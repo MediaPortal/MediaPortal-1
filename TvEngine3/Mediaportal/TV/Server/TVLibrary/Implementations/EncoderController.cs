@@ -20,7 +20,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using DirectShowLib;
 using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVDatabase.Entities;

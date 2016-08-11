@@ -171,16 +171,23 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
                   bool isCaptureOutput = false;
                   while (pinType != PinType.Max)
                   {
-                    foreach (AMMediaType matchMediaType in MEDIA_TYPES[pinType])
+                    if (pinType == PinType.RadioDataSystem)
                     {
-                      if (
-                        (matchMediaType.majorType == Guid.Empty || matchMediaType.majorType == mediaType.majorType) &&
-                        (matchMediaType.subType == Guid.Empty || matchMediaType.subType == mediaType.subType)
-                      )
+                      matched = string.Equals(pinInfo.name, "RDSOutput");
+                    }
+                    else
+                    {
+                      foreach (AMMediaType matchMediaType in MEDIA_TYPES[pinType])
                       {
-                        matched = true;
-                        isCaptureOutput = (pinType == PinType.Video || pinType == PinType.Audio) && matchMediaType.subType != MediaSubType.Null;
-                        break;
+                        if (
+                          (matchMediaType.majorType == Guid.Empty || matchMediaType.majorType == mediaType.majorType) &&
+                          (matchMediaType.subType == Guid.Empty || matchMediaType.subType == mediaType.subType)
+                        )
+                        {
+                          matched = true;
+                          isCaptureOutput = (pinType == PinType.Video || pinType == PinType.Audio) && matchMediaType.subType != MediaSubType.Null;
+                          break;
+                        }
                       }
                     }
 

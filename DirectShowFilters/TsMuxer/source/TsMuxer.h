@@ -28,18 +28,22 @@
 #include "..\..\shared\PacketSync.h"
 #include "..\..\shared\PidTable.h"
 #include "CniRegister.h"
+#include "ICallBackRds.h"
 #include "IMuxInputPin.h"
 #include "IStreamMultiplexer.h"
 #include "ITsMuxer.h"
+#include "ParserRds.h"
 #include "TsMuxerFilter.h"
 
 using namespace std;
 
 
 // This has to be large enough to contain the longest string in the CNI
-// register (currently 60), and the longest possible string from a VBI line (29
-// characters). Be generous, because there are UTF-8 characters in these
-// strings (...which means that some characters require more than 1 byte).
+// register (currently 60), the longest possible string from a VBI line (29
+// characters), and the longest possible RDS programme service name (8 UTF-16
+// characters). Be generous, because there are UTF-8 characters in some of
+// these strings (...which means that some characters require more than 1
+// byte).
 #define SERVICE_NAME_LENGTH 100
 
 
@@ -47,7 +51,8 @@ DEFINE_TVE_DEBUG_SETTING(TsMuxerDumpInput)
 DEFINE_TVE_DEBUG_SETTING(TsMuxerDumpOutput)
 
 
-class CTsMuxer : public CUnknown, public IStreamMultiplexer, public ITsMuxer
+class CTsMuxer :
+  public CUnknown, ICallBackRds, public IStreamMultiplexer, public ITsMuxer
 {
   public:
     CTsMuxer(LPUNKNOWN unk, HRESULT* hr);
@@ -72,7 +77,12 @@ class CTsMuxer : public CUnknown, public IStreamMultiplexer, public ITsMuxer
     STDMETHODIMP ConfigureLogging(wchar_t* path);
     STDMETHODIMP_(void) DumpInput(long mask);
     STDMETHODIMP_(void) DumpOutput(bool enable);
-    STDMETHODIMP SetActiveComponents(bool video, bool audio, bool teletext, bool vps, bool wss);
+    STDMETHODIMP SetActiveComponents(bool video,
+                                      bool audio,
+                                      bool rds,
+                                      bool teletext,
+                                      bool vps,
+                                      bool wss);
 
   private:
     typedef struct StreamInfo
@@ -126,6 +136,9 @@ class CTsMuxer : public CUnknown, public IStreamMultiplexer, public ITsMuxer
                                           unsigned char* data,
                                           long dataLength,
                                           REFERENCE_TIME dataStartTime);
+
+    void OnRdsProgrammeServiceNameReceived(char* programmeServiceName);
+
     static HRESULT ReadProgramAssociationTable(unsigned char* data,
                                                 long dataLength,
                                                 TransportStreamInfo& info);
@@ -152,10 +165,12 @@ class CTsMuxer : public CUnknown, public IStreamMultiplexer, public ITsMuxer
     static HRESULT ReadAudioStreamInfo(unsigned char* data,
                                         long dataLength,
                                         StreamInfo& info);
+
     void UpdatePat();
     HRESULT UpdatePmt();
     void ResetSdtInfo();
     HRESULT UpdateSdt();
+
     HRESULT WrapVbiData(const StreamInfo& info,
                         unsigned char* inputData,
                         long inputDataLength,
@@ -164,6 +179,7 @@ class CTsMuxer : public CUnknown, public IStreamMultiplexer, public ITsMuxer
                         long& outputDataLength);
     HRESULT ReadChannelNameFromVbiTeletextData(unsigned char* inputData, long inputDataLength);
     HRESULT ReadChannelNameFromVbiVpsData(unsigned char* inputData, long inputDataLength);
+
     static HRESULT WrapElementaryStreamData(const StreamInfo& info,
                                             unsigned char* inputData,
                                             long inputDataLength,
@@ -186,6 +202,7 @@ class CTsMuxer : public CUnknown, public IStreamMultiplexer, public ITsMuxer
     bool m_isStarted;
     bool m_isVideoActive;
     bool m_isAudioActive;
+    bool m_isRdsActive;
     bool m_isTeletextActive;
     bool m_isVpsActive;
     bool m_isWssActive;
@@ -203,6 +220,7 @@ class CTsMuxer : public CUnknown, public IStreamMultiplexer, public ITsMuxer
     unsigned char m_sdtVersion;
     static CCniRegister m_cniRegister;
     bool m_isCniName;
+    CParserRds* m_parserRds;
     char m_serviceName[SERVICE_NAME_LENGTH + 1];
     unsigned char m_serviceType;
     clock_t m_sdtResetTime;

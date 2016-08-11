@@ -1795,6 +1795,9 @@ namespace DirectShowLib
     /// <summary> AM_KSCATEGORY_MULTIVBICODEC </summary>
     public static readonly Guid AM_KS_CATEGORY_MULTI_VBI_CODEC = new Guid(0x9c24a977, 0x0951, 0x451a, 0x80, 0x06, 0x0e, 0x49, 0xbd, 0x28, 0xcd, 0x5f);
 
+    /// <summary> KSDATAFORMAT_SUBTYPE_RAW8 </summary>
+    public static readonly Guid KS_DATA_FORMAT_SUB_TYPE_RAW_8 = new Guid(0xca20d9a0, 0x3e3e, 0x11d1, 0x9b, 0xf9, 0x00, 0xc0, 0x4f, 0xbb, 0xde, 0xbf);
+
     /// <summary> KSMEDIUMSETID_Standard </summary>
     public static readonly Guid KS_MEDIUM_SET_ID_STANDARD = new Guid(0x4747b320, 0x62ce, 0x11cf, 0xa5, 0xd6, 0x28, 0xdb, 0x04, 0xc1, 0x00, 0x00);
 

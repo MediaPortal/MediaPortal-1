@@ -19,18 +19,12 @@
  *
  */
 #pragma once
-#include <InitGuid.h>   // DEFINE_GUID()
-#include <streams.h>    // IUnknown
 
 
-// {8533d2d1-1be1-4262-b70a-432df592b903}
-DEFINE_GUID(IID_ITS_MUXER,
-            0x8533d2d1, 0x1be1, 0x4262, 0xb7, 0xa, 0x43, 0x2d, 0xf5, 0x92, 0xb9, 0x3);
-
-DECLARE_INTERFACE_(ITsMuxer, IUnknown)
+class ICallBackRds
 {
-  STDMETHOD(ConfigureLogging)(THIS_ wchar_t* fileName)PURE;
-  STDMETHOD_(void, DumpInput)(THIS_ long mask)PURE;
-  STDMETHOD_(void, DumpOutput)(THIS_ bool enable)PURE;
-  STDMETHOD(SetActiveComponents)(THIS_ bool video, bool audio, bool rds, bool teletext, bool vps, bool wss)PURE;
+  public:
+    virtual ~ICallBackRds() {}
+
+    virtual void OnRdsProgrammeServiceNameReceived(char* programmeServiceName) = 0;
 };

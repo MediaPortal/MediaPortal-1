@@ -154,6 +154,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="source\ParserRds.cpp" />
     <ClCompile Include="source\TsMuxer.cpp" />
     <ClCompile Include="source\TsMuxerFilter.cpp" />
     <ClCompile Include="source\TsOutputPin.cpp" />
@@ -171,9 +172,11 @@
     <ClInclude Include="..\shared\TimeUtils.h" />
     <ClInclude Include="source\CniRegister.h" />
     <ClInclude Include="source\Hamming.h" />
+    <ClInclude Include="source\ICallBackRds.h" />
     <ClInclude Include="source\IMuxInputPin.h" />
     <ClInclude Include="source\IStreamMultiplexer.h" />
     <ClInclude Include="source\ITsMuxer.h" />
+    <ClInclude Include="source\ParserRds.h" />
     <ClInclude Include="source\TsMuxer.h" />
     <ClInclude Include="source\TsMuxerFilter.h" />
     <ClInclude Include="source\TsOutputPin.h" />

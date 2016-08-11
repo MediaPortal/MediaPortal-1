@@ -21,6 +21,7 @@
 #include "MuxInputPin.h"
 #include <cstddef>      // NULL
 #include <cstring>      // memcpy()
+#include <cwchar>       // wcscmp()
 
 using namespace std;
 
@@ -44,6 +45,7 @@ CMuxInputPin::CMuxInputPin(unsigned char id,
   }
 
   m_pinId = id;
+  m_isRdsConnectionAllowed = false;
   m_streamType = STREAM_TYPE_UNKNOWN;
   m_receiveTime = NOT_RECEIVING;
   m_multiplexer = multiplexer;
@@ -70,9 +72,40 @@ HRESULT CMuxInputPin::BreakConnect()
   return hr;
 }
 
+HRESULT CMuxInputPin::CheckConnect(IPin* receivePin)
+{
+  CAutoLock lock(&m_receiveLock);
+  LogDebug(L"input: pin %hhu check connect", m_pinId);
+  HRESULT hr = CRenderedInputPin::CheckConnect(receivePin);
+  if (!SUCCEEDED(hr))
+  {
+    return hr;
+  }
+
+  m_isRdsConnectionAllowed = false;
+  if (receivePin != NULL)
+  {
+    PIN_INFO pinInfo;
+    hr = receivePin->QueryPinInfo(&pinInfo);
+    if (SUCCEEDED(hr))
+    {
+      QueryPinInfoReleaseFilter(pinInfo);
+      m_isRdsConnectionAllowed = wcscmp(L"RDSOutput", (wchar_t*)&(pinInfo.achName)) == 0;
+    }
+  }
+  LogDebug(L"input: pin %hhu is RDS connection allowed = %d",
+            m_pinId, m_isRdsConnectionAllowed);
+  return S_OK;
+}
+
 HRESULT CMuxInputPin::CheckMediaType(const CMediaType* mediaType)
 {
-  for (unsigned char i = 0; i < INPUT_MEDIA_TYPE_COUNT; i++)
+  unsigned char mediaTypeCount = INPUT_MEDIA_TYPE_COUNT;
+  if (!m_isRdsConnectionAllowed)
+  {
+    mediaTypeCount -= INPUT_MEDIA_TYPE_COUNT_RDS;
+  }
+  for (unsigned char i = 0; i < mediaTypeCount; i++)
   {
     if (
       *INPUT_MEDIA_TYPES[i].clsMajorType == mediaType->majortype &&
@@ -89,6 +122,7 @@ HRESULT CMuxInputPin::CompleteConnect(IPin* receivePin)
 {
   CAutoLock lock(&m_receiveLock);
   LogDebug(L"input: pin %hhu complete connect", m_pinId);
+  m_isRdsConnectionAllowed = false;
   HRESULT hr = m_multiplexer->CompleteConnect(this);
   if (SUCCEEDED(hr))
   {
@@ -173,6 +207,7 @@ STDMETHODIMP CMuxInputPin::Receive(IMediaSample* sample)
     {
       LogDebug(L"input: pin %hhu stream started", m_pinId);
     }
+    m_receiveTime = clock();
     if (m_isDumpEnabled)
     {
       CAutoLock lock(&m_dumpLock);
@@ -183,16 +218,12 @@ STDMETHODIMP CMuxInputPin::Receive(IMediaSample* sample)
         m_dumpFileWriter.Write(data, sampleLength);
       }
     }
-    m_receiveTime = clock();
     if (m_streamType == STREAM_TYPE_MPEG2_TRANSPORT_STREAM)
     {
       OnRawData(data, sampleLength);
       return S_OK;
     }
-    else
-    {
-      return m_multiplexer->Receive(this, data, sampleLength, startTime);
-    }
+    return m_multiplexer->Receive(this, data, sampleLength, startTime);
   }
   catch (...)
   {

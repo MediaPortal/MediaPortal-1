@@ -220,6 +220,19 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
     }
 
     /// <summary>
+    /// Get the radio data system (RDS) data output pin index.
+    /// </summary>
+    public IPin PinOutputRds
+    {
+      get
+      {
+        IPin pin;
+        _outputPins.TryGetValue(PinType.RadioDataSystem, out pin);
+        return pin;
+      }
+    }
+
+    /// <summary>
     /// Get the properties supported by the capture device.
     /// </summary>
     public IEnumerable<TunerProperty> SupportedProperties

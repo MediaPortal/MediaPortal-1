@@ -440,6 +440,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
           pinsToConnect.Add(audioPin);
         }
         pinsToConnect.AddRange(vbiOutputPins.Values);
+        pinsToConnect.Add(capture.PinOutputRds);
         try
         {
           _filterTsMultiplexer = FilterGraphTools.AddFilterFromFile(graph, "TsMuxer.ax", typeof(MediaPortalTsMultiplexer).GUID, "MediaPortal TS Multiplexer");
@@ -1009,11 +1010,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
       ITsMultiplexer muxer = _filterTsMultiplexer as ITsMultiplexer;
       if (channel.MediaType == Mediaportal.TV.Server.Common.Types.Enum.MediaType.Television)
       {
-        muxer.SetActiveComponents(true, true, _isVbiEnabled, true, true);
+        muxer.SetActiveComponents(true, true, false, _isVbiEnabled, true, true);
       }
       else
       {
-        muxer.SetActiveComponents(false, true, false, false, false);
+        muxer.SetActiveComponents(false, true, true, false, false, false);
       }
     }
 

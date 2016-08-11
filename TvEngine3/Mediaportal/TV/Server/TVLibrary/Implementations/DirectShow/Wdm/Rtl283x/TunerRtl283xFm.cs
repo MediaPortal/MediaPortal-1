@@ -47,12 +47,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
   /// tuners based on Realtek's RTL283x series of chipsets.
   /// </summary>
   /// <remarks>
-  /// The tuner filter runs in a single threaded COM apartment. That means we can't directly
-  /// interact with the filter (because TVE runs in a multi-threaded apartment). All interaction
-  /// with the graph or tuner must be funnelled through a thread which runs in a STA.
-  /// Call backs are trickier. If you try to interact with the graph or tuner in any way in that
-  /// context it will result in deadlock, because the STA message queue doesn't get pumped until
-  /// after the call back completes. You must allow the call back to complete before attempting any
+  /// The tuner filter can only be instanciated and operate from within a single threaded COM
+  /// apartment. Since the TVE environment is a multi-threaded apartment, all interaction with the
+  /// graph or tuner must be performed from a separate thread which runs in a STA.
+  /// Call-backs are trickier. If you try to interact with the graph or tuner in any way in that
+  /// context it will result in dead-lock, because the STA message queue doesn't get pumped until
+  /// after the call-back completes. You must allow the call-back to complete before attempting any
   /// interaction.
   /// In short, this code is complex. Please take care and make sure you understand what you're
   /// doing before you make changes.
@@ -77,6 +77,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
     {
       Fail = 0,
       Success,
+      RdsDisplayBufferMissing
     }
 
     private enum Rtl283xFmScanStepSize : int
@@ -105,8 +106,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
     }
 
     [Flags]
-    private enum Rtl283xFmProperty : byte
+    private enum Rtl283xFmSignalControlProperty : uint
     {
+      None = 0,
       // Attenuate the audio output level (audio and noise) if signal quality is poor. Default: on.
       SoftMute = 0x01,
       // Blend stereo audio gradually based on the signal quality. Default: on.
@@ -115,6 +117,70 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
       StereoSwitch = 0x04,
       // Reduce audio bandwidth in low SNR conditions. Default: on.
       HighCutControl = 0x08
+    }
+
+    private enum Rtl283xFmAudioChannelConfig : byte
+    {
+      Mono = 0,
+      Stereo
+    }
+
+    [Flags]
+    private enum Rtl283xFmRdsSignalControlProperty : uint
+    {
+      None,
+      // Decode cyclic redundancy check bits and correct errors. Burst errors of up to 5 bits can be corrected. Default: on.
+      CyclicRedundancyChecking = 1,
+      // The decoder is only activated when the signal quality is above the threshold. Default: threshold 1 = 0, threshold 2 = 1 => 66%.
+      DecoderActivationSignalQualityThreshold1 = 2,
+      DecoderActivationSignalQualityThreshold2 = 4,
+    }
+
+    private enum Rtl283xFmRdsGroupType : byte
+    {
+      Group0a = 1,
+      Group0b
+    }
+
+    #endregion
+
+    #region structs
+
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
+    private struct RdsData    // FM_RDS_DISPLAY_STRUCT
+    {
+      public Rtl283xFmRdsGroupType GroupType;
+
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 25)]
+      public string ProgramServiceName;
+
+      // DI/PTYI bits
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 25)]
+      public string Bit3Description;                          // "Static PTY" / "Dynamic PTY"
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 25)]
+      public string Bit2Description;                          // "Not Compressed" / "Compressed"
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 25)]
+      public string Bit1Description;                          // "Not Artificial Head" / "Artificial Head"
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 25)]
+      public string Bit0Description;                          // "Mono" / "Stereo"
+
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 25)]
+      public string MusicOrSpeechDescription;                 // "Speech" / "Music"
+
+      /// <remarks>
+      /// There are four possible strings, corresponding with the four possible
+      /// combinations of the TA/TP bits:
+      /// TP = 0, TA = 0: "No traffic message"
+      /// TP = 0, TA = 1: "traffic message in EON"
+      /// TP = 1, TA = 0: "traffic msg exist not broadcast"
+      /// TP = 1, TA = 1: "broadcasting traffic message"
+      /// </remarks>
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 40)]
+      public string TrafficAnnouncementOrProgrammeDescription;
+
+      // unit = kHz
+      public float AlternativeFrequencyOne;
+      public float AlternativeFrequencyTwo;
     }
 
     #endregion
@@ -134,7 +200,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
       int DABSetMediaType(byte mediaType);
 
       /// <summary>
-      /// Call this function to set the audio sample rate.
+      /// Set the tuner's audio sample rate.
       /// </summary>
       /// <param name="sampleRate">The audio sample rate for the tuner to use.</param>
       /// <returns><c>RtlFmResult.Success</c> if successful, otherwise <c>RtlFmResult.Fail</c></returns>
@@ -142,7 +208,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
       Rtl283xFmResult SetAudioSampleRate(Rtl283xFmSampleRate sampleRate);
 
       /// <summary>
-      /// Call this function to set the tuner frequency directly.
+      /// Set the tuner's frequency.
       /// </summary>
       /// <remarks>
       /// The tuner will switch to direct-tuning mode.
@@ -153,8 +219,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
       Rtl283xFmResult SetFrequency(int frequency);
 
       /// <summary>
-      /// Call this function to perform an automated scan for the next available
-      /// station.
+      /// Perform an automated scan for the next available station.
       /// </summary>
       /// <remarks>
       /// The tuner will switch to scan-tuning mode.
@@ -170,7 +235,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
       Rtl283xFmResult ScanNextProg(int startFrequency, Rtl283xFmScanStepSize stepSize, Rtl283xFmScanDirection direction, int maxSteps, out int stationFrequency, out int stationSignalQuality);
 
       /// <summary>
-      /// Call this function to obtain the frequency range that the tuner supports.
+      /// Get the tuner's supported frequency range.
       /// </summary>
       /// <remarks>
       /// Doesn't work. The values returned are always zero.
@@ -182,51 +247,46 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
       Rtl283xFmResult GetTunerRange(out int lowerLimit, out int upperLimit);
 
       /// <summary>
-      /// Call this function to check whether tuner is locked onto a signal.
+      /// Check whether the tuner is locked onto a signal.
       /// </summary>
       /// <remarks>
       /// Only available in direct-tuning mode.
       /// </remarks>
-      /// <param name="isLocked"><c>True</c> if the tuner is currently locked.</param>
-      /// <returns><c>RtlFmResult.Success</c> if the lock status is successfully retrieved, otherwise <c>RtlFmResult.Fail</c>
-      /// if the status is not successfully retrieved or the device is not in direct-tuning mode.</returns>
+      /// <param name="isLocked"><c>True</c> if the tuner is currently locked onto a signal.</param>
+      /// <returns><c>RtlFmResult.Success</c> if the lock status is successfully retrieved, otherwise <c>RtlFmResult.Fail</c> if the status is not successfully retrieved or the tuner is not in direct-tuning mode.</returns>
       [PreserveSig]
       Rtl283xFmResult GetSignalLock([MarshalAs(UnmanagedType.Bool)] out bool isLocked);
 
       /// <summary>
-      /// Call this function to check the current signal quality.
+      /// Check the current signal quality.
       /// </summary>
       /// <remarks>
       /// Only available in direct-tuning mode.
       /// </remarks>
-      /// <param name="signalQuality">The current quality of the signal that the
-      /// tuner is tuned to.
+      /// <param name="quality">The current quality of the signal that the tuner is tuned to.
       /// 0   = no signal, tuner not locked
       /// 20  = poor, possibly very noisy
-      /// 40  = average, tollerable audio quality
+      /// 40  = average, tolerable audio quality
       /// 60  = good
       /// >80 = excellent
       /// 100 = maximum
       /// </param>
-      /// <returns><c>RtlFmResult.Success</c> if the signal quality is
-      /// successfully retrieved, otherwise <c>RtlFmResult.Fail</c> if the
-      /// quality is not successfully retrieved or the device is not in
-      /// direct-tuning mode.</returns>
+      /// <returns><c>RtlFmResult.Success</c> if the signal quality is successfully retrieved, otherwise <c>RtlFmResult.Fail</c> if the quality is not successfully retrieved or the tuner is not in direct-tuning mode.</returns>
       [PreserveSig]
-      Rtl283xFmResult GetSignalQuality(out int signalQuality);
+      Rtl283xFmResult GetSignalQuality(out int quality);
 
       /// <summary>
-      /// Call this function to obtain the current audio characteristics.
+      /// Get the current audio characteristics.
       /// </summary>
       /// <param name="channelCount">The number of audio channels received.</param>
-      /// <param name="sampleRate">The audio sample rate, in Hz.</param>
+      /// <param name="sampleRate">The audio sample rate. The unit is Hertz (Hz).</param>
       /// <param name="sampleSize">The number of bits per sample.</param>
       /// <returns><c>RtlFmResult.Success</c> if successful, otherwise <c>RtlFmResult.Fail</c></returns>
       [PreserveSig]
       Rtl283xFmResult GetPCMInfo(out byte channelCount, out Rtl283xFmSampleRate sampleRate, out uint sampleSize);
 
       /// <summary>
-      /// Call this function to set the audio de-emphasis time constant.
+      /// Set the audio de-emphasis time constant.
       /// </summary>
       /// <param name="timeConstant">The de-emphasis time constant.</param>
       /// <returns><c>RtlFmResult.Success</c> if successful, otherwise <c>RtlFmResult.Fail</c></returns>
@@ -234,29 +294,108 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
       Rtl283xFmResult SetDeemphasisTC(Rtl283xFmDeEmphasisTimeConstant timeConstant);
 
       /// <summary>
-      /// Call this function to get the values of the signal control properties.
+      /// Get the values of the signal control properties.
       /// </summary>
       /// <param name="propertyValues">The current property values.</param>
       /// <returns><c>RtlFmResult.Success</c> if successful, otherwise <c>RtlFmResult.Fail</c></returns>
       [PreserveSig]
-      Rtl283xFmResult GetSignalQualityCtr(out Rtl283xFmProperty propertyValues);
+      Rtl283xFmResult GetSignalQualityCtr(out Rtl283xFmSignalControlProperty propertyValues);
 
       /// <summary>
-      /// Call this function to set the values of the signal control properties.
+      /// Set the values of the signal control properties.
       /// </summary>
       /// <param name="propertyValues">The property values to set.</param>
       /// <returns><c>RtlFmResult.Success</c> if successful, otherwise <c>RtlFmResult.Fail</c></returns>
       [PreserveSig]
-      Rtl283xFmResult SetSignalQualityCtr(Rtl283xFmProperty propertyValues);
+      Rtl283xFmResult SetSignalQualityCtr(Rtl283xFmSignalControlProperty propertyValues);
 
       /// <summary>
-      /// Call this function to set the quality threshold for station
-      /// identification during scanning.
+      /// Set the quality threshold for station identification during automated
+      /// scanning.
       /// </summary>
-      /// <param name="thresholdQuality">The quality threshold value. Value should be between 10 and 100.</param>
+      /// <param name="thresholdQuality">The quality threshold value, which should be between 10 and 100.</param>
       /// <returns><c>RtlFmResult.Success</c> if successful, otherwise <c>RtlFmResult.Fail</c></returns>
       [PreserveSig]
       Rtl283xFmResult SetScanStopQuality(uint thresholdQuality);
+
+      /// <summary>
+      /// Check whether the radio data system (RDS) decoder is synchronised
+      /// (locked).
+      /// </summary>
+      /// <param name="isSynchronised"><c>True</c> if the RDS decoder is currently synchronised.</param>
+      /// <returns><c>RtlFmResult.Success</c> if successful, otherwise <c>RtlFmResult.Fail</c></returns>
+      [PreserveSig]
+      Rtl283xFmResult GetRDSSync([MarshalAs(UnmanagedType.Bool)] out bool isSynchronised);
+
+      /// <summary>
+      /// Set the values of the radio data system (RDS) decoder control
+      /// properties.
+      /// </summary>
+      /// <param name="propertyValues">The property values to set.</param>
+      /// <returns><c>RtlFmResult.Success</c> if successful, otherwise <c>RtlFmResult.Fail</c></returns>
+      [PreserveSig]
+      Rtl283xFmResult SetRDSCtr(Rtl283xFmRdsSignalControlProperty propertyValues);
+
+      /// <summary>
+      /// Get the values of the radio data system (RDS) decoder control
+      /// properties.
+      /// </summary>
+      /// <param name="propertyValues">The property values to set.</param>
+      /// <returns><c>RtlFmResult.Success</c> if successful, otherwise <c>RtlFmResult.Fail</c></returns>
+      [PreserveSig]
+      Rtl283xFmResult GetRDSCtr(out Rtl283xFmRdsSignalControlProperty propertyValues);
+
+      /// <summary>
+      /// Start processing radio data system (RDS) data.
+      /// </summary>
+      /// <returns><c>RtlFmResult.Success</c> if successful, otherwise <c>RtlFmResult.Fail</c></returns>
+      [PreserveSig]
+      Rtl283xFmResult StartRDS();
+
+      /// <summary>
+      /// Stop processing radio data system (RDS) data.
+      /// </summary>
+      /// <returns><c>RtlFmResult.Success</c> if successful, otherwise <c>RtlFmResult.Fail</c></returns>
+      [PreserveSig]
+      Rtl283xFmResult StopRDS();
+
+      /// <summary>
+      /// Check the current radio data system (RDS) signal quality.
+      /// </summary>
+      /// <param name="quality">The current quality of the RDS signal that the tuner is receiving. The value range is from 0 to 100.</param>
+      /// <returns><c>RtlFmResult.Success</c> if successful, otherwise <c>RtlFmResult.Fail</c></returns>
+      [PreserveSig]
+      Rtl283xFmResult GetRDSQuality(out int quality);
+
+      /// <summary>
+      /// Set the radio data system (RDS) decoder's data buffer.
+      /// </summary>
+      /// <param name="buffer">The RDS data buffer.</param>
+      /// <returns><c>RtlFmResult.Success</c> if successful, otherwise <c>RtlFmResult.Fail</c></returns>
+      [PreserveSig]
+      Rtl283xFmResult SetRDSDisplay(IntPtr buffer);
+
+      /// <summary>
+      /// Enable the radio data system (RDS) decoder.
+      /// </summary>
+      /// <returns><c>RtlFmResult.Success</c> if successful, otherwise <c>RtlFmResult.Fail</c></returns>
+      [PreserveSig]
+      Rtl283xFmResult EnableRDSDecoder();
+
+      /// <summary>
+      /// Disable the radio data system (RDS) decoder.
+      /// </summary>
+      /// <returns><c>RtlFmResult.Success</c> if successful, otherwise <c>RtlFmResult.Fail</c></returns>
+      [PreserveSig]
+      Rtl283xFmResult DisableRDSDecoder();
+
+      /// <summary>
+      /// Check the current audio channel configuration.
+      /// </summary>
+      /// <param name="config">The audio channel configuration.</param>
+      /// <returns><c>RtlFmResult.Success</c> if successful, otherwise <c>RtlFmResult.Fail</c></returns>
+      [PreserveSig]
+      Rtl283xFmResult GetMonoStereo(out Rtl283xFmAudioChannelConfig config);
     }
 
     #endregion
@@ -275,16 +414,19 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
 
     private static readonly Guid SOURCE_FILTER_CLSID = new Guid(0x6b368f8c, 0xf383, 0x44d3, 0xb8, 0xc2, 0x3a, 0x15, 0x0b, 0x70, 0xb1, 0xc9);
 
+    private static readonly int RDS_DATA_SIZE = Marshal.SizeOf(typeof(RdsData));    // 200
+
     #endregion
 
     #region variables
 
     private IRtl283xFmSource _fmSource = null;
-    private IBaseFilter _filterSource = null;
-    private Encoder _encoder = null;
+    private Capture _capture = new Capture();
+    private Encoder _encoder = new Encoder();
     private DsDevice _mainTunerDevice = null;
     private bool _mainTunerDeviceInUse = false;
     private TsWriterWrapper _staTsWriter = null;
+    private bool _isRdsEnabled = false;
 
     /// <summary>
     /// The tuner's sub-channel manager.
@@ -317,12 +459,130 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
       : base("Realtek RTL283x FM Tuner", mainTunerDevice.DevicePath + "FM", mainTunerDevice.TunerInstanceIdentifier >= 0 ? mainTunerDevice.TunerInstanceIdentifier.ToString() : null, mainTunerDevice.ProductInstanceIdentifier, BroadcastStandard.FmRadio)
     {
       _mainTunerDevice = mainTunerDevice;
-      _encoder = new Encoder();
     }
 
     ~TunerRtl283xFm()
     {
       Dispose(false);
+    }
+
+    #endregion
+
+    private IBaseFilter LoadSourceFilter()
+    {
+      this.LogDebug("RTL283x FM: load source filter");
+
+      // Normally the RTL283x driver only supports operation of one tuner in a
+      // special mode. The driver selects this tuner by first match on a list
+      // of friendly names located in the registry. We manipulate the registry
+      // list and tuner name to ensure the driver matches this tuner. In theory
+      // this should enable multiple tuners to operate in special modes
+      // simultaneously.
+      string originalListTunerName = null;
+      string originalTunerName = _mainTunerDevice.Name;
+      string fakeUniqueTunerName = "MediaPortal FM Tuner " + TunerId;
+      List<RegistryView> views = new List<RegistryView>() { RegistryView.Default };
+      if (Environment.Is64BitOperatingSystem && !Environment.Is64BitProcess)
+      {
+        views.Add(RegistryView.Registry64);
+      }
+      foreach (RegistryView view in views)
+      {
+        using (RegistryKey key = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, view).CreateSubKey(@"SYSTEM\CurrentControlSet\Services\RTL2832UBDA"))
+        {
+          try
+          {
+            if (string.IsNullOrEmpty(originalListTunerName))
+            {
+              originalListTunerName = (string)key.GetValue("FilterName1");
+            }
+            key.SetValue("FilterName1", fakeUniqueTunerName);
+          }
+          finally
+          {
+            key.Close();
+          }
+        }
+      }
+
+      try
+      {
+        _mainTunerDevice.SetPropBagValue("FriendlyName", fakeUniqueTunerName);
+
+        try
+        {
+          return FilterGraphTools.AddFilterFromRegisteredClsid(Graph, SOURCE_FILTER_CLSID, "RTL283x FM Source");
+        }
+        finally
+        {
+          _mainTunerDevice.SetPropBagValue("FriendlyName", originalTunerName);
+        }
+      }
+
+      // After loading the source filter we can revert the registry changes.
+      finally
+      {
+        foreach (RegistryView view in views)
+        {
+          using (RegistryKey key = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, view).CreateSubKey(@"SYSTEM\CurrentControlSet\Services\RTL2832UBDA"))
+          {
+            try
+            {
+              key.SetValue("FilterName1", originalListTunerName);
+            }
+            finally
+            {
+              key.Close();
+            }
+          }
+        }
+      }
+    }
+
+    #region radio data system (RDS)
+
+    private void EnableRds()
+    {
+      this.LogDebug("RTL283x FM: enable RDS");
+
+      // We'll be receiving RDS via samples from the filter output pin. This
+      // may only be applicable for reception of RDS via the interface, but
+      // just in case...
+      Rtl283xFmResult result = _fmSource.StartRDS();
+      if (result != Rtl283xFmResult.Success)
+      {
+        this.LogWarn("RTL283x FM: failed to start RDS processing, result = {0}", result);
+        return;
+      }
+      _isRdsEnabled = true;
+
+      // Apply highest possible error correction and threshold to try to
+      // minimise reception of spurious data.
+      Rtl283xFmRdsSignalControlProperty properties = Rtl283xFmRdsSignalControlProperty.CyclicRedundancyChecking;
+      properties |= Rtl283xFmRdsSignalControlProperty.DecoderActivationSignalQualityThreshold1;
+      properties |= Rtl283xFmRdsSignalControlProperty.DecoderActivationSignalQualityThreshold2;
+      result = _fmSource.SetRDSCtr(properties);
+      if (result != Rtl283xFmResult.Success)
+      {
+        this.LogWarn("RTL283x FM: failed to set RDS control properties, result = {0}", result);
+      }
+    }
+
+    private void DisableRds()
+    {
+      if (!_isRdsEnabled)
+      {
+        return;
+      }
+      this.LogDebug("RTL283x FM: disable RDS");
+
+      Rtl283xFmResult result = _fmSource.StopRDS();
+      if (result != Rtl283xFmResult.Success)
+      {
+        this.LogWarn("RTL283x FM: failed to stop RDS processing, result = {0}", result);
+      }
+
+      _isRdsEnabled = false;
     }
 
     #endregion
@@ -555,6 +815,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
     /// <param name="configuration">The tuner's configuration.</param>
     public override void ReloadConfiguration(TVDatabase.Entities.Tuner configuration)
     {
+      this.LogDebug("RTL283x FM: reload configuration");
       base.ReloadConfiguration(configuration);
 
       if (configuration.AnalogTunerSettings == null)
@@ -571,6 +832,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
         settings.EncoderBitRatePeakRecording = 100;
         settings.ExternalTunerProgram = string.Empty;
         settings.ExternalTunerProgramArguments = string.Empty;
+        settings.ExternalInputSourceVideo = (int)CaptureSourceVideo.None;
+        settings.ExternalInputSourceAudio = (int)CaptureSourceAudio.Tuner;
         settings.SupportedVideoSources = (int)CaptureSourceVideo.None;
         settings.SupportedAudioSources = (int)CaptureSourceAudio.Tuner;
         configuration.AnalogTunerSettings = AnalogTunerSettingsManagement.SaveAnalogTunerSettings(settings);
@@ -620,78 +883,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
 
       InitialiseGraph();
 
-      // Normally the RTL283x driver only supports operation of one tuner in a
-      // special mode. The driver selects this tuner by first match on a list
-      // of friendly names located in the registry. We manipulate the registry
-      // list and tuner name to ensure the driver matches this tuner. In theory
-      // this should enable multiple tuners to operate in special modes
-      // simultaneously.
-      string originalListTunerName = null;
-      string originalTunerName = _mainTunerDevice.Name;
-      string fakeUniqueTunerName = "MediaPortal FM Tuner " + TunerId;
-      List<RegistryView> views = new List<RegistryView>() { RegistryView.Default };
-      if (Environment.Is64BitOperatingSystem && !Environment.Is64BitProcess)
-      {
-        views.Add(RegistryView.Registry64);
-      }
-      foreach (RegistryView view in views)
-      {
-        using (RegistryKey key = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, view).CreateSubKey(@"SYSTEM\CurrentControlSet\Services\RTL2832UBDA"))
-        {
-          try
-          {
-            if (string.IsNullOrEmpty(originalListTunerName))
-            {
-              originalListTunerName = (string)key.GetValue("FilterName1");
-            }
-            key.SetValue("FilterName1", fakeUniqueTunerName);
-          }
-          finally
-          {
-            key.Close();
-          }
-        }
-      }
-      try
-      {
-        _mainTunerDevice.SetPropBagValue("FriendlyName", fakeUniqueTunerName);
-
-        // After loading the source filter we have to put the registry back to
-        // how it was before.
-        try
-        {
-          _filterSource = FilterGraphTools.AddFilterFromRegisteredClsid(Graph, SOURCE_FILTER_CLSID, "RTL283x FM Source");
-        }
-        finally
-        {
-          _mainTunerDevice.SetPropBagValue("FriendlyName", originalTunerName);
-        }
-      }
-      finally
-      {
-        foreach (RegistryView view in views)
-        {
-          using (RegistryKey key = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, view).CreateSubKey(@"SYSTEM\CurrentControlSet\Services\RTL2832UBDA"))
-          {
-            try
-            {
-              key.SetValue("FilterName1", originalListTunerName);
-            }
-            finally
-            {
-              key.Close();
-            }
-          }
-        }
-      }
-
-      Capture capture = new Capture();
-      capture.SetAudioCapture(_filterSource, null);
-      _encoder.PerformLoading(Graph, null, capture);
+      IBaseFilter sourceFilter = LoadSourceFilter();
+      _capture.PerformLoading(sourceFilter);
+      _encoder.PerformLoading(Graph, null, _capture);
 
       // Check for and load extensions, adding any additional filters to the graph.
       IBaseFilter lastFilter = _encoder.TsMultiplexerFilter;
-      IList<ITunerExtension> extensions = LoadExtensions(_filterSource, ref lastFilter);
+      IList<ITunerExtension> extensions = LoadExtensions(sourceFilter, ref lastFilter);
       if (streamFormat == StreamFormat.Default)
       {
         streamFormat = StreamFormat.Mpeg2Ts | StreamFormat.Analog;
@@ -699,8 +897,21 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
       AddAndConnectTsWriterIntoGraph(lastFilter, streamFormat);
       CompleteGraph();
 
-      _fmSource = _filterSource as IRtl283xFmSource;
+      _fmSource = sourceFilter as IRtl283xFmSource;
       _staTsWriter = new TsWriterWrapper(InvokeTsWriterITsWriterJob, InvokeTsWriterIGrabberSiDvbJob, InvokeTsWriterIGrabberSiMpegJob);
+
+      Rtl283xFmSignalControlProperty properties;
+      Rtl283xFmResult result = _fmSource.GetSignalQualityCtr(out properties);
+      if (result == Rtl283xFmResult.Success)
+      {
+        this.LogDebug("RTL283x FM: signal control properties = {0}", properties);
+      }
+      else
+      {
+        this.LogWarn("RTL283x FM: failed to get signal control properties, result = {0}", result);
+      }
+
+      EnableRds();
 
       _subChannelManager = new SubChannelManagerAnalog(_staTsWriter);
       _channelScanner = new ChannelScannerAnalog(this, _staTsWriter as IGrabberSiMpeg, _staTsWriter as IGrabberSiDvb);
@@ -769,16 +980,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
         _stopGraphThread = true;
         _graphThreadWaitEvent.Set();
 
-        if (_filterSource != null)
-        {
-          if (Graph != null)
-          {
-            Graph.RemoveFilter(_filterSource);
-          }
-          Release.ComObject("RTL283x FM source filter", ref _filterSource);
-        }
-        _fmSource = null;
+        DisableRds();
 
+        _fmSource = null;
+        _capture.PerformUnloading(Graph);
         _encoder.PerformUnloading(Graph);
 
         _subChannelManager = null;
@@ -832,9 +1037,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
       {
         throw new TvException("Received request to tune incompatible channel.");
       }
-      if (_fmSource.SetFrequency(fmRadioChannel.Frequency) == Rtl283xFmResult.Fail)
+      Rtl283xFmResult result = _fmSource.SetFrequency(fmRadioChannel.Frequency);
+      if (result != Rtl283xFmResult.Success)
       {
-        throw new TvException("Failed to set frequency.");
+        throw new TvException("Failed to set frequency. Result = {0}.", result);
       }
       _encoder.PerformTuning(fmRadioChannel);
     }
@@ -887,18 +1093,21 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
         return;
       }
 
-      if (_fmSource.GetSignalLock(out isLocked) == Rtl283xFmResult.Fail)
+      Rtl283xFmResult result = _fmSource.GetSignalLock(out isLocked);
+      if (result != Rtl283xFmResult.Success)
       {
-        this.LogWarn("RTL283x FM: failed to update signal lock status");
+        this.LogWarn("RTL283x FM: failed to update signal lock status, result = {0}", result);
       }
       if (onlyGetLock)
       {
         return;
       }
       isPresent = isLocked;
-      if (_fmSource.GetSignalQuality(out quality) == Rtl283xFmResult.Fail)
+
+      result = _fmSource.GetSignalQuality(out quality);
+      if (result != Rtl283xFmResult.Success)
       {
-        this.LogWarn("RTL283x FM: failed to update signal quality");
+        this.LogWarn("RTL283x FM: failed to update signal quality, result = {0}", result);
       }
       strength = quality;
     }

@@ -38,17 +38,26 @@ using namespace std;
 #define STREAM_TYPE_MPEG2_PROGRAM_STREAM 0xfd
 #define STREAM_TYPE_MPEG2_TRANSPORT_STREAM 0xfc
 #define STREAM_TYPE_TELETEXT 0xfb
-#define STREAM_TYPE_VPS 0xfa  // video programme system
+#define STREAM_TYPE_VPS 0xfa  // video programming system
 #define STREAM_TYPE_WSS 0xf9  // wide screen signalling
+#define STREAM_TYPE_RDS 0xf8  // radio data system (FM radio)
 
 #define RECEIVE_BUFFER_TS_PACKET_COUNT 5
 #define RECEIVE_BUFFER_SIZE TS_PACKET_LEN * RECEIVE_BUFFER_TS_PACKET_COUNT
 
 
-// Note: order is important! Some Mainconcept audio encoders seem to accept the
-// first proposed media type. If that first type is a video type, it tricks us
-// into thinking that the encoder is delivering video... but it is still
-// delivering audio as usual. Moral of the story: audio should be before video.
+// Order is important!
+// 1. Some Mainconcept audio encoders seem to accept the first proposed media
+// type. If that first type is a video type, it tricks us into thinking that
+// the encoder is delivering video... but it's still delivering audio as usual.
+// So, audio types need to be before video types.
+//
+// 2. The RDS media type is very generic. Unfortunately it's the only media
+// type supported by the Realtek RTL283x FM source filter. In order to avoid
+// allowing unsupported connection types we must check both pin name and media
+// types before allowing an RDS connection. So, RDS types need to be last.
+// Refer to the implementation of CheckConnect() and CheckMediaType() for more
+// information.
 const AMOVIESETUP_MEDIATYPE INPUT_MEDIA_TYPES[] =
 {
   { &MEDIATYPE_Audio, &MEDIASUBTYPE_MPEG1Payload },
@@ -72,7 +81,9 @@ const AMOVIESETUP_MEDIATYPE INPUT_MEDIA_TYPES[] =
   { &MEDIATYPE_Stream, &MEDIASUBTYPE_MPEG1System },
   { &MEDIATYPE_Stream, &MEDIASUBTYPE_MPEG2_PROGRAM },
 
-  { &MEDIATYPE_Stream, &MEDIASUBTYPE_MPEG2_TRANSPORT }
+  { &MEDIATYPE_Stream, &MEDIASUBTYPE_MPEG2_TRANSPORT },
+
+  { &MEDIATYPE_Stream, &GUID_NULL }
 };
 
 // This array describes the recognised stream type for each media type in the
@@ -100,7 +111,9 @@ const unsigned char STREAM_TYPES[] =
   STREAM_TYPE_MPEG1_SYSTEM_STREAM,
   STREAM_TYPE_MPEG2_PROGRAM_STREAM,
 
-  STREAM_TYPE_MPEG2_TRANSPORT_STREAM
+  STREAM_TYPE_MPEG2_TRANSPORT_STREAM,
+
+  STREAM_TYPE_RDS
 };
 
 const unsigned char INPUT_MEDIA_TYPE_COUNT_MPEG1_AUDIO = 3;
@@ -112,6 +125,7 @@ const unsigned char INPUT_MEDIA_TYPE_COUNT_VPS = 1;
 const unsigned char INPUT_MEDIA_TYPE_COUNT_WSS = 1;
 const unsigned char INPUT_MEDIA_TYPE_COUNT_PROGRAM_STREAM = 2;
 const unsigned char INPUT_MEDIA_TYPE_COUNT_TRANSPORT_STREAM = 1;
+const unsigned char INPUT_MEDIA_TYPE_COUNT_RDS = 1;
 
 const unsigned char INPUT_MEDIA_TYPE_COUNT = INPUT_MEDIA_TYPE_COUNT_MPEG1_AUDIO +
                                               INPUT_MEDIA_TYPE_COUNT_MPEG2_AUDIO +
@@ -121,7 +135,8 @@ const unsigned char INPUT_MEDIA_TYPE_COUNT = INPUT_MEDIA_TYPE_COUNT_MPEG1_AUDIO 
                                               INPUT_MEDIA_TYPE_COUNT_VPS +
                                               INPUT_MEDIA_TYPE_COUNT_WSS +
                                               INPUT_MEDIA_TYPE_COUNT_PROGRAM_STREAM +
-                                              INPUT_MEDIA_TYPE_COUNT_TRANSPORT_STREAM;
+                                              INPUT_MEDIA_TYPE_COUNT_TRANSPORT_STREAM +
+                                              INPUT_MEDIA_TYPE_COUNT_RDS;
 
 
 class CMuxInputPin : public CRenderedInputPin, CPacketSync, public IMuxInputPin
@@ -136,6 +151,7 @@ class CMuxInputPin : public CRenderedInputPin, CPacketSync, public IMuxInputPin
     virtual ~CMuxInputPin();
 
     HRESULT BreakConnect();
+    HRESULT CheckConnect(IPin* receivePin);
     HRESULT CheckMediaType(const CMediaType* mediaType);
     HRESULT CompleteConnect(IPin* receivePin);
     HRESULT GetMediaType(int position, CMediaType* mediaType);
@@ -154,6 +170,7 @@ class CMuxInputPin : public CRenderedInputPin, CPacketSync, public IMuxInputPin
     void OnTsPacket(unsigned char* tsPacket);
 
     unsigned char m_pinId;
+    bool m_isRdsConnectionAllowed;
     unsigned char m_streamType;
     clock_t m_receiveTime;
     CCritSec& m_receiveLock;

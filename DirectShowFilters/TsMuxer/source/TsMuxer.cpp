@@ -66,7 +66,7 @@ using namespace std;
 #define TRANSPORT_STREAM_ID 1
 #define ORIGINAL_NETWORK_ID 1
 
-#define VBI_SERVICE_NAME_TIMEOUT 5000
+#define SERVICE_NAME_TIMEOUT 5000         // The service name can be received via RDS, teletext or VPS.
 
 #define TS_HEADER_LENGTH 4
 #define PTS_LENGTH 5                      // ... bytes. Refer to ISO/IEC 13818 part 1 table 2-21.
@@ -321,9 +321,19 @@ CTsMuxer::CTsMuxer(LPUNKNOWN unk, HRESULT* hr)
     return;
   }
 
+  m_parserRds = new CParserRds();
+  if (m_parserRds == NULL)
+  {
+    LogDebug(L"muxer: failed to allocate RDS parser");
+    *hr = E_OUTOFMEMORY;
+    return;
+  }
+  m_parserRds->SetCallBack(this);
+
   m_isStarted = false;
   m_isVideoActive = true;
   m_isAudioActive = true;
+  m_isRdsActive = true;
   m_isTeletextActive = true;
   m_isVpsActive = true;
   m_isWssActive = true;
@@ -579,7 +589,7 @@ HRESULT CTsMuxer::Receive(IMuxInputPin* pin,
   // Update the SDT if we timed out waiting for the service name.
   if (
     m_sdtVersion == VERSION_NOT_SET &&
-    CTimeUtils::ElapsedMillis(m_sdtResetTime) >= VBI_SERVICE_NAME_TIMEOUT
+    CTimeUtils::ElapsedMillis(m_sdtResetTime) >= SERVICE_NAME_TIMEOUT
   )
   {
     UpdateSdt();
@@ -613,7 +623,10 @@ HRESULT CTsMuxer::Receive(IMuxInputPin* pin,
     }
     info->PinId = pinId;
     info->StreamType = streamType;
-    info->Pid = m_nextStreamPid++;
+    if (streamType != STREAM_TYPE_RDS)
+    {
+      info->Pid = m_nextStreamPid++;
+    }
     info->ContinuityCounter = 0;
     info->IsCompatible = true;  // default assumption
     info->PmtDescriptorLength = 0;
@@ -632,6 +645,12 @@ HRESULT CTsMuxer::Receive(IMuxInputPin* pin,
       info->IsIgnored = !m_isVideoActive;
       info->StreamId = m_nextVideoStreamId++;
       hr = ReadVideoStreamInfo(data, dataLength, *info);
+    }
+    else if (streamType == STREAM_TYPE_TELETEXT)
+    {
+      LogDebug(L"muxer: pin %hhu RDS stream", pinId);
+      LogDebug(L"  sample size  = %ld bytes", dataLength);
+      info->IsIgnored = true;   // special; RDS streams aren't copied into the output
     }
     else if (streamType == STREAM_TYPE_TELETEXT)
     {
@@ -715,7 +734,8 @@ HRESULT CTsMuxer::Receive(IMuxInputPin* pin,
   else
   {
     info = it->second;
-    if (!info->IsIgnored &&
+    if (
+      !info->IsIgnored &&
       info->IsCompatible &&
       (
         info->PrevReceiveTime == NOT_RECEIVING ||
@@ -736,6 +756,10 @@ HRESULT CTsMuxer::Receive(IMuxInputPin* pin,
   // and we've seen all the substreams in program, system or transport streams.
   if (!CanDeliver() || info->IsIgnored || !info->IsCompatible)
   {
+    if (streamType == STREAM_TYPE_RDS && m_isRdsActive)
+    {
+      return m_parserRds->Receive(data, dataLength);
+    }
     return S_OK;
   }
 
@@ -753,9 +777,9 @@ HRESULT CTsMuxer::Receive(IMuxInputPin* pin,
   unsigned char* pesData = NULL;
   long pesDataLength = 0;
   if (
-    info->StreamType == STREAM_TYPE_TELETEXT ||
-    info->StreamType == STREAM_TYPE_VPS ||
-    info->StreamType == STREAM_TYPE_WSS
+    streamType == STREAM_TYPE_TELETEXT ||
+    streamType == STREAM_TYPE_VPS ||
+    streamType == STREAM_TYPE_WSS
   )
   {
     hr = WrapVbiData(*info, data, dataLength, ptsScr, &pesData, pesDataLength);
@@ -831,17 +855,24 @@ STDMETHODIMP_(void) CTsMuxer::DumpOutput(bool enable)
   m_filter->DumpOutput(enable);
 }
 
-STDMETHODIMP CTsMuxer::SetActiveComponents(bool video, bool audio, bool teletext, bool vps, bool wss)
+STDMETHODIMP CTsMuxer::SetActiveComponents(bool video,
+                                            bool audio,
+                                            bool rds,
+                                            bool teletext,
+                                            bool vps,
+                                            bool wss)
 {
   CAutoLock lock(&m_receiveLock);
-  LogDebug(L"muxer: set active components, video = %d, audio = %d, teletext = %d, VPS = %d, WSS = %d",
-            video, audio, teletext, vps, wss);
+  LogDebug(L"muxer: set active components, video = %d, audio = %d, RDS = %d, teletext = %d, VPS = %d, WSS = %d",
+            video, audio, rds, teletext, vps, wss);
   m_isVideoActive = video;
   m_isAudioActive = audio;
+  m_isRdsActive = rds;
   m_isTeletextActive = teletext;
   m_isVpsActive = vps;
   m_isWssActive = wss;
 
+  bool haveRdsStream = false;
   bool haveTeletextStream = false;
   bool haveVpsStream = false;
   m_serviceType = SERVICE_TYPE_RADIO;
@@ -856,6 +887,12 @@ STDMETHODIMP CTsMuxer::SetActiveComponents(bool video, bool audio, bool teletext
     else if (CPidTable::IsAudioStream(sIt->second->StreamType))
     {
       sIt->second->IsIgnored = !m_isAudioActive;
+    }
+    else if (sIt->second->StreamType == STREAM_TYPE_RDS)
+    {
+      // Don't uncomment. RDS streams have special handling.
+      //sIt->second->IsIgnored = !m_isRdsActive;
+      haveRdsStream = true;
     }
     else if (sIt->second->StreamType == STREAM_TYPE_TELETEXT)
     {
@@ -875,12 +912,18 @@ STDMETHODIMP CTsMuxer::SetActiveComponents(bool video, bool audio, bool teletext
 
   // Clear our SDT details.
   ResetSdtInfo();
-  if ((!m_isTeletextActive || !haveTeletextStream) && (!m_isVpsActive || !haveVpsStream))
+  if (
+    (!m_isRdsActive || !haveRdsStream) &&
+    (!m_isTeletextActive || !haveTeletextStream) &&
+    (!m_isVpsActive || !haveVpsStream))
   {
-    // No point in waiting for teletext to update the SDT if we're ignoring or
-    // don't have teletext. Ditto for VPS.
+    // No point in waiting for RDS data to update the SDT if we're ignoring or
+    // don't have an RDS stream. Ditto for teletext and VPS data.
     UpdateSdt();
   }
+
+  // Clear our RDS details.
+  m_parserRds->Reset();
 
   // Update our PMT PID.
   m_pmtPid++;
@@ -925,7 +968,7 @@ bool CTsMuxer::CanDeliver()
   }
 
   // For each input pin...
-  bool haveActiveTeletextOrVpsPin = false;
+  bool haveActiveRdsOrTeletextOrVpsPin = false;
   int pinCount = m_filter->GetPinCount();
   for (int p = 0; p < pinCount; p++)
   {
@@ -953,17 +996,22 @@ bool CTsMuxer::CanDeliver()
       continue;
     }
 
-    // Check that the pin is receiving. Unless the pin is a VPS or WSS pin, we
-    // must be receiving even if the stream is incompatible or we're ignoring
-    // it. Unlike teletext, VPS and WSS don't seem to deliver unless data is
-    // really present. Therefore we don't check/expect them.
+    // Check that the pin is receiving. Unless the pin is an RDS, VPS or WSS
+    // pin, we must be receiving even if the stream is incompatible or we're
+    // ignoring it. Unlike teletext, VPS and WSS don't seem to deliver unless
+    // data is really present. Therefore we don't check/expect them.
     clock_t receiveTime = pin->GetReceiveTime();
+    unsigned char streamType = pin->GetStreamType();
     if (
       receiveTime == NOT_RECEIVING ||
       CTimeUtils::ElapsedMillis(receiveTime) >= STREAM_IDLE_TIMEOUT
     )
     {
-      if (pin->GetStreamType() == STREAM_TYPE_VPS || pin->GetStreamType() == STREAM_TYPE_WSS)
+      if (
+        streamType == STREAM_TYPE_RDS ||
+        streamType == STREAM_TYPE_VPS ||
+        streamType == STREAM_TYPE_WSS
+      )
       {
         continue;
       }
@@ -973,7 +1021,7 @@ bool CTsMuxer::CanDeliver()
     // Check that we're receiving each substream.
     // How many substreams do we expect from this pin?
     unsigned char expectedStreamCount = 0;
-    if (pin->GetStreamType() == STREAM_TYPE_MPEG2_TRANSPORT_STREAM)
+    if (streamType == STREAM_TYPE_MPEG2_TRANSPORT_STREAM)
     {
       map<unsigned char, TransportStreamInfo*>::const_iterator tsIt = m_transportStreamInfo.find(pin->GetId());
       if (tsIt == m_transportStreamInfo.end())
@@ -988,8 +1036,8 @@ bool CTsMuxer::CanDeliver()
       }
     }
     else if (
-      pin->GetStreamType() == STREAM_TYPE_MPEG1_SYSTEM_STREAM ||
-      pin->GetStreamType() == STREAM_TYPE_MPEG2_PROGRAM_STREAM
+      streamType == STREAM_TYPE_MPEG1_SYSTEM_STREAM ||
+      streamType == STREAM_TYPE_MPEG2_PROGRAM_STREAM
     )
     {
       map<unsigned char, ProgramStreamInfo*>::const_iterator psIt = m_programStreamInfo.find(pin->GetId());
@@ -1016,11 +1064,12 @@ bool CTsMuxer::CanDeliver()
     {
       expectedStreamCount = 1;
       if (
-        (m_isTeletextActive && pin->GetStreamType() == STREAM_TYPE_TELETEXT) ||
-        (m_isVpsActive && pin->GetStreamType() == STREAM_TYPE_VPS)
+        (m_isRdsActive && streamType == STREAM_TYPE_RDS) ||
+        (m_isTeletextActive && streamType == STREAM_TYPE_TELETEXT) ||
+        (m_isVpsActive && streamType == STREAM_TYPE_VPS)
       )
       {
-        haveActiveTeletextOrVpsPin = true;
+        haveActiveRdsOrTeletextOrVpsPin = true;
       }
     }
 
@@ -1060,9 +1109,9 @@ bool CTsMuxer::CanDeliver()
   // Waiting for SDT?
   if (m_sdtVersion == VERSION_NOT_SET)
   {
-    // If we don't have teletext or VPS then we're not going to get a service
-    // name, so we may as well start delivering SDT immediately.
-    if (!haveActiveTeletextOrVpsPin)
+    // If we don't have RDS, teletext or VPS then we're not going to get a
+    // service name, so we may as well start delivering SDT immediately.
+    if (!haveActiveRdsOrTeletextOrVpsPin)
     {
       UpdateSdt();
     }
@@ -1292,7 +1341,7 @@ HRESULT CTsMuxer::ReceiveProgramOrSystemStream(IMuxInputPin* pin,
   // Update the SDT if we timed out waiting for the service name.
   if (
     m_sdtVersion == VERSION_NOT_SET &&
-    CTimeUtils::ElapsedMillis(m_sdtResetTime) >= VBI_SERVICE_NAME_TIMEOUT
+    CTimeUtils::ElapsedMillis(m_sdtResetTime) >= SERVICE_NAME_TIMEOUT
   )
   {
     UpdateSdt();
@@ -1496,6 +1545,14 @@ HRESULT CTsMuxer::ReceiveProgramOrSystemStream(IMuxInputPin* pin,
     }
   }
   return S_OK;
+}
+
+void CTsMuxer::OnRdsProgrammeServiceNameReceived(char* programmeServiceName)
+{
+  unsigned long programmeServiceNameLength = min(strlen(programmeServiceName), SERVICE_NAME_LENGTH);
+  memcpy(m_serviceName, programmeServiceName, programmeServiceNameLength);
+  m_serviceName[programmeServiceNameLength] = NULL;
+  UpdateSdt();
 }
 
 HRESULT CTsMuxer::ReadProgramAssociationTable(unsigned char* data,
@@ -2210,7 +2267,7 @@ void CTsMuxer::ResetSdtInfo()
 {
   m_sdtVersion = VERSION_NOT_SET;
   m_isCniName = false;
-  memset(m_serviceName, 0, SERVICE_NAME_LENGTH);
+  memset(m_serviceName, 0, sizeof(m_serviceName));
   m_sdtResetTime = clock();
 }
 
