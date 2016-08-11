@@ -73,6 +73,7 @@
           <label>128</label>
           <onup>17</onup>
           <onright>10</onright>
+          <onleft>9991</onleft>
           <hyperlink>1016</hyperlink>
         </control>
         <control>
@@ -83,6 +84,7 @@
           <hyperlink>1021</hyperlink>
           <onup>9991</onup>
           <onright>10</onright>
+          <onleft>9992</onleft>
         </control>
         <control>
           <description>Screen</description>
@@ -92,6 +94,7 @@
           <hyperlink>9</hyperlink>
           <onup>9992</onup>
           <onright>10</onright>
+          <onleft>9993</onleft>
         </control>
         <control>
           <description>TV</description>
@@ -101,6 +104,7 @@
           <hyperlink>700</hyperlink>
           <onup>9993</onup>
           <onright>10</onright>
+          <onleft>9994</onleft>
         </control>
         <control>
           <description>My Pictures</description>
@@ -110,6 +114,7 @@
           <hyperlink>12</hyperlink>
           <onup>9994</onup>
           <onright>10</onright>
+          <onleft>9995</onleft>
         </control>
         <control>
           <description>Movies</description>
@@ -119,6 +124,7 @@
           <hyperlink>703</hyperlink>
           <onup>9995</onup>
           <onright>10</onright>
+          <onleft>9996</onleft>
         </control>
         <control>
           <description>My DVD</description>
@@ -128,6 +134,7 @@
           <hyperlink>704</hyperlink>
           <onup>9996</onup>
           <onright>10</onright>
+          <onleft>9997</onleft>
         </control>
         <control>
           <description>BluRay</description>
@@ -137,6 +144,7 @@
           <hyperlink>1024</hyperlink>
           <onup>9997</onup>
           <onright>10</onright>
+          <onleft>9998</onleft>
         </control>
         <control>
           <description>My Music</description>
@@ -147,6 +155,7 @@
           <ondown>99910</ondown>
           <onup>9998</onup>
           <onright>10</onright>
+          <onleft>9999</onleft>
         </control>
         <control>
           <description>MiniDisplay</description>
@@ -157,6 +166,7 @@
           <ondown>9991</ondown>
           <onup>9999</onup>
           <onright>10</onright>
+          <onleft>99910</onleft>
           <visible>plugin.isenabled(MiniDisplay)</visible>
         </control>
       </control>
@@ -298,9 +308,9 @@
         <type>label</type>
         <id>1</id>
         <posX>1300</posX>
-        <posY>625</posY>
+        <posY>615</posY>
         <width>500</width>
-        <label>Fanart</label>
+        <label>Fanart BasicHome</label>
         <textcolor>white</textcolor>
         <font>Label</font>
         <visible>string.equals(#hedit.mode,Horizontal Text only)</visible>
@@ -312,7 +322,6 @@
         <posY>670</posY>
         <dimColor>ffffffff</dimColor>
         <layout>StackLayout(0, Vertical, true)</layout>
-        <visible>string.equals(#hedit.mode,Horizontal Text only)</visible>
         <control>
           <description>Video Fanart BasicHome</description>
           <type>checkbutton</type>
@@ -324,7 +333,8 @@
           <onup>33</onup>
           <ondown>31</ondown>
           <onright>30</onright>
-          <onleft>9991</onleft>
+          <onleft>10</onleft>
+          <visible>string.equals(#hedit.mode,Horizontal Text only)</visible>
         </control>
         <control>
           <description>Music Fanart BasicHome</description>
@@ -337,7 +347,8 @@
           <onup>30</onup>
           <ondown>37</ondown>
           <onright>31</onright>
-          <onleft>9991</onleft>
+          <onleft>10</onleft>
+          <visible>string.equals(#hedit.mode,Horizontal Text only)</visible>
         </control>
         <control>
           <description>Music Fanart NowPlaying BasicHome</description>
@@ -350,7 +361,8 @@
           <onup>31</onup>
           <ondown>10</ondown>
           <onright>37</onright>
-          <onleft>9991</onleft>
+          <onleft>10</onleft>
+          <visible>string.equals(#hedit.mode,Horizontal Text only)</visible>
         </control>
       </control>
       <control>

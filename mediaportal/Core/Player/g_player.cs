@@ -1514,9 +1514,9 @@ namespace MediaPortal.Player
         {
           if (currentMediaInfoFilePlaying != strFile)
           {
-          _mediaInfo = new MediaInfoWrapper(strFile);
+            _mediaInfo = new MediaInfoWrapper(strFile);
             currentMediaInfoFilePlaying = strFile;
-        }
+          }
         }
 
         // back to previous Windows if we are only in video fullscreen to do a proper release when next item is music only
@@ -1637,14 +1637,7 @@ namespace MediaPortal.Player
             IsExtTS = true;
           }
           // Set bool to know if video if we force play
-          if (forcePlay)
-          {
-            ForcePlay = true;
-          }
-          else
-          {
-            ForcePlay = false;
-          }
+          ForcePlay = forcePlay;
         }
 
         // Set currentMedia needed for correct detection when BASS Engine is doing a Stop
@@ -1659,6 +1652,8 @@ namespace MediaPortal.Player
             {
               bool bInternal = xmlreader.GetValueAsBool("movieplayer", "internal", true);
               bool bInternalDVD = xmlreader.GetValueAsBool("dvdplayer", "internal", true);
+              bool bUseExternalPlayerForDVD = xmlreader.GetValueAsBool("dvdplayer", "usefordvd", true);
+              bool bUseExternalPlayerForBluray = xmlreader.GetValueAsBool("bdplayer", "useforbluray", true);
 
               // External player extension filter
               _externalPlayerExtensions = xmlreader.GetValueAsString("movieplayer", "extensions", "");
@@ -1668,6 +1663,26 @@ namespace MediaPortal.Player
                 // Do not use external player if file ext is not in the extension list
                 if (!CheckExtension(strFile))
                   bInternal = true;
+              }
+
+              // Ensure DVD player 
+              if ((!bUseExternalPlayerForDVD && !bInternalDVD && !isImageFile && (extension == ".ifo" || extension == ".vob")) ||
+                  (!bUseExternalPlayerForDVD && !bInternalDVD && isImageFile && Util.Utils.IsDVDImage(strFile)))
+              {
+                  bInternalDVD = true;
+              }
+
+              // Ensure BD player is configured external player for Bluray
+              if ((!bUseExternalPlayerForBluray && !bInternalDVD && !isImageFile && extension == ".bdmv") ||
+                  (!bUseExternalPlayerForBluray && !bInternalDVD && isImageFile && Util.Utils.IsBDImage(strFile)))
+              {
+                  bInternalDVD = true;
+              }
+
+              if ((bUseExternalPlayerForBluray && !isImageFile && extension == ".bdmv") ||
+                  (bUseExternalPlayerForBluray && isImageFile && Util.Utils.IsBDImage(strFile)))
+              {
+                bInternalDVD = false;
               }
 
               if ((!bInternalDVD && !isImageFile && (extension == ".ifo" || extension == ".vob" || extension == ".bdmv")) ||

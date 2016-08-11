@@ -30,9 +30,16 @@ using Action = MediaPortal.GUI.Library.Action;
 
 namespace MediaPortal.Player
 {
+  /// <summary>
+  /// Looks like this class is notably taking care of broadcasting various volume change events.
+  /// This is intended to be used as a singleton.
+  /// The singleton instance should be created from MP main thread.
+  /// </summary>
   public class VolumeHandler
   {
     #region Vars
+
+    static HideVolumeOSD.HideVolumeOSDLib VolumeOSD;
 
     #endregion
 
@@ -45,6 +52,7 @@ namespace MediaPortal.Player
       if (GUIGraphicsContext.DeviceAudioConnected > 0)
       {
         bool isDigital;
+        bool hideWindowsOSD;
 
         using (Settings reader = new MPSettings())
         {
@@ -67,6 +75,8 @@ namespace MediaPortal.Player
           isDigital = reader.GetValueAsBool("volume", "digital", false);
 
           _showVolumeOSD = reader.GetValueAsBool("volume", "defaultVolumeOSD", true);
+
+          hideWindowsOSD = reader.GetValueAsBool("volume", "hideWindowsOSD", false);
         }
 
         try
@@ -80,6 +90,22 @@ namespace MediaPortal.Player
         {
           Log.Error("VolumeHandler: Mixer exception when init {0}", ex);
         }
+
+        if (OSInfo.OSInfo.Win8OrLater() && hideWindowsOSD)
+        {
+          try
+          {
+            bool tempShowVolumeOSD = _showVolumeOSD;
+
+            _showVolumeOSD = false;
+            
+            VolumeOSD = new HideVolumeOSD.HideVolumeOSDLib(IsMuted);
+            VolumeOSD.HideOSD();
+
+            _showVolumeOSD = tempShowVolumeOSD;
+          }
+          catch { }
+        }
       }
       else
       {
@@ -91,7 +117,22 @@ namespace MediaPortal.Player
 
     #region Methods
 
-    private static VolumeHandler CreateInstance()
+    /// <summary>
+    /// Create our volume handler singleton.
+    /// </summary>
+    public static void CreateInstance()
+    {
+      if (_instance==null)
+      {
+        _instance = Create();
+      }      
+    }
+
+    /// <summary>
+    /// Create a volume handler.
+    /// </summary>
+    /// <returns>A newly created volume handler.</returns>
+    private static VolumeHandler Create()
     {
       if (GUIGraphicsContext.DeviceAudioConnected > 0)
       {
@@ -368,10 +409,16 @@ namespace MediaPortal.Player
       set { lock (_volumeTable) _volumeTable = value; }
     }
 
+    /// <summary>
+    /// Provide our instance singleton.
+    /// Can be null until explicitly created through CreateInstance.
+    /// </summary>
     public static VolumeHandler Instance
     {
-      get { return _instance ?? (_instance = CreateInstance()); }
+      get { return _instance; }
     }
+
+    
 
     #endregion Properties
 
@@ -391,7 +438,7 @@ namespace MediaPortal.Player
 
     private int[] _volumeTable;
     private int _startupVolume;
-    private bool _showVolumeOSD;
+    private static bool _showVolumeOSD;
 
     #endregion Fields
   }

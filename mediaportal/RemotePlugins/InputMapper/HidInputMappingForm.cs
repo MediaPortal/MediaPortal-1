@@ -38,6 +38,11 @@ namespace MediaPortal.InputDevices
   /// </summary>
   public class HidInputMappingForm : MPConfigForm
   {
+    /// <summary>
+    /// Name of the HID profile we are configuring
+    /// </summary>
+    public string ProfileName{ get; private set;}
+
     private readonly ArrayList actionList = new ArrayList();
 
     /// <summary>
@@ -45,8 +50,7 @@ namespace MediaPortal.InputDevices
     /// </summary>
     private readonly Container components = null;
 
-    private readonly string[] fullScreenList = {"Fullscreen", "No Fullscreen"};
-    private readonly string inputClassName;
+    private readonly string[] fullScreenList = {"Fullscreen", "No Fullscreen"};    
     private readonly string[] layerList = {"all", "1", "2"};
     private readonly Array nativeActionList = Enum.GetValues(typeof (Action.ActionType));
     private readonly string[] nativePlayerList = {"TV", "DVD", "MEDIA", "MUSIC"};
@@ -64,7 +68,7 @@ namespace MediaPortal.InputDevices
     private readonly string[] processList = {"Close Process", "Kill Process"};
     private readonly string[] soundList = {"none", "back.wav", "click.wav", "cursor.wav"};
     private readonly ArrayList windowsList = new ArrayList();
-    private readonly ArrayList windowsListFiltered = new ArrayList();
+    private readonly ArrayList windowsListFiltered = new ArrayList();    
     private MPButton buttonNew;
     private bool changedSettings;
 
@@ -80,7 +84,7 @@ namespace MediaPortal.InputDevices
       "{ADD}", "{SUBTRACT}", "{MULTIPLY}", "{DIVIDE}"
     };
 
-    public HidInputMappingForm(string name)
+    public HidInputMappingForm(string aProfileName)
     {
       //
       // Required for Windows Form Designer support
@@ -124,9 +128,9 @@ namespace MediaPortal.InputDevices
 
       comboBoxSound.DataSource = soundList;
       comboBoxLayer.DataSource = layerList;
-      inputClassName = name;
-      LoadMapping(inputClassName + ".xml", false);
-      headerLabel.Caption = inputClassName;
+      ProfileName = aProfileName;
+      LoadMapping(ProfileName, false);
+      headerLabel.Caption = ProfileName;
     }
 
     /// <summary>
@@ -680,10 +684,10 @@ namespace MediaPortal.InputDevices
       Close();
     }
 
-    private void LoadMapping(string xmlFile, bool defaults)
+    private void LoadMapping(string aProfileName, bool defaults)
     {
-      var pathDefault = Path.Combine(InputHandler.DefaultsDirectory, xmlFile);
-      var pathCustom = Path.Combine(InputHandler.CustomizedMappingsDirectory, xmlFile);
+      var pathDefault = HidProfiles.GetDefaultProfilePath(aProfileName);
+      var pathCustom = HidProfiles.GetCustomProfilePath(aProfileName);
 
       try
       {
@@ -700,7 +704,7 @@ namespace MediaPortal.InputDevices
         if (!File.Exists(path))
         {
           MessageBox.Show(
-            "Can't locate mapping file " + xmlFile + "\n\nMake sure it exists in /InputDeviceMappings/defaults",
+            "Can't locate mapping file " + aProfileName + "\n\nMake sure it exists in /InputDeviceMappings/defaults",
             "Mapping file missing", MessageBoxButtons.OK, MessageBoxIcon.Error);
           buttonUp.Enabled =
             buttonDown.Enabled =
@@ -738,8 +742,8 @@ namespace MediaPortal.InputDevices
               buttonName = nodeButton.Attributes["name"].Value;
             }
 
-            var background = "";
-            //Use code as name if no name attribute
+            //Get background attribute and default to false
+            var background = "";            
             if (nodeButton.Attributes["background"] == null)
             {
               background = "false";
@@ -749,8 +753,20 @@ namespace MediaPortal.InputDevices
               background = nodeButton.Attributes["background"].Value;
             }
 
+            //Get repeat attribute and default to false
+            var repeat = "";            
+            if (nodeButton.Attributes["repeat"] == null)
+            {
+              repeat = "false";
+            }
+            else
+            {
+              repeat = nodeButton.Attributes["repeat"].Value;
+            }
+
+
             var buttonNode = new TreeNode(buttonName);
-            var hbAttributes = new HidButtonAttributes(buttonName, nodeButton.Attributes["code"].Value, background);
+            var hbAttributes = new HidButtonAttributes(buttonName, nodeButton.Attributes["code"].Value, background, repeat);
             buttonNode.Tag = new NodeData("BUTTON", hbAttributes, null);
             remoteNode.Nodes.Add(buttonNode);
 
@@ -934,7 +950,7 @@ namespace MediaPortal.InputDevices
         {
           //Possibly corrupted custom configuration
           //Try loading the defaults then
-          LoadMapping(xmlFile, true);
+          LoadMapping("classic", true);
         }
         else
         {
@@ -945,10 +961,40 @@ namespace MediaPortal.InputDevices
       }
     }
 
-    private bool SaveMapping(string xmlFile)
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="aProfileName"></param>
+    /// <returns></returns>
+    private bool SaveMapping(string aProfileName)
     {
-      var pathDefault = Path.Combine(InputHandler.DefaultsDirectory, xmlFile);
-      var pathCustom = Path.Combine(InputHandler.CustomizedMappingsDirectory, xmlFile);
+      string pathDefault = HidProfiles.GetDefaultProfilePath(aProfileName);
+      string pathCustom = HidProfiles.GetCustomProfilePath(aProfileName);
+
+      //If default profile exists and custom profile was not yet created
+      if (File.Exists(pathDefault) && !File.Exists(pathCustom))
+      {
+        //Prevent occluding default profiles
+        string newProfileName = aProfileName + ".user";
+        pathCustom = HidProfiles.GetCustomProfilePath(newProfileName);
+        //Do not overwrite existing file after customizing default profile
+        if (File.Exists(pathCustom))
+        {
+          //Make up a file name that does not exists for our new custom profile
+          uint i = 0;
+          do
+          {
+            i++;
+            aProfileName = newProfileName + i.ToString();
+            pathCustom = HidProfiles.GetCustomProfilePath(aProfileName);
+          }
+          while (File.Exists(pathCustom));        
+        }
+        else
+        {
+          aProfileName=newProfileName;
+        }
+      }
 
 #if !DEBUG
       try
@@ -999,8 +1045,14 @@ namespace MediaPortal.InputDevices
 
                 if (buttonAttributes.Background != "false" && buttonAttributes.Background != "0")
                 {
-                  //Only save the background handling if different from the defaults
+                  //Only save background handling if different from the defaults
                   writer.WriteAttributeString("background", buttonAttributes.Background);
+                }
+
+                if (buttonAttributes.Repeat != "false" && buttonAttributes.Repeat != "0")
+                {
+                  //Only save repeat handling if different from the defaults
+                  writer.WriteAttributeString("repeat", buttonAttributes.Repeat);
                 }
 
                 if (buttonNode.Nodes.Count > 0)
@@ -1096,6 +1148,7 @@ namespace MediaPortal.InputDevices
         writer.WriteEndDocument();
         writer.Close();
         changedSettings = false;
+        ProfileName = aProfileName;
         return true;
       }
 #if !DEBUG
@@ -1641,7 +1694,7 @@ namespace MediaPortal.InputDevices
     {
       if (changedSettings)
       {
-        SaveMapping(inputClassName + ".xml");
+        SaveMapping(ProfileName);
       }
       Close();
     }
@@ -1650,7 +1703,7 @@ namespace MediaPortal.InputDevices
     {
       if (changedSettings)
       {
-        SaveMapping(inputClassName + ".xml");
+        SaveMapping(ProfileName);
       }
     }
 
@@ -1815,12 +1868,12 @@ namespace MediaPortal.InputDevices
 
     private void buttonDefault_Click(object sender, EventArgs e)
     {
-      var pathCustom = Path.Combine(InputHandler.CustomizedMappingsDirectory, inputClassName + ".xml");
+      var pathCustom = Path.Combine(InputHandler.CustomizedMappingsDirectory, ProfileName );
       if (File.Exists(pathCustom))
       {
         File.Delete(pathCustom);
       }
-      LoadMapping(inputClassName + ".xml", true);
+      LoadMapping(ProfileName, true);
     }
 
     private void textBoxKeyCode_KeyPress(object sender, KeyPressEventArgs e)
@@ -2031,16 +2084,18 @@ namespace MediaPortal.InputDevices
     /// </summary>
     private class HidButtonAttributes
     {
-      public HidButtonAttributes(string aName, string aCode, string aBackground)
+      public HidButtonAttributes(string aName, string aCode, string aBackground, string aRepeat)
       {
         Name = aName;
         Code = aCode;
         Background = aBackground;
+        Repeat = aRepeat;
       }
 
       public string Name { get; private set; }
       public string Code { get; private set; }
       public string Background { get; private set; }
+      public string Repeat { get; private set; }
     }
 
     private class NodeData

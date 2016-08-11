@@ -493,7 +493,7 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   File "${TVSERVER.BASE}\Ionic.Zip.dll"
 
   ; MediaInfo
-  File "${TVSERVER.BASE}\MediaInfo.dll"
+  File "${git_ROOT}\Packages\MediaInfo.0.7.69\MediaInfo.dll"
 
   ; thumbnail software
   File "${git_ROOT}\Packages\ffmpeg.2.7.1\ffmpeg.exe"
@@ -510,8 +510,6 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   File "${git_DirectShowFilters}\StreamingServer\bin\${BUILD_TYPE}\StreamingServer.dll"
   
   File "${git_DirectShowFilters}\DXErr9\bin\${BUILD_TYPE}\dxerr9.dll"
-  ; binary used for skystar2 support
-  File "${git_DirectShowFilters}\dvblib\bin\${BUILD_TYPE}\dvblib.dll"
 
   ; Common App Data Files
   SetOutPath "${COMMON_APPDATA}"
@@ -638,8 +636,6 @@ ${MementoSectionEnd}
   ; Leave the directory in place, as it might contain user modified files
   Delete "$INSTDIR\DirectShowLib.dll"
   Delete "$INSTDIR\Common.Utils.dll"
-  ; binary used for skystar2 support
-  Delete "$INSTDIR\dvblib.dll"
   Delete "$INSTDIR\PluginBase.dll"
   Delete "$INSTDIR\PowerScheduler.Interfaces.DLL"
   Delete "$INSTDIR\Blaster.exe"

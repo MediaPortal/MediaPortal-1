@@ -49,6 +49,7 @@ namespace MediaPortal.Player
     private string _videoResolution = string.Empty;
     private int _videoDuration = 0;
     private bool _DVDenabled = false;
+    private bool _BDenabled = false;
     private string _ParseSpeed;
 
     //Audio
@@ -65,6 +66,8 @@ namespace MediaPortal.Player
     private int _numsubtitles = 0;
     private bool _hasSubtitles = false;
     private static HashSet<string> _subTitleExtensions = new HashSet<string>();
+
+    private bool _mediaInfoNotloaded = false;
 
     #endregion
 
@@ -85,12 +88,14 @@ namespace MediaPortal.Player
     {
       if (!MediaInfoExist())
       {
+        _mediaInfoNotloaded = true;
         return;
       }
 
       using (Settings xmlreader = new MPSettings())
       {
         _DVDenabled = xmlreader.GetValueAsBool("dvdplayer", "mediainfoused", false);
+        _BDenabled = xmlreader.GetValueAsBool("bdplayer", "mediainfoused", false);
         _ParseSpeed = xmlreader.GetValueAsString("debug", "MediaInfoParsespeed", "0.3");
         // fix delay introduced after 0.7.26: http://sourceforge.net/tracker/?func=detail&aid=3013548&group_id=86862&atid=581181
       }
@@ -107,6 +112,14 @@ namespace MediaPortal.Player
         Log.Debug("MediaInfoWrapper: isTv:{0}, isRadio:{1}, isRTSP:{2}, isAVStream:{3}", isTV, isRadio, isRTSP,
                   isAVStream);
         Log.Debug("MediaInfoWrapper: disabled for this content");
+        _mediaInfoNotloaded = true;
+        return;
+      }
+
+      if (strFile.ToLowerInvariant().EndsWith(".wtv"))
+      {
+        Log.Debug("MediaInfoWrapper: WTV file is not handled");
+        _mediaInfoNotloaded = true;
         return;
       }
 
@@ -118,10 +131,11 @@ namespace MediaPortal.Player
         isDVD = false;
 
       //currently mediainfo is only used for local video related material (if enabled)
-      if ((!isVideo && !isDVD) || (isDVD && !_DVDenabled))
+      if ((!isVideo && !isDVD) || (isDVD && !_DVDenabled) || (isDVD && _BDenabled))
       {
         Log.Debug("MediaInfoWrapper: isVideo:{0}, isDVD:{1}[enabled:{2}]", isVideo, isDVD, _DVDenabled);
         Log.Debug("MediaInfoWrapper: disabled for this content");
+        _mediaInfoNotloaded = true;
         return;
       }
 
@@ -139,7 +153,10 @@ namespace MediaPortal.Player
             strFile = Util.DaemonTools.GetVirtualDrive() + @"\BDMV\index.bdmv";
 
             if (!File.Exists(strFile))
+            {
+              _mediaInfoNotloaded = true;
               return;
+            }
           }
         }
         
@@ -175,6 +192,7 @@ namespace MediaPortal.Player
         }
         else
         {
+          _mediaInfoNotloaded = true;
           return;
         }
 
@@ -600,6 +618,11 @@ namespace MediaPortal.Player
     public bool HasSubtitles
     {
       get { return _hasSubtitles; }
+    }
+
+    public bool MediaInfoNotloaded
+    {
+      get { return _mediaInfoNotloaded; }
     }
 
     #endregion

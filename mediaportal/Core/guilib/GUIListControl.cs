@@ -99,6 +99,16 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("IconXOff")] protected int _iconOffsetX = 8;
     [XMLSkinElement("IconYOff")] protected int _iconOffsetY = 5;
 
+    [XMLSkinElement("texturebg")] private string _backgroundTextureName = "";
+    [XMLSkinElement("lefttexture")] private string _leftTextureName = "";
+    [XMLSkinElement("midtexture")] private string _midTextureName = "";
+    [XMLSkinElement("righttexture")] private string _rightTextureName = "";
+    [XMLSkinElement("ProgressBarWidth")] protected int _widthProgressBar = 0;
+    [XMLSkinElement("ProgressBarHeight")] protected int _heightProgressBar = 0;
+    [XMLSkinElement("ProgressBarXOffset")] protected int _xOffsetProgressBar = 0;
+    [XMLSkinElement("ProgressBarYOffset")] protected int _yOffsetProgressBar = 0;
+    [XMLSkinElement("SelectedProgressOnly")] protected bool _selectedProgressOnly = false;
+
     // this is the offset from the first or last element on screen when scrolling should start
     [XMLSkinElement("scrollOffset")] protected int _scrollStartOffset = 0;
 
@@ -188,6 +198,7 @@ namespace MediaPortal.GUI.Library
     protected GUIVerticalScrollbar _verticalScrollbar = null;
 
     protected List<GUIListItem> _listItems = new List<GUIListItem>();
+    protected List<GUIProgressControl> _listProgresses = new List<GUIProgressControl>();
     protected List<GUILabelControl> _labelControls1 = new List<GUILabelControl>();
     protected List<GUILabelControl> _labelControls2 = new List<GUILabelControl>();
     protected List<GUILabelControl> _labelControls3 = new List<GUILabelControl>();
@@ -541,6 +552,36 @@ namespace MediaPortal.GUI.Library
             btn.Focus = gotFocus;
             btn.SetPosition(x, y);
             btn.Render(timePassed);
+          }
+        }
+      }
+    }
+
+    protected virtual void RenderProgressBar(float timePassed, int progressBarNr, int x, int y, bool gotFocus)
+    {
+      if (_listProgresses != null)
+      {
+        if (progressBarNr >= 0 && progressBarNr < _listProgresses.Count)
+        {
+          GUIProgressControl pItem = _listProgresses[progressBarNr];
+
+          if (pItem != null)
+          {
+            pItem.XPosition = x;
+            pItem.YPosition = y;
+            pItem.Focus = gotFocus;
+
+            if (gotFocus && _selectedProgressOnly || !_selectedProgressOnly)
+            {
+              pItem.Visible = _listItems[progressBarNr + _offset].HasProgressBar;
+            }
+            else
+            {
+              pItem.Visible = false;
+            }
+            
+            pItem.Percentage = _listItems[progressBarNr + _offset].ProgressBarPercentage;
+            pItem.Render(timePassed);
           }
         }
       }
@@ -1187,6 +1228,10 @@ namespace MediaPortal.GUI.Library
 
           // render the text
           RenderLabel(timePassed, i, labelX, dwPosY, gotFocus);
+
+          // render progressbar
+          RenderProgressBar(timePassed, i, dwPosX + GUIGraphicsContext.ScaleHorizontal(_xOffsetProgressBar),
+                            dwPosY + GUIGraphicsContext.ScaleVertical(_yOffsetProgressBar), gotFocus);
 
           RenderPinIcon(timePassed, i, pinX, dwPosY, gotFocus);
 
@@ -2364,12 +2409,26 @@ namespace MediaPortal.GUI.Library
         GUILabelControl cntl3 = new GUILabelControl(_controlId, 0, 0, 0, 0, 0, _fontName2Name, "", _textColor3,
                                                     Alignment.ALIGN_RIGHT, VAlignment.ALIGN_TOP, false,
                                                     _shadowAngle, _shadowDistance, _shadowColor);
+        if (_backgroundTextureName != string.Empty && _leftTextureName != string.Empty &&
+          _midTextureName != string.Empty && _rightTextureName != string.Empty)
+        {
+          GUIProgressControl progressCtl = new GUIProgressControl(_controlId, 0, 0, 0, GUIGraphicsContext.ScaleHorizontal(_widthProgressBar),
+                                                                  GUIGraphicsContext.ScaleVertical(_heightProgressBar),
+                                                                  _backgroundTextureName, _leftTextureName, _midTextureName, _rightTextureName);
+        progressCtl.ParentControl = this;
+        progressCtl.AllocResources();
+        progressCtl.Visible = false;
+        _listProgresses.Add(progressCtl);
+        }
+
         cntl1.ParentControl = this;
         cntl2.ParentControl = this;
         cntl3.ParentControl = this;
+
         cntl1.AllocResources();
         cntl2.AllocResources();
         cntl3.AllocResources();
+
         cntl1.DimColor = DimColor;
         cntl2.DimColor = DimColor;
         cntl3.DimColor = DimColor;
@@ -2412,6 +2471,7 @@ namespace MediaPortal.GUI.Library
       _verticalScrollbar.SafeDispose();
 
       _listItems.DisposeAndClear();
+      _listProgresses.DisposeAndClear();
       _labelControls1.DisposeAndClear();
       _labelControls2.DisposeAndClear();
       _labelControls3.DisposeAndClear();
@@ -3444,6 +3504,14 @@ namespace MediaPortal.GUI.Library
       _refresh = true;
     }
 
+    public void Replace(int index, GUIListItem item)
+    {
+      if (item != null && index >= 0 && index < _listItems.Count)
+      {
+        _listItems[index] = item;
+      }
+    }
+
     public void Insert(int index, GUIListItem item)
     {
       if (item == null)
@@ -3778,35 +3846,26 @@ namespace MediaPortal.GUI.Library
 
     public virtual int RemoveItem(int iItem)
     {
-      int selectedItemIndex = -1;
-
-      if (iItem < 0 || iItem >= _listItems.Count)
+      if (iItem < 0 || iItem > _listItems.Count)
       {
         return -1;
       }
 
       try
       {
-        //Log.Info("Moving List Item {0} up. Old index:{1}, new index{2}", item1.Path, iItem, iPreviousItem);
         Monitor.Enter(this);
         _listItems.RemoveAt(iItem);
-        if (selectedItemIndex >= _listItems.Count)
-        {
-          selectedItemIndex = _listItems.Count - 1;
-        }
       }
       catch (Exception ex)
       {
-        Log.Info("GUIListControl.RemoveItem caused an exception: {0}", ex.Message);
-        selectedItemIndex = -1;
+        Log.Error("GUIListControl.RemoveItem caused an exception: {0}", ex.Message);
       }
-
       finally
       {
         Monitor.Exit(this);
       }
-
-      return selectedItemIndex;
+      _refresh = true;
+      return SelectedListItemIndex;
     }
 
     public override int DimColor

@@ -328,7 +328,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
 
       //Sharp Display Manager
       LogInfo("MiniDisplay.Settings.LoadDrivers(): Loading Sharp Display Manager...");
-      list.Add(new Drivers.SharpDisplayManager.Display());
+      list.Add(new Drivers.SharpLibDisplay.Display());
 
 
       //Add Debug Form
