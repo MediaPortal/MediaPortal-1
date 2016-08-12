@@ -152,6 +152,11 @@ bool CF4MManifest::Parse(const char *buffer)
             if (SUCCEEDED(result))
             {
               CHECK_CONDITION_HRESULT(result, strcmp(xmlnsValue, F4M_ELEMENT_MANIFEST_ATTRIBUTE_XMLNS_VALUE) == 0, result, E_FAIL);
+              if (FAILED(result))
+              {
+                result = S_OK;
+                CHECK_CONDITION_HRESULT(result, strncmp(xmlnsValue, F4M_ELEMENT_MANIFEST_ATTRIBUTE_XMLNS_VALUE_BASE, F4M_ELEMENT_MANIFEST_ATTRIBUTE_XMLNS_VALUE_BASE_LENGTH) == 0, result, E_FAIL);
+              }
 
               if (SUCCEEDED(result))
               {

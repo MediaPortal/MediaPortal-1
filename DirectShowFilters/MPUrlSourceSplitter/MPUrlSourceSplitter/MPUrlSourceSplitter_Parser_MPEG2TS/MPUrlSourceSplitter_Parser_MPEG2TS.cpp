@@ -651,7 +651,11 @@ HRESULT CMPUrlSourceSplitter_Parser_Mpeg2TS::StartReceivingData(CParameterCollec
                 detectedAllSections &= this->IsSetFlags(MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_FOUND_PMT);
               }
 
-              requestLength *= 2;
+              if (requestLength == response->GetBuffer()->GetBufferOccupiedSpace())
+              {
+                // increase request length only in case of full buffer
+                requestLength *= 2;
+              }
 
               if (detectedAllSections)
               {
@@ -1057,7 +1061,7 @@ unsigned int WINAPI CMPUrlSourceSplitter_Parser_Mpeg2TS::ReceiveDataWorker(LPVOI
                   // no mutliplexer for program association section
                   // create new multiplexer
 
-                  CProgramAssociationSectionMultiplexer *multiplexer = new CProgramAssociationSectionMultiplexer(&result, psiPacket->GetPID(), psiPacket->GetContinuityCounter());
+                  CProgramAssociationSectionMultiplexer *multiplexer = new CProgramAssociationSectionMultiplexer(&result, psiPacket->GetPID(), psiPacket->GetPID(), psiPacket->GetContinuityCounter());
                   CHECK_POINTER_HRESULT(result, multiplexer, result, E_OUTOFMEMORY);
 
                   CHECK_CONDITION_HRESULT(result, caller->multiplexers->Add(multiplexer), result, E_OUTOFMEMORY);
@@ -1345,7 +1349,10 @@ unsigned int WINAPI CMPUrlSourceSplitter_Parser_Mpeg2TS::ReceiveDataWorker(LPVOI
                     // no mutliplexer for transport stream program map section
                     // create new multiplexer
 
-                    CTransportStreamProgramMapSectionMultiplexer *multiplexer = new CTransportStreamProgramMapSectionMultiplexer(&result, psiPacket->GetPID(), psiPacket->GetContinuityCounter());
+                    unsigned int requestedPid = psiPacket->GetPID();
+                    CHECK_CONDITION_EXECUTE(caller->IsSetFlags(MP_URL_SOURCE_SPLITTER_PARSER_MPEG2TS_FLAG_CHANGE_PROGRAM_MAP_PID), requestedPid = caller->programMapPID);
+
+                    CTransportStreamProgramMapSectionMultiplexer *multiplexer = new CTransportStreamProgramMapSectionMultiplexer(&result, psiPacket->GetPID(), requestedPid, psiPacket->GetContinuityCounter());
                     CHECK_POINTER_HRESULT(result, multiplexer, result, E_OUTOFMEMORY);
 
                     CHECK_CONDITION_HRESULT(result, caller->multiplexers->Add(multiplexer), result, E_OUTOFMEMORY);
@@ -1590,7 +1597,7 @@ unsigned int WINAPI CMPUrlSourceSplitter_Parser_Mpeg2TS::ReceiveDataWorker(LPVOI
                   // no mutliplexer for conditional access section
                   // create new multiplexer
 
-                  CConditionalAccessSectionMutiplexer *multiplexer = new CConditionalAccessSectionMutiplexer(&result, psiPacket->GetPID(), psiPacket->GetContinuityCounter());
+                  CConditionalAccessSectionMutiplexer *multiplexer = new CConditionalAccessSectionMutiplexer(&result, psiPacket->GetPID(), psiPacket->GetPID(), psiPacket->GetContinuityCounter());
                   CHECK_POINTER_HRESULT(result, multiplexer, result, E_OUTOFMEMORY);
 
                   CHECK_CONDITION_HRESULT(result, caller->multiplexers->Add(multiplexer), result, E_OUTOFMEMORY);

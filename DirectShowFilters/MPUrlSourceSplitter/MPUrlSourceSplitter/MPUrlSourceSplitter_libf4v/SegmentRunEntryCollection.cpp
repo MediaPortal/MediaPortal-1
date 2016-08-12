@@ -81,6 +81,18 @@ unsigned int CSegmentRunEntryCollection::GetFragmentRunEntrySegmentIndex(uint32_
   return result ? index : UINT_MAX;
 }
 
+unsigned int CSegmentRunEntryCollection::GetFragmentsCount(void)
+{
+  if (this->Count() > 0)
+  {
+    CSegmentRunEntry *item = this->GetItem(this->Count() - 1);
+
+    return (item->GetCumulatedFragmentCount() + item->GetFragmentsPerSegment());
+  }
+
+  return 0;
+}
+
 /* set methods */
 
 /* other methods */

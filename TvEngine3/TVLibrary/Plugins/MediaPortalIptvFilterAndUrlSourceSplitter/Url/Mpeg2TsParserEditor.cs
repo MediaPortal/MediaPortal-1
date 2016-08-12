@@ -202,7 +202,7 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
                 {
                     this.ProgramNumber = int.Parse(this.textBoxProgramNumber.Text);
 
-                    if (((this.TransportStreamID < 0) || (this.TransportStreamID > 65535)))
+                    if (((this.ProgramNumber < 0) || (this.ProgramNumber > 65535)))
                     {
                         throw new ArgumentOutOfRangeException("ProgramNumber", this.ProgramNumber, "Must be greater than or equal to zero and lower than 65536.");
                     }

@@ -32,7 +32,7 @@ along with MediaPortal 2.  If not, see <http://www.gnu.org/licenses/>.
 class CTransportStreamProgramMapSectionMultiplexer : public CSectionMultiplexer
 {
 public:
-  CTransportStreamProgramMapSectionMultiplexer(HRESULT *result, unsigned int pid, unsigned int continuityCounter);
+  CTransportStreamProgramMapSectionMultiplexer(HRESULT *result, unsigned int pid, unsigned int requestedPid, unsigned int continuityCounter);
   virtual ~CTransportStreamProgramMapSectionMultiplexer();
 
   /* get methods */

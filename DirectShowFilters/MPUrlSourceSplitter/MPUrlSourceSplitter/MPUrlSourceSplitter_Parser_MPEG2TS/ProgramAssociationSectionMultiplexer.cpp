@@ -23,8 +23,8 @@ along with MediaPortal 2.  If not, see <http://www.gnu.org/licenses/>.
 #include "ProgramAssociationSectionMultiplexer.h"
 #include "ProgramAssociationSection.h"
 
-CProgramAssociationSectionMultiplexer::CProgramAssociationSectionMultiplexer(HRESULT *result, unsigned int pid, unsigned int continuityCounter)
-  : CSectionMultiplexer(result, pid, continuityCounter)
+CProgramAssociationSectionMultiplexer::CProgramAssociationSectionMultiplexer(HRESULT *result, unsigned int pid, unsigned int requestedPid, unsigned int continuityCounter)
+  : CSectionMultiplexer(result, pid, requestedPid, continuityCounter)
 {
 }
 

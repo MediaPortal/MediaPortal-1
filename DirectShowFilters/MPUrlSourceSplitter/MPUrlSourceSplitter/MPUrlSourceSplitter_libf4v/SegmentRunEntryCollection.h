@@ -39,6 +39,10 @@ public:
   // @return : segment run entry index or UINT_MAX if not found
   unsigned int GetFragmentRunEntrySegmentIndex(uint32_t fragmentRunEntryIndex);
 
+  // get count of fragments in all segments
+  // @return : count of fragments in all segments
+  unsigned int GetFragmentsCount(void);
+
   /* set methods */
 
   /* other methods */

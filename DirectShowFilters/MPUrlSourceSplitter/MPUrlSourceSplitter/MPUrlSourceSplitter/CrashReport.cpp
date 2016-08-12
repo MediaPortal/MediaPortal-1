@@ -483,11 +483,15 @@ crash_rpt::CrashProcessingCallbackResult CALLBACK CCrashReport::HandleException(
       {
         caller->crashReporting->AddUserInfoToReport(L"UserName", caller->userName);
       }
-#ifdef _DEBUG
+//#ifdef _DEBUG
+//      result = crash_rpt::CrashProcessingCallbackResult::SkipSendReportReturnDefaultResult;
+//#else
+//      result = (SUCCEEDED(res) && caller->IsSendingCrashReportEnabled()) ? crash_rpt::CrashProcessingCallbackResult::DoDefaultActions : crash_rpt::CrashProcessingCallbackResult::SkipSendReportReturnDefaultResult;
+//#endif
+
+      // disabled sending crash report
+      // crash report does not contain log files, it seems to be useless
       result = crash_rpt::CrashProcessingCallbackResult::SkipSendReportReturnDefaultResult;
-#else
-      result = (SUCCEEDED(res) && caller->IsSendingCrashReportEnabled()) ? crash_rpt::CrashProcessingCallbackResult::DoDefaultActions : crash_rpt::CrashProcessingCallbackResult::SkipSendReportReturnDefaultResult;
-#endif
     }
 
     CHECK_CONDITION_EXECUTE(canFlush, staticLogger->Flush());
