@@ -29,6 +29,7 @@
 #include "StdString.h"
 #include "../../mpc-hc_subs/src/dsutil/DSUtil.h"
 #include <afxwin.h>
+#include "threads/SystemClock.h"
 
 const DWORD D3DFVF_VID_FRAME_VERTEX = D3DFVF_XYZRHW | D3DFVF_TEX1;
 
@@ -61,26 +62,34 @@ MPMadPresenter::~MPMadPresenter()
   {
     // nasty, but we have to let it know about our death somehow
     static_cast<CSubRenderCallback*>(static_cast<ISubRenderCallback*>(m_pSRCB))->SetDXRAP(nullptr);
+    //Log("MPMadPresenter::Destructor() - m_pSRCB");
   }
 
   if (m_pORCB)
   {
     // nasty, but we have to let it know about our death somehow
     static_cast<COsdRenderCallback*>(static_cast<IOsdRenderCallback*>(m_pORCB))->SetDXRAP(nullptr);
+    //Log("MPMadPresenter::Destructor() - m_pORCB");
   }
 
   //// Unregister madVR Exclusive Callback
   //if (Com::SmartQIPtr<IMadVRExclusiveModeCallback> pEXL = m_pDXR)
   //  pEXL->Unregister(m_exclusiveCallback, this);
 
+  //Log("MPMadPresenter::Destructor() - m_pMad release 1");
   if (m_pMad)
     m_pMad.Release();
-  
+  //Log("MPMadPresenter::Destructor() - m_pMad release 2");
+
+  //Log("MPMadPresenter::Destructor() - m_pSRCB release 1");
   if (m_pSRCB)
     m_pSRCB.Release();
-  
+  //Log("MPMadPresenter::Destructor() - m_pSRCB release 2");
+
+  //Log("MPMadPresenter::Destructor() - m_pORCB release 1");
   if (m_pORCB)
     m_pORCB.Release();
+  //Log("MPMadPresenter::Destructor() - m_pORCB release 2");
 
   Log("MPMadPresenter::Destructor() - instance 0x%x", this);
 }
@@ -104,9 +113,16 @@ void MPMadPresenter::InitializeOSD()
 
 void MPMadPresenter::SetOSDCallback()
 {
+  // Wait that madVR complete the rendering
+  m_mpWait.Wait(100);
   {
-    //CAutoLock cAutoLock(this);
-    //InitializeOSD(); // Disable OSD Callback from C#
+    // Lock madVR thread while kodi rendering
+    CAutoLock lock(&m_dsLock);
+    m_dsLock.Lock();
+
+    // Render frame to try to fix HD4XXX GPU flickering issue
+    Com::SmartQIPtr<IMadVROsdServices> pOR = m_pMad;
+    pOR->OsdRedrawFrame();
   }
 }
 
@@ -267,6 +283,24 @@ STDMETHODIMP MPMadPresenter::NonDelegatingQueryInterface(REFIID riid, void** ppv
   return __super::NonDelegatingQueryInterface(riid, ppv);
 }
 
+void CRenderWait::Wait(int ms)
+{
+  m_renderState = RENDERFRAME_LOCK;
+  XbmcThreads::EndTime timeout(ms);
+  CSingleLock lock(m_presentlock);
+  while (m_renderState == RENDERFRAME_LOCK && !timeout.IsTimePast())
+    m_presentevent.wait(lock, timeout.MillisLeft());
+}
+
+void CRenderWait::Unlock()
+{
+  {
+    CSingleLock lock(m_presentlock);
+    m_renderState = RENDERFRAME_UNLOCK;
+  }
+  m_presentevent.notifyAll();
+}
+
 HRESULT MPMadPresenter::ClearBackground(LPCSTR name, REFERENCE_TIME frameStart, RECT* fullOutputRect, RECT* activeVideoRect)
 {
   HRESULT hr = E_UNEXPECTED;
@@ -274,14 +308,25 @@ HRESULT MPMadPresenter::ClearBackground(LPCSTR name, REFERENCE_TIME frameStart, 
   WORD videoHeight = (WORD)activeVideoRect->bottom - (WORD)activeVideoRect->top;
   WORD videoWidth = (WORD)activeVideoRect->right - (WORD)activeVideoRect->left;
 
-  bool uiVisible = false;
-
   CAutoLock cAutoLock(this);
 
-  if (!m_pMPTextureGui || !m_pMadGuiVertexBuffer || !m_pRenderTextureGui || !m_pCallback)
-    return CALLBACK_EMPTY;
+  // Ugly hack to avoid flickering (most occurs on Intel GPU)
+  bool isFullScreen = m_pCallback->IsFullScreen();
+    if (isFullScreen)
+  {
+    m_mpWait.Unlock();
+    m_dsLock.Unlock();
+    return uiVisible ? CALLBACK_USER_INTERFACE : CALLBACK_INFO_DISPLAY;
+  }
 
-  m_dwHeight = (WORD)fullOutputRect->bottom - (WORD)fullOutputRect->top;
+  uiVisible = false;
+
+  //Log("MPMadPresenter::ClearBackground()");
+
+  if (!m_pMPTextureGui || !m_pMadGuiVertexBuffer || !m_pRenderTextureGui || !m_pCallback)
+    return CALLBACK_INFO_DISPLAY;
+
+  m_dwHeight = (WORD)fullOutputRect->bottom - (WORD)fullOutputRect->top; // added back
   m_dwWidth = (WORD)fullOutputRect->right - (WORD)fullOutputRect->left;
 
   RenderToTexture(m_pMPTextureGui);
@@ -299,7 +344,11 @@ HRESULT MPMadPresenter::ClearBackground(LPCSTR name, REFERENCE_TIME frameStart, 
 
   m_deviceState.Restore();
 
-  return uiVisible ? CALLBACK_USER_INTERFACE : CALLBACK_EMPTY;
+  // if we don't unlock, OSD will be slow because it will reach the timeout set in SetOSDCallback()
+  m_mpWait.Unlock();
+  m_dsLock.Unlock();
+
+  return uiVisible ? CALLBACK_USER_INTERFACE : CALLBACK_INFO_DISPLAY;
 }
 
 HRESULT MPMadPresenter::RenderOsd(LPCSTR name, REFERENCE_TIME frameStart, RECT* fullOutputRect, RECT* activeVideoRect)
@@ -309,12 +358,27 @@ HRESULT MPMadPresenter::RenderOsd(LPCSTR name, REFERENCE_TIME frameStart, RECT* 
   WORD videoHeight = (WORD)activeVideoRect->bottom - (WORD)activeVideoRect->top;
   WORD videoWidth = (WORD)activeVideoRect->right - (WORD)activeVideoRect->left;
 
-  bool uiVisible = false;
-
   CAutoLock cAutoLock(this);
 
+  // Ugly hack to avoid flickering (most occurs on Intel GPU)
+  bool isFullScreen = m_pCallback->IsFullScreen();
+  if (!isFullScreen)
+  {
+    for (int x = 0; x < 6; ++x) // need to let in a loop to slow down why ???
+    {
+      m_pDevice->PresentEx(nullptr, nullptr, nullptr, nullptr, D3DPRESENT_FORCEIMMEDIATE);
+    }
+    m_mpWait.Unlock();
+    m_dsLock.Unlock();
+    return uiVisible ? CALLBACK_USER_INTERFACE : CALLBACK_INFO_DISPLAY;
+  }
+
+  uiVisible = false;
+
+  //Log("MPMadPresenter::RenderOsd()");
+
   if (!m_pMPTextureOsd || !m_pMadOsdVertexBuffer || !m_pRenderTextureOsd || !m_pCallback)
-    return CALLBACK_EMPTY;
+    return CALLBACK_INFO_DISPLAY;
 
   IDirect3DSurface9* SurfaceMadVr = nullptr; // This will be released by C# side
 
@@ -353,7 +417,11 @@ HRESULT MPMadPresenter::RenderOsd(LPCSTR name, REFERENCE_TIME frameStart, RECT* 
 
   m_deviceState.Restore();
 
-  return uiVisible ? CALLBACK_USER_INTERFACE : CALLBACK_EMPTY;
+  // if we don't unlock, OSD will be slow because it will reach the timeout set in SetOSDCallback()
+  m_mpWait.Unlock();
+  m_dsLock.Unlock();
+
+  return uiVisible ? CALLBACK_USER_INTERFACE : CALLBACK_INFO_DISPLAY;
 }
 
 void MPMadPresenter::RenderToTexture(IDirect3DTexture9* pTexture)
@@ -366,6 +434,7 @@ void MPMadPresenter::RenderToTexture(IDirect3DTexture9* pTexture)
   {
     if (SUCCEEDED(hr = m_pCallback->SetRenderTarget(reinterpret_cast<DWORD>(pSurface))))
     {
+      // TODO is it needed ?
       hr = m_pDevice->Clear(0, nullptr, D3DCLEAR_TARGET, D3DXCOLOR(0, 0, 0, 0), 1.0f, 0);
     }
   }

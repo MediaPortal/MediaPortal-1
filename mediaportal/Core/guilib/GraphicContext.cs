@@ -1756,10 +1756,10 @@ namespace MediaPortal.GUI.Library
     {
       get
       {
-        if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && GUIGraphicsContext.InVmr9Render)
-        {
-          return 0;
-        }
+        //if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && GUIGraphicsContext.InVmr9Render)
+        //{
+        //  return 0;
+        //}
         return RenderLoopLock;
       }
     }
@@ -2199,16 +2199,19 @@ namespace MediaPortal.GUI.Library
     public static void EndClip()
     {
       // Remove the current clip rectangle.
-      ClipRectangleStack.Pop();
+      if (ClipRectangleStack != null)
+      {
+        ClipRectangleStack.Pop();
 
-      // If the clip stack is empty then tell the font engine to stop clipping otherwise restore the current clip rectangle.
-      if (ClipRectangleStack.Count == 0)
-      {
-        DXNative.FontEngineSetClipDisable();
-      }
-      else
-      {
-        DX9Device.ScissorRectangle = ClipRectangleStack.Peek();
+        // If the clip stack is empty then tell the font engine to stop clipping otherwise restore the current clip rectangle.
+        if (ClipRectangleStack.Count == 0)
+        {
+          DXNative.FontEngineSetClipDisable();
+        }
+        else
+        {
+          DX9Device.ScissorRectangle = ClipRectangleStack.Peek();
+        }
       }
     }
   }

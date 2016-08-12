@@ -2644,6 +2644,12 @@ namespace MediaPortal.Player
 
     public static void Process()
     {
+      // madVR inform that MP frame is done (workaround to avoid flickering)
+      if (GUIGraphicsContext.Vmr9Active && VMR9Util.g_vmr9 != null)
+      {
+        VMR9Util.g_vmr9.MadVrRepeatFrame();
+      }
+
       if (GUIGraphicsContext.Vmr9Active && VMR9Util.g_vmr9 != null && !GUIGraphicsContext.InVmr9Render)
       {
         VMR9Util.g_vmr9.Process();

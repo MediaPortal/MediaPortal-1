@@ -1433,7 +1433,7 @@ namespace MediaPortal.GUI.Library
             }
             else
             {
-              // TODO must do a proper fix (Flickering on TVGuide
+              // TODO must do a proper fix (Flickering on TVGuide)
               // Default behavior, draw the image texture with no mask.
               DXNative.FontEngineDrawTextureSync(_packedTextureNo, _fx, _fy, _nw, _nh, _uoff, _voff,
                 _umax, _vmax, color, matrix);

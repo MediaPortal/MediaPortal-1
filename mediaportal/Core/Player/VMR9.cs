@@ -86,6 +86,9 @@ namespace MediaPortal.Player
 
     [PreserveSig]
     void ForceOsdUpdate(bool pForce);
+
+    [PreserveSig]
+    bool IsFullScreen();
   }
 
   #endregion
@@ -413,21 +416,30 @@ namespace MediaPortal.Player
     /// <summary>
     /// Register madVR WindowsMessageMP
     /// </summary>
-    /// <param name="graphBuilder"></param>
-    public void WindowsMessageMP()
+    public void WindowsMessageMp()
     {
       // Needed to enable 3D (TODO why is needed ?)
       IVideoWindow _videoWindow = (IVideoWindow)_graphBuilder;
       if (_videoWindow != null) _videoWindow.put_Owner(GUIGraphicsContext.form.Handle);
-      Log.Debug("WMR9: Delayed OSD Callback");
-      WindowsMessage();
+      Log.Debug("VMR9: Delayed OSD Callback");
       RegisterOsd();
+    }
+
+    /// <summary>
+    /// Register madVR MadVrRepeatFrame
+    /// </summary>
+    public void MadVrRepeatFrame()
+    {
+      if (GUIGraphicsContext.Vmr9Active &&
+          GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+      {
+        WindowsMessage();
+      }
     }
 
     /// <summary>
     /// Register madVR OSD callback
     /// </summary>
-    /// <param name="graphBuilder"></param>
     public void RegisterOsd()
     {
       if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
@@ -1189,8 +1201,9 @@ namespace MediaPortal.Player
       lock (this)
       {
         // TEST but crash when DXVA Native is used in LAV
-        IVideoWindow _videoWindow = (IVideoWindow) _graphBuilder;
-        if (_videoWindow != null) _videoWindow.put_Owner(GUIGraphicsContext.form.Handle);
+        // Commented out again because it lead to crash (but this code permit to start 3D but no clear why))
+        //IVideoWindow _videoWindow = (IVideoWindow) _graphBuilder;
+        //if (_videoWindow != null) _videoWindow.put_Owner(GUIGraphicsContext.form.Handle);
 
         var hr = mediaCtrl.Run();
         Log.Debug("VMR9: StartMediaCtrl start hr: {0}", hr);

@@ -27,4 +27,5 @@ DECLARE_INTERFACE_(IVMR9Callback, IUnknown)
   STDMETHOD(RenderSubtitle)(REFERENCE_TIME frameStart, int left, int top, int right, int bottom, int width, int height)PURE;
   STDMETHOD(RenderFrame)(WORD cx, WORD cy, WORD arx, WORD ary, DWORD pTargetmadVr)PURE;
   STDMETHOD(ForceOsdUpdate)(BOOL pForce)PURE;
+  STDMETHOD(IsFullScreen)()PURE;
 };
