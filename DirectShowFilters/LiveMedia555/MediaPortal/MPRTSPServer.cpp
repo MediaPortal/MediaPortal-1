@@ -81,7 +81,6 @@ MPRTSPServer::MPRTSPServer(UsageEnvironment& env,
                             unsigned reclamationTimeSeconds)
   : RTSPServer(env, ourSocket, ourPort, authDatabase, reclamationTimeSeconds)
 {
-  m_reclamationTimeSeconds = reclamationTimeSeconds;
 }
 
 MPRTSPServer::~MPRTSPServer()
@@ -96,7 +95,7 @@ GenericMediaServer::ClientConnection* MPRTSPServer::createNewClientConnection(in
 
 GenericMediaServer::ClientSession* MPRTSPServer::createNewClientSession(u_int32_t sessionId)
 {
-  MPRTSPClientSession* session = new MPRTSPClientSession(*this, sessionId, m_reclamationTimeSeconds);
+  MPRTSPClientSession* session = new MPRTSPClientSession(*this, sessionId);
   m_clientSessions[sessionId] = session;
   return session;
 }
@@ -116,12 +115,11 @@ MPRTSPServer::MPRTSPClientConnection::~MPRTSPClientConnection()
 
 ////////// MPRTSPServer::MPRTSPClientSession //////////
 
-MPRTSPServer::MPRTSPClientSession::MPRTSPClientSession(MPRTSPServer& ourServer, u_int32_t sessionId, unsigned reclamationTimeSeconds)
+MPRTSPServer::MPRTSPClientSession::MPRTSPClientSession(MPRTSPServer& ourServer, u_int32_t sessionId)
   : RTSPClientSession(ourServer, sessionId)
 {
   m_startDateTime = time(NULL);
   m_isPaused = false;
-  m_reclamationTimeSeconds = reclamationTimeSeconds;
 }
 
 MPRTSPServer::MPRTSPClientSession::~MPRTSPClientSession()
@@ -140,7 +138,6 @@ void MPRTSPServer::MPRTSPClientSession::handleCmd_PLAY(RTSPClientConnection* our
     m_clientAddress = mpConnection->ClientAddress();
   }
   RTSPClientSession::handleCmd_PLAY(ourClientConnection, subsession, fullRequestStr);
-  m_isPaused = false;
 }
 
 void MPRTSPServer::MPRTSPClientSession::handleCmd_PAUSE(RTSPClientConnection* ourClientConnection,
@@ -148,29 +145,4 @@ void MPRTSPServer::MPRTSPClientSession::handleCmd_PAUSE(RTSPClientConnection* ou
 {
   RTSPClientSession::handleCmd_PAUSE(ourClientConnection, subsession);
   m_isPaused = true;
-}
-
-void MPRTSPServer::MPRTSPClientSession::livenessTimeoutTaskMP(MPRTSPClientSession* clientSession)
-{
-  if (clientSession->IsPaused()) 
-  {
-    LogDebug(L"livenessTimeoutTask - paused, returning");
-    return;
-  }
-  LogDebug(L"livenessTimeoutTask");
-  RTSPServer::RTSPClientSession::livenessTimeoutTask(clientSession);
-}
-
-void MPRTSPServer::MPRTSPClientSession::noteLiveness()
-{
-  if (fOurServerMediaSession != NULL) fOurServerMediaSession->noteLiveness();
-
-  if (m_reclamationTimeSeconds > 0)
-  {
-    //LogDebug(L"noteLiveness::RescheduleDelayedTask");
-    envir().taskScheduler().rescheduleDelayedTask(fLivenessCheckTask,
-                                                  m_reclamationTimeSeconds * 1000000,
-                                                  (TaskFunc*)livenessTimeoutTaskMP,
-                                                  this);
-  }
 }
