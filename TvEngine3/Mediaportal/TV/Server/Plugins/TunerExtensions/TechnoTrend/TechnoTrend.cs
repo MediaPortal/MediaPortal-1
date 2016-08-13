@@ -1011,7 +1011,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     private const int SERVICE_BUFFER_SIZE = MAX_PROGRAM_COUNT * sizeof(ushort);
     private static readonly int GENERAL_BUFFER_SIZE = Math.Max(MAX_DISEQC_COMMAND_LENGTH, TUNE_REQUEST_SIZE);
 
-    private static readonly string[] VALID_BUDGET2_DEVICE_NAMES = new string[]
+    private static readonly HashSet<string> VALID_BUDGET2_DEVICE_NAMES = new HashSet<string>
     {
       "TechnoTrend BDA/DVB-C Tuner",
       "TechnoTrend BDA/DVB-S Tuner",
@@ -1021,13 +1021,13 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
       "ttBudget2 BDA DVB-T Tuner"
     };
 
-    private static readonly string[] VALID_BUDGET3_DEVICE_NAMES = new string[]
+    private static readonly HashSet<string> VALID_BUDGET3_DEVICE_NAMES = new HashSet<string>
     {
       "TTHybridTV BDA DVBT Tuner",
       "TTHybridTV BDA ATSC Tuner"
     };
 
-    private static readonly string[] VALID_USB2_DEVICE_NAMES = new string[]
+    private static readonly HashSet<string> VALID_USB2_DEVICE_NAMES = new HashSet<string>
     {
       "USB 2.0 BDA DVB-C Tuner",
       "USB 2.0 BDA DVB-S Tuner",
@@ -1035,15 +1035,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
       "USB 2.0 BDA DVB-T Tuner"
     };
 
-    private static readonly string[] VALID_PINNACLE_DEVICE_NAMES = new string[]
-    {
-      "Pinnacle PCTV 4XXe Tuner"
-    };
-
-    private static readonly string[] VALID_DSS_DEVICE_NAMES = new string[]
-    {
-      "USB 2.0 BDA DSS Tuner"
-    };
+    private const string VALID_PINNACLE_DEVICE_NAME = "Pinnacle PCTV 4XXe Tuner";
+    private const string VALID_DSS_DEVICE_NAME = "USB 2.0 BDA DSS Tuner";
 
     #endregion
 
@@ -1098,40 +1091,25 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
         return TtDeviceCategory.Unknown;
       }
 
-      foreach (string name in VALID_BUDGET2_DEVICE_NAMES)
+      if (VALID_BUDGET2_DEVICE_NAMES.Contains(filterName))
       {
-        if (filterName.Equals(name))
-        {
-          return TtDeviceCategory.Budget2;
-        }
+        return TtDeviceCategory.Budget2;
       }
-      foreach (string name in VALID_BUDGET3_DEVICE_NAMES)
+      if (VALID_BUDGET3_DEVICE_NAMES.Contains(filterName))
       {
-        if (filterName.Equals(name))
-        {
-          return TtDeviceCategory.Budget3;
-        }
+        return TtDeviceCategory.Budget3;
       }
-      foreach (string name in VALID_USB2_DEVICE_NAMES)
+      if (VALID_USB2_DEVICE_NAMES.Contains(filterName))
       {
-        if (filterName.Equals(name))
-        {
-          return TtDeviceCategory.Usb2;
-        }
+        return TtDeviceCategory.Usb2;
       }
-      foreach (string name in VALID_PINNACLE_DEVICE_NAMES)
+      if (VALID_PINNACLE_DEVICE_NAME.Equals(filterName))
       {
-        if (filterName.Equals(name))
-        {
-          return TtDeviceCategory.Usb2Pinnacle;
-        }
+        return TtDeviceCategory.Usb2Pinnacle;
       }
-      foreach (string name in VALID_DSS_DEVICE_NAMES)
+      if (VALID_DSS_DEVICE_NAME.Equals(filterName))
       {
-        if (filterName.Equals(name))
-        {
-          return TtDeviceCategory.Usb2Dss;
-        }
+        return TtDeviceCategory.Usb2Dss;
       }
       return TtDeviceCategory.Unknown;
     }
@@ -1537,7 +1515,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
       }
     }
 
-    #region low speed communication call backs
+    #region low speed communication call-backs
 
     /// <summary>
     /// ???

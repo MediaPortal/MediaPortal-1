@@ -418,7 +418,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Knc
 
     #region constants
 
-    private static readonly string[] VALID_TUNER_NAMES = new string[]
+    private static readonly HashSet<string> VALID_TUNER_NAMES = new HashSet<string>
     {
       "KNC BDA DVB-S",
       "KNC BDA DVB-S2",
@@ -441,7 +441,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Knc
       "Satelco EasyWatch PCI (DVB-T)"
     };
 
-    private static readonly string[] VALID_DEVICE_PATHS = new string[]
+    private static readonly HashSet<string> VALID_DEVICE_PATHS = new HashSet<string>
     {
       // DVB-S - Old
       "ven_1131&dev_7146&subsys_4f561131",  // KNC
@@ -552,13 +552,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Knc
       List<string> devicePaths = new List<string>(5);
       foreach (DsDevice device in devices)
       {
-        foreach (string validTunerName in VALID_TUNER_NAMES)
+        if (device.Name != null && VALID_TUNER_NAMES.Contains(device.Name))
         {
-          if (device.Name != null && device.Name.Equals(validTunerName))
-          {
-            devicePaths.Add(device.DevicePath);
-            break;
-          }
+          devicePaths.Add(device.DevicePath);
         }
         device.Dispose();
       }
@@ -854,34 +850,39 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Knc
         this.LogError("KNC: failed to get the tuner filter name, hr = 0x{0:x}", hr);
         return false;
       }
-      foreach (string validTunerName in VALID_TUNER_NAMES)
+
+      try
       {
-        if (tunerInfo.achName.Equals(validTunerName))
+        if (!VALID_TUNER_NAMES.Contains(tunerInfo.achName))
         {
-          this.LogDebug("KNC: recognised filter name \"{0}\"", tunerInfo.achName);
-          _name = validTunerName.Substring(0, validTunerName.IndexOf(' '));
+          this.LogDebug("KNC: extension not supported");
+          return false;
+        }
 
-          // Stage 2: attempt to get the KNC device index corresponding with
-          // this tuner.
-          string devicePath = tunerExternalId.ToLowerInvariant();
-          _deviceIndex = GetDeviceIndex(devicePath);
-          if (_deviceIndex < 0)
-          {
-            this.LogError("KNC: failed to determine the device index");
-            break;
-          }
+        this.LogDebug("KNC: recognised filter name \"{0}\"", tunerInfo.achName);
 
-          // Stage 3: ensure we can get a reference to the filter that
-          // implements the proprietary interfaces.
-          this.LogDebug("KNC: device index is {0}", _deviceIndex);
-          if (!devicePath.Contains("dev_7160"))
-          {
-            // This is a PCI device. The tuner filter implements the
-            // proprietary interfaces so no further work is required.
-            _isKnc = true;
-            break;
-          }
+        // Stage 2: attempt to get the KNC device index corresponding with this
+        // tuner.
+        string devicePath = tunerExternalId.ToLowerInvariant();
+        _deviceIndex = GetDeviceIndex(devicePath);
+        if (_deviceIndex < 0)
+        {
+          this.LogError("KNC: failed to determine the device index");
+          return false;
+        }
 
+        // Stage 3: ensure we can get a reference to the filter that implements
+        // the proprietary interfaces.
+        this.LogDebug("KNC: device index is {0}", _deviceIndex);
+        if (!devicePath.Contains("dev_7160"))
+        {
+          // This is a PCI device. The tuner filter implements the proprietary
+          // interfaces so no further work is required.
+          _isKnc = true;
+          _name = tunerInfo.achName.Substring(0, tunerInfo.achName.IndexOf(' '));
+        }
+        else
+        {
           // This is a PCIe device. We need a reference to the capture filter
           // because that is the filter which implements the proprietary
           // interfaces.
@@ -896,7 +897,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Knc
           if (hr != (int)NativeMethods.HResult.S_OK || captureInputPin == null)
           {
             this.LogError("KNC: failed to get the capture filter input pin, hr = 0x{0:x}", hr);
-            break;
+            return false;
           }
 
           PinInfo captureInfo;
@@ -905,21 +906,19 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Knc
           if (hr != (int)NativeMethods.HResult.S_OK || captureInfo.filter == null)
           {
             this.LogError("KNC: failed to get the capture filter, hr = 0x{0:x}", hr);
+            return false;
           }
-          else
-          {
-            _isKnc = true;
-            _captureFilter = captureInfo.filter;
-          }
-          break;
+
+          _isKnc = true;
+          _captureFilter = captureInfo.filter;
         }
       }
-
-      if (!_isKnc)
+      finally
       {
-        this.LogDebug("KNC: extension not supported");
-        Release.FilterInfo(ref tunerInfo);
-        return false;
+        if (!_isKnc)
+        {
+          Release.FilterInfo(ref tunerInfo);
+        }
       }
 
       this.LogInfo("KNC: extension supported");
