@@ -114,9 +114,7 @@ public: // should be protected, but some old compilers complain otherwise
     virtual ~ClientSession();
 
     UsageEnvironment& envir() { return fOurServer.envir(); }
-    // Team MediaPortal modification - noteLiveness() must be virtual so that
-    // we can prevent paused streams from being killed.
-    virtual void noteLiveness();
+    void noteLiveness();
     static void noteClientLiveness(ClientSession* clientSession);
     static void livenessTimeoutTask(ClientSession* clientSession);
 
