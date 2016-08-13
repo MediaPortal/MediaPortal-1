@@ -86,6 +86,9 @@ namespace MediaPortal.Player
 
     [PreserveSig]
     void ForceOsdUpdate(bool pForce);
+
+    [PreserveSig]
+    bool IsFullScreen();
   }
 
   #endregion
@@ -413,18 +416,30 @@ namespace MediaPortal.Player
     /// <summary>
     /// Register madVR WindowsMessageMP
     /// </summary>
-    /// <param name="graphBuilder"></param>
-    public void WindowsMessageMP()
+    public void WindowsMessageMp()
     {
-      Log.Debug("WMR9: Delayed OSD Callback");
-      WindowsMessage();
+      // Needed to enable 3D (TODO why is needed ?)
+      IVideoWindow _videoWindow = (IVideoWindow)_graphBuilder;
+      if (_videoWindow != null) _videoWindow.put_Owner(GUIGraphicsContext.form.Handle);
+      Log.Debug("VMR9: Delayed OSD Callback");
       RegisterOsd();
+    }
+
+    /// <summary>
+    /// Register madVR MadVrRepeatFrame
+    /// </summary>
+    public void MadVrRepeatFrame()
+    {
+      if (GUIGraphicsContext.Vmr9Active &&
+          GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+      {
+        WindowsMessage();
+      }
     }
 
     /// <summary>
     /// Register madVR OSD callback
     /// </summary>
-    /// <param name="graphBuilder"></param>
     public void RegisterOsd()
     {
       if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
@@ -866,7 +881,7 @@ namespace MediaPortal.Player
 
     public void ProcessMadVrOsd()
     {
-      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && !GUIGraphicsContext.InVmr9Render)
+      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
       {
         TimeSpan tsPlay = DateTime.Now - playbackTimer;
         // Register OSD back 2 seconds after rendering is done on madVR filter.
@@ -1183,35 +1198,38 @@ namespace MediaPortal.Player
 
     public int StartMediaCtrl(IMediaControl mediaCtrl)
     {
-      var hr = mediaCtrl.Run();
-      Log.Debug("VMR9: StartMediaCtrl start hr: {0}", hr);
-      DsError.ThrowExceptionForHR(hr);
-      // S_FALSE from IMediaControl::Run means: The graph is preparing to run, but some filters have not completed the transition to a running state.
-      if (hr == 1)
+      lock (this)
       {
-        // wait max. 5 seconds for the graph to transition to the running state
-        DateTime startTime = DateTime.Now;
-        FilterState filterState;
-        do
+        // TEST but crash when DXVA Native is used in LAV
+        // Commented out again because it lead to crash (but this code permit to start 3D but no clear why))
+        //IVideoWindow _videoWindow = (IVideoWindow) _graphBuilder;
+        //if (_videoWindow != null) _videoWindow.put_Owner(GUIGraphicsContext.form.Handle);
+
+        var hr = mediaCtrl.Run();
+        Log.Debug("VMR9: StartMediaCtrl start hr: {0}", hr);
+        DsError.ThrowExceptionForHR(hr);
+        // S_FALSE from IMediaControl::Run means: The graph is preparing to run, but some filters have not completed the transition to a running state.
+        if (hr == 1)
         {
-          Thread.Sleep(10);
-          hr = mediaCtrl.GetState(10, out filterState);
-          hr = mediaCtrl.Run();
-          // check with timeout max. 10 times a second if the state changed
-        } while ((hr != 0) && ((DateTime.Now - startTime).TotalSeconds <= 5));
-        if (hr != 0) // S_OK
-        {
-          DsError.ThrowExceptionForHR(hr);
-          Log.Debug("VMR9: StartMediaCtrl try to play with hr: 0x{0} - '{1}'", hr.ToString("X8"));
+          // wait max. 5 seconds for the graph to transition to the running state
+          DateTime startTime = DateTime.Now;
+          FilterState filterState;
+          do
+          {
+            Thread.Sleep(10);
+            hr = mediaCtrl.GetState(10, out filterState);
+            hr = mediaCtrl.Run();
+            // check with timeout max. 10 times a second if the state changed
+          } while ((hr != 0) && ((DateTime.Now - startTime).TotalSeconds <= 5));
+          if (hr != 0) // S_OK
+          {
+            DsError.ThrowExceptionForHR(hr);
+            Log.Debug("VMR9: StartMediaCtrl try to play with hr: 0x{0} - '{1}'", hr.ToString("X8"));
+          }
+          Log.Debug("VMR9: StartMediaCtrl hr: {0}", hr);
         }
-        Log.Debug("VMR9: StartMediaCtrl hr: {0}", hr);
+        return hr;
       }
-      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
-      {
-        // Init put owner for madVR 3D
-        //_videoWindow.put_Owner(GUIGraphicsContext.form.Handle);
-      }
-      return hr;
     }
 
     public void Vmr9MediaCtrl(IMediaControl mediaCtrl)

@@ -1564,7 +1564,7 @@ namespace MediaPortal.Player
             if (_player != null)
             {
               _player.Stop();
-              
+
               if (BassMusicPlayer.IsDefaultMusicPlayer && type != MediaType.Music)
               {
                 // This would be better to be handled in a new Stop() parameter, but it would break the interface compatibility
@@ -2615,10 +2615,20 @@ namespace MediaPortal.Player
 
     public static void Process()
     {
+      // madVR inform that MP frame is done (workaround to avoid flickering)
+      if (GUIGraphicsContext.Vmr9Active && VMR9Util.g_vmr9 != null)
+      {
+        VMR9Util.g_vmr9.MadVrRepeatFrame();
+      }
+
       if (GUIGraphicsContext.Vmr9Active && VMR9Util.g_vmr9 != null && !GUIGraphicsContext.InVmr9Render)
       {
         VMR9Util.g_vmr9.Process();
         VMR9Util.g_vmr9.Repaint();
+      }
+      else if (GUIGraphicsContext.Vmr9Active && VMR9Util.g_vmr9 != null)
+      {
+        VMR9Util.g_vmr9.ProcessMadVrOsd();
       }
       if (_player == null)
       {

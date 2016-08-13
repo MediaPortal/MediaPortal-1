@@ -18,11 +18,29 @@
 #include "callback.h"
 #include "mvrInterfaces.h"
 #include "DeviceState.h"
-#include "smartptr.h"
+#include "helpers/smartptr.h"
 #include <tchar.h>
 #include "../../mpc-hc_subs/src/DSUtil/DSUtil.h"
+#include "threads/Condition.h"
+#include "threads/CriticalSection.h"
 
 using namespace std;
+
+  enum SHAREDRENDER_STATE
+  {
+    RENDERFRAME_LOCK,
+    RENDERFRAME_UNLOCK
+  };
+
+  class CRenderWait
+  {
+  public:
+    void Wait(int ms);
+    void Unlock();
+    XbmcThreads::ConditionVariable m_presentevent;
+    CCriticalSection m_presentlock;
+    SHAREDRENDER_STATE m_renderState;
+  };
 
 class MPMadPresenter : public CUnknown, public CCritSec
 {
@@ -180,5 +198,10 @@ class MPMadPresenter : public CUnknown, public CCritSec
 
     bool m_pInitOSDRender = false;
     int m_ExclusiveMode = 0;
+
+    CRenderWait m_mpWait;
+    CCritSec m_dsLock;
+
+    bool uiVisible = false;
 };
 

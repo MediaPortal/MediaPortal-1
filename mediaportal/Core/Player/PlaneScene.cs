@@ -326,7 +326,7 @@ namespace MediaPortal.Player
           break;
         case GUIMessage.MessageType.GUI_MSG_REGISTER_MADVR_OSD:
           if (VMR9Util.g_vmr9 != null)
-            VMR9Util.g_vmr9.WindowsMessageMP();
+            VMR9Util.g_vmr9.WindowsMessageMp();
           break;
       }
     }
@@ -643,6 +643,11 @@ namespace MediaPortal.Player
       }
     }
 
+    public bool IsFullScreen()
+    {
+      return GUIGraphicsContext.IsFullScreenVideo;
+    }
+
     public int RenderGui(Int16 width, Int16 height, Int16 arWidth, Int16 arHeight)
     {
       return RenderLayers(GUILayers.under, width, height, arWidth, arHeight);
@@ -656,25 +661,36 @@ namespace MediaPortal.Player
     private int RenderLayers(GUILayers layers, Int16 width, Int16 height, Int16 arWidth, Int16 arHeight)
     {
       bool visible = false;
+
+      if (_reEntrant)
+      {
+        Log.Error("PlaneScene: re-entrancy in PresentImage");
+        return -1;
+      }
+      if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.LOST)
+      {
+        return -1;
+      }
       try
       {
-        if (_reEntrant)
+        _reEntrant = true;
+
+        if (width > 0 && height > 0)
         {
-          Log.Error("PlaneScene: re-entrancy in PresentImage");
-          return -1;
+          _vmr9Util.VideoWidth = width;
+          _vmr9Util.VideoHeight = height;
+          _vmr9Util.VideoAspectRatioX = arWidth;
+          _vmr9Util.VideoAspectRatioY = arHeight;
+          _arVideoWidth = arWidth;
+          _arVideoHeight = arHeight;
         }
-        if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.LOST)
-        {
-          return -1;
-        }
+
+        float timePassed = GUIGraphicsContext.TimePassed;
+
+        //if we're stopping then just return
         if (_stopPainting)
         {
           return -1;
-        }
-
-        if (!GUIGraphicsContext.InVmr9Render)
-        {
-          GUIGraphicsContext.InVmr9Render = true;
         }
 
         if (GUIGraphicsContext.IsSwitchingToNewSkin)
@@ -687,28 +703,49 @@ namespace MediaPortal.Player
           return 1; // (0) -> S_OK, (1) -> S_FALSE; //dont present video during window transitions
         }
 
-        _reEntrant = true;
-        if (width > 0 && height > 0)
+        if (!GUIGraphicsContext.InVmr9Render)
         {
-          _vmr9Util.VideoWidth = width;
-          _vmr9Util.VideoHeight = height;
-          _vmr9Util.VideoAspectRatioX = arWidth;
-          _vmr9Util.VideoAspectRatioY = arHeight;
-          _arVideoWidth = arWidth;
-          _arVideoHeight = arHeight;
+          GUIGraphicsContext.InVmr9Render = true;
+        }
 
-          //Log.Debug("PlaneScene width {0}, height {1}", width, height);
+        if (_stopPainting)
+        {
+          return -1;
+        }
 
-          if (GUIGraphicsContext.IsWindowVisible)
-          {
-            Size nativeSize = new Size(width, height);
-            _shouldRenderTexture = SetVideoWindow(nativeSize);
-          }
-          else
-          {
-            Size nativeSize = new Size(1, 1);
-            _shouldRenderTexture = SetVideoWindow(nativeSize);
-          }
+        //sanity checks
+        if (GUIGraphicsContext.DX9Device == null)
+        {
+          return -1;
+        }
+
+        if (GUIGraphicsContext.DX9Device.Disposed)
+        {
+          return -1;
+        }
+
+        _vmr9Util.FreeFrameCounter++;
+
+        if (!_drawVideoAllowed || !_isEnabled)
+        {
+          Log.Info("planescene:RenderLayers() frame:{0} enabled:{1} allowed:{2}", _vmr9Util.FrameCounter, _isEnabled,
+            _drawVideoAllowed);
+          _vmr9Util.FrameCounter++;
+          return -1;
+        }
+        _vmr9Util.FrameCounter++;
+
+        //Log.Debug("PlaneScene width {0}, height {1}", width, height);
+
+        if (GUIGraphicsContext.IsWindowVisible)
+        {
+          Size nativeSize = new Size(width, height);
+          _shouldRenderTexture = SetVideoWindow(nativeSize);
+        }
+        else
+        {
+          Size nativeSize = new Size(1, 1);
+          _shouldRenderTexture = SetVideoWindow(nativeSize);
         }
 
         Device device = GUIGraphicsContext.DX9Device;
@@ -716,30 +753,33 @@ namespace MediaPortal.Player
         device.Clear(ClearFlags.Target, Color.FromArgb(0, 0, 0, 0), 1.0f, 0);
         device.BeginScene();
 
-        if (layers == GUILayers.over)
+        try
         {
-          SubtitleRenderer.GetInstance().Render();
-          BDOSDRenderer.GetInstance().Render();
-          GUIGraphicsContext.RenderOverlay = true;
+          if (!GUIGraphicsContext.BlankScreen)
+          {
+            if (layers == GUILayers.over)
+            {
+              SubtitleRenderer.GetInstance().Render();
+              BDOSDRenderer.GetInstance().Render();
+              GUIGraphicsContext.RenderOverlay = true;
+            }
+            GUIGraphicsContext.RenderGUI.RenderFrame(timePassed, layers, ref visible);
+            GUIFontManager.Present();
+          }
         }
-
-        //bool visible = false;
-        if (_disableLowLatencyMode)
+        finally
         {
-          GUIGraphicsContext.RenderGUI.RenderFrame(GUIGraphicsContext.TimePassed, layers);
-        }
-        else
-        {
-          GUIGraphicsContext.RenderGUI.RenderFrame(GUIGraphicsContext.TimePassed, layers, ref visible);
-        }
+          device.EndScene();
 
-        GUIFontManager.Present();
-        device.EndScene();
+          if (layers == GUILayers.under)
+          {
+            GUIGraphicsContext.RenderGui = false;
+            GUIGraphicsContext.RenderOverlay = false;
+          }
 
-        if (layers == GUILayers.under)
-        {
-          GUIGraphicsContext.RenderGui = false;
-          GUIGraphicsContext.RenderOverlay = false;
+          // Need to present to slow and avoid flickering when we are not in fullscreen (visible with Intel GPU HD4XXX)
+          if (!GUIGraphicsContext.IsFullScreenVideo)
+            device.Present();
         }
 
         // Present() call is done on C++ side so we are able to use DirectX 9 Ex device
@@ -752,16 +792,24 @@ namespace MediaPortal.Player
       }
       finally
       {
+        if (_disableLowLatencyMode)
+        {
+          visible = false;
+        }
+
         _reEntrant = false;
+        GUIGraphicsContext.InVmr9Render = false;
       }
       return visible ? 0 : 1; // S_OK, S_FALSE
     }
 
     public void SetRenderTarget(uint target)
     {
-      IntPtr ptr = (IntPtr)target;
-      Surface surface = new Surface(ptr);
-      GUIGraphicsContext.DX9Device.SetRenderTarget(0, surface);
+      Surface surface = new Surface((IntPtr) target);
+      if (GUIGraphicsContext.DX9Device != null)
+      {
+        GUIGraphicsContext.DX9Device.SetRenderTarget(0, surface);
+      }
       surface.ReleaseGraphics();
       surface.Dispose();
     }

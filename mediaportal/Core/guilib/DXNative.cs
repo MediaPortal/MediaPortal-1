@@ -46,10 +46,11 @@ namespace MediaPortal.GUI.Library
     {
       get
       {
-        if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && GUIGraphicsContext.InVmr9Render)
-        {
-          return 0;
-        }
+        // Revert this part for now and see if really (it deadlock before)
+        //if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && GUIGraphicsContext.InVmr9Render)
+        //{
+        //  return 0;
+        //}
         return lockObject;
       }
     }
@@ -84,6 +85,14 @@ namespace MediaPortal.GUI.Library
       lock (_lock)
       {
         FontEngineDrawTexture(textureNo, x, y, nw, nh, uoff, voff, umax, vmax, color, matrix);
+      }
+    }
+
+    public static void FontEnginePresentTexturesSync()
+    {
+      lock (_lock)
+      {
+        FontEnginePresentTextures();
       }
     }
 
@@ -141,7 +150,7 @@ namespace MediaPortal.GUI.Library
                                                             FontEngineBlendMode blendMode);
 
     [DllImport("fontEngine.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    public static extern unsafe void FontEnginePresentTextures();
+    private static extern unsafe void FontEnginePresentTextures();
 
     [DllImport("fontEngine.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     public static extern unsafe void FontEngineSetDevice(void* device);
