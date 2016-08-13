@@ -161,7 +161,6 @@
     <None Include="liveMedia\include\Base64.hh" />
     <None Include="liveMedia\include\BasicUDPSink.hh" />
     <None Include="liveMedia\include\BasicUDPSource.hh" />
-    <None Include="liveMedia\include\BitVector.hh" />
     <None Include="liveMedia\include\ByteStreamFileSource.hh" />
     <None Include="liveMedia\include\ByteStreamMultiFileSource.hh" />
     <None Include="liveMedia\include\DeviceSource.hh" />
