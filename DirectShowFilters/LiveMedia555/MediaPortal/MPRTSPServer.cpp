@@ -40,42 +40,38 @@ MPRTSPServer* MPRTSPServer::createNew(UsageEnvironment& env,
 
 unsigned short MPRTSPServer::GetSessionCount()
 {
-  return (unsigned short)fClientSessions->numEntries();
+  return (unsigned short)m_clientSessions.size();
 }
 
 MPRTSPServer::MPRTSPClientSession* MPRTSPServer::GetSessionByIndex(unsigned short index)
 {
-  unsigned short currentIndex = 0;
-  HashTable::Iterator* it = HashTable::Iterator::create(*fClientSessions);
-  while (true)
+  if (index >= m_clientSessions.size())
   {
-    const char* key;
-    MPRTSPClientSession* clientSession = (MPRTSPClientSession*)it->next(key);
-    if (currentIndex == index || clientSession == NULL)
+    return NULL;
+  }
+  unsigned short currentIndex = 0;
+  map<u_int32_t, MPRTSPClientSession*>::iterator it = m_clientSessions.begin();
+  while (it != m_clientSessions.end())
+  {
+    if (currentIndex == index)
     {
-      return clientSession;
+      return it->second;
     }
+    it++;
     currentIndex++;
   }
+  return NULL;
 }
 
 bool MPRTSPServer::RemoveSessionById(u_int32_t sessionId)
 {
-  HashTable::Iterator* it = HashTable::Iterator::create(*fClientSessions);
-  while (true)
+  map<u_int32_t, MPRTSPClientSession*>::iterator it = m_clientSessions.find(sessionId);
+  if (it == m_clientSessions.end() || it->second == NULL)
   {
-    const char* key;
-    MPRTSPClientSession* clientSession = (MPRTSPClientSession*)it->next(key);
-    if (clientSession == NULL)
-    {
-      return false;
-    }
-    if (clientSession->SessionId() == sessionId)
-    {
-      delete clientSession;
-      return true;
-    }
+    return false;
   }
+  delete it->second;
+  return true;
 }
 
 MPRTSPServer::MPRTSPServer(UsageEnvironment& env,
@@ -85,11 +81,11 @@ MPRTSPServer::MPRTSPServer(UsageEnvironment& env,
                             unsigned reclamationTimeSeconds)
   : RTSPServer(env, ourSocket, ourPort, authDatabase, reclamationTimeSeconds)
 {
-  m_reclamationTimeSeconds = reclamationTimeSeconds;
 }
 
 MPRTSPServer::~MPRTSPServer()
 {
+  m_clientSessions.clear();
 }
 
 GenericMediaServer::ClientConnection* MPRTSPServer::createNewClientConnection(int clientSocket, struct sockaddr_in clientAddr)
@@ -99,7 +95,9 @@ GenericMediaServer::ClientConnection* MPRTSPServer::createNewClientConnection(in
 
 GenericMediaServer::ClientSession* MPRTSPServer::createNewClientSession(u_int32_t sessionId)
 {
-  return new MPRTSPClientSession(*this, sessionId, m_reclamationTimeSeconds);
+  MPRTSPClientSession* session = new MPRTSPClientSession(*this, sessionId);
+  m_clientSessions[sessionId] = session;
+  return session;
 }
 
 
@@ -117,16 +115,17 @@ MPRTSPServer::MPRTSPClientConnection::~MPRTSPClientConnection()
 
 ////////// MPRTSPServer::MPRTSPClientSession //////////
 
-MPRTSPServer::MPRTSPClientSession::MPRTSPClientSession(MPRTSPServer& ourServer, u_int32_t sessionId, unsigned reclamationTimeSeconds)
+MPRTSPServer::MPRTSPClientSession::MPRTSPClientSession(MPRTSPServer& ourServer, u_int32_t sessionId)
   : RTSPClientSession(ourServer, sessionId)
 {
   m_startDateTime = time(NULL);
   m_isPaused = false;
-  m_reclamationTimeSeconds = reclamationTimeSeconds;
 }
 
 MPRTSPServer::MPRTSPClientSession::~MPRTSPClientSession()
 {
+  MPRTSPServer& server = static_cast<MPRTSPServer&>(fOurServer);
+  server.m_clientSessions.erase(fOurSessionId);
 }
 
 void MPRTSPServer::MPRTSPClientSession::handleCmd_PLAY(RTSPClientConnection* ourClientConnection,
@@ -139,7 +138,6 @@ void MPRTSPServer::MPRTSPClientSession::handleCmd_PLAY(RTSPClientConnection* our
     m_clientAddress = mpConnection->ClientAddress();
   }
   RTSPClientSession::handleCmd_PLAY(ourClientConnection, subsession, fullRequestStr);
-  m_isPaused = false;
 }
 
 void MPRTSPServer::MPRTSPClientSession::handleCmd_PAUSE(RTSPClientConnection* ourClientConnection,
@@ -147,27 +145,4 @@ void MPRTSPServer::MPRTSPClientSession::handleCmd_PAUSE(RTSPClientConnection* ou
 {
   RTSPClientSession::handleCmd_PAUSE(ourClientConnection, subsession);
   m_isPaused = true;
-}
-
-void MPRTSPServer::MPRTSPClientSession::livenessTimeoutTaskMP(MPRTSPClientSession* clientSession)
-{
-  if (clientSession->IsPaused()) 
-  {
-    LogDebug(L"livenessTimeoutTask - paused, returning");
-    return;
-  }
-  LogDebug(L"livenessTimeoutTask");
-  RTSPServer::RTSPClientSession::livenessTimeoutTask(clientSession);
-}
-
-void MPRTSPServer::MPRTSPClientSession::noteLiveness()
-{
-  if (m_reclamationTimeSeconds > 0)
-  {
-    //LogDebug(L"noteLiveness::RescheduleDelayedTask");
-    envir().taskScheduler().rescheduleDelayedTask(fLivenessCheckTask,
-                                                  m_reclamationTimeSeconds * 1000000,
-                                                  (TaskFunc*)livenessTimeoutTaskMP,
-                                                  this);
-  }
 }

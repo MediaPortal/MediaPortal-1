@@ -14,13 +14,16 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2015 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2016 Live Networks, Inc.  All rights reserved.
 // A generic media server class, used to implement a RTSP server, and any other server that uses
 //  "ServerMediaSession" objects to describe media to be served.
 // Implementation
 
 #include "GenericMediaServer.hh"
 #include <GroupsockHelper.hh>
+#if defined(__WIN32__) || defined(_WIN32) || defined(_QNX4)
+#define snprintf _snprintf
+#endif
 
 ////////// GenericMediaServer implementation //////////
 
@@ -106,7 +109,7 @@ GenericMediaServer::~GenericMediaServer() {
 
 void GenericMediaServer::cleanup() {
   // This member function must be called in the destructor of any subclass of
-  //"GenericMediaServer".  (We don't call this in the destructor of "GenericMediaServer" itself,
+  // "GenericMediaServer".  (We don't call this in the destructor of "GenericMediaServer" itself,
   // because by that time, the subclass destructor will already have been called, and this may
   // affect (break) the destruction of the "ClientSession" and "ClientConnection" objects, which
   // themselves will have been subclassed.)
@@ -263,7 +266,7 @@ GenericMediaServer::ClientSession::~ClientSession() {
   envir().taskScheduler().unscheduleDelayedTask(fLivenessCheckTask);
 
   // Remove ourself from the server's 'client sessions' hash table before we go:
-  char sessionIdStr[9];
+  char sessionIdStr[8+1];
   sprintf(sessionIdStr, "%08X", fOurSessionId);
   fOurServer.fClientSessions->Remove(sessionIdStr);
   
@@ -284,6 +287,8 @@ void GenericMediaServer::ClientSession::noteLiveness() {
   fprintf(stderr, "Client session (id \"%08X\", stream name \"%s\"): Liveness indication\n",
 	  fOurSessionId, streamName);
 #endif
+  if (fOurServerMediaSession != NULL) fOurServerMediaSession->noteLiveness();
+
   if (fOurServer.fReclamationSeconds > 0) {
     envir().taskScheduler().rescheduleDelayedTask(fLivenessCheckTask,
 						  fOurServer.fReclamationSeconds*1000000,
@@ -304,4 +309,90 @@ void GenericMediaServer::ClientSession::livenessTimeoutTask(ClientSession* clien
 	  clientSession->fOurSessionId, streamName);
 #endif
   delete clientSession;
+}
+
+GenericMediaServer::ClientSession* GenericMediaServer::createNewClientSessionWithId() {
+  u_int32_t sessionId;
+  char sessionIdStr[8+1];
+
+  // Choose a random (unused) 32-bit integer for the session id
+  // (it will be encoded as a 8-digit hex number).  (We avoid choosing session id 0,
+  // because that has a special use by some servers.)
+  do {
+    sessionId = (u_int32_t)our_random32();
+    snprintf(sessionIdStr, sizeof sessionIdStr, "%08X", sessionId);
+  } while (sessionId == 0 || lookupClientSession(sessionIdStr) != NULL);
+
+  ClientSession* clientSession = createNewClientSession(sessionId);
+  fClientSessions->Add(sessionIdStr, clientSession);
+
+  return clientSession;
+}
+
+GenericMediaServer::ClientSession*
+GenericMediaServer::lookupClientSession(u_int32_t sessionId) {
+  char sessionIdStr[8+1];
+  snprintf(sessionIdStr, sizeof sessionIdStr, "%08X", sessionId);
+  return lookupClientSession(sessionIdStr);
+}
+
+GenericMediaServer::ClientSession*
+GenericMediaServer::lookupClientSession(char const* sessionIdStr) {
+  return (GenericMediaServer::ClientSession*)fClientSessions->Lookup(sessionIdStr);
+}
+
+
+////////// ServerMediaSessionIterator implementation //////////
+
+GenericMediaServer::ServerMediaSessionIterator
+::ServerMediaSessionIterator(GenericMediaServer& server)
+  : fOurIterator((server.fServerMediaSessions == NULL)
+		 ? NULL : HashTable::Iterator::create(*server.fServerMediaSessions)) {
+}
+
+GenericMediaServer::ServerMediaSessionIterator::~ServerMediaSessionIterator() {
+  delete fOurIterator;
+}
+
+ServerMediaSession* GenericMediaServer::ServerMediaSessionIterator::next() {
+  if (fOurIterator == NULL) return NULL;
+
+  char const* key; // dummy
+  return (ServerMediaSession*)(fOurIterator->next(key));
+}
+
+
+////////// UserAuthenticationDatabase implementation //////////
+
+UserAuthenticationDatabase::UserAuthenticationDatabase(char const* realm,
+						       Boolean passwordsAreMD5)
+  : fTable(HashTable::create(STRING_HASH_KEYS)),
+    fRealm(strDup(realm == NULL ? "LIVE555 Streaming Media" : realm)),
+    fPasswordsAreMD5(passwordsAreMD5) {
+}
+
+UserAuthenticationDatabase::~UserAuthenticationDatabase() {
+  delete[] fRealm;
+  
+  // Delete the allocated 'password' strings that we stored in the table, and then the table itself:
+  char* password;
+  while ((password = (char*)fTable->RemoveNext()) != NULL) {
+    delete[] password;
+  }
+  delete fTable;
+}
+
+void UserAuthenticationDatabase::addUserRecord(char const* username,
+					       char const* password) {
+  fTable->Add(username, (void*)(strDup(password)));
+}
+
+void UserAuthenticationDatabase::removeUserRecord(char const* username) {
+  char* password = (char*)(fTable->Lookup(username));
+  fTable->Remove(username);
+  delete[] password;
+}
+
+char const* UserAuthenticationDatabase::lookupPassword(char const* username) {
+  return (char const*)(fTable->Lookup(username));
 }

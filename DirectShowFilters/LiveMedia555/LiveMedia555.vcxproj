@@ -47,7 +47,7 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>$(WINDOWS_SDK)Include\;$(DXSDK_DIR)Include;./usageenvironment/include;./basicusageenvironment/include;./groupsock/include;./livemedia;./livemedia/include;./MediaPortal;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_WIN32;WINNT;__MINGW32__;__GNUC__=4;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_WIN32;WINNT;__GNUC__=4;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <IgnoreStandardIncludePath>false</IgnoreStandardIncludePath>
       <MinimalRebuild>false</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -68,7 +68,7 @@
       <IntrinsicFunctions>false</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <AdditionalIncludeDirectories>$(WINDOWS_SDK)Include\;$(DXSDK_DIR)Include;./usageenvironment/include;./basicusageenvironment/include;./groupsock/include;./livemedia;./livemedia/include;./MediaPortal;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>NDEBUG;WIN32;_WIN32;__MINGW32__;__GNUC__=4;_LIB;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;WIN32;_WIN32;__GNUC__=4;_LIB;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <PrecompiledHeader>
       </PrecompiledHeader>
@@ -81,9 +81,12 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <None Include="BasicUsageEnvironment\include\DelayQueue.hh" />
+    <None Include="groupsock\include\TunnelEncaps.hh" />
     <None Include="liveMedia\EBMLNumber.hh" />
     <None Include="liveMedia\include\AC3AudioFileServerMediaSubsession.hh" />
     <None Include="liveMedia\include\BitVector.hh" />
+    <None Include="liveMedia\include\ByteStreamMemoryBufferSource.hh" />
     <None Include="liveMedia\include\DVVideoFileServerMediaSubsession.hh" />
     <None Include="liveMedia\include\DVVideoRTPSource.hh" />
     <None Include="liveMedia\include\GenericMediaServer.hh" />
@@ -156,7 +159,6 @@
     <None Include="liveMedia\include\Base64.hh" />
     <None Include="liveMedia\include\BasicUDPSink.hh" />
     <None Include="liveMedia\include\BasicUDPSource.hh" />
-    <None Include="liveMedia\BitVector.hh" />
     <None Include="liveMedia\include\ByteStreamFileSource.hh" />
     <None Include="liveMedia\include\ByteStreamMultiFileSource.hh" />
     <None Include="liveMedia\include\DeviceSource.hh" />
@@ -183,7 +185,7 @@
     <None Include="liveMedia\include\JPEGVideoRTPSink.hh" />
     <None Include="liveMedia\include\JPEGVideoRTPSource.hh" />
     <None Include="liveMedia\include\JPEGVideoSource.hh" />
-    <None Include="liveMedia\liveMedia.hh" />
+    <None Include="liveMedia\include\liveMedia.hh" />
     <None Include="liveMedia\include\liveMedia_version.hh" />
     <None Include="liveMedia\include\Locale.hh" />
     <None Include="liveMedia\include\Media.hh" />
@@ -452,8 +454,7 @@
     <ClCompile Include="MediaPortal\MPTaskScheduler.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="liveMedia\include\our_md5.h" />
-    <ClInclude Include="liveMedia\include\rtcp_from_spec.h" />
+    <ClInclude Include="liveMedia\rtcp_from_spec.h" />
     <ClInclude Include="groupsock\include\NetCommon.h" />
     <ClInclude Include="MediaPortal\MPRTSPClient.h" />
     <ClInclude Include="MediaPortal\MPRTSPServer.h" />
