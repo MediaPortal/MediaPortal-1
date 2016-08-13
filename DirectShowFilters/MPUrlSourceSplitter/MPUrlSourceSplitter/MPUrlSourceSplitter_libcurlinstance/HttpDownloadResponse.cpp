@@ -27,6 +27,7 @@ CHttpDownloadResponse::CHttpDownloadResponse(HRESULT *result)
 {
   this->headers = NULL;
   this->responseCode = 0;
+  this->lastUsedUrl = NULL;
 
   if ((result != NULL) && (SUCCEEDED(*result)))
   {
@@ -38,6 +39,7 @@ CHttpDownloadResponse::CHttpDownloadResponse(HRESULT *result)
 CHttpDownloadResponse::~CHttpDownloadResponse(void)
 {
   FREE_MEM_CLASS(this->headers);
+  FREE_MEM(this->lastUsedUrl);
 }
 
 /* get methods */
@@ -57,6 +59,11 @@ long CHttpDownloadResponse::GetResponseCode(void)
   return this->responseCode;
 }
 
+const wchar_t *CHttpDownloadResponse::GetLastUsedUrl(void)
+{
+  return this->lastUsedUrl;
+}
+
 /* set methods */
 
 void CHttpDownloadResponse::SetRangesSupported(bool rangesSupported)
@@ -68,6 +75,11 @@ void CHttpDownloadResponse::SetRangesSupported(bool rangesSupported)
 void CHttpDownloadResponse::SetResponseCode(long responseCode)
 {
   this->responseCode = responseCode;
+}
+
+bool CHttpDownloadResponse::SetLastUsedUrl(const wchar_t *lastUsedUrl)
+{
+  SET_STRING_RETURN_WITH_NULL(this->lastUsedUrl, lastUsedUrl);
 }
 
 /* other methods */

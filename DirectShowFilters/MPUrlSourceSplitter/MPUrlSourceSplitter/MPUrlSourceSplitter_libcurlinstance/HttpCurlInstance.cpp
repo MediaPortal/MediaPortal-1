@@ -580,6 +580,16 @@ size_t CHttpCurlInstance::CurlReceiveData(const unsigned char *buffer, size_t le
     }
 
     responseCode = this->httpDownloadResponse->GetResponseCode();
+
+    char *effectiveUrl = NULL;
+    if (curl_easy_getinfo(this->curl, CURLINFO_EFFECTIVE_URL, &effectiveUrl) == CURLE_OK)
+    {
+      // convert effective URL and set it to download response
+      wchar_t *lastUsedUrl = ConvertToUnicodeA(effectiveUrl);
+      this->httpDownloadResponse->SetLastUsedUrl(lastUsedUrl);
+      FREE_MEM(lastUsedUrl);
+    }
+
     if ((responseCode != 0) && ((responseCode < 200) || (responseCode >= 400)))
     {
       // response code 200 - 299 = OK

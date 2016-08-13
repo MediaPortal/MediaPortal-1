@@ -523,6 +523,14 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::ReceiveData(CStreamPackage *streamPa
           }
 
           this->flags |= (this->configuration->GetValueBool(PARAMETER_NAME_HTTP_SEEKING_SUPPORTED, true, HTTP_SEEKING_SUPPORTED_DEFAULT)) ? MP_URL_SOURCE_SPLITTER_PROTOCOL_HTTP_FLAG_RANGES_SUPPORTED : MP_URL_SOURCE_SPLITTER_PROTOCOL_HTTP_FLAG_NONE;
+
+          // set last used URL to connection parameters
+          this->configuration->Remove(PARAMETER_NAME_HTTP_LAST_USED_URL, true);
+
+          const wchar_t *lastUsedUrl = this->mainCurlInstance->GetHttpDownloadResponse()->GetLastUsedUrl();
+          CHECK_CONDITION_EXECUTE(lastUsedUrl == NULL, lastUsedUrl = this->configuration->GetValue(PARAMETER_NAME_URL, true, NULL));
+
+          this->configuration->Add(PARAMETER_NAME_HTTP_LAST_USED_URL, lastUsedUrl);
         }
       }
     }

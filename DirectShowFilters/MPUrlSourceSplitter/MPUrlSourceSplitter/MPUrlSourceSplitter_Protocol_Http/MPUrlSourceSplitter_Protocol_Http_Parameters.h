@@ -57,6 +57,8 @@
 #define PARAMETER_NAME_HTTP_PROXY_SERVER_PASSWORD                     L"HttpProxyServerPassword"
 #define PARAMETER_NAME_HTTP_PROXY_SERVER_TYPE                         L"HttpProxyServerType"
 
+#define PARAMETER_NAME_HTTP_LAST_USED_URL                             L"HttpLastUsedUrl"
+
 // we should get data in twenty seconds (splitter)
 #define HTTP_OPEN_CONNECTION_TIMEOUT_DEFAULT_SPLITTER                 20000
 #define HTTP_OPEN_CONNECTION_SLEEP_TIME_DEFAULT_SPLITTER              0
