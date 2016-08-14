@@ -32,7 +32,8 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 namespace Mediaportal.TV.Server.Plugins.TunerExtension.TeVii
 {
   /// <summary>
-  /// A class for handling DiSEqC and tuning for TeVii tuners.
+  /// A class for handling DiSEqC, remote controls and tuning for TeVii tuners.
+  /// This class is implemented using the official TeVii SDK/API.
   /// </summary>
   public class TeVii : BaseTunerExtension, ICustomTuner, IDiseqcDevice, IDisposable, IRemoteControlListener
   {

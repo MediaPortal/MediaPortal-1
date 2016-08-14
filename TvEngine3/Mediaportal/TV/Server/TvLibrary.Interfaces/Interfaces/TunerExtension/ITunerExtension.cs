@@ -168,6 +168,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension
         // - TeVii, Hauppauge, Geniatech, Turbosight, DVBSky, Prof and possibly
         //   others all use or implement the same Conexant property set for
         //   DiSEqC support.
+        // - Some TeVii drivers implement an additional unique property set and
+        //   do not implement the Conexant property set.
         // - TeVii hardware can be identified using their SDK DLL.
         // - DVBSky drivers implement an additional unique property set.
         // - Hauppauge drivers implement an additional property set (also
@@ -178,7 +180,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension
         // - Geniatech drivers implement a unique property.
         //
         // The following priority hierarchy is used to avoid problems:
-        // DVBSky, TeVii [75] > Hauppauge, Turbosight [70] > Prof (USB) [65] > Prof (PCI, PCIe) [60] > Geniatech [50] > Conexant [40]
+        // DVBSky, TeVii SDK/API [75] > Hauppauge, TeVii BDA, Turbosight [70] > Prof (USB) [65] > Prof (PCI, PCIe) [60] > Geniatech [50] > Conexant [40]
         //
         // OTHER
         // - KNC and Omicom implement the same property set for DiSEqC support.
