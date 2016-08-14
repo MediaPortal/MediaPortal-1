@@ -43,7 +43,7 @@ class CDiskRecorder
 {
   public:
     CDiskRecorder(RecorderMode mode);
-    ~CDiskRecorder(void);
+    ~CDiskRecorder();
   
     HRESULT SetPmt(unsigned char* pmt,
                     unsigned short pmtSize,

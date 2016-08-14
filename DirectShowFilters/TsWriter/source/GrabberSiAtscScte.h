@@ -63,7 +63,7 @@ class CGrabberSiAtscScte
                         ICallBackSiAtscScte* callBack,
                         LPUNKNOWN unk,
                         HRESULT* hr);
-    virtual ~CGrabberSiAtscScte(void);
+    virtual ~CGrabberSiAtscScte();
 
     DECLARE_IUNKNOWN
 

@@ -46,7 +46,7 @@ class CGrabberEpgAtsc
 {
   public:
     CGrabberEpgAtsc(ICallBackPidConsumer* callBack, LPUNKNOWN unk, HRESULT* hr);
-    virtual ~CGrabberEpgAtsc(void);
+    virtual ~CGrabberEpgAtsc();
 
     DECLARE_IUNKNOWN
 

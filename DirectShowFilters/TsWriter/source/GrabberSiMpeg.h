@@ -49,7 +49,7 @@ class CGrabberSiMpeg
                     IEncryptionAnalyser* analyser,
                     LPUNKNOWN unk,
                     HRESULT* hr);
-    virtual ~CGrabberSiMpeg(void);
+    virtual ~CGrabberSiMpeg();
 
     DECLARE_IUNKNOWN
 

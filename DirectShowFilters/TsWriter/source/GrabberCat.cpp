@@ -31,7 +31,7 @@ using namespace std;
 
 extern void LogDebug(const wchar_t* fmt, ...);
 
-CGrabberCat::CGrabberCat(void)
+CGrabberCat::CGrabberCat()
 {
   m_isReady = false;
   m_version = VERSION_NOT_SET;
@@ -40,7 +40,7 @@ CGrabberCat::CGrabberCat(void)
   SetCallBack(NULL);
 }
 
-CGrabberCat::~CGrabberCat(void)
+CGrabberCat::~CGrabberCat()
 {
   SetCallBack(NULL);
 }

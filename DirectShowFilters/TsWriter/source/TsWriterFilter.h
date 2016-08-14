@@ -46,7 +46,7 @@ class CTsWriterFilter : public CBaseFilter
                     CCritSec* filterLock,
                     CCritSec& receiveLock,
                     HRESULT* hr);
-    virtual ~CTsWriterFilter(void);
+    virtual ~CTsWriterFilter();
 
     CBasePin* GetPin(int n);
     int GetPinCount();

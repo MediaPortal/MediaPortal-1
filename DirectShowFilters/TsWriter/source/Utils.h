@@ -19,7 +19,7 @@
  *
  */
 #pragma once
-#include <algorithm>
+#include <algorithm>  // copy(), min()
 #include <cstring>    // strcmp(), strlen(), strncpy()
 #include <map>
 #include <sstream>

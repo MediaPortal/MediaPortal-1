@@ -78,7 +78,7 @@ class CParserOpenTv
 {
   public:
     CParserOpenTv(ICallBackPidConsumer* callBack, LPUNKNOWN unk, HRESULT* hr);
-    virtual ~CParserOpenTv(void);
+    virtual ~CParserOpenTv();
 
     DECLARE_IUNKNOWN
 
@@ -123,7 +123,7 @@ class CParserOpenTv
     class CRecordOpenTvEvent : public IRecord
     {
       public:
-        CRecordOpenTvEvent(void)
+        CRecordOpenTvEvent()
         {
           Pid = 0;
           TableId = 0;
@@ -139,7 +139,7 @@ class CParserOpenTv
           ParentalRating = 0;
         }
 
-        ~CRecordOpenTvEvent(void)
+        ~CRecordOpenTvEvent()
         {
           if (Title != NULL)
           {
@@ -207,7 +207,7 @@ class CParserOpenTv
     class CRecordOpenTvEventDescription : public IRecord
     {
       public:
-        CRecordOpenTvEventDescription(void)
+        CRecordOpenTvEventDescription()
         {
           Pid = 0;
           TableId = 0;
@@ -218,7 +218,7 @@ class CParserOpenTv
           SeriesLinkId = 0xffff;      // not available
         }
 
-        ~CRecordOpenTvEventDescription(void)
+        ~CRecordOpenTvEventDescription()
         {
           if (ShortDescription != NULL)
           {

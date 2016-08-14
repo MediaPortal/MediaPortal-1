@@ -45,8 +45,8 @@ extern void LogDebug(const wchar_t* fmt, ...);
 class CParserSdt : public CSectionDecoder, public IDefaultAuthorityProvider
 {
   public:
-    CParserSdt(void);
-    virtual ~CParserSdt(void);
+    CParserSdt();
+    virtual ~CParserSdt();
 
     void Reset(bool enableCrcCheck);
     void SetCallBack(ICallBackSdt* callBack);
@@ -124,7 +124,7 @@ class CParserSdt : public CSectionDecoder, public IDefaultAuthorityProvider
     class CRecordSdt : public IRecord
     {
       public:
-        CRecordSdt(void)
+        CRecordSdt()
         {
           TableId = 0;
           OriginalNetworkId = 0;
@@ -156,7 +156,7 @@ class CParserSdt : public CSectionDecoder, public IDefaultAuthorityProvider
           DefaultAuthority = NULL;
         }
 
-        ~CRecordSdt(void)
+        ~CRecordSdt()
         {
           CUtils::CleanUpStringSet(ProviderNames);
           CUtils::CleanUpStringSet(ServiceNames);

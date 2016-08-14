@@ -27,6 +27,7 @@
 #include "MultiFileWriter.h"
 #include <cstddef>      // NULL
 #include <cstring>      // memcpy()
+#include <cwchar>       // wcscpy(), wcslen(), wcstol()
 #include <Windows.h>    // CloseHandle(), CreateFileW(), GetDiskFreeSpaceEx(), GetVolumePathName(), MAX_PATH
 
 using namespace std;
@@ -553,13 +554,13 @@ bool MultiFileWriter::IsFileInUse(wchar_t* fileName)
     return false;
   }
 
-  HANDLE fileHandle = CreateFileW(fileName,       // file name
-                                  GENERIC_READ,   // file access
-                                  0,              // share access
-                                  0,              // security
-                                  OPEN_EXISTING,  // open flags
-                                  0,              // more flags
-                                  NULL);          // template
+  HANDLE fileHandle = CreateFileW(fileName,               // file name
+                                  GENERIC_READ,           // file access
+                                  0,                      // share access
+                                  NULL,                   // security
+                                  OPEN_EXISTING,          // open flags
+                                  FILE_ATTRIBUTE_NORMAL,  // more flags
+                                  NULL);                  // template
   if (fileHandle == INVALID_HANDLE_VALUE)
   {
     return true;

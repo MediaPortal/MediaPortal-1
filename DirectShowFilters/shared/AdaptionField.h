@@ -27,7 +27,7 @@ class CAdaptionField
 public:
   CAdaptionField();
   CAdaptionField(CTsHeader& header, byte* tsPacket);
-  virtual ~CAdaptionField(void);
+  virtual ~CAdaptionField();
   void Decode(CTsHeader& header, byte *tsPacket);
 
   bool DiscontinuityIndicator;

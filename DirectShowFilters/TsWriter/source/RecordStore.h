@@ -29,7 +29,7 @@ class CRecordStore
 {
   public:
     CRecordStore(unsigned long expiryTimeout);
-    virtual ~CRecordStore(void);
+    virtual ~CRecordStore();
 
     bool AddOrUpdateRecord(IRecord** record, void* callBack);
     void MarkExpiredRecords(unsigned long long key);

@@ -30,7 +30,7 @@ CTsChannel::CTsChannel(unsigned long id)
   Id = id;
 }
 
-CTsChannel::~CTsChannel(void)
+CTsChannel::~CTsChannel()
 {
 }
 

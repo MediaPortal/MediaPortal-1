@@ -45,7 +45,7 @@ class CGrabberSiDvb
 {
   public:
     CGrabberSiDvb(ICallBackSiDvb* callBack, LPUNKNOWN unk, HRESULT* hr);
-    virtual ~CGrabberSiDvb(void);
+    virtual ~CGrabberSiDvb();
 
     DECLARE_IUNKNOWN
 

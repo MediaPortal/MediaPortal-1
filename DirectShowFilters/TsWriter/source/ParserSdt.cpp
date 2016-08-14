@@ -19,7 +19,7 @@
  *
  */
 #include "ParserSdt.h"
-#include <algorithm>
+#include <algorithm>    // find()
 #include <cstring>      // strcmp(), strncmp(), strncpy()
 #include "..\..\shared\TimeUtils.h"
 #include "EnterCriticalSection.h"
@@ -38,7 +38,7 @@
 
 extern void LogDebug(const wchar_t* fmt, ...);
 
-CParserSdt::CParserSdt(void) : m_records(600000)
+CParserSdt::CParserSdt() : m_records(600000)
 {
   m_isOtherReady = false;
   m_otherCompleteTime = 0;
@@ -52,7 +52,7 @@ CParserSdt::CParserSdt(void) : m_records(600000)
   SetCallBack(NULL);
 }
 
-CParserSdt::~CParserSdt(void)
+CParserSdt::~CParserSdt()
 {
   SetCallBack(NULL);
 }

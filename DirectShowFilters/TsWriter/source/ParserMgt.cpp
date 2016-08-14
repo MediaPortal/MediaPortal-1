@@ -19,7 +19,7 @@
  *
  */
 #include "ParserMgt.h"
-#include <algorithm>
+#include <algorithm>    // find()
 #include "EnterCriticalSection.h"
 
 
@@ -31,7 +31,7 @@ CParserMgt::CParserMgt(unsigned short pid) : m_records(600000)
   SetCallBack(NULL);
 }
 
-CParserMgt::~CParserMgt(void)
+CParserMgt::~CParserMgt()
 {
   SetCallBack(NULL);
 }

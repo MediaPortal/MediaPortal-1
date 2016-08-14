@@ -63,7 +63,7 @@ class CParserMhw : public CUnknown, public IGrabberEpgMhw, ISectionCallback
 {
   public:
     CParserMhw(ICallBackPidConsumer* callBack, LPUNKNOWN unk, HRESULT* hr);
-    virtual ~CParserMhw(void);
+    virtual ~CParserMhw();
 
     DECLARE_IUNKNOWN
 
@@ -105,7 +105,7 @@ class CParserMhw : public CUnknown, public IGrabberEpgMhw, ISectionCallback
     class CRecordMhwChannel : public IRecord
     {
       public:
-        CRecordMhwChannel(void)
+        CRecordMhwChannel()
         {
           Version = 1;
           Id = 0;
@@ -115,7 +115,7 @@ class CParserMhw : public CUnknown, public IGrabberEpgMhw, ISectionCallback
           Name = NULL;
         }
 
-        ~CRecordMhwChannel(void)
+        ~CRecordMhwChannel()
         {
           if (Name != NULL)
           {
@@ -170,7 +170,7 @@ class CParserMhw : public CUnknown, public IGrabberEpgMhw, ISectionCallback
     class CRecordMhwEvent : public IRecord
     {
       public:
-        CRecordMhwEvent(void)
+        CRecordMhwEvent()
         {
           Version = 1;
           EventId = 0;
@@ -184,7 +184,7 @@ class CParserMhw : public CUnknown, public IGrabberEpgMhw, ISectionCallback
           PayPerViewId = 0;
         }
 
-        ~CRecordMhwEvent(void)
+        ~CRecordMhwEvent()
         {
           if (Title != NULL)
           {
@@ -248,14 +248,14 @@ class CParserMhw : public CUnknown, public IGrabberEpgMhw, ISectionCallback
     class CRecordMhwDescription : public IRecord
     {
       public:
-        CRecordMhwDescription(void)
+        CRecordMhwDescription()
         {
           Version = 1;
           EventId = 0;
           Description = NULL;
         }
 
-        ~CRecordMhwDescription(void)
+        ~CRecordMhwDescription()
         {
           if (Description != NULL)
           {
@@ -333,7 +333,7 @@ class CParserMhw : public CUnknown, public IGrabberEpgMhw, ISectionCallback
     class CRecordMhwTheme : public IRecord
     {
       public:
-        CRecordMhwTheme(void)
+        CRecordMhwTheme()
         {
           Version = 1;
           Id = 0;
@@ -341,7 +341,7 @@ class CParserMhw : public CUnknown, public IGrabberEpgMhw, ISectionCallback
           Name = NULL;
         }
 
-        ~CRecordMhwTheme(void)
+        ~CRecordMhwTheme()
         {
           if (Name != NULL)
           {

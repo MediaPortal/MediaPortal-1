@@ -30,8 +30,8 @@
 class CSectionDecoder
 {
   public:
-    CSectionDecoder(void);
-    virtual ~CSectionDecoder(void);
+    CSectionDecoder();
+    virtual ~CSectionDecoder();
 
     void Reset();
     void SetCallBack(ISectionCallback* callBack);

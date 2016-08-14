@@ -19,7 +19,7 @@
  *
  */
 #include "ParserNtt.h"
-#include <algorithm>
+#include <algorithm>    // find()
 #include <cstring>      // strlen(), strncpy()
 #include <map>
 #include "..\..\shared\TimeUtils.h"
@@ -30,7 +30,7 @@
 
 extern void LogDebug(const wchar_t* fmt, ...);
 
-CParserNtt::CParserNtt(void)
+CParserNtt::CParserNtt()
   : m_recordsTransponderName(600000), m_recordsSatelliteText(600000),
     m_recordsRatingsText(600000), m_recordsRatingSystem(600000),
     m_recordsSourceName(600000), m_recordsMapName(600000),
@@ -42,7 +42,7 @@ CParserNtt::CParserNtt(void)
   SetCallBack(NULL);
 }
 
-CParserNtt::~CParserNtt(void)
+CParserNtt::~CParserNtt()
 {
   SetCallBack(NULL);
 }

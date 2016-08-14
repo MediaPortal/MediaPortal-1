@@ -19,6 +19,7 @@
  *
  */
 #include "ParserBat.h"
+#include <cwchar>     // wcsncpy()
 #include <sstream>
 #include "EnterCriticalSection.h"
 
@@ -26,14 +27,14 @@ using namespace MediaPortal;
 using namespace std;
 
 
-CParserBat::CParserBat(void)
+CParserBat::CParserBat()
 {
   CParserBat::SetPid(PID_BAT);
   m_tableIds.clear();
   m_tableIds.push_back(TABLE_ID_BAT);
 }
 
-CParserBat::~CParserBat(void)
+CParserBat::~CParserBat()
 {
   CEnterCriticalSection lock(m_section);
   CleanUp();

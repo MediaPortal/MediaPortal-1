@@ -29,8 +29,8 @@
 class CParserBat : public CParserNitDvb
 {
   public:
-    CParserBat(void);
-    virtual ~CParserBat(void);
+    CParserBat();
+    virtual ~CParserBat();
 
     void SetPid(unsigned short pid);
     bool IsSeen() const;

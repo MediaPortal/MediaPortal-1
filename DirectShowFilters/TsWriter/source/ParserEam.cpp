@@ -40,7 +40,7 @@ CParserEam::CParserEam(unsigned short pid)
   m_latestRecord = NULL;
 }
 
-CParserEam::~CParserEam(void)
+CParserEam::~CParserEam()
 {
   CEnterCriticalSection lock(m_section);
   m_callBack = NULL;

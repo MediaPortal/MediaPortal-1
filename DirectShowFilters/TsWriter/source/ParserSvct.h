@@ -39,8 +39,8 @@ extern void LogDebug(const wchar_t* fmt, ...);
 class CParserSvct
 {
   public:
-    CParserSvct(void);
-    virtual ~CParserSvct(void);
+    CParserSvct();
+    virtual ~CParserSvct();
 
     void Reset();
     void SetCallBack(ICallBackSvct* callBack);
@@ -105,14 +105,14 @@ class CParserSvct
     class CRecordSvct : public IRecord
     {
       public:
-        CRecordSvct(void)
+        CRecordSvct()
         {
           TransmissionMedium = 0;
           VctId = 0;
           VirtualChannelNumber = 0;
         }
 
-        virtual ~CRecordSvct(void)
+        virtual ~CRecordSvct()
         {
         }
 
@@ -144,11 +144,11 @@ class CParserSvct
     class CRecordSvctDefinedChannel : public CRecordSvct
     {
       public:
-        CRecordSvctDefinedChannel(void)
+        CRecordSvctDefinedChannel()
         {
         }
 
-        ~CRecordSvctDefinedChannel(void)
+        ~CRecordSvctDefinedChannel()
         {
         }
 
@@ -205,7 +205,7 @@ class CParserSvct
     class CRecordSvctVirtualChannel : public CRecordSvct
     {
       public:
-        CRecordSvctVirtualChannel(void)
+        CRecordSvctVirtualChannel()
         {
           Splice = false;
           ActivationTime = 0;
@@ -249,7 +249,7 @@ class CParserSvct
           ServiceType = 0;
         }
 
-        ~CRecordSvctVirtualChannel(void)
+        ~CRecordSvctVirtualChannel()
         {
         }
 
@@ -503,12 +503,12 @@ class CParserSvct
     class CRecordSvctInverseChannel : public CRecordSvct
     {
       public:
-        CRecordSvctInverseChannel(void)
+        CRecordSvctInverseChannel()
         {
           SourceId = 0;
         }
 
-        ~CRecordSvctInverseChannel(void)
+        ~CRecordSvctInverseChannel()
         {
         }
 

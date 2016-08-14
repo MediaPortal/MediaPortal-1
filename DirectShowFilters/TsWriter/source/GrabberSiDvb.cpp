@@ -43,7 +43,7 @@ CGrabberSiDvb::CGrabberSiDvb(ICallBackSiDvb* callBack, LPUNKNOWN unk, HRESULT* h
   m_parserSdt.SetCallBack(this);
 }
 
-CGrabberSiDvb::~CGrabberSiDvb(void)
+CGrabberSiDvb::~CGrabberSiDvb()
 {
   CEnterCriticalSection lock(m_section);
   m_callBackGrabber = NULL;

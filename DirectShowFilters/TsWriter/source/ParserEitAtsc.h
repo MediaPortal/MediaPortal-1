@@ -42,7 +42,7 @@ class CParserEitAtsc : public CSectionDecoder
 {
   public:
     CParserEitAtsc(unsigned short pid);
-    virtual ~CParserEitAtsc(void);
+    virtual ~CParserEitAtsc();
 
     void Reset(bool enableCrcCheck);
     void SetCallBack(ICallBackTableParser* callBack);
@@ -81,7 +81,7 @@ class CParserEitAtsc : public CSectionDecoder
     class CRecordEit : public IRecord
     {
       public:
-        CRecordEit(void)
+        CRecordEit()
         {
           SourceId = 0;
           EventId = 0;
@@ -93,7 +93,7 @@ class CParserEitAtsc : public CSectionDecoder
           Advisories = 0;             // default: [not available]
         }
 
-        ~CRecordEit(void)
+        ~CRecordEit()
         {
           CUtils::CleanUpStringSet(Titles);
         }

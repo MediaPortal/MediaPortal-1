@@ -19,7 +19,7 @@
  *
  */
 #include "ParserSvct.h"
-#include <algorithm>
+#include <algorithm>    // find()
 #include <map>
 #include "..\..\shared\TimeUtils.h"
 #include "EnterCriticalSection.h"
@@ -27,7 +27,7 @@
 
 extern void LogDebug(const wchar_t* fmt, ...);
 
-CParserSvct::CParserSvct(void)
+CParserSvct::CParserSvct()
   : m_recordsDefinedChannel(600000),
     m_recordsVirtualChannel(600000),
     m_recordsInverseChannel(600000)
@@ -37,7 +37,7 @@ CParserSvct::CParserSvct(void)
   SetCallBack(NULL);
 }
 
-CParserSvct::~CParserSvct(void)
+CParserSvct::~CParserSvct()
 {
   SetCallBack(NULL);
 }

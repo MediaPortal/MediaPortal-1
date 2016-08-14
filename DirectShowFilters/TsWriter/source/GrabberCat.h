@@ -34,8 +34,8 @@ using namespace MediaPortal;
 class CGrabberCat : public CSectionDecoder
 {
   public:
-    CGrabberCat(void);
-    ~CGrabberCat(void);
+    CGrabberCat();
+    ~CGrabberCat();
 
     void Reset();
     void SetCallBack(ICallBackCat* callBack);

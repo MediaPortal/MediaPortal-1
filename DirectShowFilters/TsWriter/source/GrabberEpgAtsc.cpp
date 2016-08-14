@@ -51,7 +51,7 @@ CGrabberEpgAtsc::CGrabberEpgAtsc(ICallBackPidConsumer* callBack, LPUNKNOWN unk, 
   m_currentEventSourceId = 0;
 }
 
-CGrabberEpgAtsc::~CGrabberEpgAtsc(void)
+CGrabberEpgAtsc::~CGrabberEpgAtsc()
 {
   CEnterCriticalSection lock(m_section);
   m_callBackGrabber = NULL;

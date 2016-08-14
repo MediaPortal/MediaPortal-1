@@ -40,8 +40,8 @@ extern void LogDebug(const wchar_t* fmt, ...);
 class CParserPat : public CSectionDecoder
 {
   public:
-    CParserPat(void);
-    virtual ~CParserPat(void);
+    CParserPat();
+    virtual ~CParserPat();
 
     void Reset();
     void SetCallBack(ICallBackPat* callBack);
@@ -60,13 +60,13 @@ class CParserPat : public CSectionDecoder
     class CRecordPat : public IRecord
     {
       public:
-        CRecordPat(void)
+        CRecordPat()
         {
           ProgramNumber = 0;
           Pid = 0;
         }
 
-        ~CRecordPat(void)
+        ~CRecordPat()
         {
         }
 

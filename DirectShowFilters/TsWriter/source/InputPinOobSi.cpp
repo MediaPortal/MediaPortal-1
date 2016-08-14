@@ -19,6 +19,7 @@
  *
  */
 #include "InputPinOobSi.h"
+#include <algorithm>    // min()
 #include <cstddef>      // NULL
 #include <cstring>      // memcpy()
 
@@ -45,9 +46,10 @@ CInputPinOobSi::CInputPinOobSi(ITsAnalyser* analyser,
   m_analyser = analyser;
   m_receiveTime = NOT_RECEIVING;
   m_isDumpEnabled = false;
+  m_enableCrcCheck = true;
 }
 
-CInputPinOobSi::~CInputPinOobSi(void)
+CInputPinOobSi::~CInputPinOobSi()
 {
   StopDumping();
 }

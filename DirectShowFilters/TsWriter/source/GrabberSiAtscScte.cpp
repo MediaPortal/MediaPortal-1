@@ -19,6 +19,7 @@
  *
  */
 #include "GrabberSiAtscScte.h"
+#include <algorithm>      // min()
 #include "EnterCriticalSection.h"
 
 
@@ -52,7 +53,7 @@ CGrabberSiAtscScte::CGrabberSiAtscScte(unsigned short pid,
   m_parserSvct.SetCallBack(this);
 }
 
-CGrabberSiAtscScte::~CGrabberSiAtscScte(void)
+CGrabberSiAtscScte::~CGrabberSiAtscScte()
 {
   CEnterCriticalSection lock(m_section);
   m_callBackGrabber = NULL;

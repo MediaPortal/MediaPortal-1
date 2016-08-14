@@ -19,7 +19,7 @@
  *
  */
 #include "ParserPat.h"
-#include <algorithm>
+#include <algorithm>    // find()
 #include "EnterCriticalSection.h"
 
 
@@ -28,7 +28,7 @@
 
 extern void LogDebug(const wchar_t* fmt, ...);
 
-CParserPat::CParserPat(void) : m_records(600000)
+CParserPat::CParserPat() : m_records(600000)
 {
   m_isReady = false;
   m_version = VERSION_NOT_SET;
@@ -39,7 +39,7 @@ CParserPat::CParserPat(void) : m_records(600000)
   SetCallBack(NULL);
 }
 
-CParserPat::~CParserPat(void)
+CParserPat::~CParserPat()
 {
   SetCallBack(NULL);
 }

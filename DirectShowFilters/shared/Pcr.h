@@ -28,7 +28,7 @@ class CPcr
 public:
   CPcr();
   CPcr(const CPcr& pcr);
-  virtual ~CPcr(void);
+  virtual ~CPcr();
   void   Reset();
   void   Decode(unsigned char* data);
   static bool DecodeFromPesHeader(unsigned char* pesHeader,int payloadStart,CPcr& pts, CPcr& dts);

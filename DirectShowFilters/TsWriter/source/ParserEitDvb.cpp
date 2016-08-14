@@ -19,6 +19,7 @@
  *
  */
 #include "ParserEitDvb.h"
+#include <algorithm>    // find()
 #include <cstring>      // memcpy(), strcmp(), strlen(), strncpy()
 #include <iomanip>
 #include <time.h>       // gmtime(), mktime(), time_t, tm
@@ -102,7 +103,7 @@ CParserEitDvb::CParserEitDvb(ICallBackPidConsumer* callBack,
   m_referenceEventId = 0;
 }
 
-CParserEitDvb::~CParserEitDvb(void)
+CParserEitDvb::~CParserEitDvb()
 {
   CEnterCriticalSection lock(m_section);
   m_callBackGrabber = NULL;

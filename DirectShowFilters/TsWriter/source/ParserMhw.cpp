@@ -56,7 +56,7 @@ CParserMhw::CParserMhw(ICallBackPidConsumer* callBack, LPUNKNOWN unk, HRESULT* h
   m_enableCrcCheck = true;
 }
 
-CParserMhw::~CParserMhw(void)
+CParserMhw::~CParserMhw()
 {
   CEnterCriticalSection lock(m_section);
   m_callBackGrabber = NULL;

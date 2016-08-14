@@ -26,15 +26,15 @@
 class CPacketSync
 {
 public:
-  CPacketSync(void);
+  CPacketSync();
 
 public:
-  virtual ~CPacketSync(void);
+  virtual ~CPacketSync();
   void OnRawData(unsigned char* pData, int nDataLen);
   void OnRawData2(unsigned char* pData, int nDataLen);
   virtual void OnTsPacket(unsigned char* tsPacket);
   virtual void OnTsPacket(unsigned char* tsPacket, int bufferOffset, int bufferLength);
-  void Reset(void);
+  void Reset();
 
 private:
   unsigned char  m_tempBuffer[400];

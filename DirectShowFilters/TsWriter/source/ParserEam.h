@@ -41,7 +41,7 @@ class CParserEam
 {
   public:
     CParserEam(unsigned short pid);
-    virtual ~CParserEam(void);
+    virtual ~CParserEam();
 
     void Reset();
     void SetCallBack(ICallBackEam* callBack);
@@ -84,7 +84,7 @@ class CParserEam
     class CRecordEam : public IRecord
     {
       public:
-        CRecordEam(void)
+        CRecordEam()
         {
           Id = 0;
           OriginatorCode = 0;
@@ -101,7 +101,7 @@ class CParserEam
           AudioOobSourceId = 0;
         }
 
-        ~CRecordEam(void)
+        ~CRecordEam()
         {
           if (EventCode != NULL)
           {

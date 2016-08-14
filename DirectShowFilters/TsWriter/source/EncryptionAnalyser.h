@@ -33,8 +33,8 @@ using namespace std;
 class CEncryptionAnalyser : public IEncryptionAnalyser
 {
   public:
-    CEncryptionAnalyser(void);
-    virtual ~CEncryptionAnalyser(void);
+    CEncryptionAnalyser();
+    virtual ~CEncryptionAnalyser();
 
     void Reset();
     void SetCallBack(ICallBackEncryptionAnalyser* callBack);

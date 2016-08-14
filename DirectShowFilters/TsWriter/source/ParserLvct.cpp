@@ -19,7 +19,7 @@
  *
  */
 #include "ParserLvct.h"
-#include <algorithm>
+#include <algorithm>    // find()
 #include "..\..\shared\BasePmtParser.h"
 #include "..\..\shared\PidTable.h"
 #include "..\..\shared\TimeUtils.h"
@@ -47,7 +47,7 @@ CParserLvct::CParserLvct(unsigned short pid) : m_records(600000)
   m_currentRecordIndex = 0xffff;
 }
 
-CParserLvct::~CParserLvct(void)
+CParserLvct::~CParserLvct()
 {
   SetCallBack(NULL);
 }

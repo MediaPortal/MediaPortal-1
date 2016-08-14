@@ -19,6 +19,7 @@
  *
  */
 #include "ParserEitAtsc.h"
+#include <algorithm>    // find()
 #include "..\..\shared\TimeUtils.h"
 #include "EnterCriticalSection.h"
 #include "TextUtil.h"
@@ -52,7 +53,7 @@ CParserEitAtsc::CParserEitAtsc(unsigned short pid) : m_records(600000)
   m_currentRecordIndex = 0xffffffff;
 }
 
-CParserEitAtsc::~CParserEitAtsc(void)
+CParserEitAtsc::~CParserEitAtsc()
 {
   SetCallBack(NULL);
 }

@@ -44,8 +44,8 @@ extern void LogDebug(const wchar_t* fmt, ...);
 class CParserNitDvb : public CSectionDecoder, public IDefaultAuthorityProvider
 {
   public:
-    CParserNitDvb(void);
-    virtual ~CParserNitDvb(void);
+    CParserNitDvb();
+    virtual ~CParserNitDvb();
 
     void SetPid(unsigned short pid);
     void Reset(bool enableCrcCheck);
@@ -201,7 +201,7 @@ class CParserNitDvb : public CSectionDecoder, public IDefaultAuthorityProvider
           DefaultAuthority = NULL;
         }
 
-        ~CRecordNitService(void)
+        ~CRecordNitService()
         {
           // Do not dispose the table name!
           if (DefaultAuthority != NULL)
@@ -394,7 +394,7 @@ class CParserNitDvb : public CSectionDecoder, public IDefaultAuthorityProvider
     class CRecordNitTransmitter : public IRecord
     {
       public:
-        CRecordNitTransmitter(void)
+        CRecordNitTransmitter()
         {
           TableKey = 0;
           TableId = 0;
@@ -404,7 +404,7 @@ class CParserNitDvb : public CSectionDecoder, public IDefaultAuthorityProvider
           IsHomeTransmitter = false;
         }
 
-        virtual ~CRecordNitTransmitter(void)
+        virtual ~CRecordNitTransmitter()
         {
         }
 
@@ -458,7 +458,7 @@ class CParserNitDvb : public CSectionDecoder, public IDefaultAuthorityProvider
     class CRecordNitTransmitterCable : public CRecordNitTransmitter
     {
       public:
-        CRecordNitTransmitterCable(void)
+        CRecordNitTransmitterCable()
         {
           OuterFecMethod = 0;
           Modulation = 0;
@@ -472,7 +472,7 @@ class CParserNitDvb : public CSectionDecoder, public IDefaultAuthorityProvider
           GuardInterval = 0;
         }
 
-        ~CRecordNitTransmitterCable(void)
+        ~CRecordNitTransmitterCable()
         {
         }
 
@@ -628,7 +628,7 @@ class CParserNitDvb : public CSectionDecoder, public IDefaultAuthorityProvider
     class CRecordNitTransmitterSatellite : public CRecordNitTransmitter
     {
       public:
-        CRecordNitTransmitterSatellite(void)
+        CRecordNitTransmitterSatellite()
         {
           OrbitalPosition = 0;
           WestEastFlag = false;
@@ -644,7 +644,7 @@ class CParserNitDvb : public CSectionDecoder, public IDefaultAuthorityProvider
           InputStreamIdentifier = 0;
         }
 
-        ~CRecordNitTransmitterSatellite(void)
+        ~CRecordNitTransmitterSatellite()
         {
         }
 
@@ -814,7 +814,7 @@ class CParserNitDvb : public CSectionDecoder, public IDefaultAuthorityProvider
     class CRecordNitTransmitterTerrestrial : public CRecordNitTransmitter
     {
       public:
-        CRecordNitTransmitterTerrestrial(void)
+        CRecordNitTransmitterTerrestrial()
         {
           Bandwidth = 0;
           IsHighPriority = false;
@@ -837,7 +837,7 @@ class CParserNitDvb : public CSectionDecoder, public IDefaultAuthorityProvider
           CellIdExtension = 0;
         }
 
-        ~CRecordNitTransmitterTerrestrial(void)
+        ~CRecordNitTransmitterTerrestrial()
         {
         }
 

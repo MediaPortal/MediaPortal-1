@@ -42,7 +42,7 @@ class CParserLvct
 {
   public:
     CParserLvct(unsigned short pid);
-    virtual ~CParserLvct(void);
+    virtual ~CParserLvct();
 
     void Reset();
     void SetCallBack(ICallBackLvct* callBack);
@@ -93,7 +93,7 @@ class CParserLvct
     class CRecordLvct : public IRecord
     {
       public:
-        CRecordLvct(void)
+        CRecordLvct()
         {
           TableId = 0;
           SectionTransportStreamId = 0;
@@ -118,7 +118,7 @@ class CParserLvct
           IsThreeDimensional = false;
         }
 
-        ~CRecordLvct(void)
+        ~CRecordLvct()
         {
           if (ShortName != NULL)
           {

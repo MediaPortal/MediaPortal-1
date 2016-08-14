@@ -25,7 +25,7 @@ class CTsHeader
   public:
     CTsHeader();
     CTsHeader(unsigned char* tsPacket);
-    virtual ~CTsHeader(void);
+    virtual ~CTsHeader();
 
     void Decode(unsigned char* data);
     void LogHeader();

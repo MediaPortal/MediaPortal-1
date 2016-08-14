@@ -40,7 +40,7 @@ class CGrabberPmt : public CSectionDecoder
 {
   public:
     CGrabberPmt(IEncryptionAnalyser* analyser);
-    virtual ~CGrabberPmt(void);
+    virtual ~CGrabberPmt();
 
     void Reset();
     void SetFilter(unsigned short pid, unsigned short programNumber);

@@ -27,7 +27,7 @@ class CTsChannel
 {
   public:
     CTsChannel(unsigned long id);
-    virtual ~CTsChannel(void);
+    virtual ~CTsChannel();
 
     void OnTsPacket(CTsHeader& header, unsigned char* tsPacket);
 

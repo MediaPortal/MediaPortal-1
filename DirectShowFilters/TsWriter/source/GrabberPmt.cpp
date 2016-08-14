@@ -19,7 +19,7 @@
  *
  */
 #include "GrabberPmt.h"
-#include <algorithm>
+#include <algorithm>  // find()
 #include <cstddef>    // NULL
 #include <cstring>    // memcpy()
 #include "..\..\shared\TimeUtils.h"
@@ -42,7 +42,7 @@ CGrabberPmt::CGrabberPmt(IEncryptionAnalyser* analyser)
   SetCallBack(NULL);
 }
 
-CGrabberPmt::~CGrabberPmt(void)
+CGrabberPmt::~CGrabberPmt()
 {
   m_encryptionAnalyser = NULL;
   SetCallBack(NULL);

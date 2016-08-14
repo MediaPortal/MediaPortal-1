@@ -27,8 +27,8 @@
 class CSection
 {
   public:
-    CSection(void);
-    virtual ~CSection(void);
+    CSection();
+    virtual ~CSection();
 
     void Reset();
     unsigned short AppendData(const unsigned char* data, unsigned long dataLength);

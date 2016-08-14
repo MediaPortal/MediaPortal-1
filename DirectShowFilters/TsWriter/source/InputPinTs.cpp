@@ -43,7 +43,7 @@ CInputPinTs::CInputPinTs(ITsAnalyser* analyser,
   m_isDumpEnabled = false;
 }
 
-CInputPinTs::~CInputPinTs(void)
+CInputPinTs::~CInputPinTs()
 {
   StopDumping();
 }

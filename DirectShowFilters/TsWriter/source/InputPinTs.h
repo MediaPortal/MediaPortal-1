@@ -47,7 +47,7 @@ class CInputPinTs : public CRenderedInputPin, CPacketSync
                 CCritSec* filterLock,
                 CCritSec& receiveLock,
                 HRESULT* hr);
-    virtual ~CInputPinTs(void);
+    virtual ~CInputPinTs();
 
     HRESULT BreakConnect();
     HRESULT CheckMediaType(const CMediaType* mediaType);

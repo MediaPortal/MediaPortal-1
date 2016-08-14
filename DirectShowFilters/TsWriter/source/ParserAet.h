@@ -53,7 +53,7 @@ class CParserAet
 {
   public:
     CParserAet(ICallBackPidConsumer* callBack, LPUNKNOWN unk, HRESULT* hr);
-    virtual ~CParserAet(void);
+    virtual ~CParserAet();
 
     DECLARE_IUNKNOWN
 
@@ -106,7 +106,7 @@ class CParserAet
     class CRecordAeit : public IRecord
     {
       public:
-        CRecordAeit(void)
+        CRecordAeit()
         {
           Pid = 0;
           MgtTag = 0;
@@ -120,7 +120,7 @@ class CParserAet
           Advisories = 0;               // default: [not available]
         }
 
-        ~CRecordAeit(void)
+        ~CRecordAeit()
         {
           CUtils::CleanUpStringSet(Titles);
         }
@@ -196,7 +196,7 @@ class CParserAet
     class CRecordAett : public IRecord
     {
       public:
-        CRecordAett(void)
+        CRecordAett()
         {
           Pid = 0;
           MgtTag = 0;
@@ -204,7 +204,7 @@ class CParserAet
           EventId = 0;
         }
 
-        ~CRecordAett(void)
+        ~CRecordAett()
         {
           CUtils::CleanUpStringSet(Texts);
         }

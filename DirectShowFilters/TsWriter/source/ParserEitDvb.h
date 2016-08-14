@@ -75,7 +75,7 @@ class CParserEitDvb : public CUnknown, public IGrabberEpgDvb, ISectionCallback
                   IDefaultAuthorityProvider* authorityProvider,
                   LPUNKNOWN unk,
                   HRESULT* hr);
-    virtual ~CParserEitDvb(void);
+    virtual ~CParserEitDvb();
 
     DECLARE_IUNKNOWN
 
@@ -161,7 +161,7 @@ class CParserEitDvb : public CUnknown, public IGrabberEpgDvb, ISectionCallback
     class CRecordEitEventDescriptionItem
     {
       public:
-        CRecordEitEventDescriptionItem(void)
+        CRecordEitEventDescriptionItem()
         {
           DescriptorNumber = 0;
           Index = 0;
@@ -169,7 +169,7 @@ class CParserEitDvb : public CUnknown, public IGrabberEpgDvb, ISectionCallback
           Text = NULL;
         }
 
-        ~CRecordEitEventDescriptionItem(void)
+        ~CRecordEitEventDescriptionItem()
         {
           if (Description != NULL)
           {
@@ -220,7 +220,7 @@ class CParserEitDvb : public CUnknown, public IGrabberEpgDvb, ISectionCallback
     class CRecordEitEventText
     {
       public:
-        CRecordEitEventText(void)
+        CRecordEitEventText()
         {
           Language = 0;
           Title = NULL;
@@ -228,7 +228,7 @@ class CParserEitDvb : public CUnknown, public IGrabberEpgDvb, ISectionCallback
           DescriptionExtended = NULL;
         }
 
-        ~CRecordEitEventText(void)
+        ~CRecordEitEventText()
         {
           if (Title != NULL)
           {
@@ -371,7 +371,7 @@ class CParserEitDvb : public CUnknown, public IGrabberEpgDvb, ISectionCallback
     class CRecordEitEventMinimal : public IRecord
     {
       public:
-        CRecordEitEventMinimal(void)
+        CRecordEitEventMinimal()
         {
           TableId = 0;
           OriginalNetworkId = 0;
@@ -392,7 +392,7 @@ class CParserEitDvb : public CUnknown, public IGrabberEpgDvb, ISectionCallback
           VchipRating = 0xff;         // default: [not available]
         }
 
-        virtual ~CRecordEitEventMinimal(void)
+        virtual ~CRecordEitEventMinimal()
         {
           if (SeriesId != NULL)
           {
@@ -530,7 +530,7 @@ class CParserEitDvb : public CUnknown, public IGrabberEpgDvb, ISectionCallback
     class CRecordEitEvent : public CRecordEitEventMinimal
     {
       public:
-        CRecordEitEvent(void)
+        CRecordEitEvent()
         {
           ReferenceServiceId = 0;
           ReferenceEventId = 0;
@@ -635,7 +635,7 @@ class CParserEitDvb : public CUnknown, public IGrabberEpgDvb, ISectionCallback
     class CRecordEitService
     {
       public:
-        CRecordEitService(void) : Events(600000)
+        CRecordEitService() : Events(600000)
         {
           IsPremiereService = false;
           OriginalNetworkId = 0;
@@ -643,7 +643,7 @@ class CParserEitDvb : public CUnknown, public IGrabberEpgDvb, ISectionCallback
           ServiceId = 0;
         }
 
-        ~CRecordEitService(void)
+        ~CRecordEitService()
         {
         }
 

@@ -48,7 +48,7 @@ using namespace std;
     ::SHGetSpecialFolderPathW(NULL, folder, CSIDL_COMMON_APPDATA, FALSE); \
     std::wstringstream fileName; \
     fileName << folder << L"\\Team MediaPortal\\" << package << "\\debug\\" << L#setting << L".txt"; \
-    HANDLE fileHandle = CreateFileW(fileName.str().c_str(), GENERIC_READ, NULL, NULL, OPEN_EXISTING, NULL, NULL); \
+    HANDLE fileHandle = CreateFileW(fileName.str().c_str(), GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL); \
     if (fileHandle == INVALID_HANDLE_VALUE) \
     { \
       return false; \

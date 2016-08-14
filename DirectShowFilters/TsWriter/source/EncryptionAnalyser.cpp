@@ -39,12 +39,12 @@
 
 extern void LogDebug(const wchar_t* fmt, ...);
 
-CEncryptionAnalyser::CEncryptionAnalyser(void)
+CEncryptionAnalyser::CEncryptionAnalyser()
 {
   SetCallBack(NULL);
 }
 
-CEncryptionAnalyser::~CEncryptionAnalyser(void)
+CEncryptionAnalyser::~CEncryptionAnalyser()
 {
   SetCallBack(NULL);
   CleanUp();

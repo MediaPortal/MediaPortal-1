@@ -19,7 +19,7 @@
  *
  */
 #include "ParserAet.h"
-#include <algorithm>
+#include <algorithm>    // find()
 #include "..\..\shared\TimeUtils.h"
 #include "EnterCriticalSection.h"
 #include "PidUsage.h"
@@ -71,7 +71,7 @@ CParserAet::CParserAet(ICallBackPidConsumer* callBack, LPUNKNOWN unk, HRESULT* h
   m_currentRecordIndex = 0xffffffff;
 }
 
-CParserAet::~CParserAet(void)
+CParserAet::~CParserAet()
 {
   CEnterCriticalSection lock(m_section);
   m_callBackGrabber = NULL;

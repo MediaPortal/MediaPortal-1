@@ -41,7 +41,7 @@ class CParserNtt
 {
   public:
     CParserNtt();
-    virtual ~CParserNtt(void);
+    virtual ~CParserNtt();
 
     void Reset();
     void SetCallBack(ICallBackNtt* callBack);
@@ -97,14 +97,14 @@ class CParserNtt
     class CRecordNtt : public IRecord
     {
       public:
-        CRecordNtt(void)
+        CRecordNtt()
         {
           TransmissionMedium = 0;
           Language = 0;
           Name = NULL;
         }
 
-        virtual ~CRecordNtt(void)
+        virtual ~CRecordNtt()
         {
           if (Name != NULL)
           {
@@ -141,14 +141,14 @@ class CParserNtt
     class CRecordNttTransponderName : public CRecordNtt
     {
       public:
-        CRecordNttTransponderName(void)
+        CRecordNttTransponderName()
         {
           Index = 0;
           SatelliteId = 0;
           TransponderNumber = 0;
         }
 
-        ~CRecordNttTransponderName(void)
+        ~CRecordNttTransponderName()
         {
         }
 
@@ -239,14 +239,14 @@ class CParserNtt
     class CRecordNttSatelliteText : public CRecordNtt
     {
       public:
-        CRecordNttSatelliteText(void)
+        CRecordNttSatelliteText()
         {
           Index = 0;
           SatelliteId = 0;
           ReferenceName = NULL;
         }
 
-        ~CRecordNttSatelliteText(void)
+        ~CRecordNttSatelliteText()
         {
           if (ReferenceName != NULL)
           {
@@ -339,7 +339,7 @@ class CParserNtt
     class CRecordNttRatingsText : public CRecordNtt
     {
       public:
-        CRecordNttRatingsText(void)
+        CRecordNttRatingsText()
         {
           RatingRegion = 0;
           DimensionIndex = 0;
@@ -348,7 +348,7 @@ class CParserNtt
           LevelName = NULL;
         }
 
-        ~CRecordNttRatingsText(void)
+        ~CRecordNttRatingsText()
         {
           if (DimensionName != NULL)
           {
@@ -457,12 +457,12 @@ class CParserNtt
     class CRecordNttRatingSystem : public CRecordNtt
     {
       public:
-        CRecordNttRatingSystem(void)
+        CRecordNttRatingSystem()
         {
           RatingRegion = 0;
         }
 
-        ~CRecordNttRatingSystem(void)
+        ~CRecordNttRatingSystem()
         {
         }
 
@@ -529,13 +529,13 @@ class CParserNtt
     class CRecordNttSourceName : public CRecordNtt
     {
       public:
-        CRecordNttSourceName(void)
+        CRecordNttSourceName()
         {
           ApplicationType = false;
           SourceId = 0;
         }
 
-        ~CRecordNttSourceName(void)
+        ~CRecordNttSourceName()
         {
         }
 
@@ -616,12 +616,12 @@ class CParserNtt
     class CRecordNttMapName : public CRecordNtt
     {
       public:
-        CRecordNttMapName(void)
+        CRecordNttMapName()
         {
           VctId = 0;
         }
 
-        ~CRecordNttMapName(void)
+        ~CRecordNttMapName()
         {
         }
 
@@ -688,12 +688,12 @@ class CParserNtt
     class CRecordNttCurrencySystem : public CRecordNtt
     {
       public:
-        CRecordNttCurrencySystem(void)
+        CRecordNttCurrencySystem()
         {
           CurrencyRegion = 0;
         }
 
-        ~CRecordNttCurrencySystem(void)
+        ~CRecordNttCurrencySystem()
         {
         }
 

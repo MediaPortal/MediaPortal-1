@@ -19,7 +19,7 @@
  *
  */
 #include "ParserOpenTv.h"
-#include <algorithm>
+#include <algorithm>    // find()
 #include <cstring>      // strcmp()
 #include <time.h>       // gmtime(), mktime(), time_t, tm
 #include "..\..\shared\TimeUtils.h"
@@ -55,7 +55,7 @@ CParserOpenTv::CParserOpenTv(ICallBackPidConsumer* callBack, LPUNKNOWN unk, HRES
   m_enableCrcCheck = true;
 }
 
-CParserOpenTv::~CParserOpenTv(void)
+CParserOpenTv::~CParserOpenTv()
 {
   CEnterCriticalSection lock(m_section);
   m_callBackGrabber = NULL;

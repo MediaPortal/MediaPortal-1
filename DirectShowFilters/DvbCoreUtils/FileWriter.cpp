@@ -28,7 +28,9 @@
 #include "..\shared\FileWriter.h"
 #include <cstddef>    // NULL
 #include <cstring>    // memcpy()
+#include <cwchar>     // wcscpy(), wcslen()
 #include <sstream>
+#include <Windows.h>  // CloseHandle(), CreateFileW(), MAX_PATH
 
 using namespace std;
 
@@ -104,13 +106,13 @@ HRESULT FileWriter::OpenFile(const wchar_t* fileName, bool disableLogging)
   }
 
   // See if the file is being read.
-  m_fileHandle = CreateFileW(fileName,          // file name
-                              GENERIC_WRITE,    // file access
-                              0,                // share access
-                              0,                // security
-                              OPEN_ALWAYS,      // open flags
-                              0,                // more flags
-                              NULL);            // template
+  m_fileHandle = CreateFileW(fileName,                // file name
+                              GENERIC_WRITE,          // file access
+                              0,                      // share access
+                              NULL,                   // security
+                              OPEN_ALWAYS,            // open flags
+                              FILE_ATTRIBUTE_NORMAL,  // more flags
+                              NULL);                  // template
   if (m_fileHandle == INVALID_HANDLE_VALUE)
   {
     DWORD errorCode = GetLastError();
@@ -125,16 +127,18 @@ HRESULT FileWriter::OpenFile(const wchar_t* fileName, bool disableLogging)
   CloseHandle(m_fileHandle);
 
   // Try to open the file.
-  m_fileHandle = CreateFileW(fileName,          // file name
-                              GENERIC_WRITE,    // file access
-                              FILE_SHARE_READ,  // share access
-                              0,                // security
-                              OPEN_ALWAYS,      // open flags
-                              // more flags
-                              //FILE_FLAG_RANDOM_ACCESS,
-                              //FILE_FLAG_WRITE_THROUGH,
-                              (m_useAsync ? FILE_FLAG_OVERLAPPED : 0),
-                              NULL);            // template
+  DWORD flagsAndAttributes = FILE_ATTRIBUTE_NORMAL;
+  if (m_useAsync)
+  {
+    flagsAndAttributes |= FILE_FLAG_OVERLAPPED;
+  }
+  m_fileHandle = CreateFileW(fileName,                // file name
+                              GENERIC_WRITE,          // file access
+                              FILE_SHARE_READ,        // share access
+                              NULL,                   // security
+                              OPEN_ALWAYS,            // open flags
+                              flagsAndAttributes,     // more flags
+                              NULL);                  // template
   if (m_fileHandle == INVALID_HANDLE_VALUE)
   {
     DWORD errorCode = GetLastError();

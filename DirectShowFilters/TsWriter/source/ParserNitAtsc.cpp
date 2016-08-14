@@ -19,7 +19,7 @@
  *
  */
 #include "ParserNitAtsc.h"
-#include <algorithm>
+#include <algorithm>    // find()
 #include <map>
 #include "EnterCriticalSection.h"
 
@@ -32,7 +32,7 @@
 
 extern void LogDebug(const wchar_t* fmt, ...);
 
-CParserNitAtsc::CParserNitAtsc(void)
+CParserNitAtsc::CParserNitAtsc()
   : m_recordsCarrierDefinition(600000), m_recordsModulationMode(600000),
     m_recordsSatelliteInformation(600000), m_recordsTransponderData(600000)
 {
@@ -40,7 +40,7 @@ CParserNitAtsc::CParserNitAtsc(void)
   SetCallBack(NULL);
 }
 
-CParserNitAtsc::~CParserNitAtsc(void)
+CParserNitAtsc::~CParserNitAtsc()
 {
   SetCallBack(NULL);
 }

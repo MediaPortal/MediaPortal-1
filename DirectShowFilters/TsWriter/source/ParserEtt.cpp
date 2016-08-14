@@ -41,7 +41,7 @@ CParserEtt::CParserEtt(unsigned short pid) : m_records(600000)
   m_currentRecord = NULL;
 }
 
-CParserEtt::~CParserEtt(void)
+CParserEtt::~CParserEtt()
 {
   SetCallBack(NULL);
 }

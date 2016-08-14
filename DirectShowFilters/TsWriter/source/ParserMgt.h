@@ -39,7 +39,7 @@ class CParserMgt
 {
   public:
     CParserMgt(unsigned short pid);
-    virtual ~CParserMgt(void);
+    virtual ~CParserMgt();
 
     void Reset();
     void SetCallBack(ICallBackMgt* callBack);
@@ -58,7 +58,7 @@ class CParserMgt
     class CRecordMgt : public IRecord
     {
       public:
-        CRecordMgt(void)
+        CRecordMgt()
         {
           TableType = 0;
           Pid = 0;
@@ -66,7 +66,7 @@ class CParserMgt
           NumberBytes = 0;
         }
 
-        ~CRecordMgt(void)
+        ~CRecordMgt()
         {
         }
 

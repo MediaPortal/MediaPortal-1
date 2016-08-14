@@ -54,7 +54,7 @@ CGrabberSiMpeg::CGrabberSiMpeg(ICallBackSiMpeg* callBack,
   m_patParser.SetCallBack(this);
 }
 
-CGrabberSiMpeg::~CGrabberSiMpeg(void)
+CGrabberSiMpeg::~CGrabberSiMpeg()
 {
   CEnterCriticalSection lock(m_section);
   m_callBackGrabber = NULL;

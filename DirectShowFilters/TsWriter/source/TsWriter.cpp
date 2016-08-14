@@ -19,7 +19,7 @@
  *
  */
 #include "TsWriter.h"
-#include <algorithm>
+#include <algorithm>  // min()
 #include <iomanip>    // setfill(), setw()
 #include <shlobj.h>   // SHGetSpecialFolderPathW()
 #include <sstream>

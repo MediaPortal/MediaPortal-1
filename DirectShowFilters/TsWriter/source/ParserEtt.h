@@ -42,7 +42,7 @@ class CParserEtt : public CSectionDecoder
 {
   public:
     CParserEtt(unsigned short pid);
-    virtual ~CParserEtt(void);
+    virtual ~CParserEtt();
 
     void Reset(bool enableCrcCheck);
     void SetCallBack(ICallBackTableParser* callBack);
@@ -79,14 +79,14 @@ class CParserEtt : public CSectionDecoder
     class CRecordEtt : public IRecord
     {
       public:
-        CRecordEtt(void)
+        CRecordEtt()
         {
           Id = 0;
           SourceId = 0;
           EventId = 0;
         }
 
-        ~CRecordEtt(void)
+        ~CRecordEtt()
         {
           CUtils::CleanUpStringSet(Texts);
         }

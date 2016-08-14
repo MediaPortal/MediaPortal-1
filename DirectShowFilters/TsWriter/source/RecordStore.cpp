@@ -29,7 +29,7 @@ CRecordStore::CRecordStore(unsigned long expiryTimeout)
   m_expiryTimeout = expiryTimeout;
 }
 
-CRecordStore::~CRecordStore(void)
+CRecordStore::~CRecordStore()
 {
   RemoveAllRecords();
 }

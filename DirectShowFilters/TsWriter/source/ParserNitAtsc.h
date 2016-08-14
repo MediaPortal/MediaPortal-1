@@ -39,7 +39,7 @@ class CParserNitAtsc
 {
   public:
     CParserNitAtsc();
-    virtual ~CParserNitAtsc(void);
+    virtual ~CParserNitAtsc();
 
     void Reset();
     void SetCallBack(ICallBackNitAtsc* callBack);
@@ -88,13 +88,13 @@ class CParserNitAtsc
     class CRecordNit : public IRecord
     {
       public:
-        CRecordNit(void)
+        CRecordNit()
         {
           Index = 0;
           TransmissionMedium = 0;
         }
 
-        virtual ~CRecordNit(void)
+        virtual ~CRecordNit()
         {
         }
 
@@ -129,12 +129,12 @@ class CParserNitAtsc
     class CRecordNitCarrierDefinition : public CRecordNit
     {
       public:
-        CRecordNitCarrierDefinition(void)
+        CRecordNitCarrierDefinition()
         {
           Frequency = 0;
         }
 
-        ~CRecordNitCarrierDefinition(void)
+        ~CRecordNitCarrierDefinition()
         {
         }
 
@@ -195,7 +195,7 @@ class CParserNitAtsc
     class CRecordNitModulationMode : public CRecordNit
     {
       public:
-        CRecordNitModulationMode(void)
+        CRecordNitModulationMode()
         {
           TransmissionSystem = 0;
           InnerCodingMode = 0;
@@ -204,7 +204,7 @@ class CParserNitAtsc
           SymbolRate = 0;
         }
 
-        ~CRecordNitModulationMode(void)
+        ~CRecordNitModulationMode()
         {
         }
 
@@ -293,7 +293,7 @@ class CParserNitAtsc
     class CRecordNitSatelliteInformation : public CRecordNit
     {
       public:
-        CRecordNitSatelliteInformation(void)
+        CRecordNitSatelliteInformation()
         {
           SatelliteId = 0;
           YouAreHere = false;
@@ -305,7 +305,7 @@ class CParserNitAtsc
           NumberOfTransponders = 0;
         }
 
-        ~CRecordNitSatelliteInformation(void)
+        ~CRecordNitSatelliteInformation()
         {
         }
 
@@ -414,7 +414,7 @@ class CParserNitAtsc
     class CRecordNitTransponderData : public CRecordNit
     {
       public:
-        CRecordNitTransponderData(void)
+        CRecordNitTransponderData()
         {
           SatelliteId = 0;
           TransportType = 0;
@@ -434,7 +434,7 @@ class CParserNitAtsc
           CarrierFrequencyOverride = 0;
         }
 
-        ~CRecordNitTransponderData(void)
+        ~CRecordNitTransponderData()
         {
         }
 

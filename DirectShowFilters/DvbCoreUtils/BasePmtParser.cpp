@@ -19,7 +19,7 @@
  *
  */
 #include "..\shared\BasePmtParser.h"
-#include <algorithm>
+#include <algorithm>  // min()
 #include <cstddef>    // NULL
 #include <cstring>    // memcpy(), memset()
 
@@ -53,7 +53,7 @@ CBasePmtParser::CBasePmtParser()
   m_programNumber = -1;
 }
 
-CBasePmtParser::~CBasePmtParser(void)
+CBasePmtParser::~CBasePmtParser()
 {
 }
 

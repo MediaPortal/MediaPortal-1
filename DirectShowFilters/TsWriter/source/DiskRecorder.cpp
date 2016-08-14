@@ -19,6 +19,7 @@
  *
  */
 #include "DiskRecorder.h"
+#include <algorithm>    // min()
 #include <cstddef>      // NULL
 #include <cstring>      // memcpy(), memset()
 #include <vector>
@@ -149,7 +150,7 @@ CDiskRecorder::CDiskRecorder(RecorderMode mode)
   m_observer = NULL;
 }
 
-CDiskRecorder::~CDiskRecorder(void)
+CDiskRecorder::~CDiskRecorder()
 {
   CEnterCriticalSection lock(m_section);
   Stop();
@@ -1361,7 +1362,7 @@ void CDiskRecorder::PatchPcr(unsigned char* tsPacket, CTsHeader& header)
         // We assume that PCR is delivered at a regular interval which is approximated by
         // m_averagePcrSpeed. Improve the PCR speed estimate by comparison with the current speed (ie. the
         // time since the previous PCR was seen). Use a 10% adjustment factor.
-        m_averagePcrSpeed += (dt - m_averagePcrSpeed) * 0.1;
+        m_averagePcrSpeed += ((double)dt - m_averagePcrSpeed) * 0.1f;
         if (m_pcrGapConfirmationCount > 0)
         {
           WriteLog(L"PCR restabilised after %hhu confirmation(s), speed = %lld",

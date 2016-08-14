@@ -27,12 +27,12 @@ using namespace std;
 class IRecord
 {
   public:
-    IRecord(void)
+    IRecord()
     {
       LastSeen = clock();
     }
 
-    virtual ~IRecord(void)
+    virtual ~IRecord()
     {
     }
 

@@ -19,8 +19,9 @@
  *
  */
 #include "ParserNitDvb.h"
-#include <algorithm>
+#include <algorithm>  // find()
 #include <cstring>    // strcmp(), strlen(), strncmp(), strncpy()
+#include <cwchar>     // wcscmp()
 #include <sstream>
 #include "..\..\shared\TimeUtils.h"
 #include "EnterCriticalSection.h"
@@ -38,7 +39,7 @@
 
 extern void LogDebug(const wchar_t* fmt, ...);
 
-CParserNitDvb::CParserNitDvb(void)
+CParserNitDvb::CParserNitDvb()
   : m_recordsService(600000), m_recordsTransmitter(600000)
 {
   CParserNitDvb::SetPid(PID_NIT_DVB);
@@ -53,7 +54,7 @@ CParserNitDvb::CParserNitDvb(void)
   m_networkId = 0;
 }
 
-CParserNitDvb::~CParserNitDvb(void)
+CParserNitDvb::~CParserNitDvb()
 {
   CEnterCriticalSection lock(m_section);
   m_callBack = NULL;

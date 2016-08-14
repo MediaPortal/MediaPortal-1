@@ -50,7 +50,7 @@ class CInputPinOobSi : public CRenderedInputPin
                     CCritSec* filterLock,
                     CCritSec& receiveLock,
                     HRESULT* hr);
-    virtual ~CInputPinOobSi(void);
+    virtual ~CInputPinOobSi();
 
     HRESULT BreakConnect();
     HRESULT CheckMediaType(const CMediaType* mediaType);
