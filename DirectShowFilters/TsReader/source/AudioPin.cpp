@@ -71,13 +71,10 @@ CAudioPin::CAudioPin(LPUNKNOWN pUnk, CTsReaderFilter *pFilter, HRESULT *phr,CCri
     AM_SEEKING_CanSeekBackwards |
     AM_SEEKING_CanGetStopPos  |
     AM_SEEKING_CanGetDuration |
-    //AM_SEEKING_CanGetCurrentPos |
     AM_SEEKING_Source;
-  //m_bSubtitleCompensationSet=false;
   m_bInFillBuffer=false;
   m_bPinNoAddPMT = false;
   m_bAddPMT = false;
-  m_bDownstreamFlush=false;
   m_bDisableSlowPlayDiscontinuity=false;
   m_nMaxAFT = -1;
 }
@@ -274,7 +271,6 @@ HRESULT CAudioPin::CompleteConnect(IPin *pReceivePin)
 
   if (m_pTsReaderFilter->IsTimeShifting())
   {
-    //m_rtDuration=CRefTime(MAX_TIME);
     REFERENCE_TIME refTime;
     m_pTsReaderFilter->GetDuration(&refTime);
     m_rtDuration=CRefTime(refTime);
@@ -441,7 +437,6 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
         m_bInFillBuffer = false;
         if (demux.m_bFlushRunning)
         {
-          //m_bDownstreamFlush=true;
           //Force discon on next good sample
           m_sampleCount = 0;
           m_bDiscontinuity=true;
@@ -454,15 +449,6 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
         m_bInFillBuffer = true;
       }     
                   
-      if(m_bDownstreamFlush)
-      {
-        //Downstream flush
-        LogDebug("audPin : Downstream flush") ;
-        DeliverBeginFlush();
-        DeliverEndFlush();
-        m_bDownstreamFlush=false;
-      }
-
       // Get next audio buffer from demultiplexer
       buffer=demux.GetAudio(earlyStall, m_rtStart);
 
@@ -545,34 +531,6 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
           //(helps with signal corruption recovery)
           cRefTime -= m_pTsReaderFilter->m_ClockOnStart.m_time;
 
-//          if ((fTime < 0.1) && (m_dRateSeeking == 1.0) && (m_pTsReaderFilter->State() == State_Running) && (clock > 8.0))
-//          {              
-//            if (!demux.m_bAudioSampleLate) 
-//            {
-//              LogDebug("audPin : Audio to render late= %03.3f, m_fAFTMean= %03.3f", (float)fTime, (float)m_fAFTMean) ;
-//            }
-//            //Samples times are getting close to presentation time
-//            demux.m_bAudioSampleLate = true;  
-//             
-//            if (fTime < 0.05)
-//            {              
-//              if (timeNow > (m_pTsReaderFilter->m_lastPauseRun + (15*1000)))
-//              {
-//                _InterlockedExchange(&demux.m_AudioDataLowPauseTime, (long)((fTime-0.02) * -1000.0));
-//                //Samples are running very late - check if this is a persistant problem by counting over a period of time 
-//                //(m_AVDataLowCount is checked in CTsReaderFilter::ThreadProc())
-//                _InterlockedIncrement(&demux.m_AVDataLowCount); 
-//              }  
-//            }
-//            
-//            if ((fTime < -2.0) && !demux.m_bFlushDelegated)
-//            { 
-//              //Very late - request internal flush and re-sync to stream
-//              demux.DelegatedFlush(false, false);
-//              LogDebug("audPin : Audio to render very late, flushing") ;
-//            }
-//          }
-
           if (fTime < -2.0)
           {                          
             if ((m_dRateSeeking == 1.0) && (m_pTsReaderFilter->State() == State_Running) && (clock > 8.0) && !demux.m_bFlushDelegated)
@@ -611,22 +569,6 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
           {
             //ifso, set it
             pSample->SetDiscontinuity(TRUE);
-
-            //if ((m_sampleCount == 0) && m_bAddPMT && !m_pTsReaderFilter->m_bDisableAddPMT && !m_bPinNoAddPMT)
-            //{
-            //  //Add MediaType info to first sample after OnThreadStartPlay()
-            //  CMediaType mt; 
-            //  int audioIndex = 0;
-            //  demux.GetAudioStream(audioIndex);
-            //  demux.GetAudioStreamType(audioIndex, mt, m_iPosition);
-            //  pSample->SetMediaType(&mt);            
-            //  LogDebug("audPin: Add pmt and set discontinuity L:%d B:%d fTime:%03.3f SampCnt:%d", m_bDiscontinuity, buffer->GetDiscontinuity(), (float)fTime, m_sampleCount);
-            //  m_bAddPMT = false; //Only add once
-            //}   
-            //else
-            //{        
-            //  LogDebug("audPin: Set discontinuity L:%d B:%d fTime:%03.3f SampCnt:%d", m_bDiscontinuity, buffer->GetDiscontinuity(), (float)fTime, m_sampleCount);
-            //}
             
             LogDebug("audPin: Set discontinuity L:%d B:%d fTime:%03.3f SampCnt:%d", m_bDiscontinuity, buffer->GetDiscontinuity(), (float)fTime, m_sampleCount);
             m_bDiscontinuity=FALSE;
@@ -689,7 +631,6 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
           //delete the buffer and return
           delete buffer;
           demux.EraseAudioBuff();
-          //m_sampleCount++ ;
         }
         else
         { // Buffer was not displayed because it was out of date, search for next.
@@ -852,8 +793,6 @@ HRESULT CAudioPin::OnThreadStartPlay()
 {
   DWORD thrdID = GetCurrentThreadId();
   LogDebug("audPin:OnThreadStartPlay(%f), rate:%02.2f, threadID:0x%x, GET_TIME_NOW:0x%x", (float)m_rtStart.Millisecs()/1000.0f, m_dRateSeeking, thrdID, GET_TIME_NOW());
-
-  //m_pTsReaderFilter->CheckForMPAR();
   
   //set flag to compensate any differences in the stream time & file time
   m_pTsReaderFilter->m_bStreamCompensated = false;
@@ -869,7 +808,6 @@ HRESULT CAudioPin::OnThreadStartPlay()
   m_bPresentSample = false;
   m_sampleCount = 0;
   m_bInFillBuffer=false;
-  m_bDownstreamFlush=false;
   m_pTsReaderFilter->m_audioReady = false;
 
   m_FillBuffSleepTime = 1;

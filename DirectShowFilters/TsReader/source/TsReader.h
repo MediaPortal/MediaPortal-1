@@ -225,8 +225,6 @@ public:
   bool            IsFilterRunning();
   CDeMultiplexer& GetDemultiplexer();
   bool            Seek(CRefTime&  seekTime);
-//  void            SeekDone(CRefTime& refTime);
-//  void            SeekStart();
   HRESULT         SeekPreStart(CRefTime& rtSeek);
   bool            SetSeeking(bool onOff);
   void            SetWaitDataAfterSeek(bool onOff);
