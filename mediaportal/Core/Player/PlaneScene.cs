@@ -110,6 +110,8 @@ namespace MediaPortal.Player
 
     private bool _disableLowLatencyMode = false;
 
+    private bool UiVisible { get; set; }
+
     #endregion
 
     #region ctor
@@ -643,6 +645,11 @@ namespace MediaPortal.Player
       }
     }
 
+     public bool IsUiVisible()
+    {
+      return UiVisible;
+    }
+
     public bool IsFullScreen()
     {
       return GUIGraphicsContext.IsFullScreenVideo;
@@ -661,6 +668,7 @@ namespace MediaPortal.Player
     private int RenderLayers(GUILayers layers, Int16 width, Int16 height, Int16 arWidth, Int16 arHeight)
     {
       bool visible = false;
+      UiVisible = false;
 
       if (_reEntrant)
       {
@@ -792,6 +800,11 @@ namespace MediaPortal.Player
       }
       finally
       {
+        if (visible)
+        {
+          UiVisible = true;
+        }
+
         if (_disableLowLatencyMode)
         {
           visible = false;

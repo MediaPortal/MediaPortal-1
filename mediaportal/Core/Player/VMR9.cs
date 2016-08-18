@@ -89,6 +89,9 @@ namespace MediaPortal.Player
 
     [PreserveSig]
     bool IsFullScreen();
+
+    [PreserveSig]
+    bool IsUiVisible();
   }
 
   #endregion

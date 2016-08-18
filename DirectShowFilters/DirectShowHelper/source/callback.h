@@ -28,4 +28,5 @@ DECLARE_INTERFACE_(IVMR9Callback, IUnknown)
   STDMETHOD(RenderFrame)(WORD cx, WORD cy, WORD arx, WORD ary, DWORD pTargetmadVr)PURE;
   STDMETHOD(ForceOsdUpdate)(BOOL pForce)PURE;
   STDMETHOD(IsFullScreen)()PURE;
+  STDMETHOD(IsUiVisible)()PURE;
 };
