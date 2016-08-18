@@ -318,7 +318,7 @@ HRESULT MPMadPresenter::ClearBackground(LPCSTR name, REFERENCE_TIME frameStart, 
     if (isUiVisible)
     {
       int CountPass = uiVisible ? 1 : 3;
-      Log("MPMadPresenter::ClearBackground() uiVisible %x", CountPass);
+      //Log("MPMadPresenter::ClearBackground() uiVisible %x", CountPass);
       for (int x = 0; x < CountPass; ++x) // need to let in a loop to slow down why ???
       {
         m_pDevice->PresentEx(nullptr, nullptr, nullptr, nullptr, D3DPRESENT_FORCEIMMEDIATE);
