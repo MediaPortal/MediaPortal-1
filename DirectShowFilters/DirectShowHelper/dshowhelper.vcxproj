@@ -134,8 +134,10 @@
       <ImageHasSafeExceptionHandlers>true</ImageHasSafeExceptionHandlers>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy $(TargetDir)dshowhelper.dll $(SolutionDir)..\mediaportal\MediaPortal.Application\bin\$(ConfigurationName) /Y
-xcopy $(TargetDir)dshowhelper.pdb $(SolutionDir)..\mediaportal\MediaPortal.Application\bin\$(ConfigurationName) /Y</Command>
+      <Command>xcopy $(TargetDir)dshowhelper.dll $(SolutionDir)..\mediaportal\MediaPortal.Application\bin\$(ConfigurationName)\ /Y /T
+xcopy $(TargetDir)dshowhelper.pdb $(SolutionDir)..\mediaportal\MediaPortal.Application\bin\$(ConfigurationName)\ /Y /T
+xcopy $(TargetDir)dshowhelper.dll $(SolutionDir)..\mediaportal\MediaPortal.Application\bin\$(ConfigurationName)\ /Y
+xcopy $(TargetDir)dshowhelper.pdb $(SolutionDir)..\mediaportal\MediaPortal.Application\bin\$(ConfigurationName)\ /Y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
