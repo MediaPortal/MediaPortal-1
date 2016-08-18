@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2015 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2016 Live Networks, Inc.  All rights reserved.
 // A class for generating MPEG-2 Transport Stream from one or more input
 // Elementary Stream data sources
 // C++ header
@@ -32,6 +32,11 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 #define PID_TABLE_SIZE 256
 
 class MPEG2TransportStreamMultiplexor: public FramedSource {
+public:
+  Boolean canDeliverNewFrameImmediately() const { return fInputBufferBytesUsed < fInputBufferSize; }
+      // Can be used by a downstream reader to test whether the next call to "doGetNextFrame()"
+      // will deliver data immediately).
+
 protected:
   MPEG2TransportStreamMultiplexor(UsageEnvironment& env);
   virtual ~MPEG2TransportStreamMultiplexor();

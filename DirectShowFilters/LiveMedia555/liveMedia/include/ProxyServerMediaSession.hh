@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2015 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2016 Live Networks, Inc.  All rights reserved.
 // A subclass of "ServerMediaSession" that can be used to create a (unicast) RTSP servers that acts as a 'proxy' for
 // another (unicast or multicast) RTSP/RTP stream.
 // C++ header
@@ -75,7 +75,7 @@ private:
   class ProxyServerMediaSubsession *fSetupQueueHead, *fSetupQueueTail;
   unsigned fNumSetupsDone;
   unsigned fNextDESCRIBEDelay; // in seconds
-  Boolean fServerSupportsGetParameter, fLastCommandWasPLAY;
+  Boolean fServerSupportsGetParameter, fLastCommandWasPLAY, fResetOnNextLivenessTest;
   TaskToken fLivenessCommandTask, fDESCRIBECommandTask, fSubsessionTimerTask;
 };
 
@@ -144,6 +144,11 @@ protected:
   virtual Groupsock* createGroupsock(struct in_addr const& addr, Port port);
   virtual RTCPInstance* createRTCP(Groupsock* RTCPgs, unsigned totSessionBW, /* in kbps */
 				   unsigned char const* cname, RTPSink* sink);
+
+  virtual Boolean allowProxyingForSubsession(MediaSubsession const& mss);
+  // By default, this function always returns True.  However, a subclass may redefine this
+  // if it wishes to restrict which subsessions of a stream get proxied - e.g., if it wishes
+  // to proxy only video tracks, but not audio (or other) tracks.
 
 protected:
   GenericMediaServer* fOurMediaServer;

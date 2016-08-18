@@ -1140,7 +1140,6 @@ STDMETHODIMP CTsReaderFilter::Pause()
       m_lastPauseRun = GET_TIME_NOW();
       m_RandomCompensation = 0;
     }
-    m_demultiplexer.m_bVideoSampleLate=false;
     m_demultiplexer.m_bAudioSampleLate=false;
   
     //pause filter - this will update m_State
@@ -1396,7 +1395,7 @@ STDMETHODIMP CTsReaderFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pm
     milli /= 1000.0;
     LogDebug("CTsReaderFilter::Load(), duration - start:%x end:%x %f",
       (DWORD)m_duration.StartPcr().PcrReferenceBase, (DWORD) m_duration.EndPcr().PcrReferenceBase, milli);
-    m_fileReader->SetFilePointer(0LL, FILE_BEGIN);
+    //m_fileReader->SetFilePointer(0LL, FILE_BEGIN);
   }
 
   if (length > 0)
@@ -1866,7 +1865,6 @@ void CTsReaderFilter::ThreadProc()
       lastDataLowTime = timeNow;
       _InterlockedAnd(&m_demultiplexer.m_AVDataLowCount, 0);
       _InterlockedAnd(&m_demultiplexer.m_AudioDataLowPauseTime, 0) ;
-      _InterlockedAnd(&m_demultiplexer.m_VideoDataLowPauseTime, 0) ;
     }
     else if (m_demultiplexer.m_AVDataLowCount > underRunLimit)
     {      
@@ -1876,17 +1874,15 @@ void CTsReaderFilter::ThreadProc()
         m_bRenderingClockTooFast=true;
         if (timeNow < (lastDataLowTime + (pauseWaitTime/2))) //Reached trigger point in a short time
         {
-          BufferingPause(true, max(m_demultiplexer.m_AudioDataLowPauseTime, m_demultiplexer.m_VideoDataLowPauseTime)); //Force longer pause      
+          BufferingPause(true, m_demultiplexer.m_AudioDataLowPauseTime); //Force longer pause      
         }
         else
         {
-          BufferingPause(longPause, max(m_demultiplexer.m_AudioDataLowPauseTime, m_demultiplexer.m_VideoDataLowPauseTime)); //Pause for a short time         
+          BufferingPause(longPause, m_demultiplexer.m_AudioDataLowPauseTime); //Pause for a short time         
         }
         _InterlockedAnd(&m_demultiplexer.m_AVDataLowCount, 0);
         _InterlockedAnd(&m_demultiplexer.m_AudioDataLowPauseTime, 0) ;
-        _InterlockedAnd(&m_demultiplexer.m_VideoDataLowPauseTime, 0) ;
         m_bRenderingClockTooFast=false ;
-        m_demultiplexer.m_bVideoSampleLate=false;
         m_demultiplexer.m_bAudioSampleLate=false;
       }
       else
@@ -1894,8 +1890,6 @@ void CTsReaderFilter::ThreadProc()
         lastDataLowTime = timeNow;
         _InterlockedAnd(&m_demultiplexer.m_AVDataLowCount, 0);
         _InterlockedAnd(&m_demultiplexer.m_AudioDataLowPauseTime, 0) ;
-        _InterlockedAnd(&m_demultiplexer.m_VideoDataLowPauseTime, 0) ;
-        m_demultiplexer.m_bVideoSampleLate=false;
         m_demultiplexer.m_bAudioSampleLate=false;
       }
     }

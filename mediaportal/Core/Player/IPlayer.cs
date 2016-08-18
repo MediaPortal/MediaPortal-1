@@ -31,6 +31,7 @@ namespace MediaPortal.Player
   {
     MPEG2 = 1,
     H264 = 2,
+    HEVC = 3,
     MPEG4
   }
 

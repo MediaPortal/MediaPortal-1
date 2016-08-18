@@ -22,6 +22,9 @@
 #ifndef _RTSP_SERVER_HH
 #include "RTSPServer.hh"
 #endif
+#include <map>
+
+using namespace std;
 
 
 class MPRTSPServer : public RTSPServer
@@ -82,7 +85,7 @@ class MPRTSPServer : public RTSPServer
         }
         
       protected:
-        MPRTSPClientSession(MPRTSPServer& ourServer, u_int32_t sessionId, unsigned reclamationTimeSeconds);
+        MPRTSPClientSession(MPRTSPServer& ourServer, u_int32_t sessionId);
         virtual ~MPRTSPClientSession();
 
         virtual void handleCmd_PLAY(RTSPClientConnection* ourClientConnection,
@@ -90,14 +93,11 @@ class MPRTSPServer : public RTSPServer
                                     const char* fullRequestStr);
         virtual void handleCmd_PAUSE(RTSPClientConnection* ourClientConnection,
                                       ServerMediaSubsession* subsession);
-        static void livenessTimeoutTaskMP(MPRTSPClientSession* clientSession);
-        virtual void noteLiveness();
 
       private:
         struct sockaddr_in m_clientAddress;
         time_t m_startDateTime;
         bool m_isPaused;
-        unsigned m_reclamationTimeSeconds;
     };
 
     unsigned short GetSessionCount();
@@ -110,7 +110,7 @@ class MPRTSPServer : public RTSPServer
                   int ourSocket,
                   Port ourPort,
                   UserAuthenticationDatabase* authDatabase,
-                  unsigned reclamationTestSeconds);
+                  unsigned reclamationTimeSeconds);
     virtual ~MPRTSPServer();
 
     // If you subclass "RTSPClientConnection", then you must also redefine this virtual function in order
@@ -122,5 +122,5 @@ class MPRTSPServer : public RTSPServer
     virtual ClientSession* createNewClientSession(u_int32_t sessionId);
 
   private:
-    unsigned m_reclamationTimeSeconds;
+    map<u_int32_t, MPRTSPClientSession*> m_clientSessions;
 };

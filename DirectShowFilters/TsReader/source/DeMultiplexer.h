@@ -114,12 +114,6 @@ public:
   bool       SetSubtitleResetCallback( int (CALLBACK *pSubUpdateCallback)(int c, void* opts, int* select));
 
   bool       EndOfFile();
-  //  bool       HoldAudio();
-  //  void       SetHoldAudio(bool onOff);
-  //  bool       HoldVideo();
-  //  void       SetHoldVideo(bool onOff);
-  //  bool       HoldSubtitle();
-  //  void       SetHoldSubtitle(bool onOff);
   void       ThreadProc();
   void       FlushVideo(bool isMidStream);
   void       FlushAudio();
@@ -165,18 +159,14 @@ public:
   bool m_bFlushRunning;
   bool m_bReadAheadFromFile;
 
-  DWORD m_sampleTime;
-  DWORD m_sampleTimePrev;
+  float m_sampleTime;
+  float m_sampleTimePrev;
   unsigned long m_byteRead;
   float m_bitRate;
 
-  bool m_bVideoSampleLate;
   bool m_bAudioSampleLate;
-  //  long m_AudioDataLowCount;
-  //  long m_VideoDataLowCount;
   long m_AVDataLowCount;
   long m_AudioDataLowPauseTime;
-  long m_VideoDataLowPauseTime;
   DWORD m_targetAVready;
   bool  m_bSubtitleCompensationSet;
   bool m_bShuttingDown;
@@ -222,7 +212,6 @@ private:
   CPidTable m_pids;
   vector<CBuffer*> m_vecSubtitleBuffers;
   vector<CBuffer*> m_vecVideoBuffers;
-//  vector<CBuffer*> m_t_vecVideoBuffers;
   vector<CBuffer*> m_vecAudioBuffers;
   vector<CBuffer*> m_t_vecAudioBuffers;
   typedef vector<CBuffer*>::iterator ivecBuffers;
@@ -262,9 +251,6 @@ private:
 
   unsigned int m_iAudioReadCount;
 
-  //  bool m_bHoldAudio;
-  //  bool m_bHoldVideo;
-  //  bool m_bHoldSubtitle;
   int m_iAudioIdx;
   int m_iPatVersion;
   int m_ReqPatVersion;

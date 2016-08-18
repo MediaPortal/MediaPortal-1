@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2015 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2016 Live Networks, Inc.  All rights reserved.
 // An abstraction of a network interface used for RTP (or RTCP).
 // (This allows the RTP-over-TCP hack (RFC 2326, section 10.12) to
 // be implemented transparently.)
@@ -76,6 +76,8 @@ public:
 		     Boolean& packetReadWasIncomplete);
   // Note: If "tcpSocketNum" < 0, then the packet was received over UDP, and "tcpStreamChannelId"
   //   is undefined (and irrelevant).
+
+
   // Otherwise (if "tcpSocketNum" >= 0), the packet was received (interleaved) over TCP, and
   //   "tcpStreamChannelId" will return the channel id.
 
@@ -88,6 +90,11 @@ public:
     fAuxReadHandlerFunc = handlerFunc;
     fAuxReadHandlerClientData = handlerClientData;
   }
+
+  void forgetOurGroupsock() { fGS = NULL; }
+    // This may be called - *only immediately prior* to deleting this - to prevent our destructor
+    // from turning off background reading on the 'groupsock'.  (This is in case the 'groupsock'
+    // is also being read from elsewhere.)
 
 private:
   // Helper functions for sending a RTP or RTCP packet over a TCP connection:

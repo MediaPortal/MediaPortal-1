@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2015 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2016 Live Networks, Inc.  All rights reserved.
 // A filter for converting one or more MPEG Elementary Streams
 // to a MPEG-2 Transport Stream
 // C++ header
@@ -36,6 +36,8 @@ public:
       // Note: In these functions, if "PID" is not -1, then it (currently, just the low 8 bits)
       // is used as the stream's PID.  Otherwise (if "PID" is -1) the 'stream_id' is used as
       // the PID.
+
+  static unsigned maxInputESFrameSize;
 
 protected:
   MPEG2TransportStreamFromESSource(UsageEnvironment& env);

@@ -22,6 +22,7 @@
 
 #define TS_PACKET_SYNC 0x47
 #define TS_PACKET_LEN  188
+#define M2TS_PACKET_LEN 192
 
 class CPacketSync
 {
@@ -31,7 +32,7 @@ public:
 public:
   virtual ~CPacketSync(void);
   void OnRawData(byte* pData, int nDataLen);
-  void OnRawData2(byte* pData, int nDataLen);
+  bool OnRawData2(byte* pData, int nDataLen);
   int  OnRawDataCheck(byte* pData, int nDataLen);
   virtual void OnTsPacket(byte* tsPacket);
   virtual void OnTsPacket(byte* tsPacket, int bufferOffset, int bufferLength);
@@ -42,4 +43,5 @@ private:
   int   m_tempBufferPos;
   bool  m_bInSync;
   bool  m_bFirstSynced;
+  int   m_packet_len;
 };

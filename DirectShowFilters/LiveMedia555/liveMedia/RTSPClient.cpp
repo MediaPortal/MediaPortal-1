@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2015 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2016 Live Networks, Inc.  All rights reserved.
 // A generic RTSP client
 // Implementation
 
@@ -1729,6 +1729,23 @@ void RTSPClient::handleResponseBytes(int newBytesRead) {
 	  // Note: we accept "Allow:" instead of "Public:", so that "OPTIONS" requests made to HTTP servers will work.
 	} else if (checkForHeader(lineStart, "Location:", 9, headerParamsStr)) {
 	  setBaseURL(headerParamsStr);
+	} else if (checkForHeader(lineStart, "com.ses.streamID:", 17, headerParamsStr)) {
+	  // Replace the tail of the 'base URL' with the value of this header parameter:
+	  char* oldBaseURLTail = strrchr(fBaseURL, '/');
+	  if (oldBaseURLTail != NULL) {
+	    unsigned newBaseURLLen
+	      = (oldBaseURLTail - fBaseURL) + 8/* for "/stream=" */ + strlen(headerParamsStr);
+	    char* newBaseURL = new char[newBaseURLLen + 1];
+	        // Note: We couldn't use "asprintf()", because some compilers don't support it
+	    sprintf(newBaseURL, "%.*s/stream=%s",
+		     (int)(oldBaseURLTail - fBaseURL), fBaseURL, headerParamsStr);
+	    setBaseURL(newBaseURL);
+	    delete[] newBaseURL;
+	  }
+	} else if (checkForHeader(lineStart, "Connection:", 11, headerParamsStr)) {
+	  if (_strncasecmp(headerParamsStr, "Close", 5) == 0) {
+	    resetTCPSockets();
+	  }
 	}
       }
       if (!reachedEndOfHeaders) break; // an error occurred
@@ -1808,7 +1825,7 @@ void RTSPClient::handleResponseBytes(int newBytesRead) {
 	
 	if (needToResendCommand) {
 	  resetResponseBuffer();
-	  if (!resendCommand(foundRequest)) break;
+	  (void)resendCommand(foundRequest);
 	  delete[] headerDataCopy;
 	  return; // without calling our response handler; the response to the resent command will do that
 	}
@@ -1947,6 +1964,7 @@ RTSPClient::RequestRecord* RTSPClient::RequestQueue::findByCSeq(unsigned cseq) {
 }
 
 
+#ifndef OMIT_REGISTER_HANDLING
 ////////// HandlerServerForREGISTERCommand implementation /////////
 
 HandlerServerForREGISTERCommand* HandlerServerForREGISTERCommand
@@ -1991,3 +2009,4 @@ void HandlerServerForREGISTERCommand::implementCmd_REGISTER(char const* url, cha
 
   if (fCreationFunc != NULL) (*fCreationFunc)(newRTSPClient, deliverViaTCP);
 }
+#endif

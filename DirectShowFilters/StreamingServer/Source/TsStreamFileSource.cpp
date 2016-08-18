@@ -38,7 +38,7 @@ extern void LogDebug(const wchar_t *fmt, ...) ;
 
 
 TsStreamFileSource*
-TsStreamFileSource::createNew(UsageEnvironment& env, wchar_t const* fileName, CTsDuration *pDuration,
+TsStreamFileSource::createNew(UsageEnvironment& env, wchar_t const* fileName,
 							  unsigned preferredFrameSize,
 							  unsigned playTimePerFrame, 
 							  int channelType) 

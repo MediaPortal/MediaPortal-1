@@ -835,6 +835,20 @@ namespace MediaPortal.Player
           case "LATMAAC":
             AudioCodec = "AAC";
             break;
+            
+          case "DTS":
+            AudioCodec = "DTS";
+            break;
+            
+          case "DTSHD":
+          case "DTS-HD":
+            AudioCodec = "DTSHD";
+            break;
+            
+          case "PCM":
+          case "LPCM":
+            AudioCodec = "PCM";
+            break;
         }
         GUIPropertyManager.SetProperty("#Play.Current.AudioCodec.Texture", AudioCodec);
 

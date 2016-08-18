@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2015 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2016 Live Networks, Inc.  All rights reserved.
 // A WAV audio file source
 // Implementation
 
@@ -126,10 +126,12 @@ WAVAudioFileSource::WAVAudioFileSource(UsageEnvironment& env, FILE* fid)
     // Skip over any chunk that's not a FORMAT ('fmt ') chunk:
     u_int32_t tmp;
     if (!get4Bytes(fid, tmp)) break;
-    if (tmp != 0x20746d66/*'fmt ', little-endian*/) {
+    while (tmp != 0x20746d66/*'fmt ', little-endian*/) {
       // Skip this chunk:
+      u_int32_t chunkLength;
+      if (!get4Bytes(fid, chunkLength)) break;
+      if (!skipBytes(fid, chunkLength)) break;
       if (!get4Bytes(fid, tmp)) break;
-      if (!skipBytes(fid, tmp)) break;
     }
 
     // FORMAT Chunk (the 4-byte header code has already been parsed):
@@ -175,6 +177,15 @@ WAVAudioFileSource::WAVAudioFileSource(UsageEnvironment& env, FILE* fid)
       unsigned factLength;
       if (!get4Bytes(fid, factLength)) break;
       if (!skipBytes(fid, factLength)) break;
+      c = nextc;
+    }
+
+    // EYRE chunk (optional):
+    if (c == 'e') {
+      if (nextc != 'y' || nextc != 'r' || nextc != 'e') break;
+      unsigned eyreLength;
+      if (!get4Bytes(fid, eyreLength)) break;
+      if (!skipBytes(fid, eyreLength)) break;
       c = nextc;
     }
 

@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2015 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2016 Live Networks, Inc.  All rights reserved.
 // A filter that breaks up a H.264 or H.265 Video Elementary Stream into NAL units.
 // C++ header
 
@@ -81,7 +81,7 @@ protected:
 // A general routine for making a copy of a (H.264 or H.265) NAL unit,
 // removing 'emulation' bytes from the copy:
 unsigned removeH264or5EmulationBytes(u_int8_t* to, unsigned toMaxSize,
-				     u_int8_t* from, unsigned fromSize);
+				     u_int8_t const* from, unsigned fromSize);
     // returns the size of the copy; it will be <= min(toMaxSize,fromSize)
 
 #endif

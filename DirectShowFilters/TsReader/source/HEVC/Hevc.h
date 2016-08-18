@@ -79,6 +79,9 @@ namespace HEVC
 		  if (sps != NULL) free(sps);
 		  if (pps != NULL) free(pps);
 		  if (vps != NULL) free(vps);
+		  sps = NULL;
+		  pps = NULL;
+		  vps = NULL;
 		}
 	};
 

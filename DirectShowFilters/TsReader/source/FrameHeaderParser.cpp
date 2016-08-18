@@ -1302,233 +1302,243 @@ bool CFrameHeaderParser::Read(avchdr& h, int len, CMediaType* pmt, bool reset)
 {
   if (reset)
   {
-    h.spslen=0;
-    h.ppslen=0;
-    h.height=0;
-    h.width=0;
+    h.profile = 0;
+    h.level = 0;        
+    h.chromaFormat = 0;          
+    h.lumaDepth = 0;
+    h.chromaDepth = 0;
+		h.progressive = true;
+		h.spslen = 0;
+		h.ppslen = 0;
+		h.AvgTimePerFrame = 370000;  //27 Hz
 		h.ar = 0;
 		h.arx = 0;
 		h.ary = 0;
-    h.AvgTimePerFrame=370000; //27 Hz
+		h.width = 0;
+		h.height = 0;
   }
+
+	if ((len <= 5) || (len > 65534)) return(false); //Sanity check
   
-	if (len > 4)
+	int nal_len = BitRead(32);
+	INT64 next_nal = GetPos()+nal_len;
+	BYTE id=BitRead(8);
+	BYTE nal_type=id & 0x9f;
+
+  //LogDebug("nal_len = %d, next_nal = %d", nal_len, next_nal);
+
+	// we only want pic param and sequence param sets
+	if ((nal_type!=H264_NAL_SPS && nal_type!=H264_NAL_PPS) || ((id & 0x60) == 0))
 	{
-		int nal_len = BitRead(32);
-		INT64 next_nal = GetPos()+nal_len;
-		BYTE id=BitRead(8);
-		BYTE nal_type=id & 0x9f;
+	  return(false);
+	}
 
-	  //LogDebug("nal_len = %d, next_nal = %d", nal_len, next_nal);
+	if(nal_type==H264_NAL_SPS)
+	{
+		//LogDebug("SPS found");
+		
+	  h.spsid = id;
+		__int64			pos = GetPos(); //Start of NAL data (excluding ID byte)
+		
+		double			num_units_in_tick;
+		double			time_scale;
+		bool			fixed_frame_rate_flag;			
 
-		// we only want pic param and sequence param sets
-		if ((nal_type!=0x7 && nal_type!=0x8) || ((id & 0x60) == 0))
+		// Copy the full SPS packet in case the PPS is not found in the same packet,
+		// but make sure we don't change the current position in the buffer.
+		if (h.sps != NULL && (next_nal - pos) != h.spslen)
 		{
-		  return(false);
+			free(h.sps);
+			h.sps = NULL;
 		}
-
-		if(nal_type==0x7)
+		h.spslen = next_nal - pos; //length excluding length and ID bytes
+		if (h.sps == NULL)
 		{
-			//LogDebug("SPS found");
-			
-		  h.spsid = id;
-			__int64			pos = GetPos(); //Start of NAL data (excluding ID byte)
-			
-			double			num_units_in_tick;
-			double			time_scale;
-			bool			fixed_frame_rate_flag;			
-
-			// Copy the full SPS packet in case the PPS is not found in the same packet,
-			// but make sure we don't change the current position in the buffer.
-			
-			if (h.sps != NULL)
-			{
-				free(h.sps);
-			}
-			h.spslen = next_nal - pos; //length excluding length and ID bytes
-			if ((h.spslen <= 0) || (h.spslen > 65534)) return(false); //Sanity check
 			h.sps = (BYTE*) malloc(h.spslen);
-			if (h.sps == NULL) return(false); //malloc error...
-			ByteRead(h.sps, h.spslen);
-			Seek(pos);
-	    //LogDebug("h.spslen = %d, bytes = %x %x %x %x, last byte = %x", h.spslen, *h.sps, *(h.sps+1), *(h.sps+2), *(h.sps+3), *(h.sps+(h.spslen-1)));
-
-			// Manage H264 escape codes (see "remove escapes (very rare 1:2^22)" in ffmpeg h264.c file)
-			//ByteRead((BYTE*)SPSTemp, min(MAX_SPS, GetRemaining()));
-			BYTE* buff = (BYTE*) malloc(h.spslen);
-			if (buff == NULL) return(false); //malloc error...
-			CGolombBuffer	gb (buff, h.spslen);
-			RemoveMpegEscapeCode (buff, h.sps, h.spslen);
-
-			h.profile = (BYTE)gb.BitRead(8);
-			gb.BitRead(8);
-			h.level = (BYTE)gb.BitRead(8);
-
-			gb.UExpGolombRead(); // seq_parameter_set_id
-			
-			//Initialise to normal values
-		  h.chromaFormat = YUV420;
-			h.lumaDepth = 8; // bit_depth_luma_minus8
-			h.chromaDepth = 8; // bit_depth_chroma_minus8
-
-			if(h.profile >= AVC_PROF_HP || h.profile==AVC_PROF_CAVLC444 || h.profile==AVC_PROF_83 || h.profile==AVC_PROF_86) // high profile etc
-			{
-			  h.chromaFormat = gb.UExpGolombRead();
-				if(h.chromaFormat == YUV444) // chroma_format_idc
-				{
-					gb.BitRead(1); // residue_transform_flag
-				}
-
-				h.lumaDepth = (WORD)gb.UExpGolombRead() + 8; // bit_depth_luma_minus8
-				h.chromaDepth = (WORD)gb.UExpGolombRead() + 8; // bit_depth_chroma_minus8
-
-				gb.BitRead(1); // qpprime_y_zero_transform_bypass_flag
-
-				if(gb.BitRead(1)) // seq_scaling_matrix_present_flag
-					for(int i = 0; i < 8; i++)
-						if(gb.BitRead(1)) // seq_scaling_list_present_flag
-							for(int j = 0, size = i < 6 ? 16 : 64, next = 8; j < size && next != 0; ++j)
-								next = (next + gb.SExpGolombRead() + 256) & 255;
-			}
-
-			gb.UExpGolombRead(); // log2_max_frame_num_minus4
-
-			UINT64 pic_order_cnt_type = gb.UExpGolombRead();
-
-			if(pic_order_cnt_type == 0)
-			{
-				gb.UExpGolombRead(); // log2_max_pic_order_cnt_lsb_minus4
-			}
-			else if(pic_order_cnt_type == 1)
-			{
-				gb.BitRead(1); // delta_pic_order_always_zero_flag
-				gb.SExpGolombRead(); // offset_for_non_ref_pic
-				gb.SExpGolombRead(); // offset_for_top_to_bottom_field
-				UINT64 num_ref_frames_in_pic_order_cnt_cycle = gb.UExpGolombRead();
-				for(int i = 0; i < num_ref_frames_in_pic_order_cnt_cycle; i++)
-					gb.SExpGolombRead(); // offset_for_ref_frame[i]
-			}
-
-			gb.UExpGolombRead(); // num_ref_frames
-			gb.BitRead(1); // gaps_in_frame_num_value_allowed_flag
-
-			UINT64 pic_width_in_mbs_minus1 = gb.UExpGolombRead();
-			UINT64 pic_height_in_map_units_minus1 = gb.UExpGolombRead();
-			BYTE frame_mbs_only_flag = (BYTE)gb.BitRead(1);
-
-			h.progressive = (frame_mbs_only_flag != 0);
-			h.width = (pic_width_in_mbs_minus1 + 1) * 16;
-			h.height = (2 - frame_mbs_only_flag) * (pic_height_in_map_units_minus1 + 1) * 16;
-
-			if (h.height == 1088) h.height = 1080;	// Prevent blur lines 
-
-			if (!frame_mbs_only_flag) 
-				gb.BitRead(1);							// mb_adaptive_frame_field_flag
-			gb.BitRead(1);								// direct_8x8_inference_flag
-			if (gb.BitRead(1))							// frame_cropping_flag
-			{
-				gb.UExpGolombRead();					// frame_cropping_rect_left_offset
-				gb.UExpGolombRead();					// frame_cropping_rect_right_offset
-				gb.UExpGolombRead();					// frame_cropping_rect_top_offset
-				gb.UExpGolombRead();					// frame_cropping_rect_bottom_offset
-			}
-			
-			if (gb.BitRead(1))							// vui_parameters_present_flag
-			{
-				if (gb.BitRead(1))						// aspect_ratio_info_present_flag
-				{
-					h.ar = (BYTE)gb.BitRead(8); //aspect_ratio_idc
-      		if(h.ar == 255) //EXTENDED_SAR
-      		{
-						h.arx = gb.BitRead(16);   //sar_width
-						h.ary = gb.BitRead(16);   //sar_height
-      			// make sure that both are 0 if one is 0
-      			if(h.arx == 0 || h.ary == 0)
-      			{
-      				h.arx = 0;
-      				h.ary = 0;
-      		  }
-      		}
-      		else if(h.ar > 16)
-      		{
-      			// aspect ratio reserved
-            h.arx = 0;
-            h.ary = 0;
-      		}
-      		else
-      		{
-      			// use preset aspect ratio
-      		  struct {DWORD x, y;} ar[] = {{0,0},{1,1},{12,11},{10,11},{16,11},{40,33},{24,11},{20,11},{32,11},{80,33},{18,11},{15,11},{64,33},{160,99},{4,3},{3,2},{2,1}};
-      			h.arx = ar[h.ar].x;
-      			h.ary = ar[h.ar].y;
-      		}
-      
-      		h.arx *= h.width;
-      		h.ary *= h.height;
-      
-      		DWORD a = h.arx, b = h.ary;
-      		while(a) {DWORD tmp = a; a = b % tmp; b = tmp;}
-      		if(b) h.arx /= b, h.ary /= b;
-				}
-
-				if (gb.BitRead(1))						// overscan_info_present_flag
-				{
-					gb.BitRead(1);						// overscan_appropriate_flag
-				}
-
-				if (gb.BitRead(1))						// video_signal_type_present_flag
-				{
-					gb.BitRead(3);						// video_format
-					gb.BitRead(1);						// video_full_range_flag
-					if(gb.BitRead(1))					// colour_description_present_flag
-					{
-						gb.BitRead(8);					// colour_primaries
-						gb.BitRead(8);					// transfer_characteristics
-						gb.BitRead(8);					// matrix_coefficients
-					}
-				}
-				if(gb.BitRead(1))						// chroma_location_info_present_flag
-				{
-					gb.UExpGolombRead();				// chroma_sample_loc_type_top_field
-					gb.UExpGolombRead();				// chroma_sample_loc_type_bottom_field
-				}
-				if (gb.BitRead(1))						// timing_info_present_flag
-				{
-					num_units_in_tick		  = (double)gb.BitRead(32);
-					time_scale				    = (double)gb.BitRead(32);
-					fixed_frame_rate_flag	= (bool)gb.BitRead(1);
-
-					if ((time_scale > 0) && (num_units_in_tick > 0))
-					{
-						// VUI consider fields even for progressive stream : multiply num_units_in_tick by 2
-						h.AvgTimePerFrame = (REFERENCE_TIME)((20000000.0 * num_units_in_tick)/time_scale);
-				  }
-				  else // guess ?
-				  {
-						h.AvgTimePerFrame = 370000; // lets go for 27Hz :-)
-				  }
-				}
-			}
-
-			free(buff);
 		}
-		else if(nal_type==0x8)
+		if (h.sps == NULL) { h.spslen = 0; return(false); } //malloc error...
+		ByteRead(h.sps, h.spslen);
+		Seek(pos);
+    //LogDebug("h.spslen = %d, bytes = %x %x %x %x, last byte = %x", h.spslen, *h.sps, *(h.sps+1), *(h.sps+2), *(h.sps+3), *(h.sps+(h.spslen-1)));
+
+		// Manage H264 escape codes (see "remove escapes (very rare 1:2^22)" in ffmpeg h264.c file)
+		//ByteRead((BYTE*)SPSTemp, min(MAX_SPS, GetRemaining()));
+		BYTE* buff = (BYTE*) malloc(h.spslen);
+		if (buff == NULL) return(false); //malloc error...
+		CGolombBuffer	gb (buff, h.spslen);
+		RemoveMpegEscapeCode (buff, h.sps, h.spslen);
+
+		h.profile = (BYTE)gb.BitRead(8);
+		gb.BitRead(8);
+		h.level = (BYTE)gb.BitRead(8);
+
+		gb.UExpGolombRead(); // seq_parameter_set_id
+		
+		//Initialise to normal values
+	  h.chromaFormat = YUV420;
+		h.lumaDepth = 8; // bit_depth_luma_minus8
+		h.chromaDepth = 8; // bit_depth_chroma_minus8
+
+		if(h.profile >= AVC_PROF_HP || h.profile==AVC_PROF_CAVLC444 || h.profile==AVC_PROF_83 || h.profile==AVC_PROF_86) // high profile etc
 		{
-			//LogDebug("PPS found");
-			
-		  h.ppsid = id;
-			__int64 pos = GetPos();
-			if (h.pps != NULL)
+		  h.chromaFormat = gb.UExpGolombRead();
+			if(h.chromaFormat == YUV444) // chroma_format_idc
 			{
-				free(h.pps);
+				gb.BitRead(1); // residue_transform_flag
 			}
-			h.ppslen = next_nal - pos; //length excluding length and ID bytes
-			if ((h.ppslen <= 0) || (h.ppslen > 65534)) return(false); //Sanity check
-			h.pps = (BYTE*) malloc(h.ppslen);
-			if (h.pps == NULL) return(false); //malloc error...
-			ByteRead(h.pps, h.ppslen);
-	    //LogDebug("h.ppslen = %d, bytes = %x %x %x %x, last byte = %x", h.ppslen, *h.pps, *(h.pps+1), *(h.pps+2), *(h.pps+3), *(h.pps+h.ppslen-1));
+
+			h.lumaDepth = (WORD)gb.UExpGolombRead() + 8; // bit_depth_luma_minus8
+			h.chromaDepth = (WORD)gb.UExpGolombRead() + 8; // bit_depth_chroma_minus8
+
+			gb.BitRead(1); // qpprime_y_zero_transform_bypass_flag
+
+			if(gb.BitRead(1)) // seq_scaling_matrix_present_flag
+				for(int i = 0; i < 8; i++)
+					if(gb.BitRead(1)) // seq_scaling_list_present_flag
+						for(int j = 0, size = i < 6 ? 16 : 64, next = 8; j < size && next != 0; ++j)
+							next = (next + gb.SExpGolombRead() + 256) & 255;
 		}
+
+		gb.UExpGolombRead(); // log2_max_frame_num_minus4
+
+		UINT64 pic_order_cnt_type = gb.UExpGolombRead();
+
+		if(pic_order_cnt_type == 0)
+		{
+			gb.UExpGolombRead(); // log2_max_pic_order_cnt_lsb_minus4
+		}
+		else if(pic_order_cnt_type == 1)
+		{
+			gb.BitRead(1); // delta_pic_order_always_zero_flag
+			gb.SExpGolombRead(); // offset_for_non_ref_pic
+			gb.SExpGolombRead(); // offset_for_top_to_bottom_field
+			UINT64 num_ref_frames_in_pic_order_cnt_cycle = gb.UExpGolombRead();
+			for(int i = 0; i < num_ref_frames_in_pic_order_cnt_cycle; i++)
+				gb.SExpGolombRead(); // offset_for_ref_frame[i]
+		}
+
+		gb.UExpGolombRead(); // num_ref_frames
+		gb.BitRead(1); // gaps_in_frame_num_value_allowed_flag
+
+		UINT64 pic_width_in_mbs_minus1 = gb.UExpGolombRead();
+		UINT64 pic_height_in_map_units_minus1 = gb.UExpGolombRead();
+		BYTE frame_mbs_only_flag = (BYTE)gb.BitRead(1);
+
+		h.progressive = (frame_mbs_only_flag != 0);
+		h.width = (pic_width_in_mbs_minus1 + 1) * 16;
+		h.height = (2 - frame_mbs_only_flag) * (pic_height_in_map_units_minus1 + 1) * 16;
+
+		if (h.height == 1088) h.height = 1080;	// Prevent blur lines 
+
+		if (!frame_mbs_only_flag) 
+			gb.BitRead(1);							// mb_adaptive_frame_field_flag
+		gb.BitRead(1);								// direct_8x8_inference_flag
+		if (gb.BitRead(1))							// frame_cropping_flag
+		{
+			gb.UExpGolombRead();					// frame_cropping_rect_left_offset
+			gb.UExpGolombRead();					// frame_cropping_rect_right_offset
+			gb.UExpGolombRead();					// frame_cropping_rect_top_offset
+			gb.UExpGolombRead();					// frame_cropping_rect_bottom_offset
+		}
+		
+		if (gb.BitRead(1))							// vui_parameters_present_flag
+		{
+			if (gb.BitRead(1))						// aspect_ratio_info_present_flag
+			{
+				h.ar = (BYTE)gb.BitRead(8); //aspect_ratio_idc
+    		if(h.ar == 255) //EXTENDED_SAR
+    		{
+					h.arx = gb.BitRead(16);   //sar_width
+					h.ary = gb.BitRead(16);   //sar_height
+    			// make sure that both are 0 if one is 0
+    			if(h.arx == 0 || h.ary == 0)
+    			{
+    				h.arx = 0;
+    				h.ary = 0;
+    		  }
+    		}
+    		else if(h.ar > 16)
+    		{
+    			// aspect ratio reserved
+          h.arx = 0;
+          h.ary = 0;
+    		}
+    		else
+    		{
+    			// use preset aspect ratio
+    		  struct {DWORD x, y;} ar[] = {{0,0},{1,1},{12,11},{10,11},{16,11},{40,33},{24,11},{20,11},{32,11},{80,33},{18,11},{15,11},{64,33},{160,99},{4,3},{3,2},{2,1}};
+    			h.arx = ar[h.ar].x;
+    			h.ary = ar[h.ar].y;
+    		}
+    
+    		h.arx *= h.width;
+    		h.ary *= h.height;
+    
+    		DWORD a = h.arx, b = h.ary;
+    		while(a) {DWORD tmp = a; a = b % tmp; b = tmp;}
+    		if(b) h.arx /= b, h.ary /= b;
+			}
+
+			if (gb.BitRead(1))						// overscan_info_present_flag
+			{
+				gb.BitRead(1);						// overscan_appropriate_flag
+			}
+
+			if (gb.BitRead(1))						// video_signal_type_present_flag
+			{
+				gb.BitRead(3);						// video_format
+				gb.BitRead(1);						// video_full_range_flag
+				if(gb.BitRead(1))					// colour_description_present_flag
+				{
+					gb.BitRead(8);					// colour_primaries
+					gb.BitRead(8);					// transfer_characteristics
+					gb.BitRead(8);					// matrix_coefficients
+				}
+			}
+			if(gb.BitRead(1))						// chroma_location_info_present_flag
+			{
+				gb.UExpGolombRead();				// chroma_sample_loc_type_top_field
+				gb.UExpGolombRead();				// chroma_sample_loc_type_bottom_field
+			}
+			if (gb.BitRead(1))						// timing_info_present_flag
+			{
+				num_units_in_tick		  = (double)gb.BitRead(32);
+				time_scale				    = (double)gb.BitRead(32);
+				fixed_frame_rate_flag	= (bool)gb.BitRead(1);
+
+				if ((time_scale > 0) && (num_units_in_tick > 0))
+				{
+					// VUI consider fields even for progressive stream : multiply num_units_in_tick by 2
+					h.AvgTimePerFrame = (REFERENCE_TIME)((20000000.0 * num_units_in_tick)/time_scale);
+			  }
+			  else // guess ?
+			  {
+					h.AvgTimePerFrame = 370000; // lets go for 27Hz :-)
+			  }
+			}
+		}
+
+		free(buff);
+	}
+	else if(nal_type==H264_NAL_PPS)
+	{
+		//LogDebug("PPS found");			
+	  h.ppsid = id;
+		__int64 pos = GetPos();
+
+		if (h.pps != NULL && (next_nal - pos) != h.ppslen)
+		{
+			free(h.pps);
+			h.pps = NULL;
+		}
+		h.ppslen = next_nal - pos; //length excluding length and ID bytes
+		if (h.pps == NULL)
+		{
+			h.pps = (BYTE*) malloc(h.ppslen);
+		}
+		if (h.pps == NULL) { h.ppslen = 0; return(false); } //malloc error...
+		ByteRead(h.pps, h.ppslen);
+    //LogDebug("h.ppslen = %d, bytes = %x %x %x %x, last byte = %x", h.ppslen, *h.pps, *(h.pps+1), *(h.pps+2), *(h.pps+3), *(h.pps+h.ppslen-1));
 	}
 
 	//LogDebug("spslen = %I64d, ppslen = %I64d, height = %d, width = %d, AvgTimePerFrame = %I64d", h.spslen, h.ppslen, h.height, h.width, h.AvgTimePerFrame);
@@ -1626,21 +1636,6 @@ bool CFrameHeaderParser::Read(hevchdr& h, int len, CMediaType* pmt, bool reset)
     h.lumaDepth = 0;
     h.chromaDepth = 0;
 		h.progressive = true;
-		if (h.sps != NULL)
-		{
-			free(h.sps);
-		}
-		if (h.pps != NULL)
-		{
-			free(h.pps);
-		}
-		if (h.vps != NULL)
-		{
-			free(h.vps);
-		}
-		h.sps = NULL;
-		h.pps = NULL;
-		h.vps = NULL;
 		h.spslen = 0;
 		h.ppslen = 0;
 		h.vpslen = 0;
@@ -1652,72 +1647,69 @@ bool CFrameHeaderParser::Read(hevchdr& h, int len, CMediaType* pmt, bool reset)
 		h.height = 0;
   }
 
-	if ((len <= 0) || (len > 65534)) return(false); //Sanity check
+	if ((len <= 6) || (len > 65534)) return(false); //Sanity check
   
-	if (len > 4)
+	int nal_len = len;
+	INT64 next_nal = GetPos()+nal_len;
+	
+	LOG_HEVC_FHP("HEVC FrameHeaderParser, len = %d", len);			
+  //Process VPS, SPS and PPS - only use actual NAL data (skip over 4 byte start code)
+  NALUnitType nal_type = HevcNalDecode::processNALUnit(GetBufferPos()+4, nal_len-4, h);
+    
+	if(nal_type==NAL_FAIL) //NAL decoding error
 	{
-		int nal_len = len;
-		INT64 next_nal = GetPos()+nal_len;
-		
-		LOG_HEVC_FHP("HEVC FrameHeaderParser, len = %d", len);			
-    //Process VPS, SPS and PPS - only use actual NAL data (skip over 4 byte start code)
-    NALUnitType nal_type = HevcNalDecode::processNALUnit(GetBufferPos()+4, nal_len-4, h);
-      
-		if(nal_type==NAL_FAIL) //NAL decoding error
+	  return(false);
+	}
+	else if(nal_type==NAL_SPS)
+	{
+		LOG_HEVC_FHP("SPS found");			
+		//Copy SPS to buffer
+		if (h.sps != NULL && nal_len != h.spslen)
 		{
-		  return(false);
+			free(h.sps);
+			h.sps = NULL;
 		}
-		else if(nal_type==NAL_SPS)
+		if (h.sps == NULL)
 		{
-			LOG_HEVC_FHP("SPS found");			
-			//Copy SPS to buffer
-			if (h.sps != NULL && nal_len != h.spslen)
-			{
-				free(h.sps);
-				h.sps = NULL;
-			}
-			if (h.sps == NULL)
-			{
-				h.sps = (BYTE*) malloc(nal_len);
-			}
-			if (h.sps == NULL) { h.spslen = 0; return(false); } //malloc error...
-			ByteRead(h.sps, nal_len);						
-			h.spslen = nal_len; //length including start code and ID bytes
+			h.sps = (BYTE*) malloc(nal_len);
 		}
-		else if(nal_type==NAL_PPS)
+		if (h.sps == NULL) { h.spslen = 0; return(false); } //malloc error...
+		ByteRead(h.sps, nal_len);						
+		h.spslen = nal_len; //length including start code and ID bytes
+	}
+	else if(nal_type==NAL_PPS)
+	{
+		LOG_HEVC_FHP("PPS found");			
+		//Copy PPS to new buffer
+		if (h.pps != NULL && nal_len != h.ppslen)
 		{
-			LOG_HEVC_FHP("PPS found");			
-			//Copy PPS to new buffer
-			if (h.pps != NULL && nal_len != h.ppslen)
-			{
-				free(h.pps);
-				h.pps = NULL;
-			}
-			if (h.pps == NULL)
-			{
-				h.pps = (BYTE*) malloc(nal_len);
-			}
-			if (h.pps == NULL) { h.ppslen = 0; return(false); } //malloc error...
-			ByteRead(h.pps, nal_len);						
-			h.ppslen = nal_len; //length including start code and ID bytes
+			free(h.pps);
+			h.pps = NULL;
 		}
-		else if(nal_type==NAL_VPS)
+		if (h.pps == NULL)
 		{
-			LOG_HEVC_FHP("VPS found");			
-			//Copy VPS to new buffer
-			if (h.vps != NULL && nal_len != h.vpslen)
-			{
-				free(h.vps);
-				h.vps = NULL;
-			}
-			if (h.vps == NULL)
-			{
-				h.vps = (BYTE*) malloc(nal_len);
-			}
-			if (h.vps == NULL) { h.vpslen = 0; return(false); } //malloc error...
-			ByteRead(h.vps, nal_len);						
-			h.vpslen = nal_len; //length including start code and ID bytes
+			h.pps = (BYTE*) malloc(nal_len);
 		}
+		if (h.pps == NULL) { h.ppslen = 0; return(false); } //malloc error...
+		ByteRead(h.pps, nal_len);						
+		h.ppslen = nal_len; //length including start code and ID bytes
+	}
+	else if(nal_type==NAL_VPS)
+	{
+		LOG_HEVC_FHP("VPS found");			
+		//Copy VPS to new buffer
+		if (h.vps != NULL && nal_len != h.vpslen)
+		{
+			free(h.vps);
+			h.vps = NULL;
+		}
+		if (h.vps == NULL)
+		{
+			h.vps = (BYTE*) malloc(nal_len);
+		}
+		if (h.vps == NULL) { h.vpslen = 0; return(false); } //malloc error...
+		ByteRead(h.vps, nal_len);						
+		h.vpslen = nal_len; //length including start code and ID bytes
 	}
 
 	if(h.spslen<=0 || h.ppslen<=0 || h.vpslen<=0 || h.height<100 || h.width<100 || h.AvgTimePerFrame<=0) 
