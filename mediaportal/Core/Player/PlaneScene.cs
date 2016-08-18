@@ -785,9 +785,11 @@ namespace MediaPortal.Player
             GUIGraphicsContext.RenderOverlay = false;
           }
 
+          // Disabled for now (see http://forum.kodi.tv/showthread.php?tid=154534&pid=1964715#pid1964715)
+          // Present frame in advance option lead to GUI lag and/or stuttering for Intel GPU
           // Need to present to slow and avoid flickering when we are not in fullscreen (visible with Intel GPU HD4XXX)
-          if (!GUIGraphicsContext.IsFullScreenVideo)
-            device.Present();
+          //if (!GUIGraphicsContext.IsFullScreenVideo)
+          //  device.Present();
         }
 
         // Present() call is done on C++ side so we are able to use DirectX 9 Ex device

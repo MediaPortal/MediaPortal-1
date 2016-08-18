@@ -324,8 +324,8 @@ HRESULT MPMadPresenter::ClearBackground(LPCSTR name, REFERENCE_TIME frameStart, 
         m_pDevice->PresentEx(nullptr, nullptr, nullptr, nullptr, D3DPRESENT_FORCEIMMEDIATE);
       }
     }
-    m_mpWait.Unlock();
-    m_dsLock.Unlock();
+    //m_mpWait.Unlock();
+    //m_dsLock.Unlock();
     return uiVisible ? CALLBACK_USER_INTERFACE : CALLBACK_INFO_DISPLAY;
   }
 
@@ -354,9 +354,9 @@ HRESULT MPMadPresenter::ClearBackground(LPCSTR name, REFERENCE_TIME frameStart, 
 
   m_deviceState.Restore();
 
-  // if we don't unlock, OSD will be slow because it will reach the timeout set in SetOSDCallback()
-  m_mpWait.Unlock();
-  m_dsLock.Unlock();
+  //// if we don't unlock, OSD will be slow because it will reach the timeout set in SetOSDCallback()
+  //m_mpWait.Unlock();
+  //m_dsLock.Unlock();
 
   return uiVisible ? CALLBACK_USER_INTERFACE : CALLBACK_INFO_DISPLAY;
 }
@@ -374,12 +374,14 @@ HRESULT MPMadPresenter::RenderOsd(LPCSTR name, REFERENCE_TIME frameStart, RECT* 
   bool isFullScreen = m_pCallback->IsFullScreen();
   if (!isFullScreen)
   {
-    for (int x = 0; x < 6; ++x) // need to let in a loop to slow down why ???
-    {
-      m_pDevice->PresentEx(nullptr, nullptr, nullptr, nullptr, D3DPRESENT_FORCEIMMEDIATE);
-    }
-    m_mpWait.Unlock();
-    m_dsLock.Unlock();
+    // Disabled for now (see http://forum.kodi.tv/showthread.php?tid=154534&pid=1964715#pid1964715)
+    // Present frame in advance option lead to GUI lag and/or stuttering for Intel GPU
+    //for (int x = 0; x < 6; ++x) // need to let in a loop to slow down why ???
+    //{
+    //  m_pDevice->PresentEx(nullptr, nullptr, nullptr, nullptr, D3DPRESENT_FORCEIMMEDIATE);
+    //}
+    //m_mpWait.Unlock();
+    //m_dsLock.Unlock();
     return uiVisible ? CALLBACK_USER_INTERFACE : CALLBACK_INFO_DISPLAY;
   }
 
@@ -427,9 +429,9 @@ HRESULT MPMadPresenter::RenderOsd(LPCSTR name, REFERENCE_TIME frameStart, RECT* 
 
   m_deviceState.Restore();
 
-  // if we don't unlock, OSD will be slow because it will reach the timeout set in SetOSDCallback()
-  m_mpWait.Unlock();
-  m_dsLock.Unlock();
+  //// if we don't unlock, OSD will be slow because it will reach the timeout set in SetOSDCallback()
+  //m_mpWait.Unlock();
+  //m_dsLock.Unlock();
 
   return uiVisible ? CALLBACK_USER_INTERFACE : CALLBACK_INFO_DISPLAY;
 }
