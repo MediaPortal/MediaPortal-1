@@ -74,6 +74,7 @@
 
 
 extern void LogDebug(const wchar_t* fmt, ...);
+extern bool TsWriterDisableTsBufferReservation();
 
 const unsigned char CDiskRecorder::WRITE_BUFFER_THROTTLE_STEP_PACKET_COUNTS[] =
 {
@@ -145,6 +146,10 @@ CDiskRecorder::CDiskRecorder(RecorderMode mode)
   m_timeShiftingParameters.FileCountMaximum = 20;
   m_timeShiftingParameters.MaximumFileSize = 255999976;   // ~256 MB, divisible by TS_PACKET_LEN so that buffer files start and end on packet boundaries
   m_timeShiftingParameters.ReservationChunkSize = m_timeShiftingParameters.MaximumFileSize;
+  if (TsWriterDisableTsBufferReservation())
+  {
+    m_timeShiftingParameters.ReservationChunkSize = 0;
+  }
 
   m_pmtParser.Reset();
   m_observer = NULL;
@@ -484,7 +489,10 @@ HRESULT CDiskRecorder::SetTimeShiftingParameters(unsigned long fileCountMinimum,
     // Ensure buffer files always start and finish on a TS packet boundary.
     long long fileSizeAdjustment = maximumFileSize % TS_PACKET_LEN;
     m_timeShiftingParameters.MaximumFileSize = maximumFileSize - fileSizeAdjustment;
-    m_timeShiftingParameters.ReservationChunkSize = m_timeShiftingParameters.MaximumFileSize;
+    if (m_timeShiftingParameters.ReservationChunkSize != 0)
+    {
+      m_timeShiftingParameters.ReservationChunkSize = m_timeShiftingParameters.MaximumFileSize;
+    }
   }
   else
   {

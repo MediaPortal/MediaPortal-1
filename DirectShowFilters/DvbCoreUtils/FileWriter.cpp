@@ -277,12 +277,11 @@ HRESULT FileWriter::GetFilePointer(unsigned long long& pointer)
   return S_OK;
 }
 
-void FileWriter::SetReservationConfiguration(bool useReservations,
-                                              unsigned long long reservationChunkSize)
+void FileWriter::SetReservationConfiguration(unsigned long long reservationChunkSize)
 {
-  LogDebug(L"file writer: set reservation configuration, use reservations = %d, chunk size = %llu",
-            useReservations, reservationChunkSize);
-  m_useReservations = useReservations;
+  LogDebug(L"file writer: set reservation configuration, chunk size = %llu",
+            reservationChunkSize);
+  m_useReservations = reservationChunkSize != 0;
   if (m_useReservations)
   {
     m_reservedFileSize = 0;

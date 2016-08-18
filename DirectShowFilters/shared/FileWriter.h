@@ -51,8 +51,7 @@ class FileWriter
     HRESULT SetFilePointer(long long distanceToMove, DWORD moveMethod);
     HRESULT GetFilePointer(unsigned long long& pointer);
 
-    void SetReservationConfiguration(bool useReservations,
-                                      unsigned long long reservationChunkSize);
+    void SetReservationConfiguration(unsigned long long reservationChunkSize);
 
   protected:
     HRESULT WriteInternal(unsigned char* data,

@@ -30,6 +30,7 @@ using namespace std;
 // Available debug/advanced settings
 //   TsWriter:
 //     TsWriterDisableCrcCheck
+//     TsWriterDisableTsBufferReservation
 //     TsWriterDumpInput
 //   TsReader:
 //     DoNotAllowSlowMotionDuringZapping

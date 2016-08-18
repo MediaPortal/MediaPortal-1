@@ -117,7 +117,7 @@ HRESULT MultiFileWriter::OpenFile(const wchar_t* fileName)
     m_fileRegister = NULL;
     return E_OUTOFMEMORY;
   }
-  m_fileData->SetReservationConfiguration(true, m_dataFileReservationChunkSize);
+  m_fileData->SetReservationConfiguration(m_dataFileReservationChunkSize);
 
   // Take a copy of the file name.
   unsigned long fileNameLength = wcslen(fileName);
@@ -247,7 +247,7 @@ void MultiFileWriter::SetConfiguration(MultiFileWriterParams& parameters)
 
   m_dataFileSizeMaximum = parameters.MaximumFileSize;
   m_dataFileReservationChunkSize = parameters.ReservationChunkSize;
-  m_fileData->SetReservationConfiguration(true, m_dataFileReservationChunkSize);
+  m_fileData->SetReservationConfiguration(m_dataFileReservationChunkSize);
   m_dataFileCountMinimum = parameters.FileCountMinimum;
   m_dataFileCountMaximum = parameters.FileCountMaximum;
 }

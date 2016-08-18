@@ -52,6 +52,7 @@ using namespace std;
 
 
 DEFINE_TVE_DEBUG_SETTING(TsWriterDisableCrcCheck)
+DEFINE_TVE_DEBUG_SETTING(TsWriterDisableTsBufferReservation)
 DEFINE_TVE_DEBUG_SETTING(TsWriterDumpInput)
 
 
