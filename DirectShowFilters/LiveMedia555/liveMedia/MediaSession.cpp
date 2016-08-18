@@ -1330,13 +1330,6 @@ Boolean MediaSubsession::createSourceObjects(int useSpecialRTPoffset) {
 					  fRTPPayloadFormat,
 					  expectDONFields,
 					  fRTPTimestampFrequency);
-      } else if (strcmp(fCodecName, "HEVC") == 0) { // Sebastiii
-	Boolean expectDONFields = attrVal_unsigned("sprop-depack-buf-nalus") > 0;
-	fReadSource = fRTPSource
-	  = H265VideoRTPSource::createNew(env(), fRTPSocket,
-					  fRTPPayloadFormat,
-					  expectDONFields,
-					  fRTPTimestampFrequency);
       } else if (strcmp(fCodecName, "DV") == 0) {
 	fReadSource = fRTPSource
 	  = DVVideoRTPSource::createNew(env(), fRTPSocket,
