@@ -732,16 +732,17 @@ namespace MediaPortal.Player
           return -1;
         }
 
-        _vmr9Util.FreeFrameCounter++;
+        // Commented out seems to do some flickering on first few frames on pause.
+        //_vmr9Util.FreeFrameCounter++;
 
-        if (!_drawVideoAllowed || !_isEnabled)
-        {
-          Log.Info("planescene:RenderLayers() frame:{0} enabled:{1} allowed:{2}", _vmr9Util.FrameCounter, _isEnabled,
-            _drawVideoAllowed);
-          _vmr9Util.FrameCounter++;
-          return -1;
-        }
-        _vmr9Util.FrameCounter++;
+        //if (!_drawVideoAllowed || !_isEnabled)
+        //{
+        //  Log.Info("planescene:RenderLayers() frame:{0} enabled:{1} allowed:{2}", _vmr9Util.FrameCounter, _isEnabled,
+        //    _drawVideoAllowed);
+        //  _vmr9Util.FrameCounter++;
+        //  return -1;
+        //}
+        //_vmr9Util.FrameCounter++;
 
         //Log.Debug("PlaneScene width {0}, height {1}", width, height);
 
