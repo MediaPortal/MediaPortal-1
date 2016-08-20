@@ -226,16 +226,16 @@ namespace MediaPortal.Player
       GUILayerManager.UnRegisterLayer(this);
       if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
       {
-        if (MadVrRenderTarget != null)
-        {
-          //VMR9 changes the directx 9 render target. Thats why we set it back to what it was
-          if (!MadVrRenderTarget.Disposed)
-          {
-            GUIGraphicsContext.DX9Device.SetRenderTarget(0, MadVrRenderTarget);
-          }
-          MadVrRenderTarget.Dispose();
-          MadVrRenderTarget = null;
-        }
+        //if (MadVrRenderTarget != null)
+        //{
+        //  //VMR9 changes the directx 9 render target. Thats why we set it back to what it was
+        //  if (!MadVrRenderTarget.Disposed)
+        //  {
+        //    GUIGraphicsContext.DX9Device.SetRenderTarget(0, MadVrRenderTarget);
+        //  }
+        //  MadVrRenderTarget.Dispose();
+        //  MadVrRenderTarget = null;
+        //}
       }
       else if (_renderTarget != null)
       {
@@ -817,6 +817,15 @@ namespace MediaPortal.Player
         GUIGraphicsContext.InVmr9Render = false;
       }
       return visible ? 0 : 1; // S_OK, S_FALSE
+    }
+
+    public void RestoreDeviceSurface(uint pSurfaceDevice)
+    {
+      if (GUIGraphicsContext.DX9Device != null)
+      {
+        Surface surface = new Surface((IntPtr)pSurfaceDevice);
+        VMR9Util.g_vmr9.MadVrRenderTargetVMR9 = surface;
+      }
     }
 
     public void SetRenderTarget(uint target)

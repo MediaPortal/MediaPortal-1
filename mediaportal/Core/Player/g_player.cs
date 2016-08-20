@@ -2692,6 +2692,10 @@ namespace MediaPortal.Player
             }
           }
         }
+        if (_player.Paused)
+        {
+          if (VMR9Util.g_vmr9 != null) VMR9Util.g_vmr9.MadVrRepeatFrame();
+        }
       }
     }
 

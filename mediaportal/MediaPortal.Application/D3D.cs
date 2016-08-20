@@ -492,9 +492,6 @@ namespace MediaPortal
     /// </summary>
     protected void ToggleFullscreen()
     {
-      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && GUIGraphicsContext.InVmr9Render)
-        return;
-
       Log.Debug("D3D: ToggleFullScreen()");
 
       // disable event handlers
@@ -597,6 +594,12 @@ namespace MediaPortal
     /// </summary>
     internal void RecreateSwapChain(bool useBackup)
     {
+      // Don't need to resize when using madVR
+      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && GUIGraphicsContext.Vmr9Active)
+      {
+        return;
+      }
+
       // disable event handlers
       if (GUIGraphicsContext.DX9Device != null)
       {
@@ -633,67 +636,73 @@ namespace MediaPortal
         GUIFontManager.Dispose();
         GUITextureManager.Dispose();
         if (GUIGraphicsContext.DX9Device != null)
+        // Don't need to resize when using madVR
+        if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR ||
+            !GUIGraphicsContext.Vmr9Active)
         {
-          GUIGraphicsContext.DX9Device.EvictManagedResources();
+          if (GUIGraphicsContext.DX9Device != null)
+          {
+            GUIGraphicsContext.DX9Device.EvictManagedResources();
 
-          if (useBackup)
-          {
-            try
+            if (useBackup)
             {
-              Log.Debug("Main: RecreateSwapChain() by restoring startup DirectX values");
-              GUIGraphicsContext.DirectXPresentParameters = _presentParamsBackup;
-              GUIGraphicsContext.DX9Device.Reset(_presentParamsBackup);
+              try
+              {
+                Log.Debug("Main: RecreateSwapChain() by restoring startup DirectX values");
+                GUIGraphicsContext.DirectXPresentParameters = _presentParamsBackup;
+                GUIGraphicsContext.DX9Device.Reset(_presentParamsBackup);
+              }
+              catch (InvalidCallException)
+              {
+                Log.Error("D3D: D3DERR_INVALIDCALL - presentation parameters might contain an invalid value");
+              }
+              catch (DeviceLostException)
+              {
+                Log.Error("D3D: D3DERR_DEVICELOST - device is lost but cannot be reset at this time");
+              }
+              catch (DriverInternalErrorException)
+              {
+                Log.Error("D3D: D3DERR_DRIVERINTERNALERROR - internal driver error");
+              }
+              catch (OutOfVideoMemoryException)
+              {
+                Log.Error("D3D: D3DERR_OUTOFVIDEOMEMORY - not enough available display memory to perform the operation");
+              }
+              catch (OutOfMemoryException)
+              {
+                Log.Error("D3D: D3DERR_OUTOFMEMORY - could not allocate sufficient memory to complete the call");
+              }
             }
-            catch (InvalidCallException)
+            else
             {
-              Log.Error("D3D: D3DERR_INVALIDCALL - presentation parameters might contain an invalid value");
-            }
-            catch (DeviceLostException)
-            {
-              Log.Error("D3D: D3DERR_DEVICELOST - device is lost but cannot be reset at this time");
-            }
-            catch (DriverInternalErrorException)
-            {
-              Log.Error("D3D: D3DERR_DRIVERINTERNALERROR - internal driver error");
-            }
-            catch (OutOfVideoMemoryException)
-            {
-              Log.Error("D3D: D3DERR_OUTOFVIDEOMEMORY - not enough available display memory to perform the operation");
-            }
-            catch (OutOfMemoryException)
-            {
-              Log.Error("D3D: D3DERR_OUTOFMEMORY - could not allocate sufficient memory to complete the call");
-            }
-          }
-          else
-          {
-            // build new D3D presentation parameters and reset device
-            Log.Debug("Main: RecreateSwapChain() by rebuild PresentParams");
-            BuildPresentParams(Windowed);
-            try
-            {
-              GUIGraphicsContext.DX9Device.Reset(_presentParams);
-            }
-            catch (InvalidCallException)
-            {
-              Log.Error("D3D: D3DERR_INVALIDCALL - presentation parametters might contain an invalid value");
-            }
-            catch (DeviceLostException)
-            {
-              // Indicate that the device has been lost
-              Log.Error("D3D: D3DERR_DEVICELOST - device is lost but cannot be reset at this time");
-            }
-            catch (DriverInternalErrorException)
-            {
-              Log.Error("D3D: D3DERR_DRIVERINTERNALERROR - internal driver error");
-            }
-            catch (OutOfVideoMemoryException)
-            {
-              Log.Error("D3D: D3DERR_OUTOFVIDEOMEMORY - not enough available display memory to perform the operation");
-            }
-            catch (OutOfMemoryException)
-            {
-              Log.Error("D3D: D3DERR_OUTOFMEMORY - could not allocate sufficient memory to complete the call");
+              // build new D3D presentation parameters and reset device
+              Log.Debug("Main: RecreateSwapChain() by rebuild PresentParams");
+              BuildPresentParams(Windowed);
+              try
+              {
+                GUIGraphicsContext.DX9Device.Reset(_presentParams);
+              }
+              catch (InvalidCallException)
+              {
+                Log.Error("D3D: D3DERR_INVALIDCALL - presentation parametters might contain an invalid value");
+              }
+              catch (DeviceLostException)
+              {
+                // Indicate that the device has been lost
+                Log.Error("D3D: D3DERR_DEVICELOST - device is lost but cannot be reset at this time");
+              }
+              catch (DriverInternalErrorException)
+              {
+                Log.Error("D3D: D3DERR_DRIVERINTERNALERROR - internal driver error");
+              }
+              catch (OutOfVideoMemoryException)
+              {
+                Log.Error("D3D: D3DERR_OUTOFVIDEOMEMORY - not enough available display memory to perform the operation");
+              }
+              catch (OutOfMemoryException)
+              {
+                Log.Error("D3D: D3DERR_OUTOFMEMORY - could not allocate sufficient memory to complete the call");
+              }
             }
           }
         }
