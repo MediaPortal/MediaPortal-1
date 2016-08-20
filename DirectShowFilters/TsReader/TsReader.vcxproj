@@ -178,7 +178,6 @@
   <ItemGroup>
     <ClCompile Include="source\AudioPin.cpp" />
     <ClCompile Include="source\Buffer.cpp" />
-    <ClCompile Include="source\CcParseH264.cpp" />
     <ClCompile Include="source\ChannelInfo.cpp" />
     <ClCompile Include="source\DeMultiplexer.cpp" />
     <ClCompile Include="source\FileReader.cpp" />
@@ -214,7 +213,6 @@
     <ClInclude Include="..\alloctracing.h" />
     <ClInclude Include="source\AudioPin.h" />
     <ClInclude Include="source\Buffer.h" />
-    <ClInclude Include="source\CcParseH264.h" />
     <ClInclude Include="source\DeMultiplexer.h" />
     <ClInclude Include="source\FileReader.h" />
     <ClInclude Include="source\FrameHeaderParser.h" />
