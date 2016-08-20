@@ -54,6 +54,7 @@ MPMadPresenter::MPMadPresenter(IVMR9Callback* pCallback, DWORD width, DWORD heig
 {
   Log("MPMadPresenter::Constructor() - instance 0x%x", this);
   m_pShutdown = false;
+  m_pDevice->GetRenderTarget(0, &m_pSurfaceDevice);
 }
 
 MPMadPresenter::~MPMadPresenter()
@@ -114,11 +115,11 @@ void MPMadPresenter::InitializeOSD()
 void MPMadPresenter::SetOSDCallback()
 {
   // Wait that madVR complete the rendering
-  m_mpWait.Wait(100);
+  //m_mpWait.Wait(100);
   {
-    // Lock madVR thread while kodi rendering
-    CAutoLock lock(&m_dsLock);
-    m_dsLock.Lock();
+    //// Lock madVR thread while kodi rendering
+    //CAutoLock lock(&m_dsLock);
+    //m_dsLock.Lock();
 
     // Render frame to try to fix HD4XXX GPU flickering issue
     Com::SmartQIPtr<IMadVROsdServices> pOR = m_pMad;
@@ -241,6 +242,7 @@ HRESULT MPMadPresenter::Shutdown()
 
     if (m_pCallback)
     {
+      m_pCallback->RestoreDeviceSurface(reinterpret_cast<DWORD>(m_pSurfaceDevice));
       m_pCallback->Release();
     }
 
@@ -376,10 +378,11 @@ HRESULT MPMadPresenter::RenderOsd(LPCSTR name, REFERENCE_TIME frameStart, RECT* 
   {
     // Disabled for now (see http://forum.kodi.tv/showthread.php?tid=154534&pid=1964715#pid1964715)
     // Present frame in advance option lead to GUI lag and/or stuttering for Intel GPU
-    //for (int x = 0; x < 6; ++x) // need to let in a loop to slow down why ???
-    //{
-    //  m_pDevice->PresentEx(nullptr, nullptr, nullptr, nullptr, D3DPRESENT_FORCEIMMEDIATE);
-    //}
+    int CountPass = uiVisible ? 3 : 6;
+    for (int x = 0; x < CountPass; ++x) // need to let in a loop to slow down why ???
+    {
+      m_pDevice->PresentEx(nullptr, nullptr, nullptr, nullptr, D3DPRESENT_FORCEIMMEDIATE);
+    }
     //m_mpWait.Unlock();
     //m_dsLock.Unlock();
     return uiVisible ? CALLBACK_USER_INTERFACE : CALLBACK_INFO_DISPLAY;
@@ -447,7 +450,7 @@ void MPMadPresenter::RenderToTexture(IDirect3DTexture9* pTexture)
     if (SUCCEEDED(hr = m_pCallback->SetRenderTarget(reinterpret_cast<DWORD>(pSurface))))
     {
       // TODO is it needed ?
-      hr = m_pDevice->Clear(0, nullptr, D3DCLEAR_TARGET, D3DXCOLOR(0, 0, 0, 0), 1.0f, 0);
+      //hr = m_pDevice->Clear(0, nullptr, D3DCLEAR_TARGET, D3DXCOLOR(0, 0, 0, 0), 1.0f, 0);
     }
   }
   //Log("RenderToTexture hr: 0x%08x", hr);

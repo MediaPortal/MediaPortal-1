@@ -203,5 +203,7 @@ class MPMadPresenter : public CUnknown, public CCritSec
     CCritSec m_dsLock;
 
     bool uiVisible = false;
+
+    IDirect3DSurface9* m_pSurfaceDevice = nullptr;
 };
 

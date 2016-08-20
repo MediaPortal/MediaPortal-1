@@ -92,6 +92,9 @@ namespace MediaPortal.Player
 
     [PreserveSig]
     bool IsUiVisible();
+
+    [PreserveSig]
+    void RestoreDeviceSurface(uint pSurfaceDevice);
   }
 
   #endregion
@@ -513,8 +516,8 @@ namespace MediaPortal.Player
         {
           // Process frames to clear D3D dialog window
           GUIWindowManager.MadVrProcess();
-          _scene.MadVrRenderTarget = GUIGraphicsContext.DX9Device.GetRenderTarget(0);
-          MadVrRenderTargetVMR9 = GUIGraphicsContext.DX9Device.GetRenderTarget(0);
+          //_scene.MadVrRenderTarget = GUIGraphicsContext.DX9Device.GetRenderTarget(0);
+          //MadVrRenderTargetVMR9 = GUIGraphicsContext.DX9Device.GetRenderTarget(0);
         }
         _scene.Init();
 
@@ -601,10 +604,11 @@ namespace MediaPortal.Player
           {
             Log.Error("VMR9: MadDeinit - thread : {0}", Thread.CurrentThread.Name);
             GC.Collect();
-            DirectShowUtil.FinalReleaseComObject(_vmr9Filter);
-            GC.Collect();
             MadDeinit();
             GC.Collect();
+            DirectShowUtil.FinalReleaseComObject(_vmr9Filter);
+            Thread.Sleep(200);
+            RestoreGuiForMadVr();
           }
           else
           {
@@ -1489,6 +1493,7 @@ namespace MediaPortal.Player
           DirectShowUtil.FinalReleaseComObject(_vmr9Filter);
           Thread.Sleep(200);
           Log.Debug("VMR9: Dispose 2");
+          RestoreGuiForMadVr();
         }
         else
         {
@@ -1522,17 +1527,7 @@ namespace MediaPortal.Player
       }
       finally
       {
-        if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
-        {
-          if (MadVrRenderTargetVMR9 != null && !MadVrRenderTargetVMR9.Disposed)
-          {
-            GUIGraphicsContext.DX9Device.SetRenderTarget(0, MadVrRenderTargetVMR9);
-            MadVrRenderTargetVMR9.Dispose();
-            MadVrRenderTargetVMR9 = null;
-            Log.Debug("VMR9: Dispose 5");
-          }
-        }
-        Log.Debug("VMR9: Dispose 6");
+        Log.Debug("VMR9: Dispose done");
       }
     }
 
