@@ -425,10 +425,9 @@ namespace MediaPortal.Player
     public void WindowsMessageMp()
     {
       // Needed to enable 3D (TODO why is needed ?)
-      IVideoWindow _videoWindow = (IVideoWindow)_graphBuilder;
-      if (_videoWindow != null) _videoWindow.put_Owner(GUIGraphicsContext.form.Handle);
       Log.Debug("VMR9: Delayed OSD Callback");
       RegisterOsd();
+      if (VMR9Util.g_vmr9 != null) VMR9Util.g_vmr9.SetMpFullscreenWindow();
     }
 
     /// <summary>
@@ -456,6 +455,35 @@ namespace MediaPortal.Player
           var msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_UNFOCUS_FOCUS, 0, 0, 0, 0, 0, null);
           GUIWindowManager.SendThreadMessage(msg);
           Log.Debug("VMR9: send message for madVR refresh force");
+        }
+      }
+    }
+
+    /// <summary>
+    /// Set MP Window for madVR when using 3D Trick
+    /// </summary>
+    public void SetMpFullscreenWindow()
+    {
+      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+      {
+        if (UseMadVideoRenderer3D)
+        {
+          try
+          {
+            // Sending message to force unfocus/focus for 3D.
+            IVideoWindow videoWin = (IVideoWindow)_graphBuilder;
+            if (videoWin != null)
+            {
+              videoWin.put_WindowStyle((WindowStyle)((int)WindowStyle.Child + (int)WindowStyle.ClipChildren + (int)WindowStyle.ClipSiblings));
+              videoWin.put_MessageDrain(GUIGraphicsContext.ActiveForm);
+            }
+            UseMadVideoRenderer3D = false;
+          }
+          catch (Exception)
+          {
+            UseMadVideoRenderer3D = false;
+          }
+          Log.Debug("VMR9: madVR SetMpFullscreenWindow()");
         }
       }
     }
@@ -830,9 +858,6 @@ namespace MediaPortal.Player
         return;
       }
 
-      // Used for madVR
-      ProcessMadVrOsd();
-
       if (g_Player.Playing && g_Player.IsDVD && g_Player.IsDVDMenu)
       {
         GUIGraphicsContext.Vmr9FPS = 0f;
@@ -891,8 +916,8 @@ namespace MediaPortal.Player
       if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
       {
         TimeSpan tsPlay = DateTime.Now - playbackTimer;
-        // Register OSD back 2 seconds after rendering is done on madVR filter.
-        if (tsPlay.Seconds >= 3)
+        // Register OSD back 5 seconds after rendering is done on madVR filter.
+        if (tsPlay.Seconds >= 5)
         {
           if (GUIGraphicsContext.MadVrOsd)
           {
@@ -1207,10 +1232,15 @@ namespace MediaPortal.Player
     {
       lock (this)
       {
-        // TEST but crash when DXVA Native is used in LAV
-        // Commented out again because it lead to crash (but this code permit to start 3D but no clear why))
-        //IVideoWindow _videoWindow = (IVideoWindow) _graphBuilder;
-        //if (_videoWindow != null) _videoWindow.put_Owner(GUIGraphicsContext.form.Handle);
+        if (!UseMadVideoRenderer3D || GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
+        {
+          IVideoWindow videoWin = (IVideoWindow)_graphBuilder;
+          if (videoWin != null)
+          {
+            videoWin.put_WindowStyle((WindowStyle) ((int) WindowStyle.Child + (int) WindowStyle.ClipChildren + (int) WindowStyle.ClipSiblings));
+            videoWin.put_MessageDrain(GUIGraphicsContext.form.Handle);
+          }
+        }
 
         var hr = mediaCtrl.Run();
         Log.Debug("VMR9: StartMediaCtrl start hr: {0}", hr);
