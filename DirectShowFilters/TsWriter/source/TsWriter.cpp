@@ -599,18 +599,6 @@ CMpTs::CMpTs(LPUNKNOWN pUnk, HRESULT *pHr)
   LogDebug("-- Random access mode for timeshift files                        --");
   LogDebug("-- Variable size (no chunk reserve) for timeshift files          --");
   LogDebug("-------------------------------------------------------------------");  
-
-  // Set timer resolution to 1 ms (if possible)
-  TIMECAPS tc; 
-  m_dwTimerResolution = 0; 
-  if (timeGetDevCaps(&tc, sizeof(TIMECAPS)) == MMSYSERR_NOERROR)
-  {
-    m_dwTimerResolution = min(max(tc.wPeriodMin, 1), tc.wPeriodMax);
-    if (m_dwTimerResolution)
-    {
-      timeBeginPeriod(m_dwTimerResolution);
-    }
-  }
 		
   b_dumpRawPackets = false;
   m_pFilter = new CMpTsFilter(this, GetOwner(), &m_filterLock, &m_receiveLock, pHr);
@@ -647,12 +635,6 @@ CMpTs::CMpTs(LPUNKNOWN pUnk, HRESULT *pHr)
 CMpTs::~CMpTs()
 {
   LogDebug("CMpTs::dtor() ");
-
-  // Reset timer resolution (if we managed to set it originally)
-  if (m_dwTimerResolution)
-  {
-    timeEndPeriod(m_dwTimerResolution);
-  }
 
   delete m_pPin;
   delete m_pOobSiPin;

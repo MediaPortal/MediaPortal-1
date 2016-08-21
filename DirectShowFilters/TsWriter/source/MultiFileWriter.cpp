@@ -127,13 +127,11 @@ MultiFileWriter::MultiFileWriter(MultiFileWriterParam *pWriterParams) :
 {
 	m_pCurrentTSFile = new FileWriter();
 	m_pCurrentTSFile->SetChunkReserve(m_chunkReserve, m_maxTSFileSize);
-	StartThread();
 }
 
 MultiFileWriter::~MultiFileWriter()
 {
 	CloseFile();
-	StopThread();
 	
 	if (m_pTSBufferFileName)
 		delete[] m_pTSBufferFileName;
@@ -210,6 +208,8 @@ HRESULT MultiFileWriter::OpenFile(LPCWSTR pszFileName)
 	m_bDiskFull = FALSE;
 	m_bBufferFull = FALSE; 
 
+	StartThread();
+
   LogDebug(L"MultiFileWriter: OpenFile() succeeded, filename: %s", m_pTSBufferFileName);
 
 	return S_OK;
@@ -246,16 +246,21 @@ HRESULT MultiFileWriter::CloseFile()
   }
 
   //Don't lock before this point to avoid deadlock when m_writeQueue.size() > 0
-	CAutoLock lock(&m_Lock);
+  
+  { //Context for CAutoLock
+  	CAutoLock lock(&m_Lock);
+  
+  	ClearBuffers();
+  
+  	CloseHandle(m_hTSBufferFile);
+  	m_hTSBufferFile = INVALID_HANDLE_VALUE;
+  
+  	m_pCurrentTSFile->CloseFile();
+  	
+  	CleanupFiles();
+  }
 
-	ClearBuffers();
-
-	CloseHandle(m_hTSBufferFile);
-	m_hTSBufferFile = INVALID_HANDLE_VALUE;
-
-	m_pCurrentTSFile->CloseFile();
-	
-	CleanupFiles();
+	StopThread();
 		
 	if (m_pTSBufferFileName)
 	{
@@ -1003,6 +1008,18 @@ void MultiFileWriter::StartThread()
   UINT id;
   m_hThreadProc = (HANDLE)_beginthreadex(NULL, 0, &MultiFileWriter::thread_function, (void *) this, 0, &id);
   SetThreadPriority(m_hThreadProc, THREAD_PRIORITY_NORMAL);
+  
+  // Set timer resolution to SYS_TIMER_RES (if possible)
+  TIMECAPS tc; 
+  m_dwTimerResolution = 0; 
+  if (timeGetDevCaps(&tc, sizeof(TIMECAPS)) == MMSYSERR_NOERROR)
+  {
+    m_dwTimerResolution = min(max(tc.wPeriodMin, SYS_TIMER_RES), tc.wPeriodMax);
+    if (m_dwTimerResolution)
+    {
+      timeBeginPeriod(m_dwTimerResolution);
+    }
+  }
 }
 
 
@@ -1015,5 +1032,12 @@ void MultiFileWriter::StopThread()
     WaitForSingleObject(m_hThreadProc, INFINITE);	
     m_WakeThreadEvent.Reset();
     m_hThreadProc = NULL;
+  }
+  
+  // Reset timer resolution (if we managed to set it originally)
+  if (m_dwTimerResolution)
+  {
+    timeEndPeriod(m_dwTimerResolution);
+    m_dwTimerResolution = 0;
   }
 }

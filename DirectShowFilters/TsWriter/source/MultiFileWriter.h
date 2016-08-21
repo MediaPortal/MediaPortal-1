@@ -36,6 +36,9 @@
 //Number of retries allowed when writing buffer files
 #define FILE_WRITE_RETRIES 19
 
+//System timer resolution in ms
+#define SYS_TIMER_RES 5
+
 typedef struct 
 {
 	long 	minFiles;
@@ -137,7 +140,7 @@ protected:
   unsigned __stdcall ThreadProc();
   void StartThread();
   void StopThread();
-
+  DWORD m_dwTimerResolution;   //Timer resolution variable
 };
 
 #endif
