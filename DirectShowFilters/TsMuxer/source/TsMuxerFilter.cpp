@@ -22,7 +22,7 @@
 #include <cstddef>    // NULL
 #include <map>
 #include <process.h>  // _beginthread()
-#include <Windows.h>  // CloseHandle(), CreateEvent(), INVALID_HANDLE_VALUE, ResetEvent(), SetEvent(), WaitForSingleObject()
+#include <Windows.h>  // CloseHandle(), CreateEvent(), GetLastError(), INVALID_HANDLE_VALUE, ResetEvent(), SetEvent(), WaitForSingleObject()
 #include "..\..\shared\TimeUtils.h"
 
 
@@ -64,9 +64,10 @@ CTsMuxerFilter::CTsMuxerFilter(IStreamMultiplexer* multiplexer,
   m_streamingMonitorThreadStopEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
   if (m_streamingMonitorThreadStopEvent == NULL)
   {
-    *hr = GetLastError();
-    LogDebug(L"filter: failed to create streaming monitor thread stop event, hr = 0x%x",
-              *hr);
+    DWORD errorCode = GetLastError();
+    *hr = HRESULT_FROM_WIN32(errorCode);
+    LogDebug(L"filter: failed to create streaming monitor thread stop event, error = %lu, hr = 0x%x",
+              errorCode, *hr);
     return;
   }
 
