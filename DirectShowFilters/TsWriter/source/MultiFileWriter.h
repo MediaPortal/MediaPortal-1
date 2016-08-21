@@ -33,6 +33,9 @@
 #define FULL_BUFFERS 256
 #define NOT_FULL_BUFFERS 192
 
+//Number of retries allowed when writing buffer files
+#define FILE_WRITE_RETRIES 19
+
 typedef struct 
 {
 	long 	minFiles;

@@ -51,7 +51,6 @@ extern void LogDebug(const wchar_t *fmt, ...) ;
 
 FileWriter::FileWriter() :
 	m_hFile(INVALID_HANDLE_VALUE),
-	m_hFileParked(INVALID_HANDLE_VALUE),
 	m_pFileName(0),
 	m_bChunkReserve(FALSE),
 	m_chunkReserveSize(2000000),
@@ -176,16 +175,7 @@ HRESULT FileWriter::OpenFile()
 // CloseFile (close all files)
 //
 HRESULT FileWriter::CloseFile()
-{
-	if (m_hFileParked != INVALID_HANDLE_VALUE)
-	{  
-  	if (!CloseHandle(m_hFileParked))
-  	{
-  	  LogDebug(L"FileWriter: CloseFile(), CloseHandle(m_hFileParked) failed, m_hFileParked 0x%x", m_hFileParked);
-  	}
-  	m_hFileParked = INVALID_HANDLE_VALUE; // Invalidate the file
-  }
-  
+{  
 	if (m_hFile != INVALID_HANDLE_VALUE)
 	{  
    	__int64 currentPosition = GetFilePointer();
@@ -214,63 +204,6 @@ HRESULT FileWriter::CloseFile()
 	return S_OK;
 }
 
-//
-// CloseParked (close parked file)
-//
-HRESULT FileWriter::CloseParked()
-{
-	if (m_hFileParked != INVALID_HANDLE_VALUE)
-	{  
-  	if (!CloseHandle(m_hFileParked))
-  	{
-  	  LogDebug(L"FileWriter: CloseParked(), CloseHandle(m_hFileParked) failed, m_hFileParked 0x%x", m_hFileParked);
-  	}
-  	m_hFileParked = INVALID_HANDLE_VALUE; // Invalidate the file
-  }
-  
-	return S_OK;
-}
-
-//
-// ParkFile - close parked file and park current file
-//
-HRESULT FileWriter::ParkFile()
-{
-
-	if (m_hFileParked != INVALID_HANDLE_VALUE)
-	{  
-  	if (!CloseHandle(m_hFileParked))
-  	{
-  	  LogDebug(L"FileWriter: ParkFile(), CloseHandle(m_hFileParked) failed, m_hFileParked 0x%x", m_hFileParked);
-  	}
-  	m_hFileParked = INVALID_HANDLE_VALUE; // Invalidate the file
-  }
-
-	if (m_hFile != INVALID_HANDLE_VALUE)
-	{  
-   	__int64 currentPosition = GetFilePointer();
-   	
-   	if (m_bChunkReserve)
-   	{
-   		if (currentPosition < m_chunkReserveFileSize)
-   		{
-     		SetFilePointer(currentPosition, FILE_BEGIN);
-     		SetEndOfFile(m_hFile);
-   	  }
-   	}
-   
-  	m_hFileParked = m_hFile; // 'park' the file - closing it is delayed until ParkFile() is called again 
-  	m_hFile = INVALID_HANDLE_VALUE; // Invalidate the file handle
-  	
-  	if (m_pFileName)
-  	{
-      LogDebug(L"FileWriter: ParkFile() : %s", m_pFileName);			  
-    }
-	}
-	
-	return S_OK;
-}
-
 
 BOOL FileWriter::IsFileInvalid()
 {
@@ -293,6 +226,11 @@ __int64 FileWriter::GetFilePointer()
 }
 
 HRESULT FileWriter::Write(PBYTE pbData, ULONG lDataLength)
+{
+	return WriteWithRetry(pbData, lDataLength, 0);
+}
+
+HRESULT FileWriter::WriteWithRetry(PBYTE pbData, ULONG lDataLength, int retries)
 {
 	HRESULT hr;
 
@@ -325,7 +263,7 @@ HRESULT FileWriter::Write(PBYTE pbData, ULONG lDataLength)
 
 	DWORD written = 0;
   
-  for (int retryCnt = 0; retryCnt < 20; retryCnt++)
+  for (int retryCnt = 0; retryCnt <= retries; retryCnt++)
   {
   	written = 0;
 	  hr = WriteFile(m_hFile, (PVOID)pbData, (DWORD)lDataLength, &written, NULL);
@@ -337,6 +275,10 @@ HRESULT FileWriter::Write(PBYTE pbData, ULONG lDataLength)
       }
       m_bWriteFailed = FALSE;
 	    return S_OK;
+    }
+    else if (retries == 0)
+    {
+      break;
     }
     
     Sleep(50);

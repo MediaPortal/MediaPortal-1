@@ -309,7 +309,7 @@ HRESULT MultiFileWriter::WriteToDisk(PBYTE pbData, ULONG lDataLength)
 		// Write some data to the current file if it's not full
 		if (dataToWrite > 0)
 		{
-  		if FAILED(hr = m_pCurrentTSFile->Write(pbData, (ULONG)dataToWrite))
+  		if FAILED(hr = m_pCurrentTSFile->WriteWithRetry(pbData, (ULONG)dataToWrite, FILE_WRITE_RETRIES))
   		{
 			  // We might be running out of disk space, so just drop the data
   			return hr;
@@ -331,7 +331,7 @@ HRESULT MultiFileWriter::WriteToDisk(PBYTE pbData, ULONG lDataLength)
 	}
 	else
 	{
-		if FAILED(hr = m_pCurrentTSFile->Write(pbData, lDataLength))
+		if FAILED(hr = m_pCurrentTSFile->WriteWithRetry(pbData, lDataLength, FILE_WRITE_RETRIES))
 		{
 			// We might be running out of disk space, so just drop the data
 			return hr;
@@ -505,11 +505,6 @@ HRESULT MultiFileWriter::ReuseTSFile()
   		if (!FAILED(hr)) break ;
 	  }
 	  
-		if (Tmo==2)
-		{
-		  //Just in case the 'parked' file is causing a problem, close it before looping for the last time
-		  m_pCurrentTSFile->CloseParked();
-		}
 		Sleep(20) ;
 	}
 	while (--Tmo) ;

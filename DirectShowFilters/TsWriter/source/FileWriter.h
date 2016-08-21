@@ -38,8 +38,7 @@ public:
 	HRESULT OpenFile();
 	HRESULT CloseFile();
 	HRESULT Write(PBYTE pbData, ULONG lDataLength);
-	HRESULT ParkFile();
-	HRESULT CloseParked();
+  HRESULT WriteWithRetry(PBYTE pbData, ULONG lDataLength, int retries);
 
 	BOOL IsFileInvalid();
 
@@ -51,7 +50,6 @@ public:
 protected:
 	HANDLE m_hFile;
 	LPWSTR m_pFileName;
-	HANDLE m_hFileParked;
 
 	BOOL m_bChunkReserve;
 	__int64 m_chunkReserveFileSize;
