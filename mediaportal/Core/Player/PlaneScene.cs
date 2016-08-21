@@ -815,6 +815,11 @@ namespace MediaPortal.Player
 
         _reEntrant = false;
         GUIGraphicsContext.InVmr9Render = false;
+
+        if (VMR9Util.g_vmr9 != null)
+        {
+          VMR9Util.g_vmr9.ProcessMadVrOsd();
+        }
       }
       return visible ? 0 : 1; // S_OK, S_FALSE
     }

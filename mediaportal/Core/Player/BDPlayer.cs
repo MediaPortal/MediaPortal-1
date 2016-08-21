@@ -1009,11 +1009,11 @@ namespace MediaPortal.Player
         MovieEnded();
         return false;
       }
-      if (_videoWin != null)
-      {
-        _videoWin.put_WindowStyle((WindowStyle)((int)WindowStyle.Child + (int)WindowStyle.ClipSiblings + (int)WindowStyle.ClipChildren));
-        _videoWin.put_MessageDrain(GUIGraphicsContext.form.Handle);
-      }
+      //if (_videoWin != null)
+      //{
+      //  _videoWin.put_WindowStyle((WindowStyle)((int)WindowStyle.Child + (int)WindowStyle.ClipSiblings + (int)WindowStyle.ClipChildren));
+      //  _videoWin.put_MessageDrain(GUIGraphicsContext.form.Handle);
+      //}
       if (VMR9Util.g_vmr9 != null) hr = VMR9Util.g_vmr9.StartMediaCtrl(_mediaCtrl);
       if (hr < 0)
       {

@@ -2628,10 +2628,10 @@ namespace MediaPortal.Player
         VMR9Util.g_vmr9.Process();
         VMR9Util.g_vmr9.Repaint();
       }
-      else if (GUIGraphicsContext.Vmr9Active && VMR9Util.g_vmr9 != null)
-      {
-        VMR9Util.g_vmr9.ProcessMadVrOsd();
-      }
+      //else if (GUIGraphicsContext.Vmr9Active && VMR9Util.g_vmr9 != null)
+      //{
+      //  VMR9Util.g_vmr9.ProcessMadVrOsd();
+      //}
       if (_player == null)
       {
         return;

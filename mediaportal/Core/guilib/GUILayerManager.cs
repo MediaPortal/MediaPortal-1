@@ -97,30 +97,40 @@ namespace MediaPortal.GUI.Library
       {
         if (_layers[i] != null)
         {
-          // madVR pass GUI rendering when video is played
-          if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && GUIGraphicsContext.Vmr9Active)
+          if (_layers[i].ShouldRenderLayer())
           {
-            if (i == (int)LayerType.Gui && layers == GUILayers.over)
+            // For madVR, first check along all layers to inform that UI is displaying
+            // Check for madVR when GUI/OSD/Dialog is displayed, we should go to latency mode
+            if (videoLayer != i)
             {
-              continue;
+              uiVisible = true;
             }
           }
+        }
+      }
+
+      if (layers == GUILayers.under)
+        endLayer = videoLayer - 1;
+      else if (layers == GUILayers.over)
+        startLayer = videoLayer + 1;
+
+      for (int i = startLayer; i < endLayer; ++i)
+      {
+        if (_layers[i] != null)
+        {
           if (_layers[i].ShouldRenderLayer())
           {
             if (GUIGraphicsContext.ShowBackground == false && i == videoLayer)
             {
               continue;
             }
-            // For madVR, inform that we have UI displaying
-            // Check for madVR when GUI/OSD/Dialog is displayed, we should go to latency mode
-            if (i == (int) LayerType.Gui || i == (int) LayerType.Osd || i == (int) LayerType.Topbar2 ||
-                i == (int) LayerType.Dialog || i == (int) LayerType.Topbar1 || i == (int) LayerType.MiniEPG ||
-                i == (int) LayerType.Volume)
+            _layers[i].RenderLayer(timePassed);
+            GUIFontManager.Present();
+
+            if (videoLayer != i)
             {
               uiVisible = true;
             }
-            _layers[i].RenderLayer(timePassed);
-            GUIFontManager.Present();
           }
         }
       }

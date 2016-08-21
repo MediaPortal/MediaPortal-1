@@ -313,17 +313,17 @@ namespace MediaPortal.Player
           _videoWin.SetWindowPosition(0, 0, GUIGraphicsContext.Width, GUIGraphicsContext.Height);
         }
 
-        if (_videoWin != null)
-        {
-          if (hr == 0)
-          {
-            hr = _videoWin.put_WindowStyle((WindowStyle)((int)WindowStyle.Child + (int)WindowStyle.ClipChildren + (int)WindowStyle.ClipSiblings));
-            if (hr != 0)
-            {
-              Log.Info("DVDPlayer:Unable to set window style 0x{0:X}", hr);
-            }
-          }
-        }
+        //if (_videoWin != null)
+        //{
+        //  if (hr == 0)
+        //  {
+        //    hr = _videoWin.put_WindowStyle((WindowStyle)((int)WindowStyle.Child + (int)WindowStyle.ClipChildren + (int)WindowStyle.ClipSiblings));
+        //    if (hr != 0)
+        //    {
+        //      Log.Info("DVDPlayer:Unable to set window style 0x{0:X}", hr);
+        //    }
+        //  }
+        //}
         if (VMR9Util.g_vmr9 != null) hr = VMR9Util.g_vmr9.StartMediaCtrl(_mediaCtrl);
         if (hr < 0 || hr > 1)
         {

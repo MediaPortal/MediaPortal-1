@@ -224,10 +224,10 @@ void MPMadPresenter::ConfigureMadvr()
       m_pSettings->SettingsSetBoolean(L"exclusiveDelay", true);
       m_pSettings->SettingsSetBoolean(L"enableExclusive", true);
     }
-    else if (Com::SmartQIPtr<IMadVRCommand> pMadVrCmd = m_pMad)
-    {
-      MPMadPresenter::EnableExclusive(false);
-    }
+    //else if (Com::SmartQIPtr<IMadVRCommand> pMadVrCmd = m_pMad)
+    //{
+    //  MPMadPresenter::EnableExclusive(false);
+    //}
   }
 }
 
