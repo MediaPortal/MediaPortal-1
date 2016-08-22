@@ -242,15 +242,13 @@ bool CDiskRecorder::Start()
 				CloseHandle(m_hFile);
 				m_hFile=INVALID_HANDLE_VALUE;
 			}
-			m_hFile = CreateFileW(	m_wszFileName,						// The filename
-									(DWORD) GENERIC_WRITE,				// File access
-									(DWORD) FILE_SHARE_READ,			// Share access
-									NULL,								// Security
+			m_hFile = CreateFileW(	m_wszFileName,	// The filename
+									(DWORD) GENERIC_WRITE,		  // File access
+									(DWORD) FILE_SHARE_READ,	  // Share access
+									NULL,								        // Security
 									(DWORD) OPEN_ALWAYS,				// Open flags
-//									(DWORD) FILE_FLAG_RANDOM_ACCESS,
-//									(DWORD) FILE_FLAG_WRITE_THROUGH,	// More flags
-									(DWORD) 0,							// More flags
-									NULL);								// Template
+									(DWORD) FILE_ATTRIBUTE_NORMAL,  // More flags
+									NULL);								      // Template
 			if (m_hFile == INVALID_HANDLE_VALUE)
 			{
 				LogDebug(L"Recorder:unable to create file:'%s' %d",m_wszFileName, GetLastError());
@@ -603,7 +601,7 @@ void CDiskRecorder::WriteToRecording(byte* buffer, int len)
                             (DWORD) FILE_SHARE_READ,            // Share access
                             NULL,                               // Security
                             (DWORD) OPEN_ALWAYS,                // Open flags
-                            (DWORD) 0,                          // More flags
+                            (DWORD) FILE_ATTRIBUTE_NORMAL,      // More flags
                             NULL);                              // Template
                 if (m_hFile == INVALID_HANDLE_VALUE)
                 {
@@ -797,6 +795,7 @@ bool CDiskRecorder::IsStreamWanted(int stream_type)
 					stream_type==SERVICE_TYPE_VIDEO_MPEG2_DCII ||
 					stream_type==SERVICE_TYPE_VIDEO_MPEG4 || 
 					stream_type==SERVICE_TYPE_VIDEO_H264 ||
+					stream_type==SERVICE_TYPE_VIDEO_HEVC ||
 					stream_type==SERVICE_TYPE_AUDIO_MPEG1 || 
 					stream_type==SERVICE_TYPE_AUDIO_MPEG2 || 
 					stream_type==SERVICE_TYPE_AUDIO_AC3 ||
@@ -846,7 +845,14 @@ void CDiskRecorder::AddStream(PidInfo2 pidInfo)
 			m_vecPids.push_back(pi);
 			WriteLog("add audio stream pid: 0x%x fake pid: 0x%x stream type: 0x%x logical type: 0x%x descriptor length: %d",pidInfo.elementaryPid,pi.fakePid,pidInfo.streamType,pidInfo.logicalStreamType,pidInfo.rawDescriptorSize);
 		}
-		else if (pidInfo.streamType==SERVICE_TYPE_VIDEO_MPEG1 || pidInfo.streamType==SERVICE_TYPE_VIDEO_MPEG2 || pidInfo.streamType==SERVICE_TYPE_AUDIO_MPEG1 || pidInfo.streamType==SERVICE_TYPE_VIDEO_MPEG4 || pidInfo.streamType==SERVICE_TYPE_AUDIO_MPEG1 || pidInfo.streamType==SERVICE_TYPE_VIDEO_H264 || pidInfo.streamType==SERVICE_TYPE_VIDEO_MPEG2_DCII)
+		else if (pidInfo.streamType==SERVICE_TYPE_VIDEO_MPEG1 || 
+      		   pidInfo.streamType==SERVICE_TYPE_VIDEO_MPEG2 ||
+      		   pidInfo.streamType==SERVICE_TYPE_AUDIO_MPEG1 || 
+      		   pidInfo.streamType==SERVICE_TYPE_VIDEO_MPEG4 || 
+      		   pidInfo.streamType==SERVICE_TYPE_AUDIO_MPEG1 || 
+      		   pidInfo.streamType==SERVICE_TYPE_VIDEO_H264 || 
+      		   pidInfo.streamType==SERVICE_TYPE_VIDEO_MPEG2_DCII || 
+      		   pidInfo.streamType==SERVICE_TYPE_VIDEO_HEVC)
 		{
 			pi.fakePid=DR_FAKE_VIDEO_PID;
 			DR_FAKE_VIDEO_PID++;
@@ -1067,7 +1073,12 @@ void CDiskRecorder::WriteTs(byte* tsPacket)
 
 				memcpy(info.m_Pkt,tsPacket,188);
 	
-				if (info.streamType==SERVICE_TYPE_VIDEO_MPEG1 || info.streamType==SERVICE_TYPE_VIDEO_MPEG2||info.streamType==SERVICE_TYPE_VIDEO_MPEG4||info.streamType==SERVICE_TYPE_VIDEO_H264 || info.streamType==SERVICE_TYPE_VIDEO_MPEG2_DCII)
+				if (info.streamType==SERVICE_TYPE_VIDEO_MPEG1 || 
+  				  info.streamType==SERVICE_TYPE_VIDEO_MPEG2 ||
+  				  info.streamType==SERVICE_TYPE_VIDEO_MPEG4 ||
+  				  info.streamType==SERVICE_TYPE_VIDEO_H264 || 
+  				  info.streamType==SERVICE_TYPE_VIDEO_MPEG2_DCII ||
+  				  info.streamType==SERVICE_TYPE_VIDEO_HEVC)
 				{
 					//video
 					if (!info.seenStart) 
@@ -1537,7 +1548,7 @@ void CDiskRecorder::PatchPcr(byte* tsPacket,CTsHeader& header)
 				}
 				else
 				{
-   				m_PcrSpeed += ((float)dt - m_PcrSpeed) * 0.1 ;                                // Time average between 2 PCR
+   				m_PcrSpeed += ((float)dt - m_PcrSpeed) * 0.1f ;                                // Time average between 2 PCR
 					if (m_JumpInProgress && verbose)
 					{
 						WriteLog("PCR jump aborted after %d confirmation.", m_JumpInProgress) ;

@@ -834,6 +834,20 @@ namespace MediaPortal.Player
           case "LATMAAC":
             AudioCodec = "AAC";
             break;
+            
+          case "DTS":
+            AudioCodec = "DTS";
+            break;
+            
+          case "DTSHD":
+          case "DTS-HD":
+            AudioCodec = "DTSHD";
+            break;
+            
+          case "PCM":
+          case "LPCM":
+            AudioCodec = "PCM";
+            break;
         }
         GUIPropertyManager.SetProperty("#Play.Current.AudioCodec.Texture", AudioCodec);
 
@@ -1652,6 +1666,8 @@ namespace MediaPortal.Player
             {
               bool bInternal = xmlreader.GetValueAsBool("movieplayer", "internal", true);
               bool bInternalDVD = xmlreader.GetValueAsBool("dvdplayer", "internal", true);
+              bool bUseExternalPlayerForDVD = xmlreader.GetValueAsBool("dvdplayer", "usefordvd", true);
+              bool bUseExternalPlayerForBluray = xmlreader.GetValueAsBool("bdplayer", "useforbluray", true);
 
               // External player extension filter
               _externalPlayerExtensions = xmlreader.GetValueAsString("movieplayer", "extensions", "");
@@ -1661,6 +1677,26 @@ namespace MediaPortal.Player
                 // Do not use external player if file ext is not in the extension list
                 if (!CheckExtension(strFile))
                   bInternal = true;
+              }
+
+              // Ensure DVD player 
+              if ((!bUseExternalPlayerForDVD && !bInternalDVD && !isImageFile && (extension == ".ifo" || extension == ".vob")) ||
+                  (!bUseExternalPlayerForDVD && !bInternalDVD && isImageFile && Util.Utils.IsDVDImage(strFile)))
+              {
+                  bInternalDVD = true;
+              }
+
+              // Ensure BD player is configured external player for Bluray
+              if ((!bUseExternalPlayerForBluray && !bInternalDVD && !isImageFile && extension == ".bdmv") ||
+                  (!bUseExternalPlayerForBluray && !bInternalDVD && isImageFile && Util.Utils.IsBDImage(strFile)))
+              {
+                  bInternalDVD = true;
+              }
+
+              if ((bUseExternalPlayerForBluray && !isImageFile && extension == ".bdmv") ||
+                  (bUseExternalPlayerForBluray && isImageFile && Util.Utils.IsBDImage(strFile)))
+              {
+                bInternalDVD = false;
               }
 
               if ((!bInternalDVD && !isImageFile && (extension == ".ifo" || extension == ".vob" || extension == ".bdmv")) ||

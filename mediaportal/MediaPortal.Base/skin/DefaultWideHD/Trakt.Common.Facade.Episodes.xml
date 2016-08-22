@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <controls>
@@ -37,6 +37,7 @@
           <IconXOff>6</IconXOff>
           <IconYOff>12</IconYOff>
           <keepaspectratio>yes</keepaspectratio>
+          <scrollbarXOff>15</scrollbarXOff>
         </control>
         <control>
           <description>Thumbnail Panel</description>

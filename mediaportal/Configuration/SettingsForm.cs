@@ -546,6 +546,8 @@ namespace MediaPortal.Configuration
       AddSection(new ConfigPage(bd, new BDZoom(), false));
       Log.Info("  add blu-ray postprocessing section");
       AddSection(new ConfigPage(bd, new BDPostProcessing(), true));
+      Log.Info("  add blu-ray external - internal player");
+      AddSection(new ConfigPage(bd, new BDPlayer(), true));
     }
 
     private void AddTabDvd()

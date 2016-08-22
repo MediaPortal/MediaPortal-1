@@ -333,12 +333,13 @@ namespace MediaPortal.Player
           {
             SubEngine.engine = new SubEngine.DummyEngine();
           }
+        }
 
-          IPostProcessingEngine postengine = PostProcessingEngine.GetInstance(true);
-          if (!postengine.LoadPostProcessing(graphBuilder))
-          {
-            PostProcessingEngine.engine = new PostProcessingEngine.DummyEngine();
-          }
+        // Init post processing engine
+        IPostProcessingEngine postengine = PostProcessingEngine.GetInstance(true);
+        if (!postengine.LoadPostProcessing(graphBuilder))
+        {
+          PostProcessingEngine.engine = new PostProcessingEngine.DummyEngine();
         }
 
         #endregion
@@ -1384,27 +1385,10 @@ namespace MediaPortal.Player
     {
       #region return splitter IAMStreamSelect LCID
 
-      int LCIDCheck = FStreams.GetStreamInfos(StreamType.Audio, iStream).LCID;
-
-      if (LCIDCheck != 0)
+      string languageName = LCIDCheck(FStreams.GetStreamInfos(StreamType.Audio, iStream).LCID);
+      if (!string.IsNullOrEmpty(languageName))
       {
-        int size = Util.Win32API.GetLocaleInfo(LCIDCheck, 2, null, 0);
-        if (size > 0)
-        {
-          string languageName = new string(' ', size);
-          Util.Win32API.GetLocaleInfo(LCIDCheck, 2, languageName, size);
-
-          if (!string.IsNullOrEmpty(languageName))
-          {
-            if (languageName.Contains("\0"))
-              languageName = languageName.Substring(0, languageName.IndexOf("\0"));
-
-            if (languageName.Contains("("))
-              languageName = languageName.Substring(0, languageName.IndexOf("("));
-
-            return Util.Utils.TranslateLanguageString(languageName.Trim());
-          }
-        }
+        return languageName;
       }
 
       #endregion
@@ -1635,6 +1619,33 @@ namespace MediaPortal.Player
       // Audio - Dolby TrueHD, 48.0 kHz, 6 chn, 640.0 kbit/s (1100,fd,00)
       streamName = Regex.Replace(streamName, @"\(.+?\)$", "");
       return streamName;
+    }
+
+    /// <summary>
+    /// Property to get/set the current subtitle LAV stream
+    /// </summary>
+    public int CurrentSubtitleLAVStream
+    {
+      get
+      {
+        int subtitleStreams = SubtitleStreams;
+        for (int i = 0; i < subtitleStreams; i++)
+        {
+          if (FStreams.GetStreamInfos(StreamType.Subtitle, i).Current)
+          {
+            return i;
+          }
+          if (FStreams.GetStreamInfos(StreamType.Subtitle_hidden, i).Current)
+          {
+            return -1;
+          }
+          if (FStreams.GetStreamInfos(StreamType.Subtitle_file, i).Current)
+          {
+            return i;
+          }
+        }
+        return 0;
+      }
     }
 
     /// <summary>
@@ -2018,33 +2029,18 @@ namespace MediaPortal.Player
                     case StreamType.Unknown:
                     case StreamType.Subtitle:
                     case StreamType.Subtitle_file:
-                      if (streamLAVSelection)
+                    case StreamType.Subtitle_hidden:
+                    case StreamType.Subtitle_shown:
+                      if (streamLAVSelection && FSInfos.Filter.ToLowerInvariant().Contains("LAV Splitter".ToLowerInvariant()))
                       {
-                        if (FSInfos.sFlag == AMStreamSelectInfoFlags.Enabled || FSInfos.sFlag == (AMStreamSelectInfoFlags.Enabled | AMStreamSelectInfoFlags.Exclusive))
+                        if (FSInfos.sFlag == AMStreamSelectInfoFlags.Enabled ||
+                            FSInfos.sFlag == (AMStreamSelectInfoFlags.Enabled | AMStreamSelectInfoFlags.Exclusive))
                         {
                           FSInfos.Current = true;
                           pStrm.Enable(FSInfos.Id, 0);
                           pStrm.Enable(FSInfos.Id, AMStreamSelectEnableFlags.Enable);
-
-                          // Init Subtitle Engine
-                          ISubEngine engine = SubEngine.GetInstance(true);
-                          if (!engine.LoadSubtitles(graphBuilder, m_strCurrentFile))
-                          {
-                            SubEngine.engine = new SubEngine.DummyEngine();
-                          }
-                          // Set subtitle defined by LAV Splitter
-                          int subsCount = SubtitleStreams; // Not in the loop otherwise it will be reaccessed at each pass
-                          for (int i = 0; i < subsCount; i++)
-                          {
-                            string subtitleLanguage = SubtitleLanguage(i);
-                            if (FSInfos.Name.ToLowerInvariant().Contains(subtitleLanguage.ToLowerInvariant()))
-                            {
-                              CurrentSubtitleStream = i;
-                              EnableSubtitle = true;
-                              break;
-                            }
-                          }
                         }
+                        goto default;
                       }
                       break;
                     case StreamType.Video:
@@ -2086,6 +2082,18 @@ namespace MediaPortal.Player
           }
           DirectShowUtil.ReleaseComObject(enumFilters);
         }
+        if (streamLAVSelection)
+        {
+          // Init subtitle engine
+          ISubEngine engine = SubEngine.GetInstance(true);
+          if (!engine.LoadSubtitles(graphBuilder, m_strCurrentFile))
+          {
+            SubEngine.engine = new SubEngine.DummyEngine();
+          }
+          // Set LAV Splitter stream
+          CurrentSubtitleStream = CurrentSubtitleLAVStream;
+          EnableSubtitle = CurrentSubtitleLAVStream != -1;
+        }
       }
       catch { }
       return true;
@@ -2114,6 +2122,31 @@ namespace MediaPortal.Player
     public override bool HasPostprocessing
     {
       get { return PostProcessingEngine.GetInstance().HasPostProcessing; }
+    }
+
+    private string LCIDCheck(int LCID)
+    {
+      if (LCID != 0)
+      {
+        int size = Util.Win32API.GetLocaleInfo(LCID, 2, null, 0);
+        if (size > 0)
+        {
+          string languageName = new string(' ', size);
+          Util.Win32API.GetLocaleInfo(LCID, 2, languageName, size);
+
+          if (!string.IsNullOrEmpty(languageName))
+          {
+            if (languageName.Contains("\0"))
+              languageName = languageName.Substring(0, languageName.IndexOf("\0", StringComparison.Ordinal));
+
+            if (languageName.Contains("("))
+              languageName = languageName.Substring(0, languageName.IndexOf("(", StringComparison.Ordinal));
+
+            return Util.Utils.TranslateLanguageString(languageName.Trim());
+          }
+        }
+      }
+      return "";
     }
 
     #endregion

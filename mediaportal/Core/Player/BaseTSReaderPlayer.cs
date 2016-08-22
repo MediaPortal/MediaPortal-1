@@ -443,13 +443,33 @@ namespace MediaPortal.Player
         {
           return "Mpeg2";
         }
-        if (sType.subType == MEDIASUBTYPE_LATM_AAC_AUDIO) //MediaSubType.LATMAAC)
+        if (sType.subType == MEDIASUBTYPE_LATM_AAC_AUDIO)
         {
           return "LATMAAC";
         }
-        if (sType.subType == MEDIASUBTYPE_AAC_AUDIO) //MediaSubType.AAC)
+        if (sType.subType == MEDIASUBTYPE_LOAS_AAC_AUDIO)
+        {
+          return "LATMAAC";
+        }        
+        if (sType.subType == MEDIASUBTYPE_RAW_AAC_AUDIO)
         {
           return "AAC";
+        }
+        if (sType.subType == MEDIASUBTYPE_ADTS_AAC_AUDIO)
+        {
+          return "AAC";
+        }
+        if (sType.subType == MEDIASUBTYPE_BD_LPCM_AUDIO)
+        {
+          return "LPCM";
+        }    
+        if (sType.subType == MEDIASUBTYPE_DTS2)
+        {
+          return "DTS";
+        }   
+        if (sType.subType == MEDIASUBTYPE_DTS_HD)
+        {
+          return "DTS-HD";
         }
       }
       return Strings.Unknown;
@@ -2069,9 +2089,34 @@ namespace MediaPortal.Player
       get { return new Guid("000001ff-0000-0010-8000-00aa00389b71"); }
     }
 
-    private static Guid MEDIASUBTYPE_AAC_AUDIO
+    private static Guid MEDIASUBTYPE_RAW_AAC_AUDIO
     {
       get { return new Guid("000000ff-0000-0010-8000-00aa00389b71"); }
+    }
+
+    private static Guid MEDIASUBTYPE_LOAS_AAC_AUDIO
+    {
+      get { return new Guid("00001602-0000-0010-8000-00aa00389b71"); }
+    }
+    
+    private static Guid MEDIASUBTYPE_ADTS_AAC_AUDIO
+    {
+      get { return new Guid("00001600-0000-0010-8000-00aa00389b71"); }
+    }
+
+    private static Guid MEDIASUBTYPE_BD_LPCM_AUDIO
+    {
+      get { return new Guid("A23EB7FC-510B-466F-9FBF-5F878F69347C"); }
+    }
+
+    private static Guid MEDIASUBTYPE_DTS2
+    {
+      get { return new Guid("00002001-0000-0010-8000-00AA00389B71"); }
+    }
+
+    private static Guid MEDIASUBTYPE_DTS_HD
+    {
+      get { return new Guid("A2E58EB7-0FA9-48BB-A40C-FA0E156D0645"); }
     }
 
     #endregion

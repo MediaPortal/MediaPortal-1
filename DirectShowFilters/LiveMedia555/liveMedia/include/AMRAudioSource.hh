@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2016 Live Networks, Inc.  All rights reserved.
 // A source object for AMR audio sources
 // C++ header
 
@@ -31,7 +31,7 @@ public:
   unsigned numChannels() const { return fNumChannels; }
 
   u_int8_t lastFrameHeader() const { return fLastFrameHeader; }
-  // The frame header for the most recently read frame (RFC 3267, sec. 5.3)
+  // The frame header for the most recently read frame (RFC 4867, sec. 5.3)
 
 protected:
   AMRAudioSource(UsageEnvironment& env, Boolean isWideband, unsigned numChannels);
@@ -40,6 +40,7 @@ protected:
 
 private:
   // redefined virtual functions:
+  virtual char const* MIMEtype() const;
   virtual Boolean isAMRAudioSource() const;
 
 protected:

@@ -27,7 +27,7 @@ RtspTaskScheduler* RtspTaskScheduler::createNew()
   return new RtspTaskScheduler();
 }
 
-RtspTaskScheduler::RtspTaskScheduler():BasicTaskScheduler()
+RtspTaskScheduler::RtspTaskScheduler():BasicTaskScheduler(10000)   // standard LIVE555 default, unit = micro seconds
 {
 }
 
@@ -35,7 +35,7 @@ RtspTaskScheduler::~RtspTaskScheduler()
 {
 }
 
-void RtspTaskScheduler::doEventLoop(char* watchVariable)
+void RtspTaskScheduler::doEventLoop(volatile char* watchVariable)
 {
   while(true)
   {

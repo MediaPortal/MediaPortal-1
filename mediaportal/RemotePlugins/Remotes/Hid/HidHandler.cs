@@ -47,13 +47,13 @@ namespace MediaPortal.InputDevices
     ///   Constructor: Initializes mappings from XML file
     /// </summary>
     /// <param name="deviceXmlName">Input device name</param>
-    public HidHandler(string deviceXmlName)
+    public HidHandler(string aProfileName)
     {
       IsLoaded = false;
       //We will need one usage/action mapping for each HID UsagePage/UsageCollection we are listening too
       _usageActions = new Dictionary<UInt32, HidUsageAction>();
 
-      var xmlPath = GetXmlPath(deviceXmlName);
+      var xmlPath = HidProfiles.GetExistingProfilePath(aProfileName);
 
       LoadMapping(xmlPath);
     }
@@ -61,8 +61,7 @@ namespace MediaPortal.InputDevices
     #endregion Constructor
 
     #region Private Fields
-
-    private const int KXmlVersion = 1;
+    
     private const int KCurrentLayer = 1;
 
     private readonly Dictionary<UInt32, HidUsageAction> _usageActions;
@@ -92,61 +91,6 @@ namespace MediaPortal.InputDevices
 
     #region Implementation
 
-    /// <summary>
-    ///   Get version of XML mapping file
-    /// </summary>
-    /// <param name="xmlPath">Path to XML file</param>
-    /// Possible exceptions: System.Xml.XmlException
-    public int GetXmlVersion(string xmlPath)
-    {
-      var doc = new XmlDocument();
-      doc.Load(xmlPath);
-      return Convert.ToInt32(doc.DocumentElement.SelectSingleNode("/HidHandler").Attributes["version"].Value);
-    }
-
-    /// <summary>
-    ///   Check if XML file exists and version is current
-    /// </summary>
-    /// <param name="xmlPath">Path to XML file</param>
-    /// Possible exceptions: System.IO.FileNotFoundException
-    /// System.Xml.XmlException
-    /// ApplicationException("XML version mismatch")
-    public bool CheckXmlFile(string xmlPath)
-    {
-      if (!File.Exists(xmlPath) || (GetXmlVersion(xmlPath) != KXmlVersion))
-      {
-        Log.Error("HID: File does not exists or version mismatch {0}", xmlPath);
-        return false;
-      }
-      return true;
-    }
-
-    /// <summary>
-    ///   Get path to XML mapping file for given device name
-    /// </summary>
-    /// <param name="deviceXmlName">Input device name</param>
-    /// <returns>Path to XML file</returns>
-    /// Possible exceptions: System.IO.FileNotFoundException
-    /// System.Xml.XmlException
-    /// ApplicationException("XML version mismatch")
-    public string GetXmlPath(string deviceXmlName)
-    {
-      var path = string.Empty;
-      var pathDefault = Path.Combine(InputHandler.DefaultsDirectory, deviceXmlName + ".xml");
-      var pathCustom = Path.Combine(InputHandler.CustomizedMappingsDirectory, deviceXmlName + ".xml");
-
-      if (File.Exists(pathCustom) && CheckXmlFile(pathCustom))
-      {
-        path = pathCustom;
-        Log.Info("MAP: using custom mappings for {0}", deviceXmlName);
-      }
-      else if (File.Exists(pathDefault) && CheckXmlFile(pathDefault))
-      {
-        path = pathDefault;
-        Log.Info("MAP: using default mappings for {0}", deviceXmlName);
-      }
-      return path;
-    }
 
     /// <summary>
     ///   Try parsing the given string as a decimal or hexadecimal if 0x prefix is found.

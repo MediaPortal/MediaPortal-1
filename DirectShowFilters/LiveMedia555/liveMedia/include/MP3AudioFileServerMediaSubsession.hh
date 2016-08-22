@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2016 Live Networks, Inc.  All rights reserved.
 // A 'ServerMediaSubsession' object that creates new, unicast, "RTPSink"s
 // on demand, from an MP3 audio file.
 // (Actually, any MPEG-1 or MPEG-2 audio file should work.)
@@ -29,6 +29,9 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 #ifndef _MP3_ADU_INTERLEAVING_HH
 #include "MP3ADUinterleaving.hh"
 #endif
+#ifndef _MP3_ADU_HH
+#include "MP3ADU.hh"
+#endif
 
 class MP3AudioFileServerMediaSubsession: public FileServerMediaSubsession{
 public:
@@ -38,7 +41,7 @@ public:
       // Note: "interleaving" is used only if "generateADUs" is True,
       // (and a value of NULL means 'no interleaving')
 
-private:
+protected:
   MP3AudioFileServerMediaSubsession(UsageEnvironment& env,
 				    char const* fileName, Boolean reuseFirstSource,
 				    Boolean generateADUs,
@@ -46,8 +49,12 @@ private:
       // called only by createNew();
   virtual ~MP3AudioFileServerMediaSubsession();
 
-private: // redefined virtual functions
-  virtual void seekStreamSource(FramedSource* inputSource, double seekNPT);
+  FramedSource* createNewStreamSourceCommon(FramedSource* baseMP3Source, unsigned mp3NumBytes, unsigned& estBitrate);
+  void getBaseStreams(FramedSource* frontStream,
+		      FramedSource*& sourceMP3Stream, ADUFromMP3Source*& aduStream/*if any*/);
+
+protected: // redefined virtual functions
+  virtual void seekStreamSource(FramedSource* inputSource, double& seekNPT, double streamDuration, u_int64_t& numBytes);
   virtual void setStreamSourceScale(FramedSource* inputSource, float scale);
   virtual FramedSource* createNewStreamSource(unsigned clientSessionId,
 					      unsigned& estBitrate);
@@ -57,7 +64,7 @@ private: // redefined virtual functions
   virtual void testScaleFactor(float& scale);
   virtual float duration() const;
 
-private:
+protected:
   Boolean fGenerateADUs;
   Interleaving* fInterleaving;
   float fFileDuration;

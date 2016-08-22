@@ -295,6 +295,9 @@ namespace TvLibrary.Implementations.DVB.Structures
           case 0x1b: //H.264
             pidInfo.isVideo = true;
             break;
+          case 0x24: //HEVC
+            pidInfo.isVideo = true;
+            break;
           case 0x10: //MPEG4 ISO/IEC 14496-2
             pidInfo.isVideo = true;
             break;

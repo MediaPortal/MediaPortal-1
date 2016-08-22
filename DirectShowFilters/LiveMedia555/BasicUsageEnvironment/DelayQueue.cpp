@@ -13,7 +13,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
-// Copyright (c) 1996-2009, Live Networks, Inc.  All rights reserved
+// Copyright (c) 1996-2016, Live Networks, Inc.  All rights reserved
 //	Help by Carlo Bonamico to get working for Windows
 // Delay queue
 // Implementation
@@ -33,7 +33,7 @@ int Timeval::operator>=(const Timeval& arg2) const {
 
 void Timeval::operator+=(const DelayInterval& arg2) {
   secs() += arg2.seconds(); usecs() += arg2.useconds();
-  if (usecs() >= MILLION) {
+  if (useconds() >= MILLION) {
     usecs() -= MILLION;
     ++secs();
   }
@@ -41,23 +41,24 @@ void Timeval::operator+=(const DelayInterval& arg2) {
 
 void Timeval::operator-=(const DelayInterval& arg2) {
   secs() -= arg2.seconds(); usecs() -= arg2.useconds();
-  if (usecs() < 0) {
+  if ((int)useconds() < 0) {
     usecs() += MILLION;
     --secs();
   }
-  if (secs() < 0)
+  if ((int)seconds() < 0)
     secs() = usecs() = 0;
+
 }
 
 DelayInterval operator-(const Timeval& arg1, const Timeval& arg2) {
   time_base_seconds secs = arg1.seconds() - arg2.seconds();
   time_base_seconds usecs = arg1.useconds() - arg2.useconds();
 
-  if (usecs < 0) {
+  if ((int)usecs < 0) {
     usecs += MILLION;
     --secs;
   }
-  if (secs < 0)
+  if ((int)secs < 0)
     return DELAY_ZERO;
   else
     return DelayInterval(secs, usecs);
@@ -82,13 +83,16 @@ DelayInterval operator*(short arg1, const DelayInterval& arg2) {
 #endif
 const DelayInterval DELAY_ZERO(0, 0);
 const DelayInterval DELAY_SECOND(1, 0);
+const DelayInterval DELAY_MINUTE = 60*DELAY_SECOND;
+const DelayInterval DELAY_HOUR = 60*DELAY_MINUTE;
+const DelayInterval DELAY_DAY = 24*DELAY_HOUR;
 const DelayInterval ETERNITY(INT_MAX, MILLION-1);
 // used internally to make the implementation work
 
 
 ///// DelayQueueEntry /////
 
-long DelayQueueEntry::tokenCounter = 0;
+intptr_t DelayQueueEntry::tokenCounter = 0;
 
 DelayQueueEntry::DelayQueueEntry(DelayInterval delay)
   : fDeltaTimeRemaining(delay) {
@@ -112,7 +116,11 @@ DelayQueue::DelayQueue()
 }
 
 DelayQueue::~DelayQueue() {
-  while (fNext != this) removeEntry(fNext);
+  while (fNext != this) {
+    DelayQueueEntry* entryToRemove = fNext;
+    removeEntry(entryToRemove);
+    delete entryToRemove;
+  }
 }
 
 void DelayQueue::addEntry(DelayQueueEntry* newEntry) {
@@ -140,7 +148,7 @@ void DelayQueue::updateEntry(DelayQueueEntry* entry, DelayInterval newDelay) {
   addEntry(entry);
 }
 
-void DelayQueue::updateEntry(long tokenToFind, DelayInterval newDelay) {
+void DelayQueue::updateEntry(intptr_t tokenToFind, DelayInterval newDelay) {
   DelayQueueEntry* entry = findEntryByToken(tokenToFind);
   updateEntry(entry, newDelay);
 }
@@ -155,7 +163,7 @@ void DelayQueue::removeEntry(DelayQueueEntry* entry) {
   // in case we should try to remove it again
 }
 
-DelayQueueEntry* DelayQueue::removeEntry(long tokenToFind) {
+DelayQueueEntry* DelayQueue::removeEntry(intptr_t tokenToFind) {
   DelayQueueEntry* entry = findEntryByToken(tokenToFind);
   removeEntry(entry);
   return entry;
@@ -180,7 +188,7 @@ void DelayQueue::handleAlarm() {
   }
 }
 
-DelayQueueEntry* DelayQueue::findEntryByToken(long tokenToFind) {
+DelayQueueEntry* DelayQueue::findEntryByToken(intptr_t tokenToFind) {
   DelayQueueEntry* cur = head();
   while (cur != this) {
     if (cur->token() == tokenToFind) return cur;
@@ -192,7 +200,7 @@ DelayQueueEntry* DelayQueue::findEntryByToken(long tokenToFind) {
 
 void DelayQueue::synchronize() {
   // First, figure out how much time has elapsed since the last sync:
-  EventTime timeNow = TimeNow();
+  _EventTime timeNow = TimeNow();
   if (timeNow < fLastSyncTime) {
     // The system clock has apparently gone back in time; reset our sync time and return:
     fLastSyncTime  = timeNow;
@@ -212,14 +220,14 @@ void DelayQueue::synchronize() {
 }
 
 
-///// EventTime /////
+///// _EventTime /////
 
-EventTime TimeNow() {
+_EventTime TimeNow() {
   struct timeval tvNow;
 
   gettimeofday(&tvNow, NULL);
 
-  return EventTime(tvNow.tv_sec, tvNow.tv_usec);
+  return _EventTime(tvNow.tv_sec, tvNow.tv_usec);
 }
 
-const EventTime THE_END_OF_TIME(INT_MAX);
+const _EventTime THE_END_OF_TIME(INT_MAX);

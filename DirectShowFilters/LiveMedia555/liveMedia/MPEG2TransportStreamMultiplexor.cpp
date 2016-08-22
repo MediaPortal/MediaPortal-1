@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2016 Live Networks, Inc.  All rights reserved.
 // A class for generating MPEG-2 Transport Stream from one or more input
 // Elementary Stream data sources
 // Implementation
@@ -23,8 +23,8 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 
 #define TRANSPORT_PACKET_SIZE 188
 
-#define PAT_FREQUENCY 100 // # of packets between Program Association Tables
-#define PMT_FREQUENCY 500 // # of packets between Program Map Tables
+#define PAT_PERIOD 100 // # of packets between Program Association Tables
+#define PMT_PERIOD 500 // # of packets between Program Map Tables
 
 #define PID_TABLE_SIZE 256
 
@@ -56,7 +56,7 @@ void MPEG2TransportStreamMultiplexor::doGetNextFrame() {
 
   do {
     // Periodically return a Program Association Table packet instead:
-    if (fOutgoingPacketCounter++ % PAT_FREQUENCY == 0) {
+    if (fOutgoingPacketCounter++ % PAT_PERIOD == 0) {
       deliverPATPacket();
       break;
     }
@@ -64,7 +64,7 @@ void MPEG2TransportStreamMultiplexor::doGetNextFrame() {
     // Periodically (or when we see a new PID) return a Program Map Table instead:
     Boolean programMapHasChanged = fPIDState[fCurrentPID].counter == 0
       || fCurrentInputProgramMapVersion != fPreviousInputProgramMapVersion;
-    if (fOutgoingPacketCounter % PMT_FREQUENCY == 0 || programMapHasChanged) {
+    if (fOutgoingPacketCounter % PMT_PERIOD == 0 || programMapHasChanged) {
       if (programMapHasChanged) { // reset values for next time:
 	fPIDState[fCurrentPID].counter = 1;
 	fPreviousInputProgramMapVersion = fCurrentInputProgramMapVersion;
@@ -80,12 +80,18 @@ void MPEG2TransportStreamMultiplexor::doGetNextFrame() {
 
   // NEED TO SET fPresentationTime, durationInMicroseconds #####
   // Complete the delivery to the client:
-  afterGetting(this);
+  if ((fOutgoingPacketCounter%10) == 0) {
+    // To avoid excessive recursion (and stack overflow) caused by excessively large input frames,
+    // occasionally return to the event loop to do this:
+    envir().taskScheduler().scheduleDelayedTask(0, (TaskFunc*)FramedSource::afterGetting, this);
+  } else {
+    afterGetting(this);
+  }
 }
 
 void MPEG2TransportStreamMultiplexor
 ::handleNewBuffer(unsigned char* buffer, unsigned bufferSize,
-		  int mpegVersion, MPEG1or2Demux::SCR scr) {
+		  int mpegVersion, MPEG1or2Demux::SCR scr, int16_t PID) {
   if (bufferSize < 4) return;
   fInputBuffer = buffer;
   fInputBufferSize = bufferSize;
@@ -100,7 +106,10 @@ void MPEG2TransportStreamMultiplexor
     setProgramStreamMap(fInputBufferSize);
     fInputBufferSize = 0; // then, ignore the buffer
   } else {
-    fCurrentPID = stream_id;
+    if (PID == -1)
+      fCurrentPID = stream_id;
+    else
+      fCurrentPID = (u_int8_t)PID;
 
     // Set the stream's type:
     u_int8_t& streamType = fPIDState[fCurrentPID].streamType; // alias
@@ -108,35 +117,21 @@ void MPEG2TransportStreamMultiplexor
     if (streamType == 0) {
       // Instead, set the stream's type to default values, based on whether
       // the stream is audio or video, and whether it's MPEG-1 or MPEG-2:
-      if ((stream_id&0xF0) == 0xE0)       // video
-      {
-        // Ignore the video stream (which will be blank) if this is a radio channel.
-        if (fHaveVideoStreams)
-        {
-          streamType = mpegVersion == 1 ? 1 : mpegVersion == 2 ? 2 : mpegVersion == 4 ? 0x10 : 0x1B;
-        }
-        else
-        {
-          fInputBufferSize = 0;
-        }
-      }
-      else if ((stream_id&0xE0) == 0xC0)  // audio
-      {
-        streamType = mpegVersion == 1 ? 3 : mpegVersion == 2 ? 4 : 0xF;
-      }
-      else if (stream_id == 0xBD)         // private_stream1 (usually AC-3)
-      {
-        streamType = 0x06;                // for DVB; for ATSC, use 0x81
-      }
-      else                                // something else, e.g., AC-3 uses private_stream1 (0xBD)
-      {
-        streamType = 0x81;                // private
+      if ((stream_id&0xF0) == 0xE0) { // video
+	streamType = mpegVersion == 1 ? 1 : mpegVersion == 2 ? 2 : mpegVersion == 4 ? 0x10 :
+	  mpegVersion == 5/*H.264*/ ? 0x1B : 0x24/*assume H.265*/;
+      } else if ((stream_id&0xE0) == 0xC0) { // audio
+	streamType = mpegVersion == 1 ? 3 : mpegVersion == 2 ? 4 : 0xF;
+      } else if (stream_id == 0xBD) { // private_stream1 (usually AC-3)
+	streamType = 0x06; // for DVB; for ATSC, use 0x81
+      } else { // something else, e.g., AC-3 uses private_stream1 (0xBD)
+	streamType = 0x81; // private
       }
     }
 
     if (fPCR_PID == 0) { // set it to this stream, if it's appropriate:
       if ((!fHaveVideoStreams && (streamType == 3 || streamType == 4 || streamType == 0xF))/* audio stream */ ||
-	  (streamType == 1 || streamType == 2 || streamType == 0x10 || streamType == 0x1B)/* video stream */) {
+	  (streamType == 1 || streamType == 2 || streamType == 0x10 || streamType == 0x1B || streamType == 0x24)/* video stream */) {
 	fPCR_PID = fCurrentPID; // use this stream's SCR for PCR
       }
     }
@@ -242,11 +237,11 @@ void MPEG2TransportStreamMultiplexor
   }
 }
 
-static u_int32_t calculateCRC(u_int8_t* data, unsigned dataLength); // forward
-
 #define PAT_PID 0
+#ifndef OUR_PROGRAM_NUMBER
 #define OUR_PROGRAM_NUMBER 1
-#define OUR_PROGRAM_MAP_PID 0x10
+#endif
+#define OUR_PROGRAM_MAP_PID 0x30
 
 void MPEG2TransportStreamMultiplexor::deliverPATPacket() {
   // First, create a new buffer for the PAT packet:
@@ -358,12 +353,6 @@ void MPEG2TransportStreamMultiplexor::setProgramStreamMap(unsigned frameSize) {
 
   while (offset + 4 <= frameSize) {
     u_int8_t stream_type = fInputBuffer[offset];
-    // Don't put video streams into the PMT if the channel is specified to be a radio channel.
-    if (!fHaveVideoStreams && (stream_type == 1 || stream_type == 2 || stream_type == 0x10 || stream_type == 0x1B))
-    {
-      continue;
-    }
-
     u_int8_t elementary_stream_id = fInputBuffer[offset+1];
 
     fPIDState[elementary_stream_id].streamType = stream_type;
@@ -374,7 +363,7 @@ void MPEG2TransportStreamMultiplexor::setProgramStreamMap(unsigned frameSize) {
   }
 }
 
-static u_int32_t CRC32[256] = {
+static u_int32_t const CRC32[256] = {
   0x00000000, 0x04c11db7, 0x09823b6e, 0x0d4326d9,
   0x130476dc, 0x17c56b6b, 0x1a864db2, 0x1e475005,
   0x2608edb8, 0x22c9f00f, 0x2f8ad6d6, 0x2b4bcb61,
@@ -441,8 +430,8 @@ static u_int32_t CRC32[256] = {
   0xbcb4666d, 0xb8757bda, 0xb5365d03, 0xb1f740b4
 };
 
-static u_int32_t calculateCRC(u_int8_t* data, unsigned dataLength) {
-  u_int32_t crc = 0xFFFFFFFF;
+u_int32_t calculateCRC(u_int8_t const* data, unsigned dataLength, u_int32_t initialValue) {
+  u_int32_t crc = initialValue;
 
   while (dataLength-- > 0) {
     crc = (crc<<8) ^ CRC32[(crc>>24) ^ (u_int32_t)(*data++)];
