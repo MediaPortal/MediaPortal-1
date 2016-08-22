@@ -86,7 +86,7 @@ namespace MediaPortal.Player
       {
         VMR9Util.g_vmr9.Enable(true);
         _updateNeeded = true;
-        if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
+        //if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
         {
           SetVideoWindow();
         }
