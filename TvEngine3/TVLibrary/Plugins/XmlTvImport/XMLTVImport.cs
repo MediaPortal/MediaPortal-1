@@ -525,6 +525,7 @@ namespace TvEngine
                     startDate = 100 * Int64.Parse(nodeStart.Substring(0, 12)); //200403312220
                   }
 
+                  bool hasStopDate = false;
                   long stopDate = startDate;
                   if (nodeStop != null)
                   {
@@ -534,10 +535,12 @@ namespace TvEngine
                         stopDate = Int64.Parse(nodeStop.Substring(0, 14)); //20040331222000
                       else
                         stopDate = 100 * Int64.Parse(nodeStop.Substring(0, 12)); //200403312220
+                      hasStopDate = true;
                     }
                     else if (nodeStop.Length >= 12)
                     {
                       stopDate = 100 * Int64.Parse(nodeStop.Substring(0, 12)); //200403312220
+                      hasStopDate = true;
                     }
                   }
 
@@ -687,7 +690,7 @@ namespace TvEngine
                         channelPrograms = dChannelPrograms[chan.IdChannel];
 
                         // skip invalid programs with same start/end date
-                        if (chan.IdChannel < 0 || startDate == stopDate)
+                        if (chan.IdChannel < 0 || hasStopDate && startDate == stopDate)
                         {
                           continue;
                         }
