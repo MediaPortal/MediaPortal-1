@@ -771,8 +771,10 @@ namespace MediaPortal.Player
               BDOSDRenderer.GetInstance().Render();
               GUIGraphicsContext.RenderOverlay = true;
             }
+            //GUIWindowManager.StartMadVrFrameClock();
             GUIGraphicsContext.RenderGUI.RenderFrame(timePassed, layers, ref visible);
             GUIFontManager.Present();
+            //GUIWindowManager.WaitForMadVrFrameClock();
           }
         }
         finally

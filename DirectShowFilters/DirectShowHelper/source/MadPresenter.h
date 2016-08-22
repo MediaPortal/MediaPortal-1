@@ -205,5 +205,7 @@ class MPMadPresenter : public CUnknown, public CCritSec
     bool uiVisible = false;
 
     IDirect3DSurface9* m_pSurfaceDevice = nullptr;
+
+    double m_pRefreshrate = 0;
 };
 

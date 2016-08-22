@@ -208,11 +208,11 @@ void MPMadPresenter::ConfigureMadvr()
   // TODO implement IMadVRSubclassReplacement
   //if (Com::SmartQIPtr<IMadVRSubclassReplacement> pSubclassReplacement = m_pMad)  { }
 
-  if (Com::SmartQIPtr<IVideoWindow> pWindow = m_pMad)
-  {
-    pWindow->SetWindowPosition(0, 0, m_dwGUIWidth, m_dwGUIHeight);
-    pWindow->put_Owner(m_hParent);
-  }
+  //if (Com::SmartQIPtr<IVideoWindow> pWindow = m_pMad)
+  //{
+  //  pWindow->SetWindowPosition(0, 0, m_dwGUIWidth, m_dwGUIHeight);
+  //  pWindow->put_Owner(m_hParent);
+  //}
 
   if (Com::SmartQIPtr<IMadVRSettings> m_pSettings = m_pMad)
   {
@@ -319,6 +319,8 @@ HRESULT MPMadPresenter::ClearBackground(LPCSTR name, REFERENCE_TIME frameStart, 
   {
     if (isUiVisible)
     {
+      //int pRefreshrate = static_cast<int>(m_pRefreshrate);
+      //Sleep(100 / m_pRefreshrate);
       int CountPass = uiVisible ? 1 : 3;
       //Log("MPMadPresenter::ClearBackground() uiVisible %x", CountPass);
       for (int x = 0; x < CountPass; ++x) // need to let in a loop to slow down why ???
@@ -379,6 +381,8 @@ HRESULT MPMadPresenter::RenderOsd(LPCSTR name, REFERENCE_TIME frameStart, RECT* 
   {
     // Disabled for now (see http://forum.kodi.tv/showthread.php?tid=154534&pid=1964715#pid1964715)
     // Present frame in advance option lead to GUI lag and/or stuttering for Intel GPU
+    //int pRefreshrate = static_cast<int>(m_pRefreshrate);
+    //Sleep(100 / m_pRefreshrate);
     int CountPass = uiVisible ? 3 : 6;
     //Log("MPMadPresenter::RenderOsd() uiVisible %x", CountPass);
     for (int x = 0; x < CountPass; ++x) // need to let in a loop to slow down why ???
@@ -590,6 +594,13 @@ HRESULT MPMadPresenter::SetDevice(IDirect3DDevice9* pD3DDev)
         hr = S_OK;
         Log("MPMadPresenter::SetDevice() init ok for D3D : 0x:%x", m_pMadD3DDev);
       }
+
+    // Get refresh rate information
+    if (Com::SmartQIPtr<IMadVRInfo> m_pInfos = m_pMad)
+    {
+      m_pInfos->GetDouble("RefreshRate", &m_pRefreshrate);
+    }
+
     m_pInitOSDRender = false;
   }
   else

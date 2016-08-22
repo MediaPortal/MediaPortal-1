@@ -47,6 +47,8 @@ namespace MediaPortal.GUI.Library
   {
     private static Stopwatch clockWatch = new Stopwatch();
 
+    private static Stopwatch clockWatchMadVr = new Stopwatch();
+
     #region Frame limiting code
 
     private static void WaitForFrameClock()
@@ -79,6 +81,38 @@ namespace MediaPortal.GUI.Library
     {
       clockWatch.Reset();
       clockWatch.Start();
+    }
+
+    internal static void WaitForMadVrFrameClock()
+    {
+      long milliSecondsLeft;
+      long timeElapsed = 0;
+
+      // frame limiting code.
+      // sleep as long as there are ticks left for this frame
+      clockWatchMadVr.Stop();
+      timeElapsed = clockWatchMadVr.ElapsedTicks;
+      if (timeElapsed < GUIGraphicsContext.DesiredFrameTime)
+      {
+        milliSecondsLeft = (((GUIGraphicsContext.DesiredFrameTime - timeElapsed) * 1000) / Stopwatch.Frequency);
+        if (milliSecondsLeft > 0)
+        {
+          Thread.Sleep((int)milliSecondsLeft);
+          //Log.Debug("GUIWindowManager: Wait for desired framerate - sleeping {0} ms.", milliSecondsLeft);
+        }
+        else
+        {
+          // Allow to finish other thread context
+          Thread.Sleep(1);
+          //Log.Debug("GUIWindowManager: Cannot reach desired framerate - please check your system config!");
+        }
+      }
+    }
+
+    internal static void StartMadVrFrameClock()
+    {
+      clockWatchMadVr.Reset();
+      clockWatchMadVr.Start();
     }
 
     #endregion

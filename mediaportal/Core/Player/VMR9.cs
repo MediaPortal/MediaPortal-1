@@ -602,6 +602,11 @@ namespace MediaPortal.Player
             (uint) GUIGraphicsContext.ActiveForm.ToInt32(), ref _vmr9Filter, mPMediaControl);
           hr = new HResult(graphBuilder.AddFilter(_vmr9Filter, "madVR"));
           Log.Info("VMR9: added madVR Renderer to graph");
+          backbuffer.SafeDispose();
+          IVideoWindow videoWin = (IVideoWindow)graphBuilder;
+          videoWin.put_Owner(GUIGraphicsContext.ActiveForm);
+          //videoWin.put_WindowStyle((WindowStyle)((int)WindowStyle.Child + (int)WindowStyle.ClipChildren + (int)WindowStyle.ClipSiblings));
+          //videoWin.put_MessageDrain(GUIGraphicsContext.ActiveForm);
         }
         else
         {
@@ -1232,7 +1237,7 @@ namespace MediaPortal.Player
     {
       lock (this)
       {
-        if (!UseMadVideoRenderer3D || GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
+        if (!UseMadVideoRenderer3D || g_Player.IsTimeShifting || GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
         {
           IVideoWindow videoWin = (IVideoWindow)_graphBuilder;
           if (videoWin != null)
