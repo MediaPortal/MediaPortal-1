@@ -70,6 +70,7 @@ class CTextUtil
     static bool MultiRootHuffmanToString(unsigned char* data,
                                           unsigned short dataLength,
                                           unsigned char* huffmanTable,
+                                          bool isUtf8UncompressedContext,
                                           char** text);
     static bool SingleRootHuffmanToString(unsigned char* data,
                                           unsigned short dataLength,

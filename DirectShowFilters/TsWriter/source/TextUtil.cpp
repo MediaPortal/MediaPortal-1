@@ -42,12 +42,12 @@
 #define HUFFMAN_TABLE_OPENTV_DEFAULT_TABLE_SIZE           512
 #define HUFFMAN_TABLE_OPENTV_DEFAULT_ES_BIT_COUNT_MIN     3
 #define HUFFMAN_TABLE_OPENTV_DEFAULT_ES_BIT_COUNT_MAX     27
-#define HUFFMAN_TABLE_OPENTV_DEFAULT_DS_BYTE_COUNT        5     // note: actual range is 1 - 19
+#define HUFFMAN_TABLE_OPENTV_DEFAULT_DS_BYTE_COUNT        19    // note: this is the maximum; range is 1 - 19
 
 #define HUFFMAN_TABLE_OPENTV_ITALY_TABLE_SIZE             510
 #define HUFFMAN_TABLE_OPENTV_ITALY_ES_BIT_COUNT_MIN       2
 #define HUFFMAN_TABLE_OPENTV_ITALY_ES_BIT_COUNT_MAX       29
-#define HUFFMAN_TABLE_OPENTV_ITALY_DS_BYTE_COUNT          6     // note: actual range is 1 - 22
+#define HUFFMAN_TABLE_OPENTV_ITALY_DS_BYTE_COUNT          22    // note: this is the maximum; range is 1 - 22
 
 
 extern void LogDebug(const wchar_t* fmt, ...);
@@ -157,7 +157,7 @@ bool CTextUtil::AtscScteMultipleStringStructureToStrings(unsigned char* data,
       char* existingString = strings[iso639LanguageCode];
       if (existingString != NULL)
       {
-        if (strcmp(existingString, fullString) != NULL)
+        if (strcmp(existingString, fullString) != 0)
         {
           LogDebug(L"ATSC/SCTE text: duplicate strings for language %S in multiple string structure, current = %S, new = %S",
                     (char*)&iso639LanguageCode, existingString, fullString);
@@ -187,9 +187,45 @@ bool CTextUtil::AtscScteMultilingualTextToString(unsigned char* data,
   unsigned long totalStringLength = 0;
   unsigned short pointer = 0;
   bool result = true;
-  while (pointer + 1 < dataLength)
+  while (pointer < dataLength)
   {
     unsigned char mode = data[pointer++];
+
+    if (mode >= 0x40 && mode <= 0x9f)
+    {
+      // Single byte format effectors. Refer to SCTE 65 table 7.5.
+      //LogDebug(L"  segment, format effector = %hhu", mode);
+      if (mode == 0x80 || mode == 0x81 || mode == 0x82)
+      {
+        // new line with justification
+        char* segment = new char[3];
+        if (segment == NULL)
+        {
+          LogDebug(L"ATSC/SCTE text: failed to allocate 3 byte(s)");
+        }
+        else
+        {
+          segment[0] = 0x15;
+          segment[1] = '\r';
+          segment[2] = NULL;
+          segments.push_back(segment);
+        }
+      }
+      else
+      {
+        // italics on/off, underline on/off, bold on/off, reserved
+      }
+      continue;
+    }
+
+    if (pointer >= dataLength)
+    {
+      LogDebug(L"ATSC/SCTE text: invalid multilingual text, pointer = %hu, data length = %hu",
+                pointer, dataLength);
+      result = false;
+      break;
+    }
+
     unsigned char length = data[pointer++];
     //LogDebug(L"  segment, mode = %hhu, length = %hhu", mode, length);
     if (pointer + length > dataLength)
@@ -200,16 +236,24 @@ bool CTextUtil::AtscScteMultilingualTextToString(unsigned char* data,
       break;
     }
 
-    char* segment = NULL;
-    if (!AtscScteTextToString(&data[pointer], length, 0, mode, &segment))
+    if (mode >= 0xa0 && mode <= 0xff)
     {
-      result = false;
-      break;
+      // Multi byte format effectors. Refer to SCTE 65 section 7.1.2. Currently
+      // none are defined.
     }
-    if (segment != NULL)
+    else
     {
-      //LogDebug(L"    %S", segment);
-      segments.push_back(segment);
+      char* segment = NULL;
+      if (!AtscScteTextToString(&data[pointer], length, 0, mode, &segment))
+      {
+        result = false;
+        break;
+      }
+      if (segment != NULL)
+      {
+        //LogDebug(L"    %S", segment);
+        segments.push_back(segment);
+      }
     }
 
     pointer += length;
@@ -627,12 +671,13 @@ bool CTextUtil::AtscScteTextToString(unsigned char* data,
   }
   else
   {
-    bool result;
+    bool result = false;
     if (compressionType == 1)
     {
       result = MultiRootHuffmanToString(data,
                                         dataLength,
                                         (unsigned char*)HUFFMAN_TABLE_GENERAL_INSTRUMENTS_1,
+                                        false,
                                         &uncompressedText);
     }
     else if (compressionType == 2)
@@ -640,6 +685,7 @@ bool CTextUtil::AtscScteTextToString(unsigned char* data,
       result = MultiRootHuffmanToString(data,
                                         dataLength,
                                         (unsigned char*)HUFFMAN_TABLE_GENERAL_INSTRUMENTS_2,
+                                        false,
                                         &uncompressedText);
     }
 
@@ -700,10 +746,15 @@ bool CTextUtil::AtscScteTextToString(unsigned char* data,
   }
   else
   {
-    for (unsigned short i = 0; i < uncompressedByteCount; i++)
+    unsigned short i = 0;
+    if (compressionType != 0)
+    {
+      i = 2;    // skip the leading 0x10 0x01
+    }
+    while (i < uncompressedByteCount)
     {
       tempBuffer[textIndex++] = mode;
-      tempBuffer[textIndex++] = uncompressedText[i];
+      tempBuffer[textIndex++] = uncompressedText[i++];
     }
   }
   tempBuffer[textIndex++] = NULL;
@@ -765,7 +816,8 @@ bool CTextUtil::AtscScteCombineSegments(vector<char*>& segments, char** text)
     {
       if (*text != NULL)
       {
-        strncat(*text, segment, totalStringLength - strlen(*text));
+        // Add the segment, excluding the leading 0x15.
+        strncat(*text, &segment[1], totalStringLength - (strlen(*text) - 1));
         (*text)[totalStringLength - 1] = NULL;
       }
       delete[] segment;
@@ -783,11 +835,19 @@ bool CTextUtil::BbcHuffmanToString(unsigned char* data,
 {
   if (tableId == 1) 
   {
-    return MultiRootHuffmanToString(data, dataLength, (unsigned char*)HUFFMAN_TABLE_BBC_1, text);
+    return MultiRootHuffmanToString(data,
+                                    dataLength,
+                                    (unsigned char*)HUFFMAN_TABLE_BBC_1,
+                                    true,
+                                    text);
   }
   else if (tableId == 2)
   {
-    return MultiRootHuffmanToString(data, dataLength, (unsigned char*)HUFFMAN_TABLE_BBC_2, text);
+    return MultiRootHuffmanToString(data,
+                                    dataLength,
+                                    (unsigned char*)HUFFMAN_TABLE_BBC_2,
+                                    true,
+                                    text);
   }
 
   LogDebug(L"BBC text: unsupported Huffman table, table ID = %hhu", tableId);
@@ -808,6 +868,7 @@ unsigned char CTextUtil::GetBit(unsigned long bitIndex, const unsigned char* dat
 bool CTextUtil::MultiRootHuffmanToString(unsigned char* data,
                                           unsigned short dataLength,
                                           unsigned char* huffmanTable,
+                                          bool isUtf8UncompressedContext,
                                           char** text)
 {
   // Multi-root Huffman encoding/decoding is explained nicely in ATSC A/65
@@ -828,21 +889,24 @@ bool CTextUtil::MultiRootHuffmanToString(unsigned char* data,
     return true;
   }
 
-  // Encoding for uncompressed bytes.
-  // ATSC A/65 annex C.2.1 says uncompressed characters are "coded as 8-bit
-  // ASCII (Latin I)", which we interpret as meaning ISO/IEC 8859-1. In lieu
-  // of access to specifications, we assume the same applies to all supported
-  // MR-Huffman compression schemes.
-  // These two bytes indicate ISO/IEC 8859-1 according to EN 300 468 annex A
-  // tables A.3 and A.4.
-  t[0] = 0x10;
-  t[1] = 0x01;
+  unsigned long textIndex = 0;
+  if (isUtf8UncompressedContext)
+  {
+    // UTF-8 encoding of ISO/IEC 10646 BMP according to EN 300 468 annex A
+    // table A.3.
+    t[textIndex++] = 0x15;
+  }
+  else
+  {
+    // ISO/IEC 8859-1 according to EN 300 468 annex A tables A.3 and A.4.
+    t[textIndex++] = 0x10;
+    t[textIndex++] = 0x01;
+  }
 
   // Reserve a byte for NULL termination.
   textLength--;
 
   unsigned long bitIndex = 0;
-  unsigned long textIndex = 2;
   unsigned long totalBitCount = dataLength << 3;
   unsigned char prevc = 0;
   unsigned char c = 0;
