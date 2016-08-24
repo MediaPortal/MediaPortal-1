@@ -468,7 +468,7 @@ public class MediaPortalApp : D3D, IRender
   private static extern bool UnregisterPowerSettingNotification(IntPtr handle);
 
   [DllImport("user32.dll", SetLastError = true)]
-  private static extern bool SetProcessDPIAware();
+  private static extern int SetProcessDPIAware();
 
   [DllImport("user32.dll", SetLastError = true)]
   static extern bool PostMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
@@ -501,7 +501,8 @@ public class MediaPortalApp : D3D, IRender
 
     if (Environment.OSVersion.Version.Major >= 6)
     {
-      SetProcessDPIAware();
+      int succeeded = SetProcessDPIAware();
+      Log.Info("Main: MediaPortal SetProcessDPIAware {0}", succeeded);
     }
 
     #if !DEBUG
@@ -2961,10 +2962,9 @@ public class MediaPortalApp : D3D, IRender
     {
       try
       {
-        int process = 5;
+        int process = 10;
         while (process > 0)
         {
-          FrameMove();
           FullRender();
           process--;
         }

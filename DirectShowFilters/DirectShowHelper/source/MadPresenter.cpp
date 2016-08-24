@@ -121,6 +121,8 @@ void MPMadPresenter::SetOSDCallback()
     //CAutoLock lock(&m_dsLock);
     //m_dsLock.Lock();
 
+    CAutoLock cAutoLock(this);
+
     // Render frame to try to fix HD4XXX GPU flickering issue
     Com::SmartQIPtr<IMadVROsdServices> pOR = m_pMad;
     pOR->OsdRedrawFrame();
@@ -199,6 +201,13 @@ void MPMadPresenter::EnableExclusive(bool bEnable)
 
 void MPMadPresenter::ConfigureMadvr()
 {
+  if (Com::SmartQIPtr<IVideoWindow> pWindow = m_pMad)
+  {
+    pWindow->SetWindowPosition(0, 0, m_dwGUIWidth, m_dwGUIHeight);
+    pWindow->put_Owner(m_hParent);
+    pWindow->put_Visible(true);
+  }
+
   if (Com::SmartQIPtr<IMadVRCommand> pMadVrCmd = m_pMad)
     pMadVrCmd->SendCommandBool("disableSeekbar", true);
 
@@ -229,6 +238,13 @@ void MPMadPresenter::ConfigureMadvr()
     //  MPMadPresenter::EnableExclusive(false);
     //}
   }
+
+  //if (Com::SmartQIPtr<IVideoWindow> pWindow = m_pMad)
+  //{
+  //  pWindow->SetWindowPosition(0, 0, m_dwGUIWidth, m_dwGUIHeight);
+  //  pWindow->put_Owner(m_hParent);
+  //  pWindow->put_Visible(true);
+  //}
 }
 
 HRESULT MPMadPresenter::Shutdown()
@@ -325,7 +341,8 @@ HRESULT MPMadPresenter::ClearBackground(LPCSTR name, REFERENCE_TIME frameStart, 
       //Log("MPMadPresenter::ClearBackground() uiVisible %x", CountPass);
       for (int x = 0; x < CountPass; ++x) // need to let in a loop to slow down why ???
       {
-        m_pDevice->PresentEx(nullptr, nullptr, nullptr, nullptr, D3DPRESENT_FORCEIMMEDIATE);
+        // commented out (it slown down video on GPU Nvidia)
+        //m_pDevice->PresentEx(nullptr, nullptr, nullptr, nullptr, D3DPRESENT_FORCEIMMEDIATE);
       }
     }
     //m_mpWait.Unlock();
@@ -387,7 +404,8 @@ HRESULT MPMadPresenter::RenderOsd(LPCSTR name, REFERENCE_TIME frameStart, RECT* 
     //Log("MPMadPresenter::RenderOsd() uiVisible %x", CountPass);
     for (int x = 0; x < CountPass; ++x) // need to let in a loop to slow down why ???
     {
-      m_pDevice->PresentEx(nullptr, nullptr, nullptr, nullptr, D3DPRESENT_FORCEIMMEDIATE);
+      // commented out (it slown down video on GPU Nvidia)
+      //m_pDevice->PresentEx(nullptr, nullptr, nullptr, nullptr, D3DPRESENT_FORCEIMMEDIATE);
     }
     //m_mpWait.Unlock();
     //m_dsLock.Unlock();
@@ -641,14 +659,14 @@ HRESULT MPMadPresenter::Render(REFERENCE_TIME frameStart, int left, int top, int
       }
       m_pInitOSDRender = true;
 
-      if (m_pMediaControl)
-      {
-        OAFilterState _fs = -1;
-        if (m_pMediaControl) m_pMediaControl->GetState(1000, &_fs);
-        if (_fs == State_Paused)
-          m_pMediaControl->Run();
-        Log("MPMadPresenter::Render() m_pMediaControl : 0x:%x", _fs);
-      }
+      //if (m_pMediaControl)
+      //{
+      //  OAFilterState _fs = -1;
+      //  if (m_pMediaControl) m_pMediaControl->GetState(1000, &_fs);
+      //  if (_fs == State_Paused)
+      //    m_pMediaControl->Run();
+      //  Log("MPMadPresenter::Render() m_pMediaControl : 0x:%x", _fs);
+      //}
 
       // TODO disable OSD delay for now (used to force IVideoWindow on C# side)
       m_pCallback->ForceOsdUpdate(true);
