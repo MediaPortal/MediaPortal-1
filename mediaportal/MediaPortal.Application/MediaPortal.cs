@@ -2929,10 +2929,9 @@ public class MediaPortalApp : D3D, IRender
     {
       try
       {
-        int process = 5;
+        int process = 10;
         while (process > 0)
         {
-          FrameMove();
           FullRender();
           process--;
         }
