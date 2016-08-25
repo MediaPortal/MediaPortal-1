@@ -341,7 +341,8 @@ HRESULT MPMadPresenter::ClearBackground(LPCSTR name, REFERENCE_TIME frameStart, 
       //Log("MPMadPresenter::ClearBackground() uiVisible %x", CountPass);
       for (int x = 0; x < CountPass; ++x) // need to let in a loop to slow down why ???
       {
-        m_pDevice->PresentEx(nullptr, nullptr, nullptr, nullptr, D3DPRESENT_FORCEIMMEDIATE);
+        // commented out (it slown down video on GPU Nvidia)
+        //m_pDevice->PresentEx(nullptr, nullptr, nullptr, nullptr, D3DPRESENT_FORCEIMMEDIATE);
       }
     }
     //m_mpWait.Unlock();
@@ -403,7 +404,8 @@ HRESULT MPMadPresenter::RenderOsd(LPCSTR name, REFERENCE_TIME frameStart, RECT* 
     //Log("MPMadPresenter::RenderOsd() uiVisible %x", CountPass);
     for (int x = 0; x < CountPass; ++x) // need to let in a loop to slow down why ???
     {
-      m_pDevice->PresentEx(nullptr, nullptr, nullptr, nullptr, D3DPRESENT_FORCEIMMEDIATE);
+      // commented out (it slown down video on GPU Nvidia)
+      //m_pDevice->PresentEx(nullptr, nullptr, nullptr, nullptr, D3DPRESENT_FORCEIMMEDIATE);
     }
     //m_mpWait.Unlock();
     //m_dsLock.Unlock();
