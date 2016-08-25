@@ -1756,10 +1756,11 @@ namespace MediaPortal.GUI.Library
     {
       get
       {
-        //if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && GUIGraphicsContext.InVmr9Render)
-        //{
-        //  return 0;
-        //}
+        // Added back this part for now and see if it stop the deadlock
+        if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && GUIGraphicsContext.InVmr9Render)
+        {
+          return 0;
+        }
         return RenderLoopLock;
       }
     }
