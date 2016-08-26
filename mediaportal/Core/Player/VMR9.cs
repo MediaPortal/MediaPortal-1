@@ -1281,26 +1281,24 @@ namespace MediaPortal.Player
       {
         if (mediaCtrl != null)
         {
-          lock (mediaCtrl)
+          var hr = 0;
+          Log.Debug("VMR9: mediaCtrl.Stop() 1");
+          if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+            MadDeinit();
+          hr = mediaCtrl.Stop();
+          Log.Debug("VMR9: mediaCtrl.Stop() 2");
+          DsError.ThrowExceptionForHR(hr);
+          if (GUIGraphicsContext.InVmr9Render)
           {
-            var hr = 0;
-            Log.Debug("VMR9: mediaCtrl.Stop() 1");
-            hr = mediaCtrl.StopWhenReady();
-            hr = mediaCtrl.Stop();
-            Log.Debug("VMR9: mediaCtrl.Stop() 2");
-            DsError.ThrowExceptionForHR(hr);
-            if (GUIGraphicsContext.InVmr9Render)
+            switch (GUIGraphicsContext.VideoRenderer)
             {
-              switch (GUIGraphicsContext.VideoRenderer)
-              {
-                case GUIGraphicsContext.VideoRendererType.madVR:
-                  GUIGraphicsContext.InVmr9Render = false;
-                  //if (_vmr9Filter != null) MadvrInterface.EnableExclusiveMode(false, _vmr9Filter);
-                  break;
-                default:
-                  Log.Error("VMR9: {0} in renderer", g_Player.Player.ToString());
-                  break;
-              }
+              case GUIGraphicsContext.VideoRendererType.madVR:
+                GUIGraphicsContext.InVmr9Render = false;
+                //if (_vmr9Filter != null) MadvrInterface.EnableExclusiveMode(false, _vmr9Filter);
+                break;
+              default:
+                Log.Error("VMR9: {0} in renderer", g_Player.Player.ToString());
+                break;
             }
           }
         }
@@ -1525,6 +1523,7 @@ namespace MediaPortal.Player
           GC.Collect();
           MadDeinit();
           GC.Collect();
+          DirectShowUtil.DisconnectAllPins(_graphBuilder, _vmr9Filter);
           DirectShowUtil.FinalReleaseComObject(_vmr9Filter);
           Thread.Sleep(200);
           Log.Debug("VMR9: Dispose 2");
@@ -1545,6 +1544,7 @@ namespace MediaPortal.Player
           DirectShowUtil.ReleaseComObject(_vmr9Filter);
           Log.Debug("VMR9: Dispose 3");
         }
+        g_vmr9.Enable(false);
         _vmr9Filter = null;
         _scene = null;
         g_vmr9 = null;
