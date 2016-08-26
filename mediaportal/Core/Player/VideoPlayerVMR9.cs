@@ -1406,6 +1406,12 @@ namespace MediaPortal.Player
           if (mediaCtrl != null)
           {
             // Stop the player
+            if (VMR9Util.g_vmr9 != null && VMR9Util.g_vmr9._vmr9Filter != null)
+            {
+              MadvrInterface.EnableExclusiveMode(false, VMR9Util.g_vmr9._vmr9Filter);
+              DirectShowUtil.DisconnectAllPins(graphBuilder, VMR9Util.g_vmr9._vmr9Filter);
+              Log.Info("VideoPlayer9: Cleanup VMR9");
+            }
             VMR9Util.g_vmr9.Vmr9MediaCtrl(mediaCtrl);
           }
           VMR9Util.g_vmr9.Enable(false);
@@ -1499,19 +1505,12 @@ namespace MediaPortal.Player
           Log.Info("VideoPlayer9: Cleanup MediaPortal AudioSwitcher (for external audio files)");
         }
 
-        if (VMR9Util.g_vmr9 != null && VMR9Util.g_vmr9._vmr9Filter != null)
-        {
-          MadvrInterface.EnableExclusiveMode(false, VMR9Util.g_vmr9._vmr9Filter);
-          DirectShowUtil.DisconnectAllPins(graphBuilder, VMR9Util.g_vmr9._vmr9Filter);
-          Log.Info("VideoPlayer9: Cleanup VMR9");
-        }
-
         SubEngine.GetInstance().FreeSubtitles();
         PostProcessingEngine.GetInstance().FreePostProcess();
 
         #endregion
 
-        if (videoWin != null && GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
+        if (videoWin != null)
         {
           videoWin.put_Owner(IntPtr.Zero);
           videoWin.put_Visible(OABool.False);

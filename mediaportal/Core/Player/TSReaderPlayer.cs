@@ -827,6 +827,12 @@ namespace MediaPortal.Player
             if (_mediaCtrl != null)
             {
               // Stop the player
+              if (VMR9Util.g_vmr9 != null && VMR9Util.g_vmr9._vmr9Filter != null)
+              {
+                MadvrInterface.EnableExclusiveMode(false, VMR9Util.g_vmr9._vmr9Filter);
+                DirectShowUtil.DisconnectAllPins(_graphBuilder, VMR9Util.g_vmr9._vmr9Filter);
+                Log.Info("TSReaderPlayer: Cleanup VMR9");
+              }
               VMR9Util.g_vmr9.Vmr9MediaCtrl(_mediaCtrl);
             }
             VMR9Util.g_vmr9.Enable(false);
@@ -934,20 +940,13 @@ namespace MediaPortal.Player
             Log.Debug("TSReaderPlayer: Cleanup line21CoreCCParser");
           }
 
-          if (VMR9Util.g_vmr9 != null && VMR9Util.g_vmr9._vmr9Filter != null)
-          {
-            MadvrInterface.EnableExclusiveMode(false, VMR9Util.g_vmr9._vmr9Filter);
-            DirectShowUtil.DisconnectAllPins(_graphBuilder, VMR9Util.g_vmr9._vmr9Filter);
-            Log.Info("TSReaderPlayer: Cleanup VMR9");
-          }
-
           if (_dvbSubRenderer != null)
           {
             _dvbSubRenderer.SetPlayer(null);
             _dvbSubRenderer = null;
           }
 
-          if (_videoWin != null && GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
+          if (_videoWin != null)
           {
             _videoWin.put_Owner(IntPtr.Zero);
             _videoWin.put_Visible(OABool.False);
