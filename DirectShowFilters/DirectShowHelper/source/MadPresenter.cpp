@@ -123,6 +123,11 @@ void MPMadPresenter::SetOSDCallback()
 
     CAutoLock cAutoLock(this);
 
+    if (m_pMediaControl)
+    {
+      m_pMediaControl->Pause();
+    }
+
     // Render frame to try to fix HD4XXX GPU flickering issue
     Com::SmartQIPtr<IMadVROsdServices> pOR = m_pMad;
     pOR->OsdRedrawFrame();
