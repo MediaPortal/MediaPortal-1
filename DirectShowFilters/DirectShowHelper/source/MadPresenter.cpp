@@ -259,6 +259,31 @@ HRESULT MPMadPresenter::Shutdown()
     if (m_pCallback)
     {
       m_pCallback->RestoreDeviceSurface(reinterpret_cast<DWORD>(m_pSurfaceDevice));
+      if (m_pMediaControl)
+      {
+        Log("MPMadPresenter::Shutdown() m_pMediaControl->Stop() 1");
+        int counter = 0;
+        OAFilterState state = -1;
+        m_pMediaControl->Stop();
+        m_pMediaControl->GetState(100, &state);
+        while (state != State_Stopped)
+        {
+          Log("MPMadPresenter::Shutdown() m_pMediaControl: graph still running");
+          Sleep(100);
+          m_pMediaControl->GetState(10, &state);
+          counter++;
+          if (counter >= 30)
+          {
+            if (state != State_Stopped)
+            {
+              Log("MPMadPresenter::Shutdown() m_pMediaControl: graph still running");
+            }
+            break;
+          }
+        }
+        Log("MPMadPresenter::Shutdown() m_pMediaControl->Stop() 2");
+        m_pMediaControl = nullptr;
+      }
       m_pCallback->Release();
     }
 
