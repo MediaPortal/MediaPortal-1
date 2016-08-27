@@ -198,15 +198,33 @@ namespace MediaPortal
         {
           Log.Debug("FrameGrabber: Creating new frame grabbing surface");
 
-          rgbSurface = GUIGraphicsContext.DX9Device.CreateRenderTarget(width, height, Format.A8R8G8B8,
-                                                                       MultiSampleType.None, 0, true);
+          if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
+          {
+            rgbSurface = GUIGraphicsContext.DX9Device.CreateRenderTarget(width, height, Format.A8R8G8B8,
+                                                             MultiSampleType.None, 0, true);
+          }
+          else if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && GUIGraphicsContext.Vmr9Active)
+          {
+            if (GUIGraphicsContext.DX9DeviceMadVr != null)
+            {
+              rgbSurface = GUIGraphicsContext.DX9DeviceMadVr.CreateRenderTarget(width, height, Format.A8R8G8B8,
+                                                                 MultiSampleType.None, 0, true);
+            }
+          }
+          else
+          {
+            rgbSurface = GUIGraphicsContext.DX9Device.CreateRenderTarget(width, height, Format.A8R8G8B8,
+                                                                         MultiSampleType.None, 0, true);
+          }
         }
         unsafe
         {
           // copy the YUV video surface to our managed ARGB surface
           // Log.Debug("Calling VideoSurfaceToRGBSurface");
           if (rgbSurface != null)
+          {
             VideoSurfaceToRGBSurface(new IntPtr(pSurface), (IntPtr) rgbSurface.UnmanagedComPointer);
+          }
           lock (grabNotifier)
           {
             grabSample = false;
