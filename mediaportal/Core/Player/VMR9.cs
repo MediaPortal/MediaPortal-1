@@ -1281,13 +1281,18 @@ namespace MediaPortal.Player
       {
         if (mediaCtrl != null)
         {
-          var hr = 0;
           Log.Debug("VMR9: mediaCtrl.Stop() 1");
           if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+          {
             MadDeinit();
-          hr = mediaCtrl.Stop();
+          }
+          else
+          {
+            var hr = mediaCtrl.Stop();
+            DsError.ThrowExceptionForHR(hr);
+          }
           Log.Debug("VMR9: mediaCtrl.Stop() 2");
-          DsError.ThrowExceptionForHR(hr);
+
           if (GUIGraphicsContext.InVmr9Render)
           {
             switch (GUIGraphicsContext.VideoRenderer)
