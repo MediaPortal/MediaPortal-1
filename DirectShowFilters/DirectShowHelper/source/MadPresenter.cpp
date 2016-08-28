@@ -206,13 +206,6 @@ void MPMadPresenter::EnableExclusive(bool bEnable)
 
 void MPMadPresenter::ConfigureMadvr()
 {
-  if (Com::SmartQIPtr<IVideoWindow> pWindow = m_pMad)
-  {
-    pWindow->SetWindowPosition(0, 0, m_dwGUIWidth, m_dwGUIHeight);
-    pWindow->put_Owner(m_hParent);
-    pWindow->put_Visible(true);
-  }
-
   if (Com::SmartQIPtr<IMadVRCommand> pMadVrCmd = m_pMad)
     pMadVrCmd->SendCommandBool("disableSeekbar", true);
 
@@ -222,11 +215,11 @@ void MPMadPresenter::ConfigureMadvr()
   // TODO implement IMadVRSubclassReplacement
   //if (Com::SmartQIPtr<IMadVRSubclassReplacement> pSubclassReplacement = m_pMad)  { }
 
-  //if (Com::SmartQIPtr<IVideoWindow> pWindow = m_pMad)
-  //{
-  //  pWindow->SetWindowPosition(0, 0, m_dwGUIWidth, m_dwGUIHeight);
-  //  pWindow->put_Owner(m_hParent);
-  //}
+  if (Com::SmartQIPtr<IVideoWindow> pWindow = m_pMad)
+  {
+    pWindow->SetWindowPosition(0, 0, m_dwGUIWidth, m_dwGUIHeight);
+    pWindow->put_Owner(m_hParent);
+  }
 
   if (Com::SmartQIPtr<IMadVRSettings> m_pSettings = m_pMad)
   {
@@ -243,19 +236,14 @@ void MPMadPresenter::ConfigureMadvr()
     //  MPMadPresenter::EnableExclusive(false);
     //}
   }
-
-  //if (Com::SmartQIPtr<IVideoWindow> pWindow = m_pMad)
-  //{
-  //  pWindow->SetWindowPosition(0, 0, m_dwGUIWidth, m_dwGUIHeight);
-  //  pWindow->put_Owner(m_hParent);
-  //  pWindow->put_Visible(true);
-  //}
 }
 
 HRESULT MPMadPresenter::Shutdown()
 {
   { // Scope for autolock for the local variable (lock, which when deleted releases the lock)
     CAutoLock lock(this);
+
+    m_dsLock.Lock();
 
     Log("MPMadPresenter::Shutdown() scope start");
 
@@ -285,6 +273,7 @@ HRESULT MPMadPresenter::Shutdown()
       }
       Log("MPMadPresenter::Shutdown() m_pMediaControl->Stop() 2");
       m_pMediaControl = nullptr;
+      m_dsLock.Unlock();
       return S_OK;
     }
 
@@ -316,6 +305,8 @@ HRESULT MPMadPresenter::Shutdown()
   } // Scope for autolock
 
   Log("MPMadPresenter::Shutdown()");
+
+  m_dsLock.Unlock();
 
   return S_OK;
 }
@@ -354,6 +345,9 @@ void CRenderWait::Unlock()
 HRESULT MPMadPresenter::ClearBackground(LPCSTR name, REFERENCE_TIME frameStart, RECT* fullOutputRect, RECT* activeVideoRect)
 {
   HRESULT hr = E_UNEXPECTED;
+
+  // Lock madVR thread while Shutdown()
+  CAutoLock lock(&m_dsLock);
 
   WORD videoHeight = (WORD)activeVideoRect->bottom - (WORD)activeVideoRect->top;
   WORD videoWidth = (WORD)activeVideoRect->right - (WORD)activeVideoRect->left;
@@ -417,6 +411,9 @@ HRESULT MPMadPresenter::ClearBackground(LPCSTR name, REFERENCE_TIME frameStart, 
 HRESULT MPMadPresenter::RenderOsd(LPCSTR name, REFERENCE_TIME frameStart, RECT* fullOutputRect, RECT* activeVideoRect)
 {
   HRESULT hr = E_UNEXPECTED;
+
+  // Lock madVR thread while Shutdown()
+  CAutoLock lock(&m_dsLock);
 
   WORD videoHeight = (WORD)activeVideoRect->bottom - (WORD)activeVideoRect->top;
   WORD videoWidth = (WORD)activeVideoRect->right - (WORD)activeVideoRect->left;
@@ -622,6 +619,9 @@ HRESULT MPMadPresenter::SetDevice(IDirect3DDevice9* pD3DDev)
 {
   HRESULT hr = S_FALSE;
 
+  // Lock madVR thread while Shutdown()
+  CAutoLock lock(&m_dsLock);
+
   CAutoLock cAutoLock(this);
 
   Log("MPMadPresenter::SetDevice() device 0x:%x", pD3DDev);
@@ -670,6 +670,9 @@ HRESULT MPMadPresenter::Render(REFERENCE_TIME frameStart, int left, int top, int
 {
   if (m_pCallback)
   {
+    // Lock madVR thread while Shutdown()
+    CAutoLock lock(&m_dsLock);
+
     CAutoLock cAutoLock(this);
 
     HRESULT hr = S_FALSE;
