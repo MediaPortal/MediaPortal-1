@@ -732,6 +732,14 @@ namespace MediaPortal.Player
           return -1;
         }
 
+        if (g_Player.Paused)
+        {
+          if (VMR9Util.g_vmr9 != null)
+          {
+            VMR9Util.g_vmr9.MadVrRepeatFrame();
+          }
+        }
+
         // Commented out seems to do some flickering on first few frames on pause.
         //_vmr9Util.FreeFrameCounter++;
 
