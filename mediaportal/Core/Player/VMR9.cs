@@ -435,11 +435,7 @@ namespace MediaPortal.Player
     /// </summary>
     public void MadVrRepeatFrame()
     {
-      if (GUIGraphicsContext.Vmr9Active &&
-          GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
-      {
-        WindowsMessage();
-      }
+      WindowsMessage();
     }
 
     /// <summary>
