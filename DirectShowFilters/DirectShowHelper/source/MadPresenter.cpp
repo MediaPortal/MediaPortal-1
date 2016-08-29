@@ -355,27 +355,27 @@ HRESULT MPMadPresenter::ClearBackground(LPCSTR name, REFERENCE_TIME frameStart, 
 
   CAutoLock cAutoLock(this);
 
-  // Ugly hack to avoid flickering (most occurs on Intel GPU)
-  bool isFullScreen = m_pCallback->IsFullScreen();
-  bool isUiVisible = m_pCallback->IsUiVisible();
-  if (isFullScreen)
-  {
-    if (isUiVisible)
-    {
-      //int pRefreshrate = static_cast<int>(m_pRefreshrate);
-      //Sleep(100 / m_pRefreshrate);
-      int CountPass = uiVisible ? 1 : 3;
-      //Log("MPMadPresenter::ClearBackground() uiVisible %x", CountPass);
-      for (int x = 0; x < CountPass; ++x) // need to let in a loop to slow down why ???
-      {
-        // commented out (it slown down video on GPU Nvidia)
-        //m_pDevice->PresentEx(nullptr, nullptr, nullptr, nullptr, D3DPRESENT_FORCEIMMEDIATE);
-      }
-    }
-    //m_mpWait.Unlock();
-    //m_dsLock.Unlock();
-    return uiVisible ? CALLBACK_USER_INTERFACE : CALLBACK_INFO_DISPLAY;
-  }
+  //// Ugly hack to avoid flickering (most occurs on Intel GPU)
+  //bool isFullScreen = m_pCallback->IsFullScreen();
+  //bool isUiVisible = m_pCallback->IsUiVisible();
+  //if (isFullScreen)
+  //{
+  //  if (isUiVisible)
+  //  {
+  //    //int pRefreshrate = static_cast<int>(m_pRefreshrate);
+  //    //Sleep(100 / m_pRefreshrate);
+  //    int CountPass = uiVisible ? 1 : 3;
+  //    //Log("MPMadPresenter::ClearBackground() uiVisible %x", CountPass);
+  //    for (int x = 0; x < CountPass; ++x) // need to let in a loop to slow down why ???
+  //    {
+  //      // commented out (it slown down video on GPU Nvidia)
+  //      //m_pDevice->PresentEx(nullptr, nullptr, nullptr, nullptr, D3DPRESENT_FORCEIMMEDIATE);
+  //    }
+  //  }
+  //  //m_mpWait.Unlock();
+  //  //m_dsLock.Unlock();
+  //  return uiVisible ? CALLBACK_USER_INTERFACE : CALLBACK_INFO_DISPLAY;
+  //}
 
   uiVisible = false;
 
@@ -421,26 +421,26 @@ HRESULT MPMadPresenter::RenderOsd(LPCSTR name, REFERENCE_TIME frameStart, RECT* 
 
   CAutoLock cAutoLock(this);
 
-  // Ugly hack to avoid flickering (most occurs on Intel GPU)
-  bool isFullScreen = m_pCallback->IsFullScreen();
-  bool isUiVisible = m_pCallback->IsUiVisible();
-  if (isUiVisible)
-  {
-    // Disabled for now (see http://forum.kodi.tv/showthread.php?tid=154534&pid=1964715#pid1964715)
-    // Present frame in advance option lead to GUI lag and/or stuttering for Intel GPU
-    //int pRefreshrate = static_cast<int>(m_pRefreshrate);
-    //Sleep(100 / m_pRefreshrate);
-    int CountPass = uiVisible ? 3 : 6;
-    //Log("MPMadPresenter::RenderOsd() uiVisible %x", CountPass);
-    for (int x = 0; x < CountPass; ++x) // need to let in a loop to slow down why ???
-    {
-      // commented out (it slown down video on GPU Nvidia)
-      //m_pDevice->PresentEx(nullptr, nullptr, nullptr, nullptr, D3DPRESENT_FORCEIMMEDIATE);
-    }
-    //m_mpWait.Unlock();
-    //m_dsLock.Unlock();
-    //return uiVisible ? CALLBACK_USER_INTERFACE : CALLBACK_INFO_DISPLAY;
-  }
+  //// Ugly hack to avoid flickering (most occurs on Intel GPU)
+  //bool isFullScreen = m_pCallback->IsFullScreen();
+  //bool isUiVisible = m_pCallback->IsUiVisible();
+  //if (isUiVisible)
+  //{
+  //  // Disabled for now (see http://forum.kodi.tv/showthread.php?tid=154534&pid=1964715#pid1964715)
+  //  // Present frame in advance option lead to GUI lag and/or stuttering for Intel GPU
+  //  //int pRefreshrate = static_cast<int>(m_pRefreshrate);
+  //  //Sleep(100 / m_pRefreshrate);
+  //  int CountPass = uiVisible ? 3 : 6;
+  //  //Log("MPMadPresenter::RenderOsd() uiVisible %x", CountPass);
+  //  for (int x = 0; x < CountPass; ++x) // need to let in a loop to slow down why ???
+  //  {
+  //    // commented out (it slown down video on GPU Nvidia)
+  //    //m_pDevice->PresentEx(nullptr, nullptr, nullptr, nullptr, D3DPRESENT_FORCEIMMEDIATE);
+  //  }
+  //  //m_mpWait.Unlock();
+  //  //m_dsLock.Unlock();
+  //  //return uiVisible ? CALLBACK_USER_INTERFACE : CALLBACK_INFO_DISPLAY;
+  //}
 
   uiVisible = false;
 
