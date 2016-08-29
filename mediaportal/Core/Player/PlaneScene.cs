@@ -721,6 +721,12 @@ namespace MediaPortal.Player
           return -1;
         }
 
+        if (GUIGraphicsContext.MadVrStop)
+        {
+          VMR9Util.g_vmr9.ShutdownMadVr();
+          return -1;
+        }
+
         //sanity checks
         if (GUIGraphicsContext.DX9Device == null)
         {

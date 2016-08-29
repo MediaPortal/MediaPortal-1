@@ -1788,6 +1788,7 @@ namespace MediaPortal.GUI.Library
     public static bool IsWindowVisible { get; set; }
     public static bool UpdateVideoWindow { get; set; }
     public static bool MadVrOsd { get; set; }
+    public static bool MadVrStop { get; set; }
 
     /// <summary>
     /// Enable/Disable bypassing of UI Calibration transforms
