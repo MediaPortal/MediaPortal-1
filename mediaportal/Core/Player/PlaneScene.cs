@@ -670,35 +670,33 @@ namespace MediaPortal.Player
       bool visible = false;
       UiVisible = false;
 
-      if (_reEntrant)
-      {
-        Log.Error("PlaneScene: re-entrancy in PresentImage");
-        return -1;
-      }
-      if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.LOST)
-      {
-        return -1;
-      }
       try
       {
-        _reEntrant = true;
-
-        if (width > 0 && height > 0)
+        if (GUIGraphicsContext.MadVrStop)
         {
-          _vmr9Util.VideoWidth = width;
-          _vmr9Util.VideoHeight = height;
-          _vmr9Util.VideoAspectRatioX = arWidth;
-          _vmr9Util.VideoAspectRatioY = arHeight;
-          _arVideoWidth = arWidth;
-          _arVideoHeight = arHeight;
+          VMR9Util.g_vmr9.ShutdownMadVr();
+          return -1;
         }
 
-        float timePassed = GUIGraphicsContext.TimePassed;
+        if (_reEntrant)
+        {
+          Log.Error("PlaneScene: re-entrancy in PresentImage");
+          return -1;
+        }
 
-        //if we're stopping then just return
+        if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.LOST)
+        {
+          return -1;
+        }
+
         if (_stopPainting)
         {
           return -1;
+        }
+
+        if (!GUIGraphicsContext.InVmr9Render)
+        {
+          GUIGraphicsContext.InVmr9Render = true;
         }
 
         if (GUIGraphicsContext.IsSwitchingToNewSkin)
@@ -711,33 +709,6 @@ namespace MediaPortal.Player
           return 1; // (0) -> S_OK, (1) -> S_FALSE; //dont present video during window transitions
         }
 
-        if (!GUIGraphicsContext.InVmr9Render)
-        {
-          GUIGraphicsContext.InVmr9Render = true;
-        }
-
-        if (_stopPainting)
-        {
-          return -1;
-        }
-
-        if (GUIGraphicsContext.MadVrStop)
-        {
-          VMR9Util.g_vmr9.ShutdownMadVr();
-          return -1;
-        }
-
-        //sanity checks
-        if (GUIGraphicsContext.DX9Device == null)
-        {
-          return -1;
-        }
-
-        if (GUIGraphicsContext.DX9Device.Disposed)
-        {
-          return -1;
-        }
-
         if (g_Player.Paused)
         {
           if (VMR9Util.g_vmr9 != null)
@@ -746,29 +717,28 @@ namespace MediaPortal.Player
           }
         }
 
-        // Commented out seems to do some flickering on first few frames on pause.
-        //_vmr9Util.FreeFrameCounter++;
-
-        //if (!_drawVideoAllowed || !_isEnabled)
-        //{
-        //  Log.Info("planescene:RenderLayers() frame:{0} enabled:{1} allowed:{2}", _vmr9Util.FrameCounter, _isEnabled,
-        //    _drawVideoAllowed);
-        //  _vmr9Util.FrameCounter++;
-        //  return -1;
-        //}
-        //_vmr9Util.FrameCounter++;
-
-        //Log.Debug("PlaneScene width {0}, height {1}", width, height);
-
-        if (GUIGraphicsContext.IsWindowVisible)
+        _reEntrant = true;
+        if (width > 0 && height > 0)
         {
-          Size nativeSize = new Size(width, height);
-          _shouldRenderTexture = SetVideoWindow(nativeSize);
-        }
-        else
-        {
-          Size nativeSize = new Size(1, 1);
-          _shouldRenderTexture = SetVideoWindow(nativeSize);
+          _vmr9Util.VideoWidth = width;
+          _vmr9Util.VideoHeight = height;
+          _vmr9Util.VideoAspectRatioX = arWidth;
+          _vmr9Util.VideoAspectRatioY = arHeight;
+          _arVideoWidth = arWidth;
+          _arVideoHeight = arHeight;
+
+          //Log.Debug("PlaneScene width {0}, height {1}", width, height);
+
+          if (GUIGraphicsContext.IsWindowVisible)
+          {
+            Size nativeSize = new Size(width, height);
+            _shouldRenderTexture = SetVideoWindow(nativeSize);
+          }
+          else
+          {
+            Size nativeSize = new Size(1, 1);
+            _shouldRenderTexture = SetVideoWindow(nativeSize);
+          }
         }
 
         Device device = GUIGraphicsContext.DX9Device;
@@ -776,37 +746,30 @@ namespace MediaPortal.Player
         device.Clear(ClearFlags.Target, Color.FromArgb(0, 0, 0, 0), 1.0f, 0);
         device.BeginScene();
 
-        try
+        if (layers == GUILayers.over)
         {
-          if (!GUIGraphicsContext.BlankScreen)
-          {
-            if (layers == GUILayers.over)
-            {
-              SubtitleRenderer.GetInstance().Render();
-              BDOSDRenderer.GetInstance().Render();
-              GUIGraphicsContext.RenderOverlay = true;
-            }
-            //GUIWindowManager.StartMadVrFrameClock();
-            GUIGraphicsContext.RenderGUI.RenderFrame(timePassed, layers, ref visible);
-            GUIFontManager.Present();
-            //GUIWindowManager.WaitForMadVrFrameClock();
-          }
+          SubtitleRenderer.GetInstance().Render();
+          BDOSDRenderer.GetInstance().Render();
+          GUIGraphicsContext.RenderOverlay = true;
         }
-        finally
+
+        //bool visible = false;
+        if (_disableLowLatencyMode)
         {
-          device.EndScene();
+          GUIGraphicsContext.RenderGUI.RenderFrame(GUIGraphicsContext.TimePassed, layers);
+        }
+        else
+        {
+          GUIGraphicsContext.RenderGUI.RenderFrame(GUIGraphicsContext.TimePassed, layers, ref visible);
+        }
 
-          if (layers == GUILayers.under)
-          {
-            GUIGraphicsContext.RenderGui = false;
-            GUIGraphicsContext.RenderOverlay = false;
-          }
+        GUIFontManager.Present();
+        device.EndScene();
 
-          // Disabled for now (see http://forum.kodi.tv/showthread.php?tid=154534&pid=1964715#pid1964715)
-          // Present frame in advance option lead to GUI lag and/or stuttering for Intel GPU
-          // Need to present to slow and avoid flickering when we are not in fullscreen (visible with Intel GPU HD4XXX)
-          //if (!GUIGraphicsContext.IsFullScreenVideo)
-          //  device.Present();
+        if (layers == GUILayers.under)
+        {
+          GUIGraphicsContext.RenderGui = false;
+          GUIGraphicsContext.RenderOverlay = false;
         }
 
         // Present() call is done on C++ side so we are able to use DirectX 9 Ex device
