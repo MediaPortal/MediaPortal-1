@@ -215,11 +215,11 @@ void MPMadPresenter::ConfigureMadvr()
   // TODO implement IMadVRSubclassReplacement
   //if (Com::SmartQIPtr<IMadVRSubclassReplacement> pSubclassReplacement = m_pMad)  { }
 
-  if (Com::SmartQIPtr<IVideoWindow> pWindow = m_pMad)
-  {
-    pWindow->SetWindowPosition(0, 0, m_dwGUIWidth, m_dwGUIHeight);
-    pWindow->put_Owner(m_hParent);
-  }
+  //if (Com::SmartQIPtr<IVideoWindow> pWindow = m_pMad)
+  //{
+  //  pWindow->SetWindowPosition(0, 0, m_dwGUIWidth, m_dwGUIHeight);
+  //  pWindow->put_Owner(m_hParent);
+  //}
 
   if (Com::SmartQIPtr<IMadVRSettings> m_pSettings = m_pMad)
   {
