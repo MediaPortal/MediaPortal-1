@@ -706,10 +706,10 @@ namespace MediaPortal.Player
           return -1;
         }
 
-        //if (GUIWindowManager.IsSwitchingToNewWindow && !_vmr9Util.InMenu)
-        //{
-        //  return 1; // (0) -> S_OK, (1) -> S_FALSE; //dont present video during window transitions
-        //}
+        if (GUIWindowManager.IsSwitchingToNewWindow && !_vmr9Util.InMenu)
+        {
+          return 1; // (0) -> S_OK, (1) -> S_FALSE; //dont present video during window transitions
+        }
 
         if (!GUIGraphicsContext.InVmr9Render)
         {
