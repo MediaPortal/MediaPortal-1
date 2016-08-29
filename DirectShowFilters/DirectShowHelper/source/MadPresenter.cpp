@@ -301,6 +301,7 @@ HRESULT MPMadPresenter::Shutdown()
       pWindow.Release();
     }
 
+    m_pCallback = nullptr;
     Log("MPMadPresenter::Shutdown() scope done ");
   } // Scope for autolock
 

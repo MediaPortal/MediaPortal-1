@@ -158,6 +158,7 @@ namespace MediaPortal.Player
 
     public static VMR9Util g_vmr9 = null;
     private static int _instanceCounter = 0;
+    public static readonly AutoResetEvent finished = new AutoResetEvent(false);
 
     #endregion
 
@@ -484,6 +485,18 @@ namespace MediaPortal.Player
       }
     }
 
+    public void ShutdownMadVr()
+    {
+      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+      {
+        Log.Debug("VMR9: ShutdownMadVr() 1");
+        MadDeinit();
+        GUIGraphicsContext.MadVrStop = false;
+        VMR9Util.finished.Set();
+        Log.Debug("VMR9: ShutdownMadVr() 2");
+      }
+    }
+
     /// <summary>
     /// Add VMR9 filter to graph and configure it
     /// </summary>
@@ -592,6 +605,7 @@ namespace MediaPortal.Player
         else if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
         {
           GUIGraphicsContext.MadVrOsd = false;
+          GUIGraphicsContext.MadVrStop = false;
           IMediaControl mPMediaControl = (IMediaControl) graphBuilder;
           var backbuffer = GUIGraphicsContext.DX9Device.PresentationParameters;
           MadInit(_scene, backbuffer.BackBufferWidth, backbuffer.BackBufferHeight, (uint) upDevice.ToInt32(),
@@ -1280,7 +1294,15 @@ namespace MediaPortal.Player
           Log.Debug("VMR9: mediaCtrl.Stop() 1");
           if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
           {
-            MadDeinit();
+            GUIGraphicsContext.MadVrStop = true;
+            finished.WaitOne(5000);
+
+            // Check if the stop was done on from madVR thread
+            if (GUIGraphicsContext.MadVrStop)
+            {
+              Log.Debug("VMR9: Vmr9MediaCtrl MadDeinit()");
+              MadDeinit();
+            }
           }
           else
           {
