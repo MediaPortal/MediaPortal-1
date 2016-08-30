@@ -174,6 +174,7 @@
     <ClCompile Include="source\ChannelScan.cpp" />
     <ClCompile Include="source\DiskRecorder.cpp" />
     <ClCompile Include="source\EpgScanner.cpp" />
+    <ClCompile Include="source\FileWriterThreaded.cpp" />
     <ClCompile Include="source\LvctParser.cpp" />
     <ClCompile Include="source\NttParser.cpp" />
     <ClCompile Include="source\PmtGrabber.cpp" />
@@ -209,6 +210,7 @@
     <ClInclude Include="source\ChannelScan.h" />
     <ClInclude Include="source\DiskRecorder.h" />
     <ClInclude Include="source\EpgScanner.h" />
+    <ClInclude Include="source\FileWriterThreaded.h" />
     <ClInclude Include="source\LvctParser.h" />
     <ClInclude Include="source\NttParser.h" />
     <ClInclude Include="source\PmtGrabber.h" />

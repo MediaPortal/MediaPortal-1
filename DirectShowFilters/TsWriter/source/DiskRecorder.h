@@ -20,6 +20,7 @@
  */
 #pragma once
 #include "multifilewriter.h"
+#include "FileWriterThreaded.h"
 #include "criticalsection.h"
 #include "entercriticalsection.h"
 #include "..\..\shared\TsHeader.h"
@@ -137,6 +138,7 @@ private:
 	bool				         m_bRunning;
 	wchar_t				         m_wszFileName[2048];
 	MultiFileWriter*     m_pTimeShiftFile;
+	FileWriterThreaded*  m_pRecordingFile;
 	HANDLE							 m_hFile;
 	CCriticalSection     m_section;
   int                  m_iPmtPid;
