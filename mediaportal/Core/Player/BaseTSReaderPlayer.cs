@@ -1986,7 +1986,7 @@ namespace MediaPortal.Player
             if (ppFilter.Value != null)
             {
               DirectShowUtil.RemoveFilters(_graphBuilder, ppFilter.Key);
-              DirectShowUtil.ReleaseComObject(ppFilter.Value);//, 5000);
+              DirectShowUtil.ReleaseComObject(ppFilter.Value); //, 5000);
             }
           }
           PostProcessFilterVideo.Clear();
@@ -2007,7 +2007,7 @@ namespace MediaPortal.Player
             if (ppFilter.Value != null)
             {
               DirectShowUtil.RemoveFilters(_graphBuilder, ppFilter.Key);
-              DirectShowUtil.ReleaseComObject(ppFilter.Value);//, 5000);
+              DirectShowUtil.ReleaseComObject(ppFilter.Value); //, 5000);
             }
           }
           PostProcessFilterAudio.Clear();
@@ -2056,56 +2056,49 @@ namespace MediaPortal.Player
               _graphBuilder.RemoveFilter(pInfoNext.filter);
               DsUtils.FreePinInfo(pInfoNext);
               DirectShowUtil.ReleaseComObject(fInfoNext.pGraph);
-              DirectShowUtil.ReleaseComObject(pinToVideo); pinToVideo = null;
+              DirectShowUtil.ReleaseComObject(pinToVideo);
+              pinToVideo = null;
             }
-            DirectShowUtil.ReleaseComObject(pinFromOut); pinFromOut = null;
+            DirectShowUtil.ReleaseComObject(pinFromOut);
+            pinFromOut = null;
           }
-          else if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+          else if (selection == "Video" && GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
           {
-            if (selection == "Video")
-            {
-              // Only remove the filter if it's not the same to add
-              if (fInfo.achName != MatchFilters(selection))
-              {
-                DirectShowUtil.DisconnectAllPins(_graphBuilder, pInfo.filter);
-                _graphBuilder.RemoveFilter(pInfo.filter);
-                needVideoUpdate = true;
-                Log.Debug("TSReaderPlayer: UpdateFilters Remove filter - {0}", fInfo.achName);
-              }
-              else
-              {
-                VMR9Util vmr9 = VMR9Util.g_vmr9;
-                if (vmr9 != null && vmr9.IsVMR9Connected)
-                {
-                  Log.Debug("TSReaderPlayer: UpdateFilters disconnect output pin for filter - {0}", fInfo.achName);
-                  IPin pinVideoOut = DsFindPin.ByDirection(pInfo.filter, PinDirection.Output, 0);
-                  IPin videoInputRenderer = vmr9.PinConnectedInput;
-
-                  // This is the pin that we will connect to video renderer input.
-                  IPin pinVideoTo = vmr9.PinConnectedTo;
-                  pinVideoTo.Disconnect();
-                  hr = _graphBuilder.Connect(pinVideoOut, videoInputRenderer);
-                  if (hr != 0)
-                  {
-                    Log.Error("TSReaderPlayer: UpdateFilters could not connect output video pin");
-                    return;
-                  }
-
-                  Log.Debug("TSReaderPlayer: UpdateFilters video pin reconnected to video renderer");
-                  DirectShowUtil.ReleaseComObject(pinVideoTo);
-                  pinVideoTo = null;
-                  DirectShowUtil.ReleaseComObject(pinVideoOut);
-                  pinVideoOut = null;
-                  DirectShowUtil.ReleaseComObject(videoInputRenderer);
-                  videoInputRenderer = null;
-                }
-              }
-            }
-            else
+            // Only remove the filter if it's not the same to add
+            if (fInfo.achName != MatchFilters(selection))
             {
               DirectShowUtil.DisconnectAllPins(_graphBuilder, pInfo.filter);
               _graphBuilder.RemoveFilter(pInfo.filter);
+              needVideoUpdate = true;
               Log.Debug("TSReaderPlayer: UpdateFilters Remove filter - {0}", fInfo.achName);
+            }
+            else
+            {
+              VMR9Util vmr9 = VMR9Util.g_vmr9;
+              if (vmr9 != null && vmr9.IsVMR9Connected)
+              {
+                Log.Debug("TSReaderPlayer: UpdateFilters disconnect output pin for filter - {0}", fInfo.achName);
+                IPin pinVideoOut = DsFindPin.ByDirection(pInfo.filter, PinDirection.Output, 0);
+                IPin videoInputRenderer = vmr9.PinConnectedInput;
+
+                // This is the pin that we will connect to video renderer input.
+                IPin pinVideoTo = vmr9.PinConnectedTo;
+                pinVideoTo.Disconnect();
+                hr = _graphBuilder.Connect(pinVideoOut, videoInputRenderer);
+                if (hr != 0)
+                {
+                  Log.Error("TSReaderPlayer: UpdateFilters could not connect output video pin");
+                  return;
+                }
+
+                Log.Debug("TSReaderPlayer: UpdateFilters video pin reconnected to video renderer");
+                DirectShowUtil.ReleaseComObject(pinVideoTo);
+                pinVideoTo = null;
+                DirectShowUtil.ReleaseComObject(pinVideoOut);
+                pinVideoOut = null;
+                DirectShowUtil.ReleaseComObject(videoInputRenderer);
+                videoInputRenderer = null;
+              }
             }
           }
           else
@@ -2116,9 +2109,11 @@ namespace MediaPortal.Player
           }
           DsUtils.FreePinInfo(pInfo);
           DirectShowUtil.ReleaseComObject(fInfo.pGraph);
-          DirectShowUtil.ReleaseComObject(pinTo); pinTo = null;
+          DirectShowUtil.ReleaseComObject(pinTo);
+          pinTo = null;
         }
-        DirectShowUtil.ReleaseComObject(pinFrom); pinFrom = null;
+        DirectShowUtil.ReleaseComObject(pinFrom);
+        pinFrom = null;
       }
 
       if (selection == "Video")
@@ -2133,6 +2128,10 @@ namespace MediaPortal.Player
           {
             DirectShowUtil.ReleaseComObject(filterCodec.VideoCodec);
             filterCodec.VideoCodec = null;
+            filterCodec.VideoCodec = DirectShowUtil.AddFilterToGraph(this._graphBuilder, MatchFilters(selection));
+          }
+          else if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
+          {
             filterCodec.VideoCodec = DirectShowUtil.AddFilterToGraph(this._graphBuilder, MatchFilters(selection));
           }
         }
