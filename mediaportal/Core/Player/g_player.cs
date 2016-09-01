@@ -2615,13 +2615,13 @@ namespace MediaPortal.Player
 
     public static void Process()
     {
-      // Disabled for now (see http://forum.kodi.tv/showthread.php?tid=154534&pid=1964715#pid1964715)
-      // Present frame in advance option lead to GUI lag and/or stuttering for Intel GPU
-      //// madVR inform that MP frame is done (workaround to avoid flickering)
-      //if (GUIGraphicsContext.Vmr9Active && VMR9Util.g_vmr9 != null)
-      //{
-      //  VMR9Util.g_vmr9.MadVrRepeatFrame();
-      //}
+      // Sent pause message to madVR.
+      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
+          GUIGraphicsContext.Vmr9Active && VMR9Util.g_vmr9 != null)
+      {
+        if (g_Player.Paused)
+          VMR9Util.g_vmr9.MadVrRepeatFrame();
+      }
 
       if (GUIGraphicsContext.Vmr9Active && VMR9Util.g_vmr9 != null && !GUIGraphicsContext.InVmr9Render)
       {

@@ -694,11 +694,6 @@ namespace MediaPortal.Player
           return -1;
         }
 
-        if (!GUIGraphicsContext.InVmr9Render)
-        {
-          GUIGraphicsContext.InVmr9Render = true;
-        }
-
         if (GUIGraphicsContext.IsSwitchingToNewSkin)
         {
           return -1;
@@ -709,15 +704,9 @@ namespace MediaPortal.Player
           return 1; // (0) -> S_OK, (1) -> S_FALSE; //dont present video during window transitions
         }
 
-        if (g_Player.Paused)
-        {
-          if (VMR9Util.g_vmr9 != null)
-          {
-            VMR9Util.g_vmr9.MadVrRepeatFrame();
-          }
-        }
-
         _reEntrant = true;
+        GUIGraphicsContext.InVmr9Render = true;
+
         if (width > 0 && height > 0)
         {
           _vmr9Util.VideoWidth = width;
