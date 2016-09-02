@@ -2544,6 +2544,12 @@ namespace MediaPortal
         ExitToTray = true;
         MinimizeToTray();
       }
+      else if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
+               GUIGraphicsContext.Vmr9Active && VMR9Util.g_vmr9 != null)
+      {
+        // Hack to not close MP while madVR running (need to find why some plugin like OV trigger this)
+        Log.Debug("D3D: OnFormClosing() avoiding for madVR while running");
+      }
       else
       {
         _isClosing = true;
