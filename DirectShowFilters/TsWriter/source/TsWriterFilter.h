@@ -24,6 +24,7 @@
 #include <InitGuid.h> // DEFINE_GUID()
 #include <WinError.h> // HRESULT
 #include <sstream>
+#include "..\shared\Thread.h"
 #include "InputPinOobSi.h"
 #include "InputPinTs.h"
 #include "ITsAnalyser.h"
@@ -55,20 +56,28 @@ class CTsWriterFilter : public CBaseFilter
     STDMETHODIMP Run(REFERENCE_TIME startTime);
     STDMETHODIMP Stop();
 
-    static void __cdecl StreamingMonitorThreadFunction(void* arg);
-
     STDMETHODIMP SetDumpFilePath(wchar_t* path);
     STDMETHODIMP DumpInput(bool enableTs, bool enableOobSi);
     void CheckSectionCrcs(bool enable);
 
   private:
+    class CThreadContext
+    {
+      public:
+        CTsWriterFilter* m_filter;
+        bool m_isReceivingOobSi;
+        bool m_isReceivingTs;
+    };
+
+    static bool __cdecl StreamingMonitorThreadFunction(void* arg);
+
     ITsAnalyser* m_analyser;
     CInputPinOobSi* m_inputPinOobSi;    // SCTE 65 out-of-band service information
     CInputPinTs* m_inputPinTs;          // MPEG 2 transport stream
     CCritSec& m_receiveLock;            // sample receive lock
 
-    HANDLE m_streamingMonitorThread;
-    HANDLE m_streamingMonitorThreadStopEvent;
+    CThread m_streamingMonitorThread;
+    CThreadContext m_streamingMonitorThreadContext;
 
     wstringstream m_debugPath;
     bool m_isDebugEnabledOobSi;

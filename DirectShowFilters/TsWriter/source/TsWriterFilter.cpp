@@ -19,8 +19,6 @@
  *
  */
 #include "TsWriterFilter.h"
-#include <process.h>  // _beginthread()
-#include <Windows.h>  // CloseHandle(), CreateEvent(), INVALID_HANDLE_VALUE, ResetEvent(), SetEvent(), WaitForSingleObject()
 #include "..\..\shared\TimeUtils.h"
 
 
@@ -68,16 +66,6 @@ CTsWriterFilter::CTsWriterFilter(ITsAnalyser* analyser,
     return;
   }
 
-  m_streamingMonitorThread = INVALID_HANDLE_VALUE;
-  m_streamingMonitorThreadStopEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
-  if (m_streamingMonitorThreadStopEvent == NULL)
-  {
-    *hr = GetLastError();
-    LogDebug(L"filter: failed to create streaming monitor thread stop event, hr = 0x%x",
-              *hr);
-    return;
-  }
-
   if (debugPath != NULL)
   {
     m_debugPath.str(debugPath);
@@ -91,7 +79,6 @@ CTsWriterFilter::CTsWriterFilter(ITsAnalyser* analyser,
 CTsWriterFilter::~CTsWriterFilter()
 {
   LogDebug(L"filter: destructor");
-
   if (m_inputPinOobSi != NULL)
   {
     delete m_inputPinOobSi;
@@ -101,11 +88,6 @@ CTsWriterFilter::~CTsWriterFilter()
   {
     delete m_inputPinTs;
     m_inputPinTs = NULL;
-  }
-
-  if (m_streamingMonitorThreadStopEvent != NULL)
-  {
-    CloseHandle(m_streamingMonitorThreadStopEvent);
   }
   LogDebug(L"filter: completed");
 }
@@ -144,13 +126,14 @@ STDMETHODIMP CTsWriterFilter::Run(REFERENCE_TIME startTime)
   CAutoLock filterLock(m_pLock);
 
   LogDebug(L"filter: start stream monitor thread...");
-  ResetEvent(m_streamingMonitorThreadStopEvent);
-  m_streamingMonitorThread = (HANDLE)_beginthread(&CTsWriterFilter::StreamingMonitorThreadFunction,
-                                                  0,
-                                                  (void*)this);
-  if (m_streamingMonitorThread == INVALID_HANDLE_VALUE)
+  m_streamingMonitorThreadContext.m_filter = this;
+  m_streamingMonitorThreadContext.m_isReceivingOobSi = m_inputPinOobSi->IsConnected() == TRUE;
+  m_streamingMonitorThreadContext.m_isReceivingTs = m_inputPinTs->IsConnected() == TRUE;
+  if (!m_streamingMonitorThread.Start(STREAM_IDLE_TIMEOUT,
+                                      &CTsWriterFilter::StreamingMonitorThreadFunction,
+                                      (void*)&m_streamingMonitorThreadContext))
   {
-    return E_OUTOFMEMORY;
+    return E_FAIL;
   }
 
   // Configure dumping.
@@ -193,9 +176,7 @@ STDMETHODIMP CTsWriterFilter::Stop()
   CAutoLock receiveLock(&m_receiveLock);
 
   LogDebug(L"filter: stop stream monitor thread...");
-  SetEvent(m_streamingMonitorThreadStopEvent);
-  WaitForSingleObject(m_streamingMonitorThread, INFINITE);
-  m_streamingMonitorThread = INVALID_HANDLE_VALUE;
+  m_streamingMonitorThread.Stop();
 
   m_inputPinOobSi->StopDumping();
   m_inputPinTs->StopDumping();
@@ -204,60 +185,6 @@ STDMETHODIMP CTsWriterFilter::Stop()
   HRESULT hr = CBaseFilter::Stop();
   LogDebug(L"filter: completed, hr = 0x%x", hr);
   return hr;
-}
-
-void __cdecl CTsWriterFilter::StreamingMonitorThreadFunction(void* arg)
-{
-  LogDebug(L"filter: monitor thread started");
-  CTsWriterFilter* filter = (CTsWriterFilter*)arg;
-  ITsAnalyser* analyser = filter->m_analyser;
-  bool isReceivingOobSi = filter->m_inputPinOobSi->IsConnected() == TRUE;
-  bool isReceivingTs = filter->m_inputPinTs->IsConnected() == TRUE;
-  while (true)
-  {
-    DWORD result = WaitForSingleObject(filter->m_streamingMonitorThreadStopEvent,
-                                        STREAM_IDLE_TIMEOUT);
-    if (result != WAIT_TIMEOUT)
-    {
-      // event was set
-      break;
-    }
-
-    bool wasReceiving = isReceivingOobSi;
-    bool isReceiving = true;
-    if (
-      filter->m_inputPinOobSi->IsConnected() != TRUE ||
-      filter->m_inputPinOobSi->GetReceiveTime() == NOT_RECEIVING ||
-      CTimeUtils::ElapsedMillis(filter->m_inputPinOobSi->GetReceiveTime()) >= STREAM_IDLE_TIMEOUT
-    )
-    {
-      isReceiving = false;
-    }
-    if (wasReceiving != isReceiving)
-    {
-      LogDebug(L"filter: OOB SI pin changed receiving state, %d => %d",
-                wasReceiving, isReceiving);
-    }
-    isReceivingOobSi = isReceiving;
-
-    wasReceiving = isReceivingTs;
-    isReceiving = true;
-    if (
-      filter->m_inputPinTs->IsConnected() != TRUE ||
-      filter->m_inputPinTs->GetReceiveTime() == NOT_RECEIVING ||
-      CTimeUtils::ElapsedMillis(filter->m_inputPinTs->GetReceiveTime()) >= STREAM_IDLE_TIMEOUT
-    )
-    {
-      isReceiving = false;
-    }
-    if (wasReceiving != isReceiving)
-    {
-      LogDebug(L"filter: TS pin changed receiving state, %d => %d",
-                wasReceiving, isReceiving);
-    }
-    isReceivingTs = isReceiving;
-  }
-  LogDebug(L"filter: monitor thread stopped");
 }
 
 STDMETHODIMP CTsWriterFilter::SetDumpFilePath(wchar_t* path)
@@ -282,4 +209,50 @@ STDMETHODIMP CTsWriterFilter::DumpInput(bool enableTs, bool enableOobSi)
 void CTsWriterFilter::CheckSectionCrcs(bool enable)
 {
   m_inputPinOobSi->CheckSectionCrcs(enable);
+}
+
+bool __cdecl CTsWriterFilter::StreamingMonitorThreadFunction(void* arg)
+{
+  CThreadContext* context = (CThreadContext*)arg;
+  if (context == NULL)
+  {
+    LogDebug(L"filter: streaming monitor thread context not provided");
+    return false;
+  }
+  CTsWriterFilter* filter = context->m_filter;
+
+  bool wasReceiving = context->m_isReceivingOobSi;
+  bool isReceiving = true;
+  if (
+    filter->m_inputPinOobSi->IsConnected() != TRUE ||
+    filter->m_inputPinOobSi->GetReceiveTime() == NOT_RECEIVING ||
+    CTimeUtils::ElapsedMillis(filter->m_inputPinOobSi->GetReceiveTime()) >= STREAM_IDLE_TIMEOUT
+  )
+  {
+    isReceiving = false;
+  }
+  if (wasReceiving != isReceiving)
+  {
+    LogDebug(L"filter: OOB SI pin changed receiving state, %d => %d",
+              wasReceiving, isReceiving);
+  }
+  context->m_isReceivingOobSi = isReceiving;
+
+  wasReceiving = context->m_isReceivingTs;
+  isReceiving = true;
+  if (
+    filter->m_inputPinTs->IsConnected() != TRUE ||
+    filter->m_inputPinTs->GetReceiveTime() == NOT_RECEIVING ||
+    CTimeUtils::ElapsedMillis(filter->m_inputPinTs->GetReceiveTime()) >= STREAM_IDLE_TIMEOUT
+  )
+  {
+    isReceiving = false;
+  }
+  if (wasReceiving != isReceiving)
+  {
+    LogDebug(L"filter: TS pin changed receiving state, %d => %d",
+              wasReceiving, isReceiving);
+  }
+  context->m_isReceivingTs = isReceiving;
+  return true;
 }

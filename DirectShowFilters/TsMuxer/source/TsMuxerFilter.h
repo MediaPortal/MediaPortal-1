@@ -23,8 +23,10 @@
 #include <streams.h>  // CAutoLock, CBaseFilter, CBasePin, CCritSec, CUnknown (IUnknown, LPUNKNOWN)
 #include <InitGuid.h> // DEFINE_GUID()
 #include <WinError.h> // HRESULT
+#include <map>
 #include <sstream>
 #include <vector>
+#include "..\shared\Thread.h"
 #include "IStreamMultiplexer.h"
 #include "MuxInputPin.h"
 #include "TsOutputPin.h"
@@ -58,21 +60,28 @@ class CTsMuxerFilter : public CBaseFilter
     STDMETHODIMP Run(REFERENCE_TIME startTime);
     STDMETHODIMP Stop();
 
-    static void __cdecl StreamingMonitorThreadFunction(void* arg);
-
     STDMETHODIMP SetDumpFilePath(wchar_t* path);
     STDMETHODIMP_(void) DumpInput(long mask);
     STDMETHODIMP_(void) DumpOutput(bool enable);
 
   private:
+    class CThreadContext
+    {
+      public:
+        CTsMuxerFilter* m_filter;
+        map<unsigned char, bool> m_pinStates;
+    };
+
+    static bool __cdecl StreamingMonitorThreadFunction(void* arg);
+
     IStreamMultiplexer* m_multiplexer;
     CTsOutputPin* m_outputPin;          // MPEG 2 transport stream output pin
     vector<CMuxInputPin*> m_inputPins;  // input pins
     CCritSec m_inputPinsLock;           // input pins vector lock
     CCritSec& m_receiveLock;            // sample receive lock
 
-    HANDLE m_streamingMonitorThread;
-    HANDLE m_streamingMonitorThreadStopEvent;
+    CThread m_streamingMonitorThread;
+    CThreadContext m_streamingMonitorThreadContext;
 
     wstringstream m_debugPath;
     long m_inputPinDebugMask;

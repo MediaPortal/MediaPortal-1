@@ -20,9 +20,6 @@
  */
 #include "TsMuxerFilter.h"
 #include <cstddef>    // NULL
-#include <map>
-#include <process.h>  // _beginthread()
-#include <Windows.h>  // CloseHandle(), CreateEvent(), GetLastError(), INVALID_HANDLE_VALUE, ResetEvent(), SetEvent(), WaitForSingleObject()
 #include "..\..\shared\TimeUtils.h"
 
 
@@ -60,17 +57,6 @@ CTsMuxerFilter::CTsMuxerFilter(IStreamMultiplexer* multiplexer,
     return;
   }
 
-  m_streamingMonitorThread = INVALID_HANDLE_VALUE;
-  m_streamingMonitorThreadStopEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
-  if (m_streamingMonitorThreadStopEvent == NULL)
-  {
-    DWORD errorCode = GetLastError();
-    *hr = HRESULT_FROM_WIN32(errorCode);
-    LogDebug(L"filter: failed to create streaming monitor thread stop event, error = %lu, hr = 0x%x",
-              errorCode, *hr);
-    return;
-  }
-
   *hr = AddPin();
 
   if (debugPath != NULL)
@@ -103,11 +89,6 @@ CTsMuxerFilter::~CTsMuxerFilter()
   {
     delete m_outputPin;
     m_outputPin = NULL;
-  }
-
-  if (m_streamingMonitorThreadStopEvent != NULL)
-  {
-    CloseHandle(m_streamingMonitorThreadStopEvent);
   }
   LogDebug(L"filter: completed");
 }
@@ -208,13 +189,20 @@ STDMETHODIMP CTsMuxerFilter::Run(REFERENCE_TIME startTime)
   CAutoLock filterLock(m_pLock);
 
   LogDebug(L"filter: start stream monitor thread...");
-  ResetEvent(m_streamingMonitorThreadStopEvent);
-  m_streamingMonitorThread = (HANDLE)_beginthread(&CTsMuxerFilter::StreamingMonitorThreadFunction,
-                                                  0,
-                                                  (void*)this);
-  if (m_streamingMonitorThread == INVALID_HANDLE_VALUE)
+  m_streamingMonitorThreadContext.m_filter = this;
   {
-    return E_OUTOFMEMORY;
+    CAutoLock pinLock(&m_inputPinsLock);
+    for (vector<CMuxInputPin*>::const_iterator it = m_inputPins.begin(); it != m_inputPins.end(); it++)
+    {
+      CMuxInputPin* pin = *it;
+      m_streamingMonitorThreadContext.m_pinStates[pin->GetId()] = pin->IsConnected() == TRUE;
+    }
+  }
+  if (!m_streamingMonitorThread.Start(STREAM_IDLE_TIMEOUT,
+                                      &CTsMuxerFilter::StreamingMonitorThreadFunction,
+                                      (void*)&m_streamingMonitorThreadContext))
+  {
+    return E_FAIL;
   }
 
   // Configure dumping.
@@ -274,9 +262,7 @@ STDMETHODIMP CTsMuxerFilter::Stop()
   CAutoLock receiveLock(&m_receiveLock);
 
   LogDebug(L"filter: stop stream monitor thread...");
-  SetEvent(m_streamingMonitorThreadStopEvent);
-  WaitForSingleObject(m_streamingMonitorThread, INFINITE);
-  m_streamingMonitorThread = INVALID_HANDLE_VALUE;
+  m_streamingMonitorThread.Stop();
 
   CAutoLock pinLock(&m_inputPinsLock);
   vector<CMuxInputPin*>::const_iterator it = m_inputPins.begin();
@@ -290,65 +276,6 @@ STDMETHODIMP CTsMuxerFilter::Stop()
   HRESULT hr = CBaseFilter::Stop();
   LogDebug(L"filter: completed, hr = 0x%x", hr);
   return hr;
-}
-
-void __cdecl CTsMuxerFilter::StreamingMonitorThreadFunction(void* arg)
-{
-  LogDebug(L"filter: monitor thread started");
-  CTsMuxerFilter* filter = (CTsMuxerFilter*)arg;
-  IStreamMultiplexer* muxer = filter->m_multiplexer;
-  map<unsigned char, bool> pinStates;
-  bool isFirst = true;
-  while (true)
-  {
-    DWORD result = WaitForSingleObject(filter->m_streamingMonitorThreadStopEvent,
-                                        STREAM_IDLE_TIMEOUT);
-    if (result != WAIT_TIMEOUT)
-    {
-      // event was set
-      break;
-    }
-
-    if (muxer != NULL && muxer->IsStarted())
-    {
-      CAutoLock pinLock(&(filter->m_inputPinsLock));
-      vector<CMuxInputPin*>::const_iterator it = filter->m_inputPins.begin();
-      if (isFirst)
-      {
-        for ( ; it != filter->m_inputPins.end(); it++)
-        {
-          CMuxInputPin* pin = *it;
-          pinStates[pin->GetId()] = pin->IsConnected() == TRUE;
-        }
-        isFirst = false;
-      }
-      else
-      {
-        for ( ; it != filter->m_inputPins.end(); it++)
-        {
-          CMuxInputPin* pin = *it;
-          unsigned char pinId = pin->GetId();
-          bool wasReceiving = pinStates[pinId];
-          bool isReceiving = true;
-          if (
-            pin->IsConnected() != TRUE ||
-            pin->GetReceiveTime() == NOT_RECEIVING ||
-            CTimeUtils::ElapsedMillis(pin->GetReceiveTime()) >= STREAM_IDLE_TIMEOUT
-          )
-          {
-            isReceiving = false;
-          }
-          if (wasReceiving != isReceiving)
-          {
-            LogDebug(L"filter: pin %hhu changed receiving state, %d => %d",
-                      pinId, wasReceiving, isReceiving);
-          }
-          pinStates[pinId] = isReceiving;
-        }
-      }
-    }
-  }
-  LogDebug(L"filter: monitor thread stopped");
 }
 
 STDMETHODIMP CTsMuxerFilter::SetDumpFilePath(wchar_t* path)
@@ -372,4 +299,42 @@ STDMETHODIMP_(void) CTsMuxerFilter::DumpOutput(bool enable)
 {
   CAutoLock filterLock(m_pLock);
   m_isOutputDebugEnabled = enable;
+}
+
+bool __cdecl CTsMuxerFilter::StreamingMonitorThreadFunction(void* arg)
+{
+  CThreadContext* context = (CThreadContext*)arg;
+  if (context == NULL)
+  {
+    LogDebug(L"filter: streaming monitor thread context not provided");
+    return false;
+  }
+  CTsMuxerFilter* filter = context->m_filter;
+  IStreamMultiplexer* muxer = filter->m_multiplexer;
+  if (muxer != NULL && muxer->IsStarted())
+  {
+    CAutoLock pinLock(&(filter->m_inputPinsLock));
+    for (vector<CMuxInputPin*>::const_iterator it = filter->m_inputPins.begin(); it != filter->m_inputPins.end(); it++)
+    {
+      CMuxInputPin* pin = *it;
+      unsigned char pinId = pin->GetId();
+      bool wasReceiving = context->m_pinStates[pinId];
+      bool isReceiving = true;
+      if (
+        pin->IsConnected() != TRUE ||
+        pin->GetReceiveTime() == NOT_RECEIVING ||
+        CTimeUtils::ElapsedMillis(pin->GetReceiveTime()) >= STREAM_IDLE_TIMEOUT
+      )
+      {
+        isReceiving = false;
+      }
+      if (wasReceiving != isReceiving)
+      {
+        LogDebug(L"filter: pin %hhu changed receiving state, %d => %d",
+                  pinId, wasReceiving, isReceiving);
+        context->m_pinStates[pinId] = isReceiving;
+      }
+    }
+  }
+  return true;
 }

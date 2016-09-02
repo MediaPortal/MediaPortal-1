@@ -169,6 +169,7 @@
     <ClInclude Include="..\shared\FileWriter.h" />
     <ClInclude Include="..\shared\PacketSync.h" />
     <ClInclude Include="..\shared\PidTable.h" />
+    <ClInclude Include="..\shared\Thread.h" />
     <ClInclude Include="..\shared\TimeUtils.h" />
     <ClInclude Include="source\CniRegister.h" />
     <ClInclude Include="source\Hamming.h" />

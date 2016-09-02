@@ -96,6 +96,7 @@
     <ClCompile Include="PidTable.cpp" />
     <ClCompile Include="Section.cpp" />
     <ClCompile Include="SectionDecoder.cpp" />
+    <ClCompile Include="Thread.cpp" />
     <ClCompile Include="TsHeader.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -111,6 +112,7 @@
     <ClInclude Include="..\shared\Section.h" />
     <ClInclude Include="..\shared\SectionDecoder.h" />
     <ClInclude Include="..\shared\stdafx.h" />
+    <ClInclude Include="..\shared\Thread.h" />
     <ClInclude Include="..\shared\TimeUtils.h" />
     <ClInclude Include="..\shared\TsHeader.h" />
   </ItemGroup>
