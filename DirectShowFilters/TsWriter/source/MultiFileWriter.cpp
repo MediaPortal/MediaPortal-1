@@ -121,7 +121,7 @@ HRESULT MultiFileWriter::OpenFile(const wchar_t* fileName)
 
   // Take a copy of the file name.
   unsigned long fileNameLength = wcslen(fileName);
-  if (m_registerFileName)
+  if (m_registerFileName != NULL)
   {
     delete[] m_registerFileName;
   }
@@ -156,8 +156,6 @@ HRESULT MultiFileWriter::CloseFile()
     m_fileData = NULL;
   }
 
-  CleanUpDataFiles();
-
   ResetDataFileProperties();
   return S_OK;
 }
@@ -176,6 +174,7 @@ HRESULT MultiFileWriter::Write(unsigned char* data, unsigned long dataLength, bo
     return S_FALSE;
   }
 
+  bool isDataFileChanged = false;
   HRESULT hr;
   if (m_fileData->IsFileInvalid())
   {
@@ -184,6 +183,7 @@ HRESULT MultiFileWriter::Write(unsigned char* data, unsigned long dataLength, bo
     {
       return hr;
     }
+    isDataFileChanged = true;
   }
 
   // Do we need to move to the next data file?
@@ -203,30 +203,25 @@ HRESULT MultiFileWriter::Write(unsigned char* data, unsigned long dataLength, bo
     }
 
     // Start a new file.
-    data += dataToWrite;
-    dataLength -= dataToWrite;
     hr = OpenDataFile(disableLogging);
     if (FAILED(hr))
     {
       return hr;
     }
-    hr = m_fileData->Write(data, dataLength, disableLogging);
-    if (FAILED(hr))
-    {
-      return hr;
-    }
+
+    isDataFileChanged = true;
+    data += dataToWrite;
+    dataLength -= dataToWrite;
   }
-  else
+
+  hr = m_fileData->Write(data, dataLength, disableLogging);
+  if (FAILED(hr))
   {
-    hr = m_fileData->Write(data, dataLength, disableLogging);
-    if (FAILED(hr))
-    {
-      return hr;
-    }
+    return hr;
   }
 
   m_dataFileSize += dataLength;
-  return WriteRegisterFile();
+  return WriteRegisterFile(isDataFileChanged);
 }
 
 void MultiFileWriter::GetCurrentFilePosition(unsigned long& currentFileId,
@@ -378,7 +373,7 @@ HRESULT MultiFileWriter::ReuseDataFile(bool disableLogging)
   return S_OK;
 }
 
-HRESULT MultiFileWriter::WriteRegisterFile()
+HRESULT MultiFileWriter::WriteRegisterFile(bool updateFileInfo)
 {
   unsigned char* writePointer = m_registerFileWriteBuffer;
 
@@ -386,113 +381,54 @@ HRESULT MultiFileWriter::WriteRegisterFile()
   *((unsigned long long*)writePointer) = m_dataFileSize;
   writePointer += sizeof(unsigned long long);
 
-  // Data file counts...
-  *((unsigned long*)writePointer) = m_dataFileCountUsed;
-  writePointer += sizeof(unsigned long);
-  
-  *((unsigned long*)writePointer) = m_dataFileCountRemoved;
-  writePointer += sizeof(unsigned long);
-
-  // Data file names...
-  std::vector<wchar_t*>::const_iterator it = m_dataFileNames.begin();
-  for ( ; it < m_dataFileNames.end(); it++)
+  if (updateFileInfo)
   {
-    wchar_t* fileName = *it;
-    if (fileName == NULL)
+    // Data file counts...
+    *((unsigned long*)writePointer) = m_dataFileCountUsed;
+    writePointer += sizeof(unsigned long);
+  
+    *((unsigned long*)writePointer) = m_dataFileCountRemoved;
+    writePointer += sizeof(unsigned long);
+
+    // Data file names...
+    std::vector<wchar_t*>::const_iterator it = m_dataFileNames.begin();
+    for ( ; it < m_dataFileNames.end(); it++)
     {
-      continue;
+      wchar_t* fileName = *it;
+      if (fileName == NULL)
+      {
+        continue;
+      }
+
+      unsigned long length = wcslen(fileName) + 1;
+      length *= sizeof(wchar_t);
+      memcpy(writePointer, fileName, length);
+      writePointer += length;
+
+      if (writePointer - m_registerFileWriteBuffer > REGISTER_FILE_WRITE_BUFFER_SIZE - MAX_PATH)
+      {
+        LogDebug(L"multi file writer: failed to write register file, data file count = %llu",
+                  (unsigned long long)m_dataFileNames.size());
+        return S_FALSE;
+      }
     }
 
-    unsigned long length = wcslen(fileName) + 1;
-    length *= sizeof(wchar_t);
-    memcpy(writePointer, fileName, length);
-    writePointer += length;
-
-    if (writePointer - m_registerFileWriteBuffer > REGISTER_FILE_WRITE_BUFFER_SIZE - MAX_PATH)
-    {
-      LogDebug(L"multi file writer: failed to write register file, data file count = %llu",
-                (unsigned long long)m_dataFileNames.size());
-      return S_FALSE;
-    }
+    // Mark the end of the content with a Unicode null character.
+    *((wchar_t*)writePointer) = NULL;
+    writePointer += sizeof(wchar_t);
+  
+    // For backwards compatibility with TsReader's multi file reader...
+    *((unsigned long*)writePointer) = m_dataFileCountUsed;
+    writePointer += sizeof(unsigned long);
+  
+    *((unsigned long*)writePointer) = m_dataFileCountRemoved;
+    writePointer += sizeof(unsigned long);
   }
-
-  // Mark the end of the content with a Unicode null character.
-  *((wchar_t*)writePointer) = NULL;
-  writePointer += sizeof(wchar_t);
-  
-  // For backwards compatibility with TsReader's multi file reader...
-  *((unsigned long*)writePointer) = m_dataFileCountUsed;
-  writePointer += sizeof(unsigned long);
-  
-  *((unsigned long*)writePointer) = m_dataFileCountRemoved;
-  writePointer += sizeof(unsigned long);
 
   return m_fileRegister->Write(m_registerFileWriteBuffer,
                                 writePointer - m_registerFileWriteBuffer,
                                 false,
                                 0);
-}
-
-void MultiFileWriter::CleanUpDataFiles()
-{
-  LogDebug(L"multi file writer: clean up data files");
-
-  // Check if either the register file or any of the data files are in use. If
-  // one of the files is in use, don't even attempt to delete any of the files.
-  bool deleteFiles = true;
-  if (IsFileInUse(m_registerFileName))
-  {
-    LogDebug(L"multi file writer: register file is in use, name = %s",
-              m_registerFileName);
-    deleteFiles = false;
-  }
-
-  std::vector<wchar_t*>::iterator it = m_dataFileNames.begin();
-  for ( ; it < m_dataFileNames.end(); it++)
-  {
-    wchar_t* fileName = *it;
-    if (IsFileInUse(fileName))
-    {
-      LogDebug(L"multi file writer: data file is in use, name = %s", fileName);
-      deleteFiles = false;
-    }
-  }
-
-  // Clean up the data file names, and delete the files if appropriate.
-  for (it = m_dataFileNames.begin(); it < m_dataFileNames.end(); it++)
-  {
-    wchar_t* fileName = *it;
-    if (fileName != NULL)
-    {
-      if (deleteFiles)
-      {
-        if (DeleteFileW(fileName) == FALSE)
-        {
-          DWORD errorCode = GetLastError();
-          HRESULT hr = HRESULT_FROM_WIN32(errorCode);
-          LogDebug(L"multi file writer: failed to delete data file, error = %lu, hr = 0x%x, name = %s",
-                    errorCode, hr, fileName);
-        }
-      }
-      delete[] fileName;
-      *it = NULL;
-    }
-  }
-  m_dataFileNames.clear();
-
-  if (m_registerFileName != NULL)
-  {
-    if (deleteFiles && DeleteFileW(m_registerFileName) == FALSE)
-    {
-      DWORD errorCode = GetLastError();
-      HRESULT hr = HRESULT_FROM_WIN32(errorCode);
-      LogDebug(L"multi file writer: failed to delete register file, error = %lu, hr = 0x%x, name = %s",
-                errorCode, hr, m_registerFileName);
-    }
-
-    delete[] m_registerFileName;
-    m_registerFileName = NULL;
-  }
 }
 
 void MultiFileWriter::ResetDataFileProperties()

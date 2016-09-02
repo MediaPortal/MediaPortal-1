@@ -61,8 +61,7 @@ class MultiFileWriter
     HRESULT CreateDataFile(bool disableLogging);
     HRESULT ReuseDataFile(bool disableLogging);
 
-    HRESULT WriteRegisterFile();
-    void CleanUpDataFiles();
+    HRESULT WriteRegisterFile(bool updateFileInfo);
     void ResetDataFileProperties();
 
     static HRESULT GetAvailableDiskSpace(const wchar_t* path,

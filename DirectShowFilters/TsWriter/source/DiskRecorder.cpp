@@ -355,8 +355,6 @@ HRESULT CDiskRecorder::Start()
       }
     }
 
-    ::DeleteFileW(fileName.c_str());
-
     if (m_recorderMode == TimeShift)
     {
       m_fileTimeShifting = new MultiFileWriter();
