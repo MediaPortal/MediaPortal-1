@@ -2548,6 +2548,9 @@ namespace MediaPortal
                GUIGraphicsContext.Vmr9Active && VMR9Util.g_vmr9 != null)
       {
         // Hack to not close MP while madVR running (need to find why some plugin like OV trigger this)
+        _isClosing = false;
+        formClosingEventArgs.Cancel = true;
+        GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.RUNNING;
         Log.Debug("D3D: OnFormClosing() avoiding for madVR while running");
       }
       else
