@@ -2551,6 +2551,7 @@ namespace MediaPortal
         _isClosing = false;
         formClosingEventArgs.Cancel = true;
         GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.RUNNING;
+        g_Player.Stop();
         Log.Debug("D3D: OnFormClosing() avoiding for madVR while running");
       }
       else
