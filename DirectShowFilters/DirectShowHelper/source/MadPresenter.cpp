@@ -241,17 +241,12 @@ void MPMadPresenter::ConfigureMadvr()
 HRESULT MPMadPresenter::Shutdown()
 {
   { // Scope for autolock for the local variable (lock, which when deleted releases the lock)
-    m_dsLock.Lock();
-
     m_pShutdown = true;
-
     CAutoLock lock(this);
-
-    Log("MPMadPresenter::Shutdown() scope start");
 
     if (m_pMediaControl)
     {
-      Log("MPMadPresenter::Shutdown() m_pMediaControl->Stop() 1");
+      Log("MPMadPresenter::Shutdown() m_pMediaControl stop 1");
       int counter = 0;
       OAFilterState state = -1;
       m_pMediaControl->Stop();
@@ -271,27 +266,38 @@ HRESULT MPMadPresenter::Shutdown()
           break;
         }
       }
-      Log("MPMadPresenter::Shutdown() m_pMediaControl->Stop() 2");
       m_pMediaControl = nullptr;
-      m_dsLock.Unlock();
+      Log("MPMadPresenter::Shutdown() m_pMediaControl stop 2");
       return S_OK;
     }
 
+    Log("MPMadPresenter::Shutdown() start");
+
     if (m_pCallback)
     {
+      m_pCallback->SetSubtitleDevice(reinterpret_cast<DWORD>(nullptr));
+      Log("MPMadPresenter::Shutdown() reset subtitle device");
+      m_deviceState.Shutdown();
+      Log("MPMadPresenter::Shutdown() m_deviceState");
       m_pCallback->RestoreDeviceSurface(reinterpret_cast<DWORD>(m_pSurfaceDevice));
+      Log("MPMadPresenter::Shutdown() RestoreDeviceSurface");
       m_pCallback->Release();
+      Log("MPMadPresenter::Shutdown() m_pCallback release");
     }
 
     // Disable exclusive mode
     if (m_ExclusiveMode)
+    {
       MPMadPresenter::EnableExclusive(false);
+      Log("MPMadPresenter::Shutdown() disable exclusive mode");
+    }
 
     // Let's madVR restore original display mode (when adjust refresh it's handled by madVR)
     if (Com::SmartQIPtr<IMadVRCommand> pMadVrCmd = m_pMad)
     {
       pMadVrCmd->SendCommand("restoreDisplayModeNow");
       pMadVrCmd.Release();
+      Log("MPMadPresenter::Shutdown() restoreDisplayModeNow");
     }
 
     if (Com::SmartQIPtr<IVideoWindow> pWindow = m_pMad)
@@ -299,17 +305,12 @@ HRESULT MPMadPresenter::Shutdown()
       pWindow->put_Owner(reinterpret_cast<OAHWND>(nullptr));
       pWindow->put_Visible(false);
       pWindow.Release();
+      Log("MPMadPresenter::Shutdown() releasing IVideoWindow");
     }
 
-    m_pCallback = nullptr;
-    Log("MPMadPresenter::Shutdown() scope done ");
+    Log("MPMadPresenter::Shutdown() stop");
+    return S_OK;
   } // Scope for autolock
-
-  Log("MPMadPresenter::Shutdown()");
-
-  m_dsLock.Unlock();
-
-  return S_OK;
 }
 
 STDMETHODIMP MPMadPresenter::NonDelegatingQueryInterface(REFIID riid, void** ppv)

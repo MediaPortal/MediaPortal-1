@@ -150,6 +150,7 @@ class MPMadPresenter : public CUnknown, public CCritSec
     bool m_pShutdown = false;
     bool m_pInitOSD = false;
     IVMR9Callback* m_pCallback = nullptr;
+    CCritSec m_dsLock;
 
   private:
     void RenderToTexture(IDirect3DTexture9* pTexture);
@@ -200,7 +201,6 @@ class MPMadPresenter : public CUnknown, public CCritSec
     int m_ExclusiveMode = 0;
 
     CRenderWait m_mpWait;
-    CCritSec m_dsLock;
 
     bool uiVisible = false;
 

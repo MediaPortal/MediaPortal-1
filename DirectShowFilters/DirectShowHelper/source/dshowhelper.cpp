@@ -938,8 +938,10 @@ void MadDeinit()
   try
   {
     Log("MPMadDshow::MadDeinit shutdown start");
+    m_madPresenter->m_dsLock.Lock();
     m_madPresenter->Shutdown();
     m_pVMR9Filter = nullptr;
+    m_madPresenter->m_dsLock.Unlock();
     Log("MPMadDshow::MadDeinit shutdown done");
   }
   catch(...)
