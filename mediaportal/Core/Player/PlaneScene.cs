@@ -781,7 +781,6 @@ namespace MediaPortal.Player
         }
 
         _reEntrant = false;
-        GUIGraphicsContext.InVmr9Render = false;
 
         if (VMR9Util.g_vmr9 != null)
         {
