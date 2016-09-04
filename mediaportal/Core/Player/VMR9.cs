@@ -1254,6 +1254,7 @@ namespace MediaPortal.Player
           {
             videoWin.put_WindowStyle((WindowStyle) ((int) WindowStyle.Child + (int) WindowStyle.ClipChildren + (int) WindowStyle.ClipSiblings));
             videoWin.put_MessageDrain(GUIGraphicsContext.form.Handle);
+            Log.Debug("VMR9: StartMediaCtrl start put_WindowStyle");
           }
         }
 
@@ -1276,7 +1277,7 @@ namespace MediaPortal.Player
           if (hr != 0) // S_OK
           {
             DsError.ThrowExceptionForHR(hr);
-            Log.Debug("VMR9: StartMediaCtrl try to play with hr: 0x{0} - '{1}'", hr.ToString("X8"));
+            Log.Debug("VMR9: StartMediaCtrl try to play with hr: 0x{0}", hr.ToString("X8"));
           }
           Log.Debug("VMR9: StartMediaCtrl hr: {0}", hr);
         }
@@ -1294,17 +1295,17 @@ namespace MediaPortal.Player
           Log.Debug("VMR9: mediaCtrl.Stop() 1");
           if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
           {
-            GUIGraphicsContext.MadVrStop = true;
-            finished.WaitOne(5000);
+            //GUIGraphicsContext.MadVrStop = true;
+            //finished.WaitOne(5000);
 
-            // Check if the stop was done on from madVR thread
-            if (GUIGraphicsContext.MadVrStop)
+            //// Check if the stop was done on from madVR thread
+            //if (GUIGraphicsContext.MadVrStop)
             {
               Log.Debug("VMR9: Vmr9MediaCtrl MadDeinit()");
               MadDeinit();
             }
           }
-          else
+          //else
           {
             var hr = mediaCtrl.Stop();
             DsError.ThrowExceptionForHR(hr);
@@ -1339,6 +1340,20 @@ namespace MediaPortal.Player
         GUIGraphicsContext.DX9Device.SetRenderTarget(0, MadVrRenderTargetVMR9);
         MadVrRenderTargetVMR9.Dispose();
         MadVrRenderTargetVMR9 = null;
+        if ((GUIGraphicsContext.form.WindowState != FormWindowState.Minimized))
+        {
+          // Make MediaPortal window normal ( if minimized )
+          Win32API.ShowWindow(GUIGraphicsContext.ActiveForm, Win32API.ShowWindowFlags.ShowNormal);
+
+          // Make Mediaportal window focused
+          if (Win32API.SetForegroundWindow(GUIGraphicsContext.ActiveForm, true))
+          {
+            Log.Info("VMR9: Successfully switched focus.");
+          }
+
+          // Bring MP to front
+          GUIGraphicsContext.form.BringToFront();
+        }
         Log.Debug("VMR9: RestoreGuiForMadVr");
       }
     }
