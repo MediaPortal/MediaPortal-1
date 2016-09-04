@@ -46,18 +46,16 @@
     <ClInclude Include="source\threads\SystemClock.h">
       <Filter>threads</Filter>
     </ClInclude>
-    <ClInclude Include="source\Geometry.h">
-      <Filter>helpers</Filter>
-    </ClInclude>
-    <ClInclude Include="source\smartptr.h">
-      <Filter>helpers</Filter>
-    </ClInclude>
     <ClInclude Include="source\Scheduler.h" />
     <ClInclude Include="source\TimeSource.h" />
-    <ClInclude Include="source\helpers\smartptr.h" />
-    <ClInclude Include="source\helpers\Geometry.h" />
     <ClInclude Include="source\threads\Helpers.h" />
     <ClInclude Include="source\threads\Condition.h" />
+    <ClInclude Include="source\helpers\smartptr.h">
+      <Filter>helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="source\helpers\Geometry.h">
+      <Filter>helpers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="source\dshowhelper.rc" />

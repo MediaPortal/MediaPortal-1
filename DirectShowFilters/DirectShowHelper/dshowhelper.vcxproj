@@ -162,7 +162,6 @@ xcopy $(TargetDir)dshowhelper.pdb $(SolutionDir)..\mediaportal\MediaPortal.Appli
     <ClInclude Include="source\dshowhelper.h" />
     <ClInclude Include="source\DX9AllocatorPresenter.h" />
     <ClInclude Include="source\EVRCustomPresenter.h" />
-    <ClInclude Include="source\Geometry.h" />
     <ClInclude Include="source\helpers\Geometry.h" />
     <ClInclude Include="source\helpers\smartptr.h" />
     <ClInclude Include="source\IAVSyncClock.h" />
@@ -172,7 +171,6 @@ xcopy $(TargetDir)dshowhelper.pdb $(SolutionDir)..\mediaportal\MediaPortal.Appli
     <ClInclude Include="source\MyQueue.h" />
     <ClInclude Include="source\OuterEVR.h" />
     <ClInclude Include="source\Scheduler.h" />
-    <ClInclude Include="source\smartptr.h" />
     <ClInclude Include="source\StatsRenderer.h" />
     <ClInclude Include="source\StdAfx.h" />
     <ClInclude Include="source\StdString.h" />
