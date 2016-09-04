@@ -80,12 +80,12 @@ MPMadPresenter::~MPMadPresenter()
   //if (Com::SmartQIPtr<IMadVRExclusiveModeCallback> pEXL = m_pDXR)
   //  pEXL->Unregister(m_exclusiveCallback, this);
 
-  Log("MPMadPresenter::Destructor() - m_pMad release 1");
-  if (m_pMad)
-  {
-    m_pMad.Release();
-  }
-  Log("MPMadPresenter::Destructor() - m_pMad release 2");
+  //Log("MPMadPresenter::Destructor() - m_pMad release 1");
+  //if (m_pMad)
+  //{
+  //  m_pMad.Release();
+  //}
+  //Log("MPMadPresenter::Destructor() - m_pMad release 2");
 
   Log("MPMadPresenter::Destructor() - m_pSRCB release 1");
   if (m_pSRCB)
@@ -256,8 +256,6 @@ HRESULT MPMadPresenter::Shutdown()
     {
       m_pCallback->SetSubtitleDevice(reinterpret_cast<DWORD>(nullptr));
       Log("MPMadPresenter::Shutdown() reset subtitle device");
-      m_deviceState.Shutdown();
-      Log("MPMadPresenter::Shutdown() m_deviceState");
       m_pCallback->RestoreDeviceSurface(reinterpret_cast<DWORD>(m_pSurfaceDevice));
       Log("MPMadPresenter::Shutdown() RestoreDeviceSurface");
       m_pCallback->Release();
