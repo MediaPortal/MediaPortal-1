@@ -73,34 +73,34 @@ MPMadPresenter::~MPMadPresenter()
   {
     // nasty, but we have to let it know about our death somehow
     static_cast<CSubRenderCallback*>(static_cast<ISubRenderCallback*>(m_pSRCB))->SetDXRAP(nullptr);
-    //Log("MPMadPresenter::Destructor() - m_pSRCB");
+    Log("MPMadPresenter::Destructor() - m_pSRCB");
   }
 
   if (m_pORCB)
   {
     // nasty, but we have to let it know about our death somehow
     static_cast<COsdRenderCallback*>(static_cast<IOsdRenderCallback*>(m_pORCB))->SetDXRAP(nullptr);
-    //Log("MPMadPresenter::Destructor() - m_pORCB");
+    Log("MPMadPresenter::Destructor() - m_pORCB");
   }
 
   //// Unregister madVR Exclusive Callback
   //if (Com::SmartQIPtr<IMadVRExclusiveModeCallback> pEXL = m_pDXR)
   //  pEXL->Unregister(m_exclusiveCallback, this);
 
-  //Log("MPMadPresenter::Destructor() - m_pMad release 1");
+  Log("MPMadPresenter::Destructor() - m_pMad release 1");
   if (m_pMad)
     m_pMad.Release();
-  //Log("MPMadPresenter::Destructor() - m_pMad release 2");
+  Log("MPMadPresenter::Destructor() - m_pMad release 2");
 
-  //Log("MPMadPresenter::Destructor() - m_pSRCB release 1");
+  Log("MPMadPresenter::Destructor() - m_pSRCB release 1");
   if (m_pSRCB)
     m_pSRCB.Release();
-  //Log("MPMadPresenter::Destructor() - m_pSRCB release 2");
+  Log("MPMadPresenter::Destructor() - m_pSRCB release 2");
 
-  //Log("MPMadPresenter::Destructor() - m_pORCB release 1");
+  Log("MPMadPresenter::Destructor() - m_pORCB release 1");
   if (m_pORCB)
     m_pORCB.Release();
-  //Log("MPMadPresenter::Destructor() - m_pORCB release 2");
+  Log("MPMadPresenter::Destructor() - m_pORCB release 2");
 
   m_dsLock.Unlock();
 
