@@ -137,6 +137,7 @@ class MPMadPresenter : public CUnknown, public CCritSec
     void InitializeOSD();
     void SetOSDCallback();
     HRESULT Shutdown();
+    HRESULT Stopping();
 
     STDMETHODIMP NonDelegatingQueryInterface(REFIID riid, void** ppv);
     STDMETHODIMP ClearBackground(LPCSTR name, REFERENCE_TIME frameStart, RECT *fullOutputRect, RECT *activeVideoRect);

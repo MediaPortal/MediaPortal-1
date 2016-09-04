@@ -59,6 +59,7 @@ MPMadPresenter::MPMadPresenter(IVMR9Callback* pCallback, DWORD width, DWORD heig
 
 MPMadPresenter::~MPMadPresenter()
 {
+  CAutoLock lock(&m_dsLock);
   m_dsLock.Lock();
 
   if (m_pSRCB)
@@ -82,13 +83,6 @@ MPMadPresenter::~MPMadPresenter()
   Log("MPMadPresenter::Destructor() - m_pMad release 1");
   if (m_pMad)
   {
-    if (Com::SmartQIPtr<IVideoWindow> pWindow = m_pMad)
-    {
-      pWindow->put_Owner(reinterpret_cast<OAHWND>(nullptr));
-      pWindow->put_Visible(false);
-      pWindow.Release();
-      Log("MPMadPresenter::Destructor() - releasing IVideoWindow");
-    }
     m_pMad.Release();
   }
   Log("MPMadPresenter::Destructor() - m_pMad release 2");
@@ -254,35 +248,7 @@ void MPMadPresenter::ConfigureMadvr()
 HRESULT MPMadPresenter::Shutdown()
 {
   { // Scope for autolock for the local variable (lock, which when deleted releases the lock)
-    m_pShutdown = true;
     CAutoLock lock(this);
-
-    if (m_pMediaControl)
-    {
-      Log("MPMadPresenter::Shutdown() m_pMediaControl stop 1");
-      int counter = 0;
-      OAFilterState state = -1;
-      m_pMediaControl->Stop();
-      m_pMediaControl->GetState(100, &state);
-      while (state != State_Stopped)
-      {
-        Log("MPMadPresenter::Shutdown() m_pMediaControl: graph still running");
-        Sleep(100);
-        m_pMediaControl->GetState(10, &state);
-        counter++;
-        if (counter >= 30)
-        {
-          if (state != State_Stopped)
-          {
-            Log("MPMadPresenter::Shutdown() m_pMediaControl: graph still running");
-          }
-          break;
-        }
-      }
-      m_pMediaControl = nullptr;
-      Log("MPMadPresenter::Shutdown() m_pMediaControl stop 2");
-      return S_OK;
-    }
 
     Log("MPMadPresenter::Shutdown() start");
 
@@ -322,6 +288,42 @@ HRESULT MPMadPresenter::Shutdown()
     }
 
     Log("MPMadPresenter::Shutdown() stop");
+    return S_OK;
+  } // Scope for autolock
+}
+
+HRESULT MPMadPresenter::Stopping()
+{
+  { // Scope for autolock for the local variable (lock, which when deleted releases the lock)
+    CAutoLock lock(this);
+
+    if (m_pMediaControl)
+    {
+      Log("MPMadPresenter::Stopping() m_pMediaControl stop 1");
+      int counter = 0;
+      OAFilterState state = -1;
+      m_pMediaControl->Stop();
+      m_pMediaControl->GetState(100, &state);
+      while (state != State_Stopped)
+      {
+        Log("MPMadPresenter::Stopping() m_pMediaControl: graph still running");
+        Sleep(100);
+        m_pMediaControl->GetState(10, &state);
+        counter++;
+        if (counter >= 30)
+        {
+          if (state != State_Stopped)
+          {
+            Log("MPMadPresenter::Stopping() m_pMediaControl: graph still running");
+          }
+          break;
+        }
+      }
+      m_pMediaControl = nullptr;
+      Log("MPMadPresenter::Stopping() m_pMediaControl stop 2");
+    }
+
+    Log("MPMadPresenter::Stopping() start");
     return S_OK;
   } // Scope for autolock
 }
