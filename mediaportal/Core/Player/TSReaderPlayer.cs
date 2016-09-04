@@ -168,9 +168,13 @@ namespace MediaPortal.Player
         {
           return this.filterConfig.Video;
         }
-        else
+        else if (_videoFormat.streamType == VideoStreamType.H264)
         {
           return this.filterConfig.VideoH264;
+        }
+        else
+        {
+          return this.filterConfig.VideoHEVC;
         }
       }
       else

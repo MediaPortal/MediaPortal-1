@@ -32,9 +32,9 @@ namespace MediaPortal.GUI.Library
     private static void MakeBoolean(string funcName, int paramIndex, ref object param)
     {
       // The parameter must be a boolean; attempt coersion if it is a string.
-      if (param.GetType() != typeof(bool))
+      if (param != null && param.GetType() != typeof(bool))
       {
-        bool value = false;
+        var value = false;
         if (!bool.TryParse((string)param, out value))
         {
           Log.Error("Condition for {0}() function is not a boolean; paramIndex={1}, value={2}. Condition is being forced to 'false'.  You must correct your skin function.", funcName, paramIndex, param);
@@ -269,7 +269,7 @@ namespace MediaPortal.GUI.Library
     public static object Iif(object condition, object truePart, object falsePart)
     {
       MakeBoolean("iif", 0, ref condition);
-      return (bool)condition ? truePart : falsePart;
+      return condition != null && (bool)condition ? truePart : falsePart;
     }
 
     [XMLSkinFunction("choose")]
@@ -936,12 +936,10 @@ namespace MediaPortal.GUI.Library
     {
       // args[0] - skin window id
       // args[1] - skin control id
-      if (args.Length == 2)
-      {
-        int windowId = (int)args[0];
-        int controlId = (int)args[1];
-        GUIControl.FocusControl(windowId, controlId);
-      }
+      if (args.Length != 2) return;
+      int windowId = (int)args[0];
+      int controlId = (int)args[1];
+      GUIControl.FocusControl(windowId, controlId);
     }
 
     [XMLSkinFunction("plugin.isenabled")]

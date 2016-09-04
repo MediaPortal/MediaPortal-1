@@ -276,7 +276,7 @@ namespace MediaPortal.Player
                 // Apply settings
                 r = ChangeDisplaySettingsEx(null, null, IntPtr.Zero, 0, IntPtr.Zero);
                 Log.Info("CycleRefreshRate: result {0} for refresh rate change {1}Hz", r, refreshRate);
-                FixDwm();
+                //FixDwm();
               }
             }
           }
@@ -758,7 +758,7 @@ namespace MediaPortal.Player
         }
         else if (RunExternalJob(newExtCmd, strFile, type, deviceReset) && newRR != currentRR)
         {
-          Win32.FixDwm();
+          //Win32.FixDwm();
           NotifyRefreshRateChanged(newRRDescription, false);
         }
 
