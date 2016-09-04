@@ -1091,12 +1091,12 @@ public class MediaPortalApp : D3D, IRender
 
   static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
   {
-    Log.Error(string.Format("*** UNHANDLED APPDOMAIN EXCEPTION ({0}) *****", e.IsTerminating ? "Terminating" : "Non-Terminating"), e.ExceptionObject as Exception);
+    //Log.Error(string.Format("*** UNHANDLED APPDOMAIN EXCEPTION ({0}) *****", e.IsTerminating ? "Terminating" : "Non-Terminating"), e.ExceptionObject as Exception);
   }
 
   static void Application_ThreadException(object sender, System.Threading.ThreadExceptionEventArgs e)
   {
-    Log.Error("*** UNHANDLED THREAD EXCEPTION *****", e.Exception);
+    //Log.Error("*** UNHANDLED THREAD EXCEPTION *****", e.Exception);
   }
 
   /// <summary>
