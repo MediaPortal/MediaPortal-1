@@ -87,7 +87,7 @@ MPMadPresenter::~MPMadPresenter()
       pWindow->put_Owner(reinterpret_cast<OAHWND>(nullptr));
       pWindow->put_Visible(false);
       pWindow.Release();
-      Log("MPMadPresenter::Destructor() releasing IVideoWindow");
+      Log("MPMadPresenter::Destructor() - releasing IVideoWindow");
     }
     m_pMad.Release();
   }
@@ -630,6 +630,15 @@ HRESULT MPMadPresenter::SetupMadDeviceState()
 
 HRESULT MPMadPresenter::SetDeviceOsd(IDirect3DDevice9* pD3DDev)
 {
+  // Lock madVR thread while Shutdown()
+  CAutoLock lock(&m_dsLock);
+
+  if (m_pShutdown)
+  {
+    Log("MPMadPresenter::SetDeviceOsd shutdown");
+    return S_OK;
+  }
+
   CAutoLock cAutoLock(this);
   if (!pD3DDev)
   {

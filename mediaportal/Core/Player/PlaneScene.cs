@@ -676,11 +676,11 @@ namespace MediaPortal.Player
 
       try
       {
-        if (GUIGraphicsContext.MadVrStop)
-        {
-          VMR9Util.g_vmr9.ShutdownMadVr();
-          return -1;
-        }
+        //if (GUIGraphicsContext.MadVrStop)
+        //{
+        //  VMR9Util.g_vmr9.ShutdownMadVr();
+        //  return -1;
+        //}
 
         if (_reEntrant)
         {
