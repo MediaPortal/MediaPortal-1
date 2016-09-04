@@ -61,14 +61,6 @@ MPMadPresenter::~MPMadPresenter()
 {
   m_dsLock.Lock();
 
-  if (Com::SmartQIPtr<IVideoWindow> pWindow = m_pMad)
-  {
-    pWindow->put_Owner(reinterpret_cast<OAHWND>(nullptr));
-    pWindow->put_Visible(false);
-    pWindow.Release();
-    Log("MPMadPresenter::Destructor() releasing IVideoWindow");
-  }
-
   if (m_pSRCB)
   {
     // nasty, but we have to let it know about our death somehow
@@ -89,7 +81,16 @@ MPMadPresenter::~MPMadPresenter()
 
   Log("MPMadPresenter::Destructor() - m_pMad release 1");
   if (m_pMad)
+  {
+    if (Com::SmartQIPtr<IVideoWindow> pWindow = m_pMad)
+    {
+      pWindow->put_Owner(reinterpret_cast<OAHWND>(nullptr));
+      pWindow->put_Visible(false);
+      pWindow.Release();
+      Log("MPMadPresenter::Destructor() releasing IVideoWindow");
+    }
     m_pMad.Release();
+  }
   Log("MPMadPresenter::Destructor() - m_pMad release 2");
 
   Log("MPMadPresenter::Destructor() - m_pSRCB release 1");
