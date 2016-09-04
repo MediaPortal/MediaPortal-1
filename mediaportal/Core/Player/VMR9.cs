@@ -150,6 +150,9 @@ namespace MediaPortal.Player
     private static extern unsafe void MadDeinit();
 
     [DllImport("dshowhelper.dll", CallingConvention = CallingConvention.Cdecl)]
+    private static extern unsafe void MadStopping();
+
+    [DllImport("dshowhelper.dll", CallingConvention = CallingConvention.Cdecl)]
     private static extern unsafe void WindowsMessage();
 
     #endregion
@@ -1302,7 +1305,7 @@ namespace MediaPortal.Player
             //if (GUIGraphicsContext.MadVrStop)
             {
               Log.Debug("VMR9: Vmr9MediaCtrl MadDeinit()");
-              MadDeinit();
+              MadStopping();
             }
           }
           //else
