@@ -870,16 +870,19 @@ namespace TvPlugin
     /// <returns></returns>
     private int GetChannelIndex(Channel ch)
     {
-      IList<GroupMap> groupMaps = CurrentGroup.ReferringGroupMap();
-      for (int i = 0; i < groupMaps.Count; i++)
+      if (CurrentGroup != null)
       {
-        GroupMap gm = (GroupMap)groupMaps[i];
-        if (gm != null)
+        IList<GroupMap> groupMaps = CurrentGroup.ReferringGroupMap();
+        for (int i = 0; i < groupMaps.Count; i++)
         {
-          Channel chan = (Channel)gm.ReferencedChannel();
-          if (ch != null && (chan != null && chan.IdChannel == ch.IdChannel))
+          GroupMap gm = (GroupMap)groupMaps[i];
+          if (gm != null)
           {
-            return i;
+            Channel chan = (Channel)gm.ReferencedChannel();
+            if (ch != null && (chan != null && chan.IdChannel == ch.IdChannel))
+            {
+              return i;
+            }
           }
         }
       }

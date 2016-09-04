@@ -481,29 +481,32 @@ namespace TvPlugin
 
     private List<Channel> GetChannelListByGroup()
     {
-      int idGroup = TVHome.Navigator.CurrentGroup.IdGroup;
-
-      if (_tvGroupChannelListCache == null)
+      if (TVHome.Navigator != null)
       {
-        _tvGroupChannelListCache = new Dictionary<int, List<Channel>>();
-      }
+        int idGroup = TVHome.Navigator.CurrentGroup.IdGroup;
 
-      List<Channel> channels = null;
-      if (_tvGroupChannelListCache.TryGetValue(idGroup, out channels))  //already in cache ? then return it.      
-      {
-        Log.Debug("TvMiniGuide: GetChannelListByGroup returning cached version of channels.");
-        return channels;
-      }
-      else //not in cache, fetch it and update cache, then return.
-      {
-        TvBusinessLayer layer = new TvBusinessLayer();
-        List<Channel> tvChannelList = layer.GetTVGuideChannelsForGroup(idGroup);
-
-        if (tvChannelList != null)
+        if (_tvGroupChannelListCache == null)
         {
-          Log.Debug("TvMiniGuide: GetChannelListByGroup caching channels from DB.");
-          _tvGroupChannelListCache.Add(idGroup, tvChannelList);
-          return tvChannelList;
+          _tvGroupChannelListCache = new Dictionary<int, List<Channel>>();
+        }
+
+        List<Channel> channels = null;
+        if (_tvGroupChannelListCache.TryGetValue(idGroup, out channels))  //already in cache ? then return it.      
+        {
+          Log.Debug("TvMiniGuide: GetChannelListByGroup returning cached version of channels.");
+          return channels;
+        }
+        else //not in cache, fetch it and update cache, then return.
+        {
+          TvBusinessLayer layer = new TvBusinessLayer();
+          List<Channel> tvChannelList = layer.GetTVGuideChannelsForGroup(idGroup);
+
+          if (tvChannelList != null)
+          {
+            Log.Debug("TvMiniGuide: GetChannelListByGroup caching channels from DB.");
+            _tvGroupChannelListCache.Add(idGroup, tvChannelList);
+            return tvChannelList;
+          }
         }
       }
       return new List<Channel>();

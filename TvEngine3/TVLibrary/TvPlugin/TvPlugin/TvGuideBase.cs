@@ -3132,16 +3132,19 @@ namespace TvPlugin
         btnTvGroup.Visible = GroupButtonAvail;
 
       // set min index for focus handling
-      if (GroupButtonAvail)
+      if (TVHome.Navigator != null && TVHome.Navigator.CurrentGroup.GroupName != null)
       {
-        MinYIndex = -1; // allow focus of button
-        GroupButtonText = String.Format("{0}: {1}", GUILocalizeStrings.Get(971), TVHome.Navigator.CurrentGroup.GroupName);
-        GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.Group", TVHome.Navigator.CurrentGroup.GroupName);
-      }
-      else
-      {
-        GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.Group", TVHome.Navigator.CurrentGroup.GroupName);
-        MinYIndex = 0;
+        if (GroupButtonAvail)
+        {
+          MinYIndex = -1; // allow focus of button
+          GroupButtonText = String.Format("{0}: {1}", GUILocalizeStrings.Get(971), TVHome.Navigator.CurrentGroup.GroupName);
+          GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.Group", TVHome.Navigator.CurrentGroup.GroupName);
+        }
+        else
+        {
+          GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.Group", TVHome.Navigator.CurrentGroup.GroupName);
+          MinYIndex = 0;
+        }
       }
 
       // Set proper text for group change button; Empty string to hide text if only 1 group

@@ -85,6 +85,7 @@ namespace TvPlugin
 
     private static int _currentChannelIdForTune = 0;
     private static int _currentChannelIdPendingTune = 0;
+    private static bool OnLoadedDone = false;
 
     private enum Controls
     {
@@ -313,14 +314,20 @@ namespace TvPlugin
 
     public static void OnLoaded()
     {
-      if (Thread.CurrentThread.Name != "MPMain" && Thread.CurrentThread.Name != "Config Main")
+      try
       {
-        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_INIT_TV_LOAD, 0, 0, 0, 0, 0, null);
-        GUIWindowManager.SendThreadMessage(msg);
+        if (Thread.CurrentThread.Name != "MPMain" && Thread.CurrentThread.Name != "Config Main")
+        {
+          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_INIT_TV_LOAD, 0, 0, 0, 0, 0, null);
+          GUIWindowManager.SendThreadMessage(msg);
+        }
+        else
+        {
+          OnLoadedCallback();
+        }
       }
-      else
+      catch (Exception ex)
       {
-        OnLoadedCallback();
       }
     }
 
@@ -329,8 +336,9 @@ namespace TvPlugin
       Log.Info("TVHome:OnLoaded");
       try
       {
-        if (Connected && !firstNotLoaded)
+        if (Connected && !firstNotLoaded && !OnLoadedDone)
         {
+          OnLoadedDone = true;
           m_navigator = new ChannelNavigator();
           m_navigator.OnZapChannel -= new ChannelNavigator.OnZapChannelDelegate(ForceUpdates);
           m_navigator.OnZapChannel += new ChannelNavigator.OnZapChannelDelegate(ForceUpdates);
