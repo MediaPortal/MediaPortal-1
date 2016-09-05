@@ -1028,21 +1028,20 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public static void VideoWindowChanged()
     {
-      if (Thread.CurrentThread.Name != "MPMain" && Thread.CurrentThread.Name != "Config Main")
+      lock (RenderLoopLock)
       {
-        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ONVIDEOWINDOWCHANGED, 0, 0, 0, 0, 0, null);
-        msg.Param1 = GUIGraphicsContext.VideoWindow.Left;
-        msg.Param2 = GUIGraphicsContext.VideoWindow.Top;
-        msg.Param3 = GUIGraphicsContext.VideoWindow.Width;
-        msg.Param4 = GUIGraphicsContext.VideoWindow.Height;
-        //Log.Debug("GraphicContext VideoWindowChanged (SendThreadMessage sender) Left: {0}, Top: {1}, Width: {2}, Height: {3}", msg.Param1, msg.Param2, msg.Param3, msg.Param4);
-        GUIWindowManager.SendThreadMessage(msg);
-      }
-      else
-      {
-        //Log.Debug("GraphicContext VideoWindowChanged (MP Main thread) Left: {0}, Top: {1}, Width: {2}, Height: {3}", VideoWindow.Left, VideoWindow.Top, VideoWindow.Width, VideoWindow.Height);
-        OnVideoWindowChanged?.Invoke();
-        Log.Debug("GraphicContext VideoWindowChanged() MP Main thread");
+        if (!VideoWindowChangedDone)
+        {
+          VideoWindowChangedDone = true;
+          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ONVIDEOWINDOWCHANGED, 0, 0, 0, 0, 0, null);
+          msg.Param1 = GUIGraphicsContext.VideoWindow.Left;
+          msg.Param2 = GUIGraphicsContext.VideoWindow.Top;
+          msg.Param3 = GUIGraphicsContext.VideoWindow.Width;
+          msg.Param4 = GUIGraphicsContext.VideoWindow.Height;
+          //Log.Debug("GraphicContext VideoWindowChanged (SendThreadMessage sender) Left: {0}, Top: {1}, Width: {2}, Height: {3}", msg.Param1, msg.Param2, msg.Param3, msg.Param4);
+          GUIWindowManager.SendThreadMessage(msg);
+          Log.Debug("GraphicContext VideoWindowChanged() Not MP Main thread");
+        }
       }
     }
 
@@ -1087,8 +1086,9 @@ namespace MediaPortal.GUI.Library
 
           if (!_overlay)
           {
-            if (Thread.CurrentThread.Name != "MPMain" && Thread.CurrentThread.Name != "Config Main")
+            if (!SetVideoWindowDone)
             {
+              SetVideoWindowDone = true;
               if (bOldOverlay)
               {
                 GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETVIDEOWINDOW, 0, 0, 0, 1, 0, null);
@@ -1098,17 +1098,6 @@ namespace MediaPortal.GUI.Library
               {
                 GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETVIDEOWINDOW, 0, 0, 0, 0, 0, null);
                 GUIWindowManager.SendThreadMessage(msg);
-              }
-            }
-            else
-            {
-              // Here is a call from a different thread like madVR when switching from fullscreen/windowed
-              // Here is to hide video window madVR when skin didn't handle video overlay (the value need to be different from Process() player like VMR7)
-              VideoWindow = new Rectangle(0, 0, 1, 1);
-              GUIGraphicsContext.IsWindowVisible = true;
-              if (bOldOverlay != _overlay)
-              {
-                VideoWindowChanged();
               }
             }
           }
@@ -1128,7 +1117,8 @@ namespace MediaPortal.GUI.Library
           //Log.Debug("GraphicContext VideoWindowChanged (SendThreadMessage receiver) Left: {0}, Top: {1}, Width: {2}, Height: {3}", message.Param1, message.Param2, message.Param3, message.Param4);
           GUIGraphicsContext.VideoWindow = new Rectangle(message.Param1, message.Param2, message.Param3, message.Param4);
           OnVideoWindowChanged?.Invoke();
-          Log.Debug("GraphicContext VideoWindowChanged() SendThreadMessage receiver");
+          Log.Debug("GraphicContext VideoWindowChanged() SendThreadMessage received");
+          VideoWindowChangedDone = false;
           break;
         case GUIMessage.MessageType.GUI_MSG_SETVIDEOWINDOW:
           // Here is a call from a different thread like madVR when switching from fullscreen/windowed
@@ -1139,6 +1129,7 @@ namespace MediaPortal.GUI.Library
           {
             VideoWindowChanged();
           }
+          SetVideoWindowDone = false;
           break;
       }
     }
@@ -1756,11 +1747,11 @@ namespace MediaPortal.GUI.Library
     {
       get
       {
-        // Added back this part for now and see if it stop the deadlock
-        if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && GUIGraphicsContext.InVmr9Render)
-        {
-          return 0;
-        }
+        //// Added back this part for now and see if it stop the deadlock
+        //if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && GUIGraphicsContext.InVmr9Render)
+        //{
+        //  return 0;
+        //}
         return RenderLoopLock;
       }
     }
@@ -1777,6 +1768,8 @@ namespace MediaPortal.GUI.Library
     public static bool UpdateVideoWindow { get; set; }
     public static bool MadVrOsd { get; set; }
     public static bool MadVrStop { get; set; }
+    public static bool VideoWindowChangedDone { get; set; }
+    public static bool SetVideoWindowDone { get; set; }
 
     /// <summary>
     /// Enable/Disable bypassing of UI Calibration transforms
