@@ -139,7 +139,6 @@ private:
 	wchar_t				         m_wszFileName[2048];
 	MultiFileWriter*     m_pTimeShiftFile;
 	FileWriterThreaded*  m_pRecordingFile;
-	HANDLE							 m_hFile;
 	CCriticalSection     m_section;
   int                  m_iPmtPid;
   int                  m_iOriginalPcrPid;
