@@ -19,6 +19,8 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace MediaPortal.GUI.Library
 {
@@ -90,24 +92,9 @@ namespace MediaPortal.GUI.Library
         }
       }
 
+      List<int> layerCount = new List<int>();
       int startLayer = 0;
       int endLayer = MAX_LAYERS;
-
-      for (int i = startLayer; i < endLayer; ++i)
-      {
-        if (_layers[i] != null)
-        {
-          if (_layers[i].ShouldRenderLayer())
-          {
-            // For madVR, first check along all layers to inform that UI is displaying
-            // Check for madVR when GUI/OSD/Dialog is displayed, we should go to latency mode
-            if (videoLayer != i)
-            {
-              uiVisible = true;
-            }
-          }
-        }
-      }
 
       if (layers == GUILayers.under)
         endLayer = videoLayer - 1;
@@ -131,10 +118,41 @@ namespace MediaPortal.GUI.Library
             {
               uiVisible = true;
             }
+            if (!layerCount.Contains(i))
+              layerCount.Add(i);
           }
         }
       }
+
+      // For madVR, first check along all layers to inform that UI is displaying
+      // Check for madVR when GUI/OSD/Dialog is displayed, we should go to latency mode
+      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
+          GUIGraphicsContext.InVmr9Render)
+      {
+        for (var i = 0; i < MAX_LAYERS; ++i)
+        {
+          if (_layers[i] == null) continue;
+          GetValue(layerCount, i);
+        }
+
+        foreach (var layer in from layer in layerCount where _layers[layer] != null where _layers[layer].ShouldRenderLayer() where videoLayer != layer select layer)
+        {
+          uiVisible = true;
+        }
+      }
       return uiVisible;
+    }
+
+    private static void GetValue(List<int> layerCount, int i)
+    {
+      if (layerCount.Contains(i))
+      {
+        layerCount.Remove(i);
+      }
+      else
+      {
+        layerCount.Add(i);
+      }
     }
   }
 }

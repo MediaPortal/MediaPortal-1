@@ -361,14 +361,14 @@ HRESULT MPMadPresenter::ClearBackground(LPCSTR name, REFERENCE_TIME frameStart, 
 {
   HRESULT hr = E_UNEXPECTED;
 
-  // Lock madVR thread while Shutdown()
-  CAutoLock lock(&m_dsLock);
-
   if (m_pShutdown)
   {
     Log("MPMadPresenter::ClearBackground() shutdown");
     return hr;
   }
+
+  // Lock madVR thread while Shutdown()
+  CAutoLock lock(&m_dsLock);
 
   WORD videoHeight = (WORD)activeVideoRect->bottom - (WORD)activeVideoRect->top;
   WORD videoWidth = (WORD)activeVideoRect->right - (WORD)activeVideoRect->left;
@@ -433,14 +433,14 @@ HRESULT MPMadPresenter::RenderOsd(LPCSTR name, REFERENCE_TIME frameStart, RECT* 
 {
   HRESULT hr = E_UNEXPECTED;
 
-  // Lock madVR thread while Shutdown()
-  CAutoLock lock(&m_dsLock);
-
   if (m_pShutdown)
   {
     Log("MPMadPresenter::RenderOsd() shutdown");
     return hr;
   }
+
+  // Lock madVR thread while Shutdown()
+  CAutoLock lock(&m_dsLock);
 
   WORD videoHeight = (WORD)activeVideoRect->bottom - (WORD)activeVideoRect->top;
   WORD videoWidth = (WORD)activeVideoRect->right - (WORD)activeVideoRect->left;
@@ -630,14 +630,14 @@ HRESULT MPMadPresenter::SetupMadDeviceState()
 
 HRESULT MPMadPresenter::SetDeviceOsd(IDirect3DDevice9* pD3DDev)
 {
-  // Lock madVR thread while Shutdown()
-  CAutoLock lock(&m_dsLock);
-
   if (m_pShutdown)
   {
     Log("MPMadPresenter::SetDeviceOsd shutdown");
     return S_OK;
   }
+
+  // Lock madVR thread while Shutdown()
+  CAutoLock lock(&m_dsLock);
 
   CAutoLock cAutoLock(this);
   if (!pD3DDev)
@@ -655,14 +655,14 @@ HRESULT MPMadPresenter::SetDevice(IDirect3DDevice9* pD3DDev)
 {
   HRESULT hr = S_FALSE;
 
-  // Lock madVR thread while Shutdown()
-  CAutoLock lock(&m_dsLock);
-
   if (m_pShutdown)
   {
     Log("MPMadPresenter::SetDevice() shutdown");
     return hr;
   }
+
+  // Lock madVR thread while Shutdown()
+  CAutoLock lock(&m_dsLock);
 
   CAutoLock cAutoLock(this);
 
@@ -714,14 +714,14 @@ HRESULT MPMadPresenter::Render(REFERENCE_TIME frameStart, int left, int top, int
 {
   if (m_pCallback)
   {
-    // Lock madVR thread while Shutdown()
-    CAutoLock lock(&m_dsLock);
-
     if (m_pShutdown)
     {
       Log("MPMadPresenter::Render() shutdown");
       return S_FALSE;
     }
+
+    // Lock madVR thread while Shutdown()
+    CAutoLock lock(&m_dsLock);
 
     CAutoLock cAutoLock(this);
 

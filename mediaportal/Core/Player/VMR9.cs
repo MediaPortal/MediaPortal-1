@@ -1564,8 +1564,9 @@ namespace MediaPortal.Player
           GC.Collect();
           MadDeinit();
           GC.Collect();
-          DirectShowUtil.DisconnectAllPins(_graphBuilder, _vmr9Filter);
+          DirectShowUtil.RemoveFilter(_graphBuilder, _vmr9Filter);
           DirectShowUtil.FinalReleaseComObject(_vmr9Filter);
+          _vmr9Filter = null;
           Thread.Sleep(200);
           Log.Debug("VMR9: Dispose 2");
         }
