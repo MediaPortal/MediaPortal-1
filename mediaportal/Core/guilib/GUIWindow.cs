@@ -1154,6 +1154,7 @@ namespace MediaPortal.GUI.Library
                 // Some plugin get stuck in loop when madVR in use because it waiting madVR change that was already done before
                 if (GUIGraphicsContext.InVmr9Render)
                 {
+                  Log.Debug("GUIWindow: OnPageDestroy for madVR");
                   GUIWindowManager.Process();
                   break;
                 }
