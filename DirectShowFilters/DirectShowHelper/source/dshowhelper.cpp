@@ -938,12 +938,12 @@ void MadDeinit()
   try
   {
     Log("MPMadDshow::MadDeinit shutdown start");
-    CAutoLock lock(&m_madPresenter->m_dsLock);
-    m_madPresenter->m_dsLock.Lock();
+    //CAutoLock lock(&m_madPresenter->m_dsLock);
+    //m_madPresenter->m_dsLock.Lock();
     m_madPresenter->m_pShutdown = true;
     m_madPresenter->Shutdown();
     m_pVMR9Filter = nullptr;
-    m_madPresenter->m_dsLock.Unlock();
+    //m_madPresenter->m_dsLock.Unlock();
     Log("MPMadDshow::MadDeinit shutdown done");
   }
   catch(...)
@@ -956,11 +956,11 @@ void MadStopping()
   try
   {
     Log("MPMadDshow::MadStopping start");
-    CAutoLock lock(&m_madPresenter->m_dsLock);
-    m_madPresenter->m_dsLock.Lock();
+    //CAutoLock lock(&m_madPresenter->m_dsLock);
+    //m_madPresenter->m_dsLock.Lock();
     m_madPresenter->m_pShutdown = true;
     m_madPresenter->Stopping();
-    m_madPresenter->m_dsLock.Unlock();
+    //m_madPresenter->m_dsLock.Unlock();
     Log("MPMadDshow::MadStopping done");
   }
   catch (...)
