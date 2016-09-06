@@ -59,8 +59,8 @@ MPMadPresenter::MPMadPresenter(IVMR9Callback* pCallback, DWORD width, DWORD heig
 
 MPMadPresenter::~MPMadPresenter()
 {
-  CAutoLock lock(&m_dsLock);
-  m_dsLock.Lock();
+  //CAutoLock lock(&m_dsLock);
+  //m_dsLock.Lock();
 
   if (m_pSRCB)
   {
@@ -80,12 +80,12 @@ MPMadPresenter::~MPMadPresenter()
   //if (Com::SmartQIPtr<IMadVRExclusiveModeCallback> pEXL = m_pDXR)
   //  pEXL->Unregister(m_exclusiveCallback, this);
 
-  //Log("MPMadPresenter::Destructor() - m_pMad release 1");
-  //if (m_pMad)
-  //{
-  //  m_pMad.Release();
-  //}
-  //Log("MPMadPresenter::Destructor() - m_pMad release 2");
+  Log("MPMadPresenter::Destructor() - m_pMad release 1");
+  if (m_pMad)
+  {
+    m_pMad.Release();
+  }
+  Log("MPMadPresenter::Destructor() - m_pMad release 2");
 
   Log("MPMadPresenter::Destructor() - m_pSRCB release 1");
   if (m_pSRCB)
@@ -97,7 +97,7 @@ MPMadPresenter::~MPMadPresenter()
     m_pORCB.Release();
   Log("MPMadPresenter::Destructor() - m_pORCB release 2");
 
-  m_dsLock.Unlock();
+  //m_dsLock.Unlock();
 
   Log("MPMadPresenter::Destructor() - instance 0x%x", this);
 }
@@ -130,14 +130,24 @@ void MPMadPresenter::SetOSDCallback()
 
     CAutoLock cAutoLock(this);
 
-    if (m_pMediaControl)
+    int counter = 0;
+    OAFilterState state = -1;
+    m_pMediaControl->GetState(100, &state);
+    if (state != State_Paused)
     {
-      m_pMediaControl->Pause();
+      m_pPaused = false;
     }
 
-    // Render frame to try to fix HD4XXX GPU flickering issue
-    Com::SmartQIPtr<IMadVROsdServices> pOR = m_pMad;
-    pOR->OsdRedrawFrame();
+    if (m_pMediaControl && !m_pPaused)
+    {
+      m_pMediaControl->Pause();
+      m_pPaused = true;
+      Log("MPMadPresenter:::SetOSDCallback() pause");
+    }
+
+    //// Render frame to try to fix HD4XXX GPU flickering issue
+    //Com::SmartQIPtr<IMadVROsdServices> pOR = m_pMad;
+    //pOR->OsdRedrawFrame();
   }
 }
 

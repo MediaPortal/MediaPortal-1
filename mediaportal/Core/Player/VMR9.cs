@@ -1564,9 +1564,7 @@ namespace MediaPortal.Player
           GC.Collect();
           MadDeinit();
           GC.Collect();
-          DirectShowUtil.RemoveFilter(_graphBuilder, _vmr9Filter);
-          DirectShowUtil.FinalReleaseComObject(_vmr9Filter);
-          _vmr9Filter = null;
+          DirectShowUtil.ReleaseComObject(_vmr9Filter);
           Thread.Sleep(200);
           Log.Debug("VMR9: Dispose 2");
         }
@@ -1582,7 +1580,6 @@ namespace MediaPortal.Player
           Log.Debug("VMR9: Dispose 3");
         }
         g_vmr9.Enable(false);
-        _vmr9Filter = null;
         _scene = null;
         g_vmr9 = null;
         _isVmr9Initialized = false;
@@ -1601,6 +1598,8 @@ namespace MediaPortal.Player
       {
         Thread.Sleep(500);
         RestoreGuiForMadVr();
+        DirectShowUtil.TryRelease(ref _vmr9Filter);
+        _vmr9Filter = null;
         Log.Debug("VMR9: Dispose done");
       }
     }
