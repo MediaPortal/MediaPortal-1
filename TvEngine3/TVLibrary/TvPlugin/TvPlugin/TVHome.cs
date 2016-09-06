@@ -1540,6 +1540,7 @@ namespace TvPlugin
       if (Connected)
         Log.Info("TVHome: OnRemotingDisconnected");
       Connected = false;
+      connectionStringLoaded = false;
       if (_notifyManager != null)
       {
         _notifyManager.Stop();
@@ -3976,6 +3977,7 @@ namespace TvPlugin
     }
 
     private static readonly object _asyncTuneLock = new object();
+    internal static bool connectionStringLoaded;
 
     static TVHome()
     {
