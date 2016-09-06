@@ -316,15 +316,8 @@ namespace TvPlugin
     {
       try
       {
-        if (Thread.CurrentThread.Name != "MPMain" && Thread.CurrentThread.Name != "Config Main")
-        {
-          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_INIT_TV_LOAD, 0, 0, 0, 0, 0, null);
-          GUIWindowManager.SendThreadMessage(msg);
-        }
-        else
-        {
-          OnLoadedCallback();
-        }
+        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_INIT_TV_LOAD, 0, 0, 0, 0, 0, null);
+        GUIWindowManager.SendThreadMessage(msg);
       }
       catch (Exception ex)
       {
