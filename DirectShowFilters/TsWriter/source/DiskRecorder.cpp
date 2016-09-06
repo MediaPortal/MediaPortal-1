@@ -58,7 +58,8 @@
 #define ADAPTION_FIELD_EXTENSION_FLAG_BIT   0x1     // bitmask for the DAPTION_FIELD_EXTENSION flag
 
 //#define ERROR_FILE_TOO_LARGE 223  - already defined in winerror.h
-#define RECORD_BUFFER_SIZE 256000
+//#define RECORD_BUFFER_SIZE 256000
+#define RECORD_BUFFER_SIZE (174 * TS_PACKET_SIZE)
 
 int DR_FAKE_NETWORK_ID   = 0x456;                // network id we use in our PAT
 int DR_FAKE_TRANSPORT_ID = 0x4;                  // transport id we use in our PAT
@@ -529,30 +530,31 @@ void CDiskRecorder::WriteToRecording(byte* buffer, int len)
 	{
   	if (!m_bRunning) return;
     if (buffer==NULL) return;
+    if (m_pWriteBuffer == NULL) return; //sanity check
     if (m_bPaused || m_bClearTsQueue) 
     {
-       try
-       {
-          WriteLog("clear TS packet queue"); 
-          m_bClearTsQueue = false;
-          ZeroMemory(m_pWriteBuffer, m_iWriteBufferSize);
-          m_iWriteBufferPos = 0;
-  		
-      		//	Reset the write buffer throttle
-      		LogDebug("CDiskRecorder::WriteToRecording() - Reset write buffer throttle");
-      		m_iWriteBufferThrottle = 0;
-      		m_bThrottleAtMax = FALSE;
-        }
-        catch(...)
-        {
-          WriteLog("Write exception - 1");
-        }
-        return;
+      try
+      {
+        WriteLog("clear TS packet queue"); 
+        m_bClearTsQueue = false;
+        ZeroMemory(m_pWriteBuffer, m_iWriteBufferSize);
+        m_iWriteBufferPos = 0;
+        
+        //	Reset the write buffer throttle
+        LogDebug("CDiskRecorder::WriteToRecording() - Reset write buffer throttle");
+        m_iWriteBufferThrottle = 0;
+        m_bThrottleAtMax = FALSE;
+      }
+      catch(...)
+      {
+        WriteLog("Write exception - 1");
+      }
+      return;
     }
     if (len <=0) return;
     if (len + m_iWriteBufferPos >= RECORD_BUFFER_SIZE)
     {
-       Flush();      
+      Flush();
     }
 
     if ( (m_iWriteBufferPos+len) < RECORD_BUFFER_SIZE && len > 0)

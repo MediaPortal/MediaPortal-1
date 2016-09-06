@@ -35,7 +35,7 @@
 #define FILE_WRITE_RETRIES 19
 
 //System timer resolution in ms
-#define SYS_TIMER_RES 20
+#define SYS_TIMER_RES 5
 
 class CDiskBuffWT
 {
