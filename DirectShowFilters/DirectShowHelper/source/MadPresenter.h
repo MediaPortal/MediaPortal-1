@@ -208,5 +208,6 @@ class MPMadPresenter : public CUnknown, public CCritSec
     IDirect3DSurface9* m_pSurfaceDevice = nullptr;
 
     double m_pRefreshrate = 0;
+    bool m_pPaused = false;
 };
 
