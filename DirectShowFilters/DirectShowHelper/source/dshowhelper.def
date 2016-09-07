@@ -25,4 +25,5 @@ EVRGetDisplayFPS        @20
 MadInit                 @21
 MadDeinit               @22
 MadStopping             @23
-WindowsMessage          @24
+MadVrPaused             @24
+MadRepeatFrame          @25

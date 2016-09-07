@@ -364,178 +364,185 @@ namespace MediaPortal.Player
     /// </returns>
     public bool SetVideoWindow(Size videoSize)
     {
-      try
+      lock (GUIGraphicsContext.RenderLock)
       {
-        if (!GUIGraphicsContext.IsPlayingVideo && !_vmr9Util.InMenu)
+        try
         {
-          return false;
-        }
-
-        // check if the aspect ratio belongs to a Full-HD 3D format
-
-        GUIGraphicsContext.IsFullHD3DFormat = false;
-
-        if (((double)videoSize.Width / videoSize.Height >= 2.5) && (videoSize.Width >= _full3DSBSMinWidth)) // we have Full HD SBS 
-        {
-          GUIGraphicsContext.IsFullHD3DFormat = true;
-        }
-        else if (((double)videoSize.Width / videoSize.Height <= 1.5) && (videoSize.Height >= _full3DTABMinHeight)) // we have Full HD TAB
-        {
-          GUIGraphicsContext.IsFullHD3DFormat = true;
-        }
-
-        GUIGraphicsContext.VideoSize = videoSize;
-        // get the window where the video/tv should be shown
-        float x = GUIGraphicsContext.VideoWindow.X;
-        float y = GUIGraphicsContext.VideoWindow.Y;
-        int nw = GUIGraphicsContext.VideoWindow.Width;
-        int nh = GUIGraphicsContext.VideoWindow.Height;
-
-        //sanity checks
-        if (nw > GUIGraphicsContext.OverScanWidth)
-        {
-          nw = GUIGraphicsContext.OverScanWidth;
-        }
-        if (nh > GUIGraphicsContext.OverScanHeight)
-        {
-          nh = GUIGraphicsContext.OverScanHeight;
-        }
-
-        //are we supposed to show video in fullscreen or in a preview window?
-        if (GUIGraphicsContext.IsFullScreenVideo || !GUIGraphicsContext.ShowBackground)
-        {
-          //yes fullscreen, then use the entire screen
-          x = GUIGraphicsContext.OverScanLeft;
-          y = GUIGraphicsContext.OverScanTop;
-          nw = GUIGraphicsContext.OverScanWidth;
-          nh = GUIGraphicsContext.OverScanHeight;
-        }
-
-        //sanity check
-        if (nw <= 10 || nh <= 10 || x < 0 || y < 0)
-        {
-          // Need to resize window video for madVR
-          if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
+          if (!GUIGraphicsContext.IsPlayingVideo && !_vmr9Util.InMenu)
+          {
             return false;
+          }
+
+          // check if the aspect ratio belongs to a Full-HD 3D format
+
+          GUIGraphicsContext.IsFullHD3DFormat = false;
+
+          if (((double) videoSize.Width/videoSize.Height >= 2.5) && (videoSize.Width >= _full3DSBSMinWidth))
+            // we have Full HD SBS 
+          {
+            GUIGraphicsContext.IsFullHD3DFormat = true;
+          }
+          else if (((double) videoSize.Width/videoSize.Height <= 1.5) && (videoSize.Height >= _full3DTABMinHeight))
+            // we have Full HD TAB
+          {
+            GUIGraphicsContext.IsFullHD3DFormat = true;
+          }
+
+          GUIGraphicsContext.VideoSize = videoSize;
+          // get the window where the video/tv should be shown
+          float x = GUIGraphicsContext.VideoWindow.X;
+          float y = GUIGraphicsContext.VideoWindow.Y;
+          int nw = GUIGraphicsContext.VideoWindow.Width;
+          int nh = GUIGraphicsContext.VideoWindow.Height;
+
+          //sanity checks
+          if (nw > GUIGraphicsContext.OverScanWidth)
+          {
+            nw = GUIGraphicsContext.OverScanWidth;
+          }
+          if (nh > GUIGraphicsContext.OverScanHeight)
+          {
+            nh = GUIGraphicsContext.OverScanHeight;
+          }
+
+          //are we supposed to show video in fullscreen or in a preview window?
+          if (GUIGraphicsContext.IsFullScreenVideo || !GUIGraphicsContext.ShowBackground)
+          {
+            //yes fullscreen, then use the entire screen
+            x = GUIGraphicsContext.OverScanLeft;
+            y = GUIGraphicsContext.OverScanTop;
+            nw = GUIGraphicsContext.OverScanWidth;
+            nh = GUIGraphicsContext.OverScanHeight;
+          }
+
+          //sanity check
+          if (nw <= 10 || nh <= 10 || x < 0 || y < 0)
+          {
+            // Need to resize window video for madVR
+            if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
+              return false;
+          }
+
+          GUIGraphicsContext.ScaleVideoWindow(ref nw, ref nh, ref x, ref y);
+
+          //did the video window,aspect ratio change? if not
+          //then we dont need to recalculate and just return the previous settings
+          //add a delta value of -1 or +1 to check
+          if (!updateCrop && (int) x == _rectPrevious.X && (int) y == _rectPrevious.Y &&
+              nw == _rectPrevious.Width && nh == _rectPrevious.Height &&
+              GUIGraphicsContext.ARType == _aspectRatioType &&
+              GUIGraphicsContext.Overlay == _lastOverlayVisible && _shouldRenderTexture &&
+              (_prevVideoWidth == videoSize.Width || _prevVideoWidth == videoSize.Width + 1 ||
+               _prevVideoWidth == videoSize.Width - 1) &&
+              (_prevVideoHeight == videoSize.Height || _prevVideoHeight == videoSize.Height + 1 ||
+               _prevVideoHeight == videoSize.Height - 1) &&
+              (_prevArVideoWidth == _arVideoWidth || _prevArVideoWidth == _arVideoWidth + 1 ||
+               _prevArVideoWidth == _arVideoWidth - 1) &&
+              (_prevArVideoHeight == _arVideoHeight || _prevArVideoHeight == _arVideoHeight + 1 ||
+               _prevArVideoHeight == _arVideoHeight - 1))
+          {
+            //not changed, return previous settings
+            return _shouldRenderTexture;
+          }
+
+          //settings (position,size,aspect ratio) changed.
+          //Store these settings and start calucating the new video window
+          _rectPrevious = new Rectangle((int) x, (int) y, (int) nw, (int) nh);
+          _subsRect = _rectPrevious;
+          _aspectRatioType = GUIGraphicsContext.ARType;
+          _lastOverlayVisible = GUIGraphicsContext.Overlay;
+          _prevVideoWidth = videoSize.Width;
+          _prevVideoHeight = videoSize.Height;
+          _prevArVideoWidth = _arVideoWidth;
+          _prevArVideoHeight = _arVideoHeight;
+
+          //calculate the video window according to the current aspect ratio settings
+          float fVideoWidth = (float) videoSize.Width;
+          float fVideoHeight = (float) videoSize.Height;
+
+          // if we have a Full-HD 3D video we half the width or height in order
+          // to provide only the size of one half to the GetWindow call of the
+          // Geometry class
+
+          if (((double) videoSize.Width/videoSize.Height >= 2.5) && (videoSize.Width >= _full3DSBSMinWidth))
+            // we have Full HD SBS 
+          {
+            fVideoWidth /= 2;
+          }
+          else if (((double) videoSize.Width/videoSize.Height <= 1.5) && (videoSize.Height >= _full3DTABMinHeight))
+            // we have Full HD TAB
+          {
+            fVideoHeight /= 2;
+          }
+
+          _geometry.ImageWidth = (int) fVideoWidth;
+          _geometry.ImageHeight = (int) fVideoHeight;
+          _geometry.ScreenWidth = (int) nw;
+          _geometry.ScreenHeight = (int) nh;
+          _geometry.ARType = GUIGraphicsContext.ARType;
+          _geometry.PixelRatio = GUIGraphicsContext.PixelRatio;
+
+          // if the width or height was altered because of a Full-HD 3D format we recalculate
+          // the width to allow the GetWindowCall to operate with the correct aspect ratio       
+
+          if (GUIGraphicsContext.IsFullHD3DFormat)
+          {
+            _arVideoWidth = (int) ((float) _geometry.ImageWidth/_geometry.ImageHeight*_arVideoHeight);
+          }
+
+          _geometry.GetWindow(_arVideoWidth, _arVideoHeight, out _sourceRect, out _destinationRect,
+            out _useNonLinearStretch, _cropSettings);
+
+          updateCrop = false;
+          _destinationRect.X += (int) x;
+          _destinationRect.Y += (int) y;
+
+          //sanity check
+          if (_destinationRect.Width < 10)
+          {
+            return false;
+          }
+          if (_destinationRect.Height < 10)
+          {
+            return false;
+          }
+          if (_sourceRect.Width < 10)
+          {
+            return false;
+          }
+          if (_sourceRect.Height < 10)
+          {
+            return false;
+          }
+
+          if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+          {
+            // Force VideoWindow to be refreshed with madVR when switching from video size like 16:9 to 4:3
+            GUIGraphicsContext.UpdateVideoWindow = true;
+            GUIGraphicsContext.VideoWindowChanged();
+          }
+
+          Log.Debug("PlaneScene: crop T, B  : {0}, {1}", _cropSettings.Top, _cropSettings.Bottom);
+          Log.Debug("PlaneScene: crop L, R  : {0}, {1}", _cropSettings.Left, _cropSettings.Right);
+
+          Log.Info("PlaneScene: video WxH  : {0}x{1}", videoSize.Width, videoSize.Height);
+          Log.Debug("PlaneScene: video AR   : {0}:{1}", _arVideoWidth, _arVideoHeight);
+          Log.Info("PlaneScene: screen WxH : {0}x{1}", nw, nh);
+          Log.Debug("PlaneScene: AR type    : {0}", GUIGraphicsContext.ARType);
+          Log.Debug("PlaneScene: PixelRatio : {0}", GUIGraphicsContext.PixelRatio);
+          Log.Debug("PlaneScene: src        : ({0},{1})-({2},{3})",
+            _sourceRect.X, _sourceRect.Y, _sourceRect.X + _sourceRect.Width, _sourceRect.Y + _sourceRect.Height);
+          Log.Debug("PlaneScene: dst        : ({0},{1})-({2},{3})",
+            _destinationRect.X, _destinationRect.Y, _destinationRect.X + _destinationRect.Width,
+            _destinationRect.Y + _destinationRect.Height);
+
+          return true;
         }
-
-        GUIGraphicsContext.ScaleVideoWindow(ref nw, ref nh, ref x, ref y);
-
-        //did the video window,aspect ratio change? if not
-        //then we dont need to recalculate and just return the previous settings
-        //add a delta value of -1 or +1 to check
-        if (!updateCrop && (int) x == _rectPrevious.X && (int) y == _rectPrevious.Y &&
-            nw == _rectPrevious.Width && nh == _rectPrevious.Height &&
-            GUIGraphicsContext.ARType == _aspectRatioType &&
-            GUIGraphicsContext.Overlay == _lastOverlayVisible && _shouldRenderTexture &&
-            (_prevVideoWidth == videoSize.Width || _prevVideoWidth == videoSize.Width + 1 ||
-             _prevVideoWidth == videoSize.Width - 1) &&
-            (_prevVideoHeight == videoSize.Height || _prevVideoHeight == videoSize.Height + 1 ||
-             _prevVideoHeight == videoSize.Height - 1) &&
-            (_prevArVideoWidth == _arVideoWidth || _prevArVideoWidth == _arVideoWidth + 1 ||
-             _prevArVideoWidth == _arVideoWidth - 1) &&
-            (_prevArVideoHeight == _arVideoHeight || _prevArVideoHeight == _arVideoHeight + 1 ||
-             _prevArVideoHeight == _arVideoHeight - 1))
+        catch (Exception ex)
         {
-          //not changed, return previous settings
-          return _shouldRenderTexture;
-        }
-
-        //settings (position,size,aspect ratio) changed.
-        //Store these settings and start calucating the new video window
-        _rectPrevious = new Rectangle((int)x, (int)y, (int)nw, (int)nh);
-        _subsRect = _rectPrevious;
-        _aspectRatioType = GUIGraphicsContext.ARType;
-        _lastOverlayVisible = GUIGraphicsContext.Overlay;
-        _prevVideoWidth = videoSize.Width;
-        _prevVideoHeight = videoSize.Height;
-        _prevArVideoWidth = _arVideoWidth;
-        _prevArVideoHeight = _arVideoHeight;
-
-        //calculate the video window according to the current aspect ratio settings
-        float fVideoWidth = (float)videoSize.Width;
-        float fVideoHeight = (float)videoSize.Height;
-
-        // if we have a Full-HD 3D video we half the width or height in order
-        // to provide only the size of one half to the GetWindow call of the
-        // Geometry class
-
-        if (((double)videoSize.Width / videoSize.Height >= 2.5) && (videoSize.Width >= _full3DSBSMinWidth)) // we have Full HD SBS 
-        {
-          fVideoWidth /= 2;
-        }
-        else if (((double)videoSize.Width / videoSize.Height <= 1.5) && (videoSize.Height >= _full3DTABMinHeight)) // we have Full HD TAB
-        {
-          fVideoHeight /= 2;
-        }
-
-        _geometry.ImageWidth = (int)fVideoWidth;
-        _geometry.ImageHeight = (int)fVideoHeight;
-        _geometry.ScreenWidth = (int)nw;
-        _geometry.ScreenHeight = (int)nh;
-        _geometry.ARType = GUIGraphicsContext.ARType;
-        _geometry.PixelRatio = GUIGraphicsContext.PixelRatio;
-
-        // if the width or height was altered because of a Full-HD 3D format we recalculate
-        // the width to allow the GetWindowCall to operate with the correct aspect ratio       
-
-        if (GUIGraphicsContext.IsFullHD3DFormat)
-        {
-          _arVideoWidth = (int) ((float) _geometry.ImageWidth/_geometry.ImageHeight*_arVideoHeight);
-        }
-
-        _geometry.GetWindow(_arVideoWidth, _arVideoHeight, out _sourceRect, out _destinationRect,
-                            out _useNonLinearStretch, _cropSettings);
-
-        updateCrop = false;
-        _destinationRect.X += (int)x;
-        _destinationRect.Y += (int)y;
-
-        //sanity check
-        if (_destinationRect.Width < 10)
-        {
+          Log.Error(ex);
           return false;
         }
-        if (_destinationRect.Height < 10)
-        {
-          return false;
-        }
-        if (_sourceRect.Width < 10)
-        {
-          return false;
-        }
-        if (_sourceRect.Height < 10)
-        {
-          return false;
-        }
-
-        if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
-        {
-          // Force VideoWindow to be refreshed with madVR when switching from video size like 16:9 to 4:3
-          GUIGraphicsContext.UpdateVideoWindow = true;
-          GUIGraphicsContext.VideoWindowChanged();
-        }
-
-        Log.Debug("PlaneScene: crop T, B  : {0}, {1}", _cropSettings.Top, _cropSettings.Bottom);
-        Log.Debug("PlaneScene: crop L, R  : {0}, {1}", _cropSettings.Left, _cropSettings.Right);
-
-        Log.Info("PlaneScene: video WxH  : {0}x{1}", videoSize.Width, videoSize.Height);
-        Log.Debug("PlaneScene: video AR   : {0}:{1}", _arVideoWidth, _arVideoHeight);
-        Log.Info("PlaneScene: screen WxH : {0}x{1}", nw, nh);
-        Log.Debug("PlaneScene: AR type    : {0}", GUIGraphicsContext.ARType);
-        Log.Debug("PlaneScene: PixelRatio : {0}", GUIGraphicsContext.PixelRatio);
-        Log.Debug("PlaneScene: src        : ({0},{1})-({2},{3})",
-                  _sourceRect.X, _sourceRect.Y, _sourceRect.X + _sourceRect.Width, _sourceRect.Y + _sourceRect.Height);
-        Log.Debug("PlaneScene: dst        : ({0},{1})-({2},{3})",
-                  _destinationRect.X, _destinationRect.Y, _destinationRect.X + _destinationRect.Width,
-                  _destinationRect.Y + _destinationRect.Height);
-
-        return true;
-      }
-      catch (Exception ex)
-      {
-        Log.Error(ex);
-        return false;
       }
     }
 

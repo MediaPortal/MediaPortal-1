@@ -153,7 +153,10 @@ namespace MediaPortal.Player
     private static extern unsafe void MadStopping();
 
     [DllImport("dshowhelper.dll", CallingConvention = CallingConvention.Cdecl)]
-    private static extern unsafe void WindowsMessage();
+    private static extern unsafe void MadVrPaused();
+
+    [DllImport("dshowhelper.dll", CallingConvention = CallingConvention.Cdecl)]
+    private static extern unsafe void MadVrRepeatFrameSend();
 
     #endregion
 
@@ -435,11 +438,11 @@ namespace MediaPortal.Player
     }
 
     /// <summary>
-    /// Register madVR MadVrRepeatFrame
+    /// Register madVR StartMadVrPaused
     /// </summary>
-    public void MadVrRepeatFrame()
+    public void StartMadVrPaused()
     {
-      WindowsMessage();
+      MadVrPaused();
     }
 
     /// <summary>
@@ -858,6 +861,13 @@ namespace MediaPortal.Player
       _repaintTimer = DateTime.Now;
       currentVmr9State = Vmr9PlayState.Repaint;
       if (_scene != null) _scene.DrawVideo = false;
+
+      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
+          GUIGraphicsContext.InVmr9Render)
+      {
+        MadVrRepeatFrameSend();
+        Log.Debug("VMR9: MadVrRepeatFrameSend()");
+      }
     }
 
     public bool IsRepainting

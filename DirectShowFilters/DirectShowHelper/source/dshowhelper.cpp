@@ -968,9 +968,14 @@ void MadStopping()
   }
 }
 
-void WindowsMessage()
+void MadVrPaused()
 {
-  m_madPresenter->SetOSDCallback();
+  m_madPresenter->SetMadVrPaused();
+}
+
+void MadRepeatFrame()
+{
+  m_madPresenter->RepeatFrame();
 }
 
 void Vmr9SetDeinterlaceMode(int mode)

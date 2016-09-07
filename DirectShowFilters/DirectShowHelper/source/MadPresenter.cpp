@@ -119,36 +119,39 @@ void MPMadPresenter::InitializeOSD()
   }
 }
 
-void MPMadPresenter::SetOSDCallback()
+void MPMadPresenter::SetMadVrPaused()
 {
-  // Wait that madVR complete the rendering
-  //m_mpWait.Wait(100);
+  CAutoLock cAutoLock(this);
+
+  int counter = 0;
+  OAFilterState state = -1;
+  m_pMediaControl->GetState(100, &state);
+  if (state != State_Paused)
   {
-    //// Lock madVR thread while kodi rendering
-    //CAutoLock lock(&m_dsLock);
-    //m_dsLock.Lock();
-
-    CAutoLock cAutoLock(this);
-
-    int counter = 0;
-    OAFilterState state = -1;
-    m_pMediaControl->GetState(100, &state);
-    if (state != State_Paused)
-    {
-      m_pPaused = false;
-    }
-
-    if (m_pMediaControl && !m_pPaused)
-    {
-      m_pMediaControl->Pause();
-      m_pPaused = true;
-      Log("MPMadPresenter:::SetOSDCallback() pause");
-    }
-
-    //// Render frame to try to fix HD4XXX GPU flickering issue
-    //Com::SmartQIPtr<IMadVROsdServices> pOR = m_pMad;
-    //pOR->OsdRedrawFrame();
+    m_pPaused = false;
   }
+
+  if (m_pMediaControl && !m_pPaused)
+  {
+    m_pMediaControl->Pause();
+    m_pPaused = true;
+    Log("MPMadPresenter:::SetOSDCallback() pause");
+  }
+}
+
+void MPMadPresenter::RepeatFrame()
+{
+  if (m_pShutdown)
+  {
+    Log("MPMadPresenter::ClearBackground() shutdown");
+    return;
+  }
+
+  CAutoLock cAutoLock(this);
+
+  // Render frame to try to fix HD4XXX GPU flickering issue
+  Com::SmartQIPtr<IMadVROsdServices> pOR = m_pMad;
+  pOR->OsdRedrawFrame();
 }
 
 IBaseFilter* MPMadPresenter::Initialize()
@@ -385,6 +388,10 @@ HRESULT MPMadPresenter::ClearBackground(LPCSTR name, REFERENCE_TIME frameStart, 
 
   CAutoLock cAutoLock(this);
 
+  // Render frame to try to fix HD4XXX GPU flickering issue
+  Com::SmartQIPtr<IMadVROsdServices> pOR = m_pMad;
+  pOR->OsdRedrawFrame();
+
   //// Ugly hack to avoid flickering (most occurs on Intel GPU)
   //bool isFullScreen = m_pCallback->IsFullScreen();
   //bool isUiVisible = m_pCallback->IsUiVisible();
@@ -456,6 +463,10 @@ HRESULT MPMadPresenter::RenderOsd(LPCSTR name, REFERENCE_TIME frameStart, RECT* 
   WORD videoWidth = (WORD)activeVideoRect->right - (WORD)activeVideoRect->left;
 
   CAutoLock cAutoLock(this);
+
+  // Render frame to try to fix HD4XXX GPU flickering issue
+  Com::SmartQIPtr<IMadVROsdServices> pOR = m_pMad;
+  pOR->OsdRedrawFrame();
 
   //// Ugly hack to avoid flickering (most occurs on Intel GPU)
   //bool isFullScreen = m_pCallback->IsFullScreen();
