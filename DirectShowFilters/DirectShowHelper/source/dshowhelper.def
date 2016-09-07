@@ -26,4 +26,4 @@ MadInit                 @21
 MadDeinit               @22
 MadStopping             @23
 MadVrPaused             @24
-MadRepeatFrame          @25
+MadVrRepeatFrameSend    @25

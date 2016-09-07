@@ -973,7 +973,7 @@ void MadVrPaused()
   m_madPresenter->SetMadVrPaused();
 }
 
-void MadRepeatFrame()
+void MadVrRepeatFrameSend()
 {
   m_madPresenter->RepeatFrame();
 }
