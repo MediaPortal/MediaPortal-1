@@ -902,20 +902,12 @@ HRESULT MultiFileWriter::Write(PBYTE pbData, ULONG lDataLength)
   }
   
   diskBuffer->Add(pbData,lDataLength);
-  UINT qsize = 0;
   { //Context for CAutoLock
   	CAutoLock lock(&m_qLock);
     m_writeQueue.push_back(diskBuffer);   
-    qsize = m_writeQueue.size();
   }
   
   m_WakeThreadEvent.Set();
-
-  if (qsize > m_maxBuffersUsed) 
-  {     
-    m_maxBuffersUsed = qsize;
-		//LogDebug("MultiFileWriter::Write(), Max buffers used = %d", m_maxBuffersUsed);
-  }
 		
   return S_OK;
 }
@@ -976,6 +968,12 @@ unsigned __stdcall MultiFileWriter::ThreadProc()
       WriteToDisk(diskBuffer->Data(), diskBuffer->Length());  
       delete diskBuffer;
       diskBuffer = NULL;
+    }
+
+    if (qsize > m_maxBuffersUsed) 
+    {     
+      m_maxBuffersUsed = qsize;
+      //LogDebug("MultiFileWriter::ThreadProc(), Max buffers used = %d", m_maxBuffersUsed);
     }
     
     if (qsize < 2) //this is the pre 'pop' qsize value

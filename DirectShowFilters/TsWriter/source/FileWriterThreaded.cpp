@@ -451,20 +451,12 @@ HRESULT FileWriterThreaded::Write(PBYTE pbData, ULONG lDataLength)
   }
   
   diskBuffer->Add(pbData,lDataLength);
-  UINT qsize = 0;
   { //Context for CAutoLock
     CAutoLock lock(&m_qLock);
     m_writeQueue.push_back(diskBuffer);   
-    qsize = m_writeQueue.size();
   }
   
   m_WakeThreadEvent.Set();
-
-  if (qsize > m_maxBuffersUsed) 
-  {     
-    m_maxBuffersUsed = qsize;
-    //LogDebug("FileWriterThreaded::Write(), Max buffers used = %d", m_maxBuffersUsed);
-  }
     
   return S_OK;
 }
@@ -525,6 +517,12 @@ unsigned __stdcall FileWriterThreaded::ThreadProc()
       WriteWithRetry(diskBuffer->Data(), diskBuffer->Length(), FILE_WRITE_RETRIES);  
       delete diskBuffer;
       diskBuffer = NULL;
+    }
+
+    if (qsize > m_maxBuffersUsed) 
+    {     
+      m_maxBuffersUsed = qsize;
+      //LogDebug("FileWriterThreaded::ThreadProc(), Max buffers used = %d", m_maxBuffersUsed);
     }
     
     if (qsize < 2) //this is the pre 'pop' qsize value
