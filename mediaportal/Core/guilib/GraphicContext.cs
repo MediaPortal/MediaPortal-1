@@ -1046,7 +1046,7 @@ namespace MediaPortal.GUI.Library
           msg.Param4 = GUIGraphicsContext.VideoWindow.Height;
           //Log.Debug("GraphicContext VideoWindowChanged (SendThreadMessage sender) Left: {0}, Top: {1}, Width: {2}, Height: {3}", msg.Param1, msg.Param2, msg.Param3, msg.Param4);
           GUIWindowManager.SendThreadMessage(msg);
-          Log.Debug("GraphicContext VideoWindowChanged() Not MP Main thread");
+          Log.Debug("GraphicContext VideoWindowChanged() SendThreadMessage sended");
         }
       }
     }

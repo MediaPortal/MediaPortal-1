@@ -2620,7 +2620,7 @@ namespace MediaPortal.Player
           GUIGraphicsContext.Vmr9Active && VMR9Util.g_vmr9 != null)
       {
         if (g_Player.Paused)
-          VMR9Util.g_vmr9.MadVrRepeatFrame();
+          VMR9Util.g_vmr9.StartMadVrPaused();
       }
 
       if (GUIGraphicsContext.Vmr9Active && VMR9Util.g_vmr9 != null && !GUIGraphicsContext.InVmr9Render)
