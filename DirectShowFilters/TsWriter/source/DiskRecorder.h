@@ -22,7 +22,9 @@
 #include <ctime>
 #include <map>
 #include <sstream>
+#include <WinError.h>   // HRESULT
 #include "..\..\shared\BasePmtParser.h"
+#include "..\..\shared\FileWriter.h"
 #include "..\..\shared\PacketSync.h"
 #include "..\..\shared\Pcr.h"
 #include "..\..\shared\TsHeader.h"
@@ -93,18 +95,21 @@ class CDiskRecorder
     }PidInfo;
 
     void WriteLog(const wchar_t* fmt, ...);
-    void ClearPids();
 
     void WritePacket(unsigned char* tsPacket);
     void WritePacketDirect(unsigned char* tsPacket);
 
     void CreateFakePat();
     void CreateFakePmt(CPidTable& pidTable);
+    void ClearPids();
     void AddPidToPmt(BasePid* pid,
                       const string& pidType,
                       unsigned short& nextFakePid,
                       unsigned short& pmtOffset);
     void WriteFakeServiceInfo();
+
+    bool ReadParameters();
+    void WriteParameters();
 
     void InjectPcrFromPts(PidInfo& info);
     void PatchPcr(unsigned char* tsPacket, CTsHeader& header);
@@ -113,7 +118,7 @@ class CDiskRecorder
 
     static unsigned char GetPesHeader(unsigned char* tsPacket, CTsHeader& header, PidInfo& info);
     static void UpdatePesHeader(PidInfo& info);
-    static long long EcPcrTime(long long newTs, long long prevTs);
+    static long long PcrDifference(long long newTs, long long prevTs);
     static void SetPcrBase(unsigned char* tsPacket, long long pcrBaseValue);
 
     CCriticalSection m_section;
@@ -158,7 +163,7 @@ class CDiskRecorder
     bool m_generatePcrFromPts;                // Used in the [rare] case that the stream does not contain PCR.
     CPcr m_prevPcr;
     clock_t m_prevPcrReceiveTimeStamp;
-    double m_averagePcrSpeed;                 // Time average between PCR samples.
+    double m_averagePcrIncrement;             // Average difference between PCR values. PCR frequency/timing is assumed to be regular.
     long long m_pcrCompensation;              // Compensation from PCR/PTS/DTS to fake PCR/PTS/DTS (33 bit offset with PCR resoluion).
     unsigned char m_pcrGapConfirmationCount;
     long long m_pcrFutureCompensation;

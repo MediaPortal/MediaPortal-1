@@ -22,13 +22,13 @@
 *  nate can be reached on the forums at
 *    http://forums.dvbowners.com/
 */
-#define _WIN32_WINNT 0x0502
-
 #include "MultiFileWriter.h"
 #include <cstddef>      // NULL
 #include <cstring>      // memcpy()
 #include <cwchar>       // wcscpy(), wcslen(), wcstol()
-#include <Windows.h>    // CloseHandle(), CreateFileW(), GetDiskFreeSpaceEx(), GetVolumePathName(), MAX_PATH
+#include <Windows.h>    // MAX_PATH
+#include "FileReader.h"
+#include "FileUtils.h"
 
 using namespace std;
 
@@ -64,10 +64,10 @@ HRESULT MultiFileWriter::GetFileName(wchar_t** fileName)
   return S_OK;
 }
 
-HRESULT MultiFileWriter::OpenFile(const wchar_t* fileName)
+HRESULT MultiFileWriter::OpenFile(const wchar_t* fileName, bool& resume)
 {
-  LogDebug(L"multi file writer: open file, name = %s",
-            fileName == NULL ? L"" : fileName);
+  LogDebug(L"multi file writer: open file, name = %s, resume = %d",
+            fileName == NULL ? L"" : fileName, resume);
 
   // Is the file already open?
   if (m_fileRegister != NULL || m_fileData != NULL)
@@ -78,11 +78,30 @@ HRESULT MultiFileWriter::OpenFile(const wchar_t* fileName)
     return S_FALSE;
   }
 
-  // Check disk space. We need to be able to create at least 2 data files.
+  // If resuming, read the register file which contains the current state.
+  HRESULT hr;
+  unsigned long dataFileCount = 2;
+  if (resume)
+  {
+    hr = ReadRegisterFile(fileName);
+
+    resume = hr == S_OK;
+    if (m_dataFileNames.size() > dataFileCount)
+    {
+      dataFileCount = 0;
+    }
+    else if (m_dataFileNames.size() != 0)
+    {
+      dataFileCount = dataFileCount - (m_dataFileNames.size() - 1);
+    }
+  }
+
+  // Check disk space. We need to be able to create (or already have) at least
+  // 2 data files.
   unsigned long long availableDiskSpace = 0;
   if (
-    SUCCEEDED(GetAvailableDiskSpace(fileName, availableDiskSpace)) &&
-    availableDiskSpace < ((m_dataFileSizeMaximum * 2) + RESERVED_DISK_SPACE)
+    SUCCEEDED(CFileUtils::GetAvailableDiskSpace(fileName, availableDiskSpace)) &&
+    availableDiskSpace < ((m_dataFileSizeMaximum * dataFileCount) + RESERVED_DISK_SPACE)
   )
   {
     LogDebug(L"multi file writer: failed to open file, available disk space = %llu bytes, maximum data file size = %llu bytes, name = %s",
@@ -98,7 +117,7 @@ HRESULT MultiFileWriter::OpenFile(const wchar_t* fileName)
               fileName == NULL ? L"" : fileName);
     return E_OUTOFMEMORY;
   }
-  HRESULT hr = m_fileRegister->OpenFile(fileName);
+  hr = m_fileRegister->OpenFile(fileName);
   if (FAILED(hr))
   {
     LogDebug(L"multi file writer: failed to open register file, hr = 0x%x, name = %s",
@@ -116,6 +135,24 @@ HRESULT MultiFileWriter::OpenFile(const wchar_t* fileName)
     delete m_fileRegister;
     m_fileRegister = NULL;
     return E_OUTOFMEMORY;
+  }
+  if (resume)
+  {
+    hr = m_fileData->OpenFile(m_dataFileNames[m_dataFileNames.size() - 1]);
+    if (FAILED(hr))
+    {
+      LogDebug(L"multi file writer: failed to reopen last data file, hr = 0x%x, name = %s",
+                hr, m_dataFileNames[m_dataFileNames.size() - 1]);
+      return hr;
+    }
+
+    hr = m_fileData->SetFilePointer(m_dataFileSize, FILE_BEGIN);
+    if (FAILED(hr))
+    {
+      LogDebug(L"multi file writer: failed to set the pointer for the last data file, hr = 0x%x, name = %s",
+                hr, m_dataFileNames[m_dataFileNames.size() - 1]);
+      return hr;
+    }
   }
   m_fileData->SetReservationConfiguration(m_dataFileReservationChunkSize);
 
@@ -148,6 +185,11 @@ HRESULT MultiFileWriter::CloseFile()
     delete m_fileRegister;
     m_fileRegister = NULL;
   }
+  if (m_registerFileName != NULL)
+  {
+    delete[] m_registerFileName;
+    m_registerFileName = NULL;
+  }
 
   if (m_fileData != NULL)
   {
@@ -155,7 +197,6 @@ HRESULT MultiFileWriter::CloseFile()
     delete m_fileData;
     m_fileData = NULL;
   }
-
   ResetDataFileProperties();
   return S_OK;
 }
@@ -241,7 +282,18 @@ void MultiFileWriter::SetConfiguration(MultiFileWriterParams& parameters)
             m_registerFileName == NULL ? L"" : m_registerFileName);
 
   m_dataFileSizeMaximum = parameters.MaximumFileSize;
-  m_dataFileReservationChunkSize = parameters.ReservationChunkSize;
+  m_dataFileReservationChunkSize = 0;
+  if (parameters.ReservationChunkSize != 0)
+  {
+    if (m_dataFileSizeMaximum % parameters.ReservationChunkSize == 0)
+    {
+      m_dataFileReservationChunkSize = parameters.ReservationChunkSize;
+    }
+    else
+    {
+      LogDebug(L"multi file writer: reservation disabled because chunk size is not a file size factor");
+    }
+  }
   m_fileData->SetReservationConfiguration(m_dataFileReservationChunkSize);
   m_dataFileCountMinimum = parameters.FileCountMinimum;
   m_dataFileCountMaximum = parameters.FileCountMaximum;
@@ -255,7 +307,7 @@ HRESULT MultiFileWriter::OpenDataFile(bool disableLogging)
   HRESULT hr;
   unsigned long long availableDiskSpace = 0;
   if (
-    SUCCEEDED(GetAvailableDiskSpace(m_registerFileName, availableDiskSpace)) &&
+    SUCCEEDED(CFileUtils::GetAvailableDiskSpace(m_registerFileName, availableDiskSpace)) &&
     availableDiskSpace < (m_dataFileSizeMaximum + RESERVED_DISK_SPACE)
   )
   {
@@ -292,23 +344,17 @@ HRESULT MultiFileWriter::CreateDataFile(bool disableLogging)
   {
     if (!disableLogging)
     {
-      LogDebug(L"multi file writer: failed to allocate %lu bytes for a file name copy",
+      LogDebug(L"multi file writer: failed to allocate %lu bytes for a data file name",
                 MAX_PATH);
     }
     return E_OUTOFMEMORY;
   }
 
-  WIN32_FIND_DATAW findData;
-  while (true)
+  do
   {
     swprintf(fileName, L"%s%lu.ts", MAX_PATH, m_registerFileName, m_dataFileIdNext++);
-    HANDLE handle = FindFirstFileW(fileName, &findData);
-    if (handle == INVALID_HANDLE_VALUE)
-    {
-      break;
-    }
-    FindClose(handle);
   }
+  while (CFileUtils::Exists(fileName));
 
   // Create the file and update the list of data file names.
   HRESULT hr = m_fileData->OpenFile(fileName, disableLogging);
@@ -341,7 +387,7 @@ HRESULT MultiFileWriter::ReuseDataFile(bool disableLogging)
   unsigned char retryCount = 0;
   for (retryCount = 0; retryCount < 5; retryCount++)
   {
-    DeleteFileW(fileName);  // This function can return success when the file is only marked for deletion.
+    CFileUtils::DeleteFile(fileName);   // The file may only be marked for deletion.
     hr = m_fileData->OpenFile(fileName, disableLogging);
     if (SUCCEEDED(hr))
     {
@@ -373,6 +419,77 @@ HRESULT MultiFileWriter::ReuseDataFile(bool disableLogging)
   return S_OK;
 }
 
+HRESULT MultiFileWriter::ReadRegisterFile(const wchar_t* fileName)
+{
+  unsigned long readByteCount = REGISTER_FILE_WRITE_BUFFER_SIZE;
+  HRESULT hr = FileReader::Read(fileName, m_registerFileWriteBuffer, readByteCount);
+  if (hr != S_OK)
+  {
+    return hr;
+  }
+  if (
+    readByteCount < sizeof(unsigned long long) + (sizeof(unsigned long) * 4) ||
+    readByteCount == REGISTER_FILE_WRITE_BUFFER_SIZE
+  )
+  {
+    LogDebug(L"multi file writer: unexpected register file size, size = %lu, name = %s",
+              readByteCount, fileName);
+    return E_UNEXPECTED;
+  }
+
+  unsigned char* readPointer = m_registerFileWriteBuffer;
+
+  m_dataFileSize = *((unsigned long long*)readPointer);
+  readPointer += sizeof(unsigned long long);
+
+  m_dataFileCountUsed = *((unsigned long*)readPointer);
+  readPointer += sizeof(unsigned long);
+
+  m_dataFileCountRemoved = *((unsigned long*)readPointer);
+  readPointer += sizeof(unsigned long);
+
+  m_dataFileIdNext = 1;
+  while (true)
+  {
+    unsigned short fileNameLength = wcslen((wchar_t*)readPointer) + 1;
+    if (fileNameLength == 1)
+    {
+      m_dataFileIdNext++;
+      return S_OK;
+    }
+
+    wchar_t* dataFileName = new wchar_t[fileNameLength];
+    if (dataFileName == NULL)
+    {
+      LogDebug(L"multi file writer: failed to allocate %hu bytes for a data file name",
+                fileNameLength);
+      ResetDataFileProperties();
+      return E_OUTOFMEMORY;
+    }
+
+    wcscpy(dataFileName, (wchar_t*)readPointer);
+    m_dataFileNames.push_back(dataFileName);
+
+    if (!CFileUtils::Exists(fileName))
+    {
+      LogDebug(L"multi file writer: data file missing, name = %s",
+                dataFileName);
+      ResetDataFileProperties();
+      return HRESULT_FROM_WIN32(ERROR_FILE_NOT_FOUND);
+    }
+
+    m_dataFileIdCurrent = wcstol(dataFileName + wcslen(fileName), NULL, 10);
+    if (m_dataFileIdCurrent > m_dataFileIdNext)
+    {
+      m_dataFileIdNext = m_dataFileIdCurrent;
+    }
+    readPointer += (fileNameLength * sizeof(wchar_t));
+  }
+
+  // Unreachable.
+  return S_FALSE;
+}
+
 HRESULT MultiFileWriter::WriteRegisterFile(bool updateFileInfo)
 {
   unsigned char* writePointer = m_registerFileWriteBuffer;
@@ -386,12 +503,12 @@ HRESULT MultiFileWriter::WriteRegisterFile(bool updateFileInfo)
     // Data file counts...
     *((unsigned long*)writePointer) = m_dataFileCountUsed;
     writePointer += sizeof(unsigned long);
-  
+
     *((unsigned long*)writePointer) = m_dataFileCountRemoved;
     writePointer += sizeof(unsigned long);
 
     // Data file names...
-    std::vector<wchar_t*>::const_iterator it = m_dataFileNames.begin();
+    vector<wchar_t*>::const_iterator it = m_dataFileNames.begin();
     for ( ; it < m_dataFileNames.end(); it++)
     {
       wchar_t* fileName = *it;
@@ -416,11 +533,11 @@ HRESULT MultiFileWriter::WriteRegisterFile(bool updateFileInfo)
     // Mark the end of the content with a Unicode null character.
     *((wchar_t*)writePointer) = NULL;
     writePointer += sizeof(wchar_t);
-  
+
     // For backwards compatibility with TsReader's multi file reader...
     *((unsigned long*)writePointer) = m_dataFileCountUsed;
     writePointer += sizeof(unsigned long);
-  
+
     *((unsigned long*)writePointer) = m_dataFileCountRemoved;
     writePointer += sizeof(unsigned long);
   }
@@ -440,68 +557,15 @@ void MultiFileWriter::ResetDataFileProperties()
 
   m_dataFileCountUsed = 0;
   m_dataFileCountRemoved = 0;
-}
 
-HRESULT MultiFileWriter::GetAvailableDiskSpace(const wchar_t* path,
-                                                unsigned long long& availableDiskSpace)
-{
-  availableDiskSpace = 0;
-  if (path == NULL || wcslen(path) < 2)
+  for (vector<wchar_t*>::iterator it = m_dataFileNames.begin(); it < m_dataFileNames.end(); it++)
   {
-    LogDebug(L"multi file writer: failed to get available disk space, path not supplied");
-    return E_INVALIDARG;
+    wchar_t* fileName = *it;
+    if (fileName != NULL)
+    {
+      delete[] fileName;
+      *it = NULL;
+    }
   }
-
-  wchar_t volumePathName[MAX_PATH + 1];
-  BOOL result = GetVolumePathNameW(path, volumePathName, MAX_PATH);
-  if (result == FALSE)
-  {
-    DWORD errorCode = GetLastError();
-    HRESULT hr = HRESULT_FROM_WIN32(errorCode);
-    LogDebug(L"multi file writer: failed to get volume path name for checking available disk space, error = %lu, hr = 0x%x",
-              errorCode, hr);
-    return hr;
-  }
-
-  ULARGE_INTEGER diskSpaceAvailable;
-  diskSpaceAvailable.QuadPart = 0;
-  ULARGE_INTEGER diskSpaceTotal;
-  diskSpaceTotal.QuadPart = 0;
-  result = GetDiskFreeSpaceExW(&volumePathName[0], &diskSpaceAvailable, &diskSpaceTotal, NULL);
-  if (result == FALSE)
-  {
-    DWORD errorCode = GetLastError();
-    HRESULT hr = HRESULT_FROM_WIN32(errorCode);
-    LogDebug(L"multi file writer: failed to get available disk space, error = %lu, hr = 0x%x",
-              errorCode, hr);
-    return hr;
-  }
-
-  LogDebug(L"multi file writer: disk space, free = %llu bytes, total = %llu bytes",
-            diskSpaceAvailable.QuadPart, diskSpaceTotal.QuadPart);
-  availableDiskSpace = diskSpaceAvailable.QuadPart;
-  return S_OK;
-}
-
-bool MultiFileWriter::IsFileInUse(wchar_t* fileName)
-{
-  if (fileName == NULL)
-  {
-    return false;
-  }
-
-  HANDLE fileHandle = CreateFileW(fileName,               // file name
-                                  GENERIC_READ,           // file access
-                                  0,                      // share access
-                                  NULL,                   // security
-                                  OPEN_EXISTING,          // open flags
-                                  FILE_ATTRIBUTE_NORMAL,  // more flags
-                                  NULL);                  // template
-  if (fileHandle == INVALID_HANDLE_VALUE)
-  {
-    return true;
-  }
-
-  CloseHandle(fileHandle);
-  return false;
+  m_dataFileNames.clear();
 }

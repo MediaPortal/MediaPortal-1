@@ -27,6 +27,8 @@
 #include "..\..\shared\DvbUtil.h"
 #include "..\..\shared\Section.h"
 #include "..\..\shared\TimeUtils.h"
+#include "FileReader.h"
+#include "FileUtils.h"
 
 
 #define WRITE_BUFFER_THROTTLE_FULLY_OPEN_STEP_RADIO   7
@@ -69,8 +71,8 @@
 #define PTS_OR_DTS_LENGTH                 5       // the length of the PTS (or DTS) field in bytes
 #define PTS_AND_DTS_LENGTH                10      // the length of the combined PTS/DTS field in bytes
 
-//#define ERROR_FILE_TOO_LARGE 223  - already defined in winerror.h
 #define RECORD_BUFFER_SIZE                255680  // needs to be divisible by TS_PACKET_LEN
+#define PARAM_BUFFER_SIZE                 69      // (sizeof(unsigned char) * 5) + (sizeof(unsigned long) * 2) + (sizeof(unsigned long long) * 5) + (sizeof(long long) * 2)
 
 
 extern void LogDebug(const wchar_t* fmt, ...);
@@ -129,7 +131,7 @@ CDiskRecorder::CDiskRecorder(RecorderMode mode)
   m_waitingForPcr = true;
   m_generatePcrFromPts = false;
   m_prevPcrReceiveTimeStamp = 0;
-  m_averagePcrSpeed = 0;
+  m_averagePcrIncrement = 0;
   m_pcrCompensation = 0;
   m_pcrGapConfirmationCount = 0;
   m_pcrFutureCompensation = 0;
@@ -364,14 +366,29 @@ HRESULT CDiskRecorder::Start()
         return E_OUTOFMEMORY;
       }
 
+      bool resume = ReadParameters();
       m_fileTimeShifting->SetConfiguration(m_timeShiftingParameters);
-      HRESULT hr = m_fileTimeShifting->OpenFile(fileName.c_str());
+      HRESULT hr = m_fileTimeShifting->OpenFile(fileName.c_str(), resume);
       if (FAILED(hr)) 
       {
         WriteLog(L"failed to open file, hr = 0x%x, file = %s", hr, fileName);
         delete m_fileTimeShifting;
         m_fileTimeShifting = NULL;
         return hr;
+      }
+
+      if (resume)
+      {
+        m_fakePat[6] = ((m_patVersion & 0x1f) << 1) | (m_fakePat[6] & 0xc1);
+        m_fakePmt[6] = ((m_pmtVersion & 0x1f) << 1) | (m_fakePmt[6] & 0xc1);
+      }
+      else
+      {
+        m_patContinuityCounter = CONTINUITY_COUNTER_NOT_SET;
+        m_patVersion = 0;
+        m_pmtContinuityCounter = CONTINUITY_COUNTER_NOT_SET;
+        m_pmtVersion = 0;
+        m_pcrCompensation = 0;
       }
     }
     else
@@ -434,6 +451,7 @@ void CDiskRecorder::Stop()
       m_fileTimeShifting->CloseFile();
       delete m_fileTimeShifting;
       m_fileTimeShifting = NULL;
+      WriteParameters();
     }
 
     if (m_fileRecording != NULL)
@@ -463,13 +481,9 @@ void CDiskRecorder::Stop()
 
 HRESULT CDiskRecorder::SetTimeShiftingParameters(unsigned long fileCountMinimum,
                                                   unsigned long fileCountMaximum,
-                                                  unsigned long long maximumFileSize)
+                                                  unsigned long long fileSizeBytes)
 {
   CEnterCriticalSection lock(m_section);
-  WriteLog(L"current parameters, file count minimum = %lu, file count maximum = %lu, maximum file size = %llu",
-            m_timeShiftingParameters.FileCountMinimum,
-            m_timeShiftingParameters.FileCountMaximum,
-            m_timeShiftingParameters.MaximumFileSize);
 
   HRESULT hr = S_OK;
   if (fileCountMinimum > 1 && fileCountMinimum <= fileCountMaximum)
@@ -479,14 +493,23 @@ HRESULT CDiskRecorder::SetTimeShiftingParameters(unsigned long fileCountMinimum,
   }
   else
   {
+    WriteLog(L"invalid file counts, minimum = %lu, maximum = %lu, using minimum = %lu, maximum = %lu",
+              fileCountMinimum, fileCountMaximum,
+              m_timeShiftingParameters.FileCountMinimum,
+              m_timeShiftingParameters.FileCountMaximum);
     hr = E_INVALIDARG;
   }
 
-  if (maximumFileSize > 50000000) // 50 MB
+  if (fileSizeBytes > 50000000) // 50 MB
   {
     // Ensure buffer files always start and finish on a TS packet boundary.
-    long long fileSizeAdjustment = maximumFileSize % TS_PACKET_LEN;
-    m_timeShiftingParameters.MaximumFileSize = maximumFileSize - fileSizeAdjustment;
+    long long fileSizeAdjustment = fileSizeBytes % TS_PACKET_LEN;
+    m_timeShiftingParameters.MaximumFileSize = fileSizeBytes - fileSizeAdjustment;
+    if (fileSizeAdjustment != 0)
+    {
+      WriteLog(L"file size adjusted, adjustment = % bytes, file size = %llu bytes",
+                fileSizeAdjustment, m_timeShiftingParameters.MaximumFileSize);
+    }
     if (m_timeShiftingParameters.ReservationChunkSize != 0)
     {
       m_timeShiftingParameters.ReservationChunkSize = m_timeShiftingParameters.MaximumFileSize;
@@ -494,6 +517,8 @@ HRESULT CDiskRecorder::SetTimeShiftingParameters(unsigned long fileCountMinimum,
   }
   else
   {
+    WriteLog(L"invalid file size, size = %llu bytes, using size = %llu bytes",
+              fileSizeBytes, m_timeShiftingParameters.MaximumFileSize);
     hr = E_INVALIDARG;
   }
 
@@ -506,11 +531,11 @@ HRESULT CDiskRecorder::SetTimeShiftingParameters(unsigned long fileCountMinimum,
 
 void CDiskRecorder::GetTimeShiftingParameters(unsigned long& fileCountMinimum,
                                               unsigned long& fileCountMaximum,
-                                              unsigned long long& maximumFileSize)
+                                              unsigned long long& fileSizeBytes)
 {
   fileCountMinimum = m_timeShiftingParameters.FileCountMinimum;
   fileCountMaximum = m_timeShiftingParameters.FileCountMaximum;
-  maximumFileSize = m_timeShiftingParameters.MaximumFileSize;
+  fileSizeBytes = m_timeShiftingParameters.MaximumFileSize;
 }
 
 void CDiskRecorder::GetTimeShiftingFilePosition(unsigned long long& position,
@@ -846,20 +871,6 @@ void CDiskRecorder::WriteLog(const wchar_t* fmt, ...)
   }
 }
 
-void CDiskRecorder::ClearPids()
-{
-  map<unsigned short, PidInfo*>::iterator it = m_pids.begin();
-  for ( ; it != m_pids.end(); it++)
-  {
-    if (it->second != NULL)
-    {
-      delete it->second;
-      it->second = NULL;
-    }
-  }
-  m_pids.clear();
-}
-
 void CDiskRecorder::WritePacket(unsigned char* tsPacket)
 {
   if (m_waitingForPcr)
@@ -1125,6 +1136,20 @@ void CDiskRecorder::CreateFakePmt(CPidTable& pidTable)
   m_serviceInfoPacketCounter = SERVICE_INFO_INJECT_RATE;
 }
 
+void CDiskRecorder::ClearPids()
+{
+  map<unsigned short, PidInfo*>::iterator it = m_pids.begin();
+  for ( ; it != m_pids.end(); it++)
+  {
+    if (it->second != NULL)
+    {
+      delete it->second;
+      it->second = NULL;
+    }
+  }
+  m_pids.clear();
+}
+
 void CDiskRecorder::AddPidToPmt(BasePid* pid,
                                 const string& pidType,
                                 unsigned short& nextFakePid,
@@ -1224,6 +1249,128 @@ void CDiskRecorder::WriteFakeServiceInfo()
   }
 }
 
+bool CDiskRecorder::ReadParameters()
+{
+  wchar_t fileName[MAX_PATH];
+  swprintf(fileName, L"%s.tvedrpts", MAX_PATH, m_fileName.str().c_str());
+  if (!CFileUtils::Exists(fileName))
+  {
+    return false;
+  }
+
+  unsigned char buffer[PARAM_BUFFER_SIZE];
+  unsigned long bufferSize = PARAM_BUFFER_SIZE;
+  HRESULT hr = FileReader::Read(fileName, buffer, bufferSize);
+  CFileUtils::DeleteFile(fileName);
+  if (hr != S_OK)
+  {
+    return false;
+  }
+  if (bufferSize != PARAM_BUFFER_SIZE || *buffer != 1)
+  {
+    WriteLog(L"unsupported parameter file format, buffer size = %lu",
+              bufferSize);
+    return false;
+  }
+
+  unsigned char* pointer = &buffer[1];
+
+  m_patContinuityCounter = *pointer;
+  pointer += sizeof(unsigned char);
+
+  m_patVersion = *pointer;
+  pointer += sizeof(unsigned char);
+
+  m_pmtContinuityCounter = *pointer;
+  pointer += sizeof(unsigned char);
+
+  m_pmtVersion = *pointer;
+  pointer += sizeof(unsigned char);
+
+  m_prevPcr.PcrReferenceBase = *((unsigned long long*)pointer);
+  pointer += sizeof(unsigned long long);
+
+  m_prevPcr.PcrReferenceExtension = *((unsigned long long*)pointer);
+  pointer += sizeof(unsigned long long);
+
+  m_prevPcrReceiveTimeStamp = (clock_t)*((unsigned long long*)pointer);
+  pointer += sizeof(unsigned long long);
+
+  m_averagePcrIncrement = (double)*((long long*)pointer);
+  pointer += sizeof(long long);
+
+  m_pcrCompensation = *((long long*)pointer);
+  pointer += sizeof(long long);
+
+  m_timeShiftingParameters.MaximumFileSize = *((unsigned long long*)pointer);
+  pointer += sizeof(unsigned long long);
+
+  m_timeShiftingParameters.ReservationChunkSize = *((unsigned long long*)pointer);
+  pointer += sizeof(unsigned long long);
+
+  m_timeShiftingParameters.FileCountMinimum = *((unsigned long*)pointer);
+  pointer += sizeof(unsigned long);
+
+  m_timeShiftingParameters.FileCountMaximum = *((unsigned long*)pointer);
+  return true;
+}
+
+void CDiskRecorder::WriteParameters()
+{
+  unsigned char buffer[PARAM_BUFFER_SIZE];
+  unsigned char* pointer = buffer;
+
+  *pointer = 1;    // format/version number
+  pointer += sizeof(unsigned char);
+
+  *pointer = m_patContinuityCounter;
+  pointer += sizeof(unsigned char);
+
+  *pointer = m_patVersion;
+  pointer += sizeof(unsigned char);
+
+  *pointer = m_pmtContinuityCounter;
+  pointer += sizeof(unsigned char);
+
+  *pointer = m_pmtVersion;
+  pointer += sizeof(unsigned char);
+
+  *((unsigned long long*)pointer) = m_prevPcr.PcrReferenceBase;
+  pointer += sizeof(unsigned long long);
+
+  *((unsigned long long*)pointer) = m_prevPcr.PcrReferenceExtension;
+  pointer += sizeof(unsigned long long);
+
+  *((unsigned long long*)pointer) = (unsigned long long)m_prevPcrReceiveTimeStamp;
+  pointer += sizeof(unsigned long long);
+
+  *((long long*)pointer) = (long long)m_averagePcrIncrement;
+  pointer += sizeof(long long);
+
+  *((long long*)pointer) = m_pcrCompensation;
+  pointer += sizeof(long long);
+
+  *((unsigned long long*)pointer) = m_timeShiftingParameters.MaximumFileSize;
+  pointer += sizeof(unsigned long long);
+
+  *((unsigned long long*)pointer) = m_timeShiftingParameters.ReservationChunkSize;
+  pointer += sizeof(unsigned long long);
+
+  *((unsigned long*)pointer) = m_timeShiftingParameters.FileCountMinimum;
+  pointer += sizeof(unsigned long);
+
+  *((unsigned long*)pointer) = m_timeShiftingParameters.FileCountMaximum;
+
+  FileWriter writer;
+  wchar_t fileName[MAX_PATH];
+  swprintf(fileName, L"%s.tvedrpts", MAX_PATH, m_fileName.str().c_str());
+  if (writer.OpenFile(fileName) == S_OK)
+  {
+    writer.Write(buffer, PARAM_BUFFER_SIZE);
+    writer.CloseFile();
+  }
+}
+
 void CDiskRecorder::InjectPcrFromPts(PidInfo& info)
 {
   // We only use PTS from audio PIDs because it is guaranteed to be sequential.
@@ -1308,71 +1455,75 @@ void CDiskRecorder::PatchPcr(unsigned char* tsPacket, CTsHeader& header)
       // 100 ms in Transport Streams, or up to 700 ms in Program Streams.
       // ... and TR 101 290:
       // In DVB a cycle period of not more than 40 ms is recommended.
-      m_averagePcrSpeed = 3600;  // 40 ms
+      m_averagePcrIncrement = 3600;   // 90 kHz ticks => 40 ms (3600 / 90000 = 0.04)
       // PCR compensation is set in such a way as to ensure PCR starts at zero.
       m_pcrCompensation = (0 - pcrNew.PcrReferenceBase) & MAX_PCR_BASE;
     }
     else
     {
-      // Adjust the PCR compensation in such a way that we get a smooth transition without jumps.
-      unsigned long long predictedNextPcrOldStream = (m_prevPcr.PcrReferenceBase + (unsigned long long)m_averagePcrSpeed) & MAX_PCR_BASE;
+      // Adjust the PCR compensation to try to achieve a smooth transition between streams. The
+      // transition won't be perfect because the PCR increment is an estimate and the transition
+      // is unlikely to occur at the exact time we were expecting the next PCR.
+      unsigned long long predictedNextPcrOldStream = (m_prevPcr.PcrReferenceBase + (unsigned long long)m_averagePcrIncrement) & MAX_PCR_BASE;
       m_pcrCompensation = (m_pcrCompensation + predictedNextPcrOldStream - pcrNew.PcrReferenceBase) & MAX_PCR_BASE;
     }
     m_prevPcr = pcrNew;
 
-    CPcr nextPcr;
-    nextPcr.PcrReferenceBase = MAX_PCR_BASE - pcrNew.PcrReferenceBase;
-    nextPcr.PcrReferenceExtension = MAX_PCR_EXTENSION - pcrNew.PcrReferenceExtension;
-    WriteLog(L"PCR found, value = %llu, compensation = %lld, next broadcast program clock reference rollover in %S",
-              pcrNew.PcrReferenceBase, m_pcrCompensation, nextPcr.ToString());
+    CPcr nextPcrRollOver;
+    nextPcrRollOver.PcrReferenceBase = MAX_PCR_BASE - pcrNew.PcrReferenceBase;
+    nextPcrRollOver.PcrReferenceExtension = MAX_PCR_EXTENSION - pcrNew.PcrReferenceExtension;
+    WriteLog(L"PCR found, value = %llu, compensation = %lld, next broadcast program clock reference roll-over in %S",
+              pcrNew.PcrReferenceBase, m_pcrCompensation,
+              nextPcrRollOver.ToString());
   }
   else
   {
     if (pcrNew.PcrReferenceBase < 0x10000 && m_prevPcr.PcrReferenceBase > 0x1ffff0000)
     {
-      WriteLog(L"normal broadcast program clock reference rollover passed");
+      WriteLog(L"normal broadcast program clock reference roll-over passed");
     }
 
-    // Calculate the difference between the new and previous PCR value. The unit is 90 kHz ticks.
-    long long dt = EcPcrTime(pcrNew.PcrReferenceBase, m_prevPcr.PcrReferenceBase);
+    // Calculate the difference between the new and previous PCR values. The unit is 90 kHz ticks.
+    long long pcrDifference = PcrDifference(pcrNew.PcrReferenceBase, m_prevPcr.PcrReferenceBase);
 
-    // Any negative PCR change is unexpected.
-    if (dt < 0)
+    if (pcrDifference < 0)
     {
-      HandlePcrInstability(pcrNew, dt);
+      // Normally the PCR should increase. A decrease is unexpected.
+      HandlePcrInstability(pcrNew, pcrDifference);
     }
     else
     {
-      // Is this postive PCR change unexpectedly large? 8x (800%) normal is an arbitrary threshold.
-      if (dt > 8 * m_averagePcrSpeed)
+      // Is this PCR increase unexpectedly large? 8x (800%) normal is an arbitrary threshold.
+      if (pcrDifference > 8 * m_averagePcrIncrement)
       {
-        // Yes. Is it also coherent/consistent with the local system clock change?
-        long long dt2 = (timeStamp - m_prevPcrReceiveTimeStamp) * 90;   // # 90 kHz local system clock ticks since previous PCR seen
-        long long dt3 = dt2 - dt;
-        if (dt3 < 15000 && dt3 > -15000)  // +/- 166 ms
+        // Yes. Is it coherent/consistent with the local system clock change?
+        long long expectedPcrDifference = (timeStamp - m_prevPcrReceiveTimeStamp) * 90; // # 90 kHz ticks expected based on the local system clock
+        long long pcrDrift = expectedPcrDifference - pcrDifference;
+        if (expectedPcrDifference > 0 && pcrDrift < 15000 && pcrDrift > -15000)         // 90 kHz ticks => +/- 166 ms (15000 / 90000 = 0.166)
         {
           // Yes. Assume signal was lost or the stream stopped for awhile and do nothing.
-          WriteLog(L"PCR jump %lld detected with coherent local system clock jump %lld, signal quality or HDD load problem?",
-                    dt, dt2);
+          WriteLog(L"coherrent PCR jump %lld detected (expected %lld), signal quality or HDD load problem?",
+                    pcrDifference, expectedPcrDifference);
           m_prevPcr = pcrNew;
         }
         else
         {
           // No, so this really is unexpected.
-          HandlePcrInstability(pcrNew, dt);
+          HandlePcrInstability(pcrNew, pcrDifference);
         }
       }
       else
       {
         // Normal situation - stable/regular/timely PCR.
-        // We assume that PCR is delivered at a regular interval which is approximated by
-        // m_averagePcrSpeed. Improve the PCR speed estimate by comparison with the current speed (ie. the
-        // time since the previous PCR was seen). Use a 10% adjustment factor.
-        m_averagePcrSpeed += ((double)dt - m_averagePcrSpeed) * 0.1f;
+        // We assume that PCR is delivered at a regular interval with an increment approximated by
+        // m_averagePcrIncrement. Improve the PCR increment estimate by comparison with the current
+        // increment. Use a 10% adjustment factor.
+        m_averagePcrIncrement += ((double)pcrDifference - m_averagePcrIncrement) * 0.1f;
         if (m_pcrGapConfirmationCount > 0)
         {
-          WriteLog(L"PCR restabilised after %hhu confirmation(s), speed = %lld",
-                    m_pcrGapConfirmationCount, (long long)m_averagePcrSpeed);
+          WriteLog(L"PCR restabilised after %hhu confirmation(s), average increment = %lld",
+                    m_pcrGapConfirmationCount,
+                    (long long)m_averagePcrIncrement);
         }
         m_pcrGapConfirmationCount = 0;
         m_prevPcr = pcrNew;
@@ -1390,16 +1541,16 @@ void CDiskRecorder::HandlePcrInstability(CPcr& pcrNew, long long pcrChange)
 {
   // Estimate the expected PCR value. This estimate should be slower/less than reality to avoid
   // falling into the negative PCR change case and perpetual instability.
-  m_prevPcr.PcrReferenceBase += (long long)(m_averagePcrSpeed / 2);
+  m_prevPcr.PcrReferenceBase += (long long)(m_averagePcrIncrement / 2);
   m_prevPcr.PcrReferenceBase &= MAX_PCR_BASE;
 
-  long long futureComp = m_pcrCompensation - pcrChange + (long long)m_averagePcrSpeed;
+  long long futureCompensation = m_pcrCompensation - pcrChange + (long long)m_averagePcrIncrement;
   if (m_pcrGapConfirmationCount > 0)
   {
     // We previously detected instability. Has that instability settled yet?
-    long long ecFutureComp = EcPcrTime(m_pcrFutureCompensation, futureComp);
-    m_pcrFutureCompensation = futureComp;
-    if (ecFutureComp < -8 * m_averagePcrSpeed || ecFutureComp > 8 * m_averagePcrSpeed)
+    long long compensationDifference = PcrDifference(m_pcrFutureCompensation, futureCompensation);
+    m_pcrFutureCompensation = futureCompensation;
+    if (compensationDifference < -8 * m_averagePcrIncrement || compensationDifference > 8 * m_averagePcrIncrement)
     {
       // No, looks like the instability is continuing.
       WriteLog(L"ongoing PCR instability, change = %lld, confirmation count = %hhu",
@@ -1425,9 +1576,9 @@ void CDiskRecorder::HandlePcrInstability(CPcr& pcrNew, long long pcrChange)
   {
     // Start of instability.
     m_pcrGapConfirmationCount = 1;
-    m_pcrFutureCompensation = futureComp;
-    WriteLog(L"PCR instability detected, change = %lld, speed = %lld, compensation = %lld",
-              pcrChange, (long long)m_averagePcrSpeed, m_pcrCompensation);
+    m_pcrFutureCompensation = futureCompensation;
+    WriteLog(L"PCR instability detected, change = %lld, average increment = %lld, compensation = %lld",
+              pcrChange, (long long)m_averagePcrIncrement, m_pcrCompensation);
   }
 }
 
@@ -1452,22 +1603,23 @@ void CDiskRecorder::PatchPtsDts(unsigned char* pesHeader, PidInfo& pidInfo)
   if (pts.IsValid)
   {
     // Check for PTS jumps.
-    /*if (pidInfo.PrevPts != -1)
-    {
-      long long dt = EcPcrTime(pts.PcrReferenceBase, pidInfo.PrevPts);  // # 90 kHz broadcast clock ticks since previous PTS
-      long long dt2 = (timeStamp - pidInfo.PrevPtsTimeStamp) * 90;      // # 90 kHz local system clock ticks since previous PTS seen
-      long long dt3 = dt2 - dt;                                         // = PTS drift estimation
-      if (
-        (dt3 < -30000LL || dt3 > 30000LL) &&
-        (
-          (pidInfo.FakePid & 0xff0) == PID_VIDEO_FIRST ||
-          (pidInfo.FakePid & 0xff0) == PID_AUDIO_FIRST
-        )
+    /*if (
+      pidInfo.PrevPts != -1 &&
+      (
+        (pidInfo.FakePid & 0xff0) == PID_VIDEO_FIRST ||
+        (pidInfo.FakePid & 0xff0) == PID_AUDIO_FIRST)
       )
+    )
+    {
+      long long ptsDifference = PcrDifference(pts.PcrReferenceBase, pidInfo.PrevPts);   // # 90 kHz broadcast clock ticks since previous PTS
+      long long expectedPtsDifference = (timeStamp - pidInfo.PrevPtsTimeStamp) * 90;    // # 90 kHz ticks expected based on the local system clock
+      long long ptsDrift = expectedPtsDifference - ptsDifference;
+      if (ptsDrift < -30000LL || ptsDrift > 30000LL)                                    // 90 kHz ticks => +/- 333 ms (30000 / 90000 = 0.333)
       {
-        WriteLog(L"PTS jump %lld detected on PID %hu stream ID 0x%hhx, corresponding local system clock jump = %lld, clock jump difference = %lld, prev PTS = %lld, new PTS = %llu",
-                  dt, pidInfo.OriginalPid, pesHeader[3], dt2, dt3,
-                  pidInfo.PrevPts, pts.PcrReferenceBase);
+        WriteLog(L"PTS jump %lld detected for PID %hu stream ID 0x%hhx, expected increment = %lld, drift = %lld, previous PTS = %lld, new PTS = %llu",
+                  ptsDifference, pidInfo.OriginalPid, pesHeader[3],
+                  expectedPtsDifference, ptsDrift, pidInfo.PrevPts,
+                  pts.PcrReferenceBase);
       }
     }*/
 
@@ -1488,22 +1640,23 @@ void CDiskRecorder::PatchPtsDts(unsigned char* pesHeader, PidInfo& pidInfo)
 
     if (dts.IsValid)
     {
-      /*if (pidInfo.PrevDts != -1)
-      {
-        long long dt = EcPcrTime(dts.PcrReferenceBase, pidInfo.PrevDts);  // # 90 kHz broadcast clock ticks since previous DTS
-        long long dt2 = (timeStamp - pidInfo.PrevPtsTimeStamp) * 90;      // # 90 kHz local system clock ticks since previous DTS seen
-        long long dt3 = dt2 - dt;                                         // = DTS drift estimation
-        if (
-          (dt3 < -30000LL || dt3 > 30000LL) &&
-          (
-            (pidInfo.FakePid & 0xff0) == PID_VIDEO_FIRST ||
-            (pidInfo.FakePid & 0xff0) == PID_AUDIO_FIRST
-          )
+      /*if (
+        pidInfo.PrevDts != -1 &&
+        (
+          (pidInfo.FakePid & 0xff0) == PID_VIDEO_FIRST ||
+          (pidInfo.FakePid & 0xff0) == PID_AUDIO_FIRST)
         )
+      )
+      {
+        long long dtsDifference = PcrDifference(dts.PcrReferenceBase, pidInfo.PrevDts); // # 90 kHz broadcast clock ticks since previous DTS
+        long long expectedDtsDifference = (timeStamp - pidInfo.PrevPtsTimeStamp) * 90;  // # 90 kHz ticks expected based on the local system clock
+        long long dtsDrift = expectedPtsDifference - dtsDifference;
+        if (dtsDrift < -30000LL || dtsDrift > 30000LL)                                  // 90 kHz ticks => +/- 333 ms (30000 / 90000 = 0.333)
         {
-          WriteLog(L"DTS jump %lld detected on PID %hu stream ID 0x%hhx, corresponding local system clock jump = %lld, clock jump difference = %lld, prev DTS = %lld, new DTS = %llu",
-                    dt, pidInfo.OriginalPid, pesHeader[3], dt2, dt3,
-                    pidInfo.PrevDts, dts.PcrReferenceBase);
+          WriteLog(L"DTS jump %lld detected for PID %hu stream ID 0x%hhx, expected increment = %lld, drift = %lld, previous DTS = %lld, new DTS = %llu",
+                    dtsDifference, pidInfo.OriginalPid, pesHeader[3],
+                    expectedPtsDifference, dtsDrift, pidInfo.PrevDts,
+                    dts.PcrReferenceBase);
         }
       }*/
 
@@ -1647,19 +1800,19 @@ void CDiskRecorder::UpdatePesHeader(PidInfo& info)
   while (i < info.TsPacketQueueLength);
 }
 
-long long CDiskRecorder::EcPcrTime(long long newTs, long long prevTs)
+long long CDiskRecorder::PcrDifference(long long newTs, long long prevTs)
 {
   // Compute a signed difference between the new and previous timestamps.
-  long long dt = newTs - prevTs;
-  if (dt & 0x100000000)
+  long long difference = newTs - prevTs;
+  if (difference & 0x100000000)
   {
-    dt |= 0xffffffff00000000LL; // negative
+    difference |= 0xffffffff00000000LL; // negative
   }
   else
   {
-    dt &= 0x00000000ffffffffLL; // positive
+    difference &= 0x00000000ffffffffLL; // positive
   }
-  return dt;
+  return difference;
 }
 
 void CDiskRecorder::SetPcrBase(unsigned char* tsPacket, long long pcrBaseValue)

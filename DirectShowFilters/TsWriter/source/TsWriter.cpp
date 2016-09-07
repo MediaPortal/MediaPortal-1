@@ -675,7 +675,7 @@ STDMETHODIMP CTsWriter::TimeShifterSetParameters(long handle,
                                                   unsigned long fileCountMaximum,
                                                   unsigned long long fileSizeBytes)
 {
-  LogDebug(L"writer: set time-shifter parameters, file count minimum = %lu, file count maximum = %lu, maximum file size = %llu",
+  LogDebug(L"writer: set time-shifter parameters, file count minimum = %lu, file count maximum = %lu, file size = %llu bytes",
             fileCountMinimum, fileCountMaximum, fileSizeBytes);
   CAutoLock lock(&m_channelLock);
   CTsChannel* channel = GetChannel(handle);

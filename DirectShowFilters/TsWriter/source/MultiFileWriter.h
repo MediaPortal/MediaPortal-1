@@ -35,7 +35,7 @@
 typedef struct MultiFileWriterParams
 {
   unsigned long long MaximumFileSize;       // unit = bytes
-  unsigned long long ReservationChunkSize;  // unit = bytes
+  unsigned long long ReservationChunkSize;  // unit = bytes; must be a factor for MaximumFileSize
   unsigned long FileCountMinimum;
   unsigned long FileCountMaximum;
 } MultiFileWriterParams;
@@ -47,7 +47,7 @@ class MultiFileWriter
     virtual ~MultiFileWriter();
 
     HRESULT GetFileName(wchar_t** fileName);
-    HRESULT OpenFile(const wchar_t* fileName);
+    HRESULT OpenFile(const wchar_t* fileName, bool& resume);
     HRESULT CloseFile();
   
     HRESULT Write(unsigned char* data, unsigned long dataLength, bool disableLogging);
@@ -61,12 +61,9 @@ class MultiFileWriter
     HRESULT CreateDataFile(bool disableLogging);
     HRESULT ReuseDataFile(bool disableLogging);
 
+    HRESULT ReadRegisterFile(const wchar_t* fileName);
     HRESULT WriteRegisterFile(bool updateFileInfo);
     void ResetDataFileProperties();
-
-    static HRESULT GetAvailableDiskSpace(const wchar_t* path,
-                                          unsigned long long& availableDiskSpace);
-    static bool IsFileInUse(wchar_t* fileName);
 
     FileWriter* m_fileRegister;
     wchar_t* m_registerFileName;

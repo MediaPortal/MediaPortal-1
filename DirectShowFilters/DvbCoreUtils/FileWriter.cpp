@@ -22,9 +22,6 @@
 *  nate can be reached on the forums at
 *    http://forums.dvbowners.com/
 */
-
-#define _WIN32_WINNT 0x0502
-
 #include "..\shared\FileWriter.h"
 #include <cstddef>    // NULL
 #include <cstring>    // memcpy()
