@@ -689,25 +689,25 @@ namespace MediaPortal.Player
 
         if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.LOST)
         {
-          Log.Error("1");
+          //Log.Error("1");
           return -1;
         }
 
         if (_stopPainting)
         {
-          Log.Error("2");
+          //Log.Error("2");
           return -1;
         }
 
         if (GUIGraphicsContext.IsSwitchingToNewSkin)
         {
-          Log.Error("3");
+          //Log.Error("3");
           return -1;
         }
 
         if (GUIWindowManager.IsSwitchingToNewWindow && !_vmr9Util.InMenu)
         {
-          Log.Error("4");
+          //Log.Error("4");
           return -1; // (0) -> S_OK, (1) -> S_FALSE; //dont present video during window transitions
         }
 

@@ -960,12 +960,6 @@ public class MediaPortalApp : D3D, IRender
               Application.Run(app);
               app.Focus();
             }
-            catch (ThreadStateException ex)
-            {
-              Log.Error(ex);
-              Log.Error("MediaPortal stopped due to thread exception {0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
-              _mpCrashed = true;
-            }
             catch (Exception ex)
             {
               Log.Error(ex);
