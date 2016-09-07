@@ -37,6 +37,7 @@ using namespace std;
 
 
 extern void LogDebug(const wchar_t* fmt, ...);
+extern bool TsWriterDisableTsBufferReservation();
 
 MultiFileWriter::MultiFileWriter()
 {
@@ -96,8 +97,8 @@ HRESULT MultiFileWriter::OpenFile(const wchar_t* fileName, bool& resume)
     }
   }
 
-  // Check disk space. We need to be able to create (or already have) at least
-  // 2 data files.
+  // Check disk space. We need to have or be able to create at least 2 data
+  // files.
   unsigned long long availableDiskSpace = 0;
   if (
     SUCCEEDED(CFileUtils::GetAvailableDiskSpace(fileName, availableDiskSpace)) &&
@@ -110,6 +111,7 @@ HRESULT MultiFileWriter::OpenFile(const wchar_t* fileName, bool& resume)
     return E_FAIL;
   }
 
+  // Open the register and data files.
   m_fileRegister = new FileWriter();
   if (m_fileRegister == NULL)
   {
@@ -154,7 +156,13 @@ HRESULT MultiFileWriter::OpenFile(const wchar_t* fileName, bool& resume)
       return hr;
     }
   }
-  m_fileData->SetReservationConfiguration(m_dataFileReservationChunkSize);
+
+  unsigned long long reservationChunkSize = m_dataFileReservationChunkSize;
+  if (TsWriterDisableTsBufferReservation() || fileName[0] == L'\\')
+  {
+    reservationChunkSize = 0;
+  }
+  m_fileData->SetReservationConfiguration(reservationChunkSize);
 
   // Take a copy of the file name.
   unsigned long fileNameLength = wcslen(fileName);
@@ -165,7 +173,7 @@ HRESULT MultiFileWriter::OpenFile(const wchar_t* fileName, bool& resume)
   m_registerFileName = new wchar_t[fileNameLength + 1];
   if (m_registerFileName == NULL)
   {
-    LogDebug(L"multi file writer: failed to allocate %lu bytes for a file name copy, name = %s",
+    LogDebug(L"multi file writer: failed to allocate %lu bytes for the register file name, name = %s",
               fileNameLength, fileName);
     CloseFile();
     return E_OUTOFMEMORY;
@@ -282,6 +290,9 @@ void MultiFileWriter::SetConfiguration(MultiFileWriterParams& parameters)
             m_registerFileName == NULL ? L"" : m_registerFileName);
 
   m_dataFileSizeMaximum = parameters.MaximumFileSize;
+  m_dataFileCountMinimum = parameters.FileCountMinimum;
+  m_dataFileCountMaximum = parameters.FileCountMaximum;
+
   m_dataFileReservationChunkSize = 0;
   if (parameters.ReservationChunkSize != 0)
   {
@@ -294,9 +305,15 @@ void MultiFileWriter::SetConfiguration(MultiFileWriterParams& parameters)
       LogDebug(L"multi file writer: reservation disabled because chunk size is not a file size factor");
     }
   }
-  m_fileData->SetReservationConfiguration(m_dataFileReservationChunkSize);
-  m_dataFileCountMinimum = parameters.FileCountMinimum;
-  m_dataFileCountMaximum = parameters.FileCountMaximum;
+  if (m_fileData != NULL)
+  {
+    unsigned long long reservationChunkSize = m_dataFileReservationChunkSize;
+    if (TsWriterDisableTsBufferReservation() || m_registerFileName[0] == L'\\')
+    {
+      reservationChunkSize = 0;
+    }
+    m_fileData->SetReservationConfiguration(reservationChunkSize);
+  }
 }
 
 HRESULT MultiFileWriter::OpenDataFile(bool disableLogging)
