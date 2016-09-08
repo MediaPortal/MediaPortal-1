@@ -442,7 +442,21 @@ namespace MediaPortal.Player
     /// </summary>
     public void StartMadVrPaused()
     {
-      MadVrPaused();
+      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+      {
+        MadVrPaused();
+      }
+    }
+
+    /// <summary>
+    /// Send call to repeat frame for madVR
+    /// </summary>
+    public void MadVrRepeatFrame()
+    {
+      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+      {
+        MadVrRepeatFrameSend();
+      }
     }
 
     /// <summary>
