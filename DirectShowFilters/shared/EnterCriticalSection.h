@@ -28,7 +28,7 @@
 #pragma once
 
 #if !defined(AFX_CRITICALSECTION_H__3B3A15BD_92D5_4044_8D69_5E1B8F15F369__INCLUDED_)
-#include "CriticalSection.h"
+#include "..\shared\CriticalSection.h"
 #endif // !defined(AFX_CRITICALSECTION_H__3B3A15BD_92D5_4044_8D69_5E1B8F15F369__INCLUDED_)
 
 

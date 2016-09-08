@@ -24,12 +24,11 @@
 #include <sstream>
 #include <WinError.h>   // HRESULT
 #include "..\..\shared\BasePmtParser.h"
+#include "..\..\shared\CriticalSection.h"
 #include "..\..\shared\FileWriter.h"
 #include "..\..\shared\PacketSync.h"
 #include "..\..\shared\Pcr.h"
 #include "..\..\shared\TsHeader.h"
-#include "CriticalSection.h"
-#include "EnterCriticalSection.h"
 #include "IChannelObserver.h"
 #include "MultiFileWriter.h"
 #include "RecorderMode.h"

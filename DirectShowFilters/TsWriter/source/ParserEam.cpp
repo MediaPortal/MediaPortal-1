@@ -21,7 +21,7 @@
 #include "ParserEam.h"
 #include <cstddef>      // NULL
 #include <cstring>      // memcpy()
-#include "EnterCriticalSection.h"
+#include "..\..\shared\EnterCriticalSection.h"
 #include "TextUtil.h"
 #include "Utils.h"
 

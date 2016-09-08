@@ -21,9 +21,9 @@
 #pragma once
 #include <ctime>
 #include <map>
+#include "..\..\shared\CriticalSection.h"
 #include "..\..\shared\Section.h"
 #include "..\..\shared\SectionDecoder.h"
-#include "CriticalSection.h"
 #include "ICallBackTableParser.h"
 #include "IRecord.h"
 #include "RecordStore.h"

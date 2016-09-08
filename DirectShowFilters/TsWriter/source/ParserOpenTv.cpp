@@ -22,8 +22,8 @@
 #include <algorithm>    // find()
 #include <cstring>      // strcmp()
 #include <time.h>       // gmtime(), mktime(), time_t, tm
+#include "..\..\shared\EnterCriticalSection.h"
 #include "..\..\shared\TimeUtils.h"
-#include "EnterCriticalSection.h"
 #include "PidUsage.h"
 #include "TextUtil.h"
 #include "Utils.h"

@@ -20,8 +20,8 @@
  */
 #include "ParserEitAtsc.h"
 #include <algorithm>    // find()
+#include "..\..\shared\EnterCriticalSection.h"
 #include "..\..\shared\TimeUtils.h"
-#include "EnterCriticalSection.h"
 #include "TextUtil.h"
 #include "Utils.h"
 

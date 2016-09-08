@@ -20,8 +20,8 @@
  */
 #pragma once
 #include <vector>
+#include "..\..\shared\CriticalSection.h"
 #include "..\..\shared\Section.h"
-#include "CriticalSection.h"
 #include "ICallBackMgt.h"
 #include "IRecord.h"
 #include "RecordStore.h"

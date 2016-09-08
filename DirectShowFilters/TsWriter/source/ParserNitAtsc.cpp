@@ -21,7 +21,7 @@
 #include "ParserNitAtsc.h"
 #include <algorithm>    // find()
 #include <map>
-#include "EnterCriticalSection.h"
+#include "..\..\shared\EnterCriticalSection.h"
 
 
 #define MINIMUM_RECORD_BYTE_COUNT_CDS 5

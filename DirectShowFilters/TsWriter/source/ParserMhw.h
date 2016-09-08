@@ -25,10 +25,10 @@
 #include <time.h>       // gmtime(), mktime(), time_t, tm
 #include <vector>
 #include <WinError.h>   // HRESULT
+#include "..\..\shared\CriticalSection.h"
 #include "..\..\shared\ISectionCallback.h"
 #include "..\..\shared\SectionDecoder.h"
 #include "..\..\shared\TsHeader.h"
-#include "CriticalSection.h"
 #include "ICallBackGrabber.h"
 #include "ICallBackPidConsumer.h"
 #include "IGrabberEpgMhw.h"

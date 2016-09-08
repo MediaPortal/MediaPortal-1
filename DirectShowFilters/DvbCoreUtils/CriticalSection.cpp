@@ -18,7 +18,7 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
-#include "CriticalSection.h"
+#include "..\shared\CriticalSection.h"
 
 using namespace MediaPortal;
 

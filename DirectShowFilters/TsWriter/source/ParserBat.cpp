@@ -21,7 +21,7 @@
 #include "ParserBat.h"
 #include <cwchar>     // wcsncpy()
 #include <sstream>
-#include "EnterCriticalSection.h"
+#include "..\..\shared\EnterCriticalSection.h"
 
 using namespace MediaPortal;
 using namespace std;

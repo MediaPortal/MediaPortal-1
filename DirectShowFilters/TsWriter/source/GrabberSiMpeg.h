@@ -23,8 +23,8 @@
 #include <streams.h>    // CUnknown, LPUNKNOWN
 #include <vector>
 #include <WinError.h>   // HRESULT
+#include "..\..\shared\CriticalSection.h"
 #include "..\..\shared\\TsHeader.h"
-#include "CriticalSection.h"
 #include "GrabberCat.h"
 #include "GrabberPmt.h"
 #include "ICallBackCat.h"

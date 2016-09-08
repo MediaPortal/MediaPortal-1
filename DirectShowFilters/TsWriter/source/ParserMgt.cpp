@@ -20,7 +20,7 @@
  */
 #include "ParserMgt.h"
 #include <algorithm>    // find()
-#include "EnterCriticalSection.h"
+#include "..\..\shared\EnterCriticalSection.h"
 
 
 extern void LogDebug(const wchar_t* fmt, ...);

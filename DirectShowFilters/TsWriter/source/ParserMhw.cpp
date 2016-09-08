@@ -19,8 +19,8 @@
  *
  */
 #include "ParserMhw.h"
+#include "..\..\shared\EnterCriticalSection.h"
 #include "..\..\shared\TimeUtils.h"
-#include "EnterCriticalSection.h"
 #include "PidUsage.h"
 #include "TextUtil.h"
 #include "Utils.h"

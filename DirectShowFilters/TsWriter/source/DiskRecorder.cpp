@@ -25,6 +25,7 @@
 #include <vector>
 #include "..\..\shared\AdaptionField.h"
 #include "..\..\shared\DvbUtil.h"
+#include "..\..\shared\EnterCriticalSection.h"
 #include "..\..\shared\Section.h"
 #include "..\..\shared\TimeUtils.h"
 #include "FileReader.h"

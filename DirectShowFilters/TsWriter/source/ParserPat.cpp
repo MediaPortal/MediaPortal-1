@@ -20,7 +20,7 @@
  */
 #include "ParserPat.h"
 #include <algorithm>    // find()
-#include "EnterCriticalSection.h"
+#include "..\..\shared\EnterCriticalSection.h"
 
 
 #define VERSION_NOT_SET 0xff

@@ -21,8 +21,8 @@
 #pragma once
 #include <map>
 #include <vector>
+#include "..\..\shared\CriticalSection.h"
 #include "..\..\shared\Section.h"
-#include "CriticalSection.h"
 #include "ICallBackEam.h"
 #include "IRecord.h"
 #include "RecordStore.h"

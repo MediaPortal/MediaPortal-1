@@ -18,30 +18,53 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
-#if !defined(AFX_CRITICALSECTION_H__3B3A15BD_92D5_4044_8D69_5E1B8F15F369__INCLUDED_)
-#define AFX_CRITICALSECTION_H__3B3A15BD_92D5_4044_8D69_5E1B8F15F369__INCLUDED_
+#include "..\shared\EnterCriticalSection.h"
 
-#pragma once
-#include <Windows.h>
+using namespace MediaPortal;
 
 
-namespace MediaPortal
+CEnterCriticalSection::CEnterCriticalSection(CCriticalSection& cs)
+  : m_cs(cs), m_isOwner(false)
 {
-  // Wrapper for critical section struct.
-  class CCriticalSection
-  {
-    public:
-      CCriticalSection();
-      virtual ~CCriticalSection();
-
-      operator LPCRITICAL_SECTION();
-
-  private:
-    CCriticalSection(const CCriticalSection& src);
-    CCriticalSection& operator = (const CCriticalSection& src);
-
-    CRITICAL_SECTION m_cs;
-  };
+  Enter();
 }
 
-#endif // !defined(AFX_CRITICALSECTION_H__3B3A15BD_92D5_4044_8D69_5E1B8F15F369__INCLUDED_)
+CEnterCriticalSection::CEnterCriticalSection(const CCriticalSection& cs)
+  : m_cs(const_cast<CCriticalSection&>(cs)), m_isOwner(false)
+{
+  Enter();
+}
+
+CEnterCriticalSection::~CEnterCriticalSection()
+{
+  Leave();
+}
+
+bool CEnterCriticalSection::IsOwner() const
+{
+  return m_isOwner;
+}
+
+bool CEnterCriticalSection::Enter()
+{
+  if (m_isOwner)
+  {
+    return true;
+  }
+
+  // blocking call
+  ::EnterCriticalSection(m_cs);
+  m_isOwner = true;
+  return m_isOwner;
+}
+
+void CEnterCriticalSection::Leave()
+{
+  if (!m_isOwner)
+  {
+    return;
+  }
+
+  ::LeaveCriticalSection(m_cs);
+  m_isOwner = false;
+}

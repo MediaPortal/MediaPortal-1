@@ -22,9 +22,9 @@
 #include <ctime>
 #include <map>
 #include <vector>
+#include "..\..\shared\CriticalSection.h"
 #include "..\..\shared\Section.h"
 #include "..\..\shared\SectionDecoder.h"
-#include "CriticalSection.h"
 #include "ICallBackSdt.h"
 #include "IDefaultAuthorityProvider.h"
 #include "IRecord.h"

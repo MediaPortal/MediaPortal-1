@@ -21,8 +21,8 @@
 #include "ParserSvct.h"
 #include <algorithm>    // find()
 #include <map>
+#include "..\..\shared\EnterCriticalSection.h"
 #include "..\..\shared\TimeUtils.h"
-#include "EnterCriticalSection.h"
 
 
 extern void LogDebug(const wchar_t* fmt, ...);

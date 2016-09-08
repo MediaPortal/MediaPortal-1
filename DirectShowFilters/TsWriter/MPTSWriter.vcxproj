@@ -195,14 +195,14 @@
     <ClCompile Include="source\ParserSdt.cpp" />
     <ClCompile Include="source\ParserLvct.cpp" />
     <ClCompile Include="source\MultiFileWriter.cpp" />
-    <ClCompile Include="source\CriticalSection.cpp" />
-    <ClCompile Include="source\EnterCriticalSection.cpp" />
     <ClCompile Include="source\TsWriterFilter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="source\TsWriter.def" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\shared\CriticalSection.h" />
+    <ClInclude Include="..\shared\EnterCriticalSection.h" />
     <ClInclude Include="..\shared\FileWriter.h" />
     <ClInclude Include="..\shared\Thread.h" />
     <ClInclude Include="..\shared\TimeUtils.h" />
@@ -281,8 +281,6 @@
     <ClInclude Include="source\ParserSdt.h" />
     <ClInclude Include="source\ParserLvct.h" />
     <ClInclude Include="source\MultiFileWriter.h" />
-    <ClInclude Include="source\CriticalSection.h" />
-    <ClInclude Include="source\EnterCriticalSection.h" />
     <ClInclude Include="..\shared\AdaptionField.h" />
     <ClInclude Include="..\shared\DebugSettings.h" />
     <ClInclude Include="..\shared\DvbUtil.h" />

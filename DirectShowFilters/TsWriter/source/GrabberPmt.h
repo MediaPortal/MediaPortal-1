@@ -22,10 +22,10 @@
 #include <ctime>
 #include <vector>
 #include "..\..\shared\BasePmtParser.h"
+#include "..\..\shared\CriticalSection.h"
 #include "..\..\shared\Section.h"
 #include "..\..\shared\SectionDecoder.h"
 #include "..\..\shared\TsHeader.h"
-#include "CriticalSection.h"
 #include "ICallBackPmt.h"
 #include "IEncryptionAnalyser.h"
 

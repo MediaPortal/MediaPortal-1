@@ -22,8 +22,8 @@
 #include <ctime>
 #include <map>
 #include <vector>
+#include "..\..\shared\CriticalSection.h"
 #include "..\..\shared\SectionDecoder.h"
-#include "CriticalSection.h"
 #include "ICallBackNitDvb.h"
 #include "IDefaultAuthorityProvider.h"
 #include "IRecord.h"

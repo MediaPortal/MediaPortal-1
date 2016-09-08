@@ -19,7 +19,7 @@
  *
  */
 #include "GrabberSiMpeg.h"
-#include "EnterCriticalSection.h"
+#include "..\..\shared\EnterCriticalSection.h"
 
 
 extern void LogDebug(const wchar_t* fmt, ...);

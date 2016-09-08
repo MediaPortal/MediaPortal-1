@@ -20,8 +20,8 @@
  */
 #pragma once
 #include <map>
+#include "..\..\shared\CriticalSection.h"
 #include "..\..\shared\TsHeader.h"
-#include "CriticalSection.h"
 #include "EncryptionState.h"
 #include "ICallBackEncryptionAnalyser.h"
 #include "IEncryptionAnalyser.h"

@@ -24,8 +24,8 @@
 #include <iomanip>
 #include <time.h>       // gmtime(), mktime(), time_t, tm
 #include <typeinfo>     // bad_cast
+#include "..\..\shared\EnterCriticalSection.h"
 #include "..\..\shared\TimeUtils.h"
-#include "EnterCriticalSection.h"
 #include "ParserBat.h"
 #include "ParserNitDvb.h"
 #include "ParserSdt.h"

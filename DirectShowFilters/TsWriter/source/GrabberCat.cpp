@@ -21,7 +21,7 @@
 #include "GrabberCat.h"
 #include <cstddef>      // NULL
 #include <cstring>      // memcpy()
-#include "EnterCriticalSection.h"
+#include "..\..\shared\EnterCriticalSection.h"
 
 using namespace std;
 

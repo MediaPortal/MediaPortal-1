@@ -20,12 +20,10 @@
  */
 #include "ParserAet.h"
 #include <algorithm>    // find()
+#include "..\..\shared\EnterCriticalSection.h"
 #include "..\..\shared\TimeUtils.h"
-#include "EnterCriticalSection.h"
 #include "PidUsage.h"
 #include "TextUtil.h"
-
-using namespace std;
 
 
 #define MINIMUM_SECTION_LENGTH 10

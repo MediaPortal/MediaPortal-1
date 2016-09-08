@@ -19,7 +19,7 @@
  *
  */
 #include "GrabberEpgAtsc.h"
-#include "EnterCriticalSection.h"
+#include "..\..\shared\EnterCriticalSection.h"
 #include "PidUsage.h"
 #include "Utils.h"
 

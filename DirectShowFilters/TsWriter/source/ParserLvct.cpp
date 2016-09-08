@@ -21,9 +21,9 @@
 #include "ParserLvct.h"
 #include <algorithm>    // find()
 #include "..\..\shared\BasePmtParser.h"
+#include "..\..\shared\EnterCriticalSection.h"
 #include "..\..\shared\PidTable.h"
 #include "..\..\shared\TimeUtils.h"
-#include "EnterCriticalSection.h"
 #include "TextUtil.h"
 #include "Utils.h"
 

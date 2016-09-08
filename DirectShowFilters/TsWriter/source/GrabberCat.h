@@ -19,9 +19,9 @@
  *
  */
 #pragma once
+#include "..\..\shared\CriticalSection.h"
 #include "..\..\shared\Section.h"
 #include "..\..\shared\SectionDecoder.h"
-#include "CriticalSection.h"
 #include "ICallBackCat.h"
 
 using namespace MediaPortal;

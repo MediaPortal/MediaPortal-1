@@ -23,8 +23,8 @@
 #include <cstring>    // strcmp(), strlen(), strncmp(), strncpy()
 #include <cwchar>     // wcscmp()
 #include <sstream>
+#include "..\..\shared\EnterCriticalSection.h"
 #include "..\..\shared\TimeUtils.h"
-#include "EnterCriticalSection.h"
 #include "TextUtil.h"
 #include "Utils.h"
 

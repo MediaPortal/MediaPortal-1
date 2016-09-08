@@ -19,8 +19,8 @@
  *
  */
 #include "EncryptionAnalyser.h"
+#include "..\..\shared\EnterCriticalSection.h"
 #include "..\..\shared\PacketSync.h"
-#include "EnterCriticalSection.h"
 
 
 // We have a threshold to avoid call back jitter.

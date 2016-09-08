@@ -22,8 +22,8 @@
 #include <algorithm>  // find()
 #include <cstddef>    // NULL
 #include <cstring>    // memcpy()
+#include "..\..\shared\EnterCriticalSection.h"
 #include "..\..\shared\TimeUtils.h"
-#include "EnterCriticalSection.h"
 #include "Utils.h"
 
 
