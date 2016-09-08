@@ -819,7 +819,7 @@ namespace MediaPortal.GUI.Library
     {
       if (OnVideoReceived != null)
       {
-        Log.Debug("GraphicContext VideoReceived()");
+        //Log.Debug("GraphicContext VideoReceived()");
         OnVideoReceived();
       }
     }
