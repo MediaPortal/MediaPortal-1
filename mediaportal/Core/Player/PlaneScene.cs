@@ -427,19 +427,6 @@ namespace MediaPortal.Player
 
           GUIGraphicsContext.VideoReceived();
 
-          ////did the video window,aspect ratio change? if not
-          ////then we dont need to recalculate and just return the previous settings
-          //if (!updateCrop && (int)x == _rectPrevious.X && (int)y == _rectPrevious.Y &&
-          //    nw == _rectPrevious.Width && nh == _rectPrevious.Height &&
-          //    GUIGraphicsContext.ARType == _aspectRatioType &&
-          //    GUIGraphicsContext.Overlay == _lastOverlayVisible && _shouldRenderTexture &&
-          //    _prevVideoWidth == videoSize.Width && _prevVideoHeight == videoSize.Height &&
-          //    _prevArVideoWidth == _arVideoWidth && _prevArVideoHeight == _arVideoHeight)
-          //{
-          //  //not changed, return previous settings
-          //  return _shouldRenderTexture;
-          //}
-
           //did the video window,aspect ratio change? if not
           //then we dont need to recalculate and just return the previous settings
           //add a delta value of -1 or +1 to check
@@ -457,11 +444,6 @@ namespace MediaPortal.Player
                _prevArVideoHeight == _arVideoHeight - 1))
           {
             //not changed, return previous settings
-            if (VMR9Util.g_vmr9 != null)
-            {
-              VMR9Util.g_vmr9.MadVrRepeatFrame();
-              Log.Debug("PlaneScene: MadVrRepeatFrameSend()");
-            }
             return _shouldRenderTexture;
           }
 
