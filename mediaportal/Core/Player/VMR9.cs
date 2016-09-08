@@ -619,8 +619,8 @@ namespace MediaPortal.Player
           hr = new HResult(graphBuilder.AddFilter(_vmr9Filter, "madVR"));
           Log.Info("VMR9: added madVR Renderer to graph");
           backbuffer.SafeDispose();
-          IVideoWindow videoWin = (IVideoWindow)graphBuilder;
-          videoWin.put_Owner(GUIGraphicsContext.ActiveForm);
+          //IVideoWindow videoWin = (IVideoWindow)graphBuilder;
+          //videoWin.put_Owner(GUIGraphicsContext.ActiveForm);
           //videoWin.put_WindowStyle((WindowStyle)((int)WindowStyle.Child + (int)WindowStyle.ClipChildren + (int)WindowStyle.ClipSiblings));
           //videoWin.put_MessageDrain(GUIGraphicsContext.ActiveForm);
         }

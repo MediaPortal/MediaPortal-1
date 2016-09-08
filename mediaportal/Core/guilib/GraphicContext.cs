@@ -817,7 +817,7 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public static void VideoReceived()
     {
-      Log.Debug("GraphicContext VideoReceived()");
+      //Log.Debug("GraphicContext VideoReceived()");
       OnVideoReceived?.Invoke();
     }
 

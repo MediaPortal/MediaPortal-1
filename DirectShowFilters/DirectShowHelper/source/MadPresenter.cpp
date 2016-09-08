@@ -159,7 +159,14 @@ IBaseFilter* MPMadPresenter::Initialize()
   CAutoLock cAutoLock(this);
 
   if (Com::SmartQIPtr<IBaseFilter> baseFilter = m_pMad)
+  {
+    if (Com::SmartQIPtr<IVideoWindow> pWindow = m_pMad)
+    {
+      pWindow->SetWindowPosition(0, 0, m_dwGUIWidth, m_dwGUIHeight);
+      pWindow->put_Owner(m_hParent);
+    }
     return baseFilter;
+  }
 
   return nullptr;
 }

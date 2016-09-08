@@ -425,25 +425,40 @@ namespace MediaPortal.Player
 
           GUIGraphicsContext.ScaleVideoWindow(ref nw, ref nh, ref x, ref y);
 
+          GUIGraphicsContext.VideoReceived();
+
           //did the video window,aspect ratio change? if not
           //then we dont need to recalculate and just return the previous settings
-          //add a delta value of -1 or +1 to check
-          if (!updateCrop && (int) x == _rectPrevious.X && (int) y == _rectPrevious.Y &&
+          if (!updateCrop && (int)x == _rectPrevious.X && (int)y == _rectPrevious.Y &&
               nw == _rectPrevious.Width && nh == _rectPrevious.Height &&
               GUIGraphicsContext.ARType == _aspectRatioType &&
               GUIGraphicsContext.Overlay == _lastOverlayVisible && _shouldRenderTexture &&
-              (_prevVideoWidth == videoSize.Width || _prevVideoWidth == videoSize.Width + 1 ||
-               _prevVideoWidth == videoSize.Width - 1) &&
-              (_prevVideoHeight == videoSize.Height || _prevVideoHeight == videoSize.Height + 1 ||
-               _prevVideoHeight == videoSize.Height - 1) &&
-              (_prevArVideoWidth == _arVideoWidth || _prevArVideoWidth == _arVideoWidth + 1 ||
-               _prevArVideoWidth == _arVideoWidth - 1) &&
-              (_prevArVideoHeight == _arVideoHeight || _prevArVideoHeight == _arVideoHeight + 1 ||
-               _prevArVideoHeight == _arVideoHeight - 1))
+              _prevVideoWidth == videoSize.Width && _prevVideoHeight == videoSize.Height &&
+              _prevArVideoWidth == _arVideoWidth && _prevArVideoHeight == _arVideoHeight)
           {
             //not changed, return previous settings
             return _shouldRenderTexture;
           }
+
+          ////did the video window,aspect ratio change? if not
+          ////then we dont need to recalculate and just return the previous settings
+          ////add a delta value of -1 or +1 to check
+          //if (!updateCrop && (int) x == _rectPrevious.X && (int) y == _rectPrevious.Y &&
+          //    nw == _rectPrevious.Width && nh == _rectPrevious.Height &&
+          //    GUIGraphicsContext.ARType == _aspectRatioType &&
+          //    GUIGraphicsContext.Overlay == _lastOverlayVisible && _shouldRenderTexture &&
+          //    (_prevVideoWidth == videoSize.Width || _prevVideoWidth == videoSize.Width + 1 ||
+          //     _prevVideoWidth == videoSize.Width - 1) &&
+          //    (_prevVideoHeight == videoSize.Height || _prevVideoHeight == videoSize.Height + 1 ||
+          //     _prevVideoHeight == videoSize.Height - 1) &&
+          //    (_prevArVideoWidth == _arVideoWidth || _prevArVideoWidth == _arVideoWidth + 1 ||
+          //     _prevArVideoWidth == _arVideoWidth - 1) &&
+          //    (_prevArVideoHeight == _arVideoHeight || _prevArVideoHeight == _arVideoHeight + 1 ||
+          //     _prevArVideoHeight == _arVideoHeight - 1))
+          //{
+          //  //not changed, return previous settings
+          //  return _shouldRenderTexture;
+          //}
 
           //settings (position,size,aspect ratio) changed.
           //Store these settings and start calucating the new video window
