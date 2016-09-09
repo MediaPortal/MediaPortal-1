@@ -343,8 +343,7 @@ namespace MediaPortal.Player
           return null;
         }
 
-        IPin pinIn, pinConnected;
-        pinIn = DsFindPin.ByDirection(_vmr9Filter, PinDirection.Input, 0);
+        var pinIn = DsFindPin.ByDirection(_vmr9Filter, PinDirection.Input, 0);
         if (pinIn == null)
         {
           //no input pin found, vmr9 is not possible
@@ -1588,7 +1587,7 @@ namespace MediaPortal.Player
           GC.Collect();
           MadDeinit();
           GC.Collect();
-          DirectShowUtil.ReleaseComObject(_vmr9Filter);
+          DirectShowUtil.FinalReleaseComObject(_vmr9Filter);
           Thread.Sleep(200);
           Log.Debug("VMR9: Dispose 2");
         }
