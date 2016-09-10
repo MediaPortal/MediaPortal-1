@@ -1622,6 +1622,7 @@ namespace MediaPortal.Player
         Thread.Sleep(500);
         RestoreGuiForMadVr();
         DirectShowUtil.TryRelease(ref _vmr9Filter);
+        GUIWindowManager.MadVrProcess();
         _vmr9Filter = null;
         Log.Debug("VMR9: Dispose done");
       }

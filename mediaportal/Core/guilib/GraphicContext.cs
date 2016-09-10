@@ -66,6 +66,7 @@ namespace MediaPortal.GUI.Library
     public static event OnRenderBlackHandler OnRenderBlack;
 
     private static readonly object RenderLoopLock = new object();  // Rendering loop lock - use this when removing any D3D resources
+    private static readonly object RenderLoopMadVrLock = new object();  // Rendering loop madVR lock - use this when calling video window changed
     private static readonly List<Point> Cameras = new List<Point>();
     private static readonly List<TransformMatrix> GroupTransforms = new List<TransformMatrix>();
     private static TransformMatrix _guiTransform = new TransformMatrix();
@@ -1034,11 +1035,10 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public static void VideoWindowChanged()
     {
-      lock (RenderLoopLock)
+      if (Thread.CurrentThread.Name != "MPMain" && Thread.CurrentThread.Name != "Config Main")
       {
-        if (!VideoWindowChangedDone)
+        lock (RenderMadVrLock)
         {
-          VideoWindowChangedDone = true;
           GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ONVIDEOWINDOWCHANGED, 0, 0, 0, 0, 0, null);
           msg.Param1 = GUIGraphicsContext.VideoWindow.Left;
           msg.Param2 = GUIGraphicsContext.VideoWindow.Top;
@@ -1047,6 +1047,16 @@ namespace MediaPortal.GUI.Library
           //Log.Debug("GraphicContext VideoWindowChanged (SendThreadMessage sender) Left: {0}, Top: {1}, Width: {2}, Height: {3}", msg.Param1, msg.Param2, msg.Param3, msg.Param4);
           GUIWindowManager.SendThreadMessage(msg);
           Log.Debug("GraphicContext VideoWindowChanged() SendThreadMessage sended");
+        }
+      }
+      else
+      {
+        // TODO see if really needed
+        //if (!VideoWindowChangedDone)
+        {
+          VideoWindowChangedDone = true;
+          if (OnVideoWindowChanged != null) OnVideoWindowChanged.Invoke();
+          Log.Debug("GraphicContext VideoWindowChanged() sended on main MP thread");
         }
       }
     }
@@ -1120,12 +1130,14 @@ namespace MediaPortal.GUI.Library
       switch (message.Message)
       {
         case GUIMessage.MessageType.GUI_MSG_ONVIDEOWINDOWCHANGED:
-          //Log.Debug("GraphicContext VideoWindowChanged (SendThreadMessage receiver) Left: {0}, Top: {1}, Width: {2}, Height: {3}", message.Param1, message.Param2, message.Param3, message.Param4);
-          GUIGraphicsContext.VideoWindow = new Rectangle(message.Param1, message.Param2, message.Param3, message.Param4);
-          if (OnVideoWindowChanged != null) OnVideoWindowChanged.Invoke();
-          Log.Debug("GraphicContext VideoWindowChanged() SendThreadMessage received");
-          GUIWindowManager.MadVrProcess();
-          VideoWindowChangedDone = false;
+          lock (RenderMadVrLock)
+          {
+            GUIGraphicsContext.VideoWindow = new Rectangle(message.Param1, message.Param2, message.Param3, message.Param4);
+            if (OnVideoWindowChanged != null) OnVideoWindowChanged.Invoke();
+            Log.Debug("GraphicContext VideoWindowChanged() SendThreadMessage received");
+            GUIWindowManager.MadVrProcess();
+            VideoWindowChangedDone = false;
+          }
           break;
         case GUIMessage.MessageType.GUI_MSG_SETVIDEOWINDOW:
           // Here is a call from a different thread like madVR when switching from fullscreen/windowed
@@ -1760,6 +1772,22 @@ namespace MediaPortal.GUI.Library
         //  return 0;
         //}
         return RenderLoopLock;
+      }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public static object RenderMadVrLock
+    {
+      get
+      {
+        // Added back this part for now and see if it stop the deadlock
+        if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && GUIGraphicsContext.InVmr9Render)
+        {
+          return RenderLoopMadVrLock;
+        }
+        return 0;
       }
     }
 
