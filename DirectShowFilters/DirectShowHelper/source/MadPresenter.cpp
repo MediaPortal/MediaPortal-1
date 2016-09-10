@@ -99,6 +99,9 @@ MPMadPresenter::~MPMadPresenter()
 
   //m_dsLock.Unlock();
 
+  // Detroy create madVR window
+  DeInitMadvrWindow();
+
   Log("MPMadPresenter::Destructor() - instance 0x%x", this);
 }
 
@@ -162,8 +165,13 @@ IBaseFilter* MPMadPresenter::Initialize()
   {
     if (Com::SmartQIPtr<IVideoWindow> pWindow = m_pMad)
     {
-      //pWindow->SetWindowPosition(0, 0, m_dwGUIWidth, m_dwGUIHeight);
-      pWindow->put_Owner(m_hParent);
+      // Create a madVR Window
+      if (InitMadvrWindow(m_hWnd))
+      {
+        Log("%s : Create DSPlayer window - hWnd: %i", __FUNCTION__, m_hWnd);
+        pWindow->put_Owner(reinterpret_cast<OAHWND>(m_hWnd));
+        SetDsWndVisible(true);
+      }
     }
     return baseFilter;
   }
@@ -308,6 +316,97 @@ HRESULT MPMadPresenter::Shutdown()
     Log("MPMadPresenter::Shutdown() stop");
     return S_OK;
   } // Scope for autolock
+}
+
+void MPMadPresenter::DeInitMadvrWindow()
+{
+  // remove ourself as user data to ensure we're not called anymore
+  SetWindowLongPtr(m_hWnd, GWL_USERDATA, 0);
+
+  // destroy the hidden window
+  DestroyWindow(m_hWnd);
+
+  // unregister the window class
+  UnregisterClass(m_className.c_str(), m_hInstance);
+
+  // reset the hWnd
+  m_hWnd = nullptr;
+}
+
+
+bool MPMadPresenter::InitMadvrWindow(HWND &hWnd)
+{
+  m_hInstance = static_cast<HINSTANCE>(GetModuleHandle(nullptr));
+  if (m_hInstance == nullptr)
+    Log("%s : GetModuleHandle failed with %d", __FUNCTION__, GetLastError());
+
+  int nWidth = m_dwGUIWidth;
+  int nHeight = m_dwGUIHeight;
+  m_className = "MediaPortal:DSPlayer";
+
+  // Register the windows class
+  WNDCLASS wndClass;
+
+  wndClass.style = CS_HREDRAW | CS_VREDRAW | CS_NOCLOSE;
+  wndClass.lpfnWndProc = MPMadPresenter::WndProc;
+  wndClass.cbClsExtra = 0;
+  wndClass.cbWndExtra = 0;
+  wndClass.hInstance = m_hInstance;
+  wndClass.hIcon = nullptr;
+  wndClass.hCursor = nullptr;
+  wndClass.hbrBackground = static_cast<HBRUSH>(GetStockObject(BLACK_BRUSH));
+  wndClass.lpszMenuName = nullptr;
+  wndClass.lpszClassName = m_className.c_str();
+
+  if (!RegisterClass(&wndClass))
+  {
+    //Log("%s : RegisterClass failed with %d", __FUNCTION__, GetLastError());
+    //return false;
+  }
+  hWnd = CreateWindow(m_className.c_str(), m_className.c_str(),
+    WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN,
+    0, 0, nWidth, nHeight,
+    reinterpret_cast<HWND>(m_hParent), NULL, m_hInstance, NULL);
+  if (hWnd == nullptr)
+  {
+    Log("%s : CreateWindow failed with %d", __FUNCTION__, GetLastError());
+    return false;
+  }
+
+  if (hWnd)
+    SetWindowLongPtr(hWnd, GWL_USERDATA, NPT_POINTER_TO_LONG(this));
+
+  return true;
+}
+
+LRESULT CALLBACK MPMadPresenter::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+  HWND g_hWnd = nullptr;
+  switch (uMsg)
+  {
+  case WM_MOUSEMOVE:
+  case WM_LBUTTONDOWN:
+  case WM_MBUTTONDOWN:
+  case WM_RBUTTONDOWN:
+  case WM_LBUTTONUP:
+  case WM_MBUTTONUP:
+  case WM_RBUTTONUP:
+  case WM_MOUSEWHEEL:
+    ::PostMessage(g_hWnd, uMsg, wParam, lParam);
+    return(0);
+  case WM_SIZE:
+    SetWindowPos(hWnd, 0, 0, 0, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam), SWP_NOMOVE | SWP_NOOWNERZORDER | SWP_NOZORDER);
+    return(0);
+  }
+  return DefWindowProc(hWnd, uMsg, wParam, lParam);
+}
+
+void MPMadPresenter::SetDsWndVisible(bool bVisible)
+{
+  int cmd;
+  bVisible ? cmd = SW_SHOW : cmd = SW_HIDE;
+  ShowWindow(m_hWnd, cmd);
+  UpdateWindow(m_hWnd);
 }
 
 HRESULT MPMadPresenter::Stopping()

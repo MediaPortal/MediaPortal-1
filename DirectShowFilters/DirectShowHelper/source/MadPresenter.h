@@ -23,6 +23,7 @@
 #include "../../mpc-hc_subs/src/DSUtil/DSUtil.h"
 #include "threads/Condition.h"
 #include "threads/CriticalSection.h"
+#include "StdString.h"
 
 using namespace std;
 
@@ -139,6 +140,19 @@ class MPMadPresenter : public CUnknown, public CCritSec
     void RepeatFrame();
     HRESULT Shutdown();
     HRESULT Stopping();
+
+    //madVR Window
+    CStdString m_className;
+    void SetDsWndVisible(bool);
+    //virtual OAHWND HWnDMadVR() { return reinterpret_cast<OAHWND>(m_hWnd); }
+    static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+    HWND m_hWnd;
+    bool InitMadvrWindow(HWND &hWnd);
+    void DeInitMadvrWindow();
+    HINSTANCE m_hInstance;
+    #if !defined(NPT_POINTER_TO_LONG)
+    #define NPT_POINTER_TO_LONG(_p) ((long)(_p))
+    #endif
 
     STDMETHODIMP NonDelegatingQueryInterface(REFIID riid, void** ppv);
     STDMETHODIMP ClearBackground(LPCSTR name, REFERENCE_TIME frameStart, RECT *fullOutputRect, RECT *activeVideoRect);
