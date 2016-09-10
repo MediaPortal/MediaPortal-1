@@ -494,10 +494,6 @@ HRESULT MPMadPresenter::ClearBackground(LPCSTR name, REFERENCE_TIME frameStart, 
 
   CAutoLock cAutoLock(this);
 
-  // Render frame to try to fix HD4XXX GPU flickering issue
-  Com::SmartQIPtr<IMadVROsdServices> pOR = m_pMad;
-  pOR->OsdRedrawFrame();
-
   //// Ugly hack to avoid flickering (most occurs on Intel GPU)
   //bool isFullScreen = m_pCallback->IsFullScreen();
   //bool isUiVisible = m_pCallback->IsUiVisible();
@@ -533,7 +529,15 @@ HRESULT MPMadPresenter::ClearBackground(LPCSTR name, REFERENCE_TIME frameStart, 
   RenderToTexture(m_pMPTextureGui);
 
   if (SUCCEEDED(hr = m_deviceState.Store()))
+  {
     hr = m_pCallback->RenderGui(videoWidth, videoHeight, videoWidth, videoHeight);
+    m_pDevice->PresentEx(nullptr, nullptr, nullptr, nullptr, D3DPRESENT_FORCEIMMEDIATE);
+    m_pDevice->PresentEx(nullptr, nullptr, nullptr, nullptr, D3DPRESENT_FORCEIMMEDIATE);
+    m_pDevice->PresentEx(nullptr, nullptr, nullptr, nullptr, D3DPRESENT_FORCEIMMEDIATE);
+    // Render frame to try to fix HD4XXX GPU flickering issue
+    Com::SmartQIPtr<IMadVROsdServices> pOR = m_pMad;
+    pOR->OsdRedrawFrame();
+  }
 
   uiVisible = hr == S_OK ? true : false;
 
@@ -569,10 +573,6 @@ HRESULT MPMadPresenter::RenderOsd(LPCSTR name, REFERENCE_TIME frameStart, RECT* 
   WORD videoWidth = (WORD)activeVideoRect->right - (WORD)activeVideoRect->left;
 
   CAutoLock cAutoLock(this);
-
-  // Render frame to try to fix HD4XXX GPU flickering issue
-  Com::SmartQIPtr<IMadVROsdServices> pOR = m_pMad;
-  pOR->OsdRedrawFrame();
 
   //// Ugly hack to avoid flickering (most occurs on Intel GPU)
   //bool isFullScreen = m_pCallback->IsFullScreen();
@@ -627,7 +627,15 @@ HRESULT MPMadPresenter::RenderOsd(LPCSTR name, REFERENCE_TIME frameStart, RECT* 
   RenderToTexture(m_pMPTextureOsd);
 
   if (SUCCEEDED(hr = m_deviceState.Store()))
+  {
     hr = m_pCallback->RenderOverlay(videoWidth, videoHeight, videoWidth, videoHeight);
+    m_pDevice->PresentEx(nullptr, nullptr, nullptr, nullptr, D3DPRESENT_FORCEIMMEDIATE);
+    m_pDevice->PresentEx(nullptr, nullptr, nullptr, nullptr, D3DPRESENT_FORCEIMMEDIATE);
+    m_pDevice->PresentEx(nullptr, nullptr, nullptr, nullptr, D3DPRESENT_FORCEIMMEDIATE);
+    // Render frame to try to fix HD4XXX GPU flickering issue
+    Com::SmartQIPtr<IMadVROsdServices> pOR = m_pMad;
+    pOR->OsdRedrawFrame();
+  }
 
   uiVisible = hr == S_OK ? true : false;
 
