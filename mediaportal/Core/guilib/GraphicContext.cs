@@ -1118,6 +1118,7 @@ namespace MediaPortal.GUI.Library
           GUIGraphicsContext.VideoWindow = new Rectangle(message.Param1, message.Param2, message.Param3, message.Param4);
           OnVideoWindowChanged?.Invoke();
           Log.Debug("GraphicContext VideoWindowChanged() SendThreadMessage received");
+          GUIWindowManager.MadVrProcess();
           VideoWindowChangedDone = false;
           break;
         case GUIMessage.MessageType.GUI_MSG_SETVIDEOWINDOW:
