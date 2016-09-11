@@ -1035,28 +1035,14 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public static void VideoWindowChanged()
     {
-      if (Thread.CurrentThread.Name != "MPMain" && Thread.CurrentThread.Name != "Config Main")
+      lock (RenderMadVrLock)
       {
-        lock (RenderMadVrLock)
-        {
-          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ONVIDEOWINDOWCHANGED, 0, 0, 0, 0, 0, null);
-          msg.Param1 = GUIGraphicsContext.VideoWindow.Left;
-          msg.Param2 = GUIGraphicsContext.VideoWindow.Top;
-          msg.Param3 = GUIGraphicsContext.VideoWindow.Width;
-          msg.Param4 = GUIGraphicsContext.VideoWindow.Height;
-          //Log.Debug("GraphicContext VideoWindowChanged (SendThreadMessage sender) Left: {0}, Top: {1}, Width: {2}, Height: {3}", msg.Param1, msg.Param2, msg.Param3, msg.Param4);
-          GUIWindowManager.SendThreadMessage(msg);
-          Log.Debug("GraphicContext VideoWindowChanged() SendThreadMessage sended");
-        }
-      }
-      else
-      {
-        // TODO see if really needed
-        //if (!VideoWindowChangedDone)
+        if (!VideoWindowChangedDone)
         {
           VideoWindowChangedDone = true;
-          if (OnVideoWindowChanged != null) OnVideoWindowChanged.Invoke();
-          Log.Debug("GraphicContext VideoWindowChanged() sended on main MP thread");
+          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ONVIDEOWINDOWCHANGED, 0, 0, 0, 0, 0, null);
+          GUIWindowManager.SendThreadMessage(msg);
+          Log.Debug("GraphicContext VideoWindowChanged() SendThreadMessage sended");
         }
       }
     }
@@ -1102,19 +1088,14 @@ namespace MediaPortal.GUI.Library
 
           if (!_overlay)
           {
-            if (!SetVideoWindowDone)
+            VideoWindow = new Rectangle(0, 0, 1, 1);
+          }
+
+          if (bOldOverlay != _overlay && OnVideoWindowChanged != null)
+          {
+            lock (RenderMadVrLock)
             {
-              SetVideoWindowDone = true;
-              if (bOldOverlay)
-              {
-                GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETVIDEOWINDOW, 0, 0, 0, 1, 0, null);
-                GUIWindowManager.SendThreadMessage(msg);
-              }
-              else
-              {
-                GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETVIDEOWINDOW, 0, 0, 0, 0, 0, null);
-                GUIWindowManager.SendThreadMessage(msg);
-              }
+              VideoWindowChanged();
             }
           }
         }
@@ -1132,23 +1113,11 @@ namespace MediaPortal.GUI.Library
         case GUIMessage.MessageType.GUI_MSG_ONVIDEOWINDOWCHANGED:
           lock (RenderMadVrLock)
           {
-            GUIGraphicsContext.VideoWindow = new Rectangle(message.Param1, message.Param2, message.Param3, message.Param4);
-            if (OnVideoWindowChanged != null) OnVideoWindowChanged.Invoke();
-            Log.Debug("GraphicContext VideoWindowChanged() SendThreadMessage received");
+            OnVideoWindowChanged?.Invoke();
             GUIWindowManager.MadVrProcess();
             VideoWindowChangedDone = false;
+            Log.Debug("GraphicContext VideoWindowChanged() SendThreadMessage received");
           }
-          break;
-        case GUIMessage.MessageType.GUI_MSG_SETVIDEOWINDOW:
-          // Here is a call from a different thread like madVR when switching from fullscreen/windowed
-          bool bOldOverlay = message.Param1 == 1;
-          VideoWindow = new Rectangle(0, 0, 1, 1);
-          GUIGraphicsContext.IsWindowVisible = true;
-          if (bOldOverlay != _overlay)
-          {
-            VideoWindowChanged();
-          }
-          SetVideoWindowDone = false;
           break;
       }
     }
@@ -1804,7 +1773,6 @@ namespace MediaPortal.GUI.Library
     public static bool MadVrOsd { get; set; }
     public static bool MadVrStop { get; set; }
     public static bool VideoWindowChangedDone { get; set; }
-    public static bool SetVideoWindowDone { get; set; }
 
     /// <summary>
     /// Enable/Disable bypassing of UI Calibration transforms

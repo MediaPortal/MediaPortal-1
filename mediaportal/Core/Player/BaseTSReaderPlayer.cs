@@ -668,6 +668,17 @@ namespace MediaPortal.Player
         {
           return;
         }
+
+        if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+        {
+          if (_basicVideo != null)
+          {
+            // TODO why it is needed for some video to be able to reduce fullscreen video window
+            _basicVideo.SetDestinationPosition(0, 0, 1, 1);
+            //Log.Error("TsReader: hide video window");
+          }
+        }
+
         _updateNeeded = false;
         GUIGraphicsContext.UpdateVideoWindow = false;
 

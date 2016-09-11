@@ -1050,6 +1050,16 @@ namespace MediaPortal.Player
         return;
       }
 
+      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+      {
+        if (_basicVideo != null)
+        {
+          // TODO why it is needed for some video to be able to reduce fullscreen video window
+          _basicVideo.SetDestinationPosition(0, 0, 1, 1);
+          //Log.Error("BDPlayer: hide video window");
+        }
+      }
+
       _updateNeeded = false;
       GUIGraphicsContext.UpdateVideoWindow = false;
 
@@ -1156,40 +1166,55 @@ namespace MediaPortal.Player
       {
         _updateTimer = DateTime.Now;
 
-        if (_videoWin != null)
+        if (GUIGraphicsContext.Overlay == false && GUIGraphicsContext.IsFullScreenVideo == false)
         {
-          if (GUIGraphicsContext.Overlay == false && GUIGraphicsContext.IsFullScreenVideo == false)
+          if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
           {
-            if (_isVisible)
+            if (GUIGraphicsContext.IsWindowVisible)
             {
-              _isVisible = false;
-              if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
-              {
-                _videoWin.put_Visible(OABool.False);
-              }
-              else
+              GUIGraphicsContext.IsWindowVisible = false;
+              if (!GUIGraphicsContext.IsFullScreenVideo)
               {
                 if (_basicVideo != null)
                 {
-                  if (!GUIGraphicsContext.IsFullScreenVideo)
-                    _basicVideo.SetDestinationPosition(-100, -100, 50, 50);
+                  // Here is to hide video window madVR when skin didn't handle video overlay (the value need to be different from GUIVideoControl Render)
+                  _basicVideo.SetDestinationPosition(-100, -100, 50, 50);
+                  //Log.Error("VMR7 hide video window");
                 }
               }
             }
           }
-          else if (!_isVisible)
+          else if (_isVisible)
           {
-            _isVisible = true;
-            if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
+            _isVisible = false;
+            if (_videoWin != null)
             {
-              _videoWin.put_Visible(OABool.True);
+              _videoWin.put_Visible(OABool.False);
             }
-            else
+          }
+        }
+        else if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+        {
+          if (!GUIGraphicsContext.IsWindowVisible)
+          {
+            GUIGraphicsContext.IsWindowVisible = true;
+            if (!GUIGraphicsContext.IsFullScreenVideo)
             {
-              if (!GUIGraphicsContext.IsFullScreenVideo)
-                GUIGraphicsContext.VideoWindow = new Rectangle(0, 0, GUIGraphicsContext.VideoWindowWidth,
+              if (_basicVideo != null)
+              {
+                _basicVideo.SetDestinationPosition(0, 0, GUIGraphicsContext.VideoWindowWidth,
                   GUIGraphicsContext.VideoWindowHeight);
+                //Log.Error("VMR7 show video window");
+              }
             }
+          }
+        }
+        else if (!_isVisible)
+        {
+          _isVisible = true;
+          if (_videoWin != null)
+          {
+            _videoWin.put_Visible(OABool.True);
           }
         }
         CheckVideoResolutionChanges();
