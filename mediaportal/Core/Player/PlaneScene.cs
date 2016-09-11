@@ -657,7 +657,7 @@ namespace MediaPortal.Player
       }
     }
 
-     public bool IsUiVisible()
+    public bool IsUiVisible()
     {
       return UiVisible;
     }
@@ -684,7 +684,6 @@ namespace MediaPortal.Player
 
       lock (GUIGraphicsContext.RenderMadVrLock)
       {
-
         try
         {
           if (_reEntrant)
@@ -755,15 +754,7 @@ namespace MediaPortal.Player
             GUIGraphicsContext.RenderOverlay = true;
           }
 
-          //bool visible = false;
-          if (_disableLowLatencyMode)
-          {
-            GUIGraphicsContext.RenderGUI.RenderFrame(GUIGraphicsContext.TimePassed, layers);
-          }
-          else
-          {
-            GUIGraphicsContext.RenderGUI.RenderFrame(GUIGraphicsContext.TimePassed, layers, ref visible);
-          }
+          GUIGraphicsContext.RenderGUI.RenderFrame(GUIGraphicsContext.TimePassed, layers, ref visible);
 
           GUIFontManager.Present();
           device.EndScene();
