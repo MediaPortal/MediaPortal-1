@@ -1113,7 +1113,7 @@ namespace MediaPortal.GUI.Library
         case GUIMessage.MessageType.GUI_MSG_ONVIDEOWINDOWCHANGED:
           lock (RenderMadVrLock)
           {
-            OnVideoWindowChanged?.Invoke();
+            if (OnVideoWindowChanged != null) OnVideoWindowChanged.Invoke();
             GUIWindowManager.MadVrProcess();
             VideoWindowChangedDone = false;
             Log.Debug("GraphicContext VideoWindowChanged() SendThreadMessage received");
