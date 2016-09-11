@@ -554,7 +554,7 @@ namespace MediaPortal.Player
         if (basicVideo != null)
         {
           // TODO why it is needed for some video to be able to reduce fullscreen video window
-          basicVideo.SetDestinationPosition(0, 0, 1, 1);
+          basicVideo.SetDestinationPosition(0, 0, 4, 4);
           //Log.Error("VideoPlayer: hide video window");
         }
       }
