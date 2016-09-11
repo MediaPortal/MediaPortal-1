@@ -548,6 +548,17 @@ namespace MediaPortal.Player
       {
         return;
       }
+
+      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+      {
+        if (basicVideo != null)
+        {
+          // TODO why it is needed for some video to be able to reduce fullscreen video window
+          basicVideo.SetDestinationPosition(0, 0, 1, 1);
+          //Log.Error("VideoPlayer: hide video window");
+        }
+      }
+
       _updateNeeded = false;
       GUIGraphicsContext.UpdateVideoWindow = false;
       m_bStarted = true;
@@ -716,52 +727,54 @@ namespace MediaPortal.Player
           mediaPos.get_Duration(out m_dDuration); //(refresh timeline when change EDITION)
           mediaPos.get_CurrentPosition(out m_dCurrentPos);
         }
-        if (GUIGraphicsContext.BlankScreen || (GUIGraphicsContext.VideoWindow.Width <= 10 && GUIGraphicsContext.IsFullScreenVideo == false))
+        if (GUIGraphicsContext.BlankScreen || (GUIGraphicsContext.VideoWindow.Width <= 10 && GUIGraphicsContext.Overlay == false && GUIGraphicsContext.IsFullScreenVideo == false))
         {
-          if (GUIGraphicsContext.IsWindowVisible)
+          if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
           {
-            GUIGraphicsContext.IsWindowVisible = false;
-            if (videoWin != null)
+            if (GUIGraphicsContext.IsWindowVisible)
             {
-              if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+              GUIGraphicsContext.IsWindowVisible = false;
+              if (!GUIGraphicsContext.IsFullScreenVideo)
               {
                 if (basicVideo != null)
                 {
-                  if (!GUIGraphicsContext.IsFullScreenVideo)
-                  {
-                    // Here is to hide video window madVR when skin didn't handle video overlay (the value need to be different from GUIVideoControl Render)
-                    basicVideo.SetDestinationPosition(-100, -100, 50, 50);
-                    //Log.Error("VMR7 hide video window");
-                  }
+                  // Here is to hide video window madVR when skin didn't handle video overlay (the value need to be different from GUIVideoControl Render)
+                  basicVideo.SetDestinationPosition(-100, -100, 50, 50);
+                  //Log.Error("VideoPlayer: hide video window");
                 }
               }
-              else
+            }
+          }
+          else if (m_bVisible)
+          {
+            m_bVisible = false;
+            if (videoWin != null)
+            {
+              videoWin.put_Visible(OABool.False);
+            }
+          }
+        }
+        else if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+        {
+          if (!GUIGraphicsContext.IsWindowVisible)
+          {
+            GUIGraphicsContext.IsWindowVisible = true;
+            if (!GUIGraphicsContext.IsFullScreenVideo)
+            {
+              if (basicVideo != null)
               {
-                videoWin.put_Visible(OABool.False);
+                basicVideo.SetDestinationPosition(0, 0, GUIGraphicsContext.VideoWindowWidth, GUIGraphicsContext.VideoWindowHeight);
+                //Log.Error("VideoPlayer: show video window");
               }
             }
           }
         }
-        else if (!GUIGraphicsContext.IsWindowVisible)
+        else if (!m_bVisible)
         {
+          m_bVisible = true;
           if (videoWin != null)
           {
-            if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
-            {
-              if (basicVideo != null)
-              {
-                if (!GUIGraphicsContext.IsFullScreenVideo)
-                {
-                  basicVideo.SetDestinationPosition(0, 0, GUIGraphicsContext.VideoWindowWidth,
-                    GUIGraphicsContext.VideoWindowHeight);
-                  //Log.Error("VMR7 show video window");
-                }
-              }
-            }
-            else
-            {
-              videoWin.put_Visible(OABool.True);
-            }
+            videoWin.put_Visible(OABool.True);
           }
         }
         updateTimer = DateTime.Now;
