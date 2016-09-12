@@ -832,10 +832,6 @@ HRESULT MPMadPresenter::SetDevice(IDirect3DDevice9* pD3DDev)
       {
         hr = S_OK;
         Log("MPMadPresenter::SetDevice() init ok for D3D : 0x:%x", m_pMadD3DDev);
-
-        // Init created madVR window instance.
-        SetDsWndVisible(true);
-        Log("MPMadPresenter::SetDevice() init madVR Window");
       }
 
     // Get refresh rate information
@@ -892,6 +888,10 @@ HRESULT MPMadPresenter::Render(REFERENCE_TIME frameStart, int left, int top, int
       {
         m_pCallback->SetSubtitleDevice((DWORD)m_pMadD3DDev);
         Log("MPMadPresenter::SetDevice() SetSubtitleDevice for D3D : 0x:%x", m_pMadD3DDev);
+
+        // Init created madVR window instance.
+        SetDsWndVisible(true);
+        Log("MPMadPresenter::SetDevice() init madVR Window");
       }
       m_pInitOSDRender = true;
 
