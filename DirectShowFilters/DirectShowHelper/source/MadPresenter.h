@@ -61,7 +61,7 @@ class MPMadPresenter : public CUnknown, public CCritSec
 
     void SetDXRAP(MPMadPresenter* pDXRAP)
     {
-      CAutoLock cAutoLock(this); // TODO need to be commented to avoid deadlock.
+      //CAutoLock cAutoLock(this); // TODO need to be commented to avoid deadlock.
       m_pDXRAP = pDXRAP;
     }
 
@@ -88,13 +88,9 @@ class MPMadPresenter : public CUnknown, public CCritSec
 
   class CSubRenderCallback : public CUnknown, public ISubRenderCallback, public CCritSec
   {
-    MPMadPresenter* m_pDXRAP;
+    MPMadPresenter* m_pDXRAPSUB;
 
-  public:
-    CSubRenderCallback(MPMadPresenter* pDXRAP)
-      : CUnknown(_T("CSubRender"), NULL)
-      , m_pDXRAP(pDXRAP) {
-    }
+    public: CSubRenderCallback(MPMadPresenter* pDXRAPSUB) : CUnknown(_T("CSubRender"), NULL) , m_pDXRAPSUB(pDXRAPSUB) {}
 
     DECLARE_IUNKNOWN
     STDMETHODIMP NonDelegatingQueryInterface(REFIID riid, void** ppv)
@@ -104,10 +100,10 @@ class MPMadPresenter : public CUnknown, public CCritSec
         __super::NonDelegatingQueryInterface(riid, ppv);
     }
 
-    void SetDXRAP(MPMadPresenter* pDXRAP)
+    void SetDXRAPSUB(MPMadPresenter* pDXRAPSUB)
     {
-      CAutoLock cAutoLock(this); // TODO need to be commented to avoid deadlock.
-      m_pDXRAP = pDXRAP;
+      //CAutoLock cAutoLock(this); // TODO need to be commented to avoid deadlock.
+      m_pDXRAPSUB = pDXRAPSUB;
     }
 
     // ISubRenderCallback
@@ -115,13 +111,13 @@ class MPMadPresenter : public CUnknown, public CCritSec
     STDMETHODIMP SetDevice(IDirect3DDevice9* pD3DDev)
     {
       CAutoLock cAutoLock(this);
-      return m_pDXRAP ? m_pDXRAP->SetDevice(pD3DDev) : E_UNEXPECTED;
+      return m_pDXRAPSUB ? m_pDXRAPSUB->SetDevice(pD3DDev) : E_UNEXPECTED;
     }
 
     STDMETHODIMP Render(REFERENCE_TIME rtStart, int left, int top, int right, int bottom, int width, int height)
     {
       CAutoLock cAutoLock(this);
-      return m_pDXRAP ? m_pDXRAP->Render(rtStart, left, top, right, bottom, width, height) : E_UNEXPECTED;
+      return m_pDXRAPSUB ? m_pDXRAPSUB->Render(rtStart, left, top, right, bottom, width, height) : E_UNEXPECTED;
     }
   };
 
