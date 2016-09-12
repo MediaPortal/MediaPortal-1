@@ -150,10 +150,8 @@ namespace TvPlugin
           Log.Debug("SetupDatabaseConnection()");
           string xmlPath = Config.GetFile(Config.Dir.Config, "Gentle.config");
           XmlDocument doc = new XmlDocument();
-          using (var reader = XmlReader.Create(xmlPath))
-          {
-            doc.Load(reader);
-          }
+          doc.Load(new MemoryStream(File.ReadAllBytes(xmlPath)));
+          bool needSave = false;
           var nodeKey = doc.SelectSingleNode("/Gentle.Framework/DefaultProvider");
           if (nodeKey != null)
           {
@@ -161,16 +159,26 @@ namespace TvPlugin
             {
               var node = nodeKey.Attributes.GetNamedItem("connectionString");
               var nodeProvider = nodeKey.Attributes.GetNamedItem("name");
-              node.InnerText = TVHome.connectionString;
-              nodeProvider.InnerText = TVHome.provider;
+              if (node.InnerText != TVHome.connectionString)
+                if (nodeProvider.InnerText != TVHome.provider)
+                {
+                  node.InnerText = TVHome.connectionString;
+                  nodeProvider.InnerText = TVHome.provider;
+                  needSave = true;
+                }
             }
           }
-          doc.Save(xmlPath);
+          if (needSave)
+          {
+            doc.Save(xmlPath);
+            Log.Debug("gentle.config saved");
+          }
           TVHome.connectionStringLoaded = true;
         }
       }
       catch (Exception ex)
       {
+        //System.Diagnostics.Debugger.Launch();
         Log.Error("Unable to create/modify gentle.config {0},{1}", ex.Message, ex.StackTrace);
         return false;
       }
@@ -196,7 +204,7 @@ namespace TvPlugin
           }
 
           string threadName = Thread.CurrentThread.Name;
-          if (string.IsNullOrEmpty(threadName))
+          if (!string.IsNullOrEmpty(threadName))
           {
             Log.Debug("Reload SetupDatabaseConnection on thread : [{0}]", threadName);
           }

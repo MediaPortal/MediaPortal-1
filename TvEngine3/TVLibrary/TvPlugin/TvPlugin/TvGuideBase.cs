@@ -778,6 +778,7 @@ namespace TvPlugin
               if (TVHome.m_navigator == null)
               {
                 TVHome.m_navigator = new ChannelNavigator();
+                TVHome.LoadSettings(true);
               }
 
               GUIPropertyManager.SetProperty("#itemcount", string.Empty);
