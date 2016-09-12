@@ -22,10 +22,33 @@ DeviceState::DeviceState()
 
 DeviceState::~DeviceState()
 {
-  if (m_pVS) m_pVS->Release();
-  if (m_pStreamData) m_pStreamData->Release();
-  if (m_pTexture) m_pTexture->Release();
-  if (m_pSurface) m_pSurface->Release();
+  try
+  {
+    if (m_pVS)
+    {
+      m_pVS->Release();
+      m_pVS = nullptr;
+    }
+  }
+  catch (...) {}
+  try
+  {
+    if (m_pTexture)
+    {
+      m_pTexture->Release();
+      m_pTexture = nullptr;
+    }
+  }
+  catch (...) {}
+  try
+  {
+    if (m_pSurface)
+    {
+      m_pSurface->Release();
+      m_pSurface = nullptr;
+    }
+  }
+  catch (...) {}
 }
 
 void DeviceState::SetDevice(IDirect3DDevice9* pDevice)
@@ -41,10 +64,42 @@ void DeviceState::Store_Surface(IDirect3DSurface9* pSurface)
 
 void DeviceState::Shutdown()
 {
-  if (m_pVS) m_pVS->Release();
-  if (m_pStreamData) m_pStreamData->Release();
-  if (m_pTexture) m_pTexture->Release();
-  if (m_pSurface) m_pSurface->Release();
+  try
+  {
+    if (m_pVS)
+    {
+      m_pVS->Release();
+      m_pVS = nullptr;
+    }
+  }
+  catch (...) {}
+  try
+  {
+    if (m_pStreamData)
+    {
+      m_pStreamData->Release();
+      m_pStreamData = nullptr;
+    }
+  }
+  catch (...) {}
+  try
+  {
+    if (m_pTexture)
+    {
+      m_pTexture->Release();
+      m_pTexture = nullptr;
+    }
+  }
+  catch (...) {}
+  try
+  {
+    if (m_pSurface)
+    {
+      m_pSurface->Release();
+      m_pSurface = nullptr;
+    }
+  }
+  catch (...) {}
 }
 
 HRESULT DeviceState::Store()
@@ -103,10 +158,42 @@ HRESULT DeviceState::Restore()
 
   if (!m_pD3DDev)
   {
-    if (m_pVS) m_pVS->Release();
-    if (m_pStreamData) m_pStreamData->Release();
-    if (m_pTexture) m_pTexture->Release();
-    if (m_pSurface) m_pSurface->Release();
+    try
+    {
+      if (m_pVS)
+      {
+        m_pVS->Release();
+        m_pVS = nullptr;
+      }
+    }
+    catch (...) {}
+    try
+    {
+      if (m_pStreamData)
+      {
+        m_pStreamData->Release();
+        m_pStreamData = nullptr;
+      }
+    }
+    catch (...) {}
+    try
+    {
+      if (m_pTexture)
+      {
+        m_pTexture->Release();
+        m_pTexture = nullptr;
+      }
+    }
+    catch (...) {}
+    try
+    {
+      if (m_pSurface)
+      {
+        m_pSurface->Release();
+        m_pSurface = nullptr;
+      }
+    }
+    catch (...) {}
     return hr;
   }
 

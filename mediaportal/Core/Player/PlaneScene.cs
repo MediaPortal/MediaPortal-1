@@ -682,7 +682,7 @@ namespace MediaPortal.Player
       bool visible = false;
       UiVisible = false;
 
-      lock (GUIGraphicsContext.RenderMadVrLock)
+      //lock (GUIGraphicsContext.RenderMadVrLock)
       {
         try
         {
