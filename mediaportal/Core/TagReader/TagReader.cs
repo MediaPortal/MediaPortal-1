@@ -358,6 +358,7 @@ namespace MediaPortal.TagReader
         case ".mpc":
         case ".mp+":
         case ".mpp":
+        case ".opus":
           return true;
       }
 
