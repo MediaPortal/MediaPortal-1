@@ -326,11 +326,15 @@ void MPMadPresenter::DeInitMadvrWindow()
   // destroy the hidden window
   DestroyWindow(m_hWnd);
 
+  Log("%s : DestroyWindow window - hWnd: %i", __FUNCTION__, m_hWnd);
+
   // unregister the window class
   UnregisterClass(m_className.c_str(), m_hInstance);
 
   // reset the hWnd
   m_hWnd = nullptr;
+
+  Log("%s : DestroyWindow window - done", __FUNCTION__);
 }
 
 bool MPMadPresenter::InitMadvrWindow(HWND &hWnd)
@@ -406,6 +410,7 @@ void MPMadPresenter::SetDsWndVisible(bool bVisible)
   bVisible ? cmd = SW_SHOW : cmd = SW_HIDE;
   ShowWindow(m_hWnd, cmd);
   UpdateWindow(m_hWnd);
+  Log("%s : Set DSPlayer window - Visible: %i", __FUNCTION__, cmd);
 }
 
 HRESULT MPMadPresenter::Stopping()
@@ -491,7 +496,7 @@ HRESULT MPMadPresenter::ClearBackground(LPCSTR name, REFERENCE_TIME frameStart, 
   WORD videoHeight = (WORD)activeVideoRect->bottom - (WORD)activeVideoRect->top;
   WORD videoWidth = (WORD)activeVideoRect->right - (WORD)activeVideoRect->left;
 
-  CAutoLock cAutoLock(this);
+  //CAutoLock cAutoLock(this);
 
   //// Ugly hack to avoid flickering (most occurs on Intel GPU)
   //bool isFullScreen = m_pCallback->IsFullScreen();
@@ -575,7 +580,7 @@ HRESULT MPMadPresenter::RenderOsd(LPCSTR name, REFERENCE_TIME frameStart, RECT* 
   WORD videoHeight = (WORD)activeVideoRect->bottom - (WORD)activeVideoRect->top;
   WORD videoWidth = (WORD)activeVideoRect->right - (WORD)activeVideoRect->left;
 
-  CAutoLock cAutoLock(this);
+  //CAutoLock cAutoLock(this);
 
   //// Ugly hack to avoid flickering (most occurs on Intel GPU)
   //bool isFullScreen = m_pCallback->IsFullScreen();
@@ -781,7 +786,7 @@ HRESULT MPMadPresenter::SetDeviceOsd(IDirect3DDevice9* pD3DDev)
   // Lock madVR thread while Shutdown()
   CAutoLock lock(&m_dsLock);
 
-  CAutoLock cAutoLock(this);
+  //CAutoLock cAutoLock(this);
   if (!pD3DDev)
   {
     // release all resources
@@ -806,7 +811,7 @@ HRESULT MPMadPresenter::SetDevice(IDirect3DDevice9* pD3DDev)
   // Lock madVR thread while Shutdown()
   CAutoLock lock(&m_dsLock);
 
-  CAutoLock cAutoLock(this);
+  //CAutoLock cAutoLock(this);
 
   Log("MPMadPresenter::SetDevice() device 0x:%x", pD3DDev);
 
