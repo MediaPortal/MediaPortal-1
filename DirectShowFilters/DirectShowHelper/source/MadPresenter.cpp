@@ -832,6 +832,10 @@ HRESULT MPMadPresenter::SetDevice(IDirect3DDevice9* pD3DDev)
       {
         hr = S_OK;
         Log("MPMadPresenter::SetDevice() init ok for D3D : 0x:%x", m_pMadD3DDev);
+
+        // Init created madVR window instance.
+        SetDsWndVisible(true);
+        Log("MPMadPresenter::SetDevice() init madVR Window");
       }
 
     // Get refresh rate information
@@ -853,9 +857,6 @@ HRESULT MPMadPresenter::SetDevice(IDirect3DDevice9* pD3DDev)
     m_deviceState.Shutdown();
     Log("MPMadPresenter::SetDevice() Shutdown() 2");
   }
-
-  // Init created madVR window instance.
-  SetDsWndVisible(true);
 
   return hr;
 }
