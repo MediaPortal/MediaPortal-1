@@ -1055,8 +1055,8 @@ namespace MediaPortal.Player
         if (_basicVideo != null)
         {
           // TODO why it is needed for some video to be able to reduce fullscreen video window
-          _basicVideo.SetDestinationPosition(0, 0, 4, 4);
-          //Log.Error("BDPlayer: hide video window");
+          _basicVideo.SetDestinationPosition(_positionX, _positionY, _width, _height);
+          Log.Debug("BDPlayer: rezise madVR video window _positionX : {0}, _positionY : {1}, _width : {2}, _height : {3}", _positionX, _positionY, _width, _height);
         }
       }
 
