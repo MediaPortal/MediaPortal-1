@@ -1143,16 +1143,6 @@ namespace MediaPortal.Player
         return;
       }
 
-      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && !_isFullscreen)
-      {
-        if (_basicVideo != null)
-        {
-          // TODO why it is needed for some video to be able to reduce fullscreen video window
-          _basicVideo.SetDestinationPosition(_positionX, _positionY, _width, _height);
-          Log.Debug("BDPlayer: rezise madVR video window _positionX : {0}, _positionY : {1}, _width : {2}, _height : {3}", _positionX, _positionY, _width, _height);
-        }
-      }
-
       _updateNeeded = false;
       GUIGraphicsContext.UpdateVideoWindow = false;
 
@@ -1232,6 +1222,16 @@ namespace MediaPortal.Player
       SetVideoPosition(rDest);
       _sourceRectangle = rSource;
       _videoRectangle = rDest;
+
+      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && !_isFullscreen)
+      {
+        if (_basicVideo != null)
+        {
+          // TODO why it is needed for some video to be able to reduce fullscreen video window
+          _basicVideo.SetDestinationPosition(_positionX, _positionY, _width, _height);
+          Log.Debug("BDPlayer: rezise madVR video window _positionX : {0}, _positionY : {1}, _width : {2}, _height : {3}", _positionX, _positionY, _width, _height);
+        }
+      }
     }
 
     public override bool Ended
@@ -1272,7 +1272,7 @@ namespace MediaPortal.Player
                 {
                   // Here is to hide video window madVR when skin didn't handle video overlay (the value need to be different from GUIVideoControl Render)
                   _basicVideo.SetDestinationPosition(-100, -100, 50, 50);
-                  //Log.Error("VMR7 hide video window");
+                  //Log.Error("BDPlayer: hide video window");
                 }
               }
             }
@@ -1297,7 +1297,7 @@ namespace MediaPortal.Player
               {
                 _basicVideo.SetDestinationPosition(0, 0, GUIGraphicsContext.VideoWindowWidth,
                   GUIGraphicsContext.VideoWindowHeight);
-                //Log.Error("VMR7 show video window");
+                //Log.Error("BDPlayer: show video window");
               }
             }
           }

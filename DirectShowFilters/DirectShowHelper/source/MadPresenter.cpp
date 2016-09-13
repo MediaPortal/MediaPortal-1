@@ -174,7 +174,6 @@ IBaseFilter* MPMadPresenter::Initialize()
       {
         Log("%s : Create DSPlayer window - hWnd: %i", __FUNCTION__, m_hWnd);
         pWindow->put_Owner(reinterpret_cast<OAHWND>(m_hWnd));
-        //SetDsWndVisible(true); // disable here to don't avoid displaying MP GUi rendering.
       }
     }
     return baseFilter;
@@ -858,6 +857,10 @@ HRESULT MPMadPresenter::SetDevice(IDirect3DDevice9* pD3DDev)
     Log("MPMadPresenter::SetDevice() Shutdown() 2");
   }
 
+  // Init created madVR window instance.
+  SetDsWndVisible(true);
+  Log("MPMadPresenter::SetDevice() init madVR Window");
+
   return hr;
 }
 
@@ -892,10 +895,6 @@ HRESULT MPMadPresenter::Render(REFERENCE_TIME frameStart, int left, int top, int
       {
         m_pCallback->SetSubtitleDevice((DWORD)m_pMadD3DDev);
         Log("MPMadPresenter::SetDevice() SetSubtitleDevice for D3D : 0x:%x", m_pMadD3DDev);
-
-        // Init created madVR window instance.
-        SetDsWndVisible(true);
-        Log("MPMadPresenter::SetDevice() init madVR Window");
       }
       m_pInitOSDRender = true;
 
