@@ -669,16 +669,6 @@ namespace MediaPortal.Player
           return;
         }
 
-        if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && !_isFullscreen)
-        {
-          if (_basicVideo != null)
-          {
-            // TODO why it is needed for some video to be able to reduce fullscreen video window
-            _basicVideo.SetDestinationPosition(_positionX, _positionY, _width, _height);
-            Log.Debug("TsReader: rezise madVR video window _positionX : {0}, _positionY : {1}, _width : {2}, _height : {3}", _positionX, _positionY, _width, _height);
-          }
-        }
-
         _updateNeeded = false;
         GUIGraphicsContext.UpdateVideoWindow = false;
 
@@ -757,6 +747,16 @@ namespace MediaPortal.Player
         SetVideoPosition(rDest);
         _sourceRectangle = rSource;
         _videoRectangle = rDest;
+
+        if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && !_isFullscreen)
+        {
+          if (_basicVideo != null)
+          {
+            // TODO why it is needed for some video to be able to reduce fullscreen video window
+            _basicVideo.SetDestinationPosition(_positionX, _positionY, _width, _height);
+            Log.Debug("TsReader: rezise madVR video window _positionX : {0}, _positionY : {1}, _width : {2}, _height : {3}", _positionX, _positionY, _width, _height);
+          }
+        }
       }
     }
 

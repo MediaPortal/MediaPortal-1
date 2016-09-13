@@ -1088,21 +1088,18 @@ namespace MediaPortal.GUI.Library
 
           if (!_overlay)
           {
-            if (!SetVideoWindowDone)
+            lock (RenderMadVrLock)
             {
-              SetVideoWindowDone = true;
-              if (bOldOverlay)
-              {
-                GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETVIDEOWINDOW, 0, 0, 0, 1, 0, null);
-                GUIWindowManager.SendThreadMessage(msg);
-              }
-              else
-              {
-                GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETVIDEOWINDOW, 0, 0, 0, 0, 0, null);
-                GUIWindowManager.SendThreadMessage(msg);
-              }
+              VideoWindow = GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR ? new Rectangle(0, 0, 2, 2) : new Rectangle(0, 0, 1, 1);
             }
+          }
 
+          if (bOldOverlay != _overlay && OnVideoWindowChanged != null)
+          {
+            lock (RenderMadVrLock)
+            {
+              VideoWindowChanged();
+            }
           }
         }
       }
@@ -1124,17 +1121,6 @@ namespace MediaPortal.GUI.Library
             VideoWindowChangedDone = false;
             Log.Debug("GraphicContext VideoWindowChanged() SendThreadMessage received");
           }
-          break;
-        case GUIMessage.MessageType.GUI_MSG_SETVIDEOWINDOW:
-          // Here is a call from a different thread like madVR when switching from fullscreen/windowed
-          bool bOldOverlay = message.Param1 == 1;
-          VideoWindow = new Rectangle(0, 0, 1, 1);
-          GUIGraphicsContext.IsWindowVisible = true;
-          if (bOldOverlay != _overlay)
-          {
-            VideoWindowChanged();
-          }
-          SetVideoWindowDone = false;
           break;
       }
     }
