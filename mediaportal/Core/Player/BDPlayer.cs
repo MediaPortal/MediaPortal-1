@@ -1143,7 +1143,7 @@ namespace MediaPortal.Player
         return;
       }
 
-      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && !_isFullscreen)
       {
         if (_basicVideo != null)
         {
