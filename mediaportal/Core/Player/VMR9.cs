@@ -619,6 +619,11 @@ namespace MediaPortal.Player
             }
           }
           hr = new HResult(graphBuilder.AddFilter(_vmr9Filter, "Enhanced Video Renderer"));
+
+          // Adding put_Owner here.
+          IVideoWindow videoWin = (IVideoWindow)graphBuilder;
+          videoWin.put_Owner(GUIGraphicsContext.ActiveForm);
+
           Log.Info("VMR9: added EVR Renderer to graph");
         }
         else if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
