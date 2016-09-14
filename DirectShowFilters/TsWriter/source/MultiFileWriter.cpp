@@ -69,20 +69,17 @@ CDiskBuff::~CDiskBuff()
 }
 
 // Adds data contained to this buffer
-void CDiskBuff::Add(byte* data, int len)
+int CDiskBuff::Add(byte* data, int len)
 {
-	if((m_iSize >= m_iLength + len ) && data) 
+  if((m_iSize >= m_iLength + len ) && data) 
   {
     memcpy(&m_pBuffer[m_iLength], data, len);
     m_iLength+=len;
+    return 0; //All data written
   }
   else
   {
-    LogDebug("CDiskBuff::Add - sanity check failed! Buffer size %d, data length %d", m_iSize, m_iLength + len );
-    if(data == NULL)
-    {
-      LogDebug("  data was NULL!");
-    }
+    return len; //No data written/consumed
   }
 }
 
@@ -126,21 +123,14 @@ MultiFileWriter::MultiFileWriter(MultiFileWriterParam *pWriterParams) :
 {
 	m_pCurrentTSFile = new FileWriter();
 	m_pCurrentTSFile->SetChunkReserve(m_chunkReserve, m_maxTSFileSize);
-	StartThread();
 }
 
 MultiFileWriter::~MultiFileWriter()
 {
-	StopThread();
-	
-	if (m_pCurrentTSFile)
-		delete[] m_pCurrentTSFile;
+	CloseFile();
 
-	if (m_pTSBufferFileName)
-	{
-	  LogDebug(L"MultiFileWriter: Dtor(), filename: %s, Max buffers used: %d", m_pTSBufferFileName, m_maxBuffersUsed);
-		delete[] m_pTSBufferFileName;
-	}
+	if (m_pCurrentTSFile)
+		delete[] m_pCurrentTSFile;	
 }
 
 HRESULT MultiFileWriter::GetFileName(LPOLESTR *lpszFileName)
@@ -178,6 +168,8 @@ HRESULT MultiFileWriter::SetFileName(LPCWSTR pszFileName)
 	if (m_pTSBufferFileName == NULL)
 		return E_OUTOFMEMORY;
 	wcscpy(m_pTSBufferFileName, pszFileName);
+
+	StartThread();
 
   m_WakeThreadEvent.Set(); //Trigger thread to open file
 	
@@ -242,6 +234,7 @@ HRESULT MultiFileWriter::OpenFile()
 HRESULT MultiFileWriter::CloseFile()
 {	
   //Wait for all buffers to be written to disk
+  PushBuffer(); //Force temp buffer onto queue
   m_WakeThreadEvent.Set();
   for (;;)
   { 
@@ -261,19 +254,31 @@ HRESULT MultiFileWriter::CloseFile()
     Sleep(1);
   }
 
-  //Don't lock before this point to avoid deadlock when m_writeQueue.size() > 0
+  //Don't m_Lock before this point to avoid deadlock when m_writeQueue.size() > 0
+  
+  StopThread();
   
   { //Context for CAutoLock
   	CAutoLock lock(&m_Lock);
   
   	ClearBuffers();
-  
-  	CloseHandle(m_hTSBufferFile);
-  	m_hTSBufferFile = INVALID_HANDLE_VALUE;
+  	  
+  	if (m_hTSBufferFile != INVALID_HANDLE_VALUE)
+  	{
+    	CloseHandle(m_hTSBufferFile);
+    	m_hTSBufferFile = INVALID_HANDLE_VALUE;
+    }
   
   	m_pCurrentTSFile->CloseFile();
   	
   	CleanupFiles();
+  	
+  	if (m_pTSBufferFileName)
+  	{
+  	  LogDebug(L"MultiFileWriter: CloseFile(), filename: %s, Max buffers used: %d", m_pTSBufferFileName, m_maxBuffersUsed);
+  		delete[] m_pTSBufferFileName;
+ 		  m_pTSBufferFileName = NULL;
+ 	  }
   }
 		
 	return S_OK;
@@ -732,35 +737,6 @@ HRESULT MultiFileWriter::GetAvailableDiskSpace(__int64* llAvailableDiskSpace)
 	return hr;
 }
 
-
-LPWSTR MultiFileWriter::getBufferFileName(void)
-{
-	CAutoLock lock(&m_Lock);
-	return 	m_pTSBufferFileName;
-}
-
-void MultiFileWriter::setBufferFileName(LPWSTR fileName)
-{
-//	CheckPointer(fileName,E_POINTER);
-
-	if(wcslen(fileName) > MAX_PATH)
-		return;// ERROR_FILENAME_EXCED_RANGE;
-
-	CAutoLock lock(&m_Lock);
-
-	// Take a copy of the filename
-	if (m_pTSBufferFileName)
-	{
-		delete[] m_pTSBufferFileName;
-		m_pTSBufferFileName = NULL;
-	}
-	m_pTSBufferFileName = new WCHAR[1+lstrlenW(fileName)];
-	if (m_pTSBufferFileName == NULL)
-		return;// E_OUTOFMEMORY;
-
-	wcscpy(m_pTSBufferFileName, fileName);
-}
-
 FileWriter* MultiFileWriter::getCurrentTSFile(void)
 {
 	CAutoLock lock(&m_Lock);
@@ -865,53 +841,76 @@ void MultiFileWriter::ClearBuffers()
   m_bBufferFull = FALSE;
 }
 
-HRESULT MultiFileWriter::Write(PBYTE pbData, ULONG lDataLength)
+
+
+////**************************************
+//// Temporary Disk Buffer methods
+////
+
+HRESULT MultiFileWriter::NewBuffer(int size)
 {
-	CheckPointer(pbData,E_POINTER);
-	if (lDataLength == 0)
-		return S_OK;
-
-  // Has a filename been set yet?
-	if (m_pTSBufferFileName == NULL)
-		return S_FALSE;
-
-  {//Context for CAutoLock
-    CAutoLock lock(&m_qLock);
-    
-  	if (m_bBufferFull)
-  		return S_FALSE;
-  		
-    if (m_writeQueue.size() >= FULL_BUFFERS)
-    {
-      //queue too large - abort and discard data
-      m_bBufferFull = TRUE;
-		  return S_FALSE;
-    }
-  }
-
-  //Copy data into new buffer and push pointer onto queue
-  CDiskBuff* diskBuffer = NULL;
+  if (m_pDiskBuffer != NULL) return S_FALSE;
+  	
   try 
   {
-    diskBuffer = new CDiskBuff(lDataLength);		
+    m_pDiskBuffer = new CDiskBuff(size);    
   }
   catch(...)
   {
-    LogDebug("MultiFileWriter::Write() buffer allocation exception, lDataLength = %d", lDataLength);
+    LogDebug("MultiFileWriter::NewBuffer() buffer allocation exception, size = %d", size);
     return S_FALSE;
   }
-  
-  diskBuffer->Add(pbData,lDataLength);
-  { //Context for CAutoLock
-  	CAutoLock lock(&m_qLock);
-    m_writeQueue.push_back(diskBuffer);   
-  }
-  
-  m_WakeThreadEvent.Set();
-		
   return S_OK;
 }
 
+HRESULT MultiFileWriter::AddToBuffer(byte* pbData, int len, int newBuffSize)
+{
+  if (m_pDiskBuffer == NULL)
+  {
+    NewBuffer(newBuffSize);
+  }   
+    
+	if (m_pDiskBuffer->Add(pbData,len) > 0)
+	{
+	  //Not enough space to add data to current buffer
+    PushBuffer(); //Push the current buffer onto the disk write queue
+    NewBuffer(newBuffSize);
+  	if (m_pDiskBuffer->Add(pbData,len) != 0)
+  	{
+      return E_FAIL;
+ 	  }
+    return S_FALSE;
+	}
+	
+  return S_OK;
+}
+
+HRESULT MultiFileWriter::PushBuffer()
+{
+  // Has a filename been set yet?
+  if (m_pTSBufferFileName == NULL)
+  {
+		DiscardBuffer();
+    return S_FALSE;
+  }
+  
+  if (m_pDiskBuffer == NULL) return S_FALSE;
+  { //Context for CAutoLock
+    CAutoLock lock(&m_qLock);
+    m_writeQueue.push_back(m_pDiskBuffer);
+    m_pDiskBuffer = NULL;   
+  }	  
+  m_WakeThreadEvent.Set();    
+	return S_OK;
+}
+
+HRESULT MultiFileWriter::DiscardBuffer()
+{
+  if (m_pDiskBuffer == NULL) return S_OK;
+  delete m_pDiskBuffer;
+  m_pDiskBuffer = NULL;
+	return S_OK;
+}
 
 ////**************************************
 //// Write Thread methods
@@ -1016,8 +1015,6 @@ void MultiFileWriter::StartThread()
 
 void MultiFileWriter::StopThread()
 {
-	CloseFile();
-
   if (m_hThreadProc)
   {
     m_bThreadRunning = FALSE;

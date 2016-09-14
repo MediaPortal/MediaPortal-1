@@ -44,7 +44,7 @@ public:
   ~CDiskBuffWT(void);
   int    Length();
   byte*  Data();
-  void   Add(byte* data, int len);
+  int    Add(byte* data, int len);
 
 private:
   byte* m_pBuffer;
@@ -62,7 +62,9 @@ public:
 
 	HRESULT GetFileName(LPWSTR *lpszFileName);
 	HRESULT SetFileName(LPCWSTR pszFileName);
-  HRESULT Write(PBYTE pbData, ULONG lDataLength);
+  
+	HRESULT AddToBuffer(byte* pbData, int len, int newBuffSize);
+	HRESULT DiscardBuffer();
 
 
 protected:
@@ -72,11 +74,14 @@ protected:
 	int    m_iPart;
 
 	BOOL m_bWriteFailed;
+	CDiskBuffWT* m_pDiskBuffer;
 	
 	UINT m_maxBuffersUsed;
 	BOOL m_bDiskFull;
 	BOOL m_bBufferFull;
 	
+	HRESULT PushBuffer();
+	HRESULT NewBuffer(int size);
 	void ClearBuffers();
 	HRESULT OpenFile();
 	HRESULT CloseFile();

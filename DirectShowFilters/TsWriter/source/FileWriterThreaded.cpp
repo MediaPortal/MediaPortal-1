@@ -68,20 +68,17 @@ CDiskBuffWT::~CDiskBuffWT()
 }
 
 // Adds data contained to this buffer
-void CDiskBuffWT::Add(byte* data, int len)
+int CDiskBuffWT::Add(byte* data, int len)
 {
   if((m_iSize >= m_iLength + len ) && data) 
   {
     memcpy(&m_pBuffer[m_iLength], data, len);
     m_iLength+=len;
+    return 0; //All data written
   }
   else
   {
-    LogDebug("CDiskBuffWT::Add - sanity check failed! Buffer size %d, data length %d", m_iSize, m_iLength + len );
-    if(data == NULL)
-    {
-      LogDebug("  data was NULL!");
-    }
+    return len; //No data written/consumed
   }
 }
 
@@ -110,22 +107,16 @@ FileWriterThreaded::FileWriterThreaded() :
   m_pFileName(0),
   m_iPart(2),
   m_maxBuffersUsed(0),
+  m_pDiskBuffer(NULL),
   m_bDiskFull(FALSE),
   m_bBufferFull(FALSE),
   m_bWriteFailed(FALSE)
 {
-  StartThread();
 }
 
 FileWriterThreaded::~FileWriterThreaded()
 {
-  StopThread();
-    
-  if (m_pFileName)
-  {
-    LogDebug(L"FileWriterThreaded: Dtor() succeeded, filename: %s, Max buffers used: %d", m_pFileName, m_maxBuffersUsed);
-    delete m_pFileName;
-  }
+  CloseFile();    
 }
 
 HRESULT FileWriterThreaded::GetFileName(LPWSTR *lpszFileName)
@@ -165,6 +156,8 @@ HRESULT FileWriterThreaded::SetFileName(LPCWSTR pszFileName)
     return E_OUTOFMEMORY;
 
   wcscpy(m_pFileName,pszFileName);
+
+  StartThread();
 
   m_WakeThreadEvent.Set(); //Trigger thread to open file
 
@@ -244,6 +237,7 @@ HRESULT FileWriterThreaded::OpenFile()
 HRESULT FileWriterThreaded::CloseFile()
 {  
   //Wait for all buffers to be written to disk
+  PushBuffer(); //Force temp buffer onto queue
   m_WakeThreadEvent.Set();
   for (;;)
   { 
@@ -264,6 +258,8 @@ HRESULT FileWriterThreaded::CloseFile()
   }
 
   //Don't lock before this point to avoid deadlock when m_writeQueue.size() > 0
+
+  StopThread();
   
   { //Context for CAutoLock
     CAutoLock lock(&m_Lock);
@@ -272,6 +268,12 @@ HRESULT FileWriterThreaded::CloseFile()
   
     CloseHandle(m_hFile);
     m_hFile = INVALID_HANDLE_VALUE;
+    
+    if (m_pFileName)
+    {
+      LogDebug(L"FileWriterThreaded: CloseFile() succeeded, filename: %s, Max buffers used: %d", m_pFileName, m_maxBuffersUsed);
+      delete m_pFileName;
+    }
   }
 
   return S_OK;
@@ -412,55 +414,75 @@ void FileWriterThreaded::ClearBuffers()
   m_bBufferFull = FALSE;
 }
 
-HRESULT FileWriterThreaded::Write(PBYTE pbData, ULONG lDataLength)
+
+////**************************************
+//// Temporary Disk Buffer methods
+////
+
+HRESULT FileWriterThreaded::NewBuffer(int size)
 {
-  CheckPointer(pbData,E_POINTER);
-  if (lDataLength == 0)
-    return S_OK;
-
-  // Has a filename been set yet?
-  if (m_pFileName == NULL)
-  {
-    return S_FALSE;
-  }
-
-  {//Context for CAutoLock
-    CAutoLock lock(&m_qLock);
-    
-    if (m_bBufferFull)
-      return S_FALSE;
-      
-    if (m_writeQueue.size() >= FULL_BUFFERS)
-    {
-      //queue too large - abort and discard data
-      m_bBufferFull = TRUE;
-      return S_FALSE;
-    }
-  }
-
-  //Copy data into new buffer and push pointer onto queue
-  CDiskBuffWT* diskBuffer = NULL;
+  if (m_pDiskBuffer != NULL) return S_FALSE;
+  	
   try 
   {
-    diskBuffer = new CDiskBuffWT(lDataLength);    
+    m_pDiskBuffer = new CDiskBuffWT(size);    
   }
   catch(...)
   {
-    LogDebug("FileWriterThreaded::Write() buffer allocation exception, lDataLength = %d", lDataLength);
+    LogDebug("FileWriterThreaded::NewBuffer() buffer allocation exception, size = %d", size);
     return S_FALSE;
   }
-  
-  diskBuffer->Add(pbData,lDataLength);
-  { //Context for CAutoLock
-    CAutoLock lock(&m_qLock);
-    m_writeQueue.push_back(diskBuffer);   
-  }
-  
-  m_WakeThreadEvent.Set();
-    
   return S_OK;
 }
 
+HRESULT FileWriterThreaded::AddToBuffer(byte* pbData, int len, int newBuffSize)
+{
+  if (m_pDiskBuffer == NULL)
+  {
+    NewBuffer(newBuffSize);
+  }   
+    
+	if (m_pDiskBuffer->Add(pbData,len) > 0)
+	{
+	  //Not enough space to add data to current buffer
+    PushBuffer(); //Push the current buffer onto the disk write queue
+    NewBuffer(newBuffSize);
+  	if (m_pDiskBuffer->Add(pbData,len) != 0)
+  	{
+      return E_FAIL;
+ 	  }
+    return S_FALSE;
+	}
+	
+  return S_OK;
+}
+
+HRESULT FileWriterThreaded::PushBuffer()
+{
+  // Has a filename been set yet?
+  if (m_pFileName == NULL)
+  {
+		DiscardBuffer();
+    return S_FALSE;
+  }
+  
+  if (m_pDiskBuffer == NULL) return S_FALSE;
+  { //Context for CAutoLock
+    CAutoLock lock(&m_qLock);
+    m_writeQueue.push_back(m_pDiskBuffer);
+    m_pDiskBuffer = NULL;   
+  }	  
+  m_WakeThreadEvent.Set();    
+	return S_OK;
+}
+
+HRESULT FileWriterThreaded::DiscardBuffer()
+{
+  if (m_pDiskBuffer == NULL) return S_OK;
+  delete m_pDiskBuffer;
+  m_pDiskBuffer = NULL;
+	return S_OK;
+}
 
 ////**************************************
 //// Write Thread methods
@@ -565,8 +587,6 @@ void FileWriterThreaded::StartThread()
 
 void FileWriterThreaded::StopThread()
 {
-  CloseFile();
-
   if (m_hThreadProc)
   {
     m_bThreadRunning = FALSE;

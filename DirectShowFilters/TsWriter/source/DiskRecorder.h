@@ -123,10 +123,11 @@ private:
 	void SetPcrPid(int pcrPid);
 	bool IsStreamWanted(int stream_type);
 	void AddStream(PidInfo2 pidInfo);
-  void Flush();
 	void WriteTs(byte* tsPacket);
   void WriteFakePAT();  
   void WriteFakePMT();
+  void AdjustThrottle();
+  void ResetThrottle();
 
   __int64 EcPcrTime(__int64 New, __int64 Prev) ;
   void PatchPcr(byte* tsPacket,CTsHeader& header);
@@ -159,7 +160,6 @@ private:
 	int			        m_iPmtVersion;
 	int             m_iPart;
   byte*           m_pWriteBuffer;
-  int             m_iWriteBufferPos;
   int			  m_iWriteBufferSize;
   int			m_iThrottleBufferSizes[NUMBER_THROTTLE_BUFFER_SIZES];
   int				m_iWriteBufferThrottle;

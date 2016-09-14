@@ -54,7 +54,7 @@ public:
   ~CDiskBuff(void);
   int    Length();
   byte*  Data();
-  void   Add(byte* data, int len);
+  int    Add(byte* data, int len);
 
 private:
   byte* m_pBuffer;
@@ -71,7 +71,9 @@ public:
 	HRESULT GetFileName(LPWSTR *lpszFileName);
 	HRESULT SetFileName(LPCWSTR pszFileName);
 	HRESULT GetFileSize(__int64 *lpllsize);	
-  HRESULT Write(PBYTE pbData, ULONG lDataLength);
+//  HRESULT Write(PBYTE pbData, ULONG lDataLength);
+	HRESULT AddToBuffer(byte* pbData, int len, int newBuffSize);
+	HRESULT DiscardBuffer();
 
 	long getNumbFilesAdded(void);
 	long getNumbFilesRemoved(void);
@@ -92,9 +94,13 @@ protected:
 	HRESULT CloseFile();
 	HRESULT WriteToDisk(PBYTE pbData, ULONG lDataLength);
 	HRESULT GetAvailableDiskSpace(__int64* llAvailableDiskSpace);
-	LPWSTR getBufferFileName(void);
-	void setBufferFileName(LPWSTR fileName);
+//	LPWSTR getBufferFileName(void);
+//	void setBufferFileName(LPWSTR fileName);
 	FileWriter* getCurrentTSFile(void);
+
+	HRESULT PushBuffer();
+	HRESULT NewBuffer(int size);
+	void ClearBuffers();
 
 	HRESULT PrepareTSFile();
 	HRESULT CreateNewTSFile();
@@ -103,10 +109,10 @@ protected:
 	HRESULT WriteTSBufferFile();
 	HRESULT CleanupFiles();
 	BOOL IsFileLocked(LPWSTR pFilename);
-	void ClearBuffers();
 
 	HANDLE m_hTSBufferFile;
 	LPWSTR m_pTSBufferFileName;
+	CDiskBuff* m_pDiskBuffer;
 
 	CCritSec m_Lock;
 
