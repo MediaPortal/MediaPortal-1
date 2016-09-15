@@ -118,6 +118,7 @@ MultiFileWriter::MultiFileWriter(MultiFileWriterParam *pWriterParams) :
 	m_maxTSFileSize(pWriterParams->maxSize),	
 	m_chunkReserve(pWriterParams->chunkSize),
 	m_maxBuffersUsed(0),
+  m_pDiskBuffer(NULL),
 	m_bDiskFull(FALSE),
 	m_bBufferFull(FALSE)
 {
@@ -130,7 +131,9 @@ MultiFileWriter::~MultiFileWriter()
 	CloseFile();
 
 	if (m_pCurrentTSFile)
-		delete[] m_pCurrentTSFile;	
+		delete[] m_pCurrentTSFile;
+			
+  LogDebug("MultiFileWriter::Dtor() end");
 }
 
 HRESULT MultiFileWriter::GetFileName(LPOLESTR *lpszFileName)
@@ -857,8 +860,9 @@ HRESULT MultiFileWriter::NewBuffer(int size)
   }
   catch(...)
   {
+    m_pDiskBuffer = NULL;
     LogDebug("MultiFileWriter::NewBuffer() buffer allocation exception, size = %d", size);
-    return S_FALSE;
+    return E_FAIL;
   }
   return S_OK;
 }
@@ -867,14 +871,20 @@ HRESULT MultiFileWriter::AddToBuffer(byte* pbData, int len, int newBuffSize)
 {
   if (m_pDiskBuffer == NULL)
   {
-    NewBuffer(newBuffSize);
+    if (NewBuffer(newBuffSize) != S_OK)
+    {
+      return E_FAIL;    
+    }
   }   
     
 	if (m_pDiskBuffer->Add(pbData,len) > 0)
 	{
 	  //Not enough space to add data to current buffer
     PushBuffer(); //Push the current buffer onto the disk write queue
-    NewBuffer(newBuffSize);
+    if (NewBuffer(newBuffSize) != S_OK)
+    {
+      return E_FAIL;    
+    }
   	if (m_pDiskBuffer->Add(pbData,len) != 0)
   	{
       return E_FAIL;
@@ -906,9 +916,11 @@ HRESULT MultiFileWriter::PushBuffer()
 
 HRESULT MultiFileWriter::DiscardBuffer()
 {
-  if (m_pDiskBuffer == NULL) return S_OK;
-  delete m_pDiskBuffer;
-  m_pDiskBuffer = NULL;
+  if (m_pDiskBuffer != NULL)
+  {
+    delete m_pDiskBuffer;
+    m_pDiskBuffer = NULL;
+  }
 	return S_OK;
 }
 

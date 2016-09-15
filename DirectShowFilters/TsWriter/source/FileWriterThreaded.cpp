@@ -117,6 +117,7 @@ FileWriterThreaded::FileWriterThreaded() :
 FileWriterThreaded::~FileWriterThreaded()
 {
   CloseFile();    
+  LogDebug("FileWriterThreaded::Dtor() end");
 }
 
 HRESULT FileWriterThreaded::GetFileName(LPWSTR *lpszFileName)
@@ -429,8 +430,9 @@ HRESULT FileWriterThreaded::NewBuffer(int size)
   }
   catch(...)
   {
+    m_pDiskBuffer = NULL;
     LogDebug("FileWriterThreaded::NewBuffer() buffer allocation exception, size = %d", size);
-    return S_FALSE;
+    return E_FAIL;
   }
   return S_OK;
 }
@@ -439,14 +441,20 @@ HRESULT FileWriterThreaded::AddToBuffer(byte* pbData, int len, int newBuffSize)
 {
   if (m_pDiskBuffer == NULL)
   {
-    NewBuffer(newBuffSize);
+    if (NewBuffer(newBuffSize) != S_OK)
+    {
+      return E_FAIL;    
+    }
   }   
     
 	if (m_pDiskBuffer->Add(pbData,len) > 0)
 	{
 	  //Not enough space to add data to current buffer
     PushBuffer(); //Push the current buffer onto the disk write queue
-    NewBuffer(newBuffSize);
+    if (NewBuffer(newBuffSize) != S_OK)
+    {
+      return E_FAIL;    
+    }
   	if (m_pDiskBuffer->Add(pbData,len) != 0)
   	{
       return E_FAIL;
@@ -478,9 +486,11 @@ HRESULT FileWriterThreaded::PushBuffer()
 
 HRESULT FileWriterThreaded::DiscardBuffer()
 {
-  if (m_pDiskBuffer == NULL) return S_OK;
-  delete m_pDiskBuffer;
-  m_pDiskBuffer = NULL;
+  if (m_pDiskBuffer != NULL)
+  {
+    delete m_pDiskBuffer;
+    m_pDiskBuffer = NULL;
+  }
 	return S_OK;
 }
 
