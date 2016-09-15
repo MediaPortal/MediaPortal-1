@@ -6,10 +6,11 @@
     <Channel id="40 TV" siteId="40-tv" />
     <Channel id="7 TV Murcia" siteId="7rm" />
     <Channel id="8Madrid TV" siteId="8madrid-tv" />
-    <Channel id="A&amp;E España" siteId="a-e-espana" />
+    <Channel id="A&amp;E" siteId="a-e-espana" />
     <Channel id="Al Jazeera" siteId="al-jazeera" />
     <Channel id="AMC" siteId="amc-espana" />
     <Channel id="Antena 3" siteId="antena3" />
+    <Channel id="Atreseries" siteId="atreseries" />
     <Channel id="Aragontelevisión" siteId="atv" />
     <Channel id="AXN" siteId="axn" />
     <Channel id="AXN White" siteId="axnwhite" />
@@ -18,23 +19,24 @@
     <Channel id="BBC World" siteId="bbc-world" />
     <Channel id="Bloomberg" siteId="bloomberg" />
     <Channel id="Boing" siteId="boing" />
-    <Channel id="Buzz18" siteId="buzz" />
+    <Channel id="Buzz" siteId="buzz" />
     <Channel id="24horas" siteId="canal24horas" />
     <Channel id="Calle 13" siteId="calle13" />
-    <Channel id="Canal+1" siteId="canalplus1" />
-    <Channel id="Canal+2" siteId="canalplus2" />
-    <Channel id="Canal+30" siteId="canalplus1-30" />
-    <Channel id="Canal+ 3D" siteId="canal-plus-3d" />
-    <Channel id="Canal+ Acción" siteId="canal-plus-accion" />
-    <Channel id="Canal+ Comedia" siteId="canal-plus-comedia" />
-    <Channel id="Canal+ Dcine" siteId="canalplus-dcine" />
-    <Channel id="Canal+ Deporte" siteId="canal-plus-deportes" />
-    <Channel id="Canal+ Fútbol" siteId="canal-plus-futbol" />
-    <Channel id="Canal+ Liga" siteId="canal-plus-liga" />
-    <Channel id="Canal+ Liga de campeones" siteId="canal-plus-liga-de-campeones" />
-    <Channel id="Canal+ Series" siteId="canal-plus-series" />
-    <Channel id="Canal+ Toros" siteId="canal-plus-toros" />
-    <Channel id="Canal+ Xtra" siteId="canal-plus-xtra" />
+    <Channel id="#0" siteId="movistar0" />
+    <Channel id="Somos" siteId="somos" />
+    <Channel id="El Garage TV" siteId="el-garage-tv" />
+    <Channel id="Clan" siteId="clan" />
+    <Channel id="C+ Acción" siteId="canalplus-accion" />
+    <Channel id="C+ Comedia" siteId="canal-plus-comedia" />
+    <Channel id="C+ Dcine" siteId="canalplus-dcine" />
+    <Channel id="Dcine Español" siteId="dcine-espanol" />
+    <Channel id="C+ Deporte" siteId="canal-plus-deportes" />
+    <Channel id="C+ Fútbol" siteId="canal-plus-futbol" />
+    <Channel id="C+ Liga" siteId="canal-plus-liga" />
+    <Channel id="C+ Liga de campeones" siteId="canal-plus-liga-de-campeones" />
+    <Channel id="C+ Series" siteId="canal-plus-series" />
+    <Channel id="C+ Toros" siteId="canal-plus-toros" />
+    <Channel id="C+ Xtra" siteId="canal-plus-xtra" />
     <Channel id="Canal Cocina" siteId="canal-cocina" />
     <Channel id="Canal de las Estrellas" siteId="canal-de-las-estrellas" />
     <Channel id="Canal Extremadura" siteId="canal-extremadura" />
@@ -49,20 +51,18 @@
     <Channel id="CNN" siteId="cnn" />
     <Channel id="Comedy Central" siteId="comedycentral" />
     <Channel id="Cosmopolitan" siteId="cosmopolitan" />
+    <Channel id="Cosmo" siteId="cosmopolitan" />
     <Channel id="CrimenInvestigación" siteId="crimen-investigacion" />
     <Channel id="Cuatro" siteId="cuatro" />
     <Channel id="DCine Español" siteId="dcine-espanol" />
     <Channel id="Decasa" siteId="decasa" />
     <Channel id="Discovery Channel" siteId="discovery-channel" />
-    <Channel id="Discovery Civilization" siteId="discovery-civilization" />
     <Channel id="Discovery MAX" siteId="discoverymax" />
-    <Channel id="Discovery Science" siteId="discovery-science" />
-    <Channel id="Discovery Turbo" siteId="discovery-turbo" />
     <Channel id="Disney Junior" siteId="disney-junior" />
     <Channel id="Disney Channel" siteId="disney-channel" />
     <Channel id="Disney XD" siteId="disney-xd" />
+    <Channel id="10" siteId="ten" />
     <Channel id="Divinity" siteId="divinity" />
-    <Channel id="El Garage Tv" siteId="el-garage-tv" />
     <Channel id="Energy" siteId="energy" />
     <Channel id="ETB1" siteId="etb1" />
     <Channel id="ETB2" siteId="etb2" />
@@ -80,20 +80,18 @@
     <Channel id="Iberalia" siteId="iberalia" />
     <Channel id="Intereconomía" siteId="intereconomia" />
     <Channel id="La 1" siteId="la1" />
-    <Channel id="Tve1" siteId="la1" />
     <Channel id="La 2" siteId="la2" />
     <Channel id="La Sexta" siteId="lasexta" />
     <Channel id="MotoGP" siteId="motogp" />
-    <Channel id="MTV 2" siteId="mtv-2" />
     <Channel id="MTV España" siteId="mtv-espana" />
-    <Channel id="MTV Hits" siteId="mtv-hits" />
+    <Channel id="Mega" siteId="mega-espana" />
     <Channel id="Nat Geograph" siteId="national-geographic" />
     <Channel id="Nat Geo Wild" siteId="nat-geo-wild" />
     <Channel id="Natura" siteId="canal-natura" />
     <Channel id="Neox" siteId="neox" />
     <Channel id="Nick Jr." siteId="nick-jr" />
     <Channel id="Nickelodeon" siteId="nick" />
-    <Channel id="Nova" siteId="nova" />
+    <Channel id="Nova" siteId="nova" />1
     <Channel id="Odisea" siteId="odisea" />
     <Channel id="Paramount Channel" siteId="paramountchannel" />
     <Channel id="Playboy TV" siteId="playboy-tv" />
@@ -106,7 +104,7 @@
     <Channel id="Television Canarias" siteId="tv-canaria" />
     <Channel id="TNT" siteId="tnt-espana" />
     <Channel id="Trace Sports" siteId="trace-sports-stars" />
-    <Channel id="TV3" siteId="tv3" />
+    <Channel id="TV3Cat" siteId="tv3" />
     <Channel id="TV5 Monde" siteId="tv5-monde" />
     <Channel id="TV Caracol Internacional" siteId="tv-caracol-internacional" />
     <Channel id="TV Chile" siteId="tv-chile" />
@@ -120,7 +118,6 @@
     <Channel id="Sundance Channel" siteId="sundance-channel" />
     <Channel id="SyFy" siteId="syfy-espana" />
     <Channel id="VH1" siteId="vh1" />
-    <Channel id="VH1 Classics" siteId="vh1-classics" />
     <Channel id="Viajar" siteId="canal-viajar" />
     <Channel id="Xtreme" siteId="xtrm" />
   </Channels>
