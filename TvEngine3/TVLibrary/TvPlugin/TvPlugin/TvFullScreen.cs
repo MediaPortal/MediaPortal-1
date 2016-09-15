@@ -3324,8 +3324,7 @@ namespace TvPlugin
       //TVHome.SendHeartBeat(); //not needed, now sent from tvoverlay.cs
       if (CheckScreenState())
       {
-        if (GUIGraphicsContext.InVmr9Render)
-          return true;
+        return true;
       }
       return false;
     }
