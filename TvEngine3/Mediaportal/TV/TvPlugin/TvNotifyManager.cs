@@ -218,6 +218,16 @@ namespace Mediaportal.TV.TvPlugin
       {
         foreach (ProgramBLL program in _notifiesList)
         {
+          if (System.DateTime.Now > program.Entity.StartTime)
+          {
+            Log.Debug("Notify auto cancel old program {0} on {1} ended {2}", program.Title, program.ReferencedChannel().DisplayName,
+                          program.Entity.StartTime);
+            program.Notify = false;
+
+            _notifiesList.Remove(program);
+
+            return;
+          }
           if (preNotifySecs > program.Entity.StartTime)
           {
             this.LogInfo("Notify {0} on {1} start {2}", program.Entity.Title, program.Entity.Channel.DisplayName,
