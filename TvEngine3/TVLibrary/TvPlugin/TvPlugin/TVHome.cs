@@ -309,9 +309,9 @@ namespace TvPlugin
       RemoteControl.OnRemotingDisconnected += RemoteControl_OnRemotingDisconnected;
       RemoteControl.OnRemotingConnected += RemoteControl_OnRemotingConnected;
 
-      GUIGraphicsContext.OnBlackImageRendered += new BlackImageRenderedHandler(OnBlackImageRendered);
-      GUIGraphicsContext.OnRenderBlack += new OnRenderBlackHandler(RenderBlackImage);
-      GUIGraphicsContext.OnVideoReceived += new VideoReceivedHandler(OnVideoReceived);
+      //GUIGraphicsContext.OnBlackImageRendered += new BlackImageRenderedHandler(OnBlackImageRendered);
+      //GUIGraphicsContext.OnRenderBlack += new OnRenderBlackHandler(RenderBlackImage);
+      //GUIGraphicsContext.OnVideoReceived += new VideoReceivedHandler(OnVideoReceived);
 
       _waitForBlackScreen = new ManualResetEvent(false);
       _waitForVideoReceived = new ManualResetEvent(false);
@@ -381,9 +381,9 @@ namespace TvPlugin
       RemoteControl.OnRemotingDisconnected -= RemoteControl_OnRemotingDisconnected;
       RemoteControl.OnRemotingConnected -= RemoteControl_OnRemotingConnected;
 
-      GUIGraphicsContext.OnBlackImageRendered -= new BlackImageRenderedHandler(OnBlackImageRendered);
-      GUIGraphicsContext.OnRenderBlack -= new OnRenderBlackHandler(RenderBlackImage);
-      GUIGraphicsContext.OnVideoReceived -= new VideoReceivedHandler(OnVideoReceived);
+      //GUIGraphicsContext.OnBlackImageRendered -= new BlackImageRenderedHandler(OnBlackImageRendered);
+      //GUIGraphicsContext.OnRenderBlack -= new OnRenderBlackHandler(RenderBlackImage);
+      //GUIGraphicsContext.OnVideoReceived -= new VideoReceivedHandler(OnVideoReceived);
 
       Application.ApplicationExit -= new EventHandler(Application_ApplicationExit);
 
@@ -3372,7 +3372,7 @@ namespace TvPlugin
         }
         if (_status.IsSet(LiveTvStatus.WasPlaying))
         {
-          RenderBlackImage();
+          //RenderBlackImage();
           g_Player.PauseGraph();
         }
         else
