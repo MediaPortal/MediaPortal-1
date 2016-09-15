@@ -199,17 +199,19 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       if (this.heightInChars == 1)
       {
         //SL: I believe this is the feature that combines both lines on a single one if our display only supports one line.
-        String str1, str2;
-
         line = this.lines[0];
         line2 = this.lines[1];
-        
-        str1 = line.Process();
-        str2 = line2.Process();
 
-        if ( str2.Length == 0 )
+        string str1 = line.Process();
+        string str2 = line2.Process();
+
+        if (string.IsNullOrEmpty(str2))
         {
           str = str1;
+        }
+        else if (string.IsNullOrEmpty(str1))
+        {
+          str = str2;
         }
         else
         {
