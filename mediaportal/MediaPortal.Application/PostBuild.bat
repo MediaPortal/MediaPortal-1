@@ -185,7 +185,7 @@ xcopy %1\..\Packages\MediaPortal-iMON-Display.1.1.0\lib\iMONDisplay.dll . /Y /D
 xcopy %1\..\Packages\MediaPortal-iMON-Display.1.1.0\lib\iMONDisplayWrapper.dll . /Y /D
 
 REM taglib-sharp
-xcopy %1\..\Packages\MediaPortal.TagLib.2.1.0.1\lib\net40\taglib-sharp.dll ./Y /D
+xcopy %1\..\Packages\MediaPortal.TagLib.2.1.0.2\lib\net40\taglib-sharp.dll ./Y /D
 
 REM Enable >2GB for 32 bit process
 call %Build%\MSBUILD_MP_LargeAddressAware.bat %2
