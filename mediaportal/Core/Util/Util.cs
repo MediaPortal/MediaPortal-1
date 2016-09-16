@@ -1295,6 +1295,32 @@ namespace MediaPortal.Util
       return strHMS;
     }
 
+    public static string SecondsToHMSStringSeconds(TimeSpan timespan)
+    {
+      return SecondsToHMSStringSeconds(Convert.ToInt32(timespan.TotalSeconds));
+    }
+
+    public static string SecondsToHMSStringSeconds(int lSeconds)
+    {
+      if (lSeconds < 0) return ("0:00");
+      string strHMS = "";
+      strHMS = String.Format("{0}", lSeconds);
+      return strHMS;
+    }
+
+    public static string SecondsToHMSStringMinutes(TimeSpan timespan)
+    {
+      return SecondsToHMSStringMinutes(Convert.ToInt32(timespan.TotalSeconds));
+    }
+
+    public static string SecondsToHMSStringMinutes(int lSeconds)
+    {
+      if (lSeconds < 0) return ("0:00");
+      int mm = lSeconds / 60;
+      string strHMS = "";
+      strHMS = String.Format("{0}", mm);
+      return strHMS;
+    }
 
     public static string GetNamedMonth(string aTwoLetterMonth)
     {
@@ -2070,7 +2096,7 @@ namespace MediaPortal.Util
 
     public static void EjectCDROM()
     {
-      EjectCDROM(string.Empty);
+      mciSendString("set cdaudio door open", null, 0, IntPtr.Zero);
     }
     
     public static void CloseCDROM(string driveLetter)
@@ -2402,10 +2428,15 @@ namespace MediaPortal.Util
           //if (bInternal) return false;
           string strPath = xmlreader.GetValueAsString("movieplayer", "path", "");
           string strParams = xmlreader.GetValueAsString("movieplayer", "arguments", "");
-          if (extension.ToLowerInvariant() == ".ifo" || extension.ToLowerInvariant() == ".vob" || extension.ToLowerInvariant() == ".bdmv")
+          if (extension.ToLowerInvariant() == ".ifo" || extension.ToLowerInvariant() == ".vob")
           {
             strPath = xmlreader.GetValueAsString("dvdplayer", "path", "");
             strParams = xmlreader.GetValueAsString("dvdplayer", "arguments", "");
+          }
+          else if  (extension.ToLowerInvariant() == ".bdmv")
+          {
+            strPath = xmlreader.GetValueAsString("bdplayer", "path", "");
+            strParams = xmlreader.GetValueAsString("bdplayer", "arguments", "");
           }
           if (strPath != "")
           {

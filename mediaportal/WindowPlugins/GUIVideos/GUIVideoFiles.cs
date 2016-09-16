@@ -36,6 +36,7 @@ using MediaPortal.Configuration;
 using MediaPortal.Database;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
+using MediaPortal.GUI.View;
 using MediaPortal.Player;
 using MediaPortal.Playlists;
 using MediaPortal.Services;
@@ -479,6 +480,21 @@ namespace MediaPortal.GUI.Video
         _playClicked = true;
       }
       
+      if (action.wID == Action.ActionType.ACTION_EJECTCD)
+      {
+        GUIListItem item = facadeLayout.SelectedListItem;
+        if (item == null || item.Path == null || Util.Utils.getDriveType(item.Path) != 5)
+        {
+          Util.Utils.EjectCDROM();
+        }
+        else
+        {
+          Util.Utils.EjectCDROM(Path.GetPathRoot(item.Path));
+        }
+
+        LoadDirectory(string.Empty);
+      }
+
       base.OnAction(action);
     }
 
@@ -504,7 +520,61 @@ namespace MediaPortal.GUI.Video
       }
 
       base.LoadSettings();
+      bool result = false;
       
+      if (_loadParameter != null && _loadParameter != string.Empty)
+      {
+        foreach (GUIListItem item in VirtualDirectories.Instance.Movies.GetRootExt())
+        {
+          if (item.Label.ToUpper() == _loadParameter.ToUpper())
+          {
+            _currentFolder = item.Path;
+            result = true;
+            base.SetView(0);
+          }
+        }
+        if (!result)
+        {
+          if (_loadParameter == "134")
+          {
+            base.SetView(0);
+            Log.Debug("GUIVideoFiles.OnPageLoad: selectedView.Name = share");
+          }
+          else
+          {
+            try
+            {
+              string selectedView;
+
+              try
+              {
+                selectedView = GUILocalizeStrings.Get(Convert.ToInt32(_loadParameter));
+              }
+              catch
+              {
+                selectedView = _loadParameter;
+              }
+
+              for (int i = 0; i < handler.Views.Count; i++)
+              {
+                if (handler.Views[i].LocalizedName == selectedView)
+                {
+                  Log.Debug("GUIVideoFiles.OnPageLoad: selectedView.Name = {0}", handler.Views[i].LocalizedName);
+
+                  base.SetView(i + 1);
+
+                  break;
+                }
+              }
+            }
+            catch (Exception ex)
+            {
+              Log.Error("GUIVideoFiles.OnPageLoad: Exception {0}", ex);
+            }
+          }
+        }
+      }
+
       // This can't be in LoadSettings beacuse settings are loaded on MP start and it will disable SortTitle setting always
       using (Profile.Settings xmlreader = new Profile.MPSettings())
       {
@@ -1482,7 +1552,7 @@ namespace MediaPortal.GUI.Video
           break;
 
         case 654: // Eject
-          if (Util.Utils.getDriveType(item.Path) != 5)
+          if (item == null || item.Path == null || Util.Utils.getDriveType(item.Path) != 5)
           {
             Util.Utils.EjectCDROM();
           }
@@ -3218,6 +3288,12 @@ namespace MediaPortal.GUI.Video
             }
           }
 
+          if (!item.IsFolder)
+          {
+            item.HasProgressBar = true;
+            item.ProgressBarPercentage = percentWatched;
+          }
+
           //Do NOT add OnItemSelected event handler here, because its still there...
 
           if (item.IsFolder || !item.IsFolder && !_hideWatchedFiles && item.IsPlayed || !item.IsFolder && !item.IsPlayed)
@@ -3313,7 +3389,7 @@ namespace MediaPortal.GUI.Video
                   item.Label = pair.Key;
                 }
               }
-
+              int percentWatched = 0;
               // Check db for watched status for played movie or changed status in movie info window
               string file = item.Path;
               if (!item.IsFolder || isMovieFolder)
@@ -3330,7 +3406,6 @@ namespace MediaPortal.GUI.Video
                   }
                 }
 
-                int percentWatched = 0;
                 int timesWatched = 0;
                 int movieId = VideoDatabase.GetMovieId(file);
                 bool played = VideoDatabase.GetmovieWatchedStatus(movieId, out percentWatched, out timesWatched);
@@ -3372,6 +3447,12 @@ namespace MediaPortal.GUI.Video
               SetLabel(item);
               item.OnItemSelected += item_OnItemSelected;
 
+              if (!item.IsFolder)
+              {
+                item.HasProgressBar = true;
+                item.ProgressBarPercentage = percentWatched;
+              }
+
               if (item.IsFolder || !item.IsFolder && !_hideWatchedFiles && item.IsPlayed || !item.IsFolder && !item.IsPlayed)
               {
                 facadeLayout.Add(item);
@@ -3397,6 +3478,8 @@ namespace MediaPortal.GUI.Video
               isMovieFolder = false;
             }
 
+            int percentWatched = 0;
+
             if (!item.IsFolder || isMovieFolder)
             {
               // Special folders (DVD/BluRay)
@@ -3411,7 +3494,6 @@ namespace MediaPortal.GUI.Video
                 }
               }
 
-              int percentWatched = 0;
               int timesWatched = 0;
               int movieId = VideoDatabase.GetMovieId(file);
               bool played = VideoDatabase.GetmovieWatchedStatus(movieId, out percentWatched, out timesWatched);
@@ -3452,6 +3534,12 @@ namespace MediaPortal.GUI.Video
 
             SetLabel(item);
             item.OnItemSelected += item_OnItemSelected;
+
+            if (!item.IsFolder)
+            {
+              item.HasProgressBar = true;
+              item.ProgressBarPercentage = percentWatched;
+            }
 
             if (item.IsFolder || !item.IsFolder && !_hideWatchedFiles && item.IsPlayed || !item.IsFolder && !item.IsPlayed)
             {
