@@ -60,8 +60,9 @@ public:
 	FileWriterThreaded();
 	virtual ~FileWriterThreaded();
 
+	HRESULT Open(LPCWSTR pszFileName);
+	HRESULT Close();
 	HRESULT GetFileName(LPWSTR *lpszFileName);
-	HRESULT SetFileName(LPCWSTR pszFileName);
   
 	HRESULT AddToBuffer(byte* pbData, int len, int newBuffSize);
 	HRESULT DiscardBuffer();
@@ -84,7 +85,6 @@ protected:
 	HRESULT NewBuffer(int size);
 	void ClearBuffers();
 	HRESULT OpenFile();
-	HRESULT CloseFile();
   HRESULT WriteWithRetry(PBYTE pbData, ULONG lDataLength, int retries);
 	DWORD SetFilePointer(__int64 llDistanceToMove, DWORD dwMoveMethod);
 	__int64 GetFilePointer();

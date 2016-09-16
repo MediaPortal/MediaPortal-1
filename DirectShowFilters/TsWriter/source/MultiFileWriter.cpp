@@ -122,16 +122,14 @@ MultiFileWriter::MultiFileWriter(MultiFileWriterParam *pWriterParams) :
 	m_bDiskFull(FALSE),
 	m_bBufferFull(FALSE)
 {
-	m_pCurrentTSFile = new FileWriter();
-	m_pCurrentTSFile->SetChunkReserve(m_chunkReserve, m_maxTSFileSize);
 }
 
 MultiFileWriter::~MultiFileWriter()
 {
-	CloseFile();
-
-	if (m_pCurrentTSFile)
-		delete[] m_pCurrentTSFile;
+	if (m_pTSBufferFileName != NULL)
+	{
+  	Close();
+  }
 			
   LogDebug("MultiFileWriter::Dtor() end");
 }
@@ -143,15 +141,15 @@ HRESULT MultiFileWriter::GetFileName(LPOLESTR *lpszFileName)
 	return S_OK;
 }
 
-HRESULT MultiFileWriter::SetFileName(LPCWSTR pszFileName)
+HRESULT MultiFileWriter::Open(LPCWSTR pszFileName)
 {
 	CAutoLock lock(&m_Lock);
 
-	// Is the file already opened
-	if (m_hTSBufferFile != INVALID_HANDLE_VALUE)
-	{
-		return E_FAIL;
-	}
+  // Are we already open?
+  if (m_pTSBufferFileName != NULL)
+  {
+    return E_FAIL;
+  }
 
 	// Is this a valid filename supplied
 	CheckPointer(pszFileName,E_POINTER);
@@ -162,15 +160,24 @@ HRESULT MultiFileWriter::SetFileName(LPCWSTR pszFileName)
 		return ERROR_FILENAME_EXCED_RANGE;
   }
 	// Take a copy of the filename
-	if (m_pTSBufferFileName)
-	{
-		delete[] m_pTSBufferFileName;
-		m_pTSBufferFileName = NULL;
-	}
 	m_pTSBufferFileName = new WCHAR[1+lstrlenW(pszFileName)];
 	if (m_pTSBufferFileName == NULL)
 		return E_OUTOFMEMORY;
 	wcscpy(m_pTSBufferFileName, pszFileName);
+
+  try 
+  {
+  	m_pCurrentTSFile = new FileWriter();
+  }
+  catch(...)
+  {
+    m_pCurrentTSFile = NULL;
+		delete[] m_pTSBufferFileName;
+		m_pTSBufferFileName = NULL;
+    return E_FAIL;
+  }
+  
+	m_pCurrentTSFile->SetChunkReserve(m_chunkReserve, m_maxTSFileSize);
 
 	StartThread();
 
@@ -232,9 +239,9 @@ HRESULT MultiFileWriter::OpenFile()
 }
 
 //
-// CloseFile
+// Close
 //
-HRESULT MultiFileWriter::CloseFile()
+HRESULT MultiFileWriter::Close()
 {	
   //Wait for all buffers to be written to disk
   PushBuffer(); //Force temp buffer onto queue
@@ -276,12 +283,18 @@ HRESULT MultiFileWriter::CloseFile()
   	
   	CleanupFiles();
   	
-  	if (m_pTSBufferFileName)
+  	if (m_pCurrentTSFile)
   	{
-  	  LogDebug(L"MultiFileWriter: CloseFile(), filename: %s, Max buffers used: %d", m_pTSBufferFileName, m_maxBuffersUsed);
+  		delete m_pCurrentTSFile;		
+      m_pCurrentTSFile = NULL;
+    }
+
+  	if (m_pTSBufferFileName != NULL)
+  	{
+  	  LogDebug(L"MultiFileWriter: Close(), filename: %s, Max buffers used: %d", m_pTSBufferFileName, m_maxBuffersUsed);
   		delete[] m_pTSBufferFileName;
  		  m_pTSBufferFileName = NULL;
- 	  }
+ 	  } 	  
   }
 		
 	return S_OK;

@@ -104,7 +104,8 @@ byte* CDiskBuffWT::Data()
 
 FileWriterThreaded::FileWriterThreaded() :
   m_hFile(INVALID_HANDLE_VALUE),
-  m_pFileName(0),
+  m_pFileName(NULL),
+	m_hThreadProc(NULL),
   m_iPart(2),
   m_maxBuffersUsed(0),
   m_pDiskBuffer(NULL),
@@ -116,7 +117,10 @@ FileWriterThreaded::FileWriterThreaded() :
 
 FileWriterThreaded::~FileWriterThreaded()
 {
-  CloseFile();    
+  if (m_pFileName != NULL)
+  {
+    Close();  
+  }  
   LogDebug("FileWriterThreaded::Dtor() end");
 }
 
@@ -127,12 +131,12 @@ HRESULT FileWriterThreaded::GetFileName(LPWSTR *lpszFileName)
   return S_OK;
 }
 
-HRESULT FileWriterThreaded::SetFileName(LPCWSTR pszFileName)
+HRESULT FileWriterThreaded::Open(LPCWSTR pszFileName)
 {
   CAutoLock lock(&m_Lock);
   
-  // Is the file already opened
-  if (m_hFile != INVALID_HANDLE_VALUE)
+  // Are we already open?
+  if (m_pFileName != NULL)
   {
     return E_FAIL;
   }
@@ -146,12 +150,6 @@ HRESULT FileWriterThreaded::SetFileName(LPCWSTR pszFileName)
     return ERROR_FILENAME_EXCED_RANGE;
 
   // Take a copy of the filename
-
-  if (m_pFileName)
-  {
-    delete[] m_pFileName;
-    m_pFileName = NULL;
-  }
   m_pFileName = new wchar_t[length+1];
   if (m_pFileName == NULL)
     return E_OUTOFMEMORY;
@@ -232,10 +230,10 @@ HRESULT FileWriterThreaded::OpenFile()
 }
 
 ////
-//// CloseFile
+//// Close
 ////
 
-HRESULT FileWriterThreaded::CloseFile()
+HRESULT FileWriterThreaded::Close()
 {  
   //Wait for all buffers to be written to disk
   PushBuffer(); //Force temp buffer onto queue
@@ -270,10 +268,11 @@ HRESULT FileWriterThreaded::CloseFile()
     CloseHandle(m_hFile);
     m_hFile = INVALID_HANDLE_VALUE;
     
-    if (m_pFileName)
+    if (m_pFileName != NULL)
     {
-      LogDebug(L"FileWriterThreaded: CloseFile() succeeded, filename: %s, Max buffers used: %d", m_pFileName, m_maxBuffersUsed);
+      LogDebug(L"FileWriterThreaded: Close() succeeded, filename: %s, Max buffers used: %d", m_pFileName, m_maxBuffersUsed);
       delete m_pFileName;
+      m_pFileName = NULL;
     }
   }
 

@@ -222,9 +222,9 @@ bool CDiskRecorder::Start()
 		if (m_recordingMode==RecordingMode::TimeShift)
 		{
 			m_pTimeShiftFile = new MultiFileWriter(&m_params);
-			if (FAILED(m_pTimeShiftFile->SetFileName(m_wszFileName))) 
+			if (FAILED(m_pTimeShiftFile->Open(m_wszFileName))) 
 			{
-				WriteLog(L"failed to set timeshift filename:%s %d",m_wszFileName,GetLastError());
+				WriteLog(L"failed to open timeshift file:%s %d",m_wszFileName,GetLastError());
 				delete m_pTimeShiftFile;
 				m_pTimeShiftFile=NULL;
 				return false;
@@ -233,9 +233,9 @@ bool CDiskRecorder::Start()
 		else
 		{
 			m_pRecordingFile = new FileWriterThreaded();
-			if (FAILED(m_pRecordingFile->SetFileName(m_wszFileName))) 
+			if (FAILED(m_pRecordingFile->Open(m_wszFileName))) 
 			{
-				WriteLog(L"failed to set recording filename:%s %d",m_wszFileName,GetLastError());
+				WriteLog(L"failed to open recording file:%s %d",m_wszFileName,GetLastError());
 				delete m_pRecordingFile;
 				m_pRecordingFile=NULL;
 				return false;
@@ -269,11 +269,13 @@ void CDiskRecorder::Stop()
 		m_pPmtParser->Reset();
 		if (m_pTimeShiftFile!=NULL)
 		{
+		  m_pTimeShiftFile->Close();
 			delete m_pTimeShiftFile;
 			m_pTimeShiftFile=NULL;
 		}
 		if (m_pRecordingFile!=NULL)
 		{
+		  m_pRecordingFile->Close();
 			delete m_pRecordingFile;
 			m_pRecordingFile=NULL;
 		}

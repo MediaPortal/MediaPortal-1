@@ -68,8 +68,10 @@ public:
 	MultiFileWriter(MultiFileWriterParam *pWriterParams);
 	virtual ~MultiFileWriter();
 
+	HRESULT Open(LPCWSTR pszFileName);
+	HRESULT Close();
+	
 	HRESULT GetFileName(LPWSTR *lpszFileName);
-	HRESULT SetFileName(LPCWSTR pszFileName);
 	HRESULT GetFileSize(__int64 *lpllsize);	
 //  HRESULT Write(PBYTE pbData, ULONG lDataLength);
 	HRESULT AddToBuffer(byte* pbData, int len, int newBuffSize);
@@ -91,7 +93,6 @@ public:
 
 protected:
 	HRESULT OpenFile();
-	HRESULT CloseFile();
 	HRESULT WriteToDisk(PBYTE pbData, ULONG lDataLength);
 	HRESULT GetAvailableDiskSpace(__int64* llAvailableDiskSpace);
 //	LPWSTR getBufferFileName(void);
