@@ -33,6 +33,8 @@ namespace MediaPortal.Configuration.Sections
       this.mpVMR9FilterMethod = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.checkboxMpNonsquare = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpGroupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.numericUpDownFrame = new System.Windows.Forms.NumericUpDown();
+      this.reduceMadvrFrame = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.UseMadVideoRenderer3D = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.DisableLowLatencyMode = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.UseEVRMadVRForTV = new MediaPortal.UserInterface.Controls.MPCheckBox();
@@ -46,6 +48,7 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxVMRWebStreams = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.label1 = new System.Windows.Forms.Label();
       this.mpGroupBox1.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownFrame)).BeginInit();
       this.SuspendLayout();
       // 
       // checkboxDXEclusive
@@ -98,6 +101,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.mpGroupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGroupBox1.Controls.Add(this.numericUpDownFrame);
+      this.mpGroupBox1.Controls.Add(this.reduceMadvrFrame);
       this.mpGroupBox1.Controls.Add(this.UseMadVideoRenderer3D);
       this.mpGroupBox1.Controls.Add(this.DisableLowLatencyMode);
       this.mpGroupBox1.Controls.Add(this.UseEVRMadVRForTV);
@@ -120,6 +125,32 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox1.TabIndex = 1;
       this.mpGroupBox1.TabStop = false;
       this.mpGroupBox1.Text = "Video renderer - advanced settings";
+      // 
+      // numericUpDownFrame
+      // 
+      this.numericUpDownFrame.Location = new System.Drawing.Point(190, 362);
+      this.numericUpDownFrame.Maximum = new decimal(new int[] {
+            3,
+            0,
+            0,
+            0});
+      this.numericUpDownFrame.Name = "numericUpDownFrame";
+      this.numericUpDownFrame.Size = new System.Drawing.Size(42, 20);
+      this.numericUpDownFrame.TabIndex = 19;
+      this.numericUpDownFrame.ValueChanged += new System.EventHandler(this.numericUpDownFrame_ValueChanged);
+      // 
+      // reduceMadvrFrame
+      // 
+      this.reduceMadvrFrame.AutoSize = true;
+      this.reduceMadvrFrame.Checked = true;
+      this.reduceMadvrFrame.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.reduceMadvrFrame.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.reduceMadvrFrame.Location = new System.Drawing.Point(64, 362);
+      this.reduceMadvrFrame.Name = "reduceMadvrFrame";
+      this.reduceMadvrFrame.Size = new System.Drawing.Size(129, 17);
+      this.reduceMadvrFrame.TabIndex = 18;
+      this.reduceMadvrFrame.Text = "Reduce madVR frame";
+      this.reduceMadvrFrame.UseVisualStyleBackColor = true;
       // 
       // UseMadVideoRenderer3D
       // 
@@ -165,7 +196,7 @@ namespace MediaPortal.Configuration.Sections
       // mpMadLabel
       // 
       this.mpMadLabel.AutoSize = true;
-      this.mpMadLabel.Location = new System.Drawing.Point(61, 367);
+      this.mpMadLabel.Location = new System.Drawing.Point(61, 383);
       this.mpMadLabel.Name = "mpMadLabel";
       this.mpMadLabel.Size = new System.Drawing.Size(269, 13);
       this.mpMadLabel.TabIndex = 14;
@@ -271,6 +302,7 @@ namespace MediaPortal.Configuration.Sections
       this.Size = new System.Drawing.Size(438, 409);
       this.mpGroupBox1.ResumeLayout(false);
       this.mpGroupBox1.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownFrame)).EndInit();
       this.ResumeLayout(false);
 
     }
@@ -294,5 +326,7 @@ namespace MediaPortal.Configuration.Sections
     private UserInterface.Controls.MPCheckBox UseEVRMadVRForTV;
     private UserInterface.Controls.MPCheckBox DisableLowLatencyMode;
     private UserInterface.Controls.MPCheckBox UseMadVideoRenderer3D;
+    private UserInterface.Controls.MPCheckBox reduceMadvrFrame;
+    private System.Windows.Forms.NumericUpDown numericUpDownFrame;
   }
 }

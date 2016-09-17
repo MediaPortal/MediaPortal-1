@@ -205,6 +205,7 @@ class MPMadPresenter : public CUnknown, public CCritSec
     int secondFrame = 3;
     int resetFrame = -1;
     int m_pRefCount = 0;
+    int m_pMadVRFrameCount = 0;
 
     Com::SmartPtr<IOsdRenderCallback> m_pORCB;
     Com::SmartPtr<ISubRenderCallback> m_pSRCB;

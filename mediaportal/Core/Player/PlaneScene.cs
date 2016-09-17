@@ -109,6 +109,8 @@ namespace MediaPortal.Player
                                           };
 
     private bool _disableLowLatencyMode = false;
+    private int _reduceMadvrFrame = 0;
+    private bool _useReduceMadvrFrame = false;
 
     private bool UiVisible { get; set; }
 
@@ -307,6 +309,8 @@ namespace MediaPortal.Player
         try
         {
           _disableLowLatencyMode = xmlreader.GetValueAsBool("general", "disableLowLatencyMode", true);
+          _reduceMadvrFrame = xmlreader.GetValueAsInt("general", "reduceMadvrFrame", 0);
+          _useReduceMadvrFrame = xmlreader.GetValueAsBool("general", "useReduceMadvrFrame", false);
         }
         catch (Exception)
         {
@@ -656,6 +660,15 @@ namespace MediaPortal.Player
         surfaceMadVr.ReleaseGraphics();
         surfaceMadVr.Dispose();
       }
+    }
+
+    public int ReduceMadvrFrame()
+    {
+      if (_useReduceMadvrFrame)
+      {
+        return _reduceMadvrFrame;
+      }
+      return 0;
     }
 
     public bool IsUiVisible()

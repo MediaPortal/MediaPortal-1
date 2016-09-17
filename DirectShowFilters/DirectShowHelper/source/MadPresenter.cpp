@@ -527,13 +527,18 @@ HRESULT MPMadPresenter::ClearBackground(LPCSTR name, REFERENCE_TIME frameStart, 
     hr = m_pCallback->RenderGui(videoWidth, videoHeight, videoWidth, videoHeight);
     if (m_pCallback->IsUiVisible())
     {
-      //Log("MPMadPresenter::ClearBackground() IsUiVisible");
-      m_pDevice->PresentEx(nullptr, nullptr, nullptr, nullptr, D3DPRESENT_FORCEIMMEDIATE);
-      m_pDevice->PresentEx(nullptr, nullptr, nullptr, nullptr, D3DPRESENT_FORCEIMMEDIATE);
-      m_pDevice->PresentEx(nullptr, nullptr, nullptr, nullptr, D3DPRESENT_FORCEIMMEDIATE);
-      // Render frame to try to fix HD4XXX GPU flickering issue
-      Com::SmartQIPtr<IMadVROsdServices> pOR = m_pMad;
-      pOR->OsdRedrawFrame();
+      for (int x = 0; x < m_pMadVRFrameCount; ++x) // need to let in a loop to slow down why ???
+      {
+        if (x <= 3)
+        {
+          // commented out (it slown down video on GPU Nvidia)
+          m_pDevice->PresentEx(nullptr, nullptr, nullptr, nullptr, D3DPRESENT_FORCEIMMEDIATE);
+          //Log("MPMadPresenter::RenderOsd() IsUiVisible");
+          // Render frame to try to fix HD4XXX GPU flickering issue
+          //Com::SmartQIPtr<IMadVROsdServices> pOR = m_pMad;
+          //pOR->OsdRedrawFrame();
+        }
+      }
     }
   }
 
@@ -629,13 +634,18 @@ HRESULT MPMadPresenter::RenderOsd(LPCSTR name, REFERENCE_TIME frameStart, RECT* 
     hr = m_pCallback->RenderOverlay(videoWidth, videoHeight, videoWidth, videoHeight);
     if (m_pCallback->IsUiVisible())
     {
-      //Log("MPMadPresenter::RenderOsd() IsUiVisible");
-      m_pDevice->PresentEx(nullptr, nullptr, nullptr, nullptr, D3DPRESENT_FORCEIMMEDIATE);
-      m_pDevice->PresentEx(nullptr, nullptr, nullptr, nullptr, D3DPRESENT_FORCEIMMEDIATE);
-      m_pDevice->PresentEx(nullptr, nullptr, nullptr, nullptr, D3DPRESENT_FORCEIMMEDIATE);
-      // Render frame to try to fix HD4XXX GPU flickering issue
-      Com::SmartQIPtr<IMadVROsdServices> pOR = m_pMad;
-      pOR->OsdRedrawFrame();
+      for (int x = 0; x < m_pMadVRFrameCount; ++x) // need to let in a loop to slow down why ???
+      {
+        if (x <= 3)
+        {
+          // commented out (it slown down video on GPU Nvidia)
+          m_pDevice->PresentEx(nullptr, nullptr, nullptr, nullptr, D3DPRESENT_FORCEIMMEDIATE);
+          //Log("MPMadPresenter::RenderOsd() IsUiVisible");
+          // Render frame to try to fix HD4XXX GPU flickering issue
+          //Com::SmartQIPtr<IMadVROsdServices> pOR = m_pMad;
+          //pOR->OsdRedrawFrame();
+        }
+      }
     }
   }
 
@@ -897,6 +907,9 @@ HRESULT MPMadPresenter::Render(REFERENCE_TIME frameStart, int left, int top, int
       // TODO disable OSD delay for now (used to force IVideoWindow on C# side)
       m_pCallback->ForceOsdUpdate(true);
       Log("MPMadPresenter::Render() ForceOsdUpdate");
+
+      m_pMadVRFrameCount = m_pCallback->ReduceMadvrFrame();
+      Log("%s : reduce madVR frame to : %i", __FUNCTION__, m_pMadVRFrameCount);
 
       // Init created madVR window instance.
       SetDsWndVisible(true);

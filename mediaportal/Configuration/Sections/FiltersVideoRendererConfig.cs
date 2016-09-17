@@ -72,6 +72,8 @@ namespace MediaPortal.Configuration.Sections
           UseEVRMadVRForTV.Checked = xmlreader.GetValueAsBool("general", "useEVRMadVRForTV", false);
           DisableLowLatencyMode.Checked = xmlreader.GetValueAsBool("general", "disableLowLatencyMode", false);
           UseMadVideoRenderer3D.Checked = xmlreader.GetValueAsBool("general", "useMadVideoRenderer3D", false);
+          numericUpDownFrame.Value = xmlreader.GetValueAsInt("general", "reduceMadvrFrame", 0);
+          reduceMadvrFrame.Checked = xmlreader.GetValueAsBool("general", "useReduceMadvrFrame", false);
         }
         _init = true;
       }
@@ -98,6 +100,8 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValueAsBool("general", "useEVRMadVRForTV", UseEVRMadVRForTV.Checked);
         xmlwriter.SetValueAsBool("general", "disableLowLatencyMode", DisableLowLatencyMode.Checked);
         xmlwriter.SetValueAsBool("general", "useMadVideoRenderer3D", UseMadVideoRenderer3D.Checked);
+        xmlwriter.SetValue("general", "reduceMadvrFrame", numericUpDownFrame.Value);
+        xmlwriter.SetValueAsBool("general", "useReduceMadvrFrame", reduceMadvrFrame.Checked);
       }
     }
 
@@ -146,6 +150,11 @@ namespace MediaPortal.Configuration.Sections
     }
 
     private void DisableLowLatencyMode_CheckedChanged(object sender, EventArgs e)
+    {
+
+    }
+
+    private void numericUpDownFrame_ValueChanged(object sender, EventArgs e)
     {
 
     }
