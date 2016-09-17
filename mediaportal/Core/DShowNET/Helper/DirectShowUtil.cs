@@ -2281,10 +2281,20 @@ namespace DShowNET.Helper
         if (obj != null)
         {
           if (Marshal.IsComObject(obj))
-            while (Marshal.FinalReleaseComObject(obj) > 0) ;
+            while (true)
+            {
+              if (Marshal.ReleaseComObject(obj) > 0)
+              {
+                Thread.Sleep(100);
+              }
+              else
+              {
+                Marshal.FinalReleaseComObject(obj);
+                obj = null;
+                break;
+              }
+            }
         }
-        obj = null;
-        //GC.Collect();
       }
       catch (Exception)
       {

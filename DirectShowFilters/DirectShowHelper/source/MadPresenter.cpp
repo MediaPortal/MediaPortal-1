@@ -62,9 +62,6 @@ MPMadPresenter::~MPMadPresenter()
   {
     CAutoLock cAutoLock(this);
 
-    //CAutoLock lock(&m_dsLock);
-    //m_dsLock.Lock();
-
     if (m_pSRCB)
     {
       // nasty, but we have to let it know about our death somehow
@@ -83,13 +80,6 @@ MPMadPresenter::~MPMadPresenter()
     //if (Com::SmartQIPtr<IMadVRExclusiveModeCallback> pEXL = m_pDXR)
     //  pEXL->Unregister(m_exclusiveCallback, this);
 
-    Log("MPMadPresenter::Destructor() - m_pMad release 1");
-    if (m_pMad)
-    {
-      m_pMad.Release();
-    }
-    Log("MPMadPresenter::Destructor() - m_pMad release 2");
-
     Log("MPMadPresenter::Destructor() - m_pSRCB release 1");
     if (m_pSRCB)
       m_pSRCB.Release();
@@ -100,10 +90,22 @@ MPMadPresenter::~MPMadPresenter()
       m_pORCB.Release();
     Log("MPMadPresenter::Destructor() - m_pORCB release 2");
 
-    //m_dsLock.Unlock();
-
     // Detroy create madVR window
     DeInitMadvrWindow();
+
+    Log("MPMadPresenter::Destructor() - m_pMad release 1");
+    if (m_pMad)
+    {
+      // Let's madVR restore original display mode (when adjust refresh it's handled by madVR)
+      if (Com::SmartQIPtr<IMadVRCommand> pMadVrCmd = m_pMad)
+      {
+        pMadVrCmd->SendCommand("restoreDisplayModeNow");
+        pMadVrCmd.Release();
+        Log("MPMadPresenter::Shutdown() restoreDisplayModeNow");
+      }
+      m_pMad.Release();
+    }
+    Log("MPMadPresenter::Destructor() - m_pMad release 2");
 
     Log("MPMadPresenter::Destructor() - instance 0x%x", this);
   }
@@ -174,6 +176,7 @@ IBaseFilter* MPMadPresenter::Initialize()
       {
         Log("%s : Create DSPlayer window - hWnd: %i", __FUNCTION__, m_hWnd);
         pWindow->put_Owner(reinterpret_cast<OAHWND>(m_hWnd));
+        pWindow->put_Visible(reinterpret_cast<OAHWND>(m_hWnd));
       }
     }
     return baseFilter;
@@ -298,22 +301,6 @@ HRESULT MPMadPresenter::Shutdown()
     {
       MPMadPresenter::EnableExclusive(false);
       Log("MPMadPresenter::Shutdown() disable exclusive mode");
-    }
-
-    // Let's madVR restore original display mode (when adjust refresh it's handled by madVR)
-    if (Com::SmartQIPtr<IMadVRCommand> pMadVrCmd = m_pMad)
-    {
-      pMadVrCmd->SendCommand("restoreDisplayModeNow");
-      pMadVrCmd.Release();
-      Log("MPMadPresenter::Shutdown() restoreDisplayModeNow");
-    }
-
-    if (Com::SmartQIPtr<IVideoWindow> pWindow = m_pMad)
-    {
-      pWindow->put_Owner(reinterpret_cast<OAHWND>(nullptr));
-      pWindow->put_Visible(false);
-      pWindow.Release();
-      Log("MPMadPresenter::Shutdown() releasing IVideoWindow");
     }
 
     Log("MPMadPresenter::Shutdown() stop");
@@ -619,8 +606,8 @@ HRESULT MPMadPresenter::RenderOsd(LPCSTR name, REFERENCE_TIME frameStart, RECT* 
   m_dwWidth = (WORD)fullOutputRect->right - (WORD)fullOutputRect->left;
 
   // Handle GetBackBuffer to be done only 2 frames
-  countFrame++;
-  if (countFrame == firstFrame || countFrame == secondFrame)
+  //countFrame++;
+  //if (countFrame == firstFrame || countFrame == secondFrame)
   {
     if (SUCCEEDED(hr = m_pMadD3DDev->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &SurfaceMadVr)))
     {
@@ -628,10 +615,10 @@ HRESULT MPMadPresenter::RenderOsd(LPCSTR name, REFERENCE_TIME frameStart, RECT* 
       {
         SurfaceMadVr->Release();
       }
-      if (countFrame == secondFrame)
-      {
-        countFrame = resetFrame;
-      }
+      //if (countFrame == secondFrame)
+      //{
+      //  countFrame = resetFrame;
+      //}
     }
   }
 
@@ -858,8 +845,8 @@ HRESULT MPMadPresenter::SetDevice(IDirect3DDevice9* pD3DDev)
   }
 
   // Init created madVR window instance.
-  SetDsWndVisible(true);
-  Log("MPMadPresenter::SetDevice() init madVR Window");
+  //SetDsWndVisible(true);
+  //Log("MPMadPresenter::SetDevice() init madVR Window");
 
   return hr;
 }
@@ -910,6 +897,10 @@ HRESULT MPMadPresenter::Render(REFERENCE_TIME frameStart, int left, int top, int
       // TODO disable OSD delay for now (used to force IVideoWindow on C# side)
       m_pCallback->ForceOsdUpdate(true);
       Log("MPMadPresenter::Render() ForceOsdUpdate");
+
+      // Init created madVR window instance.
+      SetDsWndVisible(true);
+      Log("MPMadPresenter::SetDevice() init madVR Window");
     }
     m_deviceState.Store();
     SetupMadDeviceState();
