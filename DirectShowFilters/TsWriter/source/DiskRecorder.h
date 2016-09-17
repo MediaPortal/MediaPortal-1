@@ -127,7 +127,7 @@ private:
   void WriteFakePAT();  
   void WriteFakePMT();
   void AdjustThrottle();
-  void ResetThrottle();
+  void ResetThrottle(bool logging);
 
   __int64 EcPcrTime(__int64 New, __int64 Prev) ;
   void PatchPcr(byte* tsPacket,CTsHeader& header);

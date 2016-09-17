@@ -156,7 +156,12 @@ HRESULT FileWriterThreaded::Open(LPCWSTR pszFileName)
 
   wcscpy(m_pFileName,pszFileName);
 
-  StartThread();
+	if (FAILED(StartThread()))
+	{
+		delete[] m_pFileName;
+		m_pFileName = NULL;
+    return E_FAIL;
+	}
 
   m_WakeThreadEvent.Set(); //Trigger thread to open file
 
@@ -458,7 +463,7 @@ HRESULT FileWriterThreaded::AddToBuffer(byte* pbData, int len, int newBuffSize)
   	{
       return E_FAIL;
  	  }
-    return S_FALSE;
+    return S_FALSE; //We have rolled over into a new buffer
 	}
 	
   return S_OK;
@@ -573,11 +578,15 @@ unsigned __stdcall FileWriterThreaded::ThreadProc()
 }
 
 
-void FileWriterThreaded::StartThread()
+HRESULT FileWriterThreaded::StartThread()
 {
   m_bThreadRunning = TRUE;
   UINT id;
   m_hThreadProc = (HANDLE)_beginthreadex(NULL, 0, &FileWriterThreaded::thread_function, (void *) this, 0, &id);
+  if (!m_hThreadProc)
+  {
+    return E_FAIL;
+  }
   SetThreadPriority(m_hThreadProc, THREAD_PRIORITY_NORMAL);
   
   // Set timer resolution to SYS_TIMER_RES (if possible)
@@ -591,6 +600,8 @@ void FileWriterThreaded::StartThread()
       timeBeginPeriod(m_dwTimerResolution);
     }
   }
+  
+  return S_OK;
 }
 
 

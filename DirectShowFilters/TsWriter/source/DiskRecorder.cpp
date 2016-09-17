@@ -34,9 +34,10 @@
 #include "..\..\shared\section.h"
 
 #define TS_PACKET_SIZE	188
-#define THROTTLE_MAXIMUM_RADIO_PACKETS			10		//	Throttle to 10 for radio
-#define THROTTLE_MAXIMUM_TV_PACKETS				172		//	Throttle to 172 fo tv for reduced disk IOs
 
+#define THROTTLE_MAXIMUM_RADIO  ((NUMBER_THROTTLE_BUFFER_SIZES/2) - 1)		//	Throttle to 11 for radio
+#define THROTTLE_MAXIMUM_TV	(NUMBER_THROTTLE_BUFFER_SIZES - 1)		//	Throttle to 19 for tv for reduced disk IOs
+#define REC_THTL_MULT 8 // Multiplier to increase buffer sizes for recordings c.f. timeshift
 
 #define IGNORE_AFTER_TUNE 25                        // how many TS packets to ignore after tuning
 
@@ -58,8 +59,6 @@
 #define ADAPTION_FIELD_EXTENSION_FLAG_BIT   0x1     // bitmask for the DAPTION_FIELD_EXTENSION flag
 
 //#define ERROR_FILE_TOO_LARGE 223  - already defined in winerror.h
-//#define RECORD_BUFFER_SIZE 256000
-#define RECORD_BUFFER_SIZE (174 * TS_PACKET_SIZE)
 
 int DR_FAKE_NETWORK_ID   = 0x456;                // network id we use in our PAT
 int DR_FAKE_TRANSPORT_ID = 0x4;                  // transport id we use in our PAT
@@ -104,17 +103,9 @@ CDiskRecorder::CDiskRecorder(RecordingMode mode)
 	m_bDetermineNewStartPcr=false;
 	m_iPatVersion=0;
 	m_iPmtVersion=0;
-	m_iWriteBufferSize = 0;
 	m_eChannelType = TV;
 
-	if (m_recordingMode == TimeShift)
-		//	Set the buffer to the maximum it can throttle to
-		m_iWriteBufferSize = THROTTLE_MAXIMUM_TV_PACKETS * TS_PACKET_SIZE;
-	else
-		m_iWriteBufferSize = RECORD_BUFFER_SIZE;
 
-	m_iWriteBufferThrottle = 0;
-	m_bThrottleAtMax = FALSE;
 	m_TsPacketCount=0;
 	m_bClearTsQueue=false;
 	m_pPmtParser=new CPmtParser();
@@ -131,7 +122,7 @@ CDiskRecorder::CDiskRecorder(RecordingMode mode)
 	m_iThrottleBufferSizes[6] = 5;		//	30
 	m_iThrottleBufferSizes[7] = 10;		//	40
 	m_iThrottleBufferSizes[8] = 10;		//	50
-	m_iThrottleBufferSizes[9] = 10;		//	60
+	m_iThrottleBufferSizes[9] = 10;		//	60 (Max for radio)
 	m_iThrottleBufferSizes[10] = 10;	//	70
 	m_iThrottleBufferSizes[11] = 10;	//	80
 	m_iThrottleBufferSizes[12] = 20;	//	100
@@ -141,9 +132,11 @@ CDiskRecorder::CDiskRecorder(RecordingMode mode)
 	m_iThrottleBufferSizes[16] = 40;	//	212
 	m_iThrottleBufferSizes[17] = 50;	//	262
 	m_iThrottleBufferSizes[18] = 82;	//	344	*sync with streamingserver
-	m_iThrottleBufferSizes[19] = 172;	//	516	*sync with streamingserver
+	m_iThrottleBufferSizes[19] = 174;	//	518	*sync with streamingserver (max for TV)
 
-
+  ResetThrottle(false); //initialise m_iWriteBufferSize etc.
+  
+	//LogDebug("CDiskRecorder::Ctor - end");
 }
 //*******************************************************************
 //* dtor
@@ -165,6 +158,8 @@ CDiskRecorder::~CDiskRecorder(void)
 
 	m_pPmtParser->Reset();
 	delete m_pPmtParser;
+	
+	//LogDebug("CDiskRecorder::Dtor - end");
 }
 
 void CDiskRecorder::SetChannelType(int channelType)
@@ -177,17 +172,18 @@ void CDiskRecorder::SetChannelType(int channelType)
 	{
 		//	If tv (0)
 		if(channelType == 0)
-			m_eChannelType = TV;
-
-		//	Else assume radio
-		else
+			m_eChannelType = TV;		
+		else  //Else assume radio
 			m_eChannelType = Radio;
+			
+	  m_bThrottleAtMax = FALSE; //Allow throttle adjustment
 	}
 	catch(...)
 	{
 		WriteLog("SetChannelType exception");
 	}
 }
+
 void CDiskRecorder::SetFileNameW(wchar_t* pwszFileName)
 {
 	CEnterCriticalSection enter(m_section);
@@ -343,8 +339,8 @@ void CDiskRecorder::Reset()
     m_iTsContinuityCounter=0;
 
 		//	Reset the write buffer throttle
-		ResetThrottle();
-
+		ResetThrottle(true);
+	  LogDebug("CDiskRecorder::Reset() - end");
 	}
 	catch(...)
 	{
@@ -522,7 +518,7 @@ void CDiskRecorder::WriteToRecording(byte* buffer, int len)
       WriteLog("clear TS packet queue"); 
       m_bClearTsQueue = false;
       m_pRecordingFile->DiscardBuffer();
-      ResetThrottle();
+      ResetThrottle(true);
     }
     catch(...)
     {
@@ -536,7 +532,11 @@ void CDiskRecorder::WriteToRecording(byte* buffer, int len)
 	try
 	{
 	  //This will create a new buffer if needed
-    m_pRecordingFile->AddToBuffer(buffer, len, m_iWriteBufferSize);
+    if (m_pRecordingFile->AddToBuffer(buffer, len, m_iWriteBufferSize) == S_FALSE)
+    {	
+      //We have just rolled over into another buffer, so check if throttle needs adjustment
+      AdjustThrottle();
+    }
   } 
   catch (...) 
   { 
@@ -556,7 +556,7 @@ void CDiskRecorder::WriteToTimeshiftFile(byte* buffer, int len)
         WriteLog("clear TS packet queue"); 
         m_bClearTsQueue = false;
         m_pTimeShiftFile->DiscardBuffer();
-    		ResetThrottle();
+    		ResetThrottle(true);
      }
      catch(...)
      {
@@ -584,12 +584,24 @@ void CDiskRecorder::WriteToTimeshiftFile(byte* buffer, int len)
   }
 }
 
-void CDiskRecorder::ResetThrottle()
+void CDiskRecorder::ResetThrottle(bool logging)
 {
+  m_bThrottleAtMax = FALSE;
 	m_iWriteBufferThrottle = 0;
-	m_bThrottleAtMax = FALSE;
-  m_iWriteBufferSize = m_iThrottleBufferSizes[m_iWriteBufferThrottle] * TS_PACKET_SIZE;
-  LogDebug("CDiskRecorder::Reset write buffer throttle");
+
+  if (m_recordingMode == TimeShift)
+  {
+    m_iWriteBufferSize = m_iThrottleBufferSizes[m_iWriteBufferThrottle] * TS_PACKET_SIZE;
+	}
+	else
+	{
+    m_iWriteBufferSize = m_iThrottleBufferSizes[m_iWriteBufferThrottle] * TS_PACKET_SIZE * REC_THTL_MULT;
+	}
+  
+  if (logging)
+  {
+    LogDebug("CDiskRecorder::ResetThrottle() - Throttle to %d bytes", m_iWriteBufferSize);
+  }
 }
 
 void CDiskRecorder::AdjustThrottle()
@@ -602,29 +614,35 @@ void CDiskRecorder::AdjustThrottle()
   
   if(m_iWriteBufferThrottle >= NUMBER_THROTTLE_BUFFER_SIZES)
   	m_iWriteBufferThrottle = NUMBER_THROTTLE_BUFFER_SIZES - 1;
-  
-  int currentThrottlePackets = m_iThrottleBufferSizes[m_iWriteBufferThrottle];
-  m_iWriteBufferSize = currentThrottlePackets * TS_PACKET_SIZE;
-  
-  int throttleToNumberPackets = THROTTLE_MAXIMUM_TV_PACKETS;
-  
+    
+  int throttleToNumber = THROTTLE_MAXIMUM_TV;  
   //	If radio, we want to throttle to a smaller buffer size
   if(m_eChannelType == Radio)
-  	throttleToNumberPackets = THROTTLE_MAXIMUM_RADIO_PACKETS;
+  	throttleToNumber = THROTTLE_MAXIMUM_RADIO;
   
   //	Throttle up if we are not at maximum		
-  if(currentThrottlePackets < throttleToNumberPackets)
-  {	
-  	if(m_iWriteBufferThrottle < (NUMBER_THROTTLE_BUFFER_SIZES - 1))
-  		LogDebug("CDiskRecorder::AdjustThrottle() - Throttle to %d bytes", m_iWriteBufferSize);
-  
+  if(m_iWriteBufferThrottle < throttleToNumber)
+  {	  
   	m_iWriteBufferThrottle++;
   }
-  else if(currentThrottlePackets == throttleToNumberPackets && m_bThrottleAtMax == FALSE)
+  
+  //Reduce to new maximum if required e.g. if m_eChannelType changes, and/or set m_bThrottleAtMax
+  if(m_iWriteBufferThrottle >= throttleToNumber)
   {
+  	m_iWriteBufferThrottle = throttleToNumber;
   	m_bThrottleAtMax = TRUE;
-  	LogDebug("CDiskRecorder::AdjustThrottle() - Throttle to %d bytes (max)", m_iWriteBufferSize);
   }
+  
+  if (m_recordingMode == TimeShift)
+  {
+    m_iWriteBufferSize = m_iThrottleBufferSizes[m_iWriteBufferThrottle] * TS_PACKET_SIZE;
+	}
+	else
+	{
+    m_iWriteBufferSize = m_iThrottleBufferSizes[m_iWriteBufferThrottle] * TS_PACKET_SIZE * REC_THTL_MULT;
+	}
+  
+  LogDebug("CDiskRecorder::AdjustThrottle() - Throttle to %d bytes", m_iWriteBufferSize);
 }
 
 void CDiskRecorder::WriteLog(const char* fmt,...)

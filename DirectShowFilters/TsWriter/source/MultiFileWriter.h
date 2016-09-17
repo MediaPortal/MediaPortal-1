@@ -143,7 +143,7 @@ protected:
 
 	static unsigned __stdcall thread_function(void* p);
   unsigned __stdcall ThreadProc();
-  void StartThread();
+  HRESULT StartThread();
   void StopThread();
   DWORD m_dwTimerResolution;   //Timer resolution variable
 };

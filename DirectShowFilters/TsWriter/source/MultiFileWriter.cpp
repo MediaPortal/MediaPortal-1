@@ -176,11 +176,18 @@ HRESULT MultiFileWriter::Open(LPCWSTR pszFileName)
 		m_pTSBufferFileName = NULL;
     return E_FAIL;
   }
+
+	if (FAILED(StartThread()))
+	{
+		delete m_pCurrentTSFile;
+    m_pCurrentTSFile = NULL;
+		delete[] m_pTSBufferFileName;
+		m_pTSBufferFileName = NULL;
+    return E_FAIL;
+	}
   
 	m_pCurrentTSFile->SetChunkReserve(m_chunkReserve, m_maxTSFileSize);
-
-	StartThread();
-
+	
   m_WakeThreadEvent.Set(); //Trigger thread to open file
 	
 	return S_OK;
@@ -902,7 +909,7 @@ HRESULT MultiFileWriter::AddToBuffer(byte* pbData, int len, int newBuffSize)
   	{
       return E_FAIL;
  	  }
-    return S_FALSE;
+    return S_FALSE; //We have rolled over into a new buffer
 	}
 	
   return S_OK;
@@ -1017,11 +1024,15 @@ unsigned __stdcall MultiFileWriter::ThreadProc()
 }
 
 
-void MultiFileWriter::StartThread()
+HRESULT MultiFileWriter::StartThread()
 {
   m_bThreadRunning = TRUE;
   UINT id;
-  m_hThreadProc = (HANDLE)_beginthreadex(NULL, 0, &MultiFileWriter::thread_function, (void *) this, 0, &id);
+  m_hThreadProc = (HANDLE)_beginthreadex(NULL, 0, &MultiFileWriter::thread_function, (void *) this, 0, &id);   
+  if (!m_hThreadProc)
+  {
+    return E_FAIL;
+  }    
   SetThreadPriority(m_hThreadProc, THREAD_PRIORITY_NORMAL);
   
   // Set timer resolution to SYS_TIMER_RES (if possible)
@@ -1035,6 +1046,8 @@ void MultiFileWriter::StartThread()
       timeBeginPeriod(m_dwTimerResolution);
     }
   }
+  
+  return S_OK;
 }
 
 
