@@ -30,4 +30,5 @@ DECLARE_INTERFACE_(IVMR9Callback, IUnknown)
   STDMETHOD(IsFullScreen)()PURE;
   STDMETHOD(IsUiVisible)()PURE;
   STDMETHOD(RestoreDeviceSurface)(DWORD pSurfaceDevice)PURE;
+  STDMETHOD(ReduceMadvrFrame)()PURE;
 };

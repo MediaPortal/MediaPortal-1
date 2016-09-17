@@ -95,6 +95,9 @@ namespace MediaPortal.Player
 
     [PreserveSig]
     void RestoreDeviceSurface(uint pSurfaceDevice);
+
+    [PreserveSig]
+    int ReduceMadvrFrame();
   }
 
   #endregion
