@@ -120,21 +120,14 @@ FileWriterThreaded::~FileWriterThreaded()
   if (m_pFileName != NULL)
   {
     Close();  
+    LogDebug("FileWriterThreaded::Dtor() before Close()");
   }  
-  LogDebug("FileWriterThreaded::Dtor() end");
-}
-
-HRESULT FileWriterThreaded::GetFileName(LPWSTR *lpszFileName)
-{
-  CAutoLock lock(&m_Lock);
-  *lpszFileName = m_pFileName;
-  return S_OK;
 }
 
 HRESULT FileWriterThreaded::Open(LPCWSTR pszFileName)
-{
+{  
   CAutoLock lock(&m_Lock);
-  
+
   // Are we already open?
   if (m_pFileName != NULL)
   {
@@ -173,8 +166,6 @@ HRESULT FileWriterThreaded::Open(LPCWSTR pszFileName)
 //
 HRESULT FileWriterThreaded::OpenFile()
 {
-  CAutoLock lock(&m_Lock);
-
   // Is the file already opened
   if (m_hFile != INVALID_HANDLE_VALUE)
   {
@@ -240,8 +231,11 @@ HRESULT FileWriterThreaded::OpenFile()
 
 HRESULT FileWriterThreaded::Close()
 {  
-  //Wait for all buffers to be written to disk
+  CAutoLock lock(&m_Lock);
+
   PushBuffer(); //Force temp buffer onto queue
+
+  //Wait for all buffers to be written to disk
   m_WakeThreadEvent.Set();
   for (;;)
   { 
@@ -261,24 +255,17 @@ HRESULT FileWriterThreaded::Close()
     Sleep(1);
   }
 
-  //Don't lock before this point to avoid deadlock when m_writeQueue.size() > 0
+  StopThread();  
+  ClearBuffers();
 
-  StopThread();
+  CloseHandle(m_hFile);
+  m_hFile = INVALID_HANDLE_VALUE;
   
-  { //Context for CAutoLock
-    CAutoLock lock(&m_Lock);
-  
-    ClearBuffers();
-  
-    CloseHandle(m_hFile);
-    m_hFile = INVALID_HANDLE_VALUE;
-    
-    if (m_pFileName != NULL)
-    {
-      LogDebug(L"FileWriterThreaded: Close() succeeded, filename: %s, Max buffers used: %d", m_pFileName, m_maxBuffersUsed);
-      delete m_pFileName;
-      m_pFileName = NULL;
-    }
+  if (m_pFileName != NULL)
+  {
+    LogDebug(L"FileWriterThreaded: Close() succeeded, filename: %s, Max buffers used: %d", m_pFileName, m_maxBuffersUsed);
+    delete m_pFileName;
+    m_pFileName = NULL;
   }
 
   return S_OK;
@@ -301,8 +288,6 @@ __int64 FileWriterThreaded::GetFilePointer()
 
 HRESULT FileWriterThreaded::WriteWithRetry(PBYTE pbData, ULONG lDataLength, int retries)
 {
-  CAutoLock lock(&m_Lock);
-
   HRESULT hr;
   
   // Is file open yet
@@ -443,6 +428,8 @@ HRESULT FileWriterThreaded::NewBuffer(int size)
 
 HRESULT FileWriterThreaded::AddToBuffer(byte* pbData, int len, int newBuffSize)
 {
+  CAutoLock lock(&m_Lock);
+
   if (m_pDiskBuffer == NULL)
   {
     if (NewBuffer(newBuffSize) != S_OK)
@@ -490,6 +477,7 @@ HRESULT FileWriterThreaded::PushBuffer()
 
 HRESULT FileWriterThreaded::DiscardBuffer()
 {
+  CAutoLock lock(&m_Lock);
   if (m_pDiskBuffer != NULL)
   {
     delete m_pDiskBuffer;
@@ -512,7 +500,7 @@ unsigned FileWriterThreaded::thread_function(void* p)
 
 unsigned __stdcall FileWriterThreaded::ThreadProc()
 {
-  LogDebug("FileWriterThreaded::ThreadProc() started");
+  //LogDebug("FileWriterThreaded::ThreadProc() started");
   CDiskBuffWT* diskBuffer = NULL;
   UINT qsize = 0;
   
@@ -573,7 +561,7 @@ unsigned __stdcall FileWriterThreaded::ThreadProc()
   {
     delete diskBuffer;
   }
-  LogDebug("FileWriterThreaded::ThreadProc() finished");
+  //LogDebug("FileWriterThreaded::ThreadProc() finished");
   return 0;
 }
 

@@ -70,34 +70,16 @@ public:
 
 	HRESULT Open(LPCWSTR pszFileName);
 	HRESULT Close();
-	
-	HRESULT GetFileName(LPWSTR *lpszFileName);
-	HRESULT GetFileSize(__int64 *lpllsize);	
-//  HRESULT Write(PBYTE pbData, ULONG lDataLength);
 	HRESULT AddToBuffer(byte* pbData, int len, int newBuffSize);
 	HRESULT DiscardBuffer();
 
-	long getNumbFilesAdded(void);
-	long getNumbFilesRemoved(void);
-	
-	long getCurrentFileId(void);	
-	long getMinTSFiles(void);
-	void setMinTSFiles(long minFiles);
-	long getMaxTSFiles(void);	
-	void setMaxTSFiles(long maxFiles);
-	__int64 getMaxTSFileSize(void);
-	void setMaxTSFileSize(__int64 maxSize);
-	__int64 getChunkReserve(void);
-	void setChunkReserve(__int64 chunkSize);
-	void GetPosition(__int64 * position);
+	void GetPosition(__int64 * position, long * bufferId);
 
 protected:
+  	  
 	HRESULT OpenFile();
 	HRESULT WriteToDisk(PBYTE pbData, ULONG lDataLength);
 	HRESULT GetAvailableDiskSpace(__int64* llAvailableDiskSpace);
-//	LPWSTR getBufferFileName(void);
-//	void setBufferFileName(LPWSTR fileName);
-	FileWriter* getCurrentTSFile(void);
 
 	HRESULT PushBuffer();
 	HRESULT NewBuffer(int size);
@@ -116,6 +98,7 @@ protected:
 	CDiskBuff* m_pDiskBuffer;
 
 	CCritSec m_Lock;
+	CCritSec m_posnLock;
 
 	FileWriter *m_pCurrentTSFile;
 	std::vector<LPWSTR> m_tsFileNames;

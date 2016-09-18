@@ -339,8 +339,8 @@ void CDiskRecorder::Reset()
     m_iTsContinuityCounter=0;
 
 		//	Reset the write buffer throttle
-		ResetThrottle(true);
-	  LogDebug("CDiskRecorder::Reset() - end");
+		ResetThrottle(false);
+	  //LogDebug("CDiskRecorder::Reset() - end");
 	}
 	catch(...)
 	{
@@ -408,21 +408,6 @@ void CDiskRecorder::GetBufferSize(long *size)
 	*size = 0;
 }
 
-void CDiskRecorder::GetNumbFilesAdded(WORD *numbAdd)
-{
-	*numbAdd = (WORD)m_pTimeShiftFile->getNumbFilesAdded();
-}
-
-void CDiskRecorder::GetNumbFilesRemoved(WORD *numbRem)
-{
-	*numbRem = (WORD)m_pTimeShiftFile->getNumbFilesRemoved();
-}
-
-void CDiskRecorder::GetCurrentFileId(WORD *fileID)
-{
-	*fileID = (WORD)m_pTimeShiftFile->getCurrentFileId();
-}
-
 void CDiskRecorder::GetMinTSFiles(WORD *minFiles)
 {
 	*minFiles = (WORD) m_params.minFiles;
@@ -463,15 +448,9 @@ void CDiskRecorder::SetChunkReserve(__int64 chunkSize)
 	m_params.chunkSize=chunkSize;
 }
 
-void CDiskRecorder::GetFileBufferSize(__int64 *lpllsize)
-{
-	m_pTimeShiftFile->GetFileSize(lpllsize);
-}
-
 void CDiskRecorder::GetTimeShiftPosition(__int64 * position,long * bufferId)
 {
-	m_pTimeShiftFile->GetPosition(position);
-	*bufferId=m_pTimeShiftFile->getCurrentFileId();
+	m_pTimeShiftFile->GetPosition(position, bufferId);	
 }
 
 void CDiskRecorder::GetDiscontinuityCounter(int* counter)
@@ -607,18 +586,14 @@ void CDiskRecorder::ResetThrottle(bool logging)
 void CDiskRecorder::AdjustThrottle()
 {
   if (m_bThrottleAtMax) return;
-    
-  //Check/adjust throttle
-  if(m_iWriteBufferThrottle < 0)
-  	m_iWriteBufferThrottle = 0;
-  
-  if(m_iWriteBufferThrottle >= NUMBER_THROTTLE_BUFFER_SIZES)
-  	m_iWriteBufferThrottle = NUMBER_THROTTLE_BUFFER_SIZES - 1;
-    
+       
   int throttleToNumber = THROTTLE_MAXIMUM_TV;  
   //	If radio, we want to throttle to a smaller buffer size
   if(m_eChannelType == Radio)
   	throttleToNumber = THROTTLE_MAXIMUM_RADIO;
+
+  //Check throttle limits  	
+  m_iWriteBufferThrottle = min(max(m_iWriteBufferThrottle, 0), throttleToNumber); 
   
   //	Throttle up if we are not at maximum		
   if(m_iWriteBufferThrottle < throttleToNumber)
@@ -626,10 +601,8 @@ void CDiskRecorder::AdjustThrottle()
   	m_iWriteBufferThrottle++;
   }
   
-  //Reduce to new maximum if required e.g. if m_eChannelType changes, and/or set m_bThrottleAtMax
   if(m_iWriteBufferThrottle >= throttleToNumber)
   {
-  	m_iWriteBufferThrottle = throttleToNumber;
   	m_bThrottleAtMax = TRUE;
   }
   

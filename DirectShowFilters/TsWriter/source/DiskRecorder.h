@@ -96,9 +96,6 @@ public:
 	// Only needed for timeshifting
 	void SetVideoAudioObserver (IVideoAudioObserver* callback);
 	void GetBufferSize( long * size) ;
-	void GetNumbFilesAdded( WORD *numbAdd) ;
-	void GetNumbFilesRemoved( WORD *numbRem) ;
-	void GetCurrentFileId( WORD *fileID) ;
 	void GetMinTSFiles( WORD *minFiles) ;
 	void SetMinTSFiles( WORD minFiles) ;
 	void GetMaxTSFiles( WORD *maxFiles) ;
@@ -107,7 +104,6 @@ public:
 	void SetMaxTSFileSize( __int64 maxSize) ;
 	void GetChunkReserve( __int64 *chunkSize) ;
 	void SetChunkReserve( __int64 chunkSize) ;
-	void GetFileBufferSize( __int64 *lpllsize) ;
 	void GetTimeShiftPosition(__int64 * position,long * bufferId);
   void GetDiscontinuityCounter(int* counter);
   void GetTotalBytes(int* packetsProcessed);
@@ -146,7 +142,6 @@ private:
   int                  m_iFakePcrPid;
 	int									 m_iServiceId;
 	vector<PidInfo2>		 m_vecPids;
-//	bool								 m_bSeenAudioStart;
 	bool								 m_AudioOrVideoSeen;
 	int									 m_iPmtContinuityCounter;
 	int									 m_iPatContinuityCounter;
@@ -160,9 +155,9 @@ private:
 	int			        m_iPmtVersion;
 	int             m_iPart;
   byte*           m_pWriteBuffer;
-  int			  m_iWriteBufferSize;
-  int			m_iThrottleBufferSizes[NUMBER_THROTTLE_BUFFER_SIZES];
-  int				m_iWriteBufferThrottle;
+  int			    m_iWriteBufferSize;
+  int			    m_iThrottleBufferSizes[NUMBER_THROTTLE_BUFFER_SIZES];
+  int				  m_iWriteBufferThrottle;
   BOOL				m_bThrottleAtMax;
   MpChannelType		m_eChannelType;
   CTsHeader       m_tsHeader;

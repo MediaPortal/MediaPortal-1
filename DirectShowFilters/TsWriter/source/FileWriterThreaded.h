@@ -62,7 +62,6 @@ public:
 
 	HRESULT Open(LPCWSTR pszFileName);
 	HRESULT Close();
-	HRESULT GetFileName(LPWSTR *lpszFileName);
   
 	HRESULT AddToBuffer(byte* pbData, int len, int newBuffSize);
 	HRESULT DiscardBuffer();
