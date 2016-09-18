@@ -826,7 +826,12 @@ namespace MediaPortal.Player
         Log.Info("TSReaderPlayer: Cleanup DShow graph {0}", GUIGraphicsContext.InVmr9Render);
         try
         {
-          if (VMR9Util.g_vmr9 != null)
+          if (_isRadio)
+          {
+            var hr = _mediaCtrl.Stop();
+            DsError.ThrowExceptionForHR(hr);
+          }
+          else if (VMR9Util.g_vmr9 != null)
           {
             if (_mediaCtrl != null)
             {
