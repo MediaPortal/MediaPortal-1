@@ -3100,8 +3100,8 @@ namespace MediaPortal.Player
 
         if (VMR9Util.g_vmr9 != null && VMR9Util.g_vmr9._vmr9Filter != null)
         {
-          MadvrInterface.EnableExclusiveMode(false, VMR9Util.g_vmr9._vmr9Filter);
-          DirectShowUtil.DisconnectAllPins(_graphBuilder, VMR9Util.g_vmr9._vmr9Filter);
+          //MadvrInterface.EnableExclusiveMode(false, VMR9Util.g_vmr9._vmr9Filter);
+          //DirectShowUtil.DisconnectAllPins(_graphBuilder, VMR9Util.g_vmr9._vmr9Filter);
           Log.Info("BDPlayer: Cleanup VMR9");
         }
 
