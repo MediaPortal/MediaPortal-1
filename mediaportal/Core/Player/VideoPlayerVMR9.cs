@@ -1401,7 +1401,12 @@ namespace MediaPortal.Player
       Log.Info("VideoPlayer9: Cleanup DShow graph");
       try
       {
-        if (VMR9Util.g_vmr9 != null)
+        if (AudioOnly)
+        {
+          var hr = mediaCtrl.Stop();
+          DsError.ThrowExceptionForHR(hr);
+        }
+        else if (VMR9Util.g_vmr9 != null)
         {
           if (mediaCtrl != null)
           {

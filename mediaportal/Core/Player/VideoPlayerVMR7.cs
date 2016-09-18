@@ -378,7 +378,14 @@ namespace MediaPortal.Player
           //  videoWin.put_WindowStyle((WindowStyle)((int)WindowStyle.Child + (int)WindowStyle.ClipChildren + (int)WindowStyle.ClipSiblings));
           //  videoWin.put_MessageDrain(GUIGraphicsContext.form.Handle);
           //}
-          if (VMR9Util.g_vmr9 != null) hr = VMR9Util.g_vmr9.StartMediaCtrl(mediaCtrl);
+          if (AudioOnly)
+          {
+            hr = mediaCtrl.Run();
+          }
+          else if (VMR9Util.g_vmr9 != null)
+          {
+            hr = VMR9Util.g_vmr9.StartMediaCtrl(mediaCtrl);
+          }
         }
         catch (Exception error)
         {
