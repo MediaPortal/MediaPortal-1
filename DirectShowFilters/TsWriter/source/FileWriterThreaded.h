@@ -25,9 +25,10 @@
 
 #ifndef FILEWRITERTHREADED
 #define FILEWRITERTHREADED
+#include "CDiskBuff.h"
 #include <vector>
 
-//Variable size buffers are used - CDiskBuffWT::CDiskBuffWT(int size)
+//Variable size buffers are used - CDiskBuff::CDiskBuff(int size)
 #define FULL_BUFFERS 256
 #define NOT_FULL_BUFFERS 192
 
@@ -36,22 +37,6 @@
 
 //System timer resolution in ms
 #define SYS_TIMER_RES 5
-
-class CDiskBuffWT
-{
-public:
-  CDiskBuffWT(int size);
-  ~CDiskBuffWT(void);
-  int    Length();
-  byte*  Data();
-  int    Add(byte* data, int len);
-
-private:
-  byte* m_pBuffer;
-  int   m_iLength;
-  int   m_iSize;
-};
-
 
 class FileWriterThreaded
 {
@@ -74,7 +59,7 @@ protected:
 	int    m_iPart;
 
 	BOOL m_bWriteFailed;
-	CDiskBuffWT* m_pDiskBuffer;
+	CDiskBuff* m_pDiskBuffer;
 	
 	UINT m_maxBuffersUsed;
 	BOOL m_bDiskFull;
@@ -91,8 +76,8 @@ protected:
 	CCritSec m_Lock;
 	CCritSec m_qLock;	
 	
-  std::vector<CDiskBuffWT*> m_writeQueue;
-  typedef std::vector<CDiskBuffWT*>::iterator ivecDiskBuff;
+  std::vector<CDiskBuff*> m_writeQueue;
+  typedef std::vector<CDiskBuff*>::iterator ivecDiskBuff;
 
   BOOL m_bThreadRunning;
   HANDLE m_hThreadProc;

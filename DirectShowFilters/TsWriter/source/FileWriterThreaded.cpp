@@ -49,54 +49,6 @@
 extern void LogDebug(const char *fmt, ...) ;
 extern void LogDebug(const wchar_t *fmt, ...) ;
 
-///*******************************************
-///Class which holds a single disk buffer
-///
-
-CDiskBuffWT::CDiskBuffWT(int size)
-{
-  m_iLength=0;
-  m_pBuffer = new byte[size];
-  m_iSize = size;
-}
-
-CDiskBuffWT::~CDiskBuffWT()
-{
-  delete [] m_pBuffer;
-  m_pBuffer=NULL;
-  m_iLength=0;
-}
-
-// Adds data contained to this buffer
-int CDiskBuffWT::Add(byte* data, int len)
-{
-  if((m_iSize >= m_iLength + len ) && data) 
-  {
-    memcpy(&m_pBuffer[m_iLength], data, len);
-    m_iLength+=len;
-    return 0; //All data written
-  }
-  else
-  {
-    return len; //No data written/consumed
-  }
-}
-
-// returns the length in bytes of the buffer
-int CDiskBuffWT::Length()
-{
-  return m_iLength;
-}
-
-// returns the buffer
-byte* CDiskBuffWT::Data()
-{
-  if (m_pBuffer==NULL)
-  {
-    return NULL;
-  }
-  return m_pBuffer;
-}
 
 ///*******************************************
 /// FileWriter code 
@@ -397,7 +349,7 @@ void FileWriterThreaded::ClearBuffers()
   ivecDiskBuff it = m_writeQueue.begin();
   while (it != m_writeQueue.end())
   {
-    CDiskBuffWT* diskBuffer = *it;
+    CDiskBuff* diskBuffer = *it;
     delete diskBuffer;
     it = m_writeQueue.erase(it);
   }
@@ -415,7 +367,7 @@ HRESULT FileWriterThreaded::NewBuffer(int size)
   	
   try 
   {
-    m_pDiskBuffer = new CDiskBuffWT(size);    
+    m_pDiskBuffer = new CDiskBuff(size);    
   }
   catch(...)
   {
@@ -501,7 +453,7 @@ unsigned FileWriterThreaded::thread_function(void* p)
 unsigned __stdcall FileWriterThreaded::ThreadProc()
 {
   //LogDebug("FileWriterThreaded::ThreadProc() started");
-  CDiskBuffWT* diskBuffer = NULL;
+  CDiskBuff* diskBuffer = NULL;
   UINT qsize = 0;
   
   while (m_bThreadRunning)

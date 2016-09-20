@@ -27,6 +27,7 @@
 #define MULTIFILEWRITER
 
 #include "FileWriter.h"
+#include "CDiskBuff.h"
 #include <vector>
 
 //Variable size buffers are used - CDiskBuff::CDiskBuff(int size)
@@ -47,20 +48,6 @@ typedef struct
 	__int64	chunkSize;
 } MultiFileWriterParam;
 
-class CDiskBuff
-{
-public:
-  CDiskBuff(int size);
-  ~CDiskBuff(void);
-  int    Length();
-  byte*  Data();
-  int    Add(byte* data, int len);
-
-private:
-  byte* m_pBuffer;
-  int   m_iLength;
-  int   m_iSize;
-};
 
 class MultiFileWriter
 {

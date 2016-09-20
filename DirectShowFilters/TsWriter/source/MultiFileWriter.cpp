@@ -50,54 +50,6 @@
 extern void LogDebug(const char *fmt, ...) ;
 extern void LogDebug(const wchar_t *fmt, ...) ;
 
-///*******************************************
-///Class which holds a single disk buffer
-///
-
-CDiskBuff::CDiskBuff(int size)
-{
-  m_iLength=0;
-  m_pBuffer = new byte[size];
-  m_iSize = size;
-}
-
-CDiskBuff::~CDiskBuff()
-{
-  delete [] m_pBuffer;
-  m_pBuffer=NULL;
-  m_iLength=0;
-}
-
-// Adds data contained to this buffer
-int CDiskBuff::Add(byte* data, int len)
-{
-  if((m_iSize >= m_iLength + len ) && data) 
-  {
-    memcpy(&m_pBuffer[m_iLength], data, len);
-    m_iLength+=len;
-    return 0; //All data written
-  }
-  else
-  {
-    return len; //No data written/consumed
-  }
-}
-
-// returns the length in bytes of the buffer
-int CDiskBuff::Length()
-{
-  return m_iLength;
-}
-
-// returns the buffer
-byte* CDiskBuff::Data()
-{
-  if (m_pBuffer==NULL)
-  {
-    return NULL;
-  }
-  return m_pBuffer;
-}
 
 ///*******************************************
 /// MultiFileWriter code 
