@@ -154,7 +154,9 @@ bool CDeMultiplexer::SetAudioStream(int stream)
   if (m_AudioStreamType != newAudioStreamType)
   {
     LogDebug("demux: old %s new audio %s", StreamFormatAsString(m_AudioStreamType), StreamFormatAsString(newAudioStreamType));
-		m_AudioStreamType = newAudioStreamType;
+    m_AudioStreamType = newAudioStreamType;
+    // TODO madVR hack to fix rendering start
+    m_filter.IssueCommand(FAKESEEK, m_rtOffset);
   }
   else
   {

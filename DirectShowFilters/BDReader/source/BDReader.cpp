@@ -559,6 +559,17 @@ DWORD WINAPI CBDReaderFilter::CommandThread()
             break;
           }
 
+        case FAKESEEK:
+        {
+          // TODO madVR hack to fix rendering start
+          LogDebug("CBDReaderFilter::Command thread: fakeseek requested - pos: %06.3f", cmd.refTime.Millisecs() / 1000.0);
+          HRESULT hr = m_pMediaSeeking->SetPositions((LONGLONG*)&cmd.refTime.m_time, AM_SEEKING_AbsolutePositioning | AM_SEEKING_FakeSeek, &posEnd, AM_SEEKING_NoPositioning);
+          m_pMediaSeeking->SetRate(0.5);
+          m_pMediaSeeking->SetRate(1);
+
+          break;
+        }
+
         case PAUSE:
           if (!m_pLibPaused && m_pMediaControl)
           {
@@ -597,7 +608,7 @@ STDMETHODIMP CBDReaderFilter::Run(REFERENCE_TIME tStart)
   
   CAutoLock cObjectLock(m_pLock);
   lib.SetState(State_Running);
-  
+
   HRESULT hr = CSource::Run(tStart);
 
   lib.SetRate((UINT32((double)BLURAY_RATE_NORMAL * m_dRate)));
@@ -609,6 +620,21 @@ STDMETHODIMP CBDReaderFilter::Run(REFERENCE_TIME tStart)
 
   return hr;
 }
+
+//void CBDReaderFilter::FakeSeek(REFERENCE_TIME tStart)
+//{
+//  // Needed for madVR to start rendering on madVR side
+//  if (m_pMediaSeeking)
+//  {
+//    LogDebug("CBDReaderFilter::FakeSeek(%05.2f) state %d", tStart / 10000000.0, m_State);
+//    LONGLONG posEnd = 0;
+//    HRESULT hr = m_pMediaSeeking->GetDuration(&posEnd);
+//    hr = m_pMediaSeeking->SetPositions(static_cast<LONGLONG*>(&tStart), AM_SEEKING_AbsolutePositioning | AM_SEEKING_FakeSeek, &posEnd, AM_SEEKING_NoPositioning);
+//    m_demultiplexer.FlushVideo();
+//    Seek(1);
+//    OnPlaybackPositionChange();
+//  }
+//}
 
 STDMETHODIMP CBDReaderFilter::Stop()
 {
