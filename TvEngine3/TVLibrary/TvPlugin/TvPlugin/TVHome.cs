@@ -2587,6 +2587,8 @@ namespace TvPlugin
         GUIPropertyManager.SetProperty("#TV.View.episode", current.EpisodeNumber);
         GUIPropertyManager.SetProperty("#TV.View.genre", current.Genre);
         GUIPropertyManager.SetProperty("#TV.View.remaining",Utils.SecondsToHMSString(current.CalculateTimeRemaining()));
+        GUIPropertyManager.SetProperty("#TV.View.remainingSeconds", Utils.SecondsToHMSStringSeconds(current.CalculateTimeRemaining()));
+        GUIPropertyManager.SetProperty("#TV.View.remainingMinutes", Utils.SecondsToHMSStringMinutes(current.CalculateTimeRemaining()));
         SetTvThumbProperty(ch);
 
         TimeSpan ts = current.EndTime - current.StartTime;
@@ -2651,6 +2653,8 @@ namespace TvPlugin
       GUIPropertyManager.SetProperty("#TV.Record.percent2", "0");
       GUIPropertyManager.SetProperty("#TV.Record.percent3", "0");
       GUIPropertyManager.SetProperty("#TV.View.remaining", String.Empty);
+      GUIPropertyManager.SetProperty("#TV.View.remainingSeconds", string.Empty);
+      GUIPropertyManager.SetProperty("#TV.View.remainingMinutes", string.Empty);
     }
 
     private static void UpdateNextEpgProperties(Channel ch)
