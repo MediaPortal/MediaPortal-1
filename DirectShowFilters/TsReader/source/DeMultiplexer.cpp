@@ -153,7 +153,6 @@ CDeMultiplexer::CDeMultiplexer(CTsDuration& duration,CTsReaderFilter& filter)
   m_prefetchLoopDelay = PF_LOOP_DELAY_MIN;
 
   m_mpegPesParser = new CMpegPesParser();
-  // m_CcParserH264 = new CcParseH264();
 
   m_pFileReadBuffer = NULL;
   m_pFileReadBuffer = new byte[READ_SIZE]; //~130ms of data @ 8Mbit/s
