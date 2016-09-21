@@ -90,15 +90,22 @@ MPMadPresenter::~MPMadPresenter()
       m_pORCB.Release();
     Log("MPMadPresenter::Destructor() - m_pORCB release 2");
 
-    // Detroy create madVR window
-    DeInitMadvrWindow();
-
     Log("MPMadPresenter::Destructor() - m_pMad release 1");
     if (m_pMad)
     {
+      // Let's madVR restore original display mode (when adjust refresh it's handled by madVR)
+      if (Com::SmartQIPtr<IMadVRCommand> pMadVrCmd = m_pMad)
+      {
+        pMadVrCmd->SendCommand("restoreDisplayModeNow");
+        pMadVrCmd.Release();
+        Log("MPMadPresenter::Shutdown() restoreDisplayModeNow");
+      }
       m_pMad.Release();
     }
     Log("MPMadPresenter::Destructor() - m_pMad release 2");
+
+    // Detroy create madVR window and need to be here to avoid some crash
+    DeInitMadvrWindow();
 
     Log("MPMadPresenter::Destructor() - instance 0x%x", this);
   }
@@ -137,7 +144,7 @@ void MPMadPresenter::SetMadVrPaused()
   {
     m_pMediaControl->Pause();
     m_pPaused = true;
-    Log("MPMadPresenter:::SetOSDCallback() pause");
+    Log("MPMadPresenter:::SetMadVrPaused() pause");
   }
 }
 
@@ -427,16 +434,13 @@ HRESULT MPMadPresenter::Stopping()
       Log("MPMadPresenter::Shutdown() disable exclusive mode");
     }
 
-    // Let's madVR restore original display mode (when adjust refresh it's handled by madVR)
-    if (Com::SmartQIPtr<IMadVRCommand> pMadVrCmd = m_pMad)
-    {
-      pMadVrCmd->SendCommand("restoreDisplayModeNow");
-      pMadVrCmd.Release();
-      Log("MPMadPresenter::Shutdown() restoreDisplayModeNow");
-    }
-
-    // Detroy create madVR window
-    DeInitMadvrWindow();
+    //// Let's madVR restore original display mode (when adjust refresh it's handled by madVR)
+    //if (Com::SmartQIPtr<IMadVRCommand> pMadVrCmd = m_pMad)
+    //{
+    //  pMadVrCmd->SendCommand("restoreDisplayModeNow");
+    //  pMadVrCmd.Release();
+    //  Log("MPMadPresenter::Shutdown() restoreDisplayModeNow");
+    //}
 
     Log("MPMadPresenter::Stopping() start");
     return S_OK;
