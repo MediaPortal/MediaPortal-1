@@ -147,7 +147,7 @@ bool CDeMultiplexer::SetAudioStream(int stream)
   }
 
   // Get the new audio stream type
-  int newAudioStreamType =  m_audioStreams[stream].audioType;   
+  int newAudioStreamType =  m_audioStreams[stream].audioType;
   m_iAudioStream = stream;
   m_iAudioIdx = stream;
 
@@ -155,12 +155,12 @@ bool CDeMultiplexer::SetAudioStream(int stream)
   {
     LogDebug("demux: old %s new audio %s", StreamFormatAsString(m_AudioStreamType), StreamFormatAsString(newAudioStreamType));
     m_AudioStreamType = newAudioStreamType;
-    // TODO madVR hack to fix rendering start
-    m_filter.IssueCommand(FAKESEEK, m_rtOffset);
+    //// TODO madVR hack to fix rendering start
+    //m_filter.IssueCommand(FAKESEEK, m_rtOffset);
   }
   else
   {
-    LogDebug("demux: no change in audio type (%s)", StreamFormatAsString(m_AudioStreamType));      
+    LogDebug("demux: no change in audio type (%s)", StreamFormatAsString(m_AudioStreamType));
   }
 
   delete m_pCurrentAudioBuffer;

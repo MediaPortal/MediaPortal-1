@@ -564,8 +564,8 @@ DWORD WINAPI CBDReaderFilter::CommandThread()
           // TODO madVR hack to fix rendering start
           LogDebug("CBDReaderFilter::Command thread: fakeseek requested - pos: %06.3f", cmd.refTime.Millisecs() / 1000.0);
           HRESULT hr = m_pMediaSeeking->SetPositions((LONGLONG*)&cmd.refTime.m_time, AM_SEEKING_AbsolutePositioning | AM_SEEKING_FakeSeek, &posEnd, AM_SEEKING_NoPositioning);
-          m_pMediaSeeking->SetRate(0.5);
-          m_pMediaSeeking->SetRate(1);
+          //m_pMediaSeeking->SetRate(2);
+          //m_pMediaSeeking->SetRate(1);
 
           break;
         }
