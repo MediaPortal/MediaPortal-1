@@ -1595,6 +1595,7 @@ namespace MediaPortal.Player
           GC.Collect();
           MadDeinit();
           GC.Collect();
+          MadvrInterface.restoreDisplayModeNow(_vmr9Filter);
           DirectShowUtil.FinalReleaseComObject(_vmr9Filter);
           Log.Debug("VMR9: Dispose 2");
         }
