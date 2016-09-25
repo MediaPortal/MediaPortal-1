@@ -3053,6 +3053,8 @@ namespace TvPlugin
         GUIPropertyManager.SetProperty("#TV.View.remaining", Utils.SecondsToHMSString(current.CalculateTimeRemaining()));
         GUIPropertyManager.SetProperty("#TV.View.remainingSeconds", Utils.SecondsToHMSStringSeconds(current.CalculateTimeRemaining()));
         GUIPropertyManager.SetProperty("#TV.View.remainingMinutes", Utils.SecondsToHMSStringMinutes(current.CalculateTimeRemaining()));
+        GUIPropertyManager.SetProperty("#TV.View.remainingSeconds", Utils.SecondsToHMSStringSeconds(current.CalculateTimeRemaining()));
+        GUIPropertyManager.SetProperty("#TV.View.remainingMinutes", Utils.SecondsToHMSStringMinutes(current.CalculateTimeRemaining()));
         SetTvThumbProperty(ch);
 
         TimeSpan ts = current.EndTime - current.StartTime;
