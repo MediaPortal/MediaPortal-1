@@ -140,12 +140,6 @@
     <Compile Include="Implementations\Dri\Service\TunerService.cs" />
     <Compile Include="Implementations\Dri\TunerDri.cs" />
     <Compile Include="Implementations\Pbda\TunerPbdaCableCard.cs" />
-    <Compile Include="Implementations\DVB\Graphs\B2C2\DeviceInfo.cs" />
-    <Compile Include="Implementations\DVB\Graphs\B2C2\StructB2C2.cs" />
-    <Compile Include="Implementations\DVB\Graphs\B2C2\EnumsB2C2.cs" />
-    <Compile Include="Implementations\DVB\Graphs\B2C2\IB2C2MPEG2TunerCtrl4.cs" />
-    <Compile Include="Implementations\DVB\Graphs\B2C2\IB2C2MPEG2DataCtrl6.cs" />
-    <Compile Include="Implementations\DVB\Graphs\B2C2\IB2C2MPEG2AVCtrl3.cs" />
     <Compile Include="Implementations\DVB\QAM\GenericATSC.cs" />
     <Compile Include="Implementations\DVB\DisEqC\GenericBDAS.cs" />
     <Compile Include="Implementations\DVB\DisEqC\GenPixBDA.cs" />
@@ -176,7 +170,8 @@
     <Compile Include="Implementations\DVB\Graphs\DVBC\TvCardDVBC.cs" />
     <Compile Include="Implementations\DVB\Graphs\DVBS\DVBSScanning.cs" />
     <Compile Include="Implementations\DVB\Graphs\DVBS\TvCardDVBS.cs" />
-    <Compile Include="Implementations\DVB\Graphs\B2C2\TvCardDvbB2C2.cs" />
+    <Compile Include="Implementations\DVB\Graphs\SS2\DVBSkyStar2Helper.cs" />
+    <Compile Include="Implementations\DVB\Graphs\SS2\TvCardDvbSS2.cs" />
     <Compile Include="Implementations\DVB\Structures\CaPmt.cs" />
     <Compile Include="Implementations\DVB\Structures\ChannelInfo.cs" />
     <Compile Include="Implementations\DVB\Graphs\DVBT\DVBTScanning.cs" />
