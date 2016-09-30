@@ -134,6 +134,7 @@ namespace TvPlugin
     private static ManualResetEvent _waitForBlackScreen = null;
     private static ManualResetEvent _waitForVideoReceived = null;
 
+    private static int FramesBeforeStopRenderBlackImage = 0;
     private static BitHelper<LiveTvStatus> _status = new BitHelper<LiveTvStatus>();
 
     [SkinControl(2)] private GUIButtonControl btnTvGuide = null;
@@ -309,9 +310,8 @@ namespace TvPlugin
       RemoteControl.OnRemotingDisconnected += RemoteControl_OnRemotingDisconnected;
       RemoteControl.OnRemotingConnected += RemoteControl_OnRemotingConnected;
 
-      //GUIGraphicsContext.OnBlackImageRendered += new BlackImageRenderedHandler(OnBlackImageRendered);
-      //GUIGraphicsContext.OnRenderBlack += new OnRenderBlackHandler(RenderBlackImage);
-      //GUIGraphicsContext.OnVideoReceived += new VideoReceivedHandler(OnVideoReceived);
+      GUIGraphicsContext.OnBlackImageRendered += new BlackImageRenderedHandler(OnBlackImageRendered);
+      GUIGraphicsContext.OnVideoReceived += new VideoReceivedHandler(OnVideoReceived);
 
       _waitForBlackScreen = new ManualResetEvent(false);
       _waitForVideoReceived = new ManualResetEvent(false);
@@ -381,9 +381,8 @@ namespace TvPlugin
       RemoteControl.OnRemotingDisconnected -= RemoteControl_OnRemotingDisconnected;
       RemoteControl.OnRemotingConnected -= RemoteControl_OnRemotingConnected;
 
-      //GUIGraphicsContext.OnBlackImageRendered -= new BlackImageRenderedHandler(OnBlackImageRendered);
-      //GUIGraphicsContext.OnRenderBlack -= new OnRenderBlackHandler(RenderBlackImage);
-      //GUIGraphicsContext.OnVideoReceived -= new VideoReceivedHandler(OnVideoReceived);
+      GUIGraphicsContext.OnBlackImageRendered -= new BlackImageRenderedHandler(OnBlackImageRendered);
+      GUIGraphicsContext.OnVideoReceived -= new VideoReceivedHandler(OnVideoReceived);
 
       Application.ApplicationExit -= new EventHandler(Application_ApplicationExit);
 
@@ -2222,6 +2221,7 @@ namespace TvPlugin
       dlg.Reset();
       dlg.SetHeading(692); // Active Tv Streams
       int selected = 0;
+
       IList<Card> cards = TvDatabase.Card.ListAll();
       List<Channel> channels = new List<Channel>();
       int count = 0;
@@ -3198,8 +3198,27 @@ namespace TvPlugin
     {
       if (GUIGraphicsContext.RenderBlackImage)
       {
-        GUIGraphicsContext.RenderBlackImage = false;
-        Log.Debug("TvHome.StopRenderBlackImage()");
+        Log.Debug("TvHome.OnVideoReceived() {0}", FramesBeforeStopRenderBlackImage);
+        if (FramesBeforeStopRenderBlackImage != 0)
+        {
+          FramesBeforeStopRenderBlackImage--;
+          if (FramesBeforeStopRenderBlackImage == 0)
+          {
+            GUIGraphicsContext.RenderBlackImage = false;
+            Log.Debug("TvHome.StopRenderBlackImage()");
+          }
+        }
+      }
+    }
+
+    private static void StopRenderBlackImage()
+    {
+      if (GUIGraphicsContext.RenderBlackImage)
+      {
+        FramesBeforeStopRenderBlackImage = 3;
+        // Ambass : we need to wait the 3rd frame to avoid persistance of previous channel....Why ?????
+        // Morpheus: number of frames depends on hardware, from 1..5 or higher might be needed! 
+        //           Probably the faster the graphics card is, the more frames required???
       }
     }
 
@@ -3376,7 +3395,7 @@ namespace TvPlugin
         }
         if (_status.IsSet(LiveTvStatus.WasPlaying))
         {
-          //RenderBlackImage();
+          RenderBlackImage();
           g_Player.PauseGraph();
         }
         else
@@ -3493,6 +3512,7 @@ namespace TvPlugin
       }
       finally
       {
+        StopRenderBlackImage();
         _userChannelChanged = false;
         FireOnChannelChangedEvent();
         Navigator.UpdateCurrentChannel();
