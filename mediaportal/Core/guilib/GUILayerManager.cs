@@ -18,6 +18,10 @@
 
 #endregion
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
 namespace MediaPortal.GUI.Library
 {
   public class GUILayerManager
@@ -44,7 +48,7 @@ namespace MediaPortal.GUI.Library
 
     private const int MAX_LAYERS = 15;
 
-    private static IRenderLayer[] _layers = new IRenderLayer[MAX_LAYERS];
+    private static readonly IRenderLayer[] _layers = new IRenderLayer[MAX_LAYERS];
 
     public static void RegisterLayer(IRenderLayer renderer, LayerType zOrder)
     {
@@ -67,13 +71,15 @@ namespace MediaPortal.GUI.Library
       return _layers[(int)zOrder];
     }
 
-    public static void Render(float timePassed)
+    public static bool Render(float timePassed, GUILayers layers)
     {
+      bool uiVisible = false;
+
       if (GUIGraphicsContext.BlankScreen)
       {
-        return;
+        return false;
       }
-      int videoLayer = (int)LayerType.Video;
+      int videoLayer = (int) LayerType.Video;
       if (GUIGraphicsContext.ShowBackground == false)
       {
         if (_layers[videoLayer] != null)
@@ -85,7 +91,17 @@ namespace MediaPortal.GUI.Library
           }
         }
       }
-      for (int i = 0; i < MAX_LAYERS; ++i)
+
+      List<int> layerCount = new List<int>();
+      int startLayer = 0;
+      int endLayer = MAX_LAYERS;
+
+      if (layers == GUILayers.under)
+        endLayer = videoLayer - 1;
+      else if (layers == GUILayers.over)
+        startLayer = videoLayer + 1;
+
+      for (int i = startLayer; i < endLayer; ++i)
       {
         if (_layers[i] != null)
         {
@@ -97,8 +113,45 @@ namespace MediaPortal.GUI.Library
             }
             _layers[i].RenderLayer(timePassed);
             GUIFontManager.Present();
+
+            if (videoLayer != i)
+            {
+              uiVisible = true;
+            }
+            if (!layerCount.Contains(i))
+              layerCount.Add(i);
           }
         }
+      }
+
+      // For madVR, first check along all layers to inform that UI is displaying
+      // Check for madVR when GUI/OSD/Dialog is displayed, we should go to latency mode
+      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
+          GUIGraphicsContext.InVmr9Render)
+      {
+        for (var i = 0; i < MAX_LAYERS; ++i)
+        {
+          if (_layers[i] == null) continue;
+          GetValue(layerCount, i);
+        }
+
+        foreach (var layer in from layer in layerCount where _layers[layer] != null where _layers[layer].ShouldRenderLayer() where videoLayer != layer select layer)
+        {
+          uiVisible = true;
+        }
+      }
+      return uiVisible;
+    }
+
+    private static void GetValue(List<int> layerCount, int i)
+    {
+      if (layerCount.Contains(i))
+      {
+        layerCount.Remove(i);
+      }
+      else
+      {
+        layerCount.Add(i);
       }
     }
   }

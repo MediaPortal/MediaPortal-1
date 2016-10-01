@@ -3299,10 +3299,34 @@ namespace TvPlugin
 
     #region IRenderLayer
 
+    private bool CheckScreenState()
+    {
+      return (_screenState != null && (_screenState.OsdVisible ||
+                                       _screenState.Paused ||
+                                       _screenState.ContextMenuVisible ||
+                                       _screenState.ShowStatusLine ||
+                                       _screenState.ShowTime ||
+                                       _screenState.ZapOsdVisible ||
+                                       _screenState.MsgBoxVisible ||
+                                       _screenState.ShowGroup ||
+                                       _screenState.ShowInput ||
+                                       _screenState._notifyDialogVisible ||
+                                       _screenState._bottomDialogMenuVisible ||
+                                       _screenState.wasVMRBitmapVisible ||
+                                       _screenState.volumeVisible ||
+                                       _screenState._dialogYesNoVisible ||
+                                       Math.Abs(_screenState.Speed - 1) > 0 ||
+                                      _screenState.SeekStep != 0));
+    }
+
     public bool ShouldRenderLayer()
     {
       //TVHome.SendHeartBeat(); //not needed, now sent from tvoverlay.cs
-      return true;
+      if (CheckScreenState())
+      {
+        return true;
+      }
+      return false;
     }
 
     public void RenderLayer(float timePassed)

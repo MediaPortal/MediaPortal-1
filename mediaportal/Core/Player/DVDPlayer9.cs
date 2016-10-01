@@ -40,6 +40,8 @@ namespace MediaPortal.Player
   /// </summary>
   public class DVDPlayer9 : DVDPlayer
   {
+    private const int WM_GRAPHNOTIFY = 0x00008001;
+
     private VMR9Util _vmr9 = null;
 
     /// <summary> create the used COM components and get the interfaces. </summary>    
@@ -177,11 +179,19 @@ namespace MediaPortal.Player
         hr = _dvdGraph.GetFiltergraph(out _graphBuilder);
         DsError.ThrowExceptionForHR(hr);
 
+        _basicVideo = _graphBuilder as IBasicVideo2;
+        _videoWin = _graphBuilder as IVideoWindow;
+
         _rotEntry = new DsROTEntry((IFilterGraph)_graphBuilder);
 
-        _vmr9 = new VMR9Util();
-        _vmr9.AddVMR9(_graphBuilder);
-        _vmr9.Enable(false);
+        _vmr9 = VMR9Util.g_vmr9 = new VMR9Util();
+        bool AddVMR9 = VMR9Util.g_vmr9.AddVMR9(_graphBuilder);
+        if (!AddVMR9)
+        {
+          Log.Error("DVDPlayer9:Failed to add VMR9 to graph");
+          return false;
+        }
+        VMR9Util.g_vmr9.Enable(false);
 
         try
         {
@@ -269,7 +279,7 @@ namespace MediaPortal.Player
           }
         }
 
-        if (!_vmr9.IsVMR9Connected)
+        if (!VMR9Util.g_vmr9.IsVMR9Connected)
         {
           Log.Info("DVDPlayer9:Failed vmr9 not connected");
           _mediaCtrl = null;
@@ -293,12 +303,12 @@ namespace MediaPortal.Player
         _mediaPos = (IMediaPosition)_graphBuilder;
         _basicVideo = (IBasicVideo2)_graphBuilder;
 
-        _videoWidth = _vmr9.VideoWidth;
-        _videoHeight = _vmr9.VideoHeight;
+        _videoWidth = VMR9Util.g_vmr9.VideoWidth;
+        _videoHeight = VMR9Util.g_vmr9.VideoHeight;
 
         DirectShowUtil.SetARMode(_graphBuilder, arMode);
-        _vmr9.SetDeinterlaceMode();
-        _vmr9.Enable(true);
+        VMR9Util.g_vmr9.SetDeinterlaceMode();
+        VMR9Util.g_vmr9.Enable(true);
 
         Log.Info("Dvdplayer9:Graph created");
         _started = true;
@@ -363,68 +373,64 @@ namespace MediaPortal.Player
       {
         Log.Info("DVDPlayer9: cleanup DShow graph");
 
-        if (_mediaCtrl != null)
-        {
-          int counter = 0;
-          FilterState state;
-          hr = _mediaCtrl.Stop();
-          hr = _mediaCtrl.GetState(10, out state);
-          while (state != FilterState.Stopped || GUIGraphicsContext.InVmr9Render)
-          {
-            System.Threading.Thread.Sleep(100);
-            hr = _mediaCtrl.GetState(10, out state);
-            counter++;
-            if (counter >= 30)
-            {
-              if (state != FilterState.Stopped)
-                Log.Debug("DVDPlayer9: graph still running");
-              if (GUIGraphicsContext.InVmr9Render)
-                Log.Debug("DVDPlayer9: in renderer");
-              break;
-            }
-          }
-          _mediaCtrl = null;
-        }
-
         _state = PlayState.Stopped;
         VMR9Util.g_vmr9.EVRSetDVDMenuState(false);
 
-        if (_vmr9 != null)
+        if (VMR9Util.g_vmr9 != null)
         {
-          _vmr9.Enable(false);
+          VMR9Util.g_vmr9.Vmr9MediaCtrl(_mediaCtrl);
+          VMR9Util.g_vmr9.Enable(false);
         }
 
+        if (_mediaEvt != null)
+        {
+          hr = _mediaEvt.SetNotifyWindow(IntPtr.Zero, WM_GRAPHNOTIFY, IntPtr.Zero);
+        }
+
+        if (VMR9Util.g_vmr9 != null && VMR9Util.g_vmr9._vmr9Filter != null)
+        {
+          MadvrInterface.EnableExclusiveMode(false, VMR9Util.g_vmr9._vmr9Filter);
+          DirectShowUtil.DisconnectAllPins(_graphBuilder, VMR9Util.g_vmr9._vmr9Filter);
+          Log.Info("DVDPlayer9: Cleanup VMR9");
+        }
+
+        if (_videoWin != null && GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
+        {
+          _videoWin.put_Owner(IntPtr.Zero);
+          _videoWin.put_Visible(OABool.False);
+        }
+
+        _mediaCtrl = null;
         _visible = false;
-        _mediaEvt = null;
         _dvdCtrl = null;
         _dvdInfo = null;
+        _videoWin = null;
         _basicVideo = null;
         _basicAudio = null;
         _mediaPos = null;
-        _videoWin = null;
         _pendingCmd = false;
 
         if (_cmdOption != null)
         {
-          DirectShowUtil.ReleaseComObject(_cmdOption);
+          DirectShowUtil.FinalReleaseComObject(_cmdOption);
           _cmdOption = null;
         }
 
         if (_dvdbasefilter != null)
         {
-          while ((hr = DirectShowUtil.ReleaseComObject(_dvdbasefilter)) > 0) ;
+          DirectShowUtil.FinalReleaseComObject(_dvdbasefilter);
           _dvdbasefilter = null;
         }
 
         if (_dvdGraph != null)
         {
-          while ((hr = DirectShowUtil.ReleaseComObject(_dvdGraph)) > 0) ;
+          DirectShowUtil.FinalReleaseComObject(_dvdGraph);
           _dvdGraph = null;
         }
 
         if (_line21Decoder != null)
         {
-          while ((hr = DirectShowUtil.ReleaseComObject(_line21Decoder)) > 0) ;
+          DirectShowUtil.FinalReleaseComObject(_line21Decoder);
           _line21Decoder = null;
         }
 
@@ -438,22 +444,24 @@ namespace MediaPortal.Player
             _rotEntry.SafeDispose();
             _rotEntry = null;
           }
-          while ((hr = DirectShowUtil.ReleaseComObject(_graphBuilder)) > 0) ;
+          DirectShowUtil.FinalReleaseComObject(_graphBuilder);
           _graphBuilder = null;
         }
 
-        if (_vmr9 != null)
+        if (VMR9Util.g_vmr9 != null)
         {
-          _vmr9.SafeDispose();
-          _vmr9 = null;
+          VMR9Util.g_vmr9.SafeDispose();
+          VMR9Util.g_vmr9 = null;
         }
 
         _state = PlayState.Init;
-        GUIGraphicsContext.form.Invalidate(true);
-        //GUIGraphicsContext.form.Activate();
       }
       catch (Exception ex)
       {
+        if (VMR9Util.g_vmr9 != null)
+        {
+          VMR9Util.g_vmr9.RestoreGuiForMadVr();
+        }
         Log.Error("DVDPlayer9: Exception while cleanuping DShow graph - {0} {1}", ex.Message, ex.StackTrace);
       }
       Log.Info("DVDPlayer9: Disabling DX9 exclusive mode");
@@ -469,11 +477,11 @@ namespace MediaPortal.Player
 
     protected override void Repaint()
     {
-      if (_vmr9 == null)
+      if (VMR9Util.g_vmr9 == null)
       {
         return;
       }
-      _vmr9.Repaint();
+      VMR9Util.g_vmr9.Repaint();
     }
 
     public override void Process()
@@ -514,7 +522,7 @@ namespace MediaPortal.Player
 
           // Transform back to original window position / aspect ratio
           // in order to know the intended position
-          _vmr9.GetVideoWindows(out src, out dst);
+          VMR9Util.g_vmr9.GetVideoWindows(out src, out dst);
 
           x -= dst.X;
           y -= dst.Y;

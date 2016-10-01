@@ -1,0 +1,83 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="source\DeviceState.cpp" />
+    <ClCompile Include="source\dllmodul.cpp" />
+    <ClCompile Include="source\dshowhelper.cpp" />
+    <ClCompile Include="source\DX9AllocatorPresenter.cpp" />
+    <ClCompile Include="source\EVRCustomPresenter.cpp" />
+    <ClCompile Include="source\GrabBitmaps.cpp" />
+    <ClCompile Include="source\MadPresenter.cpp" />
+    <ClCompile Include="source\OuterEVR.cpp" />
+    <ClCompile Include="source\StatsRenderer.cpp" />
+    <ClCompile Include="source\threads\SystemClock.cpp">
+      <Filter>threads</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Scheduler.cpp" />
+    <ClCompile Include="source\TimeSource.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\alloctracing.h" />
+    <ClInclude Include="source\autoint.h" />
+    <ClInclude Include="source\callback.h" />
+    <ClInclude Include="source\DeviceState.h" />
+    <ClInclude Include="source\dshowhelper.h" />
+    <ClInclude Include="source\DX9AllocatorPresenter.h" />
+    <ClInclude Include="source\EVRCustomPresenter.h" />
+    <ClInclude Include="source\IAVSyncClock.h" />
+    <ClInclude Include="source\IMF.h" />
+    <ClInclude Include="source\MadPresenter.h" />
+    <ClInclude Include="source\mvrInterfaces.h" />
+    <ClInclude Include="source\MyQueue.h" />
+    <ClInclude Include="source\OuterEVR.h" />
+    <ClInclude Include="source\StatsRenderer.h" />
+    <ClInclude Include="source\StdAfx.h" />
+    <ClInclude Include="source\StdString.h" />
+    <ClInclude Include="source\version.h" />
+    <ClInclude Include="source\threads\CriticalSection.h">
+      <Filter>threads</Filter>
+    </ClInclude>
+    <ClInclude Include="source\threads\Lockables.h">
+      <Filter>threads</Filter>
+    </ClInclude>
+    <ClInclude Include="source\threads\SingleLock.h">
+      <Filter>threads</Filter>
+    </ClInclude>
+    <ClInclude Include="source\threads\SystemClock.h">
+      <Filter>threads</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Scheduler.h" />
+    <ClInclude Include="source\TimeSource.h" />
+    <ClInclude Include="source\threads\Helpers.h" />
+    <ClInclude Include="source\threads\Condition.h" />
+    <ClInclude Include="source\helpers\smartptr.h">
+      <Filter>helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="source\helpers\Geometry.h">
+      <Filter>helpers</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="source\dshowhelper.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="source\dshowhelper.def" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="helpers">
+      <UniqueIdentifier>{b4311e8e-7880-4eb0-85e3-a27d7f53dfd3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="threads">
+      <UniqueIdentifier>{710675ae-6cb0-4a67-9534-82aeca289dab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="threads\win">
+      <UniqueIdentifier>{b4da510c-343b-4a33-bbfb-fd6c03968f71}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="threads\pthreads">
+      <UniqueIdentifier>{ffd47201-1371-49a2-9226-700f7b0ff1a4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="threads\platform">
+      <UniqueIdentifier>{8f94714f-3cb9-4748-9f91-15c0842b5986}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

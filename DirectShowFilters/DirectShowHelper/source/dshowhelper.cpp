@@ -30,6 +30,7 @@
 #include "dshowhelper.h"
 #include "evrcustomPresenter.h"
 #include "dx9allocatorpresenter.h"
+#include "madPresenter.h"
 
 // For more details for memory leak detection see the alloctracing.h header
 #include "..\..\alloctracing.h"
@@ -67,12 +68,14 @@ TAvRevertMmThreadCharacteristics*   m_pAvRevertMmThreadCharacteristics = NULL;
 BOOL m_bEVRLoaded    = false;
 TCHAR* m_RenderPrefix = _T("vmr9");
 
-LPDIRECT3DDEVICE9			    m_pDevice       = NULL;
-CVMR9AllocatorPresenter*	m_vmr9Presenter = NULL;
-MPEVRCustomPresenter*	    m_evrPresenter  = NULL;
-IBaseFilter*				      m_pVMR9Filter   = NULL;
-IVMRSurfaceAllocator9*		m_allocator     = NULL;
-LONG						          m_iRecordingId  = 0;
+LPDIRECT3DDEVICE9         m_pDevice       = NULL;
+CVMR9AllocatorPresenter*  m_vmr9Presenter = NULL;
+MPEVRCustomPresenter*     m_evrPresenter  = NULL;
+MPMadPresenter*           m_madPresenter  = NULL;
+IBaseFilter*              m_pVMR9Filter   = NULL;
+IVMRSurfaceAllocator9*    m_allocator     = NULL;
+LONG                      m_iRecordingId  = 0;
+int                       m_pRefCount = 0;
 
 map<int,IStreamBufferRecordControl*> m_mapRecordControl;
 typedef map<int,IStreamBufferRecordControl*>::iterator imapRecordControl;
@@ -146,11 +149,67 @@ HANDLE m_hLogger = NULL;
 CAMEvent m_EndLoggingEvent;
 
 
+
+LONG LogWriteRegistryKeyString(HKEY hKey, LPCTSTR& lpSubKey, LPCTSTR& data)
+{  
+  LONG result = RegSetValueEx(hKey, lpSubKey, 0, REG_SZ, (LPBYTE)data, _tcslen(data) * sizeof(TCHAR));
+  
+  return result;
+}
+
+LONG LogReadRegistryKeyString(HKEY hKey, LPCTSTR& lpSubKey, LPCTSTR& data)
+{
+  DWORD dwSize = MAX_PATH * sizeof(TCHAR);
+  DWORD dwType = REG_SZ;
+  LONG result = RegQueryValueEx(hKey, lpSubKey, NULL, &dwType, (PBYTE)data, &dwSize);
+  
+  if (result != ERROR_SUCCESS)
+  {
+    if (result == ERROR_FILE_NOT_FOUND)
+    {
+      //create default value
+      result = LogWriteRegistryKeyString(hKey, lpSubKey, data);
+    }
+  }
+  
+  return result;
+}
+
 void LogPath(TCHAR* dest, TCHAR* name)
 {
-  TCHAR folder[MAX_PATH];
-  SHGetSpecialFolderPath(NULL,folder,CSIDL_COMMON_APPDATA,FALSE);
-  _stprintf(dest, _T("%s\\Team Mediaportal\\MediaPortal\\log\\%s.%s"), folder, m_RenderPrefix, name);
+  CAutoLock lock(&m_logFileLock); 
+  HKEY hKey;
+  //Try to read logging folder path from registry
+  LONG result = RegCreateKeyEx(HKEY_CURRENT_USER, _T("Software\\Team MediaPortal\\Client Common"), 0, NULL, 
+                                    REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &hKey, NULL);                                   
+  if (result == ERROR_SUCCESS)
+  {
+    //Get default log folder path
+    TCHAR folder[MAX_PATH];
+    SHGetSpecialFolderPath(NULL,folder,CSIDL_COMMON_APPDATA,FALSE);
+    TCHAR logFolder[MAX_PATH];
+    _stprintf(logFolder, _T("%s\\Team Mediaportal\\MediaPortal\\log"), folder);
+
+    //Read log folder path from registry (or write default path into registry if key doesn't exist)
+    LPCTSTR logFolderC = logFolder;    
+    LPCTSTR logFolderPath = _T("LogFolderPath");
+    result = LogReadRegistryKeyString(hKey, logFolderPath, logFolderC);
+    
+    if (result == ERROR_SUCCESS)
+    {
+      //Get full log file path
+      _stprintf(dest, _T("%s\\%s.%s"), logFolderC, m_RenderPrefix, name);
+    }
+  }
+    
+  if (result != ERROR_SUCCESS)
+  {
+    //Fall back to default log folder path
+    TCHAR folder[MAX_PATH];
+    SHGetSpecialFolderPath(NULL,folder,CSIDL_COMMON_APPDATA,FALSE);
+    //Get full log file path
+    _stprintf(dest, _T("%s\\Team Mediaportal\\MediaPortal\\log\\%s.%s"), folder, m_RenderPrefix, name);
+  }
 }
 
 
@@ -845,6 +904,78 @@ double EVRGetDisplayFPS()
       displayFPS = 1000.0 / displayFPS; // Convert period into FPS
   }
   return displayFPS;
+}
+
+BOOL MadInit(IVMR9Callback* callback, DWORD width, DWORD height, DWORD dwD3DDevice, OAHWND parent, IBaseFilter** madFilter, IMediaControl* pMediaControl)
+{
+  m_RenderPrefix = _T("mad");
+
+  m_pDevice = reinterpret_cast<LPDIRECT3DDEVICE9>(dwD3DDevice);
+
+  Log("MPMadDshow::MadInit");
+
+  m_madPresenter = new MPMadPresenter(callback, width, height, parent, m_pDevice, pMediaControl);
+
+  Com::SmartPtr<IUnknown> pRenderer;
+  m_madPresenter->CreateRenderer(&pRenderer);
+  m_pVMR9Filter = m_madPresenter->Initialize();
+  m_pVMR9Filter = Com::SmartQIPtr<IBaseFilter>(pRenderer).Detach();
+  
+  // madVR supports calling IVideoWindow::put_Owner before the pins are connected
+  //if (Com::SmartQIPtr<IVideoWindow> pVW = pCAP)
+  //    pVW->put_Owner((OAHWND)CDSPlayer::GetDShWnd());
+
+  *madFilter = m_pVMR9Filter;
+
+  if (!madFilter)
+    return FALSE;
+
+  return TRUE;
+}
+
+void MadDeinit()
+{
+  try
+  {
+    Log("MPMadDshow::MadDeinit shutdown start");
+    //CAutoLock lock(&m_madPresenter->m_dsLock);
+    //m_madPresenter->m_dsLock.Lock();
+    m_madPresenter->m_pShutdown = true;
+    m_madPresenter->Shutdown();
+    m_pVMR9Filter = nullptr;
+    //m_madPresenter->m_dsLock.Unlock();
+    Log("MPMadDshow::MadDeinit shutdown done");
+  }
+  catch(...)
+  {
+  }
+}
+
+void MadStopping()
+{
+  try
+  {
+    Log("MPMadDshow::MadStopping start");
+    //CAutoLock lock(&m_madPresenter->m_dsLock);
+    //m_madPresenter->m_dsLock.Lock();
+    m_madPresenter->m_pShutdown = true;
+    m_madPresenter->Stopping();
+    //m_madPresenter->m_dsLock.Unlock();
+    Log("MPMadDshow::MadStopping done");
+  }
+  catch (...)
+  {
+  }
+}
+
+void MadVrPaused()
+{
+  m_madPresenter->SetMadVrPaused();
+}
+
+void MadVrRepeatFrameSend()
+{
+  m_madPresenter->RepeatFrame();
 }
 
 void Vmr9SetDeinterlaceMode(int mode)

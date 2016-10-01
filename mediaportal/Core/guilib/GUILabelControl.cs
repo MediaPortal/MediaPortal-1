@@ -266,7 +266,8 @@ namespace MediaPortal.GUI.Library
           sc &= DimColor;
         }
         sc = GUIGraphicsContext.MergeAlpha((uint)sc);
-        _font.DrawShadowText(xpos, ypos, c, label, Alignment.ALIGN_LEFT, width, _shadowAngle, _shadowDistance, sc);
+        if (_font != null)
+          _font.DrawShadowText(xpos, ypos, c, label, Alignment.ALIGN_LEFT, width, _shadowAngle, _shadowDistance, sc);
       }
       else
       {
@@ -277,7 +278,7 @@ namespace MediaPortal.GUI.Library
         clipRect.Height = GUIGraphicsContext.Height - clipRect.Y;
 
         GUIGraphicsContext.BeginClip(clipRect);
-        _font.DrawTextEx(xpos, ypos, c, label, ref _context, width);
+        if (_font != null) _font.DrawTextEx(xpos, ypos, c, label, ref _context, width);
         GUIGraphicsContext.EndClip();
       }
     }
@@ -548,7 +549,7 @@ namespace MediaPortal.GUI.Library
       {
         return;
       }
-      if (_labelText.IndexOf(tag) >= 0)
+      if (_labelText.IndexOf(tag, StringComparison.Ordinal) >= 0)
       {
         _propertyHasChanged = true;
       }

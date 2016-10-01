@@ -98,7 +98,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <Optimization>MaxSpeed</Optimization>
+      <Optimization>Disabled</Optimization>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <AdditionalIncludeDirectories>$(SolutionDir)baseclasses;$(WINDOWS_SDK)Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -109,7 +109,7 @@
       <ObjectFileName>.\obj\Release/</ObjectFileName>
       <ProgramDataBaseFileName>.\bin\Release/</ProgramDataBaseFileName>
       <WarningLevel>Level3</WarningLevel>
-      <DebugInformationFormat>OldStyle</DebugInformationFormat>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <PrecompiledHeaderFile>Stdafx.h</PrecompiledHeaderFile>
     </ClCompile>
@@ -121,7 +121,7 @@
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <ModuleDefinitionFile>./source/dshowhelper.def</ModuleDefinitionFile>
       <AddModuleNamesToAssembly>%(AddModuleNamesToAssembly)</AddModuleNamesToAssembly>
-      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>bin\Release/dshowhelper.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
@@ -133,32 +133,53 @@
       <TargetMachine>MachineX86</TargetMachine>
       <ImageHasSafeExceptionHandlers>true</ImageHasSafeExceptionHandlers>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy $(TargetDir)dshowhelper.dll $(SolutionDir)..\mediaportal\MediaPortal.Application\bin\$(ConfigurationName)\ /Y /T
+xcopy $(TargetDir)dshowhelper.pdb $(SolutionDir)..\mediaportal\MediaPortal.Application\bin\$(ConfigurationName)\ /Y /T
+xcopy $(TargetDir)dshowhelper.dll $(SolutionDir)..\mediaportal\MediaPortal.Application\bin\$(ConfigurationName)\ /Y
+xcopy $(TargetDir)dshowhelper.pdb $(SolutionDir)..\mediaportal\MediaPortal.Application\bin\$(ConfigurationName)\ /Y</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="source\DeviceState.cpp" />
     <ClCompile Include="source\dllmodul.cpp" />
     <ClCompile Include="source\dshowhelper.cpp" />
     <ClCompile Include="source\DX9AllocatorPresenter.cpp" />
     <ClCompile Include="source\EVRCustomPresenter.cpp" />
     <ClCompile Include="source\GrabBitmaps.cpp" />
+    <ClCompile Include="source\MadPresenter.cpp" />
     <ClCompile Include="source\OuterEVR.cpp" />
     <ClCompile Include="source\Scheduler.cpp" />
     <ClCompile Include="source\StatsRenderer.cpp" />
+    <ClCompile Include="source\threads\SystemClock.cpp" />
     <ClCompile Include="source\TimeSource.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\alloctracing.h" />
     <ClInclude Include="source\autoint.h" />
     <ClInclude Include="source\callback.h" />
+    <ClInclude Include="source\DeviceState.h" />
     <ClInclude Include="source\dshowhelper.h" />
     <ClInclude Include="source\DX9AllocatorPresenter.h" />
     <ClInclude Include="source\EVRCustomPresenter.h" />
+    <ClInclude Include="source\helpers\Geometry.h" />
+    <ClInclude Include="source\helpers\smartptr.h" />
     <ClInclude Include="source\IAVSyncClock.h" />
     <ClInclude Include="source\IMF.h" />
+    <ClInclude Include="source\MadPresenter.h" />
+    <ClInclude Include="source\mvrInterfaces.h" />
     <ClInclude Include="source\MyQueue.h" />
     <ClInclude Include="source\OuterEVR.h" />
     <ClInclude Include="source\Scheduler.h" />
     <ClInclude Include="source\StatsRenderer.h" />
     <ClInclude Include="source\StdAfx.h" />
+    <ClInclude Include="source\StdString.h" />
+    <ClInclude Include="source\threads\CriticalSection.h" />
+    <ClInclude Include="source\threads\Helpers.h" />
+    <ClInclude Include="source\threads\Lockables.h" />
+    <ClInclude Include="source\threads\SingleLock.h" />
+    <ClInclude Include="source\threads\SystemClock.h" />
+    <ClInclude Include="source\threads\Condition.h" />
     <ClInclude Include="source\TimeSource.h" />
     <ClInclude Include="source\version.h" />
   </ItemGroup>

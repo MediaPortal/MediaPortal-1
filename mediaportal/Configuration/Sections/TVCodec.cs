@@ -82,7 +82,9 @@ namespace MediaPortal.Configuration.Sections
         }
         availableVideoFilters.Sort();
         ArrayList availableH264VideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.H264);
+        ArrayList availableHEVCVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.HEVC);
         availableH264VideoFilters.Sort();
+        availableHEVCVideoFilters.Sort();
         ArrayList availableAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.Mpeg2Audio);
         //Remove Muxer's from Audio decoder list to avoid confusion.
         while (availableAudioFilters.Contains("CyberLink MPEG Muxer"))
@@ -110,6 +112,7 @@ namespace MediaPortal.Configuration.Sections
         availableAudioRenderers.Sort();
         videoCodecComboBox.Items.AddRange(availableVideoFilters.ToArray());
         h264videoCodecComboBox.Items.AddRange(availableH264VideoFilters.ToArray());
+        hevcvideoCodecComboBox.Items.AddRange(availableHEVCVideoFilters.ToArray());
         audioCodecComboBox.Items.AddRange(availableAudioFilters.ToArray());
         aacAudioCodecComboBox.Items.AddRange(availableAACAudioFilters.ToArray());
         ddplusAudioCodecComboBox.Items.AddRange(availableDDPLUSAudioFilters.ToArray());
@@ -134,6 +137,7 @@ namespace MediaPortal.Configuration.Sections
         string audioCodec = xmlreader.GetValueAsString("mytv", "audiocodec", "");
         string videoCodec = xmlreader.GetValueAsString("mytv", "videocodec", "");
         string h264videoCodec = xmlreader.GetValueAsString("mytv", "h264videocodec", "");
+        string hevcvideoCodec = xmlreader.GetValueAsString("mytv", "hevcvideocodec", "");
         string aacaudioCodec = xmlreader.GetValueAsString("mytv", "aacaudiocodec", "");
         string ddplusaudioCodec = xmlreader.GetValueAsString("mytv", "ddplusaudiocodec", "");
         string audioRenderer = xmlreader.GetValueAsString("mytv", "audiorenderer", "Default DirectSound Device");
@@ -147,6 +151,11 @@ namespace MediaPortal.Configuration.Sections
         {
           ArrayList availableH264VideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.H264);
           h264videoCodec = SetCodecBox(availableH264VideoFilters, "LAV Video Decoder", "CoreAVC Video Decoder", "");
+        }
+        if (hevcvideoCodec == string.Empty)
+        {
+          ArrayList availableHEVCVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.HEVC);
+          hevcvideoCodec = SetCodecBox(availableHEVCVideoFilters, "LAV Video Decoder", "Lentoid HEVC Decoder", "");
         }
         if (audioCodec == string.Empty)
         {
@@ -167,12 +176,14 @@ namespace MediaPortal.Configuration.Sections
         audioCodecComboBox.Text = audioCodec;
         videoCodecComboBox.Text = videoCodec;
         h264videoCodecComboBox.Text = h264videoCodec;
+        hevcvideoCodecComboBox.Text = hevcvideoCodec;
         audioRendererComboBox.Text = audioRenderer;
         aacAudioCodecComboBox.Text = aacaudioCodec;
         ddplusAudioCodecComboBox.Text = ddplusaudioCodec;
         CheckBoxValid(audioCodecComboBox);
         CheckBoxValid(videoCodecComboBox);
         CheckBoxValid(h264videoCodecComboBox);
+        CheckBoxValid(hevcvideoCodecComboBox);
         CheckBoxValid(audioRendererComboBox);
         CheckBoxValid(aacAudioCodecComboBox);
         CheckBoxValid(ddplusAudioCodecComboBox);
@@ -245,6 +256,7 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValue("mytv", "audiocodec", audioCodecComboBox.Text);
         xmlwriter.SetValue("mytv", "videocodec", videoCodecComboBox.Text);
         xmlwriter.SetValue("mytv", "h264videocodec", h264videoCodecComboBox.Text);
+        xmlwriter.SetValue("mytv", "hevcvideocodec", hevcvideoCodecComboBox.Text);
         xmlwriter.SetValue("mytv", "audiorenderer", audioRendererComboBox.Text);
         xmlwriter.SetValue("mytv", "aacaudiocodec", aacAudioCodecComboBox.Text);
         xmlwriter.SetValue("mytv", "ddplusaudiocodec", ddplusAudioCodecComboBox.Text);
@@ -420,6 +432,11 @@ namespace MediaPortal.Configuration.Sections
     private void configAudioRenderer_Click(object sender, EventArgs e)
     {
       ConfigAudioRendererCodecSection(sender, e, audioRendererComboBox.Text);
+    }
+
+    private void configHEVC_Click(object sender, EventArgs e)
+    {
+      ConfigCodecSection(sender, e, hevcvideoCodecComboBox.Text);
     }
   }
 }

@@ -639,7 +639,7 @@ void CTsReaderFilter::OnVideoFormatChanged(int streamType,int width,int height,i
 
 void CTsReaderFilter::OnBitRateChanged(int bitrate)
 {
-  if ( m_pCallback )
+  if ( m_pCallback)
     m_pCallback->OnBitRateChanged(bitrate);
 }
 
@@ -676,9 +676,9 @@ STDMETHODIMP CTsReaderFilter::SetRelaxedMode(BOOL relaxedReading)
 
 void STDMETHODCALLTYPE CTsReaderFilter::OnZapping(int info)
 {
-  LogDebug("OnZapping %x", info);
-  // Theorically a new PAT ( equal to PAT+1 modulo 16 ) will be issued by TsWriter.
-  if (info == 0x80)							
+  LogDebug("OnZapping() - info 0x%x", info);
+  // Theoretically a new PAT ( equal to PAT+1 modulo 16 ) will be issued by TsWriter.
+  if (info == 0x80)
   {
     m_bOnZap = true ;
     m_demultiplexer.RequestNewPat();

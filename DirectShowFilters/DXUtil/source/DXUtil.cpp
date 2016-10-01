@@ -26,13 +26,13 @@
 
 extern "C" __declspec(dllexport) HRESULT __stdcall VideoSurfaceToRGBSurface(IDirect3DSurface9* source, IDirect3DSurface9* dest)
 {
-	IDirect3DDevice9* device = NULL;
-	HRESULT hr = source->GetDevice(&device);
-	if(!FAILED(hr)){
-		hr = device->StretchRect(source,NULL,dest,NULL,D3DTEXF_NONE);
-	}
-	//delete device;
-	return hr;
+  IDirect3DDevice9* device = NULL;
+  HRESULT hr = source->GetDevice(&device);
+  if (!FAILED(hr)) {
+    hr = device->StretchRect(source, NULL, dest, NULL, D3DTEXF_NONE);
+  }
+  //delete device;
+  return hr;
 }
 
 
@@ -42,8 +42,7 @@ extern "C" __declspec(dllexport) HRESULT __stdcall VideoSurfaceToRGBSurface(IDir
 
 BOOL APIENTRY DllMain( HMODULE hModule,
                        DWORD  ul_reason_for_call,
-                       LPVOID lpReserved
-					 )
+                       LPVOID lpReserved)
 {
     return TRUE;
 }
