@@ -79,7 +79,6 @@ namespace Mediaportal.TV.TvPlugin
     {
       bool bResult = Load(GUIGraphicsContext.Skin + @"\TVCropSettings.xml");
       GetID = (int)Window.WINDOW_TV_CROP_SETTINGS;
-      GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Dialog);
       return bResult;
     }
 

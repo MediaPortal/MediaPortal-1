@@ -371,7 +371,7 @@ namespace Mediaportal.TV.TvPlugin
         lblZapToCannelNo.Visible = !string.IsNullOrEmpty(channelNr);
       }
       if (LastError != null)
-      {        
+      {
         lblStartTime.Label = "";
         lblEndTime.Label = "";
         if (LastError.FailingChannel != null)
@@ -456,20 +456,25 @@ namespace Mediaportal.TV.TvPlugin
 
     private void UpdateProgressBar()
     {
-      Program prog = TVHome.Navigator.GetChannel(idChannel, true).CurrentProgram;
-      if (prog == null)
+      double fPercent = 0;
+      var program = TVHome.Navigator.GetChannel(idChannel, true).CurrentProgram;
+      if (program != null)
       {
-        return;
-      }
-      string strTime = String.Format("{0}-{1}",
-                                     prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-                                     prog.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+        var currentProgram = program;
+        if (currentProgram != null)
+        {
+          Program prog = currentProgram;
+          string strTime = String.Format("{0}-{1}",
+            prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+            prog.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
 
-      TimeSpan ts = prog.EndTime - prog.StartTime;
-      double iTotalSecs = ts.TotalSeconds;
-      ts = DateTime.Now - prog.StartTime;
-      double iCurSecs = ts.TotalSeconds;
-      double fPercent = ((double)iCurSecs) / ((double)iTotalSecs);
+          TimeSpan ts = prog.EndTime - prog.StartTime;
+          double iTotalSecs = ts.TotalSeconds;
+          ts = DateTime.Now - prog.StartTime;
+          double iCurSecs = ts.TotalSeconds;
+          fPercent = ((double)iCurSecs) / ((double)iTotalSecs);
+        }
+      }
       fPercent *= 100.0d;
       GUIPropertyManager.SetProperty("#TV.View.Percentage", fPercent.ToString());
     }

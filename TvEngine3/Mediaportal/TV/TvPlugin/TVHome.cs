@@ -142,7 +142,6 @@ namespace Mediaportal.TV.TvPlugin
     private static bool _doingChannelChange = false;
     private static bool _ServerNotConnectedHandled = false;
     private static bool _recoverTV = false;
-    private static bool _connected = false;
     private static bool _isAnyCardRecording = false;
 
 
@@ -152,24 +151,15 @@ namespace Mediaportal.TV.TvPlugin
     private static int FramesBeforeStopRenderBlackImage = 0;
     private static BitHelper<LiveTvStatus> _status = new BitHelper<LiveTvStatus>();
 
-    [SkinControl(2)]
-    protected GUIButtonControl btnTvGuide = null;
-    [SkinControl(3)]
-    protected GUIButtonControl btnRecord = null;
-    [SkinControl(7)]
-    protected GUIButtonControl btnChannel = null;
-    [SkinControl(8)]
-    protected GUIToggleButtonControl btnTvOnOff = null;
-    [SkinControl(13)]
-    protected GUIButtonControl btnTeletext = null;
-    [SkinControl(24)]
-    protected GUIImage imgRecordingIcon = null;
-    [SkinControl(99)]
-    protected GUIVideoControl videoWindow = null;
-    [SkinControl(9)]
-    protected GUIButtonControl btnActiveStreams = null;
-    [SkinControl(14)]
-    protected GUIButtonControl btnActiveRecordings = null;
+    [SkinControl(2)] protected GUIButtonControl btnTvGuide = null;
+    [SkinControl(3)] protected GUIButtonControl btnRecord = null;
+    [SkinControl(7)] protected GUIButtonControl btnChannel = null;
+    [SkinControl(8)] protected GUIToggleButtonControl btnTvOnOff = null;
+    [SkinControl(13)] protected GUIButtonControl btnTeletext = null;
+    [SkinControl(24)] protected GUIImage imgRecordingIcon = null;
+    [SkinControl(99)] protected GUIVideoControl videoWindow = null;
+    [SkinControl(9)] protected GUIButtonControl btnActiveStreams = null;
+    [SkinControl(14)] protected GUIButtonControl btnActiveRecordings = null;
 
     // error handling
     public class ChannelErrorInfo
@@ -619,17 +609,20 @@ namespace Mediaportal.TV.TvPlugin
 
       if (channel != null)
       {
-        this.LogInfo("tv home init:{0}", channel.DisplayName);
-        if (!_suspended)
+        if (Navigator.CurrentGroup != null)
         {
-          AutoTurnOnTv(channel);
+          this.LogInfo("tv home init:{0}", channel.DisplayName);
+          if (!_suspended)
+          {
+            AutoTurnOnTv(channel);
+          }
+          else
+          {
+            _resumeChannel = channel;
+          }
+          GUIPropertyManager.SetProperty("#TV.Guide.Group", Navigator.CurrentGroup.GroupName);
+          this.LogInfo("tv home init:{0} done", channel.DisplayName);
         }
-        else
-        {
-          _resumeChannel = channel;
-        }
-        GUIPropertyManager.SetProperty("#TV.Guide.Group", Navigator.CurrentGroup.GroupName);
-        this.LogInfo("tv home init:{0} done", channel.DisplayName);
       }
 
       if (!_suspended)
@@ -648,7 +641,7 @@ namespace Mediaportal.TV.TvPlugin
 
     private void AutoTurnOnTv(Channel channel)
     {
-      if (_autoTurnOnTv && !_playbackStopped && !wasPrevWinTVplugin())
+      if (_autoTurnOnTv && !_playbackStopped)
       {
         if (!wasPrevWinTVplugin())
         {
@@ -1158,11 +1151,7 @@ namespace Mediaportal.TV.TvPlugin
       get { return _isAnyCardRecording; }
     }
 
-    public static bool Connected
-    {
-      get { return _connected; }
-      set { _connected = value; }
-    }
+    public static bool Connected { get; set; }
 
     public static IVirtualCard Card
     {
@@ -1740,6 +1729,7 @@ namespace Mediaportal.TV.TvPlugin
 
             break;
           case PBT_APMRESUMESUSPEND:
+          case PBT_APMRESUMEAUTOMATIC:
             this.LogInfo("TVHome.WndProc(): Windows has resumed from hibernate mode");
             OnResume();
             break;
@@ -2095,11 +2085,16 @@ namespace Mediaportal.TV.TvPlugin
       UpdateProgressPercentageBar();
 
       bool hasTeletext = (!Connected || Card.HasTeletext) && (playbackStarted);
-      btnTeletext.IsVisible = hasTeletext;
+      if (btnTeletext != null) btnTeletext.IsVisible = hasTeletext;
     }
 
     private void UpdateGUIonPlaybackStateChange()
     {
+      if (!Connected)
+      {
+        return;
+      }
+
       bool isTimeShiftingTV = (Connected && Card.IsTimeShifting && g_Player.IsTV);
 
       if (btnTvOnOff != null && btnTvOnOff.Selected != isTimeShiftingTV)
@@ -2110,7 +2105,7 @@ namespace Mediaportal.TV.TvPlugin
       UpdateProgressPercentageBar();
 
       bool hasTeletext = (!Connected || Card.HasTeletext) && (isTimeShiftingTV);
-      btnTeletext.IsVisible = hasTeletext;
+      if (btnTeletext != null) btnTeletext.IsVisible = hasTeletext;
     }
 
     private void UpdateCurrentChannel()
@@ -2448,7 +2443,10 @@ namespace Mediaportal.TV.TvPlugin
           Navigator.LastViewedChannel = Navigator.Channel.Entity;
         }
         Log.Info("succeeded:{0} {1}", succeeded, card);
-        Card = card; //Moved by joboehl - Only touch the card if starttimeshifting succeeded. 
+        if (card != null)
+        {
+          Card = card; //Moved by joboehl - Only touch the card if starttimeshifting succeeded. 
+        }
 
         // continue graph
         g_Player.ContinueGraph();
@@ -3173,7 +3171,7 @@ namespace Mediaportal.TV.TvPlugin
 
     private static void RenderBlackImage()
     {
-      if (GUIGraphicsContext.RenderBlackImage == false)
+      if (!GUIGraphicsContext.RenderBlackImage)
       {
         Log.Debug("TvHome.RenderBlackImage()");
         _waitForBlackScreen.Reset();

@@ -785,10 +785,13 @@ namespace Mediaportal.TV.TvPlugin
       for (int i = 0; i < groupMaps.Count; i++)
       {
         GroupMap gm = groupMaps[i];
-        Channel chan = gm.Channel;
-        if (chan.IdChannel == ch.IdChannel)
+        if (gm != null)
         {
-          return i;
+          Channel chan = gm.Channel;
+          if (chan.IdChannel == ch.IdChannel)
+          {
+            return i;
+          }
         }
       }
       return 0; // Not found, return first channel index
