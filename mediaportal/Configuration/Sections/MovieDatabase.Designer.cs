@@ -48,6 +48,7 @@ namespace MediaPortal.Configuration.Sections
       this.btnSave = new MediaPortal.UserInterface.Controls.MPButton();
       this.linkActorMovie = new System.Windows.Forms.LinkLabel();
       this.btnRefreshAllImg = new MediaPortal.UserInterface.Controls.MPButton();
+      this.btnRefreshMissingCovers = new MediaPortal.UserInterface.Controls.MPButton();
       this.btnSearchCover = new MediaPortal.UserInterface.Controls.MPButton();
       this.btnDowngradeCovers = new MediaPortal.UserInterface.Controls.MPButton();
       this.btnUpgradeCovers = new MediaPortal.UserInterface.Controls.MPButton();
@@ -617,6 +618,20 @@ namespace MediaPortal.Configuration.Sections
         " IMDB id. If id is invalid\r\nno action will  be taken.");
       this.btnRefreshAllImg.UseVisualStyleBackColor = true;
       this.btnRefreshAllImg.Click += new System.EventHandler(this.btnRefreshAllCovers_Click);
+      // 
+      // btnRefreshMissingCovers
+      // 
+      this.btnRefreshMissingCovers.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.btnRefreshMissingCovers.AutoSize = true;
+      this.btnRefreshMissingCovers.Location = new System.Drawing.Point(325, 205);
+      this.btnRefreshMissingCovers.Name = "btnRefreshMissingCovers";
+      this.btnRefreshMissingCovers.Size = new System.Drawing.Size(126, 23);
+      this.btnRefreshMissingCovers.TabIndex = 43;
+      this.btnRefreshMissingCovers.Text = "Refresh missing covers";
+      this.toolTipMPvdb.SetToolTip(this.btnRefreshMissingCovers, "Refresh missing covers for all movies in your collection.\r\nRefreshing will be don" +
+        "e by remote URL. If URL is invalid or local\r\nno action will  be taken.");
+      this.btnRefreshMissingCovers.UseVisualStyleBackColor = true;
+      this.btnRefreshMissingCovers.Click += new System.EventHandler(this.btnRefreshMissingCovers_Click);
       // 
       // btnSearchCover
       // 
@@ -2873,6 +2888,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox7.Controls.Add(this.tbCoverSearchStr);
       this.groupBox7.Controls.Add(this.pbSearchCover);
       this.groupBox7.Controls.Add(this.btnRefreshAllImg);
+      this.groupBox7.Controls.Add(this.btnRefreshMissingCovers);
       this.groupBox7.Controls.Add(this.mpLabel1);
       this.groupBox7.Controls.Add(this.chbIMDBCoverSource);
       this.groupBox7.Controls.Add(this.chbImpAwCoverSource);
@@ -4398,6 +4414,7 @@ namespace MediaPortal.Configuration.Sections
     private System.Windows.Forms.DataGridViewTextBoxColumn Role;
     private System.Windows.Forms.DataGridViewTextBoxColumn IMDBID;
     private MediaPortal.UserInterface.Controls.MPButton btnRefreshAllImg;
+    private MediaPortal.UserInterface.Controls.MPButton btnRefreshMissingCovers;
     private MediaPortal.UserInterface.Controls.MPProgressBar pbSearchCover;
     private System.Windows.Forms.TabPage tabPageTools;
     private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox5;
