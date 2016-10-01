@@ -22,8 +22,6 @@
 #include "Settings.h"
 #include "SettingsProp.h"
 
-#include <shlobj.h>
-
 #include "alloctracing.h"
 
 using namespace std;
@@ -98,247 +96,6 @@ STDAPI DllUnregisterServer()
   return AMovieDllRegisterServer2(FALSE);
 }
 
-//
-// TODO: this logging code is borrowed from dshowhelper.dll
-// To be replaced when MP2 has generic C++ log framework available
-//
-
-const int MAX_LOG_LINE_LENGHT = 1000;
-const int LOG_LINE_RESERVED = 32;
-
-void LogPath(TCHAR* dest, TCHAR* name)
-{
-  TCHAR folder[MAX_PATH];
-  SHGetSpecialFolderPath(NULL,folder,CSIDL_COMMON_APPDATA,FALSE);
-  _stprintf(dest, _T("%s\\Team Mediaportal\\MediaPortal\\log\\AudioRenderer.%s"), folder, name);
-}
-
-void LogRotate()
-{
-  TCHAR fileName[MAX_PATH];
-  LogPath(fileName, _T("log"));
-  TCHAR bakFileName[MAX_PATH];
-  LogPath(bakFileName, _T("bak"));
-  _tremove(bakFileName);
-  // ignore if rename fails 
-  (void)_trename(fileName, bakFileName);
-}
-
-CCritSec m_qLock;
-CCritSec m_threadLock;
-
-std::queue<std::string> m_logQueue;
-HANDLE m_hLogger = NULL;
-CAMEvent m_eLog;
-CAMEvent m_eStop;
-
-string GetLogLine()
-{
-  CAutoLock lock(&m_qLock);
-  if (m_logQueue.size() == 0)
-    return "";
-
-  string ret = m_logQueue.front();
-  m_logQueue.pop();
-  return ret;
-}
-
-UINT CALLBACK LogThread(void* param)
-{
-  SetThreadName(0, "LoggerThread");
-
-  TCHAR fileName[MAX_PATH];
-  LogPath(fileName, _T("log"));
-
-  HANDLE handles[3];
-  handles[0] = m_eLog;
-  handles[1] = m_hLogger;
-  handles[2] = m_eStop;
-
-  while (true)
-  {
-    DWORD result = WaitForMultipleObjects(3, handles, false, INFINITE);
-    
-    if (result == WAIT_OBJECT_0)
-    {
-      FILE* pFile = _tfopen(fileName, _T("a+"));
-      if (pFile)
-      {
-        string line = GetLogLine();
-        while (!line.empty())
-        {
-          fprintf(pFile, "%s", line.c_str());
-          line = GetLogLine();
-        }
-        fclose(pFile);
-      }
-    }
-    else if (result == WAIT_FAILED)
-    {
-      DWORD error = GetLastError();
-      FILE* pFile = _tfopen(fileName, _T("a+"));
-      if (pFile)
-      {
-        fprintf(pFile, "LoggerThread - WaitForMultipleObjects failed, result: %d error: %d\n", result, error);
-        fclose(pFile);
-      }
-    }
-    else if (result == WAIT_OBJECT_0 + 2 || result == WAIT_OBJECT_0 + 1)
-      return 0;
-  }
-
-  return 0;
-}
-
-void StartLogger()
-{
-  CAutoLock lock(&m_threadLock);
-  UINT id = 0;
-  m_hLogger = (HANDLE)_beginthreadex(NULL, 0, LogThread, 0, 0, &id);
-  SetThreadPriority(m_hLogger, THREAD_PRIORITY_BELOW_NORMAL);
-}
-
-void StopLogger()
-{
-  CAutoLock lock(&m_threadLock);
-
-  if (m_hLogger)
-  {
-    m_eStop.Set();
-    WaitForSingleObject(m_hLogger, INFINITE);
-    m_hLogger = NULL;
-  }
-}
-
-void Log(const char *fmt, ...)
-{
-  static CCritSec lock;
-  va_list ap;
-  va_start(ap, fmt);
-
-  CAutoLock logLock(&lock);
-  if (!m_hLogger)
-    return;
-
-  char buffer[MAX_LOG_LINE_LENGHT - LOG_LINE_RESERVED]; 
-  int ret;
-  va_start(ap, fmt);
-  ret = _vsnprintf(buffer, MAX_LOG_LINE_LENGHT - LOG_LINE_RESERVED, fmt, ap);
-  va_end(ap); 
-
-  if (ret < 0)
-    return;
-
-  SYSTEMTIME systemTime;
-  GetLocalTime(&systemTime);
-  char msg[MAX_LOG_LINE_LENGHT];
-  sprintf_s(msg, MAX_LOG_LINE_LENGHT,"%02.2d-%02.2d-%04.4d %02.2d:%02.2d:%02.2d.%03.3d [%5x] %s\n",
-    systemTime.wDay, systemTime.wMonth, systemTime.wYear,
-    systemTime.wHour, systemTime.wMinute, systemTime.wSecond,
-    systemTime.wMilliseconds,
-    GetCurrentThreadId(),
-    buffer);
-
-  CAutoLock l(&m_qLock);
-
-  m_logQueue.push((string)msg);
-  m_eLog.Set();
-}
-
-HRESULT __fastcall UnicodeToAnsi(LPCOLESTR pszW, LPSTR* ppszA)
-{
-  ULONG cbAnsi;
-  ULONG cCharacters;
-
-  // If input is null then just return the same.
-  if (pszW == NULL)
-  {
-    *ppszA = NULL;
-    return NOERROR;
-  }
-
-  cCharacters = (ULONG)wcslen(pszW)+1;
-  // Determine number of bytes to be allocated for ANSI string. An
-  // ANSI string can have at most 2 bytes per character (for Double
-  // Byte Character Strings.)
-  cbAnsi = cCharacters*2;
-
-  // Use of the OLE allocator is not required because the resultant
-  // ANSI  string will never be passed to another COM component. You
-  // can use your own allocator.
-  *ppszA = (LPSTR) CoTaskMemAlloc(cbAnsi);
-  if (NULL == *ppszA)
-    return E_OUTOFMEMORY;
-
-  // Convert to ANSI.
-  if (0 == WideCharToMultiByte(CP_ACP, 0, pszW, cCharacters, *ppszA,
-    cbAnsi, NULL, NULL))
-  {
-    DWORD dwError = GetLastError();
-    CoTaskMemFree(*ppszA);
-    *ppszA = NULL;
-    return HRESULT_FROM_WIN32(dwError);
-  }
-  return NOERROR;
-}
-
-void LogWaveFormat(const WAVEFORMATEXTENSIBLE* pwfx, const char* text)
-{
-  if (pwfx)
-  {
-    char type = 'u';
-      
-    if (pwfx->Format.wFormatTag == WAVE_FORMAT_EXTENSIBLE)
-    {
-      if (pwfx->SubFormat == KSDATAFORMAT_SUBTYPE_PCM)
-        type = 'i';
-      else if (pwfx->SubFormat == KSDATAFORMAT_SUBTYPE_IEEE_FLOAT)
-        type = 'f';
-
-      Log("%s: %6dHz %2d%c (%2d)bits %2dch -- ch mask: %4d align: %2d avgbytes: %8d", text, pwfx->Format.nSamplesPerSec, 
-        pwfx->Format.wBitsPerSample, type, pwfx->Samples.wValidBitsPerSample, pwfx->Format.nChannels, pwfx->dwChannelMask, pwfx->Format.nBlockAlign, pwfx->Format.nAvgBytesPerSec);
-    }
-  }
-
-  /*if (pwfx)
-  {
-    Log("WAVEFORMATEX - %s", text);
-    Log("  nAvgBytesPerSec     %d", pwfx->nAvgBytesPerSec);
-    Log("  nBlockAlign         %d", pwfx->nBlockAlign);
-    Log("  nChannels           %d", pwfx->nChannels);
-    Log("  nSamplesPerSec      %d", pwfx->nSamplesPerSec);
-    Log("  wBitsPerSample      %d", pwfx->wBitsPerSample);
-    Log("  wFormatTag          %d", pwfx->wFormatTag);
-
-    if (pwfx->wFormatTag == WAVE_FORMAT_EXTENSIBLE)
-    {
-      WAVEFORMATEXTENSIBLE* tmp = (WAVEFORMATEXTENSIBLE*)pwfx;
-      Log("  WAVE_FORMAT_EXTENSIBLE");
-      Log("  dwChannelMask       %d", tmp->dwChannelMask);
-      Log("  wValidBitsPerSample %d", tmp->Samples.wValidBitsPerSample);
-      if (tmp->SubFormat == KSDATAFORMAT_SUBTYPE_PCM)
-        Log("  SubFormat           PCM");
-      else if (tmp->SubFormat == KSDATAFORMAT_SUBTYPE_IEEE_FLOAT)
-        Log("  SubFormat           FLOAT");
-
-      LPOLESTR str;
-      LPSTR astr;
-      str = (LPOLESTR)CoTaskMemAlloc(400);
-      if (str)
-      {
-        StringFromGUID2(tmp->SubFormat, str, 200);
-        UnicodeToAnsi(str, &astr);
-        Log("  GUID          %s", astr);
-        CoTaskMemFree(str);
-      }
-    }
-    else if (pwfx->wFormatTag == WAVE_FORMAT_PCM)
-      Log("  SubFormat           PCM");
-    else if (pwfx->wFormatTag == WAVE_FORMAT_IEEE_FLOAT)
-      Log("  SubFormat           FLOAT");
-  }*/
-}
-
 HRESULT CopyWaveFormatEx(WAVEFORMATEXTENSIBLE** dst, const WAVEFORMATEXTENSIBLE* src)
 {
   if (!src)
@@ -384,8 +141,11 @@ HRESULT ToWaveFormatExtensible(WAVEFORMATEXTENSIBLE** dst, WAVEFORMATEX* src)
   case WAVE_FORMAT_IEEE_FLOAT:
     pwfe->SubFormat = KSDATAFORMAT_SUBTYPE_IEEE_FLOAT;
     break;
+  case WAVE_FORMAT_DOLBY_AC3_SPDIF:
+    pwfe->SubFormat = KSDATAFORMAT_SUBTYPE_IEC61937_DOLBY_DIGITAL;
+    break;
   default:
-    delete pwfe;
+    delete[] pwfe;
     return VFW_E_TYPE_NOT_ACCEPTED;
   }
   if (pwfe->Format.nChannels >= 1 && pwfe->Format.nChannels <= 8)
@@ -393,13 +153,13 @@ HRESULT ToWaveFormatExtensible(WAVEFORMATEXTENSIBLE** dst, WAVEFORMATEX* src)
     pwfe->dwChannelMask = gdwDefaultChannelMask[pwfe->Format.nChannels];
     if (pwfe->dwChannelMask == 0)
     {
-      delete pwfe;
+      delete[] pwfe;
       return VFW_E_TYPE_NOT_ACCEPTED;
     }
   }
   else
   {
-    delete pwfe;
+    delete[] pwfe;
     return VFW_E_TYPE_NOT_ACCEPTED;
   }
 

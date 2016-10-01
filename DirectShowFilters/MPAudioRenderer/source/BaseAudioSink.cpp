@@ -19,8 +19,10 @@
 #include "BaseAudioSink.h"
 
 #include "alloctracing.h"
+#include <ks.h>
+#include <ksmedia.h>
 
-CBaseAudioSink::CBaseAudioSink(bool bHandleSampleRelease) : 
+CBaseAudioSink::CBaseAudioSink(bool bHandleSampleRelease, AudioRendererSettings* pSettings, Logger* pLogger) :
   m_bHandleSampleRelease(bHandleSampleRelease),
   m_pNextSink(NULL),
   m_pInputFormat(NULL),
@@ -34,7 +36,10 @@ CBaseAudioSink::CBaseAudioSink(bool bHandleSampleRelease) :
   m_chOrder(DS_ORDER),
   m_nOutBufferCount(DEFAULT_OUT_BUFFER_COUNT),
   m_nOutBufferSize(DEFAULT_OUT_BUFFER_SIZE),
-  m_bNextFormatPassthru(false)
+  m_bNextFormatPassthru(false),
+  m_bBitstreaming(false),
+  m_pSettings(pSettings),
+  m_pLogger(pLogger)
 {
 }
 
@@ -225,7 +230,7 @@ HRESULT CBaseAudioSink::EndFlush()
 
 bool CBaseAudioSink::FormatsEqual(const WAVEFORMATEXTENSIBLE* pwfx1, const WAVEFORMATEXTENSIBLE* pwfx2)
 {
-  if ((!pwfx1 && pwfx2) || (pwfx1 && !pwfx2))
+  if ((!pwfx1 && pwfx2) || (pwfx1 && !pwfx2) || (!pwfx1 && !pwfx2))
     return false;
 
   if (pwfx1->Format.wFormatTag != pwfx2->Format.wFormatTag ||
@@ -241,6 +246,22 @@ bool CBaseAudioSink::FormatsEqual(const WAVEFORMATEXTENSIBLE* pwfx1, const WAVEF
     return false;
 
   return true;
+}
+
+bool CBaseAudioSink::CanBitstream(const WAVEFORMATEXTENSIBLE* pwfx)
+{
+  if (pwfx)
+  {
+    if (pwfx->SubFormat == KSDATAFORMAT_SUBTYPE_IEC61937_DOLBY_DIGITAL
+      || pwfx->SubFormat == KSDATAFORMAT_SUBTYPE_IEC61937_DOLBY_DIGITAL_PLUS
+      || pwfx->SubFormat == KSDATAFORMAT_SUBTYPE_IEC61937_DOLBY_MLP
+      || pwfx->SubFormat == KSDATAFORMAT_SUBTYPE_IEC61937_DTS
+      || pwfx->SubFormat == KSDATAFORMAT_SUBTYPE_IEC61937_DTS_HD
+      || pwfx->SubFormat == KSDATAFORMAT_SUBTYPE_IEC61937_WMA_PRO)
+      return true;
+  }
+
+  return false;
 }
 
 HRESULT CBaseAudioSink::InitAllocator()

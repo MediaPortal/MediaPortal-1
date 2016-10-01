@@ -17,6 +17,7 @@
 #include "stdafx.h"
 #include "Globals.h"
 #include "BitDepthAdapter.h"
+#include <Audioclient.h>
 
 #include "alloctracing.h"
 
@@ -88,12 +89,13 @@ static BitDepthConversionDescriptor gValidConversions[] =
 BitDepthDescriptor* FindConversion(const BitDepthDescriptor& source);
 
 
-CBitDepthAdapter::CBitDepthAdapter() : 
-  CBaseAudioSink(true),  
+CBitDepthAdapter::CBitDepthAdapter(AudioRendererSettings* pSettings, Logger* pLogger) :
+  CBaseAudioSink(true, pSettings, pLogger),  
   m_bPassThrough(false),
   m_rtInSampleTime(0),
   m_rtNextIncomingSampleTime(0),
-  m_pfnConvert(NULL)
+  m_pfnConvert(NULL),
+  m_pLogger(pLogger)
 {
   ResetDithering();
 }
@@ -129,6 +131,18 @@ HRESULT CBitDepthAdapter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int 
   bool bApplyChanges = (nApplyChangesDepth != 0);
   if (nApplyChangesDepth != INFINITE && nApplyChangesDepth > 0)
     nApplyChangesDepth--;
+
+  if (m_pSettings->GetAllowBitStreaming() && CanBitstream(pwfx))
+  {
+    HRESULT hr = m_pNextSink->NegotiateFormat(pwfx, nApplyChangesDepth, pChOrder);
+    if (SUCCEEDED(hr))
+    {
+      m_bNextFormatPassthru = true;
+      m_bPassThrough = true;
+      m_chOrder = *pChOrder;
+    }
+    return hr;
+  }
 
   // Try passthrough
   HRESULT hr = m_pNextSink->NegotiateFormat(pwfx, nApplyChangesDepth, pChOrder);
@@ -183,6 +197,8 @@ HRESULT CBitDepthAdapter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int 
     pOutWfx->Format.nAvgBytesPerSec = pOutWfx->Format.nBlockAlign * pOutWfx->Format.nSamplesPerSec;
   
     hr = m_pNextSink->NegotiateFormat(pOutWfx, nApplyChangesDepth, pChOrder);
+    if (hr == AUDCLNT_E_DEVICE_IN_USE) // If the audio client is in use changing the format won't help
+      break;
   }
 
   if (FAILED(hr))
@@ -222,13 +238,17 @@ HRESULT CBitDepthAdapter::PutSample(IMediaSample *pSample)
   if (!pSample)
     return S_OK;
 
+  WAVEFORMATEXTENSIBLE* pwfe = NULL;
   AM_MEDIA_TYPE *pmt = NULL;
   bool bFormatChanged = false;
   
   HRESULT hr = S_OK;
 
   if (SUCCEEDED(pSample->GetMediaType(&pmt)) && pmt != NULL)
-    bFormatChanged = !FormatsEqual((WAVEFORMATEXTENSIBLE*)pmt->pbFormat, m_pInputFormat);
+  {
+    pwfe = (WAVEFORMATEXTENSIBLE*)pmt->pbFormat;
+    bFormatChanged = !FormatsEqual(pwfe, m_pInputFormat);
+  }
 
   if (pSample->IsDiscontinuity() == S_OK)
     m_bDiscontinuity = true;
@@ -254,6 +274,8 @@ HRESULT CBitDepthAdapter::PutSample(IMediaSample *pSample)
       Log("BitDepthAdapter: PutSample failed to change format: 0x%08x", hr);
       return hr;
     }
+
+    SetInputFormat(pwfe);
     m_chOrder = chOrder;
   }
 

@@ -20,25 +20,17 @@
 
 #include "alloctracing.h"
 
-extern void Log(const char *fmt, ...);
-
-SynchCorrection::SynchCorrection(AudioRendererSettings* pSettings) :
+SynchCorrection::SynchCorrection(AudioRendererSettings* pSettings, Logger* pLogger) :
   m_pSettings(pSettings),
-  m_dAudioDelay(0.0) // audio delay is not reset on seek / pause
+  m_dAudioDelay(0.0), // audio delay is not reset on seek / pause
+  m_pLogger(pLogger)
 {
   Reset(false);
 }
 
 SynchCorrection::~SynchCorrection()
 {
-  CAutoLock lock(&m_csSampleQueueLock);
-
-  while (m_qSampleTimes.size()>0)
-  {
-    SampleTimeData * oldSample = m_qSampleTimes.front();
-    m_qSampleTimes.pop();
-    delete oldSample;
-  }
+  Flush();
 }
 
 void SynchCorrection::Flush()
@@ -47,12 +39,13 @@ void SynchCorrection::Flush()
 
   Log("SynchCorrection::Flush");
 
-  while (m_qSampleTimes.size()>0)
+  while (m_qSampleTimes.size() > 0)
   {
-    SampleTimeData * oldSample = m_qSampleTimes.front();
+    SampleTimeData* oldSample = m_qSampleTimes.front();
     m_qSampleTimes.pop();
     delete oldSample;
   }
+
   m_rtQueueDuration = 0;
   m_rtQueueAdjustedDuration = 0;
 }
@@ -72,15 +65,13 @@ void SynchCorrection::Reset(bool soft)
     m_dlastAdjustment = 1.0;
     m_iQualityDir = 0;
     m_bQualityCorrectionOn = false;
-    m_bDriftCorrectionEnabled = true;
-    m_bBiasCorrectionEnabled = true;
-    m_bAdjustmentCorrectionEnabled = true;
-    {
-      CAutoLock dLock(&m_csDeltaLock);
-      m_dDeltaError=0.0;
-    }
     m_rtAHwStartSet = false;
     m_rtAHwStart = 0;
+
+    {
+      CAutoLock dLock(&m_csDeltaLock);
+      m_dDeltaError = 0.0;
+    }
 
     SetBias(1.0);
     SetAdjustment(1.0);
@@ -123,13 +114,13 @@ void SynchCorrection::SetAdjustment(double adjustment)
 
   if (adjustment != m_dlastAdjustment)
   {
-	  m_dlastAdjustment=adjustment;
+    m_dlastAdjustment = adjustment;
     if (m_iBiasDir != 0) // there has been an adjustment already
     {
       // if the direction is different we have overshot so half the correction
       if ((m_iBiasDir == DIRUP) && (adjustment < 1))
         m_dBiasCorrection /= 2;
-      else if ((m_iBiasDir == DIRDOWN) && (adjustment > 1)) 
+      else if ((m_iBiasDir == DIRDOWN) && (adjustment > 1))
         m_dBiasCorrection /= 2;
     }
 
@@ -138,10 +129,11 @@ void SynchCorrection::SetAdjustment(double adjustment)
     else if (adjustment < 1)
       m_iBiasDir = DIRDOWN;
 
-    CAutoLock lock(&m_csBiasLock);
+    CAutoLock biasLock(&m_csBiasLock);
     m_Bias += m_dBiasCorrection * (double) m_iBiasDir;
   }
-  m_Adjustment=adjustment;
+
+  m_Adjustment = adjustment;
 }
 
 double SynchCorrection::GetAdjustment()
@@ -189,12 +181,13 @@ INT64 SynchCorrection::GetPresenterInducedAudioDelay()
 // recalculation of the delta value for the reference clock
 INT64 SynchCorrection::GetCorrectedTimeDelta(INT64 time, REFERENCE_TIME rtAHwTime, REFERENCE_TIME rtRCTime)
 {
-  double deltaTime = 0;  
+  double deltaTime = 0;
   {
     CAutoLock lock(&m_csDeltaLock);
     deltaTime = time * GetAdjustment() * GetBias() + m_dDeltaError;
     m_dDeltaError = deltaTime - floor(deltaTime);
   }
+
   return (INT64) deltaTime;
 }
 
@@ -207,7 +200,6 @@ double SynchCorrection::TotalAudioDrift(REFERENCE_TIME rtAHwTime, REFERENCE_TIME
 // get the adjustment required to match the hardware clocks
 double SynchCorrection::GetRequiredAdjustment(REFERENCE_TIME rtAHwTime, REFERENCE_TIME rtRCTime, double bias, double adjustment)
 {
-
   double ret = bias* adjustment;
   double totalAudioDrift = CalculateDrift(rtAHwTime, rtRCTime - m_rtStart) + m_dAudioDelay +m_dEVRAudioDelay;
   bool bQuality = bias > 1.0 - QUALITY_BIAS_LIMIT &&  bias < 1.0 + QUALITY_BIAS_LIMIT;
@@ -221,12 +213,12 @@ double SynchCorrection::GetRequiredAdjustment(REFERENCE_TIME rtAHwTime, REFERENC
          ((m_iQualityDir == DIRDOWN) && (totalAudioDrift < QUALITY_CORRECTION_LIMIT * -1.0)))
       {
         //we've corrected enough
-        m_bQualityCorrectionOn=false;
-        m_iQualityDir=0;
+        m_bQualityCorrectionOn = false;
+        m_iQualityDir = 0;
       }
-      if (m_iQualityDir==DIRUP) //behind so stretch
+      if (m_iQualityDir == DIRUP) //behind so stretch
         ret = QUALITY_CORRECTION_MULTIPLIER;
-      else if (m_iQualityDir==DIRDOWN) // in front so slow
+      else if (m_iQualityDir == DIRDOWN) // in front so slow
         ret = 1.0 / QUALITY_CORRECTION_MULTIPLIER;
     }
     else // not correcting now so check for breach
@@ -247,42 +239,43 @@ double SynchCorrection::GetRequiredAdjustment(REFERENCE_TIME rtAHwTime, REFERENC
   { // we've stretched too much shift down for a while
     double msDrift = totalAudioDrift / 10000.0;
     double quickCorrection = 1.0;
-   
+
     if (msDrift > 10.0)
       quickCorrection = log(msDrift);
     else
       quickCorrection = msDrift / 10.0;
    
     if (quickCorrection > 5.0) quickCorrection = 5.0;
-    ret = ret * (1.0 / (1 + (CORRECTION_RATE-1) * quickCorrection));
+      ret = ret * (1.0 / (1 + (CORRECTION_RATE-1) * quickCorrection));
   }
   else if (totalAudioDrift < ALLOWED_DRIFT * -1.0 && (!bQuality || bias > 1.0))
   { // haven't streched enough
     double msDrift = totalAudioDrift / -10000.0;
     double quickCorrection = 1.0;
- 
+
     if (msDrift > 10.0)
       quickCorrection = log(msDrift);
     else
       quickCorrection = msDrift / 10.0;
-   
+ 
     if (quickCorrection > 5.0)
-      quickCorrection=5.0;
-   
+      quickCorrection = 5.0;
+ 
     ret = ret * (1+(CORRECTION_RATE-1)*quickCorrection);
   }
+
   return ret;
 }
 
 void SynchCorrection::AddSample(INT64 rtOriginalStart, INT64 rtAdjustedStart, INT64 rtOriginalEnd, INT64 rtAdjustedEnd)
 {
-  SampleTimeData * newSample = new SampleTimeData();
+  SampleTimeData* newSample = new SampleTimeData;
   newSample->rtOriginalSampleStart = rtOriginalStart;
   newSample->rtAdjustedSampleStart = rtAdjustedStart;
   newSample->rtOriginalSampleEnd = rtOriginalEnd;
   newSample->rtAdjustedSampleEnd = rtAdjustedEnd;
 
-  if (m_pSettings->m_bLogDebug)
+  if (m_pSettings->GetLogDebug())
     Log ("SynchCorrection::AddSample Size: %4u rtOriginalStart: %10.8f rtAdjustedStart: %10.8f rtOriginalEnd: %10.8f rtAdjustedEnd: %10.8f m_rtQueueDuration: %10.8f  m_rtAdjustedQueueDuration: %10.8f",
       m_qSampleTimes.size(),rtOriginalStart / 10000000.0, rtAdjustedStart / 10000000.0, rtOriginalEnd / 10000000.0, rtAdjustedEnd / 10000000.0, m_rtQueueDuration / 10000000.0, m_rtQueueAdjustedDuration/ 10000000.0);
 
@@ -305,6 +298,7 @@ REFERENCE_TIME SynchCorrection::GetReferenceTimeFromAudioSamples(REFERENCE_TIME 
     INT64 adjustedDuration = sampleTime->rtAdjustedSampleEnd - sampleTime->rtAdjustedSampleStart;
     ret = sampleTime->rtOriginalSampleStart + ((rtAHwtime - sampleTime->rtAdjustedSampleStart) * duration) / adjustedDuration;
   }
+
   return ret;
 }
 
@@ -314,13 +308,13 @@ SampleTimeData* SynchCorrection::GetMatchingSampleForTime(REFERENCE_TIME rtAHwti
 
   while (m_qSampleTimes.size() > 1 && m_qSampleTimes.front()->rtAdjustedSampleEnd < rtAHwtime)
   {
-    SampleTimeData * oldSample = m_qSampleTimes.front();
+    SampleTimeData* oldSample = m_qSampleTimes.front();
     m_qSampleTimes.pop();
     m_rtQueueDuration -= oldSample->rtOriginalSampleEnd - oldSample->rtOriginalSampleStart;
     m_rtQueueAdjustedDuration -= oldSample->rtAdjustedSampleEnd - oldSample->rtAdjustedSampleStart;
     delete oldSample;
   }
-  
+
   if (m_qSampleTimes.size() == 1 && m_qSampleTimes.front()->rtOriginalSampleEnd < rtAHwtime)
     Log("SynchCorrection::GetMatchingSampleForTime: Not Enough Data");
   
@@ -334,22 +328,21 @@ INT64 SynchCorrection::CalculateDrift(REFERENCE_TIME rtAHwTime, REFERENCE_TIME r
 {
   rtAHwTime -= m_rtAHwStart;
 
-  if (m_pSettings->m_bLogDebug)
+  if (m_pSettings->GetLogDebug())
     Log ("SynchCorrection::CalculateDrift Size: %4u rtAHwTime: %10.8f rtRCTime: %10.8f m_rtStart: %10.8f",
       m_qSampleTimes.size(),rtAHwTime / 10000000.0, rtRCTime / 10000000.0, m_rtStart / 10000000.0);
 
-  if (rtRCTime < 0) 
+  if (rtRCTime < 0)
     return 0;
-  
+
   double bias = GetBias();
-  if (!m_rtAHwStartSet) 
+  if (!m_rtAHwStartSet)
   {
     m_rtAHwStart = rtAHwTime - rtRCTime / bias;
     m_rtAHwStartSet = true;
     rtAHwTime -= m_rtAHwStart;
   }
-  
-  REFERENCE_TIME preCalculatedTime = GetReferenceTimeFromAudioSamples(rtAHwTime);
-  return preCalculatedTime - rtRCTime + (m_rtQueueDuration - m_rtQueueAdjustedDuration * bias) ;
-}
 
+  REFERENCE_TIME preCalculatedTime = GetReferenceTimeFromAudioSamples(rtAHwTime);
+  return preCalculatedTime - rtRCTime + (m_rtQueueDuration - m_rtQueueAdjustedDuration * bias);
+}

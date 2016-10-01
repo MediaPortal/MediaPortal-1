@@ -19,13 +19,14 @@
 #include <queue>
 #include <vector>
 #include "BaseAudioSink.h"
+#include "Logger.h"
 
 using namespace std;
 
 class CQueuedAudioSink : public CBaseAudioSink
 {
 public:
-  CQueuedAudioSink();
+  CQueuedAudioSink(AudioRendererSettings* pSettings, Logger* pLogger);
   virtual ~CQueuedAudioSink();
 
 // IAudioSink implementation
@@ -105,4 +106,7 @@ protected:
   CCritSec  m_csResources;
 
   CComPtr<IMediaSample> m_pCurrentSample;
+  CCritSec m_csCurrentSample;
+
+  Logger* m_pLogger;
 };
