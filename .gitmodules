@@ -1,6 +1,6 @@
-[submodule "libbluray"]
-	path = libbluray
-	url = git://git.1f0.de/libbluray.git
 [submodule "Build/BuildReport"]
 	path = Build/BuildReport
 	url = https://github.com/MediaPortal/BuildReport.git
+[submodule "libbluray"]
+	path = libbluray
+	url = https://github.com/tourettes/libbluray.git
