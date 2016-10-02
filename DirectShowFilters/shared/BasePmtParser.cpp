@@ -125,7 +125,8 @@ bool CBasePmtParser::DecodePmtPidTable(CSection& section)
       if(stream_type==SERVICE_TYPE_VIDEO_MPEG1 
         || stream_type==SERVICE_TYPE_VIDEO_MPEG2
         || stream_type==SERVICE_TYPE_VIDEO_MPEG4
-        || stream_type==SERVICE_TYPE_VIDEO_H264 )
+        || stream_type==SERVICE_TYPE_VIDEO_H264
+        || stream_type==SERVICE_TYPE_VIDEO_HEVC )
       {
         VideoPid pid;
         pid.Pid=elementary_PID;

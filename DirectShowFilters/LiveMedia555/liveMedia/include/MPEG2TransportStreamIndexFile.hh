@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2016 Live Networks, Inc.  All rights reserved.
 // A class that encapsulates MPEG-2 Transport Stream 'index files'/
 // These index files are used to implement 'trick play' operations
 // (seek-by-time, fast forward, reverse play) on Transport Stream files.
@@ -46,10 +46,10 @@ public:
 	// (This may modify "npt" to a more exact value.)
         // (We also return the index record number that we looked up.)
 
-  void lookupPCRFromTSPacketNum(unsigned long& tsPacketNumber, Boolean reverseToPreviousVSH,
+  void lookupPCRFromTSPacketNum(unsigned long& tsPacketNumber, Boolean reverseToPreviousCleanPoint,
 				float& pcr, unsigned long& indexRecordNumber);
     // Looks up the PCR timestamp for the transport packet "tsPacketNumber".
-	// (Adjust "tsPacketNumber" only if "reverseToPreviousVSH" is True.)
+	// (Adjust "tsPacketNumber" only if "reverseToPreviousCleanPoint" is True.)
         // (We also return the index record number that we looked up.)
 
   // Miscellaneous functions used to implement 'trick play':
@@ -58,6 +58,10 @@ public:
 				u_int8_t& size, float& pcr, u_int8_t& recordType);
   float getPlayingDuration();
   void stopReading() { closeFid(); }
+
+  int mpegVersion();
+      // returns the best guess for the version of MPEG being used for data within the underlying Transport Stream file.
+      // (1,2,4, or 5 (representing H.264).  0 means 'don't know' (usually because the index file is empty))
 
 private:
   MPEG2TransportStreamIndexFile(UsageEnvironment& env, char const* indexFileName);
@@ -73,13 +77,15 @@ private:
   u_int8_t sizeFromBuf() { return fBuf[2]; }
   float pcrFromBuf(); // after "fBuf" has been read
   unsigned long tsPacketNumFromBuf();
+  void setMPEGVersionFromRecordType(u_int8_t recordType);
 
-  Boolean rewindToVSH(unsigned long&ixFound);
+  Boolean rewindToCleanPoint(unsigned long&ixFound);
       // used to implement "lookupTSPacketNumber()"
 
 private:
   char* fFileName;
   FILE* fFid; // used internally when reading from the file
+  int fMPEGVersion;
   unsigned long fCurrentIndexRecordNum; // within "fFid"
   float fCachedPCR;
   unsigned long fCachedTSPacketNumber, fCachedIndexRecordNumber;

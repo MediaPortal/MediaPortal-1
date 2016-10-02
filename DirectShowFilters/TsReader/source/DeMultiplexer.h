@@ -39,6 +39,8 @@
 #include <map>
 #include <dvdmedia.h>
 #include "MpegPesParser.h"
+#include "FrameHeaderParser.h"
+#include "TsAVRT.h"
 
 using namespace std;
 class CTsReaderFilter;
@@ -58,14 +60,14 @@ public:
 	void SetData(const void* ptr, DWORD len) {SetCount(len); memcpy(GetData(), ptr, len);}
 };
 
-class CDeMultiplexer : public CPacketSync, public IPatParserCallback, public TSThread
+class CDeMultiplexer : public CPacketSync, public IPatParserCallback, public TSThread, public TsAVRT
 {
 public:
   CDeMultiplexer( CTsDuration& duration,CTsReaderFilter& filter);
   virtual ~CDeMultiplexer(void);
 
-  void       Start();
-  void       Flush(bool clearAVready);
+  bool       Start(DWORD timeout);
+  void       Flush(bool clearAVready, bool isMidStream);
   CBuffer*   GetVideo(bool earlyStall);
   CBuffer*   GetAudio(bool earlyStall, CRefTime rtStartTime);
   CBuffer*   GetSubtitle();
@@ -80,6 +82,7 @@ public:
   void       FillVideo(CTsHeader& header, byte* tsPacket, int bufferOffset, int bufferLength);
   void       FillVideoH264(CTsHeader& header, byte* tsPacket);
   void       FillVideoMPEG2(CTsHeader& header, byte* tsPacket);
+  void       FillVideoHEVC(CTsHeader& header, byte* tsPacket);
   void       FillTeletext(CTsHeader& header, byte* tsPacket);
   void       SetEndOfFile(bool bEndOfFile);
   CPidTable  GetPidTable();
@@ -97,7 +100,7 @@ public:
   bool       GetAudioStream(__int32 &stream);
 
   void       GetAudioStreamInfo(int stream,char* szName);
-  void       GetAudioStreamType(int stream,CMediaType&  pmt);
+  bool       GetAudioStreamType(int stream,CMediaType&  pmt, int iPosition);
   bool       GetVideoStreamType(CMediaType &pmt);
   int        GetAudioStreamCount();
 
@@ -110,15 +113,10 @@ public:
   bool       SetSubtitleResetCallback( int (CALLBACK *pSubUpdateCallback)(int c, void* opts, int* select));
 
   bool       EndOfFile();
-  //  bool       HoldAudio();
-  //  void       SetHoldAudio(bool onOff);
-  //  bool       HoldVideo();
-  //  void       SetHoldVideo(bool onOff);
-  //  bool       HoldSubtitle();
-  //  void       SetHoldSubtitle(bool onOff);
   void       ThreadProc();
-  void       FlushVideo();
+  void       FlushVideo(bool isMidStream);
   void       FlushAudio();
+  void       FlushCurrentAudio();
   void       FlushSubtitle();
   void       FlushTeletext();
   int        GetVideoServiceType();
@@ -142,12 +140,16 @@ public:
   bool VidPidGood(void);
   bool SubPidGood(void);
   bool PatParsed(void);
+  void CheckMediaChange(unsigned int Pid, bool isVideo);
 
-  int  ReadAheadFromFile();
+  int  ReadAheadFromFile(ULONG lDataLength);
   bool CheckPrefetchState(bool isNormal, bool isForced);
 
   void DelegatedFlush(bool forceNow, bool waitForFlush);
   void PrefetchData();
+  
+  DWORD GetMaxFileReadLatency();
+  float GetAveFileReadLatency();
 
   bool m_DisableDiscontinuitiesFiltering;
   DWORD m_LastDataFromRtsp;
@@ -156,22 +158,22 @@ public:
   bool m_bFlushRunning;
   bool m_bReadAheadFromFile;
 
-  DWORD m_sampleTime;
-  DWORD m_sampleTimePrev;
+  float m_sampleTime;
+  float m_sampleTimePrev;
   unsigned long m_byteRead;
   float m_bitRate;
 
-  bool m_bVideoSampleLate;
   bool m_bAudioSampleLate;
-  //  long m_AudioDataLowCount;
-  //  long m_VideoDataLowCount;
   long m_AVDataLowCount;
   long m_AudioDataLowPauseTime;
-  long m_VideoDataLowPauseTime;
   DWORD m_targetAVready;
   bool  m_bSubtitleCompensationSet;
   bool m_bShuttingDown;
-
+  double m_dVidPTSJumpLimit;
+  double m_dfAudSampleDuration;
+  
+  DWORD  m_lastFlushTime;
+  
 private:
   struct stAudioStream
   {
@@ -188,7 +190,7 @@ private:
 
   vector<struct stAudioStream> m_audioStreams;
   vector<struct stSubtitleStream> m_subtitleStreams;
-  int ReadFromFile();
+  int ReadFromFile(ULONG lDataLength);
   bool m_bEndOfFile;
   HRESULT RenderFilterPin(CBasePin* pin, bool isAudio, bool isVideo);
   CCritSec m_sectionFlushAudio;
@@ -207,7 +209,6 @@ private:
   CPidTable m_pids;
   vector<CBuffer*> m_vecSubtitleBuffers;
   vector<CBuffer*> m_vecVideoBuffers;
-//  vector<CBuffer*> m_t_vecVideoBuffers;
   vector<CBuffer*> m_vecAudioBuffers;
   vector<CBuffer*> m_t_vecAudioBuffers;
   typedef vector<CBuffer*>::iterator ivecBuffers;
@@ -247,9 +248,6 @@ private:
 
   unsigned int m_iAudioReadCount;
 
-  //  bool m_bHoldAudio;
-  //  bool m_bHoldVideo;
-  //  bool m_bHoldSubtitle;
   int m_iAudioIdx;
   int m_iPatVersion;
   int m_ReqPatVersion;
@@ -268,7 +266,6 @@ private:
 
   bool m_bStarting;
 
-  bool m_mpegParserTriggerFormatChange;
   bool m_videoChanged;
   bool m_audioChanged;
   bool m_bSetAudioDiscontinuity;
@@ -304,6 +301,8 @@ private:
 
   int m_lastARX;
   int m_lastARY;
+
+  int m_lastStreamType;
   
   bool m_mpegParserReset;
   bool m_bFirstGopParsed;
@@ -314,8 +313,20 @@ private:
   
   int  m_initialAudioSamples;
   int  m_initialVideoSamples;
-  int  m_prefetchLoopDelay;
+  DWORD  m_prefetchLoopDelay;
   
   byte* m_pFileReadBuffer;
   
+  DWORD m_currentAudHeader;
+  DWORD m_lastAudHeader;
+  int m_audHeaderCount;
+  int m_hadPESfail;
+  
+  DWORD m_fileReadLatency;
+  DWORD m_maxFileReadLatency;
+  DWORD m_fileReadLatSum;
+  DWORD m_fileReadLatCount;
+
+  int m_audioBytesRead;
+    
 };

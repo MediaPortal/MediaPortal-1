@@ -37,6 +37,7 @@ FileReader::FileReader() :
 	m_hFile(INVALID_HANDLE_VALUE),
 	m_pFileName(0),
   m_bUseDummyWrites(FALSE),
+  m_bUseRandomAccess(FALSE),
   m_bIsStopping(FALSE),
   m_pKernel32LibHandle(NULL),
   m_pCancelSynchronousIoProcHandle(NULL)
@@ -62,7 +63,7 @@ FileReader::~FileReader()
   
   if (m_pFileName)
     delete m_pFileName;
-
+    
   if (m_pKernel32LibHandle != NULL)
   {
     FreeLibrary(m_pKernel32LibHandle);
@@ -116,6 +117,9 @@ HRESULT FileReader::OpenFile()
 	DWORD Tmo=14 ;
   HANDLE hFileUnbuff = INVALID_HANDLE_VALUE;
   
+  //Can be used to open files in random-access mode to workaround SMB caching problems
+  DWORD accessModeFlags = (m_bUseRandomAccess ? FILE_FLAG_RANDOM_ACCESS : FILE_FLAG_SEQUENTIAL_SCAN);     
+  
 	// Is the file already opened
 	if (m_hFile != INVALID_HANDLE_VALUE) 
   {
@@ -157,7 +161,7 @@ HRESULT FileReader::OpenFile()
       							(DWORD) (FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE), // Share access
       							NULL,						            // Security
       							(DWORD) CREATE_ALWAYS,		  // Open flags
-      							(DWORD) (FILE_ATTRIBUTE_NORMAL | FILE_FLAG_DELETE_ON_CLOSE), // | FILE_FLAG_WRITE_THROUGH),	// More flags
+      							(DWORD) (FILE_ATTRIBUTE_NORMAL | FILE_FLAG_DELETE_ON_CLOSE),	// More flags
       							NULL);						          // Template
       
       		if (hFileUnbuff != INVALID_HANDLE_VALUE)
@@ -174,35 +178,40 @@ HRESULT FileReader::OpenFile()
     }
     
 		// do not try to open a tsbuffer file without SHARE_WRITE so skip this try if we have a buffer file
-		if (wcsstr(pFileName, L".ts.tsbuffer") == NULL) 
+		if (wcsstr(pFileName, L".ts.tsbuffer") == NULL)   // not tsbuffer files
 		{
-			// Try to open the file
+			// Try to open the file in read-only mode (should fail for 'live' recordings)
 			m_hFile = ::CreateFileW(pFileName,      // The filename
 						 (DWORD) GENERIC_READ,        // File access
 						 (DWORD) FILE_SHARE_READ,     // Share access
 						 NULL,                        // Security
 						 (DWORD) OPEN_EXISTING,       // Open flags
-						 (DWORD) 0,                   // More flags
+						 (DWORD) accessModeFlags,     // More flags
 						 NULL);                       // Template
-
 			if (m_hFile != INVALID_HANDLE_VALUE) break ;
+			  
+  		//This is in case file is being recorded to ('live' recordings)
+  		m_hFile = ::CreateFileW(pFileName,		// The filename
+  							(DWORD) GENERIC_READ,				// File access
+  							(DWORD) (FILE_SHARE_READ | FILE_SHARE_WRITE), // Share access
+  							NULL,						            // Security
+  							(DWORD) OPEN_EXISTING,		  // Open flags
+  							(DWORD) accessModeFlags,	                // More flags
+  							NULL);						          // Template 
+  		if (m_hFile != INVALID_HANDLE_VALUE) break ;
 		}
-
-		//Test incase file is being recorded to
-		m_hFile = ::CreateFileW(pFileName,		// The filename
-							(DWORD) GENERIC_READ,				// File access
-							(DWORD) (FILE_SHARE_READ |
-							FILE_SHARE_WRITE),          // Share access
-							NULL,						            // Security
-							(DWORD) OPEN_EXISTING,		  // Open flags
-//							(DWORD) 0,
-							(DWORD) FILE_ATTRIBUTE_NORMAL,		// More flags
-//							FILE_ATTRIBUTE_NORMAL |
-//							FILE_FLAG_RANDOM_ACCESS,	      // More flags
-//							FILE_FLAG_SEQUENTIAL_SCAN,	    // More flags
-							NULL);						                // Template
-
-		if (m_hFile != INVALID_HANDLE_VALUE) break ;
+    else  //for tsbuffer files
+    {
+  		//This is in case file is being recorded to
+  		m_hFile = ::CreateFileW(pFileName,		// The filename
+  							(DWORD) GENERIC_READ,				// File access
+  							(DWORD) (FILE_SHARE_READ | FILE_SHARE_WRITE), // Share access
+  							NULL,						            // Security
+  							(DWORD) OPEN_EXISTING,		  // Open flags
+  							(DWORD) accessModeFlags,	  // More flags
+  							NULL);						                // Template 
+  		if (m_hFile != INVALID_HANDLE_VALUE) break ;
+	  }
 
 		if ((wcsstr(pFileName, L".ts.tsbuffer") != NULL) && (Tmo<10)) //timeshift file only
 		{
@@ -231,7 +240,7 @@ HRESULT FileReader::OpenFile()
             Sleep(50);   		  
           	::CloseHandle(hFileUnbuff); //File is deleted on CloseHandle since FILE_FLAG_DELETE_ON_CLOSE was used
           	hFileUnbuff = INVALID_HANDLE_VALUE; // Invalidate the file
-    	      LogDebug("FileReader::OpenFile(), dummy file write %d bytes to %ws", bytesWritten, tempFileName);
+    	      LogDebug("FileReader::OpenFile(), dummy file WRITE_THROUGH write %d bytes to %ws", bytesWritten, tempFileName);
       		}
       	}
       }
@@ -243,7 +252,7 @@ HRESULT FileReader::OpenFile()
   							(DWORD) (FILE_SHARE_READ | FILE_SHARE_WRITE), // Share access
   							NULL,						            // Security
   							(DWORD) OPEN_EXISTING,		  // Open flags
-  							(DWORD) (FILE_ATTRIBUTE_NORMAL | FILE_FLAG_NO_BUFFERING),	// More flags
+  							(DWORD) FILE_FLAG_NO_BUFFERING,	// More flags
   							NULL);						          // Template
   
   		if (hFileUnbuff != INVALID_HANDLE_VALUE)
@@ -251,7 +260,7 @@ HRESULT FileReader::OpenFile()
       	::CloseHandle(hFileUnbuff);
       	hFileUnbuff = INVALID_HANDLE_VALUE; // Invalidate the file
   		}
-  	  LogDebug("FileReader::OpenFile() unbuff, %d tries to open %ws", 15-Tmo, pFileName);  	  
+  	  //LogDebug("FileReader::OpenFile() unbuff, %d tries to open %ws", 15-Tmo, pFileName);  	  
     }
 
 		Sleep(min((20*(15-Tmo)),250)) ; //wait longer between retries as loop iterations increase
@@ -310,26 +319,6 @@ BOOL FileReader::IsFileInvalid()
 	return (m_hFile == INVALID_HANDLE_VALUE);
 }
 
-HRESULT FileReader::GetFileSize(__int64 *pStartPosition, __int64 *pLength)
-{
-	*pStartPosition = 0;
-		
-	DWORD dwSizeLow;
-	DWORD dwSizeHigh;
-
-	dwSizeLow = ::GetFileSize(m_hFile, &dwSizeHigh);
-	if ((dwSizeLow == 0xFFFFFFFF) && (GetLastError() != NO_ERROR ))
-	{
-		return E_FAIL;
-	}
-
-	LARGE_INTEGER li;
-	li.LowPart = dwSizeLow;
-	li.HighPart = dwSizeHigh;
-	
-	*pLength = li.QuadPart;
-	return S_OK;
-}
 
 DWORD FileReader::SetFilePointer(__int64 llDistanceToMove, DWORD dwMoveMethod)
 {
@@ -351,6 +340,11 @@ __int64 FileReader::GetFilePointer()
 	li.LowPart = ::SetFilePointer(m_hFile, 0, &li.HighPart, FILE_CURRENT);
 
 	return li.QuadPart;
+}
+
+HRESULT FileReader::ReadWithRefresh(PBYTE pbData, ULONG lDataLength, ULONG *dwReadBytes)
+{
+  return Read(pbData, lDataLength, dwReadBytes);
 }
 
 HRESULT FileReader::Read(PBYTE pbData, ULONG lDataLength, ULONG *dwReadBytes)
@@ -378,8 +372,11 @@ HRESULT FileReader::Read(PBYTE pbData, ULONG lDataLength, ULONG *dwReadBytes)
 	{
   	if (!m_bIsStopping)
     {
-  	  HRESULT lastErr = HRESULT_FROM_WIN32(GetLastError());	  
-      LogDebug("FileReader::Read() read failed, Error = 0x%x, %ws, filename = %ws", lastErr, HresultToCString(lastErr), m_pFileName);
+  	  HRESULT lastErr = HRESULT_FROM_WIN32(GetLastError());	    	  
+  	  if (lastErr != 0x80090006) //Do not log "Invalid Signature" (2148073478) errors on SMB3 connections - these can be normal...
+  	  {
+        LogDebug("FileReader::Read() read failed, Error = 0x%x, %ws, filename = %ws", lastErr, HresultToCString(lastErr), m_pFileName);
+      }
     }
     *dwReadBytes = 0;
 		return E_FAIL;
@@ -387,7 +384,7 @@ HRESULT FileReader::Read(PBYTE pbData, ULONG lDataLength, ULONG *dwReadBytes)
 
 	if (*dwReadBytes < (ULONG)lDataLength)
   {
-    LogDebug("FileReader::Read() read to less bytes");
+    //LogDebug("FileReader::Read() read to less bytes from %ws", m_pFileName);
 		return S_FALSE;
   }
 	return S_OK;
@@ -408,10 +405,23 @@ HRESULT FileReader::Read(PBYTE pbData, ULONG lDataLength, ULONG *dwReadBytes, __
 __int64 FileReader::GetFileSize()
 {
   CAutoLockFR rLock (&m_accessLock);
-  __int64 pStartPosition =0;
-  __int64 pLength=0;
-  GetFileSize(&pStartPosition, &pLength);
-  return pLength;
+  
+  BY_HANDLE_FILE_INFORMATION fileinfo;
+		
+  //fill the structure with info regarding the file
+  if (GetFileInformationByHandle(m_hFile, &fileinfo))
+  {	  
+    //Extract the file size info
+  	LARGE_INTEGER li;
+  	li.LowPart  = fileinfo.nFileSizeLow;
+  	li.HighPart = fileinfo.nFileSizeHigh;
+  	
+	  return li.QuadPart;
+  }
+  
+  HRESULT lastErr = HRESULT_FROM_WIN32(GetLastError());	  
+	LogDebug("FileReader::GetFileSize() failed. Error 0x%x, %ws, filename = %ws", lastErr, HresultToCString(lastErr), m_pFileName);    
+  return -1;
 }
 
 CString FileReader::randomStrGen(int length) 
@@ -434,8 +444,21 @@ void FileReader::SetDummyWrites(BOOL useDummyWrites)
 	//LogDebug("FileReader::SetDummyWrites, useDummyWrites = %d", useDummyWrites);
 }
 
+//Enable 'random access' mode when opening files
+void FileReader::SetRandomAccess(BOOL useRandomAccess)
+{
+  CAutoLockFR rLock (&m_accessLock);
+	m_bUseRandomAccess = useRandomAccess;
+	//LogDebug("FileReader::SetRandomAccess, useRandomAccess = %d", useRandomAccess);
+}
+
 //for MultiFileReader() compatibility only
 void FileReader::SetFileNext(BOOL useFileNext)
+{
+}
+
+//for MultiFileReader() compatibility only
+void FileReader::CloseBufferFiles()
 {
 }
 
@@ -463,7 +486,7 @@ void FileReader::CancelPendingIO()
     {
       //Something else is holding the lock, so may have outstanding IO requests
     	if (m_pCancelSynchronousIoProcHandle != NULL && m_accessLock.GetThreadID() != 0) //Valid thread ID
-    	{    	
+    	{
       	HANDLE threadHandle = ::OpenThread(THREAD_ALL_ACCESS, FALSE, m_accessLock.GetThreadID());    
       	
       	if (threadHandle != NULL)

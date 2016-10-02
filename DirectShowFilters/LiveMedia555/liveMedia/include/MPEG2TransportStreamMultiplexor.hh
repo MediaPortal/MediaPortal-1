@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2016 Live Networks, Inc.  All rights reserved.
 // A class for generating MPEG-2 Transport Stream from one or more input
 // Elementary Stream data sources
 // C++ header
@@ -32,6 +32,11 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 #define PID_TABLE_SIZE 256
 
 class MPEG2TransportStreamMultiplexor: public FramedSource {
+public:
+  Boolean canDeliverNewFrameImmediately() const { return fInputBufferBytesUsed < fInputBufferSize; }
+      // Can be used by a downstream reader to test whether the next call to "doGetNextFrame()"
+      // will deliver data immediately).
+
 protected:
   MPEG2TransportStreamMultiplexor(UsageEnvironment& env);
   virtual ~MPEG2TransportStreamMultiplexor();
@@ -40,9 +45,12 @@ protected:
       // implemented by subclasses
 
   void handleNewBuffer(unsigned char* buffer, unsigned bufferSize,
-		       int mpegVersion, MPEG1or2Demux::SCR scr);
-  // called by "awaitNewBuffer()"
-  // Note: For MPEG-4 video, set "mpegVersion" to 4; for H.264 video, set "mpegVersion" to 5. 
+		       int mpegVersion, MPEG1or2Demux::SCR scr, int16_t PID = -1);
+      // called by "awaitNewBuffer()"
+      // Note: For MPEG-4 video, set "mpegVersion" to 4; for H.264 video, set "mpegVersion" to 5. 
+      // The buffer is assumed to be a PES packet, with a proper PES header.
+      // If "PID" is not -1, then it (currently, only the low 8 bits) is used as the stream's PID,
+      // otherwise the "stream_id" in the PES header is reused to be the stream's PID.
 
 private:
   // Redefined virtual functions:
@@ -76,5 +84,10 @@ private:
   unsigned fInputBufferSize, fInputBufferBytesUsed;
   Boolean fIsFirstAdaptationField;
 };
+
+
+// The CRC calculation function that Transport Streams use.  We make this function public
+// here in case it's useful elsewhere:
+u_int32_t calculateCRC(u_int8_t const* data, unsigned dataLength, u_int32_t initialValue = 0xFFFFFFFF);
 
 #endif

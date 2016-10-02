@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2016 Live Networks, Inc.  All rights reserved.
 // MPEG-4 audio, using LATM multiplexing
 // Implementation
 
@@ -145,16 +145,19 @@ static Boolean getNibble(char const*& configStr,
 }
 
 static Boolean getByte(char const*& configStr, unsigned char& resultByte) {
+  resultByte = 0; // by default, in case parsing fails
+
   unsigned char firstNibble;
   if (!getNibble(configStr, firstNibble)) return False;
+  resultByte = firstNibble<<4;
 
   unsigned char secondNibble = 0;
   if (!getNibble(configStr, secondNibble) && configStr[0] != '\0') {
     // There's a second nibble, but it's malformed
     return False;
   }
+  resultByte |= secondNibble;
 
-  resultByte = (firstNibble<<4)|secondNibble;
   return True;
 }
 
@@ -169,8 +172,8 @@ parseStreamMuxConfigStr(char const* configStr,
                         unsigned char*& audioSpecificConfig,
                         unsigned& audioSpecificConfigSize) {
   // Set default versions of the result parameters:
-  audioMuxVersion = 0;
-  allStreamsSameTimeFraming = 1;
+  audioMuxVersion = False;
+  allStreamsSameTimeFraming = True;
   numSubFrames = numProgram = numLayer = 0;
   audioSpecificConfig = NULL;
   audioSpecificConfigSize = 0;
@@ -181,10 +184,10 @@ parseStreamMuxConfigStr(char const* configStr,
     unsigned char nextByte;
 
     if (!getByte(configStr, nextByte)) break;
-    audioMuxVersion = (nextByte&0x80)>>7;
-    if (audioMuxVersion != 0) break;
+    audioMuxVersion = (nextByte&0x80) != 0;
+    if (audioMuxVersion) break;
 
-    allStreamsSameTimeFraming = (nextByte&0x40)>>6;
+    allStreamsSameTimeFraming = ((nextByte&0x40)>>6) != 0;
     numSubFrames = (nextByte&0x3F);
 
     if (!getByte(configStr, nextByte)) break;
@@ -241,18 +244,16 @@ unsigned char* parseGeneralConfigStr(char const* configStr,
   unsigned char* config = NULL;
   do {
     if (configStr == NULL) break;
-    configSize = (strlen(configStr)+1)/2 + 1;
+    configSize = (strlen(configStr)+1)/2;
 
     config = new unsigned char[configSize];
     if (config == NULL) break;
 
-    Boolean parseSuccess;
-    unsigned i = 0;
-    do {
-      parseSuccess = getByte(configStr, config[i++]);
-    } while (parseSuccess);
-    if (i != configSize) break;
-        // part of the remaining string was bad
+    unsigned i;
+    for (i = 0; i < configSize; ++i) {
+      if (!getByte(configStr, config[i])) break;
+    }
+    if (i != configSize) break; // part of the string was bad
 
     return config;
   } while (0);
@@ -261,4 +262,3 @@ unsigned char* parseGeneralConfigStr(char const* configStr,
   delete[] config;
   return NULL;
 }
-
