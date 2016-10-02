@@ -1096,6 +1096,12 @@
     <String id="1323">Video Codecs for .TS files</String>
     <String id="1324">Override audio selection and use default one</String>
     <String id="1325">Use audio/subtitle stream selection from LAV Splitter</String>
+    <String id="1324">Movie collection</String>
+    <String id="1330">Only User groups</String>
+    <String id="1331">Movie collection</String>
+    <String id="1332">Only Movie collection</String>
+    <String id="1333">Add Movie to Collection</String>
+    <String id="1334">Remove selected movie from Collection</String>
     <String id="1335">Refresh cover</String>
     <String id="1440" prefix="My ">Teletext</String>
     <String id="1441">Teletext</String>
