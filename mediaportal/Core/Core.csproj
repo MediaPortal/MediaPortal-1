@@ -236,6 +236,7 @@
     <Reference Include="Microsoft.DirectX.DirectDraw, Version=1.0.2902.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
       <SpecificVersion>True</SpecificVersion>
     </Reference>
+    <Reference Include="Microsoft.VisualC" />
     <Reference Include="Microsoft.WindowsAPICodePack.Shell">
       <HintPath>..\MediaPortal.Base\Microsoft.WindowsAPICodePack.Shell.dll</HintPath>
     </Reference>
@@ -280,8 +281,8 @@
     <Reference Include="System.Xml">
       <Name>System.XML</Name>
     </Reference>
-    <Reference Include="taglib-sharp, Version=2.1.0.1, Culture=neutral, PublicKeyToken=db62eba44689b5b0, processorArchitecture=x86">
-      <HintPath>..\..\Packages\MediaPortal.TagLib.2.1.0.1\lib\net40\taglib-sharp.dll</HintPath>
+    <Reference Include="taglib-sharp, Version=2.1.0.2, Culture=neutral, PublicKeyToken=db62eba44689b5b0, processorArchitecture=x86">
+      <HintPath>..\..\Packages\MediaPortal.TagLib.2.1.0.2\lib\net40\taglib-sharp.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="WindowsBase" />
@@ -568,6 +569,7 @@
     <Compile Include="Util\FilterChecker.cs" />
     <Compile Include="Util\FolderThumbCacher.cs" />
     <Compile Include="Util\FolderThumbCreator.cs" />
+    <Compile Include="Util\HideVolumeOSDLib.cs" />
     <Compile Include="Util\HResult.cs" />
     <Compile Include="Util\HTMLParser.cs" />
     <Compile Include="Util\IMDBSearch.cs" />

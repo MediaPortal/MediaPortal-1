@@ -176,7 +176,7 @@
       <width>1170</width>
       <font>font12</font>
       <textcolor>ffa9d0f7</textcolor>
-      <label>#TV.Guide.Time  |  #TV.Guide.CompositeTitle  |  #TV.Guide.Genre</label>
+      <label>#TV.Guide.Time (#TV.Guide.DurationMins) | #TV.Guide.CompositeTitle | #TV.Guide.Genre</label>
     </control>
     <control Style="NoShadow">
       <description>Current program time</description>

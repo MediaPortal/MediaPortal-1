@@ -1102,6 +1102,7 @@
     <String id="1332">Only Movie collection</String>
     <String id="1333">Add Movie to Collection</String>
     <String id="1334">Remove selected movie from Collection</String>
+    <String id="1335">Refresh cover</String>
     <String id="1440" prefix="My ">Teletext</String>
     <String id="1441">Teletext</String>
     <String id="1442">Scroll speed (horizontal)</String>
@@ -1200,7 +1201,7 @@
     <String id="1991">Please wait until the server is waking up</String>
     <String id="1992">The server is not available.</String>
     <String id="1993">Check the network connection or increase the timeout value.</String>
-    <String id="1994">Wait until the share cames online.</String>
+    <String id="1994">Wait until the share comes online.</String>
     <String id="1995">Create folder thumb from thumbnails</String>
     <String id="1999">Name with Duration</String>
     <String id="2000">The song is read only!</String>

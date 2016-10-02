@@ -181,7 +181,7 @@ xcopy %1\..\Packages\MediaPortal-iMON-Display.1.1.0\lib\iMONDisplay.dll . /Y /D
 xcopy %1\..\Packages\MediaPortal-iMON-Display.1.1.0\lib\iMONDisplayWrapper.dll . /Y /D
 
 REM taglib-sharp
-xcopy %1\..\Packages\MediaPortal.TagLib.2.1.0.1\lib\net40\taglib-sharp.dll ./Y /D
+xcopy %1\..\Packages\MediaPortal.TagLib.2.1.0.2\lib\net40\taglib-sharp.dll ./Y /D
 
 REM SharpLibHid
 xcopy %1\..\Packages\SharpLibHid.1.3.1\lib\net20\SharpLibHid.dll . /Y /D

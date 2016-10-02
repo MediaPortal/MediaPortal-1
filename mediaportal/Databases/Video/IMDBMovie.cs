@@ -792,6 +792,16 @@ namespace MediaPortal.Video.Database
                                 ")");
       }
 
+      if (RunTime <= 0)
+      {
+        GUIPropertyManager.SetProperty("#runtimeMins", string.Empty);
+      }
+      else
+      {
+        int runtimeMins = RunTime * 60;
+        GUIPropertyManager.SetProperty("#runtimeMins", runtimeMins.ToString());
+      }
+
       if (Duration <= 0)
       {
         GUIPropertyManager.SetProperty("#videoruntime", string.Empty);
@@ -1960,6 +1970,16 @@ namespace MediaPortal.Video.Database
                                   " (" + Util.Utils.SecondsToHMString(info.RunTime * 60) + ")");
           }
 
+          if (info.RunTime <= 0)
+          {
+            GUIPropertyManager.SetProperty("#runtimeMins", string.Empty);
+          }
+          else
+          {
+            int runtimeMins = info.RunTime * 60;
+            GUIPropertyManager.SetProperty("#runtimeMins", runtimeMins.ToString());
+          }
+
           if (info.Duration <= 0)
           {
             GUIPropertyManager.SetProperty("#videoruntime", string.Empty);
@@ -2081,6 +2101,7 @@ namespace MediaPortal.Video.Database
       GUIPropertyManager.SetProperty("#hideinfo", "true");
       GUIPropertyManager.SetProperty("#runtime", string.Empty);
       GUIPropertyManager.SetProperty("#videoruntime", string.Empty);
+      GUIPropertyManager.SetProperty("#runtimeMins", string.Empty);
       GUIPropertyManager.SetProperty("#iswatched", string.Empty);
       GUIPropertyManager.SetProperty("#watchedpercent", string.Empty);
       GUIPropertyManager.SetProperty("#watchedcount", string.Empty);
