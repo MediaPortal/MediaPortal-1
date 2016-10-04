@@ -693,6 +693,11 @@ SectionEnd
 		Delete  "$MPdir.Base\mpaudiorenderer.ax"
 	${EndIf}
   ${EndIf}
+  ; Delete filter to be able to be registered with an updated version
+  Delete  "$MPdir.Base\TsReader.ax"
+  Delete  "$MPdir.Base\cccp.ax"
+  Delete  "$MPdir.Base\DVBSub3.ax"
+  Delete  "$MPdir.Base\BDReader.ax"
 
 ### AUTO-GENERATED   UNINSTALLATION CODE ###
   !include "${git_MP}\Setup\uninstall.nsh"
@@ -797,6 +802,8 @@ SectionEnd
   RMDir /r "$MPdir.Base\Wizards"
   ; Log
   Delete "$MPdir.Base\log4net.dll"
+  Delete "$MPdir.Base\TsReader.ax"
+  Delete "$MPdir.Base\cccp.ax"
   
 !macroend
 
