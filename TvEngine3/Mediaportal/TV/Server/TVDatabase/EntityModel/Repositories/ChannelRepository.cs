@@ -79,6 +79,10 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
       bool tuningDetails = includeRelations.HasFlag(ChannelRelation.TuningDetails);
 
       IList<Channel> list = channels.ToList(); //fetch the basic/incomplete result from DB now.
+      if (!channelMapsTuner && !groupMapsChannelGroup && !tuningDetails)
+      {
+        return list;
+      }
 
       IDictionary<int, Tuner> tuners = null;
       IDictionary<int, ChannelGroup> channelGroups = null;
