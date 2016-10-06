@@ -388,7 +388,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // Select the new channel.
       Channel channel = null;
       IList<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllVisibleChannelsByMediaType((MediaType)mediaType, ChannelRelation.None);
-      using (FormSelectItems dlgSelect = new FormSelectItems("Select Channel For Recording(s)", "Please select a channel:", null, "Name", false, null))
+      Channel[] channelsArray = new Channel[channels.Count];
+      channels.CopyTo(channelsArray, 0);
+      using (FormSelectItems dlgSelect = new FormSelectItems("Select Channel For Recording(s)", "Please select a channel:", channelsArray, "Name", false, null))
       {
         if (dlgSelect.ShowDialog() != DialogResult.OK || dlgSelect.Items == null || dlgSelect.Items.Count != 1)
         {
