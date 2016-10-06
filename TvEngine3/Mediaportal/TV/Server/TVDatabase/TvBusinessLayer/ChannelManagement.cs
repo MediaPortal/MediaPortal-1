@@ -72,8 +72,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       {
         IQueryable<Channel> query = channelRepository.GetQuery<Channel>(c => c.IdChannel == idChannel);
         Channel channel = channelRepository.IncludeAllRelations(query, includeRelations).FirstOrDefault();
-        channel = channelRepository.LoadNavigationProperties(channel, includeRelations);
-        return channel;
+        return channelRepository.LoadNavigationProperties(channel, includeRelations);
       }
     }
 
@@ -260,11 +259,9 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     {
       using (IChannelRepository channelRepository = new ChannelRepository())
       {
-        IQueryable<Channel> query =
-          channelRepository.GetQuery<Channel>(c => c.ExternalId != null && c.ExternalId != "").OrderBy(
-            c => c.ExternalId);
-        query = channelRepository.IncludeAllRelations(query, ChannelRelation.TuningDetails);
-        return channelRepository.LoadNavigationProperties(query, ChannelRelation.TuningDetails);
+        IQueryable<Channel> query = channelRepository.GetQuery<Channel>(c => c.ExternalId != null && c.ExternalId != "").OrderBy(c => c.ExternalId);
+        query = channelRepository.IncludeAllRelations(query, ChannelRelation.None);
+        return channelRepository.LoadNavigationProperties(query, ChannelRelation.None);
       }
     }
 
