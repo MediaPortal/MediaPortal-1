@@ -318,7 +318,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
     private void comboBoxTransmitter_SelectedIndexChanged(object sender, EventArgs e)
     {
-      bool enableAdvancedOptions = string.Equals(comboBoxTransmitter.SelectedItem.ToString(), TuningDetailFilter.ALL_TUNING_DETAIL_ITEM);
+      bool enableAdvancedOptions = !string.Equals(comboBoxTransmitter.SelectedItem.ToString(), TuningDetailFilter.ALL_TUNING_DETAIL_ITEM);
       checkBoxUseAdvancedOptions.Enabled = enableAdvancedOptions;
       groupBoxAdvancedOptions.Enabled = enableAdvancedOptions;
     }
