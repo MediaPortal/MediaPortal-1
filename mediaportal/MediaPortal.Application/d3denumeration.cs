@@ -20,6 +20,7 @@
 
 using System.Collections;
 using System.Diagnostics;
+using MediaPortal.GUI.Library;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 
@@ -191,10 +192,13 @@ namespace MediaPortal
     {
       foreach (AdapterInformation ai in Manager.Adapters)
       {
+        // Here after GPU recovery or crash or disable/enable Manager.Adapters are not filled correctly anymore
+        Manager.Adapters.Reset();
         ArrayList adapterFormatList = new ArrayList();
         GraphicsAdapterInfo adapterInfo = new GraphicsAdapterInfo();
         adapterInfo.AdapterOrdinal = ai.Adapter;
         adapterInfo.AdapterDetails = ai.Information;
+        Log.Debug("D3DEnumeration ai.Information : {0}", ai.Information.Description);
 
         // Get list of all display modes on this adapter.  
         // Also build a temporary list of all display adapter formats.

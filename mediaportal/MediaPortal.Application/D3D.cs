@@ -38,6 +38,7 @@ using MediaPortal.Properties;
 using MediaPortal.UserInterface.Controls;
 using MediaPortal.Util;
 using MediaPortal.Video.Database;
+using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using WPFMediaKit.DirectX;
 
@@ -147,7 +148,7 @@ namespace MediaPortal
 
     #region private attributes
 
-    private readonly Control           _renderTarget;             // render target object
+    private Control           _renderTarget;             // render target object
     protected readonly PresentParameters _presentParams;          // D3D presentation parameters
     protected PresentParameters        _presentParamsBackup;      // D3D presentation parameters Backup
     internal D3DEnumeration            _enumerationSettings;      //
@@ -630,6 +631,7 @@ namespace MediaPortal
             catch (InvalidCallException)
             {
               Log.Error("D3D: D3DERR_INVALIDCALL - presentation parameters might contain an invalid value");
+              //Util.Utils.RestartMePo();
             }
             catch (DeviceLostException)
             {
@@ -647,6 +649,39 @@ namespace MediaPortal
             {
               Log.Error("D3D: D3DERR_OUTOFMEMORY - could not allocate sufficient memory to complete the call");
             }
+            // ADDED FOR TESTING START
+            catch (Exception ex)
+            {
+              //Util.Utils.RestartMePo();
+              //_renderTarget = new Form();
+              //_renderTarget = new MediaPortalApp();
+              //successful = false;
+              //successfulInit = false;
+              //Init();
+              //BuildPresentParams(Windowed);
+              //CreateDirectX9ExDevice();
+
+              Log.Error(ex);
+              Log.Error("D3D: RecreateSwapChain Exception {0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
+
+              //_renderTarget.Dispose();
+              //_renderTarget = this;
+
+              //GUIGraphicsContext.form = this;
+              //GUIGraphicsContext.ActiveForm = Handle;
+              _renderTarget = new MediaPortalApp();
+              successful = false;
+              successfulInit = false;
+              Init();
+              //BuildPresentParams(Windowed);
+              //CreateDirectX9ExDevice();
+
+              GUIGraphicsContext.DX9Device.Reset(_presentParams);
+              GUIGraphicsContext.DX9Device.Present();
+              //SwapChain sc = new SwapChain(GUIGraphicsContext.DX9Device, _presentParams);
+              //sc.Present();
+            }
+            // ADDED FOR TESTING END
           }
           else
           {
@@ -678,6 +713,12 @@ namespace MediaPortal
             {
               Log.Error("D3D: D3DERR_OUTOFMEMORY - could not allocate sufficient memory to complete the call");
             }
+            // ADDED FOR TESTING START
+            catch (Exception ex)
+            {
+              //Util.Utils.RestartMePo();
+            }
+            // ADDED FOR TESTING END
           }
         }
 
@@ -840,6 +881,37 @@ namespace MediaPortal
           Log.Warn("D3D: D3DERR_DEVICENOTRESET - device is lost but can be reset at this time");
         }
       }
+
+      //// ADDED FOR TESTING START
+      //while (true)
+      //{
+      //  try
+      //  {
+      //    if (GUIGraphicsContext.DX9Device != null)
+      //    {
+      //      // Check device
+      //      GUIGraphicsContext.DX9Device.Present();
+      //      break;
+      //    }
+      //  }
+      //  catch (DirectXException dex)
+      //  {
+      //    switch (dex.ErrorCode)
+      //    {
+      //      default:
+      //        Log.Error(dex);
+      //        //Util.Utils.RestartMePo();
+      //        break;
+      //    }
+      //  }
+      //  catch (Exception ex)
+      //  {
+      //    Log.Error(ex);
+      //    //Util.Utils.RestartMePo();
+      //    break;
+      //  }
+      //}
+      //// ADDED FOR TESTING END
 
       // lock rendering loop and recreate the backbuffer for the current D3D device
       RecreateSwapChain(true);
