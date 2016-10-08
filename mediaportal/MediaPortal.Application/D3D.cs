@@ -38,6 +38,7 @@ using MediaPortal.Properties;
 using MediaPortal.UserInterface.Controls;
 using MediaPortal.Util;
 using MediaPortal.Video.Database;
+using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using WPFMediaKit.DirectX;
 
@@ -595,7 +596,8 @@ namespace MediaPortal
     internal void RecreateSwapChain(bool useBackup)
     {
       // Don't need to resize when using madVR
-      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && GUIGraphicsContext.Vmr9Active)
+      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
+          GUIGraphicsContext.Vmr9Active)
       {
         return;
       }
@@ -635,7 +637,6 @@ namespace MediaPortal
         GUIWindowManager.Dispose();
         GUIFontManager.Dispose();
         GUITextureManager.Dispose();
-        if (GUIGraphicsContext.DX9Device != null)
         // Don't need to resize when using madVR
         if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR ||
             !GUIGraphicsContext.Vmr9Active)
@@ -655,6 +656,7 @@ namespace MediaPortal
               catch (InvalidCallException)
               {
                 Log.Error("D3D: D3DERR_INVALIDCALL - presentation parameters might contain an invalid value");
+                Util.Utils.RestartMePo();
               }
               catch (DeviceLostException)
               {
@@ -671,6 +673,10 @@ namespace MediaPortal
               catch (OutOfMemoryException)
               {
                 Log.Error("D3D: D3DERR_OUTOFMEMORY - could not allocate sufficient memory to complete the call");
+              }
+              catch (Exception ex)
+              {
+                Util.Utils.RestartMePo();
               }
             }
             else
@@ -702,6 +708,10 @@ namespace MediaPortal
               catch (OutOfMemoryException)
               {
                 Log.Error("D3D: D3DERR_OUTOFMEMORY - could not allocate sufficient memory to complete the call");
+              }
+              catch (Exception ex)
+              {
+                Util.Utils.RestartMePo();
               }
             }
           }
@@ -864,6 +874,35 @@ namespace MediaPortal
         catch (DeviceNotResetException)
         {
           Log.Warn("D3D: D3DERR_DEVICENOTRESET - device is lost but can be reset at this time");
+        }
+      }
+
+      while (true)
+      {
+        try
+        {
+          if (GUIGraphicsContext.DX9Device != null)
+          {
+            // Check device
+            GUIGraphicsContext.DX9Device.Present();
+            break;
+          }
+        }
+        catch (DirectXException dex)
+        {
+          switch (dex.ErrorCode)
+          {
+            default:
+              Log.Error(dex);
+              Util.Utils.RestartMePo();
+              break;
+          }
+        }
+        catch (Exception ex)
+        {
+          Log.Error(ex);
+          Util.Utils.RestartMePo();
+          break;
         }
       }
 
@@ -1252,6 +1291,7 @@ namespace MediaPortal
     /// <returns>The adapter that has the specified screen on its primary monitor</returns>
     private GraphicsAdapterInfo FindAdapterForScreen(Screen screen)
     {
+      GraphicsAdapterInfo adapterInfoSafe = null;
       foreach (GraphicsAdapterInfo adapterInfo in _enumerationSettings.AdapterInfoList)
       {
         var hMon = Manager.GetAdapterMonitor(adapterInfo.AdapterOrdinal);
@@ -1267,8 +1307,12 @@ namespace MediaPortal
           GUIGraphicsContext.currentStartScreen = GUIGraphicsContext.currentScreen;
           return adapterInfo;
         }
+        if (adapterInfo.AdapterDetails.DeviceId != 0)
+        {
+          adapterInfoSafe = adapterInfo;
+        }
       }
-      return null;
+      return adapterInfoSafe;
     }
 
     
