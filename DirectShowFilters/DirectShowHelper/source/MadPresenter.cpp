@@ -401,6 +401,30 @@ HRESULT MPMadPresenter::Stopping()
   { // Scope for autolock for the local variable (lock, which when deleted releases the lock)
     CAutoLock lock(this);
 
+    if (m_pSRCB)
+    {
+      // nasty, but we have to let it know about our death somehow
+      static_cast<CSubRenderCallback*>(static_cast<ISubRenderCallback*>(m_pSRCB))->SetDXRAPSUB(nullptr);
+      Log("MPMadPresenter::Stopping() m_pSRCB");
+    }
+
+    if (m_pORCB)
+    {
+      // nasty, but we have to let it know about our death somehow
+      static_cast<COsdRenderCallback*>(static_cast<IOsdRenderCallback*>(m_pORCB))->SetDXRAP(nullptr);
+      Log("MPMadPresenter::Stopping() m_pORCB");
+    }
+
+    Log("MPMadPresenter::Stopping() m_pSRCB release 1");
+    if (m_pSRCB)
+      m_pSRCB.Release();
+    Log("MPMadPresenter::Stopping() m_pSRCB release 2");
+
+    Log("MPMadPresenter::Stopping() m_pORCB release 1");
+    if (m_pORCB)
+      m_pORCB.Release();
+    Log("MPMadPresenter::Stopping() m_pORCB release 2");
+
     if (m_pMediaControl)
     {
       Log("MPMadPresenter::Stopping() m_pMediaControl stop 1");
@@ -433,30 +457,6 @@ HRESULT MPMadPresenter::Stopping()
       MPMadPresenter::EnableExclusive(false);
       Log("MPMadPresenter::Stopping() disable exclusive mode");
     }
-
-    if (m_pSRCB)
-    {
-      // nasty, but we have to let it know about our death somehow
-      static_cast<CSubRenderCallback*>(static_cast<ISubRenderCallback*>(m_pSRCB))->SetDXRAPSUB(nullptr);
-      Log("MPMadPresenter::Stopping() m_pSRCB");
-    }
-
-    if (m_pORCB)
-    {
-      // nasty, but we have to let it know about our death somehow
-      static_cast<COsdRenderCallback*>(static_cast<IOsdRenderCallback*>(m_pORCB))->SetDXRAP(nullptr);
-      Log("MPMadPresenter::Stopping() m_pORCB");
-    }
-
-    Log("MPMadPresenter::Stopping() m_pSRCB release 1");
-    if (m_pSRCB)
-      m_pSRCB.Release();
-    Log("MPMadPresenter::Stopping() m_pSRCB release 2");
-
-    Log("MPMadPresenter::Stopping() m_pORCB release 1");
-    if (m_pORCB)
-      m_pORCB.Release();
-    Log("MPMadPresenter::Stopping() m_pORCB release 2");
 
     Log("MPMadPresenter::Stopping() stopped");
     return S_OK;
