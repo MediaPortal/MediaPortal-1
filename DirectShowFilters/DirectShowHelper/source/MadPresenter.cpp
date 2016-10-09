@@ -98,7 +98,7 @@ MPMadPresenter::~MPMadPresenter()
       {
         pMadVrCmd->SendCommand("restoreDisplayModeNow");
         pMadVrCmd.Release();
-        Log("MPMadPresenter::Shutdown() restoreDisplayModeNow");
+        Log("MPMadPresenter::Destructor() - restoreDisplayModeNow");
       }
       m_pMad.Release();
     }
@@ -401,6 +401,30 @@ HRESULT MPMadPresenter::Stopping()
   { // Scope for autolock for the local variable (lock, which when deleted releases the lock)
     CAutoLock lock(this);
 
+    if (m_pSRCB)
+    {
+      // nasty, but we have to let it know about our death somehow
+      static_cast<CSubRenderCallback*>(static_cast<ISubRenderCallback*>(m_pSRCB))->SetDXRAPSUB(nullptr);
+      Log("MPMadPresenter::Stopping() m_pSRCB");
+    }
+
+    if (m_pORCB)
+    {
+      // nasty, but we have to let it know about our death somehow
+      static_cast<COsdRenderCallback*>(static_cast<IOsdRenderCallback*>(m_pORCB))->SetDXRAP(nullptr);
+      Log("MPMadPresenter::Stopping() m_pORCB");
+    }
+
+    Log("MPMadPresenter::Stopping() m_pSRCB release 1");
+    if (m_pSRCB)
+      m_pSRCB.Release();
+    Log("MPMadPresenter::Stopping() m_pSRCB release 2");
+
+    Log("MPMadPresenter::Stopping() m_pORCB release 1");
+    if (m_pORCB)
+      m_pORCB.Release();
+    Log("MPMadPresenter::Stopping() m_pORCB release 2");
+
     if (m_pMediaControl)
     {
       Log("MPMadPresenter::Stopping() m_pMediaControl stop 1");
@@ -431,18 +455,10 @@ HRESULT MPMadPresenter::Stopping()
     if (m_ExclusiveMode)
     {
       MPMadPresenter::EnableExclusive(false);
-      Log("MPMadPresenter::Shutdown() disable exclusive mode");
+      Log("MPMadPresenter::Stopping() disable exclusive mode");
     }
 
-    //// Let's madVR restore original display mode (when adjust refresh it's handled by madVR)
-    //if (Com::SmartQIPtr<IMadVRCommand> pMadVrCmd = m_pMad)
-    //{
-    //  pMadVrCmd->SendCommand("restoreDisplayModeNow");
-    //  pMadVrCmd.Release();
-    //  Log("MPMadPresenter::Shutdown() restoreDisplayModeNow");
-    //}
-
-    Log("MPMadPresenter::Stopping() start");
+    Log("MPMadPresenter::Stopping() stopped");
     return S_OK;
   } // Scope for autolock
 }

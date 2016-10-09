@@ -941,6 +941,7 @@ void MadDeinit()
     //CAutoLock lock(&m_madPresenter->m_dsLock);
     //m_madPresenter->m_dsLock.Lock();
     m_madPresenter->m_pShutdown = true;
+    Sleep(100);
     m_madPresenter->Shutdown();
     m_pVMR9Filter = nullptr;
     //m_madPresenter->m_dsLock.Unlock();
@@ -959,6 +960,7 @@ void MadStopping()
     //CAutoLock lock(&m_madPresenter->m_dsLock);
     //m_madPresenter->m_dsLock.Lock();
     m_madPresenter->m_pShutdown = true;
+    Sleep(100);
     m_madPresenter->Stopping();
     //m_madPresenter->m_dsLock.Unlock();
     Log("MPMadDshow::MadStopping done");
