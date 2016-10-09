@@ -548,25 +548,33 @@ HRESULT MPMadPresenter::ClearBackground(LPCSTR name, REFERENCE_TIME frameStart, 
 
   if (SUCCEEDED(hr = m_deviceState.Store()))
   {
-    hr = m_pCallback->RenderGui(videoWidth, videoHeight, videoWidth, videoHeight);
-    if (m_pCallback->IsUiVisible())
+    if (SUCCEEDED(hr = m_pCallback->RenderGui(videoWidth, videoHeight, videoWidth, videoHeight)))
     {
-      for (int x = 0; x < m_pMadVRFrameCount; ++x) // need to let in a loop to slow down why ???
+      //Log("ClearBackground() hr: 0x%08x - 1", hr);
+      if (m_pCallback->IsUiVisible())
       {
-        if (x <= 3)
+        for (int x = 0; x < m_pMadVRFrameCount; ++x) // need to let in a loop to slow down why ???
         {
-          // commented out (it slown down video on GPU Nvidia)
-          m_pDevice->PresentEx(nullptr, nullptr, nullptr, nullptr, D3DPRESENT_FORCEIMMEDIATE);
-          //Log("MPMadPresenter::RenderOsd() IsUiVisible");
-          // Render frame to try to fix HD4XXX GPU flickering issue
-          //Com::SmartQIPtr<IMadVROsdServices> pOR = m_pMad;
-          //pOR->OsdRedrawFrame();
+          if (x <= 3)
+          {
+            // commented out (it slown down video on GPU Nvidia)
+            m_pDevice->PresentEx(nullptr, nullptr, nullptr, nullptr, D3DPRESENT_FORCEIMMEDIATE);
+            //Log("MPMadPresenter::ClearBackground() IsUiVisible");
+            // Render frame to try to fix HD4XXX GPU flickering issue
+            //Com::SmartQIPtr<IMadVROsdServices> pOR = m_pMad;
+            //pOR->OsdRedrawFrame();
+          }
         }
       }
+      uiVisible = hr == S_OK ? true : false;
+    }
+    else
+    {
+      return E_UNEXPECTED;
     }
   }
 
-  uiVisible = hr == S_OK ? true : false;
+  //Log("ClearBackground() hr: 0x%08x - 2", hr);
 
   if (SUCCEEDED(hr = m_pDevice->PresentEx(nullptr, nullptr, nullptr, nullptr, D3DPRESENT_FORCEIMMEDIATE)))
     if (SUCCEEDED(hr = SetupMadDeviceState()))
@@ -655,25 +663,33 @@ HRESULT MPMadPresenter::RenderOsd(LPCSTR name, REFERENCE_TIME frameStart, RECT* 
 
   if (SUCCEEDED(hr = m_deviceState.Store()))
   {
-    hr = m_pCallback->RenderOverlay(videoWidth, videoHeight, videoWidth, videoHeight);
-    if (m_pCallback->IsUiVisible())
+    if (SUCCEEDED(hr = m_pCallback->RenderOverlay(videoWidth, videoHeight, videoWidth, videoHeight)))
     {
-      for (int x = 0; x < m_pMadVRFrameCount; ++x) // need to let in a loop to slow down why ???
+      //Log("RenderOsd() hr: 0x%08x - 1", hr);
+      if (m_pCallback->IsUiVisible())
       {
-        if (x <= 3)
+        for (int x = 0; x < m_pMadVRFrameCount; ++x) // need to let in a loop to slow down why ???
         {
-          // commented out (it slown down video on GPU Nvidia)
-          m_pDevice->PresentEx(nullptr, nullptr, nullptr, nullptr, D3DPRESENT_FORCEIMMEDIATE);
-          //Log("MPMadPresenter::RenderOsd() IsUiVisible");
-          // Render frame to try to fix HD4XXX GPU flickering issue
-          //Com::SmartQIPtr<IMadVROsdServices> pOR = m_pMad;
-          //pOR->OsdRedrawFrame();
+          if (x <= 3)
+          {
+            // commented out (it slown down video on GPU Nvidia)
+            m_pDevice->PresentEx(nullptr, nullptr, nullptr, nullptr, D3DPRESENT_FORCEIMMEDIATE);
+            //Log("MPMadPresenter::RenderOsd() IsUiVisible");
+            // Render frame to try to fix HD4XXX GPU flickering issue
+            //Com::SmartQIPtr<IMadVROsdServices> pOR = m_pMad;
+            //pOR->OsdRedrawFrame();
+          }
         }
       }
+      uiVisible = hr == S_OK ? true : false;
+    }
+    else
+    {
+      return E_UNEXPECTED;
     }
   }
 
-  uiVisible = hr == S_OK ? true : false;
+  //Log("RenderOsd() hr: 0x%08x - 2", hr);
 
   if (SUCCEEDED(hr = m_pDevice->PresentEx(nullptr, nullptr, nullptr, nullptr, D3DPRESENT_FORCEIMMEDIATE)))
     if (SUCCEEDED(hr = SetupMadDeviceState()))
