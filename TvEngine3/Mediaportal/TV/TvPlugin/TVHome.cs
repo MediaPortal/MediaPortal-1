@@ -3326,7 +3326,10 @@ namespace Mediaportal.TV.TvPlugin
         }
         if (_status.IsSet(LiveTvStatus.WasPlaying))
         {
-          RenderBlackImage();
+          if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
+          {
+            RenderBlackImage();
+          }
           g_Player.PauseGraph();
         }
         else
