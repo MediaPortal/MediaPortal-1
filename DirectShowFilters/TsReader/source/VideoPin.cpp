@@ -53,14 +53,12 @@ CVideoPin::CVideoPin(LPUNKNOWN pUnk, CTsReaderFilter *pFilter, HRESULT *phr,CCri
     AM_SEEKING_CanSeekBackwards |
     AM_SEEKING_CanGetStopPos  |
     AM_SEEKING_CanGetDuration |
-    //AM_SEEKING_CanGetCurrentPos |
     AM_SEEKING_Source;
-//  m_bSeeking=false;
   m_bInFillBuffer = false;
   m_bPinNoAddPMT = false;
   m_bAddPMT = false;
   m_bPinNoNewSegFlush = false;
-  m_bDownstreamFlush=false;
+  m_bufferSize = 0;
 }
 
 CVideoPin::~CVideoPin()
@@ -141,7 +139,7 @@ HRESULT CVideoPin::GetMediaType(int iPosition, CMediaType *pmt)
 
   CDeMultiplexer& demux=m_pTsReaderFilter->GetDemultiplexer();
   
-  for (int i=0; i < 200; i++) //Wait up to 1 sec for pmt to be valid
+  for (int i=0; i < 400; i++) //Wait up to 2 sec for pmt to be valid
   {
     if (demux.PatParsed())
     {
@@ -161,6 +159,7 @@ HRESULT CVideoPin::GetMediaType(int iPosition, CMediaType *pmt)
   }
 
   //Return a null media type
+  LogDebug("vidPin:GetMediaType() - Timeout");
   pmt->InitMediaType();
   return S_OK;
 }
@@ -171,8 +170,8 @@ HRESULT CVideoPin::DecideBufferSize(IMemAllocator *pAlloc, ALLOCATOR_PROPERTIES 
   CheckPointer(pAlloc, E_POINTER);
   CheckPointer(pRequest, E_POINTER);
 
-  pRequest->cBuffers = max(2, pRequest->cBuffers);
-  pRequest->cbBuffer = max(8388608, (ULONG)pRequest->cbBuffer);
+  pRequest->cBuffers = max(VID_PIN_BUFFERS, pRequest->cBuffers);
+  pRequest->cbBuffer = max(2097152, (ULONG)pRequest->cbBuffer);
 
   ALLOCATOR_PROPERTIES Actual;
   hr = pAlloc->SetProperties(pRequest, &Actual);
@@ -180,6 +179,8 @@ HRESULT CVideoPin::DecideBufferSize(IMemAllocator *pAlloc, ALLOCATOR_PROPERTIES 
   {
     return hr;
   }
+  
+  m_bufferSize = Actual.cbBuffer;
 
   if (Actual.cbBuffer < pRequest->cbBuffer)
   {
@@ -276,6 +277,7 @@ HRESULT CVideoPin::CompleteConnect(IPin *pReceivePin)
 HRESULT CVideoPin::BreakConnect()
 {  
   m_bConnected=false;
+  m_bufferSize = 0;
   return CSourceStream::BreakConnect();
 }
 
@@ -286,7 +288,10 @@ void CVideoPin::SetDiscontinuity(bool onOff)
 
 void CVideoPin::SetAddPMT()
 {
-  LogDebug("vidPin:SetAddPMT()");
+  if (!m_bAddPMT) 
+  {
+    LogDebug("vidPin:SetAddPMT()");
+  }
   m_bAddPMT = true;
   m_sampleCount = 0;
 }
@@ -307,9 +312,14 @@ void CVideoPin::CreateEmptySample(IMediaSample *pSample)
 
 HRESULT CVideoPin::DoBufferProcessingLoop(void)
 {
+  if (!m_bConnected) 
+  {
+    return S_OK;
+  }
+  
   Command com;
   OnThreadStartPlay();
-  SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_ABOVE_NORMAL);
+  SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_NORMAL);
 
   do 
   {
@@ -331,7 +341,7 @@ HRESULT CVideoPin::DoBufferProcessingLoop(void)
       if (hr == S_OK) 
       {
         // Some decoders seem to crash when we provide empty samples 
-        if ((pSample->GetActualDataLength() > 0) && !m_pTsReaderFilter->IsStopping())
+        if ((pSample->GetActualDataLength() > 0) && !m_pTsReaderFilter->IsStopping() && m_bConnected)
         {
           hr = Deliver(pSample);     
           m_sampleCount++ ;
@@ -410,11 +420,16 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
       //did we reach the end of the file
       if (demux.EndOfFile())
       {
-        LogDebug("vidPin:set eof");
-        m_FillBuffSleepTime = 5;
-        CreateEmptySample(pSample);
-        m_bInFillBuffer = false;
-        return S_FALSE; //S_FALSE will notify the graph that end of file has been reached
+        int ACnt, VCnt;
+        demux.GetBufferCounts(&ACnt, &VCnt);
+        if (ACnt <= 0 && VCnt <= 0) //have we used all the data ?
+        {
+          LogDebug("vidPin:set eof");
+          m_FillBuffSleepTime = 5;
+          CreateEmptySample(pSample);
+          m_bInFillBuffer = false;
+          return S_FALSE; //S_FALSE will notify the graph that end of file has been reached
+        }
       }
 
       //if the filter is currently seeking to a new position
@@ -427,7 +442,6 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
         m_bInFillBuffer = false;
         if (demux.m_bFlushRunning || !m_pTsReaderFilter->m_bStreamCompensated)
         {
-          //m_bDownstreamFlush=true;
           //Force discon on next good sample
           m_sampleCount = 0;
           m_bDiscontinuity=true;
@@ -439,22 +453,23 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
         m_FillBuffSleepTime = 1;
         m_bInFillBuffer = true;
       }     
-            
-      if(m_bDownstreamFlush)
-      {
-        //Downstream flush
-        LogDebug("vidPin : Downstream flush") ;
-        DeliverBeginFlush();
-        DeliverEndFlush();
-        m_bDownstreamFlush=false;
-      }
-      
+                  
       // Get next video buffer from demultiplexer
       buffer=demux.GetVideo(earlyStall);
 
       if (buffer == NULL)
       {
         m_FillBuffSleepTime = 5;
+      }
+      else if (buffer->Length() > m_bufferSize)
+      {
+        //discard buffer
+        delete buffer;
+        demux.EraseVideoBuff();
+        m_bDiscontinuity = TRUE; //Next good sample will be discontinuous
+        buffer = NULL;
+        m_FillBuffSleepTime = 1;
+        LogDebug("vidPin : Error - buffer too large for sample") ;        
       }
       else
       {
@@ -482,7 +497,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
           cRefTime -= m_pTsReaderFilter->m_ClockOnStart.m_time;
           
           // 'fast start' timestamp modification, during first (AddVideoComp + 1 sec) of play
-          double fsAdjLimit = (double)m_pTsReaderFilter->AddVideoComp.m_time + (double)FS_ADDON_LIM; //vid comp + 1 second
+          double fsAdjLimit = (1.0 * (double)m_pTsReaderFilter->AddVideoComp.m_time) + (double)FS_ADDON_LIM; //(1 * vid comp) + 1 second
           if (m_pTsReaderFilter->m_EnableSlowMotionOnZapping && ((double)cRefTime.m_time < fsAdjLimit) )
           {
             //float startCref = (float)cRefTime.m_time/(1000*10000); //used in LogDebug below only
@@ -506,35 +521,17 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
                                                                       
           if (m_dRateSeeking == 1.0)
           {
-            if ((fTime < 0.3) && (m_pTsReaderFilter->State() == State_Running) && (m_sampleCount > 10) && !ForcePresent)
-            {              
-              if (!demux.m_bVideoSampleLate) 
-              {
-                LogDebug("vidPin : Video to render late= %03.3f", (float)fTime) ;
-              }
-              //Samples times are getting close to presentation time
-              demux.m_bVideoSampleLate = true;   
-              
-              if (fTime < 0.05)
-              {              
-                _InterlockedExchange(&demux.m_VideoDataLowPauseTime, (long)((fTime-0.02) * -1000.0));
-                //Samples are running very late - check if this is a persistant problem by counting over a period of time 
-                //(m_AVDataLowCount is checked in CTsReaderFilter::ThreadProc())
-                _InterlockedIncrement(&demux.m_AVDataLowCount);   
-              }
-              
-              if ((fTime < -2.0) && !demux.m_bFlushDelegated)
-              { 
-                //Very late - request internal flush and re-sync to stream
-                demux.DelegatedFlush(false, false);
-                LogDebug("vidPin : Video to render very late, flushing") ;
-              }
+            if ((fTime < -2.0) && (m_pTsReaderFilter->State() == State_Running) && (clock > 8.0) && !ForcePresent && !demux.m_bFlushDelegated)
+            {                            
+              //Very late - request internal flush and re-sync to stream
+              demux.DelegatedFlush(false, false);
+              LogDebug("vidPin : Video to render very late, flushing") ;
             }
 
             //Discard late samples at start of play,
             //and samples outside a sensible timing window during play 
             //(helps with signal corruption recovery)
-            if ((fTime > (ForcePresent ? -1.0 : -0.3)) && (fTime < (stallPoint + 1.0)))
+            if ((fTime > (ForcePresent ? -1.0 : -0.3)) && (fTime < (demux.m_dVidPTSJumpLimit + 1.0))   )
             {
               if ((fTime > stallPoint) && (m_sampleCount > 10))
               {
@@ -573,6 +570,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
               if (demux.GetVideoStreamType(mt))
               {
                 pSample->SetMediaType(&mt); 
+                SetMediaType(&mt);               
                 LogDebug("vidPin: Add pmt and set discontinuity L:%d B:%d fTime:%03.3f SampCnt:%d", m_bDiscontinuity, buffer->GetDiscontinuity(), (float)fTime, m_sampleCount);
               }
               else
@@ -652,7 +650,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
           pSample->SetActualDataLength(buffer->Length());
           pSample->GetPointer(&pSampleBuffer);
           memcpy(pSampleBuffer,buffer->Data(),buffer->Length());
-          
+                    
           // delete the buffer
           delete buffer;
           demux.EraseVideoBuff();
@@ -743,7 +741,6 @@ HRESULT CVideoPin::OnThreadStartPlay()
   m_LastFillBuffTime = GET_TIME_NOW();
   m_sampleCount = 0;
   m_bInFillBuffer=false;
-  m_bDownstreamFlush=false;
 
   m_pTsReaderFilter->m_ShowBufferVideo = INIT_SHOWBUFFERVIDEO;
 
@@ -805,7 +802,9 @@ HRESULT CVideoPin::ChangeRate()
   
   if( m_dRateSeeking > 4.0 && 
      ((demux.GetVideoServiceType()==SERVICE_TYPE_VIDEO_H264) || 
-      (demux.GetVideoServiceType()==SERVICE_TYPE_VIDEO_MPEG4)) )
+      (demux.GetVideoServiceType()==SERVICE_TYPE_VIDEO_MPEG4)||
+      (demux.GetVideoServiceType()==SERVICE_TYPE_VIDEO_HEVC))
+    )
   {
     m_dRateSeeking = 1.0;  // Reset to a reasonable value.
     return E_FAIL;

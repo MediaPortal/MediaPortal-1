@@ -212,6 +212,18 @@ namespace TvPlugin
       {
         foreach (Program program in _notifiesList)
         {
+          if (System.DateTime.Now > program.EndTime)
+          {
+            Log.Debug("Notify auto cancel old program {0} on {1} ended {2}", program.Title, program.ReferencedChannel().DisplayName,
+                     program.EndTime);
+            program.Notify = false;
+            program.Persist();
+
+            _notifiesList.Remove(program);
+
+            return;
+          }
+
           if (preNotifySecs > program.StartTime)
           {
             Log.Info("Notify {0} on {1} start {2}", program.Title, program.ReferencedChannel().DisplayName,

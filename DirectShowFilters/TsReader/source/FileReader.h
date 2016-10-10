@@ -105,11 +105,13 @@ public:
 	virtual HRESULT OpenFile();
 	virtual HRESULT CloseFile();
 	virtual HRESULT Read(PBYTE pbData, ULONG lDataLength, ULONG *dwReadBytes);
+	virtual HRESULT ReadWithRefresh(PBYTE pbData, ULONG lDataLength, ULONG *dwReadBytes);
 	virtual BOOL IsFileInvalid();
 	virtual DWORD SetFilePointer(__int64 llDistanceToMove, DWORD dwMoveMethod);
 	virtual __int64 GetFilePointer();
 
 	virtual void SetDummyWrites(BOOL useDummyWrites);
+	virtual void SetRandomAccess(BOOL useRandomAccess);
 
 	virtual __int64 GetFileSize();
 	
@@ -118,15 +120,16 @@ public:
 	virtual bool HasMoreData(){return false;};
 	virtual int HasData(){return 0; } ;
 
-	//The two methods below are for MultiFileReader() compatibility
+	//The three methods below are for MultiFileReader() compatibility
 	virtual BOOL GetFileNext(){return false;};
 	virtual void SetFileNext(BOOL useFileNext);
+	virtual void CloseBufferFiles();
 	
 	virtual void SetStopping(BOOL isStopping);
   
 protected:
   
-	HRESULT GetFileSize(__int64 *pStartPosition, __int64 *pLength);
+	// HRESULT GetFileSize(__int64 *pStartPosition, __int64 *pLength);
 	HRESULT Read(PBYTE pbData, ULONG lDataLength, ULONG *dwReadBytes, __int64 llDistanceToMove, DWORD dwMoveMethod);
   
   CString randomStrGen(int length); 
@@ -138,6 +141,7 @@ protected:
 	LPOLESTR m_pFileName;           // The filename where we stream
 
 	BOOL     m_bUseDummyWrites;
+	BOOL     m_bUseRandomAccess;
 	BOOL     m_bIsStopping;
 	BOOL     m_bIsVistaOrLater;
 	DWORD    m_dwLastThreadID;

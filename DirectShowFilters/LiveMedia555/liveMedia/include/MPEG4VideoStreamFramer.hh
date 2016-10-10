@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2016 Live Networks, Inc.  All rights reserved.
 // A filter that breaks up an MPEG-4 video elementary stream into
 //   frames for:
 // - Visual Object Sequence (VS) Header + Visual Object (VO) Header
@@ -40,6 +40,10 @@ public:
   }
 
   unsigned char* getConfigBytes(unsigned& numBytes) const;
+
+  void setConfigInfo(u_int8_t profileAndLevelIndication, char const* configStr);
+    // Assigns the "profile_and_level_indication" number, and the 'config' bytes.
+    // If this function is not called, then this data is only assigned later, when it appears in the input stream.
 
 protected:
   MPEG4VideoStreamFramer(UsageEnvironment& env,

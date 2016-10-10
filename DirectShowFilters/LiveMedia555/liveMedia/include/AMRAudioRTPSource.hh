@@ -14,8 +14,8 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
-// AMR Audio RTP Sources (RFC 3267)
+// Copyright (c) 1996-2016 Live Networks, Inc.  All rights reserved.
+// AMR Audio RTP Sources (RFC 4867)
 // C++ header
 
 #ifndef _AMR_AUDIO_RTP_SOURCE_HH

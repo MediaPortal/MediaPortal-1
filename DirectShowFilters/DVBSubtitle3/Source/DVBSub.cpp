@@ -49,7 +49,8 @@ CDVBSub::CDVBSub( LPUNKNOWN pUnk, HRESULT *phr, CCritSec *pLock ) :
   m_startTimestamp( -1 ),
   m_CurrentSeekPosition( 0 ),
   m_prevSubtitleTimestamp( 0 ),
-  m_bBasePcrSet( false )
+  m_bBasePcrSet( false ),
+  m_bHDMV( false )
 {
   TCHAR filename[1024];
   GetLogFile(filename);
@@ -385,15 +386,18 @@ void CDVBSub::NotifySubtitle()
   {
     // Notify the MediaPortal side
     SUBTITLE sub;
-    GetSubtitle( 0, &sub );
-    LogDebug( "Calling subtitle callback" );
-    int retval = (*m_pSubtitleObserver)( &sub );
-    LogDebug( "Subtitle Callback returned" );
+    if (GetSubtitle( 0, &sub ) == S_OK)
+    {
+      LogDebug( "Calling subtitle callback" );
+      int retval = (*m_pSubtitleObserver)( &sub );
+      LogDebug( "Subtitle Callback returned" );
+    }
     DiscardOldestSubtitle();
   }
   else
   {
-    LogDebug( "No callback set" );
+    LogDebug( "No callback set, discarding subtitle" );
+    DiscardOldestSubtitle();
   }
 }
 

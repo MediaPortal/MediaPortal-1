@@ -261,6 +261,14 @@ namespace TvLibrary.Implementations.DVB.Structures
     }
 
     /// <summary>
+    /// Determins if the pid is HEVC video
+    /// </summary>
+    public bool IsHEVCVideo
+    {
+      get { return (isVideo && stream_type == 0x24); }
+    }
+
+    /// <summary>
     /// Determins if the pid is AAC audio
     /// </summary>
     public bool IsAACAudio
@@ -284,6 +292,8 @@ namespace TvLibrary.Implementations.DVB.Structures
     /// </returns>
     public override string ToString()
     {
+      if (IsHEVCVideo)
+        return String.Format("pid:{0:X} video type:HEVC", pid);
       if (IsH264Video)
         return String.Format("pid:{0:X} video type:H.264", pid);
       if (IsMpeg4Video)

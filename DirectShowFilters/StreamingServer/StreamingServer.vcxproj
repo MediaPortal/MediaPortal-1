@@ -21,10 +21,11 @@
     <CharacterSet>Unicode</CharacterSet>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <PlatformToolset>v120_xp</PlatformToolset>
+    <UseOfMfc>Dynamic</UseOfMfc>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <UseOfMfc>false</UseOfMfc>
+    <UseOfMfc>Dynamic</UseOfMfc>
     <CharacterSet>Unicode</CharacterSet>
     <PlatformToolset>v120_xp</PlatformToolset>
   </PropertyGroup>
@@ -131,8 +132,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Source\CriticalSection.cpp" />
-    <ClCompile Include="Source\EnterCriticalSection.cpp" />
     <ClCompile Include="Source\main.cpp" />
     <ClCompile Include="Source\FileReader.cpp" />
     <ClCompile Include="Source\MultiFileReader.cpp" />
@@ -149,10 +148,10 @@
     <None Include="Source\ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\StdAfx.h" />
+    <ClInclude Include="Source\StreamingDefs.h" />
     <ClInclude Include="Source\TSBuffer.h" />
     <ClInclude Include="Source\TSThread.h" />
-    <ClInclude Include="Source\CriticalSection.h" />
-    <ClInclude Include="Source\EnterCriticalSection.h" />
     <ClInclude Include="Source\FileReader.h" />
     <ClInclude Include="Source\MultiFileReader.h" />
     <ClInclude Include="Source\Global.h" />
