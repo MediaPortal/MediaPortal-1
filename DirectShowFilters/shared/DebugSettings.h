@@ -37,7 +37,7 @@
     TCHAR folder[MAX_PATH]; \
     TCHAR fileName[MAX_PATH]; \
     ::SHGetSpecialFolderPath(NULL, folder, CSIDL_COMMON_APPDATA, FALSE); \
-    _stprintf(fileName, _T("%s\\Team MediaPortal\\" package _T("\\debug\\") _T(#setting) _T(".txt")), folder); \
+    _stprintf_s(fileName, MAX_PATH, _T("%s\\Team MediaPortal\\" package _T("\\debug\\") _T(#setting) _T(".txt")), folder); \
     HANDLE hTest=CreateFile(fileName,(DWORD) GENERIC_READ,0,0,(DWORD) OPEN_EXISTING,0,NULL); \
     if (hTest==INVALID_HANDLE_VALUE) \
 		  return false; \

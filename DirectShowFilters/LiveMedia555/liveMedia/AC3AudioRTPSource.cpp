@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2016 Live Networks, Inc.  All rights reserved.
 // AC3 Audio RTP Sources
 // Implementation
 
@@ -46,30 +46,17 @@ Boolean AC3AudioRTPSource
   unsigned char* headerStart = packet->data();
   unsigned packetSize = packet->dataSize();
 
-  // There's a 1-byte "NDU" header, containing the number of frames
-  // present in this RTP packet.
+  // There's a 2-byte payload header at the beginning:
   if (packetSize < 2) return False;
-  unsigned char numFrames = headerStart[0];
-  if (numFrames == 0) return False;
-
-  // TEMP: We can't currently handle packets containing > 1 frame #####
-  if (numFrames > 1) {
-    envir() << "AC3AudioRTPSource::processSpecialHeader(): packet contains "
-	    << numFrames << " frames (we can't handle this!)\n";
-    return False;
-  }
-
-  // We current can't handle packets that consist only of redundant data:
-  unsigned char typ_field = headerStart[1] >> 6;
-  if (typ_field >= 2) return False;
-
-  fCurrentPacketBeginsFrame = fCurrentPacketCompletesFrame;
-  // whether the *previous* packet ended a frame
-
-  // The RTP "M" (marker) bit indicates the last fragment of a frame:
-  fCurrentPacketCompletesFrame = packet->rtpMarkerBit();
-
   resultSpecialHeaderSize = 2;
+
+  unsigned char FT = headerStart[0]&0x03;
+  fCurrentPacketBeginsFrame = FT != 3;
+
+  // The RTP "M" (marker) bit indicates the last fragment of a frame.
+  // In case the sender did not set the "M" bit correctly, we also test for FT == 0:
+  fCurrentPacketCompletesFrame = packet->rtpMarkerBit() || FT == 0;
+
   return True;
 }
 

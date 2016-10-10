@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2016 Live Networks, Inc.  All rights reserved.
 // RTP sink for MPEG-4 audio, using LATM multiplexing (RFC 3016)
 // (Note that the initial 'size' field is assumed to be present at the start of
 //  each frame.)
@@ -52,7 +52,7 @@ private: // redefined virtual functions:
   virtual void doSpecialFrameHandling(unsigned fragmentationOffset,
                                       unsigned char* frameStart,
                                       unsigned numBytesInFrame,
-                                      struct timeval frameTimestamp,
+                                      struct timeval framePresentationTime,
                                       unsigned numRemainingBytes);
   virtual Boolean
   frameCanAppearAfterPacketStart(unsigned char const* frameStart,

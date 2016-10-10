@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2016 Live Networks, Inc.  All rights reserved.
 // RTP Sinks
 // Implementation
 
@@ -51,12 +51,13 @@ RTPSink::RTPSink(UsageEnvironment& env,
   : MediaSink(env), fRTPInterface(this, rtpGS),
     fRTPPayloadType(rtpPayloadType),
     fPacketCount(0), fOctetCount(0), fTotalOctetCount(0),
-    fTimestampFrequency(rtpTimestampFrequency), fNextTimestampHasBeenPreset(True),
-    fNumChannels(numChannels) {
+    fTimestampFrequency(rtpTimestampFrequency), fNextTimestampHasBeenPreset(False), fEnableRTCPReports(True),
+    fNumChannels(numChannels), fEstimatedBitrate(0) {
   fRTPPayloadFormatName
     = strDup(rtpPayloadFormatName == NULL ? "???" : rtpPayloadFormatName);
   gettimeofday(&fCreationTime, NULL);
   fTotalOctetCountStartTime = fCreationTime;
+  resetPresentationTimes();
 
   fSeqNo = (u_int16_t)our_random();
   fSSRC = our_random32();
@@ -68,13 +69,15 @@ RTPSink::RTPSink(UsageEnvironment& env,
 RTPSink::~RTPSink() {
   delete fTransmissionStatsDB;
   delete[] (char*)fRTPPayloadFormatName;
+  fRTPInterface.forgetOurGroupsock();
+    // so that the "fRTCPInterface" destructor doesn't turn off background read handling (in case
+    // its 'groupsock' is being shared with something else that does background read handling).
 }
 
 u_int32_t RTPSink::convertToRTPTimestamp(struct timeval tv) {
   // Begin by converting from "struct timeval" units to RTP timestamp units:
   u_int32_t timestampIncrement = (fTimestampFrequency*tv.tv_sec);
-  timestampIncrement += (u_int32_t)((2.0*fTimestampFrequency*tv.tv_usec + 1000000.0)/2000000);
-       // note: rounding
+  timestampIncrement += (u_int32_t)(fTimestampFrequency*(tv.tv_usec/1000000.0) + 0.5); // note: rounding
 
   // Then add this to our 'timestamp base':
   if (fNextTimestampHasBeenPreset) {
@@ -99,8 +102,11 @@ u_int32_t RTPSink::presetNextTimestamp() {
   gettimeofday(&timeNow, NULL);
 
   u_int32_t tsNow = convertToRTPTimestamp(timeNow);
-  fTimestampBase = tsNow;
-  fNextTimestampHasBeenPreset = True;
+  if (!groupsockBeingUsed().hasMultipleDestinations()) {
+    // Don't adjust the timestamp stream if we already have another destination ongoing
+    fTimestampBase = tsNow;
+    fNextTimestampHasBeenPreset = True;
+  }
 
   return tsNow;
 }
@@ -115,6 +121,11 @@ void RTPSink::getTotalBitrate(unsigned& outNumBytes, double& outElapsedTime) {
 
   fTotalOctetCount = 0;
   fTotalOctetCountStartTime = timeNow;
+}
+
+void RTPSink::resetPresentationTimes() {
+  fInitialPresentationTime.tv_sec = fMostRecentPresentationTime.tv_sec = 0;
+  fInitialPresentationTime.tv_usec = fMostRecentPresentationTime.tv_usec = 0;
 }
 
 char const* RTPSink::sdpMediaType() const {
@@ -236,7 +247,7 @@ void RTPTransmissionStatsDB::add(u_int32_t SSRC, RTPTransmissionStats* stats) {
 RTPTransmissionStats::RTPTransmissionStats(RTPSink& rtpSink, u_int32_t SSRC)
   : fOurRTPSink(rtpSink), fSSRC(SSRC), fLastPacketNumReceived(0),
     fPacketLossRatio(0), fTotNumPacketsLost(0), fJitter(0),
-    fLastSRTime(0), fDiffSR_RRTime(0), fFirstPacket(True),
+    fLastSRTime(0), fDiffSR_RRTime(0), fAtLeastTwoRRsHaveBeenReceived(False), fFirstPacket(True),
     fTotalOctetCount_hi(0), fTotalOctetCount_lo(0),
     fTotalPacketCount_hi(0), fTotalPacketCount_lo(0) {
   gettimeofday(&fTimeCreated, NULL);
@@ -256,7 +267,7 @@ void RTPTransmissionStats
     fFirstPacket = False;
     fFirstPacketNumReported = lastPacketNumReceived;
   } else {
-    fOldValid = True;
+    fAtLeastTwoRRsHaveBeenReceived = True;
     fOldLastPacketNumReceived = fLastPacketNumReceived;
     fOldTotNumPacketsLost = fTotNumPacketsLost;
   }
@@ -335,13 +346,13 @@ void RTPTransmissionStats::getTotalPacketCount(u_int32_t& hi, u_int32_t& lo) {
 }
 
 unsigned RTPTransmissionStats::packetsReceivedSinceLastRR() const {
-  if (!fOldValid) return 0;
+  if (!fAtLeastTwoRRsHaveBeenReceived) return 0;
 
   return fLastPacketNumReceived-fOldLastPacketNumReceived;
 }
 
 int RTPTransmissionStats::packetsLostBetweenRR() const {
-  if (!fOldValid) return 0;
+  if (!fAtLeastTwoRRsHaveBeenReceived) return 0;
 
   return fTotNumPacketsLost - fOldTotNumPacketsLost;
 }

@@ -75,7 +75,7 @@
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <IntrinsicFunctions>false</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <AdditionalIncludeDirectories>$(SolutionDir)baseclasses;$(WINDOWS_SDK)Include\;..\LiveMedia555\BasicUsageEnvironment/include;..\LiveMedia555\groupsock/include;..\LiveMedia555\liveMedia;..\LiveMedia555\liveMedia/include;..\LiveMedia555\UsageEnvironment/include;../LiveMedia555/MediaPortal;..\shared;..\streamingserver\Source;..\dxerr;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)baseclasses;$(WINDOWS_SDK)Include\;..\LiveMedia555\BasicUsageEnvironment/include;..\LiveMedia555\groupsock/include;..\LiveMedia555\liveMedia;..\LiveMedia555\liveMedia/include;..\LiveMedia555\UsageEnvironment/include;../LiveMedia555/MediaPortal;..\shared;..\dxerr;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32; _WIN32; NDEBUG; _CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>false</StringPooling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
@@ -136,7 +136,7 @@
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(SolutionDir)baseclasses;$(WINDOWS_SDK)Include\;..\LiveMedia555\BasicUsageEnvironment/include;..\LiveMedia555\groupsock/include;../LiveMedia555/liveMedia;..\LiveMedia555\liveMedia/include;..\LiveMedia555\UsageEnvironment/include;../LiveMedia555/MediaPortal;..\shared;..\streamingserver\Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)baseclasses;$(WINDOWS_SDK)Include\;..\LiveMedia555\BasicUsageEnvironment/include;..\LiveMedia555\groupsock/include;../LiveMedia555/liveMedia;..\LiveMedia555\liveMedia/include;..\LiveMedia555\UsageEnvironment/include;../LiveMedia555/MediaPortal;..\shared;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>DBG=1;DEBUG;_DEBUG;INC_OLE2;STRICT;_MT;_DLL;_X86_=1;_CRT_SECURE_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -183,7 +183,9 @@
     <ClCompile Include="source\FileReader.cpp" />
     <ClCompile Include="source\FrameHeaderParser.cpp" />
     <ClCompile Include="source\GolombBuffer.cpp" />
-    <ClCompile Include="source\H264Nalu.cpp" />
+    <ClCompile Include="source\HEVC\BitstreamReader.cpp" />
+    <ClCompile Include="source\HEVC\Hevc.cpp" />
+    <ClCompile Include="source\HEVC\HevcNalDecode.cpp" />
     <ClCompile Include="source\MediaSeeking.cpp" />
     <ClCompile Include="source\MemoryBuffer.cpp" />
     <ClCompile Include="source\MemoryReader.cpp" />
@@ -196,6 +198,7 @@
     <ClCompile Include="source\PmtParser.cpp" />
     <ClCompile Include="source\RTSPClient.cpp" />
     <ClCompile Include="source\SubtitlePin.cpp" />
+    <ClCompile Include="source\TsAVRT.cpp" />
     <ClCompile Include="source\TsDuration.cpp" />
     <ClCompile Include="source\TsFileSeek.cpp" />
     <ClCompile Include="source\TsReader.cpp" />
@@ -214,7 +217,9 @@
     <ClInclude Include="source\FileReader.h" />
     <ClInclude Include="source\FrameHeaderParser.h" />
     <ClInclude Include="source\GolombBuffer.h" />
-    <ClInclude Include="source\H264Nalu.h" />
+    <ClInclude Include="source\HEVC\BitstreamReader.h" />
+    <ClInclude Include="source\HEVC\Hevc.h" />
+    <ClInclude Include="source\HEVC\HevcNalDecode.h" />
     <ClInclude Include="source\IAudioStream.h" />
     <ClInclude Include="source\ISubtitleStream.h" />
     <ClInclude Include="source\ITeletextSource.h" />
@@ -233,6 +238,7 @@
     <ClInclude Include="source\StdAfx.h" />
     <ClInclude Include="source\SubtitlePin.h" />
     <ClInclude Include="source\TeletextServiceInfo.h" />
+    <ClInclude Include="source\TsAVRT.h" />
     <ClInclude Include="source\TsDuration.h" />
     <ClInclude Include="source\TsFileSeek.h" />
     <ClInclude Include="source\TsReader.h" />

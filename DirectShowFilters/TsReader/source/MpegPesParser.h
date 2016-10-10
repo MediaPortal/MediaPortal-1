@@ -41,13 +41,23 @@ class CMpegPesParser
 private:
 	CFrameHeaderParser hdrParser;
 	avchdr avc;
-	bool ParseVideo(byte* tsPacket,bool isMpeg2,bool reset);
+	HEVC::hevchdr hevc;
+	bool ParseVideo(byte* tsPacket,int vidType,bool reset);
+	bool ParseAudio(byte* audioPacket, int streamType, bool reset);
 
 public:
 	CMpegPesParser();
-	bool OnTsPacket(byte* Frame,int Length,bool isMpeg2,bool reset);
+	bool OnTsPacket(byte* Frame,int Length,int vidType,bool reset);
+  bool OnAudioPacket(byte *Frame,int Length, int streamType, unsigned int streamIndex, bool reset);
+  void VideoReset();
+  void VideoValidReset();
+  void AudioReset();
+  void AudioValidReset();
 	CMediaType pmt;
+	CMediaType audPmt;
 	BasicVideoInfo basicVideoInfo;
+	BasicAudioInfo basicAudioInfo;
   CCritSec m_sectionVideoPmt;
+  CCritSec m_sectionAudioPmt;
 };
 

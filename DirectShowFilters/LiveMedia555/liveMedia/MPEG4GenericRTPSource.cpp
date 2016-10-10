@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2016 Live Networks, Inc.  All rights reserved.
 // MPEG4-GENERIC ("audio", "video", or "application") RTP stream sources
 // Implementation
 
@@ -202,7 +202,7 @@ BufferedPacket* MPEG4GenericBufferedPacketFactory
 
 ////////// samplingFrequencyFromAudioSpecificConfig() implementation //////////
 
-static unsigned samplingFrequencyFromIndex[16] = {
+static unsigned const samplingFrequencyFromIndex[16] = {
   96000, 88200, 64000, 48000, 44100, 32000, 24000, 22050,
   16000, 12000, 11025, 8000, 7350, 0, 0, 0
 };

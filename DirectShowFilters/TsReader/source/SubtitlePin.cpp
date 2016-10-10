@@ -168,11 +168,8 @@ HRESULT CSubtitlePin::DecideBufferSize(IMemAllocator *pAlloc, ALLOCATOR_PROPERTI
   CheckPointer(pAlloc, E_POINTER);
   CheckPointer(pRequest, E_POINTER);
 
-  if (pRequest->cBuffers == 0)
-  {
-      pRequest->cBuffers = 30;
-  }
-  pRequest->cbBuffer = 8192;
+  pRequest->cBuffers = max(SUB_PIN_BUFFERS, pRequest->cBuffers);
+  pRequest->cbBuffer = max(MAX_BUFFER_SIZE, (ULONG)pRequest->cbBuffer);
 
   ALLOCATOR_PROPERTIES Actual;
   hr = pAlloc->SetProperties(pRequest, &Actual);
@@ -183,6 +180,7 @@ HRESULT CSubtitlePin::DecideBufferSize(IMemAllocator *pAlloc, ALLOCATOR_PROPERTI
 
   if (Actual.cbBuffer < pRequest->cbBuffer)
   {
+    LogDebug("subPin:DecideBufferSize - failed to get buffer");
     return E_FAIL;
   }
 
@@ -316,8 +314,14 @@ void CSubtitlePin::CreateEmptySample(IMediaSample *pSample)
 
 HRESULT CSubtitlePin::DoBufferProcessingLoop(void)
 {
+  if (!m_bConnected) 
+  {
+    return S_OK;
+  }
+
   Command com;
   OnThreadStartPlay();
+  SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_BELOW_NORMAL);
 
   do 
   {
@@ -339,7 +343,7 @@ HRESULT CSubtitlePin::DoBufferProcessingLoop(void)
       if (hr == S_OK) 
       {
         // Some decoders seem to crash when we provide empty samples 
-        if ((pSample->GetActualDataLength() > 0) && !m_pTsReaderFilter->IsSeeking() && !m_pTsReaderFilter->IsStopping())
+        if ((pSample->GetActualDataLength() > 0) && !m_pTsReaderFilter->IsSeeking() && !m_pTsReaderFilter->IsStopping() && m_bConnected)
         {
           hr = Deliver(pSample);     
         }
@@ -403,10 +407,15 @@ HRESULT CSubtitlePin::FillBuffer(IMediaSample *pSample)
       //did we reach the end of the file
       if (demux.EndOfFile())
       {
-        LogDebug("subPin:set eof");
-        CreateEmptySample(pSample);
-        m_bInFillBuffer=false;
-        return S_FALSE; //S_FALSE will notify the graph that end of file has been reached
+        int ACnt, VCnt;
+        demux.GetBufferCounts(&ACnt, &VCnt);
+        if (ACnt <= 0 && VCnt <= 0) //have we used all the data ?
+        {
+          LogDebug("subPin:set eof");
+          CreateEmptySample(pSample);
+          m_bInFillBuffer=false;
+          return S_FALSE; //S_FALSE will notify the graph that end of file has been reached
+        }
       }
 
       //if the filter is currently seeking to a new position

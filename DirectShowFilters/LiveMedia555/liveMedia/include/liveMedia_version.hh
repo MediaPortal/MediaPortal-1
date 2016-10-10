@@ -1,10 +1,10 @@
 // Version information for the "liveMedia" library
-// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2016 Live Networks, Inc.  All rights reserved.
 
 #ifndef _LIVEMEDIA_VERSION_HH
 #define _LIVEMEDIA_VERSION_HH
 
-#define LIVEMEDIA_LIBRARY_VERSION_STRING	"2009.09.04"
-#define LIVEMEDIA_LIBRARY_VERSION_INT		1252022400
+#define LIVEMEDIA_LIBRARY_VERSION_STRING	"2016.08.07"
+#define LIVEMEDIA_LIBRARY_VERSION_INT		1470528000
 
 #endif
