@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2016 Live Networks, Inc.  All rights reserved.
 // A filter for converting one or more MPEG Elementary Streams
 // to a MPEG-2 Transport Stream
 // C++ header
@@ -30,14 +30,23 @@ class MPEG2TransportStreamFromESSource: public MPEG2TransportStreamMultiplexor {
 public:
   static MPEG2TransportStreamFromESSource* createNew(UsageEnvironment& env);
 
-  void addNewVideoSource(FramedSource* inputSource, int mpegVersion);
-      // Note: For MPEG-4 video, set "mpegVersion" to 4; for H.264 video, set "mpegVersion"to 5.
-  void addNewAudioSource(FramedSource* inputSource, int mpegVersion);
+  void addNewVideoSource(FramedSource* inputSource, int mpegVersion, int16_t PID = -1);
+      // Note: For MPEG-4 video, set "mpegVersion" to 4; for H.264 video, set "mpegVersion" to 5.
+  void addNewAudioSource(FramedSource* inputSource, int mpegVersion, int16_t PID = -1);
+      // Note: In these functions, if "PID" is not -1, then it (currently, just the low 8 bits)
+      // is used as the stream's PID.  Otherwise (if "PID" is -1) the 'stream_id' is used as
+      // the PID.
+
+  static unsigned maxInputESFrameSize;
 
 protected:
   MPEG2TransportStreamFromESSource(UsageEnvironment& env);
       // called only by createNew()
   virtual ~MPEG2TransportStreamFromESSource();
+
+  void addNewInputSource(FramedSource* inputSource,
+			 u_int8_t streamId, int mpegVersion, int16_t PID = -1);
+  // used to implement addNew*Source() above
 
 private:
   // Redefined virtual functions:
@@ -45,14 +54,10 @@ private:
   virtual void awaitNewBuffer(unsigned char* oldBuffer);
 
 private:
-  void addNewInputSource(FramedSource* inputSource,
-			 u_int8_t streamId, int mpegVersion);
-  // used to implement addNew*Source() above
-
-private:
   friend class InputESSourceRecord;
   class InputESSourceRecord* fInputSources;
   unsigned fVideoSourceCounter, fAudioSourceCounter;
+  Boolean fAwaitingBackgroundDelivery;
 };
 
 #endif

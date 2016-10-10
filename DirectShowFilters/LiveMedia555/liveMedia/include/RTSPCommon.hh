@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2016 Live Networks, Inc.  All rights reserved.
 // Common routines used by both RTSP clients and servers
 // C++ header
 
@@ -25,6 +25,10 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 #include "Boolean.hh"
 #endif
 
+#ifndef _MEDIA_HH
+#include <Media.hh> // includes some definitions perhaps needed for Borland compilers?
+#endif
+
 #if defined(__WIN32__) || defined(_WIN32) || defined(_QNX4)
 #define _strncasecmp _strnicmp
 #define snprintf _snprintf
@@ -32,7 +36,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 #define _strncasecmp strncasecmp
 #endif
 
-#define RTSP_PARAM_STRING_MAX 100
+#define RTSP_PARAM_STRING_MAX 200
 
 Boolean parseRTSPRequestString(char const *reqStr, unsigned reqStrSize,
 			       char *resultCmdName,
@@ -42,8 +46,20 @@ Boolean parseRTSPRequestString(char const *reqStr, unsigned reqStrSize,
 			       char* resultURLSuffix,
 			       unsigned resultURLSuffixMaxSize,
 			       char* resultCSeq,
-			       unsigned resultCSeqMaxSize);
+			       unsigned resultCSeqMaxSize,
+			       char* resultSessionId,
+			       unsigned resultSessionIdMaxSize,
+			       unsigned& contentLength);
 
-Boolean parseRangeHeader(char const* buf, double& rangeStart, double& rangeEnd);
+Boolean parseRangeParam(char const* paramStr, double& rangeStart, double& rangeEnd, char*& absStartTime, char*& absEndTime, Boolean& startTimeIsNow);
+Boolean parseRangeHeader(char const* buf, double& rangeStart, double& rangeEnd, char*& absStartTime, char*& absEndTime, Boolean& startTimeIsNow);
+
+Boolean parseScaleHeader(char const* buf, float& scale);
+
+Boolean RTSPOptionIsSupported(char const* commandName, char const* optionsResponseString);
+    // Returns True iff the RTSP command "commandName" is mentioned as one of the commands supported in "optionsResponseString"
+    // (which should be the 'resultString' from a previous RTSP "OPTIONS" request).
+
+char const* dateHeader(); // A "Date:" header that can be used in a RTSP (or HTTP) response 
 
 #endif

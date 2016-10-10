@@ -615,6 +615,8 @@ protected:
   CAMEvent      m_bFlushDone;
   CAMEvent      m_bDwmInitDone;
 
+  DWORD         m_dwTimerResolution;   //Timer resolution variable
+
   // CheckShutdown: 
   //     Returns MF_E_SHUTDOWN if the presenter is shutdown.
   //     Call this at the start of any methods that should fail after shutdown.

@@ -95,7 +95,18 @@ MPEVRCustomPresenter::MPEVRCustomPresenter( IVMR9Callback* pCallback,
 
   instanceID = this;  
 
-  timeBeginPeriod(1);
+  // Set timer resolution to 1 ms (if possible)
+  TIMECAPS tc; 
+  m_dwTimerResolution = 0; 
+  if (timeGetDevCaps(&tc, sizeof(TIMECAPS)) == MMSYSERR_NOERROR)
+  {
+    m_dwTimerResolution = min(max(tc.wPeriodMin, 1), tc.wPeriodMax);
+    if (m_dwTimerResolution)
+    {
+      timeBeginPeriod(m_dwTimerResolution);
+    }
+  }
+
   if (m_pMFCreateVideoSampleFromSurface)
   {
     HRESULT hr;
@@ -592,6 +603,13 @@ void MPEVRCustomPresenter::ReleaseCallback()
   if (m_pMediaType)
     m_pMediaType.Release();
 
+  // Reset timer resolution (if we managed to set it originally)
+  if (m_dwTimerResolution)
+  {
+    timeEndPeriod(m_dwTimerResolution);
+    m_dwTimerResolution = 0;
+  }
+
   m_pCallback = NULL;
 
   Log("EVRCustomPresenter::ReleaseCallback() - Done - instance 0x%x", this);
@@ -609,7 +627,6 @@ MPEVRCustomPresenter::~MPEVRCustomPresenter()
     
   m_pDeviceManager = NULL;
   delete m_pStatsRenderer;
-  timeEndPeriod(1);
   Log("EVRCustomPresenter::dtor - Done - instance 0x%x", this);
 }  
 

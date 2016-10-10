@@ -38,6 +38,8 @@
 
 extern void LogDebug(const char *fmt, ...) ;
 
+#define LOG_HEVC_FHP //LogDebug
+
 #define MARKER if(BitRead(1) != 1) {ASSERT(0); return(false);}
 #define countof(array) (sizeof(array)/sizeof(array[0]))
 #define DNew new
@@ -60,6 +62,8 @@ extern void LogDebug(const char *fmt, ...) ;
 #define YUV422  2     
 #define YUV444  3     
 
+using namespace HEVC;
+  
 int CFrameHeaderParser::MakeAACInitData(BYTE* pData, int profile, int freq, int channels)
 {
 	int srate_idx;
@@ -649,6 +653,7 @@ bool CFrameHeaderParser::Read(aachdr& h, int len, CMediaType* pmt)
 	static int freq[] = {96000, 88200, 64000, 48000, 44100, 32000, 24000, 22050, 16000, 12000, 11025, 8000};
 	h.nBytesPerSec = h.aac_frame_length * freq[h.freq] / 1024; // ok?
 	h.rtDuration = 10000000i64 * 1024 / freq[h.freq]; // ok?
+	h.nSamplesPerSec = freq[h.freq];
 
 	if(!pmt) return(true);
 
@@ -656,9 +661,11 @@ bool CFrameHeaderParser::Read(aachdr& h, int len, CMediaType* pmt)
 	memset(wfe, 0, sizeof(WAVEFORMATEX)+5);
 	wfe->wFormatTag = WAVE_FORMAT_AAC;
 	wfe->nChannels = h.channels <= 6 ? h.channels : 2;
-	wfe->nSamplesPerSec = freq[h.freq];
-	wfe->nBlockAlign = h.aac_frame_length;
+	h.channels = wfe->nChannels;
+	wfe->nSamplesPerSec = h.nSamplesPerSec;
+	wfe->nBlockAlign = 1; //h.aac_frame_length;
 	wfe->nAvgBytesPerSec = h.nBytesPerSec;
+	wfe->wBitsPerSample = 0;
 	wfe->cbSize = MakeAACInitData((BYTE*)(wfe+1), h.profile, wfe->nSamplesPerSec, wfe->nChannels);
 
 	pmt->majortype = MEDIATYPE_Audio;
@@ -681,15 +688,20 @@ bool CFrameHeaderParser::Read(ac3hdr& h, int len, CMediaType* pmt)
 	if(len < 7)
 		return(false);
 
+	//---- byte 0
 	h.sync = (WORD)BitRead(16);
 	if(h.sync != 0x0B77)
 		return(false);
 
+	//---- byte 2
 	h.crc1 = (WORD)BitRead(16);
+	//---- byte 3
 	h.fscod = BitRead(2);
 	h.frmsizecod = BitRead(6);
+	//---- byte 4
 	h.bsid = BitRead(5);
 	h.bsmod = BitRead(3);
+	//---- byte 5
 	h.acmod = BitRead(3);
 	if((h.acmod & 1) && h.acmod != 1) h.cmixlev = BitRead(2);
 	if(h.acmod & 4) h.surmixlev = BitRead(2);
@@ -698,31 +710,33 @@ bool CFrameHeaderParser::Read(ac3hdr& h, int len, CMediaType* pmt)
 
 	if(h.bsid >= 17 || h.fscod == 3 || h.frmsizecod >= 48)
 		return(false);
+			
+	static int channels[] = {2, 1, 2, 3, 3, 4, 4, 5};
+	h.nChannels = channels[h.acmod] + h.lfeon;
+
+	static int freq[] = {48000, 44100, 32000, 0};
+	h.nSamplesPerSec = freq[h.fscod];
+
+	switch(h.bsid)
+	{
+	case 9: h.nSamplesPerSec >>= 1; break;
+	case 10: h.nSamplesPerSec >>= 2; break;
+	case 11: h.nSamplesPerSec >>= 3; break;
+	default: break;
+	}
+
+	static int rate[] = {32, 40, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256, 320, 384, 448, 512, 576, 640, 768, 896, 1024, 1152, 1280};
+
+	h.nBytesPerSec = (rate[h.frmsizecod>>1] * 1000) / 8;
 
 	if(!pmt) return(true);
 
 	WAVEFORMATEX wfe;
 	memset(&wfe, 0, sizeof(wfe));
 	wfe.wFormatTag = WAVE_FORMAT_DOLBY_AC3;
-
-	static int channels[] = {2, 1, 2, 3, 3, 4, 4, 5};
-	wfe.nChannels = channels[h.acmod] + h.lfeon;
-
-	static int freq[] = {48000, 44100, 32000, 0};
-	wfe.nSamplesPerSec = freq[h.fscod];
-
-	switch(h.bsid)
-	{
-	case 9: wfe.nSamplesPerSec >>= 1; break;
-	case 10: wfe.nSamplesPerSec >>= 2; break;
-	case 11: wfe.nSamplesPerSec >>= 3; break;
-	default: break;
-	}
-
-	static int rate[] = {32, 40, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256, 320, 384, 448, 512, 576, 640, 768, 896, 1024, 1152, 1280};
-
-	wfe.nAvgBytesPerSec = (rate[h.frmsizecod>>1] * 1000) / 8;
-	wfe.nBlockAlign = (WORD)(1536 * wfe.nAvgBytesPerSec / wfe.nSamplesPerSec);
+	wfe.nChannels = h.nChannels;
+	wfe.nAvgBytesPerSec = h.nBytesPerSec;
+	wfe.nBlockAlign = (WORD)(1536 * h.nBytesPerSec / h.nSamplesPerSec);
 
 	pmt->majortype = MEDIATYPE_Audio;
 	pmt->subtype = MEDIASUBTYPE_DOLBY_AC3;
@@ -731,6 +745,67 @@ bool CFrameHeaderParser::Read(ac3hdr& h, int len, CMediaType* pmt)
 
 	return(true);
 }
+
+bool CFrameHeaderParser::Read(eac3hdr& h, int len, CMediaType* pmt)
+{
+	memset(&h, 0, sizeof(h));
+
+	for(; len >= 7 && BitRead(16, true) != 0x0b77; len--)
+		BitRead(8);
+
+	if(len < 7)
+		return(false);
+
+	//---- byte 0
+	h.sync = (WORD)BitRead(16);
+	if(h.sync != 0x0B77)
+		return(false);
+	
+	//---- byte 2
+	h.strmtyp = BitRead(2);
+	h.substreamid = BitRead(3);
+	h.frmsiz = ((WORD)BitRead(11)) + 1;
+	//---- byte 4
+	h.fscod = BitRead(2);
+	h.fscod2 = BitRead(2); //only valid if h.fscod==3	
+	h.acmod = BitRead(3);
+	h.lfeon = BitRead(1);
+	//---- byte 5	
+	h.bsid = BitRead(5);
+	h.bsmod = BitRead(3);
+
+	if(h.bsid >= 17)
+		return(false);
+
+	static int channels[] = {2, 1, 2, 3, 3, 4, 4, 5};
+	h.nChannels = channels[h.acmod] + h.lfeon;
+
+	static int freq[] = {48000, 44100, 32000, 0};
+	if (h.fscod==3)
+	  h.nSamplesPerSec = freq[h.fscod2]/2;
+	else
+	  h.nSamplesPerSec = freq[h.fscod];
+	  
+	h.nBytesPerSec = 1000 *(((DWORD)h.frmsiz * h.nSamplesPerSec) / (16 * 48000));
+
+	if(!pmt) return(true);
+
+	WAVEFORMATEX wfe;
+	memset(&wfe, 0, sizeof(wfe));
+	wfe.wFormatTag = WAVE_FORMAT_DOLBY_AC3;
+	wfe.nChannels = h.nChannels;	  
+	wfe.nAvgBytesPerSec = h.nBytesPerSec;
+	wfe.nBlockAlign = (WORD)((1536 * h.nBytesPerSec) / h.nSamplesPerSec);
+
+	pmt->majortype = MEDIATYPE_Audio;
+	pmt->subtype = MEDIASUBTYPE_DOLBY_DDPLUS;
+	pmt->formattype = FORMAT_WaveFormatEx;
+	pmt->SetFormat((BYTE*)&wfe, sizeof(wfe));
+
+	return(true);
+}
+
+
 
 bool CFrameHeaderParser::Read(dtshdr& h, int len, CMediaType* pmt)
 {
@@ -1227,213 +1302,252 @@ bool CFrameHeaderParser::Read(avchdr& h, int len, CMediaType* pmt, bool reset)
 {
   if (reset)
   {
-    h.spslen=0;
-    h.ppslen=0;
-    h.height=0;
-    h.width=0;
-    h.AvgTimePerFrame=0;
+    h.profile = 0;
+    h.level = 0;        
+    h.chromaFormat = 0;          
+    h.lumaDepth = 0;
+    h.chromaDepth = 0;
+		h.progressive = true;
+		h.spslen = 0;
+		h.ppslen = 0;
+		h.AvgTimePerFrame = 370000;  //27 Hz
+		h.ar = 0;
+		h.arx = 0;
+		h.ary = 0;
+		h.width = 0;
+		h.height = 0;
   }
+
+	if ((len <= 5) || (len > 65534)) return(false); //Sanity check
   
-	if (len > 4)
+	int nal_len = BitRead(32);
+	INT64 next_nal = GetPos()+nal_len;
+	BYTE id=BitRead(8);
+	BYTE nal_type=id & 0x9f;
+
+  //LogDebug("nal_len = %d, next_nal = %d", nal_len, next_nal);
+
+	// we only want pic param and sequence param sets
+	if ((nal_type!=H264_NAL_SPS && nal_type!=H264_NAL_PPS) || ((id & 0x60) == 0))
 	{
-		int nal_len = BitRead(32);
-		INT64 next_nal = GetPos()+nal_len;
-		BYTE id=BitRead(8);
-		BYTE nal_type=id & 0x9f;
-
-	  //LogDebug("nal_len = %d, next_nal = %d", nal_len, next_nal);
-
-		// we only want pic param and sequence param sets
-		if ((nal_type!=0x7 && nal_type!=0x8) || ((id & 0x60) == 0))
-		{
-		  return(false);
-		}
-
-		if(nal_type==0x7)
-		{
-			//LogDebug("SPS found");
-			
-		  h.spsid = id;
-			__int64			pos = GetPos(); //Start of NAL data (excluding ID byte)
-			
-			double			num_units_in_tick;
-			double			time_scale;
-			bool			fixed_frame_rate_flag;			
-
-			// Copy the full SPS packet in case the PPS is not found in the same packet,
-			// but make sure we don't change the current position in the buffer.
-			
-			if (h.sps != NULL)
-			{
-				free(h.sps);
-			}
-			h.spslen = next_nal - pos; //length excluding length and ID bytes
-			if ((h.spslen <= 0) || (h.spslen > 65534)) return(false); //Sanity check
-			h.sps = (BYTE*) malloc(h.spslen);
-			if (h.sps == NULL) return(false); //malloc error...
-			ByteRead(h.sps, h.spslen);
-			Seek(pos);
-	    //LogDebug("h.spslen = %d, bytes = %x %x %x %x, last byte = %x", h.spslen, *h.sps, *(h.sps+1), *(h.sps+2), *(h.sps+3), *(h.sps+(h.spslen-1)));
-
-			// Manage H264 escape codes (see "remove escapes (very rare 1:2^22)" in ffmpeg h264.c file)
-			//ByteRead((BYTE*)SPSTemp, min(MAX_SPS, GetRemaining()));
-			BYTE* buff = (BYTE*) malloc(h.spslen);
-			if (buff == NULL) return(false); //malloc error...
-			CGolombBuffer	gb (buff, h.spslen);
-			RemoveMpegEscapeCode (buff, h.sps, h.spslen);
-
-			h.profile = (BYTE)gb.BitRead(8);
-			gb.BitRead(8);
-			h.level = (BYTE)gb.BitRead(8);
-
-			gb.UExpGolombRead(); // seq_parameter_set_id
-			
-			//Initialise to normal values
-		  h.chromaFormat = YUV420;
-			h.lumaDepth = 8; // bit_depth_luma_minus8
-			h.chromaDepth = 8; // bit_depth_chroma_minus8
-
-			if(h.profile >= AVC_PROF_HP || h.profile==AVC_PROF_CAVLC444 || h.profile==AVC_PROF_83 || h.profile==AVC_PROF_86) // high profile etc
-			{
-			  h.chromaFormat = gb.UExpGolombRead();
-				if(h.chromaFormat == YUV444) // chroma_format_idc
-				{
-					gb.BitRead(1); // residue_transform_flag
-				}
-
-				h.lumaDepth = (WORD)gb.UExpGolombRead() + 8; // bit_depth_luma_minus8
-				h.chromaDepth = (WORD)gb.UExpGolombRead() + 8; // bit_depth_chroma_minus8
-
-				gb.BitRead(1); // qpprime_y_zero_transform_bypass_flag
-
-				if(gb.BitRead(1)) // seq_scaling_matrix_present_flag
-					for(int i = 0; i < 8; i++)
-						if(gb.BitRead(1)) // seq_scaling_list_present_flag
-							for(int j = 0, size = i < 6 ? 16 : 64, next = 8; j < size && next != 0; ++j)
-								next = (next + gb.SExpGolombRead() + 256) & 255;
-			}
-
-			gb.UExpGolombRead(); // log2_max_frame_num_minus4
-
-			UINT64 pic_order_cnt_type = gb.UExpGolombRead();
-
-			if(pic_order_cnt_type == 0)
-			{
-				gb.UExpGolombRead(); // log2_max_pic_order_cnt_lsb_minus4
-			}
-			else if(pic_order_cnt_type == 1)
-			{
-				gb.BitRead(1); // delta_pic_order_always_zero_flag
-				gb.SExpGolombRead(); // offset_for_non_ref_pic
-				gb.SExpGolombRead(); // offset_for_top_to_bottom_field
-				UINT64 num_ref_frames_in_pic_order_cnt_cycle = gb.UExpGolombRead();
-				for(int i = 0; i < num_ref_frames_in_pic_order_cnt_cycle; i++)
-					gb.SExpGolombRead(); // offset_for_ref_frame[i]
-			}
-
-			gb.UExpGolombRead(); // num_ref_frames
-			gb.BitRead(1); // gaps_in_frame_num_value_allowed_flag
-
-			UINT64 pic_width_in_mbs_minus1 = gb.UExpGolombRead();
-			UINT64 pic_height_in_map_units_minus1 = gb.UExpGolombRead();
-			BYTE frame_mbs_only_flag = (BYTE)gb.BitRead(1);
-
-			h.progressive = (frame_mbs_only_flag != 0);
-			h.width = (pic_width_in_mbs_minus1 + 1) * 16;
-			h.height = (2 - frame_mbs_only_flag) * (pic_height_in_map_units_minus1 + 1) * 16;
-
-			if (h.height == 1088) h.height = 1080;	// Prevent blur lines 
-
-			if (!frame_mbs_only_flag) 
-				gb.BitRead(1);							// mb_adaptive_frame_field_flag
-			gb.BitRead(1);								// direct_8x8_inference_flag
-			if (gb.BitRead(1))							// frame_cropping_flag
-			{
-				gb.UExpGolombRead();					// frame_cropping_rect_left_offset
-				gb.UExpGolombRead();					// frame_cropping_rect_right_offset
-				gb.UExpGolombRead();					// frame_cropping_rect_top_offset
-				gb.UExpGolombRead();					// frame_cropping_rect_bottom_offset
-			}
-			
-			if (gb.BitRead(1))							// vui_parameters_present_flag
-			{
-				if (gb.BitRead(1))						// aspect_ratio_info_present_flag
-				{
-					h.ar = (BYTE)gb.BitRead(8); //aspect_ratio_idc
-					if (255 == h.ar)
-					{
-						h.arx = gb.BitRead(16);   //sar_width
-						h.ary = gb.BitRead(16);   //sar_height
-					}
-				}
-
-				if (gb.BitRead(1))						// overscan_info_present_flag
-				{
-					gb.BitRead(1);						// overscan_appropriate_flag
-				}
-
-				if (gb.BitRead(1))						// video_signal_type_present_flag
-				{
-					gb.BitRead(3);						// video_format
-					gb.BitRead(1);						// video_full_range_flag
-					if(gb.BitRead(1))					// colour_description_present_flag
-					{
-						gb.BitRead(8);					// colour_primaries
-						gb.BitRead(8);					// transfer_characteristics
-						gb.BitRead(8);					// matrix_coefficients
-					}
-				}
-				if(gb.BitRead(1))						// chroma_location_info_present_flag
-				{
-					gb.UExpGolombRead();				// chroma_sample_loc_type_top_field
-					gb.UExpGolombRead();				// chroma_sample_loc_type_bottom_field
-				}
-				if (gb.BitRead(1))						// timing_info_present_flag
-				{
-					num_units_in_tick		  = (double)gb.BitRead(32);
-					time_scale				    = (double)gb.BitRead(32);
-					fixed_frame_rate_flag	= (bool)gb.BitRead(1);
-
-					if ((time_scale > 0) && (num_units_in_tick > 0))
-					{
-						// VUI consider fields even for progressive stream : multiply num_units_in_tick by 2
-						h.AvgTimePerFrame = (REFERENCE_TIME)((20000000.0 * num_units_in_tick)/time_scale);
-				  }
-				  else // guess ?
-				  {
-						h.AvgTimePerFrame = 370000; // lets go for 27Hz :-)
-				  }
-				}
-			}
-
-			Seek(pos + gb.GetPos());
-			free(buff);
-		}
-		else if(nal_type==0x8)
-		{
-			//LogDebug("PPS found");
-			
-		  h.ppsid = id;
-			__int64 pos = GetPos();
-			if (h.pps != NULL)
-			{
-				free(h.pps);
-			}
-			h.ppslen = next_nal - pos; //length excluding length and ID bytes
-			if ((h.ppslen <= 0) || (h.ppslen > 65534)) return(false); //Sanity check
-			h.pps = (BYTE*) malloc(h.ppslen);
-			if (h.pps == NULL) return(false); //malloc error...
-			ByteRead(h.pps, h.ppslen);
-	    //LogDebug("h.ppslen = %d, bytes = %x %x %x %x, last byte = %x", h.ppslen, *h.pps, *(h.pps+1), *(h.pps+2), *(h.pps+3), *(h.pps+h.ppslen-1));
-		}
-
-		//BitByteAlign();
-
-		//Seek(next_nal);
+	  return(false);
 	}
 
+	if(nal_type==H264_NAL_SPS)
+	{
+		//LogDebug("SPS found");
+		
+	  h.spsid = id;
+		__int64			pos = GetPos(); //Start of NAL data (excluding ID byte)
+		
+		double			num_units_in_tick;
+		double			time_scale;
+		bool			fixed_frame_rate_flag;			
+
+		// Copy the full SPS packet in case the PPS is not found in the same packet,
+		// but make sure we don't change the current position in the buffer.
+		if (h.sps != NULL && (next_nal - pos) != h.spslen)
+		{
+			free(h.sps);
+			h.sps = NULL;
+		}
+		h.spslen = next_nal - pos; //length excluding length and ID bytes
+		if (h.sps == NULL)
+		{
+			h.sps = (BYTE*) malloc(h.spslen);
+		}
+		if (h.sps == NULL) { h.spslen = 0; return(false); } //malloc error...
+		ByteRead(h.sps, h.spslen);
+		Seek(pos);
+    //LogDebug("h.spslen = %d, bytes = %x %x %x %x, last byte = %x", h.spslen, *h.sps, *(h.sps+1), *(h.sps+2), *(h.sps+3), *(h.sps+(h.spslen-1)));
+
+		// Manage H264 escape codes (see "remove escapes (very rare 1:2^22)" in ffmpeg h264.c file)
+		//ByteRead((BYTE*)SPSTemp, min(MAX_SPS, GetRemaining()));
+		BYTE* buff = (BYTE*) malloc(h.spslen);
+		if (buff == NULL) return(false); //malloc error...
+		CGolombBuffer	gb (buff, h.spslen);
+		RemoveMpegEscapeCode (buff, h.sps, h.spslen);
+
+		h.profile = (BYTE)gb.BitRead(8);
+		gb.BitRead(8);
+		h.level = (BYTE)gb.BitRead(8);
+
+		gb.UExpGolombRead(); // seq_parameter_set_id
+		
+		//Initialise to normal values
+	  h.chromaFormat = YUV420;
+		h.lumaDepth = 8; // bit_depth_luma_minus8
+		h.chromaDepth = 8; // bit_depth_chroma_minus8
+
+		if(h.profile >= AVC_PROF_HP || h.profile==AVC_PROF_CAVLC444 || h.profile==AVC_PROF_83 || h.profile==AVC_PROF_86) // high profile etc
+		{
+		  h.chromaFormat = gb.UExpGolombRead();
+			if(h.chromaFormat == YUV444) // chroma_format_idc
+			{
+				gb.BitRead(1); // residue_transform_flag
+			}
+
+			h.lumaDepth = (WORD)gb.UExpGolombRead() + 8; // bit_depth_luma_minus8
+			h.chromaDepth = (WORD)gb.UExpGolombRead() + 8; // bit_depth_chroma_minus8
+
+			gb.BitRead(1); // qpprime_y_zero_transform_bypass_flag
+
+			if(gb.BitRead(1)) // seq_scaling_matrix_present_flag
+				for(int i = 0; i < 8; i++)
+					if(gb.BitRead(1)) // seq_scaling_list_present_flag
+						for(int j = 0, size = i < 6 ? 16 : 64, next = 8; j < size && next != 0; ++j)
+							next = (next + gb.SExpGolombRead() + 256) & 255;
+		}
+
+		gb.UExpGolombRead(); // log2_max_frame_num_minus4
+
+		UINT64 pic_order_cnt_type = gb.UExpGolombRead();
+
+		if(pic_order_cnt_type == 0)
+		{
+			gb.UExpGolombRead(); // log2_max_pic_order_cnt_lsb_minus4
+		}
+		else if(pic_order_cnt_type == 1)
+		{
+			gb.BitRead(1); // delta_pic_order_always_zero_flag
+			gb.SExpGolombRead(); // offset_for_non_ref_pic
+			gb.SExpGolombRead(); // offset_for_top_to_bottom_field
+			UINT64 num_ref_frames_in_pic_order_cnt_cycle = gb.UExpGolombRead();
+			for(int i = 0; i < num_ref_frames_in_pic_order_cnt_cycle; i++)
+				gb.SExpGolombRead(); // offset_for_ref_frame[i]
+		}
+
+		gb.UExpGolombRead(); // num_ref_frames
+		gb.BitRead(1); // gaps_in_frame_num_value_allowed_flag
+
+		UINT64 pic_width_in_mbs_minus1 = gb.UExpGolombRead();
+		UINT64 pic_height_in_map_units_minus1 = gb.UExpGolombRead();
+		BYTE frame_mbs_only_flag = (BYTE)gb.BitRead(1);
+
+		h.progressive = (frame_mbs_only_flag != 0);
+		h.width = (pic_width_in_mbs_minus1 + 1) * 16;
+		h.height = (2 - frame_mbs_only_flag) * (pic_height_in_map_units_minus1 + 1) * 16;
+
+		if (h.height == 1088) h.height = 1080;	// Prevent blur lines 
+
+		if (!frame_mbs_only_flag) 
+			gb.BitRead(1);							// mb_adaptive_frame_field_flag
+		gb.BitRead(1);								// direct_8x8_inference_flag
+		if (gb.BitRead(1))							// frame_cropping_flag
+		{
+			gb.UExpGolombRead();					// frame_cropping_rect_left_offset
+			gb.UExpGolombRead();					// frame_cropping_rect_right_offset
+			gb.UExpGolombRead();					// frame_cropping_rect_top_offset
+			gb.UExpGolombRead();					// frame_cropping_rect_bottom_offset
+		}
+		
+		if (gb.BitRead(1))							// vui_parameters_present_flag
+		{
+			if (gb.BitRead(1))						// aspect_ratio_info_present_flag
+			{
+				h.ar = (BYTE)gb.BitRead(8); //aspect_ratio_idc
+    		if(h.ar == 255) //EXTENDED_SAR
+    		{
+					h.arx = gb.BitRead(16);   //sar_width
+					h.ary = gb.BitRead(16);   //sar_height
+    			// make sure that both are 0 if one is 0
+    			if(h.arx == 0 || h.ary == 0)
+    			{
+    				h.arx = 0;
+    				h.ary = 0;
+    		  }
+    		}
+    		else if(h.ar > 16)
+    		{
+    			// aspect ratio reserved
+          h.arx = 0;
+          h.ary = 0;
+    		}
+    		else
+    		{
+    			// use preset aspect ratio
+    		  struct {DWORD x, y;} ar[] = {{0,0},{1,1},{12,11},{10,11},{16,11},{40,33},{24,11},{20,11},{32,11},{80,33},{18,11},{15,11},{64,33},{160,99},{4,3},{3,2},{2,1}};
+    			h.arx = ar[h.ar].x;
+    			h.ary = ar[h.ar].y;
+    		}
+    
+    		h.arx *= h.width;
+    		h.ary *= h.height;
+    
+    		DWORD a = h.arx, b = h.ary;
+    		while(a) {DWORD tmp = a; a = b % tmp; b = tmp;}
+    		if(b) h.arx /= b, h.ary /= b;
+			}
+
+			if (gb.BitRead(1))						// overscan_info_present_flag
+			{
+				gb.BitRead(1);						// overscan_appropriate_flag
+			}
+
+			if (gb.BitRead(1))						// video_signal_type_present_flag
+			{
+				gb.BitRead(3);						// video_format
+				gb.BitRead(1);						// video_full_range_flag
+				if(gb.BitRead(1))					// colour_description_present_flag
+				{
+					gb.BitRead(8);					// colour_primaries
+					gb.BitRead(8);					// transfer_characteristics
+					gb.BitRead(8);					// matrix_coefficients
+				}
+			}
+			if(gb.BitRead(1))						// chroma_location_info_present_flag
+			{
+				gb.UExpGolombRead();				// chroma_sample_loc_type_top_field
+				gb.UExpGolombRead();				// chroma_sample_loc_type_bottom_field
+			}
+			if (gb.BitRead(1))						// timing_info_present_flag
+			{
+				num_units_in_tick		  = (double)gb.BitRead(32);
+				time_scale				    = (double)gb.BitRead(32);
+				fixed_frame_rate_flag	= (bool)gb.BitRead(1);
+
+				if ((time_scale > 0) && (num_units_in_tick > 0))
+				{
+					// VUI consider fields even for progressive stream : multiply num_units_in_tick by 2
+					h.AvgTimePerFrame = (REFERENCE_TIME)((20000000.0 * num_units_in_tick)/time_scale);
+			  }
+			  else // guess ?
+			  {
+					h.AvgTimePerFrame = 370000; // lets go for 27Hz :-)
+			  }
+			}
+		}
+
+		free(buff);
+	}
+	else if(nal_type==H264_NAL_PPS)
+	{
+		//LogDebug("PPS found");			
+	  h.ppsid = id;
+		__int64 pos = GetPos();
+
+		if (h.pps != NULL && (next_nal - pos) != h.ppslen)
+		{
+			free(h.pps);
+			h.pps = NULL;
+		}
+		h.ppslen = next_nal - pos; //length excluding length and ID bytes
+		if (h.pps == NULL)
+		{
+			h.pps = (BYTE*) malloc(h.ppslen);
+		}
+		if (h.pps == NULL) { h.ppslen = 0; return(false); } //malloc error...
+		ByteRead(h.pps, h.ppslen);
+    //LogDebug("h.ppslen = %d, bytes = %x %x %x %x, last byte = %x", h.ppslen, *h.pps, *(h.pps+1), *(h.pps+2), *(h.pps+3), *(h.pps+h.ppslen-1));
+	}
+
+	//LogDebug("spslen = %I64d, ppslen = %I64d, height = %d, width = %d, AvgTimePerFrame = %I64d", h.spslen, h.ppslen, h.height, h.width, h.AvgTimePerFrame);
+
 	if(h.spslen<=0 || h.ppslen<=0 || h.height<100 || h.width<100 || h.AvgTimePerFrame<=0) 
+	{
+	  //Not found all the SPS and PPS information yet, or it's not a usable video stream
 		return(false);
+  }
 
 	if(!pmt) 
 	{
@@ -1453,39 +1567,6 @@ bool CFrameHeaderParser::Read(avchdr& h, int len, CMediaType* pmt, bool reset)
 		memset(vi, 0, len);
 		vi->hdr.AvgTimePerFrame = h.AvgTimePerFrame;
 
-		/*
-		h.ar=h.width/h.height;
-		struct {DWORD x, y;} ar[] = {{h.width,h.height},{4,3},{16,9},{221,100},{h.width,h.height}};
-		int i = min(max(h.ar, 1), 5)-1;
-		*/
-		struct {DWORD x, y;} ar[] = {{0,0},{1,1},{12,11},{10,11},{16,11},{40,33},{24,11},{20,11},{32,11},{80,33},{18,11},{15,11},{64,33},{160,99},{4,3},{3,2},{2,1}};
-		if(h.ar == 255)
-		{
-			// make sure that both are 0 or none
-			if(h.arx == 0 || h.ary == 0)
-				h.arx = h.ary = 0;
-
-			// h.arx and h.ary now contain sample aspect ratio
-		}
-		else if(h.ar < 1 || h.ar > 16)
-		{
-			// aspect ratio unspecified or reserved
-			h.ar = 0;
-			h.arx = h.ary = 0;
-		}
-		else
-		{
-			// use preset aspect ratio
-			h.arx = ar[h.ar].x;
-			h.ary = ar[h.ar].y;
-		}
-
-		h.arx *= h.width;
-		h.ary *= h.height;
-
-		DWORD a = h.arx, b = h.ary;
-		while(a) {DWORD tmp = a; a = b % tmp; b = tmp;}
-		if(b) h.arx /= b, h.ary /= b;
 		vi->hdr.dwPictAspectRatioX = h.arx;
 		vi->hdr.dwPictAspectRatioY = h.ary;
     vi->hdr.rcSource.right = h.width;
@@ -1545,6 +1626,170 @@ bool CFrameHeaderParser::Read(avchdr& h, int len, CMediaType* pmt, bool reset)
 	return(true);
 }
 
+bool CFrameHeaderParser::Read(hevchdr& h, int len, CMediaType* pmt, bool reset)
+{
+  if (reset)
+  {
+    h.profile = 0;
+    h.level = 0;        
+    h.chromaFormat = 0;          
+    h.lumaDepth = 0;
+    h.chromaDepth = 0;
+		h.progressive = true;
+		h.spslen = 0;
+		h.ppslen = 0;
+		h.vpslen = 0;
+		h.AvgTimePerFrame = 370000;  //27 Hz
+		h.ar = 0;
+		h.arx = 0;
+		h.ary = 0;
+		h.width = 0;
+		h.height = 0;
+  }
+
+	if ((len <= 6) || (len > 65534)) return(false); //Sanity check
+  
+	int nal_len = len;
+	INT64 next_nal = GetPos()+nal_len;
+	
+	LOG_HEVC_FHP("HEVC FrameHeaderParser, len = %d", len);			
+  //Process VPS, SPS and PPS - only use actual NAL data (skip over 4 byte start code)
+  NALUnitType nal_type = HevcNalDecode::processNALUnit(GetBufferPos()+4, nal_len-4, h);
+    
+	if(nal_type==NAL_FAIL) //NAL decoding error
+	{
+	  return(false);
+	}
+	else if(nal_type==NAL_SPS)
+	{
+		LOG_HEVC_FHP("SPS found");			
+		//Copy SPS to buffer
+		if (h.sps != NULL && nal_len != h.spslen)
+		{
+			free(h.sps);
+			h.sps = NULL;
+		}
+		if (h.sps == NULL)
+		{
+			h.sps = (BYTE*) malloc(nal_len);
+		}
+		if (h.sps == NULL) { h.spslen = 0; return(false); } //malloc error...
+		ByteRead(h.sps, nal_len);						
+		h.spslen = nal_len; //length including start code and ID bytes
+	}
+	else if(nal_type==NAL_PPS)
+	{
+		LOG_HEVC_FHP("PPS found");			
+		//Copy PPS to new buffer
+		if (h.pps != NULL && nal_len != h.ppslen)
+		{
+			free(h.pps);
+			h.pps = NULL;
+		}
+		if (h.pps == NULL)
+		{
+			h.pps = (BYTE*) malloc(nal_len);
+		}
+		if (h.pps == NULL) { h.ppslen = 0; return(false); } //malloc error...
+		ByteRead(h.pps, nal_len);						
+		h.ppslen = nal_len; //length including start code and ID bytes
+	}
+	else if(nal_type==NAL_VPS)
+	{
+		LOG_HEVC_FHP("VPS found");			
+		//Copy VPS to new buffer
+		if (h.vps != NULL && nal_len != h.vpslen)
+		{
+			free(h.vps);
+			h.vps = NULL;
+		}
+		if (h.vps == NULL)
+		{
+			h.vps = (BYTE*) malloc(nal_len);
+		}
+		if (h.vps == NULL) { h.vpslen = 0; return(false); } //malloc error...
+		ByteRead(h.vps, nal_len);						
+		h.vpslen = nal_len; //length including start code and ID bytes
+	}
+
+	if(h.spslen<=0 || h.ppslen<=0 || h.vpslen<=0 || h.height<100 || h.width<100 || h.AvgTimePerFrame<=0) 
+	{
+	  //Not found all the VPS, SPS and PPS information yet, or it's not a usable video stream
+		return(false);
+  }
+
+	LOG_HEVC_FHP("HEVC: vpslen = %I64d, spslen = %I64d, ppslen = %I64d, height = %d, width = %d, AvgTimePerFrame = %I64d", h.vpslen, h.spslen, h.ppslen, h.height, h.width, h.AvgTimePerFrame);
+
+	if(!pmt) 
+	{
+	  return(true);
+	}
+  else //Fill out PMT data
+	{
+		int extra =  h.vpslen + h.spslen + h.ppslen;
+		pmt->SetType(&MEDIATYPE_Video);
+		pmt->SetSubtype(&MEDIASUBTYPE_HEVC);
+		pmt->formattype = FORMAT_MPEG2_VIDEO;
+		pmt->bTemporalCompression = TRUE;
+
+		int len = FIELD_OFFSET(MPEG2VIDEOINFO, dwSequenceHeader) + extra;
+		MPEG2VIDEOINFO* vi = (MPEG2VIDEOINFO*)pmt->AllocFormatBuffer(len);
+		memset(vi, 0, len);
+		vi->hdr.AvgTimePerFrame = h.AvgTimePerFrame;
+		  		  
+		vi->hdr.dwPictAspectRatioX = h.arx;
+		vi->hdr.dwPictAspectRatioY = h.ary;
+    vi->hdr.rcSource.right = h.width;
+    vi->hdr.rcSource.bottom = h.height;
+    vi->hdr.rcTarget.right = h.width;
+    vi->hdr.rcTarget.bottom = h.height;
+		vi->hdr.bmiHeader.biWidth = h.width;
+		vi->hdr.bmiHeader.biHeight = h.height;
+		vi->hdr.bmiHeader.biCompression = 'CVEH';
+		vi->hdr.bmiHeader.biPlanes=1;
+
+    switch (h.chromaFormat)
+    {
+      case YUV420 :
+  		  vi->hdr.bmiHeader.biBitCount = h.lumaDepth + (h.chromaDepth/2);
+        break;
+      case YUV422 :
+  		  vi->hdr.bmiHeader.biBitCount = h.lumaDepth + h.chromaDepth;
+        break;
+      case YUV444 :
+  		  vi->hdr.bmiHeader.biBitCount = h.lumaDepth + (2*h.chromaDepth);
+        break;
+      case YUV400 : //Monochrome
+		    vi->hdr.bmiHeader.biBitCount = h.lumaDepth;
+        break;
+      default :
+  		  vi->hdr.bmiHeader.biBitCount = h.lumaDepth + (h.chromaDepth/2);
+    }
+
+		vi->hdr.bmiHeader.biClrUsed=0;
+    vi->hdr.bmiHeader.biSizeImage = DIBSIZE(vi->hdr.bmiHeader);
+		vi->hdr.bmiHeader.biSize = sizeof(vi->hdr.bmiHeader);
+		vi->dwProfile = h.profile;
+		vi->dwFlags = 0; // No length info at start of each NAL unit data block, start codes delimit the NALs
+		vi->dwLevel = h.level;
+		vi->cbSequenceHeader = extra;
+		vi->dwStartTimeCode=0;
+		
+		BYTE* p = (BYTE*)&vi->dwSequenceHeader[0];
+
+		memcpy(p, h.vps, h.vpslen);
+		p += h.vpslen;
+
+		memcpy(p, h.sps, h.spslen);
+		p += h.spslen;
+		
+		memcpy(p, h.pps, h.ppslen);
+		
+		pmt->SetFormat((BYTE*)vi, len);
+	}
+
+	return(true);
+}
 
 bool CFrameHeaderParser::Read(vc1hdr& h, int len, CMediaType* pmt)
 {
@@ -1737,4 +1982,25 @@ void CFrameHeaderParser::DumpAvcHeader(avchdr h)
 	LogDebug("chromaDepth: %i",h.chromaDepth);
 	LogDebug("=================================");
 }
+
+void CFrameHeaderParser::DumpHevcHeader(hevchdr h)
+{
+	LogDebug("====== HEVC HEADER =====");
+	LogDebug("VPS len: %i",h.vpslen);
+	LogDebug("PPS len: %i",h.ppslen);
+	LogDebug("SPS len: %i",h.spslen);
+	LogDebug("avg time/frame: %i",h.AvgTimePerFrame);
+	LogDebug("width: %i",h.width);
+	LogDebug("height: %i",h.height);
+	LogDebug("ARidx: %i",h.ar);
+	LogDebug("ARx: %i",h.arx);
+	LogDebug("ARy: %i",h.ary);
+	LogDebug("level: %i",h.level);
+	LogDebug("profile: %i",h.profile);
+	LogDebug("chromaFormat: %i",h.chromaFormat);
+	LogDebug("lumaDepth: %i",h.lumaDepth);
+	LogDebug("chromaDepth: %i",h.chromaDepth);
+	LogDebug("=================================");
+}
+
 

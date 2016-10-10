@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2016 Live Networks, Inc.  All rights reserved.
 // A server demultiplexer for a MPEG 1 or 2 Program Stream
 // Implementation
 
@@ -163,12 +163,12 @@ static float MPEG1or2ProgramStreamFileDuration(UsageEnvironment& env,
   return duration;
 }
 
-#define DUMMY_SINK_BUFFER_SIZE (6+65535) /* large enough for a PES packet */
+#define MFSD_DUMMY_SINK_BUFFER_SIZE (6+65535) /* large enough for a PES packet */
 
-class DummySink: public MediaSink {
+class MFSD_DummySink: public MediaSink {
 public:
-  DummySink(MPEG1or2Demux& demux, Boolean returnFirstSeenCode);
-  virtual ~DummySink();
+  MFSD_DummySink(MPEG1or2Demux& demux, Boolean returnFirstSeenCode);
+  virtual ~MFSD_DummySink();
 
   char watchVariable;
 
@@ -186,10 +186,10 @@ private:
 private:
   MPEG1or2Demux& fOurDemux;
   Boolean fReturnFirstSeenCode;
-  unsigned char fBuf[DUMMY_SINK_BUFFER_SIZE];
+  unsigned char fBuf[MFSD_DUMMY_SINK_BUFFER_SIZE];
 };
 
-static void afterPlayingDummySink(DummySink* sink); // forward
+static void afterPlayingMFSD_DummySink(MFSD_DummySink* sink); // forward
 static float computeSCRTimeCode(MPEG1or2Demux::SCR const& scr); // forward
 
 static Boolean getMPEG1or2TimeCode(FramedSource* dataSource,
@@ -199,9 +199,9 @@ static Boolean getMPEG1or2TimeCode(FramedSource* dataSource,
   // Start reading through "dataSource", until we see a SCR time code:
   parentDemux.lastSeenSCR().isValid = False;
   UsageEnvironment& env = dataSource->envir(); // alias
-  DummySink sink(parentDemux, returnFirstSeenCode);
+  MFSD_DummySink sink(parentDemux, returnFirstSeenCode);
   sink.startPlaying(*dataSource,
-		    (MediaSink::afterPlayingFunc*)afterPlayingDummySink, &sink);
+		    (MediaSink::afterPlayingFunc*)afterPlayingMFSD_DummySink, &sink);
   env.taskScheduler().doEventLoop(&sink.watchVariable);
 
   timeCode = computeSCRTimeCode(parentDemux.lastSeenSCR());
@@ -209,17 +209,17 @@ static Boolean getMPEG1or2TimeCode(FramedSource* dataSource,
 }
 
 
-////////// DummySink implementation //////////
+////////// MFSD_DummySink implementation //////////
 
-DummySink::DummySink(MPEG1or2Demux& demux, Boolean returnFirstSeenCode)
+MFSD_DummySink::MFSD_DummySink(MPEG1or2Demux& demux, Boolean returnFirstSeenCode)
   : MediaSink(demux.envir()),
     watchVariable(0), fOurDemux(demux), fReturnFirstSeenCode(returnFirstSeenCode) {
 }
 
-DummySink::~DummySink() {
+MFSD_DummySink::~MFSD_DummySink() {
 }
 
-Boolean DummySink::continuePlaying() {
+Boolean MFSD_DummySink::continuePlaying() {
   if (fSource == NULL) return False; // sanity check
 
   fSource->getNextFrame(fBuf, sizeof fBuf,
@@ -228,26 +228,26 @@ Boolean DummySink::continuePlaying() {
   return True;
 }
 
-void DummySink::afterGettingFrame(void* clientData, unsigned /*frameSize*/,
+void MFSD_DummySink::afterGettingFrame(void* clientData, unsigned /*frameSize*/,
 				  unsigned /*numTruncatedBytes*/,
 				  struct timeval /*presentationTime*/,
 				  unsigned /*durationInMicroseconds*/) {
-  DummySink* sink = (DummySink*)clientData;
+  MFSD_DummySink* sink = (MFSD_DummySink*)clientData;
   sink->afterGettingFrame1();
 }
 
-void DummySink::afterGettingFrame1() {
+void MFSD_DummySink::afterGettingFrame1() {
   if (fReturnFirstSeenCode && fOurDemux.lastSeenSCR().isValid) {
     // We were asked to return the first SCR that we saw, and we've seen one,
     // so we're done.  (Handle this as if the input source had closed.)
-    onSourceClosure(this);
+    onSourceClosure();
     return;
   }
 
   continuePlaying();
 }
 
-static void afterPlayingDummySink(DummySink* sink) {
+static void afterPlayingMFSD_DummySink(MFSD_DummySink* sink) {
   // Return from the "doEventLoop()" call:
   sink->watchVariable = ~0;
 }

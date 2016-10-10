@@ -23,9 +23,10 @@
 *  bear and nate can be reached on the forums at
 *    http://forums.dvbowners.com/
 */
+#pragma once
+#include <WinError.h> // HRESULT
+#include <Windows.h>  // CloseHandle(), CreateEvent(), DWORD, INVALID_HANDLE_VALUE, ResetEvent(), SetEvent(), WaitForSingleObject()
 
-#ifndef TSTHREAD_H
-#define TSTHREAD_H
 
 class TSThread  
 {
@@ -48,5 +49,3 @@ private:
 	HANDLE m_threadHandle;
 	static void thread_function(void* p);
 };
-
-#endif

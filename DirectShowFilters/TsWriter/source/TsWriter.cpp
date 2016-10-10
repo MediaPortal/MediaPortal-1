@@ -1,5 +1,5 @@
 /* 
- *	Copyright (C) 2006-2008 Team MediaPortal
+ *	Copyright (C) 2006-2015 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -594,9 +594,11 @@ CMpTs::CMpTs(LPUNKNOWN pUnk, HRESULT *pHr)
   LogDebug("================ New TsWriter filter instance =====================");
   LogDebug("  Logging format: [Date Time] [InstanceID] [ThreadID] Message....  ");
   LogDebug("===================================================================");
-  LogDebug("---------------------- v%d.%d.%d.0 --------------------------------", TSWRITER_MAJOR_VERSION,TSWRITER_MID_VERSION,TSWRITER_VERSION);
-  LogDebug("-- async logging, v4 deadlock, 0x46 scan, packetSync and PCR_hunt_v3 mods --");
-  LogDebug(" ");  
+  LogDebug("---------------------- v%d.%d.%d.%d -------------------------------", TSWRITER_MAJOR_VERSION,TSWRITER_MID_VERSION,TSWRITER_VERSION,TSWRITER_POINT_VERSION);
+  LogDebug("-- Threaded timeshift file writing                               --");
+  LogDebug("-- Random access mode for timeshift files                        --");
+  LogDebug("-- Variable size (no chunk reserve) for timeshift files          --");
+  LogDebug("-------------------------------------------------------------------");  
 		
   b_dumpRawPackets = false;
   m_pFilter = new CMpTsFilter(this, GetOwner(), &m_filterLock, &m_receiveLock, pHr);
@@ -633,6 +635,7 @@ CMpTs::CMpTs(LPUNKNOWN pUnk, HRESULT *pHr)
 CMpTs::~CMpTs()
 {
   LogDebug("CMpTs::dtor() ");
+
   delete m_pPin;
   delete m_pOobSiPin;
   delete m_pFilter;
@@ -1058,7 +1061,8 @@ STDMETHODIMP CMpTs::TimeShiftSetParams(int handle, int minFiles, int maxFiles, U
   pChannel->m_pTimeShifting->SetMinTSFiles(minFiles);
   pChannel->m_pTimeShifting->SetMaxTSFiles(maxFiles);
   pChannel->m_pTimeShifting->SetMaxTSFileSize(chunkSize);
-  pChannel->m_pTimeShifting->SetChunkReserve(chunkSize);
+  //pChannel->m_pTimeShifting->SetChunkReserve(chunkSize);
+  pChannel->m_pTimeShifting->SetChunkReserve(0); //No chunk reserve
   return S_OK;
 }
 

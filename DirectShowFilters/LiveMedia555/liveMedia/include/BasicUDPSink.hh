@@ -14,12 +14,12 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2016 Live Networks, Inc.  All rights reserved.
 // A simple UDP sink (i.e., without RTP or other headers added); one frame per packet
 // C++ header
 
-#ifndef _SIMPLE_UDP_SINK_HH
-#define _SIMPLE_UDP_SINK_HH
+#ifndef _BASIC_UDP_SINK_HH
+#define _BASIC_UDP_SINK_HH
 
 #ifndef _MEDIA_SINK_HH
 #include "MediaSink.hh"

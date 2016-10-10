@@ -14,15 +14,19 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2016 Live Networks, Inc.  All rights reserved.
 // A class encapsulating the state of a MP3 stream
 // Implementation
 
 #include "MP3StreamState.hh"
+#include "InputFile.hh"
 #include "GroupsockHelper.hh"
 
 #if defined(__WIN32__) || defined(_WIN32)
 #define snprintf _snprintf
+#if _MSC_VER >= 1400 // 1400 == vs2005
+#define fileno _fileno
+#endif
 #endif
 
 #define MILLION 1000000
@@ -35,10 +39,10 @@ MP3StreamState::~MP3StreamState() {
   // Close our open file or socket:
   if (fFid != NULL && fFid != stdin) {
     if (fFidIsReallyASocket) {
-      long fid_long = (long)fFid;
+      intptr_t fid_long = (intptr_t)fFid;
       closeSocket((int)fid_long);
     } else {
-      fclose(fFid);
+      CloseInputFile(fFid);
     }
   }
 }
@@ -86,21 +90,10 @@ float MP3StreamState::filePlayTime() const {
   return numFramesInFile*(pt.tv_sec + pt.tv_usec/(float)MILLION);
 }
 
-void MP3StreamState::seekWithinFile(double seekNPT) {
-  if (fFidIsReallyASocket) return; // it's not seekable
-
-  float fileDuration = filePlayTime();
-  if (seekNPT < 0.0) {
-    seekNPT = 0.0;
-  } else if (seekNPT > fileDuration) {
-    seekNPT = fileDuration;
-  }
-  float seekFraction = (float)seekNPT/fileDuration;
-
-  unsigned seekByteNumber;
+unsigned MP3StreamState::getByteNumberFromPositionFraction(float fraction) {
   if (fHasXingTOC) {
     // The file is VBR, with a Xing TOC; use it to determine which byte to seek to:
-    float percent = seekFraction*100.0f;
+    float percent = fraction*100.0f;
     unsigned a = (unsigned)percent;
     if (a > 99) a = 99;
 
@@ -111,15 +104,16 @@ void MP3StreamState::seekWithinFile(double seekNPT) {
     } else {
       fb = 256;
     }
-    float seekByteFraction = (fa + (fb-fa)*(percent-a))/256.0f;
-
-    seekByteNumber = (unsigned)(seekByteFraction*fFileSize);
-  } else {
-    // Normal case: Treat the file as if it's CBR:
-    seekByteNumber = (unsigned)(seekFraction*fFileSize);
+    fraction = (fa + (fb-fa)*(percent-a))/256.0f;
   }
 
-  fseek(fFid, seekByteNumber, SEEK_SET);
+  return (unsigned)(fraction*fFileSize);
+}
+
+void MP3StreamState::seekWithinFile(unsigned seekByteNumber) {
+  if (fFidIsReallyASocket) return; // it's not seekable
+
+  SeekFile64(fFid, seekByteNumber, SEEK_SET);
 }
 
 unsigned MP3StreamState::findNextHeader(struct timeval& presentationTime) {
@@ -195,30 +189,6 @@ void MP3StreamState::getAttributes(char* buffer, unsigned bufferSize) const {
 #endif
 }
 
-void MP3StreamState::writeGetCmd(char const* hostName,
-				 unsigned short portNum,
-				 char const* fileName) {
-  char const* const getCmdFmt = "GET %s HTTP/1.1\r\nHost: %s:%d\r\n\r\n";
-
-  if (fFidIsReallyASocket) {
-    long fid_long = (long)fFid;
-    int sock = (int)fid_long;
-    char writeBuf[100];
-#if defined(IRIX) || defined(ALPHA) || defined(_QNX4) || defined(IMN_PIM) || defined(CRIS)
-    /* snprintf() isn't defined, so just use sprintf() */
-    /* This is a security risk if filename can come from an external user */
-    sprintf(writeBuf, getCmdFmt, fileName, hostName, portNum);
-#else
-    snprintf(writeBuf, sizeof writeBuf, getCmdFmt,
-	     fileName, hostName, portNum);
-#endif
-    send(sock, writeBuf, strlen(writeBuf), 0);
-  } else {
-    fprintf(fFid, getCmdFmt, fileName, hostName, portNum);
-    fflush(fFid);
-  }
-}
-
 // This is crufty old code that needs to be cleaned up #####
 #define HDRCMPMASK 0xfffffd00
 
@@ -226,18 +196,6 @@ Boolean MP3StreamState::findNextFrame() {
   unsigned char hbuf[8];
   unsigned l; int i;
   int attempt = 0;
-
-#ifdef DEBUGGING_INPUT
-  /* use this debugging code to generate a copy of the input stream */
-  FILE* fout;
-  unsigned char c;
-  fout = fopen("testOut", "w");
-  while (readFromStream(&c, 1) ==1) {
-    fwrite(&c, 1, 1, fout);
-  }
-  fclose(fout);
-  exit(0);
-#endif
 
  read_again:
   if (readFromStream(hbuf, 4) != 4) return False;
@@ -412,7 +370,7 @@ unsigned MP3StreamState::readFromStream(unsigned char* buf,
 					unsigned numChars) {
   // Hack for doing socket I/O instead of file I/O (e.g., on Windows)
   if (fFidIsReallyASocket) {
-    long fid_long = (long)fFid;
+    intptr_t fid_long = (intptr_t)fFid;
     int sock = (int)fid_long;
     unsigned totBytesRead = 0;
     do {
@@ -426,7 +384,9 @@ unsigned MP3StreamState::readFromStream(unsigned char* buf,
 
     return totBytesRead;
   } else {
+#ifndef _WIN32_WCE
     waitUntilSocketIsReadable(fEnv, (int)fileno(fFid));
+#endif
     return fread(buf, 1, numChars, fFid);
   }
 }
