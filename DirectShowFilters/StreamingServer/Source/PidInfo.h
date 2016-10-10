@@ -42,6 +42,7 @@ public:
 
 	int vid;
 	int h264;
+	int hevc;
 	int mpeg4;
 	int aud;
 	int aud2;

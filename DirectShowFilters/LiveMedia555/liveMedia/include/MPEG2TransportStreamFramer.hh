@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2016 Live Networks, Inc.  All rights reserved.
 // A filter that passes through (unchanged) chunks that contain an integral number
 // of MPEG-2 Transport Stream packets, but returning (in "fDurationInMicroseconds")
 // an updated estimate of the time gap between chunks.
@@ -36,11 +36,13 @@ public:
   static MPEG2TransportStreamFramer*
   createNew(UsageEnvironment& env, FramedSource* inputSource);
 
-  unsigned long tsPacketCount() const { return fTSPacketCount; }
+  u_int64_t tsPacketCount() const { return fTSPacketCount; }
 
   void changeInputSource(FramedSource* newInputSource) { fInputSource = newInputSource; }
 
   void clearPIDStatusTable();
+  void setNumTSPacketsToStream(unsigned long numTSRecordsToStream);
+  void setPCRLimit(float pcrLimit);
 
 protected:
   MPEG2TransportStreamFramer(UsageEnvironment& env, FramedSource* inputSource);
@@ -60,13 +62,17 @@ private:
   void afterGettingFrame1(unsigned frameSize,
 			  struct timeval presentationTime);
 
-  void updateTSPacketDurationEstimate(unsigned char* pkt, double timeNow);
+  Boolean updateTSPacketDurationEstimate(unsigned char* pkt, double timeNow);
 
 private:
-  unsigned long fTSPacketCount;
+  u_int64_t fTSPacketCount;
   double fTSPacketDurationEstimate;
   HashTable* fPIDStatusTable;
-  unsigned long fTSPCRCount;
+  u_int64_t fTSPCRCount;
+  Boolean fLimitNumTSPacketsToStream;
+  unsigned long fNumTSPacketsToStream; // used iff "fLimitNumTSPacketsToStream" is True
+  Boolean fLimitTSPacketsToStreamByPCR;
+  float fPCRLimit; // used iff "fLimitTSPacketsToStreamByPCR" is True
 };
 
 #endif

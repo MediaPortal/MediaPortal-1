@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2016 Live Networks, Inc.  All rights reserved.
 // A file source that is a plain byte stream (rather than frames)
 // C++ header
 
@@ -36,7 +36,6 @@ public:
 
   static ByteStreamFileSource* createNew(UsageEnvironment& env,
 					 FILE* fid,
-					 Boolean deleteFidOnClose = False,
 					 unsigned preferredFrameSize = 0,
 					 unsigned playTimePerFrame = 0);
       // an alternative version of "createNew()" that's used if you already have
@@ -45,12 +44,14 @@ public:
   u_int64_t fileSize() const { return fFileSize; }
       // 0 means zero-length, unbounded, or unknown
 
-  void seekToByteAbsolute(u_int64_t byteNumber);
-  void seekToByteRelative(int64_t offset);
+  void seekToByteAbsolute(u_int64_t byteNumber, u_int64_t numBytesToStream = 0);
+    // if "numBytesToStream" is >0, then we limit the stream to that number of bytes, before treating it as EOF
+  void seekToByteRelative(int64_t offset, u_int64_t numBytesToStream = 0);
+  void seekToEnd(); // to force EOF handling on the next read
 
 protected:
   ByteStreamFileSource(UsageEnvironment& env,
-		       FILE* fid, Boolean deleteFidOnClose,
+		       FILE* fid,
 		       unsigned preferredFrameSize,
 		       unsigned playTimePerFrame);
 	// called only by createNew()
@@ -65,13 +66,17 @@ private:
   virtual void doGetNextFrame();
   virtual void doStopGettingFrames();
 
+protected:
+  u_int64_t fFileSize;
+
 private:
   unsigned fPreferredFrameSize;
   unsigned fPlayTimePerFrame;
+  Boolean fFidIsSeekable;
   unsigned fLastPlayTime;
-  u_int64_t fFileSize;
-  Boolean fDeleteFidOnClose;
   Boolean fHaveStartedReading;
+  Boolean fLimitNumBytesToStream;
+  u_int64_t fNumBytesToStream; // used iff "fLimitNumBytesToStream" is True
 };
 
 #endif

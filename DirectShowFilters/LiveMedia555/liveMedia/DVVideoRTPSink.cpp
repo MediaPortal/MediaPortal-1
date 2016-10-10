@@ -14,13 +14,12 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2016 Live Networks, Inc.  All rights reserved.
 // RTP sink for DV video (RFC 3189)
 // (Thanks to Ben Hutchings for prototyping this.)
 // Implementation
 
 #include "DVVideoRTPSink.hh"
-#include "DVVideoStreamFramer.hh"
 
 ////////// DVVideoRTPSink implementation //////////
 
@@ -47,14 +46,8 @@ Boolean DVVideoRTPSink::sourceIsCompatibleWithUs(MediaSource& source) {
 void DVVideoRTPSink::doSpecialFrameHandling(unsigned fragmentationOffset,
 					      unsigned char* /*frameStart*/,
 					      unsigned /*numBytesInFrame*/,
-					      struct timeval frameTimestamp,
+					      struct timeval framePresentationTime,
 					      unsigned numRemainingBytes) {
-  if (fragmentationOffset == 0) {
-    // This packet contains the first (or only) fragment of the frame.  Read its header to figure out our profile:
-
-    
-  }
-
   if (numRemainingBytes == 0) {
     // This packet contains the last (or only) fragment of the frame.
     // Set the RTP 'M' ('marker') bit:
@@ -62,10 +55,8 @@ void DVVideoRTPSink::doSpecialFrameHandling(unsigned fragmentationOffset,
   }
 
   // Also set the RTP timestamp:
-  setTimestamp(frameTimestamp);
+  setTimestamp(framePresentationTime);
 }
-
-#define DV_DIF_BLOCK_SIZE 80
 
 unsigned DVVideoRTPSink::computeOverflowForNewFrame(unsigned newFrameSize) const {
   unsigned initialOverflow = MultiFramedRTPSink::computeOverflowForNewFrame(newFrameSize);
@@ -85,7 +76,12 @@ char const* DVVideoRTPSink::auxSDPLine() {
   DVVideoStreamFramer* framerSource = (DVVideoStreamFramer*)fSource;
   if (framerSource == NULL) return NULL; // we don't yet have a source
 
+  return auxSDPLineFromFramer(framerSource);
+}
+
+char const* DVVideoRTPSink::auxSDPLineFromFramer(DVVideoStreamFramer* framerSource) {
   char const* const profileName = framerSource->profileName();
+  if (profileName == NULL) return NULL;
 
   char const* const fmtpSDPFmt = "a=fmtp:%d encode=%s;audio=bundled\r\n";
   unsigned fmtpSDPFmtSize = strlen(fmtpSDPFmt)

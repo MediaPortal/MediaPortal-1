@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2016 Live Networks, Inc.  All rights reserved.
 // RTP Sinks
 // C++ header
 
@@ -34,13 +34,6 @@ class RTPSink: public MediaSink {
 public:
   static Boolean lookupByName(UsageEnvironment& env, char const* sinkName,
 			      RTPSink*& resultSink);
-
-  // used by RTCP:
-  u_int32_t SSRC() const {return fSSRC;}
-     // later need a means of changing the SSRC if there's a collision #####
-  u_int32_t convertToRTPTimestamp(struct timeval tv);
-  unsigned packetCount() const {return fPacketCount;}
-  unsigned octetCount() const {return fOctetCount;}
 
   // used by RTSP servers:
   Groupsock const& groupsockBeingUsed() const { return *(fRTPInterface.gs()); }
@@ -70,7 +63,18 @@ public:
   }
 
   Boolean nextTimestampHasBeenPreset() const { return fNextTimestampHasBeenPreset; }
+  Boolean& enableRTCPReports() { return fEnableRTCPReports; }
 
+  void getTotalBitrate(unsigned& outNumBytes, double& outElapsedTime);
+      // returns the number of bytes sent since the last time that we
+      // were called, and resets the counter.
+
+  struct timeval const& creationTime() const { return fCreationTime; }
+  struct timeval const& initialPresentationTime() const { return fInitialPresentationTime; }
+  struct timeval const& mostRecentPresentationTime() const { return fMostRecentPresentationTime; }
+  void resetPresentationTimes();
+
+  // Hacks to allow sending RTP over TCP (RFC 2236, section 10.12):
   void setStreamSocket(int sockNum, unsigned char streamChannelId) {
     fRTPInterface.setStreamSocket(sockNum, streamChannelId);
   }
@@ -80,11 +84,10 @@ public:
   void removeStreamSocket(int sockNum, unsigned char streamChannelId) {
     fRTPInterface.removeStreamSocket(sockNum, streamChannelId);
   }
-    // hacks to allow sending RTP over TCP (RFC 2236, section 10.12)
+  unsigned& estimatedBitrate() { return fEstimatedBitrate; } // kbps; usually 0 (i.e., unset)
 
-  void getTotalBitrate(unsigned& outNumBytes, double& outElapsedTime);
-      // returns the number of bytes sent since the last time that we
-      // were called, and resets the counter.
+  u_int32_t SSRC() const {return fSSRC;}
+     // later need a means of changing the SSRC if there's a collision #####
 
 protected:
   RTPSink(UsageEnvironment& env,
@@ -96,10 +99,18 @@ protected:
 
   virtual ~RTPSink();
 
+  // used by RTCP:
+  friend class RTCPInstance;
+  friend class RTPTransmissionStats;
+  u_int32_t convertToRTPTimestamp(struct timeval tv);
+  unsigned packetCount() const {return fPacketCount;}
+  unsigned octetCount() const {return fOctetCount;}
+
+protected:
   RTPInterface fRTPInterface;
   unsigned char fRTPPayloadType;
   unsigned fPacketCount, fOctetCount, fTotalOctetCount /*incl RTP hdr*/;
-  struct timeval fTotalOctetCountStartTime;
+  struct timeval fTotalOctetCountStartTime, fInitialPresentationTime, fMostRecentPresentationTime;
   u_int32_t fCurrentTimestamp;
   u_int16_t fSeqNo;
 
@@ -111,9 +122,11 @@ private:
   u_int32_t fSSRC, fTimestampBase;
   unsigned fTimestampFrequency;
   Boolean fNextTimestampHasBeenPreset;
+  Boolean fEnableRTCPReports; // whether RTCP "SR" reports should be sent for this sink (default: True)
   char const* fRTPPayloadFormatName;
   unsigned fNumChannels;
   struct timeval fCreationTime;
+  unsigned fEstimatedBitrate; // set on creation if known; otherwise 0
 
   RTPTransmissionStatsDB* fTransmissionStatsDB;
 };
@@ -158,7 +171,7 @@ private:
 private:
   friend class Iterator;
   unsigned fNumReceivers;
-    RTPSink& fOurRTPSink;
+  RTPSink& fOurRTPSink;
   HashTable* fTable;
 };
 
@@ -175,13 +188,12 @@ public:
   unsigned roundTripDelay() const;
       // The round-trip delay (in units of 1/65536 seconds) computed from
       // the most recently-received RTCP RR packet.
-  struct timeval timeCreated() const {return fTimeCreated;}
-  struct timeval lastTimeReceived() const {return fTimeReceived;}
+  struct timeval const& timeCreated() const {return fTimeCreated;}
+  struct timeval const& lastTimeReceived() const {return fTimeReceived;}
   void getTotalOctetCount(u_int32_t& hi, u_int32_t& lo);
   void getTotalPacketCount(u_int32_t& hi, u_int32_t& lo);
 
   // Information which requires at least two RRs to have been received:
-  Boolean oldValid() const {return fOldValid;} // Have two RRs been received?
   unsigned packetsReceivedSinceLastRR() const;
   u_int8_t packetLossRatio() const { return fPacketLossRatio; }
      // as an 8-bit fixed-point number
@@ -209,7 +221,7 @@ private:
   unsigned fLastSRTime;
   unsigned fDiffSR_RRTime;
   struct timeval fTimeCreated, fTimeReceived;
-  Boolean fOldValid;
+  Boolean fAtLeastTwoRRsHaveBeenReceived;
   unsigned fOldLastPacketNumReceived;
   unsigned fOldTotNumPacketsLost;
   Boolean fFirstPacket;

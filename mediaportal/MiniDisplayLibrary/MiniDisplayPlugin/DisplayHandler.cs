@@ -195,17 +195,36 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       }
       Line line;
       Line line2;
-      string str;
+      string str = string.Empty;
+
+      // If we have a single line display
       if (this.heightInChars == 1)
       {
-        //SL: I believe this is the feature that combines both lines on a single one if our display only supports one line.
+        // Combines both lines on a single one if our display only supports one line.
         line = this.lines[0];
         line2 = this.lines[1];
-        str = line.Process() + " - " + line2.Process();
+
+        string str1 = line.Process();
+        string str2 = line2.Process();
+        
+        // If both lines are empty we still won't add that hyphen and the resulting string will be empty
+        if (string.IsNullOrEmpty(str2))
+        {
+          str = str1;
+        }
+        else if (string.IsNullOrEmpty(str1))
+        {
+          str = str2;
+        }
+        else
+        {
+          // None of our lines are empty, concatenate them then
+          str = str1 + " - " + str2;
+        }
       }
       else
       {
-        //Our display supports more than one line. Well, it could be zero though...
+        // Our display has more than one line of text.
         line = this.lines[_line];
         str = line.Process();
       }

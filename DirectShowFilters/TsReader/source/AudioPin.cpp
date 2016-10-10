@@ -63,6 +63,7 @@ CAudioPin::CAudioPin(LPUNKNOWN pUnk, CTsReaderFilter *pFilter, HRESULT *phr,CCri
   m_section(section)
 {
   m_bConnected=false;
+  m_iPosition=0;
   m_rtStart=0;
   m_dwSeekingCaps =
     AM_SEEKING_CanSeekAbsolute  |
@@ -70,13 +71,12 @@ CAudioPin::CAudioPin(LPUNKNOWN pUnk, CTsReaderFilter *pFilter, HRESULT *phr,CCri
     AM_SEEKING_CanSeekBackwards |
     AM_SEEKING_CanGetStopPos  |
     AM_SEEKING_CanGetDuration |
-    //AM_SEEKING_CanGetCurrentPos |
     AM_SEEKING_Source;
-  //m_bSubtitleCompensationSet=false;
   m_bInFillBuffer=false;
   m_bPinNoAddPMT = false;
   m_bAddPMT = false;
-  m_bDownstreamFlush=false;
+  m_bDisableSlowPlayDiscontinuity=false;
+  m_nMaxAFT = -1;
 }
 
 CAudioPin::~CAudioPin()
@@ -112,13 +112,18 @@ HRESULT CAudioPin::CheckMediaType(const CMediaType* pmt)
   CMediaType pmti;
   int audioIndex = 0;
   demux.GetAudioStream(audioIndex);
-  demux.GetAudioStreamType(audioIndex, pmti);
-  CMediaType* ppmti = &pmti;
-
-  if(*pmt == *ppmti)
+  
+  for (int iPosition(0); iPosition <2; iPosition++)
   {
-    //LogDebug("audPin:CheckMediaType() ok");  
-    return S_OK;
+    demux.GetAudioStreamType(audioIndex, pmti, iPosition);
+    CMediaType* ppmti = &pmti;
+  
+    if(*pmt == *ppmti)
+    {
+      m_iPosition = iPosition;
+      //LogDebug("audPin:CheckMediaType() ok, iPosition = %d", iPosition);  
+      return S_OK;
+    }
   }
 
   //LogDebug("audPin:CheckMediaType() fail");  
@@ -136,14 +141,18 @@ HRESULT CAudioPin::GetMediaType(int iPosition, CMediaType *pmt)
   {              
     return E_INVALIDARG;
   }                                        
-  if (iPosition > 0)   
+  if (iPosition > 1)   
   {           
     return VFW_S_NO_MORE_ITEMS;
   }   
 
   CDeMultiplexer& demux=m_pTsReaderFilter->GetDemultiplexer();
 
-  for (int i=0; i < 200; i++) //Wait up to 1 sec for pmt to be valid
+//  int audioIdx = 0;
+//  demux.GetAudioStream(audioIdx);
+//  LogDebug("audPin:GetMediaType(), audioIdx: %d, iPosition: %d, patParsed: %d", audioIdx, iPosition, demux.PatParsed());
+
+  for (int i=0; i < 400; i++) //Wait up to 2 sec for pmt to be valid
   {
     if (demux.PatParsed())
     {
@@ -155,17 +164,20 @@ HRESULT CAudioPin::GetMediaType(int iPosition, CMediaType *pmt)
       }
       else
       {
-        //LogDebug("audPin:GetMediaType() - good pid");
         int audioIndex = 0;
         demux.GetAudioStream(audioIndex);
-        demux.GetAudioStreamType(audioIndex, *pmt);
-        return S_OK;
+        if(demux.GetAudioStreamType(audioIndex, *pmt, iPosition))
+        {
+          //LogDebug("audPin:GetMediaType() - good pid");
+          return S_OK;
+        }
       }
     }
     Sleep(5);
   }
 
   //Return a null media type
+  LogDebug("audPin:GetMediaType() - Timeout");
   pmt->InitMediaType();
   return S_OK;
 }
@@ -177,7 +189,10 @@ void CAudioPin::SetDiscontinuity(bool onOff)
 
 void CAudioPin::SetAddPMT()
 {
-  LogDebug("audPin:SetAddPMT()");
+  if (!m_bAddPMT) 
+  {
+    LogDebug("audPin:SetAddPMT()");
+  }
   m_bAddPMT = true;
   m_sampleCount = 0;
 }
@@ -194,8 +209,8 @@ HRESULT CAudioPin::DecideBufferSize(IMemAllocator *pAlloc, ALLOCATOR_PROPERTIES 
   CheckPointer(pAlloc, E_POINTER);
   CheckPointer(pRequest, E_POINTER);
 
-  pRequest->cBuffers = max(30, pRequest->cBuffers);
-  pRequest->cbBuffer = max(8192, (ULONG)pRequest->cbBuffer);
+  pRequest->cBuffers = max(AUD_PIN_BUFFERS, pRequest->cBuffers);
+  pRequest->cbBuffer = max(MAX_BUFFER_SIZE, (ULONG)pRequest->cbBuffer);
 
   ALLOCATOR_PROPERTIES Actual;
   hr = pAlloc->SetProperties(pRequest, &Actual);
@@ -206,6 +221,7 @@ HRESULT CAudioPin::DecideBufferSize(IMemAllocator *pAlloc, ALLOCATOR_PROPERTIES 
 
   if (Actual.cbBuffer < pRequest->cbBuffer)
   {
+    LogDebug("audPin:DecideBufferSize - failed to get buffer");
     return E_FAIL;
   }
 
@@ -235,19 +251,26 @@ HRESULT CAudioPin::CompleteConnect(IPin *pReceivePin)
   {
     char szName[MAX_FILTER_NAME];
     int cch = WideCharToMultiByte(CP_ACP, 0, filterInfo.achName, MAX_FILTER_NAME, szName, MAX_FILTER_NAME, 0, 0);
-    LogDebug("audPin:CompleteConnect() ok, filter: %s", szName);
+    LogDebug("audPin:CompleteConnect() ok, filter: %s, iPosition: %d", szName, m_iPosition);
     
     m_bConnected=true;
+
+    CLSID &ref=m_pTsReaderFilter->GetCLSIDFromPin(pReceivePin);
+    m_pTsReaderFilter->m_audioDecoderCLSID = ref;
+    if (m_pTsReaderFilter->m_audioDecoderCLSID == CLSID_LAVAUDIO)
+    {
+      m_bDisableSlowPlayDiscontinuity = (m_pTsReaderFilter->m_regLAV_AutoAVSync > 0);
+      LogDebug("audPin:CompleteConnect() DisableSlowPlayDiscontinuity = %d", m_bDisableSlowPlayDiscontinuity);
+    }
   }
   else
   {
-    LogDebug("audPin:CompleteConnect() failed:%x",hr);
+    LogDebug("audPin:CompleteConnect() failed:%x, iPosition: %d", hr, m_iPosition);
     return E_FAIL;
   }
 
   if (m_pTsReaderFilter->IsTimeShifting())
   {
-    //m_rtDuration=CRefTime(MAX_TIME);
     REFERENCE_TIME refTime;
     m_pTsReaderFilter->GetDuration(&refTime);
     m_rtDuration=CRefTime(refTime);
@@ -265,6 +288,7 @@ HRESULT CAudioPin::CompleteConnect(IPin *pReceivePin)
 HRESULT CAudioPin::BreakConnect()
 {
   m_bConnected=false;
+  m_iPosition=0;
   return CSourceStream::BreakConnect();
 }
 
@@ -283,9 +307,14 @@ void CAudioPin::CreateEmptySample(IMediaSample *pSample)
 
 HRESULT CAudioPin::DoBufferProcessingLoop(void)
 {
+  if (!m_bConnected) 
+  {
+    return S_OK;
+  }
+    
   Command com;
   OnThreadStartPlay();
-  SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_BELOW_NORMAL);
+  SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_NORMAL);
 
   do 
   {
@@ -307,7 +336,7 @@ HRESULT CAudioPin::DoBufferProcessingLoop(void)
       if (hr == S_OK) 
       {
         // Some decoders seem to crash when we provide empty samples 
-        if ((pSample->GetActualDataLength() > 0) && !m_pTsReaderFilter->IsStopping())
+        if ((pSample->GetActualDataLength() > 0) && !m_pTsReaderFilter->IsStopping() && m_bConnected)
         {
           hr = Deliver(pSample); 
           m_sampleCount++ ;
@@ -386,11 +415,16 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
       //did we reach the end of the file
       if (demux.EndOfFile())
       {
-        LogDebug("audPin:set eof");
-        m_FillBuffSleepTime = 5;
-        CreateEmptySample(pSample);
-        m_bInFillBuffer = false;
-        return S_FALSE; //S_FALSE will notify the graph that end of file has been reached
+        int ACnt, VCnt;
+        demux.GetBufferCounts(&ACnt, &VCnt);
+        if (ACnt <= 0 && VCnt <= 0) //have we used all the data ?
+        {
+          LogDebug("audPin:set eof");
+          m_FillBuffSleepTime = 5;
+          CreateEmptySample(pSample);
+          m_bInFillBuffer = false;
+          return S_FALSE; //S_FALSE will notify the graph that end of file has been reached
+        }
       }
 
       //if the filter is currently seeking to a new position
@@ -403,7 +437,6 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
         m_bInFillBuffer = false;
         if (demux.m_bFlushRunning)
         {
-          //m_bDownstreamFlush=true;
           //Force discon on next good sample
           m_sampleCount = 0;
           m_bDiscontinuity=true;
@@ -416,15 +449,6 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
         m_bInFillBuffer = true;
       }     
                   
-      if(m_bDownstreamFlush)
-      {
-        //Downstream flush
-        LogDebug("audPin : Downstream flush") ;
-        DeliverBeginFlush();
-        DeliverEndFlush();
-        m_bDownstreamFlush=false;
-      }
-
       // Get next audio buffer from demultiplexer
       buffer=demux.GetAudio(earlyStall, m_rtStart);
 
@@ -434,6 +458,10 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
       {
         m_FillBuffSleepTime = 5;
         buffer=NULL; //Continue looping
+        if (!m_pTsReaderFilter->m_bStreamCompensated && (m_nNextAFT != 0))
+        {
+          ClearAverageFtime();
+        }
         
         if (!m_pTsReaderFilter->m_bStreamCompensated)
         {
@@ -447,6 +475,15 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
       {
         m_bPresentSample = true ;
         
+        if (buffer->GetForcePMT())
+        {
+          m_bAddPMT = true;
+        }
+        if (buffer->GetDiscontinuity())
+        {
+          m_bDiscontinuity = true;
+        }
+        
         CRefTime RefTime,cRefTime ;
         bool HasTimestamp ;
         double fTime = 0.0;
@@ -459,42 +496,50 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
 					cRefTime -= m_rtStart ;
           //adjust the timestamp with the compensation
           cRefTime-= m_pTsReaderFilter->GetCompensation() ;
+          
+          //Check if total compensation offset is more than +/-10ms
+          if (abs(m_pTsReaderFilter->GetTotalDeltaComp()) > 100000)
+          {
+            if (!m_bDisableSlowPlayDiscontinuity)
+            {
+              //Force downstream filters to resync by setting discontinuity flag
+              pSample->SetDiscontinuity(TRUE);
+            }
+            m_pTsReaderFilter->ClearTotalDeltaComp();
+          }
 
           REFERENCE_TIME RefClock = 0;
           m_pTsReaderFilter->GetMediaPosition(&RefClock) ;
           clock = (double)(RefClock-m_rtStart.m_time)/10000000.0 ;
           fTime = ((double)cRefTime.m_time/10000000.0) - clock ;
+          
+          //Calculate a mean 'fTime' value using 'raw' fTime data
+          CalcAverageFtime(fTime);
+          if (timeNow < (m_pTsReaderFilter->m_lastPauseRun + (30*1000)))
+          {
+            //do this for 30s after start of play, a flush or pause
+            m_fAFTMeanRef = m_fAFTMean;
+          }
+          
+          //Add compensation time for external downstream audio delay
+          //to stop samples becoming 'late' (note: this does NOT change the actual sample timestamps)
+          fTime -= m_fAFTMeanRef;  //remove the 'mean' offset
+          fTime += ((AUDIO_STALL_POINT/2.0) + 0.2); //re-centre the timing                 
 
           //Discard late samples at start of play,
           //and samples outside a sensible timing window during play 
           //(helps with signal corruption recovery)
           cRefTime -= m_pTsReaderFilter->m_ClockOnStart.m_time;
 
-          if ((fTime < 0.2) && (m_dRateSeeking == 1.0) && (m_pTsReaderFilter->State() == State_Running) && (m_sampleCount > 10))
-          {              
-            if (!demux.m_bAudioSampleLate) 
-            {
-              LogDebug("audPin : Audio to render late= %03.3f", (float)fTime) ;
-            }
-            //Samples times are getting close to presentation time
-            demux.m_bAudioSampleLate = true;  
-             
-            if (fTime < 0.05)
-            {              
-              _InterlockedExchange(&demux.m_AudioDataLowPauseTime, (long)((fTime-0.02) * -1000.0));
-              //Samples are running very late - check if this is a persistant problem by counting over a period of time 
-              //(m_AVDataLowCount is checked in CTsReaderFilter::ThreadProc())
-              _InterlockedIncrement(&demux.m_AVDataLowCount);   
-            }
-            
-            if ((fTime < -2.0) && !demux.m_bFlushDelegated)
+          if (fTime < -2.0)
+          {                          
+            if ((m_dRateSeeking == 1.0) && (m_pTsReaderFilter->State() == State_Running) && (clock > 8.0) && !demux.m_bFlushDelegated)
             { 
               //Very late - request internal flush and re-sync to stream
               demux.DelegatedFlush(false, false);
               LogDebug("audPin : Audio to render very late, flushing") ;
             }
           }
-
           
           if ((cRefTime.m_time >= PRESENT_DELAY) && 
               (fTime > ((cRefTime.m_time >= FS_TIM_LIM) ? -0.3 : -0.5)) && (fTime < 2.5))
@@ -520,29 +565,28 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
         if (m_bPresentSample && (m_dRateSeeking == 1.0) && (buffer->Length() > 0))
         {
           //do we need to set the discontinuity flag?
-          if (m_bDiscontinuity || buffer->GetDiscontinuity())
+          if (m_bDiscontinuity)
           {
             //ifso, set it
             pSample->SetDiscontinuity(TRUE);
-
-            if ((m_sampleCount == 0) && m_bAddPMT && !m_pTsReaderFilter->m_bDisableAddPMT && !m_bPinNoAddPMT)
-            {
-              //Add MediaType info to first sample after OnThreadStartPlay()
-              CMediaType mt; 
-              int audioIndex = 0;
-              demux.GetAudioStream(audioIndex);
-              demux.GetAudioStreamType(audioIndex, mt);
-              pSample->SetMediaType(&mt);            
-              LogDebug("audPin: Add pmt and set discontinuity L:%d B:%d fTime:%03.3f SampCnt:%d", m_bDiscontinuity, buffer->GetDiscontinuity(), (float)fTime, m_sampleCount);
-              m_bAddPMT = false; //Only add once
-            }   
-            else
-            {        
-              LogDebug("audPin: Set discontinuity L:%d B:%d fTime:%03.3f SampCnt:%d", m_bDiscontinuity, buffer->GetDiscontinuity(), (float)fTime, m_sampleCount);
-            }
-
+            
+            LogDebug("audPin: Set discontinuity L:%d B:%d fTime:%03.3f SampCnt:%d", m_bDiscontinuity, buffer->GetDiscontinuity(), (float)fTime, m_sampleCount);
             m_bDiscontinuity=FALSE;
           }
+
+          if (m_bAddPMT && !m_pTsReaderFilter->m_bDisableAddPMT && !m_bPinNoAddPMT)
+          {
+            //Add MediaType info to sample
+            CMediaType mt; 
+            int audioIndex = 0;
+            demux.GetAudioStream(audioIndex);
+            demux.GetAudioStreamType(audioIndex, mt, m_iPosition);
+            pSample->SetMediaType(&mt); 
+            SetMediaType(&mt);               
+            WAVEFORMATEX* wfe = (WAVEFORMATEX*)mt.Format();         
+            LogDebug("audPin: Add pmt, fTime:%03.3f SampCnt:%d, Ch:%d, Sr:%d", (float)fTime, m_sampleCount, wfe->nChannels, wfe->nSamplesPerSec);
+            m_bAddPMT = false; //Only add once
+          }   
 
           if (HasTimestamp)
           {
@@ -565,6 +609,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
               LogDebug("Aud/Ref : %03.3f, Compensated = %03.3f ( %0.3f A/V buffers=%02d/%02d), Clk : %f, SampCnt %d, Sleep %d ms, stallPt %03.3f", (float)RefTime.Millisecs()/1000.0f, (float)cRefTime.Millisecs()/1000.0f, fTime,cntA,cntV, clock, m_sampleCount, m_FillBuffSleepTime, (float)stallPoint);
             }
             if (m_pTsReaderFilter->m_ShowBufferAudio) m_pTsReaderFilter->m_ShowBufferAudio--;
+            // CalcAverageFtime(fTime);
               
             if (((float)cRefTime.Millisecs()/1000.0f) > AUDIO_READY_POINT)
             {
@@ -586,7 +631,6 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
           //delete the buffer and return
           delete buffer;
           demux.EraseAudioBuff();
-          //m_sampleCount++ ;
         }
         else
         { // Buffer was not displayed because it was out of date, search for next.
@@ -620,6 +664,76 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
   return NOERROR;
 }
 
+void CAudioPin::ClearAverageFtime()
+{
+  m_nMaxAFT = -1;
+  m_nNextAFT = 0;
+	m_fAFTMean = 0.0;
+	m_llAFTSumAvg = 0.0;
+	m_fAFTMeanRef = 0.0; 
+  ZeroMemory((void*)&m_pllAFT, sizeof(double) * NB_AFTSIZE);
+}
+
+// Calculate rolling average audio ftime
+void CAudioPin::CalcAverageFtime(double ftime)
+{      
+  if (m_nMaxAFT < 0)   
+  { 
+    CDeMultiplexer& demux=m_pTsReaderFilter->GetDemultiplexer();    
+    if (demux.m_dfAudSampleDuration > 0.0)
+    {
+      //Calculate the number of samples needed to provide an average over 3 seconds 
+      //but limit to maximum array size and a minimum of 16 samples
+      m_nMaxAFT = max(16, min(NB_AFTSIZE, (int)(3.0/demux.m_dfAudSampleDuration)));
+    }
+    else
+    {
+      m_nMaxAFT = NB_AFTSIZE;
+    }
+    LogDebug("audPin:CalcAverageFtime m_nMaxAFT: %d, SampDur: %03.6f", m_nMaxAFT, (float)demux.m_dfAudSampleDuration);
+  }
+
+    // Calculate the mean timestamp difference
+  if (m_nNextAFT >= m_nMaxAFT)
+  {
+    m_fAFTMean = m_llAFTSumAvg / (double)m_nMaxAFT;
+  }
+  else if (m_nNextAFT > 1)
+  {
+    m_fAFTMean = m_llAFTSumAvg / (double)m_nNextAFT;
+  }
+  else
+  {
+    m_fAFTMean = ftime;
+  }
+
+  // Update the rolling timestamp to presentation diff average
+  // (these values are initialised in OnThreadStartPlay())
+  int tempNextASD = (m_nNextAFT % m_nMaxAFT);
+  m_llAFTSumAvg -= m_pllAFT[tempNextASD];
+  m_pllAFT[tempNextASD] = ftime;
+  m_llAFTSumAvg += ftime;
+  m_nNextAFT++;
+  
+  //LogDebug("audPin:GetAverageSampleTime, nextASD %d, TsMeanDiff %0.3f, ftime %0.3f", m_nNextAFT, (float)m_fAFTMean/10000.0f, (float)ftime/10000.0f);  
+}
+
+double CAudioPin::GetAudToPresMeanDelta()
+{
+  return m_fAFTMean;
+}
+
+double CAudioPin::GetAudioPresToRefDiff()
+{
+  if ((m_dRateSeeking == 1.0) && (m_pTsReaderFilter->State() == State_Running))
+  {
+    return  m_fAFTMean - m_fAFTMeanRef;
+  }
+  else
+  {
+    return  0.0;
+  }
+}
 
 bool CAudioPin::IsInFillBuffer()
 {
@@ -635,6 +749,12 @@ bool CAudioPin::IsConnected()
 {
   return m_bConnected;
 }
+
+int CAudioPin::GetPMTiPosition()
+{
+  return m_iPosition;
+}
+
 
 HRESULT CAudioPin::ChangeStart()
 {
@@ -673,8 +793,6 @@ HRESULT CAudioPin::OnThreadStartPlay()
 {
   DWORD thrdID = GetCurrentThreadId();
   LogDebug("audPin:OnThreadStartPlay(%f), rate:%02.2f, threadID:0x%x, GET_TIME_NOW:0x%x", (float)m_rtStart.Millisecs()/1000.0f, m_dRateSeeking, thrdID, GET_TIME_NOW());
-
-  //m_pTsReaderFilter->CheckForMPAR();
   
   //set flag to compensate any differences in the stream time & file time
   m_pTsReaderFilter->m_bStreamCompensated = false;
@@ -690,11 +808,12 @@ HRESULT CAudioPin::OnThreadStartPlay()
   m_bPresentSample = false;
   m_sampleCount = 0;
   m_bInFillBuffer=false;
-  m_bDownstreamFlush=false;
   m_pTsReaderFilter->m_audioReady = false;
 
   m_FillBuffSleepTime = 1;
   m_LastFillBuffTime = GET_TIME_NOW();
+
+  ClearAverageFtime();
   
   //get file-duration and set m_rtDuration
   GetDuration(NULL);

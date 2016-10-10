@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2016 Live Networks, Inc.  All rights reserved.
 // Framed Filters
 // C++ header
 
@@ -29,8 +29,10 @@ class FramedFilter: public FramedSource {
 public:
   FramedSource* inputSource() const { return fInputSource; }
 
+  void reassignInputSource(FramedSource* newInputSource) { fInputSource = newInputSource; }
+
   // Call before destruction if you want to prevent the destructor from closing the input source
-  void detachInputSource() { fInputSource = NULL; }
+  void detachInputSource();
 
 protected:
   FramedFilter(UsageEnvironment& env, FramedSource* inputSource);

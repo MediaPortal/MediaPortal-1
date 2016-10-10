@@ -73,7 +73,7 @@
       <InlineFunctionExpansion>Default</InlineFunctionExpansion>
       <IntrinsicFunctions>false</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <AdditionalIncludeDirectories>$(SolutionDir)baseclasses;$(WINDOWS_SDK)Include\;../LiveMedia555/BasicUsageEnvironment/include;../LiveMedia555/groupsock/include;../LiveMedia555/liveMedia;../LiveMedia555/liveMedia/include;../LiveMedia555/UsageEnvironment/include;../LiveMedia555/MediaPortal;../streamingserver/Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)baseclasses;$(WINDOWS_SDK)Include\;../LiveMedia555/BasicUsageEnvironment/include;../LiveMedia555/groupsock/include;../LiveMedia555/liveMedia;../LiveMedia555/liveMedia/include;../LiveMedia555/UsageEnvironment/include;../LiveMedia555/MediaPortal;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>NDEBUGT;WIN32;_WIN32;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>false</StringPooling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
@@ -126,7 +126,7 @@
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(SolutionDir)baseclasses;$(WINDOWS_SDK)Include\;../LiveMedia555/BasicUsageEnvironment/include;../LiveMedia555/groupsock/include;../LiveMedia555/liveMedia;../LiveMedia555/liveMedia/include;../LiveMedia555/UsageEnvironment/include;../LiveMedia555/MediaPortal;../streamingserver/Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)baseclasses;$(WINDOWS_SDK)Include\;../LiveMedia555/BasicUsageEnvironment/include;../LiveMedia555/groupsock/include;../LiveMedia555/liveMedia;../LiveMedia555/liveMedia/include;../LiveMedia555/UsageEnvironment/include;../LiveMedia555/MediaPortal;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>DBG=1;DEBUG;_DEBUG;INC_OLE2;STRICT;WIN32;_WIN32;_MT;_DLL;_X86_=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
