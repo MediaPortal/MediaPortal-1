@@ -233,7 +233,18 @@ namespace MediaPortal.InputDevices
               }
 
               //Now parse usage action mapping
-              usageAction.Load(usageActionNode, TryParseEnum<Hid.Usage.GenericDesktop>);
+              if (rawUsageCollection == (ushort)Hid.UsageCollection.GenericDesktop.Keyboard)
+              {
+                //Special case for keyboards
+                //Try to parse virtual keys
+                usageAction.Load(usageActionNode, TryParseEnum < System.Windows.Forms.Keys>);
+              }
+              else
+              {
+                //Generic case
+                usageAction.Load(usageActionNode, TryParseEnum<Hid.Usage.GenericDesktop>);
+              }
+              
             }
               break;
 
@@ -329,7 +340,9 @@ namespace MediaPortal.InputDevices
       {
         rid[i].usUsagePage = entry.Value.UsagePage;
         rid[i].usUsage = entry.Value.UsageCollection;
-        rid[i].dwFlags = (entry.Value.HandleHidEventsWhileInBackground ? Const.RIDEV_INPUTSINK : 0);
+        rid[i].dwFlags = (entry.Value.HandleHidEventsWhileInBackground ? SharpLib.Win32.RawInputDeviceFlags.RIDEV_INPUTSINK : 0);
+        //Funny enough that "no legacy" flag prevents our HID keyboard handler to work
+        //rid[i].dwFlags |= SharpLib.Win32.RawInputDeviceFlags.RIDEV_NOLEGACY;
         rid[i].hwndTarget = aHWND;
         i++;
       }
@@ -373,39 +386,59 @@ namespace MediaPortal.InputDevices
     /// <param name="aHidEvent"></param>
     public void OnHidEvent(object aSender, Hid.Event aHidEvent)
     {
+      HidListener.LogInfo("\n" + aHidEvent.ToString());
+
       if (aHidEvent.IsRepeat)
       {
-        HidListener.LogInfo("HID: Repeat");  
+        HidListener.LogInfo("HID: Repeat");
       }
 
       _actions = null;
       _actions = new List<MediaPortal.InputDevices.HidUsageAction.ConditionalAction>();
       HidUsageAction usageAction;
+      // Check if we have mappings for this usage ID (page/collection).
       if (_usageActions.TryGetValue(aHidEvent.UsageId, out usageAction))
       {
         //Alright we do handle this usage ID
         //Try mapping actions to each of our usage
-        foreach (ushort usage in aHidEvent.Usages)
+        if (aHidEvent.IsGeneric)
         {
-          HidListener.LogInfo("HID: try mapping usage {0}", usage.ToString("X4"));
-          _actions.Add(usageAction.GetAction(usage.ToString(), aHidEvent.IsBackground, aHidEvent.IsRepeat));
-          if (_shouldRaiseAction)
+          foreach (ushort usage in aHidEvent.Usages)
           {
-            usageAction.MapAction(usage, aHidEvent.IsBackground, aHidEvent.IsRepeat);
+            HidListener.LogInfo("HID: try mapping usage 0x{0}", usage.ToString("X4"));
+            HidUsageAction.ConditionalAction action = usageAction.GetAction(usage.ToString(), aHidEvent.IsBackground, aHidEvent.IsRepeat, aHidEvent.HasModifierShift, aHidEvent.HasModifierControl, aHidEvent.HasModifierAlt, aHidEvent.HasModifierWindows);
+            _actions.Add(action);
+            if (_shouldRaiseAction)
+            {
+              usageAction.ExecuteActionIfNeeded(action);
+            }
+          }
+
+          //Do some extra checks if our device is a gamepad
+          if (aHidEvent.Device != null && aHidEvent.Device.IsGamePad)
+          {
+            //Check if dpad needs to be handled too
+            HidListener.LogInfo("HID: try mapping dpad {0}", aHidEvent.GetDirectionPadState());
+            const int KDPadButtonOffset = 1000; //This is our magic dpad button offset. Should be good enough as it leaves us with 998 genuine buttons. 
+            ushort dpadFakeUsage = (ushort)(KDPadButtonOffset + (int)aHidEvent.GetDirectionPadState());
+            HidUsageAction.ConditionalAction action = usageAction.GetAction(dpadFakeUsage.ToString(), aHidEvent.IsBackground, aHidEvent.IsRepeat, aHidEvent.HasModifierShift, aHidEvent.HasModifierControl, aHidEvent.HasModifierAlt, aHidEvent.HasModifierWindows);
+            _actions.Add(action);
+            if (_shouldRaiseAction)
+            {
+              usageAction.ExecuteActionIfNeeded(action);
+            }
           }
         }
-
-        //Do some extra checks if our device is a gamepad
-        if (aHidEvent.Device.IsGamePad)
+        else if (aHidEvent.IsKeyboard && aHidEvent.IsButtonDown && !GUIWindowManager.NeedsTextInput)
         {
-          //Check if dpad needs to be handled too
-          HidListener.LogInfo("HID: try mapping dpad {0}", aHidEvent.GetDirectionPadState());
-          const int KDPadButtonOffset = 1000; //This is our magic dpad button offset. Should be good enough as it leaves us with 998 genuine buttons. 
-          ushort dpadFakeUsage = (ushort)(KDPadButtonOffset + (int)aHidEvent.GetDirectionPadState());
-          _actions.Add(usageAction.GetAction(dpadFakeUsage.ToString(), aHidEvent.IsBackground, aHidEvent.IsRepeat));
+          //Keyboard handling
+          ushort virtualKey = aHidEvent.RawInput.keyboard.VKey;
+          HidListener.LogInfo("HID: try mapping virtual code 0x{0}", virtualKey.ToString("X4"));
+          HidUsageAction.ConditionalAction action = usageAction.GetAction(virtualKey.ToString(), aHidEvent.IsBackground, aHidEvent.IsRepeat, aHidEvent.HasModifierShift, aHidEvent.HasModifierControl, aHidEvent.HasModifierAlt, aHidEvent.HasModifierWindows);
+          _actions.Add(action);
           if (_shouldRaiseAction)
           {
-            usageAction.MapAction(dpadFakeUsage, aHidEvent.IsBackground, aHidEvent.IsRepeat);
+            usageAction.ExecuteActionIfNeeded(action);
           }
         }
       }

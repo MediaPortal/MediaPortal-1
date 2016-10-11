@@ -587,10 +587,10 @@ Section "MediaPortal core files (required)" SecCore
   File "${git_ROOT}\Packages\MediaPortal.TagLib.2.1.0.2\lib\net40\taglib-sharp.dll"
   ; SharpLibHid
   SetOutPath "$MPdir.Base\"
-  File "${git_ROOT}\Packages\SharpLibHid.1.3.1\lib\net20\SharpLibHid.dll"
+  File "${git_ROOT}\Packages\SharpLibHid.1.4.2\lib\net40\SharpLibHid.dll"
   ; SharpLibWin32
   SetOutPath "$MPdir.Base\"
-  File "${git_ROOT}\Packages\SharpLibWin32.0.0.7\lib\net20\SharpLibWin32.dll"
+  File "${git_ROOT}\Packages\SharpLibWin32.0.0.9\lib\net20\SharpLibWin32.dll"
   ; SharpLibDisplay
   SetOutPath "$MPdir.Base\"
   File "${git_ROOT}\Packages\SharpLibDisplay.0.2.5\lib\net40\SharpLibDisplay.dll"

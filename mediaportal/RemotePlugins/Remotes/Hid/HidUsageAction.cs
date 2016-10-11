@@ -121,14 +121,18 @@ namespace MediaPortal.InputDevices
     /// </summary>
     private class Button
     {
-      private readonly List<ConditionalAction> _actions = new List<ConditionalAction>();
+      private readonly List<ConditionalAction> _actions;
 
-      public Button(string newCode, string newName, bool aBackground, bool aRepeat, List<ConditionalAction> aActions)
+      public Button(string aCode, string aName, bool aBackground, bool aRepeat, bool aShift, bool aCtrl, bool aAlt, bool aWin, List<ConditionalAction> aActions)
       {
-        Code = newCode;
-        Name = newName;
+        Code = aCode;
+        Name = aName;
         Background = aBackground;
         Repeat = aRepeat;
+        NeedsModifierShift = aShift;
+        NeedsModifierControl = aCtrl;
+        NeedsModifierAlt = aAlt;
+        NeedsModifierWindows = aWin;
         _actions = aActions;
       }
 
@@ -145,6 +149,29 @@ namespace MediaPortal.InputDevices
       /// </summary>
       public bool Repeat { get; private set; }
 
+      /// <summary>
+      ///   Tells whether this button needs shift modifier.
+      /// </summary>
+      public bool NeedsModifierShift { get; private set; }
+
+      /// <summary>
+      ///   Tells whether this button needs control modifier.
+      /// </summary>
+      public bool NeedsModifierControl { get; private set; }
+
+      /// <summary>
+      ///   Tells whether this button needs alt modifier.
+      /// </summary>
+      public bool NeedsModifierAlt { get; private set; }
+
+      /// <summary>
+      ///   Tells whether this button needs windows modifier.
+      /// </summary>
+      public bool NeedsModifierWindows { get; private set; }
+
+      /// <summary>
+      /// Actions this buttons can trigger.
+      /// </summary>
       public List<ConditionalAction> Actions
       {
         get { return _actions; }
@@ -155,6 +182,46 @@ namespace MediaPortal.InputDevices
 
     #region Implementation
 
+
+    /// <summary>
+    /// Convert an XML attribute value to boolean
+    /// </summary>
+    /// <param name="aAttribute"></param>
+    /// <param name="aDefault"></param>
+    /// <returns></returns>
+    public static bool AttributeValueToBoolean(XmlAttribute aAttribute, bool aDefault=false)
+    {
+      if (aAttribute == null)
+      {
+        return aDefault;
+      }
+
+      return AttributeValueToBoolean(aAttribute.Value, aDefault);
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="aValue"></param>
+    /// <param name="aDefault"></param>
+    /// <returns></returns>
+    public static bool AttributeValueToBoolean(string aValue, bool aDefault = false)
+    {
+      string val = aValue.ToLower();
+
+      if (val.Equals("true") || val.Equals("on") || val.Equals("enabled") || val.Equals("1"))
+      {
+        return true;
+      }
+
+      if (val.Equals("false") || val.Equals("off") || val.Equals("disabled") || val.Equals("0"))
+      {
+        return false;
+      }
+
+      Log.Warn("HID XML configuration: can't parse attribute value '{0}' using default '{1}' instead.", aValue, aDefault);
+      return aDefault;      
+    }
 
     /// <summary>
     /// Load mapping from XML file
@@ -176,7 +243,7 @@ namespace MediaPortal.InputDevices
         //Get element name and code
         var code = nodeButton.Attributes["code"].Value;
 
-        //We do not require a name attribute anymore as the code itself can in most cases used as a name too
+        //We do not require a name attribute anymore as the code itself can in most cases be used as a name too
         var name = "";
         var nameAttribute = nodeButton.Attributes["name"];
         if (nameAttribute != null)
@@ -191,28 +258,22 @@ namespace MediaPortal.InputDevices
         }
 
         //Check if this command is supported while MP is in background
-        var background = false;
-        if (nodeButton.Attributes["background"] != null &&
-            (nodeButton.Attributes["background"].Value == "true" ||
-             nodeButton.Attributes["background"].Value == "1"))
-        {
-          background = true;
-        }
+        bool background = AttributeValueToBoolean(nodeButton.Attributes["background"]);
 
         //Check if this command supports repeats
-        bool repeat = false;
-        if (nodeButton.Attributes["repeat"] != null &&
-            (nodeButton.Attributes["repeat"].Value == "true" ||
-             nodeButton.Attributes["repeat"].Value == "1"))
-        {
-            repeat = true;
-        }
+        bool repeat = AttributeValueToBoolean(nodeButton.Attributes["repeat"]);
+
+        // Get the required keyboard modifiers 
+        bool shift = AttributeValueToBoolean(nodeButton.Attributes["shift"]);
+        bool ctrl = AttributeValueToBoolean(nodeButton.Attributes["ctrl"]);
+        bool alt = AttributeValueToBoolean(nodeButton.Attributes["alt"]);
+        bool win = AttributeValueToBoolean(nodeButton.Attributes["win"]);
 
         //Now try and parse our usage code using the provided method
         ushort usage = 0;
         if (!aTryParseUsage(code, out usage))
         {
-          Log.Warn("HID XML configuration parser: can't parse usage {0} for button {1}", code, name);
+          Log.Warn("HID: XML loader can't parse usage {0} for button {1}", code, name);
           continue;
         }
 
@@ -252,77 +313,35 @@ namespace MediaPortal.InputDevices
             cmdProperty, cmdKeyChar, cmdKeyCode, sound, focus);
           actions.Add(conditionMap);
         }
-        var button = new Button(code, name, background, repeat, actions);
+        var button = new Button(code, name, background, repeat, shift, ctrl, alt, win, actions);
         _buttons.Add(button);
       }
       IsLoaded = true;
     }
 
-    /// <summary>
-    ///   Evaluates the button number, gets its mapping and executes the action
-    /// </summary>
-    /// <param name="btnCode">Button code (ref: XML file)</param>
-    public bool MapAction(int btnCode, bool aIsBackground, bool aIsRepeat)
-    {
-      return DoMapAction(btnCode.ToString(), aIsBackground, aIsRepeat, -1);
-    }
 
     /// <summary>
-    ///   Evaluates the button number, gets its mapping and executes the action
+    /// Execute the given conditional action if needed.
     /// </summary>
-    /// <param name="btnCode">Button code (ref: XML file)</param>
-    public bool MapAction(string btnCode, bool aIsBackground, bool aIsRepeat)
+    /// <param name="aAction">The action we want to conditionally execute.</param>
+    /// <param name="aProcessId">Process-ID for close/kill commands.</param>
+    /// <returns></returns>
+    public bool ExecuteActionIfNeeded(ConditionalAction aAction, int aProcessId = -1)
     {
-      return DoMapAction(btnCode, aIsBackground, aIsRepeat, -1);
-    }
-
-    /// <summary>
-    ///   Evaluates the button number, gets its mapping and executes the action with an optional parameter
-    /// </summary>
-    /// <param name="btnCode">Button code (ref: XML file)</param>
-    /// <param name="processID">Process-ID for close/kill commands</param>
-    public bool MapAction(int btnCode, bool aIsBackground, bool aIsRepeat, int processID)
-    {
-      return DoMapAction(btnCode.ToString(), aIsBackground, aIsRepeat, processID);
-    }
-
-    /// <summary>
-    ///   Evaluates the button number, gets its mapping and executes the action with an optional parameter
-    /// </summary>
-    /// <param name="btnCode">Button code (ref: XML file)</param>
-    /// <param name="processID">Process-ID for close/kill commands</param>
-    public bool MapAction(string btnCode, bool aIsBackground, bool aIsRepeat, int processID)
-    {
-      return DoMapAction(btnCode, aIsBackground, aIsRepeat, processID);
-    }
-
-    /// <summary>
-    ///   Evaluates the button number, gets its mapping and executes the action
-    /// </summary>
-    /// <param name="btnCode">Button code (ref: XML file)</param>
-    /// <param name="processID">Process-ID for close/kill commands</param>
-    private bool DoMapAction(string btnCode, bool aIsBackground, bool aIsRepeat, int processID)
-    {
-      if (!IsLoaded) // No mapping loaded
-      {
-        Log.Info("Map: No button mapping loaded");
-        return false;
-      }
-      ConditionalAction map = null;
-      map = GetAction(btnCode, aIsBackground, aIsRepeat);
-      if (map == null)
+      if (aAction == null)
       {
         return false;
       }
+
 #if DEBUG
-      Log.Info("{0} / {1} / {2} / {3}", map.Condition, map.ConProperty, map.Command, map.CmdProperty);
+      Log.Info("{0} / {1} / {2} / {3}", aAction.Condition, aAction.ConProperty, aAction.Command, aAction.CmdProperty);
 #endif
       Action action;
-      if (map.Sound != string.Empty)
+      if (aAction.Sound != string.Empty)
       {
-        Util.Utils.PlaySound(map.Sound, false, true);
+        Util.Utils.PlaySound(aAction.Sound, false, true);
       }
-      if (map.Focus && !GUIGraphicsContext.HasFocus)
+      if (aAction.Focus && !GUIGraphicsContext.HasFocus)
       {
         GUIGraphicsContext.ResetLastActivity();
         var msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GETFOCUS, 0, 0, 0, 0, 0, null);
@@ -330,44 +349,44 @@ namespace MediaPortal.InputDevices
         GUIGraphicsContext.SendMessage(msg);
         return true;
       }
-      switch (map.Command)
+      switch (aAction.Command)
       {
         case "ACTION": // execute Action x
-          var key = new Key(map.CmdKeyChar, map.CmdKeyCode);
+          var key = new Key(aAction.CmdKeyChar, aAction.CmdKeyCode);
 #if DEBUG
-          Log.Info("Executing: key {0} / {1} / Action: {2} / {3}", map.CmdKeyChar, map.CmdKeyCode,
-            map.CmdProperty,
-            ((Action.ActionType) Convert.ToInt32(map.CmdProperty)).ToString());
+          Log.Info("Executing: key {0} / {1} / Action: {2} / {3}", aAction.CmdKeyChar, aAction.CmdKeyCode,
+            aAction.CmdProperty,
+            ((Action.ActionType)Convert.ToInt32(aAction.CmdProperty)).ToString());
 #endif
-          action = new Action(key, (Action.ActionType) Convert.ToInt32(map.CmdProperty), 0, 0);
+          action = new Action(key, (Action.ActionType)Convert.ToInt32(aAction.CmdProperty), 0, 0);
           GUIGraphicsContext.OnAction(action);
           break;
 
         case "KEY": // send Key x
-          SendKeys.SendWait(map.CmdProperty);
+          SendKeys.SendWait(aAction.CmdProperty);
           break;
 
         case "WINDOW": // activate Window x
           GUIGraphicsContext.ResetLastActivity();
           GUIMessage msg;
-          if ((Convert.ToInt32(map.CmdProperty) == (int) GUIWindow.Window.WINDOW_HOME) ||
-              (Convert.ToInt32(map.CmdProperty) == (int) GUIWindow.Window.WINDOW_SECOND_HOME))
+          if ((Convert.ToInt32(aAction.CmdProperty) == (int)GUIWindow.Window.WINDOW_HOME) ||
+              (Convert.ToInt32(aAction.CmdProperty) == (int)GUIWindow.Window.WINDOW_SECOND_HOME))
           {
             if (_basicHome)
             {
               msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GOTO_WINDOW, 0, 0, 0,
-                (int) GUIWindow.Window.WINDOW_SECOND_HOME, 0, null);
+                (int)GUIWindow.Window.WINDOW_SECOND_HOME, 0, null);
             }
             else
             {
               msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GOTO_WINDOW, 0, 0, 0,
-                (int) GUIWindow.Window.WINDOW_HOME, 0, null);
+                (int)GUIWindow.Window.WINDOW_HOME, 0, null);
             }
           }
           else
           {
             msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GOTO_WINDOW, 0, 0, 0,
-              Convert.ToInt32(map.CmdProperty),
+              Convert.ToInt32(aAction.CmdProperty),
               0, null);
           }
 
@@ -387,12 +406,12 @@ namespace MediaPortal.InputDevices
 
         case "POWER": // power down commands
 
-          if ((map.CmdProperty == "STANDBY") || (map.CmdProperty == "HIBERNATE"))
+          if ((aAction.CmdProperty == "STANDBY") || (aAction.CmdProperty == "HIBERNATE"))
           {
             GUIGraphicsContext.ResetLastActivity();
           }
 
-          switch (map.CmdProperty)
+          switch (aAction.CmdProperty)
           {
             case "EXIT":
               action = new Action(Action.ActionType.ACTION_EXIT, 0, 0);
@@ -422,26 +441,26 @@ namespace MediaPortal.InputDevices
           break;
 
         case "PROCESS":
-        {
-          GUIGraphicsContext.ResetLastActivity();
-          if (processID > 0)
           {
-            var proc = Process.GetProcessById(processID);
-            if (null != proc)
+            GUIGraphicsContext.ResetLastActivity();
+            if (aProcessId > 0)
             {
-              switch (map.CmdProperty)
+              var proc = Process.GetProcessById(aProcessId);
+              if (null != proc)
               {
-                case "CLOSE":
-                  proc.CloseMainWindow();
-                  break;
+                switch (aAction.CmdProperty)
+                {
+                  case "CLOSE":
+                    proc.CloseMainWindow();
+                    break;
 
-                case "KILL":
-                  proc.Kill();
-                  break;
+                  case "KILL":
+                    proc.Kill();
+                    break;
+                }
               }
             }
           }
-        }
           break;
 
         default:
@@ -450,34 +469,63 @@ namespace MediaPortal.InputDevices
       return true;
     }
 
+
+
     /// <summary>
-    ///   Get mappings for a given button code based on the current conditions
+    /// /// Get mappings for a given button code based on the current conditions.
     /// </summary>
-    /// <param name="btnCode">Button code (ref: XML file)</param>
-    /// <returns>Mapping</returns>
-    public ConditionalAction GetAction(string btnCode, bool aIsBackground, bool aIsRepeat)
+    /// <param name="aButtonCode"></param>
+    /// <param name="aIsBackground"></param>
+    /// <param name="aIsRepeat"></param>
+    /// <param name="aShift"></param>
+    /// <param name="aCtrl"></param>
+    /// <param name="aAlt"></param>
+    /// <param name="aWin"></param>
+    /// <returns></returns>
+    public ConditionalAction GetAction(string aButtonCode, bool aIsBackground, bool aIsRepeat, bool aShift, bool aCtrl, bool aAlt, bool aWin)
     {
       Button button = null;
       ConditionalAction found = null;
 
-      foreach (var btn in _buttons)
+      // Try find a button that's matching the provided criteria
+      foreach (Button btn in _buttons)
       {
-        if (btnCode == btn.Code)
+        if (aButtonCode == btn.Code)
         {
           if (aIsBackground && !btn.Background)
           {
             //We don't proceed button while in background unless they are marked as supporting background
-            HidListener.LogInfo("HID: button not supported while in background");
-            return null;
+            continue;
           }
 
           if (aIsRepeat && !btn.Repeat)
           {
             //We don't proceed button repeat unless otherwise specified
-            HidListener.LogInfo("HID: button does not support repeat");
-            return null;
+            continue;
           }
 
+          //We need our modifiers to match too
+          if (aShift != btn.NeedsModifierShift)
+          {
+            continue;
+          }
+
+          if (aCtrl != btn.NeedsModifierControl)
+          {
+            continue;
+          }
+
+          if (aAlt != btn.NeedsModifierAlt)
+          {
+            continue;
+          }
+
+          if (aWin != btn.NeedsModifierWindows)
+          {
+            continue;
+          }
+
+          //We are happy with this button
           button = btn;
           break;
         }
