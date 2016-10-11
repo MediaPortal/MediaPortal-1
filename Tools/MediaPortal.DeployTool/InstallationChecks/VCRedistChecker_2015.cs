@@ -25,15 +25,15 @@ using System.Windows.Forms;
 
 namespace MediaPortal.DeployTool.InstallationChecks
 {
-  internal class VCRedistChecker2013 : IInstallationPackage
+  internal class VcRedistChecker2015 : IInstallationPackage
   {
-    public static string prg = "VCRedist2013";
+    public static string prg = "VCRedist2015";
 
     private readonly string _fileName = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString(prg, "FILE");
 
     public string GetDisplayName()
     {
-      return "MS Visual C++ 2013";
+      return "MS Visual C++ 2015";
     }
 
     public bool Download()
@@ -68,7 +68,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
 
     public bool UnInstall()
     {
-      Utils.UninstallMSI("{FF66E9F6-83E7-3A3E-AF14-8DE9A809A6A4}");
+      Utils.UninstallMSI("{2e085fd2-a3e4-4b39-8e10-6b8d35f55244}");
       return true;
     }
 
@@ -96,15 +96,15 @@ namespace MediaPortal.DeployTool.InstallationChecks
       string InstallDir = Environment.GetEnvironmentVariable("SystemRoot") + "\\system32\\";
       string[] dll = new string[7];
       //CRT
-      dll[0] = "msvcp120.dll";
-      dll[1] = "msvcr120.dll";
+      dll[0] = "msvcp140.dll";
+      dll[1] = "msvcr140.dll";
       //MFC
-      dll[2] = "mfc120.dll";
-      dll[3] = "mfc120u.dll";
-      dll[4] = "mfcm120.dll";
-      dll[5] = "mfcm120u.dll";
+      dll[2] = "mfc140.dll";
+      dll[3] = "mfc140u.dll";
+      dll[4] = "mfcm140.dll";
+      dll[5] = "mfcm140u.dll";
       //ATL
-      dll[6] = "atl100.dll";
+      dll[6] = "atl110.dll";
 
       for (int i = 0; i < dll.Length; i++)
       {
