@@ -579,34 +579,43 @@ namespace TvPlugin
     /// <param name="useZapDelay">If true, the configured zap delay is used. Otherwise it zaps immediately.</param>
     public void ZapToChannelNumber(int channelNr, bool useZapDelay)
     {
-      IList<GroupMap> channels = CurrentGroup.ReferringGroupMap();
-      if (channelNr >= 0)
+      foreach (ChannelGroup group in m_groups)
       {
-        Log.Debug("channels.Count {0}", channels.Count);
-
-        bool found = false;
-        int iCounter = 0;
-        Channel chan;
-        while (iCounter < channels.Count && found == false)
+        IList<GroupMap> channels = group.ReferringGroupMap();
+        if (channelNr >= 0)
         {
-          chan = ((GroupMap)channels[iCounter]).ReferencedChannel();
+          Log.Debug("channels.Count {0} Channel Nr {1}", channels.Count, channelNr);
 
-          Log.Debug("chan {0}", chan.DisplayName);
-          if (chan.VisibleInGuide)
+          bool found = false;
+          int iCounter = 0;
+          Channel chan;
+          while (iCounter < channels.Count && found == false)
           {
-            if (chan.ChannelNumber == channelNr)
+            chan = ((GroupMap)channels[iCounter]).ReferencedChannel();
+
+            Log.Debug("chan {0}", chan.DisplayName);
+            if (chan.VisibleInGuide)
             {
-              Log.Debug("find channel: iCounter {0}, chan.ChannelNumber {1}, chan.DisplayName {2}, channels.Count {3}",
-                        iCounter, chan.ChannelNumber, chan.DisplayName, channels.Count);
-              found = true;
-              ZapToChannel(iCounter + 1, useZapDelay);
+              foreach (TuningDetail detail in chan.ReferringTuningDetail())
+              {
+                Log.Debug("detail nr {0} id{1}", detail.ChannelNumber, detail.IdChannel);
+
+                if (detail.ChannelNumber == channelNr)
+                {
+                  Log.Debug("find channel: iCounter {0}, detail.ChannelNumber {1}, detail.name {2}, channels.Count {3}",
+                            iCounter, detail.ChannelNumber, detail.Name, channels.Count);
+                  found = true;
+                  SetCurrentGroup(group.GroupName);
+                  ZapToChannel(iCounter + 1, useZapDelay);
+                }
+              }
             }
+            iCounter++;
           }
-          iCounter++;
-        }
-        if (found)
-        {
-          m_zapChannelNr = channelNr;
+          if (found)
+          {
+            m_zapChannelNr = channelNr;
+          }
         }
       }
     }
