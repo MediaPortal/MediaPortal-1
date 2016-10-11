@@ -131,15 +131,13 @@ namespace MediaPortal.DeployTool.InstallationChecks
 
       if (UpgradeDlg.reInstallForce)
       {
-        setup = Process.Start(_fileName,
-                              String.Format("/S /DeployMode --DeployMode /UpdateMode"));
+        setup = Process.Start(_fileName, String.Format("/S"));
       }
       else
       {
       //NSIS installer doesn't want " in parameters (chefkoch)
       //Remember that /D must be the last one         (chefkoch)
-        setup = Process.Start(_fileName,
-                                      String.Format("/S /DeployMode --DeployMode {0} /D={1}", UpdateMode, targetDir));
+        setup = Process.Start(_fileName, String.Format("/S /DeployMode --DeployMode {0} /D={1}", UpdateMode, targetDir));
       }
       if (setup != null)
       {
