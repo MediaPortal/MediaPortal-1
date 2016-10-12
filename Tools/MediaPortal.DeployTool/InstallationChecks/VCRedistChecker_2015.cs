@@ -94,17 +94,14 @@ namespace MediaPortal.DeployTool.InstallationChecks
       }
 
       string InstallDir = Environment.GetEnvironmentVariable("SystemRoot") + "\\system32\\";
-      string[] dll = new string[7];
+      string[] dll = new string[5];
       //CRT
       dll[0] = "msvcp140.dll";
-      dll[1] = "msvcr140.dll";
       //MFC
-      dll[2] = "mfc140.dll";
-      dll[3] = "mfc140u.dll";
-      dll[4] = "mfcm140.dll";
-      dll[5] = "mfcm140u.dll";
-      //ATL
-      dll[6] = "atl110.dll";
+      dll[1] = "mfc140.dll";
+      dll[2] = "mfc140u.dll";
+      dll[3] = "mfcm140.dll";
+      dll[4] = "mfcm140u.dll";
 
       for (int i = 0; i < dll.Length; i++)
       {
