@@ -252,5 +252,4 @@ private:
 		CCritSec m_channelLock;         // Lock for protecting access to m_vecChannels.
     typedef vector<CTsChannel*>::iterator ivecChannels;
 		int m_id;
-		DWORD m_dwTimerResolution;   //Timer resolution variable
 };
