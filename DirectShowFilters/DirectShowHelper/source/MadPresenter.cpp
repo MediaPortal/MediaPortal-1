@@ -415,15 +415,15 @@ HRESULT MPMadPresenter::Stopping()
       Log("MPMadPresenter::Stopping() m_pORCB");
     }
 
-    Log("MPMadPresenter::Stopping() m_pSRCB release 1");
-    if (m_pSRCB)
-      m_pSRCB.Release();
-    Log("MPMadPresenter::Stopping() m_pSRCB release 2");
+    //Log("MPMadPresenter::Stopping() m_pSRCB release 1");
+    //if (m_pSRCB)
+    //  m_pSRCB.Release();
+    //Log("MPMadPresenter::Stopping() m_pSRCB release 2");
 
-    Log("MPMadPresenter::Stopping() m_pORCB release 1");
-    if (m_pORCB)
-      m_pORCB.Release();
-    Log("MPMadPresenter::Stopping() m_pORCB release 2");
+    //Log("MPMadPresenter::Stopping() m_pORCB release 1");
+    //if (m_pORCB)
+    //  m_pORCB.Release();
+    //Log("MPMadPresenter::Stopping() m_pORCB release 2");
 
     if (m_pMediaControl)
     {
@@ -544,35 +544,26 @@ HRESULT MPMadPresenter::ClearBackground(LPCSTR name, REFERENCE_TIME frameStart, 
   m_dwHeight = (WORD)fullOutputRect->bottom - (WORD)fullOutputRect->top; // added back
   m_dwWidth = (WORD)fullOutputRect->right - (WORD)fullOutputRect->left;
 
-  RenderToTexture(m_pMPTextureGui);
+  RenderToTextureGUI(m_pMPTextureGui);
 
   if (SUCCEEDED(hr = m_deviceState.Store()))
   {
-    if (SUCCEEDED(hr = m_pCallback->RenderGui(videoWidth, videoHeight, videoWidth, videoHeight)))
+    hr = m_pCallback->RenderGui(videoWidth, videoHeight, videoWidth, videoHeight);
+    if (m_pCallback->IsUiVisible())
     {
-      //Log("ClearBackground() hr: 0x%08x - 1", hr);
-      if (m_pCallback->IsUiVisible())
+      for (int x = 0; x < m_pMadVRFrameCount; ++x) // need to let in a loop to slow down why ???
       {
-        for (int x = 0; x < m_pMadVRFrameCount; ++x) // need to let in a loop to slow down why ???
+        if (x <= 3)
         {
-          if (x <= 3)
-          {
-            // commented out (it slown down video on GPU Nvidia)
-            m_pDevice->PresentEx(nullptr, nullptr, nullptr, nullptr, D3DPRESENT_FORCEIMMEDIATE);
-            //Log("MPMadPresenter::ClearBackground() IsUiVisible");
-            // Render frame to try to fix HD4XXX GPU flickering issue
-            //Com::SmartQIPtr<IMadVROsdServices> pOR = m_pMad;
-            //pOR->OsdRedrawFrame();
-          }
+          // commented out (it slown down video on GPU Nvidia)
+          m_pDevice->PresentEx(nullptr, nullptr, nullptr, nullptr, D3DPRESENT_FORCEIMMEDIATE);
+          //Log("MPMadPresenter::ClearBackground() IsUiVisible");
         }
       }
-      uiVisible = hr == S_OK ? true : false;
-    }
-    else
-    {
-      return E_UNEXPECTED;
     }
   }
+
+  uiVisible = hr == S_OK ? true : false;
 
   //Log("ClearBackground() hr: 0x%08x - 2", hr);
 
@@ -659,35 +650,26 @@ HRESULT MPMadPresenter::RenderOsd(LPCSTR name, REFERENCE_TIME frameStart, RECT* 
     }
   }
 
-  RenderToTexture(m_pMPTextureOsd);
+  RenderToTextureOSD(m_pMPTextureOsd);
 
   if (SUCCEEDED(hr = m_deviceState.Store()))
   {
-    if (SUCCEEDED(hr = m_pCallback->RenderOverlay(videoWidth, videoHeight, videoWidth, videoHeight)))
+    hr = m_pCallback->RenderOverlay(videoWidth, videoHeight, videoWidth, videoHeight);
+    if (m_pCallback->IsUiVisible())
     {
-      //Log("RenderOsd() hr: 0x%08x - 1", hr);
-      if (m_pCallback->IsUiVisible())
+      for (int x = 0; x < m_pMadVRFrameCount; ++x) // need to let in a loop to slow down why ???
       {
-        for (int x = 0; x < m_pMadVRFrameCount; ++x) // need to let in a loop to slow down why ???
+        if (x <= 3)
         {
-          if (x <= 3)
-          {
-            // commented out (it slown down video on GPU Nvidia)
-            m_pDevice->PresentEx(nullptr, nullptr, nullptr, nullptr, D3DPRESENT_FORCEIMMEDIATE);
-            //Log("MPMadPresenter::RenderOsd() IsUiVisible");
-            // Render frame to try to fix HD4XXX GPU flickering issue
-            //Com::SmartQIPtr<IMadVROsdServices> pOR = m_pMad;
-            //pOR->OsdRedrawFrame();
-          }
+          // commented out (it slown down video on GPU Nvidia)
+          m_pDevice->PresentEx(nullptr, nullptr, nullptr, nullptr, D3DPRESENT_FORCEIMMEDIATE);
+          //Log("MPMadPresenter::RenderOsd() IsUiVisible");
         }
       }
-      uiVisible = hr == S_OK ? true : false;
-    }
-    else
-    {
-      return E_UNEXPECTED;
     }
   }
+
+  uiVisible = hr == S_OK ? true : false;
 
   //Log("RenderOsd() hr: 0x%08x - 2", hr);
 
@@ -706,7 +688,24 @@ HRESULT MPMadPresenter::RenderOsd(LPCSTR name, REFERENCE_TIME frameStart, RECT* 
   return uiVisible ? CALLBACK_USER_INTERFACE : CALLBACK_INFO_DISPLAY;
 }
 
-void MPMadPresenter::RenderToTexture(IDirect3DTexture9* pTexture)
+void MPMadPresenter::RenderToTextureOSD(IDirect3DTexture9* pTexture)
+{
+  if (!m_pDevice)
+    return;
+  HRESULT hr = E_UNEXPECTED;
+  IDirect3DSurface9* pSurface = nullptr; // This will be released by C# side
+  if (SUCCEEDED(hr = pTexture->GetSurfaceLevel(0, &pSurface)))
+  {
+    if (SUCCEEDED(hr = m_pCallback->SetRenderTarget(reinterpret_cast<DWORD>(pSurface))))
+    {
+      // TODO is it needed ?
+      hr = m_pDevice->Clear(0, nullptr, D3DCLEAR_TARGET, D3DXCOLOR(0, 0, 0, 0), 1.0f, 0);
+    }
+  }
+  //Log("RenderToTexture hr: 0x%08x", hr);
+}
+
+void MPMadPresenter::RenderToTextureGUI(IDirect3DTexture9* pTexture)
 {
   if (!m_pDevice)
     return;
