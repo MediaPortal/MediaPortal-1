@@ -884,7 +884,7 @@ HRESULT MultiFileWriter::StartThread()
   {
     return E_FAIL;
   }    
-  SetThreadPriority(m_hThreadProc, THREAD_PRIORITY_NORMAL);
+  SetThreadPriority(m_hThreadProc, THREAD_PRIORITY_BELOW_NORMAL);
   
   // Set timer resolution to SYS_TIMER_RES (if possible)
   TIMECAPS tc; 
@@ -906,10 +906,13 @@ void MultiFileWriter::StopThread()
 {
   if (m_hThreadProc)
   {
+    //Make sure the thread runs soon so it can finish processing
+    SetThreadPriority(m_hThreadProc, THREAD_PRIORITY_ABOVE_NORMAL);
     m_bThreadRunning = FALSE;
     m_WakeThreadEvent.Set();
     WaitForSingleObject(m_hThreadProc, INFINITE);	
     m_WakeThreadEvent.Reset();
+    CloseHandle(m_hThreadProc);
     m_hThreadProc = NULL;
   }
   
