@@ -165,7 +165,8 @@ class MPMadPresenter : public CUnknown, public CCritSec
     CCritSec m_dsLock;
 
   private:
-    void RenderToTexture(IDirect3DTexture9* pTexture);
+    void RenderToTextureGUI(IDirect3DTexture9* pTexture);
+    void RenderToTextureOSD(IDirect3DTexture9* pTexture);
     void RenderTexture(IDirect3DVertexBuffer9* pVertexBuf, IDirect3DTexture9* pTexture);
 
     HRESULT SetupOSDVertex(IDirect3DVertexBuffer9* pVertextBuf);
