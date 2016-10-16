@@ -339,13 +339,14 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.ObjContext
       model.LnbTypes.AddObject(new LnbType { IdLnbType = 5, Name = "Ku-Band 10750 MHz", LowBandFrequency = 10750000, HighBandFrequency = -1, SwitchFrequency = -1, IsBandStacked = false });
       model.LnbTypes.AddObject(new LnbType { IdLnbType = 6, Name = "Ku-Band 11250 MHz (NA Legacy)", LowBandFrequency = 11250000, HighBandFrequency = -1, SwitchFrequency = -1, IsBandStacked = false });
       model.LnbTypes.AddObject(new LnbType { IdLnbType = 7, Name = "Ku-Band 11300 MHz", LowBandFrequency = 11300000, HighBandFrequency = -1, SwitchFrequency = -1, IsBandStacked = false });
-      model.LnbTypes.AddObject(new LnbType { IdLnbType = 8, Name = "Ka-Band 21200 MHz", LowBandFrequency = 21200000, HighBandFrequency = -1, SwitchFrequency = -1, IsBandStacked = false });
-      model.LnbTypes.AddObject(new LnbType { IdLnbType = 9, Name = "DishPro Band-Stacked FSS", LowBandFrequency = 10750000, HighBandFrequency = 13850000, SwitchFrequency = -1, IsBandStacked = true });
-      model.LnbTypes.AddObject(new LnbType { IdLnbType = 10, Name = "DishPro Band-Stacked DBS", LowBandFrequency = 11250000, HighBandFrequency = 14350000, SwitchFrequency = -1, IsBandStacked = true });
-      model.LnbTypes.AddObject(new LnbType { IdLnbType = 11, Name = "NA Band-Stacked FSS", LowBandFrequency = 10750000, HighBandFrequency = 10175000, SwitchFrequency = -1, IsBandStacked = true });
-      model.LnbTypes.AddObject(new LnbType { IdLnbType = 12, Name = "NA Band-Stacked DBS", LowBandFrequency = 11250000, HighBandFrequency = 10675000, SwitchFrequency = -1, IsBandStacked = true });
-      model.LnbTypes.AddObject(new LnbType { IdLnbType = 13, Name = "Sadoun Band-Stacked", LowBandFrequency = 10100000, HighBandFrequency = 10750000, SwitchFrequency = -1, IsBandStacked = true });
-      model.LnbTypes.AddObject(new LnbType { IdLnbType = 14, Name = "C-Band Band-Stacked", LowBandFrequency = 5150000, HighBandFrequency = 5750000, SwitchFrequency = -1, IsBandStacked = true });
+      model.LnbTypes.AddObject(new LnbType { IdLnbType = 8, Name = "Ka-Band 20450 MHz", LowBandFrequency = 20450000, HighBandFrequency = -1, SwitchFrequency = -1, IsBandStacked = false });
+      model.LnbTypes.AddObject(new LnbType { IdLnbType = 9, Name = "Ka-Band 21200 MHz", LowBandFrequency = 21200000, HighBandFrequency = -1, SwitchFrequency = -1, IsBandStacked = false });
+      model.LnbTypes.AddObject(new LnbType { IdLnbType = 10, Name = "DishPro Band-Stacked FSS", LowBandFrequency = 10750000, HighBandFrequency = 13850000, SwitchFrequency = -1, IsBandStacked = true });
+      model.LnbTypes.AddObject(new LnbType { IdLnbType = 11, Name = "DishPro Band-Stacked DBS", LowBandFrequency = 11250000, HighBandFrequency = 14350000, SwitchFrequency = -1, IsBandStacked = true });
+      model.LnbTypes.AddObject(new LnbType { IdLnbType = 12, Name = "NA Band-Stacked FSS", LowBandFrequency = 10750000, HighBandFrequency = 10175000, SwitchFrequency = -1, IsBandStacked = true });
+      model.LnbTypes.AddObject(new LnbType { IdLnbType = 13, Name = "NA Band-Stacked DBS", LowBandFrequency = 11250000, HighBandFrequency = 10675000, SwitchFrequency = -1, IsBandStacked = true });
+      model.LnbTypes.AddObject(new LnbType { IdLnbType = 14, Name = "Sadoun Band-Stacked", LowBandFrequency = 10100000, HighBandFrequency = 10750000, SwitchFrequency = -1, IsBandStacked = true });
+      model.LnbTypes.AddObject(new LnbType { IdLnbType = 15, Name = "C-Band Band-Stacked", LowBandFrequency = 5150000, HighBandFrequency = 5750000, SwitchFrequency = -1, IsBandStacked = true });
 
       // List of supported video and combined video/audio encoders.
       model.VideoEncoders.AddObject(new VideoEncoder { IdVideoEncoder = 1, Priority = 1, ClassId = "{4d997eb1-46f5-4818-b5ce-6900aa7ed43b}", Name = "AVerMedia" });
