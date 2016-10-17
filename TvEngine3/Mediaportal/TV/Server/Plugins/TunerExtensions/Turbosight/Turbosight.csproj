@@ -88,7 +88,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\..\..\..\..\..\..\Packages\TBS.CI.API.1.0.1.5\build\TBS.CI.API.targets" Condition="Exists('..\..\..\..\..\..\..\Packages\TBS.CI.API.1.0.1.5\build\TBS.CI.API.targets')" />

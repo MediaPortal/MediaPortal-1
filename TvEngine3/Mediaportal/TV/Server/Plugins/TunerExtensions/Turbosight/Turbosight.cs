@@ -241,45 +241,56 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
     #region delegates
 
     /// <summary>
-    /// Open the conditional access interface for a specific Turbosight device.
+    /// Open the conditional access interface associated with the first
+    /// instance of a Turbosight product.
+    /// </summary>
+    /// <param name="tunerFilter">The tuner filter.</param>
+    /// <param name="deviceName">The corresponding <see cref="DsDevice"/> name.</param>
+    /// <returns>a handle that the DLL can use to identify this interface for future function calls</returns>
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    private delegate IntPtr On_Start_CI(IBaseFilter tunerFilter, [MarshalAs(UnmanagedType.LPWStr)] string deviceName);
+
+    /// <summary>
+    /// Open the conditional access interface associated with a specific
+    /// Turbosight device.
     /// </summary>
     /// <param name="tunerFilter">The tuner filter.</param>
     /// <param name="deviceName">The corresponding <see cref="DsDevice"/> name.</param>
     /// <param name="deviceIndex">A unique index for the device. This index enables CI support for multiple instances of a product.</param>
-    /// <returns>a handle that the DLL can use to identify this device for future function calls</returns>
+    /// <returns>a handle that the DLL can use to identify this interface for future function calls</returns>
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    private delegate IntPtr On_Start_CI(IBaseFilter tunerFilter, [MarshalAs(UnmanagedType.LPWStr)] string deviceName, int deviceIndex);
+    private delegate IntPtr On_Start_CI2(IBaseFilter tunerFilter, [MarshalAs(UnmanagedType.LPWStr)] string deviceName, int deviceIndex);
 
     /// <summary>
-    /// Check whether a CAM is present in the CI slot associated with a specific Turbosight device.
+    /// Check whether a CAM is present in the interface's CI slot.
     /// </summary>
-    /// <param name="handle">The handle allocated to this device.</param>
+    /// <param name="handle">The handle allocated to this interface.</param>
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     [return: MarshalAs(UnmanagedType.I1)]
     private delegate bool Camavailable(IntPtr handle);
 
     /// <summary>
-    /// Exchange MMI messages with the CAM.
+    /// Exchange MMI messages with the CAM in the interface's CI slot.
     /// </summary>
-    /// <param name="handle">The handle allocated to this device.</param>
+    /// <param name="handle">The handle allocated to this interface.</param>
     /// <param name="command">The MMI command.</param>
     /// <param name="response">The MMI response.</param>
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     private delegate void TBS_ci_MMI_Process(IntPtr handle, IntPtr command, IntPtr response);
 
     /// <summary>
-    /// Send PMT to the CAM.
+    /// Send PMT to the CAM in the interface's CI slot.
     /// </summary>
-    /// <param name="handle">The handle allocated to this device.</param>
+    /// <param name="handle">The handle allocated to this interface.</param>
     /// <param name="pmt">The PMT command.</param>
     /// <param name="pmtLength">The length of the PMT.</param>
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     private delegate void TBS_ci_SendPmt(IntPtr handle, [MarshalAs(UnmanagedType.LPArray)] byte[] pmt, ushort pmtLength);
 
     /// <summary>
-    /// Close the conditional access interface for a specific Turbosight device.
+    /// Close a conditional access interface handle.
     /// </summary>
-    /// <param name="handle">The handle allocated to this device.</param>
+    /// <param name="handle">The handle allocated to this interface.</param>
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     private delegate void On_Exit_CI(IntPtr handle);
 
@@ -309,6 +320,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
 
     // This variable tracks the number of open CI API instances which corresponds with used DLL indices.
     private static int _ciApiCount = 0;
+    private static HashSet<string> _ciApiOpenDevices = new HashSet<string>();
 
     // Conditional access API instance variables.
     private int _ciApiIndex = 0;
@@ -318,6 +330,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
 
     // Delegate instances for each CI API function.
     private On_Start_CI _onStartCi = null;
+    private On_Start_CI2 _onStartCi2 = null;
     private Camavailable _camAvailable = null;
     private TBS_ci_MMI_Process _mmiProcess = null;
     private TBS_ci_SendPmt _sendPmt = null;
@@ -397,19 +410,33 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
 
       try
       {
-        IntPtr function = NativeMethods.GetProcAddress(_ciApiLibHandle, "On_Start_CI");
+        bool isOnStartCi2 = true;
+        IntPtr function = NativeMethods.GetProcAddress(_ciApiLibHandle, "On_Start_CI2");
         if (function == IntPtr.Zero)
         {
-          this.LogError("Turbosight: failed to locate the On_Start_CI function");
-          return false;
+          isOnStartCi2 = false;
+          function = NativeMethods.GetProcAddress(_ciApiLibHandle, "On_Start_CI");
+          if (function == IntPtr.Zero)
+          {
+            this.LogError("Turbosight: failed to locate the On_Start_CI and On_Start_CI2 functions");
+            return false;
+          }
+          this.LogWarn("Turbosight: failed to locate the On_Start_CI2 function, the CI interface will only work for one instance of each product");
         }
         try
         {
-          _onStartCi = (On_Start_CI)Marshal.GetDelegateForFunctionPointer(function, typeof(On_Start_CI));
+          if (isOnStartCi2)
+          {
+            _onStartCi2 = (On_Start_CI2)Marshal.GetDelegateForFunctionPointer(function, typeof(On_Start_CI2));
+          }
+          else
+          {
+            _onStartCi = (On_Start_CI)Marshal.GetDelegateForFunctionPointer(function, typeof(On_Start_CI));
+          }
         }
         catch (Exception ex)
         {
-          this.LogError(ex, "Turbosight: failed to load the On_Start_CI function");
+          this.LogError(ex, "Turbosight: failed to load the On_Start_CI{0} function", isOnStartCi2 ? string.Empty : "2");
           return false;
         }
 
@@ -1427,8 +1454,21 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
         return false;
       }
 
+      if (_onStartCi2 == null && _ciApiOpenDevices.Contains(_tunerFilterName))
+      {
+        this.LogError("Turbosight: conditional access interface is already open for another product instance");
+        return false;
+      }
+
       // Attempt to initialise the interface.
-      _ciApiHandle = _onStartCi(_tunerFilter, _tunerFilterName, _ciApiIndex);
+      if (_onStartCi2 != null)
+      {
+        _ciApiHandle = _onStartCi2(_tunerFilter, _tunerFilterName, _ciApiIndex);
+      }
+      else
+      {
+        _ciApiHandle = _onStartCi(_tunerFilter, _tunerFilterName);
+      }
       if (_ciApiHandle == IntPtr.Zero || _ciApiHandle == NativeMethods.INVALID_HANDLE_VALUE)
       {
         this.LogWarn("Turbosight: interface handle is null");
@@ -1445,6 +1485,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
       _isCamPresent = _camAvailable(_ciApiHandle);
       this.LogDebug("Turbosight: CAM available = {0}", _isCamPresent);
 
+      _ciApiOpenDevices.Add(_tunerFilterName);
       _isCaInterfaceOpen = true;
       StartMmiHandlerThread();
 
@@ -1488,6 +1529,10 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
         {
           _onExitCi(_ciApiHandle);
           _ciApiHandle = IntPtr.Zero;
+          if (isDisposing)
+          {
+            _ciApiOpenDevices.Remove(_tunerFilterName);
+          }
         }
         else
         {
