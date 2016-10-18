@@ -100,7 +100,7 @@ MPMadPresenter::~MPMadPresenter()
         pMadVrCmd.Release();
         Log("MPMadPresenter::Destructor() - restoreDisplayModeNow");
       }
-      m_pMad.Release();
+      m_pMad.FullRelease();
     }
     Log("MPMadPresenter::Destructor() - m_pMad release 2");
 
