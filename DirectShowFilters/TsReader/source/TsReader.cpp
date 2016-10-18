@@ -257,7 +257,7 @@ void StopLogger()
   if (m_hLogger)
   {
     //Make sure the thread runs soon so it can finish processing
-    SetThreadPriority(m_hLogger, THREAD_PRIORITY_ABOVE_NORMAL);
+    SetThreadPriority(m_hLogger, THREAD_PRIORITY_NORMAL);
     m_bLoggerRunning = FALSE;
     m_EndLoggingEvent.Set();
     WaitForSingleObject(m_hLogger, INFINITE);	

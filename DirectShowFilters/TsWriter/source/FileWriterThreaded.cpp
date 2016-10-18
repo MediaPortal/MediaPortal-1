@@ -78,35 +78,37 @@ FileWriterThreaded::~FileWriterThreaded()
 
 HRESULT FileWriterThreaded::Open(LPCWSTR pszFileName)
 {  
-  CAutoLock lock(&m_Lock);
-
-  // Are we already open?
-  if (m_pFileName != NULL)
-  {
-    return E_FAIL;
+  { //Context for CAutoLock
+    CAutoLock lock(&m_Lock);
+  
+    // Are we already open?
+    if (m_pFileName != NULL)
+    {
+      return E_FAIL;
+    }
+  
+    // Is this a valid filename supplied
+    CheckPointer(pszFileName,E_POINTER);
+  
+    long length = wcslen(pszFileName);
+  
+    if(length > MAX_PATH)
+      return ERROR_FILENAME_EXCED_RANGE;
+  
+    // Take a copy of the filename
+    m_pFileName = new wchar_t[length+1];
+    if (m_pFileName == NULL)
+      return E_OUTOFMEMORY;
+  
+    wcscpy(m_pFileName,pszFileName);
+  
+  	if (FAILED(StartThread()))
+  	{
+  		delete[] m_pFileName;
+  		m_pFileName = NULL;
+      return E_FAIL;
+  	}
   }
-
-  // Is this a valid filename supplied
-  CheckPointer(pszFileName,E_POINTER);
-
-  long length = wcslen(pszFileName);
-
-  if(length > MAX_PATH)
-    return ERROR_FILENAME_EXCED_RANGE;
-
-  // Take a copy of the filename
-  m_pFileName = new wchar_t[length+1];
-  if (m_pFileName == NULL)
-    return E_OUTOFMEMORY;
-
-  wcscpy(m_pFileName,pszFileName);
-
-	if (FAILED(StartThread()))
-	{
-		delete[] m_pFileName;
-		m_pFileName = NULL;
-    return E_FAIL;
-	}
 
   m_WakeThreadEvent.Set(); //Trigger thread to open file
 
@@ -418,12 +420,17 @@ HRESULT FileWriterThreaded::PushBuffer()
   }
   
   if (m_pDiskBuffer == NULL) return S_FALSE;
+  UINT qsize;
   { //Context for CAutoLock
     CAutoLock lock(&m_qLock);
+    qsize = m_writeQueue.size();
     m_writeQueue.push_back(m_pDiskBuffer);
     m_pDiskBuffer = NULL;   
   }	  
-  m_WakeThreadEvent.Set();    
+  if (qsize >= 2) //There is too much 'old' data in the buffer, so wake the thread (polling not frequent enough)
+  {              
+    m_WakeThreadEvent.Set();    
+  } 
 	return S_OK;
 }
 
@@ -550,7 +557,7 @@ void FileWriterThreaded::StopThread()
   if (m_hThreadProc)
   {
     //Make sure the thread runs soon so it can finish processing
-    SetThreadPriority(m_hThreadProc, THREAD_PRIORITY_ABOVE_NORMAL);
+    SetThreadPriority(m_hThreadProc, THREAD_PRIORITY_NORMAL);
     m_bThreadRunning = FALSE;
     m_WakeThreadEvent.Set();
     WaitForSingleObject(m_hThreadProc, INFINITE); 
