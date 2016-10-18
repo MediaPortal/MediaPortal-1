@@ -68,7 +68,6 @@
     <Compile Include="Enum\CamType.cs" />
     <Compile Include="Enum\ContentAdvisory.cs" />
     <Compile Include="Enum\ChannelGroupType.cs" />
-    <Compile Include="Enum\SatelliteBroadcastBand.cs" />
     <Compile Include="Enum\EncodeMode.cs" />
     <Compile Include="Enum\QualityType.cs" />
     <Compile Include="Enum\RecordingThumbnailQuality.cs" />
