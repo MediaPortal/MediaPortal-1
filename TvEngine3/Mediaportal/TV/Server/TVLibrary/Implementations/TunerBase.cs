@@ -271,7 +271,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// A dictionary of satellite tuning parameters, specific to this tuner.
     /// The key is the satellite's longitude.
     /// </summary>
-    private IDictionary<int, TunerSatellite> _satellites = new Dictionary<int, TunerSatellite>(100);
+    private IDictionary<int, IList<TunerSatellite>> _satellites = new Dictionary<int, IList<TunerSatellite>>(100);
 
     #endregion
 
@@ -793,9 +793,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
 
           IList<TunerSatellite> tunerSatellites = TunerSatelliteManagement.ListAllTunerSatellitesByTuner(_tunerId, TunerSatelliteRelation.LnbType | TunerSatelliteRelation.Satellite);
           _satellites.Clear();
+          IList<TunerSatellite> satellites = null;
+          int longitude = -1;
           foreach (TunerSatellite tunerSatellite in tunerSatellites)
           {
-            _satellites[tunerSatellite.Satellite.Longitude] = tunerSatellite;
+            if (longitude != tunerSatellite.Satellite.Longitude)
+            {
+              longitude = tunerSatellite.Satellite.Longitude;
+              satellites = new List<TunerSatellite>(5);
+              _satellites[longitude] = satellites;
+            }
+            satellites.Add(tunerSatellite);
           }
         }
       }
@@ -1289,10 +1297,28 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         )
       )
       {
+        // For satellite transmitters, the tuner must be able to receive the
+        // satellite, and one of the corresponding LNBs must be able to receive
+        // the transmitter.
         IChannelSatellite satelliteChannel = channel as IChannelSatellite;
-        if (satelliteChannel == null || _satellites.ContainsKey(satelliteChannel.Longitude))
+        if (satelliteChannel == null)
         {
           return true;
+        }
+
+        IList<TunerSatellite> satellitesForLongitude;
+        if (_satellites.TryGetValue(satelliteChannel.Longitude, out satellitesForLongitude))
+        {
+          foreach (TunerSatellite satellite in satellitesForLongitude)
+          {
+            if (
+              satelliteChannel.Frequency >= satellite.LnbType.InputFrequencyMinimum &&
+              satelliteChannel.Frequency <= satellite.LnbType.InputFrequencyMaximum
+            )
+            {
+              return true;
+            }
+          }
         }
       }
       return false;
@@ -1338,11 +1364,26 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
           TunerSatellite satellite = null;
           if (satelliteChannel != null)
           {
-            if (!_satellites.TryGetValue(satelliteChannel.Longitude, out satellite))
+            IList<TunerSatellite> satellitesForLongitude;
+            if (_satellites.TryGetValue(satelliteChannel.Longitude, out satellitesForLongitude))
+            {
+              foreach (TunerSatellite s in satellitesForLongitude)
+              {
+                if (
+                  satelliteChannel.Frequency >= s.LnbType.InputFrequencyMinimum &&
+                  satelliteChannel.Frequency <= s.LnbType.InputFrequencyMaximum
+                )
+                {
+                  satellite = s;
+                  SatelliteLnbHandler.Convert(ref satelliteChannel, s.SatIpSource, s.LnbType.LowBandFrequency, s.LnbType.HighBandFrequency, s.LnbType.SwitchFrequency, s.LnbType.IsBandStacked, (Tone22kState)s.Tone22kState, s.IsToroidalDish);
+                  break;
+                }
+              }
+            }
+            if (satellite == null)
             {
               throw new TvExceptionSatelliteNotReceivable(_tunerId, Satellite.LongitudeString(satelliteChannel.Longitude));
             }
-            SatelliteLnbHandler.Convert(ref satelliteChannel, satellite.SatIpSource, satellite.LnbType.LowBandFrequency, satellite.LnbType.HighBandFrequency, satellite.LnbType.SwitchFrequency, satellite.LnbType.IsBandStacked, (Tone22kState)satellite.Tone22kState, satellite.IsToroidalDish);
           }
 
           // Extension OnBeforeTune().
