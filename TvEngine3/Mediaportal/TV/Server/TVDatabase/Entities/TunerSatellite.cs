@@ -189,6 +189,21 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private int _toneBurst;
     
         [DataMember]
+        public int Polarisations
+        {
+            get { return _polarisations; }
+            set
+            {
+                if (_polarisations != value)
+                {
+                    _polarisations = value;
+                    OnPropertyChanged("Polarisations");
+                }
+            }
+        }
+        private int _polarisations;
+    
+        [DataMember]
         public bool IsToroidalDish
         {
             get { return _isToroidalDish; }

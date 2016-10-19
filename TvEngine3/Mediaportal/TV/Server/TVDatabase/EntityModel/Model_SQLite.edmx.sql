@@ -735,6 +735,7 @@ CREATE TABLE "TunerSatellites"  (
     "DiseqcMotorPosition" int NOT NULL, 
     "Tone22kState" int NOT NULL, 
     "ToneBurst" int NOT NULL, 
+    "Polarisations" int NOT NULL, 
     "IsToroidalDish" bit NOT NULL,
     CONSTRAINT "FK_SatelliteTunerSatellite" FOREIGN KEY ("IdSatellite")
     REFERENCES "Satellites" ("IdSatellite") ON DELETE CASCADE,

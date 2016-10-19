@@ -601,6 +601,7 @@
     <Property Name="DiseqcMotorPosition" Type="int" Nullable="false" />
     <Property Name="Tone22kState" Type="int" Nullable="false" />
     <Property Name="ToneBurst" Type="int" Nullable="false" />
+    <Property Name="Polarisations" Type="int" Nullable="false" />
     <Property Name="IsToroidalDish" Type="bit" Nullable="false" />
   </EntityType>
   <Association Name="GroupMapChannelGroup">

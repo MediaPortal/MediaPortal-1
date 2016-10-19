@@ -606,6 +606,7 @@
     <Property Name="DiseqcMotorPosition" Type="int" Nullable="false" />
     <Property Name="Tone22kState" Type="int" Nullable="false" />
     <Property Name="ToneBurst" Type="int" Nullable="false" />
+    <Property Name="Polarisations" Type="int" Nullable="false" />
     <Property Name="IsToroidalDish" Type="bool" Nullable="false" />
   </EntityType>
   <Association Name="GroupMapChannelGroup">
@@ -2092,6 +2093,7 @@
           <NavigationProperty Name="LnbType" Relationship="TVDatabaseModel.LnbTypeTunerSatellite" FromRole="TunerSatellite" ToRole="LnbType" />
           <Property Type="Int32" Name="Tone22kState" Nullable="false" />
           <Property Type="Int32" Name="ToneBurst" Nullable="false" />
+          <Property Type="Int32" Name="Polarisations" Nullable="false" />
           <Property Type="Boolean" Name="IsToroidalDish" Nullable="false" />
         </EntityType>
         <Association Name="TunerTunerSatellite">
@@ -2617,6 +2619,7 @@
           <ScalarProperty Name="DiseqcMotorPosition" ColumnName="DiseqcMotorPosition" />
           <ScalarProperty Name="Tone22kState" ColumnName="Tone22kState" />
           <ScalarProperty Name="ToneBurst" ColumnName="ToneBurst" />
+          <ScalarProperty Name="Polarisations" ColumnName="Polarisations" />
           <ScalarProperty Name="IsToroidalDish" ColumnName="IsToroidalDish" />
         </MappingFragment>
       </EntityTypeMapping>
@@ -2745,8 +2748,8 @@
           <ConnectorPoint PointX="2.125" PointY="6.625" />
         </AssociationConnector>
         <AssociationConnector Association="TVDatabaseModel.ChannelConflict">
-          <ConnectorPoint PointX="4.875" PointY="9.84375" />
-          <ConnectorPoint PointX="2.09375" PointY="9.84375" />
+          <ConnectorPoint PointX="4.875" PointY="9.8750025" />
+          <ConnectorPoint PointX="2.09375" PointY="9.8750025" />
           <ConnectorPoint PointX="2.09375" PointY="9.203390299479171" />
         </AssociationConnector>
         <AssociationConnector Association="TVDatabaseModel.ScheduleConflict">
@@ -2791,19 +2794,19 @@
           <ConnectorPoint PointX="8.875" PointY="3.5033268229166667" />
           <ConnectorPoint PointX="8" PointY="3.5033268229166667" />
         </AssociationConnector>
-        <EntityTypeShape EntityType="TVDatabaseModel.TunerSatellite" Width="1.625" PointX="5.5" PointY="6" Height="3.0714322916666656" />
+        <EntityTypeShape EntityType="TVDatabaseModel.TunerSatellite" Width="1.625" PointX="5.5" PointY="5.875" Height="3.2357796223958335" />
         <AssociationConnector Association="TVDatabaseModel.TunerTunerSatellite" ManuallyRouted="false">
           <ConnectorPoint PointX="4.71875" PointY="6.0366422526041656" />
           <ConnectorPoint PointX="4.71875" PointY="6.6433236263020836" />
           <ConnectorPoint PointX="5.5" PointY="6.6433236263020836" />
         </AssociationConnector>
         <AssociationConnector Association="TVDatabaseModel.SatelliteTunerSatellite">
-          <ConnectorPoint PointX="8.25" PointY="8.5982161458333337" />
-          <ConnectorPoint PointX="7.125" PointY="8.5982161458333337" />
+          <ConnectorPoint PointX="8.25" PointY="8.6178898111979159" />
+          <ConnectorPoint PointX="7.125" PointY="8.6178898111979159" />
         </AssociationConnector>
         <AssociationConnector Association="TVDatabaseModel.LnbTypeTunerSatellite">
-          <ConnectorPoint PointX="8.25" PointY="6.957021484375" />
-          <ConnectorPoint PointX="7.125" PointY="6.957021484375" />
+          <ConnectorPoint PointX="8.25" PointY="6.8945214843749989" />
+          <ConnectorPoint PointX="7.125" PointY="6.8945214843749989" />
         </AssociationConnector>
         <AssociationConnector Association="TVDatabaseModel.SatelliteTuningDetail">
           <ConnectorPoint PointX="9.75" PointY="9.2533268229166659" />

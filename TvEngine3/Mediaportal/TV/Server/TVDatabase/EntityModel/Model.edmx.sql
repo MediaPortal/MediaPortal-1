@@ -582,6 +582,7 @@ CREATE TABLE `TunerSatellites`(
 	`DiseqcMotorPosition` int NOT NULL, 
 	`Tone22kState` int NOT NULL, 
 	`ToneBurst` int NOT NULL, 
+	`Polarisations` int NOT NULL, 
 	`IsToroidalDish` bool NOT NULL);
 
 ALTER TABLE `TunerSatellites` ADD PRIMARY KEY (IdTunerSatellite);
