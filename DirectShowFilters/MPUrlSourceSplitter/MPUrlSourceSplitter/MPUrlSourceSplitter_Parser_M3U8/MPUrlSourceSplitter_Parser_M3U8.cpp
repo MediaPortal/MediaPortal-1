@@ -255,22 +255,13 @@ HRESULT CMPUrlSourceSplitter_Parser_M3U8::GetParserResult(void)
 
                                   CHECK_CONDITION_EXECUTE(SUCCEEDED(this->parserResult), this->parserResult = this->protocolHoster->GetConnectionParameters(protocolConnectionParameters));
 
-                                  if (this->connectionParameters->GetValueBool(PARAMETER_NAME_M3U8_USE_LAST_URL_AS_PLAYLIST_URL, true, M3U8_USE_LAST_URL_AS_PLAYLIST_URL_DEFAULT))
+                                  if (SUCCEEDED(this->parserResult))
                                   {
+                                    // use last used URL as playlist URL
                                     wchar_t *replacedUrl = ReplaceSchema(protocolConnectionParameters->GetValue(PARAMETER_NAME_HTTP_LAST_USED_URL, true, NULL), L"m3u8");
                                     CHECK_POINTER_HRESULT(this->parserResult, replacedUrl, this->parserResult, E_OUTOFMEMORY);
 
                                     CHECK_CONDITION_HRESULT(this->parserResult, this->connectionParameters->Update(PARAMETER_NAME_M3U8_PLAYLIST_URL, true, protocolConnectionParameters->GetValue(PARAMETER_NAME_HTTP_LAST_USED_URL, true, NULL)), this->parserResult, E_OUTOFMEMORY);
-                                    CHECK_CONDITION_HRESULT(this->parserResult, this->connectionParameters->Update(PARAMETER_NAME_URL, true, replacedUrl), this->parserResult, E_OUTOFMEMORY);
-
-                                    FREE_MEM(replacedUrl);
-                                  }
-                                  else
-                                  {
-                                    wchar_t *replacedUrl = ReplaceSchema(this->connectionParameters->GetValue(PARAMETER_NAME_URL, true, NULL), L"m3u8");
-                                    CHECK_POINTER_HRESULT(this->parserResult, replacedUrl, this->parserResult, E_OUTOFMEMORY);
-
-                                    CHECK_CONDITION_HRESULT(this->parserResult, this->connectionParameters->CopyParameter(PARAMETER_NAME_URL, true, PARAMETER_NAME_M3U8_PLAYLIST_URL), this->parserResult, E_OUTOFMEMORY);
                                     CHECK_CONDITION_HRESULT(this->parserResult, this->connectionParameters->Update(PARAMETER_NAME_URL, true, replacedUrl), this->parserResult, E_OUTOFMEMORY);
 
                                     FREE_MEM(replacedUrl);

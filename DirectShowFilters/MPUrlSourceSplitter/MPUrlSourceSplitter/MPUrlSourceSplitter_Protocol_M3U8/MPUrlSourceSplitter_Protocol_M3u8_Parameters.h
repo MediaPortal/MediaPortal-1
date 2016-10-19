@@ -28,8 +28,4 @@
 #define PARAMETER_NAME_M3U8_PLAYLIST_URL                              L"M3u8PlaylistUrl"
 #define PARAMETER_NAME_M3U8_PLAYLIST_CONTENT                          L"M3u8PlaylistContent"
 
-#define PARAMETER_NAME_M3U8_USE_LAST_URL_AS_PLAYLIST_URL              L"M3u8UseLastUrlAsPlaylistUrl"
-
-#define M3U8_USE_LAST_URL_AS_PLAYLIST_URL_DEFAULT                     false
-
 #endif
