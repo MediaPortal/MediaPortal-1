@@ -116,6 +116,36 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
             }
         }
         private bool _isBandStacked;
+    
+        [DataMember]
+        public int InputFrequencyMinimum
+        {
+            get { return _inputFrequencyMinimum; }
+            set
+            {
+                if (_inputFrequencyMinimum != value)
+                {
+                    _inputFrequencyMinimum = value;
+                    OnPropertyChanged("InputFrequencyMinimum");
+                }
+            }
+        }
+        private int _inputFrequencyMinimum;
+    
+        [DataMember]
+        public int InputFrequencyMaximum
+        {
+            get { return _inputFrequencyMaximum; }
+            set
+            {
+                if (_inputFrequencyMaximum != value)
+                {
+                    _inputFrequencyMaximum = value;
+                    OnPropertyChanged("InputFrequencyMaximum");
+                }
+            }
+        }
+        private int _inputFrequencyMaximum;
 
         #endregion
         #region Navigation Properties

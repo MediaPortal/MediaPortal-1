@@ -505,6 +505,8 @@
     <Property Name="HighBandFrequency" Type="int" Nullable="false" />
     <Property Name="SwitchFrequency" Type="int" Nullable="false" />
     <Property Name="IsBandStacked" Type="bit" Nullable="false" />
+    <Property Name="InputFrequencyMinimum" Type="int" Nullable="false" />
+    <Property Name="InputFrequencyMaximum" Type="int" Nullable="false" />
   </EntityType>
   <EntityType Name="RecordingCredits">
     <Key>

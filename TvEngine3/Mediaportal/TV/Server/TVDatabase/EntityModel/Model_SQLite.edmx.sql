@@ -585,7 +585,9 @@ CREATE TABLE "LnbTypes"  (
     "LowBandFrequency" int NOT NULL,
     "HighBandFrequency" int NOT NULL,
     "SwitchFrequency" int NOT NULL,
-    "IsBandStacked" bit NOT NULL
+    "IsBandStacked" bit NOT NULL,
+    "InputFrequencyMinimum" int NOT NULL,
+    "InputFrequencyMaximum" int NOT NULL
 );
 
 CREATE TRIGGER "LnbTypes_autoincrement" AFTER INSERT ON "LnbTypes"
