@@ -181,7 +181,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       DebugTunerSatelliteSettings(tunerSatellite);
       row.Tag = tunerSatellite;
       row.Cells["dataGridViewColumnSatellite"].Value = tunerSatellite.Satellite.ToString();
-      row.Cells["dataGridViewColumnTuner"].Value = tunerSatellite.Tuner.ToString();
+      row.Cells["dataGridViewColumnTuner"].Value = tunerSatellite.IdTuner.HasValue ? tunerSatellite.Tuner.ToString() : "All (Default)";
       row.Cells["dataGridViewColumnSatIpSource"].Value = tunerSatellite.SatIpSource.ToString();
       if (tunerSatellite.SatIpSource == 0)
       {
@@ -191,13 +191,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         row.Cells["dataGridViewColumnToneBurst"].Value = ((ToneBurst)tunerSatellite.ToneBurst).GetDescription();
         row.Cells["dataGridViewColumnTone22kState"].Value = ((Tone22kState)tunerSatellite.Tone22kState).GetDescription();
       }
-
-      string isToroidalDish = "No";
-      if (tunerSatellite.IsToroidalDish)
-      {
-        isToroidalDish = "Yes";
-      }
-      row.Cells["dataGridViewColumnIsToroidalDish"].Value = isToroidalDish;
+      row.Cells["dataGridViewColumnIsToroidalDish"].Value = tunerSatellite.IsToroidalDish ? "Yes" : "No";
     }
 
     private void buttonTunerSatelliteAdd_Click(object sender, EventArgs e)
