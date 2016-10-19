@@ -116,6 +116,9 @@ protected:
   HRESULT StartThread();
   void StopThread();
   DWORD m_dwTimerResolution;   //Timer resolution variable
+  
+  UINT m_totalBuffers;
+  UINT m_totalWakes;
 };
 
 #endif

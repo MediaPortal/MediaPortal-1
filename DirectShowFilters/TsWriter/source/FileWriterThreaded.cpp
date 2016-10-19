@@ -63,7 +63,9 @@ FileWriterThreaded::FileWriterThreaded() :
   m_pDiskBuffer(NULL),
   m_bDiskFull(FALSE),
   m_bBufferFull(FALSE),
-  m_bWriteFailed(FALSE)
+  m_bWriteFailed(FALSE),
+  m_totalBuffers(0),
+  m_totalWakes(0)
 {
 }
 
@@ -111,6 +113,9 @@ HRESULT FileWriterThreaded::Open(LPCWSTR pszFileName)
   }
 
   m_WakeThreadEvent.Set(); //Trigger thread to open file
+
+  m_totalBuffers = 0;
+  m_totalWakes = 0;
 
   return S_OK;
 }
@@ -217,7 +222,7 @@ HRESULT FileWriterThreaded::Close()
   
   if (m_pFileName != NULL)
   {
-    LogDebug(L"FileWriterThreaded: Close() succeeded, filename: %s, Max buffers used: %d", m_pFileName, m_maxBuffersUsed);
+    LogDebug(L"FileWriterThreaded: Close(), filename: %s, MaxBuff: %d, totBuff: %d, totWake: %d", m_pFileName, m_maxBuffersUsed, m_totalBuffers, m_totalWakes);
     delete m_pFileName;
     m_pFileName = NULL;
   }
@@ -429,8 +434,10 @@ HRESULT FileWriterThreaded::PushBuffer()
   }	  
   if (qsize >= 2) //There is too much 'old' data in the buffer, so wake the thread (polling not frequent enough)
   {              
-    m_WakeThreadEvent.Set();    
+    m_WakeThreadEvent.Set(); 
+    m_totalWakes++;   
   } 
+  m_totalBuffers++;   
 	return S_OK;
 }
 

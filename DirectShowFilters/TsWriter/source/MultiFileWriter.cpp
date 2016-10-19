@@ -72,7 +72,9 @@ MultiFileWriter::MultiFileWriter(MultiFileWriterParam *pWriterParams) :
 	m_maxBuffersUsed(0),
   m_pDiskBuffer(NULL),
 	m_bDiskFull(FALSE),
-	m_bBufferFull(FALSE)
+	m_bBufferFull(FALSE),
+  m_totalBuffers(0),
+  m_totalWakes(0)
 {
 }
 
@@ -136,6 +138,9 @@ HRESULT MultiFileWriter::Open(LPCWSTR pszFileName)
 	
   m_WakeThreadEvent.Set(); //Trigger thread to open file
 	
+  m_totalBuffers = 0;
+  m_totalWakes = 0;
+
 	return S_OK;
 }
 
@@ -238,7 +243,7 @@ HRESULT MultiFileWriter::Close()
 
 	if (m_pTSBufferFileName != NULL)
 	{
-	  LogDebug(L"MultiFileWriter: Close(), filename: %s, Max buffers used: %d", m_pTSBufferFileName, m_maxBuffersUsed);
+    LogDebug(L"MultiFileWriter: Close(), filename: %s, MaxBuff: %d, totBuff: %d, totWake: %d", m_pTSBufferFileName, m_maxBuffersUsed, m_totalBuffers, m_totalWakes);
 		delete[] m_pTSBufferFileName;
 	  m_pTSBufferFileName = NULL;
   } 	  
@@ -787,7 +792,9 @@ HRESULT MultiFileWriter::PushBuffer()
   if (qsize >= 8) //There is too much 'old' data in the buffer, so wake the thread (polling not frequent enough)
   {              
     m_WakeThreadEvent.Set();    
+    m_totalWakes++;   
   }
+  m_totalBuffers++;   
 	return S_OK;
 }
 
