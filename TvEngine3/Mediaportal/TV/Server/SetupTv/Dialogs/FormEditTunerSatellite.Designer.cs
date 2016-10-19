@@ -189,10 +189,10 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // labelTuner
       // 
       this.labelTuner.AutoSize = true;
-      this.labelTuner.Location = new System.Drawing.Point(12, 42);
+      this.labelTuner.Location = new System.Drawing.Point(12, 68);
       this.labelTuner.Name = "labelTuner";
       this.labelTuner.Size = new System.Drawing.Size(38, 13);
-      this.labelTuner.TabIndex = 2;
+      this.labelTuner.TabIndex = 4;
       this.labelTuner.Text = "Tuner:";
       // 
       // comboBoxTuner
@@ -200,10 +200,10 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.comboBoxTuner.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
       this.comboBoxTuner.FormattingEnabled = true;
-      this.comboBoxTuner.Location = new System.Drawing.Point(133, 39);
+      this.comboBoxTuner.Location = new System.Drawing.Point(133, 65);
       this.comboBoxTuner.Name = "comboBoxTuner";
       this.comboBoxTuner.Size = new System.Drawing.Size(200, 21);
-      this.comboBoxTuner.TabIndex = 3;
+      this.comboBoxTuner.TabIndex = 5;
       // 
       // labelSatellite
       // 
@@ -263,7 +263,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       // numericUpDownSatIpSource
       // 
-      this.numericUpDownSatIpSource.Location = new System.Drawing.Point(133, 66);
+      this.numericUpDownSatIpSource.Location = new System.Drawing.Point(133, 39);
       this.numericUpDownSatIpSource.Maximum = new decimal(new int[] {
             255,
             0,
@@ -271,7 +271,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
             0});
       this.numericUpDownSatIpSource.Name = "numericUpDownSatIpSource";
       this.numericUpDownSatIpSource.Size = new System.Drawing.Size(45, 20);
-      this.numericUpDownSatIpSource.TabIndex = 5;
+      this.numericUpDownSatIpSource.TabIndex = 3;
       this.numericUpDownSatIpSource.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       this.numericUpDownSatIpSource.TruncateDecimalPlaces = false;
       this.numericUpDownSatIpSource.ValueChanged += new System.EventHandler(this.numericUpDownSatIpSource_ValueChanged);
@@ -279,10 +279,10 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // labelSatIpSource
       // 
       this.labelSatIpSource.AutoSize = true;
-      this.labelSatIpSource.Location = new System.Drawing.Point(12, 68);
+      this.labelSatIpSource.Location = new System.Drawing.Point(12, 41);
       this.labelSatIpSource.Name = "labelSatIpSource";
       this.labelSatIpSource.Size = new System.Drawing.Size(82, 13);
-      this.labelSatIpSource.TabIndex = 4;
+      this.labelSatIpSource.TabIndex = 2;
       this.labelSatIpSource.Text = "SAT>IP source:";
       // 
       // FormEditTunerSatellite

@@ -154,8 +154,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.LogDebug("  ID                = {0}", tunerSatellite.IdTunerSatellite);
       this.LogDebug("  satellite         = {0} [{1}]", tunerSatellite.Satellite, tunerSatellite.IdSatellite);
       this.LogDebug("  tuner ID          = {0}", !tunerSatellite.IdTuner.HasValue ? "[null]" : tunerSatellite.IdTuner.ToString());
-      this.LogDebug("  SAT>IP source     = {0}", tunerSatellite.SatIpSource);
       this.LogDebug("  LNB type          = {0} [{1}]", tunerSatellite.LnbType.Name, tunerSatellite.IdLnbType);
+      this.LogDebug("  SAT>IP source     = {0}", tunerSatellite.SatIpSource);
       this.LogDebug("  DiSEqC switch     = {0}", (DiseqcPort)tunerSatellite.DiseqcPort);
       this.LogDebug("  DiSEqC motor pos. = {0}", GetDiseqcMotorPositionDescription(tunerSatellite.DiseqcMotorPosition));
       this.LogDebug("  tone burst        = {0}", (ToneBurst)tunerSatellite.ToneBurst);
@@ -182,10 +182,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       row.Tag = tunerSatellite;
       row.Cells["dataGridViewColumnSatellite"].Value = tunerSatellite.Satellite.ToString();
       row.Cells["dataGridViewColumnTuner"].Value = tunerSatellite.IdTuner.HasValue ? tunerSatellite.Tuner.ToString() : "All (Default)";
+      row.Cells["dataGridViewColumnLnbType"].Value = tunerSatellite.LnbType.ToString();
       row.Cells["dataGridViewColumnSatIpSource"].Value = tunerSatellite.SatIpSource.ToString();
       if (tunerSatellite.SatIpSource == 0)
       {
-        row.Cells["dataGridViewColumnLnbType"].Value = tunerSatellite.LnbType.ToString();
         row.Cells["dataGridViewColumnDiseqcMotor"].Value = GetDiseqcMotorPositionDescription(tunerSatellite.DiseqcMotorPosition);
         row.Cells["dataGridViewColumnDiseqcSwitch"].Value = ((DiseqcPort)tunerSatellite.DiseqcPort).GetDescription();
         row.Cells["dataGridViewColumnToneBurst"].Value = ((ToneBurst)tunerSatellite.ToneBurst).GetDescription();

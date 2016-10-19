@@ -23,7 +23,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Windows.Forms;
 using Mediaportal.TV.Server.Common.Types.Enum;
-using Mediaportal.TV.Server.SetupControls;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
@@ -42,7 +41,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
 
     private int _idTunerSatellite = -1;
     private IList<Tuner> _satelliteTuners = null;
-    private IDictionary<int, HashSet<int>> _allowedTunerIdsBySatelliteId = null;
     private TunerSatellite _tunerSatellite = null;
 
     public FormEditTunerSatellite(int idTunerSatellite = -1)
@@ -60,13 +58,17 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
 
     private void FormEditTunerSatellite_Load(object sender, EventArgs e)
     {
-      // It is valid to define one tuner satellite record:
-      // 1. ...for each unique {satellite + tuner} pair.
-      // 2. ...for each satellite, to specify the default parameters for tuners
-      //    that do not have a specific record (ie. as per point 1).
-      // The code below determines which records already exist and which
-      // records can be created. This information is used to prevent creation
-      // of [invalid] duplicates.
+      // It is valid to define tuner satellite records:
+      // 1. ...for {satellite + tuner} pairs.
+      // 2. ...for satellites, to specify the default parameters for tuners
+      //    that do not have specific records (ie. as per point 1).
+      // It is valid to define more than one record of both types for a given
+      // satellite. This enables people to describe a tuner that can receive
+      // Ku, C and/or Ka band signals with different reception (LNB, DiSEqC
+      // etc.) settings. If we were to limit to one record of each type, each
+      // tuner would be limited to receiving one band per satellite. That is
+      // not desirable.
+
       if (_idTunerSatellite > 0)
       {
         this.LogInfo("tuner satellite: start edit, ID = {0}", _idTunerSatellite);
@@ -92,58 +94,23 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
         }
       }
 
-      IList<Satellite> satellites = ServiceAgents.Instance.TunerServiceAgent.ListAllSatellites();
-      IList<TunerSatellite> tunerSatellites = ServiceAgents.Instance.TunerServiceAgent.ListAllTunerSatellites(TunerSatelliteRelation.None);
-      _allowedTunerIdsBySatelliteId = new Dictionary<int, HashSet<int>>(satellites.Count);
-      foreach (TunerSatellite tunerSatellite in tunerSatellites)
-      {
-        HashSet<int> tunerIds;
-        if (!_allowedTunerIdsBySatelliteId.TryGetValue(tunerSatellite.IdSatellite, out tunerIds))
-        {
-          tunerIds = new HashSet<int>(allSatelliteTunerIds);
-          _allowedTunerIdsBySatelliteId.Add(tunerSatellite.IdSatellite, tunerIds);
-        }
-
-        if (_idTunerSatellite == tunerSatellite.IdTunerSatellite)
-        {
-          _tunerSatellite = tunerSatellite;
-          continue;
-        }
-
-        tunerIds.Remove(tunerSatellite.IdTuner.GetValueOrDefault(ALL_TUNERS_ID));
-        if (tunerIds.Count == 0)
-        {
-          _allowedTunerIdsBySatelliteId.Remove(tunerSatellite.IdSatellite);
-        }
-      }
-
-      if (_allowedTunerIdsBySatelliteId.Keys.Count == 0)
-      {
-        MessageBox.Show("All possible tuner satellites have already been defined.", SectionSettings.MESSAGE_CAPTION, MessageBoxButtons.OK, MessageBoxIcon.Information);
-        this.DialogResult = DialogResult.Cancel;
-        Close();
-        return;
-      }
-
       Satellite defaultSatellite = null;
       int defaultSatelliteLongitude = Satellite.DefaultSatelliteLongitude.GetValueOrDefault(100000);
       comboBoxSatellite.BeginUpdate();
       try
       {
         comboBoxSatellite.Items.Clear();
+        IList<Satellite> satellites = ServiceAgents.Instance.TunerServiceAgent.ListAllSatellites();
         foreach (Satellite satellite in satellites)
         {
-          if (_allowedTunerIdsBySatelliteId.ContainsKey(satellite.IdSatellite))
+          comboBoxSatellite.Items.Add(satellite);
+          if (_tunerSatellite != null && _tunerSatellite.IdSatellite == satellite.IdSatellite)
           {
-            comboBoxSatellite.Items.Add(satellite);
-            if (_tunerSatellite != null && _tunerSatellite.IdSatellite == satellite.IdSatellite)
-            {
-              comboBoxSatellite.SelectedItem = satellite;
-            }
-            else if (satellite.Longitude == defaultSatelliteLongitude)
-            {
-              defaultSatellite = satellite;
-            }
+            comboBoxSatellite.SelectedItem = satellite;
+          }
+          else if (satellite.Longitude == defaultSatelliteLongitude)
+          {
+            defaultSatellite = satellite;
           }
         }
         if (comboBoxSatellite.SelectedItem == null)
@@ -269,8 +236,8 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
 
       _tunerSatellite.IdSatellite = ((Satellite)comboBoxSatellite.SelectedItem).IdSatellite;
       _tunerSatellite.IdTuner = ((Tuner)comboBoxTuner.SelectedItem).IdTuner;
-      _tunerSatellite.SatIpSource = (int)numericUpDownSatIpSource.Value;
       _tunerSatellite.IdLnbType = ((LnbType)comboBoxLnbType.SelectedItem).IdLnbType;
+      _tunerSatellite.SatIpSource = (int)numericUpDownSatIpSource.Value;
       _tunerSatellite.DiseqcPort = Convert.ToInt32(typeof(DiseqcPort).GetEnumFromDescription((string)comboBoxDiseqcSwitchPort.SelectedItem));
 
       string diseqcMotorPositionType = (string)comboBoxDiseqcMotorPositionType.SelectedItem;
@@ -312,17 +279,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
 
     private void comboBoxSatellite_SelectedIndexChanged(object sender, EventArgs e)
     {
-      // The tuners available for selection in the tuner combo box depend on
-      // the selected satellite. Try to maintain the current selection.
-      HashSet<int> allowedTunerIds;
-      Satellite selectedSatellite = (Satellite)comboBoxSatellite.SelectedItem;
-      if (selectedSatellite == null || !_allowedTunerIdsBySatelliteId.TryGetValue(selectedSatellite.IdSatellite, out allowedTunerIds))
-      {
-        buttonOkay.Enabled = false;
-        return;
-      }
-
-      buttonOkay.Enabled = true;
+      // Try to maintain the current selection.
       Tuner selectedTuner = (Tuner)comboBoxTuner.SelectedItem;
       comboBoxTuner.BeginUpdate();
       try
@@ -330,13 +287,10 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
         comboBoxTuner.Items.Clear();
         foreach (Tuner tuner in _satelliteTuners)
         {
-          if (allowedTunerIds.Contains(tuner.IdTuner))
+          comboBoxTuner.Items.Add(tuner);
+          if (selectedTuner != null && selectedTuner.IdTuner == tuner.IdTuner)
           {
-            comboBoxTuner.Items.Add(tuner);
-            if (selectedTuner != null && selectedTuner.IdTuner == tuner.IdTuner)
-            {
-              comboBoxTuner.SelectedItem = tuner;
-            }
+            comboBoxTuner.SelectedItem = tuner;
           }
         }
         if (comboBoxTuner.SelectedItem == null)
@@ -347,29 +301,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       finally
       {
         comboBoxTuner.EndUpdate();
-      }
-    }
-
-    private void numericUpDownSatIpSource_ValueChanged(object sender, EventArgs e)
-    {
-      bool isNotSatIp = numericUpDownSatIpSource.Value == 0;
-      comboBoxLnbType.Enabled = isNotSatIp;
-      comboBoxDiseqcSwitchPort.Enabled = isNotSatIp;
-      comboBoxDiseqcMotorPositionType.Enabled = isNotSatIp;
-      comboBoxToneBurst.Enabled = isNotSatIp;
-
-      if (isNotSatIp)
-      {
-        comboBoxLnbType_SelectedIndexChanged(null, null);
-        comboBoxDiseqcMotorPositionType_SelectedIndexChanged(null, null);
-      }
-      else
-      {
-        comboBoxDiseqcSwitchPort.SelectedItem = DiseqcPort.None.GetDescription();
-        comboBoxDiseqcMotorPositionType.SelectedItem = DISEQC_MOTOR_POSITION_TYPE_NONE;
-        comboBoxToneBurst.SelectedItem = ToneBurst.None.GetDescription();
-        comboBoxTone22kState.Enabled = false;
-        comboBoxTone22kState.SelectedItem = Tone22kState.Automatic.GetDescription();
       }
     }
 
@@ -411,11 +342,31 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // kHz tone state (eg. universal LNB type) then disable the 22 kHz tone
       // state combo box. Otherwise enable it.
       LnbType lnbType = (LnbType)comboBoxLnbType.SelectedItem;
-      comboBoxTone22kState.Enabled = lnbType.SwitchFrequency <= 0;
+      comboBoxTone22kState.Enabled = lnbType.SwitchFrequency > 0 && numericUpDownSatIpSource.Value == 0;
       if (!comboBoxTone22kState.Enabled)
       {
         comboBoxTone22kState.SelectedItem = Tone22kState.Automatic.GetDescription();
       }
+    }
+
+    private void numericUpDownSatIpSource_ValueChanged(object sender, EventArgs e)
+    {
+      bool isNotSatIp = numericUpDownSatIpSource.Value == 0;
+      comboBoxDiseqcSwitchPort.Enabled = isNotSatIp;
+      comboBoxDiseqcMotorPositionType.Enabled = isNotSatIp;
+      comboBoxToneBurst.Enabled = isNotSatIp;
+
+      if (isNotSatIp)
+      {
+        comboBoxDiseqcMotorPositionType_SelectedIndexChanged(null, null);
+      }
+      else
+      {
+        comboBoxDiseqcSwitchPort.SelectedItem = DiseqcPort.None.GetDescription();
+        comboBoxDiseqcMotorPositionType.SelectedItem = DISEQC_MOTOR_POSITION_TYPE_NONE;
+        comboBoxToneBurst.SelectedItem = ToneBurst.None.GetDescription();
+      }
+      comboBoxLnbType_SelectedIndexChanged(null, null);
     }
 
     private void comboBoxDiseqcMotorPositionType_SelectedIndexChanged(object sender, EventArgs e)
