@@ -22,6 +22,8 @@
 
 #include "HttpDownloadResponse.h"
 
+#include "CurlInstance.h"
+
 CHttpDownloadResponse::CHttpDownloadResponse(HRESULT *result)
   : CDownloadResponse(result)
 {
@@ -62,6 +64,19 @@ long CHttpDownloadResponse::GetResponseCode(void)
 const wchar_t *CHttpDownloadResponse::GetLastUsedUrl(void)
 {
   return this->lastUsedUrl;
+}
+
+HRESULT CHttpDownloadResponse::GetResultError(void)
+{
+  // result error is sometimes set to S_OK, even if HTTP error occured
+
+  // check result error and set if necessary
+  if ((__super::GetResultError() == S_OK) && IS_RESPONSE_CODE_ERROR(this->GetResponseCode()))
+  {
+    this->SetResultError(HRESULT_FROM_CURL_CODE(CURLE_HTTP_RETURNED_ERROR));
+  }
+
+  return __super::GetResultError();
 }
 
 /* set methods */

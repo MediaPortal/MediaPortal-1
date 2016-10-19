@@ -565,6 +565,37 @@ void CHttpCurlInstance::CurlDebug(curl_infotype type, const unsigned char *data,
 
     FREE_MEM(lowerBuffer);
     FREE_MEM(curlData);
+
+    {
+      long previousResponseCode = this->httpDownloadResponse->GetResponseCode();
+      long responseCode = 0;
+
+      if (curl_easy_getinfo(this->curl, CURLINFO_RESPONSE_CODE, &responseCode) == CURLE_OK)
+      {
+        this->httpDownloadResponse->SetResponseCode(responseCode);
+      }
+
+      responseCode = this->httpDownloadResponse->GetResponseCode();
+
+      if (this->httpDownloadResponse->GetLastUsedUrl() == NULL)
+      {
+        char *effectiveUrl = NULL;
+        if (curl_easy_getinfo(this->curl, CURLINFO_EFFECTIVE_URL, &effectiveUrl) == CURLE_OK)
+        {
+          // convert effective URL and set it to download response
+          wchar_t *lastUsedUrl = ConvertToUnicodeA(effectiveUrl);
+          this->httpDownloadResponse->SetLastUsedUrl(lastUsedUrl);
+          FREE_MEM(lastUsedUrl);
+        }
+      }
+
+      if ((previousResponseCode == 0) && (responseCode != 0) && IS_RESPONSE_CODE_ERROR(responseCode))
+      {
+        // response code 200 - 299 = OK
+        // response code 300 - 399 = redirect (OK)
+        this->logger->Log(LOGGER_VERBOSE, L"%s: %s: error response code: %u", this->protocolName, METHOD_CURL_DEBUG_NAME, responseCode);
+      }
+    }
   }
 }
 
@@ -589,12 +620,13 @@ size_t CHttpCurlInstance::CurlReceiveData(const unsigned char *buffer, size_t le
       this->httpDownloadResponse->SetLastUsedUrl(lastUsedUrl);
       FREE_MEM(lastUsedUrl);
     }
-
-    if ((responseCode != 0) && ((responseCode < 200) || (responseCode >= 400)))
+                 
+    if ((responseCode != 0) && IS_RESPONSE_CODE_ERROR(responseCode))
     {
       // response code 200 - 299 = OK
       // response code 300 - 399 = redirect (OK)
       this->logger->Log(LOGGER_VERBOSE, L"%s: %s: error response code: %u", this->protocolName, METHOD_CURL_RECEIVE_DATA_NAME, responseCode);
+
       // return error
       result = 0;
     }
@@ -645,13 +677,18 @@ CDownloadResponse *CHttpCurlInstance::CreateDownloadResponse(void)
 
 HRESULT CHttpCurlInstance::DestroyCurlWorker(void)
 {
-  long responseCode;
-  if ((this->httpDownloadResponse != NULL) && (curl_easy_getinfo(this->curl, CURLINFO_RESPONSE_CODE, &responseCode) == CURLE_OK))
+  HRESULT result = __super::DestroyCurlWorker();
+
+  if (this->httpDownloadResponse != NULL)
   {
-    this->httpDownloadResponse->SetResponseCode(responseCode);
+    long responseCode;
+    if ((this->httpDownloadResponse->GetResponseCode() == 0) && (curl_easy_getinfo(this->curl, CURLINFO_RESPONSE_CODE, &responseCode) == CURLE_OK))
+    {
+      this->httpDownloadResponse->SetResponseCode(responseCode);
+    }
   }
 
-  return __super::DestroyCurlWorker();
+  return result;
 }
 
 CDumpBox *CHttpCurlInstance::CreateDumpBox(void)

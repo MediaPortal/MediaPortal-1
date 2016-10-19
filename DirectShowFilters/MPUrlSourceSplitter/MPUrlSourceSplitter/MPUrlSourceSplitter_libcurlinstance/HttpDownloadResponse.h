@@ -32,6 +32,8 @@
 
 #define HTTP_DOWNLOAD_RESPONSE_FLAG_LAST                              (DOWNLOAD_RESPONSE_FLAG_LAST + 1)
 
+FORCEINLINE bool IS_RESPONSE_CODE_ERROR(long responseCode) { return ((responseCode < 200) || (responseCode >= 400)); }
+
 class CHttpDownloadResponse : public CDownloadResponse
 {
 public:
@@ -55,6 +57,10 @@ public:
   // gets the last used URL (it can be different from request URL)
   // @return : the last used URL or NULL if last used URL is same as request URL
   virtual const wchar_t *GetLastUsedUrl(void);
+
+  // gets result error
+  // @return : result error (S_OK if none)
+  virtual HRESULT GetResultError(void);
 
   /* set methods */
 
