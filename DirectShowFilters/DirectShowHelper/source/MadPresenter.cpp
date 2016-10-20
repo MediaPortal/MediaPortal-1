@@ -895,6 +895,12 @@ HRESULT MPMadPresenter::SetDevice(IDirect3DDevice9* pD3DDev)
 
   // Init created madVR window instance.
   SetDsWndVisible(true);
+  if (Com::SmartQIPtr<IVideoWindow> pWindow = m_pMad)
+  {
+    pWindow->put_Owner(reinterpret_cast<OAHWND>(m_hWnd));
+    pWindow->put_Visible(reinterpret_cast<OAHWND>(m_hWnd));
+    pWindow->SetWindowPosition(0, 0, m_dwGUIWidth, m_dwGUIHeight);
+  }
   Log("MPMadPresenter::SetDevice() init madVR Window");
 
   return hr;
