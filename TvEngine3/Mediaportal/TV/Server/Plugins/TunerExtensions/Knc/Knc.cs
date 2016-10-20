@@ -428,12 +428,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Knc
 
       "Mystique SaTiX DVB-S",
       "Mystique SaTiX DVB-S2",
-      "Mystique CaBiX DVB-C2",
-      "Mystique TeRiX DVB-T2",
-      "Mystique SaTiX-S",
-      "Mystique SaTiX-S2",
-      "Mystique CaBiX-C2",
-      "Mystique TeRiX-T2",
+      "Mystique CaBiX DVB-C",
+      "Mystique TeRiX DVB-T",
 
       "Satelco EasyWatch PCI (DVB-S)",
       "Satelco EasyWatch PCI (DVB-S2)",
@@ -444,64 +440,72 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Knc
     private static readonly HashSet<string> VALID_DEVICE_PATHS = new HashSet<string>
     {
       // DVB-S - Old
-      "ven_1131&dev_7146&subsys_4f561131",  // KNC
+      "ven_1131&dev_7146&subsys_4f561131",
+      "ven_1131&dev_7146&subsys_4f501131",  // with analog
 
       // DVB-S - SH2
-      "ven_1131&dev_7146&subsys_00101894",  // KNC
-      "ven_1131&dev_7146&subsys_00111894",  // Mystique
+      "ven_1131&dev_7146&subsys_00101894",
+      "ven_1131&dev_7146&subsys_00111894",  // with analog
+      "ven_1131&dev_7146&subsys_00131894",  // with analog
       "ven_1131&dev_7146&subsys_001a1894",  // Satelco
 
       // DVB-S - X4
-      "ven_1131&dev_7146&subsys_00161894",  // KNC
-      "ven_1131&dev_7146&subsys_00151894",  // Mystique
+      "ven_1131&dev_7146&subsys_00161894",
+      "ven_1131&dev_7146&subsys_00151894",  // with analog
       "ven_1131&dev_7146&subsys_001b1894",  // Satelco
 
       // DVB-S - X4 (no CI)
-      "ven_1131&dev_7146&subsys_00141894",  // KNC
+      "ven_1131&dev_7146&subsys_00141894",
       "ven_1131&dev_7146&subsys_001e1894",  // Satelco
 
-      // DVB-S - X6
-      "ven_1131&dev_7146&subsys_00191894",  // KNC
-      "ven_1131&dev_7146&subsys_00181894",  // Mystique
+      // DVB-S2 - X6
+      "ven_1131&dev_7146&subsys_00191894",
+      "ven_1131&dev_7146&subsys_00181894",  // with analog
       "ven_1131&dev_7146&subsys_001d1894",  // Satelco
-      "ven_1131&dev_7146&subsys_001f1894",  // Satelco
+      "ven_1131&dev_7146&subsys_001f1894",  // Satelco with analog
 
       // DVB-S2 - Sharp
-      "ven_1131&dev_7146&subsys_00501894",  // KNC
-      "ven_1131&dev_7146&subsys_00511894",  // Mystique
+      "ven_1131&dev_7146&subsys_00501894",
+      "ven_1131&dev_7146&subsys_00511894",  // with analog
       "ven_1131&dev_7146&subsys_00521894",  // Satelco
 
       // DVB-S - X8
-      "ven_1131&dev_7146&subsys_00561894",  // KNC
-      "ven_1131&dev_7146&subsys_00551894",  // Mystique
+      "ven_1131&dev_7146&subsys_00561894",
+      "ven_1131&dev_7146&subsys_00551894",  // with analog
       "ven_1131&dev_7146&subsys_005b1894",  // Satelco
 
       // DVB-S - X8 (no CI)
-      "ven_1131&dev_7146&subsys_00541894",  // KNC
+      "ven_1131&dev_7146&subsys_00541894",
       "ven_1131&dev_7146&subsys_005e1894",  // Satelco
 
       // DVB-C - MK2
-      "ven_1131&dev_7146&subsys_00201894",  // KNC
-      "ven_1131&dev_7146&subsys_00211894",  // Mystique
+      "ven_1131&dev_7146&subsys_00201894",
+      "ven_1131&dev_7146&subsys_00211894",  // with analog
       "ven_1131&dev_7146&subsys_002a1894",  // Satelco
 
       // DVB-C - MK3
-      "ven_1131&dev_7146&subsys_00221894",  // KNC
-      "ven_1131&dev_7146&subsys_00231894",  // Mystique
+      "ven_1131&dev_7146&subsys_00221894",
+      "ven_1131&dev_7146&subsys_00231894",  // with analog
+      "ven_1131&dev_7146&subsys_00241894",
+      "ven_1131&dev_7146&subsys_00251894",  // with analog
       "ven_1131&dev_7146&subsys_002c1894",  // Satelco
 
+      // DVB-C - LG
+      "ven_1131&dev_7146&subsys_00261894",  // with analog
+
       // DVB-C - MK32
-      "ven_1131&dev_7146&subsys_00281894",  // KNC
+      "ven_1131&dev_7146&subsys_00281894",
 
       // DVB-T
-      "ven_1131&dev_7146&subsys_00301894",  // KNC
-      "ven_1131&dev_7146&subsys_00311894",  // Mystique
+      "ven_1131&dev_7146&subsys_00301894",
+      "ven_1131&dev_7146&subsys_00311894",  // with analog
+      "ven_1131&dev_7146&subsys_00361894",
       "ven_1131&dev_7146&subsys_003a1894",  // Satelco
 
-      // New KNC PCI-e tuners
-      "ven_1131&dev_7160&subsys_01101894",  // DVB-S/DVB-S2 (not yet released)
+      // KNC PCI-e tuners
+      "ven_1131&dev_7160&subsys_01101894",  // DVB-S/DVB-S2 (never released)
       "ven_1131&dev_7160&subsys_02101894",  // DVB-S2/DVB-S2 (DVB-S2 Twin)
-      "ven_1131&dev_7160&subsys_03101894",  // DVB-T/DVB-C (not yet released)
+      "ven_1131&dev_7160&subsys_03101894",  // DVB-T/DVB-C (never released)
     };
 
     private static readonly int CALLBACK_SET_SIZE = Marshal.SizeOf(typeof(KncCiCallBack));   // 28
