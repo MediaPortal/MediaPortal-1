@@ -18,20 +18,22 @@
 
 #endregion
 
+using System;
 using System.ComponentModel;
 
 namespace Mediaportal.TV.Server.Common.Types.Enum
 {
+  [Flags]
   public enum Polarisation
   {
-    Automatic,
+    Automatic = 0,
     [Description("Linear Horizontal")]
-    LinearHorizontal,
+    LinearHorizontal = 1,
     [Description("Linear Vertical")]
-    LinearVertical,
+    LinearVertical = 2,
     [Description("Circular Left")]
-    CircularLeft,
+    CircularLeft = 4,
     [Description("Circular Right")]
-    CircularRight
+    CircularRight = 8
   }
 }

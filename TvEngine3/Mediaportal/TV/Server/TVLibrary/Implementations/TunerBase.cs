@@ -1312,8 +1312,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
           foreach (TunerSatellite satellite in satellitesForLongitude)
           {
             if (
-              satelliteChannel.Frequency >= satellite.LnbType.InputFrequencyMinimum &&
-              satelliteChannel.Frequency <= satellite.LnbType.InputFrequencyMaximum
+              ((Polarisation)satellite.Polarisations).HasFlag(satelliteChannel.Polarisation) &&
+              satellite.LnbType.InputFrequencyMinimum <= satelliteChannel.Frequency &&
+              satellite.LnbType.InputFrequencyMaximum >= satelliteChannel.Frequency
             )
             {
               return true;
@@ -1370,8 +1371,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
               foreach (TunerSatellite s in satellitesForLongitude)
               {
                 if (
-                  satelliteChannel.Frequency >= s.LnbType.InputFrequencyMinimum &&
-                  satelliteChannel.Frequency <= s.LnbType.InputFrequencyMaximum
+                  ((Polarisation)s.Polarisations).HasFlag(satelliteChannel.Polarisation) &&
+                  s.LnbType.InputFrequencyMinimum <= satelliteChannel.Frequency &&
+                  s.LnbType.InputFrequencyMaximum >= satelliteChannel.Frequency
                 )
                 {
                   satellite = s;

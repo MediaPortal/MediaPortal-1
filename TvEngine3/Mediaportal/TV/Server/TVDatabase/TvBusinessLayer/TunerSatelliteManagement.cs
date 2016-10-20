@@ -17,7 +17,11 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
         query = tunerSatelliteRepository.IncludeAllRelations(query, includeRelations);
         if (includeRelations.HasFlag(TunerSatelliteRelation.Satellite))
         {
-          query = query.OrderBy(ts => ts.Satellite.Longitude);
+          query = query.OrderBy(ts => ts.Satellite.Longitude).ThenBy(ts => ts.IdTuner.GetValueOrDefault(0));
+        }
+        else
+        {
+          query = query.OrderBy(ts => ts.IdTuner.GetValueOrDefault(0));
         }
         return query.ToList();
       }
@@ -31,7 +35,11 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
         query = tunerSatelliteRepository.IncludeAllRelations(query, includeRelations);
         if (includeRelations.HasFlag(TunerSatelliteRelation.Satellite))
         {
-          query = query.OrderBy(ts => ts.Satellite.Longitude);
+          query = query.OrderBy(ts => ts.Satellite.Longitude).ThenBy(ts => !ts.IdTuner.HasValue);
+        }
+        else
+        {
+          query = query.OrderBy(ts => !ts.IdTuner.HasValue);
         }
         return query.ToList();
       }

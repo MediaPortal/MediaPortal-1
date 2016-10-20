@@ -82,7 +82,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
 
       IList<Tuner> tuners = ServiceAgents.Instance.TunerServiceAgent.ListAllTuners(TunerRelation.None);
       _satelliteTuners = new List<Tuner>(tuners.Count + 1);
-      _satelliteTuners.Add(new Tuner { Name = "All (Default)", IdTuner = ALL_TUNERS_ID });
+      _satelliteTuners.Add(new Tuner { Name = "All", IdTuner = ALL_TUNERS_ID });
       List<int> allSatelliteTunerIds = new List<int>(tuners.Count + 1);
       allSatelliteTunerIds.Add(ALL_TUNERS_ID);
       foreach (Tuner tuner in tuners)
@@ -137,6 +137,13 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
         comboBoxDiseqcSwitchPort.SelectedItem = ((DiseqcPort)_tunerSatellite.DiseqcPort).GetDescription();
         comboBoxToneBurst.SelectedItem = ((ToneBurst)_tunerSatellite.ToneBurst).GetDescription();
         comboBoxTone22kState.SelectedItem = ((Tone22kState)_tunerSatellite.Tone22kState).GetDescription();
+
+        Polarisation polarisations = (Polarisation)_tunerSatellite.Polarisations;
+        checkBoxPolarisationsLinearVertical.Checked = polarisations.HasFlag(Polarisation.LinearVertical);
+        checkBoxPolarisationsLinearHorizontal.Checked = polarisations.HasFlag(Polarisation.LinearHorizontal);
+        checkBoxPolarisationsCircularRight.Checked = polarisations.HasFlag(Polarisation.CircularRight);
+        checkBoxPolarisationsCircularLeft.Checked = polarisations.HasFlag(Polarisation.CircularLeft);
+
         checkBoxIsToroidalDish.Checked = _tunerSatellite.IsToroidalDish;
       }
       else
@@ -145,6 +152,10 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
         comboBoxDiseqcSwitchPort.SelectedItem = DiseqcPort.None.GetDescription();
         comboBoxToneBurst.SelectedItem = ToneBurst.None.GetDescription();
         comboBoxTone22kState.SelectedItem = Tone22kState.Automatic.GetDescription();
+        checkBoxPolarisationsLinearVertical.Checked = true;
+        checkBoxPolarisationsLinearHorizontal.Checked = true;
+        checkBoxPolarisationsCircularRight.Checked = false;
+        checkBoxPolarisationsCircularLeft.Checked = false;
         checkBoxIsToroidalDish.Checked = false;
       }
 
@@ -256,6 +267,26 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
 
       _tunerSatellite.ToneBurst = Convert.ToInt32(typeof(ToneBurst).GetEnumFromDescription((string)comboBoxToneBurst.SelectedItem));
       _tunerSatellite.Tone22kState = Convert.ToInt32(typeof(Tone22kState).GetEnumFromDescription((string)comboBoxTone22kState.SelectedItem));
+
+      Polarisation polarisations = 0;
+      if (checkBoxPolarisationsLinearVertical.Checked)
+      {
+        polarisations |= Polarisation.LinearVertical;
+      }
+      if (checkBoxPolarisationsLinearHorizontal.Checked)
+      {
+        polarisations |= Polarisation.LinearHorizontal;
+      }
+      if (checkBoxPolarisationsCircularRight.Checked)
+      {
+        polarisations |= Polarisation.CircularRight;
+      }
+      if (checkBoxPolarisationsCircularLeft.Checked)
+      {
+        polarisations |= Polarisation.CircularLeft;
+      }
+      _tunerSatellite.Polarisations = (int)polarisations;
+
       _tunerSatellite.IsToroidalDish = checkBoxIsToroidalDish.Checked;
 
       _tunerSatellite = ServiceAgents.Instance.TunerServiceAgent.SaveTunerSatellite(_tunerSatellite);

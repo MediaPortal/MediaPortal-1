@@ -60,6 +60,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.dataGridViewColumnDiseqcSwitch = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPDataGridViewTextBoxColumn();
       this.dataGridViewColumnToneBurst = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPDataGridViewTextBoxColumn();
       this.dataGridViewColumnTone22kState = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPDataGridViewTextBoxColumn();
+      this.dataGridViewColumnPolarisations = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPDataGridViewTextBoxColumn();
       this.dataGridViewColumnIsToroidalDish = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPDataGridViewTextBoxColumn();
       ((System.ComponentModel.ISupportInitialize)(this.dataGridViewTunerSatellites)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownUsalsLongitude)).BeginInit();
@@ -125,6 +126,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             this.dataGridViewColumnDiseqcSwitch,
             this.dataGridViewColumnToneBurst,
             this.dataGridViewColumnTone22kState,
+            this.dataGridViewColumnPolarisations,
             this.dataGridViewColumnIsToroidalDish});
       this.dataGridViewTunerSatellites.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
       this.dataGridViewTunerSatellites.Location = new System.Drawing.Point(6, 19);
@@ -434,7 +436,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // dataGridViewColumnDiseqcMotor
       // 
       this.dataGridViewColumnDiseqcMotor.HeaderText = "DiSEqC Motor";
-      this.dataGridViewColumnDiseqcMotor.MinimumWidth = 60;
       this.dataGridViewColumnDiseqcMotor.Name = "dataGridViewColumnDiseqcMotor";
       this.dataGridViewColumnDiseqcMotor.ReadOnly = true;
       this.dataGridViewColumnDiseqcMotor.Width = 60;
@@ -442,7 +443,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // dataGridViewColumnDiseqcSwitch
       // 
       this.dataGridViewColumnDiseqcSwitch.HeaderText = "DiSEqC Switch";
-      this.dataGridViewColumnDiseqcSwitch.MinimumWidth = 60;
       this.dataGridViewColumnDiseqcSwitch.Name = "dataGridViewColumnDiseqcSwitch";
       this.dataGridViewColumnDiseqcSwitch.ReadOnly = true;
       this.dataGridViewColumnDiseqcSwitch.Width = 60;
@@ -450,7 +450,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // dataGridViewColumnToneBurst
       // 
       this.dataGridViewColumnToneBurst.HeaderText = "Burst";
-      this.dataGridViewColumnToneBurst.MinimumWidth = 40;
       this.dataGridViewColumnToneBurst.Name = "dataGridViewColumnToneBurst";
       this.dataGridViewColumnToneBurst.ReadOnly = true;
       this.dataGridViewColumnToneBurst.Width = 40;
@@ -458,15 +457,21 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // dataGridViewColumnTone22kState
       // 
       this.dataGridViewColumnTone22kState.HeaderText = "22 kHz";
-      this.dataGridViewColumnTone22kState.MinimumWidth = 50;
       this.dataGridViewColumnTone22kState.Name = "dataGridViewColumnTone22kState";
       this.dataGridViewColumnTone22kState.ReadOnly = true;
       this.dataGridViewColumnTone22kState.Width = 50;
       // 
+      // dataGridViewColumnPolarisations
+      // 
+      this.dataGridViewColumnPolarisations.HeaderText = "Polarisations";
+      this.dataGridViewColumnPolarisations.Name = "dataGridViewColumnPolarisations";
+      this.dataGridViewColumnPolarisations.ReadOnly = true;
+      this.dataGridViewColumnPolarisations.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+      this.dataGridViewColumnPolarisations.Width = 75;
+      // 
       // dataGridViewColumnIsToroidalDish
       // 
       this.dataGridViewColumnIsToroidalDish.HeaderText = "Is Toroidal Dish?";
-      this.dataGridViewColumnIsToroidalDish.MinimumWidth = 60;
       this.dataGridViewColumnIsToroidalDish.Name = "dataGridViewColumnIsToroidalDish";
       this.dataGridViewColumnIsToroidalDish.ReadOnly = true;
       this.dataGridViewColumnIsToroidalDish.Width = 60;
@@ -528,6 +533,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private MPDataGridViewTextBoxColumn dataGridViewColumnDiseqcSwitch;
     private MPDataGridViewTextBoxColumn dataGridViewColumnToneBurst;
     private MPDataGridViewTextBoxColumn dataGridViewColumnTone22kState;
+    private MPDataGridViewTextBoxColumn dataGridViewColumnPolarisations;
     private MPDataGridViewTextBoxColumn dataGridViewColumnIsToroidalDish;
 
   }

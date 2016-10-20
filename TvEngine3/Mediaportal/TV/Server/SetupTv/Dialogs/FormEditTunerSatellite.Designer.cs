@@ -51,6 +51,13 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.comboBoxDiseqcMotorPositionType = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
       this.numericUpDownSatIpSource = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPNumericUpDown();
       this.labelSatIpSource = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.checkBoxPolarisationsLinearHorizontal = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
+      this.labelPolarisations = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.checkBoxPolarisationsLinearVertical = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
+      this.checkBoxPolarisationsCircularLeft = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
+      this.checkBoxPolarisationsCircularRight = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
+      this.labelPolarisationsLinear = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.labelPolarisationsCircular = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownDiseqcMotorPosition)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownSatIpSource)).BeginInit();
       this.SuspendLayout();
@@ -59,10 +66,10 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-      this.buttonCancel.Location = new System.Drawing.Point(258, 260);
+      this.buttonCancel.Location = new System.Drawing.Point(258, 327);
       this.buttonCancel.Name = "buttonCancel";
       this.buttonCancel.Size = new System.Drawing.Size(75, 23);
-      this.buttonCancel.TabIndex = 20;
+      this.buttonCancel.TabIndex = 27;
       this.buttonCancel.Text = "&Cancel";
       this.buttonCancel.UseVisualStyleBackColor = true;
       this.buttonCancel.Click += new System.EventHandler(this.buttonCancel_Click);
@@ -70,10 +77,10 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // buttonOkay
       // 
       this.buttonOkay.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonOkay.Location = new System.Drawing.Point(177, 260);
+      this.buttonOkay.Location = new System.Drawing.Point(177, 327);
       this.buttonOkay.Name = "buttonOkay";
       this.buttonOkay.Size = new System.Drawing.Size(75, 23);
-      this.buttonOkay.TabIndex = 19;
+      this.buttonOkay.TabIndex = 26;
       this.buttonOkay.Text = "&OK";
       this.buttonOkay.UseVisualStyleBackColor = true;
       this.buttonOkay.Click += new System.EventHandler(this.buttonOkay_Click);
@@ -81,20 +88,20 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // labelIsToroidalDish
       // 
       this.labelIsToroidalDish.AutoSize = true;
-      this.labelIsToroidalDish.Location = new System.Drawing.Point(12, 229);
+      this.labelIsToroidalDish.Location = new System.Drawing.Point(12, 298);
       this.labelIsToroidalDish.Name = "labelIsToroidalDish";
       this.labelIsToroidalDish.Size = new System.Drawing.Size(70, 13);
-      this.labelIsToroidalDish.TabIndex = 17;
+      this.labelIsToroidalDish.TabIndex = 24;
       this.labelIsToroidalDish.Text = "Toroidal dish:";
       // 
       // checkBoxIsToroidalDish
       // 
       this.checkBoxIsToroidalDish.AutoSize = true;
       this.checkBoxIsToroidalDish.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxIsToroidalDish.Location = new System.Drawing.Point(133, 227);
+      this.checkBoxIsToroidalDish.Location = new System.Drawing.Point(133, 296);
       this.checkBoxIsToroidalDish.Name = "checkBoxIsToroidalDish";
       this.checkBoxIsToroidalDish.Size = new System.Drawing.Size(27, 17);
-      this.checkBoxIsToroidalDish.TabIndex = 18;
+      this.checkBoxIsToroidalDish.TabIndex = 25;
       this.checkBoxIsToroidalDish.Text = " ";
       this.checkBoxIsToroidalDish.TextAlign = System.Drawing.ContentAlignment.TopRight;
       this.checkBoxIsToroidalDish.UseVisualStyleBackColor = true;
@@ -285,13 +292,95 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.labelSatIpSource.TabIndex = 2;
       this.labelSatIpSource.Text = "SAT>IP source:";
       // 
+      // checkBoxPolarisationsLinearHorizontal
+      // 
+      this.checkBoxPolarisationsLinearHorizontal.AutoSize = true;
+      this.checkBoxPolarisationsLinearHorizontal.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxPolarisationsLinearHorizontal.Location = new System.Drawing.Point(133, 268);
+      this.checkBoxPolarisationsLinearHorizontal.Name = "checkBoxPolarisationsLinearHorizontal";
+      this.checkBoxPolarisationsLinearHorizontal.Size = new System.Drawing.Size(71, 17);
+      this.checkBoxPolarisationsLinearHorizontal.TabIndex = 20;
+      this.checkBoxPolarisationsLinearHorizontal.Text = "Horizontal";
+      this.checkBoxPolarisationsLinearHorizontal.TextAlign = System.Drawing.ContentAlignment.TopRight;
+      this.checkBoxPolarisationsLinearHorizontal.UseVisualStyleBackColor = true;
+      // 
+      // labelPolarisations
+      // 
+      this.labelPolarisations.AutoSize = true;
+      this.labelPolarisations.Location = new System.Drawing.Point(12, 229);
+      this.labelPolarisations.Name = "labelPolarisations";
+      this.labelPolarisations.Size = new System.Drawing.Size(69, 13);
+      this.labelPolarisations.TabIndex = 17;
+      this.labelPolarisations.Text = "Polarisations:";
+      // 
+      // checkBoxPolarisationsLinearVertical
+      // 
+      this.checkBoxPolarisationsLinearVertical.AutoSize = true;
+      this.checkBoxPolarisationsLinearVertical.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxPolarisationsLinearVertical.Location = new System.Drawing.Point(133, 245);
+      this.checkBoxPolarisationsLinearVertical.Name = "checkBoxPolarisationsLinearVertical";
+      this.checkBoxPolarisationsLinearVertical.Size = new System.Drawing.Size(59, 17);
+      this.checkBoxPolarisationsLinearVertical.TabIndex = 19;
+      this.checkBoxPolarisationsLinearVertical.Text = "Vertical";
+      this.checkBoxPolarisationsLinearVertical.TextAlign = System.Drawing.ContentAlignment.TopRight;
+      this.checkBoxPolarisationsLinearVertical.UseVisualStyleBackColor = true;
+      // 
+      // checkBoxPolarisationsCircularLeft
+      // 
+      this.checkBoxPolarisationsCircularLeft.AutoSize = true;
+      this.checkBoxPolarisationsCircularLeft.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxPolarisationsCircularLeft.Location = new System.Drawing.Point(217, 268);
+      this.checkBoxPolarisationsCircularLeft.Name = "checkBoxPolarisationsCircularLeft";
+      this.checkBoxPolarisationsCircularLeft.Size = new System.Drawing.Size(42, 17);
+      this.checkBoxPolarisationsCircularLeft.TabIndex = 23;
+      this.checkBoxPolarisationsCircularLeft.Text = "Left";
+      this.checkBoxPolarisationsCircularLeft.TextAlign = System.Drawing.ContentAlignment.TopRight;
+      this.checkBoxPolarisationsCircularLeft.UseVisualStyleBackColor = true;
+      // 
+      // checkBoxPolarisationsCircularRight
+      // 
+      this.checkBoxPolarisationsCircularRight.AutoSize = true;
+      this.checkBoxPolarisationsCircularRight.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxPolarisationsCircularRight.Location = new System.Drawing.Point(217, 245);
+      this.checkBoxPolarisationsCircularRight.Name = "checkBoxPolarisationsCircularRight";
+      this.checkBoxPolarisationsCircularRight.Size = new System.Drawing.Size(49, 17);
+      this.checkBoxPolarisationsCircularRight.TabIndex = 22;
+      this.checkBoxPolarisationsCircularRight.Text = "Right";
+      this.checkBoxPolarisationsCircularRight.TextAlign = System.Drawing.ContentAlignment.TopRight;
+      this.checkBoxPolarisationsCircularRight.UseVisualStyleBackColor = true;
+      // 
+      // labelPolarisationsLinear
+      // 
+      this.labelPolarisationsLinear.AutoSize = true;
+      this.labelPolarisationsLinear.Location = new System.Drawing.Point(130, 229);
+      this.labelPolarisationsLinear.Name = "labelPolarisationsLinear";
+      this.labelPolarisationsLinear.Size = new System.Drawing.Size(36, 13);
+      this.labelPolarisationsLinear.TabIndex = 18;
+      this.labelPolarisationsLinear.Text = "Linear";
+      // 
+      // labelPolarisationsCircular
+      // 
+      this.labelPolarisationsCircular.AutoSize = true;
+      this.labelPolarisationsCircular.Location = new System.Drawing.Point(214, 229);
+      this.labelPolarisationsCircular.Name = "labelPolarisationsCircular";
+      this.labelPolarisationsCircular.Size = new System.Drawing.Size(42, 13);
+      this.labelPolarisationsCircular.TabIndex = 21;
+      this.labelPolarisationsCircular.Text = "Circular";
+      // 
       // FormEditTunerSatellite
       // 
       this.AcceptButton = this.buttonOkay;
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.CancelButton = this.buttonCancel;
-      this.ClientSize = new System.Drawing.Size(345, 295);
+      this.ClientSize = new System.Drawing.Size(345, 362);
+      this.Controls.Add(this.labelPolarisationsCircular);
+      this.Controls.Add(this.labelPolarisationsLinear);
+      this.Controls.Add(this.checkBoxPolarisationsCircularLeft);
+      this.Controls.Add(this.checkBoxPolarisationsCircularRight);
+      this.Controls.Add(this.checkBoxPolarisationsLinearVertical);
+      this.Controls.Add(this.labelPolarisations);
+      this.Controls.Add(this.checkBoxPolarisationsLinearHorizontal);
       this.Controls.Add(this.labelSatIpSource);
       this.Controls.Add(this.numericUpDownSatIpSource);
       this.Controls.Add(this.comboBoxDiseqcMotorPositionType);
@@ -350,5 +439,12 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
     private MPComboBox comboBoxDiseqcMotorPositionType;
     private MPNumericUpDown numericUpDownSatIpSource;
     protected MPLabel labelSatIpSource;
+    protected MPCheckBox checkBoxPolarisationsLinearHorizontal;
+    protected MPLabel labelPolarisations;
+    protected MPCheckBox checkBoxPolarisationsLinearVertical;
+    protected MPCheckBox checkBoxPolarisationsCircularLeft;
+    protected MPCheckBox checkBoxPolarisationsCircularRight;
+    protected MPLabel labelPolarisationsLinear;
+    protected MPLabel labelPolarisationsCircular;
   }
 }

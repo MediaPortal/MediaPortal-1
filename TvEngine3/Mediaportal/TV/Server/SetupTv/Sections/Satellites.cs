@@ -160,6 +160,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.LogDebug("  DiSEqC motor pos. = {0}", GetDiseqcMotorPositionDescription(tunerSatellite.DiseqcMotorPosition));
       this.LogDebug("  tone burst        = {0}", (ToneBurst)tunerSatellite.ToneBurst);
       this.LogDebug("  22 kHz tone state = {0}", (Tone22kState)tunerSatellite.Tone22kState);
+      this.LogDebug("  polarisations     = {0}", (Polarisation)tunerSatellite.Polarisations);
       this.LogDebug("  is toroidal dish? = {0}", tunerSatellite.IsToroidalDish);
     }
 
@@ -181,7 +182,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       DebugTunerSatelliteSettings(tunerSatellite);
       row.Tag = tunerSatellite;
       row.Cells["dataGridViewColumnSatellite"].Value = tunerSatellite.Satellite.ToString();
-      row.Cells["dataGridViewColumnTuner"].Value = tunerSatellite.IdTuner.HasValue ? tunerSatellite.Tuner.ToString() : "All (Default)";
+      row.Cells["dataGridViewColumnTuner"].Value = tunerSatellite.IdTuner.HasValue ? tunerSatellite.Tuner.ToString() : "All";
       row.Cells["dataGridViewColumnLnbType"].Value = tunerSatellite.LnbType.ToString();
       row.Cells["dataGridViewColumnSatIpSource"].Value = tunerSatellite.SatIpSource.ToString();
       if (tunerSatellite.SatIpSource == 0)
@@ -191,6 +192,37 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         row.Cells["dataGridViewColumnToneBurst"].Value = ((ToneBurst)tunerSatellite.ToneBurst).GetDescription();
         row.Cells["dataGridViewColumnTone22kState"].Value = ((Tone22kState)tunerSatellite.Tone22kState).GetDescription();
       }
+
+      Polarisation polarisations = (Polarisation)tunerSatellite.Polarisations;
+      string polarisationsString = string.Empty;
+      if (polarisations.HasFlag(Polarisation.CircularLeft | Polarisation.CircularRight | Polarisation.LinearHorizontal | Polarisation.LinearVertical))
+      {
+        polarisationsString = "All";
+        polarisations = Polarisation.Automatic;
+      }
+      else if (polarisations.HasFlag(Polarisation.CircularLeft | Polarisation.CircularRight))
+      {
+        polarisationsString = "Circular";
+        polarisations &= ~(Polarisation.CircularLeft | Polarisation.CircularRight);
+      }
+      else if (polarisations.HasFlag(Polarisation.LinearHorizontal | Polarisation.LinearVertical))
+      {
+        polarisationsString = "Linear";
+        polarisations &= ~(Polarisation.LinearHorizontal | Polarisation.LinearVertical);
+      }
+      if (polarisations != Polarisation.Automatic)
+      {
+        if (string.IsNullOrEmpty(polarisationsString))
+        {
+          polarisationsString = string.Join(", ", typeof(Polarisation).GetDescriptions((int)polarisations, false));
+        }
+        else
+        {
+          polarisationsString = string.Format("{0}, {1}", polarisationsString, string.Join(", ", typeof(Polarisation).GetDescriptions((int)polarisations, false)));
+        }
+      }
+      row.Cells["dataGridViewColumnPolarisations"].Value = polarisationsString;
+
       row.Cells["dataGridViewColumnIsToroidalDish"].Value = tunerSatellite.IsToroidalDish ? "Yes" : "No";
     }
 
