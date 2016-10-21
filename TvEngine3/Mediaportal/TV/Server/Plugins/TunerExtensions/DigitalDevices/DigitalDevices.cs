@@ -729,15 +729,15 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
         return;
       }
 
+      // Required by Digital Devices Max S8. Cine and DuoFlex S2 tuners
+      // auto-detect modulation.
+      // Refer to http://forum.team-mediaportal.com/threads/dd-max-s8-tuning-problems.129173/page-3
       IChannelSatellite satelliteChannel = channel as IChannelSatellite;
-      if (satelliteChannel == null)
+      if (satelliteChannel == null || !_tunerExternalId.ToLowerInvariant().Contains("dev_0007&subsys_0023"))
       {
         return;
       }
 
-      // Required by Digital Devices Max S8. Cine and DuoFlex S2 tuners
-      // auto-detect modulation.
-      // Refer to http://forum.team-mediaportal.com/threads/dd-max-s8-tuning-problems.129173/page-3
       if (satelliteChannel is ChannelDvbS2)
       {
         if (Environment.OSVersion.Version.Major >= 6) // Vista or later
@@ -753,8 +753,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
         }
         else
         {
-          // XP: use DD Control Center setting, which must be set to DVB-S2.
-          satelliteChannel.ModulationScheme = (ModulationSchemePsk)DirectShowLib.BDA.ModulationType.ModNotSet;
+          satelliteChannel.ModulationScheme = (ModulationSchemePsk)DirectShowLib.BDA.ModulationType.Mod8Vsb;
         }
       }
       else if (satelliteChannel.ModulationScheme == ModulationSchemePsk.Psk4)
