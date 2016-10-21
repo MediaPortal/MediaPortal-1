@@ -220,26 +220,26 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
           hr = Slot.GetCamCaSystemIds(out camCasIds);
           if (hr != (int)NativeMethods.HResult.S_OK)
           {
-            this.LogWarn("Digital Devices: failed to read CAM CA system IDs, hr = 0x{0:x}", hr);
+            this.LogWarn("Digital Devices: slot {0} failed to read CAM CA system IDs, hr = 0x{1:x}", Slot.Index, hr);
           }
         }
 
         hr = Slot.GetCiBitRate(out ciBitRate);
         if (hr != (int)NativeMethods.HResult.S_OK)
         {
-          this.LogWarn("Digital Devices: failed to read CI bit rate, hr = 0x{0:x}", hr);
+          this.LogWarn("Digital Devices: slot {0} failed to read CI bit rate, hr = 0x{1:x}", Slot.Index, hr);
         }
 
         hr = Slot.GetCiMaxBitRate(out ciMaxBitRate);
         if (hr != (int)NativeMethods.HResult.S_OK)
         {
-          this.LogWarn("Digital Devices: failed to read maximum CI bit rate, hr = 0x{0:x}", hr);
+          this.LogWarn("Digital Devices: slot {0} failed to read maximum CI bit rate, hr = 0x{1:x}", Slot.Index, hr);
         }
 
         hr = Slot.GetCiTunerCount(out ciTunerCount);
         if (hr != (int)NativeMethods.HResult.S_OK)
         {
-          this.LogWarn("Digital Devices: failed to read CI tuner count, hr = 0x{0:x}", hr);
+          this.LogWarn("Digital Devices: slot {0} failed to read CI tuner count, hr = 0x{1:x}", Slot.Index, hr);
         }
 
         if (isCamReady != IsCamReady ||
@@ -543,12 +543,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
                 sharedContext.CamMenuId = id;
                 if (type == CiSlot.MenuType.Unknown)
                 {
-                  this.LogError("Digital Devices: received unknown/unsupported menu type");
+                  this.LogError("Digital Devices: slot {0} received unknown/unsupported menu type", sharedContext.Slot.Index);
                   continue;
                 }
 
                 this.LogInfo("Digital Devices: slot {0} received new menu", sharedContext.Slot.Index);
-                this.LogDebug("  id        = {0}", id);
+                this.LogDebug("  ID        = {0}", id);
                 this.LogDebug("  type      = {0}", type);
 
                 lock (_caMenuCallBackLock)
@@ -595,7 +595,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
               {
                 // Attempting to check for a menu when the menu has not previously been
                 // opened seems to fail (HRESULT 0x8007001f). Don't flood the logs...
-                this.LogError("Digital Devices: failed to read MMI, hr = 0x{0:x}", hr);
+                this.LogError("Digital Devices: slot = {0} failed to read MMI, hr = 0x{1:x}", sharedContext.Slot.Index, hr);
               }
             }
           }
@@ -1730,7 +1730,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
           // Future menu interactions will be passed to this CI slot/CAM.
           _menuContext = ciSlotDevicePath;
           _menuSlotIndex = context.Slot.Index;
-          DigitalDevicesHardware.IsDevice(ciSlotDevicePath, out _menuSlotIndex);
           return true;
         }
 

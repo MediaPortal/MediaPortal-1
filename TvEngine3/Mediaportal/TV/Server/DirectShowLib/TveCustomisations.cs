@@ -828,8 +828,8 @@ namespace DirectShowLib
           // Convert the device path to a device ID. For example:
           // @device:pnp:\\?\stream#hcw88bar.cfg92#5&35edf2e&7&0#{a799a801-a46d-11d0-a18c-00a02401dcd4}\global
           // STREAM\HCW88BAR.CFG92\5&35EDF2E&7&0
-          // @device:pnp:\\?\dd_dvb#ven_dd01&dev_0011&subsys_0040dd01&rev_00&tuner#5&71e513c&0&2#{71985f48-1ca1-11d3-9cc8-00c04f7971e0}\{8b884e32-fbca-11de-b16f-000000004d56}
-          // DD_DVB\VEN_DD01&DEV_0011&SUBSYS_0040DD01&REV_00&TUNER\5&71E513C&0&2
+          // @device:pnp:\\?\dd_dvb#ven_dd01&dev_0003&subsys_0021dd01&rev_00&tuner#5&d34488e&0&2#{71985f48-1ca1-11d3-9cc8-00c04f7971e0}\{8b884e11-fbca-11de-b16f-000000004d56}
+          // DD_DVB\VEN_DD01&DEV_0003&SUBSYS_0021DD01&REV_00&TUNER\5&D34488E&0&2
           string targetDeviceId = string.Format(@"{0}\{1}\{2}", pnpConnection.ToUpperInvariant(), sections[1].ToUpperInvariant(), sections[2].ToUpperInvariant());
 
           // Enumerate installed and present media devices with stream class drivers.
@@ -859,6 +859,7 @@ namespace DirectShowLib
                     {
                       // Yes. The parent device ID should look something like:
                       // PCI\VEN_14F1&DEV_8800&SUBSYS_92020070&REV_05\4&CF81C54&0&10F0
+                      // PCI\VEN_DD01&DEV_0003&SUBSYS_0021DD01&REV_00\4&2BEDC12D&0&00E4
                       string[] parentSections = parentDeviceId.ToString().Split('\\');
                       if (parentSections.Length == 3)
                       {
@@ -971,11 +972,11 @@ namespace DirectShowLib
 
         // Digital Devices tuners...
         // The device path contains two digits that identify the tuner type and
-        // instance. The second digit is the zero-indexed tuner identifier.
-        m = Regex.Match(devicePath, @"8b884e\d(\d)-fbca-11de-b16f-000000004d56", RegexOptions.IgnoreCase);
+        // instance. The third digit is the zero-indexed tuner identifier.
+        m = Regex.Match(devicePath, @"8b884[0-9a-f]{2}([0-9a-f])-fbca-11de-b16f-000000004d56", RegexOptions.IgnoreCase);
         if (m.Success)
         {
-          _tunerInstanceId = int.Parse(m.Groups[1].Captures[0].Value);
+          _tunerInstanceId = Convert.ToInt32(m.Groups[1].Captures[0].Value, 16);
           return _tunerInstanceId;
         }
 

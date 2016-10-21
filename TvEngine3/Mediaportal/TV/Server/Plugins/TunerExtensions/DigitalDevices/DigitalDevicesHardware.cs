@@ -27,13 +27,13 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
   /// <summary>
   /// A wrapper class for Digital Devices hardware information  slot properties and methods.
   /// </summary>
+  /// <remarks>
+  /// The indices produced by this class are unique among the component devices of a given type
+  /// (tuner, capture or common interface) connected to a base device (Cine, Octopus CI, bridge).
+  /// They are not unique across base devices.
+  /// </remarks>
   internal class DigitalDevicesHardware
   {
-    /// <summary>
-    /// An <see cref="IMoniker"/> display name section that is common to all Digital Devices KS components.
-    /// </summary>
-    public static readonly string COMMON_DEVICE_PATH_SECTION = "fbca-11de-b16f-000000004d56";
-
     /// <summary>
     /// Check if a device is a Digital Devices device.
     /// </summary>
@@ -47,10 +47,10 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
       {
         return false;
       }
-      Match m = Regex.Match(devicePath, @"\{8b884.(.)(.)\-" + COMMON_DEVICE_PATH_SECTION, RegexOptions.IgnoreCase);
+      Match m = Regex.Match(devicePath, @"\{8b884[0-9a-f]{2}([0-9a-f])\-fbca-11de-b16f-000000004d56", RegexOptions.IgnoreCase);
       if (m.Success)
       {
-        index = Convert.ToInt32(m.Groups[2].Captures[0].Value, 16) + 1;   // + 1 to match the filter names => less confusing
+        index = Convert.ToInt32(m.Groups[1].Captures[0].Value, 16) + 1;   // + 1 to match the filter names => less confusing
         return true;
       }
       return false;

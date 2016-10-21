@@ -213,12 +213,10 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices.Config
       foreach (CiContext context in _ciContexts)
       {
         bool isChanged = false;
-        int index;
-        DigitalDevicesHardware.IsDevice(context.Config.DevicePath, out index);
 
         if (context.Config.DecryptLimit != context.DecryptLimitControl.Value)
         {
-          this.LogInfo("Digital Devices config: decrypt limit for slot {0} changed from {1} to {2}", index, context.Config.DecryptLimit, context.DecryptLimitControl.Value);
+          this.LogInfo("Digital Devices config: decrypt limit for slot {0} changed from {1} to {2}", context.Config.DevicePath, context.Config.DecryptLimit, context.DecryptLimitControl.Value);
           context.Config.DecryptLimit = (int)context.DecryptLimitControl.Value;
           isChanged = true;
         }
@@ -226,7 +224,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices.Config
         HashSet<string> providers = new HashSet<string>(Regex.Split(context.ProviderListControl.Text.Trim(), @"\s*,\s*"));
         if (context.Config.Providers.SetEquals(providers))
         {
-          this.LogInfo("Digital Devices config: providers for slot {0} changed from [{1}] to [{2}]", index, string.Join(", ", context.Config.Providers), string.Join(", ", providers));
+          this.LogInfo("Digital Devices config: providers for slot {0} changed from [{1}] to [{2}]", context.Config.DevicePath, string.Join(", ", context.Config.Providers), string.Join(", ", providers));
           context.Config.Providers = providers;
           isChanged = true;
         }

@@ -147,10 +147,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
     /// <summary>
     /// Get the CI slot's index.
     /// </summary>
-    /// <remarks>
-    /// The index is zero-based. Expected to be 0..3. The index is unique per
-    /// base device (Cine, Octopus CI, bridge).
-    /// </remarks>
     public int Index
     {
       get
