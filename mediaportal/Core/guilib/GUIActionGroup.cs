@@ -272,7 +272,11 @@ namespace MediaPortal.GUI.Library
     {
       if (!Dimmed)
       {
-        if (GUIGraphicsContext.Overlay != _isOverlayAllowed)
+        if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+        {
+          GUIGraphicsContext.Overlay = true;
+        }
+        else if (GUIGraphicsContext.Overlay != _isOverlayAllowed)
         {
           GUIGraphicsContext.Overlay = _parentWin.IsOverlayAllowed = _isOverlayAllowed;
         }
