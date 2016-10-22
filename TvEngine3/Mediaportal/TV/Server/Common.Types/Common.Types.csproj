@@ -58,6 +58,7 @@
     <Compile Include="..\..\..\..\..\Common-MP-TVE3\SolutionInfo.cs">
       <Link>SolutionInfo.cs</Link>
     </Compile>
+    <Compile Include="Channel\ModCod.cs" />
     <Compile Include="Country\Country.cs" />
     <Compile Include="Country\CountryCollection.cs" />
     <Compile Include="Enum\AnalogTunerSource.cs" />
