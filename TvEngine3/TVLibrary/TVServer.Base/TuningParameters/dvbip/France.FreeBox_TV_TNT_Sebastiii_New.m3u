@@ -1,0 +1,64 @@
+#EXTM3U
+#EXTINF:0,1 - TF1 (TNT)
+rtsp://192.168.1.100/fbxdvb/stream?tsid=6&nid=8442&sid=1537&frontend=1
+#EXTINF:0,2 - France 2 (TNT)
+rtsp://192.168.1.100/fbxdvb/stream?tsid=1&nid=8442&sid=257&frontend=1
+#EXTINF:0,3 - F3 Centre (TNT)
+rtsp://192.168.1.100/fbxdvb/stream?tsid=1&nid=8442&sid=275&frontend=1
+#EXTINF:0,3 - F3 Pays de la Loire (TNT)
+rtsp://192.168.1.100/fbxdvb/stream?tsid=1&nid=8442&sid=281&frontend=1
+#EXTINF:0,4 - CANAL+ (TNT)
+rtsp://192.168.1.100/fbxdvb/stream?tsid=3&nid=8442&sid=769&frontend=1
+#EXTINF:0,5 - France 5 (TNT)
+rtsp://192.168.1.100/fbxdvb/stream?tsid=4&nid=8442&sid=1045&frontend=1
+#EXTINF:0,6 - M6 (TNT)
+rtsp://192.168.1.100/fbxdvb/stream?tsid=4&nid=8442&sid=1025&frontend=1
+#EXTINF:0,7 - Arte (TNT)
+rtsp://192.168.1.100/fbxdvb/stream?tsid=4&nid=8442&sid=1031&frontend=1
+#EXTINF:0,8 - C8 (TNT)
+rtsp://192.168.1.100/fbxdvb/stream?tsid=2&nid=8442&sid=513&frontend=1
+#EXTINF:0,9 - W9 (TNT)
+rtsp://192.168.1.100/fbxdvb/stream?tsid=4&nid=8442&sid=1026&frontend=1
+rtsp://mafreebox.freebox.fr/fbxtv_pub/stream?namespace=1&service=497
+#EXTINF:0,10 - TMC (TNT)
+rtsp://192.168.1.100/fbxdvb/stream?tsid=6&nid=8442&sid=1542&frontend=1
+#EXTINF:0,11 - NT1 (TNT)
+rtsp://192.168.1.100/fbxdvb/stream?tsid=6&nid=8442&sid=1544&frontend=1
+#EXTINF:0,12 - NRJ12 (TNT)
+rtsp://192.168.1.100/fbxdvb/stream?tsid=6&nid=8442&sid=1538&frontend=1
+#EXTINF:0,13 - LCP (TNT)
+rtsp://192.168.1.100/fbxdvb/stream?tsid=6&nid=8442&sid=1545&frontend=1
+#EXTINF:0,14 - France 4 (TNT)
+rtsp://192.168.1.100/fbxdvb/stream?tsid=1&nid=8442&sid=260&frontend=1
+#EXTINF:0,15 - BFM TV (TNT)
+rtsp://192.168.1.100/fbxdvb/stream?tsid=2&nid=8442&sid=515&frontend=1
+#EXTINF:0,16 - i>TELE (TNT)
+rtsp://192.168.1.100/fbxdvb/stream?tsid=2&nid=8442&sid=516&frontend=1
+#EXTINF:0,17 - CSTAR (TNT)
+rtsp://192.168.1.100/fbxdvb/stream?tsid=2&nid=8442&sid=517&frontend=1
+#EXTINF:0,18 - Gulli (TNT)
+rtsp://192.168.1.100/fbxdvb/stream?tsid=2&nid=8442&sid=518&frontend=1
+#EXTINF:0,19 - France Ô (TNT)
+rtsp://192.168.1.100/fbxdvb/stream?tsid=1&nid=8442&sid=261&frontend=1
+#EXTINF:0,20 - HD1 (TNT)
+rtsp://192.168.1.100/fbxdvb/stream?tsid=10&nid=8442&sid=2561&frontend=1
+#EXTINF:0,21 - L'Equipe 21 (TNT)
+rtsp://192.168.1.100/fbxdvb/stream?tsid=10&nid=8442&sid=2562&frontend=1
+#EXTINF:0,22 - 6ter (TNT)
+rtsp://192.168.1.100/fbxdvb/stream?tsid=4&nid=8442&sid=1046&frontend=1
+#EXTINF:0,23 - NUMERO 23 (TNT)
+rtsp://192.168.1.100/fbxdvb/stream?tsid=10&nid=8442&sid=2565&frontend=1
+#EXTINF:0,24 - RMC Découverte (TNT)
+rtsp://192.168.1.100/fbxdvb/stream?tsid=10&nid=8442&sid=2564&frontend=1
+#EXTINF:0,25 - Chérie 25 (TNT)
+rtsp://192.168.1.100/fbxdvb/stream?tsid=10&nid=8442&sid=2563&frontend=1
+#EXTINF:0,26 - LCI (TNT)
+rtsp://192.168.1.100/fbxdvb/stream?tsid=3&nid=8442&sid=776&frontend=1
+#EXTINF:0,27 - franceinfo: (TNT)
+rtsp://192.168.1.100/fbxdvb/stream?tsid=1&nid=8442&sid=262&frontend=1
+#EXTINF:0,28 - PARIS PREMIERE (TNT)
+rtsp://192.168.1.100/fbxdvb/stream?tsid=3&nid=8442&sid=777&frontend=1
+#EXTINF:0,42 - CANAL+ CINEMA (TNT)
+rtsp://192.168.1.100/fbxdvb/stream?tsid=3&nid=8442&sid=770&frontend=1
+#EXTINF:0,43 - CANAL+ SPORT (TNT)
+rtsp://192.168.1.100/fbxdvb/stream?tsid=3&nid=8442&sid=771&frontend=1
