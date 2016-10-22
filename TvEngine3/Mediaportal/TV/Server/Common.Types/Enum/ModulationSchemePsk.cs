@@ -70,27 +70,27 @@ namespace Mediaportal.TV.Server.Common.Types.Enum
     /// <summary>
     /// 16 [A]PSK.
     /// </summary>
-    [Description("16 PSK")]
+    [Description("16 APSK")]
     Psk16,
     /// <summary>
     /// 32 [A]PSK.
     /// </summary>
-    [Description("32 PSK")]
+    [Description("32 APSK")]
     Psk32,
     /// <summary>
     /// 64 [A]PSK.
     /// </summary>
-    [Description("64 PSK")]
+    [Description("64 APSK")]
     Psk64,
     /// <summary>
     /// 128 [A]PSK.
     /// </summary>
-    [Description("128 PSK")]
+    [Description("128 APSK")]
     Psk128,
     /// <summary>
     /// 256 [A]PSK.
     /// </summary>
-    [Description("256 PSK")]
+    [Description("256 APSK")]
     Psk256
   }
 }
