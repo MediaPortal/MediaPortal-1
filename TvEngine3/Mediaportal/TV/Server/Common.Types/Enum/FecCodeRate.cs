@@ -30,6 +30,8 @@ namespace Mediaportal.TV.Server.Common.Types.Enum
     Automatic,
     [Description("1/5")]
     Rate1_5,                  // 0.2
+    [Description("2/9")]
+    Rate2_9,                  // 0.22*
     [Description("11/45")]
     Rate11_45,                // 0.244*
     [Description("1/4")]
