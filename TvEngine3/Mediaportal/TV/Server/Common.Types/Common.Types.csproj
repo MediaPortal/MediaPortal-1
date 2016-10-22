@@ -100,7 +100,7 @@
     <Compile Include="Provider\BouquetFreeviewSatellite.cs" />
     <Compile Include="Provider\BouquetOpenTvFoxtel.cs" />
     <Compile Include="Provider\BouquetOpenTvSkyUk.cs" />
-    <Compile Include="Provider\BouquetOpenvSkyNz.cs" />
+    <Compile Include="Provider\BouquetOpenTvSkyNz.cs" />
     <Compile Include="Provider\DishNetworkMarket.cs" />
     <Compile Include="Provider\RegionFreesat.cs" />
     <Compile Include="Provider\RegionOpenTvFoxtel.cs" />
