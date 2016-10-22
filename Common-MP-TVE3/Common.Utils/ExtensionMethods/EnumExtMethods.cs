@@ -19,10 +19,10 @@
 #endregion
 
 using System;
-using System.ComponentModel;
-using System.Reflection;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Reflection;
 
 namespace MediaPortal.Common.Utils.ExtensionMethods
 {
@@ -33,9 +33,11 @@ namespace MediaPortal.Common.Utils.ExtensionMethods
   public static class EnumExtMethods
   {
     /// <summary>
-    /// Get the description for an enum member. The member's name is returned if a description is
-    /// not available.
+    /// Get the description for an enum member.
     /// </summary>
+    /// <remarks>
+    /// The member's name is returned if a description is not available.
+    /// </remarks>
     /// <param name="value">The enum member value.</param>
     /// <returns>the description of the member</returns>
     public static string GetDescription(this Enum value)
@@ -84,9 +86,11 @@ namespace MediaPortal.Common.Utils.ExtensionMethods
 
     /// <summary>
     /// Get the descriptions for a subset of the members of an enum type.
+    /// </summary>
+    /// <remarks>
     /// Members are filtered in or out of the result set by bitwise comparison
     /// of the member value with the filter value.
-    /// </summary>
+    /// </remarks>
     /// <param name="enumType">The enum type.</param>
     /// <param name="filter">The member filter.</param>
     /// <param name="includeZeroMember"><c>True</c> to include the member with value zero.</param>
@@ -107,6 +111,32 @@ namespace MediaPortal.Common.Utils.ExtensionMethods
         {
           toReturn.Add(GetDescription(e));
         }
+      }
+      return toReturn.ToArray();
+    }
+
+    /// <summary>
+    /// Get the descriptions for a subset of the members of an enum type.
+    /// </summary>
+    /// <remarks>
+    /// Members are filtered in or out of the result set by bitwise comparison
+    /// of the member value with the filter value.
+    /// </remarks>
+    /// <param name="enumType">The enum type.</param>
+    /// <param name="filter">The member filter.</param>
+    /// <param name="includeZeroMember"><c>True</c> to include the member with value zero.</param>
+    /// <returns>an array of strings containing the descriptions for each member that matches the filter</returns>
+    public static string[] GetDescriptions(this Type enumType, IEnumerable<Enum> values)
+    {
+      if (enumType == null || !enumType.IsEnum)
+      {
+        return new string[0];
+      }
+
+      List<string> toReturn = new List<string>();
+      foreach (Enum e in values)
+      {
+        toReturn.Add(GetDescription(e));
       }
       return toReturn.ToArray();
     }
