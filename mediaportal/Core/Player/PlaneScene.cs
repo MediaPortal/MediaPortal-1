@@ -733,6 +733,8 @@ namespace MediaPortal.Player
           _reEntrant = true;
           GUIGraphicsContext.InVmr9Render = true;
 
+          if (VMR9Util.g_vmr9 != null) VMR9Util.g_vmr9.PlaneSceneMadvrTimer = DateTime.Now;
+
           if (width > 0 && height > 0)
           {
             _vmr9Util.VideoWidth = width;
