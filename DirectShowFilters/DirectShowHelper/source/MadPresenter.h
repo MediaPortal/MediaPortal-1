@@ -132,7 +132,7 @@ class MPMadPresenter : public CUnknown, public CCritSec
 
     IBaseFilter* Initialize();
     void InitializeOSD();
-    void SetMadVrPaused();
+    void SetMadVrPaused(bool paused);
     void RepeatFrame();
     HRESULT Shutdown();
     HRESULT Stopping();

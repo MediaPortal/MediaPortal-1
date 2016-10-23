@@ -970,9 +970,9 @@ void MadStopping()
   }
 }
 
-void MadVrPaused()
+void MadVrPaused(bool paused)
 {
-  m_madPresenter->SetMadVrPaused();
+  m_madPresenter->SetMadVrPaused(paused);
 }
 
 void MadVrRepeatFrameSend()
