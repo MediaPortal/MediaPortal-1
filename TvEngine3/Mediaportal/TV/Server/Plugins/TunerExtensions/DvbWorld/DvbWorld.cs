@@ -509,33 +509,49 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DvbWorld
         return;
       }
 
-      // We only have work to do if the channel is a DVB-S2 channel.
-      ChannelDvbS2 dvbs2Channel = channel as ChannelDvbS2;
-      if (dvbs2Channel == null)
+      IChannelSatellite satelliteChannel = channel as IChannelSatellite;
+      if (satelliteChannel == null)
       {
         return;
       }
 
       ModulationType bdaModulation = ModulationType.ModNotSet;
-      if (dvbs2Channel.ModulationScheme == ModulationSchemePsk.Psk4)
+      if (satelliteChannel is ChannelDvbS2)
       {
-        bdaModulation = ModulationType.ModNbcQpsk;
+        if (satelliteChannel.ModulationScheme == ModulationSchemePsk.Psk4)
+        {
+          bdaModulation = ModulationType.ModNbcQpsk;
+        }
+        else if (satelliteChannel.ModulationScheme == ModulationSchemePsk.Psk8)
+        {
+          bdaModulation = ModulationType.ModNbc8Psk;
+        }
+
+        // Specifications on the website indicate some of the products support
+        // 16 and 32 APSK, but this is not documented in the SDK.
+        else if (satelliteChannel.ModulationScheme == ModulationSchemePsk.Psk16)
+        {
+          bdaModulation = ModulationType.Mod16Apsk;
+        }
+        else if (satelliteChannel.ModulationScheme == ModulationSchemePsk.Psk32)
+        {
+          bdaModulation = ModulationType.Mod32Apsk;
+        }
       }
-      else if (dvbs2Channel.ModulationScheme == ModulationSchemePsk.Psk8)
+      else if (satelliteChannel is ChannelDvbS && satelliteChannel.ModulationScheme == ModulationSchemePsk.Psk4)
       {
-        bdaModulation = ModulationType.ModNbc8Psk;
+        bdaModulation = ModulationType.ModQpsk;
+      }
+
+      if (bdaModulation == ModulationType.ModNotSet)
+      {
+        this.LogWarn("DVB World: satellite tune request uses unsupported modulation scheme {0}", satelliteChannel.ModulationScheme);
       }
       else
       {
-        this.LogWarn("DVB World: DVB-S2 tune request uses unsupported modulation scheme {0}", dvbs2Channel.ModulationScheme);
-        // DVB-S2 with automatic modulation detection. Specifications on the
-        // website indicate some of the products may support 16 and/or 32 APSK,
-        // but this is not documented in the SDK.
-        bdaModulation = ModulationType.ModAnalogFrequency;
+        this.LogDebug("  modulation = {0}", bdaModulation);
       }
-
-      this.LogDebug("  modulation    = {0}", bdaModulation);
-      dvbs2Channel.ModulationScheme = (ModulationSchemePsk)bdaModulation;
+      satelliteChannel.ModulationScheme = (ModulationSchemePsk)bdaModulation;
     }
 
     #endregion
@@ -674,7 +690,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DvbWorld
       {
         tuningParams.Modulation = DwModulation.Dvbs2_8Psk;
       }
-      else if (bdaModulation == ModulationType.ModNotSet)
+      else if (bdaModulation == ModulationType.ModQpsk)
       {
         tuningParams.Modulation = DwModulation.Dvbs_Qpsk;
       }
