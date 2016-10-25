@@ -25,13 +25,14 @@
 #include "SoundTouchEx.h"
 #include "Globals.h"
 #include "SyncClock.h"
+#include "Logger.h"
 
 using namespace std;
 
 class CTimeStretchFilter : public CQueuedAudioSink, public ITimeStretch
 {
 public:
-  CTimeStretchFilter(AudioRendererSettings *pSettings, CSyncClock* pClock);
+  CTimeStretchFilter(AudioRendererSettings *pSettings, CSyncClock* pClock, Logger* pLogger);
   ~CTimeStretchFilter();
 
   // IAudioSink implementation
@@ -48,7 +49,7 @@ public:
 
   /// Sets new tempo control value. Normal tempo = 1.0, smaller values
   /// represent slower tempo, larger faster tempo.
-  void setTempo(float newTempo, float newAdjustment);
+  bool setTempo(float newTempo, float newAdjustment);
 
   /// Sets new rate control value as a difference in percents compared
   /// to the original rate (-50 .. +100 %)
@@ -128,9 +129,6 @@ protected:
 
 // Internal implementation
 private:
-
-  AudioRendererSettings* m_pSettings;
-
   vector<HANDLE> m_hSampleEvents;
   vector<DWORD>  m_dwSampleWaitObjects;
 
@@ -149,7 +147,9 @@ private:
   double m_fNewTempo;
   double m_fNewAdjustment;
 
-  CCritSec m_allocatorLock;
+  mutable CCritSec m_csStreamLock;  // allow const methods to use the lock
 
   CSyncClock* m_pClock;
+
+  Logger* m_pLogger;
 };

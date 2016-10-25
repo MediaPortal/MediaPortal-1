@@ -51,8 +51,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,1,5,0
- PRODUCTVERSION 1,1,5,0
+ FILEVERSION 1,1,9,0
+ PRODUCTVERSION 1,1,9,0
  FILEFLAGSMASK 0x17L
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -68,12 +68,12 @@ BEGIN
         BLOCK "040904b0"
         BEGIN
             VALUE "FileDescription", "MediaPortal Audio Renderer"
-            VALUE "FileVersion", "1.1.6.0"
+            VALUE "FileVersion", "1.1.9.0"
             VALUE "InternalName", "MpAudioRenderer"
-            VALUE "LegalCopyright", "Copyright (C) 2005-2013 "
+            VALUE "LegalCopyright", "Copyright (C) 2005-2014"
             VALUE "OriginalFilename", "MpAudioRenderer.ax"
             VALUE "ProductName", "MpAudioRenderer"
-            VALUE "ProductVersion", "1.1.6.0"
+            VALUE "ProductVersion", "1.1.9.0"
         END
     END
     BLOCK "VarFileInfo"

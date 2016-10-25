@@ -38,11 +38,14 @@
 #include "TimeStretchFilter.h"
 #include "SampleRateConverterFilter.h"
 #include "ChannelMixer.h"
+#include "SampleCopier.h"
 
 #include "../SoundTouch/Include/SoundTouch.h"
 #include "SyncClock.h"
 #include "Settings.h"
 #include "VolumeHandler.h"
+#include "IMPAudioSettings.h"
+#include "Logger.h"
 
 // if you get a compilation error on AUDCLNT_E_BUFFER_SIZE_NOT_ALIGNED,
 // uncomment the #define below
@@ -120,7 +123,8 @@ private:
   bool DeliverSample(IMediaSample* pSample);
   HRESULT SetupFilterPipeline();
   HRESULT GetReferenceClockInterface(REFIID riid, void** ppv);
-   
+  HRESULT InitFilter();
+
 private:
   CBaseReferenceClock*	m_pReferenceClock;
   double					      m_dRate;
@@ -134,7 +138,7 @@ private:
   double          m_dBias;
   double          m_dAdjustment;
 
-  AudioRendererSettings m_Settings;
+  AudioRendererSettings* m_pSettings;
 
   IAudioSink* m_pPipeline; // entry point for the audio filter pipeline
   CWASAPIRenderFilter*  m_pWASAPIRenderer;
@@ -144,12 +148,20 @@ private:
   CTimeStretchFilter*   m_pTimestretchFilter;
   CSampleRateConverter* m_pSampleRateConverter;
   CChannelMixer*        m_pChannelMixer;
+  CSampleCopier*        m_pSampleCopier;
 
   IRenderFilter* m_pRenderer;
   ITimeStretch* m_pTimeStretch;
 
   HANDLE m_hRendererStarving;
   HANDLE m_hStopWaitingRenderer;
-  
+
   AM_MEDIA_TYPE* m_pMediaType;
+  bool m_bInitialized;
+  bool m_bFirstSample;
+
+  CCritSec  m_csAudioRenderer;
+  CCritSec  m_csInitLock;
+
+  Logger* m_pLogger;
 };
