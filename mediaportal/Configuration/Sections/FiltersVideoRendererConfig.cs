@@ -74,6 +74,7 @@ namespace MediaPortal.Configuration.Sections
           UseMadVideoRenderer3D.Checked = xmlreader.GetValueAsBool("general", "useMadVideoRenderer3D", false);
           numericUpDownFrame.Value = xmlreader.GetValueAsInt("general", "reduceMadvrFrame", 0);
           reduceMadvrFrame.Checked = xmlreader.GetValueAsBool("general", "useReduceMadvrFrame", false);
+          DRCheckBox.Checked = xmlreader.GetValueAsBool("general", "useInternalDRC", false);
         }
         _init = true;
       }
@@ -102,6 +103,7 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValueAsBool("general", "useMadVideoRenderer3D", UseMadVideoRenderer3D.Checked);
         xmlwriter.SetValue("general", "reduceMadvrFrame", numericUpDownFrame.Value);
         xmlwriter.SetValueAsBool("general", "useReduceMadvrFrame", reduceMadvrFrame.Checked);
+        xmlwriter.SetValueAsBool("general", "useInternalDRC", DRCheckBox.Checked);
       }
     }
 

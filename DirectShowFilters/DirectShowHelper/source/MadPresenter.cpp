@@ -100,7 +100,7 @@ MPMadPresenter::~MPMadPresenter()
         pMadVrCmd.Release();
         Log("MPMadPresenter::Destructor() - restoreDisplayModeNow");
       }
-      m_pMad.Release();
+      m_pMad.FullRelease();
     }
     Log("MPMadPresenter::Destructor() - m_pMad release 2");
 
@@ -128,23 +128,30 @@ void MPMadPresenter::InitializeOSD()
   }
 }
 
-void MPMadPresenter::SetMadVrPaused()
+void MPMadPresenter::SetMadVrPaused(bool paused)
 {
   CAutoLock cAutoLock(this);
 
-  int counter = 0;
-  OAFilterState state = -1;
-  m_pMediaControl->GetState(100, &state);
-  if (state != State_Paused)
+  if (paused)
+  {
+    int counter = 0;
+    OAFilterState state = -1;
+    m_pMediaControl->GetState(100, &state);
+    if (state != State_Paused)
+    {
+      m_pPaused = false;
+    }
+
+    if (m_pMediaControl && !m_pPaused)
+    {
+      m_pMediaControl->Pause();
+      m_pPaused = true;
+      Log("MPMadPresenter:::SetMadVrPaused() pause");
+    }
+  }
+  else
   {
     m_pPaused = false;
-  }
-
-  if (m_pMediaControl && !m_pPaused)
-  {
-    m_pMediaControl->Pause();
-    m_pPaused = true;
-    Log("MPMadPresenter:::SetMadVrPaused() pause");
   }
 }
 
@@ -544,7 +551,7 @@ HRESULT MPMadPresenter::ClearBackground(LPCSTR name, REFERENCE_TIME frameStart, 
   m_dwHeight = (WORD)fullOutputRect->bottom - (WORD)fullOutputRect->top; // added back
   m_dwWidth = (WORD)fullOutputRect->right - (WORD)fullOutputRect->left;
 
-  RenderToTexture(m_pMPTextureGui);
+  RenderToTextureGUI(m_pMPTextureGui);
 
   if (SUCCEEDED(hr = m_deviceState.Store()))
   {
@@ -557,16 +564,15 @@ HRESULT MPMadPresenter::ClearBackground(LPCSTR name, REFERENCE_TIME frameStart, 
         {
           // commented out (it slown down video on GPU Nvidia)
           m_pDevice->PresentEx(nullptr, nullptr, nullptr, nullptr, D3DPRESENT_FORCEIMMEDIATE);
-          //Log("MPMadPresenter::RenderOsd() IsUiVisible");
-          // Render frame to try to fix HD4XXX GPU flickering issue
-          //Com::SmartQIPtr<IMadVROsdServices> pOR = m_pMad;
-          //pOR->OsdRedrawFrame();
+          //Log("MPMadPresenter::ClearBackground() IsUiVisible");
         }
       }
     }
   }
 
   uiVisible = hr == S_OK ? true : false;
+
+  //Log("ClearBackground() hr: 0x%08x - 2", hr);
 
   if (SUCCEEDED(hr = m_pDevice->PresentEx(nullptr, nullptr, nullptr, nullptr, D3DPRESENT_FORCEIMMEDIATE)))
     if (SUCCEEDED(hr = SetupMadDeviceState()))
@@ -651,7 +657,7 @@ HRESULT MPMadPresenter::RenderOsd(LPCSTR name, REFERENCE_TIME frameStart, RECT* 
     }
   }
 
-  RenderToTexture(m_pMPTextureOsd);
+  RenderToTextureOSD(m_pMPTextureOsd);
 
   if (SUCCEEDED(hr = m_deviceState.Store()))
   {
@@ -665,15 +671,14 @@ HRESULT MPMadPresenter::RenderOsd(LPCSTR name, REFERENCE_TIME frameStart, RECT* 
           // commented out (it slown down video on GPU Nvidia)
           m_pDevice->PresentEx(nullptr, nullptr, nullptr, nullptr, D3DPRESENT_FORCEIMMEDIATE);
           //Log("MPMadPresenter::RenderOsd() IsUiVisible");
-          // Render frame to try to fix HD4XXX GPU flickering issue
-          //Com::SmartQIPtr<IMadVROsdServices> pOR = m_pMad;
-          //pOR->OsdRedrawFrame();
         }
       }
     }
   }
 
   uiVisible = hr == S_OK ? true : false;
+
+  //Log("RenderOsd() hr: 0x%08x - 2", hr);
 
   if (SUCCEEDED(hr = m_pDevice->PresentEx(nullptr, nullptr, nullptr, nullptr, D3DPRESENT_FORCEIMMEDIATE)))
     if (SUCCEEDED(hr = SetupMadDeviceState()))
@@ -690,7 +695,24 @@ HRESULT MPMadPresenter::RenderOsd(LPCSTR name, REFERENCE_TIME frameStart, RECT* 
   return uiVisible ? CALLBACK_USER_INTERFACE : CALLBACK_INFO_DISPLAY;
 }
 
-void MPMadPresenter::RenderToTexture(IDirect3DTexture9* pTexture)
+void MPMadPresenter::RenderToTextureOSD(IDirect3DTexture9* pTexture)
+{
+  if (!m_pDevice)
+    return;
+  HRESULT hr = E_UNEXPECTED;
+  IDirect3DSurface9* pSurface = nullptr; // This will be released by C# side
+  if (SUCCEEDED(hr = pTexture->GetSurfaceLevel(0, &pSurface)))
+  {
+    if (SUCCEEDED(hr = m_pCallback->SetRenderTarget(reinterpret_cast<DWORD>(pSurface))))
+    {
+      // TODO is it needed ?
+      hr = m_pDevice->Clear(0, nullptr, D3DCLEAR_TARGET, D3DXCOLOR(0, 0, 0, 0), 1.0f, 0);
+    }
+  }
+  //Log("RenderToTexture hr: 0x%08x", hr);
+}
+
+void MPMadPresenter::RenderToTextureGUI(IDirect3DTexture9* pTexture)
 {
   if (!m_pDevice)
     return;
@@ -879,8 +901,14 @@ HRESULT MPMadPresenter::SetDevice(IDirect3DDevice9* pD3DDev)
   }
 
   // Init created madVR window instance.
-  //SetDsWndVisible(true);
-  //Log("MPMadPresenter::SetDevice() init madVR Window");
+  SetDsWndVisible(true);
+  if (Com::SmartQIPtr<IVideoWindow> pWindow = m_pMad)
+  {
+    pWindow->put_Owner(reinterpret_cast<OAHWND>(m_hWnd));
+    pWindow->put_Visible(reinterpret_cast<OAHWND>(m_hWnd));
+    pWindow->SetWindowPosition(0, 0, m_dwGUIWidth, m_dwGUIHeight);
+  }
+  Log("MPMadPresenter::SetDevice() init madVR Window");
 
   return hr;
 }
@@ -936,8 +964,8 @@ HRESULT MPMadPresenter::Render(REFERENCE_TIME frameStart, int left, int top, int
       Log("%s : reduce madVR frame to : %i", __FUNCTION__, m_pMadVRFrameCount);
 
       // Init created madVR window instance.
-      SetDsWndVisible(true);
-      Log("MPMadPresenter::SetDevice() init madVR Window");
+      //SetDsWndVisible(true);
+      //Log("MPMadPresenter::SetDevice() init madVR Window");
     }
     m_deviceState.Store();
     SetupMadDeviceState();

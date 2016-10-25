@@ -711,7 +711,13 @@ namespace MediaPortal.Player
     {
       if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
       {
-        return;
+        using (Settings xmlreader = new MPSettings())
+        {
+          if (!xmlreader.GetValueAsBool("general", "useInternalDRC", false))
+          {
+            return;
+          }
+        }
       }
 
       double currentRR = 0;

@@ -2633,8 +2633,14 @@ namespace MediaPortal.Player
       if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
           GUIGraphicsContext.Vmr9Active && VMR9Util.g_vmr9 != null)
       {
-        if (g_Player.Paused)
-          VMR9Util.g_vmr9.StartMadVrPaused();
+        VMR9Util.g_vmr9.StartMadVrPaused();
+
+        // HACK : If madVR is running but stuck in not rendering anymore, we need to force a refresh
+        TimeSpan tsPlay = DateTime.Now - VMR9Util.g_vmr9.PlaneSceneMadvrTimer;
+        if (tsPlay.Seconds >= 2)
+        {
+          GUIGraphicsContext.IsFullScreenVideo = !GUIGraphicsContext.IsFullScreenVideo;
+        }
       }
 
       if (GUIGraphicsContext.Vmr9Active && VMR9Util.g_vmr9 != null && !GUIGraphicsContext.InVmr9Render)

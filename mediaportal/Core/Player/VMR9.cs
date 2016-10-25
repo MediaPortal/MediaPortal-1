@@ -156,7 +156,7 @@ namespace MediaPortal.Player
     private static extern unsafe void MadStopping();
 
     [DllImport("dshowhelper.dll", CallingConvention = CallingConvention.Cdecl)]
-    private static extern unsafe void MadVrPaused();
+    private static extern unsafe void MadVrPaused(bool paused);
 
     [DllImport("dshowhelper.dll", CallingConvention = CallingConvention.Cdecl)]
     private static extern unsafe void MadVrRepeatFrameSend();
@@ -208,6 +208,7 @@ namespace MediaPortal.Player
     protected bool UseEVRMadVRForTV;
     protected bool UseMadVideoRenderer3D;
     protected internal DateTime playbackTimer;
+    protected internal DateTime PlaneSceneMadvrTimer;
 
     #endregion
 
@@ -446,7 +447,7 @@ namespace MediaPortal.Player
     {
       if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
       {
-        MadVrPaused();
+        MadVrPaused(g_Player.Paused);
       }
     }
 

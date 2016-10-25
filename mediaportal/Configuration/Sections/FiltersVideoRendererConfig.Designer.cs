@@ -47,6 +47,7 @@ namespace MediaPortal.Configuration.Sections
       this.labelFilteringHint = new MediaPortal.UserInterface.Controls.MPLabel();
       this.checkBoxVMRWebStreams = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.label1 = new System.Windows.Forms.Label();
+      this.DRCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpGroupBox1.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownFrame)).BeginInit();
       this.SuspendLayout();
@@ -101,6 +102,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.mpGroupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGroupBox1.Controls.Add(this.DRCheckBox);
       this.mpGroupBox1.Controls.Add(this.numericUpDownFrame);
       this.mpGroupBox1.Controls.Add(this.reduceMadvrFrame);
       this.mpGroupBox1.Controls.Add(this.UseMadVideoRenderer3D);
@@ -121,7 +123,7 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.mpGroupBox1.Location = new System.Drawing.Point(6, 0);
       this.mpGroupBox1.Name = "mpGroupBox1";
-      this.mpGroupBox1.Size = new System.Drawing.Size(428, 409);
+      this.mpGroupBox1.Size = new System.Drawing.Size(428, 426);
       this.mpGroupBox1.TabIndex = 1;
       this.mpGroupBox1.TabStop = false;
       this.mpGroupBox1.Text = "Video renderer - advanced settings";
@@ -171,7 +173,7 @@ namespace MediaPortal.Configuration.Sections
       this.DisableLowLatencyMode.Checked = true;
       this.DisableLowLatencyMode.CheckState = System.Windows.Forms.CheckState.Checked;
       this.DisableLowLatencyMode.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.DisableLowLatencyMode.Location = new System.Drawing.Point(64, 327);
+      this.DisableLowLatencyMode.Location = new System.Drawing.Point(64, 326);
       this.DisableLowLatencyMode.Name = "DisableLowLatencyMode";
       this.DisableLowLatencyMode.Size = new System.Drawing.Size(310, 17);
       this.DisableLowLatencyMode.TabIndex = 16;
@@ -196,7 +198,7 @@ namespace MediaPortal.Configuration.Sections
       // mpMadLabel
       // 
       this.mpMadLabel.AutoSize = true;
-      this.mpMadLabel.Location = new System.Drawing.Point(61, 383);
+      this.mpMadLabel.Location = new System.Drawing.Point(61, 402);
       this.mpMadLabel.Name = "mpMadLabel";
       this.mpMadLabel.Size = new System.Drawing.Size(269, 13);
       this.mpMadLabel.TabIndex = 14;
@@ -292,6 +294,19 @@ namespace MediaPortal.Configuration.Sections
       this.label1.Size = new System.Drawing.Size(0, 13);
       this.label1.TabIndex = 1;
       // 
+      // DRCheckBox
+      // 
+      this.DRCheckBox.AutoSize = true;
+      this.DRCheckBox.Checked = true;
+      this.DRCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.DRCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.DRCheckBox.Location = new System.Drawing.Point(64, 380);
+      this.DRCheckBox.Name = "DRCheckBox";
+      this.DRCheckBox.Size = new System.Drawing.Size(136, 17);
+      this.DRCheckBox.TabIndex = 20;
+      this.DRCheckBox.Text = "Use internal refresh rate";
+      this.DRCheckBox.UseVisualStyleBackColor = true;
+      // 
       // FiltersVideoRenderer
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -299,7 +314,7 @@ namespace MediaPortal.Configuration.Sections
       this.BackColor = System.Drawing.SystemColors.Window;
       this.Controls.Add(this.mpGroupBox1);
       this.Name = "FiltersVideoRenderer";
-      this.Size = new System.Drawing.Size(438, 409);
+      this.Size = new System.Drawing.Size(438, 429);
       this.mpGroupBox1.ResumeLayout(false);
       this.mpGroupBox1.PerformLayout();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownFrame)).EndInit();
@@ -328,5 +343,6 @@ namespace MediaPortal.Configuration.Sections
     private UserInterface.Controls.MPCheckBox UseMadVideoRenderer3D;
     private UserInterface.Controls.MPCheckBox reduceMadvrFrame;
     private System.Windows.Forms.NumericUpDown numericUpDownFrame;
+    private UserInterface.Controls.MPCheckBox DRCheckBox;
   }
 }

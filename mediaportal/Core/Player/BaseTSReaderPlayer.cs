@@ -769,6 +769,7 @@ namespace MediaPortal.Player
         _sourceRectangle = rSource;
         _videoRectangle = rDest;
 
+        // Need to be disable for TV - TODO
         if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && !_isFullscreen)
         {
           if (_basicVideo != null)
