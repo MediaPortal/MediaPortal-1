@@ -22,17 +22,17 @@
 
 extern unsigned int gAllowedSampleRates[7];
 
-CSampleRateConverter::CSampleRateConverter(AudioRendererSettings* pSettings) :
-  CBaseAudioSink(true), 
+CSampleRateConverter::CSampleRateConverter(AudioRendererSettings* pSettings, Logger* pLogger) :
+  CBaseAudioSink(true, pSettings, pLogger), 
   m_bPassThrough(false),
   m_rtInSampleTime(0),
-  m_pSettings(pSettings),
   m_pSrcState(NULL),
   m_dSampleRateRation(1.0),
   m_rtNextIncomingSampleTime(0),
   m_llFramesInput(0),
   m_llFramesOutput(0),
-  m_nFrameSize(0)
+  m_nFrameSize(0),
+  m_pLogger(pLogger)
 {
 }
 
@@ -70,6 +70,18 @@ HRESULT CSampleRateConverter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, 
   bool bApplyChanges = (nApplyChangesDepth != 0);
   if (nApplyChangesDepth != INFINITE && nApplyChangesDepth > 0)
     nApplyChangesDepth--;
+
+  if (m_pSettings->GetAllowBitStreaming() && CanBitstream(pwfx))
+  {
+    HRESULT hr = m_pNextSink->NegotiateFormat(pwfx, nApplyChangesDepth, pChOrder);
+    if (SUCCEEDED(hr))
+    {
+      m_bNextFormatPassthru = true;
+      m_bPassThrough = true;
+      m_chOrder = *pChOrder;
+    }
+    return hr;
+  }
 
   // Try passthrough
   HRESULT hr = m_pNextSink->NegotiateFormat(pwfx, nApplyChangesDepth, pChOrder);
@@ -132,6 +144,9 @@ HRESULT CSampleRateConverter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, 
     hr = m_pNextSink->NegotiateFormat(pOutWfx, nApplyChangesDepth, pChOrder);
     sampleRatesTested++;
 
+    if (hr == AUDCLNT_E_DEVICE_IN_USE) // If the audio client is in use changing the format won't help
+      break;
+
     if (FAILED(hr))
       pOutWfx->Format.nSamplesPerSec = 0;
 
@@ -175,13 +190,17 @@ HRESULT CSampleRateConverter::PutSample(IMediaSample *pSample)
   if (!pSample)
     return S_OK;
 
-  AM_MEDIA_TYPE* pmt = NULL;
+  WAVEFORMATEXTENSIBLE* pwfe = NULL;
+  AM_MEDIA_TYPE *pmt = NULL;
   bool bFormatChanged = false;
   
   HRESULT hr = S_OK;
 
   if (SUCCEEDED(pSample->GetMediaType(&pmt)) && pmt != NULL)
-    bFormatChanged = !FormatsEqual((WAVEFORMATEXTENSIBLE*)pmt->pbFormat, m_pInputFormat);
+  {
+    pwfe = (WAVEFORMATEXTENSIBLE*)pmt->pbFormat;
+    bFormatChanged = !FormatsEqual(pwfe, m_pInputFormat);
+  }
 
   if (pSample->IsDiscontinuity() == S_OK)
     m_bDiscontinuity = true;
@@ -195,6 +214,7 @@ HRESULT CSampleRateConverter::PutSample(IMediaSample *pSample)
     // Process any remaining input
     if (!m_bPassThrough)
       hr = ProcessData(NULL, 0, NULL);
+
     // Apply format change locally, 
     // next filter will evaluate the format change when it receives the sample
     Log("CSampleRateConverter::PutSample: Processing format change");
@@ -206,6 +226,8 @@ HRESULT CSampleRateConverter::PutSample(IMediaSample *pSample)
       Log("SampleRateConverter: PutSample failed to change format: 0x%08x", hr);
       return hr;
     }
+
+    SetInputFormat(pwfe);
     m_chOrder = chOrder;
   }
 
@@ -293,7 +315,7 @@ HRESULT CSampleRateConverter::SetupConversion()
     m_pSrcState = src_delete(m_pSrcState);
 
   int error = 0;
-  m_pSrcState = src_new(m_pSettings->m_nResamplingQuality, m_pInputFormat->Format.nChannels, &error);
+  m_pSrcState = src_new(m_pSettings->GetResamplingQuality(), m_pInputFormat->Format.nChannels, &error);
 
   m_llFramesInput = 0;
   m_llFramesOutput = 0;
