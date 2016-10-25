@@ -39,7 +39,7 @@ using MediaPortal.Common.Utils;
 
 [assembly: SubsystemVersion("MP.Players", "1.1.6.27644")]
 [assembly: SubsystemVersion("MP.Players.DVD", "1.1.6.27644")]
-[assembly: SubsystemVersion("MP.Players.Video", "1.1.6.27644")]
+[assembly: SubsystemVersion("MP.Players.Video", "1.15.100.0")]
 [assembly: SubsystemVersion("MP.Players.TV", "1.1.6.27644")]
 [assembly: SubsystemVersion("MP.Players.Music", "1.3.100.0")]
 
