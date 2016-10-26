@@ -849,7 +849,7 @@ namespace MediaPortal.Player
 
           if (filterCodec != null && filterCodec._audioRendererFilter != null)
           {
-            DirectShowUtil.RemoveFilter(_graphBuilder, filterCodec._audioRendererFilter);
+            //DirectShowUtil.RemoveFilter(_graphBuilder, filterCodec._audioRendererFilter);
             DirectShowUtil.FinalReleaseComObject(filterCodec._audioRendererFilter);
             filterCodec._audioRendererFilter = null;
             Log.Debug("TSReaderPlayer: Cleanup _audioRendererFilter");
@@ -919,7 +919,7 @@ namespace MediaPortal.Player
 
           if (filterCodec != null && filterCodec.AudioCodec != null)
           {
-            DirectShowUtil.RemoveFilter(_graphBuilder, filterCodec.AudioCodec);
+            //DirectShowUtil.RemoveFilter(_graphBuilder, filterCodec.AudioCodec);
             DirectShowUtil.FinalReleaseComObject(filterCodec.AudioCodec);
             filterCodec.AudioCodec = null;
             Log.Debug("TSReaderPlayer: Cleanup AudioCodec");
@@ -927,7 +927,7 @@ namespace MediaPortal.Player
 
           if (filterCodec != null && filterCodec.VideoCodec != null)
           {
-            DirectShowUtil.RemoveFilter(_graphBuilder, filterCodec.VideoCodec);
+            //DirectShowUtil.RemoveFilter(_graphBuilder, filterCodec.VideoCodec);
             DirectShowUtil.FinalReleaseComObject(filterCodec.VideoCodec);
             filterCodec.VideoCodec = null;
             Log.Debug("TSReaderPlayer: Cleanup VideoCodec");

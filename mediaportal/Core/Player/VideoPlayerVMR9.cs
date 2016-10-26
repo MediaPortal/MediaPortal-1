@@ -1434,7 +1434,7 @@ namespace MediaPortal.Player
 
         if (filterCodec != null && filterCodec.VideoCodec != null)
         {
-          DirectShowUtil.RemoveFilter(graphBuilder, filterCodec.VideoCodec);
+          //DirectShowUtil.RemoveFilter(graphBuilder, filterCodec.VideoCodec);
           DirectShowUtil.FinalReleaseComObject(filterCodec.VideoCodec);
           filterCodec.VideoCodec = null;
           Log.Info("VideoPlayer9: Cleanup VideoCodec");
@@ -1442,7 +1442,7 @@ namespace MediaPortal.Player
 
         if (filterCodec != null && filterCodec.AudioCodec != null)
         {
-          DirectShowUtil.RemoveFilter(graphBuilder, filterCodec.AudioCodec);
+          //DirectShowUtil.RemoveFilter(graphBuilder, filterCodec.AudioCodec);
           DirectShowUtil.FinalReleaseComObject(filterCodec.AudioCodec);
           filterCodec.AudioCodec = null;
           Log.Info("VideoPlayer9: Cleanup AudioCodec");
@@ -1450,7 +1450,7 @@ namespace MediaPortal.Player
 
         if (filterCodec != null && filterCodec._audioRendererFilter != null)
         {
-          DirectShowUtil.RemoveFilter(graphBuilder, filterCodec._audioRendererFilter);
+          //DirectShowUtil.RemoveFilter(graphBuilder, filterCodec._audioRendererFilter);
           DirectShowUtil.FinalReleaseComObject(filterCodec._audioRendererFilter);
           filterCodec._audioRendererFilter = null;
           Log.Info("VideoPlayer9: Cleanup AudioRenderer");
