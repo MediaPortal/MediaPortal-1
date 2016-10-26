@@ -1458,7 +1458,7 @@ namespace MediaPortal.Player
 
         if (_interfaceSourceFilter != null)
         {
-          DirectShowUtil.RemoveFilter(graphBuilder, _interfaceSourceFilter);
+          //DirectShowUtil.RemoveFilter(graphBuilder, _interfaceSourceFilter);
           DirectShowUtil.FinalReleaseComObject(_interfaceSourceFilter);
           _interfaceSourceFilter = null;
           Log.Info("VideoPlayer9: Cleanup InterfaceSourceFilter");

@@ -857,7 +857,7 @@ namespace MediaPortal.Player
 
           if (_fileSource != null)
           {
-            DirectShowUtil.RemoveFilter(_graphBuilder, _fileSource);
+            //DirectShowUtil.RemoveFilter(_graphBuilder, _fileSource);
             DirectShowUtil.FinalReleaseComObject(_fileSource);
             _fileSource = null;
             Log.Debug("TSReaderPlayer: Cleanup _fileSource");

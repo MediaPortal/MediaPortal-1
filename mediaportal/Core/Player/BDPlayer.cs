@@ -3112,7 +3112,7 @@ namespace MediaPortal.Player
 
         if (_interfaceBDReader != null)
         {
-          DirectShowUtil.RemoveFilter(_graphBuilder, _interfaceBDReader);
+          //DirectShowUtil.RemoveFilter(_graphBuilder, _interfaceBDReader);
           DirectShowUtil.FinalReleaseComObject(_interfaceBDReader);
           _interfaceBDReader = null;
         }
