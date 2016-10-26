@@ -1699,7 +1699,6 @@ namespace DShowNET.Helper
     {
       try
       {
-        DisconnectAllPins(graphBuilder, filter);
         return graphBuilder.RemoveFilter(filter);
       }
       catch (Exception)

@@ -109,6 +109,8 @@ namespace MediaPortal.Player
                                           };
 
     private bool _disableLowLatencyMode = false;
+    private bool _visible = false;
+
     private int _reduceMadvrFrame = 0;
     private bool _useReduceMadvrFrame = false;
 
@@ -174,6 +176,18 @@ namespace MediaPortal.Player
         _drawVideoAllowed = value;
         //Log.Info("PlaneScene: video draw allowed:{0}", _drawVideoAllowed);
       }
+    }
+
+    public bool DisableLowLatencyMode
+    {
+      get { return _disableLowLatencyMode; }
+      set { _disableLowLatencyMode = value; }
+    }
+
+    public bool Visible
+    {
+      get { return _visible; }
+      set { _visible = value; }
     }
 
     public Surface MadVrRenderTarget { get; set; }
@@ -693,7 +707,6 @@ namespace MediaPortal.Player
 
     private int RenderLayers(GUILayers layers, Int16 width, Int16 height, Int16 arWidth, Int16 arHeight)
     {
-      bool visible = false;
       UiVisible = false;
 
       //lock (GUIGraphicsContext.RenderMadVrLock)
@@ -702,7 +715,6 @@ namespace MediaPortal.Player
         {
           if (_reEntrant)
           {
-            Log.Error("PlaneScene: re-entrancy in PresentImage");
             return -1;
           }
 
@@ -770,7 +782,7 @@ namespace MediaPortal.Player
             GUIGraphicsContext.RenderOverlay = true;
           }
 
-          GUIGraphicsContext.RenderGUI.RenderFrame(GUIGraphicsContext.TimePassed, layers, ref visible);
+          GUIGraphicsContext.RenderGUI.RenderFrame(GUIGraphicsContext.TimePassed, layers, ref _visible);
 
           GUIFontManager.Present();
           device.EndScene();
@@ -791,14 +803,14 @@ namespace MediaPortal.Player
         }
         finally
         {
-          if (visible)
+          if (_visible)
           {
             UiVisible = true;
           }
 
           if (_disableLowLatencyMode)
           {
-            visible = false;
+            _visible = false;
           }
 
           _reEntrant = false;
@@ -808,7 +820,7 @@ namespace MediaPortal.Player
             VMR9Util.g_vmr9.ProcessMadVrOsd();
           }
         }
-        return visible ? 0 : 1; // S_OK, S_FALSE
+        return _visible ? 0 : 1; // S_OK, S_FALSE
       }
     }
 

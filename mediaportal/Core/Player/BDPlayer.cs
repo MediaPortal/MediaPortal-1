@@ -3039,7 +3039,6 @@ namespace MediaPortal.Player
 
         if (VideoCodec != null)
         {
-          DirectShowUtil.RemoveFilter(_graphBuilder, VideoCodec);
           DirectShowUtil.FinalReleaseComObject(VideoCodec);
           VideoCodec = null;
           Log.Info("BDPlayer: Cleanup VideoCodec");
@@ -3047,7 +3046,6 @@ namespace MediaPortal.Player
 
         if (AudioCodec != null)
         {
-          DirectShowUtil.RemoveFilter(_graphBuilder, AudioCodec);
           DirectShowUtil.FinalReleaseComObject(AudioCodec);
           AudioCodec = null;
           Log.Info("BDPlayer: Cleanup AudioCodec");
@@ -3055,7 +3053,6 @@ namespace MediaPortal.Player
 
         if (_audioRendererFilter != null)
         {
-          DirectShowUtil.RemoveFilter(_graphBuilder, _audioRendererFilter);
           DirectShowUtil.FinalReleaseComObject(_audioRendererFilter);
           _audioRendererFilter = null;
           Log.Info("BDPlayer: Cleanup AudioRenderer");
@@ -3093,7 +3090,6 @@ namespace MediaPortal.Player
 
         if (_interfaceBDReader != null)
         {
-          DirectShowUtil.RemoveFilter(_graphBuilder, _interfaceBDReader);
           DirectShowUtil.FinalReleaseComObject(_interfaceBDReader);
           _interfaceBDReader = null;
         }

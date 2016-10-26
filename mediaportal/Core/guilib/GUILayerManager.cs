@@ -126,20 +126,20 @@ namespace MediaPortal.GUI.Library
 
       // For madVR, first check along all layers to inform that UI is displaying
       // Check for madVR when GUI/OSD/Dialog is displayed, we should go to latency mode
-      //if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
-      //    GUIGraphicsContext.InVmr9Render)
-      //{
-      //  for (var i = 0; i < MAX_LAYERS; ++i)
-      //  {
-      //    if (_layers[i] == null) continue;
-      //    GetValue(layerCount, i);
-      //  }
+      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
+          GUIGraphicsContext.InVmr9Render)
+      {
+        for (var i = 0; i < MAX_LAYERS; ++i)
+        {
+          if (_layers[i] == null) continue;
+          GetValue(layerCount, i);
+        }
 
-      //  foreach (var layer in from layer in layerCount where _layers[layer] != null where _layers[layer].ShouldRenderLayer() where videoLayer != layer select layer)
-      //  {
-      //    uiVisible = true;
-      //  }
-      //}
+        foreach (var layer in from layer in layerCount where _layers[layer] != null where _layers[layer].ShouldRenderLayer() where videoLayer != layer select layer)
+        {
+          uiVisible = true;
+        }
+      }
       return uiVisible;
     }
 

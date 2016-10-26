@@ -132,26 +132,29 @@ void MPMadPresenter::SetMadVrPaused(bool paused)
 {
   CAutoLock cAutoLock(this);
 
-  if (paused)
+  if (m_pMediaControl)
   {
-    int counter = 0;
-    OAFilterState state = -1;
-    m_pMediaControl->GetState(100, &state);
-    if (state != State_Paused)
+    if (paused)
+    {
+      int counter = 0;
+      OAFilterState state = -1;
+      m_pMediaControl->GetState(100, &state);
+      if (state != State_Paused)
+      {
+        m_pPaused = false;
+      }
+
+      if (!m_pPaused)
+      {
+        m_pMediaControl->Pause();
+        m_pPaused = true;
+        Log("MPMadPresenter:::SetMadVrPaused() pause");
+      }
+    }
+    else
     {
       m_pPaused = false;
     }
-
-    if (m_pMediaControl && !m_pPaused)
-    {
-      m_pMediaControl->Pause();
-      m_pPaused = true;
-      Log("MPMadPresenter:::SetMadVrPaused() pause");
-    }
-  }
-  else
-  {
-    m_pPaused = false;
   }
 }
 
