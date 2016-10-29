@@ -25,7 +25,6 @@ using System.Globalization;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text;
-using System.Threading;
 using System.Windows.Forms;
 using MediaPortal.Configuration;
 using MediaPortal.ExtensionMethods;
@@ -1536,7 +1535,7 @@ namespace MediaPortal.Player
         }
 
         // back to previous Windows if we are only in video fullscreen to do a proper release when next item is music only
-        if (((GUIWindow.Window)(Enum.Parse(typeof(GUIWindow.Window), GUIWindowManager.ActiveWindow.ToString())) ==
+        if (((GUIWindow.Window) (Enum.Parse(typeof (GUIWindow.Window), GUIWindowManager.ActiveWindow.ToString())) ==
              GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO) && !MediaInfo.hasVideo && type == MediaType.Music)
         {
           GUIWindowManager.ShowPreviousWindow();
@@ -2666,9 +2665,26 @@ namespace MediaPortal.Player
 
         // HACK : If madVR is running but stuck in not rendering anymore, we need to force a refresh
         TimeSpan tsPlay = DateTime.Now - VMR9Util.g_vmr9.PlaneSceneMadvrTimer;
-        if (tsPlay.Seconds >= 2)
+        if (tsPlay.Seconds >= 2 && VMR9Util.g_vmr9.PlaneSceneMadvrTimer.Second > 0)
         {
-          GUIGraphicsContext.IsFullScreenVideo = !GUIGraphicsContext.IsFullScreenVideo;
+          // Need to force a pause state and restore (working when it happen in video fullscreen or working if low latency mode is disable, why ??)
+          //bool getDisableLowLatencyMode = VMR9Util.g_vmr9.DisableLowLatencyMode;
+          //bool getVisible = VMR9Util.g_vmr9.Visible;
+          VMR9Util.g_vmr9.DisableLowLatencyMode = true;
+          VMR9Util.g_vmr9.Visible = false;
+          //Log.Debug("1- getDisableLowLatencyMode : {0}", getDisableLowLatencyMode);
+          //Log.Debug("1- getVisible : {0}", getVisible);
+          //Log.Debug("1- PlaneScene.DisableLowLatencyMode : {0}", PlaneScene.DisableLowLatencyMode);
+          //Log.Debug("1- PlaneScene.Visible : {0}", PlaneScene.Visible);
+          _player.Pause();
+          _player.Pause();
+          //VMR9Util.g_vmr9.DisableLowLatencyMode = getDisableLowLatencyMode;
+          //VMR9Util.g_vmr9.Visible = getVisible;
+          //Log.Debug("2- getDisableLowLatencyMode : {0}", getDisableLowLatencyMode);
+          //Log.Debug("2- getVisible : {0}", getVisible);
+          //Log.Debug("2- PlaneScene.DisableLowLatencyMode : {0}", PlaneScene.DisableLowLatencyMode);
+          //Log.Debug("2- PlaneScene.Visible : {0}", PlaneScene.Visible);
+          Log.Debug("g_Player.Process() - restore madVR rendering GUI");
         }
       }
 

@@ -818,8 +818,11 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public static void VideoReceived()
     {
-      //Log.Debug("GraphicContext VideoReceived()");
-      OnVideoReceived?.Invoke();
+      if (OnVideoReceived != null)
+      {
+        //Log.Debug("GraphicContext VideoReceived()");
+        OnVideoReceived();
+      }
     }
 
     /// <summary>
@@ -827,7 +830,10 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public static void RenderBlack()
     {
-      OnRenderBlack?.Invoke();
+      if (OnRenderBlack != null)
+      {
+        OnRenderBlack();
+      }
     }
 
     /// <summary>
@@ -1110,7 +1116,7 @@ namespace MediaPortal.GUI.Library
         case GUIMessage.MessageType.GUI_MSG_ONVIDEOWINDOWCHANGED:
           lock (RenderMadVrLock)
           {
-            OnVideoWindowChanged?.Invoke();
+            if (OnVideoWindowChanged != null) OnVideoWindowChanged.Invoke();
             if (GUIGraphicsContext.InVmr9Render)
             {
               GUIWindowManager.MadVrProcess();
@@ -1735,11 +1741,11 @@ namespace MediaPortal.GUI.Library
     {
       get
       {
-        //// Added back this part for now and see if it stop the deadlock
-        //if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && GUIGraphicsContext.InVmr9Render)
-        //{
-        //  return 0;
-        //}
+        // Added back this part for now and see if it stop the deadlock
+        if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && GUIGraphicsContext.InVmr9Render)
+        {
+          return 0;
+        }
         return RenderLoopLock;
       }
     }
