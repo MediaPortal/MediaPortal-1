@@ -226,8 +226,7 @@ HRESULT B2C2MPEG2Adapter::EnumerateFilterPins(BOOL bAudoPin /*= TRUE*/,
 	PIN_INFO	pin_Info;
 	IPin *		pPinOut = NULL;
 
-	char		szPinName[128];	// from SDK, strmif.h; PIN_INFO::achName[ 128 ]
-	char		szTsPinName[10];
+	TCHAR		szTsPinName[10];
 
 	// Check if already initialized; got filter
 
@@ -270,8 +269,6 @@ HRESULT B2C2MPEG2Adapter::EnumerateFilterPins(BOOL bAudoPin /*= TRUE*/,
 			continue;
 		}
 
-		wcstombs (szPinName, pin_Info.achName, sizeof (szPinName));
-
 		BOOL bPinUsed = FALSE;
 
 		// Check for TS pins first
@@ -280,11 +277,11 @@ HRESULT B2C2MPEG2Adapter::EnumerateFilterPins(BOOL bAudoPin /*= TRUE*/,
 		{
 			for (int iCnt = 0; iCnt < B2C2_FILTER_MAX_TS_PINS; iCnt++)
 			{
-				sprintf (szTsPinName,"Data %d",iCnt);
+				wsprintf (szTsPinName,TEXT("Data %d"),iCnt);
 
 				if (  m_pTsOutPin[iCnt] == NULL 
 				   && bTsPins
-				   && strstr (szPinName, szTsPinName) != NULL)
+				   && StrStr(pin_Info.achName, szTsPinName) != NULL)
 				{
 					m_pTsOutPin[iCnt] = pPinOut;
 					bPinUsed = TRUE;
@@ -300,7 +297,7 @@ HRESULT B2C2MPEG2Adapter::EnumerateFilterPins(BOOL bAudoPin /*= TRUE*/,
 		// Check if Audio PIN; if still 'missing'
 		if (  m_pPinOutAudio == NULL
 			    && bAudoPin 
-				&& strstr (szPinName, "Audio") != NULL)
+				&& StrStr(pin_Info.achName, TEXT("Audio")) != NULL)
 		{
 			m_pPinOutAudio = pPinOut;
 		}
@@ -308,7 +305,7 @@ HRESULT B2C2MPEG2Adapter::EnumerateFilterPins(BOOL bAudoPin /*= TRUE*/,
 		// Check if Video PIN; if still 'missing'
 		if (  m_pPinOutVideo == NULL 
 		   && bVideoPin
-		   && strstr (szPinName, "Video") != NULL)
+		   && StrStr(pin_Info.achName, TEXT("Video")) != NULL)
 		{
 			m_pPinOutVideo = pPinOut;
 		}
@@ -708,10 +705,7 @@ HRESULT B2C2MPEG2Adapter::ConnectTsFilterInToTsOutPin (int nPin, const TCHAR * s
 		// check name if defined
 		if (bUsePin && szInPinName)
 		{
-			char szPinName[128];	// from SDK, strmif.h; PIN_INFO::achName[ 128 ]
-			wcstombs (szPinName, pin_Info.achName, sizeof (szPinName));
-
-			if (strstr (szPinName, szInPinName) == NULL)
+			if (StrStr(pin_Info.achName, szInPinName) == NULL)
 			{
 				// Not this PIN
 				bUsePin = FALSE;
