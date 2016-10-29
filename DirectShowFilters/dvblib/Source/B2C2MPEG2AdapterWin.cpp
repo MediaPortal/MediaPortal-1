@@ -708,10 +708,7 @@ HRESULT B2C2MPEG2Adapter::ConnectTsFilterInToTsOutPin (int nPin, const TCHAR * s
 		// check name if defined
 		if (bUsePin && szInPinName)
 		{
-			char szPinName[128];	// from SDK, strmif.h; PIN_INFO::achName[ 128 ]
-			wcstombs (szPinName, pin_Info.achName, sizeof (szPinName));
-
-			if (strstr (szPinName, szInPinName) == NULL)
+			if (StrStr(pin_Info.achName, szInPinName) == NULL)
 			{
 				// Not this PIN
 				bUsePin = FALSE;
