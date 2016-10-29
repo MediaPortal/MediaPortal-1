@@ -293,6 +293,16 @@ HRESULT MPMadPresenter::Shutdown()
 
     Log("MPMadPresenter::Shutdown() start");
 
+    Log("MPMadPresenter::Stopping() m_pSRCB release 1");
+    if (m_pSRCB)
+      m_pSRCB.Release();
+    Log("MPMadPresenter::Stopping() m_pSRCB release 2");
+
+    Log("MPMadPresenter::Stopping() m_pORCB release 1");
+    if (m_pORCB)
+      m_pORCB.Release();
+    Log("MPMadPresenter::Stopping() m_pORCB release 2");
+
     if (m_pCallback)
     {
       m_pCallback->SetSubtitleDevice(reinterpret_cast<DWORD>(nullptr));
@@ -422,15 +432,15 @@ HRESULT MPMadPresenter::Stopping()
       Log("MPMadPresenter::Stopping() m_pORCB");
     }
 
-    Log("MPMadPresenter::Stopping() m_pSRCB release 1");
-    if (m_pSRCB)
-      m_pSRCB.Release();
-    Log("MPMadPresenter::Stopping() m_pSRCB release 2");
+    //Log("MPMadPresenter::Stopping() m_pSRCB release 1");
+    //if (m_pSRCB)
+    //  m_pSRCB.Release();
+    //Log("MPMadPresenter::Stopping() m_pSRCB release 2");
 
-    Log("MPMadPresenter::Stopping() m_pORCB release 1");
-    if (m_pORCB)
-      m_pORCB.Release();
-    Log("MPMadPresenter::Stopping() m_pORCB release 2");
+    //Log("MPMadPresenter::Stopping() m_pORCB release 1");
+    //if (m_pORCB)
+    //  m_pORCB.Release();
+    //Log("MPMadPresenter::Stopping() m_pORCB release 2");
 
     if (m_pMediaControl)
     {

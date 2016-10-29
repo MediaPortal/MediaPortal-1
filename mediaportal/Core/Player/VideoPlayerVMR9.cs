@@ -1426,7 +1426,7 @@ namespace MediaPortal.Player
 
         if (Splitter != null)
         {
-          DirectShowUtil.RemoveFilter(graphBuilder, Splitter);
+          //DirectShowUtil.RemoveFilter(graphBuilder, Splitter);
           DirectShowUtil.FinalReleaseComObject(Splitter);
           Splitter = null;
           Log.Info("VideoPlayer9: Cleanup Splitter");
@@ -1469,7 +1469,7 @@ namespace MediaPortal.Player
         {
           if (ppFilter.Value != null)
           {
-            DirectShowUtil.RemoveFilter(graphBuilder, ppFilter.Value as IBaseFilter);
+            //DirectShowUtil.RemoveFilter(graphBuilder, ppFilter.Value as IBaseFilter);
             DirectShowUtil.FinalReleaseComObject(ppFilter.Value);
           }
         }
@@ -1478,7 +1478,7 @@ namespace MediaPortal.Player
         {
           if (ppFilter.Value != null)
           {
-            DirectShowUtil.RemoveFilter(graphBuilder, ppFilter.Value as IBaseFilter);
+            //DirectShowUtil.RemoveFilter(graphBuilder, ppFilter.Value as IBaseFilter);
             DirectShowUtil.FinalReleaseComObject(ppFilter.Value);
           }
         }
@@ -1488,7 +1488,7 @@ namespace MediaPortal.Player
         {
           if (ppFilter.Value != null)
           {
-            DirectShowUtil.RemoveFilter(graphBuilder, ppFilter.Value as IBaseFilter);
+            //DirectShowUtil.RemoveFilter(graphBuilder, ppFilter.Value as IBaseFilter);
             DirectShowUtil.FinalReleaseComObject(ppFilter.Value);
           }
         }
@@ -1497,14 +1497,14 @@ namespace MediaPortal.Player
 
         if (_FFDShowAudio != null)
         {
-          DirectShowUtil.RemoveFilter(graphBuilder, _FFDShowAudio);
+          //DirectShowUtil.RemoveFilter(graphBuilder, _FFDShowAudio);
           DirectShowUtil.FinalReleaseComObject(_FFDShowAudio);
           _FFDShowAudio = null;
           Log.Info("VideoPlayer9: Cleanup _FFDShowAudio");
         }
         if (_audioSwitcher != null)
         {
-          DirectShowUtil.RemoveFilter(graphBuilder, _audioSwitcher);
+          //DirectShowUtil.RemoveFilter(graphBuilder, _audioSwitcher);
           DirectShowUtil.FinalReleaseComObject(_audioSwitcher);
           _audioSwitcher = null;
           Log.Info("VideoPlayer9: Cleanup MediaPortal AudioSwitcher (for external audio files)");
@@ -1529,7 +1529,7 @@ namespace MediaPortal.Player
 
         if (graphBuilder != null)
         {
-          DirectShowUtil.RemoveFilters(graphBuilder);
+          //DirectShowUtil.RemoveFilters(graphBuilder);
           if (_rotEntry != null)
           {
             Log.Debug("VideoPlayer9: rotEntry Dispose 1");
