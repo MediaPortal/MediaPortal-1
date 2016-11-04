@@ -849,7 +849,6 @@ namespace MediaPortal.Player
 
           if (filterCodec != null && filterCodec._audioRendererFilter != null)
           {
-            DirectShowUtil.RemoveFilter(_graphBuilder, filterCodec._audioRendererFilter);
             DirectShowUtil.FinalReleaseComObject(filterCodec._audioRendererFilter);
             filterCodec._audioRendererFilter = null;
             Log.Debug("TSReaderPlayer: Cleanup _audioRendererFilter");
@@ -857,7 +856,6 @@ namespace MediaPortal.Player
 
           if (_fileSource != null)
           {
-            DirectShowUtil.RemoveFilter(_graphBuilder, _fileSource);
             DirectShowUtil.FinalReleaseComObject(_fileSource);
             _fileSource = null;
             Log.Debug("TSReaderPlayer: Cleanup _fileSource");
@@ -919,7 +917,6 @@ namespace MediaPortal.Player
 
           if (filterCodec != null && filterCodec.AudioCodec != null)
           {
-            DirectShowUtil.RemoveFilter(_graphBuilder, filterCodec.AudioCodec);
             DirectShowUtil.FinalReleaseComObject(filterCodec.AudioCodec);
             filterCodec.AudioCodec = null;
             Log.Debug("TSReaderPlayer: Cleanup AudioCodec");
@@ -927,7 +924,6 @@ namespace MediaPortal.Player
 
           if (filterCodec != null && filterCodec.VideoCodec != null)
           {
-            DirectShowUtil.RemoveFilter(_graphBuilder, filterCodec.VideoCodec);
             DirectShowUtil.FinalReleaseComObject(filterCodec.VideoCodec);
             filterCodec.VideoCodec = null;
             Log.Debug("TSReaderPlayer: Cleanup VideoCodec");
@@ -935,7 +931,6 @@ namespace MediaPortal.Player
 
           if (filterCodec != null && filterCodec.line21VideoCodec != null)
           {
-            DirectShowUtil.RemoveFilter(_graphBuilder, filterCodec.line21VideoCodec);
             DirectShowUtil.FinalReleaseComObject(filterCodec.line21VideoCodec);
             filterCodec.line21VideoCodec = null;
             Log.Debug("TSReaderPlayer: Cleanup line21VideoCodec");
@@ -943,7 +938,6 @@ namespace MediaPortal.Player
 
           if (filterCodec != null && filterCodec.line21CoreCCParser != null)
           {
-            DirectShowUtil.RemoveFilter(_graphBuilder, filterCodec.line21CoreCCParser);
             DirectShowUtil.FinalReleaseComObject(filterCodec.line21CoreCCParser);
             filterCodec.line21CoreCCParser = null;
             Log.Debug("TSReaderPlayer: Cleanup line21CoreCCParser");

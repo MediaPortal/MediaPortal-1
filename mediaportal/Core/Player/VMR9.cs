@@ -208,7 +208,7 @@ namespace MediaPortal.Player
     protected bool UseEVRMadVRForTV;
     protected bool UseMadVideoRenderer3D;
     protected internal DateTime playbackTimer;
-    protected internal DateTime PlaneSceneMadvrTimer;
+    protected internal DateTime PlaneSceneMadvrTimer = new DateTime(0);
 
     #endregion
 
@@ -421,6 +421,18 @@ namespace MediaPortal.Player
         }
         return false;
       } //get {
+    }
+
+    public bool DisableLowLatencyMode
+    {
+      get { return _scene != null && _scene.DisableLowLatencyMode; }
+      set { if (_scene != null) _scene.DisableLowLatencyMode = value; }
+    }
+
+    public bool Visible
+    {
+      get { return _scene != null && _scene.Visible; }
+      set { if (_scene != null) _scene.Visible = value; }
     }
 
     //public bool IsVMR9Connected

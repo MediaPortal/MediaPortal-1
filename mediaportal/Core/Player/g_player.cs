@@ -2637,9 +2637,26 @@ namespace MediaPortal.Player
 
         // HACK : If madVR is running but stuck in not rendering anymore, we need to force a refresh
         TimeSpan tsPlay = DateTime.Now - VMR9Util.g_vmr9.PlaneSceneMadvrTimer;
-        if (tsPlay.Seconds >= 2)
+        if (tsPlay.Seconds >= 2 && VMR9Util.g_vmr9.PlaneSceneMadvrTimer.Second > 0)
         {
-          GUIGraphicsContext.IsFullScreenVideo = !GUIGraphicsContext.IsFullScreenVideo;
+          // TODO Need to force a pause state and restore (working when it happen in video fullscreen or working if low latency mode is disable, why ??)
+          //bool getDisableLowLatencyMode = VMR9Util.g_vmr9.DisableLowLatencyMode;
+          //bool getVisible = VMR9Util.g_vmr9.Visible;
+          VMR9Util.g_vmr9.DisableLowLatencyMode = true;
+          VMR9Util.g_vmr9.Visible = false;
+          //Log.Debug("1- getDisableLowLatencyMode : {0}", getDisableLowLatencyMode);
+          //Log.Debug("1- getVisible : {0}", getVisible);
+          //Log.Debug("1- PlaneScene.DisableLowLatencyMode : {0}", PlaneScene.DisableLowLatencyMode);
+          //Log.Debug("1- PlaneScene.Visible : {0}", PlaneScene.Visible);
+          _player.Pause();
+          _player.Pause();
+          //VMR9Util.g_vmr9.DisableLowLatencyMode = getDisableLowLatencyMode;
+          //VMR9Util.g_vmr9.Visible = getVisible;
+          //Log.Debug("2- getDisableLowLatencyMode : {0}", getDisableLowLatencyMode);
+          //Log.Debug("2- getVisible : {0}", getVisible);
+          //Log.Debug("2- PlaneScene.DisableLowLatencyMode : {0}", PlaneScene.DisableLowLatencyMode);
+          //Log.Debug("2- PlaneScene.Visible : {0}", PlaneScene.Visible);
+          Log.Debug("g_Player.Process() - restore madVR rendering GUI");
         }
       }
 
