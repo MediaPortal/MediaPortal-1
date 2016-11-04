@@ -861,7 +861,7 @@ void STDMETHODCALLTYPE CTsReaderFilter::OnZapping(int info)
 {
   LogDebug("OnZapping() - info 0x%x", info);
   // Theoretically a new PAT ( equal to PAT+1 modulo 16 ) will be issued by TsWriter.
-  if (info == 0x80)							
+  if (info == 0x80)
   {
     m_bOnZap = true ;
     m_bZapinProgress = true;

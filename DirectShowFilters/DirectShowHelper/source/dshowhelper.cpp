@@ -30,6 +30,7 @@
 #include "dshowhelper.h"
 #include "evrcustomPresenter.h"
 #include "dx9allocatorpresenter.h"
+#include "madPresenter.h"
 
 // For more details for memory leak detection see the alloctracing.h header
 #include "..\..\alloctracing.h"
@@ -67,12 +68,14 @@ TAvRevertMmThreadCharacteristics*   m_pAvRevertMmThreadCharacteristics = NULL;
 BOOL m_bEVRLoaded    = false;
 TCHAR* m_RenderPrefix = _T("vmr9");
 
-LPDIRECT3DDEVICE9			    m_pDevice       = NULL;
-CVMR9AllocatorPresenter*	m_vmr9Presenter = NULL;
-MPEVRCustomPresenter*	    m_evrPresenter  = NULL;
-IBaseFilter*				      m_pVMR9Filter   = NULL;
-IVMRSurfaceAllocator9*		m_allocator     = NULL;
-LONG						          m_iRecordingId  = 0;
+LPDIRECT3DDEVICE9         m_pDevice       = NULL;
+CVMR9AllocatorPresenter*  m_vmr9Presenter = NULL;
+MPEVRCustomPresenter*     m_evrPresenter  = NULL;
+MPMadPresenter*           m_madPresenter  = NULL;
+IBaseFilter*              m_pVMR9Filter   = NULL;
+IVMRSurfaceAllocator9*    m_allocator     = NULL;
+LONG                      m_iRecordingId  = 0;
+int                       m_pRefCount = 0;
 
 map<int,IStreamBufferRecordControl*> m_mapRecordControl;
 typedef map<int,IStreamBufferRecordControl*>::iterator imapRecordControl;
@@ -901,6 +904,80 @@ double EVRGetDisplayFPS()
       displayFPS = 1000.0 / displayFPS; // Convert period into FPS
   }
   return displayFPS;
+}
+
+BOOL MadInit(IVMR9Callback* callback, DWORD width, DWORD height, DWORD dwD3DDevice, OAHWND parent, IBaseFilter** madFilter, IMediaControl* pMediaControl)
+{
+  m_RenderPrefix = _T("mad");
+
+  m_pDevice = reinterpret_cast<LPDIRECT3DDEVICE9>(dwD3DDevice);
+
+  Log("MPMadDshow::MadInit");
+
+  m_madPresenter = new MPMadPresenter(callback, width, height, parent, m_pDevice, pMediaControl);
+
+  Com::SmartPtr<IUnknown> pRenderer;
+  m_madPresenter->CreateRenderer(&pRenderer);
+  m_pVMR9Filter = m_madPresenter->Initialize();
+  m_pVMR9Filter = Com::SmartQIPtr<IBaseFilter>(pRenderer).Detach();
+  
+  // madVR supports calling IVideoWindow::put_Owner before the pins are connected
+  //if (Com::SmartQIPtr<IVideoWindow> pVW = pCAP)
+  //    pVW->put_Owner((OAHWND)CDSPlayer::GetDShWnd());
+
+  *madFilter = m_pVMR9Filter;
+
+  if (!madFilter)
+    return FALSE;
+
+  return TRUE;
+}
+
+void MadDeinit()
+{
+  try
+  {
+    Log("MPMadDshow::MadDeinit shutdown start");
+    //CAutoLock lock(&m_madPresenter->m_dsLock);
+    //m_madPresenter->m_dsLock.Lock();
+    m_madPresenter->m_pShutdown = true;
+    Sleep(100);
+    m_madPresenter->Shutdown();
+    m_pVMR9Filter = nullptr;
+    //m_madPresenter->m_dsLock.Unlock();
+    Log("MPMadDshow::MadDeinit shutdown done");
+  }
+  catch(...)
+  {
+  }
+}
+
+void MadStopping()
+{
+  try
+  {
+    Log("MPMadDshow::MadStopping start");
+    //CAutoLock lock(&m_madPresenter->m_dsLock);
+    //m_madPresenter->m_dsLock.Lock();
+    m_madPresenter->m_pShutdown = true;
+    Sleep(100);
+    m_madPresenter->Stopping();
+    //m_madPresenter->m_dsLock.Unlock();
+    Log("MPMadDshow::MadStopping done");
+  }
+  catch (...)
+  {
+  }
+}
+
+void MadVrPaused(bool paused)
+{
+  m_madPresenter->SetMadVrPaused(paused);
+}
+
+void MadVrRepeatFrameSend()
+{
+  m_madPresenter->RepeatFrame();
 }
 
 void Vmr9SetDeinterlaceMode(int mode)

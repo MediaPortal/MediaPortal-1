@@ -1,5 +1,6 @@
 REM %1 = Solution Directory
 REM %2 = $(ConfigurationName) Debug/Release
+REM %3 = Solution Directory with quote
 
 set GIT_ROOT=%~dp0..\..\
 set Build="%GIT_ROOT%\Build"
@@ -86,7 +87,7 @@ REM Utils
 xcopy %1\Utils\bin\%2\Utils.dll . /Y /D
 
 REM Copy all new files from base
-xcopy %1\MediaPortal.Base\*.* . /E /R /Y /D
+xcopy %1\MediaPortal.Base\*.* . /E /R /Y /D /EXCLUDE:%3\Exclude.txt
 
 REM Language
 xcopy %1\MediaPortal.Base\Language\*.* %ConfigPath%\"Team MediaPortal\MediaPortal\Language\" /E /Y /D
@@ -202,3 +203,5 @@ xcopy %1\..\Packages\System.Management.Automation.6.1.7601.17515\lib\net40\Syste
 REM SharpLibDisplay
 xcopy %1\..\Packages\SharpLibDisplay.0.2.5\lib\net40\SharpLibDisplay.dll . /Y /D
 
+REM Enable >2GB for 32 bit process
+call %Build%\MSBUILD_MP_LargeAddressAware.bat %2

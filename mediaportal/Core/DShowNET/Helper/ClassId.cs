@@ -78,6 +78,8 @@ namespace DShowNET.Helper
 
     public static readonly Guid FilesyncSource = new Guid("E436EBB5-524F-11CE-9F53-0020AF0BA770");
 
+    public static readonly Guid madVR = new Guid("E1A8B82A-32CE-4B0D-BE0D-AA68C772E423");
+
     /// <summary>Creates an instance of a COM object by class ID.</summary>
     /// <param name="id">The class ID of the component to instantiate.</param>
     /// <returns>A new instance of the class.</returns>

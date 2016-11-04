@@ -1463,7 +1463,7 @@ namespace MediaPortal.GUI.Library
             _offset -= (_columnCount);
             iItem += (_columnCount);
           }
-          while (iItem >= _columnCount)
+          while (iItem >= _columnCount && _columnCount != 0)
           {
             _cursorY++;
             iItem -= _columnCount;
@@ -1485,7 +1485,7 @@ namespace MediaPortal.GUI.Library
         }
 
 
-        while (iItem >= (_rowCount * _columnCount))
+        while (iItem >= (_rowCount * _columnCount) && _columnCount != 0)
         {
           _offset += (_rowCount * _columnCount);
           iItem -= (_rowCount * _columnCount);
@@ -1496,7 +1496,7 @@ namespace MediaPortal.GUI.Library
           _offset -= (_columnCount);
           iItem += (_columnCount);
         }
-        while (iItem >= _columnCount)
+        while (iItem >= _columnCount && _columnCount != 0)
         {
           if (_cursorY + 1 >= _rowCount - _scrollStartOffset)
           {

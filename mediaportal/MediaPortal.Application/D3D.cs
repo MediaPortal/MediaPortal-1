@@ -131,6 +131,7 @@ namespace MediaPortal
     protected bool                 IsDisplayTurnedOn;        // indicates if the display is turned on, assume yes on application launch
     protected bool                 IsUserPresent;            // indicates if a user is present, assume yes on application launch
     protected bool                 UseEnhancedVideoRenderer; // should EVR be used?
+    protected bool                 UseMadVideoRenderer;      // is madVR used?
     protected bool                 ExitToTray;               //
     protected int                  Frames;                   // number of frames since our last update
     protected static int           Volume;                   // used to save old volume level in case we mute audio
@@ -245,6 +246,7 @@ namespace MediaPortal
       {
         _useExclusiveDirectXMode = xmlreader.GetValueAsBool("general", "exclusivemode", true);
         UseEnhancedVideoRenderer = xmlreader.GetValueAsBool("general", "useEVRenderer", false);
+        UseMadVideoRenderer      = xmlreader.GetValueAsBool("general", "useMadVideoRenderer", false);
         _disableMouseEvents      = xmlreader.GetValueAsBool("remote", "CentareaJoystickMap", false);
         AutoHideTaskbar          = xmlreader.GetValueAsBool("general", "hidetaskbar", true);
         _alwaysOnTop             = xmlreader.GetValueAsBool("general", "alwaysontop", false);
@@ -254,8 +256,20 @@ namespace MediaPortal
 
       _useExclusiveDirectXMode = !UseEnhancedVideoRenderer && _useExclusiveDirectXMode;
       GUIGraphicsContext.IsVMR9Exclusive = _useExclusiveDirectXMode;
-      GUIGraphicsContext.IsEvr = UseEnhancedVideoRenderer;
-      
+
+      if (UseEnhancedVideoRenderer)
+      {
+        GUIGraphicsContext.VideoRenderer = GUIGraphicsContext.VideoRendererType.EVR;
+      }
+      else if (UseMadVideoRenderer)
+      {
+        GUIGraphicsContext.VideoRenderer = GUIGraphicsContext.VideoRendererType.madVR;
+      }
+      else
+      {
+        GUIGraphicsContext.VideoRenderer = GUIGraphicsContext.VideoRendererType.VMR9;
+      }
+
       InitializeComponent();
     }
 
@@ -487,10 +501,10 @@ namespace MediaPortal
       }
 
       // Reset DialogMenu to avoid freeze when going to fullscreen/windowed
-      var dialogMenu = (GUIDialogMenu) GUIWindowManager.GetWindow((int) GUIWindow.Window.WINDOW_DIALOG_MENU);
+      var dialogMenu = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
       if (dialogMenu != null &&
-          (GUIWindowManager.RoutedWindow == (int) GUIWindow.Window.WINDOW_DIALOG_MENU ||
-           GUIWindowManager.RoutedWindow == (int) GUIWindow.Window.WINDOW_DIALOG_OK))
+          (GUIWindowManager.RoutedWindow == (int)GUIWindow.Window.WINDOW_DIALOG_MENU ||
+           GUIWindowManager.RoutedWindow == (int)GUIWindow.Window.WINDOW_DIALOG_OK))
       {
         dialogMenu.Dispose();
         GUIWindowManager.UnRoute(); // only unroute if we still the routed window
@@ -580,6 +594,12 @@ namespace MediaPortal
     /// </summary>
     internal void RecreateSwapChain(bool useBackup)
     {
+      // Don't need to resize when using madVR
+      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && GUIGraphicsContext.Vmr9Active)
+      {
+        return;
+      }
+
       // disable event handlers
       if (GUIGraphicsContext.DX9Device != null)
       {
@@ -616,67 +636,73 @@ namespace MediaPortal
         GUIFontManager.Dispose();
         GUITextureManager.Dispose();
         if (GUIGraphicsContext.DX9Device != null)
+        // Don't need to resize when using madVR
+        if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR ||
+            !GUIGraphicsContext.Vmr9Active)
         {
-          GUIGraphicsContext.DX9Device.EvictManagedResources();
+          if (GUIGraphicsContext.DX9Device != null)
+          {
+            GUIGraphicsContext.DX9Device.EvictManagedResources();
 
-          if (useBackup)
-          {
-            try
+            if (useBackup)
             {
-              Log.Debug("Main: RecreateSwapChain() by restoring startup DirectX values");
-              GUIGraphicsContext.DirectXPresentParameters = _presentParamsBackup;
-              GUIGraphicsContext.DX9Device.Reset(_presentParamsBackup);
+              try
+              {
+                Log.Debug("Main: RecreateSwapChain() by restoring startup DirectX values");
+                GUIGraphicsContext.DirectXPresentParameters = _presentParamsBackup;
+                GUIGraphicsContext.DX9Device.Reset(_presentParamsBackup);
+              }
+              catch (InvalidCallException)
+              {
+                Log.Error("D3D: D3DERR_INVALIDCALL - presentation parameters might contain an invalid value");
+              }
+              catch (DeviceLostException)
+              {
+                Log.Error("D3D: D3DERR_DEVICELOST - device is lost but cannot be reset at this time");
+              }
+              catch (DriverInternalErrorException)
+              {
+                Log.Error("D3D: D3DERR_DRIVERINTERNALERROR - internal driver error");
+              }
+              catch (OutOfVideoMemoryException)
+              {
+                Log.Error("D3D: D3DERR_OUTOFVIDEOMEMORY - not enough available display memory to perform the operation");
+              }
+              catch (OutOfMemoryException)
+              {
+                Log.Error("D3D: D3DERR_OUTOFMEMORY - could not allocate sufficient memory to complete the call");
+              }
             }
-            catch (InvalidCallException)
+            else
             {
-              Log.Error("D3D: D3DERR_INVALIDCALL - presentation parameters might contain an invalid value");
-            }
-            catch (DeviceLostException)
-            {
-              Log.Error("D3D: D3DERR_DEVICELOST - device is lost but cannot be reset at this time");
-            }
-            catch (DriverInternalErrorException)
-            {
-              Log.Error("D3D: D3DERR_DRIVERINTERNALERROR - internal driver error");
-            }
-            catch (OutOfVideoMemoryException)
-            {
-              Log.Error("D3D: D3DERR_OUTOFVIDEOMEMORY - not enough available display memory to perform the operation");
-            }
-            catch (OutOfMemoryException)
-            {
-              Log.Error("D3D: D3DERR_OUTOFMEMORY - could not allocate sufficient memory to complete the call");
-            }
-          }
-          else
-          {
-            // build new D3D presentation parameters and reset device
-            Log.Debug("Main: RecreateSwapChain() by rebuild PresentParams");
-            BuildPresentParams(Windowed);
-            try
-            {
-              GUIGraphicsContext.DX9Device.Reset(_presentParams);
-            }
-            catch (InvalidCallException)
-            {
-              Log.Error("D3D: D3DERR_INVALIDCALL - presentation parametters might contain an invalid value");
-            }
-            catch (DeviceLostException)
-            {
-              // Indicate that the device has been lost
-              Log.Error("D3D: D3DERR_DEVICELOST - device is lost but cannot be reset at this time");
-            }
-            catch (DriverInternalErrorException)
-            {
-              Log.Error("D3D: D3DERR_DRIVERINTERNALERROR - internal driver error");
-            }
-            catch (OutOfVideoMemoryException)
-            {
-              Log.Error("D3D: D3DERR_OUTOFVIDEOMEMORY - not enough available display memory to perform the operation");
-            }
-            catch (OutOfMemoryException)
-            {
-              Log.Error("D3D: D3DERR_OUTOFMEMORY - could not allocate sufficient memory to complete the call");
+              // build new D3D presentation parameters and reset device
+              Log.Debug("Main: RecreateSwapChain() by rebuild PresentParams");
+              BuildPresentParams(Windowed);
+              try
+              {
+                GUIGraphicsContext.DX9Device.Reset(_presentParams);
+              }
+              catch (InvalidCallException)
+              {
+                Log.Error("D3D: D3DERR_INVALIDCALL - presentation parametters might contain an invalid value");
+              }
+              catch (DeviceLostException)
+              {
+                // Indicate that the device has been lost
+                Log.Error("D3D: D3DERR_DEVICELOST - device is lost but cannot be reset at this time");
+              }
+              catch (DriverInternalErrorException)
+              {
+                Log.Error("D3D: D3DERR_DRIVERINTERNALERROR - internal driver error");
+              }
+              catch (OutOfVideoMemoryException)
+              {
+                Log.Error("D3D: D3DERR_OUTOFVIDEOMEMORY - not enough available display memory to perform the operation");
+              }
+              catch (OutOfMemoryException)
+              {
+                Log.Error("D3D: D3DERR_OUTOFMEMORY - could not allocate sufficient memory to complete the call");
+              }
             }
           }
         }
@@ -889,7 +915,13 @@ namespace MediaPortal
 
       if (GUIGraphicsContext.Vmr9Active)
       {
-        FrameStatsLine2 = String.Format(GUIGraphicsContext.IsEvr ? "EVR {0} " : "VMR9 {0} ", GUIGraphicsContext.Vmr9FPS.ToString("f2"));
+        string renderer = "VMR9 {0} ";
+        if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.EVR)
+          renderer = "EVR {0} ";
+        else if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+          renderer = "madVR {0} ";
+
+        FrameStatsLine2 = String.Format(renderer, GUIGraphicsContext.Vmr9FPS.ToString("f2"));
       }
 
       string quality = String.Format("avg fps:{0} sync:{1} drawn:{2} dropped:{3} jitter:{4}",
@@ -2512,6 +2544,16 @@ namespace MediaPortal
         ExitToTray = true;
         MinimizeToTray();
       }
+      //else if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
+      //         GUIGraphicsContext.Vmr9Active && VMR9Util.g_vmr9 != null)
+      //{
+      //  // Hack to not close MP while madVR running (need to find why some plugin like OV trigger this)
+      //  _isClosing = false;
+      //  formClosingEventArgs.Cancel = true;
+      //  GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.RUNNING;
+      //  g_Player.Stop();
+      //  Log.Debug("D3D: OnFormClosing() avoiding for madVR while running");
+      //}
       else
       {
         _isClosing = true;

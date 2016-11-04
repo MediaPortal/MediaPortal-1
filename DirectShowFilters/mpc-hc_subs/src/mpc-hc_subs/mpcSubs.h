@@ -26,6 +26,9 @@ struct SubtitleStyle
 
 extern "C" {
 
+//set/update D3D device pointer used by MPC-HC engine
+MPCSUBS_API BOOL SetDevice(IDirect3DDevice9* d3DDev);
+
 //set default subtitle's style (call before LoadSubtitles to take effect)
 MPCSUBS_API void SetDefaultStyle(const SubtitleStyle* style, BOOL overrideUserStyles);
 MPCSUBS_API void SetAdvancedOptions(int subPicsBufferAhead, SIZE textureSize, BOOL pow2tex, BOOL disableAnim);

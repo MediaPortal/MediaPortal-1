@@ -468,7 +468,7 @@ public class MediaPortalApp : D3D, IRender
   private static extern bool UnregisterPowerSettingNotification(IntPtr handle);
 
   [DllImport("user32.dll", SetLastError = true)]
-  private static extern bool SetProcessDPIAware();
+  private static extern int SetProcessDPIAware();
 
   [DllImport("user32.dll", SetLastError = true)]
   static extern bool PostMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
@@ -480,6 +480,12 @@ public class MediaPortalApp : D3D, IRender
   [STAThread]
   public static void Main(string[] args)
   {
+    Log.Info("Starting deployer application");
+
+    Application.ThreadException += new System.Threading.ThreadExceptionEventHandler(Application_ThreadException);
+    AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
+    Application.ApplicationExit += new EventHandler(Application_ApplicationExit);
+
     using (Settings xmlreader = new MPSettings())
     {
       bool noAutoStartOnRDP = xmlreader.GetValueAsBool("general", "noautostartonrdp", false);
@@ -495,7 +501,8 @@ public class MediaPortalApp : D3D, IRender
 
     if (Environment.OSVersion.Version.Major >= 6)
     {
-      SetProcessDPIAware();
+      int succeeded = SetProcessDPIAware();
+      Log.Info("Main: MediaPortal SetProcessDPIAware {0}", succeeded);
     }
 
     #if !DEBUG
@@ -985,6 +992,12 @@ public class MediaPortalApp : D3D, IRender
               Application.Run(app);
               app.Focus();
             }
+            catch (ThreadStateException ex)
+            {
+              Log.Error(ex);
+              Log.Error("MediaPortal stopped due to thread exception {0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
+              _mpCrashed = true;
+            }
             catch (Exception ex)
             {
               Log.Error(ex);
@@ -1071,6 +1084,20 @@ public class MediaPortalApp : D3D, IRender
     Environment.Exit(0);
   }
 
+  static void Application_ApplicationExit(object sender, EventArgs e)
+  {
+    Log.Info("Application Closed");
+  }
+
+  static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+  {
+    //Log.Error(string.Format("*** UNHANDLED APPDOMAIN EXCEPTION ({0}) *****", e.IsTerminating ? "Terminating" : "Non-Terminating"), e.ExceptionObject as Exception);
+  }
+
+  static void Application_ThreadException(object sender, System.Threading.ThreadExceptionEventArgs e)
+  {
+    //Log.Error("*** UNHANDLED THREAD EXCEPTION *****", e.Exception);
+  }
 
   /// <summary>
   /// Disables the Splash Screen
@@ -1298,6 +1325,7 @@ public class MediaPortalApp : D3D, IRender
     GUIWindowManager.OnNewAction += OnAction;
     GUIWindowManager.Receivers += OnMessage;
     GUIWindowManager.Callbacks += MPProcess;
+    GUIWindowManager.MadVrCallbacks += MadVRMPProcess;
 
     GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.STARTING;
 
@@ -1423,7 +1451,8 @@ public class MediaPortalApp : D3D, IRender
     {
       UpdateStats();
 
-      if (GUIGraphicsContext.IsEvr && g_Player.HasVideo && GUIGraphicsContext.Vmr9Active)
+      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.EVR && 
+           g_Player.HasVideo && GUIGraphicsContext.Vmr9Active)
       {
         if (_showStats != _showStatsPrevious)
         {
@@ -2272,7 +2301,8 @@ public class MediaPortalApp : D3D, IRender
       GUIGraphicsContext.DX9Device.DeviceLost -= OnDeviceLost;
     }
 
-    if (VMR9Util.g_vmr9 != null && GUIGraphicsContext.Vmr9Active && GUIGraphicsContext.IsEvr)
+    if (VMR9Util.g_vmr9 != null && GUIGraphicsContext.Vmr9Active &&
+        GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.EVR)
     {
       VMR9Util.g_vmr9.UpdateEVRDisplayFPS(); // Update FPS
     }
@@ -2922,22 +2952,42 @@ public class MediaPortalApp : D3D, IRender
     }
   }
 
+  /// <summary>
+  /// Process() gets called for madVR.
+  /// It contains the message loop 
+  /// </summary>
+  public void MadVRMPProcess()
+  {
+    if (!_suspended && AppActive)
+    {
+      try
+      {
+        int process = 10;
+        while (process > 0)
+        {
+          FullRender();
+          process--;
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error(ex);
+      }
+    }
+  }
+
   #endregion
 
   #region RenderFrame()
 
-  /// <summary>
-  /// 
-  /// </summary>
-  /// <param name="timePassed"></param>
-  public void RenderFrame(float timePassed)
+  public void RenderFrame(float timePassed, GUILayers layers, ref bool uiVisible)
   {
     if (!_suspended && AppActive)
     {
       try
       {
         CreateStateBlock();
-        GUILayerManager.Render(timePassed);
+        uiVisible = GUILayerManager.Render(timePassed, layers);
         RenderStats();
       }
       catch (Exception ex)
@@ -2946,6 +2996,12 @@ public class MediaPortalApp : D3D, IRender
         Log.Error("RenderFrame exception {0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
       }
     }
+  }
+
+  public void RenderFrame(float timePassed, GUILayers layers)
+  {
+    bool uiVisible = false;
+    RenderFrame(timePassed, layers, ref uiVisible);
   }
 
   #endregion
@@ -3447,7 +3503,6 @@ public class MediaPortalApp : D3D, IRender
 
     Log.Info("Startup: Starting Window Manager");
     GUIWindowManager.PreInit();
-    GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.RUNNING;
 
     Log.Info("Startup: Activating Window Manager");
     if ((_startWithBasicHome) && (File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\basichome.xml"))))
@@ -3482,6 +3537,9 @@ public class MediaPortalApp : D3D, IRender
     // ReSharper restore ObjectCreationAsStatement
 
     SetProcessWorkingSetSize(Process.GetCurrentProcess().Handle, -1, -1);
+
+    // Set running there some plugin can loop otherwise
+    GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.RUNNING;
   }
 
 
@@ -3540,6 +3598,11 @@ public class MediaPortalApp : D3D, IRender
     {
       if (GUIGraphicsContext.InVmr9Render)
       {
+        if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+        {
+          GUIGraphicsContext.InVmr9Render = false;
+          return;
+        }
         Log.Error("Main: MediaPortal.Render() called while VMR9 render - {0} / {1}", GUIGraphicsContext.Vmr9Active,
                   GUIGraphicsContext.Vmr9FPS);
         return;
@@ -3572,7 +3635,7 @@ public class MediaPortalApp : D3D, IRender
             CreateStateBlock();
             GUIGraphicsContext.SetScalingResolution(0, 0, false);
             // ask the layer manager to render all layers
-            GUILayerManager.Render(timePassed);
+            GUILayerManager.Render(timePassed, GUILayers.all);
             RenderStats();
             GUIFontManager.Present();
             GUIGraphicsContext.DX9Device.EndScene();
@@ -4277,9 +4340,27 @@ public class MediaPortalApp : D3D, IRender
 
             string fileName = string.Format("{0}\\{1:00}-{2:00}-{3:00}", directory, DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
             Log.Info("Main: Taking screenshot - Target: {0}.png", fileName);
-            Surface backbuffer = GUIGraphicsContext.DX9Device.GetBackBuffer(0, 0, BackBufferType.Mono);
-            SurfaceLoader.Save(fileName + ".png", ImageFileFormat.Png, backbuffer);
-            backbuffer.Dispose();
+            if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
+            {
+              Surface backbuffer = GUIGraphicsContext.DX9Device.GetBackBuffer(0, 0, BackBufferType.Mono);
+              SurfaceLoader.Save(fileName + ".png", ImageFileFormat.Png, backbuffer);
+              backbuffer.Dispose();
+            }
+            else if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && GUIGraphicsContext.InVmr9Render)
+            {
+              if (GUIGraphicsContext.DX9DeviceMadVr != null)
+              {
+                Surface backbuffer = GUIGraphicsContext.DX9DeviceMadVr.GetBackBuffer(0, 0, BackBufferType.Mono);
+                SurfaceLoader.Save(fileName + ".png", ImageFileFormat.Png, backbuffer);
+                backbuffer.Dispose();
+              }
+            }
+            else
+            {
+              Surface backbuffer = GUIGraphicsContext.DX9Device.GetBackBuffer(0, 0, BackBufferType.Mono);
+              SurfaceLoader.Save(fileName + ".png", ImageFileFormat.Png, backbuffer);
+              backbuffer.Dispose();
+            }
             Log.Info("Main: Taking screenshot done");
           }
           catch (Exception ex)
@@ -5102,7 +5183,21 @@ public class MediaPortalApp : D3D, IRender
             dlgNotify.SetHeading(GUILocalizeStrings.Get(1020)); // Information
             dlgNotify.SetText(GUILocalizeStrings.Get(300024)); // Scan finished
             dlgNotify.DoModal(GUIWindowManager.ActiveWindow);
-          }       
+          }
+          break;
+
+        case GUIMessage.MessageType.GUI_MSG_UNFOCUS_FOCUS:
+          if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+          {
+            // Workaround for madVR and 3D need to force a window change.
+            if (!Windowed)
+            {
+              FormBorderStyle = FormBorderStyle.FixedSingle;
+              FormBorderStyle = FormBorderStyle.None;
+              Log.Debug("Main: madVR for 3D done");
+              ForceMPFocus();
+            }
+          }
           break;
       }
     }

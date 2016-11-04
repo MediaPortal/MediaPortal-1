@@ -95,7 +95,7 @@ namespace MediaPortal.Player.Teletext
         byte[] buffer = new byte[len];
         Marshal.Copy(pbuf, buffer, 0, len); // copy buffer
 
-        pesDecoder.OnTsPacket(buffer, lastStreamPCR);
+        if (pesDecoder != null) pesDecoder.OnTsPacket(buffer, lastStreamPCR); // TODO
       }
     }
 

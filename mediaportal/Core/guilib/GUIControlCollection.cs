@@ -150,13 +150,13 @@ namespace MediaPortal.GUI.Library
       // we should very rarely reach here, means we didn't find it by stored id, most likely it doesnt exist
       // however we have to try in case a control changed its id since we stored it
       // it could also be a subcontrol
-      for (int i = 0; i < list.Count; i++)
+      foreach (GUIControl t in list.ToList())
       {
         GUIControl sub;
-        if ((sub = list[i].GetControlById(id)) != null)
+        if (t != null && (sub = t.GetControlById(id)) != null)
         {
           // control with id found, store item in this list, not potential subitem itself
-          TryAdd(list[i]);
+          TryAdd(t);
           return sub;
         }
       }

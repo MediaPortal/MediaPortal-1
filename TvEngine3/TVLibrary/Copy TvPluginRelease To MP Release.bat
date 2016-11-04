@@ -1,0 +1,1 @@
+xcopy _TvPluginRelease\MediaPortal\*.* ..\..\mediaportal\MediaPortal.Application\bin\Release\ /E /R /Y
