@@ -11,6 +11,10 @@ rem %DeployVersionGIT% /git="%GIT_ROOT%" /path="%MediaPortal%" >> %log%
 %DeployVersionGIT% /git="%GIT_ROOT%" /path="%CommonMPTV%" >> %log%
 
 echo.
+echo Building Libbluray Java...
+call %ant_home%\bin\ant -f %LibblurayJAR% -Dsrc_awt=:java-j2se
+
+echo.
 echo Building native components...
 call VS_Rebuild_Release_DirectShowFilters.bat
 call VS_Rebuild_Debug_DirectShowFilters.bat
@@ -39,6 +43,10 @@ echo Reading the git revision...
 rem SET /p version=<version.txt >> %log%
 SET version=%errorlevel%
 DEL version.txt >> %log%
+
+echo.
+echo Make MediaPortal 2GB LARGEADDRESSAWARE...
+call MSBUILD_MP_LargeAddressAware.bat %BUILD_TYPE%
 
 echo.
 echo Building Installer...

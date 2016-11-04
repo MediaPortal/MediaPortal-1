@@ -34,13 +34,13 @@ CPlaylist::CPlaylist(int playlistNumber, REFERENCE_TIME firstPacketTime)
 CPlaylist::~CPlaylist(void)
 {
   CAutoLock vectorLock(&m_sectionVector);
-  if (m_vecClips.size()>0)
+  if (m_vecClips.size() > 0)
   {
     ivecClip it = m_vecClips.begin();
-    while (it!=m_vecClips.end())
+    while (it != m_vecClips.end())
     {
-      CClip * clip=*it;
-      it=m_vecClips.erase(it);
+      CClip* clip = *it;
+      it = m_vecClips.erase(it);
       delete clip;
     }
   }
@@ -49,42 +49,23 @@ CPlaylist::~CPlaylist(void)
 Packet* CPlaylist::ReturnNextAudioPacket()
 {
   CAutoLock vectorLock(&m_sectionVector);
-  firstPacketRead=true;
-  firstAudioPESPacketSeen=true;
-  Packet * ret = (*m_itCurrentAudioPlayBackClip)->ReturnNextAudioPacket(playlistFirstPacketTime);
+  firstPacketRead = true;
+  firstAudioPESPacketSeen = true;
+  Packet* ret = (*m_itCurrentAudioPlayBackClip)->ReturnNextAudioPacket(playlistFirstPacketTime);
   if (ret)
-  {
-    ret->nPlaylist=nPlaylist;
-  }
+    ret->nPlaylist = nPlaylist;
   else
   {
     if (m_itCurrentAudioPlayBackClip - m_vecClips.begin() == m_vecClips.size() - 1) 
-    {
       SetEmptiedAudio();
-    }
     else
     {
-      (*m_itCurrentAudioPlayBackClip)->Superceed(SUPERCEEDED_AUDIO_RETURN);
+      (*m_itCurrentAudioPlayBackClip)->Supersede(AUDIO_RETURN);
       m_itCurrentAudioPlayBackClip++;
-      ret=ReturnNextAudioPacket();
+      ret = ReturnNextAudioPacket();
     }
   }
-  return ret;
-}
 
-Packet* CPlaylist::ReturnNextAudioPacket(int clip)
-{
-  CAutoLock vectorLock(&m_sectionVector);
-  Packet* ret=NULL;
-  if ((*m_itCurrentAudioPlayBackClip)->nClip==clip)
-  {
-    ret = (*m_itCurrentAudioPlayBackClip)->ReturnNextAudioPacket(playlistFirstPacketTime);
-    if (ret!=NULL)
-    {
-      ret->nPlaylist=nPlaylist;
-    }
-  }
-  if (ret) firstPacketRead=true;
   return ret;
 }
 
@@ -92,49 +73,43 @@ Packet* CPlaylist::ReturnNextVideoPacket()
 {
   CAutoLock vectorLock(&m_sectionVector);
   firstPacketRead=true;
-  Packet * ret = (*m_itCurrentVideoPlayBackClip)->ReturnNextVideoPacket(playlistFirstPacketTime);
+  Packet* ret = (*m_itCurrentVideoPlayBackClip)->ReturnNextVideoPacket(playlistFirstPacketTime);
   if (ret)
-  {
-    ret->nPlaylist=nPlaylist;
-  }
+    ret->nPlaylist = nPlaylist;
   else
   {
-    if ((m_itCurrentVideoPlayBackClip+1) == m_vecClips.end()) 
-    {
+    if ((m_itCurrentVideoPlayBackClip+1) == m_vecClips.end())
       SetEmptiedVideo();
-    }
     else
     {
-      (*(m_itCurrentVideoPlayBackClip))->Superceed(SUPERCEEDED_VIDEO_RETURN);
+      (*(m_itCurrentVideoPlayBackClip))->Supersede(VIDEO_RETURN);
       m_itCurrentVideoPlayBackClip++;
-      ret=ReturnNextVideoPacket();
+      ret = ReturnNextVideoPacket();
     }
   }
+
   return ret;
 }
 
-bool CPlaylist::AcceptAudioPacket(Packet*  packet)
+bool CPlaylist::AcceptAudioPacket(Packet* packet)
 {
   CAutoLock vectorLock(&m_sectionVector);
   bool ret = true;
-  if (!m_vecClips.size()) return false;
+  if (!m_vecClips.size())
+    return false;
+
   if ((*m_itCurrentAudioSubmissionClip)->nClip == packet->nClipNumber)
   {
-    if (!firstAudioPESPacketSeen) packet->nNewSegment |= NS_NEW_PLAYLIST;
+    if (!firstAudioPESPacketSeen && (*m_itCurrentAudioSubmissionClip)->nPlaylist != packet->nPlaylist)
+      packet->nNewSegment |= NS_NEW_PLAYLIST;
+
     ret = (*m_itCurrentAudioSubmissionClip)->AcceptAudioPacket(packet);
   }
-  else 
-  {
+  else
     LogDebug("CPlaylist Panic in Accept Audio Packet");
-  }
 
-  if (!firstAudioPESPacketSeen && ret && packet->rtStart!=Packet::INVALID_TIME)
-  {
-    REFERENCE_TIME oldPEStime = firstAudioPESTimeStamp;
-
-    firstAudioPESPacketSeen=true;
-    firstAudioPESTimeStamp= (*m_itCurrentAudioSubmissionClip)->clipPlaylistOffset - packet->rtStart;
-  }
+  if (!firstAudioPESPacketSeen && ret && packet->rtStart != Packet::INVALID_TIME)
+    firstAudioPESPacketSeen = true;
 
   return ret;
 }
@@ -146,24 +121,20 @@ bool CPlaylist::AcceptVideoPacket(Packet* packet)
   REFERENCE_TIME prevVideoPosition = 0;
   if (nPlaylist != packet->nPlaylist)
   {
-    (*m_itCurrentVideoSubmissionClip)->Superceed(SUPERCEEDED_VIDEO_FILL);
+    (*m_itCurrentVideoSubmissionClip)->Supersede(VIDEO_FILL);
     return false;
   }
-  if ((*m_itCurrentVideoSubmissionClip)->nClip==packet->nClipNumber)
+  if ((*m_itCurrentVideoSubmissionClip)->nClip == packet->nClipNumber)
   {
-    if (!firstVideoPESPacketSeen) packet->nNewSegment |= NS_NEW_PLAYLIST;
-    prevVideoPosition = (*m_itCurrentVideoSubmissionClip)->lastVideoPosition; 
-    ret=(*m_itCurrentVideoSubmissionClip)->AcceptVideoPacket(packet);
+    if (!firstVideoPESPacketSeen && (*m_itCurrentVideoSubmissionClip)->nPlaylist != packet->nPlaylist)
+      packet->nNewSegment |= NS_NEW_PLAYLIST;
+
+    ret = (*m_itCurrentVideoSubmissionClip)->AcceptVideoPacket(packet);
   }
 
-  if (!firstVideoPESPacketSeen && ret && packet->rtStart!=Packet::INVALID_TIME)
-  {
-    REFERENCE_TIME oldPEStime = firstVideoPESTimeStamp;
+  if (!firstVideoPESPacketSeen && ret && packet->rtStart != Packet::INVALID_TIME)
+    firstVideoPESPacketSeen = true;
 
-    firstVideoPESPacketSeen=true;
-    firstVideoPESTimeStamp= (*m_itCurrentVideoSubmissionClip)->clipPlaylistOffset - packet->rtStart;
-  }
- 
   return ret;
 }
 
@@ -171,36 +142,74 @@ void CPlaylist::CurrentClipFilled()
 {
   if (m_vecClips.size())
   {
-    (*m_itCurrentAudioSubmissionClip)->Superceed(SUPERCEEDED_AUDIO_FILL);
-    (*m_itCurrentVideoSubmissionClip)->Superceed(SUPERCEEDED_VIDEO_FILL);
+    (*m_itCurrentAudioSubmissionClip)->Supersede(AUDIO_FILL);
+    (*m_itCurrentVideoSubmissionClip)->Supersede(VIDEO_FILL);
   }
 }
 
-bool CPlaylist::CreateNewClip(int clipNumber, REFERENCE_TIME clipStart, REFERENCE_TIME clipOffset, bool audioPresent, REFERENCE_TIME duration, REFERENCE_TIME playlistClipOffset, bool seekTarget, bool interrupted)
+bool CPlaylist::CreateNewClip(int clipNumber, REFERENCE_TIME clipStart, REFERENCE_TIME clipOffset, bool audioPresent, REFERENCE_TIME duration, REFERENCE_TIME playlistClipOffset, REFERENCE_TIME streamStartOffset, bool interrupted)
 {
   CAutoLock vectorLock(&m_sectionVector);
   bool ret = true;
 
-  if (m_vecClips.size())
+  if (ClipExists(clipNumber))
   {
-    (*m_itCurrentAudioSubmissionClip)->Superceed(SUPERCEEDED_AUDIO_FILL);
-    (*m_itCurrentVideoSubmissionClip)->Superceed(SUPERCEEDED_VIDEO_FILL);
-  }
-
-
-  if (m_vecClips.size()) PushClips();
-  m_vecClips.push_back(new CClip(clipNumber, nPlaylist, clipStart, clipOffset, playlistClipOffset, audioPresent, duration, seekTarget, interrupted));
-  if (m_vecClips.size() == 1)
-  {
-    // initialise
-    m_itCurrentAudioPlayBackClip=m_itCurrentVideoPlayBackClip=m_itCurrentAudioSubmissionClip=m_itCurrentVideoSubmissionClip=m_vecClips.begin();
+    LogDebug("CPlaylist::CreateNewClip - filtering out a duplicate clip - pl: %d clip: %d", nPlaylist, clipNumber);
+    ret = false;
   }
   else
   {
-    PopClips();
-    m_itCurrentAudioSubmissionClip++;
-    m_itCurrentVideoSubmissionClip++;
+    CClip* videoClip = NULL;
+    CClip* audioClip = NULL;
+
+    int clipsSize = m_vecClips.size();
+
+    if (clipsSize > 0)
+    {
+      videoClip = *m_itCurrentVideoSubmissionClip;
+      audioClip = *m_itCurrentAudioSubmissionClip;
+    }
+
+    if (videoClip && videoClip->firstVideo)
+    {
+      Packet* packet = new Packet();
+      packet->rtStart = videoClip->lastAudioPosition;
+      packet->nClipNumber = videoClip->nClip;
+      packet->nPlaylist = videoClip->nPlaylist;
+
+      AcceptVideoPacket(packet);
+    }
+  
+    if (audioClip && audioClip->firstAudio)
+    {
+      Packet* packet = new Packet();
+      packet->rtStart = audioClip->lastAudioPosition;
+      packet->nClipNumber = audioClip->nClip;
+      packet->nPlaylist = audioClip->nPlaylist;
+
+      AcceptAudioPacket(packet);
+    }
+
+    if (audioClip)
+      audioClip->Supersede(AUDIO_FILL);
+
+    if (videoClip)
+      videoClip->Supersede(VIDEO_FILL);
+
+    PushClips();
+    m_vecClips.push_back(new CClip(clipNumber, nPlaylist, clipStart, clipOffset, playlistClipOffset, audioPresent, duration, streamStartOffset, interrupted));
+
+    // initialise
+    if (clipsSize == 0)
+      m_itCurrentAudioPlayBackClip = m_itCurrentVideoPlayBackClip = m_itCurrentAudioSubmissionClip = m_itCurrentVideoSubmissionClip = m_vecClips.begin();
+    else
+    {
+      PopClips();
+      m_itCurrentAudioSubmissionClip++;
+      m_itCurrentVideoSubmissionClip++;
+    }
   }
+
   return ret;
 }
 
@@ -216,12 +225,12 @@ bool CPlaylist::IsEmptiedVideo()
 
 void CPlaylist::SetEmptiedVideo()
 {
-  playlistEmptiedVideo=true;
+  playlistEmptiedVideo = true;
 }
 
 void CPlaylist::SetEmptiedAudio()
 {
-  playlistEmptiedAudio=true;
+  playlistEmptiedAudio = true;
 }
 
 bool CPlaylist::IsFilledAudio()
@@ -236,21 +245,21 @@ bool CPlaylist::IsFilledVideo()
 
 void CPlaylist::SetFilledVideo()
 {
-  playlistFilledVideo=true;
+  playlistFilledVideo = true;
 }
 
 void CPlaylist::SetFilledAudio()
 {
-  playlistFilledAudio=true;
+  playlistFilledAudio = true;
 }
 
 void CPlaylist::FlushAudio()
 {
   CAutoLock vectorLock(&m_sectionVector);
   ivecClip it = m_vecClips.begin();
-  while (it!=m_vecClips.end())
+  while (it != m_vecClips.end())
   {
-    CClip * clip=*it;
+    CClip* clip = *it;
     clip->FlushAudio();
     ++it;
   }
@@ -259,109 +268,99 @@ void CPlaylist::FlushVideo()
 {
   CAutoLock vectorLock(&m_sectionVector);
   ivecClip it = m_vecClips.begin();
-  while (it!=m_vecClips.end())
+  while (it != m_vecClips.end())
   {
-    CClip * clip=*it;
+    CClip* clip = *it;
     clip->FlushVideo();
     ++it;
   }
 }
 
-REFERENCE_TIME CPlaylist::ClearAllButCurrentClip(REFERENCE_TIME totalStreamOffset)
+void CPlaylist::ClearClips(REFERENCE_TIME totalStreamOffset, bool skipCurrentClip)
 {
   CAutoLock vectorLock(&m_sectionVector);
-  REFERENCE_TIME ret = 0LL;
   ivecClip it = m_vecClips.begin();
-  while (it!=m_vecClips.end())
+  while (it != m_vecClips.end())
   {
-    CClip * clip=*it;
-    if (clip==m_vecClips.back())
-    {
+    CClip* clip =* it;
+    if (clip == m_vecClips.back() && skipCurrentClip)
       ++it;
-    }
     else
     {
-      it=m_vecClips.erase(it);
+      it = m_vecClips.erase(it);
       delete clip;
     }
   }
-  if (m_vecClips.size()>0)
+
+  if (m_vecClips.size() > 0)
   {
-    m_itCurrentAudioPlayBackClip=m_itCurrentVideoPlayBackClip=m_itCurrentAudioSubmissionClip=m_itCurrentVideoSubmissionClip=m_vecClips.begin();
-    ret = (*m_itCurrentAudioPlayBackClip)->PlayedDuration();
+    m_itCurrentAudioPlayBackClip = m_itCurrentVideoPlayBackClip = m_itCurrentAudioSubmissionClip = m_itCurrentVideoSubmissionClip = m_vecClips.begin();
     Reset(nPlaylist, playlistFirstPacketTime);
-    (*m_itCurrentAudioPlayBackClip)->Reset(totalStreamOffset + ret);
-    return ret;
+    (*m_itCurrentAudioPlayBackClip)->Reset(totalStreamOffset);
   }
-  return 0LL;
 }
 
 void CPlaylist::Reset(int playlistNumber, REFERENCE_TIME firstPacketTime)
 {
   CAutoLock vectorLock(&m_sectionVector);
-  nPlaylist=playlistNumber;
-  playlistFirstPacketTime=firstPacketTime;
-  playlistFilledAudio=false;
-  playlistFilledVideo=false;
-  playlistEmptiedVideo=false;
-  playlistEmptiedAudio=false;
+  nPlaylist = playlistNumber;
+  playlistFirstPacketTime = firstPacketTime;
+  playlistFilledAudio = false;
+  playlistFilledVideo = false;
+  playlistEmptiedVideo = false;
+  playlistEmptiedAudio = false;
 
-  firstAudioPESPacketSeen=false;
-  firstVideoPESPacketSeen=false;
-  firstAudioPESTimeStamp=0LL;
-  firstVideoPESTimeStamp=0LL;
+  firstAudioPESPacketSeen = false;
+  firstVideoPESPacketSeen = false;
 
-  firstPacketRead=false;
+  firstPacketRead = false;
 }
 
 bool CPlaylist::HasAudio()
 {
   CAutoLock vectorLock(&m_sectionVector);
-  if (!m_vecClips.size()) return false;
-  if ((*m_itCurrentAudioPlayBackClip)->HasAudio()) return true;
-  if (++m_itCurrentAudioPlayBackClip == m_vecClips.end()) m_itCurrentAudioPlayBackClip--;
+  if (!m_vecClips.size()) 
+    return false;
+
+  if ((*m_itCurrentAudioPlayBackClip)->HasAudio())
+    return true;
+
+  if (++m_itCurrentAudioPlayBackClip == m_vecClips.end())
+    m_itCurrentAudioPlayBackClip--;
   else
   {
     bool ret = (*m_itCurrentAudioPlayBackClip)->HasAudio();
     m_itCurrentAudioPlayBackClip--;
     return ret;
   }
+
   return false;
 }
 
 bool CPlaylist::HasVideo()
 {
   CAutoLock vectorLock(&m_sectionVector);
-  if (!m_vecClips.size()) return false;
-  if ((*m_itCurrentVideoPlayBackClip)->HasVideo()) return true;
-  if (++m_itCurrentVideoPlayBackClip == m_vecClips.end()) m_itCurrentVideoPlayBackClip--;
+  if (!m_vecClips.size()) 
+    return false;
+  if ((*m_itCurrentVideoPlayBackClip)->HasVideo())
+    return true;
+  if (++m_itCurrentVideoPlayBackClip == m_vecClips.end())
+    m_itCurrentVideoPlayBackClip--;
   else
   {
     bool ret = (*m_itCurrentVideoPlayBackClip)->HasVideo();
     m_itCurrentVideoPlayBackClip--;
     return ret;
   }
+
   return false;
-}
-
-REFERENCE_TIME CPlaylist::Incomplete()
-{
-  CAutoLock vectorLock(&m_sectionVector);
-  if (m_vecClips.size()>0)
-  {
-    return m_vecClips.back()->Incomplete();
-  }
-
-  return 0LL;
 }
 
 REFERENCE_TIME CPlaylist::PlayedDuration()
 {
   CAutoLock vectorLock(&m_sectionVector);
-  if (m_vecClips.size()>0)
-  {
+  if (m_vecClips.size() > 0)
     return m_vecClips.back()->PlayedDuration();
-  }
 
   return 0LL;
 }
@@ -379,18 +378,19 @@ bool CPlaylist::RemoveRedundantClips()
   if (it != m_vecClips.begin()) --it;
   while (it != m_vecClips.begin())
   {
-    CClip * clip=*it;
-    if (clip->IsSuperceeded(SUPERCEEDED_AUDIO_RETURN|SUPERCEEDED_VIDEO_RETURN|SUPERCEEDED_AUDIO_FILL|SUPERCEEDED_VIDEO_FILL)) 
+    CClip* clip = *it;
+    if (clip->IsSuperseded(AUDIO_RETURN | VIDEO_RETURN | AUDIO_FILL | VIDEO_FILL))
     {
-      it=m_vecClips.erase(it);
+      it = m_vecClips.erase(it);
       delete clip;
     }
     else
-    {
       --it;
-    }
   }
-  if (m_vecClips.size()==0) return true;
+  
+  if (m_vecClips.size() == 0)
+    return true;
+
   return false;
 }
 
@@ -399,23 +399,46 @@ vector<CClip*> CPlaylist::Superceed()
   CAutoLock vectorLock(&m_sectionVector);
   vector<CClip*> ret;
   ivecClip it = m_vecClips.begin();
-  while (it!=m_vecClips.end())
+  while (it != m_vecClips.end())
   {
-    CClip * clip=*it;
-    if (clip->noAudio) ret.push_back(clip);
+    CClip* clip = *it;
+    clip->Supersede(AUDIO_FILL);
+
     ++it;
   }
   return ret;
 }
 
+bool CPlaylist::ClipExists(int nClip)
+{
+  CAutoLock vectorLock(&m_sectionVector);
+  bool ret = false;
+  ivecClip it = m_vecClips.begin();
+  while (it != m_vecClips.end())
+  {
+    CClip* clip = *it;
+    if (clip->nPlaylist == nPlaylist && clip->nClip == nClip)
+    {
+      ret = true;
+      break;
+    }
+    ++it;
+  }
+
+  return ret;
+}
+
 void CPlaylist::PushClips()
 {
-  m_itCurrentAudioPlayBackClipPos = m_itCurrentAudioPlayBackClip-m_vecClips.begin();
-  m_itCurrentVideoPlayBackClipPos = m_itCurrentVideoPlayBackClip-m_vecClips.begin();
-  m_itCurrentAudioSubmissionClipPos = m_itCurrentAudioSubmissionClip-m_vecClips.begin();
-  m_itCurrentVideoSubmissionClipPos = m_itCurrentVideoSubmissionClip-m_vecClips.begin();
-
+  if (m_vecClips.size() > 0)
+  {
+    m_itCurrentAudioPlayBackClipPos = m_itCurrentAudioPlayBackClip - m_vecClips.begin();
+    m_itCurrentVideoPlayBackClipPos = m_itCurrentVideoPlayBackClip - m_vecClips.begin();
+    m_itCurrentAudioSubmissionClipPos = m_itCurrentAudioSubmissionClip - m_vecClips.begin();
+    m_itCurrentVideoSubmissionClipPos = m_itCurrentVideoSubmissionClip - m_vecClips.begin();
+  }
 }
+
 void CPlaylist::PopClips()
 {
   m_itCurrentAudioPlayBackClip = m_vecClips.begin() + m_itCurrentAudioPlayBackClipPos;
@@ -423,3 +446,14 @@ void CPlaylist::PopClips()
   m_itCurrentAudioSubmissionClip = m_vecClips.begin() + m_itCurrentAudioSubmissionClipPos;
   m_itCurrentVideoSubmissionClip = m_vecClips.begin() + m_itCurrentVideoSubmissionClipPos;
 }
+
+bool CPlaylist::AllowBuffering()
+{
+  bool ret = true;
+
+  if (*m_itCurrentAudioPlayBackClip)
+    ret = (*m_itCurrentAudioPlayBackClip)->AllowBuffering();
+
+  return ret;
+}
+

@@ -41,21 +41,21 @@ class CPlaylistManager
 public:
   CPlaylistManager(void);
   ~CPlaylistManager(void);
-  bool CreateNewPlaylistClip(int nPlaylist, int nClip, bool audioPresent, REFERENCE_TIME firstPacketTime, REFERENCE_TIME clipOffsetTime, REFERENCE_TIME duration);
+  void CreateNewPlaylistClip(int nPlaylist, int nClip, bool audioPresent, REFERENCE_TIME firstPacketTime, REFERENCE_TIME clipOffsetTime, REFERENCE_TIME duration, REFERENCE_TIME streamStartPosition, bool interrupted);
   void SetVideoPMT(AM_MEDIA_TYPE *pmt, int nPlaylist, int nClip);
 
   bool SubmitAudioPacket(Packet * packet);
   bool SubmitVideoPacket(Packet * packet);
   void FlushAudio(void);
   void FlushVideo(void);
-  void ClearAllButCurrentClip();
+  void ClearClips(bool skipCurrentClip = true);
   Packet* GetNextAudioPacket();
-  Packet* GetNextAudioPacket(int playlist, int clip);
   Packet* GetNextVideoPacket();
   bool HasAudio();
   bool HasVideo();
 
   void CurrentClipFilled();
+  bool AllowBuffering();
 
 protected:
   typedef vector<CPlaylist*>::iterator ivecPlaylists;
@@ -64,7 +64,8 @@ protected:
   void PushPlaylists();
   void PopPlaylists(int difference);
 
-  bool firstVideo, firstAudio;
+  bool firstVideo;
+  bool firstAudio;
 
   REFERENCE_TIME Incomplete();
   REFERENCE_TIME ClipPlayTime();
@@ -77,6 +78,7 @@ protected:
   ivecPlaylists m_itCurrentVideoPlayBackPlaylist;
   ivecPlaylists m_itCurrentAudioSubmissionPlaylist;
   ivecPlaylists m_itCurrentVideoSubmissionPlaylist;
+
   int m_itCurrentAudioPlayBackPlaylistPos;
   int m_itCurrentVideoPlayBackPlaylistPos;
   int m_itCurrentAudioSubmissionPlaylistPos;

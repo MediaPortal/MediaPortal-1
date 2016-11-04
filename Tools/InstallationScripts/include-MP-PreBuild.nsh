@@ -64,6 +64,7 @@
 !system '"$%WINDIR%\Microsoft.NET\Framework\v4.0.30319\MSBUILD.exe" "${git_ROOT}\Build\RestorePackages.targets"' = 0
 
 !ifdef BUILD_MediaPortal
+!system 'ant -f ${LibblurayJAR} -Dsrc_awt=:java-j2se' = 0
 !insertmacro PrepareBuildReport DirectShowFilters
 !ifdef x64Environment
 !system '"C:\Program Files (x86)\MSBuild\12.0\Bin\MSBUILD.exe" ${logger} /target:rebuild /property:Configuration=Release "${git_DirectShowFilters}\Filters.sln"' = 0
@@ -98,6 +99,7 @@
 !endif
 
 !ifdef BUILD_Installer
+!system '${git_ROOT}\Build\MSBUILD_MP_LargeAddressAware.bat Release' = 0
 !system '"${NSISDIR}\makensis.exe" "${git_MP}\Setup\setup.nsi"' = 0
 !system '"${NSISDIR}\makensis.exe" "${git_TVServer}\Setup\setup.nsi"' = 0
 !endif
