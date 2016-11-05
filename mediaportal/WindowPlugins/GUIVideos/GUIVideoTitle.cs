@@ -1418,6 +1418,8 @@ namespace MediaPortal.GUI.Video
     
     protected void SetMovieCollectionThumbs(ArrayList itemlist)
     {
+      ArrayList movies = new ArrayList();
+      
       foreach (GUIListItem item in itemlist)
       {
         // get the collection somewhere since the label isn't set yet.
@@ -1425,9 +1427,24 @@ namespace MediaPortal.GUI.Video
 
         if (movie != null) 
         {
-          string collectionCover = Util.Utils.GetCoverArt(Thumbs.MovieCollection, movie.SingleMovieCollection);
-          SetItemThumb(item, collectionCover);
+          if (movie.Title == string.Empty)
+          {
+            string collectionCover = Util.Utils.GetCoverArt(Thumbs.MovieCollection, movie.SingleMovieCollection);
+            if (File.Exists(collectionCover))
+            {
+              SetItemThumb(item, collectionCover);
+            }
+          }
+          else
+          {
+            movies.Add(item);
+          }
         }
+      }
+      
+      if (movies.Count > 0)
+      {
+        SetIMDBThumbs(movies);
       }
     }
 
