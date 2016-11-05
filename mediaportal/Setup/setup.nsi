@@ -664,13 +664,13 @@ Section "MediaPortal core files (required)" SecCore
   Delete "${MEDIAPORTAL.BASE}\skin\DefaultWideHD\MPDefaultFonts\Lato-Medium.ttf"
   Delete "${MEDIAPORTAL.BASE}\skin\DefaultWideHD\MPDefaultFonts\Lato-Light.ttf"
   Delete "${MEDIAPORTAL.BASE}\skin\DefaultWideHD\MPDefaultFonts\NotoSans-Regular.ttf"
-  Delete "${MEDIAPORTAL.BASE}\skin\Ares\Fonts\AvalonType.ttf
-  Delete "${MEDIAPORTAL.BASE}\skin\Ares\Fonts\AvalonTypeBold.ttf
-  Delete "${MEDIAPORTAL.BASE}\skin\Ares\Fonts\AvalonTypeLight.ttf
-  Delete "${MEDIAPORTAL.BASE}\skin\Ares\Fonts\HELN.TTF
-  Delete "${MEDIAPORTAL.BASE}\skin\Ares\Fonts\HindVadodara-SemiBold.ttf
-  Delete "${MEDIAPORTAL.BASE}\skin\Ares\Fonts\Lato-Regular.ttf
-  Delete "${MEDIAPORTAL.BASE}\skin\Ares\Fonts\MediaPortalDefault.ttf
+  Delete "${MEDIAPORTAL.BASE}\skin\Ares\MPDefaultFonts\AvalonType.ttf"
+  Delete "${MEDIAPORTAL.BASE}\skin\Ares\MPDefaultFonts\AvalonTypeBold.ttf"
+  Delete "${MEDIAPORTAL.BASE}\skin\Ares\MPDefaultFonts\AvalonTypeLight.ttf"
+  Delete "${MEDIAPORTAL.BASE}\skin\Ares\MPDefaultFonts\HELN.TTF"
+  Delete "${MEDIAPORTAL.BASE}\skin\Ares\MPDefaultFonts\HindVadodara-SemiBold.ttf"
+  Delete "${MEDIAPORTAL.BASE}\skin\Ares\MPDefaultFonts\Lato-Regular.ttf"
+  Delete "${MEDIAPORTAL.BASE}\skin\Ares\MPDefaultFonts\MediaPortalDefault.ttf"
 
   ; used for Default and Titan Skin Font
   StrCpy $FONT_DIR $FONTS
@@ -680,13 +680,13 @@ Section "MediaPortal core files (required)" SecCore
   !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Titan\Fonts\Titan.ttf"
   !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Titan\Fonts\TitanLight.ttf"
   !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Titan\Fonts\TitanMedium.ttf"
-  !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Ares\Fonts\AvalonType.ttf
-  !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Ares\Fonts\AvalonTypeBold.ttf
-  !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Ares\Fonts\AvalonTypeLight.ttf
-  !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Ares\Fonts\HELN.TTF
-  !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Ares\Fonts\HindVadodara-SemiBold.ttf
-  !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Ares\Fonts\Lato-Regular.ttf
-  !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Ares\Fonts\MediaPortalDefault.ttf
+  !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Ares\MPDefaultFonts\AvalonType.ttf"
+  !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Ares\MPDefaultFonts\AvalonTypeBold.ttf"
+  !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Ares\MPDefaultFonts\AvalonTypeLight.ttf"
+  !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Ares\MPDefaultFonts\HELN.TTF"
+  !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Ares\MPDefaultFonts\HindVadodara-SemiBold.ttf"
+  !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Ares\MPDefaultFonts\Lato-Regular.ttf"
+  !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Ares\MPDefaultFonts\MediaPortalDefault.ttf"
 
   SendMessage ${HWND_BROADCAST} ${WM_FONTCHANGE} 0 0 /TIMEOUT=1000
   
