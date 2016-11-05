@@ -1,0 +1,85 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <controls>
+    <!-- People List Layout -->
+	  <control>
+        <description>Little Poster</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>56</posX>
+        <posY>828</posY>
+		<height>190</height>
+		<width>137</width>
+        <texture mask="CAmask_small.png">blue.png</texture>
+        <colordiffuse>ffffffff</colordiffuse>
+      </control>	
+	  <control>
+        <description>Little Poster</description>
+        <type>image</type>
+        <id>40000</id>
+        <posX>56</posX>
+        <posY>828</posY>
+		<height>190</height>
+		<width>137</width>
+        <texture mask="CAmask_small.png">#selectedthumb</texture>
+        <colordiffuse>ffffffff</colordiffuse>
+      </control>
+	  
+
+	  
+    <control>
+      <description>Movie Poster</description>
+      <id>0</id>
+      <type>image</type>
+        <posX>1444</posX>
+        <posY>198</posY>
+        <width>422</width>
+        <height>604</height>
+        <texture mask="CAmask.png">#selectedthumb</texture>
+	  <visible>!facadeview.filmstrip</visible>
+    </control>
+	  <control>
+        <description>Cover Art</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>1416</posX>
+        <posY>185</posY>
+        <width>28</width>
+        <height>619</height>
+        <texture>D_side.png</texture>
+		<visible>!facadeview.filmstrip+!facadeview.coverflow</visible>
+      </control>	
+
+    <control>
+      <description>Name txt</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>225</posX>
+      <posY>850</posY>
+      <width>1550</width>
+      <height>140</height>
+      <label>#Trakt.Person.Name | #Trakt.Person.Birthplace | #Trakt.Person.Birthday</label>
+      <font>font13</font>
+      <align>left</align>
+      <textcolor>eaeaea</textcolor>
+      <visible>facadeview.list+!string.equals(#Trakt.Person.Name,)</visible>
+    </control>
+
+
+    <control Style="NoShadow">
+      <description>Biography value</description>
+      <type>textboxscrollup</type>
+      <id>1</id>
+      <textalign>left</textalign>
+      <posX>225</posX>
+      <posY>900</posY>
+      <width>1550</width>
+      <height>85</height>
+      <label>#Trakt.Person.Biography</label>
+      <font>font13</font>
+      <textcolor>99ffffff</textcolor>
+      <visible>facadeview.list</visible>
+    </control>
+
+  </controls>
+</window>

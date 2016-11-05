@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <controls>
+  
+    <!--:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::DEFAULT BACKGROUND IMAGE:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::-->	
+  
+  
+ 	<control>
+      <description>background default</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>defaultfanart.jpg</texture>
+	  <colordiffuse>30ffffff</colordiffuse>
+	  <animation effect="fade" time="500" reversible="true">visible</animation>
+	  <animation effect="fade" time="500" reversible="true">hidden</animation>	  
+	  <visible>!control.isvisible(010001)+!control.hasfocus(91919992)+!control.hasfocus(91919993)+!control.isvisible(010005)+!control.hasfocus(91919995)+!control.hasfocus(91919996)+!control.isvisible(010017)+!control.hasfocus(91915992)+!control.hasfocus(91915993)+!control.isvisible(010013)+!control.hasfocus(91919998)+!control.hasfocus(91919999)</visible>
+    </control>	  
+
+    <!--:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::MOVPICS FANARTS:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::-->	
+
+	
+ 	<control>
+      <description>background</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>#latestMediaHandler.movingpicture.latest1.fanart</texture>
+	  <colordiffuse>30ffffff</colordiffuse>
+	  <animation effect="fade" time="500" reversible="true">visible</animation>
+	  <animation effect="fade" time="500" reversible="true">hidden</animation>	  
+	  <visible>control.isvisible(010001)</visible>
+    </control>	
+	
+ 	<control>
+      <description>background</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>#latestMediaHandler.movingpicture.latest2.fanart</texture>
+	  <colordiffuse>30ffffff</colordiffuse>
+	  <animation effect="fade" time="500" reversible="true">visible</animation>
+	  <animation effect="fade" time="500" reversible="true">hidden</animation>	  
+	  <visible>control.hasfocus(91919992)</visible>
+    </control>	
+
+ 	<control>
+      <description>background</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>#latestMediaHandler.movingpicture.latest3.fanart</texture>
+	  <colordiffuse>30ffffff</colordiffuse>
+	  <animation effect="fade" time="500" reversible="true">visible</animation>
+	  <animation effect="fade" time="500" reversible="true">hidden</animation>	  
+	  <visible>control.hasfocus(91919993)</visible>
+    </control>	
+
+
+    <!--:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::TVSERIES FANARTS:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::-->	
+	
+	
+	<control>
+      <description>background</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>#latestMediaHandler.tvseries.latest1.fanart</texture>
+	  <colordiffuse>30ffffff</colordiffuse>
+	  <animation effect="fade" time="500" reversible="true">visible</animation>
+	  <animation effect="fade" time="500" reversible="true">hidden</animation>	  	  
+	  <visible>control.isvisible(010005)</visible>
+    </control>	
+	
+	<control>
+      <description>background</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>#latestMediaHandler.tvseries.latest2.fanart</texture>
+	  <colordiffuse>30ffffff</colordiffuse>
+	  <animation effect="fade" time="500" reversible="true">visible</animation>
+	  <animation effect="fade" time="500" reversible="true">hidden</animation>	  	  
+	  <visible>control.hasfocus(91919995)</visible>
+    </control>	
+
+	<control>
+      <description>background</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>#latestMediaHandler.tvseries.latest3.fanart</texture>
+	  <colordiffuse>30ffffff</colordiffuse>
+	  <animation effect="fade" time="500" reversible="true">visible</animation>
+	  <animation effect="fade" time="500" reversible="true">hidden</animation>	  	  
+	  <visible>control.hasfocus(91919996)</visible>
+    </control>		
+	
+
+    <!--:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::MYVIDEOS FANARTS:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::-->	
+
+	
+	<control>
+      <description>background</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>#latestMediaHandler.myvideo.latest1.fanart</texture>
+	  <colordiffuse>30ffffff</colordiffuse>
+	  <animation effect="fade" time="500" reversible="true">visible</animation>
+	  <animation effect="fade" time="500" reversible="true">hidden</animation>	  	  
+	  <visible>control.isvisible(010017)</visible>
+    </control>		
+
+	<control>
+      <description>background</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>#latestMediaHandler.myvideo.latest2.fanart</texture>
+	  <colordiffuse>30ffffff</colordiffuse>
+	  <animation effect="fade" time="500" reversible="true">visible</animation>
+	  <animation effect="fade" time="500" reversible="true">hidden</animation>	  	  
+	  <visible>control.hasfocus(91915992)</visible>
+    </control>		
+
+	<control>
+      <description>background</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>#latestMediaHandler.myvideo.latest3.fanart</texture>
+	  <colordiffuse>30ffffff</colordiffuse>
+	  <animation effect="fade" time="500" reversible="true">visible</animation>
+	  <animation effect="fade" time="500" reversible="true">hidden</animation>	  	  
+	  <visible>control.hasfocus(91915993)</visible>
+    </control>	
+
+
+    <!--:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::MYMUSIC FANARTS:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::-->	
+
+	
+	<control>
+      <description>background</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>#latestMediaHandler.music.latest1.fanart</texture>
+	  <colordiffuse>30ffffff</colordiffuse>
+	  <animation effect="fade" time="500" reversible="true">visible</animation>
+	  <animation effect="fade" time="500" reversible="true">hidden</animation>	  	  
+	  <visible>control.isvisible(010013)</visible>
+    </control>		
+
+	<control>
+      <description>background</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>#latestMediaHandler.music.latest2.fanart</texture>
+	  <colordiffuse>30ffffff</colordiffuse>
+	  <animation effect="fade" time="500" reversible="true">visible</animation>
+	  <animation effect="fade" time="500" reversible="true">hidden</animation>	  	  
+	  <visible>control.hasfocus(91919998)</visible>
+    </control>		
+
+	<control>
+      <description>background</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>#latestMediaHandler.music.latest3.fanart</texture>
+	  <colordiffuse>30ffffff</colordiffuse>
+	  <animation effect="fade" time="500" reversible="true">visible</animation>
+	  <animation effect="fade" time="500" reversible="true">hidden</animation>	  	  
+	  <visible>control.hasfocus(91919999)</visible>
+    </control>		
+	
+  
+  
+  </controls>
+</window>
+
+

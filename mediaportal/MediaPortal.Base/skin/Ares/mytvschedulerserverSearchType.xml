@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+	<id>746</id>
+	<defaultcontrol>2</defaultcontrol>
+	<allowoverlay>no</allowoverlay>
+	<controls>
+		<control>
+      <description>BG</description>
+      <type>image</type>
+      <id>1</id>
+      <texture>#backgroundcolour</texture>
+      <width>1920</width>
+      <height>1080</height>
+    </control>
+
+	<import>custom\Allscreens\user_dialog.xml</import>
+	
+	  <control>
+        <description>Cover Art</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>40</posX>
+        <posY>190</posY>
+        <width>1845</width>
+        <height>624</height>
+        <texture>D_over1.png</texture>
+      </control>	
+
+  	  <control>
+        <description>Cover Art</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>40</posX>
+        <posY>821</posY>
+        <width>1845</width>
+        <height>209</height>
+        <texture>Inf_gfx.png</texture>
+      </control>	
+    	
+		<control>
+			<type>group</type>
+			<layout>StackLayout</layout>
+			<description>group element</description>
+			<animation effect="fade" time="250">WindowOpen</animation>
+			<animation effect="fade" time="250">WindowClose</animation>
+			<posX>57</posX>
+			<posY>225</posY>
+			<control>
+				<description>Quick Record</description>
+				<type>button</type>
+				<id>2</id>
+				<label>781</label>
+				<width>1809</width>
+				<textXOff>30</textXOff>
+				<onup>17</onup>
+				<ondown>3</ondown>
+				<onright>99</onright>
+			</control>
+			<control>
+				<description>Advanced record</description>
+				<type>button</type>
+				<id>3</id>
+				<label>782</label>
+				<width>1809</width>
+				<textXOff>30</textXOff>
+				<onup>2</onup>
+				<ondown>6</ondown>
+				<onright>99</onright>
+			</control>
+			<control>
+				<description>TvGuide</description>
+				<type>button</type>
+				<id>6</id>
+				<label>4</label>
+				<width>1809</width>
+				<onup>3</onup>
+				<textXOff>30</textXOff>
+				<ondown>7</ondown>
+				<onright>99</onright>
+			</control>
+			<control>
+				<description>Search</description>
+				<type>button</type>
+				<id>7</id>
+				<label>137</label>
+				<textXOff>30</textXOff>
+				<width>1809</width>
+				<onup>6</onup>
+				<ondown>10</ondown>
+				<onright>99</onright>
+			</control>
+		</control>
+	</controls>
+</window>

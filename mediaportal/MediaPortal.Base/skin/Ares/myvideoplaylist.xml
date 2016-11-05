@@ -1,0 +1,441 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>28</id>
+  <defaultcontrol>2</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <define>#useSelectedFanart:Yes</define>
+  <define>#selecteditem:</define>
+  <controls>
+    <control>
+      <description>BG</description>
+      <type>image</type>
+      <id>1</id>
+      <texture>#backgroundcolour</texture>
+      <width>1920</width>
+      <height>1080</height>
+    </control>
+	
+	<include condition="#(eq(#MyVideos.fanart.enable,'Yes'))">common.video.fanart.xml</include>
+    <import>custom\Allscreens\user_dialog.xml</import>
+	
+    <control>
+      <description>Alternate Movie Backdrop - Toggles Load with Component 1 for animations on visibiltiy</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>#overlaycolour</texture>
+	</control>		
+
+	  <control>
+        <description>Cover Art</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>40</posX>
+        <posY>190</posY>
+        <width>1845</width>
+        <height>624</height>
+        <texture>D_over1.png</texture>
+		<visible>!control.isvisible(51)+!facadeview.coverflow</visible>
+      </control>	
+
+		<control>
+		  <description>Item Count</description>
+		  <type>label</type>
+		  <id>0</id>
+		  <posX>1873</posX>
+		  <posY>110</posY>
+		  <label>#itemcount Videos</label>
+		  <align>right</align>
+		  <font>fontBold2</font>
+		  <textcolor>ffffffff</textcolor>
+		</control>
+	
+    <control>
+      <type>actiongroup</type>
+      <description>action menu</description>
+      <defaultcontrol>2</defaultcontrol>
+      <onexit>50</onexit>
+      <buttonX>0</buttonX>
+      <buttonY>0</buttonY>
+      <buttonwidth>100</buttonwidth>
+      <buttonheight>1080</buttonheight>
+      <textureFocus>-</textureFocus>
+      <textureNoFocus></textureNoFocus>
+      <width>800</width>
+      <height>800</height>
+      <dimColor>00ffffff</dimColor>
+      <visible>!Control.HasFocus(50)</visible>
+      <control>
+        <type>image</type>
+        <id>0</id>
+        <width>1920</width>
+        <height>1080</height>
+        <texture>black.png</texture>
+        <colordiffuse>99000000</colordiffuse>
+	    <animation effect="fade" time="350" reversible="true">hidden</animation>
+		</control>
+		
+		<control>
+        <type>image</type>
+        <id>0</id>
+        <posX>420</posX>
+        <posY>150</posY>
+        <width>975</width>
+        <height>836</height>
+        <texture>dialogglowbig.png</texture>
+		<visible>!Control.HasFocus(50)</visible>    
+      </control>	
+	  
+      <control>
+        <description>group element</description>
+        <type>group</type>
+        <posX>500</posX>
+        <posY>250</posY>
+        <visible>!Control.HasFocus(50)</visible>
+        <layout>StackLayout</layout>
+        <control>
+          <description>View-As button</description>
+          <type>menubutton</type>
+          <id>2</id>
+          <label></label>
+		  <textureFocus>btn_list_blue2.png</textureFocus>
+          <textureNoFocus></textureNoFocus>
+		  <textYOff>7</textYOff>
+		  <width>820</width>
+		  <height>50</height>	
+          <onright>50</onright>
+          <onup>17</onup>
+          <ondown>20</ondown>
+          <mode>dialoglist</mode>
+          <dialogTitle>792</dialogTitle>
+          <valueTextInButton>yes</valueTextInButton>
+          <valuePrefixText>95</valuePrefixText>
+        </control>
+        <control>
+          <description>Shuffle button</description>
+          <type>button</type>
+          <id>20</id>
+		  <textureFocus>btn_list_blue2.png</textureFocus>
+          <textureNoFocus></textureNoFocus>
+		  <textYOff>7</textYOff>
+		  <width>820</width>
+		  <height>50</height>	
+          <label>191</label>
+          <onright>50</onright>
+          <onup>2</onup>
+          <ondown>30</ondown>
+        </control>
+        <control>
+          <description>Repeat on/off button</description>
+          <type>checkbutton</type>
+          <id>30</id>
+		  <textureFocus>btn_list_blue2.png</textureFocus>
+          <textureNoFocus></textureNoFocus>
+		  <textYOff>7</textYOff>
+		  <width>820</width>
+		  <height>50</height>	
+          <label>486</label>
+          <onright>50</onright>
+          <onup>20</onup>
+          <ondown>21</ondown>
+        </control>
+        <control>
+          <description>Save button</description>
+          <type>button</type>
+          <id>21</id>
+		  <textureFocus>btn_list_blue2.png</textureFocus>
+          <textureNoFocus></textureNoFocus>
+		  <textYOff>7</textYOff>
+		  <width>820</width>
+		  <height>50</height>	
+          <label>190</label>
+          <onright>50</onright>
+          <onup>30</onup>
+          <ondown>22</ondown>
+        </control>
+        <control>
+          <description>Clear button</description>
+          <type>button</type>
+          <id>22</id>
+		  <textureFocus>btn_list_blue2.png</textureFocus>
+          <textureNoFocus></textureNoFocus>
+		  <textYOff>7</textYOff>
+		  <width>820</width>
+		  <height>50</height>	
+          <label>192</label>
+          <onright>50</onright>
+          <onup>21</onup>
+          <ondown>23</ondown>
+        </control>
+        <control>
+          <description>Play button</description>
+          <type>button</type>
+          <id>23</id>
+		  <textureFocus>btn_list_blue2.png</textureFocus>
+          <textureNoFocus></textureNoFocus>
+		  <textYOff>7</textYOff>
+		  <width>820</width>
+		  <height>50</height>	
+          <label>208</label>
+          <onright>50</onright>
+          <onup>22</onup>
+          <ondown>24</ondown>
+        </control>
+        <control>
+          <description>Next button</description>
+          <type>button</type>
+          <id>24</id>
+		  <textureFocus>btn_list_blue2.png</textureFocus>
+          <textureNoFocus></textureNoFocus>
+		  <textYOff>7</textYOff>
+		  <width>820</width>
+		  <height>50</height>	
+          <label>209</label>
+          <onright>50</onright>
+          <onup>23</onup>
+          <ondown>25</ondown>
+        </control>
+        <control>
+          <description>Previous button</description>
+          <type>button</type>
+          <id>25</id>
+		  <textureFocus>btn_list_blue2.png</textureFocus>
+          <textureNoFocus></textureNoFocus>
+		  <textYOff>7</textYOff>
+		  <width>820</width>
+		  <height>50</height>	
+          <label>210</label>
+          <onright>50</onright>
+          <onup>24</onup>
+          <ondown>9</ondown>
+        </control>
+        <control>
+          <description>My Playlists</description>
+          <type>button</type>
+          <id>9</id>
+		  <textureFocus>btn_list_blue2.png</textureFocus>
+          <textureNoFocus></textureNoFocus>
+		  <textYOff>7</textYOff>
+		  <width>820</width>
+		  <height>50</height>	
+          <label>983</label>
+          <onright>50</onright>
+          <ondown>2</ondown>
+          <onup>25</onup>
+        </control>
+      </control>
+    </control>
+    <import>common.facade.video.Title.xml</import>
+
+	  <control>
+        <description>Cover Art</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>40</posX>
+        <posY>821</posY>
+        <width>1845</width>
+        <height>209</height>
+        <texture>Inf_gfx.png</texture>
+      </control>	
+	
+	  <control>
+        <description>Little Poster</description>
+        <type>image</type>
+        <id>500</id>
+        <posX>48</posX>
+        <posY>828</posY>
+		<height>190</height>
+		<width>137</width>
+        <texture mask="CAmask_small.png">#selectedthumb</texture>
+        <colordiffuse>ffffffff</colordiffuse>
+        <visible>[facadeview.playlist|facadeview.album|facadeview.smallicons|facadeview.largeicons]+Control.HasFocus(50)</visible>
+      </control> 
+	
+		  
+
+	  
+      <control>
+        <id>1</id>
+        <type>image</type>
+        <posX>1453</posX>
+        <posY>197</posY>
+        <width>422</width>
+        <height>605</height>
+		<keepaspectratio>no</keepaspectratio>
+        <zoomfromtop>no</zoomfromtop>
+        <texture mask="CAmask.png">missing_Coverart_video.png</texture>
+        <visible>[facadeview.playlist|facadeview.album|facadeview.smallicons|facadeview.largeicons]+[Control.HasFocus(50)+!control.hasthumb(500)]+string.equals(#hideinfo, False)</visible>
+      </control>
+      <control>
+        <id>500</id>
+        <type>image</type>
+        <posX>1453</posX>
+        <posY>197</posY>
+        <width>422</width>
+        <height>605</height>
+		<keepaspectratio>no</keepaspectratio>
+        <zoomfromtop>no</zoomfromtop>
+        <texture mask="CAmask.png">#selectedthumb</texture>
+        <visible>[facadeview.playlist|facadeview.album|facadeview.smallicons|facadeview.largeicons]+Control.HasFocus(50)+string.equals(#hideinfo, False)</visible>
+      </control>
+
+	  <control>
+        <description>Cover Art</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>1425</posX>
+        <posY>182</posY>
+        <width>28</width>
+        <height>619</height>
+        <texture>D_side.png</texture>
+		<visible>!facadeview.filmstrip+!facadeview.coverflow</visible>
+      </control>
+
+	  
+      <control>
+        <description>Not Watched Logo</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>1723</posX>
+        <posY>192</posY>
+        <width>163</width>
+        <height>132</height>
+        <texture>redflag.png</texture>
+        <keepaspectratio>yes</keepaspectratio>
+        <visible>[facadeview.playlist|facadeview.album|facadeview.smallicons|facadeview.largeicons]+control.hasfocus(50)+string.equals(#iswatched,no)+string.equals(#hideinfo, False)</visible>
+      </control>
+	
+
+	
+	
+	<!-- Standard info -->
+	
+    <control>
+      <description>Selected item Label</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>210</posX>
+      <posY>840</posY>
+      <width>650</width>
+      <height>20</height>
+      <font>font12</font>
+      <textcolor>eaeaea</textcolor>      
+      <align>left</align>
+      <label>#title</label>
+      <visible>[facadeview.playlist|facadeview.album|facadeview.smallicons|facadeview.largeicons]+control.hasfocus(50)+string.equals(#hideinfo, False)+!string.equals(#skin.myvids.extra,yes)</visible>   
+    </control>
+    <control>
+      <description>Plot value</description>
+      <type>textboxscrollup</type>
+      <id>1</id>
+       <posX>210</posX>
+       <posY>885</posY>
+       <width>1650</width>
+       <height>118</height>
+       <textcolor>99ffffff</textcolor>
+       <font>font12</font>
+      <label>#plot</label>
+      <visible>[facadeview.playlist|facadeview.album|facadeview.smallicons|facadeview.largeicons]+control.hasfocus(50)+string.equals(#hideinfo, False)+!string.equals(#skin.myvids.extra,yes)</visible>  
+    </control>
+	
+	<!-- Extra info -->
+	
+    <control Style="NoShadow">
+      <description>Movie Title</description>
+      <type>label</type>
+      <id>0</id>
+      <width>1650</width>
+      <height>20</height>
+      <posX>210</posX>
+      <posY>840</posY>
+      <align>left</align>
+      <font>font12</font>
+      <label>#title</label>
+      <textcolor>eaeaea</textcolor>
+      <visible>[facadeview.playlist|facadeview.album|facadeview.smallicons|facadeview.largeicons]+control.hasfocus(50)+string.equals(#skin.myvids.extra,yes)</visible>
+      <animation effect="fade" time="250" delay="0">WindowClose</animation>
+    </control>	
+	
+    <control>
+      <description>summery</description>
+      <type>textboxscrollup</type>
+      <id>0</id>
+	  <textalign>left</textalign>
+      <posX>210</posX>
+      <posY>880</posY>
+      <width>1630</width>
+      <height>80</height>
+      <textcolor>99ffffff</textcolor>
+      <font>font12</font>
+      <label>#plot</label>
+      <visible>[facadeview.playlist|facadeview.album|facadeview.smallicons|facadeview.largeicons]+control.hasfocus(50)+string.equals(#skin.myvids.extra,yes)</visible>
+    </control>	
+	
+	
+	
+	<!-- Extra info -->
+	
+    <control Style="NoShadow">
+      <description>Plot value</description>
+      <type>textboxscrollup</type>
+      <id>1</id>
+       <posX>210</posX>
+       <posY>845</posY>
+       <width>1650</width>
+       <height>155</height>
+       <textcolor>99ffffff</textcolor>
+       <font>font12</font>
+      <label>#plot</label>
+      <textcolor>99ffffff</textcolor>
+      <visible>facadeview.list+string.equals(#hideinfo, False)+!string.equals(#skin.myvids.extra,yes)</visible>
+    </control>
+	
+	<!-- Extra info -->
+	
+    <control>
+      <description>summery</description>
+      <type>textboxscrollup</type>
+      <id>0</id>
+	  <textalign>left</textalign>
+      <posX>210</posX>
+      <posY>840</posY>
+      <width>1630</width>
+      <height>120</height>
+      <textcolor>99ffffff</textcolor>
+      <font>font12</font>
+      <label>#plot</label>
+      <visible>[facadeview.list+string.equals(#hideinfo, False)]+string.equals(#skin.myvids.extra,yes)</visible>
+    </control>			
+ 	
+
+    <!-- ********** Media Info Logos (List View) ********** -->
+	
+    <include condition="#(eq(#skin.myvids.extra,'yes'))">myVideos.MediaInfoPlaylist.xml</include>	
+	
+    <control>
+      <description>Logos group</description>
+      <type>group</type>
+      <posX>1460</posX>
+      <posY>735</posY>
+      <layout>StackLayout(15, Horizontal, true)</layout>
+      <visible>!control.isvisible(51)+!facadeview.coverflow+!facadeview.filmstrip</visible>
+      <control>
+        <description>Certification</description>
+        <type>image</type>
+        <id>0</id>
+        <height>61</height>
+        <width>61</width>
+        <keepaspectratio>yes</keepaspectratio>
+		<valign>middle</valign>
+        <texture>Logos\Age\#mpaarating.png</texture>
+      </control>
+    </control>	
+	
+	
+  </controls>
+</window>
+
+

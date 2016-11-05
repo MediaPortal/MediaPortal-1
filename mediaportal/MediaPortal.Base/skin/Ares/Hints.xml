@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <controls>
+  
+  	  <control>
+        <description>BasicHome tile3</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>1045</posX>
+        <posY>65</posY>
+		<height>34</height>
+		<width>34</width>
+        <texture>ino.png</texture>
+		<animation effect="fade" time="250" reversible="true">visiblechange</animation>
+		<visible>control.hasfocus(0011223)+skin.hassetting(#skin.tips)</visible>
+      </control>
+      <control>
+        <description>Hint</description>
+        <type>label</type>
+        <id>0</id>
+		<posX>1090</posX>
+        <posY>70</posY>
+		<align>left</align>
+        <label>350001</label>
+		<font>font101</font>
+		<textcolor>ffffffff</textcolor>
+		<visible>control.hasfocus(0011223)+skin.hassetting(#skin.tips)</visible>
+		<animation effect="fade" time="250" reversible="true">visiblechange</animation>
+      </control>
+	  
+  	  <control>
+        <description>BasicHome tile3</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>750</posX>
+        <posY>65</posY>
+		<height>34</height>
+		<width>34</width>
+        <texture>ino.png</texture>
+		<animation effect="fade" time="250" reversible="true">visiblechange</animation>
+		<visible>control.hasfocus(5005)+skin.hassetting(#skin.tips)</visible>
+      </control>  
+      <control>
+        <description>Hint</description>
+        <type>label</type>
+        <id>0</id>
+		<posX>800</posX>
+        <posY>70</posY>
+		<align>left</align>
+        <label>350020</label>
+		<font>font101</font>
+		<textcolor>ffffffff</textcolor>
+		<visible>control.hasfocus(5005)+skin.hassetting(#skin.tips)</visible>
+		<animation effect="fade" time="250" reversible="true">visiblechange</animation>
+      </control>
+	  
+
+	  
+  </controls>
+</window>
+
+
+

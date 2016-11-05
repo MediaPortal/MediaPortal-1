@@ -107,6 +107,7 @@ Var frominstall
 Var MPTray_Running
 
 Var PREVIOUS_SKINSETTINGS_TITAN_CONFIG
+Var PREVIOUS_SKINSETTINGS_ARES_CONFIG
 Var PREVIOUS_SKINSETTINGS_DEFAULTWIDEHD_CONFIG
 
 #---------------------------------------------------------------------------
@@ -311,6 +312,12 @@ ShowUninstDetails show
     ${LOG_TEXT} "INFO" "Backup SkinSettings.xml for Titan (${COMMON_APPDATA}\skin\Titan\SkinSettings.xml)"
     CopyFiles /SILENT /FILESONLY "${COMMON_APPDATA}\skin\Titan\SkinSettings.xml" "$PREVIOUS_SKINSETTINGS_TITAN_CONFIG"
   ${EndIf}
+
+  ${If} ${FileExists} "${COMMON_APPDATA}\skin\Ares\SkinSettings.xml"
+    GetTempFileName $PREVIOUS_SKINSETTINGS_ARES_CONFIG
+    ${LOG_TEXT} "INFO" "Backup SkinSettings.xml for Ares (${COMMON_APPDATA}\skin\Ares\SkinSettings.xml)"
+    CopyFiles /SILENT /FILESONLY "${COMMON_APPDATA}\skin\Ares\SkinSettings.xml" "$PREVIOUS_SKINSETTINGS_ARES_CONFIG"
+  ${EndIf}
 !macroend
 
 !macro RestoreSkinSettings
@@ -323,6 +330,11 @@ ShowUninstDetails show
     ${LOG_TEXT} "INFO" "Restore SkinSettings.xml for Titan (${COMMON_APPDATA}\skin\Titan\SkinSettings.xml)"
     CopyFiles /SILENT /FILESONLY "$PREVIOUS_SKINSETTINGS_TITAN_CONFIG" "${COMMON_APPDATA}\skin\Titan\SkinSettings.xml" 
   ${EndIf}  
+
+  ${If} ${FileExists} "$PREVIOUS_SKINSETTINGS_ARES_CONFIG"
+    ${LOG_TEXT} "INFO" "Restore SkinSettings.xml for Ares (${COMMON_APPDATA}\skin\Ares\SkinSettings.xml)"
+    CopyFiles /SILENT /FILESONLY "$PREVIOUS_SKINSETTINGS_ARES_CONFIG" "${COMMON_APPDATA}\skin\Ares\SkinSettings.xml" 
+  ${EndIf} 
 !macroend
 
 Function RunUninstaller
@@ -652,6 +664,13 @@ Section "MediaPortal core files (required)" SecCore
   Delete "${MEDIAPORTAL.BASE}\skin\DefaultWideHD\MPDefaultFonts\Lato-Medium.ttf"
   Delete "${MEDIAPORTAL.BASE}\skin\DefaultWideHD\MPDefaultFonts\Lato-Light.ttf"
   Delete "${MEDIAPORTAL.BASE}\skin\DefaultWideHD\MPDefaultFonts\NotoSans-Regular.ttf"
+  Delete "${MEDIAPORTAL.BASE}\skin\Ares\Fonts\AvalonType.ttf
+  Delete "${MEDIAPORTAL.BASE}\skin\Ares\Fonts\AvalonTypeBold.ttf
+  Delete "${MEDIAPORTAL.BASE}\skin\Ares\Fonts\AvalonTypeLight.ttf
+  Delete "${MEDIAPORTAL.BASE}\skin\Ares\Fonts\HELN.TTF
+  Delete "${MEDIAPORTAL.BASE}\skin\Ares\Fonts\HindVadodara-SemiBold.ttf
+  Delete "${MEDIAPORTAL.BASE}\skin\Ares\Fonts\Lato-Regular.ttf
+  Delete "${MEDIAPORTAL.BASE}\skin\Ares\Fonts\MediaPortalDefault.ttf
 
   ; used for Default and Titan Skin Font
   StrCpy $FONT_DIR $FONTS
@@ -661,6 +680,14 @@ Section "MediaPortal core files (required)" SecCore
   !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Titan\Fonts\Titan.ttf"
   !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Titan\Fonts\TitanLight.ttf"
   !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Titan\Fonts\TitanMedium.ttf"
+  !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Ares\Fonts\AvalonType.ttf
+  !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Ares\Fonts\AvalonTypeBold.ttf
+  !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Ares\Fonts\AvalonTypeLight.ttf
+  !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Ares\Fonts\HELN.TTF
+  !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Ares\Fonts\HindVadodara-SemiBold.ttf
+  !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Ares\Fonts\Lato-Regular.ttf
+  !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Ares\Fonts\MediaPortalDefault.ttf
+
   SendMessage ${HWND_BROADCAST} ${WM_FONTCHANGE} 0 0 /TIMEOUT=1000
   
   !insertmacro RestoreSkinSettings

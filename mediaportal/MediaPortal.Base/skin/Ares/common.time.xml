@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <controls>
+    <control>
+      <description>Date Time</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1866</posX>
+      <posY>15</posY>
+      <label>#date | #time</label>
+      <align>right</align>
+      <font>font101</font>
+      <textcolor>ff808080</textcolor>
+    </control>
+  </controls>
+</window>
