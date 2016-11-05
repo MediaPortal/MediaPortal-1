@@ -36,6 +36,8 @@
       this.pbSkin = new System.Windows.Forms.PictureBox();
       this.lblExisting = new System.Windows.Forms.Label();
       this.btnExisting = new System.Windows.Forms.Button();
+      this.btnAres = new System.Windows.Forms.Button();
+      this.lblAres = new System.Windows.Forms.Label();
       ((System.ComponentModel.ISupportInitialize)(this.pbSkin)).BeginInit();
       this.SuspendLayout();
       // 
@@ -137,9 +139,36 @@
       this.btnExisting.Visible = false;
       this.btnExisting.Click += new System.EventHandler(this.btnExisting_Click);
       // 
+      // btnAres
+      // 
+      this.btnAres.Cursor = System.Windows.Forms.Cursors.Hand;
+      this.btnAres.FlatAppearance.BorderSize = 0;
+      this.btnAres.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
+      this.btnAres.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
+      this.btnAres.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+      this.btnAres.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
+      this.btnAres.Location = new System.Drawing.Point(290, 196);
+      this.btnAres.Name = "btnAres";
+      this.btnAres.Size = new System.Drawing.Size(33, 23);
+      this.btnAres.TabIndex = 4;
+      this.btnAres.UseVisualStyleBackColor = true;
+      this.btnAres.Click += new System.EventHandler(this.btnSkin3_Click);
+      // 
+      // lblAres
+      // 
+      this.lblAres.AutoSize = true;
+      this.lblAres.ForeColor = System.Drawing.Color.White;
+      this.lblAres.Location = new System.Drawing.Point(329, 201);
+      this.lblAres.Name = "lblAres";
+      this.lblAres.Size = new System.Drawing.Size(90, 13);
+      this.lblAres.TabIndex = 12;
+      this.lblAres.Text = "Ares (1920x1080)";
+      // 
       // SkinChoice
       // 
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+      this.Controls.Add(this.lblAres);
+      this.Controls.Add(this.btnAres);
       this.Controls.Add(this.lblExisting);
       this.Controls.Add(this.btnExisting);
       this.Controls.Add(this.pbSkin);
@@ -158,6 +187,8 @@
       this.Controls.SetChildIndex(this.labelSectionHeader, 0);
       this.Controls.SetChildIndex(this.btnExisting, 0);
       this.Controls.SetChildIndex(this.lblExisting, 0);
+      this.Controls.SetChildIndex(this.btnAres, 0);
+      this.Controls.SetChildIndex(this.lblAres, 0);
       ((System.ComponentModel.ISupportInitialize)(this.pbSkin)).EndInit();
       this.ResumeLayout(false);
       this.PerformLayout();
@@ -174,5 +205,7 @@
     private System.Windows.Forms.PictureBox pbSkin;
     private System.Windows.Forms.Label lblExisting;
     private System.Windows.Forms.Button btnExisting;
+    private System.Windows.Forms.Button btnAres;
+    private System.Windows.Forms.Label lblAres;
   }
 }
