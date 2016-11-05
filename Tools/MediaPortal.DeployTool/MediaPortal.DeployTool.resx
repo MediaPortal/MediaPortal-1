@@ -377,7 +377,7 @@ The PC will then act as a dedicated TV-Server and provide other PC's in your LAN
     <value>Please select your language before you continue</value>
   </data>
   <data name="Finished_labelEbay" xml:space="preserve">
-    <value>MediaPortal is FREE - if you bought it on ebay you have been fooled!</value>
+    <value>MediaPortal is completely FREE - you don't need to pay any money for it!</value>
   </data>
   <data name="Install_actionConfigure" xml:space="preserve">
     <value>Configure</value>
