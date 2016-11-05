@@ -129,7 +129,7 @@ namespace MediaPortal.GUI.Video
       if (g_Player.CurrentFile != _fileName)
       {
         _fileName = g_Player.CurrentFile;
-        Log.Debug("GUIVideoOverlay : SetCurrentFile _fileName {0}", Util.Utils.GetFilename(_fileName));
+        Log.Debug("GUIVideoOverlay : SetCurrentFile DoesPostRender _fileName {0}", Util.Utils.GetFilename(_fileName));
         SetCurrentFile(_fileName);
         if (SetGuiPropertiesUpdate != null) SetGuiPropertiesUpdate(g_Player.MediaType.Video, g_Player.CurrentFile);
       }
@@ -276,8 +276,6 @@ namespace MediaPortal.GUI.Video
       // Preset title and file
       GUIPropertyManager.SetProperty("#Play.Current.Title", Util.Utils.GetFilename(fileName));
       GUIPropertyManager.SetProperty("#Play.Current.File", Util.Utils.GetFileNameWithExtension(fileName));
-      //Log.Error("SetCurrentFile before #Play.Current.Title {0}", Util.Utils.GetFilename(fileName));
-      //Log.Error("SetCurrentFile before #Play.Current.File {0}", Util.Utils.GetFileNameWithExtension(fileName));
 
       // Set audio / video properties
       if ((g_Player.IsVideo || g_Player.IsDVD) && !g_Player.IsTV && g_Player.MediaInfo != null)

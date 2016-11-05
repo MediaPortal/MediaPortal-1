@@ -435,6 +435,18 @@ namespace MediaPortal.Player
       set { if (_scene != null) _scene.Visible = value; }
     }
 
+    public bool DisableLowLatencyMode
+    {
+      get { return _scene != null && _scene.DisableLowLatencyMode; }
+      set { if (_scene != null) _scene.DisableLowLatencyMode = value; }
+    }
+
+    public bool Visible
+    {
+      get { return _scene != null && _scene.Visible; }
+      set { if (_scene != null) _scene.Visible = value; }
+    }
+
     //public bool IsVMR9Connected
 
     #endregion

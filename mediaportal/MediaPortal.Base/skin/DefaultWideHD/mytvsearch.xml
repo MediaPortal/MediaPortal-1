@@ -141,7 +141,7 @@
       <posX>240</posX>
       <posY>660</posY>
       <width>1590</width>
-      <label>#TV.Search.Title</label>
+      <label>#selecteditem - #TV.Search.Channel</label>
       <font>font14</font>
       <textcolor>ivory</textcolor>
       <visible>control.hasfocus(10) | control.hasfocus(11)</visible>
