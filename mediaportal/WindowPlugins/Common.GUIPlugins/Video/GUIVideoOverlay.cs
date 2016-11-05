@@ -53,6 +53,10 @@ namespace MediaPortal.GUI.Video
 
     private bool _didRenderLastTime = false;
 
+    public delegate void SetGuiProperties(g_Player.MediaType type, string filename);
+
+    public static event SetGuiProperties SetGuiPropertiesUpdate;
+
     public GUIVideoOverlay()
     {
       GetID = (int)Window.WINDOW_VIDEO_OVERLAY;
@@ -127,6 +131,7 @@ namespace MediaPortal.GUI.Video
         _fileName = g_Player.CurrentFile;
         Log.Debug("GUIVideoOverlay : SetCurrentFile DoesPostRender _fileName {0}", Util.Utils.GetFilename(_fileName));
         SetCurrentFile(_fileName);
+        if (SetGuiPropertiesUpdate != null) SetGuiPropertiesUpdate(g_Player.MediaType.Video, g_Player.CurrentFile);
       }
 
       if (g_Player.IsTV && (_program != GUIPropertyManager.GetProperty("#TV.View.title")) && g_Player.IsTimeShifting)
@@ -175,6 +180,7 @@ namespace MediaPortal.GUI.Video
           _fileName = g_Player.CurrentFile;
           Log.Debug("GUIVideoOverlay : SetCurrentFile PostRender _fileName {0}", Util.Utils.GetFilename(_fileName));
           SetCurrentFile(_fileName);
+          if (SetGuiPropertiesUpdate != null) SetGuiPropertiesUpdate(g_Player.MediaType.Video, g_Player.CurrentFile);
         }
 
         //        int speed = g_Player.Speed;
