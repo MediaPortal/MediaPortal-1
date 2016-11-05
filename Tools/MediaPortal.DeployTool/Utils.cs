@@ -106,7 +106,8 @@ namespace MediaPortal.DeployTool
     public static void ErrorDlg(string msg)
     {
       MessageBox.Show(msg, "MediaPortal Deploy Tool -- Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-      Environment.Exit(-1);
+      // TODO - When an error happen that doesn't mean that is always a big error (like download abort)
+      // Environment.Exit(-1);
     }
 
     #endregion

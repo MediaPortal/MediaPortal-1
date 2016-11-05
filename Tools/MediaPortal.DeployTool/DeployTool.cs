@@ -172,32 +172,34 @@ namespace MediaPortal.DeployTool
           {
             Process process = new Process();
             process.StartInfo.FileName = "explorer.exe";
-            process.StartInfo.Arguments = "/e, " + Application.StartupPath;
+            process.StartInfo.Arguments = "/e, " + Application.StartupPath + "\\deploy";
             process.StartInfo.UseShellExecute = true;
             process.Start();
           }
             // Starting processes might fail - prefer a not opening Explorer instead of a big crash window...
-          catch (Exception) {}
+          catch (Exception)
+          {
+          }
         }
 
-          //
-          // If in install mode, start the included setup guide
-          //
-        else
-        {
-          if (InstallationProperties.Instance["InstallType"] != "tvserver_master" && OSInfo.OSInfo.VistaOrLater() &&
-              !Utils.IsAeroEnabled())
-          {
-            MessageBox.Show(Localizer.GetBestTranslation("AeroThemeMissing"), "MediaPortal", MessageBoxButtons.OK,
-                            MessageBoxIcon.Warning);
-          }
-          try
-          {
-            Process.Start("http://wiki.team-mediaportal.com/TeamMediaPortal/MP1QuickSetupGuide");
-          }
-            // This might fail on systems without a default browser
-          catch (Exception) {}
-        }
+        //
+        // Remove start web explorer on exit (If in install mode, start the included setup guide)
+        //
+        //else
+        //{
+        //  if (InstallationProperties.Instance["InstallType"] != "tvserver_master" && OSInfo.OSInfo.VistaOrLater() &&
+        //      !Utils.IsAeroEnabled())
+        //  {
+        //    MessageBox.Show(Localizer.GetBestTranslation("AeroThemeMissing"), "MediaPortal", MessageBoxButtons.OK,
+        //                    MessageBoxIcon.Warning);
+        //  }
+        //  try
+        //  {
+        //    Process.Start("http://wiki.team-mediaportal.com/TeamMediaPortal/MP1QuickSetupGuide");
+        //  }
+        //    // This might fail on systems without a default browser
+        //  catch (Exception) {}
+        //}
         Close();
         return;
       }
