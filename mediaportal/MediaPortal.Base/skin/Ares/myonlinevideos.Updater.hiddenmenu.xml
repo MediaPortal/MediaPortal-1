@@ -1,0 +1,133 @@
+<window>
+  <controls>
+
+	    <!-- *** HIDDEN MENU *** -->
+        <control>
+		  <type>actiongroup</type>
+		  <description>action menu</description>
+		  <defaultcontrol>4</defaultcontrol>
+		  <onexit>50</onexit>
+		  <buttonX>0</buttonX>
+		  <buttonY>0</buttonY>
+		  <buttonwidth>100</buttonwidth>
+          <buttonheight>1080</buttonheight>
+          <textureFocus>-</textureFocus>
+          <textureNoFocus>-</textureNoFocus>
+		  <width>800</width>
+		  <height>800</height>
+		  <dimColor>00ffffff</dimColor>    
+	  <control>
+	   <type>image</type>
+	   <posX>0</posX>
+	   <posY>0</posY>
+	   <width>1920</width>
+	   <height>1080</height>
+       <texture>black.png</texture>
+        <colordiffuse>99000000</colordiffuse>
+	   <animation effect="fade" time="350" reversible="true">hidden</animation>
+	   <visible>!Control.HasFocus(50)</visible>    
+	 </control>
+		
+	  <control>
+        <type>image</type>
+        <id>0</id>
+        <posX>420</posX>
+        <posY>150</posY>
+        <width>975</width>
+        <height>836</height>
+        <texture>dialogglowbig.png</texture>
+		<visible>!Control.HasFocus(50)</visible>    
+      </control>
+    <control>
+      <description>button group</description>
+      <type>group</type>        
+      <posX>500</posX>
+      <posY>250</posY>
+      <layout>StackLayout</layout>
+      <visible>!Control.HasFocus(50)</visible>
+      <control>
+        <type>selectbutton</type>          
+        <description>filter button</description>
+        <id>503</id>
+        <onright>50</onright>
+        <onup>17</onup>
+        <label>#OnlineVideos.Translation.Filter.Label: #OnlineVideos.Translation.State.Label</label>
+        <font>font11</font>
+        <height>50</height>
+        <textureFocus>btn_list_blue2.png</textureFocus>
+        <textureNoFocus></textureNoFocus>
+		<textYOff>7</textYOff>
+		<width>800</width>
+		<texturebg>btn_list_blue2.png</texturebg>
+        <visible>!Control.HasFocus(50)</visible>
+      </control>
+      <control>
+        <type>selectbutton</type>          
+        <description>filter button for Creator</description>
+        <id>506</id>
+        <onright>50</onright>
+        <onup>503</onup>
+        <label>#OnlineVideos.Translation.Filter.Label: #OnlineVideos.Translation.Creator.Label</label>
+        <font>font11</font>
+        <height>50</height>
+        <textureFocus>btn_list_blue2.png</textureFocus>
+        <textureNoFocus></textureNoFocus>
+		<textYOff>7</textYOff>
+		<width>800</width>
+		<texturebg>btn_list_blue2.png</texturebg>
+        <visible>!Control.HasFocus(50)</visible>
+      </control>
+      <control>
+        <type>selectbutton</type>          
+        <description>filter button for Language</description>
+        <id>507</id>
+        <onright>50</onright>
+        <onup>506</onup>
+        <label>#OnlineVideos.Translation.Filter.Label: #OnlineVideos.Translation.Language.Label</label>
+        <font>font11</font>
+        <height>50</height>
+        <textureFocus>btn_list_blue2.png</textureFocus>
+        <textureNoFocus></textureNoFocus>
+		<textYOff>7</textYOff>
+		<width>800</width>
+		<texturebg>btn_list_blue2.png</texturebg>
+        <visible>!Control.HasFocus(50)</visible>
+      </control>      
+      <control>
+        <type>selectbutton</type>
+        <description>Order By</description>
+        <id>504</id>
+        <onright>50</onright>
+        <onup>507</onup>
+        <ondown>508</ondown>
+        <label>#OnlineVideos.Translation.SortOptions.Label</label>
+        <font>font11</font>
+        <height>50</height>
+        <textureFocus>btn_list_blue2.png</textureFocus>
+        <textureNoFocus></textureNoFocus>
+		<textYOff>7</textYOff>
+		<width>800</width>
+		<texturebg>btn_list_blue2.png</texturebg>
+        <visible>!Control.HasFocus(50)</visible>
+      </control>   
+      <control>
+        <type>button</type>
+        <description>automatic update button</description>
+        <id>508</id>
+        <onright>50</onright>
+        <onup>504</onup>          
+        <ondown>50</ondown>
+        <label>#OnlineVideos.Translation.AutomaticUpdate.Label</label>
+        <font>font11</font>
+        <height>50</height>
+        <textureFocus>btn_list_blue2.png</textureFocus>
+        <textureNoFocus></textureNoFocus>
+		<textYOff>7</textYOff>
+		<width>800</width>
+        <visible allowhiddenfocus="true">!Control.HasFocus(50)</visible>
+      </control>      
+    </control>
+	</control>
+	
+</controls>
+</window>

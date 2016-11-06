@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>1019</id>
+  <defaultcontrol>10</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <rememberLastFocusedControl>yes</rememberLastFocusedControl>
+  <controls>
+    <import>common.settings.xml</import>
+
+    <!-- Startup resume-->
+    <control>
+      <description>buttons</description>
+      <type>group</type>
+      <animation effect="fade" start="0" end="100" time="200">WindowOpen</animation>
+      <animation effect="fade" start="100" end="0" time="200">WindowClose</animation>
+      <posX>500</posX>
+      <posY>240</posY>
+      <layout>StackLayout(0, Vertical, false)</layout>
+      <control>
+        <description>MP fullscreen</description>
+        <type>checkbutton</type>
+        <id>10</id>
+        <onup>123</onup>
+        <label>300105</label>
+        <textureFocus>btn_list_blue2.png</textureFocus>
+        <textureNoFocus></textureNoFocus>
+		<textYOff>7</textYOff>
+		<width>820</width>
+		<height>50</height>
+      </control>
+      <control>
+        <description>Splashscreen</description>
+        <type>checkbutton</type>
+        <id>11</id>
+        <label>300106</label>
+        <textureFocus>btn_list_blue2.png</textureFocus>
+        <textureNoFocus></textureNoFocus>
+		<textYOff>7</textYOff>
+		<width>820</width>
+		<height>50</height>
+      </control>
+      <control>
+        <description>On top</description>
+        <type>checkbutton</type>
+        <id>12</id>
+        <label>300107</label>
+        <textureFocus>btn_list_blue2.png</textureFocus>
+        <textureNoFocus></textureNoFocus>
+		<textYOff>7</textYOff>
+		<width>820</width>
+		<height>50</height>
+      </control>
+      <control>
+        <description>Hide taskbar</description>
+        <type>checkbutton</type>
+        <id>13</id>
+        <label>300108</label>
+        <textureFocus>btn_list_blue2.png</textureFocus>
+        <textureNoFocus></textureNoFocus>
+		<textYOff>7</textYOff>
+		<width>820</width>
+		<height>50</height>
+      </control>
+      <control>
+        <description>Autostart on WinUp</description>
+        <type>checkbutton</type>
+        <id>14</id>
+        <label>300109</label>
+        <textureFocus>btn_list_blue2.png</textureFocus>
+        <textureNoFocus></textureNoFocus>
+		<textYOff>7</textYOff>
+		<width>820</width>
+		<height>50</height>
+      </control>
+      <control>
+        <description>Minimize to tray Startup</description>
+        <type>checkbutton</type>
+        <id>15</id>
+        <label>300110</label>
+        <textureFocus>btn_list_blue2.png</textureFocus>
+        <textureNoFocus></textureNoFocus>
+		<textYOff>7</textYOff>
+		<width>820</width>
+		<height>50</height>
+		<onup>14</onup>
+	    <ondown>16</ondown>
+      </control>
+      <control>
+        <description>Minimize to tray GUI exit</description>
+        <type>checkbutton</type>
+        <id>16</id>
+        <label>300111</label>
+        <textureFocus>btn_list_blue2.png</textureFocus>
+        <textureNoFocus></textureNoFocus>
+		<textYOff>7</textYOff>
+		<width>820</width>
+		<height>50</height>
+		<onup>15</onup>
+	    <ondown>17</ondown>
+      </control>
+      <control>
+        <description>Minimize to tray on focus loss</description>
+        <type>checkbutton</type>
+        <id>17</id>
+        <label>300229</label>
+        <textureFocus>btn_list_blue2.png</textureFocus>
+        <textureNoFocus></textureNoFocus>
+		<textYOff>7</textYOff>
+		<width>820</width>
+		<height>50</height>
+		<onup>16</onup>
+	    <ondown>17</ondown>
+      </control>
+    </control>
+  </controls>
+</window>
+
+

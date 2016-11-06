@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>35</id>
+  <defaultcontrol>00512</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <rememberLastFocusedControl>yes</rememberLastFocusedControl>
+  <controls>
+
+
+	<control>
+      <description>background</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>#backgroundcolour</texture>
+	  <shouldCache>false</shouldCache>
+    </control>
+	
+	
+    <import>BasicHomeFanarts.xml</import>
+	
+	
+	<control>
+      <description>background</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>#overlaycolour</texture>
+    </control>	
+
+	<!-- 
+    <control>
+      <description>current temp label</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>10</posX>
+      <posY>10</posY>
+      <height>71</height>
+      <align>left</align>
+      <label>#skin.page3navright #skin.page3navleft</label>
+      <font>font10</font>
+      <textcolor>ffffffff</textcolor>
+	  <visible>true</visible>
+    </control>	
+    -->
+	<!-- Expression test box (labels do not work with cint !! -->
+	
+	
+
+
+    <import>custom\Allscreens\user_dialog.xml</import>
+	<import>PluginDefines.xml</import>	
+	<import>BasicHomePage1.xml</import>	
+	<import>BasicHomePage2.xml</import>	
+    <import>BasicHomePage3.xml</import>	
+    <import>BasicHomePage4.xml</import>		
+    <import>BasicHomePage5.xml</import>		
+	<include condition="#(eq(#skin.rss.info,'True'))">BasicHomerss.xml</include>
+	<include condition="#(eq(#skin.rss.info,'False'))">BasicHomePageInd.xml</include>
+    <include condition="#(and(eq(#skin.no.latestmedia,'True'),eq(#skin.latest.overview,'False')))">BasicHomeExtraInfos.xml</include>	
+    <include condition="#(and(eq(#skin.no.latestmedia,'True'),eq(#skin.latest.overview,'True')))">BasicHomeExtraInfosOverview.xml</include>		
+    <import>BasicHomeDummyVisibility.xml</import>	
+	<import>BasicHome_Settings1.xml</import>
+    <import>BasicHome_Settings2.xml</import>	
+	<import>BasicHome_Settings3.xml</import>
+    <import>BasicHome_Settings4.xml</import>	
+	<import>BasicHome_Settings5.xml</import>
+	<import>BasicHome_Settings1Img.xml</import>
+	<import>BasicHome_Settings2Img.xml</import>
+	<import>BasicHome_Settings3Img.xml</import>
+	<import>BasicHome_Settings4Img.xml</import>
+	<import>BasicHome_Settings5Img.xml</import>
+	<import>BasicHomeDesc.xml</import>
+	<import>BasicHomeEdit.xml</import>
+   
+  </controls>
+</window>
+
+
