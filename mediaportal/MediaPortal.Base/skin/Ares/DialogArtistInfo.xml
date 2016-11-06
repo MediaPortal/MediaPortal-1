@@ -1,0 +1,342 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>2011</id>
+  <defaultcontrol>5</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <define>#selecteditem:</define>
+  <define>#useSelectedFanart:Yes</define>
+  <controls>
+    <control>
+      <description>BG</description>
+      <type>image</type>
+      <id>1</id>
+      <texture>#backgroundcolour</texture>
+      <width>1920</width>
+      <height>1080</height>
+    </control>
+ 
+    <include condition="#(eq(#Music.fanart.enable,'All Screens'))">common.music.fanart.xml</include>
+       
+    <control>
+      <description>Alternate Movie Backdrop - Toggles Load with Component 1 for animations on visibiltiy</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>#overlaycolour</texture>
+	  <visible>string.equals(#Music.fanart.enable,All Screens)</visible>
+	</control>	
+	
+	  <control>
+        <description>Cover Art</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>40</posX>
+        <posY>190</posY>
+        <width>1845</width>
+        <height>624</height>
+        <texture>D_over1.png</texture>
+      </control>	
+	  
+	  
+	<import>custom\Allscreens\user_dialog.xml</import>
+	
+		
+	  <control>
+        <description>Cover Art</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>40</posX>
+        <posY>821</posY>
+        <width>1845</width>
+        <height>209</height>
+        <texture>Inf_gfx.png</texture>
+      </control>	
+		
+
+    <control>
+      <description>group element</description>
+      <type>group</type>
+      <layout>StackLayout(2, Vertical, true)</layout>
+      <posX>57</posX>
+      <posY>650</posY>
+      <control>
+        <description>Bio/Albums</description>
+        <type>button</type>
+        <id>5</id>
+        <width>1224</width>
+	    <height>45</height>
+        <label>#(L(689)) / #(L(132))</label>
+        <textcolor>ffffffff</textcolor>
+        <colordiffuse>ffffffff</colordiffuse>
+        <textureFocus>btn_list.png</textureFocus>
+        <font>font12</font>
+        <onleft>5</onleft>
+        <onright>6</onright>
+        <onup>17</onup>
+        <ondown>5</ondown>
+        <onclick>#(skin.togglesetting('#ArtistInfo.ShowAlbums'))</onclick>
+      </control>
+      <control>
+        <description>Refresh</description>
+        <type>button</type>
+        <id>6</id>
+        <width>1224</width>
+	    <height>45</height>
+        <label>184</label>
+        <textcolor>ffffffff</textcolor>
+        <colordiffuse>ffffffff</colordiffuse>
+        <textureFocus>btn_list.png</textureFocus>
+        <font>font12</font>
+        <onleft>5</onleft>
+        <onright>5</onright>
+        <onup>17</onup>
+        <ondown>6</ondown>
+      </control>      
+    </control>  
+
+	
+    <control>
+      <description>group element</description>
+      <type>group</type>
+      <layout>StackLayout(45, Vertical, true)</layout>
+      <posX>80</posX>
+      <posY>215</posY>
+    <control Style="NoShadow">
+      <description>Born</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>140</posX>
+      <posY>260</posY>
+      <width>1020</width>
+      <label>Born: #ArtistInfo.Born</label>
+      <font>font13</font>      
+      <textcolor>white</textcolor>
+    </control>
+
+    <control Style="NoShadow">
+      <description>Years Active</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>80</posX>
+      <posY>215</posY>
+      <width>1020</width>
+      <label>Years Active: #ArtistInfo.YearsActive</label>
+      <font>font13</font>      
+      <textcolor>white</textcolor>
+    </control>
+
+    <control Style="NoShadow">
+      <description>Genres</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>140</posX>
+      <posY>420</posY>
+      <width>300</width>
+      <label>Genres:</label>
+      <font>font13</font>      
+      <textcolor>white</textcolor>
+    </control>
+    <control Style="NoShadow">
+      <description>Genres value</description>
+      <type>textbox</type>
+      <id>0</id>
+      <posX>140</posX>
+      <posY>460</posY>
+      <label>#ArtistInfo.Genres</label>
+      <width>1020</width>
+	  <height>30</height>
+      <font>font13</font>
+      <textcolor>eaeaea</textcolor>
+    </control>
+    <control Style="NoShadow">
+      <description>Tones</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>140</posX>
+      <posY>500</posY>
+      <width>300</width>
+      <label>Tones:</label>
+      <font>font13</font>      
+      <textcolor>white</textcolor>
+    </control>
+    <control Style="NoShadow">
+      <description>Tones value</description>
+      <type>textbox</type>
+      <id>0</id>
+      <posX>140</posX>
+      <posY>540</posY>
+      <width>1020</width>
+	  <height>30</height>
+      <label>#ArtistInfo.Tones</label>
+      <font>font13</font>
+      <textcolor>eaeaea</textcolor>
+    </control>
+    <control Style="NoShadow">
+      <description>Styles</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>140</posX>
+      <posY>580</posY>
+      <width>300</width>
+      <label>Styles:</label>
+      <font>font13</font>      
+      <textcolor>white</textcolor>
+    </control>
+    <control Style="NoShadow">
+      <description>Styles value</description>
+      <type>textbox</type>
+      <id>0</id>
+      <posX>140</posX>
+      <posY>620</posY>
+      <width>1020</width>
+	  <height>30</height>
+      <label>#ArtistInfo.Styles</label>
+      <font>font13</font>
+      <textcolor>eaeaea</textcolor>
+    </control>
+	</control>
+
+    <!--<control Style="NoShadow">
+      <description>Instruments</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>880</posX>
+      <posY>457</posY>
+      <width>250</width>
+      <label>Intruments:</label>
+      <font>font111</font>
+      <align>left</align>
+      <textcolor>eaeaea</textcolor>
+    </control>    
+    <control Style="NoShadow">
+      <description>Instruments value</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>1130</posX>
+      <posY>457</posY>
+      <label>#ArtistInfo.Instruments</label>
+      <width>600</width>
+      <font>font111</font>
+      <textcolor>eaeaea</textcolor>
+    </control>-->
+	
+    <control>
+      <id>1</id>
+      <type>image</type>
+        <posX>1261</posX>
+        <posY>197</posY>
+        <width>605</width>
+        <height>605</height>
+		<keepaspectratio>no</keepaspectratio>
+        <zoomfromtop>no</zoomfromtop>
+        <texture mask="MA_mask.png">missing_Coverart.png</texture>
+    </control>    
+    <control>
+      <id>0</id>
+      <type>image</type>
+        <posX>1261</posX>
+        <posY>197</posY>
+        <width>605</width>
+        <height>605</height>
+		<keepaspectratio>no</keepaspectratio>
+        <zoomfromtop>no</zoomfromtop>
+        <texture mask="MA_mask.png">#ArtistInfo.Thumb</texture>
+    </control>
+	
+	  <control>
+        <description>Cover Art</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>1233</posX>
+        <posY>182</posY>
+        <width>28</width>
+        <height>619</height>
+        <texture>D_side.png</texture>
+      </control>  
+
+
+    <control>
+      <id>0</id>
+      <type>image</type>
+        <posX>1261</posX>
+        <posY>197</posY>
+        <width>605</width>
+        <height>605</height>
+		<keepaspectratio>no</keepaspectratio>
+        <zoomfromtop>no</zoomfromtop>
+        <texture mask="MA_mask.png">black.png</texture>
+		<colordiffuse>99ffffff</colordiffuse>
+		<visible>skin.hassetting(#ArtistInfo.ShowAlbums)</visible>
+    </control>	
+    <control>
+      <id>0</id>
+      <type>image</type>
+        <posX>1261</posX>
+        <posY>197</posY>
+        <width>605</width>
+        <height>605</height>
+		<keepaspectratio>no</keepaspectratio>
+        <zoomfromtop>no</zoomfromtop>
+        <texture mask="MA_mask.png">black.png</texture>
+		<colordiffuse>99ffffff</colordiffuse>
+		<visible>skin.hassetting(#ArtistInfo.ShowAlbums)</visible>
+    </control>		  
+    <control>
+      <description>Little Poster</description>
+      <type>image</type>
+      <id>0</id>
+        <posX>56</posX>
+        <posY>828</posY>
+		<height>190</height>
+		<width>190</width>
+        <texture mask="MAmask.png">missing_Coverart.png</texture>
+      <colordiffuse>ffffffff</colordiffuse>
+    </control>
+	
+    <control>
+      <description>Little Poster</description>
+      <type>image</type>
+      <id>0</id>
+        <posX>56</posX>
+        <posY>828</posY>
+		<height>190</height>
+		<width>190</width>
+        <texture mask="MAmask.png">#ArtistInfo.Thumb</texture>
+      <colordiffuse>ffffffff</colordiffuse>
+    </control>
+	
+    	
+    <control Style="NoShadow">
+      <description>textarea</description>
+      <type>textboxscrollup</type>
+      <id>0</id>
+      <posX>260</posX>
+      <posY>860</posY>
+      <width>1600</width>
+      <height>125</height> 
+      <onleft>5</onleft>
+      <onright>5</onright>      
+      <font>font13</font>      
+      <textcolor>99ffffff</textcolor>
+      <label>#ArtistInfo.Bio</label>
+    </control>
+    <control Style="NoShadow">
+      <description>textarea</description>
+      <type>textboxscrollup</type>
+      <id>0</id>
+      <posX>1280</posX>
+      <posY>215</posY>
+      <width>540</width>
+      <height>570</height> 
+      <onleft>5</onleft>
+      <onright>5</onright>      
+      <font>font12</font>      
+      <textcolor>ffffffff</textcolor>
+      <label>#ArtistInfo.Albums</label>
+      <visible>skin.hassetting(#ArtistInfo.ShowAlbums)</visible>
+    </control>    
+  </controls>
+</window>

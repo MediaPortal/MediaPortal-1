@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>2004</id>
+  <defaultcontrol>2</defaultcontrol>
+  <controls>
+
+	
+	<control>
+      <description>background</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>50</posX>
+      <posY>15</posY>
+      <width>347</width>
+      <height>163</height>
+      <texture>tvbackground.png</texture>
+	  <visible>Player.HasAudio+!Player.HasVideo</visible>
+	</control>
+	
+	
+	<control>
+      <id>1</id>
+      <type>image</type>
+      <posX>163</posX>
+      <posY>25</posY>
+      <width>140</width>
+      <height>140</height>
+      <texture>cdfx_small.png</texture>
+      <visible>Player.HasAudio+!Player.HasVideo+!control.hasthumb(11922)</visible>
+      <animation effect="fade" time="2000" delay="1500" reversible="false">visible</animation>
+	  <animation effect="fade" time="500" reversible="false">hidden</animation>
+	  <animation effect="fade" time="2000" delay="1500" reversible="false">windowopen</animation>
+	  <animation effect="fade" time="100" reversible="false">windowclose</animation>
+	  <animation effect="slide" start="-70,0" delay="1500" end="0,0" time="300">visible</animation>
+	  <animation effect="slide" start="-70,0" delay="1500" end="0,0" time="300">windowopen</animation>
+	  <animation effect="rotate" delay="0" end="-360" centre="475,258" time="20000" loop="true" condition="player.hasaudio+player.playing">Conditional</animation>
+    </control>
+    <control>
+      <id>11922</id>
+      <type>image</type>
+      <posX>163</posX>
+      <posY>25</posY>
+      <width>140</width>
+      <height>140</height>
+      <texture>#Music.CDArt\#Play.Current.Artist - #Play.Current.Album.png</texture>
+      <visible>Player.HasAudio+!Player.HasVideo</visible>
+      <animation effect="fade" time="2000" delay="1500" reversible="false">visible</animation>
+	  <animation effect="fade" time="500" reversible="false">hidden</animation>
+	  <animation effect="fade" time="2000" delay="1500" reversible="false">windowopen</animation>
+	  <animation effect="fade" time="100" reversible="false">windowclose</animation>
+	  <animation effect="slide" start="-70,0" delay="1500" end="0,0" time="300">visible</animation>
+	  <animation effect="slide" start="-70,0" delay="1500" end="0,0" time="300">windowopen</animation>
+	  <animation effect="rotate" delay="0" end="-360" centre="475,258" time="20000" loop="true" condition="player.hasaudio+player.playing">Conditional</animation>
+    </control>	
+	
+
+	
+    <control>
+      <description>default</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>90</posX>
+      <posY>20</posY>
+      <width>149</width>
+      <height>149</height>
+      <centered>yes</centered>
+      <keepaspectratio>true</keepaspectratio>
+      <visible>Player.HasAudio+!Player.HasVideo+!control.hasthumb(12345)+!control.hasthumb(77)</visible>
+      <texture mask="">defaultArtistBig.png</texture>
+	  <animation effect="fade" time="1500" reversible="true">windowopen</animation>
+	  <animation effect="fade" time="100" reversible="true">windowclose</animation>
+	  <animation effect="fade" time="1500" reversible="true">visible</animation>
+	  <animation effect="fade" time="2500" reversible="true">hidden</animation>
+    </control>
+
+    <control>
+      <description>music logo</description>
+      <type>image</type>
+      <id>12345</id>
+      <posX>90</posX>
+      <posY>20</posY>
+      <width>149</width>
+      <height>149</height>
+      <centered>yes</centered>
+      <keepaspectratio>true</keepaspectratio>
+      <visible>Player.HasAudio+!Player.HasVideo</visible>
+      <texture mask="">#Play.Current.Thumb</texture>
+	  <animation effect="fade" time="1500" reversible="true">windowopen</animation>
+	  <animation effect="fade" time="100" reversible="true">windowclose</animation>
+	  <animation effect="fade" time="1500" reversible="true">visible</animation>
+	  <animation effect="fade" time="1500" reversible="true">hidden</animation>
+    </control>
+    <control>
+      <description>music logo</description>
+      <type>image</type>
+      <id>77</id>
+      <posX>90</posX>
+      <posY>20</posY>
+      <width>149</width>
+      <height>149</height>
+      <centered>yes</centered>
+      <keepaspectratio>true</keepaspectratio>
+      <texture mask="">#Play.Current.ArtistThumb</texture>
+      <visible>Player.HasAudio+!Player.HasVideo+!control.hasthumb(12345)</visible>
+	  <animation effect="fade" time="1500" reversible="true">windowopen</animation>
+	  <animation effect="fade" time="100" reversible="true">windowclose</animation>
+	  <animation effect="fade" time="1500" reversible="true">visible</animation>
+	  <animation effect="fade" time="1500" reversible="true">hidden</animation>
+    </control>
+
+    <!--     *******************************************************************************************  -->
+    <!--     ******************    !!!  THESE CONTROLS ARE FOR COMPATIBILITY ONLY  !!!  ****************  -->
+    <!--     *******************************************************************************************  -->
+    <control>
+      <description>play time label</description>
+      <type>label</type>
+      <id>2</id>
+      <posX>3429</posX>
+      <posY>877</posY>
+      <label>#currentplaytime</label>
+      <align>left</align>
+      <font>font14</font>
+      <textcolor>80ffffff</textcolor>
+    </control>
+    <control>
+      <description>music logo</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>3427</posX>
+      <posY>837</posY>
+      <width>172</width>
+      <height>172</height>
+      <keepaspectratio>no</keepaspectratio>
+      <centered>yes</centered>
+      <texture mask="picturethumbmask.png">missing_coverart.png</texture>
+      <visible>![control.hasthumb(87)|control.hasthumb(86)]</visible>
+    </control>
+    <control>
+      <description>music logo</description>
+      <type>image</type>
+      <id>87</id>
+      <posX>3427</posX>
+      <posY>837</posY>
+      <width>172</width>
+      <height>172</height>
+      <keepaspectratio>no</keepaspectratio>
+      <centered>yes</centered>
+      <texture mask="picturethumbmask.png">#Play.Current.Thumb</texture>
+    </control>
+    <control>
+      <description>music logo</description>
+      <type>image</type>
+      <id>86</id>
+      <posX>3427</posX>
+      <posY>837</posY>
+      <width>172</width>
+      <height>172</height>
+      <keepaspectratio>no</keepaspectratio>
+      <centered>yes</centered>
+      <texture mask="picturethumbmask.png">#Play.Current.ArtistThumb</texture>
+      <visible>!control.hasthumb(87)</visible>
+    </control>
+    <control>
+      <description>play logo</description>
+      <type>image</type>
+      <id>3</id>
+      <posX>3324</posX>
+      <posY>870</posY>
+      <width>78</width>
+      <height>77</height>
+      <texture>play_enabled.png</texture>
+    </control>
+    <control>
+      <description>Pause logo</description>
+      <type>image</type>
+      <id>4</id>
+      <posX>3324</posX>
+      <posY>870</posY>
+      <width>78</width>
+      <height>77</height>
+      <texture>pause_enabled.png</texture>
+    </control>
+    <control>
+      <description>FF logo</description>
+      <type>image</type>
+      <id>7</id>
+      <posX>3324</posX>
+      <posY>870</posY>
+      <width>78</width>
+      <height>77</height>
+      <texture>fastforward_enabled.png</texture>
+    </control>
+    <control>
+      <description>RW logo</description>
+      <type>image</type>
+      <id>8</id>
+      <posX>3324</posX>
+      <posY>870</posY>
+      <width>78</width>
+      <height>77</height>
+      <texture>rew_enabled.png</texture>
+    </control>
+    <control>
+      <description>Gap / Normal Icon</description>
+      <type>image</type>
+      <id>10</id>
+      <posX>3345</posX>
+      <posY>957</posY>
+      <width>64</width>
+      <height>40</height>
+      <texture>logo_gap.png</texture>
+      <keepaspectratio>yes</keepaspectratio>
+    </control>
+    <control>
+      <description>Gapless Icon</description>
+      <type>image</type>
+      <id>11</id>
+      <posX>3345</posX>
+      <posY>957</posY>
+      <width>64</width>
+      <height>40</height>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>logo_gapless.png</texture>
+    </control>
+    <control>
+      <description>Crossfade Icon</description>
+      <type>image</type>
+      <id>12</id>
+      <posX>3345</posX>
+      <posY>957</posY>
+      <width>64</width>
+      <height>40</height>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>logo_crossfade.png</texture>
+    </control>
+    <control>
+      <description>album/artist/genre etc info label</description>
+      <type>fadelabel</type>
+      <id>5</id>
+      <height>55</height>
+      <posX>3364</posX>
+      <posY>1012</posY>
+      <width>502</width>
+      <font>font121</font>
+      <label>#(L(179)): #Play.Current.Title\r#(L(171)) #Play.Current.Artist\r#(L(170)) #Play.Current.Album\r#(L(435)) #Play.Current.Track\r#(L(436)) #Play.Current.Year</label>
+      <textcolor>EFFFFFFF</textcolor>
+    </control>
+  </controls>
+</window>

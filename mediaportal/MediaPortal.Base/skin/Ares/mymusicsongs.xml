@@ -1,0 +1,528 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>501</id>
+  <defaultcontrol>2</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <define>#useSelectedFanart:Yes</define>
+  <controls>
+    <control>
+      <description>BG</description>
+      <type>image</type>
+      <id>1</id>
+      <texture>#backgroundcolour</texture>
+      <width>1920</width>
+      <height>1080</height>
+    </control>    	
+	
+	<include condition="#(eq(#Music.fanart.enable,'All Screens'))">common.music.fanart.xml</include>
+	
+    <control>
+      <description>Alternate Movie Backdrop - Toggles Load with Component 1 for animations on visibiltiy</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>#overlaycolour</texture>
+	  <visible>string.equals(#Music.fanart.enable,All Screens)</visible>
+	</control>	
+	
+	  <control>
+        <description>Cover Art</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>40</posX>
+        <posY>190</posY>
+        <width>1845</width>
+        <height>624</height>
+        <texture>D_over1.png</texture>
+      </control>		
+	
+	<import>custom\Allscreens\user_dialog.xml</import>
+	
+		
+	  <control>
+        <description>Cover Art</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>40</posX>
+        <posY>821</posY>
+        <width>1845</width>
+        <height>209</height>
+        <texture>Inf_gfx.png</texture>
+      </control>	
+
+	  
+    <control>
+      <description>Date / Time</description>
+      <type>label</type>
+      <id>0</id>
+	  <posX>1864</posX>
+	  <posY>110</posY>
+	  <label>#itemcount items</label>
+	  <align>right</align>
+	  <font>fontBold2</font>
+      <textcolor>ffffffff</textcolor>
+    </control>	  
+	  
+    <control>
+      <type>actiongroup</type>
+      <description>action menu</description>
+      <defaultcontrol>2</defaultcontrol>
+      <onexit>0</onexit>
+      <buttonX>1</buttonX>
+      <buttonY>1</buttonY>
+      <buttonwidth>100</buttonwidth>
+      <buttonheight>1080</buttonheight>
+      <textureFocus></textureFocus>
+      <textureNoFocus></textureNoFocus>
+      <width>800</width>
+      <height>800</height>
+      <dimColor>00ffffff</dimColor>
+
+	  
+	  <control>
+	   <type>image</type>
+	   <posX>0</posX>
+	   <posY>0</posY>
+	   <width>1920</width>
+	   <height>1080</height>
+           <texture>black.png</texture>
+           <colordiffuse>99000000</colordiffuse>
+	   <animation effect="fade" time="350" reversible="true">hidden</animation>
+	   <visible>!Control.HasFocus(50)</visible>    
+	 </control>
+		
+	  <control>
+        <type>image</type>
+        <id>0</id>
+        <posX>420</posX>
+        <posY>150</posY>
+        <width>975</width>
+        <height>836</height>
+        <texture>dialogglowbig.png</texture>
+	<visible>!Control.HasFocus(50)</visible>    
+      </control>	
+	  
+	  
+      <control>
+        <description>group element</description>
+        <type>group</type>
+		<animation effect="fade" time="350" reversible="true">hidden</animation>
+        <layout>StackLayout(0, Vertical, true)</layout>
+        <posX>500</posX>
+		<posY>250</posY>
+        <visible>!Control.HasFocus(50)</visible>
+        <control>
+          <description>View-As</description>
+          <type>menubutton</type>
+          <id>2</id>
+          <label></label>
+          <onright>50</onright>
+          <onup>18</onup>
+          <ondown>5</ondown>
+          <mode>dialoglist</mode>
+          <dialogTitle>792</dialogTitle>
+          <valueTextInButton>yes</valueTextInButton>
+          <valuePrefixText>95</valuePrefixText>
+		  <textYOff>0</textYOff>
+		  <width>820</width>
+		  <height>50</height>
+		  <textureFocus>btn_list_blue2.png</textureFocus>
+          <textureNoFocus></textureNoFocus>
+        </control>
+        <control>
+          <description>Switch View</description>
+          <type>menubutton</type>
+          <id>5</id>
+          <label></label>
+          <onright>50</onright>
+          <onup>2</onup>
+          <ondown>3</ondown>
+          <mode>dialoglist</mode>
+          <dialogTitle>499</dialogTitle>
+          <valueTextInButton>yes</valueTextInButton>
+          <valuePrefixText>97</valuePrefixText>
+		  <textYOff>0</textYOff>
+		  <width>820</width>
+		  <height>50</height>
+		  <textureFocus>btn_list_blue2.png</textureFocus>
+          <textureNoFocus></textureNoFocus>
+        </control>
+        <control>
+          <description>Sort</description>
+          <type>sortbutton</type>
+          <id>3</id>
+          <label>103</label>
+          <onright>50</onright>
+          <onup>5</onup>
+          <ondown>12</ondown>
+		  <textYOff>0</textYOff>
+		  <width>820</width>
+		  <height>50</height>
+		  <textureFocus>btn_list_blue2.png</textureFocus>
+          <textureNoFocus></textureNoFocus>
+        </control>
+        <control>
+          <description>Play CD</description>
+          <type>button</type>
+          <id>12</id>
+          <label>890</label>
+          <onright>50</onright>
+          <onup>3</onup>
+          <ondown>11</ondown>
+		  <textYOff>0</textYOff>
+		  <width>820</width>
+		  <height>50</height>
+		  <textureFocus>btn_list_blue2.png</textureFocus>
+          <textureNoFocus></textureNoFocus>
+        </control>
+        <control>
+          <description>Now playing</description>
+          <type>button</type>
+          <id>11</id>
+          <label>4540</label>
+          <hyperlink>510</hyperlink>
+          <onright>50</onright>
+          <onup>12</onup>
+          <ondown>9</ondown>
+		  <textYOff>0</textYOff>
+		  <width>820</width>
+		  <height>50</height>
+		  <textureFocus>btn_list_blue2.png</textureFocus>
+          <textureNoFocus></textureNoFocus>
+        </control>
+        <control>
+          <description>Current Playlist</description>
+          <type>button</type>
+          <id>9</id>
+          <label>4555</label>
+          <action>33</action>
+          <onright>50</onright>
+          <onup>11</onup>
+          <ondown>10</ondown>
+		  <textYOff>0</textYOff>
+		  <width>820</width>
+		  <height>50</height>
+		  <textureFocus>btn_list_blue2.png</textureFocus>
+          <textureNoFocus></textureNoFocus>
+        </control>
+        <control>
+          <description>My Playlists</description>
+          <type>button</type>
+          <id>10</id>
+          <label>983</label>
+          <onright>50</onright>
+          <onup>9</onup>
+          <ondown>105</ondown>
+		  <textYOff>0</textYOff>
+		  <width>820</width>
+		  <height>50</height>
+		  <textureFocus>btn_list_blue2.png</textureFocus>
+          <textureNoFocus></textureNoFocus>
+        </control>
+        <control>
+          <description>Radiobutton</description>
+          <type>button</type>
+          <id>105</id>
+          <label>Radio</label>
+          <hyperlink>30</hyperlink>
+          <onright>50</onright>
+          <onup>10</onup>
+          <ondown>106</ondown>
+		  <textYOff>0</textYOff>
+		  <width>820</width>
+		  <height>50</height>
+		  <textureFocus>btn_list_blue2.png</textureFocus>
+          <textureNoFocus></textureNoFocus>
+        </control>
+        <control>
+          <description>Lastfmbutton</description>
+          <type>button</type>
+          <id>106</id>
+          <label>Last.FM</label>
+          <hyperlink>7890</hyperlink>
+          <onright>50</onright>
+          <onup>105</onup>
+          <ondown>9876</ondown>
+          <visible>plugin.isenabled(Last.fm Radio)</visible>
+		  <textYOff>0</textYOff>
+		  <width>820</width>
+		  <height>50</height>
+		  <textureFocus>btn_list_blue2.png</textureFocus>
+          <textureNoFocus></textureNoFocus>
+        </control>
+        <control>
+          <description>Search Music normal push button</description>
+          <type>button</type>
+          <id>9876</id>
+          <hyperlink>30885</hyperlink>
+          <label>#GlobalSearch.Translation.SearchMusic.Label</label>
+          <onup>106</onup>
+          <ondown>9875</ondown>
+          <onright>50</onright>
+		  <textYOff>0</textYOff>
+		  <width>820</width>
+		  <height>50</height>
+          <visible>plugin.isenabled(Search music)</visible>
+		  <textureFocus>btn_list_blue2.png</textureFocus>
+          <textureNoFocus></textureNoFocus>
+        </control>
+        <control>
+          <description>Lyrics normal push button</description>
+          <type>button</type>
+          <id>9875</id>
+          <hyperlink>90478</hyperlink>
+          <label>Lyrics</label>
+          <onup>9876</onup>
+          <ondown>18</ondown>
+          <onright>50</onright>
+		  <textYOff>0</textYOff>
+		  <width>820</width>
+		  <height>50</height>
+          <visible>plugin.isenabled(My Lyrics)</visible>
+		  <textureFocus>btn_list_blue2.png</textureFocus>
+          <textureNoFocus></textureNoFocus>
+        </control>
+		<control>
+		<description>AutoDJ</description>
+		<type>checkbutton</type>
+		<id>18</id>
+		<label>AutoDJ</label>
+		<onup>9875</onup>
+		<ondown>2</ondown>
+		<onleft>50</onleft>
+		<onright>50</onright>
+		<textYOff>0</textYOff>
+		  <width>820</width>
+		  <height>50</height>
+		<textureFocus>btn_list_blue2.png</textureFocus>
+          <textureNoFocus></textureNoFocus>
+		</control>
+      </control>
+    </control>
+	
+	
+    <import>common.facade.music.xml</import>
+	
+	  
+      <control>
+        <id>1</id>
+        <type>image</type>
+        <posX>1261</posX>
+        <posY>197</posY>
+        <width>605</width>
+        <height>605</height>
+		<keepaspectratio>no</keepaspectratio>
+        <zoomfromtop>no</zoomfromtop>
+        <texture mask="MA_mask.png">missing_Coverart.png</texture>
+        <visible>[facadeview.largeicons|facadeview.smallicons]</visible>
+        <animation effect="fade" time="350" reversible="true">hidden</animation>
+      </control>
+      <control>
+        <id>500</id>
+        <type>image</type>
+        <posX>1261</posX>
+        <posY>197</posY>
+        <width>605</width>
+        <height>605</height>
+		<keepaspectratio>no</keepaspectratio>
+        <zoomfromtop>no</zoomfromtop>
+        <texture mask="MA_mask.png">#selectedthumb</texture>
+        <visible>[facadeview.largeicons|facadeview.smallicons]</visible>
+        <animation effect="fade" time="350" reversible="true">hidden</animation>
+      </control>
+ 
+  
+      <control>
+        <id>1</id>
+        <type>image</type>
+        <posX>1261</posX>
+        <posY>197</posY>
+        <width>605</width>
+        <height>605</height>
+		<keepaspectratio>no</keepaspectratio>
+        <zoomfromtop>no</zoomfromtop>
+        <texture mask="MA_mask.png">missing_Coverart.png</texture>
+        <visible>[facadeview.list|facadeview.album]+[Control.HasFocus(50)+!control.hasthumb(500)]</visible>
+        <animation effect="fade" time="350" reversible="true">hidden</animation>
+      </control>
+      <control>
+        <id>500</id>
+        <type>image</type>
+        <posX>1261</posX>
+        <posY>197</posY>
+        <width>605</width>
+        <height>605</height>
+		<keepaspectratio>no</keepaspectratio>
+        <zoomfromtop>no</zoomfromtop>
+        <texture mask="MA_mask.png">#selectedthumb</texture>
+        <visible>[facadeview.list|facadeview.album]</visible>
+        <animation effect="fade" time="350" reversible="true">hidden</animation>
+      </control>   
+
+	  
+	  <control>
+        <description>Cover Art</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>1233</posX>
+        <posY>182</posY>
+        <width>28</width>
+        <height>619</height>
+        <texture>D_side.png</texture>
+		<visible>!facadeview.filmstrip+!facadeview.coverflow</visible>
+      </control>    
+	  
+	  	  
+	
+	
+      <control>
+        <description>Little Poster</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>56</posX>
+        <posY>828</posY>
+		<height>190</height>
+		<width>190</width>
+        <texture mask="MAmask.png">missing_Coverart.png</texture>
+        <colordiffuse>ffffffff</colordiffuse>
+      </control>
+	
+      <control>
+        <description>Little Poster</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>56</posX>
+        <posY>828</posY>
+		<height>190</height>
+		<width>190</width>
+        <texture mask="MAmask.png">#selectedthumb</texture>
+        <colordiffuse>ffffffff</colordiffuse>
+      </control>
+	
+	  
+    <control>
+      <description>Selected item Label</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>260</posX>
+      <posY>840</posY> 
+      <width>1530</width>     
+      <label>#selecteditem</label>
+      <align>left</align>
+      <font>font12</font>
+      <textcolor>99ffffff</textcolor>
+      <visible>[facadeview.list|facadeview.album]+!player.hasaudio</visible>
+    </control>
+	
+	
+
+    <!-- Now playing info -->
+
+    <control>
+      <description>progress bar</description>
+      <type>progress</type>
+      <id>118</id>
+      <posX>0</posX>
+      <posY>1077</posY>
+      <width>1920</width>
+      <height>3</height>
+      <label>#percentage</label>
+      <texturebg>black.png</texturebg>
+      <onlymidtexture>yes</onlymidtexture>
+      <midwidth>1920</midwidth>
+      <midheight>3</midheight>
+      <midoffsetX>-</midoffsetX>
+      <midoffsetY>0</midoffsetY>
+      <midtexture>osd_progress_mid.png</midtexture>
+      <visible>[facadeview.list|facadeview.album|facadeview.smallicons]+player.hasmedia</visible>
+	  </control>
+	
+    <control>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>260</posX>
+      <posY>900</posY>
+      <width>160</width>
+      <label>Now Playing...</label>
+      <align>left</align>
+      <font>font10</font>
+      <textcolor>99ffffff</textcolor>
+	  <visible>[facadeview.list|facadeview.album|facadeview.smallicons]+Player.HasAudio+!Player.HasVideo</visible>
+    </control>	
+    <control>
+      <type>label</type>
+      <id>1</id>
+      <posX>260</posX>
+      <posY>970</posY>
+      <width>350</width>
+      <label>#currentplaytime &gt; #currentremaining</label>
+      <align>left</align>
+      <textcolor>99ffffff</textcolor>
+      <font>font11</font>
+      <visible>[facadeview.list|facadeview.album|facadeview.smallicons]+Player.HasAudio+!Player.HasVideo+string.equals(#Play.Current.Lastfm.CurrentStream,)</visible>
+    </control>
+    <control>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>260</posX>
+      <posY>970</posY>
+      <width>350</width>
+      <label>#currentplaytime &gt; #currentremaining</label>
+      <align>left</align>
+      <textcolor>99ffffff</textcolor>
+      <font>font11</font>
+      <visible>[facadeview.list|facadeview.album|facadeview.smallicons]+Player.HasAudio+!Player.HasVideo+!string.equals(#Play.Current.Lastfm.CurrentStream,)</visible>
+    </control>	
+    <control>
+      <type>label</type>
+      <id>1</id>
+      <posX>260</posX>
+      <posY>930</posY>
+      <label>#Play.Current.Artist - #Play.Current.Title</label>
+      <align>left</align>
+      <font>font12</font>
+      <textcolor>99ffffff</textcolor>
+	  <visible>[facadeview.list|facadeview.album|facadeview.smallicons]+Player.HasAudio+!Player.HasVideo</visible>
+    </control>           	
+
+
+    <control>
+      <description>music logo when no thumb</description>
+      <type>image</type>
+      <id>1</id>
+        <posX>56</posX>
+        <posY>828</posY>
+		<height>190</height>
+		<width>190</width>
+        <texture mask="MAmask.png">defaultArtistBig.png</texture>
+      <visible>[facadeview.list|facadeview.album|facadeview.smallicons]+Player.HasAudio+!Player.HasVideo+!control.hasthumb(12345)+!control.hasthumb(77)</visible>	  
+    </control>
+    <control>
+      <description>music logo</description>
+      <type>image</type>
+      <id>12345</id>
+        <posX>56</posX>
+        <posY>828</posY>
+		<height>190</height>
+		<width>190</width>
+        <texture mask="MAmask.png">#Play.Current.Thumb</texture>
+	  <visible>[facadeview.list|facadeview.album|facadeview.smallicons]+Player.HasAudio+!Player.HasVideo</visible>
+    </control>
+    <control>
+      <description>music logo</description>
+      <type>image</type>
+      <id>77</id>
+        <posX>56</posX>
+        <posY>828</posY>
+		<height>190</height>
+		<width>190</width>
+        <texture mask="MAmask.png">#Play.Current.ArtistThumb</texture>
+      <visible>[facadeview.list|facadeview.album|facadeview.smallicons]+Player.HasAudio+!Player.HasVideo+!control.hasthumb(12345)</visible>
+    </control>	
+  </controls>
+</window>
+
+

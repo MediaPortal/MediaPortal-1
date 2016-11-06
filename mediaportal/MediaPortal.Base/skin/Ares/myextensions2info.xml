@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>804</id>
+  <defaultcontrol>2</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <define>#selecteditem:#MPE.Selected.Name</define>
+  <controls>
+    <control>
+      <description>BG</description>
+      <type>image</type>
+      <id>1</id>
+      <texture>#backgroundcolour</texture>
+      <width>1920</width>
+      <height>1080</height>
+    </control>
+    
+	<import>custom\Allscreens\user_dialog.xml</import>
+	
+	  <control>
+        <description>Cover Art</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>40</posX>
+        <posY>190</posY>
+        <width>1845</width>
+        <height>624</height>
+        <texture>D_over1.png</texture>
+		<visible>!facadeview.coverflow</visible>
+      </control>	
+
+  	  <control>
+        <description>Cover Art</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>40</posX>
+        <posY>821</posY>
+        <width>1845</width>
+        <height>209</height>
+        <texture>Inf_gfx.png</texture>
+      </control>	
+	
+    <control>
+      <description>Action Buttons</description>
+      <type>group</type>
+      <posX>57</posX>
+      <posY>225</posY>
+      <layout>StackLayout(0, Vertical, true)</layout>
+      <control>
+        <id>2</id>
+        <description>Install</description>
+        <type>button</type>
+        <visible>!string.equals(#MPE.Selected.isinstalled,true)</visible>
+        <label>#MPEI.Translation.Install.Label</label>
+		<width>1224</width>
+        <onright>2</onright>
+        <ondown>3</ondown>
+        <onup>9</onup>
+      </control>
+      <control>
+        <id>3</id>
+        <description>UnInstall</description>
+        <type>button</type>
+        <visible>string.equals(#MPE.Selected.isinstalled,true)</visible>
+        <label>#MPEI.Translation.Uninstall.Label</label>
+		<width>1224</width>
+        <onright>3</onright>
+        <ondown>4</ondown>
+        <onup>2</onup>
+      </control>
+      <control>
+        <id>4</id>
+        <description>Update</description>
+        <type>button</type>
+        <visible>string.equals(#MPE.Selected.haveupdate,true)</visible>
+        <label>#MPEI.Translation.Update.Label</label>
+		<width>1224</width>
+        <onright>4</onright>
+        <ondown>5</ondown>
+        <onup>3</onup>
+      </control>
+      <control>
+        <id>5</id>
+        <description>Disable</description>
+        <type>button</type>
+        <visible>string.equals(#MPE.Selected.IsEnabled,true)</visible>
+        <label>#MPEI.Translation.Disable.Label</label>
+		<width>1224</width>
+        <onright>5</onright>
+        <ondown>6</ondown>
+        <onup>4</onup>
+      </control>
+      <control>
+        <id>6</id>
+        <description>Enable</description>
+        <type>button</type>
+        <visible>string.equals(#MPE.Selected.IsDisabled,true)</visible>
+        <label>#MPEI.Translation.Enable.Label</label>
+		<width>1224</width>
+        <onright>6</onright>
+        <ondown>7</ondown>
+        <onup>5</onup>
+      </control>
+      <control>
+        <id>7</id>
+        <description>Settings</description>
+        <type>button</type>
+        <visible>string.equals(#MPE.Selected.HaveSettings,true)</visible>
+        <label>#MPEI.Translation.Settings.Label</label>
+		<width>1224</width>
+        <onright>7</onright>
+        <ondown>8</ondown>
+        <onup>6</onup>
+      </control>
+      <control>
+        <id>8</id>
+        <description>Change Log</description>
+        <type>button</type>
+        <label>#MPEI.Translation.ChangeLog.Label</label>
+		<width>1224</width>
+        <onright>8</onright>
+        <ondown>9</ondown>
+        <onup>7</onup>
+        <visible>!string.equals(#MPE.View.Name,#MPEI.Translation.MPOnlineExtensions.Label)</visible>
+      </control>
+      <control>
+        <id>9</id>
+        <description>Screenshots</description>
+        <type>button</type>
+        <label>#MPEI.Translation.Screenshots.Label</label>
+		<width>1224</width>
+        <onright>9</onright>
+        <ondown>2</ondown>
+        <onup>8</onup>
+        <visible>string.equals(#MPE.Selected.HaveScreenShots,true)</visible>
+      </control>
+    </control>
+	
+	  
+	
+      <control>
+        <id>1</id>
+        <type>image</type>
+        <posX>56</posX>
+        <posY>828</posY>
+		<height>190</height>
+		<width>190</width>
+        <texture mask="MAmask.png">blue.png</texture>
+      </control>
+	  
+      <control>
+        <id>1</id>
+        <type>image</type>
+        <posX>1261</posX>
+        <posY>197</posY>
+        <width>605</width>
+        <height>605</height>
+		<keepaspectratio>no</keepaspectratio>
+        <zoomfromtop>no</zoomfromtop>
+        <texture mask="MA_mask.png">blue.png</texture>
+      </control>	
+
+	  <control>
+        <description>Little Poster</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>76</posX>
+        <posY>848</posY>
+		<height>150</height>
+		<width>150</width>
+		<keepaspectratio>yes</keepaspectratio>
+        <texture mask="">#MPE.Selected.Icon</texture>
+        <colordiffuse>ffffffff</colordiffuse>
+      </control>
+	  
+	<control>
+        <description>Poster</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>1400</posX>
+        <posY>350</posY>
+		<width>400</width>
+		<height>313</height>
+		<keepaspectratio>yes</keepaspectratio>
+        <zoomfromtop>no</zoomfromtop>
+        <texture mask="">#MPE.Selected.Icon</texture>
+        <colordiffuse>ffffffff</colordiffuse>
+      </control>
+	   
+	  
+	  <control>
+        <description>Cover Art</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>1233</posX>
+        <posY>182</posY>
+        <width>28</width>
+        <height>619</height>
+        <texture>D_side.png</texture>
+      </control>  	
+	
+
+    <control>
+      <type>imagelist</type>
+      <description>-</description>
+      <id>0</id>
+      <posX>595</posX>
+      <posY>356</posY>
+      <width>130</width>
+      <height>24</height>
+      <colordiffuse>ffffffff</colordiffuse>
+      <percentage>#MPE.Selected.Rating</percentage>
+      <textureHeight>24</textureHeight>
+      <orientation>horizontal</orientation>
+      <textureWidth>24</textureWidth>
+      <subitems>
+        <subitem>starbad.png</subitem>
+        <subitem>stargood.png</subitem>
+      </subitems>
+      <visible>!string.equals(#MPE.Selected.Votes,)</visible>
+    </control>
+    <control>
+      <type>fadelabel</type>
+      <posX>730</posX>
+      <posY>354</posY>
+      <width>428</width>
+      <font>font111</font>
+      <label>#(div(cint(#MPE.Selected.Rating), cflt(2))) #(string.format('({0:#,0} #MPEI.Translation.Votes.Label)',cint(#MPE.Selected.Votes)))</label>
+      <visible>!string.equals(#MPE.Selected.Votes,)</visible>
+    </control>
+	
+
+	 <control>
+      <type>textbox</type>
+      <id>1</id>
+      <posX>265</posX>
+      <posY>840</posY>
+      <width>1550</width>
+      <height>140</height>
+      <label>#MPE.Selected.Status | #MPE.Selected.Version | #MPE.Selected.Author | #MPE.Selected.ReleaseDate</label>
+      <align>left</align>
+      <font>font13</font>
+      <textcolor>ffffffff</textcolor>
+    </control>
+	
+    <control>
+      <type>textboxscrollup</type>
+      <textalign>left</textalign>
+      <posX>265</posX>
+      <posY>900</posY>
+      <width>1550</width>
+      <height>85</height>
+      <font>font13</font>
+      <label>#MPE.Selected.Description</label>
+	  <textcolor>99ffffff</textcolor>
+    </control>
+    <control>
+      <description>Image Tags</description>
+      <type>group</type>
+      <posX>8970</posX>
+      <posY>180</posY>
+      <dimColor>FFffffff</dimColor>
+      <layout>StackLayout(4, Horizontal, true)</layout>
+      <control>
+        <type>image</type>
+        <visible>string.contains(#MPE.Selected.JustAded,true)</visible>
+        <texture>status_new.png</texture>
+      </control>
+      <control>
+        <type>image</type>
+        <visible>string.contains(#MPE.Selected.Popular,true)</visible>
+        <texture>status_popular.png</texture>
+      </control>
+      <control>
+        <type>image</type>
+        <visible>string.contains(#MPE.Selected.DeveloperPick,true)</visible>
+        <texture>status_editorpick.png</texture>
+      </control>
+    </control>
+  </controls>
+</window>

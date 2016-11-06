@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <controls>
+  
+  
+  	  <!-- NAVIGATION CONTROLS FOR TILES IN BASICHOME -->
+	  
+	  <control>
+        <description>left</description>
+        <type>image</type>
+        <id>666010</id>
+        <posX>0</posX>
+        <posY>0</posY>
+        <width>5</width>
+        <height>5</height>
+        <texture></texture>
+        <colordiffuse>ffffffff</colordiffuse>
+		<visible>control.hasfocus(00519)</visible>
+      </control>
+	  
+	  <control>
+        <description>right</description>
+        <type>image</type>
+        <id>666009</id>
+        <posX>0</posX>
+        <posY>0</posY>
+        <width>5</width>
+        <height>5</height>
+        <texture></texture>
+        <colordiffuse>ffffffff</colordiffuse>
+		<visible>control.hasfocus(00500)|[string.equals(#skin.pages,4)+control.hasfocus(00505)]|[string.equals(#skin.pages,3)+control.hasfocus(00510)]</visible>
+      </control>
+
+	  
+	  
+    <control>
+      <description>group element</description>
+      <type>group</type>
+	  <visible allowhiddenfocus="true">control.hasfocus(00520)|control.hasfocus(00521)|control.hasfocus(00522)|control.hasfocus(00523)|control.hasfocus(00524)|control.hasfocus(270)|control.hasfocus(271)|control.hasfocus(272)|control.hasfocus(273)|control.hasfocus(274)|control.hasfocus(275)|control.hasfocus(276)|control.hasfocus(277)|control.hasfocus(278)|control.hasfocus(279)|control.hasfocus(370)|control.hasfocus(371)|control.hasfocus(372)|control.hasfocus(373)|control.hasfocus(374)|control.hasfocus(375)|control.isvisible(5011105)|control.isvisible(5011110)|control.isvisible(5011115)|control.isvisible(5011120)|control.isvisible(5011125)|control.hasfocus(8001125)|control.hasfocus(421)|control.hasfocus(422)|control.hasfocus(423)|control.hasfocus(424)|control.hasfocus(425)</visible>
+	  <control>
+        <description>BasicHome btn1</description>
+        <type>button</type>
+        <id>00520</id>
+		<posX>40</posX>
+        <posY>405</posY>
+		<height>571</height>
+		<width>367</width>
+        <label>#(iif(eq(#skin.manualnames,'yes'),'#tile21plugin.name',''))#(iif(eq(#skin.manualnames,'no'),#tile21.name,''))</label>
+		<oninfo>#(skin.setfocus(35,270))</oninfo>
+		<hyperlink>#tile21.hyperlink</hyperlink>
+		<textcolorNoFocus>ff999999</textcolorNoFocus>
+		<textcolor>ffffffff</textcolor>
+		<textureFocus overlay="">#(iif(eq(#skin.manualimg,'yes'),'btn\focus\focus_#tile21pluginImg.png','btn\focus\focus_#tile21plugin.hyperlink.png'))</textureFocus>
+		<textureNoFocus>#(iif(eq(#skin.manualimg,'yes'),'btn\unfocus\#tile21pluginImg.png','btn\unfocus\#tile21plugin.hyperlink.png'))</textureNoFocus>
+		<textalign>center</textalign>
+		<textYOff>230</textYOff>
+		<font>font13</font>
+        <onleft>00#skin.page5navleft</onleft>
+        <onup>#tile21.navigation</onup>
+		<ondown>00520</ondown>
+		<onright>00521</onright>
+		<animation effect="slide" start="0,0" end="-2500,0" reversible="true" time="350" condition="control.isVisible(666010)">Conditional</animation>
+		<animation effect="slide" start="0,0" end="2500,0" reversible="true" time="350" condition="control.isVisible(666009)">Conditional</animation>
+		<animation effect="slide" start="0,0" end="2500,0" reversible="true" time="350" condition="control.hasfocus(55512)">Conditional</animation>
+		<animation effect="fade" time="350" reversible="true">hidden</animation>
+      </control>
+	  
+	  <control>
+        <description>BasicHome btn2</description>
+        <type>button</type>
+        <id>00521</id>
+		<posX>410</posX>
+        <posY>405</posY>
+		<height>571</height>
+		<width>367</width>
+        <label>#(iif(eq(#skin.manualnames,'yes'),'#tile22plugin.name',''))#(iif(eq(#skin.manualnames,'no'),#tile22.name,''))</label>
+		<oninfo>#(skin.setfocus(35,272))</oninfo>
+		<hyperlink>#tile22.hyperlink</hyperlink>
+		<textcolorNoFocus>ff999999</textcolorNoFocus>
+		<textcolor>ffffffff</textcolor>
+		<textureFocus overlay="">#(iif(eq(#skin.manualimg,'yes'),'btn\focus\focus_#tile22pluginImg.png','btn\focus\focus_#tile22plugin.hyperlink.png'))</textureFocus>
+		<textureNoFocus>#(iif(eq(#skin.manualimg,'yes'),'btn\unfocus\#tile22pluginImg.png','btn\unfocus\#tile22plugin.hyperlink.png'))</textureNoFocus>
+		<textalign>center</textalign>
+		<textYOff>230</textYOff>
+		<font>font13</font>
+        <onleft>00520</onleft>
+        <onup>#tile22.navigation</onup>
+		<ondown>00521</ondown>
+		<onright>00522</onright>
+		<animation effect="slide" start="0,0" end="-2500,0" reversible="true" time="350" condition="control.isVisible(666010)">Conditional</animation>
+		<animation effect="slide" start="0,0" end="2500,0" reversible="true" time="350" condition="control.isVisible(666009)">Conditional</animation>
+		<animation effect="slide" start="0,0" end="2500,0" reversible="true" time="350" condition="control.hasfocus(55512)">Conditional</animation>
+		<animation effect="fade" time="350" reversible="true">hidden</animation>
+      </control>	  
+	  
+	  <control>
+        <description>BasicHome btn3</description>
+        <type>button</type>
+        <id>00522</id>
+		<posX>780</posX>
+        <posY>405</posY>
+		<height>571</height>
+		<width>367</width>
+        <label>#(iif(eq(#skin.manualnames,'yes'),'#tile23plugin.name',''))#(iif(eq(#skin.manualnames,'no'),#tile23.name,''))</label>
+		<oninfo>#(skin.setfocus(35,274))</oninfo>
+		<hyperlink>#tile23.hyperlink</hyperlink>
+		<textcolorNoFocus>ff999999</textcolorNoFocus>
+		<textcolor>ffffffff</textcolor>
+		<textureFocus overlay="">#(iif(eq(#skin.manualimg,'yes'),'btn\focus\focus_#tile23pluginImg.png','btn\focus\focus_#tile23plugin.hyperlink.png'))</textureFocus>
+		<textureNoFocus>#(iif(eq(#skin.manualimg,'yes'),'btn\unfocus\#tile23pluginImg.png','btn\unfocus\#tile23plugin.hyperlink.png'))</textureNoFocus>
+		<textalign>center</textalign>
+		<textYOff>230</textYOff>
+		<font>font13</font>
+        <onleft>00521</onleft>
+        <onup>#tile23.navigation</onup>
+		<ondown>00522</ondown>
+		<onright>00523</onright>
+		<animation effect="slide" start="0,0" end="-2500,0" reversible="true" time="350" condition="control.isVisible(666010)">Conditional</animation>
+		<animation effect="slide" start="0,0" end="2500,0" reversible="true" time="350" condition="control.isVisible(666009)">Conditional</animation>
+		<animation effect="slide" start="0,0" end="2500,0" reversible="true" time="350" condition="control.hasfocus(55512)">Conditional</animation>
+		<animation effect="fade" time="350" reversible="true">hidden</animation>
+      </control>
+
+	  <control>
+        <description>BasicHome btn4</description>
+        <type>button</type>
+        <id>00523</id>
+		<posX>1150</posX>
+        <posY>405</posY>
+		<height>571</height>
+		<width>367</width>
+        <label>#(iif(eq(#skin.manualnames,'yes'),'#tile24plugin.name',''))#(iif(eq(#skin.manualnames,'no'),#tile24.name,''))</label>
+		<oninfo>#(skin.setfocus(35,276))</oninfo>
+		<hyperlink>#tile24.hyperlink</hyperlink>
+		<textcolorNoFocus>ff999999</textcolorNoFocus>
+		<textcolor>ffffffff</textcolor>
+		<textureFocus overlay="">#(iif(eq(#skin.manualimg,'yes'),'btn\focus\focus_#tile24pluginImg.png','btn\focus\focus_#tile24plugin.hyperlink.png'))</textureFocus>
+		<textureNoFocus>#(iif(eq(#skin.manualimg,'yes'),'btn\unfocus\#tile24pluginImg.png','btn\unfocus\#tile24plugin.hyperlink.png'))</textureNoFocus>
+		<textalign>center</textalign>
+		<textYOff>230</textYOff>
+		<font>font13</font>
+        <onleft>00522</onleft>
+        <onup>#tile24.navigation</onup>
+		<ondown>00523</ondown>
+		<onright>00524</onright>
+		<animation effect="slide" start="0,0" end="-2500,0" reversible="true" time="350" condition="control.isVisible(666010)">Conditional</animation>
+		<animation effect="slide" start="0,0" end="2500,0" reversible="true" time="350" condition="control.isVisible(666009)">Conditional</animation>
+		<animation effect="slide" start="0,0" end="2500,0" reversible="true" time="350" condition="control.hasfocus(55512)">Conditional</animation>
+		<animation effect="fade" time="350" reversible="true">hidden</animation>
+      </control>
+
+	  <control>
+        <description>BasicHome btn5</description>
+        <type>button</type>
+        <id>00524</id>
+		<posX>1520</posX>
+        <posY>405</posY>
+		<height>571</height>
+		<width>367</width>
+        <label>#(iif(eq(#skin.manualnames,'yes'),'#tile25plugin.name',''))#(iif(eq(#skin.manualnames,'no'),#tile25.name,''))</label>
+		<oninfo>#(skin.setfocus(35,278))</oninfo>
+		<hyperlink>#tile25.hyperlink</hyperlink>
+		<textcolorNoFocus>ff999999</textcolorNoFocus>
+		<textcolor>ffffffff</textcolor>
+		<textureFocus overlay="">#(iif(eq(#skin.manualimg,'yes'),'btn\focus\focus_#tile25pluginImg.png','btn\focus\focus_#tile25plugin.hyperlink.png'))</textureFocus>
+		<textureNoFocus>#(iif(eq(#skin.manualimg,'yes'),'btn\unfocus\#tile25pluginImg.png','btn\unfocus\#tile25plugin.hyperlink.png'))</textureNoFocus>
+		<textalign>center</textalign>
+		<textYOff>230</textYOff>
+		<font>font13</font>
+        <onleft>00523</onleft>
+        <onup>#tile25.navigation</onup>
+		<ondown>00524</ondown>
+		<onright>00#skin.page5navright</onright>
+		<animation effect="slide" start="0,0" end="-2500,0" reversible="true" time="350" condition="control.isVisible(666010)">Conditional</animation>
+		<animation effect="slide" start="0,0" end="2500,0" reversible="true" time="350" condition="control.isVisible(666009)">Conditional</animation>
+		<animation effect="slide" start="0,0" end="2500,0" reversible="true" time="350" condition="control.hasfocus(55512)">Conditional</animation>
+		<animation effect="fade" time="350" reversible="true">hidden</animation>
+      </control>
+
+	  
+    </control>
+  </controls>
+</window>
+
+
+

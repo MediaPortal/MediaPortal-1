@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--
+Contains Music and Video Overlay
+not visible in filmstripview, but visible in details view
+-->
+<window>
+  <controls>
+
+    <!--                                    :: DUMMY / BACKGROUND ::                                    -->
+
+    <control>
+      <description>dummy (visible when music is playing)</description>
+      <type>label</type>
+      <id>3337</id>
+      <posX>3000</posX>
+      <label>#Play.Current.Album</label>
+      <visible>player.hasmedia+control.hastext(3337)</visible>
+    </control>
+
+    <control>
+      <description>dummy (visible when there is a next track)</description>
+      <type>label</type>
+      <id>3338</id>
+      <posX>2700</posX>
+      <label>#Play.Next.Title</label>
+      <visible>player.hasmedia+control.hastext(3338)</visible>
+    </control>
+
+    <control>
+      <description>dialog bg</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>34</posX>
+      <posY>28</posY>
+      <width>298</width>
+      <height>185</height>
+      <texture></texture>
+      <visible>player.hasmedia+[!facadeview.filmstrip|!control.isvisible(50)]+!facadeview.smallicons+!facadeview.largeicons</visible>
+    </control>
+
+    <!--                                    :: MUSIC OVERLAY ::                                    -->
+
+	
+	<control>
+      <description>background</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>20</posX>
+      <posY>10</posY>
+      <width>275</width>
+      <height>172</height>
+      <texture>tvbac.png</texture>
+	  <shouldCache>true</shouldCache>
+      <colordiffuse>99000000</colordiffuse>
+	  <visible>player.hasaudio</visible>
+	</control>
+	
+	<control>
+      <id>1</id>
+      <type>image</type>
+      <posX>110</posX>
+      <posY>38</posY>
+      <width>110</width>
+      <height>110</height>
+      <texture>cdfx_small.png</texture>
+      <visible>Player.HasAudio+!Player.HasVideo</visible>
+	  <animation effect="slide" start="-70,0" delay="1500" end="0,0" time="300">visible</animation>
+	  <animation effect="slide" start="-70,0" delay="1500" end="0,0" time="300">windowopen</animation>
+	  <animation effect="rotate" delay="0" end="-360" centre="475,258" time="20000" loop="true" condition="player.hasaudio+player.playing">Conditional</animation>
+    </control>
+	
+	<control>
+      <description>background</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>36</posX>
+      <posY>25</posY>
+      <width>140</width>
+      <height>140</height>
+      <texture>s_cdshad.png</texture>
+	  <shouldCache>true</shouldCache>
+      <colordiffuse>ffffffff</colordiffuse>
+	  <visible>Player.HasAudio+!Player.HasVideo</visible>
+	</control>
+	
+	<control>
+      <description>default</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>40</posX>
+      <posY>30</posY>
+      <width>131</width>
+      <height>131</height>
+      <visible>Player.HasAudio+!Player.HasVideo+!control.hasthumb(12345)+!control.hasthumb(77)</visible>
+      <texture mask="s_cdmask.png">defaultArtistBig.png</texture>
+    </control>
+	
+    <control>
+      <description>music logo</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>40</posX>
+      <posY>30</posY>
+      <width>131</width>
+      <height>131</height>
+      <texture mask="s_cdmask.png">#Play.Current.Thumb</texture>
+      <visible>player.hasaudio</visible>
+    </control>
+	
+
+
+    <!--                                    :: VIDEO OVERLAY ::                                    -->
+
+	
+	<control>
+      <description>background</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>20</posX>
+      <posY>10</posY>
+      <width>275</width>
+      <height>172</height>
+      <texture>tvbac.png</texture>
+	  <shouldCache>true</shouldCache>
+      <colordiffuse>99000000</colordiffuse>
+	  <visible>player.hasmedia+!control.isvisible(3337)</visible>
+	  <animation effect="fade" time="1500" reversible="true">visible</animation>
+	  <animation effect="fade" time="1500" reversible="true">hidden</animation>
+	</control>
+	
+	    <control>
+      <description>video preview window</description>
+      <type>videowindow</type>
+      <id>99</id>
+      <posX>35</posX>
+      <posY>28</posY>
+      <width>241</width>
+      <height>135</height>
+      <visible>player.hasmedia+!control.isvisible(3337)</visible>
+      <action>18</action>
+      <textureFocus>tv_green_border.png</textureFocus>
+	  <animation effect="fade" time="1500" reversible="true">visible</animation>
+	  <animation effect="fade" time="0" reversible="true">hidden</animation>
+    </control>
+	
+  </controls>
+</window>

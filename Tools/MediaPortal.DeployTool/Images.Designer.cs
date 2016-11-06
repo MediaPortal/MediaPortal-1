@@ -203,6 +203,16 @@ namespace MediaPortal.DeployTool {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap preview_ares {
+            get {
+                object obj = ResourceManager.GetObject("preview_ares", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap preview_DefaultWide_HD {
             get {
                 object obj = ResourceManager.GetObject("preview_DefaultWide_HD", resourceCulture);

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <controls>
+    <control>
+      <description>BG</description>
+      <type>image</type>
+      <id>1</id>
+      <texture>#backgroundcolour</texture>
+      <width>1920</width>
+      <height>1080</height>
+      <colordiffuse>ffffffff</colordiffuse>
+    </control>
+
+	
+    <control>
+      <type>image</type>
+      <id>0</id>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>black.png</texture>
+      <colordiffuse>95000000</colordiffuse>
+	  <visible>!control.isvisible(07500)</visible>
+    </control>
+    <control>
+      <type>image</type>
+      <id>0</id>
+      <posX>420</posX>
+      <posY>150</posY>
+      <width>975</width>
+      <height>836</height>
+      <texture>dialogglowbig.png</texture>
+      <colordiffuse>ffffffff</colordiffuse>
+	  <visible>!control.isvisible(911110)+!control.isvisible(07500)</visible>
+    </control>
+	
+  </controls>
+</window>
