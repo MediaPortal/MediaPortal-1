@@ -54,9 +54,9 @@ namespace MediaPortal.DeployTool.Sections
       this.labelHeading2.Font = new System.Drawing.Font("Verdana", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.labelHeading2.ForeColor = System.Drawing.Color.White;
       this.labelHeading2.Location = new System.Drawing.Point(182, 40);
-      this.labelHeading2.MaximumSize = new System.Drawing.Size(386, 0);
+      this.labelHeading2.MaximumSize = new System.Drawing.Size(450, 0);
       this.labelHeading2.Name = "labelHeading2";
-      this.labelHeading2.Size = new System.Drawing.Size(335, 34);
+      this.labelHeading2.Size = new System.Drawing.Size(426, 17);
       this.labelHeading2.TabIndex = 12;
       this.labelHeading2.Text = "You successfully completed your setup of MediaPortal";
       // 
@@ -65,20 +65,20 @@ namespace MediaPortal.DeployTool.Sections
       this.labelHeading3.AutoSize = true;
       this.labelHeading3.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.labelHeading3.ForeColor = System.Drawing.Color.White;
-      this.labelHeading3.Location = new System.Drawing.Point(182, 99);
+      this.labelHeading3.Location = new System.Drawing.Point(182, 117);
       this.labelHeading3.MaximumSize = new System.Drawing.Size(386, 0);
       this.labelHeading3.Name = "labelHeading3";
       this.labelHeading3.Size = new System.Drawing.Size(349, 26);
       this.labelHeading3.TabIndex = 13;
       this.labelHeading3.Text = "Below you may find some useful links that help you getting started with MediaPort" +
-          "al";
+    "al";
       // 
       // linkHomepage
       // 
       this.linkHomepage.AutoSize = true;
       this.linkHomepage.Cursor = System.Windows.Forms.Cursors.Hand;
       this.linkHomepage.LinkColor = System.Drawing.Color.White;
-      this.linkHomepage.Location = new System.Drawing.Point(182, 153);
+      this.linkHomepage.Location = new System.Drawing.Point(182, 151);
       this.linkHomepage.Name = "linkHomepage";
       this.linkHomepage.Size = new System.Drawing.Size(118, 13);
       this.linkHomepage.TabIndex = 14;
@@ -91,7 +91,7 @@ namespace MediaPortal.DeployTool.Sections
       this.linkForum.AutoSize = true;
       this.linkForum.Cursor = System.Windows.Forms.Cursors.Hand;
       this.linkForum.LinkColor = System.Drawing.Color.White;
-      this.linkForum.Location = new System.Drawing.Point(182, 172);
+      this.linkForum.Location = new System.Drawing.Point(182, 170);
       this.linkForum.Name = "linkForum";
       this.linkForum.Size = new System.Drawing.Size(100, 13);
       this.linkForum.TabIndex = 15;
@@ -104,7 +104,7 @@ namespace MediaPortal.DeployTool.Sections
       this.linkWiki.AutoSize = true;
       this.linkWiki.Cursor = System.Windows.Forms.Cursors.Hand;
       this.linkWiki.LinkColor = System.Drawing.Color.White;
-      this.linkWiki.Location = new System.Drawing.Point(182, 191);
+      this.linkWiki.Location = new System.Drawing.Point(182, 189);
       this.linkWiki.Name = "linkWiki";
       this.linkWiki.Size = new System.Drawing.Size(87, 13);
       this.linkWiki.TabIndex = 16;
@@ -118,16 +118,15 @@ namespace MediaPortal.DeployTool.Sections
       this.labelEbay.BackColor = System.Drawing.Color.Transparent;
       this.labelEbay.Font = new System.Drawing.Font("Verdana", 7.25F);
       this.labelEbay.ForeColor = System.Drawing.Color.White;
-      this.labelEbay.Location = new System.Drawing.Point(183, 214);
-      this.labelEbay.MaximumSize = new System.Drawing.Size(386, 0);
+      this.labelEbay.Location = new System.Drawing.Point(183, 210);
+      this.labelEbay.MaximumSize = new System.Drawing.Size(450, 0);
       this.labelEbay.Name = "labelEbay";
-      this.labelEbay.Size = new System.Drawing.Size(380, 24);
+      this.labelEbay.Size = new System.Drawing.Size(444, 12);
       this.labelEbay.TabIndex = 17;
       this.labelEbay.Text = "*Mediaportal is dedicated to always remaining a free program and not for sale";
       // 
       // FinishedDlg
       // 
-	  this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
       this.BackgroundImage = global::MediaPortal.DeployTool.Images.Background_middle_with_MP_Box;
       this.Controls.Add(this.labelEbay);
