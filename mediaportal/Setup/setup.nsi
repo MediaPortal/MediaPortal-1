@@ -108,6 +108,7 @@ Var MPTray_Running
 
 Var PREVIOUS_SKINSETTINGS_TITAN_CONFIG
 Var PREVIOUS_SKINSETTINGS_DEFAULTWIDEHD_CONFIG
+Var PREVIOUS_KEYMAPSETTINGS
 
 #---------------------------------------------------------------------------
 # INCLUDE FILES
