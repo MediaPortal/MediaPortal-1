@@ -325,6 +325,21 @@ ShowUninstDetails show
   ${EndIf}  
 !macroend
 
+!macro BackupKeymapSettings
+  ${If} ${FileExists} "${COMMON_APPDATA}\keymap.xml"
+    GetTempFileName $PREVIOUS_KEYMAPSETTINGS
+    ${LOG_TEXT} "INFO" "Backup keymap.xml (${COMMON_APPDATA}\keymap.xml)"
+    CopyFiles /SILENT /FILESONLY "${COMMON_APPDATA}\keymap.xml" "$PREVIOUS_KEYMAPSETTINGS"
+  ${EndIf}
+!macroend
+
+!macro RestoreKeymapSettings
+  ${If} ${FileExists} "$PREVIOUS_KEYMAPSETTINGS"
+    ${LOG_TEXT} "INFO" "Restore keymap.xml (${COMMON_APPDATA}\keymap.xml)"
+    CopyFiles /SILENT /FILESONLY "$PREVIOUS_KEYMAPSETTINGS" "${COMMON_APPDATA}\keymap.xml" 
+  ${EndIf}
+!macroend
+
 Function RunUninstaller
 
 !ifndef GIT_BUILD
@@ -349,6 +364,7 @@ Section "-prepare" SecPrepare
 
   !insertmacro ShutdownRunningMediaPortalApplications
   !insertmacro BackupSkinSettings
+  !insertmacro BackupKeymapSettings
 
   ${LOG_TEXT} "INFO" "Deleting SkinCache..."
   RMDir /r "$MPdir.Cache"
@@ -664,6 +680,7 @@ Section "MediaPortal core files (required)" SecCore
   SendMessage ${HWND_BROADCAST} ${WM_FONTCHANGE} 0 0 /TIMEOUT=1000
   
   !insertmacro RestoreSkinSettings
+  !insertmacro RestoreKeymapSettings
 
 SectionEnd
 !macro Remove_${SecCore}
