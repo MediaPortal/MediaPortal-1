@@ -115,7 +115,7 @@
       <visible>!control.hasthumb(02201)</visible>
       <animation effect="fade" time="70" reversible="false">visible</animation>
     </control>
-	
+	<!--
 	<control>
       <id>1</id>
       <type>image</type>
@@ -129,11 +129,26 @@
 	  <animation effect="rotate" delay="0" end="-360" centre="475,258" time="30000" loop="true" condition="player.hasAudio">Conditional</animation>
 	  <colordiffuse>ffffffff</colordiffuse>
     </control>
+	-->
 	
 	<control>
       <id>11922</id>
       <type>image</type>
-      <posX>1041</posX>
+      <posX>1021</posX>
+      <posY>250</posY>
+      <width>525</width>
+      <height>525</height>
+      <texture>..\..\..\thumbs\CDArt\Music\#Play.Current.Artist - #Play.Current.Album.png</texture>
+      <animation effect="fade" time="70" reversible="false">visible</animation>
+	  <animation effect="rotate" delay="0" end="-360" centre="475,258" time="30000" loop="true" condition="player.hasAudio">Conditional</animation>
+	  <colordiffuse>ffffffff</colordiffuse>
+    </control>		
+	
+	
+	<control>
+      <id>11922</id>
+      <type>image</type>
+      <posX>1021</posX>
       <posY>250</posY>
       <width>525</width>
       <height>503</height>
