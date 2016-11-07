@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>600</id>
+  <defaultcontrol>2</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <controls>
+  	
+
+	
+    <include condition="#(eq(#skin.tvguide.rows,' 7'))">mytvguide.7rows.xml</include>
+    <include condition="#(eq(#skin.tvguide.rows,' 12'))">mytvguide.12rows.xml</include>
+	<include condition="#(skin.hassetting('#skin.tvguide.usecolorsforbuttons'))">mytvguide.colors.xml</include>
+	
+    <import>custom\Allscreens\user_dialog.xml</import>
+
+  </controls>
+</window>

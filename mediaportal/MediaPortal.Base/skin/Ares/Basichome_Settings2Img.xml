@@ -1,0 +1,209 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <controls>
+	
+
+	  <control>
+		<description>button group</description>
+		<type>group</type>
+		<posX>70</posX>
+		<posY>500</posY>
+		<!-- Remove and Gaps when buttons are not visible -->
+		<layout>StackLayout(0, Horizontal, false)</layout>
+		<visible allowhiddenfocus="true">control.hasfocus(240)|control.hasfocus(241)|control.hasfocus(242)|control.hasfocus(243)|control.hasfocus(244)|control.hasfocus(245)|control.hasfocus(246)|control.hasfocus(247)|control.hasfocus(248)|control.hasfocus(249)|control.hasfocus(340)|control.hasfocus(341)|control.hasfocus(342)|control.hasfocus(343)|control.hasfocus(344)|control.hasfocus(406)|control.hasfocus(407)|control.hasfocus(408)|control.hasfocus(409)|control.hasfocus(410)</visible>   
+	  <control>
+        <description>Page1 Button1</description>
+        <type>menubutton</type>
+        <id>406</id>
+        <width>52</width>
+        <height>52</height>
+		<textXOff>5</textXOff>
+        <textYOff>3</textYOff>
+		<oninfo>#(skin.setfocus(35,00510))</oninfo>
+        <mode>dialoglist</mode>
+        <dialogTitle>Choose an image</dialogTitle>
+        <valueTextInButton>no</valueTextInButton>
+        <valuePrefixText> Plugin : </valuePrefixText>
+        <onclick>#(skin.setstring('#tile6pluginImg',#selectedlabel406))</onclick>
+        <binding>#tile6pluginImg</binding>
+        <subitems>
+        <subitem>#PluginTileList</subitem>
+        </subitems>
+        <textcolorNoFocus>70ffffff</textcolorNoFocus>
+        <textureFocus>picBtnEdit_focus.png</textureFocus>
+		<textureNoFocus>picBtnEdit.png</textureNoFocus>
+		<onup>240</onup>
+        <onleft>406</onleft>
+        <ondown>00505</ondown>
+        <onright>406</onright>
+      </control>
+	  
+	  <control>
+        <description>DUMMY</description>
+        <type>button</type>
+        <id>0</id>
+        <width>320</width>
+		<height>32</height>
+        <label></label>
+		<font>font111</font>
+		<textcolorNoFocus>99ffffff</textcolorNoFocus>
+		<textureFocus></textureFocus>
+		<textureNoFocus></textureNoFocus>
+      </control>		  
+	  <control>
+        <description>Page1 Button2</description>
+        <type>menubutton</type>
+        <id>407</id>
+        <width>52</width>
+        <height>52</height>
+		<textXOff>5</textXOff>
+        <textYOff>3</textYOff>
+		<oninfo>#(skin.setfocus(35,00511))</oninfo>
+        <mode>dialoglist</mode>
+        <dialogTitle>Choose an image</dialogTitle>
+        <valueTextInButton>no</valueTextInButton>
+        <valuePrefixText> Plugin : </valuePrefixText>
+        <onclick>#(skin.setstring('#tile7pluginImg',#selectedlabel407))</onclick>
+        <binding>#tile7pluginImg</binding>
+        <subitems>
+        <subitem>#PluginTileList</subitem>
+        </subitems>
+        <textcolorNoFocus>70ffffff</textcolorNoFocus>
+        <textureFocus>picBtnEdit_focus.png</textureFocus>
+		<textureNoFocus>picBtnEdit.png</textureNoFocus>
+		<onup>242</onup>
+        <onleft>412</onleft>
+        <ondown>00506</ondown>
+        <onright>412</onright>
+      </control>	  
+	  
+	  
+	  
+	  <control>
+        <description>DUMMY</description>
+        <type>button</type>
+        <id>0</id>
+        <width>315</width>
+		<height>32</height>
+        <label></label>
+		<font>font111</font>
+		<textcolorNoFocus>99ffffff</textcolorNoFocus>
+		<textureFocus></textureFocus>
+		<textureNoFocus></textureNoFocus>
+      </control>		  
+	  <control>
+        <description>Page1 Button3</description>
+        <type>menubutton</type>
+        <id>408</id>
+        <width>52</width>
+        <height>52</height>
+		<textXOff>5</textXOff>
+        <textYOff>3</textYOff>
+		<oninfo>#(skin.setfocus(35,00512))</oninfo>
+        <mode>dialoglist</mode>
+        <dialogTitle>Choose an image</dialogTitle>
+        <valueTextInButton>no</valueTextInButton>
+        <valuePrefixText> Plugin : </valuePrefixText>
+        <onclick>#(skin.setstring('#tile8pluginImg',#selectedlabel408))</onclick>
+        <binding>#tile8pluginImg</binding>
+        <subitems>
+        <subitem>#PluginTileList</subitem>
+        </subitems>
+        <textcolorNoFocus>70ffffff</textcolorNoFocus>
+        <textureFocus>picBtnEdit_focus.png</textureFocus>
+		<textureNoFocus>picBtnEdit.png</textureNoFocus>
+		<onup>244</onup>
+        <onleft>413</onleft>
+        <ondown>00507</ondown>
+        <onright>413</onright>
+      </control>
+
+
+
+	  <control>
+        <description>DUMMY</description>
+        <type>button</type>
+        <id>0</id>
+        <width>315</width>
+		<height>32</height>
+        <label></label>
+		<font>font111</font>
+		<textcolorNoFocus>99ffffff</textcolorNoFocus>
+		<textureFocus></textureFocus>
+		<textureNoFocus></textureNoFocus>
+      </control>		  
+	  <control>
+        <description>Page1 Button4</description>
+        <type>menubutton</type>
+        <id>409</id>
+        <width>52</width>
+        <height>52</height>
+		<textXOff>5</textXOff>
+        <textYOff>3</textYOff>
+		<oninfo>#(skin.setfocus(35,00513))</oninfo>
+        <mode>dialoglist</mode>
+        <dialogTitle>Choose an image</dialogTitle>
+        <valueTextInButton>no</valueTextInButton>
+        <valuePrefixText> Plugin : </valuePrefixText>
+        <onclick>#(skin.setstring('#tile9pluginImg',#selectedlabel409))</onclick>
+        <binding>#tile9pluginImg</binding>
+        <subitems>
+        <subitem>#PluginTileList</subitem>
+        </subitems>
+        <textcolorNoFocus>70ffffff</textcolorNoFocus>
+        <textureFocus>picBtnEdit_focus.png</textureFocus>
+		<textureNoFocus>picBtnEdit.png</textureNoFocus>
+		<onup>246</onup>
+        <onleft>414</onleft>
+        <ondown>00508</ondown>
+        <onright>414</onright>
+      </control>
+	  
+	  
+	  
+	  <control>
+        <description>DUMMY</description>
+        <type>button</type>
+        <id>0</id>
+        <width>315</width>
+		<height>32</height>
+        <label></label>
+		<font>font111</font>
+		<textcolorNoFocus>99ffffff</textcolorNoFocus>
+		<textureFocus></textureFocus>
+		<textureNoFocus></textureNoFocus>
+      </control>		  
+	  <control>
+        <description>Page1 Button4</description>
+        <type>menubutton</type>
+        <id>410</id>
+        <width>52</width>
+        <height>52</height>
+		<textXOff>5</textXOff>
+        <textYOff>3</textYOff>
+		<oninfo>#(skin.setfocus(35,00513))</oninfo>
+        <mode>dialoglist</mode>
+        <dialogTitle>Choose an image</dialogTitle>
+        <valueTextInButton>no</valueTextInButton>
+        <valuePrefixText> Plugin : </valuePrefixText>
+        <onclick>#(skin.setstring('#tile10pluginImg',#selectedlabel410))</onclick>
+        <binding>#tile10pluginImg</binding>
+        <subitems>
+        <subitem>#PluginTileList</subitem>
+        </subitems>
+        <textcolorNoFocus>70ffffff</textcolorNoFocus>
+        <textureFocus>picBtnEdit_focus.png</textureFocus>
+		<textureNoFocus>picBtnEdit.png</textureNoFocus>
+		<onup>248</onup>
+        <onleft>415</onleft>
+        <ondown>00509</ondown>
+        <onright>415</onright>
+      </control>	  
+
+	  
+
+	  
+      </control>
+
+  </controls>
+</window>

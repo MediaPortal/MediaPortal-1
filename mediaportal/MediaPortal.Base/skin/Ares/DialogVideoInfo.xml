@@ -1,0 +1,869 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>2003</id>
+  <defaultcontrol>2</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <define>#selecteditem:#title</define>
+  <define>#useSelectedFanart:Yes</define>
+  <controls>
+    <control>
+      <description>Background Image</description>
+      <type>image</type>
+      <id>1</id>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>#backgroundcolour</texture>
+    </control>
+	
+	<include condition="#(eq(#MyVideos.fanart.enable,'Yes'))">common.video.fanart.xml</include>
+	
+    <control>
+      <description>Alternate Movie Backdrop - Toggles Load with Component 1 for animations on visibiltiy</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>1080</height>
+	  <colordiffuse>ffffffff</colordiffuse>
+      <texture>#overlaycolour</texture>
+	</control>		
+	
+	  <control>
+        <description>Cover Art</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>40</posX>
+        <posY>190</posY>
+        <width>1845</width>
+        <height>624</height>
+        <texture>D_over1.png</texture>
+		<visible>!control.isvisible(51)+!facadeview.filmstrip+!facadeview.coverflow</visible>
+      </control>	
+
+	  
+      <import>custom\Allscreens\user_dialog.xml</import>
+	  <include>myVideos.extra.infologosDetails.xml</include>
+	  
+	  
+		<control>
+		  <description>Item Count</description>
+		  <type>label</type>
+		  <id>0</id>
+		  <posX>1864</posX>
+		  <posY>110</posY>
+		  <label>#itemcount Actors</label>
+		  <align>right</align>
+		  <font>fontBold2</font>
+		  <textcolor>ffffffff</textcolor>
+		  <visible>control.isvisible(24)</visible>
+		</control>
+
+    <!--     *******************************************************************************************  -->
+    <!--     **************************************  MENU BUTTONS  *************************************  -->
+    <!--     *******************************************************************************************  -->
+    <control>
+      <type>actiongroup</type>
+      <description>action menu</description>
+      <defaultcontrol>3</defaultcontrol>
+      <onexit>24</onexit>
+      <buttonX>0</buttonX>
+      <buttonY>0</buttonY>
+      <buttonwidth>100</buttonwidth>
+      <buttonheight>1080</buttonheight>
+      <textureFocus>-</textureFocus>
+      <textureNoFocus></textureNoFocus>
+      <width>800</width>
+	  <height>800</height>
+	  <dimColor>00ffffff</dimColor>
+      <control>
+        <type>image</type>
+        <id>0</id>
+        <width>1920</width>
+        <height>1080</height>
+        <texture>black.png</texture>
+        <colordiffuse>99000000</colordiffuse>
+      </control>
+
+	  <control>
+        <type>image</type>
+        <id>0</id>
+        <posX>420</posX>
+        <posY>150</posY>
+        <width>975</width>
+        <height>836</height>
+        <texture>dialogglowbig.png</texture>
+		<visible>!Control.HasFocus(24)|!control.hasfocus(54321)</visible>    
+      </control>	
+	  
+      <control>
+        <description>group element</description>
+        <type>group</type>
+        <visible>!Control.HasFocus(24)|!control.hasfocus(54321)</visible>
+        <layout>StackLayout</layout>
+        <posX>500</posX>
+		<posY>250</posY>
+
+        <control>
+          <description>Plot Button</description>
+          <type>checkbutton</type>
+          <id>3</id>
+          <label>207</label>
+		  <textureFocus>btn_list_blue2.png</textureFocus>
+          <textureNoFocus></textureNoFocus>
+		  <textYOff>7</textYOff>
+		  <width>820</width>
+		  <height>50</height>
+          <font>font11</font>
+          <onleft>3</onleft>
+		  <onright>2</onright>
+          <onup>2</onup>
+          <ondown>4</ondown>
+        </control>
+        <control>
+          <description>Cast Button</description>
+          <type>checkbutton</type>
+          <id>4</id>
+          <label>206</label>
+		  <textureFocus>btn_list_blue2.png</textureFocus>
+          <textureNoFocus></textureNoFocus>
+		  <textYOff>7</textYOff>
+		  <width>820</width>
+		  <height>50</height>
+          <font>font11</font>
+          <onleft>4</onleft>
+		  <onright>2</onright>
+          <onup>3</onup>
+          <ondown>7</ondown>
+        </control>
+        <control>
+          <description>User Review Button</description>
+          <type>checkbutton</type>
+          <id>7</id>
+          <label>183</label>
+		  <textureFocus>btn_list_blue2.png</textureFocus>
+          <textureNoFocus></textureNoFocus>
+		  <textYOff>7</textYOff>
+		  <width>820</width>
+		  <height>50</height>
+          <font>font11</font>
+          <onleft>7</onleft>
+		  <onright>2</onright>
+          <onup>4</onup>
+          <ondown>5</ondown>
+        </control>
+        <control>
+          <description>Refresh Button</description>
+          <type>button</type>
+          <id>5</id>
+          <label>184</label>
+		  <textureFocus>btn_list_blue2.png</textureFocus>
+          <textureNoFocus></textureNoFocus>
+		  <textYOff>7</textYOff>
+		  <width>820</width>
+		  <height>50</height>
+          <onleft>5</onleft>
+		  <onright>2</onright>
+          <onup>7</onup>
+          <ondown>26</ondown>
+        </control>
+        <control>
+          <description>Rename Title Button</description>
+          <type>button</type>
+          <id>26</id>
+          <onleft>26</onleft>
+          <label>118</label>
+		  <textureFocus>btn_list_blue2.png</textureFocus>
+          <textureNoFocus></textureNoFocus>
+		  <textYOff>7</textYOff>
+		  <width>820</width>
+		  <height>50</height>
+		  <onright>2</onright>
+          <onup>5</onup>
+          <ondown>6</ondown>
+        </control>
+        <control>
+          <description>Watched Button</description>
+          <type>checkbutton</type>
+          <id>6</id>
+          <label>1010</label>
+		  <textureFocus>btn_list_blue2.png</textureFocus>
+          <textureNoFocus></textureNoFocus>
+		  <textYOff>7</textYOff>
+		  <width>820</width>
+		  <height>50</height>
+          <onleft>6</onleft>
+          <onright>2</onright>
+          <onup>26</onup>
+          <ondown>10</ondown>
+        </control>
+
+      </control>
+      <!--     *******************************************************************************************  -->
+      <!--     **************************************  SELECT BUTTONS  ***********************************  -->
+      <!--     *******************************************************************************************  -->
+      <control>
+        <description>select cover label</description>
+        <type>label</type>
+        <id>30</id>
+        <posX>515</posX>
+        <posY>665</posY>
+        <label>634</label>
+        <font>font11</font>
+        <align>left</align>
+        <textcolor>ffffffff</textcolor>
+      </control>
+      <control>
+        <description>>select cover Spin Control</description>
+        <type>spincontrol</type>
+        <id>10</id>
+        <posX>520</posX>
+        <posY>732</posY>
+        <onup>8</onup>
+        <ondown>11</ondown>
+      </control>
+      <control>
+        <description>select disc label</description>
+        <type>label</type>
+        <id>100</id>
+        <posX>520</posX>
+        <posY>777</posY>
+        <label>427</label>
+        <font>font11</font>
+        <textcolor>ffffffff</textcolor>
+      </control>
+      <control>
+        <description>select Disc spin control</description>
+        <type>spincontrol</type>
+        <id>11</id>
+        <posX>520</posX>
+        <posY>830</posY>
+        <onup>10</onup>
+        <ondown>2</ondown>
+        <onleft>5</onleft>
+        <onright>5</onright>
+        <textcolor>eaeaea</textcolor>
+        <buddycontrolid>100</buddycontrolid>
+        <showrange>no</showrange>
+      </control>
+    </control>
+
+  <!--     *******************************************************************************************  -->
+  <!--     **************************************  MOVIE INFOS  **************************************  -->
+  <!--     *******************************************************************************************  -->
+
+  <control>
+    <description>group element</description>
+    <type>group</type>
+    <layout>StackLayout(0, Vertical, True)</layout>
+    <posX>85</posX>
+    <posY>210</posY>
+    <visible>!control.isvisible(24)+!control.isvisible(23)+!control.hasfocus(70116)</visible>
+      <control>
+        <description>Selected item Label Title</description>
+        <type>fadelabel</type>
+        <id>1</id>
+        <width>1550</width>
+        <height>65</height>
+        <align>left</align>
+        <font>fontBold</font>
+        <label>#title</label>  
+        <textcolor>ffe3e3e3</textcolor>		
+      </control>
+    <control>
+      <description>Genre Value</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <height>35</height>
+      <posY>230</posY>
+	  <height>45</height>
+      <width>700</width>
+      <label>#genre</label>
+      <font>font13</font>
+      <textcolor>99ffffff</textcolor>
+    </control>
+    <control>
+      <description>Director Label</description>
+      <type>label</type>
+      <id>1</id>
+      <height>45</height>
+      <posY>270</posY>
+      <label>#(L(199)) / #(L(200))</label>
+      <font>font13</font>
+      <textcolor>ffe3e3e3</textcolor>
+    </control>
+    <control>
+      <description>Director Value</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <height>35</height>
+      <posY>270</posY>
+	  <height>45</height>
+      <width>1250</width>
+      <label>#director / #credits</label>
+      <font>font13</font>
+      <textcolor>99ffffff</textcolor>
+    </control>
+
+    <control>
+      <description>Studios Label</description>
+      <type>label</type>
+      <id>1</id>
+      <height>45</height>
+      <posY>350</posY>
+      <label>1274</label>
+      <font>font13</font>
+      <textcolor>ffe3e3e3</textcolor>
+    </control>
+    <control>
+      <description>Studios Value</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <height>35</height>
+      <posY>350</posY>
+      <width>1250</width>
+	  <height>45</height>
+      <label>#studios</label>
+      <font>font13</font>
+      <textcolor>99ffffff</textcolor>
+    </control>
+
+    <control>
+      <description>Year Label</description>
+      <type>label</type>
+      <id>1</id>
+      <height>35</height>
+      <posY>410</posY>
+      <width>600</width>
+	  <height>45</height>
+      <label>201</label>
+      <font>font13</font>
+      <textcolor>ffe3e3e3</textcolor>
+    </control>
+    <control>
+      <description>Year Value</description>
+      <type>label</type>
+      <id>1</id>
+      <height>45</height>
+      <posY>410</posY>
+      <label>#year Last Update #lastupdate</label>
+      <font>font13</font>
+      <width>700</width>
+      <textcolor>99ffffff</textcolor>
+    </control>
+
+  </control>
+
+  
+
+  <control>
+    <description>group element</description>
+    <type>group</type>
+	    <control>
+          <description>Play Movie</description>
+          <type>button</type>
+          <id>2</id>
+          <onup>4755</onup>
+          <ondown>2</ondown>
+          <onright>70116</onright>
+          <onleft>3</onleft>
+          <posX>56</posX>
+          <posY>725</posY>
+          <width>1404</width>
+          <height>50</height>
+		  <label>208</label>
+          <textcolor>ffffffff</textcolor>
+          <font>font13</font>
+          <textYOff>3</textYOff>
+          <textXOff>30</textXOff>
+          <textalign>left</textalign>
+          <textcolorNoFocus>60ffffff</textcolorNoFocus>
+		  <textureFocus>btn_list.png</textureFocus>
+		  <textureNoFocus></textureNoFocus>
+		  <visible allowhiddenfocus="true">!control.isvisible(24)+!control.isvisible(23)+!control.hasfocus(70116)</visible>
+        </control>	
+	    <control>
+          <description>IMDb Trailer Button (Online Videos)</description>
+          <type>button</type>
+          <id>4755</id>
+          <onup>4755</onup>
+          <ondown>2</ondown>
+          <onright>70116</onright>
+          <onleft>3</onleft>
+          <posX>56</posX>
+          <posY>675</posY>
+          <width>1404</width>
+          <height>50</height>
+		  <label>5906</label>
+		  <hyperlink>4755</hyperlink>
+          <hyperlinkParameter>site:IMDb Movie Trailers|search:#(iif(neq(#imdbnumber,''),#imdbnumber,#title))|return:Locked</hyperlinkParameter>
+          <textcolor>ffffffff</textcolor>
+          <font>font13</font>
+          <textYOff>3</textYOff>
+          <textXOff>30</textXOff>
+          <textalign>left</textalign>
+          <textcolorNoFocus>60ffffff</textcolorNoFocus>
+		  <textureFocus>btn_list.png</textureFocus>
+		  <textureNoFocus></textureNoFocus>
+		  <visible allowhiddenfocus="true">[!control.isvisible(24)+!control.isvisible(23)+!control.hasfocus(70116)]+plugin.isenabled(OnlineVideos)</visible>
+        </control>			
+    </control>
+	
+	
+
+	<!--  
+      <control>
+      <description>Logos group</description>
+      <type>group</type>
+      <posX>150</posX>
+      <posY>750</posY>
+	  <visible>!Control.IsVisible(24)</visible>
+      <layout>StackLayout(15, Horizontal, true)</layout>
+      <control>
+        <description>Certification (MPAA) Logo</description>
+        <type>image</type>
+        <id>0</id>
+        <width>85</width>
+        <height>55</height>
+		<valign>middle</valign>
+        <texture>logos\#mpaarating.png</texture>
+        <keepaspectratio>yes</keepaspectratio>
+      </control>
+      <control>
+        <description>Video codec</description>
+        <type>image</type>
+        <id>0</id>
+        <width>85</width>
+        <height>55</height>
+        <texture>logos\#VideoCodec.png</texture>
+        <keepaspectratio>yes</keepaspectratio>
+      </control>
+      <control>
+        <description>Video resolution</description>
+        <type>image</type>
+        <id>0</id>
+        <width>85</width>
+        <height>55</height>
+        <texture>logos\#VideoResolution.png</texture>
+        <keepaspectratio>yes</keepaspectratio>
+      </control>
+      <control>
+        <description>Aspect ratio</description>
+        <type>image</type>
+        <id>0</id>
+        <width>85</width>
+        <height>55</height>
+        <texture>logos\#AspectRatio.png</texture>
+        <keepaspectratio>yes</keepaspectratio>
+      </control>
+      <control>
+        <description>Audio codec</description>
+        <type>image</type>
+        <id>0</id>
+        <width>85</width>
+        <height>55</height>
+        <texture>logos\#AudioCodec.png</texture>
+        <keepaspectratio>yes</keepaspectratio>
+      </control>
+      <control>
+        <description>Audio channels</description>
+        <type>image</type>
+        <id>0</id>
+        <width>85</width>
+        <height>55</height>
+        <texture>logos\#AudioChannels.png</texture>
+        <keepaspectratio>yes</keepaspectratio>
+      </control>
+      <control>
+        <description>Subtitles</description>
+        <type>image</type>
+        <id>0</id>
+        <width>85</width>
+        <height>55</height>
+        <texture>logos\subtitles.png</texture>
+        <keepaspectratio>yes</keepaspectratio>
+        <visible>string.equals(#HasSubtitles, True)</visible>
+      </control>
+    </control>
+	-->
+ 
+  <!--     *******************************************************************************************  -->
+  <!--     ********************************  LAST UPDATE / WATCHCOUNT  *******************************  -->
+  <!--     *******************************************************************************************  -->
+  
+  <!--<control>
+    <description>Watched Count Value</description>
+    <type>label</type>
+    <id>1</id>
+    <posX>255</posX>
+    <posY>935</posY>
+    <label>#watchedcount</label>
+    <font>font10</font>
+    <align>left</align>
+    <textcolor>ivory</textcolor>
+  </control>-->
+  <!--     *******************************************************************************************  -->
+  <!--     ********************************  PLOT / USERINFO TEXT   **********************************  -->
+  <!--     *******************************************************************************************  -->   
+
+   
+	  <control>
+        <description>Cover Art</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>40</posX>
+        <posY>821</posY>
+        <width>1845</width>
+        <height>209</height>
+        <texture>Inf_gfx.png</texture>
+      </control>	 
+      <control>
+        <description>Little Poster Missing cover art</description>
+        <id>1</id>
+        <type>image</type>
+        <posX>56</posX>
+        <posY>828</posY>
+		<height>190</height>
+		<width>137</width>
+        <texture mask="CAmask_small.png">defaultVideoBig.png</texture>
+        <visible>!control.isvisible(24)</visible>
+      </control>
+	  
+      <control>
+        <description>Little Poster Missing cover art</description>
+        <id>21</id>
+        <type>image</type>
+        <posX>56</posX>
+        <posY>828</posY>
+		<height>190</height>
+		<width>137</width>
+        <texture mask="CAmask_small.png">#thumb</texture>
+        <visible>!control.isvisible(24)</visible>
+      </control>	  
+	  
+
+	  <control>
+        <description>Cover Art</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>1414</posX>
+        <posY>182</posY>
+        <width>28</width>
+        <height>619</height>
+        <texture>D_side.png</texture>
+		<visible>!control.isvisible(24)</visible>
+      </control>	  
+
+ 
+      <control Style="NoShadow">
+       <description></description>
+       <type>textbox</type>
+       <id>20</id>
+	   <textalign>left</textalign>
+       <posX>215</posX>
+       <posY>855</posY>
+       <width>1650</width>
+       <height>115</height>
+       <textcolor>99ffffff</textcolor>
+       <font>font13</font>
+       <label></label>
+     </control>
+      <control Style="NoShadow">
+       <description>Plot value</description>
+       <type>textboxscrollup</type>
+       <id>20</id>
+	   <textalign>left</textalign>
+       <posX>215</posX>
+       <posY>855</posY>
+       <width>1650</width>
+       <height>125</height>
+       <textcolor>99ffffff</textcolor>
+       <font>font13</font>
+       <label>#plot</label>
+	   <visible>!control.isvisible(23)+!control.hasfocus(70116)</visible>
+     </control>	 
+      <control Style="NoShadow">
+       <description>Plot value</description>
+       <type>textbox</type>
+       <id>0</id>
+	   <textalign>left</textalign>
+       <posX>215</posX>
+       <posY>853</posY>
+       <width>1650</width>
+       <height>200</height>
+       <textcolor>99ffffff</textcolor>
+       <font>font13</font>
+       <label>#plot</label>
+	   <visible>control.isvisible(23)|control.hasfocus(70116)</visible>
+     </control>	 
+	 
+	 
+      <control Style="NoShadow">
+       <description>Plot value</description>
+       <type>textboxscrollup</type>
+       <id>23</id>
+	   <textalign>left</textalign>
+       <posX>70</posX>
+       <posY>220</posY>
+       <width>1350</width>
+       <height>535</height>
+       <textcolor>99ffffff</textcolor>
+       <font>font13</font>
+       <label></label>
+     </control>	 
+	 
+     <control>
+          <description>Dummy review btn</description>
+          <type>button</type>
+          <id>70116</id>
+          <onup>2</onup>
+          <ondown>2</ondown>
+          <onright>2</onright>
+          <onleft>2</onleft>
+          <posX>0</posX>
+          <posY>0</posY>
+          <width>1</width>
+          <height>1</height>
+		  <label></label>
+          <textcolor>ffffffff</textcolor>
+          <font>font13</font>
+          <textYOff>3</textYOff>
+          <textXOff>30</textXOff>
+          <textalign>left</textalign>
+          <textcolorNoFocus>60ffffff</textcolorNoFocus>
+		  <textureFocus></textureFocus>
+	      <textureNoFocus></textureNoFocus>
+      </control>		 
+	 
+      <control Style="NoShadow">
+       <description>Plot value</description>
+       <type>textboxscrollup</type>
+       <id>70117</id>
+	   <textalign>left</textalign>
+       <posX>80</posX>
+       <posY>220</posY>
+       <width>1350</width>
+       <height>545</height>
+       <textcolor>99ffffff</textcolor>
+       <font>font13</font>
+       <label>#userreview</label>
+	   <visible>control.hasfocus(70116)|control.isvisible(23)</visible>
+     </control>	 	 
+	 
+	
+  <!--     *******************************************************************************************  -->
+  <!--     **************************************  MOVIE COVER  **************************************  -->
+  <!--     *******************************************************************************************  -->
+
+
+	  <control>
+        <description>Missing Cover Art</description>
+        <type>image</type>
+        <id>1</id>
+        <posX>1444</posX>
+        <posY>197</posY>
+        <width>422</width>
+        <height>605</height>
+		<keepaspectratio>no</keepaspectratio>
+        <zoomfromtop>no</zoomfromtop>
+        <texture mask="CAmask.png">missing_Coverart_video.png</texture>
+        <visible>!control.isvisible(24)</visible>
+      </control>  
+  
+	  <control>
+        <description>Cover Art</description>
+        <type>image</type>
+        <id>21</id>
+        <posX>1444</posX>
+        <posY>197</posY>
+        <width>422</width>
+        <height>605</height>
+		<keepaspectratio>no</keepaspectratio>
+        <zoomfromtop>no</zoomfromtop>
+        <texture mask="CAmask.png">#thumb</texture>
+        <visible>!control.isvisible(24)</visible>
+      </control>
+	  
+  
+  	  <control>
+        <description>Cover Art watched flag</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>1714</posX>
+        <posY>192</posY>
+        <width>163</width>
+        <height>132</height>
+        <texture>redflag.png</texture>
+		<visible>!control.isvisible(24)+string.equals(#iswatched,no)</visible>
+      </control>
+	  <control>
+        <description>Cover Art watched flag</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>1714</posX>
+        <posY>192</posY>
+        <width>163</width>
+        <height>132</height>
+        <texture>greyflag.png</texture>
+		<visible>!control.isvisible(24)+string.equals(#iswatched,yes)</visible>
+      </control>
+	<!--  
+  <control>
+    <description>Movie Cover Glass Image and Dummy button to be able to activate action menu</description>
+    <type>button</type>
+    <id>54321</id>
+    <posX>1342</posX>
+    <posY>225</posY>
+    <width>402</width>
+    <height>576</height>
+    <textureFocus></textureFocus>
+    <textureNoFocus></textureNoFocus>
+    <onleft>2</onleft>
+    <action>68</action>
+    <visible>!control.isvisible(24)</visible>
+  </control>
+  -->
+
+    <control>
+      <description>Logos group</description>
+      <type>group</type>
+      <posX>1460</posX>
+      <posY>725</posY>
+      <layout>StackLayout(15, Horizontal, true)</layout>
+      <visible>!control.isvisible(51)+!facadeview.coverflow+!facadeview.filmstrip</visible>
+      <control>
+        <description>Certification</description>
+        <type>image</type>
+        <id>0</id>
+        <height>61</height>
+        <width>61</width>
+        <keepaspectratio>yes</keepaspectratio>
+		<valign>middle</valign>
+        <texture>Logos\Age\#mpaarating.png</texture>
+      </control>
+    </control>		  
+	
+	
+	
+  <!--     *******************************************************************************************  -->
+  <!--     **************************************  ACTOR INFOS  **************************************  -->
+  <!--     *******************************************************************************************  -->
+      <control>
+        <description>Actors/Cast Image</description>
+        <id>1</id>
+        <type>image</type>
+        <posX>1444</posX>
+        <posY>197</posY>
+        <width>422</width>
+        <height>605</height>  
+        <texture mask="CAmask.png">defaultActorBig.png</texture>
+        <visible>control.isvisible(24)</visible>
+      </control>
+      <control>
+        <description>Actors/Cast Image</description>
+        <type>image</type>
+        <id>25</id>
+        <posX>1444</posX>
+        <posY>197</posY>
+        <width>422</width>
+        <height>605</height>
+        <texture mask="CAmask.png">#actorThumb</texture>
+        <visible>control.isvisible(24)</visible>
+      </control>
+      <control>
+        <description>Actors/Cast Image Cover</description>
+        <type>image</type>
+        <id>1</id>
+        <posX>1342</posX>
+        <posY>225</posY>
+        <width>402</width>
+        <height>576</height>	  
+        <texture></texture>
+        <visible>control.isvisible(24)</visible>
+      </control>
+  
+	  
+  <control>
+    <description>Actors/Cast List</description>
+    <type>listcontrol</type>
+    <id>24</id>
+    <posX>56</posX>
+    <posY>225</posY>
+    <width>1388</width>
+    <height>620</height>
+    <onleft>3</onleft>
+    <onright>24</onright>
+    <scrollOffset>2</scrollOffset>
+    <textXOff>-15</textXOff>
+    <textYOff>3</textYOff>
+    <IconXOff>3000</IconXOff> 
+    <textureFocus>btn_list.png</textureFocus>
+    <textureHeight>50</textureHeight>
+    <spinPosX>3405</spinPosX>
+    <spinPosY>1020</spinPosY>
+    <spinCanFocus>yes</spinCanFocus>
+    <unfocusedAlpha>180</unfocusedAlpha>
+    <font>font12</font>
+    <textcolor>ffffffff</textcolor>
+    <textcolorNoFocus>ff888888</textcolorNoFocus>
+    <textvisible2>no</textvisible2>
+    <textvisible3>no</textvisible3>
+    <keepaspectratio>yes</keepaspectratio>
+  </control>
+  
+  	  <control>
+        <description>Cover Art</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>1416</posX>
+        <posY>182</posY>
+        <width>28</width>
+        <height>619</height>
+        <texture>D_side.png</texture>
+      </control>
+	  
+  <!-- ********** Actors list (Old style for Non EN Scrapers)  ********** -->
+  <control Style="NoShadow">
+    <description>Actors list</description>
+    <type>textbox</type>
+    <id>22</id>
+    <posX>215</posX>
+    <posY>240</posY>
+    <width>900</width>
+    <height>620</height>
+    <onleft>2</onleft>
+    <onright>2</onright>
+    <onup>2</onup>
+    <ondown>2</ondown>
+    <label>#cast</label>
+    <font>font12</font>
+  </control>
+
+      <control>
+        <description>Little Actor Image Missing Art</description>
+        <id>1</id>
+        <type>image</type>
+        <posX>56</posX>
+        <posY>828</posY>
+		<height>190</height>
+		<width>137</width>	  
+        <texture mask="CAmask_small.png">defaultActor.png</texture>
+        <visible>control.isvisible(24)</visible>
+      </control>
+      <control>
+        <description>Little Actor Image</description>
+        <type>image</type>
+        <id>21</id>
+        <posX>56</posX>
+        <posY>828</posY>
+		<height>190</height>
+		<width>137</width>  
+        <texture mask="CAmask_small.png">#actorThumb</texture>
+        <visible>control.isvisible(24)</visible>
+      </control>    
+
+
+</controls>
+</window>
+
+

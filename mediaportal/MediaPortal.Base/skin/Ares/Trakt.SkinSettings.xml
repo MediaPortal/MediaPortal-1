@@ -1,0 +1,72 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<settings>
+  <!--
+		The purpose of Trakt.SkinSettings.xml is to allow the skinner to control the presentation of the Trakt plugin to the user		
+	-->
+  <!-- Dashboard configuration e.g. activity stream, trending shows/movies -->
+  <dashboard>
+    <!--
+			Note: As a skinner you can choose to show a facade or properties or both
+			for trending and activities. Choose what fits best for each window you implement
+			the dashboard, there is no limitation where the facade/properties are placed as
+			long as there is a window id defined.
+		-->
+    <activities>
+      <!-- Control what GUI windows the dashboard should be displayed on -->
+      <!-- Seperate multiple window id's with pipe '|' seperator -->
+      <!-- e.g. <windows>35|87258</windows> for BasicHome.xml and Trakt.xml -->
+      <windows>87258</windows>
+      <!-- Facade Type e.g. Filmstrip, LargeIcons, SmallIcons, List -->
+      <!-- set facade to None if not using a facade -->
+      <facadetype>List</facadetype>
+      <!-- Set the Max number of items to show in facade -->
+      <!-- If you dont expect the user to scroll then set to the viewable amount -->
+      <facademaxitems>50</facademaxitems>
+      <!-- Number of properties to push to skin for Activity Stream -->
+      <!-- Use this to set skin properties independant of the facade or selected item -->
+      <!-- if not using properties, then set to 0 -->
+      <propertiesmaxitems>0</propertiesmaxitems>
+    </activities>
+    <trending>
+      <facadetype>Filmstrip</facadetype>
+      <facademaxitems>4</facademaxitems>
+      <propertiesmaxitems>4</propertiesmaxitems>
+      <shows>
+        <windows>87258</windows>
+      </shows>
+      <movies>
+        <windows>87258</windows>
+      </movies>
+    </trending>
+    <!-- User Statistics e.g. No of Episodes collected/watched -->
+    <statistics>false</statistics>
+  </dashboard>
+  <!-- Position of 'library/seen/watchlist' icons in facade thumbs -->
+  <!-- Draws 'traktLibrary.png, traktSeenIt.png, traktWatchList.png' on thumbnail -->
+  <mainoverlayicons>
+    <!-- Posters are fixed at 300px wide and usually 450px height -->
+    <!-- Positions are relative to top left i.e. (0,0) -->
+    <posters>
+      <posx>178</posx>
+      <posy>0</posy>
+    </posters>
+    <!-- Episode thumbnails are 400x225px -->
+    <episodethumbs>
+      <posx>278</posx>
+      <posy>0</posy>
+    </episodethumbs>
+  </mainoverlayicons>
+  <!-- Position of 'love/hate' user rating icon -->
+  <!-- Draws 'traktLove.png, traktHate.png' on thumbnail -->
+  <ratingoverlayicons>
+    <posters>
+      <posx>178</posx>
+      <posy>0</posy>
+    </posters>
+    <episodethumbs>
+      <posx>278</posx>
+      <posy>0</posy>
+    </episodethumbs>
+  </ratingoverlayicons>
+</settings>

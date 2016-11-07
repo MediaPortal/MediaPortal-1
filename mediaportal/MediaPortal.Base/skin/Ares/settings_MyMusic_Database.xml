@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>1011</id>
+  <defaultcontrol>14</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <rememberLastFocusedControl>yes</rememberLastFocusedControl>
+  <controls>
+    <import>common.settings.xml</import>
+	
+	<control>
+      <type>image</type>
+      <id>911110</id>
+      <posX>420</posX>
+      <posY>50</posY>
+      <width>975</width>
+      <height>1056</height>
+      <texture>dialogglowbig.png</texture>
+      <colordiffuse>ffffffff</colordiffuse>
+    </control>
+	
+    <control>
+      <description>Folder BG label</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>515</posX>
+      <posY>150</posY>
+      <label>300071</label>
+      <textcolor>ffffffff</textcolor>
+    </control>
+    <control>
+      <description>Scan folders listcontrol</description>
+      <type>listcontrol</type>
+      <id>2</id>
+      <posX>500</posX>
+      <posY>190</posY>
+      <width>810</width>
+      <height>100</height>
+	  <textXOff2>800</textXOff2>
+      <textYOff2>7</textYOff2>
+      <onright>14</onright>
+      <onleft>14</onleft>
+    </control>
+    <control>
+      <description>Scan status</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>137</posX>
+	  <posY>125</posY>
+      <font>font101</font>
+      <width>900</width>
+      <label>#scanstatus</label>
+    </control>
+
+    <control>
+      <description>Scan label</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>515</posX>
+      <posY>300</posY>
+      <label>300163</label>
+      <textcolor>ffffffff</textcolor>
+    </control>
+    <control>
+      <description>group element</description>
+      <type>group</type>
+      <posX>500</posX>
+      <posY>350</posY>
+      <layout>StackLayout</layout>
+      <control>
+        <description>Scan database</description>
+        <type>button</type>
+        <id>14</id>
+        <label>300164</label>
+        <posX>105</posX>
+        <posY>225</posY>
+        <width>810</width>
+        <font>font101</font>
+        <onup>2</onup>
+        <ondown>11</ondown>
+        <onleft>17</onleft>
+        <onright>5</onright>
+      </control>
+      <control>
+        <description>Create scan date</description>
+        <type>button</type>
+        <id>11</id>
+        <label>#dateadded</label>
+        <posX>105</posX>
+        <posY>277</posY>
+        <width>810</width>
+        <font>font101</font>
+        <onup>14</onup>
+        <ondown>12</ondown>
+        <onleft>17</onleft>
+        <onright>5</onright>
+      </control>
+      <control>
+        <description>Only update by new date</description>
+        <type>checkbutton</type>
+        <id>12</id>
+        <label>#updatesincelastimprot</label>
+        <posX>105</posX>
+        <posY>330</posY>
+        <width>810</width>
+        <font>font101</font>
+        <onup>11</onup>
+        <ondown>13</ondown>
+        <onleft>17</onleft>
+        <onright>5</onright>
+      </control>
+      <control>
+        <description>Auto update</description>
+        <type>checkbutton</type>
+        <id>13</id>
+        <label>300165</label>
+        <posX>105</posX>
+        <posY>382</posY>
+        <width>810</width>
+        <font>font101</font>
+        <onup>12</onup>
+        <ondown>3</ondown>
+        <onleft>17</onleft>
+        <onright>5</onright>
+      </control>
+      <control>
+        <description>Strip prefixes button</description>
+        <type>checkbutton</type>
+        <id>3</id>
+        <label>300166</label>
+        <posX>105</posX>
+        <posY>435</posY>
+        <width>810</width>
+        <font>font101</font>
+        <onup>14</onup>
+        <onright>2</onright>
+        <onup>13</onup>
+        <ondown>4</ondown>
+        <onleft>17</onleft>
+        <onright>5</onright>
+      </control>
+      <control>
+        <description>Treat tracks</description>
+        <type>checkbutton</type>
+        <id>4</id>
+        <label>300167</label>
+        <posX>105</posX>
+        <posY>525</posY>
+        <width>810</width>
+        <font>font101</font>
+        <onleft></onleft>
+        <onup>3</onup>
+        <ondown>5</ondown>
+        <onleft>17</onleft>
+        <onright>5</onright>
+      </control>
+    </control>
+    <control>
+        <description>Prefixes</description>
+        <type>label</type>
+        <id>1</id>
+        <posX>1000</posX>
+        <posY>558</posY>
+        <width>200</width>
+        <font>font101</font>
+        <label>#prefixes</label>
+      </control>
+
+    <control>
+      <description>Folder BG label</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>515</posX>
+      <posY>655</posY>
+      <label>300168</label>
+      <textcolor>ffffffff</textcolor>
+    </control>
+    <control>
+      <description>group element</description>
+      <type>group</type>
+      <posX>500</posX>
+      <posY>700</posY>
+      <layout>StackLayout</layout>
+      <control>
+        <description>All extensions</description>
+        <type>checkbutton</type>
+        <id>5</id>
+        <label>300169</label>
+        <posX>105</posX>
+        <posY>652</posY>
+        <width>810</width>
+        <font>font101</font>
+        <onup>4</onup>
+        <ondown>6</ondown>
+        <onleft>14</onleft>
+        <onright>17</onright>
+      </control>
+      <control>
+        <description>All extensions</description>
+        <type>checkbutton</type>
+        <id>6</id>
+        <label>300170</label>
+        <posX>105</posX>
+        <posY>705</posY>
+        <width>810</width>
+        <font>font101</font>
+        <onleft></onleft>
+        <onup>5</onup>
+        <ondown>7</ondown>
+        <onleft>14</onleft>
+        <onright>17</onright>
+      </control>
+      <control>
+        <description>Cover art in ID3</description>
+        <type>checkbutton</type>
+        <id>7</id>
+        <label>300171</label>
+        <posX>105</posX>
+        <posY>757</posY>
+        <width>810</width>
+        <font>font101</font>
+        <onup>6</onup>
+        <ondown>8</ondown>
+        <onleft>14</onleft>
+        <onright>17</onright>
+      </control>
+      <control>
+        <description>Create genre previes</description>
+        <type>checkbutton</type>
+        <id>8</id>
+        <label>300172</label>
+        <posX>105</posX>
+        <posY>810</posY>
+        <width>810</width>
+        <font>font101</font>
+        <onup>7</onup>
+        <ondown>9</ondown>
+        <onleft>14</onleft>
+        <onright>17</onright>
+      </control>
+      <control>
+        <description>Create artist preview</description>
+        <type>checkbutton</type>
+        <id>9</id>
+        <label>300173</label>
+        <posX>105</posX>
+        <posY>862</posY>
+        <width>810</width>
+        <font>font101</font>
+        <onup>8</onup>
+        <ondown>10</ondown>
+        <onleft>14</onleft>
+        <onright>17</onright>
+      </control>
+      <control>
+        <description>Create missing folder.jpg</description>
+        <type>checkbutton</type>
+        <id>10</id>
+        <label>300174</label>
+        <posX>105</posX>
+        <posY>915</posY>
+        <width>810</width>
+        <font>font101</font>
+        <ondown>14</ondown>
+        <onleft>14</onleft>
+        <onright>17</onright>
+      </control>
+    </control>
+  </controls>
+</window>

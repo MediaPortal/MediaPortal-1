@@ -1,0 +1,402 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+This file should contain the details view
+-->
+<window>
+
+  <controls>
+  <control>
+      <description>group element</description>
+      <type>group</type>
+	
+    <!--            :: MAIN DETAILS ::            -->  
+
+	
+	  <control>
+        <description>Cover Art</description>
+        <type>image</type>
+        <id>70</id>
+        <posX>1444</posX>
+        <posY>197</posY>
+        <width>422</width>
+        <height>605</height>
+		<keepaspectratio>no</keepaspectratio>
+        <zoomfromtop>no</zoomfromtop>
+        <texture mask="CAmask.png">#MovingPictures.Coverart</texture>
+        <visible>control.isvisible(6)</visible>
+      </control>	
+	 
+
+    
+	    <control>
+          <description>Play Movie</description>
+          <type>button</type>
+          <id>6</id>
+          <onup>11899</onup>
+          <ondown>6</ondown>
+          <onright>10000</onright>
+          <onleft>10000</onleft>
+          <posX>57</posX>
+          <posY>727</posY>
+          <width>1387</width>
+          <height>50</height>
+		  <label>Play</label>
+          <textcolor>ffffffff</textcolor>
+          <font>font13</font>
+          <textYOff>3</textYOff>
+          <textXOff>30</textXOff>
+          <textalign>left</textalign>
+          <textcolorNoFocus>60ffffff</textcolorNoFocus>
+		  <textureFocus>btn_list.png</textureFocus>
+		  <textureNoFocus></textureNoFocus>
+          <visible allowhiddenfocus="true">!control.isvisible(50)+!control.isvisible(51)+!control.hasfocus(1500)</visible>
+		  <animation effect="fade" delay="0" reversible="false" time="250">visible</animation>
+        </control>
+	
+	    <control>
+          <description>trailer</description>
+          <type>button</type>
+          <id>11899</id>
+          <onup>11899</onup>
+          <ondown>6</ondown>
+          <onright>10000</onright>
+          <onleft>10000</onleft>
+          <posX>57</posX>
+          <posY>677</posY>
+          <width>1387</width>
+          <height>50</height>
+	      <label>Trailer</label>
+          <textcolor>ffffffff</textcolor>
+          <font>font13</font>
+          <textYOff>3</textYOff>
+          <textXOff>30</textXOff>
+          <textalign>left</textalign>
+          <textcolorNoFocus>60ffffff</textcolorNoFocus>
+	      <textureFocus>btn_list.png</textureFocus>
+	      <textureNoFocus></textureNoFocus>
+          <visible>[control.isvisible(6)]+plugin.isenabled(Trailers)</visible>
+		  <animation effect="fade" delay="0" reversible="false" time="250">visible</animation>
+        </control>
+		
+	
+	  <control>
+        <description>Cover Art</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>1416</posX>
+        <posY>182</posY>
+        <width>28</width>
+        <height>619</height>
+        <texture>D_side.png</texture>
+		<visible>control.isvisible(6)</visible>
+      </control>	 		
+<!--
+    <control>
+      <description>Star Rating Image</description>
+      <type>image</type>
+      <id>101</id>
+      <width>198</width>
+      <height>20</height>
+      <posX>1120</posX>
+      <posY>250</posY>
+      <align>right</align>
+	  <textcolor>eaeaea</textcolor>
+      <texture>star#MovingPictures.SelectedMovie.score.rounded.png</texture>
+      <visible>control.isVisible(6)</visible>
+	  <animation effect="fade" delay="0" reversible="false" time="250">visible</animation>
+    </control>
+	-->
+	 <control>
+      <description>Progress Indicator bg</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1286</posX>
+      <posY>737</posY>
+      <width>25</width>
+      <height>25</height>
+      <texture>checkered-flag.png</texture>
+	  <colordiffuse>eaeaea</colordiffuse>
+      <visible>control.hasfocus(6)+string.equals(#Dtimeformat,False)</visible>
+    </control>	
+	  <control>
+        <description>runtime</description>
+        <type>fadelabel</type>
+        <id>0</id>
+        <posX>1331</posX>
+        <posY>730</posY>
+	    <align>left</align>
+        <width>200</width>
+        <height>50</height>
+        <textcolor>eaeaea</textcolor>
+        <font>font13</font>
+        <label>#(string.format('{0:hh:mm}', cdate(date.add('nn',cint(#MovingPictures.SelectedMovie.runtime.totalminutes),cdate(#time)))))</label>
+        <visible>control.hasfocus(6)+string.equals(#Dtimeformat,False)</visible>
+		<animation effect="fade" delay="0" reversible="false" time="250" condition="control.isVisible(791140)">conditional</animation>
+      </control>
+	  
+	  
+	 <control>
+      <description>Progress Indicator bg</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1286</posX>
+      <posY>737</posY>
+      <width>25</width>
+      <height>25</height>
+      <texture>checkered-flag.png</texture>
+	  <colordiffuse>eaeaea</colordiffuse>
+      <visible>control.hasfocus(6)+string.equals(#Dtimeformat,True)</visible>
+    </control>	  
+	  <control>
+        <description>runtime</description>
+        <type>fadelabel</type>
+        <id>0</id>
+        <posX>1340</posX>
+        <posY>730</posY>
+	    <align>left</align>
+        <width>200</width>
+        <height>50</height>
+        <textcolor>eaeaea</textcolor>
+        <font>font13</font>
+        <label>#(string.format('{0:HH:mm}', cdate(date.add('nn',cint(#MovingPictures.SelectedMovie.runtime.totalminutes),cdate(#time)))))</label>
+        <visible>control.hasfocus(6)+string.equals(#Dtimeformat,True)</visible>
+		<animation effect="fade" delay="0" reversible="false" time="250" condition="control.isVisible(791140)">conditional</animation>
+      </control>
+
+	
+	  <control>
+        <description>Progress Indicator %</description>
+        <type>fadelabel</type>
+        <id>0</id>
+        <posX>1780</posX>
+        <posY>200</posY>
+	    <align>center</align>
+        <width>100</width>
+        <height>50</height>
+        <textcolor>eaeaea</textcolor>
+        <font>font101</font>
+        <label>#MovingPictures.UserMovieSettings.Progress%</label>
+        <visible>[!facadeview.filmstrip+!facadeview.coverflow]+[control.isvisible(50)|control.isVisible(6)]+!string.equals(#MovingPictures.UserMovieSettings.Progress,0)</visible>
+		<animation effect="fade" delay="0" reversible="false" time="250" condition="control.isVisible(791140)">conditional</animation>
+        <animation effect="rotate" delay="0" end="-26" time="0" condition="true">Conditional</animation>
+      </control>		  
+	  
+	
+	<control>
+      <description>group element</description>
+      <type>group</type>
+      <posX>85</posX>
+      <posY>210</posY>
+	  <layout>StackLayout(15, Vertical, true)</layout>
+	  <animation effect="fade" delay="0" reversible="false" time="250">visible</animation>
+	
+	<control>
+      <description>Label</description>
+      <type>label</type>
+      <label>#MovingPictures.SelectedMovie.title</label>
+      <id>0</id>
+      <posX>880</posX>
+      <posY>697</posY>
+      <width>1000</width>
+	  <height>45</height>
+      <font>fontBold</font>
+      <textcolor>ffe3e3e3</textcolor>
+      <visible>control.isvisible(6)</visible>
+    </control>
+	
+	<control>
+      <description>Label</description>
+      <type>label</type>
+      <label>#MovingPictures.SelectedMovie.genres</label>
+      <id>0</id>
+      <posX>880</posX>
+      <posY>697</posY>
+      <width>1000</width>
+	  <height>40</height>
+      <font>font13</font>
+      <textcolor>99ffffff</textcolor>
+      <visible>control.isvisible(6)</visible>
+    </control>
+	
+	
+	
+	
+    <control>
+      <description>Directors Label</description>
+      <type>label</type>
+      <label>#MovingPictures.Translation.Directors.Label / #MovingPictures.Translation.Writers.Label:</label>
+      <id>0</id>
+      <posX>880</posX>
+      <posY>697</posY>
+      <width>1000</width>
+	  <height>30</height>
+      <font>font13</font>
+      <textcolor>ffe3e3e3</textcolor>
+      <visible>control.isvisible(6)</visible>
+    </control>
+	<control>
+      <description>Directors Label</description>
+      <type>textbox</type>
+      <label>#MovingPictures.SelectedMovie.directors / #MovingPictures.SelectedMovie.writers</label>
+      <id>0</id>
+      <posX>880</posX>
+      <posY>697</posY>
+      <width>1300</width>
+	  <height>95</height>
+      <font>font13</font>
+      <textcolor>99ffffff</textcolor>
+      <visible>control.isvisible(6)</visible>
+    </control>
+	</control>
+	
+	
+    <control>
+      <description>actors</description>
+      <type>label</type>
+      <label>#MovingPictures.Translation.Actors.Label:</label>
+      <id>0</id>
+      <posX>85</posX>
+      <posY>460</posY>
+      <width>1000</width>
+	  <height>30</height>
+      <font>font13</font>
+      <textcolor>ffe3e3e3</textcolor>
+      <visible>control.isvisible(6)</visible>
+    </control>
+	<control>
+      <description>actors</description>
+      <type>textbox</type>
+      <label>#MovingPictures.SelectedMovie.actors</label>
+      <id>0</id>
+      <posX>85</posX>
+      <posY>505</posY>
+      <width>1300</width>
+	  <height>130</height>
+      <font>font13</font>
+      <textcolor>99ffffff</textcolor>
+      <visible>control.isvisible(6)</visible>
+    </control>	
+	
+	</control>	
+
+	   <!-- Details View Hidden Menu  -->
+    <control>
+      <type>actiongroup</type>
+      <description>action menu</description>
+      <defaultcontrol>10000</defaultcontrol>
+      <onexit>6</onexit>
+      <dimColor>00ffffff</dimColor>
+      <buttonX>0</buttonX>
+	  <buttonY>0</buttonY>
+	  <buttonwidth>100</buttonwidth>
+      <buttonheight>1080</buttonheight>
+      <textureFocus>-</textureFocus>
+      <textureNoFocus>-</textureNoFocus>
+	  <width>800</width>
+	  <height>800</height>
+      <visible allowhiddenfocus="true">control.isvisible(6)+control.hasfocus(10000)|control.hasfocus(10001)|control.hasfocus(97258)|control.hasfocus(97259)|control.hasfocus(97260)</visible>
+      
+	  <control>
+        <type>image</type>
+        <id>0</id>
+        <width>1920</width>
+        <height>1080</height>
+        <texture>black.png</texture>
+        <colordiffuse>95000000</colordiffuse>
+      </control>
+      <control>
+        <type>image</type>
+        <posX>420</posX>
+        <posY>150</posY>
+        <width>975</width>
+        <height>836</height>
+	    <texture>dialogglowbig.png</texture>
+      </control>   
+	  
+      <control>
+        <type>group</type>
+        <description>group element</description>
+        <posX>500</posX>
+		<posY>250</posY>
+        <width>330</width>
+        <height>1080</height>
+        <layout>StackLayout(0, Vertical, true)</layout>
+        <control>
+          <description>Trailer Search (IMDB)</description>
+          <type>button</type>
+          <id>10000</id>
+          <label>IMDb #(L(5900))</label>
+          <ondown>10001</ondown>
+          <onup>17</onup>
+          <onleft>6</onleft>
+          <onright>6</onright>
+          <hyperlink>4755</hyperlink>
+		  <width>820</width>
+		  <textureFocus>btn_list_blue2.png</textureFocus>
+          <hyperlinkParameter>site:IMDb Movie Trailers|search:#(iif(neq(#MovingPictures.SelectedMovie.imdb_id,''),#MovingPictures.SelectedMovie.imdb_id,#MovingPictures.SelectedMovie.title))|return:Locked</hyperlinkParameter>
+          <visible allowhiddenfocus="true">plugin.isenabled(OnlineVideos)</visible>
+        </control>
+        <control>
+          <description>Subtitles</description>
+          <type>button</type>
+          <id>10001</id>
+          <label>287</label>
+          <hyperlink>84623</hyperlink>
+          <onup>10000</onup>
+          <ondown>97259</ondown>
+          <onleft>6</onleft>
+          <onright>6</onright>
+		  <width>820</width>
+		  <textureFocus>btn_list_blue2.png</textureFocus>
+          <visible allowhiddenfocus="true">plugin.isenabled(SubCentral)</visible>
+        </control>
+        <control>
+          <description>Trakt Rate Movie</description>
+          <type>button</type>
+          <!-- ID:97259 for Trakt Rate -->
+          <id>97259</id>
+          <label>Trakt #Trakt.Translation.Rate.Label</label>
+          <onup>10001</onup>
+          <ondown>97260</ondown>
+          <onleft>6</onleft>
+          <onright>6</onright>
+		  <width>820</width>
+		  <textureFocus>btn_list_blue2.png</textureFocus>
+          <visible allowhiddenfocus="true">plugin.isenabled(Trakt)</visible>
+        </control>
+        <control>
+          <description>Trakt Shouts</description>
+          <type>button</type>
+          <!-- ID:97260 for Trakt Shouts -->
+          <id>97260</id>
+          <label>Trakt #Trakt.Translation.Shouts.Label</label>
+          <onup>97259</onup>
+          <ondown>97258</ondown>
+          <onleft>6</onleft>
+          <onright>6</onright>
+		  <width>820</width>
+		  <textureFocus>btn_list_blue2.png</textureFocus>
+          <visible allowhiddenfocus="true">plugin.isenabled(Trakt)</visible>
+        </control>
+        <control>
+          <description>Trakt Add to Watchlist</description>
+          <type>button</type>
+          <!-- ID:97258 for Add to Watchlist -->
+          <id>97258</id>
+          <label>Trakt +#Trakt.Translation.WatchList.Label</label>
+          <onup>97260</onup>
+          <ondown>10000</ondown>
+          <onleft>6</onleft>
+          <onright>6</onright>
+		  <width>820</width>
+		  <textureFocus>btn_list_blue2.png</textureFocus>
+          <visible allowhiddenfocus="true">plugin.isenabled(Trakt)</visible>
+        </control>
+      </control>
+    </control>
+	
+	
+
+  </controls>
+</window>
+

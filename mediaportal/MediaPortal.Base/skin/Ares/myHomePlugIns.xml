@@ -1,0 +1,301 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>34</id>
+  <defaultcontrol>50</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <disabletopbar>yes</disabletopbar>
+  <define>#selecteditem:</define>
+  <define>#selectedindex:</define>
+  <define>#indexcount:</define>
+  <define>#usePlayFanart:Yes</define>
+  <controls>
+    <control>
+      <description>BG</description>
+      <type>image</type>
+      <id>1</id>
+      <texture>#backgroundcolour</texture>
+      <width>1920</width>
+      <height>1080</height>
+    </control>
+	
+ 	<control>
+      <description>background default</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>defaultfanart.jpg</texture>
+	  <colordiffuse>30ffffff</colordiffuse> 
+    </control>
+
+	
+	<control>
+      <description>background</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>#overlaycolour</texture>
+    </control>		
+    
+    <import>custom\Allscreens\user_dialog.xml</import>
+	
+	
+    <control>
+      <description>Menu</description>
+      <type>menu</type>
+      <animation effect="fade" time="300">WindowOpen</animation>
+      <animation effect="fade" time="300">WindowClose</animation>
+      <id>50</id>
+      <posX>-50</posX>
+      <posY>230</posY>
+      <width>1950</width>
+      <textAlign>center</textAlign>
+      <textcolor>ffffffff</textcolor>
+      <textColorNoFocus>ff6c7880</textColorNoFocus>
+      <dimColor>ffffffff</dimColor>
+      <buttonTextXOff>0</buttonTextXOff>
+      <buttonTextYOff>0</buttonTextYOff>
+      <buttonOffset>0</buttonOffset>
+      <buttonFont>font15</buttonFont>
+      <buttonHeight>40</buttonHeight>
+      <buttonWidth>320</buttonWidth>
+      <spaceBetweenButtons>20</spaceBetweenButtons>
+      <numberOfButtons>12</numberOfButtons>
+      <textureButtonFocus></textureButtonFocus>
+      <textureButtonNoFocus></textureButtonNoFocus>
+      <hoverX>2220</hoverX>
+      <hoverY>130</hoverY>
+      <hoverWidth>750</hoverWidth>
+      <hoverHeight>750</hoverHeight>
+      <hoverKeepAspectratio>yes</hoverKeepAspectratio>
+      <scrollTime>50</scrollTime>
+      <scrollTimeMin>20</scrollTimeMin>
+      <textureBackground>-</textureBackground>
+      <onright>50</onright>
+      <onleft>50</onleft>
+      <onup>21</onup>
+      <ondown>50</ondown>
+      <horizontal>no</horizontal>
+      <animation effect="fade" time="150" delay="100">windowopen</animation>
+      <animation effect="fade" time="150" delay="100">windowclose</animation>
+    </control>
+    <import>topbarhome.xml</import>
+    <!--     *******************************************************************************************  -->
+    <!--     *************************    NOW PLAYING OVERLAYS          ********************************  -->
+    <!--     *******************************************************************************************  -->
+    <!-- ******************************************************************************************* -->
+    <!-- ************************* INFOS ON BASIC HOME (NOW PLAYING VIDEO) ********************* -->
+    <!-- ******************************************************************************************* -->
+    <!--     *******************************************************************************************  -->
+    <!--     *************************    NOW PLAYING OVERLAYS          ********************************  -->
+    <!--     *******************************************************************************************  -->
+    <!-- ******************************************************************************************* -->
+    <!-- ************************* INFOS ON BASIC HOME (NOW PLAYING VIDEO) ********************* -->
+    <!-- ******************************************************************************************* -->
+    
+	<control>
+      <description>background</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>20</posX>
+      <posY>10</posY>
+      <width>275</width>
+      <height>172</height>
+      <texture>tvbac.png</texture>
+	  <shouldCache>true</shouldCache>
+      <colordiffuse>99000000</colordiffuse>
+	  <visible>player.HasVideo</visible>
+	  <animation effect="fade" time="1500" reversible="true">visible</animation>
+	  <animation effect="fade" time="1500" reversible="true">hidden</animation>
+	</control>
+	
+    <control>
+      <description>video preview window</description>
+      <type>videowindow</type>
+      <id>99</id>
+      <posX>35</posX>
+      <posY>28</posY>
+      <width>241</width>
+      <height>135</height>
+      <visible>player.HasVideo</visible>
+      <action>18</action>
+      <textureFocus>tv_green_border.png</textureFocus>
+	  <animation effect="fade" time="1500" reversible="true">visible</animation>
+	  <animation effect="fade" time="0" reversible="true">hidden</animation>
+    </control>
+    <!--control>
+      <description>scrolling info label Video</description>
+      <type>fadelabel</type>
+      <id>01018</id>
+      <posX>185</posX>
+      <posY>1030</posY>
+      <width>345</width>
+      <align>left</align>
+      <font>font9</font>
+      <textcolor>99ffffff</textcolor>
+      <label>#Play.Current.Title</label>
+      <visible>player.HasVideo</visible>
+	  <animation effect="fade" time="1500" reversible="true">windowopen</animation>
+	  <animation effect="fade" time="100" reversible="true">windowclose</animation>
+	  <animation effect="fade" time="1500" reversible="true">visible</animation>
+	  <animation effect="fade" time="1500" reversible="true">hidden</animation>
+    </control>
+	
+	<control>
+      <description>scrolling info label Video</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>185</posX>
+      <posY>1030</posY>
+      <width>345</width>
+      <align>left</align>
+      <font>font9</font>
+      <textcolor>99ffffff</textcolor>
+      <label>#TV.View.title</label>
+      <visible>[player.HasVideo]+!control.hastext(01018)</visible>
+	  <animation effect="fade" time="1500" reversible="true">windowopen</animation>
+	  <animation effect="fade" time="100" reversible="true">windowclose</animation>
+	  <animation effect="fade" time="1500" reversible="true">visible</animation>
+	  <animation effect="fade" time="1500" reversible="true">hidden</animation>
+    </control-->
+	
+	
+    
+    <!--     *******************************************************************************************  -->
+    <!--     ******************   INFOS ON BASIC HOME (NOW PLAYING AUDIO) W FANART  ********************  -->
+    <!--     *******************************************************************************************  -->
+	
+	<control>
+      <description>background</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>20</posX>
+      <posY>10</posY>
+      <width>275</width>
+      <height>172</height>
+      <texture>tvbac.png</texture>
+	  <shouldCache>true</shouldCache>
+      <colordiffuse>99000000</colordiffuse>
+	  <visible>control.hasfocus(089)</visible>
+	  <animation effect="zoom" start="1,100" end="100,100" center="0,0" time="300">visible</animation>
+	  <animation effect="zoom" start="100,100" end="1,100" center="0,0" time="300">hidden</animation>
+	  <animation effect="slide" start="0,0" delay="0" end="290,0" time="300">visible</animation>
+	  <animation effect="slide" start="290,0" delay="0" end="0,0" time="300">hidden</animation>
+	</control>
+	
+	<control>
+      <description>background</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>20</posX>
+      <posY>10</posY>
+      <width>275</width>
+      <height>172</height>
+      <texture>tvbac.png</texture>
+	  <shouldCache>true</shouldCache>
+      <colordiffuse>90000000</colordiffuse>
+	  <visible>Player.HasAudio+!Player.HasVideo</visible>
+	  <animation effect="fade" time="1000" reversible="true">visible</animation>
+	  <animation effect="fade" time="1500" reversible="true">hidden</animation>
+	</control>
+	
+		<control>
+      <id>1</id>
+      <type>image</type>
+      <posX>110</posX>
+      <posY>38</posY>
+      <width>110</width>
+      <height>110</height>
+      <texture>cdfx_small.png</texture>
+      <visible>Player.HasAudio+!Player.HasVideo</visible>
+      <animation effect="fade" time="2000" delay="1500" reversible="false">visible</animation>
+	  <animation effect="fade" time="500" reversible="false">hidden</animation>
+	  <animation effect="fade" time="2000" delay="1500" reversible="false">windowopen</animation>
+	  <animation effect="fade" time="100" reversible="false">windowclose</animation>
+	  <animation effect="slide" start="-70,0" delay="1500" end="0,0" time="300">visible</animation>
+	  <animation effect="slide" start="-70,0" delay="1500" end="0,0" time="300">windowopen</animation>
+	  <animation effect="rotate" delay="0" end="-360" centre="475,258" time="20000" loop="true" condition="player.hasaudio+player.playing">Conditional</animation>
+    </control>
+	
+	<control>
+      <description>background</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>36</posX>
+      <posY>25</posY>
+      <width>140</width>
+      <height>140</height>
+      <texture>s_cdshad.png</texture>
+	  <shouldCache>true</shouldCache>
+      <colordiffuse>ffffffff</colordiffuse>
+	  <visible>Player.HasAudio+!Player.HasVideo</visible>
+      <animation effect="fade" time="1000" reversible="true">windowopen</animation>
+	  <animation effect="fade" time="100" reversible="true">windowclose</animation>
+	  <animation effect="fade" time="1500" reversible="true">visible</animation>
+	  <animation effect="fade" time="500" reversible="true">hidden</animation>
+	</control>
+
+	
+    <control>
+      <description>default</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>40</posX>
+      <posY>30</posY>
+      <width>131</width>
+      <height>131</height>
+      <centered>no</centered>
+      <keepaspectratio>no</keepaspectratio>
+      <visible>Player.HasAudio+!Player.HasVideo+!control.hasthumb(12345)+!control.hasthumb(77)</visible>
+      <texture mask="s_cdmask.png">defaultArtistBig.png</texture>
+	  <animation effect="fade" time="1500" reversible="true">windowopen</animation>
+	  <animation effect="fade" time="100" reversible="true">windowclose</animation>
+	  <animation effect="fade" time="1500" reversible="true">visible</animation>
+	  <animation effect="fade" time="2500" reversible="true">hidden</animation>
+    </control>
+
+    <control>
+      <description>music logo</description>
+      <type>image</type>
+      <id>12345</id>
+      <posX>40</posX>
+      <posY>30</posY>
+      <width>131</width>
+      <height>131</height>
+      <centered>no</centered>
+      <keepaspectratio>no</keepaspectratio>
+      <visible>Player.HasAudio+!Player.HasVideo</visible>
+      <texture mask="s_cdmask.png">#Play.Current.Thumb</texture>
+	  <animation effect="fade" time="1500" reversible="true">windowopen</animation>
+	  <animation effect="fade" time="100" reversible="true">windowclose</animation>
+	  <animation effect="fade" time="1500" reversible="true">visible</animation>
+	  <animation effect="fade" time="1500" reversible="true">hidden</animation>
+    </control>
+    <control>
+      <description>music logo</description>
+      <type>image</type>
+      <id>77</id>
+      <posX>40</posX>
+      <posY>30</posY>
+      <width>131</width>
+      <height>131</height>
+      <keepaspectratio>no</keepaspectratio>
+      <texture mask="s_cdmask.png">#Play.Current.ArtistThumb</texture>
+      <visible>Player.HasAudio+!Player.HasVideo+!control.hasthumb(12345)</visible>
+	  <animation effect="fade" time="1500" reversible="true">windowopen</animation>
+	  <animation effect="fade" time="100" reversible="true">windowclose</animation>
+	  <animation effect="fade" time="1500" reversible="true">visible</animation>
+	  <animation effect="fade" time="1500" reversible="true">hidden</animation>
+    </control>
+    
+    
+
+  </controls>
+</window>
+
+
