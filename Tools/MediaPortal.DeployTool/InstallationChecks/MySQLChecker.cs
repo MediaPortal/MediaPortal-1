@@ -408,8 +408,17 @@ namespace MediaPortal.DeployTool.InstallationChecks
 
     public CheckResult CheckStatus()
     {
+
+      CheckResult result = default(CheckResult);
+
+      // check if the user does not want LAV installed
+      if (InstallationProperties.Instance["ConfigureMediaPortalMySQL"] == "No")
+      {
+        result.state = CheckState.SKIPPED;
+        return result;
+      }
+
       RegistryKey key = null;
-      CheckResult result;
       result.needsDownload = true;
       FileInfo mySqlFile = new FileInfo(_fileName);
 
