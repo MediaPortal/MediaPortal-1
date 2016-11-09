@@ -20,12 +20,15 @@
     <entry name="#ArtistInfo.ShowAlbums">False</entry>
     <entry name="#Dtimeformat">False</entry>
     <entry name="#skin.latest.overview">False</entry>
+    <entry name="#skin.pages,'two'">False</entry>
+    <entry name="#skin.pages,two">False</entry>
   </section>
   <section name="theme">
     <entry name="name">Skin default</entry>
   </section>
   <section name="stringsettings">
-    <entry name="#skin.test">Enable latest media overview as default instead of latest media item information</entry>
+    <entry name="#skin.test">Enable latest media items in homescreen</entry>
+    <entry name="#skin.setnav">8205555</entry>
     <entry name="#background.colour">dark</entry>
     <entry name="#tile1plugin.hyperlink">NoPlugin</entry>
     <entry name="#tile1plugin.name">Configure name</entry>
@@ -91,11 +94,11 @@
     <entry name="#tile16plugin.name">scheduled recordings</entry>
     <entry name="#tile16plugin.parameter">Empty</entry>
     <entry name="#tile16pluginImg">NoPlugin</entry>
-    <entry name="#tile17plugin.hyperlink">Radio</entry>
+    <entry name="#tile17plugin.hyperlink">NoPlugin</entry>
     <entry name="#tile17plugin.name">tv wishlist</entry>
     <entry name="#tile17plugin.parameter">Empty</entry>
     <entry name="#tile17pluginImg">NoPlugin</entry>
-    <entry name="#tile18plugin.hyperlink">Pictures</entry>
+    <entry name="#tile18plugin.hyperlink">NoPlugin</entry>
     <entry name="#tile18plugin.name">logo manager</entry>
     <entry name="#tile18plugin.parameter">Empty</entry>
     <entry name="#tile18pluginImg">NoPlugin</entry>

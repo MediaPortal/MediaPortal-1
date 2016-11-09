@@ -38,6 +38,7 @@
 		  <textXOff>-15</textXOff>
 		  <textXOff2>1190</textXOff2>
 		  <textYOff2>3</textYOff2>
+		  <scrollbarXOff>600</scrollbarXOff>
 		  <selectedColor2>ffeaeaea</selectedColor2>
           <selectedColor>ffeaeaea</selectedColor>
 		  <textureHeight>49</textureHeight>
