@@ -21,8 +21,6 @@
       <description>group element</description>
       <type>group</type>
       <visible>!Control.HasFocus(50)</visible>
-      <animation effect="fade" start="0" end="100" time="200">WindowOpen</animation>
-      <animation effect="fade" start="100" end="0" time="200">WindowClose</animation>
       <control>
         <description>composite control consisting of a list control and a thumbnail panel</description>
         <type>facadeview</type>
@@ -40,8 +38,9 @@
       <font2>font12</font2>
 	  <textYOff>5</textYOff>
 	  <textXOff>-25</textXOff>
-	  <textXOff2>730</textXOff2>
+	  <textXOff2>920</textXOff2>
 	  <textYOff2>5</textYOff2>
+	  <scrollbarXOff>600</scrollbarXOff>
 	  <textureHeight>49</textureHeight>
 	  <textureFocus>btn_list.png</textureFocus>
 	  <textureNoFocus></textureNoFocus>

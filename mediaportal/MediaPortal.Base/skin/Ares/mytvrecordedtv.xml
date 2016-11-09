@@ -266,6 +266,7 @@
 		  <textureFocus>btn_list_blue2.png</textureFocus>
           <textureNoFocus></textureNoFocus>
 		  <textYOff>3</textYOff>
+		  <textXOff>15</textXOff>
 		  <width>820</width>
 		  <height>50</height>
           <onleft>6</onleft>

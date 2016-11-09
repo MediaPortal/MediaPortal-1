@@ -95,7 +95,7 @@
                        <onclick>#(skin.togglesetting('#skin.weather.home'))</onclick>
                        <onup>20800</onup>
 		               <onright>20810</onright>
-					   <onleft>8005555</onleft>
+					   <onleft>#(cint(#skin.setnav))</onleft>
                        <ondown>20801</ondown>
 					   <layoutDetail>TableCell(1, 1, 1)</layoutDetail>
                     </control>
@@ -114,7 +114,7 @@
                        <onclick>#(skin.togglesetting('#skin.no.latestmedia'))</onclick>
                        <onup>20800</onup>
 		               <onright>20810</onright>
-					   <onleft>8005555</onleft>
+					   <onleft>#(cint(#skin.setnav))</onleft>
                        <ondown>20809</ondown>
 					   <layoutDetail>TableCell(1, 1, 1)</layoutDetail>
                     </control>
@@ -133,7 +133,7 @@
                        <onclick>#(skin.togglesetting('#skin.latest.overview'))</onclick>
                        <onup>20801</onup>
 		               <onright>20810</onright>
-					   <onleft>8005555</onleft>
+					   <onleft>#(cint(#skin.setnav))</onleft>
                        <ondown>20802</ondown>
 					   <layoutDetail>TableCell(1, 1, 1)</layoutDetail>
                     </control>					
@@ -160,7 +160,7 @@
                        <textureFocus>btn_list_blue2.png</textureFocus>
 		               <textureNoFocus></textureNoFocus>
 		               <onup>20809</onup>
-                       <onleft>8005555</onleft>
+                       <onleft>#(cint(#skin.setnav))</onleft>
                        <ondown>20803</ondown>
                        <onright>20810</onright>
 					   <layoutDetail>TableCell(1, 1, 1)</layoutDetail>
@@ -187,7 +187,7 @@
                        <textureFocus>btn_list_blue2.png</textureFocus>
 		               <textureNoFocus></textureNoFocus>
 		               <onup>20802</onup>
-                       <onleft>8005555</onleft>
+                       <onleft>#(cint(#skin.setnav))</onleft>
                        <ondown>20804</ondown>
                        <onright>20810</onright>
 					   <layoutDetail>TableCell(1, 1, 1)</layoutDetail>
@@ -215,7 +215,7 @@
                        <textureFocus>btn_list_blue2.png</textureFocus>
 		               <textureNoFocus></textureNoFocus>
                        <onup>20803</onup>
-                       <onleft>8005555</onleft>
+                       <onleft>#(cint(#skin.setnav))</onleft>
                        <ondown>20805</ondown>
                        <onright>20810</onright>
 					   <layoutDetail>TableCell(1, 1, 1)</layoutDetail>
@@ -246,7 +246,7 @@
                        <textureFocus>btn_list_blue2.png</textureFocus>
 		               <textureNoFocus></textureNoFocus>
                        <onup>20804</onup>
-                       <onleft>8005555</onleft>
+                       <onleft>#(cint(#skin.setnav))</onleft>
                        <ondown>20806</ondown>
                        <onright>20810</onright>
 					   <layoutDetail>TableCell(1, 1, 1)</layoutDetail>
@@ -266,7 +266,7 @@
                        <onclick>#(skin.togglesetting('#Dtimeformat'))</onclick>
                        <onup>20805</onup>
 		               <onright>20810</onright>
-					   <onleft>8005555</onleft>
+					   <onleft>#(cint(#skin.setnav))</onleft>
                        <ondown>20807</ondown>
 					   <layoutDetail>TableCell(1, 1, 1)</layoutDetail>
                     </control>	
@@ -293,7 +293,7 @@
                        <textureFocus>btn_list_blue2.png</textureFocus>
 		               <textureNoFocus></textureNoFocus>
                        <onup>20806</onup>
-                       <onleft>8005555</onleft>
+                       <onleft>#(cint(#skin.setnav))</onleft>
                        <ondown>20808</ondown>
                        <onright>20810</onright>
 					   <layoutDetail>TableCell(1, 1, 1)</layoutDetail>
@@ -313,8 +313,8 @@
                        <onclick>#(skin.togglesetting('#skin.rss.info'))</onclick>
                        <onup>20807</onup>
 		               <onright>20810</onright>
-					   <onleft>8005555</onleft>
-                       <ondown>8005555</ondown>
+					   <onleft>#(cint(#skin.setnav))</onleft>
+                       <ondown>#(cint(#skin.setnav))</ondown>
 					   <layoutDetail>TableCell(1, 1, 1)</layoutDetail>
                     </control>	
 					<control>

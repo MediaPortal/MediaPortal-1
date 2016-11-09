@@ -15,7 +15,7 @@
         <height>5</height>
         <texture></texture>
         <colordiffuse>ffffffff</colordiffuse>
-		<visible>control.hasfocus(00509)|[string.equals(#skin.pages,3)+control.hasfocus(00524)]|[string.equals(#skin.pages,2)+control.hasfocus(00519)]</visible>
+		<visible>control.hasfocus(00509)|[string.equals(#skin.pages,three)+control.hasfocus(00524)]|[string.equals(#skin.pages,two)+control.hasfocus(00519)]</visible>
       </control>
 	  
 	  <control>
@@ -176,9 +176,8 @@
 		<animation effect="slide" start="0,0" end="2500,0" reversible="true" time="350" condition="control.hasfocus(55512)">Conditional</animation>
 		<animation effect="fade" time="350" reversible="true">hidden</animation>
       </control>
-
-
-	<control>
+	  
+	  	<control>
       <description>background</description>
       <type>image</type>
       <id>0</id>
@@ -227,7 +226,7 @@
         <id>8005555</id>
 		<posX>190</posX>
         <posY>1000</posY>
-		<onclick>#(skin.setfocus(35,20800))</onclick>
+		<onclick>#(skin.setfocus(35,20800))#(skin.setstring('#skin.setnav','8005555'))</onclick>
 		<height>33</height>
 		<width>33</width>
         <label></label>
@@ -269,7 +268,8 @@
 		<animation effect="fade" delay="0" reversible="false" time="300">Visible</animation>
 		<animation effect="fade" delay="0" reversible="false" time="200">Hidden</animation>
 		<visible allowhiddenfocus="true">control.isvisible(00510)|control.hasfocus(8001123)|control.hasfocus(8005555)|control.hasfocus(8006555)</visible>
-	 </control> 	 
+	 </control> 
+	 
 
 	  
     </control>
