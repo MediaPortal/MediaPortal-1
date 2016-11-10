@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+
+<window>
+  <id>25651</id>
+  <defaultcontrol>35</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <controls>
+
+       <control>
+	   <type>image</type>
+	   <posX>0</posX>
+	   <posY>0</posY>
+	   <width>1920</width>
+	   <height>1080</height>
+       <texture>black.png</texture>
+        <colordiffuse>99000000</colordiffuse>
+	   <animation effect="fade" time="350" reversible="true">hidden</animation>
+	   <visible>!window.isvisible(602)+!window.isvisible(2005)</visible>    
+	 </control>
+		
+       <control>
+	   <type>image</type>
+	   <posX>0</posX>
+	   <posY>0</posY>
+	   <width>1920</width>
+	   <height>1080</height>
+       <texture>black.png</texture>
+        <colordiffuse>99000000</colordiffuse>
+	   <animation effect="fade" time="350" reversible="true">hidden</animation>
+	   <visible>!window.isvisible(602)+!window.isvisible(2005)</visible>    
+	 </control>		
+		
+	  <control>
+        <type>image</type>
+        <id>0</id>
+        <posX>350</posX>
+        <posY>150</posY>
+        <width>1215</width>
+        <height>836</height>
+        <texture>dialogglowbig.png</texture>
+		<visible>window.isvisible(602)|window.isvisible(2005)</visible>    
+      </control>	
+	  <control>
+        <type>image</type>
+        <id>0</id>
+        <posX>350</posX>
+        <posY>150</posY>
+        <width>1215</width>
+        <height>836</height>
+        <texture>dialogglowbig.png</texture>
+		<visible>window.isvisible(602)|window.isvisible(2005)</visible>    
+      </control>		  
+	  
+	  <control>
+        <type>image</type>
+        <id>1</id>
+        <posX>350</posX>
+        <posY>150</posY>
+        <width>1215</width>
+        <height>836</height>
+        <texture>dialogglowbig.png</texture>
+		<visible>!window.isvisible(602)+!window.isvisible(2005)</visible>    
+      </control>		
+	  <control>
+        <type>image</type>
+        <id>1</id>
+        <posX>350</posX>
+        <posY>150</posY>
+        <width>1215</width>
+        <height>836</height>
+        <texture>dialogglowbig.png</texture>
+		<visible>!window.isvisible(602)+!window.isvisible(2005)</visible>    
+      </control>	
+
+	  
+
+    <control>
+      <description>list to show channels without channel state logos</description>
+      <type>listcontrol</type>
+      <id>35</id>
+      <posX>427</posX>
+      <posY>225</posY>
+      <height>700</height>
+      <width>1059</width>
+      <textXOff>30</textXOff>
+      <textYOff>35</textYOff>
+      <textXOff2>0</textXOff2>
+      <textYOff2>0</textYOff2>
+      <textXOff3>92</textXOff3>
+      <textYOff3>0</textYOff3>
+      <IconXOff>20</IconXOff>
+      <IconYOff>5</IconYOff>
+      <PinIconXOff>1008</PinIconXOff>
+      <PinIconYOff>32</PinIconYOff>
+      <PinIconWidth>35</PinIconWidth>
+      <PinIconHeight>35</PinIconHeight>
+      <spinPosX>4400</spinPosX>
+      <spinPosY>930</spinPosY>
+      <itemWidth>52</itemWidth>
+      <itemHeight>52</itemHeight>
+      <spaceBetweenItems>5</spaceBetweenItems>
+      <textureHeight>68</textureHeight>
+	  <textureFocus>miniguidebar.png</textureFocus>
+      <textureNoFocus></textureNoFocus>
+      <keepaspectratio>no</keepaspectratio>
+      <font>font10</font>
+      <font2>font11</font2>
+      <font3>font12</font3>
+      <shadedColor>20ffffff</shadedColor>
+      <selectedColor3>ffffffff</selectedColor3>
+      <selectedColor2>ffffffff</selectedColor2>
+      <selectedColor>ffffffff</selectedColor>
+      <playedColor>ff787878</playedColor>
+      <playedColor2>ff787878</playedColor2>
+      <textcolor>ffffffff</textcolor>
+      <textcolorNoFocus>ff666666</textcolorNoFocus>
+      <textcolor2>ffffffff</textcolor2>
+      <textcolor3>ffffffff</textcolor3>
+      <colordiffuse>ffffffff</colordiffuse>
+      <remoteColor>ff4d96b1</remoteColor>
+      <remoteColor2>ff4d96b1</remoteColor2>
+      <downloadColor>ff666666</downloadColor>
+      <downloadColor2>ff000000</downloadColor2>
+      <scrollbarXOff>2035</scrollbarXOff>
+      <scrollOffset>2</scrollOffset>
+      <!-- used for selected channel -->
+      <onleft>36</onleft>
+      <onright>34</onright>
+      <scrollbarXOff>2035</scrollbarXOff>
+      <showScrollbar>no</showScrollbar>
+    </control>
+
+    <control>
+      <description>list to show channels with channel state logos</description>
+      <type>listcontrol</type>
+      <id>37</id>
+      <posX>427</posX>
+      <posY>225</posY>
+      <height>700</height>
+      <width>1059</width>
+      <textXOff>30</textXOff>
+      <textYOff>35</textYOff>
+      <textXOff2>0</textXOff2>
+      <textYOff2>0</textYOff2>
+      <textXOff3>92</textXOff3>
+      <textYOff3>0</textYOff3>
+      <IconXOff>20</IconXOff>
+      <IconYOff>5</IconYOff>
+      <PinIconXOff>1008</PinIconXOff>
+      <PinIconYOff>32</PinIconYOff>
+      <PinIconWidth>35</PinIconWidth>
+      <PinIconHeight>35</PinIconHeight>
+      <spinPosX>4400</spinPosX>
+      <spinPosY>930</spinPosY>
+      <itemWidth>52</itemWidth>
+      <itemHeight>52</itemHeight>
+      <spaceBetweenItems>5</spaceBetweenItems>
+      <textureHeight>68</textureHeight>
+	  <textureFocus>miniguidebar.png</textureFocus>
+      <textureNoFocus></textureNoFocus>
+      <keepaspectratio>no</keepaspectratio>
+      <font>font10</font>
+      <font2>font11</font2>
+      <font3>font12</font3>
+      <shadedColor>20ffffff</shadedColor>
+      <selectedColor3>ffffffff</selectedColor3>
+      <selectedColor2>ffffffff</selectedColor2>
+      <selectedColor>ffffffff</selectedColor>
+      <playedColor>ff787878</playedColor>
+      <playedColor2>ff787878</playedColor2>
+      <textcolor>ffffffff</textcolor>
+      <textcolorNoFocus>ff666666</textcolorNoFocus>
+      <textcolor2>ffffffff</textcolor2>
+      <textcolor3>ffffffff</textcolor3>
+      <colordiffuse>ffffffff</colordiffuse>
+      <remoteColor>ff4d96b1</remoteColor>
+      <remoteColor2>ff4d96b1</remoteColor2>
+      <downloadColor>ff666666</downloadColor>
+      <downloadColor2>ff000000</downloadColor2>
+      <scrollbarXOff>2035</scrollbarXOff>
+      <scrollOffset>2</scrollOffset>
+      <!-- used for selected channel -->
+      <onleft>36</onleft>
+      <onright>34</onright>
+      <showScrollbar>no</showScrollbar>
+    </control>
+
+
+    <control>
+      <description>Current Time Info</description>
+      <type>label</type>
+      <id>110</id>
+      <posX>8020</posX>
+      <posY>64</posY>
+      <label>#time</label>
+      <align>right</align>
+      <font>font121</font>
+      <textcolor>fff5deb3</textcolor>
+    </control>
+
+    <control>
+      <description>exit button</description>
+      <type>button</type>
+      <id>34</id>
+      <posX>8916</posX>
+      <posY>67</posY>
+      <width>72</width>
+      <height>63</height>
+      <textureFocus>dialogue_shutdown_focus.png</textureFocus>
+      <textureNoFocus>dialogue_shutdown_nofocus.png</textureNoFocus>
+      <onleft>36</onleft>
+      <onright>34</onright>
+      <ondown>35</ondown>
+      <onup>34</onup>
+    </control>
+
+  </controls>
+
+</window>

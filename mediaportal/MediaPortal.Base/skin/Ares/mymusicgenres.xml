@@ -88,7 +88,6 @@
         <height>1080</height>
         <texture>black.png</texture>
         <colordiffuse>99000000</colordiffuse>
-        <animation effect="fade" time="350" reversible="true">hidden</animation>
         <visible>!Control.HasFocus(50)</visible>
       </control>
       <control>
@@ -104,7 +103,6 @@
       <control>
         <description>group element</description>
         <type>group</type>
-        <animation effect="fade" time="350" reversible="true">hidden</animation>        
         <layout>StackLayout(0, Vertical, true)</layout>
         <posX>500</posX>
         <posY>250</posY>
@@ -116,7 +114,7 @@
           <label></label>
           <textureFocus>btn_list_blue2.png</textureFocus>
           <textureNoFocus></textureNoFocus>
-	      <textYOff>0</textYOff>
+	      <textYOff>3</textYOff>
 	      <width>820</width>
 	      <height>50</height>	  
           <onright>50</onright>
@@ -135,7 +133,7 @@
           <label></label>
           <textureFocus>btn_list_blue2.png</textureFocus>
           <textureNoFocus></textureNoFocus>
-	      <textYOff>0</textYOff>
+	      <textYOff>3</textYOff>
 	      <width>820</width>
 	      <height>50</height>
 	      <onleft>50</onleft>
@@ -153,10 +151,10 @@
           <id>3</id>
           <textureFocus>btn_list_blue2.png</textureFocus>
           <textureNoFocus></textureNoFocus>
-	  <textYOff>0</textYOff>
-	  <width>820</width>
-	  <height>50</height>
-	  <onleft>50</onleft>
+	      <textYOff>3</textYOff>
+	      <width>820</width>
+	      <height>50</height>
+	      <onleft>50</onleft>
           <label>103</label>
           <onright>50</onright>
           <onup>5</onup>
@@ -168,7 +166,8 @@
           <id>12</id>
           <textureFocus>btn_list_blue2.png</textureFocus>
           <textureNoFocus></textureNoFocus>
-	  <textYOff>0</textYOff>
+	  <textXOff>15</textXOff>
+		  <textYOff>3</textYOff>
 	  <width>820</width>
 	  <height>50</height>
 	  <onleft>50</onleft>
@@ -183,7 +182,8 @@
           <id>11</id>
           <textureFocus>btn_list_blue2.png</textureFocus>
           <textureNoFocus></textureNoFocus>
-	  <textYOff>0</textYOff>
+	  <textXOff>15</textXOff>
+		  <textYOff>3</textYOff>
 	  <width>820</width>
 	  <height>50</height>
 	  <onleft>50</onleft>
@@ -199,7 +199,8 @@
           <id>9</id>
           <textureFocus>btn_list_blue2.png</textureFocus>
           <textureNoFocus></textureNoFocus>
-	  <textYOff>0</textYOff>
+	  <textXOff>15</textXOff>
+		  <textYOff>3</textYOff>
 	  <width>820</width>
 	  <height>50</height>
           <label>4555</label>
@@ -215,7 +216,8 @@
           <id>10</id>
           <textureFocus>btn_list_blue2.png</textureFocus>
           <textureNoFocus></textureNoFocus>
-	  <textYOff>0</textYOff>
+	  <textXOff>15</textXOff>
+		  <textYOff>3</textYOff>
 	  <width>820</width>
 	  <height>50</height>
           <label>983</label>
@@ -230,7 +232,8 @@
           <id>105</id>
           <textureFocus>btn_list_blue2.png</textureFocus>
           <textureNoFocus></textureNoFocus>
-	  <textYOff>0</textYOff>
+	  <textXOff>15</textXOff>
+		  <textYOff>3</textYOff>
 	  <width>820</width>
 	  <height>50</height>
           <label>Radio</label>
@@ -246,7 +249,8 @@
           <id>106</id>
           <textureFocus>btn_list_blue2.png</textureFocus>
           <textureNoFocus></textureNoFocus>
-	  <textYOff>0</textYOff>
+	  <textXOff>15</textXOff>
+		  <textYOff>3</textYOff>
 	  <width>820</width>
 	  <height>50</height>
           <label>Last.FM</label>
@@ -263,7 +267,8 @@
           <id>9876</id>
           <textureFocus>btn_list_blue2.png</textureFocus>
           <textureNoFocus></textureNoFocus>
-	  <textYOff>0</textYOff>
+	  <textXOff>15</textXOff>
+		  <textYOff>3</textYOff>
 	  <width>820</width>
 	  <height>50</height>
           <hyperlink>30885</hyperlink>
@@ -280,7 +285,8 @@
           <id>9875</id>
           <textureFocus>btn_list_blue2.png</textureFocus>
           <textureNoFocus></textureNoFocus>
-	  <textYOff>0</textYOff>
+	  <textXOff>15</textXOff>
+		  <textYOff>3</textYOff>
 	  <width>820</width>
 	  <height>50</height>
           <hyperlink>90478</hyperlink>
@@ -307,7 +313,6 @@
         <zoomfromtop>no</zoomfromtop>
         <texture mask="MA_mask.png">missing_Coverart.png</texture>
       <visible>[facadeview.largeicons|facadeview.smallicons]</visible>
-      <animation effect="fade" time="350" reversible="true">hidden</animation>
     </control>    
     <control>
       <id>500</id>
@@ -320,7 +325,6 @@
         <zoomfromtop>no</zoomfromtop>
         <texture mask="MA_mask.png">#selectedthumb</texture>
       <visible>[facadeview.largeicons|facadeview.smallicons]</visible>
-      <animation effect="fade" time="350" reversible="true">hidden</animation>
     </control>
 
     <control>
@@ -334,7 +338,6 @@
         <zoomfromtop>no</zoomfromtop>
         <texture mask="MA_mask.png">missing_Coverart.png</texture>
       <visible>[facadeview.list|facadeview.album]+[Control.HasFocus(50)+!control.hasthumb(500)]</visible>
-      <animation effect="fade" time="350" reversible="true">hidden</animation>
     </control>
     <control>
       <id>500</id>
@@ -347,7 +350,6 @@
         <zoomfromtop>no</zoomfromtop>
         <texture mask="MA_mask.png">#selectedthumb</texture>
       <visible>[facadeview.list|facadeview.album]+[Control.HasFocus(50)]</visible>
-      <animation effect="fade" time="350" reversible="true">hidden</animation>
     </control>
 	  
 	  
@@ -393,7 +395,7 @@
       <type>fadelabel</type>
       <id>1</id>
       <posX>260</posX>
-      <posY>840</posY> 
+      <posY>850</posY> 
       <width>1530</width>      
       <label>#selecteditem</label>
       <align>left</align>
@@ -401,6 +403,20 @@
       <textcolor>99ffffff</textcolor>
       <visible>[facadeview.list|facadeview.album]+!player.hasaudio</visible>
     </control>
+    <control>
+      <description>Selected item</description>
+      <type>textboxscrollup</type>
+      <id>1</id>
+      <posX>260</posX>
+      <posY>900</posY> 
+      <width>1560</width>   
+      <height>80</height>	  
+      <label>#ArtistInfo.Bio</label>
+      <align>left</align>
+      <font>font12</font>
+      <textcolor>99ffffff</textcolor>
+      <visible>[facadeview.list|facadeview.album]+!player.hasaudio</visible>
+    </control>	
 	
 	
 	

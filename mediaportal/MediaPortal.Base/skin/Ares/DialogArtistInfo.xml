@@ -74,9 +74,9 @@
         <textureFocus>btn_list.png</textureFocus>
         <font>font12</font>
         <onleft>5</onleft>
-        <onright>6</onright>
-        <onup>17</onup>
-        <ondown>5</ondown>
+        <onright>5</onright>
+        <onup>5</onup>
+        <ondown>6</ondown>
         <onclick>#(skin.togglesetting('#ArtistInfo.ShowAlbums'))</onclick>
       </control>
       <control>
@@ -90,9 +90,9 @@
         <colordiffuse>ffffffff</colordiffuse>
         <textureFocus>btn_list.png</textureFocus>
         <font>font12</font>
-        <onleft>5</onleft>
-        <onright>5</onright>
-        <onup>17</onup>
+        <onleft>6</onleft>
+        <onright>6</onright>
+        <onup>5</onup>
         <ondown>6</ondown>
       </control>      
     </control>  

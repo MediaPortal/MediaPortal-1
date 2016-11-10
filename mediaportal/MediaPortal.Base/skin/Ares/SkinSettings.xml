@@ -28,6 +28,7 @@
   </section>
   <section name="stringsettings">
     <entry name="#skin.test">Enable latest media items in homescreen</entry>
+    <entry name="#skin.currentTile">00513</entry>
     <entry name="#skin.setnav">8205555</entry>
     <entry name="#background.colour">dark</entry>
     <entry name="#tile1plugin.hyperlink">NoPlugin</entry>
