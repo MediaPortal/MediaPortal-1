@@ -85,7 +85,7 @@ namespace MediaPortal.Common.Utils.ExtensionMethods
     }
 
     /// <summary>
-    /// Get the descriptions for a subset of the members of an enum type.
+    /// Get the descriptions for a sub-set of the members of an enum type.
     /// </summary>
     /// <remarks>
     /// Members are filtered in or out of the result set by bitwise comparison
@@ -116,17 +116,12 @@ namespace MediaPortal.Common.Utils.ExtensionMethods
     }
 
     /// <summary>
-    /// Get the descriptions for a subset of the members of an enum type.
+    /// Get the descriptions for a sub-set of the members of an enum type.
     /// </summary>
-    /// <remarks>
-    /// Members are filtered in or out of the result set by bitwise comparison
-    /// of the member value with the filter value.
-    /// </remarks>
     /// <param name="enumType">The enum type.</param>
-    /// <param name="filter">The member filter.</param>
-    /// <param name="includeZeroMember"><c>True</c> to include the member with value zero.</param>
-    /// <returns>an array of strings containing the descriptions for each member that matches the filter</returns>
-    public static string[] GetDescriptions(this Type enumType, IEnumerable<Enum> values)
+    /// <param name="values">The sub-set of enum members.</param>
+    /// <returns>an array of strings containing the descriptions for each member in <paramref name="values"/></returns>
+    public static string[] GetDescriptions(this Type enumType, IEnumerable values)
     {
       if (enumType == null || !enumType.IsEnum)
       {
