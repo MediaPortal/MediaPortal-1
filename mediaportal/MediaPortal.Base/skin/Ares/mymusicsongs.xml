@@ -90,7 +90,6 @@
 	   <height>1080</height>
            <texture>black.png</texture>
            <colordiffuse>99000000</colordiffuse>
-	   <animation effect="fade" time="350" reversible="true">hidden</animation>
 	   <visible>!Control.HasFocus(50)</visible>    
 	 </control>
 		
@@ -109,7 +108,6 @@
       <control>
         <description>group element</description>
         <type>group</type>
-		<animation effect="fade" time="350" reversible="true">hidden</animation>
         <layout>StackLayout(0, Vertical, true)</layout>
         <posX>500</posX>
 		<posY>250</posY>
@@ -126,7 +124,7 @@
           <dialogTitle>792</dialogTitle>
           <valueTextInButton>yes</valueTextInButton>
           <valuePrefixText>95</valuePrefixText>
-		  <textYOff>0</textYOff>
+		  <textYOff>3</textYOff>
 		  <width>820</width>
 		  <height>50</height>
 		  <textureFocus>btn_list_blue2.png</textureFocus>
@@ -144,7 +142,7 @@
           <dialogTitle>499</dialogTitle>
           <valueTextInButton>yes</valueTextInButton>
           <valuePrefixText>97</valuePrefixText>
-		  <textYOff>0</textYOff>
+		  <textYOff>3</textYOff>
 		  <width>820</width>
 		  <height>50</height>
 		  <textureFocus>btn_list_blue2.png</textureFocus>
@@ -158,7 +156,7 @@
           <onright>50</onright>
           <onup>5</onup>
           <ondown>12</ondown>
-		  <textYOff>0</textYOff>
+		  <textYOff>3</textYOff>
 		  <width>820</width>
 		  <height>50</height>
 		  <textureFocus>btn_list_blue2.png</textureFocus>
@@ -172,7 +170,8 @@
           <onright>50</onright>
           <onup>3</onup>
           <ondown>11</ondown>
-		  <textYOff>0</textYOff>
+		  <textXOff>15</textXOff>
+		  <textYOff>3</textYOff>
 		  <width>820</width>
 		  <height>50</height>
 		  <textureFocus>btn_list_blue2.png</textureFocus>
@@ -187,7 +186,8 @@
           <onright>50</onright>
           <onup>12</onup>
           <ondown>9</ondown>
-		  <textYOff>0</textYOff>
+		  <textXOff>15</textXOff>
+		  <textYOff>3</textYOff>
 		  <width>820</width>
 		  <height>50</height>
 		  <textureFocus>btn_list_blue2.png</textureFocus>
@@ -202,7 +202,8 @@
           <onright>50</onright>
           <onup>11</onup>
           <ondown>10</ondown>
-		  <textYOff>0</textYOff>
+		  <textXOff>15</textXOff>
+		  <textYOff>3</textYOff>
 		  <width>820</width>
 		  <height>50</height>
 		  <textureFocus>btn_list_blue2.png</textureFocus>
@@ -216,7 +217,8 @@
           <onright>50</onright>
           <onup>9</onup>
           <ondown>105</ondown>
-		  <textYOff>0</textYOff>
+		  <textXOff>15</textXOff>
+		  <textYOff>3</textYOff>
 		  <width>820</width>
 		  <height>50</height>
 		  <textureFocus>btn_list_blue2.png</textureFocus>
@@ -231,7 +233,8 @@
           <onright>50</onright>
           <onup>10</onup>
           <ondown>106</ondown>
-		  <textYOff>0</textYOff>
+		  <textXOff>15</textXOff>
+		  <textYOff>3</textYOff>
 		  <width>820</width>
 		  <height>50</height>
 		  <textureFocus>btn_list_blue2.png</textureFocus>
@@ -247,7 +250,8 @@
           <onup>105</onup>
           <ondown>9876</ondown>
           <visible>plugin.isenabled(Last.fm Radio)</visible>
-		  <textYOff>0</textYOff>
+		  <textXOff>15</textXOff>
+		  <textYOff>3</textYOff>
 		  <width>820</width>
 		  <height>50</height>
 		  <textureFocus>btn_list_blue2.png</textureFocus>
@@ -262,7 +266,8 @@
           <onup>106</onup>
           <ondown>9875</ondown>
           <onright>50</onright>
-		  <textYOff>0</textYOff>
+		  <textXOff>15</textXOff>
+		  <textYOff>3</textYOff>
 		  <width>820</width>
 		  <height>50</height>
           <visible>plugin.isenabled(Search music)</visible>
@@ -278,7 +283,8 @@
           <onup>9876</onup>
           <ondown>18</ondown>
           <onright>50</onright>
-		  <textYOff>0</textYOff>
+		  <textXOff>15</textXOff>
+		  <textYOff>3</textYOff>
 		  <width>820</width>
 		  <height>50</height>
           <visible>plugin.isenabled(My Lyrics)</visible>
@@ -294,7 +300,8 @@
 		<ondown>2</ondown>
 		<onleft>50</onleft>
 		<onright>50</onright>
-		<textYOff>0</textYOff>
+		<textXOff>15</textXOff>
+		  <textYOff>3</textYOff>
 		  <width>820</width>
 		  <height>50</height>
 		<textureFocus>btn_list_blue2.png</textureFocus>
@@ -408,7 +415,7 @@
       <type>fadelabel</type>
       <id>1</id>
       <posX>260</posX>
-      <posY>840</posY> 
+      <posY>850</posY> 
       <width>1530</width>     
       <label>#selecteditem</label>
       <align>left</align>
@@ -416,6 +423,21 @@
       <textcolor>99ffffff</textcolor>
       <visible>[facadeview.list|facadeview.album]+!player.hasaudio</visible>
     </control>
+    <control>
+      <description>Selected item</description>
+      <type>textboxscrollup</type>
+      <id>1</id>
+      <posX>260</posX>
+      <posY>900</posY> 
+      <width>1560</width>   
+      <height>80</height>	  
+      <label>#ArtistInfo.Bio</label>
+      <align>left</align>
+      <font>font12</font>
+      <textcolor>99ffffff</textcolor>
+      <visible>[facadeview.list|facadeview.album]+!player.hasaudio</visible>
+    </control>
+	
 	
 	
 

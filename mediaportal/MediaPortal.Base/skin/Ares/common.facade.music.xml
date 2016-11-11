@@ -15,6 +15,21 @@
       <visible>[facadeview.filmstrip|facadeview.coverflow|facadeview.largeicons|facadeview.smallicons]+!window.isvisible(801)</visible>
     </control>  
     <control>
+      <description>Selected item</description>
+      <type>textboxscrollup</type>
+      <id>1</id>
+      <posX>260</posX>
+      <posY>900</posY> 
+      <width>1560</width>   
+      <height>80</height>	  
+      <label>#ArtistInfo.Bio</label>
+      <align>left</align>
+      <font>font12</font>
+      <textcolor>99ffffff</textcolor>
+      <visible>[facadeview.filmstrip|facadeview.coverflow|facadeview.largeicons|facadeview.smallicons]+!window.isvisible(801)</visible>
+    </control>	
+	
+    <control>
       <description>group element</description>
       <type>group</type>
       <visible>!Control.HasFocus(50)</visible>
@@ -86,10 +101,10 @@
           <type>thumbnailpanel</type>
           <dimColor>90ffffff</dimColor>
           <id>50</id>
-					<posX>55</posX>
-                    <posY>203</posY>
-                    <width>1350</width>
-                    <height>750</height>
+		  <posX>55</posX>
+          <posY>203</posY>
+          <width>1350</width>
+          <height>750</height>
           <scrollOffset>1</scrollOffset>
           <onleft>2</onleft>
           <onright>2</onright>
