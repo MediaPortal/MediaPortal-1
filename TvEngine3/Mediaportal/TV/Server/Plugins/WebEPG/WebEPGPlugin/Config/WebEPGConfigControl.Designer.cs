@@ -121,7 +121,6 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
       // 
       this.cbCountry.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.cbCountry.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.cbCountry.FormattingEnabled = true;
       this.cbCountry.Location = new System.Drawing.Point(84, 23);
       this.cbCountry.Name = "cbCountry";
@@ -192,7 +191,6 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
       // 
       this.DestinationComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.DestinationComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.DestinationComboBox.FormattingEnabled = true;
       this.DestinationComboBox.Items.AddRange(new object[] {
             "TV Server database",

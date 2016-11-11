@@ -266,8 +266,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.UsbUirt.Config
       this.LogInfo("  USB-UIRT index = {0}", usbUirt.Index);
       this.LogInfo("  transmit zone  = {0}", transmitZone);
       this.LogInfo("  STB profile    = {0}", stbProfileName);
-      this.LogInfo("  channel #      = {0}", numericUpDownTest.Value);
-      TransmitResult result = ServiceAgents.Instance.PluginService<IUsbUirtConfigService>().Transmit((uint)usbUirt.Index, transmitZone, stbProfileName, numericUpDownTest.Value.ToString());
+      this.LogInfo("  channel #      = {0}", channelNumberUpDownTest.Text);
+      TransmitResult result = ServiceAgents.Instance.PluginService<IUsbUirtConfigService>().Transmit((uint)usbUirt.Index, transmitZone, stbProfileName, channelNumberUpDownTest.Text);
       this.LogInfo("  result         = {0}", result);
       if (result == TransmitResult.Success)
       {

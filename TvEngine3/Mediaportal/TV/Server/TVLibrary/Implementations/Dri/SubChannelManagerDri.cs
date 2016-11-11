@@ -58,7 +58,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
     protected override ISubChannelInternal OnTune(int id, IChannel channel, TimeSpan timeLimitReceiveStreamInfo)
     {
       ChannelScte scteChannel = channel as ChannelScte;
-      if (scteChannel != null && scteChannel.Frequency == ChannelScte.FREQUENCY_OUT_OF_BAND_CHANNEL_SCAN)
+      if (scteChannel != null && scteChannel.IsOutOfBandScanChannel())
       {
         // When scanning using the out-of-band tuner we don't require any
         // in band stream. Special handling is required. The regular
@@ -67,8 +67,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
       }
 
       bool isNew;
-      ChannelMpeg2Base mpeg2Channel = channel as ChannelMpeg2Base;
-      if (mpeg2Channel == null || mpeg2Channel.ProgramNumber != ChannelMpeg2Base.PROGRAM_NUMBER_NOT_KNOWN_SELECT_FIRST)
+      IChannelMpeg2Ts mpeg2TsChannel = channel as IChannelMpeg2Ts;
+      if (mpeg2TsChannel == null || mpeg2TsChannel.ProgramNumber != ChannelMpeg2TsBase.PROGRAM_NUMBER_NOT_KNOWN_SELECT_FIRST)
       {
         return _subChannelManager.Tune(id, channel, out isNew) as ISubChannelInternal;
       }
@@ -83,15 +83,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
       // tuners deliver the PAT and PMT for all the programs in the full
       // transport stream, only excluding extra video and audio streams.
       // Therefore we have to do this...
-      int originalProgramNumber = mpeg2Channel.ProgramNumber;
+      int originalProgramNumber = mpeg2TsChannel.ProgramNumber;
       DateTime start = DateTime.Now;
       while (DateTime.Now - start < timeLimitReceiveStreamInfo)
       {
         ThrowExceptionIfTuneCancelled();
-        mpeg2Channel.ProgramNumber = 0;
+        mpeg2TsChannel.ProgramNumber = 0;
         try
         {
-          mpeg2Channel.ProgramNumber = (int)_muxService.QueryStateVariable("ProgramNumber");
+          mpeg2TsChannel.ProgramNumber = (int)_muxService.QueryStateVariable("ProgramNumber");
         }
         catch (Exception ex)
         {
@@ -99,13 +99,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
         }
 
         ThrowExceptionIfTuneCancelled();
-        if (mpeg2Channel.ProgramNumber != 0)
+        if (mpeg2TsChannel.ProgramNumber != 0)
         {
-          this.LogDebug("sub-channel manager DRI: determined program number, ID = {0}, program number = {1}", id, mpeg2Channel.ProgramNumber);
+          this.LogDebug("sub-channel manager DRI: determined program number, ID = {0}, program number = {1}", id, mpeg2TsChannel.ProgramNumber);
           ISubChannelInternal subChannel = _subChannelManager.Tune(id, channel, out isNew) as ISubChannelInternal;
           if (subChannel != null)
           {
-            mpeg2Channel.ProgramNumber = originalProgramNumber;
+            mpeg2TsChannel.ProgramNumber = originalProgramNumber;
             subChannel.CurrentChannel = channel;
           }
           return subChannel;

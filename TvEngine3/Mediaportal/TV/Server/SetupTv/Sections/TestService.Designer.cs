@@ -66,7 +66,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.buttonRestart = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
       this.imageList1 = new System.Windows.Forms.ImageList(this.components);
       this.mpComboBoxChannels = new Mediaportal.TV.Server.SetupControls.ComboBoxEx();
-      this.comboBoxGroups = new Mediaportal.TV.Server.SetupControls.ComboBoxEx();
+      this.comboBoxGroups = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
       this.mpLabel2 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.mpButtonPark = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
       this.txtUsername = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTextBox();
@@ -386,7 +386,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // mpComboBoxChannels
       // 
       this.mpComboBoxChannels.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-      this.mpComboBoxChannels.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.mpComboBoxChannels.FormattingEnabled = true;
       this.mpComboBoxChannels.ImageList = null;
       this.mpComboBoxChannels.Location = new System.Drawing.Point(64, 254);
@@ -396,10 +395,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       // comboBoxGroups
       // 
-      this.comboBoxGroups.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-      this.comboBoxGroups.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxGroups.FormattingEnabled = true;
-      this.comboBoxGroups.ImageList = this.imageList1;
       this.comboBoxGroups.Location = new System.Drawing.Point(64, 230);
       this.comboBoxGroups.Name = "comboBoxGroups";
       this.comboBoxGroups.Size = new System.Drawing.Size(151, 21);
@@ -577,7 +573,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private System.Windows.Forms.ImageList imageList1;
     private MPLabel mpLabelRecording;
     private MPLabel mpLabelTimeShift;
-    private SetupControls.ComboBoxEx comboBoxGroups;
+    private MPComboBox comboBoxGroups;
     private MPLabel mpLabel2;
     private MPLabel mpLabelSignalLevel;
     private MPLabel mpLabelSignalQuality;

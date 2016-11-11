@@ -43,25 +43,14 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
         query = query.Include(c => c.ChannelLinkMaps.Select(l => l.ChannelPortal));
       }
 
-      if (includeRelations.HasFlag(ChannelRelation.ChannelMaps))
+      if (includeRelations.HasFlag(ChannelRelation.ChannelGroupMappings))
       {
-        query = query.Include(c => c.ChannelMaps);
+        query = query.Include(c => c.ChannelGroupMappings);
       }
-
       //too slow, handle in LoadNavigationProperties instead
-      //if (channelMapsTuner)
-      //{      
-      //query = query.Include(c => c.ChannelMaps.Select(tuner => tuner.Tuner));
-      //}
-      if (includeRelations.HasFlag(ChannelRelation.GroupMaps))
-      {
-        query = query.Include(c => c.GroupMaps);
-      }
-
-      //too slow, handle in LoadNavigationProperties instead
-      //if (groupMapsChannelGroup)
+      //if (channelGroupMappingsChannelGroup)
       //{
-      //  query = query.Include(c => c.GroupMaps.Select(g => g.ChannelGroup));
+      //  query = query.Include(c => c.ChannelGroupMappings.Select(m => m.ChannelGroup));
       //}
 
       if (includeRelations.HasFlag(ChannelRelation.TuningDetails))
@@ -74,36 +63,25 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
 
     public IList<Channel> LoadNavigationProperties(IEnumerable<Channel> channels, ChannelRelation includeRelations)
     {
-      bool channelMapsTuner = includeRelations.HasFlag(ChannelRelation.ChannelMapsTuner);
-      bool groupMapsChannelGroup = includeRelations.HasFlag(ChannelRelation.GroupMapsChannelGroup);
+      bool channelGroupMappingsChannelGroup = includeRelations.HasFlag(ChannelRelation.ChannelGroupMappingsChannelGroup);
       bool tuningDetails = includeRelations.HasFlag(ChannelRelation.TuningDetails);
 
       IList<Channel> list = channels.ToList(); //fetch the basic/incomplete result from DB now.
-      if (!channelMapsTuner && !groupMapsChannelGroup && !tuningDetails)
+      if (!channelGroupMappingsChannelGroup && !tuningDetails)
       {
         return list;
       }
 
-      IDictionary<int, Tuner> tuners = null;
       IDictionary<int, ChannelGroup> channelGroups = null;
       IDictionary<int, Satellite> satellites = null;
 
-      if (channelMapsTuner)
-      {
-        List<Tuner> tempTuners = GetAll<Tuner>().ToList();
-        tuners = new Dictionary<int, Tuner>();
-        foreach (Tuner tuner in tempTuners)
-        {
-          tuners.Add(tuner.IdTuner, tuner);
-        }
-      }
-      if (groupMapsChannelGroup)
+      if (channelGroupMappingsChannelGroup)
       {
         List<ChannelGroup> tempChannelGroups = GetAll<ChannelGroup>().ToList();
         channelGroups = new Dictionary<int, ChannelGroup>();
-        foreach (ChannelGroup group in tempChannelGroups)
+        foreach (ChannelGroup channelGroup in tempChannelGroups)
         {
-          channelGroups.Add(group.IdGroup, group);
+          channelGroups.Add(channelGroup.IdChannelGroup, channelGroup);
         }
       }
       if (tuningDetails)
@@ -120,25 +98,14 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
       // TODO further speed improvements by using Parallel/ThreadHelper?
       foreach (Channel channel in list)
       {
-        if (channelMapsTuner)
+        if (channelGroupMappingsChannelGroup)
         {
-          foreach (ChannelMap channelMap in channel.ChannelMaps)
-          {
-            Tuner tuner;
-            if (tuners.TryGetValue(channelMap.IdTuner, out tuner))
-            {
-              channelMap.Tuner = tuner;
-            }
-          }
-        }
-        if (groupMapsChannelGroup)
-        {
-          foreach (GroupMap groupMap in channel.GroupMaps)
+          foreach (ChannelGroupChannelMapping mapping in channel.ChannelGroupMappings)
           {
             ChannelGroup channelGroup;
-            if (channelGroups.TryGetValue(groupMap.IdGroup, out channelGroup))
+            if (channelGroups.TryGetValue(mapping.IdChannelGroup, out channelGroup))
             {
-              groupMap.ChannelGroup = channelGroup;
+              mapping.ChannelGroup = channelGroup;
             }
           }
         }

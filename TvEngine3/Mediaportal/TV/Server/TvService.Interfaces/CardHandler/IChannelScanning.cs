@@ -15,6 +15,6 @@ namespace Mediaportal.TV.Server.TVService.Interfaces.CardHandler
 
     void Scan(IChannel channel, bool isFastNetworkScan, out IList<ScannedChannel> channels, out IDictionary<ChannelGroupType, IDictionary<ulong, string>> groupNames);
 
-    TuningDetail[] ScanNIT(IChannel channel);
+    ScannedTransmitter[] ScanNIT(IChannel channel);
   }
 }

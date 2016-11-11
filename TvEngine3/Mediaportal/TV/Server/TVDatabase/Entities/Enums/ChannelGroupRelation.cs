@@ -6,8 +6,8 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities.Enums
   public enum ChannelGroupRelation
   {
     None = 0,
-    GroupMaps = 1,
-    GroupMapsChannel = 2,
-    GroupMapsTuningDetails = 4
+    ChannelMappings = 1,
+    ChannelMappingsChannel = 2,
+    ChannelMappingsTuningDetails = 4
   }
 }

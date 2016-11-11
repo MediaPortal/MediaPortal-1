@@ -14,7 +14,6 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       using (ITunerSatelliteRepository tunerSatelliteRepository = new TunerSatelliteRepository())
       {
         IQueryable<TunerSatellite> query = tunerSatelliteRepository.GetAll<TunerSatellite>();
-        query = tunerSatelliteRepository.IncludeAllRelations(query, includeRelations);
         if (includeRelations.HasFlag(TunerSatelliteRelation.Satellite))
         {
           query = query.OrderBy(ts => ts.Satellite.Longitude).ThenBy(ts => ts.IdTuner.GetValueOrDefault(0));
@@ -23,7 +22,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
         {
           query = query.OrderBy(ts => ts.IdTuner.GetValueOrDefault(0));
         }
-        return query.ToList();
+        return tunerSatelliteRepository.IncludeAllRelations(query, includeRelations).ToList();
       }
     }
 
@@ -32,7 +31,6 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       using (ITunerSatelliteRepository tunerSatelliteRepository = new TunerSatelliteRepository())
       {
         IQueryable<TunerSatellite> query = tunerSatelliteRepository.GetQuery<TunerSatellite>(ts => ts.IdTuner == null || ts.IdTuner == idTuner);
-        query = tunerSatelliteRepository.IncludeAllRelations(query, includeRelations);
         if (includeRelations.HasFlag(TunerSatelliteRelation.Satellite))
         {
           query = query.OrderBy(ts => ts.Satellite.Longitude).ThenBy(ts => !ts.IdTuner.HasValue);
@@ -41,7 +39,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
         {
           query = query.OrderBy(ts => !ts.IdTuner.HasValue);
         }
-        return query.ToList();
+        return tunerSatelliteRepository.IncludeAllRelations(query, includeRelations).ToList();
       }
     }
 
@@ -50,8 +48,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       using (ITunerSatelliteRepository tunerSatelliteRepository = new TunerSatelliteRepository())
       {
         IQueryable<TunerSatellite> query = tunerSatelliteRepository.GetQuery<TunerSatellite>(ts => ts.IdTunerSatellite == idTunerSatellite);
-        query = tunerSatelliteRepository.IncludeAllRelations(query, includeRelations);
-        return query.FirstOrDefault();
+        return tunerSatelliteRepository.IncludeAllRelations(query, includeRelations).FirstOrDefault();
       }
     }
 

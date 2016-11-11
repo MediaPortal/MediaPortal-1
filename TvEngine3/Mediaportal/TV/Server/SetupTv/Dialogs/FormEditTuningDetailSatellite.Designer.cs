@@ -71,22 +71,49 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.labelFreesatChannelId = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.numericTextBoxOpenTvChannelId = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPNumericTextBox();
       this.labelOpenTvChannelId = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      ((System.ComponentModel.ISupportInitialize)(this.channelNumberUpDownNumber)).BeginInit();
       this.groupBoxEpgSource.SuspendLayout();
       this.SuspendLayout();
       // 
       // buttonCancel
       // 
-      this.buttonCancel.Location = new System.Drawing.Point(403, 438);
+      this.buttonCancel.Location = new System.Drawing.Point(338, 438);
       this.buttonCancel.TabIndex = 48;
       // 
       // buttonOkay
       // 
-      this.buttonOkay.Location = new System.Drawing.Point(308, 438);
+      this.buttonOkay.Location = new System.Drawing.Point(243, 438);
       this.buttonOkay.TabIndex = 47;
+      // 
+      // labelNumber
+      // 
+      this.labelNumber.Location = new System.Drawing.Point(12, 40);
+      // 
+      // channelNumberUpDownNumber
+      // 
+      this.channelNumberUpDownNumber.Value = new decimal(new int[] {
+            10000,
+            0,
+            0,
+            0});
+      // 
+      // textBoxName
+      // 
+      this.textBoxName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxName.MinimumSize = new System.Drawing.Size(105, 4);
+      this.textBoxName.Size = new System.Drawing.Size(105, 20);
       // 
       // checkBoxIsEncrypted
       // 
       this.checkBoxIsEncrypted.Location = new System.Drawing.Point(123, 91);
+      // 
+      // textBoxProvider
+      // 
+      this.textBoxProvider.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxProvider.MinimumSize = new System.Drawing.Size(105, 4);
+      this.textBoxProvider.Size = new System.Drawing.Size(105, 20);
       // 
       // labelIsEncrypted
       // 
@@ -112,36 +139,36 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       this.comboBoxRollOffFactor.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxRollOffFactor.FormattingEnabled = true;
-      this.comboBoxRollOffFactor.Location = new System.Drawing.Point(123, 380);
+      this.comboBoxRollOffFactor.Location = new System.Drawing.Point(123, 353);
       this.comboBoxRollOffFactor.Name = "comboBoxRollOffFactor";
-      this.comboBoxRollOffFactor.Size = new System.Drawing.Size(87, 21);
-      this.comboBoxRollOffFactor.TabIndex = 31;
+      this.comboBoxRollOffFactor.Size = new System.Drawing.Size(105, 21);
+      this.comboBoxRollOffFactor.TabIndex = 29;
       // 
       // labelRollOffFactor
       // 
       this.labelRollOffFactor.AutoSize = true;
-      this.labelRollOffFactor.Location = new System.Drawing.Point(12, 383);
+      this.labelRollOffFactor.Location = new System.Drawing.Point(12, 356);
       this.labelRollOffFactor.Name = "labelRollOffFactor";
       this.labelRollOffFactor.Size = new System.Drawing.Size(73, 13);
-      this.labelRollOffFactor.TabIndex = 30;
+      this.labelRollOffFactor.TabIndex = 28;
       this.labelRollOffFactor.Text = "Roll-off factor:";
       // 
       // comboBoxPilotTonesState
       // 
       this.comboBoxPilotTonesState.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxPilotTonesState.FormattingEnabled = true;
-      this.comboBoxPilotTonesState.Location = new System.Drawing.Point(123, 353);
+      this.comboBoxPilotTonesState.Location = new System.Drawing.Point(123, 380);
       this.comboBoxPilotTonesState.Name = "comboBoxPilotTonesState";
-      this.comboBoxPilotTonesState.Size = new System.Drawing.Size(87, 21);
-      this.comboBoxPilotTonesState.TabIndex = 29;
+      this.comboBoxPilotTonesState.Size = new System.Drawing.Size(105, 21);
+      this.comboBoxPilotTonesState.TabIndex = 31;
       // 
       // labelPilotTonesState
       // 
       this.labelPilotTonesState.AutoSize = true;
-      this.labelPilotTonesState.Location = new System.Drawing.Point(12, 356);
+      this.labelPilotTonesState.Location = new System.Drawing.Point(12, 383);
       this.labelPilotTonesState.Name = "labelPilotTonesState";
       this.labelPilotTonesState.Size = new System.Drawing.Size(85, 13);
-      this.labelPilotTonesState.TabIndex = 28;
+      this.labelPilotTonesState.TabIndex = 30;
       this.labelPilotTonesState.Text = "Pilot tones state:";
       // 
       // comboBoxFecCodeRate
@@ -150,7 +177,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.comboBoxFecCodeRate.FormattingEnabled = true;
       this.comboBoxFecCodeRate.Location = new System.Drawing.Point(123, 326);
       this.comboBoxFecCodeRate.Name = "comboBoxFecCodeRate";
-      this.comboBoxFecCodeRate.Size = new System.Drawing.Size(87, 21);
+      this.comboBoxFecCodeRate.Size = new System.Drawing.Size(105, 21);
       this.comboBoxFecCodeRate.TabIndex = 27;
       // 
       // labelFecCodeRate
@@ -168,7 +195,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.comboBoxPolarisation.FormattingEnabled = true;
       this.comboBoxPolarisation.Location = new System.Drawing.Point(123, 246);
       this.comboBoxPolarisation.Name = "comboBoxPolarisation";
-      this.comboBoxPolarisation.Size = new System.Drawing.Size(150, 21);
+      this.comboBoxPolarisation.Size = new System.Drawing.Size(105, 21);
       this.comboBoxPolarisation.TabIndex = 20;
       // 
       // labelPolarisation
@@ -203,20 +230,22 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       // numericTextBoxPmtPid
       // 
-      this.numericTextBoxPmtPid.Location = new System.Drawing.Point(414, 142);
+      this.numericTextBoxPmtPid.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.numericTextBoxPmtPid.Location = new System.Drawing.Point(364, 142);
       this.numericTextBoxPmtPid.MaximumValue = 65535;
       this.numericTextBoxPmtPid.MaxLength = 5;
       this.numericTextBoxPmtPid.MinimumValue = 0;
       this.numericTextBoxPmtPid.Name = "numericTextBoxPmtPid";
-      this.numericTextBoxPmtPid.Size = new System.Drawing.Size(55, 20);
+      this.numericTextBoxPmtPid.Size = new System.Drawing.Size(40, 20);
       this.numericTextBoxPmtPid.TabIndex = 45;
       this.numericTextBoxPmtPid.Text = "0";
       this.numericTextBoxPmtPid.Value = 0;
       // 
       // labelOriginalNetworkId
       // 
+      this.labelOriginalNetworkId.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.labelOriginalNetworkId.AutoSize = true;
-      this.labelOriginalNetworkId.Location = new System.Drawing.Point(305, 15);
+      this.labelOriginalNetworkId.Location = new System.Drawing.Point(255, 15);
       this.labelOriginalNetworkId.Name = "labelOriginalNetworkId";
       this.labelOriginalNetworkId.Size = new System.Drawing.Size(100, 13);
       this.labelOriginalNetworkId.TabIndex = 34;
@@ -224,44 +253,48 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       // numericTextBoxServiceId
       // 
-      this.numericTextBoxServiceId.Location = new System.Drawing.Point(414, 64);
+      this.numericTextBoxServiceId.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.numericTextBoxServiceId.Location = new System.Drawing.Point(364, 64);
       this.numericTextBoxServiceId.MaximumValue = 65535;
       this.numericTextBoxServiceId.MaxLength = 5;
       this.numericTextBoxServiceId.MinimumValue = 0;
       this.numericTextBoxServiceId.Name = "numericTextBoxServiceId";
-      this.numericTextBoxServiceId.Size = new System.Drawing.Size(55, 20);
+      this.numericTextBoxServiceId.Size = new System.Drawing.Size(40, 20);
       this.numericTextBoxServiceId.TabIndex = 39;
       this.numericTextBoxServiceId.Text = "0";
       this.numericTextBoxServiceId.Value = 0;
       // 
       // numericTextBoxTransportStreamId
       // 
-      this.numericTextBoxTransportStreamId.Location = new System.Drawing.Point(414, 38);
+      this.numericTextBoxTransportStreamId.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.numericTextBoxTransportStreamId.Location = new System.Drawing.Point(364, 37);
       this.numericTextBoxTransportStreamId.MaximumValue = 65535;
       this.numericTextBoxTransportStreamId.MaxLength = 5;
       this.numericTextBoxTransportStreamId.MinimumValue = 0;
       this.numericTextBoxTransportStreamId.Name = "numericTextBoxTransportStreamId";
-      this.numericTextBoxTransportStreamId.Size = new System.Drawing.Size(55, 20);
+      this.numericTextBoxTransportStreamId.Size = new System.Drawing.Size(40, 20);
       this.numericTextBoxTransportStreamId.TabIndex = 37;
       this.numericTextBoxTransportStreamId.Text = "0";
       this.numericTextBoxTransportStreamId.Value = 0;
       // 
       // numericTextBoxOriginalNetworkId
       // 
-      this.numericTextBoxOriginalNetworkId.Location = new System.Drawing.Point(414, 12);
+      this.numericTextBoxOriginalNetworkId.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.numericTextBoxOriginalNetworkId.Location = new System.Drawing.Point(364, 12);
       this.numericTextBoxOriginalNetworkId.MaximumValue = 65535;
       this.numericTextBoxOriginalNetworkId.MaxLength = 5;
       this.numericTextBoxOriginalNetworkId.MinimumValue = 0;
       this.numericTextBoxOriginalNetworkId.Name = "numericTextBoxOriginalNetworkId";
-      this.numericTextBoxOriginalNetworkId.Size = new System.Drawing.Size(55, 20);
+      this.numericTextBoxOriginalNetworkId.Size = new System.Drawing.Size(40, 20);
       this.numericTextBoxOriginalNetworkId.TabIndex = 35;
       this.numericTextBoxOriginalNetworkId.Text = "0";
       this.numericTextBoxOriginalNetworkId.Value = 0;
       // 
       // labelPmtPid
       // 
+      this.labelPmtPid.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.labelPmtPid.AutoSize = true;
-      this.labelPmtPid.Location = new System.Drawing.Point(305, 145);
+      this.labelPmtPid.Location = new System.Drawing.Point(255, 145);
       this.labelPmtPid.Name = "labelPmtPid";
       this.labelPmtPid.Size = new System.Drawing.Size(54, 13);
       this.labelPmtPid.TabIndex = 44;
@@ -269,8 +302,9 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       // labelTransportStreamId
       // 
+      this.labelTransportStreamId.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.labelTransportStreamId.AutoSize = true;
-      this.labelTransportStreamId.Location = new System.Drawing.Point(305, 41);
+      this.labelTransportStreamId.Location = new System.Drawing.Point(255, 40);
       this.labelTransportStreamId.Name = "labelTransportStreamId";
       this.labelTransportStreamId.Size = new System.Drawing.Size(103, 13);
       this.labelTransportStreamId.TabIndex = 36;
@@ -278,8 +312,9 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       // labelServiceId
       // 
+      this.labelServiceId.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.labelServiceId.AutoSize = true;
-      this.labelServiceId.Location = new System.Drawing.Point(305, 67);
+      this.labelServiceId.Location = new System.Drawing.Point(255, 67);
       this.labelServiceId.Name = "labelServiceId";
       this.labelServiceId.Size = new System.Drawing.Size(60, 13);
       this.labelServiceId.TabIndex = 38;
@@ -305,12 +340,18 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       // comboBoxModulation
       // 
+      this.comboBoxModulation.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.comboBoxModulation.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.comboBoxModulation.DropDownWidth = 155;
       this.comboBoxModulation.FormattingEnabled = true;
       this.comboBoxModulation.Location = new System.Drawing.Point(123, 273);
+      this.comboBoxModulation.MaximumSize = new System.Drawing.Size(155, 0);
+      this.comboBoxModulation.MinimumSize = new System.Drawing.Size(105, 0);
       this.comboBoxModulation.Name = "comboBoxModulation";
-      this.comboBoxModulation.Size = new System.Drawing.Size(150, 21);
+      this.comboBoxModulation.Size = new System.Drawing.Size(105, 21);
       this.comboBoxModulation.TabIndex = 22;
+      this.comboBoxModulation.SelectedIndexChanged += new System.EventHandler(this.comboBoxModulation_SelectedIndexChanged);
       // 
       // labelModulation
       // 
@@ -345,9 +386,9 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // numericTextBoxFrequency
       // 
       this.numericTextBoxFrequency.Location = new System.Drawing.Point(123, 220);
-      this.numericTextBoxFrequency.MaximumValue = 20000000;
+      this.numericTextBoxFrequency.MaximumValue = 22000000;
       this.numericTextBoxFrequency.MaxLength = 8;
-      this.numericTextBoxFrequency.MinimumValue = 1500000;
+      this.numericTextBoxFrequency.MinimumValue = 3400000;
       this.numericTextBoxFrequency.Name = "numericTextBoxFrequency";
       this.numericTextBoxFrequency.Size = new System.Drawing.Size(55, 20);
       this.numericTextBoxFrequency.TabIndex = 17;
@@ -365,11 +406,14 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       // comboBoxSatellite
       // 
+      this.comboBoxSatellite.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.comboBoxSatellite.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxSatellite.FormattingEnabled = true;
       this.comboBoxSatellite.Location = new System.Drawing.Point(123, 193);
+      this.comboBoxSatellite.MinimumSize = new System.Drawing.Size(105, 0);
       this.comboBoxSatellite.Name = "comboBoxSatellite";
-      this.comboBoxSatellite.Size = new System.Drawing.Size(150, 21);
+      this.comboBoxSatellite.Size = new System.Drawing.Size(105, 21);
       this.comboBoxSatellite.TabIndex = 15;
       // 
       // labelSatellite
@@ -387,7 +431,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.comboBoxBroadcastStandard.FormattingEnabled = true;
       this.comboBoxBroadcastStandard.Location = new System.Drawing.Point(123, 166);
       this.comboBoxBroadcastStandard.Name = "comboBoxBroadcastStandard";
-      this.comboBoxBroadcastStandard.Size = new System.Drawing.Size(87, 21);
+      this.comboBoxBroadcastStandard.Size = new System.Drawing.Size(105, 21);
       this.comboBoxBroadcastStandard.TabIndex = 13;
       this.comboBoxBroadcastStandard.SelectedIndexChanged += new System.EventHandler(this.comboBoxBroadcastStandard_SelectedIndexChanged);
       // 
@@ -402,6 +446,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       // groupBoxEpgSource
       // 
+      this.groupBoxEpgSource.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxEpgSource.Controls.Add(this.labelEpgOriginalNetworkId);
       this.groupBoxEpgSource.Controls.Add(this.numericTextBoxEpgServiceId);
       this.groupBoxEpgSource.Controls.Add(this.numericTextBoxEpgTransportStreamId);
@@ -409,9 +454,9 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.groupBoxEpgSource.Controls.Add(this.labelEpgTransportStreamId);
       this.groupBoxEpgSource.Controls.Add(this.labelEpgServiceId);
       this.groupBoxEpgSource.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxEpgSource.Location = new System.Drawing.Point(296, 174);
+      this.groupBoxEpgSource.Location = new System.Drawing.Point(246, 174);
       this.groupBoxEpgSource.Name = "groupBoxEpgSource";
-      this.groupBoxEpgSource.Size = new System.Drawing.Size(182, 103);
+      this.groupBoxEpgSource.Size = new System.Drawing.Size(167, 103);
       this.groupBoxEpgSource.TabIndex = 46;
       this.groupBoxEpgSource.TabStop = false;
       this.groupBoxEpgSource.Text = "EPG Source";
@@ -432,7 +477,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.numericTextBoxEpgServiceId.MaxLength = 5;
       this.numericTextBoxEpgServiceId.MinimumValue = 0;
       this.numericTextBoxEpgServiceId.Name = "numericTextBoxEpgServiceId";
-      this.numericTextBoxEpgServiceId.Size = new System.Drawing.Size(55, 20);
+      this.numericTextBoxEpgServiceId.Size = new System.Drawing.Size(40, 20);
       this.numericTextBoxEpgServiceId.TabIndex = 5;
       this.numericTextBoxEpgServiceId.Text = "0";
       this.numericTextBoxEpgServiceId.Value = 0;
@@ -444,7 +489,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.numericTextBoxEpgTransportStreamId.MaxLength = 5;
       this.numericTextBoxEpgTransportStreamId.MinimumValue = 0;
       this.numericTextBoxEpgTransportStreamId.Name = "numericTextBoxEpgTransportStreamId";
-      this.numericTextBoxEpgTransportStreamId.Size = new System.Drawing.Size(55, 20);
+      this.numericTextBoxEpgTransportStreamId.Size = new System.Drawing.Size(40, 20);
       this.numericTextBoxEpgTransportStreamId.TabIndex = 3;
       this.numericTextBoxEpgTransportStreamId.Text = "0";
       this.numericTextBoxEpgTransportStreamId.Value = 0;
@@ -456,7 +501,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.numericTextBoxEpgOriginalNetworkId.MaxLength = 5;
       this.numericTextBoxEpgOriginalNetworkId.MinimumValue = 0;
       this.numericTextBoxEpgOriginalNetworkId.Name = "numericTextBoxEpgOriginalNetworkId";
-      this.numericTextBoxEpgOriginalNetworkId.Size = new System.Drawing.Size(55, 20);
+      this.numericTextBoxEpgOriginalNetworkId.Size = new System.Drawing.Size(40, 20);
       this.numericTextBoxEpgOriginalNetworkId.TabIndex = 1;
       this.numericTextBoxEpgOriginalNetworkId.Text = "0";
       this.numericTextBoxEpgOriginalNetworkId.Value = 0;
@@ -481,20 +526,22 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       // numericTextBoxFreesatChannelId
       // 
-      this.numericTextBoxFreesatChannelId.Location = new System.Drawing.Point(414, 90);
+      this.numericTextBoxFreesatChannelId.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.numericTextBoxFreesatChannelId.Location = new System.Drawing.Point(364, 90);
       this.numericTextBoxFreesatChannelId.MaximumValue = 65535;
       this.numericTextBoxFreesatChannelId.MaxLength = 5;
       this.numericTextBoxFreesatChannelId.MinimumValue = 0;
       this.numericTextBoxFreesatChannelId.Name = "numericTextBoxFreesatChannelId";
-      this.numericTextBoxFreesatChannelId.Size = new System.Drawing.Size(55, 20);
+      this.numericTextBoxFreesatChannelId.Size = new System.Drawing.Size(40, 20);
       this.numericTextBoxFreesatChannelId.TabIndex = 41;
       this.numericTextBoxFreesatChannelId.Text = "0";
       this.numericTextBoxFreesatChannelId.Value = 0;
       // 
       // labelFreesatChannelId
       // 
+      this.labelFreesatChannelId.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.labelFreesatChannelId.AutoSize = true;
-      this.labelFreesatChannelId.Location = new System.Drawing.Point(305, 93);
+      this.labelFreesatChannelId.Location = new System.Drawing.Point(255, 93);
       this.labelFreesatChannelId.Name = "labelFreesatChannelId";
       this.labelFreesatChannelId.Size = new System.Drawing.Size(100, 13);
       this.labelFreesatChannelId.TabIndex = 40;
@@ -502,20 +549,22 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       // numericTextBoxOpenTvChannelId
       // 
-      this.numericTextBoxOpenTvChannelId.Location = new System.Drawing.Point(414, 116);
+      this.numericTextBoxOpenTvChannelId.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.numericTextBoxOpenTvChannelId.Location = new System.Drawing.Point(364, 116);
       this.numericTextBoxOpenTvChannelId.MaximumValue = 65535;
       this.numericTextBoxOpenTvChannelId.MaxLength = 5;
       this.numericTextBoxOpenTvChannelId.MinimumValue = 0;
       this.numericTextBoxOpenTvChannelId.Name = "numericTextBoxOpenTvChannelId";
-      this.numericTextBoxOpenTvChannelId.Size = new System.Drawing.Size(55, 20);
+      this.numericTextBoxOpenTvChannelId.Size = new System.Drawing.Size(40, 20);
       this.numericTextBoxOpenTvChannelId.TabIndex = 43;
       this.numericTextBoxOpenTvChannelId.Text = "0";
       this.numericTextBoxOpenTvChannelId.Value = 0;
       // 
       // labelOpenTvChannelId
       // 
+      this.labelOpenTvChannelId.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.labelOpenTvChannelId.AutoSize = true;
-      this.labelOpenTvChannelId.Location = new System.Drawing.Point(305, 119);
+      this.labelOpenTvChannelId.Location = new System.Drawing.Point(255, 119);
       this.labelOpenTvChannelId.Name = "labelOpenTvChannelId";
       this.labelOpenTvChannelId.Size = new System.Drawing.Size(105, 13);
       this.labelOpenTvChannelId.TabIndex = 42;
@@ -526,7 +575,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.AcceptButton = this.buttonOkay;
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.CancelButton = this.buttonCancel;
-      this.ClientSize = new System.Drawing.Size(490, 473);
+      this.ClientSize = new System.Drawing.Size(425, 473);
       this.Controls.Add(this.numericTextBoxOpenTvChannelId);
       this.Controls.Add(this.labelOpenTvChannelId);
       this.Controls.Add(this.numericTextBoxFreesatChannelId);
@@ -562,6 +611,8 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.Controls.Add(this.labelFecCodeRate);
       this.Controls.Add(this.comboBoxPolarisation);
       this.Controls.Add(this.labelPolarisation);
+      this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
+      this.MinimumSize = new System.Drawing.Size(433, 499);
       this.Name = "FormEditTuningDetailSatellite";
       this.Text = "Add/Edit Satellite Tuning Detail";
       this.Controls.SetChildIndex(this.labelPolarisation, 0);
@@ -607,12 +658,13 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.Controls.SetChildIndex(this.checkBoxIsEncrypted, 0);
       this.Controls.SetChildIndex(this.textBoxName, 0);
       this.Controls.SetChildIndex(this.labelName, 0);
-      this.Controls.SetChildIndex(this.textBoxNumber, 0);
+      this.Controls.SetChildIndex(this.channelNumberUpDownNumber, 0);
       this.Controls.SetChildIndex(this.labelNumber, 0);
       this.Controls.SetChildIndex(this.buttonOkay, 0);
       this.Controls.SetChildIndex(this.buttonCancel, 0);
       this.Controls.SetChildIndex(this.labelOpenTvChannelId, 0);
       this.Controls.SetChildIndex(this.numericTextBoxOpenTvChannelId, 0);
+      ((System.ComponentModel.ISupportInitialize)(this.channelNumberUpDownNumber)).EndInit();
       this.groupBoxEpgSource.ResumeLayout(false);
       this.groupBoxEpgSource.PerformLayout();
       this.ResumeLayout(false);

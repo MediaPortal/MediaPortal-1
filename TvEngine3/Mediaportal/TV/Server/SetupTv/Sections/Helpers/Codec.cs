@@ -61,7 +61,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
 
     public override int GetHashCode()
     {
-      return base.GetHashCode() ^ Name.GetHashCode() ^ ClassId.GetHashCode();
+      return Name.GetHashCode() ^ ClassId.GetHashCode();
     }
 
     public override string ToString()

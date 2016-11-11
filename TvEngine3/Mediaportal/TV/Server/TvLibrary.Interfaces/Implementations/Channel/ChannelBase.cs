@@ -19,7 +19,6 @@
 #endregion
 
 using System.Runtime.Serialization;
-using System.Text.RegularExpressions;
 using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
 
@@ -29,29 +28,27 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel
   /// A base class for <see cref="T:IChannel"/> implementations.
   /// </summary>
   [DataContract]
+  [KnownType(typeof(ChannelAmRadio))]
   [KnownType(typeof(ChannelAnalogTv))]
   [KnownType(typeof(ChannelAtsc))]
   [KnownType(typeof(ChannelCapture))]
   [KnownType(typeof(ChannelDigiCipher2))]
   [KnownType(typeof(ChannelDvbC))]
   [KnownType(typeof(ChannelDvbC2))]
+  [KnownType(typeof(ChannelDvbDsng))]
   [KnownType(typeof(ChannelDvbS))]
   [KnownType(typeof(ChannelDvbS2))]
   [KnownType(typeof(ChannelDvbT))]
   [KnownType(typeof(ChannelDvbT2))]
   [KnownType(typeof(ChannelFmRadio))]
+  [KnownType(typeof(ChannelIsdbC))]
+  [KnownType(typeof(ChannelIsdbS))]
+  [KnownType(typeof(ChannelIsdbT))]
   [KnownType(typeof(ChannelSatelliteTurboFec))]
   [KnownType(typeof(ChannelScte))]
   [KnownType(typeof(ChannelStream))]
   public abstract class ChannelBase : IChannel
   {
-    #region constants
-
-    public static readonly Regex LOGICAL_CHANNEL_NUMBER_FORMAT = new Regex(@"^(\d+)([^\d](\d+))?$");
-    public const char LOGICAL_CHANNEL_NUMBER_SEPARATOR = '.';
-
-    #endregion
-
     #region variables
 
     [DataMember]
@@ -137,10 +134,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel
     {
       get
       {
-        // If we were to use zero or empty string, sorting channel groups by
-        // number would place the channels with default numbers first. That
-        // would be undesirable.
-        return "10000";
+        return Mediaportal.TV.Server.Common.Types.Channel.LogicalChannelNumber.GLOBAL_DEFAULT;
       }
     }
 
@@ -247,7 +241,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel
     /// <returns>a hash code for the current <see cref="T:System.Object"/></returns>
     public override int GetHashCode()
     {
-      return base.GetHashCode() ^ Name.GetHashCode() ^ Provider.GetHashCode() ^
+      return Name.GetHashCode() ^ Provider.GetHashCode() ^
               LogicalChannelNumber.GetHashCode() ^ MediaType.GetHashCode() ^
               IsEncrypted.GetHashCode() ^ IsHighDefinition.GetHashCode() ^
               IsThreeDimensional.GetHashCode();
@@ -259,9 +253,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel
     /// <returns>a <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/></returns>
     public override string ToString()
     {
-      return string.Format("name = {0}, provider = {1}, LCN = {2}, media type = {3}, is encrypted = {4}, is HD = {5}, is 3D = {6}",
+      string description = string.Format("name = {0}, provider = {1}, LCN = {2}, media type = {3}, is encrypted = {4}",
                             Name, Provider, LogicalChannelNumber, MediaType,
-                            IsEncrypted, IsHighDefinition, IsThreeDimensional);
+                            IsEncrypted);
+      if (MediaType == MediaType.Radio)
+      {
+        return description;
+      }
+      return string.Format("{0}, is HD = {5}, is 3D = {6}", IsHighDefinition, IsThreeDimensional);
     }
 
     #endregion

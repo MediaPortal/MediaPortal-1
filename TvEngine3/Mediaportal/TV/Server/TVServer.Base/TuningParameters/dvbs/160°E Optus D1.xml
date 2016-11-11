@@ -2,31 +2,31 @@
 <ArrayOfTuningDetail xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <TuningDetail>
     <BroadcastStandard>DvbS2</BroadcastStandard>
-    <SatellitePosition>1600</SatellitePosition>
+    <Longitude>1600</Longitude>
     <Frequency>12267000</Frequency>
     <Polarisation>LinearHorizontal</Polarisation>
     <ModulationScheme>Psk8</ModulationScheme>
     <SymbolRate>22500</SymbolRate>
     <FecCodeRate>Rate2_3</FecCodeRate>
-    <PilotTonesState>On</PilotTonesState>
     <RollOffFactor>ThirtyFive</RollOffFactor>
+    <PilotTonesState>On</PilotTonesState>
     <StreamId>-1</StreamId>
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS2</BroadcastStandard>
-    <SatellitePosition>1600</SatellitePosition>
+    <Longitude>1600</Longitude>
     <Frequency>12295000</Frequency>
     <Polarisation>LinearHorizontal</Polarisation>
     <ModulationScheme>Psk8</ModulationScheme>
     <SymbolRate>22500</SymbolRate>
     <FecCodeRate>Rate3_4</FecCodeRate>
-    <PilotTonesState>On</PilotTonesState>
     <RollOffFactor>ThirtyFive</RollOffFactor>
+    <PilotTonesState>On</PilotTonesState>
     <StreamId>-1</StreamId>
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1600</SatellitePosition>
+    <Longitude>1600</Longitude>
     <Frequency>12329000</Frequency>
     <Polarisation>LinearHorizontal</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
@@ -35,19 +35,19 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS2</BroadcastStandard>
-    <SatellitePosition>1600</SatellitePosition>
+    <Longitude>1600</Longitude>
     <Frequency>12331000</Frequency>
     <Polarisation>LinearHorizontal</Polarisation>
     <ModulationScheme>Psk8</ModulationScheme>
     <SymbolRate>22500</SymbolRate>
     <FecCodeRate>Rate2_3</FecCodeRate>
-    <PilotTonesState>On</PilotTonesState>
     <RollOffFactor>ThirtyFive</RollOffFactor>
+    <PilotTonesState>On</PilotTonesState>
     <StreamId>-1</StreamId>
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1600</SatellitePosition>
+    <Longitude>1600</Longitude>
     <Frequency>12348000</Frequency>
     <Polarisation>LinearHorizontal</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
@@ -56,19 +56,19 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS2</BroadcastStandard>
-    <SatellitePosition>1600</SatellitePosition>
+    <Longitude>1600</Longitude>
     <Frequency>12358000</Frequency>
     <Polarisation>LinearHorizontal</Polarisation>
     <ModulationScheme>Psk8</ModulationScheme>
     <SymbolRate>22500</SymbolRate>
     <FecCodeRate>Rate2_3</FecCodeRate>
-    <PilotTonesState>On</PilotTonesState>
     <RollOffFactor>ThirtyFive</RollOffFactor>
+    <PilotTonesState>On</PilotTonesState>
     <StreamId>-1</StreamId>
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1600</SatellitePosition>
+    <Longitude>1600</Longitude>
     <Frequency>12365000</Frequency>
     <Polarisation>LinearHorizontal</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
@@ -76,20 +76,8 @@
     <FecCodeRate>Rate7_8</FecCodeRate>
   </TuningDetail>
   <TuningDetail>
-    <BroadcastStandard>DvbS2</BroadcastStandard>
-    <SatellitePosition>1600</SatellitePosition>
-    <Frequency>12381000</Frequency>
-    <Polarisation>LinearVertical</Polarisation>
-    <ModulationScheme>Psk4</ModulationScheme>
-    <SymbolRate>3750</SymbolRate>
-    <FecCodeRate>Rate2_3</FecCodeRate>
-    <PilotTonesState>Off</PilotTonesState>
-    <RollOffFactor>ThirtyFive</RollOffFactor>
-    <StreamId>-1</StreamId>
-  </TuningDetail>
-  <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1600</SatellitePosition>
+    <Longitude>1600</Longitude>
     <Frequency>12391000</Frequency>
     <Polarisation>LinearHorizontal</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
@@ -98,7 +86,7 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1600</SatellitePosition>
+    <Longitude>1600</Longitude>
     <Frequency>12394000</Frequency>
     <Polarisation>LinearHorizontal</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
@@ -106,8 +94,20 @@
     <FecCodeRate>Rate3_4</FecCodeRate>
   </TuningDetail>
   <TuningDetail>
+    <BroadcastStandard>DvbS2</BroadcastStandard>
+    <Longitude>1600</Longitude>
+    <Frequency>12396000</Frequency>
+    <Polarisation>LinearVertical</Polarisation>
+    <ModulationScheme>Psk16</ModulationScheme>
+    <SymbolRate>20103</SymbolRate>
+    <FecCodeRate>Rate8_9</FecCodeRate>
+    <RollOffFactor>ThirtyFive</RollOffFactor>
+    <PilotTonesState>On</PilotTonesState>
+    <StreamId>-1</StreamId>
+  </TuningDetail>
+  <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1600</SatellitePosition>
+    <Longitude>1600</Longitude>
     <Frequency>12409000</Frequency>
     <Polarisation>LinearHorizontal</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
@@ -116,7 +116,7 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1600</SatellitePosition>
+    <Longitude>1600</Longitude>
     <Frequency>12421000</Frequency>
     <Polarisation>LinearHorizontal</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
@@ -125,7 +125,7 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1600</SatellitePosition>
+    <Longitude>1600</Longitude>
     <Frequency>12427000</Frequency>
     <Polarisation>LinearHorizontal</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
@@ -134,7 +134,7 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1600</SatellitePosition>
+    <Longitude>1600</Longitude>
     <Frequency>12430000</Frequency>
     <Polarisation>LinearVertical</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
@@ -143,7 +143,7 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1600</SatellitePosition>
+    <Longitude>1600</Longitude>
     <Frequency>12456000</Frequency>
     <Polarisation>LinearHorizontal</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
@@ -152,7 +152,7 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1600</SatellitePosition>
+    <Longitude>1600</Longitude>
     <Frequency>12483000</Frequency>
     <Polarisation>LinearHorizontal</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
@@ -161,7 +161,7 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1600</SatellitePosition>
+    <Longitude>1600</Longitude>
     <Frequency>12514000</Frequency>
     <Polarisation>LinearHorizontal</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
@@ -170,7 +170,7 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1600</SatellitePosition>
+    <Longitude>1600</Longitude>
     <Frequency>12519000</Frequency>
     <Polarisation>LinearHorizontal</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
@@ -179,7 +179,7 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1600</SatellitePosition>
+    <Longitude>1600</Longitude>
     <Frequency>12528000</Frequency>
     <Polarisation>LinearVertical</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
@@ -188,7 +188,7 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1600</SatellitePosition>
+    <Longitude>1600</Longitude>
     <Frequency>12532000</Frequency>
     <Polarisation>LinearHorizontal</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
@@ -197,7 +197,7 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1600</SatellitePosition>
+    <Longitude>1600</Longitude>
     <Frequency>12546000</Frequency>
     <Polarisation>LinearVertical</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
@@ -206,7 +206,7 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1600</SatellitePosition>
+    <Longitude>1600</Longitude>
     <Frequency>12546000</Frequency>
     <Polarisation>LinearHorizontal</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
@@ -215,7 +215,7 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1600</SatellitePosition>
+    <Longitude>1600</Longitude>
     <Frequency>12550000</Frequency>
     <Polarisation>LinearHorizontal</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
@@ -224,7 +224,7 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1600</SatellitePosition>
+    <Longitude>1600</Longitude>
     <Frequency>12556000</Frequency>
     <Polarisation>LinearVertical</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
@@ -233,7 +233,7 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1600</SatellitePosition>
+    <Longitude>1600</Longitude>
     <Frequency>12577000</Frequency>
     <Polarisation>LinearHorizontal</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
@@ -242,7 +242,7 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1600</SatellitePosition>
+    <Longitude>1600</Longitude>
     <Frequency>12581000</Frequency>
     <Polarisation>LinearHorizontal</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
@@ -251,7 +251,7 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1600</SatellitePosition>
+    <Longitude>1600</Longitude>
     <Frequency>12595000</Frequency>
     <Polarisation>LinearHorizontal</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
@@ -260,7 +260,7 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1600</SatellitePosition>
+    <Longitude>1600</Longitude>
     <Frequency>12607000</Frequency>
     <Polarisation>LinearVertical</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
@@ -269,7 +269,7 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1600</SatellitePosition>
+    <Longitude>1600</Longitude>
     <Frequency>12608000</Frequency>
     <Polarisation>LinearHorizontal</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
@@ -278,7 +278,7 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1600</SatellitePosition>
+    <Longitude>1600</Longitude>
     <Frequency>12613000</Frequency>
     <Polarisation>LinearHorizontal</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
@@ -286,17 +286,20 @@
     <FecCodeRate>Rate7_8</FecCodeRate>
   </TuningDetail>
   <TuningDetail>
-    <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1600</SatellitePosition>
-    <Frequency>12637000</Frequency>
+    <BroadcastStandard>DvbS2</BroadcastStandard>
+    <Longitude>1600</Longitude>
+    <Frequency>12640000</Frequency>
     <Polarisation>LinearVertical</Polarisation>
-    <ModulationScheme>Psk4</ModulationScheme>
-    <SymbolRate>5100</SymbolRate>
+    <ModulationScheme>Psk16</ModulationScheme>
+    <SymbolRate>15000</SymbolRate>
     <FecCodeRate>Rate3_4</FecCodeRate>
+    <RollOffFactor>ThirtyFive</RollOffFactor>
+    <PilotTonesState>On</PilotTonesState>
+    <StreamId>-1</StreamId>
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1600</SatellitePosition>
+    <Longitude>1600</Longitude>
     <Frequency>12644000</Frequency>
     <Polarisation>LinearHorizontal</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
@@ -305,7 +308,7 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1600</SatellitePosition>
+    <Longitude>1600</Longitude>
     <Frequency>12661000</Frequency>
     <Polarisation>LinearVertical</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
@@ -314,7 +317,7 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1600</SatellitePosition>
+    <Longitude>1600</Longitude>
     <Frequency>12670000</Frequency>
     <Polarisation>LinearVertical</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
@@ -323,7 +326,7 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1600</SatellitePosition>
+    <Longitude>1600</Longitude>
     <Frequency>12671000</Frequency>
     <Polarisation>LinearHorizontal</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
@@ -332,7 +335,7 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1600</SatellitePosition>
+    <Longitude>1600</Longitude>
     <Frequency>12679000</Frequency>
     <Polarisation>LinearVertical</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
@@ -341,7 +344,7 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1600</SatellitePosition>
+    <Longitude>1600</Longitude>
     <Frequency>12681000</Frequency>
     <Polarisation>LinearHorizontal</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
@@ -350,7 +353,7 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1600</SatellitePosition>
+    <Longitude>1600</Longitude>
     <Frequency>12699000</Frequency>
     <Polarisation>LinearHorizontal</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
@@ -359,7 +362,7 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1600</SatellitePosition>
+    <Longitude>1600</Longitude>
     <Frequency>12707000</Frequency>
     <Polarisation>LinearHorizontal</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
@@ -368,7 +371,7 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1600</SatellitePosition>
+    <Longitude>1600</Longitude>
     <Frequency>12734000</Frequency>
     <Polarisation>LinearHorizontal</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>

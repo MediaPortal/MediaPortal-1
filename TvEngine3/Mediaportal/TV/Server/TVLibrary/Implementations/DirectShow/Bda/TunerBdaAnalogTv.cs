@@ -46,6 +46,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
   /// </summary>
   internal class TunerBdaAnalogTv : TunerBdaBase
   {
+    #region constants
+
+    private const string TUNING_SPACE_NAME = "MediaPortal Analog TV Tuning Space";
+
+    #endregion
+
     #region variables
 
     private ExternalTuner _externalTuner = new ExternalTuner();
@@ -70,33 +76,34 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
     #region graph building
 
     /// <summary>
-    /// Create and register a BDA tuning space for the tuner type.
+    /// Create a BDA tuning space for tuning a given channel type.
     /// </summary>
+    /// <param name="channelType">The channel type.</param>
     /// <returns>the tuning space that was created</returns>
-    protected override ITuningSpace CreateTuningSpace()
+    protected override ITuningSpace CreateTuningSpace(Type channelType)
     {
-      this.LogDebug("BDA analog TV: create tuning space");
+      this.LogDebug("BDA analog TV: create tuning space, type = {0}", channelType.Name);
 
       IAnalogTVTuningSpace tuningSpace = null;
       try
       {
         tuningSpace = (IAnalogTVTuningSpace)new AnalogTVTuningSpace();
-        int hr = tuningSpace.put_UniqueName(TuningSpaceName);
-        hr |= tuningSpace.put_FriendlyName(TuningSpaceName);
-        hr |= tuningSpace.put__NetworkType(NetworkType.ANALOG_AUX_IN);
-        hr |= tuningSpace.put_CountryCode(0);
-        hr |= tuningSpace.put_MinChannel(1);
+        int hr = tuningSpace.put_CountryCode(-1);
+        hr |= tuningSpace.put_FriendlyName(TUNING_SPACE_NAME);
         hr |= tuningSpace.put_MaxChannel(158);
+        hr |= tuningSpace.put_MinChannel(1);
+        hr |= tuningSpace.put__NetworkType(NetworkType.ANALOG_TV);
+        hr |= tuningSpace.put_UniqueName(TUNING_SPACE_NAME);
 
         if (hr != (int)NativeMethods.HResult.S_OK)
         {
-          this.LogWarn("BDA analog TV: potential error creating tuning space, hr = 0x{0:x}", hr);
+          this.LogWarn("BDA analog TV: potential error creating tuning space, hr = 0x{0:x}, type = {1}", hr, channelType.Name);
         }
         return tuningSpace;
       }
       catch
       {
-        Release.ComObject("BDA analog TV tuner tuning space", ref tuningSpace);
+        Release.ComObject(string.Format("BDA analog TV tuner {0} tuning space", channelType.Name), ref tuningSpace);
         throw;
       }
     }
@@ -116,13 +123,16 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
     }
 
     /// <summary>
-    /// Get the registered name of the BDA tuning space for the tuner type.
+    /// Get the name(s) of the registered BDA tuning space(s) for the tuner type.
     /// </summary>
-    protected override string TuningSpaceName
+    protected override IDictionary<string, Type> TuningSpaceNames
     {
       get
       {
-        return "MediaPortal Analog TV Tuning Space";
+        return new Dictionary<string, Type>
+        {
+          { TUNING_SPACE_NAME, null }
+        };
       }
     }
 
@@ -152,24 +162,22 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
 
       int hr = analogTvTuningSpace.put_CountryCode(analogTvChannel.Country.ItuCode);
 
-      TunerInputType inputType;
       if (analogTvChannel.TunerSource == AnalogTunerSource.Antenna)
       {
-        inputType = TunerInputType.Antenna;
+        hr |= analogTvTuningSpace.put_InputType(TunerInputType.Antenna);
       }
       else if (analogTvChannel.TunerSource == AnalogTunerSource.Cable)
       {
-        inputType = TunerInputType.Cable;
+        hr |= analogTvTuningSpace.put_InputType(TunerInputType.Cable);
       }
       else
       {
         throw new TvException("Failed to translate tuner source {0}.", analogTvChannel.TunerSource);
       }
-      hr |= analogTvTuningSpace.put_InputType(inputType);
 
       ITuneRequest tuneRequest;
       hr |= tuningSpace.CreateTuneRequest(out tuneRequest);
-      TvExceptionDirectShowError.Throw(hr, "Failed to create tuning request from tuning space.");
+      TvExceptionDirectShowError.Throw(hr, "Failed to create tune request from tuning space.");
       try
       {
         IChannelTuneRequest channelTuneRequest = tuneRequest as IChannelTuneRequest;

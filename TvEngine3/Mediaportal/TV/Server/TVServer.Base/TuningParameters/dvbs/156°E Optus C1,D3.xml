@@ -2,19 +2,19 @@
 <ArrayOfTuningDetail xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <TuningDetail>
     <BroadcastStandard>DvbS2</BroadcastStandard>
-    <SatellitePosition>1560</SatellitePosition>
+    <Longitude>1560</Longitude>
     <Frequency>11720000</Frequency>
     <Polarisation>LinearHorizontal</Polarisation>
     <ModulationScheme>Psk8</ModulationScheme>
     <SymbolRate>29455</SymbolRate>
     <FecCodeRate>Rate3_5</FecCodeRate>
-    <PilotTonesState>On</PilotTonesState>
     <RollOffFactor>ThirtyFive</RollOffFactor>
+    <PilotTonesState>On</PilotTonesState>
     <StreamId>-1</StreamId>
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1560</SatellitePosition>
+    <Longitude>1560</Longitude>
     <Frequency>11762000</Frequency>
     <Polarisation>LinearHorizontal</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
@@ -23,19 +23,19 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS2</BroadcastStandard>
-    <SatellitePosition>1560</SatellitePosition>
+    <Longitude>1560</Longitude>
     <Frequency>11804000</Frequency>
     <Polarisation>LinearVertical</Polarisation>
     <ModulationScheme>Psk8</ModulationScheme>
     <SymbolRate>30000</SymbolRate>
     <FecCodeRate>Rate3_5</FecCodeRate>
-    <PilotTonesState>On</PilotTonesState>
     <RollOffFactor>ThirtyFive</RollOffFactor>
+    <PilotTonesState>On</PilotTonesState>
     <StreamId>-1</StreamId>
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1560</SatellitePosition>
+    <Longitude>1560</Longitude>
     <Frequency>11845000</Frequency>
     <Polarisation>LinearVertical</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
@@ -44,19 +44,19 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS2</BroadcastStandard>
-    <SatellitePosition>1560</SatellitePosition>
+    <Longitude>1560</Longitude>
     <Frequency>11886000</Frequency>
     <Polarisation>LinearVertical</Polarisation>
     <ModulationScheme>Psk8</ModulationScheme>
     <SymbolRate>30000</SymbolRate>
     <FecCodeRate>Rate3_5</FecCodeRate>
-    <PilotTonesState>On</PilotTonesState>
     <RollOffFactor>ThirtyFive</RollOffFactor>
+    <PilotTonesState>On</PilotTonesState>
     <StreamId>-1</StreamId>
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1560</SatellitePosition>
+    <Longitude>1560</Longitude>
     <Frequency>11886000</Frequency>
     <Polarisation>LinearHorizontal</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
@@ -65,19 +65,19 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS2</BroadcastStandard>
-    <SatellitePosition>1560</SatellitePosition>
+    <Longitude>1560</Longitude>
     <Frequency>11928000</Frequency>
     <Polarisation>LinearVertical</Polarisation>
     <ModulationScheme>Psk8</ModulationScheme>
     <SymbolRate>30000</SymbolRate>
     <FecCodeRate>Rate3_5</FecCodeRate>
-    <PilotTonesState>On</PilotTonesState>
     <RollOffFactor>ThirtyFive</RollOffFactor>
+    <PilotTonesState>On</PilotTonesState>
     <StreamId>-1</StreamId>
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1560</SatellitePosition>
+    <Longitude>1560</Longitude>
     <Frequency>11928000</Frequency>
     <Polarisation>LinearHorizontal</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
@@ -86,7 +86,7 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1560</SatellitePosition>
+    <Longitude>1560</Longitude>
     <Frequency>11970000</Frequency>
     <Polarisation>LinearHorizontal</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
@@ -95,7 +95,7 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1560</SatellitePosition>
+    <Longitude>1560</Longitude>
     <Frequency>12011000</Frequency>
     <Polarisation>LinearVertical</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
@@ -104,19 +104,19 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS2</BroadcastStandard>
-    <SatellitePosition>1560</SatellitePosition>
+    <Longitude>1560</Longitude>
     <Frequency>12011000</Frequency>
     <Polarisation>LinearHorizontal</Polarisation>
     <ModulationScheme>Psk8</ModulationScheme>
     <SymbolRate>29455</SymbolRate>
     <FecCodeRate>Rate3_5</FecCodeRate>
-    <PilotTonesState>On</PilotTonesState>
     <RollOffFactor>ThirtyFive</RollOffFactor>
+    <PilotTonesState>On</PilotTonesState>
     <StreamId>-1</StreamId>
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1560</SatellitePosition>
+    <Longitude>1560</Longitude>
     <Frequency>12052000</Frequency>
     <Polarisation>LinearVertical</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
@@ -125,19 +125,19 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS2</BroadcastStandard>
-    <SatellitePosition>1560</SatellitePosition>
+    <Longitude>1560</Longitude>
     <Frequency>12052000</Frequency>
     <Polarisation>LinearHorizontal</Polarisation>
     <ModulationScheme>Psk8</ModulationScheme>
     <SymbolRate>29455</SymbolRate>
     <FecCodeRate>Rate3_5</FecCodeRate>
-    <PilotTonesState>On</PilotTonesState>
     <RollOffFactor>ThirtyFive</RollOffFactor>
+    <PilotTonesState>On</PilotTonesState>
     <StreamId>-1</StreamId>
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1560</SatellitePosition>
+    <Longitude>1560</Longitude>
     <Frequency>12094000</Frequency>
     <Polarisation>LinearVertical</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
@@ -146,19 +146,19 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS2</BroadcastStandard>
-    <SatellitePosition>1560</SatellitePosition>
+    <Longitude>1560</Longitude>
     <Frequency>12094000</Frequency>
     <Polarisation>LinearHorizontal</Polarisation>
     <ModulationScheme>Psk8</ModulationScheme>
     <SymbolRate>29455</SymbolRate>
     <FecCodeRate>Rate3_5</FecCodeRate>
-    <PilotTonesState>On</PilotTonesState>
     <RollOffFactor>ThirtyFive</RollOffFactor>
+    <PilotTonesState>On</PilotTonesState>
     <StreamId>-1</StreamId>
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1560</SatellitePosition>
+    <Longitude>1560</Longitude>
     <Frequency>12136000</Frequency>
     <Polarisation>LinearVertical</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
@@ -167,7 +167,7 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1560</SatellitePosition>
+    <Longitude>1560</Longitude>
     <Frequency>12136000</Frequency>
     <Polarisation>LinearHorizontal</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
@@ -176,7 +176,7 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1560</SatellitePosition>
+    <Longitude>1560</Longitude>
     <Frequency>12177000</Frequency>
     <Polarisation>LinearVertical</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
@@ -185,7 +185,7 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1560</SatellitePosition>
+    <Longitude>1560</Longitude>
     <Frequency>12177000</Frequency>
     <Polarisation>LinearHorizontal</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
@@ -194,7 +194,7 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1560</SatellitePosition>
+    <Longitude>1560</Longitude>
     <Frequency>12358000</Frequency>
     <Polarisation>LinearHorizontal</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
@@ -203,19 +203,19 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS2</BroadcastStandard>
-    <SatellitePosition>1560</SatellitePosition>
+    <Longitude>1560</Longitude>
     <Frequency>12369000</Frequency>
     <Polarisation>LinearVertical</Polarisation>
     <ModulationScheme>Psk8</ModulationScheme>
     <SymbolRate>30000</SymbolRate>
     <FecCodeRate>Rate3_5</FecCodeRate>
-    <PilotTonesState>On</PilotTonesState>
     <RollOffFactor>ThirtyFive</RollOffFactor>
+    <PilotTonesState>On</PilotTonesState>
     <StreamId>-1</StreamId>
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1560</SatellitePosition>
+    <Longitude>1560</Longitude>
     <Frequency>12398000</Frequency>
     <Polarisation>LinearHorizontal</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
@@ -224,7 +224,7 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1560</SatellitePosition>
+    <Longitude>1560</Longitude>
     <Frequency>12407000</Frequency>
     <Polarisation>LinearVertical</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
@@ -233,7 +233,7 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1560</SatellitePosition>
+    <Longitude>1560</Longitude>
     <Frequency>12438000</Frequency>
     <Polarisation>LinearHorizontal</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
@@ -242,7 +242,7 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1560</SatellitePosition>
+    <Longitude>1560</Longitude>
     <Frequency>12478000</Frequency>
     <Polarisation>LinearHorizontal</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
@@ -251,19 +251,19 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS2</BroadcastStandard>
-    <SatellitePosition>1560</SatellitePosition>
+    <Longitude>1560</Longitude>
     <Frequency>12487000</Frequency>
     <Polarisation>LinearVertical</Polarisation>
     <ModulationScheme>Psk8</ModulationScheme>
     <SymbolRate>30000</SymbolRate>
     <FecCodeRate>Rate3_5</FecCodeRate>
-    <PilotTonesState>On</PilotTonesState>
     <RollOffFactor>ThirtyFive</RollOffFactor>
+    <PilotTonesState>On</PilotTonesState>
     <StreamId>-1</StreamId>
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1560</SatellitePosition>
+    <Longitude>1560</Longitude>
     <Frequency>12518000</Frequency>
     <Polarisation>LinearHorizontal</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
@@ -272,7 +272,7 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1560</SatellitePosition>
+    <Longitude>1560</Longitude>
     <Frequency>12558000</Frequency>
     <Polarisation>LinearHorizontal</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
@@ -281,19 +281,19 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS2</BroadcastStandard>
-    <SatellitePosition>1560</SatellitePosition>
+    <Longitude>1560</Longitude>
     <Frequency>12567000</Frequency>
     <Polarisation>LinearVertical</Polarisation>
     <ModulationScheme>Psk8</ModulationScheme>
     <SymbolRate>30000</SymbolRate>
     <FecCodeRate>Rate3_5</FecCodeRate>
-    <PilotTonesState>On</PilotTonesState>
     <RollOffFactor>ThirtyFive</RollOffFactor>
+    <PilotTonesState>On</PilotTonesState>
     <StreamId>-1</StreamId>
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1560</SatellitePosition>
+    <Longitude>1560</Longitude>
     <Frequency>12598000</Frequency>
     <Polarisation>LinearHorizontal</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
@@ -302,19 +302,19 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS2</BroadcastStandard>
-    <SatellitePosition>1560</SatellitePosition>
+    <Longitude>1560</Longitude>
     <Frequency>12607000</Frequency>
     <Polarisation>LinearVertical</Polarisation>
     <ModulationScheme>Psk8</ModulationScheme>
     <SymbolRate>30000</SymbolRate>
     <FecCodeRate>Rate3_5</FecCodeRate>
-    <PilotTonesState>On</PilotTonesState>
     <RollOffFactor>ThirtyFive</RollOffFactor>
+    <PilotTonesState>On</PilotTonesState>
     <StreamId>-1</StreamId>
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1560</SatellitePosition>
+    <Longitude>1560</Longitude>
     <Frequency>12638000</Frequency>
     <Polarisation>LinearHorizontal</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
@@ -323,19 +323,19 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS2</BroadcastStandard>
-    <SatellitePosition>1560</SatellitePosition>
+    <Longitude>1560</Longitude>
     <Frequency>12647000</Frequency>
     <Polarisation>LinearVertical</Polarisation>
     <ModulationScheme>Psk8</ModulationScheme>
     <SymbolRate>30000</SymbolRate>
     <FecCodeRate>Rate3_5</FecCodeRate>
-    <PilotTonesState>On</PilotTonesState>
     <RollOffFactor>ThirtyFive</RollOffFactor>
+    <PilotTonesState>On</PilotTonesState>
     <StreamId>-1</StreamId>
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1560</SatellitePosition>
+    <Longitude>1560</Longitude>
     <Frequency>12689000</Frequency>
     <Polarisation>LinearHorizontal</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
@@ -344,11 +344,23 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1560</SatellitePosition>
+    <Longitude>1560</Longitude>
     <Frequency>12707000</Frequency>
     <Polarisation>LinearHorizontal</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
     <SymbolRate>22500</SymbolRate>
     <FecCodeRate>Rate3_4</FecCodeRate>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>DvbS2</BroadcastStandard>
+    <Longitude>1560</Longitude>
+    <Frequency>12712000</Frequency>
+    <Polarisation>LinearVertical</Polarisation>
+    <ModulationScheme>Psk8</ModulationScheme>
+    <SymbolRate>45000</SymbolRate>
+    <FecCodeRate>Rate4_5</FecCodeRate>
+    <RollOffFactor>ThirtyFive</RollOffFactor>
+    <PilotTonesState>On</PilotTonesState>
+    <StreamId>-1</StreamId>
   </TuningDetail>
 </ArrayOfTuningDetail>

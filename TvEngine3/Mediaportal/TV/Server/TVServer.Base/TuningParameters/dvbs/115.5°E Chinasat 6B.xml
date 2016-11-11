@@ -2,7 +2,7 @@
 <ArrayOfTuningDetail xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1155</SatellitePosition>
+    <Longitude>1155</Longitude>
     <Frequency>3600000</Frequency>
     <Polarisation>LinearVertical</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
@@ -11,7 +11,7 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1155</SatellitePosition>
+    <Longitude>1155</Longitude>
     <Frequency>3640000</Frequency>
     <Polarisation>LinearVertical</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
@@ -20,7 +20,7 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1155</SatellitePosition>
+    <Longitude>1155</Longitude>
     <Frequency>3680000</Frequency>
     <Polarisation>LinearVertical</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
@@ -29,7 +29,7 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1155</SatellitePosition>
+    <Longitude>1155</Longitude>
     <Frequency>3709000</Frequency>
     <Polarisation>LinearHorizontal</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
@@ -38,7 +38,7 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1155</SatellitePosition>
+    <Longitude>1155</Longitude>
     <Frequency>3740000</Frequency>
     <Polarisation>LinearVertical</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
@@ -47,7 +47,7 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1155</SatellitePosition>
+    <Longitude>1155</Longitude>
     <Frequency>3750000</Frequency>
     <Polarisation>LinearHorizontal</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
@@ -56,16 +56,16 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1155</SatellitePosition>
-    <Frequency>3769000</Frequency>
+    <Longitude>1155</Longitude>
+    <Frequency>3770000</Frequency>
     <Polarisation>LinearHorizontal</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
-    <SymbolRate>13400</SymbolRate>
+    <SymbolRate>12360</SymbolRate>
     <FecCodeRate>Rate7_8</FecCodeRate>
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1155</SatellitePosition>
+    <Longitude>1155</Longitude>
     <Frequency>3780000</Frequency>
     <Polarisation>LinearVertical</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
@@ -74,7 +74,7 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1155</SatellitePosition>
+    <Longitude>1155</Longitude>
     <Frequency>3796000</Frequency>
     <Polarisation>LinearHorizontal</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
@@ -83,7 +83,7 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1155</SatellitePosition>
+    <Longitude>1155</Longitude>
     <Frequency>3807000</Frequency>
     <Polarisation>LinearVertical</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
@@ -92,7 +92,7 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1155</SatellitePosition>
+    <Longitude>1155</Longitude>
     <Frequency>3808000</Frequency>
     <Polarisation>LinearHorizontal</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
@@ -101,7 +101,7 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1155</SatellitePosition>
+    <Longitude>1155</Longitude>
     <Frequency>3815000</Frequency>
     <Polarisation>LinearVertical</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
@@ -110,16 +110,7 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1155</SatellitePosition>
-    <Frequency>3825000</Frequency>
-    <Polarisation>LinearVertical</Polarisation>
-    <ModulationScheme>Psk4</ModulationScheme>
-    <SymbolRate>6780</SymbolRate>
-    <FecCodeRate>Rate3_4</FecCodeRate>
-  </TuningDetail>
-  <TuningDetail>
-    <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1155</SatellitePosition>
+    <Longitude>1155</Longitude>
     <Frequency>3834000</Frequency>
     <Polarisation>LinearVertical</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
@@ -128,7 +119,7 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1155</SatellitePosition>
+    <Longitude>1155</Longitude>
     <Frequency>3840000</Frequency>
     <Polarisation>LinearHorizontal</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
@@ -137,7 +128,7 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1155</SatellitePosition>
+    <Longitude>1155</Longitude>
     <Frequency>3846000</Frequency>
     <Polarisation>LinearVertical</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
@@ -146,7 +137,7 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1155</SatellitePosition>
+    <Longitude>1155</Longitude>
     <Frequency>3854000</Frequency>
     <Polarisation>LinearVertical</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
@@ -155,7 +146,7 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1155</SatellitePosition>
+    <Longitude>1155</Longitude>
     <Frequency>3861000</Frequency>
     <Polarisation>LinearVertical</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
@@ -164,7 +155,7 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1155</SatellitePosition>
+    <Longitude>1155</Longitude>
     <Frequency>3871000</Frequency>
     <Polarisation>LinearVertical</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
@@ -173,7 +164,7 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1155</SatellitePosition>
+    <Longitude>1155</Longitude>
     <Frequency>3880000</Frequency>
     <Polarisation>LinearHorizontal</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
@@ -182,7 +173,7 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1155</SatellitePosition>
+    <Longitude>1155</Longitude>
     <Frequency>3885000</Frequency>
     <Polarisation>LinearVertical</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
@@ -191,7 +182,7 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1155</SatellitePosition>
+    <Longitude>1155</Longitude>
     <Frequency>3892000</Frequency>
     <Polarisation>LinearVertical</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
@@ -200,7 +191,7 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1155</SatellitePosition>
+    <Longitude>1155</Longitude>
     <Frequency>3903000</Frequency>
     <Polarisation>LinearVertical</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
@@ -209,7 +200,7 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1155</SatellitePosition>
+    <Longitude>1155</Longitude>
     <Frequency>3913000</Frequency>
     <Polarisation>LinearVertical</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
@@ -218,7 +209,7 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1155</SatellitePosition>
+    <Longitude>1155</Longitude>
     <Frequency>3920000</Frequency>
     <Polarisation>LinearHorizontal</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
@@ -227,7 +218,7 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1155</SatellitePosition>
+    <Longitude>1155</Longitude>
     <Frequency>3929000</Frequency>
     <Polarisation>LinearVertical</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
@@ -236,7 +227,7 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1155</SatellitePosition>
+    <Longitude>1155</Longitude>
     <Frequency>3940000</Frequency>
     <Polarisation>LinearVertical</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
@@ -245,7 +236,7 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1155</SatellitePosition>
+    <Longitude>1155</Longitude>
     <Frequency>3950000</Frequency>
     <Polarisation>LinearHorizontal</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
@@ -254,7 +245,7 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1155</SatellitePosition>
+    <Longitude>1155</Longitude>
     <Frequency>3951000</Frequency>
     <Polarisation>LinearVertical</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
@@ -263,7 +254,7 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1155</SatellitePosition>
+    <Longitude>1155</Longitude>
     <Frequency>3960000</Frequency>
     <Polarisation>LinearHorizontal</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
@@ -272,7 +263,7 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1155</SatellitePosition>
+    <Longitude>1155</Longitude>
     <Frequency>3971000</Frequency>
     <Polarisation>LinearHorizontal</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
@@ -281,7 +272,7 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1155</SatellitePosition>
+    <Longitude>1155</Longitude>
     <Frequency>3980000</Frequency>
     <Polarisation>LinearVertical</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
@@ -290,7 +281,7 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1155</SatellitePosition>
+    <Longitude>1155</Longitude>
     <Frequency>4000000</Frequency>
     <Polarisation>LinearHorizontal</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
@@ -299,7 +290,7 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1155</SatellitePosition>
+    <Longitude>1155</Longitude>
     <Frequency>4020000</Frequency>
     <Polarisation>LinearVertical</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
@@ -308,7 +299,7 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1155</SatellitePosition>
+    <Longitude>1155</Longitude>
     <Frequency>4040000</Frequency>
     <Polarisation>LinearHorizontal</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
@@ -317,7 +308,7 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1155</SatellitePosition>
+    <Longitude>1155</Longitude>
     <Frequency>4060000</Frequency>
     <Polarisation>LinearVertical</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
@@ -326,16 +317,16 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1155</SatellitePosition>
-    <Frequency>4080000</Frequency>
+    <Longitude>1155</Longitude>
+    <Frequency>4067000</Frequency>
     <Polarisation>LinearHorizontal</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
-    <SymbolRate>27500</SymbolRate>
+    <SymbolRate>9988</SymbolRate>
     <FecCodeRate>Rate3_4</FecCodeRate>
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1155</SatellitePosition>
+    <Longitude>1155</Longitude>
     <Frequency>4116000</Frequency>
     <Polarisation>LinearHorizontal</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
@@ -344,7 +335,7 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1155</SatellitePosition>
+    <Longitude>1155</Longitude>
     <Frequency>4140000</Frequency>
     <Polarisation>LinearVertical</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
@@ -353,7 +344,7 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1155</SatellitePosition>
+    <Longitude>1155</Longitude>
     <Frequency>4147000</Frequency>
     <Polarisation>LinearHorizontal</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
@@ -362,7 +353,7 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1155</SatellitePosition>
+    <Longitude>1155</Longitude>
     <Frequency>4158000</Frequency>
     <Polarisation>LinearHorizontal</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
@@ -371,7 +362,7 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1155</SatellitePosition>
+    <Longitude>1155</Longitude>
     <Frequency>4171000</Frequency>
     <Polarisation>LinearHorizontal</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
@@ -380,7 +371,7 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1155</SatellitePosition>
+    <Longitude>1155</Longitude>
     <Frequency>4175000</Frequency>
     <Polarisation>LinearVertical</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
@@ -389,7 +380,7 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>1155</SatellitePosition>
+    <Longitude>1155</Longitude>
     <Frequency>4192000</Frequency>
     <Polarisation>LinearVertical</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>

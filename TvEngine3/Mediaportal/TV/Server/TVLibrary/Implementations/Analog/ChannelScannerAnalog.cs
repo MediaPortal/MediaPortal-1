@@ -102,8 +102,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog
     /// within the available network information.
     /// </summary>
     /// <param name="channel">The channel to tune to.</param>
-    /// <returns>the tuning details found</returns>
-    public override IList<TuningDetail> ScanNetworkInformation(IChannel channel)
+    /// <returns>the transmitter tuning details found in the network information</returns>
+    public override IList<ScannedTransmitter> ScanNetworkInformation(IChannel channel)
     {
       throw new NotImplementedException();
     }
@@ -119,6 +119,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog
     /// <returns>a name for the channel</returns>
     protected override string GetNameForChannel(IChannel channel)
     {
+      if (channel is ChannelAmRadio)
+      {
+        return string.Format("AM {0}", channel.LogicalChannelNumber);
+      }
       if (channel is ChannelAnalogTv)
       {
         return string.Format("Analog TV {0}", channel.LogicalChannelNumber);

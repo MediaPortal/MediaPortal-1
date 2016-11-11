@@ -332,16 +332,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
     public override void PerformTuning(IChannel channel)
     {
       this.LogDebug("WDM analog: perform tuning");
-      ChannelAnalogTv analogTvChannel = channel as ChannelAnalogTv;
-      ChannelCapture captureChannel = channel as ChannelCapture;
-      ChannelFmRadio fmRadioChannel = channel as ChannelFmRadio;
-      if (analogTvChannel == null && captureChannel == null && fmRadioChannel == null)
+      if (
+        !(channel is ChannelAmRadio) &&
+        !(channel is ChannelAnalogTv) &&
+        !(channel is ChannelCapture) && 
+        !(channel is ChannelFmRadio)
+      )
       {
         throw new TvException("Received request to tune incompatible channel.");
       }
 
       IChannel tuneChannel = _externalTuner.Tune(channel);
-      if (tuneChannel is ChannelAnalogTv || tuneChannel is ChannelFmRadio)
+      if (!(tuneChannel is ChannelCapture))
       {
         if (_tuner != null)
         {

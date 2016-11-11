@@ -242,6 +242,9 @@ namespace DirectShowLib.BDA
     Max
   }
 
+  /*
+   * Redefined in TveCustomisations.cs.
+   * 
   /// <summary>
   /// From ModulationType
   /// </summary>
@@ -293,7 +296,7 @@ namespace DirectShowLib.BDA
     Cable,
     Terrestrial,
     Satellite,
-  }
+  }*/
 
   /// <summary>
   /// From HierarchyAlpha

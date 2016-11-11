@@ -28,7 +28,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel
   /// An implementation of <see cref="T:IChannel"/> for DVB-C channels.
   /// </summary>
   [DataContract]
-  public class ChannelDvbC : ChannelDvbBase, IChannelPhysical
+  public class ChannelDvbC : ChannelOpenTvBase, IChannelDvb, IChannelPhysical
   {
     #region variables
 

@@ -93,8 +93,8 @@ namespace Mediaportal.TV.Server.SetupTV
         AddSection(radioChannels);
 
         AddSection(new Epg());
-        AddSection(new TvRecording(OnServerConfigurationChanged));
-        AddSection(new TvTimeshifting(OnServerConfigurationChanged));
+        AddSection(new Sections.Recording(OnServerConfigurationChanged));
+        AddSection(new TimeShifting(OnServerConfigurationChanged));
         AddSection(new TvSchedules());
         AddSection(new StreamingServer(OnServerConfigurationChanged));
         AddSection(new UserPriorities(OnServerConfigurationChanged));
@@ -122,8 +122,8 @@ namespace Mediaportal.TV.Server.SetupTV
         AddSection(new ThirdPartyChecks());
         if (showAdvancedSettings)
         {
-          AddChildSection(channels, new ChannelMapping("Mapping", MediaType.Television));
-          AddChildSection(radioChannels, new ChannelMapping("Mapping ", MediaType.Radio));
+          AddChildSection(channels, new TuningDetailMapping("Mapping", MediaType.Television));
+          AddChildSection(radioChannels, new TuningDetailMapping("Mapping ", MediaType.Radio));
           AddSection(new TestChannels());
           AddSection(new DebugOptions());
         }
@@ -146,29 +146,31 @@ namespace Mediaportal.TV.Server.SetupTV
       {
         if (tuner.IsEnabled && ServiceAgents.Instance.ControllerServiceAgent.IsCardPresent(tuner.IdTuner))
         {
-          if ((tuner.SupportedBroadcastStandards & (int)(BroadcastStandard.MaskAnalog | BroadcastStandard.ExternalInput)) != 0)
+          BroadcastStandard supportedBroadcastStandards = (BroadcastStandard)tuner.SupportedBroadcastStandards;
+          string subSectionName = string.Format("{0} {1}", tuner.IdTuner, tuner.Name);
+          if ((supportedBroadcastStandards & ScanAnalog.SUPPORTED_BROADCAST_STANDARDS) != 0)
           {
-            AddChildSection(_sectionScanning, new CardAnalog(string.Format("{0} Analog {1}", tuner.IdTuner, tuner.Name), tuner.IdTuner), 1);
+            AddChildSection(_sectionScanning, new ScanAnalog(subSectionName, tuner.IdTuner), 1);
           }
-          else if ((tuner.SupportedBroadcastStandards & (int)BroadcastStandard.MaskDvb & (int)BroadcastStandard.MaskTerrestrial) != 0)
+          else if ((supportedBroadcastStandards & ScanAtscScte.SUPPORTED_BROADCAST_STANDARDS) != 0)
           {
-            AddChildSection(_sectionScanning, new CardDvbT(string.Format("{0} DVB-T/T2 {1}", tuner.IdTuner, tuner.Name), tuner.IdTuner), 1);
+            AddChildSection(_sectionScanning, new ScanAtscScte(subSectionName, tuner.IdTuner), 1);
           }
-          else if ((tuner.SupportedBroadcastStandards & (int)BroadcastStandard.MaskDvb & (int)BroadcastStandard.MaskCable) != 0)
+          else if ((supportedBroadcastStandards & ScanCable.SUPPORTED_BROADCAST_STANDARDS) != 0)
           {
-            AddChildSection(_sectionScanning, new CardDvbC(string.Format("{0} DVB-C {1}", tuner.IdTuner, tuner.Name), tuner.IdTuner), 1);
+            AddChildSection(_sectionScanning, new ScanCable(subSectionName, tuner.IdTuner), 1);
           }
-          else if ((tuner.SupportedBroadcastStandards & (int)BroadcastStandard.MaskSatellite) != 0)
+          else if ((supportedBroadcastStandards & ScanSatellite.SUPPORTED_BROADCAST_STANDARDS) != 0)
           {
-            AddChildSection(_sectionScanning, new CardDvbS(string.Format("{0} Satellite {1}", tuner.IdTuner, tuner.Name), tuner.IdTuner), 1);
+            AddChildSection(_sectionScanning, new ScanSatellite(subSectionName, tuner.IdTuner), 1);
           }
-          else if ((tuner.SupportedBroadcastStandards & (int)(BroadcastStandard.Atsc | BroadcastStandard.Scte)) != 0)
+          else if ((supportedBroadcastStandards & ScanStream.SUPPORTED_BROADCAST_STANDARDS) != 0)
           {
-            AddChildSection(_sectionScanning, new CardAtsc(string.Format("{0} ATSC {1}", tuner.IdTuner, tuner.Name), tuner.IdTuner), 1);
+            AddChildSection(_sectionScanning, new ScanStream(subSectionName, tuner.IdTuner), 1);
           }
-          else if (tuner.SupportedBroadcastStandards == (int)BroadcastStandard.DvbIp)
+          else if ((supportedBroadcastStandards & ScanTerrestrial.SUPPORTED_BROADCAST_STANDARDS) != 0)
           {
-            AddChildSection(_sectionScanning, new CardDvbIP(string.Format("{0} Stream {1}", tuner.IdTuner, tuner.Name), tuner.IdTuner), 1);
+            AddChildSection(_sectionScanning, new ScanTerrestrial(subSectionName, tuner.IdTuner), 1);
           }
         }
       }

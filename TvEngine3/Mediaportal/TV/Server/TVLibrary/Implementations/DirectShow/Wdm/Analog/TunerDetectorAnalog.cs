@@ -213,10 +213,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
     {
       productInstanceId = null;
       tunerInstanceId = null;
-
-      // Assume the crossbar has at least one input. Tuner inputs count as
-      // external inputs too because an STB can be connected via RF/coax.
-      supportedBroadcastStandards = BroadcastStandard.ExternalInput;
+      supportedBroadcastStandards = BroadcastStandard.Unknown;
 
       IFilterGraph2 graph = (IFilterGraph2)new FilterGraph();
       Crossbar crossbar = new Crossbar(device);
@@ -228,6 +225,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
         // component moniker... but try the crossbar if there is no tuner.
         if (crossbar.PinIndexInputTunerVideo == Crossbar.PIN_INDEX_NOT_SET && crossbar.PinIndexInputTunerAudio == Crossbar.PIN_INDEX_NOT_SET)
         {
+          // Assume the crossbar has at least one input.
+          supportedBroadcastStandards = BroadcastStandard.ExternalInput;
+
           GetIdentifiersForDevice(device, out productInstanceId, out tunerInstanceId);
           return;
         }
@@ -239,7 +239,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
           AMTunerModeType supportedModes = t.SupportedTuningModes;
           if (supportedModes.HasFlag(AMTunerModeType.TV))
           {
-            supportedBroadcastStandards |= BroadcastStandard.AnalogTelevision;
+            // Tuner inputs count as external inputs too because an STB can be
+            // connected via RF/coax.
+            supportedBroadcastStandards |= BroadcastStandard.AnalogTelevision | BroadcastStandard.ExternalInput;
           }
           if (supportedModes.HasFlag(AMTunerModeType.AMRadio))
           {

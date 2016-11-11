@@ -26,11 +26,9 @@ using System.Windows.Forms;
 using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.SetupControls;
 using Mediaportal.TV.Server.TVControl;
-using Mediaportal.TV.Server.TVControl.Interfaces.Events;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.CiMenu;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVService.Interfaces;
 using Mediaportal.TV.Server.TVService.Interfaces.Enums;
@@ -40,19 +38,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 {
   public partial class TestService : SectionSettings
   {
-
     private class ServerMonitor
     {
-      #region events & delegates
-
-      public delegate void ServerDisconnectedDelegate();
-      public delegate void ServerConnectedDelegate();
-
-      public event ServerDisconnectedDelegate OnServerDisconnected;
-      public event ServerConnectedDelegate OnServerConnected;
-
-      #endregion
-
       private Thread _serverMonitorThread;
       private readonly static ManualResetEvent _evtHeartbeatCtrl = new ManualResetEvent(false);
       private const int SERVER_ALIVE_INTERVAL_SEC = 5;
@@ -94,12 +81,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         }
       }
 
-
       private void ServerMonitorThread()
       {
         while (!_evtHeartbeatCtrl.WaitOne(SERVER_ALIVE_INTERVAL_SEC * 1000))
         {
-
           bool isconnected = false;
           try
           {
@@ -111,20 +96,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           }
           finally
           {
-            if (!_isConnected && isconnected)
-            {
-              if (OnServerConnected != null)
-              {
-                OnServerConnected();
-              }
-            }
-            else if (_isConnected && !isconnected)
-            {
-              if (OnServerDisconnected != null)
-              {
-                OnServerDisconnected();
-              }
-            }
+            // Could notify if _isConnected != isconnected.
             _isConnected = isconnected;
           }
         }
@@ -132,8 +104,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     }
 
     private IList<Tuner> _tuners;
-    private Dictionary<int, string> _channelNames;
-
     private ServerMonitor _serverMonitor = new ServerMonitor();
 
     public TestService()
@@ -143,19 +113,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       mpComboBoxChannels.ImageList = imageList1;
       DoubleBuffered = true;
 
-      _serverMonitor.OnServerConnected += new ServerMonitor.ServerConnectedDelegate(_serverMonitor_OnServerConnected);
-      _serverMonitor.OnServerDisconnected += new ServerMonitor.ServerDisconnectedDelegate(_serverMonitor_OnServerDisconnected);
       _serverMonitor.Start();
-    }
-
-    void _serverMonitor_OnServerDisconnected()
-    {
-      
-    }
-
-    void _serverMonitor_OnServerConnected()
-    {
-      
     }
 
     public override void OnSectionActivated()
@@ -166,17 +124,22 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
       comboBoxGroups.Items.Clear();
       IList<ChannelGroup> groups = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroups(ChannelGroupRelation.None);
-      foreach (ChannelGroup group in groups)
-        comboBoxGroups.Items.Add(new ComboBoxExItem(group.GroupName, -1, group.IdGroup));
-      if (comboBoxGroups.Items.Count == 0)
-        comboBoxGroups.Items.Add(new ComboBoxExItem("(no groups defined)", -1, -1));
+      if (groups.Count == 0)
+      {
+        comboBoxGroups.Items.Add(new ChannelGroup { Name = "(no groups defined)", IdChannelGroup = -1 });
+      }
+      else
+      {
+        foreach (ChannelGroup group in groups)
+        {
+          comboBoxGroups.Items.Add(group);
+        }
+      }
       comboBoxGroups.SelectedIndex = 0;
 
       timer1.Enabled = true;
 
-
-      int prio = ServiceAgents.Instance.SettingServiceAgent.GetValue("PriorityUser", 2);
-      txtPrio.Text = prio.ToString();
+      txtPrio.Text = ServiceAgents.Instance.SettingServiceAgent.GetValue(UserFactory.SETTING_NAME_PRIORITY_OTHER_DEFAULT, UserFactory.DEFAULT_PRIORITY_OTHER).ToString();
 
       UpdateAdvMode();
 
@@ -184,13 +147,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
       mpButtonRec.Enabled = false;
       //mpButtonPark.Enabled = false;
-
-      _channelNames = new Dictionary<int, string>();
-      IList<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannels(ChannelRelation.None);
-      foreach (Channel ch in channels)
-      {
-        _channelNames.Add(ch.IdChannel, ch.Name);
-      }
     }
 
     public override void OnSectionDeActivated()
@@ -205,19 +161,17 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       if (mpComboBoxChannels.SelectedItem == null) return;
       int id = ((ComboBoxExItem)mpComboBoxChannels.SelectedItem).Id;
       
-      IVirtualCard card = GetCardTimeShiftingChannel(id);
+      IVirtualCard card = GetCardChannel(id);
 
       if (card != null && IsSameUser(card))
       {
-        var user = card.User.Clone() as IUser;
-
+        string name = card.User.Name;
         if (txtUsername.Text.Length > 0)
         {
-          user.Name = txtUsername.Text;
-          user.SubChannels.Clear();
+          name = txtUsername.Text;
         }
-
-        ServiceAgents.Instance.ControllerServiceAgent.StopTimeShifting(user.Name, out user);
+        IUser user;
+        ServiceAgents.Instance.ControllerServiceAgent.StopTimeShifting(name, out user);
 
         //card.StopTimeShifting();
         mpButtonRec.Enabled = false;
@@ -234,10 +188,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             break; // Keep the first card enabled selected only
           }
         }                   
-        IHeartbeatEventCallbackClient handler = new HeartbeatEventCallback();
-        ServiceAgents.Instance.EventServiceAgent.RegisterHeartbeatCallbacks(handler);
-        ICiMenuEventCallback menuHandler = new CiMenuEventCallback();
-        ServiceAgents.Instance.EventServiceAgent.UnRegisterCiMenuCallbacks(menuHandler, false);
+
         IUser user;
         TvResult result = ServiceAgents.Instance.ControllerServiceAgent.StartTimeShifting(GetUserName(cardId, id), id, out card, out user);
         if (result != TvResult.Succeeded)
@@ -314,21 +265,11 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
     private string GetUserName(int cardId, int id)
     {
-      string userName;
-      if (txtUsername.Text.Length > 0 && mpCheckBoxAdvMode.Checked)
+      if (mpCheckBoxAdvMode.Checked && !string.IsNullOrWhiteSpace(txtUsername.Text))
       {
-        userName = txtUsername.Text;
+        return txtUsername.Text.Trim();
       }
-      else
-      {
-        userName = "setuptv-" + id + "-" + cardId;
-      }
-      return userName;
-    }
-
-    private void OnHeartbeatRequestReceived()
-    {
-      //ignore
+      return "setuptv-" + id + "-" + cardId;
     }
 
     private void mpButtonRec_Click(object sender, EventArgs e)
@@ -337,7 +278,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       if (mpComboBoxChannels.SelectedItem == null) return;
       string channel = mpComboBoxChannels.SelectedItem.ToString();
       int id = ((ComboBoxExItem)mpComboBoxChannels.SelectedItem).Id;
-      VirtualCard card = GetCardRecordingChannel(id);
+      VirtualCard card = GetCardChannel(id, true);
       if (card != null)
       {
         card.StopRecording();
@@ -346,7 +287,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }
       else
       {
-        card = GetCardTimeShiftingChannel(id);
+        card = GetCardChannel(id);
         if (card != null)
         {
           foreach (var c in System.IO.Path.GetInvalidFileNameChars())
@@ -362,7 +303,11 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
     private void timer1_Tick(object sender, EventArgs e)
     {
-      if (!ServiceHelper.IsRestrictedMode)
+      if (ServiceHelper.IsRestrictedMode)
+      {
+        buttonRestart.Text = "*Restricted Mode*";
+      }
+      else
       {
         bool isServiceRunning = ServiceHelper.IsRunning;
         if (isServiceRunning)
@@ -384,11 +329,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           mpComboBoxChannels.Enabled = false;
           mpListView1.Items.Clear();
           return;
-        }
-      }
-      else
-      {
-        buttonRestart.Text = "*Restricted Mode*";
+        }        
       }
       
       comboBoxGroups.Enabled = true;
@@ -398,7 +339,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       if (mpComboBoxChannels.SelectedItem != null)
       {
         int id = ((ComboBoxExItem)mpComboBoxChannels.SelectedItem).Id;
-        VirtualCard card = GetCardTimeShiftingChannel(id);
+        VirtualCard card = GetCardChannel(id);
         if (card != null)
         {
           mpGroupBox1.Visible = true;
@@ -457,33 +398,25 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
     private bool IsChannelParked(VirtualCard card, int id)
     {
-      bool isChannelParked = false;
       foreach (ISubChannel subch in card.User.SubChannels.Values)
       {
         if (subch.IdChannel == id)
         {
-          if (subch.Usage == TvUsage.Parked)
+          if (subch.IsParked)
           {
-            isChannelParked = true;
-            break;
+            return true;
           }
         }
       }
-      return isChannelParked;
+      return false;
     }
 
     private void UpdateCardStatus()
     {
-      if (_tuners == null)
+      if (_tuners != null && _tuners.Count > 0)
       {
-        return;
+        Utils.UpdateCardStatus(mpListView1);
       }
-      if (_tuners.Count == 0)
-      {
-        return;
-      }
-
-      Utils.UpdateCardStatus(mpListView1);      
     }
 
     private void buttonRestart_Click(object sender, EventArgs e)
@@ -530,11 +463,12 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     }
 
     /// <summary>
-    /// returns the virtualcard which is timeshifting the channel specified
+    /// returns the virtualcard which is timeshifting or recording the channel specified
     /// </summary>
     /// <param name="channelId">Id of the channel</param>
+    /// <param name="isRecording"><c>True</c> if looking for a recording sub-channel.</param>
     /// <returns>virtual card</returns>
-    public VirtualCard GetCardTimeShiftingChannel(int channelId)
+    private VirtualCard GetCardChannel(int channelId, bool isRecording = false)
     {
       IList<Tuner> tuners = ServiceAgents.Instance.TunerServiceAgent.ListAllTuners(TunerRelation.None);
       foreach (Tuner tuner in tuners)
@@ -551,40 +485,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             if (subchannel.IdChannel == channelId)
             {
               var vcard = new VirtualCard(user1);
-              if (vcard.IsTimeShifting)
-              {
-                return vcard;
-              }
-            } 
-          }          
-        }
-      }
-      return null;
-    }
-
-    /// <summary>
-    /// returns the virtualcard which is recording the channel specified
-    /// </summary>
-    /// <param name="channelId">Id of the channel</param>
-    /// <returns>virtual card</returns>
-    public VirtualCard GetCardRecordingChannel(int channelId)
-    {
-      IList<Tuner> tuners = ServiceAgents.Instance.TunerServiceAgent.ListAllTuners(TunerRelation.None);
-      foreach (Tuner tuner in tuners)
-      {
-        if (tuner.IsEnabled == false) continue;
-        if (!ServiceAgents.Instance.ControllerServiceAgent.IsCardPresent(tuner.IdTuner))
-          continue;
-        IDictionary<string, IUser> usersForCard = ServiceAgents.Instance.ControllerServiceAgent.GetUsersForCard(tuner.IdTuner);
-
-        foreach (IUser user in usersForCard.Values)
-        {
-          foreach (var subchannel in user.SubChannels.Values)
-          {
-            if (subchannel.IdChannel == channelId)
-            {
-              var vcard = new VirtualCard(user);
-              if (vcard.IsRecording)
+              if ((!isRecording && vcard.IsTimeShifting) || (isRecording && vcard.IsRecording))
               {
                 return vcard;
               }
@@ -597,72 +498,37 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
     private void comboBoxGroups_SelectedIndexChanged(object sender, EventArgs e)
     {
-      ComboBoxExItem idItem = (ComboBoxExItem)comboBoxGroups.Items[comboBoxGroups.SelectedIndex];
+      int channelGroupId = ((ChannelGroup)comboBoxGroups.SelectedItem).IdChannelGroup;
       mpComboBoxChannels.Items.Clear();
-      if (idItem.Id == -1)
+      IList<Channel> channels;
+      if (channelGroupId == -1)
       {        
-        IList<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannels(ChannelRelation.TuningDetails);
-        foreach (Channel ch in channels)
-        {
-          if (ch.MediaType != (int)MediaType.Television) continue;
-          bool hasFta = false;
-          bool hasScrambled = false;
-          IList<TuningDetail> tuningDetails = ch.TuningDetails;
-          foreach (TuningDetail detail in tuningDetails)
-          {
-            if (detail.IsEncrypted)
-            {
-              hasScrambled = true;
-            }
-            else
-            {
-              hasFta = true;
-            }
-          }
-
-          int imageIndex;
-          if (hasFta && hasScrambled)
-          {
-            imageIndex = 5;
-          }
-          else if (hasScrambled)
-          {
-            imageIndex = 4;
-          }
-          else
-          {
-            imageIndex = 3;
-          }
-          ComboBoxExItem item = new ComboBoxExItem(ch.Name, imageIndex, ch.IdChannel);
-
-          mpComboBoxChannels.Items.Add(item);
-        }
+        channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannels(ChannelRelation.TuningDetails);
       }
       else
       {
-        ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetChannelGroup(idItem.Id, ChannelGroupRelation.GroupMapsTuningDetails);
-        IList<GroupMap> maps = group.GroupMaps;
+        channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannelsByGroupId(channelGroupId, ChannelRelation.TuningDetails);
+      }
+      foreach (Channel ch in channels)
+      {
         bool hasFta = false;
-        foreach (GroupMap map in maps)
+        bool hasScrambled = false;
+        IList<TuningDetail> tuningDetails = ch.TuningDetails;
+        foreach (TuningDetail detail in tuningDetails)
         {
-          Channel ch = map.Channel;
-          if (ch.MediaType != (int)MediaType.Television)
-          hasFta = false;
-          bool hasScrambled = false;
-          IList<TuningDetail> tuningDetails = ch.TuningDetails;
-          foreach (TuningDetail detail in tuningDetails)
+          if (detail.IsEncrypted)
           {
-            if (detail.IsEncrypted)
-            {
-              hasScrambled = true;
-            }
-            else
-            {
-              hasFta = true;
-            }
+            hasScrambled = true;
           }
+          else
+          {
+            hasFta = true;
+          }
+        }
 
-          int imageIndex;
+        int imageIndex;
+        if (ch.MediaType == (int)MediaType.Television)
+        {
           if (hasFta && hasScrambled)
           {
             imageIndex = 5;
@@ -675,9 +541,23 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           {
             imageIndex = 3;
           }
-          ComboBoxExItem item = new ComboBoxExItem(ch.Name, imageIndex, ch.IdChannel);
-          mpComboBoxChannels.Items.Add(item);
         }
+        else
+        {
+          if (hasFta && hasScrambled)
+          {
+            imageIndex = 2;
+          }
+          else if (hasScrambled)
+          {
+            imageIndex = 1;
+          }
+          else
+          {
+            imageIndex = 0;
+          }
+        }
+        mpComboBoxChannels.Items.Add(new ComboBoxExItem(ch.Name, imageIndex, ch.IdChannel));
       }
       if (mpComboBoxChannels.Items.Count > 0)
         mpComboBoxChannels.SelectedIndex = 0;
@@ -690,7 +570,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       string channel = mpComboBoxChannels.SelectedItem.ToString();
       int id = ((ComboBoxExItem)mpComboBoxChannels.SelectedItem).Id;
 
-      //VirtualCard card = GetCardTimeShiftingChannel(id);
+      //VirtualCard card = GetCardChannel(id);
       //if (card != null)
       {
         //var user = card.User.Clone() as IUser;
@@ -714,8 +594,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         } */
         double duration = 0;
         double.TryParse(txtDuration.Text, out duration);
-        IUser user = new User(txtUsername.Text, UserType.Normal);
-        bool result = ServiceAgents.Instance.ControllerServiceAgent.ParkTimeShifting(user.Name, duration, id, out user);
+        IUser user;
+        bool result = ServiceAgents.Instance.ControllerServiceAgent.ParkTimeShifting(txtUsername.Text, duration, id, out user);
       }      
     }
 
@@ -723,34 +603,26 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     {
       if (!ServiceHelper.IsAvailable) return;
       if (mpComboBoxChannels.SelectedItem == null) return;
-      string channel = mpComboBoxChannels.SelectedItem.ToString();
       int id = ((ComboBoxExItem)mpComboBoxChannels.SelectedItem).Id;
 
-      IUser user = new User(txtUsername.Text, UserType.Normal);
-
-
+      IUser user;
       double duration = 0;
       double.TryParse(txtDuration.Text, out duration);
       IVirtualCard card;
-      bool result = ServiceAgents.Instance.ControllerServiceAgent.UnParkTimeShifting(user.Name, duration, id, out user, out card);
+      bool result = ServiceAgents.Instance.ControllerServiceAgent.UnParkTimeShifting(txtUsername.Text, duration, id, out user, out card);
     }
 
     private void mpButtonAdvStartTimeshift_Click(object sender, EventArgs e)
     {
       if (!ServiceHelper.IsAvailable) return;
       if (mpComboBoxChannels.SelectedItem == null) return;
-      string channel = mpComboBoxChannels.SelectedItem.ToString();
       int id = ((ComboBoxExItem)mpComboBoxChannels.SelectedItem).Id;
 
-
-      
       IVirtualCard card;
-
       int prio;
-      bool parsed = int.TryParse(txtPrio.Text, out prio);
       TvResult result;
       IUser user;
-      if (parsed)
+      if (int.TryParse(txtPrio.Text, out prio))
       {
         result = ServiceAgents.Instance.ControllerServiceAgent.StartTimeShifting(txtUsername.Text, id, out card, out user, prio);
       }
@@ -766,7 +638,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     {
       if (!ServiceHelper.IsAvailable) return;
       if (mpComboBoxChannels.SelectedItem == null) return;
-      string channel = mpComboBoxChannels.SelectedItem.ToString();
       IUser user;
       bool result = ServiceAgents.Instance.ControllerServiceAgent.StopTimeShifting(txtUsername.Text, out user);
     }
@@ -798,28 +669,5 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         mpButtonRec.Location = new Point(343, 254);
       }
     }
-  }
-
-  internal class CiMenuEventCallback : ICiMenuEventCallback
-  {
-    #region Implementation of ICiMenuEventCallback
-
-    public void CiMenuCallback(CiMenu menu)
-    {
-      
-    }
-
-    #endregion
-  }
-
-  internal class HeartbeatEventCallback : IHeartbeatEventCallbackClient
-  {
-    #region Implementation of IHeartbeatEventCallback
-
-    public void HeartbeatRequestReceived()
-    {
-    }
-
-    #endregion
   }
 }

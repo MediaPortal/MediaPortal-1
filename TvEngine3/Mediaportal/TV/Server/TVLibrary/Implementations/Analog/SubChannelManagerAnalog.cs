@@ -42,7 +42,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog
       {
         return 1;   // TsMuxer's fixed/static program number
       }
-      return ChannelMpeg2Base.PROGRAM_NUMBER_SCANNING;
+      return ChannelMpeg2TsBase.PROGRAM_NUMBER_SCANNING;
     }
   }
 }

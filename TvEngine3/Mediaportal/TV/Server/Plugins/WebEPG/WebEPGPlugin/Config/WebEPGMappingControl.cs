@@ -126,7 +126,7 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
         }
         foreach (ChannelGroup cg in channelGroups)
         {
-          GroupComboBox.Items.Add(new CBChannelGroup(cg.GroupName, cg.IdGroup));
+          GroupComboBox.Items.Add(new CBChannelGroup(cg.Name, cg.IdChannelGroup));
         }
       }
       catch (Exception e)

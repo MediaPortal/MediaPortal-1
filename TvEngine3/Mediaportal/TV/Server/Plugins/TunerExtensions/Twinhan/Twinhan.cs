@@ -40,7 +40,9 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner.Diseqc.Enum;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension.Enum;
 using MediaPortal.Common.Utils;
+using BdaPolarisation = DirectShowLib.BDA.Polarisation;
 using ITuner = Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner.ITuner;
+using TvePolarisation = Mediaportal.TV.Server.Common.Types.Enum.Polarisation;
 
 namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
 {
@@ -61,7 +63,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
       DvbT = 0x0002,
       DvbC = 0x0004,
       Atsc = 0x0008,
-      AnnexB = 0x0010,        // North American cable ITU-T annex B (AKA SCTE, OpenCable, clear QAM)
+      AnnexB = 0x0010,        // North American cable ITU-T J.83 annex B (AKA SCTE, OpenCable, clear QAM)
       IsdbT = 0x0020,
       IsdbS = 0x0040,
 
@@ -469,8 +471,16 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
       [FieldOffset(4)]
       public int Bandwidth;                                 // unit = MHz
 
+      // Disassembly of a Mantis chipset driver revealed that the driver
+      // interprets the modulation member value as both a modulation and a
+      // polarisation. There's no way for us to solve that. We can only
+      // decide whether modulation or polarisation are more critical for
+      // acquiring signal lock, and pass in the corresponding value.
       [FieldOffset(8)]
-      public ModulationType Modulation;                     // or polarisation???
+      public ModulationType Modulation;
+      [FieldOffset(8)]
+      public BdaPolarisation Polarisation;
+
       [FieldOffset(12), MarshalAs(UnmanagedType.I1)]
       public bool LockWaitForResult;
       [FieldOffset(13)]
@@ -543,6 +553,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
     #region variables
 
     private bool _isTwinhan = false;
+    private bool _isSatelliteTuner = false;
     private bool _isElgatoDriver = false;
     private bool _isElgatoPbdaDriver = false;
     private bool _isTerraTecDriver = false;
@@ -574,7 +585,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
 
     private IKsPropertySet _propertySet = null;
     private IoControl _ioControl = null;
-    private BroadcastStandard _tunerSupportedBroadcastStandards = BroadcastStandard.Unknown;
     private string _tunerProductInstanceId = string.Empty;
     private string _tunerExternalId = string.Empty;
 
@@ -1182,7 +1192,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
 
       this.LogInfo("Twinhan: extension supported");
       _isTwinhan = true;
-      _tunerSupportedBroadcastStandards = tunerSupportedBroadcastStandards;
+      _isSatelliteTuner = (tunerSupportedBroadcastStandards & BroadcastStandard.MaskSatellite) != 0;
       _tunerExternalId = tunerExternalId;
       if (_tunerExternalId != null)
       {
@@ -1297,12 +1307,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
         return;
       }
 
+      ModulationType bdaModulation = ModulationType.ModNotSet;
       if (channel is ChannelDvbS2)
       {
         // Modulation for DVB-S2 QPSK and 8 PSK should be Mod8Vsb. As far as I
         // know, none of the hardware supported by this extension support 16 or
         // 32 APSK.
-        ModulationType bdaModulation = ModulationType.ModNotSet;
         if (satelliteChannel.ModulationScheme == ModulationSchemePsk.Psk4 || satelliteChannel.ModulationScheme == ModulationSchemePsk.Psk8)
         {
           bdaModulation = ModulationType.Mod8Vsb;
@@ -1315,12 +1325,24 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
         {
           bdaModulation = ModulationType.ModOqpsk;
         }
-
-        if (bdaModulation != ModulationType.ModNotSet)
+      }
+      else if (channel is ChannelDvbS)
+      {
+        if (satelliteChannel.ModulationScheme == ModulationSchemePsk.Psk2)
         {
-          this.LogDebug("  modulation = {0}", bdaModulation);
-          satelliteChannel.ModulationScheme = (ModulationSchemePsk)bdaModulation;
+          // Probably not supported. This may trigger slow auto-detection.
+          bdaModulation = ModulationType.ModBpsk;
         }
+        else if (satelliteChannel.ModulationScheme == ModulationSchemePsk.Psk4)
+        {
+          bdaModulation = ModulationType.ModQpsk;
+        }
+      }
+
+      if (bdaModulation != ModulationType.ModNotSet)
+      {
+        this.LogDebug("  modulation = {0}", bdaModulation);
+        satelliteChannel.ModulationScheme = (ModulationSchemePsk)bdaModulation;
       }
 
       // Reset DiSEqC switch settings. We don't send commands unless we're
@@ -1392,7 +1414,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
       // KsProperty with the actual property codes encoded in the property data).
       // For that reason and for safety's sake we only execute this function for
       // satellite tuners.
-      if ((_tunerSupportedBroadcastStandards & BroadcastStandard.MaskSatellite) == 0)
+      if (!_isSatelliteTuner)
       {
         this.LogDebug("Twinhan: function disabled for safety");
         return true;    // Don't retry...
@@ -1431,12 +1453,10 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
     public bool CanTuneChannel(IChannel channel)
     {
       if (
-        (channel is ChannelAtsc && _tunerSupportedBroadcastStandards.HasFlag(BroadcastStandard.Atsc)) ||
-        (channel is ChannelScte && _tunerSupportedBroadcastStandards.HasFlag(BroadcastStandard.Scte)) ||
-        (channel is ChannelDvbC && _tunerSupportedBroadcastStandards.HasFlag(BroadcastStandard.DvbC)) ||
-        (channel is IChannelSatellite && (_tunerSupportedBroadcastStandards & BroadcastStandard.MaskSatellite) != 0) ||
-        (channel is ChannelDvbT && _tunerSupportedBroadcastStandards.HasFlag(BroadcastStandard.DvbT)) ||
-        (channel is ChannelDvbT2 && _tunerSupportedBroadcastStandards.HasFlag(BroadcastStandard.DvbT2))
+        channel is ChannelAtsc ||
+        channel is IChannelOfdm ||
+        channel is IChannelQam ||
+        channel is IChannelSatellite
       )
       {
         return true;
@@ -1469,25 +1489,40 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
       int hr;
       TuningParams tuningParams = new TuningParams();
       ChannelAtsc atscChannel = channel as ChannelAtsc;
-      if (atscChannel != null && _tunerSupportedBroadcastStandards.HasFlag(BroadcastStandard.Atsc))
+      if (atscChannel != null)
       {
         tuningParams.Frequency = atscChannel.Frequency;
+        switch (atscChannel.ModulationScheme)
+        {
+          case ModulationSchemeVsb.Vsb8:
+            tuningParams.Modulation = ModulationType.Mod8Vsb;
+            break;
+          case ModulationSchemeVsb.Vsb16:
+            tuningParams.Modulation = ModulationType.Mod16Vsb;
+            break;
+          default:
+            this.LogWarn("Twinhan: ATSC tune request uses unsupported modulation {0}, falling back to automatic", atscChannel.ModulationScheme);
+            tuningParams.Modulation = ModulationType.ModNotSet;
+            break;
+        }
       }
       else
       {
-        ChannelScte scteChannel = channel as ChannelScte;
-        if (scteChannel != null && _tunerSupportedBroadcastStandards.HasFlag(BroadcastStandard.Scte))
+        IChannelOfdm ofdmChannel = channel as IChannelOfdm;
+        if (ofdmChannel == null)
         {
-          tuningParams.Frequency = scteChannel.Frequency;
+          tuningParams.Frequency = ofdmChannel.Frequency;
+          tuningParams.Bandwidth = ofdmChannel.Bandwidth / 1000;
+          tuningParams.Modulation = 0;
         }
         else
         {
-          ChannelDvbC dvbcChannel = channel as ChannelDvbC;
-          if (dvbcChannel != null && _tunerSupportedBroadcastStandards.HasFlag(BroadcastStandard.DvbC))
+          IChannelQam qamChannel = channel as IChannelQam;
+          if (qamChannel != null)
           {
-            tuningParams.Frequency = dvbcChannel.Frequency;
-            tuningParams.SymbolRate = dvbcChannel.SymbolRate;
-            switch (dvbcChannel.ModulationScheme)
+            tuningParams.Frequency = qamChannel.Frequency;
+            tuningParams.SymbolRate = qamChannel.SymbolRate;
+            switch (qamChannel.ModulationScheme)
             {
               case ModulationSchemeQam.Qam16:
                 tuningParams.Modulation = ModulationType.Mod16Qam;
@@ -1510,42 +1545,52 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
               case ModulationSchemeQam.Qam1024:
                 tuningParams.Modulation = ModulationType.Mod1024Qam;
                 break;
+              default:
+                this.LogWarn("Twinhan: DVB-C tune request uses unsupported modulation {0}, falling back to automatic", qamChannel.ModulationScheme);
+                tuningParams.Modulation = ModulationType.ModNotSet;
+                break;
             }
           }
           else
           {
             IChannelSatellite satelliteChannel = channel as IChannelSatellite;
-            if (satelliteChannel != null)
+            if (satelliteChannel == null)
             {
-              tuningParams.Frequency = satelliteChannel.Frequency;
-              tuningParams.SymbolRate = satelliteChannel.SymbolRate;
-              if (SatelliteLnbHandler.IsHighVoltage(satelliteChannel.Polarisation))
-              {
-                tuningParams.Modulation = (ModulationType)2;
-              }
-              else
-              {
-                tuningParams.Modulation = (ModulationType)1;
-              }
+              this.LogError("Twinhan: tuning is not supported for channel{0}{1}", Environment.NewLine, channel);
+              return false;
             }
-            else
-            {
-              IChannelOfdm ofdmChannel = channel as IChannelOfdm;
-              if (ofdmChannel == null || (!_tunerSupportedBroadcastStandards.HasFlag(BroadcastStandard.DvbT) && !_tunerSupportedBroadcastStandards.HasFlag(BroadcastStandard.DvbT2)))
-              {
-                this.LogError("Twinhan: tuning is not supported for channel{0}{1}", Environment.NewLine, channel);
-                return false;
-              }
 
-              tuningParams.Frequency = ofdmChannel.Frequency;
-              tuningParams.Bandwidth = ofdmChannel.Bandwidth / 1000;
-              tuningParams.Modulation = 0;
+            tuningParams.Frequency = satelliteChannel.Frequency;
+            tuningParams.SymbolRate = satelliteChannel.SymbolRate;
+
+            // Can't set both polarisation and modulation. Refer to the
+            // struct comments.
+            //tuningParams.Modulation = (ModulationType)satelliteChannel.ModulationScheme;
+
+            switch (satelliteChannel.Polarisation)
+            {
+              case TvePolarisation.CircularLeft:
+                tuningParams.Polarisation = BdaPolarisation.CircularL;
+                break;
+              case TvePolarisation.CircularRight:
+                tuningParams.Polarisation = BdaPolarisation.CircularR;
+                break;
+              case TvePolarisation.LinearHorizontal:
+                tuningParams.Polarisation = BdaPolarisation.LinearH;
+                break;
+              case TvePolarisation.LinearVertical:
+                tuningParams.Polarisation = BdaPolarisation.LinearV;
+                break;
+              default:
+                this.LogWarn("Twinhan: satellite tune request uses unsupported polarisation {0}, falling back to automatic", satelliteChannel.Polarisation);
+                tuningParams.Polarisation = BdaPolarisation.NotSet;
+                break;
             }
           }
         }
       }
 
-      tuningParams.LockWaitForResult = true;
+      tuningParams.LockWaitForResult = false;
 
       Marshal.StructureToPtr(tuningParams, _generalBuffer, false);
       Dump.DumpBinary(_generalBuffer, TUNING_PARAMS_SIZE);

@@ -58,9 +58,10 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.labelExternalId = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.textBoxExternalId = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTextBox();
       this.tableLayoutPanel = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTableLayoutPanel();
-      this.textBoxNumber = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTextBox();
+      this.channelNumberUpDownNumber = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPChannelNumberUpDown();
       this.groupBoxTuningDetails.SuspendLayout();
       this.tableLayoutPanel.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.channelNumberUpDownNumber)).BeginInit();
       this.SuspendLayout();
       // 
       // buttonOkay
@@ -354,7 +355,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.tableLayoutPanel.Controls.Add(this.labelName, 0, 1);
       this.tableLayoutPanel.Controls.Add(this.textBoxName, 1, 1);
       this.tableLayoutPanel.Controls.Add(this.checkBoxVisibleInGuide, 3, 2);
-      this.tableLayoutPanel.Controls.Add(this.textBoxNumber, 1, 2);
+      this.tableLayoutPanel.Controls.Add(this.channelNumberUpDownNumber, 1, 2);
       this.tableLayoutPanel.Location = new System.Drawing.Point(12, 1);
       this.tableLayoutPanel.Name = "tableLayoutPanel";
       this.tableLayoutPanel.RowCount = 3;
@@ -364,13 +365,28 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.tableLayoutPanel.Size = new System.Drawing.Size(522, 78);
       this.tableLayoutPanel.TabIndex = 0;
       // 
-      // textBoxNumber
+      // channelNumberUpDownNumber
       // 
-      this.textBoxNumber.Location = new System.Drawing.Point(56, 55);
-      this.textBoxNumber.MaxLength = 10;
-      this.textBoxNumber.Name = "textBoxNumber";
-      this.textBoxNumber.Size = new System.Drawing.Size(70, 20);
-      this.textBoxNumber.TabIndex = 4;
+      this.channelNumberUpDownNumber.DecimalPlaces = 3;
+      this.channelNumberUpDownNumber.Location = new System.Drawing.Point(56, 55);
+      this.channelNumberUpDownNumber.Maximum = new decimal(new int[] {
+            65535999,
+            0,
+            0,
+            196608});
+      this.channelNumberUpDownNumber.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+      this.channelNumberUpDownNumber.Name = "channelNumberUpDownNumber";
+      this.channelNumberUpDownNumber.Size = new System.Drawing.Size(75, 20);
+      this.channelNumberUpDownNumber.TabIndex = 4;
+      this.channelNumberUpDownNumber.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
       // 
       // FormEditChannel
       // 
@@ -395,6 +411,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.groupBoxTuningDetails.PerformLayout();
       this.tableLayoutPanel.ResumeLayout(false);
       this.tableLayoutPanel.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.channelNumberUpDownNumber)).EndInit();
       this.ResumeLayout(false);
 
     }
@@ -427,6 +444,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
     private MPButton buttonTuningDetailPriorityDown;
     private MPLabel labelPriority;
     private MPTableLayoutPanel tableLayoutPanel;
-    private MPTextBox textBoxNumber;
+    private MPChannelNumberUpDown channelNumberUpDownNumber;
   }
 }

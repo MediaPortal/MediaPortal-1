@@ -20,10 +20,8 @@
 
 using System;
 using System.ComponentModel;
-using System.Data.SqlTypes;
-using System.Globalization;
 using System.Windows.Forms;
-using Mediaportal.TV.Server.Common.Types.Enum;
+using Mediaportal.TV.Server.Common.Types.Channel;
 using Mediaportal.TV.Server.SetupControls;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
@@ -58,13 +56,13 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
     {
       if (_tuningDetail != null)
       {
-        this.LogInfo("tuning detail: start edit, ID = {0}", _tuningDetail.IdTuning);
-        if (_tuningDetail.IdTuning > 0)
+        this.LogInfo("tuning detail: start edit, ID = {0}", _tuningDetail.IdTuningDetail);
+        if (_tuningDetail.IdTuningDetail > 0)
         {
-          _tuningDetail = ServiceAgents.Instance.ChannelServiceAgent.GetTuningDetail(_tuningDetail.IdTuning, TuningDetailRelation.None);
+          _tuningDetail = ServiceAgents.Instance.ChannelServiceAgent.GetTuningDetail(_tuningDetail.IdTuningDetail, TuningDetailRelation.None);
         }
         textBoxName.Text = _tuningDetail.Name;
-        textBoxNumber.Text = _tuningDetail.LogicalChannelNumber;
+        channelNumberUpDownNumber.Text = _tuningDetail.LogicalChannelNumber;
         textBoxProvider.Text = _tuningDetail.Provider;
         checkBoxIsEncrypted.Checked = _tuningDetail.IsEncrypted;
         checkBoxIsHighDefinition.Checked = _tuningDetail.IsHighDefinition;
@@ -77,7 +75,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
           this.LogInfo("tuning detail: create new");
         }
         textBoxName.Text = string.Empty;
-        textBoxNumber.Text = string.Empty;
+        channelNumberUpDownNumber.Text = LogicalChannelNumber.GLOBAL_DEFAULT;
         textBoxProvider.Text = string.Empty;
         checkBoxIsEncrypted.Checked = false;
         checkBoxIsHighDefinition.Checked = false;
@@ -95,17 +93,10 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
         return;
       }
 
-      int intChannelNumber;
-      float floatChannelNumber;
-      if (
-        string.IsNullOrWhiteSpace(textBoxNumber.Text) ||
-        (
-          !int.TryParse(textBoxNumber.Text, NumberStyles.None, CultureInfo.InvariantCulture.NumberFormat, out intChannelNumber) &&
-          !float.TryParse(textBoxNumber.Text, NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture.NumberFormat, out floatChannelNumber)
-        )
-      )
+      string logicalChannelNumber;
+      if (!LogicalChannelNumber.Create(channelNumberUpDownNumber.Text, out logicalChannelNumber))
       {
-        MessageBox.Show("Please enter a number in the form ### or #.#. For example, 123 or 1.10.", SectionSettings.MESSAGE_CAPTION);
+        MessageBox.Show("Please enter a channel number in the form ### or #.#. For example, 123 or 1.23.", SectionSettings.MESSAGE_CAPTION, MessageBoxButtons.OK);
         return;
       }
 
@@ -119,48 +110,18 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
         this.LogInfo("tuning detail: save new");
         _tuningDetail = new TuningDetail
         {
-          BroadcastStandard = (int)BroadcastStandard.Unknown,
           Name = textBoxName.Text,
           Provider = textBoxProvider.Text,
-          LogicalChannelNumber = textBoxNumber.Text,
+          LogicalChannelNumber = logicalChannelNumber,
           IsEncrypted = checkBoxIsEncrypted.Checked,
           IsHighDefinition = checkBoxIsHighDefinition.Checked,
-          IsThreeDimensional = checkBoxIsThreeDimensional.Checked,
-          OriginalNetworkId = -1,
-          TransportStreamId = -1,
-          ServiceId = -1,
-          FreesatChannelId = -1,
-          OpenTvChannelId = -1,
-          EpgOriginalNetworkId = -1,
-          EpgTransportStreamId = -1,
-          EpgServiceId = -1,
-          SourceId = -1,
-          PmtPid = -1,
-          PhysicalChannelNumber = -1,
-          Frequency = -1,
-          CountryId = -1,
-          Modulation = -1,
-          Polarisation = (int)Polarisation.Automatic,
-          SymbolRate = -1,
-          Bandwidth = -1,
-          VideoSource = (int)CaptureSourceVideo.None,
-          AudioSource = (int)CaptureSourceAudio.None,
-          TuningSource = (int)AnalogTunerSource.Cable,
-          FecCodeRate = (int)FecCodeRate.Automatic,
-          PilotTonesState = (int)PilotTonesState.Automatic,
-          RollOffFactor = (int)RollOffFactor.Automatic,
-          StreamId = -1,
-          Url = string.Empty,
-          IsVcrSignal = false,
-          IdSatellite = null,
-          GrabEpg = true,
-          LastEpgGrabTime = SqlDateTime.MinValue.Value
+          IsThreeDimensional = checkBoxIsThreeDimensional.Checked
         };
       }
       UpdateProperties(_tuningDetail);
-      if (_tuningDetail.IdTuning > 0)
+      if (_tuningDetail.IdTuningDetail > 0)
       {
-        this.LogInfo("tuning detail: save changes, ID = {0}", _tuningDetail.IdTuning);
+        this.LogInfo("tuning detail: save changes, ID = {0}", _tuningDetail.IdTuningDetail);
         ServiceAgents.Instance.ChannelServiceAgent.SaveTuningDetail(_tuningDetail);
       }
 
@@ -176,7 +137,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       }
       else
       {
-        this.LogInfo("tuning detail: cancel changes, ID = {0}", _tuningDetail.IdTuning);
+        this.LogInfo("tuning detail: cancel changes, ID = {0}", _tuningDetail.IdTuningDetail);
       }
       DialogResult = DialogResult.Cancel;
       Close();

@@ -141,7 +141,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
         if (_scannerAtsc != null)
         {
           ChannelScte scteChannel = channel as ChannelScte;
-          isForcedLvctScan = scteChannel != null && scteChannel.Frequency != ChannelScte.FREQUENCY_OUT_OF_BAND_CHANNEL_SCAN;
+          isForcedLvctScan = scteChannel != null && !scteChannel.IsOutOfBandScanChannel();
           _scannerAtsc.Scan(channel, isForcedLvctScan, out channels, out groupNames, out ignoredChannelNumbers);
         }
         else
@@ -198,8 +198,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
     /// within the available network information.
     /// </summary>
     /// <param name="channel">The channel to tune to.</param>
-    /// <returns>the tuning details found</returns>
-    public IList<TuningDetail> ScanNetworkInformation(IChannel channel)
+    /// <returns>the transmitter tuning details found in the network information</returns>
+    public IList<ScannedTransmitter> ScanNetworkInformation(IChannel channel)
     {
       return _scanner.ScanNetworkInformation(channel);
     }

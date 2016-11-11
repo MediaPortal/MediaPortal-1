@@ -236,7 +236,17 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AutumnWave
     /// <returns><c>true</c> if the extension supports specialised tuning for the channel, otherwise <c>false</c></returns>
     public bool CanTuneChannel(IChannel channel)
     {
-      return channel is ChannelAtsc || channel is ChannelScte;
+      ChannelAtsc atscChannel = channel as ChannelAtsc;
+      if (atscChannel != null)
+      {
+        return atscChannel.ModulationScheme == ModulationSchemeVsb.Vsb8;
+      }
+      ChannelScte scteChannel = channel as ChannelScte;
+      if (scteChannel != null && !scteChannel.IsCableCardNeededToTune())
+      {
+        return scteChannel.ModulationScheme == ModulationSchemeQam.Qam64 || scteChannel.ModulationScheme == ModulationSchemeQam.Qam256;
+      }
+      return false;
     }
 
     /// <summary>
@@ -259,16 +269,14 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AutumnWave
       ChannelAtsc atscChannel = channel as ChannelAtsc;
       if (atscChannel != null)
       {
-        if (atscChannel.ModulationScheme == ModulationSchemeVsb.Vsb8)
-        {
-          mode = AutumnWaveTunerMode.Vsb8;
-          physicalChannelNumber = atscChannel.PhysicalChannelNumber;
-        }
-        else
+        if (atscChannel.ModulationScheme != ModulationSchemeVsb.Vsb8)
         {
           this.LogError("AutumnWave: ATSC tune request uses unsupported modulation scheme {0}", atscChannel.ModulationScheme);
           return false;
         }
+
+        mode = AutumnWaveTunerMode.Vsb8;
+        physicalChannelNumber = atscChannel.PhysicalChannelNumber;
       }
       else
       {

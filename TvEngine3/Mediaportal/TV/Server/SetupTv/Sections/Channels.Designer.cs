@@ -33,11 +33,11 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.components = new System.ComponentModel.Container();
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Channels));
       this.listViewChannels = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPListView();
-      this.columnHeaderChannelsName = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader();
-      this.columnHeaderChannelsNumber = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader();
-      this.columnHeaderChannelsGroups = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader();
-      this.columnHeaderChannelsProvider = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader();
-      this.columnHeaderChannelsTuningDetails = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader();
+      this.columnHeaderChannelsName = ((Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader)(new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader()));
+      this.columnHeaderChannelsNumber = ((Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader)(new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader()));
+      this.columnHeaderChannelsGroups = ((Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader)(new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader()));
+      this.columnHeaderChannelsProvider = ((Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader)(new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader()));
+      this.columnHeaderChannelsTuningDetails = ((Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader)(new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader()));
       this.imageList1 = new System.Windows.Forms.ImageList(this.components);
       this.tabControl = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTabControl();
       this.tabPageChannels = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTabPage();
@@ -71,9 +71,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.buttonGroupChannelsAdd = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
       this.buttonGroupChannelsRemove = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
       this.listViewChannelsInGroup = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPListView();
-      this.columnHeaderChannelsInGroupName = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader();
-      this.columnHeaderChannelsInGroupNumber = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader();
-      this.toolTip = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPToolTip();
+      this.columnHeaderChannelsInGroupName = ((Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader)(new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader()));
+      this.columnHeaderChannelsInGroupNumber = ((Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader)(new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader()));
+      this.toolTip = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPToolTip(this.components);
       this.tabControl.SuspendLayout();
       this.tabPageChannels.SuspendLayout();
       this.tabPageChannelGroups.SuspendLayout();
@@ -86,9 +86,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       this.listViewChannels.AllowColumnReorder = true;
       this.listViewChannels.AllowRowReorder = false;
-      this.listViewChannels.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.listViewChannels.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.listViewChannels.CheckBoxes = true;
       this.listViewChannels.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeaderChannelsName,
@@ -158,9 +158,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       this.tabControl.AllowDrop = true;
       this.tabControl.AllowReorderTabs = false;
-      this.tabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.tabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.tabControl.Controls.Add(this.tabPageChannels);
       this.tabControl.Controls.Add(this.tabPageChannelGroups);
       this.tabControl.Location = new System.Drawing.Point(0, 0);
@@ -205,6 +205,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.textBoxChannelNumber.Text = "0";
       this.textBoxChannelNumber.Visible = false;
       this.textBoxChannelNumber.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBoxChannelNumber_KeyDown);
+      this.textBoxChannelNumber.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxChannelNumber_KeyPress);
       this.textBoxChannelNumber.Leave += new System.EventHandler(this.textBoxChannelNumber_Leave);
       this.textBoxChannelNumber.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.textBoxChannelNumber_PreviewKeyDown);
       // 
@@ -296,8 +297,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       // textBoxFilter
       // 
-      this.textBoxFilter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxFilter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxFilter.Location = new System.Drawing.Point(44, 6);
       this.textBoxFilter.Name = "textBoxFilter";
       this.textBoxFilter.Size = new System.Drawing.Size(422, 20);
@@ -330,8 +331,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       // groupBoxGroup
       // 
-      this.groupBoxGroup.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxGroup.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxGroup.Controls.Add(this.buttonGroupOrder);
       this.groupBoxGroup.Controls.Add(this.buttonGroupAdd);
       this.groupBoxGroup.Controls.Add(this.buttonGroupDelete);
@@ -380,9 +381,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       // comboBoxChannelGroup
       // 
-      this.comboBoxChannelGroup.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.comboBoxChannelGroup.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.comboBoxChannelGroup.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.comboBoxChannelGroup.FormattingEnabled = true;
       this.comboBoxChannelGroup.Location = new System.Drawing.Point(6, 19);
       this.comboBoxChannelGroup.Name = "comboBoxChannelGroup";
@@ -525,9 +525,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       this.listViewChannelsInGroup.AllowDrop = true;
       this.listViewChannelsInGroup.AllowRowReorder = true;
-      this.listViewChannelsInGroup.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.listViewChannelsInGroup.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.listViewChannelsInGroup.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeaderChannelsInGroupName,
             this.columnHeaderChannelsInGroupNumber});

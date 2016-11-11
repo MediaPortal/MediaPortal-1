@@ -36,17 +36,38 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.labelAudioSource = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.comboBoxVideoSource = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
       this.labelVideoSource = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      ((System.ComponentModel.ISupportInitialize)(this.channelNumberUpDownNumber)).BeginInit();
       this.SuspendLayout();
       // 
       // buttonCancel
       // 
-      this.buttonCancel.Location = new System.Drawing.Point(198, 243);
+      this.buttonCancel.Location = new System.Drawing.Point(149, 243);
       this.buttonCancel.TabIndex = 19;
       // 
       // buttonOkay
       // 
-      this.buttonOkay.Location = new System.Drawing.Point(103, 243);
+      this.buttonOkay.Location = new System.Drawing.Point(54, 243);
       this.buttonOkay.TabIndex = 18;
+      // 
+      // channelNumberUpDownNumber
+      // 
+      this.channelNumberUpDownNumber.Value = new decimal(new int[] {
+            10000,
+            0,
+            0,
+            0});
+      // 
+      // textBoxName
+      // 
+      this.textBoxName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxName.Size = new System.Drawing.Size(101, 20);
+      // 
+      // textBoxProvider
+      // 
+      this.textBoxProvider.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxProvider.Size = new System.Drawing.Size(101, 20);
       // 
       // labelIsVcrSignal
       // 
@@ -75,7 +96,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.comboBoxAudioSource.FormattingEnabled = true;
       this.comboBoxAudioSource.Location = new System.Drawing.Point(123, 186);
       this.comboBoxAudioSource.Name = "comboBoxAudioSource";
-      this.comboBoxAudioSource.Size = new System.Drawing.Size(150, 21);
+      this.comboBoxAudioSource.Size = new System.Drawing.Size(100, 21);
       this.comboBoxAudioSource.TabIndex = 15;
       // 
       // labelAudioSource
@@ -93,7 +114,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.comboBoxVideoSource.FormattingEnabled = true;
       this.comboBoxVideoSource.Location = new System.Drawing.Point(123, 159);
       this.comboBoxVideoSource.Name = "comboBoxVideoSource";
-      this.comboBoxVideoSource.Size = new System.Drawing.Size(150, 21);
+      this.comboBoxVideoSource.Size = new System.Drawing.Size(100, 21);
       this.comboBoxVideoSource.TabIndex = 13;
       // 
       // labelVideoSource
@@ -110,13 +131,15 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.AcceptButton = this.buttonOkay;
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.CancelButton = this.buttonCancel;
-      this.ClientSize = new System.Drawing.Size(285, 278);
+      this.ClientSize = new System.Drawing.Size(236, 278);
       this.Controls.Add(this.labelIsVcrSignal);
       this.Controls.Add(this.comboBoxAudioSource);
       this.Controls.Add(this.checkBoxIsVcrSignal);
       this.Controls.Add(this.labelAudioSource);
       this.Controls.Add(this.comboBoxVideoSource);
       this.Controls.Add(this.labelVideoSource);
+      this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
+      this.MinimumSize = new System.Drawing.Size(244, 304);
       this.Name = "FormEditTuningDetailCapture";
       this.Text = "Add/Edit Capture Tuning Detail";
       this.Controls.SetChildIndex(this.checkBoxIsHighDefinition, 0);
@@ -129,7 +152,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.Controls.SetChildIndex(this.checkBoxIsEncrypted, 0);
       this.Controls.SetChildIndex(this.textBoxName, 0);
       this.Controls.SetChildIndex(this.labelName, 0);
-      this.Controls.SetChildIndex(this.textBoxNumber, 0);
+      this.Controls.SetChildIndex(this.channelNumberUpDownNumber, 0);
       this.Controls.SetChildIndex(this.labelVideoSource, 0);
       this.Controls.SetChildIndex(this.comboBoxVideoSource, 0);
       this.Controls.SetChildIndex(this.labelNumber, 0);
@@ -139,6 +162,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.Controls.SetChildIndex(this.buttonCancel, 0);
       this.Controls.SetChildIndex(this.comboBoxAudioSource, 0);
       this.Controls.SetChildIndex(this.labelIsVcrSignal, 0);
+      ((System.ComponentModel.ISupportInitialize)(this.channelNumberUpDownNumber)).EndInit();
       this.ResumeLayout(false);
       this.PerformLayout();
 

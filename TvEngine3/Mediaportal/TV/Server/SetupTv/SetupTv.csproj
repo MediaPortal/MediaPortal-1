@@ -72,11 +72,11 @@
     <Compile Include="Dialogs\FormEditTuningDetailCommon.Designer.cs">
       <DependentUpon>FormEditTuningDetailCommon.cs</DependentUpon>
     </Compile>
-    <Compile Include="Dialogs\FormEditTuningDetailFmRadio.cs">
+    <Compile Include="Dialogs\FormEditTuningDetailAnalogRadio.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Dialogs\FormEditTuningDetailFmRadio.Designer.cs">
-      <DependentUpon>FormEditTuningDetailFmRadio.cs</DependentUpon>
+    <Compile Include="Dialogs\FormEditTuningDetailAnalogRadio.Designer.cs">
+      <DependentUpon>FormEditTuningDetailAnalogRadio.cs</DependentUpon>
     </Compile>
     <Compile Include="Dialogs\FormEditTuningDetailCapture.cs">
       <SubType>Form</SubType>
@@ -84,11 +84,11 @@
     <Compile Include="Dialogs\FormEditTuningDetailCapture.Designer.cs">
       <DependentUpon>FormEditTuningDetailCapture.cs</DependentUpon>
     </Compile>
-    <Compile Include="Dialogs\FormEditTuningDetailScte.cs">
+    <Compile Include="Dialogs\FormEditTuningDetailAtscScte.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Dialogs\FormEditTuningDetailScte.Designer.cs">
-      <DependentUpon>FormEditTuningDetailScte.cs</DependentUpon>
+    <Compile Include="Dialogs\FormEditTuningDetailAtscScte.Designer.cs">
+      <DependentUpon>FormEditTuningDetailAtscScte.cs</DependentUpon>
     </Compile>
     <Compile Include="Dialogs\FormOrderItems.cs">
       <SubType>Form</SubType>
@@ -108,23 +108,17 @@
     <Compile Include="Dialogs\FormEditTuningDetailAnalogTv.Designer.cs">
       <DependentUpon>FormEditTuningDetailAnalogTv.cs</DependentUpon>
     </Compile>
-    <Compile Include="Dialogs\FormEditTuningDetailAtsc.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Dialogs\FormEditTuningDetailAtsc.Designer.cs">
-      <DependentUpon>FormEditTuningDetailAtsc.cs</DependentUpon>
-    </Compile>
     <Compile Include="Dialogs\FormSelectTuningDetailType.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Dialogs\FormSelectTuningDetailType.Designer.cs">
       <DependentUpon>FormSelectTuningDetailType.cs</DependentUpon>
     </Compile>
-    <Compile Include="Dialogs\FormEditTuningDetailDvbC.cs">
+    <Compile Include="Dialogs\FormEditTuningDetailCable.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Dialogs\FormEditTuningDetailDvbC.Designer.cs">
-      <DependentUpon>FormEditTuningDetailDvbC.cs</DependentUpon>
+    <Compile Include="Dialogs\FormEditTuningDetailCable.Designer.cs">
+      <DependentUpon>FormEditTuningDetailCable.cs</DependentUpon>
     </Compile>
     <Compile Include="Dialogs\FormEditTuningDetailStream.cs">
       <SubType>Form</SubType>
@@ -138,11 +132,11 @@
     <Compile Include="Dialogs\FormEditTuningDetailSatellite.Designer.cs">
       <DependentUpon>FormEditTuningDetailSatellite.cs</DependentUpon>
     </Compile>
-    <Compile Include="Dialogs\FormEditTuningDetailDvbT.cs">
+    <Compile Include="Dialogs\FormEditTuningDetailTerrestrial.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Dialogs\FormEditTuningDetailDvbT.Designer.cs">
-      <DependentUpon>FormEditTuningDetailDvbT.cs</DependentUpon>
+    <Compile Include="Dialogs\FormEditTuningDetailTerrestrial.Designer.cs">
+      <DependentUpon>FormEditTuningDetailTerrestrial.cs</DependentUpon>
     </Compile>
     <Compile Include="Dialogs\FormEditTuner.cs">
       <SubType>Form</SubType>
@@ -174,9 +168,10 @@
     <Compile Include="Dialogs\FormSelectItems.designer.cs">
       <DependentUpon>FormSelectItems.cs</DependentUpon>
     </Compile>
-    <Compile Include="ExtensionMethods.cs" />
     <Compile Include="HelpSystem.cs" />
     <Compile Include="InputBox.cs" />
+    <Compile Include="Sections\Helpers\Enum\TuningDetailGroup.cs" />
+    <Compile Include="Sections\Helpers\TuningDetail.cs" />
     <Compile Include="Sections\Satellites.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -204,11 +199,11 @@
     <Compile Include="Sections\DebugOptions.Designer.cs">
       <DependentUpon>DebugOptions.cs</DependentUpon>
     </Compile>
-    <Compile Include="Sections\CardDvbIP.cs">
+    <Compile Include="Sections\ScanStream.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Sections\CardDvbIP.Designer.cs">
-      <DependentUpon>CardDvbIP.cs</DependentUpon>
+    <Compile Include="Sections\ScanStream.Designer.cs">
+      <DependentUpon>ScanStream.cs</DependentUpon>
     </Compile>
     <Compile Include="Sections\Epg.cs">
       <SubType>UserControl</SubType>
@@ -223,11 +218,11 @@
     <Compile Include="Sections\TestChannels.Designer.cs">
       <DependentUpon>TestChannels.cs</DependentUpon>
     </Compile>
-    <Compile Include="Sections\TvTimeshifting.cs">
+    <Compile Include="Sections\TimeShifting.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Sections\TvTimeshifting.Designer.cs">
-      <DependentUpon>TvTimeshifting.cs</DependentUpon>
+    <Compile Include="Sections\TimeShifting.Designer.cs">
+      <DependentUpon>TimeShifting.cs</DependentUpon>
     </Compile>
     <Compile Include="Sections\Helpers\TuningDetailFilter.cs" />
     <Compile Include="Sections\Helpers\Enum\ScanState.cs" />
@@ -259,16 +254,16 @@
       <DependentUpon>FormEditTuningDetailCommon.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Dialogs\FormEditTuningDetailFmRadio.resx">
-      <DependentUpon>FormEditTuningDetailFmRadio.cs</DependentUpon>
+    <EmbeddedResource Include="Dialogs\FormEditTuningDetailAnalogRadio.resx">
+      <DependentUpon>FormEditTuningDetailAnalogRadio.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Dialogs\FormEditTuningDetailCapture.resx">
       <DependentUpon>FormEditTuningDetailCapture.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Dialogs\FormEditTuningDetailScte.resx">
-      <DependentUpon>FormEditTuningDetailScte.cs</DependentUpon>
+    <EmbeddedResource Include="Dialogs\FormEditTuningDetailAtscScte.resx">
+      <DependentUpon>FormEditTuningDetailAtscScte.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Dialogs\FormOrderItems.resx">
@@ -284,25 +279,25 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Sections\CardAnalog.resx">
+    <EmbeddedResource Include="Sections\ScanAnalog.resx">
       <SubType>Designer</SubType>
-      <DependentUpon>CardAnalog.cs</DependentUpon>
+      <DependentUpon>ScanAnalog.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Sections\CardAtsc.resx">
+    <EmbeddedResource Include="Sections\ScanAtscScte.resx">
       <SubType>Designer</SubType>
-      <DependentUpon>CardAtsc.cs</DependentUpon>
+      <DependentUpon>ScanAtscScte.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Sections\CardDvbC.resx">
+    <EmbeddedResource Include="Sections\ScanCable.resx">
       <SubType>Designer</SubType>
-      <DependentUpon>CardDvbC.cs</DependentUpon>
+      <DependentUpon>ScanCable.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Sections\CardDvbS.resx">
+    <EmbeddedResource Include="Sections\ScanSatellite.resx">
       <SubType>Designer</SubType>
-      <DependentUpon>CardDvbS.cs</DependentUpon>
+      <DependentUpon>ScanSatellite.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Sections\CardDvbT.resx">
+    <EmbeddedResource Include="Sections\ScanTerrestrial.resx">
       <SubType>Designer</SubType>
-      <DependentUpon>CardDvbT.cs</DependentUpon>
+      <DependentUpon>ScanTerrestrial.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\Satellites.resx">
       <DependentUpon>Satellites.cs</DependentUpon>
@@ -324,9 +319,9 @@
       <SubType>Designer</SubType>
       <DependentUpon>Tuners.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Sections\ChannelMapping.resx">
+    <EmbeddedResource Include="Sections\TuningDetailMapping.resx">
       <SubType>Designer</SubType>
-      <DependentUpon>ChannelMapping.cs</DependentUpon>
+      <DependentUpon>TuningDetailMapping.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\Channels.resx">
       <SubType>Designer</SubType>
@@ -347,35 +342,35 @@
     <EmbeddedResource Include="SetupTv.exe.manifest">
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <Compile Include="Sections\CardAnalog.cs">
+    <Compile Include="Sections\ScanAnalog.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Sections\CardAnalog.Designer.cs">
-      <DependentUpon>CardAnalog.cs</DependentUpon>
+    <Compile Include="Sections\ScanAnalog.Designer.cs">
+      <DependentUpon>ScanAnalog.cs</DependentUpon>
     </Compile>
-    <Compile Include="Sections\CardAtsc.cs">
+    <Compile Include="Sections\ScanAtscScte.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Sections\CardAtsc.Designer.cs">
-      <DependentUpon>CardAtsc.cs</DependentUpon>
+    <Compile Include="Sections\ScanAtscScte.Designer.cs">
+      <DependentUpon>ScanAtscScte.cs</DependentUpon>
     </Compile>
-    <Compile Include="Sections\CardDvbC.cs">
+    <Compile Include="Sections\ScanCable.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Sections\CardDvbC.Designer.cs">
-      <DependentUpon>CardDvbC.cs</DependentUpon>
+    <Compile Include="Sections\ScanCable.Designer.cs">
+      <DependentUpon>ScanCable.cs</DependentUpon>
     </Compile>
-    <Compile Include="Sections\CardDvbS.cs">
+    <Compile Include="Sections\ScanSatellite.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Sections\CardDvbS.Designer.cs">
-      <DependentUpon>CardDvbS.cs</DependentUpon>
+    <Compile Include="Sections\ScanSatellite.Designer.cs">
+      <DependentUpon>ScanSatellite.cs</DependentUpon>
     </Compile>
-    <Compile Include="Sections\CardDvbT.cs">
+    <Compile Include="Sections\ScanTerrestrial.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Sections\CardDvbT.Designer.cs">
-      <DependentUpon>CardDvbT.cs</DependentUpon>
+    <Compile Include="Sections\ScanTerrestrial.Designer.cs">
+      <DependentUpon>ScanTerrestrial.cs</DependentUpon>
     </Compile>
     <Compile Include="Sections\Helpers\Player.cs" />
     <Compile Include="Sections\Plugins.cs">
@@ -396,11 +391,11 @@
     <Compile Include="Sections\StreamingServer.Designer.cs">
       <DependentUpon>StreamingServer.cs</DependentUpon>
     </Compile>
-    <Compile Include="Sections\TvRecording.cs">
+    <Compile Include="Sections\Recording.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Sections\TvRecording.Designer.cs">
-      <DependentUpon>TvRecording.cs</DependentUpon>
+    <Compile Include="Sections\Recording.Designer.cs">
+      <DependentUpon>Recording.cs</DependentUpon>
     </Compile>
     <Compile Include="Sections\TestService.cs">
       <SubType>UserControl</SubType>
@@ -414,11 +409,11 @@
     <Compile Include="Sections\Tuners.Designer.cs">
       <DependentUpon>Tuners.cs</DependentUpon>
     </Compile>
-    <Compile Include="Sections\ChannelMapping.cs">
+    <Compile Include="Sections\TuningDetailMapping.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Sections\ChannelMapping.Designer.cs">
-      <DependentUpon>ChannelMapping.cs</DependentUpon>
+    <Compile Include="Sections\TuningDetailMapping.Designer.cs">
+      <DependentUpon>TuningDetailMapping.cs</DependentUpon>
     </Compile>
     <Compile Include="Sections\Channels.cs">
       <SubType>UserControl</SubType>
@@ -492,9 +487,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Sections\TvRecording.resx">
+    <EmbeddedResource Include="Sections\Recording.resx">
       <SubType>Designer</SubType>
-      <DependentUpon>TvRecording.cs</DependentUpon>
+      <DependentUpon>Recording.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
@@ -518,12 +513,12 @@
       <DependentUpon>FormSelectItems.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Sections\CardDvbIP.resx">
-      <DependentUpon>CardDvbIP.cs</DependentUpon>
+    <EmbeddedResource Include="Sections\ScanStream.resx">
+      <DependentUpon>ScanStream.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Sections\TvTimeshifting.resx">
-      <DependentUpon>TvTimeshifting.cs</DependentUpon>
+    <EmbeddedResource Include="Sections\TimeShifting.resx">
+      <DependentUpon>TimeShifting.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\Project.resx">
@@ -556,16 +551,12 @@
       <DependentUpon>FormEditTuningDetailAnalogTv.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Dialogs\FormEditTuningDetailAtsc.resx">
-      <DependentUpon>FormEditTuningDetailAtsc.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="Dialogs\FormSelectTuningDetailType.resx">
       <DependentUpon>FormSelectTuningDetailType.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Dialogs\FormEditTuningDetailDvbC.resx">
-      <DependentUpon>FormEditTuningDetailDvbC.cs</DependentUpon>
+    <EmbeddedResource Include="Dialogs\FormEditTuningDetailCable.resx">
+      <DependentUpon>FormEditTuningDetailCable.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Dialogs\FormEditTuningDetailStream.resx">
@@ -576,8 +567,8 @@
       <DependentUpon>FormEditTuningDetailSatellite.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Dialogs\FormEditTuningDetailDvbT.resx">
-      <DependentUpon>FormEditTuningDetailDvbT.cs</DependentUpon>
+    <EmbeddedResource Include="Dialogs\FormEditTuningDetailTerrestrial.resx">
+      <DependentUpon>FormEditTuningDetailTerrestrial.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\DebugOptions.resx">

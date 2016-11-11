@@ -49,17 +49,17 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.UsbUirt.Config
     private void InitializeComponent()
     {
       this.dataGridViewConfig = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPDataGridView();
-      this.buttonTest = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
-      this.numericUpDownTest = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPNumericUpDown();
-      this.buttonLearn = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
       this.dataGridViewColumnTunerId = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPDataGridViewTextBoxColumn();
       this.dataGridViewColumnTunerName = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPDataGridViewTextBoxColumn();
       this.dataGridViewColumnUsbUirt = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPDataGridViewComboBoxColumn();
       this.dataGridViewColumnTransmitZone = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPDataGridViewComboBoxColumn();
       this.dataGridViewColumnSetTopBoxProfile = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPDataGridViewComboBoxColumn();
       this.dataGridViewColumnPowerControl = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPDataGridViewCheckBoxColumn();
+      this.buttonTest = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
+      this.channelNumberUpDownTest = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPChannelNumberUpDown();
+      this.buttonLearn = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
       ((System.ComponentModel.ISupportInitialize)(this.dataGridViewConfig)).BeginInit();
-      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTest)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.channelNumberUpDownTest)).BeginInit();
       this.SuspendLayout();
       // 
       // dataGridViewConfig
@@ -85,58 +85,10 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.UsbUirt.Config
       this.dataGridViewConfig.Name = "dataGridViewConfig";
       this.dataGridViewConfig.RowHeadersVisible = false;
       this.dataGridViewConfig.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-      this.dataGridViewConfig.Size = new System.Drawing.Size(465, 378);
+      this.dataGridViewConfig.Size = new System.Drawing.Size(465, 375);
       this.dataGridViewConfig.TabIndex = 0;
       this.dataGridViewConfig.CurrentCellDirtyStateChanged += new System.EventHandler(this.dataGridViewConfig_CurrentCellDirtyStateChanged);
       this.dataGridViewConfig.SelectionChanged += new System.EventHandler(this.dataGridViewConfig_SelectionChanged);
-      // 
-      // buttonTest
-      // 
-      this.buttonTest.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonTest.Location = new System.Drawing.Point(411, 387);
-      this.buttonTest.Name = "buttonTest";
-      this.buttonTest.Size = new System.Drawing.Size(60, 23);
-      this.buttonTest.TabIndex = 3;
-      this.buttonTest.Text = "&Test";
-      this.buttonTest.UseVisualStyleBackColor = true;
-      this.buttonTest.Click += new System.EventHandler(this.buttonTest_Click);
-      // 
-      // numericUpDownTest
-      // 
-      this.numericUpDownTest.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.numericUpDownTest.DecimalPlaces = 2;
-      this.numericUpDownTest.Location = new System.Drawing.Point(335, 390);
-      this.numericUpDownTest.Maximum = new decimal(new int[] {
-            99999,
-            0,
-            0,
-            0});
-      this.numericUpDownTest.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-      this.numericUpDownTest.Name = "numericUpDownTest";
-      this.numericUpDownTest.Size = new System.Drawing.Size(70, 20);
-      this.numericUpDownTest.TabIndex = 2;
-      this.numericUpDownTest.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-      this.numericUpDownTest.TruncateDecimalPlaces = true;
-      this.numericUpDownTest.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-      // 
-      // buttonLearn
-      // 
-      this.buttonLearn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonLearn.Location = new System.Drawing.Point(238, 387);
-      this.buttonLearn.Name = "buttonLearn";
-      this.buttonLearn.Size = new System.Drawing.Size(60, 23);
-      this.buttonLearn.TabIndex = 1;
-      this.buttonLearn.Text = "&Learn";
-      this.buttonLearn.UseVisualStyleBackColor = true;
-      this.buttonLearn.Click += new System.EventHandler(this.buttonLearn_Click);
       // 
       // dataGridViewColumnTunerId
       // 
@@ -190,19 +142,66 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.UsbUirt.Config
       this.dataGridViewColumnPowerControl.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
       this.dataGridViewColumnPowerControl.Width = 50;
       // 
+      // buttonTest
+      // 
+      this.buttonTest.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonTest.Location = new System.Drawing.Point(411, 387);
+      this.buttonTest.Name = "buttonTest";
+      this.buttonTest.Size = new System.Drawing.Size(60, 23);
+      this.buttonTest.TabIndex = 3;
+      this.buttonTest.Text = "&Test";
+      this.buttonTest.UseVisualStyleBackColor = true;
+      this.buttonTest.Click += new System.EventHandler(this.buttonTest_Click);
+      // 
+      // channelNumberUpDownTest
+      // 
+      this.channelNumberUpDownTest.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.channelNumberUpDownTest.DecimalPlaces = 3;
+      this.channelNumberUpDownTest.Location = new System.Drawing.Point(325, 390);
+      this.channelNumberUpDownTest.Maximum = new decimal(new int[] {
+            65535999,
+            0,
+            0,
+            196608});
+      this.channelNumberUpDownTest.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+      this.channelNumberUpDownTest.Name = "channelNumberUpDownTest";
+      this.channelNumberUpDownTest.Size = new System.Drawing.Size(80, 20);
+      this.channelNumberUpDownTest.TabIndex = 2;
+      this.channelNumberUpDownTest.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+      this.channelNumberUpDownTest.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+      // 
+      // buttonLearn
+      // 
+      this.buttonLearn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonLearn.Location = new System.Drawing.Point(238, 387);
+      this.buttonLearn.Name = "buttonLearn";
+      this.buttonLearn.Size = new System.Drawing.Size(60, 23);
+      this.buttonLearn.TabIndex = 1;
+      this.buttonLearn.Text = "&Learn";
+      this.buttonLearn.UseVisualStyleBackColor = true;
+      this.buttonLearn.Click += new System.EventHandler(this.buttonLearn_Click);
+      // 
       // UsbUirtConfig
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.BackColor = System.Drawing.SystemColors.Window;
       this.Controls.Add(this.buttonLearn);
-      this.Controls.Add(this.numericUpDownTest);
+      this.Controls.Add(this.channelNumberUpDownTest);
       this.Controls.Add(this.buttonTest);
       this.Controls.Add(this.dataGridViewConfig);
       this.Name = "UsbUirtConfig";
       this.Size = new System.Drawing.Size(480, 420);
       ((System.ComponentModel.ISupportInitialize)(this.dataGridViewConfig)).EndInit();
-      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTest)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.channelNumberUpDownTest)).EndInit();
       this.ResumeLayout(false);
 
     }
@@ -210,7 +209,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.UsbUirt.Config
     #endregion
 
     private SetupControls.UserInterfaceControls.MPButton buttonTest;
-    private SetupControls.UserInterfaceControls.MPNumericUpDown numericUpDownTest;
+    private SetupControls.UserInterfaceControls.MPChannelNumberUpDown channelNumberUpDownTest;
     private SetupControls.UserInterfaceControls.MPButton buttonLearn;
     private SetupControls.UserInterfaceControls.MPDataGridView dataGridViewConfig;
     private SetupControls.UserInterfaceControls.MPDataGridViewTextBoxColumn dataGridViewColumnTunerId;

@@ -43,37 +43,28 @@ namespace Mediaportal.TV.Server.SetupControls
       ea.DrawBackground();
       ea.DrawFocusRectangle();
 
-      ComboBoxExItem item;
-      Size imageSize = imageList.ImageSize;
       Rectangle bounds = ea.Bounds;
-
-      try
+      string text = Text;
+      int imageIndex = -1;
+      if (ea.Index >= 0 && ea.Index < Items.Count)
       {
-        item = (ComboBoxExItem)Items[ea.Index];
-
-        if (item.ImageIndex != -1)
+        object item = Items[ea.Index];
+        text = item.ToString();
+        ComboBoxExItem itemEx = item as ComboBoxExItem;
+        if (itemEx != null)
         {
-          imageList.Draw(ea.Graphics, bounds.Left, bounds.Top, item.ImageIndex);
-          ea.Graphics.DrawString(item.Text, ea.Font, new SolidBrush(ea.ForeColor), bounds.Left + imageSize.Width,
-                                 bounds.Top);
-        }
-        else
-        {
-          ea.Graphics.DrawString(item.Text, ea.Font, new SolidBrush(ea.ForeColor), bounds.Left, bounds.Top);
+          text = itemEx.Text;
+          imageIndex = itemEx.ImageIndex;
         }
       }
-      catch
+
+      int leftBound = bounds.Left;
+      if (imageIndex != -1)
       {
-        if (ea.Index != -1)
-        {
-          ea.Graphics.DrawString(Items[ea.Index].ToString(), ea.Font, new SolidBrush(ea.ForeColor), bounds.Left,
-                                 bounds.Top);
-        }
-        else
-        {
-          ea.Graphics.DrawString(Text, ea.Font, new SolidBrush(ea.ForeColor), bounds.Left, bounds.Top);
-        }
+        imageList.Draw(ea.Graphics, bounds.Left, bounds.Top, imageIndex);
+        leftBound += imageList.ImageSize.Width;
       }
+      ea.Graphics.DrawString(text, ea.Font, new SolidBrush(ea.ForeColor), leftBound, bounds.Top);
 
       base.OnDrawItem(ea);
     }

@@ -226,17 +226,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Genpix
       }
 
       // Genpix tuners support modulation types that many other tuners do not.
-      // Their support of DigiCipher II  makes them very attractive for North
-      // American people trying to receive Dish TV on HTPCs. Aparently there
-      // are some Twinhan and DVB World tuners that also support some of the
-      // turbo FEC schemes used by Dish. However their SDKs don't specify the
-      // details. The TeVii SDK does specify modulation mappings for turbo
-      // schemes, but I don't know if the hardware actually supports them. The
-      // Genpix SDK also specifies support for some DC II modulation schemes
-      // and FEC code rates.
-
-      // Genpix driver mappings are as follows [BDA ModulationType =>
-      // hardware/driver modulation]:
+      // The driver interprets BDA ModulationType as follows:
       // QPSK     => DVB-S QPSK
       // 16 QAM   => turbo FEC QPSK
       // 8 PSK    => turbo FEC 8 PSK
@@ -252,74 +242,58 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Genpix
       }
 
       ModulationType bdaModulation = ModulationType.ModNotSet;
-      try
+      if (satelliteChannel is ChannelDvbS)
       {
-        if (satelliteChannel is ChannelDvbS && satelliteChannel.ModulationScheme == ModulationSchemePsk.Psk4)
+        if (satelliteChannel.ModulationScheme == ModulationSchemePsk.Psk4)
         {
           bdaModulation = ModulationType.ModQpsk;
         }
-        else if (satelliteChannel is ChannelSatelliteTurboFec)
-        {
-          if (satelliteChannel.ModulationScheme == ModulationSchemePsk.Psk4)
-          {
-            bdaModulation = ModulationType.Mod16Qam;
-          }
-          else if (satelliteChannel.ModulationScheme == ModulationSchemePsk.Psk8)
-          {
-            bdaModulation = ModulationType.Mod8Psk;
-          }
-        }
-        else if (satelliteChannel is ChannelDigiCipher2)
-        {
-          if (satelliteChannel.ModulationScheme == ModulationSchemePsk.Psk4)
-          {
-            bdaModulation = ModulationType.Mod32Qam;
-          }
-          else if (satelliteChannel.ModulationScheme == ModulationSchemePsk.Psk4SplitI)
-          {
-            bdaModulation = ModulationType.Mod64Qam;
-          }
-          else if (satelliteChannel.ModulationScheme == ModulationSchemePsk.Psk4SplitQ)
-          {
-            bdaModulation = ModulationType.Mod80Qam;
-          }
-          else if (satelliteChannel.ModulationScheme == ModulationSchemePsk.Psk4Offset)
-          {
-            bdaModulation = ModulationType.Mod96Qam;
-          }
-          // DC II 8 PSK is present in transponder sources, but not sure if it
-          // is turbo, DVB-S2 or other. Assume turbo for now...
-          else if (satelliteChannel.ModulationScheme == ModulationSchemePsk.Psk8)
-          {
-            bdaModulation = ModulationType.Mod8Psk;
-          }
-        }
-        // Since 8 PSK is mapped to turbo FEC 8 PSK, my guess is that NBC QPSK
-        // and NBC 8 PSK are mapped to DVB-S2 (if supported by the hardware).
-        else if (satelliteChannel is ChannelDvbS2)
-        {
-          if (satelliteChannel.ModulationScheme == ModulationSchemePsk.Psk4)
-          {
-            bdaModulation = ModulationType.ModNbcQpsk;
-          }
-          else if (satelliteChannel.ModulationScheme == ModulationSchemePsk.Psk8)
-          {
-            bdaModulation = ModulationType.ModNbc8Psk;
-          }
-        }
       }
-      finally
+      else if (satelliteChannel is ChannelSatelliteTurboFec)
       {
-        if (bdaModulation == ModulationType.ModNotSet)
+        if (satelliteChannel.ModulationScheme == ModulationSchemePsk.Psk4)
         {
-          this.LogWarn("Genpix: tune request uses unsupported modulation scheme {0}, falling back to default mapping", satelliteChannel.ModulationScheme);
+          bdaModulation = ModulationType.Mod16Qam;
         }
-        else
+        else if (satelliteChannel.ModulationScheme == ModulationSchemePsk.Psk8)
         {
-          this.LogDebug("  modulation = {0}", bdaModulation);
-          satelliteChannel.ModulationScheme = (ModulationSchemePsk)bdaModulation;
+          bdaModulation = ModulationType.Mod8Psk;
         }
       }
+      else if (satelliteChannel is ChannelDigiCipher2)
+      {
+        if (satelliteChannel.ModulationScheme == ModulationSchemePsk.Psk4)
+        {
+          bdaModulation = ModulationType.Mod32Qam;
+        }
+        else if (satelliteChannel.ModulationScheme == ModulationSchemePsk.Psk4SplitI)
+        {
+          bdaModulation = ModulationType.Mod64Qam;
+        }
+        else if (satelliteChannel.ModulationScheme == ModulationSchemePsk.Psk4SplitQ)
+        {
+          bdaModulation = ModulationType.Mod80Qam;
+        }
+        else if (satelliteChannel.ModulationScheme == ModulationSchemePsk.Psk4Offset)
+        {
+          bdaModulation = ModulationType.Mod96Qam;
+        }
+        // DC II 8 PSK is turbo FEC 8 PSK
+        else if (satelliteChannel.ModulationScheme == ModulationSchemePsk.Psk8)
+        {
+          bdaModulation = ModulationType.Mod8Psk;
+        }
+      }
+
+      if (bdaModulation == ModulationType.ModNotSet)
+      {
+        this.LogWarn("Genpix: tune request uses unsupported modulation scheme {0}, falling back to automatic", satelliteChannel.ModulationScheme);
+      }
+      else
+      {
+        this.LogDebug("  modulation = {0}", bdaModulation);
+      }
+      satelliteChannel.ModulationScheme = (ModulationSchemePsk)bdaModulation;
     }
 
     #endregion
@@ -454,7 +428,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Genpix
         return true;
       }
 
-      this.LogError("Digital Everywhere: failed to tune, hr = 0x{0:x}{1}{2}", hr, Environment.NewLine, channel);
+      this.LogError("Genpix: failed to tune, hr = 0x{0:x}{1}{2}", hr, Environment.NewLine, channel);
       return false;
     }
 

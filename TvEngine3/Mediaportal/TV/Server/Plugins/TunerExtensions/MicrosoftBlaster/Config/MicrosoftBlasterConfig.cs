@@ -332,8 +332,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster.Config
       this.LogInfo("  transceiver   = {0}", transceiver.DevicePath);
       this.LogInfo("  transmit port = {0}", transmitPort.Port);
       this.LogInfo("  STB profile   = {0}", stbProfileName);
-      this.LogInfo("  channel #     = {0}", numericUpDownTest.Value);
-      TransmitResult result = ServiceAgents.Instance.PluginService<IMicrosoftBlasterConfigService>().Transmit(transceiver.DevicePath, transmitPort.Port, stbProfileName, numericUpDownTest.Value.ToString());
+      this.LogInfo("  channel #     = {0}", channelNumberUpDown.Text);
+      TransmitResult result = ServiceAgents.Instance.PluginService<IMicrosoftBlasterConfigService>().Transmit(transceiver.DevicePath, transmitPort.Port, stbProfileName, channelNumberUpDown.Text);
       this.LogInfo("  result        = {0}", result);
       if (result == TransmitResult.Success)
       {

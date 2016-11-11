@@ -24,10 +24,10 @@ using System.IO;
 using System.Threading;
 using System.Xml;
 using System.Xml.Serialization;
+using Mediaportal.TV.Server.Common.Types.Channel;
 using Mediaportal.TV.Server.Plugins.TunerExtension.UsbUirt.Enum;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using MediaPortal.Common.Utils;
@@ -200,12 +200,27 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.UsbUirt.Service
       if (
         usbUirtIndex > Driver.MAXIMUM_DEVICE_INDEX ||
         zone == TransmitZone.None ||
-        string.IsNullOrEmpty(setTopBoxProfileName) ||
-        string.IsNullOrEmpty(channelNumber)
+        string.IsNullOrEmpty(setTopBoxProfileName)
       )
       {
-        this.LogError("USB-UIRT service: failed to transmit, invalid parameters");
+        this.LogError("USB-UIRT service: failed to transmit, invalid parameters, USB-UIRT index = {0}, zone(s) = [{1}], profile name = {2}", usbUirtIndex, zone, setTopBoxProfileName ?? string.Empty);
         return TransmitResult.Fail;
+      }
+
+      ushort majorChannelNumber;
+      ushort? minorChannelNumber;
+      if (!LogicalChannelNumber.Parse(channelNumber, out majorChannelNumber, out minorChannelNumber))
+      {
+        this.LogError("USB-UIRT service: failed to transmit, invalid channel number, number = {0}", channelNumber);
+        return TransmitResult.Fail;
+      }
+      if (!minorChannelNumber.HasValue)
+      {
+        channelNumber = majorChannelNumber.ToString();
+      }
+      else
+      {
+        channelNumber = string.Format("{0}.{1}", majorChannelNumber, minorChannelNumber.Value);
       }
 
       // Load the STB profile.
@@ -297,7 +312,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.UsbUirt.Service
       if (profile.DigitCount > 0)
       {
         int digitCount = channelNumber.Length;
-        if (channelNumber.Contains(ChannelBase.LOGICAL_CHANNEL_NUMBER_SEPARATOR.ToString()))
+        if (minorChannelNumber.HasValue)
         {
           digitCount--;
         }
@@ -326,9 +341,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.UsbUirt.Service
         }
         isFirst = false;
 
-        if (c == ChannelBase.LOGICAL_CHANNEL_NUMBER_SEPARATOR)
+        if (c == '.')
         {
-          commandName = string.Format("separator ({0})", c);
+          commandName = string.Format("separator");
           commandString = profile.Separator;
         }
         else
@@ -336,7 +351,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.UsbUirt.Service
           int d = (int)c - (int)'0';
           if (d < 0 || d >= digits.Length)
           {
-            this.LogError("USB-UIRT service: failed to transmit, channel number contains unexpected content, channel number = {0}", channelNumber);
+            this.LogError("USB-UIRT service: failed to transmit, channel number contains unexpected content, number = {0}", channelNumber);
             return TransmitResult.Fail;
           }
           commandName = c.ToString();

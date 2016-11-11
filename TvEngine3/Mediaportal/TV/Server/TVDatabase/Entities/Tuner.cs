@@ -18,7 +18,7 @@ using System.Runtime.Serialization;
 namespace Mediaportal.TV.Server.TVDatabase.Entities
 {
     [DataContract(IsReference = true)]
-    [KnownType(typeof(ChannelMap))]
+    [KnownType(typeof(TunerTuningDetailMapping))]
     [KnownType(typeof(TunerGroup))]
     [KnownType(typeof(TunerProperty))]
     [KnownType(typeof(AnalogTunerSettings))]
@@ -374,51 +374,51 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         #region Navigation Properties
     
         [DataMember]
-        public TrackableCollection<ChannelMap> ChannelMaps
+        public TrackableCollection<TunerTuningDetailMapping> TuningDetailMappings
         {
             get
             {
-                if (_channelMaps == null)
+                if (_tuningDetailMappings == null)
                 {
-                    _channelMaps = new TrackableCollection<ChannelMap>();
-                    _channelMaps.CollectionChanged += FixupChannelMaps;
+                    _tuningDetailMappings = new TrackableCollection<TunerTuningDetailMapping>();
+                    _tuningDetailMappings.CollectionChanged += FixupTuningDetailMappings;
                 }
-                return _channelMaps;
+                return _tuningDetailMappings;
             }
             set
             {
-                if (!ReferenceEquals(_channelMaps, value))
+                if (!ReferenceEquals(_tuningDetailMappings, value))
                 {
                     if (ChangeTracker.ChangeTrackingEnabled)
                     {
                         throw new InvalidOperationException("Cannot set the FixupChangeTrackingCollection when ChangeTracking is enabled");
                     }
-                    if (_channelMaps != null)
+                    if (_tuningDetailMappings != null)
                     {
-                        _channelMaps.CollectionChanged -= FixupChannelMaps;
+                        _tuningDetailMappings.CollectionChanged -= FixupTuningDetailMappings;
                         // This is the principal end in an association that performs cascade deletes.
                         // Remove the cascade delete event handler for any entities in the current collection.
-                        foreach (ChannelMap item in _channelMaps)
+                        foreach (TunerTuningDetailMapping item in _tuningDetailMappings)
                         {
                             ChangeTracker.ObjectStateChanging -= item.HandleCascadeDelete;
                         }
                     }
-                    _channelMaps = value;
-                    if (_channelMaps != null)
+                    _tuningDetailMappings = value;
+                    if (_tuningDetailMappings != null)
                     {
-                        _channelMaps.CollectionChanged += FixupChannelMaps;
+                        _tuningDetailMappings.CollectionChanged += FixupTuningDetailMappings;
                         // This is the principal end in an association that performs cascade deletes.
                         // Add the cascade delete event handler for any entities that are already in the new collection.
-                        foreach (ChannelMap item in _channelMaps)
+                        foreach (TunerTuningDetailMapping item in _tuningDetailMappings)
                         {
                             ChangeTracker.ObjectStateChanging += item.HandleCascadeDelete;
                         }
                     }
-                    OnNavigationPropertyChanged("ChannelMaps");
+                    OnNavigationPropertyChanged("TuningDetailMappings");
                 }
             }
         }
-        private TrackableCollection<ChannelMap> _channelMaps;
+        private TrackableCollection<TunerTuningDetailMapping> _tuningDetailMappings;
     
         [DataMember]
         public TunerGroup TunerGroup
@@ -673,7 +673,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
     
         protected virtual void ClearNavigationProperties()
         {
-            ChannelMaps.Clear();
+            TuningDetailMappings.Clear();
             TunerGroup = null;
             TunerProperties.Clear();
             AnalogTunerSettings = null;
@@ -781,7 +781,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
             }
         }
     
-        private void FixupChannelMaps(object sender, NotifyCollectionChangedEventArgs e)
+        private void FixupTuningDetailMappings(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (IsDeserializing)
             {
@@ -790,7 +790,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
     
             if (e.NewItems != null)
             {
-                foreach (ChannelMap item in e.NewItems)
+                foreach (TunerTuningDetailMapping item in e.NewItems)
                 {
                     item.Tuner = this;
                     if (ChangeTracker.ChangeTrackingEnabled)
@@ -799,7 +799,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                         {
                             item.StartTracking();
                         }
-                        ChangeTracker.RecordAdditionToCollectionProperties("ChannelMaps", item);
+                        ChangeTracker.RecordAdditionToCollectionProperties("TuningDetailMappings", item);
                     }
                     // This is the principal end in an association that performs cascade deletes.
                     // Update the event listener to refer to the new dependent.
@@ -809,7 +809,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
     
             if (e.OldItems != null)
             {
-                foreach (ChannelMap item in e.OldItems)
+                foreach (TunerTuningDetailMapping item in e.OldItems)
                 {
                     if (ReferenceEquals(item.Tuner, this))
                     {
@@ -817,7 +817,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                     }
                     if (ChangeTracker.ChangeTrackingEnabled)
                     {
-                        ChangeTracker.RecordRemovalFromCollectionProperties("ChannelMaps", item);
+                        ChangeTracker.RecordRemovalFromCollectionProperties("TuningDetailMappings", item);
                     }
                     // This is the principal end in an association that performs cascade deletes.
                     // Remove the previous dependent from the event listener.

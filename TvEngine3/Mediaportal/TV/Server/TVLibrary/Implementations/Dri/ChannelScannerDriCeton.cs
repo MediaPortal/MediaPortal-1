@@ -169,7 +169,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
                 channel.TransportStreamId = 0;              // doesn't really matter
                 channel.SourceId = sourceId;
                 channel.ProgramNumber = programNumber;
-                channel.PmtPid = ChannelMpeg2Base.PMT_PID_NOT_KNOWN;    // lookup the correct PID from the PAT when the channel is tuned
+                channel.PmtPid = ChannelMpeg2TsBase.PMT_PID_NOT_KNOWN;    // lookup the correct PID from the PAT when the channel is tuned
                 channels.Add(channel.LogicalChannelNumber, channel);
               }
               number = 0;

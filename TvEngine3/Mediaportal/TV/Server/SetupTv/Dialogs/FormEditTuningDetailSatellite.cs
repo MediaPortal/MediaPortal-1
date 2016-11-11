@@ -21,6 +21,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Mediaportal.TV.Server.Common.Types.Channel.Constant;
 using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
@@ -38,13 +39,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
     protected override void LoadProperties(TuningDetail tuningDetail)
     {
       comboBoxBroadcastStandard.Items.Clear();
-      comboBoxBroadcastStandard.Items.AddRange(new string[]
-      {
-        BroadcastStandard.DvbS.GetDescription(),
-        BroadcastStandard.DvbS2.GetDescription(),
-        BroadcastStandard.DigiCipher2.GetDescription(),
-        BroadcastStandard.SatelliteTurboFec.GetDescription()
-      });
+      comboBoxBroadcastStandard.Items.AddRange(typeof(BroadcastStandard).GetDescriptions((int)BroadcastStandard.MaskSatellite, false));
 
       IList<Satellite> satellites = ServiceAgents.Instance.TunerServiceAgent.ListAllSatellites();
       Satellite[] satellitesArray = new Satellite[satellites.Count];
@@ -55,23 +50,13 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       comboBoxPolarisation.Items.Clear();
       comboBoxPolarisation.Items.AddRange(typeof(Polarisation).GetDescriptions());
 
-      comboBoxModulation.Items.Clear();
-      comboBoxModulation.Items.AddRange(typeof(ModulationSchemePsk).GetDescriptions());
-
-      comboBoxFecCodeRate.Items.Clear();
-      comboBoxFecCodeRate.Items.AddRange(typeof(FecCodeRate).GetDescriptions());
-
       comboBoxPilotTonesState.Items.Clear();
       comboBoxPilotTonesState.Items.AddRange(typeof(PilotTonesState).GetDescriptions());
-
-      comboBoxRollOffFactor.Items.Clear();
-      comboBoxRollOffFactor.Items.AddRange(typeof(RollOffFactor).GetDescriptions());
 
       if (tuningDetail != null)
       {
         Text = "Edit Satellite Tuning Detail";
-        BroadcastStandard broadcastStandard = (BroadcastStandard)tuningDetail.BroadcastStandard;
-        comboBoxBroadcastStandard.SelectedItem = broadcastStandard.GetDescription();
+        comboBoxBroadcastStandard.SelectedItem = ((BroadcastStandard)tuningDetail.BroadcastStandard).GetDescription();
 
         foreach (Satellite satellite in satellites)
         {
@@ -87,23 +72,53 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
         comboBoxModulation.SelectedItem = ((ModulationSchemePsk)tuningDetail.Modulation).GetDescription();
         numericTextBoxSymbolRate.Value = tuningDetail.SymbolRate;
         comboBoxFecCodeRate.SelectedItem = ((FecCodeRate)tuningDetail.FecCodeRate).GetDescription();
-        comboBoxPilotTonesState.SelectedItem = ((PilotTonesState)tuningDetail.PilotTonesState).GetDescription();
-        comboBoxRollOffFactor.SelectedItem = ((RollOffFactor)tuningDetail.RollOffFactor).GetDescription();
-        numericTextBoxInputStreamId.Value = tuningDetail.StreamId;
+        if (comboBoxRollOffFactor.Enabled)
+        {
+          comboBoxRollOffFactor.SelectedItem = ((RollOffFactor)tuningDetail.RollOffFactor).GetDescription();
+        }
+        else
+        {
+          comboBoxRollOffFactor.SelectedItem = RollOffFactor.Automatic.GetDescription();
+        }
+        if (comboBoxPilotTonesState.Enabled)
+        {
+          comboBoxPilotTonesState.SelectedItem = ((PilotTonesState)tuningDetail.PilotTonesState).GetDescription();
+        }
+        else
+        {
+          comboBoxPilotTonesState.SelectedItem = PilotTonesState.Automatic.GetDescription();
+        }
+        if (numericTextBoxInputStreamId.Enabled)
+        {
+          numericTextBoxInputStreamId.Value = tuningDetail.StreamId;
+        }
+        else
+        {
+          numericTextBoxInputStreamId.Value = -1;
+        }
         numericTextBoxOriginalNetworkId.Value = tuningDetail.OriginalNetworkId;
         numericTextBoxTransportStreamId.Value = tuningDetail.TransportStreamId;
         numericTextBoxServiceId.Value = tuningDetail.ServiceId;
-        numericTextBoxFreesatChannelId.Value = tuningDetail.FreesatChannelId;
-        numericTextBoxOpenTvChannelId.Value = tuningDetail.OpenTvChannelId;
+        if (numericTextBoxFreesatChannelId.Enabled)
+        {
+          numericTextBoxFreesatChannelId.Value = tuningDetail.FreesatChannelId;
+        }
+        else
+        {
+          numericTextBoxFreesatChannelId.Value = 0;
+        }
+        if (numericTextBoxOpenTvChannelId.Enabled)
+        {
+          numericTextBoxOpenTvChannelId.Value = tuningDetail.OpenTvChannelId;
+        }
+        else
+        {
+          numericTextBoxOpenTvChannelId.Value = 0;
+        }
         numericTextBoxPmtPid.Value = tuningDetail.PmtPid;
         numericTextBoxEpgOriginalNetworkId.Value = tuningDetail.EpgOriginalNetworkId;
         numericTextBoxEpgTransportStreamId.Value = tuningDetail.EpgTransportStreamId;
         numericTextBoxEpgServiceId.Value = tuningDetail.EpgServiceId;
-
-        bool isDvbS2 = broadcastStandard == BroadcastStandard.DvbS2 || broadcastStandard == BroadcastStandard.DvbS2X;
-        comboBoxPilotTonesState.Enabled = isDvbS2;
-        comboBoxRollOffFactor.Enabled = isDvbS2;
-        numericTextBoxInputStreamId.Enabled = isDvbS2;
       }
       else
       {
@@ -132,8 +147,8 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
         comboBoxModulation.SelectedItem = ModulationSchemePsk.Automatic.GetDescription();
         numericTextBoxSymbolRate.Value = 25000;
         comboBoxFecCodeRate.SelectedItem = FecCodeRate.Automatic.GetDescription();
-        comboBoxPilotTonesState.SelectedItem = PilotTonesState.Automatic.GetDescription();
         comboBoxRollOffFactor.SelectedItem = RollOffFactor.Automatic.GetDescription();
+        comboBoxPilotTonesState.SelectedItem = PilotTonesState.Automatic.GetDescription();
         numericTextBoxInputStreamId.Value = -1;
         numericTextBoxOriginalNetworkId.Value = 0;
         numericTextBoxTransportStreamId.Value = 0;
@@ -144,16 +159,13 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
         numericTextBoxEpgOriginalNetworkId.Value = 0;
         numericTextBoxEpgTransportStreamId.Value = 0;
         numericTextBoxEpgServiceId.Value = 0;
-
-        // broadcast standard DVB-S2
-        comboBoxPilotTonesState.Enabled = true;
-        comboBoxRollOffFactor.Enabled = true;
-        numericTextBoxInputStreamId.Enabled = true;
       }
     }
 
     protected override void UpdateProperties(TuningDetail tuningDetail)
     {
+      TuningDetail defaults = new TuningDetail();
+
       tuningDetail.BroadcastStandard = Convert.ToInt32(typeof(BroadcastStandard).GetEnumFromDescription((string)comboBoxBroadcastStandard.SelectedItem));
 
       Satellite satellite = (Satellite)comboBoxSatellite.SelectedItem;
@@ -164,21 +176,21 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       tuningDetail.Modulation = Convert.ToInt32(typeof(ModulationSchemePsk).GetEnumFromDescription((string)comboBoxModulation.SelectedItem));
       tuningDetail.SymbolRate = numericTextBoxSymbolRate.Value;
       tuningDetail.FecCodeRate = Convert.ToInt32(typeof(FecCodeRate).GetEnumFromDescription((string)comboBoxFecCodeRate.SelectedItem));
-      if (comboBoxPilotTonesState.Enabled)
-      {
-        tuningDetail.PilotTonesState = Convert.ToInt32(typeof(PilotTonesState).GetEnumFromDescription((string)comboBoxPilotTonesState.SelectedItem));
-      }
-      else
-      {
-        tuningDetail.PilotTonesState = (int)PilotTonesState.Automatic;
-      }
       if (comboBoxRollOffFactor.Enabled)
       {
         tuningDetail.RollOffFactor = Convert.ToInt32(typeof(RollOffFactor).GetEnumFromDescription((string)comboBoxRollOffFactor.SelectedItem));
       }
       else
       {
-        tuningDetail.RollOffFactor = (int)RollOffFactor.Automatic;
+        tuningDetail.RollOffFactor = defaults.RollOffFactor;
+      }
+      if (comboBoxPilotTonesState.Enabled)
+      {
+        tuningDetail.PilotTonesState = Convert.ToInt32(typeof(PilotTonesState).GetEnumFromDescription((string)comboBoxPilotTonesState.SelectedItem));
+      }
+      else
+      {
+        tuningDetail.PilotTonesState = defaults.PilotTonesState;
       }
       if (numericTextBoxInputStreamId.Enabled)
       {
@@ -186,26 +198,142 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       }
       else
       {
-        tuningDetail.StreamId = -1;
+        tuningDetail.StreamId = defaults.StreamId;
       }
-      tuningDetail.OriginalNetworkId = numericTextBoxOriginalNetworkId.Value;
+      if (numericTextBoxOriginalNetworkId.Enabled)
+      {
+        tuningDetail.OriginalNetworkId = numericTextBoxOriginalNetworkId.Value;
+      }
+      else
+      {
+        tuningDetail.OriginalNetworkId = defaults.OriginalNetworkId;
+      }
       tuningDetail.TransportStreamId = numericTextBoxTransportStreamId.Value;
       tuningDetail.ServiceId = numericTextBoxServiceId.Value;
-      tuningDetail.FreesatChannelId = numericTextBoxFreesatChannelId.Value;
-      tuningDetail.OpenTvChannelId = numericTextBoxOpenTvChannelId.Value;
+      if (numericTextBoxFreesatChannelId.Enabled)
+      {
+        tuningDetail.FreesatChannelId = numericTextBoxFreesatChannelId.Value;
+      }
+      else
+      {
+        tuningDetail.FreesatChannelId = defaults.FreesatChannelId;
+      }
+      if (numericTextBoxOpenTvChannelId.Enabled)
+      {
+        tuningDetail.OpenTvChannelId = numericTextBoxOpenTvChannelId.Value;
+      }
+      else
+      {
+        tuningDetail.OpenTvChannelId = defaults.OpenTvChannelId;
+      }
       tuningDetail.PmtPid = numericTextBoxPmtPid.Value;
-      tuningDetail.EpgOriginalNetworkId = numericTextBoxEpgOriginalNetworkId.Value;
-      tuningDetail.EpgTransportStreamId = numericTextBoxEpgTransportStreamId.Value;
-      tuningDetail.EpgServiceId = numericTextBoxEpgServiceId.Value;
+      if (groupBoxEpgSource.Enabled)
+      {
+        tuningDetail.EpgOriginalNetworkId = numericTextBoxEpgOriginalNetworkId.Value;
+        tuningDetail.EpgTransportStreamId = numericTextBoxEpgTransportStreamId.Value;
+        tuningDetail.EpgServiceId = numericTextBoxEpgServiceId.Value;
+      }
+      else
+      {
+        tuningDetail.EpgOriginalNetworkId = defaults.EpgOriginalNetworkId;
+        tuningDetail.EpgTransportStreamId = defaults.EpgTransportStreamId;
+        tuningDetail.EpgServiceId = defaults.EpgServiceId;
+      }
     }
 
     private void comboBoxBroadcastStandard_SelectedIndexChanged(object sender, EventArgs e)
     {
       BroadcastStandard broadcastStandard = (BroadcastStandard)typeof(BroadcastStandard).GetEnumFromDescription((string)comboBoxBroadcastStandard.SelectedItem);
-      bool isDvbS2 = broadcastStandard == BroadcastStandard.DvbS2 || broadcastStandard == BroadcastStandard.DvbS2X;
+      bool isDvbS2 = BroadcastStandard.MaskDvbS2.HasFlag(broadcastStandard);
+      comboBoxRollOffFactor.Enabled = isDvbS2 || broadcastStandard == BroadcastStandard.DvbDsng;
       comboBoxPilotTonesState.Enabled = isDvbS2;
-      comboBoxRollOffFactor.Enabled = isDvbS2;
       numericTextBoxInputStreamId.Enabled = isDvbS2;
+
+      numericTextBoxFreesatChannelId.Enabled = BroadcastStandard.MaskFreesatSi.HasFlag(broadcastStandard);
+      numericTextBoxOpenTvChannelId.Enabled = BroadcastStandard.MaskOpenTvSi.HasFlag(broadcastStandard);
+
+      numericTextBoxOriginalNetworkId.Enabled = BroadcastStandard.MaskDvbSi.HasFlag(broadcastStandard);
+      groupBoxEpgSource.Enabled = numericTextBoxOriginalNetworkId.Enabled;
+
+      string selectedModulationDescription = (string)comboBoxModulation.SelectedItem;
+      comboBoxModulation.BeginUpdate();
+      try
+      {
+        comboBoxModulation.Items.Clear();
+        string[] newModulationDescriptions = typeof(ModulationSchemePsk).GetDescriptions(ModCod.SATELLITE[broadcastStandard]);
+        foreach (string modulationDescription in newModulationDescriptions)
+        {
+          comboBoxModulation.Items.Add(modulationDescription);
+          if (string.Equals(modulationDescription, selectedModulationDescription))
+          {
+            comboBoxModulation.SelectedItem = modulationDescription;
+          }
+        }
+        if (comboBoxModulation.SelectedItem == null)
+        {
+          comboBoxModulation.SelectedIndex = 0;
+        }
+      }
+      finally
+      {
+        comboBoxModulation.EndUpdate();
+      }
+      // Ensure that the choices for FEC code rate are updated when the
+      // modulation scheme selection doesn't change. This may be unnecessary.
+      comboBoxModulation_SelectedIndexChanged(null, null);
+
+      string selectedRollOffFactorDescription = (string)comboBoxRollOffFactor.SelectedItem;
+      comboBoxRollOffFactor.BeginUpdate();
+      try
+      {
+        comboBoxRollOffFactor.Items.Clear();
+        string[] newRollOffFactorDescriptions = typeof(RollOffFactor).GetDescriptions(ModCod.SATELLITE_ROLL_OFF_FACTOR[broadcastStandard]);
+        foreach (string rollOffFactorDescription in newRollOffFactorDescriptions)
+        {
+          comboBoxRollOffFactor.Items.Add(rollOffFactorDescription);
+          if (string.Equals(rollOffFactorDescription, selectedRollOffFactorDescription))
+          {
+            comboBoxRollOffFactor.SelectedItem = rollOffFactorDescription;
+          }
+        }
+        if (comboBoxRollOffFactor.SelectedItem == null)
+        {
+          comboBoxRollOffFactor.SelectedIndex = 0;
+        }
+      }
+      finally
+      {
+        comboBoxRollOffFactor.EndUpdate();
+      }
+    }
+
+    private void comboBoxModulation_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      BroadcastStandard broadcastStandard = (BroadcastStandard)typeof(BroadcastStandard).GetEnumFromDescription((string)comboBoxBroadcastStandard.SelectedItem);
+      ModulationSchemePsk modulationScheme = (ModulationSchemePsk)typeof(ModulationSchemePsk).GetEnumFromDescription((string)comboBoxModulation.SelectedItem);
+      string selectedFecCodeRateDescription = (string)comboBoxFecCodeRate.SelectedItem;
+      comboBoxFecCodeRate.BeginUpdate();
+      try
+      {
+        comboBoxFecCodeRate.Items.Clear();
+        string[] newFecCodeRateDescriptions = typeof(FecCodeRate).GetDescriptions(ModCod.SATELLITE_CODE_RATE[broadcastStandard][modulationScheme]);
+        foreach (string fecCodeRateDescription in newFecCodeRateDescriptions)
+        {
+          comboBoxFecCodeRate.Items.Add(fecCodeRateDescription);
+          if (string.Equals(fecCodeRateDescription, selectedFecCodeRateDescription))
+          {
+            comboBoxFecCodeRate.SelectedItem = fecCodeRateDescription;
+          }
+        }
+        if (comboBoxFecCodeRate.SelectedItem == null)
+        {
+          comboBoxFecCodeRate.SelectedIndex = 0;
+        }
+      }
+      finally
+      {
+        comboBoxFecCodeRate.EndUpdate();
+      }
     }
   }
 }

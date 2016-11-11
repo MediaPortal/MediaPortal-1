@@ -58,8 +58,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner
     /// within the available network information.
     /// </summary>
     /// <param name="channel">The channel to tune to.</param>
-    /// <returns>the tuning details found</returns>
-    IList<TuningDetail> ScanNetworkInformation(IChannel channel);
+    /// <returns>the transmitter tuning details found in the network information</returns>
+    IList<ScannedTransmitter> ScanNetworkInformation(IChannel channel);
 
     /// <summary>
     /// Abort scanning for channels and/or network information.

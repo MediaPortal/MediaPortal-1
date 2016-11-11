@@ -19,9 +19,9 @@ DROP TABLE IF EXISTS "TunerGroups";
 DROP TABLE IF EXISTS "Channels";
 DROP TABLE IF EXISTS "ChannelGroups";
 DROP TABLE IF EXISTS "ChannelLinkageMaps";
-DROP TABLE IF EXISTS "ChannelMaps";
+DROP TABLE IF EXISTS "TunerTuningDetailMappings";
 DROP TABLE IF EXISTS "Conflicts";
-DROP TABLE IF EXISTS "GroupMaps";
+DROP TABLE IF EXISTS "ChannelGroupChannelMappings";
 DROP TABLE IF EXISTS "Histories";
 DROP TABLE IF EXISTS "PendingDeletions";
 DROP TABLE IF EXISTS "Programs";
@@ -136,15 +136,15 @@ CREATE TRIGGER "Channels_autoincrement" AFTER INSERT ON "Channels"
 -- Table "ChannelGroups"
 CREATE TABLE "ChannelGroups"  ( 
     "Id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-    "IdGroup" int UNIQUE,
-    "GroupName" varchar(200) NOT NULL COLLATE NOCASE,
+    "IdChannelGroup" int UNIQUE,
+    "Name" varchar(200) NOT NULL COLLATE NOCASE,
     "SortOrder" int NOT NULL,
     "MediaType" int NOT NULL
 );
 
 CREATE TRIGGER "ChannelGroups_autoincrement" AFTER INSERT ON "ChannelGroups"
   FOR EACH ROW BEGIN
-    UPDATE ChannelGroups SET IdGroup = Id WHERE Id = NEW.Id; 
+    UPDATE ChannelGroups SET IdChannelGroup = Id WHERE Id = NEW.Id; 
   END;
 
 -- Table "ChannelLinkageMaps"
@@ -168,24 +168,24 @@ CREATE TRIGGER "ChannelLinkageMaps_autoincrement" AFTER INSERT ON "ChannelLinkag
     UPDATE ChannelLinkageMaps SET IdMapping = Id WHERE Id = NEW.Id; 
   END;
 
--- Table "ChannelMaps"
-CREATE TABLE "ChannelMaps"  ( 
+-- Table "TunerTuningDetailMappings"
+CREATE TABLE "TunerTuningDetailMappings"  ( 
     "Id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-    "IdChannelMap" int UNIQUE,
-    "IdChannel" int NOT NULL,
+    "IdTunerTuningDetailMapping" int UNIQUE,
+    "IdTuningDetail" int NOT NULL,
     "IdTuner" int NOT NULL,
-    CONSTRAINT "FK_TunerChannelMap" FOREIGN KEY ("IdTuner")
+    CONSTRAINT "FK_TunerTunerTuningDetailMapping" FOREIGN KEY ("IdTuner")
     REFERENCES "Tuners" ("IdTuner") ON DELETE CASCADE,
-    CONSTRAINT "FK_ChannelChannelMap" FOREIGN KEY ("IdChannel")
-    REFERENCES "Channels" ("IdChannel") ON DELETE CASCADE
+    CONSTRAINT "FK_TuningDetailTunerTuningDetailMapping" FOREIGN KEY ("IdTuningDetail")
+    REFERENCES "TuningDetails" ("IdTuningDetail") ON DELETE CASCADE
 );
 
-CREATE INDEX Idx_ChannelMaps_1 ON  "ChannelMaps" (IdChannel);
-CREATE INDEX Idx_ChannelMaps_2 ON  "ChannelMaps" (IdTuner);
+CREATE INDEX Idx_TunerTuningDetailMappings_1 ON  "TunerTuningDetailMappings" (IdTuningDetail);
+CREATE INDEX Idx_TunerTuningDetailMappings_2 ON  "TunerTuningDetailMappings" (IdTuner);
 
-CREATE TRIGGER "ChannelMaps_autoincrement" AFTER INSERT ON "ChannelMaps"
+CREATE TRIGGER "TunerTuningDetailMappings_autoincrement" AFTER INSERT ON "TunerTuningDetailMappings"
   FOR EACH ROW BEGIN
-    UPDATE ChannelMaps SET IdChannelMap = Id WHERE Id = NEW.Id; 
+    UPDATE TunerTuningDetailMappings SET IdTunerTuningDetailMapping = Id WHERE Id = NEW.Id; 
   END;
 
 -- Table "Conflicts"
@@ -217,25 +217,25 @@ CREATE TRIGGER "Conflicts_autoincrement" AFTER INSERT ON "Conflicts"
     UPDATE Conflicts SET IdConflict = Id WHERE Id = NEW.Id; 
   END;
 
--- Table "GroupMaps"
-CREATE TABLE "GroupMaps"  ( 
+-- Table "ChannelGroupChannelMappings"
+CREATE TABLE "ChannelGroupChannelMappings"  ( 
     "Id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-    "IdMap" int UNIQUE,
-    "IdGroup" int NOT NULL,
+    "IdChannelGroupChannelMapping" int UNIQUE,
+    "IdChannelGroup" int NOT NULL,
     "IdChannel" int NOT NULL,
     "SortOrder" int NOT NULL,
-    CONSTRAINT "FK_GroupMapChannelGroup" FOREIGN KEY ("IdGroup")
-    REFERENCES "ChannelGroups" ("IdGroup") ON DELETE CASCADE,
-    CONSTRAINT "FK_GroupMapChannel" FOREIGN KEY ("IdChannel")
+    CONSTRAINT "FK_ChannelGroupChannelGroupChannelMapping" FOREIGN KEY ("IdChannelGroup")
+    REFERENCES "ChannelGroups" ("IdChannelGroup") ON DELETE CASCADE,
+    CONSTRAINT "FK_ChannelChannelGroupChannelMapping" FOREIGN KEY ("IdChannel")
     REFERENCES "Channels" ("IdChannel") ON DELETE CASCADE
 );
 
-CREATE INDEX Idx_GroupMaps_1 ON  "GroupMaps" (IdGroup);
-CREATE INDEX Idx_GroupMaps_2 ON  "GroupMaps" (IdChannel);
+CREATE INDEX Idx_ChannelGroupChannelMappings_1 ON  "ChannelGroupChannelMappings" (IdChannelGroup);
+CREATE INDEX Idx_ChannelGroupChannelMappings_2 ON  "ChannelGroupChannelMappings" (IdChannel);
 
-CREATE TRIGGER "GroupMaps_autoincrement" AFTER INSERT ON "GroupMaps"
+CREATE TRIGGER "ChannelGroupChannelMappings_autoincrement" AFTER INSERT ON "ChannelGroupChannelMappings"
   FOR EACH ROW BEGIN
-    UPDATE GroupMaps SET IdMap = Id WHERE Id = NEW.Id; 
+    UPDATE ChannelGroupChannelMappings SET IdChannelGroupChannelMapping = Id WHERE Id = NEW.Id; 
   END;
 
 -- Table "Histories"
@@ -511,7 +511,7 @@ CREATE TRIGGER "Settings_autoincrement" AFTER INSERT ON "Settings"
 -- Table "TuningDetails"
 CREATE TABLE "TuningDetails"  ( 
     "Id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-    "IdTuning" int UNIQUE,
+    "IdTuningDetail" int UNIQUE,
     "IdChannel" int NOT NULL,
     "MediaType" int NOT NULL,
     "Priority" int NOT NULL,
@@ -542,8 +542,8 @@ CREATE TABLE "TuningDetails"  (
     "VideoSource" int NOT NULL,
     "TuningSource" int NOT NULL,
     "FecCodeRate" int NOT NULL,
-    "PilotTonesState" int NOT NULL,
     "RollOffFactor" int NOT NULL,
+    "PilotTonesState" int NOT NULL,
     "StreamId" int NOT NULL,
     "Url" varchar(200) NOT NULL COLLATE NOCASE,
     "AudioSource" int NOT NULL,
@@ -562,7 +562,7 @@ CREATE INDEX Idx_TuningDetails_2 ON "TuningDetails" (IdSatellite);
 
 CREATE TRIGGER "TuningDetails_autoincrement" AFTER INSERT ON "TuningDetails"
   FOR EACH ROW BEGIN
-    UPDATE TuningDetails SET IdTuning = Id WHERE Id = NEW.Id; 
+    UPDATE TuningDetails SET IdTuningDetail = Id WHERE Id = NEW.Id; 
   END;
 
 -- Table "Versions"

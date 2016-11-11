@@ -600,6 +600,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
     #region variables
 
     private bool _isDigitalEverywhere = false;
+    private bool _isSatelliteTuner = false;
     private bool _isCaInterfaceOpen = false;
     #pragma warning disable 0414
     private bool _isCamPresent = false;
@@ -607,12 +608,10 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
     private bool _isCamReady = false;
     private HashSet<ushort> _pidFilterPids = new HashSet<ushort>();
 
+    private IKsPropertySet _propertySet = null;
     private IntPtr _generalBuffer = IntPtr.Zero;
     private IntPtr _mmiBuffer = IntPtr.Zero;
     private IntPtr _pmtBuffer = IntPtr.Zero;
-
-    private IKsPropertySet _propertySet = null;
-    private BroadcastStandard _tunerSupportedBroadcastStandards = BroadcastStandard.Unknown;
 
     private Thread _mmiHandlerThread = null;
     private ManualResetEvent _mmiHandlerThreadStopEvent = null;
@@ -1214,7 +1213,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
 
       this.LogInfo("Digital Everywhere: extension supported");
       _isDigitalEverywhere = true;
-      _tunerSupportedBroadcastStandards = tunerSupportedBroadcastStandards;
+      _isSatelliteTuner = (tunerSupportedBroadcastStandards & BroadcastStandard.MaskSatellite) != 0;
       _generalBuffer = Marshal.AllocCoTaskMem(GENERAL_BUFFER_SIZE);
 
       ReadDriverInfo();
@@ -1244,12 +1243,15 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
         return;
       }
 
-      // We need to tweak the modulation and inner FEC rate, but only for DVB-S/S2 channels.
+      // We need to tweak the modulation and FEC code rate for DVB-S/S2 channels.
       ChannelDvbS dvbsChannel = channel as ChannelDvbS;
       if (dvbsChannel != null)
       {
-        this.LogDebug("  modulation    = {0}", ModulationType.ModQpsk);
-        dvbsChannel.ModulationScheme = (ModulationSchemePsk)ModulationType.ModQpsk;
+        if (dvbsChannel.ModulationScheme == ModulationSchemePsk.Psk4)
+        {
+          dvbsChannel.ModulationScheme = (ModulationSchemePsk)ModulationType.ModQpsk;
+          this.LogDebug("  modulation = {0}", ModulationType.ModQpsk);
+        }
         return;
       }
 
@@ -1257,17 +1259,13 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
       if (dvbs2Channel != null)
       {
         ModulationType bdaModulation = ModulationType.ModNotSet;
-        switch (dvbs2Channel.ModulationScheme)
+        if (dvbs2Channel.ModulationScheme == ModulationSchemePsk.Psk4)
         {
-          case ModulationSchemePsk.Psk4:
-            bdaModulation = ModulationType.ModNbcQpsk;
-            break;
-          case ModulationSchemePsk.Psk8:
-            bdaModulation = ModulationType.ModNbc8Psk;
-            break;
-          default:
-            this.LogWarn("Digital Everywhere: DVB-S2 tune request uses unsupported modulation scheme {0}, falling back to automatic", dvbs2Channel.ModulationScheme);
-            break;
+          bdaModulation = ModulationType.ModNbcQpsk;
+        }
+        else if (dvbs2Channel.ModulationScheme == ModulationSchemePsk.Psk8)
+        {
+          bdaModulation = ModulationType.ModNbc8Psk;
         }
         if (bdaModulation != ModulationType.ModNotSet)
         {
@@ -1278,25 +1276,26 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
         if (dvbs2Channel.FecCodeRate != FecCodeRate.Automatic)
         {
           // Digital Everywhere uses the inner FEC rate parameter to encode the
-          // pilot tones state and roll-off factor as well as the FEC rate.
+          // pilot tones state and roll-off factor as well as the FEC code rate.
+          // Commented FEC code rates are not supported by the hardware.
           BinaryConvolutionCodeRate bdaCodeRate = BinaryConvolutionCodeRate.RateNotSet;
           switch (dvbs2Channel.FecCodeRate)
           {
             case FecCodeRate.Rate1_2:
               bdaCodeRate = BinaryConvolutionCodeRate.Rate1_2;
               break;
-            case FecCodeRate.Rate1_3:
+            /*case FecCodeRate.Rate1_3:
               bdaCodeRate = BinaryConvolutionCodeRate.Rate1_3;
               break;
             case FecCodeRate.Rate1_4:
               bdaCodeRate = BinaryConvolutionCodeRate.Rate1_4;
-              break;
+              break;*/
             case FecCodeRate.Rate2_3:
               bdaCodeRate = BinaryConvolutionCodeRate.Rate2_3;
               break;
-            case FecCodeRate.Rate2_5:
+            /*case FecCodeRate.Rate2_5:
               bdaCodeRate = BinaryConvolutionCodeRate.Rate2_5;
-              break;
+              break;*/
             case FecCodeRate.Rate3_4:
               bdaCodeRate = BinaryConvolutionCodeRate.Rate3_4;
               break;
@@ -1306,15 +1305,15 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
             case FecCodeRate.Rate4_5:
               bdaCodeRate = BinaryConvolutionCodeRate.Rate4_5;
               break;
-            case FecCodeRate.Rate5_11:
+            /*case FecCodeRate.Rate5_11:
               bdaCodeRate = BinaryConvolutionCodeRate.Rate5_11;
-              break;
+              break;*/
             case FecCodeRate.Rate5_6:
               bdaCodeRate = BinaryConvolutionCodeRate.Rate5_6;
               break;
-            case FecCodeRate.Rate6_7:
+            /*case FecCodeRate.Rate6_7:
               bdaCodeRate = BinaryConvolutionCodeRate.Rate6_7;
-              break;
+              break;*/
             case FecCodeRate.Rate7_8:
               bdaCodeRate = BinaryConvolutionCodeRate.Rate7_8;
               break;
@@ -1325,20 +1324,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
               bdaCodeRate = BinaryConvolutionCodeRate.Rate9_10;
               break;
             default:
-              this.LogWarn("Digital Everywhere: tune request uses unsupported FEC code rate {0}, falling back to automatic", dvbs2Channel.FecCodeRate);
+              this.LogWarn("Digital Everywhere: DVB-S2 tune request uses unsupported FEC code rate {0}, falling back to automatic", dvbs2Channel.FecCodeRate);
               break;
           }
 
           int codeRate = (int)bdaCodeRate;
-          if (dvbs2Channel.PilotTonesState == PilotTonesState.Off)
-          {
-            codeRate += 64;
-          }
-          else if (dvbs2Channel.PilotTonesState == PilotTonesState.On)
-          {
-            codeRate += 128;
-          }
-
           switch (dvbs2Channel.RollOffFactor)
           {
             case RollOffFactor.Twenty:
@@ -1352,6 +1342,19 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
               break;
             default:
               this.LogWarn("Digital Everywhere: DVB-S2 tune request uses unsupported roll-off factor {0}", dvbs2Channel.RollOffFactor);
+              break;
+          }
+
+          switch (dvbs2Channel.PilotTonesState)
+          {
+            case PilotTonesState.Off:
+              codeRate += 64;
+              break;
+            case PilotTonesState.On:
+              codeRate += 128;
+              break;
+            default:
+              this.LogWarn("Digital Everywhere: DVB-S2 tune request uses unsupported pilot tones state {0}", dvbs2Channel.PilotTonesState);
               break;
           }
 
@@ -1398,7 +1401,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
       // Digital Everywhere tuners do not. Apparently the FireDTV T also
       // supports active antennas but it is unclear whether and how that power
       // supply might be turned on or off.
-      if ((_tunerSupportedBroadcastStandards & BroadcastStandard.MaskSatellite) == 0)
+      if (!_isSatelliteTuner)
       {
         this.LogDebug("Digital Everywhere: property not supported");
         return false;
@@ -1444,12 +1447,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
     /// <returns><c>true</c> if the filter should be enabled, otherwise <c>false</c></returns>
     bool IMpeg2PidFilter.ShouldEnable(IChannel tuningDetail)
     {
-      if ((_tunerSupportedBroadcastStandards & BroadcastStandard.MaskDvb) == 0)
-      {
-        // PID filtering not supported.
-        return false;
-      }
-
       // It is not ideal to have to enable PID filtering because doing so can
       // limit the number of channels that can be viewed/recorded
       // simultaneously. However, it does seem that there is a need for
@@ -1546,14 +1543,14 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
       }
       else
       {
-        ChannelDvbC dvbcTuningDetail = tuningDetail as ChannelDvbC;
-        if (dvbcTuningDetail == null)
+        IChannelQam qamTuningDetail = tuningDetail as IChannelQam;
+        if (qamTuningDetail == null)
         {
           return false;
         }
 
         int bitsPerSymbol = 6;  // 64 QAM
-        switch (dvbcTuningDetail.ModulationScheme)
+        switch (qamTuningDetail.ModulationScheme)
         {
           case ModulationSchemeQam.Qam16:
             bitsPerSymbol = 4;
@@ -1585,7 +1582,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
             bitsPerSymbol = 12;
             break;
         }
-        bitRate = bitsPerSymbol * dvbcTuningDetail.SymbolRate;  // kb/s
+        bitRate = bitsPerSymbol * qamTuningDetail.SymbolRate;  // kb/s
       }
 
       // Rough approximation: enable PID filtering when bit rate is over 60 Mb/s.
@@ -1680,7 +1677,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
 
       BdaExtensionProperty property = BdaExtensionProperty.SelectPidsDvbS;
       int bufferSize = DVBS_PID_FILTER_PARAMS_SIZE;
-      if ((_tunerSupportedBroadcastStandards & BroadcastStandard.MaskSatellite) != 0)
+      if (_isSatelliteTuner)
       {
         DvbsPidFilterParams filter = new DvbsPidFilterParams();
         filter.CurrentTransponder = true;
@@ -1725,16 +1722,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
       // tuner.
       // DVB-C tuning may also be supported but documentation is missing.
       // DVB-S2 tuning appears not to work.
-      if (channel is ChannelDvbT && _tunerSupportedBroadcastStandards.HasFlag(BroadcastStandard.DvbT))
-      {
-        return true;
-      }
-      ChannelDvbS dvbsChannel = channel as ChannelDvbS;
-      if (dvbsChannel != null && _tunerSupportedBroadcastStandards.HasFlag(BroadcastStandard.DvbS))
-      {
-        return true;
-      }
-      return false;
+      return channel is ChannelDvbS || channel is ChannelDvbT;
     }
 
     /// <summary>
@@ -1754,8 +1742,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
 
       int hr;
 
-      ChannelDvbS dvbsChannel = channel as ChannelDvbS;
-      if (dvbsChannel != null && _tunerSupportedBroadcastStandards.HasFlag(BroadcastStandard.DvbS))
+      IChannelSatellite satelliteChannel = channel as IChannelSatellite;
+      if (satelliteChannel != null)
       {
         // LNB settings must be applied.
         LnbParamInfo lnbParams = new LnbParamInfo();
@@ -1782,11 +1770,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
         }
 
         DvbsMultiplexParams tuneRequest = new DvbsMultiplexParams();
-        tuneRequest.Frequency = dvbsChannel.Frequency;
-        tuneRequest.SymbolRate = dvbsChannel.SymbolRate;
+        tuneRequest.Frequency = satelliteChannel.Frequency;
+        tuneRequest.SymbolRate = satelliteChannel.SymbolRate;
         tuneRequest.Lnb = 0;    // To match the AntennaNumber value above.
 
-        switch (dvbsChannel.FecCodeRate)
+        switch (satelliteChannel.FecCodeRate)
         {
           case FecCodeRate.Rate1_2:
             tuneRequest.InnerFecRate = DeFecCodeRate.Rate1_2;
@@ -1804,13 +1792,13 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
             tuneRequest.InnerFecRate = DeFecCodeRate.Rate7_8;
             break;
           default:
-            this.LogWarn("Digital Everywhere: tune request uses unsupported FEC code rate {0}, falling back to automatic", dvbsChannel.FecCodeRate);
+            this.LogWarn("Digital Everywhere: tune request uses unsupported FEC code rate {0}, falling back to automatic", satelliteChannel.FecCodeRate);
             tuneRequest.InnerFecRate = DeFecCodeRate.Auto;
             break;
         }
 
         tuneRequest.Polarisation = DePolarisation.Vertical;
-        if (SatelliteLnbHandler.IsHighVoltage(dvbsChannel.Polarisation))
+        if (SatelliteLnbHandler.IsHighVoltage(satelliteChannel.Polarisation))
         {
           tuneRequest.Polarisation = DePolarisation.Horizontal;
         }
@@ -1825,46 +1813,44 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
       }
       else
       {
-        ChannelDvbT dvbtChannel = channel as ChannelDvbT;
-        if (dvbtChannel != null && _tunerSupportedBroadcastStandards.HasFlag(BroadcastStandard.DvbT))
-        {
-          DvbtMultiplexParams tuneRequest = new DvbtMultiplexParams();
-          tuneRequest.Frequency = (uint)dvbtChannel.Frequency;
-          switch (dvbtChannel.Bandwidth)
-          {
-            case 8000:
-              tuneRequest.Bandwidth = DeOfdmBandwidth.Bandwidth8;
-              break;
-            case 7000:
-              tuneRequest.Bandwidth = DeOfdmBandwidth.Bandwidth7;
-              break;
-            case 6000:
-              tuneRequest.Bandwidth = DeOfdmBandwidth.Bandwidth6;
-              break;
-            default:
-              this.LogWarn("Digital Everywhere: tune request uses unsupported bandwidth {0} kHz, falling back to 8000 kHz", dvbtChannel.Bandwidth);
-              tuneRequest.Bandwidth = DeOfdmBandwidth.Bandwidth8;
-              break;
-          }
-          tuneRequest.Constellation = DeOfdmConstellation.Auto;
-          tuneRequest.CodeRateHp = DeOfdmCodeRate.Auto;
-          tuneRequest.CodeRateLp = DeOfdmCodeRate.Auto;
-          tuneRequest.GuardInterval = DeOfdmGuardInterval.Auto;
-          tuneRequest.TransmissionMode = DeOfdmTransmissionMode.Auto;
-          tuneRequest.Hierarchy = DeOfdmHierarchy.Auto;
-
-          Marshal.StructureToPtr(tuneRequest, _generalBuffer, false);
-          Dump.DumpBinary(_generalBuffer, DVBT_MULTIPLEX_PARAMS_SIZE);
-          hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.SelectMultiplexDvbT,
-            _generalBuffer, DVBT_MULTIPLEX_PARAMS_SIZE,
-            _generalBuffer, DVBT_MULTIPLEX_PARAMS_SIZE
-          );
-        }
-        else
+        IChannelOfdm ofdmChannel = channel as IChannelOfdm;
+        if (ofdmChannel == null)
         {
           this.LogError("Digital Everywhere: tuning is not supported for channel{0}{1}", Environment.NewLine, channel);
           return false;
         }
+
+        DvbtMultiplexParams tuneRequest = new DvbtMultiplexParams();
+        tuneRequest.Frequency = (uint)ofdmChannel.Frequency;
+        switch (ofdmChannel.Bandwidth)
+        {
+          case 8000:
+            tuneRequest.Bandwidth = DeOfdmBandwidth.Bandwidth8;
+            break;
+          case 7000:
+            tuneRequest.Bandwidth = DeOfdmBandwidth.Bandwidth7;
+            break;
+          case 6000:
+            tuneRequest.Bandwidth = DeOfdmBandwidth.Bandwidth6;
+            break;
+          default:
+            this.LogWarn("Digital Everywhere: tune request uses unsupported bandwidth {0} kHz, falling back to 8000 kHz", ofdmChannel.Bandwidth);
+            tuneRequest.Bandwidth = DeOfdmBandwidth.Bandwidth8;
+            break;
+        }
+        tuneRequest.Constellation = DeOfdmConstellation.Auto;
+        tuneRequest.CodeRateHp = DeOfdmCodeRate.Auto;
+        tuneRequest.CodeRateLp = DeOfdmCodeRate.Auto;
+        tuneRequest.GuardInterval = DeOfdmGuardInterval.Auto;
+        tuneRequest.TransmissionMode = DeOfdmTransmissionMode.Auto;
+        tuneRequest.Hierarchy = DeOfdmHierarchy.Auto;
+
+        Marshal.StructureToPtr(tuneRequest, _generalBuffer, false);
+        Dump.DumpBinary(_generalBuffer, DVBT_MULTIPLEX_PARAMS_SIZE);
+        hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.SelectMultiplexDvbT,
+          _generalBuffer, DVBT_MULTIPLEX_PARAMS_SIZE,
+          _generalBuffer, DVBT_MULTIPLEX_PARAMS_SIZE
+        );
       }
 
       if (hr == (int)NativeMethods.HResult.S_OK)

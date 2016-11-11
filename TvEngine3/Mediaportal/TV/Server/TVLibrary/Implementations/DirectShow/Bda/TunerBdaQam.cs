@@ -19,6 +19,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using DirectShowLib;
 using DirectShowLib.BDA;
 using Mediaportal.TV.Server.Common.Types.Enum;
@@ -37,6 +38,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
   /// </summary>
   internal class TunerBdaQam : TunerBdaBase
   {
+    #region constants
+
+    private const string TUNING_SPACE_NAME_ISDB = "MediaPortal ISDB-C Tuning Space";
+    private const string TUNING_SPACE_NAME_QAM = "MediaPortal QAM Tuning Space";
+
+    #endregion
+
     #region constructor
 
     /// <summary>
@@ -53,22 +61,32 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
     #region graph building
 
     /// <summary>
-    /// Create and register a BDA tuning space for the tuner type.
+    /// Create a BDA tuning space for tuning a given channel type.
     /// </summary>
+    /// <param name="channelType">The channel type.</param>
     /// <returns>the tuning space that was created</returns>
-    protected override ITuningSpace CreateTuningSpace()
+    protected override ITuningSpace CreateTuningSpace(Type channelType)
     {
-      this.LogDebug("BDA QAM: create tuning space");
+      this.LogDebug("BDA QAM: create tuning space, type = {0}", channelType.Name);
 
-      IDVBTuningSpace tuningSpace = null;
+      string name = TUNING_SPACE_NAME_QAM;
+      Guid networkType = NetworkType.DVB_CABLE;
+      if (channelType == typeof(ChannelIsdbC))
+      {
+        name = TUNING_SPACE_NAME_ISDB;
+        networkType = NetworkType.ISDB_CABLE;
+      }
+
+      IDVBTuningSpace2 tuningSpace = null;
       IDVBCLocator locator = null;
       try
       {
-        tuningSpace = (IDVBTuningSpace)new DVBTuningSpace();
-        int hr = tuningSpace.put_UniqueName(TuningSpaceName);
-        hr |= tuningSpace.put_FriendlyName(TuningSpaceName);
-        hr |= tuningSpace.put__NetworkType(NetworkType.DVB_CABLE);
-        hr |= tuningSpace.put_SystemType(DVBSystemType.Cable);
+        tuningSpace = (IDVBTuningSpace2)new DVBTuningSpace();
+        int hr = tuningSpace.put_FriendlyName(name);
+        hr |= tuningSpace.put_NetworkID(-1);
+        hr |= tuningSpace.put__NetworkType(networkType);
+        hr |= tuningSpace.put_SystemType(DVBSystemType.Dvb_Cable);
+        hr |= tuningSpace.put_UniqueName(name);
 
         locator = (IDVBCLocator)new DVBCLocator();
         hr |= locator.put_CarrierFrequency(-1);
@@ -82,14 +100,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
         hr |= tuningSpace.put_DefaultLocator(locator);
         if (hr != (int)NativeMethods.HResult.S_OK)
         {
-          this.LogWarn("BDA QAM: potential error creating tuning space, hr = 0x{0:x}", hr);
+          this.LogWarn("BDA QAM: potential error creating tuning space, hr = 0x{0:x}, type = {1}", hr, channelType.Name);
         }
         return tuningSpace;
       }
       catch
       {
-        Release.ComObject("BDA QAM tuner tuning space", ref tuningSpace);
-        Release.ComObject("BDA QAM tuner locator", ref locator);
+        Release.ComObject(string.Format("BDA QAM tuner {0} tuning space", channelType.Name), ref tuningSpace);
+        Release.ComObject(string.Format("BDA QAM tuner {0} locator", channelType.Name), ref locator);
         throw;
       }
     }
@@ -106,13 +124,21 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
     }
 
     /// <summary>
-    /// Get the registered name of the BDA tuning space for the tuner type.
+    /// Get the name(s) of the registered BDA tuning space(s) for the tuner type.
     /// </summary>
-    protected override string TuningSpaceName
+    protected override IDictionary<string, Type> TuningSpaceNames
     {
       get
       {
-        return "MediaPortal QAM Tuning Space";
+        Dictionary<string, Type> names = new Dictionary<string, Type>(2)
+        {
+          { TUNING_SPACE_NAME_QAM, null }
+        };
+        if (Environment.OSVersion.Version.Major >= 6)
+        {
+          names.Add(TUNING_SPACE_NAME_ISDB, typeof(ChannelIsdbT));
+        }
+        return names;
       }
     }
 
@@ -128,8 +154,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
     /// <returns>a tune request instance</returns>
     protected override ITuneRequest AssembleTuneRequest(ITuningSpace tuningSpace, IChannel channel)
     {
-      ChannelDvbC dvbcChannel = channel as ChannelDvbC;
-      if (dvbcChannel == null)
+      IChannelQam qamChannel = channel as IChannelQam;
+      if (qamChannel == null)
       {
         throw new TvException("Received request to tune incompatible channel.");
       }
@@ -144,48 +170,51 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
         {
           throw new TvException("Failed to find DVB-C locator interface on locator.");
         }
-        hr = dvbcLocator.put_CarrierFrequency((int)dvbcChannel.Frequency);
-        hr |= dvbcLocator.put_SymbolRate(dvbcChannel.SymbolRate);
-        hr |= dvbcLocator.put_Modulation(GetBdaModulation(dvbcChannel.ModulationScheme));
+        hr = dvbcLocator.put_CarrierFrequency(qamChannel.Frequency);
+        hr |= dvbcLocator.put_SymbolRate(qamChannel.SymbolRate);
+        hr |= dvbcLocator.put_Modulation(GetBdaModulation(qamChannel.ModulationScheme));
+
+        if (hr != (int)NativeMethods.HResult.S_OK)
+        {
+          this.LogWarn("BDA QAM: potential error configuring locator, hr = 0x{0:x}", hr);
+        }
 
         ITuneRequest tuneRequest;
         hr = tuningSpace.CreateTuneRequest(out tuneRequest);
-        TvExceptionDirectShowError.Throw(hr, "Failed to create tuning request from tuning space.");
-        try
+        TvExceptionDirectShowError.Throw(hr, "Failed to create tune request from tuning space.");
+
+        IChannelDvbCompatible dvbCompatibleChannel = channel as IChannelDvbCompatible;
+        if (dvbCompatibleChannel != null)
         {
           IDVBTuneRequest dvbTuneRequest = tuneRequest as IDVBTuneRequest;
           if (dvbTuneRequest == null)
           {
-            throw new TvException("Failed to find DVB tune request interface on tune request.");
+            this.LogWarn("BDA QAM: DVB tune request interface is not available on tune request");
           }
-
-          if (dvbcChannel.OriginalNetworkId > 0)
+          else
           {
-            hr |= dvbTuneRequest.put_ONID(dvbcChannel.OriginalNetworkId);
+            if (dvbCompatibleChannel.OriginalNetworkId > 0)
+            {
+              hr |= dvbTuneRequest.put_ONID(dvbCompatibleChannel.OriginalNetworkId);
+            }
+            if (dvbCompatibleChannel.TransportStreamId > 0)
+            {
+              hr |= dvbTuneRequest.put_TSID(dvbCompatibleChannel.TransportStreamId);
+            }
+            if (dvbCompatibleChannel.ServiceId > 0)
+            {
+              hr |= dvbTuneRequest.put_SID(dvbCompatibleChannel.ServiceId);
+            }
           }
-          if (dvbcChannel.TransportStreamId > 0)
-          {
-            hr |= dvbTuneRequest.put_TSID(dvbcChannel.TransportStreamId);
-          }
-          if (dvbcChannel.ServiceId > 0)
-          {
-            hr |= dvbTuneRequest.put_SID(dvbcChannel.ServiceId);
-          }
-
-          hr |= dvbTuneRequest.put_Locator(locator);
-
-          if (hr != (int)NativeMethods.HResult.S_OK)
-          {
-            this.LogWarn("BDA QAM: potential error assembling tune request, hr = 0x{0:x}", hr);
-          }
-
-          return dvbTuneRequest;
         }
-        catch
+        hr |= tuneRequest.put_Locator(locator);
+
+        if (hr != (int)NativeMethods.HResult.S_OK)
         {
-          Release.ComObject("BDA QAM tuner tune request", ref tuneRequest);
-          throw;
+          this.LogWarn("BDA QAM: potential error assembling tune request, hr = 0x{0:x}", hr);
         }
+
+        return tuneRequest;
       }
       finally
       {
@@ -201,8 +230,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
     /// <returns>an HRESULT indicating whether the tuning parameters were applied successfully</returns>
     protected override int PerformMediaPortalNetworkProviderTuning(IDvbNetworkProvider networkProvider, IChannel channel)
     {
-      ChannelDvbC dvbcChannel = channel as ChannelDvbC;
-      if (dvbcChannel == null)
+      IChannelQam qamChannel = channel as IChannelQam;
+      if (qamChannel == null)
       {
         throw new TvException("Received request to tune incompatible channel.");
       }
@@ -210,7 +239,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
       FrequencySettings frequencySettings = new FrequencySettings
       {
         Multiplier = 1000,
-        Frequency = (uint)(dvbcChannel.Frequency),
+        Frequency = (uint)qamChannel.Frequency,
         Bandwidth = uint.MaxValue,
         Polarity = DirectShowLib.BDA.Polarisation.NotSet,
         Range = uint.MaxValue
@@ -219,13 +248,24 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
       {
         InnerFECRate = BinaryConvolutionCodeRate.RateNotSet,
         InnerFECMethod = FECMethod.MethodNotSet,
-        Modulation = GetBdaModulation(dvbcChannel.ModulationScheme),
+        Modulation = GetBdaModulation(qamChannel.ModulationScheme),
         OuterFECMethod = FECMethod.MethodNotSet,
         OuterFECRate = BinaryConvolutionCodeRate.RateNotSet,
         SpectralInversion = SpectralInversion.NotSet,
-        SymbolRate = (uint)dvbcChannel.SymbolRate
+        SymbolRate = (uint)qamChannel.SymbolRate
       };
       return networkProvider.TuneDVBC(frequencySettings, demodulatorSettings);
+    }
+
+    /// <summary>
+    /// Get the broadcast standards supported by the tuner code/class/type implementation.
+    /// </summary>
+    public override BroadcastStandard PossibleBroadcastStandards
+    {
+      get
+      {
+        return BroadcastStandard.DvbC | BroadcastStandard.IsdbC;
+      }
     }
 
     #region tuning parameter translation

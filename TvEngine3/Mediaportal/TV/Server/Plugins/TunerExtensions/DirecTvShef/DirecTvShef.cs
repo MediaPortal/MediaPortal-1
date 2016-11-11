@@ -19,7 +19,7 @@
 #endregion
 
 using System;
-using System.Text.RegularExpressions;
+using Mediaportal.TV.Server.Common.Types.Channel;
 using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.Plugins.Base.Interfaces;
 using Mediaportal.TV.Server.Plugins.TunerExtension.DirecTvShef.Config;
@@ -182,17 +182,16 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DirecTvShef
         return;
       }
 
-      Match m = ChannelBase.LOGICAL_CHANNEL_NUMBER_FORMAT.Match(channel.LogicalChannelNumber);
-      if (!m.Success)
+      ushort majorChannelNumber;
+      ushort? minorChannelNumber;
+      if (!LogicalChannelNumber.Parse(channel.LogicalChannelNumber, out majorChannelNumber, out minorChannelNumber))
       {
         this.LogError("DirecTV SHEF: invalid channel number, channel = {0}, number = {1}", channel.Name, channel.LogicalChannelNumber);
         return;
       }
-      int majorChannelNumber = int.Parse(m.Groups[1].Captures[0].Value);
-      int minorChannelNumber = ShefRequestTune.MINOR_CHANNEL_NUMBER_NOT_SET;
-      if (m.Groups[3].Captures.Count != 0)
+      if (!minorChannelNumber.HasValue)
       {
-        minorChannelNumber = int.Parse(m.Groups[3].Captures[0].Value);
+        minorChannelNumber = ShefRequestTune.MINOR_CHANNEL_NUMBER_NOT_SET;
       }
 
       lock (_configLock)
@@ -204,7 +203,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DirecTvShef
         }
 
         this.LogDebug("DirecTV SHEF: change channel, IP address = {0}, MAC address = {1}, location = {2}, major channel number = {3}, minor channel number = {4}", _config.IpAddress, _config.MacAddress, _config.Location, majorChannelNumber, minorChannelNumber);
-        if (!_shefClient.SendRequest(new ShefRequestTune(majorChannelNumber, minorChannelNumber, _config.MacAddress)))
+        if (!_shefClient.SendRequest(new ShefRequestTune(majorChannelNumber, minorChannelNumber.Value, _config.MacAddress)))
         {
           this.LogError("DirecTV SHEF: failed to change channel, IP address = {0}, MAC address = {1}, location = {2}, major channel number = {3}, minor channel number = {4}", _config.IpAddress, _config.MacAddress, _config.Location, majorChannelNumber, minorChannelNumber);
         }

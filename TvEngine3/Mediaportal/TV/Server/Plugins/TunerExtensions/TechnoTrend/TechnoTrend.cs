@@ -1053,7 +1053,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     private byte _slotIndex = 0;
     private TtCiState _ciState = TtCiState.Unknown;
 
-    private BroadcastStandard _tunerSupportedBroadcastStandards = BroadcastStandard.Unknown;
+    private bool _isTerrestrialTuner = false;
     private TtDeviceCategory _deviceCategory = TtDeviceCategory.Unknown;
     private string _name = "TechnoTrend";
 
@@ -1660,10 +1660,10 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
 
       this.LogInfo("TechnoTrend: extension supported, category = {0}, id = {1}", _deviceCategory, deviceId);
       _isTechnoTrend = true;
-      _tunerSupportedBroadcastStandards = tunerSupportedBroadcastStandards;
+      _isTerrestrialTuner = (tunerSupportedBroadcastStandards & BroadcastStandard.MaskDigital & BroadcastStandard.MaskTerrestrial) != 0;
       _generalBuffer = Marshal.AllocCoTaskMem(GENERAL_BUFFER_SIZE);
       ReadDeviceInfo();
-      if ((_tunerSupportedBroadcastStandards & BroadcastStandard.MaskDigital & BroadcastStandard.MaskTerrestrial) == 0)
+      if (_isTerrestrialTuner)
       {
         TtApiResult result = bdaapiSetDVBTAutoOffsetMode(_tunerHandle, false);
         if (result != TtApiResult.Success)
@@ -1717,8 +1717,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
 
       if (bdaModulation != ModulationType.ModNotSet)
       {
-        satelliteChannel.ModulationScheme = (ModulationSchemePsk)bdaModulation;
         this.LogDebug("  modulation = {0}", bdaModulation);
+        satelliteChannel.ModulationScheme = (ModulationSchemePsk)bdaModulation;
       }
     }
 
@@ -1742,7 +1742,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
         this.LogWarn("TechnoTrend: not initialised or interface not supported");
         return false;
       }
-      if ((_tunerSupportedBroadcastStandards & BroadcastStandard.MaskTerrestrial) != 0)
+      if (!_isTerrestrialTuner)
       {
         this.LogDebug("TechnoTrend: power control is not supported for this device");
         return false;
@@ -1770,12 +1770,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     /// <returns><c>true</c> if the extension supports specialised tuning for the channel, otherwise <c>false</c></returns>
     public bool CanTuneChannel(IChannel channel)
     {
-      // Tuning of DVB-C, satellite and DVB-T/T2 channels is supported with an appropriate tuner.
+      // Tuning of OFDM, QAM and satellite channels is supported with an appropriate tuner.
       if (
-        (channel is ChannelDvbC && _tunerSupportedBroadcastStandards.HasFlag(BroadcastStandard.DvbC)) ||
-        (channel is IChannelSatellite && (_tunerSupportedBroadcastStandards & BroadcastStandard.MaskSatellite) != 0) ||
-        (channel is ChannelDvbT && _tunerSupportedBroadcastStandards.HasFlag(BroadcastStandard.DvbT)) ||
-        (channel is ChannelDvbT2 && _tunerSupportedBroadcastStandards.HasFlag(BroadcastStandard.DvbT2))
+        channel is IChannelOfdm ||
+        channel is IChannelQam ||
+        channel is IChannelSatellite
       )
       {
         return true;
@@ -1798,48 +1797,73 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
         return false;
       }
 
-      ChannelDvbC dvbcChannel = channel as ChannelDvbC;
-      if (dvbcChannel != null && _tunerSupportedBroadcastStandards.HasFlag(BroadcastStandard.DvbC))
+      IChannelOfdm ofdmChannel = channel as IChannelOfdm;
+      if (ofdmChannel != null)
       {
-        TtDvbcTuneRequest tuneRequest = new TtDvbcTuneRequest();
-        tuneRequest.DeviceType = TtDeviceType.DvbC;
-        tuneRequest.Frequency = dvbcChannel.Frequency;
-
-        switch (dvbcChannel.ModulationScheme)
-        {
-          case ModulationSchemeQam.Qam16:
-            tuneRequest.Modulation = ModulationType.Mod16Qam;
-            break;
-          case ModulationSchemeQam.Qam32:
-            tuneRequest.Modulation = ModulationType.Mod32Qam;
-            break;
-          case ModulationSchemeQam.Qam64:
-            tuneRequest.Modulation = ModulationType.Mod64Qam;
-            break;
-          case ModulationSchemeQam.Qam128:
-            tuneRequest.Modulation = ModulationType.Mod128Qam;
-            break;
-          case ModulationSchemeQam.Qam256:
-            tuneRequest.Modulation = ModulationType.Mod256Qam;
-            break;
-          case ModulationSchemeQam.Qam512:
-            tuneRequest.Modulation = ModulationType.Mod512Qam;
-            break;
-          case ModulationSchemeQam.Qam1024:
-            tuneRequest.Modulation = ModulationType.Mod1024Qam;
-            break;
-        }
-
-        tuneRequest.SymbolRate = dvbcChannel.SymbolRate;
+        TtDvbtTuneRequest tuneRequest = new TtDvbtTuneRequest();
+        tuneRequest.DeviceType = TtDeviceType.DvbT;
+        tuneRequest.Frequency = ofdmChannel.Frequency;
+        // Frequency is already specified in kHz (the base unit) so the
+        // multiplier is set to 1.
+        tuneRequest.FrequencyMultiplier = 1;
+        tuneRequest.Bandwidth = ofdmChannel.Bandwidth;
+        tuneRequest.Modulation = ModulationType.ModNotSet;
         tuneRequest.SpectralInversion = SpectralInversion.Automatic;
 
         Marshal.StructureToPtr(tuneRequest, _generalBuffer, false);
       }
       else
       {
-        IChannelSatellite satelliteChannel = channel as IChannelSatellite;
-        if (satelliteChannel != null && (_tunerSupportedBroadcastStandards & BroadcastStandard.MaskSatellite) != 0)
+        IChannelQam qamChannel = channel as IChannelQam;
+        if (qamChannel != null)
         {
+          TtDvbcTuneRequest tuneRequest = new TtDvbcTuneRequest();
+          tuneRequest.DeviceType = TtDeviceType.DvbC;
+          tuneRequest.Frequency = qamChannel.Frequency;
+
+          switch (qamChannel.ModulationScheme)
+          {
+            case ModulationSchemeQam.Qam16:
+              tuneRequest.Modulation = ModulationType.Mod16Qam;
+              break;
+            case ModulationSchemeQam.Qam32:
+              tuneRequest.Modulation = ModulationType.Mod32Qam;
+              break;
+            case ModulationSchemeQam.Qam64:
+              tuneRequest.Modulation = ModulationType.Mod64Qam;
+              break;
+            case ModulationSchemeQam.Qam128:
+              tuneRequest.Modulation = ModulationType.Mod128Qam;
+              break;
+            case ModulationSchemeQam.Qam256:
+              tuneRequest.Modulation = ModulationType.Mod256Qam;
+              break;
+            case ModulationSchemeQam.Qam512:
+              tuneRequest.Modulation = ModulationType.Mod512Qam;
+              break;
+            case ModulationSchemeQam.Qam1024:
+              tuneRequest.Modulation = ModulationType.Mod1024Qam;
+              break;
+            default:
+              this.LogWarn("TechnoTrend: QAM tune request uses unsupported modulation {0}, falling back to automatic", qamChannel.ModulationScheme);
+              tuneRequest.Modulation = ModulationType.ModNotSet;
+              break;
+          }
+
+          tuneRequest.SymbolRate = qamChannel.SymbolRate;
+          tuneRequest.SpectralInversion = SpectralInversion.Automatic;
+
+          Marshal.StructureToPtr(tuneRequest, _generalBuffer, false);
+        }
+        else
+        {
+          IChannelSatellite satelliteChannel = channel as IChannelSatellite;
+          if (satelliteChannel == null)
+          {
+            this.LogError("TechnoTrend: tuning is not supported for channel{0}{1}", Environment.NewLine, channel);
+            return false;
+          }
+
           TtDvbsTuneRequest tuneRequest = new TtDvbsTuneRequest();
           tuneRequest.DeviceType = TtDeviceType.DvbS;
           // Frequency is already specified in kHz (the base unit) so the
@@ -1865,6 +1889,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
               tuneRequest.Polarisation = BdaPolarisation.LinearV;
               break;
             default:
+              this.LogWarn("TechnoTrend: satellite tune request uses unsupported polarisation {0}, falling back to automatic", satelliteChannel.Polarisation);
               tuneRequest.Polarisation = BdaPolarisation.NotSet;
               break;
           }
@@ -1873,27 +1898,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
           tuneRequest.UseToneBurst = false;
           tuneRequest.Modulation = (ModulationType)satelliteChannel.ModulationScheme;
           tuneRequest.SymbolRate = satelliteChannel.SymbolRate;
-          tuneRequest.SpectralInversion = SpectralInversion.Automatic;
-
-          Marshal.StructureToPtr(tuneRequest, _generalBuffer, false);
-        }
-        else
-        {
-          IChannelOfdm ofdmChannel = channel as IChannelOfdm;
-          if (ofdmChannel == null || (!_tunerSupportedBroadcastStandards.HasFlag(BroadcastStandard.DvbT) && !_tunerSupportedBroadcastStandards.HasFlag(BroadcastStandard.DvbT2)))
-          {
-            this.LogError("TechnoTrend: tuning is not supported for channel{0}{1}", Environment.NewLine, channel);
-            return false;
-          }
-
-          TtDvbtTuneRequest tuneRequest = new TtDvbtTuneRequest();
-          tuneRequest.DeviceType = TtDeviceType.DvbT;
-          tuneRequest.Frequency = ofdmChannel.Frequency;
-          // Frequency is already specified in kHz (the base unit) so the
-          // multiplier is set to 1.
-          tuneRequest.FrequencyMultiplier = 1;
-          tuneRequest.Bandwidth = ofdmChannel.Bandwidth;
-          tuneRequest.Modulation = ModulationType.ModNotSet;
           tuneRequest.SpectralInversion = SpectralInversion.Automatic;
 
           Marshal.StructureToPtr(tuneRequest, _generalBuffer, false);

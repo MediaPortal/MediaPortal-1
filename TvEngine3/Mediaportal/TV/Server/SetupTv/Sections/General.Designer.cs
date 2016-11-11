@@ -79,7 +79,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       // comboBoxServicePriority
       // 
-      this.comboBoxServicePriority.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxServicePriority.FormattingEnabled = true;
       this.comboBoxServicePriority.Location = new System.Drawing.Point(125, 19);
       this.comboBoxServicePriority.Name = "comboBoxServicePriority";
@@ -148,7 +147,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       // comboBoxPreviewCodecAudio
       // 
-      this.comboBoxPreviewCodecAudio.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxPreviewCodecAudio.FormattingEnabled = true;
       this.comboBoxPreviewCodecAudio.Location = new System.Drawing.Point(49, 46);
       this.comboBoxPreviewCodecAudio.MaxDropDownItems = 20;
@@ -167,7 +165,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       // comboBoxPreviewCodecVideo
       // 
-      this.comboBoxPreviewCodecVideo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxPreviewCodecVideo.FormattingEnabled = true;
       this.comboBoxPreviewCodecVideo.Location = new System.Drawing.Point(49, 19);
       this.comboBoxPreviewCodecVideo.MaxDropDownItems = 20;

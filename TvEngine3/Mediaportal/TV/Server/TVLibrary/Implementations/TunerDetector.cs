@@ -1014,7 +1014,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
           Name = tuner.Name,
           IsEnabled = true,
           Priority = 1,
-          UseForEpgGrabbing = (tuner.SupportedBroadcastStandards & (BroadcastStandard.Atsc | BroadcastStandard.MaskDvb)) != 0,
+          UseForEpgGrabbing = (tuner.SupportedBroadcastStandards & (BroadcastStandard.Atsc | BroadcastStandard.MaskDvb | BroadcastStandard.MaskIsdb)) != 0,
           Preload = false,
           AlwaysSendDiseqcCommands = false,
           UseConditionalAccess = (tuner.SupportedBroadcastStandards & BroadcastStandard.MaskDigital) != 0,
@@ -1023,10 +1023,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
           DecryptLimit = 1,
           MultiChannelDecryptMode = (int)MultiChannelDecryptMode.List,
           IdleMode = (int)TunerIdleMode.Stop,
-          BdaNetworkProvider = (int)BdaNetworkProvider.Generic,
+          BdaNetworkProvider = (int)(Environment.OSVersion.Version.Major >= 6 ? BdaNetworkProvider.Generic : BdaNetworkProvider.Specific),
           PidFilterMode = (int)PidFilterMode.Automatic,
           UseCustomTuning = false,
-          SupportedBroadcastStandards = (int)tuner.SupportedBroadcastStandards
+          SupportedBroadcastStandards = (int)tuner.SupportedBroadcastStandards,
+          TsMuxerInputDumpMask = 0,
+          TsWriterInputDumpMask = 0,
+          DisableTsWriterCrcChecking = false
         };
 
         // If we have product/tuner instance information and detected the tuner is a member of a

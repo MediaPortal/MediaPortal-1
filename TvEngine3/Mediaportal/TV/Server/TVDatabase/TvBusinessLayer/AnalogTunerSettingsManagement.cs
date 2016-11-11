@@ -12,8 +12,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       using (IAnalogTunerSettingsRepository analogTunerSettingsRepository = new AnalogTunerSettingsRepository())
       {
         var query = analogTunerSettingsRepository.GetQuery<AnalogTunerSettings>(s => s.IdAnalogTunerSettings == idAnalogTunerSettings);
-        query = analogTunerSettingsRepository.IncludeAllRelations(query);
-        return query.FirstOrDefault();
+        return analogTunerSettingsRepository.IncludeAllRelations(query).FirstOrDefault();
       }
     }
 

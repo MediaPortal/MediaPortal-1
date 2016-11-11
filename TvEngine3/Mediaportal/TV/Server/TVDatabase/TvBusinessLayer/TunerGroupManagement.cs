@@ -22,8 +22,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       using (ITunerGroupRepository tunerGroupRepository = new TunerGroupRepository())
       {
         var query = tunerGroupRepository.GetQuery<TunerGroup>(tg => tg.IdTunerGroup == idTunerGroup);
-        query = tunerGroupRepository.IncludeAllRelations(query);
-        return query.FirstOrDefault();
+        return tunerGroupRepository.IncludeAllRelations(query).FirstOrDefault();
       }
     }
 

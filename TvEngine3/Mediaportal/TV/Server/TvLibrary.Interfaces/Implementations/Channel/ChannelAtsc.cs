@@ -19,9 +19,9 @@
 #endregion
 
 using System.Runtime.Serialization;
-using System.Text.RegularExpressions;
 using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
+using LcnSyntax = Mediaportal.TV.Server.Common.Types.Channel.LogicalChannelNumber;
 
 namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel
 {
@@ -29,7 +29,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel
   /// An implementation of <see cref="T:IChannel"/> for ATSC channels.
   /// </summary>
   [DataContract]
-  public class ChannelAtsc : ChannelMpeg2Base, IChannelPhysical
+  public class ChannelAtsc : ChannelMpeg2TsBase, IChannelPhysical
   {
     #region variables
 
@@ -109,10 +109,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel
     {
       get
       {
-        Match m = LOGICAL_CHANNEL_NUMBER_FORMAT.Match(LogicalChannelNumber);
-        if (m.Success)
+        ushort majorChannelNumber;
+        ushort? minorChannelNumber;
+        if (LcnSyntax.Parse(LogicalChannelNumber, out majorChannelNumber, out minorChannelNumber))
         {
-          return int.Parse(m.Groups[1].Captures[0].Value);
+          return (int)majorChannelNumber;
         }
         return -1;
       }
@@ -125,10 +126,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel
     {
       get
       {
-        Match m = LOGICAL_CHANNEL_NUMBER_FORMAT.Match(LogicalChannelNumber);
-        if (m.Success && m.Groups[3].Captures.Count != 0)
+        ushort majorChannelNumber;
+        ushort? minorChannelNumber;
+        if (LcnSyntax.Parse(LogicalChannelNumber, out majorChannelNumber, out minorChannelNumber) && minorChannelNumber.HasValue)
         {
-          return int.Parse(m.Groups[3].Captures[0].Value);
+          return (int)minorChannelNumber.Value;
         }
         return -1;
       }

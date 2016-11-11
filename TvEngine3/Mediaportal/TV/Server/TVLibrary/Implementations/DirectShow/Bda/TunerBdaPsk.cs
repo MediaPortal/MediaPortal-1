@@ -43,6 +43,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
   /// </summary>
   internal class TunerBdaPsk : TunerBdaBase
   {
+    #region constants
+
+    private const string TUNING_SPACE_NAME_ISDB = "MediaPortal ISDB-S Tuning Space";
+    private const string TUNING_SPACE_NAME_PSK = "MediaPortal PSK Tuning Space";
+
+    #endregion
+
     #region constructor
 
     /// <summary>
@@ -60,33 +67,58 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
     #region graph building
 
     /// <summary>
-    /// Create and register a BDA tuning space for the tuner type.
+    /// Create a BDA tuning space for tuning a given channel type.
     /// </summary>
+    /// <param name="channelType">The channel type.</param>
     /// <returns>the tuning space that was created</returns>
-    protected override ITuningSpace CreateTuningSpace()
+    protected override ITuningSpace CreateTuningSpace(Type channelType)
     {
-      this.LogDebug("BDA PSK: create tuning space");
+      this.LogDebug("BDA PSK: create tuning space, type = {0}", channelType.Name);
+
+      IDVBSLocator locator = null;
+      string name = TUNING_SPACE_NAME_PSK;
+      Guid networkType = NetworkType.DVB_SATELLITE;
+      DVBSystemType systemType = DVBSystemType.Dvb_Satellite;
+      if (channelType == typeof(ChannelIsdbS))
+      {
+        // ISDB support is a bit of a murky subject. Vista has the network
+        // type; 7 has the locator, modulation type, system type *and* a new
+        // network type.
+        name = TUNING_SPACE_NAME_ISDB;
+        networkType = NetworkType.ISDB_SATELLITE;
+        if (
+          (Environment.OSVersion.Version.Major == 6 && Environment.OSVersion.Version.Minor >= 1) ||
+          Environment.OSVersion.Version.Major > 6
+        )
+        {
+          locator = (IDVBSLocator)new ISDBSLocator();
+          networkType = NetworkType.ISDB_S;
+          systemType = DVBSystemType.Isdb_Satellite;
+        }
+      }
 
       IDVBSTuningSpace tuningSpace = null;
-      IDVBSLocator locator = null;
       try
       {
         tuningSpace = (IDVBSTuningSpace)new DVBSTuningSpace();
-        int hr = tuningSpace.put_UniqueName(TuningSpaceName);
-        hr |= tuningSpace.put_FriendlyName(TuningSpaceName);
-        hr |= tuningSpace.put__NetworkType(NetworkType.DVB_SATELLITE);
-        hr |= tuningSpace.put_SystemType(DVBSystemType.Satellite);
-        hr |= tuningSpace.put_LowOscillator(9750000);
-        hr |= tuningSpace.put_HighOscillator(10600000);
-        hr |= tuningSpace.put_LNBSwitch(11700000);
-        // Causes an access violation exception in some cases, presumably when
-        // the tuner driver tries to send a DiSEqC command (which we don't
+        int hr = tuningSpace.put_FriendlyName(name);
+        hr |= tuningSpace.put_HighOscillator(SatelliteLnbHandler.HIGH_BAND_LOF);
+        // Causes an access violation exception in some cases (presumably when
+        // the tuner driver tries to send a DiSEqC command, which we don't
         // intend to do here).
         //hr |= tuningSpace.put_InputRange(-1);
         hr |= tuningSpace.put_NetworkID(-1);
+        hr |= tuningSpace.put__NetworkType(networkType);
+        hr |= tuningSpace.put_LNBSwitch(SatelliteLnbHandler.SWITCH_FREQUENCY);
+        hr |= tuningSpace.put_LowOscillator(SatelliteLnbHandler.LOW_BAND_LOF);
         hr |= tuningSpace.put_SpectralInversion(SpectralInversion.Automatic);
+        hr |= tuningSpace.put_SystemType(systemType);
+        hr |= tuningSpace.put_UniqueName(name);
 
-        locator = (IDVBSLocator)new DVBSLocator();
+        if (locator == null)
+        {
+          locator = (IDVBSLocator)new DVBSLocator();
+        }
         hr |= locator.put_Azimuth(-1);
         hr |= locator.put_CarrierFrequency(-1);
         hr |= locator.put_Elevation(-1);
@@ -115,14 +147,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
         hr |= tuningSpace.put_DefaultLocator(locator);
         if (hr != (int)NativeMethods.HResult.S_OK)
         {
-          this.LogWarn("BDA PSK: potential error creating tuning space, hr = 0x{0:x}", hr);
+          this.LogWarn("BDA PSK: potential error creating tuning space, hr = 0x{0:x}, type = {1}", hr, channelType.Name);
         }
         return tuningSpace;
       }
       catch
       {
-        Release.ComObject("BDA PSK tuner tuning space", ref tuningSpace);
-        Release.ComObject("BDA PSK tuner locator", ref locator);
+        Release.ComObject(string.Format("BDA PSK tuner {0} tuning space", channelType.Name), ref tuningSpace);
+        Release.ComObject(string.Format("BDA PSK tuner {0} locator", channelType.Name), ref locator);
         throw;
       }
     }
@@ -139,13 +171,21 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
     }
 
     /// <summary>
-    /// Get the registered name of the BDA tuning space for the tuner type.
+    /// Get the name(s) of the registered BDA tuning space(s) for the tuner type.
     /// </summary>
-    protected override string TuningSpaceName
+    protected override IDictionary<string, Type> TuningSpaceNames
     {
       get
       {
-        return "MediaPortal PSK Tuning Space";
+        Dictionary<string, Type> names = new Dictionary<string, Type>(2)
+        {
+          { TUNING_SPACE_NAME_PSK, null }
+        };
+        if (Environment.OSVersion.Version.Major >= 6)
+        {
+          names.Add(TUNING_SPACE_NAME_ISDB, typeof(ChannelIsdbS));
+        }
+        return names;
       }
     }
 
@@ -181,18 +221,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
         throw new TvException("Received request to tune incompatible channel.");
       }
 
-      IDVBSTuningSpace dvbsTuningSpace = tuningSpace as IDVBSTuningSpace;
-      if (dvbsTuningSpace == null)
-      {
-        throw new TvException("Failed to find DVB-S tuning space interface on tuning space.");
-      }
-
-      int hr = dvbsTuningSpace.put_LowOscillator(SatelliteLnbHandler.LOW_BAND_LOF);
-      hr |= dvbsTuningSpace.put_HighOscillator(SatelliteLnbHandler.HIGH_BAND_LOF);
-      hr |= dvbsTuningSpace.put_LNBSwitch(SatelliteLnbHandler.SWITCH_FREQUENCY);
-
       ILocator locator;
-      hr |= tuningSpace.get_DefaultLocator(out locator);
+      int hr = tuningSpace.get_DefaultLocator(out locator);
       TvExceptionDirectShowError.Throw(hr, "Failed to get the default locator for the tuning space.");
       try
       {
@@ -202,69 +232,83 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
           throw new TvException("Failed to find DVB-S locator interface on locator.");
         }
 
-        ChannelDvbS2 dvbs2Channel = channel as ChannelDvbS2;
         hr = dvbsLocator.put_CarrierFrequency(satelliteChannel.Frequency);
         hr |= dvbsLocator.put_SignalPolarisation(GetBdaPolarisation(satelliteChannel.Polarisation));
         hr |= dvbsLocator.put_SymbolRate(satelliteChannel.SymbolRate);
-        hr |= dvbsLocator.put_Modulation(GetBdaModulation(satelliteChannel.ModulationScheme, dvbs2Channel != null));
+        hr |= dvbsLocator.put_Modulation(GetBdaModulation(satelliteChannel.ModulationScheme, satelliteChannel.GetType()));
         hr |= dvbsLocator.put_InnerFECRate(GetBdaFecCodeRate(satelliteChannel.FecCodeRate));
+
+        FECMethod fecMethodInner;
+        FECMethod fecMethodOuter;
+        GetBdaFecMethods(satelliteChannel, out fecMethodInner, out fecMethodOuter);
+        hr |= dvbsLocator.put_InnerFEC(fecMethodInner);
+        hr |= dvbsLocator.put_OuterFEC(fecMethodOuter);
 
         IDVBSLocator2 dvbs2Locator = locator as IDVBSLocator2;
         if (dvbs2Locator != null)
         {
+          ChannelDvbS2 dvbs2Channel = channel as ChannelDvbS2;
           if (dvbs2Channel != null)
           {
-            hr |= dvbs2Locator.put_SignalPilot(GetBdaPilot(dvbs2Channel.PilotTonesState));
             hr |= dvbs2Locator.put_SignalRollOff(GetBdaRollOff(dvbs2Channel.RollOffFactor));
+            hr |= dvbs2Locator.put_SignalPilot(GetBdaPilot(dvbs2Channel.PilotTonesState));
           }
           else
           {
-            hr |= dvbs2Locator.put_SignalPilot(Pilot.NotSet);
-            hr |= dvbs2Locator.put_SignalRollOff(RollOff.NotSet);
+            ChannelDvbDsng dvbDsngChannel = channel as ChannelDvbDsng;
+            if (dvbDsngChannel != null)
+            {
+              hr |= dvbs2Locator.put_SignalRollOff(GetBdaRollOff(dvbDsngChannel.RollOffFactor));
+            }
+            else
+            {
+              hr |= dvbs2Locator.put_SignalRollOff(RollOff.NotSet);
+              hr |= dvbs2Locator.put_SignalPilot(Pilot.NotSet);
+            }
           }
+        }
+
+        if (hr != (int)NativeMethods.HResult.S_OK)
+        {
+          this.LogWarn("BDA PSK: potential error configuring locator, hr = 0x{0:x}", hr);
         }
 
         ITuneRequest tuneRequest;
         hr = tuningSpace.CreateTuneRequest(out tuneRequest);
-        TvExceptionDirectShowError.Throw(hr, "Failed to create tuning request from tuning space.");
-        try
+        TvExceptionDirectShowError.Throw(hr, "Failed to create tune request from tuning space.");
+
+        IChannelDvbCompatible dvbCompatibleChannel = channel as IChannelDvbCompatible;
+        if (dvbCompatibleChannel != null)
         {
           IDVBTuneRequest dvbTuneRequest = tuneRequest as IDVBTuneRequest;
           if (dvbTuneRequest == null)
           {
-            throw new TvException("Failed to find DVB tune request interface on tune request.");
+            this.LogWarn("BDA PSK: DVB tune request interface is not available on tune request");
           }
-
-          ChannelDvbBase dvbChannel = channel as ChannelDvbBase;
-          if (dvbChannel != null)
+          else
           {
-            if (dvbChannel.OriginalNetworkId > 0)
+            if (dvbCompatibleChannel.OriginalNetworkId > 0)
             {
-              hr |= dvbTuneRequest.put_ONID(dvbChannel.OriginalNetworkId);
+              hr |= dvbTuneRequest.put_ONID(dvbCompatibleChannel.OriginalNetworkId);
             }
-            if (dvbChannel.TransportStreamId > 0)
+            if (dvbCompatibleChannel.TransportStreamId > 0)
             {
-              hr |= dvbTuneRequest.put_TSID(dvbChannel.TransportStreamId);
+              hr |= dvbTuneRequest.put_TSID(dvbCompatibleChannel.TransportStreamId);
             }
-            if (dvbChannel.ServiceId > 0)
+            if (dvbCompatibleChannel.ServiceId > 0)
             {
-              hr |= dvbTuneRequest.put_SID(dvbChannel.ServiceId);
+              hr |= dvbTuneRequest.put_SID(dvbCompatibleChannel.ServiceId);
             }
           }
-          hr |= dvbTuneRequest.put_Locator(locator);
-
-          if (hr != (int)NativeMethods.HResult.S_OK)
-          {
-            this.LogWarn("BDA PSK: potential error assembling tune request, hr = 0x{0:x}", hr);
-          }
-
-          return dvbTuneRequest;
         }
-        catch
+        hr |= tuneRequest.put_Locator(locator);
+
+        if (hr != (int)NativeMethods.HResult.S_OK)
         {
-          Release.ComObject("BDA PSK tuner tune request", ref tuneRequest);
-          throw;
+          this.LogWarn("BDA PSK: potential error assembling tune request, hr = 0x{0:x}", hr);
         }
+
+        return tuneRequest;
       }
       finally
       {
@@ -285,7 +329,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
       {
         throw new TvException("Received request to tune incompatible channel.");
       }
-      ChannelDvbS2 dvbs2Channel = channel as ChannelDvbS2;
 
       FrequencySettings frequencySettings = new FrequencySettings
       {
@@ -295,26 +338,40 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
         Polarity = GetBdaPolarisation(satelliteChannel.Polarisation),
         Range = uint.MaxValue
       };
+
+      FECMethod fecMethodInner;
+      FECMethod fecMethodOuter;
+      GetBdaFecMethods(satelliteChannel, out fecMethodInner, out fecMethodOuter);
       DigitalDemodulator2Settings demodulatorSettings = new DigitalDemodulator2Settings
       {
         InnerFECRate = GetBdaFecCodeRate(satelliteChannel.FecCodeRate),
-        InnerFECMethod = FECMethod.MethodNotSet,
-        Modulation = GetBdaModulation(satelliteChannel.ModulationScheme, dvbs2Channel != null),
-        OuterFECMethod = FECMethod.MethodNotSet,
+        InnerFECMethod = fecMethodInner,
+        Modulation = GetBdaModulation(satelliteChannel.ModulationScheme, channel.GetType()),
+        OuterFECMethod = fecMethodOuter,
         OuterFECRate = BinaryConvolutionCodeRate.RateNotSet,
         SpectralInversion = SpectralInversion.NotSet,
         SymbolRate = (uint)satelliteChannel.SymbolRate,
         TransmissionMode = TransmissionMode.ModeNotSet
       };
+
+      ChannelDvbS2 dvbs2Channel = channel as ChannelDvbS2;
       if (dvbs2Channel != null)
       {
-        demodulatorSettings.Pilot = GetBdaPilot(dvbs2Channel.PilotTonesState);
         demodulatorSettings.RollOff = GetBdaRollOff(dvbs2Channel.RollOffFactor);
+        demodulatorSettings.Pilot = GetBdaPilot(dvbs2Channel.PilotTonesState);
       }
       else
       {
-        demodulatorSettings.Pilot = Pilot.NotSet;
-        demodulatorSettings.RollOff = RollOff.NotSet;
+        ChannelDvbDsng dvbDsngChannel = channel as ChannelDvbDsng;
+        if (dvbDsngChannel != null)
+        {
+          demodulatorSettings.RollOff = GetBdaRollOff(dvbDsngChannel.RollOffFactor);
+        }
+        else
+        {
+          demodulatorSettings.RollOff = RollOff.NotSet;
+          demodulatorSettings.Pilot = Pilot.NotSet;
+        }
       }
 
       LnbInfoSettings lnbSettings = new LnbInfoSettings
@@ -340,7 +397,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
     {
       get
       {
-        return BroadcastStandard.DigiCipher2 | BroadcastStandard.DvbDsng | BroadcastStandard.DvbS | BroadcastStandard.DvbS2 | BroadcastStandard.SatelliteTurboFec;
+        return BroadcastStandard.DigiCipher2 | BroadcastStandard.DvbDsng | BroadcastStandard.DvbS | BroadcastStandard.DvbS2 | BroadcastStandard.DvbS2Pro | BroadcastStandard.IsdbS | BroadcastStandard.SatelliteTurboFec;
       }
     }
 
@@ -366,8 +423,19 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
       }
     }
 
-    private static ModulationType GetBdaModulation(ModulationSchemePsk modulation, bool isDvbS2)
+    private static ModulationType GetBdaModulation(ModulationSchemePsk modulation, Type channelType)
     {
+      if (
+        channelType == typeof(ChannelIsdbS) &&
+        (
+          (Environment.OSVersion.Version.Major == 6 && Environment.OSVersion.Version.Minor >= 1) ||
+          Environment.OSVersion.Version.Major > 6
+        )
+      )
+      {
+        return ModulationType.ModIsdbsTmcc;
+      }
+
       switch (modulation)
       {
         case ModulationSchemePsk.Psk2:
@@ -375,7 +443,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
         case ModulationSchemePsk.Psk4SplitQ:
           return ModulationType.ModBpsk;
         case ModulationSchemePsk.Psk4:
-          if (isDvbS2)
+          if (channelType == typeof(ChannelDvbS2))
           {
             return ModulationType.ModQpsk;
           }
@@ -463,19 +531,28 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
       }
     }
 
-    private static Pilot GetBdaPilot(PilotTonesState pilotTonesState)
+    private static void GetBdaFecMethods(IChannelSatellite channel, out FECMethod fecMethodInner, out FECMethod fecMethodOuter)
     {
-      switch (pilotTonesState)
+      if (channel is ChannelDvbS2)
       {
-        case PilotTonesState.Off:
-          return Pilot.Off;
-        case PilotTonesState.On:
-          return Pilot.On;
-        case PilotTonesState.Automatic:
-          Log.Warn("BDA PSK: falling back to automatic pilot tones state");
-          return Pilot.NotSet;
-        default:
-          return (Pilot)pilotTonesState;
+        fecMethodInner = FECMethod.Ldpc;
+        fecMethodOuter = FECMethod.Bch;
+      }
+      else if (
+        (channel is ChannelDigiCipher2 && channel.ModulationScheme != ModulationSchemePsk.Psk8) ||
+        channel is ChannelDvbS ||
+        (channel is ChannelIsdbS && channel.ModulationScheme != ModulationSchemePsk.Psk8)
+      )
+      {
+        // ISDB-S: 8 PSK is trellis coded
+        // DigiCipher 2: RS ratio *may* be different, but 8 PSK is definitely turbo FEC
+        fecMethodInner = FECMethod.Viterbi;
+        fecMethodOuter = FECMethod.RS204_188;
+      }
+      else  // turbo FEC, other
+      {
+        fecMethodInner = FECMethod.MethodNotSet;
+        fecMethodOuter = FECMethod.MethodNotSet;
       }
     }
 
@@ -499,6 +576,22 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
           return RollOff.NotSet;
         default:
           return (RollOff)rollOffFactor;
+      }
+    }
+
+    private static Pilot GetBdaPilot(PilotTonesState pilotTonesState)
+    {
+      switch (pilotTonesState)
+      {
+        case PilotTonesState.Off:
+          return Pilot.Off;
+        case PilotTonesState.On:
+          return Pilot.On;
+        case PilotTonesState.Automatic:
+          Log.Warn("BDA PSK: falling back to automatic pilot tones state");
+          return Pilot.NotSet;
+        default:
+          return (Pilot)pilotTonesState;
       }
     }
 

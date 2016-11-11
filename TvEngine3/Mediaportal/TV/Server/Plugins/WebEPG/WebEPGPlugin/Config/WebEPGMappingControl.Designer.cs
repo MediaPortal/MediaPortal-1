@@ -188,7 +188,6 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
       // 
       this.GroupComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.GroupComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.GroupComboBox.FormattingEnabled = true;
       this.GroupComboBox.Location = new System.Drawing.Point(48, 19);
       this.GroupComboBox.Name = "GroupComboBox";

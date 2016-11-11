@@ -278,14 +278,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
           _streamChannel.MediaType = channel.MediaType;
           _streamChannel.Name = channel.Name;
           _streamChannel.OriginalNetworkId = -1;
+          _streamChannel.Provider = channel.Provider;
 
-          ChannelMpeg2Base mpeg2Channel = channel as ChannelMpeg2Base;
-          if (mpeg2Channel != null)
+          IChannelMpeg2Ts mpeg2TsChannel = channel as IChannelMpeg2Ts;
+          if (mpeg2TsChannel != null)
           {
-            _streamChannel.PmtPid = mpeg2Channel.PmtPid;
-            _streamChannel.Provider = mpeg2Channel.Provider;
-            _streamChannel.ProgramNumber = mpeg2Channel.ProgramNumber;
-            _streamChannel.TransportStreamId = mpeg2Channel.TransportStreamId;
+            _streamChannel.PmtPid = mpeg2TsChannel.PmtPid;
+            _streamChannel.ProgramNumber = mpeg2TsChannel.ProgramNumber;
+            _streamChannel.TransportStreamId = mpeg2TsChannel.TransportStreamId;
           }
         }
       }

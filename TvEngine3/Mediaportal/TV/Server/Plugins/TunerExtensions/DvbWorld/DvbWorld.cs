@@ -168,9 +168,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DvbWorld
     #region variables
 
     private bool _isDvbWorld = false;
-    private BroadcastStandard _tunerSupportedBroadcastStandards = BroadcastStandard.Unknown;
     private IntPtr _ksObjectHandle = IntPtr.Zero;
     private IntPtr _generalBuffer = IntPtr.Zero;
+    private IBDA_DeviceControl _deviceControlInterface = null;
     private IBDA_FrequencyFilter _frequencyFilterInterface = null;
 
     private bool _isRemoteControlInterfaceOpen = false;
@@ -482,9 +482,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DvbWorld
 
       this.LogInfo("DVB World: extension supported");
       _isDvbWorld = true;
-      _tunerSupportedBroadcastStandards = tunerSupportedBroadcastStandards;
-
-      _frequencyFilterInterface = FindFrequencyFilter(context);
+      _deviceControlInterface = context as IBDA_DeviceControl;
+      if (_deviceControlInterface != null)
+      {
+        _frequencyFilterInterface = FindFrequencyFilter(context);
+      }
       ReadTunerInfo();
       return true;
     }
@@ -518,34 +520,69 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DvbWorld
       ModulationType bdaModulation = ModulationType.ModNotSet;
       if (satelliteChannel is ChannelDvbS2)
       {
-        if (satelliteChannel.ModulationScheme == ModulationSchemePsk.Psk4)
+        if (Environment.OSVersion.Version.Major >= 6) // Vista and newer
         {
-          bdaModulation = ModulationType.ModNbcQpsk;
+          if (satelliteChannel.ModulationScheme == ModulationSchemePsk.Psk4)
+          {
+            bdaModulation = ModulationType.ModNbcQpsk;
+          }
+          else if (satelliteChannel.ModulationScheme == ModulationSchemePsk.Psk8)
+          {
+            bdaModulation = ModulationType.ModNbc8Psk;
+          }
+          // Specifications on the website indicate some of the products
+          // support 16 and 32 APSK. Mappings aren't documented in the SDK.
+          // Assume the standard values work.
+          else if (satelliteChannel.ModulationScheme == ModulationSchemePsk.Psk16)
+          {
+            bdaModulation = ModulationType.Mod16Apsk;
+          }
+          else if (satelliteChannel.ModulationScheme == ModulationSchemePsk.Psk32)
+          {
+            bdaModulation = ModulationType.Mod32Apsk;
+          }
         }
-        else if (satelliteChannel.ModulationScheme == ModulationSchemePsk.Psk8)
+        else
         {
-          bdaModulation = ModulationType.ModNbc8Psk;
-        }
-
-        // Specifications on the website indicate some of the products support
-        // 16 and 32 APSK, but this is not documented in the SDK.
-        else if (satelliteChannel.ModulationScheme == ModulationSchemePsk.Psk16)
-        {
-          bdaModulation = ModulationType.Mod16Apsk;
-        }
-        else if (satelliteChannel.ModulationScheme == ModulationSchemePsk.Psk32)
-        {
-          bdaModulation = ModulationType.Mod32Apsk;
+          // The above mapping may work on XP too, but use offical XP
+          // modulation values to be on the safe side with the network
+          // provider. All of these values tell the hardware to auto-detect
+          // DVB-S2.
+          if (satelliteChannel.ModulationScheme == ModulationSchemePsk.Psk4)
+          {
+            bdaModulation = ModulationType.ModOqpsk;
+          }
+          else if (satelliteChannel.ModulationScheme == ModulationSchemePsk.Psk8)
+          {
+            bdaModulation = ModulationType.Mod8Vsb;
+          }
+          else if (satelliteChannel.ModulationScheme == ModulationSchemePsk.Psk16)
+          {
+            bdaModulation = ModulationType.Mod16Vsb;
+          }
+          else if (satelliteChannel.ModulationScheme == ModulationSchemePsk.Psk32)
+          {
+            bdaModulation = ModulationType.ModAnalogAmplitude;
+          }
         }
       }
-      else if (satelliteChannel is ChannelDvbS && satelliteChannel.ModulationScheme == ModulationSchemePsk.Psk4)
+      else if (satelliteChannel is ChannelDvbS)
       {
-        bdaModulation = ModulationType.ModQpsk;
+        if (satelliteChannel.ModulationScheme == ModulationSchemePsk.Psk2)
+        {
+          // This value can't be ModBpsk, because the driver interprets that as
+          // DVB-S2. Mod16Qam should be interpretted as DVB-S.
+          bdaModulation = ModulationType.Mod16Qam;
+        }
+        else if (satelliteChannel.ModulationScheme == ModulationSchemePsk.Psk4)
+        {
+          bdaModulation = ModulationType.ModQpsk;
+        }
       }
 
       if (bdaModulation == ModulationType.ModNotSet)
       {
-        this.LogWarn("DVB World: satellite tune request uses unsupported modulation scheme {0}", satelliteChannel.ModulationScheme);
+        this.LogWarn("DVB World: satellite tune request uses unsupported modulation scheme {0}, falling back to automatic", satelliteChannel.ModulationScheme);
       }
       else
       {
@@ -567,18 +604,23 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DvbWorld
     /// <returns><c>true</c> if the extension supports specialised tuning for the channel, otherwise <c>false</c></returns>
     public bool CanTuneChannel(IChannel channel)
     {
+      // The hardware may support additional modulation schemes (eg. DVB-S
+      // BPSK, and DVB-S2 16 and 32 APSK) but the custom tuning interface does
+      // not. Also, remember that OnBeforeTune() has mapped the values already.
       ChannelDvbS dvbsChannel = channel as ChannelDvbS;
-      ChannelDvbS dvbs2Channel = channel as ChannelDvbS;
+      if (dvbsChannel != null)
+      {
+        return dvbsChannel.ModulationScheme == (ModulationSchemePsk)ModulationType.ModQpsk;
+      }
+
+      ChannelDvbS2 dvbs2Channel = channel as ChannelDvbS2;
       if (
-        (dvbsChannel != null && _tunerSupportedBroadcastStandards.HasFlag(BroadcastStandard.DvbS)) ||
+        dvbs2Channel != null &&
         (
-          dvbs2Channel != null &&
-          _tunerSupportedBroadcastStandards.HasFlag(BroadcastStandard.DvbS2) &&
-          (
-            // Take care! OnBeforeTune() will have modified the modulation.
-            dvbs2Channel.ModulationScheme == (ModulationSchemePsk)ModulationType.ModNbcQpsk ||
-            dvbs2Channel.ModulationScheme == (ModulationSchemePsk)ModulationType.ModNbc8Psk
-          )
+          dvbs2Channel.ModulationScheme == (ModulationSchemePsk)ModulationType.ModNbcQpsk ||  // Vista and newer
+          dvbs2Channel.ModulationScheme == (ModulationSchemePsk)ModulationType.ModNbc8Psk ||  // Vista and newer
+          dvbs2Channel.ModulationScheme == (ModulationSchemePsk)ModulationType.ModOqpsk ||    // XP
+          dvbs2Channel.ModulationScheme == (ModulationSchemePsk)ModulationType.Mod8Vsb        // XP
         )
       )
       {
@@ -682,11 +724,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DvbWorld
 
       // Take care! OnBeforeTune() will have modified the modulation.
       ModulationType bdaModulation = (ModulationType)satelliteChannel.ModulationScheme;
-      if (bdaModulation == ModulationType.ModNbcQpsk)
+      if (bdaModulation == ModulationType.ModNbcQpsk || bdaModulation == ModulationType.ModOqpsk)
       {
         tuningParams.Modulation = DwModulation.Dvbs2_Qpsk;
       }
-      else if (bdaModulation == ModulationType.ModNbc8Psk)
+      else if (bdaModulation == ModulationType.ModNbc8Psk || bdaModulation == ModulationType.Mod8Vsb)
       {
         tuningParams.Modulation = DwModulation.Dvbs2_8Psk;
       }
@@ -783,23 +825,53 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DvbWorld
         return false;
       }
 
-      int hr = (int)NativeMethods.HResult.S_OK;
-      if (command == ToneBurst.ToneBurst)
+      // Prepare the command.
+      bool success = true;
+      int hr = _deviceControlInterface.StartChanges();
+      if (hr != (int)NativeMethods.HResult.S_OK)
       {
-        hr = _frequencyFilterInterface.put_FrequencyMultiplier((int)DwToneBurst.ToneBurst);
+        this.LogError("DVB World: failed to start device control changes, hr = 0x{0:x}", hr);
+        success = false;
       }
-      else if (command == ToneBurst.DataBurst)
+      if (success)
       {
-        hr = _frequencyFilterInterface.put_FrequencyMultiplier((int)DwToneBurst.DataBurst);
-      }
-      if (hr == (int)NativeMethods.HResult.S_OK)
-      {
-        this.LogDebug("DVB World: result = success");
-        return true;
+        if (command == ToneBurst.ToneBurst)
+        {
+          hr = _frequencyFilterInterface.put_FrequencyMultiplier((int)DwToneBurst.ToneBurst);
+        }
+        else if (command == ToneBurst.DataBurst)
+        {
+          hr = _frequencyFilterInterface.put_FrequencyMultiplier((int)DwToneBurst.DataBurst);
+        }
+        if (hr != (int)NativeMethods.HResult.S_OK)
+        {
+          this.LogDebug("DVB World: failed to put frequency multiplier, hr = 0x{0:x}", hr);
+          success = false;
+        }
       }
 
-      this.LogError("DVB World: failed to send tone burst command, hr = 0x{0:x}", hr);
-      return false;
+      // Finalise (send) the command.
+      if (success)
+      {
+        hr = _deviceControlInterface.CheckChanges();
+        if (hr != (int)NativeMethods.HResult.S_OK)
+        {
+          this.LogError("DVB World: failed to check device control changes, hr = 0x{0:x}", hr);
+          success = false;
+        }
+      }
+      if (success)
+      {
+        hr = _deviceControlInterface.CommitChanges();
+        if (hr != (int)NativeMethods.HResult.S_OK)
+        {
+          this.LogError("DVB World: failed to commit device control changes, hr = 0x{0:x}", hr);
+          success = false;
+        }
+      }
+
+      this.LogDebug("DVB World: result = {0}", success);
+      return success;
     }
 
     /// <summary>
@@ -923,6 +995,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DvbWorld
       }
       if (isDisposing)
       {
+        _deviceControlInterface = null;
         Release.ComObject("DVB World frequency filter interface", ref _frequencyFilterInterface);
       }
       if (_generalBuffer != IntPtr.Zero)

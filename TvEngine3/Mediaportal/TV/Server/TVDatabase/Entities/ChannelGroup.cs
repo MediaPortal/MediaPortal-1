@@ -18,44 +18,44 @@ using System.Runtime.Serialization;
 namespace Mediaportal.TV.Server.TVDatabase.Entities
 {
     [DataContract(IsReference = true)]
-    [KnownType(typeof(GroupMap))]
+    [KnownType(typeof(ChannelGroupChannelMapping))]
     public partial class ChannelGroup: IObjectWithChangeTracker, INotifyPropertyChanged
     {
         #region Primitive Properties
     
         [DataMember]
-        public int IdGroup
+        public int IdChannelGroup
         {
-            get { return _idGroup; }
+            get { return _idChannelGroup; }
             set
             {
-                if (_idGroup != value)
+                if (_idChannelGroup != value)
                 {
                     if (ChangeTracker.ChangeTrackingEnabled && ChangeTracker.State != ObjectState.Added)
                     {
-                        throw new InvalidOperationException("The property 'IdGroup' is part of the object's key and cannot be changed. Changes to key properties can only be made when the object is not being tracked or is in the Added state.");
+                        throw new InvalidOperationException("The property 'IdChannelGroup' is part of the object's key and cannot be changed. Changes to key properties can only be made when the object is not being tracked or is in the Added state.");
                     }
-                    _idGroup = value;
-                    OnPropertyChanged("IdGroup");
+                    _idChannelGroup = value;
+                    OnPropertyChanged("IdChannelGroup");
                 }
             }
         }
-        private int _idGroup;
+        private int _idChannelGroup;
     
         [DataMember]
-        public string GroupName
+        public string Name
         {
-            get { return _groupName; }
+            get { return _name; }
             set
             {
-                if (_groupName != value)
+                if (_name != value)
                 {
-                    _groupName = value;
-                    OnPropertyChanged("GroupName");
+                    _name = value;
+                    OnPropertyChanged("Name");
                 }
             }
         }
-        private string _groupName;
+        private string _name;
     
         [DataMember]
         public int SortOrder
@@ -91,51 +91,51 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         #region Navigation Properties
     
         [DataMember]
-        public TrackableCollection<GroupMap> GroupMaps
+        public TrackableCollection<ChannelGroupChannelMapping> ChannelMappings
         {
             get
             {
-                if (_groupMaps == null)
+                if (_channelMappings == null)
                 {
-                    _groupMaps = new TrackableCollection<GroupMap>();
-                    _groupMaps.CollectionChanged += FixupGroupMaps;
+                    _channelMappings = new TrackableCollection<ChannelGroupChannelMapping>();
+                    _channelMappings.CollectionChanged += FixupChannelMappings;
                 }
-                return _groupMaps;
+                return _channelMappings;
             }
             set
             {
-                if (!ReferenceEquals(_groupMaps, value))
+                if (!ReferenceEquals(_channelMappings, value))
                 {
                     if (ChangeTracker.ChangeTrackingEnabled)
                     {
                         throw new InvalidOperationException("Cannot set the FixupChangeTrackingCollection when ChangeTracking is enabled");
                     }
-                    if (_groupMaps != null)
+                    if (_channelMappings != null)
                     {
-                        _groupMaps.CollectionChanged -= FixupGroupMaps;
+                        _channelMappings.CollectionChanged -= FixupChannelMappings;
                         // This is the principal end in an association that performs cascade deletes.
                         // Remove the cascade delete event handler for any entities in the current collection.
-                        foreach (GroupMap item in _groupMaps)
+                        foreach (ChannelGroupChannelMapping item in _channelMappings)
                         {
                             ChangeTracker.ObjectStateChanging -= item.HandleCascadeDelete;
                         }
                     }
-                    _groupMaps = value;
-                    if (_groupMaps != null)
+                    _channelMappings = value;
+                    if (_channelMappings != null)
                     {
-                        _groupMaps.CollectionChanged += FixupGroupMaps;
+                        _channelMappings.CollectionChanged += FixupChannelMappings;
                         // This is the principal end in an association that performs cascade deletes.
                         // Add the cascade delete event handler for any entities that are already in the new collection.
-                        foreach (GroupMap item in _groupMaps)
+                        foreach (ChannelGroupChannelMapping item in _channelMappings)
                         {
                             ChangeTracker.ObjectStateChanging += item.HandleCascadeDelete;
                         }
                     }
-                    OnNavigationPropertyChanged("GroupMaps");
+                    OnNavigationPropertyChanged("ChannelMappings");
                 }
             }
         }
-        private TrackableCollection<GroupMap> _groupMaps;
+        private TrackableCollection<ChannelGroupChannelMapping> _channelMappings;
 
         #endregion
         #region ChangeTracking
@@ -215,13 +215,13 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
     
         protected virtual void ClearNavigationProperties()
         {
-            GroupMaps.Clear();
+            ChannelMappings.Clear();
         }
 
         #endregion
         #region Association Fixup
     
-        private void FixupGroupMaps(object sender, NotifyCollectionChangedEventArgs e)
+        private void FixupChannelMappings(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (IsDeserializing)
             {
@@ -230,7 +230,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
     
             if (e.NewItems != null)
             {
-                foreach (GroupMap item in e.NewItems)
+                foreach (ChannelGroupChannelMapping item in e.NewItems)
                 {
                     item.ChannelGroup = this;
                     if (ChangeTracker.ChangeTrackingEnabled)
@@ -239,7 +239,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                         {
                             item.StartTracking();
                         }
-                        ChangeTracker.RecordAdditionToCollectionProperties("GroupMaps", item);
+                        ChangeTracker.RecordAdditionToCollectionProperties("ChannelMappings", item);
                     }
                     // This is the principal end in an association that performs cascade deletes.
                     // Update the event listener to refer to the new dependent.
@@ -249,7 +249,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
     
             if (e.OldItems != null)
             {
-                foreach (GroupMap item in e.OldItems)
+                foreach (ChannelGroupChannelMapping item in e.OldItems)
                 {
                     if (ReferenceEquals(item.ChannelGroup, this))
                     {
@@ -257,7 +257,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                     }
                     if (ChangeTracker.ChangeTrackingEnabled)
                     {
-                        ChangeTracker.RecordRemovalFromCollectionProperties("GroupMaps", item);
+                        ChangeTracker.RecordRemovalFromCollectionProperties("ChannelMappings", item);
                     }
                     // This is the principal end in an association that performs cascade deletes.
                     // Remove the previous dependent from the event listener.

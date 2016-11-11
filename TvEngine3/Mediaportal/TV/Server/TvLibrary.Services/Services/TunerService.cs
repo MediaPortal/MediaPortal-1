@@ -12,32 +12,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
   {
     #region tuners
 
-    public IList<Tuner> ListAllTuners()
-    {
-      return TunerManagement.ListAllTuners();
-    }
-
-    public IList<Tuner> ListAllTuners(TunerIncludeRelationEnum includeRelations)
+    public IList<Tuner> ListAllTuners(TunerRelation includeRelations)
     {
       return TunerManagement.ListAllTuners(includeRelations);
     }
 
-    public Tuner GetTuner(int idTuner)
-    {
-      return TunerManagement.GetTuner(idTuner);
-    }
-
-    public Tuner GetTuner(int idTuner, TunerIncludeRelationEnum includeRelations)
+    public Tuner GetTuner(int idTuner, TunerRelation includeRelations)
     {
       return TunerManagement.GetTuner(idTuner, includeRelations);
     }
 
-    public Tuner GetTunerByExternalId(string externalId)
-    {
-      return TunerManagement.GetTunerByExternalId(externalId);
-    }
-
-    public Tuner GetTunerByExternalId(string externalId, TunerIncludeRelationEnum includeRelations)
+    public Tuner GetTunerByExternalId(string externalId, TunerRelation includeRelations)
     {
       return TunerManagement.GetTunerByExternalId(externalId, includeRelations);
     }
@@ -111,6 +96,40 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
 
     #endregion
 
+    #region tuner satellites
+
+    public IList<TunerSatellite> ListAllTunerSatellites(TunerSatelliteRelation includeRelations)
+    {
+      return TunerSatelliteManagement.ListAllTunerSatellites(includeRelations);
+    }
+
+    public IList<TunerSatellite> ListAllTunerSatellitesByTuner(int idTuner, TunerSatelliteRelation includeRelations)
+    {
+      return TunerSatelliteManagement.ListAllTunerSatellitesByTuner(idTuner, includeRelations);
+    }
+
+    public TunerSatellite GetTunerSatellite(int idTunerSatellite, TunerSatelliteRelation includeRelations)
+    {
+      return TunerSatelliteManagement.GetTunerSatellite(idTunerSatellite, includeRelations);
+    }
+
+    public TunerSatellite SaveTunerSatellite(TunerSatellite tunerSatellite)
+    {
+      return TunerSatelliteManagement.SaveTunerSatellite(tunerSatellite);
+    }
+
+    public IList<TunerSatellite> SaveTunerSatellites(IEnumerable<TunerSatellite> tunerSatellites)
+    {
+      return TunerSatelliteManagement.SaveTunerSatellites(tunerSatellites);
+    }
+
+    public void DeleteTunerSatellite(int idTunerSatellite)
+    {
+      TunerSatelliteManagement.DeleteTunerSatellite(idTunerSatellite);
+    }
+
+    #endregion
+
     #region software encoders
 
     public IList<VideoEncoder> ListAvailableSoftwareEncodersVideo()
@@ -138,12 +157,37 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
 
     public IList<Satellite> ListAllSatellites()
     {
-      return TunerManagement.ListAllSatellites();
+      return SatelliteManagement.ListAllSatellites();
+    }
+
+    public IList<Satellite> ListAllReferencedSatellites()
+    {
+      return SatelliteManagement.ListAllReferencedSatellites();
+    }
+
+    public Satellite GetSatellite(int idSatellite)
+    {
+      return SatelliteManagement.GetSatellite(idSatellite);
+    }
+
+    public Satellite GetSatelliteByLongitude(int longitude)
+    {
+      return SatelliteManagement.GetSatelliteByLongitude(longitude);
     }
 
     public Satellite SaveSatellite(Satellite satellite)
     {
-      return TunerManagement.SaveSatellite(satellite);
+      return SatelliteManagement.SaveSatellite(satellite);
+    }
+
+    public IList<Satellite> SaveSatellites(IEnumerable<Satellite> satellites)
+    {
+      return SatelliteManagement.SaveSatellites(satellites);
+    }
+
+    public void DeleteSatellite(int idSatellite)
+    {
+      SatelliteManagement.DeleteSatellite(idSatellite);
     }
 
     #endregion
@@ -161,10 +205,5 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
     }
 
     #endregion
-
-    public DiseqcMotor SaveDiseqcMotor(DiseqcMotor motor)
-    {
-      return TunerManagement.SaveDiseqcMotor(motor);
-    }
   }
 }

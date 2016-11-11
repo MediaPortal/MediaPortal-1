@@ -2,7 +2,7 @@
 <ArrayOfTuningDetail xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <TuningDetail>
     <BroadcastStandard>IsdbS</BroadcastStandard>
-    <SatellitePosition>1100</SatellitePosition>
+    <Longitude>1100</Longitude>
     <Frequency>11727000</Frequency>
     <Polarisation>CircularRight</Polarisation>
     <ModulationScheme>Psk8</ModulationScheme>
@@ -11,7 +11,7 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>IsdbS</BroadcastStandard>
-    <SatellitePosition>1100</SatellitePosition>
+    <Longitude>1100</Longitude>
     <Frequency>11766000</Frequency>
     <Polarisation>CircularRight</Polarisation>
     <ModulationScheme>Psk8</ModulationScheme>
@@ -20,7 +20,7 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>IsdbS</BroadcastStandard>
-    <SatellitePosition>1100</SatellitePosition>
+    <Longitude>1100</Longitude>
     <Frequency>11804000</Frequency>
     <Polarisation>CircularRight</Polarisation>
     <ModulationScheme>Psk8</ModulationScheme>
@@ -29,7 +29,7 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>IsdbS</BroadcastStandard>
-    <SatellitePosition>1100</SatellitePosition>
+    <Longitude>1100</Longitude>
     <Frequency>11843000</Frequency>
     <Polarisation>CircularRight</Polarisation>
     <ModulationScheme>Psk8</ModulationScheme>
@@ -38,7 +38,7 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>IsdbS</BroadcastStandard>
-    <SatellitePosition>1100</SatellitePosition>
+    <Longitude>1100</Longitude>
     <Frequency>11881000</Frequency>
     <Polarisation>CircularRight</Polarisation>
     <ModulationScheme>Psk8</ModulationScheme>
@@ -47,7 +47,7 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>IsdbS</BroadcastStandard>
-    <SatellitePosition>1100</SatellitePosition>
+    <Longitude>1100</Longitude>
     <Frequency>11919000</Frequency>
     <Polarisation>CircularRight</Polarisation>
     <ModulationScheme>Psk8</ModulationScheme>
@@ -56,7 +56,7 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>IsdbS</BroadcastStandard>
-    <SatellitePosition>1100</SatellitePosition>
+    <Longitude>1100</Longitude>
     <Frequency>11958000</Frequency>
     <Polarisation>CircularRight</Polarisation>
     <ModulationScheme>Psk8</ModulationScheme>
@@ -65,7 +65,7 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>IsdbS</BroadcastStandard>
-    <SatellitePosition>1100</SatellitePosition>
+    <Longitude>1100</Longitude>
     <Frequency>11996000</Frequency>
     <Polarisation>CircularRight</Polarisation>
     <ModulationScheme>Psk8</ModulationScheme>
@@ -74,7 +74,7 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>IsdbS</BroadcastStandard>
-    <SatellitePosition>1100</SatellitePosition>
+    <Longitude>1100</Longitude>
     <Frequency>12034000</Frequency>
     <Polarisation>CircularRight</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
@@ -83,7 +83,7 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>IsdbS</BroadcastStandard>
-    <SatellitePosition>1100</SatellitePosition>
+    <Longitude>1100</Longitude>
     <Frequency>12073000</Frequency>
     <Polarisation>CircularRight</Polarisation>
     <ModulationScheme>Psk8</ModulationScheme>
@@ -92,7 +92,7 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>IsdbS</BroadcastStandard>
-    <SatellitePosition>1100</SatellitePosition>
+    <Longitude>1100</Longitude>
     <Frequency>12111000</Frequency>
     <Polarisation>CircularRight</Polarisation>
     <ModulationScheme>Psk8</ModulationScheme>
@@ -101,7 +101,7 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>IsdbS</BroadcastStandard>
-    <SatellitePosition>1100</SatellitePosition>
+    <Longitude>1100</Longitude>
     <Frequency>12149000</Frequency>
     <Polarisation>CircularRight</Polarisation>
     <ModulationScheme>Psk8</ModulationScheme>
@@ -110,110 +110,110 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>IsdbS</BroadcastStandard>
-    <SatellitePosition>1100</SatellitePosition>
+    <Longitude>1100</Longitude>
     <Frequency>12291000</Frequency>
     <Polarisation>CircularRight</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
     <SymbolRate>28860</SymbolRate>
-    <FecCodeRate>Rate2_3</FecCodeRate>
+    <FecCodeRate>Rate3_4</FecCodeRate>
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>IsdbS</BroadcastStandard>
-    <SatellitePosition>1100</SatellitePosition>
+    <Longitude>1100</Longitude>
     <Frequency>12331000</Frequency>
     <Polarisation>CircularRight</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
     <SymbolRate>28860</SymbolRate>
-    <FecCodeRate>Rate2_3</FecCodeRate>
+    <FecCodeRate>Rate3_4</FecCodeRate>
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>IsdbS</BroadcastStandard>
-    <SatellitePosition>1100</SatellitePosition>
+    <Longitude>1100</Longitude>
     <Frequency>12371000</Frequency>
     <Polarisation>CircularRight</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
     <SymbolRate>28860</SymbolRate>
-    <FecCodeRate>Rate2_3</FecCodeRate>
+    <FecCodeRate>Rate3_4</FecCodeRate>
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>IsdbS</BroadcastStandard>
-    <SatellitePosition>1100</SatellitePosition>
+    <Longitude>1100</Longitude>
     <Frequency>12411000</Frequency>
     <Polarisation>CircularRight</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
     <SymbolRate>28860</SymbolRate>
-    <FecCodeRate>Rate2_3</FecCodeRate>
+    <FecCodeRate>Rate3_4</FecCodeRate>
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>IsdbS</BroadcastStandard>
-    <SatellitePosition>1100</SatellitePosition>
+    <Longitude>1100</Longitude>
     <Frequency>12451000</Frequency>
     <Polarisation>CircularRight</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
     <SymbolRate>28860</SymbolRate>
-    <FecCodeRate>Rate2_3</FecCodeRate>
+    <FecCodeRate>Rate3_4</FecCodeRate>
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>IsdbS</BroadcastStandard>
-    <SatellitePosition>1100</SatellitePosition>
+    <Longitude>1100</Longitude>
     <Frequency>12491000</Frequency>
     <Polarisation>CircularRight</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
     <SymbolRate>28860</SymbolRate>
-    <FecCodeRate>Rate2_3</FecCodeRate>
+    <FecCodeRate>Rate3_4</FecCodeRate>
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>IsdbS</BroadcastStandard>
-    <SatellitePosition>1100</SatellitePosition>
+    <Longitude>1100</Longitude>
     <Frequency>12531000</Frequency>
     <Polarisation>CircularRight</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
     <SymbolRate>28860</SymbolRate>
-    <FecCodeRate>Rate2_3</FecCodeRate>
+    <FecCodeRate>Rate3_4</FecCodeRate>
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>IsdbS</BroadcastStandard>
-    <SatellitePosition>1100</SatellitePosition>
+    <Longitude>1100</Longitude>
     <Frequency>12571000</Frequency>
     <Polarisation>CircularRight</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
     <SymbolRate>28860</SymbolRate>
-    <FecCodeRate>Rate2_3</FecCodeRate>
+    <FecCodeRate>Rate3_4</FecCodeRate>
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>IsdbS</BroadcastStandard>
-    <SatellitePosition>1100</SatellitePosition>
+    <Longitude>1100</Longitude>
     <Frequency>12611000</Frequency>
     <Polarisation>CircularRight</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
     <SymbolRate>28860</SymbolRate>
-    <FecCodeRate>Rate2_3</FecCodeRate>
+    <FecCodeRate>Rate3_4</FecCodeRate>
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>IsdbS</BroadcastStandard>
-    <SatellitePosition>1100</SatellitePosition>
+    <Longitude>1100</Longitude>
     <Frequency>12651000</Frequency>
     <Polarisation>CircularRight</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
     <SymbolRate>28860</SymbolRate>
-    <FecCodeRate>Rate2_3</FecCodeRate>
+    <FecCodeRate>Rate3_4</FecCodeRate>
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>IsdbS</BroadcastStandard>
-    <SatellitePosition>1100</SatellitePosition>
+    <Longitude>1100</Longitude>
     <Frequency>12691000</Frequency>
     <Polarisation>CircularRight</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
     <SymbolRate>28860</SymbolRate>
-    <FecCodeRate>Rate2_3</FecCodeRate>
+    <FecCodeRate>Rate3_4</FecCodeRate>
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>IsdbS</BroadcastStandard>
-    <SatellitePosition>1100</SatellitePosition>
+    <Longitude>1100</Longitude>
     <Frequency>12731000</Frequency>
     <Polarisation>CircularRight</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
     <SymbolRate>28860</SymbolRate>
-    <FecCodeRate>Rate2_3</FecCodeRate>
+    <FecCodeRate>Rate3_4</FecCodeRate>
   </TuningDetail>
 </ArrayOfTuningDetail>

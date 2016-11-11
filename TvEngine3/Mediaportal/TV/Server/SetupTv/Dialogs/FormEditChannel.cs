@@ -21,8 +21,8 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Globalization;
 using System.Windows.Forms;
+using Mediaportal.TV.Server.Common.Types.Channel;
 using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.SetupControls;
 using Mediaportal.TV.Server.SetupControls.UserInterfaceControls;
@@ -65,7 +65,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
         _channel = ServiceAgents.Instance.ChannelServiceAgent.GetChannel(_idChannel, ChannelRelation.None);
         labelIdValue.Text = _channel.IdChannel.ToString();
         textBoxName.Text = _channel.Name;
-        textBoxNumber.Text = _channel.ChannelNumber;
+        channelNumberUpDownNumber.Text = _channel.ChannelNumber;
         textBoxExternalId.Text = _channel.ExternalId;
         checkBoxVisibleInGuide.Checked = _channel.VisibleInGuide;
         DebugChannelSettings(_channel);
@@ -76,7 +76,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
         Text = "Add Channel";
         labelIdValue.Text = string.Empty;
         textBoxName.Text = string.Empty;
-        textBoxNumber.Text = string.Empty;
+        channelNumberUpDownNumber.Text = LogicalChannelNumber.GLOBAL_DEFAULT;
         textBoxExternalId.Text = string.Empty;
         checkBoxVisibleInGuide.Checked = true;
       }
@@ -99,7 +99,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
     private void DebugTuningDetailSettings(TuningDetail tuningDetail)
     {
       this.LogDebug("channel: tuning detail...");
-      this.LogDebug("  ID               = {0}", tuningDetail.IdTuning);
+      this.LogDebug("  ID               = {0}", tuningDetail.IdTuningDetail);
       this.LogDebug("  name             = {0}", tuningDetail.Name);
       this.LogDebug("  number           = {0}", tuningDetail.LogicalChannelNumber);
       this.LogDebug("  priority         = {0}", tuningDetail.Priority);
@@ -112,7 +112,11 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       BroadcastStandard broadcastStandard = (BroadcastStandard)tuningDetail.BroadcastStandard;
       this.LogDebug("  standard         = {0}", broadcastStandard);
 
-      if (broadcastStandard == BroadcastStandard.AnalogTelevision)
+      if (broadcastStandard == BroadcastStandard.AmRadio)
+      {
+        this.LogDebug("  frequency        = {0} kHz", tuningDetail.Frequency);
+      }
+      else if (broadcastStandard == BroadcastStandard.AnalogTelevision)
       {
         this.LogDebug("  physical channel = {0}", tuningDetail.PhysicalChannelNumber);
         this.LogDebug("  frequency        = {0} kHz", tuningDetail.Frequency);
@@ -141,17 +145,24 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
         this.LogDebug("  audio source     = {0}", (CaptureSourceAudio)tuningDetail.AudioSource);
         this.LogDebug("  VCR signal?      = {0}", tuningDetail.IsVcrSignal);
       }
-      else if (broadcastStandard == BroadcastStandard.DvbC)
+      else if (broadcastStandard == BroadcastStandard.DvbC || broadcastStandard == BroadcastStandard.IsdbC)
       {
         this.LogDebug("  frequency        = {0} kHz", tuningDetail.Frequency);
-        this.LogDebug("  modulation       = {0}", (ModulationSchemeQam)tuningDetail.Modulation);
-        this.LogDebug("  symbol rate      = {0} ks/s", tuningDetail.SymbolRate);
+        if (broadcastStandard == BroadcastStandard.DvbC)
+        {
+          this.LogDebug("  modulation       = {0}", (ModulationSchemeQam)tuningDetail.Modulation);
+          this.LogDebug("  symbol rate      = {0} ks/s", tuningDetail.SymbolRate);
+        }
         this.LogDebug("  ONID             = {0}", tuningDetail.OriginalNetworkId);
         this.LogDebug("  TSID             = {0}", tuningDetail.TransportStreamId);
         this.LogDebug("  service ID       = {0}", tuningDetail.ServiceId);
         this.LogDebug("  PMT PID          = {0}", tuningDetail.PmtPid);
       }
-      else if (broadcastStandard == BroadcastStandard.DvbT || broadcastStandard == BroadcastStandard.DvbT2)
+      else if (
+        broadcastStandard == BroadcastStandard.DvbT ||
+        broadcastStandard == BroadcastStandard.DvbT2 ||
+        broadcastStandard == BroadcastStandard.IsdbT
+      )
       {
         this.LogDebug("  frequency        = {0} kHz", tuningDetail.Frequency);
         this.LogDebug("  bandwidth        = {0} kHz", tuningDetail.Bandwidth);
@@ -176,20 +187,23 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
         this.LogDebug("  modulation       = {0}", (ModulationSchemePsk)tuningDetail.Modulation);
         this.LogDebug("  symbol rate      = {0} ks/s", tuningDetail.SymbolRate);
         this.LogDebug("  FEC code rate    = {0}", (FecCodeRate)tuningDetail.FecCodeRate);
-        if (broadcastStandard == BroadcastStandard.DvbS2)
+        if (broadcastStandard == BroadcastStandard.DvbDsng || BroadcastStandard.MaskDvbS2.HasFlag(broadcastStandard))
         {
-          this.LogDebug("  pilot tones      = {0}", (PilotTonesState)tuningDetail.PilotTonesState);
           this.LogDebug("  roll-off factor  = {0}", (RollOffFactor)tuningDetail.RollOffFactor);
-          this.LogDebug("  input stream ID  = {0}", tuningDetail.StreamId);
+          if (BroadcastStandard.MaskDvbS2.HasFlag(broadcastStandard))
+          {
+            this.LogDebug("  pilot tones      = {0}", (PilotTonesState)tuningDetail.PilotTonesState);
+            this.LogDebug("  input stream ID  = {0}", tuningDetail.StreamId);
+          }
         }
-        if (BroadcastStandard.MaskDvb.HasFlag(broadcastStandard) || broadcastStandard == BroadcastStandard.SatelliteTurboFec)
+        if (broadcastStandard != BroadcastStandard.DigiCipher2)
         {
           this.LogDebug("  ONID             = {0}", tuningDetail.OriginalNetworkId);
         }
         this.LogDebug("  TSID             = {0}", tuningDetail.TransportStreamId);
         this.LogDebug("  program number   = {0}", tuningDetail.ServiceId);
         this.LogDebug("  PMT PID          = {0}", tuningDetail.PmtPid);
-        if (BroadcastStandard.MaskDvb.HasFlag(broadcastStandard))
+        if (broadcastStandard == BroadcastStandard.DvbS || BroadcastStandard.MaskDvbS2.HasFlag(broadcastStandard))
         {
           this.LogDebug("  Freesat CID      = {0}", tuningDetail.FreesatChannelId);
         }
@@ -203,9 +217,12 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
         this.LogDebug("  PMT PID          = {0}", tuningDetail.PmtPid);
       }
 
-      if (BroadcastStandard.MaskDvb.HasFlag(broadcastStandard))
+      if (BroadcastStandard.MaskOpenTvSi.HasFlag(broadcastStandard))
       {
         this.LogDebug("  OpenTV CID       = {0}", tuningDetail.OpenTvChannelId);
+      }
+      if ((BroadcastStandard.MaskDvb | BroadcastStandard.MaskIsdb).HasFlag(broadcastStandard))
+      {
         this.LogDebug("  EPG ONID         = {0}", tuningDetail.EpgOriginalNetworkId);
         this.LogDebug("  EPG TSID         = {0}", tuningDetail.EpgTransportStreamId);
         this.LogDebug("  EPG service ID   = {0}", tuningDetail.EpgServiceId);
@@ -259,13 +276,13 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
           imageIndex = 2;
         }
       }
-      ListViewItem item = new ListViewItem(tuningDetail.IdTuning.ToString(), imageIndex);
+      ListViewItem item = new ListViewItem(tuningDetail.IdTuningDetail.ToString(), imageIndex);
       item.Tag = tuningDetail;
       item.SubItems.Add(tuningDetail.Name);
       item.SubItems.Add(tuningDetail.LogicalChannelNumber);
       item.SubItems.Add(tuningDetail.Provider);
       item.SubItems.Add(((BroadcastStandard)tuningDetail.BroadcastStandard).GetDescription());
-      item.SubItems.Add(tuningDetail.GetDescriptiveString());
+      item.SubItems.Add(tuningDetail.GetTerseTuningDescription());
       return item;
     }
 
@@ -278,17 +295,10 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
         MessageBox.Show("Please enter a name for the channel.", SetupControls.SectionSettings.MESSAGE_CAPTION);
         return;
       }
-      int intChannelNumber;
-      float floatChannelNumber;
-      if (
-        string.IsNullOrWhiteSpace(textBoxNumber.Text) ||
-        (
-          !int.TryParse(textBoxNumber.Text, NumberStyles.None, CultureInfo.InvariantCulture.NumberFormat, out intChannelNumber) &&
-          !float.TryParse(textBoxNumber.Text, NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture.NumberFormat, out floatChannelNumber)
-        )
-      )
+      string logicalChannelNumber;
+      if (!LogicalChannelNumber.Create(channelNumberUpDownNumber.Text, out logicalChannelNumber))
       {
-        MessageBox.Show("Please enter a channel number in the form ### or #.#. For example, 123 or 1.10.", SectionSettings.MESSAGE_CAPTION, MessageBoxButtons.OK);
+        MessageBox.Show("Please enter a channel number in the form ### or #.#. For example, 123 or 1.23.", SectionSettings.MESSAGE_CAPTION, MessageBoxButtons.OK);
         return;
       }
 
@@ -303,7 +313,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
         this.LogInfo("channel: save changes, ID = {0}", _idChannel);
       }
       _channel.Name = textBoxName.Text;
-      _channel.ChannelNumber = textBoxNumber.Text;
+      _channel.ChannelNumber = logicalChannelNumber;
       _channel.ExternalId = textBoxExternalId.Text;
       _channel.VisibleInGuide = checkBoxVisibleInGuide.Checked;
       _channel = ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(_channel);
@@ -314,23 +324,23 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       foreach (ListViewItem item in listViewTuningDetails.Items)
       {
         TuningDetail tuningDetail = item.Tag as TuningDetail;
-        if (tuningDetail.IdTuning <= 0)
+        if (tuningDetail.IdTuningDetail <= 0)
         {
           // New tuning detail.
-          int originalId = tuningDetail.IdTuning;
-          tuningDetail.IdTuning = 0;
+          int originalId = tuningDetail.IdTuningDetail;
+          tuningDetail.IdTuningDetail = 0;
           tuningDetail.IdChannel = _channel.IdChannel;
           tuningDetail.MediaType = (int)_mediaType;
           tuningDetail.Priority = priority;
           tuningDetail = ServiceAgents.Instance.ChannelServiceAgent.SaveTuningDetail(tuningDetail);
-          this.LogInfo("channel: tuning detail {0} saved as {1}", originalId, tuningDetail.IdTuning);
+          this.LogInfo("channel: tuning detail {0} saved as {1}", originalId, tuningDetail.IdTuningDetail);
         }
         else
         {
           if (tuningDetail.Priority != priority)
           {
             // Existing tuning detail priority change.
-            this.LogInfo("channel: tuning detail {0} priority changed from {1} to {2}", tuningDetail.IdTuning, tuningDetail.Priority, priority);
+            this.LogInfo("channel: tuning detail {0} priority changed from {1} to {2}", tuningDetail.IdTuningDetail, tuningDetail.Priority, priority);
             tuningDetail.Priority = priority;
             ServiceAgents.Instance.ChannelServiceAgent.SaveTuningDetail(tuningDetail);
           }
@@ -360,7 +370,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
         foreach (ListViewItem item in listViewTuningDetails.Items)
         {
           TuningDetail tuningDetail = item.Tag as TuningDetail;
-          if (tuningDetail.IdTuning > 0)
+          if (tuningDetail.IdTuningDetail > 0)
           {
             if (!confirmed)
             {
@@ -372,8 +382,8 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
               }
               confirmed = true;
             }
-            this.LogInfo("channel: tuning detail {0} deleted", tuningDetail.IdTuning);
-            ServiceAgents.Instance.ChannelServiceAgent.DeleteTuningDetail(tuningDetail.IdTuning);
+            this.LogInfo("channel: tuning detail {0} deleted", tuningDetail.IdTuningDetail);
+            ServiceAgents.Instance.ChannelServiceAgent.DeleteTuningDetail(tuningDetail.IdTuningDetail);
           }
         }
       }
@@ -413,11 +423,11 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
         form.Dispose();
       }
 
-      tuningDetail.IdTuning = _newTuningDetailFakeId--;
+      tuningDetail.IdTuningDetail = _newTuningDetailFakeId--;
       tuningDetail.IdChannel = _idChannel;
       tuningDetail.MediaType = (int)_mediaType;
       tuningDetail.Priority = listViewTuningDetails.Items.Count + 1;
-      this.LogInfo("channel: tuning detail {0} added", tuningDetail.IdTuning);
+      this.LogInfo("channel: tuning detail {0} added", tuningDetail.IdTuningDetail);
       DebugTuningDetailSettings(tuningDetail);
       listViewTuningDetails.Items.Add(CreateItemForTuningDetail(tuningDetail));
     }
@@ -453,9 +463,9 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
             continue;
           }
 
-          if (tuningDetail.IdTuning > 0)
+          if (tuningDetail.IdTuningDetail > 0)
           {
-            tuningDetail = ServiceAgents.Instance.ChannelServiceAgent.GetTuningDetail(tuningDetail.IdTuning, TuningDetailRelation.Satellite);
+            tuningDetail = ServiceAgents.Instance.ChannelServiceAgent.GetTuningDetail(tuningDetail.IdTuningDetail, TuningDetailRelation.Satellite);
           }
           else
           {
@@ -501,10 +511,10 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
           continue;
         }
 
-        this.LogInfo("channel: tuning detail {0} deleted", tuningDetail.IdTuning);
-        if (tuningDetail.IdTuning > 0)
+        this.LogInfo("channel: tuning detail {0} deleted", tuningDetail.IdTuningDetail);
+        if (tuningDetail.IdTuningDetail > 0)
         {
-          ServiceAgents.Instance.ChannelServiceAgent.DeleteTuningDetail(tuningDetail.IdTuning);
+          ServiceAgents.Instance.ChannelServiceAgent.DeleteTuningDetail(tuningDetail.IdTuningDetail);
         }
         item.Remove();
       }
@@ -661,17 +671,17 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
             int originalChannelId = tuningDetail.IdChannel;
             tuningDetail.IdChannel = _channel.IdChannel;
             tuningDetail.Priority = dropIndex;
-            if (tuningDetail.IdTuning <= 0)
+            if (tuningDetail.IdTuningDetail <= 0)
             {
               // New tuning detail.
-              int originalTuningDetailId = tuningDetail.IdTuning;
-              tuningDetail.IdTuning = 0;
+              int originalTuningDetailId = tuningDetail.IdTuningDetail;
+              tuningDetail.IdTuningDetail = 0;
               tuningDetail = ServiceAgents.Instance.ChannelServiceAgent.SaveTuningDetail(tuningDetail);
-              this.LogInfo("channel: new tuning detail {0} moved from channel {1} to channel {2} and saved as {3}", originalTuningDetailId, originalChannelId, _channel.IdChannel, tuningDetail.IdTuning);
+              this.LogInfo("channel: new tuning detail {0} moved from channel {1} to channel {2} and saved as {3}", originalTuningDetailId, originalChannelId, _channel.IdChannel, tuningDetail.IdTuningDetail);
             }
             else
             {
-              this.LogInfo("channel: tuning detail {0} moved from channel {1} to channel {2}", tuningDetail.IdTuning, originalChannelId, _channel.IdChannel);
+              this.LogInfo("channel: tuning detail {0} moved from channel {1} to channel {2}", tuningDetail.IdTuningDetail, originalChannelId, _channel.IdChannel);
               tuningDetail = ServiceAgents.Instance.ChannelServiceAgent.SaveTuningDetail(tuningDetail);
             }
             item.Tag = tuningDetail;

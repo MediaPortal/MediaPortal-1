@@ -34,7 +34,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel
   /// I/Q) and service information tables/formats.
   /// </remarks>
   [DataContract]
-  public class ChannelDigiCipher2 : ChannelMpeg2Base, IChannelSatellite
+  public class ChannelDigiCipher2 : ChannelMpeg2TsBase, IChannelSatellite
   {
     #region variables
 

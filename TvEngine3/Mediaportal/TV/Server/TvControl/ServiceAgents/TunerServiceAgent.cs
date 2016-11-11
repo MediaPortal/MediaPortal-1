@@ -183,6 +183,16 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
       return _channel.ListAllReferencedSatellites();
     }
 
+    public Satellite GetSatellite(int idSatellite)
+    {
+      return _channel.GetSatellite(idSatellite);
+    }
+
+    public Satellite GetSatelliteByLongitude(int longitude)
+    {
+      return _channel.GetSatelliteByLongitude(longitude);
+    }
+
     public Satellite SaveSatellite(Satellite satellite)
     {
       satellite.UnloadAllUnchangedRelationsForEntity();

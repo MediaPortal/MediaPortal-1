@@ -31,19 +31,23 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         string countryName = System.Globalization.RegionInfo.CurrentRegion.EnglishName;
         if (string.Equals(countryName, "Australia"))
         {
-          return 1560;    // Optus C1/D3: Foxtel, VAST
+          return 1560;    // Foxtel, VAST
         }
         else if (string.Equals(countryName, "Germany"))
         {
           return 192;
         }
+        else if (string.Equals(countryName, "Japan"))
+        {
+          return 1100;    // NHK, Sky PerfecTV!
+        }
         else if (string.Equals(countryName, "New Zealand"))
         {
-          return 1600;    // Optus D1: Freeview, Sky
+          return 1600;    // Freeview, Sky
         }
         else if (string.Equals(countryName, "United Kingdom"))
         {
-          return 282;     // 28.2E: Freesat
+          return 282;     // Freesat
         }
         return null;
       }

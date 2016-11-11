@@ -31,7 +31,6 @@ namespace Mediaportal.TV.Server.SetupControls.UserInterfaceControls
     public MPColumnHeader(int imageIndex) : base(imageIndex) { }
     public MPColumnHeader(string imageKey) : base(imageKey) { }
   }
-  public class MPComboBox : ComboBox { }
   public class MPContextMenuStrip : ContextMenuStrip
   {
     public MPContextMenuStrip() : base() { }

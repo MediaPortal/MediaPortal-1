@@ -94,7 +94,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
     {
       get
       {
-        return BroadcastStandard.DvbDsng | BroadcastStandard.DvbS | BroadcastStandard.DvbS2;
+        return BroadcastStandard.DvbS | BroadcastStandard.DvbS2;
       }
     }
 

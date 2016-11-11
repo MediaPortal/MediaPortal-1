@@ -163,7 +163,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       mpComboBoxChannelsGroup.Items.Clear();
       IList<ChannelGroup> groups = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroupsByMediaType(MediaType.Television, ChannelGroupRelation.None);
       foreach (ChannelGroup group in groups)
-        mpComboBoxChannelsGroup.Items.Add(new ComboBoxExItem(group.GroupName, -1, group.IdGroup));
+        mpComboBoxChannelsGroup.Items.Add(new ComboBoxExItem(group.Name, -1, group.IdChannelGroup));
       if (mpComboBoxChannelsGroup.Items.Count == 0)
         mpComboBoxChannelsGroup.Items.Add(new ComboBoxExItem("(no groups defined)", -1, -1));
       mpComboBoxChannelsGroup.SelectedIndex = 0;
@@ -498,12 +498,12 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       }
       else
       {
-        ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetChannelGroup(idItem.Id, ChannelGroupRelation.GroupMapsTuningDetails);
-        IList<GroupMap> maps = group.GroupMaps;
+        ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetChannelGroup(idItem.Id, ChannelGroupRelation.ChannelMappingsTuningDetails);
+        IList<ChannelGroupChannelMapping> mappings = group.ChannelMappings;
         bool hasFta = false;
-        foreach (GroupMap map in maps)
+        foreach (ChannelGroupChannelMapping mapping in mappings)
         {
-          Channel ch = map.Channel;
+          Channel ch = mapping.Channel;
           if (ch.MediaType != (int)MediaType.Television)
           hasFta = false;
           bool hasScrambled = false;

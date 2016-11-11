@@ -25,11 +25,11 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Xml;
 using System.Xml.Serialization;
+using Mediaportal.TV.Server.Common.Types.Channel;
 using Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster.Driver;
 using Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster.Enum;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using MediaPortal.Common.Utils;
@@ -218,12 +218,27 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster.Service
       if (
         string.IsNullOrEmpty(transceiverDevicePath) ||
         port == TransmitPort.None ||
-        string.IsNullOrEmpty(setTopBoxProfileName) ||
-        string.IsNullOrEmpty(channelNumber)
+        string.IsNullOrEmpty(setTopBoxProfileName)
       )
       {
-        this.LogError("Microsoft blaster service: failed to transmit, invalid parameters");
+        this.LogError("Microsoft blaster service: failed to transmit, invalid parameters, device path = {0}, port(s) = [{1}], profile name = {2}", transceiverDevicePath, port, setTopBoxProfileName);
         return TransmitResult.Fail;
+      }
+
+      ushort majorChannelNumber;
+      ushort? minorChannelNumber;
+      if (!LogicalChannelNumber.Parse(channelNumber, out majorChannelNumber, out minorChannelNumber))
+      {
+        this.LogError("Microsoft blaster service: failed to transmit, invalid channel number, number = {0}", channelNumber);
+        return TransmitResult.Fail;
+      }
+      if (!minorChannelNumber.HasValue)
+      {
+        channelNumber = majorChannelNumber.ToString();
+      }
+      else
+      {
+        channelNumber = string.Format("{0}.{1}", majorChannelNumber, minorChannelNumber.Value);
       }
 
       // Load the STB profile.
@@ -315,7 +330,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster.Service
       if (profile.DigitCount > 0)
       {
         int digitCount = channelNumber.Length;
-        if (channelNumber.Contains(ChannelBase.LOGICAL_CHANNEL_NUMBER_SEPARATOR.ToString()))
+        if (minorChannelNumber.HasValue)
         {
           digitCount--;
         }
@@ -344,9 +359,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster.Service
         }
         isFirst = false;
 
-        if (c == ChannelBase.LOGICAL_CHANNEL_NUMBER_SEPARATOR)
+        if (c == '.')
         {
-          commandName = string.Format("separator ({0})", c);
+          commandName = string.Format("separator");
           commandString = profile.Separator;
         }
         else
@@ -354,7 +369,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster.Service
           int d = (int)c - (int)'0';
           if (d < 0 || d >= digits.Length)
           {
-            this.LogError("Microsoft blaster service: failed to transmit, channel number contains unexpected content, channel number = {0}", channelNumber);
+            this.LogError("Microsoft blaster service: failed to transmit, channel number contains unexpected content, number = {0}", channelNumber);
             return TransmitResult.Fail;
           }
           commandName = c.ToString();

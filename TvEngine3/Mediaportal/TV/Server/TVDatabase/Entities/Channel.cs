@@ -18,10 +18,9 @@ using System.Runtime.Serialization;
 namespace Mediaportal.TV.Server.TVDatabase.Entities
 {
     [DataContract(IsReference = true)]
-    [KnownType(typeof(GroupMap))]
+    [KnownType(typeof(ChannelGroupChannelMapping))]
     [KnownType(typeof(Recording))]
     [KnownType(typeof(Program))]
-    [KnownType(typeof(ChannelMap))]
     [KnownType(typeof(Schedule))]
     [KnownType(typeof(History))]
     [KnownType(typeof(TuningDetail))]
@@ -174,51 +173,51 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         #region Navigation Properties
     
         [DataMember]
-        public TrackableCollection<GroupMap> GroupMaps
+        public TrackableCollection<ChannelGroupChannelMapping> ChannelGroupMappings
         {
             get
             {
-                if (_groupMaps == null)
+                if (_channelGroupMappings == null)
                 {
-                    _groupMaps = new TrackableCollection<GroupMap>();
-                    _groupMaps.CollectionChanged += FixupGroupMaps;
+                    _channelGroupMappings = new TrackableCollection<ChannelGroupChannelMapping>();
+                    _channelGroupMappings.CollectionChanged += FixupChannelGroupMappings;
                 }
-                return _groupMaps;
+                return _channelGroupMappings;
             }
             set
             {
-                if (!ReferenceEquals(_groupMaps, value))
+                if (!ReferenceEquals(_channelGroupMappings, value))
                 {
                     if (ChangeTracker.ChangeTrackingEnabled)
                     {
                         throw new InvalidOperationException("Cannot set the FixupChangeTrackingCollection when ChangeTracking is enabled");
                     }
-                    if (_groupMaps != null)
+                    if (_channelGroupMappings != null)
                     {
-                        _groupMaps.CollectionChanged -= FixupGroupMaps;
+                        _channelGroupMappings.CollectionChanged -= FixupChannelGroupMappings;
                         // This is the principal end in an association that performs cascade deletes.
                         // Remove the cascade delete event handler for any entities in the current collection.
-                        foreach (GroupMap item in _groupMaps)
+                        foreach (ChannelGroupChannelMapping item in _channelGroupMappings)
                         {
                             ChangeTracker.ObjectStateChanging -= item.HandleCascadeDelete;
                         }
                     }
-                    _groupMaps = value;
-                    if (_groupMaps != null)
+                    _channelGroupMappings = value;
+                    if (_channelGroupMappings != null)
                     {
-                        _groupMaps.CollectionChanged += FixupGroupMaps;
+                        _channelGroupMappings.CollectionChanged += FixupChannelGroupMappings;
                         // This is the principal end in an association that performs cascade deletes.
                         // Add the cascade delete event handler for any entities that are already in the new collection.
-                        foreach (GroupMap item in _groupMaps)
+                        foreach (ChannelGroupChannelMapping item in _channelGroupMappings)
                         {
                             ChangeTracker.ObjectStateChanging += item.HandleCascadeDelete;
                         }
                     }
-                    OnNavigationPropertyChanged("GroupMaps");
+                    OnNavigationPropertyChanged("ChannelGroupMappings");
                 }
             }
         }
-        private TrackableCollection<GroupMap> _groupMaps;
+        private TrackableCollection<ChannelGroupChannelMapping> _channelGroupMappings;
     
         [DataMember]
         public TrackableCollection<Recording> Recordings
@@ -301,53 +300,6 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
             }
         }
         private TrackableCollection<Program> _programs;
-    
-        [DataMember]
-        public TrackableCollection<ChannelMap> ChannelMaps
-        {
-            get
-            {
-                if (_channelMaps == null)
-                {
-                    _channelMaps = new TrackableCollection<ChannelMap>();
-                    _channelMaps.CollectionChanged += FixupChannelMaps;
-                }
-                return _channelMaps;
-            }
-            set
-            {
-                if (!ReferenceEquals(_channelMaps, value))
-                {
-                    if (ChangeTracker.ChangeTrackingEnabled)
-                    {
-                        throw new InvalidOperationException("Cannot set the FixupChangeTrackingCollection when ChangeTracking is enabled");
-                    }
-                    if (_channelMaps != null)
-                    {
-                        _channelMaps.CollectionChanged -= FixupChannelMaps;
-                        // This is the principal end in an association that performs cascade deletes.
-                        // Remove the cascade delete event handler for any entities in the current collection.
-                        foreach (ChannelMap item in _channelMaps)
-                        {
-                            ChangeTracker.ObjectStateChanging -= item.HandleCascadeDelete;
-                        }
-                    }
-                    _channelMaps = value;
-                    if (_channelMaps != null)
-                    {
-                        _channelMaps.CollectionChanged += FixupChannelMaps;
-                        // This is the principal end in an association that performs cascade deletes.
-                        // Add the cascade delete event handler for any entities that are already in the new collection.
-                        foreach (ChannelMap item in _channelMaps)
-                        {
-                            ChangeTracker.ObjectStateChanging += item.HandleCascadeDelete;
-                        }
-                    }
-                    OnNavigationPropertyChanged("ChannelMaps");
-                }
-            }
-        }
-        private TrackableCollection<ChannelMap> _channelMaps;
     
         [DataMember]
         public TrackableCollection<Schedule> Schedules
@@ -697,10 +649,9 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
     
         protected virtual void ClearNavigationProperties()
         {
-            GroupMaps.Clear();
+            ChannelGroupMappings.Clear();
             Recordings.Clear();
             Programs.Clear();
-            ChannelMaps.Clear();
             Schedules.Clear();
             Histories.Clear();
             TuningDetails.Clear();
@@ -712,7 +663,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         #endregion
         #region Association Fixup
     
-        private void FixupGroupMaps(object sender, NotifyCollectionChangedEventArgs e)
+        private void FixupChannelGroupMappings(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (IsDeserializing)
             {
@@ -721,7 +672,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
     
             if (e.NewItems != null)
             {
-                foreach (GroupMap item in e.NewItems)
+                foreach (ChannelGroupChannelMapping item in e.NewItems)
                 {
                     item.Channel = this;
                     if (ChangeTracker.ChangeTrackingEnabled)
@@ -730,7 +681,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                         {
                             item.StartTracking();
                         }
-                        ChangeTracker.RecordAdditionToCollectionProperties("GroupMaps", item);
+                        ChangeTracker.RecordAdditionToCollectionProperties("ChannelGroupMappings", item);
                     }
                     // This is the principal end in an association that performs cascade deletes.
                     // Update the event listener to refer to the new dependent.
@@ -740,7 +691,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
     
             if (e.OldItems != null)
             {
-                foreach (GroupMap item in e.OldItems)
+                foreach (ChannelGroupChannelMapping item in e.OldItems)
                 {
                     if (ReferenceEquals(item.Channel, this))
                     {
@@ -748,7 +699,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                     }
                     if (ChangeTracker.ChangeTrackingEnabled)
                     {
-                        ChangeTracker.RecordRemovalFromCollectionProperties("GroupMaps", item);
+                        ChangeTracker.RecordRemovalFromCollectionProperties("ChannelGroupMappings", item);
                     }
                     // This is the principal end in an association that performs cascade deletes.
                     // Remove the previous dependent from the event listener.
@@ -833,51 +784,6 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                     if (ChangeTracker.ChangeTrackingEnabled)
                     {
                         ChangeTracker.RecordRemovalFromCollectionProperties("Programs", item);
-                    }
-                    // This is the principal end in an association that performs cascade deletes.
-                    // Remove the previous dependent from the event listener.
-                    ChangeTracker.ObjectStateChanging -= item.HandleCascadeDelete;
-                }
-            }
-        }
-    
-        private void FixupChannelMaps(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            if (IsDeserializing)
-            {
-                return;
-            }
-    
-            if (e.NewItems != null)
-            {
-                foreach (ChannelMap item in e.NewItems)
-                {
-                    item.Channel = this;
-                    if (ChangeTracker.ChangeTrackingEnabled)
-                    {
-                        if (!item.ChangeTracker.ChangeTrackingEnabled)
-                        {
-                            item.StartTracking();
-                        }
-                        ChangeTracker.RecordAdditionToCollectionProperties("ChannelMaps", item);
-                    }
-                    // This is the principal end in an association that performs cascade deletes.
-                    // Update the event listener to refer to the new dependent.
-                    ChangeTracker.ObjectStateChanging += item.HandleCascadeDelete;
-                }
-            }
-    
-            if (e.OldItems != null)
-            {
-                foreach (ChannelMap item in e.OldItems)
-                {
-                    if (ReferenceEquals(item.Channel, this))
-                    {
-                        item.Channel = null;
-                    }
-                    if (ChangeTracker.ChangeTrackingEnabled)
-                    {
-                        ChangeTracker.RecordRemovalFromCollectionProperties("ChannelMaps", item);
                     }
                     // This is the principal end in an association that performs cascade deletes.
                     // Remove the previous dependent from the event listener.

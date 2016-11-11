@@ -68,19 +68,19 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Geniatech
       LnbPower
     }
 
-    private enum GtPilotTonesState
-    {
-      Off = 0,
-      On,
-      Unknown               // (Not used...)
-    }
-
     private enum GtRollOffFactor
     {
       Undefined = 0xff,
       Twenty = 0,           // 0.2
       TwentyFive,           // 0.25
       ThirtyFive            // 0.35
+    }
+
+    private enum GtPilotTonesState
+    {
+      Off = 0,
+      On,
+      Unknown               // (Not used...)
     }
 
     #endregion
@@ -206,34 +206,31 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Geniatech
         return;
       }
 
-      // We only have work to do if the channel is a DVB-S/S2 channel.
+      // We only have work to do if the channel is a satellite channel.
       IChannelSatellite satelliteChannel = channel as IChannelSatellite;
       if (satelliteChannel == null)
       {
         return;
       }
 
+      // For non-DVB-S2, maybe these NBC parameter values should be 0.35/off...
+      // or maybe we shouldn't even use the property.
       NbcParams nbcParams = new NbcParams();
+      nbcParams.RollOffFactor = GtRollOffFactor.Undefined;
+      nbcParams.PilotTonesState = GtPilotTonesState.Unknown;
+      RollOffFactor rollOffFactor = RollOffFactor.Automatic;
       ChannelDvbS2 dvbs2Channel = channel as ChannelDvbS2;
-      if (dvbs2Channel == null)
+      if (dvbs2Channel != null)
       {
-        nbcParams.PilotTonesState = GtPilotTonesState.Off;
-        nbcParams.RollOffFactor = GtRollOffFactor.ThirtyFive;
-      }
-      else
-      {
+        // I'm not sure if these modulation values can be used on XP.
         ModulationType bdaModulation = ModulationType.ModNotSet;
-        switch (dvbs2Channel.ModulationScheme)
+        if (dvbs2Channel.ModulationScheme == ModulationSchemePsk.Psk4)
         {
-          case ModulationSchemePsk.Psk4:
-            bdaModulation = ModulationType.ModNbcQpsk;
-            break;
-          case ModulationSchemePsk.Psk8:
-            bdaModulation = ModulationType.ModNbc8Psk;
-            break;
-          default:
-            this.LogWarn("Geniatech: DVB-S2 tune request uses unsupported modulation scheme {0}", dvbs2Channel.ModulationScheme);
-            break;
+          bdaModulation = ModulationType.ModNbcQpsk;
+        }
+        else if (dvbs2Channel.ModulationScheme == ModulationSchemePsk.Psk8)
+        {
+          bdaModulation = ModulationType.ModNbc8Psk;
         }
         if (bdaModulation != ModulationType.ModNotSet)
         {
@@ -241,17 +238,33 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Geniatech
           dvbs2Channel.ModulationScheme = (ModulationSchemePsk)bdaModulation;
         }
 
-        if (dvbs2Channel.PilotTonesState == PilotTonesState.On)
+        rollOffFactor = dvbs2Channel.RollOffFactor;
+        switch (dvbs2Channel.PilotTonesState)
         {
-          nbcParams.PilotTonesState = GtPilotTonesState.On;
-        }
-        else if (dvbs2Channel.PilotTonesState == PilotTonesState.Off)
-        {
-          nbcParams.PilotTonesState = GtPilotTonesState.Off;
+          case PilotTonesState.On:
+            nbcParams.PilotTonesState = GtPilotTonesState.On;
+            break;
+          case PilotTonesState.Off:
+            nbcParams.PilotTonesState = GtPilotTonesState.Off;
+            break;
+          default:
+            this.LogWarn("Geniatech: DVB-S2 tune request uses unsupported pilot tones state {0}", dvbs2Channel.PilotTonesState);
+            break;
         }
         this.LogDebug("  pilot tones     = {0}", nbcParams.PilotTonesState);
+      }
+      else
+      {
+        ChannelDvbDsng dvbDsngChannel = channel as ChannelDvbDsng;
+        if (dvbDsngChannel != null)
+        {
+          rollOffFactor = dvbDsngChannel.RollOffFactor;
+        }
+      }
 
-        switch (dvbs2Channel.RollOffFactor)
+      if (rollOffFactor != RollOffFactor.Automatic)
+      {
+        switch (rollOffFactor)
         {
           case RollOffFactor.Twenty:
             nbcParams.RollOffFactor = GtRollOffFactor.Twenty;
@@ -263,8 +276,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Geniatech
             nbcParams.RollOffFactor = GtRollOffFactor.ThirtyFive;
             break;
           default:
-            this.LogWarn("Geniatech: DVB-S2 tune request uses unsupported roll-off factor {0}", dvbs2Channel.RollOffFactor);
-            nbcParams.RollOffFactor = GtRollOffFactor.Undefined;
+            this.LogWarn("Geniatech: DVB-DSNG/DVB-S2 tune request uses unsupported roll-off factor {0}", rollOffFactor);
             break;
         }
         this.LogDebug("  roll-off factor = {0}", nbcParams.RollOffFactor);

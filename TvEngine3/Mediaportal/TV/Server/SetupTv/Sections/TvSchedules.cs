@@ -107,13 +107,16 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     {
       comboBoxGroups.Items.Clear();
       IList<ChannelGroup> groups = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroups(ChannelGroupRelation.None);
-      foreach (ChannelGroup group in groups)
+      if (groups.Count == 0)
       {
-        comboBoxGroups.Items.Add(new ComboBoxExItem(group.GroupName, -1, group.IdGroup));
+        comboBoxGroups.Items.Add(new ChannelGroup { Name = "(no groups defined)", IdChannelGroup = -1 });
       }
-      if (comboBoxGroups.Items.Count == 0)
+      else
       {
-        comboBoxGroups.Items.Add(new ComboBoxExItem("(no groups defined)", -1, -1));
+        foreach (ChannelGroup group in groups)
+        {
+          comboBoxGroups.Items.Add(group);
+        }
       }
       comboBoxGroups.SelectedIndex = 0;
     }
@@ -378,72 +381,37 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
     private void comboBoxGroups_SelectedIndexChanged(object sender, EventArgs e)
     {
-      ComboBoxExItem idItem = (ComboBoxExItem)comboBoxGroups.Items[comboBoxGroups.SelectedIndex];
+      int channelGroupId = ((ChannelGroup)comboBoxGroups.SelectedItem).IdChannelGroup;
       comboBoxChannels.Items.Clear();
-      if (idItem.Id == -1)
+      IList<Channel> channels;
+      if (channelGroupId == -1)
       {
-        IList<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannels(ChannelRelation.TuningDetails);
-        foreach (Channel ch in channels)
-        {
-          if (ch.MediaType != (int)MediaType.Television) continue;
-          bool hasFta = false;
-          bool hasScrambled = false;
-          IList<TuningDetail> tuningDetails = ch.TuningDetails;
-          foreach (TuningDetail detail in tuningDetails)
-          {
-            if (detail.IsEncrypted)
-            {
-              hasScrambled = true;
-            }
-            else
-            {
-              hasFta = true;
-            }
-          }
-
-          int imageIndex;
-          if (hasFta && hasScrambled)
-          {
-            imageIndex = 5;
-          }
-          else if (hasScrambled)
-          {
-            imageIndex = 4;
-          }
-          else
-          {
-            imageIndex = 3;
-          }
-          ComboBoxExItem item = new ComboBoxExItem(ch.Name, imageIndex, ch.IdChannel);
-
-          comboBoxChannels.Items.Add(item);
-        }
+        channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannels(ChannelRelation.TuningDetails);
       }
       else
       {
-        ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetChannelGroup(idItem.Id, ChannelGroupRelation.GroupMapsTuningDetails);
-        IList<GroupMap> maps = group.GroupMaps;
+        channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannelsByGroupId(channelGroupId, ChannelRelation.TuningDetails);
+      }
+      foreach (Channel ch in channels)
+      {
+        bool hasFta = false;
         bool hasScrambled = false;
-        foreach (GroupMap map in maps)
+        IList<TuningDetail> tuningDetails = ch.TuningDetails;
+        foreach (TuningDetail detail in tuningDetails)
         {
-          Channel ch = map.Channel;
-          bool hasFta = false;
-          if (ch.MediaType != (int)MediaType.Television)          
-          hasScrambled = false;
-          IList<TuningDetail> tuningDetails = ch.TuningDetails;
-          foreach (TuningDetail detail in tuningDetails)
+          if (detail.IsEncrypted)
           {
-            if (detail.IsEncrypted)
-            {
-              hasScrambled = true;
-            }
-            else
-            {
-              hasFta = true;
-            }
+            hasScrambled = true;
           }
+          else
+          {
+            hasFta = true;
+          }
+        }
 
-          int imageIndex;
+        int imageIndex;
+        if (ch.MediaType == (int)MediaType.Television)
+        {
           if (hasFta && hasScrambled)
           {
             imageIndex = 5;
@@ -456,9 +424,23 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           {
             imageIndex = 3;
           }
-          ComboBoxExItem item = new ComboBoxExItem(ch.Name, imageIndex, ch.IdChannel);
-          comboBoxChannels.Items.Add(item);
         }
+        else
+        {
+          if (hasFta && hasScrambled)
+          {
+            imageIndex = 2;
+          }
+          else if (hasScrambled)
+          {
+            imageIndex = 1;
+          }
+          else
+          {
+            imageIndex = 0;
+          }
+        }
+        comboBoxChannels.Items.Add(new ComboBoxExItem(ch.Name, imageIndex, ch.IdChannel));
       }
       if (comboBoxChannels.Items.Count > 0)
         comboBoxChannels.SelectedIndex = 0;

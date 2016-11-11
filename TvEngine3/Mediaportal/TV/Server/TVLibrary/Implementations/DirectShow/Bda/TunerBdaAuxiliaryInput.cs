@@ -46,6 +46,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
   /// </summary>
   internal class TunerBdaAuxiliaryInput : TunerBdaBase
   {
+    #region constants
+
+    private const string TUNING_SPACE_NAME = "MediaPortal Auxiliary Input Tuning Space";
+
+    #endregion
+
     #region variables
 
     private CaptureSourceVideo _supportedVideoSources;
@@ -72,31 +78,32 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
     #region graph building
 
     /// <summary>
-    /// Create and register a BDA tuning space for the tuner type.
+    /// Create a BDA tuning space for tuning a given channel type.
     /// </summary>
+    /// <param name="channelType">The channel type.</param>
     /// <returns>the tuning space that was created</returns>
-    protected override ITuningSpace CreateTuningSpace()
+    protected override ITuningSpace CreateTuningSpace(Type channelType)
     {
-      this.LogDebug("BDA auxiliary input: create tuning space");
+      this.LogDebug("BDA auxiliary input: create tuning space, type = {0}", channelType.Name);
 
       IAuxInTuningSpace2 tuningSpace = null;
       try
       {
         tuningSpace = (IAuxInTuningSpace2)new AuxInTuningSpace();
-        int hr = tuningSpace.put_UniqueName(TuningSpaceName);
-        hr |= tuningSpace.put_FriendlyName(TuningSpaceName);
+        int hr = tuningSpace.put_CountryCode(0);
+        hr |= tuningSpace.put_FriendlyName(TUNING_SPACE_NAME);
         hr |= tuningSpace.put__NetworkType(NetworkType.ANALOG_AUX_IN);
-        hr |= tuningSpace.put_CountryCode(0);
+        hr |= tuningSpace.put_UniqueName(TUNING_SPACE_NAME);
 
         if (hr != (int)NativeMethods.HResult.S_OK)
         {
-          this.LogWarn("BDA auxiliary input: potential error creating tuning space, hr = 0x{0:x}", hr);
+          this.LogWarn("BDA auxiliary input: potential error creating tuning space, hr = 0x{0:x}, type = {1}", hr, channelType.Name);
         }
         return tuningSpace;
       }
       catch
       {
-        Release.ComObject("BDA auxiliary input tuner tuning space", ref tuningSpace);
+        Release.ComObject(string.Format("BDA auxiliary input tuner {0} tuning space", channelType.Name), ref tuningSpace);
         throw;
       }
     }
@@ -116,13 +123,16 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
     }
 
     /// <summary>
-    /// Get the registered name of the BDA tuning space for the tuner type.
+    /// Get the name(s) of the registered BDA tuning space(s) for the tuner type.
     /// </summary>
-    protected override string TuningSpaceName
+    protected override IDictionary<string, Type> TuningSpaceNames
     {
       get
       {
-        return "MediaPortal Auxiliary Input Tuning Space";
+        return new Dictionary<string, Type>
+        {
+          { TUNING_SPACE_NAME, null }
+        };
       }
     }
 
@@ -146,7 +156,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
 
       ITuneRequest tuneRequest;
       int hr = tuningSpace.CreateTuneRequest(out tuneRequest);
-      TvExceptionDirectShowError.Throw(hr, "Failed to create tuning request from tuning space.");
+      TvExceptionDirectShowError.Throw(hr, "Failed to create tune request from tuning space.");
       try
       {
         IChannelTuneRequest channelTuneRequest = tuneRequest as IChannelTuneRequest;

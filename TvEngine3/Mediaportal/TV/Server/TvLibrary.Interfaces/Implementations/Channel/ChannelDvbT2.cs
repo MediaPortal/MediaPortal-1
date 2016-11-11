@@ -27,7 +27,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel
   /// An implementation of <see cref="T:IChannel"/> for DVB-T2 channels.
   /// </summary>  
   [DataContract]
-  public class ChannelDvbT2 : ChannelDvbBase, IChannelOfdm
+  public class ChannelDvbT2 : ChannelOpenTvBase, IChannelDvb, IChannelOfdm
   {
     #region variables
 

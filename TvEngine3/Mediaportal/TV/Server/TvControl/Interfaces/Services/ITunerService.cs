@@ -115,6 +115,12 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     IList<Satellite> ListAllReferencedSatellites();
 
     [OperationContract]
+    Satellite GetSatellite(int idSatellite);
+
+    [OperationContract]
+    Satellite GetSatelliteByLongitude(int longitude);
+
+    [OperationContract]
     Satellite SaveSatellite(Satellite satellite);
 
     [OperationContract]

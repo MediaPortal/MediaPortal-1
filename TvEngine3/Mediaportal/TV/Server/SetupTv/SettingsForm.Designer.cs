@@ -43,8 +43,8 @@ namespace Mediaportal.TV.Server.SetupTV
       // 
       // sectionTree
       // 
-      this.sectionTree.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)));
+      this.sectionTree.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
       this.sectionTree.FullRowSelect = true;
       this.sectionTree.HideSelection = false;
       this.sectionTree.HotTracking = true;
@@ -70,8 +70,8 @@ namespace Mediaportal.TV.Server.SetupTV
       // 
       // headerLabel
       // 
-      this.headerLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.headerLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.headerLabel.Caption = "";
       this.headerLabel.FirstColor = System.Drawing.SystemColors.InactiveCaption;
       this.headerLabel.Font = new System.Drawing.Font("Verdana", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -87,9 +87,9 @@ namespace Mediaportal.TV.Server.SetupTV
       // 
       // holderPanel
       // 
-      this.holderPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.holderPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.holderPanel.AutoScroll = true;
       this.holderPanel.BackColor = System.Drawing.SystemColors.Control;
       this.holderPanel.Location = new System.Drawing.Point(216, 58);
@@ -99,8 +99,8 @@ namespace Mediaportal.TV.Server.SetupTV
       // 
       // beveledLine1
       // 
-      this.beveledLine1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.beveledLine1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.beveledLine1.Location = new System.Drawing.Point(8, 505);
       this.beveledLine1.Name = "beveledLine1";
       this.beveledLine1.Size = new System.Drawing.Size(701, 2);
@@ -144,14 +144,13 @@ namespace Mediaportal.TV.Server.SetupTV
       // 
       this.configToolStripSplitButton.ImageTransparentColor = System.Drawing.Color.Magenta;
       this.configToolStripSplitButton.Name = "configToolStripSplitButton";
-      this.configToolStripSplitButton.Size = new System.Drawing.Size(103, 22);
-      this.configToolStripSplitButton.Text = "Open Log directory";
+      this.configToolStripSplitButton.Size = new System.Drawing.Size(100, 22);
+      this.configToolStripSplitButton.Text = "Open log directory";
       this.configToolStripSplitButton.Click += new System.EventHandler(this.configToolStripSplitButton_ButtonClick);
       // 
       // SettingsForm
       // 
       this.AcceptButton = this.closeButton;
-      this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScroll = true;
       this.ClientSize = new System.Drawing.Size(717, 546);
       this.Controls.Add(this.toolStrip1);

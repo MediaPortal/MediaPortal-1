@@ -33,7 +33,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.buttonCancel = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
       this.buttonOkay = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
       this.labelNumber = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.textBoxNumber = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTextBox();
+      this.channelNumberUpDownNumber = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPChannelNumberUpDown();
       this.labelName = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.textBoxName = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTextBox();
       this.checkBoxIsEncrypted = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
@@ -44,6 +44,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.checkBoxIsHighDefinition = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
       this.labelIsThreeDimensional = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.checkBoxIsThreeDimensional = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
+      ((System.ComponentModel.ISupportInitialize)(this.channelNumberUpDownNumber)).BeginInit();
       this.SuspendLayout();
       // 
       // buttonCancel
@@ -78,13 +79,28 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.labelNumber.TabIndex = 2;
       this.labelNumber.Text = "Number:";
       // 
-      // textBoxNumber
+      // channelNumberUpDownNumber
       // 
-      this.textBoxNumber.Location = new System.Drawing.Point(123, 38);
-      this.textBoxNumber.MaxLength = 10;
-      this.textBoxNumber.Name = "textBoxNumber";
-      this.textBoxNumber.Size = new System.Drawing.Size(55, 20);
-      this.textBoxNumber.TabIndex = 3;
+      this.channelNumberUpDownNumber.DecimalPlaces = 3;
+      this.channelNumberUpDownNumber.Location = new System.Drawing.Point(123, 38);
+      this.channelNumberUpDownNumber.Maximum = new decimal(new int[] {
+            65535999,
+            0,
+            0,
+            196608});
+      this.channelNumberUpDownNumber.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+      this.channelNumberUpDownNumber.Name = "channelNumberUpDownNumber";
+      this.channelNumberUpDownNumber.Size = new System.Drawing.Size(75, 20);
+      this.channelNumberUpDownNumber.TabIndex = 3;
+      this.channelNumberUpDownNumber.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
       // 
       // labelName
       // 
@@ -194,7 +210,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.Controls.Add(this.checkBoxIsHighDefinition);
       this.Controls.Add(this.labelIsEncrypted);
       this.Controls.Add(this.labelNumber);
-      this.Controls.Add(this.textBoxNumber);
+      this.Controls.Add(this.channelNumberUpDownNumber);
       this.Controls.Add(this.labelName);
       this.Controls.Add(this.textBoxName);
       this.Controls.Add(this.checkBoxIsEncrypted);
@@ -209,6 +225,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
       this.Text = "FormTuningDetailCommon";
       this.Load += new System.EventHandler(this.FormEditTuningDetailCommon_Load);
+      ((System.ComponentModel.ISupportInitialize)(this.channelNumberUpDownNumber)).EndInit();
       this.ResumeLayout(false);
       this.PerformLayout();
 
@@ -219,7 +236,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
     protected MPButton buttonCancel;
     protected MPButton buttonOkay;
     protected MPLabel labelNumber;
-    protected MPTextBox textBoxNumber;
+    protected MPChannelNumberUpDown channelNumberUpDownNumber;
     protected MPLabel labelName;
     protected MPTextBox textBoxName;
     protected MPCheckBox checkBoxIsEncrypted;

@@ -6,7 +6,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities.Enums
   public enum TunerRelation
   {
     None = 0,
-    ChannelMaps = 1,
+    TuningDetailMappings = 1,
     TunerGroup = 2,
     TunerProperties = 4,
     AnalogTunerSettings = 8,

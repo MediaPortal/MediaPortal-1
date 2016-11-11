@@ -65,12 +65,11 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.ObjContext
       model.AnalogTunerSettings.MergeOption = MergeOption.NoTracking;
       model.AudioEncoders.MergeOption = MergeOption.NoTracking;
       model.CanceledSchedules.MergeOption = MergeOption.NoTracking;
+      model.ChannelGroupChannelMappings.MergeOption = MergeOption.NoTracking;
       model.ChannelGroups.MergeOption = MergeOption.NoTracking;
       model.ChannelLinkageMaps.MergeOption = MergeOption.NoTracking;
-      model.ChannelMaps.MergeOption = MergeOption.NoTracking;
       model.Channels.MergeOption = MergeOption.NoTracking;
       model.Conflicts.MergeOption = MergeOption.NoTracking;
-      model.GroupMaps.MergeOption = MergeOption.NoTracking;
       model.GuideCategories.MergeOption = MergeOption.NoTracking;
       model.Histories.MergeOption = MergeOption.NoTracking;
       model.LnbTypes.MergeOption = MergeOption.NoTracking;
@@ -89,6 +88,7 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.ObjContext
       model.TunerProperties.MergeOption = MergeOption.NoTracking;
       model.TunerSatellites.MergeOption = MergeOption.NoTracking;
       model.Tuners.MergeOption = MergeOption.NoTracking;
+      model.TunerTuningDetailMappings.MergeOption = MergeOption.NoTracking;
       model.TuningDetails.MergeOption = MergeOption.NoTracking;
       model.Versions.MergeOption = MergeOption.NoTracking;
       model.VideoEncoders.MergeOption = MergeOption.NoTracking;
@@ -220,16 +220,14 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.ObjContext
       TryCreateIndex(model, "AnalogTunerSettings", "IdAudioEncoder");
       TryCreateIndex(model, "AnalogTunerSettings", "IdVideoEncoder");
       TryCreateIndex(model, "CanceledSchedules", "IdSchedule");
-      TryCreateIndex(model, "ChannelMaps", "IdTuner");
-      TryCreateIndex(model, "ChannelMaps", "IdChannel");
+      TryCreateIndex(model, "ChannelGroupChannelMappings", "IdChannel");
+      TryCreateIndex(model, "ChannelGroupChannelMappings", "IdChannelGroup");
       TryCreateIndex(model, "ChannelLinkageMaps", "IdLinkedChannel");
       TryCreateIndex(model, "ChannelLinkageMaps", "IdPortalChannel");
       TryCreateIndex(model, "Conflicts", "IdTuner");
       TryCreateIndex(model, "Conflicts", "IdChannel");
       TryCreateIndex(model, "Conflicts", "IdSchedule");
       TryCreateIndex(model, "Conflicts", "IdConflictingSchedule");
-      TryCreateIndex(model, "GroupMaps", "IdGroup");
-      TryCreateIndex(model, "GroupMaps", "IdChannel");
       TryCreateIndex(model, "Histories", "IdChannel");
       TryCreateIndex(model, "Histories", "IdProgramCategory");
       TryCreateIndex(model, "Programs", "IdChannel");
@@ -247,6 +245,8 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.ObjContext
       TryCreateIndex(model, "TunerSatellites", "IdLnbType");
       TryCreateIndex(model, "TunerSatellites", "IdSatellite");
       TryCreateIndex(model, "TunerSatellites", "IdTuner");
+      TryCreateIndex(model, "TunerTuningDetailMappings", "IdTuner");
+      TryCreateIndex(model, "TunerTuningDetailMappings", "IdTuningDetail");
       TryCreateIndex(model, "TuningDetails", "IdChannel");
       TryCreateIndex(model, "TuningDetails", "IdSatellite");
 
@@ -319,8 +319,8 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.ObjContext
     private static void InsertInitialValues(Model model)
     {
       // We need at least one channel group for each media type in order for the UI to function correctly.
-      model.ChannelGroups.AddObject(new ChannelGroup { GroupName = "Favourites", SortOrder = 9999, MediaType = (int)MediaType.Television });
-      model.ChannelGroups.AddObject(new ChannelGroup { GroupName = "Favourites", SortOrder = 9999, MediaType = (int)MediaType.Radio });
+      model.ChannelGroups.AddObject(new ChannelGroup { Name = "Favourites", SortOrder = 9999, MediaType = (int)MediaType.Television });
+      model.ChannelGroups.AddObject(new ChannelGroup { Name = "Favourites", SortOrder = 9999, MediaType = (int)MediaType.Radio });
 
       // Guide program categories.
       model.GuideCategories.AddObject(new GuideCategory { IsEnabled = true, IsMovie = false, Name = "Documentary" });

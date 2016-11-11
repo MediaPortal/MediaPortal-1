@@ -79,10 +79,17 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
       comboBoxGroups.Items.Clear();
       IList<ChannelGroup> groups = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroups(ChannelGroupRelation.None);
-      foreach (ChannelGroup group in groups)
-        comboBoxGroups.Items.Add(new ComboBoxExItem(group.GroupName, -1, group.IdGroup));
-      if (comboBoxGroups.Items.Count == 0)
-        comboBoxGroups.Items.Add(new ComboBoxExItem("(no groups defined)", -1, -1));
+      if (groups.Count == 0)
+      {
+        comboBoxGroups.Items.Add(new ChannelGroup { Name = "(no groups defined)", IdChannelGroup = -1 });
+      }
+      else
+      {
+        foreach (ChannelGroup group in groups)
+        {
+          comboBoxGroups.Items.Add(group);
+        }
+      }
       comboBoxGroups.SelectedIndex = 0;
 
       timer1.Enabled = true;
@@ -172,17 +179,16 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             if (channelChunks != null && channelChunks.Count >= i + 1)
             {
               IEnumerable<Channel> channelsForUser = channelChunks[i];
-              channelsForUser = channelsForUser.Randomize();
+              Random rnd2 = new Random();
+              channelsForUser = channelsForUser.OrderBy((item) => rnd2.Next());
 
               int priority = GetUserPriority();
-              string name = "stress-" + Convert.ToString(rnd.Next(1, 500)) + " [" + priority + "]";              
-              IUser user = UserFactory.CreateBasicUser(name, priority);
-
-              while (_users.ContainsKey(user.Name))
+              string name = "stress-" + Convert.ToString(rnd.Next(1, 500)) + " [" + priority + "]";
+              while (_users.ContainsKey(name))
               {
-                user.Name = "stress-" + Convert.ToString(rnd.Next(1, 500)) + " [" + priority + "]";
+                name = "stress-" + Convert.ToString(rnd.Next(1, 500)) + " [" + priority + "]";
               }
-
+              IUser user = UserFactory.CreateBasicUser(name, priority);
               _users.Add(user.Name, true);
               ThreadPool.QueueUserWorkItem(delegate { TuneChannelsForUser(user, channelsForUser); });
               Thread.Sleep(500);
@@ -256,8 +262,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         _firstFail = 0;
         UpdateCounters();
 
-        ComboBoxExItem idItem = (ComboBoxExItem)comboBoxGroups.Items[comboBoxGroups.SelectedIndex];
-        List<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannelsByGroupId(idItem.Id, ChannelRelation.None).ToList();
+        int channelGroupId = ((ChannelGroup)comboBoxGroups.SelectedItem).IdChannelGroup;
+        List<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannelsByGroupId(channelGroupId, ChannelRelation.None).ToList();
         Thread channelTestThread = new Thread(new ParameterizedThreadStart(delegate { ChannelTestThread(channels); }));
         channelTestThread.Name = "Channel Test Thread";
         channelTestThread.IsBackground = true;
@@ -376,7 +382,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             }
             nextRowIndexForDiscUpdate = Add2Log("OK", channel.Name, mSecsElapsed, user.Name,
                                                 Convert.ToString(cardId), "");
-            user.CardId = cardId;
+            //user.TunerId = cardId;
             _succeeded++;
           }
           else if (result == TvResult.CardIsDisabled ||
@@ -401,14 +407,16 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
               _firstFail = mpListViewLog.Items.Count + 1;
             }
             nextRowIndexForDiscUpdate = Add2Log("ERR", channel.Name, mSecsElapsed, user.Name,
-                                                Convert.ToString(user.FailedCardId), err);
+                                                string.Empty, err);
+                                                //Convert.ToString(user.FailedCardId), err);
             _failed++;
           }
         }
         catch (Exception e)
         {
           nextRowIndexForDiscUpdate = Add2Log("EXC", channel.Name, mSecsElapsed, user.Name,
-                                              Convert.ToString(user.FailedCardId), e.Message);
+                                              string.Empty, e.Message);
+                                              //Convert.ToString(user.FailedCardId), e.Message);
           _ignored++;
           if (_firstFail == 0 && _running)
           {
@@ -511,7 +519,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       if (nextRowIndexForDiscUpdate > 0)
       {
         ListViewItem item = mpListViewLog.Items[nextRowIndexForDiscUpdate - 1];
-        if (user.CardId > 0)
+        if (user.SubChannels.Count > 0)//user.TunerId > 0)
         {
           int discCounter = 0;
           int totalBytes = 0;

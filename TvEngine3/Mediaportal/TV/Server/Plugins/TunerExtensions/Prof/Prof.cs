@@ -93,19 +93,19 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Prof
       NoReply,              // Expecting no response(s).
     }
 
-    private enum ProfPilotTonesState : uint
-    {
-      Off = 0,
-      On,
-      Unknown               // (Not used...)
-    }
-
     private enum ProfRollOffFactor : uint
     {
       Undefined = 0xff,
       Twenty = 0,           // 0.2
       TwentyFive,           // 0.25
       ThirtyFive            // 0.35
+    }
+
+    private enum ProfPilotTonesState : uint
+    {
+      Off = 0,
+      On,
+      Unknown               // (Not used...)
     }
 
     private enum ProfDvbsStandard : uint
@@ -273,98 +273,90 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Prof
         return;
       }
 
+      // We only have work to do if the channel is a satellite channel.
       IChannelSatellite satelliteChannel = channel as IChannelSatellite;
       if (satelliteChannel == null)
       {
         return;
       }
 
-      KSPropertySupport support;
-      int hr = _propertySet.QuerySupported(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.NbcParams, out support);
-      if (hr != (int)NativeMethods.HResult.S_OK || !support.HasFlag(KSPropertySupport.Set))
-      {
-        this.LogDebug("Prof: NBC tuning parameter property not supported, hr = 0x{0:x}, support = {1}", hr, support);
-        return;
-      }
-
       NbcTuningParams command = new NbcTuningParams();
-
-      if (channel is ChannelDvbS)
+      ModulationType bdaModulation = ModulationType.ModNotSet;
+      ChannelDvbS2 dvbs2Channel = channel as ChannelDvbS2;
+      if (dvbs2Channel != null)
+      {
+        command.DvbsStandard = ProfDvbsStandard.Dvbs2;
+        switch (satelliteChannel.ModulationScheme)
+        {
+          case ModulationSchemePsk.Psk4:
+            if (Environment.OSVersion.Version.Major >= 6)
+            {
+              bdaModulation = ModulationType.ModNbcQpsk;
+            }
+            else
+            {
+              bdaModulation = ModulationType.ModOqpsk;
+            }
+            break;
+          case ModulationSchemePsk.Psk8:
+            if (Environment.OSVersion.Version.Major >= 6)
+            {
+              bdaModulation = ModulationType.ModNbc8Psk;
+            }
+            else
+            {
+              bdaModulation = ModulationType.ModBpsk;
+            }
+            break;
+          // I'm not sure what values to use for 16 and 32 APSK on XP.
+          // However, AFAIK the hardware only supports QPSK and 8 PSK anyway.
+          case ModulationSchemePsk.Psk16:
+            bdaModulation = ModulationType.Mod16Apsk;
+            break;
+          case ModulationSchemePsk.Psk32:
+            bdaModulation = ModulationType.ModNbc8Psk;
+            break;
+          default:
+            this.LogWarn("Prof: DVB-S2 tune request uses unsupported modulation scheme {0}", satelliteChannel.ModulationScheme);
+            break;
+        }
+      }
+      else if (channel is ChannelDvbS)
       {
         command.DvbsStandard = ProfDvbsStandard.Dvbs;
-        command.PilotTonesState = ProfPilotTonesState.Off;
-        command.RollOffFactor = ProfRollOffFactor.ThirtyFive;
-        if (satelliteChannel.ModulationScheme == ModulationSchemePsk.Psk4)
+        switch (satelliteChannel.ModulationScheme)
         {
-          command.ModulationType = ModulationType.ModQpsk;
-          satelliteChannel.ModulationScheme = (ModulationSchemePsk)ModulationType.ModQpsk;
-        }
-        else
-        {
-          this.LogWarn("Prof: DVB-S tune request uses unsupported modulation scheme {0}", satelliteChannel.ModulationScheme);
+          case ModulationSchemePsk.Psk2:
+            // The driver maps ModBpsk to DVB-S2, so we have to override the
+            // default mapping. Assume Mod16Qam is mapped to DVB-S.
+            bdaModulation = ModulationType.Mod16Qam;
+            break;
+          case ModulationSchemePsk.Psk4:
+            bdaModulation = ModulationType.ModQpsk;
+            break;
+          default:
+            this.LogWarn("Prof: DVB-S tune request uses unsupported modulation scheme {0}", satelliteChannel.ModulationScheme);
+            break;
         }
       }
       else
       {
-        ChannelDvbS2 dvbs2Channel = channel as ChannelDvbS2;
-        if (dvbs2Channel == null)
-        {
-          // Default: tuning with "auto" is slower, so avoid it if possible.
-          this.LogWarn("Prof: tune request for unsupported satellite standard");
-          command.DvbsStandard = ProfDvbsStandard.Auto;
-          command.ModulationType = ModulationType.ModNotSet;
-          command.PilotTonesState = ProfPilotTonesState.Off;
-          command.RollOffFactor = ProfRollOffFactor.ThirtyFive;
-        }
-        else
-        {
-          command.DvbsStandard = ProfDvbsStandard.Dvbs2;
-          switch (satelliteChannel.ModulationScheme)
-          {
-            case ModulationSchemePsk.Psk4:
-              command.ModulationType = ModulationType.ModNbcQpsk;
-              satelliteChannel.ModulationScheme = (ModulationSchemePsk)ModulationType.ModNbcQpsk;
-              break;
-            case ModulationSchemePsk.Psk8:
-              command.ModulationType = ModulationType.ModNbc8Psk;
-              satelliteChannel.ModulationScheme = (ModulationSchemePsk)ModulationType.ModNbc8Psk;
-              break;
-            default:
-              this.LogWarn("Prof: DVB-S2 tune request uses unsupported modulation scheme {0}", satelliteChannel.ModulationScheme);
-              command.ModulationType = ModulationType.ModNotSet;
-              break;
-          }
+        // Tuning with "auto" is slower, so avoid it if possible.
+        this.LogWarn("Prof: tune request for unsupported satellite standard");
+        command.DvbsStandard = ProfDvbsStandard.Auto;
+      }
 
-          if (dvbs2Channel.PilotTonesState == PilotTonesState.Off)
-          {
-            command.PilotTonesState = ProfPilotTonesState.Off;
-          }
-          else if (dvbs2Channel.PilotTonesState == PilotTonesState.On)
-          {
-            command.PilotTonesState = ProfPilotTonesState.On;
-          }
-          else
-          {
-            command.PilotTonesState = ProfPilotTonesState.Unknown;
-          }
-
-          switch (dvbs2Channel.RollOffFactor)
-          {
-            case RollOffFactor.Twenty:
-              command.RollOffFactor = ProfRollOffFactor.Twenty;
-              break;
-            case RollOffFactor.TwentyFive:
-              command.RollOffFactor = ProfRollOffFactor.TwentyFive;
-              break;
-            case RollOffFactor.ThirtyFive:
-              command.RollOffFactor = ProfRollOffFactor.ThirtyFive;
-              break;
-            default:
-              this.LogWarn("Prof: DVB-S2 tune request uses unsupported roll-off factor {0}", dvbs2Channel.RollOffFactor);
-              command.RollOffFactor = ProfRollOffFactor.Undefined;
-              break;
-          }
+      KSPropertySupport support;
+      int hr = _propertySet.QuerySupported(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.NbcParams, out support);
+      if (hr != (int)NativeMethods.HResult.S_OK || !support.HasFlag(KSPropertySupport.Set))
+      {
+        if (command.ModulationType != ModulationType.ModNotSet)
+        {
+          this.LogDebug("  modulation = {0}", command.ModulationType);
+          satelliteChannel.ModulationScheme = (ModulationSchemePsk)bdaModulation;
         }
+        this.LogDebug("Prof: NBC tuning parameter property not supported, hr = 0x{0:x}, support = {1}", hr, support);
+        return;
       }
 
       switch (satelliteChannel.FecCodeRate)
@@ -414,15 +406,68 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Prof
         default:
           this.LogWarn("Prof: tune request uses unsupported FEC code rate {0}", satelliteChannel.FecCodeRate);
           command.FecCodeRate = BinaryConvolutionCodeRate.RateNotSet;
-          command.DvbsStandard = ProfDvbsStandard.Auto;   // old demods can't auto-detect DVB-S2 FEC code rate
           break;
+      }
+
+      // Maybe these NBC parameter values should be 0.35/off for non-DVB-S2.
+      command.RollOffFactor = ProfRollOffFactor.Undefined;
+      command.PilotTonesState = ProfPilotTonesState.Unknown;
+      RollOffFactor rollOffFactor = RollOffFactor.Automatic;
+      if (dvbs2Channel == null)
+      {
+        ChannelDvbDsng dvbDsngChannel = channel as ChannelDvbDsng;
+        if (dvbDsngChannel != null)
+        {
+          rollOffFactor = dvbDsngChannel.RollOffFactor;
+        }
+      }
+      else
+      {
+        if (command.FecCodeRate == BinaryConvolutionCodeRate.RateNotSet)
+        {
+          // Old demods can't auto-detect DVB-S2 FEC code rate.
+          command.DvbsStandard = ProfDvbsStandard.Auto;
+        }
+
+        rollOffFactor = dvbs2Channel.RollOffFactor;
+        switch (dvbs2Channel.PilotTonesState)
+        {
+          case PilotTonesState.Off:
+            command.PilotTonesState = ProfPilotTonesState.Off;
+            break;
+          case PilotTonesState.On:
+            command.PilotTonesState = ProfPilotTonesState.On;
+            break;
+          default:
+            this.LogWarn("Prof: DVB-S2 tune request uses unsupported pilot tones state {0}", dvbs2Channel.PilotTonesState);
+            break;
+        }
+      }
+
+      if (rollOffFactor != RollOffFactor.Automatic)
+      {
+        switch (rollOffFactor)
+        {
+          case RollOffFactor.Twenty:
+            command.RollOffFactor = ProfRollOffFactor.Twenty;
+            break;
+          case RollOffFactor.TwentyFive:
+            command.RollOffFactor = ProfRollOffFactor.TwentyFive;
+            break;
+          case RollOffFactor.ThirtyFive:
+            command.RollOffFactor = ProfRollOffFactor.ThirtyFive;
+            break;
+          default:
+            this.LogWarn("Prof: DVB-DSNG/DVB-S2 tune request uses unsupported roll-off factor {0}", rollOffFactor);
+            break;
+        }
       }
 
       this.LogDebug("  standard        = {0}", command.DvbsStandard);
       this.LogDebug("  modulation      = {0}", command.ModulationType);
       this.LogDebug("  FEC code rate   = {0}", command.FecCodeRate);
-      this.LogDebug("  pilot tones     = {0}", command.PilotTonesState);
       this.LogDebug("  roll-off factor = {0}", command.RollOffFactor);
+      this.LogDebug("  pilot tones     = {0}", command.PilotTonesState);
 
       Marshal.StructureToPtr(command, _generalBuffer, false);
       //Dump.DumpBinary(_generalBuffer, NBC_TUNING_PARAMS_SIZE);

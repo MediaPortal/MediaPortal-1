@@ -36,6 +36,22 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       }
     }
 
+    public static Satellite GetSatellite(int idSatellite)
+    {
+      using (ITunerRepository tunerRepository = new TunerRepository())
+      {
+        return tunerRepository.GetQuery<Satellite>(s => s.IdSatellite == idSatellite).FirstOrDefault();
+      }
+    }
+
+    public static Satellite GetSatelliteByLongitude(int longitude)
+    {
+      using (ITunerRepository tunerRepository = new TunerRepository())
+      {
+        return tunerRepository.GetQuery<Satellite>(s => s.Longitude == longitude).FirstOrDefault();
+      }
+    }
+
     public static Satellite SaveSatellite(Satellite satellite)
     {
       using (ITunerRepository tunerRepository = new TunerRepository())

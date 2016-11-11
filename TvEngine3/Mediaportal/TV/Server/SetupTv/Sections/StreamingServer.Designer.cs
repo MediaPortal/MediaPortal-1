@@ -86,7 +86,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       // comboBoxInterface
       // 
-      this.comboBoxInterface.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxInterface.FormattingEnabled = true;
       this.comboBoxInterface.Location = new System.Drawing.Point(64, 19);
       this.comboBoxInterface.Name = "comboBoxInterface";

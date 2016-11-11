@@ -170,20 +170,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
             break;
         }
 
-        switch (dvbs2Channel.PilotTonesState)
-        {
-          case PilotTonesState.Off:
-            pilotTonesState = "off";
-            break;
-          case PilotTonesState.On:
-            pilotTonesState = "on";
-            break;
-          default:
-            this.LogWarn("SAT>IP satellite: unsupported pilot tones state {0}, falling back to on", dvbs2Channel.PilotTonesState);
-            pilotTonesState = "on";
-            break;
-        }
-
         switch (dvbs2Channel.RollOffFactor)
         {
           case RollOffFactor.ThirtyFive:
@@ -200,10 +186,24 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
             rollOffFactor = "0.35";
             break;
         }
+
+        switch (dvbs2Channel.PilotTonesState)
+        {
+          case PilotTonesState.Off:
+            pilotTonesState = "off";
+            break;
+          case PilotTonesState.On:
+            pilotTonesState = "on";
+            break;
+          default:
+            this.LogWarn("SAT>IP satellite: unsupported pilot tones state {0}, falling back to on", dvbs2Channel.PilotTonesState);
+            pilotTonesState = "on";
+            break;
+        }
       }
 
-      string parameters = string.Format("msys={0}&src={1}&freq={2}&pol={3}&mtype={4}&sr={5}&fec={6}&plts={7}&ro={8}", system, satelliteChannel.Longitude, frequency, polarisation, modulation, satelliteChannel.SymbolRate, fecCodeRate, pilotTonesState, rollOffFactor);
-      PerformTuning(channel as ChannelDvbBase, parameters);
+      string parameters = string.Format("msys={0}&src={1}&freq={2}&pol={3}&mtype={4}&sr={5}&fec={6}&ro={7}&plts={8}", system, satelliteChannel.Longitude, frequency, polarisation, modulation, satelliteChannel.SymbolRate, fecCodeRate, rollOffFactor, pilotTonesState);
+      PerformTuning(channel as IChannelDvb, parameters);
     }
 
     #endregion

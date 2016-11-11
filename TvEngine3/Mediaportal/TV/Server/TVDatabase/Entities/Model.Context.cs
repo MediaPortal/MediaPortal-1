@@ -113,11 +113,11 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         }
         private ObjectSet<ChannelLinkageMap> _channelLinkageMaps;
     
-        public ObjectSet<ChannelMap> ChannelMaps
+        public ObjectSet<TunerTuningDetailMapping> TunerTuningDetailMappings
         {
-            get { return _channelMaps  ?? (_channelMaps = CreateObjectSet<ChannelMap>("ChannelMaps")); }
+            get { return _tunerTuningDetailMappings  ?? (_tunerTuningDetailMappings = CreateObjectSet<TunerTuningDetailMapping>("TunerTuningDetailMappings")); }
         }
-        private ObjectSet<ChannelMap> _channelMaps;
+        private ObjectSet<TunerTuningDetailMapping> _tunerTuningDetailMappings;
     
         public ObjectSet<Conflict> Conflicts
         {
@@ -125,11 +125,11 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         }
         private ObjectSet<Conflict> _conflicts;
     
-        public ObjectSet<GroupMap> GroupMaps
+        public ObjectSet<ChannelGroupChannelMapping> ChannelGroupChannelMappings
         {
-            get { return _groupMaps  ?? (_groupMaps = CreateObjectSet<GroupMap>("GroupMaps")); }
+            get { return _channelGroupChannelMappings  ?? (_channelGroupChannelMappings = CreateObjectSet<ChannelGroupChannelMapping>("ChannelGroupChannelMappings")); }
         }
-        private ObjectSet<GroupMap> _groupMaps;
+        private ObjectSet<ChannelGroupChannelMapping> _channelGroupChannelMappings;
     
         public ObjectSet<History> Histories
         {

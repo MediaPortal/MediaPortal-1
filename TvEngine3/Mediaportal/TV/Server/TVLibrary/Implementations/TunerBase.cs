@@ -293,6 +293,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       _productInstanceId = productInstanceId;
       _supportedBroadcastStandards = supportedBroadcastStandards;
       _possibleBroadcastStandards = supportedBroadcastStandards;
+      _possibleBroadcastStandards &= PossibleBroadcastStandards;
+      _supportedBroadcastStandards &= PossibleBroadcastStandards;
     }
 
     ~TunerBase()
@@ -712,14 +714,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
           this.LogDebug("  ID                  = {0}", config.IdTuner);
           this.LogDebug("  name                = {0}", config.Name);
           this.LogDebug("  external ID         = {0}", config.ExternalId);
-          this.LogDebug("  standards           = {0}", (BroadcastStandard)config.SupportedBroadcastStandards);
+          this.LogDebug("  standard(s)         = [{0}]", (BroadcastStandard)config.SupportedBroadcastStandards);
           this.LogDebug("  tuner group ID      = {0}", config.IdTunerGroup == null ? "[null]" : config.IdTunerGroup.ToString());
           this.LogDebug("  enabled?            = {0}", config.IsEnabled);
           this.LogDebug("  priority            = {0}", config.Priority);
           this.LogDebug("  EPG grabbing?       = {0}", config.UseForEpgGrabbing);
           this.LogDebug("  preload?            = {0}", config.Preload);
           this.LogDebug("  conditional access? = {0}", config.UseConditionalAccess);
-          this.LogDebug("    providers         = {0}", config.ConditionalAccessProviders);
+          this.LogDebug("    provider(s)       = [{0}]", config.ConditionalAccessProviders);
           this.LogDebug("    CAM type          = {0}", (CamType)config.CamType);
           this.LogDebug("    decrypt limit     = {0}", config.DecryptLimit);
           this.LogDebug("    MCD mode          = {0}", (MultiChannelDecryptMode)config.MultiChannelDecryptMode);
@@ -738,12 +740,20 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
           BroadcastStandard impossibleStandards = configuredStandards & ~PossibleBroadcastStandards;
           if (impossibleStandards != BroadcastStandard.Unknown)
           {
-            this.LogWarn("tuner base: configuration attempts to enable support for broadcast standard(s) not supported by code, impossible standards = [{0}]", impossibleStandards);
             configuredStandards &= PossibleBroadcastStandards;
+            if (configuredStandards == BroadcastStandard.Unknown)
+            {
+              this.LogWarn("tuner base: tuner type appears to have changed, configured = [{0}], current = [{1}]", configuredStandards, _supportedBroadcastStandards);
+              configuredStandards = _supportedBroadcastStandards;
+            }
+            else
+            {
+              this.LogWarn("tuner base: configuration attempts to enable support for broadcast standard(s) not supported by code, impossible standards = [{0}]", impossibleStandards);
+            }
             config.SupportedBroadcastStandards = (int)configuredStandards;
             TunerManagement.SaveTuner(config);
           }
-          if (configuredStandards != SupportedBroadcastStandards)
+          if (configuredStandards != _supportedBroadcastStandards)
           {
             this.LogDebug("tuner base: configuration enables/disables support for broadcast standard(s)...");
             this.LogDebug("  detected      = {0}", SupportedBroadcastStandards);
@@ -793,17 +803,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
 
           IList<TunerSatellite> tunerSatellites = TunerSatelliteManagement.ListAllTunerSatellitesByTuner(_tunerId, TunerSatelliteRelation.LnbType | TunerSatelliteRelation.Satellite);
           _satellites.Clear();
-          IList<TunerSatellite> satellites = null;
+          IList<TunerSatellite> tunerSatellitesAtLongitude = null;
           int longitude = -1;
           foreach (TunerSatellite tunerSatellite in tunerSatellites)
           {
             if (longitude != tunerSatellite.Satellite.Longitude)
             {
               longitude = tunerSatellite.Satellite.Longitude;
-              satellites = new List<TunerSatellite>(5);
-              _satellites[longitude] = satellites;
+              tunerSatellitesAtLongitude = new List<TunerSatellite>(5);
+              _satellites[longitude] = tunerSatellitesAtLongitude;
             }
-            satellites.Add(tunerSatellite);
+            tunerSatellitesAtLongitude.Add(tunerSatellite);
           }
         }
       }
@@ -1277,6 +1287,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <returns><c>true</c> if the tuner can tune to the channel, otherwise <c>false</c></returns>
     public virtual bool CanTune(IChannel channel)
     {
+      bool canTuneDvbS2 = false;
+      ChannelDvbS2 dvbs2Channel = channel as ChannelDvbS2;
+      if (dvbs2Channel != null)
+      {
+        canTuneDvbS2 = _supportedBroadcastStandards.HasFlag(dvbs2Channel.BroadcastStandard);
+      }
+
       if (
         _isEnabled &&
         (
@@ -1286,8 +1303,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
           (channel is ChannelDigiCipher2 && _supportedBroadcastStandards.HasFlag(BroadcastStandard.DigiCipher2)) ||
           (channel is ChannelDvbC && _supportedBroadcastStandards.HasFlag(BroadcastStandard.DvbC)) ||
           (channel is ChannelDvbC2 && _supportedBroadcastStandards.HasFlag(BroadcastStandard.DvbC2)) ||
+          (channel is ChannelDvbDsng && _supportedBroadcastStandards.HasFlag(BroadcastStandard.DvbDsng)) ||
           (channel is ChannelDvbS && _supportedBroadcastStandards.HasFlag(BroadcastStandard.DvbS)) ||
-          (channel is ChannelDvbS2 && _supportedBroadcastStandards.HasFlag(BroadcastStandard.DvbS2)) ||
+          canTuneDvbS2 ||
           (channel is ChannelDvbT && _supportedBroadcastStandards.HasFlag(BroadcastStandard.DvbT)) ||
           (channel is ChannelDvbT2 && _supportedBroadcastStandards.HasFlag(BroadcastStandard.DvbT2)) ||
           (channel is ChannelFmRadio && _supportedBroadcastStandards.HasFlag(BroadcastStandard.FmRadio)) ||
@@ -1306,10 +1324,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
           return true;
         }
 
-        IList<TunerSatellite> satellitesForLongitude;
-        if (_satellites.TryGetValue(satelliteChannel.Longitude, out satellitesForLongitude))
+        IList<TunerSatellite> tunerSatellitesAtLongitude;
+        if (_satellites.TryGetValue(satelliteChannel.Longitude, out tunerSatellitesAtLongitude))
         {
-          foreach (TunerSatellite satellite in satellitesForLongitude)
+          foreach (TunerSatellite satellite in tunerSatellitesAtLongitude)
           {
             if (
               ((Polarisation)satellite.Polarisations).HasFlag(satelliteChannel.Polarisation) &&
@@ -1365,10 +1383,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
           TunerSatellite satellite = null;
           if (satelliteChannel != null)
           {
-            IList<TunerSatellite> satellitesForLongitude;
-            if (_satellites.TryGetValue(satelliteChannel.Longitude, out satellitesForLongitude))
+            IList<TunerSatellite> tunerSatellitesAtLongitude;
+            if (_satellites.TryGetValue(satelliteChannel.Longitude, out tunerSatellitesAtLongitude))
             {
-              foreach (TunerSatellite s in satellitesForLongitude)
+              foreach (TunerSatellite s in tunerSatellitesAtLongitude)
               {
                 if (
                   ((Polarisation)s.Polarisations).HasFlag(satelliteChannel.Polarisation) &&

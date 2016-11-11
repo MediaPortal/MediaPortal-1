@@ -7,6 +7,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities.Enums
   {
     None = 0,
     Channel = 1,
-    Satellite = 2
+    Satellite = 2,
+    TunerMappings = 3
   }
 }

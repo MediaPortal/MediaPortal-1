@@ -21,6 +21,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
+
 namespace Mediaportal.TV.Server.TVDatabase.Entities
 {
   public partial class Program

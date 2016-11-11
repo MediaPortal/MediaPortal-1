@@ -162,7 +162,7 @@ namespace Mediaportal.TV.Server.Plugins.TvMovieImport.Config
         _channelGroups = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroups(ChannelGroupRelation.None);
         foreach (ChannelGroup group in _channelGroups)
         {
-          comboBoxMappingsChannelGroup.Items.Add(new ComboBoxChannelGroup(string.Format("{0} - {1}", ((MediaType)group.MediaType).GetDescription(), group.GroupName), group.IdGroup));
+          comboBoxMappingsChannelGroup.Items.Add(new ComboBoxChannelGroup(string.Format("{0} - {1}", ((MediaType)group.MediaType).GetDescription(), group.Name), group.IdChannelGroup));
         }
         comboBoxMappingsChannelGroup.SelectedIndex = 0;
       }

@@ -26,12 +26,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel
 {
   /// <summary>
   /// An implementation of <see cref="T:IChannel"/> for satellite channels
-  /// broadcast with non-standard turbo FEC code rates and modulation schemes.
+  /// broadcast with turbo forward error correction (FEC) coding.
   /// </summary>
   /// <remarks>
-  /// These techniques were used mainly on North American satellites before
-  /// DVB-S2 was standardised and/or widely used as a way to get better
-  /// efficiency than DVB-S. Some broadcasts still exist today (2014).
+  /// Turbo FEC was implemented by some North American broadcasters such as
+  /// Dish Network USA before DVB-S2 was standardised. It is more efficient
+  /// than DVB-S.
   /// </remarks>
   [DataContract]
   public class ChannelSatelliteTurboFec : ChannelDvbBase, IChannelSatellite

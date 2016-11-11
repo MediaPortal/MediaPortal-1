@@ -84,97 +84,142 @@ namespace Mediaportal.TV.Server.Common.Types.Enum
     [Description("DVB-S2")]
     DvbS2 = 0x00000200,
     /// <summary>
+    /// Professional features (eg. 16 and 32 APSK) for the second generation Digital Video Broadcast standard for satellite broadcast.
+    /// </summary>
+    [Description("DVB-S2 Pro")]
+    DvbS2Pro = 0x00000400,
+    /// <summary>
     /// Optional extension to the second generation Digital Video Broadcast standard for satellite broadcast.
     /// </summary>
     [Description("DVB-S2X")]
-    DvbS2X = 0x00000400,
+    DvbS2X = 0x00000800,
     /// <summary>
     /// First generation Digital Video Broadcast standard for terrestrial broadcast.
     /// </summary>
     [Description("DVB-T")]
-    DvbT = 0x00000800,
+    DvbT = 0x00001000,
     /// <summary>
     /// Second generation Digital Video Broadcast standard for terrestrial broadcast.
     /// </summary>
     [Description("DVB-T2")]
-    DvbT2 = 0x00001000,
+    DvbT2 = 0x00002000,
     /// <summary>
     /// Advanced Television Systems Committee standard for terrestrial broadcast.
     /// </summary>
     [Description("ATSC")]
-    Atsc = 0x00002000,
+    Atsc = 0x00004000,
     /// <summary>
     /// Society of Cable and Telecommunications Engineers standard for cable broadcast.
     /// </summary>
     [Description("SCTE")]
-    Scte = 0x00004000,
+    Scte = 0x00008000,
     /// <summary>
     /// Integrated Services Digital Broadcasting standard for cable broadcast.
     /// </summary>
     [Description("ISDB-C")]
-    IsdbC = 0x00008000,
+    IsdbC = 0x00010000,
     /// <summary>
     /// Integrated Services Digital Broadcasting standard for satellite broadcast.
     /// </summary>
     [Description("ISDB-S")]
-    IsdbS = 0x00010000,
+    IsdbS = 0x00020000,
     /// <summary>
     /// Integrated Services Digital Broadcasting standard for terrestrial broadcast.
     /// </summary>
     [Description("ISDB-T")]
-    IsdbT = 0x00020000,
+    IsdbT = 0x00040000,
     /// <summary>
     /// Non-standardised turbo-FEC satellite broadcast.
     /// </summary>
     [Description("Turbo FEC")]
-    SatelliteTurboFec = 0x00040000,
+    SatelliteTurboFec = 0x00080000,
     /// <summary>
     /// Motorola DigiCipher 2 (DC II) standard for satellite and cable broadcast.
     /// </summary>
     [Description("DigiCipher 2")]
-    DigiCipher2 = 0x00080000,
+    DigiCipher2 = 0x00100000,
     /// <summary>
     /// DirecTV standard for satellite broadcast.
     /// </summary>
     [Description("DirecTV")]
-    DirecTvDss = 0x00100000,
+    DirecTvDss = 0x00200000,
     /// <summary>
     /// Digital Audio Broadcast standard.
     /// </summary>
     [Description("DAB")]
-    Dab = 0x00200000,
+    Dab = 0x00400000,
 
     /// <summary>
     /// A mask for identifying analog broadcast standards.
     /// </summary>
-    MaskAnalog = 0x0000000e,
+    MaskAnalog = AmRadio | AnalogTelevision | FmRadio,
     /// <summary>
     /// A mask for identifying digital broadcast standards.
     /// </summary>
-    MaskDigital = 0x003fffff0,
+    MaskDigital = ~MaskAnalog & ~ExternalInput,
+
     /// <summary>
     /// A mask for identifying Digital Video Broadcast standards.
     /// </summary>
-    MaskDvb = 0x00001ff0,
+    MaskDvb = DvbC | DvbC2 | DvbDsng | DvbIp | DvbS | DvbS2 | DvbS2Pro | DvbS2X | DvbT | DvbT2,
     /// <summary>
     /// A mask for identifying second generation Digital Video Broadcast standards.
     /// </summary>
-    MaskDvb2 = 0x00001620,
+    MaskDvb2 = DvbC2 | DvbS2 | DvbS2Pro | DvbS2X | DvbT2,
+    /// <summary>
+    /// A mask for identifying second generation Digital Video Broadcast standards for satellite broadcast.
+    /// </summary>
+    MaskDvbS2 = DvbS2 | DvbS2Pro | DvbS2X,
     /// <summary>
     /// A mask for identifying Integrated Services Digital Broadcasting broadcast standards.
     /// </summary>
-    MaskIsdb = 0x00038000,
+    MaskIsdb = IsdbC | IsdbS | IsdbT,
+
     /// <summary>
     /// A mask for identifying broadcast standards that are applicable for cable transmission.
     /// </summary>
-    MaskCable = 0x0000c032,
+    MaskCable = AnalogTelevision | DvbC | DvbC2 | IsdbC | Scte,
     /// <summary>
     /// A mask for identifying broadcast standards that are applicable for satellite transmission.
     /// </summary>
-    MaskSatellite = 0x001d0740,
+    MaskSatellite = DigiCipher2 | DirecTvDss | DvbDsng | DvbS | DvbS2 | DvbS2Pro | DvbS2X | IsdbS | SatelliteTurboFec,
     /// <summary>
     /// A mask for identifying broadcast standards that are applicable for terrestrial transmission.
     /// </summary>
-    MaskTerrestrial = 0x0022380e
+    MaskTerrestrial = AmRadio | AnalogTelevision | Atsc | Dab | FmRadio | DvbT | DvbT2 | IsdbT,
+
+    /// <summary>
+    /// A mask for identifying broadcast standards that utilise orthogonal frequency division multiplexing techniques.
+    /// </summary>
+    MaskOfdm = Dab | DvbC2 | DvbT | DvbT2 | IsdbT,
+    /// <summary>
+    /// A mask for identifying broadcast standards that utilise phase shift keying modulation techniques.
+    /// </summary>
+    MaskPsk = MaskSatellite,
+    /// <summary>
+    /// A mask for identifying broadcast standards that utilise quadrature amplitude modulation techniques.
+    /// </summary>
+    MaskQam = DvbC | IsdbC | Scte,
+
+    /// <summary>
+    /// A mask for identifying broadcast standards that can be used in conjunction with ATSC and/or SCTE service information standards.
+    /// </summary>
+    MaskAtscScteSi = Atsc | Scte,
+    /// <summary>
+    /// A mask for identifying broadcast standards that can be used in conjunction with the Digital Video Broadcast service information standard.
+    /// </summary>
+    MaskDvbSi = MaskDvb | MaskIsdb | SatelliteTurboFec,
+    /// <summary>
+    /// A mask for identifying broadcast standards that can be used in conjunction with the Freesat service information standard.
+    /// </summary>
+    MaskFreesatSi = DvbS | DvbS2,
+    /// <summary>
+    /// A mask for identifying broadcast standards that can be used in conjunction with the MPEG 2 transport stream program and service information standard.
+    /// </summary>
+    MaskMpeg2TsSi = MaskAtscScteSi | MaskDvbSi | DigiCipher2,
+    /// <summary>
+    /// A mask for identifying broadcast standards that can be used in conjunction with the OpenTV service information standard.
+    /// </summary>
+    MaskOpenTvSi = DvbC | DvbC2 | DvbS | DvbS2 | DvbS2Pro | DvbS2X | DvbT | DvbT2
   }
 }

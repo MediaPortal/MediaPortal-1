@@ -48,7 +48,11 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
     private void buttonOkay_Click(object sender, EventArgs e)
     {
       BroadcastStandard broadcastStandard = BroadcastStandard.Unknown;
-      if (radioButtonAnalogTv.Checked)
+      if (radioButtonAmRadio.Checked)
+      {
+        broadcastStandard = BroadcastStandard.AmRadio;
+      }
+      else if (radioButtonAnalogTv.Checked)
       {
         broadcastStandard = BroadcastStandard.AnalogTelevision;
       }
@@ -60,11 +64,11 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       {
         broadcastStandard = BroadcastStandard.ExternalInput;
       }
-      else if (radioButtonDvbC.Checked)
+      else if (radioButtonCable.Checked)
       {
         broadcastStandard = BroadcastStandard.DvbC;
       }
-      else if (radioButtonDvbT.Checked)
+      else if (radioButtonTerrestrial.Checked)
       {
         broadcastStandard = BroadcastStandard.DvbT;
       }
@@ -105,38 +109,38 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
     {
       switch (broadcastStandard)
       {
+        case BroadcastStandard.AmRadio:
+        case BroadcastStandard.FmRadio:
+          return new FormEditTuningDetailAnalogRadio(broadcastStandard);
         case BroadcastStandard.AnalogTelevision:
           return new FormEditTuningDetailAnalogTv();
         case BroadcastStandard.Atsc:
-          return new FormEditTuningDetailAtsc();
+        case BroadcastStandard.Scte:
+          return new FormEditTuningDetailAtscScte(broadcastStandard);
         case BroadcastStandard.ExternalInput:
           return new FormEditTuningDetailCapture();
         case BroadcastStandard.DvbC:
-          return new FormEditTuningDetailDvbC();
+        case BroadcastStandard.IsdbC:
+          return new FormEditTuningDetailCable();
         case BroadcastStandard.DvbT:
         case BroadcastStandard.DvbT2:
-          return new FormEditTuningDetailDvbT();
-        case BroadcastStandard.FmRadio:
-          return new FormEditTuningDetailFmRadio();
+        case BroadcastStandard.IsdbT:
+          return new FormEditTuningDetailTerrestrial();
+        case BroadcastStandard.DvbDsng:
         case BroadcastStandard.DvbS:
         case BroadcastStandard.DvbS2:
+        case BroadcastStandard.DvbS2Pro:
+        case BroadcastStandard.DvbS2X:
+        case BroadcastStandard.IsdbS:
         case BroadcastStandard.SatelliteTurboFec:
         case BroadcastStandard.DigiCipher2:
+        case BroadcastStandard.DirecTvDss:
           return new FormEditTuningDetailSatellite();
-        case BroadcastStandard.Scte:
-          return new FormEditTuningDetailScte();
         case BroadcastStandard.DvbIp:
           return new FormEditTuningDetailStream();
 
         // Not implemented.
-        case BroadcastStandard.AmRadio:
         case BroadcastStandard.DvbC2:
-        case BroadcastStandard.DvbDsng:
-        case BroadcastStandard.DvbS2X:
-        case BroadcastStandard.IsdbC:
-        case BroadcastStandard.IsdbS:
-        case BroadcastStandard.IsdbT:
-        case BroadcastStandard.DirecTvDss:
         case BroadcastStandard.Dab:
         default:
           return null;

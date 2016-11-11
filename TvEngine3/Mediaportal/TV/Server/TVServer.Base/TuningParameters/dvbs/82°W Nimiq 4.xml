@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ArrayOfTuningDetail xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <TuningDetail>
-    <BroadcastStandard>TurboFec</BroadcastStandard>
-    <SatellitePosition>-820</SatellitePosition>
+    <BroadcastStandard>SatelliteTurboFec</BroadcastStandard>
+    <Longitude>-820</Longitude>
     <Frequency>12224000</Frequency>
     <Polarisation>CircularRight</Polarisation>
     <ModulationScheme>Psk8</ModulationScheme>
@@ -10,8 +10,8 @@
     <FecCodeRate>Rate2_3</FecCodeRate>
   </TuningDetail>
   <TuningDetail>
-    <BroadcastStandard>TurboFec</BroadcastStandard>
-    <SatellitePosition>-820</SatellitePosition>
+    <BroadcastStandard>SatelliteTurboFec</BroadcastStandard>
+    <Longitude>-820</Longitude>
     <Frequency>12239000</Frequency>
     <Polarisation>CircularLeft</Polarisation>
     <ModulationScheme>Psk8</ModulationScheme>
@@ -19,8 +19,8 @@
     <FecCodeRate>Rate2_3</FecCodeRate>
   </TuningDetail>
   <TuningDetail>
-    <BroadcastStandard>TurboFec</BroadcastStandard>
-    <SatellitePosition>-820</SatellitePosition>
+    <BroadcastStandard>SatelliteTurboFec</BroadcastStandard>
+    <Longitude>-820</Longitude>
     <Frequency>12253000</Frequency>
     <Polarisation>CircularRight</Polarisation>
     <ModulationScheme>Psk8</ModulationScheme>
@@ -28,8 +28,8 @@
     <FecCodeRate>Rate2_3</FecCodeRate>
   </TuningDetail>
   <TuningDetail>
-    <BroadcastStandard>TurboFec</BroadcastStandard>
-    <SatellitePosition>-820</SatellitePosition>
+    <BroadcastStandard>SatelliteTurboFec</BroadcastStandard>
+    <Longitude>-820</Longitude>
     <Frequency>12268000</Frequency>
     <Polarisation>CircularLeft</Polarisation>
     <ModulationScheme>Psk8</ModulationScheme>
@@ -37,8 +37,8 @@
     <FecCodeRate>Rate2_3</FecCodeRate>
   </TuningDetail>
   <TuningDetail>
-    <BroadcastStandard>TurboFec</BroadcastStandard>
-    <SatellitePosition>-820</SatellitePosition>
+    <BroadcastStandard>SatelliteTurboFec</BroadcastStandard>
+    <Longitude>-820</Longitude>
     <Frequency>12282000</Frequency>
     <Polarisation>CircularRight</Polarisation>
     <ModulationScheme>Psk8</ModulationScheme>
@@ -46,8 +46,8 @@
     <FecCodeRate>Rate2_3</FecCodeRate>
   </TuningDetail>
   <TuningDetail>
-    <BroadcastStandard>TurboFec</BroadcastStandard>
-    <SatellitePosition>-820</SatellitePosition>
+    <BroadcastStandard>SatelliteTurboFec</BroadcastStandard>
+    <Longitude>-820</Longitude>
     <Frequency>12297000</Frequency>
     <Polarisation>CircularLeft</Polarisation>
     <ModulationScheme>Psk8</ModulationScheme>
@@ -55,8 +55,8 @@
     <FecCodeRate>Rate2_3</FecCodeRate>
   </TuningDetail>
   <TuningDetail>
-    <BroadcastStandard>TurboFec</BroadcastStandard>
-    <SatellitePosition>-820</SatellitePosition>
+    <BroadcastStandard>SatelliteTurboFec</BroadcastStandard>
+    <Longitude>-820</Longitude>
     <Frequency>12311000</Frequency>
     <Polarisation>CircularRight</Polarisation>
     <ModulationScheme>Psk8</ModulationScheme>
@@ -64,8 +64,8 @@
     <FecCodeRate>Rate2_3</FecCodeRate>
   </TuningDetail>
   <TuningDetail>
-    <BroadcastStandard>TurboFec</BroadcastStandard>
-    <SatellitePosition>-820</SatellitePosition>
+    <BroadcastStandard>SatelliteTurboFec</BroadcastStandard>
+    <Longitude>-820</Longitude>
     <Frequency>12326000</Frequency>
     <Polarisation>CircularLeft</Polarisation>
     <ModulationScheme>Psk8</ModulationScheme>
@@ -73,8 +73,8 @@
     <FecCodeRate>Rate2_3</FecCodeRate>
   </TuningDetail>
   <TuningDetail>
-    <BroadcastStandard>TurboFec</BroadcastStandard>
-    <SatellitePosition>-820</SatellitePosition>
+    <BroadcastStandard>SatelliteTurboFec</BroadcastStandard>
+    <Longitude>-820</Longitude>
     <Frequency>12341000</Frequency>
     <Polarisation>CircularRight</Polarisation>
     <ModulationScheme>Psk8</ModulationScheme>
@@ -82,8 +82,8 @@
     <FecCodeRate>Rate2_3</FecCodeRate>
   </TuningDetail>
   <TuningDetail>
-    <BroadcastStandard>TurboFec</BroadcastStandard>
-    <SatellitePosition>-820</SatellitePosition>
+    <BroadcastStandard>SatelliteTurboFec</BroadcastStandard>
+    <Longitude>-820</Longitude>
     <Frequency>12355000</Frequency>
     <Polarisation>CircularLeft</Polarisation>
     <ModulationScheme>Psk8</ModulationScheme>
@@ -91,8 +91,8 @@
     <FecCodeRate>Rate2_3</FecCodeRate>
   </TuningDetail>
   <TuningDetail>
-    <BroadcastStandard>TurboFec</BroadcastStandard>
-    <SatellitePosition>-820</SatellitePosition>
+    <BroadcastStandard>SatelliteTurboFec</BroadcastStandard>
+    <Longitude>-820</Longitude>
     <Frequency>12370000</Frequency>
     <Polarisation>CircularRight</Polarisation>
     <ModulationScheme>Psk8</ModulationScheme>
@@ -100,8 +100,8 @@
     <FecCodeRate>Rate2_3</FecCodeRate>
   </TuningDetail>
   <TuningDetail>
-    <BroadcastStandard>TurboFec</BroadcastStandard>
-    <SatellitePosition>-820</SatellitePosition>
+    <BroadcastStandard>SatelliteTurboFec</BroadcastStandard>
+    <Longitude>-820</Longitude>
     <Frequency>12384000</Frequency>
     <Polarisation>CircularLeft</Polarisation>
     <ModulationScheme>Psk8</ModulationScheme>
@@ -109,8 +109,8 @@
     <FecCodeRate>Rate2_3</FecCodeRate>
   </TuningDetail>
   <TuningDetail>
-    <BroadcastStandard>TurboFec</BroadcastStandard>
-    <SatellitePosition>-820</SatellitePosition>
+    <BroadcastStandard>SatelliteTurboFec</BroadcastStandard>
+    <Longitude>-820</Longitude>
     <Frequency>12399000</Frequency>
     <Polarisation>CircularRight</Polarisation>
     <ModulationScheme>Psk8</ModulationScheme>
@@ -118,8 +118,8 @@
     <FecCodeRate>Rate2_3</FecCodeRate>
   </TuningDetail>
   <TuningDetail>
-    <BroadcastStandard>TurboFec</BroadcastStandard>
-    <SatellitePosition>-820</SatellitePosition>
+    <BroadcastStandard>SatelliteTurboFec</BroadcastStandard>
+    <Longitude>-820</Longitude>
     <Frequency>12414000</Frequency>
     <Polarisation>CircularLeft</Polarisation>
     <ModulationScheme>Psk8</ModulationScheme>
@@ -128,7 +128,7 @@
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
-    <SatellitePosition>-820</SatellitePosition>
+    <Longitude>-820</Longitude>
     <Frequency>12443000</Frequency>
     <Polarisation>CircularLeft</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
@@ -136,8 +136,8 @@
     <FecCodeRate>Rate7_8</FecCodeRate>
   </TuningDetail>
   <TuningDetail>
-    <BroadcastStandard>TurboFec</BroadcastStandard>
-    <SatellitePosition>-820</SatellitePosition>
+    <BroadcastStandard>SatelliteTurboFec</BroadcastStandard>
+    <Longitude>-820</Longitude>
     <Frequency>12457000</Frequency>
     <Polarisation>CircularRight</Polarisation>
     <ModulationScheme>Psk8</ModulationScheme>
@@ -145,8 +145,8 @@
     <FecCodeRate>Rate2_3</FecCodeRate>
   </TuningDetail>
   <TuningDetail>
-    <BroadcastStandard>TurboFec</BroadcastStandard>
-    <SatellitePosition>-820</SatellitePosition>
+    <BroadcastStandard>SatelliteTurboFec</BroadcastStandard>
+    <Longitude>-820</Longitude>
     <Frequency>12472000</Frequency>
     <Polarisation>CircularLeft</Polarisation>
     <ModulationScheme>Psk8</ModulationScheme>
@@ -154,8 +154,8 @@
     <FecCodeRate>Rate2_3</FecCodeRate>
   </TuningDetail>
   <TuningDetail>
-    <BroadcastStandard>TurboFec</BroadcastStandard>
-    <SatellitePosition>-820</SatellitePosition>
+    <BroadcastStandard>SatelliteTurboFec</BroadcastStandard>
+    <Longitude>-820</Longitude>
     <Frequency>12486000</Frequency>
     <Polarisation>CircularRight</Polarisation>
     <ModulationScheme>Psk8</ModulationScheme>
@@ -163,8 +163,8 @@
     <FecCodeRate>Rate2_3</FecCodeRate>
   </TuningDetail>
   <TuningDetail>
-    <BroadcastStandard>TurboFec</BroadcastStandard>
-    <SatellitePosition>-820</SatellitePosition>
+    <BroadcastStandard>SatelliteTurboFec</BroadcastStandard>
+    <Longitude>-820</Longitude>
     <Frequency>12501000</Frequency>
     <Polarisation>CircularLeft</Polarisation>
     <ModulationScheme>Psk8</ModulationScheme>
@@ -172,8 +172,8 @@
     <FecCodeRate>Rate2_3</FecCodeRate>
   </TuningDetail>
   <TuningDetail>
-    <BroadcastStandard>TurboFec</BroadcastStandard>
-    <SatellitePosition>-820</SatellitePosition>
+    <BroadcastStandard>SatelliteTurboFec</BroadcastStandard>
+    <Longitude>-820</Longitude>
     <Frequency>12516000</Frequency>
     <Polarisation>CircularRight</Polarisation>
     <ModulationScheme>Psk8</ModulationScheme>
@@ -181,17 +181,8 @@
     <FecCodeRate>Rate2_3</FecCodeRate>
   </TuningDetail>
   <TuningDetail>
-    <BroadcastStandard>TurboFec</BroadcastStandard>
-    <SatellitePosition>-820</SatellitePosition>
-    <Frequency>12530000</Frequency>
-    <Polarisation>CircularLeft</Polarisation>
-    <ModulationScheme>Psk8</ModulationScheme>
-    <SymbolRate>21500</SymbolRate>
-    <FecCodeRate>Rate2_3</FecCodeRate>
-  </TuningDetail>
-  <TuningDetail>
-    <BroadcastStandard>TurboFec</BroadcastStandard>
-    <SatellitePosition>-820</SatellitePosition>
+    <BroadcastStandard>SatelliteTurboFec</BroadcastStandard>
+    <Longitude>-820</Longitude>
     <Frequency>12545000</Frequency>
     <Polarisation>CircularRight</Polarisation>
     <ModulationScheme>Psk8</ModulationScheme>
@@ -199,8 +190,8 @@
     <FecCodeRate>Rate2_3</FecCodeRate>
   </TuningDetail>
   <TuningDetail>
-    <BroadcastStandard>TurboFec</BroadcastStandard>
-    <SatellitePosition>-820</SatellitePosition>
+    <BroadcastStandard>SatelliteTurboFec</BroadcastStandard>
+    <Longitude>-820</Longitude>
     <Frequency>12559000</Frequency>
     <Polarisation>CircularLeft</Polarisation>
     <ModulationScheme>Psk8</ModulationScheme>
@@ -208,8 +199,8 @@
     <FecCodeRate>Rate2_3</FecCodeRate>
   </TuningDetail>
   <TuningDetail>
-    <BroadcastStandard>TurboFec</BroadcastStandard>
-    <SatellitePosition>-820</SatellitePosition>
+    <BroadcastStandard>SatelliteTurboFec</BroadcastStandard>
+    <Longitude>-820</Longitude>
     <Frequency>12574000</Frequency>
     <Polarisation>CircularRight</Polarisation>
     <ModulationScheme>Psk8</ModulationScheme>
@@ -217,8 +208,8 @@
     <FecCodeRate>Rate2_3</FecCodeRate>
   </TuningDetail>
   <TuningDetail>
-    <BroadcastStandard>TurboFec</BroadcastStandard>
-    <SatellitePosition>-820</SatellitePosition>
+    <BroadcastStandard>SatelliteTurboFec</BroadcastStandard>
+    <Longitude>-820</Longitude>
     <Frequency>12588000</Frequency>
     <Polarisation>CircularLeft</Polarisation>
     <ModulationScheme>Psk8</ModulationScheme>
@@ -226,8 +217,8 @@
     <FecCodeRate>Rate2_3</FecCodeRate>
   </TuningDetail>
   <TuningDetail>
-    <BroadcastStandard>TurboFec</BroadcastStandard>
-    <SatellitePosition>-820</SatellitePosition>
+    <BroadcastStandard>SatelliteTurboFec</BroadcastStandard>
+    <Longitude>-820</Longitude>
     <Frequency>12603000</Frequency>
     <Polarisation>CircularRight</Polarisation>
     <ModulationScheme>Psk8</ModulationScheme>
@@ -235,8 +226,8 @@
     <FecCodeRate>Rate2_3</FecCodeRate>
   </TuningDetail>
   <TuningDetail>
-    <BroadcastStandard>TurboFec</BroadcastStandard>
-    <SatellitePosition>-820</SatellitePosition>
+    <BroadcastStandard>SatelliteTurboFec</BroadcastStandard>
+    <Longitude>-820</Longitude>
     <Frequency>12618000</Frequency>
     <Polarisation>CircularLeft</Polarisation>
     <ModulationScheme>Psk8</ModulationScheme>
@@ -244,8 +235,8 @@
     <FecCodeRate>Rate2_3</FecCodeRate>
   </TuningDetail>
   <TuningDetail>
-    <BroadcastStandard>TurboFec</BroadcastStandard>
-    <SatellitePosition>-820</SatellitePosition>
+    <BroadcastStandard>SatelliteTurboFec</BroadcastStandard>
+    <Longitude>-820</Longitude>
     <Frequency>12632000</Frequency>
     <Polarisation>CircularRight</Polarisation>
     <ModulationScheme>Psk8</ModulationScheme>
@@ -253,8 +244,8 @@
     <FecCodeRate>Rate2_3</FecCodeRate>
   </TuningDetail>
   <TuningDetail>
-    <BroadcastStandard>TurboFec</BroadcastStandard>
-    <SatellitePosition>-820</SatellitePosition>
+    <BroadcastStandard>SatelliteTurboFec</BroadcastStandard>
+    <Longitude>-820</Longitude>
     <Frequency>12647000</Frequency>
     <Polarisation>CircularLeft</Polarisation>
     <ModulationScheme>Psk8</ModulationScheme>
@@ -262,8 +253,8 @@
     <FecCodeRate>Rate2_3</FecCodeRate>
   </TuningDetail>
   <TuningDetail>
-    <BroadcastStandard>TurboFec</BroadcastStandard>
-    <SatellitePosition>-820</SatellitePosition>
+    <BroadcastStandard>SatelliteTurboFec</BroadcastStandard>
+    <Longitude>-820</Longitude>
     <Frequency>12661000</Frequency>
     <Polarisation>CircularRight</Polarisation>
     <ModulationScheme>Psk8</ModulationScheme>
@@ -271,8 +262,8 @@
     <FecCodeRate>Rate2_3</FecCodeRate>
   </TuningDetail>
   <TuningDetail>
-    <BroadcastStandard>TurboFec</BroadcastStandard>
-    <SatellitePosition>-820</SatellitePosition>
+    <BroadcastStandard>SatelliteTurboFec</BroadcastStandard>
+    <Longitude>-820</Longitude>
     <Frequency>12676000</Frequency>
     <Polarisation>CircularLeft</Polarisation>
     <ModulationScheme>Psk8</ModulationScheme>

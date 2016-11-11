@@ -161,9 +161,6 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Interfaces
     void AddList<TEntity>(IEnumerable<TEntity> entities) where TEntity : class;
     void DeleteList<TEntity>(IList<TEntity> entities) where TEntity : class;
 
-    Expression<Func<TElement, bool>> BuildContainsExpression<TElement, TValue>(
-    Expression<Func<TElement, TValue>> valueSelector, IEnumerable<TValue> values);
-
     void ApplyChanges<TEntity>(ObjectSet<TEntity> objectSet, TEntity entity) where TEntity : class, IObjectWithChangeTracker;
     void ApplyChanges<TEntity>(string entitySetName, TEntity entity) where TEntity : class, IObjectWithChangeTracker;
     void ApplyChanges<TEntity>(ObjectSet<TEntity> entitySetName, IEnumerable<TEntity> entities) where TEntity : class, IObjectWithChangeTracker;

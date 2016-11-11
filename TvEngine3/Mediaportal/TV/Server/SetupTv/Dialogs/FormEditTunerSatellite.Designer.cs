@@ -108,12 +108,10 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       // comboBoxTone22kState
       // 
-      this.comboBoxTone22kState.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
       this.comboBoxTone22kState.FormattingEnabled = true;
       this.comboBoxTone22kState.Location = new System.Drawing.Point(133, 200);
       this.comboBoxTone22kState.Name = "comboBoxTone22kState";
-      this.comboBoxTone22kState.Size = new System.Drawing.Size(129, 21);
+      this.comboBoxTone22kState.Size = new System.Drawing.Size(75, 21);
       this.comboBoxTone22kState.TabIndex = 16;
       // 
       // labelTone22kState
@@ -140,6 +138,8 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
             | System.Windows.Forms.AnchorStyles.Right)));
       this.comboBoxToneBurst.FormattingEnabled = true;
       this.comboBoxToneBurst.Location = new System.Drawing.Point(133, 173);
+      this.comboBoxToneBurst.MaximumSize = new System.Drawing.Size(200, 0);
+      this.comboBoxToneBurst.MinimumSize = new System.Drawing.Size(134, 0);
       this.comboBoxToneBurst.Name = "comboBoxToneBurst";
       this.comboBoxToneBurst.Size = new System.Drawing.Size(200, 21);
       this.comboBoxToneBurst.TabIndex = 14;
@@ -168,6 +168,8 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
             | System.Windows.Forms.AnchorStyles.Right)));
       this.comboBoxDiseqcSwitchPort.FormattingEnabled = true;
       this.comboBoxDiseqcSwitchPort.Location = new System.Drawing.Point(133, 119);
+      this.comboBoxDiseqcSwitchPort.MaximumSize = new System.Drawing.Size(200, 0);
+      this.comboBoxDiseqcSwitchPort.MinimumSize = new System.Drawing.Size(134, 0);
       this.comboBoxDiseqcSwitchPort.Name = "comboBoxDiseqcSwitchPort";
       this.comboBoxDiseqcSwitchPort.Size = new System.Drawing.Size(200, 21);
       this.comboBoxDiseqcSwitchPort.TabIndex = 9;
@@ -234,8 +236,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       // numericUpDownDiseqcMotorPosition
       // 
-      this.numericUpDownDiseqcMotorPosition.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.numericUpDownDiseqcMotorPosition.Location = new System.Drawing.Point(217, 147);
+      this.numericUpDownDiseqcMotorPosition.Location = new System.Drawing.Point(222, 147);
       this.numericUpDownDiseqcMotorPosition.Maximum = new decimal(new int[] {
             255,
             0,
@@ -259,12 +260,10 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       // comboBoxDiseqcMotorPositionType
       // 
-      this.comboBoxDiseqcMotorPositionType.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
       this.comboBoxDiseqcMotorPositionType.FormattingEnabled = true;
       this.comboBoxDiseqcMotorPositionType.Location = new System.Drawing.Point(133, 146);
       this.comboBoxDiseqcMotorPositionType.Name = "comboBoxDiseqcMotorPositionType";
-      this.comboBoxDiseqcMotorPositionType.Size = new System.Drawing.Size(70, 21);
+      this.comboBoxDiseqcMotorPositionType.Size = new System.Drawing.Size(75, 21);
       this.comboBoxDiseqcMotorPositionType.TabIndex = 11;
       this.comboBoxDiseqcMotorPositionType.SelectedIndexChanged += new System.EventHandler(this.comboBoxDiseqcMotorPositionType_SelectedIndexChanged);
       // 
@@ -329,7 +328,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       this.checkBoxPolarisationsCircularLeft.AutoSize = true;
       this.checkBoxPolarisationsCircularLeft.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxPolarisationsCircularLeft.Location = new System.Drawing.Point(217, 268);
+      this.checkBoxPolarisationsCircularLeft.Location = new System.Drawing.Point(213, 268);
       this.checkBoxPolarisationsCircularLeft.Name = "checkBoxPolarisationsCircularLeft";
       this.checkBoxPolarisationsCircularLeft.Size = new System.Drawing.Size(42, 17);
       this.checkBoxPolarisationsCircularLeft.TabIndex = 23;
@@ -341,7 +340,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       this.checkBoxPolarisationsCircularRight.AutoSize = true;
       this.checkBoxPolarisationsCircularRight.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxPolarisationsCircularRight.Location = new System.Drawing.Point(217, 245);
+      this.checkBoxPolarisationsCircularRight.Location = new System.Drawing.Point(213, 245);
       this.checkBoxPolarisationsCircularRight.Name = "checkBoxPolarisationsCircularRight";
       this.checkBoxPolarisationsCircularRight.Size = new System.Drawing.Size(49, 17);
       this.checkBoxPolarisationsCircularRight.TabIndex = 22;
@@ -361,7 +360,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // labelPolarisationsCircular
       // 
       this.labelPolarisationsCircular.AutoSize = true;
-      this.labelPolarisationsCircular.Location = new System.Drawing.Point(214, 229);
+      this.labelPolarisationsCircular.Location = new System.Drawing.Point(210, 229);
       this.labelPolarisationsCircular.Name = "labelPolarisationsCircular";
       this.labelPolarisationsCircular.Size = new System.Drawing.Size(42, 13);
       this.labelPolarisationsCircular.TabIndex = 21;
@@ -403,6 +402,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.Controls.Add(this.buttonCancel);
       this.Controls.Add(this.buttonOkay);
       this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
+      this.MinimumSize = new System.Drawing.Size(287, 388);
       this.Name = "FormEditTunerSatellite";
       this.ShowIcon = false;
       this.ShowInTaskbar = false;

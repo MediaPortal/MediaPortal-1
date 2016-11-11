@@ -653,11 +653,10 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.ProfUsb
       }
       tuningParams.FecCodeRate = (byte)bdaFecCodeRate;
 
-      ChannelDvbS2 dvbs2Channel = channel as ChannelDvbS2;
-      if (dvbs2Channel != null)
+      ModulationType bdaModulation = (ModulationType)0xff;  // not set (-1), limited to 1 byte
+      if (channel is ChannelDvbS2)
       {
-        ModulationType bdaModulation = ModulationType.ModNotSet;
-        switch (dvbs2Channel.ModulationScheme)
+        switch (satelliteChannel.ModulationScheme)
         {
           case ModulationSchemePsk.Psk4:
             bdaModulation = ModulationType.ModNbcQpsk;
@@ -673,28 +672,29 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.ProfUsb
             break;
           default:
             this.LogWarn("Prof USB: DVB-S2 tune request uses unsupported modulation scheme {0}, falling back to automatic", satelliteChannel.ModulationScheme);
-            bdaModulation = ModulationType.ModNotSet;
             break;
         }
-        tuningParams.Modulation = (byte)bdaModulation;
       }
       else if (channel is ChannelDvbS)
       {
-        if (satelliteChannel.ModulationScheme == ModulationSchemePsk.Psk4)
+        switch (satelliteChannel.ModulationScheme)
         {
-          tuningParams.Modulation = (byte)ModulationType.ModQpsk;
-        }
-        else
-        {
-          this.LogWarn("Prof USB: DVB-S tune request uses unsupported modulation scheme {0}, falling back to automatic", satelliteChannel.ModulationScheme);
-          tuningParams.Modulation = 0xff; // not set
+          case ModulationSchemePsk.Psk2:
+            bdaModulation = ModulationType.ModBpsk;
+            break;
+          case ModulationSchemePsk.Psk4:
+            bdaModulation = ModulationType.ModQpsk;
+            break;
+          default:
+            this.LogWarn("Prof USB: DVB-S tune request uses unsupported modulation scheme {0}, falling back to automatic", satelliteChannel.ModulationScheme);
+            break;
         }
       }
       else
       {
-        this.LogWarn("Prof USB: tune request for unsupported satellite standard");
-        tuningParams.Modulation = 0xff; // not set
+        this.LogWarn("Prof USB: tune request for unsupported satellite standard, using automatic modulation");
       }
+      tuningParams.Modulation = (byte)bdaModulation;
 
       Marshal.StructureToPtr(tuningParams, _generalBuffer, false);
       //Dump.DumpBinary(_generalBuffer, BDA_EXTENSION_PARAMS_SIZE);

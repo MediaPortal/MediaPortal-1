@@ -730,7 +730,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
       }
 
       // Required by Digital Devices Max S8. Cine and DuoFlex S2 tuners
-      // auto-detect modulation.
+      // auto-detect standard and modulation.
       // Refer to http://forum.team-mediaportal.com/threads/dd-max-s8-tuning-problems.129173/page-3
       IChannelSatellite satelliteChannel = channel as IChannelSatellite;
       if (satelliteChannel == null || !_tunerExternalId.ToLowerInvariant().Contains("dev_0007&subsys_0023"))
@@ -738,29 +738,35 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
         return;
       }
 
+      DirectShowLib.BDA.ModulationType bdaModulation = DirectShowLib.BDA.ModulationType.ModNotSet;
       if (satelliteChannel is ChannelDvbS2)
       {
-        if (Environment.OSVersion.Version.Major >= 6) // Vista or later
+        if (Environment.OSVersion.Version.Major >= 6) // Vista and newer
         {
           if (satelliteChannel.ModulationScheme == ModulationSchemePsk.Psk4)
           {
-            satelliteChannel.ModulationScheme = (ModulationSchemePsk)DirectShowLib.BDA.ModulationType.ModNbcQpsk;
+            bdaModulation = DirectShowLib.BDA.ModulationType.ModNbcQpsk;
           }
           else if (satelliteChannel.ModulationScheme == ModulationSchemePsk.Psk8)
           {
-            satelliteChannel.ModulationScheme = (ModulationSchemePsk)DirectShowLib.BDA.ModulationType.ModNbc8Psk;
+            bdaModulation = DirectShowLib.BDA.ModulationType.ModNbc8Psk;
           }
         }
         else
         {
-          satelliteChannel.ModulationScheme = (ModulationSchemePsk)DirectShowLib.BDA.ModulationType.Mod8Vsb;
+          bdaModulation = DirectShowLib.BDA.ModulationType.Mod8Vsb;
         }
       }
-      else if (satelliteChannel.ModulationScheme == ModulationSchemePsk.Psk4)
+      else if (satelliteChannel is ChannelDvbS && satelliteChannel.ModulationScheme == ModulationSchemePsk.Psk4)
       {
-        satelliteChannel.ModulationScheme = (ModulationSchemePsk)DirectShowLib.BDA.ModulationType.ModQpsk;
+        bdaModulation = DirectShowLib.BDA.ModulationType.ModQpsk;
       }
-      this.LogDebug("  modulation = {0}", satelliteChannel.ModulationScheme);
+
+      if (bdaModulation != DirectShowLib.BDA.ModulationType.ModNotSet)
+      {
+        this.LogDebug("  modulation = {0}", bdaModulation);
+        satelliteChannel.ModulationScheme = (ModulationSchemePsk)bdaModulation;
+      }
     }
 
     /// <summary>

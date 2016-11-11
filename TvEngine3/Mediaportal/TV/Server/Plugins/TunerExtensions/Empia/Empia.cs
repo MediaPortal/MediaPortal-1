@@ -637,7 +637,22 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Empia
     /// <returns><c>true</c> if the extension supports specialised tuning for the channel, otherwise <c>false</c></returns>
     public bool CanTuneChannel(IChannel channel)
     {
-      return (channel is ChannelAtsc || channel is ChannelScte) && _isAtscQamModeSupported;
+      if (!_isAtscQamModeSupported)
+      {
+        return false;
+      }
+
+      ChannelAtsc atscChannel = channel as ChannelAtsc;
+      if (atscChannel != null)
+      {
+        return atscChannel.ModulationScheme == ModulationSchemeVsb.Vsb8;
+      }
+      ChannelScte scteChannel = channel as ChannelScte;
+      if (scteChannel != null && !scteChannel.IsCableCardNeededToTune())
+      {
+        return scteChannel.ModulationScheme == ModulationSchemeQam.Qam64 || scteChannel.ModulationScheme == ModulationSchemeQam.Qam256;
+      }
+      return false;
     }
 
     /// <summary>
@@ -660,16 +675,14 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Empia
       ChannelAtsc atscChannel = channel as ChannelAtsc;
       if (atscChannel != null)
       {
-        if (atscChannel.ModulationScheme == ModulationSchemeVsb.Vsb8)
-        {
-          mode = QamMode.Vsb;
-          frequency = atscChannel.Frequency;
-        }
-        else
+        if (atscChannel.ModulationScheme != ModulationSchemeVsb.Vsb8)
         {
           this.LogError("eMPIA: ATSC tune request uses unsupported modulation scheme {0}", atscChannel.ModulationScheme);
           return false;
         }
+
+        mode = QamMode.Vsb;
+        frequency = atscChannel.Frequency;
       }
       else
       {

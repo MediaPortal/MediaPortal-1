@@ -967,20 +967,19 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Knc
       ModulationType bdaModulation = ModulationType.ModNotSet;
       if (channel is ChannelDvbS2)
       {
-        // The KNC PCIe tuner driver behaves differently to the PCI tuner driver.
+        // The KNC PCIe tuner driver definitely behaves differently to the PCI
+        // tuner driver. I'm not sure if behaviour also varies for different
+        // versions of Windows.
         if (_isPcie)
         {
-          switch (satelliteChannel.ModulationScheme)
+          // I'm not sure if these values can be used on XP.
+          if (satelliteChannel.ModulationScheme == ModulationSchemePsk.Psk4)
           {
-            case ModulationSchemePsk.Psk4:
-              bdaModulation = ModulationType.ModNbcQpsk;
-              break;
-            case ModulationSchemePsk.Psk8:
-              bdaModulation = ModulationType.ModNbc8Psk;
-              break;
-            default:
-              this.LogWarn("KNC: DVB-S2 tune request uses unsupported modulation scheme {0}", satelliteChannel.ModulationScheme);
-              break;
+            bdaModulation = ModulationType.ModNbcQpsk;
+          }
+          else if (satelliteChannel.ModulationScheme == ModulationSchemePsk.Psk8)
+          {
+            bdaModulation = ModulationType.ModNbc8Psk;
           }
         }
         else
@@ -988,24 +987,16 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Knc
           bdaModulation = ModulationType.Mod8Psk;
         }
       }
-      else if (channel is ChannelDvbS)
+      else if (channel is ChannelDvbS && satelliteChannel.ModulationScheme == ModulationSchemePsk.Psk4)
       {
-        if (satelliteChannel.ModulationScheme == ModulationSchemePsk.Psk4)
-        {
-          bdaModulation = ModulationType.ModQpsk;
-        }
-        else
-        {
-          this.LogWarn("KNC: DVB-S tune request uses unsupported modulation scheme {0}", satelliteChannel.ModulationScheme);
-        }
-      }
-      else
-      {
-        return;
+        bdaModulation = ModulationType.ModQpsk;
       }
 
-      this.LogDebug("  modulation = {0}", bdaModulation);
-      satelliteChannel.ModulationScheme = (ModulationSchemePsk)bdaModulation;
+      if (bdaModulation != ModulationType.ModNotSet)
+      {
+        this.LogDebug("  modulation = {0}", bdaModulation);
+        satelliteChannel.ModulationScheme = (ModulationSchemePsk)bdaModulation;
+      }
     }
 
     #endregion

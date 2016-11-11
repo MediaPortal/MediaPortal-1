@@ -30,8 +30,8 @@ using Mediaportal.TV.Server.SetupControls;
 using Mediaportal.TV.Server.SetupControls.UserInterfaceControls;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
-using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils.ExtensionMethods;
 using MediaPortal.Common.Utils.Localisation;
 
 namespace Mediaportal.TV.Server.SetupTV.Sections
@@ -248,7 +248,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         DataGridViewRow row = dataGridViewTunerEpgGrabberTransmitters.Rows[rowIndex++];
         row.Tag = tuningDetail;
         row.Cells["dataGridViewColumnTunerEpgGrabberTransmitterIsEnabled"].Value = tuningDetail.GrabEpg;
-        row.Cells["dataGridViewColumnTunerEpgGrabberTransmitterTuningDetail"].Value = tuningDetail.GetDescriptiveString();
+        row.Cells["dataGridViewColumnTunerEpgGrabberTransmitterTuningDetail"].Value = string.Format("{0}: {1}", ((BroadcastStandard)tuningDetail.BroadcastStandard).GetDescription(), tuningDetail.GetTerseTuningDescription());
         row.Cells["dataGridViewColumnTunerEpgGrabberTransmitterChannels"].Value = tuningDetail.Name;
         row.Cells["dataGridViewColumnTunerEpgGrabberTransmitterLastGrabTime"].Value = tuningDetail.LastEpgGrabTime.ToString("yyyy-MM-dd HH:mm:ss");
       }
@@ -353,7 +353,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         TuningDetail tuningDetail = row.Tag as TuningDetail;
         if (tuningDetail.GrabEpg != isEnabled)
         {
-          this.LogInfo("EPG: transmitter [{0}] grab EPG flag changed to {1}", tuningDetail.GetDescriptiveString(), isEnabled);
+          this.LogInfo("EPG: transmitter [{0}: {1}] grab EPG flag changed to {1}", ((BroadcastStandard)tuningDetail.BroadcastStandard).GetDescription(), tuningDetail.GetTerseTuningDescription(), isEnabled);
           tuningDetail.GrabEpg = isEnabled;
           ServiceAgents.Instance.ChannelServiceAgent.UpdateTuningDetailEpgInfo(tuningDetail);
         }
@@ -465,15 +465,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     {
       this.LogDebug("EPG: refresh EPG data");
       ServiceAgents.Instance.ControllerServiceAgent.EpgGrabberEnabled = false;
-
-      // TODO this is far from optimal; we should update a single grabber setting
-      IList<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannels(ChannelRelation.None);
-      foreach (Channel ch in channels)
-      {
-        ch.LastGrabTime = SqlDateTime.MinValue.Value;
-      }
-      ServiceAgents.Instance.ChannelServiceAgent.SaveChannels(channels);
-
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("tunerEpgGrabberLastGrabTime", SqlDateTime.MinValue.Value);
       ServiceAgents.Instance.ControllerServiceAgent.EpgGrabberEnabled = true;
     }
 

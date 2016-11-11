@@ -1651,6 +1651,76 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
         ChannelAnalogTv analogTvChannel = tuneChannel as ChannelAnalogTv;
         if (analogTvChannel != null)
         {
+          // Usually only physical channel number will be set. Frequency is an
+          // override. Where not overriden, convert the physical channel number
+          // to a frequency in accordance with the USA standard cable band
+          // plan. Assume that the tuner expects us to specify the analog video
+          // carrier frequency.
+          int frequency = analogTvChannel.Frequency;
+          if (frequency <= 0)
+          {
+            if (analogTvChannel.PhysicalChannelNumber > 158)
+            {
+              throw new TvException("Physical channel number {0} is invalid.", analogTvChannel.PhysicalChannelNumber);
+            }
+            else if (analogTvChannel.PhysicalChannelNumber >= 100)
+            {
+              // jumbo
+              frequency = 649250 + (6000 * (analogTvChannel.PhysicalChannelNumber - 100));
+            }
+            else if (analogTvChannel.PhysicalChannelNumber >= 95)
+            {
+              // mid 1
+              frequency = 91250 + (6000 * (analogTvChannel.PhysicalChannelNumber - 95));
+            }
+            else if (analogTvChannel.PhysicalChannelNumber >= 23)
+            {
+              // super, hyper, ultra
+              frequency = 217250 + (6000 * (analogTvChannel.PhysicalChannelNumber - 23));
+            }
+            else if (analogTvChannel.PhysicalChannelNumber >= 14)
+            {
+              // mid 2
+              frequency = 121250 + (6000 * (analogTvChannel.PhysicalChannelNumber - 14));
+            }
+            else if (analogTvChannel.PhysicalChannelNumber >= 7)
+            {
+              // high
+              frequency = 175250 + (6000 * (analogTvChannel.PhysicalChannelNumber - 7));
+            }
+            else if (analogTvChannel.PhysicalChannelNumber >= 5)
+            {
+              // low 2
+              frequency = 77250 + (6000 * (analogTvChannel.PhysicalChannelNumber - 5));
+            }
+            else if (analogTvChannel.PhysicalChannelNumber >= 2)
+            {
+              // low 1
+              frequency = 55250 + (6000 * (analogTvChannel.PhysicalChannelNumber - 2));
+            }
+            else
+            {
+              throw new TvException("Physical channel number {0} is invalid.", analogTvChannel.PhysicalChannelNumber);
+            }
+
+            // FCC regulatory quirks
+            // https://www.gpo.gov/fdsys/pkg/CFR-2011-title47-vol4/xml/CFR-2011-title47-vol4-sec76-612.xml
+            if (
+              (frequency >= 118000 && frequency <= 137000) ||
+              (frequency >= 225000 && frequency <= 328600) ||
+              (frequency >= 335400 && frequency <= 400000)
+            )
+            {
+              frequency += 13;  // +/- 12.5 kHz
+            }
+            else if (
+              (frequency >= 108000 && frequency <= 118000) ||
+              (frequency >= 328600 && frequency <= 335400)
+            )
+            {
+              frequency += 25;  // +/- 25 kHz
+            }
+          }
           TuneByFrequency(analogTvChannel.Frequency, TunerModulation.Ntsc);
           inputSelection = EncoderInputSelection.Tuner;
         }

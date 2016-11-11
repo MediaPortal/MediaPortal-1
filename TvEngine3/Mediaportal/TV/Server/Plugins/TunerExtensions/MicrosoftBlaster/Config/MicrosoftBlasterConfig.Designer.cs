@@ -50,18 +50,18 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster.Config
     {
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MicrosoftBlasterConfig));
       this.dataGridViewConfig = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPDataGridView();
-      this.buttonTest = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
-      this.numericUpDownTest = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPNumericUpDown();
-      this.buttonLearn = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
-      this.pictureBoxLogo = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPPictureBox();
       this.dataGridViewColumnTunerId = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPDataGridViewTextBoxColumn();
       this.dataGridViewColumnTunerName = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPDataGridViewTextBoxColumn();
       this.dataGridViewColumnTransceiver = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPDataGridViewComboBoxColumn();
       this.dataGridViewColumnTransmitPort = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPDataGridViewComboBoxColumn();
       this.dataGridViewColumnSetTopBoxProfile = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPDataGridViewComboBoxColumn();
       this.dataGridViewColumnPowerControl = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPDataGridViewCheckBoxColumn();
+      this.buttonTest = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
+      this.channelNumberUpDown = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPChannelNumberUpDown();
+      this.buttonLearn = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
+      this.pictureBoxLogo = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPPictureBox();
       ((System.ComponentModel.ISupportInitialize)(this.dataGridViewConfig)).BeginInit();
-      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTest)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.channelNumberUpDown)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBoxLogo)).BeginInit();
       this.SuspendLayout();
       // 
@@ -92,65 +92,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster.Config
       this.dataGridViewConfig.TabIndex = 0;
       this.dataGridViewConfig.CurrentCellDirtyStateChanged += new System.EventHandler(this.dataGridViewConfig_CurrentCellDirtyStateChanged);
       this.dataGridViewConfig.SelectionChanged += new System.EventHandler(this.dataGridViewConfig_SelectionChanged);
-      // 
-      // buttonTest
-      // 
-      this.buttonTest.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonTest.Location = new System.Drawing.Point(411, 387);
-      this.buttonTest.Name = "buttonTest";
-      this.buttonTest.Size = new System.Drawing.Size(60, 23);
-      this.buttonTest.TabIndex = 3;
-      this.buttonTest.Text = "&Test";
-      this.buttonTest.UseVisualStyleBackColor = true;
-      this.buttonTest.Click += new System.EventHandler(this.buttonTest_Click);
-      // 
-      // numericUpDownTest
-      // 
-      this.numericUpDownTest.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.numericUpDownTest.DecimalPlaces = 2;
-      this.numericUpDownTest.Location = new System.Drawing.Point(335, 390);
-      this.numericUpDownTest.Maximum = new decimal(new int[] {
-            99999,
-            0,
-            0,
-            0});
-      this.numericUpDownTest.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-      this.numericUpDownTest.Name = "numericUpDownTest";
-      this.numericUpDownTest.Size = new System.Drawing.Size(70, 20);
-      this.numericUpDownTest.TabIndex = 2;
-      this.numericUpDownTest.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-      this.numericUpDownTest.TruncateDecimalPlaces = true;
-      this.numericUpDownTest.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-      // 
-      // buttonLearn
-      // 
-      this.buttonLearn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonLearn.Location = new System.Drawing.Point(238, 387);
-      this.buttonLearn.Name = "buttonLearn";
-      this.buttonLearn.Size = new System.Drawing.Size(60, 23);
-      this.buttonLearn.TabIndex = 1;
-      this.buttonLearn.Text = "&Learn";
-      this.buttonLearn.UseVisualStyleBackColor = true;
-      this.buttonLearn.Click += new System.EventHandler(this.buttonLearn_Click);
-      // 
-      // pictureBoxLogo
-      // 
-      this.pictureBoxLogo.BackColor = System.Drawing.SystemColors.Window;
-      this.pictureBoxLogo.Image = ((System.Drawing.Image)(resources.GetObject("pictureBoxLogo.Image")));
-      this.pictureBoxLogo.Location = new System.Drawing.Point(6, 4);
-      this.pictureBoxLogo.Name = "pictureBoxLogo";
-      this.pictureBoxLogo.Size = new System.Drawing.Size(399, 44);
-      this.pictureBoxLogo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-      this.pictureBoxLogo.TabIndex = 8;
-      this.pictureBoxLogo.TabStop = false;
       // 
       // dataGridViewColumnTunerId
       // 
@@ -204,6 +145,64 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster.Config
       this.dataGridViewColumnPowerControl.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
       this.dataGridViewColumnPowerControl.Width = 50;
       // 
+      // buttonTest
+      // 
+      this.buttonTest.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonTest.Location = new System.Drawing.Point(411, 387);
+      this.buttonTest.Name = "buttonTest";
+      this.buttonTest.Size = new System.Drawing.Size(60, 23);
+      this.buttonTest.TabIndex = 3;
+      this.buttonTest.Text = "&Test";
+      this.buttonTest.UseVisualStyleBackColor = true;
+      this.buttonTest.Click += new System.EventHandler(this.buttonTest_Click);
+      // 
+      // channelNumberUpDown
+      // 
+      this.channelNumberUpDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.channelNumberUpDown.DecimalPlaces = 3;
+      this.channelNumberUpDown.Location = new System.Drawing.Point(325, 390);
+      this.channelNumberUpDown.Maximum = new decimal(new int[] {
+            65535999,
+            0,
+            0,
+            196608});
+      this.channelNumberUpDown.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+      this.channelNumberUpDown.Name = "channelNumberUpDown";
+      this.channelNumberUpDown.Size = new System.Drawing.Size(80, 20);
+      this.channelNumberUpDown.TabIndex = 2;
+      this.channelNumberUpDown.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+      this.channelNumberUpDown.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+      // 
+      // buttonLearn
+      // 
+      this.buttonLearn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonLearn.Location = new System.Drawing.Point(238, 387);
+      this.buttonLearn.Name = "buttonLearn";
+      this.buttonLearn.Size = new System.Drawing.Size(60, 23);
+      this.buttonLearn.TabIndex = 1;
+      this.buttonLearn.Text = "&Learn";
+      this.buttonLearn.UseVisualStyleBackColor = true;
+      this.buttonLearn.Click += new System.EventHandler(this.buttonLearn_Click);
+      // 
+      // pictureBoxLogo
+      // 
+      this.pictureBoxLogo.BackColor = System.Drawing.SystemColors.Window;
+      this.pictureBoxLogo.Image = ((System.Drawing.Image)(resources.GetObject("pictureBoxLogo.Image")));
+      this.pictureBoxLogo.Location = new System.Drawing.Point(6, 4);
+      this.pictureBoxLogo.Name = "pictureBoxLogo";
+      this.pictureBoxLogo.Size = new System.Drawing.Size(399, 44);
+      this.pictureBoxLogo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+      this.pictureBoxLogo.TabIndex = 8;
+      this.pictureBoxLogo.TabStop = false;
+      // 
       // MicrosoftBlasterConfig
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -211,13 +210,13 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster.Config
       this.BackColor = System.Drawing.SystemColors.Window;
       this.Controls.Add(this.pictureBoxLogo);
       this.Controls.Add(this.buttonLearn);
-      this.Controls.Add(this.numericUpDownTest);
+      this.Controls.Add(this.channelNumberUpDown);
       this.Controls.Add(this.buttonTest);
       this.Controls.Add(this.dataGridViewConfig);
       this.Name = "MicrosoftBlasterConfig";
       this.Size = new System.Drawing.Size(480, 420);
       ((System.ComponentModel.ISupportInitialize)(this.dataGridViewConfig)).EndInit();
-      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTest)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.channelNumberUpDown)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBoxLogo)).EndInit();
       this.ResumeLayout(false);
 
@@ -226,7 +225,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster.Config
     #endregion
 
     private SetupControls.UserInterfaceControls.MPButton buttonTest;
-    private SetupControls.UserInterfaceControls.MPNumericUpDown numericUpDownTest;
+    private SetupControls.UserInterfaceControls.MPChannelNumberUpDown channelNumberUpDown;
     private SetupControls.UserInterfaceControls.MPButton buttonLearn;
     private SetupControls.UserInterfaceControls.MPPictureBox pictureBoxLogo;
     private SetupControls.UserInterfaceControls.MPDataGridView dataGridViewConfig;

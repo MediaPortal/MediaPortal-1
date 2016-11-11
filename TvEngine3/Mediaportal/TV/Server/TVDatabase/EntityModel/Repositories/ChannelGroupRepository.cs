@@ -24,17 +24,17 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
 
     public IQueryable<ChannelGroup> IncludeAllRelations(IQueryable<ChannelGroup> query, ChannelGroupRelation includeRelations)
     {
-      if (includeRelations.HasFlag(ChannelGroupRelation.GroupMaps))
+      if (includeRelations.HasFlag(ChannelGroupRelation.ChannelMappings))
       {
-        query = query.Include(g => g.GroupMaps);
+        query = query.Include(g => g.ChannelMappings);
       }
-      if (includeRelations.HasFlag(ChannelGroupRelation.GroupMapsChannel))
+      if (includeRelations.HasFlag(ChannelGroupRelation.ChannelMappingsChannel))
       {
-        query = query.Include(g => g.GroupMaps.Select(c => c.Channel));
+        query = query.Include(g => g.ChannelMappings.Select(c => c.Channel));
       }
-      if (includeRelations.HasFlag(ChannelGroupRelation.GroupMapsTuningDetails))
+      if (includeRelations.HasFlag(ChannelGroupRelation.ChannelMappingsTuningDetails))
       {
-        query = query.Include(g => g.GroupMaps.Select(c => c.Channel.TuningDetails));
+        query = query.Include(g => g.ChannelMappings.Select(c => c.Channel.TuningDetails));
       }
       return query;
     }

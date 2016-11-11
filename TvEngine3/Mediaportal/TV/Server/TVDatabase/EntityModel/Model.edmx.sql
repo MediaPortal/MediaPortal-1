@@ -5,7 +5,7 @@
 -- -----------------------------------------------------------
 -- Entity Designer DDL Script for MySQL Server 4.1 and higher
 -- -----------------------------------------------------------
--- Date Created: 10/19/2016 23:46:08
+-- Date Created: 11/04/2016 12:08:46
 -- Generated from EDMX file: F:\sdev\Code\MediaPortal\MediaPortal-1_TVE35\TvEngine3\Mediaportal\TV\Server\TVDatabase\EntityModel\Model.edmx
 -- Target version: 2.0.0.0
 -- --------------------------------------------------
@@ -16,12 +16,11 @@
 -- NOTE: if the constraint does not exist, an ignorable error will be reported.
 -- --------------------------------------------------
 
---    ALTER TABLE `GroupMaps` DROP CONSTRAINT `FK_GroupMapChannelGroup`;
---    ALTER TABLE `GroupMaps` DROP CONSTRAINT `FK_GroupMapChannel`;
+--    ALTER TABLE `ChannelGroupChannelMappings` DROP CONSTRAINT `FK_ChannelGroupChannelGroupChannelMapping`;
+--    ALTER TABLE `ChannelGroupChannelMappings` DROP CONSTRAINT `FK_ChannelChannelGroupChannelMapping`;
 --    ALTER TABLE `Recordings` DROP CONSTRAINT `FK_ChannelRecording`;
 --    ALTER TABLE `Programs` DROP CONSTRAINT `FK_ChannelProgram`;
---    ALTER TABLE `ChannelMaps` DROP CONSTRAINT `FK_TunerChannelMap`;
---    ALTER TABLE `ChannelMaps` DROP CONSTRAINT `FK_ChannelChannelMap`;
+--    ALTER TABLE `TunerTuningDetailMappings` DROP CONSTRAINT `FK_TunerTunerTuningDetailMapping`;
 --    ALTER TABLE `Schedules` DROP CONSTRAINT `FK_ChannelSchedule`;
 --    ALTER TABLE `Schedules` DROP CONSTRAINT `FK_ScheduleParentSchedule`;
 --    ALTER TABLE `Programs` DROP CONSTRAINT `FK_ProgramProgramCategory`;
@@ -49,6 +48,7 @@
 --    ALTER TABLE `TunerSatellites` DROP CONSTRAINT `FK_SatelliteTunerSatellite`;
 --    ALTER TABLE `TunerSatellites` DROP CONSTRAINT `FK_LnbTypeTunerSatellite`;
 --    ALTER TABLE `TuningDetails` DROP CONSTRAINT `FK_SatelliteTuningDetail`;
+--    ALTER TABLE `TunerTuningDetailMappings` DROP CONSTRAINT `FK_TuningDetailTunerTuningDetailMapping`;
 
 -- --------------------------------------------------
 -- Dropping existing tables
@@ -60,9 +60,9 @@ SET foreign_key_checks = 0;
     DROP TABLE IF EXISTS `Channels`;
     DROP TABLE IF EXISTS `ChannelGroups`;
     DROP TABLE IF EXISTS `ChannelLinkageMaps`;
-    DROP TABLE IF EXISTS `ChannelMaps`;
+    DROP TABLE IF EXISTS `TunerTuningDetailMappings`;
     DROP TABLE IF EXISTS `Conflicts`;
-    DROP TABLE IF EXISTS `GroupMaps`;
+    DROP TABLE IF EXISTS `ChannelGroupChannelMappings`;
     DROP TABLE IF EXISTS `Histories`;
     DROP TABLE IF EXISTS `PendingDeletions`;
     DROP TABLE IF EXISTS `Programs`;
@@ -156,12 +156,12 @@ ALTER TABLE `Channels` ADD PRIMARY KEY (IdChannel);
 
 
 CREATE TABLE `ChannelGroups`(
-	`IdGroup` int NOT NULL AUTO_INCREMENT UNIQUE, 
-	`GroupName` varchar (200) NOT NULL, 
+	`IdChannelGroup` int NOT NULL AUTO_INCREMENT UNIQUE, 
+	`Name` varchar (200) NOT NULL, 
 	`SortOrder` int NOT NULL, 
 	`MediaType` int NOT NULL);
 
-ALTER TABLE `ChannelGroups` ADD PRIMARY KEY (IdGroup);
+ALTER TABLE `ChannelGroups` ADD PRIMARY KEY (IdChannelGroup);
 
 
 
@@ -177,12 +177,12 @@ ALTER TABLE `ChannelLinkageMaps` ADD PRIMARY KEY (IdMapping);
 
 
 
-CREATE TABLE `ChannelMaps`(
-	`IdChannelMap` int NOT NULL AUTO_INCREMENT UNIQUE, 
-	`IdChannel` int NOT NULL, 
+CREATE TABLE `TunerTuningDetailMappings`(
+	`IdTunerTuningDetailMapping` int NOT NULL AUTO_INCREMENT UNIQUE, 
+	`IdTuningDetail` int NOT NULL, 
 	`IdTuner` int NOT NULL);
 
-ALTER TABLE `ChannelMaps` ADD PRIMARY KEY (IdChannelMap);
+ALTER TABLE `TunerTuningDetailMappings` ADD PRIMARY KEY (IdTunerTuningDetailMapping);
 
 
 
@@ -200,13 +200,13 @@ ALTER TABLE `Conflicts` ADD PRIMARY KEY (IdConflict);
 
 
 
-CREATE TABLE `GroupMaps`(
-	`IdMap` int NOT NULL AUTO_INCREMENT UNIQUE, 
-	`IdGroup` int NOT NULL, 
+CREATE TABLE `ChannelGroupChannelMappings`(
+	`IdChannelGroupChannelMapping` int NOT NULL AUTO_INCREMENT UNIQUE, 
+	`IdChannelGroup` int NOT NULL, 
 	`IdChannel` int NOT NULL, 
 	`SortOrder` int NOT NULL);
 
-ALTER TABLE `GroupMaps` ADD PRIMARY KEY (IdMap);
+ALTER TABLE `ChannelGroupChannelMappings` ADD PRIMARY KEY (IdChannelGroupChannelMapping);
 
 
 
@@ -410,7 +410,7 @@ ALTER TABLE `Settings` ADD PRIMARY KEY (IdSetting);
 
 
 CREATE TABLE `TuningDetails`(
-	`IdTuning` int NOT NULL AUTO_INCREMENT UNIQUE, 
+	`IdTuningDetail` int NOT NULL AUTO_INCREMENT UNIQUE, 
 	`IdChannel` int NOT NULL, 
 	`MediaType` int NOT NULL, 
 	`Priority` int NOT NULL, 
@@ -441,8 +441,8 @@ CREATE TABLE `TuningDetails`(
 	`VideoSource` int NOT NULL, 
 	`TuningSource` int NOT NULL, 
 	`FecCodeRate` int NOT NULL, 
-	`PilotTonesState` int NOT NULL, 
 	`RollOffFactor` int NOT NULL, 
+	`PilotTonesState` int NOT NULL, 
 	`StreamId` int NOT NULL, 
 	`Url` varchar (200) NOT NULL, 
 	`AudioSource` int NOT NULL, 
@@ -451,7 +451,7 @@ CREATE TABLE `TuningDetails`(
 	`GrabEpg` bool NOT NULL, 
 	`LastEpgGrabTime` datetime NOT NULL);
 
-ALTER TABLE `TuningDetails` ADD PRIMARY KEY (IdTuning);
+ALTER TABLE `TuningDetails` ADD PRIMARY KEY (IdTuningDetail);
 
 
 
@@ -596,34 +596,34 @@ ALTER TABLE `TunerSatellites` ADD PRIMARY KEY (IdTunerSatellite);
 -- Creating all FOREIGN KEY constraints
 -- --------------------------------------------------
 
--- Creating foreign key on `IdGroup` in table 'GroupMaps'
+-- Creating foreign key on `IdChannelGroup` in table 'ChannelGroupChannelMappings'
 
-ALTER TABLE `GroupMaps`
-ADD CONSTRAINT `FK_GroupMapChannelGroup`
-    FOREIGN KEY (`IdGroup`)
+ALTER TABLE `ChannelGroupChannelMappings`
+ADD CONSTRAINT `FK_ChannelGroupChannelGroupChannelMapping`
+    FOREIGN KEY (`IdChannelGroup`)
     REFERENCES `ChannelGroups`
-        (`IdGroup`)
+        (`IdChannelGroup`)
     ON DELETE CASCADE ON UPDATE NO ACTION;
 
--- Creating non-clustered index for FOREIGN KEY 'FK_GroupMapChannelGroup'
+-- Creating non-clustered index for FOREIGN KEY 'FK_ChannelGroupChannelGroupChannelMapping'
 
-CREATE INDEX `IX_FK_GroupMapChannelGroup` 
-    ON `GroupMaps`
-    (`IdGroup`);
+CREATE INDEX `IX_FK_ChannelGroupChannelGroupChannelMapping` 
+    ON `ChannelGroupChannelMappings`
+    (`IdChannelGroup`);
 
--- Creating foreign key on `IdChannel` in table 'GroupMaps'
+-- Creating foreign key on `IdChannel` in table 'ChannelGroupChannelMappings'
 
-ALTER TABLE `GroupMaps`
-ADD CONSTRAINT `FK_GroupMapChannel`
+ALTER TABLE `ChannelGroupChannelMappings`
+ADD CONSTRAINT `FK_ChannelChannelGroupChannelMapping`
     FOREIGN KEY (`IdChannel`)
     REFERENCES `Channels`
         (`IdChannel`)
     ON DELETE CASCADE ON UPDATE NO ACTION;
 
--- Creating non-clustered index for FOREIGN KEY 'FK_GroupMapChannel'
+-- Creating non-clustered index for FOREIGN KEY 'FK_ChannelChannelGroupChannelMapping'
 
-CREATE INDEX `IX_FK_GroupMapChannel` 
-    ON `GroupMaps`
+CREATE INDEX `IX_FK_ChannelChannelGroupChannelMapping` 
+    ON `ChannelGroupChannelMappings`
     (`IdChannel`);
 
 -- Creating foreign key on `IdChannel` in table 'Recordings'
@@ -656,35 +656,20 @@ CREATE INDEX `IX_FK_ChannelProgram`
     ON `Programs`
     (`IdChannel`);
 
--- Creating foreign key on `IdTuner` in table 'ChannelMaps'
+-- Creating foreign key on `IdTuner` in table 'TunerTuningDetailMappings'
 
-ALTER TABLE `ChannelMaps`
-ADD CONSTRAINT `FK_TunerChannelMap`
+ALTER TABLE `TunerTuningDetailMappings`
+ADD CONSTRAINT `FK_TunerTunerTuningDetailMapping`
     FOREIGN KEY (`IdTuner`)
     REFERENCES `Tuners`
         (`IdTuner`)
     ON DELETE CASCADE ON UPDATE NO ACTION;
 
--- Creating non-clustered index for FOREIGN KEY 'FK_TunerChannelMap'
+-- Creating non-clustered index for FOREIGN KEY 'FK_TunerTunerTuningDetailMapping'
 
-CREATE INDEX `IX_FK_TunerChannelMap` 
-    ON `ChannelMaps`
+CREATE INDEX `IX_FK_TunerTunerTuningDetailMapping` 
+    ON `TunerTuningDetailMappings`
     (`IdTuner`);
-
--- Creating foreign key on `IdChannel` in table 'ChannelMaps'
-
-ALTER TABLE `ChannelMaps`
-ADD CONSTRAINT `FK_ChannelChannelMap`
-    FOREIGN KEY (`IdChannel`)
-    REFERENCES `Channels`
-        (`IdChannel`)
-    ON DELETE CASCADE ON UPDATE NO ACTION;
-
--- Creating non-clustered index for FOREIGN KEY 'FK_ChannelChannelMap'
-
-CREATE INDEX `IX_FK_ChannelChannelMap` 
-    ON `ChannelMaps`
-    (`IdChannel`);
 
 -- Creating foreign key on `IdChannel` in table 'Schedules'
 
@@ -1084,6 +1069,21 @@ ADD CONSTRAINT `FK_SatelliteTuningDetail`
 CREATE INDEX `IX_FK_SatelliteTuningDetail` 
     ON `TuningDetails`
     (`IdSatellite`);
+
+-- Creating foreign key on `IdTuningDetail` in table 'TunerTuningDetailMappings'
+
+ALTER TABLE `TunerTuningDetailMappings`
+ADD CONSTRAINT `FK_TuningDetailTunerTuningDetailMapping`
+    FOREIGN KEY (`IdTuningDetail`)
+    REFERENCES `TuningDetails`
+        (`IdTuningDetail`)
+    ON DELETE CASCADE ON UPDATE NO ACTION;
+
+-- Creating non-clustered index for FOREIGN KEY 'FK_TuningDetailTunerTuningDetailMapping'
+
+CREATE INDEX `IX_FK_TuningDetailTunerTuningDetailMapping` 
+    ON `TunerTuningDetailMappings`
+    (`IdTuningDetail`);
 
 -- --------------------------------------------------
 -- Script has ended

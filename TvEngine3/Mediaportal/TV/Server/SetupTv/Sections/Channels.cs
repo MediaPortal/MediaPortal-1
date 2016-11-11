@@ -21,10 +21,10 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
+using Mediaportal.TV.Server.Common.Types.Channel;
 using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.SetupControls;
 using Mediaportal.TV.Server.SetupControls.UserInterfaceControls;
@@ -33,14 +33,14 @@ using Mediaportal.TV.Server.SetupTV.Sections.Helpers;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
-using Mediaportal.TV.Server.TVDatabase.Entities.Factories;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using TuningDetail = Mediaportal.TV.Server.TVDatabase.Entities.TuningDetail;
 
 namespace Mediaportal.TV.Server.SetupTV.Sections
 {
   public partial class Channels : SectionSettings
   {
-    private const ChannelRelation REQUIRED_CHANNEL_RELATIONS = ChannelRelation.TuningDetails | ChannelRelation.GroupMaps;
+    private const ChannelRelation REQUIRED_CHANNEL_RELATIONS = ChannelRelation.TuningDetails | ChannelRelation.ChannelGroupMappings;
 
     #region variables
 
@@ -77,7 +77,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     // channel ID => item
     private IDictionary<int, ListViewItem> _listViewChannelsInGroupItemCache = null;
     // group ID => [ordered mappings]
-    private IDictionary<int, List<GroupMap>> _channelsInGroupMappingCache = null;
+    private IDictionary<int, List<ChannelGroupChannelMapping>> _channelsInGroupMappingCache = null;
 
     #endregion
 
@@ -110,26 +110,26 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
       // channel group channel items and mappings
       _listViewChannelsInGroupItemCache = new Dictionary<int, ListViewItem>(allChannels.Count);
-      _channelsInGroupMappingCache = new Dictionary<int, List<GroupMap>>(allGroups.Count);
+      _channelsInGroupMappingCache = new Dictionary<int, List<ChannelGroupChannelMapping>>(allGroups.Count);
       foreach (Channel channel in allChannels)
       {
         _listViewChannelsInGroupItemCache.Add(channel.IdChannel, CreateChannelsInGroupItemForChannel(channel));
 
-        foreach (GroupMap mapping in channel.GroupMaps)
+        foreach (ChannelGroupChannelMapping mapping in channel.ChannelGroupMappings)
         {
-          List<GroupMap> mappings;
-          if (!_channelsInGroupMappingCache.TryGetValue(mapping.IdGroup, out mappings))
+          List<ChannelGroupChannelMapping> mappings;
+          if (!_channelsInGroupMappingCache.TryGetValue(mapping.IdChannelGroup, out mappings))
           {
-            mappings = new List<GroupMap>(allChannels.Count);
-            _channelsInGroupMappingCache[mapping.IdGroup] = mappings;
+            mappings = new List<ChannelGroupChannelMapping>(allChannels.Count);
+            _channelsInGroupMappingCache[mapping.IdChannelGroup] = mappings;
           }
           mappings.Add(mapping);
         }
       }
 
-      foreach (List<GroupMap> mappings in _channelsInGroupMappingCache.Values)
+      foreach (List<ChannelGroupChannelMapping> mappings in _channelsInGroupMappingCache.Values)
       {
-        mappings.Sort(delegate(GroupMap m1, GroupMap m2)
+        mappings.Sort(delegate(ChannelGroupChannelMapping m1, ChannelGroupChannelMapping m2)
         {
           return m1.SortOrder.CompareTo(m2.SortOrder);
         });
@@ -178,13 +178,13 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             this.LogDebug("channels: channels...");
             foreach (Channel channel in allChannels)
             {
-              this.LogDebug("  ID = {0, -4}, name = {1, -30}, number = {2, -5}, tuning detail count = {3}, group count = {4}", channel.IdChannel, channel.Name, channel.ChannelNumber, channel.TuningDetails.Count, channel.GroupMaps.Count);
+              this.LogDebug("  ID = {0, -4}, name = {1, -30}, number = {2, -5}, tuning detail count = {3}, group count = {4}", channel.IdChannel, channel.Name, channel.ChannelNumber, channel.TuningDetails.Count, channel.ChannelGroupMappings.Count);
             }
             this.LogDebug("channels: groups...");
             foreach (ChannelGroup group in allGroups)
             {
-              List<GroupMap> mappings = _channelsInGroupMappingCache[group.IdGroup];
-              this.LogDebug("  ID = {0, -3}, name = {1, -30}, channel count = {2, -4}, channels = [{3}]", group.IdGroup, group.GroupName, mappings.Count, string.Join(", ", from mapping in mappings select mapping.IdChannel));
+              List<ChannelGroupChannelMapping> mappings = _channelsInGroupMappingCache[group.IdChannelGroup];
+              this.LogDebug("  ID = {0, -3}, name = {1, -30}, channel count = {2, -4}, channels = [{3}]", group.IdChannelGroup, group.Name, mappings.Count, string.Join(", ", from mapping in mappings select mapping.IdChannel));
             }
           }
           catch
@@ -551,8 +551,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       ChannelGroup[] groups = new ChannelGroup[groupCount + 1];
       groups[0] = new ChannelGroup
       {
-        IdGroup = -1,
-        GroupName = "[New]"
+        IdChannelGroup = -1,
+        Name = "[New]"
       };
       int i = 1;
       foreach (ChannelGroup g in comboBoxChannelGroup.Items)
@@ -575,7 +575,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }
 
       IList<Channel> channels;
-      if (group.IdGroup == -1)
+      if (group.IdChannelGroup == -1)
       {
         // new group
         group = CreateNewChannelGroup();
@@ -601,7 +601,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         }
         if (channels.Count == 0)
         {
-          MessageBox.Show(string.Format("The selected channel(s) are already in group {0}.", group.GroupName), MESSAGE_CAPTION);
+          MessageBox.Show(string.Format("The selected channel(s) are already in group {0}.", group.Name), MESSAGE_CAPTION);
           return;
         }
       }
@@ -657,7 +657,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
             newChannel.TuningDetails.Add(tuningDetail);
             newChannel.AcceptChanges();
-            this.LogInfo("channels: channel {0} created from tuning detail {1}", newChannel.IdChannel, tuningDetail.IdTuning);
+            this.LogInfo("channels: channel {0} created from tuning detail {1}", newChannel.IdChannel, tuningDetail.IdTuningDetail);
             modifiedChannels.Add(newChannel);
           }
           channel.AcceptChanges();
@@ -871,20 +871,13 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         }
         else if (_channelInlineEditSubItemIndex == ChannelListViewHandler.SUBITEM_INDEX_NUMBER)
         {
-          int intChannelNumber;
-          float floatChannelNumber;
-          if (
-            string.IsNullOrWhiteSpace(e.Label) ||
-            (
-              !int.TryParse(e.Label, NumberStyles.None, CultureInfo.InvariantCulture.NumberFormat, out intChannelNumber) &&
-              !float.TryParse(e.Label, NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture.NumberFormat, out floatChannelNumber)
-            )
-          )
+          string lcn;
+          if (!LogicalChannelNumber.Create(e.Label, out lcn))
           {
             return;
           }
-          this.LogInfo("channels: channel {0} renumbered, old number = {1}, new number = {2}", channel.IdChannel, channel.ChannelNumber, e.Label);
-          channel.ChannelNumber = e.Label;
+          this.LogInfo("channels: channel {0} renumbered, old number = {1}, new number = {2} ({3})", channel.IdChannel, channel.ChannelNumber, lcn, e.Label);
+          channel.ChannelNumber = lcn;
         }
 
         channel = SaveChannel(channel);
@@ -950,6 +943,18 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }
     }
 
+    private void textBoxChannelNumber_KeyPress(object sender, KeyPressEventArgs e)
+    {
+      if (e.KeyChar == '.')
+      {
+        e.Handled = (sender as TextBox).Text.IndexOf('.') > -1;
+      }
+      else if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
+      {
+        e.Handled = true;
+      }
+    }
+
     private void textBoxChannelNumber_Leave(object sender, EventArgs e)
     {
       // Trigger saving, mimicing normal list view label after edit behaviour.
@@ -984,7 +989,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         return;
       }
 
-      this.LogDebug("channels: selecting channel group, ID = {0}, name = {1}", group.IdGroup, group.GroupName);
+      this.LogDebug("channels: selecting channel group, ID = {0}, name = {1}", group.IdChannelGroup, group.Name);
       if (_currentChannelGroup != null)
       {
         SaveChannelsInGroupOrder();
@@ -995,12 +1000,12 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       try
       {
         listViewChannelsInGroup.Items.Clear();
-        List<GroupMap> mappings;
-        if (_channelsInGroupMappingCache.TryGetValue(group.IdGroup, out mappings))
+        List<ChannelGroupChannelMapping> mappings;
+        if (_channelsInGroupMappingCache.TryGetValue(group.IdChannelGroup, out mappings))
         {
           ListViewItem[] items = new ListViewItem[mappings.Count];
           int i = 0;
-          foreach (GroupMap mapping in mappings)
+          foreach (ChannelGroupChannelMapping mapping in mappings)
           {
             ListViewItem item;
             if (_listViewChannelsInGroupItemCache.TryGetValue(mapping.IdChannel, out item))
@@ -1095,7 +1100,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         listViewChannelsInGroup.EndUpdate();
       }
 
-      foreach (KeyValuePair<int, List<GroupMap>> groupMappings in _channelsInGroupMappingCache)
+      foreach (KeyValuePair<int, List<ChannelGroupChannelMapping>> groupMappings in _channelsInGroupMappingCache)
       {
         groupMappings.Value.RemoveAll(mapping => channelIds.Contains(mapping.IdChannel));
       }
@@ -1123,9 +1128,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         int lastGroupSortOrder = 0;
         foreach (ChannelGroup g in comboBoxChannelGroup.Items)
         {
-          if (string.Equals(g.GroupName, dlg.TextValue))
+          if (string.Equals(g.Name, dlg.TextValue))
           {
-            MessageBox.Show(string.Format("There is already a group named {0}. Please choose a different name.", g.GroupName), MESSAGE_CAPTION);
+            MessageBox.Show(string.Format("There is already a group named {0}. Please choose a different name.", g.Name), MESSAGE_CAPTION);
             found = true;
             break;
           }
@@ -1135,14 +1140,14 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         if (!found)
         {
           ChannelGroup group = new ChannelGroup();
-          group.GroupName = dlg.TextValue;
+          group.Name = dlg.TextValue;
           group.MediaType = (int)_mediaType;
           group.SortOrder = lastGroupSortOrder + 1;
           group = ServiceAgents.Instance.ChannelGroupServiceAgent.SaveChannelGroup(group);
-          this.LogInfo("channels: channel group {0} added, name = {1}", group.IdGroup, group.GroupName);
+          this.LogInfo("channels: channel group {0} added, name = {1}", group.IdChannelGroup, group.Name);
 
           _listViewChannelsHandler.AddGroup(group);
-          _channelsInGroupMappingCache[group.IdGroup] = new List<GroupMap>(_listViewChannelsHandler.AllItems.Count);
+          _channelsInGroupMappingCache[group.IdChannelGroup] = new List<ChannelGroupChannelMapping>(_listViewChannelsHandler.AllItems.Count);
           comboBoxChannelGroup.BeginUpdate();
           try
           {
@@ -1165,7 +1170,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
     private void buttonGroupRename_Click(object sender, EventArgs e)
     {
-      FormEnterText dlg = new FormEnterText("Rename Channel Group", "Please enter a new name for the channel group:", _currentChannelGroup.GroupName);
+      FormEnterText dlg = new FormEnterText("Rename Channel Group", "Please enter a new name for the channel group:", _currentChannelGroup.Name);
       while (true)
       {
         if (dlg.ShowDialog() != DialogResult.OK)
@@ -1177,18 +1182,18 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         bool found = false;
         foreach (ChannelGroup g in comboBoxChannelGroup.Items)
         {
-          if (string.Equals(g.GroupName, dlg.TextValue) && g.IdGroup != _currentChannelGroup.IdGroup)
+          if (string.Equals(g.Name, dlg.TextValue) && g.IdChannelGroup != _currentChannelGroup.IdChannelGroup)
           {
             found = true;
-            MessageBox.Show(string.Format("There is already a group named {0}. Please choose a different name.", g.GroupName), MESSAGE_CAPTION);
+            MessageBox.Show(string.Format("There is already a group named {0}. Please choose a different name.", g.Name), MESSAGE_CAPTION);
             break;
           }
         }
 
         if (!found)
         {
-          this.LogInfo("channels: channel group {0} renamed, old name = {1}, new name = {2}", _currentChannelGroup.IdGroup, _currentChannelGroup.GroupName, dlg.TextValue);
-          _currentChannelGroup.GroupName = dlg.TextValue;
+          this.LogInfo("channels: channel group {0} renamed, old name = {1}, new name = {2}", _currentChannelGroup.IdChannelGroup, _currentChannelGroup.Name, dlg.TextValue);
+          _currentChannelGroup.Name = dlg.TextValue;
           _currentChannelGroup = ServiceAgents.Instance.ChannelGroupServiceAgent.SaveChannelGroup(_currentChannelGroup);
 
           int index = comboBoxChannelGroup.SelectedIndex;
@@ -1223,10 +1228,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }
 
       // Prompt if one or more channels are in the group.
-      List<GroupMap> mappings;
-      if (!_channelsInGroupMappingCache.TryGetValue(_currentChannelGroup.IdGroup, out mappings))
+      List<ChannelGroupChannelMapping> mappings;
+      if (!_channelsInGroupMappingCache.TryGetValue(_currentChannelGroup.IdChannelGroup, out mappings))
       {
-        mappings = new List<GroupMap>(0);
+        mappings = new List<ChannelGroupChannelMapping>(0);
       }
       if (mappings.Count > 0)
       {
@@ -1237,10 +1242,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         }
       }
 
-      this.LogInfo("channels: channel group {0} deleted, channels = [{1}]", _currentChannelGroup.IdGroup, string.Join(", ", from mapping in mappings select mapping.IdChannel));
+      this.LogInfo("channels: channel group {0} deleted, channels = [{1}]", _currentChannelGroup.IdChannelGroup, string.Join(", ", from mapping in mappings select mapping.IdChannel));
       _listViewChannelsHandler.DeleteGroup(_currentChannelGroup);
-      ServiceAgents.Instance.ChannelGroupServiceAgent.DeleteChannelGroup(_currentChannelGroup.IdGroup);
-      _channelsInGroupMappingCache.Remove(_currentChannelGroup.IdGroup);
+      ServiceAgents.Instance.ChannelGroupServiceAgent.DeleteChannelGroup(_currentChannelGroup.IdChannelGroup);
+      _channelsInGroupMappingCache.Remove(_currentChannelGroup.IdChannelGroup);
       comboBoxChannelGroup.Items.Remove(_currentChannelGroup);
       comboBoxChannelGroup.SelectedIndex = 0;
 
@@ -1254,7 +1259,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       int i = 0;
       foreach (ChannelGroup group in comboBoxChannelGroup.Items)
       {
-        ListViewItem item = new ListViewItem(group.GroupName);
+        ListViewItem item = new ListViewItem(group.Name);
         item.Tag = group;
         items[i++] = item;
       }
@@ -1275,14 +1280,14 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
               continue;
             }
 
-            if (group.IdGroup == _currentChannelGroup.IdGroup)
+            if (group.IdChannelGroup == _currentChannelGroup.IdChannelGroup)
             {
               selectedIndex = i;
             }
             if (group.SortOrder != ++i)
             {
               isOrderChanged = true;
-              this.LogInfo("channels: channel group {0} sort order changed from {1} to {2}", group.IdGroup, group.SortOrder, i);
+              this.LogInfo("channels: channel group {0} sort order changed from {1} to {2}", group.IdChannelGroup, group.SortOrder, i);
               group.SortOrder = i;
               group = ServiceAgents.Instance.ChannelGroupServiceAgent.SaveChannelGroup(group);
             }
@@ -1315,10 +1320,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
     private void buttonGroupChannelsAdd_Click(object sender, EventArgs e)
     {
-      List<GroupMap> channelsInGroup;
-      if (!_channelsInGroupMappingCache.TryGetValue(_currentChannelGroup.IdGroup, out channelsInGroup))
+      List<ChannelGroupChannelMapping> channelsInGroup;
+      if (!_channelsInGroupMappingCache.TryGetValue(_currentChannelGroup.IdChannelGroup, out channelsInGroup))
       {
-        channelsInGroup = new List<GroupMap>(0);
+        channelsInGroup = new List<ChannelGroupChannelMapping>(0);
       }
       List<Channel> availableChannels = new List<Channel>(_listViewChannelsHandler.AllItems.Count);
       foreach (ListViewItem item in _listViewChannelsHandler.AllItems)
@@ -1369,27 +1374,27 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
       try
       {
-        List<GroupMap> existingMappings;
-        if (!_channelsInGroupMappingCache.TryGetValue(group.IdGroup, out existingMappings))
+        List<ChannelGroupChannelMapping> existingMappings;
+        if (!_channelsInGroupMappingCache.TryGetValue(group.IdChannelGroup, out existingMappings))
         {
-          existingMappings = new List<GroupMap>(channels.Count);
-          _channelsInGroupMappingCache[group.IdGroup] = existingMappings;
+          existingMappings = new List<ChannelGroupChannelMapping>(channels.Count);
+          _channelsInGroupMappingCache[group.IdChannelGroup] = existingMappings;
         }
 
         int lastMappingSortOrder = existingMappings.Count + 1;
-        IList<GroupMap> mappings = new List<GroupMap>(channels.Count);
+        IList<ChannelGroupChannelMapping> mappings = new List<ChannelGroupChannelMapping>(channels.Count);
         IDictionary<int, Channel> channelDictionary = new Dictionary<int, Channel>(channels.Count);
         foreach (Channel channel in channels)
         {
           channelDictionary.Add(channel.IdChannel, channel);
-          GroupMap mapping = new GroupMap();
+          ChannelGroupChannelMapping mapping = new ChannelGroupChannelMapping();
           mapping.IdChannel = channel.IdChannel;
-          mapping.IdGroup = group.IdGroup;
+          mapping.IdChannelGroup = group.IdChannelGroup;
           mapping.SortOrder = lastMappingSortOrder++;
           mappings.Add(mapping);
         }
-        this.LogInfo("channels: {0} channel(s) added to group {1}, channels = [{2}]", channelDictionary.Count, group.IdGroup, string.Join(", ", channelDictionary.Keys));
-        mappings = ServiceAgents.Instance.ChannelServiceAgent.SaveChannelGroupMaps(mappings);
+        this.LogInfo("channels: {0} channel(s) added to group {1}, channels = [{2}]", channelDictionary.Count, group.IdChannelGroup, string.Join(", ", channelDictionary.Keys));
+        mappings = ServiceAgents.Instance.ChannelServiceAgent.SaveChannelGroupMappings(mappings);
 
         existingMappings.AddRange(mappings);
         _listViewChannelsHandler.AddChannelsToGroup(mappings);
@@ -1400,7 +1405,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         {
           ListViewItem[] items = new ListViewItem[mappings.Count];
           int i = 0;
-          foreach (GroupMap mapping in mappings)
+          foreach (ChannelGroupChannelMapping mapping in mappings)
           {
             ListViewItem item;
             if (_listViewChannelsInGroupItemCache.TryGetValue(mapping.IdChannel, out item))
@@ -1446,7 +1451,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
       try
       {
-        List<GroupMap> mappings = new List<GroupMap>(items.Count);
+        List<ChannelGroupChannelMapping> mappings = new List<ChannelGroupChannelMapping>(items.Count);
         HashSet<int> mappingIds = new HashSet<int>();
         IList<int> channelIds = new List<int>(items.Count);
         listViewChannelsInGroup.BeginUpdate();
@@ -1454,11 +1459,11 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         {
           foreach (ListViewItem item in items)
           {
-            GroupMap mapping = item.Tag as GroupMap;
+            ChannelGroupChannelMapping mapping = item.Tag as ChannelGroupChannelMapping;
             if (mapping != null)
             {
               mappings.Add(mapping);
-              mappingIds.Add(mapping.IdMap);
+              mappingIds.Add(mapping.IdChannelGroupChannelMapping);
               channelIds.Add(mapping.IdChannel);
             }
             listViewChannelsInGroup.Items.Remove(item);
@@ -1469,13 +1474,13 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           listViewChannelsInGroup.EndUpdate();
         }
 
-        this.LogInfo("channels: {0} channel(s) removed from group {1}, channels = [{2}]", channelIds.Count, _currentChannelGroup.IdGroup, string.Join(", ", channelIds));
-        ServiceAgents.Instance.ChannelServiceAgent.DeleteChannelGroupMaps(mappingIds);
+        this.LogInfo("channels: {0} channel(s) removed from group {1}, channels = [{2}]", channelIds.Count, _currentChannelGroup.IdChannelGroup, string.Join(", ", channelIds));
+        ServiceAgents.Instance.ChannelServiceAgent.DeleteChannelGroupMappings(mappingIds);
 
         _listViewChannelsHandler.RemoveChannelsFromGroup(mappings);
-        if (_channelsInGroupMappingCache.TryGetValue(_currentChannelGroup.IdGroup, out mappings))
+        if (_channelsInGroupMappingCache.TryGetValue(_currentChannelGroup.IdChannelGroup, out mappings))
         {
-          mappings.RemoveAll(mapping => mappingIds.Contains(mapping.IdMap));
+          mappings.RemoveAll(mapping => mappingIds.Contains(mapping.IdChannelGroupChannelMapping));
         }
       }
       finally
@@ -1619,20 +1624,20 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
     private void SaveChannelsInGroupOrder()
     {
-      List<GroupMap> existingMappings;
-      if (!_channelsInGroupMappingCache.TryGetValue(_currentChannelGroup.IdGroup, out existingMappings))
+      List<ChannelGroupChannelMapping> existingMappings;
+      if (!_channelsInGroupMappingCache.TryGetValue(_currentChannelGroup.IdChannelGroup, out existingMappings))
       {
         // This can happen when we delete the channel group.
         return;
       }
 
       existingMappings.Clear();
-      IList<GroupMap> mappings = new List<GroupMap>(listViewChannelsInGroup.Items.Count);
+      IList<ChannelGroupChannelMapping> mappings = new List<ChannelGroupChannelMapping>(listViewChannelsInGroup.Items.Count);
       IList<int> channelIds = new List<int>(listViewChannelsInGroup.Items.Count);
       int i = 1;
       foreach (ListViewItem item in listViewChannelsInGroup.Items)
       {
-        GroupMap mapping = item.Tag as GroupMap;
+        ChannelGroupChannelMapping mapping = item.Tag as ChannelGroupChannelMapping;
         if (mapping == null)
         {
           continue;
@@ -1648,8 +1653,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }
       if (mappings.Count > 0)
       {
-        this.LogInfo("channels: {0} channel(s) reordered in group {1}, channels = [{2}]", mappings.Count, _currentChannelGroup.IdGroup, string.Join(", ", channelIds));
-        ServiceAgents.Instance.ChannelServiceAgent.SaveChannelGroupMaps(mappings);
+        this.LogInfo("channels: {0} channel(s) reordered in group {1}, channels = [{2}]", mappings.Count, _currentChannelGroup.IdChannelGroup, string.Join(", ", channelIds));
+        ServiceAgents.Instance.ChannelServiceAgent.SaveChannelGroupMappings(mappings);
 
         // We're not creating new mappings here, so no need to bother
         // integrating the mappings returned by Save(). Also, since this
@@ -1657,11 +1662,11 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         // touch the items in the list view. This means we can get away with
         // simply reseting the change trackers, which is easier than searching
         // and replacing each saved mapping.
-        foreach (GroupMap mapping in existingMappings)
+        foreach (ChannelGroupChannelMapping mapping in existingMappings)
         {
           mapping.AcceptChanges();
         }
-        this.LogDebug("channels: new order for group {0}, channels = [{1}]", _currentChannelGroup.IdGroup, string.Join(", ", from mapping in existingMappings select mapping.IdChannel));
+        this.LogDebug("channels: new order for group {0}, channels = [{1}]", _currentChannelGroup.IdChannelGroup, string.Join(", ", from mapping in existingMappings select mapping.IdChannel));
       }
     }
 

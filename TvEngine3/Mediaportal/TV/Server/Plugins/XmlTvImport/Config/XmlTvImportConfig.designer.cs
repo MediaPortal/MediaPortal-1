@@ -444,7 +444,6 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport.Config
       // 
       // comboBoxMappingsChannelGroup
       // 
-      this.comboBoxMappingsChannelGroup.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxMappingsChannelGroup.FormattingEnabled = true;
       this.comboBoxMappingsChannelGroup.Location = new System.Drawing.Point(55, 11);
       this.comboBoxMappingsChannelGroup.Name = "comboBoxMappingsChannelGroup";

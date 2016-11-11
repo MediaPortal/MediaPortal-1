@@ -40,6 +40,7 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner;
 using MediaPortal.Common.Utils.ExtensionMethods;
 using DvbPolarisation = Mediaportal.TV.Server.TVLibrary.Implementations.Dvb.Enum.Polarisation;
 using DvbRollOffFactor = Mediaportal.TV.Server.TVLibrary.Implementations.Dvb.Enum.RollOffFactor;
+using LcnSyntax = Mediaportal.TV.Server.Common.Types.Channel.LogicalChannelNumber;
 using TvePolarisation = Mediaportal.TV.Server.Common.Types.Enum.Polarisation;
 using TveRollOffFactor = Mediaportal.TV.Server.Common.Types.Enum.RollOffFactor;
 
@@ -424,7 +425,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
         // Read MPEG 2 TS program information.
         ushort transportStreamId;
         IDictionary<uint, ProgramInfo> programs;
-        CollectPrograms(out transportStreamId, out programs);
+        CollectPrograms(channel is ChannelStream, out transportStreamId, out programs);
         if (_cancelScan)
         {
           return;
@@ -489,18 +490,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
             newChannel.IsEncrypted = program.Value.IsEncrypted;
             newChannel.IsThreeDimensional = program.Value.IsThreeDimensional;
 
-            ChannelMpeg2Base mpeg2Channel = newChannel as ChannelMpeg2Base;
-            if (mpeg2Channel != null)
+            IChannelMpeg2Ts mpeg2TsChannel = newChannel as IChannelMpeg2Ts;
+            if (mpeg2TsChannel != null)
             {
-              mpeg2Channel.TransportStreamId = transportStreamId;
-              mpeg2Channel.ProgramNumber = program.Value.ProgramNumber;
-              mpeg2Channel.PmtPid = program.Value.PmtPid;
-            }
+              mpeg2TsChannel.TransportStreamId = transportStreamId;
+              mpeg2TsChannel.ProgramNumber = program.Value.ProgramNumber;
+              mpeg2TsChannel.PmtPid = program.Value.PmtPid;
 
-            ChannelDvbBase dvbChannel = newChannel as ChannelDvbBase;
-            if (dvbChannel != null)
-            {
-              dvbChannel.OriginalNetworkId = originalNetworkId;
+              IChannelDvbCompatible dvbCompatibleChannel = newChannel as IChannelDvbCompatible;
+              if (dvbCompatibleChannel != null)
+              {
+                dvbCompatibleChannel.OriginalNetworkId = originalNetworkId;
+              }
             }
 
             ScannedChannel scannedChannel = new ScannedChannel(newChannel);
@@ -544,14 +545,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
     /// within the available network information.
     /// </summary>
     /// <param name="channel">The channel to tune to.</param>
-    /// <returns>the tuning details found</returns>
-    public virtual IList<TuningDetail> ScanNetworkInformation(IChannel channel)
+    /// <returns>the transmitter tuning details found in the network information</returns>
+    public virtual IList<ScannedTransmitter> ScanNetworkInformation(IChannel channel)
     {
-      IList<TuningDetail> tuningDetails = new List<TuningDetail>();
+      IList<ScannedTransmitter> transmitters = new List<ScannedTransmitter>();
       if (_grabberMpeg == null || _grabberDvb == null)
       {
         this.LogError("scan DVB: grabber interfaces not available, not possible to scan");
-        return tuningDetails;
+        return transmitters;
       }
 
       try
@@ -582,7 +583,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
           }
           if (_cancelScan)
           {
-            return tuningDetails;
+            return transmitters;
           }
           remainingTime = _minimumTime - (DateTime.Now - start);
         }
@@ -590,7 +591,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
         if (!_seenTables.HasFlag(TableType.NitActual) && !_seenTables.HasFlag(TableType.NitOther))
         {
           this.LogInfo("scan DVB: NIT not available");
-          return tuningDetails;
+          return transmitters;
         }
 
         // Wait for scanning to complete.
@@ -598,7 +599,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
         {
           if (_cancelScan)
           {
-            return tuningDetails;
+            return transmitters;
           }
 
           // Check for scan completion.
@@ -623,17 +624,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
         }
         while (remainingTime > TimeSpan.Zero);
 
-        tuningDetails = CollectTransmitters(_grabberDvb);
+        transmitters = CollectTransmitters(channel, _grabberDvb);
         if (_grabberFreesat != null)
         {
-          IList<TuningDetail> freesatTuningDetails = CollectTransmitters(_grabberFreesat);
-          foreach (TuningDetail td in freesatTuningDetails)
+          IList<ScannedTransmitter> freesatTransmitters = CollectTransmitters(channel, _grabberFreesat);
+          foreach (ScannedTransmitter transmitter in freesatTransmitters)
           {
-            tuningDetails.Add(td);
+            transmitters.Add(transmitter);
           }
         }
 
-        return tuningDetails;
+        return transmitters;
       }
       finally
       {
@@ -693,15 +694,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
 
       // Try to use "Unknown <frequency>.<program number>". At least that way
       // people can see which transmitter the channel came from.
-      ChannelMpeg2Base mpeg2Channel = channel as ChannelMpeg2Base;
+      IChannelMpeg2Ts mpeg2TsChannel = channel as IChannelMpeg2Ts;
       IChannelPhysical physicalChannel = channel as IChannelPhysical;
-      if (mpeg2Channel != null && physicalChannel != null)
+      if (mpeg2TsChannel != null && physicalChannel != null)
       {
-        return string.Format("Unknown {0}.{1}", (int)(physicalChannel.Frequency / 1000), mpeg2Channel.ProgramNumber);
+        return string.Format("Unknown {0}.{1}", (int)(physicalChannel.Frequency / 1000), mpeg2TsChannel.ProgramNumber);
       }
-      if (mpeg2Channel != null)
+      if (mpeg2TsChannel != null)
       {
-        return string.Format("Unknown {0}", mpeg2Channel.ProgramNumber);
+        return string.Format("Unknown {0}", mpeg2TsChannel.ProgramNumber);
       }
 
       // In theory this code should never be reached.
@@ -764,9 +765,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
     /// <summary>
     /// Collect the program information from an MPEG 2 transport stream.
     /// </summary>
+    /// <param name="isNetworkStream"><c>True</c> if the stream is sourced from a network.</param>
     /// <param name="transportStreamId">The transport stream's identifier.</param>
     /// <param name="programs">A dictionary of programs, keyed on the transport stream identifier and program number.</param>
-    private void CollectPrograms(out ushort transportStreamId, out IDictionary<uint, ProgramInfo> programs)
+    private void CollectPrograms(bool isNetworkStream, out ushort transportStreamId, out IDictionary<uint, ProgramInfo> programs)
     {
       ushort networkPid;
       ushort programCount;
@@ -777,6 +779,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
       {
         return;
       }
+
+      uint mainProgramKey = 0;
+      ushort pmtCount = 0;
 
       ushort programNumber;
       ushort pmtPid;
@@ -820,6 +825,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
         program.PmtPid = pmtPid;
         if (isPmtReceived)
         {
+          pmtCount++;
+          mainProgramKey = ((uint)transportStreamId << 16) | programNumber;
+
           if (streamCountVideo > 0)
           {
             program.MediaType = MediaType.Television;
@@ -833,6 +841,19 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
           program.IsThreeDimensional = isThreeDimensional;
         }
         programs[((uint)transportStreamId << 16) | programNumber] = program;
+      }
+
+      if (isNetworkStream && pmtCount == 1)
+      {
+        // If the stream is sourced from a network and only one PMT has been
+        // received, assume that the stream is intended to be a single program
+        // transport stream. Discard the other program details. They won't be
+        // receivable because the PMT and content-carrying PIDs (video, audio
+        // etc.) will have been excluded.
+        this.LogDebug("scan DVB: detected single program network stream");
+        ProgramInfo program = programs[mainProgramKey];
+        programs.Clear();
+        programs[mainProgramKey] = program;
       }
     }
 
@@ -884,6 +905,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
           tuningChannels.Add(currentTransportStreamOriginalNetworkId, new Dictionary<ushort, IChannel>(1) { { currentTransportStreamId, tuningChannel } });
         }
       }
+
+      bool isSingleProgramTransportStream = tuningChannel is ChannelStream && programs.Count == 1;
 
       int j = 1;
       byte tableId;
@@ -1141,7 +1164,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
         ProgramInfo program = null;
         if (programs != null)
         {
-          programs.TryGetValue(serviceKey, out program);
+          bool isProgramFound = programs.TryGetValue(serviceKey, out program);
+          if (isSingleProgramTransportStream && !isProgramFound)
+          {
+            // It looks like this is a PID-filtered multi-program transport
+            // stream where the SDT and other tables have not been updated.
+            // Discard SDT records for services/programs that aren't
+            // receivable.
+            continue;
+          }
         }
 
         MediaType mediaType;
@@ -1199,7 +1230,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
             }
           }
         }
-        else
+        else if (!isSingleProgramTransportStream || string.IsNullOrEmpty(newChannel.Name))
         {
           newChannel.Name = string.Empty;
         }
@@ -1218,22 +1249,23 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
         {
           newChannel.Provider = string.Empty;
         }
-        if (distinctLcns.Count == 1)
+        string lcnString;
+        if (distinctLcns.Count > 1)
         {
-          if (dishSubChannelNumber != 0)
-          {
-            newChannel.LogicalChannelNumber = string.Format("{0}{1}{2}", lcn, ChannelBase.LOGICAL_CHANNEL_NUMBER_SEPARATOR, dishSubChannelNumber);
-          }
-          else
-          {
-            newChannel.LogicalChannelNumber = lcn.ToString();
-          }
+          lcn = SelectPreferredChannelNumber(logicalChannelNumbers, logicalChannelNumberCount);
+          dishSubChannelNumber = 0;
         }
-        else if (distinctLcns.Count > 1)
+        if (
+          distinctLcns.Count > 0 &&
+          (
+            (dishSubChannelNumber != 0 && LcnSyntax.Create(lcn, out lcnString, dishSubChannelNumber)) ||
+            LcnSyntax.Create(lcn, out lcnString)
+          )
+        )
         {
-          newChannel.LogicalChannelNumber = SelectPreferredChannelNumber(logicalChannelNumbers, logicalChannelNumberCount);
+          newChannel.LogicalChannelNumber = lcnString;
         }
-        else
+        else if (!isSingleProgramTransportStream || string.IsNullOrEmpty(newChannel.LogicalChannelNumber))
         {
           newChannel.LogicalChannelNumber = string.Empty;
         }
@@ -1257,39 +1289,36 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
           newChannel.IsThreeDimensional |= program.IsThreeDimensional;
         }
 
-        ChannelMpeg2Base mpeg2Channel = newChannel as ChannelMpeg2Base;
-        if (mpeg2Channel != null)
+        IChannelMpeg2Ts mpeg2TsChannel = newChannel as IChannelMpeg2Ts;
+        if (mpeg2TsChannel != null)
         {
-          mpeg2Channel.TransportStreamId = transportStreamId;
-          mpeg2Channel.ProgramNumber = serviceId;
-          mpeg2Channel.PmtPid = ChannelMpeg2Base.PMT_PID_NOT_KNOWN;
+          mpeg2TsChannel.TransportStreamId = transportStreamId;
+          mpeg2TsChannel.ProgramNumber = serviceId;
+          mpeg2TsChannel.PmtPid = ChannelMpeg2TsBase.PMT_PID_NOT_KNOWN;
           if (program != null)
           {
-            mpeg2Channel.PmtPid = program.PmtPid;
+            mpeg2TsChannel.PmtPid = program.PmtPid;
           }
-        }
 
-        ChannelDvbBase dvbChannel = newChannel as ChannelDvbBase;
-        if (dvbChannel != null)
-        {
-          dvbChannel.OriginalNetworkId = originalNetworkId;
-          dvbChannel.OpenTvChannelId = openTvChannelId;
-          dvbChannel.EpgOriginalNetworkId = epgOriginalNetworkId;
-          dvbChannel.EpgTransportStreamId = epgTransportStreamId;
-          dvbChannel.EpgServiceId = epgServiceId;
-        }
-
-        ChannelDvbS dvbsChannel = newChannel as ChannelDvbS;
-        if (dvbsChannel != null)
-        {
-          dvbsChannel.FreesatChannelId = freesatChannelId;
-        }
-        else
-        {
-          ChannelDvbS2 dvbs2Channel = newChannel as ChannelDvbS2;
-          if (dvbs2Channel != null)
+          IChannelDvbCompatible dvbCompatibleChannel = newChannel as IChannelDvbCompatible;
+          if (dvbCompatibleChannel != null)
           {
-            dvbs2Channel.FreesatChannelId = freesatChannelId;
+            dvbCompatibleChannel.OriginalNetworkId = originalNetworkId;
+            dvbCompatibleChannel.EpgOriginalNetworkId = epgOriginalNetworkId;
+            dvbCompatibleChannel.EpgTransportStreamId = epgTransportStreamId;
+            dvbCompatibleChannel.EpgServiceId = epgServiceId;
+
+            IChannelFreesat freesatChannel = newChannel as IChannelFreesat;
+            if (freesatChannel != null)
+            {
+              freesatChannel.FreesatChannelId = freesatChannelId;
+            }
+
+            IChannelOpenTv openTvChannel = newChannel as IChannelOpenTv;
+            if (openTvChannel != null)
+            {
+              openTvChannel.OpenTvChannelId = openTvChannelId;
+            }
           }
         }
 
@@ -1615,7 +1644,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
     /// <param name="logicalChannelNumbers">The channel number candidates.</param>
     /// <param name="logicalChannelNumberCount">The number of <paramref name="logicalChannelNumbers">candidates</paramref>.</param>
     /// <returns>the preferred number for the channel</returns>
-    private string SelectPreferredChannelNumber(LogicalChannelNumber[] logicalChannelNumbers, ushort logicalChannelNumberCount)
+    private ushort SelectPreferredChannelNumber(LogicalChannelNumber[] logicalChannelNumbers, ushort logicalChannelNumberCount)
     {
       // Priority system:
       // 10 = provider 1 specific region HD
@@ -1688,11 +1717,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
           preferredLcnPriority = lcnPriority;
         }
       }
-      return preferredLcn.ToString();
+      return preferredLcn;
     }
 
-    private static BroadcastStandard GetBroadcastStandardFromChannelInstance(IChannel channel)
+    public static BroadcastStandard GetBroadcastStandardFromChannelInstance(IChannel channel)
     {
+      if (channel is ChannelAmRadio)
+      {
+        return BroadcastStandard.AmRadio;
+      }
       if (channel is ChannelAnalogTv)
       {
         return BroadcastStandard.AnalogTelevision;
@@ -1717,13 +1750,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
       {
         return BroadcastStandard.DvbC2;
       }
+      if (channel is ChannelDvbDsng)
+      {
+        return BroadcastStandard.DvbDsng;
+      }
       if (channel is ChannelDvbS)
       {
         return BroadcastStandard.DvbS;
       }
-      if (channel is ChannelDvbS2)
+      ChannelDvbS2 dvbs2Channel = channel as ChannelDvbS2;
+      if (dvbs2Channel != null)
       {
-        return BroadcastStandard.DvbS2;
+        return dvbs2Channel.BroadcastStandard;
       }
       if (channel is ChannelDvbT)
       {
@@ -1736,6 +1774,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
       if (channel is ChannelFmRadio)
       {
         return BroadcastStandard.FmRadio;
+      }
+      if (channel is ChannelIsdbC)
+      {
+        return BroadcastStandard.IsdbC;
+      }
+      if (channel is ChannelIsdbS)
+      {
+        return BroadcastStandard.IsdbS;
+      }
+      if (channel is ChannelIsdbT)
+      {
+        return BroadcastStandard.IsdbT;
       }
       if (channel is ChannelSatelliteTurboFec)
       {
@@ -1804,33 +1854,35 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
           preferredChannel.IsThreeDimensional = true;
         }
 
-        ChannelDvbBase preferredDvbChannel = preferredChannel as ChannelDvbBase;
-        if (preferredDvbChannel != null)
+        IChannelFreesat preferredFreesatChannel = preferredChannel as IChannelFreesat;
+        if (preferredFreesatChannel != null && preferredFreesatChannel.FreesatChannelId <= 0)
         {
-          ChannelDvbBase secondaryDvbChannel = secondaryChannel as ChannelDvbBase;
-          if (preferredDvbChannel.OpenTvChannelId <= 0)
+          IChannelFreesat secondaryFreesatChannel = secondaryChannel as IChannelFreesat;
+          if (secondaryFreesatChannel != null)
           {
-            preferredDvbChannel.OpenTvChannelId = secondaryDvbChannel.OpenTvChannelId;
-          }
-          if (preferredDvbChannel.EpgOriginalNetworkId <= 0)
-          {
-            preferredDvbChannel.EpgOriginalNetworkId = secondaryDvbChannel.EpgOriginalNetworkId;
-            preferredDvbChannel.EpgTransportStreamId = secondaryDvbChannel.EpgTransportStreamId;
-            preferredDvbChannel.EpgServiceId = secondaryDvbChannel.EpgServiceId;
+            preferredFreesatChannel.FreesatChannelId = secondaryFreesatChannel.FreesatChannelId;
           }
         }
 
-        ChannelDvbS preferredDvbsChannel = preferredChannel as ChannelDvbS;
-        if (preferredDvbsChannel != null && preferredDvbsChannel.FreesatChannelId <= 0)
+        IChannelOpenTv preferredOpenTvChannel = preferredChannel as IChannelOpenTv;
+        if (preferredOpenTvChannel != null && preferredOpenTvChannel.OpenTvChannelId <= 0)
         {
-          preferredDvbsChannel.FreesatChannelId = (secondaryChannel as ChannelDvbS).FreesatChannelId;
-        }
-        else
-        {
-          ChannelDvbS2 preferredDvbs2Channel = preferredChannel as ChannelDvbS2;
-          if (preferredDvbs2Channel != null && preferredDvbs2Channel.FreesatChannelId <= 0)
+          IChannelOpenTv secondaryOpenTvChannel = secondaryChannel as IChannelOpenTv;
+          if (secondaryOpenTvChannel != null)
           {
-            preferredDvbs2Channel.FreesatChannelId = (secondaryChannel as ChannelDvbS2).FreesatChannelId;
+            preferredOpenTvChannel.OpenTvChannelId = secondaryOpenTvChannel.OpenTvChannelId;
+          }
+        }
+
+        IChannelDvbCompatible preferredDvbCompatibleChannel = preferredChannel as IChannelDvbCompatible;
+        if (preferredDvbCompatibleChannel != null && preferredDvbCompatibleChannel.EpgOriginalNetworkId <= 0)
+        {
+          IChannelDvbCompatible secondaryDvbCompatibleChannel = secondaryChannel as IChannelDvbCompatible;
+          if (secondaryDvbCompatibleChannel != null)
+          {
+            preferredDvbCompatibleChannel.EpgOriginalNetworkId = secondaryDvbCompatibleChannel.EpgOriginalNetworkId;
+            preferredDvbCompatibleChannel.EpgTransportStreamId = secondaryDvbCompatibleChannel.EpgTransportStreamId;
+            preferredDvbCompatibleChannel.EpgServiceId = secondaryDvbCompatibleChannel.EpgServiceId;
           }
         }
 
@@ -1840,6 +1892,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
           preferredScannedChannel.PreviousTransportStreamId = secondaryScannedChannel.Value.PreviousTransportStreamId;
           preferredScannedChannel.PreviousServiceId = secondaryScannedChannel.Value.PreviousServiceId;
         }
+
         foreach (var group in secondaryScannedChannel.Value.Groups)
         {
           ICollection<ulong> groupIds;
@@ -1901,28 +1954,28 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
     /// <returns>a dictionary of the tuning channels for each transport stream, keyed on original network identifier (primary) and transport stream identifier (secondary)</returns>
     private IDictionary<ushort, IDictionary<ushort, IChannel>> DetermineTransportStreamTuningDetails(IGrabberSiDvb grabber, IChannel currentTuningChannel, ushort currentOriginalNetworkId, ushort currentTransportStreamId)
     {
-      IList<TuningDetail> tuningDetails = CollectTransmitters(grabber);
+      IList<ScannedTransmitter> transmitters = CollectTransmitters(currentTuningChannel, grabber);
 
       this.LogInfo("scan DVB: determine correct tuning details for other transport streams");
 
-      // Sort tuning details into a dictionary keyed on ONID/TSID.
-      Dictionary<uint, List<TuningDetail>> possibleTuningDetailsByTransportStream = new Dictionary<uint, List<TuningDetail>>(tuningDetails.Count);
-      foreach (TuningDetail td in tuningDetails)
+      // Sort transmitters into a dictionary keyed on ONID/TSID.
+      Dictionary<uint, List<ScannedTransmitter>> possibleTuningDetailsByTransportStream = new Dictionary<uint, List<ScannedTransmitter>>(transmitters.Count);
+      foreach (ScannedTransmitter transmitter in transmitters)
       {
-        uint key = ((uint)td.OriginalNetworkId << 16) | td.TransportStreamId;
-        List<TuningDetail> transportStreamTuningDetails;
+        uint key = ((uint)transmitter.OriginalNetworkId << 16) | transmitter.TransportStreamId;
+        List<ScannedTransmitter> transportStreamTuningDetails;
         if (!possibleTuningDetailsByTransportStream.TryGetValue(key, out transportStreamTuningDetails))
         {
-          transportStreamTuningDetails = new List<TuningDetail>(5);
+          transportStreamTuningDetails = new List<ScannedTransmitter>(5);
           possibleTuningDetailsByTransportStream[key] = transportStreamTuningDetails;
         }
-        transportStreamTuningDetails.Add(td);
+        transportStreamTuningDetails.Add(transmitter);
       }
 
       // Build a dictionary of the actual tuning channel for each transport stream.
       HashSet<IChannel> seenTuningChannels = new HashSet<IChannel>() { currentTuningChannel };
       Dictionary<ushort, IDictionary<ushort, IChannel>> transportStreamTuningChannels = new Dictionary<ushort, IDictionary<ushort, IChannel>>(possibleTuningDetailsByTransportStream.Count);
-      transportStreamTuningChannels.Add(currentOriginalNetworkId, new Dictionary<ushort, IChannel>(tuningDetails.Count) { { currentTransportStreamId, currentTuningChannel } });
+      transportStreamTuningChannels.Add(currentOriginalNetworkId, new Dictionary<ushort, IChannel>(transmitters.Count) { { currentTransportStreamId, currentTuningChannel } });
       foreach (var transportStream in possibleTuningDetailsByTransportStream)
       {
         ushort targetOriginalNetworkId = (ushort)(transportStream.Key >> 16);
@@ -1934,16 +1987,21 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
         }
 
         IDictionary<ushort, IChannel> networkTransportStreams;
+        IChannel tuningChannel;
         if (!transportStreamTuningChannels.TryGetValue(targetOriginalNetworkId, out networkTransportStreams))
         {
           networkTransportStreams = new Dictionary<ushort, IChannel>(possibleTuningDetailsByTransportStream.Count);
           transportStreamTuningChannels.Add(targetOriginalNetworkId, networkTransportStreams);
         }
+        else if (networkTransportStreams.TryGetValue(targetTransportStreamId, out tuningChannel))
+        {
+          // We already have the tuning channel for the target transport stream.
+          continue;
+        }
 
         // If we only have one possible tuning detail with one frequency then
         // it must be correct.
-        IChannel tuningChannel;
-        if (transportStream.Value.Count == 1 && (transportStream.Value[0].Frequencies == null || transportStream.Value[0].Frequencies.Count == 0))
+        if (transportStream.Value.Count == 1 && transportStream.Value[0].Frequencies.Count == 1)
         {
           tuningChannel = transportStream.Value[0].GetTuningChannel();
           networkTransportStreams.Add(targetTransportStreamId, tuningChannel);
@@ -1953,61 +2011,26 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
 
         // Otherwise we must check each tuning detail + frequency combination.
         bool foundTransportStream = false;
-        foreach (TuningDetail td in transportStream.Value)
+        foreach (ScannedTransmitter transmitter in transportStream.Value)
         {
-          // Build a list of the valid frequencies for the tuning detail.
-          IList<Tuple<int, bool>> frequencies = new List<Tuple<int, bool>>(td.Frequencies.Count * 3);
-          foreach (int frequency in td.Frequencies)
-          {
-            if (frequency > 0)
-            {
-              frequencies.Add(new Tuple<int, bool>(frequency, false));
-              if (td.FrequencyOffset != 0)
-              {
-                frequencies.Add(new Tuple<int, bool>(frequency + td.FrequencyOffset, true));
-                frequencies.Add(new Tuple<int, bool>(frequency - td.FrequencyOffset, true));
-              }
-            }
-          }
-
-          // If we only have one possible tuning detail with one valid
-          // frequency then it must be correct.
-          if (transportStream.Value.Count == 1 && frequencies.Count == 1)
-          {
-            foundTransportStream = true;
-            td.Frequency = frequencies[0].Item1;
-            tuningChannel = td.GetTuningChannel();
-            networkTransportStreams.Add(targetTransportStreamId, tuningChannel);
-            seenTuningChannels.Add(tuningChannel);
-            break;
-          }
-
           // For each possible frequency...
-          bool skipOffsetFrequencies = false;
-          foreach (Tuple<int, bool> frequency in frequencies)
+          IList<int> frequencies = new List<int>(transmitter.Frequencies);
+          foreach (int frequency in frequencies)
           {
             if (_cancelScan)
             {
               transportStreamTuningChannels.Clear();
               return transportStreamTuningChannels;
             }
-            if (frequency.Item2 && skipOffsetFrequencies)
-            {
-              // Skip offset frequencies when a previous frequency was locked.
-              continue;
-            }
-            skipOffsetFrequencies = false;
 
             // Tune and check the actual transport stream details.
-            td.Frequency = frequency.Item1;
-            tuningChannel = td.GetTuningChannel();
+            transmitter.Frequencies[0] = frequency;
+            tuningChannel = transmitter.GetTuningChannel();
             seenTuningChannels.Add(tuningChannel);
             ushort tunedOriginalNetworkId;
             ushort tunedTransportStreamId;
             if (CollectTransportStreamInformation(tuningChannel, grabber, out tunedOriginalNetworkId, out tunedTransportStreamId))
             {
-              skipOffsetFrequencies = frequency.Item2;
-
               // Add the transport stream details to our dictionary.
               if (!transportStreamTuningChannels.TryGetValue(tunedOriginalNetworkId, out networkTransportStreams))
               {
@@ -2046,11 +2069,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
     /// Collect the transmitter information from a DVB or Freesat network
     /// information table.
     /// </summary>
+    /// <param name="tuningChannel">The tuning details used to tune the current transport stream.</param>
     /// <param name="grabber">The network information grabber.</param>
-    /// <returns>the tuning details for each transmitter</returns>
-    private IList<TuningDetail> CollectTransmitters(IGrabberSiDvb grabber)
+    /// <returns>the transmitter tuning details found in the network information table</returns>
+    private IList<ScannedTransmitter> CollectTransmitters(IChannel tuningChannel, IGrabberSiDvb grabber)
     {
-      List<TuningDetail> tuningDetails = new List<TuningDetail>();
+      List<ScannedTransmitter> transmitters = new List<ScannedTransmitter>();
 
       ushort transmitterCount = grabber.GetTransmitterCount();
       this.LogInfo("scan DVB: transmitter count = {0}", transmitterCount);
@@ -2078,8 +2102,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
       {
         if (_cancelScan)
         {
-          tuningDetails.Clear();
-          return tuningDetails;
+          transmitters.Clear();
+          return transmitters;
         }
 
         frequencyCount = COUNT_FREQUENCIES;
@@ -2104,26 +2128,56 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
         this.LogInfo("    cell ID = {0, -5}, cell ID extension = {1, -3}, is multiple input stream = {2, -5}, PLP ID = {3}",
                       cellId, cellIdExtension, isMultipleInputStream, plpId);
 
-        TuningDetail tuningDetail = new TuningDetail();
-        tuningDetail.BroadcastStandard = broadcastStandard;
-        tuningDetail.SymbolRate = (int)symbolRate;
-        tuningDetail.Bandwidth = bandwidth;
-        tuningDetail.OriginalNetworkId = originalNetworkId;
-        tuningDetail.TransportStreamId = transportStreamId;
-        if (frequencyCount == 1)
+        if (
+          broadcastStandard != BroadcastStandard.DvbC &&
+          broadcastStandard != BroadcastStandard.DvbC2 &&
+          broadcastStandard != BroadcastStandard.DvbS &&
+          broadcastStandard != BroadcastStandard.DvbS2 &&
+          broadcastStandard != BroadcastStandard.DvbT &&
+          broadcastStandard != BroadcastStandard.DvbT2
+        )
         {
-          tuningDetail.Frequency = (int)frequencies[0];
+          throw new TvException("Unsupported transmitter broadcast standard {0}.", broadcastStandard);
         }
-        else
+
+        BroadcastStandard originalBroadcastStandard = broadcastStandard;
+        if (tuningChannel is IChannelIsdb)
         {
-          for (byte f = 0; f < frequencyCount; f++)
+          if (broadcastStandard == BroadcastStandard.DvbC || broadcastStandard == BroadcastStandard.DvbC2)
           {
-            tuningDetail.Frequencies.Add((int)frequencies[f]);
+            broadcastStandard = BroadcastStandard.IsdbC;
+          }
+          else if (broadcastStandard == BroadcastStandard.DvbS || broadcastStandard == BroadcastStandard.DvbS2)
+          {
+            broadcastStandard = BroadcastStandard.IsdbS;
+          }
+          else
+          {
+            broadcastStandard = BroadcastStandard.IsdbT;
+          }
+        }
+
+        ScannedTransmitter transmitter = new ScannedTransmitter();
+        transmitter.BroadcastStandard = broadcastStandard;
+        transmitter.SymbolRate = (int)symbolRate;
+        transmitter.Bandwidth = bandwidth;
+        transmitter.OriginalNetworkId = originalNetworkId;
+        transmitter.TransportStreamId = transportStreamId;
+        for (byte f = 0; f < frequencyCount; f++)
+        {
+          int frequency = (int)frequencies[f];
+          if (frequency > 0)
+          {
+            transmitter.Frequencies.Add(frequency);
           }
         }
         if (isMultipleInputStream)
         {
-          tuningDetail.StreamId = plpId;
+          transmitter.StreamId = plpId;
+          if (broadcastStandard == BroadcastStandard.DvbS2)
+          {
+            broadcastStandard = BroadcastStandard.DvbS2Pro;
+          }
         }
 
         if (broadcastStandard == BroadcastStandard.DvbC)
@@ -2151,40 +2205,31 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
               modulationScheme = ModulationSchemeQam.Automatic;
               break;
           }
-          tuningDetail.ModulationScheme = modulationScheme.ToString();
+          transmitter.ModulationSchemeQam = modulationScheme;
         }
-        else if (broadcastStandard == BroadcastStandard.DvbS2)
+        else if ((broadcastStandard & BroadcastStandard.MaskSatellite) != 0)
         {
-          switch (rollOffFactor)
+          transmitter.Longitude = longitude;
+
+          switch (polarisation)
           {
-            case DvbRollOffFactor.ThirtyFive:
-              tuningDetail.RollOffFactor = TveRollOffFactor.ThirtyFive;
+            case DvbPolarisation.LinearHorizontal:
+              transmitter.Polarisation = TvePolarisation.LinearHorizontal;
               break;
-            case DvbRollOffFactor.TwentyFive:
-              tuningDetail.RollOffFactor = TveRollOffFactor.TwentyFive;
+            case DvbPolarisation.LinearVertical:
+              transmitter.Polarisation = TvePolarisation.LinearVertical;
               break;
-            case DvbRollOffFactor.Twenty:
-              tuningDetail.RollOffFactor = TveRollOffFactor.Twenty;
+            case DvbPolarisation.CircularLeft:
+              transmitter.Polarisation = TvePolarisation.CircularLeft;
+              break;
+            case DvbPolarisation.CircularRight:
+              transmitter.Polarisation = TvePolarisation.CircularRight;
               break;
             default:
-              this.LogWarn("scan DVB: unsupported DVB-S2 roll-off factor {0}, falling back to automatic", rollOffFactor);
-              tuningDetail.RollOffFactor = TveRollOffFactor.Automatic;
+              this.LogWarn("scan DVB: unsupported DVB-S/S2 polarisation {0}, falling back to automatic", polarisation);
+              transmitter.Polarisation = TvePolarisation.Automatic;
               break;
           }
-        }
-        else if (
-          broadcastStandard != BroadcastStandard.DvbC2 &&
-          broadcastStandard != BroadcastStandard.DvbS &&
-          broadcastStandard != BroadcastStandard.DvbT &&
-          broadcastStandard != BroadcastStandard.DvbT2
-        )
-        {
-          throw new TvException("Unsupported transmitter broadcast standard {0}.", broadcastStandard);
-        }
-
-        if ((broadcastStandard & BroadcastStandard.MaskSatellite) != 0)
-        {
-          tuningDetail.Longitude = longitude;
 
           ModulationSchemePsk modulationScheme;
           switch (modulation)
@@ -2198,75 +2243,151 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
               break;
             case 2:
               modulationScheme = ModulationSchemePsk.Psk8;
+
+              if (broadcastStandard == BroadcastStandard.DvbS)
+              {
+                // Dish Network USA and Bell TV are the only known broadcasters
+                // who use turbo-FEC 8 PSK. We know from a transport stream
+                // dump that Dish Network USA signals turbo-FEC 8 PSK as DVB-S
+                // 8 PSK (as opposed to DVB-S2 8 PSK). We assume Bell TV does
+                // the same.
+                if (
+                  // Bell TV
+                  longitude == -820 ||
+                  longitude == -910 ||
+
+                  // Dish Network USA
+                  longitude == -615 ||
+                  longitude == -727 ||
+                  longitude == -770 ||
+                  longitude == -1100 ||
+                  longitude == -1180 ||
+                  longitude == -1190 ||
+                  longitude == -1210 ||
+                  longitude == -1290 ||
+                  longitude == -1480
+                )
+                {
+                  broadcastStandard = BroadcastStandard.SatelliteTurboFec;
+                }
+                else
+                {
+                  broadcastStandard = BroadcastStandard.DvbDsng;
+                }
+              }
+              break;
+            case 3:
+              if (longitude == -770)
+              {
+                // Dish Network USA and Dish Network Mexico are the only known
+                // broadcasters who use turbo-FEC QPSK. They currently only use
+                // it at 77W. We know from a transport stream dump that Dish
+                // Network USA signals turbo-FEC QPSK using the 16 QAM code.
+                // We assume Dish Network Mexico does the same.
+                broadcastStandard = BroadcastStandard.SatelliteTurboFec;
+                modulationScheme = ModulationSchemePsk.Psk4;
+              }
+              else
+              {
+                this.LogWarn("scan DVB: unsupported DVB-DSNG 16 QAM modulation scheme, falling back to automatic");
+                broadcastStandard = BroadcastStandard.DvbDsng;
+                modulationScheme = ModulationSchemePsk.Automatic;
+              }
               break;
             default:
-              // 16 QAM and any other unsupported value
               this.LogWarn("scan DVB: unsupported DVB-S/S2 modulation scheme {0}, falling back to automatic", modulation);
               modulationScheme = ModulationSchemePsk.Automatic;
               break;
           }
-          tuningDetail.ModulationScheme = modulationScheme.ToString();
+          transmitter.ModulationSchemePsk = modulationScheme;
 
           switch (innerFecRate)
           {
             case FecCodeRateDvbCS.Rate1_2:
-              tuningDetail.FecCodeRate = FecCodeRate.Rate1_2;
+              transmitter.FecCodeRate = FecCodeRate.Rate1_2;
               break;
             case FecCodeRateDvbCS.Rate2_3:
-              tuningDetail.FecCodeRate = FecCodeRate.Rate2_3;
+              transmitter.FecCodeRate = FecCodeRate.Rate2_3;
               break;
             case FecCodeRateDvbCS.Rate3_4:
-              tuningDetail.FecCodeRate = FecCodeRate.Rate3_4;
-              break;
-            case FecCodeRateDvbCS.Rate5_6:
-              tuningDetail.FecCodeRate = FecCodeRate.Rate5_6;
-              break;
-            case FecCodeRateDvbCS.Rate7_8:
-              tuningDetail.FecCodeRate = FecCodeRate.Rate7_8;
-              break;
-            case FecCodeRateDvbCS.Rate8_9:
-              tuningDetail.FecCodeRate = FecCodeRate.Rate8_9;
+              transmitter.FecCodeRate = FecCodeRate.Rate3_4;
               break;
             case FecCodeRateDvbCS.Rate3_5:
-              tuningDetail.FecCodeRate = FecCodeRate.Rate3_5;
+              transmitter.FecCodeRate = FecCodeRate.Rate3_5;
               break;
             case FecCodeRateDvbCS.Rate4_5:
-              tuningDetail.FecCodeRate = FecCodeRate.Rate4_5;
+              transmitter.FecCodeRate = FecCodeRate.Rate4_5;
+              break;
+            case FecCodeRateDvbCS.Rate5_6:
+              transmitter.FecCodeRate = FecCodeRate.Rate5_6;
+              break;
+            case FecCodeRateDvbCS.Rate7_8:
+              transmitter.FecCodeRate = FecCodeRate.Rate7_8;
+              break;
+            case FecCodeRateDvbCS.Rate8_9:
+              transmitter.FecCodeRate = FecCodeRate.Rate8_9;
               break;
             case FecCodeRateDvbCS.Rate9_10:
-              tuningDetail.FecCodeRate = FecCodeRate.Rate9_10;
+              transmitter.FecCodeRate = FecCodeRate.Rate9_10;
               break;
             default:
               this.LogWarn("scan DVB: unsupported DVB-S/S2 FEC code rate {0}, falling back to automatic", modulation);
-              tuningDetail.FecCodeRate = FecCodeRate.Automatic;
+              transmitter.FecCodeRate = FecCodeRate.Automatic;
               break;
           }
 
-          switch (polarisation)
+          bool isRollOffFactorVariable = false;
+          if (
+            broadcastStandard == BroadcastStandard.DvbDsng ||
+            broadcastStandard == BroadcastStandard.DvbS2 ||
+            broadcastStandard == BroadcastStandard.DvbS2Pro
+          )
           {
-            case DvbPolarisation.LinearHorizontal:
-              tuningDetail.Polarisation = TvePolarisation.LinearHorizontal;
-              break;
-            case DvbPolarisation.LinearVertical:
-              tuningDetail.Polarisation = TvePolarisation.LinearVertical;
-              break;
-            case DvbPolarisation.CircularLeft:
-              tuningDetail.Polarisation = TvePolarisation.CircularLeft;
-              break;
-            case DvbPolarisation.CircularRight:
-              tuningDetail.Polarisation = TvePolarisation.CircularRight;
-              break;
-            default:
-              this.LogWarn("scan DVB: unsupported DVB-S/S2 polarisation {0}, falling back to automatic", polarisation);
-              tuningDetail.Polarisation = TvePolarisation.Automatic;
-              break;
+            isRollOffFactorVariable = true;
+          }
+          if (!isRollOffFactorVariable && rollOffFactor != DvbRollOffFactor.ThirtyFive)
+          {
+            // Hmmm, unexpected roll-off factor value.
+            if (broadcastStandard == BroadcastStandard.DvbS)
+            {
+              // Assume DVB-DSNG is signalled as DVB-S.
+              broadcastStandard = BroadcastStandard.DvbDsng;
+              isRollOffFactorVariable = true;
+            }
+            else
+            {
+              this.LogWarn("scan DVB: unsupported roll-off factor {0} for unexpected broadcast standard {1}", rollOffFactor, broadcastStandard);
+            }
+          }
+          if (isRollOffFactorVariable)
+          {
+            switch (rollOffFactor)
+            {
+              case DvbRollOffFactor.ThirtyFive:
+                transmitter.RollOffFactor = TveRollOffFactor.ThirtyFive;
+                break;
+              case DvbRollOffFactor.TwentyFive:
+                transmitter.RollOffFactor = TveRollOffFactor.TwentyFive;
+                break;
+              case DvbRollOffFactor.Twenty:
+                transmitter.RollOffFactor = TveRollOffFactor.Twenty;
+                break;
+              default:
+                this.LogWarn("scan DVB: unsupported DVB-DSNG/DVB-S2 roll-off factor {0}, falling back to automatic", rollOffFactor);
+                transmitter.RollOffFactor = TveRollOffFactor.Automatic;
+                break;
+            }
           }
         }
 
-        tuningDetails.Add(tuningDetail);
+        if (originalBroadcastStandard != broadcastStandard)
+        {
+          this.LogDebug("scan DVB: broadcast standard translated from {0} to {1}", originalBroadcastStandard, broadcastStandard);
+        }
+        transmitters.Add(transmitter);
       }
 
-      return tuningDetails;
+      return transmitters;
     }
 
     /// <summary>

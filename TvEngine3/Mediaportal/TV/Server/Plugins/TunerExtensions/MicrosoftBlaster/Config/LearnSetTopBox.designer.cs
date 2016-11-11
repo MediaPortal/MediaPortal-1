@@ -221,7 +221,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster.Config
       // 
       // comboBoxDigitCount
       // 
-      this.comboBoxDigitCount.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxDigitCount.FormattingEnabled = true;
       this.comboBoxDigitCount.Items.AddRange(new object[] {
             "None",

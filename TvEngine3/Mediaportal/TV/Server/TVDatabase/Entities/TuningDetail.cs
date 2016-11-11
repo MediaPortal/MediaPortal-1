@@ -20,28 +20,29 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
     [DataContract(IsReference = true)]
     [KnownType(typeof(Channel))]
     [KnownType(typeof(Satellite))]
+    [KnownType(typeof(TunerTuningDetailMapping))]
     public partial class TuningDetail: IObjectWithChangeTracker, INotifyPropertyChanged
     {
         #region Primitive Properties
     
         [DataMember]
-        public int IdTuning
+        public int IdTuningDetail
         {
-            get { return _idTuning; }
+            get { return _idTuningDetail; }
             set
             {
-                if (_idTuning != value)
+                if (_idTuningDetail != value)
                 {
                     if (ChangeTracker.ChangeTrackingEnabled && ChangeTracker.State != ObjectState.Added)
                     {
-                        throw new InvalidOperationException("The property 'IdTuning' is part of the object's key and cannot be changed. Changes to key properties can only be made when the object is not being tracked or is in the Added state.");
+                        throw new InvalidOperationException("The property 'IdTuningDetail' is part of the object's key and cannot be changed. Changes to key properties can only be made when the object is not being tracked or is in the Added state.");
                     }
-                    _idTuning = value;
-                    OnPropertyChanged("IdTuning");
+                    _idTuningDetail = value;
+                    OnPropertyChanged("IdTuningDetail");
                 }
             }
         }
-        private int _idTuning;
+        private int _idTuningDetail;
     
         [DataMember]
         public int IdChannel
@@ -502,21 +503,6 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private int _fecCodeRate;
     
         [DataMember]
-        public int PilotTonesState
-        {
-            get { return _pilotTonesState; }
-            set
-            {
-                if (_pilotTonesState != value)
-                {
-                    _pilotTonesState = value;
-                    OnPropertyChanged("PilotTonesState");
-                }
-            }
-        }
-        private int _pilotTonesState;
-    
-        [DataMember]
         public int RollOffFactor
         {
             get { return _rollOffFactor; }
@@ -530,6 +516,21 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
             }
         }
         private int _rollOffFactor;
+    
+        [DataMember]
+        public int PilotTonesState
+        {
+            get { return _pilotTonesState; }
+            set
+            {
+                if (_pilotTonesState != value)
+                {
+                    _pilotTonesState = value;
+                    OnPropertyChanged("PilotTonesState");
+                }
+            }
+        }
+        private int _pilotTonesState;
     
         [DataMember]
         public int StreamId
@@ -680,6 +681,53 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
             }
         }
         private Satellite _satellite;
+    
+        [DataMember]
+        public TrackableCollection<TunerTuningDetailMapping> TunerMappings
+        {
+            get
+            {
+                if (_tunerMappings == null)
+                {
+                    _tunerMappings = new TrackableCollection<TunerTuningDetailMapping>();
+                    _tunerMappings.CollectionChanged += FixupTunerMappings;
+                }
+                return _tunerMappings;
+            }
+            set
+            {
+                if (!ReferenceEquals(_tunerMappings, value))
+                {
+                    if (ChangeTracker.ChangeTrackingEnabled)
+                    {
+                        throw new InvalidOperationException("Cannot set the FixupChangeTrackingCollection when ChangeTracking is enabled");
+                    }
+                    if (_tunerMappings != null)
+                    {
+                        _tunerMappings.CollectionChanged -= FixupTunerMappings;
+                        // This is the principal end in an association that performs cascade deletes.
+                        // Remove the cascade delete event handler for any entities in the current collection.
+                        foreach (TunerTuningDetailMapping item in _tunerMappings)
+                        {
+                            ChangeTracker.ObjectStateChanging -= item.HandleCascadeDelete;
+                        }
+                    }
+                    _tunerMappings = value;
+                    if (_tunerMappings != null)
+                    {
+                        _tunerMappings.CollectionChanged += FixupTunerMappings;
+                        // This is the principal end in an association that performs cascade deletes.
+                        // Add the cascade delete event handler for any entities that are already in the new collection.
+                        foreach (TunerTuningDetailMapping item in _tunerMappings)
+                        {
+                            ChangeTracker.ObjectStateChanging += item.HandleCascadeDelete;
+                        }
+                    }
+                    OnNavigationPropertyChanged("TunerMappings");
+                }
+            }
+        }
+        private TrackableCollection<TunerTuningDetailMapping> _tunerMappings;
 
         #endregion
         #region ChangeTracking
@@ -771,6 +819,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         {
             Channel = null;
             Satellite = null;
+            TunerMappings.Clear();
         }
 
         #endregion
@@ -855,6 +904,51 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                 if (Satellite != null && !Satellite.ChangeTracker.ChangeTrackingEnabled)
                 {
                     Satellite.StartTracking();
+                }
+            }
+        }
+    
+        private void FixupTunerMappings(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (IsDeserializing)
+            {
+                return;
+            }
+    
+            if (e.NewItems != null)
+            {
+                foreach (TunerTuningDetailMapping item in e.NewItems)
+                {
+                    item.TuningDetail = this;
+                    if (ChangeTracker.ChangeTrackingEnabled)
+                    {
+                        if (!item.ChangeTracker.ChangeTrackingEnabled)
+                        {
+                            item.StartTracking();
+                        }
+                        ChangeTracker.RecordAdditionToCollectionProperties("TunerMappings", item);
+                    }
+                    // This is the principal end in an association that performs cascade deletes.
+                    // Update the event listener to refer to the new dependent.
+                    ChangeTracker.ObjectStateChanging += item.HandleCascadeDelete;
+                }
+            }
+    
+            if (e.OldItems != null)
+            {
+                foreach (TunerTuningDetailMapping item in e.OldItems)
+                {
+                    if (ReferenceEquals(item.TuningDetail, this))
+                    {
+                        item.TuningDetail = null;
+                    }
+                    if (ChangeTracker.ChangeTrackingEnabled)
+                    {
+                        ChangeTracker.RecordRemovalFromCollectionProperties("TunerMappings", item);
+                    }
+                    // This is the principal end in an association that performs cascade deletes.
+                    // Remove the previous dependent from the event listener.
+                    ChangeTracker.ObjectStateChanging -= item.HandleCascadeDelete;
                 }
             }
         }

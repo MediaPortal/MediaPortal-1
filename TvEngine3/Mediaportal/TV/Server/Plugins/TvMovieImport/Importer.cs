@@ -223,7 +223,7 @@ namespace Mediaportal.TV.Server.Plugins.TvMovieImport
             return false;
           }
 
-          Log.Debug("TV Movie import: reading programmes");
+          Log.Debug("TV Movie import: reading programs");
           showProgress("loading programs", stats);
 
           IDictionary<string, ProgramCategory> dbCategories = new Dictionary<string, ProgramCategory>();
@@ -259,7 +259,7 @@ namespace Mediaportal.TV.Server.Plugins.TvMovieImport
           foreach (var mappedChannelSet in allMappedChannelsByGuideChannelId)
           {
             // Check that this TV Movie channel is mapped to at least one DB
-            // channel. If not, there is no point in retrieving the programmes
+            // channel. If not, there is no point in retrieving the programs
             // for this channel.
             if (mappedChannelSet.Value == null || mappedChannelSet.Value.Count == 0)
             {
@@ -281,7 +281,6 @@ namespace Mediaportal.TV.Server.Plugins.TvMovieImport
                     reader.Close();
                   }
                   dbTransaction.Commit();
-                  dbConnection.Close();
                 }
                 catch (Exception ex)
                 {

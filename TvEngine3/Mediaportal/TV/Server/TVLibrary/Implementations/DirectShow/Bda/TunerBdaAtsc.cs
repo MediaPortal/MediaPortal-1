@@ -40,6 +40,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
   /// </summary>
   internal class TunerBdaAtsc : TunerBdaBase
   {
+    #region constants
+
+    private const string TUNING_SPACE_NAME_ATSC = "MediaPortal ATSC Tuning Space";
+    private const string TUNING_SPACE_NAME_SCTE = "MediaPortal SCTE Tuning Space";
+
+    #endregion
+
     #region constructor
 
     /// <summary>
@@ -57,35 +64,52 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
     #region graph building
 
     /// <summary>
-    /// Create and register a BDA tuning space for the tuner type.
+    /// Create a BDA tuning space for tuning a given channel type.
     /// </summary>
+    /// <param name="channelType">The channel type.</param>
     /// <returns>the tuning space that was created</returns>
-    protected override ITuningSpace CreateTuningSpace()
+    protected override ITuningSpace CreateTuningSpace(Type channelType)
     {
-      this.LogDebug("BDA ATSC: create tuning space");
+      this.LogDebug("BDA ATSC: create tuning space, type = {0}", channelType.Name);
+
+      TunerInputType inputType = TunerInputType.Antenna;
+      int majorChannelMaximum = 99;
+      int minorChannelMaximum = 99;
+      string name = TUNING_SPACE_NAME_ATSC;
+      int physicalChannelMaximum = 69;
+      int physicalChannelMinimum = 2;
+      if (channelType == typeof(ChannelScte))
+      {
+        inputType = TunerInputType.Cable;
+        majorChannelMaximum = 999;
+        minorChannelMaximum = 999;
+        name = TUNING_SPACE_NAME_SCTE;
+        physicalChannelMaximum = 158;
+        physicalChannelMinimum = 1;
+      }
 
       IATSCTuningSpace tuningSpace = null;
       IATSCLocator locator = null;
       try
       {
         tuningSpace = (IATSCTuningSpace)new ATSCTuningSpace();
-        int hr = tuningSpace.put_UniqueName(TuningSpaceName);
-        hr |= tuningSpace.put_FriendlyName(TuningSpaceName);
+        int hr = tuningSpace.put_CountryCode(0);
+        hr |= tuningSpace.put_FriendlyName(name);
+        hr |= tuningSpace.put_InputType(inputType);
+        hr |= tuningSpace.put_MaxChannel(majorChannelMaximum);
+        hr |= tuningSpace.put_MaxMinorChannel(minorChannelMaximum);
+        hr |= tuningSpace.put_MaxPhysicalChannel(physicalChannelMaximum);
+        hr |= tuningSpace.put_MinChannel(1);
+        hr |= tuningSpace.put_MinMinorChannel(1);
+        hr |= tuningSpace.put_MinPhysicalChannel(physicalChannelMinimum);
         hr |= tuningSpace.put__NetworkType(NetworkType.ATSC_TERRESTRIAL);
-        hr |= tuningSpace.put_CountryCode(0);
-        hr |= tuningSpace.put_InputType(TunerInputType.Antenna);
-        hr |= tuningSpace.put_MinPhysicalChannel(1);    // 1 for terrestrial, 2 for cable
-        hr |= tuningSpace.put_MaxPhysicalChannel(158);  // 69 for terrestrial, 158 for cable
-        hr |= tuningSpace.put_MinChannel(-1);
-        hr |= tuningSpace.put_MaxChannel(9999);         // the number of scannable major channels
-        hr |= tuningSpace.put_MinMinorChannel(-1);
-        hr |= tuningSpace.put_MaxMinorChannel(999);     // the number of minor channels per major channel
+        hr |= tuningSpace.put_UniqueName(name);
 
         locator = (IATSCLocator)new ATSCLocator();
         hr |= locator.put_CarrierFrequency(-1);
         hr |= locator.put_InnerFEC(FECMethod.MethodNotSet);
         hr |= locator.put_InnerFECRate(BinaryConvolutionCodeRate.RateNotSet);
-        hr |= locator.put_Modulation(ModulationType.Mod8Vsb); // 8 VSB or 16 VSB for terrestrial, 64 or 256 QAM for cable
+        hr |= locator.put_Modulation(ModulationType.ModNotSet);
         hr |= locator.put_OuterFEC(FECMethod.MethodNotSet);
         hr |= locator.put_OuterFECRate(BinaryConvolutionCodeRate.RateNotSet);
         hr |= locator.put_PhysicalChannel(-1);
@@ -95,14 +119,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
         hr |= tuningSpace.put_DefaultLocator(locator);
         if (hr != (int)NativeMethods.HResult.S_OK)
         {
-          this.LogWarn("BDA ATSC: potential error creating tuning space, hr = 0x{0:x}", hr);
+          this.LogWarn("BDA ATSC: potential error creating tuning space, hr = 0x{0:x}, type = {1}", hr, channelType.Name);
         }
         return tuningSpace;
       }
       catch
       {
-        Release.ComObject("BDA ATSC tuner tuning space", ref tuningSpace);
-        Release.ComObject("BDA ATSC tuner locator", ref locator);
+        Release.ComObject(string.Format("BDA ATSC tuner {0} tuning space", channelType.Name), ref tuningSpace);
+        Release.ComObject(string.Format("BDA ATSC tuner {0} locator", channelType.Name), ref locator);
         throw;
       }
     }
@@ -119,13 +143,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
     }
 
     /// <summary>
-    /// Get the registered name of the BDA tuning space for the tuner type.
+    /// Get the name(s) of the registered BDA tuning space(s) for the tuner type.
     /// </summary>
-    protected override string TuningSpaceName
+    protected override IDictionary<string, Type> TuningSpaceNames
     {
       get
       {
-        return "MediaPortal ATSC Tuning Space";
+        return new Dictionary<string, Type>
+        {
+          { TUNING_SPACE_NAME_ATSC, null },
+          { TUNING_SPACE_NAME_SCTE, typeof(ChannelScte) }
+        };
       }
     }
 
@@ -162,24 +190,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
         throw new TvException("Received request to tune incompatible channel.");
       }
 
-      IATSCTuningSpace atscTuningSpace = tuningSpace as IATSCTuningSpace;
-      if (atscTuningSpace == null)
-      {
-        throw new TvException("Failed to find ATSC tuning space interface on tuning space.");
-      }
-
-      int hr;
-      if (atscChannel != null)
-      {
-        hr = atscTuningSpace.put_InputType(TunerInputType.Antenna);
-      }
-      else
-      {
-        hr = atscTuningSpace.put_InputType(TunerInputType.Cable);
-      }
-
       ILocator locator;
-      hr |= tuningSpace.get_DefaultLocator(out locator);
+      int hr = tuningSpace.get_DefaultLocator(out locator);
       TvExceptionDirectShowError.Throw(hr, "Failed to get the default locator for the tuning space.");
       try
       {
@@ -206,47 +218,45 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
           hr |= atscLocator.put_TSID(scteChannel.TransportStreamId);
         }
 
+        if (hr != (int)NativeMethods.HResult.S_OK)
+        {
+          this.LogWarn("BDA ATSC: potential error configuring locator, hr = 0x{0:x}", hr);
+        }
+
         ITuneRequest tuneRequest;
         hr = tuningSpace.CreateTuneRequest(out tuneRequest);
-        TvExceptionDirectShowError.Throw(hr, "Failed to create tuning request from tuning space.");
-        try
+        TvExceptionDirectShowError.Throw(hr, "Failed to create tune request from tuning space.");
+
+        IATSCChannelTuneRequest atscTuneRequest = tuneRequest as IATSCChannelTuneRequest;
+        if (atscTuneRequest == null)
         {
-          IATSCChannelTuneRequest atscTuneRequest = tuneRequest as IATSCChannelTuneRequest;
-          if (atscTuneRequest == null)
-          {
-            throw new TvException("Failed to find ATSC tune request interface on tune request.");
-          }
-
-          // The MSDN remarks on IDigitalCableTuneRequest suggest there is more
-          // than one way for the network provider to interpret the tune
-          // request parameters.
-          // http://msdn.microsoft.com/en-us/library/windows/desktop/dd693565%28v=vs.85%29.aspx
-          //
-          // Maybe we don't want to set these?
-          if (atscChannel != null)
-          {
-            hr |= atscTuneRequest.put_Channel(atscChannel.MajorChannelNumber);
-            hr |= atscTuneRequest.put_MinorChannel(atscChannel.MinorChannelNumber);
-          }
-          else
-          {
-            hr |= atscTuneRequest.put_Channel(scteChannel.MajorChannelNumber);
-            hr |= atscTuneRequest.put_MinorChannel(scteChannel.MinorChannelNumber);
-          }
-          hr |= atscTuneRequest.put_Locator(locator);
-
-          if (hr != (int)NativeMethods.HResult.S_OK)
-          {
-            this.LogWarn("BDA ATSC: potential error assembling tune request, hr = 0x{0:x}", hr);
-          }
-
-          return atscTuneRequest;
+          this.LogWarn("BDA ATSC: ATSC tune request interface is not available on tune request.");
         }
-        catch
+
+        // The MSDN remarks on IDigitalCableTuneRequest suggest there is more
+        // than one way for the network provider to interpret the tune
+        // request parameters.
+        // http://msdn.microsoft.com/en-us/library/windows/desktop/dd693565%28v=vs.85%29.aspx
+        //
+        // Maybe we don't want to set these?
+        else if (atscChannel != null)
         {
-          Release.ComObject("BDA ATSC tuner tune request", ref tuneRequest);
-          throw;
+          hr |= atscTuneRequest.put_Channel(atscChannel.MajorChannelNumber);
+          hr |= atscTuneRequest.put_MinorChannel(atscChannel.MinorChannelNumber);
         }
+        else
+        {
+          hr |= atscTuneRequest.put_Channel(scteChannel.MajorChannelNumber);
+          hr |= atscTuneRequest.put_MinorChannel(scteChannel.MinorChannelNumber);
+        }
+        hr |= tuneRequest.put_Locator(locator);
+
+        if (hr != (int)NativeMethods.HResult.S_OK)
+        {
+          this.LogWarn("BDA ATSC: potential error assembling tune request, hr = 0x{0:x}", hr);
+        }
+
+        return atscTuneRequest;
       }
       finally
       {

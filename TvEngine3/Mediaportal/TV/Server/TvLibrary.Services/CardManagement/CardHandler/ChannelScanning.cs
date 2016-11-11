@@ -96,7 +96,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       }
     }
 
-    public TuningDetail[] ScanNIT(IChannel channel)
+    public ScannedTransmitter[] ScanNIT(IChannel channel)
     {
       try
       {
@@ -108,11 +108,11 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
         IChannelScanner scanner = _cardHandler.Card.ChannelScanningInterface;
         if (scanner != null)
         {
-          IList<TuningDetail> tuningDetails = scanner.ScanNetworkInformation(channel);
-          if (tuningDetails != null)
+          IList<ScannedTransmitter> transmitters = scanner.ScanNetworkInformation(channel);
+          if (transmitters != null)
           {
-            TuningDetail[] returnArray = new TuningDetail[tuningDetails.Count];
-            tuningDetails.CopyTo(returnArray, 0);
+            ScannedTransmitter[] returnArray = new ScannedTransmitter[transmitters.Count];
+            transmitters.CopyTo(returnArray, 0);
             return returnArray;
           }
         }

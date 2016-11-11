@@ -403,65 +403,21 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
         throw new TvException("Failed to find tuner interface on filter.");
       }
 
-      // No need to tune if this tune request was only triggered due to use of
-      // a blaster.
       ChannelAnalogTv analogTvChannel = channel as ChannelAnalogTv;
-      if (
-        analogTvChannel != null &&
-        !analogTvChannel.IsDifferentTransmitter(_currentChannel)
-      )
-      {
-        this.LogDebug("WDM analog tuner: tuning not required");
-        _currentChannel = channel;
-        return;
-      }
-
-      if (analogTvChannel != null && channel.MediaType == MediaType.Television)
-      {
-        UpdateFrequencyOverride(analogTvChannel);
-      }
-
-      // Set tuning parameters.
-      ChannelFmRadio fmRadioChannel = channel as ChannelFmRadio;
       int hr = (int)NativeMethods.HResult.S_OK;
-      if (fmRadioChannel != null)
+      if (analogTvChannel != null)
       {
-        bool isSupportedMode = false;
-        if (fmRadioChannel.Frequency < 30000)
+        // No need to tune if this tune request was only triggered due to use
+        // of a blaster.
+        if (!analogTvChannel.IsDifferentTransmitter(_currentChannel))
         {
-          if (!_supportedTuningModes.HasFlag(AMTunerModeType.AMRadio))
-          {
-            this.LogWarn("WDM analog tuner: requested tuning mode AM radio is not supported");
-          }
-          else
-          {
-            hr |= tuner.put_Mode(AMTunerModeType.AMRadio);
-            isSupportedMode = true;
-          }
-        }
-        else
-        {
-          if (!_supportedTuningModes.HasFlag(AMTunerModeType.FMRadio))
-          {
-            this.LogWarn("WDM analog tuner: requested tuning mode FM radio is not supported");
-          }
-          else
-          {
-            hr |= tuner.put_Mode(AMTunerModeType.FMRadio);
-            isSupportedMode = true;
-          }
+          this.LogDebug("WDM analog tuner: tuning not required");
+          _currentChannel = channel;
+          return;
         }
 
-        if (isSupportedMode)
-        {
-          hr |= tuner.put_TuningSpace(1);   // USA
-          hr |= tuner.put_CountryCode(1);   // USA
-          hr |= tuner.put_InputType(0, TunerInputType.Antenna);
-          hr |= tuner.put_Channel(fmRadioChannel.Frequency * 1000, AMTunerSubChannel.Default, AMTunerSubChannel.Default);
-        }
-      }
-      else if (analogTvChannel != null)
-      {
+        UpdateFrequencyOverride(analogTvChannel);
+
         if (!_supportedTuningModes.HasFlag(AMTunerModeType.TV))
         {
           this.LogWarn("WDM analog tuner: requested tuning mode analog TV is not supported");
@@ -478,6 +434,43 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
           }
           hr |= tuner.put_InputType(0, inputType);
           hr |= tuner.put_Channel(analogTvChannel.PhysicalChannelNumber, AMTunerSubChannel.Default, AMTunerSubChannel.Default);
+        }
+      }
+      else
+      {
+        AMTunerModeType mode = AMTunerModeType.Default;
+        int frequency;
+        ChannelFmRadio fmRadioChannel = channel as ChannelFmRadio;
+        if (fmRadioChannel != null)
+        {
+          mode = AMTunerModeType.FMRadio;
+          frequency = fmRadioChannel.Frequency;
+        }
+        else
+        {
+          ChannelAmRadio amRadioChannel = channel as ChannelAmRadio;
+          if (amRadioChannel != null)
+          {
+            mode = AMTunerModeType.AMRadio;
+            frequency = amRadioChannel.Frequency;
+          }
+          else
+          {
+            throw new TvException("Received request to tune incompatible channel.");
+          }
+        }
+
+        if (!_supportedTuningModes.HasFlag(mode))
+        {
+          this.LogWarn("WDM analog tuner: requested tuning mode {0} is not supported", mode);
+        }
+        else
+        {
+          hr |= tuner.put_Mode(AMTunerModeType.FMRadio);
+          hr |= tuner.put_TuningSpace(1);   // USA
+          hr |= tuner.put_CountryCode(1);   // USA
+          hr |= tuner.put_InputType(0, TunerInputType.Antenna);
+          hr |= tuner.put_Channel(frequency * 1000, AMTunerSubChannel.Default, AMTunerSubChannel.Default);
         }
       }
 

@@ -193,7 +193,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
     /// </summary>
     /// <param name="channel">The channel to tune to.</param>
     /// <param name="parameters">A URI section specifying the tuning parameters.</param>
-    protected void PerformTuning(ChannelDvbBase channel, string parameters)
+    protected void PerformTuning(IChannelDvb channel, string parameters)
     {
       this.LogDebug("SAT>IP base: perform tuning");
 

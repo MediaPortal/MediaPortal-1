@@ -24,9 +24,9 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
 
     public IQueryable<Tuner> IncludeAllRelations(IQueryable<Tuner> query, TunerRelation includeRelations)
     {
-      if (includeRelations.HasFlag(TunerRelation.ChannelMaps))
+      if (includeRelations.HasFlag(TunerRelation.TuningDetailMappings))
       {
-        query = query.Include(t => t.ChannelMaps);
+        query = query.Include(t => t.TuningDetailMappings);
       }
       if (includeRelations.HasFlag(TunerRelation.TunerGroup))
       {

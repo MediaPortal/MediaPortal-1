@@ -409,7 +409,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       // mpComboBoxRoles
       // 
-      this.mpComboBoxRoles.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.mpComboBoxRoles.FormattingEnabled = true;
       this.mpComboBoxRoles.Location = new System.Drawing.Point(138, 19);
       this.mpComboBoxRoles.Name = "mpComboBoxRoles";
@@ -448,7 +447,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       // mpComboBoxOperators
       // 
-      this.mpComboBoxOperators.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.mpComboBoxOperators.FormattingEnabled = true;
       this.mpComboBoxOperators.Location = new System.Drawing.Point(345, 19);
       this.mpComboBoxOperators.Name = "mpComboBoxOperators";
@@ -484,7 +482,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       // mpComboBoxProgramFields
       // 
-      this.mpComboBoxProgramFields.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.mpComboBoxProgramFields.FormattingEnabled = true;
       this.mpComboBoxProgramFields.Location = new System.Drawing.Point(236, 19);
       this.mpComboBoxProgramFields.Name = "mpComboBoxProgramFields";
@@ -559,7 +556,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       // mpComboBoxChannels
       // 
-      this.mpComboBoxChannels.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.mpComboBoxChannels.FormattingEnabled = true;
       this.mpComboBoxChannels.Location = new System.Drawing.Point(304, 43);
       this.mpComboBoxChannels.Name = "mpComboBoxChannels";
@@ -588,7 +584,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       // mpComboBoxChannelsGroup
       // 
-      this.mpComboBoxChannelsGroup.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.mpComboBoxChannelsGroup.FormattingEnabled = true;
       this.mpComboBoxChannelsGroup.Location = new System.Drawing.Point(195, 43);
       this.mpComboBoxChannelsGroup.Name = "mpComboBoxChannelsGroup";
@@ -690,7 +685,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       // mpComboBoxCategories
       // 
-      this.mpComboBoxCategories.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.mpComboBoxCategories.FormattingEnabled = true;
       this.mpComboBoxCategories.Location = new System.Drawing.Point(138, 43);
       this.mpComboBoxCategories.Name = "mpComboBoxCategories";
@@ -825,7 +819,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       // mpComboBoxKeepMethods
       // 
-      this.mpComboBoxKeepMethods.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.mpComboBoxKeepMethods.FormattingEnabled = true;
       this.mpComboBoxKeepMethods.Location = new System.Drawing.Point(1026, 19);
       this.mpComboBoxKeepMethods.Name = "mpComboBoxKeepMethods";
@@ -982,7 +975,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       // mpComboBoxTemplates
       // 
-      this.mpComboBoxTemplates.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.mpComboBoxTemplates.FormattingEnabled = true;
       this.mpComboBoxTemplates.Location = new System.Drawing.Point(619, 456);
       this.mpComboBoxTemplates.Name = "mpComboBoxTemplates";

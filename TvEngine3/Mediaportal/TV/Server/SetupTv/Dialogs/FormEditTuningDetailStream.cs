@@ -39,7 +39,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
         numericTextBoxOriginalNetworkId.Value = tuningDetail.OriginalNetworkId;
         numericTextBoxTransportStreamId.Value = tuningDetail.TransportStreamId;
         numericTextBoxServiceId.Value = tuningDetail.ServiceId;
-        numericTextBoxOpenTvChannelId.Value = tuningDetail.OpenTvChannelId;
         numericTextBoxPmtPid.Value = tuningDetail.PmtPid;
         numericTextBoxEpgOriginalNetworkId.Value = tuningDetail.EpgOriginalNetworkId;
         numericTextBoxEpgTransportStreamId.Value = tuningDetail.EpgTransportStreamId;
@@ -52,7 +51,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
         numericTextBoxOriginalNetworkId.Value = 0;
         numericTextBoxTransportStreamId.Value = 0;
         numericTextBoxServiceId.Value = 0;
-        numericTextBoxOpenTvChannelId.Value = 0;
         numericTextBoxPmtPid.Value = 0;
         numericTextBoxEpgOriginalNetworkId.Value = 0;
         numericTextBoxEpgTransportStreamId.Value = 0;
@@ -67,7 +65,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       tuningDetail.OriginalNetworkId = numericTextBoxOriginalNetworkId.Value;
       tuningDetail.TransportStreamId = numericTextBoxTransportStreamId.Value;
       tuningDetail.ServiceId = numericTextBoxServiceId.Value;
-      tuningDetail.OpenTvChannelId = numericTextBoxOpenTvChannelId.Value;
       tuningDetail.PmtPid = numericTextBoxPmtPid.Value;
       tuningDetail.EpgOriginalNetworkId = numericTextBoxEpgOriginalNetworkId.Value;
       tuningDetail.EpgTransportStreamId = numericTextBoxEpgTransportStreamId.Value;

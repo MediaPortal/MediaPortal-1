@@ -36,6 +36,7 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Dvb;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner;
 using MediaPortal.Common.Utils.ExtensionMethods;
+using LcnSyntax = Mediaportal.TV.Server.Common.Types.Channel.LogicalChannelNumber;
 using Polarisation = Mediaportal.TV.Server.TVLibrary.Implementations.Atsc.Enum.Polarisation;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
@@ -164,8 +165,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
       newChannel.ModulationScheme = ModulationSchemeQam.Automatic;
       newChannel.TransportStreamId = 0;     // doesn't really matter
       newChannel.SourceId = 0;              // ideally we should have this; EPG data will have to be sourced externally
-      newChannel.ProgramNumber = ChannelMpeg2Base.PROGRAM_NUMBER_NOT_KNOWN_SELECT_FIRST;  // lookup the correct program number from the tuner when the channel is tuned
-      newChannel.PmtPid = ChannelMpeg2Base.PMT_PID_NOT_KNOWN;                             // lookup the correct PID from the PAT when the channel is tuned
+      newChannel.ProgramNumber = ChannelMpeg2TsBase.PROGRAM_NUMBER_NOT_KNOWN_SELECT_FIRST;  // lookup the correct program number from the tuner when the channel is tuned
+      newChannel.PmtPid = ChannelMpeg2TsBase.PMT_PID_NOT_KNOWN;                             // lookup the correct PID from the PAT when the channel is tuned
       return CreateScannedChannel(newChannel, isVisibleInGuide, BroadcastStandard.Scte, groupNames);
     }
 
@@ -392,7 +393,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
         if (
           !isForcedLvctScan &&
           scteChannel != null &&
-          scteChannel.Frequency == ChannelScte.FREQUENCY_OUT_OF_BAND_CHANNEL_SCAN
+          scteChannel.IsOutOfBandScanChannel()
         )
         {
           isOutOfBandChannelScan = true;
@@ -541,12 +542,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
             newChannel.IsEncrypted = program.Value.IsEncrypted;
             newChannel.IsThreeDimensional = program.Value.IsThreeDimensional;
 
-            ChannelMpeg2Base mpeg2Channel = newChannel as ChannelMpeg2Base;
-            if (mpeg2Channel != null)
+            IChannelMpeg2Ts mpeg2TsChannel = newChannel as IChannelMpeg2Ts;
+            if (mpeg2TsChannel != null)
             {
-              mpeg2Channel.TransportStreamId = transportStreamId;
-              mpeg2Channel.ProgramNumber = program.Value.ProgramNumber;
-              mpeg2Channel.PmtPid = program.Value.PmtPid;
+              mpeg2TsChannel.TransportStreamId = transportStreamId;
+              mpeg2TsChannel.ProgramNumber = program.Value.ProgramNumber;
+              mpeg2TsChannel.PmtPid = program.Value.PmtPid;
             }
 
             ScannedChannel scannedChannel = new ScannedChannel(newChannel);
@@ -595,8 +596,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
     /// within the available network information.
     /// </summary>
     /// <param name="channel">The channel to tune to.</param>
-    /// <returns>the tuning details found</returns>
-    public IList<TuningDetail> ScanNetworkInformation(IChannel channel)
+    /// <returns>the transmitter tuning details found in the network information</returns>
+    public IList<ScannedTransmitter> ScanNetworkInformation(IChannel channel)
     {
       throw new NotImplementedException();
     }
@@ -975,23 +976,29 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
                             frequency, symbolRate, transmissionSystem, innerCodingMode, splitBitstreamMode, modulationFormat);
             }
 
+            string lcn;
+            if (
+              majorChannelNumber == 0 ||
+              (
+                (minorChannelNumber == 0 || !LcnSyntax.Create(majorChannelNumber, out lcn, minorChannelNumber)) &&
+                !LcnSyntax.Create(majorChannelNumber, out lcn)
+              )
+            )
+            {
+              lcn = string.Empty;
+            }
+
             // NOTE: this function assumes that we will only ever receive S-VCT
             // from a cable feed. Technically there are older ATSC standards
             // that indicate S-VCT might be used with satellite and terrestrial
             // broadcasts as well. However we currently don't support those
             // possibilities.
-            string lcn;
-            if (minorChannelNumber == 0)
-            {
-              lcn = majorChannelNumber.ToString();
-            }
-            else
-            {
-              lcn = string.Format("{0}{1}{2}", majorChannelNumber, ChannelBase.LOGICAL_CHANNEL_NUMBER_SEPARATOR, minorChannelNumber);
-            }
             if (transmissionMedium != TransmissionMedium.Cable || applicationVirtualChannel || pathSelect == PathSelect.Path2 || outOfBand)   // not cable OR application (data) channel OR alternative feed
             {
-              ignoredChannelNumbers.Add(lcn);
+              if (transmissionMedium == TransmissionMedium.Cable && !string.IsNullOrEmpty(lcn))
+              {
+                ignoredChannelNumbers.Add(lcn);
+              }
               continue;
             }
 
@@ -1025,7 +1032,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
                 // but assigns them to physical channel 158 (which isn't
                 // actually used).
                 frequency = ChannelScte.FREQUENCY_SWITCHED_DIGITAL_VIDEO;
-                programNumber = ChannelMpeg2Base.PROGRAM_NUMBER_NOT_KNOWN_SELECT_FIRST;
+                programNumber = ChannelMpeg2TsBase.PROGRAM_NUMBER_NOT_KNOWN_SELECT_FIRST;
               }
 
               ChannelScte scteChannel = new ChannelScte();
@@ -1067,7 +1074,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
 
               scteChannel.TransportStreamId = transportStreamId;    // may not be populated
               scteChannel.ProgramNumber = programNumber;
-              scteChannel.PmtPid = ChannelMpeg2Base.PMT_PID_NOT_KNOWN;
+              scteChannel.PmtPid = ChannelMpeg2TsBase.PMT_PID_NOT_KNOWN;
               scteChannel.SourceId = sourceId;
 
               newChannel = scteChannel;
@@ -1359,13 +1366,20 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
               }
             }
           }
-          if (minorChannelNumber == 0)
+          string lcn;
+          if (
+            majorChannelNumber != 0 &&
+            (
+              (minorChannelNumber != 0 && LcnSyntax.Create(majorChannelNumber, out lcn, minorChannelNumber)) ||
+              LcnSyntax.Create(majorChannelNumber, out lcn)
+            )
+          )
           {
-            newChannel.LogicalChannelNumber = majorChannelNumber.ToString();
+            newChannel.LogicalChannelNumber = lcn;
           }
           else
           {
-            newChannel.LogicalChannelNumber = string.Format("{0}{1}{2}", majorChannelNumber, ChannelBase.LOGICAL_CHANNEL_NUMBER_SEPARATOR, minorChannelNumber);
+            newChannel.LogicalChannelNumber = string.Empty;
           }
           newChannel.IsEncrypted = accessControlled;
           if (program != null)
@@ -1393,7 +1407,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
             atscChannel.TransportStreamId = transportStreamId;
             atscChannel.ProgramNumber = programNumber;
             atscChannel.SourceId = sourceId;
-            atscChannel.PmtPid = ChannelMpeg2Base.PMT_PID_NOT_KNOWN;
+            atscChannel.PmtPid = ChannelMpeg2TsBase.PMT_PID_NOT_KNOWN;
             if (program != null)
             {
               atscChannel.PmtPid = program.PmtPid;
@@ -1407,7 +1421,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
               broadcastStandard = BroadcastStandard.Scte;
               if (
                 (currentTransportStreamId != 0 && currentTransportStreamId != transportStreamId) ||   // Channel from another transport stream.
-                (scteChannel.Frequency == ChannelScte.FREQUENCY_OUT_OF_BAND_CHANNEL_SCAN)
+                scteChannel.IsOutOfBandScanChannel()
               )
               {
                 // This channel is broadcast by a different transmitter.
@@ -1431,7 +1445,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
               scteChannel.TransportStreamId = transportStreamId;
               scteChannel.ProgramNumber = programNumber;
               scteChannel.SourceId = sourceId;
-              scteChannel.PmtPid = ChannelMpeg2Base.PMT_PID_NOT_KNOWN;
+              scteChannel.PmtPid = ChannelMpeg2TsBase.PMT_PID_NOT_KNOWN;
               if (program != null)
               {
                 scteChannel.PmtPid = program.PmtPid;

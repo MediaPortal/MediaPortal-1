@@ -115,7 +115,7 @@ namespace DirectShowLib
   /// <summary>
   /// From KSPROPERTY_SUPPORT_* defines
   /// </summary>
-  [Flags]     // Added this attribute.
+  [Flags]     // *** Added this attribute. ***
   public enum KSPropertySupport
   {
     Get = 1,
@@ -138,7 +138,7 @@ namespace DirectShowLib
     [Description("language C")]
     LangC = 0x0040,
 
-    // Added...
+    // *** Modes in KsMedia.h, missing in AXExtend.cs added here. ***
     [Description("preset stereo")]
     PresetStereo = 0x0200,
     [Description("preset language A")]
@@ -164,7 +164,7 @@ namespace DirectShowLib
     WhiteBalance,
     BacklightCompensation,
     Gain,
-    // Properties in KsMedia.h, missing in AXExtend.cs added here.
+    // *** Properties in KsMedia.h, missing in AXExtend.cs added here. ***
     DigitalMultiplier,
     DigitalMultiplierLimit,
     WhiteBalanceComponent,
@@ -183,7 +183,7 @@ namespace DirectShowLib
     Exposure,
     Iris,
     Focus,
-    // Properties in KsMedia.h, missing in AXExtend.cs added here.
+    // *** Properties in KsMedia.h, missing in AXExtend.cs added here. ***
     ScanMode,
     Privacy,
     PanTilt,
@@ -199,10 +199,12 @@ namespace DirectShowLib
     AutoExposurePriority
   }
 
+  // Disable obsolete interface warning. Some implementations of IEncoderAPI
+  // that we want to support do not implement ICodecAPI.
   [ComImport, SuppressUnmanagedCodeSecurity,
    Guid("70423839-6ACC-4b23-B079-21DBF08156A5"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-  [Obsolete("This interface is deprecated and is maintained for backward compatibility only. New applications and drivers should use the ICodecAPI interface.")]
+  //[Obsolete("This interface is deprecated and is maintained for backward compatibility only. New applications and drivers should use the ICodecAPI interface.")]
   public interface IEncoderAPI
   {
     [PreserveSig]
@@ -245,9 +247,6 @@ namespace DirectShowLib
       );
   }
 
-  // Disable obsolete interface warning. Some implementations of IEncoderAPI
-  // that we want to support do not implement ICodecAPI.
-  #pragma warning disable 618
   [ComImport, SuppressUnmanagedCodeSecurity,
    Guid("02997C3B-8E1B-460e-9270-545E0DE9563E"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
@@ -297,7 +296,6 @@ namespace DirectShowLib
 
     #endregion
   }
-  #pragma warning restore 618
 }
 
   #endregion
@@ -393,9 +391,77 @@ namespace DirectShowLib.BDA
 
   #endregion
 
+  #region BDATypes.cs
+
+namespace DirectShowLib.BDA
+{
+  /// <summary>
+  /// From DVBSystemType
+  /// </summary>
+  public enum DVBSystemType
+  {
+    Dvb_Cable,
+    Dvb_Terrestrial,
+    Dvb_Satellite,
+
+    // *** System types in BDATypes.h, missing in BDATypes.cs added here. ***
+    Isdb_Terrestrial,
+    Isdb_Satellite
+  }
+
+  /// <summary>
+  /// From ModulationType
+  /// </summary>
+  public enum ModulationType
+  {
+    ModNotSet = -1,
+    ModNotDefined = 0,
+    Mod16Qam = 1,
+    Mod32Qam,
+    Mod64Qam,
+    Mod80Qam,
+    Mod96Qam,
+    Mod112Qam,
+    Mod128Qam,
+    Mod160Qam,
+    Mod192Qam,
+    Mod224Qam,
+    Mod256Qam,
+    Mod320Qam,
+    Mod384Qam,
+    Mod448Qam,
+    Mod512Qam,
+    Mod640Qam,
+    Mod768Qam,
+    Mod896Qam,
+    Mod1024Qam,
+    ModQpsk,
+    ModBpsk,
+    ModOqpsk,
+    Mod8Vsb,
+    Mod16Vsb,
+    ModAnalogAmplitude, // std am
+    ModAnalogFrequency, // std fm
+    Mod8Psk,
+    ModRF,
+    Mod16Apsk,
+    Mod32Apsk,
+    ModNbcQpsk,
+    ModNbc8Psk,
+    ModDirectTv,
+
+    // *** Modulation types in BDATypes.h, missing in BDATypes.cs added here. ***
+    ModIsdbtTmcc,
+    ModIsdbsTmcc,
+    ModMax
+  }
+}
+
+  #endregion
+
   #region DsUtils.cs
 
-  // The while loops in DsFindPin methods have been modified as follows:
+// The while loops in DsFindPin methods have been modified as follows:
   //
   //  ...
   //  int lFetched;
@@ -2469,5 +2535,13 @@ namespace DirectShowLib.BDA
     RenewalEntitlementExpired = unchecked((int)0x8002000a),
     ShowingNotAvailable = unchecked((int)0x8002000b),
     ShowingNext = unchecked((int)0x8002000c)
+  }
+
+  /// <summary>
+  /// CLSID_DVBTLocator2
+  /// </summary>
+  [ComImport, Guid("EFE3FA02-45D7-4920-BE96-53FA7F35B0E6")]
+  public class DVBTLocator2
+  {
   }
 }

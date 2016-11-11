@@ -60,8 +60,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
     {
       this.LogDebug("SAT>IP terrestrial: perform tuning");
 
-      IChannelOfdm ofdmChannel = channel as IChannelOfdm;
-      if (ofdmChannel == null)
+      ChannelDvbT dvbtChannel = channel as ChannelDvbT;
+      ChannelDvbT2 dvbt2Channel = channel as ChannelDvbT2;
+      if (dvbtChannel == null && dvbt2Channel == null)
       {
         throw new TvException("Received request to tune incompatible channel.");
       }
@@ -70,8 +71,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
       // modulation type and inner FEC rate. However, we don't have these
       // details, and the Digital Devices Octopus Net - currently the only
       // avaliable SAT>IP DVB-T/T2 tuner - doesn't require/use them.
+      IChannelOfdm ofdmChannel = channel as IChannelOfdm;
       string parameters = string.Format("freq={0}&bw={1}&msys=dvbt", (ofdmChannel.Frequency / 1000).ToString(), (ofdmChannel.Bandwidth/ 1000).ToString());
-      ChannelDvbT2 dvbt2Channel = channel as ChannelDvbT2;
       if (dvbt2Channel != null)
       {
         int plpId = dvbt2Channel.PlpId;
@@ -81,7 +82,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
         }
         parameters = string.Format("{0}2&plp={1}", parameters, plpId);
       }
-      PerformTuning(channel as ChannelDvbBase, parameters);
+      PerformTuning(channel as IChannelDvb, parameters);
     }
 
     #endregion

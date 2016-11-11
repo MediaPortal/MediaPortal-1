@@ -32,7 +32,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     {
       using (IChannelGroupRepository channelGroupRepository = new ChannelGroupRepository())
       {
-        IQueryable<ChannelGroup> query = channelGroupRepository.GetQuery<ChannelGroup>(cg => cg.IdGroup == idChannelGroup);
+        IQueryable<ChannelGroup> query = channelGroupRepository.GetQuery<ChannelGroup>(cg => cg.IdChannelGroup == idChannelGroup);
         return channelGroupRepository.IncludeAllRelations(query, includeRelations).FirstOrDefault();
       }
     }
@@ -41,10 +41,10 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     {
       using (IChannelGroupRepository channelGroupRepository = new ChannelGroupRepository())
       {
-        ChannelGroup group = channelGroupRepository.Single<ChannelGroup>(cg => cg.GroupName == name && cg.MediaType == (int)mediaType);
+        ChannelGroup group = channelGroupRepository.Single<ChannelGroup>(cg => cg.Name == name && cg.MediaType == (int)mediaType);
         if (group == null)
         {
-          group = new ChannelGroup { GroupName = name, SortOrder = 9999, MediaType = (int)mediaType };
+          group = new ChannelGroup { Name = name, SortOrder = 9999, MediaType = (int)mediaType };
           channelGroupRepository.Add(group);
           channelGroupRepository.UnitOfWork.SaveChanges();
         }
@@ -68,17 +68,17 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     {
       using (IChannelGroupRepository channelGroupRepository = new ChannelGroupRepository(true))
       {
-        IQueryable <ChannelGroup> query = channelGroupRepository.GetQuery<ChannelGroup>(g => g.IdGroup == idChannelGroup);
-        ChannelGroup group = channelGroupRepository.IncludeAllRelations(query, ChannelGroupRelation.GroupMaps).FirstOrDefault();
-        if (group.GroupMaps.Count > 0)
+        IQueryable<ChannelGroup> query = channelGroupRepository.GetQuery<ChannelGroup>(g => g.IdChannelGroup == idChannelGroup);
+        ChannelGroup group = channelGroupRepository.IncludeAllRelations(query, ChannelGroupRelation.ChannelMappings).FirstOrDefault();
+        if (group.ChannelMappings.Count > 0)
         {
-          foreach (GroupMap mapping in group.GroupMaps)
+          foreach (ChannelGroupChannelMapping mapping in group.ChannelMappings)
           {
             mapping.ChangeTracker.State = ObjectState.Deleted;
           }
           channelGroupRepository.ApplyChanges(channelGroupRepository.ObjectContext.ChannelGroups, group);
         }
-        channelGroupRepository.Delete<ChannelGroup>(cg => cg.IdGroup == idChannelGroup);
+        channelGroupRepository.Delete<ChannelGroup>(cg => cg.IdChannelGroup == idChannelGroup);
         channelGroupRepository.UnitOfWork.SaveChanges();
       }
     }

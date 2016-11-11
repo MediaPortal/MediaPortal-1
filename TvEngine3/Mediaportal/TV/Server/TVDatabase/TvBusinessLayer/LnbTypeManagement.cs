@@ -12,8 +12,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     {
       using (IRepository<Model> lnbTypeRepository = new GenericRepository<Model>())
       {
-        LnbType query = lnbTypeRepository.Single<LnbType>(l => l.IdLnbType == idLnbType);
-        return query;
+        return lnbTypeRepository.Single<LnbType>(l => l.IdLnbType == idLnbType);
       }
     }
 

@@ -223,12 +223,42 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Omicom
         return;
       }
 
-      // We only need to tweak the modulation for DVB-S2 channels.
-      ChannelDvbS2 dvbs2Channel = channel as ChannelDvbS2;
-      if (dvbs2Channel != null)
+      // We only need to tweak the modulation for DVB-S/S2 channels.
+      IChannelSatellite satelliteChannel = channel as IChannelSatellite;
+      if (satelliteChannel == null)
       {
-        dvbs2Channel.ModulationScheme = (ModulationSchemePsk)ModulationType.Mod8Psk;
-        this.LogDebug("  modulation = {0}", ModulationType.Mod8Psk);
+        return;
+      }
+
+      ModulationType bdaModulation = ModulationType.ModNotSet;
+      if (channel is ChannelDvbS2)
+      {
+        if (Environment.OSVersion.Version.Major >= 6) // Vista and newer
+        {
+          if (satelliteChannel.ModulationScheme == ModulationSchemePsk.Psk4)
+          {
+            bdaModulation = ModulationType.ModNbcQpsk;
+          }
+          else if (satelliteChannel.ModulationScheme == ModulationSchemePsk.Psk8)
+          {
+            bdaModulation = ModulationType.ModNbc8Psk;
+          }
+        }
+        else
+        {
+          // Assume that the driver can auto-detect the actual scheme.
+          bdaModulation = ModulationType.Mod8Psk;
+        }
+      }
+      else if (channel is ChannelDvbS && satelliteChannel.ModulationScheme == ModulationSchemePsk.Psk4)
+      {
+        bdaModulation = ModulationType.ModQpsk;
+      }
+
+      if (bdaModulation != ModulationType.ModNotSet)
+      {
+        this.LogDebug("  modulation = {0}", bdaModulation);
+        satelliteChannel.ModulationScheme = (ModulationSchemePsk)bdaModulation;
       }
     }
 

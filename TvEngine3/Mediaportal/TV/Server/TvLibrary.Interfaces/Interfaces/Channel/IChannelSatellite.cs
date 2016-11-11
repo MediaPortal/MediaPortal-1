@@ -25,7 +25,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Channel
   /// <summary>
   /// Interface which describes a satellite channel.
   /// </summary>
-  public interface IChannelSatellite : IChannel, IChannelPhysical
+  public interface IChannelSatellite : IChannelPhysical
   {
     /// <summary>
     /// Get/set the longitude of the satellite that the channel is broadcast from. The longitude unit is tenths of a degree. Negative values are West; positive values are East.

@@ -139,7 +139,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog
         try
         {
           Process p = Process.Start(startInfo);
-          if (p.WaitForExit(10000))
+          if (p.WaitForExit(20000))
           {
             this.LogDebug("external tuner: process exited with code {0}", p.ExitCode);
           }

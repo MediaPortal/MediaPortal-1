@@ -315,7 +315,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TeVii
 
     private int _deviceIndex = -1;
     private bool _isTeVii = false;
-    private bool _isCustomTuningSupported = false;
     private Tone22kState _toneState = Tone22kState.Automatic;
     private string _tunerExternalId = string.Empty;
     private bool _restartTeViiRcExe = false;
@@ -412,7 +411,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TeVii
       }
       this.LogInfo("TeVii: extension supported");
       _isTeVii = true;
-      _isCustomTuningSupported = (tunerSupportedBroadcastStandards & BroadcastStandard.MaskSatellite) != 0;
       _tunerExternalId = tunerExternalId.ToLowerInvariant();
       return true;
     }
@@ -429,7 +427,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TeVii
     public bool CanTuneChannel(IChannel channel)
     {
       // Tuning of satellite channels is supported with an appropriate tuner.
-      return channel is IChannelSatellite && _isCustomTuningSupported;
+      return channel is IChannelSatellite;
     }
 
     /// <summary>
@@ -448,7 +446,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TeVii
       }
 
       IChannelSatellite satelliteChannel = channel as IChannelSatellite;
-      if (satelliteChannel == null || !_isCustomTuningSupported)
+      if (satelliteChannel == null)
       {
         this.LogError("TeVii: tuning is not supported for channel{0}{1}", Environment.NewLine, channel);
         return false;
@@ -466,13 +464,14 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TeVii
       TeViiModulation modulation = TeViiModulation.Auto;
       if (channel is ChannelDvbS)
       {
-        if (satelliteChannel.ModulationScheme == ModulationSchemePsk.Psk2)
+        switch (satelliteChannel.ModulationScheme)
         {
-          modulation = TeViiModulation.Bpsk;
-        }
-        else if (satelliteChannel.ModulationScheme == ModulationSchemePsk.Psk4)
-        {
-          modulation = TeViiModulation.Qpsk;
+          case ModulationSchemePsk.Psk2:
+            modulation = TeViiModulation.Bpsk;
+            break;
+          case ModulationSchemePsk.Psk4:
+            modulation = TeViiModulation.Qpsk;
+            break;
         }
       }
       else if (channel is ChannelDvbS2)

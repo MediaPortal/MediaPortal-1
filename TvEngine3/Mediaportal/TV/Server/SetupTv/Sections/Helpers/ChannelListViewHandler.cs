@@ -26,6 +26,7 @@ using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Exception;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using MediaPortal.Common.Utils.ExtensionMethods;
+using DbTuningDetail = Mediaportal.TV.Server.TVDatabase.Entities.TuningDetail;
 
 namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
 {
@@ -730,7 +731,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
     public bool IsChannelInGroup(ListViewItem item, ChannelGroup group)
     {
       HashSet<int> groupIds = item.SubItems[2].Tag as HashSet<int>;
-      return groupIds != null && groupIds.Contains(group.IdGroup);
+      return groupIds != null && groupIds.Contains(group.IdChannelGroup);
     }
 
     public void AddOrUpdateChannels(IEnumerable<Channel> channels)
@@ -744,10 +745,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
 
         HashSet<int> groupIds = new HashSet<int>();
         SortedSet<string> groupNames = new SortedSet<string>(StringComparer.InvariantCultureIgnoreCase);
-        foreach (GroupMap gm in channel.GroupMaps)
+        foreach (ChannelGroupChannelMapping mapping in channel.ChannelGroupMappings)
         {
-          groupIds.Add(gm.IdGroup);
-          groupNames.Add(_channelGroups[gm.IdGroup].GroupName);
+          groupIds.Add(mapping.IdChannelGroup);
+          groupNames.Add(_channelGroups[mapping.IdChannelGroup].Name);
         }
         ListViewItem.ListViewSubItem subItem = item.SubItems.Add(string.Join(", ", groupNames));
         subItem.Tag = groupIds;
@@ -757,7 +758,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
         IDictionary<BroadcastStandard, int> tuningDetailBroadcastStandardCounts = new Dictionary<BroadcastStandard, int>(10);
         bool hasFta = false;
         bool hasScrambled = false;
-        foreach (TuningDetail tuningDetail in channel.TuningDetails)
+        foreach (DbTuningDetail tuningDetail in channel.TuningDetails)
         {
           if (!string.IsNullOrEmpty(tuningDetail.Provider))
           {
@@ -862,10 +863,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
       }
     }
 
-    public void AddChannelsToGroup(IEnumerable<GroupMap> mappings)
+    public void AddChannelsToGroup(IEnumerable<ChannelGroupChannelMapping> mappings)
     {
       bool haveChannelInGroup = false;
-      foreach (GroupMap mapping in mappings)
+      foreach (ChannelGroupChannelMapping mapping in mappings)
       {
         ListViewItem item;
         if (_itemCache.TryGetValue(mapping.IdChannel, out item))
@@ -873,17 +874,17 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
           haveChannelInGroup = true;
           ListViewItem.ListViewSubItem subItem = item.SubItems[SUBITEM_INDEX_GROUPS];
           HashSet<int> groupIds = subItem.Tag as HashSet<int>;
-          groupIds.Add(mapping.IdGroup);
+          groupIds.Add(mapping.IdChannelGroup);
           SortedSet<string> groupNames = new SortedSet<string>(StringComparer.InvariantCultureIgnoreCase);
           foreach (int groupId in groupIds)
           {
-            groupNames.Add(_channelGroups[groupId].GroupName);
+            groupNames.Add(_channelGroups[groupId].Name);
           }
           subItem.Text = string.Join(", ", groupNames);
           subItem.Tag = groupIds;
 
           Channel channel = item.Tag as Channel;
-          channel.GroupMaps.Add(mapping);
+          channel.ChannelGroupMappings.Add(mapping);
           channel.AcceptChanges();
           item.Tag = channel;
         }
@@ -895,10 +896,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
       }
     }
 
-    public void RemoveChannelsFromGroup(IEnumerable<GroupMap> mappings)
+    public void RemoveChannelsFromGroup(IEnumerable<ChannelGroupChannelMapping> mappings)
     {
       bool haveChannelInGroup = false;
-      foreach (GroupMap mapping in mappings)
+      foreach (ChannelGroupChannelMapping mapping in mappings)
       {
         ListViewItem item;
         if (!_itemCache.TryGetValue(mapping.IdChannel, out item))
@@ -908,24 +909,24 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
 
         ListViewItem.ListViewSubItem subItem = item.SubItems[SUBITEM_INDEX_GROUPS];
         HashSet<int> groupIds = subItem.Tag as HashSet<int>;
-        if (groupIds.Remove(mapping.IdGroup))
+        if (groupIds.Remove(mapping.IdChannelGroup))
         {
           haveChannelInGroup = true;
 
           SortedSet<string> groupNames = new SortedSet<string>(StringComparer.InvariantCultureIgnoreCase);
           foreach (int groupId in groupIds)
           {
-            groupNames.Add(_channelGroups[groupId].GroupName);
+            groupNames.Add(_channelGroups[groupId].Name);
           }
           subItem.Text = string.Join(", ", groupNames);
           subItem.Tag = groupIds;
 
           Channel channel = item.Tag as Channel;
-          for (int i = channel.GroupMaps.Count - 1; i >= 0; i--)
+          for (int i = channel.ChannelGroupMappings.Count - 1; i >= 0; i--)
           {
-            if (channel.GroupMaps[i].IdGroup == mapping.IdGroup)
+            if (channel.ChannelGroupMappings[i].IdChannelGroup == mapping.IdChannelGroup)
             {
-              channel.GroupMaps.RemoveAt(i);
+              channel.ChannelGroupMappings.RemoveAt(i);
               break;
             }
           }
@@ -942,21 +943,21 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
 
     public void AddGroup(ChannelGroup group)
     {
-      _channelGroups[group.IdGroup] = group;
+      _channelGroups[group.IdChannelGroup] = group;
     }
 
     public void AddOrUpdateGroup(ChannelGroup group)
     {
       try
       {
-        if (!_channelGroups.ContainsKey(group.IdGroup))
+        if (!_channelGroups.ContainsKey(group.IdChannelGroup))
         {
           return;
         }
       }
       finally
       {
-        _channelGroups[group.IdGroup] = group;
+        _channelGroups[group.IdChannelGroup] = group;
       }
 
       bool haveChannelInGroup = false;
@@ -964,13 +965,13 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
       {
         ListViewItem.ListViewSubItem subItem = item.SubItems[SUBITEM_INDEX_GROUPS];
         HashSet<int> groupIds = subItem.Tag as HashSet<int>;
-        if (groupIds.Contains(group.IdGroup))
+        if (groupIds.Contains(group.IdChannelGroup))
         {
           haveChannelInGroup = true;
           SortedSet<string> groupNames = new SortedSet<string>(StringComparer.InvariantCultureIgnoreCase);
           foreach (int groupId in groupIds)
           {
-            groupNames.Add(_channelGroups[groupId].GroupName);
+            groupNames.Add(_channelGroups[groupId].Name);
           }
           subItem.Text = string.Join(", ", groupNames);
           subItem.Tag = groupIds;
@@ -985,31 +986,31 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
 
     public void DeleteGroup(ChannelGroup group)
     {
-      _channelGroups.Remove(group.IdGroup);
+      _channelGroups.Remove(group.IdChannelGroup);
 
       bool haveChannelInGroup = false;
       foreach (ListViewItem item in _itemCache.Values)
       {
         ListViewItem.ListViewSubItem subItem = item.SubItems[SUBITEM_INDEX_GROUPS];
         HashSet<int> groupIds = subItem.Tag as HashSet<int>;
-        if (groupIds.Remove(group.IdGroup))
+        if (groupIds.Remove(group.IdChannelGroup))
         {
           haveChannelInGroup = true;
 
           SortedSet<string> groupNames = new SortedSet<string>(StringComparer.InvariantCultureIgnoreCase);
           foreach (int groupId in groupIds)
           {
-            groupNames.Add(_channelGroups[groupId].GroupName);
+            groupNames.Add(_channelGroups[groupId].Name);
           }
           subItem.Text = string.Join(", ", groupNames);
           subItem.Tag = groupIds;
 
           Channel channel = item.Tag as Channel;
-          for (int i = channel.GroupMaps.Count - 1; i >= 0; i--)
+          for (int i = channel.ChannelGroupMappings.Count - 1; i >= 0; i--)
           {
-            if (channel.GroupMaps[i].IdGroup == group.IdGroup)
+            if (channel.ChannelGroupMappings[i].IdChannelGroup == group.IdChannelGroup)
             {
-              channel.GroupMaps.RemoveAt(i);
+              channel.ChannelGroupMappings.RemoveAt(i);
               break;
             }
           }

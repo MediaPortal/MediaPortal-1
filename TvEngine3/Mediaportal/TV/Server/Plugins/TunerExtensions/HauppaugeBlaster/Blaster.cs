@@ -21,6 +21,7 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
+using Mediaportal.TV.Server.Common.Types.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeBlaster
@@ -117,7 +118,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeBlaster
 
     /// <remarks>
     /// Blast plain channel numbers (integers) up to 4 digits in length.
-    /// Two part channel numbers not supported.
+    /// Two part channel numbers are not supported.
     /// </remarks>
     [DllImport("hcwIRblast.dll")]
     private static extern HcwResult UIR_GotoChannel(int device, int codeSet, int channelNumber);
@@ -130,23 +131,26 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeBlaster
     [DllImport("hcwIRblast.dll")]
     private static extern HcwResult UIR_GetVersionStr([MarshalAs(UnmanagedType.LPStr)] StringBuilder versionString, ref int bufferSize);
 
-    /// <summary>
-    /// Get the number of blaster ports available which are of the type of the currently opened port.
-    /// </summary>
-    /// <returns></returns>
+    /// <remarks>
+    /// The return value could be a count or a bit-mask.
+    /// </remarks>
     [DllImport("hcwIRblast.dll")]
     private static extern int UIR_GetPortCount();
 
     /// <summary>
-    /// Set the blaster port number to use.
+    /// Select the blaster port(s) to use.
     /// </summary>
-    /// <param name="portNumber">The port number. Should be between 1 and the result of UIR_GetPortCount(), inclusive.</param>
+    /// <param name="portNumber">The port number (or mask???). Should be between 1 and the result of UIR_GetPortCount(), inclusive.</param>
     [DllImport("hcwIRblast.dll")]
     private static extern HcwResult UIR_SetPort(int portNumber);
 
     /// <remarks>
     /// unknown1 should be between 1 and 5, inclusive.
-    ///   3 = get emitter count
+    ///   2 = send key code
+    ///   3 = get port count (IOCTL_IR_GET_EMITTERS)
+    ///   4 = set port
+    ///   5 = (set an unknown value)
+    /// unknown2 is the parameter value (eg. key code, port number, value).
     /// </remarks>
     [DllImport("hcwIRblast.dll")]
     [return: MarshalAs(UnmanagedType.Bool)]
@@ -155,8 +159,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeBlaster
     /// <remarks>
     /// If you pass a numeric string and UseMajorMinorFormat is FALSE, behaviour should be identical to UIR_GotoChannel().
     /// If you pass a numeric string and UseMajorMinorFormat is TRUE:
-    /// - value should be less than or equal 10000
-    /// - digit 1 and 2 are the major channel number; digits 3, 4 and 5 are the minor channel number
+    /// - value should be between 1000 and 1999
+    /// - digit 1 seems to be ignored; digits 2 and 3 are the major channel number; digit 4 is the minor channel number
     /// 
     /// If you pass a NON-numeric string it is expected to be in one of two formats.
     /// Format 1:
@@ -166,7 +170,18 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeBlaster
     /// 
     /// Format 2:
     /// - '{' + ['BS' OR 'CS' OR 'IT' OR 'NO'] + [number, value 1 to 12 inclusive]
-    /// - the number is a key code (1, 2.. 9, 0, 84 [unknown], 85 [unknown])
+    /// - the different prefixes map to different key codes
+    ///   BS = 86 [unknown]
+    ///   CS = 87 [unknown]
+    ///   IT = 88 [unknown]
+    ///   NO = [nothing]
+    /// - the number maps to a key code too
+    ///   1 = 1
+    ///   2 = 2
+    ///   ...
+    ///   10 = 0
+    ///   11 = 84 [unknown]
+    ///   12 = 85 [unknown]
     /// </remarks>
     [DllImport("hcwIRblast.dll")]
     private static extern HcwResult UIR_GotoChannelEx(int device, int codeSet, [MarshalAs(UnmanagedType.LPStr)] string channelNumber);
@@ -341,20 +356,38 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeBlaster
           return false;
         }
 
-        int channelNumberAsInt;
-        bool isIntChannelNumber = int.TryParse(channelNumber, out channelNumberAsInt);
-        if (!_config.UseMajorMinorFormat && !isIntChannelNumber)
-        {
-          this.LogError("Hauppauge blaster: unsupported channel number format");
-          return false;
-        }
-        if (isIntChannelNumber && (channelNumberAsInt <= 0 || channelNumberAsInt >= 9999))
+        ushort majorChannelNumber;
+        ushort? minorChannelNumber;
+        if (!LogicalChannelNumber.Parse(channelNumber, out majorChannelNumber, out minorChannelNumber))
         {
           this.LogError("Hauppauge blaster: invalid channel number {0}", channelNumber);
           return false;
         }
+        if (minorChannelNumber.HasValue)
+        {
+          if (!_config.UseMajorMinorFormat)
+          {
+            this.LogError("Hauppauge blaster: unsupported channel number format");
+            return false;
+          }
+          if (majorChannelNumber > 999 || minorChannelNumber.Value > 99)
+          {
+            this.LogError("Hauppauge blaster: major channel number exceeds limit, number = {0}, limit = 999", majorChannelNumber);
+            return false;
+          }
+          if (minorChannelNumber.Value > 99)
+          {
+            this.LogError("Hauppauge blaster: minor channel number exceeds limit, number = {0}, limit = 99", minorChannelNumber);
+            return false;
+          }
+        }
+        else if (majorChannelNumber > 9999)
+        {
+          this.LogError("Hauppauge blaster: channel number exceeds limit, number = {0}, limit = 9999", majorChannelNumber);
+          return false;
+        }
 
-        if (port < 1 || port > PortCount)
+        if (port < 1 || port > _portCount)
         {
           this.LogError("Hauppauge blaster: invalid port number, port = {0}, port count = {1}", port, _portCount);
           return false;
@@ -383,13 +416,13 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeBlaster
 
         try
         {
-          if (isIntChannelNumber)
+          if (!minorChannelNumber.HasValue)
           {
-            result = UIR_GotoChannel(_config.Device, _config.CodeSet, channelNumberAsInt);
+            result = UIR_GotoChannel(_config.Device, _config.CodeSet, majorChannelNumber);
           }
           else
           {
-            result = UIR_GotoChannelEx(_config.Device, _config.CodeSet, channelNumber);
+            result = UIR_GotoChannelEx(_config.Device, _config.CodeSet, string.Format("{0}.{1}", majorChannelNumber, minorChannelNumber));
           }
           if (result == HcwResult.Success)
           {

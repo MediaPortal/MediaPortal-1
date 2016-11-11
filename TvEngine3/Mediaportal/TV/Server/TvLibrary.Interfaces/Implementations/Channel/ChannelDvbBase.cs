@@ -19,30 +19,32 @@
 #endregion
 
 using System.Runtime.Serialization;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
 
 namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel
 {
   /// <summary>
-  /// A base class for DVB <see cref="T:IChannel"/> implementations.
+  /// A base class for Digital Video Broadcast <see cref="T:IChannel"/> implementations.
   /// </summary>
   [DataContract]
   [KnownType(typeof(ChannelDvbC))]
   [KnownType(typeof(ChannelDvbC2))]
+  [KnownType(typeof(ChannelDvbDsng))]
   [KnownType(typeof(ChannelDvbS))]
   [KnownType(typeof(ChannelDvbS2))]
   [KnownType(typeof(ChannelDvbT))]
   [KnownType(typeof(ChannelDvbT2))]
+  [KnownType(typeof(ChannelIsdbC))]
+  [KnownType(typeof(ChannelIsdbS))]
+  [KnownType(typeof(ChannelIsdbT))]
   [KnownType(typeof(ChannelSatelliteTurboFec))]
   [KnownType(typeof(ChannelStream))]
-  public abstract class ChannelDvbBase : ChannelMpeg2Base
+  public abstract class ChannelDvbBase : ChannelMpeg2TsBase, IChannelDvbCompatible
   {
     #region variables
 
     [DataMember]
     protected int _originalNetworkId = -1;
-
-    [DataMember]
-    protected int _openTvChannelId = -1;
 
     [DataMember]
     protected int _epgOriginalNetworkId = -1;
@@ -87,21 +89,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel
       set
       {
         ProgramNumber = value;
-      }
-    }
-
-    /// <summary>
-    /// Get/set the channel's OpenTV channel identifier.
-    /// </summary>
-    public int OpenTvChannelId
-    {
-      get
-      {
-        return _openTvChannelId;
-      }
-      set
-      {
-        _openTvChannelId = value;
       }
     }
 
@@ -166,7 +153,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel
         channel == null ||
         !base.Equals(obj) ||
         OriginalNetworkId != channel.OriginalNetworkId ||
-        OpenTvChannelId != channel.OpenTvChannelId ||
         EpgOriginalNetworkId != channel.EpgOriginalNetworkId ||
         EpgTransportStreamId != channel.EpgTransportStreamId ||
         EpgServiceId != channel.EpgServiceId
@@ -184,7 +170,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel
     public override int GetHashCode()
     {
       return base.GetHashCode() ^ OriginalNetworkId.GetHashCode() ^
-              OpenTvChannelId.GetHashCode() ^
               EpgOriginalNetworkId.GetHashCode() ^
               EpgTransportStreamId.GetHashCode() ^ EpgServiceId.GetHashCode();
     }
@@ -195,11 +180,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel
     /// <returns>a <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/></returns>
     public override string ToString()
     {
-      return string.Format("{0}, ONID = {1}, OpenTV CID = {2}, EPG ONID = {3}, EPG TSID = {4}, EPG service ID = {5}",
+      return string.Format("{0}, ONID = {1}, EPG ONID = {2}, EPG TSID = {3}, EPG service ID = {4}",
                             base.ToString().Replace("program number", "service ID"),
-                            OriginalNetworkId, OpenTvChannelId,
-                            EpgOriginalNetworkId, EpgTransportStreamId,
-                            EpgServiceId);
+                            OriginalNetworkId, EpgOriginalNetworkId,
+                            EpgTransportStreamId, EpgServiceId);
     }
 
     #endregion

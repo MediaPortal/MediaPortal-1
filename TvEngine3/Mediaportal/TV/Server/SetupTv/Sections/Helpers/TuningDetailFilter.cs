@@ -28,7 +28,8 @@ using System.Xml.Serialization;
 using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.SetupControls;
 using Mediaportal.TV.Server.SetupControls.UserInterfaceControls;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations;
+using Mediaportal.TV.Server.SetupTV.Sections.Helpers.Enum;
+using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
@@ -86,15 +87,17 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
     public const string SATELLITE_SUB_DIRECTORY = "dvbs";
     public const string ALL_TUNING_DETAIL_ITEM = "All";
 
-    private readonly BroadcastStandard _broadcastStandard;
+    private readonly int _tunerId;
+    private readonly TuningDetailGroup _group;
     private readonly MPComboBox _comboBoxLevel1 = null;
     private readonly MPComboBox _comboBoxLevel2 = null;
     private readonly MPComboBox _comboBoxLevel3 = null;
     private string[] _files;
 
-    public TuningDetailFilter(BroadcastStandard broadcastStandard, MPComboBox comboBoxLevel1, string selectedItemLevel1, MPComboBox comboBoxLevel2, string selectedItemLevel2, MPComboBox comboBoxLevel3 = null, string selectedItemLevel3 = null)
+    public TuningDetailFilter(int tunerId, TuningDetailGroup group, MPComboBox comboBoxLevel1, string selectedItemLevel1, MPComboBox comboBoxLevel2, string selectedItemLevel2, MPComboBox comboBoxLevel3 = null, string selectedItemLevel3 = null)
     {
-      _broadcastStandard = broadcastStandard;
+      _tunerId = tunerId;
+      _group = group;
       _comboBoxLevel1 = comboBoxLevel1;
       _comboBoxLevel2 = comboBoxLevel2;
       _comboBoxLevel3 = comboBoxLevel3;
@@ -120,9 +123,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
       }
     }
 
-    public static void Load(BroadcastStandard broadcastStandard, string fileName, MPComboBox comboBox, bool isFileNameQualified = false)
+    public static void Load(int tunerId, TuningDetailGroup group, string fileName, MPComboBox comboBox, bool isFileNameQualified = false)
     {
-      if (broadcastStandard == BroadcastStandard.Unknown)
+      if (fileName == null)
       {
         comboBox.Enabled = false;
         comboBox.Items.Clear();
@@ -133,7 +136,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
 
       if (!isFileNameQualified)
       {
-        fileName = Path.Combine(GetPathForBroadcastStandard(broadcastStandard), fileName);
+        fileName = Path.Combine(GetPathForTuningDetailGroup(group), fileName);
       }
 
       comboBox.BeginUpdate();
@@ -141,7 +144,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
       {
         comboBox.Items.Clear();
         comboBox.Items.Add(ALL_TUNING_DETAIL_ITEM);
-        if (broadcastStandard == BroadcastStandard.DvbIp)
+        if (group == TuningDetailGroup.Stream)
         {
           LoadM3uPlaylist(fileName, comboBox);
           return;
@@ -156,7 +159,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
         }
         foreach (TuningDetail tuningDetail in tuningDetails)
         {
-          if (broadcastStandard.HasFlag(tuningDetail.BroadcastStandard))
+          if (ServiceAgents.Instance.ControllerServiceAgent.CanTune(tunerId, tuningDetail.GetTuningChannel()))
           {
             comboBox.Items.Add(tuningDetail);
           }
@@ -177,13 +180,32 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
 
     public void Save(string fileName, IList<TuningDetail> tuningDetails)
     {
-      string filePath = Path.Combine(GetPathForBroadcastStandard(_broadcastStandard), fileName);
+      string filePath = Path.Combine(GetPathForTuningDetailGroup(_group), fileName);
+
+      // Expand any tuning details that have more than one frequency so that
+      // there's one tuning detail per frequency.
+      List<TuningDetail> tempTuningDetails = new List<TuningDetail>(tuningDetails.Count);
+      foreach (TuningDetail tuningDetail in tuningDetails)
+      {
+        if (tuningDetail.Frequencies == null || tuningDetail.Frequencies.Count == 0)
+        {
+          tempTuningDetails.Add(tuningDetail);
+          continue;
+        }
+        foreach (int frequency in tuningDetail.Frequencies)
+        {
+          TuningDetail tempTuningDetail = (TuningDetail)tuningDetail.Clone();
+          tempTuningDetail.Frequency = frequency;
+          tempTuningDetails.Add(tempTuningDetail);
+        }
+      }
+
       try
       {
         using (XmlWriter xmlWriter = XmlWriter.Create(filePath, new XmlWriterSettings() { Indent = true, IndentChars = "  ", NewLineChars = Environment.NewLine }))
         {
           XmlSerializer xmlSerializer = new XmlSerializer(typeof(List<TuningDetail>));
-          xmlSerializer.Serialize(xmlWriter, tuningDetails);
+          xmlSerializer.Serialize(xmlWriter, tempTuningDetails);
           xmlWriter.Close();
 
           object selectedItemLevel1 = _comboBoxLevel1.SelectedItem;
@@ -242,11 +264,11 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
     private void LoadFiles()
     {
       string filter = "*.xml";
-      if (_broadcastStandard == BroadcastStandard.DvbIp)
+      if (_group == TuningDetailGroup.Stream)
       {
         filter = "*.m3u";
       }
-      _files = Directory.GetFiles(GetPathForBroadcastStandard(_broadcastStandard), filter);
+      _files = Directory.GetFiles(GetPathForTuningDetailGroup(_group), filter);
       Array.Sort(_files);
 
       _comboBoxLevel1.BeginUpdate();
@@ -277,25 +299,29 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
       }
     }
 
-    private static string GetPathForBroadcastStandard(BroadcastStandard broadcastStandard)
+    private static string GetPathForTuningDetailGroup(TuningDetailGroup group)
     {
-      if (broadcastStandard == BroadcastStandard.AnalogTelevision || broadcastStandard == BroadcastStandard.FmRadio)
+      if (group == TuningDetailGroup.Analog)
       {
         return Path.Combine(DATA_PATH, "analog");
       }
-      if ((BroadcastStandard.MaskDvb | BroadcastStandard.MaskCable).HasFlag(broadcastStandard))
+      if (group == TuningDetailGroup.AtscScte)
+      {
+        return Path.Combine(DATA_PATH, "atsc");
+      }
+      if (group == TuningDetailGroup.Cable)
       {
         return Path.Combine(DATA_PATH, "dvbc");
       }
-      if (broadcastStandard == BroadcastStandard.DvbIp)
-      {
-        return Path.Combine(DATA_PATH, "dvbip");
-      }
-      if (BroadcastStandard.MaskSatellite.HasFlag(broadcastStandard))
+      if (group == TuningDetailGroup.Satellite)
       {
         return Path.Combine(DATA_PATH, SATELLITE_SUB_DIRECTORY);
       }
-      if ((BroadcastStandard.MaskDvb | BroadcastStandard.MaskTerrestrial).HasFlag(broadcastStandard))
+      if (group == TuningDetailGroup.Stream)
+      {
+        return Path.Combine(DATA_PATH, "dvbip");
+      }
+      if (group == TuningDetailGroup.Terrestrial)
       {
         return Path.Combine(DATA_PATH, "dvbt");
       }
@@ -377,7 +403,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
     {
       if (_comboBoxLevel3 == null)
       {
-        Load(_broadcastStandard, ((ComboBoxFileItem)_comboBoxLevel1.SelectedItem).FileName, _comboBoxLevel2, true);
+        Load(_tunerId, _group, ((ComboBoxFileItem)_comboBoxLevel1.SelectedItem).FileName, _comboBoxLevel2, true);
         return;
       }
 
@@ -396,7 +422,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
 
     private void Level2SelectedIndexChanged(object sender, EventArgs e)
     {
-      Load(_broadcastStandard, ((ComboBoxFileItem)_comboBoxLevel2.SelectedItem).FileName, _comboBoxLevel3, true);
+      Load(_tunerId, _group, ((ComboBoxFileItem)_comboBoxLevel2.SelectedItem).FileName, _comboBoxLevel3, true);
     }
   }
 }

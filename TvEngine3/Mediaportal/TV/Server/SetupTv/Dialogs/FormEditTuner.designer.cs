@@ -322,7 +322,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       // comboBoxBdaNetworkProvider
       // 
-      this.comboBoxBdaNetworkProvider.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxBdaNetworkProvider.FormattingEnabled = true;
       this.comboBoxBdaNetworkProvider.Location = new System.Drawing.Point(126, 67);
       this.comboBoxBdaNetworkProvider.Name = "comboBoxBdaNetworkProvider";
@@ -331,7 +330,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       // comboBoxPidFilterMode
       // 
-      this.comboBoxPidFilterMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxPidFilterMode.FormattingEnabled = true;
       this.comboBoxPidFilterMode.Location = new System.Drawing.Point(126, 94);
       this.comboBoxPidFilterMode.Name = "comboBoxPidFilterMode";
@@ -349,7 +347,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       // comboBoxIdleMode
       // 
-      this.comboBoxIdleMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxIdleMode.FormattingEnabled = true;
       this.comboBoxIdleMode.Location = new System.Drawing.Point(126, 40);
       this.comboBoxIdleMode.Name = "comboBoxIdleMode";
@@ -614,7 +611,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       // comboBoxMultiChannelDecryptMode
       // 
-      this.comboBoxMultiChannelDecryptMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxMultiChannelDecryptMode.FormattingEnabled = true;
       this.comboBoxMultiChannelDecryptMode.Location = new System.Drawing.Point(152, 120);
       this.comboBoxMultiChannelDecryptMode.Name = "comboBoxMultiChannelDecryptMode";
@@ -632,7 +628,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       // comboBoxCamType
       // 
-      this.comboBoxCamType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxCamType.FormattingEnabled = true;
       this.comboBoxCamType.Location = new System.Drawing.Point(68, 67);
       this.comboBoxCamType.Name = "comboBoxCamType";
@@ -740,7 +735,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.buttonEncoderSettingsCheckSupport.Name = "buttonEncoderSettingsCheckSupport";
       this.buttonEncoderSettingsCheckSupport.Size = new System.Drawing.Size(110, 23);
       this.buttonEncoderSettingsCheckSupport.TabIndex = 0;
-      this.buttonEncoderSettingsCheckSupport.Text = "&Check For Support";
+      this.buttonEncoderSettingsCheckSupport.Text = "Check For &Support";
       this.buttonEncoderSettingsCheckSupport.UseVisualStyleBackColor = true;
       this.buttonEncoderSettingsCheckSupport.Click += new System.EventHandler(this.buttonEncoderSettingsCheckSupport_Click);
       // 
@@ -831,7 +826,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       // comboBoxEncoderBitRateModeRecording
       // 
-      this.comboBoxEncoderBitRateModeRecording.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxEncoderBitRateModeRecording.FormattingEnabled = true;
       this.comboBoxEncoderBitRateModeRecording.Location = new System.Drawing.Point(205, 37);
       this.comboBoxEncoderBitRateModeRecording.Name = "comboBoxEncoderBitRateModeRecording";
@@ -947,7 +941,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       // comboBoxEncoderBitRateModeTimeShifting
       // 
-      this.comboBoxEncoderBitRateModeTimeShifting.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxEncoderBitRateModeTimeShifting.FormattingEnabled = true;
       this.comboBoxEncoderBitRateModeTimeShifting.Location = new System.Drawing.Point(49, 37);
       this.comboBoxEncoderBitRateModeTimeShifting.Name = "comboBoxEncoderBitRateModeTimeShifting";
@@ -1005,53 +998,46 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       // comboBoxAnalogVideoStandard
       // 
-      this.comboBoxAnalogVideoStandard.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-      this.comboBoxAnalogVideoStandard.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxAnalogVideoStandard.FormattingEnabled = true;
       this.comboBoxAnalogVideoStandard.Location = new System.Drawing.Point(72, 19);
       this.comboBoxAnalogVideoStandard.Name = "comboBoxAnalogVideoStandard";
-      this.comboBoxAnalogVideoStandard.Size = new System.Drawing.Size(233, 21);
+      this.comboBoxAnalogVideoStandard.Size = new System.Drawing.Size(110, 21);
       this.comboBoxAnalogVideoStandard.TabIndex = 1;
       // 
       // comboBoxFrameSize
       // 
       this.comboBoxFrameSize.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-      this.comboBoxFrameSize.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxFrameSize.FormattingEnabled = true;
-      this.comboBoxFrameSize.Location = new System.Drawing.Point(72, 46);
+      this.comboBoxFrameSize.Location = new System.Drawing.Point(72, 73);
       this.comboBoxFrameSize.Name = "comboBoxFrameSize";
       this.comboBoxFrameSize.Size = new System.Drawing.Size(233, 21);
-      this.comboBoxFrameSize.TabIndex = 3;
+      this.comboBoxFrameSize.TabIndex = 5;
       // 
       // comboBoxFrameRate
       // 
-      this.comboBoxFrameRate.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-      this.comboBoxFrameRate.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxFrameRate.FormattingEnabled = true;
-      this.comboBoxFrameRate.Location = new System.Drawing.Point(72, 73);
+      this.comboBoxFrameRate.Location = new System.Drawing.Point(72, 46);
       this.comboBoxFrameRate.Name = "comboBoxFrameRate";
-      this.comboBoxFrameRate.Size = new System.Drawing.Size(233, 21);
-      this.comboBoxFrameRate.TabIndex = 5;
+      this.comboBoxFrameRate.Size = new System.Drawing.Size(110, 21);
+      this.comboBoxFrameRate.TabIndex = 3;
       // 
       // labelFrameRate
       // 
       this.labelFrameRate.AutoSize = true;
-      this.labelFrameRate.Location = new System.Drawing.Point(6, 76);
+      this.labelFrameRate.Location = new System.Drawing.Point(6, 49);
       this.labelFrameRate.Name = "labelFrameRate";
       this.labelFrameRate.Size = new System.Drawing.Size(60, 13);
-      this.labelFrameRate.TabIndex = 4;
+      this.labelFrameRate.TabIndex = 2;
       this.labelFrameRate.Text = "Frame rate:";
       // 
       // labelFrameSize
       // 
       this.labelFrameSize.AutoSize = true;
-      this.labelFrameSize.Location = new System.Drawing.Point(6, 49);
+      this.labelFrameSize.Location = new System.Drawing.Point(6, 76);
       this.labelFrameSize.Name = "labelFrameSize";
       this.labelFrameSize.Size = new System.Drawing.Size(60, 13);
-      this.labelFrameSize.TabIndex = 2;
+      this.labelFrameSize.TabIndex = 4;
       this.labelFrameSize.Text = "Frame size:";
       // 
       // groupBoxSoftwareEncoders
@@ -1074,7 +1060,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       this.comboBoxSoftwareEncoderAudio.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-      this.comboBoxSoftwareEncoderAudio.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxSoftwareEncoderAudio.FormattingEnabled = true;
       this.comboBoxSoftwareEncoderAudio.Location = new System.Drawing.Point(72, 46);
       this.comboBoxSoftwareEncoderAudio.Name = "comboBoxSoftwareEncoderAudio";
@@ -1103,7 +1088,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       this.comboBoxSoftwareEncoderVideo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-      this.comboBoxSoftwareEncoderVideo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxSoftwareEncoderVideo.FormattingEnabled = true;
       this.comboBoxSoftwareEncoderVideo.Location = new System.Drawing.Point(72, 19);
       this.comboBoxSoftwareEncoderVideo.Name = "comboBoxSoftwareEncoderVideo";
@@ -1175,7 +1159,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       this.comboBoxVideoOrCameraProperty.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-      this.comboBoxVideoOrCameraProperty.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxVideoOrCameraProperty.FormattingEnabled = true;
       this.comboBoxVideoOrCameraProperty.Location = new System.Drawing.Point(72, 19);
       this.comboBoxVideoOrCameraProperty.Name = "comboBoxVideoOrCameraProperty";
@@ -1330,7 +1313,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       this.comboBoxExternalInputCountry.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-      this.comboBoxExternalInputCountry.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxExternalInputCountry.FormattingEnabled = true;
       this.comboBoxExternalInputCountry.Location = new System.Drawing.Point(89, 73);
       this.comboBoxExternalInputCountry.Name = "comboBoxExternalInputCountry";
@@ -1339,13 +1321,10 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       // comboBoxExternalInputSourceAudio
       // 
-      this.comboBoxExternalInputSourceAudio.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-      this.comboBoxExternalInputSourceAudio.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxExternalInputSourceAudio.FormattingEnabled = true;
       this.comboBoxExternalInputSourceAudio.Location = new System.Drawing.Point(89, 46);
       this.comboBoxExternalInputSourceAudio.Name = "comboBoxExternalInputSourceAudio";
-      this.comboBoxExternalInputSourceAudio.Size = new System.Drawing.Size(216, 21);
+      this.comboBoxExternalInputSourceAudio.Size = new System.Drawing.Size(90, 21);
       this.comboBoxExternalInputSourceAudio.TabIndex = 3;
       // 
       // labelExternalInputSourceAudio
@@ -1368,13 +1347,10 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       // comboBoxExternalInputSourceVideo
       // 
-      this.comboBoxExternalInputSourceVideo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-      this.comboBoxExternalInputSourceVideo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxExternalInputSourceVideo.FormattingEnabled = true;
       this.comboBoxExternalInputSourceVideo.Location = new System.Drawing.Point(89, 19);
       this.comboBoxExternalInputSourceVideo.Name = "comboBoxExternalInputSourceVideo";
-      this.comboBoxExternalInputSourceVideo.Size = new System.Drawing.Size(216, 21);
+      this.comboBoxExternalInputSourceVideo.Size = new System.Drawing.Size(90, 21);
       this.comboBoxExternalInputSourceVideo.TabIndex = 1;
       this.comboBoxExternalInputSourceVideo.SelectedIndexChanged += new System.EventHandler(this.comboBoxExternalInputSourceVideo_SelectedIndexChanged);
       // 

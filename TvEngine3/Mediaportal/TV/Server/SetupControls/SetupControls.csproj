@@ -89,6 +89,12 @@
     <Compile Include="SectionSettings.Designer.cs">
       <DependentUpon>SectionSettings.cs</DependentUpon>
     </Compile>
+    <Compile Include="UserInterfaceControls\MPComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UserInterfaceControls\MPChannelNumberUpDown.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="UserInterfaceControls\MPDataGridView.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -159,6 +165,12 @@
     <Content Include="Resources\icon_folder.png" />
     <Content Include="Resources\icon_help.png" />
     <Content Include="Resources\icon_refresh.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Common.Types\Common.Types.csproj">
+      <Project>{F9F4E5C1-9A6A-42F8-8452-4BDAFEA0E798}</Project>
+      <Name>Common.Types</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

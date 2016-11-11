@@ -9,54 +9,34 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
 {  
   public class ChannelGroupService : IChannelGroupService
   {    
-    public IList<ChannelGroup> ListAllChannelGroups()
-    {
-      return ChannelGroupManagement.ListAllChannelGroups();
-    }
-
-    public IList<ChannelGroup> ListAllChannelGroups(ChannelGroupIncludeRelationEnum includeRelations)
+    public IList<ChannelGroup> ListAllChannelGroups(ChannelGroupRelation includeRelations)
     {
       return ChannelGroupManagement.ListAllChannelGroups(includeRelations);
     }
 
-    public IList<ChannelGroup> ListAllChannelGroupsByMediaType(MediaType mediaType)
+    public IList<ChannelGroup> ListAllChannelGroupsByMediaType(MediaType mediaType, ChannelGroupRelation includeRelations)
     {
-      return ChannelGroupManagement.ListAllChannelGroupsByMediaType(mediaType);
+      return ChannelGroupManagement.ListAllChannelGroupsByMediaType(mediaType, includeRelations);
     }
 
-    public IList<ChannelGroup> ListAllChannelGroupsByMediaType(MediaType mediaTypeEnum, ChannelGroupIncludeRelationEnum includeRelations)
+    public ChannelGroup GetChannelGroup(int idChannelGroup, ChannelGroupRelation includeRelations)
     {
-      return ChannelGroupManagement.ListAllChannelGroupsByMediaType(mediaTypeEnum, includeRelations);
+      return ChannelGroupManagement.GetChannelGroup(idChannelGroup, includeRelations);
     }
 
-    public ChannelGroup GetChannelGroupByNameAndMediaType(string groupName, MediaType mediaType)
+    public ChannelGroup GetOrCreateChannelGroup(string name, MediaType mediaType)
     {
-      return ChannelGroupManagement.GetChannelGroupByNameAndMediaType(groupName, mediaType);
+      return ChannelGroupManagement.GetOrCreateChannelGroup(name, mediaType);
     }
 
-    public ChannelGroup GetChannelGroup(int id)
+    public ChannelGroup SaveChannelGroup(ChannelGroup channelGroup)
     {
-      return ChannelGroupManagement.GetChannelGroup(id);
+      return ChannelGroupManagement.SaveChannelGroup(channelGroup);
     }
 
-    public ChannelGroup GetChannelGroup(int id, ChannelGroupIncludeRelationEnum includeRelations)
+    public void DeleteChannelGroup(int idChannelGroup)
     {
-      return ChannelGroupManagement.GetChannelGroup(id, includeRelations);
-    }
-
-    public ChannelGroup SaveGroup(ChannelGroup group)
-    {
-      return ChannelGroupManagement.SaveGroup(group);
-    }
-
-    public void DeleteChannelGroup(int idGroup)
-    {
-      ChannelGroupManagement.DeleteChannelGroup(idGroup);
-    }
-
-    public ChannelGroup GetOrCreateGroup(string groupName, MediaType mediaType)
-    {
-      return ChannelGroupManagement.GetOrCreateGroup(groupName, mediaType);
+      ChannelGroupManagement.DeleteChannelGroup(idChannelGroup);
     }
   }
 }

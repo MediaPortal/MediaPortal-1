@@ -28,12 +28,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel
   /// An implementation of <see cref="T:IChannel"/> for DVB-S2 channels.
   /// </summary>
   [DataContract]
-  public class ChannelDvbS2 : ChannelDvbBase, IChannelSatellite
+  public class ChannelDvbS2 : ChannelOpenTvBase, IChannelDvb, IChannelFreesat, IChannelSatellite
   {
     #region variables
 
     [DataMember]
-    protected int _freesatChannelId = -1;
+    private int _freesatChannelId = -1;
 
     [DataMember]
     private int _longitude = 0;
@@ -54,13 +54,32 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel
     private FecCodeRate _fecCodeRate = FecCodeRate.Automatic;
 
     [DataMember]
-    private PilotTonesState _pilotTonesState = PilotTonesState.Automatic;
-
-    [DataMember]
     private RollOffFactor _rollOffFactor = RollOffFactor.Automatic;
 
     [DataMember]
+    private PilotTonesState _pilotTonesState = PilotTonesState.Automatic;
+
+    [DataMember]
     private short _streamId = -1;
+
+    [DataMember]
+    private readonly BroadcastStandard _broadcastStandard = BroadcastStandard.DvbS2;
+
+    #endregion
+
+    #region constructor
+
+    /// <summary>
+    /// Initialise a new instance of the <see cref="ChannelDvbS2"/> class.
+    /// </summary>
+    /// <param name="broadcastStandard">The standard/profile that the channel's transmitter conforms to.</param>
+    public ChannelDvbS2(BroadcastStandard broadcastStandard)
+    {
+      if (BroadcastStandard.MaskDvbS2.HasFlag(broadcastStandard))
+      {
+        _broadcastStandard = broadcastStandard;
+      }
+    }
 
     #endregion
 
@@ -172,21 +191,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel
     }
 
     /// <summary>
-    /// Get/set the channel transmitter's pilot tones state.
-    /// </summary>
-    public PilotTonesState PilotTonesState
-    {
-      get
-      {
-        return _pilotTonesState;
-      }
-      set
-      {
-        _pilotTonesState = value;
-      }
-    }
-
-    /// <summary>
     /// Get/set the channel transmitter's roll-off factor.
     /// </summary>
     public RollOffFactor RollOffFactor
@@ -202,6 +206,21 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel
     }
 
     /// <summary>
+    /// Get/set the channel transmitter's pilot tones state.
+    /// </summary>
+    public PilotTonesState PilotTonesState
+    {
+      get
+      {
+        return _pilotTonesState;
+      }
+      set
+      {
+        _pilotTonesState = value;
+      }
+    }
+
+    /// <summary>
     /// Get/set the identifier of the input stream that the channel is multiplexed in.
     /// </summary>
     public short StreamId
@@ -213,6 +232,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel
       set
       {
         _streamId = value;
+      }
+    }
+
+    /// <summary>
+    /// Get the standard that the channel's transmitter conforms to.
+    /// </summary>
+    public BroadcastStandard BroadcastStandard
+    {
+      get
+      {
+        return _broadcastStandard;
       }
     }
 
@@ -236,8 +266,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel
         ModulationScheme != dvbs2Channel.ModulationScheme ||
         SymbolRate != dvbs2Channel.SymbolRate ||
         FecCodeRate != dvbs2Channel.FecCodeRate ||
-        PilotTonesState != dvbs2Channel.PilotTonesState ||
         RollOffFactor != dvbs2Channel.RollOffFactor ||
+        PilotTonesState != dvbs2Channel.PilotTonesState ||
         StreamId != dvbs2Channel.StreamId
       )
       {
@@ -268,9 +298,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel
         ModulationScheme != channel.ModulationScheme ||
         SymbolRate != channel.SymbolRate ||
         FecCodeRate != channel.FecCodeRate ||
-        PilotTonesState != channel.PilotTonesState ||
         RollOffFactor != channel.RollOffFactor ||
-        StreamId != channel.StreamId
+        PilotTonesState != channel.PilotTonesState ||
+        StreamId != channel.StreamId ||
+        BroadcastStandard != channel.BroadcastStandard
       )
       {
         return false;
@@ -288,8 +319,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel
               Longitude.GetHashCode() ^ Frequency.GetHashCode() ^
               Polarisation.GetHashCode() ^ ModulationScheme.GetHashCode() ^
               SymbolRate.GetHashCode() ^ FecCodeRate.GetHashCode() ^
-              PilotTonesState.GetHashCode() ^ RollOffFactor.GetHashCode() ^
-              StreamId.GetHashCode();
+              RollOffFactor.GetHashCode() ^ PilotTonesState.GetHashCode() ^
+              StreamId.GetHashCode() ^ BroadcastStandard.GetHashCode();
     }
 
     /// <summary>
@@ -298,11 +329,20 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel
     /// <returns>a <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/></returns>
     public override string ToString()
     {
-      return string.Format("DVB-S2, {0}, Freesat CID = {1}, satellite ID = {2}, frequency = {3} kHz, polarisation = {4}, modulation scheme = {5}, symbol rate = {6} ks/s, FEC code rate = {7}, pilot tones state = {8}, roll-off factor = {9}, stream ID = {10}",
-                            base.ToString(), FreesatChannelId, Longitude,
-                            Frequency, Polarisation, ModulationScheme,
-                            SymbolRate, FecCodeRate, PilotTonesState,
-                            RollOffFactor, StreamId);
+      string standard = "DVB-S2";
+      if (BroadcastStandard == BroadcastStandard.DvbS2Pro)
+      {
+        standard = "DVB-S2 Pro";
+      }
+      else if (BroadcastStandard == BroadcastStandard.DvbS2X)
+      {
+        standard = "DVB-S2X";
+      }
+      return string.Format("{0}, {1}, Freesat CID = {2}, satellite ID = {3}, frequency = {4} kHz, polarisation = {5}, modulation scheme = {6}, symbol rate = {7} ks/s, FEC code rate = {8}, roll-off factor = {9}, pilot tones state = {10}, stream ID = {11}",
+                            standard, base.ToString(), FreesatChannelId,
+                            Longitude, Frequency, Polarisation,
+                            ModulationScheme, SymbolRate, FecCodeRate,
+                            RollOffFactor, PilotTonesState, StreamId);
     }
 
     #endregion

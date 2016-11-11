@@ -72,38 +72,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeBda
     #endregion
 
     /// <summary>
-    /// Set the pilot tones state tuning parameter.
-    /// </summary>
-    /// <param name="pilotTonesState">The pilot tones state value.</param>
-    /// <returns><c>true</c> if the setting is successfully applied, otherwise <c>false</c></returns>
-    private bool SetPilotTonesState(Pilot pilotTonesState)
-    {
-      this.LogDebug("Hauppauge BDA: set pilot tones state = {0}", pilotTonesState);
-
-      KSPropertySupport support;
-      int hr = _propertySet.QuerySupported(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.PilotTonesState, out support);
-      if (hr != (int)NativeMethods.HResult.S_OK || !support.HasFlag(KSPropertySupport.Set))
-      {
-        this.LogDebug("Hauppauge BDA: pilot tones state property not supported, hr = 0x{0:x}, support = {1}", hr, support);
-        return true;  // This is not an error.
-      }
-
-      Marshal.WriteInt32(_paramBuffer, 0, (int)pilotTonesState);
-      hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.PilotTonesState,
-        _instanceBuffer, INSTANCE_SIZE,
-        _paramBuffer, sizeof(int)
-      );
-      if (hr == (int)NativeMethods.HResult.S_OK)
-      {
-        this.LogDebug("Hauppauge BDA: result = success");
-        return true;
-      }
-
-      this.LogError("Hauppauge BDA: failed to set pilot tones state, hr = 0x{0:x}", hr);
-      return false;
-    }
-
-    /// <summary>
     /// Set the roll-off factor tuning parameter.
     /// </summary>
     /// <param name="rollOffFactor">The roll-off factor value.</param>
@@ -132,6 +100,38 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeBda
       }
 
       this.LogError("Hauppauge BDA: failed to set roll-off, hr = 0x{0:x}", hr);
+      return false;
+    }
+
+    /// <summary>
+    /// Set the pilot tones state tuning parameter.
+    /// </summary>
+    /// <param name="pilotTonesState">The pilot tones state value.</param>
+    /// <returns><c>true</c> if the setting is successfully applied, otherwise <c>false</c></returns>
+    private bool SetPilotTonesState(Pilot pilotTonesState)
+    {
+      this.LogDebug("Hauppauge BDA: set pilot tones state = {0}", pilotTonesState);
+
+      KSPropertySupport support;
+      int hr = _propertySet.QuerySupported(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.PilotTonesState, out support);
+      if (hr != (int)NativeMethods.HResult.S_OK || !support.HasFlag(KSPropertySupport.Set))
+      {
+        this.LogDebug("Hauppauge BDA: pilot tones state property not supported, hr = 0x{0:x}, support = {1}", hr, support);
+        return true;  // This is not an error.
+      }
+
+      Marshal.WriteInt32(_paramBuffer, 0, (int)pilotTonesState);
+      hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.PilotTonesState,
+        _instanceBuffer, INSTANCE_SIZE,
+        _paramBuffer, sizeof(int)
+      );
+      if (hr == (int)NativeMethods.HResult.S_OK)
+      {
+        this.LogDebug("Hauppauge BDA: result = success");
+        return true;
+      }
+
+      this.LogError("Hauppauge BDA: failed to set pilot tones state, hr = 0x{0:x}", hr);
       return false;
     }
 
@@ -244,64 +244,65 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeBda
       // commands *will* fail if you don't do this.
       action = TunerAction.Start;
 
-      // We only have work to do if the channel is a DVB-S/S2 channel.
-      // Note this code is questionable. Some tuners definitely need modulation
+      // We only have work to do if the channel is a satellite channel.
+      IChannelSatellite satelliteChannel = channel as IChannelSatellite;
+      if (satelliteChannel == null)
+      {
+        return;
+      }
+
+      // This code is questionable. Some tuners definitely need modulation
       // translation... but whether the translation is the same for all tuners,
       // driver versions and operating systems is unclear. Same applies for
       // pilot tones state and roll-off factor.
-      ChannelDvbS dvbsChannel = channel as ChannelDvbS;
+      ModulationType bdaModulation = ModulationType.ModNotSet;
+      RollOff bdaRollOffFactor = RollOff.NotSet;        // Correct for DVB-S/non-DVB-S2???
+      Pilot bdaPilotTonesState = Pilot.NotSet;          // Correct for DVB-S/non-DVB-S2???
+      RollOffFactor tveRollOffFactor = RollOffFactor.Automatic;
       ChannelDvbS2 dvbs2Channel = channel as ChannelDvbS2;
-      Pilot bdaPilotTonesState = Pilot.NotSet;
-      RollOff bdaRollOffFactor = RollOff.NotSet;
-      if (dvbsChannel != null)
+      if (dvbs2Channel != null)
       {
-        if (dvbsChannel.ModulationScheme == ModulationSchemePsk.Psk4)
+        if (dvbs2Channel.ModulationScheme == ModulationSchemePsk.Psk4)
         {
-          this.LogDebug("  modulation = {0}", ModulationType.ModQpsk);
-          dvbs2Channel.ModulationScheme = (ModulationSchemePsk)ModulationType.ModQpsk;
+          bdaModulation = ModulationType.ModNbcQpsk;    // ...or ModBpsk for XP???
         }
-        else
+        else if (dvbs2Channel.ModulationScheme == ModulationSchemePsk.Psk8)
         {
-          this.LogWarn("Hauppauge: DVB-S tune request uses unsupported modulation scheme {0}", dvbsChannel.ModulationScheme);
+          bdaModulation = ModulationType.ModNbc8Psk;    // ...or Mod8Psk for XP???
         }
-        bdaPilotTonesState = Pilot.Off;
-        bdaRollOffFactor = RollOff.ThirtyFive;
-      }
-      else if (dvbs2Channel != null)
-      {
-        ModulationType bdaModulation = ModulationType.ModNotSet;
-        switch (dvbs2Channel.ModulationScheme)
+
+        tveRollOffFactor = dvbs2Channel.RollOffFactor;
+        switch (dvbs2Channel.PilotTonesState)
         {
-          case ModulationSchemePsk.Psk4:
-            bdaModulation = ModulationType.ModNbcQpsk;
+          case PilotTonesState.Off:
+            bdaPilotTonesState = Pilot.Off;
             break;
-          case ModulationSchemePsk.Psk8:
-            bdaModulation = ModulationType.ModNbc8Psk;
+          case PilotTonesState.On:
+            bdaPilotTonesState = Pilot.On;
             break;
           default:
-            this.LogWarn("Hauppauge: DVB-S2 tune request uses unsupported modulation scheme {0}", dvbs2Channel.ModulationScheme);
+            this.LogWarn("Hauppauge: DVB-S2 tune request uses unsupported pilot tones state {0}", dvbs2Channel.PilotTonesState);
             break;
         }
-        if (bdaModulation != ModulationType.ModNotSet)
+      }
+      else if (channel is ChannelDvbS)
+      {
+        // The driver may interpret ModBpsk as DVB-S2, so we must override.
+        // Assume the driver can auto-detect BPSK vs. QPSK.
+        bdaModulation = ModulationType.ModQpsk;
+      }
+      else
+      {
+        ChannelDvbDsng dvbDsngChannel = channel as ChannelDvbDsng;
+        if (dvbDsngChannel != null)
         {
-          this.LogDebug("  modulation = {0}", bdaModulation);
-          dvbs2Channel.ModulationScheme = (ModulationSchemePsk)bdaModulation;
+          tveRollOffFactor = dvbDsngChannel.RollOffFactor;
         }
+      }
 
-        if (dvbs2Channel.PilotTonesState == PilotTonesState.Off)
-        {
-          bdaPilotTonesState = Pilot.Off;
-        }
-        else if (dvbs2Channel.PilotTonesState == PilotTonesState.On)
-        {
-          bdaPilotTonesState = Pilot.On;
-        }
-        else
-        {
-          bdaPilotTonesState = Pilot.NotSet;
-        }
-
-        switch (dvbs2Channel.RollOffFactor)
+      if (tveRollOffFactor != RollOffFactor.Automatic)
+      {
+        switch (tveRollOffFactor)
         {
           case RollOffFactor.Twenty:
             bdaRollOffFactor = RollOff.Twenty;
@@ -313,18 +314,20 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeBda
             bdaRollOffFactor = RollOff.ThirtyFive;
             break;
           default:
-            this.LogWarn("Hauppauge: DVB-S2 tune request uses unsupported roll-off factor {0}", dvbs2Channel.RollOffFactor);
-            bdaRollOffFactor = RollOff.NotSet;
+            this.LogWarn("Hauppauge: DVB-DSNG/DVB-S2 tune request uses unsupported roll-off factor {0}", tveRollOffFactor);
             break;
         }
       }
-      else
+
+      if (bdaModulation != ModulationType.ModNotSet)
       {
-        return;
+        this.LogDebug("  modulation = {0}", bdaModulation);
+        satelliteChannel.ModulationScheme = (ModulationSchemePsk)bdaModulation;
       }
 
-      SetPilotTonesState(bdaPilotTonesState);
+      // Should these functions be called if not tuning DVB-S2???
       SetRollOffFactor(bdaRollOffFactor);
+      SetPilotTonesState(bdaPilotTonesState);
     }
 
     #endregion

@@ -250,8 +250,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Mpeg2Ts
     {
       ProgramInformation program;
       if (
-        programNumber == ChannelMpeg2Base.PROGRAM_NUMBER_SCANNING ||
-        programNumber == ChannelMpeg2Base.PROGRAM_NUMBER_NOT_KNOWN_SELECT_FIRST
+        programNumber == ChannelMpeg2TsBase.PROGRAM_NUMBER_SCANNING ||
+        programNumber == ChannelMpeg2TsBase.PROGRAM_NUMBER_NOT_KNOWN_SELECT_FIRST
       )
       {
         // Scanning, single program transport stream with unknown program
@@ -781,12 +781,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Mpeg2Ts
 
     protected virtual int GetTuningProgramNumber(IChannel channel)
     {
-      ChannelMpeg2Base mpeg2Channel = channel as ChannelMpeg2Base;
-      if (mpeg2Channel != null)
+      IChannelMpeg2Ts mpeg2TsChannel = channel as IChannelMpeg2Ts;
+      if (mpeg2TsChannel != null)
       {
-        return mpeg2Channel.ProgramNumber;
+        return mpeg2TsChannel.ProgramNumber;
       }
-      return ChannelMpeg2Base.PROGRAM_NUMBER_NOT_KNOWN_SELECT_FIRST;
+      return ChannelMpeg2TsBase.PROGRAM_NUMBER_NOT_KNOWN_SELECT_FIRST;
     }
 
     #region sub-channel manager base implementations/overrides
@@ -851,13 +851,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Mpeg2Ts
           continue;
         }
 
-        if (programNumber == ChannelMpeg2Base.PROGRAM_NUMBER_SCANNING)
+        if (programNumber == ChannelMpeg2TsBase.PROGRAM_NUMBER_SCANNING)
         {
           // Scanning - we only wait for the PAT to confirm we're receiving a stream.
           break;
         }
 
-        if (programNumber == ChannelMpeg2Base.PROGRAM_NUMBER_NOT_KNOWN_SELECT_FIRST)
+        if (programNumber == ChannelMpeg2TsBase.PROGRAM_NUMBER_NOT_KNOWN_SELECT_FIRST)
         {
           // Unknown program number. We assume the transport stream only
           // contains one program, or the caller wants us to select any running
@@ -890,7 +890,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Mpeg2Ts
             this.LogError("MPEG 2: no running programs available for selection, ID = {0}", id);
             throw new TvExceptionServiceNotRunning(channel);
           }
-          if (programNumber == ChannelMpeg2Base.PROGRAM_NUMBER_NOT_KNOWN_SELECT_FIRST)
+          if (programNumber == ChannelMpeg2TsBase.PROGRAM_NUMBER_NOT_KNOWN_SELECT_FIRST)
           {
             continue;   // still waiting for PMT
           }
@@ -941,7 +941,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Mpeg2Ts
         subChannel = new SubChannelMpeg2Ts(id, _tsWriter);
       }
       subChannel.CurrentChannel = channel;
-      if (programNumber == ChannelMpeg2Base.PROGRAM_NUMBER_SCANNING)
+      if (programNumber == ChannelMpeg2TsBase.PROGRAM_NUMBER_SCANNING)
       {
         return subChannel;
       }
@@ -1139,18 +1139,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Mpeg2Ts
         return false;
       }
 
-      ChannelMpeg2Base mpeg2Channel = channel as ChannelMpeg2Base;
-      int programNumber = ChannelMpeg2Base.PROGRAM_NUMBER_NOT_KNOWN_SELECT_FIRST;   // assume single program TS
-      if (mpeg2Channel != null)
+      IChannelMpeg2Ts mpeg2TsChannel = channel as IChannelMpeg2Ts;
+      int programNumber = ChannelMpeg2TsBase.PROGRAM_NUMBER_NOT_KNOWN_SELECT_FIRST;   // assume single program TS
+      if (mpeg2TsChannel != null)
       {
-        if (mpeg2Channel.ProgramNumber == ChannelMpeg2Base.PROGRAM_NUMBER_SCANNING)
+        if (mpeg2TsChannel.ProgramNumber == ChannelMpeg2TsBase.PROGRAM_NUMBER_SCANNING)
         {
           return false;
         }
-        programNumber = mpeg2Channel.ProgramNumber;
+        programNumber = mpeg2TsChannel.ProgramNumber;
       }
 
-      if (programNumber != ChannelMpeg2Base.PROGRAM_NUMBER_NOT_KNOWN_SELECT_FIRST)
+      if (programNumber != ChannelMpeg2TsBase.PROGRAM_NUMBER_NOT_KNOWN_SELECT_FIRST)
       {
         lock (_lock)
         {
