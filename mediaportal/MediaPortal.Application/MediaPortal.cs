@@ -591,7 +591,21 @@ public class MediaPortalApp : D3D, IRender
         Win32API.ActivatePreviousInstance();
       }
     }
-   
+
+    // Check for a Configuration Instance running and don't allow Mediaportal to start
+    using (ProcessLock processLock = new ProcessLock(ConfigMutex))
+    {
+      if (processLock.AlreadyExists)
+      {
+        DialogResult dialogResult = MessageBox.Show(
+          "MediaPortal configuration has to be closed for starting MediaPortal",
+          "MediaPortal", MessageBoxButtons.OK, MessageBoxIcon.Question);
+
+        Log.Warn("Main: Configuration is running - start of MediaPortal aborted");
+        return;
+      }
+    }
+
     if (string.IsNullOrEmpty(_alternateConfig))
     {
       Log.BackupLogFiles();
