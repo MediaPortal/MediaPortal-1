@@ -41,17 +41,17 @@ using namespace std;
 #define STREAM_TYPE_VIDEO_MPEG2_VIEW            0x22  // service-compatible stereoscopic 3DTV, MPEG 2 additional view
 #define STREAM_TYPE_VIDEO_MPEG4_PART10_VIEW     0x23  // service-compatible stereoscopic 3DTV, h.264/AVC additional view
 #define STREAM_TYPE_VIDEO_MPEGH_PART2           0x24  // h.265/HEVC
-#define STREAM_TYPE_VIDEO_VC1                   0xea  // this is the [SMPTE] standard stream type; DVB uses STREAM_TYPE_PES_PRIVATE_DATA with a registration descriptor
+#define STREAM_TYPE_VIDEO_VC1                   0xea  // this is the [SMPTE, DVB] standard stream type
 
 #define STREAM_TYPE_AUDIO_MPEG1                 0x03
 #define STREAM_TYPE_AUDIO_MPEG2_PART3           0x04
 #define STREAM_TYPE_AUDIO_MPEG2_PART7           0x0f
 #define STREAM_TYPE_AUDIO_MPEG4_PART3_LATM      0x11
 #define STREAM_TYPE_AUDIO_MPEG4_PART3           0x1c  // no transport
-#define STREAM_TYPE_AUDIO_AC3                   0x81  // this is the [ATSC] standard stream type; DVB uses STREAM_TYPE_PES_PRIVATE_DATA with a descriptor
+#define STREAM_TYPE_AUDIO_AC3                   0x81  // this is the [ATSC, SCTE] standard stream type; DVB uses STREAM_TYPE_PES_PRIVATE_DATA with a descriptor
 #define STREAM_TYPE_AUDIO_DTS                   0x82  // defacto standard (ffdshow, libbluray etc.); DVB uses STREAM_TYPE_PES_PRIVATE_DATA with a descriptor, not supported by ATSC and SCTE
-#define STREAM_TYPE_AUDIO_E_AC3                 0x87  // this is the [ATSC] standard stream type; DVB uses STREAM_TYPE_PES_PRIVATE_DATA with a descriptor
-#define STREAM_TYPE_AUDIO_DTS_HD                0x88  // defacto standard (ATSC 2.0); DVB uses STREAM_TYPE_PES_PRIVATE_DATA with a descriptor, SCTE uses STREAM_TYPE_PES_PRIVATE_DATA with a descriptor
+#define STREAM_TYPE_AUDIO_E_AC3                 0x87  // this is the [ATSC, SCTE] standard stream type; DVB uses STREAM_TYPE_PES_PRIVATE_DATA with a descriptor
+#define STREAM_TYPE_AUDIO_DTS_HD                0x88  // this is the [ATSC, SCTE] standard stream type; DVB uses STREAM_TYPE_PES_PRIVATE_DATA with a descriptor
 #define STREAM_TYPE_AUDIO_AC4                   0x89  // (place-holder - revise later)
 
 #define STREAM_TYPE_PRIVATE_SECTIONS            0x05

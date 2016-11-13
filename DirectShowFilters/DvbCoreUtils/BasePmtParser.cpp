@@ -291,178 +291,8 @@ bool CBasePmtParser::DecodePmtSection(const CSection& section)
           return false;
         }
 
-        if (tag == DESCRIPTOR_REGISTRATION)
-        {
-          if (
-            length >= 4 &&
-            data[pointer] == 'V' &&
-            data[pointer + 1] == 'C' &&
-            data[pointer + 2] == '-' &&
-            data[pointer + 3] == '1'
-          )
-          {
-            // This is a VC-1 video stream in a DVB TS.
-            VideoPid* pid = new VideoPid(elementaryPid, streamType);
-            if (pid == NULL)
-            {
-              LogDebug(L"PMT: failed to allocate video PID %hu", elementaryPid);
-              return false;
-            }
-            pid->LogicalStreamType = STREAM_TYPE_VIDEO_VC1;
-            m_pidInfo.VideoPids.push_back(pid);
-            basePid = pid;
-            //LogDebug(L"PMT:  video PID %hu, stream type = 0x%hhx",
-            //          elementaryPid, streamType);
-          }
-        }
-        else if (
-          tag == DESCRIPTOR_DVB_AC3 ||
-          tag == DESCRIPTOR_DVB_E_AC3 ||
-          (tag == DESCRIPTOR_DVB_DTS && !isScteTs) ||
-          (
-            tag == DESCRIPTOR_DVB_EXTENSION &&
-            length >= 1 &&
-            (
-              data[pointer] == DESCRIPTOR_DVB_X_DTS_HD ||
-              data[pointer] == DESCRIPTOR_DVB_X_AC4
-            )
-          ) ||
-          (tag == DESCRIPTOR_SCTE_DTS_HD && isScteTs)
-        )
-        {
-          AudioPid* pid = new AudioPid(elementaryPid, streamType);
-          if (pid == NULL)
-          {
-            LogDebug(L"PMT: failed to allocate audio PID %hu", elementaryPid);
-            return false;
-          }
-          if (tag == DESCRIPTOR_DVB_AC3)
-          {
-            pid->LogicalStreamType = STREAM_TYPE_AUDIO_AC3;
-          }
-          else if (tag == DESCRIPTOR_DVB_E_AC3)
-          {
-            pid->LogicalStreamType = STREAM_TYPE_AUDIO_E_AC3;
-          }
-          else if (tag == DESCRIPTOR_DVB_DTS && !isScteTs)
-          {
-            pid->LogicalStreamType = STREAM_TYPE_AUDIO_DTS;
-          }
-          else if (tag == DESCRIPTOR_DVB_EXTENSION && data[pointer] == DESCRIPTOR_DVB_X_AC4)
-          {
-            pid->LogicalStreamType = STREAM_TYPE_AUDIO_AC4;
-          }
-          else
-          {
-            pid->LogicalStreamType = STREAM_TYPE_AUDIO_DTS_HD;
-          }
-          if (lang[0] != 0)
-          {
-            memcpy(pid->Lang, lang, min(sizeof(pid->Lang), sizeof(lang)) - 1);
-          }
-
-          m_pidInfo.AudioPids.push_back(pid);
-          basePid = pid;
-          //LogDebug(L"PMT:  audio PID %hu, stream type = 0x%hhx",
-          //          elementaryPid, streamType);
-        }
-        else if (tag == DESCRIPTOR_ATSC_AC3 && basePid != NULL && length >= 10)
-        {
-          AudioPid* audioPid = dynamic_cast<AudioPid*>(basePid);
-          if (audioPid != NULL)
-          {
-            unsigned char textlenOffset = 5;
-            unsigned char languageFlagsOffset = 6;
-            unsigned char numChannels = (data[pointer + 2] & 0xf) >> 1;
-            if (numChannels == 0)
-            {
-              textlenOffset++;
-              languageFlagsOffset++;
-            }
-            unsigned char textlen = data[pointer + textlenOffset] >> 1;
-            languageFlagsOffset += textlenOffset;
-            if (languageFlagsOffset + 3 < length)
-            {
-              bool languageFlag = (data[pointer + languageFlagsOffset] & 0x80) != 0;
-              bool languageFlag2 = (data[pointer + languageFlagsOffset] & 0x40) != 0; // for dual-mono
-              if (languageFlag || languageFlag2)
-              {
-                memcpy(audioPid->Lang,
-                        &data[languageFlagsOffset + 1],
-                        min((unsigned char)sizeof(audioPid->Lang), (unsigned char)4) - 1);
-              }
-              if (languageFlag && languageFlag2 && languageFlagsOffset + 6 < length)
-              {
-                memcpy(audioPid->Lang,
-                        &data[languageFlagsOffset + 1],
-                        min((unsigned char)sizeof(audioPid->Lang), (unsigned char)7) - 1);
-              }
-              //LogDebug(L"PMT:    ATSC AC3 language = %S",
-              //          (char*)audioPid->Lang);
-            }
-          }
-        }
-        else if (tag == DESCRIPTOR_ATSC_E_AC3 && basePid != NULL && length >= 6)
-        {
-          AudioPid* audioPid = dynamic_cast<AudioPid*>(basePid);
-          if (audioPid != NULL)
-          {
-            bool languageFlag = (data[pointer + 2] & 0x80) != 0;
-            bool languageFlag2 = (data[pointer + 2] & 0x40) != 0;
-            // Perhaps we could also take the 3 sub-stream languages...
-            if (languageFlag || languageFlag2)
-            {
-              unsigned char languageOffset = 3;
-              bool mainIdFlag = (data[pointer] & 0x20) != 0;
-              bool asvcFlag = (data[pointer] & 0x10) != 0;
-              bool mixInfoExistsFlag = (data[pointer] & 8) != 0;
-              bool subStream1Flag = (data[pointer] & 4) != 0;
-              bool subStream2Flag = (data[pointer] & 2) != 0;
-              bool subStream3Flag = (data[pointer] & 1) != 0;
-              if (mainIdFlag)
-              {
-                languageOffset++;
-              }
-              if (asvcFlag)
-              {
-                languageOffset++;
-              }
-              if (mixInfoExistsFlag)
-              {
-                languageOffset++;
-              }
-              if (subStream1Flag)
-              {
-                languageOffset++;
-              }
-              if (subStream2Flag)
-              {
-                languageOffset++;
-              }
-              if (subStream3Flag)
-              {
-                languageOffset++;
-              }
-
-              if (languageOffset + 2 < length)
-              {
-                memcpy(audioPid->Lang,
-                        &data[pointer + languageOffset],
-                        min((unsigned char)sizeof(audioPid->Lang), (unsigned char)4) - 1);
-              }
-              if (languageFlag && languageFlag2 && languageOffset + 5 < length)
-              {
-                memcpy(audioPid->Lang,
-                        &data[pointer + languageOffset],
-                        min((unsigned char)sizeof(audioPid->Lang), (unsigned char)7) - 1);
-              }
-              //LogDebug(L"PMT:    ATSC E-AC3 language = %S",
-              //          (char*)audioPid->Lang);
-            }
-          }
-        }
         // audio or subtitle language
-        else if (tag == DESCRIPTOR_ISO_639_LANG)
+        if (tag == DESCRIPTOR_ISO_639_LANG)
         {
           // Copy the language to the corresponding audio or subtitle PID. In
           // cases where we rely on a descriptor to determine the stream type
@@ -505,49 +335,224 @@ bool CBasePmtParser::DecodePmtSection(const CSection& section)
           }
           //LogDebug(L"PMT:    ISO 639 language = %S", (char*)pidLang);
         }
-        else if (streamType == STREAM_TYPE_PES_PRIVATE_DATA && tag == DESCRIPTOR_DVB_VBI_DATA)
+        else if (basePid != NULL)
         {
-          isVbiStream = true;
+          if (tag == DESCRIPTOR_ATSC_AC3 && length >= 10)
+          {
+            AudioPid* audioPid = dynamic_cast<AudioPid*>(basePid);
+            if (audioPid != NULL)
+            {
+              unsigned char textlenOffset = 5;
+              unsigned char languageFlagsOffset = 6;
+              unsigned char numChannels = (data[pointer + 2] & 0xf) >> 1;
+              if (numChannels == 0)
+              {
+                textlenOffset++;
+                languageFlagsOffset++;
+              }
+              unsigned char textlen = data[pointer + textlenOffset] >> 1;
+              languageFlagsOffset += textlenOffset;
+              if (languageFlagsOffset + 3 < length)
+              {
+                bool languageFlag = (data[pointer + languageFlagsOffset] & 0x80) != 0;
+                bool languageFlag2 = (data[pointer + languageFlagsOffset] & 0x40) != 0; // for dual-mono
+                if (languageFlag || languageFlag2)
+                {
+                  memcpy(audioPid->Lang,
+                          &data[languageFlagsOffset + 1],
+                          min((unsigned char)sizeof(audioPid->Lang), (unsigned char)4) - 1);
+                }
+                if (languageFlag && languageFlag2 && languageFlagsOffset + 6 < length)
+                {
+                  memcpy(audioPid->Lang,
+                          &data[languageFlagsOffset + 1],
+                          min((unsigned char)sizeof(audioPid->Lang), (unsigned char)7) - 1);
+                }
+                //LogDebug(L"PMT:    ATSC AC3 language = %S",
+                //          (char*)audioPid->Lang);
+              }
+            }
+          }
+          else if (tag == DESCRIPTOR_ATSC_E_AC3 && length >= 6)
+          {
+            AudioPid* audioPid = dynamic_cast<AudioPid*>(basePid);
+            if (audioPid != NULL)
+            {
+              bool languageFlag = (data[pointer + 2] & 0x80) != 0;
+              bool languageFlag2 = (data[pointer + 2] & 0x40) != 0;
+              // Perhaps we could also take the 3 sub-stream languages...
+              if (languageFlag || languageFlag2)
+              {
+                unsigned char languageOffset = 3;
+                bool mainIdFlag = (data[pointer] & 0x20) != 0;
+                bool asvcFlag = (data[pointer] & 0x10) != 0;
+                bool mixInfoExistsFlag = (data[pointer] & 8) != 0;
+                bool subStream1Flag = (data[pointer] & 4) != 0;
+                bool subStream2Flag = (data[pointer] & 2) != 0;
+                bool subStream3Flag = (data[pointer] & 1) != 0;
+                if (mainIdFlag)
+                {
+                  languageOffset++;
+                }
+                if (asvcFlag)
+                {
+                  languageOffset++;
+                }
+                if (mixInfoExistsFlag)
+                {
+                  languageOffset++;
+                }
+                if (subStream1Flag)
+                {
+                  languageOffset++;
+                }
+                if (subStream2Flag)
+                {
+                  languageOffset++;
+                }
+                if (subStream3Flag)
+                {
+                  languageOffset++;
+                }
+
+                if (languageOffset + 2 < length)
+                {
+                  memcpy(audioPid->Lang,
+                          &data[pointer + languageOffset],
+                          min((unsigned char)sizeof(audioPid->Lang), (unsigned char)4) - 1);
+                }
+                if (languageFlag && languageFlag2 && languageOffset + 5 < length)
+                {
+                  memcpy(audioPid->Lang,
+                          &data[pointer + languageOffset],
+                          min((unsigned char)sizeof(audioPid->Lang), (unsigned char)7) - 1);
+                }
+                //LogDebug(L"PMT:    ATSC E-AC3 language = %S",
+                //          (char*)audioPid->Lang);
+              }
+            }
+          }
         }
-        else if (
-          !isTeletextStream &&
-          streamType == STREAM_TYPE_PES_PRIVATE_DATA &&
-          (tag == DESCRIPTOR_DVB_TELETEXT || tag == DESCRIPTOR_DVB_VBI_TELETEXT)
-        )
+        else if (streamType == STREAM_TYPE_PES_PRIVATE_DATA)  // Note: basePid must be NULL!
         {
-          isTeletextStream = true;
-          TeletextPid* pid = new TeletextPid(elementaryPid, streamType);
-          if (pid == NULL)
+          if (tag == DESCRIPTOR_REGISTRATION)
           {
-            LogDebug(L"PMT: failed to allocate teletext PID %hu", elementaryPid);
-            return false;
+            if (
+              length >= 4 &&
+              data[pointer] == 'V' &&
+              data[pointer + 1] == 'C' &&
+              data[pointer + 2] == '-' &&
+              data[pointer + 3] == '1'
+            )
+            {
+              // This is old-style DVB signalling for a VC-1 video stream.
+              // These days VC-1 can be signalled by STREAM_TYPE_VIDEO_VC1.
+              VideoPid* pid = new VideoPid(elementaryPid, streamType);
+              if (pid == NULL)
+              {
+                LogDebug(L"PMT: failed to allocate video PID %hu", elementaryPid);
+                return false;
+              }
+              pid->LogicalStreamType = STREAM_TYPE_VIDEO_VC1;
+              m_pidInfo.VideoPids.push_back(pid);
+              basePid = pid;
+              //LogDebug(L"PMT:  video PID %hu, stream type = 0x%hhx",
+              //          elementaryPid, streamType);
+            }
           }
-          m_pidInfo.TeletextPids.push_back(pid);
-          basePid = pid;
-          //LogDebug(L"PMT:  teletext PID %hu, stream type = 0x%hhx",
-          //          elementaryPid, streamType);
-        }
-        else if (streamType == STREAM_TYPE_PES_PRIVATE_DATA && tag == DESCRIPTOR_DVB_SUBTITLING)
-        {
-          SubtitlePid* pid = new SubtitlePid(elementaryPid, streamType);
-          if (pid == NULL)
+          else if (
+            tag == DESCRIPTOR_DVB_AC3 ||
+            tag == DESCRIPTOR_DVB_E_AC3 ||
+            (tag == DESCRIPTOR_DVB_DTS && !isScteTs) ||
+            (
+              tag == DESCRIPTOR_DVB_EXTENSION &&
+              length >= 1 &&
+              (
+                data[pointer] == DESCRIPTOR_DVB_X_DTS_HD ||
+                data[pointer] == DESCRIPTOR_DVB_X_AC4
+              )
+            ) ||
+            (tag == DESCRIPTOR_SCTE_DTS_HD && isScteTs)
+          )
           {
-            LogDebug(L"PMT: failed to allocate subtitle PID %hu", elementaryPid);
-            return false;
+            AudioPid* pid = new AudioPid(elementaryPid, streamType);
+            if (pid == NULL)
+            {
+              LogDebug(L"PMT: failed to allocate audio PID %hu", elementaryPid);
+              return false;
+            }
+            if (tag == DESCRIPTOR_DVB_AC3)
+            {
+              pid->LogicalStreamType = STREAM_TYPE_AUDIO_AC3;
+            }
+            else if (tag == DESCRIPTOR_DVB_E_AC3)
+            {
+              pid->LogicalStreamType = STREAM_TYPE_AUDIO_E_AC3;
+            }
+            else if (tag == DESCRIPTOR_DVB_DTS && !isScteTs)
+            {
+              pid->LogicalStreamType = STREAM_TYPE_AUDIO_DTS;
+            }
+            else if (tag == DESCRIPTOR_DVB_EXTENSION && data[pointer] == DESCRIPTOR_DVB_X_AC4)
+            {
+              pid->LogicalStreamType = STREAM_TYPE_AUDIO_AC4;
+            }
+            else
+            {
+              // This is old-style SCTE signalling for a DTS-HD audio stream.
+              // These days DTS-HD can be signalled by STREAM_TYPE_AUDIO_DTS_HD.
+              pid->LogicalStreamType = STREAM_TYPE_AUDIO_DTS_HD;
+            }
+            if (lang[0] != 0)
+            {
+              memcpy(pid->Lang, lang, min(sizeof(pid->Lang), sizeof(lang)) - 1);
+            }
+
+            m_pidInfo.AudioPids.push_back(pid);
+            basePid = pid;
+            //LogDebug(L"PMT:  audio PID %hu, stream type = 0x%hhx",
+            //          elementaryPid, streamType);
           }
-          // Populate the PID language if we can.
-          if (length >= 3)
+          else if (tag == DESCRIPTOR_DVB_VBI_DATA)
           {
-            memcpy(pid->Lang, &data[pointer], min((unsigned char)sizeof(pid->Lang), (unsigned char)4) - 1);
+            isVbiStream = true;
           }
-          else if (lang[0] != 0)
+          else if (tag == DESCRIPTOR_DVB_TELETEXT || tag == DESCRIPTOR_DVB_VBI_TELETEXT)
           {
-            memcpy(pid->Lang, lang, min(sizeof(pid->Lang), sizeof(lang)));
+            isTeletextStream = true;
+            TeletextPid* pid = new TeletextPid(elementaryPid, streamType);
+            if (pid == NULL)
+            {
+              LogDebug(L"PMT: failed to allocate teletext PID %hu", elementaryPid);
+              return false;
+            }
+            m_pidInfo.TeletextPids.push_back(pid);
+            basePid = pid;
+            //LogDebug(L"PMT:  teletext PID %hu, stream type = 0x%hhx",
+            //          elementaryPid, streamType);
           }
-          m_pidInfo.SubtitlePids.push_back(pid);
-          basePid = pid;
-          //LogDebug(L"PMT:  subtitle PID %hu, stream type = 0x%hhx, language = %S",
-          //          elementaryPid, streamType, (char*)pid->Lang);
+          else if (tag == DESCRIPTOR_DVB_SUBTITLING)
+          {
+            SubtitlePid* pid = new SubtitlePid(elementaryPid, streamType);
+            if (pid == NULL)
+            {
+              LogDebug(L"PMT: failed to allocate subtitle PID %hu", elementaryPid);
+              return false;
+            }
+            // Populate the PID language if we can.
+            if (length >= 3)
+            {
+              memcpy(pid->Lang, &data[pointer], min((unsigned char)sizeof(pid->Lang), (unsigned char)4) - 1);
+            }
+            else if (lang[0] != 0)
+            {
+              memcpy(pid->Lang, lang, min(sizeof(pid->Lang), sizeof(lang)));
+            }
+            m_pidInfo.SubtitlePids.push_back(pid);
+            basePid = pid;
+            //LogDebug(L"PMT:  subtitle PID %hu, stream type = 0x%hhx, language = %S",
+            //          elementaryPid, streamType, (char*)pid->Lang);
+          }
         }
 
         pointer = endOfDescriptor;
