@@ -374,7 +374,7 @@ Ce PC sera utilisé comme TV-Server dédié et distribuera la TV aux autres PC d
     <value>Veuillez séléctionner votre langue avant de continuer</value>
   </data>
   <data name="Finished_labelEbay" xml:space="preserve">
-    <value>MediaPortal est complement GRATUIT - vous n'avez pas à l'acheter!</value>
+    <value>MediaPortal est completement GRATUIT - vous n'avez pas à l'acheter!</value>
   </data>
   <data name="Install_actionConfigure" xml:space="preserve">
     <value>Configurer</value>
