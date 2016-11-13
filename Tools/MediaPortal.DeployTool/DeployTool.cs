@@ -181,25 +181,6 @@ namespace MediaPortal.DeployTool
           {
           }
         }
-
-        //
-        // Remove start web explorer on exit (If in install mode, start the included setup guide)
-        //
-        //else
-        //{
-        //  if (InstallationProperties.Instance["InstallType"] != "tvserver_master" && OSInfo.OSInfo.VistaOrLater() &&
-        //      !Utils.IsAeroEnabled())
-        //  {
-        //    MessageBox.Show(Localizer.GetBestTranslation("AeroThemeMissing"), "MediaPortal", MessageBoxButtons.OK,
-        //                    MessageBoxIcon.Warning);
-        //  }
-        //  try
-        //  {
-        //    Process.Start("http://wiki.team-mediaportal.com/TeamMediaPortal/MP1QuickSetupGuide");
-        //  }
-        //    // This might fail on systems without a default browser
-        //  catch (Exception) {}
-        //}
         Close();
         return;
       }
