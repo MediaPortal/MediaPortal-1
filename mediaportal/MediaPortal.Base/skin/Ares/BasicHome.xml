@@ -34,33 +34,33 @@
       <texture>#overlaycolour</texture>
     </control>	
 
-	<!-- 
+	
     <control>
       <description>current temp label</description>
       <type>label</type>
       <id>0</id>
-      <posX>10</posX>
+      <posX>8010</posX>
       <posY>10</posY>
       <height>71</height>
       <align>left</align>
-      <label>#skin.page3navright #skin.page3navleft</label>
+      <label>#tile14.navigation</label>
       <font>font10</font>
       <textcolor>ffffffff</textcolor>
 	  <visible>true</visible>
     </control>	
-    -->
+    
 	<!-- Expression test box (labels do not work with cint !! -->
 	
 	
 
 
     <import>custom\Allscreens\user_dialog.xml</import>
-	<import>PluginDefines.xml</import>	
+	
 	<import>BasicHomePage1.xml</import>	
 	<import>BasicHomePage2.xml</import>	
     <import>BasicHomePage3.xml</import>	
     <import>BasicHomePage4.xml</import>		
-    <import>BasicHomePage5.xml</import>		
+    <import>BasicHomePage5.xml</import>
 	<include condition="#(eq(#skin.rss.info,'True'))">BasicHomerss.xml</include>
 	<include condition="#(eq(#skin.rss.info,'False'))">BasicHomePageInd.xml</include>
     <include condition="#(and(eq(#skin.no.latestmedia,'True'),eq(#skin.latest.overview,'False')))">BasicHomeExtraInfos.xml</include>	
@@ -78,7 +78,7 @@
 	<import>BasicHome_Settings5Img.xml</import>
 	<import>BasicHomeDesc.xml</import>
 	<import>BasicHomeEdit.xml</import>
-   
+   <import>PluginDefines.xml</import>	
   </controls>
 </window>
 

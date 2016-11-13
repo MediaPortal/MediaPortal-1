@@ -36,7 +36,7 @@
     <control>
       <description>group element</description>
       <type>group</type>
-	  <visible allowhiddenfocus="true">control.hasfocus(00520)|control.hasfocus(00521)|control.hasfocus(00522)|control.hasfocus(00523)|control.hasfocus(00524)|control.hasfocus(270)|control.hasfocus(271)|control.hasfocus(272)|control.hasfocus(273)|control.hasfocus(274)|control.hasfocus(275)|control.hasfocus(276)|control.hasfocus(277)|control.hasfocus(278)|control.hasfocus(279)|control.hasfocus(370)|control.hasfocus(371)|control.hasfocus(372)|control.hasfocus(373)|control.hasfocus(374)|control.hasfocus(375)|control.isvisible(5011105)|control.isvisible(5011110)|control.isvisible(5011115)|control.isvisible(5011120)|control.isvisible(5011125)|control.hasfocus(8001125)|control.hasfocus(421)|control.hasfocus(422)|control.hasfocus(423)|control.hasfocus(424)|control.hasfocus(425)|control.hasfocus(8406555)|control.hasfocus(8405555)|control.hasfocus(8401123)</visible>
+	  <visible allowhiddenfocus="true">control.hasfocus(00520)|control.hasfocus(00521)|control.hasfocus(00522)|control.hasfocus(00523)|control.hasfocus(00524)|control.hasfocus(270)|control.hasfocus(271)|control.hasfocus(272)|control.hasfocus(273)|control.hasfocus(274)|control.hasfocus(275)|control.hasfocus(276)|control.hasfocus(277)|control.hasfocus(278)|control.hasfocus(279)|control.hasfocus(370)|control.hasfocus(371)|control.hasfocus(372)|control.hasfocus(373)|control.hasfocus(374)|control.hasfocus(375)|control.isvisible(5011105)|control.isvisible(5011110)|control.isvisible(5011115)|control.isvisible(5011120)|control.isvisible(5011125)|control.hasfocus(8001125)|control.hasfocus(421)|control.hasfocus(422)|control.hasfocus(423)|control.hasfocus(424)|control.hasfocus(425)|control.hasfocus(8406555)|control.hasfocus(8405555)|control.hasfocus(8401123)|string.equals(#skin.currentTile,00520)|string.equals(#skin.currentTile,00521)|string.equals(#skin.currentTile,00522)|string.equals(#skin.currentTile,00523)|string.equals(#skin.currentTile,00524)</visible>
 	  <control>
         <description>BasicHome btn1</description>
         <type>button</type>
@@ -45,6 +45,7 @@
         <posY>405</posY>
 		<height>571</height>
 		<width>367</width>
+		<onfocus>#(skin.setstring('#skin.currentTile','00520'))</onfocus>
         <label>#(iif(eq(#skin.manualnames,'yes'),'#tile21plugin.name',''))#(iif(eq(#skin.manualnames,'no'),#tile21.name,''))</label>
 		<oninfo>#(skin.setfocus(35,270))</oninfo>
 		<hyperlink>#tile21.hyperlink</hyperlink>
@@ -73,6 +74,7 @@
         <posY>405</posY>
 		<height>571</height>
 		<width>367</width>
+		<onfocus>#(skin.setstring('#skin.currentTile','00521'))</onfocus>
         <label>#(iif(eq(#skin.manualnames,'yes'),'#tile22plugin.name',''))#(iif(eq(#skin.manualnames,'no'),#tile22.name,''))</label>
 		<oninfo>#(skin.setfocus(35,272))</oninfo>
 		<hyperlink>#tile22.hyperlink</hyperlink>
@@ -101,6 +103,7 @@
         <posY>405</posY>
 		<height>571</height>
 		<width>367</width>
+		<onfocus>#(skin.setstring('#skin.currentTile','00522'))</onfocus>
         <label>#(iif(eq(#skin.manualnames,'yes'),'#tile23plugin.name',''))#(iif(eq(#skin.manualnames,'no'),#tile23.name,''))</label>
 		<oninfo>#(skin.setfocus(35,274))</oninfo>
 		<hyperlink>#tile23.hyperlink</hyperlink>
@@ -129,6 +132,7 @@
         <posY>405</posY>
 		<height>571</height>
 		<width>367</width>
+		<onfocus>#(skin.setstring('#skin.currentTile','00523'))</onfocus>
         <label>#(iif(eq(#skin.manualnames,'yes'),'#tile24plugin.name',''))#(iif(eq(#skin.manualnames,'no'),#tile24.name,''))</label>
 		<oninfo>#(skin.setfocus(35,276))</oninfo>
 		<hyperlink>#tile24.hyperlink</hyperlink>
@@ -157,6 +161,7 @@
         <posY>405</posY>
 		<height>571</height>
 		<width>367</width>
+		<onfocus>#(skin.setstring('#skin.currentTile','00524'))</onfocus>
         <label>#(iif(eq(#skin.manualnames,'yes'),'#tile25plugin.name',''))#(iif(eq(#skin.manualnames,'no'),#tile25.name,''))</label>
 		<oninfo>#(skin.setfocus(35,278))</oninfo>
 		<hyperlink>#tile25.hyperlink</hyperlink>

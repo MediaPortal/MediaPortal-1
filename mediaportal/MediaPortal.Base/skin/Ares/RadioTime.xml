@@ -1,0 +1,535 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>25650</id>
+  <defaultcontrol>11</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <define>#header.hover:</define>
+  <define>#header.label:RadioTime</define>  
+  <controls>
+    <control>
+      <description>BG</description>
+      <type>image</type>
+      <id>1</id>
+      <texture>#backgroundcolour</texture>
+      <width>1920</width>
+      <height>1080</height>
+    </control>    	
+
+	
+    <control>
+      <description>Backdrop</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>radiotime_back.jpg</texture>
+	  <colordiffuse>25ffffff</colordiffuse>
+	</control>
+    <control>
+      <description>Backdrop</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>#overlaycolour</texture>
+	</control>			
+	
+	  <control>
+        <description>Cover Art</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>40</posX>
+        <posY>190</posY>
+        <width>1845</width>
+        <height>624</height>
+        <texture>D_over1.png</texture>
+      </control>	
+
+  	  <control>
+        <description>Cover Art</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>40</posX>
+        <posY>821</posY>
+        <width>1845</width>
+        <height>209</height>
+        <texture>Inf_gfx.png</texture>
+      </control>   	  
+	
+	<import>custom\Allscreens\user_dialog.xml</import>
+
+
+    <control>
+      <description>Time / Item Count / Play station</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1862</posX>
+      <posY>110</posY>
+      <height>43</height>
+      <width>500</width>
+	  <align>right</align>
+      <font>fontBold2</font>
+	  <label>#itemcount</label>
+      <textcolor>white</textcolor>  
+    </control>
+
+    <control>
+      <type>actiongroup</type>
+      <description>action menu</description>
+      <defaultcontrol>2</defaultcontrol>
+      <onexit>0</onexit>
+      <buttonX>1</buttonX>
+      <buttonY>1</buttonY>
+      <buttonwidth>100</buttonwidth>
+      <buttonheight>1080</buttonheight>
+      <textureFocus></textureFocus>
+      <textureNoFocus></textureNoFocus>
+      <width>800</width>
+      <height>800</height>
+      <dimColor>00ffffff</dimColor>
+
+	  
+	  <control>
+	   <type>image</type>
+	   <posX>0</posX>
+	   <posY>0</posY>
+	   <width>1920</width>
+	   <height>1080</height>
+           <texture>black.png</texture>
+           <colordiffuse>99000000</colordiffuse>
+	   <visible>!Control.HasFocus(50)</visible>    
+	 </control>
+		
+	  <control>
+        <type>image</type>
+        <id>0</id>
+        <posX>420</posX>
+        <posY>150</posY>
+        <width>975</width>
+        <height>836</height>
+        <texture>dialogglowbig.png</texture>
+	<visible>!Control.HasFocus(50)</visible>    
+      </control>	
+	  
+	  
+      <control>
+        <description>group element</description>
+        <type>group</type>
+        <layout>StackLayout(0, Vertical, true)</layout>
+        <posX>500</posX>
+		<posY>250</posY>
+        <visible>!Control.HasFocus(50)</visible>
+      <control>
+        <description>Fast Presets</description>
+        <type>button</type>
+        <id>4</id>
+        <label>Home</label>
+        <onright>50</onright>
+        <onup>17</onup>
+        <ondown>11</ondown>
+		<textXOff>15</textXOff>
+		<textYOff>3</textYOff>
+		<width>820</width>
+		<textureFocus>btn_list_blue2.png</textureFocus>
+        <textureNoFocus></textureNoFocus>
+      </control>
+      <control>
+        <description>Fast Presets</description>
+        <type>button</type>
+        <id>11</id>
+        <label>#RadioTime.Translation.FastPresets.Label</label>
+        <onright>50</onright>
+        <onup>4</onup>
+        <ondown>6</ondown>
+		<textXOff>15</textXOff>
+		<textYOff>3</textYOff>
+		<width>820</width>
+		<textureFocus>btn_list_blue2.png</textureFocus>
+        <textureNoFocus></textureNoFocus>		  
+      </control>
+      <control>
+        <description>My Presets</description>
+        <type>button</type>
+        <id>6</id>
+        <label>#RadioTime.Translation.Presets.Label</label>
+        <onright>50</onright>
+        <onup>11</onup>
+        <ondown>3</ondown>
+		<textXOff>15</textXOff>
+		<textYOff>3</textYOff>
+		<width>820</width>
+		<textureFocus>btn_list_blue2.png</textureFocus>
+        <textureNoFocus></textureNoFocus>	
+      </control>
+      <control>
+        <description>Swich view</description>
+        <type>button</type>
+        <id>3</id>
+        <label />
+        <onright>50</onright>
+        <onup>6</onup>
+        <ondown>9</ondown>
+		<textXOff>15</textXOff>
+		<textYOff>3</textYOff>
+		<width>820</width>
+		<textureFocus>btn_list_blue2.png</textureFocus>
+        <textureNoFocus></textureNoFocus>		
+      </control>
+      <control>
+        <description>Now playing</description>
+        <type>button</type>
+        <id>9</id>
+        <label>#RadioTime.Translation.NowPlaying.Label</label>
+        <onright>50</onright>
+        <onup>3</onup>
+        <ondown>8</ondown>
+		<textXOff>15</textXOff>
+		<textYOff>3</textYOff>
+		<width>820</width>
+		<textureFocus>btn_list_blue2.png</textureFocus>
+        <textureNoFocus></textureNoFocus>		  
+      </control>
+      <control>
+        <description>genres</description>
+        <type>button</type>
+        <id>8</id>
+        <label>#RadioTime.Translation.Genres.Label</label>
+        <onright>50</onright>
+        <onup>9</onup>
+        <ondown>5</ondown>
+		<textXOff>15</textXOff>
+		<textYOff>3</textYOff>
+		<width>820</width>
+		<textureFocus>btn_list_blue2.png</textureFocus>
+        <textureNoFocus></textureNoFocus>		
+      </control>
+      <control>
+        <description>Search Button</description>
+        <type>button</type>
+        <id>5</id>
+        <label>#RadioTime.Translation.Search.Label</label>
+        <onright>50</onright>
+        <onup>8</onup>
+        <ondown>7</ondown>
+		<textXOff>15</textXOff>
+		<textYOff>3</textYOff>
+		<width>820</width>
+		<textureFocus>btn_list_blue2.png</textureFocus>
+        <textureNoFocus></textureNoFocus>		  
+      </control>
+      <control>
+        <description>Search Button</description>
+        <type>button</type>
+        <id>7</id>
+        <label>#RadioTime.Translation.SearchArtist.Label</label>
+        <onright>50</onright>
+        <onup>5</onup>
+        <ondown>2</ondown>
+		<textXOff>15</textXOff>
+		<textYOff>3</textYOff>
+		<width>820</width>
+		<textureFocus>btn_list_blue2.png</textureFocus>
+        <textureNoFocus></textureNoFocus>		  
+      </control>
+      <control>
+        <description>Sort Button</description>
+        <type>sortbutton</type>
+        <id>2</id>
+        <label></label>
+        <onright>50</onright>
+        <onup>7</onup>
+        <ondown>10</ondown>
+		<textXOff>15</textXOff>
+		<textYOff>3</textYOff>
+		<width>820</width>
+		<textureFocus>btn_list_blue2.png</textureFocus>
+        <textureNoFocus></textureNoFocus>		
+      </control>
+      <control>
+        <description>Random</description>
+        <type>button</type>
+        <id>10</id>
+        <label>#RadioTime.Translation.Random.Label</label>
+        <onright>50</onright>
+        <onup>2</onup>
+        <ondown>90</ondown>
+		<textXOff>15</textXOff>
+		<textYOff>3</textYOff>
+		<width>820</width>
+		<textureFocus>btn_list_blue2.png</textureFocus>
+        <textureNoFocus></textureNoFocus>		  
+      </control>
+      </control>
+    </control>
+		
+
+
+    <control>
+      <description>meta label</description>
+      <type>fadelabel</type>
+      <id>47</id>
+      <posX>260</posX>
+      <posY>850</posY> 
+      <width>1530</width> 
+      <label>#selecteditem</label>
+      <font>font12</font>
+      <align>left</align>
+      <textcolor>ffffffff</textcolor>
+    </control>
+    <control>
+      <description>meta label</description>
+      <type>fadelabel</type>
+      <id>47</id>
+      <posX>260</posX>
+      <posY>900</posY>
+      <width>1590</width>
+      <height>120</height>
+      <label>#RadioTime.Selected.Format</label>
+      <font>font12</font>
+      <align>left</align>
+      <textcolor>ffffffff</textcolor>
+    </control>
+
+    <control>
+      <type>group</type>
+      <description>group element</description>
+      <visible>!Control.HasFocus(50)</visible>      
+      <control>
+        <description>composite control consisting of a list control and a thumbnail panel</description>
+        <type>facadeview</type>
+        <id>50</id>        
+        <control style="NoShadow">
+          <description>listcontrol</description>
+          <type>listcontrol</type>
+          <id>50</id>
+	      <posX>56</posX>
+          <posY>225</posY>
+          <width>1224</width>
+          <height>620</height>
+		  <font>font12</font>
+		  <textalign>left</textalign>
+          <font2>font12</font2>
+		  <textYOff>3</textYOff>
+		  <textXOff>-15</textXOff>
+		  <textXOff2>1190</textXOff2>
+		  <textYOff2>3</textYOff2>
+		  <scrollbarXOff>600</scrollbarXOff>
+		  <selectedColor2>ffeaeaea</selectedColor2>
+          <selectedColor>ffeaeaea</selectedColor>
+		  <textureHeight>49</textureHeight>
+		  <textureFocus>btn_list.png</textureFocus>
+		  <textureNoFocus></textureNoFocus>
+	      <IconXOff>-1800</IconXOff>
+	      <onright>11</onright>
+	      <onleft>11</onleft>
+        </control> 
+        <control>
+          <description>Thumbnail Panel</description>
+          <type>thumbnailpanel</type>
+          <id>50</id>
+		  <posX>65</posX>
+          <posY>203</posY>
+          <width>1350</width>
+          <height>750</height>
+          <scrollOffset>1</scrollOffset>
+          <onleft>2</onleft>
+          <onright>2</onright>
+          <textureWidthBig>292</textureWidthBig>
+          <textureHeightBig>292</textureHeightBig>
+          <itemWidthBig>292</itemWidthBig>
+          <itemHeightBig>292</itemHeightBig>
+          <thumbWidthBig>292</thumbWidthBig>
+          <thumbHeightBig>292</thumbHeightBig>
+          <thumbPosXBig>0</thumbPosXBig>
+          <thumbPosYBig>0</thumbPosYBig>		  
+          <itemWidth>195</itemWidth>
+          <itemHeight>195</itemHeight>
+          <thumbWidth>193</thumbWidth>
+          <thumbHeight>193</thumbHeight>
+          <textureWidth>193</textureWidth>
+          <textureHeight>193</textureHeight>		  
+          <thumbPosX>0</thumbPosX>
+          <thumbPosY>0</thumbPosY>
+          <thumbZoom>no</thumbZoom>
+          <enableFocusZoom>no</enableFocusZoom>
+          <zoomXPixels>10</zoomXPixels>
+          <zoomYPixels>10</zoomYPixels>
+          <hideUnfocusTexture>yes</hideUnfocusTexture>
+          <renderFocusText>no</renderFocusText>
+          <renderUnfocusText>no</renderUnfocusText>
+          <showFrame>true</showFrame>
+          <imageFolder>-</imageFolder>
+          <imageFolderFocus></imageFolderFocus>
+          <textureMask>Mthumb_mask.png</textureMask>
+          <frameNoFocus>Mthumb_masknofocus.png</frameNoFocus>
+          <frameFocus>Mthumb_maskfocus.png</frameFocus>
+          <keepaspectratio>yes</keepaspectratio>
+          <font>font10</font>
+          <spinCanFocus>no</spinCanFocus>
+          <dimColor>80ffffff</dimColor>
+          <spinPosY>1012</spinPosY>
+        </control>
+        <control>
+          <description>Filmstrip view</description>
+          <type>filmstrip</type>
+          <id>50</id>
+         <scrollOffset>2</scrollOffset>
+          <posX>70</posX>
+          <posY>330</posY>
+          <width>1770</width>
+          <height>1080</height>
+          <onup>5</onup>
+		  <ondown>5</ondown>
+          <onleft>11</onleft>
+		  <onright>11</onright>
+          <thumbWidth>325</thumbWidth>
+          <thumbHeight>325</thumbHeight>
+          <thumbPosX>80</thumbPosX>
+          <thumbPosY>0</thumbPosY>
+          <itemWidth>325</itemWidth>
+          <itemHeight>325</itemHeight>
+          <textureWidth>325</textureWidth>
+          <textureHeight>325</textureHeight>
+          <imageFolder>-</imageFolder>
+          <imageFolderFocus>-</imageFolderFocus>
+          <frame>-</frame>
+          <frameFocus>-</frameFocus>
+          <textureMask></textureMask>
+          <thumbs mask=""></thumbs>
+          <background>emtpy.png</background>
+          <InfoImage></InfoImage>
+          <showFrame>yes</showFrame>
+          <showFolder>no</showFolder>
+          <showBackGround>no</showBackGround>
+          <showInfoImage>no</showInfoImage>
+          <keepaspectratio>no</keepaspectratio>
+          <dimColor>80ffffff</dimColor>
+          <spinPosX>-1200</spinPosX>
+          <scrollbarBackground>bar_hor.png</scrollbarBackground>
+          <scrollbarLeft>mouse_left_horizontal.png</scrollbarLeft>
+          <scrollbarRight>mouse_right_horizontal.png</scrollbarRight>
+          <scrollbarYOff>455</scrollbarYOff>
+          <showScrollbar>no</showScrollbar>
+          <thumbAnimation effect="zoom" start="100,100" end="150,150" time="200" tween="circle" ease="inout">focus</thumbAnimation>
+          <thumbAnimation effect="zoom" start="150,150" end="100,100" time="200" tween="back" ease="inout">unfocus</thumbAnimation>
+        </control>
+	<control>
+        <description>default playlist control</description>
+        <type>playlistcontrol</type>
+        <id>50</id>
+	    <posX>56</posX>
+        <posY>225</posY>
+        <width>1188</width>
+        <height>620</height>
+        <onleft>2</onleft>
+        <onright>2</onright>
+        <scrollOffset>2</scrollOffset>
+        <keepaspectratio>yes</keepaspectratio>
+        <textXOff2>2220</textXOff2>
+		<upBtnXOffset>1070</upBtnXOffset>
+        <downBtnXOffset>1100</downBtnXOffset>
+        <deleteBtnXOffset>1130</deleteBtnXOffset>		
+  </control>   
+		
+        
+        <!--<control>
+          <id>81</id>
+          <description>existent rating2</description>
+          <type>imagelist</type>
+          <visible>no</visible>
+          <posX>2248</posX>
+          <posY>72</posY>
+          <width>224</width>
+          <height>23</height>
+          <textureWidth>20</textureWidth>
+          <textureHeight>20</textureHeight>
+          <percentage>#RadioTime.Selected.Reliability</percentage>
+          <imagesToDraw>5</imagesToDraw>
+          <orientation>HORIZONTAL</orientation>
+          <align>LEFT</align>
+          <subitems>
+            <subitem>starbad.png</subitem>
+            <subitem>stargood.png</subitem>
+          </subitems>
+          <visible>facadeview.list</visible>
+        </control>-->	      
+      </control>
+    </control>
+
+	  <control>
+        <description>Cover Art</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>1233</posX>
+        <posY>184</posY>
+        <width>28</width>
+        <height>619</height>
+        <texture>D_side.png</texture>
+      </control>
+	  <control>
+        <description>Cover Art</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>1233</posX>
+        <posY>184</posY>
+        <width>28</width>
+        <height>619</height>
+        <texture>D_side.png</texture>
+      </control>
+	  
+      <control>
+        <id>1</id>
+        <type>image</type>
+        <posX>1261</posX>
+        <posY>197</posY>
+        <width>605</width>
+        <height>605</height>
+		<keepaspectratio>no</keepaspectratio>
+        <zoomfromtop>no</zoomfromtop>
+        <texture mask="MA_mask.png">blue.png</texture>
+      </control>
+	  
+      <control>
+        <id>1</id>
+        <type>image</type>
+        <posX>1281</posX>
+        <posY>217</posY>
+        <width>565</width>
+        <height>565</height>
+		<keepaspectratio>yes</keepaspectratio>
+		<centered>yes</centered>
+        <texture>#selectedthumb</texture>
+      </control>	  
+	  
+	  
+      <control>
+        <description>Little Poster</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>56</posX>
+        <posY>828</posY>
+		<height>190</height>
+		<width>190</width>
+        <texture mask="MAmask.png">blue.png</texture>
+        <colordiffuse>ffffffff</colordiffuse>
+      </control>	  
+    <control>
+      <description>station logo</description>
+      <type>image</type>
+      <id>51</id>
+      <posX>76</posX>
+      <posY>848</posY>
+      <width>150</width>
+      <height>150</height>
+      <texture></texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <centered>yes</centered>
+    </control>
+	<import>Radiotime_overlay.xml</import>
+
+  </controls>
+</window>

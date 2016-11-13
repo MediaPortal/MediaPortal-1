@@ -53,7 +53,7 @@ Top info
       <description>current weather icon</description>
       <type>image</type>
       <id>0</id>
-      <posX>1550</posX>
+      <posX>1520</posX>
       <posY>10</posY>
       <width>155</width>
       <height>155</height>

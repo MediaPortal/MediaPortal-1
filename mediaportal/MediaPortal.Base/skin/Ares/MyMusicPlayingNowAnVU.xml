@@ -118,46 +118,28 @@
 	<control>
       <id>1</id>
       <type>image</type>
-      <posX>1041</posX>
+      <posX>1021</posX>
       <posY>250</posY>
       <width>525</width>
-      <height>503</height>
-      <texture>cdfx.png</texture>
-      <visible>control.hasthumb(02201)</visible>
-      <animation effect="fade" time="70" reversible="false">visible</animation>
+      <height>525</height>
+      <texture>cdblank.png</texture>
+      <visible>player.hasAudio+!control.hasthumb(11922)</visible>
 	  <animation effect="rotate" delay="0" end="-360" centre="475,258" time="30000" loop="true" condition="player.hasAudio">Conditional</animation>
 	  <colordiffuse>ffffffff</colordiffuse>
     </control>
 	
+	
 	<control>
       <id>11922</id>
       <type>image</type>
-      <posX>1041</posX>
+      <posX>1021</posX>
       <posY>250</posY>
       <width>525</width>
-      <height>503</height>
-      <texture>#Music.CDArt\#Play.Current.Artist-#Play.Current.Album.jpg</texture>
-      <animation effect="fade" time="70" reversible="false">visible</animation>
+      <height>525</height>
+      <texture>..\..\..\thumbs\CDArt\Music\#Play.Current.Artist - #Play.Current.Album.png</texture>
 	  <animation effect="rotate" delay="0" end="-360" centre="475,258" time="30000" loop="true" condition="player.hasAudio">Conditional</animation>
 	  <colordiffuse>ffffffff</colordiffuse>
-    </control>	
-	
-	<!-- PATH TEST FOR CDART NAMES -->
-	<!--
-	<control>
-      <type>label</type>
-      <id>1</id>
-      <posX>1920</posX>
-      <posY>130</posY>
-      <width>1920</width>
-      <height>30</height>
-      <label>#Music.CDArt\#Play.Current.Artist-#Play.Current.Album.jpg</label>
-      <align>right</align>
-      <font>font10</font>
-      <textcolor>ffffffff</textcolor>
-      <visible>player.hasaudio</visible>
-    </control>	  
--->
+    </control>		
 	
 	
     <control>
