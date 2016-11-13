@@ -481,6 +481,7 @@ STDMETHODIMP_(bool) CGrabberSiAtscScte::GetSvctVirtualChannel(unsigned short ind
     LogDebug(L"SI ATSC/SCTE %d: missing source name, transmission medium = %hhu, application VC = %d, source ID = %hu",
               m_sectionDecoder.GetPid(), *transmissionMedium,
               *applicationVirtualChannel, *sourceId);
+    *sourceNameBufferSize = 0;
   }
 
   if (mapName == NULL)
@@ -495,6 +496,7 @@ STDMETHODIMP_(bool) CGrabberSiAtscScte::GetSvctVirtualChannel(unsigned short ind
   {
     LogDebug(L"SI ATSC/SCTE %d: missing VCT/map name, transmission medium = %hhu, VCT ID = %hu",
               m_sectionDecoder.GetPid(), *transmissionMedium, *vctId);
+    *mapNameBufferSize = 0;
   }
 
   if (*channelType == 3 || *transmissionMedium != 1)  // NVOD access or non-satellite
@@ -547,6 +549,7 @@ STDMETHODIMP_(bool) CGrabberSiAtscScte::GetSvctVirtualChannel(unsigned short ind
     {
       LogDebug(L"SI ATSC/SCTE %d: missing transponder name, satellite ID = %hhu, transponder number = %hhu",
                 m_sectionDecoder.GetPid(), *satelliteId, *transponderNumber);
+      *transponderNameBufferSize = 0;
     }
 
     if (satelliteReferenceName == NULL && satelliteFullName == NULL)
@@ -564,6 +567,8 @@ STDMETHODIMP_(bool) CGrabberSiAtscScte::GetSvctVirtualChannel(unsigned short ind
     {
       LogDebug(L"SI ATSC/SCTE %d: missing satellite name, satellite ID = %hhu",
                 m_sectionDecoder.GetPid(), *satelliteId);
+      *satelliteReferenceNameBufferSize = 0;
+      *satelliteFullNameBufferSize = 0;
     }
 
     unsigned char numberOfTransponders;
@@ -579,6 +584,12 @@ STDMETHODIMP_(bool) CGrabberSiAtscScte::GetSvctVirtualChannel(unsigned short ind
     {
       LogDebug(L"SI ATSC/SCTE %d: missing satellite information, satellite ID = %hhu",
                 m_sectionDecoder.GetPid(), *satelliteId);
+      *youAreHere = false;
+      *frequencyBand = 0;       // C band, less likely to be receivable
+      *outOfService = true;
+      *hemisphere = 0;          // Western
+      *orbitalPosition = 0;
+      *polarisationType = 0;    // linear
     }
 
     unsigned short vctId2 = 0;
@@ -603,6 +614,22 @@ STDMETHODIMP_(bool) CGrabberSiAtscScte::GetSvctVirtualChannel(unsigned short ind
     {
       LogDebug(L"SI ATSC/SCTE %d: missing transponder data, satellite ID = %hhu, transponder number = %hhu",
                 m_sectionDecoder.GetPid(), *satelliteId, *transponderNumber);
+      *transportType = 0;       // MPEG 2
+      *polarisation = 0;        // linear horizontal / circular left
+      cdtReference = 255;       // try to choose an invalid value
+      mmtReference = 255;       // try to choose an invalid value
+      *rootTransponder = false;
+
+      // Not applicable for MPEG 2 transport.
+      *wideBandwidthVideo = 0;  // narrow bandwidth
+      *waveformStandard = 0;    // unknown/undefined
+      *wideBandwidthAudio = false;
+      *compandedAudio = false;
+      *matrixMode = 1;          // discrete stereo
+      *subcarrier2Offset = 0;
+      *subcarrier1Offset = 0;
+
+      carrierFrequencyOverride2 = 0;
     }
     else if (carrierFrequencyOverride == 0)
     {
@@ -618,8 +645,19 @@ STDMETHODIMP_(bool) CGrabberSiAtscScte::GetSvctVirtualChannel(unsigned short ind
                                               *transmissionMedium,
                                               *frequency))
   {
-    LogDebug(L"SI ATSC/SCTE %d: missing carrier definition, CDT reference = %hhu, transmission medium = %hhu",
-              m_sectionDecoder.GetPid(), cdtReference, *transmissionMedium);
+    if (cdtReference == 255 && *transmissionMedium == 0)
+    {
+      // Comcast signalling for Switched digital video. Translate to Charter
+      // signalling so TVE can interpret correctly.
+      // http://forum.team-mediaportal.com/threads/all-cards-busy.135409/
+      *frequency = 999000;
+    }
+    else
+    {
+      LogDebug(L"SI ATSC/SCTE %d: missing carrier definition, CDT reference = %hhu, transmission medium = %hhu",
+                m_sectionDecoder.GetPid(), cdtReference, *transmissionMedium);
+      *frequency = 0;
+    }
   }
 
   if (*transportType == 0)  // MPEG 2
@@ -634,6 +672,10 @@ STDMETHODIMP_(bool) CGrabberSiAtscScte::GetSvctVirtualChannel(unsigned short ind
     {
       LogDebug(L"SI ATSC/SCTE %d: missing modulation mode, MMT reference = %hhu, transmission medium = %hhu",
                 m_sectionDecoder.GetPid(), mmtReference, *transmissionMedium);
+      *innerCodingMode = 15;    // none, concatenated coding not used
+      *splitBitstreamMode = false;
+      *modulationFormat = 0;    // unknown
+      *symbolRate = 0;
     }
     if (symbolRateOverride != 0)
     {
