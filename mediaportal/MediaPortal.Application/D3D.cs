@@ -2326,6 +2326,7 @@ namespace MediaPortal
     /// <param name="e"></param>
     private void OnKeyDown(object sender, KeyEventArgs e)
     {
+      //TODO: Remove hard coded shortcuts and use actions instead
       if (e.Control == false && e.Alt && (e.KeyCode == Keys.Return))
       {
         ToggleFullscreen();
@@ -2347,6 +2348,8 @@ namespace MediaPortal
 
       if (e.Handled == false)
       {
+        //SL: Why is it done this way? Surely the derived class (MediaPortal.cs) could register to the event as well rather than using that virtual function.
+        // Also once hard coded shortcuts above are removed we probably don't need that event handler here.
         KeyDownEvent(e);
       }
     }
@@ -2359,6 +2362,7 @@ namespace MediaPortal
     /// <param name="e"></param>
     private void OnKeyPress(object sender, KeyPressEventArgs e)
     {
+      //SL: Why is it done this way? Surely the derived class (MediaPortal.cs) could register to the event as well rather than using that virtual function.
       KeyPressEvent(e);
     }
 
