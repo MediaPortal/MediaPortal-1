@@ -233,6 +233,8 @@ namespace MediaPortal.GUI.Library
     private Object instance;
     protected string _loadParameter = null;
     private bool _skipAnimation = false;
+    private bool _loadSkinResult = false;
+    private bool _loadSkinDone = false;
 
     //-1=default from topbar.xml 
     // 0=flase from skin.xml
@@ -253,6 +255,7 @@ namespace MediaPortal.GUI.Library
     private VisualEffect _showAnimation = new VisualEffect(); // for dialogs
     private VisualEffect _closeAnimation = new VisualEffect();
     public static SynchronizationContext _mainThreadContext = SynchronizationContext.Current;
+    public static AutoResetEvent Eventfinished = new AutoResetEvent(false);
 
     #endregion
 
@@ -490,15 +493,23 @@ namespace MediaPortal.GUI.Library
     {
       if (Thread.CurrentThread.Name != "MPMain" && Thread.CurrentThread.Name != "Config Main")
       {
+        _loadSkinDone = false;
         GUIWindowManager.SendThreadCallback(LoadSkinThreaded, 0, 0, null);
-        return true;
+        while (!_loadSkinDone)
+        {
+          Eventfinished.WaitOne(5000);
+          Log.Error("run LoadSkin() until is done in MP main thread _loadSkinDone {0}", _loadSkinDone);
+        }
+        return _loadSkinResult;
       }
       return LoadSkinBool();
     }
 
     public int LoadSkinThreaded(int p1, int p2, object s)
     {
-      LoadSkinBool();
+      _loadSkinResult = LoadSkinBool();
+      _loadSkinDone = true;
+      Log.Error("LoadSkinThreaded() done with return value : {0}", _loadSkinResult);
       return p1;
     }
 

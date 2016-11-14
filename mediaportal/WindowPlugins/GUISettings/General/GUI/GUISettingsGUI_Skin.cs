@@ -73,13 +73,17 @@ namespace WindowPlugins.GUISettings
 
     private void SaveSettings()
     {
-      using (Settings xmlwriter = new MPSettings())
+      // Don't save setting if skin value was not set
+      if (_btnSkin != null && _btnSkin.Label != "Skin:")
       {
-        xmlwriter.SetValue("gui", "language", _btnLanguage.Label);
-        xmlwriter.SetValue("skin", "name", _btnSkin.Label);
-        xmlwriter.SetValueAsBool("gui", "myprefix", _btnLanguagePrefix.Selected);
+        using (Settings xmlwriter = new MPSettings())
+        {
+          xmlwriter.SetValue("gui", "language", _btnLanguage.Label);
+          xmlwriter.SetValue("skin", "name", _btnSkin.Label);
+          xmlwriter.SetValueAsBool("gui", "myprefix", _btnLanguagePrefix.Selected);
+        }
+        Config.SkinName = _btnSkin.Label;
       }
-      Config.SkinName = _btnSkin.Label;
     }
 
     #endregion
