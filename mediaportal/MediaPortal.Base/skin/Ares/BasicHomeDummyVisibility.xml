@@ -635,6 +635,37 @@
     </control>		
 	
 	
+	
+	<!--#####################################DUMMY VISIBILTY FOR KEEPING TILES VISIBLE WHILE WEATHER SELECTED###############################################-->
+
+	<control>
+      <description>DUMMY weather</description>
+      <type>image</type>
+      <id>5100000</id>
+      <posX>7000</posX>
+      <posY>10</posY>
+      <width>10</width>
+      <height>10</height>
+      <texture></texture>  
+	  <visible>[[string.equals(#tile1plugin.hyperlink,WorldWeatherLite)+control.hasfocus(00500)]|[string.equals(#tile2plugin.hyperlink,WorldWeatherLite)+control.hasfocus(00501)]|[string.equals(#tile3plugin.hyperlink,WorldWeatherLite)+control.hasfocus(00502)]|[string.equals(#tile4plugin.hyperlink,WorldWeatherLite)+control.hasfocus(00503)]|[string.equals(#tile5plugin.hyperlink,WorldWeatherLite)+control.hasfocus(00504)]|[string.equals(#tile6plugin.hyperlink,WorldWeatherLite)+control.hasfocus(00505)]|[string.equals(#tile7plugin.hyperlink,WorldWeatherLite)+control.hasfocus(00506)]|[string.equals(#tile8plugin.hyperlink,WorldWeatherLite)+control.hasfocus(00507)]|[string.equals(#tile9plugin.hyperlink,WorldWeatherLite)+control.hasfocus(00508)]|[string.equals(#tile10plugin.hyperlink,WorldWeatherLite)+control.hasfocus(00509)]|[string.equals(#tile11plugin.hyperlink,WorldWeatherLite)+control.hasfocus(00510)]|[string.equals(#tile12plugin.hyperlink,WorldWeatherLite)+control.hasfocus(00511)]|[string.equals(#tile13plugin.hyperlink,WorldWeatherLite)+control.hasfocus(00512)]|[string.equals(#tile14plugin.hyperlink,WorldWeatherLite)+control.hasfocus(00513)]|[string.equals(#tile15plugin.hyperlink,WorldWeatherLite)+control.hasfocus(00514)]|[string.equals(#tile16plugin.hyperlink,WorldWeatherLite)+control.hasfocus(00515)]|[string.equals(#tile17plugin.hyperlink,WorldWeatherLite)+control.hasfocus(00516)]|[string.equals(#tile18plugin.hyperlink,WorldWeatherLite)+control.hasfocus(00517)]|[string.equals(#tile19plugin.hyperlink,WorldWeatherLite)+control.hasfocus(00518)]|[string.equals(#tile20plugin.hyperlink,WorldWeatherLite)+control.hasfocus(00519)]|[string.equals(#tile21plugin.hyperlink,WorldWeatherLite)+control.hasfocus(00520)]|[string.equals(#tile22plugin.hyperlink,WorldWeatherLite)+control.hasfocus(00521)]|[string.equals(#tile23plugin.hyperlink,WorldWeatherLite)+control.hasfocus(00522)]|[string.equals(#tile24plugin.hyperlink,WorldWeatherLite)+control.hasfocus(00523)]|[string.equals(#tile25plugin.hyperlink,WorldWeatherLite)+control.hasfocus(00524)]]+plugin.isenabled(World Weather Lite)</visible>
+    </control>	
+	<control>
+      <description>DUMMY weather</description>
+      <type>image</type>
+      <id>5100001</id>
+      <posX>7000</posX>
+      <posY>10</posY>
+      <width>10</width>
+      <height>10</height>
+      <texture></texture>  
+	  <visible>[[string.equals(#tile1plugin.hyperlink,WorldWeather)+control.hasfocus(00500)]|[string.equals(#tile2plugin.hyperlink,WorldWeather)+control.hasfocus(00501)]|[string.equals(#tile3plugin.hyperlink,WorldWeather)+control.hasfocus(00502)]|[string.equals(#tile4plugin.hyperlink,WorldWeather)+control.hasfocus(00503)]|[string.equals(#tile5plugin.hyperlink,WorldWeather)+control.hasfocus(00504)]|[string.equals(#tile6plugin.hyperlink,WorldWeather)+control.hasfocus(00505)]|[string.equals(#tile7plugin.hyperlink,WorldWeather)+control.hasfocus(00506)]|[string.equals(#tile8plugin.hyperlink,WorldWeather)+control.hasfocus(00507)]|[string.equals(#tile9plugin.hyperlink,WorldWeather)+control.hasfocus(00508)]|[string.equals(#tile10plugin.hyperlink,WorldWeather)+control.hasfocus(00509)]|[string.equals(#tile11plugin.hyperlink,WorldWeather)+control.hasfocus(00510)]|[string.equals(#tile12plugin.hyperlink,WorldWeather)+control.hasfocus(00511)]|[string.equals(#tile13plugin.hyperlink,WorldWeather)+control.hasfocus(00512)]|[string.equals(#tile14plugin.hyperlink,WorldWeather)+control.hasfocus(00513)]|[string.equals(#tile15plugin.hyperlink,WorldWeather)+control.hasfocus(00514)]|[string.equals(#tile16plugin.hyperlink,WorldWeather)+control.hasfocus(00515)]|[string.equals(#tile17plugin.hyperlink,WorldWeather)+control.hasfocus(00516)]|[string.equals(#tile18plugin.hyperlink,WorldWeather)+control.hasfocus(00517)]|[string.equals(#tile19plugin.hyperlink,WorldWeather)+control.hasfocus(00518)]|[string.equals(#tile20plugin.hyperlink,WorldWeather)+control.hasfocus(00519)]|[string.equals(#tile21plugin.hyperlink,WorldWeather)+control.hasfocus(00520)]|[string.equals(#tile22plugin.hyperlink,WorldWeather)+control.hasfocus(00521)]|[string.equals(#tile23plugin.hyperlink,WorldWeather)+control.hasfocus(00522)]|[string.equals(#tile24plugin.hyperlink,WorldWeather)+control.hasfocus(00523)]|[string.equals(#tile25plugin.hyperlink,WorldWeather)+control.hasfocus(00524)]]+plugin.isenabled(World Weather)</visible>
+    </control>		
+
+
+
+
+	
+	
   </controls>
 </window>
 

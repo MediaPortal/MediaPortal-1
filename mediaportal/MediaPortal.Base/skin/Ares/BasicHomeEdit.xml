@@ -272,26 +272,17 @@
                     </control>	
 					<control>
                        <description>Backgrounds</description>
-                       <type>menubutton</type>
+                       <type>checkbutton</type>
                        <id>20807</id>
-                       <width>550</width>
-                       <height>50</height>
-		               <textXOff>5</textXOff>
-                       <textYOff>3</textYOff>
-                       <mode>spinlist</mode>
-					   <onfocus>#(skin.setstring('#skin.test','Choose yes to enable the showing of your defined custom names of tiles'))</onfocus>
-                       <dialogTitle>Set a custom tile name..</dialogTitle>
-                       <valueTextInButton>yes</valueTextInButton>
-                       <valuePrefixText> Custom tile names: </valuePrefixText>
-                       <onclick>#(skin.setstring('#skin.manualnames',#selectedlabel20807))</onclick>
-                       <binding>#skin.manualnames</binding>
-                       <subitems>
-                       <subitem>yes</subitem>
-                       <subitem>no</subitem>
-                       </subitems>
-                       <textcolorNoFocus>99ffffff</textcolorNoFocus>
-                       <textureFocus>btn_list_blue2.png</textureFocus>
+                       <label>Enable weather forecast</label>
+		               <font>font12</font>
+					   <width>550</width>
+		               <textcolorNoFocus>99ffffff</textcolorNoFocus>
+		               <textureFocus>btn_list_blue2.png</textureFocus>
 		               <textureNoFocus></textureNoFocus>
+					   <onfocus>#(skin.setstring('#skin.test','Enable weather forecast when weather tile has focus'))</onfocus>
+                       <selected>#(skin.hassetting('#skin.no.weather'))</selected>
+                       <onclick>#(skin.togglesetting('#skin.no.weather'))</onclick>
                        <onup>20806</onup>
                        <onleft>#(cint(#skin.setnav))</onleft>
                        <ondown>20808</ondown>
@@ -353,16 +344,17 @@
 	
 	<control>
       <description>label</description>
-      <type>label</type>
+      <type>textbox</type>
       <id>0</id>
       <posX>97</posX>
       <posY>900</posY>
-	  <width>1200</width>
+	  <width>1700</width>
+	  <height>125</height>
       <align>left</align>
       <label>#skin.test</label>
       <font>font13</font>
       <textcolor>eaeaea</textcolor>
-	  <visible>true</visible>
+	   <visible>control.isvisible(20800)|control.hasfocus(20801)|control.hasfocus(20802)|control.hasfocus(20803)|control.hasfocus(20804)|control.hasfocus(20805)|control.hasfocus(20806)|control.hasfocus(20807)|control.hasfocus(20808)|control.hasfocus(20809)|control.hasfocus(20810)</visible>    
     </control>	
 	
 	
