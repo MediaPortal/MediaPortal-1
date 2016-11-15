@@ -1160,15 +1160,11 @@ namespace MediaPortal.GUI.Library
               {
                 break;
               }
-              if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && switching)
+              if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && switching && GUIGraphicsContext.InVmr9Render)
               {
                 // Some plugin get stuck in loop when madVR in use because it waiting madVR change that was already done before
-                if (GUIGraphicsContext.InVmr9Render)
-                {
-                  Log.Debug("GUIWindow: OnPageDestroy for madVR");
-                  GUIWindowManager.Process();
-                  break;
-                }
+                Log.Debug("GUIWindow: OnPageDestroy for madVR");
+                IsAnimating(AnimationType.None);
               }
               GUIWindowManager.Process();
             }
