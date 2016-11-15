@@ -20,11 +20,19 @@
 
 namespace MediaPortal.GUI.Library
 {
+  public enum GUILayers
+  {
+    all = 0,
+    under = 1,
+    over = 2
+  }
+
   /// <summary>
   /// Interface which is used for VMR9 players to render the GUI
   /// </summary>
   public interface IRender
   {
-    void RenderFrame(float timePassed);
+    void RenderFrame(float timePassed, GUILayers layers);
+    void RenderFrame(float timePassed, GUILayers layers, ref bool uiVisible);
   }
 }

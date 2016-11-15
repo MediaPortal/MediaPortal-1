@@ -14,9 +14,9 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2016 Live Networks, Inc.  All rights reserved.
 // A 'ServerMediaSubsession' object that creates new, unicast, "RTPSink"s
-// on demand, from a MPEG-4 video file.
+// on demand, from a H.263 video file.
 // C++ header
 
 #ifndef _H263PLUS_VIDEO_FILE_SERVER_MEDIA_SUBSESSION_HH

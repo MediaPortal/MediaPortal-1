@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2016 Live Networks, Inc.  All rights reserved.
 // A RTP source for a simple RTP payload format that
 //     - doesn't have any special headers following the RTP header
 //       (if necessary, the "offset" parameter can be used to specify a
@@ -37,9 +37,9 @@ public:
 				    char const* mimeTypeString,
 				    unsigned offset = 0,
 				    Boolean doNormalMBitRule = True);
-  // "doNormalMBitRule" means: If the medium is video, use the RTP "M"
+  // "doNormalMBitRule" means: If the medium is not audio, use the RTP "M"
   // bit on each incoming packet to indicate the last (or only) fragment
-  // of a frame.  (Otherwise, ignore the "M" bit.)
+  // of a frame.  Otherwise (i.e., if "doNormalMBitRule" is False, or the medium is "audio"), the "M" bit is ignored.
 
 protected:
   virtual ~SimpleRTPSource();

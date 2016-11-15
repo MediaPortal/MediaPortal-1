@@ -35,9 +35,9 @@ set logger=/l:XmlFileLogger,"BuildReport\MSBuild.ExtensionPack.Loggers.dll";logf
 
 REM "%WINDIR%\Microsoft.NET\Framework\v4.0.30319\MSBUILD.exe" %logger% /p:PlatformToolset=Windows7.1SDK /target:%BUILD_MODE% /property:Configuration=%BUILD_TYPE% "..\DirectShowFilters\Filters.sln" %PRJ% >> %log%
 IF EXIST "%ProgramFiles(x86)%" (
-"C:\Program Files (x86)\MSBuild\12.0\Bin\MSBUILD.exe" %logger% /m /target:%BUILD_MODE% /property:Configuration=%BUILD_TYPE% "..\DirectShowFilters\Filters.sln" %PRJ% >> %log%
+"C:\Program Files (x86)\MSBuild\14.0\Bin\MSBUILD.exe" %logger% /m /target:%BUILD_MODE% /property:Configuration=%BUILD_TYPE% "..\DirectShowFilters\Filters.sln" %PRJ% >> %log%
 ) ELSE (
-"C:\Program Files\MSBuild\12.0\Bin\MSBUILD.exe" %logger% /m /target:%BUILD_MODE% /property:Configuration=%BUILD_TYPE% "..\DirectShowFilters\Filters.sln" %PRJ% >> %log%
+"C:\Program Files\MSBuild\14.0\Bin\MSBUILD.exe" %logger% /m /target:%BUILD_MODE% /property:Configuration=%BUILD_TYPE% "..\DirectShowFilters\Filters.sln" %PRJ% >> %log%
 )
 BuildReport\msxsl %xml% _BuildReport_Files\BuildReport.xslt -o %html%
 
@@ -50,9 +50,9 @@ set logger=/l:XmlFileLogger,"BuildReport\MSBuild.ExtensionPack.Loggers.dll";logf
 
 REM "%WINDIR%\Microsoft.NET\Framework\v4.0.30319\MSBUILD.exe" %logger% /p:PlatformToolset=Windows7.1SDK /target:%BUILD_MODE% /property:Configuration=%BUILD_TYPE% "..\DirectShowFilters\Filters.sln" >> %log%
 IF EXIST "%ProgramFiles(x86)%" (
-"C:\Program Files (x86)\MSBuild\12.0\Bin\MSBUILD.exe" %logger% /m /target:%BUILD_MODE% /property:Configuration=%BUILD_TYPE% "..\DirectShowFilters\Filters.sln" >> %log%
+"C:\Program Files (x86)\MSBuild\14.0\Bin\MSBUILD.exe" %logger% /m /target:%BUILD_MODE% /property:Configuration=%BUILD_TYPE% "..\DirectShowFilters\Filters.sln" >> %log%
 ) ELSE (
-"C:\Program Files\MSBuild\12.0\Bin\MSBUILD.exe" %logger% /m /target:%BUILD_MODE% /property:Configuration=%BUILD_TYPE% "..\DirectShowFilters\Filters.sln" >> %log%
+"C:\Program Files\MSBuild\14.0\Bin\MSBUILD.exe" %logger% /m /target:%BUILD_MODE% /property:Configuration=%BUILD_TYPE% "..\DirectShowFilters\Filters.sln" >> %log%
 )
 BuildReport\msxsl %xml% _BuildReport_Files\BuildReport.xslt -o %html%
 

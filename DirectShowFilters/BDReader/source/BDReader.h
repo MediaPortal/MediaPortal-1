@@ -26,8 +26,6 @@
 
 #include "pcrdecoder.h"
 #include "demultiplexer.h"
-#include "..\..\DVBSubtitle3\Source\IDVBSub.h"
-#include "ISubtitleStream.h"
 #include "IAudioStream.h"
 #include "LibBlurayWrapper.h"
 #include "BDEventObserver.h"
@@ -39,14 +37,13 @@
 
 //#define LOG_SEEK_INFORMATION
 
-//#define SOUNDDEBUG // you will get NO sound if you enable debugging as there is a lot of output 
-
 #define CONVERT_90KHz_DS(x) (REFERENCE_TIME)(x * 111 + x / 9)
 #define CONVERT_DS_90KHz(x) (REFERENCE_TIME)(x / 100 - x / 1000)
 
+#define IDLE_SLEEP_DURATION 40
+
 using namespace std;
 
-class CSubtitlePin;
 class CAudioPin;
 class CVideoPin;
 class CBDReader;
@@ -100,19 +97,19 @@ public:
 enum DS_CMD_ID
 {
   REBUILD,
-  SEEK
+  SEEK,
+  PAUSE,
+  RESUME
 };
 
 class CBDReaderFilter : public CSource, 
                         public IFileSourceFilter, 
                         public IAMFilterMiscFlags, 
                         public IAMStreamSelect, 
-                        public ISubtitleStream, 
                         public IAudioStream,
                         public IBDReader,
                         public BDEventObserver,
-                        public CCritSec,
-                        protected CAMThread
+                        public CCritSec
 {
 public:
   DECLARE_IUNKNOWN
@@ -144,14 +141,6 @@ private:
   // IAudioStream
   STDMETHODIMP GetAudioStream(__int32 &stream);
 
-  // ISubtitleStream
-  STDMETHODIMP SetSubtitleStream(__int32 stream);
-  STDMETHODIMP GetSubtitleStreamType(__int32 stream, int &type);
-  STDMETHODIMP GetSubtitleStreamCount(__int32 &count);
-  STDMETHODIMP GetCurrentSubtitleStream(__int32 &stream);
-  STDMETHODIMP GetSubtitleStreamLanguage(__int32 stream,char* szLanguage);
-  STDMETHODIMP SetSubtitleResetCallback( int (CALLBACK *pSubUpdateCallback)(int count, void* opts, int* select)); 
-
 public:
   // IBDReader
   STDMETHODIMP SetGraphCallback(IBDReaderCallback* pCallback);
@@ -176,7 +165,7 @@ public:
   void STDMETHODCALLTYPE SetBDPlayerSettings(bd_player_settings settings);
 
   // BDEventObserver
-  void HandleBDEvent(BD_EVENT& pEv, UINT64 pPos);
+  void HandleBDEvent(BD_EVENT& pEv);
   void HandleOSDUpdate(OSDTexture& pTexture);
 
   // IFileSourceFilter
@@ -186,8 +175,6 @@ public:
   void            Seek(REFERENCE_TIME rtAbsSeek);
   CAudioPin*      GetAudioPin();
   CVideoPin*      GetVideoPin();
-  CSubtitlePin*   GetSubtitlePin();
-  IDVBSubtitle*   GetSubtitleFilter();
   FILTER_STATE    State() {return m_State;}
 
   // IMediaSeeking
@@ -195,6 +182,9 @@ public:
   STDMETHODIMP SetPositions(LONGLONG* pCurrent, DWORD dwCurrentFlags, LONGLONG* pStop, DWORD dwStopFlags);
   STDMETHODIMP SetPositionsInternal(void *caller, LONGLONG* pCurrent, DWORD dwCurrentFlags, LONGLONG* pStop, DWORD dwStopFlags);
   
+  // Extended
+  STDMETHODIMP GetTime(REFERENCE_TIME* pTime);
+
   bool IsStopping();
 
   void IssueCommand(DS_CMD_ID pCommand, REFERENCE_TIME pTime);
@@ -207,39 +197,32 @@ public:
 
   bool  m_bStopping;
 
-protected:
-
-  // CAMThread
-  enum {CMD_EXIT, CMD_SEEK};
-  DWORD ThreadProc();
-
 private:
 
   struct DS_CMD
   {
     DS_CMD_ID id;
-    CRefTime refTime; 
+    CRefTime refTime;
   };
 
   void DeliverBeginFlush();
   void DeliverEndFlush();
 
-  HRESULT FindSubtitleFilter();
+  REFERENCE_TIME GetScr();
 
   CAudioPin*      m_pAudioPin;
   CVideoPin*      m_pVideoPin;
-  CSubtitlePin*	  m_pSubtitlePin;
   WCHAR           m_fileName[1024];
   CCritSec        m_section;
   CDeMultiplexer  m_demultiplexer;
 
-  IDVBSubtitle*   m_pDVBSubtitle;
   IBDReaderCallback* m_pCallback;
   IBDReaderAudioChange* m_pRequestAudioCallback;
 
   DWORD           m_MPmainThreadID;
 
   IMediaSeeking*  m_pMediaSeeking;
+  IMediaControl*  m_pMediaControl;
 
   char            m_pathToBD[MAX_PATH];
 
@@ -256,16 +239,11 @@ private:
   HANDLE          m_hCommandEvent;
   HANDLE          m_hStopCommandThreadEvent;
   DWORD           m_dwThreadId;
-  bool            m_bUpdateStreamPositionOnly;
-
-  bool m_bFirstPlay;
 
   REFERENCE_TIME m_rtPlaybackOffset;
   REFERENCE_TIME m_rtSeekPosition;
   REFERENCE_TIME m_rtTitleDuration;
   REFERENCE_TIME m_rtCurrentTime;
-  REFERENCE_TIME m_rtRunOffset;
-  REFERENCE_TIME m_rtRun;
   CCritSec       m_csClock;
 
   // Times
@@ -282,14 +260,11 @@ private:
   std::set<void *> m_lastSeekers;
   bool m_bFirstSeek;
 
-  // Flushing
-  bool m_bFlushing;
-  CAMEvent m_eEndFlush;
-  CAMEvent m_eEndNewSegment;
-  CAMEvent m_eSeekDone;
-  
-  bool m_bChapterChangeRequested;
+  bool m_bHandleSeekEvent;
+  bool m_bForceTitleBasedPlayback;
 
   bool m_bRebuildOngoing;
   CAMEvent m_eRebuild;
+
+  bool m_pLibPaused;
 };

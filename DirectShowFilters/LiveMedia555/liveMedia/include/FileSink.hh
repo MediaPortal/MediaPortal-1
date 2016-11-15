@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2016 Live Networks, Inc.  All rights reserved.
 // File Sinks
 // C++ header
 
@@ -37,8 +37,8 @@ public:
   //   file name suffix).  The default behavior ("oneFilePerFrame" == False)
   //   is to output all incoming data into a single file.
 
-  void addData(unsigned char* data, unsigned dataSize,
-	       struct timeval presentationTime);
+  virtual void addData(unsigned char const* data, unsigned dataSize,
+		       struct timeval presentationTime);
   // (Available in case a client wants to add extra data to the output file)
 
 protected:
@@ -47,23 +47,25 @@ protected:
       // called only by createNew()
   virtual ~FileSink();
 
+protected: // redefined virtual functions:
+  virtual Boolean continuePlaying();
+
 protected:
   static void afterGettingFrame(void* clientData, unsigned frameSize,
 				unsigned numTruncatedBytes,
 				struct timeval presentationTime,
 				unsigned durationInMicroseconds);
-  virtual void afterGettingFrame1(unsigned frameSize,
-				  struct timeval presentationTime);
+  virtual void afterGettingFrame(unsigned frameSize,
+				 unsigned numTruncatedBytes,
+				 struct timeval presentationTime);
 
   FILE* fOutFid;
   unsigned char* fBuffer;
   unsigned fBufferSize;
   char* fPerFrameFileNamePrefix; // used if "oneFilePerFrame" is True
   char* fPerFrameFileNameBuffer; // used if "oneFilePerFrame" is True
-
-private: // redefined virtual functions:
-  virtual Boolean continuePlaying();
+  struct timeval fPrevPresentationTime;
+  unsigned fSamePresentationTimeCounter;
 };
-
 
 #endif

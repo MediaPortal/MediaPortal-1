@@ -654,32 +654,35 @@ namespace MediaPortal.Configuration.Sections
       }
 
       DirectoryInfo di = new DirectoryInfo(pluginPath);
-      FileInfo[] fi = di.GetFiles("*.dll", SearchOption.AllDirectories);
-      foreach (FileInfo vstplugin in fi)
+      if (Directory.Exists(pluginPath))
       {
-        try
+        FileInfo[] fi = di.GetFiles("*.dll", SearchOption.AllDirectories);
+        foreach (FileInfo vstplugin in fi)
         {
-          BASS_VST_INFO vstInfo = new BASS_VST_INFO();
-          _vstHandle = BassVst.BASS_VST_ChannelSetDSP(0, vstplugin.FullName, BASSVSTDsp.BASS_VST_DEFAULT, 1);
-          // When Handle > 0 this Vst Plugin is a DSP Plugin
-          if (_vstHandle > 0)
+          try
           {
-            DSPPluginInfo pluginInfo = new DSPPluginInfo(DSPPluginInfo.PluginType.VST, vstplugin.FullName,
-                                                         vstplugin.Name);
-            if (pluginInfo.IsBlackListed)
+            BASS_VST_INFO vstInfo = new BASS_VST_INFO();
+            _vstHandle = BassVst.BASS_VST_ChannelSetDSP(0, vstplugin.FullName, BASSVSTDsp.BASS_VST_DEFAULT, 1);
+            // When Handle > 0 this Vst Plugin is a DSP Plugin
+            if (_vstHandle > 0)
             {
-              Log.Info("DSP Plugin {0} may not be used, as it is known for causing problems.", vstplugin.Name);
+              DSPPluginInfo pluginInfo = new DSPPluginInfo(DSPPluginInfo.PluginType.VST, vstplugin.FullName,
+                vstplugin.Name);
+              if (pluginInfo.IsBlackListed)
+              {
+                Log.Info("DSP Plugin {0} may not be used, as it is known for causing problems.", vstplugin.Name);
+              }
+              else
+              {
+                listBoxFoundPlugins.Items.Add(pluginInfo);
+              }
             }
-            else
-            {
-              listBoxFoundPlugins.Items.Add(pluginInfo);
-            }
+            BassVst.BASS_VST_ChannelRemoveDSP(0, _vstHandle);
           }
-          BassVst.BASS_VST_ChannelRemoveDSP(0, _vstHandle);
-        }
-        catch (Exception ex)
-        {
-          Log.Error("Error reading VST Plugin Information: {0}", ex.Message);
+          catch (Exception ex)
+          {
+            Log.Error("Error reading VST Plugin Information: {0}", ex.Message);
+          }
         }
       }
 
@@ -727,7 +730,8 @@ namespace MediaPortal.Configuration.Sections
       // WinAmp Plugins
 
       // Get the available plugins in the directory and fill the found listbox
-      WINAMP_DSP.FindPlugins(pluginPath);
+      if (Directory.Exists(pluginPath))
+        WINAMP_DSP.FindPlugins(pluginPath);
       foreach (WINAMP_DSP winampPlugin in WINAMP_DSP.PlugIns)
       {
         DSPPluginInfo pluginInfo = new DSPPluginInfo(DSPPluginInfo.PluginType.Winamp, winampPlugin.File,

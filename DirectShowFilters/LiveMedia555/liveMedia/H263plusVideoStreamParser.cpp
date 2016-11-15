@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2016 Live Networks, Inc.  All rights reserved.
 // Author Bernhard Feiten
 // A filter that breaks up an H.263plus video stream into frames.
 // Based on MPEG4IP/mp4creator/h263.c
@@ -328,8 +328,6 @@ void H263plusVideoStreamParser::GetMaxBitrate( MaxBitrate_CTX *ctx,
 ////////////////////////////////////////////////////////////////////////////////
 u_int64_t H263plusVideoStreamParser::CalculateDuration(u_int8_t trDiff)
 {
-  //static u_int32_t nextTR    = 0;   // The next frame's presentation time in TR units
-  //static u_int64_t currentPT = 0;   // The current frame's presentation time in milli-seconds
   u_int64_t        nextPT;          // The next frame's presentation time in milli-seconds
   u_int64_t        duration;        // The current frame's duration in milli-seconds
 
@@ -351,10 +349,10 @@ bool H263plusVideoStreamParser::GetWidthAndHeight( u_int8_t  fmt,
                                                    u_int16_t *height)
 {
    // The 'fmt' corresponds to bits 5-7 of the PTYPE
-   static struct {
+  static struct {
       u_int16_t width;
       u_int16_t height;
-   } dimensionsTable[8] = {
+   } const dimensionsTable[8] = {
 	   { 0,    0 },      // 000 - 0 - forbidden, generates an error
 	   { 128,  96 },     // 001 - 1 - Sub QCIF
 	   { 176,  144 },    // 010 - 2 - QCIF
@@ -634,7 +632,7 @@ static int LoadNextH263Object(  FILE           *inputFileHandle,
   // This table and the following loop implements a state machine enabling
   // us to read bytes from the file untill (and inclusing) the requested
   // start code (00 00 8X) is found
-  int8_t        row = 0;
+  char        row = 0;
   u_int8_t     *bufferStart = frameBuffer;
   // The buffer end which will allow the loop to leave place for
   // the additionalBytesNeeded
@@ -797,8 +795,8 @@ static void GetMaxBitrate(      MaxBitrate_CTX *ctx,
  * /
 static MP4Duration CalculateDuration(u_int8_t   trDiff)
 {
-  static u_int32_t    nextTR    = 0;   // The next frame's presentation time in TR units
-  static MP4Duration  currentPT = 0;   // The current frame's presentation time in milli-seconds
+  static u_int32_t const    nextTR    = 0;   // The next frame's presentation time in TR units
+  static MP4Duration const  currentPT = 0;   // The current frame's presentation time in milli-seconds
   MP4Duration         nextPT;          // The next frame's presentation time in milli-seconds
   MP4Duration         duration;        // The current frame's duration in milli-seconds
 
@@ -823,7 +821,7 @@ static bool GetWidthAndHeight(  u_int8_t        fmt,
   static struct {
     u_int16_t width;
     u_int16_t height;
-  } dimensionsTable[8] = {
+  } const dimensionsTable[8] = {
     { 0,    0 },      // 000 - 0 - forbidden, generates an error
     { 128,  96 },     // 001 - 1 - Sub QCIF
     { 176,  144 },    // 010 - 2 - QCIF

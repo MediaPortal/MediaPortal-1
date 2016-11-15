@@ -14,11 +14,12 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2016 Live Networks, Inc.  All rights reserved.
 // A sink that generates an AVI file from a composite media session
 // Implementation
 
 #include "AVIFileSink.hh"
+#include "InputFile.hh"
 #include "OutputFile.hh"
 #include "GroupsockHelper.hh"
 
@@ -94,6 +95,29 @@ private:
 };
 
 
+///////// AVIIndexRecord definition & implementation //////////
+
+class AVIIndexRecord {
+public:
+  AVIIndexRecord(unsigned chunkId, unsigned flags, unsigned offset, unsigned size)
+    : fNext(NULL), fChunkId(chunkId), fFlags(flags), fOffset(offset), fSize(size) {
+  }
+
+  AVIIndexRecord*& next() { return fNext; }
+  unsigned chunkId() const { return fChunkId; }
+  unsigned flags() const { return fFlags; }
+  unsigned offset() const { return fOffset; }
+  unsigned size() const { return fSize; }
+
+private:
+  AVIIndexRecord* fNext;
+  unsigned fChunkId;
+  unsigned fFlags;
+  unsigned fOffset;
+  unsigned fSize;
+};
+
+
 ////////// AVIFileSink implementation //////////
 
 AVIFileSink::AVIFileSink(UsageEnvironment& env,
@@ -103,6 +127,7 @@ AVIFileSink::AVIFileSink(UsageEnvironment& env,
 			 unsigned short movieWidth, unsigned short movieHeight,
 			 unsigned movieFPS, Boolean packetLossCompensate)
   : Medium(env), fInputSession(inputSession),
+    fIndexRecordsHead(NULL), fIndexRecordsTail(NULL), fNumIndexRecords(0),
     fBufferSize(bufferSize), fPacketLossCompensate(packetLossCompensate),
     fAreCurrentlyBeingPlayed(False), fNumSubsessions(0), fNumBytesWritten(0),
     fHaveCompletedOutputFile(False),
@@ -149,15 +174,25 @@ AVIFileSink::AVIFileSink(UsageEnvironment& env,
 AVIFileSink::~AVIFileSink() {
   completeOutputFile();
 
-  // Then, delete each active "AVISubsessionIOState":
+  // Then, stop streaming and delete each active "AVISubsessionIOState":
   MediaSubsessionIterator iter(fInputSession);
   MediaSubsession* subsession;
   while ((subsession = iter.next()) != NULL) {
+    if (subsession->readSource() != NULL) subsession->readSource()->stopGettingFrames();
+
     AVISubsessionIOState* ioState
       = (AVISubsessionIOState*)(subsession->miscPtr);
     if (ioState == NULL) continue;
 
     delete ioState;
+  }
+
+  // Then, delete the index records:
+  AVIIndexRecord* cur = fIndexRecordsHead;
+  while (cur != NULL) {
+    AVIIndexRecord* next = cur->next();
+    delete cur;
+    cur = next;
   }
 
   // Finally, close our output file:
@@ -229,10 +264,15 @@ Boolean AVIFileSink::continuePlaying() {
 
 void AVIFileSink
 ::afterGettingFrame(void* clientData, unsigned packetDataSize,
-		    unsigned /*numTruncatedBytes*/,
+		    unsigned numTruncatedBytes,
 		    struct timeval presentationTime,
 		    unsigned /*durationInMicroseconds*/) {
   AVISubsessionIOState* ioState = (AVISubsessionIOState*)clientData;
+  if (numTruncatedBytes > 0) {
+    ioState->envir() << "AVIFileSink::afterGettingFrame(): The input frame data was too large for our buffer.  "
+		     << numTruncatedBytes
+		     << " bytes of trailing data was dropped!  Correct this by increasing the \"bufferSize\" parameter in the \"createNew()\" call.\n";
+  }
   ioState->afterGettingFrame(packetDataSize, presentationTime);
 }
 
@@ -281,6 +321,16 @@ void AVIFileSink::onRTCPBye(void* clientData) {
   ioState->onSourceClosure();
 }
 
+void AVIFileSink::addIndexRecord(AVIIndexRecord* newIndexRecord) {
+  if (fIndexRecordsHead == NULL) {
+    fIndexRecordsHead = newIndexRecord;
+  } else {
+    fIndexRecordsTail->next() = newIndexRecord;
+  }
+  fIndexRecordsTail = newIndexRecord;
+  ++fNumIndexRecords;
+}
+
 void AVIFileSink::completeOutputFile() {
   if (fHaveCompletedOutputFile || fOutFid == NULL) return;
 
@@ -306,6 +356,15 @@ void AVIFileSink::completeOutputFile() {
   }
 
   //// Global fields:
+  add4ByteString("idx1");
+  addWord(fNumIndexRecords*4*4); // the size of all of the index records, which come next:
+  for (AVIIndexRecord* indexRecord = fIndexRecordsHead; indexRecord != NULL; indexRecord = indexRecord->next()) {
+    addWord(indexRecord->chunkId());
+    addWord(indexRecord->flags());
+    addWord(indexRecord->offset());
+    addWord(indexRecord->size());
+  }
+
   fRIFFSizeValue += fNumBytesWritten;
   setWord(fRIFFSizePosition, fRIFFSizeValue);
 
@@ -469,9 +528,23 @@ void AVISubsessionIOState::useFrame(SubsessionBuffer& buffer) {
     }
   }
 
+  // Add an index record for this frame:
+  AVIIndexRecord* newIndexRecord
+    = new AVIIndexRecord(fAVISubsessionTag, // chunk id
+			 frameSource[0] == 0x67 ? 0x10 : 0, // flags
+			 fOurSink.fMoviSizePosition + 8 + fOurSink.fNumBytesWritten, // offset (note: 8 == size + 'movi')
+			 frameSize + 4); // size
+  fOurSink.addIndexRecord(newIndexRecord);
+
   // Write the data into the file:
   fOurSink.fNumBytesWritten += fOurSink.addWord(fAVISubsessionTag);
-  fOurSink.fNumBytesWritten += fOurSink.addWord(frameSize);
+  if (strcmp(fOurSubsession.codecName(), "H264") == 0) {
+    // Insert a 'start code' (0x00 0x00 0x00 0x01) in front of the frame:
+    fOurSink.fNumBytesWritten += fOurSink.addWord(4+frameSize);
+    fOurSink.fNumBytesWritten += fOurSink.addWord(fourChar(0x00, 0x00, 0x00, 0x01));//add start code
+  } else {
+    fOurSink.fNumBytesWritten += fOurSink.addWord(frameSize);
+  }
   fwrite(frameSource, 1, frameSize, fOurSink.fOutFid);
   fOurSink.fNumBytesWritten += frameSize;
   // Pad to an even length:
@@ -520,15 +593,15 @@ unsigned AVIFileSink::add4ByteString(char const* str) {
 
 void AVIFileSink::setWord(unsigned filePosn, unsigned size) {
   do {
-    if (fseek(fOutFid, filePosn, SEEK_SET) < 0) break;
+    if (SeekFile64(fOutFid, filePosn, SEEK_SET) < 0) break;
     addWord(size);
-    if (fseek(fOutFid, 0, SEEK_END) < 0) break; // go back to where we were
+    if (SeekFile64(fOutFid, 0, SEEK_END) < 0) break; // go back to where we were
 
     return;
   } while (0);
 
-  // One of the fseek()s failed, probable because we're not a seekable file
-  envir() << "AVIFileSink::setWord(): fseek failed (err "
+  // One of the SeekFile64()s failed, probable because we're not a seekable file
+  envir() << "AVIFileSink::setWord(): SeekFile64 failed (err "
 	  << envir().getErrno() << ")\n";
 }
 
@@ -537,7 +610,7 @@ void AVIFileSink::setWord(unsigned filePosn, unsigned size) {
 #define addFileHeader(tag,name) \
     unsigned AVIFileSink::addFileHeader_##name() { \
         add4ByteString("" #tag ""); \
-        unsigned headerSizePosn = ftell(fOutFid); addWord(0); \
+        unsigned headerSizePosn = (unsigned)TellFile64(fOutFid); addWord(0); \
         add4ByteString("" #name ""); \
         unsigned ignoredSize = 8;/*don't include size of tag or size fields*/ \
         unsigned size = 12
@@ -545,7 +618,7 @@ void AVIFileSink::setWord(unsigned filePosn, unsigned size) {
 #define addFileHeader1(name) \
     unsigned AVIFileSink::addFileHeader_##name() { \
         add4ByteString("" #name ""); \
-        unsigned headerSizePosn = ftell(fOutFid); addWord(0); \
+        unsigned headerSizePosn = (unsigned)TellFile64(fOutFid); addWord(0); \
         unsigned ignoredSize = 8;/*don't include size of name or size fields*/ \
         unsigned size = 8
 
@@ -602,11 +675,11 @@ addFileHeaderEnd;
 addFileHeader1(avih);
     unsigned usecPerFrame = fMovieFPS == 0 ? 0 : 1000000/fMovieFPS;
     size += addWord(usecPerFrame); // dwMicroSecPerFrame
-    fAVIHMaxBytesPerSecondPosition = ftell(fOutFid);
+    fAVIHMaxBytesPerSecondPosition = (unsigned)TellFile64(fOutFid);
     size += addWord(0); // dwMaxBytesPerSec (fill in later)
     size += addWord(0); // dwPaddingGranularity
     size += addWord(AVIF_TRUSTCKTYPE|AVIF_HASINDEX|AVIF_ISINTERLEAVED); // dwFlags
-    fAVIHFrameCountPosition = ftell(fOutFid);
+    fAVIHFrameCountPosition = (unsigned)TellFile64(fOutFid);
     size += addWord(0); // dwTotalFrames (fill in later)
     size += addWord(0); // dwInitialFrame
     size += addWord(fNumSubsessions); // dwStreams
@@ -634,7 +707,7 @@ addFileHeader1(strh);
     size += addWord(fCurrentIOState->fAVIScale); // dwScale
     size += addWord(fCurrentIOState->fAVIRate); // dwRate
     size += addWord(0); // dwStart
-    fCurrentIOState->fSTRHFrameCountPosition = ftell(fOutFid);
+    fCurrentIOState->fSTRHFrameCountPosition = (unsigned)TellFile64(fOutFid);
     size += addWord(0); // dwLength (fill in later)
     size += addWord(fBufferSize); // dwSuggestedBufferSize
     size += addWord((unsigned)-1); // dwQuality

@@ -11,7 +11,6 @@
 #include "..\..\alloctracing.h"
 
 ////////// CMemorySink //////////
-#define SUBMIT_BUF_SIZE (1316*30)
 extern void LogDebug(const char *fmt, ...) ;
 
 CMemorySink::CMemorySink(UsageEnvironment& env,CMemoryBuffer& buffer, unsigned bufferSize) 
@@ -21,8 +20,6 @@ CMemorySink::CMemorySink(UsageEnvironment& env,CMemoryBuffer& buffer, unsigned b
 {
   LogDebug("CMemorySink::ctor");
   fBuffer = new unsigned char[bufferSize];
-  m_pSubmitBuffer = new byte[SUBMIT_BUF_SIZE];
-  m_iSubmitBufferPos=0;
   m_bReEntrant=false;
 }
 
@@ -30,7 +27,6 @@ CMemorySink::~CMemorySink()
 {
   LogDebug("CMemorySink::dtor");
   delete[] fBuffer;
-  delete[] m_pSubmitBuffer;
 }
 
 CMemorySink* CMemorySink::createNew(UsageEnvironment& env, CMemoryBuffer& buffer,unsigned bufferSize) 

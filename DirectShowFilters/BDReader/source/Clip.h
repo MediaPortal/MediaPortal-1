@@ -31,21 +31,23 @@
 
 using namespace std;
 
-// TODO - enum
-#define SUPERCEEDED_AUDIO_RETURN    1
-#define SUPERCEEDED_VIDEO_RETURN    2
-#define SUPERCEEDED_SUBTITLE_RETURN 4
-#define SUPERCEEDED_AUDIO_FILL      8
-#define SUPERCEEDED_VIDEO_FILL     16
-#define SUPERCEEDED_SUBTITLE_FILL  32
+enum SUPERSEDE
+{
+  NO_SUPERSEDE = 0,
+  AUDIO_RETURN = 1,
+  VIDEO_RETURN = 2,
+  AUDIO_FILL = 4,
+  VIDEO_FILL = 8
+};
 
 #define FAKE_AUDIO_DURATION 320000LL
 #define AC3_FRAME_LENGTH 1792
+#define BUFFER_LIMIT_TIME 30000000LL // 3 seconds
 
 class CClip
 {
 public:
-  CClip(int clipNumber, int playlistNumber, REFERENCE_TIME playlistFirstPacketTime, REFERENCE_TIME clipOffset, REFERENCE_TIME totalStreamOffset, bool audioPresent, REFERENCE_TIME duration, bool seekTarget, bool interrupted);
+  CClip(int clipNumber, int playlistNumber, REFERENCE_TIME playlistFirstPacketTime, REFERENCE_TIME clipOffset, REFERENCE_TIME totalStreamOffset, bool audioPresent, REFERENCE_TIME duration, REFERENCE_TIME streamStartOffset, bool interrupted);
   ~CClip();
   Packet* ReturnNextAudioPacket(REFERENCE_TIME playlistOffset);
   Packet* ReturnNextVideoPacket(REFERENCE_TIME playlistOffset);
@@ -56,22 +58,18 @@ public:
   int  nClip;
   int  nPlaylist;
   bool noAudio;
-  bool sparseVideo;
-  bool bSeekTarget;
   bool clipReset;
   bool clipInterrupted;
-  void Superceed(int superceedType);
-  bool IsSuperceeded(int superceedType);
+  void Supersede(int supersedeType);
+  bool IsSuperseded(int supersedeType);
   REFERENCE_TIME playlistFirstPacketTime;
   REFERENCE_TIME clipPlaylistOffset;
   void Reset(REFERENCE_TIME totalStreamOffset);
-  bool FakeAudioAvailable();
-  bool SparseVideoAvailable();
   bool HasAudio();
   bool HasVideo();
-  REFERENCE_TIME Incomplete();
   REFERENCE_TIME PlayedDuration();
   void SetVideoPMT(AM_MEDIA_TYPE *pmt);
+  bool AllowBuffering();
 
   // endtime of the last audio packet buffered in the clip
   REFERENCE_TIME lastAudioPosition;
@@ -95,37 +93,45 @@ public:
   // offset of this clip from the beginning of the playlist
   REFERENCE_TIME m_playlistOffset;
 
+  // offset of this clip fromt he beginning of the stream
+  REFERENCE_TIME m_rtStreamStartOffset;
+
   // Accurate clip starting time (when known).
   // Not set when selecting chapter from the menu
-  REFERENCE_TIME m_rtClipStartingOffset;
-
-protected:
-  typedef vector<Packet*>::iterator ivecVideoBuffers;
-  typedef vector<Packet*>::iterator ivecAudioBuffers;
-  vector<Packet*> m_vecClipAudioPackets;
-  vector<Packet*> m_vecClipVideoPackets;
-  AM_MEDIA_TYPE *m_videoPmt;
-  Packet* m_pSparseVideoPacket;
-  int superceeded;
-
-  int nVideoPackets;
-
-  CCritSec m_sectionRead;
-  CCritSec m_sectionVectorAudio;
-  CCritSec m_sectionVectorVideo;
+  REFERENCE_TIME m_rtClipAudioStartingOffset;
+  REFERENCE_TIME m_rtClipVideoStartingOffset;
 
   // true would indicate that this is the first audio packet
   bool firstAudio;
   // true would indicate that this is the first video packet
   bool firstVideo;
 
+protected:
+  void LogSupersede(int supersede);
+
+  typedef vector<Packet*>::iterator ivecVideoBuffers;
+  typedef vector<Packet*>::iterator ivecAudioBuffers;
+  vector<Packet*> m_vecClipAudioPackets;
+  vector<Packet*> m_vecClipVideoPackets;
+  AM_MEDIA_TYPE* m_videoPmt;
+  int superseded;
+
+  CCritSec m_sectionRead;
+  CCritSec m_sectionVectorAudio;
+  CCritSec m_sectionVectorVideo;
+
+  bool m_bCalculateAudioOffset;
+  bool m_bCalculateVideoOffset;
+
   // indicates if this is the first packet to be buffered in clip
   bool firstPacketAccepted;
   // indicates if this is the first packet to be returned from the clip
   bool firstPacketReturned;
 
+  REFERENCE_TIME m_rtPrevAudioStart;
+  REFERENCE_TIME m_rtPlayedDuration; // Do not zero on reset as this should be cumulative
+
   Packet* GenerateFakeAudio(REFERENCE_TIME rtStart);
-  Packet* GenerateSparseVideo(REFERENCE_TIME rtStart);
 };
 
 // Silent AC3 frame

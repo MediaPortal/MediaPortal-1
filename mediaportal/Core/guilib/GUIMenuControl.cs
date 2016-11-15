@@ -23,6 +23,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Media.Animation;
 using MediaPortal.Profile;
 using Microsoft.DirectX.Direct3D;
@@ -125,18 +126,21 @@ namespace MediaPortal.GUI.Library
       get { return _focusPosition; }
       set
       {
-        _buttonList[_focusPosition].Focus = false;
-        _focusPosition = value;
-        _buttonList[_focusPosition].Focus = true;
-        if (_focusImage != null)
+        if (_buttonList != null)
         {
-          if (!_horizontal)
+          if (_buttonList.Count > _focusPosition) _buttonList[_focusPosition].Focus = false;
+          _focusPosition = value;
+          if (_buttonList.Count > _focusPosition) _buttonList[_focusPosition].Focus = true;
+          if (_focusImage != null)
           {
-            _focusImage.SetPosition(_focusImage._positionX, _buttonList[_focusPosition]._positionY);
-          }
-          else
-          {
-            _focusImage.SetPosition(_buttonList[_focusPosition]._positionX, _focusImage._positionY);
+            if (!_horizontal)
+            {
+              _focusImage.SetPosition(_focusImage._positionX, _buttonList[_focusPosition]._positionY);
+            }
+            else
+            {
+              _focusImage.SetPosition(_buttonList[_focusPosition]._positionX, _focusImage._positionY);
+            }
           }
         }
       }
@@ -1420,7 +1424,7 @@ namespace MediaPortal.GUI.Library
       {
         _focusImage.Render(timePassed);
       }
-      foreach (GUIButtonControl button in _buttonList)
+      foreach (GUIButtonControl button in _buttonList.ToList())
       {
         button.Render(timePassed);
       }

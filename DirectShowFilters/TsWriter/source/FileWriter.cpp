@@ -1,3 +1,19 @@
+// Copyright (C) 2006-2015 Team MediaPortal
+// http://www.team-mediaportal.com
+// 
+// MediaPortal is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 2 of the License, or
+// (at your option) any later version.
+// 
+// MediaPortal is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
+
 /**
 *  FileWriter.cpp
 *  Copyright (C) 2006-2007      nate
@@ -39,7 +55,8 @@ FileWriter::FileWriter() :
 	m_bChunkReserve(FALSE),
 	m_chunkReserveSize(2000000),
 	m_chunkReserveFileSize(0),
-	m_maxFileSize(0)
+	m_maxFileSize(0),
+	m_bWriteFailed(FALSE)
 {
 }
 
@@ -99,35 +116,44 @@ HRESULT FileWriter::OpenFile()
 		return ERROR_INVALID_NAME;
 	}
 
-	// See the file is being read.
-	m_hFile = CreateFileW(m_pFileName,                  // The filename
-						 (DWORD) GENERIC_WRITE,         // File access
-						 (DWORD) NULL,                  // Share access
-						 NULL,                          // Security
-						 (DWORD) OPEN_ALWAYS,           // Open flags
-						 (DWORD) 0,                     // More flags
-						 NULL);                         // Template
+	// Check if the file is being read by another process.
+	// (which should result in a 'sharing violation' error)
+	m_hFile = CreateFileW(m_pFileName,          // The filename
+						 (DWORD) GENERIC_WRITE,           // File access
+						 (DWORD) NULL,                    // Share access
+						 NULL,                            // Security
+						 (DWORD) OPEN_ALWAYS,             // Open flags
+						 (DWORD) 0,                       // More flags
+						 NULL);                           // Template
 	if (m_hFile == INVALID_HANDLE_VALUE)
 	{
 		DWORD dwErr = GetLastError();
-		if (dwErr == ERROR_SHARING_VIOLATION)
-		{
-			return HRESULT_FROM_WIN32(dwErr);
-		}
 		return HRESULT_FROM_WIN32(dwErr);
 	}
 	CloseHandle(m_hFile);
 
-	// Try to open the file
-	m_hFile = CreateFileW(m_pFileName,                  // The filename
-						 (DWORD) GENERIC_WRITE,         // File access
-						 (DWORD) FILE_SHARE_READ,       // Share access
-						 NULL,                          // Security
-						 (DWORD) OPEN_ALWAYS,           // Open flags
-//						 (DWORD) FILE_FLAG_RANDOM_ACCESS,
-//						 (DWORD) FILE_FLAG_WRITE_THROUGH,             // More flags
-						 (DWORD) 0,                     // More flags
-						 NULL);                         // Template
+	if (wcsstr(m_pFileName, L".ts.tsbuffer") == NULL)   // not tsbuffer files
+	{
+  	// Try to open the file in normal mode
+  	m_hFile = CreateFileW(m_pFileName,           // The filename
+  						 (DWORD) GENERIC_WRITE,            // File access
+  						 (DWORD) FILE_SHARE_READ,          // Share access
+  						 NULL,                             // Security
+  						 (DWORD) OPEN_ALWAYS,              // Open flags
+  						 (DWORD) FILE_ATTRIBUTE_NORMAL,    // More flags
+  						 NULL);                            // Template
+  }
+  else  // tsbuffer files
+  {
+  	m_hFile = CreateFileW(m_pFileName,           // The filename
+  						 (DWORD) GENERIC_WRITE,            // File access
+  						 (DWORD) (FILE_SHARE_READ | FILE_SHARE_WRITE),          // Share access
+  						 NULL,                             // Security
+  						 (DWORD) OPEN_ALWAYS,              // Open flags
+  						 //(DWORD) FILE_ATTRIBUTE_NORMAL,    // More flags
+							 (DWORD) (FILE_ATTRIBUTE_NORMAL | FILE_FLAG_RANDOM_ACCESS),     // More flags
+  						 NULL);                            // Template
+  }
 
 	if (m_hFile == INVALID_HANDLE_VALUE)
 	{
@@ -138,33 +164,46 @@ HRESULT FileWriter::OpenFile()
 	SetFilePointer(0, FILE_END);
 	m_chunkReserveFileSize = GetFilePointer();
 	SetFilePointer(0, FILE_BEGIN);
+  m_bWriteFailed = FALSE;
+
+  //LogDebug(L"FileWriter: OpenFile(), file %s: m_chunkReserveFileSize %I64d, m_maxFileSize: %I64d", m_pFileName, m_chunkReserveFileSize, m_maxFileSize);			  
 
 	return S_OK;
 }
 
 //
-// CloseFile
+// CloseFile (close all files)
 //
 HRESULT FileWriter::CloseFile()
-{
-	if (m_hFile == INVALID_HANDLE_VALUE)
-	{
-		return S_OK;
+{  
+	if (m_hFile != INVALID_HANDLE_VALUE)
+	{  
+   	__int64 currentPosition = GetFilePointer();
+   	
+   	if (m_bChunkReserve)
+   	{
+   		if (currentPosition < m_chunkReserveFileSize)
+   		{
+     		SetFilePointer(currentPosition, FILE_BEGIN);
+     		SetEndOfFile(m_hFile);
+   	  }
+   	}
+    
+  	if (!CloseHandle(m_hFile))
+  	{
+  	  LogDebug(L"FileWriter: CloseFile(), CloseHandle(m_hFile) failed, m_hFile 0x%x", m_hFile);
+  	}
+  	m_hFile = INVALID_HANDLE_VALUE; // Invalidate the file
+  	
+  	// if (m_pFileName)
+  	// {
+    //   LogDebug(L"FileWriter: CloseFile() : %s", m_pFileName);			  
+    // }
 	}
-
-	if (m_bChunkReserve)
-	{
-		__int64 currentPosition = GetFilePointer();
-		SetFilePointer(currentPosition, FILE_BEGIN);
-		SetEndOfFile(m_hFile);
-	}
-
-	CloseHandle(m_hFile);
-	m_hFile = INVALID_HANDLE_VALUE; // Invalidate the file
 
 	return S_OK;
-
 }
+
 
 BOOL FileWriter::IsFileInvalid()
 {
@@ -188,15 +227,21 @@ __int64 FileWriter::GetFilePointer()
 
 HRESULT FileWriter::Write(PBYTE pbData, ULONG lDataLength)
 {
+	return WriteWithRetry(pbData, lDataLength, 0);
+}
+
+HRESULT FileWriter::WriteWithRetry(PBYTE pbData, ULONG lDataLength, int retries)
+{
 	HRESULT hr;
 
 	// If the file has already been closed, don't continue
 	if (m_hFile == INVALID_HANDLE_VALUE)
 		return S_FALSE;
 
+  __int64 currentPosition = GetFilePointer();
+
 	if (m_bChunkReserve)
 	{
-		__int64 currentPosition = GetFilePointer();
 		if ((currentPosition + lDataLength > m_chunkReserveFileSize) &&
 			(m_chunkReserveFileSize < m_maxFileSize))
 		{
@@ -208,32 +253,69 @@ HRESULT FileWriter::Write(PBYTE pbData, ULONG lDataLength)
 
 			SetFilePointer(m_chunkReserveFileSize, FILE_BEGIN);
 			SetEndOfFile(m_hFile);
-			SetFilePointer(currentPosition, FILE_BEGIN);
+			DWORD dwPtr = SetFilePointer(currentPosition, FILE_BEGIN);
+			if (dwPtr == INVALID_SET_FILE_POINTER)
+			{
+        LogDebug(L"FileWriter: Write() SetFilePointer() error, file %s: pointer %d, hr: %d", m_pFileName, currentPosition, dwPtr);			  
+			}
 		}
 	}
 
 	DWORD written = 0;
-	hr = WriteFile(m_hFile, (PVOID)pbData, (DWORD)lDataLength, &written, NULL);
-
-	if (FAILED(hr))
-		return hr;
-	if (written < (ULONG)lDataLength)
+  
+  for (int retryCnt = 0; retryCnt <= retries; retryCnt++)
   {
-     LogDebug(L"!!!!!    Error writing to file %s: written %d of expected %d bytes", m_pFileName, written, lDataLength);
-		return S_FALSE;
+  	written = 0;
+	  hr = WriteFile(m_hFile, (PVOID)pbData, (DWORD)lDataLength, &written, NULL);
+  	if (hr && (written == (DWORD)lDataLength))
+    {
+      if (retryCnt > 0)
+      {
+        LogDebug(L"FileWriter: Write() retry, file %s: retries %d", m_pFileName, retryCnt);
+      }
+      m_bWriteFailed = FALSE;
+	    return S_OK;
+    }
+    else if (retries == 0)
+    {
+      break;
+    }
+    
+    Sleep(50);
+	  DWORD dwPtr = SetFilePointer(currentPosition, FILE_BEGIN);
+		if (dwPtr == INVALID_SET_FILE_POINTER)
+		{
+      LogDebug(L"FileWriter: Write() retry, SetFilePointer() error, file %s: pointer %d, hr: %d", m_pFileName, currentPosition, dwPtr);			  
+		}		
   }
 
-	return S_OK;
+  //Failed to write after retries
+  if (!m_bWriteFailed) //Only log the first failure in a series...
+  {
+    LogDebug(L"FileWriter: Error writing to file %s: written %d of expected %d bytes, hr: %d", m_pFileName, written, lDataLength, hr);
+  }    
+  m_bWriteFailed = TRUE;
+  
+  return S_FALSE;
 }
 
-void FileWriter::SetChunkReserve(BOOL bEnable, __int64 chunkReserveSize, __int64 maxFileSize)
+void FileWriter::SetChunkReserve( __int64 chunkReserveSize, __int64 maxFileSize)
 {
-	m_bChunkReserve = bEnable;
+	m_bChunkReserve = (chunkReserveSize > 0);
+	
+  LogDebug(L"FileWriter: SetChunkReserve(), chunkReserveSize: %I64d, maxFileSize: %I64d, m_bChunkReserve: %d", chunkReserveSize, maxFileSize, m_bChunkReserve);		
+  	  
 	if (m_bChunkReserve)
 	{
 		m_chunkReserveSize = chunkReserveSize;
 		m_chunkReserveFileSize = 0;
-		m_maxFileSize = maxFileSize;
 	}
+	else
+	{
+	  m_chunkReserveSize = 2000000;
+		m_chunkReserveFileSize = 0;
+	}
+	
+	m_maxFileSize = maxFileSize;
 }
 

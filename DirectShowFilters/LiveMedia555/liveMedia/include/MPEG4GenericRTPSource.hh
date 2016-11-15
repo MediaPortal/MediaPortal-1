@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2016 Live Networks, Inc.  All rights reserved.
 // MPEG4-GENERIC ("audio", "video", or "application") RTP stream sources
 // C++ header
 
@@ -24,8 +24,6 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 #ifndef _MULTI_FRAMED_RTP_SOURCE_HH
 #include "MultiFramedRTPSource.hh"
 #endif
-
-#define SPECIAL_HEADER_BUFFER_SIZE 1000
 
 class MPEG4GenericRTPSource: public MultiFramedRTPSource {
 public:

@@ -33,7 +33,6 @@
 #include "bdreader.h"
 #include "audiopin.h"
 #include "videopin.h"
-#include "subtitlepin.h"
 #include "..\..\shared\DebugSettings.h"
 
 // For more details for memory leak detection see the alloctracing.h header
@@ -54,22 +53,15 @@ const AMOVIESETUP_MEDIATYPE acceptVideoPinTypes =
   &MEDIASUBTYPE_MPEG2_VIDEO     // minor type
 };
 
-const AMOVIESETUP_MEDIATYPE acceptSubtitlePinTypes =
-{
-  &MEDIATYPE_Stream,            // major type
-  &MEDIASUBTYPE_MPEG2_TRANSPORT // minor type
-};
-
 const AMOVIESETUP_PIN pins[] =
 {
   {L"Audio", FALSE, TRUE, FALSE, FALSE, &CLSID_NULL, NULL, 1, &acceptAudioPinTypes},
-  {L"Video", FALSE, TRUE, FALSE, FALSE, &CLSID_NULL, NULL, 1, &acceptVideoPinTypes},
-  {L"Subtitle", FALSE, TRUE, FALSE, FALSE, &CLSID_NULL, NULL, 1, &acceptSubtitlePinTypes}
+  {L"Video", FALSE, TRUE, FALSE, FALSE, &CLSID_NULL, NULL, 1, &acceptVideoPinTypes}
 };
 
 const AMOVIESETUP_FILTER BDReader =
 {
-  &CLSID_BDReader, L"MediaPortal BD Reader", MERIT_NORMAL + 1000, 3, pins, CLSID_LegacyAmFilterCategory
+  &CLSID_BDReader, L"MediaPortal BD Reader", MERIT_NORMAL + 1000, 2, pins, CLSID_LegacyAmFilterCategory
 };
 
 CFactoryTemplate g_Templates[] =
@@ -97,13 +89,11 @@ CBDReaderFilter::CBDReaderFilter(IUnknown *pUnk, HRESULT *phr):
   CSource(NAME("CBDReaderFilter"), pUnk, CLSID_BDReader),
   m_pAudioPin(NULL),
   m_demultiplexer(*this),
-  m_pDVBSubtitle(NULL),
   m_pCallback(NULL),
   m_pRequestAudioCallback(NULL),
   m_hCommandThread(NULL),
   m_hCommandEvent(NULL),
   m_hStopCommandThreadEvent(NULL),
-  m_bUpdateStreamPositionOnly(false),
   m_dwThreadId(0),
   m_pMediaSeeking(NULL),
   m_rtPlaybackOffset(_I64_MIN),
@@ -118,10 +108,11 @@ CBDReaderFilter::CBDReaderFilter(IUnknown *pUnk, HRESULT *phr):
   m_dRate(1.0),
   m_rtLastStart(0),
   m_rtLastStop(0),
-  m_bFlushing(false),
   m_bRebuildOngoing(false),
-  m_bChapterChangeRequested(false),
-  m_bFirstSeek(true)
+  m_bHandleSeekEvent(false),
+  m_bForceTitleBasedPlayback(false),
+  m_bFirstSeek(true),
+  m_pLibPaused(false)
 {
   // use the following line if you are having trouble setting breakpoints
   // #pragma comment( lib, "strmbasd" )
@@ -134,9 +125,8 @@ CBDReaderFilter::CBDReaderFilter(IUnknown *pUnk, HRESULT *phr):
   LogDebug("CBDReaderFilter::ctor");
   m_pAudioPin = new CAudioPin(GetOwner(), this, phr, &m_section, m_demultiplexer);
   m_pVideoPin = new CVideoPin(GetOwner(), this, phr, &m_section, m_demultiplexer);
-  m_pSubtitlePin = new CSubtitlePin(GetOwner(), this, phr, &m_section);
 
-  if (!m_pAudioPin || !m_pVideoPin || !m_pSubtitlePin)
+  if (!m_pAudioPin || !m_pVideoPin)
   {
     *phr = E_OUTOFMEMORY;
     return;
@@ -144,7 +134,6 @@ CBDReaderFilter::CBDReaderFilter(IUnknown *pUnk, HRESULT *phr):
   
   wcscpy(m_fileName, L"");
 
-  LogDebug("Wait for seeking to eof - false - constructor");
   m_bStopping = false;
   m_MPmainThreadID = GetCurrentThreadId();
 
@@ -154,8 +143,6 @@ CBDReaderFilter::CBDReaderFilter(IUnknown *pUnk, HRESULT *phr):
   // Manual reset to allow easier command queue handling
   m_hCommandEvent = CreateEvent(NULL, true, false, NULL); 
   m_hStopCommandThreadEvent = CreateEvent(NULL, false, false, NULL);
-
-  Create(); // CAMThread
 }
 
 CBDReaderFilter::~CBDReaderFilter()
@@ -165,9 +152,6 @@ CBDReaderFilter::~CBDReaderFilter()
   CAutoLock cAutoLock(this);
 
   m_eRebuild.Set(); // Release the command thead if graph rebuild was interrupted
-
-  CAMThread::CallWorker(CMD_EXIT);
-  CAMThread::Close();
 
   if (m_hStopCommandThreadEvent)
   {
@@ -180,6 +164,8 @@ CBDReaderFilter::~CBDReaderFilter()
     CloseHandle(m_hCommandEvent);
 
   lib.RemoveEventObserver(this);
+  lib.CloseBluray();
+
   if (m_pAudioPin)
   {
     m_pAudioPin->Disconnect();
@@ -190,18 +176,6 @@ CBDReaderFilter::~CBDReaderFilter()
   {
     m_pVideoPin->Disconnect();
     delete m_pVideoPin;
-  }
-
-  if (m_pSubtitlePin)
-  {
-    m_pSubtitlePin->Disconnect();
-    delete m_pSubtitlePin;
-  }
-
-  if (m_pDVBSubtitle)
-  {
-    m_pDVBSubtitle->Release();
-    m_pDVBSubtitle = NULL;
   }
 }
 
@@ -221,8 +195,6 @@ STDMETHODIMP CBDReaderFilter::NonDelegatingQueryInterface(REFIID riid, void ** p
     return GetInterface((IFileSourceFilter*)this, ppv);
   if (riid == IID_IAMStreamSelect)
     return GetInterface((IAMStreamSelect*)this, ppv);
-  if (riid == IID_ISubtitleStream)
-    return GetInterface((ISubtitleStream*)this, ppv);
   if (riid == IID_IBDReader)
     return GetInterface((IBDReader*)this, ppv);
   if (riid == IID_IAudioStream)
@@ -237,14 +209,12 @@ CBasePin* CBDReaderFilter::GetPin(int n)
     return m_pAudioPin;
   else  if (n == 1)
     return m_pVideoPin;
-  else if (n == 2)
-    return m_pSubtitlePin;
   return NULL;
 }
 
 int CBDReaderFilter::GetPinCount()
 {
-  return 3;
+  return 2;
 }
 
 void CBDReaderFilter::IssueCommand(DS_CMD_ID pCommand, REFERENCE_TIME pTime)
@@ -307,10 +277,10 @@ void CBDReaderFilter::OnPlaybackPositionChange()
 
     if (m_State == State_Running && m_pCallback)
     {
-      m_rtCurrentTime = time - m_rtPlaybackOffset + m_rtSeekPosition - m_rtRun + m_rtRunOffset;
+      m_rtCurrentTime = time - m_rtPlaybackOffset + m_rtSeekPosition;
 
       m_pCallback->OnClockChange(m_rtTitleDuration, m_rtCurrentTime);
-      //LogDebug("dur: %6.3f pos: %6.3f run delay: %6.3f", m_rtTitleDuration / 10000000.0, m_rtCurrentTime / 10000000.0, (m_rtRun - m_rtRunOffset) / 10000000.0);
+      //LogDebug("dur: %6.3f pos: %6.3f", m_rtTitleDuration / 10000000.0, m_rtCurrentTime / 10000000.0);
     }
   }
 }
@@ -331,9 +301,6 @@ void CBDReaderFilter::ResetPlaybackOffset(REFERENCE_TIME pSeekPosition)
   CAutoLock lock(&m_csClock);
   m_rtSeekPosition = pSeekPosition;
   m_rtPlaybackOffset = _I64_MIN;
-
-  if (m_pClock)
-    m_pClock->GetTime(&m_rtRunOffset);
 
   m_rtLastStart = 0;
 }
@@ -382,11 +349,6 @@ STDMETHODIMP CBDReaderFilter::Action(int key)
 {
   lib.LogAction(key);
 
-  INT64 pos = -1;
-
-  if (m_pMediaSeeking)
-    HRESULT hr = m_pMediaSeeking->GetCurrentPosition(&pos);
-  
   switch (key)
   {  
     case BD_VK_0:
@@ -407,9 +369,9 @@ STDMETHODIMP CBDReaderFilter::Action(int key)
     case BD_VK_POPUP:
     case BD_VK_ROOT_MENU:
     case BD_VK_MOUSE_ACTIVATE:
-      return lib.ProvideUserInput(CONVERT_DS_90KHz(pos), (UINT32)key) == true ? S_OK : S_FALSE;
+      return lib.ProvideUserInput(GetScr(), (UINT32)key) == true ? S_OK : S_FALSE;
     break;
-    default:  
+    default:
       return S_FALSE;
   }
   return S_FALSE;
@@ -422,14 +384,13 @@ STDMETHODIMP CBDReaderFilter::SetAngle(UINT8 angle)
 
 STDMETHODIMP CBDReaderFilter::SetChapter(UINT32 chapter)
 {
-  m_bChapterChangeRequested = true;
-
   HRESULT hr = S_FALSE;
 
   UINT32 current = 0;
   if (lib.GetChapter(&current) && current != chapter)
   {
-    hr = m_demultiplexer.FlushToChapter(chapter);
+    lib.SetChapter(chapter);
+    m_bHandleSeekEvent = true;
   }
 
   return hr;
@@ -459,16 +420,7 @@ STDMETHODIMP CBDReaderFilter::GetTitleCount(UINT32* count)
 
 STDMETHODIMP CBDReaderFilter::MouseMove(UINT16 x, UINT16 y)
 {
-  INT64 pos = -1;
-
-  if (m_pMediaSeeking)
-  {
-    HRESULT hr = m_pMediaSeeking->GetCurrentPosition(&pos);
-    if (SUCCEEDED(hr))
-      pos = CONVERT_DS_90KHz(pos);
-  }
-
-  lib.MouseMove(CONVERT_DS_90KHz(pos), x, y);
+  lib.MouseMove(GetScr(), x, y);
   return S_OK;
 }
 
@@ -518,6 +470,7 @@ DWORD WINAPI CBDReaderFilter::CommandThread()
   if (pGraph)
   {
     pGraph->QueryInterface(&m_pMediaSeeking);
+    pGraph->QueryInterface(&m_pMediaControl);
     pGraph->Release();
   }
 
@@ -529,24 +482,20 @@ DWORD WINAPI CBDReaderFilter::CommandThread()
   {
     while(1)
     {
-      //DWORD result = WaitForMultipleObjects(2, handles, false, 40);
-	    DWORD result = WaitForMultipleObjects(2, handles, false, INFINITE);
+      DWORD result = WaitForMultipleObjects(2, handles, false, 40);
       if (result == WAIT_OBJECT_0) // exit event
       {
         LogDebug("CBDReaderFilter::Command thread: closing down");
         return 0;
       }
-      /*
       else if (result == WAIT_TIMEOUT)
       {
-        LONGLONG pos = 0;
-        HRESULT hr = m_pMediaSeeking->GetCurrentPosition(&pos);
-        if (SUCCEEDED(hr))
-        {
-          lib.ProvideUserInput(CONVERT_DS_90KHz(pos), BD_VK_NONE);
-        }
+        LONGLONG pos = CONVERT_DS_90KHz(m_rtCurrentTime);
+        lib.SetScr(pos, m_demultiplexer.m_rtOffset);
+
+        if (m_pMediaControl && m_pLibPaused)
+          lib.ProcessEvents();
       }
-      */
       else if (result == WAIT_OBJECT_0 + 1) // command in queue
       {
         LONGLONG posEnd = 0;
@@ -593,29 +542,41 @@ DWORD WINAPI CBDReaderFilter::CommandThread()
               return 0;
             }
 
-            m_bUpdateStreamPositionOnly = true;
-
             LogDebug("CBDReaderFilter::Command thread: seek - pos: %06.3f (rebuild)", cmd.refTime.Millisecs() / 1000.0);
             m_pMediaSeeking->SetPositions(&pos, AM_SEEKING_AbsolutePositioning | AM_SEEKING_FakeSeek, &posEnd, AM_SEEKING_NoPositioning);
-
-            m_eSeekDone.Wait();
-            m_eSeekDone.Reset();
 
             m_demultiplexer.SetMediaChanging(false);
             m_demultiplexer.m_bRebuildOngoing = false;
 
             break;
-		      }
+          }
 
         case SEEK:
-          m_bUpdateStreamPositionOnly = true;
+          {
+            LogDebug("CBDReaderFilter::Command thread: seek requested - pos: %06.3f", cmd.refTime.Millisecs() / 1000.0);
+            HRESULT hr = m_pMediaSeeking->SetPositions((LONGLONG*)&cmd.refTime.m_time, AM_SEEKING_AbsolutePositioning | AM_SEEKING_FakeSeek, &posEnd, AM_SEEKING_NoPositioning);
+
+            break;
+          }
+
+        case PAUSE:
+          if (!m_pLibPaused && m_pMediaControl)
+          {
+            LogDebug("CBDReaderFilter::Command thread: pause requested");
+            m_pMediaControl->Pause();
+            m_pLibPaused = true;
+          }
           
-          LogDebug("CBDReaderFilter::Command thread: seek requested - pos: %06.3f", cmd.refTime.Millisecs() / 1000.0);
-          HRESULT hr = m_pMediaSeeking->SetPositions((LONGLONG*)&cmd.refTime.m_time, AM_SEEKING_AbsolutePositioning | AM_SEEKING_FakeSeek, &posEnd, AM_SEEKING_NoPositioning);
+          break;
 
-          m_eSeekDone.Wait();
-          m_eSeekDone.Reset();
-
+        case RESUME:
+          if (m_pLibPaused && m_pMediaControl)
+          {
+            LogDebug("CBDReaderFilter::Command thread: resume requested");
+            m_pMediaControl->Run();
+            m_pLibPaused = false;
+          }
+          
           break;
         }
       }
@@ -634,17 +595,13 @@ STDMETHODIMP CBDReaderFilter::Run(REFERENCE_TIME tStart)
 {
   LogDebug("CBDReaderFilter::Run(%05.2f) state %d", tStart / 10000000.0, m_State);
   
-  m_rtRun = tStart;
-
   CAutoLock cObjectLock(m_pLock);
-  lib.SetState(State_Running);  
+  lib.SetState(State_Running);
   
-  if (m_pSubtitlePin) 
-    m_pSubtitlePin->SetRunningStatus(true);
-	
   HRESULT hr = CSource::Run(tStart);
 
-  FindSubtitleFilter();
+  lib.SetRate((UINT32((double)BLURAY_RATE_NORMAL * m_dRate)));
+
   LogDebug("CBDReaderFilter::Run(%05.2f) state %d -->done", tStart / 10000000.0, m_State);
 
   if (!m_hCommandThread)
@@ -664,9 +621,6 @@ STDMETHODIMP CBDReaderFilter::Stop()
 
   if (!m_bRebuildOngoing)
   {
-    if (m_pSubtitlePin)
-      m_pSubtitlePin->SetRunningStatus(false);
-
     m_demultiplexer.m_bVideoRequiresRebuild = false;
     m_demultiplexer.m_bAudioRequiresRebuild = false;
     m_demultiplexer.m_bVideoClipSeen = false;
@@ -696,6 +650,9 @@ STDMETHODIMP CBDReaderFilter::Pause()
   CAutoLock cObjectLock(m_pLock);
   lib.SetState(State_Paused);
 
+  if (m_State == State_Running)
+    lib.SetRate(BLURAY_RATE_PAUSED);
+
   HRESULT hr = CSource::Pause();
 
   LogDebug("CBDReaderFilter::Pause() - END - state = %d", m_State);
@@ -707,12 +664,7 @@ STDMETHODIMP CBDReaderFilter::GetDuration(REFERENCE_TIME* pDuration)
   if (!pDuration)
     return E_INVALIDARG;
 
-  ULONGLONG pos = 0, dur = 0;
-
-  if (lib.CurrentPosition(pos, dur))
-    *pDuration = CONVERT_90KHz_DS(dur);
-  else
-    pDuration = 0;
+  *pDuration = m_demultiplexer.TitleDuration();
 
   return NOERROR;
 }
@@ -722,9 +674,24 @@ STDMETHODIMP CBDReaderFilter::GetAudioChannelCount(long lIndex)
   return m_demultiplexer.GetAudioChannelCount((int)lIndex);
 }
 
+STDMETHODIMP CBDReaderFilter::GetTime(REFERENCE_TIME* pTime)
+{
+  if (!pTime)
+    return E_INVALIDARG;
+
+  if (m_pClock)
+    m_pClock->GetTime(pTime);
+  else
+    return S_FALSE;
+
+  return S_OK;
+}
+
 STDMETHODIMP CBDReaderFilter::Load(LPCOLESTR pszFileName, const AM_MEDIA_TYPE *pmt)
 {
   LogDebug("CBDReaderFilter::Load()");
+
+  CheckPointer(pszFileName, E_POINTER);
 
   wcscpy(m_fileName, pszFileName);
   char path[4096];
@@ -746,36 +713,27 @@ STDMETHODIMP CBDReaderFilter::Load(LPCOLESTR pszFileName, const AM_MEDIA_TYPE *p
   if (!lib.OpenBluray(m_pathToBD))
     return VFW_E_NOT_FOUND;
 
-  UINT32 titleCount = lib.GetTitles(TITLES_ALL);
-
-  for (unsigned int i = 0; i < titleCount; i++)
-    lib.LogTitleInfo(i, true);
-
-  // Debugging aid - allow GraphEdit to be used
-  if (0)
-  {
-    // Aviator
-    lib.ForceTitleBasedPlayback(true);
-    lib.SetTitle(5);
-    Start();
-  }
-
-  return S_OK;
+  lib.Play();
+  return m_demultiplexer.Start();
 }
 
 STDMETHODIMP CBDReaderFilter::Start()
 {
-  m_bFirstPlay = true;
+  if (!m_bForceTitleBasedPlayback)
+  {
+    TriggerOnMediaChanged();
+    return S_OK;
+  }
+
+  // We need to restart the lib as initial start was done in menu mode
+  lib.CloseBluray();
+  lib.OpenBluray(m_pathToBD);
   lib.Play();
 
   HRESULT hr = m_demultiplexer.Start();
-  TriggerOnMediaChanged();
-  // Close BD so the HDVM etc. are reset completely after querying the initial data.
-  // This is required so we wont lose the initial events.
-  lib.CloseBluray();
-  m_bFirstPlay = false;
-  lib.OpenBluray(m_pathToBD);
-  lib.Play();
+
+  if (SUCCEEDED(hr))
+    TriggerOnMediaChanged();
 
   return hr;
 }
@@ -815,21 +773,10 @@ void CBDReaderFilter::Seek(REFERENCE_TIME rtAbsSeek)
 
   LogDebug("CBDReaderFilter::--Seek()-- %6.3f, media changing %d", rtAbsSeek / 10000000.0, m_demultiplexer.IsMediaChanging());
 
-  if (!m_bUpdateStreamPositionOnly)
-  {
-    LogDebug("CBDReaderFilter::Seek - Flush");
-    m_demultiplexer.Flush(true, true, rtAbsSeek);
-    lib.Seek(CONVERT_DS_90KHz(rtAbsSeek));
-  }
+  LogDebug("CBDReaderFilter::Seek - delivering seek request to lib");
+  lib.Seek(CONVERT_DS_90KHz(rtAbsSeek));
 
-  m_bUpdateStreamPositionOnly = false;
-
-  if (m_pDVBSubtitle)
-  {
-    m_pDVBSubtitle->SetFirstPcr(0); // TODO: check if we need ot set the 1st PTS
-    CRefTime refTime(rtAbsSeek);
-    m_pDVBSubtitle->SeekDone(refTime);
-  }
+  m_demultiplexer.m_rtStallTime = 0;
 }
 
 CAudioPin* CBDReaderFilter::GetAudioPin()
@@ -842,27 +789,45 @@ CVideoPin* CBDReaderFilter::GetVideoPin()
   return m_pVideoPin;
 }
 
-CSubtitlePin* CBDReaderFilter::GetSubtitlePin()
-{
-  return m_pSubtitlePin;
-}
-
-IDVBSubtitle* CBDReaderFilter::GetSubtitleFilter()
-{
-  return m_pDVBSubtitle;
-}
-
-void CBDReaderFilter::HandleBDEvent(BD_EVENT& pEv, UINT64 pPos)
+void CBDReaderFilter::HandleBDEvent(BD_EVENT& pEv)
 {
   switch (pEv.event)
   {
+    case BD_EVENT_IDLE:
+      Sleep(IDLE_SLEEP_DURATION); // To avoid busy looping
+      break;
+
     case BD_EVENT_SEEK:
+      if (m_bHandleSeekEvent)
+      {
+        DeliverBeginFlush();
+        DeliverEndFlush();
+
+        m_pVideoPin->DeliverNewSegment(m_rtStart, m_rtStop, m_dRate, true);
+        m_pAudioPin->DeliverNewSegment(m_rtStart, m_rtStop, m_dRate, true);
+      }
+
+      m_bHandleSeekEvent = true;
+
+      break;
+
+    case BD_EVENT_PLAYLIST_STOP:
+      DeliverBeginFlush();
+      DeliverEndFlush();
+
+      m_pVideoPin->DeliverNewSegment(m_rtStart, m_rtStop, m_dRate);
+      m_pAudioPin->DeliverNewSegment(m_rtStart, m_rtStop, m_dRate);
+
       break;
 
     case BD_EVENT_STILL_TIME:
       break;
 
     case BD_EVENT_STILL:
+      if (pEv.param == 1)
+        IssueCommand(PAUSE, 0);
+      else
+        IssueCommand(RESUME, 0);
       break;
 
     case BD_EVENT_TITLE:
@@ -873,7 +838,7 @@ void CBDReaderFilter::HandleBDEvent(BD_EVENT& pEv, UINT64 pPos)
   }
 
   // Send event to the callback - filter out the none events
-  if (m_pCallback && pEv.event != BD_EVENT_NONE && !m_bFirstPlay)
+  if (m_pCallback && pEv.event != BD_EVENT_NONE)
     m_pCallback->OnBDEvent(pEv);
 }
 
@@ -887,7 +852,10 @@ void CBDReaderFilter::HandleOSDUpdate(OSDTexture& pTexture)
 /// returns the number of audio streams available
 STDMETHODIMP CBDReaderFilter::Count(DWORD* streamCount)
 {
-  *streamCount = m_demultiplexer.GetAudioStreamCount();
+  int subCount = 0;
+  m_demultiplexer.GetSubtitleStreamCount(subCount);
+
+  *streamCount = m_demultiplexer.GetAudioStreamCount() + subCount;
   return S_OK;
 }
 
@@ -895,39 +863,71 @@ STDMETHODIMP CBDReaderFilter::Count(DWORD* streamCount)
 /// Sets the current audio stream to use
 STDMETHODIMP CBDReaderFilter::Enable(long index, DWORD flags)
 {
-  return m_demultiplexer.SetAudioStream((int)index) ? S_OK : S_FALSE;
+  int subtitleOffset = m_demultiplexer.GetAudioStreamCount();
+
+  if (index < subtitleOffset)
+    return m_demultiplexer.SetAudioStream((int)index) ? S_OK : S_FALSE;
+  else
+  {
+    bool enable = flags & AMSTREAMSELECTENABLE_ENABLE;
+    
+    return lib.SetSubtitleStream((int)index - subtitleOffset, enable) ? S_OK : S_FALSE;
+  }
 }
 
 /// method which implements IAMStreamSelect.Info
-/// returns an array of all audio streams available
+/// returns an array of all audio and subtitle streams available
 STDMETHODIMP CBDReaderFilter::Info(long lIndex, AM_MEDIA_TYPE**ppmt, DWORD* pdwFlags, LCID* plcid, DWORD* pdwGroup, WCHAR** ppszName, IUnknown** ppObject, IUnknown** ppUnk)
 {
+  int subtitleOffset = m_demultiplexer.GetAudioStreamCount();
+  bool isAudioStream = lIndex < subtitleOffset;
+
   if (pdwFlags)
   {
     int audioIndex = 0;
+    int subtitleIndex = 0;
     m_demultiplexer.GetAudioStream(audioIndex);
+    m_demultiplexer.GetAudioStream(subtitleIndex);
 
-    //if (m_demultiplexer.GetAudioStream()==(int)lIndex)
-    if (audioIndex == (int)lIndex)
+    if (isAudioStream && audioIndex == (int)lIndex || !isAudioStream && subtitleIndex == (int)lIndex + subtitleOffset)
       *pdwFlags = AMSTREAMSELECTINFO_EXCLUSIVE;
     else
       *pdwFlags = 0;
   }
-  if (plcid) *plcid = 0;
-  if (pdwGroup) *pdwGroup = m_demultiplexer.GetAudioStreamType((int)lIndex); //*pdwGroup = 1;
-  if (ppObject) *ppObject = NULL;
-  if (ppUnk) *ppUnk = NULL;
+  if (plcid)
+    *plcid = 0;
+
+  if (pdwGroup)
+    *pdwGroup = isAudioStream ? 1 : 2;
+
+  if (ppObject)
+    *ppObject = NULL;
+  
+  if (ppUnk)
+    *ppUnk = NULL;
+  
   if (ppszName)
   {
     char szName[40];
-    m_demultiplexer.GetAudioStreamInfo((int)lIndex, szName);
+
+    if (isAudioStream)
+      m_demultiplexer.GetAudioStreamInfo((int)lIndex, szName);
+    else
+      m_demultiplexer.GetSubtitleStreamLanguage((int)lIndex - subtitleOffset, szName);
+    
     *ppszName = (WCHAR *)CoTaskMemAlloc(20);
     MultiByteToWideChar(CP_ACP, 0, szName, -1, *ppszName, 20);
   }
+
   if (ppmt)
   {
     CMediaType mediaType;
-    m_demultiplexer.GetAudioStreamPMT(mediaType);
+
+    if (isAudioStream)
+      m_demultiplexer.AudioStreamMediaType((int)lIndex, mediaType);
+    else
+      m_demultiplexer.GetSubtitleStreamPMT(mediaType);
+
     AM_MEDIA_TYPE* mType = (AM_MEDIA_TYPE*)(&mediaType);
     *ppmt = (AM_MEDIA_TYPE*)CoTaskMemAlloc(sizeof(AM_MEDIA_TYPE));
     if (*ppmt)
@@ -948,68 +948,6 @@ STDMETHODIMP CBDReaderFilter::GetAudioStream(__int32 &stream)
   return m_demultiplexer.GetAudioStream(stream) ? S_OK : S_FALSE;
 }
 
-// ISubtitleStream methods
-STDMETHODIMP CBDReaderFilter::SetSubtitleStream(__int32 stream)
-{
-  return m_demultiplexer.SetSubtitleStream(stream) ? S_OK : S_FALSE;
-}
-
-STDMETHODIMP CBDReaderFilter::GetSubtitleStreamLanguage(__int32 stream, char* szLanguage)
-{
-  return m_demultiplexer.GetSubtitleStreamLanguage(stream, szLanguage) ? S_OK : S_FALSE;
-}
-
-STDMETHODIMP CBDReaderFilter::GetSubtitleStreamType(__int32 stream, int &type)
-{
-  return m_demultiplexer.GetSubtitleStreamType(stream, type) ? S_OK : S_FALSE;
-}
-
-STDMETHODIMP CBDReaderFilter::GetSubtitleStreamCount(__int32 &count)
-{
-  return m_demultiplexer.GetSubtitleStreamCount(count) ? S_OK : S_FALSE;
-}
-
-STDMETHODIMP CBDReaderFilter::GetCurrentSubtitleStream(__int32 &stream)
-{
-  return m_demultiplexer.GetCurrentSubtitleStream(stream) ? S_OK : S_FALSE;
-}
-
-STDMETHODIMP CBDReaderFilter::SetSubtitleResetCallback( int (CALLBACK *pSubUpdateCallback)(int c, void* opts, int* select))
-{
-  return m_demultiplexer.SetSubtitleResetCallback(pSubUpdateCallback) ? S_OK : S_FALSE;
-}
-
-HRESULT CBDReaderFilter::FindSubtitleFilter()
-{
-  if (m_pDVBSubtitle)
-    return S_OK;
-
-  HRESULT hr = S_FALSE;
-  ULONG fetched = 0;
-
-  IEnumFilters * piEnumFilters = NULL;
-  if (GetFilterGraph() && SUCCEEDED(GetFilterGraph()->EnumFilters(&piEnumFilters)))
-  {
-    IBaseFilter * pFilter;
-    while (piEnumFilters->Next(1, &pFilter, &fetched) == NOERROR)
-    {
-      FILTER_INFO filterInfo;
-      if (pFilter->QueryFilterInfo(&filterInfo) == S_OK)
-      {
-        if (!wcsicmp(L"MediaPortal DVBSub3", filterInfo.achName))
-          hr = pFilter->QueryInterface(IID_IDVBSubtitle3, (void**)&m_pDVBSubtitle);
-
-        filterInfo.pGraph->Release();
-      }
-      pFilter->Release();
-      pFilter = NULL;
-    }
-    piEnumFilters->Release();
-  }
-
-  return hr;
-}
-
 bool CBDReaderFilter::IsStopping()
 {
   return m_bStopping;
@@ -1019,6 +957,8 @@ void CBDReaderFilter::ForceTitleBasedPlayback(bool force, UINT32 pTitle)
 {
   lib.ForceTitleBasedPlayback(force);
   lib.SetTitle(pTitle);
+
+  m_bForceTitleBasedPlayback = force;
 }
 
 void CBDReaderFilter::SetD3DDevice(IDirect3DDevice9* device)
@@ -1066,16 +1006,12 @@ STDMETHODIMP CBDReaderFilter::SetPositionsInternal(void *caller, LONGLONG* pCurr
   //
   // - Ignore seek request when playback is stopping
   if (m_bRebuildOngoing || m_bStopping)
-  {
-    m_eSeekDone.Set();
     return S_OK;
-  }
 
   if (!pCurrent && !pStop
     || (dwCurrentFlags & AM_SEEKING_PositioningBitsMask) == AM_SEEKING_NoPositioning 
     && (dwStopFlags & AM_SEEKING_PositioningBitsMask) == AM_SEEKING_NoPositioning) 
   {
-    m_eSeekDone.Set();
     return S_OK;
   }
 
@@ -1119,7 +1055,6 @@ STDMETHODIMP CBDReaderFilter::SetPositionsInternal(void *caller, LONGLONG* pCurr
     LogDebug("  ::SetPositions() - already seeked to pos - mark 1");
 #endif
 
-    m_eSeekDone.Set();
     return S_OK;
   }
 
@@ -1129,8 +1064,8 @@ STDMETHODIMP CBDReaderFilter::SetPositionsInternal(void *caller, LONGLONG* pCurr
     LogDebug("  ::SetPositions() - already seeked to pos - mark 2");
 #endif
 
-    m_eSeekDone.Set();
     m_lastSeekers.insert(caller);
+
     return S_OK;
   }
 
@@ -1142,128 +1077,45 @@ STDMETHODIMP CBDReaderFilter::SetPositionsInternal(void *caller, LONGLONG* pCurr
   m_rtNewStart = m_rtCurrent = rtCurrent;
   m_rtNewStop = rtStop;
 
-  if (ThreadExists())
-  {
-    m_eEndNewSegment.Reset();
-    
-    DeliverBeginFlush();
-    CallWorker(CMD_SEEK);
-    DeliverEndFlush();
+  DeliverBeginFlush();
+  DeliverEndFlush();
 
-    // Do not allow new seek to happen before the old one is completed 
-    m_eEndNewSegment.Wait();
-  }
-  else
+  if (!fakeSeek)
   {
-#ifdef LOG_SEEK_INFORMATION   
-    LogDebug("  ::SetPositions() - no ThreadExists()");
-#endif
+    m_bHandleSeekEvent = false;
+    Seek(m_rtNewStart);
+    m_demultiplexer.Flush(true);
   }
 
-  m_eSeekDone.Set();
+  m_pVideoPin->DeliverNewSegment(m_rtNewStart, m_rtStop, m_dRate);
+  m_pAudioPin->DeliverNewSegment(m_rtNewStart, m_rtStop, m_dRate);
+
+  m_rtStart = m_rtNewStart;
+  m_rtStop = m_rtNewStop;
 
   return S_OK;
 }
 
 void CBDReaderFilter::DeliverBeginFlush()
 {
-  m_bFlushing = true;
-
   if (m_pVideoPin && m_pVideoPin->IsConnected())
-  {
     m_pVideoPin->DeliverBeginFlush();
-    m_pVideoPin->Stop();
-  }
 
   if (m_pAudioPin && m_pAudioPin->IsConnected())
-  {
     m_pAudioPin->DeliverBeginFlush();
-    m_pVideoPin->Stop();
-  }
-
-  if (m_pSubtitlePin && m_pSubtitlePin->IsConnected())
-  {
-    m_pSubtitlePin->DeliverBeginFlush();
-    m_pVideoPin->Stop();
-  }
 }
 
 void CBDReaderFilter::DeliverEndFlush()
 {
   if (m_pVideoPin && m_pVideoPin->IsConnected())
-  {
     m_pVideoPin->DeliverEndFlush();
-    m_pVideoPin->Pause();
-  }
 
   if (m_pAudioPin && m_pAudioPin->IsConnected())
-  {
     m_pAudioPin->DeliverEndFlush();
-    m_pAudioPin->Pause();
-  }
-
-  if (m_pSubtitlePin && m_pSubtitlePin->IsConnected())
-  {
-    m_pSubtitlePin->DeliverEndFlush();
-    m_pSubtitlePin->Pause();
-  }
-
-  m_bFlushing = false;
-  m_eEndFlush.Set();
 }
 
-DWORD CBDReaderFilter::ThreadProc()
+REFERENCE_TIME CBDReaderFilter::GetScr()
 {
-  SetThreadName(-1, "BDReader_WORKER");
-
-  m_bFlushing = false;
-  m_eEndFlush.Set();
-
-  for (DWORD cmd = (DWORD)-1; ; cmd = GetRequest())
-  {
-    if (cmd == CMD_EXIT)
-    {
-      m_hThread = NULL;
-      Reply(S_OK);
-      return 0;
-    }
-
-    SetThreadPriority(m_hThread, THREAD_PRIORITY_NORMAL);
-
-    m_rtStart = m_rtNewStart;
-    m_rtStop = m_rtNewStop;
-
-    if (cmd == CMD_SEEK)
-      Seek(m_rtStart);
-
-    if (cmd != (DWORD)-1)
-      Reply(S_OK);
-
-    // Wait for the end of any flush
-    m_eEndFlush.Wait();
-
-    if (cmd == CMD_SEEK)
-    {
-      m_pVideoPin->DeliverNewSegment(m_rtStart, m_rtStop, m_dRate);
-      m_pAudioPin->DeliverNewSegment(m_rtStart, m_rtStop, m_dRate);
-      m_pSubtitlePin->DeliverNewSegment(m_rtStart, m_rtStop, m_dRate);
-
-      m_eEndNewSegment.Set();
-    }
-
-    while (!CheckRequest(&cmd)) 
-      Sleep(5); // TODO remove polling or maybe start to use the worker thread for pre-caching data
-
-    // If we didnt exit by request, deliver end-of-stream
-    if (!CheckRequest(&cmd)) 
-    {
-      m_pAudioPin->EndOfStream();
-      m_pVideoPin->EndOfStream();
-      m_pSubtitlePin->EndOfStream();
-    }
-  }
-  ASSERT(0); // we should only exit via CMD_EXIT
-
-  m_hThread = NULL;
-  return 0;
+  return CONVERT_DS_90KHz(m_rtCurrentTime) - m_demultiplexer.m_rtOffset;
 }
+

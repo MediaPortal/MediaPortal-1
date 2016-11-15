@@ -1,0 +1,387 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>25653</id>
+  <defaultcontrol>101</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <define>#header.hover:</define>
+  <define>#header.label:RadioTime</define>
+  <controls>
+     <control>
+      <description>BG</description>
+      <type>image</type>
+      <id>1</id>
+      <texture>#backgroundcolour</texture>
+      <width>1920</width>
+      <height>1080</height>
+    </control>
+   <control>
+      <description>Backdrop</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>radiotime_back.jpg</texture>
+	  <colordiffuse>25ffffff</colordiffuse>
+	</control>
+    <control>
+      <description>Backdrop</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>#overlaycolour</texture>
+	</control>			
+	
+	  <control>
+        <description>Cover Art</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>40</posX>
+        <posY>190</posY>
+        <width>1845</width>
+        <height>624</height>
+        <texture>D_over1.png</texture>
+      </control>	
+
+  	  <control>
+        <description>Cover Art</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>40</posX>
+        <posY>821</posY>
+        <width>1845</width>
+        <height>209</height>
+        <texture>Inf_gfx.png</texture>
+      </control>   	  
+	
+	<import>custom\Allscreens\user_dialog.xml</import>
+
+    <control>
+      <description>Time / Item Count / Play station</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1862</posX>
+      <posY>110</posY>
+      <height>43</height>
+      <width>500</width>
+	  <align>right</align>
+      <font>fontBold2</font>
+	  <textcolor>white</textcolor>  
+	  <label>#(string.trim(iif(eq(#itemcount,''),'0 presets','#itemcount presets')))</label>
+    </control>
+	
+	<import>Radiotime_overlay.xml</import>
+ 
+
+    <control>
+      <type>actiongroup</type>
+      <description>action menu</description>
+      <defaultcontrol>2</defaultcontrol>
+      <onexit>0</onexit>
+      <buttonX>1</buttonX>
+      <buttonY>1</buttonY>
+      <buttonwidth>100</buttonwidth>
+      <buttonheight>1080</buttonheight>
+      <textureFocus></textureFocus>
+      <textureNoFocus></textureNoFocus>
+      <width>800</width>
+      <height>800</height>
+      <dimColor>00ffffff</dimColor>
+
+	  
+	  <control>
+	   <type>image</type>
+	   <posX>0</posX>
+	   <posY>0</posY>
+	   <width>1920</width>
+	   <height>1080</height>
+           <texture>black.png</texture>
+           <colordiffuse>99000000</colordiffuse>
+	   <visible>!Control.HasFocus(50)</visible>    
+	 </control>
+		
+	  <control>
+        <type>image</type>
+        <id>0</id>
+        <posX>420</posX>
+        <posY>150</posY>
+        <width>975</width>
+        <height>836</height>
+        <texture>dialogglowbig.png</texture>
+	<visible>!Control.HasFocus(50)</visible>    
+      </control>	
+	  
+	  
+      <control>
+        <description>group element</description>
+        <type>group</type>
+        <layout>StackLayout(0, Vertical, true)</layout>
+        <posX>500</posX>
+		<posY>250</posY>
+        <visible>!Control.HasFocus(50)</visible> 
+    <!-- RadioTime home button -->
+    <control>
+      <id>2</id>
+      <type>button</type>
+      <onup>17</onup>
+      <ondown>101</ondown>
+      <onright>101</onright>
+      <textXOff>15</textXOff>
+	  <textYOff>3</textYOff>
+	  <width>820</width>
+      <textureFocus>btn_list_blue2.png</textureFocus>
+      <textureNoFocus></textureNoFocus>	
+      <label>#RadioTime.Translation.Home.Label</label>
+    </control>
+    </control>
+    </control>
+	
+
+    <control>
+      <description>Presets lable</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>8850</posX>
+      <posY>230</posY>
+      <width>800</width>
+      <label>#RadioTime.Translation.FastPresets.Label</label>      
+      <font>font111</font>
+      <textcolor>eaeaea</textcolor>      
+    </control>
+
+	   <control>
+        <description>group element</description>
+        <type>group</type>
+        <layout>StackLayout(0, Vertical, true)</layout>
+        <posX>57</posX>
+		<posY>225</posY>
+    <!-- RadioTime Presets Station Name -->
+    <control>
+      <id>101</id>
+      <type>button</type>
+      <onup>17</onup>
+      <onright>101</onright>      
+      <onleft>2</onleft>
+      <ondown>102</ondown>
+      <posX>850</posX>
+      <posY>300</posY>
+      <width>1224</width>
+      <label>#RadioTime.Presets.1.Name</label>
+    </control>
+    <control>
+      <id>102</id>
+      <type>button</type>
+      <onright>102</onright>
+      <onup>101</onup>
+      <ondown>103</ondown>
+      <onleft>2</onleft>
+      <posX>850</posX>
+      <posY>350</posY>
+      <width>1224</width>
+      <label>#RadioTime.Presets.2.Name</label>
+    </control>
+    <control>
+      <id>103</id>
+      <type>button</type>
+      <onright>103</onright>
+      <onup>102</onup>
+      <ondown>104</ondown>
+      <onleft>2</onleft>
+      <posX>850</posX>
+      <posY>400</posY>
+      <width>1224</width>
+      <label>#RadioTime.Presets.3.Name</label>
+    </control>
+    <control>
+      <id>104</id>
+      <type>button</type>
+      <onright>104</onright>
+      <onleft>2</onleft>
+      <onup>103</onup>
+      <ondown>105</ondown>
+      <posX>850</posX>
+      <posY>450</posY>
+      <width>1224</width>
+      <label>#RadioTime.Presets.4.Name</label>
+    </control>
+    <control>
+      <id>105</id>
+      <type>button</type>
+      <onright>105</onright>
+      <onup>104</onup>
+      <ondown>106</ondown>
+      <onleft>2</onleft>
+      <posX>850</posX>
+      <posY>500</posY>
+      <width>1224</width>
+      <label>#RadioTime.Presets.5.Name</label>
+    </control>
+    <control>
+      <id>106</id>
+      <type>button</type>
+      <onleft>2</onleft>
+      <onup>105</onup>
+      <ondown>107</ondown>
+      <onright>106</onright>
+      <posX>850</posX>
+      <posY>550</posY>
+      <width>1224</width>
+      <label>#RadioTime.Presets.6.Name</label>
+    </control>
+    <control>
+      <id>107</id>
+      <type>button</type>
+      <onleft>2</onleft>
+      <onright>107</onright>
+      <onup>106</onup>
+      <ondown>108</ondown>
+      <posX>850</posX>
+      <posY>600</posY>
+      <width>1224</width>
+      <label>#RadioTime.Presets.7.Name</label>
+    </control>
+    <control>
+      <id>108</id>
+      <type>button</type>
+      <onleft>2</onleft>
+      <onup>107</onup>
+      <onright>108</onright>
+      <ondown>109</ondown>
+      <posX>850</posX>
+      <posY>650</posY>
+      <width>1224</width>
+      <label>#RadioTime.Presets.8.Name</label>
+    </control>
+    <control>
+      <id>109</id>
+      <type>button</type>
+      <onleft>2</onleft>
+      <onright>109</onright>
+      <onup>108</onup>
+      <ondown>110</ondown>
+      <posX>850</posX>
+      <posY>700</posY>
+      <width>1224</width>
+      <label>#RadioTime.Presets.9.Name</label>
+    </control>
+    <control>
+      <id>110</id>
+      <type>button</type>
+      <onleft>2</onleft>
+      <onright>110</onright>
+      <onup>109</onup>
+      <ondown>101</ondown>
+      <posX>850</posX>
+      <posY>750</posY>
+      <width>1224</width>
+      <label>#RadioTime.Presets.10.Name</label>
+    </control>
+	</control>
+
+	
+	  <control>
+        <description>Cover Art</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>1233</posX>
+        <posY>184</posY>
+        <width>28</width>
+        <height>619</height>
+        <texture>D_side.png</texture>
+      </control>
+	  <control>
+        <description>Cover Art</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>1233</posX>
+        <posY>184</posY>
+        <width>28</width>
+        <height>619</height>
+        <texture>D_side.png</texture>
+      </control>
+	  
+      <control>
+        <id>1</id>
+        <type>image</type>
+        <posX>1261</posX>
+        <posY>197</posY>
+        <width>605</width>
+        <height>605</height>
+		<keepaspectratio>no</keepaspectratio>
+        <zoomfromtop>no</zoomfromtop>
+        <texture mask="MA_mask.png">blue.png</texture>
+      </control>
+	  
+      <control>
+        <id>1</id>
+        <type>image</type>
+        <posX>1281</posX>
+        <posY>217</posY>
+        <width>565</width>
+        <height>565</height>
+		<keepaspectratio>yes</keepaspectratio>
+		<centered>yes</centered>
+        <texture>#RadioTime.Selected.Logo</texture>
+      </control>	  
+	  
+	  
+      <control>
+        <description>Little Poster</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>56</posX>
+        <posY>828</posY>
+		<height>190</height>
+		<width>190</width>
+        <texture mask="MAmask.png">blue.png</texture>
+        <colordiffuse>ffffffff</colordiffuse>
+      </control>	  
+    <control>
+      <description>station logo</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>76</posX>
+      <posY>848</posY>
+      <width>150</width>
+      <height>150</height>
+      <texture>#RadioTime.Selected.Logo</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <centered>yes</centered>
+    </control>	
+
+    
+    <control>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>260</posX>
+      <posY>850</posY>
+      <width>1650</width>
+      <font>font12</font>
+      <align>left</align>
+      <textcolor>eaeaea</textcolor>
+      <label>#RadioTime.Presets.Folder.Name</label>
+    </control>
+
+    <!--<control>
+      <id>81</id>
+      <description>existent rating2</description>
+      <type>imagelist</type> 
+      <visible>no</visible>      
+    </control>
+    <control>
+      <id>3</id>
+      <type>button</type>
+      <onup>17</onup>
+      <ondown>2</ondown>
+      <onright>101</onright>
+      <posX>3125</posX>
+      <posY>330</posY>
+      <label>#RadioTime.Translation.Folders.Label</label>
+      <visible>no</visible>   
+    </control>-->
+  </controls>
+</window>

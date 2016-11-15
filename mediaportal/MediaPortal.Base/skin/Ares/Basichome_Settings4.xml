@@ -1,0 +1,516 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <controls>
+	
+
+	  <control>
+		<description>button group</description>
+		<type>group</type>
+		<posX>60</posX>
+		<posY>420</posY>
+		<!-- Remove and Gaps when buttons are not visible -->
+		<layout>StackLayout(0, Horizontal, false)</layout>
+		<visible allowhiddenfocus="true">control.hasfocus(260)|control.hasfocus(261)|control.hasfocus(262)|control.hasfocus(263)|control.hasfocus(264)|control.hasfocus(265)|control.hasfocus(266)|control.hasfocus(267)|control.hasfocus(268)|control.hasfocus(269)|control.hasfocus(360)|control.hasfocus(361)|control.hasfocus(362)|control.hasfocus(363)|control.hasfocus(364)|control.hasfocus(416)|control.hasfocus(417)|control.hasfocus(418)|control.hasfocus(419)|control.hasfocus(420)</visible>   
+	  <control>
+        <description>Page1 Button1</description>
+        <type>menubutton</type>
+        <id>260</id>
+        <width>69</width>
+        <height>66</height>
+		<textXOff>5</textXOff>
+        <textYOff>3</textYOff>
+		<oninfo>#(skin.setfocus(35,00515))</oninfo>
+        <mode>dialoglist</mode>
+        <dialogTitle>Choose a plugin</dialogTitle>
+        <valueTextInButton>no</valueTextInButton>
+        <valuePrefixText> Plugin : </valuePrefixText>
+        <onclick>#(skin.setstring('#tile16plugin.hyperlink',#selectedlabel260))</onclick>
+        <binding>#tile16plugin.hyperlink</binding>
+        <subitems>
+        <subitem>#pluginlist</subitem>
+        </subitems>
+        <textcolorNoFocus>70ffffff</textcolorNoFocus>
+        <textureFocus>pluge.png</textureFocus>
+		<textureNoFocus>plugd.png</textureNoFocus>
+		<onup>260</onup>
+        <onleft>260</onleft>
+        <ondown>416</ondown>
+        <onright>360</onright>
+      </control>
+	  
+	  <control>
+        <description>Page1 Button1</description>
+        <type>menubutton</type>
+        <id>360</id>
+        <width>69</width>
+        <height>66</height>
+		<oninfo>#(skin.setfocus(35,00515))</oninfo>
+        <label></label>
+		<font>font111</font>
+		<textcolorNoFocus>99ffffff</textcolorNoFocus>
+        <onclick>#(skin.setstring('#tile16plugin.name'))</onclick>
+        <textureFocus>lblfocus.png</textureFocus>
+		<textureNoFocus>lblnofocus.png</textureNoFocus>
+		<onup>360</onup>
+        <onleft>260</onleft>
+        <ondown>00515</ondown>
+        <onright>261</onright>
+      </control>		  
+	  
+	  
+	  <control>
+        <description>DUMMY</description>
+        <type>button</type>
+        <id>0</id>
+        <width>10</width>
+		<height>32</height>
+        <label></label>
+		<font>font111</font>
+		<textcolorNoFocus>99ffffff</textcolorNoFocus>
+		<textureFocus></textureFocus>
+		<textureNoFocus></textureNoFocus>
+      </control>	
+	  
+	  
+	  <!--MAIN MOVIES HYPERLINK PARAMETER-->.
+	  <control>
+        <description>Page1 Button1</description>
+        <type>button</type>
+        <id>261</id>
+        <width>69</width>
+        <height>66</height>
+		<oninfo>#(skin.setfocus(35,00515))</oninfo>
+        <label></label>
+		<font>font111</font>
+		<textcolorNoFocus>99ffffff</textcolorNoFocus>
+		<textureFocus>menu.png</textureFocus>
+		<textureNoFocus></textureNoFocus>
+        <onclick>#(skin.setstring('#tile16plugin.parameter'))</onclick>
+		<onup>261</onup>
+        <onleft>360</onleft>
+        <ondown>00515</ondown>
+        <onright>262</onright>		
+      </control>
+	  <!--HYPERLINK PARAMETER-->		 
+
+	  <control>
+        <description>DUMMY</description>
+        <type>button</type>
+        <id>0</id>
+        <width>150</width>
+		<height>32</height>
+        <label></label>
+		<font>font111</font>
+		<textcolorNoFocus>99ffffff</textcolorNoFocus>
+		<textureFocus></textureFocus>
+		<textureNoFocus></textureNoFocus>
+      </control>
+	  
+	  
+	  <!--##############################################################################################-->
+	  <!--##############################################################################################-->
+	  
+	  <control>
+        <description>Page1 Button2</description>
+        <type>menubutton</type>
+        <id>262</id>
+        <width>69</width>
+        <height>66</height>
+		<textXOff>5</textXOff>
+        <textYOff>3</textYOff>
+		<oninfo>#(skin.setfocus(35,00516))</oninfo>
+        <mode>dialoglist</mode>
+        <dialogTitle>Choose a plugin</dialogTitle>
+        <valueTextInButton>no</valueTextInButton>
+        <valuePrefixText> Plugin : </valuePrefixText>
+        <onclick>#(skin.setstring('#tile17plugin.hyperlink',#selectedlabel262))</onclick>
+        <binding>#tile17plugin.hyperlink</binding>
+        <subitems>
+        <subitem>#pluginlist</subitem>
+        </subitems>
+        <textcolorNoFocus>70ffffff</textcolorNoFocus>
+        <textureFocus>pluge.png</textureFocus>
+		<textureNoFocus>plugd.png</textureNoFocus>
+		<onup>262</onup>
+        <onleft>261</onleft>
+        <ondown>417</ondown>
+        <onright>361</onright>
+      </control>
+	  
+	  <control>
+        <description>Page1 Button1</description>
+        <type>menubutton</type>
+        <id>361</id>
+        <width>69</width>
+        <height>66</height>
+		<oninfo>#(skin.setfocus(35,00516))</oninfo>
+        <label></label>
+		<font>font111</font>
+		<textcolorNoFocus>99ffffff</textcolorNoFocus>
+        <onclick>#(skin.setstring('#tile17plugin.name'))</onclick>
+        <textureFocus>lblfocus.png</textureFocus>
+		<textureNoFocus>lblnofocus.png</textureNoFocus>
+		<onup>361</onup>
+        <onleft>262</onleft>
+        <ondown>00516</ondown>
+        <onright>263</onright>
+      </control>			  
+	  
+	  
+	  
+	  <control>
+        <description>DUMMY</description>
+        <type>button</type>
+        <id>0</id>
+        <width>10</width>
+		<height>32</height>
+        <label></label>
+		<font>font111</font>
+		<textcolorNoFocus>99ffffff</textcolorNoFocus>
+		<textureFocus></textureFocus>
+		<textureNoFocus></textureNoFocus>
+      </control>	
+
+	  
+	  <!--MAIN MOVIES HYPERLINK PARAMETER-->.
+	  <control>
+        <description>Page1 Button2</description>
+        <type>button</type>
+        <id>263</id>
+        <width>69</width>
+        <height>66</height>
+		<oninfo>#(skin.setfocus(35,00516))</oninfo>
+        <label></label>
+		<font>font111</font>
+		<textcolorNoFocus>99ffffff</textcolorNoFocus>
+		<textureFocus>menu.png</textureFocus>
+		<textureNoFocus></textureNoFocus>
+        <onclick>#(skin.setstring('#tile17plugin.parameter'))</onclick>
+		<onup>263</onup>
+        <onleft>361</onleft>
+        <ondown>00516</ondown>
+        <onright>264</onright>
+      </control>
+	  <!--HYPERLINK PARAMETER-->
+	  
+	  <control>
+        <description>DUMMY</description>
+        <type>button</type>
+        <id>0</id>
+        <width>153</width>
+		<height>32</height>
+        <label></label>
+		<font>font111</font>
+		<textcolorNoFocus>99ffffff</textcolorNoFocus>
+		<textureFocus></textureFocus>
+		<textureNoFocus></textureNoFocus>
+      </control>
+	  
+	  
+	  <!--##############################################################################################-->
+	  <!--##############################################################################################-->
+	  
+	  <control>
+        <description>Page1 Button2</description>
+        <type>menubutton</type>
+        <id>264</id>
+        <width>69</width>
+        <height>66</height>
+		<textXOff>5</textXOff>
+        <textYOff>3</textYOff>
+		<oninfo>#(skin.setfocus(35,00517))</oninfo>
+        <mode>dialoglist</mode>
+        <dialogTitle>Choose a plugin</dialogTitle>
+        <valueTextInButton>no</valueTextInButton>
+        <valuePrefixText> Plugin : </valuePrefixText>
+        <onclick>#(skin.setstring('#tile18plugin.hyperlink',#selectedlabel264))</onclick>
+        <binding>#tile18plugin.hyperlink</binding>
+        <subitems>
+        <subitem>#pluginlist</subitem>
+        </subitems>
+        <textcolorNoFocus>70ffffff</textcolorNoFocus>
+        <textureFocus>pluge.png</textureFocus>
+		<textureNoFocus>plugd.png</textureNoFocus>
+		<onup>264</onup>
+        <onleft>263</onleft>
+        <ondown>418</ondown>
+        <onright>362</onright>
+      </control>
+	  
+	  <control>
+        <description>Page1 Button1</description>
+        <type>menubutton</type>
+        <id>362</id>
+        <width>69</width>
+        <height>66</height>
+		<oninfo>#(skin.setfocus(35,00517))</oninfo>
+        <label></label>
+		<font>font111</font>
+		<textcolorNoFocus>99ffffff</textcolorNoFocus>
+        <onclick>#(skin.setstring('#tile18plugin.name'))</onclick>
+        <textureFocus>lblfocus.png</textureFocus>
+		<textureNoFocus>lblnofocus.png</textureNoFocus>
+		<onup>362</onup>
+        <onleft>264</onleft>
+        <ondown>00517</ondown>
+        <onright>265</onright>
+      </control>	  
+	  
+	  <control>
+        <description>DUMMY</description>
+        <type>button</type>
+        <id>0</id>
+        <width>10</width>
+		<height>32</height>
+        <label></label>
+		<font>font111</font>
+		<textcolorNoFocus>99ffffff</textcolorNoFocus>
+		<textureFocus></textureFocus>
+		<textureNoFocus></textureNoFocus>
+      </control>	
+	  
+	  
+	  <!--MAIN MOVIES HYPERLINK PARAMETER-->.
+	  <control>
+        <description>Page1 Button2</description>
+        <type>button</type>
+        <id>265</id>
+        <width>69</width>
+        <height>66</height>
+		<oninfo>#(skin.setfocus(35,00517))</oninfo>
+        <label></label>
+		<font>font111</font>
+		<textcolorNoFocus>99ffffff</textcolorNoFocus>
+		<textureFocus>menu.png</textureFocus>
+		<textureNoFocus></textureNoFocus>
+        <onclick>#(skin.setstring('#tile18plugin.parameter'))</onclick>
+		<onup>265</onup>
+        <onleft>362</onleft>
+        <ondown>00517</ondown>
+        <onright>266</onright>
+      </control>
+	  <!--HYPERLINK PARAMETER-->
+	  
+	  <control>
+        <description>DUMMY</description>
+        <type>button</type>
+        <id>0</id>
+        <width>153</width>
+		<height>32</height>
+        <label></label>
+		<font>font111</font>
+		<textcolorNoFocus>99ffffff</textcolorNoFocus>
+		<textureFocus></textureFocus>
+		<textureNoFocus></textureNoFocus>
+      </control>	  
+
+	  
+	  <!--##############################################################################################-->
+	  <!--##############################################################################################-->
+	  
+	  <control>
+        <description>Page1 Button2</description>
+        <type>menubutton</type>
+        <id>266</id>
+        <width>69</width>
+        <height>66</height>
+		<textXOff>5</textXOff>
+        <textYOff>3</textYOff>
+		<oninfo>#(skin.setfocus(35,00518))</oninfo>
+        <mode>dialoglist</mode>
+        <dialogTitle>Choose a plugin</dialogTitle>
+        <valueTextInButton>no</valueTextInButton>
+        <valuePrefixText> Plugin : </valuePrefixText>
+        <onclick>#(skin.setstring('#tile19plugin.hyperlink',#selectedlabel266))</onclick>
+        <binding>#tile19plugin.hyperlink</binding>
+        <subitems>
+        <subitem>#pluginlist</subitem>
+        </subitems>
+        <textcolorNoFocus>70ffffff</textcolorNoFocus>
+        <textureFocus>pluge.png</textureFocus>
+		<textureNoFocus>plugd.png</textureNoFocus>
+		<onup>266</onup>
+        <onleft>265</onleft>
+        <ondown>419</ondown>
+        <onright>363</onright>
+      </control>
+	  
+	  <control>
+        <description>Page1 Button1</description>
+        <type>menubutton</type>
+        <id>363</id>
+        <width>69</width>
+        <height>66</height>
+		<oninfo>#(skin.setfocus(35,00518))</oninfo>
+        <label></label>
+		<font>font111</font>
+		<textcolorNoFocus>99ffffff</textcolorNoFocus>
+        <onclick>#(skin.setstring('#tile19plugin.name'))</onclick>
+        <textureFocus>lblfocus.png</textureFocus>
+		<textureNoFocus>lblnofocus.png</textureNoFocus>
+		<onup>363</onup>
+        <onleft>266</onleft>
+        <ondown>00518</ondown>
+        <onright>267</onright>
+      </control>	  
+	  
+	  
+	  <control>
+        <description>DUMMY</description>
+        <type>button</type>
+        <id>0</id>
+        <width>10</width>
+		<height>32</height>
+        <label></label>
+		<font>font111</font>
+		<textcolorNoFocus>99ffffff</textcolorNoFocus>
+		<textureFocus></textureFocus>
+		<textureNoFocus></textureNoFocus>
+      </control>	
+	  
+	  
+	  <!--MAIN MOVIES HYPERLINK PARAMETER-->.
+	  <control>
+        <description>Page1 Button2</description>
+        <type>button</type>
+        <id>267</id>
+        <width>69</width>
+        <height>66</height>
+		<oninfo>#(skin.setfocus(35,00518))</oninfo>
+        <label></label>
+		<font>font111</font>
+		<textcolorNoFocus>99ffffff</textcolorNoFocus>
+		<textureFocus>menu.png</textureFocus>
+		<textureNoFocus></textureNoFocus>
+        <onclick>#(skin.setstring('#tile19plugin.parameter'))</onclick>
+		<onup>267</onup>
+        <onleft>363</onleft>
+        <ondown>00518</ondown>
+        <onright>268</onright>
+      </control>
+	  <!--HYPERLINK PARAMETER-->
+	  
+	  <control>
+        <description>DUMMY</description>
+        <type>button</type>
+        <id>0</id>
+        <width>155</width>
+		<height>32</height>
+        <label></label>
+		<font>font111</font>
+		<textcolorNoFocus>99ffffff</textcolorNoFocus>
+		<textureFocus></textureFocus>
+		<textureNoFocus></textureNoFocus>
+      </control>	  
+	  
+	  
+
+	  <!--##############################################################################################-->
+	  <!--##############################################################################################-->
+	  
+	  <control>
+        <description>Page1 Button2</description>
+        <type>menubutton</type>
+        <id>268</id>
+       <width>69</width>
+        <height>66</height>
+		<textXOff>5</textXOff>
+        <textYOff>3</textYOff>
+		<oninfo>#(skin.setfocus(35,00519))</oninfo>
+        <mode>dialoglist</mode>
+        <dialogTitle>Choose a plugin</dialogTitle>
+        <valueTextInButton>no</valueTextInButton>
+        <valuePrefixText> Plugin : </valuePrefixText>
+        <onclick>#(skin.setstring('#tile20plugin.hyperlink',#selectedlabel268))</onclick>
+        <binding>#tile20plugin.hyperlink</binding>
+        <subitems>
+        <subitem>#pluginlist</subitem>
+        </subitems>
+        <textcolorNoFocus>70ffffff</textcolorNoFocus>
+        <textureFocus>pluge.png</textureFocus>
+		<textureNoFocus>plugd.png</textureNoFocus>
+		<onup>268</onup>
+        <onleft>267</onleft>
+        <ondown>420</ondown>
+        <onright>364</onright>
+      </control>
+	  
+	  <control>
+        <description>Page1 Button1</description>
+        <type>menubutton</type>
+        <id>364</id>
+        <width>69</width>
+        <height>66</height>
+		<oninfo>#(skin.setfocus(35,00519))</oninfo>
+        <label></label>
+		<font>font111</font>
+		<textcolorNoFocus>99ffffff</textcolorNoFocus>
+        <onclick>#(skin.setstring('#tile20plugin.name'))</onclick>
+        <textureFocus>lblfocus.png</textureFocus>
+		<textureNoFocus>lblnofocus.png</textureNoFocus>
+		<onup>364</onup>
+        <onleft>268</onleft>
+        <ondown>00519</ondown>
+        <onright>269</onright>
+      </control>		  
+	  
+	  
+	  <control>
+        <description>DUMMY</description>
+        <type>button</type>
+        <id>0</id>
+        <width>10</width>
+		<height>32</height>
+        <label></label>
+		<font>font111</font>
+		<textcolorNoFocus>99ffffff</textcolorNoFocus>
+		<textureFocus></textureFocus>
+		<textureNoFocus></textureNoFocus>
+      </control>	
+	  
+	  
+	  <!--MAIN MOVIES HYPERLINK PARAMETER-->.
+	  <control>
+        <description>Page1 Button2</description>
+        <type>button</type>
+        <id>269</id>
+        <width>69</width>
+        <height>66</height>
+		<oninfo>#(skin.setfocus(35,00519))</oninfo>
+        <label></label>
+		<font>font111</font>
+		<textcolorNoFocus>99ffffff</textcolorNoFocus>
+		<textureFocus>menu.png</textureFocus>
+		<textureNoFocus></textureNoFocus>
+        <onclick>#(skin.setstring('#tile20plugin.parameter'))</onclick>
+		<onup>269</onup>
+        <onleft>364</onleft>
+        <ondown>00519</ondown>
+        <onright>260</onright>
+      </control>
+	  <!--HYPERLINK PARAMETER-->
+	  
+	  <control>
+        <description>DUMMY</description>
+        <type>button</type>
+        <id>0</id>
+        <width>155</width>
+		<height>32</height>
+        <label></label>
+		<font>font111</font>
+		<textcolorNoFocus>99ffffff</textcolorNoFocus>
+		<textureFocus></textureFocus>
+		<textureNoFocus></textureNoFocus>
+      </control>	  	  
+
+
+
+
+	  
+	  
+	  
+	  
+      </control>
+
+  </controls>
+</window>

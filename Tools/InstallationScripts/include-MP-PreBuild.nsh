@@ -61,27 +61,28 @@
 !system '"${git_DeployVersionGIT}\DeployVersionGIT\bin\Release\DeployVersionGIT.exe" /git="${git_ROOT}" /path="${git_ROOT}\Common-MP-TVE3"' = 0
 !endif
 
-!system '"$%WINDIR%\Microsoft.NET\Framework\v4.0.30319\MSBUILD.exe" "${git_ROOT}\Build\RestorePackages.targets"' = 0
+!system '"$%ProgramFiles(x86)%\MSBuild\14.0\Bin\MSBUILD.exe" "${git_ROOT}\Build\RestorePackages.targets"' = 0
 
 !ifdef BUILD_MediaPortal
+!system 'ant -f ${LibblurayJAR} -Dsrc_awt=:java-j2se' = 0
 !insertmacro PrepareBuildReport DirectShowFilters
 !ifdef x64Environment
-!system '"C:\Program Files (x86)\MSBuild\12.0\Bin\MSBUILD.exe" ${logger} /target:rebuild /property:Configuration=Release "${git_DirectShowFilters}\Filters.sln"' = 0
+!system '"C:\Program Files (x86)\MSBuild\14.0\Bin\MSBUILD.exe" ${logger} /target:rebuild /property:Configuration=Release "${git_DirectShowFilters}\Filters.sln"' = 0
 !else
-!system '"C:\Program Files\MSBuild\12.0\Bin\MSBUILD.exe" ${logger} /target:rebuild /property:Configuration=Release "${git_DirectShowFilters}\Filters.sln"' = 0
+!system '"C:\Program Files\MSBuild\14.0\Bin\MSBUILD.exe" ${logger} /target:rebuild /property:Configuration=Release "${git_DirectShowFilters}\Filters.sln"' = 0
 !endif
 !insertmacro FinalizeBuildReport
 !insertmacro PrepareBuildReport MediaPortal
-!system '"$%WINDIR%\Microsoft.NET\Framework\v4.0.30319\MSBUILD.exe" ${logger} /target:Rebuild /property:Configuration=Release;Platform=x86 "${git_MP}\MediaPortal.sln"' = 0
+!system '"$%ProgramFiles(x86)%\MSBuild\14.0\Bin\MSBUILD.exe" ${logger} /target:Rebuild /property:Configuration=Release;Platform=x86 "${git_MP}\MediaPortal.sln"' = 0
 !insertmacro FinalizeBuildReport
 !endif
 
 !ifdef BUILD_TVServer
 !insertmacro PrepareBuildReport TvLibrary
-!system '"$%WINDIR%\Microsoft.NET\Framework\v4.0.30319\MSBUILD.exe" ${logger} /target:Rebuild /property:Configuration=Release;Platform=x86 "${git_TVServer}\TvLibrary.sln"' = 0
+!system '"$%ProgramFiles(x86)%\MSBuild\14.0\Bin\MSBUILD.exe" ${logger} /target:Rebuild /property:Configuration=Release;Platform=x86 "${git_TVServer}\TvLibrary.sln"' = 0
 !insertmacro FinalizeBuildReport
 !insertmacro PrepareBuildReport TvPlugin
-!system '"$%WINDIR%\Microsoft.NET\Framework\v4.0.30319\MSBUILD.exe" ${logger} /target:Rebuild /property:Configuration=Release;Platform=x86 "${git_TVServer}\TvPlugin\TvPlugin.sln"' = 0
+!system '"$%ProgramFiles(x86)%\MSBuild\14.0\Bin\MSBUILD.exe" ${logger} /target:Rebuild /property:Configuration=Release;Platform=x86 "${git_TVServer}\TvPlugin\TvPlugin.sln"' = 0
 !insertmacro FinalizeBuildReport
 !endif
 
@@ -93,11 +94,12 @@
 
 !ifdef BUILD_DeployTool
 !insertmacro PrepareBuildReport DeployTool
-!system '"$%WINDIR%\Microsoft.NET\Framework\v4.0.30319\MSBUILD.exe" ${logger} /p:ALToolPath="${ALToolPath}" /target:Rebuild /property:Configuration=Release;Platform=x86 "${git_DeployTool}\MediaPortal.DeployTool.sln"' = 0
+!system '"$%ProgramFiles(x86)%\MSBuild\14.0\Bin\MSBUILD.exe" ${logger} /p:ALToolPath="${ALToolPath}" /target:Rebuild /property:Configuration=Release;Platform=x86 "${git_DeployTool}\MediaPortal.DeployTool.sln"' = 0
 !insertmacro FinalizeBuildReport
 !endif
 
 !ifdef BUILD_Installer
+!system '${git_ROOT}\Build\MSBUILD_MP_LargeAddressAware.bat Release' = 0
 !system '"${NSISDIR}\makensis.exe" "${git_MP}\Setup\setup.nsi"' = 0
 !system '"${NSISDIR}\makensis.exe" "${git_TVServer}\Setup\setup.nsi"' = 0
 !endif

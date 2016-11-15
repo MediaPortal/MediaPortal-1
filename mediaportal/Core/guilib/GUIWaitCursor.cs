@@ -79,7 +79,7 @@ namespace MediaPortal.GUI.Library
       //this is to prevent animation starting from beginning every time Show() is called, making it "jumpy"
       if (Interlocked.Equals(_showCount, 1))
       {
-        _animation.Begin();
+        if (_animation != null) _animation.Begin();
       }
     }
 

@@ -180,7 +180,7 @@ namespace MediaPortal.Player
       _backingFileDuration = (int)(iTimeShiftBuffer / 6);
 
       _isVisible = false;
-      _isWindowVisible = false;
+      GUIGraphicsContext.IsWindowVisible = false;
       _volume = 100;
       _state = PlayState.Init;
       _currentFile = strFile;
@@ -218,13 +218,6 @@ namespace MediaPortal.Player
         CloseInterfaces();
         return false;
       }
-      if (_videoWin != null)
-      {
-        _videoWin.put_Owner(GUIGraphicsContext.ActiveForm);
-        _videoWin.put_WindowStyle(
-          (WindowStyle)((int)WindowStyle.Child + (int)WindowStyle.ClipSiblings + (int)WindowStyle.ClipChildren));
-        _videoWin.put_MessageDrain(GUIGraphicsContext.form.Handle);
-      }
       if (_basicVideo != null)
       {
         hr = _basicVideo.GetVideoSize(out _videoWidth, out _videoHeight);
@@ -258,7 +251,12 @@ namespace MediaPortal.Player
       SetVideoWindow();
 
       DirectShowUtil.EnableDeInterlace(_graphBuilder);
-      hr = _mediaCtrl.Run();
+      //if (_videoWin != null)
+      //{
+      //  _videoWin.put_WindowStyle((WindowStyle)((int)WindowStyle.Child + (int)WindowStyle.ClipSiblings + (int)WindowStyle.ClipChildren));
+      //  _videoWin.put_MessageDrain(GUIGraphicsContext.form.Handle);
+      //}
+      if (VMR9Util.g_vmr9 != null) hr = VMR9Util.g_vmr9.StartMediaCtrl(_mediaCtrl);
       if (hr < 0)
       {
         Log.Error("StreamBufferPlayer:Rungraph failed");
@@ -325,12 +323,13 @@ namespace MediaPortal.Player
         _updateNeeded = true;
       }
 
-      if (!_updateNeeded)
+      if (!_updateNeeded && !GUIGraphicsContext.UpdateVideoWindow)
       {
         return;
       }
 
       _updateNeeded = false;
+      GUIGraphicsContext.UpdateVideoWindow = false;
       _isStarted = true;
       float x = _positionX;
       float y = _positionY;
@@ -477,7 +476,6 @@ namespace MediaPortal.Player
       }
       _lastPosition = CurrentPosition;
 
-
       if (GUIGraphicsContext.VideoWindow.Width <= 10 && GUIGraphicsContext.IsFullScreenVideo == false)
       {
         _isVisible = false;
@@ -486,22 +484,35 @@ namespace MediaPortal.Player
       {
         _isVisible = false;
       }
-      if (_isWindowVisible && !_isVisible)
+      if (GUIGraphicsContext.IsWindowVisible && !_isVisible)
       {
-        _isWindowVisible = false;
-        //Log.Info("StreamBufferPlayer:hide window");
-        if (_videoWin != null)
+        GUIGraphicsContext.IsWindowVisible = false;
+        //Log.Info("TSReaderPlayer:hide window");
+        if (_videoWin != null && GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
         {
           _videoWin.put_Visible(OABool.False);
         }
+        else
+        {
+          if (_basicVideo != null)
+          {
+            if (!GUIGraphicsContext.IsFullScreenVideo)
+              _basicVideo.SetDestinationPosition(-100, -100, 50, 50);
+          }
+        }
       }
-      else if (!_isWindowVisible && _isVisible)
+      else if (!GUIGraphicsContext.IsWindowVisible && _isVisible)
       {
-        _isWindowVisible = true;
-        //Log.Info("StreamBufferPlayer:show window");
-        if (_videoWin != null)
+        GUIGraphicsContext.IsWindowVisible = true;
+        //Log.Info("TSReaderPlayer:show window");
+        if (_videoWin != null && GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
         {
           _videoWin.put_Visible(OABool.True);
+        }
+        else
+        {
+          GUIGraphicsContext.VideoWindow = new Rectangle(0, 0, GUIGraphicsContext.VideoWindowWidth,
+            GUIGraphicsContext.VideoWindowHeight);
         }
       }
 
@@ -1071,6 +1082,10 @@ namespace MediaPortal.Player
         {
           return;
         }
+        if (rDest.Left <= 0 && rDest.Top <= 0 && rDest.Width <= 1 && rDest.Height <= 1)
+        {
+          return;
+        }
         _videoWin.SetWindowPosition(rDest.Left, rDest.Top, rDest.Width, rDest.Height);
       }
     }
@@ -1079,16 +1094,23 @@ namespace MediaPortal.Player
     {
       if (_basicVideo != null)
       {
-        if (rSource.Left < 0 || rSource.Top < 0 || rSource.Width <= 0 || rSource.Height <= 0)
+        lock (_basicVideo)
         {
-          return;
+          if (rSource.Left < 0 || rSource.Top < 0 || rSource.Width <= 0 || rSource.Height <= 0)
+          {
+            return;
+          }
+          if (rDest.Width <= 0 || rDest.Height <= 0)
+          {
+            return;
+          }
+          if (rDest.Left <= 0 && rDest.Top <= 0 && rDest.Width <= 1 && rDest.Height <= 1)
+          {
+            return;
+          }
+          _basicVideo.SetSourcePosition(rSource.Left, rSource.Top, rSource.Width, rSource.Height);
+          _basicVideo.SetDestinationPosition(0, 0, rDest.Width, rDest.Height);
         }
-        if (rDest.Width <= 0 || rDest.Height <= 0)
-        {
-          return;
-        }
-        _basicVideo.SetSourcePosition(rSource.Left, rSource.Top, rSource.Width, rSource.Height);
-        _basicVideo.SetDestinationPosition(0, 0, rDest.Width, rDest.Height);
       }
     }
 
@@ -1364,7 +1386,7 @@ namespace MediaPortal.Player
         _state = PlayState.Init;
 
         _mediaEvt = null;
-        _isWindowVisible = false;
+        GUIGraphicsContext.IsWindowVisible = false;
         _isVisible = false;
         _videoWin = null;
         _mediaSeeking = null;
@@ -1376,27 +1398,18 @@ namespace MediaPortal.Player
 
         if (_videoCodecFilter != null)
         {
-          while ((hr = DirectShowUtil.ReleaseComObject(_videoCodecFilter)) > 0)
-          {
-            ;
-          }
+          DirectShowUtil.ReleaseComObject(_videoCodecFilter);
           _videoCodecFilter = null;
         }
         if (_audioCodecFilter != null)
         {
-          while ((hr = DirectShowUtil.ReleaseComObject(_audioCodecFilter)) > 0)
-          {
-            ;
-          }
+          DirectShowUtil.ReleaseComObject(_audioCodecFilter);
           _audioCodecFilter = null;
         }
 
         if (_audioRendererFilter != null)
         {
-          while ((hr = DirectShowUtil.ReleaseComObject(_audioRendererFilter)) > 0)
-          {
-            ;
-          }
+          DirectShowUtil.ReleaseComObject(_audioRendererFilter);
           _audioRendererFilter = null;
         }
 
@@ -1405,19 +1418,13 @@ namespace MediaPortal.Player
         {
           if (customFilters[i] != null)
           {
-            while ((hr = DirectShowUtil.ReleaseComObject(customFilters[i])) > 0)
-            {
-              ;
-            }
+            DirectShowUtil.ReleaseComObject(customFilters[i]);
           }
           customFilters[i] = null;
         }
         if (streamConfig2 != null)
         {
-          while ((hr = DirectShowUtil.ReleaseComObject(streamConfig2)) > 0)
-          {
-            ;
-          }
+          DirectShowUtil.ReleaseComObject(streamConfig2);
           streamConfig2 = null;
         }
         m_StreamBufferConfig = null;
@@ -1430,10 +1437,7 @@ namespace MediaPortal.Player
             _rotEntry.SafeDispose();
             _rotEntry = null;
           }
-          while ((hr = DirectShowUtil.ReleaseComObject(_graphBuilder)) > 0)
-          {
-            ;
-          }
+          DirectShowUtil.ReleaseComObject(_graphBuilder);
           _graphBuilder = null;
         }
 

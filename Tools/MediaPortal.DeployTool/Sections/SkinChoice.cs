@@ -82,6 +82,7 @@ namespace MediaPortal.DeployTool.Sections
       btnExisting.Image = Images.Choose_button_off;
       btnTitan.Image = Images.Choose_button_on;
       btnDefaultWide.Image = Images.Choose_button_off;
+      btnAres.Image = Images.Choose_button_off;
       pbSkin.Image = Images.preview_titan;
       InstallationProperties.Instance.Set("ChosenSkin", "Titan");
     }
@@ -91,8 +92,19 @@ namespace MediaPortal.DeployTool.Sections
       btnExisting.Image = Images.Choose_button_off;
       btnTitan.Image = Images.Choose_button_off;
       btnDefaultWide.Image = Images.Choose_button_on;
+      btnAres.Image = Images.Choose_button_off;
       pbSkin.Image = Images.preview_DefaultWide_HD;
       InstallationProperties.Instance.Set("ChosenSkin", "DefaultWideHD");
+    }
+
+    private void btnSkin3_Click(object sender, EventArgs e)
+    {
+      btnExisting.Image = Images.Choose_button_off;
+      btnTitan.Image = Images.Choose_button_off;
+      btnDefaultWide.Image = Images.Choose_button_off;
+      btnAres.Image = Images.Choose_button_on;
+      pbSkin.Image = Images.preview_ares;
+      InstallationProperties.Instance.Set("ChosenSkin", "Ares");
     }
 
     private void btnExisting_Click(object sender, EventArgs e)

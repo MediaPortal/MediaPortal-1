@@ -59,6 +59,7 @@ namespace WatchDog
     private readonly List<string> _knownPids = new List<string>();
     private bool _safeMode;
     private int GraphsCreated { get; set; }
+    private string _currentpath = Directory.GetCurrentDirectory();
 
     #endregion
 
@@ -182,40 +183,57 @@ namespace WatchDog
         _tempDir += "\\";
       }
       _tempDir += "MPTemp";
-      _zipFile = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory) +
-                 "\\MediaPortalLogs_[date]__[time].zip";
-      if (!ParseCommandLine())
+      // Check If Watchdog is installed on TV Server folder for disabled 1st & 2nd choice & rename Zip file
+     if (File.Exists(Path.Combine(_currentpath, "WatchDog.exe")) & File.Exists(Path.Combine(_currentpath, "SetupTV.exe")))
       {
-        Application.Exit();
-      }
-      tbZipFile.Text = _zipFile;
-      if (_autoMode)
-      {
-        if (!CheckRequirements())
+        _zipFile = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory) + "\\MediaPortal-Logs\\MP_TVELogs_[date]__[time].zip";
+        if (!ParseCommandLine())
         {
           Application.Exit();
         }
-        if (_safeMode)
-        {
-          SafeModeRadioButton.Checked = true;
-        }
-        else
-        {
-          NormalModeRadioButton.Checked = true;
-        }
-        EnableChoice(false);
-        ProceedButton.Enabled = false;
-        SetStatus("Running in auto/debug mode...");
-        tmrUnAttended.Enabled = true;
+        tbZipFile.Text = _zipFile;
+
+        SafeModeRadioButton.Enabled = false;
+        NormalModeRadioButton.Enabled = false;
+        ExportLogsRadioButton.Enabled = true;
+        ExportLogsRadioButton.Checked = true;
       }
-      if (_watchdog)
+     else
       {
-        WindowState = FormWindowState.Minimized;
-        ShowInTaskbar = false;
-        tmrWatchdog.Enabled = true;
-        using (var xmlreader = new MPSettings())
+        _zipFile = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory) + "\\MediaPortal-Logs\\MediaPortalLogs_[date]__[time].zip";
+        if (!ParseCommandLine())
         {
-          _restoreTaskbar = xmlreader.GetValueAsBool("general", "hidetaskbar", false);
+          Application.Exit();
+        }
+        tbZipFile.Text = _zipFile;
+        if (_autoMode)
+        {
+          if (!CheckRequirements())
+          {
+            Application.Exit();
+          }
+          if (_safeMode)
+          {
+            SafeModeRadioButton.Checked = true;
+          }
+          else
+          {
+            NormalModeRadioButton.Checked = true;
+          }
+          EnableChoice(false);
+          ProceedButton.Enabled = false;
+          SetStatus("Running in auto/debug mode...");
+          tmrUnAttended.Enabled = true;
+        }
+        if (_watchdog)
+        {
+          WindowState = FormWindowState.Minimized;
+          ShowInTaskbar = false;
+          tmrWatchdog.Enabled = true;
+          using (var xmlreader = new MPSettings())
+          {
+            _restoreTaskbar = xmlreader.GetValueAsBool("general", "hidetaskbar", false);
+          }
         }
       }
     }

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+This file should contain the details view
+-->
+<window>
+  <controls>
+
+	<!-- Listview info -->
+
+    <control>
+      <description>TV Channel Logo</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>205</posX>
+      <posY>970</posY>
+      <width>654</width>
+      <height>34</height>
+      <texture>Einfo1.png</texture>
+      <visible>[facadeview.list|facadeview.smallicons]+control.isvisible(1238)|control.isvisible(1237)</visible>	  
+    </control>
+	<control>
+      <description>summery</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>240</posX>
+      <posY>970</posY>
+      <width>50</width>
+      <height>35</height>
+      <textcolor>ffb9bcc0</textcolor>
+      <font>fontBold2</font>
+	  <align>center</align>	  
+      <label>#(iif(eq(#TVSeries.Series.Rating,''),'N/A','#TVSeries.Series.Rating'))</label>
+      <visible>[facadeview.list|facadeview.smallicons]+control.isvisible(1238)|control.isvisible(1237)</visible>	  
+    </control>	
+	<control>
+      <description>summery</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>322</posX>
+      <posY>970</posY>
+      <width>170</width>
+      <height>35</height>
+      <textcolor>ffb9bcc0</textcolor>
+      <font>fontBold2</font>
+	  <align>center</align>
+      <label>#(string.toupper(#TVSeries.Series.Status))</label>
+      <visible>[facadeview.list|facadeview.smallicons]+control.isvisible(1238)|control.isvisible(1237)</visible>	  
+    </control>	
+	<control>
+      <description>summery</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>545</posX>
+      <posY>970</posY>
+      <width>170</width>
+      <height>35</height>
+      <textcolor>ffb9bcc0</textcolor>
+      <font>fontBold2</font>
+	  <align>center</align>
+      <label>#(string.toupper(iif(eq(#TVSeries.Series.AirsDay,''),'NA','')))#(string.toupper(#TVSeries.Series.AirsDay))</label>
+      <visible>[facadeview.list|facadeview.smallicons]+control.isvisible(1238)|control.isvisible(1237)</visible>	  
+    </control>	
+	<control>
+      <description>summery</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>755</posX>
+      <posY>970</posY>
+      <width>100</width>
+      <height>35</height>
+      <textcolor>ffb9bcc0</textcolor>
+      <font>fontBold2</font>
+	  <align>center</align>	  
+      <label>#(string.toupper(iif(eq(#TVSeries.Series.AirsTime,''),'NA','')))#(string.toupper(string.rtrim(#TVSeries.Series.AirsTime,'a,m,A,M,P,p,')))</label>
+      <visible>[facadeview.list|facadeview.smallicons]+control.isvisible(1238)|control.isvisible(1237)</visible>	  
+    </control>	
+	
+	
+  
+  </controls>
+</window>
+

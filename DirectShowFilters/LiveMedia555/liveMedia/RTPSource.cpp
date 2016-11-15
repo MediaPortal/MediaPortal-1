@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2016 Live Networks, Inc.  All rights reserved.
 // RTP Sources
 // Implementation
 
@@ -53,10 +53,10 @@ RTPSource::RTPSource(UsageEnvironment& env, Groupsock* RTPgs,
 		     u_int32_t rtpTimestampFrequency)
   : FramedSource(env),
     fRTPInterface(this, RTPgs),
-    fCurPacketHasBeenSynchronizedUsingRTCP(False),
-    fRTPPayloadFormat(rtpPayloadFormat),
-    fTimestampFrequency(rtpTimestampFrequency),
-    fSSRC(our_random32()) {
+    fCurPacketHasBeenSynchronizedUsingRTCP(False), fLastReceivedSSRC(0),
+    fRTCPInstanceForMultiplexedRTCPPackets(NULL),
+    fRTPPayloadFormat(rtpPayloadFormat), fTimestampFrequency(rtpTimestampFrequency),
+    fSSRC(our_random32()), fEnableRTCPReports(True) {
   fReceptionStatsDB = new RTPReceptionStatsDB();
 }
 
@@ -201,6 +201,8 @@ void RTPReceptionStats::init(u_int32_t SSRC) {
   fSSRC = SSRC;
   fTotNumPacketsReceived = 0;
   fTotBytesReceived_hi = fTotBytesReceived_lo = 0;
+  fBaseExtSeqNumReceived = 0;
+  fHighestExtSeqNumReceived = 0;
   fHaveSeenInitialSequenceNumber = False;
   fLastTransit = ~0;
   fPreviousPacketRTPTimestamp = 0;
@@ -217,8 +219,8 @@ void RTPReceptionStats::init(u_int32_t SSRC) {
 }
 
 void RTPReceptionStats::initSeqNum(u_int16_t initialSeqNum) {
-    fBaseExtSeqNumReceived = initialSeqNum-1;
-    fHighestExtSeqNumReceived = initialSeqNum;
+    fBaseExtSeqNumReceived = 0x10000 | initialSeqNum;
+    fHighestExtSeqNumReceived = 0x10000 | initialSeqNum;
     fHaveSeenInitialSequenceNumber = True;
 }
 
@@ -245,18 +247,32 @@ void RTPReceptionStats
 
   // Check whether the new sequence number is the highest yet seen:
   unsigned oldSeqNum = (fHighestExtSeqNumReceived&0xFFFF);
+  unsigned seqNumCycle = (fHighestExtSeqNumReceived&0xFFFF0000);
+  unsigned seqNumDifference = (unsigned)((int)seqNum-(int)oldSeqNum);
+  unsigned newSeqNum = 0;
   if (seqNumLT((u_int16_t)oldSeqNum, seqNum)) {
     // This packet was not an old packet received out of order, so check it:
-    unsigned seqNumCycle = (fHighestExtSeqNumReceived&0xFFFF0000);
-    unsigned seqNumDifference = (unsigned)((int)seqNum-(int)oldSeqNum);
+    
     if (seqNumDifference >= 0x8000) {
       // The sequence number wrapped around, so start a new cycle:
       seqNumCycle += 0x10000;
     }
-
-    unsigned newSeqNum = seqNumCycle|seqNum;
+    
+    newSeqNum = seqNumCycle|seqNum;
     if (newSeqNum > fHighestExtSeqNumReceived) {
       fHighestExtSeqNumReceived = newSeqNum;
+    }
+  } else if (fTotNumPacketsReceived > 1) {
+    // This packet was an old packet received out of order
+    
+    if ((int)seqNumDifference >= 0x8000) {
+      // The sequence number wrapped around, so switch to an old cycle:
+      seqNumCycle -= 0x10000;
+    }
+    
+    newSeqNum = seqNumCycle|seqNum;
+    if (newSeqNum < fBaseExtSeqNumReceived) {
+      fBaseExtSeqNumReceived = newSeqNum;
     }
   }
 

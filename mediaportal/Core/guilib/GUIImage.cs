@@ -819,7 +819,7 @@ namespace MediaPortal.GUI.Library
       {
         return;
       }
-      if (_textureFileNameTag.IndexOf(tag) >= 0)
+      if (_textureFileNameTag.IndexOf(tag, StringComparison.Ordinal) >= 0)
       {
         _propertyChanged = true;
       }
@@ -844,25 +844,22 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public override void Dispose()
     {
-      lock (GUIGraphicsContext.RenderLock)
+      //lock (GUIGraphicsContext.RenderLock)
       {
-        lock (this)
+        if (!_allocated)
         {
-          if (!_allocated)
-          {
-            return;
-          }
-
-          //base.Dispose(); // breaks fade in/out animations-.
-          _allocated = false;
-          UnsubscribeOnPropertyChanged();
-          UnsubscribeAndReleaseListTextures();
-          Cleanup();
-
-          _memoryImage.SafeDispose();
-          _memoryImageTexture = null;
-          //_debugDisposed = true;   
+          return;
         }
+
+        //base.Dispose(); // breaks fade in/out animations-.
+        _allocated = false;
+        UnsubscribeOnPropertyChanged();
+        UnsubscribeAndReleaseListTextures();
+        Cleanup();
+
+        _memoryImage.SafeDispose();
+        _memoryImageTexture = null;
+        //_debugDisposed = true;   
       }
     }
 
@@ -1436,9 +1433,10 @@ namespace MediaPortal.GUI.Library
             }
             else
             {
-                // Default behavior, draw the image texture with no mask.
-                DXNative.FontEngineDrawTextureSync(_packedTextureNo, _fx, _fy, _nw, _nh, _uoff, _voff, 
-                                                   _umax, _vmax, color, matrix);
+              // TODO must do a proper fix (Flickering on TVGuide)
+              // Default behavior, draw the image texture with no mask.
+              DXNative.FontEngineDrawTextureSync(_packedTextureNo, _fx, _fy, _nw, _nh, _uoff, _voff,
+                _umax, _vmax, color, matrix);
             }
           }
 

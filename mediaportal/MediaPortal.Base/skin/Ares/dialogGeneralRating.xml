@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>28380</id>
+  <defaultcontrol>10</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+	<animation effect="fade" time="250">WindowOpen</animation>
+	<animation effect="fade" time="250">WindowClose</animation>
+  <controls>
+    <import>common.dialog.xml</import>
+    <control>
+			<description>1 Star</description>
+			<type>checkbutton</type>
+			<id>100</id>
+			<posX>732</posX>
+			<posY>543</posY>
+			<width>48</width>
+			<height>48</height>
+			<onup>101</onup>
+			<textureFocus>UserRatingStarOn.png</textureFocus>
+			<textureNoFocus>UserRatingStarOff.png</textureNoFocus>
+			<textureCheckmark>UserRatingStarOn.png</textureCheckmark>
+			<textureCheckmarkNoFocus>UserRatingStarOff.png</textureCheckmarkNoFocus>
+    </control>
+
+    <control>
+			<description>2 Star</description>
+			<type>checkbutton</type>
+			<id>101</id>
+			<posX>840</posX>
+			<posY>543</posY>
+			<width>48</width>
+			<height>48</height>
+			<onup>102</onup>
+			<textureFocus>UserRatingStarOn.png</textureFocus>
+			<textureNoFocus>UserRatingStarOff.png</textureNoFocus>
+			<textureCheckmark>UserRatingStarOn.png</textureCheckmark>
+			<textureCheckmarkNoFocus>UserRatingStarOff.png</textureCheckmarkNoFocus>
+    </control>
+
+    <control>
+			<description>3 Star</description>
+			<type>checkbutton</type>
+			<id>102</id>
+			<posX>946</posX>
+			<posY>543</posY>
+			<width>48</width>
+			<height>48</height>
+			<onup>103</onup>
+			<textureFocus>UserRatingStarOn.png</textureFocus>
+			<textureNoFocus>UserRatingStarOff.png</textureNoFocus>
+			<textureCheckmark>UserRatingStarOn.png</textureCheckmark>
+			<textureCheckmarkNoFocus>UserRatingStarOff.png</textureCheckmarkNoFocus>
+    </control>
+
+    <control>
+			<description>4 Star</description>
+			<type>checkbutton</type>
+			<id>103</id>
+			<posX>1053</posX>
+			<posY>543</posY>
+			<width>48</width>
+			<height>48</height>
+			<onup>104</onup>
+			<textureFocus>UserRatingStarOn.png</textureFocus>
+			<textureNoFocus>UserRatingStarOff.png</textureNoFocus>
+			<textureCheckmark>UserRatingStarOn.png</textureCheckmark>
+			<textureCheckmarkNoFocus>UserRatingStarOff.png</textureCheckmarkNoFocus>
+    </control>
+	
+    <control>
+			<description>5 Star</description>
+			<type>checkbutton</type>
+			<id>104</id>
+			<posX>1159</posX>
+			<posY>543</posY>
+			<width>48</width>
+			<height>48</height>		
+			<textureFocus>UserRatingStarOn.png</textureFocus>
+			<textureNoFocus>UserRatingStarOff.png</textureNoFocus>
+			<textureCheckmark>UserRatingStarOn.png</textureCheckmark>
+			<textureCheckmarkNoFocus>UserRatingStarOff.png</textureCheckmarkNoFocus>
+    </control>
+	
+	<control>
+		<description>dialog text</description>
+		<type>label</type>
+		<id>7</id>
+		<posX>1200</posX>
+		<posY>600</posY>
+		<font>font13</font>
+		<align>right</align>
+		<width>450</width>
+		<textcolor>ff666666</textcolor>
+  </control>
+		
+  </controls>
+</window>

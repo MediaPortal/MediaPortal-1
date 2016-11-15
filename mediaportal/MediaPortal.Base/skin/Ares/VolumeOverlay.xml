@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+<id>7972</id>
+<defaultcontrol>2</defaultcontrol>
+
+<controls>
+ <!-- **************************** Volume Display  ********************************** -->
+    <control>
+      <type>image</type>
+      <id>501</id>
+      <posX>37</posX>
+      <posY>21</posY>
+      <width>450</width>
+      <height>90</height>
+      <texture></texture>
+      <colordiffuse>ffffffff</colordiffuse>
+    </control>
+	<control>
+      <type>volumebar</type>
+      <id>503</id>
+      <posX>0</posX>
+      <posY>-19</posY>
+      <align>left</align>
+      <height>25</height>
+      <imageHeight>5</imageHeight>
+      <width>1920</width>
+      <texture>volume.states.png</texture>
+    </control>
+
+    <control>
+      <type>image</type>
+      <id>502</id>
+      <posX>0</posX>
+      <posY>-2</posY>
+	  <width>1920</width>
+      <texture>volume.states.mute.png</texture>
+      <visible>no</visible>
+    </control>
+</controls>
+</window> 

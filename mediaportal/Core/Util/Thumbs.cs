@@ -83,6 +83,7 @@ namespace MediaPortal.Util
     public static readonly string MovieGenre = Config.GetSubFolder(Config.Dir.Thumbs, @"Videos\Genre");
     public static readonly string MovieUserGroups = Config.GetSubFolder(Config.Dir.Thumbs, @"Videos\UserGroups");
     public static readonly string MovieYear = Config.GetSubFolder(Config.Dir.Thumbs, @"Videos\Year");
+    public static readonly string MovieCollection = Config.GetSubFolder(Config.Dir.Thumbs, @"Videos\Collection");
 
     public static readonly string TVChannel = Config.GetSubFolder(Config.Dir.Thumbs, @"TV\Logos");
     public static readonly string TVShows = Config.GetSubFolder(Config.Dir.Thumbs, @"TV\Shows");
@@ -181,6 +182,7 @@ namespace MediaPortal.Util
         Directory.CreateDirectory(MovieTitle);
         Directory.CreateDirectory(MovieActors);
         Directory.CreateDirectory(MovieYear);
+        Directory.CreateDirectory(MovieCollection);
         Directory.CreateDirectory(News);
         Directory.CreateDirectory(Trailers);
       }

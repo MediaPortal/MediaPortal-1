@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2016 Live Networks, Inc.  All rights reserved.
 // A 'ServerMediaSubsession' object that represents an existing
 // 'RTPSink', rather than one that creates new 'RTPSink's on demand.
 // C++ header
@@ -43,6 +43,8 @@ protected:
       // called only by createNew();
   virtual ~PassiveServerMediaSubsession();
 
+  virtual Boolean rtcpIsMuxed();
+
 protected: // redefined virtual functions
   virtual char const* sdpLines();
   virtual void getStreamParameters(unsigned clientSessionId,
@@ -62,12 +64,21 @@ protected: // redefined virtual functions
 			   TaskFunc* rtcpRRHandler,
 			   void* rtcpRRHandlerClientData,
                            unsigned short& rtpSeqNum,
-                           unsigned& rtpTimestamp);
+                           unsigned& rtpTimestamp,
+			   ServerRequestAlternativeByteHandler* serverRequestAlternativeByteHandler,
+                           void* serverRequestAlternativeByteHandlerClientData);
+  virtual float getCurrentNPT(void* streamToken);
+  virtual void getRTPSinkandRTCP(void* streamToken,
+				 RTPSink const*& rtpSink, RTCPInstance const*& rtcp);
+  virtual void deleteStream(unsigned clientSessionId, void*& streamToken);
+
+protected:
+  char* fSDPLines;
 
 private:
   RTPSink& fRTPSink;
   RTCPInstance* fRTCPInstance;
-  char* fSDPLines;
+  HashTable* fClientRTCPSourceRecords; // indexed by client session id; used to implement RTCP "RR" handling
 };
 
 #endif

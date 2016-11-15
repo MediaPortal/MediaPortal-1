@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2016 Live Networks, Inc.  All rights reserved.
 // RTP sink for MPEG video (RFC 2250)
 // Implementation
 
@@ -68,7 +68,7 @@ void MPEG1or2VideoRTPSink
 ::doSpecialFrameHandling(unsigned fragmentationOffset,
 			 unsigned char* frameStart,
 			 unsigned numBytesInFrame,
-			 struct timeval frameTimestamp,
+			 struct timeval framePresentationTime,
 			 unsigned numRemainingBytes) {
   Boolean thisFrameIsASlice = False; // until we learn otherwise
   if (isFirstFrameInPacket()) {
@@ -154,7 +154,7 @@ void MPEG1or2VideoRTPSink
 
   // Also set the RTP timestamp.  (As above, we do this for each frame
   // in the packet.)
-  setTimestamp(frameTimestamp);
+  setTimestamp(framePresentationTime);
 
   // Set the RTP 'M' (marker) bit iff this frame ends (i.e., is the last
   // slice of) a picture (and there are no fragments remaining).
@@ -170,6 +170,6 @@ void MPEG1or2VideoRTPSink
 }
 
 unsigned MPEG1or2VideoRTPSink::specialHeaderSize() const {
-  // There's a 4 byte special audio header:
+  // There's a 4 byte special video header:
   return 4;
 }
