@@ -811,14 +811,9 @@ namespace TvPlugin
 
     private void SetProperties(Schedule rec)
     {
-      string strTime = String.Format("{0} {1} - {2}",
-                                     Utils.GetShortDayString(rec.StartTime),
-                                     rec.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-                                     rec.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
-
       GUIPropertyManager.SetProperty("#TV.RecordedTV.Title", rec.ProgramName);
       GUIPropertyManager.SetProperty("#TV.RecordedTV.Genre", "");
-      GUIPropertyManager.SetProperty("#TV.RecordedTV.Time", strTime);
+      GUIPropertyManager.SetProperty("#TV.RecordedTV.Time", TVUtil.GetRecordingDateStringFull(rec));
       GUIPropertyManager.SetProperty("#TV.RecordedTV.Description", "");
       string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, rec.ReferencedChannel().DisplayName);
       if (string.IsNullOrEmpty(strLogo))
@@ -840,13 +835,8 @@ namespace TvPlugin
       GUIPropertyManager.SetProperty("#TV.Scheduled.thumb", String.Empty);
       GUIPropertyManager.SetProperty("#TV.Scheduled.Channel", String.Empty);
 
-      string strTime = String.Format("{0} {1} - {2}",
-                                     Utils.GetShortDayString(schedule.StartTime),
-                                     schedule.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-                                     schedule.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
-
       GUIPropertyManager.SetProperty("#TV.Scheduled.Title", prog.Title);
-      GUIPropertyManager.SetProperty("#TV.Scheduled.Time", strTime);
+      GUIPropertyManager.SetProperty("#TV.Scheduled.Time", TVUtil.GetRecordingDateStringFull(schedule));
       if (prog != null)
       {
         GUIPropertyManager.SetProperty("#TV.Scheduled.Channel", prog.ReferencedChannel().DisplayName);

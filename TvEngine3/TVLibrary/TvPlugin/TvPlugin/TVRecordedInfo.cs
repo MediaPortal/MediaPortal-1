@@ -19,7 +19,6 @@
 #endregion
 
 using System;
-using System.Globalization;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
@@ -76,13 +75,8 @@ namespace TvPlugin
         return;
       }
 
-      string strTime = String.Format("{0} {1} - {2}",
-                                     Utils.GetShortDayString(currentProgram.StartTime),
-                                     currentProgram.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-                                     currentProgram.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
-
       lblProgramGenre.Label = currentProgram.Genre;
-      lblProgramTime.Label = strTime;
+      lblProgramTime.Label = TVUtil.GetRecordingDateStringFull(currentProgram);
       lblProgramDescription.Label = currentProgram.Description;
       lblProgramTitle.Label = currentProgram.Title;
     }
