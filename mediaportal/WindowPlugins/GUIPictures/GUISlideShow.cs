@@ -1336,6 +1336,7 @@ namespace MediaPortal.GUI.Pictures
         _currentSlideIndex = 0;
         _currentSlide = _slideCache.GetCurrentSlide(_slideList[_currentSlideIndex]);
       }
+      GUIPropertyManager.SetProperty("#isslideshow", "true");
     }
 
     public void StartSlideShow(string path)
@@ -1345,11 +1346,14 @@ namespace MediaPortal.GUI.Pictures
       StartBackgroundMusic(path);
       GUIPictureSlideShow._slideDirection = 1;
       _isSlideShow = true;
+      GUIPropertyManager.SetProperty("#isslideshow", "true");
     }
 
 
     public void Reset()
     {
+      GUIPropertyManager.SetProperty("#isslideshow", "false");
+
       _slideRecursiveItem.Clear();
       _slideList.Clear();
       _slideFolder.Clear();
