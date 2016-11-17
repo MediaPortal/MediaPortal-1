@@ -278,34 +278,38 @@ namespace MediaPortal.GUI.Library
       int w = 0;
       int h = 0;
 
-      for (int index = 0; index < _images.Length; index++)
+      if (_images != null)
       {
-        _imageId++;
-        _images[index] = new GUIImage(ParentID, _imageId + index, 0, 0, Width, Height, (string)_filenames[index], 0);
-        _images[index].ParentControl = this;
-        _images[index].ColourDiffuse = ColourDiffuse;
-        _images[index].DimColor = DimColor;
-        _images[index].KeepAspectRatio = _keepAspectRatio;
-        _images[index].Filtering = Filtering;
-        _images[index].RepeatBehavior = _repeatBehavior;
-        _images[index].DiffuseFileName = _diffuseFileName;
-        _images[index].MaskFileName = _maskFileName;
-        _images[index].OverlayFileName = _overlayFileName;
-        _images[index].FlipX = _flipX;
-        _images[index].FlipY = _flipY;
-        _images[index].SetBorder(_strBorder, _borderPosition, _borderTextureRepeat,
-                                 _borderTextureRotate, _borderTextureFileName, _borderColorKey, _borderHasCorners,
-                                 _borderCornerTextureRotate);
-        _images[index].TileFill = _tileFill;
-        _images[index].AllocResources();
-        //_images[index].ScaleToScreenResolution(); -> causes too big images in fullscreen
+        for (int index = 0; index < _images.Length; index++)
+        {
+          _imageId++;
+          _images[index] = new GUIImage(ParentID, _imageId + index, 0, 0, Width, Height, (string) _filenames[index], 0);
+          _images[index].ParentControl = this;
+          _images[index].ColourDiffuse = ColourDiffuse;
+          _images[index].DimColor = DimColor;
+          _images[index].KeepAspectRatio = _keepAspectRatio;
+          _images[index].Filtering = Filtering;
+          _images[index].RepeatBehavior = _repeatBehavior;
+          _images[index].DiffuseFileName = _diffuseFileName;
+          _images[index].MaskFileName = _maskFileName;
+          _images[index].OverlayFileName = _overlayFileName;
+          _images[index].FlipX = _flipX;
+          _images[index].FlipY = _flipY;
+          _images[index].SetBorder(_strBorder, _borderPosition, _borderTextureRepeat,
+            _borderTextureRotate, _borderTextureFileName, _borderColorKey, _borderHasCorners,
+            _borderCornerTextureRotate);
+          _images[index].TileFill = _tileFill;
+          _images[index].AllocResources();
+          //_images[index].ScaleToScreenResolution(); -> causes too big images in fullscreen
 
-        w = Math.Max(w, _images[index].Width);
-        h = Math.Max(h, _images[index].Height);
-        _renderWidth = Math.Max(_renderWidth, _images[index].RenderWidth);
-        _renderHeight = Math.Max(_renderHeight, _images[index].RenderHeight);
-        _textureWidth = Math.Max(_textureWidth, _images[index].TextureWidth);
-        _textureHeight = Math.Max(_textureHeight, _images[index].TextureHeight);
+
+          if (_images.Length > index) w = Math.Max(w, _images[index].Width);
+          if (_images.Length > index) h = Math.Max(h, _images[index].Height);
+          if (_images.Length > index) _renderWidth = Math.Max(_renderWidth, _images[index].RenderWidth);
+          if (_images.Length > index) _renderHeight = Math.Max(_renderHeight, _images[index].RenderHeight);
+          if (_images.Length > index) _textureWidth = Math.Max(_textureWidth, _images[index].TextureWidth);
+          if (_images.Length > index) _textureHeight = Math.Max(_textureHeight, _images[index].TextureHeight);
+        }
       }
 
       int x = _positionX;

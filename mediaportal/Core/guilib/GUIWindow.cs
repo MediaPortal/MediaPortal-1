@@ -233,8 +233,9 @@ namespace MediaPortal.GUI.Library
     private Object instance;
     protected string _loadParameter = null;
     private bool _skipAnimation = false;
-    private bool _loadSkinResult = false;
-    private bool _loadSkinDone = false;
+    private static bool _loadSkinResult = false;
+    protected internal static bool _loadSkinDone = false;
+    private static bool isSkinXMLLoading = false;
 
     //-1=default from topbar.xml 
     // 0=flase from skin.xml
@@ -255,7 +256,6 @@ namespace MediaPortal.GUI.Library
     private VisualEffect _showAnimation = new VisualEffect(); // for dialogs
     private VisualEffect _closeAnimation = new VisualEffect();
     public static SynchronizationContext _mainThreadContext = SynchronizationContext.Current;
-    public static AutoResetEvent Eventfinished = new AutoResetEvent(false);
 
     #endregion
 
@@ -493,12 +493,13 @@ namespace MediaPortal.GUI.Library
     {
       if (Thread.CurrentThread.Name != "MPMain" && Thread.CurrentThread.Name != "Config Main")
       {
-        _loadSkinDone = false;
-        GUIWindowManager.SendThreadCallback(LoadSkinThreaded, 0, 0, null);
-        while (!_loadSkinDone)
+        if (!GUIWindow._loadSkinDone)
         {
-          Eventfinished.WaitOne(5000);
-          Log.Error("run LoadSkin() until is done in MP main thread _loadSkinDone {0}", _loadSkinDone);
+          GUIWindow._loadSkinDone = true;
+          if (!isSkinXMLLoading)
+          {
+            int result = GUIWindowManager.SendThreadCallback(LoadSkinThreaded, 0, 0, null);
+          }
         }
         return _loadSkinResult;
       }
@@ -508,8 +509,8 @@ namespace MediaPortal.GUI.Library
     public int LoadSkinThreaded(int p1, int p2, object s)
     {
       _loadSkinResult = LoadSkinBool();
-      _loadSkinDone = true;
-      Log.Error("LoadSkinThreaded() done with return value : {0}", _loadSkinResult);
+      Log.Debug("LoadSkinThreaded() done with return value : {0}", _loadSkinResult);
+      GUIWindow._loadSkinDone = false;
       return p1;
     }
 
@@ -534,15 +535,21 @@ namespace MediaPortal.GUI.Library
         }
       }
 
+      if (isSkinXMLLoading)
+        Log.Error("LoadSkin: Running already so skipping");
+
+      isSkinXMLLoading = true;
       _lastSkin = GUIGraphicsContext.Skin;
       // no filename is configured
       if (_windowXmlFileName == "")
       {
+        isSkinXMLLoading = false;
         return false;
       }
       // TODO what is the reason for this check
       if (Children.Count > 0)
       {
+        isSkinXMLLoading = false;
         return false;
       }
 
@@ -566,12 +573,14 @@ namespace MediaPortal.GUI.Library
         doc.Load(_windowXmlFileName);
         if (doc.DocumentElement == null)
         {
+          isSkinXMLLoading = false;
           return false;
         }
         string root = doc.DocumentElement.Name;
         // Check root element
         if (root != "window")
         {
+          isSkinXMLLoading = false;
           return false;
         }
 
@@ -594,12 +603,14 @@ namespace MediaPortal.GUI.Library
         XmlNode nodeId = doc.DocumentElement.SelectSingleNode("/window/id");
         if (nodeId == null)
         {
+          isSkinXMLLoading = false;
           return false;
         }
         // Set the default control that has the focus after loading the window
         XmlNode nodeDefault = doc.DocumentElement.SelectSingleNode("/window/defaultcontrol");
         if (nodeDefault == null)
         {
+          isSkinXMLLoading = false;
           return false;
         }
         // Convert the id to an int
@@ -783,24 +794,28 @@ namespace MediaPortal.GUI.Library
         }
 
         // TODO: remove this when all XAML parser or will result in double initialization
-        ((ISupportInitialize) this).EndInit();
+        ((ISupportInitialize)this).EndInit();
 
         //				PrepareTriggers();
 
         // initialize the controls
         OnWindowLoaded();
         _isSkinLoaded = true;
+        isSkinXMLLoading = false;
+
         return true;
       }
       catch (FileNotFoundException e)
       {
         Log.Error("SKIN: Missing {0}", e.FileName);
+        isSkinXMLLoading = false;
         return false;
       }
       catch (Exception ex)
       {
         Log.Error("exception loading window {0} err:{1}\r\n\r\n{2}\r\n\r\n", _windowXmlFileName, ex.Message,
           ex.StackTrace);
+        isSkinXMLLoading = false;
         return false;
       }
     }
@@ -1167,6 +1182,10 @@ namespace MediaPortal.GUI.Library
                 IsAnimating(AnimationType.None);
               }
               GUIWindowManager.Process();
+              if (GUIWindow._loadSkinDone)
+              {
+                break;
+              }
             }
             GUIWindowManager.IsSwitchingToNewWindow = switching;
             foreach (GUIControl control in controlList)
@@ -1242,7 +1261,10 @@ namespace MediaPortal.GUI.Library
         {
           try
           {
-            Children[i].PreAllocResources();
+            if (Children.Count > 0)
+            {
+              Children[i].PreAllocResources();
+            }
           }
           catch (Exception ex1)
           {
@@ -1258,7 +1280,10 @@ namespace MediaPortal.GUI.Library
           {
             if (!faultyControl.Contains(i))
             {
-              Children[i].AllocResources();
+              if (Children.Count > 0)
+              {
+                Children[i].AllocResources();
+              }
             }
             else
             {
