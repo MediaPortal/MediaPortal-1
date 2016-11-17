@@ -3897,12 +3897,6 @@ public class MediaPortalApp : D3D, IRender
       return;
     }
 
-    // Set event to be able to allow loadskin loading
-    if (GUIWindow.Eventfinished != null)
-    {
-      GUIWindow.Eventfinished.Set();
-    }
-
 #if !DEBUG
     try
     {

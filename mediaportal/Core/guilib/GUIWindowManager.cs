@@ -167,6 +167,7 @@ namespace MediaPortal.GUI.Library
     private static int _nextWindowID = -1;
     private static bool _startWithBasicHome = false;
     private static readonly Object thisLock = new Object(); // used in Route functions
+    private static readonly Object thisLockProcess = new Object(); // used to avoid duplicate process
 
     #endregion
 
@@ -330,7 +331,7 @@ namespace MediaPortal.GUI.Library
       return env.result;
     }
 
-    public static void SendThreadCallback(Callback callback, int param1, int param2, object data)
+    public static int SendThreadCallback(Callback callback, int param1, int param2, object data)
     {
       CallbackEnv env = new CallbackEnv();
       env.callback = callback;
@@ -346,6 +347,11 @@ namespace MediaPortal.GUI.Library
       {
         DispatchThreadMessages();
       }
+
+      Log.Debug("SendThreadCallbackAndWait - Waitone");
+      env.finished.WaitOne(5000);
+
+      return env.result;
     }
 
 
@@ -1332,12 +1338,15 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public static void Process()
     {
-      StartFrameClock();
-      if (null != Callbacks)
+      lock (thisLockProcess)
       {
-        Callbacks();
+        StartFrameClock();
+        if (null != Callbacks)
+        {
+          Callbacks();
+        }
+        WaitForFrameClock();
       }
-      WaitForFrameClock();
     }
 
     /// <summary>
