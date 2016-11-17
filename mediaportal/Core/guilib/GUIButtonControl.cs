@@ -18,6 +18,7 @@
 
 #endregion
 
+using System;
 using System.Diagnostics;
 using System.IO;
 using MediaPortal.ExtensionMethods;
