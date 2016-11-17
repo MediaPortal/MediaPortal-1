@@ -122,7 +122,14 @@ namespace MediaPortal.GUI.Library
       {
         //render the focused image
         _imageFocused.Render(timePassed);
-        GUIPropertyManager.SetProperty("#highlightedbutton", Label);
+        if (!string.IsNullOrEmpty(Label) && (Label.IndexOf("#") >= 0))
+        {
+          GUIPropertyManager.SetProperty("#highlightedbutton", GUIPropertyManager.Parse(Label) ?? String.Empty);
+        }
+        else
+        {
+          GUIPropertyManager.SetProperty("#highlightedbutton", Label);
+        }
       }
       else
       {
