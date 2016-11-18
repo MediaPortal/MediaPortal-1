@@ -26,6 +26,7 @@ using System.Data.SqlTypes;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Globalization;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
@@ -565,6 +566,9 @@ namespace Mediaportal.TV.TvPlugin
           {
             if (!string.IsNullOrEmpty(currentNowAndNext.TitleNow))
             {
+              sbTmp.Append(currentNowAndNext.NowStartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+              sbTmp.Append(": ");
+              
               TVUtil.TitleDisplay(sbTmp, currentNowAndNext.TitleNow, currentNowAndNext.EpisodeName,
                                               currentNowAndNext.SeriesNum,
                                               currentNowAndNext.EpisodeNum, currentNowAndNext.EpisodePart);
@@ -580,7 +584,7 @@ namespace Mediaportal.TV.TvPlugin
           }
 
           item.Label2 = sbTmp.ToString();
-          sbTmp.Insert(0, local789);
+          sbTmp.Insert(0, string.Empty);
           item.Label3 = sbTmp.ToString();
 
           sbTmp.Length = 0;
@@ -625,6 +629,9 @@ namespace Mediaportal.TV.TvPlugin
 
           if (hasNowNext && listNowNext[channelID].IdProgramNext != -1)
           {
+            sbTmp.Append(currentNowAndNext.NextStartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+            sbTmp.Append(": ");
+
             TVUtil.TitleDisplay(sbTmp, currentNowAndNext.TitleNext, currentNowAndNext.EpisodeNameNext,
                                             currentNowAndNext.SeriesNumNext,
                                             currentNowAndNext.EpisodeNumNext,
@@ -637,7 +644,7 @@ namespace Mediaportal.TV.TvPlugin
 
           item.Label2 = sb.ToString();
 
-          sbTmp.Insert(0, local790);
+          sbTmp.Insert(0, string.Empty);
 
           item.Label = sbTmp.ToString();
 

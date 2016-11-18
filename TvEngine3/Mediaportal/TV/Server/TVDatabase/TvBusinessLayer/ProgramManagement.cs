@@ -94,19 +94,21 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
         string seriesNumNext = nextPrg.SeriesNum;
         string episodeNumNext = nextPrg.EpisodeNum;
         string episodePartNext = nextPrg.EpisodePart;
+        DateTime nextStart = nextPrg.StartTime;
+        DateTime nextEnd = nextPrg.EndTime;
 
         if (nowAndNext == null)
         {
           DateTime nowStart = SqlDateTime.MinValue.Value;
           DateTime nowEnd = SqlDateTime.MinValue.Value;
-          ;
+
           string titleNow = string.Empty;
           int idProgramNow = -1;
           string episodeNameNow = string.Empty;
           string seriesNumNow = string.Empty;
           string episodeNumNow = string.Empty;
           string episodePartNow = string.Empty;
-          nowAndNext = new NowAndNext(idChannel, nowStart, nowEnd, titleNow, titleNext, idProgramNow,
+          nowAndNext = new NowAndNext(idChannel, nowStart, nowEnd, nextStart, nextEnd, titleNow, titleNext, idProgramNow,
                                       idProgramNext, episodeNameNow, episodeNameNext, seriesNumNow,
                                       seriesNumNext, episodeNumNow, episodeNumNext, episodePartNow,
                                       episodePartNext);
@@ -135,9 +137,12 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
         string seriesNumNext = string.Empty;
         string episodeNumNext = string.Empty;
         string episodePartNext = string.Empty;
+        DateTime nexttart = SqlDateTime.MinValue.Value;
+        DateTime nextEnd = SqlDateTime.MinValue.Value;
 
         DateTime nowStart = nowPrg.StartTime;
         DateTime nowEnd = nowPrg.EndTime;
+
         string titleNow = nowPrg.Title;
         int idProgramNow = nowPrg.IdProgram;
         string episodeNameNow = nowPrg.EpisodeName;
@@ -145,7 +150,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
         string episodeNumNow = nowPrg.EpisodeNum;
         string episodePartNow = nowPrg.EpisodePart;
 
-        var nowAndNext = new NowAndNext(idChannel, nowStart, nowEnd, titleNow, titleNext, idProgramNow,
+        var nowAndNext = new NowAndNext(idChannel, nowStart, nowEnd, nexttart, nextEnd, titleNow, titleNext, idProgramNow,
                                         idProgramNext, episodeNameNow, episodeNameNext, seriesNumNow,
                                         seriesNumNext, episodeNumNow, episodeNumNext, episodePartNow,
                                         episodePartNext);

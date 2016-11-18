@@ -29,6 +29,8 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
     private int _idChannel;
     private DateTime _nowStart;
     private DateTime _nowEnd;
+    private DateTime _nextStart;
+    private DateTime _nextEnd;
     private string _titleNow;
     private string _titleNext;
     private int _idProgramNow;
@@ -42,7 +44,9 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
     private string _episodePart;
     private string _episodePartNext;
 
-    public NowAndNext(int idChannel, DateTime nowStart, DateTime nowEnd, string titleNow, string titleNext,
+    public NowAndNext(int idChannel, DateTime nowStart, DateTime nowEnd,
+                      DateTime nextStart, DateTime nextEnd,
+                      string titleNow, string titleNext,
                       int idProgramNow, int idProgramNext,
                       string episodeName, string episodeNameNext, string seriesNum, string seriesNumNext,
                       string episodeNum, string EpisodeNumNext, string episodePart, string episodePartNext)
@@ -52,6 +56,8 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
       _nowEnd = nowEnd;
       _titleNow = titleNow;
       _titleNext = titleNext;
+      _nextStart = nextStart;
+      _nextEnd = nextEnd;
       _idProgramNow = idProgramNow;
       _idProgramNext = idProgramNext;
       _episodeName = episodeName;
@@ -83,6 +89,20 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
     {
       get { return _nowEnd; }
       set { _nowEnd = value; }
+    }
+
+    [DataMember]
+    public DateTime NextStartTime
+    {
+      get { return _nextStart; }
+      set { _nextStart = value; }
+    }
+
+    [DataMember]
+    public DateTime NextEndTime
+    {
+      get { return _nextEnd; }
+      set { _nextEnd = value; }
     }
 
     [DataMember]
