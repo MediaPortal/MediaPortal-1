@@ -41,7 +41,12 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setting
 
     protected override string DoEvaluate()
     {
-      return GUIPropertyManager.GetProperty(base.value);
+      string strEval = GUIPropertyManager.GetProperty(base.value);
+      if (!string.IsNullOrEmpty(strEval) && (strEval.IndexOf('#') > -1))
+      {
+        strEval = GUIPropertyManager.Parse(strEval) ?? string.Empty;
+      }
+      return strEval;
     }
   }
 }
