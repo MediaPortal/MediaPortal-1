@@ -289,16 +289,6 @@ HRESULT MPMadPresenter::Shutdown()
 
     Log("MPMadPresenter::Shutdown() start");
 
-    Log("MPMadPresenter::Shutdown() m_pSRCB release 1");
-    if (m_pSRCB)
-      m_pSRCB.Release();
-    Log("MPMadPresenter::Shutdown() m_pSRCB release 2");
-
-    Log("MPMadPresenter::Shutdown() m_pORCB release 1");
-    if (m_pORCB)
-      m_pORCB.Release();
-    Log("MPMadPresenter::Shutdown() m_pORCB release 2");
-
     if (m_pCallback)
     {
       m_pCallback->SetSubtitleDevice(reinterpret_cast<DWORD>(nullptr));
@@ -307,6 +297,15 @@ HRESULT MPMadPresenter::Shutdown()
       Log("MPMadPresenter::Shutdown() RestoreDeviceSurface");
       m_pCallback->Release();
       Log("MPMadPresenter::Shutdown() m_pCallback release");
+    }
+
+    // Restore windowed overlay settings
+    if (Com::SmartQIPtr<IMadVRSettings> m_pSettings = m_pMad)
+    {
+      if (m_enableOverlay)
+      {
+        m_pSettings->SettingsSetBoolean(L"enableOverlay", true);
+      }
     }
 
     Log("MPMadPresenter::Shutdown() stop");
@@ -414,6 +413,27 @@ HRESULT MPMadPresenter::Stopping()
   { // Scope for autolock for the local variable (lock, which when deleted releases the lock)
     CAutoLock lock(this);
 
+    if (Com::SmartQIPtr<IMadVRSettings> m_pSettings = m_pMad)
+    {
+      // Read enableOverlay settings
+      m_pSettings->SettingsGetBoolean(L"enableOverlay", &m_enableOverlay);
+
+      if (m_enableOverlay)
+      {
+        m_pSettings->SettingsSetBoolean(L"enableOverlay", false);
+      }
+    }
+
+    // Disable exclusive mode
+    if (m_ExclusiveMode)
+    {
+      MPMadPresenter::EnableExclusive(false);
+      Log("MPMadPresenter::Stopping() disable exclusive mode");
+    }
+
+    // Detroy create madVR window and need to be here to avoid some crash
+    DeInitMadvrWindow();
+
     if (m_pMad)
     {
       // Let's madVR restore original display mode (when adjust refresh it's handled by madVR)
@@ -439,6 +459,16 @@ HRESULT MPMadPresenter::Stopping()
       Log("MPMadPresenter::Stopping() m_pORCB");
     }
 
+    Log("MPMadPresenter::Stopping() m_pSRCB release 1");
+    if (m_pSRCB)
+      m_pSRCB.Release();
+    Log("MPMadPresenter::Stopping() m_pSRCB release 2");
+
+    Log("MPMadPresenter::Stopping() m_pORCB release 1");
+    if (m_pORCB)
+      m_pORCB.Release();
+    Log("MPMadPresenter::Stopping() m_pORCB release 2");
+
     if (m_pMediaControl)
     {
       Log("MPMadPresenter::Stopping() m_pMediaControl stop 1");
@@ -463,13 +493,6 @@ HRESULT MPMadPresenter::Stopping()
       }
       m_pMediaControl = nullptr;
       Log("MPMadPresenter::Stopping() m_pMediaControl stop 2");
-    }
-
-    // Disable exclusive mode
-    if (m_ExclusiveMode)
-    {
-      MPMadPresenter::EnableExclusive(false);
-      Log("MPMadPresenter::Stopping() disable exclusive mode");
     }
 
     Log("MPMadPresenter::Stopping() stopped");
