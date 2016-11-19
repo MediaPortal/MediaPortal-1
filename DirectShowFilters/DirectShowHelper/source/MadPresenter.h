@@ -213,6 +213,7 @@ class MPMadPresenter : public CUnknown, public CCritSec
 
     bool m_pInitOSDRender = false;
     int m_ExclusiveMode = 0;
+    int m_enableOverlay = 0;
 
     CRenderWait m_mpWait;
 
