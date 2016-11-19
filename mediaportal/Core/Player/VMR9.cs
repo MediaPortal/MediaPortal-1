@@ -79,7 +79,7 @@ namespace MediaPortal.Player
     void SetSubtitleDevice(IntPtr device);
 
     [PreserveSig]
-    void RenderSubtitle(long frameStart, int left, int top, int right, int bottom, int width, int height);
+    void RenderSubtitle(long frameStart, int left, int top, int right, int bottom, int width, int height, int xOffsetInPixels);
 
     [PreserveSig]
     void RenderFrame(Int16 cx, Int16 cy, Int16 arx, Int16 ary, uint pSurface);

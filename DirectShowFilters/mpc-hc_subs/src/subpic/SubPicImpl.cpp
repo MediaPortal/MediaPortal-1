@@ -113,29 +113,29 @@ STDMETHODIMP CSubPicImpl::GetDirtyRect(RECT* pDirtyRect)
     return pDirtyRect ? *pDirtyRect = m_rcDirty, S_OK : E_POINTER;
 }
 
-STDMETHODIMP CSubPicImpl::GetSourceAndDest(SIZE* pSize, RECT* pRcSource, RECT* pRcDest)
+STDMETHODIMP CSubPicImpl::GetSourceAndDest(SIZE* pSize, RECT* pRcSource, RECT* pRcDest, int xOffsetInPixels /*= 0*/)
 {
     CheckPointer(pRcSource, E_POINTER);
     CheckPointer(pRcDest,   E_POINTER);
 
     if (m_size.cx > 0 && m_size.cy > 0) {
         CRect rcTemp = m_rcDirty;
+        double scaleX, scaleY;
 
         // FIXME
         rcTemp.DeflateRect(1, 1);
 
         *pRcSource = rcTemp;
 
-        rcTemp.OffsetRect(m_VirtualTextureTopLeft);
+        rcTemp.OffsetRect(m_VirtualTextureTopLeft + CPoint(xOffsetInPixels, 0));
         *pRcDest = CRect(rcTemp.left   * pSize->cx / m_VirtualTextureSize.cx,
                          rcTemp.top    * pSize->cy / m_VirtualTextureSize.cy,
                          rcTemp.right  * pSize->cx / m_VirtualTextureSize.cx,
                          rcTemp.bottom * pSize->cy / m_VirtualTextureSize.cy);
 
         return S_OK;
-    } else {
-        return E_INVALIDARG;
     }
+    return E_INVALIDARG;
 }
 
 STDMETHODIMP CSubPicImpl::SetDirtyRect(RECT* pDirtyRect)

@@ -193,11 +193,11 @@ namespace MediaPortal.Player.Subtitles
       get { return this.autoSaveType; }
     }
 
-    public void Render(Rectangle subsRect, Rectangle frameRect)
+    public void Render(Rectangle subsRect, Rectangle frameRect, int xOffsetInPixels)
     {
       Rectangle r = posRelativeToFrame ? frameRect : subsRect;
       int posY = adjustPosY * r.Height / GUIGraphicsContext.Height;
-      MpcSubtitles.Render(r.X, r.Y + posY, r.Width, r.Height);
+      MpcSubtitles.Render(r.X, r.Y + posY, r.Width, r.Height, xOffsetInPixels);
     }
 
     public int GetCount()
@@ -317,7 +317,7 @@ namespace MediaPortal.Player.Subtitles
       public static extern void SetEnable(bool enable);
 
       [DllImport("mpcSubs.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-      public static extern void Render(int x, int y, int width, int height);
+      public static extern void Render(int x, int y, int width, int height, int xOffsetInPixels);
 
       [DllImport("mpcSubs.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
       public static extern int GetDelay();

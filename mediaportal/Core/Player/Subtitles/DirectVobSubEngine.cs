@@ -208,7 +208,7 @@ namespace MediaPortal.Player.Subtitles
       get { return AutoSaveTypeEnum.NEVER; }
     }
 
-    public void Render(Rectangle subsRect, Rectangle frameRect) { }
+    public void Render(Rectangle subsRect, Rectangle frameRect, int xOffsetInPixels) { }
 
     public int GetCount()
     {
@@ -506,13 +506,12 @@ namespace MediaPortal.Player.Subtitles
 
     public static void RemoveFromGraph(IGraphBuilder graphBuilder)
     {
+      IBaseFilter vob = null;
       using (Settings xmlreader = new MPSettings())
       {
         string engineType = xmlreader.GetValueAsString("subtitles", "engine", "DirectVobSub");
         XySubFilter = engineType.Equals("XySubFilter");
       }
-
-      IBaseFilter vob = null;
 
       if (!XySubFilter)
       {
@@ -523,7 +522,8 @@ namespace MediaPortal.Player.Subtitles
           DirectShowUtil.FindFilterByClassID(graphBuilder, ClassId.DirectVobSubNormal, out vob);
         }
       }
-      else
+
+      if (vob == null)
       {
         DirectShowUtil.FindFilterByClassID(graphBuilder, ClassId.XySubFilterAutoload, out vob);
         if (vob != null)
