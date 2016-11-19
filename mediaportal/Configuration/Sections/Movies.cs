@@ -1323,7 +1323,31 @@ namespace MediaPortal.Configuration.Sections
         }
         catch (Exception)
         {
-          MessageBox.Show("DirectVobSub is not installed!");
+          try
+          {
+            foreach (DsDevice device in DsDevice.GetDevicesOfCat(DirectShowLib.FilterCategory.LegacyAmFilterCategory))
+            {
+              try
+              {
+                if (device.Name != null)
+                {
+                  if (device.Name.Contains("XySubFilter") && device.DevicePath.ToLowerInvariant().Contains(ClassId.XySubFilterNormal.ToString().ToLowerInvariant()))
+                  {
+                    DirectShowPropertyPage page = new DirectShowPropertyPage((DsDevice) device);
+                    page.Show(this);
+                  }
+                }
+              }
+              catch (Exception)
+              {
+                MessageBox.Show("DirectVobSub is not installed!");
+              }
+            }
+          }
+          catch (Exception)
+          {
+            MessageBox.Show("DirectVobSub is not installed!");
+          }
         }
         finally
         {

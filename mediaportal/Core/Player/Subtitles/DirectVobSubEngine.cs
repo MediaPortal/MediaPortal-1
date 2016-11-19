@@ -346,6 +346,18 @@ namespace MediaPortal.Player.Subtitles
         DirectShowUtil.FindFilterByClassID(graphBuilder, ClassId.DirectVobSubNormal, out vob);
       }
 
+      if (vob == null)
+      {
+        //Try the XySubFilter "autoload" filter.
+        DirectShowUtil.FindFilterByClassID(graphBuilder, ClassId.XySubFilterAutoload, out vob);
+      }
+
+      if (vob == null)
+      {
+        //Try the XySubFilter "normal" filter then.
+        DirectShowUtil.FindFilterByClassID(graphBuilder, ClassId.XySubFilterNormal, out vob);
+      }
+
       //if the directvobsub filter has not been added to the graph. (i.e. with evr)
       //we add a bit more intelligence to determine if subtitles are enabled.
       //and if subtitles are present for the video / movie then we add it if necessary to the graph.
@@ -357,8 +369,12 @@ namespace MediaPortal.Player.Subtitles
         vob = DirectShowUtil.AddFilterToGraph(graphBuilder, "DirectVobSub");
         if (vob == null)
         {
-          Log.Warn("VideoPlayerVMR9: DirectVobSub filter not found! You need to install VSFilter");
-          return null;
+          vob = DirectShowUtil.AddFilterToGraph(graphBuilder, "XySubFilter");
+          if (vob == null)
+          {
+            Log.Warn("VideoPlayerVMR9: DirectVobSub or XySubFilter filter not found! You need to install VSFilter");
+            return null;
+          }
         }
         else
         {
@@ -477,6 +493,17 @@ namespace MediaPortal.Player.Subtitles
       {
         //Try the "normal" filter then.
         DirectShowUtil.FindFilterByClassID(graphBuilder, ClassId.DirectVobSubNormal, out vob);
+      }
+
+      if (vob == null)
+      {
+        DirectShowUtil.FindFilterByClassID(graphBuilder, ClassId.XySubFilterAutoload, out vob);
+      }
+
+      if (vob == null)
+      {
+        //Try the XySubFilter "normal" filter then.
+        DirectShowUtil.FindFilterByClassID(graphBuilder, ClassId.XySubFilterNormal, out vob);
         if (vob == null)
           return;
       }
@@ -488,12 +515,19 @@ namespace MediaPortal.Player.Subtitles
 
       //find directvobsub's video output pin source input pin
       IPin pinVideoTo = null;
-      pinVideoOut.ConnectedTo(out pinVideoTo);
+      if (pinVideoOut != null)
+      {
+        pinVideoOut.ConnectedTo(out pinVideoTo);
+      }
+
       //find directvobsub's video input pin source output pin
       IPin pinVideoFrom = null;
-      pinVideoIn.ConnectedTo(out pinVideoFrom);
+      if (pinVideoIn != null)
+      {
+        pinVideoIn.ConnectedTo(out pinVideoFrom);
+      }
 
-      int hr;
+      int hr = 0;
 
       if (pinVideoFrom != null)
       {
@@ -519,17 +553,33 @@ namespace MediaPortal.Player.Subtitles
       vob = null;
 
       //reconnect the source output pin to the vmr9/evr filter
-      hr = graphBuilder.Connect(pinVideoFrom, pinVideoTo);
-      //hr = graphBuilder.Render(pinVideoFrom);
+      if (pinVideoFrom != null)
+      {
+        if (pinVideoTo != null)
+        {
+          hr = graphBuilder.Connect(pinVideoFrom, pinVideoTo);
+        }
+        //hr = graphBuilder.Render(pinVideoFrom);
+        DirectShowUtil.ReleaseComObject(pinVideoFrom);
+        pinVideoFrom = null;
+      }
 
-      DirectShowUtil.ReleaseComObject(pinVideoFrom);
-      pinVideoFrom = null;
-      DirectShowUtil.ReleaseComObject(pinVideoTo);
-      pinVideoTo = null;
-      DirectShowUtil.ReleaseComObject(pinVideoOut);
-      pinVideoOut = null;
-      DirectShowUtil.ReleaseComObject(pinVideoIn);
-      pinVideoIn = null;
+      if (pinVideoTo != null)
+      {
+        DirectShowUtil.ReleaseComObject(pinVideoTo);
+        pinVideoTo = null;
+      }
+      if (pinVideoOut != null)
+      {
+        DirectShowUtil.ReleaseComObject(pinVideoOut);
+        pinVideoOut = null;
+      }
+
+      if (pinVideoIn != null)
+      {
+        DirectShowUtil.ReleaseComObject(pinVideoIn);
+        pinVideoIn = null;
+      }
 
       if (hr != 0)
         Log.Error("VideoPlayerVMR9: Could not connect video out to video renderer: {0}", hr);
