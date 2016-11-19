@@ -93,13 +93,6 @@ MPMadPresenter::~MPMadPresenter()
     Log("MPMadPresenter::Destructor() - m_pMad release 1");
     if (m_pMad)
     {
-      // Let's madVR restore original display mode (when adjust refresh it's handled by madVR)
-      if (Com::SmartQIPtr<IMadVRCommand> pMadVrCmd = m_pMad)
-      {
-        pMadVrCmd->SendCommand("restoreDisplayModeNow");
-        pMadVrCmd.Release();
-        Log("MPMadPresenter::Destructor() - restoreDisplayModeNow");
-      }
       m_pMad.FullRelease();
     }
     Log("MPMadPresenter::Destructor() - m_pMad release 2");
@@ -296,6 +289,16 @@ HRESULT MPMadPresenter::Shutdown()
 
     Log("MPMadPresenter::Shutdown() start");
 
+    Log("MPMadPresenter::Shutdown() m_pSRCB release 1");
+    if (m_pSRCB)
+      m_pSRCB.Release();
+    Log("MPMadPresenter::Shutdown() m_pSRCB release 2");
+
+    Log("MPMadPresenter::Shutdown() m_pORCB release 1");
+    if (m_pORCB)
+      m_pORCB.Release();
+    Log("MPMadPresenter::Shutdown() m_pORCB release 2");
+
     if (m_pCallback)
     {
       m_pCallback->SetSubtitleDevice(reinterpret_cast<DWORD>(nullptr));
@@ -411,6 +414,17 @@ HRESULT MPMadPresenter::Stopping()
   { // Scope for autolock for the local variable (lock, which when deleted releases the lock)
     CAutoLock lock(this);
 
+    if (m_pMad)
+    {
+      // Let's madVR restore original display mode (when adjust refresh it's handled by madVR)
+      if (Com::SmartQIPtr<IMadVRCommand> pMadVrCmd = m_pMad)
+      {
+        pMadVrCmd->SendCommand("restoreDisplayModeNow");
+        pMadVrCmd.Release();
+        Log("MPMadPresenter::Stopping() restoreDisplayModeNow");
+      }
+    }
+
     if (m_pSRCB)
     {
       // nasty, but we have to let it know about our death somehow
@@ -424,16 +438,6 @@ HRESULT MPMadPresenter::Stopping()
       static_cast<COsdRenderCallback*>(static_cast<IOsdRenderCallback*>(m_pORCB))->SetDXRAP(nullptr);
       Log("MPMadPresenter::Stopping() m_pORCB");
     }
-
-    Log("MPMadPresenter::Stopping() m_pSRCB release 1");
-    if (m_pSRCB)
-      m_pSRCB.Release();
-    Log("MPMadPresenter::Stopping() m_pSRCB release 2");
-
-    Log("MPMadPresenter::Stopping() m_pORCB release 1");
-    if (m_pORCB)
-      m_pORCB.Release();
-    Log("MPMadPresenter::Stopping() m_pORCB release 2");
 
     if (m_pMediaControl)
     {
