@@ -630,12 +630,8 @@ namespace MediaPortal.Player
 
         if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && !m_bFullScreen)
         {
-          if (basicVideo != null)
-          {
-            // TODO why it is needed for some video to be able to reduce fullscreen video window
-            basicVideo.SetDestinationPosition(m_iPositionX, m_iPositionY, m_iWidth, m_iHeight);
-            Log.Debug("VideoPlayer: rezise madVR video window m_iPositionX : {0}, m_iPositionY : {1}, m_iWidth : {2}, m_iHeight : {3}", m_iPositionX, m_iPositionY, m_iWidth, m_iHeight);
-          }
+          // TODO why it is needed for some video to be able to reduce fullscreen video window
+          SetSourceDestRectangles(rSource, rDest);
         }
       }
     }
