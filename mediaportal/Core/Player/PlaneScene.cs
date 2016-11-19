@@ -848,7 +848,7 @@ namespace MediaPortal.Player
     {
       // Set madVR D3D Device
       GUIGraphicsContext.DX9DeviceMadVr = device != IntPtr.Zero ? new Device(device) : null;
-      ISubEngine engine = SubEngine.GetInstance(true);
+      ISubEngine engine = SubEngine.GetInstance(false);
       if (engine != null)
       {
         engine.SetDevice(device);

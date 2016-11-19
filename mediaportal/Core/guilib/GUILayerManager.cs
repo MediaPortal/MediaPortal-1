@@ -135,7 +135,7 @@ namespace MediaPortal.GUI.Library
           GetValue(layerCount, i);
         }
 
-        foreach (var layer in from layer in layerCount where _layers[layer] != null where videoLayer != layer select layer)
+        foreach (var layer in from layer in layerCount where _layers[layer] != null where _layers[layer].ShouldRenderLayer() where videoLayer != layer select layer)
         {
           uiVisible = true;
         }
