@@ -945,6 +945,21 @@ HRESULT MPMadPresenter::SetDevice(IDirect3DDevice9* pD3DDev)
 
 HRESULT MPMadPresenter::Render(REFERENCE_TIME frameStart, int left, int top, int right, int bottom, int width, int height)
 {
+  return RenderEx(frameStart, 0, 0, left, top, right, bottom, width, height);
+}
+
+HRESULT MPMadPresenter::RenderEx(REFERENCE_TIME frameStart, REFERENCE_TIME frameStop, REFERENCE_TIME avgTimePerFrame, int left, int top, int right, int bottom, int width, int height)
+{
+  return RenderEx2(frameStart, frameStop, avgTimePerFrame, { left, top, right, bottom }, { left, top, right, bottom }, { 0, 0, width, height });
+}
+
+HRESULT MPMadPresenter::RenderEx2(REFERENCE_TIME frameStart, REFERENCE_TIME frameStop, REFERENCE_TIME avgTimePerFrame, RECT croppedVideoRect, RECT originalVideoRect, RECT viewportRect, const double videoStretchFactor /*= 1.0*/)
+{
+  return RenderEx3(std::move(frameStart), std::move(frameStop), std::move(avgTimePerFrame), std::move(croppedVideoRect), std::move(originalVideoRect), std::move(viewportRect), std::move(videoStretchFactor));
+}
+
+HRESULT MPMadPresenter::RenderEx3(REFERENCE_TIME rtStart, REFERENCE_TIME rtStop, REFERENCE_TIME atpf, RECT croppedVideoRect, RECT originalVideoRect, RECT viewportRect, const double videoStretchFactor /*= 1.0*/, int xOffsetInPixels /*= 0*/, DWORD flags /*= 0*/)
+{
   if (m_pCallback)
   {
     if (m_pShutdown)
@@ -1000,7 +1015,10 @@ HRESULT MPMadPresenter::Render(REFERENCE_TIME frameStart, int left, int top, int
     m_deviceState.Store();
     SetupMadDeviceState();
 
-    m_pCallback->RenderSubtitle(frameStart, left, top, right, bottom, width, height);
+    m_pCallback->RenderSubtitle(rtStart, croppedVideoRect.left, croppedVideoRect.top, croppedVideoRect.right, croppedVideoRect.bottom, viewportRect.right, viewportRect.bottom, xOffsetInPixels);
+
+    // Commented out but usefull for testing
+    //Log("%s : madVR xOffsetInPixels : %i", __FUNCTION__, xOffsetInPixels);
 
     m_deviceState.Restore();
   }

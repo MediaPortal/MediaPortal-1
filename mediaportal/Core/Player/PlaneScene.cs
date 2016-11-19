@@ -858,13 +858,13 @@ namespace MediaPortal.Player
       Log.Debug("Planescene: Set subtitle device - {0}", device);
     }
 
-    public void RenderSubtitle(long frameStart, int left, int top, int right, int bottom, int width, int height)
+    public void RenderSubtitle(long frameStart, int left, int top, int right, int bottom, int width, int height, int xOffsetInPixels)
     {
       ISubEngine engine = SubEngine.GetInstance();
       if (engine != null)
       {
         engine.SetTime(frameStart);
-        engine.Render(_subsRect, _destinationRect);
+        engine.Render(_subsRect, _destinationRect, xOffsetInPixels);
       }
     }
 
@@ -1153,7 +1153,7 @@ namespace MediaPortal.Player
               if (!GUIGraphicsContext.Render3DSubtitle)
               {
                 SubtitleRenderer.GetInstance().Render();
-                SubEngine.GetInstance().Render(_subsRect, _destinationRect);
+                SubEngine.GetInstance().Render(_subsRect, _destinationRect, 0);
               }
 
               GUIGraphicsContext.DX9Device.Present();
@@ -1272,7 +1272,7 @@ namespace MediaPortal.Player
             if (!GUIGraphicsContext.Render3DSubtitle)
             {
               SubtitleRenderer.GetInstance().Render();
-              SubEngine.GetInstance().Render(_subsRect, _destinationRect);
+              SubEngine.GetInstance().Render(_subsRect, _destinationRect, 0);
             }
 
             GUIGraphicsContext.DX9Device.Present();
@@ -1683,7 +1683,7 @@ namespace MediaPortal.Player
       {
         // for a 2D movie we render the subtitles here
 
-        SubEngine.GetInstance().Render(_subsRect, _destinationRect);
+        SubEngine.GetInstance().Render(_subsRect, _destinationRect, 0);
       }
       else if (((GUIGraphicsContext.Render3DModeHalf == GUIGraphicsContext.eRender3DModeHalf.SBSLeft ||
                 GUIGraphicsContext.Render3DModeHalf == GUIGraphicsContext.eRender3DModeHalf.TABTop) && !GUIGraphicsContext.Switch3DSides) ||
@@ -1697,7 +1697,7 @@ namespace MediaPortal.Player
         if (GUIGraphicsContext.Render3DSubtitle)
         {
             if (!GUIGraphicsContext.StretchSubtitles)
-                SubEngine.GetInstance().Render(_subsRect, _destinationRect);
+                SubEngine.GetInstance().Render(_subsRect, _destinationRect, 0);
             else
             {
                 Rectangle dstRect = _destinationRect;
@@ -1707,7 +1707,7 @@ namespace MediaPortal.Player
                 else
                     dstRect.Height *= 2;
                 
-                SubEngine.GetInstance().Render(_subsRect, dstRect);
+                SubEngine.GetInstance().Render(_subsRect, dstRect, 0);
             }
         }
       }
@@ -1736,7 +1736,7 @@ namespace MediaPortal.Player
           subRect.X += GUIGraphicsContext.Render3DSubtitleDistance;
           dstRect.X += GUIGraphicsContext.Render3DSubtitleDistance;
 
-          SubEngine.GetInstance().Render(subRect, dstRect);
+          SubEngine.GetInstance().Render(subRect, dstRect, 0);
         }
       }
 

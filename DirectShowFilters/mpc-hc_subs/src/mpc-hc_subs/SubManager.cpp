@@ -295,7 +295,7 @@ void CSubManager::SetTime(REFERENCE_TIME nsSampleTime)
 	m_isSetTime = true;
 }
 
-void CSubManager::Render(int x, int y, int width, int height)
+void CSubManager::Render(int x, int y, int width, int height, int xOffsetInPixels)
 {
 	if (!m_enabled)
 		return;
@@ -326,7 +326,7 @@ void CSubManager::Render(int x, int y, int width, int height)
 	if(m_pSubPicQueue->LookupSubPic(m_rtNow, pSubPic)) 
 	{
  		CRect rcSource, rcDest;
-		if (SUCCEEDED (pSubPic->GetSourceAndDest(&size, rcSource, rcDest))) {
+		if (SUCCEEDED (pSubPic->GetSourceAndDest(&size, rcSource, rcDest, xOffsetInPixels))) {
 			//ATLTRACE("m_rtNow %d", (long)(m_rtNow/10000000));
 			//ATLTRACE("src: (%d,%d) - (%d,%d)", rcSource.left, rcSource.top, rcSource.right, rcSource.bottom);
 			//ATLTRACE("dst: (%d,%d) - (%d,%d)\n", rcDest.left, rcDest.top, rcDest.right, rcDest.bottom);

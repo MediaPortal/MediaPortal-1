@@ -78,11 +78,11 @@ void SetTime(REFERENCE_TIME nsSampleTime)
 	}
 }
 
-void Render(int x, int y, int width, int height)
+void Render(int x, int y, int width, int height, int xOffsetInPixels)
 {
 	if (g_subManager)
 	{
-		g_subManager->Render(x, y, width, height);
+		g_subManager->Render(x, y, width, height, xOffsetInPixels);
 	}
 }
 
