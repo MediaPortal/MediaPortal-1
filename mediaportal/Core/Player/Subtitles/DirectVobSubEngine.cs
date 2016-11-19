@@ -350,12 +350,20 @@ namespace MediaPortal.Player.Subtitles
       {
         //Try the XySubFilter "autoload" filter.
         DirectShowUtil.FindFilterByClassID(graphBuilder, ClassId.XySubFilterAutoload, out vob);
+        if (vob != null)
+        {
+          return vob;
+        }
       }
 
       if (vob == null)
       {
         //Try the XySubFilter "normal" filter then.
         DirectShowUtil.FindFilterByClassID(graphBuilder, ClassId.XySubFilterNormal, out vob);
+        if (vob != null)
+        {
+          return vob;
+        }
       }
 
       //if the directvobsub filter has not been added to the graph. (i.e. with evr)
@@ -375,11 +383,10 @@ namespace MediaPortal.Player.Subtitles
             Log.Warn("VideoPlayerVMR9: DirectVobSub or XySubFilter filter not found! You need to install VSFilter");
             return null;
           }
-        }
-        else
-        {
           Log.Debug("VideoPlayerVMR9: VobSub filter added to graph");
+          return vob;
         }
+        Log.Debug("VideoPlayerVMR9: VobSub filter added to graph");
       }
       else // VobSub already loaded
       {
@@ -498,14 +505,25 @@ namespace MediaPortal.Player.Subtitles
       if (vob == null)
       {
         DirectShowUtil.FindFilterByClassID(graphBuilder, ClassId.XySubFilterAutoload, out vob);
-      }
+        if (vob != null)
+        {
+          //remove the XySubFilter filter from the graph
+          graphBuilder.RemoveFilter(vob);
+          DirectShowUtil.ReleaseComObject(vob);
+          vob = null;
+          return;
+        }
 
-      if (vob == null)
-      {
         //Try the XySubFilter "normal" filter then.
         DirectShowUtil.FindFilterByClassID(graphBuilder, ClassId.XySubFilterNormal, out vob);
-        if (vob == null)
-          return;
+        if (vob != null)
+        {
+          //remove the XySubFilter filter from the graph
+          graphBuilder.RemoveFilter(vob);
+          DirectShowUtil.ReleaseComObject(vob);
+          vob = null;
+        }
+        return;
       }
 
       Log.Info("VideoPlayerVMR9: DirectVobSub in graph, removing...");
