@@ -95,6 +95,8 @@ namespace MediaPortal.Player.Subtitles
               engine = new FFDShowEngine();
             else if (engineType.Equals("DirectVobSub"))
               engine = new DirectVobSubEngine();
+            else if (engineType.Equals("XySubFilter"))
+              engine = new DirectVobSubEngine();
             else
               engine = new DummyEngine();
           }

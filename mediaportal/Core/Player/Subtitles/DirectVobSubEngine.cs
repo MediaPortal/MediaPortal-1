@@ -27,7 +27,9 @@ using DShowNET.Helper;
 using MediaPortal.GUI.Library;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
+using DirectShowLib.BDA;
 using FFDShow;
+using MediaPortal.Profile;
 
 namespace MediaPortal.Player.Subtitles
 {
@@ -61,7 +63,7 @@ namespace MediaPortal.Player.Subtitles
         }
       }
 
-      vobSub = (IDirectVobSub)DirectVobSubUtil.AddToGraph(graphBuilder);
+      vobSub = (IDirectVobSub) DirectVobSubUtil.AddToGraph(graphBuilder);
       if (vobSub == null)
         return false;
 
@@ -339,14 +341,22 @@ namespace MediaPortal.Player.Subtitles
     {
       IBaseFilter vob = null;
 
-      DirectShowUtil.FindFilterByClassID(graphBuilder, ClassId.DirectVobSubAutoload, out vob);
-      if (vob == null)
+      using (Settings xmlreader = new MPSettings())
       {
-        //Try the "normal" filter then.
-        DirectShowUtil.FindFilterByClassID(graphBuilder, ClassId.DirectVobSubNormal, out vob);
+        string engineType = xmlreader.GetValueAsString("subtitles", "engine", "DirectVobSub");
+        XySubFilter = engineType.Equals("XySubFilter");
       }
 
-      if (vob == null)
+      if (!XySubFilter)
+      {
+        DirectShowUtil.FindFilterByClassID(graphBuilder, ClassId.DirectVobSubAutoload, out vob);
+        if (vob == null)
+        {
+          //Try the "normal" filter then.
+          DirectShowUtil.FindFilterByClassID(graphBuilder, ClassId.DirectVobSubNormal, out vob);
+        }
+      }
+      else
       {
         //Try the XySubFilter "autoload" filter.
         DirectShowUtil.FindFilterByClassID(graphBuilder, ClassId.XySubFilterAutoload, out vob);
@@ -354,16 +364,22 @@ namespace MediaPortal.Player.Subtitles
         {
           return vob;
         }
-      }
 
-      if (vob == null)
-      {
         //Try the XySubFilter "normal" filter then.
         DirectShowUtil.FindFilterByClassID(graphBuilder, ClassId.XySubFilterNormal, out vob);
         if (vob != null)
         {
           return vob;
         }
+
+        vob = DirectShowUtil.AddFilterToGraph(graphBuilder, "XySubFilter");
+        if (vob == null)
+        {
+          Log.Warn("VideoPlayerVMR9: DirectVobSub or XySubFilter filter not found! You need to install XySubFilter");
+          return null;
+        }
+        Log.Debug("VideoPlayerVMR9: VobSub filter added to graph");
+        return vob;
       }
 
       //if the directvobsub filter has not been added to the graph. (i.e. with evr)
@@ -377,14 +393,8 @@ namespace MediaPortal.Player.Subtitles
         vob = DirectShowUtil.AddFilterToGraph(graphBuilder, "DirectVobSub");
         if (vob == null)
         {
-          vob = DirectShowUtil.AddFilterToGraph(graphBuilder, "XySubFilter");
-          if (vob == null)
-          {
-            Log.Warn("VideoPlayerVMR9: DirectVobSub or XySubFilter filter not found! You need to install VSFilter");
-            return null;
-          }
-          Log.Debug("VideoPlayerVMR9: VobSub filter added to graph");
-          return vob;
+          Log.Warn("VideoPlayerVMR9: DirectVobSub or XySubFilter filter not found! You need to install VSFilter");
+          return null;
         }
         Log.Debug("VideoPlayerVMR9: VobSub filter added to graph");
       }
@@ -492,17 +502,28 @@ namespace MediaPortal.Player.Subtitles
       return vob;
     }
 
+    public static bool XySubFilter { get; set; }
+
     public static void RemoveFromGraph(IGraphBuilder graphBuilder)
     {
-      IBaseFilter vob = null;
-      DirectShowUtil.FindFilterByClassID(graphBuilder, ClassId.DirectVobSubAutoload, out vob);
-      if (vob == null)
+      using (Settings xmlreader = new MPSettings())
       {
-        //Try the "normal" filter then.
-        DirectShowUtil.FindFilterByClassID(graphBuilder, ClassId.DirectVobSubNormal, out vob);
+        string engineType = xmlreader.GetValueAsString("subtitles", "engine", "DirectVobSub");
+        XySubFilter = engineType.Equals("XySubFilter");
       }
 
-      if (vob == null)
+      IBaseFilter vob = null;
+
+      if (!XySubFilter)
+      {
+        DirectShowUtil.FindFilterByClassID(graphBuilder, ClassId.DirectVobSubAutoload, out vob);
+        if (vob == null)
+        {
+          //Try the "normal" filter then.
+          DirectShowUtil.FindFilterByClassID(graphBuilder, ClassId.DirectVobSubNormal, out vob);
+        }
+      }
+      else
       {
         DirectShowUtil.FindFilterByClassID(graphBuilder, ClassId.XySubFilterAutoload, out vob);
         if (vob != null)
