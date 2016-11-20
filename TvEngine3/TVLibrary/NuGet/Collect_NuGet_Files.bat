@@ -2,6 +2,9 @@
 rem set TARGET=Debug
 set TARGET=Release
 
+rem make sure that packages are restored, especially MediaInfo needs to be available!
+@"%WINDIR%\Microsoft.NET\Framework\v4.0.30319\MSBUILD.exe" ..\..\..\Build\RestorePackages.targets
+
 cd MediaPortal.TvEngine.Core3
 mkdir content\References
 mkdir content\References\ProgramData
