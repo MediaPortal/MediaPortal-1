@@ -2657,6 +2657,7 @@ namespace MediaPortal.Player
           //Log.Debug("2- PlaneScene.DisableLowLatencyMode : {0}", PlaneScene.DisableLowLatencyMode);
           //Log.Debug("2- PlaneScene.Visible : {0}", PlaneScene.Visible);
           Log.Debug("g_Player.Process() - restore madVR rendering GUI");
+          VMR9Util.g_vmr9.PlaneSceneMadvrTimer = DateTime.Now;
         }
       }
 
