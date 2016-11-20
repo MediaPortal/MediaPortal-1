@@ -179,8 +179,11 @@ IBaseFilter* MPMadPresenter::Initialize()
       if (InitMadvrWindow(m_hWnd))
       {
         Log("%s : Create DSPlayer window - hWnd: %i", __FUNCTION__, m_hWnd);
-        pWindow->put_Owner(reinterpret_cast<OAHWND>(m_hWnd));
-        pWindow->put_Visible(reinterpret_cast<OAHWND>(m_hWnd));
+        pWindow->put_Owner(m_hParent);
+        pWindow->put_MessageDrain(m_hParent);
+        pWindow->put_Visible(m_hParent);
+        //pWindow->put_Owner(reinterpret_cast<OAHWND>(m_hWnd));
+        //pWindow->put_Visible(reinterpret_cast<OAHWND>(m_hWnd));
       }
     }
     return baseFilter;
@@ -404,8 +407,8 @@ void MPMadPresenter::SetDsWndVisible(bool bVisible)
 {
   int cmd;
   bVisible ? cmd = SW_SHOW : cmd = SW_HIDE;
-  ShowWindow(m_hWnd, cmd);
-  UpdateWindow(m_hWnd);
+  ShowWindow(reinterpret_cast<HWND>(m_hParent), cmd);
+  UpdateWindow(reinterpret_cast<HWND>(m_hParent));
   Log("%s : Set DSPlayer window - Visible: %i", __FUNCTION__, cmd);
 }
 
@@ -422,6 +425,7 @@ HRESULT MPMadPresenter::Stopping()
       if (m_enableOverlay)
       {
         m_pSettings->SettingsSetBoolean(L"enableOverlay", false);
+        Log("MPMadPresenter::Stopping() disable windowed overlay mode");
       }
     }
 
@@ -431,9 +435,6 @@ HRESULT MPMadPresenter::Stopping()
       MPMadPresenter::EnableExclusive(false);
       Log("MPMadPresenter::Stopping() disable exclusive mode");
     }
-
-    // Detroy create madVR window and need to be here to avoid some crash
-    DeInitMadvrWindow();
 
     if (m_pMad)
     {
