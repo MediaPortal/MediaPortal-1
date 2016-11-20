@@ -123,7 +123,8 @@ void MPMadPresenter::InitializeOSD()
 
 void MPMadPresenter::SetMadVrPaused(bool paused)
 {
-  CAutoLock cAutoLock(this);
+  // TODO why it deadlock ?
+  //CAutoLock cAutoLock(this);
 
   if (m_pMediaControl)
   {
@@ -930,14 +931,6 @@ HRESULT MPMadPresenter::SetDevice(IDirect3DDevice9* pD3DDev)
     Log("MPMadPresenter::SetDevice() Shutdown() 2");
   }
 
-  // Init created madVR window instance.
-  SetDsWndVisible(true);
-  if (Com::SmartQIPtr<IVideoWindow> pWindow = m_pMad)
-  {
-    pWindow->put_Owner(reinterpret_cast<OAHWND>(m_hWnd));
-    pWindow->put_Visible(reinterpret_cast<OAHWND>(m_hWnd));
-    pWindow->SetWindowPosition(0, 0, m_dwGUIWidth, m_dwGUIHeight);
-  }
   Log("MPMadPresenter::SetDevice() init madVR Window");
 
   return hr;
@@ -964,7 +957,7 @@ HRESULT MPMadPresenter::RenderEx3(REFERENCE_TIME rtStart, REFERENCE_TIME rtStop,
   {
     if (m_pShutdown)
     {
-      Log("MPMadPresenter::Render() shutdown");
+      Log("%s : shutdown", __FUNCTION__);
       return S_FALSE;
     }
 
@@ -972,6 +965,8 @@ HRESULT MPMadPresenter::RenderEx3(REFERENCE_TIME rtStart, REFERENCE_TIME rtStop,
     CAutoLock lock(&m_dsLock);
 
     CAutoLock cAutoLock(this);
+
+    //Log("%s", __FUNCTION__);
 
     HRESULT hr = S_FALSE;
 
@@ -983,12 +978,12 @@ HRESULT MPMadPresenter::RenderEx3(REFERENCE_TIME rtStart, REFERENCE_TIME rtStop,
             if (SUCCEEDED(hr = m_pMadD3DDev->CreateTexture(m_dwGUIWidth, m_dwGUIHeight, 0, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &m_pRenderTextureOsd.p, &m_hSharedOsdHandle)))
             {
               hr = S_OK;
-              Log("MPMadPresenter::Render() init ok for D3D : 0x:%x", m_pMadD3DDev);
+              Log("%s : init ok for D3D : 0x:%x", __FUNCTION__, m_pMadD3DDev);
             }
       if (m_pCallback)
       {
         m_pCallback->SetSubtitleDevice((DWORD)m_pMadD3DDev);
-        Log("MPMadPresenter::SetDevice() SetSubtitleDevice for D3D : 0x:%x", m_pMadD3DDev);
+        Log("%s : SetDevice() SetSubtitleDevice for D3D : 0x:%x", __FUNCTION__, m_pMadD3DDev);
       }
       m_pInitOSDRender = true;
 
@@ -1003,14 +998,19 @@ HRESULT MPMadPresenter::RenderEx3(REFERENCE_TIME rtStart, REFERENCE_TIME rtStop,
 
       // TODO disable OSD delay for now (used to force IVideoWindow on C# side)
       m_pCallback->ForceOsdUpdate(true);
-      Log("MPMadPresenter::Render() ForceOsdUpdate");
+      Log("%s : ForceOsdUpdate", __FUNCTION__);
 
       m_pMadVRFrameCount = m_pCallback->ReduceMadvrFrame();
       Log("%s : reduce madVR frame to : %i", __FUNCTION__, m_pMadVRFrameCount);
 
       // Init created madVR window instance.
-      //SetDsWndVisible(true);
-      //Log("MPMadPresenter::SetDevice() init madVR Window");
+      SetDsWndVisible(true);
+      if (Com::SmartQIPtr<IVideoWindow> pWindow = m_pMad)
+      {
+        pWindow->put_Owner(reinterpret_cast<OAHWND>(m_hWnd));
+        pWindow->put_Visible(reinterpret_cast<OAHWND>(m_hWnd));
+        pWindow->SetWindowPosition(0, 0, m_dwGUIWidth, m_dwGUIHeight);
+      }
     }
     m_deviceState.Store();
     SetupMadDeviceState();
@@ -1018,7 +1018,8 @@ HRESULT MPMadPresenter::RenderEx3(REFERENCE_TIME rtStart, REFERENCE_TIME rtStop,
     m_pCallback->RenderSubtitle(rtStart, croppedVideoRect.left, croppedVideoRect.top, croppedVideoRect.right, croppedVideoRect.bottom, viewportRect.right, viewportRect.bottom, xOffsetInPixels);
 
     // Commented out but usefull for testing
-    //Log("%s : madVR xOffsetInPixels : %i", __FUNCTION__, xOffsetInPixels);
+    //Log("%s : RenderSubtitle : rtStart: %i, croppedVideoRect.left: %d, croppedVideoRect.top: %d, croppedVideoRect.right: %d, croppedVideoRect.bottom: %d", __FUNCTION__, rtStart, croppedVideoRect.left, croppedVideoRect.top, croppedVideoRect.right, croppedVideoRect.bottom);
+    //Log("%s : RenderSubtitle : viewportRect.right : %i, viewportRect.bottom : %i, xOffsetInPixels : %i", __FUNCTION__, viewportRect.right, viewportRect.bottom, xOffsetInPixels);
 
     m_deviceState.Restore();
   }

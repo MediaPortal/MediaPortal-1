@@ -113,6 +113,7 @@ namespace MediaPortal.Player
 
     private int _reduceMadvrFrame = 0;
     private bool _useReduceMadvrFrame = false;
+    private string _subEngineType = "";
 
     private bool UiVisible { get; set; }
 
@@ -325,6 +326,7 @@ namespace MediaPortal.Player
           _disableLowLatencyMode = xmlreader.GetValueAsBool("general", "disableLowLatencyMode", true);
           _reduceMadvrFrame = xmlreader.GetValueAsInt("general", "reduceMadvrFrame", 0);
           _useReduceMadvrFrame = xmlreader.GetValueAsBool("general", "useReduceMadvrFrame", false);
+          _subEngineType = xmlreader.GetValueAsString("subtitles", "engine", "DirectVobSub");
         }
         catch (Exception)
         {
@@ -848,12 +850,16 @@ namespace MediaPortal.Player
     {
       // Set madVR D3D Device
       GUIGraphicsContext.DX9DeviceMadVr = device != IntPtr.Zero ? new Device(device) : null;
-      ISubEngine engine = SubEngine.GetInstance(false);
-      if (engine != null)
+      // No need to set subtitle engine when using XySubFilter and madVR.
+      if (!_subEngineType.Equals("XySubFilter"))
       {
-        engine.SetDevice(device);
+        ISubEngine engine = SubEngine.GetInstance(true);
+        if (engine != null)
+        {
+          engine.SetDevice(device);
+        }
+        Log.Debug("Planescene: Set subtitle device - {0}", device);
       }
-      Log.Debug("Planescene: Set subtitle device - {0}", device);
     }
 
     public void RenderSubtitle(long frameStart, int left, int top, int right, int bottom, int width, int height, int xOffsetInPixels)
