@@ -181,7 +181,7 @@ IBaseFilter* MPMadPresenter::Initialize()
         Log("%s : Create DSPlayer window - hWnd: %i", __FUNCTION__, m_hWnd);
         pWindow->put_Owner(m_hParent);
         pWindow->put_MessageDrain(m_hParent);
-        pWindow->put_Visible(m_hParent);
+        //pWindow->put_Visible(m_hParent);
         //pWindow->put_Owner(reinterpret_cast<OAHWND>(m_hWnd));
         //pWindow->put_Visible(reinterpret_cast<OAHWND>(m_hWnd));
       }
@@ -407,8 +407,8 @@ void MPMadPresenter::SetDsWndVisible(bool bVisible)
 {
   int cmd;
   bVisible ? cmd = SW_SHOW : cmd = SW_HIDE;
-  ShowWindow(reinterpret_cast<HWND>(m_hParent), cmd);
-  UpdateWindow(reinterpret_cast<HWND>(m_hParent));
+  ShowWindow(m_hWnd, cmd);
+  UpdateWindow(m_hWnd);
   Log("%s : Set DSPlayer window - Visible: %i", __FUNCTION__, cmd);
 }
 
