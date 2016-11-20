@@ -502,7 +502,7 @@ namespace MediaPortal.GUI.Library
     {
       lock (Renderlock)
       {
-        DXNative.FontEnginePresentTextures();
+        DXNative.FontEnginePresentTexturesSync();
         foreach (GUIFont font in ListFonts)
         {
           font.Present();

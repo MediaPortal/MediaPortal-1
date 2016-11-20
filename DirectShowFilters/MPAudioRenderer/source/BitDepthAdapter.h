@@ -20,11 +20,12 @@
 #include <ks.h>
 #include <ksmedia.h>
 #include "BaseAudioSink.h"
+#include "Logger.h"
 
 class CBitDepthAdapter : public CBaseAudioSink
 {
 public:
-  CBitDepthAdapter();
+  CBitDepthAdapter(AudioRendererSettings* pSettings, Logger* pLogger);
   virtual ~CBitDepthAdapter();
 
 // type definitions
@@ -76,5 +77,7 @@ protected:
   long m_lInSampleError[32];
 
   static BitDepthConversionFunc gConversions[4][4];
+
+  Logger* m_pLogger;
 };
 

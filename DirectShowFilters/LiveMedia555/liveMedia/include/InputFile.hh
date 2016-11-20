@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2016 Live Networks, Inc.  All rights reserved.
 // Common routines for opening/closing named input files
 // C++ header
 
@@ -23,6 +23,28 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 
 #include <UsageEnvironment.hh>
 #include <stdio.h>
+
+#if (defined(__WIN32__) || defined(_WIN32) || defined(_WIN32_WCE))
+#ifndef _WIN32_WCE
+// Include header files that might be needed by Windows (in code that uses this header file):
+#include <io.h>
+#include <fcntl.h>
+#endif
+
+#define READ_FROM_FILES_SYNCHRONOUSLY 1
+    // Because Windows is a silly toy operating system that doesn't (reliably) treat
+    // open files as being readable sockets (which can be handled within the default
+    // "BasicTaskScheduler" event loop, using "select()"), we implement file reading
+    // in Windows using synchronous, rather than asynchronous, I/O.  This can severely
+    // limit the scalability of servers using this code that run on Windows.
+    // If this is a problem for you, then either use a better operating system,
+    // or else write your own Windows-specific event loop ("TaskScheduler" subclass)
+    // that can handle readable data in Windows open files as an event.
+#endif
+
+#ifndef _WIN32_WCE
+#include <sys/stat.h>
+#endif
 
 FILE* OpenInputFile(UsageEnvironment& env, char const* fileName);
 
@@ -37,5 +59,8 @@ int64_t SeekFile64(FILE *fid, int64_t offset, int whence);
 int64_t TellFile64(FILE *fid);
     // A platform-independent routine for reporting the position within
     // (possibly) large files
+
+Boolean FileIsSeekable(FILE *fid);
+    // Tests whether "fid" is seekable, by trying to seek within it.
 
 #endif

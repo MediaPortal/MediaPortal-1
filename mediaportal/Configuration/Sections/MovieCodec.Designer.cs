@@ -25,6 +25,9 @@ namespace MediaPortal.Configuration.Sections
     {
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MovieCodec));
       this.mpGroupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.configHEVC = new MediaPortal.UserInterface.Controls.MPButton();
+      this.mpLabel7 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.hevcvideoCodecComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.mpLabel6 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpCheckBoxTS = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.configSplitterSync = new MediaPortal.UserInterface.Controls.MPButton();
@@ -66,6 +69,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.mpGroupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGroupBox1.Controls.Add(this.configHEVC);
+      this.mpGroupBox1.Controls.Add(this.mpLabel7);
+      this.mpGroupBox1.Controls.Add(this.hevcvideoCodecComboBox);
       this.mpGroupBox1.Controls.Add(this.mpLabel6);
       this.mpGroupBox1.Controls.Add(this.mpCheckBoxTS);
       this.mpGroupBox1.Controls.Add(this.configSplitterSync);
@@ -103,17 +109,48 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.mpGroupBox1.Location = new System.Drawing.Point(6, 0);
       this.mpGroupBox1.Name = "mpGroupBox1";
-      this.mpGroupBox1.Size = new System.Drawing.Size(462, 412);
+      this.mpGroupBox1.Size = new System.Drawing.Size(462, 423);
       this.mpGroupBox1.TabIndex = 1;
       this.mpGroupBox1.TabStop = false;
       this.mpGroupBox1.Text = "Settings Decoder";
       // 
+      // configHEVC
+      // 
+      this.configHEVC.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.configHEVC.Image = global::MediaPortal.Configuration.Properties.Resources.codec_screwdriver;
+      this.configHEVC.Location = new System.Drawing.Point(422, 71);
+      this.configHEVC.Name = "configHEVC";
+      this.configHEVC.Size = new System.Drawing.Size(35, 21);
+      this.configHEVC.TabIndex = 71;
+      this.configHEVC.UseVisualStyleBackColor = true;
+      this.configHEVC.Click += new System.EventHandler(this.configHEVC_Click);
+      // 
+      // mpLabel7
+      // 
+      this.mpLabel7.Location = new System.Drawing.Point(16, 75);
+      this.mpLabel7.Name = "mpLabel7";
+      this.mpLabel7.Size = new System.Drawing.Size(98, 16);
+      this.mpLabel7.TabIndex = 4;
+      this.mpLabel7.Text = "HEVC Video :";
+      // 
+      // hevcvideoCodecComboBox
+      // 
+      this.hevcvideoCodecComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+      this.hevcvideoCodecComboBox.BorderColor = System.Drawing.Color.Empty;
+      this.hevcvideoCodecComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.hevcvideoCodecComboBox.Location = new System.Drawing.Point(122, 71);
+      this.hevcvideoCodecComboBox.Name = "hevcvideoCodecComboBox";
+      this.hevcvideoCodecComboBox.Size = new System.Drawing.Size(295, 21);
+      this.hevcvideoCodecComboBox.Sorted = true;
+      this.hevcvideoCodecComboBox.TabIndex = 5;
+      // 
       // mpLabel6
       // 
-      this.mpLabel6.Location = new System.Drawing.Point(16, 382);
+      this.mpLabel6.Location = new System.Drawing.Point(16, 405);
       this.mpLabel6.Name = "mpLabel6";
       this.mpLabel6.Size = new System.Drawing.Size(429, 17);
-      this.mpLabel6.TabIndex = 79;
+      this.mpLabel6.TabIndex = 80;
       this.mpLabel6.Text = "* Splitter filter selection only works in combination with File Source (Async.) o" +
     "r (URL.)";
       // 
@@ -122,10 +159,10 @@ namespace MediaPortal.Configuration.Sections
       this.mpCheckBoxTS.AutoSize = true;
       this.mpCheckBoxTS.CheckAlign = System.Drawing.ContentAlignment.TopLeft;
       this.mpCheckBoxTS.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpCheckBoxTS.Location = new System.Drawing.Point(19, 353);
+      this.mpCheckBoxTS.Location = new System.Drawing.Point(19, 376);
       this.mpCheckBoxTS.Name = "mpCheckBoxTS";
       this.mpCheckBoxTS.Size = new System.Drawing.Size(397, 17);
-      this.mpCheckBoxTS.TabIndex = 22;
+      this.mpCheckBoxTS.TabIndex = 26;
       this.mpCheckBoxTS.Text = "Use Video Codecs when playing .ts files (TV Codecs will be used if unchecked)";
       this.mpCheckBoxTS.UseVisualStyleBackColor = true;
       // 
@@ -133,7 +170,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.configSplitterSync.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.configSplitterSync.Image = global::MediaPortal.Configuration.Properties.Resources.codec_screwdriver;
-      this.configSplitterSync.Location = new System.Drawing.Point(422, 234);
+      this.configSplitterSync.Location = new System.Drawing.Point(422, 257);
       this.configSplitterSync.Name = "configSplitterSync";
       this.configSplitterSync.Size = new System.Drawing.Size(35, 21);
       this.configSplitterSync.TabIndex = 78;
@@ -144,7 +181,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.configSplitterSource.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.configSplitterSource.Image = global::MediaPortal.Configuration.Properties.Resources.codec_screwdriver;
-      this.configSplitterSource.Location = new System.Drawing.Point(422, 210);
+      this.configSplitterSource.Location = new System.Drawing.Point(422, 233);
       this.configSplitterSource.Name = "configSplitterSource";
       this.configSplitterSource.Size = new System.Drawing.Size(35, 21);
       this.configSplitterSource.TabIndex = 77;
@@ -155,10 +192,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.configAudioRenderer.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.configAudioRenderer.Image = global::MediaPortal.Configuration.Properties.Resources.codec_screwdriver;
-      this.configAudioRenderer.Location = new System.Drawing.Point(422, 258);
+      this.configAudioRenderer.Location = new System.Drawing.Point(422, 281);
       this.configAudioRenderer.Name = "configAudioRenderer";
       this.configAudioRenderer.Size = new System.Drawing.Size(35, 21);
-      this.configAudioRenderer.TabIndex = 76;
+      this.configAudioRenderer.TabIndex = 79;
       this.configAudioRenderer.UseVisualStyleBackColor = true;
       this.configAudioRenderer.Click += new System.EventHandler(this.configAudioRenderer_Click);
       // 
@@ -166,10 +203,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.configAACAudio.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.configAACAudio.Image = global::MediaPortal.Configuration.Properties.Resources.codec_screwdriver;
-      this.configAACAudio.Location = new System.Drawing.Point(422, 176);
+      this.configAACAudio.Location = new System.Drawing.Point(422, 199);
       this.configAACAudio.Name = "configAACAudio";
       this.configAACAudio.Size = new System.Drawing.Size(35, 21);
-      this.configAACAudio.TabIndex = 75;
+      this.configAACAudio.TabIndex = 76;
       this.configAACAudio.UseVisualStyleBackColor = true;
       this.configAACAudio.Click += new System.EventHandler(this.configAACAudio_Click);
       // 
@@ -177,10 +214,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.configMPEGAudio.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.configMPEGAudio.Image = global::MediaPortal.Configuration.Properties.Resources.codec_screwdriver;
-      this.configMPEGAudio.Location = new System.Drawing.Point(422, 152);
+      this.configMPEGAudio.Location = new System.Drawing.Point(422, 175);
       this.configMPEGAudio.Name = "configMPEGAudio";
       this.configMPEGAudio.Size = new System.Drawing.Size(35, 21);
-      this.configMPEGAudio.TabIndex = 74;
+      this.configMPEGAudio.TabIndex = 75;
       this.configMPEGAudio.UseVisualStyleBackColor = true;
       this.configMPEGAudio.Click += new System.EventHandler(this.configMPEGAudio_Click);
       // 
@@ -188,10 +225,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.configDivxXvid.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.configDivxXvid.Image = global::MediaPortal.Configuration.Properties.Resources.codec_screwdriver;
-      this.configDivxXvid.Location = new System.Drawing.Point(422, 119);
+      this.configDivxXvid.Location = new System.Drawing.Point(422, 142);
       this.configDivxXvid.Name = "configDivxXvid";
       this.configDivxXvid.Size = new System.Drawing.Size(35, 21);
-      this.configDivxXvid.TabIndex = 73;
+      this.configDivxXvid.TabIndex = 74;
       this.configDivxXvid.UseVisualStyleBackColor = true;
       this.configDivxXvid.Click += new System.EventHandler(this.configDivxXvid_Click);
       // 
@@ -199,10 +236,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.configVC1i.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.configVC1i.Image = global::MediaPortal.Configuration.Properties.Resources.codec_screwdriver;
-      this.configVC1i.Location = new System.Drawing.Point(422, 96);
+      this.configVC1i.Location = new System.Drawing.Point(422, 119);
       this.configVC1i.Name = "configVC1i";
       this.configVC1i.Size = new System.Drawing.Size(35, 21);
-      this.configVC1i.TabIndex = 72;
+      this.configVC1i.TabIndex = 73;
       this.configVC1i.UseVisualStyleBackColor = true;
       this.configVC1i.Click += new System.EventHandler(this.configVC1i_Click);
       // 
@@ -210,10 +247,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.configVC1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.configVC1.Image = global::MediaPortal.Configuration.Properties.Resources.codec_screwdriver;
-      this.configVC1.Location = new System.Drawing.Point(422, 72);
+      this.configVC1.Location = new System.Drawing.Point(422, 95);
       this.configVC1.Name = "configVC1";
       this.configVC1.Size = new System.Drawing.Size(35, 21);
-      this.configVC1.TabIndex = 71;
+      this.configVC1.TabIndex = 72;
       this.configVC1.UseVisualStyleBackColor = true;
       this.configVC1.Click += new System.EventHandler(this.configVC1_Click);
       // 
@@ -248,19 +285,19 @@ namespace MediaPortal.Configuration.Sections
             | System.Windows.Forms.AnchorStyles.Right)));
       this.xvidvideoCodecComboBox.BorderColor = System.Drawing.Color.Empty;
       this.xvidvideoCodecComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.xvidvideoCodecComboBox.Location = new System.Drawing.Point(122, 119);
+      this.xvidvideoCodecComboBox.Location = new System.Drawing.Point(122, 142);
       this.xvidvideoCodecComboBox.Name = "xvidvideoCodecComboBox";
       this.xvidvideoCodecComboBox.Size = new System.Drawing.Size(295, 21);
       this.xvidvideoCodecComboBox.Sorted = true;
-      this.xvidvideoCodecComboBox.TabIndex = 9;
+      this.xvidvideoCodecComboBox.TabIndex = 11;
       // 
       // mpLabelXVID
       // 
       this.mpLabelXVID.AccessibleName = resources.GetString("mpLabelXVID.AccessibleName");
-      this.mpLabelXVID.Location = new System.Drawing.Point(16, 123);
+      this.mpLabelXVID.Location = new System.Drawing.Point(16, 146);
       this.mpLabelXVID.Name = "mpLabelXVID";
       this.mpLabelXVID.Size = new System.Drawing.Size(116, 18);
-      this.mpLabelXVID.TabIndex = 8;
+      this.mpLabelXVID.TabIndex = 10;
       this.mpLabelXVID.Text = "DivX / Xvid Video :";
       // 
       // ForceSourceSplitter
@@ -268,10 +305,10 @@ namespace MediaPortal.Configuration.Sections
       this.ForceSourceSplitter.AutoSize = true;
       this.ForceSourceSplitter.CheckAlign = System.Drawing.ContentAlignment.TopLeft;
       this.ForceSourceSplitter.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.ForceSourceSplitter.Location = new System.Drawing.Point(19, 325);
+      this.ForceSourceSplitter.Location = new System.Drawing.Point(19, 348);
       this.ForceSourceSplitter.Name = "ForceSourceSplitter";
       this.ForceSourceSplitter.Size = new System.Drawing.Size(224, 17);
-      this.ForceSourceSplitter.TabIndex = 21;
+      this.ForceSourceSplitter.TabIndex = 25;
       this.ForceSourceSplitter.Text = "Manually select Source and Splitter filters *";
       this.ForceSourceSplitter.UseVisualStyleBackColor = true;
       this.ForceSourceSplitter.CheckedChanged += new System.EventHandler(this.ForceSourceSplitter_CheckedChanged);
@@ -282,18 +319,18 @@ namespace MediaPortal.Configuration.Sections
             | System.Windows.Forms.AnchorStyles.Right)));
       this.SplitterFileComboBox.BorderColor = System.Drawing.Color.Empty;
       this.SplitterFileComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.SplitterFileComboBox.Location = new System.Drawing.Point(122, 234);
+      this.SplitterFileComboBox.Location = new System.Drawing.Point(122, 257);
       this.SplitterFileComboBox.Name = "SplitterFileComboBox";
       this.SplitterFileComboBox.Size = new System.Drawing.Size(295, 21);
       this.SplitterFileComboBox.Sorted = true;
-      this.SplitterFileComboBox.TabIndex = 17;
+      this.SplitterFileComboBox.TabIndex = 21;
       // 
       // mpLabel5
       // 
-      this.mpLabel5.Location = new System.Drawing.Point(16, 238);
+      this.mpLabel5.Location = new System.Drawing.Point(16, 261);
       this.mpLabel5.Name = "mpLabel5";
       this.mpLabel5.Size = new System.Drawing.Size(100, 17);
-      this.mpLabel5.TabIndex = 18;
+      this.mpLabel5.TabIndex = 20;
       this.mpLabel5.Text = "Splitter filter * :";
       // 
       // SplitterComboBox
@@ -302,28 +339,28 @@ namespace MediaPortal.Configuration.Sections
             | System.Windows.Forms.AnchorStyles.Right)));
       this.SplitterComboBox.BorderColor = System.Drawing.Color.Empty;
       this.SplitterComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.SplitterComboBox.Location = new System.Drawing.Point(122, 210);
+      this.SplitterComboBox.Location = new System.Drawing.Point(122, 233);
       this.SplitterComboBox.Name = "SplitterComboBox";
       this.SplitterComboBox.Size = new System.Drawing.Size(295, 21);
       this.SplitterComboBox.Sorted = true;
-      this.SplitterComboBox.TabIndex = 15;
+      this.SplitterComboBox.TabIndex = 19;
       this.SplitterComboBox.SelectedIndexChanged += new System.EventHandler(this.SplitterComboBox_SelectedIndexChanged);
       // 
       // mpLabel4
       // 
-      this.mpLabel4.Location = new System.Drawing.Point(16, 214);
+      this.mpLabel4.Location = new System.Drawing.Point(16, 237);
       this.mpLabel4.Name = "mpLabel4";
       this.mpLabel4.Size = new System.Drawing.Size(98, 17);
-      this.mpLabel4.TabIndex = 16;
+      this.mpLabel4.TabIndex = 18;
       this.mpLabel4.Text = "Source filter :";
       // 
       // mpLabel3
       // 
       this.mpLabel3.AccessibleName = resources.GetString("mpLabel3.AccessibleName");
-      this.mpLabel3.Location = new System.Drawing.Point(16, 101);
+      this.mpLabel3.Location = new System.Drawing.Point(16, 124);
       this.mpLabel3.Name = "mpLabel3";
       this.mpLabel3.Size = new System.Drawing.Size(98, 16);
-      this.mpLabel3.TabIndex = 6;
+      this.mpLabel3.TabIndex = 8;
       this.mpLabel3.Text = "VC-1i Video :";
       // 
       // vc1ivideoCodecComboBox
@@ -333,18 +370,18 @@ namespace MediaPortal.Configuration.Sections
             | System.Windows.Forms.AnchorStyles.Right)));
       this.vc1ivideoCodecComboBox.BorderColor = System.Drawing.Color.Empty;
       this.vc1ivideoCodecComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.vc1ivideoCodecComboBox.Location = new System.Drawing.Point(122, 96);
+      this.vc1ivideoCodecComboBox.Location = new System.Drawing.Point(122, 119);
       this.vc1ivideoCodecComboBox.Name = "vc1ivideoCodecComboBox";
       this.vc1ivideoCodecComboBox.Size = new System.Drawing.Size(295, 21);
       this.vc1ivideoCodecComboBox.Sorted = true;
-      this.vc1ivideoCodecComboBox.TabIndex = 7;
+      this.vc1ivideoCodecComboBox.TabIndex = 9;
       // 
       // mpLabel2
       // 
-      this.mpLabel2.Location = new System.Drawing.Point(16, 76);
+      this.mpLabel2.Location = new System.Drawing.Point(16, 99);
       this.mpLabel2.Name = "mpLabel2";
       this.mpLabel2.Size = new System.Drawing.Size(98, 16);
-      this.mpLabel2.TabIndex = 4;
+      this.mpLabel2.TabIndex = 6;
       this.mpLabel2.Text = "VC-1 Video :";
       // 
       // vc1videoCodecComboBox
@@ -353,18 +390,18 @@ namespace MediaPortal.Configuration.Sections
             | System.Windows.Forms.AnchorStyles.Right)));
       this.vc1videoCodecComboBox.BorderColor = System.Drawing.Color.Empty;
       this.vc1videoCodecComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.vc1videoCodecComboBox.Location = new System.Drawing.Point(122, 72);
+      this.vc1videoCodecComboBox.Location = new System.Drawing.Point(122, 95);
       this.vc1videoCodecComboBox.Name = "vc1videoCodecComboBox";
       this.vc1videoCodecComboBox.Size = new System.Drawing.Size(295, 21);
       this.vc1videoCodecComboBox.Sorted = true;
-      this.vc1videoCodecComboBox.TabIndex = 5;
+      this.vc1videoCodecComboBox.TabIndex = 7;
       // 
       // labelAACDecoder
       // 
-      this.labelAACDecoder.Location = new System.Drawing.Point(16, 179);
+      this.labelAACDecoder.Location = new System.Drawing.Point(16, 202);
       this.labelAACDecoder.Name = "labelAACDecoder";
       this.labelAACDecoder.Size = new System.Drawing.Size(98, 17);
-      this.labelAACDecoder.TabIndex = 12;
+      this.labelAACDecoder.TabIndex = 16;
       this.labelAACDecoder.Text = "AAC audio :";
       // 
       // aacAudioCodecComboBox
@@ -373,21 +410,21 @@ namespace MediaPortal.Configuration.Sections
             | System.Windows.Forms.AnchorStyles.Right)));
       this.aacAudioCodecComboBox.BorderColor = System.Drawing.Color.Empty;
       this.aacAudioCodecComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.aacAudioCodecComboBox.Location = new System.Drawing.Point(122, 176);
+      this.aacAudioCodecComboBox.Location = new System.Drawing.Point(122, 199);
       this.aacAudioCodecComboBox.Name = "aacAudioCodecComboBox";
       this.aacAudioCodecComboBox.Size = new System.Drawing.Size(295, 21);
       this.aacAudioCodecComboBox.Sorted = true;
-      this.aacAudioCodecComboBox.TabIndex = 13;
+      this.aacAudioCodecComboBox.TabIndex = 17;
       // 
       // autoDecoderSettings
       // 
       this.autoDecoderSettings.AutoSize = true;
       this.autoDecoderSettings.CheckAlign = System.Drawing.ContentAlignment.TopLeft;
       this.autoDecoderSettings.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.autoDecoderSettings.Location = new System.Drawing.Point(19, 289);
+      this.autoDecoderSettings.Location = new System.Drawing.Point(19, 312);
       this.autoDecoderSettings.Name = "autoDecoderSettings";
       this.autoDecoderSettings.Size = new System.Drawing.Size(282, 30);
-      this.autoDecoderSettings.TabIndex = 20;
+      this.autoDecoderSettings.TabIndex = 24;
       this.autoDecoderSettings.Text = "Automatic decoder selection \r\nCaution! This option will use decoders based on mer" +
     "its.";
       this.autoDecoderSettings.UseVisualStyleBackColor = true;
@@ -419,18 +456,18 @@ namespace MediaPortal.Configuration.Sections
             | System.Windows.Forms.AnchorStyles.Right)));
       this.audioRendererComboBox.BorderColor = System.Drawing.Color.Empty;
       this.audioRendererComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.audioRendererComboBox.Location = new System.Drawing.Point(122, 258);
+      this.audioRendererComboBox.Location = new System.Drawing.Point(122, 281);
       this.audioRendererComboBox.Name = "audioRendererComboBox";
       this.audioRendererComboBox.Size = new System.Drawing.Size(295, 21);
       this.audioRendererComboBox.Sorted = true;
-      this.audioRendererComboBox.TabIndex = 19;
+      this.audioRendererComboBox.TabIndex = 23;
       // 
       // label3
       // 
-      this.label3.Location = new System.Drawing.Point(16, 262);
+      this.label3.Location = new System.Drawing.Point(16, 285);
       this.label3.Name = "label3";
       this.label3.Size = new System.Drawing.Size(98, 17);
-      this.label3.TabIndex = 14;
+      this.label3.TabIndex = 22;
       this.label3.Text = "Audio renderer :";
       // 
       // label6
@@ -447,11 +484,11 @@ namespace MediaPortal.Configuration.Sections
             | System.Windows.Forms.AnchorStyles.Right)));
       this.audioCodecComboBox.BorderColor = System.Drawing.Color.Empty;
       this.audioCodecComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.audioCodecComboBox.Location = new System.Drawing.Point(122, 152);
+      this.audioCodecComboBox.Location = new System.Drawing.Point(122, 175);
       this.audioCodecComboBox.Name = "audioCodecComboBox";
       this.audioCodecComboBox.Size = new System.Drawing.Size(295, 21);
       this.audioCodecComboBox.Sorted = true;
-      this.audioCodecComboBox.TabIndex = 11;
+      this.audioCodecComboBox.TabIndex = 13;
       // 
       // videoCodecComboBox
       // 
@@ -467,10 +504,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // label5
       // 
-      this.label5.Location = new System.Drawing.Point(16, 156);
+      this.label5.Location = new System.Drawing.Point(16, 179);
       this.label5.Name = "label5";
       this.label5.Size = new System.Drawing.Size(127, 21);
-      this.label5.TabIndex = 10;
+      this.label5.TabIndex = 12;
       this.label5.Text = "MPEG / AC3 audio :";
       // 
       // MovieCodec
@@ -480,7 +517,7 @@ namespace MediaPortal.Configuration.Sections
       this.BackColor = System.Drawing.SystemColors.Window;
       this.Controls.Add(this.mpGroupBox1);
       this.Name = "MovieCodec";
-      this.Size = new System.Drawing.Size(472, 412);
+      this.Size = new System.Drawing.Size(472, 426);
       this.mpGroupBox1.ResumeLayout(false);
       this.mpGroupBox1.PerformLayout();
       this.ResumeLayout(false);
@@ -524,5 +561,8 @@ namespace MediaPortal.Configuration.Sections
     private UserInterface.Controls.MPButton configMPEG;
     private UserInterface.Controls.MPCheckBox mpCheckBoxTS;
     private UserInterface.Controls.MPLabel mpLabel6;
+    private UserInterface.Controls.MPButton configHEVC;
+    private UserInterface.Controls.MPLabel mpLabel7;
+    private UserInterface.Controls.MPComboBox hevcvideoCodecComboBox;
   }
 }

@@ -394,12 +394,14 @@ namespace MediaPortal.GUI.Video
         string largeCoverArtImage = Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, titleExt);
         
         Util.Utils.FileDelete(coverArtImage);
+        Util.Utils.FileDelete(largeCoverArtImage);
         //
         // 07.11.2010 Deda: Cache entry Flag change for cover thumb file
         //
         Util.Utils.DoInsertNonExistingFileIntoCache(coverArtImage);
         //
-        Util.Utils.FileDelete(largeCoverArtImage);
+        GUITextureManager.ReleaseTexture(largeCoverArtImage);
+        //
         Refresh();
         Update();
         int idMovie = _currentMovie.ID;
@@ -562,6 +564,7 @@ namespace MediaPortal.GUI.Video
         dlg.AddLocalizedString(1298); //Refresh fanart
       }
 
+      dlg.AddLocalizedString(1335); //Refresh cover
       dlg.AddLocalizedString(1304); //Export to nfo file
       // Show dialog menu
       dlg.DoModal(GetID);
@@ -579,6 +582,9 @@ namespace MediaPortal.GUI.Video
           break;
         case 1298: // Refresh fanart
           OnFanartRefresh();
+          break;
+        case 1335: // Refresh cover
+          OnCoverRefresh();
           break;
         case 1263: // Set deault grabber script
           GUIVideoFiles.SetDefaultGrabber();
@@ -1596,6 +1602,32 @@ namespace MediaPortal.GUI.Video
           dlgNotify.DoModal(GetID);
         }
       }
+    }
+
+    // Cover refresh
+    private void OnCoverRefresh()
+    {
+      if (string.IsNullOrEmpty(_currentMovie.ThumbURL) || _currentMovie.ThumbURL.Length <= 7 || (_currentMovie.ThumbURL.Length > 7 && !_currentMovie.ThumbURL.Substring(0, 7).Equals("http://")))
+      {
+        return;
+      }
+
+      string titleExt = string.Empty;
+        
+      // Title suffix for problem with covers and movie with the same name
+      titleExt = _currentMovie.Title + "{" + _currentMovie.ID + "}";
+      string coverArtImage = Util.Utils.GetCoverArtName(Thumbs.MovieTitle, titleExt);
+      string largeCoverArtImage = Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, titleExt);
+        
+      Util.Utils.FileDelete(coverArtImage);
+      Util.Utils.FileDelete(largeCoverArtImage);
+      //
+      Util.Utils.DoInsertNonExistingFileIntoCache(coverArtImage);
+      //
+      GUITextureManager.ReleaseTexture(largeCoverArtImage);
+      //
+      Refresh();
+      Update();
     }
 
     private void OnCreateNfoFile()

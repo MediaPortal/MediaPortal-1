@@ -217,7 +217,7 @@
 
   <define property="true" evaluateNow="true">#list.TV:#(#list.header.left)#(L(605))#(#list.header.right),#NONE,#TV1,#TV2,#TV3,#TV4,#TV5,#TV6,#TV7,#TV8</define>
 
-  <define property="true" evaluateNow="true">#list.VIDEO:#(#list.header.left)#(L(291))#(#list.header.right),#NONE,#VIDEO1,#.TVSERIES,#1.TVSERIES,#2.TVSERIES,#3.TVSERIES,#4.TVSERIES,#5.TVSERIES,#6.TVSERIES,#7.TVSERIES,#8.TVSERIES,#9.TVSERIES,#10.TVSERIES,#11.TVSERIES,#12.TVSERIES,#13.TVSERIES,#14.TVSERIES,#15.TVSERIES,#.MOVPIC,#1.MOVPIC,#2.MOVPIC,#3.MOVPIC,#4.MOVPIC,#5.MOVPIC,#6.MOVPIC,#7.MOVPIC,#8.MOVPIC,#9.MOVPIC,#10.MOVPIC,#VIDEO3,#VIDEO4,#VIDEO5,#.TRAKT,#1.TRAKT,#2.TRAKT,#3.TRAKT,#4.TRAKT,#5.TRAKT,#6.TRAKT,#7.TRAKT,#8.TRAKT,#9.TRAKT,#10.TRAKT,#11.TRAKT,#12.TRAKT,#VIDEO6,#VIDEO7,#VIDEO8</define>
+  <define property="true" evaluateNow="true">#list.VIDEO:#(#list.header.left)#(L(291))#(#list.header.right),#NONE,#VIDEO1,#1.VIDEO,#2.VIDEO,#3.VIDEO,#4.VIDEO,#5.VIDEO,#6.VIDEO,#7.VIDEO,#8.VIDEO,#9.VIDEO,#10.VIDEO,#11.VIDEO,#12.VIDEO,#13.VIDEO,#.TVSERIES,#1.TVSERIES,#2.TVSERIES,#3.TVSERIES,#4.TVSERIES,#5.TVSERIES,#6.TVSERIES,#7.TVSERIES,#8.TVSERIES,#9.TVSERIES,#10.TVSERIES,#11.TVSERIES,#12.TVSERIES,#13.TVSERIES,#14.TVSERIES,#15.TVSERIES,#.MOVPIC,#1.MOVPIC,#2.MOVPIC,#3.MOVPIC,#4.MOVPIC,#5.MOVPIC,#6.MOVPIC,#7.MOVPIC,#8.MOVPIC,#9.MOVPIC,#10.MOVPIC,#VIDEO3,#VIDEO4,#VIDEO5,#.TRAKT,#1.TRAKT,#2.TRAKT,#3.TRAKT,#4.TRAKT,#5.TRAKT,#6.TRAKT,#7.TRAKT,#8.TRAKT,#9.TRAKT,#10.TRAKT,#11.TRAKT,#12.TRAKT</define>
 
   <define property="true" evaluateNow="true">#list.AUDIO:#(#list.header.left)#(L(292))#(#list.header.right),#NONE,#AUDIO1,#AUDIO2,#AUDIO22,#AUDIO23,#AUDIO24,#AUDIO3,#AUDIO4,#AUDIO5,#AUDIO6,#AUDIO7,#AUDIO8,#AUDIO9,#AUDIO20,#AUDIO21,#.MUSIC,#1.MUSIC,#2.MUSIC,#3.MUSIC,#4.MUSIC,#5.MUSIC,#6.MUSIC,#7.MUSIC,#8.MUSIC,#9.MUSIC,#10.MUSIC</define>
 
@@ -437,7 +437,7 @@
   <define property="true" evaluateNow="true">#VIDEO8.iconnofocus:tb_videoNF.png</define>
   <define property="true" evaluateNow="true">#VIDEO8.active:#(iif(or(eq(#VIDEO8.plugin,''),plugin.isenabled(#VIDEO8.plugin)),' ',''))</define>
   <define property="true" evaluateNow="true">#VIDEO8:#(string.format('{0}{1}',#VIDEO8.name,iif(eq(#VIDEO8.active,' '),'',#PLUGERROR)))</define>
-
+  
   <!--     *******************************************************************************************  -->
   <!--     **************************************    AUDIO ITEMS   ***********************************  -->
   <!--     *******************************************************************************************  -->
@@ -597,7 +597,7 @@
   <define property="true" evaluateNow="true">#AUDIO24.iconnofocus:tb_musicNF.png</define>
   <define property="true" evaluateNow="true">#AUDIO24.active:#(iif(or(eq(#AUDIO24.plugin,''),plugin.isenabled(#AUDIO24.plugin)),' ',''))</define>
   <define property="true" evaluateNow="true">#AUDIO24:#(string.format('{0}{1}',#AUDIO24.name,iif(eq(#AUDIO24.active,' '),'',#PLUGERROR)))</define>
-
+  
   <!--     *******************************************************************************************  -->
   <!--     **************************************   PICTURES ITEMS   *********************************  -->
   <!--     *******************************************************************************************  -->
@@ -2116,6 +2116,166 @@
   <define property="true" evaluateNow="true">#15.TVSERIES.active:#(iif(and(or(eq(#15.TVSERIES.plugin,''),plugin.isenabled(#15.TVSERIES.plugin)),neq(#15.TVSERIES.name,#PLUGOPTERROR)),' ',''))</define>
   <define property="true" evaluateNow="true">#15.TVSERIES:TV-S. | #(string.format('{0}{1}',#15.TVSERIES.name,iif(eq(#15.TVSERIES.active,' '),'',#PLUGERROR)))</define>
   <define property="true" evaluateNow="true">#15.TVSERIES.latestmedia:919199940</define>
+  
+  <!--     *******************************************************************************************  -->
+  <!--     **************************************   MYVIDEOS VIEWS   *********************************  -->
+  <!--     *******************************************************************************************  -->
+  
+  <!-- Videos Title -->
+  <define property="true" evaluateNow="true">#1.VIDEO.name:#(L(3)) | #(L(369))</define>
+  <define property="true" evaluateNow="true">#1.VIDEO.plugin:Videos</define>
+  <define property="true" evaluateNow="true">#1.VIDEO.hyperlink:6</define>
+  <define property="true" evaluateNow="true">#1.VIDEO.parameter:369</define>
+  <define property="true" evaluateNow="true">#1.VIDEO.hover:hover_my videos.png</define>
+  <define property="true" evaluateNow="true">#1.VIDEO.background:Animations\BasicHome\videos.jpg</define>
+  <define property="true" evaluateNow="true">#1.VIDEO.iconfocus:tb_video.png</define>
+  <define property="true" evaluateNow="true">#1.VIDEO.iconnofocus:tb_videoNF.png</define>
+  <define property="true" evaluateNow="true">#1.VIDEO.active:#(iif(or(eq(#1.VIDEO.plugin,''),plugin.isenabled(#1.VIDEO.plugin)),' ',''))</define>
+  <define property="true" evaluateNow="true">#1.VIDEO:#(string.format('{0}{1}',#1.VIDEO.name,iif(eq(#1.VIDEO.active,' '),'',#PLUGERROR)))</define>  
+  
+  <!-- Videos Title (Index) -->
+  <define property="true" evaluateNow="true">#2.VIDEO.name:#(L(3)) | #(L(1287))</define>
+  <define property="true" evaluateNow="true">#2.VIDEO.plugin:Videos</define>
+  <define property="true" evaluateNow="true">#2.VIDEO.hyperlink:6</define>
+  <define property="true" evaluateNow="true">#2.VIDEO.parameter:1287</define>
+  <define property="true" evaluateNow="true">#2.VIDEO.hover:hover_my videos.png</define>
+  <define property="true" evaluateNow="true">#2.VIDEO.background:Animations\BasicHome\videos.jpg</define>
+  <define property="true" evaluateNow="true">#2.VIDEO.iconfocus:tb_video.png</define>
+  <define property="true" evaluateNow="true">#2.VIDEO.iconnofocus:tb_videoNF.png</define>
+  <define property="true" evaluateNow="true">#2.VIDEO.active:#(iif(or(eq(#2.VIDEO.plugin,''),plugin.isenabled(#2.VIDEO.plugin)),' ',''))</define>
+  <define property="true" evaluateNow="true">#2.VIDEO:#(string.format('{0}{1}',#2.VIDEO.name,iif(eq(#2.VIDEO.active,' '),'',#PLUGERROR)))</define>  
+  
+  <!-- Videos Actors -->
+  <define property="true" evaluateNow="true">#3.VIDEO.name:#(L(3)) | #(L(344))</define>
+  <define property="true" evaluateNow="true">#3.VIDEO.plugin:Videos</define>
+  <define property="true" evaluateNow="true">#3.VIDEO.hyperlink:6</define>
+  <define property="true" evaluateNow="true">#3.VIDEO.parameter:344</define>
+  <define property="true" evaluateNow="true">#3.VIDEO.hover:hover_my videos.png</define>
+  <define property="true" evaluateNow="true">#3.VIDEO.background:Animations\BasicHome\videos.jpg</define>
+  <define property="true" evaluateNow="true">#3.VIDEO.iconfocus:tb_video.png</define>
+  <define property="true" evaluateNow="true">#3.VIDEO.iconnofocus:tb_videoNF.png</define>
+  <define property="true" evaluateNow="true">#3.VIDEO.active:#(iif(or(eq(#3.VIDEO.plugin,''),plugin.isenabled(#3.VIDEO.plugin)),' ',''))</define>
+  <define property="true" evaluateNow="true">#3.VIDEO:#(string.format('{0}{1}',#3.VIDEO.name,iif(eq(#3.VIDEO.active,' '),'',#PLUGERROR)))</define>    
+  
+  <!-- Videos Actors (Index) -->
+  <define property="true" evaluateNow="true">#4.VIDEO.name:#(L(3)) | #(L(1288))</define>
+  <define property="true" evaluateNow="true">#4.VIDEO.plugin:Videos</define>
+  <define property="true" evaluateNow="true">#4.VIDEO.hyperlink:6</define>
+  <define property="true" evaluateNow="true">#4.VIDEO.parameter:1288</define>
+  <define property="true" evaluateNow="true">#4.VIDEO.hover:hover_my videos.png</define>
+  <define property="true" evaluateNow="true">#4.VIDEO.background:Animations\BasicHome\videos.jpg</define>
+  <define property="true" evaluateNow="true">#4.VIDEO.iconfocus:tb_video.png</define>
+  <define property="true" evaluateNow="true">#4.VIDEO.iconnofocus:tb_videoNF.png</define>
+  <define property="true" evaluateNow="true">#4.VIDEO.active:#(iif(or(eq(#4.VIDEO.plugin,''),plugin.isenabled(#4.VIDEO.plugin)),' ',''))</define>
+  <define property="true" evaluateNow="true">#4.VIDEO:#(string.format('{0}{1}',#4.VIDEO.name,iif(eq(#4.VIDEO.active,' '),'',#PLUGERROR)))</define>
+  
+  <!-- Videos Genre -->
+  <define property="true" evaluateNow="true">#5.VIDEO.name:#(L(3)) | #(L(135))</define>
+  <define property="true" evaluateNow="true">#5.VIDEO.plugin:Videos</define>
+  <define property="true" evaluateNow="true">#5.VIDEO.hyperlink:6</define>
+  <define property="true" evaluateNow="true">#5.VIDEO.parameter:135</define>
+  <define property="true" evaluateNow="true">#5.VIDEO.hover:hover_my videos.png</define>
+  <define property="true" evaluateNow="true">#5.VIDEO.background:Animations\BasicHome\videos.jpg</define>
+  <define property="true" evaluateNow="true">#5.VIDEO.iconfocus:tb_video.png</define>
+  <define property="true" evaluateNow="true">#5.VIDEO.iconnofocus:tb_videoNF.png</define>
+  <define property="true" evaluateNow="true">#5.VIDEO.active:#(iif(or(eq(#5.VIDEO.plugin,''),plugin.isenabled(#5.VIDEO.plugin)),' ',''))</define>
+  <define property="true" evaluateNow="true">#5.VIDEO:#(string.format('{0}{1}',#5.VIDEO.name,iif(eq(#5.VIDEO.active,' '),'',#PLUGERROR)))</define>
+  
+  <!-- Videos User Defined Groups -->
+  <define property="true" evaluateNow="true">#6.VIDEO.name:#(L(3)) | #(L(1265))</define>
+  <define property="true" evaluateNow="true">#6.VIDEO.plugin:Videos</define>
+  <define property="true" evaluateNow="true">#6.VIDEO.hyperlink:6</define>
+  <define property="true" evaluateNow="true">#6.VIDEO.parameter:1265</define>
+  <define property="true" evaluateNow="true">#6.VIDEO.hover:hover_my videos.png</define>
+  <define property="true" evaluateNow="true">#6.VIDEO.background:Animations\BasicHome\videos.jpg</define>
+  <define property="true" evaluateNow="true">#6.VIDEO.iconfocus:tb_video.png</define>
+  <define property="true" evaluateNow="true">#6.VIDEO.iconnofocus:tb_videoNF.png</define>
+  <define property="true" evaluateNow="true">#6.VIDEO.active:#(iif(or(eq(#6.VIDEO.plugin,''),plugin.isenabled(#6.VIDEO.plugin)),' ',''))</define>
+  <define property="true" evaluateNow="true">#6.VIDEO:#(string.format('{0}{1}',#6.VIDEO.name,iif(eq(#6.VIDEO.active,' '),'',#PLUGERROR)))</define>
+  
+  <!-- Videos Years -->
+  <define property="true" evaluateNow="true">#7.VIDEO.name:#(L(3)) | #(L(987))</define>
+  <define property="true" evaluateNow="true">#7.VIDEO.plugin:Videos</define>
+  <define property="true" evaluateNow="true">#7.VIDEO.hyperlink:6</define>
+  <define property="true" evaluateNow="true">#7.VIDEO.parameter:987</define>
+  <define property="true" evaluateNow="true">#7.VIDEO.hover:hover_my videos.png</define>
+  <define property="true" evaluateNow="true">#7.VIDEO.background:Animations\BasicHome\videos.jpg</define>
+  <define property="true" evaluateNow="true">#7.VIDEO.iconfocus:tb_video.png</define>
+  <define property="true" evaluateNow="true">#7.VIDEO.iconnofocus:tb_videoNF.png</define>
+  <define property="true" evaluateNow="true">#7.VIDEO.active:#(iif(or(eq(#7.VIDEO.plugin,''),plugin.isenabled(#7.VIDEO.plugin)),' ',''))</define>
+  <define property="true" evaluateNow="true">#7.VIDEO:#(string.format('{0}{1}',#7.VIDEO.name,iif(eq(#7.VIDEO.active,' '),'',#PLUGERROR)))</define>
+  
+  <!-- Videos Recently Added -->
+  <define property="true" evaluateNow="true">#8.VIDEO.name:#(L(3)) | #(L(4558))</define>
+  <define property="true" evaluateNow="true">#8.VIDEO.plugin:Videos</define>
+  <define property="true" evaluateNow="true">#8.VIDEO.hyperlink:6</define>
+  <define property="true" evaluateNow="true">#8.VIDEO.parameter:4558</define>
+  <define property="true" evaluateNow="true">#8.VIDEO.hover:hover_my videos.png</define>
+  <define property="true" evaluateNow="true">#8.VIDEO.background:Animations\BasicHome\videos.jpg</define>
+  <define property="true" evaluateNow="true">#8.VIDEO.iconfocus:tb_video.png</define>
+  <define property="true" evaluateNow="true">#8.VIDEO.iconnofocus:tb_videoNF.png</define>
+  <define property="true" evaluateNow="true">#8.VIDEO.active:#(iif(or(eq(#8.VIDEO.plugin,''),plugin.isenabled(#8.VIDEO.plugin)),' ',''))</define>
+  <define property="true" evaluateNow="true">#8.VIDEO:#(string.format('{0}{1}',#8.VIDEO.name,iif(eq(#8.VIDEO.active,' '),'',#PLUGERROR)))</define>
+  
+  <!-- Videos Recently Watched -->
+  <define property="true" evaluateNow="true">#9.VIDEO.name:#(L(3)) | #(L(4559))</define>
+  <define property="true" evaluateNow="true">#9.VIDEO.plugin:Videos</define>
+  <define property="true" evaluateNow="true">#9.VIDEO.hyperlink:6</define>
+  <define property="true" evaluateNow="true">#9.VIDEO.parameter:4559</define>
+  <define property="true" evaluateNow="true">#9.VIDEO.hover:hover_my videos.png</define>
+  <define property="true" evaluateNow="true">#9.VIDEO.background:Animations\BasicHome\videos.jpg</define>
+  <define property="true" evaluateNow="true">#9.VIDEO.iconfocus:tb_video.png</define>
+  <define property="true" evaluateNow="true">#9.VIDEO.iconnofocus:tb_videoNF.png</define>
+  <define property="true" evaluateNow="true">#9.VIDEO.active:#(iif(or(eq(#9.VIDEO.plugin,''),plugin.isenabled(#9.VIDEO.plugin)),' ',''))</define>
+  <define property="true" evaluateNow="true">#9.VIDEO:#(string.format('{0}{1}',#9.VIDEO.name,iif(eq(#9.VIDEO.active,' '),'',#PLUGERROR)))</define>
+  
+  <!-- Videos Watched -->
+  <define property="true" evaluateNow="true">#10.VIDEO.name:#(L(3)) | #(L(1266))</define>
+  <define property="true" evaluateNow="true">#10.VIDEO.plugin:Videos</define>
+  <define property="true" evaluateNow="true">#10.VIDEO.hyperlink:6</define>
+  <define property="true" evaluateNow="true">#10.VIDEO.parameter:1266</define>
+  <define property="true" evaluateNow="true">#10.VIDEO.hover:hover_my videos.png</define>
+  <define property="true" evaluateNow="true">#10.VIDEO.background:Animations\BasicHome\videos.jpg</define>
+  <define property="true" evaluateNow="true">#10.VIDEO.iconfocus:tb_video.png</define>
+  <define property="true" evaluateNow="true">#10.VIDEO.iconnofocus:tb_videoNF.png</define>
+  <define property="true" evaluateNow="true">#10.VIDEO.active:#(iif(or(eq(#10.VIDEO.plugin,''),plugin.isenabled(#10.VIDEO.plugin)),' ',''))</define>
+  <define property="true" evaluateNow="true">#10.VIDEO:#(string.format('{0}{1}',#10.VIDEO.name,iif(eq(#10.VIDEO.active,' '),'',#PLUGERROR)))</define>
+  
+  <!-- Videos Unwatched -->
+  <define property="true" evaluateNow="true">#11.VIDEO.name:#(L(3)) | #(L(1267))</define>
+  <define property="true" evaluateNow="true">#11.VIDEO.plugin:Videos</define>
+  <define property="true" evaluateNow="true">#11.VIDEO.hyperlink:6</define>
+  <define property="true" evaluateNow="true">#11.VIDEO.parameter:1267</define>
+  <define property="true" evaluateNow="true">#11.VIDEO.hover:hover_my videos.png</define>
+  <define property="true" evaluateNow="true">#11.VIDEO.background:Animations\BasicHome\videos.jpg</define>
+  <define property="true" evaluateNow="true">#11.VIDEO.iconfocus:tb_video.png</define>
+  <define property="true" evaluateNow="true">#11.VIDEO.iconnofocus:tb_videoNF.png</define>
+  <define property="true" evaluateNow="true">#11.VIDEO.active:#(iif(or(eq(#11.VIDEO.plugin,''),plugin.isenabled(#11.VIDEO.plugin)),' ',''))</define>
+  <define property="true" evaluateNow="true">#11.VIDEO:#(string.format('{0}{1}',#11.VIDEO.name,iif(eq(#11.VIDEO.active,' '),'',#PLUGERROR)))</define>
+  
+  <!-- Videos Folder -->
+  <define property="true" evaluateNow="true">#12.VIDEO.name:#(L(3)) | #(L(134))</define>
+  <define property="true" evaluateNow="true">#12.VIDEO.plugin:Videos</define>
+  <define property="true" evaluateNow="true">#12.VIDEO.hyperlink:6</define>
+  <define property="true" evaluateNow="true">#12.VIDEO.parameter:134</define>
+  <define property="true" evaluateNow="true">#12.VIDEO.hover:hover_my videos.png</define>
+  <define property="true" evaluateNow="true">#12.VIDEO.background:Animations\BasicHome\videos.jpg</define>
+  <define property="true" evaluateNow="true">#12.VIDEO.iconfocus:tb_video.png</define>
+  <define property="true" evaluateNow="true">#12.VIDEO.iconnofocus:tb_videoNF.png</define>
+  <define property="true" evaluateNow="true">#12.VIDEO.active:#(iif(or(eq(#12.VIDEO.plugin,''),plugin.isenabled(#12.VIDEO.plugin)),' ',''))</define>
+  <define property="true" evaluateNow="true">#12.VIDEO:#(string.format('{0}{1}',#12.VIDEO.name,iif(eq(#12.VIDEO.active,' '),'',#PLUGERROR)))</define>
+  
+  <!-- Videos Custom 13 -->
+  <define property="true" evaluateNow="true">#13.VIDEO.name:Your Custom View Name</define>
+  <define property="true" evaluateNow="true">#13.VIDEO.plugin:Videos</define>
+  <define property="true" evaluateNow="true">#13.VIDEO.hyperlink:6</define>
+  <define property="true" evaluateNow="true">#13.VIDEO.parameter:Your Custom View Name</define>
+  <define property="true" evaluateNow="true">#13.VIDEO.hover:hover_my videos.png</define>
+  <define property="true" evaluateNow="true">#13.VIDEO.background:Animations\BasicHome\videos.jpg</define>
+  <define property="true" evaluateNow="true">#13.VIDEO.iconfocus:tb_video.png</define>
+  <define property="true" evaluateNow="true">#13.VIDEO.iconnofocus:tb_videoNF.png</define>
+  <define property="true" evaluateNow="true">#13.VIDEO.active:#(iif(and(or(eq(#13.VIDEO.plugin,''),plugin.isenabled(#13.VIDEO.plugin)),neq(#13.VIDEO.name,#PLUGOPTERROR)),' ',''))</define>
+  <define property="true" evaluateNow="true">#13.VIDEO:#(L(3)) | #(string.format('{0}{1}',#13.VIDEO.name,iif(eq(#13.VIDEO.active,' '),'',#PLUGERROR)))</define>
 
 <!-- :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
 

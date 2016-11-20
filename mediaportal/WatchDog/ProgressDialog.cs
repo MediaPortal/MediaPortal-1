@@ -44,6 +44,7 @@
 
 using System;
 using System.Drawing;
+using System.Diagnostics;
 using System.Windows.Forms;
 
 namespace WatchDog
@@ -189,6 +190,7 @@ namespace WatchDog
 
     private void OkButtonClick(object sender, EventArgs e)
     {
+      Process.Start(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory) + "\\MediaPortal-Logs");
       this.Close();
     }
   }

@@ -108,6 +108,7 @@ Var MPTray_Running
 
 Var PREVIOUS_SKINSETTINGS_TITAN_CONFIG
 Var PREVIOUS_SKINSETTINGS_DEFAULTWIDEHD_CONFIG
+Var PREVIOUS_KEYMAPSETTINGS
 
 #---------------------------------------------------------------------------
 # INCLUDE FILES
@@ -325,6 +326,21 @@ ShowUninstDetails show
   ${EndIf}  
 !macroend
 
+!macro BackupKeymapSettings
+  ${If} ${FileExists} "${COMMON_APPDATA}\keymap.xml"
+    GetTempFileName $PREVIOUS_KEYMAPSETTINGS
+    ${LOG_TEXT} "INFO" "Backup keymap.xml (${COMMON_APPDATA}\keymap.xml)"
+    CopyFiles /SILENT /FILESONLY "${COMMON_APPDATA}\keymap.xml" "$PREVIOUS_KEYMAPSETTINGS"
+  ${EndIf}
+!macroend
+
+!macro RestoreKeymapSettings
+  ${If} ${FileExists} "$PREVIOUS_KEYMAPSETTINGS"
+    ${LOG_TEXT} "INFO" "Restore keymap.xml (${COMMON_APPDATA}\keymap.xml)"
+    CopyFiles /SILENT /FILESONLY "$PREVIOUS_KEYMAPSETTINGS" "${COMMON_APPDATA}\keymap.xml" 
+  ${EndIf}
+!macroend
+
 Function RunUninstaller
 
 !ifndef GIT_BUILD
@@ -349,6 +365,7 @@ Section "-prepare" SecPrepare
 
   !insertmacro ShutdownRunningMediaPortalApplications
   !insertmacro BackupSkinSettings
+  !insertmacro BackupKeymapSettings
 
   ${LOG_TEXT} "INFO" "Deleting SkinCache..."
   RMDir /r "$MPdir.Cache"
@@ -584,13 +601,13 @@ Section "MediaPortal core files (required)" SecCore
   File "${git_ROOT}\Packages\bass.dsd.0.0.1\bassdsd.dll"
   ; taglib-sharp
   SetOutPath "$MPdir.Base\"
-  File "${git_ROOT}\Packages\MediaPortal.TagLib.2.1.0.1\lib\net40\taglib-sharp.dll"
+  File "${git_ROOT}\Packages\MediaPortal.TagLib.2.1.0.2\lib\net40\taglib-sharp.dll"
   ; SharpLibHid
   SetOutPath "$MPdir.Base\"
-  File "${git_ROOT}\Packages\SharpLibHid.1.3.1\lib\net20\SharpLibHid.dll"
+  File "${git_ROOT}\Packages\SharpLibHid.1.4.2\lib\net40\SharpLibHid.dll"
   ; SharpLibWin32
   SetOutPath "$MPdir.Base\"
-  File "${git_ROOT}\Packages\SharpLibWin32.0.0.7\lib\net20\SharpLibWin32.dll"
+  File "${git_ROOT}\Packages\SharpLibWin32.0.0.9\lib\net20\SharpLibWin32.dll"
   ; SharpLibDisplay
   SetOutPath "$MPdir.Base\"
   File "${git_ROOT}\Packages\SharpLibDisplay.0.2.5\lib\net40\SharpLibDisplay.dll"
@@ -605,11 +622,17 @@ Section "MediaPortal core files (required)" SecCore
   !else
     File /oname=bluray.dll "${git_DirectShowFilters}\bin_Win32\libbluray\libbluray.dll"
   !endif
+  File /oname=libbluray.jar "${git_Libbluray}\src\.libs\libbluray-.jar"
+  CopyFiles /SILENT "$MPdir.Base\libbluray.jar" "$MPdir.Base\libbluray-j2se-0.6.2.jar"
   ; TvLibrary for Genre
   File "${git_TVServer}\TvLibrary.Interfaces\bin\${BUILD_TYPE}\TvLibrary.Interfaces.dll"
   File "${git_MP}\LastFMLibrary\bin\${BUILD_TYPE}\LastFMLibrary.dll"
   ; MediaPortal.exe
   
+  ; libbluray
+  ;SetOutPath "$MPdir.Base\lib"
+  ;File /nonfatal /r /x .git "${MEDIAPORTAL.BASE}\lib\*"
+
   #---------------------------------------------------------------------------
   # FILTER REGISTRATION
   #               for more information see:           http://nsis.sourceforge.net/Docs/AppendixB.html
@@ -658,6 +681,7 @@ Section "MediaPortal core files (required)" SecCore
   SendMessage ${HWND_BROADCAST} ${WM_FONTCHANGE} 0 0 /TIMEOUT=1000
   
   !insertmacro RestoreSkinSettings
+  !insertmacro RestoreKeymapSettings
 
 SectionEnd
 !macro Remove_${SecCore}
@@ -693,6 +717,11 @@ SectionEnd
 		Delete  "$MPdir.Base\mpaudiorenderer.ax"
 	${EndIf}
   ${EndIf}
+  ; Delete filter to be able to be registered with an updated version
+  Delete  "$MPdir.Base\TsReader.ax"
+  Delete  "$MPdir.Base\cccp.ax"
+  Delete  "$MPdir.Base\DVBSub3.ax"
+  Delete  "$MPdir.Base\BDReader.ax"
 
 ### AUTO-GENERATED   UNINSTALLATION CODE ###
   !include "${git_MP}\Setup\uninstall.nsh"
@@ -797,6 +826,8 @@ SectionEnd
   RMDir /r "$MPdir.Base\Wizards"
   ; Log
   Delete "$MPdir.Base\log4net.dll"
+  Delete "$MPdir.Base\TsReader.ax"
+  Delete "$MPdir.Base\cccp.ax"
   
 !macroend
 

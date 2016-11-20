@@ -892,27 +892,21 @@ namespace MediaPortal.GUI.Library
     {
       get
       {
-        int r = 0;
+        int r;
         if (int.TryParse(_upControl, out r))
         {
           return r;
         }
-        else
+        string parsed = GUIPropertyManager.Parse(_upControl);
+        if (int.TryParse(parsed, out r))
         {
-          string parsed = GUIPropertyManager.Parse(_upControl);
-          if (int.TryParse(parsed, out r))
-          {
-            return r;
-          }
-          else
-          {
-            if (_upControl.Length > 0)
-            {
-              Log.Debug("GUIControl.NavigateUp: Tried to use parsed string, original {0}, parsed {1}", _upControl, parsed);
-            }
-            return 0;
-          }
+          return r;
         }
+        if (_upControl.Length > 0)
+        {
+          Log.Debug("GUIControl.NavigateUp: Tried to use parsed string, original {0}, parsed {1}", _upControl, parsed);
+        }
+        return 0;
       }
       set { _upControl = string.Format("{0}",value); }
     }
@@ -921,27 +915,21 @@ namespace MediaPortal.GUI.Library
     {
       get
       {
-        int r = 0;
+        int r;
         if (int.TryParse(_downControl, out r))
         {
           return r;
         }
-        else
+        string parsed = GUIPropertyManager.Parse(_downControl);
+        if (int.TryParse(parsed, out r))
         {
-          string parsed = GUIPropertyManager.Parse(_downControl);
-          if (int.TryParse(parsed, out r))
-          {
-            return r;
-          }
-          else
-          {
-            if (_downControl.Length > 0)
-            {
-              Log.Debug("GUIControl.NavigateDown: Tried to use parsed string, original {0}, parsed {1}", _downControl, parsed);
-            }
-            return 0;
-          }
+          return r;
         }
+        if (_downControl.Length > 0)
+        {
+          Log.Debug("GUIControl.NavigateDown: Tried to use parsed string, original {0}, parsed {1}", _downControl, parsed);
+        }
+        return 0;
       }
       set { _downControl = string.Format("{0}", value); }
     }
@@ -950,27 +938,21 @@ namespace MediaPortal.GUI.Library
     {
       get
       {
-        int r = 0;
+        int r;
         if (int.TryParse(_leftControl, out r))
         {
           return r;
         }
-        else
+        string parsed = GUIPropertyManager.Parse(_leftControl);
+        if (int.TryParse(parsed, out r))
         {
-          string parsed = GUIPropertyManager.Parse(_leftControl);
-          if (int.TryParse(parsed, out r))
-          {
-            return r;
-          }
-          else
-          {
-            if (_leftControl.Length > 0)
-            {
-              Log.Debug("GUIControl.NavigateLeft: Tried to use parsed string, original {0}, parsed {1}", _leftControl, parsed);
-            }
-            return 0;
-          }
+          return r;
         }
+        if (_leftControl.Length > 0)
+        {
+          Log.Debug("GUIControl.NavigateLeft: Tried to use parsed string, original {0}, parsed {1}", _leftControl, parsed);
+        }
+        return 0;
       }
       set { _leftControl = string.Format("{0}", value); }
     }
@@ -979,27 +961,21 @@ namespace MediaPortal.GUI.Library
     {
       get
       {
-        int r = 0;
+        int r;
         if (int.TryParse(_rightControl, out r))
         {
           return r;
         }
-        else
+        string parsed = GUIPropertyManager.Parse(_rightControl);
+        if (int.TryParse(parsed, out r))
         {
-          string parsed = GUIPropertyManager.Parse(_rightControl);
-          if (int.TryParse(parsed, out r))
-          {
-            return r;
-          }
-          else
-          {
-            if (_rightControl.Length > 0)
-            {
-              Log.Debug("GUIControl.NavigateRight: Tried to use parsed string, original {0}, parsed {1}", _rightControl, parsed);
-            }
-            return 0;
-          }
+          return r;
         }
+        if (_rightControl.Length > 0)
+        {
+          Log.Debug("GUIControl.NavigateRight: Tried to use parsed string, original {0}, parsed {1}", _rightControl, parsed);
+        }
+        return 0;
       }
       set { _rightControl = string.Format("{0}", value); }
     }
@@ -1909,7 +1885,6 @@ namespace MediaPortal.GUI.Library
     public virtual int GetVisibleCondition()
     {
       return _visibleCondition;
-      ;
     }
 
     public virtual List<VisualEffect> GetAnimations(AnimationType type, bool checkConditions /* = true */)

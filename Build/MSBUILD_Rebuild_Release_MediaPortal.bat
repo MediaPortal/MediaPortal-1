@@ -11,12 +11,16 @@ rem %DeployVersionGIT% /git="%GIT_ROOT%" /path="%MediaPortal%" >> %log%
 %DeployVersionGIT% /git="%GIT_ROOT%" /path="%CommonMPTV%" >> %log%
 
 echo.
+echo Building Libbluray Java...
+call %ant_home%\bin\ant -f %LibblurayJAR% -Dsrc_awt=:java-j2se
+
+echo.
 echo Building MediaPortal...
 set xml=Build_Report_%BUILD_TYPE%_MediaPortal.xml
 set html=Build_Report_%BUILD_TYPE%_MediaPortal.html
 set logger=/l:XmlFileLogger,"BuildReport\MSBuild.ExtensionPack.Loggers.dll";logfile=%xml%
 
-"%WINDIR%\Microsoft.NET\Framework\v4.0.30319\MSBUILD.exe" %logger% /target:Rebuild /property:Configuration=%BUILD_TYPE%;Platform=x86 "%MediaPortal%\MediaPortal.sln" >> %log%
+"%ProgramFiles(x86)%\MSBuild\14.0\Bin\MSBUILD.exe" %logger% /target:Rebuild /property:Configuration=%BUILD_TYPE%;Platform=x86 "%MediaPortal%\MediaPortal.sln" >> %log%
 BuildReport\msxsl %xml% _BuildReport_Files\BuildReport.xslt -o %html%
 
 echo.
@@ -30,6 +34,10 @@ echo Reading the git revision...
 rem SET /p version=<version.txt >> %log%
 SET version=%errorlevel%
 DEL version.txt >> %log%
+
+echo.
+echo Make MediaPortal 2GB LARGEADDRESSAWARE...
+call MSBUILD_MP_LargeAddressAware.bat %BUILD_TYPE%
 
 echo.
 echo Building Installer...

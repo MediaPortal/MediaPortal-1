@@ -51,6 +51,11 @@ bool CPmtParser::IsReady()
   return m_isFound;
 }
 
+void CPmtParser::ClearReady()
+{
+  m_isFound = false;
+}
+
 void CPmtParser::OnNewSection(CSection& section)
 {   
   if (section.table_id!=2)
@@ -103,14 +108,16 @@ void CPmtParser::OnNewSection(CSection& section)
       elementary_PID = ((section.Data[pointer+1]&0x1F)<<8)+section.Data[pointer+2];
       ES_info_length = ((section.Data[pointer+3] & 0xF)<<8)+section.Data[pointer+4];
       //LogDebug("pmt: pid:%x type:%x",elementary_PID, stream_type);
-      if(stream_type==SERVICE_TYPE_VIDEO_MPEG1 
+      if ( stream_type==SERVICE_TYPE_VIDEO_MPEG1 
         || stream_type==SERVICE_TYPE_VIDEO_MPEG2
         || stream_type==SERVICE_TYPE_VIDEO_MPEG4
-        || stream_type==SERVICE_TYPE_VIDEO_H264 )
+        || stream_type==SERVICE_TYPE_VIDEO_H264
+        || stream_type==SERVICE_TYPE_VIDEO_HEVC
+        )
       {
         VideoPid pid;
         pid.Pid=elementary_PID;
-        pid.VideoServiceType=stream_type;
+        pid.VideoServiceType = stream_type;
         if (!dvb_video_found) //Workaround for mis-detection of DC II streams...
         {
           m_pidInfo.videoPids.clear();
@@ -124,7 +131,10 @@ void CPmtParser::OnNewSection(CSection& section)
         stream_type==SERVICE_TYPE_AUDIO_AAC || 
         stream_type==SERVICE_TYPE_AUDIO_LATM_AAC ||
         stream_type==SERVICE_TYPE_AUDIO_DD_PLUS ||
-        stream_type==SERVICE_TYPE_AUDIO_E_AC3)
+        stream_type==SERVICE_TYPE_AUDIO_E_AC3 ||
+        stream_type==SERVICE_TYPE_AUDIO_DTS ||     
+        stream_type==SERVICE_TYPE_AUDIO_DTS_HD ||
+        stream_type==SERVICE_TYPE_AUDIO_DTS_HDMA)
       {				  
         AudioPid pid;
         pid.Pid=elementary_PID;
@@ -148,29 +158,77 @@ void CPmtParser::OnNewSection(CSection& section)
 
         int indicator=section.Data[pointer];
         x = section.Data[pointer + 1] + 2;
-  						
-        if(indicator==DESCRIPTOR_DVB_AC3 || indicator==DESCRIPTOR_DVB_E_AC3)
+
+        if(indicator==DESCRIPTOR_VIDEO_STREAM)
         {								
-          AudioPid pid;
-          pid.Pid=elementary_PID;
-          pid.AudioServiceType=(indicator==DESCRIPTOR_DVB_AC3) ? SERVICE_TYPE_AUDIO_AC3 : SERVICE_TYPE_AUDIO_DD_PLUS;
+          VideoPid pid = m_pidInfo.videoPids.back(); //Get the current video PID data
+          pid.DescriptorData = section.Data[pointer+2];
           
-          for(unsigned int i(0); i<tempPids.size(); i++)
+          m_pidInfo.videoPids.pop_back();
+          m_pidInfo.videoPids.push_back(pid);
+        }
+
+        if(indicator==DESCRIPTOR_AVC_VIDEO || indicator==DESCRIPTOR_HEVC_VIDEO)
+        {							
+          if (m_pidInfo.videoPids.size() > 0)	
           {
-            if(tempPids[i].Pid==elementary_PID)
+            VideoPid temp_pid = m_pidInfo.videoPids.back(); //Get the most recent video PID data
+            if (temp_pid.Pid != elementary_PID) //It's not the current PID, so create a new pidInfo entry
             {
-              pid.Lang[0]=tempPids[i].Lang[0];
-              pid.Lang[1]=tempPids[i].Lang[1];
-              pid.Lang[2]=tempPids[i].Lang[2];
-              pid.Lang[3]=tempPids[i].Lang[3]; // should be null if no extra data is available
-              pid.Lang[4]=tempPids[i].Lang[4];
-              pid.Lang[5]=tempPids[i].Lang[5];
-              tempPids.pop_back();
-              break;
+              VideoPid pid;
+              pid.Pid=elementary_PID;
+              pid.VideoServiceType = (indicator==DESCRIPTOR_HEVC_VIDEO) ? SERVICE_TYPE_VIDEO_HEVC : SERVICE_TYPE_VIDEO_H264;                  
+              m_pidInfo.videoPids.push_back(pid);
             }
           }
-
-          m_pidInfo.audioPids.push_back(pid);
+        }
+  						
+        if(indicator==DESCRIPTOR_DVB_AC3 || indicator==DESCRIPTOR_DVB_E_AC3 || indicator==DESCRIPTOR_DVB_DTS)
+        {							
+          bool newPid = true;
+          if (m_pidInfo.audioPids.size() > 0)	
+          {
+            AudioPid temp_pid = m_pidInfo.audioPids.back(); //Get the most recent audio PID data
+            if (temp_pid.Pid == elementary_PID) //It's the current PID, so don't create a new pidInfo entry
+            {
+              newPid = false;
+            }
+          }
+          
+          if (newPid)
+          {
+            AudioPid pid;
+            pid.Pid=elementary_PID;
+            switch (indicator)
+            {
+              case DESCRIPTOR_DVB_AC3:
+                pid.AudioServiceType=SERVICE_TYPE_AUDIO_AC3;
+                break;
+              case DESCRIPTOR_DVB_E_AC3:
+                pid.AudioServiceType=SERVICE_TYPE_AUDIO_DD_PLUS;
+                break;
+              case DESCRIPTOR_DVB_DTS:
+                pid.AudioServiceType=SERVICE_TYPE_AUDIO_DTS;
+                break;
+            }
+            
+            for(unsigned int i(0); i<tempPids.size(); i++)
+            {
+              if(tempPids[i].Pid==elementary_PID)
+              {
+                pid.Lang[0]=tempPids[i].Lang[0];
+                pid.Lang[1]=tempPids[i].Lang[1];
+                pid.Lang[2]=tempPids[i].Lang[2];
+                pid.Lang[3]=tempPids[i].Lang[3]; // should be null if no extra data is available
+                pid.Lang[4]=tempPids[i].Lang[4];
+                pid.Lang[5]=tempPids[i].Lang[5];
+                tempPids.pop_back();
+                break;
+              }
+            }
+    
+            m_pidInfo.audioPids.push_back(pid);
+          }
         }
   			
 		    // audio and subtitle languages
@@ -345,6 +403,23 @@ void CPmtParser::OnNewSection(CSection& section)
             pid.AudioServiceType=stream_type;
             m_pidInfo.audioPids.push_back(pid);
             lpcm_audio_found=true;
+          }
+          else if ( section.Data[pointer+2]=='H' && 
+                    section.Data[pointer+3]=='E' && 
+                    section.Data[pointer+4]=='V' && 
+                    section.Data[pointer+5]=='C' && 
+                    stream_type==SERVICE_TYPE_PRIVATE_DATA)
+          {
+            //HEVC video (backward compatibility with old streams)
+            VideoPid pid;
+            pid.Pid=elementary_PID;
+            pid.VideoServiceType = SERVICE_TYPE_VIDEO_HEVC;
+            if (!dvb_video_found) //Workaround for mis-detection of DC II streams...
+            {
+              m_pidInfo.videoPids.clear();
+            }
+            m_pidInfo.videoPids.push_back(pid);
+            dvb_video_found = true;
           }
         }
         len2 -= x;

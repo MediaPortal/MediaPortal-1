@@ -52,12 +52,15 @@ namespace MediaPortal.GUI.Library
     protected GUIImage _imageBigPinIcon = null; // pointer to CImage containing the icon
     protected bool _isSelected = false; // item is selected or not
     protected bool _isFolder = false; // indicated if the item is a folder or a path
+    protected bool _hasProgressBar = false;
+    protected int _progressBarPercentage = 0;
     protected string _folder = string.Empty; // path + filename of the item
     protected string _dvdLabel = string.Empty; // indicates the disc number of movie
     protected int _duration = 0; // duration (in seconds) of the movie or song
     private FileInformation _fileInfo = null; // file info (size, date/time etc.) of the file
     private bool _shaded = false; // indicates if the item needs to be rendered shaded
     private float _rating = 0; // rating of a movie
+    private int _userrating = 0; // user rating of a movie
     private int _year = 0; // release year of the movie/song
     private object _tagMusic; // object containing the tag info of a music file (e.g., id3 tag)
     private object _tagTv; // object containing the tag info of a tv-recording
@@ -99,6 +102,7 @@ namespace MediaPortal.GUI.Library
       _duration = item._duration;
       _fileInfo = item._fileInfo;
       _rating = item._rating;
+      _userrating = item._userrating;
       _year = item._year;
       _idItem = item._idItem;
       _tagMusic = item._tagMusic;
@@ -518,6 +522,15 @@ namespace MediaPortal.GUI.Library
     }
 
     /// <summary>
+    /// Get/set the user rating of a movie.
+    /// </summary>
+    public int UserRating
+    {
+      get { return _userrating; }
+      set { _userrating = value; }
+    }
+
+    /// <summary>
     /// Get/set the object containing the tag info of a tv-recording.
     /// </summary>
     public object TVTag
@@ -551,6 +564,18 @@ namespace MediaPortal.GUI.Library
     {
       get { return _shaded; }
       set { _shaded = value; }
+    }
+
+    public int ProgressBarPercentage
+    {
+      get { return _progressBarPercentage; }
+      set { _progressBarPercentage = value; }
+    }
+
+    public bool HasProgressBar
+    {
+      get { return _hasProgressBar; }
+      set { _hasProgressBar = value; }
     }
 
     /// <summary>

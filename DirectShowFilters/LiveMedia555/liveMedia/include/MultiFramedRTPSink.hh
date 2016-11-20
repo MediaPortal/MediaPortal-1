@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2016 Live Networks, Inc.  All rights reserved.
 // RTP sink for a common kind of payload format: Those which pack multiple,
 // complete codec frames (as many as possible) into each RTP packet.
 // C++ header
@@ -30,6 +30,13 @@ class MultiFramedRTPSink: public RTPSink {
 public:
   void setPacketSizes(unsigned preferredPacketSize, unsigned maxPacketSize);
 
+  typedef void (onSendErrorFunc)(void* clientData);
+  void setOnSendErrorFunc(onSendErrorFunc* onSendErrorFunc, void* onSendErrorFuncData) {
+    // Can be used to set a callback function to be called if there's an error sending RTP packets on our socket.
+    fOnSendErrorFunc = onSendErrorFunc;
+    fOnSendErrorData = onSendErrorFuncData;
+  }
+
 protected:
   MultiFramedRTPSink(UsageEnvironment& env,
 		     Groupsock* rtpgs, unsigned char rtpPayloadType,
@@ -43,7 +50,7 @@ protected:
   virtual void doSpecialFrameHandling(unsigned fragmentationOffset,
 				      unsigned char* frameStart,
 				      unsigned numBytesInFrame,
-				      struct timeval frameTimestamp,
+				      struct timeval framePresentationTime,
 				      unsigned numRemainingBytes);
       // perform any processing specific to the particular payload format
   virtual Boolean allowFragmentationAfterStart() const;
@@ -53,7 +60,7 @@ protected:
       // whether other frames can be packed into a packet following the
       // final fragment of a previous, fragmented frame (by default: False)
   virtual Boolean frameCanAppearAfterPacketStart(unsigned char const* frameStart,
-					 unsigned numBytesInFrame) const;
+						 unsigned numBytesInFrame) const;
       // whether this frame can appear in position >1 in a pkt (default: True)
   virtual unsigned specialHeaderSize() const;
       // returns the size of any special header used (following the RTP header) (default: 0)
@@ -69,9 +76,9 @@ protected:
   // Functions that might be called by doSpecialFrameHandling(), or other subclass virtual functions:
   Boolean isFirstPacket() const { return fIsFirstPacket; }
   Boolean isFirstFrameInPacket() const { return fNumFramesUsedSoFar == 0; }
-  Boolean curFragmentationOffset() const { return fCurFragmentationOffset; }
+  unsigned curFragmentationOffset() const { return fCurFragmentationOffset; }
   void setMarkerBit();
-  void setTimestamp(struct timeval timestamp);
+  void setTimestamp(struct timeval framePresentationTime);
   void setSpecialHeaderWord(unsigned word, /* 32 bits, in host order */
 			    unsigned wordPosition = 0);
   void setSpecialHeaderBytes(unsigned char const* bytes, unsigned numBytes,
@@ -125,6 +132,9 @@ private:
   unsigned fCurFrameSpecificHeaderSize; // size in bytes of cur frame-specific header
   unsigned fTotalFrameSpecificHeaderSizes; // size of all frame-specific hdrs in pkt
   unsigned fOurMaxPacketSize;
+
+  onSendErrorFunc* fOnSendErrorFunc;
+  void* fOnSendErrorData;
 };
 
 #endif

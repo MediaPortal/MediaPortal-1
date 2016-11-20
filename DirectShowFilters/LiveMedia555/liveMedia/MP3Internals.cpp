@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2016 Live Networks, Inc.  All rights reserved.
 // MP3 internal implementation details
 // Implementation
 
@@ -27,7 +27,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 
 // This is crufty old code that needs to be cleaned up #####
 
-static unsigned live_tabsel[2][3][16] = {
+static unsigned const live_tabsel[2][3][16] = {
    { {32,32,64,96,128,160,192,224,256,288,320,352,384,416,448,448},
      {32,32,48,56, 64, 80, 96,112,128,160,192,224,256,320,384,384},
      {32,32,40,48, 56, 64, 80, 96,112,128,160,192,224,256,320,320} },
@@ -38,7 +38,7 @@ static unsigned live_tabsel[2][3][16] = {
 };
 /* Note: live_tabsel[*][*][0 or 15] shouldn't occur; use dummy values there */
 
-static long live_freqs[]
+static long const live_freqs[]
 = { 44100, 48000, 32000, 22050, 24000, 16000, 11025, 12000, 8000, 0 };
 
 struct bandInfoStruct {
@@ -102,7 +102,6 @@ MP3FrameParams::MP3FrameParams()
 
   static Boolean doneInit = False;
   if (doneInit) return;
-  doneInit = True;
 
   int i,j,k,l;
 
@@ -148,6 +147,7 @@ MP3FrameParams::MP3FrameParams()
       }
     }
   }
+  doneInit = True;
 }
 
 MP3FrameParams::~MP3FrameParams() {
@@ -173,7 +173,7 @@ void MP3FrameParams::setParamsFromHeader() {
     samplingFreqIndex = ((hdr>>10)&0x3) + (isMPEG2*3);
   }
 
-  hasCRC = ((hdr>>16)&0x1)^0x1;
+  hasCRC = (hdr & 0x10000) == 0;
 
   padding   = ((hdr>>9)&0x1);
   extension = ((hdr>>8)&0x1);
@@ -224,7 +224,7 @@ unsigned ComputeFrameSize(unsigned bitrate, unsigned samplingFreq,
   unsigned framesize;
 
   framesize = bitrate*bitrateMultiplier;
-  framesize /= samplingFreq<<isMPEG2;
+  framesize /= samplingFreq<<(isMPEG2 ? 1 : 0);
   framesize = framesize + usePadding - 4;
 
   return framesize;
@@ -516,7 +516,7 @@ void MP3FrameParams::getSideInfo(MP3SideInfo& si) {
   if (hasCRC) getBits(16);
 
   int single = -1;
-  int ms_stereo, i_stereo;
+  int ms_stereo;
   int sfreq = samplingFreqIndex;
 
   if (stereo == 1) {
@@ -524,7 +524,6 @@ void MP3FrameParams::getSideInfo(MP3SideInfo& si) {
   }
 
   ms_stereo = (mode == MPG_MD_JOINT_STEREO) && (mode_ext & 0x2);
-  i_stereo = (mode == MPG_MD_JOINT_STEREO) && (mode_ext & 0x1);
 
   if (isMPEG2) {
     getSideInfo2(*this, si, stereo, ms_stereo, sfreq, single);

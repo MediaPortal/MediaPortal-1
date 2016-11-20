@@ -199,6 +199,7 @@ bool CRecorder::IsStreamWanted(int stream_type)
 					stream_type==SERVICE_TYPE_VIDEO_MPEG2 || 
 					stream_type==SERVICE_TYPE_VIDEO_MPEG4 || 
 					stream_type==SERVICE_TYPE_VIDEO_H264 ||
+					stream_type==SERVICE_TYPE_VIDEO_HEVC ||
 					stream_type==SERVICE_TYPE_AUDIO_MPEG1 || 
 					stream_type==SERVICE_TYPE_AUDIO_MPEG2 || 
 					stream_type==SERVICE_TYPE_AUDIO_AC3 ||

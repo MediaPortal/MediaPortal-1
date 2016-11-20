@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2016 Live Networks, Inc.  All rights reserved.
 // A simple RTP sink that packs frames into each outgoing
 //     packet, without any fragmentation or special headers.
 // Implementation
@@ -32,11 +32,10 @@ SimpleRTPSink::SimpleRTPSink(UsageEnvironment& env, Groupsock* RTPgs,
   : MultiFramedRTPSink(env, RTPgs, rtpPayloadFormat,
 		       rtpTimestampFrequency, rtpPayloadFormatName,
 		       numChannels),
-    fAllowMultipleFramesPerPacket(allowMultipleFramesPerPacket) {
+    fAllowMultipleFramesPerPacket(allowMultipleFramesPerPacket), fSetMBitOnNextPacket(False) {
   fSDPMediaTypeString
     = strDup(sdpMediaTypeString == NULL ? "unknown" : sdpMediaTypeString);
-  fSetMBitOnLastFrames
-    = strcmp(fSDPMediaTypeString, "video") == 0 && doNormalMBitRule;
+  fSetMBitOnLastFrames = doNormalMBitRule && strcmp(fSDPMediaTypeString, "audio") != 0;
 }
 
 SimpleRTPSink::~SimpleRTPSink() {
@@ -63,19 +62,24 @@ SimpleRTPSink::createNew(UsageEnvironment& env, Groupsock* RTPgs,
 void SimpleRTPSink::doSpecialFrameHandling(unsigned fragmentationOffset,
 					   unsigned char* frameStart,
 					   unsigned numBytesInFrame,
-					   struct timeval frameTimestamp,
+					   struct timeval framePresentationTime,
 					   unsigned numRemainingBytes) {
   if (numRemainingBytes == 0) {
     // This packet contains the last (or only) fragment of the frame.
     // Set the RTP 'M' ('marker') bit, if appropriate:
     if (fSetMBitOnLastFrames) setMarkerBit();
   }
+  if (fSetMBitOnNextPacket) {
+    // An external object has asked for the 'M' bit to be set on the next packet:
+    setMarkerBit();
+    fSetMBitOnNextPacket = False;
+  }
 
   // Important: Also call our base class's doSpecialFrameHandling(),
   // to set the packet's timestamp:
   MultiFramedRTPSink::doSpecialFrameHandling(fragmentationOffset,
 					     frameStart, numBytesInFrame,
-					     frameTimestamp,
+					     framePresentationTime,
 					     numRemainingBytes);
 }
 

@@ -142,6 +142,8 @@ namespace TvPlugin
 
     private IList listTvChannels;
 
+    private int UpdateInt = 0;
+
     public TvOsd()
     {
       GetID = (int)Window.WINDOW_TVOSD;
@@ -176,9 +178,18 @@ namespace TvPlugin
 
     public override void Render(float timePassed)
     {
-      UpdateProgressBar();
-      //SetVideoProgress();
-      Get_TimeInfo(); // show the time elapsed/total playing time
+      // update information all 50 frames to avoid stuttering
+      if (UpdateInt == 50 || UpdateInt == 0)
+      {
+        UpdateProgressBar();
+        //SetVideoProgress();
+        Get_TimeInfo(); // show the time elapsed/total playing time
+        if (UpdateInt == 50)
+        {
+          UpdateInt = 0;
+        }
+      }
+      UpdateInt++;
       SetRecorderStatus(); // BAV: fixing bug 1429: OSD is not updated with recording status 
       base.Render(timePassed); // render our controls to the screen
     }
@@ -553,19 +564,19 @@ namespace TvPlugin
           {
             int iControl = message.SenderControlId; // get the ID of the control sending us a message
 
-            if (iControl == btnChannelUp.GetID)
+            if (btnChannelUp != null && iControl == btnChannelUp.GetID)
             {
               OnNextChannel();
             }
 
-            if (iControl == btnChannelDown.GetID)
+            if (btnChannelDown != null && iControl == btnChannelDown.GetID)
             {
               OnPreviousChannel();
             }
 
             if (!g_Player.IsTVRecording)
             {
-              if (iControl == btnPreviousProgram.GetID)
+              if (btnPreviousProgram != null && iControl == btnPreviousProgram.GetID)
               {
                 Program prog = GetChannel().GetProgramAt(m_dateTime);
                 if (prog != null)
@@ -1829,6 +1840,8 @@ namespace TvPlugin
             strTime = String.Format("{0} ", prog.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
             GUIPropertyManager.SetProperty("#TV.View.stop", strTime);
             GUIPropertyManager.SetProperty("#TV.View.remaining", Utils.SecondsToHMSString(prog.CalculateTimeRemaining()));
+            GUIPropertyManager.SetProperty("#TV.View.remainingSeconds", Utils.SecondsToHMSStringSeconds(prog.CalculateTimeRemaining()));
+            GUIPropertyManager.SetProperty("#TV.View.remainingMinutes", Utils.SecondsToHMSStringMinutes(prog.CalculateTimeRemaining()));
           }
           if (tbProgramDescription != null)
           {
@@ -1912,6 +1925,8 @@ namespace TvPlugin
         GUIPropertyManager.SetProperty("#TV.View.start", string.Empty);
         GUIPropertyManager.SetProperty("#TV.View.stop", string.Empty);
         GUIPropertyManager.SetProperty("#TV.View.remaining", string.Empty);
+        GUIPropertyManager.SetProperty("#TV.View.remainingSeconds", string.Empty);
+        GUIPropertyManager.SetProperty("#TV.View.remainingMinutes", string.Empty);
         if (lblCurrentTime != null)
         {
           lblCurrentTime.Label = String.Empty;
@@ -2020,6 +2035,8 @@ namespace TvPlugin
           GUIPropertyManager.SetProperty("#TV.View.stop",
                                          prog.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
           GUIPropertyManager.SetProperty("#TV.View.remaining", Utils.SecondsToHMSString(prog.CalculateTimeRemaining()));
+          GUIPropertyManager.SetProperty("#TV.View.remainingSeconds", Utils.SecondsToHMSStringSeconds(prog.CalculateTimeRemaining()));
+          GUIPropertyManager.SetProperty("#TV.View.remainingMinutes", Utils.SecondsToHMSStringMinutes(prog.CalculateTimeRemaining()));
           GUIPropertyManager.SetProperty("#TV.View.genre", prog.Genre);
           GUIPropertyManager.SetProperty("#TV.View.title", prog.Title);
           GUIPropertyManager.SetProperty("#TV.View.compositetitle", TVUtil.GetDisplayTitle(prog));

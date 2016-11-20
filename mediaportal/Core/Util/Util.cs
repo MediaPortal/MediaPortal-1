@@ -1295,6 +1295,32 @@ namespace MediaPortal.Util
       return strHMS;
     }
 
+    public static string SecondsToHMSStringSeconds(TimeSpan timespan)
+    {
+      return SecondsToHMSStringSeconds(Convert.ToInt32(timespan.TotalSeconds));
+    }
+
+    public static string SecondsToHMSStringSeconds(int lSeconds)
+    {
+      if (lSeconds < 0) return ("0:00");
+      string strHMS = "";
+      strHMS = String.Format("{0}", lSeconds);
+      return strHMS;
+    }
+
+    public static string SecondsToHMSStringMinutes(TimeSpan timespan)
+    {
+      return SecondsToHMSStringMinutes(Convert.ToInt32(timespan.TotalSeconds));
+    }
+
+    public static string SecondsToHMSStringMinutes(int lSeconds)
+    {
+      if (lSeconds < 0) return ("0:00");
+      int mm = lSeconds / 60;
+      string strHMS = "";
+      strHMS = String.Format("{0}", mm);
+      return strHMS;
+    }
 
     public static string GetNamedMonth(string aTwoLetterMonth)
     {
@@ -2070,7 +2096,7 @@ namespace MediaPortal.Util
 
     public static void EjectCDROM()
     {
-      EjectCDROM(string.Empty);
+      mciSendString("set cdaudio door open", null, 0, IntPtr.Zero);
     }
     
     public static void CloseCDROM(string driveLetter)
@@ -2402,10 +2428,15 @@ namespace MediaPortal.Util
           //if (bInternal) return false;
           string strPath = xmlreader.GetValueAsString("movieplayer", "path", "");
           string strParams = xmlreader.GetValueAsString("movieplayer", "arguments", "");
-          if (extension.ToLowerInvariant() == ".ifo" || extension.ToLowerInvariant() == ".vob" || extension.ToLowerInvariant() == ".bdmv")
+          if (extension.ToLowerInvariant() == ".ifo" || extension.ToLowerInvariant() == ".vob")
           {
             strPath = xmlreader.GetValueAsString("dvdplayer", "path", "");
             strParams = xmlreader.GetValueAsString("dvdplayer", "arguments", "");
+          }
+          else if  (extension.ToLowerInvariant() == ".bdmv")
+          {
+            strPath = xmlreader.GetValueAsString("bdplayer", "path", "");
+            strParams = xmlreader.GetValueAsString("bdplayer", "arguments", "");
           }
           if (strPath != "")
           {
@@ -2435,7 +2466,7 @@ namespace MediaPortal.Util
                 }
               }
               // %filename% argument handling
-              else if (strParams.IndexOf("%filename%") >= 0)
+              else if (strParams.IndexOf("%filename%", StringComparison.Ordinal) >= 0)
                 strParams = strParams.Replace("%filename%", "\"" + strFile + "\"");
               
               Process movieplayer = new Process();
@@ -2466,7 +2497,8 @@ namespace MediaPortal.Util
                 OnStopExternal(movieplayer, true); // Event: External process stopped
               }
               Log.Debug("Util: External player stopped on {0}", strPath);
-              if (IsISOImage(strFile))
+              // Avoid unMount ISO
+              /*if (IsISOImage(strFile))
               {
                 if (!String.IsNullOrEmpty(DaemonTools.GetVirtualDrive()) &&
                     (g_Player.IsBDDirectory(DaemonTools.GetVirtualDrive()) ||
@@ -2474,13 +2506,10 @@ namespace MediaPortal.Util
                 {
                   DaemonTools.UnMount();
                 }
-              }
+              }*/
               return true;
             }
-            else
-            {
-              Log.Warn("Util: External player {0} does not exists", strPath);
-            }
+            Log.Warn("Util: External player {0} does not exists", strPath);
           }
         }
       }
@@ -2640,16 +2669,16 @@ namespace MediaPortal.Util
       return false;
     }
 
-    public static void DownLoadImage(string strURL, string strFile, System.Drawing.Imaging.ImageFormat imageFormat)
+    public static void DownLoadImage(string strUrl, string strFile, System.Drawing.Imaging.ImageFormat imageFormat)
     {
-      if (string.IsNullOrEmpty(strURL) || string.IsNullOrEmpty(strFile))
+      if (string.IsNullOrEmpty(strUrl) || string.IsNullOrEmpty(strFile))
         return;
 
       using (WebClient client = new WebClient())
       {
         try
         {
-          string extensionURL = Path.GetExtension(strURL);
+          string extensionURL = Path.GetExtension(strUrl);
           string extensionFile = Path.GetExtension(strFile);
           if (extensionURL.Length > 0 && extensionFile.Length > 0)
           {
@@ -2657,7 +2686,7 @@ namespace MediaPortal.Util
             extensionFile = extensionFile.ToLowerInvariant();
             string strLogo = Path.ChangeExtension(strFile, extensionURL);
             client.Proxy.Credentials = CredentialCache.DefaultCredentials;
-            client.DownloadFile(strURL, strLogo);
+            client.DownloadFile(strUrl, strLogo);
             if (extensionURL != extensionFile)
             {
               using (Image imgSrc = Image.FromFile(strLogo))
@@ -2670,7 +2699,7 @@ namespace MediaPortal.Util
         }
         catch (Exception ex)
         {
-          Log.Error("Utils: DownLoadImage {1} failed: {0}", ex.Message, strURL);
+          Log.Error("Utils: DownLoadImage {1} failed: {0}", ex.Message, strUrl);
         }
       }
     }
@@ -2747,68 +2776,41 @@ namespace MediaPortal.Util
       }
     }
 
-    public static void DownLoadImage(string strURL, string strFile)
+    public static void DownLoadImage(string strUrl, string strFile)
     {
-      if (string.IsNullOrEmpty(strURL) || string.IsNullOrEmpty(strFile))
+      if (string.IsNullOrEmpty(strUrl) || string.IsNullOrEmpty(strFile))
         return;
 
       try
       {
-        HttpWebRequest wr = (HttpWebRequest)WebRequest.Create(strURL);
-        wr.Timeout = 20000;
-        try
+        using (WebClient client = new WebClientWithTimeouts { Timeout = TimeSpan.FromMilliseconds(20000) })
         {
-          // Use the current user in case an NTLM Proxy or similar is used.
-          // wr.Proxy = WebProxy.GetDefaultProxy();
-          wr.Proxy.Credentials = CredentialCache.DefaultCredentials;
-        }
-        catch (Exception) {}
-        HttpWebResponse ws = (HttpWebResponse)wr.GetResponse();
-        try
-        {
-          using (Stream str = ws.GetResponseStream())
-          {
-            byte[] inBuf = new byte[900000];
-            int bytesToRead = (int)inBuf.Length;
-            int bytesRead = 0;
-
-            DateTime dt = DateTime.Now;
-            while (bytesToRead > 0)
-            {
-              dt = DateTime.Now;
-              int n = str.Read(inBuf, bytesRead, bytesToRead);
-              if (n == 0)
-                break;
-              bytesRead += n;
-              bytesToRead -= n;
-              TimeSpan ts = DateTime.Now - dt;
-              if (ts.TotalSeconds >= 5)
-              {
-                throw new Exception("timeout");
-              }
-            }
-            using (FileStream fstr = new FileStream(strFile, FileMode.OpenOrCreate, FileAccess.Write))
-            {
-              fstr.Write(inBuf, 0, bytesRead);
-              str.Close();
-              fstr.Close();
-            }
-          }
-        }
-        finally
-        {
-          if (ws != null)
-          {
-            ws.Close();
-          }
+          client.UseDefaultCredentials = true;
+          client.Headers.Add("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko)");
+          client.DownloadFile(strUrl, strFile);
+          client.Dispose();
         }
       }
       catch (Exception ex)
       {
-        Log.Info("Utils: DownLoadImage {1} failed:{0}", ex.Message, strURL);
+        Log.Info("Utils: DownLoadImage {1} failed:{0}", ex.Message, strUrl);
       }
     }
 
+    public class WebClientWithTimeouts : WebClient
+    {
+      public TimeSpan? Timeout { get; set; }
+
+      protected override WebRequest GetWebRequest(Uri uri)
+      {
+        WebRequest webRequest = base.GetWebRequest(uri);
+        if (this.Timeout.HasValue)
+        {
+          if (webRequest != null) webRequest.Timeout = (int)Timeout.Value.TotalMilliseconds;
+        }
+        return webRequest;
+      }
+    }
 
     public static string RemoveTrailingSlash(string strLine)
     {

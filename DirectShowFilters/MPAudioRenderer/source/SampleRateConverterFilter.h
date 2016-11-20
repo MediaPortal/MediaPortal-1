@@ -21,12 +21,13 @@
 #include <ksmedia.h>
 #include "BaseAudioSink.h"
 #include "Settings.h"
+#include "Logger.h"
 #include "..\libresample\src\samplerate.h"
 
 class CSampleRateConverter : public CBaseAudioSink
 {
 public:
-  CSampleRateConverter(AudioRendererSettings* pSettings);
+  CSampleRateConverter(AudioRendererSettings* pSettings, Logger* pLogger);
   virtual ~CSampleRateConverter();
 
 
@@ -68,6 +69,6 @@ protected:
 
   SRC_STATE* m_pSrcState;
 
-  AudioRendererSettings* m_pSettings;
+  Logger* m_pLogger;
 };
 

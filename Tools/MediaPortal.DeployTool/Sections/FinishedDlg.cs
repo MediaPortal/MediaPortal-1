@@ -92,7 +92,7 @@ namespace MediaPortal.DeployTool.Sections
 
     private void linkWiki_LinkClicked_1(object sender, LinkLabelLinkClickedEventArgs e)
     {
-      OpenURL("http://www.team-mediaportal.com/manual/");
+      OpenURL("http://wiki.team-mediaportal.com/TeamMediaPortal/MP1QuickSetupGuide/");
     }
 
     #endregion

@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2016 Live Networks, Inc.  All rights reserved.
 // A source object for AMR audio sources
 // Implementation
 
@@ -27,6 +27,10 @@ AMRAudioSource::AMRAudioSource(UsageEnvironment& env,
 }
 
 AMRAudioSource::~AMRAudioSource() {
+}
+
+char const* AMRAudioSource::MIMEtype() const {
+  return "audio/AMR";
 }
 
 Boolean AMRAudioSource::isAMRAudioSource() const {

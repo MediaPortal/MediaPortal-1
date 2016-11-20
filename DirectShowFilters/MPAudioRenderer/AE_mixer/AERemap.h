@@ -22,10 +22,11 @@
 
 #include "..\source\stdafx.h"
 #include "AEAudioFormat.h"
+#include "..\source\Logger.h"
 
 class CAERemap {
 public:
-  CAERemap();
+  CAERemap(Logger* pLogger);
   ~CAERemap();
 
   bool Initialize(CAEChannelInfo input, CAEChannelInfo output, bool finalStage, bool forceNormalize = false, enum AEStdChLayout stdChLayout = AE_CH_LAYOUT_INVALID);
@@ -53,5 +54,7 @@ private:
 
   void ResolveMix(const AEChannel from, CAEChannelInfo to);
   void BuildUpmixMatrix(const CAEChannelInfo& input, const CAEChannelInfo& output);
+
+  Logger* m_pLogger;
 };
 

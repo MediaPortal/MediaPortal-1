@@ -32,7 +32,8 @@ CSubManager::CSubManager(IDirect3DDevice9* d3DDev, SIZE size, HRESULT& hr)
 	m_isIntSubStreamSelected(false),
 	m_rtNow(-1),
 	m_delay(0),
-	m_lastSize(size)
+	m_lastSize(size),
+  m_bIsMadVR(false)
 {
 	ATLTRACE("CSubManager constructor: texture size %dx%d, buffer ahead: %d, pow2tex: %d", g_textureSize.cx, g_textureSize.cy, g_subPicsBufferAhead, g_pow2tex);
 	m_pAllocator = new CDX9SubPicAllocator(d3DDev, g_textureSize, g_pow2tex/*AfxGetAppSettings().fSPCPow2Tex*/, false);
@@ -50,6 +51,43 @@ CSubManager::CSubManager(IDirect3DDevice9* d3DDev, SIZE size, HRESULT& hr)
 CSubManager::~CSubManager(void)
 {
 	ATLTRACE("CSubManager destructor");
+}
+
+void CSubManager::SetDevice(IDirect3DDevice9* d3DDev)
+{
+  if (!d3DDev)
+  {
+    // Release ressource
+    m_pAllocator = nullptr;
+    m_pSubPicQueue = nullptr;
+    if (m_d3DDev)
+    {
+      m_d3DDev.Release();
+      m_d3DDev = nullptr;
+    }
+    return;
+  }
+
+  m_d3DDev = d3DDev;
+
+  if (m_pAllocator)
+    m_pAllocator.Detach();
+
+  if (m_pSubPicQueue)
+    m_pSubPicQueue.Detach();
+
+  m_pAllocator = new CDX9SubPicAllocator(d3DDev, g_textureSize, g_pow2tex, false);
+  HRESULT hr = S_OK;
+
+  if (g_subPicsBufferAhead > 0)
+    m_pSubPicQueue = new CSubPicQueue(g_subPicsBufferAhead, g_disableAnim, m_pAllocator, &hr);
+  else
+    m_pSubPicQueue = new CSubPicQueueNoThread(m_pAllocator, &hr);
+
+  if (FAILED(hr))
+  {
+    ATLTRACE("CSubPicQueue creation error: %x", hr);
+  }
 }
 
 void CSubManager::ApplyStyle(CRenderedTextSubtitle* pRTS) {
@@ -128,7 +166,8 @@ void CSubManager::InvalidateSubtitle(ISubStream* pSubStream, REFERENCE_TIME rtIn
 	if(m_pSubStream == pSubStream && m_iSubtitleSel >= 0)
 	{
 		ATLTRACE("InvalidateSubtitle!");
-		m_pSubPicQueue->Invalidate(rtInvalidate);
+    if (m_pSubPicQueue)
+      m_pSubPicQueue->Invalidate(rtInvalidate);
 	}
 }
 
@@ -228,8 +267,11 @@ int CSubManager::GetCurrent()
 
 void CSubManager::SetCurrent(int current)
 {
-	m_iSubtitleSel = current; 
-	UpdateSubtitle();
+  if (m_pAllocator && m_pSubPicQueue)
+  {
+    m_iSubtitleSel = current;
+    UpdateSubtitle();
+  }
 }
 
 void CSubManager::SetEnable(BOOL enabled)
@@ -244,7 +286,11 @@ BOOL CSubManager::GetEnable()
 
 void CSubManager::SetTime(REFERENCE_TIME nsSampleTime)
 {
-	m_rtNow = g_tSegmentStart + nsSampleTime - m_delay;
+  if (m_bIsMadVR)
+    m_rtNow = nsSampleTime - m_delay;
+  else
+    m_rtNow = g_tSegmentStart + nsSampleTime - m_delay;
+
 	m_pSubPicQueue->SetTime(m_rtNow);
 	m_isSetTime = true;
 }
@@ -256,7 +302,11 @@ void CSubManager::Render(int x, int y, int width, int height)
 
 	if (!m_isSetTime)
 	{
-		m_rtNow = g_tSegmentStart + g_tSampleStart - m_delay;
+    if (m_bIsMadVR)
+      m_rtNow = g_tSampleStart - m_delay;
+    else
+      m_rtNow = g_tSegmentStart + g_tSampleStart - m_delay;
+
 		m_pSubPicQueue->SetTime(m_rtNow);
 	}
 
@@ -619,6 +669,11 @@ void CSubManager::LoadSubtitlesForFile(const wchar_t* fn, IGraphBuilder* pGB, co
 		{
 			pGB->FindFilterByName(L"Video Mixing Renderer 9", &vmr);
 		}
+    if (!vmr)
+    {
+      pGB->FindFilterByName(L"madVR", &vmr);
+      m_bIsMadVR = true;
+    }
 		if (!vmr)
 		{
 			ATLTRACE(L"Failed to load subtitles: could not find video renderer");

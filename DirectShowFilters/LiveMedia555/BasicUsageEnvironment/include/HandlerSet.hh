@@ -13,12 +13,16 @@ You should have received a copy of the GNU Lesser General Public License
 along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
-// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2016 Live Networks, Inc.  All rights reserved.
 // Basic Usage Environment: for a simple, non-scripted, console application
 // C++ header
 
 #ifndef _HANDLER_SET_HH
 #define _HANDLER_SET_HH
+
+#ifndef _BOOLEAN_HH
+#include "Boolean.hh"
+#endif
 
 ////////// HandlerSet (etc.) definition //////////
 
@@ -28,6 +32,7 @@ class HandlerDescriptor {
 
 public:
   int socketNum;
+  int conditionSet;
   TaskScheduler::BackgroundHandlerProc* handlerProc;
   void* clientData;
 
@@ -44,10 +49,12 @@ public:
   HandlerSet();
   virtual ~HandlerSet();
 
-  void assignHandler(int socketNum,
-		     TaskScheduler::BackgroundHandlerProc* handlerProc,
-		     void* clientData);
-  void removeHandler(int socketNum);
+  void assignHandler(int socketNum, int conditionSet, TaskScheduler::BackgroundHandlerProc* handlerProc, void* clientData);
+  void clearHandler(int socketNum);
+  void moveHandler(int oldSocketNum, int newSocketNum);
+
+private:
+  HandlerDescriptor* lookupHandler(int socketNum);
 
 private:
   friend class HandlerIterator;

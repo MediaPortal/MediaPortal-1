@@ -67,6 +67,7 @@ namespace MediaPortal.Configuration.Sections
         ArrayList availableVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubTypeEx.MPEG2);
         ArrayList availableAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.Mpeg2Audio);
         ArrayList availableH264VideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.H264);
+        ArrayList availableHEVCVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.HEVC);
         ArrayList availableVC1VideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.VC1);
         ArrayList availableVC1IVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.VC1);
         ArrayList availableXVIDVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.XVID);
@@ -153,6 +154,7 @@ namespace MediaPortal.Configuration.Sections
         vc1videoCodecComboBox.Items.AddRange(availableVC1CyberlinkVideoFilters.ToArray());
         vc1ivideoCodecComboBox.Items.AddRange(availableVC1ICyberlinkVideoFilters.ToArray());
         h264videoCodecComboBox.Items.AddRange(availableH264VideoFilters.ToArray());
+        hevcvideoCodecComboBox.Items.AddRange(availableHEVCVideoFilters.ToArray());
         xvidvideoCodecComboBox.Items.AddRange(availableXVIDVideoFilters.ToArray());
         audioRendererComboBox.Items.AddRange(availableAudioRenderers.ToArray());
         aacAudioCodecComboBox.Items.AddRange(availableAACAudioFilters.ToArray());
@@ -220,6 +222,7 @@ namespace MediaPortal.Configuration.Sections
         // Set codecs
         string videoCodec = xmlreader.GetValueAsString("movieplayer", "mpeg2videocodec", "");
         string h264videoCodec = xmlreader.GetValueAsString("movieplayer", "h264videocodec", "");
+        string hevcvideoCodec = xmlreader.GetValueAsString("movieplayer", "hevcvideocodec", "");
         string vc1ivideoCodec = xmlreader.GetValueAsString("movieplayer", "vc1ivideocodec", "");
         string vc1videoCodec = xmlreader.GetValueAsString("movieplayer", "vc1videocodec", "");
         string xvidvideoCodec = xmlreader.GetValueAsString("movieplayer", "xvidvideocodec", "");
@@ -238,6 +241,11 @@ namespace MediaPortal.Configuration.Sections
         {
           ArrayList availableH264VideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.H264);
           h264videoCodec = SetCodecBox(availableH264VideoFilters, "LAV Video Decoder", "CoreAVC Video Decoder", "");
+        }
+        if (hevcvideoCodec == string.Empty)
+        {
+          ArrayList availableHEVCVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.HEVC);
+          hevcvideoCodec = SetCodecBox(availableHEVCVideoFilters, "LAV Video Decoder", "Lentoid HEVC Decoder", "");
         }
         if (vc1videoCodec == string.Empty)
         {
@@ -292,6 +300,7 @@ namespace MediaPortal.Configuration.Sections
         audioCodecComboBox.Text = audioCodec;
         videoCodecComboBox.Text = videoCodec;
         h264videoCodecComboBox.Text = h264videoCodec;
+        hevcvideoCodecComboBox.Text = hevcvideoCodec;
         vc1ivideoCodecComboBox.Text = vc1ivideoCodec;
         vc1videoCodecComboBox.Text = vc1videoCodec;
         xvidvideoCodecComboBox.Text = xvidvideoCodec;
@@ -383,6 +392,7 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValue("movieplayer", "mpeg2audiocodec", audioCodecComboBox.Text);
         xmlwriter.SetValue("movieplayer", "mpeg2videocodec", videoCodecComboBox.Text);
         xmlwriter.SetValue("movieplayer", "h264videocodec", h264videoCodecComboBox.Text);
+        xmlwriter.SetValue("movieplayer", "hevcvideocodec", hevcvideoCodecComboBox.Text);
         xmlwriter.SetValue("movieplayer", "vc1ivideocodec", vc1ivideoCodecComboBox.Text);
         xmlwriter.SetValue("movieplayer", "vc1videocodec", vc1videoCodecComboBox.Text);
         xmlwriter.SetValue("movieplayer", "xvidvideocodec", xvidvideoCodecComboBox.Text);
@@ -598,6 +608,11 @@ namespace MediaPortal.Configuration.Sections
       {
         SplitterFileComboBox.Enabled = false;
       }
+    }
+
+    private void configHEVC_Click(object sender, EventArgs e)
+    {
+      ConfigCodecSection(sender, e, hevcvideoCodecComboBox.Text);
     }
   }
 }

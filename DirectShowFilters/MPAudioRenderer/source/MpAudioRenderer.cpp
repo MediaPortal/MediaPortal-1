@@ -46,10 +46,6 @@ CUnknown* WINAPI CMPAudioRenderer::CreateInstance(LPUNKNOWN punk, HRESULT* phr)
   return pNewObject;
 }
 
-// for logging
-extern void Log(const char* fmt, ...);
-extern void StopLogger();
-
 CMPAudioRenderer::CMPAudioRenderer(LPUNKNOWN punk, HRESULT* phr)
   : CBaseRenderer(__uuidof(this), NAME("MediaPortal - Audio Renderer"), punk, phr),
   m_dRate(1.0),
@@ -57,6 +53,7 @@ CMPAudioRenderer::CMPAudioRenderer(LPUNKNOWN punk, HRESULT* phr)
   m_dBias(1.0),
   m_dAdjustment(1.0),
   m_pVolumeHandler(NULL),
+  m_pPipeline(NULL),
   m_pWASAPIRenderer(NULL),
   m_pAC3Encoder(NULL),
   m_pInBitDepthAdapter(NULL),
@@ -66,16 +63,45 @@ CMPAudioRenderer::CMPAudioRenderer(LPUNKNOWN punk, HRESULT* phr)
   m_pTimeStretch(NULL),
   m_pMediaType(NULL),
   m_lastSampleArrivalTime(0),
-  m_rtNextSample(0)
+  m_rtNextSample(0),
+  m_pSettings(NULL),
+  m_pTimestretchFilter(NULL),
+  m_pChannelMixer(NULL),
+  m_pClock(NULL),
+  m_bInitialized(false),
+  m_bFirstSample(true),
+  m_pSampleCopier(NULL)
 {
+  m_pLogger = new Logger();
+
+  if (!m_pLogger)
+  {
+    if (phr)
+      *phr = E_OUTOFMEMORY;
+    return;
+  }
+
+  m_pLogger->Start();
+  m_pLogger->LogRotate();
+
+  Log("MP Audio Renderer - v1.1.9");
   Log("CMPAudioRenderer - instance 0x%x", this);
 
-  m_Settings.AddRef();
+  m_pSettings = new AudioRendererSettings(m_pLogger);
+
+  if (!m_pSettings)
+  {
+    if (phr)
+      *phr = E_OUTOFMEMORY;
+    return;
+  }
+
+  m_pSettings->AddRef();
 
   m_hRendererStarving = CreateEvent(NULL, TRUE, FALSE, NULL);
-  m_hStopWaitingRenderer = CreateEvent(NULL, FALSE, FALSE, NULL);
+  m_hStopWaitingRenderer = CreateEvent(NULL, TRUE, FALSE, NULL);
 
-  m_pClock = new CSyncClock(static_cast<IBaseFilter*>(this), phr, this, &m_Settings);
+  m_pClock = new CSyncClock(static_cast<IBaseFilter*>(this), phr, this, m_pSettings, m_pLogger);
 
   if (!m_pClock)
   {
@@ -83,8 +109,6 @@ CMPAudioRenderer::CMPAudioRenderer(LPUNKNOWN punk, HRESULT* phr)
       *phr = E_OUTOFMEMORY;
     return;
   }
-
-  m_pClock->SetAudioDelay(m_Settings.m_lAudioDelay * 10000); // setting in registry is in ms
 
   m_pVolumeHandler = new CVolumeHandler(punk);
 
@@ -107,32 +131,22 @@ CMPAudioRenderer::CMPAudioRenderer(LPUNKNOWN punk, HRESULT* phr)
       *phr = hr;
     return;
   }
-  
-  hr = SetupFilterPipeline();
-  if (FAILED(hr))
-  {
-    if (phr)
-      *phr = hr;
-    return;
-  }  
 
-  hr = m_pPipeline->Init();
-  if (FAILED(hr))
+  m_pWASAPIRenderer = new CWASAPIRenderFilter(m_pSettings, m_pClock, m_pLogger);
+  if (!m_pWASAPIRenderer)
   {
-    if (phr)
-      *phr = hr;
+    *phr = E_OUTOFMEMORY;
     return;
-  }  
+  }
 
-  if (SUCCEEDED(m_pRenderer->SetMoreSamplesEvent(&m_hRendererStarving)))
-    m_pPipeline->Start(0);
+  m_pRenderer = static_cast<IRenderFilter*>(m_pWASAPIRenderer);
 }
 
 CMPAudioRenderer::~CMPAudioRenderer()
 {
   Log("MP Audio Renderer - destructor - instance 0x%x", this);
-  
-  CAutoLock cInterfaceLock(&m_InterfaceLock);
+
+  CAutoLock cs(&m_csAudioRenderer);
 
   m_pRenderer->SetMoreSamplesEvent(NULL);
 
@@ -153,13 +167,18 @@ CMPAudioRenderer::~CMPAudioRenderer()
     SAFE_RELEASE(m_pReferenceClock);
   }
 
-  HRESULT hr = m_pPipeline->Cleanup();
-  if (FAILED(hr))
-    Log("Pipeline cleanup failed with: (0x%08x)");
+  if (m_pPipeline)
+  {
+    HRESULT hr = m_pPipeline->Cleanup();
+    if (FAILED(hr))
+      Log("Pipeline cleanup failed with: (0x%08x)");
 
-  m_pPipeline->DisconnectAll();
-  if (FAILED(hr))
-    Log("Pipeline DisconnectAll failed with: (0x%08x)", hr);
+    m_pPipeline->DisconnectAll();
+    if (FAILED(hr))
+      Log("Pipeline DisconnectAll failed with: (0x%08x)", hr);
+  }
+
+  SAFE_RELEASE(m_pSettings);
 
   delete m_pWASAPIRenderer;
   delete m_pAC3Encoder;
@@ -168,54 +187,118 @@ CMPAudioRenderer::~CMPAudioRenderer()
   delete m_pTimestretchFilter;
   delete m_pSampleRateConverter;
   delete m_pChannelMixer;
+  delete m_pSampleCopier;
 
   Log("MP Audio Renderer - destructor - instance 0x%x - end", this);
-  StopLogger();
+  if (m_pLogger)
+  {
+    m_pLogger->Stop();
+    delete m_pLogger;
+  }
+}
+
+HRESULT CMPAudioRenderer::InitFilter()
+{
+  HRESULT hr = S_OK;
+
+  CAutoLock cs(&m_csInitLock);
+
+  if (!m_bInitialized)
+  {
+    CAutoLock lockRenderer(&m_csAudioRenderer);
+
+    m_pClock->SetAudioDelay(m_pSettings->GetAudioDelay() * 10000); // setting in registry is in ms
+
+    SetupFilterPipeline();
+
+    if (SUCCEEDED(hr = m_pPipeline->Init()))
+    { 
+      if (SUCCEEDED(m_pRenderer->SetMoreSamplesEvent(&m_hRendererStarving)))
+        m_pPipeline->Start(0);
+    }
+
+    m_bInitialized = true;
+  }
+
+  return hr;
 }
 
 HRESULT CMPAudioRenderer::SetupFilterPipeline()
 {
-  m_pWASAPIRenderer = new CWASAPIRenderFilter(&m_Settings, m_pClock);
-  if (!m_pWASAPIRenderer)
-    return E_OUTOFMEMORY;
+  int nUseFilters = m_pSettings->GetUseFilters();
+  m_pPipeline = m_pWASAPIRenderer;
 
-  m_pRenderer = static_cast<IRenderFilter*>(m_pWASAPIRenderer);
+  if (m_pSettings->GetAC3EncodingMode() != DISABLED && nUseFilters & USE_FILTERS_AC3ENCODER)
+  {
+    m_pAC3Encoder = new CAC3EncoderFilter(m_pSettings, m_pLogger);
+    if (!m_pAC3Encoder)
+      return E_OUTOFMEMORY;
 
-  m_pAC3Encoder = new CAC3EncoderFilter(&m_Settings);
-  if (!m_pAC3Encoder)
-    return E_OUTOFMEMORY;
+    m_pAC3Encoder->ConnectTo(m_pPipeline);
+    m_pPipeline = m_pAC3Encoder;
+  }
 
-  m_pInBitDepthAdapter = new CBitDepthAdapter();
-  if (!m_pInBitDepthAdapter)
-    return E_OUTOFMEMORY;
+  if (nUseFilters & USE_FILTERS_BIT_DEPTH_OUT)
+  {
+    m_pOutBitDepthAdapter = new CBitDepthAdapter(m_pSettings, m_pLogger);
+    if (!m_pOutBitDepthAdapter)
+      return E_OUTOFMEMORY;
 
-  m_pOutBitDepthAdapter = new CBitDepthAdapter();
-  if (!m_pOutBitDepthAdapter)
-    return E_OUTOFMEMORY;
+    m_pOutBitDepthAdapter->ConnectTo(m_pPipeline);
+    m_pPipeline = m_pOutBitDepthAdapter;
+  }
 
-  m_pTimestretchFilter = new CTimeStretchFilter(&m_Settings, m_pClock);
-  if (!m_pTimestretchFilter)
-    return E_OUTOFMEMORY;
+  if (m_pSettings->GetUseTimeStretching() && nUseFilters & USE_FILTERS_TIME_STRETCH)
+  {
+    m_pTimestretchFilter = new CTimeStretchFilter(m_pSettings, m_pClock, m_pLogger);
+    if (!m_pTimestretchFilter)
+      return E_OUTOFMEMORY;
 
-  m_pTimeStretch = static_cast<ITimeStretch*>(m_pTimestretchFilter);
+    m_pTimeStretch = static_cast<ITimeStretch*>(m_pTimestretchFilter);
 
-  m_pSampleRateConverter = new CSampleRateConverter(&m_Settings);
-  if (!m_pSampleRateConverter)
-    return E_OUTOFMEMORY;
+    m_pTimestretchFilter->ConnectTo(m_pPipeline);
+    m_pPipeline = m_pTimestretchFilter;
+  }
 
-  m_pChannelMixer = new CChannelMixer(&m_Settings);
-  if (!m_pChannelMixer)
-    return E_OUTOFMEMORY;
+  if (nUseFilters & USE_FILTERS_CHANNEL_MIXER)
+  {
+    m_pChannelMixer = new CChannelMixer(m_pSettings, m_pLogger);
+    if (!m_pChannelMixer)
+      return E_OUTOFMEMORY;
 
-  m_pInBitDepthAdapter->ConnectTo(m_pSampleRateConverter);
-  m_pSampleRateConverter->ConnectTo(m_pChannelMixer);
-  m_pChannelMixer->ConnectTo(m_pTimestretchFilter);
-  m_pTimestretchFilter->ConnectTo(m_pOutBitDepthAdapter);
-  m_pOutBitDepthAdapter->ConnectTo(m_pAC3Encoder);
-  m_pAC3Encoder->ConnectTo(m_pWASAPIRenderer);
-  
-  // Entry point for the audio filter pipeline
-  m_pPipeline = m_pInBitDepthAdapter;
+    m_pChannelMixer->ConnectTo(m_pPipeline);
+    m_pPipeline = m_pChannelMixer;
+  }
+
+  if (nUseFilters & USE_FILTERS_SAMPLE_RATE_CONVERTER)
+  {
+    m_pSampleRateConverter = new CSampleRateConverter(m_pSettings, m_pLogger);
+    if (!m_pSampleRateConverter)
+      return E_OUTOFMEMORY;
+
+    m_pSampleRateConverter->ConnectTo(m_pPipeline);
+    m_pPipeline = m_pSampleRateConverter;
+  }
+
+  if (nUseFilters & USE_FILTERS_BIT_DEPTH_IN)
+  {
+    m_pInBitDepthAdapter = new CBitDepthAdapter(m_pSettings, m_pLogger);
+    if (!m_pInBitDepthAdapter)
+      return E_OUTOFMEMORY;
+
+    m_pInBitDepthAdapter->ConnectTo(m_pPipeline);
+    m_pPipeline = m_pInBitDepthAdapter;
+  }
+
+  if (m_pSettings->GetAllowBitStreaming())
+  {
+    m_pSampleCopier = new CSampleCopier(m_pSettings, m_pLogger);
+    if (!m_pSampleCopier)
+      return E_OUTOFMEMORY;
+
+    m_pSampleCopier->ConnectTo(m_pPipeline);
+    m_pPipeline = m_pSampleCopier;
+  }
 
   return S_OK;
 }
@@ -224,12 +307,12 @@ STDMETHODIMP CMPAudioRenderer::GetState(DWORD dwMSecs, FILTER_STATE* State)
 {
   CheckPointer(State, E_POINTER);
 
-  if ((m_pRenderer->BufferredDataDuration() <= (m_Settings.m_msOutputBuffer * 10000)) &&
-     (GetCurrentTimestamp() - m_lastSampleArrivalTime < SAMPLE_RECEIVE_TIMEOUT)) 
+  if (m_State == State_Paused && (m_pRenderer->BufferredDataDuration() <= (m_pSettings->GetOutputBuffer() * 10000)) &&
+    (GetCurrentTimestamp() - m_lastSampleArrivalTime < SAMPLE_RECEIVE_TIMEOUT)) 
   {
     NotifyEvent(EC_STARVATION, 0, 0);
     *State = State_Paused;
-    
+
     return VFW_S_STATE_INTERMEDIATE;
   }
 
@@ -244,10 +327,12 @@ HRESULT CMPAudioRenderer::CheckInputType(const CMediaType* pmt)
 HRESULT	CMPAudioRenderer::CheckMediaType(const CMediaType* pmt)
 {
   HRESULT hr = S_OK;
-  
+
   if (!pmt) 
     return E_INVALIDARG;
-  
+
+  InitFilter();
+
   if ((pmt->majortype	!= MEDIATYPE_Audio) ||
       (pmt->formattype != FORMAT_WaveFormatEx))
   {
@@ -264,8 +349,11 @@ HRESULT	CMPAudioRenderer::CheckMediaType(const CMediaType* pmt)
 
   if (IS_WAVEFORMATEXTENSIBLE(pwfx))
   {
+    if (!m_pSettings->GetAllowBitStreaming() && CBaseAudioSink::CanBitstream((WAVEFORMATEXTENSIBLE*)pwfx))
+      return VFW_E_TYPE_NOT_ACCEPTED;
+
     LogWaveFormat((WAVEFORMATEXTENSIBLE*)pwfx, "CheckMediaType  ");
-    return m_pPipeline->NegotiateFormat((WAVEFORMATEXTENSIBLE*)(pwfx), 0, &chOrder);
+    hr = m_pPipeline->NegotiateFormat((WAVEFORMATEXTENSIBLE*)(pwfx), 0, &chOrder);
   }
   else
   {
@@ -273,13 +361,17 @@ HRESULT	CMPAudioRenderer::CheckMediaType(const CMediaType* pmt)
     hr = ToWaveFormatExtensible(&wfe, pwfx);
     if (SUCCEEDED(hr))
     {
+      if (!m_pSettings->GetAllowBitStreaming() && CBaseAudioSink::CanBitstream(wfe))
+        return VFW_E_TYPE_NOT_ACCEPTED;
+
       LogWaveFormat(wfe, "CheckMediaType  ");
       hr = m_pPipeline->NegotiateFormat(wfe, 0, &chOrder);
     }
-    
+
     SAFE_DELETE_WAVEFORMATEX(wfe);
-    return hr;
   }
+
+  return hr;
 }
 
 HRESULT CMPAudioRenderer::AudioClock(ULONGLONG& ullTimestamp, ULONGLONG& ullQpc, ULONGLONG ullQpcNow)
@@ -309,15 +401,14 @@ HRESULT CMPAudioRenderer::Receive(IMediaSample* pSample)
     return hr;
   }
 
-  if (m_State == State_Paused) 
+  if (m_State == State_Paused)
   {
     {
+      // Make sure CBaseRenderer::WaitForReceiveToComplete won't block infinitely
+      m_bInReceive = FALSE;
       CAutoLock cRendererLock(&m_InterfaceLock);
       if (m_State == State_Stopped)
-      {
-        m_bInReceive = FALSE;
         return NOERROR;
-      }
     }
     Ready();
   }
@@ -342,7 +433,8 @@ HRESULT CMPAudioRenderer::Receive(IMediaSample* pSample)
 
 bool CMPAudioRenderer::DeliverSample(IMediaSample* pSample)
 {
-  if (!pSample) return false;
+  if (!pSample)
+    return false;
 
   WAVEFORMATEXTENSIBLE* wfe = NULL;
   AM_MEDIA_TYPE* pmt = NULL;
@@ -350,7 +442,7 @@ bool CMPAudioRenderer::DeliverSample(IMediaSample* pSample)
   if (SUCCEEDED(pSample->GetMediaType(&pmt)) && pmt)
   {
     WAVEFORMATEX* pwfx = (WAVEFORMATEX*)pmt->pbFormat;
-  
+
     // Convert WAVEFORMATEX to WAVEFORMATEXTENSIBLE for internal use
     if (!IS_WAVEFORMATEXTENSIBLE(pwfx))
     {
@@ -364,22 +456,39 @@ bool CMPAudioRenderer::DeliverSample(IMediaSample* pSample)
     }
   }
 
-  if (pmt)
+  REFERENCE_TIME rtStart = 0;
+  REFERENCE_TIME rtStop = 0;
+
+  pSample->GetTime(&rtStart, &rtStop);
+
+  // Discard samples that have negative timestamps as render will reject those in any case
+  if (rtStart < 0)
+    return false;
+
+  if (m_pMediaType)
   {
-    if (m_pMediaType)
-      DeleteMediaType(m_pMediaType);
-    m_pMediaType = CreateMediaType(pmt);
+    if (m_bFirstSample)
+    {
+      // In some cases audio decoder wont put the PMT on 1st sample (depends how the format negotiation goes?)
+      pSample->SetMediaType(m_pMediaType);
+      m_bFirstSample = false;
+    }
+
+    WAVEFORMATEXTENSIBLE* pwf = (WAVEFORMATEXTENSIBLE*)m_pMediaType->pbFormat;
+
+    UINT32 nSampleLength = pSample->GetActualDataLength();
+    UINT nFrames = nSampleLength / pwf->Format.nBlockAlign;
+    UINT32 nExpectedLength = nFrames * pwf->Format.nBlockAlign;
+    
+    if (nSampleLength != nExpectedLength)
+    {
+      Log("CMPAudioRenderer::DeliverSample incorrect incoming sample length %d expected %d", nSampleLength, nExpectedLength);
+      pSample->SetActualDataLength(nExpectedLength);
+    }
   }
-  else if (m_pMediaType)
-    pSample->SetMediaType(m_pMediaType);
 
-  if (m_Settings.m_bLogSampleTimes)
+  if (m_pSettings->GetLogSampleTimes())
   {
-    REFERENCE_TIME rtStart = 0;
-    REFERENCE_TIME rtStop = 0;
-
-    pSample->GetTime(&rtStart, &rtStop);
-
     if (abs(m_rtNextSample - rtStart) > MAX_SAMPLE_TIME_ERROR)
       Log("Stream discontinuity detected in incoming samples: %6.3f", (m_rtNextSample - rtStart) / 10000000.0);
    
@@ -387,6 +496,13 @@ bool CMPAudioRenderer::DeliverSample(IMediaSample* pSample)
 
     if (pSample->IsDiscontinuity() == S_OK)
       Log("Discontinuity flag set on in the incoming sample: %6.3f", rtStart / 10000000.0);
+  }
+
+  {
+    CAutoLock cInterfaceLock(&m_InterfaceLock);
+
+    if (m_State == State_Stopped) 
+      return false;
   }
 
   HANDLE handles[2];
@@ -415,9 +531,11 @@ STDMETHODIMP CMPAudioRenderer::NonDelegatingQueryInterface(REFIID riid, void** p
   else if (riid == IID_IBasicAudio)
     return GetInterface(static_cast<IBasicAudio*>(m_pVolumeHandler), ppv);
   else if (riid == IID_ISpecifyPropertyPages)
-    return GetInterface(static_cast<ISpecifyPropertyPages*>(&m_Settings), ppv);
+    return GetInterface(static_cast<ISpecifyPropertyPages*>(m_pSettings), ppv);
   else if (riid == IID_IMPARSettings)
-    return GetInterface(static_cast<IMPARSettings*>(&m_Settings), ppv);
+    return GetInterface(static_cast<IMPARSettings*>(m_pSettings), ppv);
+  else if (riid == _uuidof(IMPAudioRendererConfig))
+    return GetInterface(static_cast<IMPAudioRendererConfig*>(m_pSettings), ppv);
   else if (riid == IID_IAMFilterMiscFlags)
   {
     *ppv = static_cast<IAMFilterMiscFlags*>(this);
@@ -445,7 +563,10 @@ HRESULT CMPAudioRenderer::SetMediaType(const CMediaType* pmt)
 
   if (IS_WAVEFORMATEXTENSIBLE(pwfx))
   {
-    wfe = (WAVEFORMATEXTENSIBLE*)pwfx;
+    wfe = (WAVEFORMATEXTENSIBLE*)pwfx;    
+    if (!m_pSettings->GetAllowBitStreaming() && CBaseAudioSink::CanBitstream(wfe))
+      return VFW_E_TYPE_NOT_ACCEPTED;
+
     hr = m_pPipeline->NegotiateFormat(wfe, depth, &chOrder);
   }
   else
@@ -453,6 +574,9 @@ HRESULT CMPAudioRenderer::SetMediaType(const CMediaType* pmt)
     hr = ToWaveFormatExtensible(&wfe, pwfx);
     if (SUCCEEDED(hr))
     {
+      if (!m_pSettings->GetAllowBitStreaming() && CBaseAudioSink::CanBitstream(wfe))
+        return VFW_E_TYPE_NOT_ACCEPTED;
+
       hr = m_pPipeline->NegotiateFormat(wfe, depth, &chOrder);
       freeWaveFormat = true;
     }
@@ -497,7 +621,7 @@ HRESULT CMPAudioRenderer::CompleteConnect(IPin* pReceivePin)
 
   if (FAILED(hr)) 
     return E_FAIL;
-  
+
   Log("CompleteConnect - audio decoder: %S", &filterInfo.achName);
 
   if (SUCCEEDED(hr)) hr = CBaseRenderer::CompleteConnect(pReceivePin);
@@ -509,17 +633,25 @@ HRESULT CMPAudioRenderer::CompleteConnect(IPin* pReceivePin)
 STDMETHODIMP CMPAudioRenderer::Run(REFERENCE_TIME tStart)
 {
   Log("Run - %6.3f", tStart / 10000000.0);
-  CAutoLock cInterfaceLock(&m_InterfaceLock);
-  
   HRESULT	hr = S_OK;
 
-  if (m_State == State_Running) 
-    return hr;
+  { // Scope this to only protect base object's state
+    CAutoLock cInterfaceLock(&m_InterfaceLock);
+
+    if (m_State == State_Running) 
+      return hr;
+  }
+
+  CAutoLock cInterfaceLock(&m_csAudioRenderer);
+
+  if (m_hStopWaitingRenderer)
+    ResetEvent(m_hStopWaitingRenderer);
 
   if (m_pClock)
     m_pClock->Reset();
 
-  hr = m_pPipeline->Run(tStart);
+  if (m_pPipeline)
+    hr = m_pPipeline->Run(tStart);
      
   if (FAILED(hr))
     return hr;
@@ -531,16 +663,16 @@ STDMETHODIMP CMPAudioRenderer::Stop()
 {
   Log("Stop");
 
-  CAutoLock cInterfaceLock(&m_InterfaceLock);
+  CAutoLock cInterfaceLock(&m_csAudioRenderer);
   
   if (m_hStopWaitingRenderer)
     SetEvent(m_hStopWaitingRenderer);
 
-  m_pPipeline->BeginStop();
-  m_pPipeline->EndStop();
-
-  if (m_Settings.m_bReleaseDeviceOnStop)
-    m_pRenderer->ReleaseDevice();
+  if (m_pPipeline)
+  {
+    m_pPipeline->BeginStop();
+    m_pPipeline->EndStop();
+  }
 
   return CBaseRenderer::Stop(); 
 };
@@ -548,15 +680,18 @@ STDMETHODIMP CMPAudioRenderer::Stop()
 STDMETHODIMP CMPAudioRenderer::Pause()
 {
   Log("Pause");
-  CAutoLock cInterfaceLock(&m_InterfaceLock);
+  CAutoLock cInterfaceLock(&m_csAudioRenderer);
 
   if (m_hStopWaitingRenderer)
     SetEvent(m_hStopWaitingRenderer);
 
-  HRESULT hr = m_pPipeline->Pause();
+  if (m_pPipeline)
+  {
+    HRESULT hr = m_pPipeline->Pause();
 
-  if (FAILED(hr))
-    return hr;
+    if (FAILED(hr))
+      return hr;
+  }
 
   return CBaseRenderer::Pause(); 
 }
@@ -569,7 +704,7 @@ HRESULT CMPAudioRenderer::GetReferenceClockInterface(REFIID riid, void **ppv)
     return m_pReferenceClock->NonDelegatingQueryInterface(riid, ppv);
 
   m_pReferenceClock = new CBaseReferenceClock (NAME("MP Audio Clock"), NULL, &hr);
-	
+
   if (!m_pReferenceClock)
     return E_OUTOFMEMORY;
 
@@ -592,9 +727,12 @@ HRESULT CMPAudioRenderer::EndOfStream()
   if (m_hStopWaitingRenderer)
     SetEvent(m_hStopWaitingRenderer);
 
-  HRESULT hr = m_pPipeline->EndOfStream();
-  if (FAILED(hr))
-    return hr;
+  if (m_pPipeline)
+  {
+    HRESULT hr = m_pPipeline->EndOfStream();
+    if (FAILED(hr))
+      return hr;
+  }
 
   return CBaseRenderer::EndOfStream();
 }
@@ -602,6 +740,7 @@ HRESULT CMPAudioRenderer::EndOfStream()
 HRESULT CMPAudioRenderer::BeginFlush()
 {
   Log("BeginFlush");
+  HRESULT hr = S_OK;
 
   if (m_State == State_Paused) 
     NotReady();
@@ -613,8 +752,11 @@ HRESULT CMPAudioRenderer::BeginFlush()
   CancelNotification();
   ClearPendingSample();
 
-  HRESULT hr = m_pPipeline->BeginFlush();
-  WaitForReceiveToComplete();
+  if (m_pPipeline)
+  {
+    hr = m_pPipeline->BeginFlush();
+    WaitForReceiveToComplete();
+  }
 
   return hr;
 }
@@ -624,38 +766,30 @@ HRESULT CMPAudioRenderer::EndFlush()
   Log("EndFlush");
   CAutoLock cInterfaceLock(&m_InterfaceLock);
   
-  m_pPipeline->EndFlush();
-  m_pClock->Reset(0);
+  if (m_hStopWaitingRenderer)
+    ResetEvent(m_hStopWaitingRenderer);
+
+  if (m_pPipeline)
+    m_pPipeline->EndFlush();
+  if (m_pClock)
+    m_pClock->Reset(0);
+
+  m_bFirstSample = true;
 
   return CBaseRenderer::EndFlush(); 
 }
-
-// TODO - implement TsReader side as well
-
-/*
-bool CMPAudioRenderer::CheckForLiveSouce()
-{
-  FILTER_INFO filterInfo;
-  ZeroMemory(&filterInfo, sizeof(filterInfo));
-  m_EVRFilter->QueryFilterInfo(&filterInfo); // This addref's the pGraph member
-
-  CComPtr<IBaseFilter> pBaseFilter;
-
-  HRESULT hr = filterInfo.pGraph->FindFilterByName(L"MediaPortal File Reader", &pBaseFilter);
-  filterInfo.pGraph->Release();
-}*/
 
 // IAVSyncClock interface implementation
 
 HRESULT CMPAudioRenderer::AdjustClock(DOUBLE pAdjustment)
 {
-  //CAutoLock cAutoLock(&m_csResampleLock);
-  
-  if (m_Settings.m_bUseTimeStretching && m_Settings.m_bEnableSyncAdjustment)
+  CAutoLock cs(&m_csAudioRenderer);
+
+  if (m_pSettings->GetUseTimeStretching() && m_pSettings->GetEnableSyncAdjustment())
   {
     m_dAdjustment = pAdjustment;
     m_pClock->SetAdjustment(m_dAdjustment);
-    
+
     if (m_pTimeStretch)
       m_pTimeStretch->setTempo(m_dBias, m_dAdjustment);
 
@@ -667,11 +801,11 @@ HRESULT CMPAudioRenderer::AdjustClock(DOUBLE pAdjustment)
 
 HRESULT CMPAudioRenderer::SetEVRPresentationDelay(DOUBLE pEVRDelay)
 {
-  //CAutoLock cAutoLock(&m_csResampleLock);
+  CAutoLock cs(&m_csAudioRenderer);
 
-  bool ret = S_FALSE;
+  HRESULT ret = S_FALSE;
 
-  if (m_Settings.m_bUseTimeStretching)
+  if (m_pSettings->GetUseTimeStretching())
   {
     Log("SetPresentationDelay: %1.10f", pEVRDelay);
 
@@ -682,7 +816,7 @@ HRESULT CMPAudioRenderer::SetEVRPresentationDelay(DOUBLE pEVRDelay)
   else
   {
     Log("SetPresentationDelay: %1.10f - failed, time stretching is disabled", pEVRDelay);
-    ret = S_FALSE;  
+    ret = S_FALSE;
   }
 
   return ret;
@@ -692,19 +826,19 @@ HRESULT CMPAudioRenderer::SetBias(DOUBLE pBias)
 {
   //CAutoLock cAutoLock(&m_csResampleLock);
 
-  bool ret = S_FALSE;
+  HRESULT ret = S_FALSE;
 
-  if (m_Settings.m_bUseTimeStretching)
+  if (m_pSettings->GetUseTimeStretching())
   {
     Log("SetBias: %1.10f", pBias);
 
-    if (pBias < m_Settings.m_dMinBias)
+    if (pBias < m_pSettings->GetMinBias())
     {
       Log("   bias value too small - using 1.0");
       m_dBias = 1.0;
       ret = S_FALSE; 
     }
-    else if(pBias > m_Settings.m_dMaxBias)
+    else if (pBias > m_pSettings->GetMaxBias())
     {
       Log("   bias value too big - using 1.0");
       m_dBias = 1.0;
@@ -715,7 +849,7 @@ HRESULT CMPAudioRenderer::SetBias(DOUBLE pBias)
       m_dBias = pBias;
       ret = S_OK;  
     }
-    
+
     m_pClock->SetBias(m_dBias);
     if (m_pTimeStretch)
     {
@@ -749,7 +883,7 @@ HRESULT CMPAudioRenderer::GetBias(DOUBLE* pBias)
 HRESULT CMPAudioRenderer::GetMaxBias(DOUBLE *pMaxBias)
 {
   CheckPointer(pMaxBias, E_POINTER);
-  *pMaxBias = m_Settings.m_dMaxBias;
+  *pMaxBias = m_pSettings->GetMaxBias();
 
   return S_OK;
 }
@@ -757,7 +891,7 @@ HRESULT CMPAudioRenderer::GetMaxBias(DOUBLE *pMaxBias)
 HRESULT CMPAudioRenderer::GetMinBias(DOUBLE *pMinBias)
 {
   CheckPointer(pMinBias, E_POINTER);
-  *pMinBias = m_Settings.m_dMinBias;
+  *pMinBias = m_pSettings->GetMinBias();
 
   return S_OK;
 }

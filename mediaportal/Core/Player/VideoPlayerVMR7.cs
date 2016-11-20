@@ -258,6 +258,7 @@ namespace MediaPortal.Player
     protected bool vc1ICodec = false;
     protected bool vc1Codec = false;
     protected bool h264Codec = false;
+    protected bool hevcCodec = false;
     protected bool xvidCodec = false;
     protected bool aacCodec = false;
     protected bool aacCodecLav = false;
@@ -304,7 +305,7 @@ namespace MediaPortal.Player
     {
       updateTimer = DateTime.Now;
       m_speedRate = 10000;
-      m_bVisible = false;
+      GUIGraphicsContext.IsWindowVisible = false;
       m_iVolume = 100;
       m_state = PlayState.Init;
       m_strCurrentFile = strFile;
@@ -324,6 +325,15 @@ namespace MediaPortal.Player
           return false;
         }
 
+        int hr = mediaEvt.SetNotifyWindow(GUIGraphicsContext.ActiveForm, WM_GRAPHNOTIFY, IntPtr.Zero);
+        if (hr < 0)
+        {
+          Error.SetError("Unable to play movie", "Can not set notifications");
+          m_strCurrentFile = "";
+          CloseInterfaces();
+          return false;
+        }
+
         #region FFDShowEngine and PostProcessingEngine Detection
 
         if (!streamLAVSelection)
@@ -333,12 +343,13 @@ namespace MediaPortal.Player
           {
             SubEngine.engine = new SubEngine.DummyEngine();
           }
+        }
 
-          IPostProcessingEngine postengine = PostProcessingEngine.GetInstance(true);
-          if (!postengine.LoadPostProcessing(graphBuilder))
-          {
-            PostProcessingEngine.engine = new PostProcessingEngine.DummyEngine();
-          }
+        // Init post processing engine
+        IPostProcessingEngine postengine = PostProcessingEngine.GetInstance(true);
+        if (!postengine.LoadPostProcessing(graphBuilder))
+        {
+          PostProcessingEngine.engine = new PostProcessingEngine.DummyEngine();
         }
 
         #endregion
@@ -348,32 +359,6 @@ namespace MediaPortal.Player
         SelectAudioLanguage();
         OnInitialized();
 
-        int hr = mediaEvt.SetNotifyWindow(GUIGraphicsContext.ActiveForm, WM_GRAPHNOTIFY, IntPtr.Zero);
-        if (hr < 0)
-        {
-          Error.SetError("Unable to play movie", "Can not set notifications");
-          m_strCurrentFile = "";
-          CloseInterfaces();
-          return false;
-        }
-        if (videoWin != null)
-        {
-          videoWin.put_Owner(GUIGraphicsContext.ActiveForm);
-          videoWin.put_WindowStyle(
-            (WindowStyle)((int)WindowStyle.Child + (int)WindowStyle.ClipChildren + (int)WindowStyle.ClipSiblings));
-          videoWin.put_MessageDrain(GUIGraphicsContext.form.Handle);
-        }
-        if (basicVideo != null)
-        {
-          hr = basicVideo.GetVideoSize(out m_iVideoWidth, out m_iVideoHeight);
-          if (hr < 0)
-          {
-            Error.SetError("Unable to play movie", "Can not find movie width/height");
-            m_strCurrentFile = "";
-            CloseInterfaces();
-            return false;
-          }
-        }
         /*
         GUIGraphicsContext.DX9Device.Clear( ClearFlags.Target, Color.Black, 1.0f, 0);
         try
@@ -388,8 +373,19 @@ namespace MediaPortal.Player
         // DsUtils.DumpFilters(graphBuilder);
         try
         {
-          hr = mediaCtrl.Run();
-          DsError.ThrowExceptionForHR(hr);
+          //if (videoWin != null)
+          //{
+          //  videoWin.put_WindowStyle((WindowStyle)((int)WindowStyle.Child + (int)WindowStyle.ClipChildren + (int)WindowStyle.ClipSiblings));
+          //  videoWin.put_MessageDrain(GUIGraphicsContext.form.Handle);
+          //}
+          if (AudioOnly)
+          {
+            hr = mediaCtrl.Run();
+          }
+          else if (VMR9Util.g_vmr9 != null)
+          {
+            hr = VMR9Util.g_vmr9.StartMediaCtrl(mediaCtrl);
+          }
         }
         catch (Exception error)
         {
@@ -402,6 +398,12 @@ namespace MediaPortal.Player
           CloseInterfaces();
           return false;
         }
+
+        if (basicVideo != null)
+        {
+          basicVideo.GetVideoSize(out m_iVideoWidth, out m_iVideoHeight);
+        }
+
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYBACK_STARTED, 0, 0, 0, 0, 0, null);
         msg.Label = strFile;
         GUIWindowManager.SendThreadMessage(msg);
@@ -541,20 +543,21 @@ namespace MediaPortal.Player
     {
       if (GUIGraphicsContext.Vmr9Active)
       {
-        _updateNeeded = false;
         m_bStarted = true;
-        return;
       }
+
       if (GUIGraphicsContext.IsFullScreenVideo != m_bFullScreen)
       {
         m_bFullScreen = GUIGraphicsContext.IsFullScreenVideo;
         _updateNeeded = true;
       }
-      if (!_updateNeeded)
+      if (!_updateNeeded && !GUIGraphicsContext.UpdateVideoWindow)
       {
         return;
       }
+
       _updateNeeded = false;
+      GUIGraphicsContext.UpdateVideoWindow = false;
       m_bStarted = true;
       float x = m_iPositionX;
       float y = m_iPositionY;
@@ -599,6 +602,7 @@ namespace MediaPortal.Player
         m_aspectX = aspectX;
         m_aspectY = aspectY;
         GUIGraphicsContext.VideoSize = new Size(m_iVideoWidth, m_iVideoHeight);
+        GUIGraphicsContext.ScaleVideoWindow(ref nw, ref nh, ref x, ref y);
         Rectangle rSource, rDest;
         Geometry m_geometry = new Geometry();
         m_geometry.ImageWidth = m_iVideoWidth;
@@ -623,6 +627,16 @@ namespace MediaPortal.Player
         SetVideoPosition(rDest);
         _sourceRectangle = rSource;
         _videoRectangle = rDest;
+
+        if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && !m_bFullScreen)
+        {
+          if (basicVideo != null)
+          {
+            // TODO why it is needed for some video to be able to reduce fullscreen video window
+            basicVideo.SetDestinationPosition(m_iPositionX, m_iPositionY, m_iWidth, m_iHeight);
+            Log.Debug("VideoPlayer: rezise madVR video window m_iPositionX : {0}, m_iPositionY : {1}, m_iWidth : {2}, m_iHeight : {3}", m_iPositionX, m_iPositionY, m_iWidth, m_iHeight);
+          }
+        }
       }
     }
 
@@ -634,7 +648,21 @@ namespace MediaPortal.Player
         {
           return;
         }
-        videoWin.SetWindowPosition(rDest.Left, rDest.Top, rDest.Width, rDest.Height);
+
+        if (rDest.Left <= 0 && rDest.Top <= 0 && rDest.Width <= 1 && rDest.Height <= 1)
+        {
+          return;
+        }
+
+        if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+        {
+          Size client = GUIGraphicsContext.form.ClientSize;
+          videoWin.SetWindowPosition(0, 0, client.Width, client.Height);
+        }
+        else
+        {
+          videoWin.SetWindowPosition(rDest.Left, rDest.Top, rDest.Width, rDest.Height);
+        }
       }
     }
 
@@ -642,16 +670,36 @@ namespace MediaPortal.Player
     {
       if (basicVideo != null)
       {
-        if (rSource.Left < 0 || rSource.Top < 0 || rSource.Width <= 0 || rSource.Height <= 0)
+        lock (basicVideo)
         {
-          return;
+          if (rSource.Left < 0 || rSource.Top < 0 || rSource.Width <= 0 || rSource.Height <= 0)
+          {
+            return;
+          }
+
+          if (rDest.Width <= 0 || rDest.Height <= 0)
+          {
+            return;
+          }
+
+          if (rDest.Left <= 0 && rDest.Top <= 0 && rDest.Width <= 1 && rDest.Height <= 1)
+          {
+            return;
+          }
+
+          Log.Debug("VideoPlayer: SetSourcePosition 1");
+          basicVideo.SetSourcePosition(rSource.Left, rSource.Top, rSource.Width, rSource.Height);
+          Log.Debug("VideoPlayer: SetSourcePosition 2");
+
+          if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+          {
+            basicVideo.SetDestinationPosition(rDest.Left, rDest.Top, rDest.Width, rDest.Height);
+          }
+          else
+          {
+            basicVideo.SetDestinationPosition(0, 0, rDest.Width, rDest.Height);
+          }
         }
-        if (rDest.Width <= 0 || rDest.Height <= 0)
-        {
-          return;
-        }
-        basicVideo.SetSourcePosition(rSource.Left, rSource.Top, rSource.Width, rSource.Height);
-        basicVideo.SetDestinationPosition(0, 0, rDest.Width, rDest.Height);
       }
     }
 
@@ -686,15 +734,45 @@ namespace MediaPortal.Player
           mediaPos.get_Duration(out m_dDuration); //(refresh timeline when change EDITION)
           mediaPos.get_CurrentPosition(out m_dCurrentPos);
         }
-        if (GUIGraphicsContext.BlankScreen ||
-            (GUIGraphicsContext.Overlay == false && GUIGraphicsContext.IsFullScreenVideo == false))
+        if (GUIGraphicsContext.BlankScreen || (GUIGraphicsContext.VideoWindow.Width <= 10 && GUIGraphicsContext.Overlay == false && GUIGraphicsContext.IsFullScreenVideo == false))
         {
-          if (m_bVisible)
+          if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+          {
+            if (GUIGraphicsContext.IsWindowVisible)
+            {
+              GUIGraphicsContext.IsWindowVisible = false;
+              if (!GUIGraphicsContext.IsFullScreenVideo)
+              {
+                if (basicVideo != null)
+                {
+                  // Here is to hide video window madVR when skin didn't handle video overlay (the value need to be different from GUIVideoControl Render)
+                  basicVideo.SetDestinationPosition(-100, -100, 50, 50);
+                  //Log.Error("VideoPlayer: hide video window");
+                }
+              }
+            }
+          }
+          else if (m_bVisible)
           {
             m_bVisible = false;
             if (videoWin != null)
             {
               videoWin.put_Visible(OABool.False);
+            }
+          }
+        }
+        else if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+        {
+          if (!GUIGraphicsContext.IsWindowVisible)
+          {
+            GUIGraphicsContext.IsWindowVisible = true;
+            if (!GUIGraphicsContext.IsFullScreenVideo)
+            {
+              if (basicVideo != null)
+              {
+                basicVideo.SetDestinationPosition(0, 0, GUIGraphicsContext.VideoWindowWidth, GUIGraphicsContext.VideoWindowHeight);
+                //Log.Error("VideoPlayer: show video window");
+              }
             }
           }
         }
@@ -706,7 +784,6 @@ namespace MediaPortal.Player
             videoWin.put_Visible(OABool.True);
           }
         }
-        CheckVideoResolutionChanges();
         updateTimer = DateTime.Now;
       }
       if (m_speedRate != 10000)
@@ -718,32 +795,6 @@ namespace MediaPortal.Player
         m_lastFrameCounter = 0;
       }
       OnProcess();
-    }
-
-    private void CheckVideoResolutionChanges()
-    {
-      if (videoWin == null || basicVideo == null)
-      {
-        return;
-      }
-      int aspectX, aspectY;
-      int videoWidth = 1, videoHeight = 1;
-      if (basicVideo != null)
-      {
-        basicVideo.GetVideoSize(out videoWidth, out videoHeight);
-      }
-      aspectX = videoWidth;
-      aspectY = videoHeight;
-      if (basicVideo != null)
-      {
-        basicVideo.GetPreferredAspectRatio(out aspectX, out aspectY);
-      }
-      if (videoHeight != m_iVideoHeight || videoWidth != m_iVideoWidth ||
-          aspectX != m_aspectX || aspectY != m_aspectY)
-      {
-        _updateNeeded = true;
-        SetVideoWindow();
-      }
     }
 
     protected virtual void OnProcess() {}
@@ -1384,27 +1435,10 @@ namespace MediaPortal.Player
     {
       #region return splitter IAMStreamSelect LCID
 
-      int LCIDCheck = FStreams.GetStreamInfos(StreamType.Audio, iStream).LCID;
-
-      if (LCIDCheck != 0)
+      string languageName = LCIDCheck(FStreams.GetStreamInfos(StreamType.Audio, iStream).LCID);
+      if (!string.IsNullOrEmpty(languageName))
       {
-        int size = Util.Win32API.GetLocaleInfo(LCIDCheck, 2, null, 0);
-        if (size > 0)
-        {
-          string languageName = new string(' ', size);
-          Util.Win32API.GetLocaleInfo(LCIDCheck, 2, languageName, size);
-
-          if (!string.IsNullOrEmpty(languageName))
-          {
-            if (languageName.Contains("\0"))
-              languageName = languageName.Substring(0, languageName.IndexOf("\0"));
-
-            if (languageName.Contains("("))
-              languageName = languageName.Substring(0, languageName.IndexOf("("));
-
-            return Util.Utils.TranslateLanguageString(languageName.Trim());
-          }
-        }
+        return languageName;
       }
 
       #endregion
@@ -1635,6 +1669,33 @@ namespace MediaPortal.Player
       // Audio - Dolby TrueHD, 48.0 kHz, 6 chn, 640.0 kbit/s (1100,fd,00)
       streamName = Regex.Replace(streamName, @"\(.+?\)$", "");
       return streamName;
+    }
+
+    /// <summary>
+    /// Property to get/set the current subtitle LAV stream
+    /// </summary>
+    public int CurrentSubtitleLAVStream
+    {
+      get
+      {
+        int subtitleStreams = SubtitleStreams;
+        for (int i = 0; i < subtitleStreams; i++)
+        {
+          if (FStreams.GetStreamInfos(StreamType.Subtitle, i).Current)
+          {
+            return i;
+          }
+          if (FStreams.GetStreamInfos(StreamType.Subtitle_hidden, i).Current)
+          {
+            return -1;
+          }
+          if (FStreams.GetStreamInfos(StreamType.Subtitle_file, i).Current)
+          {
+            return i;
+          }
+        }
+        return 0;
+      }
     }
 
     /// <summary>
@@ -2018,33 +2079,18 @@ namespace MediaPortal.Player
                     case StreamType.Unknown:
                     case StreamType.Subtitle:
                     case StreamType.Subtitle_file:
-                      if (streamLAVSelection)
+                    case StreamType.Subtitle_hidden:
+                    case StreamType.Subtitle_shown:
+                      if (streamLAVSelection && FSInfos.Filter.ToLowerInvariant().Contains("LAV Splitter".ToLowerInvariant()))
                       {
-                        if (FSInfos.sFlag == AMStreamSelectInfoFlags.Enabled || FSInfos.sFlag == (AMStreamSelectInfoFlags.Enabled | AMStreamSelectInfoFlags.Exclusive))
+                        if (FSInfos.sFlag == AMStreamSelectInfoFlags.Enabled ||
+                            FSInfos.sFlag == (AMStreamSelectInfoFlags.Enabled | AMStreamSelectInfoFlags.Exclusive))
                         {
                           FSInfos.Current = true;
                           pStrm.Enable(FSInfos.Id, 0);
                           pStrm.Enable(FSInfos.Id, AMStreamSelectEnableFlags.Enable);
-
-                          // Init Subtitle Engine
-                          ISubEngine engine = SubEngine.GetInstance(true);
-                          if (!engine.LoadSubtitles(graphBuilder, m_strCurrentFile))
-                          {
-                            SubEngine.engine = new SubEngine.DummyEngine();
-                          }
-                          // Set subtitle defined by LAV Splitter
-                          int subsCount = SubtitleStreams; // Not in the loop otherwise it will be reaccessed at each pass
-                          for (int i = 0; i < subsCount; i++)
-                          {
-                            string subtitleLanguage = SubtitleLanguage(i);
-                            if (FSInfos.Name.ToLowerInvariant().Contains(subtitleLanguage.ToLowerInvariant()))
-                            {
-                              CurrentSubtitleStream = i;
-                              EnableSubtitle = true;
-                              break;
-                            }
-                          }
                         }
+                        goto default;
                       }
                       break;
                     case StreamType.Video:
@@ -2086,6 +2132,18 @@ namespace MediaPortal.Player
           }
           DirectShowUtil.ReleaseComObject(enumFilters);
         }
+        if (streamLAVSelection)
+        {
+          // Init subtitle engine
+          ISubEngine engine = SubEngine.GetInstance(true);
+          if (!engine.LoadSubtitles(graphBuilder, m_strCurrentFile))
+          {
+            SubEngine.engine = new SubEngine.DummyEngine();
+          }
+          // Set LAV Splitter stream
+          CurrentSubtitleStream = CurrentSubtitleLAVStream;
+          EnableSubtitle = CurrentSubtitleLAVStream != -1;
+        }
       }
       catch { }
       return true;
@@ -2114,6 +2172,31 @@ namespace MediaPortal.Player
     public override bool HasPostprocessing
     {
       get { return PostProcessingEngine.GetInstance().HasPostProcessing; }
+    }
+
+    private string LCIDCheck(int LCID)
+    {
+      if (LCID != 0)
+      {
+        int size = Util.Win32API.GetLocaleInfo(LCID, 2, null, 0);
+        if (size > 0)
+        {
+          string languageName = new string(' ', size);
+          Util.Win32API.GetLocaleInfo(LCID, 2, languageName, size);
+
+          if (!string.IsNullOrEmpty(languageName))
+          {
+            if (languageName.Contains("\0"))
+              languageName = languageName.Substring(0, languageName.IndexOf("\0", StringComparison.Ordinal));
+
+            if (languageName.Contains("("))
+              languageName = languageName.Substring(0, languageName.IndexOf("(", StringComparison.Ordinal));
+
+            return Util.Utils.TranslateLanguageString(languageName.Trim());
+          }
+        }
+      }
+      return "";
     }
 
     #endregion

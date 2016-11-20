@@ -36,8 +36,8 @@ namespace MediaPortal.GUI.Library
   /// <summary>
   /// static class which takes care of window management
   /// Things done are:
-  ///   - loading and initizling all windows
-  ///   - routing messages, keypresses, mouse clicks etc to the currently active window
+  ///   - loading and initializing all windows
+  ///   - routing messages, key presses, mouse clicks etc to the currently active window
   ///   - rendering the currently active window
   ///   - methods for switching to the previous window
   ///   - methods to switch to another window
@@ -46,6 +46,8 @@ namespace MediaPortal.GUI.Library
   public class GUIWindowManager
   {
     private static Stopwatch clockWatch = new Stopwatch();
+
+    private static Stopwatch clockWatchMadVr = new Stopwatch();
 
     #region Frame limiting code
 
@@ -81,6 +83,38 @@ namespace MediaPortal.GUI.Library
       clockWatch.Start();
     }
 
+    internal static void WaitForMadVrFrameClock()
+    {
+      long milliSecondsLeft;
+      long timeElapsed = 0;
+
+      // frame limiting code.
+      // sleep as long as there are ticks left for this frame
+      clockWatchMadVr.Stop();
+      timeElapsed = clockWatchMadVr.ElapsedTicks;
+      if (timeElapsed < GUIGraphicsContext.DesiredFrameTime)
+      {
+        milliSecondsLeft = (((GUIGraphicsContext.DesiredFrameTime - timeElapsed) * 1000) / Stopwatch.Frequency);
+        if (milliSecondsLeft > 0)
+        {
+          Thread.Sleep((int)milliSecondsLeft);
+          //Log.Debug("GUIWindowManager: Wait for desired framerate - sleeping {0} ms.", milliSecondsLeft);
+        }
+        else
+        {
+          // Allow to finish other thread context
+          Thread.Sleep(1);
+          //Log.Debug("GUIWindowManager: Cannot reach desired framerate - please check your system config!");
+        }
+      }
+    }
+
+    internal static void StartMadVrFrameClock()
+    {
+      clockWatchMadVr.Reset();
+      clockWatchMadVr.Start();
+    }
+
     #endregion
 
     public enum FocusState
@@ -105,6 +139,7 @@ namespace MediaPortal.GUI.Library
     public static event SendMessageHandler Receivers;
     public static event OnActionHandler OnNewAction;
     public static event OnCallBackHandler Callbacks;
+    public static event OnCallBackHandler MadVrCallbacks;
     public static event PostRenderActionHandler OnPostRenderAction;
     //public static event  PostRendererHandler  OnPostRender;
     public static event WindowActivationHandler OnActivateWindow;
@@ -284,11 +319,12 @@ namespace MediaPortal.GUI.Library
       SendThreadMessage(msg);
 
       // if this is the main thread, then dispatch the messages
-      if (Thread.CurrentThread.Name == "MPMain")
+      if (Thread.CurrentThread.Name == "MPMain" || Thread.CurrentThread.Name == "Config Main")
       {
         DispatchThreadMessages();
       }
 
+      Log.Debug("SendThreadCallbackAndWait - Waitone");
       env.finished.WaitOne();
 
       return env.result;
@@ -304,6 +340,12 @@ namespace MediaPortal.GUI.Library
 
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CALLBACK, 0, 0, 0, 0, 0, env);
       SendThreadMessage(msg);
+
+      // if this is the main thread, then dispatch the messages
+      if (Thread.CurrentThread.Name == "MPMain" || Thread.CurrentThread.Name == "Config Main")
+      {
+        DispatchThreadMessages();
+      }
     }
 
 
@@ -348,7 +390,7 @@ namespace MediaPortal.GUI.Library
     }
 
     /// <summary>
-    /// event handler which is called by GUIGraphicsContext when a new action has occured
+    /// event handler which is called by GUIGraphicsContext when a new action has occurred
     /// The method will add the action to a list which is processed later on in the process () function
     /// The reason for this is that multiple threads can add new action and they should only be
     /// processed by the main thread
@@ -1239,6 +1281,10 @@ namespace MediaPortal.GUI.Library
           }
         }
       }
+      catch (ThreadStateException ex)
+      {
+        Log.Error("ProcessWindows thread exception:{0}", ex.ToString());
+      }
       catch (Exception ex)
       {
         Log.Error("ProcessWindows exception:{0}", ex.ToString());
@@ -1294,6 +1340,22 @@ namespace MediaPortal.GUI.Library
       WaitForFrameClock();
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    public static void MadVrProcess()
+    {
+      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+      {
+        StartFrameClock();
+        if (null != MadVrCallbacks)
+        {
+          MadVrCallbacks();
+        }
+        WaitForFrameClock();
+      }
+    }
+
     #endregion
 
     #region dialog routing
@@ -1316,6 +1378,22 @@ namespace MediaPortal.GUI.Library
         }
       }
     }
+
+    /// <summary>
+    /// Tells whether we need Text Input rather than raw keys.
+    /// </summary>
+    public static bool NeedsTextInput
+    {
+      get
+      {
+      // Do we need IsRouted here?
+      return GUIWindowManager.IsRouted || 
+              GUIWindowManager.ActiveWindowEx == (int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD || 
+              GUIWindowManager.ActiveWindowEx == (int)GUIWindow.Window.WINDOW_TV_SEARCH;
+      }
+    }
+
+
 
     /// <summary>
     /// return the ID of the window which is routed to
