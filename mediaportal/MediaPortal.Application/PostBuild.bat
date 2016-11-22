@@ -192,10 +192,10 @@ REM Enable >2GB for 32 bit process
 call %Build%\MSBUILD_MP_LargeAddressAware.bat %2
 
 REM SharpLibHid
-xcopy %1\..\Packages\SharpLibHid.1.3.1\lib\net20\SharpLibHid.dll . /Y /D
+xcopy %1\..\Packages\SharpLibHid.1.4.2\lib\net40\SharpLibHid.dll . /Y /D
 
 REM SharpLibWin32
-xcopy %1\..\Packages\SharpLibWin32.0.0.7\lib\net20\SharpLibWin32.dll . /Y /D
+xcopy %1\..\Packages\SharpLibWin32.0.0.9\lib\net20\SharpLibWin32.dll . /Y /D
 
 REM System.Management.Automation
 xcopy %1\..\Packages\System.Management.Automation.6.1.7601.17515\lib\net40\System.Management.Automation.dll . /Y /D
