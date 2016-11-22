@@ -137,12 +137,14 @@ namespace MediaPortal
     protected static int           Volume;                   // used to save old volume level in case we mute audio
     protected PlayListPlayer       PlaylistPlayer;           // 
     protected DateTime             MouseTimeOutTimer;        // tracks the time of the last mouse activity
+    protected DateTime             KeyEventTimer;            // tracks the time of the last key event activity
     protected RECT                 LastRect;                 // tracks last rectangle size for window resizing
     protected Point                LastCursorPosition;       // tracks last cursor position during window moving
     protected static SplashScreen  SplashScreen;             // splash screen object
     protected GraphicsAdapterInfo  AdapterInfo;              // hold adapter info for the selected display on startup of MP
     protected int                  MouseTimeOutMP;           // Mouse activity timeout while in MP in seconds
     protected int                  MouseTimeOutFullscreen;   // Mouse activity timeout while in Fullscreen in seconds
+    protected KeyPressEventArgs    PreviousKeyEvent;
 
     #endregion
 
@@ -2319,7 +2321,22 @@ namespace MediaPortal
     private void OnKeyPress(object sender, KeyPressEventArgs e)
     {
       //SL: Why is it done this way? Surely the derived class (MediaPortal.cs) could register to the event as well rather than using that virtual function.
-      KeyPressEvent(e);
+      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+      {
+        // Need to use this hack when wndProc receive double event when madVR in use and exclusive mode.
+        var timeSpam = DateTime.Now - KeyEventTimer;
+        if (e?.KeyChar == PreviousKeyEvent?.KeyChar && timeSpam.TotalMilliseconds < 20)
+        {
+          return;
+        }
+        KeyPressEvent(e);
+        PreviousKeyEvent = e;
+        KeyEventTimer = DateTime.Now;
+      }
+      else
+      {
+        KeyPressEvent(e);
+      }
     }
 
 
