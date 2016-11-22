@@ -1225,8 +1225,13 @@ namespace MediaPortal.Player
 
       if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && !_isFullscreen)
       {
-        // TODO why it is needed for some video to be able to reduce fullscreen video window
-        SetSourceDestRectangles(rSource, rDest);
+        if (_basicVideo != null)
+        {
+          // TODO why it is needed for some video to be able to reduce fullscreen video window
+          _basicVideo.SetDestinationPosition(rDest.X, rDest.Y, nw, nh);
+          GUIGraphicsContext.ScaleVideoWindow(ref nw, ref nh, ref x, ref y);
+          Log.Debug("BDPlayer: rezise madVR video window rDest.X : {0}, rDest.Y : {1}, _width : {2}, _height : {3}", rDest.X, rDest.Y, nw, nh);
+        }
       }
     }
 
