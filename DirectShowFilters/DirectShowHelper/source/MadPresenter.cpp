@@ -119,6 +119,8 @@ void MPMadPresenter::InitializeOSD()
   {
     m_pMad = nullptr;
   }
+
+  Log("%s", __FUNCTION__);
 }
 
 void MPMadPresenter::SetMadVrPaused(bool paused)
@@ -178,12 +180,12 @@ IBaseFilter* MPMadPresenter::Initialize()
       // Create a madVR Window
       if (InitMadvrWindow(m_hWnd))
       {
+        // Code commented out and enable it when testing the non kodi madVR window way
+        //m_hWnd = reinterpret_cast<HWND>(m_hParent);
         Log("%s : Create DSPlayer window - hWnd: %i", __FUNCTION__, m_hWnd);
-        pWindow->put_Owner(m_hParent);
-        pWindow->put_MessageDrain(m_hParent);
-        //pWindow->put_Visible(m_hParent);
-        //pWindow->put_Owner(reinterpret_cast<OAHWND>(m_hWnd));
-        //pWindow->put_Visible(reinterpret_cast<OAHWND>(m_hWnd));
+        pWindow->put_Owner(reinterpret_cast<OAHWND>(m_hWnd));
+        pWindow->put_Visible(reinterpret_cast<OAHWND>(m_hWnd));
+        pWindow->put_MessageDrain(reinterpret_cast<OAHWND>(m_hWnd));
       }
     }
     return baseFilter;
