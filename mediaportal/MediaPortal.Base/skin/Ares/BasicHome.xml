@@ -5,6 +5,7 @@
   <allowoverlay>yes</allowoverlay>
   <rememberLastFocusedControl>yes</rememberLastFocusedControl>
   <controls>
+  
 
 
 	<control>
@@ -33,21 +34,23 @@
       <height>1080</height>
       <texture>#overlaycolour</texture>
     </control>	
+		
 
 	
     <control>
       <description>current temp label</description>
       <type>label</type>
       <id>0</id>
-      <posX>10</posX>
+      <posX>9010</posX>
       <posY>10</posY>
       <height>71</height>
       <align>left</align>
-      <label></label>
+      <label>#tile15plugin.hyperlink #skin.traktnav #skin.tvseriesnav</label>
       <font>font10</font>
       <textcolor>ffffffff</textcolor>
 	  <visible>window.isvisible(35)</visible>
     </control>	
+		
     
 	<!-- Expression test box (labels do not work with cint !! -->
 	
