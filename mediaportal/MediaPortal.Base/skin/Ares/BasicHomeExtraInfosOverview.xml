@@ -15,7 +15,7 @@
         <height>209</height>
         <texture>Inf_gfx.png</texture>
 		<animation effect="fade" time="500" reversible="true">visible</animation>
-	  <visible>control.isvisible(010004)|control.isvisible(010008)|control.isvisible(010012)|control.isvisible(010016)|control.isvisible(010020)</visible>	  
+	  <visible>control.isvisible(010004)|control.isvisible(010008)|control.isvisible(010012)|control.isvisible(010016)|control.isvisible(010020)|control.isvisible(012016)|control.isvisible(013016)</visible>	  
     </control>	
 	
 	
@@ -1506,9 +1506,224 @@
         <textcolor>ffffffff</textcolor>
         <font>font12</font>
       </control>	
-      </control>	 
+      </control>	
 
 
+	  <!--************************************************************************ MYPICTURES *******************************************************************************-->
+	  
+
+	  <control>
+        <description>BasicHome tile3</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>56</posX>
+        <posY>198</posY>
+		<height>190</height>
+		<width>190</width>
+        <texture mask="MAmask.png">blue.png</texture>
+        <colordiffuse>ffffffff</colordiffuse>
+        <visible>control.isvisible(013016)</visible>
+		<animation effect="fade" time="500" reversible="true">visible</animation>
+      </control>	
+
+	  
+	  <control>
+        <description>BasicHome tile3</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>246</posX>
+        <posY>198</posY>
+		<height>190</height>
+		<width>190</width>
+        <texture mask="">blue.png</texture>
+        <colordiffuse>ffffffff</colordiffuse>
+        <visible>control.isvisible(013016)</visible>
+		<animation effect="fade" time="500" reversible="true">visible</animation>
+      </control>	
+  
+	  
+	  <control>
+        <description>BasicHome tile3</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>436</posX>
+        <posY>198</posY>
+		<height>190</height>
+		<width>190</width>
+        <texture mask="">blue.png</texture>
+        <colordiffuse>ffffffff</colordiffuse>
+        <visible>control.isvisible(013016)</visible>
+		<animation effect="fade" time="500" reversible="true">visible</animation>
+      </control>	  
+	  <control>
+        <description>BasicHome tile3</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>76</posX>
+        <posY>218</posY>
+		<height>150</height>
+		<width>150</width>
+		<keepaspectratio>true</keepaspectratio>
+        <texture mask="">#latestMediaHandler.picture.latest1.thumb</texture>
+        <colordiffuse>ffffffff</colordiffuse>
+        <visible>control.isvisible(013016)</visible>
+		<animation effect="fade" time="500" reversible="true">visible</animation>
+      </control>	
+
+	  
+	  <control>
+        <description>BasicHome tile3</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>266</posX>
+        <posY>218</posY>
+		<height>150</height>
+		<width>150</width>
+		<keepaspectratio>true</keepaspectratio>
+        <texture mask="">#latestMediaHandler.picture.latest2.thumb</texture>
+        <colordiffuse>ffffffff</colordiffuse>
+        <visible>control.isvisible(013016)</visible>
+		<animation effect="fade" time="500" reversible="true">visible</animation>
+      </control>	
+  
+	  
+	  <control>
+        <description>BasicHome tile3</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>456</posX>
+        <posY>218</posY>
+		<height>150</height>
+		<width>150</width>
+		<keepaspectratio>true</keepaspectratio>
+        <texture mask="">#latestMediaHandler.picture.latest3.thumb</texture>
+        <colordiffuse>ffffffff</colordiffuse>
+        <visible>control.isvisible(013016)</visible>
+		<animation effect="fade" time="500" reversible="true">visible</animation>
+      </control>
+	  
+      <control>
+        <description>Play Button</description>
+        <type>button</type>
+        <id>91919971</id>
+        <posX>90</posX>
+        <posY>230</posY>
+        <width>130</width>
+        <height>130</height>
+        <textureFocus>play_shad1.png</textureFocus>
+        <textureNoFocus>play_shad1.png</textureNoFocus>
+        <label></label>
+        <onleft>91919971</onleft>
+        <onright>91919972</onright>
+        <onup>2</onup>
+		<ondown>#skin.picsnav</ondown>
+        <font>font12</font>
+        <animation effect="zoom" start="10,10" end="100,100" center="0,0" time="400" acceleration="-0.9" reversible="false">visible</animation>	
+        <visible allowhiddenfocus="true">control.hasfocus(91919971)</visible>
+    </control>
+      <control>
+        <description>Play Button</description>
+        <type>button</type>
+        <id>91919972</id>
+        <posX>278</posX>
+        <posY>230</posY>
+        <width>130</width>
+        <height>130</height>
+        <textureFocus>play_shad1.png</textureFocus>
+        <textureNoFocus>play_shad1.png</textureNoFocus>
+        <label></label>
+        <onleft>91919971</onleft>
+        <onright>91919973</onright>
+        <onup>2</onup>
+		<ondown>#skin.picsnav</ondown>
+        <font>font12</font>
+        <animation effect="zoom" start="10,10" end="100,100" center="0,0" time="400" acceleration="-0.9" reversible="false">visible</animation>
+        <visible allowhiddenfocus="true">control.hasfocus(91919972)</visible>
+    </control>
+      <control>
+        <description>Play Button</description>
+        <type>button</type>
+        <id>91919973</id>
+        <posX>468</posX>
+        <posY>230</posY>
+        <width>130</width>
+        <height>130</height>
+        <textureFocus>play_shad1.png</textureFocus>
+        <textureNoFocus>play_shad1.png</textureNoFocus>
+        <label></label>
+        <onleft>91919972</onleft>
+        <onright>91919973</onright>
+        <onup>2</onup>
+		<ondown>#skin.picsnav</ondown>
+        <font>font12</font>
+        <animation effect="zoom" start="10,10" end="100,100" center="0,0" time="400" acceleration="-0.9" reversible="false">visible</animation>
+        <visible allowhiddenfocus="true">control.hasfocus(91919973)</visible>
+    </control>	
+	
+	<control>
+	  <description>DUMMY CONTROL FOR MOVIES VISIBILITY</description>
+      <type>textbox</type>
+      <id>0</id>
+      <posX>643</posX>
+      <posY>215</posY>
+      <width>1550</width>
+      <height>30</height>
+      <label>#latestMediaHandler.picture.latest1.title</label>
+      <align>left</align>
+      <font>font12</font>
+      <textcolor>eaeaea</textcolor>
+      <visible>control.isvisible(013016)</visible>
+	  <animation effect="fade" time="500" reversible="true">visible</animation>
+	  </control>	
+
+	<control>
+	  <description>DUMMY CONTROL FOR MOVIES VISIBILITY</description>
+      <type>textbox</type>
+      <id>0</id>
+      <posX>643</posX>
+      <posY>265</posY>
+      <width>1550</width>
+      <height>30</height>
+      <label>#latestMediaHandler.picture.latest2.title</label>
+      <align>left</align>
+      <font>font12</font>
+      <textcolor>eaeaea</textcolor>
+      <visible>control.isvisible(013016)</visible>
+	  <animation effect="fade" time="500" reversible="true">visible</animation>
+    </control>	
+	<control>
+	  <description>DUMMY CONTROL FOR MOVIES VISIBILITY</description>
+      <type>textbox</type>
+      <id>0</id>
+      <posX>643</posX>
+      <posY>320</posY>
+      <width>1550</width>
+      <height>30</height>
+      <label>#latestMediaHandler.picture.latest3.title</label>
+      <align>left</align>
+      <font>font12</font>
+      <textcolor>eaeaea</textcolor>
+      <visible>control.isvisible(013016)</visible>
+	  <animation effect="fade" time="500" reversible="true">visible</animation>
+    </control>		
+
+	  <control>
+        <description>BasicHome tile3</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>246</posX>
+        <posY>198</posY>
+		<height>190</height>
+		<width>209</width>
+        <texture mask="">home_shadows2.png</texture>
+        <colordiffuse>ffffffff</colordiffuse>
+        <visible>control.isvisible(013016)</visible>
+		<animation effect="fade" time="500" reversible="true">visible</animation>
+      </control>	
+	  
+	  
+	  
+	  
 	  
 	  
     </control>

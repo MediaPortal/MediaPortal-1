@@ -776,7 +776,56 @@
       <height>10</height>
       <texture></texture> 
 	  <visible>[[string.equals(#tile21plugin.hyperlink,Trakt)+[control.hasfocus(98302)|control.hasfocus(98301)]]|[string.equals(#tile22plugin.hyperlink,Trakt)+[control.hasfocus(98302)|control.hasfocus(98301)]]|[string.equals(#tile23plugin.hyperlink,Trakt)+[control.hasfocus(98302)|control.hasfocus(98301)]]|[string.equals(#tile24plugin.hyperlink,Trakt)+[control.hasfocus(98302)|control.hasfocus(98301)]]|[string.equals(#tile25plugin.hyperlink,Trakt)+[control.hasfocus(98302)|control.hasfocus(98301)]]]+!control.isvisible(5511121)+!control.isvisible(5511122)+!control.isvisible(5511123)+!control.isvisible(5511124)</visible>
-    </control>			
+    </control>	
+
+
+    <!--:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::PICS LATEST VISIBILITY:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::-->
+
+
+	<control>
+      <description>DUMMY Pictures 1</description>
+      <type>image</type>
+      <id>013013</id>
+      <posX>7000</posX>
+      <posY>10</posY>
+      <width>10</width>
+      <height>10</height>
+      <texture></texture>  
+	  <visible>[string.equals(#tile1plugin.hyperlink,Pictures)+control.hasfocus(00500)|control.hasfocus(91919971)]|[string.equals(#tile2plugin.hyperlink,Pictures)+control.hasfocus(00501)|control.hasfocus(91919971)]|[string.equals(#tile3plugin.hyperlink,Pictures)+control.hasfocus(00502)|control.hasfocus(91919971)]|[string.equals(#tile4plugin.hyperlink,Pictures)+control.hasfocus(00503)|control.hasfocus(91919971)]|[string.equals(#tile5plugin.hyperlink,Pictures)+control.hasfocus(00504)|control.hasfocus(91919971)]|[string.equals(#tile6plugin.hyperlink,Pictures)+control.hasfocus(00505)|control.hasfocus(91919971)]|[string.equals(#tile7plugin.hyperlink,Pictures)+control.hasfocus(00506)|control.hasfocus(91919971)]|[string.equals(#tile8plugin.hyperlink,Pictures)+control.hasfocus(00507)|control.hasfocus(91919971)]|[string.equals(#tile9plugin.hyperlink,Pictures)+control.hasfocus(00508)|control.hasfocus(91919971)]|[string.equals(#tile10plugin.hyperlink,Pictures)+control.hasfocus(00509)|control.hasfocus(91919971)]|[string.equals(#tile11plugin.hyperlink,Pictures)+control.hasfocus(00510)|control.hasfocus(91919971)]|[string.equals(#tile12plugin.hyperlink,Pictures)+control.hasfocus(00511)|control.hasfocus(91919971)]|[string.equals(#tile13plugin.hyperlink,Pictures)+control.hasfocus(00512)|control.hasfocus(91919971)]|[string.equals(#tile14plugin.hyperlink,Pictures)+control.hasfocus(00513)|control.hasfocus(91919971)]|[string.equals(#tile15plugin.hyperlink,Pictures)+control.hasfocus(00514)|control.hasfocus(91919971)]|[string.equals(#tile16plugin.hyperlink,Pictures)+control.hasfocus(00515)|control.hasfocus(91919971)]|[string.equals(#tile17plugin.hyperlink,Pictures)+control.hasfocus(00516)|control.hasfocus(91919971)]|[string.equals(#tile18plugin.hyperlink,Pictures)+control.hasfocus(00517)|control.hasfocus(91919971)]|[string.equals(#tile19plugin.hyperlink,Pictures)+control.hasfocus(00518)|control.hasfocus(91919971)]|[string.equals(#tile20plugin.hyperlink,Pictures)+control.hasfocus(00519)|control.hasfocus(91919971)]|[string.equals(#tile21plugin.hyperlink,Pictures)+control.hasfocus(00520)|control.hasfocus(91919971)]|[string.equals(#tile22plugin.hyperlink,Pictures)+control.hasfocus(00521)|control.hasfocus(91919971)]|[string.equals(#tile23plugin.hyperlink,Pictures)+control.hasfocus(00522)|control.hasfocus(91919971)]|[string.equals(#tile24plugin.hyperlink,Pictures)+control.hasfocus(00523)|control.hasfocus(91919971)]|[string.equals(#tile25plugin.hyperlink,Pictures)+control.hasfocus(00524)|control.hasfocus(91919971)]+plugin.isenabled(Latest Media Handler)</visible>
+    </control>	
+	<control>
+      <description>DUMMY Pictures 2</description>
+      <type>image</type>
+      <id>013014</id>
+      <posX>7000</posX>
+      <posY>10</posY>
+      <width>10</width>
+      <height>10</height>
+      <texture></texture> 
+      <visible>control.hasfocus(91919972)+plugin.isenabled(Latest Media Handler)</visible>	  
+    </control>	
+	<control>
+      <description>DUMMY Pictures 3</description>
+      <type>image</type>
+      <id>013015</id>
+      <posX>7000</posX>
+      <posY>10</posY>
+      <width>10</width>
+      <height>10</height>
+      <texture></texture> 
+      <visible>control.hasfocus(91919973)+plugin.isenabled(Latest Media Handler)</visible>	  
+    </control>	
+	<control>
+      <description>DUMMY Pictures THUMBS</description>
+      <type>image</type>
+      <id>013016</id>
+      <posX>7000</posX>
+      <posY>10</posY>
+      <width>10</width>
+      <height>10</height>
+      <texture></texture> 
+	  <visible>[[string.equals(#tile1plugin.hyperlink,Pictures)+control.hasfocus(00500)|control.hasfocus(91919971)|control.hasfocus(91919972)|control.hasfocus(91919973)]|[string.equals(#tile2plugin.hyperlink,Pictures)+control.hasfocus(00501)|control.hasfocus(91919971)|control.hasfocus(91919972)|control.hasfocus(91919973)]|[string.equals(#tile3plugin.hyperlink,Pictures)+control.hasfocus(00502)|control.hasfocus(91919971)|control.hasfocus(91919972)|control.hasfocus(91919973)]|[string.equals(#tile4plugin.hyperlink,Pictures)+control.hasfocus(00503)|control.hasfocus(91919971)|control.hasfocus(91919972)|control.hasfocus(91919973)]|[string.equals(#tile5plugin.hyperlink,Pictures)+control.hasfocus(00504)|control.hasfocus(91919971)|control.hasfocus(91919972)|control.hasfocus(91919973)]|[string.equals(#tile6plugin.hyperlink,Pictures)+control.hasfocus(00505)|control.hasfocus(91919971)|control.hasfocus(91919972)|control.hasfocus(91919973)]|[string.equals(#tile7plugin.hyperlink,Pictures)+control.hasfocus(00506)|control.hasfocus(91919971)|control.hasfocus(91919972)|control.hasfocus(91919973)]|[string.equals(#tile8plugin.hyperlink,Pictures)+control.hasfocus(00507)|control.hasfocus(91919971)|control.hasfocus(91919972)|control.hasfocus(91919973)]|[string.equals(#tile9plugin.hyperlink,Pictures)+control.hasfocus(00508)|control.hasfocus(91919971)|control.hasfocus(91919972)|control.hasfocus(91919973)]|[string.equals(#tile10plugin.hyperlink,Pictures)+control.hasfocus(00509)|control.hasfocus(91919971)|control.hasfocus(91919972)|control.hasfocus(91919973)]|[string.equals(#tile11plugin.hyperlink,Pictures)+control.hasfocus(00510)|control.hasfocus(91919971)|control.hasfocus(91919972)|control.hasfocus(91919973)]|[string.equals(#tile12plugin.hyperlink,Pictures)+control.hasfocus(00511)|control.hasfocus(91919971)|control.hasfocus(91919972)|control.hasfocus(91919973)]|[string.equals(#tile13plugin.hyperlink,Pictures)+control.hasfocus(00512)|control.hasfocus(91919971)|control.hasfocus(91919972)|control.hasfocus(91919973)]|[string.equals(#tile14plugin.hyperlink,Pictures)+control.hasfocus(00513)|control.hasfocus(91919971)|control.hasfocus(91919972)|control.hasfocus(91919973)]|[string.equals(#tile15plugin.hyperlink,Pictures)+control.hasfocus(00514)|control.hasfocus(91919971)|control.hasfocus(91919972)|control.hasfocus(91919973)]|[string.equals(#tile16plugin.hyperlink,Pictures)+control.hasfocus(00515)|control.hasfocus(91919971)|control.hasfocus(91919972)|control.hasfocus(91919973)]|[string.equals(#tile17plugin.hyperlink,Pictures)+control.hasfocus(00516)|control.hasfocus(91919971)|control.hasfocus(91919972)|control.hasfocus(91919973)]|[string.equals(#tile18plugin.hyperlink,Pictures)+control.hasfocus(00517)|control.hasfocus(91919971)|control.hasfocus(91919972)|control.hasfocus(91919973)]|[string.equals(#tile19plugin.hyperlink,Pictures)+control.hasfocus(00518)|control.hasfocus(91919971)|control.hasfocus(91919972)|control.hasfocus(91919973)]|[string.equals(#tile20plugin.hyperlink,Pictures)+control.hasfocus(00519)|control.hasfocus(91919971)|control.hasfocus(91919972)|control.hasfocus(91919973)]|[string.equals(#tile21plugin.hyperlink,Pictures)+control.hasfocus(00520)|control.hasfocus(91919971)|control.hasfocus(91919972)|control.hasfocus(91919973)]|[string.equals(#tile22plugin.hyperlink,Pictures)+control.hasfocus(00521)|control.hasfocus(91919971)|control.hasfocus(91919972)|control.hasfocus(91919973)]|[string.equals(#tile23plugin.hyperlink,Pictures)+control.hasfocus(00522)|control.hasfocus(91919971)|control.hasfocus(91919972)|control.hasfocus(91919973)]|[string.equals(#tile24plugin.hyperlink,Pictures)+control.hasfocus(00523)|control.hasfocus(91919971)|control.hasfocus(91919972)|control.hasfocus(91919973)]|[string.equals(#tile25plugin.hyperlink,Pictures)+control.hasfocus(00524)|control.hasfocus(91919971)|control.hasfocus(91919972)|control.hasfocus(91919973)]]+plugin.isenabled(Latest Media Handler)+string.equals(#latestMediaHandler.picture.latest.enabled,True)</visible>
+    </control>		
 
 
 
