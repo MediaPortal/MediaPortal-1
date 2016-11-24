@@ -498,7 +498,7 @@ namespace MediaPortal.GUI.Library
           GUIWindow._loadSkinDone = true;
           if (!isSkinXMLLoading)
           {
-            int result = GUIWindowManager.SendThreadCallback(LoadSkinThreaded, 0, 0, null);
+            int result = GUIWindowManager.SendThreadCallbackSkin(LoadSkinThreaded, 0, 0, null);
           }
         }
         return _loadSkinResult;

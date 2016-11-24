@@ -114,6 +114,7 @@ namespace MediaPortal.Player
     private int _reduceMadvrFrame = 0;
     private bool _useReduceMadvrFrame = false;
     private string _subEngineType = "";
+    private readonly object _lockobj = new object();
 
     private bool UiVisible { get; set; }
 
@@ -781,19 +782,12 @@ namespace MediaPortal.Player
           {
             SubtitleRenderer.GetInstance().Render();
             BDOSDRenderer.GetInstance().Render();
-            GUIGraphicsContext.RenderOverlay = true;
           }
 
           GUIGraphicsContext.RenderGUI.RenderFrame(GUIGraphicsContext.TimePassed, layers, ref _visible);
 
           GUIFontManager.Present();
           device.EndScene();
-
-          if (layers == GUILayers.under)
-          {
-            GUIGraphicsContext.RenderGui = false;
-            GUIGraphicsContext.RenderOverlay = false;
-          }
 
           // Present() call is done on C++ side so we are able to use DirectX 9 Ex device
           // which allows us to skip the v-sync wait. We don't want to wait with madVR
@@ -837,13 +831,16 @@ namespace MediaPortal.Player
 
     public void SetRenderTarget(uint target)
     {
-      Surface surface = new Surface((IntPtr) target);
-      if (GUIGraphicsContext.DX9Device != null)
+      lock (_lockobj)
       {
-        GUIGraphicsContext.DX9Device.SetRenderTarget(0, surface);
+        Surface surface = new Surface((IntPtr) target);
+        if (GUIGraphicsContext.DX9Device != null)
+        {
+          GUIGraphicsContext.DX9Device.SetRenderTarget(0, surface);
+        }
+        //surface.ReleaseGraphics();
+        //surface.Dispose();
       }
-      surface.ReleaseGraphics();
-      surface.Dispose();
     }
 
     public void SetSubtitleDevice(IntPtr device)

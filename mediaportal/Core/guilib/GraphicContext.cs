@@ -999,7 +999,6 @@ namespace MediaPortal.GUI.Library
         {
           _isFullScreenVideo = value;
           VideoWindowChanged();
-          GUIGraphicsContext.RenderGui = true;
         }
       }
     }

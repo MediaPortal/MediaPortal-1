@@ -132,16 +132,15 @@ void MPMadPresenter::SetMadVrPaused(bool paused)
   {
     if (paused)
     {
-      int counter = 0;
-      OAFilterState state = -1;
-      m_pMediaControl->GetState(100, &state);
-      if (state != State_Paused)
-      {
-        m_pPaused = false;
-      }
-
       if (!m_pPaused)
       {
+        int counter = 0;
+        OAFilterState state = -1;
+        m_pMediaControl->GetState(100, &state);
+        if (state != State_Paused)
+        {
+          m_pPaused = false;
+        }
         m_pMediaControl->Pause();
         m_pPaused = true;
         Log("MPMadPresenter:::SetMadVrPaused() pause");
@@ -743,7 +742,7 @@ void MPMadPresenter::RenderToTextureOSD(IDirect3DTexture9* pTexture)
       hr = m_pDevice->Clear(0, nullptr, D3DCLEAR_TARGET, D3DXCOLOR(0, 0, 0, 0), 1.0f, 0);
     }
   }
-  //Log("RenderToTexture hr: 0x%08x", hr);
+  //Log("RenderToTextureOSD hr: 0x%08x", hr);
 }
 
 void MPMadPresenter::RenderToTextureGUI(IDirect3DTexture9* pTexture)
@@ -760,7 +759,7 @@ void MPMadPresenter::RenderToTextureGUI(IDirect3DTexture9* pTexture)
       hr = m_pDevice->Clear(0, nullptr, D3DCLEAR_TARGET, D3DXCOLOR(0, 0, 0, 0), 1.0f, 0);
     }
   }
-  //Log("RenderToTexture hr: 0x%08x", hr);
+  //Log("RenderToTextureGUI hr: 0x%08x", hr);
 }
 
 void MPMadPresenter::RenderTexture(IDirect3DVertexBuffer9* pVertexBuf, IDirect3DTexture9* pTexture)
@@ -909,10 +908,14 @@ HRESULT MPMadPresenter::SetDevice(IDirect3DDevice9* pD3DDev)
 
     if (SUCCEEDED(hr = m_pDevice->CreateTexture(m_dwGUIWidth, m_dwGUIHeight, 0, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &m_pMPTextureGui.p, &m_hSharedGuiHandle)))
       if (SUCCEEDED(hr = m_pDevice->CreateTexture(m_dwGUIWidth, m_dwGUIHeight, 0, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &m_pMPTextureOsd.p, &m_hSharedOsdHandle)))
-      {
-        hr = S_OK;
-        Log("MPMadPresenter::SetDevice() init ok for D3D : 0x:%x", m_pMadD3DDev);
-      }
+        if (SUCCEEDED(hr = m_pMadD3DDev->CreateVertexBuffer(sizeof(VID_FRAME_VERTEX) * 4, D3DUSAGE_WRITEONLY, D3DFVF_VID_FRAME_VERTEX, D3DPOOL_DEFAULT, &m_pMadGuiVertexBuffer.p, NULL)))
+          if (SUCCEEDED(hr = m_pMadD3DDev->CreateVertexBuffer(sizeof(VID_FRAME_VERTEX) * 4, D3DUSAGE_WRITEONLY, D3DFVF_VID_FRAME_VERTEX, D3DPOOL_DEFAULT, &m_pMadOsdVertexBuffer.p, NULL)))
+            if (SUCCEEDED(hr = m_pMadD3DDev->CreateTexture(m_dwGUIWidth, m_dwGUIHeight, 0, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &m_pRenderTextureGui.p, &m_hSharedGuiHandle)))
+              if (SUCCEEDED(hr = m_pMadD3DDev->CreateTexture(m_dwGUIWidth, m_dwGUIHeight, 0, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &m_pRenderTextureOsd.p, &m_hSharedOsdHandle)))
+              {
+                hr = S_OK;
+                Log("%s : init ok for D3D : 0x:%x", __FUNCTION__, m_pMadD3DDev);
+              }
 
     // Get refresh rate information
     if (Com::SmartQIPtr<IMadVRInfo> m_pInfos = m_pMad)
@@ -973,22 +976,14 @@ HRESULT MPMadPresenter::RenderEx3(REFERENCE_TIME rtStart, REFERENCE_TIME rtStop,
 
     HRESULT hr = S_FALSE;
 
-    if (!m_pInitOSDRender)
+    if (!m_pInitOSDRender && !m_pShutdown)
     {
-      if (SUCCEEDED(hr = m_pMadD3DDev->CreateVertexBuffer(sizeof(VID_FRAME_VERTEX) * 4, D3DUSAGE_WRITEONLY, D3DFVF_VID_FRAME_VERTEX, D3DPOOL_DEFAULT, &m_pMadGuiVertexBuffer.p, NULL)))
-        if (SUCCEEDED(hr = m_pMadD3DDev->CreateVertexBuffer(sizeof(VID_FRAME_VERTEX) * 4, D3DUSAGE_WRITEONLY, D3DFVF_VID_FRAME_VERTEX, D3DPOOL_DEFAULT, &m_pMadOsdVertexBuffer.p, NULL)))
-          if (SUCCEEDED(hr = m_pMadD3DDev->CreateTexture(m_dwGUIWidth, m_dwGUIHeight, 0, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &m_pRenderTextureGui.p, &m_hSharedGuiHandle)))
-            if (SUCCEEDED(hr = m_pMadD3DDev->CreateTexture(m_dwGUIWidth, m_dwGUIHeight, 0, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &m_pRenderTextureOsd.p, &m_hSharedOsdHandle)))
-            {
-              hr = S_OK;
-              Log("%s : init ok for D3D : 0x:%x", __FUNCTION__, m_pMadD3DDev);
-            }
+      m_pInitOSDRender = true;
       if (m_pCallback)
       {
         m_pCallback->SetSubtitleDevice((DWORD)m_pMadD3DDev);
         Log("%s : SetDevice() SetSubtitleDevice for D3D : 0x:%x", __FUNCTION__, m_pMadD3DDev);
       }
-      m_pInitOSDRender = true;
 
       //if (m_pMediaControl)
       //{
@@ -1013,6 +1008,10 @@ HRESULT MPMadPresenter::RenderEx3(REFERENCE_TIME rtStart, REFERENCE_TIME rtStop,
         pWindow->put_Owner(reinterpret_cast<OAHWND>(m_hWnd));
         pWindow->put_Visible(reinterpret_cast<OAHWND>(m_hWnd));
         pWindow->SetWindowPosition(0, 0, m_dwGUIWidth, m_dwGUIHeight);
+        // Make MediaPortal window normal ( if minimized )
+        ShowWindow(m_hWnd, SW_SHOWNORMAL);
+        // Make Mediaportal window focused
+        SetForegroundWindow(m_hWnd);
       }
     }
     m_deviceState.Store();
