@@ -101,6 +101,7 @@ MPMadPresenter::~MPMadPresenter()
     DeInitMadvrWindow();
 
     Log("MPMadPresenter::Destructor() - instance 0x%x", this);
+    Sleep(500);
   }
 }
 
@@ -183,8 +184,9 @@ IBaseFilter* MPMadPresenter::Initialize()
       Log("%s : Create DSPlayer window - hWnd: %i", __FUNCTION__, m_hWnd);
       if (m_pMad)
       {
-        hr = m_pMad->QueryInterface(IID_IVideoWindow, (void **)&m_pVideoWindow);
+        hr = m_pMad->QueryInterface(IID_IVideoWindow, reinterpret_cast<void **>(&m_pVideoWindow));
         if (SUCCEEDED(hr)) {
+          Sleep(100);
           m_pVideoWindow->put_Owner(reinterpret_cast<OAHWND>(m_hWnd));
           m_pVideoWindow->put_WindowStyle(WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN);
           m_pVideoWindow->put_Visible(OATRUE);
@@ -193,6 +195,7 @@ IBaseFilter* MPMadPresenter::Initialize()
           m_pVideoWindow->SetWindowForeground(OATRUE);
           m_pVideoWindow->put_MessageDrain(reinterpret_cast<OAHWND>(m_hWnd));
           Log("%s : Create DSPlayer window - hr : 0x%08x", __FUNCTION__, hr);
+          Sleep(100);
         }
       }
     }
@@ -434,7 +437,7 @@ void MPMadPresenter::SetDsWndVisible(bool bVisible)
 HRESULT MPMadPresenter::Stopping()
 {
   { // Scope for autolock for the local variable (lock, which when deleted releases the lock)
-    CAutoLock lock(this);
+    //CAutoLock lock(this);
 
     if (Com::SmartQIPtr<IMadVRSettings> m_pSettings = m_pMad)
     {
@@ -568,7 +571,7 @@ HRESULT MPMadPresenter::ClearBackground(LPCSTR name, REFERENCE_TIME frameStart, 
   WORD videoHeight = (WORD)activeVideoRect->bottom - (WORD)activeVideoRect->top;
   WORD videoWidth = (WORD)activeVideoRect->right - (WORD)activeVideoRect->left;
 
-  //CAutoLock cAutoLock(this);
+  CAutoLock cAutoLock(this);
 
   //// Ugly hack to avoid flickering (most occurs on Intel GPU)
   //bool isFullScreen = m_pCallback->IsFullScreen();
@@ -602,7 +605,7 @@ HRESULT MPMadPresenter::ClearBackground(LPCSTR name, REFERENCE_TIME frameStart, 
   m_dwHeight = (WORD)fullOutputRect->bottom - (WORD)fullOutputRect->top; // added back
   m_dwWidth = (WORD)fullOutputRect->right - (WORD)fullOutputRect->left;
 
-  RenderToTextureGUI(m_pMPTextureGui);
+  RenderToTexture(m_pMPTextureGui);
 
   if (SUCCEEDED(hr = m_deviceState.Store()))
   {
@@ -656,7 +659,7 @@ HRESULT MPMadPresenter::RenderOsd(LPCSTR name, REFERENCE_TIME frameStart, RECT* 
   WORD videoHeight = (WORD)activeVideoRect->bottom - (WORD)activeVideoRect->top;
   WORD videoWidth = (WORD)activeVideoRect->right - (WORD)activeVideoRect->left;
 
-  //CAutoLock cAutoLock(this);
+  CAutoLock cAutoLock(this);
 
   //// Ugly hack to avoid flickering (most occurs on Intel GPU)
   //bool isFullScreen = m_pCallback->IsFullScreen();
@@ -708,7 +711,7 @@ HRESULT MPMadPresenter::RenderOsd(LPCSTR name, REFERENCE_TIME frameStart, RECT* 
     }
   }
 
-  RenderToTextureOSD(m_pMPTextureOsd);
+  RenderToTexture(m_pMPTextureOsd);
 
   if (SUCCEEDED(hr = m_deviceState.Store()))
   {
@@ -746,7 +749,7 @@ HRESULT MPMadPresenter::RenderOsd(LPCSTR name, REFERENCE_TIME frameStart, RECT* 
   return uiVisible ? CALLBACK_USER_INTERFACE : CALLBACK_INFO_DISPLAY;
 }
 
-void MPMadPresenter::RenderToTextureOSD(IDirect3DTexture9* pTexture)
+void MPMadPresenter::RenderToTexture(IDirect3DTexture9* pTexture)
 {
   if (!m_pDevice)
     return;
@@ -760,24 +763,7 @@ void MPMadPresenter::RenderToTextureOSD(IDirect3DTexture9* pTexture)
       hr = m_pDevice->Clear(0, nullptr, D3DCLEAR_TARGET, D3DXCOLOR(0, 0, 0, 0), 1.0f, 0);
     }
   }
-  //Log("RenderToTextureOSD hr: 0x%08x", hr);
-}
-
-void MPMadPresenter::RenderToTextureGUI(IDirect3DTexture9* pTexture)
-{
-  if (!m_pDevice)
-    return;
-  HRESULT hr = E_UNEXPECTED;
-  IDirect3DSurface9* pSurface = nullptr; // This will be released by C# side
-  if (SUCCEEDED(hr = pTexture->GetSurfaceLevel(0, &pSurface)))
-  {
-    if (SUCCEEDED(hr = m_pCallback->SetRenderTarget(reinterpret_cast<DWORD>(pSurface))))
-    {
-      // TODO is it needed ?
-      hr = m_pDevice->Clear(0, nullptr, D3DCLEAR_TARGET, D3DXCOLOR(0, 0, 0, 0), 1.0f, 0);
-    }
-  }
-  //Log("RenderToTextureGUI hr: 0x%08x", hr);
+  //Log("RenderToTexture hr: 0x%08x", hr);
 }
 
 void MPMadPresenter::RenderTexture(IDirect3DVertexBuffer9* pVertexBuf, IDirect3DTexture9* pTexture)
@@ -908,7 +894,7 @@ HRESULT MPMadPresenter::SetDevice(IDirect3DDevice9* pD3DDev)
   // Lock madVR thread while Shutdown()
   CAutoLock lock(&m_dsLock);
 
-  //CAutoLock cAutoLock(this);
+  CAutoLock cAutoLock(this);
 
   Log("MPMadPresenter::SetDevice() device 0x:%x", pD3DDev);
 
