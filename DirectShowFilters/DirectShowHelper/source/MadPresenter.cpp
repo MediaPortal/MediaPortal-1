@@ -184,7 +184,7 @@ IBaseFilter* MPMadPresenter::Initialize()
         Log("%s : Create DSPlayer window - hWnd: %i", __FUNCTION__, m_hWnd);
         pWindow->put_Owner(reinterpret_cast<OAHWND>(m_hWnd));
         pWindow->put_Visible(reinterpret_cast<OAHWND>(m_hWnd));
-        pWindow->put_MessageDrain(reinterpret_cast<OAHWND>(m_hWnd));
+        //pWindow->put_MessageDrain(reinterpret_cast<OAHWND>(m_hWnd));
       }
     }
     return baseFilter;
@@ -908,14 +908,6 @@ HRESULT MPMadPresenter::SetDevice(IDirect3DDevice9* pD3DDev)
 
     if (SUCCEEDED(hr = m_pDevice->CreateTexture(m_dwGUIWidth, m_dwGUIHeight, 0, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &m_pMPTextureGui.p, &m_hSharedGuiHandle)))
       if (SUCCEEDED(hr = m_pDevice->CreateTexture(m_dwGUIWidth, m_dwGUIHeight, 0, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &m_pMPTextureOsd.p, &m_hSharedOsdHandle)))
-        if (SUCCEEDED(hr = m_pMadD3DDev->CreateVertexBuffer(sizeof(VID_FRAME_VERTEX) * 4, D3DUSAGE_WRITEONLY, D3DFVF_VID_FRAME_VERTEX, D3DPOOL_DEFAULT, &m_pMadGuiVertexBuffer.p, NULL)))
-          if (SUCCEEDED(hr = m_pMadD3DDev->CreateVertexBuffer(sizeof(VID_FRAME_VERTEX) * 4, D3DUSAGE_WRITEONLY, D3DFVF_VID_FRAME_VERTEX, D3DPOOL_DEFAULT, &m_pMadOsdVertexBuffer.p, NULL)))
-            if (SUCCEEDED(hr = m_pMadD3DDev->CreateTexture(m_dwGUIWidth, m_dwGUIHeight, 0, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &m_pRenderTextureGui.p, &m_hSharedGuiHandle)))
-              if (SUCCEEDED(hr = m_pMadD3DDev->CreateTexture(m_dwGUIWidth, m_dwGUIHeight, 0, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &m_pRenderTextureOsd.p, &m_hSharedOsdHandle)))
-              {
-                hr = S_OK;
-                Log("%s : init ok for D3D : 0x:%x", __FUNCTION__, m_pMadD3DDev);
-              }
 
     // Get refresh rate information
     if (Com::SmartQIPtr<IMadVRInfo> m_pInfos = m_pMad)
@@ -979,6 +971,14 @@ HRESULT MPMadPresenter::RenderEx3(REFERENCE_TIME rtStart, REFERENCE_TIME rtStop,
     if (!m_pInitOSDRender && !m_pShutdown)
     {
       m_pInitOSDRender = true;
+      if (SUCCEEDED(hr = m_pMadD3DDev->CreateVertexBuffer(sizeof(VID_FRAME_VERTEX) * 4, D3DUSAGE_WRITEONLY, D3DFVF_VID_FRAME_VERTEX, D3DPOOL_DEFAULT, &m_pMadGuiVertexBuffer.p, NULL)))
+        if (SUCCEEDED(hr = m_pMadD3DDev->CreateVertexBuffer(sizeof(VID_FRAME_VERTEX) * 4, D3DUSAGE_WRITEONLY, D3DFVF_VID_FRAME_VERTEX, D3DPOOL_DEFAULT, &m_pMadOsdVertexBuffer.p, NULL)))
+          if (SUCCEEDED(hr = m_pMadD3DDev->CreateTexture(m_dwGUIWidth, m_dwGUIHeight, 0, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &m_pRenderTextureGui.p, &m_hSharedGuiHandle)))
+            if (SUCCEEDED(hr = m_pMadD3DDev->CreateTexture(m_dwGUIWidth, m_dwGUIHeight, 0, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &m_pRenderTextureOsd.p, &m_hSharedOsdHandle)))
+            {
+              hr = S_OK;
+              Log("%s : init ok for D3D : 0x:%x", __FUNCTION__, m_pMadD3DDev);
+            }
       if (m_pCallback)
       {
         m_pCallback->SetSubtitleDevice((DWORD)m_pMadD3DDev);
@@ -1008,10 +1008,10 @@ HRESULT MPMadPresenter::RenderEx3(REFERENCE_TIME rtStart, REFERENCE_TIME rtStop,
         pWindow->put_Owner(reinterpret_cast<OAHWND>(m_hWnd));
         pWindow->put_Visible(reinterpret_cast<OAHWND>(m_hWnd));
         pWindow->SetWindowPosition(0, 0, m_dwGUIWidth, m_dwGUIHeight);
-        // Make MediaPortal window normal ( if minimized )
-        ShowWindow(m_hWnd, SW_SHOWNORMAL);
-        // Make Mediaportal window focused
-        SetForegroundWindow(m_hWnd);
+        //// Make MediaPortal window normal ( if minimized )
+        //ShowWindow(m_hWnd, SW_SHOWNORMAL);
+        //// Make Mediaportal window focused
+        //SetForegroundWindow(m_hWnd);
       }
     }
     m_deviceState.Store();
