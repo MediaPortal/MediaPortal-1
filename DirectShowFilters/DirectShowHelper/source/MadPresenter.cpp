@@ -174,17 +174,26 @@ IBaseFilter* MPMadPresenter::Initialize()
 
   if (Com::SmartQIPtr<IBaseFilter> baseFilter = m_pMad)
   {
-    if (Com::SmartQIPtr<IVideoWindow> pWindow = m_pMad)
-    {
       // Create a madVR Window
-      if (InitMadvrWindow(m_hWnd))
+    if (InitMadvrWindow(m_hWnd))
+    {
+      HRESULT hr = E_UNEXPECTED;
+      // Code commented out and enable it when testing the non kodi madVR window way
+      //m_hWnd = reinterpret_cast<HWND>(m_hParent);
+      Log("%s : Create DSPlayer window - hWnd: %i", __FUNCTION__, m_hWnd);
+      if (m_pMad)
       {
-        // Code commented out and enable it when testing the non kodi madVR window way
-        //m_hWnd = reinterpret_cast<HWND>(m_hParent);
-        Log("%s : Create DSPlayer window - hWnd: %i", __FUNCTION__, m_hWnd);
-        pWindow->put_Owner(reinterpret_cast<OAHWND>(m_hWnd));
-        pWindow->put_Visible(reinterpret_cast<OAHWND>(m_hWnd));
-        //pWindow->put_MessageDrain(reinterpret_cast<OAHWND>(m_hWnd));
+        hr = m_pMad->QueryInterface(IID_IVideoWindow, (void **)&m_pVideoWindow);
+        if (SUCCEEDED(hr)) {
+          m_pVideoWindow->put_Owner(reinterpret_cast<OAHWND>(m_hWnd));
+          m_pVideoWindow->put_WindowStyle(WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN);
+          m_pVideoWindow->put_Visible(OATRUE);
+          m_pVideoWindow->put_AutoShow(OATRUE);
+          m_pVideoWindow->put_WindowState(SW_SHOW);
+          m_pVideoWindow->SetWindowForeground(OATRUE);
+          m_pVideoWindow->put_MessageDrain(reinterpret_cast<OAHWND>(m_hWnd));
+          Log("%s : Create DSPlayer window - hr : 0x%08x", __FUNCTION__, hr);
+        }
       }
     }
     return baseFilter;
@@ -262,7 +271,10 @@ void MPMadPresenter::ConfigureMadvr()
     manager->ConfigureDisplayModeChanger(false, true);
 
   // TODO implement IMadVRSubclassReplacement
-  //if (Com::SmartQIPtr<IMadVRSubclassReplacement> pSubclassReplacement = m_pMad)  { }
+  if (Com::SmartQIPtr<IMadVRSubclassReplacement> pSubclassReplacement = m_pMad)
+  {
+    pSubclassReplacement->DisableSubclassing();
+  }
 
   //if (Com::SmartQIPtr<IVideoWindow> pWindow = m_pMad)
   //{
@@ -302,6 +314,12 @@ HRESULT MPMadPresenter::Shutdown()
       Log("MPMadPresenter::Shutdown() RestoreDeviceSurface");
       m_pCallback->Release();
       Log("MPMadPresenter::Shutdown() m_pCallback release");
+    }
+
+    if (m_pMad)
+    {
+      m_pVideoWindow.Release();
+      m_pVideoWindow = nullptr;
     }
 
     // Restore windowed overlay settings
@@ -909,12 +927,6 @@ HRESULT MPMadPresenter::SetDevice(IDirect3DDevice9* pD3DDev)
     if (SUCCEEDED(hr = m_pDevice->CreateTexture(m_dwGUIWidth, m_dwGUIHeight, 0, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &m_pMPTextureGui.p, &m_hSharedGuiHandle)))
       if (SUCCEEDED(hr = m_pDevice->CreateTexture(m_dwGUIWidth, m_dwGUIHeight, 0, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &m_pMPTextureOsd.p, &m_hSharedOsdHandle)))
 
-    // Get refresh rate information
-    if (Com::SmartQIPtr<IMadVRInfo> m_pInfos = m_pMad)
-    {
-      m_pInfos->GetDouble("RefreshRate", &m_pRefreshrate);
-    }
-
     m_pInitOSDRender = false;
   }
   else
@@ -1003,16 +1015,6 @@ HRESULT MPMadPresenter::RenderEx3(REFERENCE_TIME rtStart, REFERENCE_TIME rtStop,
 
       // Init created madVR window instance.
       SetDsWndVisible(true);
-      if (Com::SmartQIPtr<IVideoWindow> pWindow = m_pMad)
-      {
-        pWindow->put_Owner(reinterpret_cast<OAHWND>(m_hWnd));
-        pWindow->put_Visible(reinterpret_cast<OAHWND>(m_hWnd));
-        pWindow->SetWindowPosition(0, 0, m_dwGUIWidth, m_dwGUIHeight);
-        //// Make MediaPortal window normal ( if minimized )
-        //ShowWindow(m_hWnd, SW_SHOWNORMAL);
-        //// Make Mediaportal window focused
-        //SetForegroundWindow(m_hWnd);
-      }
     }
     m_deviceState.Store();
     SetupMadDeviceState();
