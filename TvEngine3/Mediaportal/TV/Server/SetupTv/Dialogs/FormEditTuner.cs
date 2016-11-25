@@ -93,7 +93,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       MPLabel labelSupportedBroadcastStandards = new MPLabel();
       labelSupportedBroadcastStandards.AutoSize = true;
       labelSupportedBroadcastStandards.Font = new Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      labelSupportedBroadcastStandards.Location = new Point(9, 115);
+      labelSupportedBroadcastStandards.Location = new Point(6, 115);
       labelSupportedBroadcastStandards.Name = "labelSupportedBroadcastStandards";
       labelSupportedBroadcastStandards.TabIndex = tabIndex++;
       labelSupportedBroadcastStandards.Text = "Supported broadcast standards:";
@@ -310,6 +310,8 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       {
         comboBoxSoftwareEncoderVideo.EndUpdate();
       }
+
+      groupBoxEncoderSettings.Height = 48;
 
       comboBoxExternalInputSourceVideo.Items.AddRange(typeof(CaptureSourceVideo).GetDescriptions(_analogSettings.SupportedVideoSources, true));
       comboBoxExternalInputSourceVideo.SelectedItem = ((CaptureSourceVideo)_analogSettings.ExternalInputSourceVideo).GetDescription();
@@ -844,6 +846,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
         return;
       }
 
+      groupBoxEncoderSettings.Height = 120;
       buttonEncoderSettingsCheckSupport.Visible = false;
 
       labelEncoderSettingsTimeShifting.Visible = true;

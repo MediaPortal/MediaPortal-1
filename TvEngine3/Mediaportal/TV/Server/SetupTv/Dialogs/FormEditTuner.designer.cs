@@ -163,7 +163,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       this.buttonOkay.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.buttonOkay.DialogResult = System.Windows.Forms.DialogResult.OK;
-      this.buttonOkay.Location = new System.Drawing.Point(162, 503);
+      this.buttonOkay.Location = new System.Drawing.Point(162, 520);
       this.buttonOkay.Name = "buttonOkay";
       this.buttonOkay.Size = new System.Drawing.Size(75, 23);
       this.buttonOkay.TabIndex = 1;
@@ -175,7 +175,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-      this.buttonCancel.Location = new System.Drawing.Point(243, 503);
+      this.buttonCancel.Location = new System.Drawing.Point(243, 520);
       this.buttonCancel.Name = "buttonCancel";
       this.buttonCancel.Size = new System.Drawing.Size(75, 23);
       this.buttonCancel.TabIndex = 2;
@@ -196,7 +196,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.tabControl.Location = new System.Drawing.Point(0, 0);
       this.tabControl.Name = "tabControl";
       this.tabControl.SelectedIndex = 0;
-      this.tabControl.Size = new System.Drawing.Size(331, 496);
+      this.tabControl.Size = new System.Drawing.Size(331, 513);
       this.tabControl.TabIndex = 0;
       // 
       // tabPageGeneral
@@ -207,7 +207,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.tabPageGeneral.Location = new System.Drawing.Point(4, 22);
       this.tabPageGeneral.Name = "tabPageGeneral";
       this.tabPageGeneral.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPageGeneral.Size = new System.Drawing.Size(323, 470);
+      this.tabPageGeneral.Size = new System.Drawing.Size(323, 487);
       this.tabPageGeneral.TabIndex = 0;
       this.tabPageGeneral.Text = "General";
       this.tabPageGeneral.UseVisualStyleBackColor = true;
@@ -347,6 +347,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       // comboBoxIdleMode
       // 
+      this.comboBoxIdleMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxIdleMode.FormattingEnabled = true;
       this.comboBoxIdleMode.Location = new System.Drawing.Point(126, 40);
       this.comboBoxIdleMode.Name = "comboBoxIdleMode";
@@ -418,7 +419,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
             | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxTunerName.Location = new System.Drawing.Point(50, 19);
       this.textBoxTunerName.Name = "textBoxTunerName";
-      this.textBoxTunerName.Size = new System.Drawing.Size(249, 20);
+      this.textBoxTunerName.Size = new System.Drawing.Size(252, 20);
       this.textBoxTunerName.TabIndex = 1;
       // 
       // checkBoxPreload
@@ -440,14 +441,15 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.tabPageConditionalAccess.Location = new System.Drawing.Point(4, 22);
       this.tabPageConditionalAccess.Name = "tabPageConditionalAccess";
       this.tabPageConditionalAccess.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPageConditionalAccess.Size = new System.Drawing.Size(323, 470);
+      this.tabPageConditionalAccess.Size = new System.Drawing.Size(323, 487);
       this.tabPageConditionalAccess.TabIndex = 1;
       this.tabPageConditionalAccess.Text = "Conditional Access";
       this.tabPageConditionalAccess.UseVisualStyleBackColor = true;
       // 
       // groupBoxCaMenu
       // 
-      this.groupBoxCaMenu.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.groupBoxCaMenu.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxCaMenu.Controls.Add(this.textBoxCaMenuAnswer);
       this.groupBoxCaMenu.Controls.Add(this.buttonCaMenuOkaySelect);
@@ -461,7 +463,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.groupBoxCaMenu.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxCaMenu.Location = new System.Drawing.Point(6, 166);
       this.groupBoxCaMenu.Name = "groupBoxCaMenu";
-      this.groupBoxCaMenu.Size = new System.Drawing.Size(311, 276);
+      this.groupBoxCaMenu.Size = new System.Drawing.Size(311, 312);
       this.groupBoxCaMenu.TabIndex = 1;
       this.groupBoxCaMenu.TabStop = false;
       this.groupBoxCaMenu.Text = "Menu";
@@ -470,7 +472,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       this.textBoxCaMenuAnswer.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-      this.textBoxCaMenuAnswer.Location = new System.Drawing.Point(9, 214);
+      this.textBoxCaMenuAnswer.Location = new System.Drawing.Point(9, 250);
       this.textBoxCaMenuAnswer.Name = "textBoxCaMenuAnswer";
       this.textBoxCaMenuAnswer.Size = new System.Drawing.Size(296, 20);
       this.textBoxCaMenuAnswer.TabIndex = 5;
@@ -479,7 +481,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       this.buttonCaMenuOkaySelect.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.buttonCaMenuOkaySelect.Enabled = false;
-      this.buttonCaMenuOkaySelect.Location = new System.Drawing.Point(90, 243);
+      this.buttonCaMenuOkaySelect.Location = new System.Drawing.Point(90, 279);
       this.buttonCaMenuOkaySelect.Name = "buttonCaMenuOkaySelect";
       this.buttonCaMenuOkaySelect.Size = new System.Drawing.Size(75, 23);
       this.buttonCaMenuOkaySelect.TabIndex = 7;
@@ -491,7 +493,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       this.labelCaMenuFooter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.labelCaMenuFooter.AutoSize = true;
-      this.labelCaMenuFooter.Location = new System.Drawing.Point(6, 178);
+      this.labelCaMenuFooter.Location = new System.Drawing.Point(6, 214);
       this.labelCaMenuFooter.Name = "labelCaMenuFooter";
       this.labelCaMenuFooter.Size = new System.Drawing.Size(37, 13);
       this.labelCaMenuFooter.TabIndex = 3;
@@ -505,14 +507,14 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.listBoxCaMenuChoices.FormattingEnabled = true;
       this.listBoxCaMenuChoices.Location = new System.Drawing.Point(9, 54);
       this.listBoxCaMenuChoices.Name = "listBoxCaMenuChoices";
-      this.listBoxCaMenuChoices.Size = new System.Drawing.Size(296, 121);
+      this.listBoxCaMenuChoices.Size = new System.Drawing.Size(296, 147);
       this.listBoxCaMenuChoices.TabIndex = 2;
       // 
       // buttonCaMenuBackClose
       // 
       this.buttonCaMenuBackClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.buttonCaMenuBackClose.Enabled = false;
-      this.buttonCaMenuBackClose.Location = new System.Drawing.Point(171, 243);
+      this.buttonCaMenuBackClose.Location = new System.Drawing.Point(171, 279);
       this.buttonCaMenuBackClose.Name = "buttonCaMenuBackClose";
       this.buttonCaMenuBackClose.Size = new System.Drawing.Size(75, 23);
       this.buttonCaMenuBackClose.TabIndex = 8;
@@ -524,7 +526,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       this.labelCaMenuEnquiry.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.labelCaMenuEnquiry.AutoSize = true;
-      this.labelCaMenuEnquiry.Location = new System.Drawing.Point(6, 198);
+      this.labelCaMenuEnquiry.Location = new System.Drawing.Point(6, 234);
       this.labelCaMenuEnquiry.Name = "labelCaMenuEnquiry";
       this.labelCaMenuEnquiry.Size = new System.Drawing.Size(42, 13);
       this.labelCaMenuEnquiry.TabIndex = 4;
@@ -533,7 +535,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // buttonCaMenuOpen
       // 
       this.buttonCaMenuOpen.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.buttonCaMenuOpen.Location = new System.Drawing.Point(9, 243);
+      this.buttonCaMenuOpen.Location = new System.Drawing.Point(9, 279);
       this.buttonCaMenuOpen.Name = "buttonCaMenuOpen";
       this.buttonCaMenuOpen.Size = new System.Drawing.Size(75, 23);
       this.buttonCaMenuOpen.TabIndex = 6;
@@ -693,7 +695,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.tabPageAnalog.Location = new System.Drawing.Point(4, 22);
       this.tabPageAnalog.Name = "tabPageAnalog";
       this.tabPageAnalog.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPageAnalog.Size = new System.Drawing.Size(323, 470);
+      this.tabPageAnalog.Size = new System.Drawing.Size(323, 487);
       this.tabPageAnalog.TabIndex = 3;
       this.tabPageAnalog.Text = "Analog";
       this.tabPageAnalog.UseVisualStyleBackColor = true;
@@ -1202,7 +1204,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.tabPageExternalInput.Controls.Add(this.groupBoxExternalInput);
       this.tabPageExternalInput.Location = new System.Drawing.Point(4, 22);
       this.tabPageExternalInput.Name = "tabPageExternalInput";
-      this.tabPageExternalInput.Size = new System.Drawing.Size(323, 470);
+      this.tabPageExternalInput.Size = new System.Drawing.Size(323, 487);
       this.tabPageExternalInput.TabIndex = 4;
       this.tabPageExternalInput.Text = "External Input";
       this.tabPageExternalInput.UseVisualStyleBackColor = true;
@@ -1389,12 +1391,12 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.CancelButton = this.buttonCancel;
-      this.ClientSize = new System.Drawing.Size(329, 534);
+      this.ClientSize = new System.Drawing.Size(329, 551);
       this.Controls.Add(this.tabControl);
       this.Controls.Add(this.buttonCancel);
       this.Controls.Add(this.buttonOkay);
       this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
-      this.MinimumSize = new System.Drawing.Size(337, 560);
+      this.MinimumSize = new System.Drawing.Size(337, 577);
       this.Name = "FormEditTuner";
       this.ShowIcon = false;
       this.ShowInTaskbar = false;
