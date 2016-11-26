@@ -188,12 +188,6 @@ IBaseFilter* MPMadPresenter::Initialize()
         if (SUCCEEDED(hr)) {
           Sleep(100);
           m_pVideoWindow->put_Owner(reinterpret_cast<OAHWND>(m_hWnd));
-          m_pVideoWindow->put_WindowStyle(WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN);
-          m_pVideoWindow->put_Visible(OATRUE);
-          m_pVideoWindow->put_AutoShow(OATRUE);
-          m_pVideoWindow->put_WindowState(SW_SHOW);
-          m_pVideoWindow->SetWindowForeground(OATRUE);
-          m_pVideoWindow->put_MessageDrain(reinterpret_cast<OAHWND>(m_hWnd));
           Log("%s : Create DSPlayer window - hr : 0x%08x", __FUNCTION__, hr);
           Sleep(100);
         }
@@ -1001,6 +995,13 @@ HRESULT MPMadPresenter::RenderEx3(REFERENCE_TIME rtStart, REFERENCE_TIME rtStop,
 
       // Init created madVR window instance.
       SetDsWndVisible(true);
+      // needed to be init here otherwise refresh rate will not work.
+      m_pVideoWindow->put_WindowStyle(WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN);
+      m_pVideoWindow->put_Visible(OATRUE);
+      m_pVideoWindow->put_AutoShow(OATRUE);
+      m_pVideoWindow->put_WindowState(SW_SHOW);
+      m_pVideoWindow->SetWindowForeground(OATRUE);
+      m_pVideoWindow->put_MessageDrain(reinterpret_cast<OAHWND>(m_hWnd));
     }
     m_deviceState.Store();
     SetupMadDeviceState();
