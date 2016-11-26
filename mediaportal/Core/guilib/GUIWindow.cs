@@ -1317,8 +1317,8 @@ namespace MediaPortal.GUI.Library
       try
       {
         // tell every control to free its resources
-        Children.DisposeAndClearCollection();
-        _listPositions.DisposeAndClear();
+        Children?.DisposeAndClearCollection();
+        _listPositions?.DisposeAndClear();
       }
       catch (Exception ex)
       {
