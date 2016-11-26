@@ -33,9 +33,8 @@ namespace MediaPortal.ExtensionMethods
         {
           //for (int i = listInterface.Count - 1; i >= 0; i--)        
           //foreach (object o in listInterface)
-          for (int i = 0; i < listInterface.Count; i++)
+          foreach (object o in listInterface)
           {
-            object o = listInterface[i];
             DisposeHelper.DisposeItem(o);
           }
         }
@@ -49,9 +48,8 @@ namespace MediaPortal.ExtensionMethods
         lock (listInterface)
         {
           //for (int i = listInterface.Count - 1; i >= 0; i--)
-          for (int i = 0; i < listInterface.Count; i++)
+          foreach (object o in listInterface)
           {
-            object o = listInterface[i];
             DisposeHelper.DisposeItem(o);
           }
 
@@ -85,9 +83,8 @@ namespace MediaPortal.ExtensionMethods
         {
           //for (int i = listInterface.Count - 1; i >= 0; i--)
           //foreach (object o in listInterface)
-          for (int i = 0; i < listInterface.Count; i++)
+          foreach (object o in listInterface)
           {
-            object o = listInterface[i];
             DisposeHelper.DisposeItem(o);
           }
 
