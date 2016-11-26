@@ -1034,17 +1034,24 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public static void VideoWindowChanged()
     {
-      lock (RenderMadVrLock)
+      // TODO commented out seems to handle better video change without a deadlock
+      //if (Thread.CurrentThread.Name != "MPMain" && Thread.CurrentThread.Name != "Config Main")
+      //{
+      //  if (!VideoWindowChangedDone)
+      //  {
+      //    VideoWindowChangedDone = true;
+      //    GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ONVIDEOWINDOWCHANGED, 0, 0, 0, 0, 0, null);
+      //    GUIWindowManager.SendThreadMessage(msg);
+      //    //Log.Debug("GraphicContext VideoWindowChanged() SendThreadMessage sended");
+      //  }
+      //}
+      //else
       {
-        if (!VideoWindowChangedDone)
-        {
-          VideoWindowChangedDone = true;
-          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ONVIDEOWINDOWCHANGED, 0, 0, 0, 0, 0, null);
-          GUIWindowManager.SendThreadMessage(msg);
-          //Log.Debug("GraphicContext VideoWindowChanged() SendThreadMessage sended");
-        }
+        if (OnVideoWindowChanged != null) OnVideoWindowChanged.Invoke();
       }
     }
+
+    public static Rectangle rDest { get; set; }
 
     /// <summary>
     /// Get/Set application state (starting,running,stopping)

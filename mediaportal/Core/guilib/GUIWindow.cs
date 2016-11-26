@@ -1179,6 +1179,10 @@ namespace MediaPortal.GUI.Library
               {
                 // Some plugin get stuck in loop when madVR in use because it waiting madVR change that was already done before
                 Log.Debug("GUIWindow: OnPageDestroy for madVR");
+                _closeAnimation.QueuedProcess = AnimationProcess.None;
+                _closeAnimation.CurrentProcess = AnimationProcess.None;
+                _showAnimation.QueuedProcess = AnimationProcess.None;
+                _showAnimation.CurrentProcess = AnimationProcess.None;
                 IsAnimating(AnimationType.None);
               }
               GUIWindowManager.Process();
@@ -2189,7 +2193,15 @@ namespace MediaPortal.GUI.Library
       {
         if (control.IsEffectAnimating(animType))
         {
-          return true;
+          if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
+              GUIGraphicsContext.InVmr9Render)
+          {
+            // Do nothing
+          }
+          else
+          {
+            return true;
+          }
         }
       }
       return false;

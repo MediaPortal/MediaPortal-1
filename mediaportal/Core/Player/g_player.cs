@@ -2676,8 +2676,9 @@ namespace MediaPortal.Player
           //Log.Debug("1- getVisible : {0}", getVisible);
           //Log.Debug("1- PlaneScene.DisableLowLatencyMode : {0}", PlaneScene.DisableLowLatencyMode);
           //Log.Debug("1- PlaneScene.Visible : {0}", PlaneScene.Visible);
-          _player.Pause();
-          _player.Pause();
+          //_player.Pause();
+          //_player.Pause();
+          _player.SetVideoWindow();
           //VMR9Util.g_vmr9.DisableLowLatencyMode = getDisableLowLatencyMode;
           //VMR9Util.g_vmr9.Visible = getVisible;
           //Log.Debug("2- getDisableLowLatencyMode : {0}", getDisableLowLatencyMode);
@@ -3164,6 +3165,15 @@ namespace MediaPortal.Player
         return;
       }
       _player.SetVideoWindow();
+    }
+
+    public static void SetVideoWindowMadVr()
+    {
+      if (_player == null)
+      {
+        return;
+      }
+      _player.SetVideoWindowMadVR();
     }
 
     public static void Init()
