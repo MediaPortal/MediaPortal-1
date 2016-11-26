@@ -266,7 +266,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
           comboBoxModulation.Items.Add(modulationDescription);
           if (string.Equals(modulationDescription, selectedModulationDescription))
           {
-            comboBoxModulation.SelectedItem = modulationDescription;
+            comboBoxModulation.SelectedIndex = comboBoxModulation.Items.Count - 1;
           }
         }
         if (comboBoxModulation.SelectedItem == null)
@@ -293,7 +293,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
           comboBoxRollOffFactor.Items.Add(rollOffFactorDescription);
           if (string.Equals(rollOffFactorDescription, selectedRollOffFactorDescription))
           {
-            comboBoxRollOffFactor.SelectedItem = rollOffFactorDescription;
+            comboBoxRollOffFactor.SelectedIndex = comboBoxRollOffFactor.Items.Count - 1;
           }
         }
         if (comboBoxRollOffFactor.SelectedItem == null)
@@ -322,7 +322,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
           comboBoxFecCodeRate.Items.Add(fecCodeRateDescription);
           if (string.Equals(fecCodeRateDescription, selectedFecCodeRateDescription))
           {
-            comboBoxFecCodeRate.SelectedItem = fecCodeRateDescription;
+            comboBoxFecCodeRate.SelectedIndex = comboBoxFecCodeRate.Items.Count - 1;
           }
         }
         if (comboBoxFecCodeRate.SelectedItem == null)

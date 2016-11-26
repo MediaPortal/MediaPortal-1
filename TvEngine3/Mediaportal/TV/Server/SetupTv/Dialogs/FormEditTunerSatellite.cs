@@ -33,11 +33,15 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
 {
   public partial class FormEditTunerSatellite : Form
   {
+    #region constants
+
     private const string DISEQC_MOTOR_POSITION_TYPE_NONE = "None";
     private const string DISEQC_MOTOR_POSITION_TYPE_USALS = "USALS";
     private const string DISEQC_MOTOR_POSITION_TYPE_STORED = "Stored";
 
     private const int ALL_TUNERS_ID = -1;
+
+    #endregion
 
     private int _idTunerSatellite = -1;
     private IList<Tuner> _satelliteTuners = null;
@@ -94,7 +98,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
         }
       }
 
-      Satellite defaultSatellite = null;
+      int defaultSatelliteIndex = -1;
       int defaultSatelliteLongitude = Satellite.DefaultSatelliteLongitude.GetValueOrDefault(100000);
       comboBoxSatellite.BeginUpdate();
       try
@@ -106,17 +110,20 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
           comboBoxSatellite.Items.Add(satellite);
           if (_tunerSatellite != null && _tunerSatellite.IdSatellite == satellite.IdSatellite)
           {
-            comboBoxSatellite.SelectedItem = satellite;
+            comboBoxSatellite.SelectedIndex = comboBoxSatellite.Items.Count - 1;
           }
           else if (satellite.Longitude == defaultSatelliteLongitude)
           {
-            defaultSatellite = satellite;
+            defaultSatelliteIndex = comboBoxSatellite.Items.Count - 1;
           }
         }
         if (comboBoxSatellite.SelectedItem == null)
         {
-          comboBoxSatellite.SelectedItem = defaultSatellite;
-          if (comboBoxSatellite.SelectedItem == null)
+          if (defaultSatelliteIndex >= 0)
+          {
+            comboBoxSatellite.SelectedIndex = defaultSatelliteIndex;
+          }
+          else
           {
             comboBoxSatellite.SelectedIndex = 0;
           }
@@ -160,7 +167,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       }
 
       IList<LnbType> lnbTypes = ServiceAgents.Instance.TunerServiceAgent.ListAllLnbTypes();
-      LnbType defaultLnbType = null;
+      int defaultLnbTypeIndex = -1;
       int defaultLnbTypeLowBandLof = 9750000;  // "universal";
       string countryName = RegionInfo.CurrentRegion.EnglishName;
       if (string.Equals(countryName, "Australia"))
@@ -184,17 +191,20 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
           comboBoxLnbType.Items.Add(lnbType);
           if (_tunerSatellite != null && _tunerSatellite.IdLnbType == lnbType.IdLnbType)
           {
-            comboBoxLnbType.SelectedItem = lnbType;
+            comboBoxLnbType.SelectedIndex = comboBoxLnbType.Items.Count - 1;
           }
           else if (lnbType.LowBandFrequency == defaultLnbTypeLowBandLof)
           {
-            defaultLnbType = lnbType;
+            defaultLnbTypeIndex = comboBoxLnbType.Items.Count - 1;
           }
         }
         if (comboBoxLnbType.SelectedItem == null)
         {
-          comboBoxLnbType.SelectedItem = defaultLnbType;
-          if (comboBoxLnbType.SelectedItem == null)
+          if (defaultLnbTypeIndex >= 0)
+          {
+            comboBoxLnbType.SelectedIndex = defaultLnbTypeIndex;
+          }
+          else
           {
             comboBoxLnbType.SelectedIndex = 0;
           }
@@ -321,7 +331,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
           comboBoxTuner.Items.Add(tuner);
           if (selectedTuner != null && selectedTuner.IdTuner == tuner.IdTuner)
           {
-            comboBoxTuner.SelectedItem = tuner;
+            comboBoxTuner.SelectedIndex = comboBoxTuner.Items.Count - 1;
           }
         }
         if (comboBoxTuner.SelectedItem == null)

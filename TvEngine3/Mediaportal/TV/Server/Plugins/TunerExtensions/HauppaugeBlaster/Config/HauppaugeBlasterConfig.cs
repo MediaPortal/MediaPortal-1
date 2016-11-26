@@ -107,7 +107,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeBlaster.Config
           comboBoxTunerSelectionPort1.Items.Add(tuner);
           if (string.Equals(_tunerExternalIdPort1, tuner.ExternalId))
           {
-            comboBoxTunerSelectionPort1.SelectedItem = tuner;
+            comboBoxTunerSelectionPort1.SelectedIndex = comboBoxTunerSelectionPort1.Items.Count - 1;
           }
         }
 
@@ -120,7 +120,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeBlaster.Config
             comboBoxTunerSelectionPort2.Items.Add(tuner);
             if (isFirst || string.Equals(_tunerExternalIdPort2, tuner.ExternalId))
             {
-              comboBoxTunerSelectionPort2.SelectedItem = tuner;
+              comboBoxTunerSelectionPort2.SelectedIndex = comboBoxTunerSelectionPort2.Items.Count - 1;
             }
             isFirst = false;
           }

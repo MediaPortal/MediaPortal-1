@@ -195,7 +195,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi.Config
             comboBoxTunerSelection.Items.Add(tuner);
             if (tuner.ExternalId.Equals(context.LinkedTunerExternalId))
             {
-              comboBoxTunerSelection.SelectedItem = tuner;
+              comboBoxTunerSelection.SelectedIndex = comboBoxTunerSelection.Items.Count - 1;
             }
           }
         }

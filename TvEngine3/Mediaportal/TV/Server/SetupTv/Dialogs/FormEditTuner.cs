@@ -235,7 +235,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
           comboBoxSoftwareEncoderAudio.Items.Add(encoder);
           if (encoder.IdAudioEncoder == _analogSettings.IdAudioEncoder)
           {
-            comboBoxSoftwareEncoderAudio.SelectedItem = encoder;
+            comboBoxSoftwareEncoderAudio.SelectedIndex = comboBoxSoftwareEncoderAudio.Items.Count - 1;
           }
         }
       }
@@ -302,7 +302,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
           comboBoxSoftwareEncoderVideo.Items.Add(encoder);
           if (encoder.IdVideoEncoder == _analogSettings.IdVideoEncoder)
           {
-            comboBoxSoftwareEncoderVideo.SelectedItem = encoder;
+            comboBoxSoftwareEncoderVideo.SelectedIndex = comboBoxSoftwareEncoderVideo.Items.Count - 1;
           }
         }
       }
