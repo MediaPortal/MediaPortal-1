@@ -260,20 +260,27 @@ namespace MediaPortal.Player.Subtitles
         return ret;
       }
 
+      string streamName = Strings.Unknown;
       int index = iStream - extCount;
       if (index >= SubtitleLanguages.Count)
         return ret;
-      string streamName = SubtitleLanguages[index];
+      if (index >= 0)
+      {
+        streamName = SubtitleLanguages[index];
+      }
       return streamName;
     }
 
     public string GetSubtitleName(int iStream)
     {
-      string ret = Strings.Unknown;
+      string streamName = "";
       int index = iStream - extCount;
       if (index >= SubtitleNames.Count)
-        return ret;
-      string streamName = SubtitleNames[index];
+        return streamName;
+      if (index >= 0)
+      {
+       streamName = SubtitleNames[index];
+      }
       return streamName;
     }
 
