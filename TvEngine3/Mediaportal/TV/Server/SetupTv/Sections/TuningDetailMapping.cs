@@ -100,7 +100,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       IList<Tuner> tuners = ServiceAgents.Instance.TunerServiceAgent.ListAllTuners(TunerRelation.None);
       foreach (Tuner tuner in tuners)
       {
-        if (tuner.IsEnabled && ServiceAgents.Instance.ControllerServiceAgent.IsCardPresent(tuner.IdTuner))
+        if (tuner.IsEnabled)
         {
           comboBoxTuner.Items.Add(tuner);
         }
