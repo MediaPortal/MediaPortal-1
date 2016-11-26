@@ -39,7 +39,8 @@ namespace MediaPortal.Player.Subtitles
     protected IAMStreamSelect embeddedSelector;
 
     private List<int> intSubs = new List<int>();
-    private List<string> intNames = new List<string>();
+    private List<string> SubtitleLanguages = new List<string>();
+    private List<string> SubtitleNames = new List<string>();
     private int extCount;
     private int current;
 
@@ -86,7 +87,14 @@ namespace MediaPortal.Player.Subtitles
 
         bool fBuffer, fOnlyForced, fPolygonize;
         vobSub.get_VobSubSettings(out fBuffer, out fOnlyForced, out fPolygonize);
-        vobSub.put_VobSubSettings(fBuffer, !this.autoShow, fPolygonize);
+        if (selectionOff)
+        {
+          vobSub.put_VobSubSettings(fBuffer, false, fPolygonize);
+        }
+        else
+        {
+          vobSub.put_VobSubSettings(fBuffer, !this.autoShow, fPolygonize);
+        }
       }
 
       {
@@ -119,10 +127,6 @@ namespace MediaPortal.Player.Subtitles
       {
         Enable = false;
       }
-      else
-      {
-        Enable = autoShow;
-      }
       return true;
     }
 
@@ -146,8 +150,31 @@ namespace MediaPortal.Player.Subtitles
         if (sPDWGroup == 2 && sName.LastIndexOf("No ") == -1)
         {
           intSubs.Add(istream);
+
+          // Add subtitle names
+          if (sName.ToLowerInvariant().Contains("forced"))
+          {
+            Regex regexLAVF = new Regex(@"(?:S:\s)(?<lang_or_title>.+?)(?:\s*\[(?<lang>[^\]]*?)\])?(?:\s*\((?<info>[^\)]*?)\))?$");
+            Match resultLAVF = regexLAVF.Match(sName);
+            if (resultLAVF.Success)
+            {
+              string lang_or_title = resultLAVF.Groups[1].Value;
+              string lang = resultLAVF.Groups[2].Value;
+              string info = resultLAVF.Groups[3].Value;
+              if (lang.ToLowerInvariant().Contains("forced") || info.ToLowerInvariant().Contains("forced"))
+              {
+                if (!lang_or_title.ToLowerInvariant().Contains("forced"))
+                {
+                  sName = "S: " + lang_or_title + " Forced ";
+                }
+              }
+            }
+          }
+          SubtitleNames?.Add(sName);
+
+          // Add language names
           // Try Find Language by LCID
-          String langName = "";
+          string langName = "";
           if (sPLCid != 0)
           {
             int size = Util.Win32API.GetLocaleInfo(sPLCid, 2, null, 0);
@@ -172,7 +199,7 @@ namespace MediaPortal.Player.Subtitles
           {
             langName = sName;
           }
-          intNames.Add(langName);
+          SubtitleLanguages.Add(langName);
         }
       }
     }
@@ -186,7 +213,8 @@ namespace MediaPortal.Player.Subtitles
       vobSub = null;
       embeddedSelector = null;
       intSubs.Clear();
-      intNames.Clear();
+      SubtitleLanguages.Clear();
+      SubtitleNames.Clear();
       extCount = 0;
       current = -1;
     }
@@ -233,16 +261,20 @@ namespace MediaPortal.Player.Subtitles
       }
 
       int index = iStream - extCount;
-      if (index >= intNames.Count)
+      if (index >= SubtitleLanguages.Count)
         return ret;
-      string streamName = intNames[index];
+      string streamName = SubtitleLanguages[index];
       return streamName;
     }
 
     public string GetSubtitleName(int iStream)
     {
-      string languageTranslated = "";
-      return languageTranslated;
+      string ret = Strings.Unknown;
+      int index = iStream - extCount;
+      if (index >= SubtitleNames.Count)
+        return ret;
+      string streamName = SubtitleNames[index];
+      return streamName;
     }
 
     public int Current
