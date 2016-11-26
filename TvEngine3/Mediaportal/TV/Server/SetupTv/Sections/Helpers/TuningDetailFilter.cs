@@ -143,7 +143,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
       try
       {
         comboBox.Items.Clear();
-        comboBox.Items.Add(ALL_TUNING_DETAIL_ITEM);
+        if (tunerId > 0)
+        {
+          comboBox.Items.Add(ALL_TUNING_DETAIL_ITEM);
+        }
         if (group == TuningDetailGroup.Stream)
         {
           LoadM3uPlaylist(fileName, comboBox);
@@ -159,7 +162,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
         }
         foreach (TuningDetail tuningDetail in tuningDetails)
         {
-          if (ServiceAgents.Instance.ControllerServiceAgent.CanTune(tunerId, tuningDetail.GetTuningChannel()))
+          if (tunerId < 0 || ServiceAgents.Instance.ControllerServiceAgent.CanTune(tunerId, tuningDetail.GetTuningChannel()))
           {
             comboBox.Items.Add(tuningDetail);
           }

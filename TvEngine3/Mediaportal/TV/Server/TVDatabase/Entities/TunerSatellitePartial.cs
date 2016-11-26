@@ -29,5 +29,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
 
     public const double DISEQC_MOTOR_DEFAULT_SPEED_SLOW = 0.5;
     public const double DISEQC_MOTOR_DEFAULT_SPEED_FAST = 0.8;
+
+    public const int LONGITUDE_UNSPECIFIED = 10000;
   }
 }

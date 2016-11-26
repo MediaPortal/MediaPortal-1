@@ -93,9 +93,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner.Diseqc
     /// </summary>
     /// <param name="position">The stored position identifier corresponding with the current base position.</param>
     /// <param name="longitude">The longitude corresponding with the current base position.</param>
-    /// <param name="stepsAzimuth">The number of steps taken from the position on the azmutal axis.</param>
-    /// <param name="stepsElevation">The number of steps taken from the position on the vertical (elevation) axis.</param>
-    void GetPosition(out int position, out double longitude, out int stepsAzimuth, out int stepsElevation);
+    /// <param name="stepCountAzimuth">The number of steps taken from the position or longitude on the azmutal axis.</param>
+    /// <param name="stepCountElevation">The number of steps taken from the position or longitude on the vertical (elevation) axis.</param>
+    void GetPosition(out int position, out double longitude, out int stepCountAzimuth, out int stepCountElevation);
 
     #endregion
   }

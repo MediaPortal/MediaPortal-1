@@ -587,6 +587,7 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <None Include="images\icon.down.png" />
+    <None Include="images\icon.left.png" />
     <Content Include="images\icon.mpConfig.ico" />
     <Content Include="images\icon.radio_fta.png" />
     <Content Include="images\icon.radio_scrambled.png" />
@@ -594,6 +595,8 @@
     <None Include="images\icon.sort.asc.png" />
     <None Include="images\icon.sort.dsc.png" />
     <Content Include="images\icon.radio_scrambled_and_fta.png" />
+    <None Include="images\icon.right.png" />
+    <None Include="images\icon.stop.png" />
     <Content Include="images\icon.tv_fta.png" />
     <Content Include="images\icon.tv_scrambled.png" />
     <None Include="images\icon.up.png" />
@@ -606,6 +609,7 @@
     <Content Include="images\tvguide_recordserie_button.png" />
     <Content Include="images\tvguide_record_button.png" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

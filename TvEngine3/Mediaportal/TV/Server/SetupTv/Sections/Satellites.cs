@@ -24,11 +24,16 @@ using System.Windows.Forms;
 using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.SetupControls;
 using Mediaportal.TV.Server.SetupTV.Dialogs;
+using Mediaportal.TV.Server.SetupTV.Sections.Helpers;
+using Mediaportal.TV.Server.SetupTV.Sections.Helpers.Enum;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner.Diseqc.Enum;
 using MediaPortal.Common.Utils.ExtensionMethods;
+using TuningDetail = Mediaportal.TV.Server.SetupTV.Sections.Helpers.TuningDetail;
 
 namespace Mediaportal.TV.Server.SetupTV.Sections
 {
@@ -45,10 +50,23 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private decimal _originalDiseqcMotorSpeedSlow;
     private decimal _originalDiseqcMotorSpeedFast;
 
+    private readonly System.Timers.Timer _diseqcMotorStatusUpdateTimer = new System.Timers.Timer();
+
     public Satellites(ServerConfigurationChangedEventHandler handler)
       : base("Satellites", handler)
     {
       InitializeComponent();
+
+      _diseqcMotorStatusUpdateTimer.Interval = 1000;
+      _diseqcMotorStatusUpdateTimer.Elapsed += UpdateDiseqcMotorStatus;
+    }
+
+    ~Satellites()
+    {
+      if (_diseqcMotorStatusUpdateTimer != null)
+      {
+        _diseqcMotorStatusUpdateTimer.Dispose();
+      }
     }
 
     public override void OnSectionActivated()
@@ -57,16 +75,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
       _changedTuners.Clear();
 
-      IList<Tuner> tuners = ServiceAgents.Instance.TunerServiceAgent.ListAllTuners(TunerRelation.None);
-      _allSatelliteTunerIds = new List<int>(tuners.Count);
-      foreach (Tuner tuner in tuners)
-      {
-        if (((int)BroadcastStandard.MaskSatellite & tuner.SupportedBroadcastStandards) != 0)
-        {
-          _allSatelliteTunerIds.Add(tuner.IdTuner);
-        }
-      }
-
+      // satellites tab
       IList<TunerSatellite> tunerSatellites = ServiceAgents.Instance.TunerServiceAgent.ListAllTunerSatellites(REQUIRED_TUNER_SATELLITE_RELATIONS);
       dataGridViewTunerSatellites.Rows.Clear();
       dataGridViewTunerSatellites.Rows.Add(tunerSatellites.Count);
@@ -89,7 +98,88 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       _originalDiseqcMotorSpeedFast = (decimal)ServiceAgents.Instance.SettingServiceAgent.GetValue("diseqcMotorSpeedFast", TunerSatellite.DISEQC_MOTOR_DEFAULT_SPEED_FAST);
       numericUpDownDiseqcMotorSpeedFast.Value = _originalDiseqcMotorSpeedFast;
 
+      // DiSEqC motor setup tab
+      IList<Tuner> tuners = ServiceAgents.Instance.TunerServiceAgent.ListAllTuners(TunerRelation.None);
+      _allSatelliteTunerIds = new List<int>(tuners.Count);
+      comboBoxDiseqcMotorSetupTuner.BeginUpdate();
+      try
+      {
+        comboBoxDiseqcMotorSetupTuner.Items.Clear();
+        foreach (Tuner tuner in tuners)
+        {
+          if (((int)BroadcastStandard.MaskSatellite & tuner.SupportedBroadcastStandards) != 0)
+          {
+            _allSatelliteTunerIds.Add(tuner.IdTuner);
+            if (tuner.IsEnabled)
+            {
+              comboBoxDiseqcMotorSetupTuner.Items.Add(tuner);
+            }
+          }
+        }
+        if (comboBoxDiseqcMotorSetupTuner.Items.Count > 0)
+        {
+          comboBoxDiseqcMotorSetupTuner.SelectedIndex = 0;
+        }
+      }
+      finally
+      {
+        comboBoxDiseqcMotorSetupTuner.EndUpdate();
+      }
+
+      numericUpDownDiseqcMotorSetupPositionStored.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("diseqcMotorSetupPositionStored", 1);
+      numericUpDownDiseqcMotorSetupPositionUsals.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("diseqcMotorSetupPositionUsals", Satellite.DefaultSatelliteLongitude.GetValueOrDefault(0)) / 10;
+      numericUpDownDiseqcMotorSetupManualMoveStepCount.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("diseqcMotorSetupManualMoveStepCount", 10);
+
+      int longitude = ServiceAgents.Instance.SettingServiceAgent.GetValue("diseqcMotorSetupSatellite", Satellite.DefaultSatelliteLongitude.GetValueOrDefault(100000));
+      IList<Satellite> satellites = ServiceAgents.Instance.TunerServiceAgent.ListAllSatellites();
+      comboBoxDiseqcMotorSetupCheckSatellite.BeginUpdate();
+      try
+      {
+        comboBoxDiseqcMotorSetupCheckSatellite.Items.Clear();
+        foreach (Satellite satellite in satellites)
+        {
+          comboBoxDiseqcMotorSetupCheckSatellite.Items.Add(satellite);
+          if (longitude == satellite.Longitude)
+          {
+            comboBoxDiseqcMotorSetupCheckSatellite.SelectedIndex = comboBoxDiseqcMotorSetupCheckSatellite.Items.Count - 1;
+          }
+        }
+        if (comboBoxDiseqcMotorSetupCheckSatellite.Items.Count > 0)
+        {
+          comboBoxDiseqcMotorSetupCheckSatellite.SelectedIndex = 0;
+        }
+      }
+      finally
+      {
+        comboBoxDiseqcMotorSetupCheckSatellite.EndUpdate();
+      }
+
+      string transmitter = ServiceAgents.Instance.SettingServiceAgent.GetValue("diseqcMotorSetupTransmitter", string.Empty);
+      if (!string.IsNullOrEmpty(transmitter))
+      {
+        foreach (object item in comboBoxDiseqcMotorSetupCheckTransmitter.Items)
+        {
+          if (string.Equals(item.ToString(), transmitter))
+          {
+            comboBoxDiseqcMotorSetupCheckTransmitter.SelectedItem = item;
+            break;
+          }
+        }
+      }
+      if (comboBoxDiseqcMotorSetupCheckTransmitter.SelectedItem == null)
+      {
+        comboBoxDiseqcMotorSetupCheckTransmitter.SelectedIndex = 0;
+      }
+
+      bool isTunerAvailable = comboBoxDiseqcMotorSetupTuner.Items.Count > 0;
+      groupBoxDiseqcMotorSetupPosition.Enabled = isTunerAvailable;
+      groupBoxDiseqcMotorSetupManualMove.Enabled = isTunerAvailable;
+      groupBoxDiseqcMotorSetupMoveLimits.Enabled = isTunerAvailable;
+      groupBoxDiseqcMotorSetupCheck.Enabled = isTunerAvailable;
+
       DebugSettings();
+
+      _diseqcMotorStatusUpdateTimer.Enabled = tabControl.SelectedIndex == 1;
 
       base.OnSectionActivated();
     }
@@ -97,6 +187,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     public override void OnSectionDeActivated()
     {
       this.LogDebug("satellites: deactivating");
+
+      _diseqcMotorStatusUpdateTimer.Enabled = false;
 
       if (_originalUsalsLatitude != numericUpDownUsalsLatitude.Value)
       {
@@ -134,6 +226,12 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         OnServerConfigurationChanged(this, false, _changedTuners);
       }
 
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("diseqcMotorSetupPositionStored", (int)numericUpDownDiseqcMotorSetupPositionStored.Value);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("diseqcMotorSetupPositionUsals", (int)(numericUpDownDiseqcMotorSetupPositionUsals.Value * 10));
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("diseqcMotorSetupManualMoveStepCount", (int)numericUpDownDiseqcMotorSetupManualMoveStepCount.Value);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("diseqcMotorSetupSatellite", ((Satellite)comboBoxDiseqcMotorSetupCheckSatellite.SelectedItem).Longitude);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("diseqcMotorSetupTransmitter", comboBoxDiseqcMotorSetupCheckTransmitter.SelectedItem.ToString());
+
       base.OnSectionDeActivated();
     }
 
@@ -146,7 +244,20 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.LogDebug("  DiSEqC motor speed...");
       this.LogDebug("    slow            = {0} °/s", numericUpDownDiseqcMotorSpeedSlow.Value);
       this.LogDebug("    fast            = {0} °/s", numericUpDownDiseqcMotorSpeedFast.Value);
+      this.LogDebug("  DiSEqC motor setup...");
+      this.LogDebug("    stored position = {0}", numericUpDownDiseqcMotorSetupPositionStored.Value);
+      this.LogDebug("    USALS position  = {0}", numericUpDownDiseqcMotorSetupPositionUsals.Value);
+      this.LogDebug("    move step count = {0}", numericUpDownDiseqcMotorSetupManualMoveStepCount.Value);
+      this.LogDebug("    satellite       = {0}", comboBoxDiseqcMotorSetupCheckSatellite.SelectedItem);
+      this.LogDebug("    transmitter     = {0}", comboBoxDiseqcMotorSetupCheckTransmitter.SelectedItem);
     }
+
+    private void tabControl_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      _diseqcMotorStatusUpdateTimer.Enabled = tabControl.SelectedIndex == 1;
+    }
+
+    #region satellites tab
 
     private void DebugTunerSatelliteSettings(TunerSatellite tunerSatellite)
     {
@@ -160,7 +271,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.LogDebug("  DiSEqC motor pos. = {0}", GetDiseqcMotorPositionDescription(tunerSatellite.DiseqcMotorPosition));
       this.LogDebug("  tone burst        = {0}", (ToneBurst)tunerSatellite.ToneBurst);
       this.LogDebug("  22 kHz tone state = {0}", (Tone22kState)tunerSatellite.Tone22kState);
-      this.LogDebug("  polarisations     = {0}", (Polarisation)tunerSatellite.Polarisations);
+      this.LogDebug("  polarisations     = [{0}]", (Polarisation)tunerSatellite.Polarisations);
       this.LogDebug("  is toroidal dish? = {0}", tunerSatellite.IsToroidalDish);
     }
 
@@ -359,5 +470,237 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         e.Handled = true;
       }
     }
+
+    #endregion
+
+    #region DiSEqC motor setup tab
+
+    private void UpdateDiseqcMotorStatus(object sender, System.Timers.ElapsedEventArgs e)
+    {
+      tabPageDiseqcMotorSetup.Invoke((MethodInvoker)delegate
+      {
+        int satellitePosition = -1;
+        double satelliteLongitude = 0;
+        int stepCountAzimuth = 0;
+        int stepCountElevation = 0;
+
+        bool isSignalLocked = false;
+        bool isSignalPresent = false;
+        int signalStrength = 0;
+        int signalQuality = 0;
+
+        int tunerId;
+        if (GetSelectedTunerId(out tunerId, false))
+        {
+          ServiceAgents.Instance.ControllerServiceAgent.DiSEqCGetPosition(tunerId, out satellitePosition, out satelliteLongitude, out stepCountAzimuth, out stepCountElevation);
+          ServiceAgents.Instance.ControllerServiceAgent.GetSignalStatus(tunerId, false, out isSignalLocked, out isSignalPresent, out signalStrength, out signalQuality);
+        }
+
+        if ((satellitePosition < 0 || satellitePosition > 255) && (satelliteLongitude < 180 || satelliteLongitude > 180))
+        {
+          labelDiseqcMotorSetupPositionCurrentValue.Text = "Unknown";
+        }
+        else
+        {
+          string positionName;
+          if (satellitePosition == 0)
+          {
+            positionName = "Reference";
+          }
+          else if (satellitePosition < 0 && satellitePosition > 255)
+          {
+            positionName = string.Format("Stored {0}", satellitePosition);
+          }
+          else
+          {
+            positionName = string.Format("USALS {0}°", satelliteLongitude);
+          }
+          if (stepCountAzimuth != 0 || stepCountElevation != 0)
+          {
+            positionName = string.Format("{0}, {1} azimuth, {2} elevation", stepCountAzimuth, stepCountElevation);
+          }
+          labelDiseqcMotorSetupPositionCurrentValue.Text = positionName;
+        }
+
+        labelDiseqcMotorSetupCheckIsSignalLockedValue.Text = isSignalLocked ? "Yes" : "No";
+        labelDiseqcMotorSetupCheckIsSignalPresentValue.Text = isSignalPresent ? "Yes" : "No";
+        progressBarDiseqcMotorSetupCheckSignalStrength.Value = signalStrength;
+        progressBarDiseqcMotorSetupCheckSignalQuality.Value = signalQuality;
+      });
+    }
+
+    private bool GetSelectedTunerId(out int tunerId, bool showMessage = true)
+    {
+      tunerId = -1;
+      Tuner tuner = comboBoxDiseqcMotorSetupTuner.SelectedItem as Tuner;
+      if (tuner == null)
+      {
+        return false;
+      }
+      tunerId = tuner.IdTuner;
+      if (ServiceAgents.Instance.ControllerServiceAgent.IsCardPresent(tunerId))
+      {
+        return true;
+      }
+      MessageBox.Show("Tuner not found. Please ensure the tuner is connected, enabled, available and accessible.", SectionSettings.MESSAGE_CAPTION);
+      return false;
+    }
+
+    private void buttonDiseqcMotorSetupPositionStoredGoTo_Click(object sender, EventArgs e)
+    {
+      int tunerId;
+      if (GetSelectedTunerId(out tunerId))
+      {
+        byte position = (byte)numericUpDownDiseqcMotorSetupPositionStored.Value;
+        this.LogDebug("satellites: DiSEqC motor go to stored position, tuner ID = {0}, position = {1}", tunerId, position);
+        ServiceAgents.Instance.ControllerServiceAgent.DiSEqCGotoStoredPosition(tunerId, position);
+      }
+    }
+
+    private void buttonDiseqcMotorSetupPositionStoredStore_Click(object sender, EventArgs e)
+    {
+      int tunerId;
+      if (GetSelectedTunerId(out tunerId))
+      {
+        byte position = (byte)numericUpDownDiseqcMotorSetupPositionStored.Value;
+        this.LogDebug("satellites: DiSEqC motor store position, tuner ID = {0}, position = {1}", tunerId, position);
+        ServiceAgents.Instance.ControllerServiceAgent.DiSEqCStorePosition(tunerId, position);
+      }
+    }
+
+    private void buttonDiseqcMotorSetupPositionUsalsGoTo_Click(object sender, EventArgs e)
+    {
+      int tunerId;
+      if (GetSelectedTunerId(out tunerId))
+      {
+        double longitude = (double)numericUpDownDiseqcMotorSetupPositionUsals.Value;
+        this.LogDebug("satellites: DiSEqC motor go to USALS (angular) position, tuner ID = {0}, longitude = {1}", tunerId, longitude);
+        ServiceAgents.Instance.ControllerServiceAgent.DiSEqCGotoAngularPosition(tunerId, longitude);
+      }
+    }
+
+    private void buttonDiseqcMotorSetupPositionReset_Click(object sender, EventArgs e)
+    {
+      int tunerId;
+      if (GetSelectedTunerId(out tunerId))
+      {
+        double longitude = (double)numericUpDownDiseqcMotorSetupPositionUsals.Value;
+        this.LogDebug("satellites: DiSEqC reset, tuner ID = {0}", tunerId);
+        ServiceAgents.Instance.ControllerServiceAgent.DiSEqCReset(tunerId);
+      }
+    }
+
+    private void buttonDiseqcMotorSetupPositionReferenceGoTo_Click(object sender, EventArgs e)
+    {
+      int tunerId;
+      if (GetSelectedTunerId(out tunerId))
+      {
+        this.LogDebug("satellites: DiSEqC motor go to reference position, tuner ID = {0}", tunerId);
+        ServiceAgents.Instance.ControllerServiceAgent.DiSEqCGotoReferencePosition(tunerId);
+      }
+    }
+
+    private void Drive(DiseqcDirection direction)
+    {
+      int tunerId;
+      if (GetSelectedTunerId(out tunerId))
+      {
+        byte stepCount = (byte)numericUpDownDiseqcMotorSetupManualMoveStepCount.Value;
+        this.LogDebug("satellites: DiSEqC motor drive, tuner ID = {0}, direction = {1}, step count = {2}", tunerId, direction, stepCount);
+        ServiceAgents.Instance.ControllerServiceAgent.DiSEqCDriveMotor(tunerId, direction, stepCount);
+      }
+    }
+
+    private void buttonDiseqcMotorSetupManualMoveUp_Click(object sender, EventArgs e)
+    {
+      Drive(DiseqcDirection.Up);
+    }
+
+    private void buttonDiseqcMotorSetupManualMoveWest_Click(object sender, EventArgs e)
+    {
+      Drive(DiseqcDirection.West);
+    }
+
+    private void buttonDiseqcMotorSetupManualMoveHalt_Click(object sender, EventArgs e)
+    {
+      int tunerId;
+      if (GetSelectedTunerId(out tunerId))
+      {
+        this.LogDebug("satellites: DiSEqC motor halt, tuner ID = {0}", tunerId);
+        ServiceAgents.Instance.ControllerServiceAgent.DiSEqCStopMotor(tunerId);
+      }
+    }
+
+    private void buttonDiseqcMotorSetupManualMoveEast_Click(object sender, EventArgs e)
+    {
+      Drive(DiseqcDirection.East);
+    }
+
+    private void buttonDiseqcMotorSetupManualMoveDown_Click(object sender, EventArgs e)
+    {
+      Drive(DiseqcDirection.Down);
+    }
+
+    private void buttonDiseqcMotorSetupMoveLimitsDisable_Click(object sender, EventArgs e)
+    {
+      int tunerId;
+      if (GetSelectedTunerId(out tunerId))
+      {
+        this.LogDebug("satellites: DiSEqC motor disable movement limits, tuner ID = {0}", tunerId);
+        ServiceAgents.Instance.ControllerServiceAgent.DiSEqCForceLimit(tunerId, false);
+      }
+    }
+
+    private void buttonDiseqcMotorSetupMoveLimitsSetWest_Click(object sender, EventArgs e)
+    {
+      int tunerId;
+      if (GetSelectedTunerId(out tunerId))
+      {
+        this.LogDebug("satellites: DiSEqC motor set Westward movement limit, tuner ID = {0}", tunerId);
+        ServiceAgents.Instance.ControllerServiceAgent.DiSEqCSetWestLimit(tunerId);
+      }
+    }
+
+    private void buttonDiseqcMotorSetupMoveLimitsSetEast_Click(object sender, EventArgs e)
+    {
+      int tunerId;
+      if (GetSelectedTunerId(out tunerId))
+      {
+        this.LogDebug("satellites: DiSEqC motor set Eastward movement limit, tuner ID = {0}", tunerId);
+        ServiceAgents.Instance.ControllerServiceAgent.DiSEqCSetEastLimit(tunerId);
+      }
+    }
+
+    private void buttonDiseqcMotorSetupMoveLimitsEnable_Click(object sender, EventArgs e)
+    {
+      int tunerId;
+      if (GetSelectedTunerId(out tunerId))
+      {
+        this.LogDebug("satellites: DiSEqC motor enable movement limits, tuner ID = {0}", tunerId);
+        ServiceAgents.Instance.ControllerServiceAgent.DiSEqCForceLimit(tunerId, true);
+      }
+    }
+
+    private void comboBoxDiseqcMotorSetupCheckSatellite_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      Satellite satellite = (Satellite)comboBoxDiseqcMotorSetupCheckSatellite.SelectedItem;
+      TuningDetailFilter.Load(-1, TuningDetailGroup.Satellite, satellite.ToString() + ".xml", comboBoxDiseqcMotorSetupCheckTransmitter);
+    }
+
+    private void buttonDiseqcMotorSetupCheckTune_Click(object sender, EventArgs e)
+    {
+      int tunerId;
+      if (!GetSelectedTunerId(out tunerId))
+      {
+        return;
+      }
+      TuningDetail tuningDetail = comboBoxDiseqcMotorSetupCheckTransmitter.SelectedItem as TuningDetail;
+      this.LogDebug("satellites: DiSEqC motor tune, tuner ID = {0}, satellite = {1}, tuning detail = {2}", tunerId, Satellite.LongitudeString(tuningDetail.Longitude), tuningDetail);
+      tuningDetail.Longitude = TunerSatellite.LONGITUDE_UNSPECIFIED;
+      IChannel tuningChannel = tuningDetail.GetTuningChannel();
+      // TODO
+    }
+
+    #endregion
   }
 }

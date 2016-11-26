@@ -42,15 +42,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner
   /// </summary>
   public interface ITuner : IDisposable
   {
-    #region events
-
-    /// <summary>
-    /// Set the tuner's new sub-channel event handler.
-    /// </summary>
-    event OnNewSubChannelDelegate OnNewSubChannelEvent;
-
-    #endregion
-
     #region properties
 
     /// <summary>

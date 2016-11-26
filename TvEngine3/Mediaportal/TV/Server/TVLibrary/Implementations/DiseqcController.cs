@@ -19,6 +19,7 @@
 #endregion
 
 using System;
+using System.Threading;
 using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
@@ -36,7 +37,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
   /// A controller class for DiSEqC devices. This controller is able to control
   /// positioners and switches.
   /// </summary>
-  internal class DiseqcController : IDiseqcController
+  internal class DiseqcController : IDiseqcController, IDisposable
   {
     #region constants
 
@@ -50,7 +51,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     private const double REFRACTION_CONST_A3 = -0.25187400e-2;
     private const double REFRACTION_CONST_A4 = 0.82622101e-4;
 
-    private const double LONGITUDE_UNKNOWN = 10000;
+    private const double UNKNOWN_LONGITUDE = 10000;
+    private const int UNKNOWN_POSITION = -1;
 
     #endregion
 
@@ -58,6 +60,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
 
     private IDiseqcDevice _device = null;
     private volatile bool _cancelTune = false;
+    private ManualResetEvent _cancelTuneEvent = null;
 
     /// <summary>
     /// Enable or disable always sending DiSEqC commands.
@@ -80,8 +83,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     private double _positionerSpeedSlow = TunerSatellite.DISEQC_MOTOR_DEFAULT_SPEED_SLOW;
     private double _positionerSpeedFast = TunerSatellite.DISEQC_MOTOR_DEFAULT_SPEED_FAST;
 
-    private int _currentPosition = 0;
-    private double _currentLongitude = LONGITUDE_UNKNOWN;
+    private int _currentPosition = UNKNOWN_POSITION;
+    private double _currentLongitude = UNKNOWN_LONGITUDE;
     private int _currentStepsAzimuth = 0;
     private int _currentStepsElevation = 0;
     private DiseqcPort _currentPort = DiseqcPort.None;
@@ -89,6 +92,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     private bool _currentIsHighBand = false;
 
     #endregion
+
+    #region constructor & finaliser
 
     /// <summary>
     /// Initialise a new instance of the <see cref="DiseqcController"/> class.
@@ -101,7 +106,40 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       {
         throw new ArgumentException("DiSEqC device is null.");
       }
+      _cancelTuneEvent = new ManualResetEvent(false);
     }
+
+    ~DiseqcController()
+    {
+      Dispose(false);
+    }
+
+    #endregion
+
+    #region IDisposable member
+
+    /// <summary>
+    /// Release and dispose all resources.
+    /// </summary>
+    public void Dispose()
+    {
+      Dispose(true);
+      GC.SuppressFinalize(this);
+    }
+
+    /// <summary>
+    /// Release and dispose all resources.
+    /// </summary>
+    /// <param name="isDisposing"><c>True</c> if the instance is being disposed.</param>
+    protected virtual void Dispose(bool isDisposing)
+    {
+      if (isDisposing && _cancelTuneEvent != null)
+      {
+        _cancelTuneEvent.Dispose();
+      }
+    }
+
+    #endregion
 
     /// <summary>
     /// Reload the controller's configuration.
@@ -166,6 +204,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       // "raw" DiSEqC commands -> DiSEqC 1.0 (committed) -> tone burst (simple DiSEqC) -> 22 kHz tone on/off
       this.LogDebug("DiSEqC: tune");
       _cancelTune = false;
+      _cancelTuneEvent.Reset();
 
       bool isHighBand = SatelliteLnbHandler.Is22kToneOn(channel.Frequency);
 
@@ -248,12 +287,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
             (
               satellite.DiseqcMotorPosition != TunerSatellite.DISEQC_MOTOR_POSITION_USALS &&
               _currentPosition == satellite.DiseqcMotorPosition &&
-              _currentLongitude == 0
+              _currentLongitude == UNKNOWN_LONGITUDE
             ) ||
             // positioned by longitude (USALS)
             (
               satellite.DiseqcMotorPosition == TunerSatellite.DISEQC_MOTOR_POSITION_USALS &&
-              _currentPosition == 0 &&
+              _currentPosition == UNKNOWN_POSITION &&
               _currentLongitude == (double)satellite.Satellite.Longitude / 10
             )
           )
@@ -272,7 +311,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         {
           // Assume the positioner is connected to the switch port that we just
           // selected. Give the positioner microcontroller time to power up.
-          System.Threading.Thread.Sleep(100);
+          _cancelTuneEvent.WaitOne(100);
           ThrowExceptionIfTuneCancelled();
         }
 
@@ -283,7 +322,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         }
         double newLongitude = (double)satellite.Satellite.Longitude / 10;
         double distance;  // unit = degrees; longitude difference
-        if (_currentLongitude == LONGITUDE_UNKNOWN || _currentStepsAzimuth != 0 || _currentStepsElevation != 0)
+        if (_currentLongitude == UNKNOWN_LONGITUDE || _currentStepsAzimuth != 0 || _currentStepsElevation != 0)
         {
           distance = 90;  // assumed/average distance; intended to be a high estimate to avoid failure to lock on signal
         }
@@ -306,7 +345,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         ThrowExceptionIfTuneCancelled();
         double waitTimeMilliSeconds = distance * 1000 / speed;
         this.LogDebug("DiSEqC: wait for positioner movement, distance = {0}°, speed = {1} °/s, wait time = {2} ms", distance, speed, waitTimeMilliSeconds);
-        System.Threading.Thread.Sleep((int)waitTimeMilliSeconds);
+        _cancelTuneEvent.WaitOne((int)waitTimeMilliSeconds);
+        ThrowExceptionIfTuneCancelled();
       }
 
       // Tone burst and final state.
@@ -317,7 +357,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         {
           // Delay to clearly distinguish the previously sent positioner
           // command from the burst we're about to send.
-          System.Threading.Thread.Sleep(15);
+          Thread.Sleep(15);
         }
         _device.SendCommand(toneBurst);
         sentSwitchCommand = true;
@@ -327,7 +367,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       {
         // Delay to clearly distinguish the previously sent positioner and/or
         // switch command from the continuous tone.
-        System.Threading.Thread.Sleep(15);
+        Thread.Sleep(15);
       }
       _device.SetToneState(isHighBand ? Tone22kState.On : Tone22kState.Off);
 
@@ -344,6 +384,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     {
       this.LogDebug("DiSEqC: cancel tune");
       _cancelTune = true;
+      if (_cancelTuneEvent != null)
+      {
+        _cancelTuneEvent.Set();
+      }
     }
 
     #region IDiseqcController members
@@ -359,7 +403,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       cmd[1] = (byte)DiseqcAddress.Any;
       cmd[2] = (byte)DiseqcCommand.Reset;
       _device.SendCommand(cmd);
-      System.Threading.Thread.Sleep(100);
+      Thread.Sleep(100);
 
       this.LogDebug("DiSEqC: clear reset");
       cmd[0] = (byte)DiseqcFrame.CommandFirstTransmissionNoReply;
@@ -454,7 +498,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
 
       Stop();
 
-      _currentLongitude = LONGITUDE_UNKNOWN;
       byte[] cmd = new byte[4];
       cmd[0] = (byte)DiseqcFrame.CommandFirstTransmissionNoReply;
       if (direction == DiseqcDirection.West)
@@ -506,7 +549,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
 
       // The current position becomes our reference.
       _currentPosition = position;
-      _currentLongitude = LONGITUDE_UNKNOWN;
+      _currentLongitude = UNKNOWN_LONGITUDE;
       _currentStepsAzimuth = 0;
       _currentStepsElevation = 0;
     }
@@ -527,7 +570,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
 
       // The current position becomes our reference.
       _currentPosition = 0;
-      _currentLongitude = LONGITUDE_UNKNOWN;
+      _currentLongitude = UNKNOWN_LONGITUDE;
       _currentStepsAzimuth = 0;
       _currentStepsElevation = 0;
     }
@@ -553,7 +596,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
 
       // The current position becomes our reference.
       _currentPosition = position;
-      _currentLongitude = LONGITUDE_UNKNOWN;
+      _currentLongitude = UNKNOWN_LONGITUDE;
       _currentStepsAzimuth = 0;
       _currentStepsElevation = 0;
     }
@@ -591,7 +634,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
 
       _device.SendCommand(cmd);
 
-      _currentPosition = 0;
+      _currentPosition = UNKNOWN_POSITION;
       _currentLongitude = longitude;
       _currentStepsAzimuth = 0;
       _currentStepsElevation = 0;
@@ -602,14 +645,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// </summary>
     /// <param name="position">The stored position identifier corresponding with the current base position.</param>
     /// <param name="longitude">The longitude corresponding with the current base position.</param>
-    /// <param name="stepsAzimuth">The number of steps taken from the base position on the azmutal axis.</param>
-    /// <param name="stepsElevation">The number of steps taken from the base position on the vertical (elevation) axis.</param>
-    public void GetPosition(out int position, out double longitude, out int stepsAzimuth, out int stepsElevation)
+    /// <param name="stepCountAzimuth">The number of steps taken from the base position or longitude on the azmutal axis.</param>
+    /// <param name="stepCountElevation">The number of steps taken from the base position or longitude on the vertical (elevation) axis.</param>
+    public void GetPosition(out int position, out double longitude, out int stepCountAzimuth, out int stepCountElevation)
     {
       position = _currentPosition;
       longitude = _currentLongitude;
-      stepsAzimuth = _currentStepsAzimuth;
-      stepsElevation = _currentStepsElevation;
+      stepCountAzimuth = _currentStepsAzimuth;
+      stepCountElevation = _currentStepsElevation;
     }
 
     #endregion

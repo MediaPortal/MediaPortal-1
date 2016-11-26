@@ -66,11 +66,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
         return new SubChannelDriOutOfBandScan(id);
       }
 
-      bool isNew;
       IChannelMpeg2Ts mpeg2TsChannel = channel as IChannelMpeg2Ts;
       if (mpeg2TsChannel == null || mpeg2TsChannel.ProgramNumber != ChannelMpeg2TsBase.PROGRAM_NUMBER_NOT_KNOWN_SELECT_FIRST)
       {
-        return _subChannelManager.Tune(id, channel, out isNew) as ISubChannelInternal;
+        return _subChannelManager.Tune(id, channel) as ISubChannelInternal;
       }
 
       // When switched digital video (SDV) is active - ie. the tuner uses a
@@ -102,7 +101,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
         if (mpeg2TsChannel.ProgramNumber != 0)
         {
           this.LogDebug("sub-channel manager DRI: determined program number, ID = {0}, program number = {1}", id, mpeg2TsChannel.ProgramNumber);
-          ISubChannelInternal subChannel = _subChannelManager.Tune(id, channel, out isNew) as ISubChannelInternal;
+          ISubChannelInternal subChannel = _subChannelManager.Tune(id, channel) as ISubChannelInternal;
           if (subChannel != null)
           {
             mpeg2TsChannel.ProgramNumber = originalProgramNumber;

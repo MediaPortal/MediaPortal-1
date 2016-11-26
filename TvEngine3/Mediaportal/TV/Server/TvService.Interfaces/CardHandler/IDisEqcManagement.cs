@@ -62,5 +62,11 @@ namespace Mediaportal.TV.Server.TVService.Interfaces.CardHandler
     /// </summary>
     /// <param name="position">The position.</param>
     void GotoStoredPosition(byte position);
+
+    /// <summary>
+    /// Drives the diseqc motor to the specified position
+    /// </summary>
+    /// <param name="longitude">The longitude.</param>
+    void GotoAngularPosition(double longitude);
   }
 }

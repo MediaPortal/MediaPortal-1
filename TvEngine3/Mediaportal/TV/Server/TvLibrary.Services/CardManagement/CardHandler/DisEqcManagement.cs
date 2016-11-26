@@ -49,7 +49,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     public void GetPosition(out int satellitePosition, out double satelliteLongitude, out int stepsAzimuth, out int stepsElevation)
     {
       satellitePosition = -1;
-      satelliteLongitude = 0;
+      satelliteLongitude = 10000;
       stepsAzimuth = 0;
       stepsElevation = 0;
 
@@ -125,7 +125,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       IDiseqcController controller = _cardHandler.Card.DiseqcController;
       if (controller == null)
         return;
-      controller.DriveMotor(direction, numberOfSteps);
+      controller.Drive(direction, numberOfSteps);
     }
 
     /// <summary>
@@ -161,6 +161,18 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       if (controller == null)
         return;
       controller.GoToStoredPosition(position);
+    }
+
+    /// <summary>
+    /// Drives the diseqc motor to the specified position
+    /// </summary>
+    /// <param name="longitude">The longitude.</param>
+    public void GotoAngularPosition(double longitude)
+    {
+      IDiseqcController controller = _cardHandler.Card.DiseqcController;
+      if (controller == null)
+        return;
+      controller.GoToAngularPosition(longitude);
     }
 
     #endregion

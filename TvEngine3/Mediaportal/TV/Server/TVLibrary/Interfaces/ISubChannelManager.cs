@@ -62,9 +62,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
     /// </summary>
     /// <param name="id">The sub-channel's identifier.</param>
     /// <param name="channel">The channel to tune to.</param>
-    /// <param name="isNew"><c>True</c> if the sub-channel is newly created.</param>
     /// <returns>the sub-channel</returns>
-    ISubChannel Tune(int id, IChannel channel, out bool isNew);
+    ISubChannel Tune(int id, IChannel channel);
 
     /// <summary>
     /// Cancel the current tuning process.

@@ -45,44 +45,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
   /// </summary>
   internal abstract class TunerBase : ITunerInternal, ITuner, IDisposable
   {
-    #region events
-
-    /// <summary>
-    /// New sub-channel delegate, invoked when a new sub-channel is created.
-    /// </summary>
-    private OnNewSubChannelDelegate _newSubChannelEventDelegate = null;
-
-    /// <summary>
-    /// Set the tuner's new sub-channel event handler.
-    /// </summary>
-    /// <value>the delegate</value>
-    public event OnNewSubChannelDelegate OnNewSubChannelEvent
-    {
-      add
-      {
-        _newSubChannelEventDelegate = null;
-        _newSubChannelEventDelegate += value;
-      }
-      remove
-      {
-        _newSubChannelEventDelegate = null;
-      }
-    }
-
-    /// <summary>
-    /// Fire the new sub-channel observer event.
-    /// </summary>
-    /// <param name="subChannelId">The new sub-channel's identifier.</param>
-    private void FireNewSubChannelEvent(int subChannelId)
-    {
-      if (_newSubChannelEventDelegate != null)
-      {
-        _newSubChannelEventDelegate(subChannelId);
-      }
-    }
-
-    #endregion
-
     #region variables
 
     /// <summary>
@@ -1100,7 +1062,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
 
       if (!isFinalising)
       {
-        _diseqcController = null;
+        if (_diseqcController != null)
+        {
+          _diseqcController.Dispose();
+          _diseqcController = null;
+        }
+
         _state = TunerState.NotLoaded;
       }
     }
@@ -1319,7 +1286,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         // satellite, and one of the corresponding LNBs must be able to receive
         // the transmitter.
         IChannelSatellite satelliteChannel = channel as IChannelSatellite;
-        if (satelliteChannel == null)
+        if (satelliteChannel == null || satelliteChannel.Longitude == TunerSatellite.LONGITUDE_UNSPECIFIED)
         {
           return true;
         }
@@ -1381,7 +1348,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
 
           IChannelSatellite satelliteChannel = tuneChannel as IChannelSatellite;
           TunerSatellite satellite = null;
-          if (satelliteChannel != null)
+          if (satelliteChannel != null && satelliteChannel.Longitude != TunerSatellite.LONGITUDE_UNSPECIFIED)
           {
             IList<TunerSatellite> tunerSatellitesAtLongitude;
             if (_satellites.TryGetValue(satelliteChannel.Longitude, out tunerSatellitesAtLongitude))
@@ -1514,13 +1481,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         LockInOnSignal();
         this.LogDebug("tuner base: signal, locked = {0}, present = {1}, strength = {2} %, quality = {3} %", _isSignalLocked, _isSignalPresent, _signalStrength, _signalQuality);
 
-        bool isNewSubChannel;
-        ISubChannel subChannel = SubChannelManager.Tune(subChannelId, channel, out isNewSubChannel);
-        if (isNewSubChannel)
-        {
-          FireNewSubChannelEvent(subChannel.SubChannelId);
-        }
-
+        ISubChannel subChannel = SubChannelManager.Tune(subChannelId, channel);
         if (tuned && InternalEpgGrabberInterface != null)
         {
           InternalEpgGrabberInterface.OnTune(channel);

@@ -41,11 +41,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     private Dictionary<int, ISubChannelInternal> _subChannels = new Dictionary<int, ISubChannelInternal>();
 
     /// <summary>
-    /// The identifier to use for the next new sub-channel.
-    /// </summary>
-    private int _nextSubChannelId = 0;
-
-    /// <summary>
     /// The maximum time to wait for implementation-dependent stream
     /// information (eg. PAT, PMT and CAT) to be received during tuning.
     /// </summary>
@@ -123,7 +118,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         subChannel.Decompose();
       }
       _subChannels.Clear();
-      _nextSubChannelId = 0;
 
       OnDecompose();
     }
@@ -147,20 +141,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// </summary>
     /// <param name="id">The sub-channel's identifier.</param>
     /// <param name="channel">The channel to tune to.</param>
-    /// <param name="isNew"><c>True</c> if the sub-channel is newly created.</param>
     /// <returns>the sub-channel</returns>
-    public ISubChannel Tune(int id, IChannel channel, out bool isNew)
+    public ISubChannel Tune(int id, IChannel channel)
     {
       _cancelTune = false;
+      bool isNew = false;
       ISubChannelInternal subChannel = null;
       if (_subChannels.TryGetValue(id, out subChannel) && subChannel != null)
       {
         this.LogInfo("sub-channel manager base: using existing sub-channel, ID = {0}, count = {1}", id, _subChannels.Count);
-        isNew = false;
       }
       else
       {
-        id = _nextSubChannelId++;
         this.LogInfo("sub-channel manager base: create new sub-channel, ID = {0}, count = {1}", id, _subChannels.Count);
         isNew = true;
       }
@@ -230,10 +222,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       OnFreeSubChannel(id);
       subChannel.Decompose();
       _subChannels.Remove(id);
-      if (_subChannels.Count == 0)
-      {
-        _nextSubChannelId = 0;
-      }
     }
 
     /// <summary>
