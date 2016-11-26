@@ -520,29 +520,31 @@ namespace MediaPortal.Player
           _destinationRect.X += (int) x;
           _destinationRect.Y += (int) y;
 
-          //sanity check
-          if (_destinationRect.Width < 10)
-          {
-            return false;
-          }
-          if (_destinationRect.Height < 10)
-          {
-            return false;
-          }
-          if (_sourceRect.Width < 10)
-          {
-            return false;
-          }
-          if (_sourceRect.Height < 10)
-          {
-            return false;
-          }
-
           if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
           {
             // Force VideoWindow to be refreshed with madVR when switching from video size like 16:9 to 4:3
             GUIGraphicsContext.UpdateVideoWindow = true;
             GUIGraphicsContext.VideoWindowChanged();
+          }
+          else
+          {
+            //sanity check
+            if (_destinationRect.Width < 10)
+            {
+              return false;
+            }
+            if (_destinationRect.Height < 10)
+            {
+              return false;
+            }
+            if (_sourceRect.Width < 10)
+            {
+              return false;
+            }
+            if (_sourceRect.Height < 10)
+            {
+              return false;
+            }
           }
 
           Log.Debug("PlaneScene: crop T, B  : {0}, {1}", _cropSettings.Top, _cropSettings.Bottom);
@@ -558,6 +560,12 @@ namespace MediaPortal.Player
           Log.Debug("PlaneScene: dst        : ({0},{1})-({2},{3})",
             _destinationRect.X, _destinationRect.Y, _destinationRect.X + _destinationRect.Width,
             _destinationRect.Y + _destinationRect.Height);
+
+          if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
+              GUIGraphicsContext.Vmr9Active)
+          {
+            g_Player.SetVideoWindowMadVr();
+          }
 
           return true;
         }

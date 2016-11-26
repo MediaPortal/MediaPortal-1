@@ -633,9 +633,25 @@ namespace MediaPortal.Player
           if (basicVideo != null)
           {
             // TODO why it is needed for some video to be able to reduce fullscreen video window
-            basicVideo.SetDestinationPosition(rDest.Left, rDest.Top, rDest.Width, rDest.Height);
-            Log.Debug("VideoPlayerVMR7: rezise madVR video window rDest.Left : {0}, rDest.Top : {1}, rDest.Width : {2}, rDest.Height : {3}", rDest.Left, rDest.Top, rDest.Width, rDest.Height);
+            {
+              basicVideo.SetDestinationPosition(m_iPositionX, m_iPositionY, m_iWidth, m_iHeight);
+              GUIGraphicsContext.rDest = rDest;
+              Log.Debug("VideoPlayer: resize madVR video window m_iPositionX : {0}, m_iPositionY : {1}, m_iWidth : {2}, m_iHeight : {3}", m_iPositionX, m_iPositionY, m_iWidth, m_iHeight);
+            }
           }
+        }
+      }
+    }
+
+    public override void SetVideoWindowMadVR()
+    {
+      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && !m_bFullScreen)
+      {
+        if (basicVideo != null)
+        {
+          basicVideo.SetDestinationPosition(GUIGraphicsContext.rDest.Left, GUIGraphicsContext.rDest.Top, GUIGraphicsContext.rDest.Width, GUIGraphicsContext.rDest.Height);
+          Log.Debug("VideoPlayer: resize madVR video window rDest.Left : {0}, rDest.Top : {1}, rDest.Width : {2}, rDest.Height : {3}",
+            GUIGraphicsContext.rDest.Left, GUIGraphicsContext.rDest.Top, GUIGraphicsContext.rDest.Width, GUIGraphicsContext.rDest.Height);
         }
       }
     }
@@ -656,8 +672,11 @@ namespace MediaPortal.Player
 
         if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
         {
-          Size client = GUIGraphicsContext.form.ClientSize;
-          videoWin.SetWindowPosition(0, 0, client.Width, client.Height);
+          lock (GUIGraphicsContext.RenderMadVrLock)
+          {
+            Size client = GUIGraphicsContext.form.ClientSize;
+            videoWin.SetWindowPosition(0, 0, client.Width, client.Height);
+          }
         }
         else
         {
