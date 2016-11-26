@@ -425,15 +425,20 @@ namespace MediaPortal.Player
     protected void SelectSubtitles()
     {
       if (SubtitleStreams == 0) return;
-      if (!SubEngine.GetInstance().AutoShow) return;
+      if (!SubEngine.GetInstance().AutoShow && (SubEngine.GetSubtitleInstance() != "XySubFilter" && SubEngine.GetSubtitleInstance() != "DirectVobSub"))
+      {
+        return;
+      }
       CultureInfo ci = null;
       bool autoloadSubtitle = false;
+      bool selectionOff = false;
 
       using (Settings xmlreader = new MPSettings())
       {
         try
         {
           autoloadSubtitle = xmlreader.GetValueAsBool("subtitles", "autoloadSubtitle", false);
+          selectionOff = xmlreader.GetValueAsBool("subtitles", "selectionoff", true);
           ci = new CultureInfo(xmlreader.GetValueAsString("subtitles", "language", defaultLanguageCulture));
           Log.Info("VideoPlayerVMR7: Subtitle CultureInfo {0}", ci);
         }
@@ -446,23 +451,59 @@ namespace MediaPortal.Player
 
       if (!streamLAVSelection)
       {
-        int subsCount = SubtitleStreams; // Not in the loop otherwise it will be reaccessed at each pass
-        for (int i = 0; i < subsCount; i++)
+        if (!SubEngine.GetInstance().AutoShow && (SubEngine.GetSubtitleInstance() == "XySubFilter" || SubEngine.GetSubtitleInstance() == "DirectVobSub") && !selectionOff)
         {
-          string subtitleLanguage = SubtitleLanguage(i);
-          //Add localized stream names for FFDshow when OS language = Skin language
-          string localizedCINameSub = Util.Utils.TranslateLanguageString(ci.EnglishName);
-          if (localizedCINameSub.Equals(SubtitleLanguage(i), StringComparison.OrdinalIgnoreCase) ||
-              ci.EnglishName.Equals(subtitleLanguage, StringComparison.OrdinalIgnoreCase) ||
-              ci.TwoLetterISOLanguageName.Equals(subtitleLanguage, StringComparison.OrdinalIgnoreCase) ||
-              ci.ThreeLetterISOLanguageName.Equals(subtitleLanguage, StringComparison.OrdinalIgnoreCase) ||
-              ci.ThreeLetterWindowsLanguageName.Equals(subtitleLanguage, StringComparison.OrdinalIgnoreCase) ||
-              subtitleLanguage.ToUpperInvariant().Contains(ci.ThreeLetterWindowsLanguageName))
+          int subsCount = SubtitleStreams; // Not in the loop otherwise it will be reaccessed at each pass
+          for (var i = 0; i < subsCount; i++)
           {
-            CurrentSubtitleStream = i;
-            Log.Info("VideoPlayerVMR7: CultureInfo Selected active subtitle track language: {0} ({1})", ci.EnglishName, i);
-            EnableSubtitle = true;
-            break;
+            string subtitleLanguage = SubtitleLanguage(i);
+            string subtitleName = SubtitleName(i);
+            //Add localized stream names for FFDshow when OS language = Skin language
+            string localizedCINameSub = Util.Utils.TranslateLanguageString(ci.EnglishName);
+            if (localizedCINameSub.Equals(SubtitleLanguage(i), StringComparison.OrdinalIgnoreCase) ||
+                ci.EnglishName.Equals(subtitleLanguage, StringComparison.OrdinalIgnoreCase) ||
+                ci.TwoLetterISOLanguageName.Equals(subtitleLanguage, StringComparison.OrdinalIgnoreCase) ||
+                ci.ThreeLetterISOLanguageName.Equals(subtitleLanguage, StringComparison.OrdinalIgnoreCase) ||
+                ci.ThreeLetterWindowsLanguageName.Equals(subtitleLanguage, StringComparison.OrdinalIgnoreCase) ||
+                subtitleLanguage.ToUpperInvariant().Contains(ci.ThreeLetterWindowsLanguageName))
+            {
+              if (subtitleName.ToLowerInvariant().Contains("forced"))
+              {
+                CurrentSubtitleStream = i;
+                Log.Info("VideoPlayerVMR7: CultureInfo Selected active subtitle track language: {0} ({1})",
+                  ci.EnglishName,
+                  i);
+                EnableSubtitle = true;
+                break;
+              }
+            }
+          }
+        }
+        else if (!SubEngine.GetInstance().AutoShow)
+        {
+          return;
+        }
+        else
+        {
+          int subsCount = SubtitleStreams; // Not in the loop otherwise it will be reaccessed at each pass
+          for (int i = 0; i < subsCount; i++)
+          {
+            string subtitleLanguage = SubtitleLanguage(i);
+            //Add localized stream names for FFDshow when OS language = Skin language
+            string localizedCINameSub = Util.Utils.TranslateLanguageString(ci.EnglishName);
+            if (localizedCINameSub.Equals(SubtitleLanguage(i), StringComparison.OrdinalIgnoreCase) ||
+                ci.EnglishName.Equals(subtitleLanguage, StringComparison.OrdinalIgnoreCase) ||
+                ci.TwoLetterISOLanguageName.Equals(subtitleLanguage, StringComparison.OrdinalIgnoreCase) ||
+                ci.ThreeLetterISOLanguageName.Equals(subtitleLanguage, StringComparison.OrdinalIgnoreCase) ||
+                ci.ThreeLetterWindowsLanguageName.Equals(subtitleLanguage, StringComparison.OrdinalIgnoreCase) ||
+                subtitleLanguage.ToUpperInvariant().Contains(ci.ThreeLetterWindowsLanguageName))
+            {
+              CurrentSubtitleStream = i;
+              Log.Info("VideoPlayerVMR7: CultureInfo Selected active subtitle track language: {0} ({1})", ci.EnglishName,
+                i);
+              EnableSubtitle = true;
+              break;
+            }
           }
         }
       }

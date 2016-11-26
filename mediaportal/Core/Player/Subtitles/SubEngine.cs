@@ -80,6 +80,15 @@ namespace MediaPortal.Player.Subtitles
       return GetInstance(false);
     }
 
+    public static string GetSubtitleInstance()
+    {
+      using (Settings xmlreader = new MPSettings())
+      {
+        string engineType = xmlreader.GetValueAsString("subtitles", "engine", "DirectVobSub");
+        return engineType;
+      }
+    }
+
     public static ISubEngine GetInstance(bool forceinitialize)
     {
       if (engine == null || forceinitialize)
