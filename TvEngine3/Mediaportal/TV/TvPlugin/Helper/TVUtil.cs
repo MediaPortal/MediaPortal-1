@@ -170,18 +170,28 @@ namespace Mediaportal.TV.TvPlugin.Helper
     public static string GetRecordingDateString(Recording rec)
     {
       TimeSpan ts = rec.EndTime - rec.StartTime;
-      return String.Format("{0} ({1})",
-        Utils.GetNamedDate(rec.StartTime),
-        Utils.SecondsToHMString((int)ts.TotalSeconds));
+      if (rec.StartTime.Year == DateTime.Now.Year)
+        return String.Format("{0} ({1})",
+          Utils.GetNamedDate(rec.StartTime),
+          Utils.SecondsToHMString((int)ts.TotalSeconds));
+      else
+        return String.Format("{1}-{2} {0} ({3})", rec.StartTime.Year, rec.StartTime.Day, rec.StartTime.Month,
+          Utils.SecondsToHMString((int)ts.TotalSeconds));
     }
 
     private static string GetRecordingDateStringFull(DateTime startTime, DateTime endTime)
     {
       TimeSpan ts = endTime - startTime;
-      return string.Format("{0} {1} - {2}",
-                                     Utils.GetShortDayString(startTime),
-                                     startTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-                                     endTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+      if (startTime.Year == DateTime.Now.Year)
+        return string.Format("{0} {1} - {2}",
+                                       Utils.GetShortDayString(startTime),
+                                       startTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+                                       endTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+      else
+        return string.Format("{1}-{2} {0} {3} - {4}",
+                                       startTime.Year, startTime.Day, startTime.Month,
+                                       startTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+                                       endTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
     }
 
     public static string GetRecordingDateStringFull(Recording rec)
