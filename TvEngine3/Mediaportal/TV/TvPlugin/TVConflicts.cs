@@ -29,6 +29,7 @@ using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.Entities.Factories;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
+using Mediaportal.TV.TvPlugin.Helper;
 using Action = MediaPortal.GUI.Library.Action;
 
 namespace Mediaportal.TV.TvPlugin
@@ -155,7 +156,7 @@ namespace Mediaportal.TV.TvPlugin
 
       item.TVTag = schedule;
       string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, schedule.Channel.DisplayName);
-      if (string.IsNullOrEmpty(strLogo))                    
+      if (string.IsNullOrEmpty(strLogo))
       {
         strLogo = "defaultVideoBig.png";
       }
@@ -240,11 +241,7 @@ namespace Mediaportal.TV.TvPlugin
         switch (rec.ScheduleType)
         {
           case (int)ScheduleRecordingType.Once:
-            item.Label2 = String.Format("{0} {1} - {2}",
-                                        Utils.GetShortDayString(rec.StartTime),
-                                        rec.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-                                        rec.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
-            ;
+            item.Label2 = TVUtil.GetRecordingDateStringFull(rec);
             break;
           case (int)ScheduleRecordingType.Daily:
             strTime = String.Format("{0}-{1}",
@@ -310,13 +307,13 @@ namespace Mediaportal.TV.TvPlugin
           case (int)ScheduleRecordingType.WeeklyEveryTimeOnThisChannel:
             switch (rec.StartTime.DayOfWeek)
             {
-                case DayOfWeek.Monday: day = GUILocalizeStrings.Get(11); break;
-                case DayOfWeek.Tuesday: day = GUILocalizeStrings.Get(12); break;
-                case DayOfWeek.Wednesday: day = GUILocalizeStrings.Get(13); break;
-                case DayOfWeek.Thursday: day = GUILocalizeStrings.Get(14); break;
-                case DayOfWeek.Friday: day = GUILocalizeStrings.Get(15); break;
-                case DayOfWeek.Saturday: day = GUILocalizeStrings.Get(16); break;
-                default: day = GUILocalizeStrings.Get(17); break;
+              case DayOfWeek.Monday: day = GUILocalizeStrings.Get(11); break;
+              case DayOfWeek.Tuesday: day = GUILocalizeStrings.Get(12); break;
+              case DayOfWeek.Wednesday: day = GUILocalizeStrings.Get(13); break;
+              case DayOfWeek.Thursday: day = GUILocalizeStrings.Get(14); break;
+              case DayOfWeek.Friday: day = GUILocalizeStrings.Get(15); break;
+              case DayOfWeek.Saturday: day = GUILocalizeStrings.Get(16); break;
+              default: day = GUILocalizeStrings.Get(17); break;
             }
 
             item.Label = rec.ProgramName;
@@ -324,7 +321,7 @@ namespace Mediaportal.TV.TvPlugin
             break;
           case (int)ScheduleRecordingType.EveryTimeOnThisChannel:
             item.Label = rec.ProgramName;
-            item.Label2 = GUILocalizeStrings.Get(650, new object[] {rec.Channel.DisplayName});
+            item.Label2 = GUILocalizeStrings.Get(650, new object[] { rec.Channel.DisplayName });
             break;
           case (int)ScheduleRecordingType.EveryTimeOnEveryChannel:
             item.Label = rec.ProgramName;
@@ -382,7 +379,7 @@ namespace Mediaportal.TV.TvPlugin
           {
             if (schedule.ScheduleType == (int)ScheduleRecordingType.Once)
             {
-              ServiceAgents.Instance.ScheduleServiceAgent.DeleteSchedule(schedule.IdSchedule);                            
+              ServiceAgents.Instance.ScheduleServiceAgent.DeleteSchedule(schedule.IdSchedule);
               selectedItem = null;
             }
           }
@@ -405,14 +402,14 @@ namespace Mediaportal.TV.TvPlugin
           switch (dlg.SelectedId)
           {
             case 981: //delete specific series
-              CanceledSchedule canceledSchedule = CanceledScheduleFactory.CreateCanceledSchedule(schedule.IdSchedule, schedule.IdChannel, schedule.StartTime);              
+              CanceledSchedule canceledSchedule = CanceledScheduleFactory.CreateCanceledSchedule(schedule.IdSchedule, schedule.IdChannel, schedule.StartTime);
               ServiceAgents.Instance.CanceledScheduleServiceAgent.SaveCanceledSchedule(canceledSchedule);
               selectedItem = null;
-              
+
               ServiceAgents.Instance.ControllerServiceAgent.OnNewSchedule();
               break;
             case 982: //Delete entire recording              
-              ServiceAgents.Instance.ScheduleServiceAgent.DeleteSchedule(schedule.IdSchedule);                            
+              ServiceAgents.Instance.ScheduleServiceAgent.DeleteSchedule(schedule.IdSchedule);
               selectedItem = null;
               break;
           }
