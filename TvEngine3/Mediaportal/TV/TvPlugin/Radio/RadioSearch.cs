@@ -638,11 +638,6 @@ namespace Mediaportal.TV.TvPlugin.Radio
                 continue;
               }
 
-              strTime = String.Format("{0} {1} - {2}",
-                                      Utils.GetShortDayString(program.StartTime),
-                                      program.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-                                      program.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
-
               item = new GUIListItem();
 
               //check if we are filtering for specific show or just letter
@@ -657,7 +652,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
               {
                 //searching for specific show so add episode data to display
                 item.Label = TVUtil.GetDisplayTitle(program);
-                item.Label2 = strTime;
+                item.Label2 = TVUtil.GetRecordingDateStringFull(program);
                 item.IsFolder = false;
               }
               item.Path = program.Title;
@@ -789,11 +784,6 @@ namespace Mediaportal.TV.TvPlugin.Radio
                 continue;
               }
 
-              string strTime = String.Format("{0} {1} - {2}",
-                                             Utils.GetShortDayString(program.StartTime),
-                                             program.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-                                             program.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
-
               GUIListItem item = new GUIListItem();
 
 
@@ -813,7 +803,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
                 //moved this if statement but can not see it is doing anything?
                 //if (program.startTime > DateTime.MinValue)
                 //{
-                item.Label2 = strTime;
+                item.Label2 = TVUtil.GetRecordingDateStringFull(program);
                 //}
               }
 
@@ -898,15 +888,10 @@ namespace Mediaportal.TV.TvPlugin.Radio
                 continue;
               }
 
-              strTime = String.Format("{0} {1} - {2}",
-                                      Utils.GetShortDayString(program.StartTime),
-                                      program.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-                                      program.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
-
               GUIListItem item = new GUIListItem();
               item.IsFolder = false;
               item.Label = TVUtil.GetDisplayTitle(program);
-              item.Label2 = strTime;
+              item.Label2 = TVUtil.GetRecordingDateStringFull(program);
 
 
               item.Path = program.Title;
@@ -1364,10 +1349,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
         return;
       }
 
-      string strTime = String.Format("{0} {1} - {2}",
-                                     Utils.GetShortDayString(prog.StartTime),
-                                     prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-                                     prog.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+      string strTime =TVUtil.GetRecordingDateStringFull(prog);
 
       GUIPropertyManager.SetProperty("#Radio.Search.Title", TVUtil.GetDisplayTitle(prog));
       GUIPropertyManager.SetProperty("#Radio.Search.Time", strTime);

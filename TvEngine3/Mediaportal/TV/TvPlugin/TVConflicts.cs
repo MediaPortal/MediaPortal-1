@@ -29,6 +29,7 @@ using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.Entities.Factories;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
+using Mediaportal.TV.TvPlugin.Helper;
 using Action = MediaPortal.GUI.Library.Action;
 
 namespace Mediaportal.TV.TvPlugin
@@ -240,11 +241,7 @@ namespace Mediaportal.TV.TvPlugin
         switch (rec.ScheduleType)
         {
           case (int)ScheduleRecordingType.Once:
-            item.Label2 = String.Format("{0} {1} - {2}",
-                                        Utils.GetShortDayString(rec.StartTime),
-                                        rec.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-                                        rec.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
-            ;
+            item.Label2 = TVUtil.GetRecordingDateStringFull(rec);
             break;
           case (int)ScheduleRecordingType.Daily:
             strTime = String.Format("{0}-{1}",

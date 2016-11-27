@@ -22,6 +22,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Configuration;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -164,6 +165,43 @@ namespace Mediaportal.TV.TvPlugin.Helper
       StringBuilder strBuilder = new StringBuilder();
       TitleDisplay(strBuilder, prog.Title, prog.EpisodeName, prog.SeriesNum, prog.EpisodeNum, prog.EpisodePart);
       return strBuilder.ToString();
+    }
+
+    public static string GetRecordingDateString(Recording rec)
+    {
+      TimeSpan ts = rec.EndTime - rec.StartTime;
+      return String.Format("{0} ({1})",
+        Utils.GetNamedDate(rec.StartTime),
+        Utils.SecondsToHMString((int)ts.TotalSeconds));
+    }
+
+    private static string GetRecordingDateStringFull(DateTime startTime, DateTime endTime)
+    {
+      TimeSpan ts = endTime - startTime;
+      return string.Format("{0} {1} - {2}",
+                                     Utils.GetShortDayString(startTime),
+                                     startTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+                                     endTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+    }
+
+    public static string GetRecordingDateStringFull(Recording rec)
+    {
+      return GetRecordingDateStringFull(rec.StartTime, rec.EndTime);
+    }
+
+    public static string GetRecordingDateStringFull(Schedule rec)
+    {
+      return GetRecordingDateStringFull(rec.StartTime, rec.EndTime);
+    }
+
+    public static string GetRecordingDateStringFull(ScheduleInfo rec)
+    {
+      return GetRecordingDateStringFull(rec.StartTime, rec.EndTime);
+    }
+
+    public static string GetRecordingDateStringFull(Program rec)
+    {
+      return GetRecordingDateStringFull(rec.StartTime, rec.EndTime);
     }
 
     ///
