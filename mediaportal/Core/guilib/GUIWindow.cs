@@ -21,6 +21,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -1823,7 +1824,7 @@ namespace MediaPortal.GUI.Library
 
               InitControls();
               UpdateOverlayAllowed();
-              GUIGraphicsContext.Overlay = _isOverlayAllowed;
+              GUIGraphicsContext.Overlay = _isOverlayAllowed || GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR;
 
               // set topbar autohide 
               switch (_autoHideTopbarType)
@@ -1884,6 +1885,24 @@ namespace MediaPortal.GUI.Library
               }
 
               _skipAnimation = false;
+
+              if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+              {
+                if (Thread.CurrentThread.Name != "MPMain")
+                {
+                  if (!GUIGraphicsContext.VideoWindowChangedDone)
+                  {
+                    GUIGraphicsContext.VideoWindowChangedDone = true;
+                    msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ONVIDEOWINDOWCHANGED, 0, 0, 0, 0, 0, null);
+                    GUIWindowManager.SendThreadMessage(msg);
+                  }
+                }
+                else
+                {
+                  g_Player.SetVideoWindow();
+                }
+              }
+
               return true;
               // TODO BUG ! Check if this return needs to be in the case and if there needs to be a break statement after each case.
 
@@ -1902,6 +1921,13 @@ namespace MediaPortal.GUI.Library
 #endif
                 _shouldRestore = true;
                 _skipAnimation = false;
+
+                // madVR
+                //set video window position
+                if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && GUIGraphicsContext.Vmr9Active)
+                {
+                  GUIGraphicsContext.VideoWindow = new Rectangle(0, 0, 3, 3);
+                }
                 return true;
               }
 

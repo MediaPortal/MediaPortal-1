@@ -668,34 +668,6 @@ namespace MediaPortal.Player
         SetVideoPosition(rDest);
         _sourceRectangle = rSource;
         _videoRectangle = rDest;
-
-        if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && !m_bFullScreen)
-        {
-          if (basicVideo != null)
-          {
-            // TODO why it is needed for some video to be able to reduce fullscreen video window
-            {
-              if (m_iWidth <= 10) return;
-              basicVideo.SetDestinationPosition(m_iPositionX, m_iPositionY, m_iWidth, m_iHeight);
-              GUIGraphicsContext.rDest = rDest;
-              Log.Debug("VideoPlayer: resize madVR video window m_iPositionX : {0}, m_iPositionY : {1}, m_iWidth : {2}, m_iHeight : {3}", m_iPositionX, m_iPositionY, m_iWidth, m_iHeight);
-            }
-          }
-        }
-      }
-    }
-
-    public override void SetVideoWindowMadVR()
-    {
-      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && !m_bFullScreen)
-      {
-        if (basicVideo != null)
-        {
-          if (GUIGraphicsContext.rDest.Width <= 10) return;
-          basicVideo.SetDestinationPosition(GUIGraphicsContext.rDest.Left, GUIGraphicsContext.rDest.Top, GUIGraphicsContext.rDest.Width, GUIGraphicsContext.rDest.Height);
-          Log.Debug("VideoPlayer: resize madVR video window rDest.Left : {0}, rDest.Top : {1}, rDest.Width : {2}, rDest.Height : {3}",
-            GUIGraphicsContext.rDest.Left, GUIGraphicsContext.rDest.Top, GUIGraphicsContext.rDest.Width, GUIGraphicsContext.rDest.Height);
-        }
       }
     }
 
@@ -756,11 +728,6 @@ namespace MediaPortal.Player
           if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
           {
             basicVideo.SetDestinationPosition(rDest.Left, rDest.Top, rDest.Width, rDest.Height);
-            if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
-                GUIGraphicsContext.Vmr9Active)
-            {
-              g_Player.SetVideoWindowMadVr();
-            }
           }
           else
           {
@@ -801,7 +768,7 @@ namespace MediaPortal.Player
           mediaPos.get_Duration(out m_dDuration); //(refresh timeline when change EDITION)
           mediaPos.get_CurrentPosition(out m_dCurrentPos);
         }
-        if (GUIGraphicsContext.BlankScreen || (GUIGraphicsContext.VideoWindow.Width <= 10 && GUIGraphicsContext.Overlay == false && GUIGraphicsContext.IsFullScreenVideo == false))
+        if (GUIGraphicsContext.BlankScreen || (GUIGraphicsContext.VideoWindow.Width <= 10 && GUIGraphicsContext.IsFullScreenVideo == false))
         {
           if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
           {

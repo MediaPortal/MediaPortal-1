@@ -524,7 +524,7 @@ namespace MediaPortal.Player
           {
             // Force VideoWindow to be refreshed with madVR when switching from video size like 16:9 to 4:3
             GUIGraphicsContext.UpdateVideoWindow = true;
-            GUIGraphicsContext.VideoWindowChanged();
+            GUIGraphicsContext.VideoWindowChanged(); // TODO
           }
           else
           {
@@ -560,12 +560,6 @@ namespace MediaPortal.Player
           Log.Debug("PlaneScene: dst        : ({0},{1})-({2},{3})",
             _destinationRect.X, _destinationRect.Y, _destinationRect.X + _destinationRect.Width,
             _destinationRect.Y + _destinationRect.Height);
-
-          if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
-              GUIGraphicsContext.Vmr9Active)
-          {
-            g_Player.SetVideoWindowMadVr();
-          }
 
           return true;
         }
@@ -776,16 +770,8 @@ namespace MediaPortal.Player
 
             //Log.Debug("PlaneScene width {0}, height {1}", width, height);
 
-            if (GUIGraphicsContext.IsWindowVisible)
-            {
-              Size nativeSize = new Size(width, height);
-              _shouldRenderTexture = SetVideoWindow(nativeSize);
-            }
-            //else
-            //{
-            //  Size nativeSize = new Size(1, 1);
-            //  _shouldRenderTexture = SetVideoWindow(nativeSize);
-            //}
+            Size nativeSize = new Size(width, height);
+            _shouldRenderTexture = SetVideoWindow(nativeSize);
           }
 
           Device device = GUIGraphicsContext.DX9Device;
