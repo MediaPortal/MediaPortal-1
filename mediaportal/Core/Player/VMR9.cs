@@ -896,12 +896,12 @@ namespace MediaPortal.Player
       currentVmr9State = Vmr9PlayState.Repaint;
       if (_scene != null) _scene.DrawVideo = false;
 
-      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
-          GUIGraphicsContext.InVmr9Render)
-      {
-        MadVrRepeatFrameSend();
-        Log.Debug("VMR9: MadVrRepeatFrameSend()");
-      }
+      //if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
+      //    GUIGraphicsContext.InVmr9Render)
+      //{
+      //  MadVrRepeatFrameSend();
+      //  Log.Debug("VMR9: MadVrRepeatFrameSend()");
+      //}
     }
 
     public bool IsRepainting

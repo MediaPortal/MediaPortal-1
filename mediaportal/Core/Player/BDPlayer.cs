@@ -1225,34 +1225,6 @@ namespace MediaPortal.Player
       SetVideoPosition(rDest);
       _sourceRectangle = rSource;
       _videoRectangle = rDest;
-
-      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && !_isFullscreen)
-      {
-        if (_basicVideo != null)
-        {
-          // TODO why it is needed for some video to be able to reduce fullscreen video window
-          {
-            if (_width <= 10) return;
-            _basicVideo.SetDestinationPosition(_positionX, _positionY, _width, _height);
-            GUIGraphicsContext.rDest = rDest;
-            Log.Debug("BDPlayer: resize madVR video window _positionX : {0}, _positionY : {1}, _width : {2}, _height : {3}", _positionX, _positionY, _width, _height);
-          }
-        }
-      }
-    }
-
-    public override void SetVideoWindowMadVR()
-    {
-      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && !_isFullscreen)
-      {
-        if (_basicVideo != null)
-        {
-          if (GUIGraphicsContext.rDest.Width <= 10) return;
-          _basicVideo.SetDestinationPosition(GUIGraphicsContext.rDest.Left, GUIGraphicsContext.rDest.Top, GUIGraphicsContext.rDest.Width, GUIGraphicsContext.rDest.Height);
-          Log.Debug("BDPlayer: resize madVR video window rDest.Left : {0}, rDest.Top : {1}, rDest.Width : {2}, rDest.Height : {3}",
-            GUIGraphicsContext.rDest.Left, GUIGraphicsContext.rDest.Top, GUIGraphicsContext.rDest.Width, GUIGraphicsContext.rDest.Height);
-        }
-      }
     }
 
     public override bool Ended
@@ -1280,7 +1252,7 @@ namespace MediaPortal.Player
       {
         _updateTimer = DateTime.Now;
 
-        if (GUIGraphicsContext.Overlay == false && GUIGraphicsContext.IsFullScreenVideo == false)
+        if (GUIGraphicsContext.IsFullScreenVideo == false)
         {
           if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
           {
@@ -2479,7 +2451,7 @@ namespace MediaPortal.Player
         {
           lTimerInterval = 1000;
         }
-        rewind = _currentPosDS + (long)lTimerInterval * Speed * 10000;
+        rewind = _currentPosDS + Convert.ToInt32((long)lTimerInterval * Speed * 10000);
         int hr;
         pStop = 0;
         // if we end up before the first moment of time then just

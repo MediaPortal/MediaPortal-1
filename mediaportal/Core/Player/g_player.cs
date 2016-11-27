@@ -25,6 +25,7 @@ using System.Globalization;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading;
 using System.Windows.Forms;
 using MediaPortal.Configuration;
 using MediaPortal.ExtensionMethods;
@@ -2638,20 +2639,11 @@ namespace MediaPortal.Player
 
         // HACK : If madVR is running but stuck in not rendering anymore, we need to force a refresh
         TimeSpan tsPlay = DateTime.Now - VMR9Util.g_vmr9.PlaneSceneMadvrTimer;
-        if (tsPlay.Seconds >= 2 && VMR9Util.g_vmr9.PlaneSceneMadvrTimer.Second > 0)
+        if (tsPlay.Seconds >= 5 && VMR9Util.g_vmr9.PlaneSceneMadvrTimer.Second > 0)
         {
-          // TODO Need to force a pause state and restore (working when it happen in video fullscreen or working if low latency mode is disable, why ??)
-          //bool getDisableLowLatencyMode = VMR9Util.g_vmr9.DisableLowLatencyMode;
-          //bool getVisible = VMR9Util.g_vmr9.Visible;
+          // Need to force a pause state and restore (working when it happen in video fullscreen or working if low latency mode is disable, why ??)
           VMR9Util.g_vmr9.DisableLowLatencyMode = true;
           VMR9Util.g_vmr9.Visible = false;
-          //Log.Debug("1- getDisableLowLatencyMode : {0}", getDisableLowLatencyMode);
-          //Log.Debug("1- getVisible : {0}", getVisible);
-          //Log.Debug("1- PlaneScene.DisableLowLatencyMode : {0}", PlaneScene.DisableLowLatencyMode);
-          //Log.Debug("1- PlaneScene.Visible : {0}", PlaneScene.Visible);
-          //_player.Pause();
-          //_player.Pause();
-          //_player.SetVideoWindow();
           // TODO find a better way to restore madVR rendering (right now i send an 'X' to force refresh a current window)
           var key = new Key(120, 0);
           var action = new Action(key, Action.ActionType.ACTION_KEY_PRESSED, 0, 0);
@@ -2669,12 +2661,6 @@ namespace MediaPortal.Player
             action = new Action(key, Action.ActionType.ACTION_KEY_PRESSED, 0, 0);
             GUIGraphicsContext.OnAction(action);
           }
-          //VMR9Util.g_vmr9.DisableLowLatencyMode = getDisableLowLatencyMode;
-          //VMR9Util.g_vmr9.Visible = getVisible;
-          //Log.Debug("2- getDisableLowLatencyMode : {0}", getDisableLowLatencyMode);
-          //Log.Debug("2- getVisible : {0}", getVisible);
-          //Log.Debug("2- PlaneScene.DisableLowLatencyMode : {0}", PlaneScene.DisableLowLatencyMode);
-          //Log.Debug("2- PlaneScene.Visible : {0}", PlaneScene.Visible);
           Log.Debug("g_Player.Process() - restore madVR rendering GUI");
           VMR9Util.g_vmr9.PlaneSceneMadvrTimer = DateTime.Now;
         }
@@ -3155,21 +3141,25 @@ namespace MediaPortal.Player
         return;
       }
       _player.SetVideoWindow();
-    }
+      GUIGraphicsContext.VideoWindowChangedDone = false;
 
-    public static void SetVideoWindowMadVr()
-    {
-      if (_player == null)
-      {
-        return;
-      }
-      _player.SetVideoWindowMadVR();
+      //// madVR
+      //if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
+      //{
+      //  _player.SetVideoWindow();
+      //}
+      //else if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && Thread.CurrentThread.Name == "MPMain")
+      //{
+      //  _player.SetVideoWindow();
+      //  GUIGraphicsContext.VideoWindowChangedDone = false;
+      //}
     }
 
     public static void Init()
     {
       GUIGraphicsContext.OnVideoWindowChanged += OnVideoWindowChanged;
       GUIGraphicsContext.OnGammaContrastBrightnessChanged += OnGammaContrastBrightnessChanged;
+      GUIWindowManager.Receivers += OnMessage;
     }
 
     private static void OnGammaContrastBrightnessChanged()
@@ -3897,6 +3887,21 @@ namespace MediaPortal.Player
     #endregion
 
     #region private members
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="message"></param>
+    private static void OnMessage(GUIMessage message)
+    {
+      switch (message.Message)
+      {
+        case GUIMessage.MessageType.GUI_MSG_ONVIDEOWINDOWCHANGED:
+          SetVideoWindow();
+          Log.Debug("g_player VideoWindowChanged() SendThreadMessage received");
+          break;
+      }
+    }
 
     #endregion
   }

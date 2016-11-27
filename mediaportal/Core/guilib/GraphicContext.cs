@@ -216,7 +216,6 @@ namespace MediaPortal.GUI.Library
       Convert2Dto3DSkewFactor = 0;
       LastFrames = new List<Texture>();
       LastFramesIndex = 0;
-      GUIWindowManager.Receivers += OnMessage;
     }
 
     /// <summary>
@@ -1034,20 +1033,14 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public static void VideoWindowChanged()
     {
-      // TODO commented out seems to handle better video change without a deadlock
-      //if (Thread.CurrentThread.Name != "MPMain" && Thread.CurrentThread.Name != "Config Main")
-      //{
-      //  if (!VideoWindowChangedDone)
-      //  {
-      //    VideoWindowChangedDone = true;
-      //    GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ONVIDEOWINDOWCHANGED, 0, 0, 0, 0, 0, null);
-      //    GUIWindowManager.SendThreadMessage(msg);
-      //    //Log.Debug("GraphicContext VideoWindowChanged() SendThreadMessage sended");
-      //  }
-      //}
-      //else
+      // madVR
+      if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
       {
-        if (OnVideoWindowChanged != null) OnVideoWindowChanged.Invoke();
+        OnVideoWindowChanged?.Invoke();
+      }
+      else if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && Thread.CurrentThread.Name == "MPMain")
+      {
+        OnVideoWindowChanged?.Invoke();
       }
     }
 
@@ -1096,7 +1089,7 @@ namespace MediaPortal.GUI.Library
           {
             lock (RenderMadVrLock)
             {
-              VideoWindow = GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR ? new Rectangle(0, 0, 2, 2) : new Rectangle(0, 0, 1, 1);
+              VideoWindow = new Rectangle(0, 0, 1, 1);
             }
           }
 
@@ -1108,29 +1101,6 @@ namespace MediaPortal.GUI.Library
             }
           }
         }
-      }
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="message"></param>
-    private static void OnMessage(GUIMessage message)
-    {
-      switch (message.Message)
-      {
-        case GUIMessage.MessageType.GUI_MSG_ONVIDEOWINDOWCHANGED:
-          lock (RenderMadVrLock)
-          {
-            if (OnVideoWindowChanged != null) OnVideoWindowChanged.Invoke();
-            if (GUIGraphicsContext.InVmr9Render)
-            {
-              GUIWindowManager.MadVrProcess();
-            }
-            VideoWindowChangedDone = false;
-            //Log.Debug("GraphicContext VideoWindowChanged() SendThreadMessage received");
-          }
-          break;
       }
     }
 
