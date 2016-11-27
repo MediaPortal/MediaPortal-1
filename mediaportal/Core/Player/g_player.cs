@@ -2658,7 +2658,7 @@ namespace MediaPortal.Player
 
     public static void Process()
     {
-      // Sent pause message to madVR.
+      
       if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
           GUIGraphicsContext.Vmr9Active && VMR9Util.g_vmr9 != null)
       {
@@ -2672,23 +2672,10 @@ namespace MediaPortal.Player
           // Need to force a pause state and restore (working when it happen in video fullscreen or working if low latency mode is disable, why ??)
           VMR9Util.g_vmr9.DisableLowLatencyMode = true;
           VMR9Util.g_vmr9.Visible = false;
-          // TODO find a better way to restore madVR rendering (right now i send an 'X' to force refresh a current window)
-          var key = new Key(120, 0);
-          var action = new Action(key, Action.ActionType.ACTION_KEY_PRESSED, 0, 0);
-          if (ActionTranslator.GetAction(GUIWindowManager.ActiveWindowEx, key, ref action))
-          {
-            GUIGraphicsContext.OnAction(action);
-            action = new Action(key, Action.ActionType.ACTION_KEY_PRESSED, 0, 0);
-            GUIGraphicsContext.OnAction(action);
-          }
-          key = new Key(120, 0);
-          action = new Action(key, Action.ActionType.ACTION_KEY_PRESSED, 0, 0);
-          if (ActionTranslator.GetAction(GUIWindowManager.ActiveWindowEx, key, ref action))
-          {
-            GUIGraphicsContext.OnAction(action);
-            action = new Action(key, Action.ActionType.ACTION_KEY_PRESSED, 0, 0);
-            GUIGraphicsContext.OnAction(action);
-          }
+
+          // Refresh madVR
+          RefreshMadVrVideo();
+
           Log.Debug("g_Player.Process() - restore madVR rendering GUI");
           VMR9Util.g_vmr9.PlaneSceneMadvrTimer = DateTime.Now;
         }
@@ -2762,6 +2749,31 @@ namespace MediaPortal.Player
               break;
             }
           }
+        }
+      }
+    }
+
+    public static void RefreshMadVrVideo()
+    {
+      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
+          GUIGraphicsContext.Vmr9Active)
+      {
+        // TODO find a better way to restore madVR rendering (right now i send an 'X' to force refresh a current window)
+        var key = new Key(120, 0);
+        var action = new Action(key, Action.ActionType.ACTION_KEY_PRESSED, 0, 0);
+        if (ActionTranslator.GetAction(GUIWindowManager.ActiveWindowEx, key, ref action))
+        {
+          GUIGraphicsContext.OnAction(action);
+          action = new Action(key, Action.ActionType.ACTION_KEY_PRESSED, 0, 0);
+          GUIGraphicsContext.OnAction(action);
+        }
+        key = new Key(120, 0);
+        action = new Action(key, Action.ActionType.ACTION_KEY_PRESSED, 0, 0);
+        if (ActionTranslator.GetAction(GUIWindowManager.ActiveWindowEx, key, ref action))
+        {
+          GUIGraphicsContext.OnAction(action);
+          action = new Action(key, Action.ActionType.ACTION_KEY_PRESSED, 0, 0);
+          GUIGraphicsContext.OnAction(action);
         }
       }
     }
