@@ -583,6 +583,9 @@ namespace MediaPortal
       Log.Info("D3D: Screen size: {0}x{1}", GUIGraphicsContext.currentScreen.Bounds.Width,
         GUIGraphicsContext.currentScreen.Bounds.Height);
 
+      // Force a madVR refresh to resize MP window
+      g_Player.RefreshMadVrVideo();
+
       // enable event handlers
       if (GUIGraphicsContext.DX9Device != null)
       {
