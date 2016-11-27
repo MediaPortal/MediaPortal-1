@@ -995,14 +995,21 @@ HRESULT MPMadPresenter::RenderEx3(REFERENCE_TIME rtStart, REFERENCE_TIME rtStop,
 
       // Init created madVR window instance.
       SetDsWndVisible(true);
+
       // needed to be init here otherwise refresh rate will not work.
-      m_pVideoWindow->put_WindowStyle(WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN);
-      m_pVideoWindow->put_Visible(OATRUE);
-      m_pVideoWindow->put_AutoShow(OATRUE);
-      m_pVideoWindow->put_WindowState(SW_SHOW);
-      m_pVideoWindow->SetWindowForeground(OATRUE);
+      //m_pVideoWindow->put_WindowStyle(WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN);
+      //m_pVideoWindow->put_Visible(OATRUE);
+      //m_pVideoWindow->put_AutoShow(OATRUE);
+      //m_pVideoWindow->put_WindowState(SW_SHOW);
+      //m_pVideoWindow->SetWindowForeground(OATRUE);
+
       // Seems to avoid mouse on screen
       //m_pVideoWindow->put_MessageDrain(reinterpret_cast<OAHWND>(m_hWnd));
+
+      // another test
+      m_pVideoWindow->put_Owner(reinterpret_cast<OAHWND>(m_hWnd));
+      m_pVideoWindow->put_Visible(OATRUE);
+      m_pVideoWindow->SetWindowPosition(0, 0, m_dwGUIWidth, m_dwGUIHeight);
     }
     m_deviceState.Store();
     SetupMadDeviceState();
