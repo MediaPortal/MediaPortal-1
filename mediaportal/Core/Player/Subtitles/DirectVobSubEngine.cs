@@ -294,14 +294,14 @@ namespace MediaPortal.Player.Subtitles
         current = value;
         if (value < extCount)
         {
-          vobSub.put_SelectedLanguage(value);
+          vobSub?.put_SelectedLanguage(value);
         }
         else
         {
           int i = value - extCount;
           int index = intSubs[i];
           embeddedSelector.Enable(index, AMStreamSelectEnableFlags.Enable);
-          vobSub.put_SelectedLanguage(extCount);
+          vobSub?.put_SelectedLanguage(extCount);
         }
       }
     }
@@ -341,10 +341,14 @@ namespace MediaPortal.Player.Subtitles
       get
       {
         int delay, speedmul, speeddiv;
-        vobSub.get_SubtitleTiming(out delay, out speedmul, out speeddiv);
-        return delay;
+        if (vobSub != null)
+        {
+          vobSub.get_SubtitleTiming(out delay, out speedmul, out speeddiv);
+          return delay;
+        }
+        return 0;
       }
-      set { vobSub.put_SubtitleTiming(value, 1, 1); }
+      set { vobSub?.put_SubtitleTiming(value, 1, 1); }
     }
 
     public void DelayPlus()
@@ -365,9 +369,9 @@ namespace MediaPortal.Player.Subtitles
       set
       {
         autoShow = value;
-        bool fBuffer, fOnlyForced, fPolygonize;
-        vobSub.get_VobSubSettings(out fBuffer, out fOnlyForced, out fPolygonize);
-        vobSub.put_VobSubSettings(fBuffer, !this.autoShow, fPolygonize);
+        bool fBuffer = false, fOnlyForced, fPolygonize = false;
+        vobSub?.get_VobSubSettings(out fBuffer, out fOnlyForced, out fPolygonize);
+        vobSub?.put_VobSubSettings(fBuffer, !this.autoShow, fPolygonize);
       }
     }
 

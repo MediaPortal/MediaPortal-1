@@ -1001,7 +1001,8 @@ HRESULT MPMadPresenter::RenderEx3(REFERENCE_TIME rtStart, REFERENCE_TIME rtStop,
       m_pVideoWindow->put_AutoShow(OATRUE);
       m_pVideoWindow->put_WindowState(SW_SHOW);
       m_pVideoWindow->SetWindowForeground(OATRUE);
-      m_pVideoWindow->put_MessageDrain(reinterpret_cast<OAHWND>(m_hWnd));
+      // Seems to avoid mouse on screen
+      //m_pVideoWindow->put_MessageDrain(reinterpret_cast<OAHWND>(m_hWnd));
     }
     m_deviceState.Store();
     SetupMadDeviceState();

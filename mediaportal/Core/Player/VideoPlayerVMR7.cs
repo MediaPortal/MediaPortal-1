@@ -675,6 +675,7 @@ namespace MediaPortal.Player
           {
             // TODO why it is needed for some video to be able to reduce fullscreen video window
             {
+              if (m_iWidth <= 10) return;
               basicVideo.SetDestinationPosition(m_iPositionX, m_iPositionY, m_iWidth, m_iHeight);
               GUIGraphicsContext.rDest = rDest;
               Log.Debug("VideoPlayer: resize madVR video window m_iPositionX : {0}, m_iPositionY : {1}, m_iWidth : {2}, m_iHeight : {3}", m_iPositionX, m_iPositionY, m_iWidth, m_iHeight);
@@ -690,6 +691,7 @@ namespace MediaPortal.Player
       {
         if (basicVideo != null)
         {
+          if (GUIGraphicsContext.rDest.Width <= 10) return;
           basicVideo.SetDestinationPosition(GUIGraphicsContext.rDest.Left, GUIGraphicsContext.rDest.Top, GUIGraphicsContext.rDest.Width, GUIGraphicsContext.rDest.Height);
           Log.Debug("VideoPlayer: resize madVR video window rDest.Left : {0}, rDest.Top : {1}, rDest.Width : {2}, rDest.Height : {3}",
             GUIGraphicsContext.rDest.Left, GUIGraphicsContext.rDest.Top, GUIGraphicsContext.rDest.Width, GUIGraphicsContext.rDest.Height);
@@ -748,12 +750,17 @@ namespace MediaPortal.Player
           }
 
           Log.Debug("VideoPlayer: SetSourcePosition 1");
-          basicVideo.SetSourcePosition(rSource.Left, rSource.Top, rSource.Width, rSource.Height);
+          //basicVideo.SetSourcePosition(rSource.Left, rSource.Top, rSource.Width, rSource.Height);
           Log.Debug("VideoPlayer: SetSourcePosition 2");
 
           if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
           {
             basicVideo.SetDestinationPosition(rDest.Left, rDest.Top, rDest.Width, rDest.Height);
+            if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
+                GUIGraphicsContext.Vmr9Active)
+            {
+              g_Player.SetVideoWindowMadVr();
+            }
           }
           else
           {
