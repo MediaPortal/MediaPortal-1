@@ -281,7 +281,7 @@
     <scrollbarbg>bar_vert.png</scrollbarbg>
     <scrollbartop>mouse_left_horizontal.png</scrollbartop>
     <scrollbarbottom>mouse_right_horizontal.png</scrollbarbottom>
-    <scrollbarXOff>35</scrollbarXOff>
+    <scrollbarXOff>440</scrollbarXOff>
     <scrollbarYOff>0</scrollbarYOff>
     <showScrollbar>yes</showScrollbar>
     <scrollbarwidth>7</scrollbarwidth>

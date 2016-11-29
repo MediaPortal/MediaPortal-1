@@ -28,7 +28,7 @@
        <texture>black.png</texture>
         <colordiffuse>59000000</colordiffuse>
 	   <animation effect="fade" time="350" reversible="true">hidden</animation>
-	   <visible>control.isvisible(20800)|control.hasfocus(20801)|control.hasfocus(20802)|control.hasfocus(20803)|control.hasfocus(20804)|control.hasfocus(20805)|control.hasfocus(20806)|control.hasfocus(20807)|control.hasfocus(20808)|control.hasfocus(20809)|control.hasfocus(20810)|control.hasfocus(20811)|control.hasfocus(20812)</visible>    
+	   <visible>control.isvisible(20800)|control.hasfocus(20801)|control.hasfocus(20802)|control.hasfocus(20803)|control.hasfocus(20804)|control.hasfocus(20805)|control.hasfocus(20806)|control.hasfocus(20807)|control.hasfocus(20808)|control.hasfocus(20809)|control.hasfocus(20810)|control.hasfocus(20811)|control.hasfocus(20812)|control.hasfocus(20813)</visible>    
 	 </control>
 		
 	  <control>
@@ -40,7 +40,7 @@
         <width>1845</width>
         <height>624</height>
         <texture>D_over1.png</texture>
-		<visible>control.isvisible(20800)|control.hasfocus(20801)|control.hasfocus(20802)|control.hasfocus(20803)|control.hasfocus(20804)|control.hasfocus(20805)|control.hasfocus(20806)|control.hasfocus(20807)|control.hasfocus(20808)|control.hasfocus(20809)|control.hasfocus(20810)|control.hasfocus(20811)|control.hasfocus(20812)</visible>
+		<visible>control.isvisible(20800)|control.hasfocus(20801)|control.hasfocus(20802)|control.hasfocus(20803)|control.hasfocus(20804)|control.hasfocus(20805)|control.hasfocus(20806)|control.hasfocus(20807)|control.hasfocus(20808)|control.hasfocus(20809)|control.hasfocus(20810)|control.hasfocus(20811)|control.hasfocus(20812)|control.hasfocus(20813)</visible>
       </control>
 	  <control>
         <description>Cover Art</description>
@@ -51,7 +51,7 @@
         <width>1845</width>
         <height>209</height>
         <texture>Inf_gfx.png</texture>
-		<visible>control.isvisible(20800)|control.hasfocus(20801)|control.hasfocus(20802)|control.hasfocus(20803)|control.hasfocus(20804)|control.hasfocus(20805)|control.hasfocus(20806)|control.hasfocus(20807)|control.hasfocus(20808)|control.hasfocus(20809)|control.hasfocus(20810)|control.hasfocus(20811)|control.hasfocus(20812)</visible>
+		<visible>control.isvisible(20800)|control.hasfocus(20801)|control.hasfocus(20802)|control.hasfocus(20803)|control.hasfocus(20804)|control.hasfocus(20805)|control.hasfocus(20806)|control.hasfocus(20807)|control.hasfocus(20808)|control.hasfocus(20809)|control.hasfocus(20810)|control.hasfocus(20811)|control.hasfocus(20812)|control.hasfocus(20813)</visible>
       </control>	  
 
     <control>
@@ -65,7 +65,7 @@
       <label>Quick skin settings...</label>
       <font>font13</font>
       <textcolor>eaeaea</textcolor>
-	  <visible>control.isvisible(20800)|control.hasfocus(20801)|control.hasfocus(20802)|control.hasfocus(20803)|control.hasfocus(20804)|control.hasfocus(20805)|control.hasfocus(20806)|control.hasfocus(20807)|control.hasfocus(20808)|control.hasfocus(20809)|control.hasfocus(20810)|control.hasfocus(20811)|control.hasfocus(20812)</visible>
+	  <visible>control.isvisible(20800)|control.hasfocus(20801)|control.hasfocus(20802)|control.hasfocus(20803)|control.hasfocus(20804)|control.hasfocus(20805)|control.hasfocus(20806)|control.hasfocus(20807)|control.hasfocus(20808)|control.hasfocus(20809)|control.hasfocus(20810)|control.hasfocus(20811)|control.hasfocus(20812)|control.hasfocus(20813)</visible>
     </control>		  
 		
 			<control>
@@ -78,7 +78,7 @@
 					<posY>260</posY>
 					<!-- Remove and Gaps when buttons are not visible -->
 					<layout>TableLayout(1850, 3, 50, 0)</layout>
-					<visible allowhiddenfocus="true">control.hasfocus(20800)|control.hasfocus(20801)|control.hasfocus(20802)|control.hasfocus(20803)|control.hasfocus(20804)|control.hasfocus(20805)|control.hasfocus(20806)|control.hasfocus(20807)|control.hasfocus(20808)|control.hasfocus(20809)|control.hasfocus(20810)|control.hasfocus(20811)|control.hasfocus(20812)</visible>   
+					<visible allowhiddenfocus="true">control.hasfocus(20800)|control.hasfocus(20801)|control.hasfocus(20802)|control.hasfocus(20803)|control.hasfocus(20804)|control.hasfocus(20805)|control.hasfocus(20806)|control.hasfocus(20807)|control.hasfocus(20808)|control.hasfocus(20809)|control.hasfocus(20810)|control.hasfocus(20811)|control.hasfocus(20812)|control.hasfocus(20813)</visible>   
 				
 					<control>
                        <description>Enable weather in homescreen</description>
@@ -334,7 +334,7 @@
 					   <onleft>20808</onleft>
 					   <onup>20806</onup>
 		               <onright>20811</onright>
-					   <ondown>#(cint(#skin.setnav))</ondown>
+					   <ondown>20813</ondown>
                     </control>							
 					<control>
                        <description>Enable RSS in homescreen</description>
@@ -370,9 +370,38 @@
 					   <onESC>#(skin.setfocus(35,cint(#skin.setnav)))</onESC>
                        <onclick>#(skin.togglesetting('#skin.osd.logosvideo'))</onclick>
                        <onup>20808</onup>
-		               <onright>#(cint(#skin.setnav))</onright>
+		               <onright>20813</onright>
 					   <onleft>#(cint(#skin.setnav))</onleft>
                        <ondown>#(cint(#skin.setnav))</ondown>
+                    </control>	
+			        <control>
+                       <description>fanart option</description>
+                       <type>menubutton</type>
+                       <id>20813</id>
+                       <width>550</width>
+                       <height>50</height>
+		               <textXOff>5</textXOff>
+                       <textYOff>3</textYOff>
+                       <mode>spinlist</mode>
+					   <onfocus>#(skin.setstring('#skin.test','Choose how to display OnlineVideos latest info'))</onfocus>
+                       <valueTextInButton>yes</valueTextInButton>
+                       <valuePrefixText> OV Latest Display type:  </valuePrefixText>
+                       <onclick>#(skin.setstring('#skin.latestOV',#selectedlabel20813))</onclick>
+                       <binding>#skin.latestOV</binding>
+                       <subitems>
+                       <subitem>cover</subitem>
+		               <subitem>thumb</subitem>
+                       <subitem>square</subitem>
+					   <subitem>icon</subitem>
+                       </subitems>
+                       <textcolorNoFocus>99ffffff</textcolorNoFocus>
+                       <textureFocus>btn_list_blue2.png</textureFocus>
+		               <textureNoFocus></textureNoFocus>
+					   <onESC>#(skin.setfocus(35,cint(#skin.setnav)))</onESC>
+		               <onup>20810</onup>
+                       <onleft>20812</onleft>
+                       <ondown>#(cint(#skin.setnav))</ondown>
+                       <onright>#(cint(#skin.setnav))</onright>
                     </control>					
 				
 				</control>	

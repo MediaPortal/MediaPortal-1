@@ -20,6 +20,7 @@
 		 <font>font12</font>
 		 <width>50</width>
 		 <textcolorNoFocus>99ffffff</textcolorNoFocus>
+		 <onESC>#(skin.setfocus(35,cint(#skin.currentTile)))</onESC>
          <textureFocus>check_fo.png</textureFocus>
 		 <textureNoFocus></textureNoFocus>
          <onfocus>#(skin.setstring('#skin.test2','Enable custom name for this tile'))</onfocus>
@@ -53,6 +54,7 @@
 		 <font>font12</font>
 		 <width>50</width>
 		 <textcolorNoFocus>99ffffff</textcolorNoFocus>
+		 <onESC>#(skin.setfocus(35,cint(#skin.currentTile)))</onESC>
          <textureFocus>check_fo.png</textureFocus>
 		 <textureNoFocus></textureNoFocus>
          <onfocus>#(skin.setstring('#skin.test2','Enable custom name for this tile'))</onfocus>
@@ -86,6 +88,7 @@
 		 <font>font12</font>
 		 <width>50</width>
 		 <textcolorNoFocus>99ffffff</textcolorNoFocus>
+		 <onESC>#(skin.setfocus(35,cint(#skin.currentTile)))</onESC>
          <textureFocus>check_fo.png</textureFocus>
 		 <textureNoFocus></textureNoFocus>
          <onfocus>#(skin.setstring('#skin.test2','Enable custom name for this tile'))</onfocus>
@@ -119,6 +122,7 @@
 		 <font>font12</font>
 		 <width>50</width>
 		 <textcolorNoFocus>99ffffff</textcolorNoFocus>
+		 <onESC>#(skin.setfocus(35,cint(#skin.currentTile)))</onESC>
          <textureFocus>check_fo.png</textureFocus>
 		 <textureNoFocus></textureNoFocus>
          <onfocus>#(skin.setstring('#skin.test2','Enable custom name for this tile'))</onfocus>
@@ -152,6 +156,7 @@
 		 <font>font12</font>
 		 <width>50</width>
 		 <textcolorNoFocus>99ffffff</textcolorNoFocus>
+		 <onESC>#(skin.setfocus(35,cint(#skin.currentTile)))</onESC>
          <textureFocus>check_fo.png</textureFocus>
 		 <textureNoFocus></textureNoFocus>
          <onfocus>#(skin.setstring('#skin.test2','Enable custom name for this tile'))</onfocus>

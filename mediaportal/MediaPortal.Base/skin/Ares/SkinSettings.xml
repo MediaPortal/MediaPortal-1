@@ -55,11 +55,12 @@
     <entry name="name">Skin default</entry>
   </section>
   <section name="stringsettings">
-    <entry name="#skin.test">Set how many home pages you want to use 1-5</entry>
+    <entry name="#skin.test">Enable info logos in movie/series osd description</entry>
     <entry name="#skin.test2">Enable custom name for this tile</entry>
-    <entry name="#skin.currentTile">00517</entry>
+    <entry name="#skin.currentTile">00510</entry>
     <entry name="#skin.setnav">8005555</entry>
     <entry name="#background.colour">dark</entry>
+    <entry name="#skin.latestOV">icon</entry>
     <entry name="#tile1plugin.hyperlink">NoPlugin</entry>
     <entry name="#tile1plugin.name">Configure name</entry>
     <entry name="#tile1plugin.parameter">Empty</entry>
@@ -112,7 +113,7 @@
     <entry name="#tile13plugin.name">series</entry>
     <entry name="#tile13plugin.parameter">test</entry>
     <entry name="#tile13pluginImg">noplugin</entry>
-    <entry name="#tile14plugin.hyperlink">MyVideo</entry>
+    <entry name="#tile14plugin.hyperlink">MovPics</entry>
     <entry name="#tile14plugin.name">movies</entry>
     <entry name="#tile14plugin.parameter">Empty</entry>
     <entry name="#tile14pluginImg">NoPlugin</entry>

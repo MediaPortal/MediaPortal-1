@@ -20,6 +20,7 @@
 		<textXOff>5</textXOff>
         <textYOff>3</textYOff>
 		<oninfo>#(skin.setfocus(35,00515))</oninfo>
+		<onESC>#(skin.setfocus(35,cint(#skin.currentTile)))</onESC>
         <mode>dialoglist</mode>
         <dialogTitle>Choose an image</dialogTitle>
         <valueTextInButton>no</valueTextInButton>
@@ -59,6 +60,7 @@
 		<textXOff>5</textXOff>
         <textYOff>3</textYOff>
 		<oninfo>#(skin.setfocus(35,00516))</oninfo>
+		<onESC>#(skin.setfocus(35,cint(#skin.currentTile)))</onESC>
         <mode>dialoglist</mode>
         <dialogTitle>Choose an image</dialogTitle>
         <valueTextInButton>no</valueTextInButton>
@@ -100,6 +102,7 @@
 		<textXOff>5</textXOff>
         <textYOff>3</textYOff>
 		<oninfo>#(skin.setfocus(35,00517))</oninfo>
+		<onESC>#(skin.setfocus(35,cint(#skin.currentTile)))</onESC>
         <mode>dialoglist</mode>
         <dialogTitle>Choose an image</dialogTitle>
         <valueTextInButton>no</valueTextInButton>
@@ -141,6 +144,7 @@
 		<textXOff>5</textXOff>
         <textYOff>3</textYOff>
 		<oninfo>#(skin.setfocus(35,00518))</oninfo>
+		<onESC>#(skin.setfocus(35,cint(#skin.currentTile)))</onESC>
         <mode>dialoglist</mode>
         <dialogTitle>Choose an image</dialogTitle>
         <valueTextInButton>no</valueTextInButton>
@@ -182,6 +186,7 @@
 		<textXOff>5</textXOff>
         <textYOff>3</textYOff>
 		<oninfo>#(skin.setfocus(35,00519))</oninfo>
+		<onESC>#(skin.setfocus(35,cint(#skin.currentTile)))</onESC>
         <mode>dialoglist</mode>
         <dialogTitle>Choose an image</dialogTitle>
         <valueTextInButton>no</valueTextInButton>
