@@ -1824,7 +1824,7 @@ namespace MediaPortal.GUI.Library
 
               InitControls();
               UpdateOverlayAllowed();
-              GUIGraphicsContext.Overlay = _isOverlayAllowed || GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR;
+              GUIGraphicsContext.Overlay = _isOverlayAllowed;
 
               // set topbar autohide 
               switch (_autoHideTopbarType)
@@ -1885,23 +1885,6 @@ namespace MediaPortal.GUI.Library
               }
 
               _skipAnimation = false;
-
-              if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
-              {
-                if (Thread.CurrentThread.Name != "MPMain")
-                {
-                  if (!GUIGraphicsContext.VideoWindowChangedDone)
-                  {
-                    GUIGraphicsContext.VideoWindowChangedDone = true;
-                    msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ONVIDEOWINDOWCHANGED, 0, 0, 0, 0, 0, null);
-                    GUIWindowManager.SendThreadMessage(msg);
-                  }
-                }
-                else
-                {
-                  g_Player.SetVideoWindow();
-                }
-              }
 
               return true;
               // TODO BUG ! Check if this return needs to be in the case and if there needs to be a break statement after each case.

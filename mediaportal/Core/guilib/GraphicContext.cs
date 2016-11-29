@@ -1034,13 +1034,21 @@ namespace MediaPortal.GUI.Library
     public static void VideoWindowChanged()
     {
       // madVR
-      if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
+      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
       {
-        OnVideoWindowChanged?.Invoke();
-      }
-      else if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && Thread.CurrentThread.Name == "MPMain")
-      {
-        OnVideoWindowChanged?.Invoke();
+        if (Thread.CurrentThread.Name != "MPMain")
+        {
+          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ONVIDEOWINDOWCHANGED, 0, 0, 0, 0, 0, null);
+          msg.Param1 = GUIGraphicsContext.VideoWindow.X;
+          msg.Param2 = GUIGraphicsContext.VideoWindow.Y;
+          msg.Param3 = GUIGraphicsContext.VideoWindow.Width;
+          msg.Param4 = GUIGraphicsContext.VideoWindow.Height;
+          GUIWindowManager.SendThreadMessage(msg);
+        }
+        else
+        {
+          OnVideoWindowChanged?.Invoke();
+        }
       }
     }
 
@@ -1076,9 +1084,9 @@ namespace MediaPortal.GUI.Library
         // some windows have overlay = false, but still have videocontrol.
         // switching to another window with overlay = false but without videocontrol will
         // leave old videocontrol "hanging" on screen (since dimensions aren't updated)
-        // if (m_bOverlay != value)
+        //if (bOldOverlay != value)
         {
-          bool bOldOverlay = _overlay;
+          bOldOverlay = _overlay;
           _overlay = value;
           if (!ShowBackground)
           {
@@ -1103,6 +1111,8 @@ namespace MediaPortal.GUI.Library
         }
       }
     }
+
+    public static bool bOldOverlay { get; set; }
 
     /// <summary>
     /// Get/Set left screen calibration
@@ -1756,6 +1766,7 @@ namespace MediaPortal.GUI.Library
     public static bool MadVrStop { get; set; }
     public static bool VideoWindowChangedDone { get; set; }
     public static bool SetVideoWindowDone { get; set; }
+    public static bool VideoControl { get; set; }
 
     /// <summary>
     /// Enable/Disable bypassing of UI Calibration transforms

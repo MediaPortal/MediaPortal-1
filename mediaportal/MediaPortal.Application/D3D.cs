@@ -585,7 +585,8 @@ namespace MediaPortal
         GUIGraphicsContext.currentScreen.Bounds.Height);
 
       // Force a madVR refresh to resize MP window
-      g_Player.RefreshMadVrVideo();
+      // TODO how to handle it better
+      //g_Player.RefreshMadVrVideo();
 
       // enable event handlers
       if (GUIGraphicsContext.DX9Device != null)
