@@ -807,14 +807,17 @@ namespace MediaPortal.Player
       }
 
       _lastPosition = CurrentPosition;
-      if (GUIGraphicsContext.VideoWindow.Width <= 10 && GUIGraphicsContext.IsFullScreenVideo == false &&
-          GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
+      if (GUIGraphicsContext.IsFullScreenVideo == false)
       {
         _isVisible = false;
       }
       if (GUIGraphicsContext.BlankScreen)
       {
         _isVisible = false;
+      }
+      if (GUIGraphicsContext.VideoControl || GUIGraphicsContext.Overlay)
+      {
+        _isVisible = true;
       }
       if (GUIGraphicsContext.IsWindowVisible && !_isVisible)
       {
@@ -1505,12 +1508,6 @@ namespace MediaPortal.Player
           {
             return;
           }
-
-          if (rDest.Left <= 0 && rDest.Top <= 0 && rDest.Width <= 1 && rDest.Height <= 1)
-          {
-            return;
-          }
-
           if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
           {
             lock (GUIGraphicsContext.RenderMadVrLock)
@@ -1539,11 +1536,6 @@ namespace MediaPortal.Player
           }
 
           if (rDest.Width <= 0 || rDest.Height <= 0)
-          {
-            return;
-          }
-
-          if (rDest.Left <= 0 && rDest.Top <= 0 && rDest.Width <= 1 && rDest.Height <= 1)
           {
             return;
           }

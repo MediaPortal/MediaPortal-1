@@ -3909,6 +3909,14 @@ namespace MediaPortal.Player
       switch (message.Message)
       {
         case GUIMessage.MessageType.GUI_MSG_ONVIDEOWINDOWCHANGED:
+          GUIGraphicsContext.VideoWindow = new Rectangle(0, 0, 0, 0);
+          Rectangle[] _videoWindows = new Rectangle[1];
+          _videoWindows[0].X = message.Param1;
+          _videoWindows[0].Y = message.Param2;
+          _videoWindows[0].Width = message.Param3;
+          _videoWindows[0].Height = message.Param4;
+          GUIGraphicsContext.VideoWindow = _videoWindows[0];
+          GUIGraphicsContext.UpdateVideoWindow = true;
           SetVideoWindow();
           Log.Debug("g_player VideoWindowChanged() SendThreadMessage received");
           break;

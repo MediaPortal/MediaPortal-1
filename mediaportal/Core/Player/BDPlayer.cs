@@ -831,10 +831,6 @@ namespace MediaPortal.Player
         {
           return;
         }
-        if (destination.Left <= 0 && destination.Top <= 0 && destination.Width <= 1 && destination.Height <= 1)
-        {
-          return;
-        }
         if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
         {
           lock (GUIGraphicsContext.RenderMadVrLock)
@@ -864,12 +860,10 @@ namespace MediaPortal.Player
           {
             return;
           }
-          if (destination.Left <= 0 && destination.Top <= 0 && destination.Width <= 1 && destination.Height <= 1)
-          {
-            return;
-          }
 
+          Log.Debug("BDPlayer: SetSourcePosition 1");
           _basicVideo.SetSourcePosition(source.Left, source.Top, source.Width, source.Height);
+          Log.Debug("BDPlayer: SetSourcePosition 1");
 
           if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
           {
@@ -1252,12 +1246,18 @@ namespace MediaPortal.Player
       {
         _updateTimer = DateTime.Now;
 
+        if (GUIGraphicsContext.VideoControl)
+        {
+          _isVisible = true;
+        }
+
         if (GUIGraphicsContext.IsFullScreenVideo == false)
         {
           if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
           {
             if (GUIGraphicsContext.IsWindowVisible && !_isVisible)
             {
+              _isVisible = false;
               GUIGraphicsContext.IsWindowVisible = false;
               if (!GUIGraphicsContext.IsFullScreenVideo)
               {

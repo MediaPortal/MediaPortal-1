@@ -440,7 +440,7 @@ namespace MediaPortal.Player
           if (nw <= 10 || nh <= 10 || x < 0 || y < 0)
           {
             // Need to resize window video for madVR
-            if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
+            if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR) //TODO
               return false;
           }
 

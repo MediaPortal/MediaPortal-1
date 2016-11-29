@@ -93,7 +93,8 @@ namespace MediaPortal.GUI.Library
       // For madVR need to set it to hide video window when skin part don't allow displaying it.
       if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
       {
-        //GUIGraphicsContext.IsWindowVisible = true;
+        GUIGraphicsContext.IsWindowVisible = true;
+        GUIGraphicsContext.VideoControl = false;
       }
       base.OnDeInit();
     }
@@ -115,6 +116,7 @@ namespace MediaPortal.GUI.Library
       {
         //Log.Error("GUIVideoControl OnInit() {0}", _videoWindows[0]);
         GUIGraphicsContext.VideoWindow = _videoWindows[0];
+        GUIGraphicsContext.VideoControl = true;
       }
     }
 
