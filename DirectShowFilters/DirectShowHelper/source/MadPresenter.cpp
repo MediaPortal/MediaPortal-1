@@ -267,11 +267,11 @@ void MPMadPresenter::ConfigureMadvr()
   if (Com::SmartQIPtr<IMadVRDirect3D9Manager> manager = m_pMad)
     manager->ConfigureDisplayModeChanger(false, true);
 
-  // TODO implement IMadVRSubclassReplacement
-  if (Com::SmartQIPtr<IMadVRSubclassReplacement> pSubclassReplacement = m_pMad)
-  {
-    pSubclassReplacement->DisableSubclassing();
-  }
+  //// TODO implement IMadVRSubclassReplacement
+  //if (Com::SmartQIPtr<IMadVRSubclassReplacement> pSubclassReplacement = m_pMad)
+  //{
+  //  pSubclassReplacement->DisableSubclassing();
+  //}
 
   //if (Com::SmartQIPtr<IVideoWindow> pWindow = m_pMad)
   //{
