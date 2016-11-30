@@ -214,8 +214,6 @@ class MPMadPresenter : public CUnknown, public CCritSec
     CComQIPtr<IDirect3DVertexBuffer9> m_pMadGuiVertexBuffer = nullptr;
     CComQIPtr<IDirect3DVertexBuffer9> m_pMadOsdVertexBuffer = nullptr;
 
-    CComQIPtr<IVideoWindow> m_pVideoWindow = nullptr;
-
     HANDLE m_hSharedGuiHandle = nullptr;
     HANDLE m_hSharedOsdHandle = nullptr;
 
