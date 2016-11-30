@@ -175,22 +175,19 @@ IBaseFilter* MPMadPresenter::Initialize()
 
   if (Com::SmartQIPtr<IBaseFilter> baseFilter = m_pMad)
   {
-      // Create a madVR Window
-    if (InitMadvrWindow(m_hWnd))
+    if (Com::SmartQIPtr<IVideoWindow> pWindow = m_pMad)
     {
-      HRESULT hr = E_UNEXPECTED;
-      // Code commented out and enable it when testing the non kodi madVR window way
-      //m_hWnd = reinterpret_cast<HWND>(m_hParent);
-      Log("%s : Create DSPlayer window - hWnd: %i", __FUNCTION__, m_hWnd);
-      if (m_pMad)
+      // Create a madVR Window
+      if (InitMadvrWindow(m_hWnd))
       {
-        hr = m_pMad->QueryInterface(IID_IVideoWindow, reinterpret_cast<void **>(&m_pVideoWindow));
-        if (SUCCEEDED(hr)) {
-          Sleep(100);
-          m_pVideoWindow->put_Owner(reinterpret_cast<OAHWND>(m_hWnd));
-          Log("%s : Create DSPlayer window - hr : 0x%08x", __FUNCTION__, hr);
-          Sleep(100);
-        }
+        // Code commented out and enable it when testing the non kodi madVR window way
+        //m_hWnd = reinterpret_cast<HWND>(m_hParent);
+        Sleep(100);
+        pWindow->put_Owner(reinterpret_cast<OAHWND>(m_hWnd));
+        pWindow->put_Visible(reinterpret_cast<OAHWND>(m_hWnd));
+        //pWindow->put_MessageDrain(reinterpret_cast<OAHWND>(m_hWnd));
+        Sleep(100);
+        Log("%s : Create DSPlayer window - hWnd: %i", __FUNCTION__, m_hWnd);
       }
     }
     return baseFilter;
@@ -311,12 +308,6 @@ HRESULT MPMadPresenter::Shutdown()
       Log("MPMadPresenter::Shutdown() RestoreDeviceSurface");
       m_pCallback->Release();
       Log("MPMadPresenter::Shutdown() m_pCallback release");
-    }
-
-    if (m_pMad)
-    {
-      m_pVideoWindow.Release();
-      m_pVideoWindow = nullptr;
     }
 
     // Restore windowed overlay settings
@@ -995,21 +986,12 @@ HRESULT MPMadPresenter::RenderEx3(REFERENCE_TIME rtStart, REFERENCE_TIME rtStop,
 
       // Init created madVR window instance.
       SetDsWndVisible(true);
-
-      // needed to be init here otherwise refresh rate will not work.
-      //m_pVideoWindow->put_WindowStyle(WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN);
-      //m_pVideoWindow->put_Visible(OATRUE);
-      //m_pVideoWindow->put_AutoShow(OATRUE);
-      //m_pVideoWindow->put_WindowState(SW_SHOW);
-      //m_pVideoWindow->SetWindowForeground(OATRUE);
-
-      // Seems to avoid mouse on screen
-      //m_pVideoWindow->put_MessageDrain(reinterpret_cast<OAHWND>(m_hWnd));
-
-      // another test
-      m_pVideoWindow->put_Owner(reinterpret_cast<OAHWND>(m_hWnd));
-      m_pVideoWindow->put_Visible(OATRUE);
-      m_pVideoWindow->SetWindowPosition(0, 0, m_dwGUIWidth, m_dwGUIHeight);
+      if (Com::SmartQIPtr<IVideoWindow> pWindow = m_pMad)
+      {
+        pWindow->put_Owner(reinterpret_cast<OAHWND>(m_hWnd));
+        pWindow->put_Visible(reinterpret_cast<OAHWND>(m_hWnd));
+        pWindow->SetWindowPosition(0, 0, m_dwGUIWidth, m_dwGUIHeight);
+      }
     }
     m_deviceState.Store();
     SetupMadDeviceState();
