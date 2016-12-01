@@ -39,7 +39,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Knc
 {
   /// <summary>
   /// A class for handling conditional access and DiSEqC for KNC One tuners, including compatible
-  /// models from Mystique and Satelco.
+  /// models from Mystique, Satelco and TerraTec.
   /// </summary>
   public class Knc : BaseTunerExtension, IConditionalAccessMenuActions, IConditionalAccessProvider, IDiseqcDevice, IDisposable
   {
@@ -434,11 +434,18 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Knc
       "Satelco EasyWatch PCI (DVB-S)",
       "Satelco EasyWatch PCI (DVB-S2)",
       "Satelco EasyWatch PCI (DVB-C)",
-      "Satelco EasyWatch PCI (DVB-T)"
+      "Satelco EasyWatch PCI (DVB-T)",
+
+      "Cinergy 1200 DVB-S Tuner (BDA)",
+      "Cinergy 1200 DVB-C Tuner (BDA)",
+      "Cinergy 1200 DVB-T Tuner (BDA)"
     };
 
     private static readonly HashSet<string> VALID_DEVICE_PATHS = new HashSet<string>
     {
+      //----------------------------------
+      // KNC, Mystique and Satelco PCI tuners
+      //----------------------------------
       // DVB-S - Old
       "ven_1131&dev_7146&subsys_4f561131",
       "ven_1131&dev_7146&subsys_4f501131",  // with analog
@@ -502,10 +509,21 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Knc
       "ven_1131&dev_7146&subsys_00361894",
       "ven_1131&dev_7146&subsys_003a1894",  // Satelco
 
+      //----------------------------------
+      // TerraTec PCI tuners
+      //----------------------------------
+      "ven_1131&dev_7146&subsys_1154153b",  // DVB-S (SU1200_K)
+      "ven_1131&dev_7146&subsys_1155153b",  // DVB-S (SD1878)
+      "ven_1131&dev_7146&subsys_1156153b",  // DVB-C (CU1216)
+      "ven_1131&dev_7146&subsys_1157153b",  // DVB-T
+      "ven_1131&dev_7146&subsys_1176153b",  // DVB-C update (CU1216MK3)
+
+      //----------------------------------
       // KNC PCI-e tuners
+      //----------------------------------
       "ven_1131&dev_7160&subsys_01101894",  // DVB-S/DVB-S2 (never released)
       "ven_1131&dev_7160&subsys_02101894",  // DVB-S2/DVB-S2 (DVB-S2 Twin)
-      "ven_1131&dev_7160&subsys_03101894",  // DVB-T/DVB-C (never released)
+      "ven_1131&dev_7160&subsys_03101894"   // DVB-T/DVB-C (never released)
     };
 
     private static readonly int CALLBACK_SET_SIZE = Marshal.SizeOf(typeof(KncCiCallBack));   // 28
