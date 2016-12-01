@@ -3983,7 +3983,7 @@ public class MediaPortalApp : D3D, IRender
         if ((GUIGraphicsContext.IsFullScreenVideo && !g_Player.Paused) ||
             GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_SLIDESHOW)
         {
-          Log.Debug("Main: Active player - resetting idle timer for display to be turned off");
+          //Log.Debug("Main: Active player - resetting idle timer for display to be turned off");
           SetThreadExecutionState(EXECUTION_STATE.ES_SYSTEM_REQUIRED | EXECUTION_STATE.ES_DISPLAY_REQUIRED);
           ScreenSaverEventTimer = DateTime.Now;
         }
