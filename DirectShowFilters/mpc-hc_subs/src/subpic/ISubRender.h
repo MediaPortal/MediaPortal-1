@@ -45,6 +45,26 @@ public ISubRenderCallback {
     int width, int height) = 0;
 };
 
+// const static DWORD SUBRENDER_LEFT_EYE = 1;
+// const static DWORD SUBRENDER_RIGHT_EYE = 2;
+
+DECLARE_INTERFACE_IID_(ISubRenderCallback3, ISubRenderCallback2, "BAC4273A-3EAD-47F5-9710-8488E52AC618")
+{
+  STDMETHOD(RenderEx2)(REFERENCE_TIME rtStart, REFERENCE_TIME rtStop,
+    REFERENCE_TIME avgTimePerFrame, RECT croppedVideoRect,
+    RECT originalVideoRect, RECT viewportRect,
+    const double videoStretchFactor = 1.0) PURE;
+};
+
+DECLARE_INTERFACE_IID_(ISubRenderCallback4, ISubRenderCallback3, "C89CF1D4-29C5-4A96-8AAC-528EC6F7AF1E")
+{
+  STDMETHOD(RenderEx3)(REFERENCE_TIME rtStart, REFERENCE_TIME rtStop,
+    REFERENCE_TIME avgTimePerFrame, RECT croppedVideoRect,
+    RECT originalVideoRect, RECT viewportRect,
+    const double videoStretchFactor = 1.0,
+    int xOffsetInPixels = 0, DWORD flags = 0) PURE;
+};
+
 interface __declspec(uuid("9CC7F9F7-3ED1-493c-AF65-527EA1D9947F"))
 ISubRender :
 public IUnknown {

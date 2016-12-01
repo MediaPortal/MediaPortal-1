@@ -768,17 +768,6 @@ namespace MediaPortal.Player
         SetVideoPosition(rDest);
         _sourceRectangle = rSource;
         _videoRectangle = rDest;
-
-        // Need to be disable for TV - TODO
-        if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && !_isFullscreen)
-        {
-          if (_basicVideo != null)
-          {
-            // TODO why it is needed for some video to be able to reduce fullscreen video window
-            _basicVideo.SetDestinationPosition(_positionX, _positionY, _width, _height);
-            Log.Debug("TsReader: rezise madVR video window _positionX : {0}, _positionY : {1}, _width : {2}, _height : {3}", _positionX, _positionY, _width, _height);
-          }
-        }
       }
     }
 
@@ -818,13 +807,17 @@ namespace MediaPortal.Player
       }
 
       _lastPosition = CurrentPosition;
-      if (GUIGraphicsContext.VideoWindow.Width <= 10 && GUIGraphicsContext.IsFullScreenVideo == false)
+      if (GUIGraphicsContext.IsFullScreenVideo == false)
       {
         _isVisible = false;
       }
       if (GUIGraphicsContext.BlankScreen)
       {
         _isVisible = false;
+      }
+      if (GUIGraphicsContext.VideoControl || GUIGraphicsContext.Overlay)
+      {
+        _isVisible = true;
       }
       if (GUIGraphicsContext.IsWindowVisible && !_isVisible)
       {
@@ -1515,16 +1508,13 @@ namespace MediaPortal.Player
           {
             return;
           }
-
-          if (rDest.Left <= 0 && rDest.Top <= 0 && rDest.Width <= 1 && rDest.Height <= 1)
-          {
-            return;
-          }
-
           if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
           {
-            Size client = GUIGraphicsContext.form.ClientSize;
-            _videoWin.SetWindowPosition(0, 0, client.Width, client.Height);
+            lock (GUIGraphicsContext.RenderMadVrLock)
+            {
+              Size client = GUIGraphicsContext.form.ClientSize;
+              _videoWin.SetWindowPosition(0, 0, client.Width, client.Height);
+            }
           }
           else
           {
@@ -1546,11 +1536,6 @@ namespace MediaPortal.Player
           }
 
           if (rDest.Width <= 0 || rDest.Height <= 0)
-          {
-            return;
-          }
-
-          if (rDest.Left <= 0 && rDest.Top <= 0 && rDest.Width <= 1 && rDest.Height <= 1)
           {
             return;
           }

@@ -60,6 +60,9 @@ namespace DShowNET.Helper
     public static readonly Guid DirectVobSubAutoload = new Guid("9852A670-F845-491b-9BE6-EBD841B8A613");
     public static readonly Guid DirectVobSubNormal = new Guid("93A22E7A-5091-45ef-BA61-6DA26156A5D0");
 
+    public static readonly Guid XySubFilterAutoload = new Guid("6B237877-902B-4C6C-92F6-E63169A5166C");
+    public static readonly Guid XySubFilterNormal = new Guid("2DFCB782-EC20-4A7C-B530-4577ADB33F21");
+
     public static readonly Guid InternalScriptRenderer = new Guid("48025243-2D39-11CE-875D-00608CB78066");
 
     public static readonly Guid HaaliGuid = new Guid("55DA30FC-F16B-49FC-BAA5-AE59FC65F82D");

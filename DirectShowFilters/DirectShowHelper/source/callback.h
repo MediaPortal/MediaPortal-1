@@ -24,7 +24,7 @@ DECLARE_INTERFACE_(IVMR9Callback, IUnknown)
   STDMETHOD(RenderOverlay)(WORD cx, WORD cy, WORD arx, WORD ary)PURE;
   STDMETHOD(SetRenderTarget)(DWORD pTarget)PURE;
   STDMETHOD(SetSubtitleDevice)(DWORD pDevice)PURE;
-  STDMETHOD(RenderSubtitle)(REFERENCE_TIME frameStart, int left, int top, int right, int bottom, int width, int height)PURE;
+  STDMETHOD(RenderSubtitle)(REFERENCE_TIME frameStart, int left, int top, int right, int bottom, int width, int height, int xOffsetInPixels)PURE;
   STDMETHOD(RenderFrame)(WORD cx, WORD cy, WORD arx, WORD ary, DWORD pTargetmadVr)PURE;
   STDMETHOD(ForceOsdUpdate)(BOOL pForce)PURE;
   STDMETHOD(IsFullScreen)()PURE;

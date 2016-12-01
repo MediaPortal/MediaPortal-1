@@ -216,7 +216,6 @@ namespace MediaPortal.GUI.Library
       Convert2Dto3DSkewFactor = 0;
       LastFrames = new List<Texture>();
       LastFramesIndex = 0;
-      GUIWindowManager.Receivers += OnMessage;
     }
 
     /// <summary>
@@ -999,7 +998,6 @@ namespace MediaPortal.GUI.Library
         {
           _isFullScreenVideo = value;
           VideoWindowChanged();
-          GUIGraphicsContext.RenderGui = true;
         }
       }
     }
@@ -1035,17 +1033,26 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public static void VideoWindowChanged()
     {
-      lock (RenderMadVrLock)
+      // madVR
+      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
       {
-        if (!VideoWindowChangedDone)
+        if (Thread.CurrentThread.Name != "MPMain")
         {
-          VideoWindowChangedDone = true;
           GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ONVIDEOWINDOWCHANGED, 0, 0, 0, 0, 0, null);
+          msg.Param1 = GUIGraphicsContext.VideoWindow.X;
+          msg.Param2 = GUIGraphicsContext.VideoWindow.Y;
+          msg.Param3 = GUIGraphicsContext.VideoWindow.Width;
+          msg.Param4 = GUIGraphicsContext.VideoWindow.Height;
           GUIWindowManager.SendThreadMessage(msg);
-          //Log.Debug("GraphicContext VideoWindowChanged() SendThreadMessage sended");
+        }
+        else
+        {
+          OnVideoWindowChanged?.Invoke();
         }
       }
     }
+
+    public static Rectangle rDest { get; set; }
 
     /// <summary>
     /// Get/Set application state (starting,running,stopping)
@@ -1077,9 +1084,9 @@ namespace MediaPortal.GUI.Library
         // some windows have overlay = false, but still have videocontrol.
         // switching to another window with overlay = false but without videocontrol will
         // leave old videocontrol "hanging" on screen (since dimensions aren't updated)
-        // if (m_bOverlay != value)
+        //if (bOldOverlay != value)
         {
-          bool bOldOverlay = _overlay;
+          bOldOverlay = _overlay;
           _overlay = value;
           if (!ShowBackground)
           {
@@ -1090,7 +1097,7 @@ namespace MediaPortal.GUI.Library
           {
             lock (RenderMadVrLock)
             {
-              VideoWindow = GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR ? new Rectangle(0, 0, 2, 2) : new Rectangle(0, 0, 1, 1);
+              VideoWindow = new Rectangle(0, 0, 1, 1);
             }
           }
 
@@ -1105,28 +1112,7 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="message"></param>
-    private static void OnMessage(GUIMessage message)
-    {
-      switch (message.Message)
-      {
-        case GUIMessage.MessageType.GUI_MSG_ONVIDEOWINDOWCHANGED:
-          lock (RenderMadVrLock)
-          {
-            if (OnVideoWindowChanged != null) OnVideoWindowChanged.Invoke();
-            if (GUIGraphicsContext.InVmr9Render)
-            {
-              GUIWindowManager.MadVrProcess();
-            }
-            VideoWindowChangedDone = false;
-            //Log.Debug("GraphicContext VideoWindowChanged() SendThreadMessage received");
-          }
-          break;
-      }
-    }
+    public static bool bOldOverlay { get; set; }
 
     /// <summary>
     /// Get/Set left screen calibration
@@ -1741,11 +1727,11 @@ namespace MediaPortal.GUI.Library
     {
       get
       {
-        // Added back this part for now and see if it stop the deadlock
-        if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && GUIGraphicsContext.InVmr9Render)
-        {
-          return 0;
-        }
+        //// Added back this part for now and see if it stop the deadlock
+        //if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && GUIGraphicsContext.InVmr9Render)
+        //{
+        //  return 0;
+        //}
         return RenderLoopLock;
       }
     }
@@ -1780,6 +1766,7 @@ namespace MediaPortal.GUI.Library
     public static bool MadVrStop { get; set; }
     public static bool VideoWindowChangedDone { get; set; }
     public static bool SetVideoWindowDone { get; set; }
+    public static bool VideoControl { get; set; }
 
     /// <summary>
     /// Enable/Disable bypassing of UI Calibration transforms

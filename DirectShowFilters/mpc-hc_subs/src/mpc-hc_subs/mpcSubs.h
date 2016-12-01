@@ -41,7 +41,7 @@ MPCSUBS_API BOOL LoadSubtitles(IDirect3DDevice9* d3DDev, SIZE size, const wchar_
 MPCSUBS_API void SetTime(REFERENCE_TIME nsSampleTime);
 
 //render subtitles
-MPCSUBS_API void Render(int x, int y, int width, int height);
+MPCSUBS_API void Render(int x, int y, int width, int height, int xOffsetInPixels);
 
 //save subtitles
 MPCSUBS_API BOOL IsModified(); //timings were modified
