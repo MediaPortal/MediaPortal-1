@@ -524,7 +524,7 @@ namespace MediaPortal.Player
           {
             // Force VideoWindow to be refreshed with madVR when switching from video size like 16:9 to 4:3
             GUIGraphicsContext.UpdateVideoWindow = true;
-            GUIGraphicsContext.VideoWindowChanged();
+            //GUIGraphicsContext.VideoWindowChanged();
           }
           else
           {
