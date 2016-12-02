@@ -819,48 +819,56 @@ namespace MediaPortal.Player
       {
         _isVisible = true;
       }
-      if (GUIGraphicsContext.IsWindowVisible && !_isVisible)
+      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
       {
-        GUIGraphicsContext.IsWindowVisible = false;
-        //Log.Info("TSReaderPlayer:hide window");
-        if (_videoWin != null)
+        if (GUIGraphicsContext.IsWindowVisible && !_isVisible)
         {
-          if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+          GUIGraphicsContext.IsWindowVisible = false;
+          if (!GUIGraphicsContext.IsFullScreenVideo)
           {
             if (_basicVideo != null)
             {
-              if (!GUIGraphicsContext.IsFullScreenVideo)
-              {
-                _basicVideo.SetDestinationPosition(-100, -100, 50, 50);
-                //Log.Error("TsReader hide video window");
-              }
+              // Here is to hide video window madVR when skin didn't handle video overlay (the value need to be different from GUIVideoControl Render)
+              _basicVideo.SetDestinationPosition(-100, -100, 50, 50);
+              Log.Debug("TsReader: hide video window");
             }
           }
-          else
-          {
-            _videoWin.put_Visible(OABool.False);
-          }
         }
-      }
-      else if (!GUIGraphicsContext.IsWindowVisible && _isVisible)
-      {
-        GUIGraphicsContext.IsWindowVisible = true;
-        //Log.Info("TSReaderPlayer:show window");
-        if (_videoWin != null)
+        else
         {
-          if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+          if (!GUIGraphicsContext.IsWindowVisible && _isVisible)
           {
-            if (_basicVideo != null)
+            GUIGraphicsContext.IsWindowVisible = true;
+            if (!GUIGraphicsContext.IsFullScreenVideo)
             {
-              if (!GUIGraphicsContext.IsFullScreenVideo)
+              if (_basicVideo != null)
               {
                 _basicVideo.SetDestinationPosition(0, 0, GUIGraphicsContext.VideoWindowWidth,
                   GUIGraphicsContext.VideoWindowHeight);
-                //Log.Error("TsReader show video window");
+                Log.Debug("TsReader: show video window");
               }
             }
           }
-          else
+        }
+      }
+      else
+      {
+        if (GUIGraphicsContext.BlankScreen ||
+          (GUIGraphicsContext.Overlay == false && GUIGraphicsContext.IsFullScreenVideo == false))
+        {
+          if (_isVisible)
+          {
+            _isVisible = false;
+            if (_videoWin != null)
+            {
+              _videoWin.put_Visible(OABool.False);
+            }
+          }
+        }
+        else if (!_isVisible)
+        {
+          _isVisible = true;
+          if (_videoWin != null)
           {
             _videoWin.put_Visible(OABool.True);
           }

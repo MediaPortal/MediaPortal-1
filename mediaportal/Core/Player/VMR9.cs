@@ -435,6 +435,15 @@ namespace MediaPortal.Player
       set { if (_scene != null) _scene.Visible = value; }
     }
 
+    public void SceneMadVr()
+    {
+      if (_scene != null)
+      {
+        Size nativeSize = new Size(3, 3);
+        _scene.SetVideoWindow(nativeSize);
+      }
+    }
+
     //public bool IsVMR9Connected
 
     #endregion

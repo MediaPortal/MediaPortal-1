@@ -1907,9 +1907,12 @@ namespace MediaPortal.GUI.Library
 
                 // madVR
                 //set video window position
-                if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && GUIGraphicsContext.Vmr9Active)
+                if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
+                    GUIGraphicsContext.Vmr9Active)
                 {
-                  GUIGraphicsContext.VideoWindow = new Rectangle(0, 0, 3, 3);
+                  GUIGraphicsContext.VideoWindow = new Rectangle(0, 0, 5, 5);
+                  VMR9Util.g_vmr9.SceneMadVr();
+                  GUIGraphicsContext.IsWindowVisible = true;
                 }
                 return true;
               }
