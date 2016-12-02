@@ -770,7 +770,6 @@ namespace MediaPortal.Player
         }
         if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
         {
-
           if (GUIGraphicsContext.IsWindowVisible && !_isVisible)
           {
             //_isVisible = true;
@@ -781,7 +780,7 @@ namespace MediaPortal.Player
               {
                 // Here is to hide video window madVR when skin didn't handle video overlay (the value need to be different from GUIVideoControl Render)
                 basicVideo.SetDestinationPosition(-100, -100, 50, 50);
-                //Log.Error("VideoPlayer: hide video window");
+                Log.Debug("VideoPlayer: hide video window");
               }
             }
           }
@@ -796,7 +795,7 @@ namespace MediaPortal.Player
                 {
                   basicVideo.SetDestinationPosition(0, 0, GUIGraphicsContext.VideoWindowWidth,
                     GUIGraphicsContext.VideoWindowHeight);
-                  //Log.Error("VideoPlayer: show video window");
+                  Log.Debug("VideoPlayer: show video window");
                 }
               }
             }

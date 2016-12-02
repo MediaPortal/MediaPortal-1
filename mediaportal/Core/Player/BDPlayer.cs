@@ -1246,7 +1246,15 @@ namespace MediaPortal.Player
       {
         _updateTimer = DateTime.Now;
 
-        if (GUIGraphicsContext.VideoControl)
+        if (GUIGraphicsContext.IsFullScreenVideo == false)
+        {
+          _isVisible = false;
+        }
+        if (GUIGraphicsContext.BlankScreen)
+        {
+          _isVisible = false;
+        }
+        if (GUIGraphicsContext.VideoControl || GUIGraphicsContext.Overlay)
         {
           _isVisible = true;
         }
@@ -1265,7 +1273,7 @@ namespace MediaPortal.Player
                 {
                   // Here is to hide video window madVR when skin didn't handle video overlay (the value need to be different from GUIVideoControl Render)
                   _basicVideo.SetDestinationPosition(-100, -100, 50, 50);
-                  //Log.Error("BDPlayer: hide video window");
+                  Log.Debug("BDPlayer: hide video window");
                 }
               }
             }
@@ -1281,7 +1289,7 @@ namespace MediaPortal.Player
         }
         else if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
         {
-          if (!GUIGraphicsContext.IsWindowVisible)
+          if (!GUIGraphicsContext.IsWindowVisible &&  _isVisible)
           {
             GUIGraphicsContext.IsWindowVisible = true;
             if (!GUIGraphicsContext.IsFullScreenVideo)
@@ -1290,7 +1298,7 @@ namespace MediaPortal.Player
               {
                 _basicVideo.SetDestinationPosition(0, 0, GUIGraphicsContext.VideoWindowWidth,
                   GUIGraphicsContext.VideoWindowHeight);
-                //Log.Error("BDPlayer: show video window");
+                Log.Debug("BDPlayer: show video window");
               }
             }
           }
