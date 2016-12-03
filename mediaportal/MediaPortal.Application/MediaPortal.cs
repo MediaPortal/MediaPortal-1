@@ -1584,6 +1584,10 @@ public class MediaPortalApp : D3D, IRender
         case WM_EXITSIZEMOVE:
           Log.Debug("Main: WM_EXITSIZEMOVE");
           PluginManager.WndProc(ref msg);
+
+          // Force a madVR refresh to resize MP window
+          // TODO how to handle it better
+          g_Player.RefreshMadVrVideo();
           break;
 
         // only allow window to be moved inside a valid working area
