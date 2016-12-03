@@ -149,7 +149,7 @@ namespace MediaPortal.GUI.Library
       bool useCommas = false;
       float fTest = 123.12f;
       string test = fTest.ToString();
-      if (test.IndexOf(",") >= 0)
+      if (test.IndexOf(",", StringComparison.Ordinal) >= 0)
       {
         useCommas = true;
       }
@@ -176,7 +176,7 @@ namespace MediaPortal.GUI.Library
       text = text.Replace("screencenterx", GUIGraphicsContext.OutputScreenCenter.X.ToString());
       text = text.Replace("screencentery", GUIGraphicsContext.OutputScreenCenter.Y.ToString());
 
-      int pos = text.IndexOf(",");
+      int pos = text.IndexOf(",", StringComparison.Ordinal);
       if (pos >= 0)
       {
         x = float.Parse(text.Substring(0, pos));
