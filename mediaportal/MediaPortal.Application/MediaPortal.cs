@@ -502,6 +502,8 @@ public class MediaPortalApp : D3D, IRender
     }
 
     Thread.CurrentThread.Name = "MPMain";
+    Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
+    Thread.CurrentThread.CurrentUICulture = new CultureInfo("en-US");
 
     if (Environment.OSVersion.Version.Major >= 6)
     {
