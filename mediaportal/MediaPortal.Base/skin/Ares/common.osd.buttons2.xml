@@ -9,9 +9,9 @@
       <posY>982</posY>
       <width>48</width>
       <height>48</height>
-      <label>yup</label>
+      <label>nop</label>
       <font></font>
-	  <onfocus>#(skin.setfocus(3003,1237))</onfocus>
+	  <onfocus>#(skin.setfocus(2901,1237))</onfocus>
       <textureFocus></textureFocus>
       <textureNoFocus></textureNoFocus>
       <onleft>221</onleft>
@@ -48,7 +48,7 @@
         <height>52</height>
         <label>test</label>
         <font></font>
-		<onclick>#(skin.setfocus(3003,8997))</onclick>
+		<onclick>#(skin.setfocus(2901,8997))</onclick>
         <textureFocus>if.png</textureFocus>
         <textureNoFocus>i.png</textureNoFocus>
         <onleft>221</onleft>

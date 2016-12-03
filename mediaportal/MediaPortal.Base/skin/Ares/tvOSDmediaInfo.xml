@@ -16,7 +16,7 @@ This file should contain the details view
       <width>556</width>
       <height>33</height>
       <texture>Einfo5.png</texture>
-      <visible>control.hasfocus(1237)</visible>	  
+      <visible>control.hasfocus(8997)</visible>	  
     </control>
 	<control>
       <description>summery</description>
@@ -30,7 +30,7 @@ This file should contain the details view
       <font>fontBold2</font>
 	  <align>center</align>	  
       <label>#(string.toupper(#TV.View.remaining))</label>
-      <visible>control.hasfocus(1237)</visible>	  
+      <visible>control.hasfocus(8997)</visible>	  
     </control>	
 	<control>
       <description>summery</description>
@@ -44,7 +44,7 @@ This file should contain the details view
       <font>fontBold2</font>
 	  <align>center</align>
       <label>#(switch(eq(#Play.Current.VideoResolution,'720p'),'HD', eq(#Play.Current.VideoResolution,'1080p'),'FHD', eq(#Play.Current.VideoResolution,'1080i'),'FHD', eq(#Play.Current.VideoResolution,'576'),'SD', eq(#Play.Current.VideoResolution,'2160p'),'4k', eq(#Play.Current.VideoResolution,'480'),'SD', eq(#Play.Current.VideoResolution,'360'),'SD', eq(1,1),'NA'))</label>
-      <visible>control.hasfocus(1237)</visible>	  
+      <visible>control.hasfocus(8997)</visible>	  
     </control>	
 	<control>
       <description>summery</description>
@@ -58,7 +58,7 @@ This file should contain the details view
       <font>fontBold2</font>
 	  <align>center</align>
       <label>#(switch(eq(#Play.Current.AudioChannels,'stereo'),'2.0', eq(#Play.Current.AudioChannels,'mono'),'1.0', eq(#Play.Current.AudioChannels,''),'-', eq(1,1),#Play.Current.AudioChannels))</label>
-      <visible>control.hasfocus(1237)</visible>	  
+      <visible>control.hasfocus(8997)</visible>	  
     </control>	
 	<control>
       <description>summery</description>
@@ -72,7 +72,7 @@ This file should contain the details view
       <font>fontBold2</font>
 	  <align>center</align>	  
       <label>#(string.toupper(iif(eq(#Play.Current.HasSubtitles,'False'),'NA','cc')))</label>
-      <visible>control.hasfocus(1237)</visible>	  
+      <visible>control.hasfocus(8997)</visible>	  
     </control>	
 	<control>
       <description>summery</description>
@@ -87,7 +87,7 @@ This file should contain the details view
       <font>fontBold2</font>
 	  <align>center</align>
       <label>#(switch(eq(#Play.Current.AspectRatio,'widescreen'),'16:9', eq(#Play.Current.AspectRatio,'fullscreen'),'4:3', eq(#Play.Current.AspectRatio,'1.85'),'1:85:1', eq(#Play.Current.AspectRatio,'1.78'),'1:78:1', eq(#Play.Current.AspectRatio,'1.66'),'1:66:1', eq(#Play.Current.AspectRatio,'1.33'),'1:33:1', eq(#Play.Current.AspectRatio,''),'-', eq(1,1),'-'))</label>
-      <visible>control.hasfocus(1237)</visible>	  
+      <visible>control.hasfocus(8997)</visible>	  
     </control>	
 	<control>
       <description>summery</description>
@@ -102,7 +102,7 @@ This file should contain the details view
       <font>fontBold2</font>
 	  <align>center</align>
       <label>#(string.toupper(iif(eq(#TV.TuningDetails.FreeToAir,'False'),'enc','fta')))</label>
-      <visible>control.hasfocus(1237)</visible>	  
+      <visible>control.hasfocus(8997)</visible>	  
     </control>
 <!--	
 	<control>
@@ -118,7 +118,7 @@ This file should contain the details view
       <font>fontBold2</font>
 	  <align>center</align>
       <label>#(switch(gte(cint(#Play.Current.Rating),5000),'5000+', eq(#Play.Current.Rating,''),'-', eq(1,1),#Play.Current.Rating))</label>
-      <visible>control.hasfocus(1237)</visible>	  
+      <visible>control.hasfocus(8997)</visible>	  
     </control>		
 	<control>
       <description>summery</description>
@@ -133,7 +133,7 @@ This file should contain the details view
       <font>fontBold2</font>
 	  <align>center</align>
       <label>#(string.trim(iif(gte(cint(#TVSeries.Episode.RatingCount),5000),'5000+','#TVSeries.Episode.RatingCount')))</label>
-      <visible>control.hasfocus(1237)</visible>	  
+      <visible>control.hasfocus(8997)</visible>	  
     </control>	
 -->	
 <!-- TEST	

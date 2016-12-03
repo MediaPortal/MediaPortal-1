@@ -263,7 +263,7 @@
         <description>Selected item Label Title</description>
         <type>fadelabel</type>
         <id>1</id>
-        <width>1550</width>
+        <width>1350</width>
         <height>65</height>
         <align>left</align>
         <font>fontBold</font>
@@ -369,7 +369,7 @@
           <onleft>3</onleft>
           <posX>56</posX>
           <posY>725</posY>
-          <width>1404</width>
+          <width>1388</width>
           <height>50</height>
 		  <label>208</label>
           <textcolor>ffffffff</textcolor>
@@ -392,7 +392,7 @@
           <onleft>3</onleft>
           <posX>56</posX>
           <posY>675</posY>
-          <width>1404</width>
+          <width>1388</width>
           <height>50</height>
 		  <label>5906</label>
 		  <hyperlink>4755</hyperlink>
@@ -546,7 +546,7 @@
         <description>Cover Art</description>
         <type>image</type>
         <id>0</id>
-        <posX>1414</posX>
+        <posX>1416</posX>
         <posY>182</posY>
         <width>28</width>
         <height>619</height>
@@ -661,7 +661,7 @@
         <type>image</type>
         <id>1</id>
         <posX>1444</posX>
-        <posY>197</posY>
+        <posY>198</posY>
         <width>422</width>
         <height>605</height>
 		<keepaspectratio>no</keepaspectratio>
@@ -675,7 +675,7 @@
         <type>image</type>
         <id>21</id>
         <posX>1444</posX>
-        <posY>197</posY>
+        <posY>198</posY>
         <width>422</width>
         <height>605</height>
 		<keepaspectratio>no</keepaspectratio>

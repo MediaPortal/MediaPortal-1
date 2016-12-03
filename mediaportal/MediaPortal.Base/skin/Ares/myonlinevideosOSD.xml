@@ -61,31 +61,40 @@
       <visible>player.paused+!control.isvisible(7654)</visible>
     </control>	
 	
-
+	  <control>
+        <description>backd</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>360</posX>
+        <posY>986</posY>
+		<height>13</height>
+		<width>1353</width>
+        <texture>osd_backd.png</texture>
+      </control>
     <control>
       <description>TV Progress Bar</description>
       <type>tvprogress</type>
       <id>105</id>
-	  <posX>350</posX>
-      <posY>988</posY>
-      <width>1400</width>
-      <height>3</height>
+	  <posX>360</posX>
+      <posY>986</posY>
+      <width>1345</width>
+      <height>13</height>
       <toptexture></toptexture>
-      <TextureOffsetY>4</TextureOffsetY>
+      <TextureOffsetY>0</TextureOffsetY>
       <bottomtexture></bottomtexture>
       <texturetick></texturetick>
-      <lefttexture></lefttexture>
+      <lefttexture>osd_left.png</lefttexture>
       <midtexture></midtexture>
       <righttexture></righttexture>
       <logotexture></logotexture>
       <fillbackgroundtexture></fillbackgroundtexture>
-      <fillbgxoff>3</fillbgxoff>
+      <fillbgxoff>-3</fillbgxoff>
       <fillbgyoff>0</fillbgyoff>
-      <filltexture1>osd_progress_mid.png</filltexture1>
-      <filltexture2>osd_progress_mid.png</filltexture2>
-      <filltexture3>osd_progress_mid_orange.png</filltexture3>
+      <filltexture1>osd_mid.png</filltexture1>
+      <filltexture2>osd_mid.png</filltexture2>
+      <filltexture3>osd_orge.png</filltexture3>
       <markertexture>osd_progress_mid_red.png</markertexture>
-      <fillheight>3</fillheight>
+      <fillheight>13</fillheight>
 	  <label>#percentage</label>
 	  <label1>#percentage</label1>
 	  <label2>#TV.Record.percent3</label2>

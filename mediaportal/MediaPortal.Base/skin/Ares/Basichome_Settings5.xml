@@ -10,7 +10,7 @@
 		<posY>420</posY>
 		<!-- Remove and Gaps when buttons are not visible -->
 		<layout>StackLayout(0, Horizontal, false)</layout>
-		<visible allowhiddenfocus="true">control.hasfocus(270)|control.hasfocus(271)|control.hasfocus(272)|control.hasfocus(273)|control.hasfocus(274)|control.hasfocus(275)|control.hasfocus(276)|control.hasfocus(277)|control.hasfocus(278)|control.hasfocus(279)|control.hasfocus(370)|control.hasfocus(371)|control.hasfocus(372)|control.hasfocus(373)|control.hasfocus(374)|control.hasfocus(375)|control.hasfocus(421)|control.hasfocus(422)|control.hasfocus(423)|control.hasfocus(424)|control.hasfocus(425)</visible>   
+		<visible allowhiddenfocus="true">control.hasfocus(270)|control.hasfocus(271)|control.hasfocus(272)|control.hasfocus(273)|control.hasfocus(274)|control.hasfocus(275)|control.hasfocus(276)|control.hasfocus(277)|control.hasfocus(278)|control.hasfocus(279)|control.hasfocus(370)|control.hasfocus(371)|control.hasfocus(372)|control.hasfocus(373)|control.hasfocus(374)|control.hasfocus(375)|control.hasfocus(421)|control.hasfocus(422)|control.hasfocus(423)|control.hasfocus(424)|control.hasfocus(425)|control.hasfocus(621)|control.hasfocus(622)|control.hasfocus(623)|control.hasfocus(624)|control.hasfocus(625)</visible>   
 	  <control>
         <description>Page1 Button1</description>
         <type>menubutton</type>
@@ -20,6 +20,7 @@
 		<textXOff>5</textXOff>
         <textYOff>3</textYOff>
 		<oninfo>#(skin.setfocus(35,00520))</oninfo>
+		<onESC>#(skin.setfocus(35,cint(#skin.currentTile)))</onESC>
         <mode>dialoglist</mode>
         <dialogTitle>Choose a plugin</dialogTitle>
         <valueTextInButton>no</valueTextInButton>
@@ -45,6 +46,7 @@
         <width>69</width>
         <height>66</height>
 		<oninfo>#(skin.setfocus(35,00520))</oninfo>
+		<onESC>#(skin.setfocus(35,cint(#skin.currentTile)))</onESC>
         <label></label>
 		<font>font111</font>
 		<textcolorNoFocus>99ffffff</textcolorNoFocus>
@@ -79,6 +81,7 @@
         <width>69</width>
         <height>66</height>
 		<oninfo>#(skin.setfocus(35,00520))</oninfo>
+		<onESC>#(skin.setfocus(35,cint(#skin.currentTile)))</onESC>
         <label></label>
 		<font>font111</font>
 		<textcolorNoFocus>99ffffff</textcolorNoFocus>
@@ -118,6 +121,7 @@
 		<textXOff>5</textXOff>
         <textYOff>3</textYOff>
 		<oninfo>#(skin.setfocus(35,00521))</oninfo>
+		<onESC>#(skin.setfocus(35,cint(#skin.currentTile)))</onESC>
         <mode>dialoglist</mode>
         <dialogTitle>Choose a plugin</dialogTitle>
         <valueTextInButton>no</valueTextInButton>
@@ -143,6 +147,7 @@
         <width>69</width>
         <height>66</height>
 		<oninfo>#(skin.setfocus(35,00521))</oninfo>
+		<onESC>#(skin.setfocus(35,cint(#skin.currentTile)))</onESC>
         <label></label>
 		<font>font111</font>
 		<textcolorNoFocus>99ffffff</textcolorNoFocus>
@@ -178,6 +183,7 @@
         <width>69</width>
         <height>66</height>
 		<oninfo>#(skin.setfocus(35,00521))</oninfo>
+		<onESC>#(skin.setfocus(35,cint(#skin.currentTile)))</onESC>
         <label></label>
 		<font>font111</font>
 		<textcolorNoFocus>99ffffff</textcolorNoFocus>
@@ -217,6 +223,7 @@
 		<textXOff>5</textXOff>
         <textYOff>3</textYOff>
 		<oninfo>#(skin.setfocus(35,00522))</oninfo>
+		<onESC>#(skin.setfocus(35,cint(#skin.currentTile)))</onESC>
         <mode>dialoglist</mode>
         <dialogTitle>Choose a plugin</dialogTitle>
         <valueTextInButton>no</valueTextInButton>
@@ -242,6 +249,7 @@
         <width>69</width>
         <height>66</height>
 		<oninfo>#(skin.setfocus(35,00522))</oninfo>
+		<onESC>#(skin.setfocus(35,cint(#skin.currentTile)))</onESC>
         <label></label>
 		<font>font111</font>
 		<textcolorNoFocus>99ffffff</textcolorNoFocus>
@@ -277,6 +285,7 @@
         <width>69</width>
         <height>66</height>
 		<oninfo>#(skin.setfocus(35,00522))</oninfo>
+		<onESC>#(skin.setfocus(35,cint(#skin.currentTile)))</onESC>
         <label></label>
 		<font>font111</font>
 		<textcolorNoFocus>99ffffff</textcolorNoFocus>
@@ -316,6 +325,7 @@
 		<textXOff>5</textXOff>
         <textYOff>3</textYOff>
 		<oninfo>#(skin.setfocus(35,00523))</oninfo>
+		<onESC>#(skin.setfocus(35,cint(#skin.currentTile)))</onESC>
         <mode>dialoglist</mode>
         <dialogTitle>Choose a plugin</dialogTitle>
         <valueTextInButton>no</valueTextInButton>
@@ -341,6 +351,7 @@
         <width>69</width>
         <height>66</height>
 		<oninfo>#(skin.setfocus(35,00523))</oninfo>
+		<onESC>#(skin.setfocus(35,cint(#skin.currentTile)))</onESC>
         <label></label>
 		<font>font111</font>
 		<textcolorNoFocus>99ffffff</textcolorNoFocus>
@@ -376,6 +387,7 @@
         <width>69</width>
         <height>66</height>
 		<oninfo>#(skin.setfocus(35,00523))</oninfo>
+		<onESC>#(skin.setfocus(35,cint(#skin.currentTile)))</onESC>
         <label></label>
 		<font>font111</font>
 		<textcolorNoFocus>99ffffff</textcolorNoFocus>
@@ -416,6 +428,7 @@
 		<textXOff>5</textXOff>
         <textYOff>3</textYOff>
 		<oninfo>#(skin.setfocus(35,00524))</oninfo>
+		<onESC>#(skin.setfocus(35,cint(#skin.currentTile)))</onESC>
         <mode>dialoglist</mode>
         <dialogTitle>Choose a plugin</dialogTitle>
         <valueTextInButton>no</valueTextInButton>
@@ -441,6 +454,7 @@
         <width>69</width>
         <height>66</height>
 		<oninfo>#(skin.setfocus(35,00524))</oninfo>
+		<onESC>#(skin.setfocus(35,cint(#skin.currentTile)))</onESC>
         <label></label>
 		<font>font111</font>
 		<textcolorNoFocus>99ffffff</textcolorNoFocus>
@@ -477,6 +491,7 @@
         <width>69</width>
         <height>66</height>
 		<oninfo>#(skin.setfocus(35,00524))</oninfo>
+		<onESC>#(skin.setfocus(35,cint(#skin.currentTile)))</onESC>
         <label></label>
 		<font>font111</font>
 		<textcolorNoFocus>99ffffff</textcolorNoFocus>

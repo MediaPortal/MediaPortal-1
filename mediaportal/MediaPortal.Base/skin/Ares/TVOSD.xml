@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
   <id>3003</id>
-  <defaultcontrol>213</defaultcontrol>
+  <defaultcontrol>1237</defaultcontrol>
   <allowoverlay>no</allowoverlay>
   <define>#currentplaytime:#TV.View.start</define>
   <define>#currentremaining:#TV.View.stop</define>
@@ -30,7 +30,7 @@
         <width>1845</width>
         <height>209</height>
         <texture>Inf_gfx.png</texture>
-	  <visible>control.hasfocus(1237)</visible>
+	  <visible>control.hasfocus(8997)</visible>
     </control>
 <!--
 	<control>
@@ -297,12 +297,29 @@
       <label>#TV.View.description</label>
       <font>font13</font>
       <textcolor>eaeaea</textcolor>
-      <visible>control.hasfocus(1237)</visible>
+      <visible>control.hasfocus(8997)</visible>
       <shadowAngle>0</shadowAngle>
       <shadowDistance>0</shadowDistance>
     </control>
     <import>common.osd.buttons.xml</import>
-	<import>tvOSDmediaInfo.xml</import>
+	
+      <control>
+        <description>Display Menu</description>
+        <type>button</type>
+        <id>8997</id>
+        <width>54</width>
+        <height>54</height>
+		<onclick>#(skin.setfocus(3003,1237))</onclick>
+        <textureFocus></textureFocus>
+        <textureNoFocus></textureNoFocus>
+        <font></font>
+        <onleft>1237</onleft>
+        <onright>218</onright>
+        <onup>997</onup>
+        <ondown>997</ondown>
+      </control>
+	  
+	<include condition="#(eq(#skin.osd.logos,'True'))">tvOSDmediaInfo.xml</include>
 	
     <!-- ***************************** THESE CONTROLS ARE NOT USED IN THIS OSD  ********************************** -->
     <!-- ***************************** BUT ARE ESSENTIAL TO KEEP COMPATABILITY  ********************************** -->

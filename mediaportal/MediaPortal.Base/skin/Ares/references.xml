@@ -110,10 +110,10 @@
     <height>50</height>
     <textXOff>15</textXOff>
     <textYOff>0</textYOff>
-    <textureUp>arrow_round_up_nofocus.png</textureUp>
-    <textureUpFocus>arrow_round_up_focus.png</textureUpFocus>
-    <textureDown>arrow_round_down_nofocus.png</textureDown>
-    <textureDownFocus>arrow_round_down_focus.png</textureDownFocus>
+    <textureUp>page_up_nofocus.png</textureUp>
+    <textureUpFocus>page_up_focus.png</textureUpFocus>
+    <textureDown>page_down_nofocus.png</textureDown>
+    <textureDownFocus>page_down_focus.png</textureDownFocus>
     <spinWidth>36</spinWidth>
     <spinHeight>36</spinHeight>
     <spinXOff>13</spinXOff>
@@ -281,7 +281,7 @@
     <scrollbarbg>bar_vert.png</scrollbarbg>
     <scrollbartop>mouse_left_horizontal.png</scrollbartop>
     <scrollbarbottom>mouse_right_horizontal.png</scrollbarbottom>
-    <scrollbarXOff>35</scrollbarXOff>
+    <scrollbarXOff>440</scrollbarXOff>
     <scrollbarYOff>0</scrollbarYOff>
     <showScrollbar>yes</showScrollbar>
     <scrollbarwidth>7</scrollbarwidth>

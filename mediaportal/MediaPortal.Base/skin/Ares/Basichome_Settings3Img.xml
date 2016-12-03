@@ -2,7 +2,9 @@
 <window>
   <controls>
 	
-
+	  <control>
+		<description>button group</description>
+		<type>group</type>
 	  <control>
 		<description>button group</description>
 		<type>group</type>
@@ -10,7 +12,7 @@
 		<posY>500</posY>
 		<!-- Remove and Gaps when buttons are not visible -->
 		<layout>StackLayout(0, Horizontal, false)</layout>
-		<visible allowhiddenfocus="true">control.hasfocus(250)|control.hasfocus(251)|control.hasfocus(252)|control.hasfocus(253)|control.hasfocus(254)|control.hasfocus(255)|control.hasfocus(256)|control.hasfocus(257)|control.hasfocus(258)|control.hasfocus(259)|control.hasfocus(350)|control.hasfocus(351)|control.hasfocus(352)|control.hasfocus(353)|control.hasfocus(354)|control.hasfocus(411)|control.hasfocus(412)|control.hasfocus(413)|control.hasfocus(414)|control.hasfocus(415)</visible>   
+		<visible allowhiddenfocus="true">control.hasfocus(250)|control.hasfocus(251)|control.hasfocus(252)|control.hasfocus(253)|control.hasfocus(254)|control.hasfocus(255)|control.hasfocus(256)|control.hasfocus(257)|control.hasfocus(258)|control.hasfocus(259)|control.hasfocus(350)|control.hasfocus(351)|control.hasfocus(352)|control.hasfocus(353)|control.hasfocus(354)|control.hasfocus(411)|control.hasfocus(412)|control.hasfocus(413)|control.hasfocus(414)|control.hasfocus(415)|control.hasfocus(611)|control.hasfocus(612)|control.hasfocus(613)|control.hasfocus(614)|control.hasfocus(615)</visible>   
 	  <control>
         <description>Page1 Button1</description>
         <type>menubutton</type>
@@ -20,6 +22,7 @@
 		<textXOff>5</textXOff>
         <textYOff>3</textYOff>
 		<oninfo>#(skin.setfocus(35,00510))</oninfo>
+		<onESC>#(skin.setfocus(35,cint(#skin.currentTile)))</onESC>
         <mode>dialoglist</mode>
         <dialogTitle>Choose an image</dialogTitle>
         <valueTextInButton>no</valueTextInButton>
@@ -34,7 +37,7 @@
 		<textureNoFocus>picBtnEdit.png</textureNoFocus>
 		<onup>250</onup>
         <onleft>411</onleft>
-        <ondown>00510</ondown>
+        <ondown>611</ondown>
         <onright>411</onright>
       </control>
 	  
@@ -59,6 +62,7 @@
 		<textXOff>5</textXOff>
         <textYOff>3</textYOff>
 		<oninfo>#(skin.setfocus(35,00511))</oninfo>
+		<onESC>#(skin.setfocus(35,cint(#skin.currentTile)))</onESC>
         <mode>dialoglist</mode>
         <dialogTitle>Choose an image</dialogTitle>
         <valueTextInButton>no</valueTextInButton>
@@ -73,7 +77,7 @@
 		<textureNoFocus>picBtnEdit.png</textureNoFocus>
 		<onup>252</onup>
         <onleft>412</onleft>
-        <ondown>00511</ondown>
+        <ondown>612</ondown>
         <onright>412</onright>
       </control>	  
 	  
@@ -100,6 +104,7 @@
 		<textXOff>5</textXOff>
         <textYOff>3</textYOff>
 		<oninfo>#(skin.setfocus(35,00512))</oninfo>
+		<onESC>#(skin.setfocus(35,cint(#skin.currentTile)))</onESC>
         <mode>dialoglist</mode>
         <dialogTitle>Choose an image</dialogTitle>
         <valueTextInButton>no</valueTextInButton>
@@ -114,7 +119,7 @@
 		<textureNoFocus>picBtnEdit.png</textureNoFocus>
 		<onup>254</onup>
         <onleft>413</onleft>
-        <ondown>00512</ondown>
+        <ondown>613</ondown>
         <onright>413</onright>
       </control>
 
@@ -141,6 +146,7 @@
 		<textXOff>5</textXOff>
         <textYOff>3</textYOff>
 		<oninfo>#(skin.setfocus(35,00513))</oninfo>
+		<onESC>#(skin.setfocus(35,cint(#skin.currentTile)))</onESC>
         <mode>dialoglist</mode>
         <dialogTitle>Choose an image</dialogTitle>
         <valueTextInButton>no</valueTextInButton>
@@ -155,7 +161,7 @@
 		<textureNoFocus>picBtnEdit.png</textureNoFocus>
 		<onup>256</onup>
         <onleft>414</onleft>
-        <ondown>00513</ondown>
+        <ondown>614</ondown>
         <onright>414</onright>
       </control>
 	  
@@ -182,6 +188,7 @@
 		<textXOff>5</textXOff>
         <textYOff>3</textYOff>
 		<oninfo>#(skin.setfocus(35,00513))</oninfo>
+		<onESC>#(skin.setfocus(35,cint(#skin.currentTile)))</onESC>
         <mode>dialoglist</mode>
         <dialogTitle>Choose an image</dialogTitle>
         <valueTextInButton>no</valueTextInButton>
@@ -196,14 +203,13 @@
 		<textureNoFocus>picBtnEdit.png</textureNoFocus>
 		<onup>258</onup>
         <onleft>415</onleft>
-        <ondown>00514</ondown>
+        <ondown>615</ondown>
         <onright>415</onright>
       </control>	  
-
-	  
-
-	  
       </control>
+	  
+	  
+	  </control>
 
   </controls>
 </window>

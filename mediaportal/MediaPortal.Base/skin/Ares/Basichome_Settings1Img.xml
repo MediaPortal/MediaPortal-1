@@ -10,7 +10,7 @@
 		<posY>500</posY>
 		<!-- Remove and Gaps when buttons are not visible -->
 		<layout>StackLayout(0, Horizontal, false)</layout>
-		<visible allowhiddenfocus="true">control.hasfocus(231)|control.hasfocus(230)|control.hasfocus(232)|control.hasfocus(233)|control.hasfocus(234)|control.hasfocus(235)|control.hasfocus(236)|control.hasfocus(237)|control.hasfocus(238)|control.hasfocus(239)|control.hasfocus(330)|control.hasfocus(331)|control.hasfocus(332)|control.hasfocus(333)|control.hasfocus(334)|control.hasfocus(335)|control.hasfocus(400)|control.hasfocus(401)|control.hasfocus(402)|control.hasfocus(403)|control.hasfocus(404)</visible>   
+		<visible allowhiddenfocus="true">control.hasfocus(231)|control.hasfocus(230)|control.hasfocus(232)|control.hasfocus(233)|control.hasfocus(234)|control.hasfocus(235)|control.hasfocus(236)|control.hasfocus(237)|control.hasfocus(238)|control.hasfocus(239)|control.hasfocus(330)|control.hasfocus(331)|control.hasfocus(332)|control.hasfocus(333)|control.hasfocus(334)|control.hasfocus(335)|control.hasfocus(400)|control.hasfocus(401)|control.hasfocus(402)|control.hasfocus(403)|control.hasfocus(404)|control.hasfocus(605)|control.hasfocus(604)|control.hasfocus(603)|control.hasfocus(602)|control.hasfocus(601)</visible>   
 	  <control>
         <description>Page1 Button1</description>
         <type>menubutton</type>
@@ -20,6 +20,7 @@
 		<textXOff>5</textXOff>
         <textYOff>3</textYOff>
 		<oninfo>#(skin.setfocus(35,00500))</oninfo>
+		<onESC>#(skin.setfocus(35,cint(#skin.currentTile)))</onESC>
         <mode>dialoglist</mode>
         <dialogTitle>Choose an image</dialogTitle>
         <valueTextInButton>no</valueTextInButton>
@@ -34,7 +35,7 @@
 		<textureNoFocus>picBtnEdit.png</textureNoFocus>
 		<onup>230</onup>
         <onleft>400</onleft>
-        <ondown>00500</ondown>
+        <ondown>601</ondown>
         <onright>400</onright>
       </control>
 	  
@@ -59,6 +60,7 @@
 		<textXOff>5</textXOff>
         <textYOff>3</textYOff>
 		<oninfo>#(skin.setfocus(35,00501))</oninfo>
+		<onESC>#(skin.setfocus(35,cint(#skin.currentTile)))</onESC>
         <mode>dialoglist</mode>
         <dialogTitle>Choose an image</dialogTitle>
         <valueTextInButton>no</valueTextInButton>
@@ -73,7 +75,7 @@
 		<textureNoFocus>picBtnEdit.png</textureNoFocus>
 		<onup>232</onup>
         <onleft>401</onleft>
-        <ondown>00501</ondown>
+        <ondown>602</ondown>
         <onright>401</onright>
       </control>	  
 	  
@@ -100,6 +102,7 @@
 		<textXOff>5</textXOff>
         <textYOff>3</textYOff>
 		<oninfo>#(skin.setfocus(35,00502))</oninfo>
+		<onESC>#(skin.setfocus(35,cint(#skin.currentTile)))</onESC>
         <mode>dialoglist</mode>
         <dialogTitle>Choose an image</dialogTitle>
         <valueTextInButton>no</valueTextInButton>
@@ -114,7 +117,7 @@
 		<textureNoFocus>picBtnEdit.png</textureNoFocus>
 		<onup>234</onup>
         <onleft>402</onleft>
-        <ondown>00502</ondown>
+        <ondown>603</ondown>
         <onright>402</onright>
       </control>
 
@@ -141,6 +144,7 @@
 		<textXOff>5</textXOff>
         <textYOff>3</textYOff>
 		<oninfo>#(skin.setfocus(35,00503))</oninfo>
+		<onESC>#(skin.setfocus(35,cint(#skin.currentTile)))</onESC>
         <mode>dialoglist</mode>
         <dialogTitle>Choose an image</dialogTitle>
         <valueTextInButton>no</valueTextInButton>
@@ -155,7 +159,7 @@
 		<textureNoFocus>picBtnEdit.png</textureNoFocus>
 		<onup>236</onup>
         <onleft>403</onleft>
-        <ondown>00503</ondown>
+        <ondown>604</ondown>
         <onright>403</onright>
       </control>
 	  
@@ -182,6 +186,7 @@
 		<textXOff>5</textXOff>
         <textYOff>3</textYOff>
 		<oninfo>#(skin.setfocus(35,00504))</oninfo>
+		<onESC>#(skin.setfocus(35,cint(#skin.currentTile)))</onESC>
         <mode>dialoglist</mode>
         <dialogTitle>Choose an image</dialogTitle>
         <valueTextInButton>no</valueTextInButton>
@@ -196,7 +201,7 @@
 		<textureNoFocus>picBtnEdit.png</textureNoFocus>
 		<onup>238</onup>
         <onleft>404</onleft>
-        <ondown>00504</ondown>
+        <ondown>605</ondown>
         <onright>404</onright>
       </control>	  
 

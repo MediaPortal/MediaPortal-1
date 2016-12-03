@@ -62,6 +62,7 @@ This file should contain the facade view
 					<textXOff2>1370</textXOff2>
 					<textXOff3>15</textXOff3>
 					<IconXOff>3000</IconXOff> 
+					<scrollbarXOff>440</scrollbarXOff>
                     <textureHeight>50</textureHeight>					
 					<spinWidth>45</spinWidth>
 					<spinHeight>42</spinHeight>

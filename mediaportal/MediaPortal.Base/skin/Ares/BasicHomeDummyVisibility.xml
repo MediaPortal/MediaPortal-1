@@ -635,6 +635,216 @@
     </control>		
 	
 	
+	
+	<!--#####################################DUMMY VISIBILTY FOR KEEPING TILES VISIBLE WHILE WEATHER SELECTED###############################################-->
+
+	<control>
+      <description>DUMMY weather</description>
+      <type>image</type>
+      <id>5100000</id>
+      <posX>7000</posX>
+      <posY>10</posY>
+      <width>10</width>
+      <height>10</height>
+      <texture></texture>  
+	  <visible>[[string.equals(#tile1plugin.hyperlink,WorldWeatherLite)+control.hasfocus(00500)]|[string.equals(#tile2plugin.hyperlink,WorldWeatherLite)+control.hasfocus(00501)]|[string.equals(#tile3plugin.hyperlink,WorldWeatherLite)+control.hasfocus(00502)]|[string.equals(#tile4plugin.hyperlink,WorldWeatherLite)+control.hasfocus(00503)]|[string.equals(#tile5plugin.hyperlink,WorldWeatherLite)+control.hasfocus(00504)]|[string.equals(#tile6plugin.hyperlink,WorldWeatherLite)+control.hasfocus(00505)]|[string.equals(#tile7plugin.hyperlink,WorldWeatherLite)+control.hasfocus(00506)]|[string.equals(#tile8plugin.hyperlink,WorldWeatherLite)+control.hasfocus(00507)]|[string.equals(#tile9plugin.hyperlink,WorldWeatherLite)+control.hasfocus(00508)]|[string.equals(#tile10plugin.hyperlink,WorldWeatherLite)+control.hasfocus(00509)]|[string.equals(#tile11plugin.hyperlink,WorldWeatherLite)+control.hasfocus(00510)]|[string.equals(#tile12plugin.hyperlink,WorldWeatherLite)+control.hasfocus(00511)]|[string.equals(#tile13plugin.hyperlink,WorldWeatherLite)+control.hasfocus(00512)]|[string.equals(#tile14plugin.hyperlink,WorldWeatherLite)+control.hasfocus(00513)]|[string.equals(#tile15plugin.hyperlink,WorldWeatherLite)+control.hasfocus(00514)]|[string.equals(#tile16plugin.hyperlink,WorldWeatherLite)+control.hasfocus(00515)]|[string.equals(#tile17plugin.hyperlink,WorldWeatherLite)+control.hasfocus(00516)]|[string.equals(#tile18plugin.hyperlink,WorldWeatherLite)+control.hasfocus(00517)]|[string.equals(#tile19plugin.hyperlink,WorldWeatherLite)+control.hasfocus(00518)]|[string.equals(#tile20plugin.hyperlink,WorldWeatherLite)+control.hasfocus(00519)]|[string.equals(#tile21plugin.hyperlink,WorldWeatherLite)+control.hasfocus(00520)]|[string.equals(#tile22plugin.hyperlink,WorldWeatherLite)+control.hasfocus(00521)]|[string.equals(#tile23plugin.hyperlink,WorldWeatherLite)+control.hasfocus(00522)]|[string.equals(#tile24plugin.hyperlink,WorldWeatherLite)+control.hasfocus(00523)]|[string.equals(#tile25plugin.hyperlink,WorldWeatherLite)+control.hasfocus(00524)]]+plugin.isenabled(World Weather Lite)</visible>
+    </control>	
+	<control>
+      <description>DUMMY weather</description>
+      <type>image</type>
+      <id>5100001</id>
+      <posX>7000</posX>
+      <posY>10</posY>
+      <width>10</width>
+      <height>10</height>
+      <texture></texture>  
+	  <visible>[[string.equals(#tile1plugin.hyperlink,WorldWeather)+control.hasfocus(00500)]|[string.equals(#tile2plugin.hyperlink,WorldWeather)+control.hasfocus(00501)]|[string.equals(#tile3plugin.hyperlink,WorldWeather)+control.hasfocus(00502)]|[string.equals(#tile4plugin.hyperlink,WorldWeather)+control.hasfocus(00503)]|[string.equals(#tile5plugin.hyperlink,WorldWeather)+control.hasfocus(00504)]|[string.equals(#tile6plugin.hyperlink,WorldWeather)+control.hasfocus(00505)]|[string.equals(#tile7plugin.hyperlink,WorldWeather)+control.hasfocus(00506)]|[string.equals(#tile8plugin.hyperlink,WorldWeather)+control.hasfocus(00507)]|[string.equals(#tile9plugin.hyperlink,WorldWeather)+control.hasfocus(00508)]|[string.equals(#tile10plugin.hyperlink,WorldWeather)+control.hasfocus(00509)]|[string.equals(#tile11plugin.hyperlink,WorldWeather)+control.hasfocus(00510)]|[string.equals(#tile12plugin.hyperlink,WorldWeather)+control.hasfocus(00511)]|[string.equals(#tile13plugin.hyperlink,WorldWeather)+control.hasfocus(00512)]|[string.equals(#tile14plugin.hyperlink,WorldWeather)+control.hasfocus(00513)]|[string.equals(#tile15plugin.hyperlink,WorldWeather)+control.hasfocus(00514)]|[string.equals(#tile16plugin.hyperlink,WorldWeather)+control.hasfocus(00515)]|[string.equals(#tile17plugin.hyperlink,WorldWeather)+control.hasfocus(00516)]|[string.equals(#tile18plugin.hyperlink,WorldWeather)+control.hasfocus(00517)]|[string.equals(#tile19plugin.hyperlink,WorldWeather)+control.hasfocus(00518)]|[string.equals(#tile20plugin.hyperlink,WorldWeather)+control.hasfocus(00519)]|[string.equals(#tile21plugin.hyperlink,WorldWeather)+control.hasfocus(00520)]|[string.equals(#tile22plugin.hyperlink,WorldWeather)+control.hasfocus(00521)]|[string.equals(#tile23plugin.hyperlink,WorldWeather)+control.hasfocus(00522)]|[string.equals(#tile24plugin.hyperlink,WorldWeather)+control.hasfocus(00523)]|[string.equals(#tile25plugin.hyperlink,WorldWeather)+control.hasfocus(00524)]]+plugin.isenabled(World Weather)</visible>
+    </control>		
+	
+	
+	
+	
+	
+    <!--:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::TRAKT LATEST VISIBILITY:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::-->
+
+
+	<control>
+      <description>DUMMY TRAKT 1</description>
+      <type>image</type>
+      <id>012013</id>
+      <posX>7000</posX>
+      <posY>10</posY>
+      <width>10</width>
+      <height>10</height>
+      <texture></texture>  
+	  <visible>[[string.equals(#tile1plugin.hyperlink,Trakt)+control.hasfocus(00500)|control.hasfocus(98302)]|[string.equals(#tile2plugin.hyperlink,Trakt)+control.hasfocus(00501)|control.hasfocus(98302)]|[string.equals(#tile3plugin.hyperlink,Trakt)+control.hasfocus(00502)|control.hasfocus(98302)]|[string.equals(#tile4plugin.hyperlink,Trakt)+control.hasfocus(00503)|control.hasfocus(98302)]|[string.equals(#tile5plugin.hyperlink,Trakt)+control.hasfocus(00504)|control.hasfocus(98302)]|[string.equals(#tile6plugin.hyperlink,Trakt)+control.hasfocus(00505)|control.hasfocus(98302)]|[string.equals(#tile7plugin.hyperlink,Trakt)+control.hasfocus(00506)|control.hasfocus(98302)]|[string.equals(#tile8plugin.hyperlink,Trakt)+control.hasfocus(00507)|control.hasfocus(98302)]|[string.equals(#tile9plugin.hyperlink,Trakt)+control.hasfocus(00508)|control.hasfocus(98302)]|[string.equals(#tile10plugin.hyperlink,Trakt)+control.hasfocus(00509)|control.hasfocus(98302)]|[string.equals(#tile11plugin.hyperlink,Trakt)+control.hasfocus(00510)|control.hasfocus(98302)]|[string.equals(#tile12plugin.hyperlink,Trakt)+control.hasfocus(00511)|control.hasfocus(98302)]|[string.equals(#tile13plugin.hyperlink,Trakt)+control.hasfocus(00512)|control.hasfocus(98302)]|[string.equals(#tile14plugin.hyperlink,Trakt)+control.hasfocus(00513)|control.hasfocus(98302)]|[string.equals(#tile15plugin.hyperlink,Trakt)+control.hasfocus(00514)|control.hasfocus(98302)]|[string.equals(#tile16plugin.hyperlink,Trakt)+control.hasfocus(00515)|control.hasfocus(98302)]|[string.equals(#tile17plugin.hyperlink,Trakt)+control.hasfocus(00516)|control.hasfocus(98302)]|[string.equals(#tile18plugin.hyperlink,Trakt)+control.hasfocus(00517)|control.hasfocus(98302)]|[string.equals(#tile19plugin.hyperlink,Trakt)+control.hasfocus(00518)|control.hasfocus(98302)]|[string.equals(#tile20plugin.hyperlink,Trakt)+control.hasfocus(00519)|control.hasfocus(98302)]|[string.equals(#tile21plugin.hyperlink,Trakt)+control.hasfocus(00520)|control.hasfocus(98302)]|[string.equals(#tile22plugin.hyperlink,Trakt)+control.hasfocus(00521)|control.hasfocus(98302)]|[string.equals(#tile23plugin.hyperlink,Trakt)+control.hasfocus(00522)|control.hasfocus(98302)]|[string.equals(#tile24plugin.hyperlink,Trakt)+control.hasfocus(00523)|control.hasfocus(98302)]|[string.equals(#tile25plugin.hyperlink,Trakt)+control.hasfocus(00524)|control.hasfocus(98302)]]+plugin.isenabled(Trakt)</visible>
+    </control>	
+	<control>
+      <description>DUMMY TRAKT 2</description>
+      <type>image</type>
+      <id>012014</id>
+      <posX>7000</posX>
+      <posY>10</posY>
+      <width>10</width>
+      <height>10</height>
+      <texture></texture> 
+      <visible>control.hasfocus(98301)+plugin.isenabled(Trakt)</visible>	  
+    </control>	
+
+	<control>
+      <description>DUMMY TRAKT THUMBS</description>
+      <type>image</type>
+      <id>012016</id>
+      <posX>7000</posX>
+      <posY>10</posY>
+      <width>10</width>
+      <height>10</height>
+      <texture></texture> 
+	  <visible>[[string.equals(#tile1plugin.hyperlink,Trakt)+control.hasfocus(00500)|control.hasfocus(98302)|control.hasfocus(98301)]|[string.equals(#tile2plugin.hyperlink,Trakt)+control.hasfocus(00501)|control.hasfocus(98302)|control.hasfocus(98301)]|[string.equals(#tile3plugin.hyperlink,Trakt)+control.hasfocus(00502)|control.hasfocus(98302)|control.hasfocus(98301)]|[string.equals(#tile4plugin.hyperlink,Trakt)+control.hasfocus(00503)|control.hasfocus(98302)|control.hasfocus(98301)]|[string.equals(#tile5plugin.hyperlink,Trakt)+control.hasfocus(00504)|control.hasfocus(98302)|control.hasfocus(98301)]|[string.equals(#tile6plugin.hyperlink,Trakt)+control.hasfocus(00505)|control.hasfocus(98302)|control.hasfocus(98301)]|[string.equals(#tile7plugin.hyperlink,Trakt)+control.hasfocus(00506)|control.hasfocus(98302)|control.hasfocus(98301)]|[string.equals(#tile8plugin.hyperlink,Trakt)+control.hasfocus(00507)|control.hasfocus(98302)|control.hasfocus(98301)]|[string.equals(#tile9plugin.hyperlink,Trakt)+control.hasfocus(00508)|control.hasfocus(98302)|control.hasfocus(98301)]|[string.equals(#tile10plugin.hyperlink,Trakt)+control.hasfocus(00509)|control.hasfocus(98302)|control.hasfocus(98301)]|[string.equals(#tile11plugin.hyperlink,Trakt)+control.hasfocus(00510)|control.hasfocus(98302)|control.hasfocus(98301)]|[string.equals(#tile12plugin.hyperlink,Trakt)+control.hasfocus(00511)|control.hasfocus(98302)|control.hasfocus(98301)]|[string.equals(#tile13plugin.hyperlink,Trakt)+control.hasfocus(00512)|control.hasfocus(98302)|control.hasfocus(98301)]|[string.equals(#tile14plugin.hyperlink,Trakt)+control.hasfocus(00513)|control.hasfocus(98302)|control.hasfocus(98301)]|[string.equals(#tile15plugin.hyperlink,Trakt)+control.hasfocus(00514)|control.hasfocus(98302)|control.hasfocus(98301)]|[string.equals(#tile16plugin.hyperlink,Trakt)+control.hasfocus(00515)|control.hasfocus(98302)|control.hasfocus(98301)]|[string.equals(#tile17plugin.hyperlink,Trakt)+control.hasfocus(00516)|control.hasfocus(98302)|control.hasfocus(98301)]|[string.equals(#tile18plugin.hyperlink,Trakt)+control.hasfocus(00517)|control.hasfocus(98302)|control.hasfocus(98301)]|[string.equals(#tile19plugin.hyperlink,Trakt)+control.hasfocus(00518)|control.hasfocus(98302)|control.hasfocus(98301)]|[string.equals(#tile20plugin.hyperlink,Trakt)+control.hasfocus(00519)|control.hasfocus(98302)|control.hasfocus(98301)]|[string.equals(#tile21plugin.hyperlink,Trakt)+control.hasfocus(00520)|control.hasfocus(98302)|control.hasfocus(98301)]|[string.equals(#tile22plugin.hyperlink,Trakt)+control.hasfocus(00521)|control.hasfocus(98302)|control.hasfocus(98301)]|[string.equals(#tile23plugin.hyperlink,Trakt)+control.hasfocus(00522)|control.hasfocus(98302)|control.hasfocus(98301)]|[string.equals(#tile24plugin.hyperlink,Trakt)+control.hasfocus(00523)|control.hasfocus(98302)|control.hasfocus(98301)]|[string.equals(#tile25plugin.hyperlink,Trakt)+control.hasfocus(00524)|control.hasfocus(98302)|control.hasfocus(98301)]]+plugin.isenabled(Trakt)</visible>
+    </control>	
+
+	<control>
+      <description>DUMMY TRAKT</description>
+      <type>image</type>
+      <id>212004</id>
+      <posX>7000</posX>
+      <posY>10</posY>
+      <width>10</width>
+      <height>10</height>
+      <texture></texture> 
+      <visible>control.hasfocus(98302)+plugin.isenabled(Trakt)</visible>	  
+    </control>	
+	
+
+	<!--#####################################DUMMY VISIBILTY FOR KEEPING TILES VISIBLE WHILE LATEST MEDIA SELECTED###############################################-->
+	
+	<control>
+      <description>DUMMY Trakt PAGE1</description>
+      <type>image</type>
+      <id>5511121</id>
+      <posX>7000</posX>
+      <posY>10</posY>
+      <width>10</width>
+      <height>10</height>
+      <texture></texture> 
+	  <visible>[[string.equals(#tile1plugin.hyperlink,Trakt)+[control.hasfocus(98302)|control.hasfocus(98301)]]|[string.equals(#tile2plugin.hyperlink,Trakt)+[control.hasfocus(98302)|control.hasfocus(98301)]]|[string.equals(#tile3plugin.hyperlink,Trakt)+[control.hasfocus(98302)|control.hasfocus(98301)]]|[string.equals(#tile4plugin.hyperlink,Trakt)+[control.hasfocus(98302)|control.hasfocus(98301)]]|[string.equals(#tile5plugin.hyperlink,Trakt)+[control.hasfocus(98302)|control.hasfocus(98301)]]]+!control.isvisible(5511122)+!control.isvisible(5511123)+!control.isvisible(5511124)+!control.isvisible(5511125)</visible>
+    </control>	
+
+	<control>
+      <description>DUMMY Trakt PAGE2</description>
+      <type>image</type>
+      <id>5511122</id>
+      <posX>7000</posX>
+      <posY>10</posY>
+      <width>10</width>
+      <height>10</height>
+      <texture></texture> 
+	  <visible>[[string.equals(#tile6plugin.hyperlink,Trakt)+[control.hasfocus(98302)|control.hasfocus(98301)]]|[string.equals(#tile7plugin.hyperlink,Trakt)+[control.hasfocus(98302)|control.hasfocus(98301)]]|[string.equals(#tile8plugin.hyperlink,Trakt)+[control.hasfocus(98302)|control.hasfocus(98301)]]|[string.equals(#tile9plugin.hyperlink,Trakt)+[control.hasfocus(98302)|control.hasfocus(98301)]]|[string.equals(#tile10plugin.hyperlink,Trakt)+[control.hasfocus(98302)|control.hasfocus(98301)]]]+!control.isvisible(5511121)+!control.isvisible(5511123)+!control.isvisible(5511124)+!control.isvisible(5511125)</visible>
+    </control>		
+	
+	<control>
+      <description>DUMMY Trakt PAGE3</description>
+      <type>image</type>
+      <id>5511123</id>
+      <posX>7000</posX>
+      <posY>10</posY>
+      <width>10</width>
+      <height>10</height>
+      <texture></texture> 
+	  <visible>[[string.equals(#tile11plugin.hyperlink,Trakt)+[control.hasfocus(98302)|control.hasfocus(98301)]]|[string.equals(#tile12plugin.hyperlink,Trakt)+[control.hasfocus(98302)|control.hasfocus(98301)]]|[string.equals(#tile13plugin.hyperlink,Trakt)+[control.hasfocus(98302)|control.hasfocus(98301)]]|[string.equals(#tile14plugin.hyperlink,Trakt)+[control.hasfocus(98302)|control.hasfocus(98301)]]|[string.equals(#tile15plugin.hyperlink,Trakt)+[control.hasfocus(98302)|control.hasfocus(98301)]]]+!control.isvisible(5511121)+!control.isvisible(5511122)+!control.isvisible(5511124)+!control.isvisible(5511125)</visible>
+    </control>	
+
+	<control>
+      <description>DUMMY Trakt PAGE4</description>
+      <type>image</type>
+      <id>5511124</id>
+      <posX>7000</posX>
+      <posY>10</posY>
+      <width>10</width>
+      <height>10</height>
+      <texture></texture> 
+	  <visible>[[string.equals(#tile16plugin.hyperlink,Trakt)+[control.hasfocus(98302)|control.hasfocus(98301)]]|[string.equals(#tile17plugin.hyperlink,Trakt)+[control.hasfocus(98302)|control.hasfocus(98301)]]|[string.equals(#tile18plugin.hyperlink,Trakt)+[control.hasfocus(98302)|control.hasfocus(98301)]]|[string.equals(#tile19plugin.hyperlink,Trakt)+[control.hasfocus(98302)|control.hasfocus(98301)]]|[string.equals(#tile20plugin.hyperlink,Trakt)+[control.hasfocus(98302)|control.hasfocus(98301)]]]+!control.isvisible(5511121)+!control.isvisible(5511122)+!control.isvisible(5511123)+!control.isvisible(5511125)</visible>
+    </control>	
+
+	<control>
+      <description>DUMMY Trakt PAGE5</description>
+      <type>image</type>
+      <id>5511125</id>
+      <posX>7000</posX>
+      <posY>10</posY>
+      <width>10</width>
+      <height>10</height>
+      <texture></texture> 
+	  <visible>[[string.equals(#tile21plugin.hyperlink,Trakt)+[control.hasfocus(98302)|control.hasfocus(98301)]]|[string.equals(#tile22plugin.hyperlink,Trakt)+[control.hasfocus(98302)|control.hasfocus(98301)]]|[string.equals(#tile23plugin.hyperlink,Trakt)+[control.hasfocus(98302)|control.hasfocus(98301)]]|[string.equals(#tile24plugin.hyperlink,Trakt)+[control.hasfocus(98302)|control.hasfocus(98301)]]|[string.equals(#tile25plugin.hyperlink,Trakt)+[control.hasfocus(98302)|control.hasfocus(98301)]]]+!control.isvisible(5511121)+!control.isvisible(5511122)+!control.isvisible(5511123)+!control.isvisible(5511124)</visible>
+    </control>	
+
+
+    <!--:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::PICS LATEST VISIBILITY:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::-->
+
+
+	<control>
+      <description>DUMMY Pictures 1</description>
+      <type>image</type>
+      <id>013013</id>
+      <posX>7000</posX>
+      <posY>10</posY>
+      <width>10</width>
+      <height>10</height>
+      <texture></texture>  
+	  <visible>[string.equals(#tile1plugin.hyperlink,Pictures)+control.hasfocus(00500)|control.hasfocus(91919971)]|[string.equals(#tile2plugin.hyperlink,Pictures)+control.hasfocus(00501)|control.hasfocus(91919971)]|[string.equals(#tile3plugin.hyperlink,Pictures)+control.hasfocus(00502)|control.hasfocus(91919971)]|[string.equals(#tile4plugin.hyperlink,Pictures)+control.hasfocus(00503)|control.hasfocus(91919971)]|[string.equals(#tile5plugin.hyperlink,Pictures)+control.hasfocus(00504)|control.hasfocus(91919971)]|[string.equals(#tile6plugin.hyperlink,Pictures)+control.hasfocus(00505)|control.hasfocus(91919971)]|[string.equals(#tile7plugin.hyperlink,Pictures)+control.hasfocus(00506)|control.hasfocus(91919971)]|[string.equals(#tile8plugin.hyperlink,Pictures)+control.hasfocus(00507)|control.hasfocus(91919971)]|[string.equals(#tile9plugin.hyperlink,Pictures)+control.hasfocus(00508)|control.hasfocus(91919971)]|[string.equals(#tile10plugin.hyperlink,Pictures)+control.hasfocus(00509)|control.hasfocus(91919971)]|[string.equals(#tile11plugin.hyperlink,Pictures)+control.hasfocus(00510)|control.hasfocus(91919971)]|[string.equals(#tile12plugin.hyperlink,Pictures)+control.hasfocus(00511)|control.hasfocus(91919971)]|[string.equals(#tile13plugin.hyperlink,Pictures)+control.hasfocus(00512)|control.hasfocus(91919971)]|[string.equals(#tile14plugin.hyperlink,Pictures)+control.hasfocus(00513)|control.hasfocus(91919971)]|[string.equals(#tile15plugin.hyperlink,Pictures)+control.hasfocus(00514)|control.hasfocus(91919971)]|[string.equals(#tile16plugin.hyperlink,Pictures)+control.hasfocus(00515)|control.hasfocus(91919971)]|[string.equals(#tile17plugin.hyperlink,Pictures)+control.hasfocus(00516)|control.hasfocus(91919971)]|[string.equals(#tile18plugin.hyperlink,Pictures)+control.hasfocus(00517)|control.hasfocus(91919971)]|[string.equals(#tile19plugin.hyperlink,Pictures)+control.hasfocus(00518)|control.hasfocus(91919971)]|[string.equals(#tile20plugin.hyperlink,Pictures)+control.hasfocus(00519)|control.hasfocus(91919971)]|[string.equals(#tile21plugin.hyperlink,Pictures)+control.hasfocus(00520)|control.hasfocus(91919971)]|[string.equals(#tile22plugin.hyperlink,Pictures)+control.hasfocus(00521)|control.hasfocus(91919971)]|[string.equals(#tile23plugin.hyperlink,Pictures)+control.hasfocus(00522)|control.hasfocus(91919971)]|[string.equals(#tile24plugin.hyperlink,Pictures)+control.hasfocus(00523)|control.hasfocus(91919971)]|[string.equals(#tile25plugin.hyperlink,Pictures)+control.hasfocus(00524)|control.hasfocus(91919971)]+plugin.isenabled(Latest Media Handler)</visible>
+    </control>	
+	<control>
+      <description>DUMMY Pictures 2</description>
+      <type>image</type>
+      <id>013014</id>
+      <posX>7000</posX>
+      <posY>10</posY>
+      <width>10</width>
+      <height>10</height>
+      <texture></texture> 
+      <visible>control.hasfocus(91919972)+plugin.isenabled(Latest Media Handler)</visible>	  
+    </control>	
+	<control>
+      <description>DUMMY Pictures 3</description>
+      <type>image</type>
+      <id>013015</id>
+      <posX>7000</posX>
+      <posY>10</posY>
+      <width>10</width>
+      <height>10</height>
+      <texture></texture> 
+      <visible>control.hasfocus(91919973)+plugin.isenabled(Latest Media Handler)</visible>	  
+    </control>	
+	<control>
+      <description>DUMMY Pictures THUMBS</description>
+      <type>image</type>
+      <id>013016</id>
+      <posX>7000</posX>
+      <posY>10</posY>
+      <width>10</width>
+      <height>10</height>
+      <texture></texture> 
+	  <visible>[[string.equals(#tile1plugin.hyperlink,Pictures)+control.hasfocus(00500)|control.hasfocus(91919971)|control.hasfocus(91919972)|control.hasfocus(91919973)]|[string.equals(#tile2plugin.hyperlink,Pictures)+control.hasfocus(00501)|control.hasfocus(91919971)|control.hasfocus(91919972)|control.hasfocus(91919973)]|[string.equals(#tile3plugin.hyperlink,Pictures)+control.hasfocus(00502)|control.hasfocus(91919971)|control.hasfocus(91919972)|control.hasfocus(91919973)]|[string.equals(#tile4plugin.hyperlink,Pictures)+control.hasfocus(00503)|control.hasfocus(91919971)|control.hasfocus(91919972)|control.hasfocus(91919973)]|[string.equals(#tile5plugin.hyperlink,Pictures)+control.hasfocus(00504)|control.hasfocus(91919971)|control.hasfocus(91919972)|control.hasfocus(91919973)]|[string.equals(#tile6plugin.hyperlink,Pictures)+control.hasfocus(00505)|control.hasfocus(91919971)|control.hasfocus(91919972)|control.hasfocus(91919973)]|[string.equals(#tile7plugin.hyperlink,Pictures)+control.hasfocus(00506)|control.hasfocus(91919971)|control.hasfocus(91919972)|control.hasfocus(91919973)]|[string.equals(#tile8plugin.hyperlink,Pictures)+control.hasfocus(00507)|control.hasfocus(91919971)|control.hasfocus(91919972)|control.hasfocus(91919973)]|[string.equals(#tile9plugin.hyperlink,Pictures)+control.hasfocus(00508)|control.hasfocus(91919971)|control.hasfocus(91919972)|control.hasfocus(91919973)]|[string.equals(#tile10plugin.hyperlink,Pictures)+control.hasfocus(00509)|control.hasfocus(91919971)|control.hasfocus(91919972)|control.hasfocus(91919973)]|[string.equals(#tile11plugin.hyperlink,Pictures)+control.hasfocus(00510)|control.hasfocus(91919971)|control.hasfocus(91919972)|control.hasfocus(91919973)]|[string.equals(#tile12plugin.hyperlink,Pictures)+control.hasfocus(00511)|control.hasfocus(91919971)|control.hasfocus(91919972)|control.hasfocus(91919973)]|[string.equals(#tile13plugin.hyperlink,Pictures)+control.hasfocus(00512)|control.hasfocus(91919971)|control.hasfocus(91919972)|control.hasfocus(91919973)]|[string.equals(#tile14plugin.hyperlink,Pictures)+control.hasfocus(00513)|control.hasfocus(91919971)|control.hasfocus(91919972)|control.hasfocus(91919973)]|[string.equals(#tile15plugin.hyperlink,Pictures)+control.hasfocus(00514)|control.hasfocus(91919971)|control.hasfocus(91919972)|control.hasfocus(91919973)]|[string.equals(#tile16plugin.hyperlink,Pictures)+control.hasfocus(00515)|control.hasfocus(91919971)|control.hasfocus(91919972)|control.hasfocus(91919973)]|[string.equals(#tile17plugin.hyperlink,Pictures)+control.hasfocus(00516)|control.hasfocus(91919971)|control.hasfocus(91919972)|control.hasfocus(91919973)]|[string.equals(#tile18plugin.hyperlink,Pictures)+control.hasfocus(00517)|control.hasfocus(91919971)|control.hasfocus(91919972)|control.hasfocus(91919973)]|[string.equals(#tile19plugin.hyperlink,Pictures)+control.hasfocus(00518)|control.hasfocus(91919971)|control.hasfocus(91919972)|control.hasfocus(91919973)]|[string.equals(#tile20plugin.hyperlink,Pictures)+control.hasfocus(00519)|control.hasfocus(91919971)|control.hasfocus(91919972)|control.hasfocus(91919973)]|[string.equals(#tile21plugin.hyperlink,Pictures)+control.hasfocus(00520)|control.hasfocus(91919971)|control.hasfocus(91919972)|control.hasfocus(91919973)]|[string.equals(#tile22plugin.hyperlink,Pictures)+control.hasfocus(00521)|control.hasfocus(91919971)|control.hasfocus(91919972)|control.hasfocus(91919973)]|[string.equals(#tile23plugin.hyperlink,Pictures)+control.hasfocus(00522)|control.hasfocus(91919971)|control.hasfocus(91919972)|control.hasfocus(91919973)]|[string.equals(#tile24plugin.hyperlink,Pictures)+control.hasfocus(00523)|control.hasfocus(91919971)|control.hasfocus(91919972)|control.hasfocus(91919973)]|[string.equals(#tile25plugin.hyperlink,Pictures)+control.hasfocus(00524)|control.hasfocus(91919971)|control.hasfocus(91919972)|control.hasfocus(91919973)]]+plugin.isenabled(Latest Media Handler)+string.equals(#latestMediaHandler.picture.latest.enabled,True)</visible>
+    </control>		
+	
+    <!--:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::OV LATEST VISIBILITY:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::-->
+	
+	<control>
+      <description>DUMMY weather</description>
+      <type>image</type>
+      <id>5521125</id>
+      <posX>7000</posX>
+      <posY>10</posY>
+      <width>10</width>
+      <height>10</height>
+      <texture></texture>  
+	  <visible>[[string.equals(#tile1plugin.hyperlink,OnlineVideos)+control.hasfocus(00500)]|[string.equals(#tile2plugin.hyperlink,OnlineVideos)+control.hasfocus(00501)]|[string.equals(#tile3plugin.hyperlink,OnlineVideos)+control.hasfocus(00502)]|[string.equals(#tile4plugin.hyperlink,OnlineVideos)+control.hasfocus(00503)]|[string.equals(#tile5plugin.hyperlink,OnlineVideos)+control.hasfocus(00504)]|[string.equals(#tile6plugin.hyperlink,OnlineVideos)+control.hasfocus(00505)]|[string.equals(#tile7plugin.hyperlink,OnlineVideos)+control.hasfocus(00506)]|[string.equals(#tile8plugin.hyperlink,OnlineVideos)+control.hasfocus(00507)]|[string.equals(#tile9plugin.hyperlink,OnlineVideos)+control.hasfocus(00508)]|[string.equals(#tile10plugin.hyperlink,OnlineVideos)+control.hasfocus(00509)]|[string.equals(#tile11plugin.hyperlink,OnlineVideos)+control.hasfocus(00510)]|[string.equals(#tile12plugin.hyperlink,OnlineVideos)+control.hasfocus(00511)]|[string.equals(#tile13plugin.hyperlink,OnlineVideos)+control.hasfocus(00512)]|[string.equals(#tile14plugin.hyperlink,OnlineVideos)+control.hasfocus(00513)]|[string.equals(#tile15plugin.hyperlink,OnlineVideos)+control.hasfocus(00514)]|[string.equals(#tile16plugin.hyperlink,OnlineVideos)+control.hasfocus(00515)]|[string.equals(#tile17plugin.hyperlink,OnlineVideos)+control.hasfocus(00516)]|[string.equals(#tile18plugin.hyperlink,OnlineVideos)+control.hasfocus(00517)]|[string.equals(#tile19plugin.hyperlink,OnlineVideos)+control.hasfocus(00518)]|[string.equals(#tile20plugin.hyperlink,OnlineVideos)+control.hasfocus(00519)]|[string.equals(#tile21plugin.hyperlink,OnlineVideos)+control.hasfocus(00520)]|[string.equals(#tile22plugin.hyperlink,OnlineVideos)+control.hasfocus(00521)]|[string.equals(#tile23plugin.hyperlink,OnlineVideos)+control.hasfocus(00522)]|[string.equals(#tile24plugin.hyperlink,OnlineVideos)+control.hasfocus(00523)]|[string.equals(#tile25plugin.hyperlink,OnlineVideos)+control.hasfocus(00524)]]+plugin.isenabled(OnlineVideos)</visible>
+    </control>	
+
+
+
+	
+	
   </controls>
 </window>
 

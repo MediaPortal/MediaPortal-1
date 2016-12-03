@@ -8,7 +8,7 @@
 	  <control>
         <description>left</description>
         <type>image</type>
-        <id>666004</id>
+        <id>666003</id>
         <posX>0</posX>
         <posY>0</posY>
         <width>5</width>
@@ -21,7 +21,7 @@
 	  <control>
         <description>right</description>
         <type>image</type>
-        <id>666003</id>
+        <id>666004</id>
         <posX>0</posX>
         <posY>0</posY>
         <width>5</width>
@@ -36,7 +36,7 @@
     <control>
       <description>group element</description>
       <type>group</type>
-	  <visible allowhiddenfocus="true">control.hasfocus(00505)|control.hasfocus(00506)|control.hasfocus(00507)|control.hasfocus(00508)|control.hasfocus(00509)|control.hasfocus(240)|control.hasfocus(241)|control.hasfocus(242)|control.hasfocus(243)|control.hasfocus(244)|control.hasfocus(245)|control.hasfocus(246)|control.hasfocus(247)|control.hasfocus(248)|control.hasfocus(249)|control.hasfocus(340)|control.hasfocus(341)|control.hasfocus(342)|control.hasfocus(343)|control.hasfocus(344)|control.isvisible(5011102)|control.isvisible(5011107)|control.isvisible(5011112)|control.isvisible(5011117)|control.isvisible(5011122)|control.hasfocus(8001122)|control.hasfocus(406)|control.hasfocus(407)|control.hasfocus(408)|control.hasfocus(409)|control.hasfocus(410)|control.hasfocus(8106555)|control.hasfocus(8105555)|control.hasfocus(8101123)|string.equals(#skin.currentTile,00505)|string.equals(#skin.currentTile,00506)|string.equals(#skin.currentTile,00507)|string.equals(#skin.currentTile,00508)|string.equals(#skin.currentTile,00509)</visible>	  
+	  <visible allowhiddenfocus="true">control.hasfocus(00505)|control.hasfocus(00506)|control.hasfocus(00507)|control.hasfocus(00508)|control.hasfocus(00509)|control.hasfocus(240)|control.hasfocus(241)|control.hasfocus(242)|control.hasfocus(243)|control.hasfocus(244)|control.hasfocus(245)|control.hasfocus(246)|control.hasfocus(247)|control.hasfocus(248)|control.hasfocus(249)|control.hasfocus(340)|control.hasfocus(341)|control.hasfocus(342)|control.hasfocus(343)|control.hasfocus(344)|control.isvisible(5011102)|control.isvisible(5011107)|control.isvisible(5011112)|control.isvisible(5011117)|control.isvisible(5011122)|control.hasfocus(8001122)|control.hasfocus(406)|control.hasfocus(407)|control.hasfocus(408)|control.hasfocus(409)|control.hasfocus(410)|control.hasfocus(606)|control.hasfocus(607)|control.hasfocus(608)|control.hasfocus(609)|control.hasfocus(610)|control.hasfocus(8106555)|control.hasfocus(8105555)|control.hasfocus(8101123)|string.equals(#skin.currentTile,00505)|string.equals(#skin.currentTile,00506)|string.equals(#skin.currentTile,00507)|string.equals(#skin.currentTile,00508)|string.equals(#skin.currentTile,00509)</visible>	  
 	  <control>
         <description>BasicHome btn1</description>
         <type>button</type>
@@ -46,7 +46,7 @@
 		<height>571</height>
 		<width>367</width>
 		<onfocus>#(skin.setstring('#skin.currentTile','00505'))</onfocus>
-        <label>#(iif(eq(#skin.manualnames,'yes'),'#tile6plugin.name',''))#(iif(eq(#skin.manualnames,'no'),#tile6.name,''))</label>
+        <label>#(iif(eq(#skin.tile6cne,'True'),'#tile6plugin.name','#tile6.name'))</label>
 		<oninfo>#(skin.setfocus(35,240))</oninfo>
 		<hyperlink>#tile6.hyperlink</hyperlink>
 		<textcolorNoFocus>ff999999</textcolorNoFocus>
@@ -57,7 +57,7 @@
 		<textYOff>230</textYOff>
 		<font>font13</font>
         <onleft>00#skin.page2navleft</onleft>
-        <onup>#tile6.navigation</onup>
+        <onup>#(cint(switch( and( eq(#tile6plugin.hyperlink,'MovPics'), eq(#latestMediaHandler.movingpicture.latest.enabled,'True')),91919991, and(eq(#tile6plugin.hyperlink,'TVSeries'),eq(#latestMediaHandler.tvseries.latest.enabled,'True')),91919994, and(eq(#tile6plugin.hyperlink,'MyMusic'),eq(#latestMediaHandler.music.latest.enabled,'True')),91919997, and(eq(#tile6plugin.hyperlink,'MyVideo'),eq(#latestMediaHandler.myvideo.latest.enabled,'True')),91915991, and(eq(#tile6plugin.hyperlink,'LiveTV'),eq(#latestMediaHandler.tvrecordings.latest.enabled,'True')),91919984, and(eq(#tile6plugin.hyperlink,'Trakt'),eq(#skin.no.latestmedia,'True')),98302, and(eq(#tile6plugin.hyperlink,'Pictures'),eq(#latestMediaHandler.picture.latest.enabled,'True')),91919971, eq(1,1),21)))</onup>
 		<ondown>8106555</ondown>
 		<onright>00506</onright>
 		<animation effect="slide" start="0,0" end="-2500,0" reversible="true" time="350" condition="control.isVisible(666004)">Conditional</animation>
@@ -75,7 +75,7 @@
 		<height>571</height>
 		<width>367</width>
 		<onfocus>#(skin.setstring('#skin.currentTile','00506'))</onfocus>
-        <label>#(iif(eq(#skin.manualnames,'yes'),'#tile7plugin.name',''))#(iif(eq(#skin.manualnames,'no'),#tile7.name,''))</label>
+        <label>#(iif(eq(#skin.tile7cne,'True'),'#tile7plugin.name','#tile7.name'))</label>
 		<oninfo>#(skin.setfocus(35,242))</oninfo>
 		<hyperlink>#tile7.hyperlink</hyperlink>
 		<textcolorNoFocus>ff999999</textcolorNoFocus>
@@ -86,7 +86,7 @@
 		<textYOff>230</textYOff>
 		<font>font13</font>
         <onleft>00505</onleft>
-        <onup>#tile7.navigation</onup>
+        <onup>#(cint(switch( and( eq(#tile7plugin.hyperlink,'MovPics'), eq(#latestMediaHandler.movingpicture.latest.enabled,'True')),91919991, and(eq(#tile7plugin.hyperlink,'TVSeries'),eq(#latestMediaHandler.tvseries.latest.enabled,'True')),91919994, and(eq(#tile7plugin.hyperlink,'MyMusic'),eq(#latestMediaHandler.music.latest.enabled,'True')),91919997, and(eq(#tile7plugin.hyperlink,'MyVideo'),eq(#latestMediaHandler.myvideo.latest.enabled,'True')),91915991, and(eq(#tile7plugin.hyperlink,'LiveTV'),eq(#latestMediaHandler.tvrecordings.latest.enabled,'True')),91919984, and(eq(#tile7plugin.hyperlink,'Trakt'),eq(#skin.no.latestmedia,'True')),98302, and(eq(#tile7plugin.hyperlink,'Pictures'),eq(#latestMediaHandler.picture.latest.enabled,'True')),91919971, eq(1,1),21)))</onup>
 		<ondown>8106555</ondown>
 		<onright>00507</onright>
 		<animation effect="slide" start="0,0" end="-2500,0" reversible="true" time="350" condition="control.isVisible(666004)">Conditional</animation>
@@ -104,7 +104,7 @@
 		<height>571</height>
 		<width>367</width>
 		<onfocus>#(skin.setstring('#skin.currentTile','00507'))</onfocus>
-        <label>#(iif(eq(#skin.manualnames,'yes'),'#tile8plugin.name',''))#(iif(eq(#skin.manualnames,'no'),#tile8.name,''))</label>
+        <label>#(iif(eq(#skin.tile8cne,'True'),'#tile8plugin.name','#tile8.name'))</label>
 		<oninfo>#(skin.setfocus(35,244))</oninfo>
 		<hyperlink>#tile8.hyperlink</hyperlink>
 		<textcolorNoFocus>ff999999</textcolorNoFocus>
@@ -115,7 +115,7 @@
 		<textYOff>230</textYOff>
 		<font>font13</font>
         <onleft>00506</onleft>
-        <onup>#tile8.navigation</onup>
+        <onup>#(cint(switch( and( eq(#tile8plugin.hyperlink,'MovPics'), eq(#latestMediaHandler.movingpicture.latest.enabled,'True')),91919991, and(eq(#tile8plugin.hyperlink,'TVSeries'),eq(#latestMediaHandler.tvseries.latest.enabled,'True')),91919994, and(eq(#tile8plugin.hyperlink,'MyMusic'),eq(#latestMediaHandler.music.latest.enabled,'True')),91919997, and(eq(#tile8plugin.hyperlink,'MyVideo'),eq(#latestMediaHandler.myvideo.latest.enabled,'True')),91915991, and(eq(#tile8plugin.hyperlink,'LiveTV'),eq(#latestMediaHandler.tvrecordings.latest.enabled,'True')),91919984, and(eq(#tile8plugin.hyperlink,'Trakt'),eq(#skin.no.latestmedia,'True')),98302, and(eq(#tile8plugin.hyperlink,'Pictures'),eq(#latestMediaHandler.picture.latest.enabled,'True')),91919971, eq(1,1),21)))</onup>
 		<ondown>8106555</ondown>
 		<onright>00508</onright>
 		<animation effect="slide" start="0,0" end="-2500,0" reversible="true" time="350" condition="control.isVisible(666004)">Conditional</animation>
@@ -133,7 +133,7 @@
 		<height>571</height>
 		<width>367</width>
 		<onfocus>#(skin.setstring('#skin.currentTile','00508'))</onfocus>
-        <label>#(iif(eq(#skin.manualnames,'yes'),'#tile9plugin.name',''))#(iif(eq(#skin.manualnames,'no'),#tile9.name,''))</label>
+        <label>#(iif(eq(#skin.tile9cne,'True'),'#tile9plugin.name','#tile9.name'))</label>
 		<oninfo>#(skin.setfocus(35,246))</oninfo>
 		<hyperlink>#tile9.hyperlink</hyperlink>
 		<textcolorNoFocus>ff999999</textcolorNoFocus>
@@ -144,7 +144,7 @@
 		<textYOff>230</textYOff>
 		<font>font13</font>
         <onleft>00507</onleft>
-        <onup>#tile9.navigation</onup>
+        <onup>#(cint(switch( and( eq(#tile9plugin.hyperlink,'MovPics'), eq(#latestMediaHandler.movingpicture.latest.enabled,'True')),91919991, and(eq(#tile9plugin.hyperlink,'TVSeries'),eq(#latestMediaHandler.tvseries.latest.enabled,'True')),91919994, and(eq(#tile9plugin.hyperlink,'MyMusic'),eq(#latestMediaHandler.music.latest.enabled,'True')),91919997, and(eq(#tile9plugin.hyperlink,'MyVideo'),eq(#latestMediaHandler.myvideo.latest.enabled,'True')),91915991, and(eq(#tile9plugin.hyperlink,'LiveTV'),eq(#latestMediaHandler.tvrecordings.latest.enabled,'True')),91919984, and(eq(#tile9plugin.hyperlink,'Trakt'),eq(#skin.no.latestmedia,'True')),98302, and(eq(#tile9plugin.hyperlink,'Pictures'),eq(#latestMediaHandler.picture.latest.enabled,'True')),91919971, eq(1,1),21)))</onup>
 		<ondown>8106555</ondown>
 		<onright>00509</onright>
 		<animation effect="slide" start="0,0" end="-2500,0" reversible="true" time="350" condition="control.isVisible(666004)">Conditional</animation>
@@ -162,7 +162,7 @@
 		<height>571</height>
 		<width>367</width>
 		<onfocus>#(skin.setstring('#skin.currentTile','00509'))</onfocus>
-        <label>#(iif(eq(#skin.manualnames,'yes'),'#tile10plugin.name',''))#(iif(eq(#skin.manualnames,'no'),#tile10.name,''))</label>
+        <label>#(iif(eq(#skin.tile10cne,'True'),'#tile10plugin.name','#tile10.name'))</label>
 		<oninfo>#(skin.setfocus(35,248))</oninfo>
 		<hyperlink>#tile10.hyperlink</hyperlink>
 		<textcolorNoFocus>ff999999</textcolorNoFocus>
@@ -173,7 +173,7 @@
 		<textYOff>230</textYOff>
 		<font>font13</font>
         <onleft>00508</onleft>
-        <onup>#tile10.navigation</onup>
+        <onup>#(cint(switch( and( eq(#tile10plugin.hyperlink,'MovPics'), eq(#latestMediaHandler.movingpicture.latest.enabled,'True')),91919991, and(eq(#tile10plugin.hyperlink,'TVSeries'),eq(#latestMediaHandler.tvseries.latest.enabled,'True')),91919994, and(eq(#tile10plugin.hyperlink,'MyMusic'),eq(#latestMediaHandler.music.latest.enabled,'True')),91919997, and(eq(#tile10plugin.hyperlink,'MyVideo'),eq(#latestMediaHandler.myvideo.latest.enabled,'True')),91915991, and(eq(#tile10plugin.hyperlink,'LiveTV'),eq(#latestMediaHandler.tvrecordings.latest.enabled,'True')),91919984, and(eq(#tile10plugin.hyperlink,'Trakt'),eq(#skin.no.latestmedia,'True')),98302, and(eq(#tile10plugin.hyperlink,'Pictures'),eq(#latestMediaHandler.picture.latest.enabled,'True')),91919971, eq(1,1),21)))</onup>
 		<ondown>8106555</ondown>
 		<onright>00#skin.page2navright</onright>
 		<animation effect="slide" start="0,0" end="-2500,0" reversible="true" time="350" condition="control.isVisible(666004)">Conditional</animation>

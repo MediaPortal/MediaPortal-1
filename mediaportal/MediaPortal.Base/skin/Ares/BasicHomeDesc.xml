@@ -53,7 +53,21 @@
       <font>font13</font>
       <textcolor>eaeaea</textcolor>
 	  <visible>control.hasfocus(400)|control.hasfocus(401)|control.hasfocus(402)|control.hasfocus(403)|control.hasfocus(404)|control.hasfocus(406)|control.hasfocus(407)|control.hasfocus(408)|control.hasfocus(409)|control.hasfocus(410)|control.hasfocus(411)|control.hasfocus(412)|control.hasfocus(413)|control.hasfocus(414)|control.hasfocus(415)|control.hasfocus(416)|control.hasfocus(417)|control.hasfocus(418)|control.hasfocus(419)|control.hasfocus(420)|control.hasfocus(421)|control.hasfocus(422)|control.hasfocus(423)|control.hasfocus(424)|control.hasfocus(425)</visible>
-    </control>		
+    </control>	
+    <control>
+      <description>current temp label</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>350</posY>
+	  <width>1920</width>
+      <align>center</align>
+      <label>#skin.test2</label>
+      <font>font13</font>
+      <textcolor>eaeaea</textcolor>
+	  <visible>control.hasfocus(600)|control.hasfocus(601)|control.hasfocus(602)|control.hasfocus(603)|control.hasfocus(606)|control.hasfocus(606)|control.hasfocus(607)|control.hasfocus(608)|control.hasfocus(609)|control.hasfocus(610)|control.hasfocus(611)|control.hasfocus(612)|control.hasfocus(613)|control.hasfocus(616)|control.hasfocus(615)|control.hasfocus(616)|control.hasfocus(617)|control.hasfocus(618)|control.hasfocus(619)|control.hasfocus(620)|control.hasfocus(621)|control.hasfocus(622)|control.hasfocus(623)|control.hasfocus(626)|control.hasfocus(625)</visible>
+    </control>	
+	
 
   </controls>
 </window>
