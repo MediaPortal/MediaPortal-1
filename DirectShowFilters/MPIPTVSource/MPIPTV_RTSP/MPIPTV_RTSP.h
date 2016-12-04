@@ -44,6 +44,8 @@
 #define RTSP_UDP_PORT_RANGE_END_DEFAULT                     46000
 #define RTSP_COMMAND_RESPONSE_TIMEOUT_DEFAULT               500
 #define RTSP_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT       3
+#define RTSP_SEND_COMMAND_OPTIONS_DEFAULT                   true
+#define RTSP_SEND_COMMAND_DESCRIBE_DEFAULT                  true
 
 #define CONFIGURATION_SECTION_RTSP                          _T("RTSP")
 
@@ -55,6 +57,8 @@
 #define CONFIGURATION_RTSP_UDP_PORT_RANGE_END               _T("RtspUdpPortRangeEnd")
 #define CONFIGURATION_RTSP_COMMAND_RESPONSE_TIMEOUT         _T("RtspCommandResponseTimeout")
 #define CONFIGURATION_RTSP_OPEN_CONNECTION_MAXIMUM_ATTEMPTS _T("RtspOpenConnectionMaximumAttempts")
+#define CONFIGURATION_RTSP_SEND_COMMAND_OPTIONS             _T("RtspSendCommandOptions")
+#define CONFIGURATION_RTSP_SEND_COMMAND_DESCRIBE            _T("RtspSendCommandDescribe")
 
 // returns protocol class instance
 PIProtocol CreateProtocolInstance(void);
@@ -108,6 +112,8 @@ protected:
   unsigned int rtspUdpPortRangeStart;
   unsigned int rtspUdpPortRangeEnd;
   unsigned int rtspCommandResponseTimeout;
+  bool sendRtspCommandOptions;
+  bool sendRtspCommandDescribe;
 
   // variable for signaling exit for rtspScheduler
   char rtspThreadShouldExit;

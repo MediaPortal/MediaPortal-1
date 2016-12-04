@@ -72,6 +72,8 @@ CMPIPTV_RTSP::CMPIPTV_RTSP()
   this->rtspUdpPortRangeEnd = RTSP_UDP_PORT_RANGE_END_DEFAULT;
   this->rtspCommandResponseTimeout = RTSP_COMMAND_RESPONSE_TIMEOUT_DEFAULT;
   this->openConnetionMaximumAttempts = RTSP_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT;
+  this->sendRtspCommandOptions = RTSP_SEND_COMMAND_OPTIONS_DEFAULT;
+  this->sendRtspCommandDescribe = RTSP_SEND_COMMAND_DESCRIBE_DEFAULT;
 
   this->logger.Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CONSTRUCTOR_NAME);
 }
@@ -128,6 +130,8 @@ int CMPIPTV_RTSP::Initialize(HANDLE lockMutex, CParameterCollection *configurati
   this->rtspUdpPortRangeEnd = this->configurationParameters->GetValueLong(CONFIGURATION_RTSP_UDP_PORT_RANGE_END, true, RTSP_UDP_PORT_RANGE_END_DEFAULT);
   this->rtspCommandResponseTimeout = this->configurationParameters->GetValueLong(CONFIGURATION_RTSP_COMMAND_RESPONSE_TIMEOUT, true, RTSP_COMMAND_RESPONSE_TIMEOUT_DEFAULT);
   this->openConnetionMaximumAttempts = this->configurationParameters->GetValueLong(CONFIGURATION_RTSP_OPEN_CONNECTION_MAXIMUM_ATTEMPTS, true, RTSP_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT);
+  this->sendRtspCommandOptions = this->configurationParameters->GetValueBool(CONFIGURATION_RTSP_SEND_COMMAND_OPTIONS, true, RTSP_SEND_COMMAND_OPTIONS_DEFAULT);
+  this->sendRtspCommandDescribe = this->configurationParameters->GetValueBool(CONFIGURATION_RTSP_SEND_COMMAND_DESCRIBE, true, RTSP_SEND_COMMAND_DESCRIBE_DEFAULT);
 
   this->receiveDataTimeout = (this->receiveDataTimeout < 0) ? RTSP_RECEIVE_DATA_TIMEOUT_DEFAULT : this->receiveDataTimeout;
   this->rtspRtpClientPortRangeStart = (this->rtspRtpClientPortRangeStart < 0) ? RTSP_RTP_CLIENT_PORT_RANGE_START_DEFAULT : this->rtspRtpClientPortRangeStart & ~1;
@@ -282,15 +286,28 @@ int CMPIPTV_RTSP::OpenConnection(void)
   FREE_MEM(tempRtspUrl);
   if (
     this->rtspClient == NULL ||
-    SendRtspCommand(METHOD_OPEN_CONNECTION_NAME, _T("OPTIONS")) != STATUS_OK ||
-    SendRtspCommand(METHOD_OPEN_CONNECTION_NAME, _T("DESCRIBE")) != STATUS_OK
+    (
+      this->sendRtspCommandOptions &&
+      SendRtspCommand(METHOD_OPEN_CONNECTION_NAME, _T("OPTIONS")) != STATUS_OK
+    ) ||
+    (
+      this->sendRtspCommandDescribe &&
+      SendRtspCommand(METHOD_OPEN_CONNECTION_NAME, _T("DESCRIBE")) != STATUS_OK
+    )
   )
   {
     CloseConnection();
     return STATUS_ERROR;
   }
 
-  this->rtspSession = MediaSession::createNew(*this->rtspEnvironment, this->rtspResponseResultString);
+  if (this->sendRtspCommandDescribe)
+  {
+    this->rtspSession = MediaSession::createNew(*this->rtspEnvironment, this->rtspResponseResultString);
+  }
+  else
+  {
+    this->rtspSession = MediaSession::createNew(*this->rtspEnvironment, "v=0\r\nt=0 0\r\na=type:broadcast\r\na=recvonly\r\nm=video 0 RTP/AVP 33");
+  }
   if (this->rtspSession == NULL || !this->rtspSession->hasSubsessions())
   {
     this->LogRtspMessage(LOGGER_ERROR, METHOD_OPEN_CONNECTION_NAME, this->rtspSession == NULL ? _T("failed to create session") : _T("session doesn't have sub-sessions"));
