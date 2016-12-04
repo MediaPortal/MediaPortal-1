@@ -586,7 +586,7 @@ namespace MediaPortal
 
       // Force a madVR refresh to resize MP window
       // TODO how to handle it better
-      //g_Player.RefreshMadVrVideo();
+      g_Player.RefreshMadVrVideo();
 
       // enable event handlers
       if (GUIGraphicsContext.DX9Device != null)
@@ -1911,6 +1911,10 @@ namespace MediaPortal
         }
         ClientSize = size;
         TopMost = _alwaysOnTop;
+
+        // Force a madVR refresh to resize MP window
+        // TODO how to handle it better
+        g_Player.RefreshMadVrVideo();
       }
     }
 
