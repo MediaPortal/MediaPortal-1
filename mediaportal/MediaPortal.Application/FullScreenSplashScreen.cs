@@ -166,6 +166,121 @@ namespace MediaPortal
                   Log.Debug("FullScreenSplash: TextColor successfully set: {0}", textColor);
                 }
               }
+              if (control.SelectSingleNode("posX") != null)
+              {
+                XmlNode xmlNode = control.SelectSingleNode("posX/text()");
+                if (xmlNode != null)
+                {
+                  var _value = xmlNode.Value;
+                  Log.Debug("FullScreenSplash: Text PosX value found: {0}", _value);
+                  int _number = 0;
+                  if (Int32.TryParse(_value, out _number))
+                  {
+                    lblMain.AutoSize = false;
+                    lblMain.Left = _number;
+                    Log.Debug("FullScreenSplash: Main Label PosX successfully set: {0}", _number);
+                  }
+                }
+              }
+              if (control.SelectSingleNode("posY") != null)
+              {
+                XmlNode xmlNode = control.SelectSingleNode("posY/text()");
+                if (xmlNode != null)
+                {
+                  var _value = xmlNode.Value;
+                  Log.Debug("FullScreenSplash: Text PosY value found: {0}", _value);
+                  int _number = 0;
+                  if (Int32.TryParse(_value, out _number))
+                  {
+                    lblMain.AutoSize = false;
+                    lblMain.Top = _number;
+                    Log.Debug("FullScreenSplash: Main Label PosY successfully set: {0}", _number);
+                  }
+                }
+              }
+              if (control.SelectSingleNode("width") != null)
+              {
+                XmlNode xmlNode = control.SelectSingleNode("width/text()");
+                if (xmlNode != null)
+                {
+                  var _value = xmlNode.Value;
+                  Log.Debug("FullScreenSplash: Text Width value found: {0}", _value);
+                  int _number = 0;
+                  if (Int32.TryParse(_value, out _number))
+                  {
+                    lblMain.AutoSize = false;
+                    lblMain.Width = _number;
+                    Log.Debug("FullScreenSplash: Main Label Width successfully set: {0}", _number);
+                  }
+                }
+              }
+              if (control.SelectSingleNode("height") != null)
+              {
+                XmlNode xmlNode = control.SelectSingleNode("height/text()");
+                if (xmlNode != null)
+                {
+                  var _value = xmlNode.Value;
+                  Log.Debug("FullScreenSplash: Text Height value found: {0}", _value);
+                  int _number = 0;
+                  if (Int32.TryParse(_value, out _number))
+                  {
+                    lblMain.AutoSize = false;
+                    lblMain.Height = _number;
+                    Log.Debug("FullScreenSplash: Main Label Height successfully set: {0}", _number);
+                  }
+                }
+              }
+              if (control.SelectSingleNode("align") != null)
+              {
+                XmlNode xmlNode = control.SelectSingleNode("align/text()");
+                if (xmlNode != null)
+                {
+                  var _value = xmlNode.Value;
+                  if (!string.IsNullOrEmpty(_value))
+                  {
+                    Log.Debug("FullScreenSplash: Text Align value found: {0}", _value);
+                    _value = _value.Trim().ToLower();
+
+                    if (_value == "bottomcenter")
+                    {
+                      lblMain.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+                    }
+                    if (_value == "bottomleft")
+                    {
+                      lblMain.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
+                    }
+                    if (_value == "bottomright")
+                    {
+                      lblMain.TextAlign = System.Drawing.ContentAlignment.BottomRight;
+                    }
+                    if (_value == "middlecenter")
+                    {
+                      lblMain.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+                    }
+                    if (_value == "middleleft")
+                    {
+                      lblMain.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+                    }
+                    if (_value == "middleright")
+                    {
+                      lblMain.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+                    }
+                    if (_value == "topcenter")
+                    {
+                      lblMain.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+                    }
+                    if (_value == "topleft")
+                    {
+                      lblMain.TextAlign = System.Drawing.ContentAlignment.TopLeft;
+                    }
+                    if (_value == "topright")
+                    {
+                      lblMain.TextAlign = System.Drawing.ContentAlignment.TopRight;
+                    }
+                    Log.Debug("FullScreenSplash: Main Label Alignment successfully set: {0}", _value);
+                  }
+                }
+              }
             }
           }
       }
