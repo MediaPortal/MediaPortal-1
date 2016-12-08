@@ -36,6 +36,8 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("shadowAngle")] protected int _shadowAngle = 0;
     [XMLSkinElement("shadowDistance")] protected int _shadowDistance = 0;
     [XMLSkinElement("shadowColor")] protected long _shadowColor = 0xFF000000;
+    [XMLSkinElement("maxWidth")] protected int _maxWidth = 0;
+    [XMLSkinElement("maxHeight")] protected int _maxHeight = 0;
 
     private string _cachedTextLabel = "";
     private bool _containsProperty = false;
@@ -71,6 +73,34 @@ namespace MediaPortal.GUI.Library
                            string strFont, string strLabel, long dwTextColor, Alignment dwTextAlign,
                            VAlignment dwTextVAlign, bool bHasPath,
                            int dwShadowAngle, int dwShadowDistance, long dwShadowColor)
+      : this(dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight, 
+             strFont, strLabel, dwTextColor, dwTextAlign, dwTextVAlign, bHasPath, 
+             dwShadowAngle, dwShadowDistance, dwShadowColor, 0, 0) { }
+
+    /// <summary>
+    /// The constructor of the GUILabelControl class.
+    /// </summary>
+    /// <param name="dwParentID">The parent of this control.</param>
+    /// <param name="dwControlId">The ID of this control.</param>
+    /// <param name="dwPosX">The X position of this control.</param>
+    /// <param name="dwPosY">The Y position of this control.</param>
+    /// <param name="dwWidth">The width of this control.</param>
+    /// <param name="dwHeight">The height of this control.</param>
+    /// <param name="strFont">The indication of the font of this control.</param>
+    /// <param name="strLabel">The text of this control.</param>
+    /// <param name="dwTextColor">The color of this control.</param>
+    /// <param name="dwTextAlign">The alignment of this control.</param>
+    /// <param name="dwTextVAlign">The vertical alignment of this control.</param>
+    /// <param name="bHasPath">Indicates if the label is containing a path.</param>
+    /// <param name="dwShadowAngle">The angle of the shadow; zero degress along x-axis.</param>
+    /// <param name="dwShadowDistance">The distance of the shadow.</param>
+    /// <param name="dwShadowColor">The color of the shadow.</param>
+    /// <param name="dwMaxWidth">Max Width for autosized Label. From Width to MaxWidth.</param>
+    /// <param name="dwMaxHeight">Max Height for autosized Label. From Height to MaxHeight.</param>
+    public GUILabelControl(int dwParentID, int dwControlId, int dwPosX, int dwPosY, int dwWidth, int dwHeight,
+                           string strFont, string strLabel, long dwTextColor, Alignment dwTextAlign,
+                           VAlignment dwTextVAlign, bool bHasPath,
+                           int dwShadowAngle, int dwShadowDistance, long dwShadowColor, int dwMaxWidth, int dwMaxHeight)
       : base(dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight)
     {
       _labelText = strLabel;
@@ -81,6 +111,8 @@ namespace MediaPortal.GUI.Library
       _shadowAngle = dwShadowAngle;
       _shadowDistance = dwShadowDistance;
       _shadowColor = dwShadowColor;
+      _maxWidth = dwMaxWidth;
+      _maxHeight = dwMaxHeight;
 
       FinalizeConstruction();
     }
@@ -173,48 +205,48 @@ namespace MediaPortal.GUI.Library
 
         if (_textAlignment == Alignment.ALIGN_CENTER)
         {
-          int xoff = (_width - _textwidth) / 2;
-          if (xoff < 0 && _width > 0)
+          int xoff = (Width - _textwidth) / 2;
+          if (xoff < 0 && Width > 0)
           {
             xoff = 0;
           }
-          int yoff = (_height - _textheight) / 2;
+          int yoff = (Height - _textheight) / 2;
 
-          DrawText((float)_positionX + xoff, (float)_positionY + yoff, _cachedTextLabel, _width);
+          DrawText((float)_positionX + xoff, (float)_positionY + yoff, _cachedTextLabel, Width);
         }
         else
         {
           if (_textAlignment == Alignment.ALIGN_RIGHT)
           {
-            if (_width == 0 || _textwidth < _width)
+            if (Width == 0 || _textwidth < Width)
             {
               DrawText((float)_positionX - _textwidth, vpos, _cachedTextLabel, -1);
             }
             else
             {
-              if (_width < 6)
+              if (Width < 6)
               {
                 base.Render(timePassed);
                 return;
               }
 
-              DrawText((float)_positionX - _textwidth, vpos, _cachedTextLabel, _width - 5);
+              DrawText((float)_positionX - _textwidth, vpos, _cachedTextLabel, Width - 5);
             }
             base.Render(timePassed);
             return;
           }
 
-          if (_width == 0 || _textwidth < _width)
+          if (Width == 0 || _textwidth < Width)
           {
-            DrawText(_positionX, vpos, _cachedTextLabel, _width);
+            DrawText(_positionX, vpos, _cachedTextLabel, Width);
           }
           else
           {
-            if (_width < 6)
+            if (Width < 6)
             {
               return;
             }
-            DrawText(_positionX, vpos, _cachedTextLabel, _width - 5);
+            DrawText(_positionX, vpos, _cachedTextLabel, Width - 5);
           }
         }
       }
@@ -314,7 +346,28 @@ namespace MediaPortal.GUI.Library
 
     public override int Width
     {
-      get { return base.Width; }
+      get 
+      { 
+        if (_maxWidth > 0)
+        {
+          if (TextWidth <= base.Width)
+          {
+            return base.Width;
+          }
+          else if (TextWidth >= _maxWidth)
+          {
+            return _maxWidth;
+          }
+          else
+          {
+            return TextWidth;
+          }
+        }
+        else
+        {
+          return base.Width;
+        }
+      }
       set
       {
         if (base.Width != value)
@@ -327,7 +380,28 @@ namespace MediaPortal.GUI.Library
 
     public override int Height
     {
-      get { return base.Height; }
+      get 
+      {  
+        if (_maxHeight > 0)
+        {
+          if (TextHeight <= base.Height)
+          {
+            return base.Height;
+          }
+          else if (TextHeight >= _maxHeight)
+          {
+            return _maxHeight;
+          }
+          else
+          {
+            return TextHeight;
+          }
+        }
+        else
+        {
+          return base.Height;
+        }
+      }
       set
       {
         if (base.Height != value)
