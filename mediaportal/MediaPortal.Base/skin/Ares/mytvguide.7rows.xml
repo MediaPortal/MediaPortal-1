@@ -369,7 +369,7 @@
       <type>image</type>
       <id>110</id>
       <posX>530</posX>
-      <posY>782</posY>
+      <posY>776</posY>
       <width>17</width>
       <height>17</height>
       <texture overlay="tvguide_button_middle_colorize_overlay.png">tvguide_button_middle_colorize.png</texture>
