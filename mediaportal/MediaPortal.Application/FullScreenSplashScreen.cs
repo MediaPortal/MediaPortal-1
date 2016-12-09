@@ -177,7 +177,7 @@ namespace MediaPortal
                   int _number = 0;
                   if (Int32.TryParse(_value, out _number))
                   {
-                    lblMain.AutoSize = false;
+                    lblMain.Dock = System.Windows.Forms.DockStyle.None;
                     lblMain.Left = _number;
                     Log.Debug("FullScreenSplash: Main Label PosX successfully set: {0}", _number);
                   }
@@ -193,7 +193,7 @@ namespace MediaPortal
                   int _number = 0;
                   if (Int32.TryParse(_value, out _number))
                   {
-                    lblMain.AutoSize = false;
+                    lblMain.Dock = System.Windows.Forms.DockStyle.None;
                     lblMain.Top = _number;
                     Log.Debug("FullScreenSplash: Main Label PosY successfully set: {0}", _number);
                   }
@@ -209,7 +209,7 @@ namespace MediaPortal
                   int _number = 0;
                   if (Int32.TryParse(_value, out _number))
                   {
-                    lblMain.AutoSize = false;
+                    lblMain.Dock = System.Windows.Forms.DockStyle.None;
                     lblMain.Width = _number;
                     Log.Debug("FullScreenSplash: Main Label Width successfully set: {0}", _number);
                   }
@@ -225,7 +225,7 @@ namespace MediaPortal
                   int _number = 0;
                   if (Int32.TryParse(_value, out _number))
                   {
-                    lblMain.AutoSize = false;
+                    lblMain.Dock = System.Windows.Forms.DockStyle.None;
                     lblMain.Height = _number;
                     Log.Debug("FullScreenSplash: Main Label Height successfully set: {0}", _number);
                   }
