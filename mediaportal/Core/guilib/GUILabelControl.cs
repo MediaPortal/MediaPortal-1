@@ -256,6 +256,11 @@ namespace MediaPortal.GUI.Library
     // Wraps the calls to the GUIFont.  This provides opportunity to shadow the text if requested.
     public void DrawTextWidth(float xpos, float ypos, string label, float fMaxWidth)
     {
+      string _label = label;
+      if (_maxWidth > 0)
+      {
+        _label = GetShortenedText(_label, _maxWidth);
+      }
       long c = (uint)_textColor;
       if (Dimmed)
       {
@@ -272,17 +277,22 @@ namespace MediaPortal.GUI.Library
         }
         sc = GUIGraphicsContext.MergeAlpha((uint)sc);
 
-        _font.DrawShadowTextWidth(xpos, ypos, c, label, Alignment.ALIGN_LEFT, _shadowAngle, _shadowDistance, sc, fMaxWidth);
+        _font.DrawShadowTextWidth(xpos, ypos, c, _label, Alignment.ALIGN_LEFT, _shadowAngle, _shadowDistance, sc, fMaxWidth);
       }
       else
       {
-        _font.DrawTextWidth(xpos, ypos, c, label, fMaxWidth, Alignment.ALIGN_LEFT);
+        _font.DrawTextWidth(xpos, ypos, c, _label, fMaxWidth, Alignment.ALIGN_LEFT);
       }
     }
 
     // Wraps the calls to the GUIFont.  This provides opportunity to shadow the text if requested.
     public void DrawText(float xpos, float ypos, string label, int width)
     {
+      string _label = label;
+      if (_maxWidth > 0)
+      {
+        _label = GetShortenedText(_label, _maxWidth);
+      }
       long c = _textColor;
       if (Dimmed)
       {
@@ -299,7 +309,7 @@ namespace MediaPortal.GUI.Library
         }
         sc = GUIGraphicsContext.MergeAlpha((uint)sc);
         if (_font != null)
-          _font.DrawShadowText(xpos, ypos, c, label, Alignment.ALIGN_LEFT, width, _shadowAngle, _shadowDistance, sc);
+          _font.DrawShadowText(xpos, ypos, c, _label, Alignment.ALIGN_LEFT, width, _shadowAngle, _shadowDistance, sc);
       }
       else
       {
@@ -310,7 +320,7 @@ namespace MediaPortal.GUI.Library
         clipRect.Height = GUIGraphicsContext.Height - clipRect.Y;
 
         GUIGraphicsContext.BeginClip(clipRect);
-        if (_font != null) _font.DrawTextEx(xpos, ypos, c, label, ref _context, width);
+        if (_font != null) _font.DrawTextEx(xpos, ypos, c, _label, ref _context, width);
         GUIGraphicsContext.EndClip();
       }
     }
@@ -714,6 +724,35 @@ namespace MediaPortal.GUI.Library
     {
       base.Animate(timePassed, animator);
       _reCalculate = true;
+    }
+
+    private string GetShortenedText(string strLabel, int iMaxWidth)
+    {
+      if (string.IsNullOrEmpty(strLabel))
+      {
+        return string.Empty;
+      }
+      if (_font == null)
+      {
+        return strLabel;
+      }
+      if (strLabel.Length > 0)
+      {
+        bool bTooLong;
+        float fw = 0;
+        float fh = 0;
+        do
+        {
+          bTooLong = false;
+          _font.GetTextExtent(strLabel, ref fw, ref fh);
+          if (fw >= iMaxWidth)
+          {
+            strLabel = strLabel.Substring(0, strLabel.Length - 1);
+            bTooLong = true;
+          }
+        } while (bTooLong && strLabel.Length > 1);
+      }
+      return strLabel;
     }
   }
 }
