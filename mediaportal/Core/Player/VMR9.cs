@@ -161,6 +161,15 @@ namespace MediaPortal.Player
     [DllImport("dshowhelper.dll", CallingConvention = CallingConvention.Cdecl)]
     private static extern unsafe void MadVrRepeatFrameSend();
 
+    [DllImport("dshowhelper.dll", CallingConvention = CallingConvention.Cdecl)]
+    private static extern unsafe void MadVr3DRight(int x, int y, int width, int height);
+
+    [DllImport("dshowhelper.dll", CallingConvention = CallingConvention.Cdecl)]
+    private static extern unsafe void MadVr3DLeft(int x, int y, int width, int height);
+
+    [DllImport("dshowhelper.dll", CallingConvention = CallingConvention.Cdecl)]
+    private static extern unsafe void MadVr3DEnable(bool Enable);
+
     #endregion
 
     #region static vars
@@ -480,6 +489,39 @@ namespace MediaPortal.Player
       if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
       {
         MadVrRepeatFrameSend();
+      }
+    }
+
+    /// <summary>
+    /// Send Right 3D for madVR
+    /// </summary>
+    public void MadVr3DSizeRight(int x, int y, int width, int height)
+    {
+      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+      {
+        MadVr3DRight(x, y, width, height);
+      }
+    }
+
+    /// <summary>
+    /// Send Left 3D for madVR
+    /// </summary>
+    public void MadVr3DSizeLeft(int x, int y, int width, int height)
+    {
+      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+      {
+        MadVr3DLeft(x, y, width, height);
+      }
+    }
+
+    /// <summary>
+    /// Send 3D enable for madVR
+    /// </summary>
+    public void MadVr3DOnOff(bool Enable)
+    {
+      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+      {
+        MadVr3DEnable(Enable);
       }
     }
 

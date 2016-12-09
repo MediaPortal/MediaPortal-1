@@ -980,6 +980,21 @@ void MadVrRepeatFrameSend()
   m_madPresenter->RepeatFrame();
 }
 
+void MadVr3DRight(uint16_t x, uint16_t y, DWORD width, DWORD height)
+{
+  m_madPresenter->MadVr3DSizeRight(x, y, width, height);
+}
+
+void MadVr3DLeft(uint16_t x, uint16_t y, DWORD width, DWORD height)
+{
+  m_madPresenter->MadVr3DSizeLeft(x, y, width, height);
+}
+
+void MadVr3DEnable(bool Enable)
+{
+  m_madPresenter->MadVr3D(Enable);
+}
+
 void Vmr9SetDeinterlaceMode(int mode)
 {
   //0=None
