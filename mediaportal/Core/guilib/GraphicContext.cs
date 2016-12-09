@@ -213,6 +213,9 @@ namespace MediaPortal.GUI.Library
     {
       Render3DMode = eRender3DMode.None;
       Switch3DSides = false;
+      SideBySideDone = false;
+      TopAndBottomDone = false;
+      NoneDone = false;
       Convert2Dto3DSkewFactor = 0;
       LastFrames = new List<Texture>();
       LastFramesIndex = 0;
@@ -1767,6 +1770,9 @@ namespace MediaPortal.GUI.Library
     public static bool VideoWindowChangedDone { get; set; }
     public static bool SetVideoWindowDone { get; set; }
     public static bool VideoControl { get; set; }
+    public static bool SideBySideDone { get; set; }
+    public static bool TopAndBottomDone { get; set; }
+    public static bool NoneDone { get; set; }
 
     /// <summary>
     /// Enable/Disable bypassing of UI Calibration transforms

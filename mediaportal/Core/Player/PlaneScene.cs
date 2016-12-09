@@ -317,7 +317,14 @@ namespace MediaPortal.Player
     {
       //Log.Info("PlaneScene: init()");
       if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
+      {
         _renderTarget = GUIGraphicsContext.DX9Device.GetRenderTarget(0);
+
+        // Reset 3D
+        GUIGraphicsContext.NoneDone = false;
+        GUIGraphicsContext.TopAndBottomDone = false;
+        GUIGraphicsContext.SideBySideDone = false;
+      }
       GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Video);
       GUIWindowManager.Receivers += new SendMessageHandler(this.OnMessage);
       using (Settings xmlreader = new MPSettings())
@@ -775,6 +782,103 @@ namespace MediaPortal.Player
 
             Size nativeSize = new Size(width, height);
             _shouldRenderTexture = SetVideoWindow(nativeSize);
+          }
+
+          lock (GUIGraphicsContext.RenderModeSwitch)
+          {
+            // in case of GUIGraphicsContext.BlankScreen == true always use old method
+            // for painting blank screen
+
+            if (GUIGraphicsContext.BlankScreen ||
+                GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.None ||
+                GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.SideBySideTo2D ||
+                GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.TopAndBottomTo2D ||
+                GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.SideBySideFrom2D)
+            {
+              if (GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.SideBySideFrom2D)
+              // convert 2D to 3D
+              {
+                // left half
+                // right half
+              }
+              else // normal 2D output
+              {
+                // old output path or force 3D material to 2D by blitting only left/top halp
+                GUIGraphicsContext.Render3DModeHalf = GUIGraphicsContext.eRender3DModeHalf.None;
+
+                if (GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.SideBySideTo2D)
+                  GUIGraphicsContext.Render3DModeHalf = GUIGraphicsContext.eRender3DModeHalf.SBSLeft;
+
+                if (GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.TopAndBottomTo2D)
+                  GUIGraphicsContext.Render3DModeHalf = GUIGraphicsContext.eRender3DModeHalf.TABTop;
+
+                if (!GUIGraphicsContext.NoneDone)
+                {
+                  // Get Client size
+                  Size client = GUIGraphicsContext.form.ClientSize;
+
+                  VMR9Util.g_vmr9?.MadVr3DSizeLeft(0, 0, client.Width, client.Height);
+                  VMR9Util.g_vmr9?.MadVr3DSizeRight(0, 0, client.Width, client.Height);
+
+                  VMR9Util.g_vmr9?.MadVr3DOnOff(false);
+
+                  GUIGraphicsContext.NoneDone = true;
+                  GUIGraphicsContext.TopAndBottomDone = false;
+                  GUIGraphicsContext.SideBySideDone = false;
+                }
+              }
+            }
+            else if (GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.SideBySide ||
+                     GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.TopAndBottom)
+            {
+              // 3D output either SBS or TAB
+              if (GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.SideBySide)
+              {
+                // left half (or right if switched)
+                // right half (or left if switched)
+                if (!GUIGraphicsContext.SideBySideDone)
+                {
+                  // Enable 3D
+                  VMR9Util.g_vmr9?.MadVr3DOnOff(true);
+
+                  // Get Client size
+                  Size client = GUIGraphicsContext.form.ClientSize;
+
+                  // left half (or right if switched)
+                  VMR9Util.g_vmr9?.MadVr3DSizeLeft(0, 0, client.Width/2, client.Height);
+
+                  // right half (or left if switched)
+                  VMR9Util.g_vmr9?.MadVr3DSizeRight(client.Width/2, 0, client.Width, client.Height);
+
+                  GUIGraphicsContext.NoneDone = false;
+                  GUIGraphicsContext.TopAndBottomDone = false;
+                  GUIGraphicsContext.SideBySideDone = true;
+                }
+              }
+              else
+              {
+                // upper half (or lower if switched)
+                // lower half (or upper if switched)
+                if (!GUIGraphicsContext.TopAndBottomDone)
+                {
+                  // Enable 3D
+                  VMR9Util.g_vmr9?.MadVr3DOnOff(true);
+
+                  // Get Client size
+                  Size client = GUIGraphicsContext.form.ClientSize;
+
+                  // upper half (or lower if switched)
+                  VMR9Util.g_vmr9?.MadVr3DSizeLeft(0, 0, client.Width, client.Height/2);
+
+                  // lower half (or upper if switched)
+                  VMR9Util.g_vmr9?.MadVr3DSizeRight(0, client.Height/2, client.Width, client.Height);
+
+                  GUIGraphicsContext.NoneDone = false;
+                  GUIGraphicsContext.TopAndBottomDone = true;
+                  GUIGraphicsContext.SideBySideDone = false;
+                }
+              }
+            }
           }
 
           Device device = GUIGraphicsContext.DX9Device;
