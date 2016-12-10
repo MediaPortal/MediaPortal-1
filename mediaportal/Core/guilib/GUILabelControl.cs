@@ -364,13 +364,13 @@ namespace MediaPortal.GUI.Library
           {
             return base.Width;
           }
-          else if (TextWidth >= _maxWidth)
+          else if (TextWidth > _maxWidth)
           {
             return _maxWidth;
           }
           else
           {
-            return TextWidth;
+            return TextWidth + 1;
           }
         }
         else
@@ -745,7 +745,7 @@ namespace MediaPortal.GUI.Library
         {
           bTooLong = false;
           _font.GetTextExtent(strLabel, ref fw, ref fh);
-          if (fw >= iMaxWidth)
+          if (fw > iMaxWidth)
           {
             strLabel = strLabel.Substring(0, strLabel.Length - 1);
             bTooLong = true;
