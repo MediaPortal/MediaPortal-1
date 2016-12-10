@@ -107,7 +107,22 @@ namespace MediaPortal.Drawing.Layouts
 
           fullWidth += child.Width;
         }
-        x = Math.Max(0, x + element.Width > 0 ? (element.Width - fullWidth) : 0);
+        x += Math.Max(0, element.Width > 0 ? (element.Width - fullWidth) : 0);
+      }
+
+      if (_orientation == Orientation.Horizontal && element.GroupAlignment == MediaPortal.GUI.Library.GUIControl.Alignment.ALIGN_CENTER)
+      {
+        var fullWidth = 0;
+        foreach (var child in element.Children)
+        {
+          if (child.Visibility == Visibility.Collapsed)
+          {
+            continue;
+          }
+
+          fullWidth += child.Width;
+        }
+        x += Math.Max(0, element.Width > 0 ? (element.Width - fullWidth) : 0);
       }
 
       foreach (var child in element.Children)
@@ -150,9 +165,13 @@ namespace MediaPortal.Drawing.Layouts
         h = _orientation == Orientation.Horizontal ? Math.Max(h, child.Height) : h + child.Height + _spacing.Height;
       }
 
-      if (_orientation == Orientation.Horizontal && element.GroupAlignment == MediaPortal.GUI.Library.GUIControl.Alignment.ALIGN_RIGHT)
+      if (availableSize.Width > 0 && _orientation == Orientation.Horizontal && element.GroupAlignment == MediaPortal.GUI.Library.GUIControl.Alignment.ALIGN_RIGHT)
       {
         w = availableSize.Width;
+      }
+      if (availableSize.Width > 0 && _orientation == Orientation.Horizontal && element.GroupAlignment == MediaPortal.GUI.Library.GUIControl.Alignment.ALIGN_CENTER)
+      {
+        w = (availableSize.Width / 2) + (w / 2);
       }
 
       Thickness t = element.Margin;
