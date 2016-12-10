@@ -317,6 +317,21 @@ namespace MediaPortal.GUI.Library
       }
     }
 
+    /// <summary>
+    /// Get/set the alignment of the Group
+    /// </summary>
+    public Alignment GroupAlignment
+    {
+      get { return _groupAlignment; }
+      set
+      {
+        if (_groupAlignment != value)
+        {
+          _groupAlignment = value;
+        }
+      }
+    }
+    
     #endregion Properties
 
     ////////////////////////////
@@ -456,6 +471,8 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("camera")] private bool _hasCamera = false;
     [XMLSkin("camera", "xpos")] protected int _cameraXPos = 0;
     [XMLSkin("camera", "ypos")] protected int _cameraYPos = 0;
+
+    [XMLSkinElement("align")] private Alignment _groupAlignment = Alignment.ALIGN_LEFT;
 
     private bool _startAnimation;
 
