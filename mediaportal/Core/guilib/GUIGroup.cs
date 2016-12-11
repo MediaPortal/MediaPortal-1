@@ -77,6 +77,8 @@ namespace MediaPortal.GUI.Library
 
     public override void Render(float timePassed)
     {
+      Arrange();
+
       if (GUIGraphicsContext.Animations)
       {
         if (_animator != null)
