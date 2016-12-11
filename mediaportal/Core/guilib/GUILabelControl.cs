@@ -370,7 +370,7 @@ namespace MediaPortal.GUI.Library
           }
           else
           {
-            return TextWidth + 1;
+            return TextWidth + 1; // + 1 - Margin for not fade last char in label text
           }
         }
         else

@@ -97,7 +97,7 @@ namespace MediaPortal.Drawing.Layouts
 
       if (_orientation == Orientation.Horizontal && element.GroupAlignment == MediaPortal.GUI.Library.GUIControl.Alignment.ALIGN_RIGHT)
       {
-        var fullWidth = 0;
+        double fullWidth = 0;
         foreach (var child in element.Children)
         {
           if (child.Visibility == Visibility.Collapsed)
@@ -105,14 +105,15 @@ namespace MediaPortal.Drawing.Layouts
             continue;
           }
 
-          fullWidth += child.Width;
+          fullWidth += child.Width + _spacing.Width;
         }
-        x += Math.Max(0, element.Width > 0 ? (element.Width - fullWidth) : 0);
+        var _shift = element.Width > 0 ? (element.Width - fullWidth) : 0; 
+        x = Math.Max(0, x + _shift);
       }
 
       if (_orientation == Orientation.Horizontal && element.GroupAlignment == MediaPortal.GUI.Library.GUIControl.Alignment.ALIGN_CENTER)
       {
-        var fullWidth = 0;
+        double fullWidth = 0;
         foreach (var child in element.Children)
         {
           if (child.Visibility == Visibility.Collapsed)
@@ -120,9 +121,10 @@ namespace MediaPortal.Drawing.Layouts
             continue;
           }
 
-          fullWidth += child.Width;
+          fullWidth += child.Width + _spacing.Width;
         }
-        x += Math.Max(0, element.Width > 0 ? (element.Width - fullWidth) : 0);
+        var _shift = element.Width > 0 ? (element.Width - fullWidth) : 0;
+        x = Math.Max(0, x + _shift);
       }
 
       foreach (var child in element.Children)
@@ -167,11 +169,11 @@ namespace MediaPortal.Drawing.Layouts
 
       if (availableSize.Width > 0 && _orientation == Orientation.Horizontal && element.GroupAlignment == MediaPortal.GUI.Library.GUIControl.Alignment.ALIGN_RIGHT)
       {
-        w = availableSize.Width;
+        w = Math.Max(w, availableSize.Width);
       }
       if (availableSize.Width > 0 && _orientation == Orientation.Horizontal && element.GroupAlignment == MediaPortal.GUI.Library.GUIControl.Alignment.ALIGN_CENTER)
       {
-        w = (availableSize.Width / 2) + (w / 2);
+        w = Math.Max(w, (availableSize.Width / 2) + (w / 2));
       }
 
       Thickness t = element.Margin;
