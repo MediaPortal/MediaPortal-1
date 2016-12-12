@@ -26,6 +26,7 @@ using MediaPortal.Drawing;
 using MediaPortal.Drawing.Layouts;
 using MediaPortal.ExtensionMethods;
 using Point = MediaPortal.Drawing.Point;
+using Size = MediaPortal.Drawing.Size;
 
 namespace MediaPortal.GUI.Library
 {
@@ -43,10 +44,12 @@ namespace MediaPortal.GUI.Library
 
     public override void FinalizeConstruction()
     {
+      Log.Debug("*** :" + GetID + " - " + Width + ":" + Height);
       HasCamera = _hasCamera;
       Camera = new System.Drawing.Point(_cameraXPos, _cameraYPos);
       base.FinalizeConstruction();
-      _sizefromSkin = base.Size;
+      _sizefromSkin = new Size(Width, Height);
+      Log.Debug("*** :" + GetID + " - " + Width + ":" + Height);
     }
 
     #endregion Constructors
@@ -78,8 +81,6 @@ namespace MediaPortal.GUI.Library
 
     public override void Render(float timePassed)
     {
-      // Arrange(); 
-
       if (GUIGraphicsContext.Animations)
       {
         if (_animator != null)
@@ -101,6 +102,8 @@ namespace MediaPortal.GUI.Library
           if (_animator != null) _animator.Advance(timePassed);
         }
       }
+
+      Arrange();
 
       //uint currentTime = (uint) (DXUtil.Timer(DirectXTimer.GetAbsoluteTime)*1000.0);
       uint currentTime = (uint)System.Windows.Media.Animation.AnimationTimer.TickCount;
@@ -175,21 +178,6 @@ namespace MediaPortal.GUI.Library
       }
 
       return false;
-    }
-
-    /// <summary>
-    /// Perform an update after a change has occured. E.g. change to a new position.
-    /// </summary>
-    protected override void Update()
-    {
-      base.Update();
-
-      Arrange();
-    }
-
-    public void Refresh()
-    {
-      Update();
     }
 
     public override bool HitTest(int x, int y, out int controlID, out bool focused)
@@ -494,7 +482,7 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("align")] private Alignment _groupAlignment = Alignment.ALIGN_LEFT;
 
     private bool _startAnimation;
-    private Size _sizefromSkin;
+    private Size _sizefromSkin = Size.Empty;
 
     #endregion Fields
 

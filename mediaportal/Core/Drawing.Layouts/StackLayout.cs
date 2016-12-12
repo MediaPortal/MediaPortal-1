@@ -90,8 +90,8 @@ namespace MediaPortal.Drawing.Layouts
       Thickness t = element.Margin;
       Point l = element.Location;
 
-      double x = element.Location.X + t.Left;
-      double y = element.Location.Y + t.Top;
+      double x = l.X + t.Left;
+      double y = l.Y + t.Top;
       double w = _orientation != Orientation.Horizontal ? Math.Max(0, element.Width - t.Width) : 0;
       double h = _orientation == Orientation.Horizontal ? Math.Max(0, element.Height - t.Height) : 0;
 
@@ -107,8 +107,7 @@ namespace MediaPortal.Drawing.Layouts
 
           fullWidth += child.Width + _spacing.Width;
         }
-        var _shift = element.Width > 0 ? (element.Width - fullWidth) : 0; 
-        x = Math.Max(0, x + _shift);
+        x = Math.Max(0, x + (element.Width - fullWidth));
       }
 
       if (_orientation == Orientation.Horizontal && element.GroupAlignment == MediaPortal.GUI.Library.GUIControl.Alignment.ALIGN_CENTER)
@@ -123,8 +122,7 @@ namespace MediaPortal.Drawing.Layouts
 
           fullWidth += child.Width + _spacing.Width;
         }
-        var _shift = element.Width > 0 ? (element.Width - fullWidth) : 0;
-        x = Math.Max(0, x + _shift);
+        x = Math.Max(0, x + (element.Width / 2 - fullWidth / 2));
       }
 
       foreach (var child in element.Children)
