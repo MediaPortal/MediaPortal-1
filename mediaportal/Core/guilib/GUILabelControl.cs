@@ -360,7 +360,7 @@ namespace MediaPortal.GUI.Library
       { 
         if (_maxWidth > 0)
         {
-          if (TextWidth <= base.Width)
+          if (TextWidth < base.Width)
           {
             return base.Width;
           }
@@ -547,7 +547,6 @@ namespace MediaPortal.GUI.Library
     private void CachedLabel()
     {
       string v;
-
 
       if (_containsProperty)
       {
