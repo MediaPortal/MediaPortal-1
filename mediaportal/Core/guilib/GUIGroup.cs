@@ -46,6 +46,7 @@ namespace MediaPortal.GUI.Library
       HasCamera = _hasCamera;
       Camera = new System.Drawing.Point(_cameraXPos, _cameraYPos);
       base.FinalizeConstruction();
+      _sizefromSkin = base.Size;
     }
 
     #endregion Constructors
@@ -77,7 +78,7 @@ namespace MediaPortal.GUI.Library
 
     public override void Render(float timePassed)
     {
-      Arrange();
+      // Arrange(); 
 
       if (GUIGraphicsContext.Animations)
       {
@@ -174,6 +175,21 @@ namespace MediaPortal.GUI.Library
       }
 
       return false;
+    }
+
+    /// <summary>
+    /// Perform an update after a change has occured. E.g. change to a new position.
+    /// </summary>
+    protected override void Update()
+    {
+      base.Update();
+
+      Arrange();
+    }
+
+    public void Refresh()
+    {
+      Update();
     }
 
     public override bool HitTest(int x, int y, out int controlID, out bool focused)
@@ -370,7 +386,8 @@ namespace MediaPortal.GUI.Library
         return;
       }
 
-      this.Size = _layout.Measure(this, this.Size);
+      // this.Size = _layout.Measure(this, this.Size);
+      this.Size = _layout.Measure(this, _sizefromSkin);
 
       _layout.Arrange(this);
       DoUpdate();
@@ -477,6 +494,7 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("align")] private Alignment _groupAlignment = Alignment.ALIGN_LEFT;
 
     private bool _startAnimation;
+    private Size _sizefromSkin;
 
     #endregion Fields
 
