@@ -44,12 +44,10 @@ namespace MediaPortal.GUI.Library
 
     public override void FinalizeConstruction()
     {
-      Log.Debug("*** :" + GetID + " - " + Width + ":" + Height);
       HasCamera = _hasCamera;
       Camera = new System.Drawing.Point(_cameraXPos, _cameraYPos);
       base.FinalizeConstruction();
       _sizefromSkin = new Size(Width, Height);
-      Log.Debug("*** :" + GetID + " - " + Width + ":" + Height);
     }
 
     #endregion Constructors
@@ -81,6 +79,8 @@ namespace MediaPortal.GUI.Library
 
     public override void Render(float timePassed)
     {
+      Arrange();
+
       if (GUIGraphicsContext.Animations)
       {
         if (_animator != null)
@@ -102,8 +102,6 @@ namespace MediaPortal.GUI.Library
           if (_animator != null) _animator.Advance(timePassed);
         }
       }
-
-      Arrange();
 
       //uint currentTime = (uint) (DXUtil.Timer(DirectXTimer.GetAbsoluteTime)*1000.0);
       uint currentTime = (uint)System.Windows.Media.Animation.AnimationTimer.TickCount;
