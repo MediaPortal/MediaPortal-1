@@ -22,6 +22,8 @@ using System;
 using System.Windows;
 using System.Windows.Controls;
 using MediaPortal.GUI.Library;
+using Alignment = MediaPortal.GUI.Library.GUIControl.Alignment;
+using VAlignment = MediaPortal.GUI.Library.GUIControl.VAlignment;
 
 namespace MediaPortal.Drawing.Layouts
 {
@@ -82,6 +84,29 @@ namespace MediaPortal.Drawing.Layouts
           break;
       }
 
+      if (element is GUILabelControl)
+      {
+        if (((GUILabelControl)element).TextAlignment = Alignment.ALIGN_RIGHT)
+        {
+          rect.X = rect.X + element.Width;
+        }
+        if (((GUILabelControl)element).TextAlignment = Alignment.ALIGN_CENTER)
+        {
+          rect.X = rect.X + element.Width / 2;
+        }
+      }
+      if (element is GUIFadeLabel)
+      {
+        if (((GUIFadeLabel)element).TextAlignment = Alignment.ALIGN_RIGHT)
+        {
+          rect.X = rect.X + element.Width;
+        }
+        if (((GUIFadeLabel)element).TextAlignment = Alignment.ALIGN_CENTER)
+        {
+          rect.X = rect.X + element.Width / 2;
+        }
+      }
+
       element.Arrange(rect);
     }
 
@@ -95,7 +120,7 @@ namespace MediaPortal.Drawing.Layouts
       double w = _orientation != Orientation.Horizontal ? Math.Max(0, element.Width - t.Width) : 0;
       double h = _orientation == Orientation.Horizontal ? Math.Max(0, element.Height - t.Height) : 0;
 
-      if (_orientation == Orientation.Horizontal && element.GroupAlignment == MediaPortal.GUI.Library.GUIControl.Alignment.ALIGN_RIGHT)
+      if (_orientation == Orientation.Horizontal && element.GroupAlignment == Alignment.ALIGN_RIGHT)
       {
         double fullWidth = 0;
         foreach (var child in element.Children)
@@ -110,7 +135,7 @@ namespace MediaPortal.Drawing.Layouts
         x = Math.Max(0, x + (element.Width - fullWidth));
       }
 
-      if (_orientation == Orientation.Horizontal && element.GroupAlignment == MediaPortal.GUI.Library.GUIControl.Alignment.ALIGN_CENTER)
+      if (_orientation == Orientation.Horizontal && element.GroupAlignment == Alignment.ALIGN_CENTER)
       {
         double fullWidth = 0;
         foreach (var child in element.Children)
@@ -122,7 +147,7 @@ namespace MediaPortal.Drawing.Layouts
 
           fullWidth += child.Width + _spacing.Width;
         }
-        x = Math.Max(0, x + (element.Width / 2 - fullWidth / 2));
+        x = Math.Max(0, x + (element.Width - fullWidth));
       }
 
       foreach (var child in element.Children)
@@ -165,13 +190,13 @@ namespace MediaPortal.Drawing.Layouts
         h = _orientation == Orientation.Horizontal ? Math.Max(h, child.Height) : h + child.Height + _spacing.Height;
       }
 
-      if (availableSize.Width > 0 && _orientation == Orientation.Horizontal && element.GroupAlignment == MediaPortal.GUI.Library.GUIControl.Alignment.ALIGN_RIGHT)
+      if (availableSize.Width > 0 && _orientation == Orientation.Horizontal && element.GroupAlignment == Alignment.ALIGN_RIGHT)
       {
         w = Math.Max(w, availableSize.Width);
       }
-      if (availableSize.Width > 0 && _orientation == Orientation.Horizontal && element.GroupAlignment == MediaPortal.GUI.Library.GUIControl.Alignment.ALIGN_CENTER)
+      if (availableSize.Width > 0 && _orientation == Orientation.Horizontal && element.GroupAlignment == Alignment.ALIGN_CENTER)
       {
-        w = Math.Max(w, (availableSize.Width / 2) + (w / 2));
+        w = Math.Max(w, (availableSize.Width + w) / 2);
       }
 
       Thickness t = element.Margin;
