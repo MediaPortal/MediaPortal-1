@@ -380,7 +380,15 @@ namespace MediaPortal.GUI.Library
       }
       set
       {
-        if (base.Width != value)
+        if (_maxWidth > 0) // For compatibility. To set the dynamic Width use MinWidth, MaxWidth.
+        {
+          if (Width != value)
+          {
+            base.Width = value;
+            _reCalculate = true;
+          }
+        }
+        else if (base.Width != value)
         {
           base.Width = value;
           _reCalculate = true;
@@ -414,9 +422,69 @@ namespace MediaPortal.GUI.Library
       }
       set
       {
+        if (_maxHeight > 0) // For compatibility. To set the dynamic Height use MinHeight, MaxHeight.
+        {
+          if (Height != value)
+          {
+            base.Height = value;
+            _reCalculate = true;
+          }
+        }
+        else if (base.Height != value)
+        {
+          base.Height = value;
+          _reCalculate = true;
+        }
+      }
+    }
+
+    public int MinWidth
+    {
+      get { return base.Width; }
+      set
+      {
+        if (base.Width != value)
+        {
+          base.Width = value;
+          _reCalculate = true;
+        }
+      }
+    }
+
+    public int MinHeight
+    {
+      get { return base.Height; }
+      set
+      {
         if (base.Height != value)
         {
           base.Height = value;
+          _reCalculate = true;
+        }
+      }
+    }
+
+    public int MaxWidth
+    {
+      get { return _maxWidth; }
+      set
+      {
+        if (_maxWidth != value)
+        {
+          _maxWidth = value;
+          _reCalculate = true;
+        }
+      }
+    }
+
+    public int MaxHeight
+    {
+      get { return _maxHeight; }
+      set
+      {
+        if (_maxHeight != value)
+        {
+          _maxHeight = value;
           _reCalculate = true;
         }
       }
