@@ -180,6 +180,8 @@ namespace MediaPortal
                     lblMain.Dock = System.Windows.Forms.DockStyle.None;
                     lblMain.Left = _number;
                     Log.Debug("FullScreenSplash: Main Label PosX successfully set: {0}", _number);
+                    lblVersion.BringToFront();
+                    lblCVS.BringToFront();
                   }
                 }
               }
@@ -196,6 +198,8 @@ namespace MediaPortal
                     lblMain.Dock = System.Windows.Forms.DockStyle.None;
                     lblMain.Top = _number;
                     Log.Debug("FullScreenSplash: Main Label PosY successfully set: {0}", _number);
+                    lblVersion.BringToFront();
+                    lblCVS.BringToFront();
                   }
                 }
               }
@@ -212,6 +216,8 @@ namespace MediaPortal
                     lblMain.Dock = System.Windows.Forms.DockStyle.None;
                     lblMain.Width = _number;
                     Log.Debug("FullScreenSplash: Main Label Width successfully set: {0}", _number);
+                    lblVersion.BringToFront();
+                    lblCVS.BringToFront();
                   }
                 }
               }
@@ -228,6 +234,8 @@ namespace MediaPortal
                     lblMain.Dock = System.Windows.Forms.DockStyle.None;
                     lblMain.Height = _number;
                     Log.Debug("FullScreenSplash: Main Label Height successfully set: {0}", _number);
+                    lblVersion.BringToFront();
+                    lblCVS.BringToFront();
                   }
                 }
               }
