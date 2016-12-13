@@ -86,22 +86,22 @@ namespace MediaPortal.Drawing.Layouts
 
       if (element is GUILabelControl)
       {
-        if (((GUILabelControl)element).TextAlignment = Alignment.ALIGN_RIGHT)
+        if (((GUILabelControl)element).TextAlignment == Alignment.ALIGN_RIGHT)
         {
           rect.X = rect.X + element.Width;
         }
-        if (((GUILabelControl)element).TextAlignment = Alignment.ALIGN_CENTER)
+        if (((GUILabelControl)element).TextAlignment == Alignment.ALIGN_CENTER)
         {
           rect.X = rect.X + element.Width / 2;
         }
       }
       if (element is GUIFadeLabel)
       {
-        if (((GUIFadeLabel)element).TextAlignment = Alignment.ALIGN_RIGHT)
+        if (((GUIFadeLabel)element).TextAlignment == Alignment.ALIGN_RIGHT)
         {
           rect.X = rect.X + element.Width;
         }
-        if (((GUIFadeLabel)element).TextAlignment = Alignment.ALIGN_CENTER)
+        if (((GUIFadeLabel)element).TextAlignment == Alignment.ALIGN_CENTER)
         {
           rect.X = rect.X + element.Width / 2;
         }
