@@ -622,6 +622,12 @@ namespace MediaPortal.Player
     public virtual void SetVideoWindow() {}
 
     /// <summary>
+    /// Method which is called by MP if the player needs to update its madVR video window
+    /// because the coordinates have been changed
+    /// </summary>
+    public virtual void SetVideoWindowMadVR() { }
+
+    /// <summary>
     /// Property to get/set the contrast
     /// </summary>
     public virtual int Contrast

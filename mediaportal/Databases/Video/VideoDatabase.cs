@@ -158,6 +158,93 @@ namespace MediaPortal.Video.Database
       _database.RemoveGenresForMovie(lMovieId);
     }
 
+    public static string GetGenresForMovie(int lMovieId)      
+    {
+      return _database.GetGenresForMovie(lMovieId);
+    }
+
+    public static void GetMovieGenres(int lMovieId, ArrayList movieGenres)      
+    {
+      _database.GetMovieGenres(lMovieId, movieGenres);
+    }
+
+    #endregion
+
+    #region Movie Collection
+    public static int AddCollection(string strCollection1)
+    {
+      return _database.AddCollection(strCollection1);
+    }
+
+    public static int GetCollectionId(string movieCollection)
+    {  
+      return _database.GetCollectionId(movieCollection);
+    }
+
+    public static void AddCollectionDescription(string movieCollection, string description)
+    {
+      _database.AddCollectionDescription(movieCollection, description);
+    }      
+    
+    public static string GetCollectionDescriptionById(int collectionId)
+    {
+      return _database.GetCollectionDescriptionById(collectionId);
+    }
+
+    public static void GetCollections(ArrayList collections)
+    {
+      _database.GetCollections(collections);
+    }
+
+    public static string GetCollectionById(int collectionId)
+    {
+      return _database.GetCollectionById(collectionId);
+    }
+
+    public static void AddCollectionToMovie(int lMovieId, int lCollectionId)
+    {
+      _database.AddCollectionToMovie(lMovieId, lCollectionId);
+    }
+
+    public static void DeleteCollection(string collection)
+    {
+      _database.DeleteCollection(collection);
+    }
+
+    public static void DeleteEmptyCollections()
+    {
+      _database.DeleteEmptyCollections();
+    }
+
+    public static void RemoveCollectionFromMovie(int lMovieId, int lCollectionId)
+    {
+      _database.RemoveCollectionFromMovie(lMovieId, lCollectionId);
+    }
+
+    public static void RemoveCollectionsForMovie(int lMovieId)
+    {
+      _database.RemoveCollectionsForMovie(lMovieId);
+    }
+
+    public static string GetCollectionsForMovie(int lMovieId)      
+    {
+      return _database.GetCollectionsForMovie(lMovieId);
+    }
+
+    public static void GetMovieCollections(int lMovieId, ArrayList movieCollections)      
+    {
+      _database.GetMovieCollections(lMovieId, movieCollections);
+    }
+
+    public static bool GetMovieCollectionWatchedStatus(string collection, out int percent)
+    {
+      return _database.GetMovieCollectionWatchedStatus(collection, out percent);
+    }
+
+    public static bool GetMovieCollectionWatchedStatus(int collection, out int percent)
+    {
+      return _database.GetMovieCollectionWatchedStatus(collection, out percent);
+    }
     #endregion
 
     #region User groups
@@ -192,6 +279,11 @@ namespace MediaPortal.Video.Database
       return _database.GetUserGroupDescriptionById(groupId);
     }
     
+    public static string GetUserGroupsForMovie(int lMovieId)
+    {
+      return _database.GetUserGroupsForMovie(lMovieId);
+    }
+
     public static void GetMovieUserGroups(int movieId, ArrayList userGroups)
     {
       _database.GetMovieUserGroups(movieId, userGroups);
@@ -235,6 +327,16 @@ namespace MediaPortal.Video.Database
     public static void RemoveUserGroupRule(string groupName)
     {
       _database.RemoveUserGroupRule(groupName);
+    }
+
+    public static bool GetUserGroupWatchedStatus(string group, out int percent)
+    {
+      return _database.GetUserGroupWatchedStatus(group, out percent);
+    }
+
+    public static bool GetUserGroupWatchedStatus(int group, out int percent)
+    {
+      return _database.GetUserGroupWatchedStatus(group, out percent);
     }
 
     #endregion
@@ -431,6 +533,25 @@ namespace MediaPortal.Video.Database
 
     #endregion
 
+    #region User Rating
+
+    public static void SetUserRatingForMovie(int lMovieId, int lUserRating)
+    {
+      _database.SetUserRatingForMovie(lMovieId, lUserRating);
+    }
+
+    public static int GetUserRatingForMovie(int lMovieId)
+    {
+      return _database.GetUserRatingForMovie(lMovieId);
+    }
+
+    public static int GetUserRatingForMovie(string lIMDBNumber)
+    {
+      return _database.GetUserRatingForMovie(lIMDBNumber);
+    }
+
+    #endregion
+
     #region Duration
 
     public static int GetMovieDuration(int iMovieId)
@@ -540,6 +661,21 @@ namespace MediaPortal.Video.Database
       return _database.GetMovieTitlesByUserGroup(idGroup);
     }
 
+    public static void GetMoviesByCollection(string strCollection1, ref ArrayList movies)
+    {
+      _database.GetMoviesByCollection(strCollection1, ref movies);
+    }
+
+    public static void GetRandomMoviesByCollection(string strCollection1, ref ArrayList movies, int limit)
+    {
+      _database.GetRandomMoviesByCollection(strCollection1, ref movies, limit);
+    }
+
+    public static string GetMovieTitlesByCollection(string strCollection)
+    {
+      return _database.GetMovieTitlesByCollection(strCollection);
+    }
+
     public static void GetMoviesByActor(string strActor1, ref ArrayList movies)
     {
       _database.GetMoviesByActor(strActor1, ref movies);
@@ -585,10 +721,19 @@ namespace MediaPortal.Video.Database
       _database.GetRandomMoviesByPath(strPath1, ref movies, limit);
     }
 
+    /// <summary>
+    /// Deprecated Method (use GetMoviesByFilter with Movie Collection)
+    /// </summary>
     public static void GetMoviesByFilter(string sql, out ArrayList movies, bool actorTable, bool movieinfoTable,
                                          bool genreTable, bool usergroupTable)
     {
-      _database.GetMoviesByFilter(sql, out movies, actorTable, movieinfoTable, genreTable, usergroupTable);
+      _database.GetMoviesByFilter(sql, out movies, actorTable, movieinfoTable, genreTable, usergroupTable, false);
+    }
+
+    public static void GetMoviesByFilter(string sql, out ArrayList movies, bool actorTable, bool movieinfoTable,
+                                         bool genreTable, bool usergroupTable, bool collectionTable)
+    {
+      _database.GetMoviesByFilter(sql, out movies, actorTable, movieinfoTable, genreTable, usergroupTable, collectionTable);
     }
 
     public static void GetIndexByFilter(string sql, bool filterNonWordChar, out ArrayList movieList)

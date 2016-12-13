@@ -137,12 +137,15 @@ namespace MediaPortal
     protected static int           Volume;                   // used to save old volume level in case we mute audio
     protected PlayListPlayer       PlaylistPlayer;           // 
     protected DateTime             MouseTimeOutTimer;        // tracks the time of the last mouse activity
+    protected DateTime             KeyEventTimer;            // tracks the time of the last key event activity
+    protected DateTime             ScreenSaverEventTimer;    // tracks the time of the last key event activity
     protected RECT                 LastRect;                 // tracks last rectangle size for window resizing
     protected Point                LastCursorPosition;       // tracks last cursor position during window moving
     protected static SplashScreen  SplashScreen;             // splash screen object
     protected GraphicsAdapterInfo  AdapterInfo;              // hold adapter info for the selected display on startup of MP
     protected int                  MouseTimeOutMP;           // Mouse activity timeout while in MP in seconds
     protected int                  MouseTimeOutFullscreen;   // Mouse activity timeout while in Fullscreen in seconds
+    protected KeyPressEventArgs    PreviousKeyEvent;
 
     #endregion
 
@@ -580,6 +583,10 @@ namespace MediaPortal
       Log.Info("D3D: Client Size: {0}x{1}", ClientSize.Width, ClientSize.Height);
       Log.Info("D3D: Screen size: {0}x{1}", GUIGraphicsContext.currentScreen.Bounds.Width,
         GUIGraphicsContext.currentScreen.Bounds.Height);
+
+      // Force a madVR refresh to resize MP window
+      // TODO how to handle it better
+      g_Player.RefreshMadVrVideo();
 
       // enable event handlers
       if (GUIGraphicsContext.DX9Device != null)
@@ -1904,6 +1911,10 @@ namespace MediaPortal
         }
         ClientSize = size;
         TopMost = _alwaysOnTop;
+
+        // Force a madVR refresh to resize MP window
+        // TODO how to handle it better
+        g_Player.RefreshMadVrVideo();
       }
     }
 
@@ -2282,6 +2293,7 @@ namespace MediaPortal
     /// <param name="e"></param>
     private void OnKeyDown(object sender, KeyEventArgs e)
     {
+      //TODO: Remove hard coded shortcuts and use actions instead
       if (e.Control == false && e.Alt && (e.KeyCode == Keys.Return))
       {
         ToggleFullscreen();
@@ -2303,6 +2315,8 @@ namespace MediaPortal
 
       if (e.Handled == false)
       {
+        //SL: Why is it done this way? Surely the derived class (MediaPortal.cs) could register to the event as well rather than using that virtual function.
+        // Also once hard coded shortcuts above are removed we probably don't need that event handler here.
         KeyDownEvent(e);
       }
     }
@@ -2315,7 +2329,23 @@ namespace MediaPortal
     /// <param name="e"></param>
     private void OnKeyPress(object sender, KeyPressEventArgs e)
     {
-      KeyPressEvent(e);
+      //SL: Why is it done this way? Surely the derived class (MediaPortal.cs) could register to the event as well rather than using that virtual function.
+      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+      {
+        // Need to use this hack when wndProc receive double event when madVR in use and exclusive mode.
+        var timeSpam = DateTime.Now - KeyEventTimer;
+        if (e?.KeyChar == PreviousKeyEvent?.KeyChar && timeSpam.TotalMilliseconds < 20)
+        {
+          return;
+        }
+        KeyPressEvent(e);
+        PreviousKeyEvent = e;
+        KeyEventTimer = DateTime.Now;
+      }
+      else
+      {
+        KeyPressEvent(e);
+      }
     }
 
 

@@ -18,10 +18,10 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 // Common routines used by both RTSP clients and servers
 // Implementation
 
+#include <stdio.h>
 #include "RTSPCommon.hh"
 #include "Locale.hh"
 #include <string.h>
-#include <stdio.h>
 #include <ctype.h> // for "isxdigit()
 #include <time.h> // for "strftime()" and "gmtime()"
 

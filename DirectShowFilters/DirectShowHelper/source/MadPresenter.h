@@ -86,7 +86,7 @@ class MPMadPresenter : public CUnknown, public CCritSec
     }
   };
 
-  class CSubRenderCallback : public CUnknown, public ISubRenderCallback, public CCritSec
+  class CSubRenderCallback : public CUnknown, public ISubRenderCallback4, public CCritSec
   {
     MPMadPresenter* m_pDXRAPSUB;
 
@@ -96,7 +96,7 @@ class MPMadPresenter : public CUnknown, public CCritSec
     STDMETHODIMP NonDelegatingQueryInterface(REFIID riid, void** ppv)
     {
       return
-        QI(ISubRenderCallback)
+        QI(ISubRenderCallback4)
         __super::NonDelegatingQueryInterface(riid, ppv);
     }
 
@@ -118,6 +118,24 @@ class MPMadPresenter : public CUnknown, public CCritSec
     {
       CAutoLock cAutoLock(this);
       return m_pDXRAPSUB ? m_pDXRAPSUB->Render(rtStart, left, top, right, bottom, width, height) : E_UNEXPECTED;
+    }
+
+    STDMETHODIMP RenderEx(REFERENCE_TIME frameStart, REFERENCE_TIME frameStop, REFERENCE_TIME avgTimePerFrame, int left, int top, int right, int bottom, int width, int height)
+    {
+      CAutoLock cAutoLock(this);
+      return m_pDXRAPSUB ? m_pDXRAPSUB->Render(frameStart, left, top, right, bottom, width, height) : E_UNEXPECTED;
+    }
+
+    STDMETHODIMP RenderEx2(REFERENCE_TIME frameStart, REFERENCE_TIME frameStop, REFERENCE_TIME avgTimePerFrame, RECT croppedVideoRect, RECT originalVideoRect, RECT viewportRect, const double videoStretchFactor = 1.0)
+    {
+      CAutoLock cAutoLock(this);
+      return m_pDXRAPSUB ? m_pDXRAPSUB->Render(frameStart, croppedVideoRect.left, croppedVideoRect.top, croppedVideoRect.right, croppedVideoRect.bottom, viewportRect.top, viewportRect.right) : E_UNEXPECTED;
+    }
+
+    STDMETHODIMP RenderEx3(REFERENCE_TIME frameStart, REFERENCE_TIME frameStop, REFERENCE_TIME avgTimePerFrame, RECT croppedVideoRect, RECT originalVideoRect, RECT viewportRect, const double videoStretchFactor = 1.0, int xOffsetInPixels = 0, DWORD flags = 0)
+    {
+      CAutoLock cAutoLock(this);
+      return m_pDXRAPSUB ? m_pDXRAPSUB->RenderEx3(std::move(frameStart), std::move(frameStop), std::move(avgTimePerFrame), std::move(croppedVideoRect), std::move(originalVideoRect), std::move(viewportRect), std::move(videoStretchFactor), xOffsetInPixels) : E_UNEXPECTED;
     }
   };
 
@@ -155,7 +173,14 @@ class MPMadPresenter : public CUnknown, public CCritSec
     STDMETHODIMP RenderOsd(LPCSTR name, REFERENCE_TIME frameStart, RECT *fullOutputRect, RECT *activeVideoRect);
     STDMETHODIMP SetDevice(IDirect3DDevice9* pD3DDev);
     STDMETHODIMP SetDeviceOsd(IDirect3DDevice9* pD3DDev);
+    // ISubRenderCallback
     STDMETHOD(Render)(REFERENCE_TIME frameStart, int left, int top, int right, int bottom, int width, int height);
+    // ISubRenderCallback2
+    STDMETHOD(RenderEx)(REFERENCE_TIME frameStart, REFERENCE_TIME frameStop, REFERENCE_TIME avgTimePerFrame, int left, int top, int right, int bottom, int width, int height);
+    // ISubRenderCallback3
+    STDMETHOD(RenderEx2)(REFERENCE_TIME frameStart, REFERENCE_TIME frameStop, REFERENCE_TIME avgTimePerFrame, RECT croppedVideoRect, RECT originalVideoRect, RECT viewportRect, const double videoStretchFactor = 1.0);
+    // ISubRenderCallback4
+    STDMETHOD(RenderEx3)(REFERENCE_TIME frameStart, REFERENCE_TIME frameStop, REFERENCE_TIME avgTimePerFrame, RECT croppedVideoRect, RECT originalVideoRect, RECT viewportRect, const double videoStretchFactor = 1.0, int xOffsetInPixels = 0, DWORD flags = 0);
 
     virtual void EnableExclusive(bool bEnable);
 
@@ -165,8 +190,7 @@ class MPMadPresenter : public CUnknown, public CCritSec
     CCritSec m_dsLock;
 
   private:
-    void RenderToTextureGUI(IDirect3DTexture9* pTexture);
-    void RenderToTextureOSD(IDirect3DTexture9* pTexture);
+    void RenderToTexture(IDirect3DTexture9* pTexture);
     void RenderTexture(IDirect3DVertexBuffer9* pVertexBuf, IDirect3DTexture9* pTexture);
 
     HRESULT SetupOSDVertex(IDirect3DVertexBuffer9* pVertextBuf);
@@ -213,6 +237,7 @@ class MPMadPresenter : public CUnknown, public CCritSec
 
     bool m_pInitOSDRender = false;
     int m_ExclusiveMode = 0;
+    int m_enableOverlay = 0;
 
     CRenderWait m_mpWait;
 

@@ -109,10 +109,11 @@
     </Reference>
     <Reference Include="SharpLibHid, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Packages\SharpLibHid.1.3.1\lib\net20\SharpLibHid.dll</HintPath>
+      <HintPath>..\..\Packages\SharpLibHid.1.4.2\lib\net40\SharpLibHid.dll</HintPath>
     </Reference>
-    <Reference Include="SharpLibWin32">
-      <HintPath>..\..\Packages\SharpLibWin32.0.0.7\lib\net20\SharpLibWin32.dll</HintPath>
+    <Reference Include="SharpLibWin32, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\..\Packages\SharpLibWin32.0.0.9\lib\net20\SharpLibWin32.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System">
       <Name>System</Name>

@@ -99,7 +99,10 @@ namespace MediaPortal.GUI.Library
       if (layers == GUILayers.under)
         endLayer = videoLayer - 1;
       else if (layers == GUILayers.over)
+      {
+        _layers[(int) LayerType.VideoOverlay]?.ShouldRenderLayer();
         startLayer = videoLayer + 1;
+      }
 
       for (int i = startLayer; i < endLayer; ++i)
       {

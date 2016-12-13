@@ -46,22 +46,6 @@ namespace MediaPortal.DeployTool.Sections
 
     public override DeployDialog GetNextDialog()
     {
-      if (UpgradeDlg.MySQL56)
-      {
-        if (InstallationProperties.Instance["ConfigureMediaPortalMySQL"] == "Yes")
-        {
-          // Set SQL setting needed for MySQL upgrade
-          InstallationProperties.Instance.Set("ConfigureTVServerFirewall", "1");
-          InstallationProperties.Instance.Set("ConfigureMediaPortalFirewall", "1");
-          InstallationProperties.Instance.Set("ConfigureDBMSFirewall", "1");
-          InstallationProperties.Instance.Set("DBMSPassword", "MediaPortal");
-          // Default DBMS
-          InstallationProperties.Instance.Set("DBMSType", "mysql");
-          InstallationProperties.Instance.Set("DBMSDir",
-            InstallationProperties.Instance["ProgramFiles"] +
-            "\\MySQL\\MySQL Server 5.6");
-        }
-      }
       if (UpgradeDlg.rbFreshChecked)
       {
         // Normal deploy...
@@ -85,6 +69,24 @@ namespace MediaPortal.DeployTool.Sections
     public override void SetProperties()
     {
       InstallationProperties.Instance.Set("ConfigureMediaPortalMySQL", checkMySQL.Checked ? "Yes" : "No");
+
+      // Check here if we need to upgrade
+      if (UpgradeDlg.MySQL56)
+      {
+        if (InstallationProperties.Instance["ConfigureMediaPortalMySQL"] == "Yes")
+        {
+          // Set SQL setting needed for MySQL upgrade
+          InstallationProperties.Instance.Set("ConfigureTVServerFirewall", "1");
+          InstallationProperties.Instance.Set("ConfigureMediaPortalFirewall", "1");
+          InstallationProperties.Instance.Set("ConfigureDBMSFirewall", "1");
+          InstallationProperties.Instance.Set("DBMSPassword", "MediaPortal");
+          // Default DBMS
+          InstallationProperties.Instance.Set("DBMSType", "mysql");
+          InstallationProperties.Instance.Set("DBMSDir",
+            InstallationProperties.Instance["ProgramFiles"] +
+            "\\MySQL\\MySQL Server 5.6");
+        }
+      }
     }
 
     #endregion

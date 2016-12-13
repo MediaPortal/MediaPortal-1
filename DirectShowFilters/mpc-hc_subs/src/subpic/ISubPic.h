@@ -76,7 +76,7 @@ public IUnknown {
     STDMETHOD(Unlock)(RECT* pDirtyRect /*[in]*/) PURE;
 
     STDMETHOD(AlphaBlt)(RECT * pSrc, RECT * pDst, SubPicDesc* pTarget = NULL /*[in]*/) PURE;
-    STDMETHOD(GetSourceAndDest)(SIZE* pSize /*[in]*/, RECT* pRcSource /*[out]*/, RECT* pRcDest /*[out]*/) PURE;
+    STDMETHOD(GetSourceAndDest)(SIZE* pSize /*[in]*/, RECT* pRcSource /*[out]*/, RECT* pRcDest /*[out]*/,int xOffsetInPixels = 1 /*[in]*/) PURE;;
     STDMETHOD(SetVirtualTextureSize)(const SIZE pSize, const POINT pTopLeft) PURE;
 
     STDMETHOD_(REFERENCE_TIME, GetSegmentStart)() PURE;

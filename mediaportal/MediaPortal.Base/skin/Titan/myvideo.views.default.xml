@@ -74,6 +74,63 @@
 	</control>
     
     
+    <control>
+        <description>Collection banner</description>
+        <id>0</id>
+        <type>image</type>
+        <posX>319</posX>
+        <posY>360</posY>
+        <width>183</width>
+        <height>183</height>
+        <texture>collection.png</texture>                                                  
+        <visible>[facadeview.list|facadeview.playlist]+Control.IsVisible(50)+string.equals(#plot,)+string.equals(#iscollection,yes)</visible>
+    	<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+    <control>
+        <description>UserGroup banner</description>
+        <id>0</id>
+        <type>image</type>
+        <posX>319</posX>
+        <posY>360</posY>
+        <width>183</width>
+        <height>183</height>
+        <texture>group.png</texture>                                                  
+        <visible>[facadeview.list|facadeview.playlist]+Control.IsVisible(50)+string.equals(#plot,)+string.equals(#isgroup,yes)</visible>
+    	<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+    <!-- Rating -->
+
+    <control>
+      <description>Rating</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>388</posX>
+      <posY>360</posY>
+      <width>114</width>
+      <height>114</height>
+      <texture>Rating#(math.round(cflt(#rating))).png</texture>
+      <visible>[facadeview.list|facadeview.playlist]+Control.IsVisible(50)</visible>
+      <animation effect="fade" time="0">Visible</animation>
+      <animation effect="fade" time="0">WindowClose</animation>
+    </control>
+    <control>
+      <description>Rating</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>388</posX>
+      <posY>360</posY>
+      <width>114</width>
+      <height>114</height>
+      <texture>RatingUser#userrating.png</texture>
+      <visible>[facadeview.list|facadeview.playlist]+Control.IsVisible(50)</visible>
+      <animation effect="fade" time="0">Visible</animation>
+      <animation effect="fade" time="0">WindowClose</animation>
+    </control>
+
 	<!--            :: INFO LABELS ::            -->
 	
 	<control Style="InfoLabel">

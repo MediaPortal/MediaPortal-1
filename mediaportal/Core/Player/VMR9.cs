@@ -79,7 +79,7 @@ namespace MediaPortal.Player
     void SetSubtitleDevice(IntPtr device);
 
     [PreserveSig]
-    void RenderSubtitle(long frameStart, int left, int top, int right, int bottom, int width, int height);
+    void RenderSubtitle(long frameStart, int left, int top, int right, int bottom, int width, int height, int xOffsetInPixels);
 
     [PreserveSig]
     void RenderFrame(Int16 cx, Int16 cy, Int16 arx, Int16 ary, uint pSurface);
@@ -433,6 +433,15 @@ namespace MediaPortal.Player
     {
       get { return _scene != null && _scene.Visible; }
       set { if (_scene != null) _scene.Visible = value; }
+    }
+
+    public void SceneMadVr()
+    {
+      if (_scene != null)
+      {
+        Size nativeSize = new Size(3, 3);
+        _scene.SetVideoWindow(nativeSize);
+      }
     }
 
     //public bool IsVMR9Connected
@@ -896,12 +905,12 @@ namespace MediaPortal.Player
       currentVmr9State = Vmr9PlayState.Repaint;
       if (_scene != null) _scene.DrawVideo = false;
 
-      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
-          GUIGraphicsContext.InVmr9Render)
-      {
-        MadVrRepeatFrameSend();
-        Log.Debug("VMR9: MadVrRepeatFrameSend()");
-      }
+      //if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
+      //    GUIGraphicsContext.InVmr9Render)
+      //{
+      //  MadVrRepeatFrameSend();
+      //  Log.Debug("VMR9: MadVrRepeatFrameSend()");
+      //}
     }
 
     public bool IsRepainting

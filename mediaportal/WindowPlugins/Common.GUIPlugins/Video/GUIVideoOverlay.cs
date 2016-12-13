@@ -210,11 +210,29 @@ namespace MediaPortal.GUI.Video
           if (g_Player.Playing)
           {
             _videoRectangle.Visible = GUIGraphicsContext.ShowBackground;
+            if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
+                GUIGraphicsContext.Vmr9Active)
+            {
+              // madVR force change of overlay to be able to hide or display video if skin tell us to display an overlay but no video should be displayed
+              GUIGraphicsContext.Overlay = true;
+            }
           }
           else
           {
             _videoRectangle.Visible = false;
+            if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
+                GUIGraphicsContext.Vmr9Active)
+            {
+              // madVR force change of overlay to be able to hide or display video if skin tell us to display an overlay but no video should be displayed
+              GUIGraphicsContext.Overlay = false;
+            }
           }
+        }
+        else if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
+                 GUIGraphicsContext.Vmr9Active)
+        {
+          // madVR force change of overlay to be able to hide or display video if skin tell us to display an overlay but no video should be displayed
+          GUIGraphicsContext.Overlay = false;
         }
       }
       base.Render(timePassed);

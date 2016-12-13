@@ -36,8 +36,8 @@ namespace MediaPortal.GUI.Library
   /// <summary>
   /// static class which takes care of window management
   /// Things done are:
-  ///   - loading and initizling all windows
-  ///   - routing messages, keypresses, mouse clicks etc to the currently active window
+  ///   - loading and initializing all windows
+  ///   - routing messages, key presses, mouse clicks etc to the currently active window
   ///   - rendering the currently active window
   ///   - methods for switching to the previous window
   ///   - methods to switch to another window
@@ -167,6 +167,7 @@ namespace MediaPortal.GUI.Library
     private static int _nextWindowID = -1;
     private static bool _startWithBasicHome = false;
     private static readonly Object thisLock = new Object(); // used in Route functions
+    private static readonly Object thisLockProcess = new Object(); // used to avoid duplicate process
 
     #endregion
 
@@ -348,6 +349,29 @@ namespace MediaPortal.GUI.Library
       }
     }
 
+    public static int SendThreadCallbackSkin(Callback callback, int param1, int param2, object data)
+    {
+      CallbackEnv env = new CallbackEnv();
+      env.callback = callback;
+      env.param1 = param1;
+      env.param2 = param2;
+      env.data = data;
+
+      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CALLBACK, 0, 0, 0, 0, 0, env);
+      SendThreadMessage(msg);
+
+      // if this is the main thread, then dispatch the messages
+      if (Thread.CurrentThread.Name == "MPMain" || Thread.CurrentThread.Name == "Config Main")
+      {
+        DispatchThreadMessages();
+      }
+
+      Log.Debug("SendThreadCallbackAndWait - Waitone");
+      env.finished.WaitOne(5000);
+
+      return env.result;
+    }
+
 
     /// <summary>
     /// process the thread messages and actions
@@ -390,7 +414,7 @@ namespace MediaPortal.GUI.Library
     }
 
     /// <summary>
-    /// event handler which is called by GUIGraphicsContext when a new action has occured
+    /// event handler which is called by GUIGraphicsContext when a new action has occurred
     /// The method will add the action to a list which is processed later on in the process () function
     /// The reason for this is that multiple threads can add new action and they should only be
     /// processed by the main thread
@@ -1332,12 +1356,15 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public static void Process()
     {
-      StartFrameClock();
-      if (null != Callbacks)
+      lock (thisLockProcess)
       {
-        Callbacks();
+        StartFrameClock();
+        if (null != Callbacks)
+        {
+          Callbacks();
+        }
+        WaitForFrameClock();
       }
-      WaitForFrameClock();
     }
 
     /// <summary>
@@ -1378,6 +1405,22 @@ namespace MediaPortal.GUI.Library
         }
       }
     }
+
+    /// <summary>
+    /// Tells whether we need Text Input rather than raw keys.
+    /// </summary>
+    public static bool NeedsTextInput
+    {
+      get
+      {
+      // Do we need IsRouted here?
+      return GUIWindowManager.IsRouted || 
+              GUIWindowManager.ActiveWindowEx == (int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD || 
+              GUIWindowManager.ActiveWindowEx == (int)GUIWindow.Window.WINDOW_TV_SEARCH;
+      }
+    }
+
+
 
     /// <summary>
     /// return the ID of the window which is routed to

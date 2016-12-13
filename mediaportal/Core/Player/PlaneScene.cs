@@ -113,6 +113,8 @@ namespace MediaPortal.Player
 
     private int _reduceMadvrFrame = 0;
     private bool _useReduceMadvrFrame = false;
+    private string _subEngineType = "";
+    private readonly object _lockobj = new object();
 
     private bool UiVisible { get; set; }
 
@@ -325,6 +327,7 @@ namespace MediaPortal.Player
           _disableLowLatencyMode = xmlreader.GetValueAsBool("general", "disableLowLatencyMode", true);
           _reduceMadvrFrame = xmlreader.GetValueAsInt("general", "reduceMadvrFrame", 0);
           _useReduceMadvrFrame = xmlreader.GetValueAsBool("general", "useReduceMadvrFrame", false);
+          _subEngineType = xmlreader.GetValueAsString("subtitles", "engine", "DirectVobSub");
         }
         catch (Exception)
         {
@@ -437,7 +440,7 @@ namespace MediaPortal.Player
           if (nw <= 10 || nh <= 10 || x < 0 || y < 0)
           {
             // Need to resize window video for madVR
-            if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
+            if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR) //TODO
               return false;
           }
 
@@ -517,29 +520,31 @@ namespace MediaPortal.Player
           _destinationRect.X += (int) x;
           _destinationRect.Y += (int) y;
 
-          //sanity check
-          if (_destinationRect.Width < 10)
-          {
-            return false;
-          }
-          if (_destinationRect.Height < 10)
-          {
-            return false;
-          }
-          if (_sourceRect.Width < 10)
-          {
-            return false;
-          }
-          if (_sourceRect.Height < 10)
-          {
-            return false;
-          }
-
           if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
           {
             // Force VideoWindow to be refreshed with madVR when switching from video size like 16:9 to 4:3
             GUIGraphicsContext.UpdateVideoWindow = true;
-            GUIGraphicsContext.VideoWindowChanged();
+            //GUIGraphicsContext.VideoWindowChanged();
+          }
+          else
+          {
+            //sanity check
+            if (_destinationRect.Width < 10)
+            {
+              return false;
+            }
+            if (_destinationRect.Height < 10)
+            {
+              return false;
+            }
+            if (_sourceRect.Width < 10)
+            {
+              return false;
+            }
+            if (_sourceRect.Height < 10)
+            {
+              return false;
+            }
           }
 
           Log.Debug("PlaneScene: crop T, B  : {0}, {1}", _cropSettings.Top, _cropSettings.Bottom);
@@ -555,6 +560,11 @@ namespace MediaPortal.Player
           Log.Debug("PlaneScene: dst        : ({0},{1})-({2},{3})",
             _destinationRect.X, _destinationRect.Y, _destinationRect.X + _destinationRect.Width,
             _destinationRect.Y + _destinationRect.Height);
+
+          if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
+          {
+            Util.Utils.SwitchFocus();
+          }
 
           return true;
         }
@@ -742,6 +752,11 @@ namespace MediaPortal.Player
             return -1; // (0) -> S_OK, (1) -> S_FALSE; //dont present video during window transitions
           }
 
+          if (VMR9Util.g_vmr9 != null)
+          {
+            VMR9Util.g_vmr9.StartMadVrPaused();
+          }
+
           _reEntrant = true;
           GUIGraphicsContext.InVmr9Render = true;
 
@@ -758,16 +773,8 @@ namespace MediaPortal.Player
 
             //Log.Debug("PlaneScene width {0}, height {1}", width, height);
 
-            if (GUIGraphicsContext.IsWindowVisible)
-            {
-              Size nativeSize = new Size(width, height);
-              _shouldRenderTexture = SetVideoWindow(nativeSize);
-            }
-            else
-            {
-              Size nativeSize = new Size(1, 1);
-              _shouldRenderTexture = SetVideoWindow(nativeSize);
-            }
+            Size nativeSize = new Size(width, height);
+            _shouldRenderTexture = SetVideoWindow(nativeSize);
           }
 
           Device device = GUIGraphicsContext.DX9Device;
@@ -779,19 +786,12 @@ namespace MediaPortal.Player
           {
             SubtitleRenderer.GetInstance().Render();
             BDOSDRenderer.GetInstance().Render();
-            GUIGraphicsContext.RenderOverlay = true;
           }
 
           GUIGraphicsContext.RenderGUI.RenderFrame(GUIGraphicsContext.TimePassed, layers, ref _visible);
 
           GUIFontManager.Present();
           device.EndScene();
-
-          if (layers == GUILayers.under)
-          {
-            GUIGraphicsContext.RenderGui = false;
-            GUIGraphicsContext.RenderOverlay = false;
-          }
 
           // Present() call is done on C++ side so we are able to use DirectX 9 Ex device
           // which allows us to skip the v-sync wait. We don't want to wait with madVR
@@ -835,34 +835,41 @@ namespace MediaPortal.Player
 
     public void SetRenderTarget(uint target)
     {
-      Surface surface = new Surface((IntPtr) target);
-      if (GUIGraphicsContext.DX9Device != null)
+      lock (_lockobj)
       {
-        GUIGraphicsContext.DX9Device.SetRenderTarget(0, surface);
+        Surface surface = new Surface((IntPtr) target);
+        if (GUIGraphicsContext.DX9Device != null)
+        {
+          GUIGraphicsContext.DX9Device.SetRenderTarget(0, surface);
+        }
+        //surface.ReleaseGraphics();
+        //surface.Dispose();
       }
-      surface.ReleaseGraphics();
-      surface.Dispose();
     }
 
     public void SetSubtitleDevice(IntPtr device)
     {
       // Set madVR D3D Device
       GUIGraphicsContext.DX9DeviceMadVr = device != IntPtr.Zero ? new Device(device) : null;
-      ISubEngine engine = SubEngine.GetInstance(true);
-      if (engine != null)
+      // No need to set subtitle engine when using XySubFilter and madVR.
+      if (!_subEngineType.Equals("XySubFilter"))
       {
-        engine.SetDevice(device);
+        ISubEngine engine = SubEngine.GetInstance(true);
+        if (engine != null)
+        {
+          engine.SetDevice(device);
+        }
+        Log.Debug("Planescene: Set subtitle device - {0}", device);
       }
-      Log.Debug("Planescene: Set subtitle device - {0}", device);
     }
 
-    public void RenderSubtitle(long frameStart, int left, int top, int right, int bottom, int width, int height)
+    public void RenderSubtitle(long frameStart, int left, int top, int right, int bottom, int width, int height, int xOffsetInPixels)
     {
       ISubEngine engine = SubEngine.GetInstance();
       if (engine != null)
       {
         engine.SetTime(frameStart);
-        engine.Render(_subsRect, _destinationRect);
+        engine.Render(_subsRect, _destinationRect, xOffsetInPixels);
       }
     }
 
@@ -1151,7 +1158,7 @@ namespace MediaPortal.Player
               if (!GUIGraphicsContext.Render3DSubtitle)
               {
                 SubtitleRenderer.GetInstance().Render();
-                SubEngine.GetInstance().Render(_subsRect, _destinationRect);
+                SubEngine.GetInstance().Render(_subsRect, _destinationRect, 0);
               }
 
               GUIGraphicsContext.DX9Device.Present();
@@ -1270,7 +1277,7 @@ namespace MediaPortal.Player
             if (!GUIGraphicsContext.Render3DSubtitle)
             {
               SubtitleRenderer.GetInstance().Render();
-              SubEngine.GetInstance().Render(_subsRect, _destinationRect);
+              SubEngine.GetInstance().Render(_subsRect, _destinationRect, 0);
             }
 
             GUIGraphicsContext.DX9Device.Present();
@@ -1681,7 +1688,7 @@ namespace MediaPortal.Player
       {
         // for a 2D movie we render the subtitles here
 
-        SubEngine.GetInstance().Render(_subsRect, _destinationRect);
+        SubEngine.GetInstance().Render(_subsRect, _destinationRect, 0);
       }
       else if (((GUIGraphicsContext.Render3DModeHalf == GUIGraphicsContext.eRender3DModeHalf.SBSLeft ||
                 GUIGraphicsContext.Render3DModeHalf == GUIGraphicsContext.eRender3DModeHalf.TABTop) && !GUIGraphicsContext.Switch3DSides) ||
@@ -1695,7 +1702,7 @@ namespace MediaPortal.Player
         if (GUIGraphicsContext.Render3DSubtitle)
         {
             if (!GUIGraphicsContext.StretchSubtitles)
-                SubEngine.GetInstance().Render(_subsRect, _destinationRect);
+                SubEngine.GetInstance().Render(_subsRect, _destinationRect, 0);
             else
             {
                 Rectangle dstRect = _destinationRect;
@@ -1705,7 +1712,7 @@ namespace MediaPortal.Player
                 else
                     dstRect.Height *= 2;
                 
-                SubEngine.GetInstance().Render(_subsRect, dstRect);
+                SubEngine.GetInstance().Render(_subsRect, dstRect, 0);
             }
         }
       }
@@ -1734,7 +1741,7 @@ namespace MediaPortal.Player
           subRect.X += GUIGraphicsContext.Render3DSubtitleDistance;
           dstRect.X += GUIGraphicsContext.Render3DSubtitleDistance;
 
-          SubEngine.GetInstance().Render(subRect, dstRect);
+          SubEngine.GetInstance().Render(subRect, dstRect, 0);
         }
       }
 

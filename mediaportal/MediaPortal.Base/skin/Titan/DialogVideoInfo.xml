@@ -116,6 +116,35 @@
 		<animation effect="fade" time="250">WindowClose</animation>
   </control>
 		
+  <!-- Rating -->
+
+  <control>
+    <description>Rating</description>
+    <type>image</type>
+    <id>0</id>
+    <posX>388</posX>
+    <posY>360</posY>
+    <width>114</width>
+    <height>114</height>
+    <texture>Rating#(math.round(cflt(#rating))).png</texture>
+  	<animation effect="fade" time="250">WindowOpen</animation>
+  	<animation effect="fade" time="250">WindowClose</animation>
+    <animation effect="fade" time="250" condition="!control.hasfocus(456852)">conditional</animation>
+  </control>
+  <control>
+    <description>Rating</description>
+    <type>image</type>
+    <id>0</id>
+    <posX>388</posX>
+    <posY>360</posY>
+    <width>114</width>
+    <height>114</height>
+    <texture>RatingUser#userrating.png</texture>
+  	<animation effect="fade" time="250">WindowOpen</animation>
+  	<animation effect="fade" time="250">WindowClose</animation>
+    <animation effect="fade" time="250" condition="!control.hasfocus(456852)">conditional</animation>
+  </control>
+
   <control>
   	<description>Button group</description>
     <type>group</type>
@@ -802,6 +831,7 @@
 	  <animation effect="fade" time="250">WindowClose</animation>
   </control>
 
+<import>DialogVideoInfo.watchedCount.xml</import>
 <import>common.overlay.xml</import>
 </controls>
 </window>
