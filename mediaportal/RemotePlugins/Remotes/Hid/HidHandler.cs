@@ -29,7 +29,8 @@ using System.Xml;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 using Win32;
-using Hid=SharpLib.Hid;
+using Hid = SharpLib.Hid;
+using System.Runtime.Serialization;
 
 namespace MediaPortal.InputDevices
 {
@@ -53,7 +54,14 @@ namespace MediaPortal.InputDevices
       //We will need one usage/action mapping for each HID UsagePage/UsageCollection we are listening too
       _usageActions = new Dictionary<UInt32, HidUsageAction>();
 
-      var xmlPath = HidProfiles.GetExistingProfilePath(aProfileName);
+      string xmlPath = HidProfiles.GetExistingProfilePath(aProfileName);
+
+
+      DataContractSerializer dcs = new DataContractSerializer(typeof(HidXmlSchema.Root));
+      FileStream fs = new FileStream(xmlPath, FileMode.Open);
+      XmlDictionaryReader reader = XmlDictionaryReader.CreateTextReader(fs, new XmlDictionaryReaderQuotas());
+      HidXmlSchema.Root model = (HidXmlSchema.Root)dcs.ReadObject(reader);
+
 
       LoadMapping(xmlPath);
     }
@@ -182,6 +190,7 @@ namespace MediaPortal.InputDevices
 
         var doc = new XmlDocument();
         doc.Load(xmlPath);
+        doc.Save(xmlPath + ".save.xml");
         var usageActionNodes = doc.DocumentElement.SelectNodes("/HidHandler/HidUsageAction");
         foreach (XmlNode usageActionNode in usageActionNodes)
         {

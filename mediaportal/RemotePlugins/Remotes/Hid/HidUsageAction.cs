@@ -84,7 +84,7 @@ namespace MediaPortal.InputDevices
     #endregion Public Properties
 
     #region Nested Classes
-
+    
     /// <summary>
     ///   Condition/action class
     /// </summary>
@@ -113,6 +113,23 @@ namespace MediaPortal.InputDevices
       public int CmdKeyCode { get; private set; }
       public string Sound { get; private set; }
       public bool Focus { get; private set; }
+
+      /// <summary>
+      /// Try parse ConProperty as a GUIWindow.Window.
+      /// </summary>
+      public int WindowToMatch
+      {
+        get
+        {
+          GUIWindow.Window res = GUIWindow.Window.WINDOW_INVALID;
+          if (Enum.TryParse(ConProperty, out res))
+          {
+            return (int)res;
+          }
+
+          return Convert.ToInt32(ConProperty);
+        }
+      }
     }
 
     /// <summary>
@@ -543,8 +560,8 @@ namespace MediaPortal.InputDevices
 
               case "WINDOW": // Window-ID = x
                 if ((!GUIWindowManager.IsOsdVisible &&
-                     (GUIWindowManager.ActiveWindowEx == Convert.ToInt32(map.ConProperty))) ||
-                    ((int) GUIWindowManager.VisibleOsd == Convert.ToInt32(map.ConProperty)))
+                     (GUIWindowManager.ActiveWindowEx == map.WindowToMatch)) ||
+                    ((int) GUIWindowManager.VisibleOsd == map.WindowToMatch))
                 {
                   found = map;
                 }

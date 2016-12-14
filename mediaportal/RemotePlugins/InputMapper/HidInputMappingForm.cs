@@ -23,6 +23,7 @@ using System.Collections;
 using System.ComponentModel;
 using System.Drawing;
 using System.IO;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
@@ -30,6 +31,7 @@ using System.Xml;
 using MediaPortal.GUI.Library;
 using MediaPortal.UserInterface.Controls;
 using Action = MediaPortal.GUI.Library.Action;
+using System.Xml.Serialization;
 
 namespace MediaPortal.InputDevices
 {
@@ -44,6 +46,8 @@ namespace MediaPortal.InputDevices
     public string ProfileName{ get; private set;}
 
     private readonly ArrayList actionList = new ArrayList();
+
+    private HidXmlSchema.Root iModel;
 
     /// <summary>
     ///   Required designer variable.
@@ -858,37 +862,26 @@ namespace MediaPortal.InputDevices
           return;
         }
         doc.Load(path);
-        var listRemotes = doc.DocumentElement.SelectNodes("/HidHandler/HidUsageAction");
 
-        foreach (XmlNode nodeRemote in listRemotes)
-        {
-          var usagePageAndCollection = nodeRemote.Attributes["UsagePage"].Value + "/" +
-                                       nodeRemote.Attributes["UsageCollection"].Value;
+
+        // Load our XML schema
+        XmlSerializer s = new XmlSerializer(typeof(HidXmlSchema.Root));
+        TextReader r = new StreamReader(path);
+        iModel = (HidXmlSchema.Root)s.Deserialize(r);
+        
+        // For each if HID logical device
+        foreach (HidXmlSchema.LogicalDevice device in iModel.Devices)
+        {          
+          // Create node object
+          var usagePageAndCollection = device.UsagePage + "/" + device.UsageCollection;
           var remoteNode = new TreeNode(usagePageAndCollection);
-          var huaAttributes = new HidUsageActionAttributes(nodeRemote.Attributes["UsagePage"].Value,
-            nodeRemote.Attributes["UsageCollection"].Value,
-            nodeRemote.Attributes["HandleHidEventsWhileInBackground"].Value);
-          remoteNode.Tag = new NodeData("REMOTE", huaAttributes, null);
-          var listButtons = nodeRemote.SelectNodes("button");
-          foreach (XmlNode nodeButton in listButtons)
-          {
-            //Use code as name if no name attribute
-            var buttonName = GetAttributeValue(nodeButton.Attributes["name"], nodeButton.Attributes["code"].Value);
-            
-            //Get background attribute and default to false
-            var background = GetAttributeValue(nodeButton.Attributes["background"], "false");
+          remoteNode.Tag = new NodeData("REMOTE", device, null);
 
-            //Get repeat attribute and default to false
-            var repeat = GetAttributeValue(nodeButton.Attributes["repeat"], "false");
-
-            var shift = GetAttributeValue(nodeButton.Attributes["shift"], "false");
-            var ctrl = GetAttributeValue(nodeButton.Attributes["ctrl"], "false");
-            var alt = GetAttributeValue(nodeButton.Attributes["alt"], "false");
-            var win = GetAttributeValue(nodeButton.Attributes["win"], "false");
-
-            HidButtonAttributes hbAttributes = new HidButtonAttributes(buttonName, nodeButton.Attributes["code"].Value, background, repeat, shift, ctrl, alt, win);
-            var buttonNode = new TreeNode(hbAttributes.GetText());            
-            buttonNode.Tag = new NodeData("BUTTON", hbAttributes, null);
+          // For each usage/button of that device
+          foreach (HidXmlSchema.Usage usage in device.Usages)
+          {         
+            var buttonNode = new TreeNode(usage.GetText());            
+            buttonNode.Tag = new NodeData("BUTTON", usage, null);
             remoteNode.Nodes.Add(buttonNode);
 
             var layer1Node = new TreeNode("Layer 1");
@@ -901,38 +894,25 @@ namespace MediaPortal.InputDevices
             layer2Node.ForeColor = Color.DimGray;
             layerAllNode.ForeColor = Color.DimGray;
 
-            var listActions = nodeButton.SelectNodes("action");
-
-            foreach (XmlNode nodeAction in listActions)
+            foreach (HidXmlSchema.Action action in usage.Actions)
             {
-              var conditionString = string.Empty;
-              var commandString = string.Empty;
+              string conditionString = string.Empty;
+              string commandString = string.Empty;
+              GUIWindow.Window conditionWindow = GUIWindow.Window.WINDOW_INVALID;
 
-              var condition = nodeAction.Attributes["condition"].Value.ToUpperInvariant();
-              var conProperty = nodeAction.Attributes["conproperty"].Value.ToUpperInvariant();
-              var command = nodeAction.Attributes["command"].Value.ToUpperInvariant();
-              var cmdProperty = nodeAction.Attributes["cmdproperty"].Value.ToUpperInvariant();
-              var sound = string.Empty;
-              var soundAttribute = nodeAction.Attributes["sound"];
-              if (soundAttribute != null)
-              {
-                sound = soundAttribute.Value;
-              }
-              var gainFocus = false;
-              var focusAttribute = nodeAction.Attributes["focus"];
-              if (focusAttribute != null)
-              {
-                gainFocus = Convert.ToBoolean(focusAttribute.Value);
-              }
-              var layer = Convert.ToInt32(nodeAction.Attributes["layer"].Value);
 
               #region Conditions
 
-              switch (condition)
+              switch (action.Condition)
               {
-                case "WINDOW":
-                  conditionString =
-                    GetFriendlyName(Enum.GetName(typeof (GUIWindow.Window), Convert.ToInt32(conProperty)));
+                case "WINDOW":                  
+                  if (Enum.TryParse(action.ConditionProperty, out conditionWindow))
+                  {
+                    // We have known window ID, make sure we use the name rather than the value from now on.
+                    action.ConditionProperty = conditionWindow.ToString();
+                    conditionString = GetFriendlyName(action.ConditionProperty);
+                  }
+
                   if (string.IsNullOrEmpty(conditionString))
                   {
                     continue;
@@ -940,7 +920,7 @@ namespace MediaPortal.InputDevices
                   break;
 
                 case "FULLSCREEN":
-                  if (conProperty == "TRUE")
+                  if (action.ConditionProperty == "TRUE")
                   {
                     conditionString = "Fullscreen";
                   }
@@ -951,7 +931,7 @@ namespace MediaPortal.InputDevices
                   break;
 
                 case "PLAYER":
-                  conditionString = playerList[Array.IndexOf(nativePlayerList, conProperty)];
+                  conditionString = playerList[Array.IndexOf(nativePlayerList, action.ConditionProperty)];
                   break;
 
                 case "*":
@@ -963,21 +943,21 @@ namespace MediaPortal.InputDevices
 
               #region Commands
 
-              switch (command)
+              switch (action.Command)
               {
                 case "ACTION":
                   commandString = "Action \"" +
-                                  GetFriendlyName(Enum.GetName(typeof (Action.ActionType), Convert.ToInt32(cmdProperty))) +
+                                  GetFriendlyName(Enum.GetName(typeof (Action.ActionType), Convert.ToInt32(action.CommandProperty))) +
                                   "\"";
                   break;
 
                 case "KEY":
-                  commandString = "Key \"" + cmdProperty + "\"";
+                  commandString = "Key \"" + action.CommandProperty + "\"";
                   break;
 
                 case "WINDOW":
                   commandString = "Window \"" +
-                                  GetFriendlyName(Enum.GetName(typeof (GUIWindow.Window), Convert.ToInt32(cmdProperty))) +
+                                  GetFriendlyName(Enum.GetName(typeof (GUIWindow.Window), Convert.ToInt32(action.CommandProperty))) +
                                   "\"";
                   break;
 
@@ -986,27 +966,25 @@ namespace MediaPortal.InputDevices
                   break;
 
                 case "POWER":
-                  commandString = powerList[Array.IndexOf(nativePowerList, cmdProperty)];
+                  commandString = powerList[Array.IndexOf(nativePowerList, action.CommandProperty)];
                   break;
 
                 case "PROCESS":
-                  commandString = processList[Array.IndexOf(nativeProcessList, cmdProperty)];
+                  commandString = processList[Array.IndexOf(nativeProcessList, action.CommandProperty)];
                   break;
               }
 
               #endregion Commands
 
               var conditionNode = new TreeNode(conditionString);
-              conditionNode.Tag = new NodeData("CONDITION", condition, conProperty);
+              conditionNode.Tag = new NodeData("CONDITION", action.Condition, action.ConditionProperty);
               if (commandString == "Action \"Key Pressed\"")
               {
-                var cmdKeyChar = nodeAction.Attributes["cmdkeychar"].Value;
-                var cmdKeyCode = nodeAction.Attributes["cmdkeycode"].Value;
-                var commandNode = new TreeNode(string.Format("Key Pressed: {0} [{1}]", cmdKeyChar, cmdKeyCode));
+                var commandNode = new TreeNode(string.Format("Key Pressed: {0} [{1}]", action.CommandKeyChar, action.CommandKeyCode));
 
-                var key = new Key(Convert.ToInt32(cmdKeyChar), Convert.ToInt32(cmdKeyCode));
+                var key = new Key(action.CommandKeyChar, action.CommandKeyCode);
 
-                commandNode.Tag = new NodeData("COMMAND", "KEY", key, gainFocus);
+                commandNode.Tag = new NodeData("COMMAND", "KEY", key, action.Focus);
                 commandNode.ForeColor = Color.DarkGreen;
                 conditionNode.ForeColor = Color.Blue;
                 conditionNode.Nodes.Add(commandNode);
@@ -1014,30 +992,30 @@ namespace MediaPortal.InputDevices
               else
               {
                 var commandNode = new TreeNode(commandString);
-                commandNode.Tag = new NodeData("COMMAND", command, cmdProperty, gainFocus);
+                commandNode.Tag = new NodeData("COMMAND", action.Command, action.CommandProperty, action.Focus);
                 commandNode.ForeColor = Color.DarkGreen;
                 conditionNode.ForeColor = Color.Blue;
                 conditionNode.Nodes.Add(commandNode);
               }
 
-              var soundNode = new TreeNode(sound);
-              soundNode.Tag = new NodeData("SOUND", null, sound);
-              if (sound == string.Empty)
+              var soundNode = new TreeNode(action.Sound);
+              soundNode.Tag = new NodeData("SOUND", null, action.Sound);
+              if (action.Sound == string.Empty)
               {
                 soundNode.Text = "No Sound";
               }
               soundNode.ForeColor = Color.DarkRed;
               conditionNode.Nodes.Add(soundNode);
 
-              if (layer == 1)
+              if (action.Layer == 1)
               {
                 layer1Node.Nodes.Add(conditionNode);
               }
-              if (layer == 2)
+              if (action.Layer == 2)
               {
                 layer2Node.Nodes.Add(conditionNode);
               }
-              if (layer == 0)
+              if (action.Layer == 0)
               {
                 layerAllNode.Nodes.Add(conditionNode);
               }
@@ -1056,7 +1034,7 @@ namespace MediaPortal.InputDevices
             }
           }
           treeMapping.Nodes.Add(remoteNode);
-          if (listRemotes.Count == 1)
+          if (iModel.Devices.Count == 1)
           {
             remoteNode.Expand();
           }
@@ -1066,19 +1044,8 @@ namespace MediaPortal.InputDevices
       catch (Exception ex)
       {
         Log.Error(ex);
-        //Force loading defaults if we were not already doing it
-        if (!defaults)
-        {
-          //Possibly corrupted custom configuration
-          //Try loading the defaults then
-          LoadMapping("classic", true);
-        }
-        else
-        {
-          //Loading the default configuration failed
-          //Just propagate our exception then
-          throw ex;
-        }        
+        //Just propagate our exception then
+        throw ex;
       }
     }
 
@@ -1132,142 +1099,13 @@ namespace MediaPortal.InputDevices
       //try
 #endif
       {
-        var writer = new XmlTextWriter(pathCustom, Encoding.UTF8);
-        writer.Formatting = Formatting.Indented;
-        writer.Indentation = 1;
-        writer.IndentChar = (char) 9;
-        writer.WriteStartDocument(true);
-        writer.WriteStartElement("HidHandler"); // <mappings>
-        writer.WriteAttributeString("version", "1");
-        if (treeMapping.Nodes.Count > 0)
+        XmlSerializer serializer = new XmlSerializer(typeof(HidXmlSchema.Root));
+
+        using (StreamWriter writer = new StreamWriter(pathCustom))
         {
-          foreach (TreeNode remoteNode in treeMapping.Nodes)
-          {
-            writer.WriteStartElement("HidUsageAction"); // <remote>
-            var uaAttributres = (HidUsageActionAttributes) ((NodeData) remoteNode.Tag).Parameter;
-            writer.WriteAttributeString("UsagePage", uaAttributres.UsagePage);
-            writer.WriteAttributeString("UsageCollection", uaAttributres.UsageCollection);
-            writer.WriteAttributeString("HandleHidEventsWhileInBackground",
-              uaAttributres.HandleHidEventsWhileInBackground);
-            if (remoteNode.Nodes.Count > 0)
-            {
-              foreach (TreeNode buttonNode in remoteNode.Nodes)
-              {
-                writer.WriteStartElement("button"); // <button>
-                var buttonAttributes = (HidButtonAttributes) ((NodeData) buttonNode.Tag).Parameter;
-                if (buttonAttributes.Name != buttonAttributes.Code)
-                {
-                  //Only save the name if different from the code
-                  writer.WriteAttributeString("name", buttonAttributes.Name);
-                }
-
-                //Save code no matter what
-                writer.WriteAttributeString("code", buttonAttributes.Code);
-
-                //Only save background handling if different from the defaults
-                WriteAttribute(writer, "background", buttonAttributes.Background);
-
-                //Only save repeat handling if different from the defaults
-                WriteAttribute(writer, "repeat", buttonAttributes.Repeat);
-
-                //Modifiers
-                WriteAttribute(writer, "shift", buttonAttributes.ModifierShift);
-                WriteAttribute(writer, "ctrl", buttonAttributes.ModifierControl);
-                WriteAttribute(writer, "alt", buttonAttributes.ModifierAlt);
-                WriteAttribute(writer, "win", buttonAttributes.ModifierWindows);
-
-                if (buttonNode.Nodes.Count > 0)
-                {
-                  foreach (TreeNode layerNode in buttonNode.Nodes)
-                  {
-                    foreach (TreeNode conditionNode in layerNode.Nodes)
-                    {
-                      string layer;
-                      string condition;
-                      string conProperty;
-                      var command = string.Empty;
-                      var cmdProperty = string.Empty;
-                      var cmdKeyChar = string.Empty;
-                      var cmdKeyCode = string.Empty;
-                      var sound = string.Empty;
-                      var focus = false;
-                      foreach (TreeNode commandNode in conditionNode.Nodes)
-                      {
-                        switch (((NodeData) commandNode.Tag).Type)
-                        {
-                          case "COMMAND":
-                          {
-                            command = (string) ((NodeData) commandNode.Tag).Parameter;
-                            focus = ((NodeData) commandNode.Tag).Focus;
-                            if (command != "KEY")
-                            {
-                              cmdProperty = ((NodeData) commandNode.Tag).Value.ToString();
-                            }
-                            else
-                            {
-                              command = "ACTION";
-                              var key = (Key) ((NodeData) commandNode.Tag).Value;
-                              cmdProperty = "93";
-                              cmdKeyChar = key.KeyChar.ToString();
-                              cmdKeyCode = key.KeyCode.ToString();
-                            }
-                          }
-                            break;
-
-                          case "SOUND":
-                            sound = (string) ((NodeData) commandNode.Tag).Value;
-                            break;
-                        }
-                      }
-                      condition = (string) ((NodeData) conditionNode.Tag).Parameter;
-                      conProperty = ((NodeData) conditionNode.Tag).Value.ToString();
-                      layer = Convert.ToString(((NodeData) layerNode.Tag).Value);
-                      writer.WriteStartElement("action"); // <action>
-                      writer.WriteAttributeString("layer", layer);
-                      writer.WriteAttributeString("condition", condition);
-                      writer.WriteAttributeString("conproperty", conProperty);
-                      writer.WriteAttributeString("command", command);
-                      writer.WriteAttributeString("cmdproperty", cmdProperty);
-                      if (cmdProperty == Convert.ToInt32(Action.ActionType.ACTION_KEY_PRESSED).ToString())
-                      {
-                        if (cmdKeyChar != string.Empty)
-                        {
-                          writer.WriteAttributeString("cmdkeychar", cmdKeyChar);
-                        }
-                        else
-                        {
-                          writer.WriteAttributeString("cmdkeychar", "0");
-                        }
-                        if (cmdKeyCode != string.Empty)
-                        {
-                          writer.WriteAttributeString("cmdkeycode", cmdKeyCode);
-                        }
-                        else
-                        {
-                          writer.WriteAttributeString("cmdkeychar", "0");
-                        }
-                      }
-                      if (sound != string.Empty)
-                      {
-                        writer.WriteAttributeString("sound", sound);
-                      }
-                      if (focus)
-                      {
-                        writer.WriteAttributeString("focus", focus.ToString());
-                      }
-                      writer.WriteEndElement(); // </action>
-                    }
-                  }
-                }
-                writer.WriteEndElement(); // </button>
-              }
-            }
-            writer.WriteEndElement(); // </remote>
-          }
+          serializer.Serialize(writer, iModel);
         }
-        writer.WriteEndElement(); // </mapping>
-        writer.WriteEndDocument();
-        writer.Close();
+
         changedSettings = false;
         ProfileName = aProfileName;
         return true;
@@ -1435,13 +1273,13 @@ namespace MediaPortal.InputDevices
           comboBoxCondProperty.Text = "none";
           comboBoxCmdProperty.Text = "none";
           comboBoxSound.Text = "none";
-          HidButtonAttributes attributes = (HidButtonAttributes)data.Parameter;
-          mpCheckBoxAlt.Checked = HidUsageAction.AttributeValueToBoolean(attributes.ModifierAlt);
-          mpCheckBoxShift.Checked = HidUsageAction.AttributeValueToBoolean(attributes.ModifierShift);
-          mpCheckBoxControl.Checked = HidUsageAction.AttributeValueToBoolean(attributes.ModifierControl);
-          mpCheckBoxWindows.Checked = HidUsageAction.AttributeValueToBoolean(attributes.ModifierWindows);
-          mpCheckBoxRepeat.Checked = HidUsageAction.AttributeValueToBoolean(attributes.Repeat);
-          mpCheckBoxBackground.Checked = HidUsageAction.AttributeValueToBoolean(attributes.Background);
+          HidXmlSchema.Usage usage = (HidXmlSchema.Usage)data.Parameter;
+          mpCheckBoxAlt.Checked = usage.ModifierAlt;
+          mpCheckBoxShift.Checked = usage.ModifierShift;
+          mpCheckBoxControl.Checked = usage.ModifierControl;
+          mpCheckBoxWindows.Checked = usage.ModifierWindows;
+          mpCheckBoxRepeat.Checked = usage.Repeat;
+          mpCheckBoxBackground.Checked = usage.Background;
 
           //Populate our code combo box
           mpComboBoxCode.Items.Clear();
@@ -1450,10 +1288,10 @@ namespace MediaPortal.InputDevices
           //Check our usage page and collection
           TreeNode remoteNode = getNode("REMOTE");
           NodeData remoteData = (NodeData)remoteNode.Tag;
-          HidUsageActionAttributes remoteAttributes = (HidUsageActionAttributes) remoteData.Parameter;
+          HidXmlSchema.LogicalDevice device = (HidXmlSchema.LogicalDevice) remoteData.Parameter;
 
-          if (remoteAttributes.UsagePage.Equals(SharpLib.Hid.UsagePage.GenericDesktopControls.ToString()) &&
-              remoteAttributes.UsageCollection.Equals(SharpLib.Hid.UsageCollection.GenericDesktop.Keyboard.ToString()))
+          if (device.UsagePage.Equals(SharpLib.Hid.UsagePage.GenericDesktopControls.ToString()) &&
+              device.UsageCollection.Equals(SharpLib.Hid.UsageCollection.GenericDesktop.Keyboard.ToString()))
           {
             // Only supporting code selection for keyboard for now
             Type typeOfCode = typeof(Keys);
@@ -1466,7 +1304,7 @@ namespace MediaPortal.InputDevices
               }
             }
 
-            mpComboBoxCode.Text = attributes.Code;
+            mpComboBoxCode.Text = usage.Code;
             mpComboBoxCode.Enabled = true;
             mpCheckBoxShift.Enabled = true;
             mpCheckBoxControl.Enabled = true;
@@ -1522,8 +1360,7 @@ namespace MediaPortal.InputDevices
             case "WINDOW":
               radioButtonWindow.Checked = true;
               comboBoxCondProperty.Enabled = true;
-              UpdateCombo(ref comboBoxCondProperty, windowsList,
-                GetFriendlyName(Enum.GetName(typeof (GUIWindow.Window), Convert.ToInt32(data.Value))));
+              UpdateCombo(ref comboBoxCondProperty, windowsList, GetFriendlyName((string)data.Value));
               break;
 
             case "FULLSCREEN":
@@ -1997,18 +1834,19 @@ namespace MediaPortal.InputDevices
       newSound.Tag = new NodeData("SOUND", string.Empty, string.Empty);
       newSound.ForeColor = Color.DarkRed;
 
-      HidButtonAttributes newButtonAttributes = new HidButtonAttributes(Keys.A.ToString(), Keys.A.ToString(), false.ToString(), false.ToString(), false.ToString(), false.ToString(), false.ToString(), false.ToString());
-      var newButtonNode = new TreeNode(newButtonAttributes.GetText());
-      newButtonNode.Tag = new NodeData("BUTTON", newButtonAttributes, null);
+      HidXmlSchema.Usage usage = new HidXmlSchema.Usage();
+      usage.Code = Keys.A.ToString();
+      var newButtonNode = new TreeNode(usage.GetText());
+      newButtonNode.Tag = new NodeData("BUTTON", usage, null);
 
       switch (data.Type)
       {
         case "REMOTE":
         {
-          //Check that the selected "remote" is a keyboard
-          HidUsageActionAttributes remoteAttributes = (HidUsageActionAttributes) data.Parameter;
-          if (remoteAttributes.UsagePage.Equals(SharpLib.Hid.UsagePage.GenericDesktopControls.ToString()) &&
-              remoteAttributes.UsageCollection.Equals(SharpLib.Hid.UsageCollection.GenericDesktop.Keyboard.ToString()))
+            //Check that the selected "remote" is a keyboard
+            HidXmlSchema.LogicalDevice device = (HidXmlSchema.LogicalDevice) data.Parameter;
+          if (device.UsagePage.Equals(SharpLib.Hid.UsagePage.GenericDesktopControls.ToString()) &&
+              device.UsageCollection.Equals(SharpLib.Hid.UsageCollection.GenericDesktop.Keyboard.ToString()))
           {
             //We support adding new buttons to keyboards
             newCondition.Nodes.Add(newCommand);
@@ -2018,6 +1856,8 @@ namespace MediaPortal.InputDevices
             node.Nodes.Add(newButtonNode);
             newButtonNode.ExpandAll();
             treeMapping.SelectedNode = newButtonNode;
+              // Add our usage to our model
+              device.Usages.Add(usage);
           }
         }
           break;
@@ -2119,10 +1959,7 @@ namespace MediaPortal.InputDevices
       switch ((string) data.Parameter)
       {
         case "WINDOW":
-          node.Tag = new NodeData("CONDITION", "WINDOW",
-            (int)
-              Enum.Parse(typeof (GUIWindow.Window),
-                GetWindowName((string) comboBoxCondProperty.SelectedItem)));
+          node.Tag = new NodeData("CONDITION", "WINDOW", GetWindowName((string) comboBoxCondProperty.SelectedItem));
           node.Text = (string) comboBoxCondProperty.SelectedItem;
           break;
 
@@ -2267,103 +2104,6 @@ namespace MediaPortal.InputDevices
       changedSettings = true;
     }
 
-    /// <summary>
-    ///   Store data in our TreeNode to be able to put it back in our XML when saving.
-    /// </summary>
-    private class HidUsageActionAttributes
-    {
-      public HidUsageActionAttributes(string aUsagePage, string aUsageCollection, string aBackground)
-      {
-        UsagePage = aUsagePage;
-        UsageCollection = aUsageCollection;
-        HandleHidEventsWhileInBackground = aBackground;
-      }
-
-      public string UsagePage { get; private set; }
-      public string UsageCollection { get; private set; }
-      public string HandleHidEventsWhileInBackground { get; private set; }
-    }
-
-    /// <summary>
-    ///   Store data in our TreeNode to be able to put it back in our XML when saving.
-    /// </summary>
-    private class HidButtonAttributes
-    {
-      public HidButtonAttributes(string aName, string aCode, string aBackground, string aRepeat, string aShift, string aControl, string aAlt, string aWindows)
-      {
-        Name = aName;
-        Code = aCode;
-        Background = aBackground;
-        Repeat = aRepeat;
-        ModifierShift = aShift;
-        ModifierControl = aControl;
-        ModifierAlt = aAlt;
-        ModifierWindows = aWindows;
-      }
-
-      public string Name { get; set; }
-      public string Code { get; set; }
-      public string Background { get; set; }
-      public string Repeat { get; set; }
-      public string ModifierShift { get; set; }
-      public string ModifierControl { get; set; }
-      public string ModifierAlt { get; set; }
-      public string ModifierWindows { get; set; }
-
-      public string GetText()
-      {
-        if (Name != Code)
-        {
-          return Name;
-        }
-
-        //Build a neat name
-        string name = Code;
-        if (HidUsageAction.AttributeValueToBoolean(ModifierShift))
-        {
-          name += " + SHIFT";
-        }
-
-        if (HidUsageAction.AttributeValueToBoolean(ModifierControl))
-        {
-          name += " + CTRL";
-        }
-
-        if (HidUsageAction.AttributeValueToBoolean(ModifierAlt))
-        {
-          name += " + ALT";
-        }
-
-        if (HidUsageAction.AttributeValueToBoolean(ModifierWindows))
-        {
-          name += " + WIN";
-        }
-
-        if (HidUsageAction.AttributeValueToBoolean(Repeat) || HidUsageAction.AttributeValueToBoolean(Background))
-        {
-          name += " ( ";
-          bool needSeparator = false;
-          if (HidUsageAction.AttributeValueToBoolean(Background))
-          {
-            name += "background";
-            needSeparator = true;
-          }
-
-          if (HidUsageAction.AttributeValueToBoolean(Repeat))
-          {
-            if (needSeparator)
-            {
-              name += ", ";
-            }
-            name += "repeat";
-          }
-
-          name += " )";
-        }
-
-        return name;
-      }
-    }
 
     private class NodeData
     {
@@ -2447,8 +2187,8 @@ namespace MediaPortal.InputDevices
     {
       TreeNode node = getNode("BUTTON");
       NodeData data = (NodeData)node.Tag;
-      HidButtonAttributes attributes = (HidButtonAttributes) data.Parameter;
-      attributes.Repeat = ((CheckBox) sender).Checked.ToString();
+      HidXmlSchema.Usage attributes = (HidXmlSchema.Usage) data.Parameter;
+      attributes.Repeat = ((CheckBox) sender).Checked;
       node.Text = attributes.GetText();
       changedSettings = true;
     }
@@ -2457,8 +2197,8 @@ namespace MediaPortal.InputDevices
     {
       TreeNode node = getNode("BUTTON");
       NodeData data = (NodeData)node.Tag;
-      HidButtonAttributes attributes = (HidButtonAttributes)data.Parameter;
-      attributes.Background = ((CheckBox)sender).Checked.ToString();
+      HidXmlSchema.Usage attributes = (HidXmlSchema.Usage)data.Parameter;
+      attributes.Background = ((CheckBox)sender).Checked;
       node.Text = attributes.GetText();
       changedSettings = true;
     }
@@ -2467,8 +2207,8 @@ namespace MediaPortal.InputDevices
     {
       TreeNode node = getNode("BUTTON");
       NodeData data = (NodeData)node.Tag;
-      HidButtonAttributes attributes = (HidButtonAttributes)data.Parameter;
-      attributes.ModifierShift = ((CheckBox)sender).Checked.ToString();
+      HidXmlSchema.Usage attributes = (HidXmlSchema.Usage)data.Parameter;
+      attributes.ModifierShift = ((CheckBox)sender).Checked;
       node.Text = attributes.GetText();
       changedSettings = true;
     }
@@ -2477,8 +2217,8 @@ namespace MediaPortal.InputDevices
     {
       TreeNode node = getNode("BUTTON");
       NodeData data = (NodeData)node.Tag;
-      HidButtonAttributes attributes = (HidButtonAttributes)data.Parameter;
-      attributes.ModifierControl = ((CheckBox)sender).Checked.ToString();
+      HidXmlSchema.Usage attributes = (HidXmlSchema.Usage)data.Parameter;
+      attributes.ModifierControl = ((CheckBox)sender).Checked;
       node.Text = attributes.GetText();
       changedSettings = true;
     }
@@ -2487,8 +2227,8 @@ namespace MediaPortal.InputDevices
     {
       TreeNode node = getNode("BUTTON");
       NodeData data = (NodeData)node.Tag;
-      HidButtonAttributes attributes = (HidButtonAttributes)data.Parameter;
-      attributes.ModifierWindows = ((CheckBox)sender).Checked.ToString();
+      HidXmlSchema.Usage attributes = (HidXmlSchema.Usage)data.Parameter;
+      attributes.ModifierWindows = ((CheckBox)sender).Checked;
       node.Text = attributes.GetText();
       changedSettings = true;
     }
@@ -2497,8 +2237,8 @@ namespace MediaPortal.InputDevices
     {
       TreeNode node = getNode("BUTTON");
       NodeData data = (NodeData)node.Tag;
-      HidButtonAttributes attributes = (HidButtonAttributes)data.Parameter;
-      attributes.ModifierAlt = ((CheckBox)sender).Checked.ToString();
+      HidXmlSchema.Usage attributes = (HidXmlSchema.Usage)data.Parameter;
+      attributes.ModifierAlt = ((CheckBox)sender).Checked;
       node.Text = attributes.GetText();
       changedSettings = true;
     }
@@ -2508,7 +2248,7 @@ namespace MediaPortal.InputDevices
       //Button code was changed
       TreeNode node = getNode("BUTTON");
       NodeData data = (NodeData)node.Tag;
-      HidButtonAttributes attributes = (HidButtonAttributes)data.Parameter;
+      HidXmlSchema.Usage attributes = (HidXmlSchema.Usage)data.Parameter;
       if (attributes.Code.Equals(attributes.Name))
       {
         //Change both code and name if they are already in sync

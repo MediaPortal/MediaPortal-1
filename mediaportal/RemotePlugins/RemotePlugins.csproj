@@ -119,6 +119,8 @@
       <Name>System</Name>
     </Reference>
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Windows.Forms">
       <Name>System.Windows.Forms</Name>
     </Reference>
@@ -222,6 +224,7 @@
     </Compile>
     <Compile Include="Remotes\HcwRemote\irremote.cs" />
     <Compile Include="Remotes\Hid\HidHandler.cs" />
+    <Compile Include="Remotes\Hid\HidXmlSchema.cs" />
     <Compile Include="Remotes\Hid\HidListener.cs">
       <SubType>Code</SubType>
     </Compile>

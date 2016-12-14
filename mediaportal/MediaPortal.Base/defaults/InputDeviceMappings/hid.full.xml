@@ -839,7 +839,7 @@
 
     <button code="GreenStart">
       <!-- Go back to home screen. Note for further dev 0 is the first home screen and 35 is the second home screen. -->
-      <action layer="0" condition="*" conproperty="-1" command="WINDOW" cmdproperty="0" sound="click.wav" focus="True" />
+      <action layer="0" condition="*" conproperty="-1" command="WINDOW" cmdproperty="0" sound="click.wav" focus="true" />
     </button>
 
     <!-- TV Power button closes MediaPortal, applies also if MP is not in the foreground -->
