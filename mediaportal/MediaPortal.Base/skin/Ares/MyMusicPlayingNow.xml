@@ -78,17 +78,6 @@
         <texture>Inf_gfx.png</texture>
       </control>	
 	
-	<control>
-      <description>Item Count</description>
-      <type>label</type>
-      <id>0</id>
-	  <posX>1865</posX>
-	  <posY>110</posY>
-      <label>#time</label>
-      <align>right</align>
-      <font>fontBold2</font>
-      <textcolor>eaeaea</textcolor>
-    </control>
 	
 	<!--List background-->
     
@@ -119,12 +108,14 @@
       <id>1</id>
       <type>image</type>
       <posX>1021</posX>
-      <posY>250</posY>
+      <posY>240</posY>
       <width>525</width>
       <height>525</height>
       <texture>cdblank.png</texture>
+	  <keepaspectratio>yes</keepaspectratio>
+      <centered>yes</centered>
       <visible>player.hasAudio+!control.hasthumb(11922)</visible>
-	  <animation effect="rotate" delay="0" end="-360" centre="475,258" time="30000" loop="true" condition="player.hasAudio">Conditional</animation>
+	  <animation effect="rotate" delay="0" end="-360" centre="262,262" time="30000" loop="true" condition="player.hasAudio">Conditional</animation>
 	  <colordiffuse>ffffffff</colordiffuse>
     </control>
 	
@@ -133,11 +124,13 @@
       <id>11922</id>
       <type>image</type>
       <posX>1021</posX>
-      <posY>250</posY>
+      <posY>240</posY>
       <width>525</width>
       <height>525</height>
-      <texture>..\..\..\thumbs\Music\CDArt\Fullsize\#Play.Current.Artist - #Play.Current.Album.png</texture>
-	  <animation effect="rotate" delay="0" end="-360" centre="475,258" time="30000" loop="true" condition="player.hasAudio">Conditional</animation>
+	  <keepaspectratio>yes</keepaspectratio>
+      <centered>yes</centered>
+      <texture>..\..\..\Thumbs\CDArt\Music\#Play.Current.AlbumArtist - #Play.Current.Album.png</texture>
+	  <animation effect="rotate" delay="0" end="-360" centre="262,262" time="30000" loop="true" condition="player.hasAudio">Conditional</animation>
 	  <colordiffuse>ffffffff</colordiffuse>
     </control>		
 	
@@ -222,7 +215,7 @@
         <posY>828</posY>
 		<height>190</height>
 		<width>190</width>
-        <texture mask="MAmask.png">##Play.Next.Thumb</texture>      
+        <texture mask="MAmask.png">#Play.Next.Thumb</texture>      
     </control>	
 	
 	<control>

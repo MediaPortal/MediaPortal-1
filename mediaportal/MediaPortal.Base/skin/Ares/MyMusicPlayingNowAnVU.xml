@@ -77,17 +77,6 @@
         <texture>Inf_gfx.png</texture>
       </control>	
 	
-	<control>
-      <description>Item Count</description>
-      <type>label</type>
-      <id>0</id>
-	  <posX>1865</posX>
-	  <posY>110</posY>
-      <label>#time</label>
-      <align>right</align>
-      <font>fontBold2</font>
-      <textcolor>eaeaea</textcolor>
-    </control>
 	
 	<!--List background-->
     

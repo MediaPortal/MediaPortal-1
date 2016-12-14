@@ -6,6 +6,8 @@
   <disabletopbar>yes</disabletopbar>
   <rememberLastFocusedControl>yes</rememberLastFocusedControl>
   <controls>
+  <import>PluginDefines.xml</import>	
+  
     <control>
       <description>BG</description>
       <type>image</type>
