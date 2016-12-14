@@ -95,8 +95,9 @@ namespace MediaPortal.GUI.Library
                         int dwShadowAngle, int dwShadowDistance, long dwShadowColor,
                         string strUserWrapString)
       : this(dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight, 
-             strFont, strLabel, dwTextColor, dwTextAlign, dwTextVAlign, bHasPath, 
-             dwShadowAngle, dwShadowDistance, dwShadowColor, strUserWrapString, 0, 0) { }
+             strFont, dwTextColor, dwTextAlign, dwTextVAlign, 
+             dwShadowAngle, dwShadowDistance, dwShadowColor, 
+             strUserWrapString, 0, 0) { }
 
     /// <summary>
     /// The constructor of the GUIFadeLabel class.
@@ -158,7 +159,7 @@ namespace MediaPortal.GUI.Library
 
       _labelControl = new GUILabelControl(_parentControlId, 0, _positionX, _positionY, _width, _height, _fontName,
                                           _label, _textColor, _textAlignment, _textVAlignment, false,
-                                          _shadowAngle, _shadowDistance, _shadowColor, _maxWidth, _maxHeight)
+                                          _shadowAngle, _shadowDistance, _shadowColor/*, _maxWidth, _maxHeight*/)
                         {
                           CacheFont = false,
                           ParentControl = this
@@ -268,24 +269,24 @@ namespace MediaPortal.GUI.Library
       // get the current label
       var strLabel = (string)_listLabels[_currentLabelIndex];
 
-      if (_maxWidth > 0)
+      /*if (_maxWidth > 0)
       {
         _labelControl.MinWidth = _width;
         _labelControl.MaxWidth = _maxWidth;
       }
       else
-      {
-        _labelControl.Width = _width;
-      }
+      {*/
+        _labelControl.Width = Width /*_width*/;
+      /*}
       if (_maxHeight > 0)
       {
         _labelControl.MinHeight = _height;
         _labelControl.MaxHeight = _maxHeight;
       }
       else
-      {
+      {*/
         _labelControl.Height = _height;
-      }
+      //}
       _labelControl.Label = strLabel;
       _labelControl.SetPosition(_positionX, _positionY);
       _labelControl.TextAlignment = _textAlignment;
@@ -337,19 +338,19 @@ namespace MediaPortal.GUI.Library
         dwAlpha |= (_shadowColor & 0x00ffffff);
         _labelControl.ShadowColor = dwAlpha;
 
-        if (_maxWidth == 0)
+        // if (_maxWidth == 0)
         {
           float fwt = 0;
-          _labelControl.Label = GetShortenedText(strLabel, _width, ref fwt);
+          _labelControl.Label = GetShortenedText(strLabel, Width, ref fwt);
           if (_textAlignment == Alignment.ALIGN_RIGHT)
           {
             _labelControl.Width = (int)(fwt);
           }
         }
-        else
+        /*else
         {
           _labelControl.Label = strLabel;
-        }
+        }*/
         _labelControl.Render(timePassed);
         if (_currentFrame >= 12)
         {
@@ -559,7 +560,7 @@ namespace MediaPortal.GUI.Library
         {
           case Alignment.ALIGN_RIGHT:
             float fwt = 0;
-            GetShortenedText(originalText, maxWidth /*_width*/, ref fwt);
+            GetShortenedText(originalText, (int)maxWidth /*_width*/, ref fwt);
             //xoff = textWidth >= _width ? 0 : _width - fwt;
             xoff = textWidth >= maxWidth /*_width*/ ? -fwt : maxWidth /*_width*/ - fwt;
             xclipoff = xoff;
@@ -878,7 +879,7 @@ namespace MediaPortal.GUI.Library
           }
           else
           {
-            return TextWidth + 1; // + 1 - Margin for not fade last char in label text
+            return TextWidth + 5; // + 1 - Margin for not fade last char in label text
           }
         }
         else
@@ -893,13 +894,11 @@ namespace MediaPortal.GUI.Library
           if (Width != value)
           {
             base.Width = value;
-            _reCalculate = true;
           }
         }
         else if (base.Width != value)
         {
           base.Width = value;
-          _reCalculate = true;
         }
       }
     }
@@ -935,13 +934,11 @@ namespace MediaPortal.GUI.Library
           if (Height != value)
           {
             base.Height = value;
-            _reCalculate = true;
           }
         }
         else if (base.Height != value)
         {
           base.Height = value;
-          _reCalculate = true;
         }
       }
     }
@@ -954,7 +951,6 @@ namespace MediaPortal.GUI.Library
         if (base.Width != value)
         {
           base.Width = value;
-          _reCalculate = true;
         }
       }
     }
@@ -967,7 +963,6 @@ namespace MediaPortal.GUI.Library
         if (base.Height != value)
         {
           base.Height = value;
-          _reCalculate = true;
         }
       }
     }
@@ -980,7 +975,6 @@ namespace MediaPortal.GUI.Library
         if (_maxWidth != value)
         {
           _maxWidth = value;
-          _reCalculate = true;
         }
       }
     }
@@ -993,7 +987,6 @@ namespace MediaPortal.GUI.Library
         if (_maxHeight != value)
         {
           _maxHeight = value;
-          _reCalculate = true;
         }
       }
     }
