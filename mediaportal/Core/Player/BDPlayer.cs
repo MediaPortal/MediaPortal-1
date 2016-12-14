@@ -1289,7 +1289,7 @@ namespace MediaPortal.Player
         }
         else if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
         {
-          if (!GUIGraphicsContext.IsWindowVisible &&  _isVisible)
+          if (!GUIGraphicsContext.IsWindowVisible && _isVisible)
           {
             GUIGraphicsContext.IsWindowVisible = true;
             if (!GUIGraphicsContext.IsFullScreenVideo)

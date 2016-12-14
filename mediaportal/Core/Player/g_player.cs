@@ -2630,7 +2630,6 @@ namespace MediaPortal.Player
 
     public static void Process()
     {
-      
       if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
           GUIGraphicsContext.Vmr9Active && VMR9Util.g_vmr9 != null)
       {
