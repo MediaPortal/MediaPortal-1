@@ -25,8 +25,9 @@
 #include "MultiFileWriter.h"
 #include <cstddef>      // NULL
 #include <cstring>      // memcpy()
-#include <cwchar>       // wcscpy(), wcslen(), wcstol()
-#include <Windows.h>    // MAX_PATH
+#include <cwchar>       // wcslen(), wcsncpy(), wcstol()
+#include <sstream>
+#include <string>
 #include "FileReader.h"
 #include "FileUtils.h"
 
@@ -140,19 +141,21 @@ HRESULT MultiFileWriter::OpenFile(const wchar_t* fileName, bool& resume)
   }
   if (resume)
   {
-    hr = m_fileData->OpenFile(m_dataFileNames[m_dataFileNames.size() - 1]);
+    hr = m_fileData->OpenFile(m_dataFileNames.back());
     if (FAILED(hr))
     {
-      LogDebug(L"multi file writer: failed to reopen last data file, hr = 0x%x, name = %s",
-                hr, m_dataFileNames[m_dataFileNames.size() - 1]);
+      LogDebug(L"multi file writer: failed to reopen previous data file, hr = 0x%x, name = %s",
+                hr, m_dataFileNames.back());
+      CloseFile();
       return hr;
     }
 
-    hr = m_fileData->SetFilePointer(m_dataFileSize, FILE_BEGIN);
+    hr = m_fileData->SetFilePointer(m_dataFileSize, true);
     if (FAILED(hr))
     {
-      LogDebug(L"multi file writer: failed to set the pointer for the last data file, hr = 0x%x, name = %s",
-                hr, m_dataFileNames[m_dataFileNames.size() - 1]);
+      LogDebug(L"multi file writer: failed to resume previous data file, hr = 0x%x, size = %llu, name = %s",
+                hr, m_dataFileSize, m_dataFileNames.back());
+      CloseFile();
       return hr;
     }
   }
@@ -178,7 +181,7 @@ HRESULT MultiFileWriter::OpenFile(const wchar_t* fileName, bool& resume)
     CloseFile();
     return E_OUTOFMEMORY;
   }
-  wcscpy(m_registerFileName, fileName);
+  wcsncpy(m_registerFileName, fileName, fileNameLength + 1);
 
   return S_OK;
 }
@@ -209,14 +212,16 @@ HRESULT MultiFileWriter::CloseFile()
   return S_OK;
 }
 
-HRESULT MultiFileWriter::Write(unsigned char* data, unsigned long dataLength, bool disableLogging)
+HRESULT MultiFileWriter::Write(unsigned char* data,
+                                unsigned long dataLength,
+                                bool isErrorLoggingEnabled)
 {
   //LogDebug(L"multi file writer: write, data length = %lu, name = %s",
   //          dataLength, m_registerFileName == NULL ? L"" : m_registerFileName);
 
   if (m_fileRegister == NULL || m_fileData == NULL)
   {
-    if (!disableLogging)
+    if (isErrorLoggingEnabled)
     {
       LogDebug(L"multi file writer: failed to write to file, file not open");
     }
@@ -225,9 +230,9 @@ HRESULT MultiFileWriter::Write(unsigned char* data, unsigned long dataLength, bo
 
   bool isDataFileChanged = false;
   HRESULT hr;
-  if (m_fileData->IsFileInvalid())
+  if (!m_fileData->IsFileOpen())
   {
-    hr = OpenDataFile(disableLogging);
+    hr = OpenDataFile(isErrorLoggingEnabled);
     if (FAILED(hr))
     {
       return hr;
@@ -243,7 +248,7 @@ HRESULT MultiFileWriter::Write(unsigned char* data, unsigned long dataLength, bo
     unsigned long dataToWrite = (unsigned long)fileSpace - dataLength;
     if (dataToWrite > 0)
     {
-      hr = m_fileData->Write(data, dataToWrite, disableLogging);
+      hr = m_fileData->Write(data, dataToWrite, isErrorLoggingEnabled);
       if (FAILED(hr))
       {
         return hr;
@@ -252,7 +257,7 @@ HRESULT MultiFileWriter::Write(unsigned char* data, unsigned long dataLength, bo
     }
 
     // Start a new file.
-    hr = OpenDataFile(disableLogging);
+    hr = OpenDataFile(isErrorLoggingEnabled);
     if (FAILED(hr))
     {
       return hr;
@@ -263,14 +268,22 @@ HRESULT MultiFileWriter::Write(unsigned char* data, unsigned long dataLength, bo
     dataLength -= dataToWrite;
   }
 
-  hr = m_fileData->Write(data, dataLength, disableLogging);
+  hr = m_fileData->Write(data, dataLength, isErrorLoggingEnabled);
   if (FAILED(hr))
   {
     return hr;
   }
 
   m_dataFileSize += dataLength;
-  return WriteRegisterFile(isDataFileChanged);
+  hr = WriteRegisterFile(isDataFileChanged);
+  if (hr != S_OK)
+  {
+    // If updating the register file fails (which it shouldn't, unless
+    // something is seriously ***seriously*** wrong!), indicate partial success
+    // and don't retry.
+    return S_FALSE;
+  }
+  return S_OK;
 }
 
 void MultiFileWriter::GetCurrentFilePosition(unsigned long& currentFileId,
@@ -290,21 +303,10 @@ void MultiFileWriter::SetConfiguration(MultiFileWriterParams& parameters)
             m_registerFileName == NULL ? L"" : m_registerFileName);
 
   m_dataFileSizeMaximum = parameters.MaximumFileSize;
+  m_dataFileReservationChunkSize = parameters.ReservationChunkSize;
   m_dataFileCountMinimum = parameters.FileCountMinimum;
   m_dataFileCountMaximum = parameters.FileCountMaximum;
 
-  m_dataFileReservationChunkSize = 0;
-  if (parameters.ReservationChunkSize != 0)
-  {
-    if (m_dataFileSizeMaximum % parameters.ReservationChunkSize == 0)
-    {
-      m_dataFileReservationChunkSize = parameters.ReservationChunkSize;
-    }
-    else
-    {
-      LogDebug(L"multi file writer: reservation disabled because chunk size is not a file size factor");
-    }
-  }
   if (m_fileData != NULL)
   {
     unsigned long long reservationChunkSize = m_dataFileReservationChunkSize;
@@ -316,7 +318,7 @@ void MultiFileWriter::SetConfiguration(MultiFileWriterParams& parameters)
   }
 }
 
-HRESULT MultiFileWriter::OpenDataFile(bool disableLogging)
+HRESULT MultiFileWriter::OpenDataFile(bool isErrorLoggingEnabled)
 {
   m_fileData->CloseFile();
   m_dataFileSize = 0;
@@ -328,56 +330,59 @@ HRESULT MultiFileWriter::OpenDataFile(bool disableLogging)
     availableDiskSpace < (m_dataFileSizeMaximum + RESERVED_DISK_SPACE)
   )
   {
-    if (!disableLogging)
+    if (isErrorLoggingEnabled)
     {
       LogDebug(L"multi file writer: not enough available disk space to create new data file, available disk space = %llu bytes, maximum data file size = %llu bytes, name = %s",
                 availableDiskSpace, m_dataFileSizeMaximum, m_registerFileName);
     }
-    return ReuseDataFile(disableLogging);
+    return ReuseDataFile(isErrorLoggingEnabled);
   }
 
   // Build up to the minimum data file count.
   if (m_dataFileNames.size() < m_dataFileCountMinimum) 
   {
-    return CreateDataFile(disableLogging);
+    return CreateDataFile(isErrorLoggingEnabled);
   }
 
   // If we already have the desired number of data files, prefer to reuse an
   // existing file. That may not be possible if time-shifting is paused. In
   // that case we try to create a new data file if configuration allows.
-  hr = ReuseDataFile(disableLogging);
+  hr = ReuseDataFile(isErrorLoggingEnabled);
   if (FAILED(hr) && m_dataFileNames.size() < m_dataFileCountMaximum)
   {
-    hr = CreateDataFile(disableLogging);
+    hr = CreateDataFile(isErrorLoggingEnabled);
   }
   return hr;
 }
 
-HRESULT MultiFileWriter::CreateDataFile(bool disableLogging)
+HRESULT MultiFileWriter::CreateDataFile(bool isErrorLoggingEnabled)
 {
   // Determine the name of the next data file.
-  wchar_t* fileName = new wchar_t[MAX_PATH];
+  wstring fileNameString;
+  do
+  {
+    wstringstream fileNameStream;
+    fileNameStream << m_registerFileName << m_dataFileIdNext++ << L".ts";
+    fileNameString = fileNameStream.str();
+  }
+  while (CFileUtils::Exists(fileNameString.c_str()));
+  wchar_t* fileName = new wchar_t[fileNameString.size() + 1];
   if (fileName == NULL)
   {
-    if (!disableLogging)
+    if (isErrorLoggingEnabled)
     {
-      LogDebug(L"multi file writer: failed to allocate %lu bytes for a data file name",
-                MAX_PATH);
+      LogDebug(L"multi file writer: failed to allocate %llu bytes for a data file name",
+                (unsigned long long)fileNameString.size() + 1);
     }
     return E_OUTOFMEMORY;
   }
-
-  do
-  {
-    swprintf(fileName, L"%s%lu.ts", MAX_PATH, m_registerFileName, m_dataFileIdNext++);
-  }
-  while (CFileUtils::Exists(fileName));
+  wcsncpy(fileName, fileNameString.c_str(), fileNameString.size() + 1);
 
   // Create the file and update the list of data file names.
-  HRESULT hr = m_fileData->OpenFile(fileName, disableLogging);
+  HRESULT hr = m_fileData->OpenFile(fileName, isErrorLoggingEnabled);
   if (FAILED(hr))
   {
-    if (!disableLogging)
+    if (isErrorLoggingEnabled)
     {
       LogDebug(L"multi file writer: failed to create new data file, hr = 0x%x, name = %s",
                 hr, fileName);
@@ -394,7 +399,7 @@ HRESULT MultiFileWriter::CreateDataFile(bool disableLogging)
   return S_OK;
 }
 
-HRESULT MultiFileWriter::ReuseDataFile(bool disableLogging)
+HRESULT MultiFileWriter::ReuseDataFile(bool isErrorLoggingEnabled)
 {
   // Try to reuse the oldest data file. The file may be locked:
   // - temporarily, if TsReader is doing a duration calculation
@@ -405,7 +410,7 @@ HRESULT MultiFileWriter::ReuseDataFile(bool disableLogging)
   for (retryCount = 0; retryCount < 5; retryCount++)
   {
     CFileUtils::DeleteFile(fileName);   // The file may only be marked for deletion.
-    hr = m_fileData->OpenFile(fileName, disableLogging);
+    hr = m_fileData->OpenFile(fileName, isErrorLoggingEnabled);
     if (SUCCEEDED(hr))
     {
       break;
@@ -415,7 +420,7 @@ HRESULT MultiFileWriter::ReuseDataFile(bool disableLogging)
 
   if (retryCount == 5)
   {
-    if (!disableLogging)
+    if (isErrorLoggingEnabled)
     {
       LogDebug(L"multi file writer: failed to reuse data file (is time-shifting paused?), hr = 0x%x, name = %s",
                 hr, fileName);
@@ -484,7 +489,7 @@ HRESULT MultiFileWriter::ReadRegisterFile(const wchar_t* fileName)
       return E_OUTOFMEMORY;
     }
 
-    wcscpy(dataFileName, (wchar_t*)readPointer);
+    wcsncpy(dataFileName, (wchar_t*)readPointer, fileNameLength);
     m_dataFileNames.push_back(dataFileName);
 
     if (!CFileUtils::Exists(fileName))
@@ -536,15 +541,16 @@ HRESULT MultiFileWriter::WriteRegisterFile(bool updateFileInfo)
 
       unsigned long length = wcslen(fileName) + 1;
       length *= sizeof(wchar_t);
-      memcpy(writePointer, fileName, length);
-      writePointer += length;
 
-      if (writePointer - m_registerFileWriteBuffer > REGISTER_FILE_WRITE_BUFFER_SIZE - MAX_PATH)
+      if (writePointer - m_registerFileWriteBuffer > (unsigned long long)REGISTER_FILE_WRITE_BUFFER_SIZE - length)
       {
         LogDebug(L"multi file writer: failed to write register file, data file count = %llu",
                   (unsigned long long)m_dataFileNames.size());
-        return S_FALSE;
+        return E_OUTOFMEMORY;
       }
+
+      memcpy(writePointer, fileName, length);
+      writePointer += length;
     }
 
     // Mark the end of the content with a Unicode null character.
@@ -559,10 +565,14 @@ HRESULT MultiFileWriter::WriteRegisterFile(bool updateFileInfo)
     writePointer += sizeof(unsigned long);
   }
 
-  return m_fileRegister->Write(m_registerFileWriteBuffer,
+  HRESULT hr = m_fileRegister->SetFilePointer(0, true);
+  if (SUCCEEDED(hr))
+  {
+    hr = m_fileRegister->Write(m_registerFileWriteBuffer,
                                 writePointer - m_registerFileWriteBuffer,
-                                false,
-                                0);
+                                true);
+  }
+  return hr;
 }
 
 void MultiFileWriter::ResetDataFileProperties()

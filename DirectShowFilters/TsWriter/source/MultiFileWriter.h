@@ -50,16 +50,16 @@ class MultiFileWriter
     HRESULT OpenFile(const wchar_t* fileName, bool& resume);
     HRESULT CloseFile();
   
-    HRESULT Write(unsigned char* data, unsigned long dataLength, bool disableLogging);
+    HRESULT Write(unsigned char* data, unsigned long dataLength, bool isErrorLoggingEnabled);
 
     void GetCurrentFilePosition(unsigned long& currentFileId,
                                 unsigned long long& currentFilePointer);
     void SetConfiguration(MultiFileWriterParams& parameters);
 
   protected:
-    HRESULT OpenDataFile(bool disableLogging);
-    HRESULT CreateDataFile(bool disableLogging);
-    HRESULT ReuseDataFile(bool disableLogging);
+    HRESULT OpenDataFile(bool isErrorLoggingEnabled);
+    HRESULT CreateDataFile(bool isErrorLoggingEnabled);
+    HRESULT ReuseDataFile(bool isErrorLoggingEnabled);
 
     HRESULT ReadRegisterFile(const wchar_t* fileName);
     HRESULT WriteRegisterFile(bool updateFileInfo);

@@ -19,6 +19,7 @@
  *
  */
 #pragma once
+#include <string>
 #include <Windows.h>    // DeleteFileW(), GetDiskFreeSpaceEx(), GetFileAttributesW(), GetVolumePathName(), INVALID_FILE_ATTRIBUTES, MAX_PATH
 #include <WinError.h>   // HRESULT, HRESULT_FROM_WIN32()
 
@@ -32,12 +33,16 @@ class CFileUtils
   public:
     static void DeleteFile(const wchar_t* fileName)
     {
-      ::DeleteFileW(fileName);
+      wstring tempFileName(L"\\\\?\\");
+      tempFileName += fileName;
+      ::DeleteFileW(tempFileName.c_str());
     }
 
     static bool Exists(const wchar_t* fileName)
     {
-      return GetFileAttributesW(fileName) != INVALID_FILE_ATTRIBUTES;
+      wstring tempFileName(L"\\\\?\\");
+      tempFileName += fileName;
+      return GetFileAttributesW(tempFileName.c_str()) != INVALID_FILE_ATTRIBUTES;
     }
 
     static HRESULT GetAvailableDiskSpace(const wchar_t* path,

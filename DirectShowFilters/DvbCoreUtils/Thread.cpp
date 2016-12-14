@@ -31,7 +31,7 @@ CThread::CThread()
   m_thread = INVALID_HANDLE_VALUE;
   m_wakeEvent = NULL;
   m_stopSignal = true;
-  m_frequency = 50;
+  m_frequency = INFINITE;
   m_function = NULL;
   m_context = NULL;
 }
@@ -44,7 +44,7 @@ CThread::~CThread()
 bool CThread::Start(unsigned long frequency, bool (*function)(void*), void* context)
 {
   LogDebug(L"thread: start");
-  m_wakeEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
+  m_wakeEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
   if (m_wakeEvent == NULL)
   {
     LogDebug(L"thread: failed to create wake event, error = %lu",

@@ -396,11 +396,11 @@ HRESULT CDiskRecorder::Start()
         return E_OUTOFMEMORY;
       }
 
-      HRESULT hr = m_fileRecording->OpenFile(fileName.c_str());
+      HRESULT hr = m_fileRecording->OpenFile(m_fileName.c_str());
       if (FAILED(hr))
       {
         WriteLog(L"failed to open file, hr = 0x%x, file = %s",
-                  hr, fileName.c_str());
+                  hr, m_fileName.c_str());
         delete m_fileRecording;
         m_fileRecording = NULL;
         return hr;

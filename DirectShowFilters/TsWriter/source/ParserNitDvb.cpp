@@ -20,8 +20,9 @@
  */
 #include "ParserNitDvb.h"
 #include <algorithm>  // find()
+#include <cstddef>    // NULL
 #include <cstring>    // strcmp(), strlen(), strncmp(), strncpy()
-#include <cwchar>     // wcscmp()
+#include <cwchar>     // wcscmp(), wcsncpy()
 #include <sstream>
 #include <string>
 #include "..\..\shared\EnterCriticalSection.h"
@@ -69,6 +70,7 @@ void CParserNitDvb::SetPid(unsigned short pid)
   ss << L"NIT DVB " << pid;
   wstring s = ss.str();
   wcsncpy(m_name, s.c_str(), sizeof(m_name) / sizeof(m_name[0]));
+  m_name[sizeof(m_name) - 1] = NULL;
   CSectionDecoder::SetPid(pid);
   CSectionDecoder::Reset();
 }

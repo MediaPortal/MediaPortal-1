@@ -211,7 +211,7 @@ STDMETHODIMP CMuxInputPin::Receive(IMediaSample* sample)
     if (m_isDumpEnabled)
     {
       CAutoLock lock(&m_dumpLock);
-      if (!m_dumpFileWriter.IsFileInvalid())
+      if (m_dumpFileWriter.IsFileOpen())
       {
         LogDebug(L"input: pin %hhu dumping %ld bytes, start time = %lld, stop time = %lld",
                   m_pinId, sampleLength, startTime, stopTime);

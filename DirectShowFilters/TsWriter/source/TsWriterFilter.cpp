@@ -148,7 +148,6 @@ STDMETHODIMP CTsWriterFilter::Run(REFERENCE_TIME startTime)
   {
     LogDebug(L"filter: configure dumping, OOB SI = %d, TS = %d...",
               isDebugEnabledOobSi, isDebugEnabledTs);
-    wstringstream fileName;
     if (isDebugEnabledOobSi)
     {
       wstring fileName(m_debugPath);
@@ -188,7 +187,7 @@ STDMETHODIMP CTsWriterFilter::Stop()
   return hr;
 }
 
-STDMETHODIMP CTsWriterFilter::SetDumpFilePath(const wchar_t* path)
+HRESULT CTsWriterFilter::SetDumpFilePath(const wchar_t* path)
 {
   if (path == NULL)
   {

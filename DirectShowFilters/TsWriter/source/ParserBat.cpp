@@ -19,6 +19,7 @@
  *
  */
 #include "ParserBat.h"
+#include <cstddef>    // NULL
 #include <cwchar>     // wcsncpy()
 #include <sstream>
 #include <string>
@@ -48,6 +49,7 @@ void CParserBat::SetPid(unsigned short pid)
   ss << L"BAT " << pid;
   wstring s = ss.str();
   wcsncpy(m_name, s.c_str(), sizeof(m_name) / sizeof(m_name[0]));
+  m_name[sizeof(m_name) - 1] = NULL;
   CSectionDecoder::SetPid(pid);
   CSectionDecoder::Reset();
 }

@@ -144,7 +144,7 @@ STDMETHODIMP CInputPinTs::Receive(IMediaSample* sample)
     if (m_isDumpEnabled)
     {
       CAutoLock lock(&m_dumpLock);
-      if (!m_dumpFileWriter.IsFileInvalid())
+      if (m_dumpFileWriter.IsFileOpen())
       {
         LogDebug(L"TS input: dumping %ld bytes", sampleLength);
         m_dumpFileWriter.Write(data, sampleLength);

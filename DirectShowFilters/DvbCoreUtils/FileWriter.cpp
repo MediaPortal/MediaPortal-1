@@ -25,25 +25,33 @@
 #include "..\shared\FileWriter.h"
 #include <cstddef>    // NULL
 #include <cstring>    // memcpy()
-#include <cwchar>     // wcscpy(), wcslen()
 #include <sstream>
-#include <Windows.h>  // CloseHandle(), CreateFileW(), MAX_PATH
+#include <string>
+#include <Windows.h>  // CloseHandle(), CreateFileW(), SetFilePointer(), SetEndOfFile(), WriteFile()
+#include "..\shared\EnterCriticalSection.h"
 
-using namespace std;
+
+#define ASYNC_DATA_QUEUE_LENGTH_LIMIT 200
 
 
 extern void LogDebug(const wchar_t* fmt, ...);
 
 FileWriter::FileWriter()
 {
+  m_isFileOpen = false;
   m_fileHandle = INVALID_HANDLE_VALUE;
   m_fileName = NULL;
-  m_filePart = 2;
+  m_filePart = 1;
+
+  m_useAsyncAccess = true;
+  m_asyncAccessResult = S_OK;
+  m_asyncDataOffset = 0;
+  m_asyncDataQueueLengthMaximum = 0;
+  m_isAsyncDataQueueFull = false;
+
   m_useReservations = false;
   m_reservedFileSize = 0;
   m_reservationChunkSize = 2000000;
-  m_useAsync = true;
-  m_asyncDataOffset = 0;
 }
 
 FileWriter::~FileWriter()
@@ -59,21 +67,125 @@ HRESULT FileWriter::GetFileName(wchar_t** fileName)
 
 HRESULT FileWriter::OpenFile(const wchar_t* fileName)
 {
-  return OpenFile(fileName, false);
+  return OpenFile(fileName, true, false);
 }
 
-HRESULT FileWriter::OpenFile(const wchar_t* fileName, bool disableLogging)
+HRESULT FileWriter::OpenFile(const wchar_t* fileName, bool isLoggingEnabled)
 {
-  if (!disableLogging)
+  return OpenFile(fileName, isLoggingEnabled, false);
+}
+
+HRESULT FileWriter::CloseFile()
+{
+  return CloseFile(false);
+}
+
+HRESULT FileWriter::Write(unsigned char* data, unsigned long dataLength)
+{
+  return Write(data, dataLength, true);
+}
+
+HRESULT FileWriter::Write(unsigned char* data, unsigned long dataLength, bool isErrorLoggingEnabled)
+{
+  if (!m_isFileOpen)
   {
-    LogDebug(L"file writer: open file, name = %s",
-              fileName == NULL ? L"" : fileName);
+    if (isErrorLoggingEnabled)
+    {
+      LogDebug(L"file writer: failed to write to file, file is not open");
+    }
+    return S_FALSE;
+  }
+
+  if (!m_useAsyncAccess)
+  {
+    return WriteInternal(data, dataLength, isErrorLoggingEnabled, false);
+  }
+
+  HRESULT hr;
+  CWriteBuffer* buffer = CWriteBuffer::CreateBuffer(data, dataLength, hr);
+  if (buffer == NULL)
+  {
+    if (isErrorLoggingEnabled)
+    {
+      LogDebug(L"file writer: failed to write to file, failed to create data buffer, hr = 0x%x, is data valid = %d, data length = %lu",
+                hr, data != NULL, dataLength);
+    }
+    return E_OUTOFMEMORY;
+  }
+  return EnqueueBuffer(buffer, isErrorLoggingEnabled);
+}
+
+bool FileWriter::IsFileOpen()
+{
+  return m_isFileOpen;
+}
+
+HRESULT FileWriter::SetFilePointer(unsigned long long pointer, bool isErrorLoggingEnabled)
+{
+  if (!m_isFileOpen)
+  {
+    if (isErrorLoggingEnabled)
+    {
+      LogDebug(L"file writer: failed to set file pointer, file is not open");
+    }
+    return S_FALSE;
+  }
+
+  if (!m_useAsyncAccess)
+  {
+    return SetFilePointer((long long)pointer, FILE_BEGIN, isErrorLoggingEnabled);
+  }
+
+  HRESULT hr;
+  CWriteBuffer* buffer = CWriteBuffer::CreateBuffer((long long)pointer, hr);
+  if (buffer == NULL)
+  {
+    if (isErrorLoggingEnabled)
+    {
+      LogDebug(L"file writer: failed to set file pointer, failed to create position buffer, hr = 0x%x, pointer = %llu",
+                hr, pointer);
+    }
+    return E_OUTOFMEMORY;
+  }
+  return EnqueueBuffer(buffer, isErrorLoggingEnabled);
+}
+
+HRESULT FileWriter::GetFilePointer(unsigned long long& pointer, bool isErrorLoggingEnabled)
+{
+  if (m_useAsyncAccess)
+  {
+    pointer = m_asyncDataOffset;
+    return S_OK;
+  }
+  return GetFilePointerInternal(pointer, isErrorLoggingEnabled);
+}
+
+void FileWriter::SetReservationConfiguration(unsigned long long reservationChunkSize)
+{
+  LogDebug(L"file writer: set reservation configuration, chunk size = %llu",
+            reservationChunkSize);
+  m_useReservations = reservationChunkSize != 0;
+  if (m_useReservations)
+  {
+    m_reservationChunkSize = reservationChunkSize;
+  }
+}
+
+HRESULT FileWriter::OpenFile(const wchar_t* fileName, bool isLoggingEnabled, bool isPartFile)
+{
+  if (isLoggingEnabled)
+  {
+    LogDebug(L"file writer: open file, name = %s, part number = %hhu",
+              fileName == NULL ? L"" : fileName, m_filePart);
   }
 
   // Is the file already open?
-  if (m_fileHandle != INVALID_HANDLE_VALUE)
+  if (
+    (!isPartFile && m_isFileOpen) ||
+    (isPartFile && m_fileHandle != INVALID_HANDLE_VALUE)
+  )
   {
-    if (!disableLogging)
+    if (isLoggingEnabled)
     {
       LogDebug(L"file writer: file already open, current = %s, requested = %s",
                 m_fileName == NULL ? L"" : m_fileName,
@@ -83,27 +195,29 @@ HRESULT FileWriter::OpenFile(const wchar_t* fileName, bool disableLogging)
   }
 
   // Is the file name valid?
-  if (fileName == NULL)
+  wstring actualFileName(L"\\\\?\\");
+  if (isPartFile)
   {
-    if (!disableLogging)
-    {
-      LogDebug(L"file writer: failed to open file, name not supplied");
-    }
-    return E_INVALIDARG;
+    actualFileName += m_fileName;
+    wstringstream tempFileName;
+    tempFileName << actualFileName.substr(0, actualFileName.find_last_of(L".")) << L"_p" << m_filePart << L".ts";
+    actualFileName = tempFileName.str();
   }
-  unsigned long fileNameLength = wcslen(fileName);
-  if (fileNameLength > MAX_PATH)
+  else
   {
-    if (!disableLogging)
+    if (fileName == NULL)
     {
-      LogDebug(L"file writer: failed to open file, name length = %lu, maximum name length = %lu, name = %s",
-                fileNameLength, MAX_PATH, fileName);
+      if (isLoggingEnabled)
+      {
+        LogDebug(L"file writer: failed to open file, name not supplied");
+      }
+      return E_INVALIDARG;
     }
-    return CO_E_PATHTOOLONG;
+    actualFileName += fileName;
   }
 
-  // See if the file is being read.
-  m_fileHandle = CreateFileW(fileName,                // file name
+  // Check if the file is being read.
+  m_fileHandle = CreateFileW(actualFileName.c_str(),  // file name
                               GENERIC_WRITE,          // file access
                               0,                      // share access
                               NULL,                   // security
@@ -114,145 +228,263 @@ HRESULT FileWriter::OpenFile(const wchar_t* fileName, bool disableLogging)
   {
     DWORD errorCode = GetLastError();
     HRESULT hr = HRESULT_FROM_WIN32(errorCode);
-    if (!disableLogging)
+    if (isLoggingEnabled)
     {
       LogDebug(L"file writer: failed to open file exclusively, error = %lu, hr = 0x%x, name = %s",
-                errorCode, hr, fileName);
+                errorCode, hr, actualFileName.c_str());
     }
     return hr;
   }
   CloseHandle(m_fileHandle);
 
   // Try to open the file.
-  DWORD flagsAndAttributes = FILE_ATTRIBUTE_NORMAL;
-  if (m_useAsync)
-  {
-    flagsAndAttributes |= FILE_FLAG_OVERLAPPED;
-  }
-  m_fileHandle = CreateFileW(fileName,                // file name
+  m_fileHandle = CreateFileW(actualFileName.c_str(),  // file name
                               GENERIC_WRITE,          // file access
                               FILE_SHARE_READ,        // share access
                               NULL,                   // security
                               OPEN_ALWAYS,            // open flags
-                              flagsAndAttributes,     // more flags
+                              FILE_ATTRIBUTE_NORMAL,  // more flags
                               NULL);                  // template
   if (m_fileHandle == INVALID_HANDLE_VALUE)
   {
     DWORD errorCode = GetLastError();
     HRESULT hr = HRESULT_FROM_WIN32(errorCode);
-    if (!disableLogging)
+    if (isLoggingEnabled)
     {
-      LogDebug(L"file writer: failed to open file, error = %lu, hr = 0x%x, use async = %d, name = %s",
-                errorCode, hr, m_useAsync, fileName);
+      LogDebug(L"file writer: failed to open file, error = %lu, hr = 0x%x, name = %s",
+                errorCode, hr, actualFileName.c_str());
     }
     return hr;
   }
 
-  // Take a copy of the file name.
-  if (m_fileName != NULL)
+  if (!isPartFile)
   {
-    delete[] m_fileName;
-  }
-  m_fileName = new wchar_t[fileNameLength + 1];
-  if (m_fileName == NULL)
-  {
-    if (!disableLogging)
+    // Take a copy of the file name.
+    wchar_t* newFileName = new wchar_t[actualFileName.size() + 1];
+    if (newFileName == NULL)
     {
-      LogDebug(L"file writer: failed to allocate %lu bytes for a file name copy, name = %s",
-                fileNameLength, fileName);
+      if (isLoggingEnabled)
+      {
+        LogDebug(L"file writer: failed to allocate %llu bytes for a file name copy, name = %s",
+                  (unsigned long long)actualFileName.size() + 1, fileName);
+      }
+      CloseHandle(m_fileHandle);
+      m_fileHandle = INVALID_HANDLE_VALUE;
+      return E_OUTOFMEMORY;
     }
-    CloseHandle(m_fileHandle);
-    m_fileHandle = INVALID_HANDLE_VALUE;
-    return E_OUTOFMEMORY;
-  }
-  wcscpy(m_fileName, fileName);
+    wcsncpy(newFileName, fileName, actualFileName.size() + 1);
 
-  m_filePart = 2;
+    if (m_fileName != NULL)
+    {
+      delete[] m_fileName;
+    }
+    m_fileName = newFileName;
+
+    if (m_useAsyncAccess && !m_asyncAccessThread.Start(50, &FileWriter::AsyncThreadFunction, this))
+    {
+      LogDebug(L"file writer: failed to start async access thread, falling back to synchronous access");
+      m_useAsyncAccess = false;
+    }
+
+    m_filePart = 1;
+  }
+
+  m_isFileOpen = true;
+  m_reservedFileSize = 0;
   m_asyncDataOffset = 0;
-  SetFilePointer(0, FILE_END);
-  GetFilePointer(m_reservedFileSize);
-  SetFilePointer(0, FILE_BEGIN);
+  m_asyncDataQueueLengthMaximum = 0;
+  m_isAsyncDataQueueFull = false;
   return S_OK;
 }
 
-HRESULT FileWriter::CloseFile()
+HRESULT FileWriter::CloseFile(bool isPartFile)
 {
-  if (m_fileHandle == INVALID_HANDLE_VALUE)
+  if (isPartFile || (!isPartFile && !m_isFileOpen))
   {
     return S_FALSE;
   }
 
-  LogDebug(L"file writer: close file, name = %s",
-            m_fileName == NULL ? L"" : m_fileName);
-  if (m_useReservations)
+  LogDebug(L"file writer: close file, name = %s, part number = %hhu, max queue length = %lu",
+            m_fileName == NULL ? L"" : m_fileName, m_filePart,
+            m_asyncDataQueueLengthMaximum);
+
+  if (m_useAsyncAccess && !isPartFile)
   {
-    unsigned long long currentPosition;
-    if (SUCCEEDED(GetFilePointer(currentPosition)))
+    if (!m_isAsyncDataQueueFull)
     {
-      SetFilePointer(currentPosition, FILE_BEGIN);
+      m_asyncAccessThread.Wake();   // flush
     }
-    SetEndOfFile(m_fileHandle);
-  }
-
-  CloseHandle(m_fileHandle);
-  m_fileHandle = INVALID_HANDLE_VALUE;
-
-  if (m_fileName != NULL)
-  {
-    delete[] m_fileName;
-    m_fileName = NULL;
-  }
-  return S_OK;
-}
-
-HRESULT FileWriter::Write(unsigned char* data, unsigned long dataLength)
-{
-  return WriteInternal(data, dataLength, false, false);
-}
-
-HRESULT FileWriter::Write(unsigned char* data, unsigned long dataLength, bool disableLogging)
-{
-  return WriteInternal(data, dataLength, disableLogging, false);
-}
-
-HRESULT FileWriter::Write(unsigned char* data,
-                          unsigned long dataLength,
-                          bool disableLogging,
-                          unsigned long long offset)
-{
-  m_asyncDataOffset = offset;
-  SetFilePointer(offset, FILE_BEGIN);
-  return WriteInternal(data, dataLength, disableLogging, false);
-}
-
-bool FileWriter::IsFileInvalid()
-{
-  return m_fileHandle == INVALID_HANDLE_VALUE;
-}
-
-HRESULT FileWriter::SetFilePointer(long long distanceToMove, DWORD moveMethod)
-{
-  //LogDebug(L"file writer: set file pointer, distance to move = %lld, move method = %lu, name = %s",
-  //          distanceToMove, moveMethod, m_fileName == NULL ? L"" : m_fileName);
-  LARGE_INTEGER temp;
-  temp.QuadPart = distanceToMove;
-  DWORD result = ::SetFilePointer(m_fileHandle, temp.LowPart, &temp.HighPart, moveMethod);
-  if (result == INVALID_SET_FILE_POINTER)
-  {
-    DWORD errorCode = GetLastError();
-    if (errorCode != NO_ERROR)
+    m_asyncAccessThread.Stop();
+    for (vector<CWriteBuffer*>::iterator it = m_asyncDataQueue.begin(); it != m_asyncDataQueue.end(); it++)
     {
-      HRESULT hr = HRESULT_FROM_WIN32(errorCode);
-      LogDebug(L"file writer: failed to set file pointer, distance to move = %lld, move method = %lu, error = %lu, hr = 0x%x, name = %s",
-                distanceToMove, moveMethod, errorCode, hr,
-                m_fileName == NULL ? L"" : m_fileName);
+      CWriteBuffer* buffer = *it;
+      if (buffer != NULL)
+      {
+        delete buffer;
+        *it = NULL;
+      }
+    }
+    m_asyncDataQueue.clear();
+  }
+
+  HRESULT hr = S_OK;
+  if (m_fileHandle != INVALID_HANDLE_VALUE)
+  {
+    // Reservation config may have changed mid-file, so don't rely on
+    // m_useReservations.
+    unsigned long long currentPosition;
+    hr = GetFilePointerInternal(currentPosition, true);
+    if (FAILED(hr) || m_reservedFileSize > currentPosition)
+    {
+      BOOL setEndOfFileResult = SetEndOfFile(m_fileHandle);
+      if (setEndOfFileResult != TRUE)
+      {
+        DWORD errorCode = GetLastError();
+        hr = HRESULT_FROM_WIN32(errorCode);
+        LogDebug(L"file writer: failed to set end of file on close, error = %lu, hr = 0x%x, current position = %llu, reserved file size = %llu, name = %s, part number = %hhu",
+                  errorCode, hr, currentPosition, m_reservedFileSize,
+                  m_fileName == NULL ? L"" : m_fileName, m_filePart);
+      }
+    }
+
+    CloseHandle(m_fileHandle);
+    m_fileHandle = INVALID_HANDLE_VALUE;
+  }
+
+  if (!isPartFile)
+  {
+    if (m_fileName != NULL)
+    {
+      delete[] m_fileName;
+      m_fileName = NULL;
+    }
+    m_filePart = 1;
+
+    m_isFileOpen = false;
+  }
+  return hr;
+}
+
+HRESULT FileWriter::WriteInternal(unsigned char* data,
+                                  unsigned long dataLength,
+                                  bool isErrorLoggingEnabled,
+                                  bool isRecursive)
+{
+  //LogDebug(L"file writer: write, data length = %lu, is recursive = %d, use async access = %d, use reservations = %d, name = %s, part number = %hhu",
+  //          dataLength, isRecursive, m_useAsyncAccess, m_useReservations,
+  //          m_fileName == NULL ? L"" : m_fileName, m_filePart);
+
+  // If there's no data or the file is not open, don't continue.
+  HRESULT hr;
+  BOOL result;
+  if (m_fileHandle == INVALID_HANDLE_VALUE)
+  {
+    hr = OpenFile(m_fileName, isErrorLoggingEnabled, true);
+    if (FAILED(hr))
+    {
       return hr;
     }
   }
+  if (data == NULL || dataLength == 0)
+  {
+    if (isErrorLoggingEnabled)
+    {
+      LogDebug(L"file writer: failed to write to file, data length = %lu, name = %s, part number = %hhu",
+                dataLength, m_fileName == NULL ? L"" : m_fileName, m_filePart);
+    }
+    return S_FALSE;
+  }
+
+  if (m_useReservations)
+  {
+    // Reserve more space if necessary.
+    unsigned long long currentPosition;
+    GetFilePointerInternal(currentPosition, isErrorLoggingEnabled);
+    if (currentPosition + dataLength > m_reservedFileSize)
+    {
+      //LogDebug(L"file writer: extend reservation, current position = %llu, data length = %lu, reserved file size = %llu, reservation chunk size = %llu, name = %s, part number = %hhu",
+      //          currentPosition, dataLength, m_reservedFileSize,
+      //          m_reservationChunkSize,
+      //          m_fileName == NULL ? L"" : m_fileName, m_filePart);
+      while (currentPosition + dataLength > m_reservedFileSize)
+      {
+        m_reservedFileSize += m_reservationChunkSize;
+      }
+
+      bool extendReservationSuccess = false;
+      hr = SetFilePointer(m_reservedFileSize, FILE_BEGIN, isErrorLoggingEnabled);
+      if (SUCCEEDED(hr))
+      {
+        result = SetEndOfFile(m_fileHandle);
+        if (result != TRUE)
+        {
+          hr = HRESULT_FROM_WIN32(GetLastError());
+        }
+        else
+        {
+          hr = SetFilePointer(currentPosition, FILE_BEGIN, isErrorLoggingEnabled);
+          if (SUCCEEDED(hr))
+          {
+            extendReservationSuccess = true;
+          }
+        }
+      }
+      if (!extendReservationSuccess)
+      {
+        DWORD errorCode = GetLastError();
+        LogDebug(L"file writer: failed to extend reservation, error = %lu, hr = 0x%x, current position = %llu, target reservation = %llu, name = %s, part number = %hhu",
+                  errorCode, hr, currentPosition, m_reservedFileSize,
+                  m_fileName, m_filePart);
+      }
+    }
+  }
+
+  DWORD written = 0;
+  result = WriteFile(m_fileHandle, data, dataLength, &written, NULL);
+  if (result == FALSE)
+  {
+    DWORD errorCode = GetLastError();
+    if (isRecursive || errorCode != ERROR_FILE_TOO_LARGE)
+    {
+      hr = HRESULT_FROM_WIN32(errorCode);
+      if (isErrorLoggingEnabled)
+      {
+        LogDebug(L"file writer: failed to write to file, error = %lu, hr = 0x%x, data length = %lu, name = %s, part number = %hhu",
+                  errorCode, hr, dataLength, m_fileName, m_filePart);
+      }
+      return hr;
+    }
+
+    // If the file system is formatted with FAT16 or FAT32 then we have file
+    // size limits (2 GB and 4 GB respectively). Close the current file and
+    // create a new one, then try to write again.
+    LogDebug(L"file writer: reached file system maximum file size, name = %s, part number = %hhu",
+              m_fileName, m_filePart);
+    m_filePart++;
+    CloseFile(true);
+    hr = OpenFile(m_fileName, isErrorLoggingEnabled, true);
+    if (FAILED(hr))
+    {
+      return hr;
+    }
+    return WriteInternal(data, dataLength, isErrorLoggingEnabled, true);
+  }
+
+  m_asyncDataOffset += written;
+  if (written < dataLength)
+  {
+    if (isErrorLoggingEnabled)
+    {
+      LogDebug(L"file writer: failed to complete write to file, data length = %lu, written = %lu, name = %s, part number = %hhu",
+                dataLength, written, m_fileName, m_filePart);
+    }
+    return S_FALSE;
+  }
+
   return S_OK;
 }
 
-HRESULT FileWriter::GetFilePointer(unsigned long long& pointer)
+HRESULT FileWriter::GetFilePointerInternal(unsigned long long& pointer, bool isErrorLoggingEnabled)
 {
   pointer = 0;
   LARGE_INTEGER temp;
@@ -264,230 +496,163 @@ HRESULT FileWriter::GetFilePointer(unsigned long long& pointer)
     if (errorCode != NO_ERROR)
     {
       HRESULT hr = HRESULT_FROM_WIN32(errorCode);
-      LogDebug(L"file writer: failed to get file pointer, error = %lu, hr = 0x%x, name = %s",
-                errorCode, hr, m_fileName == NULL ? L"" : m_fileName);
+      if (isErrorLoggingEnabled)
+      {
+        LogDebug(L"file writer: failed to get file pointer, error = %lu, hr = 0x%x, name = %s, part number = %hhu",
+                  errorCode, hr, m_fileName == NULL ? L"" : m_fileName,
+                  m_filePart);
+      }
       return hr;
     }
   }
   pointer = temp.QuadPart;
-  //LogDebug(L"file writer: get file pointer, pointer = %llu, name = %s", pointer, m_fileName == NULL ? L"" : m_fileName);
+  //LogDebug(L"file writer: get file pointer, pointer = %llu, name = %s, part number = %hhu",
+  //          pointer, m_fileName == NULL ? L"" : m_fileName, m_filePart);
   return S_OK;
 }
 
-void FileWriter::SetReservationConfiguration(unsigned long long reservationChunkSize)
+HRESULT FileWriter::SetFilePointer(long long distanceToMove,
+                                    DWORD moveMethod,
+                                    bool isErrorLoggingEnabled)
 {
-  LogDebug(L"file writer: set reservation configuration, chunk size = %llu",
-            reservationChunkSize);
-  m_useReservations = reservationChunkSize != 0;
-  if (m_useReservations)
-  {
-    m_reservedFileSize = 0;
-    m_reservationChunkSize = reservationChunkSize;
-  }
-}
-
-HRESULT FileWriter::WriteInternal(unsigned char* data,
-                                  unsigned long dataLength,
-                                  bool disableLogging,
-                                  bool isRecursive)
-{
-  //LogDebug(L"file writer: write, data length = %lu, is recursive = %d, use async = %d, use reservations = %d, name = %s",
-  //          dataLength, isRecursive, m_useAsync, m_useReservations,
-  //          m_fileName == NULL ? L"" : m_fileName);
-
-  // If there's no data or the file is not open, don't continue.
+  //LogDebug(L"file writer: set file pointer, distance to move = %lld, move method = %lu, name = %s, part number = %hhu",
+  //          distanceToMove, moveMethod, m_fileName == NULL ? L"" : m_fileName,
+  //          m_filePart);
   if (m_fileHandle == INVALID_HANDLE_VALUE)
   {
-    if (!disableLogging)
-    {
-      LogDebug(L"file writer: failed to write to file, file not open");
-    }
-    return S_FALSE;
-  }
-  if (data == NULL || dataLength == 0)
-  {
-    if (!disableLogging)
-    {
-      LogDebug(L"file writer: failed to write to file, data length = %lu, name = %s",
-                dataLength, m_fileName == NULL ? L"" : m_fileName);
-    }
-    return S_FALSE;
+    return E_HANDLE;
   }
 
-  if (m_useReservations)
-  {
-    // Reserve more space if necessary.
-    unsigned long long currentPosition;
-    if (m_useAsync)
-    {
-      currentPosition = m_asyncDataOffset;
-    }
-    else
-    {
-      GetFilePointer(currentPosition);
-    }
-    if (currentPosition + dataLength > m_reservedFileSize)
-    {
-      //LogDebug(L"file writer: extend reservation, current position = %llu, data length = %lu, reserved file size = %llu, reservation chunk size = %llu, name = %s",
-      //          currentPosition, dataLength, m_reservedFileSize,
-      //          m_reservationChunkSize,
-      //          m_fileName == NULL ? L"" : m_fileName);
-      while (currentPosition + dataLength > m_reservedFileSize)
-      {
-        m_reservedFileSize += m_reservationChunkSize;
-      }
-
-      SetFilePointer(m_reservedFileSize, FILE_BEGIN);
-      SetEndOfFile(m_fileHandle);
-      SetFilePointer(currentPosition, FILE_BEGIN);
-    }
-  }
-
-  DWORD written = 0;
-  BOOL result = FALSE;
-  OVERLAPPEDEX* overlapped = NULL;
-  if (!m_useAsync)
-  {
-    result = WriteFile(m_fileHandle, data, dataLength, &written, NULL);
-  }
-  else
-  {
-    overlapped = new OVERLAPPEDEX();
-    if (overlapped == NULL)
-    {
-      if (!disableLogging)
-      {
-        LogDebug(L"file writer: failed to allocate overlapped structure, name = %s",
-                  m_fileName == NULL ? L"" : m_fileName);
-      }
-      return E_OUTOFMEMORY;
-    }
-    ZeroMemory(overlapped, sizeof(OVERLAPPEDEX));
-
-    overlapped->Data = new unsigned char[dataLength];
-    if (overlapped->Data == NULL)
-    {
-      if (!disableLogging)
-      {
-        LogDebug(L"file writer: failed to allocate %lu bytes for an async data buffer, name = %s",
-                  dataLength, m_fileName == NULL ? L"" : m_fileName);
-      }
-      delete overlapped;
-      return E_OUTOFMEMORY;
-    }
-    memcpy(overlapped->Data, data, dataLength);
-
-    ULARGE_INTEGER offset;
-    offset.QuadPart = m_asyncDataOffset;
-    overlapped->Offset = offset.LowPart;
-    overlapped->OffsetHigh = offset.HighPart;
-    overlapped->DataLength = dataLength;
-    
-    result = WriteFileEx(m_fileHandle,
-                          overlapped->Data,
-                          overlapped->DataLength,
-                          overlapped,
-                          AsyncWriteCompleted);
-  }
-
-  if (result == FALSE)
+  LARGE_INTEGER temp;
+  temp.QuadPart = distanceToMove;
+  DWORD result = ::SetFilePointer(m_fileHandle, temp.LowPart, &temp.HighPart, moveMethod);
+  if (result == INVALID_SET_FILE_POINTER)
   {
     DWORD errorCode = GetLastError();
-    if (errorCode == ERROR_IO_PENDING)
+    if (errorCode != NO_ERROR)
     {
-      return S_OK;
-    }
-    if (overlapped != NULL)
-    {
-      if (overlapped->Data != NULL)
+      HRESULT hr = HRESULT_FROM_WIN32(errorCode);
+      if (isErrorLoggingEnabled)
       {
-        delete[] overlapped->Data;
-      }
-      delete overlapped;
-    }
-
-    HRESULT hr;
-    if (isRecursive || errorCode != ERROR_FILE_TOO_LARGE)
-    {
-      hr = HRESULT_FROM_WIN32(errorCode);
-      if (!disableLogging)
-      {
-        LogDebug(L"file writer: failed to write to file, error = %lu, hr = 0x%x, data length = %lu, name = %s",
-                  errorCode, hr, dataLength, m_fileName);
+        LogDebug(L"file writer: failed to set file pointer, distance to move = %lld, move method = %lu, error = %lu, hr = 0x%x, name = %s, part number = %hhu",
+                  distanceToMove, moveMethod, errorCode, hr,
+                  m_fileName == NULL ? L"" : m_fileName, m_filePart);
       }
       return hr;
     }
-
-    // If the file system is formatted with FAT16 or FAT32 then we have file
-    // size limits (2 GB and 4 GB respectively). Close the current file and
-    // create a new one, then try to write again. Note that if this fails, we
-    // won't be able to recover due to loss of the file name.
-    LogDebug(L"file writer: reached file system maximum file size, next part = %hhu, name = %s",
-              m_filePart, m_fileName);
-    std::wstring tempFileName(m_fileName);
-    size_t extensionOffset = tempFileName.find_last_of(L".");
-    std::wstringstream newFileName;
-    newFileName << tempFileName.substr(0, extensionOffset) << L"_p" << m_filePart;
-    if (extensionOffset != std::wstring::npos)
-    {
-      newFileName << tempFileName.substr(extensionOffset);
-    }
-
-    unsigned char tempfilePart = m_filePart;  // OpenFile() resets m_filePart.
-    CloseFile();
-    hr = OpenFile(newFileName.str().c_str(), disableLogging);
-    if (FAILED(hr))
-    {
-      return hr;
-    }
-    m_filePart = tempfilePart + 1;
-
-    return WriteInternal(data, dataLength, disableLogging, true);
   }
 
-  if (m_useAsync)
+  if (moveMethod == FILE_BEGIN)
   {
-    m_asyncDataOffset += dataLength;
-    SleepEx(1, TRUE);   // Necessary to allow the async write completion call-back to be invoked.
+    m_asyncDataOffset = distanceToMove;
   }
-  else if (written < dataLength)
+  else if (m_useAsyncAccess)
   {
-    if (!disableLogging)
-    {
-      LogDebug(L"file writer: failed to complete write to file, data length = %lu, written = %lu, name = %s",
-                dataLength, written, m_fileName);
-    }
-    return S_FALSE;
+    return GetFilePointerInternal(m_asyncDataOffset, isErrorLoggingEnabled);
   }
-
   return S_OK;
 }
 
-void WINAPI FileWriter::AsyncWriteCompleted(DWORD errorCode,
-                                            DWORD transferredByteCount,
-                                            OVERLAPPED* overlapped)
+bool __cdecl FileWriter::AsyncThreadFunction(void* arg)
 {
-  OVERLAPPEDEX* overlappedEx = static_cast<OVERLAPPEDEX*>(overlapped);
-  if (overlappedEx == NULL)
+  FileWriter* writer = (FileWriter*)arg;
+  if (writer == NULL)
   {
-    LogDebug(L"file writer: async write completed, error = %lu, byte count = %lu, overlapped = NULL",
-              errorCode, transferredByteCount);
-    return;
+    LogDebug(L"file writer: async thread writer not provided");
+    return false;
   }
 
-  if (errorCode != ERROR_SUCCESS)
+  writer->WriteNextAsyncBuffer();
+  return true;
+}
+
+HRESULT FileWriter::EnqueueBuffer(CWriteBuffer* buffer, bool isErrorLoggingEnabled)
+{
   {
-    LogDebug(L"file writer: async write completed, error = %lu, byte count = %lu, data length = %lu",
-              errorCode, transferredByteCount, overlappedEx->DataLength);
+    CEnterCriticalSection lock(m_asyncDataQueueSection);
+    if (m_isAsyncDataQueueFull || m_asyncDataQueue.size() >= ASYNC_DATA_QUEUE_LENGTH_LIMIT)
+    {
+      m_isAsyncDataQueueFull = true;
+      if (isErrorLoggingEnabled)
+      {
+        LogDebug(L"file writer: failed to set file pointer, async data queue is full, name = %s, part number = %hhu",
+                  m_fileName, m_filePart);
+      }
+      delete buffer;
+      return E_FAIL;
+    }
+
+    m_asyncDataQueue.push_back(buffer);
+    if (m_asyncDataQueue.size() > m_asyncDataQueueLengthMaximum)
+    {
+      m_asyncDataQueueLengthMaximum = m_asyncDataQueue.size();
+    }
+  }
+
+  m_asyncAccessThread.Wake();
+  return S_OK;
+}
+
+void FileWriter::WriteNextAsyncBuffer()
+{
+  CWriteBuffer* buffer;
+  {
+    CEnterCriticalSection lock(m_asyncDataQueueSection);
+    while (true)
+    {
+      if (m_asyncDataQueue.size() == 0)
+      {
+        m_isAsyncDataQueueFull = false;
+        return;
+      }
+      buffer = m_asyncDataQueue[0];
+      if (buffer != NULL)
+      {
+        break;
+      }
+      m_asyncDataQueue.erase(m_asyncDataQueue.begin());
+    }
+  }
+
+  HRESULT hr = S_OK;
+  bool isPositionValid = false;
+  long long position = buffer->Position(isPositionValid);
+  if (isPositionValid)
+  {
+    hr = SetFilePointer(position,
+                        FILE_BEGIN,
+                        SUCCEEDED(m_asyncAccessResult) && !buffer->IsRetry());
+  }
+
+  unsigned char* data = buffer->Buffer();
+  if (SUCCEEDED(hr) && data != NULL)
+  {
+    hr = WriteInternal(data,
+                        buffer->Size(),
+                        SUCCEEDED(m_asyncAccessResult) && !buffer->IsRetry(),
+                        false);
+  }
+
+  if (FAILED(hr))
+  {
+    buffer->IncrementRetryCount();
+    if (buffer->CanRetry())
+    {
+      // A delay may help to avoid the error condition on the next retry, so
+      // don't wake the thread here.
+      return;
+    }
+  }
+  m_asyncAccessResult = hr;
+  delete buffer;
+  CEnterCriticalSection lock(m_asyncDataQueueSection);
+  m_asyncDataQueue.erase(m_asyncDataQueue.begin());
+  if (m_asyncDataQueue.size() == 0)
+  {
+    m_isAsyncDataQueueFull = false;
   }
   else
   {
-    //LogDebug(L"file writer: async write completed, byte count = %lu", transferredByteCount);
+    m_asyncAccessThread.Wake();
   }
-
-  if (overlappedEx->Data != NULL)
-  {
-    delete[] overlappedEx->Data;
-  }
-  delete overlappedEx;
 }

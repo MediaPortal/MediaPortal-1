@@ -149,7 +149,7 @@ STDMETHODIMP CInputPinOobSi::Receive(IMediaSample* sample)
     if (m_isDumpEnabled)
     {
       CAutoLock lock(&m_dumpLock);
-      if (!m_dumpFileWriter.IsFileInvalid())
+      if (m_dumpFileWriter.IsFileOpen())
       {
         LogDebug(L"OOB SI input: dumping %ld bytes", sampleLength);
         m_dumpFileWriter.Write((unsigned char*)&sampleLength, 4);

@@ -87,7 +87,7 @@ HRESULT CTsOutputPin::Deliver(unsigned char* data, long dataLength)
   if (m_isDumpEnabled)
   {
     CAutoLock lock(&m_dumpLock);
-    if (!m_dumpFileWriter.IsFileInvalid())
+    if (m_dumpFileWriter.IsFileOpen())
     {
       LogDebug(L"TS output: dumping %ld bytes", dataLength);
       m_dumpFileWriter.Write(data, dataLength);

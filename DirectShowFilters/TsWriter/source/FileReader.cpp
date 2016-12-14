@@ -19,6 +19,7 @@
  *
  */
 #include "FileReader.h"
+#include <string>
 #include <Windows.h>  // CloseHandle(), CreateFileW(), GetLastError(), INVALID_HANDLE_VALUE, ReadFile()
 
 using namespace std;
@@ -30,8 +31,15 @@ HRESULT FileReader::Read(const wchar_t* fileName, unsigned char* data, unsigned 
 {
   LogDebug(L"file reader: read, name = %s", fileName == NULL ? L"" : fileName);
 
+  wstring tempFileName;
+  if (fileName != NULL)
+  {
+    tempFileName = L"\\\\?\\";
+    tempFileName += fileName;
+  }
+
   HRESULT hr = S_OK;
-  HANDLE handle = CreateFileW(fileName,               // file name
+  HANDLE handle = CreateFileW(tempFileName.c_str(),   // file name
                               GENERIC_READ,           // file access
                               FILE_SHARE_READ,        // share access
                               NULL,                   // security

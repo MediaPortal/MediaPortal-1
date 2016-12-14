@@ -48,7 +48,7 @@ using namespace std;
     wchar_t folder[MAX_PATH]; \
     ::SHGetSpecialFolderPathW(NULL, folder, CSIDL_COMMON_APPDATA, FALSE); \
     std::wstringstream fileName; \
-    fileName << folder << L"\\Team MediaPortal\\" << package << "\\debug\\" << L#setting << L".txt"; \
+    fileName << L"\\\\?\\" << folder << L"\\Team MediaPortal\\" << package << "\\debug\\" << L#setting << L".txt"; \
     std::wstring tempFileName(fileName.str()); \
     HANDLE fileHandle = CreateFileW(tempFileName.c_str(), GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL); \
     if (fileHandle == INVALID_HANDLE_VALUE) \
