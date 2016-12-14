@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<window>
+  <controls>
+  
+      <control>
+        <description>Dummy Control</description>
+        <type>image</type>
+        <id>791140</id>
+        <posX>0</posX>
+        <posY>0</posY>
+        <width>10</width>
+        <height>10</height>
+        <texture></texture>
+		<visible>facadeview.list+control.isvisible(50)+!control.isvisible(51)</visible>
+      </control>
+
+	  <control>
+        <description>Cover Art</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>56</posX>
+        <posY>828</posY>
+		<height>190</height>
+		<width>137</width>
+        <texture mask="CAmask_small.png">defaultVideoBig.png</texture>
+        <visible>[facadeview.list|control.isvisible(50)|control.isvisible(6)]+!control.hasthumb(40000)+!control.isvisible(51)</visible>
+      </control>		
+	  
+	  
+	  <control>
+        <description>Little Poster</description>
+        <type>image</type>
+        <id>40000</id>
+        <posX>56</posX>
+        <posY>828</posY>
+		<height>190</height>
+		<width>137</width>
+        <texture mask="CAmask_small.png">#MovingPictures.Coverart</texture>
+        <colordiffuse>ffffffff</colordiffuse>
+		<visible>!control.isvisible(66900)</visible>
+      </control>
+
+
+	  <!--******************************* Last selected art ************************************************-->
+
+
+
+	
+	  <control>
+        <description>Cover Art</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>1444</posX>
+        <posY>197</posY>
+        <width>422</width>
+        <height>605</height>
+        <texture mask="CAmask.png">defaultVideoBig.png</texture>
+        <visible>facadeview.list+control.isvisible(50)|control.isvisible(6)+!control.hasthumb(70)+!control.isvisible(51)</visible>
+      </control>
+	  
+
+	  
+	  
+	  <control>
+        <description>Cover Art</description>
+        <type>image</type>
+        <id>70</id>
+        <posX>1444</posX>
+        <posY>197</posY>
+        <width>422</width>
+        <height>605</height>
+		<keepaspectratio>no</keepaspectratio>
+        <zoomfromtop>no</zoomfromtop>
+        <texture mask="CAmask.png">#MovingPictures.Coverart</texture>
+        <visible>facadeview.list|control.isvisible(6)[+!facadeview.smallicons+!control.isvisible(51)]</visible>
+      </control>	
+	    
+	  
+	  <!--******************************* Last selected art ************************************************-->
+	 
+	
+  
+	 
+	   
+  </controls>
+</window>

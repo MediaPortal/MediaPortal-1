@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<window>
+  <id>3005</id>
+  <defaultcontrol>21</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <autohidetopbar>yes</autohidetopbar>
+  <controls>
+    <control>
+      <type>image</type>
+      <id>1</id>
+      <posX>580</posX>
+        <posY>-5</posY>
+        <width>750</width>
+        <height>80</height>
+        <texture>top1.png</texture>
+    </control>
+    <control>
+      <description>group element</description>
+      <type>group</type>
+      <posX>620</posX>
+      <posY>9</posY>
+      <layout>StackLayout(10, Horizontal, true)</layout>
+      <control>
+        <description>Back button</description>
+        <type>button</type>
+        <id>21</id>
+        <posX>645</posX>
+        <posY>9</posY>
+        <width>52</width>
+        <height>52</height>
+        <textureFocus>top_back_enabled.png</textureFocus>
+        <textureNoFocus>top_back_disabled.png</textureNoFocus>
+        <label>-</label>
+        <keepaspectratio>yes</keepaspectratio>
+        <action>10</action>
+        <onleft>45</onleft>
+        <onright>26</onright>
+        <onup>21</onup>
+        <ondown>2</ondown>
+        <animation effect="zoom" start="100,100" end="110,110" time="0">focus</animation>
+      </control>
+      <control>
+        <description>basichome button button</description>
+        <type>button</type>
+        <id>26</id>
+        <posX>708</posX>
+        <posY>9</posY>
+        <width>52</width>
+        <height>52</height>
+        <textureFocus>top_home_enabled.png</textureFocus>
+        <textureNoFocus>top_home_disabled.png</textureNoFocus>
+        <label>-</label>
+        <keepaspectratio>yes</keepaspectratio>
+        <action>115</action>
+        <onleft>21</onleft>
+        <onright>22</onright>
+        <onup>26</onup>
+        <ondown>2</ondown>
+        <animation effect="zoom" start="100,100" end="110,110" time="0">focus</animation>
+      </control>
+      <control>
+        <description>Previous button</description>
+        <type>button</type>
+        <id>22</id>
+        <posX>771</posX>
+        <posY>9</posY>
+        <width>52</width>
+        <height>52</height>
+        <textureFocus>top_skipback_enabled.png</textureFocus>
+        <textureNoFocus>top_skipback_disabled.png</textureNoFocus>
+        <action>15</action>
+        <label>-</label>
+        <keepaspectratio>yes</keepaspectratio>
+        <onleft>26</onleft>
+        <onright>23</onright>
+        <onup>22</onup>
+        <ondown>2</ondown>
+        <animation effect="zoom" start="100,100" end="110,110" time="0">focus</animation>
+      </control>
+      <control>
+        <description>rewind button</description>
+        <type>button</type>
+        <id>23</id>
+        <posX>834</posX>
+        <posY>9</posY>
+        <width>52</width>
+        <height>52</height>
+        <textureFocus>top_rew_enabled.png</textureFocus>
+        <textureNoFocus>top_rew_disabled.png</textureNoFocus>
+        <action>78</action>
+        <label>-</label>
+        <keepaspectratio>yes</keepaspectratio>
+        <onleft>22</onleft>
+        <onright>24</onright>
+        <onup>23</onup>
+        <ondown>2</ondown>
+        <animation effect="zoom" start="100,100" end="110,110" time="0">focus</animation>
+      </control>
+      <control>
+        <description>play button</description>
+        <type>button</type>
+        <id>24</id>
+        <posX>897</posX>
+        <posY>9</posY>
+        <width>52</width>
+        <height>52</height>
+        <textureFocus>top_play_enabled.png</textureFocus>
+        <textureNoFocus>top_play_disabled.png</textureNoFocus>
+        <action>12</action>
+        <label>-</label>
+        <keepaspectratio>yes</keepaspectratio>
+        <onleft>23</onleft>
+        <onright>27</onright>
+        <onup>24</onup>
+        <ondown>2</ondown>
+        <animation effect="zoom" start="100,100" end="110,110" time="0">focus</animation>
+      </control>
+      <control>
+        <description>stop button</description>
+        <type>button</type>
+        <id>27</id>
+        <posX>960</posX>
+        <posY>9</posY>
+        <width>52</width>
+        <height>52</height>
+        <textureFocus>top_stop_enabled.png</textureFocus>
+        <textureNoFocus>top_stop_disabled.png</textureNoFocus>
+        <action>13</action>
+        <label>-</label>
+        <keepaspectratio>yes</keepaspectratio>
+        <onleft>24</onleft>
+        <onright>28</onright>
+        <onup>27</onup>
+        <ondown>2</ondown>
+        <animation effect="zoom" start="100,100" end="110,110" time="0">focus</animation>
+      </control>
+      <control>
+        <description>fast forward button</description>
+        <type>button</type>
+        <id>28</id>
+        <posX>1023</posX>
+        <posY>9</posY>
+        <width>52</width>
+        <height>52</height>
+        <textureFocus>top_fastforward_enabled.png</textureFocus>
+        <textureNoFocus>top_fastforward_disabled.png</textureNoFocus>
+        <action>77</action>
+        <label>-</label>
+        <keepaspectratio>yes</keepaspectratio>
+        <onleft>27</onleft>
+        <onright>29</onright>
+        <onup>28</onup>
+        <ondown>2</ondown>
+        <animation effect="zoom" start="100,100" end="110,110" time="0">focus</animation>
+      </control>
+      <control>
+        <description>next button</description>
+        <type>button</type>
+        <id>29</id>
+        <posX>1086</posX>
+        <posY>9</posY>
+        <width>52</width>
+        <height>52</height>
+        <textureFocus>top_skipforward_enabled.png</textureFocus>
+        <textureNoFocus>top_skipforward_disabled.png</textureNoFocus>
+        <action>14</action>
+        <label>-</label>
+        <keepaspectratio>yes</keepaspectratio>
+        <onleft>28</onleft>
+        <onright>30</onright>
+        <onup>29</onup>
+        <ondown>2</ondown>
+        <animation effect="zoom" start="100,100" end="110,110" time="0">focus</animation>
+      </control>
+      <control>
+        <description>Minimize button</description>
+        <type>button</type>
+        <id>30</id>
+        <posX>1149</posX>
+        <posY>9</posY>
+        <width>52</width>
+        <height>52</height>
+        <textureFocus>top_full_screen_enabled.png</textureFocus>
+        <textureNoFocus>top_full_screen_disabled.png</textureNoFocus>
+        <label>-</label>
+        <keepaspectratio>yes</keepaspectratio>
+        <action>18</action>
+        <onleft>29</onleft>
+        <onright>31</onright>
+        <onup>30</onup>
+        <ondown>2</ondown>
+        <animation effect="zoom" start="100,100" end="110,110" time="0">focus</animation>
+      </control>
+      <control>
+        <description>Exit button</description>
+        <type>button</type>
+        <id>31</id>
+        <posX>1212</posX>
+        <posY>9</posY>
+        <width>52</width>
+        <height>52</height>
+        <textureFocus>top_exit_enabled.png</textureFocus>
+        <textureNoFocus>top_exit_disabled.png</textureNoFocus>
+        <label>-</label>
+        <keepaspectratio>yes</keepaspectratio>
+        <action>97</action>
+        <onleft>30</onleft>
+        <onright>45</onright>
+        <onup>31</onup>
+        <ondown>2</ondown>
+        <animation effect="zoom" start="100,100" end="110,110" time="0">focus</animation>
+      </control>
+      <control>
+        <description>Shutdown button</description>
+        <type>button</type>
+        <id>45</id>
+        <posX>1275</posX>
+        <posY>9</posY>
+        <width>52</width>
+        <height>52</height>
+        <textureFocus>top_shutdown_enabled.png</textureFocus>
+        <textureNoFocus>top_shutdown_disabled.png</textureNoFocus>
+        <label>-</label>
+        <keepaspectratio>yes</keepaspectratio>
+        <action>99</action>
+        <onleft>31</onleft>
+        <onright>21</onright>
+        <onup>45</onup>
+        <ondown>2</ondown>
+        <animation effect="zoom" start="100,100" end="110,110" time="0">focus</animation>
+      </control>
+    </control>
+    </controls>
+</window>

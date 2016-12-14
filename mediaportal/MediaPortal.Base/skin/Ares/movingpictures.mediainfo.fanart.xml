@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<window>	
+	<controls>
+		<!-- Media logos [List] -->
+    <control>
+      <description>Logos group</description>
+      <type>group</type>
+      <posX>60</posX>
+      <posY>590</posY>
+      <layout>StackLayout(15, Horizontal, true)</layout>
+      <visible>control.isvisible(6)+!control.isvisible(51)+!control.isvisible(50)</visible>
+	  <!--
+      <control>
+        <description>Video Codec</description>
+        <type>image</type>
+        <id>0</id>
+        <height>60</height>
+        <width>90</width>
+        <keepaspectratio>yes</keepaspectratio>
+        <texture>Logos\#MovingPictures.LocalMedia.videocodec.png</texture>
+      </control>
+	  
+      <control>
+        <description>Video Resolution</description>
+        <type>image</type>
+        <id>0</id>
+        <height>60</height>
+        <width>90</width>
+        <keepaspectratio>yes</keepaspectratio>
+        <texture>Logos\#MovingPictures.LocalMedia.videoresolution.png</texture>
+      </control>
+      <control>
+        <description>Video Aspect Ratio</description>
+        <type>image</type>
+        <id>0</id>
+        <height>60</height>
+        <width>90</width>
+        <keepaspectratio>yes</keepaspectratio>
+        <texture>Logos\#MovingPictures.LocalMedia.videoaspectratio.png</texture>
+      </control>
+      <control>
+        <description>Audio Codec</description>
+        <type>image</type>
+        <id>0</id>
+        <height>60</height>
+        <width>90</width>
+        <keepaspectratio>yes</keepaspectratio>
+        <texture>Logos\#MovingPictures.LocalMedia.audiocodec.png</texture>
+      </control>
+      <control>
+        <description>Audio Channels</description>
+        <type>image</type>
+        <id>0</id>
+        <height>60</height>
+        <width>90</width>
+        <keepaspectratio>yes</keepaspectratio>
+        <texture>Logos\#MovingPictures.LocalMedia.audiochannels.png</texture>
+      </control>
+      <control>
+        <description>Subtitles</description>
+        <type>image</type>
+        <id>0</id>
+        <height>65</height>
+        <width>95</width>
+        <keepaspectratio>yes</keepaspectratio>
+		<valign>middle</valign>
+        <texture>Logos\#MovingPictures.LocalMedia.Subtitles.png</texture>
+      </control>
+      <control>
+        <description>Certification</description>
+        <type>image</type>
+        <id>0</id>
+        <height>60</height>
+        <width>90</width>
+        <keepaspectratio>yes</keepaspectratio>
+		<valign>middle</valign>
+        <texture>Logos\Age\#MovingPictures.SelectedMovie.certification.png</texture>
+      </control>
+	  -->
+    </control>
+	
+    <control>
+      <description>Logos group</description>
+      <type>group</type>
+      <posX>1460</posX>
+      <posY>722</posY>
+      <layout>StackLayout(15, Horizontal, true)</layout>
+      <visible>!control.isvisible(51)+!facadeview.coverflow+!facadeview.filmstrip</visible>
+      <control>
+        <description>Certification</description>
+        <type>image</type>
+        <id>0</id>
+        <height>61</height>
+        <width>61</width>
+        <keepaspectratio>yes</keepaspectratio>
+		<valign>middle</valign>
+        <texture>Logos\Age\#MovingPictures.SelectedMovie.certification.png</texture>
+      </control>
+    </control>	
+		
+	</controls>
+</window>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <controls>
+
+    
+
+    <!--###################     HERE ARE THE DISPLAYED OSD DATA    ###################################-->
+
+    <control>
+      <description>Movie thumb</description>
+      <type>image</type>
+      <id>102</id>
+        <posX>8225</posX>
+        <posY>665</posY>
+		<width>180</width>
+        <height>180</height>
+		<keepaspectratio>yes</keepaspectratio>
+		<centered>yes</centered>
+      <texture>#Play.Current.Thumb</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <visible>control.hasfocus(1237)</visible>
+    </control>
+
+    <control>
+      <description>Time Info</description>
+      <type>label</type>
+      <id>110</id>
+      <posX>8890</posX>
+      <posY>810</posY>
+      <label>#time</label>
+      <align>right</align>
+      <font>font121</font>
+      <textcolor>ivory</textcolor>
+      <visible>control.hasfocus(1237)</visible>
+    </control>
+   
+  </controls>
+</window>
