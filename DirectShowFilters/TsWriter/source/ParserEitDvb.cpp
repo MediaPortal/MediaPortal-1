@@ -3707,13 +3707,15 @@ bool CParserEitDvb::DecodeDishBevSeriesDescriptor(unsigned char* data,
     // Note: episode ID is expected to be 0 except for EP shows.
     stringstream ss;
     ss << prefix << setfill('0') << setw(8) << seriesIdNumber << setw(4) << episodeIdNumber;
-    CopyString(ss.str().c_str(), episodeId, L"a Dish episode ID");
+    string s = ss.str();
+    CopyString(s.c_str(), episodeId, L"a Dish episode ID");
 
     if (entityType == 0x7e)
     {
       ss.str("");
       ss << "EP" << setfill('0') << setw(8) << seriesIdNumber;
-      CopyString(ss.str().c_str(), seriesId, L"a Dish series ID");
+      s = ss.str();
+      CopyString(s.c_str(), seriesId, L"a Dish series ID");
     }
 
     isPreviouslyShown |= (originalAirDate != 0);

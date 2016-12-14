@@ -21,7 +21,7 @@
 #pragma once
 #include <ctime>
 #include <map>
-#include <sstream>
+#include <string>
 #include <WinError.h>   // HRESULT
 #include "..\..\shared\BasePmtParser.h"
 #include "..\..\shared\CriticalSection.h"
@@ -132,7 +132,7 @@ class CDiskRecorder
     unsigned long long m_discontinuityCount;
     unsigned long long m_droppedByteCount;
 
-    wstringstream m_fileName;
+    wstring m_fileName;
     FileWriter* m_fileRecording;
     MultiFileWriter* m_fileTimeShifting;
     MultiFileWriterParams m_timeShiftingParameters;

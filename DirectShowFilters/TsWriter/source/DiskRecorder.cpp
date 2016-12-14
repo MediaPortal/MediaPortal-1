@@ -309,7 +309,7 @@ HRESULT CDiskRecorder::SetFileName(wchar_t* fileName)
       return E_INVALIDARG;
     }
 
-    m_fileName.str(fileName);
+    m_fileName = fileName;
     return S_OK;
   }
   catch (...)
@@ -324,8 +324,7 @@ HRESULT CDiskRecorder::Start()
   try
   {
     CEnterCriticalSection lock(m_section);
-    wstring fileName = m_fileName.str();
-    if (fileName.length() == 0)
+    if (m_fileName.length() == 0)
     {
       WriteLog(L"failed to start, file name not set");
       return E_INVALIDARG;
@@ -364,10 +363,11 @@ HRESULT CDiskRecorder::Start()
 
       bool resume = ReadParameters();
       m_fileTimeShifting->SetConfiguration(m_timeShiftingParameters);
-      HRESULT hr = m_fileTimeShifting->OpenFile(fileName.c_str(), resume);
+      HRESULT hr = m_fileTimeShifting->OpenFile(m_fileName.c_str(), resume);
       if (FAILED(hr)) 
       {
-        WriteLog(L"failed to open file, hr = 0x%x, file = %s", hr, fileName);
+        WriteLog(L"failed to open file, hr = 0x%x, file = %s",
+                  hr, m_fileName.c_str());
         delete m_fileTimeShifting;
         m_fileTimeShifting = NULL;
         return hr;
@@ -399,7 +399,8 @@ HRESULT CDiskRecorder::Start()
       HRESULT hr = m_fileRecording->OpenFile(fileName.c_str());
       if (FAILED(hr))
       {
-        WriteLog(L"failed to open file, hr = 0x%x, file = %s", hr, fileName);
+        WriteLog(L"failed to open file, hr = 0x%x, file = %s",
+                  hr, fileName.c_str());
         delete m_fileRecording;
         m_fileRecording = NULL;
         return hr;
@@ -459,7 +460,7 @@ void CDiskRecorder::Stop()
         if (FAILED(hr))
         {
           WriteLog(L"failed to flush to file, hr = 0x%x, byte count = %lu, file = %s",
-                    hr, m_writeBufferPosition, m_fileName.str());
+                    hr, m_writeBufferPosition, m_fileName.c_str());
         }
         m_writeBufferPosition = 0;
       }
@@ -909,13 +910,13 @@ void CDiskRecorder::WritePacketDirect(unsigned char* tsPacket)
         return;
       }
 
-      HRESULT hr = m_fileRecording->Write(m_writeBuffer, m_writeBufferPosition, m_isDropping);
+      HRESULT hr = m_fileRecording->Write(m_writeBuffer, m_writeBufferPosition, !m_isDropping);
       if (FAILED(hr))
       {
         if (!m_isDropping)
         {
           WriteLog(L"failed to write to file, hr = 0x%x, byte count = %lu, file = %s",
-                    hr, m_writeBufferPosition, m_fileName.str());
+                    hr, m_writeBufferPosition, m_fileName.c_str());
           WriteLog(L"starting to drop data, dropped byte count = %llu",
                     m_droppedByteCount);
           m_isDropping = true;
@@ -945,13 +946,13 @@ void CDiskRecorder::WritePacketDirect(unsigned char* tsPacket)
       return;
     }
 
-    HRESULT hr = m_fileTimeShifting->Write(m_writeBuffer, m_writeBufferPosition, m_isDropping);
+    HRESULT hr = m_fileTimeShifting->Write(m_writeBuffer, m_writeBufferPosition, !m_isDropping);
     if (FAILED(hr))
     {
       if (!m_isDropping)
       {
         WriteLog(L"failed to write to file, hr = 0x%x, byte count = %lu, file = %s",
-                  hr, m_writeBufferPosition, m_fileName.str());
+                  hr, m_writeBufferPosition, m_fileName.c_str());
         WriteLog(L"starting to drop data, dropped byte count = %llu",
                   m_droppedByteCount);
         m_isDropping = true;
@@ -1244,17 +1245,17 @@ void CDiskRecorder::WriteFakeServiceInfo()
 
 bool CDiskRecorder::ReadParameters()
 {
-  wchar_t fileName[MAX_PATH];
-  swprintf(fileName, L"%s.tvedrpts", MAX_PATH, m_fileName.str().c_str());
-  if (!CFileUtils::Exists(fileName))
+  wstring fileName(m_fileName);
+  fileName = fileName.substr(0, fileName.find_last_of(L".")).append(L".tvedrpts");
+  if (!CFileUtils::Exists(fileName.c_str()))
   {
     return false;
   }
 
   unsigned char buffer[PARAM_BUFFER_SIZE];
   unsigned long bufferSize = PARAM_BUFFER_SIZE;
-  HRESULT hr = FileReader::Read(fileName, buffer, bufferSize);
-  CFileUtils::DeleteFile(fileName);
+  HRESULT hr = FileReader::Read(fileName.c_str(), buffer, bufferSize);
+  CFileUtils::DeleteFile(fileName.c_str());
   if (hr != S_OK)
   {
     return false;
@@ -1355,9 +1356,9 @@ void CDiskRecorder::WriteParameters()
   *((unsigned long*)pointer) = m_timeShiftingParameters.FileCountMaximum;
 
   FileWriter writer;
-  wchar_t fileName[MAX_PATH];
-  swprintf(fileName, L"%s.tvedrpts", MAX_PATH, m_fileName.str().c_str());
-  if (writer.OpenFile(fileName) == S_OK)
+  wstring fileName(m_fileName);
+  fileName = fileName.substr(0, fileName.find_last_of(L".")).append(L".tvedrpts");
+  if (writer.OpenFile(fileName.c_str()) == S_OK)
   {
     writer.Write(buffer, PARAM_BUFFER_SIZE);
     writer.CloseFile();

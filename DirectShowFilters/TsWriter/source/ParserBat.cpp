@@ -21,6 +21,7 @@
 #include "ParserBat.h"
 #include <cwchar>     // wcsncpy()
 #include <sstream>
+#include <string>
 #include "..\..\shared\EnterCriticalSection.h"
 
 using namespace MediaPortal;
@@ -43,9 +44,10 @@ CParserBat::~CParserBat()
 void CParserBat::SetPid(unsigned short pid)
 {
   CEnterCriticalSection lock(m_section);
-  wstringstream s;
-  s << L"BAT " << pid;
-  wcsncpy(m_name, s.str().c_str(), sizeof(m_name) / sizeof(m_name[0]));
+  wstringstream ss;
+  ss << L"BAT " << pid;
+  wstring s = ss.str();
+  wcsncpy(m_name, s.c_str(), sizeof(m_name) / sizeof(m_name[0]));
   CSectionDecoder::SetPid(pid);
   CSectionDecoder::Reset();
 }

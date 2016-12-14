@@ -23,7 +23,7 @@
 #include <streams.h>  // CAutoLock, CBaseFilter, CBasePin, CCritSec, CUnknown (IUnknown, LPUNKNOWN)
 #include <InitGuid.h> // DEFINE_GUID()
 #include <WinError.h> // HRESULT
-#include <sstream>
+#include <string>
 #include "..\shared\Thread.h"
 #include "InputPinOobSi.h"
 #include "InputPinTs.h"
@@ -56,8 +56,8 @@ class CTsWriterFilter : public CBaseFilter
     STDMETHODIMP Run(REFERENCE_TIME startTime);
     STDMETHODIMP Stop();
 
-    STDMETHODIMP SetDumpFilePath(wchar_t* path);
-    STDMETHODIMP DumpInput(bool enableTs, bool enableOobSi);
+    HRESULT SetDumpFilePath(const wchar_t* path);
+    void DumpInput(bool enableTs, bool enableOobSi);
     void CheckSectionCrcs(bool enable);
 
   private:
@@ -79,7 +79,7 @@ class CTsWriterFilter : public CBaseFilter
     CThread m_streamingMonitorThread;
     CThreadContext m_streamingMonitorThreadContext;
 
-    wstringstream m_debugPath;
+    wstring m_debugPath;
     bool m_isDebugEnabledOobSi;
     bool m_isDebugEnabledTs;
 };

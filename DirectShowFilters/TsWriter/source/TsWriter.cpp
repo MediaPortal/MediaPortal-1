@@ -24,6 +24,7 @@
 #include <shlobj.h>   // SHGetSpecialFolderPathW()
 #include <sstream>
 #include <stdio.h>    // _wfopen(), fclose()
+#include <string>
 #include <Windows.h>  // MAX_PATH
 #include "EncryptionState.h"
 #include "Version.h"
@@ -97,8 +98,8 @@ BOOL APIENTRY DllMain(HANDLE module, DWORD reason, LPVOID reserved)
 //-----------------------------------------------------------------------------
 static CCritSec g_logLock;
 static CCritSec g_logFilePathLock;
-static wstringstream g_logFilePath;
-static wstringstream g_logFileName;
+static wstring g_logFilePath;
+static wstring g_logFileName;
 static short g_currentDay = -1;
 static wchar_t g_logBuffer[2000];
 
@@ -110,15 +111,15 @@ void LogDebug(const wchar_t* fmt, ...)
   if (g_currentDay != systemTime.wDay)
   {
     CAutoLock lock(&g_logFilePathLock);
-    g_logFileName.str(wstring());
-    g_logFileName << g_logFilePath.str() << L"\\TsWriter-" <<
-                      systemTime.wYear << L"-" << setfill(L'0') << setw(2) <<
-                      systemTime.wMonth << L"-" << setw(2) <<
-                      systemTime.wDay << L".log";
+    wstringstream logFileName;
+    logFileName << g_logFilePath << L"\\TsWriter-" << systemTime.wYear <<
+                    L"-" << setfill(L'0') << setw(2) << systemTime.wMonth <<
+                    L"-" << setw(2) << systemTime.wDay << L".log";
+    g_logFileName = logFileName.str();
     g_currentDay = systemTime.wDay;
   }
 
-  FILE* file = _wfopen(g_logFileName.str().c_str(), L"a+, ccs=UTF-8");
+  FILE* file = _wfopen(g_logFileName.c_str(), L"a+, ccs=UTF-8");
   if (file != NULL)
   {
     va_list ap;
@@ -126,7 +127,7 @@ void LogDebug(const wchar_t* fmt, ...)
     vswprintf(g_logBuffer, sizeof(g_logBuffer) / sizeof(g_logBuffer[0]), fmt, ap);
     va_end(ap);
     fwprintf(file, L"%04.4hd-%02.2hd-%02.2hd %02.2hd:%02.2hd:%02.2hd.%03.3hd %s\n",
-              systemTime.wYear, systemTime.wDay, systemTime.wMonth,
+              systemTime.wYear, systemTime.wMonth, systemTime.wDay,
               systemTime.wHour, systemTime.wMinute, systemTime.wSecond,
               systemTime.wMilliseconds, g_logBuffer);
     fclose(file);
@@ -145,14 +146,15 @@ CTsWriter::CTsWriter(LPUNKNOWN unk, HRESULT* hr)
 {
   wchar_t temp[MAX_PATH];
   ::SHGetSpecialFolderPathW(NULL, temp, CSIDL_COMMON_APPDATA, FALSE);
-  g_logFilePath << temp << L"\\Team MediaPortal\\MediaPortal TV Server\\log";
+  g_logFilePath = temp;
+  g_logFilePath += L"\\Team MediaPortal\\MediaPortal TV Server\\log";
 
   LogDebug(L"--------------- v%d.%d.%d.0 ---------------", VERSION_TS_WRITER_MAJOR, VERSION_TS_WRITER_MINOR, VERSION_TS_WRITER_MICRO);
   LogDebug(L"TVE 3.5 rewritten version");
   LogDebug(L"writer: constructor");
     
   m_filter = new CTsWriterFilter(this,
-                                  g_logFilePath.str().c_str(),
+                                  g_logFilePath.c_str(),
                                   GetOwner(),
                                   &m_filterLock,
                                   m_receiveLock,
@@ -448,7 +450,7 @@ STDMETHODIMP CTsWriter::ConfigureLogging(wchar_t* path)
   }
   HRESULT hr = m_filter->SetDumpFilePath(path);
   CAutoLock lock(&g_logFilePathLock);
-  g_logFilePath.str(path);
+  g_logFilePath = path;
   return hr;
 }
 

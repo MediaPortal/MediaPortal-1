@@ -24,7 +24,7 @@
 #include <InitGuid.h> // DEFINE_GUID()
 #include <WinError.h> // HRESULT
 #include <map>
-#include <sstream>
+#include <string>
 #include <vector>
 #include "..\shared\Thread.h"
 #include "IStreamMultiplexer.h"
@@ -60,9 +60,9 @@ class CTsMuxerFilter : public CBaseFilter
     STDMETHODIMP Run(REFERENCE_TIME startTime);
     STDMETHODIMP Stop();
 
-    STDMETHODIMP SetDumpFilePath(wchar_t* path);
-    STDMETHODIMP_(void) DumpInput(long mask);
-    STDMETHODIMP_(void) DumpOutput(bool enable);
+    HRESULT SetDumpFilePath(const wchar_t* path);
+    void DumpInput(long mask);
+    void DumpOutput(bool enable);
 
   private:
     class CThreadContext
@@ -83,7 +83,7 @@ class CTsMuxerFilter : public CBaseFilter
     CThread m_streamingMonitorThread;
     CThreadContext m_streamingMonitorThreadContext;
 
-    wstringstream m_debugPath;
+    wstring m_debugPath;
     long m_inputPinDebugMask;
     bool m_isOutputDebugEnabled;
 };

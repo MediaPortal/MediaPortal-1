@@ -23,6 +23,7 @@
 #include <cstring>    // strcmp(), strlen(), strncmp(), strncpy()
 #include <cwchar>     // wcscmp()
 #include <sstream>
+#include <string>
 #include "..\..\shared\EnterCriticalSection.h"
 #include "..\..\shared\TimeUtils.h"
 #include "TextUtil.h"
@@ -64,9 +65,10 @@ CParserNitDvb::~CParserNitDvb()
 void CParserNitDvb::SetPid(unsigned short pid)
 {
   CEnterCriticalSection lock(m_section);
-  wstringstream s;
-  s << L"NIT DVB " << pid;
-  wcsncpy(m_name, s.str().c_str(), sizeof(m_name) / sizeof(m_name[0]));
+  wstringstream ss;
+  ss << L"NIT DVB " << pid;
+  wstring s = ss.str();
+  wcsncpy(m_name, s.c_str(), sizeof(m_name) / sizeof(m_name[0]));
   CSectionDecoder::SetPid(pid);
   CSectionDecoder::Reset();
 }

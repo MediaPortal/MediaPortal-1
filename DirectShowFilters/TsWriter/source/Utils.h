@@ -23,6 +23,7 @@
 #include <cstring>    // strcmp(), strlen(), strncpy()
 #include <map>
 #include <sstream>
+#include <string>
 #include <vector>
 
 using namespace std;
@@ -216,10 +217,11 @@ class CUtils
       map<T1, T2>::const_iterator it = m.begin();
       for ( ; it != m.end(); it++)
       {
-        wstringstream temp(ios_base::out | ios_base::ate);
-        temp << L"    " << keyName << L" = " << it->first << L", "
+        wstringstream tempStream(ios_base::out | ios_base::ate);
+        tempStream << L"    " << keyName << L" = " << it->first << L", "
               << elementName << L" = " << it->second;
-        LogDebug(temp.str().c_str());
+        wstring tempString(tempStream.str());
+        LogDebug(tempString.c_str());
       }
     }
 
@@ -255,28 +257,29 @@ class CUtils
         return;
       }
 
-      wstringstream temp(ios_base::out | ios_base::ate);
-      temp << L"  ";
+      wstringstream tempStream(ios_base::out | ios_base::ate);
+      tempStream << L"  ";
       if (name != NULL)
       {
-        temp << name << L" = ";
+        tempStream << name << L" = ";
       }
       vector<T>::const_iterator it = v.begin();
       for ( ; it != v.end(); it++)
       {
         if (it != v.begin())
         {
-          temp << L", ";
+          tempStream << L", ";
         }
         if (elementsAreStrings)
         {
-          temp << (char*)(&(*it));
+          tempStream << (char*)(&(*it));
         }
         else
         {
-          temp << *it;
+          tempStream << *it;
         }
       }
-      LogDebug(temp.str().c_str());
+      wstring tempString(tempStream.str());
+      LogDebug(tempString.c_str());
     }
 };

@@ -68,7 +68,7 @@ CTsWriterFilter::CTsWriterFilter(ITsAnalyser* analyser,
 
   if (debugPath != NULL)
   {
-    m_debugPath.str(debugPath);
+    m_debugPath = debugPath;
   }
   m_isDebugEnabledOobSi = false;
   m_isDebugEnabledTs = false;
@@ -151,14 +151,15 @@ STDMETHODIMP CTsWriterFilter::Run(REFERENCE_TIME startTime)
     wstringstream fileName;
     if (isDebugEnabledOobSi)
     {
-      fileName << m_debugPath.str() << L"\\ts_writer_oob_si_input_dump.ts";
-      m_inputPinOobSi->StartDumping(fileName.str().c_str());
+      wstring fileName(m_debugPath);
+      fileName += L"\\ts_writer_oob_si_input_dump.ts";
+      m_inputPinOobSi->StartDumping(fileName.c_str());
     }
     if (isDebugEnabledTs)
     {
-      fileName.str(wstring());
-      fileName << m_debugPath.str() << L"\\ts_writer_ts_input_dump.ts";
-      m_inputPinTs->StartDumping(fileName.str().c_str());
+      wstring fileName(m_debugPath);
+      fileName += L"\\ts_writer_ts_input_dump.ts";
+      m_inputPinTs->StartDumping(fileName.c_str());
     }
   }
 
@@ -187,23 +188,22 @@ STDMETHODIMP CTsWriterFilter::Stop()
   return hr;
 }
 
-STDMETHODIMP CTsWriterFilter::SetDumpFilePath(wchar_t* path)
+STDMETHODIMP CTsWriterFilter::SetDumpFilePath(const wchar_t* path)
 {
   if (path == NULL)
   {
     return E_INVALIDARG;
   }
   CAutoLock filterLock(m_pLock);
-  m_debugPath.str(path);
+  m_debugPath = path;
   return S_OK;
 }
 
-STDMETHODIMP CTsWriterFilter::DumpInput(bool enableTs, bool enableOobSi)
+void CTsWriterFilter::DumpInput(bool enableTs, bool enableOobSi)
 {
   CAutoLock filterLock(m_pLock);
   m_isDebugEnabledTs = enableTs;
   m_isDebugEnabledOobSi = enableOobSi;
-  return S_OK;
 }
 
 void CTsWriterFilter::CheckSectionCrcs(bool enable)

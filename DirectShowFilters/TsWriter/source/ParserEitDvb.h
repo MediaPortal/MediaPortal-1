@@ -22,6 +22,7 @@
 #include <ctime>
 #include <map>
 #include <sstream>
+#include <string>
 #include <streams.h>    // CUnknown, LPUNKNOWN
 #include <vector>
 #include <WinError.h>   // HRESULT
@@ -609,7 +610,8 @@ class CParserEitDvb : public CUnknown, public IGrabberEpgDvb, ISectionCallback
               temp << prIt->second << L" (" << (char*)(&(prIt->first)) << ")";
               isFirst = false;
             }
-            LogDebug(temp.str().c_str());
+            wstring s = temp.str();
+            LogDebug(s.c_str());
           }
 
           map<unsigned long, CRecordEitEventText*>::const_iterator textIt = Texts.begin();

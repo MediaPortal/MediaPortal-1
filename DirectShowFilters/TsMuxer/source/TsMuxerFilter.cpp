@@ -20,6 +20,7 @@
  */
 #include "TsMuxerFilter.h"
 #include <cstddef>    // NULL
+#include <sstream>
 #include "..\..\shared\TimeUtils.h"
 
 
@@ -61,7 +62,7 @@ CTsMuxerFilter::CTsMuxerFilter(IStreamMultiplexer* multiplexer,
 
   if (debugPath != NULL)
   {
-    m_debugPath.str(debugPath);
+    m_debugPath = debugPath;
   }
   m_inputPinDebugMask = 0;
   m_isOutputDebugEnabled = false;
@@ -220,9 +221,9 @@ STDMETHODIMP CTsMuxerFilter::Run(REFERENCE_TIME startTime)
   {
     LogDebug(L"filter: configure dumping, input mask = 0x%08x, output = %d...",
               inputPinDebugMask, isOutputDebugEnabled);
-    wstringstream fileName;
     if (inputPinDebugMask != 0)
     {
+      wstringstream fileName;
       CAutoLock pinLock(&m_inputPinsLock);
       vector<CMuxInputPin*>::const_iterator it = m_inputPins.begin();
       long mask = 1;
@@ -231,17 +232,18 @@ STDMETHODIMP CTsMuxerFilter::Run(REFERENCE_TIME startTime)
         if ((inputPinDebugMask & mask) != 0 || inputPinDebugMask == 0xffffffff)
         {
           fileName.str(wstring());
-          fileName << m_debugPath.str() << L"\\ts_muxer_input_" << (*it)->GetId() << L"_dump.dmp";
-          (*it)->StartDumping(fileName.str().c_str());
+          fileName << m_debugPath << L"\\ts_muxer_input_" << (*it)->GetId() << L"_dump.dmp";
+          wstring tempFileName = fileName.str();
+          (*it)->StartDumping(tempFileName.c_str());
         }
         mask = mask << 1;
       }
     }
     if (isOutputDebugEnabled)
     {
-      fileName.str(wstring());
-      fileName << m_debugPath.str() << L"\\ts_muxer_output_dump.ts";
-      m_outputPin->StartDumping(fileName.str().c_str());
+      wstring fileName(m_debugPath);
+      fileName += L"\\ts_muxer_output_dump.ts";
+      m_outputPin->StartDumping(fileName.c_str());
     }
   }
 
@@ -278,24 +280,24 @@ STDMETHODIMP CTsMuxerFilter::Stop()
   return hr;
 }
 
-STDMETHODIMP CTsMuxerFilter::SetDumpFilePath(wchar_t* path)
+HRESULT CTsMuxerFilter::SetDumpFilePath(const wchar_t* path)
 {
   if (path == NULL)
   {
     return E_INVALIDARG;
   }
   CAutoLock filterLock(m_pLock);
-  m_debugPath.str(path);
+  m_debugPath = path;
   return S_OK;
 }
 
-STDMETHODIMP_(void) CTsMuxerFilter::DumpInput(long mask)
+void CTsMuxerFilter::DumpInput(long mask)
 {
   CAutoLock filterLock(m_pLock);
   m_inputPinDebugMask = mask;
 }
 
-STDMETHODIMP_(void) CTsMuxerFilter::DumpOutput(bool enable)
+void CTsMuxerFilter::DumpOutput(bool enable)
 {
   CAutoLock filterLock(m_pLock);
   m_isOutputDebugEnabled = enable;

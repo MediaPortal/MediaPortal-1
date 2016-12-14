@@ -8,6 +8,7 @@
 #include "TsMPEG2TransportFileServerMediaSubsession.h" 
 #include "MPRTSPServer.h"
 #include <sstream>
+#include <string>
 #include <iomanip>  // setfill(), setw()
 
 using namespace std;
@@ -18,8 +19,8 @@ using namespace std;
 //-----------------------------------------------------------------------------
 static CCritSec g_logLock;
 static CCritSec g_logFilePathLock;
-static wstringstream g_logFilePath;
-static wstringstream g_logFileName;
+static wstring g_logFilePath;
+static wstring g_logFileName;
 static WORD g_currentDay = -1;
 static wchar_t g_logBuffer[2000];
 
@@ -31,21 +32,25 @@ void LogDebug(const wchar_t* fmt, ...)
   if (g_currentDay != systemTime.wDay)
   {
     CAutoLock lock(&g_logFilePathLock);
-    g_logFileName.str(wstring());
-    g_logFileName << g_logFilePath.str() << L"\\StreamingServer-" << systemTime.wYear << L"-" << setfill(L'0') << setw(2) << systemTime.wMonth << L"-" << setw(2) << systemTime.wDay << L".log";
+    wstringstream logFileName;
+    logFileName << g_logFilePath << L"\\StreamingServer-" << systemTime.wYear <<
+                    L"-" << setfill(L'0') << setw(2) << systemTime.wMonth <<
+                    L"-" << setw(2) << systemTime.wDay << L".log";
+    g_logFileName = logFileName.str();
     g_currentDay = systemTime.wDay;
   }
-  FILE* file = _wfopen(g_logFileName.str().c_str(), L"a+, ccs=UTF-8");
+
+  FILE* file = _wfopen(g_logFileName.c_str(), L"a+, ccs=UTF-8");
   if (file != NULL)
   {
     va_list ap;
     va_start(ap, fmt);
-    vswprintf_s(g_logBuffer, fmt, ap);
+    vswprintf(g_logBuffer, sizeof(g_logBuffer) / sizeof(g_logBuffer[0]), fmt, ap);
     va_end(ap);
-    fwprintf(file, L"%04.4d-%02.2d-%02.2d %02.2d:%02.2d:%02.2d.%03.3d %s\n",
-      systemTime.wYear, systemTime.wDay, systemTime.wMonth,
-      systemTime.wHour, systemTime.wMinute, systemTime.wSecond, systemTime.wMilliseconds,
-      g_logBuffer);
+    fwprintf(file, L"%04.4hd-%02.2hd-%02.2hd %02.2hd:%02.2hd:%02.2hd.%03.3hd %s\n",
+              systemTime.wYear, systemTime.wMonth, systemTime.wDay,
+              systemTime.wHour, systemTime.wMinute, systemTime.wSecond,
+              systemTime.wMilliseconds, g_logBuffer);
     fclose(file);
   }
 
@@ -73,7 +78,8 @@ long ServerSetup(char* ipAddress, unsigned short port)
 
   wchar_t temp[MAX_PATH];
   ::SHGetSpecialFolderPathW(NULL, temp, CSIDL_COMMON_APPDATA, FALSE);
-  g_logFilePath << temp << L"\\Team MediaPortal\\MediaPortal TV Server\\log";
+  g_logFilePath = temp;
+  g_logFilePath += L"\\Team MediaPortal\\MediaPortal TV Server\\log";
 
   LogDebug(L"--------------- v1.0.6 ---------------");
   LogDebug(L"stream server: setup server, IP address = %S, port = %hu", ipAddress, port);
