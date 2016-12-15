@@ -159,7 +159,7 @@ namespace MediaPortal.GUI.Library
 
       _labelControl = new GUILabelControl(_parentControlId, 0, _positionX, _positionY, _width, _height, _fontName,
                                           _label, _textColor, _textAlignment, _textVAlignment, false,
-                                          _shadowAngle, _shadowDistance, _shadowColor/*, _maxWidth, _maxHeight*/)
+                                          _shadowAngle, _shadowDistance, _shadowColor, _maxWidth, _maxHeight)
                         {
                           CacheFont = false,
                           ParentControl = this
@@ -269,30 +269,30 @@ namespace MediaPortal.GUI.Library
       // get the current label
       var strLabel = (string)_listLabels[_currentLabelIndex];
 
-      /*if (_maxWidth > 0)
+      if (_maxWidth > 0)
       {
-        _labelControl.MinWidth = _width;
-        _labelControl.MaxWidth = _maxWidth;
+        _labelControl.MinWidth = MinWidth;
+        _labelControl.MaxWidth = MaxWidth;
       }
       else
-      {*/
-        _labelControl.Width = Width /*_width*/;
-      /*}
+      {
+        _labelControl.Width = Width;
+      }
       if (_maxHeight > 0)
       {
-        _labelControl.MinHeight = _height;
-        _labelControl.MaxHeight = _maxHeight;
+        _labelControl.MinHeight = MinHeight;
+        _labelControl.MaxHeight = MaxHeight;
       }
       else
-      {*/
-        _labelControl.Height = _height;
-      //}
+      {
+        _labelControl.Height = Height;
+      }
       _labelControl.Label = strLabel;
       _labelControl.SetPosition(_positionX, _positionY);
       _labelControl.TextAlignment = _textAlignment;
       _labelControl.TextVAlignment = _textVAlignment;
       _labelControl.TextColor = _textColor;
-      _labelControl.CacheFont = _labelControl.TextWidth < (_maxWidth > 0 ? _width : _maxWidth);
+      _labelControl.CacheFont = _labelControl.TextWidth < (_maxWidth == 0 ? _width : _maxWidth);
       if (GUIGraphicsContext.graphics != null)
       {
         _labelControl.Render(timePassed);
@@ -301,7 +301,7 @@ namespace MediaPortal.GUI.Library
       }
 
       // if there is only one label just draw the text
-      if (_listLabels.Count == 1 && _labelControl.TextWidth < (_maxWidth > 0 ? _width : _maxWidth))
+      if (_listLabels.Count == 1 && _labelControl.TextWidth < (_maxWidth == 0 ? _width : _maxWidth))
       {
         _labelControl.Render(timePassed);
         base.Render(timePassed);
@@ -338,7 +338,7 @@ namespace MediaPortal.GUI.Library
         dwAlpha |= (_shadowColor & 0x00ffffff);
         _labelControl.ShadowColor = dwAlpha;
 
-        // if (_maxWidth == 0)
+        if (_maxWidth == 0)
         {
           float fwt = 0;
           _labelControl.Label = GetShortenedText(strLabel, Width, ref fwt);
@@ -347,10 +347,10 @@ namespace MediaPortal.GUI.Library
             _labelControl.Width = (int)(fwt);
           }
         }
-        /*else
+        else
         {
           _labelControl.Label = strLabel;
-        }*/
+        }
         _labelControl.Render(timePassed);
         if (_currentFrame >= 12)
         {
@@ -452,10 +452,10 @@ namespace MediaPortal.GUI.Library
     /// <param name="timePassed"></param>
     /// <param name="positionX">The X position of the text.</param>
     /// <param name="positionY">The Y position of the text.</param>
-    /// <param name="maxWidth">The maximum render width.</param>
+    /// <param name="maxRenderWidth">The maximum render width.</param>
     /// <param name="text">The actual text.</param>
     /// <returns>true if the render was successful</returns>
-    private bool RenderText(float timePassed, float positionX, float positionY, float maxWidth, string text)
+    private bool RenderText(float timePassed, float positionX, float positionY, float maxRenderWidth, string text)
     {
       bool result = false;
 
@@ -465,19 +465,19 @@ namespace MediaPortal.GUI.Library
         return true;
       }
 
-      // get the text dimensions.
-      float textHeight = 0;
-      float textWidth  = 0;
-      _font.GetTextExtent(text, ref textWidth, ref textHeight);
-      float fWidth = textWidth;
-      float fHeight = textHeight;
-
       // set text color and apply dimming if requested
       long color = _textColor;
       if (Dimmed)
       {
         color &= DimColor;
       }
+
+      // get the text dimensions.
+      float textWidth  = 0;
+      float textHeight = 0;
+      _font.GetTextExtent(text, ref textWidth, ref textHeight);
+      float fWidth = textWidth;
+      float fHeight = textHeight;
 
       // scroll
       string originalText = text;
@@ -487,13 +487,13 @@ namespace MediaPortal.GUI.Library
         {
           _font.GetTextExtent(originalText, ref textWidth, ref textHeight);
           originalText += _labelTail;
-        } while (textWidth >= 0 && textWidth < maxWidth);
+        } while (textWidth >= 0 && textWidth < maxRenderWidth);
       }
-
-      string scrollText = "";
 
       if (_timeElapsed > _scrollStartDelay)
       {
+        string scrollText = "";
+
         if (_allowScrolling)
         {
           if (GUIGraphicsContext.ScrollSpeedHorizontal < 3)
@@ -545,11 +545,11 @@ namespace MediaPortal.GUI.Library
         _labelControl.Label = scrollText;
         if (_maxWidth > 0)
         {
-         _labelControl.MinWidth = (int)(maxWidth + _scrollPosititionX - _scrollOffset);
+          _labelControl.MaxWidth = (int)(maxRenderWidth + _scrollPosititionX - _scrollOffset);
         }
         else
         {
-         _labelControl.Width = (int)(maxWidth + _scrollPosititionX - _scrollOffset);
+          _labelControl.Width = (int)(maxRenderWidth + _scrollPosititionX - _scrollOffset);
         }
         _labelControl.TextColor = color;
 
@@ -560,9 +560,9 @@ namespace MediaPortal.GUI.Library
         {
           case Alignment.ALIGN_RIGHT:
             float fwt = 0;
-            GetShortenedText(originalText, (int)maxWidth /*_width*/, ref fwt);
+            GetShortenedText(originalText, (int)maxRenderWidth /*_width*/, ref fwt);
             //xoff = textWidth >= _width ? 0 : _width - fwt;
-            xoff = textWidth >= maxWidth /*_width*/ ? -fwt : maxWidth /*_width*/ - fwt;
+            xoff = textWidth >= maxRenderWidth /*_width*/ ? -fwt : maxRenderWidth /*_width*/ - fwt;
             xclipoff = xoff;
             xpos = positionX + xoff - _scrollPosititionX + _scrollOffset;
             _labelControl.SetPosition((int)xpos, (int)positionY);
@@ -572,7 +572,7 @@ namespace MediaPortal.GUI.Library
             _labelControl.TextColor = color;
             _labelControl.TextVAlignment = VAlignment.ALIGN_TOP;
             xpos = positionX - _scrollPosititionX + _scrollOffset;
-            xoff = (maxWidth /*_width*/ - textWidth) / 2;
+            xoff = (maxRenderWidth /*_width*/ - textWidth) / 2;
             if (xoff < 0)
             {
               xoff = 0;
@@ -590,7 +590,7 @@ namespace MediaPortal.GUI.Library
         var clipRect = new Rectangle();
         clipRect.X      = (int)(positionX + xclipoff);
         clipRect.Y      = _labelControl.YPosition;
-        clipRect.Width  = maxWidth > 0 ? (int)(maxWidth - xclipoff) : GUIGraphicsContext.Width - clipRect.X;
+        clipRect.Width  = maxRenderWidth > 0 ? (int)(maxRenderWidth - xclipoff) : GUIGraphicsContext.Width - clipRect.X;
         clipRect.Height = GUIGraphicsContext.Height - clipRect.Y;
 
         GUIGraphicsContext.BeginClip(clipRect);
@@ -601,17 +601,24 @@ namespace MediaPortal.GUI.Library
       {
         float fwt = 0;
         float fht = 0;
-        _labelControl.Label = GetShortenedText(text, (int)maxWidth, ref fwt);
+        _labelControl.Label = GetShortenedText(text, (int)maxRenderWidth, ref fwt);
         _font.GetTextExtent(_labelControl.Label, ref fwt, ref fht);
-        _labelControl.Width = _textAlignment == Alignment.ALIGN_RIGHT ? (int)fwt : (int)maxWidth;
+        if (_maxWidth > 0)
+        {
+          _labelControl.MaxWidth = _textAlignment == Alignment.ALIGN_RIGHT ? (int)fwt : (int)maxRenderWidth;
+        }
+        else
+        {
+          _labelControl.Width = _textAlignment == Alignment.ALIGN_RIGHT ? (int)fwt : (int)maxRenderWidth;
+        }
         _labelControl.TextColor = color;
         _labelControl.TextVAlignment = _textVAlignment;
 
         double xoff = 0;
         if (_textAlignment == Alignment.ALIGN_RIGHT)
         {
-          //xoff = textWidth >= maxWidth ? fwt : maxWidth;
-          xoff = textWidth >= maxWidth ? 0 : maxWidth;
+          //xoff = textWidth >= maxRenderWidth ? fwt : maxRenderWidth;
+          xoff = textWidth >= maxRenderWidth ? 0 : maxRenderWidth;
         }
         _labelControl.SetPosition((int)positionX + (int)xoff, (int)positionY);          
         _labelControl.Render(timePassed);
@@ -879,7 +886,7 @@ namespace MediaPortal.GUI.Library
           }
           else
           {
-            return TextWidth + 5; // + 1 - Margin for not fade last char in label text
+            return TextWidth; // + 1; // + 1 - Margin for not fade last char in label text
           }
         }
         else
@@ -951,6 +958,11 @@ namespace MediaPortal.GUI.Library
         if (base.Width != value)
         {
           base.Width = value;
+
+          if (_maxWidth > 0 && _maxWidth < base.Width)
+          {
+            MaxWidth = base.Width;
+          }
         }
       }
     }
@@ -963,6 +975,11 @@ namespace MediaPortal.GUI.Library
         if (base.Height != value)
         {
           base.Height = value;
+
+          if (_maxHeight > 0 && _maxHeight < base.Height)
+          {
+            MaxHeight = base.Height;
+          }
         }
       }
     }
@@ -975,6 +992,11 @@ namespace MediaPortal.GUI.Library
         if (_maxWidth != value)
         {
           _maxWidth = value;
+
+          if (_maxWidth > 0 && _maxWidth < base.Width)
+          {
+            base.Width = _maxWidth;
+          }
         }
       }
     }
@@ -987,6 +1009,11 @@ namespace MediaPortal.GUI.Library
         if (_maxHeight != value)
         {
           _maxHeight = value;
+
+          if (_maxHeight > 0 && _maxHeight < base.Height)
+          {
+            base.Height = _maxHeight;
+          }
         }
       }
     }
@@ -998,13 +1025,19 @@ namespace MediaPortal.GUI.Library
     {
       get
       {
-        float width = 0f;
-        float height = 0f;
         if (_font == null)
         {
           return 0;
         }
-        _font.GetTextExtent(_label, ref width, ref height);
+
+        float width = 0f;
+        float height = 0f;
+        string strText = _label;
+        if (_containsProperty)
+        {
+          strText = GUIPropertyManager.Parse(strText) ?? string.Empty;
+        }
+        _font.GetTextExtent(strText, ref width, ref height);
         return (int)width;
       }
     }
@@ -1016,13 +1049,19 @@ namespace MediaPortal.GUI.Library
     {
       get
       {
-        float width = 0f;
-        float height = 0f;
         if (_font == null)
         {
           return 0;
         }
-        _font.GetTextExtent(_label, ref width, ref height);
+
+        float width = 0f;
+        float height = 0f;
+        string strText = _label;
+        if (_containsProperty)
+        {
+          strText = GUIPropertyManager.Parse(strText) ?? string.Empty;
+        }
+        _font.GetTextExtent(strText, ref width, ref height);
         return (int)height;
       }
     }
