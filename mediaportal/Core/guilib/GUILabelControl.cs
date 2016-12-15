@@ -447,6 +447,11 @@ namespace MediaPortal.GUI.Library
         {
           base.Width = value;
           _reCalculate = true;
+
+          if (_maxWidth > 0 && _maxWidth < base.Width)
+          {
+            MaxWidth = base.Width;
+          }
         }
       }
     }
@@ -460,6 +465,11 @@ namespace MediaPortal.GUI.Library
         {
           base.Height = value;
           _reCalculate = true;
+
+          if (_maxHeight > 0 && _maxHeight < base.Height)
+          {
+            MaxHeight = base.Height;
+          }
         }
       }
     }
@@ -473,6 +483,11 @@ namespace MediaPortal.GUI.Library
         {
           _maxWidth = value;
           _reCalculate = true;
+
+          if (_maxWidth > 0 && _maxWidth < base.Width)
+          {
+            base.Width = _maxWidth;
+          }
         }
       }
     }
@@ -486,6 +501,11 @@ namespace MediaPortal.GUI.Library
         {
           _maxHeight = value;
           _reCalculate = true;
+
+          if (_maxHeight > 0 && _maxHeight < base.Height)
+          {
+            base.Height = _maxHeight;
+          }
         }
       }
     }
