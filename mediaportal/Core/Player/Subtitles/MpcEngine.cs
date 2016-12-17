@@ -238,12 +238,12 @@ namespace MediaPortal.Player.Subtitles
       set { MpcSubtitles.SetDelay(value); }
     }
 
-    public void DelayPlus()
+    public void DelayPlus(int subtitleDelay)
     {
       Delay = Delay + delayInterval;
     }
 
-    public void DelayMinus()
+    public void DelayMinus(int subtitleDelay)
     {
       Delay = Delay - delayInterval;
     }
