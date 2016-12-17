@@ -317,12 +317,12 @@ namespace MediaPortal.Player.Subtitles
       set { ffdshowAPI.SubtitlesDelay = value; }
     }
 
-    public void DelayPlus()
+    public void DelayPlus(int subtitleDelay)
     {
       Delay = Delay + delayInterval;
     }
 
-    public void DelayMinus()
+    public void DelayMinus(int subtitleDelay)
     {
       Delay = Delay - delayInterval;
     }
