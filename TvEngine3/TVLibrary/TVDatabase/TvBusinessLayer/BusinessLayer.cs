@@ -2438,6 +2438,7 @@ namespace TvDatabase
       {
         Log.Info("BusinessLayer: ExecuteInsertProgramsMySqlCommand - Prepare caused an Exception - {0}", ex.Message);
       }
+      int failed = 0;
       foreach (Program prog in currentInserts)
       {
         pIdChannel.Value = prog.IdChannel;
@@ -2486,10 +2487,13 @@ namespace TvDatabase
         }
         catch (Exception ex)
         {
-          Log.Info("BusinessLayer: ExecuteInsertProgramsMySqlCommand caused an Exception - {0}, {1}", ex.Message, ex.StackTrace);
+          string errorRow = pIdChannel.Value + ", " + pTitle.Value + " : " + pStartTime.Value + "-" + pEndTime.Value;
+          Log.Info("BusinessLayer: ExecuteInsertProgramsMySqlCommand caused an Exception - {0}, {1}", errorRow, ex.Message);
+          failed++;
         }
       }
-      return;
+      if (failed > 0)
+        Log.Info("BusinessLayer: Failed to inserted {0} programs (out of {1})", failed, aCounter);
     }
 
     private static void ExecuteDeleteProgramsSqlServerCommand(IEnumerable<ProgramListPartition> deleteProgramRanges,
