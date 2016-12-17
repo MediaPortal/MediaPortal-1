@@ -1334,9 +1334,9 @@ namespace MediaPortal.Configuration.Sections
       }
       else if (selection.Equals("XySubFilter"))
       {
-        DirectShowLib.IBaseFilter vobSub = null;
         try
         {
+          bool XySubFilter = false;
           foreach (DsDevice device in DsDevice.GetDevicesOfCat(DirectShowLib.FilterCategory.LegacyAmFilterCategory))
           {
             try
@@ -1349,6 +1349,7 @@ namespace MediaPortal.Configuration.Sections
                 {
                   DirectShowPropertyPage page = new DirectShowPropertyPage((DsDevice) device);
                   page.Show(this);
+                  XySubFilter = true;
                 }
               }
             }
@@ -1357,15 +1358,14 @@ namespace MediaPortal.Configuration.Sections
               MessageBox.Show("XySubFilter is not installed!");
             }
           }
+          if (!XySubFilter)
+          {
+            MessageBox.Show("XySubFilter is not installed!");
+          }
         }
         catch (Exception)
         {
           MessageBox.Show("XySubFilter is not installed!");
-        }
-        finally
-        {
-          if (vobSub != null)
-            Marshal.ReleaseComObject(vobSub);
         }
       }
     }
