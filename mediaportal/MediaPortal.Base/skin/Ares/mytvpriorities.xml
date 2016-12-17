@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>607</id>
+  <defaultcontrol>10</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <define>#header.label:877</define>
+  <define>#header.image:television_logo.png</define>
+  <define>#header.hover:hover_my tv.png</define>
+  <controls>
+    <import>common.window.xml</import>
+    <import>common.time.xml</import>
+    <control>
+      <description>BG</description>
+      <type>image</type>
+      <id>1</id>
+      <width>1920</width>
+      <height>1080</height>
+    </control>
+    <control>
+      <type>image</type>
+      <id>1</id>
+      <posX>159</posX>
+      <posY>18</posY>
+      <texture>television_logo.png</texture>
+      
+      
+    </control>
+    <!--     <control>
+      <type>image</type>
+      <id>1</id>
+      <posX>90</posX>
+      <posY>30</posY>
+      <texture>television_logo.png</texture>
+      
+      
+    </control>
+    <control>
+      <type>image</type>
+      <id>1</id>
+      <posX>112</posX>
+      <posY>555</posY>
+      <texture>hover_my tv.png</texture>
+      
+      
+    </control>
+    <control>
+      <description>Priorities Text Label</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>375</posX>
+      <posY>105</posY>
+      <label>877</label>
+      <align>right</align>
+      <textcolor>FFFFFFFF</textcolor>
+      
+      
+    </control>
+    <control>
+      <description>Date</description>
+      <type>label</type>
+      <id>200</id>
+      <posX>1035</posX>
+      <posY>45</posY>
+      <label>#date</label>
+      <align>right</align>
+      <font>font13</font>
+      <textcolor>ffa9d0f7</textcolor>
+      
+      
+    </control>
+    <control>
+      <description>Time</description>
+      <type>label</type>
+      <id>201</id>
+      <posX>1035</posX>
+      <posY>75</posY>
+      <label>#time</label>
+      <align>right</align>
+      <font>font13</font>
+      <textcolor>ffa9d0f7</textcolor>
+      
+      
+    </control>
+    <control>
+      <description>Number of Files Label</description>
+      <type>label</type>
+      <id>12</id>
+      <posX>390</posX>
+      <posY>795</posY>
+      <label>#itemcount</label>
+      <font>font13</font>
+      <align>left</align>
+      <textcolor>FFFFFFFF</textcolor>
+      
+      
+    </control>
+    <control>
+      <description>Selected item Label</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>990</posX>
+      <posY>105</posY>
+      <width>600</width>
+      <label>#selecteditem</label>
+      <font>font13</font>
+      <align>right</align>
+      <textcolor>ffffffff</textcolor>
+      
+      
+    </control> -->
+    <control>
+      <type>group</type>
+      <description>group element</description>
+      
+      
+      <control>
+        <description>scheduler recordings listcontrol</description>
+        <type>updownlistcontrol</type>
+        <id>10</id>
+        <height>693</height>
+        <textXOff>159</textXOff>
+        <textYOff>3</textYOff>
+        <textXOff2>1119</textXOff2>
+        <textYOff2>54</textYOff2>
+        <textXOff3>265</textXOff3>
+        <textYOff3>54</textYOff3>
+        <IconXOff>31</IconXOff>
+        <PinIconXOff>75</PinIconXOff>
+        <PinIconYOff>22</PinIconYOff>
+        <spinPosX>1615</spinPosX>
+        <spinPosY>783</spinPosY>
+        <itemWidth>93</itemWidth>
+        <itemHeight>64</itemHeight>
+        <textureFocus>list_sub_focus.png</textureFocus>
+        <textureNoFocus>list_sub_nofocus.png</textureNoFocus>
+        <spaceBetweenItems>8</spaceBetweenItems>
+        <textureHeight>93</textureHeight>
+        <keepaspectratio>no</keepaspectratio>
+        <font2>font101</font2>
+        <font3>font101</font3>
+        <onleft>2</onleft>
+        <onright>2</onright>
+        <onup>2</onup>
+        <ondown>2</ondown>
+      </control>
+    </control>
+    <control>
+      <description>Current program title</description>
+      <type>fadelabel</type>
+      <id>13</id>
+      <posX>693</posX>
+      <posY>825</posY>
+      <width>666</width>
+      <label>#TV.Scheduled.Title</label>
+      <font>font13</font>
+      <textcolor>FF666666</textcolor>
+      
+      
+    </control>
+    <control>
+      <description>Current program time</description>
+      <type>label</type>
+      <id>14</id>
+      <posX>693</posX>
+      <posY>862</posY>
+      <label>#TV.Scheduled.Time</label>
+      <align>left</align>
+      <font>font13</font>
+      <textcolor>ff666666</textcolor>
+      
+      
+    </control>
+    <control>
+      <description>Description1</description>
+      <type>textboxscrollup</type>
+      <id>15</id>
+      <posX>693</posX>
+      <posY>909</posY>
+      <width>1146</width>
+      <height>121</height>
+      <label>#TV.Scheduled.Description</label>
+      <font>font13</font>
+      <textcolor>FF666666</textcolor>
+      
+      
+    </control>
+    <control>
+      <description>genre</description>
+      <type>label</type>
+      <id>17</id>
+      <posX>1759</posX>
+      <posY>862</posY>
+      <label>#TV.Scheduled.Genre</label>
+      <align>right</align>
+      <font>font13</font>
+      <textcolor>ff666666</textcolor>
+      
+      
+    </control>
+  </controls>
+</window>

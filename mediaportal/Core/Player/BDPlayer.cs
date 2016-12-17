@@ -831,14 +831,13 @@ namespace MediaPortal.Player
         {
           return;
         }
-        if (destination.Left <= 0 && destination.Top <= 0 && destination.Width <= 1 && destination.Height <= 1)
-        {
-          return;
-        }
         if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
         {
-          Size client = GUIGraphicsContext.form.ClientSize;
-          _videoWin.SetWindowPosition(0, 0, client.Width, client.Height);
+          lock (GUIGraphicsContext.RenderMadVrLock)
+          {
+            Size client = GUIGraphicsContext.form.ClientSize;
+            _videoWin.SetWindowPosition(0, 0, client.Width, client.Height);
+          }
         }
         else
         {
@@ -861,12 +860,10 @@ namespace MediaPortal.Player
           {
             return;
           }
-          if (destination.Left <= 0 && destination.Top <= 0 && destination.Width <= 1 && destination.Height <= 1)
-          {
-            return;
-          }
 
+          Log.Debug("BDPlayer: SetSourcePosition 1");
           _basicVideo.SetSourcePosition(source.Left, source.Top, source.Width, source.Height);
+          Log.Debug("BDPlayer: SetSourcePosition 1");
 
           if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
           {
@@ -1222,16 +1219,6 @@ namespace MediaPortal.Player
       SetVideoPosition(rDest);
       _sourceRectangle = rSource;
       _videoRectangle = rDest;
-
-      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && !_isFullscreen)
-      {
-        if (_basicVideo != null)
-        {
-          // TODO why it is needed for some video to be able to reduce fullscreen video window
-          _basicVideo.SetDestinationPosition(_positionX, _positionY, _width, _height);
-          Log.Debug("BDPlayer: rezise madVR video window _positionX : {0}, _positionY : {1}, _width : {2}, _height : {3}", _positionX, _positionY, _width, _height);
-        }
-      }
     }
 
     public override bool Ended
@@ -1259,12 +1246,26 @@ namespace MediaPortal.Player
       {
         _updateTimer = DateTime.Now;
 
-        if (GUIGraphicsContext.Overlay == false && GUIGraphicsContext.IsFullScreenVideo == false)
+        if (GUIGraphicsContext.IsFullScreenVideo == false)
+        {
+          _isVisible = false;
+        }
+        if (GUIGraphicsContext.BlankScreen)
+        {
+          _isVisible = false;
+        }
+        if (GUIGraphicsContext.VideoControl || GUIGraphicsContext.Overlay)
+        {
+          _isVisible = true;
+        }
+
+        if (GUIGraphicsContext.IsFullScreenVideo == false)
         {
           if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
           {
-            if (GUIGraphicsContext.IsWindowVisible)
+            if (GUIGraphicsContext.IsWindowVisible && !_isVisible)
             {
+              _isVisible = false;
               GUIGraphicsContext.IsWindowVisible = false;
               if (!GUIGraphicsContext.IsFullScreenVideo)
               {
@@ -1272,7 +1273,7 @@ namespace MediaPortal.Player
                 {
                   // Here is to hide video window madVR when skin didn't handle video overlay (the value need to be different from GUIVideoControl Render)
                   _basicVideo.SetDestinationPosition(-100, -100, 50, 50);
-                  //Log.Error("BDPlayer: hide video window");
+                  Log.Debug("BDPlayer: hide video window");
                 }
               }
             }
@@ -1288,7 +1289,7 @@ namespace MediaPortal.Player
         }
         else if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
         {
-          if (!GUIGraphicsContext.IsWindowVisible)
+          if (!GUIGraphicsContext.IsWindowVisible && _isVisible)
           {
             GUIGraphicsContext.IsWindowVisible = true;
             if (!GUIGraphicsContext.IsFullScreenVideo)
@@ -1297,7 +1298,7 @@ namespace MediaPortal.Player
               {
                 _basicVideo.SetDestinationPosition(0, 0, GUIGraphicsContext.VideoWindowWidth,
                   GUIGraphicsContext.VideoWindowHeight);
-                //Log.Error("BDPlayer: show video window");
+                Log.Debug("BDPlayer: show video window");
               }
             }
           }
@@ -2458,7 +2459,7 @@ namespace MediaPortal.Player
         {
           lTimerInterval = 1000;
         }
-        rewind = _currentPosDS + (long)lTimerInterval * Speed * 10000;
+        rewind = _currentPosDS + Convert.ToInt32((long)lTimerInterval * Speed * 10000);
         int hr;
         pStop = 0;
         // if we end up before the first moment of time then just

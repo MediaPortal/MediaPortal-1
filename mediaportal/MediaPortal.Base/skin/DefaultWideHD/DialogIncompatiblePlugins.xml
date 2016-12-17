@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>2021</id>
@@ -6,40 +5,53 @@
   <allowoverlay>no</allowoverlay>
   <controls>
     <control>
-      <id>0</id>
       <type>image</type>
+      <id>1</id>
       <width>1920</width>
       <height>1080</height>
-      <texture>background.jpg</texture>
+      <texture>white.png</texture>
+      <colordiffuse>50005eef</colordiffuse>
+    </control>
+    <control>
+      <type>image</type>
+      <id>1</id>
+      <posX>421</posX>
+      <posY>202</posY>
+      <width>1048</width>
+      <height>717</height>
+      <texture>context_background.png</texture>
+      <colordiffuse>ffffffff</colordiffuse>
     </control>
     <control>
       <type>label</type>
       <id>0</id>
-      <posX>90</posX>
-      <posY>40</posY>
-      <font>font16</font>
+      <posX>491</posX>
+      <posY>239</posY>
+      <width>843</width>
       <align>left</align>
+      <textcolor>red</textcolor>
       <label>1910</label>
-      <textcolor>ivory</textcolor>
+      <font>font14</font>
     </control>
     <control>
       <id>0</id>
       <type>image</type>
-      <posX>768</posX>
-      <posY>348</posY>
-      <colordiffuse>d0d0d0d0</colordiffuse>
+      <posX>1324</posX>
+      <posY>234</posY>
+      <width>110</width>
+      <height>110</height>
       <texture>warning-icon.png</texture>
     </control>
     <control>
       <id>0</id>
       <description>dialog line 1</description>
       <type>textbox</type>
-      <posX>90</posX>
-      <posY>99</posY>
-      <width>1740</width>
-      <height>132</height>
-      <textcolor>ffffffff</textcolor>
-      <font>font13</font>
+      <posX>491</posX>
+      <posY>289</posY>
+      <width>834</width>
+      <height>223</height>
+      <textcolor>yellow</textcolor>
+      <font>font11</font>
       <align>LEFT</align>
       <label>#(L(1911))</label>
     </control>
@@ -49,12 +61,11 @@
       <type>listcontrol</type>
       <onright>3</onright>
       <ondown>3</ondown>
-      <posX>90</posX>
-      <posY>253</posY>
-      <width>1177</width>
-      <height>658</height>
-      <scrollOffset>2</scrollOffset>
-      <unfocusedAlpha>160</unfocusedAlpha>
+      <posX>491</posX>
+      <posY>400</posY>
+      <width>870</width>
+      <height>320</height>
+      <scrollOffset>0</scrollOffset>
     </control>
     <control>
       <id>3</id>
@@ -62,12 +73,12 @@
       <type>button</type>
       <onleft>2</onleft>
       <onup>2</onup>
-      <posX>1239</posX>
-      <posY>948</posY>
-      <width>600</width>
-      <height>70</height>
+      <posX>650</posX>
+      <posY>810</posY>
+      <width>562</width>
+      <height>66</height>
       <textureFocus>button_focus.png</textureFocus>
-      <textureNoFocus>button_nofocus.png</textureNoFocus>
+      <textureNoFocus>button_focus.png</textureNoFocus>
       <label>#(string.formatcount(iif(eq(#countdownseconds,''),0,#countdownseconds), 1912))</label>
       <textalign>CENTER</textalign>
     </control>

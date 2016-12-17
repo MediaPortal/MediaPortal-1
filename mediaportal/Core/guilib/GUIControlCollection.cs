@@ -54,7 +54,14 @@ namespace MediaPortal.GUI.Library
 
     public GUIControl this[int index]
     {
-      get { return list[index]; }
+      get
+      {
+        if (list != null && list.Count > index)
+        {
+          return list[index];
+        }
+        return null;
+      }
       set
       {
         TryAdd(value);

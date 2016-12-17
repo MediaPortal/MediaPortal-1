@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>9816</id>
+  <defaultcontrol>50</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <define>#useSelectedFanart:No</define>
+  <controls>
+  
+    <control>
+      <description>Background Image</description>
+      <type>image</type>
+      <id>1</id>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>#backgroundcolour</texture>
+    </control> 
+	
+    <control>
+      <description>Fanart Background</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>#TVSeries.Current.Fanart</texture>
+	  <colordiffuse>40ffffff</colordiffuse>
+    </control>
+	
+    <control>
+      <description>Alternate Movie Backdrop - Toggles Load with Component 1 for animations on visibiltiy</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>1080</height>
+	  <colordiffuse>ffffffff</colordiffuse>
+      <texture>#overlaycolour</texture>
+	</control>	
+	
+	  <control>
+        <description>Cover Art</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>40</posX>
+        <posY>190</posY>
+        <width>1845</width>
+        <height>624</height>
+        <texture>D_over1.png</texture>
+		<visible>!control.isvisible(51)+!facadeview.coverflow</visible>
+      </control>	
+  	  <control>
+        <description>Cover Art</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>40</posX>
+        <posY>820</posY>
+        <width>1845</width>
+        <height>210</height>
+        <texture>Inf_gfx.png</texture>
+      </control>
+	  
+	  
+      <import>custom\Allscreens\user_dialog.xml</import>
+
+
+    <control>
+      <description>Number of Files Label</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>1865</posX>
+      <posY>110</posY>
+      <height>43</height>
+      <width>500</width>
+      <font>fontBold2</font>
+      <label>#selectedindex/#itemcount</label>
+      <align>right</align>
+      <textcolor>ffffffff</textcolor>
+      <visible>string.equals(#selectedindex)+string.equals(#itemcount)</visible>
+    </control>
+
+	
+	
+    <control>
+			<type>actiongroup</type>
+			<description>action menu</description>
+			<defaultcontrol>2</defaultcontrol>
+			<onexit>50</onexit>
+		    <buttonX>0</buttonX>
+		    <buttonY>0</buttonY>
+		    <buttonwidth>100</buttonwidth>
+            <buttonheight>1080</buttonheight>
+            <textureFocus>-</textureFocus>
+            <textureNoFocus>-</textureNoFocus>
+		    <width>800</width>
+		    <height>800</height>
+		    <dimColor>00ffffff</dimColor>
+			
+     <control>
+	   <type>image</type>
+	   <posX>0</posX>
+	   <posY>0</posY>
+	   <width>1920</width>
+	   <height>1080</height>
+       <texture>black.png</texture>
+        <colordiffuse>99000000</colordiffuse>
+	   <animation effect="fade" time="350" reversible="true">hidden</animation>
+	   <visible>!Control.HasFocus(50)</visible>    
+	 </control>
+		
+	  <control>
+        <type>image</type>
+        <id>0</id>
+        <posX>420</posX>
+        <posY>150</posY>
+        <width>975</width>
+        <height>836</height>
+        <texture>dialogglowbig.png</texture>
+		<visible>!Control.HasFocus(50)</visible>    
+      </control>	
+			<control>
+				<description>group element</description>
+				<type>group</type>
+				<visible>!Control.HasFocus(50)</visible>
+				<posX>500</posX>
+				<posY>250</posY>
+				<layout>StackLayout(0, Vertical, true)</layout>
+				<visible>!Control.HasFocus(50)</visible>
+
+				<control>
+					<description>Switch Layout</description>
+					<type>button</type>
+					<id>2</id>
+					<textureFocus>btn_list_blue2.png</textureFocus>
+                    <textureNoFocus></textureNoFocus>
+					<textYOff>3</textYOff>
+					<width>820</width>
+					<height>50</height>					
+					<onleft>50</onleft>
+					<onright>50</onright>
+				</control> 
+				<control>
+					<description>Refresh</description>
+					<type>button</type>
+					<id>3</id>
+                    <textureFocus>btn_list_blue2.png</textureFocus>
+                    <textureNoFocus></textureNoFocus>
+					<textYOff>3</textYOff>
+					<width>820</width>
+					<height>50</height>					
+					<label>184</label>
+					<onleft>50</onleft>
+					<onright>50</onright>
+				</control>
+			</control>			
+		</control>
+    <import>common.facade.video.Title.xml</import>
+    <control>
+      <description>Selected item Label</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>215</posX>
+      <posY>840</posY>
+      <width>1530</width>
+      <label>#selecteditem</label>
+      <font>font13</font>
+      <align>left</align>
+      <textcolor>ffffffff</textcolor>
+    </control>
+    <control>
+      <description>Series Default image</description>
+      <id>0</id>
+      <type>image</type>
+        <posX>1444</posX>
+        <posY>197</posY>
+        <width>422</width>
+        <height>605</height>
+		<keepaspectratio>no</keepaspectratio>
+        <zoomfromtop>no</zoomfromtop>
+        <texture mask="CAmask.png">missing_Coverart_video.png</texture>
+      <visible>!facadeview.coverflow+!facadeview.filmstrip+!control.hasthumb(500)</visible>
+    </control>
+    <control>
+      <description>Series Poster</description>
+      <id>500</id>
+      <type>image</type>
+        <posX>1444</posX>
+        <posY>197</posY>
+        <width>422</width>
+        <height>605</height>
+		<keepaspectratio>no</keepaspectratio>
+        <zoomfromtop>no</zoomfromtop>
+        <texture mask="CAmask.png">#selectedthumb</texture>
+      <visible>!facadeview.coverflow+!facadeview.filmstrip</visible>
+    </control>
+	
+      <control>
+        <description>Little Poster Missing cover art</description>
+        <id>1</id>
+        <type>image</type>
+        <posX>56</posX>
+        <posY>828</posY>
+		<height>190</height>
+		<width>137</width>
+        <texture mask="CAmask_small.png">defaultVideoBig.png</texture>
+      </control>
+      <control>
+        <description>Little Poster Missing cover art</description>
+        <id>1</id>
+        <type>image</type>
+        <posX>56</posX>
+        <posY>828</posY>
+		<height>190</height>
+		<width>137</width>
+        <texture mask="CAmask_small.png">#selectedthumb</texture>
+      </control>
+	  
+	  <control>
+        <description>Cover Art</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>1416</posX>
+        <posY>182</posY>
+        <width>28</width>
+        <height>619</height>
+        <texture>D_side.png</texture>
+		<visible>!facadeview.coverflow+!facadeview.filmstrip</visible>
+      </control>	  
+	  
+	  
+	  
+  </controls>
+</window>
+
+

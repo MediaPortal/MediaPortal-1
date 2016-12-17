@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>508</id>
+  <defaultcontrol>20</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <controls>
+    <control>
+      <description>BG</description>
+      <type>image</type>
+      <id>1</id>
+      <texture>#backgroundcolour</texture>
+      <width>1920</width>
+      <height>1080</height>
+    </control>
+    <include condition="#(eq(#Music.fanart.enable,'All Screens'))">common.music.fanart.xml</include>
+
+    <control>
+      <description>background overlay</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1700</posX>
+      <posY>60</posY>
+      <width>55</width>
+      <height>55</height>
+      <texture>user.png</texture>
+      <colordiffuse>ffffffff</colordiffuse>
+    </control>	
+    <control>
+      <description>background overlay</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1687</posX>
+      <posY>47</posY>
+      <width>80</width>
+      <height>80</height>
+      <texture>prog.png</texture>
+      <animation effect="fade" time="1500" reversible="true">visible</animation>
+      <animation effect="fade" time="1500" reversible="true">hidden</animation>
+      <animation effect="rotate" centre="40,40" delay="0" end="-360" time="2500" loop="true" condition="true">Conditional</animation>
+      <visible>player.hasmedia|topbar.visible</visible>
+      <colordiffuse>ffffffff</colordiffuse>
+    </control>	
+     <control>
+      <type>label</type>
+      <id>1</id>
+      <posX>1680</posX>
+      <posY>70</posY>
+      <width>200</width>
+      <height>30</height>
+      <label>#media.user</label>
+      <align>right</align>
+      <font>font101</font>
+      <textcolor>ffffffff</textcolor>
+      <visible>!player.hasaudio</visible>
+    </control>
+
+    <control>
+      <type>label</type>
+      <id>1</id>
+      <posX>1680</posX>
+      <posY>70</posY>
+      <width>200</width>
+      <height>30</height>
+      <label>Playing audio..</label>
+      <align>right</align>
+      <font>font101</font>
+      <textcolor>ffffffff</textcolor>
+      <visible>player.hasaudio</visible>
+    </control>	   
+	
+    <control>
+      <description>Current window</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>135</posX>
+      <posY>48</posY>
+      <align>left</align>
+      <width>1800</width>
+      <font>font181</font>		  
+      <label>#(iif(and(neq(L(102012), #currentmodule), neq(L(102002), #currentmodule), neq(L(100100), #currentmodule), neq(L(102015), #currentmodule)), #currentmodule, ' '))</label>
+      <textcolor>eaeaea</textcolor>		  
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+	
+
+    <control>
+      <description>Album Title</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>135</posX>
+      <posY>95</posY>
+      <label>#AlbumInfo.Title</label>
+      <align>left</align>
+      <font>font101</font>
+      <textcolor>eaeaea</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+	
+
+    <control>
+      <description>poster shadow</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>music_shadow.png</texture>
+      <colordiffuse>ffffffff</colordiffuse>      
+    </control>	  	
+    <control>
+      <description>Album Image Missing Art</description>
+      <id>0</id>
+      <type>image</type>
+      <posX>1199</posX>
+      <posY>220</posY>
+      <width>578</width>
+      <height>576</height>
+      <keepaspectratio>yes</keepaspectratio>
+      <centered>yes</centered>
+      <texture mask="music_mask.png">missing_coverart.png</texture>
+      <zoom>yes</zoom>
+    </control>
+
+    <control>
+      <type>image</type>
+      <description>Album Art image</description>
+      <id>10</id>
+      <posX>1199</posX>
+      <posY>220</posY>
+      <width>578</width>
+      <height>576</height>
+      <keepaspectratio>yes</keepaspectratio>
+      <centered>yes</centered>
+      <texture mask="music_mask.png">#AlbumInfo.Thumb</texture>      
+      <zoom>yes</zoom>
+      <colorkey>FFFFFFFF</colorkey>
+    </control>	
+	
+	
+    <control>
+      <type>image</type>
+      <description>Amazon Logo image</description>
+      <id>30</id>
+      <posX>3169</posX>
+      <posY>930</posY>
+      <width>250</width>
+      <height>84</height>
+      <texture>amazonlogo.png</texture>
+      <centered>yes</centered>
+      <keepaspectratio>yes</keepaspectratio>
+    </control>
+    <control>
+      <type>label</type>
+      <description>Album Cover Art Label</description>
+      <id>11</id>
+      <posX>3560</posX>
+      <posY>675</posY>
+      <label>4519</label>
+      <font>font121</font>
+      <textcolor>ff6FAFE1</textcolor>
+    </control>
+    <control>
+      <type>fadelabel</type>
+      <description>Artist value</description>
+      <id>12</id>
+      <posX>3672</posX>
+      <posY>250</posY>
+      <width>1200</width>
+      <label>-</label>
+      <font>font16</font>
+      <textcolor>ffffffff</textcolor>
+    </control>
+    <control>
+      <type>fadelabel</type>
+      <description>Album value</description>
+      <id>13</id>
+      <posX>3672</posX>
+      <posY>195</posY>
+      <width>1200</width>
+      <label>-</label>
+      <font>font16</font>
+      <textcolor>ffffffff</textcolor>
+    </control>
+    <control>
+      <type>label</type>
+      <description>Release year value</description>
+      <id>14</id>
+      <posX>3660</posX>
+      <posY>300</posY>
+      <label>-</label>
+      <font>font16</font>
+      <textcolor>ffffffff</textcolor>
+    </control>
+    <control>
+      <type>label</type>
+      <description>No matches label</description>
+      <id>15</id>
+      <posX>0</posX>
+      <posY>300</posY>
+      <width>1920</width>
+      <align>center</align>
+      <label>4516</label>
+      <visible>false</visible>
+      <font>font181</font>
+      <textcolor>ffffffff</textcolor>
+    </control>
+    <control>
+      <type>listcontrol</type>
+      <description>album view listcontrol</description>
+      <id>25</id>
+      <width>1020</width>
+		  <posX>125</posX>
+		  <posY>220</posY>
+		  <height>500</height>
+		  <font>font111</font>
+		  <textalign>left</textalign>
+          <font2>font111</font2>
+		  <textYOff>5</textYOff>
+		  <textXOff>20</textXOff>
+		  <textXOff2>1010</textXOff2>
+		  <textYOff2>5</textYOff2>
+		  <selectedColor2>ffffffff</selectedColor2>
+          <selectedColor>ffffffff</selectedColor>
+		  <textureHeight>50</textureHeight>
+		  <textureFocus>btn_list.png</textureFocus>
+		  <textureNoFocus></textureNoFocus>
+		  <itemWidth>45</itemWidth>
+      <itemHeight>45</itemHeight>
+      <IconXOff>15</IconXOff>
+      <IconYOff>2</IconYOff>
+    </control>
+	
+	<control>
+      <description>group element</description>
+      <type>group</type>
+      <layout>StackLayout(2, Vertical, false)</layout>
+      <posX>130</posX>
+      <posY>700</posY>
+    <control>
+      <type>button</type>
+      <description>Skip button</description>
+      <id>20</id>
+      <posX>600</posX>
+      <posY>840</posY>
+      <onleft>20</onleft>
+      <onright>25</onright>
+      <onup>20</onup>
+      <ondown>21</ondown>
+      <label>4520</label>
+      <width>1020</width>
+    </control>
+    <control>
+      <type>button</type>
+      <description>Cancel button</description>
+      <id>21</id>
+      <posX>169</posX>
+      <posY>840</posY>
+      <onleft>21</onleft>
+      <onright>25</onright>
+      <onup>20</onup>
+      <ondown>21</ondown>
+      <label>222</label>
+      <width>1020</width>
+    </control>
+	</control>
+  </controls>
+</window>

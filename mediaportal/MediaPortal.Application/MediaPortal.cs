@@ -1621,6 +1621,10 @@ public class MediaPortalApp : D3D, IRender
         case WM_EXITSIZEMOVE:
           Log.Debug("Main: WM_EXITSIZEMOVE");
           PluginManager.WndProc(ref msg);
+
+          // Force a madVR refresh to resize MP window
+          // TODO how to handle it better
+          g_Player.RefreshMadVrVideo();
           break;
 
         // only allow window to be moved inside a valid working area
@@ -3919,6 +3923,11 @@ public class MediaPortalApp : D3D, IRender
       return;
     }
 
+    if (Thread.CurrentThread.Name != "MPMain" && Thread.CurrentThread.Name != "Config Main")
+    {
+      return;
+    }
+
 #if !DEBUG
     try
     {
@@ -3995,6 +4004,19 @@ public class MediaPortalApp : D3D, IRender
               }
             }
           }
+        }
+      }
+      TimeSpan tsScreen = DateTime.Now - ScreenSaverEventTimer;
+      if (tsScreen.TotalSeconds >= 45)
+      // Reset screensaver all 45 seconds (less than the minimal windows configuration i.e 1 minute even if MP is not focused)
+      {
+        // Disable Windows screensaver even if MP is not focused
+        if ((GUIGraphicsContext.IsFullScreenVideo && !g_Player.Paused) ||
+            GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_SLIDESHOW)
+        {
+          //Log.Debug("Main: Active player - resetting idle timer for display to be turned off");
+          SetThreadExecutionState(EXECUTION_STATE.ES_SYSTEM_REQUIRED | EXECUTION_STATE.ES_DISPLAY_REQUIRED);
+          ScreenSaverEventTimer = DateTime.Now;
         }
       }
 

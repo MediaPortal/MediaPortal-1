@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <controls>
+  
+	<control>
+      <description>background</description>
+      <type>image</type>
+      <id>0</id>
+        <posX>40</posX>
+        <posY>191</posY>
+        <width>1845</width>
+        <height>209</height>
+        <texture>Inf_gfx.png</texture>
+		<animation effect="fade" time="500" reversible="true">visible</animation>
+	  <visible>control.isVisible(5100000)|control.isVisible(5100001)</visible>	  
+    </control>	
+	
+    <control>
+      <type>group</type>
+      <description>group element</description>
+      <visible>control.isVisible(5100000)|control.isVisible(5100001)</visible>
+      <control>
+        <type>group</type>
+        <description>group element</description>
+        <layout>StackLayout(0, Horizontal, true)</layout>
+		<animation effect="fade" time="500" reversible="true">visible</animation>
+        <posX>290</posX>
+        <posY>230</posY>
+        <control>
+          <description>Location</description>
+          <type>label</type>
+          <id>0</id>
+          <width>410</width>
+          <font>font11</font>
+          <textcolor>gainsboro</textcolor>
+          <label>#WorldWeather.ForecastDay1Day</label>
+        </control>
+        <control>
+          <description>Location</description>
+          <type>label</type>
+          <id>0</id>
+          <font>font11</font>
+          <width>410</width>
+          <textcolor>gainsboro</textcolor>
+          <label>#WorldWeather.ForecastDay2Day</label>
+        </control>
+        <control>
+          <description>Location</description>
+          <type>label</type>
+          <id>0</id>
+          <font>font11</font>
+          <width>410</width>
+          <textcolor>gainsboro</textcolor>
+          <label>#WorldWeather.ForecastDay3Day</label>
+        </control>
+        <control>
+          <description>Location</description>
+          <type>label</type>
+          <id>0</id>
+          <font>font11</font>
+          <width>410</width>
+          <textcolor>gainsboro</textcolor>
+          <label>#WorldWeather.ForecastDay4Day</label>
+        </control>
+      </control>
+      <control>
+        <type>group</type>
+        <description>group element</description>
+        <layout>StackLayout(0, Horizontal, true)</layout>
+		<animation effect="fade" time="500" reversible="true">visible</animation>
+        <posX>290</posX>
+        <posY>275</posY>
+        <control>
+          <description>Temperature</description>
+          <type>label</type>
+          <id>0</id>
+          <font>font11</font>
+          <width>410</width>
+          <textcolor>ivory</textcolor>
+          <label>#WorldWeather.ForecastDay1Low | #WorldWeather.ForecastDay1High</label>
+        </control>
+        <control>
+          <description>Temperature</description>
+          <type>label</type>
+          <id>0</id>
+          <font>font11</font>
+          <width>410</width>
+          <textcolor>ivory</textcolor>
+          <label>#WorldWeather.ForecastDay2Low | #WorldWeather.ForecastDay2High</label>
+        </control>
+        <control>
+          <description>Temperature</description>
+          <type>label</type>
+          <id>0</id>
+          <font>font11</font>
+          <width>410</width>
+          <textcolor>ivory</textcolor>
+          <label>#WorldWeather.ForecastDay3Low | #WorldWeather.ForecastDay3High</label>
+        </control>
+        <control>
+          <description>Temperature</description>
+          <type>label</type>
+          <id>0</id>
+          <width>410</width>
+          <font>font11</font>
+          <textcolor>ivory</textcolor>
+          <label>#WorldWeather.ForecastDay4Low | #WorldWeather.ForecastDay4High</label>
+        </control>
+      </control>
+      <control>
+        <type>group</type>
+        <description>group element</description>
+        <layout>StackLayout(0, Horizontal, true)</layout>
+		<animation effect="fade" time="500" reversible="true">visible</animation>
+        <posX>290</posX>
+        <posY>320</posY>
+        <control>
+          <description>Condition</description>
+          <type>fadelabel</type>
+          <id>0</id>
+          <width>410</width>
+          <font>font11</font>
+          <textcolor>ivory</textcolor>
+          <label>#WorldWeather.ForecastDay1Condition</label>
+        </control>
+        <control>
+          <description>Condition</description>
+          <type>fadelabel</type>
+          <id>0</id>
+          <width>410</width>
+          <font>font11</font>
+          <textcolor>ivory</textcolor>
+          <label>#WorldWeather.ForecastDay2Condition</label>
+        </control>
+        <control>
+          <description>Condition</description>
+          <type>fadelabel</type>
+          <id>0</id>
+          <width>410</width>
+          <font>font11</font>
+          <textcolor>ivory</textcolor>
+          <label>#WorldWeather.ForecastDay3Condition</label>
+        </control>
+        <control>
+          <description>Condition</description>
+          <type>fadelabel</type>
+          <id>0</id>
+          <width>410</width>
+          <font>font11</font>
+          <textcolor>ivory</textcolor>
+          <label>#WorldWeather.ForecastDay4Condition</label>
+        </control>
+      </control>
+      <control>
+        <type>group</type>
+        <description>group element</description>
+        <layout>StackLayout(260, Horizontal, true)</layout>
+		<animation effect="fade" time="500" reversible="true">visible</animation>
+        <posX>90</posX>
+        <posY>220</posY>
+        <control>
+          <description>Weather image</description>
+          <type>image</type>
+          <id>0</id>
+          <width>150</width>
+          <height>150</height>
+          <texture>#WorldWeather.ForecastDay1IconImage</texture>
+        </control>
+        <control>
+          <description>Weather image</description>
+          <type>image</type>
+          <id>0</id>
+          <width>150</width>
+          <height>150</height>
+          <texture>#WorldWeather.ForecastDay2IconImage</texture>
+        </control>
+        <control>
+          <description>Weather image</description>
+          <type>image</type>
+          <id>0</id>
+          <width>150</width>
+          <height>150</height>
+          <texture>#WorldWeather.ForecastDay3IconImage</texture>
+        </control>
+        <control>
+          <description>Weather image</description>
+          <type>image</type>
+          <id>0</id>
+          <width>150</width>
+          <height>150</height>
+          <texture>#WorldWeather.ForecastDay4IconImage</texture>
+        </control>
+      </control>
+ 
+ 
+ 
+    </control>
+  </controls>
+</window>

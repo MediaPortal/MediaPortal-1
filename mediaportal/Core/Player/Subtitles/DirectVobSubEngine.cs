@@ -27,7 +27,9 @@ using DShowNET.Helper;
 using MediaPortal.GUI.Library;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
+using DirectShowLib.BDA;
 using FFDShow;
+using MediaPortal.Profile;
 
 namespace MediaPortal.Player.Subtitles
 {
@@ -37,7 +39,8 @@ namespace MediaPortal.Player.Subtitles
     protected IAMStreamSelect embeddedSelector;
 
     private List<int> intSubs = new List<int>();
-    private List<string> intNames = new List<string>();
+    private List<string> SubtitleLanguages = new List<string>();
+    private List<string> SubtitleNames = new List<string>();
     private int extCount;
     private int current;
 
@@ -61,7 +64,7 @@ namespace MediaPortal.Player.Subtitles
         }
       }
 
-      vobSub = (IDirectVobSub)DirectVobSubUtil.AddToGraph(graphBuilder);
+      vobSub = (IDirectVobSub) DirectVobSubUtil.AddToGraph(graphBuilder);
       if (vobSub == null)
         return false;
 
@@ -84,7 +87,14 @@ namespace MediaPortal.Player.Subtitles
 
         bool fBuffer, fOnlyForced, fPolygonize;
         vobSub.get_VobSubSettings(out fBuffer, out fOnlyForced, out fPolygonize);
-        vobSub.put_VobSubSettings(fBuffer, !this.autoShow, fPolygonize);
+        if (selectionOff)
+        {
+          vobSub.put_VobSubSettings(fBuffer, false, fPolygonize);
+        }
+        else
+        {
+          vobSub.put_VobSubSettings(fBuffer, !this.autoShow, fPolygonize);
+        }
       }
 
       {
@@ -117,10 +127,6 @@ namespace MediaPortal.Player.Subtitles
       {
         Enable = false;
       }
-      else
-      {
-        Enable = autoShow;
-      }
       return true;
     }
 
@@ -144,8 +150,31 @@ namespace MediaPortal.Player.Subtitles
         if (sPDWGroup == 2 && sName.LastIndexOf("No ") == -1)
         {
           intSubs.Add(istream);
+
+          // Add subtitle names
+          if (sName.ToLowerInvariant().Contains("forced"))
+          {
+            Regex regexLAVF = new Regex(@"(?:S:\s)(?<lang_or_title>.+?)(?:\s*\[(?<lang>[^\]]*?)\])?(?:\s*\((?<info>[^\)]*?)\))?$");
+            Match resultLAVF = regexLAVF.Match(sName);
+            if (resultLAVF.Success)
+            {
+              string lang_or_title = resultLAVF.Groups[1].Value;
+              string lang = resultLAVF.Groups[2].Value;
+              string info = resultLAVF.Groups[3].Value;
+              if (lang.ToLowerInvariant().Contains("forced") || info.ToLowerInvariant().Contains("forced"))
+              {
+                if (!lang_or_title.ToLowerInvariant().Contains("forced"))
+                {
+                  sName = "S: " + lang_or_title + " Forced ";
+                }
+              }
+            }
+          }
+          SubtitleNames?.Add(sName);
+
+          // Add language names
           // Try Find Language by LCID
-          String langName = "";
+          string langName = "";
           if (sPLCid != 0)
           {
             int size = Util.Win32API.GetLocaleInfo(sPLCid, 2, null, 0);
@@ -170,7 +199,7 @@ namespace MediaPortal.Player.Subtitles
           {
             langName = sName;
           }
-          intNames.Add(langName);
+          SubtitleLanguages.Add(langName);
         }
       }
     }
@@ -184,7 +213,8 @@ namespace MediaPortal.Player.Subtitles
       vobSub = null;
       embeddedSelector = null;
       intSubs.Clear();
-      intNames.Clear();
+      SubtitleLanguages.Clear();
+      SubtitleNames.Clear();
       extCount = 0;
       current = -1;
     }
@@ -206,7 +236,7 @@ namespace MediaPortal.Player.Subtitles
       get { return AutoSaveTypeEnum.NEVER; }
     }
 
-    public void Render(Rectangle subsRect, Rectangle frameRect) { }
+    public void Render(Rectangle subsRect, Rectangle frameRect, int xOffsetInPixels) { }
 
     public int GetCount()
     {
@@ -230,17 +260,28 @@ namespace MediaPortal.Player.Subtitles
         return ret;
       }
 
+      string streamName = Strings.Unknown;
       int index = iStream - extCount;
-      if (index >= intNames.Count)
+      if (index >= SubtitleLanguages.Count)
         return ret;
-      string streamName = intNames[index];
+      if (index >= 0)
+      {
+        streamName = SubtitleLanguages[index];
+      }
       return streamName;
     }
 
     public string GetSubtitleName(int iStream)
     {
-      string languageTranslated = "";
-      return languageTranslated;
+      string streamName = "";
+      int index = iStream - extCount;
+      if (index >= SubtitleNames.Count)
+        return streamName;
+      if (index >= 0)
+      {
+       streamName = SubtitleNames[index];
+      }
+      return streamName;
     }
 
     public int Current
@@ -253,14 +294,14 @@ namespace MediaPortal.Player.Subtitles
         current = value;
         if (value < extCount)
         {
-          vobSub.put_SelectedLanguage(value);
+          vobSub?.put_SelectedLanguage(value);
         }
         else
         {
           int i = value - extCount;
           int index = intSubs[i];
           embeddedSelector.Enable(index, AMStreamSelectEnableFlags.Enable);
-          vobSub.put_SelectedLanguage(extCount);
+          vobSub?.put_SelectedLanguage(extCount);
         }
       }
     }
@@ -300,10 +341,14 @@ namespace MediaPortal.Player.Subtitles
       get
       {
         int delay, speedmul, speeddiv;
-        vobSub.get_SubtitleTiming(out delay, out speedmul, out speeddiv);
-        return delay;
+        if (vobSub != null)
+        {
+          vobSub.get_SubtitleTiming(out delay, out speedmul, out speeddiv);
+          return delay;
+        }
+        return 0;
       }
-      set { vobSub.put_SubtitleTiming(value, 1, 1); }
+      set { vobSub?.put_SubtitleTiming(value, 1, 1); }
     }
 
     public void DelayPlus()
@@ -324,9 +369,9 @@ namespace MediaPortal.Player.Subtitles
       set
       {
         autoShow = value;
-        bool fBuffer, fOnlyForced, fPolygonize;
-        vobSub.get_VobSubSettings(out fBuffer, out fOnlyForced, out fPolygonize);
-        vobSub.put_VobSubSettings(fBuffer, !this.autoShow, fPolygonize);
+        bool fBuffer = false, fOnlyForced, fPolygonize = false;
+        vobSub?.get_VobSubSettings(out fBuffer, out fOnlyForced, out fPolygonize);
+        vobSub?.put_VobSubSettings(fBuffer, !this.autoShow, fPolygonize);
       }
     }
 
@@ -339,11 +384,45 @@ namespace MediaPortal.Player.Subtitles
     {
       IBaseFilter vob = null;
 
-      DirectShowUtil.FindFilterByClassID(graphBuilder, ClassId.DirectVobSubAutoload, out vob);
-      if (vob == null)
+      using (Settings xmlreader = new MPSettings())
       {
-        //Try the "normal" filter then.
-        DirectShowUtil.FindFilterByClassID(graphBuilder, ClassId.DirectVobSubNormal, out vob);
+        string engineType = xmlreader.GetValueAsString("subtitles", "engine", "DirectVobSub");
+        XySubFilter = engineType.Equals("XySubFilter");
+      }
+
+      if (!XySubFilter)
+      {
+        DirectShowUtil.FindFilterByClassID(graphBuilder, ClassId.DirectVobSubAutoload, out vob);
+        if (vob == null)
+        {
+          //Try the "normal" filter then.
+          DirectShowUtil.FindFilterByClassID(graphBuilder, ClassId.DirectVobSubNormal, out vob);
+        }
+      }
+      else
+      {
+        //Try the XySubFilter "autoload" filter.
+        DirectShowUtil.FindFilterByClassID(graphBuilder, ClassId.XySubFilterAutoload, out vob);
+        if (vob != null)
+        {
+          return vob;
+        }
+
+        //Try the XySubFilter "normal" filter then.
+        DirectShowUtil.FindFilterByClassID(graphBuilder, ClassId.XySubFilterNormal, out vob);
+        if (vob != null)
+        {
+          return vob;
+        }
+
+        vob = DirectShowUtil.AddFilterToGraph(graphBuilder, "XySubFilter");
+        if (vob == null)
+        {
+          Log.Warn("VideoPlayerVMR9: DirectVobSub or XySubFilter filter not found! You need to install XySubFilter");
+          return null;
+        }
+        Log.Debug("VideoPlayerVMR9: VobSub filter added to graph");
+        return vob;
       }
 
       //if the directvobsub filter has not been added to the graph. (i.e. with evr)
@@ -357,13 +436,10 @@ namespace MediaPortal.Player.Subtitles
         vob = DirectShowUtil.AddFilterToGraph(graphBuilder, "DirectVobSub");
         if (vob == null)
         {
-          Log.Warn("VideoPlayerVMR9: DirectVobSub filter not found! You need to install VSFilter");
+          Log.Warn("VideoPlayerVMR9: DirectVobSub or XySubFilter filter not found! You need to install VSFilter");
           return null;
         }
-        else
-        {
-          Log.Debug("VideoPlayerVMR9: VobSub filter added to graph");
-        }
+        Log.Debug("VideoPlayerVMR9: VobSub filter added to graph");
       }
       else // VobSub already loaded
       {
@@ -469,16 +545,49 @@ namespace MediaPortal.Player.Subtitles
       return vob;
     }
 
+    public static bool XySubFilter { get; set; }
+
     public static void RemoveFromGraph(IGraphBuilder graphBuilder)
     {
       IBaseFilter vob = null;
-      DirectShowUtil.FindFilterByClassID(graphBuilder, ClassId.DirectVobSubAutoload, out vob);
+      using (Settings xmlreader = new MPSettings())
+      {
+        string engineType = xmlreader.GetValueAsString("subtitles", "engine", "DirectVobSub");
+        XySubFilter = engineType.Equals("XySubFilter");
+      }
+
+      if (!XySubFilter)
+      {
+        DirectShowUtil.FindFilterByClassID(graphBuilder, ClassId.DirectVobSubAutoload, out vob);
+        if (vob == null)
+        {
+          //Try the "normal" filter then.
+          DirectShowUtil.FindFilterByClassID(graphBuilder, ClassId.DirectVobSubNormal, out vob);
+        }
+      }
+
       if (vob == null)
       {
-        //Try the "normal" filter then.
-        DirectShowUtil.FindFilterByClassID(graphBuilder, ClassId.DirectVobSubNormal, out vob);
-        if (vob == null)
+        DirectShowUtil.FindFilterByClassID(graphBuilder, ClassId.XySubFilterAutoload, out vob);
+        if (vob != null)
+        {
+          //remove the XySubFilter filter from the graph
+          graphBuilder.RemoveFilter(vob);
+          DirectShowUtil.ReleaseComObject(vob);
+          vob = null;
           return;
+        }
+
+        //Try the XySubFilter "normal" filter then.
+        DirectShowUtil.FindFilterByClassID(graphBuilder, ClassId.XySubFilterNormal, out vob);
+        if (vob != null)
+        {
+          //remove the XySubFilter filter from the graph
+          graphBuilder.RemoveFilter(vob);
+          DirectShowUtil.ReleaseComObject(vob);
+          vob = null;
+        }
+        return;
       }
 
       Log.Info("VideoPlayerVMR9: DirectVobSub in graph, removing...");
@@ -488,12 +597,19 @@ namespace MediaPortal.Player.Subtitles
 
       //find directvobsub's video output pin source input pin
       IPin pinVideoTo = null;
-      pinVideoOut.ConnectedTo(out pinVideoTo);
+      if (pinVideoOut != null)
+      {
+        pinVideoOut.ConnectedTo(out pinVideoTo);
+      }
+
       //find directvobsub's video input pin source output pin
       IPin pinVideoFrom = null;
-      pinVideoIn.ConnectedTo(out pinVideoFrom);
+      if (pinVideoIn != null)
+      {
+        pinVideoIn.ConnectedTo(out pinVideoFrom);
+      }
 
-      int hr;
+      int hr = 0;
 
       if (pinVideoFrom != null)
       {
@@ -519,17 +635,33 @@ namespace MediaPortal.Player.Subtitles
       vob = null;
 
       //reconnect the source output pin to the vmr9/evr filter
-      hr = graphBuilder.Connect(pinVideoFrom, pinVideoTo);
-      //hr = graphBuilder.Render(pinVideoFrom);
+      if (pinVideoFrom != null)
+      {
+        if (pinVideoTo != null)
+        {
+          hr = graphBuilder.Connect(pinVideoFrom, pinVideoTo);
+        }
+        //hr = graphBuilder.Render(pinVideoFrom);
+        DirectShowUtil.ReleaseComObject(pinVideoFrom);
+        pinVideoFrom = null;
+      }
 
-      DirectShowUtil.ReleaseComObject(pinVideoFrom);
-      pinVideoFrom = null;
-      DirectShowUtil.ReleaseComObject(pinVideoTo);
-      pinVideoTo = null;
-      DirectShowUtil.ReleaseComObject(pinVideoOut);
-      pinVideoOut = null;
-      DirectShowUtil.ReleaseComObject(pinVideoIn);
-      pinVideoIn = null;
+      if (pinVideoTo != null)
+      {
+        DirectShowUtil.ReleaseComObject(pinVideoTo);
+        pinVideoTo = null;
+      }
+      if (pinVideoOut != null)
+      {
+        DirectShowUtil.ReleaseComObject(pinVideoOut);
+        pinVideoOut = null;
+      }
+
+      if (pinVideoIn != null)
+      {
+        DirectShowUtil.ReleaseComObject(pinVideoIn);
+        pinVideoIn = null;
+      }
 
       if (hr != 0)
         Log.Error("VideoPlayerVMR9: Could not connect video out to video renderer: {0}", hr);

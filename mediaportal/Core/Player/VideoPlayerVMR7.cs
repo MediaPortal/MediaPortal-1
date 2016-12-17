@@ -425,15 +425,20 @@ namespace MediaPortal.Player
     protected void SelectSubtitles()
     {
       if (SubtitleStreams == 0) return;
-      if (!SubEngine.GetInstance().AutoShow) return;
+      if (!SubEngine.GetInstance().AutoShow && (SubEngine.GetSubtitleInstance() != "XySubFilter" && SubEngine.GetSubtitleInstance() != "DirectVobSub"))
+      {
+        return;
+      }
       CultureInfo ci = null;
       bool autoloadSubtitle = false;
+      bool selectionOff = false;
 
       using (Settings xmlreader = new MPSettings())
       {
         try
         {
           autoloadSubtitle = xmlreader.GetValueAsBool("subtitles", "autoloadSubtitle", false);
+          selectionOff = xmlreader.GetValueAsBool("subtitles", "selectionoff", true);
           ci = new CultureInfo(xmlreader.GetValueAsString("subtitles", "language", defaultLanguageCulture));
           Log.Info("VideoPlayerVMR7: Subtitle CultureInfo {0}", ci);
         }
@@ -446,23 +451,59 @@ namespace MediaPortal.Player
 
       if (!streamLAVSelection)
       {
-        int subsCount = SubtitleStreams; // Not in the loop otherwise it will be reaccessed at each pass
-        for (int i = 0; i < subsCount; i++)
+        if (!SubEngine.GetInstance().AutoShow && (SubEngine.GetSubtitleInstance() == "XySubFilter" || SubEngine.GetSubtitleInstance() == "DirectVobSub") && !selectionOff)
         {
-          string subtitleLanguage = SubtitleLanguage(i);
-          //Add localized stream names for FFDshow when OS language = Skin language
-          string localizedCINameSub = Util.Utils.TranslateLanguageString(ci.EnglishName);
-          if (localizedCINameSub.Equals(SubtitleLanguage(i), StringComparison.OrdinalIgnoreCase) ||
-              ci.EnglishName.Equals(subtitleLanguage, StringComparison.OrdinalIgnoreCase) ||
-              ci.TwoLetterISOLanguageName.Equals(subtitleLanguage, StringComparison.OrdinalIgnoreCase) ||
-              ci.ThreeLetterISOLanguageName.Equals(subtitleLanguage, StringComparison.OrdinalIgnoreCase) ||
-              ci.ThreeLetterWindowsLanguageName.Equals(subtitleLanguage, StringComparison.OrdinalIgnoreCase) ||
-              subtitleLanguage.ToUpperInvariant().Contains(ci.ThreeLetterWindowsLanguageName))
+          int subsCount = SubtitleStreams; // Not in the loop otherwise it will be reaccessed at each pass
+          for (var i = 0; i < subsCount; i++)
           {
-            CurrentSubtitleStream = i;
-            Log.Info("VideoPlayerVMR7: CultureInfo Selected active subtitle track language: {0} ({1})", ci.EnglishName, i);
-            EnableSubtitle = true;
-            break;
+            string subtitleLanguage = SubtitleLanguage(i);
+            string subtitleName = SubtitleName(i);
+            //Add localized stream names for FFDshow when OS language = Skin language
+            string localizedCINameSub = Util.Utils.TranslateLanguageString(ci.EnglishName);
+            if (localizedCINameSub.Equals(SubtitleLanguage(i), StringComparison.OrdinalIgnoreCase) ||
+                ci.EnglishName.Equals(subtitleLanguage, StringComparison.OrdinalIgnoreCase) ||
+                ci.TwoLetterISOLanguageName.Equals(subtitleLanguage, StringComparison.OrdinalIgnoreCase) ||
+                ci.ThreeLetterISOLanguageName.Equals(subtitleLanguage, StringComparison.OrdinalIgnoreCase) ||
+                ci.ThreeLetterWindowsLanguageName.Equals(subtitleLanguage, StringComparison.OrdinalIgnoreCase) ||
+                subtitleLanguage.ToUpperInvariant().Contains(ci.ThreeLetterWindowsLanguageName))
+            {
+              if (subtitleName.ToLowerInvariant().Contains("forced"))
+              {
+                CurrentSubtitleStream = i;
+                Log.Info("VideoPlayerVMR7: CultureInfo Selected active subtitle track language: {0} ({1})",
+                  ci.EnglishName,
+                  i);
+                EnableSubtitle = true;
+                break;
+              }
+            }
+          }
+        }
+        else if (!SubEngine.GetInstance().AutoShow)
+        {
+          return;
+        }
+        else
+        {
+          int subsCount = SubtitleStreams; // Not in the loop otherwise it will be reaccessed at each pass
+          for (int i = 0; i < subsCount; i++)
+          {
+            string subtitleLanguage = SubtitleLanguage(i);
+            //Add localized stream names for FFDshow when OS language = Skin language
+            string localizedCINameSub = Util.Utils.TranslateLanguageString(ci.EnglishName);
+            if (localizedCINameSub.Equals(SubtitleLanguage(i), StringComparison.OrdinalIgnoreCase) ||
+                ci.EnglishName.Equals(subtitleLanguage, StringComparison.OrdinalIgnoreCase) ||
+                ci.TwoLetterISOLanguageName.Equals(subtitleLanguage, StringComparison.OrdinalIgnoreCase) ||
+                ci.ThreeLetterISOLanguageName.Equals(subtitleLanguage, StringComparison.OrdinalIgnoreCase) ||
+                ci.ThreeLetterWindowsLanguageName.Equals(subtitleLanguage, StringComparison.OrdinalIgnoreCase) ||
+                subtitleLanguage.ToUpperInvariant().Contains(ci.ThreeLetterWindowsLanguageName))
+            {
+              CurrentSubtitleStream = i;
+              Log.Info("VideoPlayerVMR7: CultureInfo Selected active subtitle track language: {0} ({1})", ci.EnglishName,
+                i);
+              EnableSubtitle = true;
+              break;
+            }
           }
         }
       }
@@ -627,16 +668,6 @@ namespace MediaPortal.Player
         SetVideoPosition(rDest);
         _sourceRectangle = rSource;
         _videoRectangle = rDest;
-
-        if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && !m_bFullScreen)
-        {
-          if (basicVideo != null)
-          {
-            // TODO why it is needed for some video to be able to reduce fullscreen video window
-            basicVideo.SetDestinationPosition(m_iPositionX, m_iPositionY, m_iWidth, m_iHeight);
-            Log.Debug("VideoPlayer: rezise madVR video window m_iPositionX : {0}, m_iPositionY : {1}, m_iWidth : {2}, m_iHeight : {3}", m_iPositionX, m_iPositionY, m_iWidth, m_iHeight);
-          }
-        }
       }
     }
 
@@ -648,16 +679,13 @@ namespace MediaPortal.Player
         {
           return;
         }
-
-        if (rDest.Left <= 0 && rDest.Top <= 0 && rDest.Width <= 1 && rDest.Height <= 1)
-        {
-          return;
-        }
-
         if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
         {
-          Size client = GUIGraphicsContext.form.ClientSize;
-          videoWin.SetWindowPosition(0, 0, client.Width, client.Height);
+          lock (GUIGraphicsContext.RenderMadVrLock)
+          {
+            Size client = GUIGraphicsContext.form.ClientSize;
+            videoWin.SetWindowPosition(0, 0, client.Width, client.Height);
+          }
         }
         else
         {
@@ -676,13 +704,7 @@ namespace MediaPortal.Player
           {
             return;
           }
-
           if (rDest.Width <= 0 || rDest.Height <= 0)
-          {
-            return;
-          }
-
-          if (rDest.Left <= 0 && rDest.Top <= 0 && rDest.Width <= 1 && rDest.Height <= 1)
           {
             return;
           }
@@ -734,54 +756,72 @@ namespace MediaPortal.Player
           mediaPos.get_Duration(out m_dDuration); //(refresh timeline when change EDITION)
           mediaPos.get_CurrentPosition(out m_dCurrentPos);
         }
-        if (GUIGraphicsContext.BlankScreen || (GUIGraphicsContext.VideoWindow.Width <= 10 && GUIGraphicsContext.Overlay == false && GUIGraphicsContext.IsFullScreenVideo == false))
+        if (GUIGraphicsContext.IsFullScreenVideo == false)
         {
-          if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
-          {
-            if (GUIGraphicsContext.IsWindowVisible)
-            {
-              GUIGraphicsContext.IsWindowVisible = false;
-              if (!GUIGraphicsContext.IsFullScreenVideo)
-              {
-                if (basicVideo != null)
-                {
-                  // Here is to hide video window madVR when skin didn't handle video overlay (the value need to be different from GUIVideoControl Render)
-                  basicVideo.SetDestinationPosition(-100, -100, 50, 50);
-                  //Log.Error("VideoPlayer: hide video window");
-                }
-              }
-            }
-          }
-          else if (m_bVisible)
-          {
-            m_bVisible = false;
-            if (videoWin != null)
-            {
-              videoWin.put_Visible(OABool.False);
-            }
-          }
+          _isVisible = false;
         }
-        else if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+        if (GUIGraphicsContext.BlankScreen)
         {
-          if (!GUIGraphicsContext.IsWindowVisible)
+          _isVisible = false;
+        }
+        if (GUIGraphicsContext.VideoControl || GUIGraphicsContext.Overlay)
+        {
+          _isVisible = true;
+        }
+        if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+        {
+          if (GUIGraphicsContext.IsWindowVisible && !_isVisible)
           {
-            GUIGraphicsContext.IsWindowVisible = true;
+            //_isVisible = true;
+            GUIGraphicsContext.IsWindowVisible = false;
             if (!GUIGraphicsContext.IsFullScreenVideo)
             {
               if (basicVideo != null)
               {
-                basicVideo.SetDestinationPosition(0, 0, GUIGraphicsContext.VideoWindowWidth, GUIGraphicsContext.VideoWindowHeight);
-                //Log.Error("VideoPlayer: show video window");
+                // Here is to hide video window madVR when skin didn't handle video overlay (the value need to be different from GUIVideoControl Render)
+                basicVideo.SetDestinationPosition(-100, -100, 50, 50);
+                Log.Debug("VideoPlayer: hide video window");
+              }
+            }
+          }
+          else
+          {
+            if (!GUIGraphicsContext.IsWindowVisible && _isVisible)
+            {
+              GUIGraphicsContext.IsWindowVisible = true;
+              if (!GUIGraphicsContext.IsFullScreenVideo)
+              {
+                if (basicVideo != null)
+                {
+                  basicVideo.SetDestinationPosition(0, 0, GUIGraphicsContext.VideoWindowWidth,
+                    GUIGraphicsContext.VideoWindowHeight);
+                  Log.Debug("VideoPlayer: show video window");
+                }
               }
             }
           }
         }
-        else if (!m_bVisible)
+        else
         {
-          m_bVisible = true;
-          if (videoWin != null)
+          if (GUIGraphicsContext.BlankScreen ||
+            (GUIGraphicsContext.Overlay == false && GUIGraphicsContext.IsFullScreenVideo == false))
           {
-            videoWin.put_Visible(OABool.True);
+            if (m_bVisible)
+            {
+              m_bVisible = false;
+              if (videoWin != null)
+              {
+                videoWin.put_Visible(OABool.False);
+              }
+            }
+          }
+          else if (!m_bVisible)
+          {
+            m_bVisible = true;
+            if (videoWin != null)
+            {
+              videoWin.put_Visible(OABool.True);
+            }
           }
         }
         updateTimer = DateTime.Now;

@@ -768,17 +768,6 @@ namespace MediaPortal.Player
         SetVideoPosition(rDest);
         _sourceRectangle = rSource;
         _videoRectangle = rDest;
-
-        // Need to be disable for TV - TODO
-        if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && !_isFullscreen)
-        {
-          if (_basicVideo != null)
-          {
-            // TODO why it is needed for some video to be able to reduce fullscreen video window
-            _basicVideo.SetDestinationPosition(_positionX, _positionY, _width, _height);
-            Log.Debug("TsReader: rezise madVR video window _positionX : {0}, _positionY : {1}, _width : {2}, _height : {3}", _positionX, _positionY, _width, _height);
-          }
-        }
       }
     }
 
@@ -818,7 +807,7 @@ namespace MediaPortal.Player
       }
 
       _lastPosition = CurrentPosition;
-      if (GUIGraphicsContext.VideoWindow.Width <= 10 && GUIGraphicsContext.IsFullScreenVideo == false)
+      if (GUIGraphicsContext.IsFullScreenVideo == false)
       {
         _isVisible = false;
       }
@@ -826,48 +815,60 @@ namespace MediaPortal.Player
       {
         _isVisible = false;
       }
-      if (GUIGraphicsContext.IsWindowVisible && !_isVisible)
+      if (GUIGraphicsContext.VideoControl || GUIGraphicsContext.Overlay)
       {
-        GUIGraphicsContext.IsWindowVisible = false;
-        //Log.Info("TSReaderPlayer:hide window");
-        if (_videoWin != null)
+        _isVisible = true;
+      }
+      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+      {
+        if (GUIGraphicsContext.IsWindowVisible && !_isVisible)
         {
-          if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+          GUIGraphicsContext.IsWindowVisible = false;
+          if (!GUIGraphicsContext.IsFullScreenVideo)
           {
             if (_basicVideo != null)
             {
-              if (!GUIGraphicsContext.IsFullScreenVideo)
-              {
-                _basicVideo.SetDestinationPosition(-100, -100, 50, 50);
-                //Log.Error("TsReader hide video window");
-              }
+              // Here is to hide video window madVR when skin didn't handle video overlay (the value need to be different from GUIVideoControl Render)
+              _basicVideo.SetDestinationPosition(-100, -100, 50, 50);
+              Log.Debug("TsReader: hide video window");
             }
           }
-          else
-          {
-            _videoWin.put_Visible(OABool.False);
-          }
         }
-      }
-      else if (!GUIGraphicsContext.IsWindowVisible && _isVisible)
-      {
-        GUIGraphicsContext.IsWindowVisible = true;
-        //Log.Info("TSReaderPlayer:show window");
-        if (_videoWin != null)
+        else
         {
-          if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+          if (!GUIGraphicsContext.IsWindowVisible && _isVisible)
           {
-            if (_basicVideo != null)
+            GUIGraphicsContext.IsWindowVisible = true;
+            if (!GUIGraphicsContext.IsFullScreenVideo)
             {
-              if (!GUIGraphicsContext.IsFullScreenVideo)
+              if (_basicVideo != null)
               {
                 _basicVideo.SetDestinationPosition(0, 0, GUIGraphicsContext.VideoWindowWidth,
                   GUIGraphicsContext.VideoWindowHeight);
-                //Log.Error("TsReader show video window");
+                Log.Debug("TsReader: show video window");
               }
             }
           }
-          else
+        }
+      }
+      else
+      {
+        if (GUIGraphicsContext.BlankScreen ||
+          (GUIGraphicsContext.Overlay == false && GUIGraphicsContext.IsFullScreenVideo == false))
+        {
+          if (_isVisible)
+          {
+            _isVisible = false;
+            if (_videoWin != null)
+            {
+              _videoWin.put_Visible(OABool.False);
+            }
+          }
+        }
+        else if (!_isVisible)
+        {
+          _isVisible = true;
+          if (_videoWin != null)
           {
             _videoWin.put_Visible(OABool.True);
           }
@@ -1515,16 +1516,13 @@ namespace MediaPortal.Player
           {
             return;
           }
-
-          if (rDest.Left <= 0 && rDest.Top <= 0 && rDest.Width <= 1 && rDest.Height <= 1)
-          {
-            return;
-          }
-
           if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
           {
-            Size client = GUIGraphicsContext.form.ClientSize;
-            _videoWin.SetWindowPosition(0, 0, client.Width, client.Height);
+            lock (GUIGraphicsContext.RenderMadVrLock)
+            {
+              Size client = GUIGraphicsContext.form.ClientSize;
+              _videoWin.SetWindowPosition(0, 0, client.Width, client.Height);
+            }
           }
           else
           {
@@ -1546,11 +1544,6 @@ namespace MediaPortal.Player
           }
 
           if (rDest.Width <= 0 || rDest.Height <= 0)
-          {
-            return;
-          }
-
-          if (rDest.Left <= 0 && rDest.Top <= 0 && rDest.Width <= 1 && rDest.Height <= 1)
           {
             return;
           }
