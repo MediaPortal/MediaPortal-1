@@ -30,37 +30,6 @@
   <start>0</start>
   <end>1536</end>
 </font>
-<!-- Apollo fonts -->
-<font>
-  <name>font101</name>
-  <filename>Lato</filename>
-  <height>10</height>
-  <start>0</start>
-  <end>1536</end>
-</font>
-<font>
-  <name>font111</name>
-  <filename>Lato</filename>
-  <height>12</height>
-  <start>0</start>
-  <end>1536</end>
-</font>
-<font>
-  <name>font121</name>
-  <filename>Lato</filename>
-  <height>13</height>
-  <start>0</start>
-  <end>1536</end>
-</font>
-<font>
-  <name>font181</name>
-  <filename>Lato</filename>
-  <height>19</height>
-  <start>0</start>
-  <end>1536</end>
-</font>
-
-
 <font>
   <name>font12</name>
   <filename>AvalonType Light</filename>
