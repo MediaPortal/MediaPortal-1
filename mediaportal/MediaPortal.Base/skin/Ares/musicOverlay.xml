@@ -243,7 +243,7 @@
       <posX>3364</posX>
       <posY>1012</posY>
       <width>502</width>
-      <font>font121</font>
+      <font>font12</font>
       <label>#(L(179)): #Play.Current.Title\r#(L(171)) #Play.Current.Artist\r#(L(170)) #Play.Current.Album\r#(L(435)) #Play.Current.Track\r#(L(436)) #Play.Current.Year</label>
       <textcolor>EFFFFFFF</textcolor>
     </control>

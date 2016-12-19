@@ -136,8 +136,8 @@
         <spaceBetweenItems>8</spaceBetweenItems>
         <textureHeight>93</textureHeight>
         <keepaspectratio>no</keepaspectratio>
-        <font2>font101</font2>
-        <font3>font101</font3>
+        <font2>font10</font2>
+        <font3>font10</font3>
         <onleft>2</onleft>
         <onright>2</onright>
         <onup>2</onup>

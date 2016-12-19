@@ -29,7 +29,7 @@
 	  <posX>6515</posX>
 	  <posY>230</posY>
 	  <width>639</width>
-	  <font>font121</font>
+	  <font>font12</font>
       <align>left</align>
       <label>1910</label>
       <textcolor>ffffffff</textcolor>
@@ -53,7 +53,7 @@
       <width>730</width>
       <height>132</height>
       <textcolor>ffffffff</textcolor>
-      <font>font111</font>
+      <font>font11</font>
       <align>LEFT</align>
       <label>#(L(1911))</label>
     </control>

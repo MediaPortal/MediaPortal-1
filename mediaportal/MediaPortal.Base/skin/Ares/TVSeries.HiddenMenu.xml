@@ -275,7 +275,7 @@
 					<description>Last Online Update Label</description>
 					<label>#TVSeries.Translation.LastOnlineUpdate.Label</label>
 					<type>label</type>
-					<font>font101</font>
+					<font>font10</font>
 					<posX>4515</posX>
 					<posY>810</posY>
 					<textcolor>ff666666</textcolor>
@@ -288,7 +288,7 @@
 					<description>Last Online Update Value</description>
 					<label>#TVSeries.LastOnlineUpdate</label>
 					<type>label</type>
-					<font>font101</font>
+					<font>font10</font>
 					<posX>4515</posX>
 					<posY>850</posY>
                     <textcolor>ff666666</textcolor>

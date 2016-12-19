@@ -179,7 +179,7 @@
       <posY>673</posY>
       <label></label>
       <align>left</align>
-      <font>font111</font>
+      <font>font11</font>
       <textcolor>ffffffff</textcolor>
       <visible>control.isVisible(111)|control.isVisible(10)|control.isVisible(11)|control.isVisible(12)</visible>
     </control>
@@ -191,7 +191,7 @@
       <posY>550</posY>
       <label></label>
       <align>right</align>
-      <font>font121</font>
+      <font>font12</font>
       <textcolor>eaeaea</textcolor>
       <visible>[control.isVisible(111)|control.isVisible(10)|control.isVisible(11)|control.isVisible(12)]+!control.isvisible(10)+!control.isvisible(11)+!control.isvisible(12)</visible>
     </control>
@@ -203,7 +203,7 @@
       <posY>840</posY>
       <width>500</width>
       <label>-</label>
-      <font>font111</font>
+      <font>font11</font>
       <align>right</align>
       <textcolor>ffffffff</textcolor>
       <visible>no</visible>
@@ -216,7 +216,7 @@
       <posY>840</posY>
       <width>500</width>
       <label>-</label>
-      <font>font111</font>
+      <font>font11</font>
       <align>right</align>
       <textcolor>ffffffff</textcolor>
       <visible>no</visible>
@@ -229,7 +229,7 @@
       <posY>840</posY>
       <width>500</width>
       <label>-</label>
-      <font>font111</font>
+      <font>font11</font>
       <align>right</align>
       <textcolor>ffffffff</textcolor>
       <visible>no</visible>

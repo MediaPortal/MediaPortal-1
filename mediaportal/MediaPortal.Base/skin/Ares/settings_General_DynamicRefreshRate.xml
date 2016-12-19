@@ -217,7 +217,7 @@
       <posY>867</posY>
       <width>367</width>
       <label>#defaultrate</label>
-      <font>font111</font>
+      <font>font11</font>
       <textcolor>ffffffff</textcolor>
 			<visible>control.isvisible(11)</visible>
     </control>

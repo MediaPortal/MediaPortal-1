@@ -51,7 +51,7 @@
         <posX>399</posX>
         <posY>375</posY>
         <label>181</label>
-        <font>font121</font>
+        <font>font12</font>
         <textcolor>ffffffff</textcolor>
       </control>
       <control>
@@ -61,7 +61,7 @@
         <posX>576</posX>
         <posY>623</posY>
         <label>-</label>
-        <font>font111</font>
+        <font>font11</font>
         <textcolor>ffffffff</textcolor>
       </control>
       <control>
@@ -71,7 +71,7 @@
         <posX>576</posX>
         <posY>654</posY>
         <label>-</label>
-        <font>font111</font>
+        <font>font11</font>
         <textcolor>ffffffff</textcolor>
       </control>
       <control>
@@ -107,7 +107,7 @@
         <spinWidth>42</spinWidth>
         <spinHeight>30</spinHeight>
         <textureHeight>50</textureHeight>
-        <font>font111</font>
+        <font>font11</font>
         <textYOff>4</textYOff>
       </control>
     </control>

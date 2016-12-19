@@ -115,7 +115,7 @@
       <posX>512</posX>
       <posY>755</posY>
       <width>780</width>
-      <font>font101</font>
+      <font>font10</font>
       <label>#customScalevalues</label>
       <visible>control.hasfocus(8)</visible>
     </control>
