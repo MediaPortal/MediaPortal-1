@@ -38,7 +38,7 @@
       <posY>408</posY>
       <width>786</width>
       <label>0</label>
-      <font>font121</font>
+      <font>font12</font>
       <textcolor>ffffffff</textcolor>
     </control>
     <control Style="NoShadow">
@@ -48,7 +48,7 @@
       <posX>559</posX>
       <posY>480</posY>
       <width>786</width>
-      <font>font111</font>
+      <font>font11</font>
       <textcolor>ffffffff</textcolor>
     </control>
     <control>
@@ -59,7 +59,7 @@
       <posY>522</posY>
       <label>0</label>
       <width>786</width>
-      <font>font111</font>
+      <font>font11</font>
       <textcolor>ffffffff</textcolor>
     </control>
     <control>
@@ -70,7 +70,7 @@
       <posY>565</posY>
       <label>0</label>
       <width>786</width>
-      <font>font111</font>
+      <font>font11</font>
       <textcolor>ffffffff</textcolor>
     </control>
     <control>
@@ -81,7 +81,7 @@
       <posY>622</posY>
       <label>0</label>
       <width>786</width>
-      <font>font111</font>
+      <font>font11</font>
       <textcolor>ffffffff</textcolor>
     </control>
   </controls>

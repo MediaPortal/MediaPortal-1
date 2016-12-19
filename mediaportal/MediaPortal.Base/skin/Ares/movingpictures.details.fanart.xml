@@ -174,7 +174,7 @@ This file should contain the details view
         <width>100</width>
         <height>50</height>
         <textcolor>eaeaea</textcolor>
-        <font>font101</font>
+        <font>font10</font>
         <label>#MovingPictures.UserMovieSettings.Progress%</label>
         <visible>[!facadeview.filmstrip+!facadeview.coverflow]+[control.isvisible(50)|control.isVisible(6)]+!string.equals(#MovingPictures.UserMovieSettings.Progress,0)</visible>
 		<animation effect="fade" delay="0" reversible="false" time="250" condition="control.isVisible(791140)">conditional</animation>

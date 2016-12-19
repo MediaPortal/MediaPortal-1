@@ -49,7 +49,7 @@
         <label>#(iif(eq(#skin.tile21cne,'True'),'#tile21plugin.name','#tile21.name'))</label>
 		<oninfo>#(skin.setfocus(35,270))</oninfo>
 		<hyperlink>#tile21.hyperlink</hyperlink>
-		<textcolorNoFocus>ff999999</textcolorNoFocus>
+		<textcolorNoFocus>ff888888</textcolorNoFocus>
 		<textcolor>ffffffff</textcolor>
 		<textureFocus overlay="">#(iif(eq(#skin.manualimg,'yes'),'btn\focus\focus_#tile21pluginImg.png','btn\focus\focus_#tile21plugin.hyperlink.png'))</textureFocus>
 		<textureNoFocus>#(iif(eq(#skin.manualimg,'yes'),'btn\unfocus\#tile21pluginImg.png','btn\unfocus\#tile21plugin.hyperlink.png'))</textureNoFocus>
@@ -78,7 +78,7 @@
         <label>#(iif(eq(#skin.tile22cne,'True'),'#tile22plugin.name','#tile22.name'))</label>
 		<oninfo>#(skin.setfocus(35,272))</oninfo>
 		<hyperlink>#tile22.hyperlink</hyperlink>
-		<textcolorNoFocus>ff999999</textcolorNoFocus>
+		<textcolorNoFocus>ff888888</textcolorNoFocus>
 		<textcolor>ffffffff</textcolor>
 		<textureFocus overlay="">#(iif(eq(#skin.manualimg,'yes'),'btn\focus\focus_#tile22pluginImg.png','btn\focus\focus_#tile22plugin.hyperlink.png'))</textureFocus>
 		<textureNoFocus>#(iif(eq(#skin.manualimg,'yes'),'btn\unfocus\#tile22pluginImg.png','btn\unfocus\#tile22plugin.hyperlink.png'))</textureNoFocus>
@@ -107,7 +107,7 @@
         <label>#(iif(eq(#skin.tile23cne,'True'),'#tile23plugin.name','#tile23.name'))</label>
 		<oninfo>#(skin.setfocus(35,274))</oninfo>
 		<hyperlink>#tile23.hyperlink</hyperlink>
-		<textcolorNoFocus>ff999999</textcolorNoFocus>
+		<textcolorNoFocus>ff888888</textcolorNoFocus>
 		<textcolor>ffffffff</textcolor>
 		<textureFocus overlay="">#(iif(eq(#skin.manualimg,'yes'),'btn\focus\focus_#tile23pluginImg.png','btn\focus\focus_#tile23plugin.hyperlink.png'))</textureFocus>
 		<textureNoFocus>#(iif(eq(#skin.manualimg,'yes'),'btn\unfocus\#tile23pluginImg.png','btn\unfocus\#tile23plugin.hyperlink.png'))</textureNoFocus>
@@ -136,7 +136,7 @@
         <label>#(iif(eq(#skin.tile24cne,'True'),'#tile24plugin.name','#tile24.name'))</label>
 		<oninfo>#(skin.setfocus(35,276))</oninfo>
 		<hyperlink>#tile24.hyperlink</hyperlink>
-		<textcolorNoFocus>ff999999</textcolorNoFocus>
+		<textcolorNoFocus>ff888888</textcolorNoFocus>
 		<textcolor>ffffffff</textcolor>
 		<textureFocus overlay="">#(iif(eq(#skin.manualimg,'yes'),'btn\focus\focus_#tile24pluginImg.png','btn\focus\focus_#tile24plugin.hyperlink.png'))</textureFocus>
 		<textureNoFocus>#(iif(eq(#skin.manualimg,'yes'),'btn\unfocus\#tile24pluginImg.png','btn\unfocus\#tile24plugin.hyperlink.png'))</textureNoFocus>
@@ -165,7 +165,7 @@
         <label>#(iif(eq(#skin.tile25cne,'True'),'#tile25plugin.name','#tile25.name'))</label>
 		<oninfo>#(skin.setfocus(35,278))</oninfo>
 		<hyperlink>#tile25.hyperlink</hyperlink>
-		<textcolorNoFocus>ff999999</textcolorNoFocus>
+		<textcolorNoFocus>ff888888</textcolorNoFocus>
 		<textcolor>ffffffff</textcolor>
 		<textureFocus overlay="">#(iif(eq(#skin.manualimg,'yes'),'btn\focus\focus_#tile25pluginImg.png','btn\focus\focus_#tile25plugin.hyperlink.png'))</textureFocus>
 		<textureNoFocus>#(iif(eq(#skin.manualimg,'yes'),'btn\unfocus\#tile25pluginImg.png','btn\unfocus\#tile25plugin.hyperlink.png'))</textureNoFocus>

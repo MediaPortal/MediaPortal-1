@@ -94,7 +94,7 @@ This file should contain the list view
 		  <width>1275</width>
 		  <height>225</height>
 		  <textcolor>ffFFFFFF</textcolor>		  
-		  <font>font111</font>
+		  <font>font11</font>
 		  <scrollStartDelaySec>#textboxscrolldelay.coverflow</scrollStartDelaySec>
 		  <label>#MovingPictures.SelectedMovie.summary</label>
 		  <visible>facadeview.coverflow+control.isvisible(50)</visible>
@@ -108,7 +108,7 @@ This file should contain the list view
 		  <posX>615</posX>
 		  <posY>420</posY>
 		  <width>450</width>
-		  <font>font111</font>
+		  <font>font11</font>
 		  <label>#MovingPictures.Translation.MovieDetails.Label</label>
 		  <textcolor>ffa9d0f7</textcolor>
 		  <visible>facadeview.coverflow+control.isvisible(50)</visible>
@@ -122,7 +122,7 @@ This file should contain the list view
 		  <posX>615</posX>
 		  <posY>457</posY>
 		  <width>645</width>
-		  <font>font101</font>
+		  <font>font10</font>
 		  <textcolor>ffFFFFFF</textcolor>
 		  <visible>facadeview.coverflow+control.isvisible(50)</visible>
 			<animation effect="fade" time="250">WindowClose</animation>
@@ -134,7 +134,7 @@ This file should contain the list view
 		  <posX>615</posX>
 		  <posY>487</posY>
 		  <width>540</width>
-		  <font>font101</font>
+		  <font>font10</font>
 		  <textcolor>ffFFFFFF</textcolor>
 		  <visible>facadeview.coverflow+control.isvisible(50)</visible>
 			<animation effect="fade" time="250">WindowClose</animation>
@@ -146,7 +146,7 @@ This file should contain the list view
 		  <posX>615</posX>
 		  <posY>517</posY>
 		  <width>540</width>
-		  <font>font101</font>
+		  <font>font10</font>
 		  <textcolor>ffFFFFFF</textcolor>
 		  <visible>facadeview.coverflow+control.isvisible(50)</visible>
 			<animation effect="fade" time="250">WindowClose</animation>
@@ -158,7 +158,7 @@ This file should contain the list view
 		  <posX>615</posX>
 		  <posY>547</posY>
 		  <width>540</width>
-		  <font>font101</font>
+		  <font>font10</font>
 		  <textcolor>ffFFFFFF</textcolor>
 		  <visible>facadeview.coverflow+control.isvisible(50)</visible>
 			<animation effect="fade" time="250">WindowClose</animation>
@@ -171,7 +171,7 @@ This file should contain the list view
 		  <posX>615</posX>
 		  <posY>600</posY>
 		  <width>450</width>
-		  <font>font111</font>
+		  <font>font11</font>
 		  <label>#MovingPictures.Translation.StarRating.Label</label>
 		  <textcolor>ffa9d0f7</textcolor>		 
 		  <visible>facadeview.coverflow+control.isvisible(50)</visible>
@@ -197,7 +197,7 @@ This file should contain the list view
 		  <posX>615</posX>
 		  <posY>678</posY>
 		  <width>540</width>
-		  <font>font101</font>	
+		  <font>font10</font>	
 		  <textcolor>ffFFFFFF</textcolor>
 		  <visible>facadeview.coverflow+control.isvisible(50)</visible>
 			<animation effect="fade" time="250">WindowClose</animation>
@@ -210,7 +210,7 @@ This file should contain the list view
 		  <posX>1312</posX>
 		  <posY>420</posY>
 		  <width>450</width>
-		  <font>font111</font>
+		  <font>font11</font>
 		  <label>#MovingPictures.Translation.Director.Label</label>
 		  <textcolor>ffa9d0f7</textcolor>
 		  <visible>facadeview.coverflow+control.isvisible(50)</visible>
@@ -224,7 +224,7 @@ This file should contain the list view
 		  <posX>1312</posX>
 		  <posY>457</posY>
 		  <width>540</width>
-		  <font>font101</font>
+		  <font>font10</font>
 		  <textcolor>ffFFFFFF</textcolor>
 		  <visible>facadeview.coverflow+control.isvisible(50)</visible>
 			<animation effect="fade" time="250">WindowClose</animation>
@@ -237,7 +237,7 @@ This file should contain the list view
 		  <posX>1312</posX>
 		  <posY>502</posY>
 		  <width>450</width>
-		  <font>font111</font>
+		  <font>font11</font>
 		  <label>#MovingPictures.Translation.Writer.Label</label>
 		  <textcolor>ffa9d0f7</textcolor>
 		  <visible>facadeview.coverflow+control.isvisible(50)</visible>
@@ -250,7 +250,7 @@ This file should contain the list view
 		  <posX>1312</posX>
 		  <posY>540</posY>
 		  <width>540</width>
-		  <font>font101</font>
+		  <font>font10</font>
 		  <textcolor>ffFFFFFF</textcolor>
 		  <visible>facadeview.coverflow+control.isvisible(50)</visible>
 			<animation effect="fade" time="250">WindowClose</animation>
@@ -263,7 +263,7 @@ This file should contain the list view
 		  <posX>1312</posX>
 		  <posY>607</posY>
 		  <width>450</width>
-		  <font>font111</font>
+		  <font>font11</font>
 		  <label>#MovingPictures.Translation.Actors.Label</label>
 		  <textcolor>ffa9d0f7</textcolor>		 
 		  <visible>facadeview.coverflow+control.isvisible(50)</visible>
@@ -277,7 +277,7 @@ This file should contain the list view
 		  <posY>645</posY>
 		  <width>570</width>
 		  <height>82</height>
-		  <font>font101</font>		 
+		  <font>font10</font>		 
 		  <textcolor>ffFFFFFF</textcolor>
 		  <visible>facadeview.coverflow+control.isvisible(50)</visible>
 			<animation effect="fade" time="250">WindowClose</animation>

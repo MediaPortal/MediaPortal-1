@@ -101,7 +101,7 @@
 					<description>timeout value label</description>
 					<id>1</id>
 					<label>#timeoutValue</label>
-					<font>font111</font>
+					<font>font11</font>
 					<posX>800</posX>
 					<posY>546</posY>
 			</control>
@@ -164,7 +164,7 @@
 					<description>Skip value label</description>
 					<id>1</id>
 					<label>#skipValue</label>
-					<font>font111</font>
+					<font>font11</font>
 					<posX>850</posX>
 					<posY>760</posY>
 			</control>
@@ -181,7 +181,7 @@
         <description>skip steps seconds</description>
         <id>1</id>
         <label>Secs</label>
-        <font>font111</font>
+        <font>font11</font>
       </control>
       <control>
         <description>Step 1</description>
@@ -397,7 +397,7 @@
         <posX>515</posX>
         <posY>805</posY>
         <label>143</label>
-        <font>font111</font>
+        <font>font11</font>
       </control>
       <control>
         <description>Current config dynamic</description>
@@ -406,7 +406,7 @@
         <posX>515</posX>
         <posY>850</posY>
         <label>15,30,60,300</label>
-        <font>font111</font>
+        <font>font11</font>
       </control>
     </control>
   </controls>

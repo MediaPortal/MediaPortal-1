@@ -47,7 +47,7 @@
 		<oninfo>#(skin.setfocus(35,00500))</oninfo>
 		<onESC>#(skin.setfocus(35,cint(#skin.currentTile)))</onESC>
         <label></label>
-		<font>font111</font>
+		<font>font11</font>
 		<textcolorNoFocus>99ffffff</textcolorNoFocus>
         <onclick>#(skin.setstring('#tile1plugin.name'))</onclick>
         <textureFocus>lblfocus.png</textureFocus>
@@ -65,7 +65,7 @@
         <width>10</width>
 		<height>32</height>
         <label></label>
-		<font>font111</font>
+		<font>font11</font>
 		<textcolorNoFocus>99ffffff</textcolorNoFocus>
 		<textureFocus></textureFocus>
 		<textureNoFocus></textureNoFocus>
@@ -81,7 +81,7 @@
 		<oninfo>#(skin.setfocus(35,00500))</oninfo>
 		<onESC>#(skin.setfocus(35,cint(#skin.currentTile)))</onESC>
         <label></label>
-		<font>font111</font>
+		<font>font11</font>
 		<textcolorNoFocus>99ffffff</textcolorNoFocus>
 		<textureFocus>menu.png</textureFocus>
 		<textureNoFocus></textureNoFocus>
@@ -100,7 +100,7 @@
         <width>150</width>
 		<height>32</height>
         <label></label>
-		<font>font111</font>
+		<font>font11</font>
 		<textcolorNoFocus>99ffffff</textcolorNoFocus>
 		<textureFocus></textureFocus>
 		<textureNoFocus></textureNoFocus>
@@ -147,7 +147,7 @@
 		<oninfo>#(skin.setfocus(35,00501))</oninfo>
 		<onESC>#(skin.setfocus(35,cint(#skin.currentTile)))</onESC>
         <label></label>
-		<font>font111</font>
+		<font>font11</font>
 		<textcolorNoFocus>99ffffff</textcolorNoFocus>
         <onclick>#(skin.setstring('#tile2plugin.name'))</onclick>
         <textureFocus>lblfocus.png</textureFocus>
@@ -166,7 +166,7 @@
         <width>10</width>
 		<height>32</height>
         <label></label>
-		<font>font111</font>
+		<font>font11</font>
 		<textcolorNoFocus>99ffffff</textcolorNoFocus>
 		<textureFocus></textureFocus>
 		<textureNoFocus></textureNoFocus>
@@ -182,7 +182,7 @@
 		<oninfo>#(skin.setfocus(35,00501))</oninfo>
 		<onESC>#(skin.setfocus(35,cint(#skin.currentTile)))</onESC>
         <label></label>
-		<font>font111</font>
+		<font>font11</font>
 		<textcolorNoFocus>99ffffff</textcolorNoFocus>
 		<textureFocus>menu.png</textureFocus>
 		<textureNoFocus></textureNoFocus>
@@ -201,7 +201,7 @@
         <width>153</width>
 		<height>32</height>
         <label></label>
-		<font>font111</font>
+		<font>font11</font>
 		<textcolorNoFocus>99ffffff</textcolorNoFocus>
 		<textureFocus></textureFocus>
 		<textureNoFocus></textureNoFocus>
@@ -248,7 +248,7 @@
 		<oninfo>#(skin.setfocus(35,00502))</oninfo>
 		<onESC>#(skin.setfocus(35,cint(#skin.currentTile)))</onESC>
         <label></label>
-		<font>font111</font>
+		<font>font11</font>
 		<textcolorNoFocus>99ffffff</textcolorNoFocus>
         <onclick>#(skin.setstring('#tile3plugin.name'))</onclick>
         <textureFocus>lblfocus.png</textureFocus>
@@ -266,7 +266,7 @@
         <width>10</width>
 		<height>32</height>
         <label></label>
-		<font>font111</font>
+		<font>font11</font>
 		<textcolorNoFocus>99ffffff</textcolorNoFocus>
 		<textureFocus></textureFocus>
 		<textureNoFocus></textureNoFocus>
@@ -282,7 +282,7 @@
 		<oninfo>#(skin.setfocus(35,00502))</oninfo>
 		<onESC>#(skin.setfocus(35,cint(#skin.currentTile)))</onESC>
         <label></label>
-		<font>font111</font>
+		<font>font11</font>
 		<textcolorNoFocus>99ffffff</textcolorNoFocus>
 		<textureFocus>menu.png</textureFocus>
 		<textureNoFocus></textureNoFocus>
@@ -301,7 +301,7 @@
         <width>153</width>
 		<height>32</height>
         <label></label>
-		<font>font111</font>
+		<font>font11</font>
 		<textcolorNoFocus>99ffffff</textcolorNoFocus>
 		<textureFocus></textureFocus>
 		<textureNoFocus></textureNoFocus>
@@ -348,7 +348,7 @@
 		<oninfo>#(skin.setfocus(35,00503))</oninfo>
 		<onESC>#(skin.setfocus(35,cint(#skin.currentTile)))</onESC>
         <label></label>
-		<font>font111</font>
+		<font>font11</font>
 		<textcolorNoFocus>99ffffff</textcolorNoFocus>
         <onclick>#(skin.setstring('#tile4plugin.name'))</onclick>
         <textureFocus>lblfocus.png</textureFocus>
@@ -367,7 +367,7 @@
         <width>10</width>
 		<height>32</height>
         <label></label>
-		<font>font111</font>
+		<font>font11</font>
 		<textcolorNoFocus>99ffffff</textcolorNoFocus>
 		<textureFocus></textureFocus>
 		<textureNoFocus></textureNoFocus>
@@ -383,7 +383,7 @@
 		<oninfo>#(skin.setfocus(35,00503))</oninfo>
 		<onESC>#(skin.setfocus(35,cint(#skin.currentTile)))</onESC>
         <label></label>
-		<font>font111</font>
+		<font>font11</font>
 		<textcolorNoFocus>99ffffff</textcolorNoFocus>
 		<textureFocus>menu.png</textureFocus>
 		<textureNoFocus></textureNoFocus>
@@ -402,7 +402,7 @@
         <width>155</width>
 		<height>32</height>
         <label></label>
-		<font>font111</font>
+		<font>font11</font>
 		<textcolorNoFocus>99ffffff</textcolorNoFocus>
 		<textureFocus></textureFocus>
 		<textureNoFocus></textureNoFocus>
@@ -450,7 +450,7 @@
 		<oninfo>#(skin.setfocus(35,00504))</oninfo>
 		<onESC>#(skin.setfocus(35,cint(#skin.currentTile)))</onESC>
         <label></label>
-		<font>font111</font>
+		<font>font11</font>
 		<textcolorNoFocus>99ffffff</textcolorNoFocus>
         <onclick>#(skin.setstring('#tile5plugin.name'))</onclick>
         <textureFocus>lblfocus.png</textureFocus>
@@ -469,7 +469,7 @@
         <width>10</width>
 		<height>32</height>
         <label></label>
-		<font>font111</font>
+		<font>font11</font>
 		<textcolorNoFocus>99ffffff</textcolorNoFocus>
 		<textureFocus></textureFocus>
 		<textureNoFocus></textureNoFocus>
@@ -485,7 +485,7 @@
 		<oninfo>#(skin.setfocus(35,00504))</oninfo>
 		<onESC>#(skin.setfocus(35,cint(#skin.currentTile)))</onESC>
         <label></label>
-		<font>font111</font>
+		<font>font11</font>
 		<textcolorNoFocus>99ffffff</textcolorNoFocus>
 		<textureFocus>menu.png</textureFocus>
 		<textureNoFocus></textureNoFocus>
@@ -504,7 +504,7 @@
         <width>150</width>
 		<height>32</height>
         <label></label>
-		<font>font111</font>
+		<font>font11</font>
 		<textcolorNoFocus>99ffffff</textcolorNoFocus>
 		<textureFocus></textureFocus>
 		<textureNoFocus></textureNoFocus>

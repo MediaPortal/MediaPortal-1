@@ -20,7 +20,7 @@ Top info
       <textcolor>ffffffff</textcolor>
       <align>right</align>
       <label>#(iif(eq(#Dtimeformat,'True'),string.format('{0:HH:mm}', cdate(#time)),string.format('{0:hh:mm}', cdate(#time))))</label>
-	  <visible>!control.isvisible(711101)</visible>
+	  <visible>string.equals(#skin.weather.home,False)</visible>
     </control>
 	
 	<control>
@@ -35,7 +35,7 @@ Top info
       <textcolor>ffffffff</textcolor>
       <align>right</align>
       <label>#(iif(eq(#skin.fullday,'True'),string.format('{0:dddd dd MMMM}', cdate(#date.local)),string.format('{0:ddd dd MMM}', cdate(#date.local))))</label>
-	  <visible>!control.isvisible(711101)</visible>
+	  <visible>string.equals(#skin.weather.home,False)</visible>
     </control>	
 	
 	
@@ -53,7 +53,7 @@ Top info
       <textcolor>ffffffff</textcolor>
       <align>right</align>
       <label>#(iif(eq(#Dtimeformat,'True'),string.format('{0:HH:mm}', cdate(#time)),string.format('{0:hh:mm}', cdate(#time))))</label>
-	  <visible>[plugin.isenabled(World Weather)|plugin.isenabled(World Weather Lite)]+skin.hassetting(#skin.weather.home)</visible>
+	  <visible>[[plugin.isenabled(World Weather)|plugin.isenabled(World Weather Lite)]+[skin.hassetting(#skin.weather.home)]]+!window.isvisible(600)</visible>
     </control>
 	
 	<control>
@@ -68,7 +68,37 @@ Top info
       <textcolor>ffffffff</textcolor>
       <align>right</align>
       <label>#(iif(eq(#skin.fullday,'True'),string.format('{0:dddd dd MMMM}', cdate(#date.local)),string.format('{0:ddd dd MMM}', cdate(#date.local))))</label>
-	  <visible>[plugin.isenabled(World Weather)|plugin.isenabled(World Weather Lite)]+skin.hassetting(#skin.weather.home)</visible>
+	  <visible>[[plugin.isenabled(World Weather)|plugin.isenabled(World Weather Lite)]+[skin.hassetting(#skin.weather.home)]]+!window.isvisible(600)</visible>
+    </control>	
+
+    <control>
+      <id>0</id>
+      <description>Time</description>
+      <type>label</type>
+      <posX>1730</posX>
+      <posY>20</posY>
+      <height>43</height>
+      <width>500</width>
+      <font>font18</font>
+      <textcolor>ffffffff</textcolor>
+      <align>right</align>
+      <label>#(iif(eq(#Dtimeformat,'True'),string.format('{0:HH:mm}', cdate(#time)),string.format('{0:hh:mm}', cdate(#time))))</label>
+	  <visible>[plugin.isenabled(World Weather)|plugin.isenabled(World Weather Lite)]+[window.isvisible(600)]+skin.hassetting(#skin.weather.home)</visible>
+    </control>
+	
+	<control>
+      <id>0</id>
+      <description>Location</description>
+      <type>label</type>
+      <posX>1730</posX>
+      <posY>70</posY>
+      <height>43</height>
+      <width>500</width>
+      <font>fontBold2</font>
+      <textcolor>ffffffff</textcolor>
+      <align>right</align>
+      <label>#(iif(eq(#skin.fullday,'True'),string.format('{0:dddd dd MMMM}', cdate(#date.local)),string.format('{0:ddd dd MMM}', cdate(#date.local))))</label>
+	  <visible>[plugin.isenabled(World Weather)|plugin.isenabled(World Weather Lite)]+[window.isvisible(600)]+skin.hassetting(#skin.weather.home)</visible>
     </control>		
 	
 	    <!-- ** Current Weather Information ** -->
@@ -94,6 +124,7 @@ Top info
       <posY>10</posY>
       <width>155</width>
       <height>155</height>
+	  <keepaspectratio>yes</keepaspectratio>	  
       <texture>#WorldWeather.TodayIconImage</texture>
 	  <visible>[plugin.isenabled(World Weather)|plugin.isenabled(World Weather Lite)]+skin.hassetting(#skin.weather.home)</visible>
     </control>	

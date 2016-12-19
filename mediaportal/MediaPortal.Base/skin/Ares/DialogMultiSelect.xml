@@ -30,7 +30,7 @@
 			<posY>230</posY>
 			<width>639</width>
 			<label>924</label>
-			<font>font121</font>
+			<font>font12</font>
 			<textcolor>ffffffff</textcolor>
 			<animation effect="fade" time="250">WindowOpen</animation>
 			<animation effect="fade" time="250">WindowClose</animation>
@@ -43,7 +43,7 @@
 			<posX>515</posX>
 			<posY>230</posY>
 			<label>181</label>
-			<font>font121</font>
+			<font>font12</font>
 			<textcolor>ffffffff</textcolor>
 			<animation effect="fade" time="250">WindowOpen</animation>
 			<animation effect="fade" time="250">WindowClose</animation>

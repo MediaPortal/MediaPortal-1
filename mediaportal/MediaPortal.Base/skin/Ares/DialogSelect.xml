@@ -32,7 +32,7 @@
       <posY>165</posY>
       <width>639</width>
       <label>181</label>
-      <font>font121</font>
+      <font>font12</font>
       <align>left</align>
       <textcolor>ffffffff</textcolor>
     </control>
@@ -43,7 +43,7 @@
       <posX>945</posX>
       <posY>174</posY>
       <label>#selecteditem</label>
-      <font>font111</font>
+      <font>font11</font>
       <width>720</width>
       <align>left</align>
       <textcolor>ffffffff</textcolor>

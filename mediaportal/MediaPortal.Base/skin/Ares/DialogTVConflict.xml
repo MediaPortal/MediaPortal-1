@@ -55,9 +55,9 @@
       <textureHeight>118</textureHeight>
       <keepaspectratio>no</keepaspectratio>
       <font>font14</font>
-      <font1>font121</font1>
-      <font2>font121</font2>
-      <font3>font121</font3>
+      <font1>font12</font1>
+      <font2>font12</font2>
+      <font3>font12</font3>
       <ondown>11</ondown>
     </control>
     <control>

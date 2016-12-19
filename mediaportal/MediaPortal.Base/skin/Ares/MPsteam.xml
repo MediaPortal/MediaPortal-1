@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+    <id>8465</id>
+    <defaultcontrol>2</defaultcontrol>
+    <allowoverlay>no</allowoverlay>
+   <define>#header.label:Steam</define>
+    <controls>
+    <control>
+      <description>BG</description>
+      <type>image</type>
+      <id>1</id>
+      <texture>#backgroundcolour</texture>
+      <width>1920</width>
+      <height>1080</height>
+    </control>
+		<control>
+			<description>fanart overlay</description>
+			<type>image</type>
+			<id>0</id>
+			<posX>0</posX>
+			<posY>0</posY>
+			<width>1920</width>
+			<height>1080</height>
+			<texture>hover_steam.jpg</texture>
+			<colordiffuse>40ffffff</colordiffuse>
+		</control>
+    <control>
+      <description>BG</description>
+      <type>image</type>
+      <id>1</id>
+      <texture>#overlaycolour</texture>
+      <width>1920</width>
+      <height>1080</height>
+    </control>		
+	
+	<import>custom\Allscreens\user_dialog.xml</import>
+	
+        <control>
+            <description>steam-logo</description>
+            <type>image</type>
+            <posX>760</posX>
+            <posY>360</posY>
+            <width>400</width>
+            <height>400</height>
+            <texture>Steam-logo.png</texture>
+        </control>
+
+        <control>
+            <id>2</id>
+            <description>ButtonStartAgain</description>
+            <type>button</type>
+            <onleft>2</onleft>
+            <onright>2</onright>
+            <onup>2</onup>
+            <ondown>3</ondown>
+            <posX>0</posX>
+            <posY>830</posY>
+            <width>1920</width>
+            <height>50</height>
+            <font>font12</font>
+            <label>Start Steam</label>
+            <textalign>CENTER</textalign>
+        </control>
+        <control>
+            <id>3</id>
+            <description>ButtonSetFocus</description>
+            <type>button</type>
+            <onleft>2</onleft>
+            <onright>2</onright>
+            <onup>2</onup>
+            <ondown>2</ondown>
+            <posX>0</posX>
+            <posY>880</posY>
+            <width>1920</width>
+            <height>50</height>
+            <font>font12</font>
+            <label>Set Focus to Steam</label>
+            <textalign>CENTER</textalign>
+        </control>		
+    </controls>
+</window>
