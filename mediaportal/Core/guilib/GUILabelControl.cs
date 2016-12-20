@@ -38,6 +38,7 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("shadowColor")] protected long _shadowColor = 0xFF000000;
     [XMLSkinElement("maxWidth")] protected int _maxWidth = 0;
     [XMLSkinElement("maxHeight")] protected int _maxHeight = 0;
+    [XMLSkinElement("trimText")] protected bool _trimText = false; // For autosized label always True
 
     private string _cachedTextLabel = "";
     private bool _containsProperty = false;
@@ -136,6 +137,11 @@ namespace MediaPortal.GUI.Library
       if (_fontName != "" && _fontName != "-")
       {
         _font = GUIFontManager.GetFont(_fontName);
+      }
+
+      if (_maxWidth > 0)
+      {
+        _trimText = true;
       }
 
       GUILocalizeStrings.LocalizeLabel(ref _labelText);
@@ -257,9 +263,9 @@ namespace MediaPortal.GUI.Library
     public void DrawTextWidth(float xpos, float ypos, string label, float fMaxWidth)
     {
       string _label = label;
-      if (_maxWidth > 0)
+      if (_trimText)
       {
-        _label = GetShortenedText(_label, _maxWidth);
+        _label = GetShortenedText(_label, _maxWidth > 0 ? _maxWidth : _width);
       }
       long c = (uint)_textColor;
       if (Dimmed)
@@ -289,9 +295,9 @@ namespace MediaPortal.GUI.Library
     public void DrawText(float xpos, float ypos, string label, int width)
     {
       string _label = label;
-      if (_maxWidth > 0)
+      if (_trimText)
       {
-        _label = GetShortenedText(_label, _maxWidth);
+        _label = GetShortenedText(_label, _maxWidth > 0 ? _maxWidth : _width);
       }
       long c = _textColor;
       if (Dimmed)
@@ -447,6 +453,11 @@ namespace MediaPortal.GUI.Library
         {
           base.Width = value;
           _reCalculate = true;
+
+          if (_maxWidth > 0 && _maxWidth < base.Width)
+          {
+            MaxWidth = base.Width;
+          }
         }
       }
     }
@@ -460,6 +471,11 @@ namespace MediaPortal.GUI.Library
         {
           base.Height = value;
           _reCalculate = true;
+
+          if (_maxHeight > 0 && _maxHeight < base.Height)
+          {
+            MaxHeight = base.Height;
+          }
         }
       }
     }
@@ -473,6 +489,11 @@ namespace MediaPortal.GUI.Library
         {
           _maxWidth = value;
           _reCalculate = true;
+
+          if (_maxWidth > 0 && _maxWidth < base.Width)
+          {
+            base.Width = _maxWidth;
+          }
         }
       }
     }
@@ -486,6 +507,11 @@ namespace MediaPortal.GUI.Library
         {
           _maxHeight = value;
           _reCalculate = true;
+
+          if (_maxHeight > 0 && _maxHeight < base.Height)
+          {
+            base.Height = _maxHeight;
+          }
         }
       }
     }
@@ -610,6 +636,12 @@ namespace MediaPortal.GUI.Library
         _containsProperty = _labelText.IndexOf("#") >= 0;
         CachedLabel();
       }
+    }
+
+    public bool TrimText
+    {
+      get { return _trimText; }
+      set { _trimText = value; }
     }
 
     private void CachedLabel()
