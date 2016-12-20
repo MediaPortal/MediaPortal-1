@@ -28,7 +28,7 @@
        <texture>black.png</texture>
         <colordiffuse>59000000</colordiffuse>
 	   <animation effect="fade" time="350" reversible="true">hidden</animation>
-	   <visible>control.isvisible(20800)|control.hasfocus(20801)|control.hasfocus(20802)|control.hasfocus(20803)|control.hasfocus(20804)|control.hasfocus(20805)|control.hasfocus(20806)|control.hasfocus(20807)|control.hasfocus(20808)|control.hasfocus(20809)|control.hasfocus(20810)|control.hasfocus(20811)|control.hasfocus(20812)|control.hasfocus(20813)</visible>    
+	   <visible>control.isvisible(20800)|control.hasfocus(20801)|control.hasfocus(20802)|control.hasfocus(20803)|control.hasfocus(20804)|control.hasfocus(20805)|control.hasfocus(20806)|control.hasfocus(20807)|control.hasfocus(20808)|control.hasfocus(20809)|control.hasfocus(20810)|control.hasfocus(20811)|control.hasfocus(20812)|control.hasfocus(20813)|control.hasfocus(20814)</visible>    
 	 </control>
 		
 	  <control>
@@ -40,7 +40,7 @@
         <width>1845</width>
         <height>624</height>
         <texture>D_over1.png</texture>
-		<visible>control.isvisible(20800)|control.hasfocus(20801)|control.hasfocus(20802)|control.hasfocus(20803)|control.hasfocus(20804)|control.hasfocus(20805)|control.hasfocus(20806)|control.hasfocus(20807)|control.hasfocus(20808)|control.hasfocus(20809)|control.hasfocus(20810)|control.hasfocus(20811)|control.hasfocus(20812)|control.hasfocus(20813)</visible>
+		<visible>control.isvisible(20800)|control.hasfocus(20801)|control.hasfocus(20802)|control.hasfocus(20803)|control.hasfocus(20804)|control.hasfocus(20805)|control.hasfocus(20806)|control.hasfocus(20807)|control.hasfocus(20808)|control.hasfocus(20809)|control.hasfocus(20810)|control.hasfocus(20811)|control.hasfocus(20812)|control.hasfocus(20813)|control.hasfocus(20814)</visible>
       </control>
 	  <control>
         <description>Cover Art</description>
@@ -51,7 +51,7 @@
         <width>1845</width>
         <height>209</height>
         <texture>Inf_gfx.png</texture>
-		<visible>control.isvisible(20800)|control.hasfocus(20801)|control.hasfocus(20802)|control.hasfocus(20803)|control.hasfocus(20804)|control.hasfocus(20805)|control.hasfocus(20806)|control.hasfocus(20807)|control.hasfocus(20808)|control.hasfocus(20809)|control.hasfocus(20810)|control.hasfocus(20811)|control.hasfocus(20812)|control.hasfocus(20813)</visible>
+		<visible>control.isvisible(20800)|control.hasfocus(20801)|control.hasfocus(20802)|control.hasfocus(20803)|control.hasfocus(20804)|control.hasfocus(20805)|control.hasfocus(20806)|control.hasfocus(20807)|control.hasfocus(20808)|control.hasfocus(20809)|control.hasfocus(20810)|control.hasfocus(20811)|control.hasfocus(20812)|control.hasfocus(20813)|control.hasfocus(20814)</visible>
       </control>	  
 
     <control>
@@ -65,7 +65,7 @@
       <label>Quick skin settings...</label>
       <font>font13</font>
       <textcolor>eaeaea</textcolor>
-	  <visible>control.isvisible(20800)|control.hasfocus(20801)|control.hasfocus(20802)|control.hasfocus(20803)|control.hasfocus(20804)|control.hasfocus(20805)|control.hasfocus(20806)|control.hasfocus(20807)|control.hasfocus(20808)|control.hasfocus(20809)|control.hasfocus(20810)|control.hasfocus(20811)|control.hasfocus(20812)|control.hasfocus(20813)</visible>
+	  <visible>control.isvisible(20800)|control.hasfocus(20801)|control.hasfocus(20802)|control.hasfocus(20803)|control.hasfocus(20804)|control.hasfocus(20805)|control.hasfocus(20806)|control.hasfocus(20807)|control.hasfocus(20808)|control.hasfocus(20809)|control.hasfocus(20810)|control.hasfocus(20811)|control.hasfocus(20812)|control.hasfocus(20813)|control.hasfocus(20814)</visible>
     </control>		  
 		
 			<control>
@@ -78,7 +78,7 @@
 					<posY>260</posY>
 					<!-- Remove and Gaps when buttons are not visible -->
 					<layout>TableLayout(1850, 3, 50, 0)</layout>
-					<visible allowhiddenfocus="true">control.hasfocus(20800)|control.hasfocus(20801)|control.hasfocus(20802)|control.hasfocus(20803)|control.hasfocus(20804)|control.hasfocus(20805)|control.hasfocus(20806)|control.hasfocus(20807)|control.hasfocus(20808)|control.hasfocus(20809)|control.hasfocus(20810)|control.hasfocus(20811)|control.hasfocus(20812)|control.hasfocus(20813)</visible>   
+					<visible allowhiddenfocus="true">control.hasfocus(20800)|control.hasfocus(20801)|control.hasfocus(20802)|control.hasfocus(20803)|control.hasfocus(20804)|control.hasfocus(20805)|control.hasfocus(20806)|control.hasfocus(20807)|control.hasfocus(20808)|control.hasfocus(20809)|control.hasfocus(20810)|control.hasfocus(20811)|control.hasfocus(20812)|control.hasfocus(20813)|control.hasfocus(20814)</visible>   
 				
 					<control>
                        <description>Enable weather in homescreen</description>
@@ -353,7 +353,7 @@
                        <onup>20807</onup>
 		               <onright>#(cint(#skin.setnav))</onright>
 					   <onleft>20810</onleft>
-                       <ondown>#(cint(#skin.setnav))</ondown>
+                       <ondown>20814</ondown>
                     </control>
 					<control>
                        <description>Enable RSS in homescreen</description>
@@ -401,8 +401,27 @@
 		               <onup>20810</onup>
                        <onleft>20812</onleft>
                        <ondown>#(cint(#skin.setnav))</ondown>
-                       <onright>#(cint(#skin.setnav))</onright>
-                    </control>					
+                       <onright>20814</onright>
+                    </control>	
+					<control>
+                       <description>Enable full day and month</description>
+                       <type>checkbutton</type>
+                       <id>20814</id>
+                       <label>Disable short day and month</label>
+		               <font>font12</font>
+					   <width>550</width>
+		               <textcolorNoFocus>99ffffff</textcolorNoFocus>
+		               <textureFocus>btn_list_blue2.png</textureFocus>
+		               <textureNoFocus></textureNoFocus>
+					   <onfocus>#(skin.setstring('#skin.test','Disable the short display of day and month in top right'))</onfocus>
+                       <selected>#(skin.hassetting('#skin.fullday'))</selected>
+					   <onESC>#(skin.setfocus(35,cint(#skin.setnav)))</onESC>
+                       <onclick>#(skin.togglesetting('#skin.fullday'))</onclick>
+                       <onup>20811</onup>
+		               <onright>#(cint(#skin.setnav))</onright>
+					   <onleft>20813</onleft>
+                       <ondown>#(cint(#skin.setnav))</ondown>
+                    </control>						
 				
 				</control>	
             </control>	

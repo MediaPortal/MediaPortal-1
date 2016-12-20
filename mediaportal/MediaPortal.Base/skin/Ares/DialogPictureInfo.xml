@@ -52,7 +52,7 @@
       <posX>307</posX>
       <posY>90</posY>
       <label>9000</label>
-      <font>font101</font>
+      <font>font10</font>
       <textcolor>ff666666</textcolor>
     </control>
     <control>
@@ -62,7 +62,7 @@
       <posX>307</posX>
       <posY>165</posY>
       <label>9001</label>
-      <font>font101</font>
+      <font>font10</font>
       <textcolor>ff666666</textcolor>
     </control>
     <control>
@@ -72,7 +72,7 @@
       <posX>307</posX>
       <posY>240</posY>
       <label>9002</label>
-      <font>font101</font>
+      <font>font10</font>
       <textcolor>ff666666</textcolor>
     </control>
     <control>
@@ -82,7 +82,7 @@
       <posX>307</posX>
       <posY>315</posY>
       <label>9003</label>
-      <font>font101</font>
+      <font>font10</font>
       <textcolor>ff666666</textcolor>
     </control>
     <control>
@@ -92,7 +92,7 @@
       <posX>307</posX>
       <posY>390</posY>
       <label>9004</label>
-      <font>font101</font>
+      <font>font10</font>
       <textcolor>ff666666</textcolor>
     </control>
     <control>
@@ -102,7 +102,7 @@
       <posX>307</posX>
       <posY>465</posY>
       <label>9005</label>
-      <font>font101</font>
+      <font>font10</font>
       <textcolor>ff666666</textcolor>
     </control>
     <control>
@@ -112,7 +112,7 @@
       <posX>307</posX>
       <posY>540</posY>
       <label>9006</label>
-      <font>font101</font>
+      <font>font10</font>
       <textcolor>ff666666</textcolor>
     </control>
     <control>
@@ -122,7 +122,7 @@
       <posX>307</posX>
       <posY>615</posY>
       <label>9007</label>
-      <font>font101</font>
+      <font>font10</font>
       <textcolor>ff666666</textcolor>
     </control>
     <control>
@@ -132,7 +132,7 @@
       <posX>307</posX>
       <posY>690</posY>
       <label>9008</label>
-      <font>font101</font>
+      <font>font10</font>
       <textcolor>ff666666</textcolor>
     </control>
     <control>
@@ -142,7 +142,7 @@
       <posX>307</posX>
       <posY>765</posY>
       <label>9009</label>
-      <font>font101</font>
+      <font>font10</font>
       <textcolor>ff666666</textcolor>
     </control>
     <control>
@@ -152,7 +152,7 @@
       <posX>307</posX>
       <posY>840</posY>
       <label>9010</label>
-      <font>font101</font>
+      <font>font10</font>
       <textcolor>ff666666</textcolor>
     </control>
     <control>
@@ -162,7 +162,7 @@
       <posX>307</posX>
       <posY>915</posY>
       <label>9011</label>
-      <font>font101</font>
+      <font>font10</font>
       <textcolor>ff666666</textcolor>
     </control>
     <control>
@@ -173,7 +173,7 @@
       <posY>123</posY>
       <width>615</width>
       <label>-</label>
-      <font>font121</font>
+      <font>font12</font>
       <textcolor>ff666666</textcolor>
     </control>
     <control>
@@ -184,7 +184,7 @@
       <posY>198</posY>
       <width>615</width>
       <label>-</label>
-      <font>font121</font>
+      <font>font12</font>
       <textcolor>ff666666</textcolor>
     </control>
     <control>
@@ -196,7 +196,7 @@
       <width>259</width>
       <width>615</width>
       <label>-</label>
-      <font>font121</font>
+      <font>font12</font>
       <textcolor>ff666666</textcolor>
     </control>
     <control>
@@ -207,7 +207,7 @@
       <posY>348</posY>
       <width>615</width>
       <label>-</label>
-      <font>font121</font>
+      <font>font12</font>
       <textcolor>ff666666</textcolor>
     </control>
     <control>
@@ -218,7 +218,7 @@
       <posY>423</posY>
       <width>615</width>
       <label>-</label>
-      <font>font121</font>
+      <font>font12</font>
       <textcolor>ff666666</textcolor>
     </control>
     <control>
@@ -229,7 +229,7 @@
       <posY>498</posY>
       <width>615</width>
       <label>-</label>
-      <font>font121</font>
+      <font>font12</font>
       <textcolor>ff666666</textcolor>
     </control>
     <control>
@@ -240,7 +240,7 @@
       <posY>573</posY>
       <width>615</width>
       <label>-</label>
-      <font>font121</font>
+      <font>font12</font>
       <textcolor>ff666666</textcolor>
     </control>
     <control>
@@ -251,7 +251,7 @@
       <posY>648</posY>
       <width>615</width>
       <label>-</label>
-      <font>font121</font>
+      <font>font12</font>
       <textcolor>ff666666</textcolor>
     </control>
     <control>
@@ -262,7 +262,7 @@
       <posY>723</posY>
       <width>615</width>
       <label>-</label>
-      <font>font121</font>
+      <font>font12</font>
       <textcolor>ff666666</textcolor>
     </control>
     <control>
@@ -273,7 +273,7 @@
       <posY>798</posY>
       <width>840</width>
       <label>-</label>
-      <font>font121</font>
+      <font>font12</font>
       <textcolor>ff666666</textcolor>
     </control>
     <control>
@@ -284,7 +284,7 @@
       <posY>873</posY>
       <width>840</width>
       <label>-</label>
-      <font>font121</font>
+      <font>font12</font>
       <textcolor>ff666666</textcolor>
     </control>
     <control>
@@ -295,7 +295,7 @@
       <posY>948</posY>
       <width>840</width>
       <label>-</label>
-      <font>font121</font>
+      <font>font12</font>
       <textcolor>ff666666</textcolor>
     </control>
     <control>

@@ -291,7 +291,7 @@
           <folderPrefix></folderPrefix>
           <folderSuffix></folderSuffix>
           <font1>font14</font1>
-          <font2>font101</font2>
+          <font2>font10</font2>
           <label1></label1>
           <label2></label2>
           <keepaspectratio>no</keepaspectratio>
@@ -322,7 +322,7 @@
       <posY>300</posY>
       <width>1920</width>
       <label>#selecteditem</label>
-      <font>font101</font>
+      <font>font10</font>
       <align>center</align>
       <textcolor>ivory</textcolor>
       <visible>string.equals(#WorldWeather.View,Image)+control.hasfocus(50)</visible>

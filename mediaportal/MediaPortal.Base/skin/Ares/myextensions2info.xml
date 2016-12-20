@@ -223,7 +223,7 @@
       <posX>730</posX>
       <posY>354</posY>
       <width>428</width>
-      <font>font111</font>
+      <font>font11</font>
       <label>#(div(cint(#MPE.Selected.Rating), cflt(2))) #(string.format('({0:#,0} #MPEI.Translation.Votes.Label)',cint(#MPE.Selected.Votes)))</label>
       <visible>!string.equals(#MPE.Selected.Votes,)</visible>
     </control>

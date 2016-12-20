@@ -49,7 +49,7 @@
       <height>30</height>
       <label>#media.user</label>
       <align>right</align>
-      <font>font101</font>
+      <font>font10</font>
       <textcolor>ffffffff</textcolor>
       <visible>!player.hasaudio</visible>
     </control>
@@ -63,7 +63,7 @@
       <height>30</height>
       <label>Playing audio..</label>
       <align>right</align>
-      <font>font101</font>
+      <font>font10</font>
       <textcolor>ffffffff</textcolor>
       <visible>player.hasaudio</visible>
     </control>	   
@@ -92,7 +92,7 @@
       <posY>95</posY>
       <label>#AlbumInfo.Title</label>
       <align>left</align>
-      <font>font101</font>
+      <font>font10</font>
       <textcolor>eaeaea</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
@@ -160,7 +160,7 @@
       <posX>3560</posX>
       <posY>675</posY>
       <label>4519</label>
-      <font>font121</font>
+      <font>font12</font>
       <textcolor>ff6FAFE1</textcolor>
     </control>
     <control>
@@ -216,9 +216,9 @@
 		  <posX>125</posX>
 		  <posY>220</posY>
 		  <height>500</height>
-		  <font>font111</font>
+		  <font>font11</font>
 		  <textalign>left</textalign>
-          <font2>font111</font2>
+          <font2>font11</font2>
 		  <textYOff>5</textYOff>
 		  <textXOff>20</textXOff>
 		  <textXOff2>1010</textXOff2>

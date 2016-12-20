@@ -9,7 +9,7 @@
       <posX>227</posX>
       <posY>880</posY>
       <label>#watchedcount</label>
-      <font>font101</font>
+      <font>font10</font>
       <align>center</align>
       <textcolor>99ffffff</textcolor>
       <visible>facadeview.list+!string.equals(#watchedcount, -1)</visible>

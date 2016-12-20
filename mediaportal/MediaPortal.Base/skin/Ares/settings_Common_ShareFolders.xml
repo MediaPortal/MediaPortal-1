@@ -71,7 +71,7 @@
       <posY>240</posY>
       <width>450</width>
       <label>300071</label>
-      <font>font111</font>
+      <font>font11</font>
       <textcolor>ffffffff</textcolor>
     </control>
     <control>
@@ -101,9 +101,9 @@
       <IconXOff>15</IconXOff>
       <IconYOff>6</IconYOff>
       <keepaspectratio>yes</keepaspectratio>
-      <font>font111</font>
-      <font2>font111</font2>
-      <font3>font111</font3>
+      <font>font11</font>
+      <font2>font11</font2>
+      <font3>font11</font3>
       <textcolor>ffffffff</textcolor>
       <textcolor2>ffffffff</textcolor2>
       <textcolor3>ffffffff</textcolor3>
@@ -137,7 +137,7 @@
         <id>1</id>
         <width>367</width>
         <label>853</label>
-        <font>font111</font>
+        <font>font11</font>
         <textcolor>ffffffff</textcolor>
       </control>
       <control>
@@ -146,7 +146,7 @@
         <id>1</id>
         <width>367</width>
         <label>300073</label>
-        <font>font111</font>
+        <font>font11</font>
         <textcolor>ffffffff</textcolor>
       </control>
       <control>
@@ -155,7 +155,7 @@
         <id>1</id>
         <width>367</width>
         <label>300074</label>
-        <font>font111</font>
+        <font>font11</font>
         <textcolor>ffffffff</textcolor>
       </control>
       <control>
@@ -164,7 +164,7 @@
         <id>1</id>
         <width>367</width>
         <label>300075</label>
-        <font>font111</font>
+        <font>font11</font>
         <textcolor>ffffffff</textcolor>
       </control>
 			<control>
@@ -173,7 +173,7 @@
         <id>1</id>
         <width>367</width>
         <label>300222</label>
-        <font>font111</font>
+        <font>font11</font>
         <textcolor>ffffffff</textcolor>
       </control>
 			<control>
@@ -182,7 +182,7 @@
         <id>1</id>
         <width>367</width>
         <label>300223</label>
-        <font>font111</font>
+        <font>font11</font>
         <textcolor>ffffffff</textcolor>
       </control>
     </control>
@@ -199,7 +199,7 @@
         <id>1</id>
         <width>517</width>
         <label>#folderName</label>
-        <font>font111</font>
+        <font>font11</font>
         <textcolor>ffffffff</textcolor>
       </control>
       <control>
@@ -208,7 +208,7 @@
         <id>1</id>
         <width>380</width>
         <label>#folder</label>
-        <font>font111</font>
+        <font>font11</font>
         <textcolor>ffffffff</textcolor>
       </control>
       <control>
@@ -217,7 +217,7 @@
         <id>1</id>
         <width>540</width>
         <label>#layout</label>
-        <font>font111</font>
+        <font>font11</font>
         <textcolor>ffffffff</textcolor>
       </control>
       <control>
@@ -226,7 +226,7 @@
         <id>1</id>
         <width>540</width>
         <label>#pinCode</label>
-        <font>font111</font>
+        <font>font11</font>
         <textcolor>ffffffff</textcolor>
       </control>
 			<control>
@@ -235,7 +235,7 @@
         <id>1</id>
         <width>540</width>
         <label>#createThumb</label>
-        <font>font111</font>
+        <font>font11</font>
         <textcolor>ffffffff</textcolor>
       </control>
 			<control>
@@ -244,7 +244,7 @@
         <id>1</id>
         <width>540</width>
         <label>#eachFolderIsMovie</label>
-        <font>font111</font>
+        <font>font11</font>
         <textcolor>ffffffff</textcolor>
       </control>
     </control>
@@ -259,7 +259,7 @@
       <label>300076</label>
       <posX>500</posX>
       <posY>740</posY>
-      <font>font111</font>
+      <font>font11</font>
       <onup>43</onup>
     </control>
     <control>
@@ -269,7 +269,7 @@
       <label>300077</label>
       <posX>500</posX>
       <posY>790</posY>
-      <font>font111</font>
+      <font>font11</font>
     </control>
     <control>
       <description>Auto switch removables On/Off</description>
@@ -278,7 +278,7 @@
       <label>300078</label>
       <posX>500</posX>
       <posY>840</posY>
-      <font>font111</font>
+      <font>font11</font>
       <ondown>40</ondown>
     </control>
   </controls>

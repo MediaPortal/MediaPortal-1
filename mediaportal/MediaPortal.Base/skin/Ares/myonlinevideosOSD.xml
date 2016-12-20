@@ -56,7 +56,7 @@
       <posY>550</posY>
       <label></label>
       <align>right</align>
-      <font>font121</font>
+      <font>font12</font>
       <textcolor>eaeaea</textcolor>
       <visible>player.paused+!control.isvisible(7654)</visible>
     </control>	
@@ -131,7 +131,7 @@
       <posY>895</posY>
       <width>1108</width>
       <textcolor>ffffffff</textcolor>
-      <font>font111</font>
+      <font>font11</font>
       <label></label>
     </control>
     <control>

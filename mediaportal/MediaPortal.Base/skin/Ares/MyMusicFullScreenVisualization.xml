@@ -49,7 +49,7 @@ including the text (the alpha component of textcolor is ignored)
     <posX>298</posX>
     <posY>46</posY>
     <label>#Play.Current.Title</label>
-    <font>font101</font>
+    <font>font10</font>
     <bold>yes</bold>
     <textcolor>ffffffff</textcolor>
   </control>
@@ -60,7 +60,7 @@ including the text (the alpha component of textcolor is ignored)
     <posX>298</posX>
     <posY>84</posY>
     <label>#Play.Current.Album</label>
-    <font>font101</font>
+    <font>font10</font>
     <bold>yes</bold>
     <textcolor>ffffffff</textcolor>
   </control>
@@ -72,7 +72,7 @@ including the text (the alpha component of textcolor is ignored)
     <posY>121</posY>
     <label>#Play.Current.Year</label>
     <bold>yes</bold>
-    <font>font101</font>
+    <font>font10</font>
     <textcolor>ffffffff</textcolor>
   </control>
   <control>
@@ -83,7 +83,7 @@ including the text (the alpha component of textcolor is ignored)
     <posY>159</posY>
     <label>#Play.Current.Artist</label>
     <bold>yes</bold>
-    <font>font101</font>
+    <font>font10</font>
     <textcolor>ffffffff</textcolor>
   </control>
   <control>

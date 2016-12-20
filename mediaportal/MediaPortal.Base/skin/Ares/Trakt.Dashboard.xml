@@ -11,7 +11,7 @@
         <posX>130</posX>
         <posY>860</posY>
         <width>840</width>
-        <font>font121</font>
+        <font>font12</font>
         <label>#Trakt.Activity.Description</label>
       </control>
 	  -->
@@ -62,7 +62,7 @@
         <posX>820</posX>
         <posY>230</posY>
         <width>840</width>
-        <font>font121</font>
+        <font>font12</font>
         <label>#Trakt.Translation.TrendingShowsAndMovies.Label</label>
       </control>
 	  -->
@@ -223,7 +223,7 @@
         <posX>1625</posX>
         <posY>315</posY>
         <width>840</width>
-        <font>font101</font>
+        <font>font10</font>
         <textcolor>ffffffff</textcolor>
         <label>#Trakt.Show.0.Ratings.Percentage%</label>
       </control>
@@ -234,7 +234,7 @@
         <posX>1625</posX>
         <posY>350</posY>
         <width>840</width>
-        <font>font101</font>
+        <font>font10</font>
         <textcolor>ffffffff</textcolor>
         <label>#Trakt.Show.1.Ratings.Percentage%</label>
       </control>
@@ -245,7 +245,7 @@
         <posX>1625</posX>
         <posY>385</posY>
         <width>840</width>
-        <font>font101</font>
+        <font>font10</font>
         <textcolor>ffffffff</textcolor>
         <label>#Trakt.Show.2.Ratings.Percentage%</label>
       </control>
@@ -256,7 +256,7 @@
         <posX>1625</posX>
         <posY>420</posY>
         <width>840</width>
-        <font>font101</font>
+        <font>font10</font>
         <textcolor>ffffffff</textcolor>
         <label>#Trakt.Show.3.Ratings.Percentage%</label>
       </control>
@@ -329,7 +329,7 @@
         <posX>1725</posX>
         <posY>315</posY>
         <width>840</width>
-        <font>font101</font>
+        <font>font10</font>
         <textcolor>ffffffff</textcolor>
         <label>#Trakt.Show.0.Watchers</label>
       </control>
@@ -340,7 +340,7 @@
         <posX>1725</posX>
         <posY>350</posY>
         <width>840</width>
-        <font>font101</font>
+        <font>font10</font>
         <textcolor>ffffffff</textcolor>
         <label>#Trakt.Show.1.Watchers</label>
       </control>
@@ -351,7 +351,7 @@
         <posX>1725</posX>
         <posY>385</posY>
         <width>840</width>
-        <font>font101</font>
+        <font>font10</font>
         <textcolor>ffffffff</textcolor>
         <label>#Trakt.Show.2.Watchers</label>
       </control>
@@ -362,7 +362,7 @@
         <posX>1725</posX>
         <posY>420</posY>
         <width>840</width>
-        <font>font101</font>
+        <font>font10</font>
         <textcolor>ffffffff</textcolor>
         <label>#Trakt.Show.3.Watchers</label>
       </control>
@@ -535,7 +535,7 @@
         <posX>1625</posX>
         <posY>545</posY>
         <width>840</width>
-        <font>font101</font>
+        <font>font10</font>
         <textcolor>ffffffff</textcolor>
         <label>#Trakt.Movie.0.Ratings.Percentage%</label>
       </control>
@@ -546,7 +546,7 @@
         <posX>1625</posX>
         <posY>580</posY>
         <width>840</width>
-        <font>font101</font>
+        <font>font10</font>
         <textcolor>ffffffff</textcolor>
         <label>#Trakt.Movie.1.Ratings.Percentage%</label>
       </control>
@@ -557,7 +557,7 @@
         <posX>1625</posX>
         <posY>615</posY>
         <width>840</width>
-        <font>font101</font>
+        <font>font10</font>
         <textcolor>ffffffff</textcolor>
         <label>#Trakt.Movie.2.Ratings.Percentage%</label>
       </control>
@@ -568,7 +568,7 @@
         <posX>1625</posX>
         <posY>650</posY>
         <width>840</width>
-        <font>font101</font>
+        <font>font10</font>
         <textcolor>ffffffff</textcolor>
         <label>#Trakt.Movie.3.Ratings.Percentage%</label>
       </control>
@@ -643,7 +643,7 @@
         <posX>1725</posX>
         <posY>545</posY>
         <width>840</width>
-        <font>font101</font>
+        <font>font10</font>
         <textcolor>ffffffff</textcolor>
         <label>#Trakt.Movie.0.Watchers</label>
       </control>
@@ -654,7 +654,7 @@
         <posX>1725</posX>
         <posY>580</posY>
         <width>840</width>
-        <font>font101</font>
+        <font>font10</font>
         <textcolor>ffffffff</textcolor>
         <label>#Trakt.Movie.1.Watchers</label>
       </control>
@@ -665,7 +665,7 @@
         <posX>1725</posX>
         <posY>615</posY>
         <width>840</width>
-        <font>font101</font>
+        <font>font10</font>
         <textcolor>ffffffff</textcolor>
         <label>#Trakt.Movie.2.Watchers</label>
       </control>
@@ -676,7 +676,7 @@
         <posX>1725</posX>
         <posY>650</posY>
         <width>840</width>
-        <font>font101</font>
+        <font>font10</font>
         <textcolor>ffffffff</textcolor>
         <label>#Trakt.Movie.3.Watchers</label>
       </control>

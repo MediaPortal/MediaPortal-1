@@ -71,7 +71,7 @@
       <label>#defScreen</label>
 	  <textcolor>ff666666</textcolor>
       <align>left</align>
-	  <font>font111</font>
+	  <font>font11</font>
     </control>
     <!--Delay section-->
     <!--Delay startup label-->
@@ -97,7 +97,7 @@
       <posY>572</posY>
       <label>#delayStartup</label>
       <align>left</align>
-      <font>font111</font>
+      <font>font11</font>
 	  <textcolor>ffffffff</textcolor>
     </control>
     <control>

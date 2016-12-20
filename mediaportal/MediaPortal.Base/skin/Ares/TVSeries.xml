@@ -4,6 +4,7 @@
   <defaultcontrol>50</defaultcontrol>
   <allowoverlay>yes</allowoverlay>
   <define>#useSelectedFanart:Yes</define>
+
   <controls>
 		<import>TVSeries.Dummy.xml</import>
 
@@ -56,38 +57,37 @@
 
     <import>custom\Allscreens\user_dialog.xml</import>
 	
-	<control>
-      <type>label</type>
-      <id>2211</id>
-      <posX>1865</posX>
-      <posY>110</posY>
-      <height>43</height>
-      <width>500</width>
-      <font>fontBold2</font>
-      <label>Scraping......</label>
-      <align>right</align>
-      <textcolor>ffffffff</textcolor>
-	  <visible>control.isvisible(51)</visible>
-    </control>
+	    <control>
+         <type>label</type>
+         <id>2211</id>
+         <posX>#Xposition</posX>
+		 <posY>#Yposition</posY>
+         <height>43</height>
+         <width>500</width>
+         <font>fontBold2</font>
+         <label>Scraping......</label>
+         <align>right</align>
+         <textcolor>ffffffff</textcolor>
+	     <visible>control.hasfocus(51)</visible>
+        </control>
 	
 	
 		<control>
 		  <description>Date / Time</description>
 		  <type>label</type>
 		  <id>0</id>
-          <posX>1865</posX>
-          <posY>110</posY>
+          <posX>#Xposition</posX>
+		  <posY>#Yposition</posY>
           <height>43</height>
           <width>500</width>
           <font>fontBold2</font>
 		  <label>#TVSeries.SeriesCount Series</label>
 		  <align>right</align>
 		  <textcolor>ffffffff</textcolor>
-		  <visible>!player.hasmedia+!control.isvisible(1239)+!control.isvisible(2211)</visible>
-		</control>
-	
+		  <visible>!control.isvisible(2211)</visible>
+		</control>	
+				
 		
-
 	<!-- #(iif(lte(cint(#TVSeries.Season.TotalOnlineEpisodes),0),'NA','#TVSeries.Season.TotalOnlineEpisodes')) -->
 	
 	

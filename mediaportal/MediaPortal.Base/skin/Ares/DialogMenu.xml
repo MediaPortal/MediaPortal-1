@@ -44,7 +44,7 @@
       <posY>260</posY>
       <label>181</label>
       <width>786</width>
-      <font>font121</font>
+      <font>font12</font>
       <textcolor>eaeaea</textcolor>
     </control>
 	
@@ -57,7 +57,7 @@
       <posY>165</posY>
       <width>639</width>
       <label>924</label>
-      <font>font121</font>
+      <font>font12</font>
       <textcolor>Black</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
@@ -98,7 +98,7 @@
 	 <onright>2</onright>
      <width>800</width>
      <label>Press left to create TvWish</label>
-     <font>font111</font>
+     <font>font11</font>
      <align>left</align>
      <textureFocus>btn_list_blue2.png</textureFocus>
      <hyperlink>70943675</hyperlink>

@@ -22,7 +22,7 @@
         <posY>70</posY>
 		<align>left</align>
         <label>350001</label>
-		<font>font101</font>
+		<font>font10</font>
 		<textcolor>ffffffff</textcolor>
 		<visible>control.hasfocus(0011223)+skin.hassetting(#skin.tips)</visible>
 		<animation effect="fade" time="250" reversible="true">visiblechange</animation>
@@ -48,7 +48,7 @@
         <posY>70</posY>
 		<align>left</align>
         <label>350020</label>
-		<font>font101</font>
+		<font>font10</font>
 		<textcolor>ffffffff</textcolor>
 		<visible>control.hasfocus(5005)+skin.hassetting(#skin.tips)</visible>
 		<animation effect="fade" time="250" reversible="true">visiblechange</animation>

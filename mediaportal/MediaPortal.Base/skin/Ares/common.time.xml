@@ -9,7 +9,7 @@
       <posY>15</posY>
       <label>#date | #time</label>
       <align>right</align>
-      <font>font101</font>
+      <font>font10</font>
       <textcolor>ff808080</textcolor>
     </control>
   </controls>

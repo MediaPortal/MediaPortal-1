@@ -61,8 +61,8 @@
 		  <description>Item Count</description>
 		  <type>label</type>
 		  <id>0</id>
-		  <posX>1865</posX>
-		  <posY>110</posY>
+		  <posX>#Xposition</posX>
+		  <posY>#Yposition</posY>
 		  <label>#itemcount Videos</label>
 		  <align>right</align>
 		  <font>fontBold2</font>
