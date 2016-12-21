@@ -36,20 +36,19 @@
     </control>	
 		
 
-	
-    <control>
-      <description>current temp label</description>
-      <type>label</type>
+
+	<control>
+      <description>background</description>
+      <type>image</type>
       <id>0</id>
-      <posX>9010</posX>
-      <posY>10</posY>
-      <height>71</height>
-      <align>left</align>
-      <label>#tile15plugin.hyperlink #skin.traktnav #skin.tvseriesnav</label>
-      <font>font10</font>
-      <textcolor>ffffffff</textcolor>
-	  <visible>window.isvisible(35)</visible>
+      <posX>150</posX>
+      <posY>1000</posY>
+      <width>32</width>
+      <height>32</height>
+      <texture>updates.png</texture>
+	  <visible>string.equals(#skin.updates.available,True)</visible>
     </control>	
+	
 		
     
 	<!-- Expression test box (labels do not work with cint !! -->
