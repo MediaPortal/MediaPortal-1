@@ -1,0 +1,62 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>87267</id>
+  <defaultcontrol>2</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <rememberLastFocusedControl>no</rememberLastFocusedControl>
+  <define>#currentmodule:#Trakt.Translation.WatchList.Label</define>
+  <define>#selecteditem:#highlightedbutton</define>
+  <define>#defaultcontrol:2</define>
+  <define>#defaultcontrol.onleft:9995</define>
+  <controls>
+    <control>
+      <description>BG</description>
+      <type>image</type>
+      <id>1</id>
+      <texture>#backgroundcolour</texture>
+      <width>1920</width>
+      <height>1080</height>
+    </control>
+    
+	<import>custom\Allscreens\user_dialog.xml</import>
+	
+    <import>Trakt.Common.xml</import>
+	
+	
+    <control>
+      <type>group</type>
+      <description>group element</description>
+      <posX>750</posX>
+      <posY>230</posY>
+      <width>373</width>
+      <height>379</height>
+      <layout>StackLayout(Vertical)</layout>
+      <control>
+        <type>button</type>
+        <description>Watch List Movies</description>
+        <id>2</id>
+        <label>#Trakt.Translation.WatchListMovies.Label</label>
+        <hyperlink>87270</hyperlink>
+        <onup>17</onup>
+        <onleft>#defaultcontrol.onleft</onleft>
+      </control>
+      <control>
+        <description>Watch List Shows</description>
+        <type>button</type>
+        <id>3</id>
+        <label>#Trakt.Translation.WatchListShows.Label</label>
+        <hyperlink>87268</hyperlink>
+        <onleft>#defaultcontrol.onleft</onleft>
+      </control>
+      <control>
+        <description>Watch List Episodes</description>
+        <type>button</type>
+        <id>4</id>
+        <label>#Trakt.Translation.WatchListEpisodes.Label</label>
+        <hyperlink>87269</hyperlink>
+        <onleft>#defaultcontrol.onleft</onleft>
+        <ondown>2</ondown>
+      </control>
+    </control>
+  </controls>
+</window>

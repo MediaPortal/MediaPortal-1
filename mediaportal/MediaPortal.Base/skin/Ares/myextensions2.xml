@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>801</id>
+  <defaultcontrol>50</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <controls>
+    <control>
+      <description>BG</description>
+      <type>image</type>
+      <id>1</id>
+      <texture>#backgroundcolour</texture>
+      <width>1920</width>
+      <height>1080</height>
+    </control>
+    
+	<import>custom\Allscreens\user_dialog.xml</import>
+	
+	  <control>
+        <description>Cover Art</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>40</posX>
+        <posY>190</posY>
+        <width>1845</width>
+        <height>624</height>
+        <texture>D_over1.png</texture>
+		<visible>!facadeview.coverflow</visible>
+      </control>	
+
+  	  <control>
+        <description>Cover Art</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>40</posX>
+        <posY>821</posY>
+        <width>1845</width>
+        <height>209</height>
+        <texture>Inf_gfx.png</texture>
+      </control>	
+	
+
+    <control>
+      <description>action menu</description>
+      <type>actiongroup</type>
+      <dimColor>00ffffff</dimColor>
+      <width>800</width>
+      <height>800</height>
+      <buttonX>0</buttonX>
+      <buttonY>-60</buttonY>
+      <buttonwidth>100</buttonwidth>
+      <buttonheight>1080</buttonheight>
+      <onexit>50</onexit>
+      <defaultcontrol>2</defaultcontrol>
+      <textureFocus></textureFocus>
+      <textureNoFocus></textureNoFocus>
+    <control>
+	   <type>image</type>
+	   <posX>0</posX>
+	   <posY>0</posY>
+	   <width>1920</width>
+	   <height>1080</height>
+       <texture>black.png</texture>
+        <colordiffuse>99000000</colordiffuse>
+	   <animation effect="fade" time="350" reversible="true">hidden</animation>
+	   <visible>!Control.HasFocus(50)</visible>    
+	 </control>
+		
+	  <control>
+        <type>image</type>
+        <id>0</id>
+        <posX>420</posX>
+        <posY>150</posY>
+        <width>975</width>
+        <height>836</height>
+        <texture>dialogglowbig.png</texture>
+		<visible>!Control.HasFocus(50)</visible>    
+      </control>		
+		
+      <control>
+        <description>group element</description>
+        <type>group</type>
+        <visible>!Control.HasFocus(50)</visible>
+        <posX>500</posX>
+        <posY>250</posY>
+        <layout>StackLayout(0, Vertical, true)</layout>
+        <control>
+          <id>2</id>
+          <description>View-As</description>
+          <type>button</type>
+          <onright>50</onright>
+          <onup>9</onup>
+		  <textureFocus>btn_list_blue2.png</textureFocus>
+          <textureNoFocus></textureNoFocus>
+		  <textYOff>7</textYOff>
+		  <width>820</width>
+		  <height>50</height>
+          <label>100</label>
+        </control>
+        <control>
+          <id>3</id>
+          <description>Sort</description>
+          <type>sortbutton</type>
+          <onright>50</onright>
+		  <textureFocus>btn_list_blue2.png</textureFocus>
+          <textureNoFocus></textureNoFocus>
+		  <textYOff>7</textYOff>
+		  <width>820</width>
+		  <height>50</height>
+        </control>
+        <control>
+          <id>6</id>
+          <description>Views</description>
+          <type>button</type>
+          <onright>50</onright>
+          <label>457</label>
+		  <textureFocus>btn_list_blue2.png</textureFocus>
+          <textureNoFocus></textureNoFocus>
+		  <textYOff>7</textYOff>
+		  <width>820</width>
+		  <height>50</height>
+        </control>
+        <control>
+          <id>5</id>
+          <description>Restart</description>
+          <type>button</type>
+          <onright>50</onright>
+		  <textureFocus>btn_list_blue2.png</textureFocus>
+          <textureNoFocus></textureNoFocus>
+		  <textYOff>7</textYOff>
+		  <width>820</width>
+		  <height>50</height>
+          <label>#MPEI.Translation.Restart.Label</label>
+        </control>
+        <control>
+          <id>8</id>
+          <description>Update all</description>
+          <type>button</type>
+          <onright>50</onright>
+		  <textureFocus>btn_list_blue2.png</textureFocus>
+          <textureNoFocus></textureNoFocus>
+		  <textYOff>7</textYOff>
+		  <width>820</width>
+		  <height>50</height>
+          <label>#MPEI.Translation.UpdateAll.Label</label>
+          <visible>string.contains(#mpei.updates,.::.)</visible>
+        </control>
+        <control>
+          <id>9</id>
+          <description>Check for Updates</description>
+          <type>button</type>
+          <onright>50</onright>
+		  <textureFocus>btn_list_blue2.png</textureFocus>
+          <textureNoFocus></textureNoFocus>
+		  <textYOff>7</textYOff>
+		  <width>820</width>
+		  <height>50</height>
+          <label>#MPEI.Translation.DownloadUpdates.Label</label>
+          <ondown>2</ondown>
+        </control>
+      </control>
+    </control>
+	
+    <import>common.facade.music.xml</import>
+	
+    <control>
+      <description>Logo</description>
+      <type>image</type>
+      <id>1</id>
+        <posX>56</posX>
+        <posY>828</posY>
+		<height>190</height>
+		<width>190</width>
+        <texture mask="MAmask.png">blue.png</texture>
+    </control>	
+
+	<control>
+        <description>Little Poster</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>1262</posX>
+        <posY>198</posY>
+        <width>605</width>
+        <height>604</height>
+		<keepaspectratio>yes</keepaspectratio>
+        <zoomfromtop>no</zoomfromtop>
+        <texture mask="MA_mask.png">blue.png</texture>
+        <colordiffuse>ffffffff</colordiffuse>
+      </control>
+	  
+	<control>
+        <description>Little Poster</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>1400</posX>
+        <posY>350</posY>
+		<width>400</width>
+		<height>313</height>
+		<keepaspectratio>yes</keepaspectratio>
+        <zoomfromtop>no</zoomfromtop>
+        <texture mask="">#selectedthumb</texture>
+        <colordiffuse>ffffffff</colordiffuse>
+      </control>
+	  
+	  <control>
+        <description>Little Poster</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>76</posX>
+        <posY>848</posY>
+		<height>150</height>
+		<width>150</width>
+		<keepaspectratio>yes</keepaspectratio>
+        <texture mask="">#selectedthumb</texture>
+        <colordiffuse>ffffffff</colordiffuse>
+      </control>
+
+	  <control>
+        <description>Cover Art</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>1234</posX>
+        <posY>182</posY>
+        <width>28</width>
+        <height>619</height>
+        <texture>D_side.png</texture>
+		<visible>!facadeview.filmstrip+!facadeview.coverflow</visible>	
+      </control> 
+
+	  
+    <control>
+      <id>0</id>
+      <description>Summary</description>
+      <type>textboxscrollup</type>
+      <textalign>left</textalign>
+      <posX>265</posX>
+      <posY>860</posY>
+      <width>1550</width>
+      <height>85</height>
+      <textcolor>ffFFFFFF</textcolor>
+      <font>font13</font>
+      <label>#MPE.Selected.Description</label>
+    </control>
+
+
+	
+    <control>
+      <description>Image Tags</description>
+      <type>group</type>
+      <posX>970</posX>
+      <posY>180</posY>
+      <dimColor>FFffffff</dimColor>
+      <layout>StackLayout(4, Horizontal, true)</layout>
+      <control>
+        <type>image</type>
+        <visible>string.equals(#MPE.Selected.JustAded,true)</visible>
+        <texture>status_new.png</texture>
+      </control>
+      <control>
+        <type>image</type>
+        <visible>string.equals(#MPE.Selected.Popular,true)</visible>
+        <texture>status_popular.png</texture>
+      </control>
+      <control>
+        <type>image</type>
+        <visible>string.equals(#MPE.Selected.DeveloperPick,true)</visible>
+        <texture>status_editorpick.png</texture>
+      </control>      
+    </control> 
+  </controls>
+</window>

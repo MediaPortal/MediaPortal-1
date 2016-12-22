@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="utf-8"?>
+<window>
+	<id>84623</id>
+	<defaultcontrol>912</defaultcontrol>
+	<allowoverlay>control.isvisible(1337)</allowoverlay> <!-- no! -->
+	<define>#header.label:#SubCentral.Header.Label</define>
+	<define>#header.background.custom:SubCentral_Background.png</define>
+	<!--
+	<animation effect="fade" time="250">WindowOpen</animation>
+	<animation effect="fade" time="250">WindowClose</animation>
+	-->
+	<controls>
+		<!-- 
+		This is the main subcentral skin file and should contain all screen elements that are common
+		to all views in the GUI. Anything that belongs only in a specific view should be placed in the
+		coorespodning subfile.
+		-->
+
+		<!-- Dummy Controls meant for visibility and status purposes. -->
+		<control>
+			<description>Visible when in the main view mode.</description>
+			<type>label</type>
+			<id>101</id>
+			<posX>-50</posX>
+			<posY>-50</posY>
+			<width>0</width>
+		</control>
+		<control>
+			<description>Visible when in the file view mode.</description>
+			<type>label</type>
+			<id>102</id>
+			<posX>-50</posX>
+			<posY>-50</posY>
+			<width>0</width>
+		</control>
+		<control>
+			<description>Visible when in the manual search mode.</description>
+			<type>label</type>
+			<id>103</id>
+			<posX>-50</posX>
+			<posY>-50</posY>
+			<width>0</width>
+		</control>
+		
+    <control>
+      <description>BG</description>
+      <type>image</type>
+      <id>1</id>
+      <texture>#backgroundcolour</texture>
+      <width>1920</width>
+      <height>1080</height>
+    </control>
+    
+     <control>
+      <description>Backdrop</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>wishlistback.jpg</texture>
+	  <colordiffuse>25ffffff</colordiffuse>
+	</control>
+    <control>
+      <description>Backdrop</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>#overlaycolour</texture>
+	</control>		
+ 	  <control>
+        <description>Cover Art</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>40</posX>
+        <posY>190</posY>
+        <width>1845</width>
+        <height>624</height>
+        <texture>D_over1.png</texture>
+      </control>	
+
+  	  <control>
+        <description>Cover Art</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>40</posX>
+        <posY>821</posY>
+        <width>1845</width>
+        <height>209</height>
+        <texture>Inf_gfx.png</texture>
+      </control>   
+
+	<import>custom\Allscreens\user_dialog.xml</import>	  
+
+
+
+		<!-- Imports for various views of the GUI -->
+		<import>SubCentral.Main.xml</import>
+		<import>SubCentral.Search.xml</import>
+		<import>SubCentral.ModifySearch.xml</import>
+		<!-- TODO MS-->
+		<!--<import>TVSeries.Overlay.xml</import>-->
+
+		<control>
+			<type>actiongroup</type>
+			<description>action menu</description>
+			<defaultcontrol>202</defaultcontrol>
+			<onexit>50</onexit>
+			<buttonX>0</buttonX>
+			<buttonY>0</buttonY>
+			<buttonwidth>100</buttonwidth>
+			<buttonheight>1080</buttonheight>
+			<textureFocus>-</textureFocus>
+			<textureNoFocus>-</textureNoFocus>
+			<width>800</width>
+			<height>800</height>
+			<dimColor>00ffffff</dimColor>
+
+     <control>
+	   <type>image</type>
+	   <posX>0</posX>
+	   <posY>0</posY>
+	   <width>1920</width>
+	   <height>1080</height>
+       <texture>black.png</texture>
+        <colordiffuse>99000000</colordiffuse>
+	   <animation effect="fade" time="350" reversible="true">hidden</animation>
+	   <visible>!control.hasfocus(50)+!control.hasfocus(912)</visible>    
+	 </control>
+		
+	  <control>
+        <type>image</type>
+        <id>0</id>
+        <posX>420</posX>
+        <posY>150</posY>
+        <width>975</width>
+        <height>836</height>
+        <texture>dialogglowbig.png</texture>
+		<visible>!control.hasfocus(50)+!control.hasfocus(912)</visible>    
+      </control>	
+	  			
+			<control>
+				<description>group element</description>
+				<type>group</type>
+				<visible>!control.hasfocus(50)+!control.hasfocus(912)</visible>				
+				<control>
+					<description>button group</description>
+					<type>group</type>
+					<posX>500</posX>
+					<posY>250</posY>
+					<layout>StackLayout</layout>
+					<visible>!control.hasfocus(50)+!control.hasfocus(912)</visible>
+					<control>
+						<description>Cancel Button</description>
+						<type>button</type>
+						<id>202</id>
+						<label>Cancel</label>
+						<onup>201</onup>
+						<ondown>203</ondown>
+						<onleft>202</onleft>
+						<onright>912</onright>
+						<textureFocus>btn_list_blue2.png</textureFocus>
+                        <textureNoFocus></textureNoFocus>
+			            <textYOff>7</textYOff>
+			            <width>820</width>
+			            <height>50</height>
+					</control>
+					<control>
+						<description>Languages Button</description>
+						<type>button</type>
+						<id>203</id>
+						<label>Languages</label>
+						<onup>202</onup>
+						<ondown>204</ondown>
+						<onleft>203</onleft>
+						<onright>912</onright>
+						<textureFocus>btn_list_blue2.png</textureFocus>
+                        <textureNoFocus></textureNoFocus>
+			            <textYOff>7</textYOff>
+			            <width>820</width>
+			            <height>50</height>
+					</control>
+					<control>
+						<description>Modify Search Button</description>
+						<type>button</type>
+						<id>204</id>
+						<label>Modify search</label>
+						<onup>203</onup>
+						<ondown>206</ondown>
+						<onleft>204</onleft>
+						<onright>912</onright>
+						<textureFocus>btn_list_blue2.png</textureFocus>
+                        <textureNoFocus></textureNoFocus>
+			            <textYOff>7</textYOff>
+			            <width>820</width>
+			            <height>50</height>
+					</control>
+					<control>
+						<description>Delete Subtitles Button</description>
+						<type>button</type>
+						<id>206</id>
+						<label>Delete subtitles</label>
+						<onup>204</onup>
+						<ondown>205</ondown>
+						<onleft>206</onleft>
+						<onright>912</onright>
+						<textureFocus>btn_list_blue2.png</textureFocus>
+                        <textureNoFocus></textureNoFocus>
+			            <textYOff>7</textYOff>
+			            <width>820</width>
+			            <height>50</height>
+					</control>
+					<control>
+						<description>Sort</description>
+						<type>sortbutton</type>
+						<id>205</id>
+						<label>Sort</label>
+						<onup>206</onup>
+						<ondown>202</ondown>
+						<onleft>205</onleft>
+						<onright>912</onright>
+						<textureFocus>btn_list_blue2.png</textureFocus>
+                        <textureNoFocus></textureNoFocus>
+			            <textYOff>7</textYOff>
+			            <width>820</width>
+			            <height>50</height>
+					</control>
+				</control>			
+			</control>
+		</control>
+	</controls>
+</window>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<window>
+	<controls>
+		<!-- 
+		This skin file is meant for all controls that should be visible for the user
+		when in the main view of the plugin. All controls should be tagged at a minimum
+		with "<visible>Control.IsVisible(101)</visible>". 
+		-->
+
+		<control>
+			<type>textbox</type>
+			<id>912</id>
+			<posX>115</posX>
+			<posY>230</posY>
+			<width>1700</width>
+			<height>600</height>
+			<label>#SubCentral.About</label>
+			<font>font13</font>
+			<!--<textcolor>90ffffff</textcolor>-->
+			<onup>912</onup>
+			<ondown>912</ondown>
+			<onleft>202</onleft>
+			<onright>50</onright>
+			<spinWidth>30</spinWidth>
+			<spinHeight>30</spinHeight>
+			<spinPosX>1720</spinPosX>
+			<spinPosY>755</spinPosY>
+			<spinAlign>left</spinAlign>
+			<spinCanFocus>yes</spinCanFocus>
+			<visible>Control.IsVisible(101)</visible>
+			<animation effect="fade" time="250">visiblechange</animation>
+		</control>
+
+		<control>
+			<description>Dummy Button</description>
+			<type>button</type>
+			<id>500</id>
+			<label>-</label>
+			<onup>500</onup>
+			<ondown>500</ondown>
+			<onleft>202</onleft>
+			<onright>50</onright>
+			<textureFocus>-</textureFocus>
+			<textureNoFocus>-</textureNoFocus>
+			<!--<visible>Control.IsVisible(101)</visible>-->
+			<visible>no</visible>
+		</control>
+		
+	</controls>
+</window>

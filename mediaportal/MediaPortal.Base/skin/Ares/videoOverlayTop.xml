@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <defaultcontrol>4</defaultcontrol>
+  <id>3008</id>
+  <controls>
+    <control>
+      <description>Pause logo</description>
+      <type>image</type>
+      <id>4</id>
+      <posX>451</posX>
+      <posY>855</posY>
+      <width>78</width>
+      <height>77</height>
+      <texture></texture>
+      <visible>player.paused</visible>
+    </control>
+    <control>
+      <description>FF logo</description>
+      <type>image</type>
+      <id>5</id>
+      <posX>451</posX>
+      <posY>855</posY>
+      <width>78</width>
+      <height>77</height>
+      <texture>fastforward_enabled.png</texture>
+      <visible>player.forwarding</visible>
+    </control>
+    <control>
+	 <description>Filter</description>
+	 <type>image</type>
+	 <id>0</id>
+	 <posX>170</posX>
+     <posY>875</posY>
+     <texture>play_shad1.png</texture>
+     <width>140</width>
+     <height>140</height>
+     <visible>player.paused</visible>
+    </control>
+	<!--
+    <control>
+	 <description>Filter</description>
+	 <type>image</type>
+	 <id>0</id>
+	 <posX>50</posX>
+     <posY>1</posY>
+     <texture>tvmask1.png</texture>
+     <width>333</width>
+     <height>192</height>
+     <visible>player.hasmedia</visible>
+    </control>
+	
+    <control>
+	 <description>Filter</description>
+	 <type>image</type>
+	 <id>0</id>
+	 <posX>50</posX>
+     <posY>1</posY>
+     <texture>tvmask2.png</texture>
+     <width>333</width>
+     <height>192</height>
+     <visible>control.isvisible(3)</visible>
+    </control>	
+	-->
+	
+					
+    <control>
+      <description>RW logo</description>
+      <type>image</type>
+      <id>6</id>
+      <posX>451</posX>
+      <posY>855</posY>
+      <width>78</width>
+      <height>77</height>
+      <texture>rew_enabled.png</texture>
+      <visible>player.rewinding</visible>
+    </control>
+  </controls>
+</window>
