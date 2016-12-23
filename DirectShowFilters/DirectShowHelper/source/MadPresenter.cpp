@@ -133,23 +133,15 @@ void MPMadPresenter::SetMadVrPaused(bool paused)
   {
     if (paused)
     {
-      if (!m_pPaused)
+      int counter = 0;
+      OAFilterState state = -1;
+      m_pMediaControl->GetState(100, &state);
+      if (state != State_Paused)
       {
-        int counter = 0;
-        OAFilterState state = -1;
-        m_pMediaControl->GetState(100, &state);
-        if (state != State_Paused)
-        {
-          m_pPaused = false;
-        }
         m_pMediaControl->Pause();
-        m_pPaused = true;
         Log("MPMadPresenter:::SetMadVrPaused() pause");
       }
-    }
-    else
-    {
-      m_pPaused = false;
+      m_pMediaControl->Pause();
     }
   }
 }
