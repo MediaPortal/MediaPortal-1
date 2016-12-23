@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--
+Top info
+-->
+<window>
+  <define property="true" evaluateNow="true">#Xposition:#(cint(switch(eq(#skin.weather.home,'True'),'1730',eq(#skin.weather.home,'False'),'1862')))</define>
+  <define property="true" evaluateNow="true">#Yposition:#(cint(switch(eq(#skin.weather.home,'True'),'100',eq(#skin.weather.home,'False'),'105')))</define>
+  <controls>
+  
+ 
+    <control>
+      <id>0</id>
+      <description>Time</description>
+      <type>label</type>
+      <posX>1865</posX>
+      <posY>25</posY>
+      <height>43</height>
+      <width>500</width>
+      <font>font18</font>
+      <textcolor>ffffffff</textcolor>
+      <align>right</align>
+      <label>#(iif(eq(#Dtimeformat,'True'),string.format('{0:HH:mm}', cdate(#time)),string.format('{0:hh:mm}', cdate(#time))))</label>
+	  <visible>string.equals(#skin.weather.home,False)</visible>
+    </control>
+	
+	<control>
+      <id>0</id>
+      <description>Location</description>
+      <type>label</type>
+      <posX>1862</posX>
+      <posY>75</posY>
+      <height>43</height>
+      <width>500</width>
+      <font>fontBold2</font>
+      <textcolor>ffffffff</textcolor>
+      <align>right</align>
+      <label>#(iif(eq(#skin.fullday,'True'),string.format('{0:dddd dd MMMM}', cdate(#date.local)),string.format('{0:ddd dd MMM}', cdate(#date.local))))</label>
+	  <visible>string.equals(#skin.weather.home,False)</visible>
+    </control>	
+	
+	
+	
+	
+    <control>
+      <id>711101</id>
+      <description>Time</description>
+      <type>label</type>
+      <posX>1730</posX>
+      <posY>20</posY>
+      <height>43</height>
+      <width>500</width>
+      <font>font18</font>
+      <textcolor>ffffffff</textcolor>
+      <align>right</align>
+      <label>#(iif(eq(#Dtimeformat,'True'),string.format('{0:HH:mm}', cdate(#time)),string.format('{0:hh:mm}', cdate(#time))))</label>
+	  <visible>[[plugin.isenabled(World Weather)|plugin.isenabled(World Weather Lite)]+[skin.hassetting(#skin.weather.home)]]+!window.isvisible(600)+!window.isvisible(762)+!window.isvisible(30)</visible>
+    </control>
+	
+	<control>
+      <id>711102</id>
+      <description>Location</description>
+      <type>label</type>
+      <posX>1730</posX>
+      <posY>70</posY>
+      <height>43</height>
+      <width>500</width>
+      <font>fontBold2</font>
+      <textcolor>ffffffff</textcolor>
+      <align>right</align>
+      <label>#(iif(eq(#skin.fullday,'True'),string.format('{0:dddd dd MMMM}', cdate(#date.local)),string.format('{0:ddd dd MMM}', cdate(#date.local))))</label>
+	  <visible>[[plugin.isenabled(World Weather)|plugin.isenabled(World Weather Lite)]+[skin.hassetting(#skin.weather.home)]]+!window.isvisible(600)+!window.isvisible(762)+!window.isvisible(30)</visible>
+    </control>	
+
+    <control>
+      <id>0</id>
+      <description>Time</description>
+      <type>label</type>
+      <posX>1730</posX>
+      <posY>20</posY>
+      <height>43</height>
+      <width>500</width>
+      <font>font18</font>
+      <textcolor>ffffffff</textcolor>
+      <align>right</align>
+      <label>#(iif(eq(#Dtimeformat,'True'),string.format('{0:HH:mm}', cdate(#time)),string.format('{0:hh:mm}', cdate(#time))))</label>
+	  <visible>[plugin.isenabled(World Weather)|plugin.isenabled(World Weather Lite)]+[window.isvisible(600)|window.isvisible(762)|window.isvisible(30)]+skin.hassetting(#skin.weather.home)</visible>
+    </control>
+	
+	<control>
+      <id>0</id>
+      <description>Location</description>
+      <type>label</type>
+      <posX>1730</posX>
+      <posY>70</posY>
+      <height>43</height>
+      <width>500</width>
+      <font>fontBold2</font>
+      <textcolor>ffffffff</textcolor>
+      <align>right</align>
+      <label>#(iif(eq(#skin.fullday,'True'),string.format('{0:dddd dd MMMM}', cdate(#date.local)),string.format('{0:ddd dd MMM}', cdate(#date.local))))</label>
+	  <visible>[plugin.isenabled(World Weather)|plugin.isenabled(World Weather Lite)]+[window.isvisible(600)|window.isvisible(762)|window.isvisible(30)]+skin.hassetting(#skin.weather.home)</visible>
+    </control>		
+	
+	    <!-- ** Current Weather Information ** -->
+		<!--
+    <control>
+      <description>current weather icon</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1500</posX>
+      <posY>10</posY>
+      <width>165</width>
+      <height>165</height>
+      <texture>#WorldWeather.TodayIconImage</texture>
+	  <visible>skin.hassetting(#skin.weather.home)</visible>
+    </control>
+	-->
+
+    <control>
+      <description>current weather icon</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1750</posX>
+      <posY>10</posY>
+      <width>155</width>
+      <height>155</height>
+	  <keepaspectratio>yes</keepaspectratio>	  
+      <texture>#WorldWeather.TodayIconImage</texture>
+	  <visible>[plugin.isenabled(World Weather)|plugin.isenabled(World Weather Lite)]+skin.hassetting(#skin.weather.home)</visible>
+    </control>	
+
+	
+		<control>
+		  <description>Unknown</description>
+		  <type>label</type>
+		  <id>0</id>
+		  <posX>1730</posX>
+		  <posY>105</posY>
+		  <label>#WorldWeather.TodayTemperature</label>
+		  <align>right</align>
+		  <font>fontBold2</font>
+		  <textcolor>ffffffff</textcolor>
+		  <visible>[plugin.isenabled(World Weather)|plugin.isenabled(World Weather Lite)]+[window.isvisible(35)|window.isvisible(600)|window.isvisible(762)|window.isvisible(30)|window.isvisible(0)|window.isvisible(34)]+skin.hassetting(#skin.weather.home)</visible>
+		</control>		
+		
+
+	
+  </controls>
+</window>

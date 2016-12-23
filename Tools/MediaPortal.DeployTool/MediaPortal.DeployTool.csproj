@@ -491,6 +491,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Install.ico" />
+    <None Include="Resources\preview_ares.png" />
     <None Include="Resources\preview_titan.png" />
     <None Include="MediaPortal.DeployTool.exe.manifest" />
     <None Include="Resources\MePo_average.png" />

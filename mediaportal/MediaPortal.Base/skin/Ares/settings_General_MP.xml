@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>1018</id>
+  <defaultcontrol>2</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <rememberLastFocusedControl>yes</rememberLastFocusedControl>
+  <controls>
+  <import>common.settings.xml</import>
+
+    <control>
+      <description>buttons</description>
+      <type>group</type>
+      <animation effect="fade" start="0" end="100" time="200">WindowOpen</animation>
+      <animation effect="fade" start="100" end="0" time="200">WindowClose</animation>
+      <posX>500</posX>
+      <posY>240</posY>
+      <layout>StackLayout(0, Vertical, false)</layout>
+      <control>
+        <description>Log</description>
+        <type>button</type>
+        <id>2</id>
+        <textureFocus>btn_list_blue2.png</textureFocus>
+        <textureNoFocus></textureNoFocus>
+		<textYOff>7</textYOff>
+		<width>820</width>
+		<height>50</height>
+        <label>300090</label>
+        <onup>17</onup>
+      </control>
+      <control>
+        <description>Process priority</description>
+        <type>button</type>
+        <id>3</id>
+        <textureFocus>btn_list_blue2.png</textureFocus>
+        <textureNoFocus></textureNoFocus>
+		<textYOff>7</textYOff>
+		<width>820</width>
+		<height>50</height>
+        <label>300091</label>
+      </control>
+      <control>
+        <description>Watchdog</description>
+        <type>checkbutton</type>
+        <id>4</id>
+        <label>300092</label>
+        <textureFocus>btn_list_blue2.png</textureFocus>
+        <textureNoFocus></textureNoFocus>
+		<textYOff>7</textYOff>
+		<width>820</width>
+		<height>50</height>
+        <align>right</align>
+      </control>
+      <control>
+        <description>Autorestart</description>
+        <type>checkbutton</type>
+        <id>5</id>
+        <posX>510</posX>
+        <posY>262</posY>
+        <label>300093</label>
+        <textureFocus>btn_list_blue2.png</textureFocus>
+        <textureNoFocus></textureNoFocus>
+		<textYOff>7</textYOff>
+		<width>820</width>
+		<height>50</height>
+        <onright>6</onright>
+        <align>right</align>
+      </control>
+    </control>
+    <control>
+      <description>Seconds label</description>
+      <type>label</type>
+      <id>100</id>
+      <posX>510</posX>
+      <posY>525</posY>
+      <width>900</width>
+      <label>300094</label>
+      <visible>control.isvisible(6)</visible>
+    </control>
+    <control>
+      <description>Seconds</description>
+      <type>spincontrol</type>
+      <id>6</id>
+      <posX>515</posX>
+      <posY>592</posY>
+      <onup>5</onup>
+      <onleft>5</onleft>
+      <ondown>99</ondown>
+      <align>left</align>
+      <buddycontrolid>100</buddycontrolid>
+    </control>
+  </controls>
+</window>
+

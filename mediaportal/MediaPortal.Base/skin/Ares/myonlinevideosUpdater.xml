@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>4757</id>
+  <defaultcontrol>50</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <controls>
+    
+    <!-- *** WINDOW DEFAULTS *** -->
+
+    <control>
+      <description>BG</description>
+      <type>image</type>
+      <id>1</id>
+      <texture>#backgroundcolour</texture>
+      <width>1920</width>
+      <height>1080</height>
+    </control>
+
+	<import>custom\Allscreens\user_dialog.xml</import>
+	
+	
+	  <control>
+        <description>Cover Art</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>40</posX>
+        <posY>190</posY>
+        <width>1845</width>
+        <height>624</height>
+        <texture>D_over1.png</texture>
+		<visible>!facadeview.coverflow</visible>
+      </control>	
+
+  	  <control>
+        <description>Cover Art</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>40</posX>
+        <posY>821</posY>
+        <width>1845</width>
+        <height>209</height>
+        <texture>Inf_gfx.png</texture>
+      </control>	
+	
+	<control>
+	  <description>Date / Time</description>
+	  <type>label</type>
+      <id>502</id>
+	  <posX>1865</posX>
+	  <posY>110</posY>
+	  <label>#selectedindex/#itemcount #itemtype</label>
+	  <align>right</align>
+	  <font>fontBold2</font>
+	  <textcolor>eaeaea</textcolor>
+	</control>	
+	
+    
+    <control>
+      <description>listcontrol</description>
+      <type>listcontrol</type>
+      <id>50</id>
+      <spinPosX>3180</spinPosX>
+      <spinPoxY>670</spinPoxY>
+	  <posX>57</posX>
+	  <width>1809</width>
+	  <textureFocus>btn_list.png</textureFocus>
+	  <PinIconWidth>25</PinIconWidth>
+      <PinIconHeight>25</PinIconHeight>
+	  <textXOff2>1450</textXOff2>
+      <scrollOffset>2</scrollOffset>
+      <textXOff3>1500</textXOff3>
+	  <textYOff>3</textYOff>
+	  <textYOff2>3</textYOff2>
+	  <textYOff3>3</textYOff3>
+      <PinIconXOff>22</PinIconXOff>
+      <PinIconYOff>11</PinIconYOff>
+      <IconXOff>60</IconXOff>
+	  <IconYOff>8</IconYOff>
+      <textXOff>60</textXOff>
+      <onleft>508</onleft>
+	  <playedColor>ffffcc00</playedColor>
+	  <visible>!control.hasfocus(503)|!control.hasfocus(504)|!control.hasfocus(506)|!control.hasfocus(507)|!control.hasfocus(508)</visible>
+    </control>
+	
+	<!-- *** Bottom part *** 
+	
+	<import>myonlinevideos.overlay.xml</import>
+	
+    -->
+
+    <control>
+      <description>Little Poster</description>
+      <type>image</type>
+      <id>1</id>
+        <posX>56</posX>
+        <posY>828</posY>
+		<height>190</height>
+		<width>190</width>
+        <texture mask="MAmask.png">blue.png</texture>
+    </control>
+
+	
+    <control>
+      <type>image</type>
+        <posX>86</posX>
+        <posY>860</posY>
+		<height>140</height>
+		<width>140</width>
+		<align>center</align>
+        <valign>middle</valign>
+		<keepaspectratio>yes</keepaspectratio>
+        <texture mask="">#selectedthumb</texture>
+      <keepaspectratio>yes</keepaspectratio>
+    </control>
+	
+    <control>
+      <description>Selected item Label</description>
+      <type>fadelabel</type>
+      <width>950</width>
+      <height>20</height>
+      <posX>260</posX>
+      <posY>840</posY>
+      <align>left</align>
+      <font>font13</font>
+      <label>#selecteditem  --  #OnlineVideos.Translation.Creator.Label: #OnlineVideos.owner</label>
+      <textcolor>White</textcolor>      
+    </control>    
+
+    <control>
+      <description>Description</description>
+      <type>textboxscrollup</type>
+      <posX>260</posX>
+      <posY>900</posY>
+      <width>1530</width>
+      <height>85</height>
+      <textcolor>99ffffff</textcolor>
+      <font>font13</font>
+      <label>#OnlineVideos.desc</label>
+    </control>           
+
+    <import>myonlinevideos.Updater.hiddenmenu.xml</import>
+ 
+  </controls>
+</window>

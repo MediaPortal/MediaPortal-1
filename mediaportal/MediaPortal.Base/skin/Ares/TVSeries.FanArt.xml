@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>9812</id>
+  <defaultcontrol>50</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <define>#useSelectedFanart:No</define>
+  <define>#selecteditem:</define>
+  <controls>
+  
+    <control>
+      <description>BG</description>
+      <type>image</type>
+      <id>1</id>
+	  <posX>0</posX>
+      <posY>0</posY>
+      <texture>#backgroundcolour</texture>
+      <width>1920</width>
+      <height>1080</height>
+      <colordiffuse>ffffffff</colordiffuse>
+    </control>
+	
+		<control>
+      <description>preview</description>
+      <id>0</id>
+      <type>image</type>
+      <posx>0</posx>
+      <posy>0</posy>
+      <width>1920</width>
+      <height>1080</height>
+	  <colordiffuse>40ffffff</colordiffuse>
+      <texture>#TVSeries.FanArt.SelectedPreview</texture>      
+    </control>
+	
+    <control>
+      <description>Alternate Movie Backdrop - Toggles Load with Component 1 for animations on visibiltiy</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>#overlaycolour</texture>
+	</control>	
+	
+	  <control>
+        <description>Cover Art</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>40</posX>
+        <posY>190</posY>
+        <width>1845</width>
+        <height>624</height>
+        <texture>D_over1.png</texture>
+		<visible>control.isvisible(6)|control.isvisible(50)+!facadeview.coverflow</visible>
+      </control>	
+	
+	
+      <import>custom\Allscreens\user_dialog.xml</import>
+	
+	
+		
+		<control>
+		  <description>Extra</description>
+		  <type>label</type>
+		  <id>0</id>
+		  <posX>140</posX>
+		  <posY>135</posY>
+		  <label>#TVSeries.FanArt.DownloadingStatus #(iif(eq(#TVSeries.FanArt.LoadingStatus,''),'','| #TVSeries.FanArt.LoadingStatus'))</label>
+		  <align>left</align>
+		  <font>font10</font>
+		  <textcolor>eaeaea</textcolor>
+		  <visible>!player.hasmedia</visible>
+		</control>		
+
+  	  <control>
+        <description>Cover Art</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>40</posX>
+        <posY>820</posY>
+        <width>1845</width>
+        <height>210</height>
+        <texture>Inf_gfx.png</texture>
+      </control>		
+
+	  <control>
+        <description>Little Poster</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>48</posX>
+        <posY>828</posY>
+		<height>190</height>
+		<width>137</width>
+        <texture mask="CAmask_small.png">#TVSeries.SeriesPoster</texture>
+        <colordiffuse>ffffffff</colordiffuse>
+      </control>
+	  
+	  
+	  
+
+    <control>
+      <description>Selected item Label</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <textalign>left</textalign>
+      <posX>210</posX>
+      <posY>840</posY>
+      <width>1530</width>
+      <height>115</height>
+      <textcolor>eaeaea</textcolor>
+      <font>font12</font>
+      <label>#selecteditem [#TVSeries.FanArt.SelectedFanartResolution] #(iif(eq(#TVSeries.FanArt.SelectedFanartIsChosen,#TVSeries.Translation.Yes.Label),string.format('[{0}]',string.rtrim(#TVSeries.Translation.LabelChosen.Label,':')),''))</label>
+   	  <visible>string.equals(#selectedindex)</visible>
+    </control>
+
+	
+    <control>
+		<type>actiongroup</type>
+		<description>Hidden Menu</description>
+		<defaultcontrol>2</defaultcontrol>
+		<onexit>50</onexit>
+		<buttonX>0</buttonX>
+		<buttonY>0</buttonY>
+		<buttonwidth>45</buttonwidth>
+        <buttonheight>525</buttonheight>
+        <textureFocus></textureFocus>
+        <textureNoFocus></textureNoFocus>
+	    <width>852</width>
+		<height>1350</height>
+		<dimColor>00ffffff</dimColor>
+      <control>
+        <type>image</type>
+        <id>0</id>
+        <width>1920</width>
+        <height>1080</height>
+        <texture>black.png</texture>
+        <colordiffuse>95000000</colordiffuse>
+      </control>
+	  <control>
+        <type>image</type>
+        <id>0</id>
+        <posX>420</posX>
+        <posY>150</posY>
+        <width>975</width>
+        <height>836</height>
+        <texture>dialogglowbig.png</texture>
+      </control>
+
+			<control>
+				<description>group element</description>
+				<type>group</type>
+				<visible>!Control.HasFocus(50)</visible>
+				<posX>500</posX>
+				<posY>240</posY>
+				<layout>StackLayout(0, Vertical, true)</layout>
+				<visible>!Control.HasFocus(50)</visible>
+				<control>
+					<description>Change Layout</description>
+					<type>button</type>
+					<id>2</id>
+					<label>Change Layout</label>
+					<width>820</width>
+						<height>50</height>
+						<textYOff>3</textYOff>
+						<textureFocus>btn_list_blue2.png</textureFocus>
+                        <textureNoFocus></textureNoFocus>
+					<onleft>50</onleft>
+					<onright>50</onright>
+				</control>
+				<control>
+					<description>Resolution Filter</description>
+					<type>button</type>
+					<id>12</id>
+					<label>Filter</label>
+					<width>820</width>
+						<height>50</height>
+						<textYOff>3</textYOff>
+						<textureFocus>btn_list_blue2.png</textureFocus>
+                        <textureNoFocus></textureNoFocus>
+					<onleft>50</onleft>
+					<onright>50</onright>
+				</control>
+				<control>
+					<description>Random Fanart</description>
+					<type>checkbutton</type>
+					<id>13</id>
+					<label>Random Fanart</label>
+					<textYOff>3</textYOff>
+					<onleft>50</onleft>
+					<onright>50</onright>
+				</control>
+			</control>
+		</control>
+    <control>
+      <description>group element</description>
+      <type>group</type>
+      <animation effect="fade" start="0" end="100" time="200">WindowOpen</animation>
+      <animation effect="fade" start="100" end="0" time="200">WindowClose</animation>
+      <control>
+        <description>composite control consisting of a list control and a thumbnail panel</description>
+        <type>facadeview</type>
+        <id>50</id>        
+        <control>
+          <description>Thumbnail Panel</description>
+          <type>thumbnailpanel</type>
+          <dimColor>90ffffff</dimColor>
+          <id>50</id>
+          <posX>70</posX>
+          <posY>210</posY>
+          <width>1800</width>
+          <height>650</height>
+          <scrollOffset>1</scrollOffset>
+          <onleft>2</onleft>
+          <onright>2</onright>
+		  <!-- Small Icons 0.66 aspect ratio -->
+		  <itemWidth>255</itemWidth>
+		  <itemHeight>144</itemHeight>
+		  <textureWidth>255</textureWidth>
+		  <textureHeight>144</textureHeight>
+		  <thumbWidth>255</thumbWidth>
+		  <thumbHeight>144</thumbHeight>
+		  <thumbPosX>0</thumbPosX>
+		  <thumbPosY>0</thumbPosY>				
+		  <!-- Large Icons 0.66 aspect ratio -->
+		  <textureWidthBig>345</textureWidthBig>
+		  <textureHeightBig>183</textureHeightBig>
+		  <itemWidthBig>357</itemWidthBig>
+		  <itemHeightBig>195</itemHeightBig>
+		  <thumbWidthBig>345</thumbWidthBig>
+		  <thumbHeightBig>183</thumbHeightBig>
+		  <thumbPosXBig>0</thumbPosXBig>
+		  <thumbPosYBig>0</thumbPosYBig>
+          <thumbPosXBig>0</thumbPosXBig>
+          <thumbPosYBig>0</thumbPosYBig>
+          <thumbPosX>0</thumbPosX>
+          <thumbPosY>0</thumbPosY>
+          <thumbZoom>yes</thumbZoom>
+		  <zoomXPixels>55</zoomXPixels>
+          <zoomYPixels>35</zoomYPixels>
+		  <keepaspectratio>no</keepaspectratio>
+		  <enableFocusZoom>no</enableFocusZoom>
+          <hideUnfocusTexture>yes</hideUnfocusTexture>
+          <renderFocusText>no</renderFocusText>
+          <renderUnfocusText>no</renderUnfocusText>
+          <showFrame>true</showFrame>
+          <imageFolder>-</imageFolder>
+          <imageFolderFocus>-</imageFolderFocus>
+		  <textureMask>fanart_mask.png</textureMask>
+		  <frameNoFocus>fanart_nofocus.png</frameNoFocus>
+          <frameFocus>fanart_focus.png</frameFocus>
+          <font>font10</font>
+          <spinCanFocus>no</spinCanFocus>
+          <dimColor>80ffffff</dimColor>
+          <spinPosY>1012</spinPosY>
+        </control>
+      </control>
+    </control>
+  </controls>
+</window>
+
+

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+This file should contain the details view
+-->
+<window>
+  <controls>
+ 
+ 
+ 
+ 	  <control>
+        <description>Cover Art</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>40</posX>
+        <posY>821</posY>
+        <width>1845</width>
+        <height>209</height>
+        <texture>Inf_gfx.png</texture>
+		<visible>control.isvisible(6)|control.isvisible(50)</visible>
+      </control>	
+	  
+	  
+	<!-- Listview info -->
+	
+    <control>
+      <description>summery</description>
+      <type>textboxscrollup</type>
+      <id>0</id>
+	  <textalign>left</textalign>
+      <posX>215</posX>
+      <posY>850</posY>
+      <width>1650</width>
+      <height>125</height>
+      <textcolor>99ffffff</textcolor>
+      <font>font13</font>
+      <label>#MovingPictures.SelectedMovie.summary</label>
+      <visible>[facadeview.list|control.isvisible(6)]+!control.isvisible(51)</visible>
+    </control>	
+	
+	<!-- Thumbsview info -->
+  
+    <control Style="NoShadow">
+      <description>Movie Title</description>
+      <type>label</type>
+      <id>0</id>
+      <width>1550</width>
+      <height>20</height>
+      <posX>215</posX>
+      <posY>837</posY>
+      <align>left</align>
+      <font>fontBold3</font>
+      <label>#MovingPictures.SelectedMovie.title</label>
+      <textcolor>ffe3e3e3</textcolor>
+      <visible>[facadeview.smallicons|facadeview.largeicons|facadeview.filmstrip|facadeview.coverflow]+!control.isvisible(6)</visible>
+      <animation effect="fade" time="250" delay="0">WindowClose</animation>
+    </control>
+	
+	<control>
+      <description>summery</description>
+      <type>textboxscrollup</type>
+      <id>0</id>
+	  <textalign>left</textalign>
+      <posX>215</posX>
+      <posY>895</posY>
+      <width>1650</width>
+      <height>85</height>
+      <textcolor>99ffffff</textcolor>
+      <font>font13</font>
+      <label>#MovingPictures.SelectedMovie.summary</label>
+      <visible>[facadeview.smallicons|facadeview.largeicons|facadeview.filmstrip|facadeview.coverflow]+!control.isvisible(6)</visible>
+      <animation effect="fade" time="250" delay="0">WindowClose</animation>
+    </control>		
+	
+  </controls>
+</window>
+

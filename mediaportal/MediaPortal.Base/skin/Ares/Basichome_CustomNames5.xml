@@ -1,0 +1,175 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <controls>
+	
+
+	  <control>
+		<description>button group</description>
+		<type>group</type>
+		<posX>70</posX>
+		<posY>570</posY>
+		<layout>StackLayout(0, Horizontal, false)</layout>
+		<visible allowhiddenfocus="true">control.hasfocus(270)|control.hasfocus(271)|control.hasfocus(272)|control.hasfocus(273)|control.hasfocus(274)|control.hasfocus(275)|control.hasfocus(276)|control.hasfocus(277)|control.hasfocus(278)|control.hasfocus(279)|control.hasfocus(370)|control.hasfocus(371)|control.hasfocus(372)|control.hasfocus(373)|control.hasfocus(374)|control.hasfocus(375)|control.hasfocus(421)|control.hasfocus(422)|control.hasfocus(423)|control.hasfocus(424)|control.hasfocus(425)|control.hasfocus(621)|control.hasfocus(622)|control.hasfocus(623)|control.hasfocus(624)|control.hasfocus(625)</visible>   
+		
+
+		<control>
+         <description>Enable weather in homescreen</description>
+         <type>checkbutton</type>
+         <id>621</id>
+         <label></label>
+		 <font>font12</font>
+		 <width>50</width>
+		 <textcolorNoFocus>99ffffff</textcolorNoFocus>
+		 <onESC>#(skin.setfocus(35,cint(#skin.currentTile)))</onESC>
+         <textureFocus>check_fo.png</textureFocus>
+		 <textureNoFocus></textureNoFocus>
+         <onfocus>#(skin.setstring('#skin.test2','Enable custom name for this tile'))</onfocus>
+         <selected>#(skin.hassetting('#skin.tile21cne'))</selected>
+         <onclick>#(skin.togglesetting('#skin.tile21cne'))</onclick>
+         <onup>421</onup>
+		 <onright>621</onright>
+		 <onleft>621</onleft>
+         <ondown>00520</ondown>
+        </control>	  
+	  
+	  <control>
+        <description>DUMMY</description>
+        <type>button</type>
+        <id>0</id>
+        <width>320</width>
+		<height>32</height>
+        <label></label>
+		<font>font11</font>
+		<textcolorNoFocus>99ffffff</textcolorNoFocus>
+		<textureFocus></textureFocus>
+		<textureNoFocus></textureNoFocus>
+      </control>	
+
+	  
+		<control>
+         <description>Enable weather in homescreen</description>
+         <type>checkbutton</type>
+         <id>622</id>
+         <label></label>
+		 <font>font12</font>
+		 <width>50</width>
+		 <textcolorNoFocus>99ffffff</textcolorNoFocus>
+		 <onESC>#(skin.setfocus(35,cint(#skin.currentTile)))</onESC>
+         <textureFocus>check_fo.png</textureFocus>
+		 <textureNoFocus></textureNoFocus>
+         <onfocus>#(skin.setstring('#skin.test2','Enable custom name for this tile'))</onfocus>
+         <selected>#(skin.hassetting('#skin.tile22cne'))</selected>
+         <onclick>#(skin.togglesetting('#skin.tile22cne'))</onclick>
+         <onup>422</onup>
+		 <onright>622</onright>
+		 <onleft>622</onleft>
+         <ondown>00521</ondown>
+        </control>	 	  
+	  
+	  
+	  
+	  <control>
+        <description>DUMMY</description>
+        <type>button</type>
+        <id>0</id>
+        <width>315</width>
+		<height>32</height>
+        <label></label>
+		<font>font11</font>
+		<textcolorNoFocus>99ffffff</textcolorNoFocus>
+		<textureFocus></textureFocus>
+		<textureNoFocus></textureNoFocus>
+      </control>		  
+		<control>
+         <description>Enable weather in homescreen</description>
+         <type>checkbutton</type>
+         <id>623</id>
+         <label></label>
+		 <font>font12</font>
+		 <width>50</width>
+		 <textcolorNoFocus>99ffffff</textcolorNoFocus>
+		 <onESC>#(skin.setfocus(35,cint(#skin.currentTile)))</onESC>
+         <textureFocus>check_fo.png</textureFocus>
+		 <textureNoFocus></textureNoFocus>
+         <onfocus>#(skin.setstring('#skin.test2','Enable custom name for this tile'))</onfocus>
+         <selected>#(skin.hassetting('#skin.tile23cne'))</selected>
+         <onclick>#(skin.togglesetting('#skin.tile23cne'))</onclick>
+         <onup>423</onup>
+		 <onright>623</onright>
+		 <onleft>623</onleft>
+         <ondown>00522</ondown>
+        </control>	
+
+
+
+	  <control>
+        <description>DUMMY</description>
+        <type>button</type>
+        <id>0</id>
+        <width>315</width>
+		<height>32</height>
+        <label></label>
+		<font>font11</font>
+		<textcolorNoFocus>99ffffff</textcolorNoFocus>
+		<textureFocus></textureFocus>
+		<textureNoFocus></textureNoFocus>
+      </control>		  
+		<control>
+         <description>Enable weather in homescreen</description>
+         <type>checkbutton</type>
+         <id>624</id>
+         <label></label>
+		 <font>font12</font>
+		 <width>50</width>
+		 <textcolorNoFocus>99ffffff</textcolorNoFocus>
+		 <onESC>#(skin.setfocus(35,cint(#skin.currentTile)))</onESC>
+         <textureFocus>check_fo.png</textureFocus>
+		 <textureNoFocus></textureNoFocus>
+         <onfocus>#(skin.setstring('#skin.test2','Enable custom name for this tile'))</onfocus>
+         <selected>#(skin.hassetting('#skin.tile24cne'))</selected>
+         <onclick>#(skin.togglesetting('#skin.tile24cne'))</onclick>
+         <onup>424</onup>
+		 <onright>624</onright>
+		 <onleft>624</onleft>
+         <ondown>00523</ondown>
+        </control>	
+	  
+	  
+	  
+	  <control>
+        <description>DUMMY</description>
+        <type>button</type>
+        <id>0</id>
+        <width>320</width>
+		<height>32</height>
+        <label></label>
+		<font>font11</font>
+		<textcolorNoFocus>99ffffff</textcolorNoFocus>
+		<textureFocus></textureFocus>
+		<textureNoFocus></textureNoFocus>
+      </control>		  
+		<control>
+         <description>Enable weather in homescreen</description>
+         <type>checkbutton</type>
+         <id>625</id>
+         <label></label>
+		 <font>font12</font>
+		 <width>50</width>
+		 <textcolorNoFocus>99ffffff</textcolorNoFocus>
+		 <onESC>#(skin.setfocus(35,cint(#skin.currentTile)))</onESC>
+         <textureFocus>check_fo.png</textureFocus>
+		 <textureNoFocus></textureNoFocus>
+         <onfocus>#(skin.setstring('#skin.test2','Enable custom name for this tile'))</onfocus>
+         <selected>#(skin.hassetting('#skin.tile25cne'))</selected>
+         <onclick>#(skin.togglesetting('#skin.tile25cne'))</onclick>
+         <onup>425</onup>
+		 <onright>625</onright>
+		 <onleft>625</onleft>
+         <ondown>00524</ondown>
+        </control>	
+		
+		
+	  </control>	
+
+  </controls>
+</window>
