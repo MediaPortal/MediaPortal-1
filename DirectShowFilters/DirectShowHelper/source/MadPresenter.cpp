@@ -141,7 +141,6 @@ void MPMadPresenter::SetMadVrPaused(bool paused)
         m_pMediaControl->Pause();
         Log("MPMadPresenter:::SetMadVrPaused() pause");
       }
-      m_pMediaControl->Pause();
     }
   }
 }
