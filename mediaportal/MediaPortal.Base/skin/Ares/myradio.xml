@@ -67,20 +67,7 @@
         <texture>Inf_gfx.png</texture>
       </control>	
 		
-		<control>
-		  <description>Date / Time</description>
-		  <type>label</type>
-		  <id>0</id>
-          <posX>1865</posX>
-          <posY>110</posY>
-          <height>43</height>
-          <width>500</width>
-          <font>fontBold2</font>
-		  <align>right</align>
-		  <label>#time / #itemcount Files</label>
-		  <textcolor>ffffffff</textcolor>
-		  <visible>!player.hasaudio+!player.hasmedia</visible>
-		</control>
+
 		
     <control>
       <type>actiongroup</type>

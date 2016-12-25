@@ -2,7 +2,7 @@
 <window>
   <id>762</id>
   <defaultcontrol>2</defaultcontrol>
-  <allowoverlay>no</allowoverlay>
+  <allowoverlay>yes</allowoverlay>
   <controls>
       <control>
       <description>background top overlay</description>
@@ -40,7 +40,7 @@
       <texture>#overlaycolour</texture>
 	</control>	
 
-    
+     <import>custom\Allscreens\user_dialog.xml</import>   
 	
 	
 	  <control>
@@ -345,7 +345,7 @@
           <id>0</id>
 		  <posX>104</posX>
 		  <posY>255</posY>
-		  <label>#TV.Guide.Group</label>
+		  <label>#Radio.Guide.Group</label>
 		  <align>left</align>
 		  <font>font11</font>
 		  <textcolor>99ffffff</textcolor>
