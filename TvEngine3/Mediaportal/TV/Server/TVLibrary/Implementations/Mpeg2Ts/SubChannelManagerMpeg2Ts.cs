@@ -1066,42 +1066,45 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Mpeg2Ts
         }
         _tsWriter.Stop();
         _isTsWriterStopped = true;
-      }
 
-      _isPatComplete = false;
-      _pmtPids.Clear();
-      _encryptedPids.Clear();
+        // Stay in locked context. TsWriter is stopped so we won't receive
+        // IObserver call-backs... but we may still receive calls to
+        // GetDecryptedSubChannelDetails() etc.
+        _isPatComplete = false;
+        _pmtPids.Clear();
+        _encryptedPids.Clear();
 
-      // If necessary, tell the CA provider extensions to stop decrypting the
-      // previous program.
-      foreach (ProgramInformation program in _programs.Values)
-      {
-        if (program.SubChannelIds.Count > 0 && program.IsEncrypted)
+        // If necessary, tell the CA provider extensions to stop decrypting the
+        // previous program.
+        foreach (ProgramInformation program in _programs.Values)
         {
-          UpdateDecryptList(program, DecryptUpdateAction.Remove);
-          break;  // There can only be one active program when tuning.
-        }
-      }
-      _programs.Clear();
-      _programs[PROGRAM_NUMBER_SI] = new ProgramInformation { ProgramNumber = PROGRAM_NUMBER_SI, IsEncryptedConfig = false, IsRunning = true, Pids = new HashSet<ushort>(_alwaysRequiredPids) };
-      _programs[PROGRAM_NUMBER_EPG] = new ProgramInformation { ProgramNumber = PROGRAM_NUMBER_EPG, IsEncryptedConfig = false, IsRunning = true, Pids = new HashSet<ushort>(_alwaysRequiredPids) };
-
-      // PID filter state after tuning is indeterminate. To be safe, explicitly
-      // remove all old PIDs and trigger re-adding PIDs after tuning.
-      if (_pids.Count > 0)
-      {
-        foreach (var filter in _pidFilters)
-        {
-          if (filter.IsEnabled)
+          if (program.SubChannelIds.Count > 0 && program.IsEncrypted)
           {
-            filter.Filter.BlockStreams(filter.Pids);
-            filter.Pids.Clear();
-            // Don't apply the change here. Assume that will be handled after
-            // tuning.
+            UpdateDecryptList(program, DecryptUpdateAction.Remove);
+            break;  // There can only be one active program when tuning.
           }
         }
+        _programs.Clear();
+        _programs[PROGRAM_NUMBER_SI] = new ProgramInformation { ProgramNumber = PROGRAM_NUMBER_SI, IsEncryptedConfig = false, IsRunning = true, Pids = new HashSet<ushort>(_alwaysRequiredPids) };
+        _programs[PROGRAM_NUMBER_EPG] = new ProgramInformation { ProgramNumber = PROGRAM_NUMBER_EPG, IsEncryptedConfig = false, IsRunning = true, Pids = new HashSet<ushort>(_alwaysRequiredPids) };
+
+        // PID filter state after tuning is indeterminate. To be safe, explicitly
+        // remove all old PIDs and trigger re-adding PIDs after tuning.
+        if (_pids.Count > 0)
+        {
+          foreach (var filter in _pidFilters)
+          {
+            if (filter.IsEnabled)
+            {
+              filter.Filter.BlockStreams(filter.Pids);
+              filter.Pids.Clear();
+              // Don't apply the change here. Assume that will be handled after
+              // tuning.
+            }
+          }
+        }
+        _pids.Clear();
       }
-      _pids.Clear();
     }
 
     /// <summary>
