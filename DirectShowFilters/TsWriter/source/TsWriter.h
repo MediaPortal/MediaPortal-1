@@ -91,6 +91,7 @@ class CTsWriter
                                 unsigned short pmtSize,
                                 bool isDynamicPmtChange);
     STDMETHODIMP RecorderStart(long handle);
+    STDMETHODIMP RecorderPause(long handle, bool isPause);
     STDMETHODIMP RecorderGetStreamQuality(long handle,
                                           unsigned long long* countTsPackets,
                                           unsigned long long* countDiscontinuities,
@@ -107,6 +108,7 @@ class CTsWriter
                                     unsigned short pmtSize,
                                     bool isDynamicPmtChange);
     STDMETHODIMP TimeShifterStart(long handle);
+    STDMETHODIMP TimeShifterPause(long handle, bool isPause);
     STDMETHODIMP TimeShifterGetStreamQuality(long handle,
                                               unsigned long long* countTsPackets,
                                               unsigned long long* countDiscontinuities,

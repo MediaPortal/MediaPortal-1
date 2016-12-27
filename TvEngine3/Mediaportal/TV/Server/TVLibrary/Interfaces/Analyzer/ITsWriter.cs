@@ -156,6 +156,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     int RecorderStart(int handle);
 
     /// <summary>
+    /// Pause or unpause a channel's recorder.
+    /// </summary>
+    /// <param name="handle">The channel's handle.</param>
+    /// <param name="isPause"><c>True</c> if pausing.</param>
+    /// <returns>an HRESULT indicating whether the recorder was paused or unpaused successfully</returns>
+    [PreserveSig]
+    int RecorderPause(int handle, [MarshalAs(UnmanagedType.I1)] bool isPause);
+
+    /// <summary>
     /// Retrieve the stream quality statistics for a channel's recorder.
     /// </summary>
     /// <param name="handle">The channel's handle.</param>
@@ -221,6 +230,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     /// <returns>an HRESULT indicating whether the time-shifter was started successfully</returns>
     [PreserveSig]
     int TimeShifterStart(int handle);
+
+    /// <summary>
+    /// Pause or unpause a channel's time-shifter.
+    /// </summary>
+    /// <param name="handle">The channel's handle.</param>
+    /// <param name="isPause"><c>True</c> if pausing.</param>
+    /// <returns>an HRESULT indicating whether the time-shifter was paused or unpaused successfully</returns>
+    [PreserveSig]
+    int TimeShifterPause(int handle, [MarshalAs(UnmanagedType.I1)] bool isPause);
 
     /// <summary>
     /// Retrieve the stream quality statistics for a channel's time-shifter.

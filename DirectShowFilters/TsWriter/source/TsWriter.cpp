@@ -629,6 +629,20 @@ STDMETHODIMP CTsWriter::RecorderStart(long handle)
   return channel->Recorder.Start();
 }
 
+STDMETHODIMP CTsWriter::RecorderPause(long handle, bool isPause)
+{
+  LogDebug(L"writer: pause/unpause recorder, channel = %ld, is pause = %d",
+            handle, isPause);
+  CAutoLock lock(&m_channelLock);
+  CTsChannel* channel = GetChannel(handle);
+  if (channel == NULL)
+  {
+    return E_FAIL;
+  }
+  channel->Recorder.Pause(isPause);
+  return S_OK;
+}
+
 STDMETHODIMP CTsWriter::RecorderGetStreamQuality(long handle,
                                                   unsigned long long* countTsPackets,
                                                   unsigned long long* countDiscontinuities,
@@ -716,6 +730,20 @@ STDMETHODIMP CTsWriter::TimeShifterStart(long handle)
     return E_FAIL;
   }
   return channel->TimeShifter.Start();
+}
+
+STDMETHODIMP CTsWriter::TimeShifterPause(long handle, bool isPause)
+{
+  LogDebug(L"writer: pause/unpause time-shifter, channel = %ld, is pause = %d",
+            handle, isPause);
+  CAutoLock lock(&m_channelLock);
+  CTsChannel* channel = GetChannel(handle);
+  if (channel == NULL)
+  {
+    return E_FAIL;
+  }
+  channel->TimeShifter.Pause(isPause);
+  return S_OK;
 }
 
 STDMETHODIMP CTsWriter::TimeShifterGetStreamQuality(long handle,

@@ -36,6 +36,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
     IQualityControlInternal QualityControlInterface { set; }
 
     /// <summary>
+    /// Perform any required actions before tuning.
+    /// </summary>
+    void OnBeforeTune();
+
+    /// <summary>
     /// Cancel the current tuning process.
     /// </summary>
     void CancelTune();

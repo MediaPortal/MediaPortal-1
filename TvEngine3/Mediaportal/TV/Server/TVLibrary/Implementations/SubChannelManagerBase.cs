@@ -134,6 +134,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       {
         throw new TvException("Tune attempt with more than one active sub-channel.");
       }
+      foreach (ISubChannelInternal subChannel in _subChannels.Values)
+      {
+        subChannel.OnBeforeTune();
+      }
     }
 
     /// <summary>

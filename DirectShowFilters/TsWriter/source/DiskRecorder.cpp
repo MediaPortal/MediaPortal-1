@@ -419,6 +419,12 @@ HRESULT CDiskRecorder::Start()
   return E_FAIL;
 }
 
+void CDiskRecorder::Pause(bool isPause)
+{
+  CEnterCriticalSection lock(m_section);
+  m_isRunning = !isPause;
+}
+
 void CDiskRecorder::GetStreamQualityCounters(unsigned long long& countTsPackets,
                                               unsigned long long& countDiscontinuities,
                                               unsigned long long& countDroppedBytes)
@@ -550,12 +556,7 @@ void CDiskRecorder::OnTsPacket(CTsHeader& header, unsigned char* tsPacket)
 {
   try
   {
-    if (!m_isRunning || tsPacket == NULL)
-    {
-      return;
-    }
-
-    if (header.Pid == 0x1fff)
+    if (!m_isRunning || tsPacket == NULL || header.Pid == 0x1fff)
     {
       return;
     }

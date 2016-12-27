@@ -50,6 +50,7 @@ DECLARE_INTERFACE_(ITsWriter, IUnknown)
                             unsigned short pmtSize,
                             bool isDynamicPmtChange)PURE;
   STDMETHOD(RecorderStart)(THIS_ long handle)PURE;
+  STDMETHOD(RecorderPause)(THIS_ long handle, bool isPause)PURE;
   STDMETHOD(RecorderGetStreamQuality)(THIS_ long handle,
                                       unsigned long long* countTsPackets,
                                       unsigned long long* countDiscontinuities,
@@ -66,6 +67,7 @@ DECLARE_INTERFACE_(ITsWriter, IUnknown)
                                 unsigned short pmtSize,
                                 bool isDynamicPmtChange)PURE;
   STDMETHOD(TimeShifterStart)(THIS_ long handle)PURE;
+  STDMETHOD(TimeShifterPause)(THIS_ long handle, bool isPause)PURE;
   STDMETHOD(TimeShifterGetStreamQuality)(THIS_ long handle,
                                           unsigned long long* countTsPackets,
                                           unsigned long long* countDiscontinuities,

@@ -205,6 +205,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
       return (int)_delegateTsWriter("RecorderStart", ref parameters);
     }
 
+    public int RecorderPause(int handle, bool isPause)
+    {
+      object[] parameters = new object[2] { handle, isPause };
+      return (int)_delegateTsWriter("RecorderPause", ref parameters);
+    }
+
     public int RecorderGetStreamQuality(int handle,
                                         out ulong countTsPackets,
                                         out ulong countDiscontinuities,
@@ -252,6 +258,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
     {
       object[] parameters = new object[1] { handle };
       return (int)_delegateTsWriter("TimeShifterStart", ref parameters);
+    }
+
+    public int TimeShifterPause(int handle, bool isPause)
+    {
+      object[] parameters = new object[2] { handle, isPause };
+      return (int)_delegateTsWriter("TimeShifterPause", ref parameters);
     }
 
     public int TimeShifterGetStreamQuality(int handle,

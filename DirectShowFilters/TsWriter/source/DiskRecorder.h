@@ -52,6 +52,7 @@ class CDiskRecorder
     void SetObserver(IChannelObserver* observer);
     HRESULT SetFileName(wchar_t* fileName);
     HRESULT Start();
+    void Pause(bool isPause);
     void GetStreamQualityCounters(unsigned long long& countTsPackets,
                                   unsigned long long& countDiscontinuities,
                                   unsigned long long& countDroppedBytes);

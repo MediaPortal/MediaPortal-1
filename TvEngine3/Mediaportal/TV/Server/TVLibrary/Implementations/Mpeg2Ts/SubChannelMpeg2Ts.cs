@@ -335,6 +335,38 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Mpeg2Ts
     }
 
     /// <summary>
+    /// Perform any required actions before tuning.
+    /// </summary>
+    public override void OnBeforeTune()
+    {
+      base.OnBeforeTune();
+      lock (_lock)
+      {
+        if (_tsWriter == null)
+        {
+          return;
+        }
+        int hr;
+        if (IsTimeShifting)
+        {
+          hr = _tsWriter.TimeShifterPause(_tsWriterHandle, true);
+          if (hr != (int)NativeMethods.HResult.S_OK)
+          {
+            this.LogWarn("MPEG 2 sub-channel: failed to pause time-shifter, ID = {0}, hr = 0x{1:x}", _subChannelId, hr);
+          }
+        }
+        if (IsRecording)
+        {
+          hr = _tsWriter.RecorderPause(_tsWriterHandle, true);
+          if (hr != (int)NativeMethods.HResult.S_OK)
+          {
+            this.LogWarn("MPEG 2 sub-channel: failed to pause recorder, ID = {0}, hr = 0x{1:x}", _subChannelId, hr);
+          }
+        }
+      }
+    }
+
+    /// <summary>
     /// Implementation of tune cancellation.
     /// </summary>
     protected override void OnCancelTune()
@@ -423,6 +455,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Mpeg2Ts
           {
             this.LogWarn("MPEG 2 sub-channel: failed to update time-shifter PMT, ID = {0}, hr = 0x{1:x}", _subChannelId, hr);
           }
+          hr = _tsWriter.TimeShifterPause(_tsWriterHandle, false);
+          if (hr != (int)NativeMethods.HResult.S_OK)
+          {
+            this.LogWarn("MPEG 2 sub-channel: failed to unpause time-shifter, ID = {0}, hr = 0x{1:x}", _subChannelId, hr);
+          }
         }
         if (isRecording)
         {
@@ -430,6 +467,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Mpeg2Ts
           if (hr != (int)NativeMethods.HResult.S_OK)
           {
             this.LogWarn("MPEG 2 sub-channel: failed to update recorder PMT, ID = {0}, hr = 0x{1:x}", _subChannelId, hr);
+          }
+          hr = _tsWriter.RecorderPause(_tsWriterHandle, false);
+          if (hr != (int)NativeMethods.HResult.S_OK)
+          {
+            this.LogWarn("MPEG 2 sub-channel: failed to unpause recorder, ID = {0}, hr = 0x{1:x}", _subChannelId, hr);
           }
         }
 
