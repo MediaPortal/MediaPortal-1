@@ -200,19 +200,16 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <param name="fileCount">The number of buffer files to use during normal time-shifting.</param>
     /// <param name="fileCountMaximum">The maximum number of buffer files to use when time-shifting is paused.</param>
     /// <param name="fileSize">The size of each buffer file.</param>
-    /// <param name="isEncrypted"><c>True</c> if time-shifting failed to start because the video and/or audio streams are encrypted.</param>
-    /// <returns><c>true</c> if time-shifting was started successfully, otherwise <c>false</c></returns>
-    public bool StartTimeShifting(string fileName, uint fileCount, uint fileCountMaximum, ulong fileSize, out bool isEncrypted)
+    public void StartTimeShifting(string fileName, uint fileCount, uint fileCountMaximum, ulong fileSize)
     {
       this.LogDebug("sub-channel base: start time-shifting, ID = {0}, file name = {1}", _subChannelId, fileName);
-      isEncrypted = false;
       _cancelTune = false;
       try
       {
         if (IsTimeShifting)
         {
           this.LogError("sub-channel base: already time-shifting, ID = {0}, file name = {1}", _subChannelId, _timeShiftFileName);
-          return false;
+          throw new TvException("Sub-channel {0} is already time-shifting.", _subChannelId);
         }
         _timeShiftFileName = fileName;
         _timeShiftStartTime = DateTime.Now;
@@ -221,17 +218,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
           _qualityControlInterface.OnStartTimeShifting();
         }
         OnStartTimeShifting(fileName, fileCount, fileCountMaximum, fileSize);
-        return true;
       }
       catch (Exception ex)
       {
         this.LogError(ex, "sub-channel base: failed to start time-shifting, ID = {0}, file name = {1}", _subChannelId, fileName);
-        if (ex is TvExceptionServiceEncrypted)
-        {
-          isEncrypted = true;
-        }
         StopTimeShifting();
-        return false;
+        throw;
       }
     }
 
@@ -295,19 +287,16 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// Start recording.
     /// </summary>
     /// <param name="fileName">The name to use for the recording file.</param>
-    /// <param name="isEncrypted"><c>True</c> if recording failed to start because the video and/or audio streams are encrypted.</param>
-    /// <returns><c>true</c> if recording was started successfully, otherwise <c>false</c></returns>
-    public bool StartRecording(string fileName, out bool isEncrypted)
+    public void StartRecording(string fileName)
     {
       this.LogDebug("sub-channel base: start recording, ID = {0}, file name = {1}", _subChannelId, fileName);
-      isEncrypted = false;
       _cancelTune = false;
       try
       {
         if (IsRecording)
         {
           this.LogError("sub-channel base: already recording, ID = {0}, file name = {1}", _subChannelId, _recordFileName);
-          return false;
+          throw new TvException("Sub-channel {0} is already recording.", _subChannelId);
         }
         _recordFileName = fileName;
         _recordStartTime = DateTime.Now;
@@ -316,17 +305,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
           _qualityControlInterface.OnStartRecording();
         }
         OnStartRecording(fileName);
-        return true;
       }
       catch (Exception ex)
       {
         this.LogError(ex, "sub-channel base: failed to start recording, ID = {0}, file name = {1}", _subChannelId, fileName);
-        if (ex is TvExceptionServiceEncrypted)
-        {
-          isEncrypted = true;
-        }
         StopRecording();
-        return false;
+        throw;
       }
     }
 
@@ -394,12 +378,21 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     }
 
     /// <summary>
+    /// Perform any required actions before tuning.
+    /// </summary>
+    public virtual void OnBeforeTune()
+    {
+      this.LogDebug("sub-channel base: on before tune, ID = {0}", _subChannelId);
+    }
+
+    /// <summary>
     /// Cancel the current tuning process.
     /// </summary>
     public void CancelTune()
     {
       this.LogDebug("sub-channel base: cancel tune, ID = {0}", _subChannelId);
       _cancelTune = true;
+      OnCancelTune();
     }
 
     /// <summary>

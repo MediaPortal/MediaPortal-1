@@ -758,9 +758,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
           _camType = (CamType)config.CamType;
           _decryptLimit = config.DecryptLimit;
 
-          if (_state == TunerState.NotLoaded && config.Preload)
+          if (_isEnabled && _state == TunerState.NotLoaded && config.Preload)
           {
             Load();
+          }
+          else if (!_isEnabled && _state != TunerState.NotLoaded)
+          {
+            Unload();
           }
 
           IList<TunerSatellite> tunerSatellites = TunerSatelliteManagement.ListAllTunerSatellitesByTuner(_tunerId, TunerSatelliteRelation.LnbType | TunerSatelliteRelation.Satellite);
@@ -1318,9 +1322,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <returns>the sub-channel associated with the tuned channel</returns>
     public virtual ISubChannel Tune(int subChannelId, IChannel channel)
     {
-      if (!IsEnabled)
+      if (!_isEnabled)
       {
-        return null;
+        throw new TvException("Tuner is disabled.");
       }
       this.LogDebug("tuner base: tune channel, {0}", channel);
       _cancelTune = false;
@@ -1340,10 +1344,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
           tuned = true;
           SubChannelManager.OnBeforeTune();
 
-          // Extensions may modify the tuning parameters when we call
-          // ITunerExtension.OnBeforeTune(). However, the original channel
-          // object *must not* be modified otherwise IsDifferentTransmitter()
-          // will sometimes returns true when it shouldn't. See mantis 0002979.
+          // For various reasons the tuning parameters may be modified during
+          // the course of tuning. However in order to preserve correct
+          // behaviour, the original channel object *must not* be modified.
           IChannel tuneChannel = (IChannel)channel.Clone();
 
           IChannelSatellite satelliteChannel = tuneChannel as IChannelSatellite;
@@ -1495,10 +1498,16 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
           this.LogError(ex);
         }
 
-        // One potential reason for getting here is that signal could not be locked, and the reason for
-        // that may be that tuning failed. We always want to force a retune on the next tune request in
-        // this situation.
-        _currentTuningDetail = null;
+        FreeSubChannel(subChannelId);
+        if (SubChannelCount == 0)
+        {
+          // Always force a retune on the next tune request after a failure.
+          _currentTuningDetail = null;
+          if (_diseqcController != null)
+          {
+            _diseqcController.Tune(null, null);
+          }
+        }
         throw;
       }
     }
