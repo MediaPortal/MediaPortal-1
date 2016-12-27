@@ -184,7 +184,7 @@ class FileWriter
     bool m_isFileOpen;
     HANDLE m_fileHandle;
     wchar_t* m_fileName;
-    unsigned char m_filePart;                   // For when file size exceeds file system limits (eg. FAT16, FAT32), and the file must be split.
+    unsigned long m_filePart;                   // For when file size exceeds file system limits (eg. FAT16, FAT32), and the file must be split.
 
     bool m_useAsyncAccess;
     CThread m_asyncAccessThread;

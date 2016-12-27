@@ -25,7 +25,7 @@
 #include "MultiFileWriter.h"
 #include <cstddef>      // NULL
 #include <cstring>      // memcpy()
-#include <cwchar>       // wcslen(), wcsncpy(), wcstol()
+#include <cwchar>       // wcslen(), wcsncpy(), wcsrchr(), wcstoul()
 #include <sstream>
 #include <string>
 #include "FileReader.h"
@@ -358,11 +358,14 @@ HRESULT MultiFileWriter::OpenDataFile(bool isErrorLoggingEnabled)
 HRESULT MultiFileWriter::CreateDataFile(bool isErrorLoggingEnabled)
 {
   // Determine the name of the next data file.
+  wstring baseFileName(m_registerFileName);
+  // TODO uncomment when TsReader doesn't recognise data files by .ts.tsbuffer
+  //baseFileName = baseFileName.substr(0, baseFileName.find_last_of(L".")).append(L".");
   wstring fileNameString;
   do
   {
     wstringstream fileNameStream;
-    fileNameStream << m_registerFileName << m_dataFileIdNext++ << L".ts";
+    fileNameStream << baseFileName << m_dataFileIdNext++ << L".ts";
     fileNameString = fileNameStream.str();
   }
   while (CFileUtils::Exists(fileNameString.c_str()));
@@ -435,7 +438,17 @@ HRESULT MultiFileWriter::ReuseDataFile(bool isErrorLoggingEnabled)
   m_dataFileNames.push_back(fileName);
   m_dataFileCountUsed++;
 
-  m_dataFileIdCurrent = wcstol(fileName + wcslen(m_registerFileName), NULL, 10);
+  // Determine the file's ID from its name.
+  unsigned long fileIdPosition = wcslen(m_registerFileName) + 1;
+  wchar_t* fileExtension = wcsrchr(m_registerFileName, L'.');
+  if (fileExtension != NULL)
+  {
+    fileIdPosition = (fileExtension - m_registerFileName) + 1;
+  }
+  // TODO remove the next line when TsReader doesn't recognise data files by .ts.tsbuffer
+  fileIdPosition = wcslen(m_registerFileName);
+  m_dataFileIdCurrent = wcstoul(fileName + fileIdPosition, NULL, 10);
+
   LogDebug(L"multi file writer: reusing data file, retry count = %hhu, file count = %llu, name = %s",
             retryCount, (unsigned long long)m_dataFileNames.size(), fileName);
   return S_OK;
@@ -458,6 +471,15 @@ HRESULT MultiFileWriter::ReadRegisterFile(const wchar_t* fileName)
               readByteCount, fileName);
     return E_UNEXPECTED;
   }
+
+  unsigned long fileIdPosition = wcslen(fileName) + 1;
+  const wchar_t* fileExtension = wcsrchr(fileName, L'.');
+  if (fileExtension != NULL)
+  {
+    fileIdPosition = (fileExtension - fileName) + 1;
+  }
+  // TODO remove the next line when TsReader doesn't recognise data files by .ts.tsbuffer
+  fileIdPosition = wcslen(fileName);
 
   unsigned char* readPointer = m_registerFileWriteBuffer;
 
@@ -500,11 +522,12 @@ HRESULT MultiFileWriter::ReadRegisterFile(const wchar_t* fileName)
       return HRESULT_FROM_WIN32(ERROR_FILE_NOT_FOUND);
     }
 
-    m_dataFileIdCurrent = wcstol(dataFileName + wcslen(fileName), NULL, 10);
+    m_dataFileIdCurrent = wcstoul(dataFileName + fileIdPosition, NULL, 10);
     if (m_dataFileIdCurrent > m_dataFileIdNext)
     {
       m_dataFileIdNext = m_dataFileIdCurrent;
     }
+
     readPointer += (fileNameLength * sizeof(wchar_t));
   }
 
