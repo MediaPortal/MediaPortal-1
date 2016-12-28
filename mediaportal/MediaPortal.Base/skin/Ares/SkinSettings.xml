@@ -12,11 +12,11 @@
     <entry name="#skin.weather.swap">True</entry>
     <entry name="#skin.myvid.dvdart">True</entry>
     <entry name="#skin.tv.enable">False</entry>
-    <entry name="#skin.no.latestmedia">True</entry>
-    <entry name="#skin.no.weather">True</entry>
+    <entry name="#skin.no.latestmedia">False</entry>
+    <entry name="#skin.no.weather">False</entry>
     <entry name="#skin.video.advanced">False</entry>
     <entry name="#AlbumInfo.ShowTracks">True</entry>
-    <entry name="#skin.weather.home">True</entry>
+    <entry name="#skin.weather.home">False</entry>
     <entry name="#skin.fullday">False</entry>
     <entry name="#skin.tips">True</entry>
     <entry name="#ArtistInfo.ShowAlbums">False</entry>
@@ -56,9 +56,9 @@
     <entry name="name">Skin default</entry>
   </section>
   <section name="stringsettings">
-    <entry name="#skin.test">Enable weather forecast when weather tile has focus</entry>
+    <entry name="#skin.test">Switch weather on or off for all screens</entry>
     <entry name="#skin.test2">Enable custom name for this tile</entry>
-    <entry name="#skin.currentTile">00515</entry>
+    <entry name="#skin.currentTile">00512</entry>
     <entry name="#skin.setnav">8005555</entry>
     <entry name="#background.colour">dark</entry>
     <entry name="#skin.latestOV">icon</entry>
@@ -178,11 +178,11 @@
   <section name="tvguidecolors">
     <entry name="guidecolorchannelbutton">FF1E1E1E</entry>
     <entry name="guidecolorchannelbuttonselected">FF066896</entry>
-    <entry name="guidecolorgroupbutton">FFFFFFFF</entry>
-    <entry name="guidecolorgroupbuttonselected">FFFFFFFF</entry>
+    <entry name="guidecolorgroupbutton">FFEAEAEA</entry>
+    <entry name="guidecolorgroupbuttonselected">FFEAEAEA</entry>
     <entry name="guidecolorprogramselected">FF066896</entry>
     <entry name="guidecolorprogramended">FF000000</entry>
-    <entry name="guidecolorborderhighlight">FFEAEAEA</entry>
+    <entry name="guidecolorborderhighlight">99ffffff</entry>
     <entry name="defaultgenre">FF252525,FF161616</entry>
     <entry name="genre0">FF115D16,FF115D16</entry>
     <entry name="genre1">FFA24C16,FFA24C16</entry>

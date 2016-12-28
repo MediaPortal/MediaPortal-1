@@ -43,7 +43,7 @@ This file should contain the details view
       <textcolor>ffb9bcc0</textcolor>
       <font>fontBold2</font>
 	  <align>center</align>
-      <label>#(string.toupper(iif( and( gte(cint(#MovingPictures.LocalMedia.videowidth),1276), lt(cint(#MovingPictures.LocalMedia.videoheight),800) ), 'HD','' )))#(string.toupper(iif( and( gte(cint(#MovingPictures.LocalMedia.videoheight),800), lte(cint(#MovingPictures.LocalMedia.videoheight),1080) ), 'FHD','' )))#(string.toupper(iif( and( lt(cint(#MovingPictures.LocalMedia.videowidth),1276), lte(cint(#MovingPictures.LocalMedia.videoheight),692) ), 'SD','' )))</label>
+      <label>#(string.toupper(iif( and( gte(cint(#MovingPictures.LocalMedia.videowidth),1276), lt(cint(#MovingPictures.LocalMedia.videoheight),800) ), 'HD','' )))#(string.toupper(iif( and( gte(cint(#MovingPictures.LocalMedia.videoheight),800), lte(cint(#MovingPictures.LocalMedia.videoheight),1080) ), 'FHD','' )))#(string.toupper(iif( and( lt(cint(#MovingPictures.LocalMedia.videowidth),1276), lte(cint(#MovingPictures.LocalMedia.videoheight),692) ), 'SD','' )))#(string.toupper(iif( and( gte(cint(#MovingPictures.LocalMedia.videoheight),1600), lte(cint(#MovingPictures.LocalMedia.videoheight),2310) ), '4K','' )))#(string.toupper(iif( and( gt(cint(#MovingPictures.LocalMedia.videoheight),2880), lte(cint(#MovingPictures.LocalMedia.videoheight),4320) ), '8K','' )))</label>
       <visible>[facadeview.list|facadeview.smallicons]+!control.isvisible(6)+!control.isvisible(51)</visible>
     </control>	
 	<control>
