@@ -43,7 +43,7 @@ This file should contain the details view
       <textcolor>ffb9bcc0</textcolor>
       <font>fontBold2</font>
 	  <align>center</align>
-      <label>#(switch(eq(#VideoResolution,'720p'),'HD', eq(#VideoResolution,'1080p'),'FHD', eq(#VideoResolution,'SD'),'SD', eq(#VideoResolution,'240'),'SD', eq(#VideoResolution,'480'),'SD', eq(1,1),'NA'))</label>
+      <label>#(switch(eq(#VideoResolution,'720p'),'HD', eq(#VideoResolution,'1080p'),'FHD', eq(#VideoResolution,'SD'),'SD', eq(#VideoResolution,'240'),'SD', eq(#VideoResolution,'480'),'SD', eq(#VideoResolution,'2160p'),'4K', eq(#VideoResolution,'4320p'),'8K', eq(1,1),'NA'))</label>
       <visible>[facadeview.list|facadeview.smallicons]+!string.equals(#hideinfo, true)</visible>	  
     </control>	
 	<control>

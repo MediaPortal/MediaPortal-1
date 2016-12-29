@@ -43,7 +43,7 @@ This file should contain the details view
       <textcolor>ffb9bcc0</textcolor>
       <font>fontBold2</font>
 	  <align>center</align>
-      <label>#(string.toupper(iif( and( gte(cint(#TVSeries.Episode.videoWidth),1276), lt(cint(#TVSeries.Episode.videoHeight),800) ), 'HD','' )))#(string.toupper(iif( and( gte(cint(#TVSeries.Episode.videoHeight),800), lte(cint(#TVSeries.Episode.videoHeight),1080) ), 'FHD','' )))#(string.toupper(iif( and( lt(cint(#TVSeries.Episode.videoWidth),1276), lte(cint(#TVSeries.Episode.videoHeight),692) ), 'SD','' )))</label>
+      <label>#(string.toupper(iif( and( gte(cint(#TVSeries.Episode.videoWidth),1276), lt(cint(#TVSeries.Episode.videoHeight),800) ), 'HD','' )))#(string.toupper(iif( and( gte(cint(#TVSeries.Episode.videoHeight),800), lte(cint(#TVSeries.Episode.videoHeight),1080) ), 'FHD','' )))#(string.toupper(iif( and( lt(cint(#TVSeries.Episode.videoWidth),1276), lte(cint(#TVSeries.Episode.videoHeight),692) ), 'SD','' )))#(string.toupper(iif( and( gte(cint(#TVSeries.Episode.videoHeight),1600), lte(cint(#TVSeries.Episode.videoHeight),2310) ), '4K','' )))#(string.toupper(iif( and( gt(cint(#TVSeries.Episode.videoHeight),2880), lte(cint(#TVSeries.Episode.videoHeight),4320) ), '8K','' )))</label>
       <visible>[facadeview.list|facadeview.smallicons]+control.isvisible(1239)</visible>	  
     </control>	
 	<control>
