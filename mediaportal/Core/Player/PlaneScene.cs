@@ -761,10 +761,11 @@ namespace MediaPortal.Player
             return -1; // (0) -> S_OK, (1) -> S_FALSE; //dont present video during window transitions
           }
 
-          if (VMR9Util.g_vmr9 != null)
-          {
-            VMR9Util.g_vmr9.StartMadVrPaused();
-          }
+          // Disable for now and added back to g_player
+          //if (VMR9Util.g_vmr9 != null)
+          //{
+          //  VMR9Util.g_vmr9.StartMadVrPaused();
+          //}
 
           _reEntrant = true;
           GUIGraphicsContext.InVmr9Render = true;
