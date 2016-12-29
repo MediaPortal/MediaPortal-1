@@ -303,16 +303,7 @@ namespace MediaPortal.Util
       string driveName = Utils.GetDriveName(path);
 
       _volumeInsertTime = DateTime.Now;
-      TimeSpan tsMount;
-      if (_mountTime == _mountDetectedTime) // Time not init
-      {
-        tsMount = DateTime.Now - _volumeInsertTime;
-      }
-      else
-      {
-        tsMount = DateTime.Now - _mountTime;
-      }
-      
+      TimeSpan tsMount = DateTime.Now - _mountTime;
       TimeSpan tsExamineCD = DateTime.Now - _examineCDTime;
       TimeSpan tsVolumeRemoval = DateTime.Now - _volumeRemovalTime;
 
@@ -365,15 +356,7 @@ namespace MediaPortal.Util
       }
 
       _volumeRemovalTime = DateTime.Now;
-      TimeSpan tsMount;
-      if (_mountTime == _mountDetectedTime) // Time not init
-      {
-        tsMount = DateTime.Now - _volumeInsertTime;
-      }
-      else
-      {
-        tsMount = DateTime.Now - _mountTime;
-      }
+      TimeSpan tsMount = DateTime.Now - _mountTime;
       TimeSpan tsExamineCD = DateTime.Now - _examineCDTime;
       TimeSpan tsVolumeInsert = DateTime.Now - _volumeInsertTime;
             
@@ -585,11 +568,10 @@ namespace MediaPortal.Util
 
     // For event filtering
     private static DateTime _mountTime = new DateTime();
-    private static DateTime _mountDetectedTime = new DateTime();
     private static DateTime _examineCDTime = new DateTime();
     private static DateTime _volumeRemovalTime = new DateTime();
     private static DateTime _volumeInsertTime = new DateTime();
-    private static int _volumeRemovalDelay = 15000; // In milliseconds
+    private static int _volumeRemovalDelay = 5000; // In milliseconds
 
     #endregion
 
