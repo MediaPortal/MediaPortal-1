@@ -78,6 +78,7 @@
     <Compile Include="..\..\..\..\Common-MP-TVE3\SolutionInfo.cs">
       <Link>SolutionInfo.cs</Link>
     </Compile>
+    <Compile Include="EnumCombo.cs" />
     <Compile Include="ComSkipLauncher.cs" />
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="ComSkipSetup.cs">
