@@ -698,12 +698,12 @@ namespace MediaPortal.Player
           GUIGraphicsContext.MadVrOsd = false;
           GUIGraphicsContext.MadVrStop = false;
           IMediaControl mPMediaControl = (IMediaControl) graphBuilder;
-          var backbuffer = GUIGraphicsContext.DX9Device.PresentationParameters;
-          MadInit(_scene, backbuffer.BackBufferWidth, backbuffer.BackBufferHeight, (uint) upDevice.ToInt32(),
+          // Get Client size
+          Size client = GUIGraphicsContext.form.ClientSize;
+          MadInit(_scene, client.Width, client.Height, (uint) upDevice.ToInt32(),
             (uint) GUIGraphicsContext.ActiveForm.ToInt32(), ref _vmr9Filter, mPMediaControl);
           hr = new HResult(graphBuilder.AddFilter(_vmr9Filter, "madVR"));
           Log.Info("VMR9: added madVR Renderer to graph");
-          backbuffer.SafeDispose();
           //IVideoWindow videoWin = (IVideoWindow)graphBuilder;
           //videoWin.put_Owner(GUIGraphicsContext.ActiveForm);
           //videoWin.put_WindowStyle((WindowStyle)((int)WindowStyle.Child + (int)WindowStyle.ClipChildren + (int)WindowStyle.ClipSiblings));
