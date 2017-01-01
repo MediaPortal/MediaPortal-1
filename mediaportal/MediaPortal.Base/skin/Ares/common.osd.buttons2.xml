@@ -161,7 +161,7 @@
       <posX>1677</posX>
       <posY>1002</posY>
       <label>1020</label>
-      <font>font111</font>
+      <font>font11</font>
       <align>center</align>
       <textcolor>ff666666</textcolor>
       <visible>!control.isvisible(102)+Control.HasFocus(1237)</visible>
@@ -173,7 +173,7 @@
       <posX>1677</posX>
       <posY>1002</posY>
       <label>924</label>
-      <font>font111</font>
+      <font>font11</font>
       <align>center</align>
       <textcolor>ff666666</textcolor>
       <visible>Control.HasFocus(997)</visible>
@@ -185,7 +185,7 @@
       <posX>1677</posX>
       <posY>1002</posY>
       <label>287</label>
-      <font>font111</font>
+      <font>font11</font>
       <align>center</align>
       <textcolor>ff666666</textcolor>
       <visible>Control.HasFocus(218)</visible>
@@ -197,7 +197,7 @@
       <posX>1677</posX>
       <posY>1002</posY>
       <label>1064</label>
-      <font>font111</font>
+      <font>font11</font>
       <align>center</align>
       <textcolor>ff666666</textcolor>
       <visible>Control.HasFocus(219)</visible>
@@ -209,7 +209,7 @@
       <posX>1677</posX>
       <posY>1002</posY>
       <label>Video</label>
-      <font>font111</font>
+      <font>font11</font>
       <align>center</align>
       <textcolor>ff666666</textcolor>
       <visible>Control.HasFocus(220)</visible>
@@ -221,7 +221,7 @@
       <posX>1677</posX>
       <posY>1002</posY>
       <label>Audio</label>
-      <font>font111</font>
+      <font>font11</font>
       <align>center</align>
       <textcolor>ff666666</textcolor>
       <visible>Control.HasFocus(221)</visible>
@@ -233,7 +233,7 @@
       <posX>1677</posX>
       <posY>1002</posY>
       <label>924</label>
-      <font>font111</font>
+      <font>font11</font>
       <align>center</align>
       <textcolor>ff666666</textcolor>
       <visible>Control.HasFocus(234)</visible>
@@ -299,7 +299,7 @@
       <posX>590</posX>
       <posY>210</posY>
       <label>303</label>
-	  <font>font111</font>
+	  <font>font11</font>
       <textcolor>eaeaea</textcolor>
       <visible>no</visible>
     </control>
@@ -329,7 +329,7 @@
       <label>305</label>
       <MarkWidth>33</MarkWidth>
       <MarkHeight>33</MarkHeight>
-      <font>font111</font>
+      <font>font11</font>
       <onup>800</onup>
       <ondown>802</ondown>
       <onleft>801</onleft>
@@ -361,7 +361,7 @@
       <id>550</id>
       <posX>590</posX>
       <posY>210</posY>
-	  <font>font111</font>
+	  <font>font11</font>
       <label>297</label>
       <textcolor>eaeaea</textcolor>
       <visible>no</visible>
@@ -406,7 +406,7 @@
       <posX>590</posX>
       <posY>210</posY>
       <label>298</label>
-	  <font>font111</font>
+	  <font>font11</font>
       <textcolor>eaeaea</textcolor>
       <visible>no</visible>
     </control>
@@ -581,7 +581,7 @@
       <posY>879</posY>
       <width>448</width>
       <height>195</height>
-      <font>font101</font>
+      <font>font10</font>
       <textureHeight>36</textureHeight>
       <textXOff>0</textXOff>
       <textYOff>0</textYOff>
@@ -612,7 +612,7 @@
       <posX>590</posX>
       <posY>140</posY>
       <label>287</label>
-      <font>font111</font>
+      <font>font11</font>
       <align>left</align>
       <textcolor>eaeaea</textcolor>
       <visible>Control.isvisible(800)</visible>
@@ -624,7 +624,7 @@
       <posX>590</posX>
       <posY>140</posY>
       <label>Video</label>
-      <font>font111</font>
+      <font>font11</font>
       <align>left</align>
       <textcolor>eaeaea</textcolor>
       <visible>Control.isvisible(700)</visible>
@@ -636,7 +636,7 @@
       <posX>590</posX>
       <posY>140</posY>
       <label>Audio</label>
-      <font>font111</font>
+      <font>font11</font>
       <align>left</align>
       <textcolor>eaeaea</textcolor>
       <visible>Control.isvisible(500)</visible>

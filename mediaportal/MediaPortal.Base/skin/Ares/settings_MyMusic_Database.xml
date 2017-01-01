@@ -46,7 +46,7 @@
       <id>1</id>
       <posX>137</posX>
 	  <posY>125</posY>
-      <font>font101</font>
+      <font>font10</font>
       <width>900</width>
       <label>#scanstatus</label>
     </control>
@@ -74,7 +74,7 @@
         <posX>105</posX>
         <posY>225</posY>
         <width>810</width>
-        <font>font101</font>
+        <font>font10</font>
         <onup>2</onup>
         <ondown>11</ondown>
         <onleft>17</onleft>
@@ -88,7 +88,7 @@
         <posX>105</posX>
         <posY>277</posY>
         <width>810</width>
-        <font>font101</font>
+        <font>font10</font>
         <onup>14</onup>
         <ondown>12</ondown>
         <onleft>17</onleft>
@@ -102,7 +102,7 @@
         <posX>105</posX>
         <posY>330</posY>
         <width>810</width>
-        <font>font101</font>
+        <font>font10</font>
         <onup>11</onup>
         <ondown>13</ondown>
         <onleft>17</onleft>
@@ -116,7 +116,7 @@
         <posX>105</posX>
         <posY>382</posY>
         <width>810</width>
-        <font>font101</font>
+        <font>font10</font>
         <onup>12</onup>
         <ondown>3</ondown>
         <onleft>17</onleft>
@@ -130,7 +130,7 @@
         <posX>105</posX>
         <posY>435</posY>
         <width>810</width>
-        <font>font101</font>
+        <font>font10</font>
         <onup>14</onup>
         <onright>2</onright>
         <onup>13</onup>
@@ -146,7 +146,7 @@
         <posX>105</posX>
         <posY>525</posY>
         <width>810</width>
-        <font>font101</font>
+        <font>font10</font>
         <onleft></onleft>
         <onup>3</onup>
         <ondown>5</ondown>
@@ -161,7 +161,7 @@
         <posX>1000</posX>
         <posY>558</posY>
         <width>200</width>
-        <font>font101</font>
+        <font>font10</font>
         <label>#prefixes</label>
       </control>
 
@@ -188,7 +188,7 @@
         <posX>105</posX>
         <posY>652</posY>
         <width>810</width>
-        <font>font101</font>
+        <font>font10</font>
         <onup>4</onup>
         <ondown>6</ondown>
         <onleft>14</onleft>
@@ -202,7 +202,7 @@
         <posX>105</posX>
         <posY>705</posY>
         <width>810</width>
-        <font>font101</font>
+        <font>font10</font>
         <onleft></onleft>
         <onup>5</onup>
         <ondown>7</ondown>
@@ -217,7 +217,7 @@
         <posX>105</posX>
         <posY>757</posY>
         <width>810</width>
-        <font>font101</font>
+        <font>font10</font>
         <onup>6</onup>
         <ondown>8</ondown>
         <onleft>14</onleft>
@@ -231,7 +231,7 @@
         <posX>105</posX>
         <posY>810</posY>
         <width>810</width>
-        <font>font101</font>
+        <font>font10</font>
         <onup>7</onup>
         <ondown>9</ondown>
         <onleft>14</onleft>
@@ -245,7 +245,7 @@
         <posX>105</posX>
         <posY>862</posY>
         <width>810</width>
-        <font>font101</font>
+        <font>font10</font>
         <onup>8</onup>
         <ondown>10</ondown>
         <onleft>14</onleft>
@@ -259,7 +259,7 @@
         <posX>105</posX>
         <posY>915</posY>
         <width>810</width>
-        <font>font101</font>
+        <font>font10</font>
         <ondown>14</ondown>
         <onleft>14</onleft>
         <onright>17</onright>

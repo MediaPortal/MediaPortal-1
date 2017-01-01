@@ -332,7 +332,7 @@
       <posY>893</posY>
       <label></label>
       <align>left</align>
-      <font>font101</font>
+      <font>font10</font>
       <textcolor>ffffffff</textcolor>
       <visible>!control.hasfocus(1237)</visible>
     </control>

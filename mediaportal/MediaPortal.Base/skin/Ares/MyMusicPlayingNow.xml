@@ -287,9 +287,10 @@
       <type>fadelabel</type>
       <description>next artist label</description>
       <id>121</id>
-      <width>620</width>
+      <width>1500</width>
 	  <height>28</height>
       <label>#Play.Next.Artist</label>
+	  <wrapString>   |   </wrapString>
       <align>left</align>
       <font>font12</font>
       <textcolor>99ffffff</textcolor>
@@ -298,9 +299,10 @@
       <type>fadelabel</type>
       <description>next title label</description>
       <id>123</id>
-      <width>700</width>
+      <width>1500</width>
 	  <height>28</height>
       <label>#Play.Next.Title</label>
+	  <wrapString>   |   </wrapString>
       <align>left</align>
       <font>font12</font>
       <textcolor>99ffffff</textcolor>
@@ -309,9 +311,10 @@
       <type>fadelabel</type>
       <description>next artist label</description>
       <id>0</id>
-      <width>700</width>
+      <width>1500</width>
 	  <height>28</height>
       <label>#Play.Next.Album</label>
+	  <wrapString>   |   </wrapString>
       <align>left</align>
       <font>font12</font>
       <textcolor>99ffffff</textcolor>
@@ -368,8 +371,9 @@
       <type>fadelabel</type>
       <id>1</id>
 	  <height>60</height>
-	  <width>1000</width>
+	  <width>900</width>
       <label>#Play.Current.Artist - #Play.Current.Title</label>
+	  <wrapString>   |   </wrapString>
       <align>left</align>
       <font>font12</font>
       <textcolor>eaeaea</textcolor>

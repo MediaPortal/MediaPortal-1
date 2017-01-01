@@ -70,7 +70,7 @@
 	    <width>820</width>
 	    <height>50</height>
         <label>300137</label>
-		<font>font111</font>
+		<font>font11</font>
         <ondown>10</ondown>
 		<onup>11</onup>
 		<visible>control.hasfocus(10)|control.hasfocus(15)|control.hasfocus(11)|control.hasfocus(14)|control.hasfocus(508)</visible>

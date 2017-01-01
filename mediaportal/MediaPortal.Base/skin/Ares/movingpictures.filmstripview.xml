@@ -51,7 +51,7 @@ This file should contain the list view
 		  <posX>515</posX>
 		  <posY>520</posY>
 		  <width>1275</width>
-		  <font>font111</font>
+		  <font>font11</font>
 		  <label>#MovingPictures.SelectedMovie.title</label>
 		  <textcolor>eaeaea</textcolor>
 		  <visible>facadeview.filmstrip+control.isvisible(50)</visible>
@@ -67,7 +67,7 @@ This file should contain the list view
 		  <width>1250</width>
 		  <height>235</height>
 		  <textcolor>eaeaea</textcolor>		  
-		  <font>font111</font>
+		  <font>font11</font>
 		  <scrollStartDelaySec>#textboxscrolldelay.filmstrip</scrollStartDelaySec>
 		  <label>#MovingPictures.SelectedMovie.summary</label>
 		  <visible>facadeview.filmstrip+control.isvisible(50)</visible>
@@ -81,7 +81,7 @@ This file should contain the list view
 		  <posX>515</posX>
 		  <posY>570</posY>
 		  <width>645</width>
-		  <font>font111</font>
+		  <font>font11</font>
 		  <textcolor>eaeaea</textcolor>
 		  <visible>facadeview.filmstrip+control.isvisible(50)</visible>
 			<animation effect="fade" time="250">WindowClose</animation>
@@ -94,7 +94,7 @@ This file should contain the list view
 		  <posX>575</posX>
 		  <posY>915</posY>
 		  <width>540</width>
-		  <font>font111</font>
+		  <font>font11</font>
 		  <textcolor>eaeaea</textcolor>
 		  <visible>facadeview.filmstrip+control.isvisible(50)</visible>
 			<animation effect="fade" time="250">WindowClose</animation>
@@ -120,7 +120,7 @@ This file should contain the list view
 		  <posX>1552</posX>
 		  <posY>520</posY>
 		  <width>540</width>
-		  <font>font111</font>	.
+		  <font>font11</font>	.
 		  <align>right</align>
 		  <textcolor>eaeaea</textcolor>
 		  <visible>facadeview.filmstrip+control.isvisible(50)</visible>

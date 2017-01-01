@@ -150,7 +150,7 @@
       <width>519</width>
       <align>left</align>
       <label>#WorldWeather.TranslationCurrentCondition</label>
-      <font>font121</font>
+      <font>font12</font>
       <textcolor>ffffffff</textcolor>
     </control>
 -->
@@ -228,7 +228,7 @@
         <type>label</type>
         <id>0</id>
         <label>#WorldWeather.TranslationCondition:</label>
-        <font>font111</font>
+        <font>font11</font>
         <height>30</height>
         <textcolor>ffffffff</textcolor>
         <visible>!string.equals(#WorldWeather.TodayCondition, )</visible>
@@ -239,7 +239,7 @@
         <type>label</type>
         <id>0</id>
         <label>#WorldWeather.TranslationVisibility:</label>
-        <font>font111</font>
+        <font>font11</font>
         <height>30</height>
         <textcolor>ffffffff</textcolor>
         <visible>!string.equals(#WorldWeather.TodayVisibility, )</visible>
@@ -250,7 +250,7 @@
         <type>label</type>
         <id>0</id>
         <label>#WorldWeather.TranslationWind:</label>
-        <font>font111</font>
+        <font>font11</font>
         <height>30</height>
         <textcolor>ffffffff</textcolor>
         <visible>!string.equals(#WorldWeather.TodayWindDirection, )</visible>
@@ -261,7 +261,7 @@
         <type>label</type>
         <id>0</id>
         <label>#WorldWeather.TranslationWindSpeed:</label>
-        <font>font111</font>
+        <font>font11</font>
         <height>30</height>
         <textcolor>ffffffff</textcolor>
         <visible>!string.equals(#WorldWeather.TodayWindSpeed, )</visible>
@@ -272,7 +272,7 @@
         <type>label</type>
         <id>0</id>
         <label>#WorldWeather.TranslationHumidity:</label>
-        <font>font111</font>
+        <font>font11</font>
         <height>30</height>
         <textcolor>ffffffff</textcolor>
         <visible>!string.equals(#WorldWeather.TodayHumidity, )</visible>
@@ -283,7 +283,7 @@
         <type>label</type>
         <id>0</id>
         <label>#WorldWeather.TranslationDewPoint:</label>
-        <font>font111</font>
+        <font>font11</font>
         <height>30</height>
         <textcolor>ffffffff</textcolor>
         <visible>!string.equals(#WorldWeather.TodayDewPoint, )</visible>
@@ -303,7 +303,7 @@
         <type>label</type>
         <id>0</id>
         <label>#WorldWeather.TodayTemperature</label>
-        <font>font111</font>
+        <font>font11</font>
         <height>30</height>
         <visible>string.equals(#WorldWeather.TodayTemperatureFeelsLike, )</visible>
       </control>
@@ -312,7 +312,7 @@
         <type>label</type>
         <id>0</id>
         <label>#WorldWeather.TodayTemperature - #WorldWeather.TranslationTemperatureFeelsLike #WorldWeather.TodayTemperatureFeelsLike</label>
-        <font>font111</font>
+        <font>font11</font>
         <height>30</height>
         <visible>!string.equals(#WorldWeather.TodayTemperatureFeelsLike, )</visible>
       </control>
@@ -321,7 +321,7 @@
         <type>label</type>
         <id>0</id>
         <label>#WorldWeather.TodayCondition</label>
-        <font>font111</font>
+        <font>font11</font>
         <height>30</height>
         <visible>!string.equals(#WorldWeather.TodayCondition, )</visible>
       </control>
@@ -330,7 +330,7 @@
         <type>label</type>
         <id>0</id>
         <label>#WorldWeather.TodayVisibility</label>
-        <font>font111</font>
+        <font>font11</font>
         <height>30</height>
         <visible>!string.equals(#WorldWeather.TodayVisibility, )</visible>
       </control>
@@ -339,7 +339,7 @@
         <type>label</type>
         <id>0</id>
         <label>#WorldWeather.TodayWindDirection</label>
-        <font>font111</font>
+        <font>font11</font>
         <height>30</height>
         <visible>string.equals(#WorldWeather.TodayWindDirectionDegree, )</visible>
       </control>
@@ -348,7 +348,7 @@
         <type>label</type>
         <id>0</id>
         <label>#WorldWeather.TodayWindDirection (#WorldWeather.TodayWindDirectionDegree)</label>
-        <font>font111</font>
+        <font>font11</font>
         <height>30</height>
         <visible>!string.equals(#WorldWeather.TodayWindDirectionDegree, )</visible>
       </control>
@@ -357,7 +357,7 @@
         <type>label</type>
         <id>0</id>
         <label>#WorldWeather.TodayWindSpeed</label>
-        <font>font111</font>
+        <font>font11</font>
         <height>30</height>
         <visible>!string.equals(#WorldWeather.TodayWindSpeed, )</visible>
       </control>
@@ -366,7 +366,7 @@
         <type>label</type>
         <id>0</id>
         <label>#WorldWeather.TodayHumidity</label>
-        <font>font111</font>
+        <font>font11</font>
         <height>30</height>
         <visible>string.equals(#WorldWeather.TodayPressure, )</visible>
       </control>
@@ -375,7 +375,7 @@
         <type>label</type>
         <id>0</id>
         <label>#WorldWeather.TodayHumidity - #WorldWeather.TodayPressure</label>
-        <font>font111</font>
+        <font>font11</font>
         <height>30</height>
         <visible>!string.equals(#WorldWeather.TodayPressure, )</visible>
       </control>
@@ -384,7 +384,7 @@
         <type>label</type>
         <id>0</id>
         <label>#WorldWeather.TodayDewPoint</label>
-        <font>font111</font>
+        <font>font11</font>
         <height>30</height>
       </control>
     </control>

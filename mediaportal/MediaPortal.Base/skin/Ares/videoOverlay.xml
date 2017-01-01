@@ -45,7 +45,7 @@
       <posY>930</posY>
       <label>#currentplaytime</label>
       <align>left</align>
-      <font>font121</font>
+      <font>font12</font>
       <textcolor>80ffffff</textcolor>
     </control>
     <control>
@@ -100,7 +100,7 @@
       <posY>4020</posY>
       <width>457</width>
       <height>55</height>
-      <font>font121</font>
+      <font>font12</font>
       <label>#Play.Current.Title\r#Play.Current.Genre\r#Play.Current.Year\r#Play.Current.Director</label>
       <textcolor>EFFFFFFF</textcolor>
     </control>

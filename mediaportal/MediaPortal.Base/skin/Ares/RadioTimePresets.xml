@@ -149,7 +149,7 @@
       <posY>230</posY>
       <width>800</width>
       <label>#RadioTime.Translation.FastPresets.Label</label>      
-      <font>font111</font>
+      <font>font11</font>
       <textcolor>eaeaea</textcolor>      
     </control>
 

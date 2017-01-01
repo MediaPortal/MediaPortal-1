@@ -196,7 +196,7 @@
     <posX>138</posX>
     <posY>115</posY>
     <textcolor>eaeaea</textcolor>
-    <font>font101</font>
+    <font>font10</font>
     <visible>string.equals(#MovingPictures.Importer.ListMode.Flag,PENDING)</visible>
   </control>
   <control>
@@ -208,7 +208,7 @@
     <posX>138</posX>
 	<posY>120</posY>
     <textcolor>eaeaea</textcolor>
-    <font>font101</font>
+    <font>font10</font>
     <visible>string.equals(#MovingPictures.Importer.ListMode.Flag,COMPLETED)</visible>
   </control>
   <control>
@@ -379,7 +379,7 @@
       <height>30</height>
       <label>#MovingPictures.Importer.Status (#MovingPictures.Importer.CurrentTask.Count/#MovingPictures.Importer.CurrentTask.Total)</label>
       <align>right</align>
-      <font>font101</font>
+      <font>font10</font>
       <textcolor>ffffffff</textcolor>
 	  <visible>!string.equals(#MovingPictures.Importer.Status,)</visible>
     </control>

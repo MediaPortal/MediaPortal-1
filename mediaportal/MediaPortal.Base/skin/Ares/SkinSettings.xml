@@ -13,7 +13,7 @@
     <entry name="#skin.myvid.dvdart">True</entry>
     <entry name="#skin.tv.enable">False</entry>
     <entry name="#skin.no.latestmedia">True</entry>
-    <entry name="#skin.no.weather">False</entry>
+    <entry name="#skin.no.weather">True</entry>
     <entry name="#skin.video.advanced">False</entry>
     <entry name="#AlbumInfo.ShowTracks">True</entry>
     <entry name="#skin.weather.home">True</entry>
@@ -56,9 +56,9 @@
     <entry name="name">Skin default</entry>
   </section>
   <section name="stringsettings">
-    <entry name="#skin.test">Disable the short display of day and month in top right</entry>
+    <entry name="#skin.test">Enable weather forecast when weather tile has focus</entry>
     <entry name="#skin.test2">Enable custom name for this tile</entry>
-    <entry name="#skin.currentTile">00512</entry>
+    <entry name="#skin.currentTile">00515</entry>
     <entry name="#skin.setnav">8005555</entry>
     <entry name="#background.colour">dark</entry>
     <entry name="#skin.latestOV">icon</entry>
@@ -114,15 +114,15 @@
     <entry name="#tile13plugin.name">series</entry>
     <entry name="#tile13plugin.parameter">test</entry>
     <entry name="#tile13pluginImg">noplugin</entry>
-    <entry name="#tile14plugin.hyperlink">MyVideo</entry>
-    <entry name="#tile14plugin.name">movies</entry>
+    <entry name="#tile14plugin.hyperlink">MovPics</entry>
+    <entry name="#tile14plugin.name">Movies</entry>
     <entry name="#tile14plugin.parameter">Empty</entry>
     <entry name="#tile14pluginImg">NoPlugin</entry>
     <entry name="#tile15plugin.hyperlink">Recordedtv</entry>
     <entry name="#tile15plugin.name">recorded tv</entry>
     <entry name="#tile15plugin.parameter">Empty</entry>
     <entry name="#tile15pluginImg">noplugin</entry>
-    <entry name="#tile16plugin.hyperlink">NoPlugin</entry>
+    <entry name="#tile16plugin.hyperlink">Radio</entry>
     <entry name="#tile16plugin.name">scheduled recordings</entry>
     <entry name="#tile16plugin.parameter">Empty</entry>
     <entry name="#tile16pluginImg">NoPlugin</entry>

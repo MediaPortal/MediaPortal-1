@@ -39,7 +39,7 @@
       <posY>180</posY>
       <width>600</width>
       <label>169</label>
-      <font>font111</font>
+      <font>font11</font>
 	  <textcolor>ff666666</textcolor>
     </control>
     <control>
@@ -50,7 +50,7 @@
       <posY>180</posY>
       <width>600</width>
       <label>#thumbResolution</label>
-      <font>font111</font>
+      <font>font11</font>
 	  <textcolor>ff666666</textcolor>
     </control>
     <control>
@@ -61,7 +61,7 @@
       <posY>225</posY>
       <width>600</width>
       <label>300146</label>
-      <font>font111</font>
+      <font>font11</font>
 	  <textcolor>ff666666</textcolor>
     </control>
     <control>
@@ -72,7 +72,7 @@
       <posY>225</posY>
       <width>600</width>
       <label>#thumbCompositing</label>
-      <font>font111</font>
+      <font>font11</font>
 	  <textcolor>ff666666</textcolor>
     </control>
     <control>
@@ -83,7 +83,7 @@
       <posY>270</posY>
       <width>600</width>
       <label>300147</label>
-      <font>font111</font>
+      <font>font11</font>
 	  <textcolor>ff666666</textcolor>
     </control>
     <control>
@@ -94,7 +94,7 @@
       <posY>270</posY>
       <width>600</width>
       <label>#thumbInterpolation</label>
-      <font>font111</font>
+      <font>font11</font>
 	  <textcolor>ff666666</textcolor>
     </control>
     <control>
@@ -105,7 +105,7 @@
       <posY>315</posY>
       <width>600</width>
       <label>300148</label>
-      <font>font111</font>
+      <font>font11</font>
 	  <textcolor>ff666666</textcolor>
     </control>
     <control>
@@ -116,7 +116,7 @@
       <posY>315</posY>
       <width>600</width>
       <label>#thumbSmoothing</label>
-      <font>font111</font>
+      <font>font11</font>
 	  <textcolor>ff666666</textcolor>
     </control>
 	-->
@@ -130,7 +130,7 @@
       <width>600</width>
 	  <align>right</align>
       <label>#thumbScreen</label>
-      <font>font111</font>
+      <font>font11</font>
 	  <textcolor>ffffffff</textcolor>
     </control>
     <!--Music-->
