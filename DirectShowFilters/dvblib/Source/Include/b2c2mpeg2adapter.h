@@ -93,7 +93,7 @@ public: // Methods
 	inline void SetLastError(const TCHAR *szErrText, DWORD dwErrCode)
 	{
 		m_dwLastErrorCode = dwErrCode;
-		sprintf( m_szLastErrorText, TEXT("%.*s"), B2C2_MAX_ERROR_TEXT-1, szErrText);
+		swprintf( m_szLastErrorText, TEXT("%.*s"), B2C2_MAX_ERROR_TEXT-1, szErrText);
 	}
 
 #if defined WIN32
