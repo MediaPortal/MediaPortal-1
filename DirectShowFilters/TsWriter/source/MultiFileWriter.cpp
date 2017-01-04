@@ -359,8 +359,7 @@ HRESULT MultiFileWriter::CreateDataFile(bool isErrorLoggingEnabled)
 {
   // Determine the name of the next data file.
   wstring baseFileName(m_registerFileName);
-  // TODO uncomment when TsReader doesn't recognise data files by .ts.tsbuffer
-  //baseFileName = baseFileName.substr(0, baseFileName.find_last_of(L".")).append(L".");
+  baseFileName = baseFileName.substr(0, baseFileName.find_last_of(L".")).append(L".");
   wstring fileNameString;
   do
   {
@@ -445,8 +444,6 @@ HRESULT MultiFileWriter::ReuseDataFile(bool isErrorLoggingEnabled)
   {
     fileIdPosition = (fileExtension - m_registerFileName) + 1;
   }
-  // TODO remove the next line when TsReader doesn't recognise data files by .ts.tsbuffer
-  fileIdPosition = wcslen(m_registerFileName);
   m_dataFileIdCurrent = wcstoul(fileName + fileIdPosition, NULL, 10);
 
   LogDebug(L"multi file writer: reusing data file, retry count = %hhu, file count = %llu, name = %s",
@@ -478,8 +475,6 @@ HRESULT MultiFileWriter::ReadRegisterFile(const wchar_t* fileName)
   {
     fileIdPosition = (fileExtension - fileName) + 1;
   }
-  // TODO remove the next line when TsReader doesn't recognise data files by .ts.tsbuffer
-  fileIdPosition = wcslen(fileName);
 
   unsigned char* readPointer = m_registerFileWriteBuffer;
 
