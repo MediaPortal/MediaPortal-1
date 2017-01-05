@@ -2254,6 +2254,107 @@ namespace MediaPortal.MusicPlayer.BASS
       dbLevelR = dbRight;
     }
 
+    /// <summary>
+    /// Return the spectrum list (lines, in range min..max) to be used by a Spectrum Analyser
+    /// </summary>
+    /// <param name="spectrum"></param>
+    /// <param name="count"></param>
+    /// <param name="min"></param>
+    /// <param name="max"></param>
+    /// <returns></returns>
+    public bool GetSpectrum(List<int> spectrum, byte lines, int _min, int _max)
+    {
+      spectrum.Clear();
+
+      if (Config.MusicPlayer == AudioPlayer.Asio)
+      {
+        return false;
+      }
+
+      MusicStream stream = GetCurrentStream();
+
+      int _result = -1;
+      float[] _fft = new float[1024];
+
+      try
+      {
+        if (Config.MusicPlayer == AudioPlayer.WasApi)
+        {
+          _result = GetDataFFT(_fft, (int)BASSData.BASS_DATA_FFT2048);
+        }
+        else
+        {
+          if (stream != null)
+          {
+            _result = GetChannelData(stream.BassStream, _fft, (int)BASSData.BASS_DATA_FFT2048);
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Debug("BASS: GetSpectrum(): {0}", ex.Message);
+        return false;
+      }
+      if (_result < 0)
+      {
+        return false ;
+      }
+
+      int x, y;
+      int b0 = 0;
+      bool _needRecalc = (_min != _max && _min != 0 && _max != 255);
+
+      // Computes the spectrum data, the code is taken from a bass_wasapi sample.
+      for (x = 0; x < lines; x++)
+      {
+        float peak = 0;
+        int b1 = (int)Math.Pow(2, x * 10.0 / (lines - 1));
+        if (b1 > 1023) 
+        {
+          b1 = 1023;
+        }
+        if (b1 <= b0)
+        {
+          b1 = b0 + 1;
+        }
+        for (; b0 < b1; b0++)
+        {
+          if (peak < _fft[1 + b0]) 
+          {
+            peak = _fft[1 + b0];
+          }
+        }
+        y = (int)(Math.Sqrt(peak) * 3 * 255 - 4);
+
+        if (y > 255) 
+        { 
+          y = 255;
+        }
+        if (y < 0)
+        {
+           y = 0;
+        }
+        if (_needRecalc)
+        {
+          y = (int)( ( ( (float)y / 255.0 ) * ( (float)_max - (float)_min) ) + (float)_min );
+        }
+
+        spectrum.Add(y);
+      }
+      return true;
+    }
+
+    /// <summary>
+    /// Return the spectrum array (lines, in range 0..255) to be used by a Spectrum Analyser
+    /// </summary>
+    /// <param name="spectrum"></param>
+    /// <param name="count"></param>
+    /// <returns></returns>
+    public bool GetSpectrum(List<int> spectrum, byte lines)
+    {
+      return GetSpectrum(spectrum, lines, 0, 255);
+    }
+
     public int GetDataFFT(float[] buffer, int lenght)
     {
       lock (_syncRoot)
