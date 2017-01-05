@@ -114,8 +114,14 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         {
           if (countryName.Equals("Australia"))
           {
+            // Don't show OPTUS regions. As of January 2017, all OPTUS bouquet
+            // channel numbers now match Foxtel standard channel numbers and
+            // the HD OPTUS bouquet no longer exists. Therefore for our intents
+            // and purposes OPTUS no longer has any unique characterestics, and
+            // it doesn't make sense to continue to allow people to select
+            // OPTUS regions.
             labelProvidersProvider1Region.Text = "Foxtel region:";
-            comboBoxProvidersProvider1Region.DataSource = RegionOpenTvFoxtel.Values.ToList().OrderBy(r => r.ToString()).ToList();
+            comboBoxProvidersProvider1Region.DataSource = RegionOpenTvFoxtel.Values.Where(r => r.Bouquet != BouquetOpenTvFoxtel.Optus).OrderBy(r => r.ToString()).ToList();
             checkBoxAutomaticChannelGroupsProvider1Region.Text = checkBoxAutomaticChannelGroupsProvider1Region.Text.Replace("provider 1 region", "Foxtel region");
           }
           else if (countryName.Equals("New Zealand"))
@@ -131,16 +137,16 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           else if (canReceiveUkSatellite)
           {
             labelProvidersProvider1Region.Text = "Sky UK region:";
-            comboBoxProvidersProvider1Region.DataSource = RegionOpenTvSkyUk.Values.ToList().OrderBy(r => r.ToString()).ToList();
+            comboBoxProvidersProvider1Region.DataSource = RegionOpenTvSkyUk.Values.OrderBy(r => r.ToString()).ToList();
             checkBoxAutomaticChannelGroupsProvider1Region.Text = checkBoxAutomaticChannelGroupsProvider1Region.Text.Replace("provider 1 region", "Sky UK region");
             labelProvidersProvider2Region.Text = "Freesat region:";
-            comboBoxProvidersProvider2Region.DataSource = RegionFreesat.Values.ToList().OrderBy(r => r.ToString()).ToList();
+            comboBoxProvidersProvider2Region.DataSource = RegionFreesat.Values.OrderBy(r => r.ToString()).ToList();
             checkBoxAutomaticChannelGroupsProvider2Region.Text = checkBoxAutomaticChannelGroupsProvider2Region.Text.Replace("provider 2 region", "Freesat region");
           }
           else if (countryName.Equals("United States"))
           {
             labelProvidersProvider1Region.Text = "Dish Network market:";
-            comboBoxProvidersProvider1Region.DataSource = DishNetworkMarket.Values.ToList().OrderBy(m => m.ToString()).ToList();
+            comboBoxProvidersProvider1Region.DataSource = DishNetworkMarket.Values.OrderBy(m => m.ToString()).ToList();
             checkBoxProvidersProvider1IsHighDefinition.Enabled = false;
             checkBoxAutomaticChannelGroupsProvider1Region.Text = checkBoxAutomaticChannelGroupsProvider1Region.Text.Replace("provider 1 region", "Dish Network market");
           }
@@ -518,7 +524,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       if (string.Equals(countryName, "Australia"))
       {
         // Assume most people have DVB-S2 tuners and can receive HD channels.
-        defaultBouquetId = (int)BouquetOpenTvFoxtel.HdResidential;
+        defaultBouquetId = (int)BouquetOpenTvFoxtel.HdBouquet;
 
         // For the default region, choose the satellite network because it has
         // the most subscribers and Sydney because it is the most populous.
@@ -540,7 +546,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             defaultRegion = RegionOpenTvFoxtel.Satellite_Adelaide;
             break;
           case "AUS Central Standard Time":     // Northern Territory (+9.5) - Darwin
-            // (region codes currently unknown)
+            defaultRegion = RegionOpenTvFoxtel.Satellite_Darwin;
             break;
           case "W. Australia Standard Time":    // Western Australia (+8) - Perth
             defaultRegion = RegionOpenTvFoxtel.Satellite_Perth;
@@ -591,10 +597,11 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       if (countryName.Equals("Australia"))
       {
         if (
+          bouquetId == (int)BouquetOpenTvFoxtel.HdBouquet ||
           bouquetId == (int)BouquetOpenTvFoxtel.HdCommercialAndPublic ||
           bouquetId == (int)BouquetOpenTvFoxtel.HdCourtesyAndVips ||
+          bouquetId == (int)BouquetOpenTvFoxtel.HdMdu ||
           bouquetId == (int)BouquetOpenTvFoxtel.HdMduLite ||
-          bouquetId == (int)BouquetOpenTvFoxtel.HdOptus ||
           bouquetId == (int)BouquetOpenTvFoxtel.HdResidential ||
           bouquetId == (int)BouquetOpenTvFoxtel.HdSports
         )
@@ -752,14 +759,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           bouquetId = (int)region.Bouquet;
           if (isHighDefinition)
           {
-            if (region.Bouquet == BouquetOpenTvFoxtel.Optus)
-            {
-              bouquetId = (int)BouquetOpenTvFoxtel.HdOptus;
-            }
-            else
-            {
-              bouquetId = (int)BouquetOpenTvFoxtel.HdResidential;
-            }
+            bouquetId = (int)BouquetOpenTvFoxtel.HdBouquet;
           }
         }
       }

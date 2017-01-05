@@ -29,6 +29,7 @@ namespace Mediaportal.TV.Server.Common.Types.Provider
     AustarDigital = 666,
     AustarTest = 667,
     AustarBusiness = 668,
+    HdAustardigital = 766,    // added 5 January 2017
     ParentBouquet = 13858,
 
     // Foxtel and Optus TV featuring Foxtel
@@ -47,6 +48,15 @@ namespace Mediaportal.TV.Server.Common.Types.Provider
     HdCourtesyAndVips,
     // (HD MCR does not exist)
     HdMduLite = 25253,
-    HdOptus
+
+    // removed 5 January 2017
+    //HdOptus = 25254,                
+
+    // added 5 January 2017
+    SdBouquet = 25312,
+    TotalUpper = 25316,
+    MduSdLite = 25317,
+    HdBouquet = 25376,
+    HdMdu = 25381
   }
 }
