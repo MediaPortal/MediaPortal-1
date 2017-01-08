@@ -604,15 +604,7 @@ namespace MediaPortal
       // Don't need to resize when using madVR
       if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && GUIGraphicsContext.Vmr9Active)
       {
-        // Resize OSD/Screen when resolution change
-        Size client = GUIGraphicsContext.form.ClientSize;
-        VMR9Util.g_vmr9?.MadVrScreenResize(0, 0, client.Width, client.Height);
-        GUIGraphicsContext.NoneDone = false;
-        GUIGraphicsContext.TopAndBottomDone = false;
-        GUIGraphicsContext.SideBySideDone = false;
-
-        // Refresh madVR
-        g_Player.RefreshMadVrVideo();
+        GUIGraphicsContext.ForceMadVRRefresh = true;
         return;
       }
 
