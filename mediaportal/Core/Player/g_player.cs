@@ -3917,16 +3917,6 @@ namespace MediaPortal.Player
           GUIGraphicsContext.VideoWindow = _videoWindows[0];
           GUIGraphicsContext.UpdateVideoWindow = true;
 
-          // Resize OSD/Screen when resolution change
-          if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && GUIGraphicsContext.InVmr9Render)
-          {
-            Size client = GUIGraphicsContext.form.ClientSize;
-            VMR9Util.g_vmr9?.MadVrScreenResize(0, 0, client.Width, client.Height);
-            GUIGraphicsContext.NoneDone = false;
-            GUIGraphicsContext.TopAndBottomDone = false;
-            GUIGraphicsContext.SideBySideDone = false;
-          }
-
           SetVideoWindow();
           Log.Debug("g_player VideoWindowChanged() SendThreadMessage received");
           break;
