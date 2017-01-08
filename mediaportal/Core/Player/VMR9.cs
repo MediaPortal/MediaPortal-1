@@ -33,6 +33,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 using MediaPortal.Util;
 using Microsoft.DirectX.Direct3D;
+using Action = MediaPortal.GUI.Library.Action;
 using Filter = Microsoft.DirectX.Direct3D.Filter;
 using Geometry = MediaPortal.GUI.Library.Geometry;
 
@@ -169,6 +170,9 @@ namespace MediaPortal.Player
 
     [DllImport("dshowhelper.dll", CallingConvention = CallingConvention.Cdecl)]
     private static extern unsafe void MadVr3DEnable(bool Enable);
+
+    [DllImport("dshowhelper.dll", CallingConvention = CallingConvention.Cdecl)]
+    private static extern unsafe void MadVrScreenResizeForce(int x, int y, int width, int height);
 
     #endregion
 
@@ -522,6 +526,17 @@ namespace MediaPortal.Player
       if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
       {
         MadVr3DEnable(Enable);
+      }
+    }
+
+    /// <summary>
+    /// Send screen resize for madVR
+    /// </summary>
+    public void MadVrScreenResize(int x, int y, int width, int height)
+    {
+      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+      {
+        MadVrScreenResizeForce(x, y, width, height);
       }
     }
 
@@ -1438,6 +1453,9 @@ namespace MediaPortal.Player
         GUIGraphicsContext.DX9Device.SetRenderTarget(0, MadVrRenderTargetVMR9);
         MadVrRenderTargetVMR9.Dispose();
         MadVrRenderTargetVMR9 = null;
+        // Send action message to refresh screen
+        Action actionScreenRefresh = new Action(Action.ActionType.ACTION_MADVR_SCREEN_REFRESH, 0, 0);
+        GUIGraphicsContext.OnAction(actionScreenRefresh);
         if ((GUIGraphicsContext.form.WindowState != FormWindowState.Minimized))
         {
           // Make MediaPortal window normal ( if minimized )

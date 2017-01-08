@@ -154,6 +154,7 @@ class MPMadPresenter : public CUnknown, public CCritSec
     void RepeatFrame();
     void MadVr3DSizeRight(uint16_t x, uint16_t y, DWORD width, DWORD height);
     void MadVr3DSizeLeft(uint16_t x, uint16_t y, DWORD width, DWORD height);
+    void MadVrScreenResize(uint16_t x, uint16_t y, DWORD width, DWORD height);    
     void MadVr3D(bool Enable);
     HRESULT Shutdown();
     HRESULT Stopping();
