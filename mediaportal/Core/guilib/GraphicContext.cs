@@ -1777,6 +1777,7 @@ namespace MediaPortal.GUI.Library
     public static bool SideBySideDone { get; set; }
     public static bool TopAndBottomDone { get; set; }
     public static bool NoneDone { get; set; }
+    public static bool ForceMadVRRefresh { get; set; }
 
     /// <summary>
     /// Enable/Disable bypassing of UI Calibration transforms
