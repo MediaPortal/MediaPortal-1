@@ -184,6 +184,15 @@ void MPMadPresenter::MadVr3DSizeLeft(uint16_t x, uint16_t y, DWORD width, DWORD 
   }
 }
 
+void MPMadPresenter::MadVrScreenResize(uint16_t x, uint16_t y, DWORD width, DWORD height)
+{
+  if (m_pMadD3DDev)
+  {
+    Log("%s : done : 0x:%x", __FUNCTION__, m_pMadD3DDev);
+    SetWindowPos(m_hWnd, 0, 0, 0, width, height, SWP_ASYNCWINDOWPOS);
+  }
+}
+
 void MPMadPresenter::MadVr3D(bool Enable)
 {
   m_madVr3DEnable = Enable;
