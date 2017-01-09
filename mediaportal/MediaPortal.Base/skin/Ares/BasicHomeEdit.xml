@@ -182,6 +182,7 @@
                        <subitems>
                        <subitem> 7</subitem>
                        <subitem> 12</subitem>
+					   <subitem> 16</subitem>
                        </subitems>
                        <textcolorNoFocus>99ffffff</textcolorNoFocus>
                        <textureFocus>btn_list_blue2.png</textureFocus>

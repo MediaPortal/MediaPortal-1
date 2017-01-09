@@ -395,7 +395,17 @@ This file should contain the details view
       </control>
     </control>
 	
-	
+    <control>
+      <description>background</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>50</posX>
+      <posY>15</posY>
+      <width>347</width>
+      <height>163</height>
+      <texture>tvbackground.png</texture>
+	  <visible>player.hasmedia</visible>
+	</control>	
 
   </controls>
 </window>
