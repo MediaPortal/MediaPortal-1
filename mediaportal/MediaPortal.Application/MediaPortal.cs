@@ -1566,7 +1566,7 @@ public class MediaPortalApp : D3D, IRender
 
         // set maximum and minimum form size in windowed mode
         case WM_GETMINMAXINFO:
-          if (Windowed || !_ignoreFullscreenResolutionChanges)
+          if (Windowed || !_ignoreFullscreenResolutionChanges || g_Player.Playing)
           {
             if (!_suspended)
             {
@@ -1598,7 +1598,7 @@ public class MediaPortalApp : D3D, IRender
 
         // verify window size in case it was not resized by the user
         case WM_SIZE:
-          if (Windowed || !_ignoreFullscreenResolutionChanges)
+          if (Windowed || !_ignoreFullscreenResolutionChanges || g_Player.Playing)
           {
             OnSize(ref msg);
             PluginManager.WndProc(ref msg);
@@ -1607,7 +1607,7 @@ public class MediaPortalApp : D3D, IRender
 
         // aspect ratio save window resizing
         case WM_SIZING:
-          if (Windowed || !_ignoreFullscreenResolutionChanges)
+          if (Windowed || !_ignoreFullscreenResolutionChanges || g_Player.Playing)
           {
             OnSizing(ref msg);
             PluginManager.WndProc(ref msg);
@@ -1616,7 +1616,7 @@ public class MediaPortalApp : D3D, IRender
 
         // handle display changes
         case WM_DISPLAYCHANGE:
-          if (Windowed || !_ignoreFullscreenResolutionChanges)
+          if (Windowed || !_ignoreFullscreenResolutionChanges || g_Player.Playing)
           {
             OnDisplayChange(ref msg);
             PluginManager.WndProc(ref msg);
@@ -1625,7 +1625,7 @@ public class MediaPortalApp : D3D, IRender
 
         // handle device changes
         case WM_DEVICECHANGE:
-          if (Windowed || !_ignoreFullscreenResolutionChanges)
+          if (Windowed || !_ignoreFullscreenResolutionChanges || g_Player.Playing)
           {
             OnDeviceChange(ref msg);
             PluginManager.WndProc(ref msg);
@@ -2151,7 +2151,7 @@ public class MediaPortalApp : D3D, IRender
               try
               {
                 GUIGraphicsContext.DeviceVideoConnected++;
-                if (Windowed || !_ignoreFullscreenResolutionChanges)
+                if (Windowed || !_ignoreFullscreenResolutionChanges || g_Player.Playing)
                 {
                   OnDisplayChange(ref msg);
                 }
