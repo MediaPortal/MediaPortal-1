@@ -3809,7 +3809,6 @@ bool CParserNitDvb::DecodeOpenTvChannelDescriptor(unsigned char* data,
     //LogDebug(L"%s: OpenTV channel descriptor, region ID = %hu",
     //          m_name, regionId);
 
-    bool dummyIsHighDefinition = false;
     unsigned short pointer = 2;
     while (pointer + 8 < dataLength)
     {
