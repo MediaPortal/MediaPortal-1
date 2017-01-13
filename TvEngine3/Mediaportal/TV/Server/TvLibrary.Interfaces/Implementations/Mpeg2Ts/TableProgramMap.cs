@@ -437,6 +437,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Mpeg2Ts
                     es.LogicalStreamType = LogicalStreamType.VideoMpeg4Part10;
                     break;
                   case DescriptorTag.Registration:
+                    // Old style DVB signalling. These days VC-1 can be
+                    // signalled with stream type 0xea.
                     if (d.Data[0] == 'V' && d.Data[1] == 'C' && d.Data[2] == '-' && d.Data[3] == '1')
                     {
                       es.LogicalStreamType = LogicalStreamType.VideoVc1;
@@ -461,6 +463,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Mpeg2Ts
                   case DescriptorTag.Dts:
                     if (isScteTs)
                     {
+                      // Old style SCTE signalling. These days DTS-HD can be
+                      // signalled with stream type 0x88.
                       es.LogicalStreamType = LogicalStreamType.AudioDtsHd;
                     }
                     else

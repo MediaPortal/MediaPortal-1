@@ -212,6 +212,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Mpeg2Ts.Enu
     /// ATSC E-AC3 audio
     /// </summary>
     EnhancedAc3Audio = 0x87,
+
+    #endregion
+
+    #region ATSC 2.0 A/107
+
     /// <summary>
     /// ATSC DTS HD audio
     /// </summary>

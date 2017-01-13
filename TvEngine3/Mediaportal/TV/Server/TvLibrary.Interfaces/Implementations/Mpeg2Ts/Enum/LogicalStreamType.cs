@@ -193,9 +193,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Mpeg2Ts.Enu
     /// DTS HD audio
     /// </summary>
     /// <remarks>
-    /// Matches the ATSC 2.0 stream type. DVB has the DTS-HD [extended]
-    /// descriptor (tag extension 0x0e). SCTE has the DTS-HD descriptor (tag
-    /// 0x7b).
+    /// Matches the ATSC 2.0 and SCTE stream type. DVB has the DTS-HD
+    /// [extended] descriptor (tag extension 0x0e). Note SCTE previously used
+    /// the DTS-HD descriptor (tag 0x7b).
     /// </remarks>
     [Description("DTS-HD Audio")]
     AudioDtsHd = 0x88,
