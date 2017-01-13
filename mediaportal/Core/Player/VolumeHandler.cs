@@ -252,7 +252,8 @@ namespace MediaPortal.Player
           _mixer.Open(0, IsDigital, true);
           _mixer.ControlChanged += mixer_ControlChanged;
 
-          return;
+          if (_mixer == null)
+            return;
         }
 
         if (_mixer.IsMuted)
