@@ -283,14 +283,14 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.labelBufferSize.TabIndex = 3;
       this.labelBufferSize.Text = "Standard size:";
       // 
-      // TvTimeshifting
+      // TimeShifting
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.BackColor = System.Drawing.SystemColors.Window;
       this.Controls.Add(this.groupBoxOther);
       this.Controls.Add(this.groupBoxBuffer);
-      this.Name = "TvTimeshifting";
+      this.Name = "TimeShifting";
       this.Size = new System.Drawing.Size(480, 420);
       this.groupBoxOther.ResumeLayout(false);
       this.groupBoxOther.PerformLayout();

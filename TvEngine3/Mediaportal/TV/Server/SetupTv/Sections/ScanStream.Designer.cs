@@ -157,7 +157,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.comboBoxStream.Size = new System.Drawing.Size(351, 21);
       this.comboBoxStream.TabIndex = 3;
       // 
-      // CardDvbIP
+      // ScanStream
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -173,7 +173,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.Controls.Add(this.listViewProgress);
       this.Controls.Add(this.labelSignalQuality);
       this.Controls.Add(this.labelSignalStrength);
-      this.Name = "CardDvbIP";
+      this.Name = "ScanStream";
       this.Size = new System.Drawing.Size(480, 420);
       this.ResumeLayout(false);
       this.PerformLayout();

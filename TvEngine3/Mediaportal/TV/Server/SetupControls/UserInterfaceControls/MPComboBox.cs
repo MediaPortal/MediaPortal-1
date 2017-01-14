@@ -18,6 +18,9 @@
 
 #endregion
 
+using System.ComponentModel;
+using System.Windows.Forms;
+
 namespace Mediaportal.TV.Server.SetupControls.UserInterfaceControls
 {
   /// <summary>
@@ -27,7 +30,21 @@ namespace Mediaportal.TV.Server.SetupControls.UserInterfaceControls
   {
     public MPComboBox()
     {
-      DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      DropDownStyle = ComboBoxStyle.DropDownList;
+    }
+
+    [DefaultValue(ComboBoxStyle.DropDownList)]
+    public new ComboBoxStyle DropDownStyle
+    {
+      get
+      {
+        return base.DropDownStyle;
+      }
+      set
+      {
+        base.DropDownStyle = value;
+        Invalidate();
+      }
     }
   }
 }

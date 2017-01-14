@@ -171,7 +171,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       // comboBoxModulation
       // 
-      this.comboBoxModulation.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxModulation.FormattingEnabled = true;
       this.comboBoxModulation.Location = new System.Drawing.Point(123, 185);
       this.comboBoxModulation.Name = "comboBoxModulation";

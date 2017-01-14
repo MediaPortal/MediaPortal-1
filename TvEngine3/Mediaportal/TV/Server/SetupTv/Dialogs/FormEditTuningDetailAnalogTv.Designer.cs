@@ -84,7 +84,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.comboBoxCountry.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
       this.comboBoxCountry.DisplayMember = "Name";
-      this.comboBoxCountry.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxCountry.DropDownWidth = 245;
       this.comboBoxCountry.FormattingEnabled = true;
       this.comboBoxCountry.Location = new System.Drawing.Point(123, 188);
@@ -103,7 +102,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       // comboBoxSource
       // 
-      this.comboBoxSource.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxSource.IntegralHeight = false;
       this.comboBoxSource.Location = new System.Drawing.Point(123, 215);
       this.comboBoxSource.Name = "comboBoxSource";

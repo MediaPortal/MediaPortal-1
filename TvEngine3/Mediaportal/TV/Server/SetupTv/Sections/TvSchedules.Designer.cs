@@ -271,7 +271,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       // comboBoxGroups
       // 
-      this.comboBoxGroups.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxGroups.FormattingEnabled = true;
       this.comboBoxGroups.Location = new System.Drawing.Point(110, 32);
       this.comboBoxGroups.Name = "comboBoxGroups";
@@ -455,7 +454,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       // comboBoxChannels
       // 
-      this.comboBoxChannels.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxChannels.FormattingEnabled = true;
       this.comboBoxChannels.Location = new System.Drawing.Point(578, 6);
       this.comboBoxChannels.Name = "comboBoxChannels";

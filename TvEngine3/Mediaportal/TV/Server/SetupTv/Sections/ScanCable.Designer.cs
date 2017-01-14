@@ -79,7 +79,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       this.comboBoxTransmitter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-      this.comboBoxTransmitter.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxTransmitter.FormattingEnabled = true;
       this.comboBoxTransmitter.Location = new System.Drawing.Point(100, 60);
       this.comboBoxTransmitter.Name = "comboBoxTransmitter";
@@ -153,7 +152,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       // comboBoxBroadcastStandard
       // 
-      this.comboBoxBroadcastStandard.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxBroadcastStandard.Enabled = false;
       this.comboBoxBroadcastStandard.FormattingEnabled = true;
       this.comboBoxBroadcastStandard.Location = new System.Drawing.Point(91, 19);
@@ -213,7 +211,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       // comboBoxModulation
       // 
-      this.comboBoxModulation.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxModulation.Enabled = false;
       this.comboBoxModulation.FormattingEnabled = true;
       this.comboBoxModulation.Location = new System.Drawing.Point(91, 72);
@@ -263,7 +260,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       // comboBoxScanType
       // 
-      this.comboBoxScanType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxScanType.FormattingEnabled = true;
       this.comboBoxScanType.Location = new System.Drawing.Point(98, 19);
       this.comboBoxScanType.Name = "comboBoxScanType";
@@ -387,7 +383,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       this.comboBoxRegionProvider.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-      this.comboBoxRegionProvider.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxRegionProvider.FormattingEnabled = true;
       this.comboBoxRegionProvider.Location = new System.Drawing.Point(100, 33);
       this.comboBoxRegionProvider.Name = "comboBoxRegionProvider";
@@ -398,7 +393,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       this.comboBoxCountry.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-      this.comboBoxCountry.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxCountry.FormattingEnabled = true;
       this.comboBoxCountry.Location = new System.Drawing.Point(100, 6);
       this.comboBoxCountry.Name = "comboBoxCountry";

@@ -117,7 +117,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       // comboBoxModulation
       // 
-      this.comboBoxModulation.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxModulation.FormattingEnabled = true;
       this.comboBoxModulation.Location = new System.Drawing.Point(123, 219);
       this.comboBoxModulation.Name = "comboBoxModulation";
@@ -390,7 +389,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       // comboBoxBroadcastStandard
       // 
-      this.comboBoxBroadcastStandard.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxBroadcastStandard.FormattingEnabled = true;
       this.comboBoxBroadcastStandard.Location = new System.Drawing.Point(123, 166);
       this.comboBoxBroadcastStandard.Name = "comboBoxBroadcastStandard";
@@ -407,7 +405,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.labelBroadcastStandard.TabIndex = 12;
       this.labelBroadcastStandard.Text = "Broadcast standard:";
       // 
-      // FormEditTuningDetailDvbC
+      // FormEditTuningDetailCable
       // 
       this.AcceptButton = this.buttonOkay;
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -436,7 +434,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.Controls.Add(this.labelSymbolRate);
       this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
       this.MinimumSize = new System.Drawing.Size(408, 341);
-      this.Name = "FormEditTuningDetailDvbC";
+      this.Name = "FormEditTuningDetailCable";
       this.Text = "Add/Edit Cable Tuning Detail";
       this.Controls.SetChildIndex(this.checkBoxIsHighDefinition, 0);
       this.Controls.SetChildIndex(this.labelIsHighDefinition, 0);

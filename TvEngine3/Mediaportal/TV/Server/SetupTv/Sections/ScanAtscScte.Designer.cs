@@ -158,7 +158,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.comboBoxScanMode.TabIndex = 1;
       this.comboBoxScanMode.SelectedIndexChanged += new System.EventHandler(this.comboBoxScanMode_SelectedIndexChanged);
       // 
-      // CardAtsc
+      // ScanAtscScte
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -174,7 +174,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.Controls.Add(this.listViewProgress);
       this.Controls.Add(this.labelSignalQuality);
       this.Controls.Add(this.labelSignalStrength);
-      this.Name = "CardAtsc";
+      this.Name = "ScanAtscScte";
       this.Size = new System.Drawing.Size(480, 420);
       this.ResumeLayout(false);
       this.PerformLayout();

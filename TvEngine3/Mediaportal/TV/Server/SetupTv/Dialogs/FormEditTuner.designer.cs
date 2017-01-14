@@ -345,7 +345,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       // comboBoxIdleMode
       // 
-      this.comboBoxIdleMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxIdleMode.FormattingEnabled = true;
       this.comboBoxIdleMode.Location = new System.Drawing.Point(126, 40);
       this.comboBoxIdleMode.Name = "comboBoxIdleMode";

@@ -453,7 +453,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       // comboBoxProvidersProvider2Region
       // 
-      this.comboBoxProvidersProvider2Region.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxProvidersProvider2Region.DropDownWidth = 285;
       this.comboBoxProvidersProvider2Region.FormattingEnabled = true;
       this.comboBoxProvidersProvider2Region.Location = new System.Drawing.Point(102, 46);
@@ -463,7 +462,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       // comboBoxProvidersProvider1Region
       // 
-      this.comboBoxProvidersProvider1Region.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxProvidersProvider1Region.FormattingEnabled = true;
       this.comboBoxProvidersProvider1Region.Location = new System.Drawing.Point(102, 19);
       this.comboBoxProvidersProvider1Region.Name = "comboBoxProvidersProvider1Region";

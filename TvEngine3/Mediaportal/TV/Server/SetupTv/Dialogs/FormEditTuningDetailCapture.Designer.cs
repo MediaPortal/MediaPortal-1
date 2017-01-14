@@ -92,7 +92,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       // comboBoxAudioSource
       // 
-      this.comboBoxAudioSource.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxAudioSource.FormattingEnabled = true;
       this.comboBoxAudioSource.Location = new System.Drawing.Point(123, 186);
       this.comboBoxAudioSource.Name = "comboBoxAudioSource";
@@ -110,7 +109,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       // comboBoxVideoSource
       // 
-      this.comboBoxVideoSource.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxVideoSource.FormattingEnabled = true;
       this.comboBoxVideoSource.Location = new System.Drawing.Point(123, 159);
       this.comboBoxVideoSource.Name = "comboBoxVideoSource";

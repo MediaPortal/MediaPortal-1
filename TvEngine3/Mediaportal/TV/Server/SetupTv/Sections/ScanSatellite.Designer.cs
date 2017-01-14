@@ -88,7 +88,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       this.comboBoxTransmitter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-      this.comboBoxTransmitter.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxTransmitter.FormattingEnabled = true;
       this.comboBoxTransmitter.Location = new System.Drawing.Point(100, 33);
       this.comboBoxTransmitter.Name = "comboBoxTransmitter";
@@ -155,7 +154,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       // comboBoxBroadcastStandard
       // 
-      this.comboBoxBroadcastStandard.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxBroadcastStandard.FormattingEnabled = true;
       this.comboBoxBroadcastStandard.Location = new System.Drawing.Point(91, 19);
       this.comboBoxBroadcastStandard.Name = "comboBoxBroadcastStandard";
@@ -177,7 +175,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       // comboBoxPolarisation
       // 
-      this.comboBoxPolarisation.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxPolarisation.FormattingEnabled = true;
       this.comboBoxPolarisation.Location = new System.Drawing.Point(91, 73);
       this.comboBoxPolarisation.Name = "comboBoxPolarisation";
@@ -204,7 +201,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       // comboBoxPilotTonesState
       // 
-      this.comboBoxPilotTonesState.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxPilotTonesState.FormattingEnabled = true;
       this.comboBoxPilotTonesState.Location = new System.Drawing.Point(353, 100);
       this.comboBoxPilotTonesState.Name = "comboBoxPilotTonesState";
@@ -231,7 +227,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       // comboBoxRollOffFactor
       // 
-      this.comboBoxRollOffFactor.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxRollOffFactor.FormattingEnabled = true;
       this.comboBoxRollOffFactor.Location = new System.Drawing.Point(353, 73);
       this.comboBoxRollOffFactor.Name = "comboBoxRollOffFactor";
@@ -258,7 +253,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       // comboBoxModulation
       // 
-      this.comboBoxModulation.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxModulation.FormattingEnabled = true;
       this.comboBoxModulation.Location = new System.Drawing.Point(91, 100);
       this.comboBoxModulation.Name = "comboBoxModulation";
@@ -268,7 +262,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       // comboBoxFecCodeRate
       // 
-      this.comboBoxFecCodeRate.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxFecCodeRate.FormattingEnabled = true;
       this.comboBoxFecCodeRate.Location = new System.Drawing.Point(353, 46);
       this.comboBoxFecCodeRate.Name = "comboBoxFecCodeRate";
@@ -367,7 +360,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       // comboBoxScanType
       // 
-      this.comboBoxScanType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxScanType.FormattingEnabled = true;
       this.comboBoxScanType.Location = new System.Drawing.Point(98, 19);
       this.comboBoxScanType.Name = "comboBoxScanType";
@@ -462,7 +454,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       this.comboBoxSatellite.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-      this.comboBoxSatellite.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxSatellite.FormattingEnabled = true;
       this.comboBoxSatellite.Location = new System.Drawing.Point(100, 6);
       this.comboBoxSatellite.Name = "comboBoxSatellite";
@@ -491,7 +482,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.checkBoxUseAdvancedOptions.UseVisualStyleBackColor = true;
       this.checkBoxUseAdvancedOptions.CheckedChanged += new System.EventHandler(this.checkBoxUseAdvancedOptions_CheckedChanged);
       // 
-      // CardDvbS
+      // ScanSatellite
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -504,7 +495,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.Controls.Add(this.labelSatellite);
       this.Controls.Add(this.checkBoxUseAdvancedOptions);
       this.Controls.Add(this.buttonScan);
-      this.Name = "CardDvbS";
+      this.Name = "ScanSatellite";
       this.Size = new System.Drawing.Size(480, 420);
       this.groupBoxAdvancedOptions.ResumeLayout(false);
       this.groupBoxAdvancedOptions.PerformLayout();

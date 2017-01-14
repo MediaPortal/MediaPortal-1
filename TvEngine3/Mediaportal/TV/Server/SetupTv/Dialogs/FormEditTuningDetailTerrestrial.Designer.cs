@@ -177,7 +177,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       // comboBoxBroadcastStandard
       // 
-      this.comboBoxBroadcastStandard.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxBroadcastStandard.FormattingEnabled = true;
       this.comboBoxBroadcastStandard.Location = new System.Drawing.Point(123, 166);
       this.comboBoxBroadcastStandard.Name = "comboBoxBroadcastStandard";

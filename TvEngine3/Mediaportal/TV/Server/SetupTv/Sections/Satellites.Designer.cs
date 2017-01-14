@@ -628,7 +628,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       this.comboBoxDiseqcMotorSetupCheckTransmitter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-      this.comboBoxDiseqcMotorSetupCheckTransmitter.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxDiseqcMotorSetupCheckTransmitter.FormattingEnabled = true;
       this.comboBoxDiseqcMotorSetupCheckTransmitter.Location = new System.Drawing.Point(74, 46);
       this.comboBoxDiseqcMotorSetupCheckTransmitter.Name = "comboBoxDiseqcMotorSetupCheckTransmitter";
@@ -704,7 +703,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       this.comboBoxDiseqcMotorSetupCheckSatellite.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-      this.comboBoxDiseqcMotorSetupCheckSatellite.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxDiseqcMotorSetupCheckSatellite.FormattingEnabled = true;
       this.comboBoxDiseqcMotorSetupCheckSatellite.Location = new System.Drawing.Point(74, 19);
       this.comboBoxDiseqcMotorSetupCheckSatellite.Name = "comboBoxDiseqcMotorSetupCheckSatellite";
@@ -788,7 +786,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       this.comboBoxDiseqcMotorSetupTuner.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-      this.comboBoxDiseqcMotorSetupTuner.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxDiseqcMotorSetupTuner.FormattingEnabled = true;
       this.comboBoxDiseqcMotorSetupTuner.Location = new System.Drawing.Point(65, 12);
       this.comboBoxDiseqcMotorSetupTuner.Name = "comboBoxDiseqcMotorSetupTuner";

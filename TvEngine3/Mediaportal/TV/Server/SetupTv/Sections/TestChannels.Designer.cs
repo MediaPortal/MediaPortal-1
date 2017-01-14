@@ -388,7 +388,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       // comboBoxGroups
       // 
-      this.comboBoxGroups.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxGroups.FormattingEnabled = true;
       this.comboBoxGroups.Location = new System.Drawing.Point(65, 268);
       this.comboBoxGroups.Name = "comboBoxGroups";

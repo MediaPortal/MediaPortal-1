@@ -244,7 +244,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.buttonMap.UseVisualStyleBackColor = true;
       this.buttonMap.Click += new System.EventHandler(this.buttonMap_Click);
       // 
-      // ChannelMapping
+      // TuningDetailMapping
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -253,7 +253,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.Controls.Add(this.pictureBoxTuner);
       this.Controls.Add(this.labelTuner);
       this.Controls.Add(this.comboBoxTuner);
-      this.Name = "ChannelMapping";
+      this.Name = "TuningDetailMapping";
       this.Size = new System.Drawing.Size(480, 420);
       ((System.ComponentModel.ISupportInitialize)(this.pictureBoxTuner)).EndInit();
       this.tableLayoutPanel.ResumeLayout(false);

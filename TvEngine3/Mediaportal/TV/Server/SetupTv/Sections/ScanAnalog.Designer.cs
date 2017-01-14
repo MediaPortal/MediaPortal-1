@@ -185,7 +185,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.openFileDialogExternalTunerChannelList.Filter = "Channel List Files (*.txt)|*.txt|All Files|*.*";
       this.openFileDialogExternalTunerChannelList.Title = "Select a channel list.";
       // 
-      // CardAnalog
+      // ScanAnalog
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -203,7 +203,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.Controls.Add(this.listViewProgress);
       this.Controls.Add(this.labelSignalQuality);
       this.Controls.Add(this.labelSignalStrength);
-      this.Name = "CardAnalog";
+      this.Name = "ScanAnalog";
       this.Size = new System.Drawing.Size(480, 420);
       this.ResumeLayout(false);
       this.PerformLayout();

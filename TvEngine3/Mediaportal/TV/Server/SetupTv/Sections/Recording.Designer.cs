@@ -912,12 +912,12 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.buttonRecordingChangeChannel.UseVisualStyleBackColor = true;
       this.buttonRecordingChangeChannel.Click += new System.EventHandler(this.buttonRecordingChangeChannel_Click);
       // 
-      // TvRecording
+      // Recording
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.Controls.Add(this.tabControl);
-      this.Name = "TvRecording";
+      this.Name = "Recording";
       this.Size = new System.Drawing.Size(480, 420);
       this.tabControl.ResumeLayout(false);
       this.tabPageStorage.ResumeLayout(false);
