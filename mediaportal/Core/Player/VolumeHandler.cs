@@ -39,21 +39,8 @@ namespace MediaPortal.Player
   {
     #region Vars
 
-    public static class Win32Api
-    {
-      public const int CM_LOCATE_DEVNODE_NORMAL = 0x00000000;
-      public const int CM_REENUMERATE_NORMAL = 0x00000000;
-      public const int CR_SUCCESS = 0x00000000;
-
-      [DllImport("CfgMgr32.dll", SetLastError = true)]
-      public static extern int CM_Locate_DevNodeA(ref int pdnDevInst, string pDeviceID, int ulFlags);
-
-      [DllImport("CfgMgr32.dll", SetLastError = true)]
-      public static extern int CM_Reenumerate_DevNode(int dnDevInst, int ulFlags);
-    }
-
     static HideVolumeOSD.HideVolumeOSDLib VolumeOSD;
-
+    private static bool IsDigital;
     #endregion
 
     #region Constructors
@@ -64,7 +51,6 @@ namespace MediaPortal.Player
     {
       if (GUIGraphicsContext.DeviceAudioConnected > 0)
       {
-        bool isDigital;
         bool hideWindowsOSD;
 
         using (Settings reader = new MPSettings())
@@ -85,7 +71,7 @@ namespace MediaPortal.Player
             _startupVolume = Math.Max(0, Math.Min(65535, reader.GetValueAsInt("volume", "startuplevel", 52428)));
           }
 
-          isDigital = reader.GetValueAsBool("volume", "digital", false);
+          IsDigital = reader.GetValueAsBool("volume", "digital", false);
 
           _showVolumeOSD = reader.GetValueAsBool("volume", "defaultVolumeOSD", true);
 
@@ -95,24 +81,13 @@ namespace MediaPortal.Player
         try
         {
           _mixer = new Mixer.Mixer();
-          _mixer.Open(0, isDigital);
+          _mixer.Open(0, IsDigital);
           _volumeTable = volumeTable;
           _mixer.ControlChanged += mixer_ControlChanged;
         }
         catch (Exception ex)
         {
           Log.Error("VolumeHandler: Mixer exception when init {0}", ex);
-          int pdnDevInst = 0;
-
-          if (Win32Api.CM_Locate_DevNodeA(ref pdnDevInst, null, Win32Api.CM_LOCATE_DEVNODE_NORMAL) != Win32Api.CR_SUCCESS)
-          {
-            throw new Exception("something...");
-          }
-
-          if (Win32Api.CM_Reenumerate_DevNode(pdnDevInst, Win32Api.CM_REENUMERATE_NORMAL) != Win32Api.CR_SUCCESS)
-          {
-            Log.Error("VolumeHandler: Audio device not refreshed when init {0}", ex);
-          }
         }
 
         if (OSInfo.OSInfo.Win8OrLater() && hideWindowsOSD)
@@ -270,6 +245,17 @@ namespace MediaPortal.Player
     {
       if (_mixer != null)
       {
+        // Check if mixer is still attached to the audio device we started with
+        if (_mixer._audioDefaultDevice.DeviceId != _mixer._audioDefaultDevice.DeviceIdCurrent)
+        {
+          _mixer = new Mixer.Mixer();
+          _mixer.Open(0, IsDigital, true);
+          _mixer.ControlChanged += mixer_ControlChanged;
+
+          if (_mixer == null)
+            return;
+        }
+
         if (_mixer.IsMuted)
         {
           _mixer.IsMuted = false;
@@ -441,6 +427,8 @@ namespace MediaPortal.Player
     {
       get { return _instance; }
     }
+
+    
 
     #endregion Properties
 
