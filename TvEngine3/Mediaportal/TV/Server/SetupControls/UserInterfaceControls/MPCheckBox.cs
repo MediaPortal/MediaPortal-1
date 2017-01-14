@@ -26,13 +26,13 @@ namespace Mediaportal.TV.Server.SetupControls.UserInterfaceControls
   /// <summary>
   /// Summary description for MPCheckBox.
   /// </summary>
-  public class MPCheckBox : System.Windows.Forms.CheckBox
+  public class MPCheckBox : CheckBox
   {
     public MPCheckBox()
     {
       AutoSize = true;
-      FlatStyle = FlatStyle.Popup;
-      UseVisualStyleBackColor = true;
+      base.FlatStyle = FlatStyle.Popup;
+      base.UseVisualStyleBackColor = true;
     }
 
     [DefaultValue(FlatStyle.Popup)]

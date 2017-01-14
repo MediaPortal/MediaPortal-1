@@ -78,7 +78,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DirecTvShef.Config
             this.dataGridViewColumnSetTopBoxIpAddress,
             this.dataGridViewColumnGenieMini,
             this.dataGridViewColumnPowerControl});
-      this.dataGridViewConfig.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
       this.dataGridViewConfig.Location = new System.Drawing.Point(6, 67);
       this.dataGridViewConfig.MultiSelect = false;
       this.dataGridViewConfig.Name = "dataGridViewConfig";

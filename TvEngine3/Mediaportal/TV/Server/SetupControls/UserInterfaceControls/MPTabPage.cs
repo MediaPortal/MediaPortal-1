@@ -29,7 +29,7 @@ namespace Mediaportal.TV.Server.SetupControls.UserInterfaceControls
   {
     public MPTabPage()
     {
-      UseVisualStyleBackColor = true;
+      base.UseVisualStyleBackColor = true;
     }
 
     [DefaultValue(true)]

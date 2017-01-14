@@ -647,7 +647,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.numericUpDownDecryptLimit.Name = "numericUpDownDecryptLimit";
       this.numericUpDownDecryptLimit.Size = new System.Drawing.Size(38, 20);
       this.numericUpDownDecryptLimit.TabIndex = 6;
-      this.numericUpDownDecryptLimit.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       this.numericUpDownDecryptLimit.Value = new decimal(new int[] {
             1,
             0,
@@ -729,7 +728,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.numericUpDownEncoderBitRateValuePeakRecording.Name = "numericUpDownEncoderBitRateValuePeakRecording";
       this.numericUpDownEncoderBitRateValuePeakRecording.Size = new System.Drawing.Size(40, 20);
       this.numericUpDownEncoderBitRateValuePeakRecording.TabIndex = 17;
-      this.numericUpDownEncoderBitRateValuePeakRecording.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       this.numericUpDownEncoderBitRateValuePeakRecording.Value = new decimal(new int[] {
             1,
             0,
@@ -770,7 +768,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.numericUpDownEncoderBitRateValueRecording.Name = "numericUpDownEncoderBitRateValueRecording";
       this.numericUpDownEncoderBitRateValueRecording.Size = new System.Drawing.Size(40, 20);
       this.numericUpDownEncoderBitRateValueRecording.TabIndex = 14;
-      this.numericUpDownEncoderBitRateValueRecording.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       this.numericUpDownEncoderBitRateValueRecording.Value = new decimal(new int[] {
             1,
             0,
@@ -842,7 +839,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.numericUpDownEncoderBitRateValuePeakTimeShifting.Name = "numericUpDownEncoderBitRateValuePeakTimeShifting";
       this.numericUpDownEncoderBitRateValuePeakTimeShifting.Size = new System.Drawing.Size(40, 20);
       this.numericUpDownEncoderBitRateValuePeakTimeShifting.TabIndex = 8;
-      this.numericUpDownEncoderBitRateValuePeakTimeShifting.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       this.numericUpDownEncoderBitRateValuePeakTimeShifting.Value = new decimal(new int[] {
             1,
             0,
@@ -883,7 +879,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.numericUpDownEncoderBitRateValueTimeShifting.Name = "numericUpDownEncoderBitRateValueTimeShifting";
       this.numericUpDownEncoderBitRateValueTimeShifting.Size = new System.Drawing.Size(40, 20);
       this.numericUpDownEncoderBitRateValueTimeShifting.TabIndex = 5;
-      this.numericUpDownEncoderBitRateValueTimeShifting.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       this.numericUpDownEncoderBitRateValueTimeShifting.Value = new decimal(new int[] {
             1,
             0,
@@ -1322,7 +1317,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.numericUpDownExternalInputPhysicalChannelNumber.Name = "numericUpDownExternalInputPhysicalChannelNumber";
       this.numericUpDownExternalInputPhysicalChannelNumber.Size = new System.Drawing.Size(50, 20);
       this.numericUpDownExternalInputPhysicalChannelNumber.TabIndex = 7;
-      this.numericUpDownExternalInputPhysicalChannelNumber.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       this.numericUpDownExternalInputPhysicalChannelNumber.Value = new decimal(new int[] {
             7,
             0,

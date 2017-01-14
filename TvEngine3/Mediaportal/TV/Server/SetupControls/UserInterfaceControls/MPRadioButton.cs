@@ -26,13 +26,13 @@ namespace Mediaportal.TV.Server.SetupControls.UserInterfaceControls
   /// <summary>
   /// Summary description for MPRadioButton.
   /// </summary>
-  public class MPRadioButton : System.Windows.Forms.RadioButton
+  public class MPRadioButton : RadioButton
   {
     public MPRadioButton()
     {
       AutoSize = true;
-      FlatStyle = FlatStyle.Popup;
-      UseVisualStyleBackColor = true;
+      base.FlatStyle = FlatStyle.Popup;
+      base.UseVisualStyleBackColor = true;
     }
 
     [DefaultValue(FlatStyle.Popup)]

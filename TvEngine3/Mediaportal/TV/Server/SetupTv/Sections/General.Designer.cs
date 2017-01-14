@@ -105,7 +105,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.numericUpDownTimeLimitSignalLock.Name = "numericUpDownTimeLimitSignalLock";
       this.numericUpDownTimeLimitSignalLock.Size = new System.Drawing.Size(60, 20);
       this.numericUpDownTimeLimitSignalLock.TabIndex = 1;
-      this.numericUpDownTimeLimitSignalLock.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       this.numericUpDownTimeLimitSignalLock.Value = new decimal(new int[] {
             2500,
             0,
@@ -200,7 +199,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.numericUpDownTimeLimitReceiveStreamInfo.Name = "numericUpDownTimeLimitReceiveStreamInfo";
       this.numericUpDownTimeLimitReceiveStreamInfo.Size = new System.Drawing.Size(60, 20);
       this.numericUpDownTimeLimitReceiveStreamInfo.TabIndex = 4;
-      this.numericUpDownTimeLimitReceiveStreamInfo.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       this.numericUpDownTimeLimitReceiveStreamInfo.Value = new decimal(new int[] {
             5000,
             0,
@@ -264,7 +262,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.numericUpDownTimeLimitReceiveVideoAudio.Name = "numericUpDownTimeLimitReceiveVideoAudio";
       this.numericUpDownTimeLimitReceiveVideoAudio.Size = new System.Drawing.Size(60, 20);
       this.numericUpDownTimeLimitReceiveVideoAudio.TabIndex = 7;
-      this.numericUpDownTimeLimitReceiveVideoAudio.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       this.numericUpDownTimeLimitReceiveVideoAudio.Value = new decimal(new int[] {
             5000,
             0,

@@ -153,7 +153,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices.Config
         numericUpDownDecryptLimit.Name = "numericUpDownDecryptLimit" + i;
         numericUpDownDecryptLimit.Size = new Size(44, 20);
         numericUpDownDecryptLimit.TabIndex = tabIndexBase + 4;
-        numericUpDownDecryptLimit.TextAlign = HorizontalAlignment.Center;
         numericUpDownDecryptLimit.Value = context.Config.DecryptLimit;
         ((ISupportInitialize)numericUpDownDecryptLimit).EndInit();
         groupBoxCi.Controls.Add(numericUpDownDecryptLimit);

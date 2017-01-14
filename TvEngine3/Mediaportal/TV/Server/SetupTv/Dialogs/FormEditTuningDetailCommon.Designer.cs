@@ -79,26 +79,10 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       // channelNumberUpDownNumber
       // 
-      this.channelNumberUpDownNumber.DecimalPlaces = 3;
       this.channelNumberUpDownNumber.Location = new System.Drawing.Point(123, 38);
-      this.channelNumberUpDownNumber.Maximum = new decimal(new int[] {
-            65535999,
-            0,
-            0,
-            196608});
-      this.channelNumberUpDownNumber.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
       this.channelNumberUpDownNumber.Name = "channelNumberUpDownNumber";
       this.channelNumberUpDownNumber.Size = new System.Drawing.Size(75, 20);
       this.channelNumberUpDownNumber.TabIndex = 3;
-      this.channelNumberUpDownNumber.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
       // 
       // labelName
       // 

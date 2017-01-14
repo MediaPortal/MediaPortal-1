@@ -79,7 +79,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.UsbUirt.Config
             this.dataGridViewColumnTransmitZone,
             this.dataGridViewColumnSetTopBoxProfile,
             this.dataGridViewColumnPowerControl});
-      this.dataGridViewConfig.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
       this.dataGridViewConfig.Location = new System.Drawing.Point(6, 6);
       this.dataGridViewConfig.MultiSelect = false;
       this.dataGridViewConfig.Name = "dataGridViewConfig";
@@ -155,27 +154,10 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.UsbUirt.Config
       // channelNumberUpDownTest
       // 
       this.channelNumberUpDownTest.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.channelNumberUpDownTest.DecimalPlaces = 3;
       this.channelNumberUpDownTest.Location = new System.Drawing.Point(325, 390);
-      this.channelNumberUpDownTest.Maximum = new decimal(new int[] {
-            65535999,
-            0,
-            0,
-            196608});
-      this.channelNumberUpDownTest.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
       this.channelNumberUpDownTest.Name = "channelNumberUpDownTest";
       this.channelNumberUpDownTest.Size = new System.Drawing.Size(80, 20);
       this.channelNumberUpDownTest.TabIndex = 2;
-      this.channelNumberUpDownTest.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-      this.channelNumberUpDownTest.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
       // 
       // buttonLearn
       // 

@@ -110,7 +110,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster.Config
       this.numericUpDownCommandDelay.Name = "numericUpDownCommandDelay";
       this.numericUpDownCommandDelay.Size = new System.Drawing.Size(60, 20);
       this.numericUpDownCommandDelay.TabIndex = 6;
-      this.numericUpDownCommandDelay.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       this.numericUpDownCommandDelay.Value = new decimal(new int[] {
             200,
             0,
@@ -153,7 +152,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster.Config
       this.numericUpDownPowerChangeDelay.Name = "numericUpDownPowerChangeDelay";
       this.numericUpDownPowerChangeDelay.Size = new System.Drawing.Size(60, 20);
       this.numericUpDownPowerChangeDelay.TabIndex = 9;
-      this.numericUpDownPowerChangeDelay.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       this.numericUpDownPowerChangeDelay.Value = new decimal(new int[] {
             3000,
             0,

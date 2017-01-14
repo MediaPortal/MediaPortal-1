@@ -19,6 +19,7 @@
 #endregion
 
 using System;
+using System.ComponentModel;
 using System.Globalization;
 using System.Windows.Forms;
 
@@ -100,6 +101,7 @@ namespace Mediaportal.TV.Server.SetupControls.UserInterfaceControls
       base.OnLostFocus(e);
     }
 
+    [DefaultValue(int.MinValue)]
     public int MinimumValue
     {
       get
@@ -112,6 +114,7 @@ namespace Mediaportal.TV.Server.SetupControls.UserInterfaceControls
       }
     }
 
+    [DefaultValue(int.MaxValue)]
     public int MaximumValue
     {
       get

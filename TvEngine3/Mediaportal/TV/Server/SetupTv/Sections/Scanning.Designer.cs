@@ -109,7 +109,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.numericUpDownTimingLimitNetworkInformation.Name = "numericUpDownTimingLimitNetworkInformation";
       this.numericUpDownTimingLimitNetworkInformation.Size = new System.Drawing.Size(60, 20);
       this.numericUpDownTimingLimitNetworkInformation.TabIndex = 8;
-      this.numericUpDownTimingLimitNetworkInformation.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       this.numericUpDownTimingLimitNetworkInformation.Value = new decimal(new int[] {
             15000,
             0,
@@ -209,7 +208,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.numericUpDownTimingMinimum.Name = "numericUpDownTimingMinimum";
       this.numericUpDownTimingMinimum.Size = new System.Drawing.Size(60, 20);
       this.numericUpDownTimingMinimum.TabIndex = 1;
-      this.numericUpDownTimingMinimum.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       this.numericUpDownTimingMinimum.Value = new decimal(new int[] {
             2000,
             0,
@@ -256,7 +254,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.numericUpDownTimingLimitSingleTransmitter.Name = "numericUpDownTimingLimitSingleTransmitter";
       this.numericUpDownTimingLimitSingleTransmitter.Size = new System.Drawing.Size(60, 20);
       this.numericUpDownTimingLimitSingleTransmitter.TabIndex = 5;
-      this.numericUpDownTimingLimitSingleTransmitter.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       this.numericUpDownTimingLimitSingleTransmitter.Value = new decimal(new int[] {
             15000,
             0,
@@ -352,7 +349,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.numericUpDownTimingLimitCableCard.Name = "numericUpDownTimingLimitCableCard";
       this.numericUpDownTimingLimitCableCard.Size = new System.Drawing.Size(60, 20);
       this.numericUpDownTimingLimitCableCard.TabIndex = 11;
-      this.numericUpDownTimingLimitCableCard.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       this.numericUpDownTimingLimitCableCard.Value = new decimal(new int[] {
             300000,
             0,

@@ -168,7 +168,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.numericUpDownDiskManagement.Name = "numericUpDownDiskManagement";
       this.numericUpDownDiskManagement.Size = new System.Drawing.Size(60, 20);
       this.numericUpDownDiskManagement.TabIndex = 4;
-      this.numericUpDownDiskManagement.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       this.numericUpDownDiskManagement.Value = new decimal(new int[] {
             1000,
             0,
@@ -443,7 +442,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.numericUpDownTunerLimit.Name = "numericUpDownTunerLimit";
       this.numericUpDownTunerLimit.Size = new System.Drawing.Size(45, 20);
       this.numericUpDownTunerLimit.TabIndex = 7;
-      this.numericUpDownTunerLimit.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       this.numericUpDownTunerLimit.Value = new decimal(new int[] {
             100,
             0,
@@ -518,7 +516,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.numericUpDownPostRecord.Name = "numericUpDownPostRecord";
       this.numericUpDownPostRecord.Size = new System.Drawing.Size(45, 20);
       this.numericUpDownPostRecord.TabIndex = 4;
-      this.numericUpDownPostRecord.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       this.numericUpDownPostRecord.Value = new decimal(new int[] {
             10,
             0,
@@ -550,7 +547,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.numericUpDownPreRecord.Name = "numericUpDownPreRecord";
       this.numericUpDownPreRecord.Size = new System.Drawing.Size(45, 20);
       this.numericUpDownPreRecord.TabIndex = 1;
-      this.numericUpDownPreRecord.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       this.numericUpDownPreRecord.Value = new decimal(new int[] {
             7,
             0,
@@ -664,7 +660,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.numericUpDownThumbnailerTimeOffset.Name = "numericUpDownThumbnailerTimeOffset";
       this.numericUpDownThumbnailerTimeOffset.Size = new System.Drawing.Size(45, 20);
       this.numericUpDownThumbnailerTimeOffset.TabIndex = 4;
-      this.numericUpDownThumbnailerTimeOffset.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       this.numericUpDownThumbnailerTimeOffset.Value = new decimal(new int[] {
             3,
             0,
@@ -696,7 +691,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.numericUpDownThumbnailerRowCount.Name = "numericUpDownThumbnailerRowCount";
       this.numericUpDownThumbnailerRowCount.Size = new System.Drawing.Size(45, 20);
       this.numericUpDownThumbnailerRowCount.TabIndex = 10;
-      this.numericUpDownThumbnailerRowCount.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       this.numericUpDownThumbnailerRowCount.Value = new decimal(new int[] {
             1,
             0,
@@ -719,7 +713,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.numericUpDownThumbnailerColumnCount.Name = "numericUpDownThumbnailerColumnCount";
       this.numericUpDownThumbnailerColumnCount.Size = new System.Drawing.Size(45, 20);
       this.numericUpDownThumbnailerColumnCount.TabIndex = 8;
-      this.numericUpDownThumbnailerColumnCount.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       this.numericUpDownThumbnailerColumnCount.Value = new decimal(new int[] {
             1,
             0,

@@ -27,6 +27,25 @@ namespace Mediaportal.TV.Server.SetupControls.UserInterfaceControls
   {
     private bool _truncateDecimalPlaces = false;
 
+    public MPNumericUpDown()
+    {
+      base.TextAlign = HorizontalAlignment.Center;
+    }
+
+    [DefaultValue(HorizontalAlignment.Center)]
+    public new HorizontalAlignment TextAlign
+    {
+      get
+      {
+        return base.TextAlign;
+      }
+      set
+      {
+        base.TextAlign = value;
+        Invalidate();
+      }
+    }
+
     [DefaultValue(false)]
     public bool TruncateDecimalPlaces
     {

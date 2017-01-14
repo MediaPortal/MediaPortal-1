@@ -433,7 +433,6 @@ namespace Mediaportal.TV.Server.Plugins.TvMovieImport.Config
       this.numericUpDownUpdateTimeFrequency.Name = "numericUpDownUpdateTimeFrequency";
       this.numericUpDownUpdateTimeFrequency.Size = new System.Drawing.Size(40, 20);
       this.numericUpDownUpdateTimeFrequency.TabIndex = 4;
-      this.numericUpDownUpdateTimeFrequency.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       this.numericUpDownUpdateTimeFrequency.Value = new decimal(new int[] {
             24,
             0,

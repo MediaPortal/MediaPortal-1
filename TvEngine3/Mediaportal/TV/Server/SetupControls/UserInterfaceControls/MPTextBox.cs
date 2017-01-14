@@ -25,7 +25,7 @@ namespace Mediaportal.TV.Server.SetupControls.UserInterfaceControls
   /// <summary>
   /// Summary description for MPTextBox.
   /// </summary>
-  public class MPTextBox : System.Windows.Forms.TextBox
+  public class MPTextBox : TextBox
   {
     protected override void OnPreviewKeyDown(PreviewKeyDownEventArgs e)
     {

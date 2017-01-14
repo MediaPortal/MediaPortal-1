@@ -30,7 +30,7 @@ namespace Mediaportal.TV.Server.SetupControls.UserInterfaceControls
   {
     public MPComboBox()
     {
-      DropDownStyle = ComboBoxStyle.DropDownList;
+      base.DropDownStyle = ComboBoxStyle.DropDownList;
     }
 
     [DefaultValue(ComboBoxStyle.DropDownList)]

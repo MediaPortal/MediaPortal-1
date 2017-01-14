@@ -68,7 +68,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.numericUpDownPort.Name = "numericUpDownPort";
       this.numericUpDownPort.Size = new System.Drawing.Size(55, 20);
       this.numericUpDownPort.TabIndex = 3;
-      this.numericUpDownPort.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       this.numericUpDownPort.Value = new decimal(new int[] {
             554,
             0,

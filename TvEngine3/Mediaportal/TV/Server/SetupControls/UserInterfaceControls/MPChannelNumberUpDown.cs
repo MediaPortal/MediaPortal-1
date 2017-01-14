@@ -19,6 +19,7 @@
 #endregion
 
 using System;
+using System.ComponentModel;
 using System.Globalization;
 using System.Windows.Forms;
 using Mediaportal.TV.Server.Common.Types.Channel;
@@ -27,14 +28,103 @@ namespace Mediaportal.TV.Server.SetupControls.UserInterfaceControls
 {
   public class MPChannelNumberUpDown : NumericUpDown
   {
+    private const int SECOND_PART_DIGIT_COUNT = 3;
+    private const int INCREMENT = 1;
+    private const int MINIMUM = 1;
+    private const decimal MAXIMUM = ushort.MaxValue + 0.999M;   // ushort.MaxValue + 3 decimal places
+
     public MPChannelNumberUpDown()
     {
-      DecimalPlaces = 3;
-      Increment = 1;
-      Minimum = 1;
-      Maximum = ushort.MaxValue + 0.999M;  // 3 decimal places => 0.999
-      Value = Minimum;
+      base.DecimalPlaces = SECOND_PART_DIGIT_COUNT;
+      base.Increment = INCREMENT;
+      base.Minimum = MINIMUM;
+      base.Maximum = MAXIMUM;
+      base.Value = MINIMUM;
+      base.TextAlign = HorizontalAlignment.Center;
     }
+
+    #region properties
+
+    [DefaultValue(SECOND_PART_DIGIT_COUNT)]
+    public new int DecimalPlaces
+    {
+      get
+      {
+        return base.DecimalPlaces;
+      }
+      set
+      {
+        base.DecimalPlaces = value;
+      }
+    }
+
+    [DefaultValue(INCREMENT)]
+    public new decimal Increment
+    {
+      get
+      {
+        return base.Increment;
+      }
+      set
+      {
+        base.Increment = value;
+      }
+    }
+
+    [DefaultValue(MINIMUM)]
+    public new decimal Minimum
+    {
+      get
+      {
+        return base.Minimum;
+      }
+      set
+      {
+        base.Minimum = value;
+      }
+    }
+
+    [DefaultValue(65535.999)]
+    public new decimal Maximum
+    {
+      get
+      {
+        return base.Maximum;
+      }
+      set
+      {
+        base.Maximum = value;
+      }
+    }
+
+    [DefaultValue(MINIMUM)]
+    public new decimal Value
+    {
+      get
+      {
+        return base.Value;
+      }
+      set
+      {
+        base.Value = value;
+      }
+    }
+
+    [DefaultValue(HorizontalAlignment.Center)]
+    public new HorizontalAlignment TextAlign
+    {
+      get
+      {
+        return base.TextAlign;
+      }
+      set
+      {
+        base.TextAlign = value;
+        Invalidate();
+      }
+    }
+
+    #endregion
 
     protected override void UpdateEditText()
     {

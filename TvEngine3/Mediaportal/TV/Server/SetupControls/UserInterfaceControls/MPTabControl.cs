@@ -28,7 +28,7 @@ namespace Mediaportal.TV.Server.SetupControls.UserInterfaceControls
   /// <summary>
   /// Summary description for MPTabControl.
   /// </summary>
-  public class MPTabControl : System.Windows.Forms.TabControl
+  public class MPTabControl : TabControl
   {
     /// <summary> 
     /// Required designer variable.

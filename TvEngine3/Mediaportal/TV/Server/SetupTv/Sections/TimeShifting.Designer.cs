@@ -106,7 +106,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.numericUpDownTunerLimit.Name = "numericUpDownTunerLimit";
       this.numericUpDownTunerLimit.Size = new System.Drawing.Size(60, 20);
       this.numericUpDownTunerLimit.TabIndex = 1;
-      this.numericUpDownTunerLimit.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       this.numericUpDownTunerLimit.Value = new decimal(new int[] {
             3,
             0,
@@ -129,7 +128,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.numericUpDownParkTimeLimit.Name = "numericUpDownParkTimeLimit";
       this.numericUpDownParkTimeLimit.Size = new System.Drawing.Size(60, 20);
       this.numericUpDownParkTimeLimit.TabIndex = 3;
-      this.numericUpDownParkTimeLimit.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       this.numericUpDownParkTimeLimit.Value = new decimal(new int[] {
             10,
             0,
@@ -224,7 +222,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.numericUpDownBufferSizePaused.Name = "numericUpDownBufferSizePaused";
       this.numericUpDownBufferSizePaused.Size = new System.Drawing.Size(60, 20);
       this.numericUpDownBufferSizePaused.TabIndex = 7;
-      this.numericUpDownBufferSizePaused.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       this.numericUpDownBufferSizePaused.Value = new decimal(new int[] {
             5,
             0,
@@ -254,7 +251,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.numericUpDownBufferSize.Name = "numericUpDownBufferSize";
       this.numericUpDownBufferSize.Size = new System.Drawing.Size(60, 20);
       this.numericUpDownBufferSize.TabIndex = 4;
-      this.numericUpDownBufferSize.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       this.numericUpDownBufferSize.Value = new decimal(new int[] {
             15,
             0,

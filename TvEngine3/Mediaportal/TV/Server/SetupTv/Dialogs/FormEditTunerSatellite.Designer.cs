@@ -246,7 +246,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.numericUpDownDiseqcMotorPosition.Name = "numericUpDownDiseqcMotorPosition";
       this.numericUpDownDiseqcMotorPosition.Size = new System.Drawing.Size(45, 20);
       this.numericUpDownDiseqcMotorPosition.TabIndex = 12;
-      this.numericUpDownDiseqcMotorPosition.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       this.numericUpDownDiseqcMotorPosition.Value = new decimal(new int[] {
             1,
             0,
@@ -273,7 +272,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.numericUpDownSatIpSource.Name = "numericUpDownSatIpSource";
       this.numericUpDownSatIpSource.Size = new System.Drawing.Size(45, 20);
       this.numericUpDownSatIpSource.TabIndex = 3;
-      this.numericUpDownSatIpSource.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       this.numericUpDownSatIpSource.ValueChanged += new System.EventHandler(this.numericUpDownSatIpSource_ValueChanged);
       // 
       // labelSatIpSource

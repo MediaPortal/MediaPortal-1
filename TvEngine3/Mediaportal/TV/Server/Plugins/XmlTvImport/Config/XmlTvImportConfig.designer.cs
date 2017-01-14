@@ -150,7 +150,6 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport.Config
       this.groupBoxImport.Controls.Add(this.labelDataOrListFile);
       this.groupBoxImport.Controls.Add(this.buttonDataOrListFileBrowse);
       this.groupBoxImport.Controls.Add(this.textBoxDataOrListFile);
-      this.groupBoxImport.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxImport.Location = new System.Drawing.Point(6, 6);
       this.groupBoxImport.Name = "groupBoxImport";
       this.groupBoxImport.Size = new System.Drawing.Size(460, 135);
@@ -218,7 +217,6 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport.Config
       this.groupBoxTimeCorrection.Controls.Add(this.checkBoxTimeCorrectionEnable);
       this.groupBoxTimeCorrection.Controls.Add(this.labelTimeCorrectionHours);
       this.groupBoxTimeCorrection.Controls.Add(this.labelTimeCorrectionMinutes);
-      this.groupBoxTimeCorrection.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxTimeCorrection.Location = new System.Drawing.Point(6, 147);
       this.groupBoxTimeCorrection.Name = "groupBoxTimeCorrection";
       this.groupBoxTimeCorrection.Size = new System.Drawing.Size(460, 93);
@@ -242,7 +240,6 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport.Config
       this.numericUpDownTimeCorrectionMinutes.Name = "numericUpDownTimeCorrectionMinutes";
       this.numericUpDownTimeCorrectionMinutes.Size = new System.Drawing.Size(40, 20);
       this.numericUpDownTimeCorrectionMinutes.TabIndex = 4;
-      this.numericUpDownTimeCorrectionMinutes.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       // 
       // numericUpDownTimeCorrectionHours
       // 
@@ -260,7 +257,6 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport.Config
       this.numericUpDownTimeCorrectionHours.Name = "numericUpDownTimeCorrectionHours";
       this.numericUpDownTimeCorrectionHours.Size = new System.Drawing.Size(40, 20);
       this.numericUpDownTimeCorrectionHours.TabIndex = 2;
-      this.numericUpDownTimeCorrectionHours.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       // 
       // labelTimeCorrectionList
       // 
@@ -274,7 +270,6 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport.Config
       // checkBoxTimeCorrectionEnable
       // 
       this.checkBoxTimeCorrectionEnable.AutoSize = true;
-      this.checkBoxTimeCorrectionEnable.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxTimeCorrectionEnable.Location = new System.Drawing.Point(6, 19);
       this.checkBoxTimeCorrectionEnable.Name = "checkBoxTimeCorrectionEnable";
       this.checkBoxTimeCorrectionEnable.Size = new System.Drawing.Size(220, 17);
@@ -312,7 +307,6 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport.Config
       this.groupBoxImportStatus.Controls.Add(this.labelImportStatusProgramCountsLabel);
       this.groupBoxImportStatus.Controls.Add(this.labelImportStatusChannelCountsLabel);
       this.groupBoxImportStatus.Controls.Add(this.labelImportStatusDateTimeLabel);
-      this.groupBoxImportStatus.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxImportStatus.Location = new System.Drawing.Point(6, 269);
       this.groupBoxImportStatus.Name = "groupBoxImportStatus";
       this.groupBoxImportStatus.Size = new System.Drawing.Size(460, 119);
@@ -419,7 +413,6 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport.Config
       this.groupBoxMapping.Controls.Add(this.progressBarMappingsProgress);
       this.groupBoxMapping.Controls.Add(this.buttonMappingsSave);
       this.groupBoxMapping.Controls.Add(this.buttonMappingsLoad);
-      this.groupBoxMapping.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxMapping.Location = new System.Drawing.Point(6, 6);
       this.groupBoxMapping.Name = "groupBoxMapping";
       this.groupBoxMapping.Size = new System.Drawing.Size(460, 85);
@@ -446,7 +439,6 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport.Config
       // checkBoxMappingsPartialMatch
       // 
       this.checkBoxMappingsPartialMatch.AutoSize = true;
-      this.checkBoxMappingsPartialMatch.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxMappingsPartialMatch.Location = new System.Drawing.Point(13, 38);
       this.checkBoxMappingsPartialMatch.Name = "checkBoxMappingsPartialMatch";
       this.checkBoxMappingsPartialMatch.Size = new System.Drawing.Size(137, 17);
@@ -562,7 +554,6 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport.Config
       this.groupBoxScheduledActionsTime.Controls.Add(this.radioButtonScheduledActionsTimeBetween);
       this.groupBoxScheduledActionsTime.Controls.Add(this.dateTimePickerScheduledActionsTimeBetweenStart);
       this.groupBoxScheduledActionsTime.Controls.Add(this.labelScheduledActionsTime);
-      this.groupBoxScheduledActionsTime.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxScheduledActionsTime.Location = new System.Drawing.Point(6, 147);
       this.groupBoxScheduledActionsTime.Name = "groupBoxScheduledActionsTime";
       this.groupBoxScheduledActionsTime.Size = new System.Drawing.Size(460, 122);
@@ -595,7 +586,6 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport.Config
       this.numericUpDownScheduledActionsTimeFrequency.Name = "numericUpDownScheduledActionsTimeFrequency";
       this.numericUpDownScheduledActionsTimeFrequency.Size = new System.Drawing.Size(40, 20);
       this.numericUpDownScheduledActionsTimeFrequency.TabIndex = 1;
-      this.numericUpDownScheduledActionsTimeFrequency.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       this.numericUpDownScheduledActionsTimeFrequency.Value = new decimal(new int[] {
             24,
             0,
@@ -625,7 +615,6 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport.Config
       // radioButtonScheduledActionsTimeStartup
       // 
       this.radioButtonScheduledActionsTimeStartup.AutoSize = true;
-      this.radioButtonScheduledActionsTimeStartup.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.radioButtonScheduledActionsTimeStartup.Location = new System.Drawing.Point(8, 68);
       this.radioButtonScheduledActionsTimeStartup.Name = "radioButtonScheduledActionsTimeStartup";
       this.radioButtonScheduledActionsTimeStartup.Size = new System.Drawing.Size(210, 17);
@@ -645,7 +634,6 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport.Config
       // 
       this.radioButtonScheduledActionsTimeBetween.AutoSize = true;
       this.radioButtonScheduledActionsTimeBetween.Checked = true;
-      this.radioButtonScheduledActionsTimeBetween.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.radioButtonScheduledActionsTimeBetween.Location = new System.Drawing.Point(8, 44);
       this.radioButtonScheduledActionsTimeBetween.Name = "radioButtonScheduledActionsTimeBetween";
       this.radioButtonScheduledActionsTimeBetween.Size = new System.Drawing.Size(66, 17);
@@ -682,7 +670,6 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport.Config
       this.groupBoxScheduledActionsStatus.Controls.Add(this.labelScheduledActionsStatusDateTimeValue);
       this.groupBoxScheduledActionsStatus.Controls.Add(this.labelScheduledActionsStatusLabel);
       this.groupBoxScheduledActionsStatus.Controls.Add(this.labelScheduledActionsStatusDateTimeLabel);
-      this.groupBoxScheduledActionsStatus.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxScheduledActionsStatus.Location = new System.Drawing.Point(6, 311);
       this.groupBoxScheduledActionsStatus.Name = "groupBoxScheduledActionsStatus";
       this.groupBoxScheduledActionsStatus.Size = new System.Drawing.Size(460, 77);
@@ -736,7 +723,6 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport.Config
       this.groupBoxScheduledActionsAction.Controls.Add(this.buttonScheduledActionsProgramBrowse);
       this.groupBoxScheduledActionsAction.Controls.Add(this.textBoxScheduledActionsProgramLocation);
       this.groupBoxScheduledActionsAction.Controls.Add(this.textBoxScheduledActionsDownloadUrl);
-      this.groupBoxScheduledActionsAction.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxScheduledActionsAction.Location = new System.Drawing.Point(6, 6);
       this.groupBoxScheduledActionsAction.Name = "groupBoxScheduledActionsAction";
       this.groupBoxScheduledActionsAction.Size = new System.Drawing.Size(460, 135);
@@ -747,7 +733,6 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport.Config
       // checkBoxScheduledActionsProgram
       // 
       this.checkBoxScheduledActionsProgram.AutoSize = true;
-      this.checkBoxScheduledActionsProgram.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxScheduledActionsProgram.Location = new System.Drawing.Point(6, 74);
       this.checkBoxScheduledActionsProgram.Name = "checkBoxScheduledActionsProgram";
       this.checkBoxScheduledActionsProgram.Size = new System.Drawing.Size(177, 17);
@@ -758,7 +743,6 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport.Config
       // checkBoxScheduledActionsDownload
       // 
       this.checkBoxScheduledActionsDownload.AutoSize = true;
-      this.checkBoxScheduledActionsDownload.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxScheduledActionsDownload.Location = new System.Drawing.Point(6, 19);
       this.checkBoxScheduledActionsDownload.Name = "checkBoxScheduledActionsDownload";
       this.checkBoxScheduledActionsDownload.Size = new System.Drawing.Size(319, 17);

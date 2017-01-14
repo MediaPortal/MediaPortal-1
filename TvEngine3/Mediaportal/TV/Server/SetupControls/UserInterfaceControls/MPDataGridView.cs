@@ -19,17 +19,32 @@
 #endregion
 
 using System.Windows.Forms;
+using System.ComponentModel;
 
 namespace Mediaportal.TV.Server.SetupControls.UserInterfaceControls
 {
   /// <summary>
   /// Summary description for MPDataGridView.
   /// </summary>
-  public class MPDataGridView : System.Windows.Forms.DataGridView
+  public class MPDataGridView : DataGridView
   {
     public MPDataGridView()
     {
-      EditMode = DataGridViewEditMode.EditOnEnter;
+      base.EditMode = DataGridViewEditMode.EditOnEnter;
+    }
+
+    [DefaultValue(DataGridViewEditMode.EditOnEnter)]
+    public new DataGridViewEditMode EditMode
+    {
+      get
+      {
+        return base.EditMode;
+      }
+      set
+      {
+        base.EditMode = value;
+        Invalidate();
+      }
     }
   }
 }

@@ -181,7 +181,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             this.dataGridViewColumnTone22kState,
             this.dataGridViewColumnPolarisations,
             this.dataGridViewColumnIsToroidalDish});
-      this.dataGridViewTunerSatellites.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
       this.dataGridViewTunerSatellites.Location = new System.Drawing.Point(6, 19);
       this.dataGridViewTunerSatellites.Name = "dataGridViewTunerSatellites";
       this.dataGridViewTunerSatellites.ReadOnly = true;
@@ -283,7 +282,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.numericUpDownUsalsLongitude.Name = "numericUpDownUsalsLongitude";
       this.numericUpDownUsalsLongitude.Size = new System.Drawing.Size(65, 20);
       this.numericUpDownUsalsLongitude.TabIndex = 4;
-      this.numericUpDownUsalsLongitude.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       this.numericUpDownUsalsLongitude.TruncateDecimalPlaces = true;
       // 
       // numericUpDownUsalsLatitude
@@ -308,7 +306,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.numericUpDownUsalsLatitude.Name = "numericUpDownUsalsLatitude";
       this.numericUpDownUsalsLatitude.Size = new System.Drawing.Size(65, 20);
       this.numericUpDownUsalsLatitude.TabIndex = 1;
-      this.numericUpDownUsalsLatitude.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       this.numericUpDownUsalsLatitude.TruncateDecimalPlaces = true;
       // 
       // labelUsalsLatitude
@@ -390,7 +387,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.numericUpDownUsalsAltitude.Name = "numericUpDownUsalsAltitude";
       this.numericUpDownUsalsAltitude.Size = new System.Drawing.Size(65, 20);
       this.numericUpDownUsalsAltitude.TabIndex = 7;
-      this.numericUpDownUsalsAltitude.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       this.numericUpDownUsalsAltitude.TruncateDecimalPlaces = true;
       // 
       // labelUsalsAltitude
@@ -457,7 +453,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.numericUpDownDiseqcMotorSpeedFast.Name = "numericUpDownDiseqcMotorSpeedFast";
       this.numericUpDownDiseqcMotorSpeedFast.Size = new System.Drawing.Size(45, 20);
       this.numericUpDownDiseqcMotorSpeedFast.TabIndex = 4;
-      this.numericUpDownDiseqcMotorSpeedFast.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       this.numericUpDownDiseqcMotorSpeedFast.TruncateDecimalPlaces = true;
       this.numericUpDownDiseqcMotorSpeedFast.Value = new decimal(new int[] {
             8,
@@ -505,7 +500,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.numericUpDownDiseqcMotorSpeedSlow.Name = "numericUpDownDiseqcMotorSpeedSlow";
       this.numericUpDownDiseqcMotorSpeedSlow.Size = new System.Drawing.Size(45, 20);
       this.numericUpDownDiseqcMotorSpeedSlow.TabIndex = 1;
-      this.numericUpDownDiseqcMotorSpeedSlow.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       this.numericUpDownDiseqcMotorSpeedSlow.TruncateDecimalPlaces = true;
       this.numericUpDownDiseqcMotorSpeedSlow.Value = new decimal(new int[] {
             5,
@@ -857,7 +851,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.numericUpDownDiseqcMotorSetupPositionUsals.Name = "numericUpDownDiseqcMotorSetupPositionUsals";
       this.numericUpDownDiseqcMotorSetupPositionUsals.Size = new System.Drawing.Size(50, 20);
       this.numericUpDownDiseqcMotorSetupPositionUsals.TabIndex = 7;
-      this.numericUpDownDiseqcMotorSetupPositionUsals.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       this.numericUpDownDiseqcMotorSetupPositionUsals.TruncateDecimalPlaces = true;
       // 
       // labelDiseqcMotorSetupPositionUsals
@@ -921,7 +914,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.numericUpDownDiseqcMotorSetupPositionStored.Name = "numericUpDownDiseqcMotorSetupPositionStored";
       this.numericUpDownDiseqcMotorSetupPositionStored.Size = new System.Drawing.Size(50, 20);
       this.numericUpDownDiseqcMotorSetupPositionStored.TabIndex = 3;
-      this.numericUpDownDiseqcMotorSetupPositionStored.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       this.numericUpDownDiseqcMotorSetupPositionStored.Value = new decimal(new int[] {
             1,
             0,
@@ -987,7 +979,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.numericUpDownDiseqcMotorSetupManualMoveStepCount.Name = "numericUpDownDiseqcMotorSetupManualMoveStepCount";
       this.numericUpDownDiseqcMotorSetupManualMoveStepCount.Size = new System.Drawing.Size(45, 20);
       this.numericUpDownDiseqcMotorSetupManualMoveStepCount.TabIndex = 1;
-      this.numericUpDownDiseqcMotorSetupManualMoveStepCount.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       this.numericUpDownDiseqcMotorSetupManualMoveStepCount.Value = new decimal(new int[] {
             10,
             0,
