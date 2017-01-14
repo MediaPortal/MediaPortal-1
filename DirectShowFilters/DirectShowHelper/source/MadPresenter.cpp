@@ -168,7 +168,7 @@ void MPMadPresenter::MadVr3DSizeRight(uint16_t x, uint16_t y, DWORD width, DWORD
     m_dwTop = y;
     m_dwWidth = width;
     m_dwHeight = height;
-    Log("%s : init ok for Auto D3D : 0x:%x", __FUNCTION__, m_pMadD3DDev);
+    Log("%s : init ok for Auto D3D : %d x %d", __FUNCTION__, width, height);
   }
 }
 
@@ -180,7 +180,7 @@ void MPMadPresenter::MadVr3DSizeLeft(uint16_t x, uint16_t y, DWORD width, DWORD 
     m_dwTopLeft = y;
     m_dwWidthLeft = width;
     m_dwHeightLeft = height;
-    Log("%s : init ok for Auto D3D : 0x:%x", __FUNCTION__, m_pMadD3DDev);
+    Log("%s : init ok for Auto D3D : %d x %d", __FUNCTION__, width, height);
   }
 }
 
@@ -188,7 +188,7 @@ void MPMadPresenter::MadVrScreenResize(uint16_t x, uint16_t y, DWORD width, DWOR
 {
   if (m_pMadD3DDev)
   {
-    Log("%s : done : 0x:%x", __FUNCTION__, m_pMadD3DDev);
+    Log("%s : done : %d x %d", __FUNCTION__, width, height);
     SetWindowPos(m_hWnd, 0, 0, 0, width, height, SWP_ASYNCWINDOWPOS);
   }
 }
