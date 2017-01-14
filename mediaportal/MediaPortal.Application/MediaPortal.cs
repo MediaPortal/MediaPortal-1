@@ -1566,7 +1566,7 @@ public class MediaPortalApp : D3D, IRender
 
         // set maximum and minimum form size in windowed mode
         case WM_GETMINMAXINFO:
-          if (Windowed || !_ignoreFullscreenResolutionChanges || g_Player.Playing)
+          if (Windowed || !_ignoreFullscreenResolutionChanges)
           {
             if (!_suspended)
             {
@@ -1598,7 +1598,7 @@ public class MediaPortalApp : D3D, IRender
 
         // verify window size in case it was not resized by the user
         case WM_SIZE:
-          if (Windowed || !_ignoreFullscreenResolutionChanges || g_Player.Playing)
+          if (Windowed || !_ignoreFullscreenResolutionChanges)
           {
             OnSize(ref msg);
             PluginManager.WndProc(ref msg);
@@ -1607,7 +1607,7 @@ public class MediaPortalApp : D3D, IRender
 
         // aspect ratio save window resizing
         case WM_SIZING:
-          if (Windowed || !_ignoreFullscreenResolutionChanges || g_Player.Playing)
+          if (Windowed || !_ignoreFullscreenResolutionChanges)
           {
             OnSizing(ref msg);
             PluginManager.WndProc(ref msg);
@@ -1616,16 +1616,21 @@ public class MediaPortalApp : D3D, IRender
 
         // handle display changes
         case WM_DISPLAYCHANGE:
-          if (Windowed || !_ignoreFullscreenResolutionChanges || g_Player.Playing)
+          if (Windowed || !_ignoreFullscreenResolutionChanges)
           {
             OnDisplayChange(ref msg);
             PluginManager.WndProc(ref msg);
+          }
+          if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && AppActive)
+          {
+            NeedRecreateSwapChain = true;
+            GUIGraphicsContext.ForceMadVRRefresh = true;
           }
           break;
 
         // handle device changes
         case WM_DEVICECHANGE:
-          if (Windowed || !_ignoreFullscreenResolutionChanges || g_Player.Playing)
+          if (Windowed || !_ignoreFullscreenResolutionChanges)
           {
             OnDeviceChange(ref msg);
             PluginManager.WndProc(ref msg);
@@ -2151,7 +2156,7 @@ public class MediaPortalApp : D3D, IRender
               try
               {
                 GUIGraphicsContext.DeviceVideoConnected++;
-                if (Windowed || !_ignoreFullscreenResolutionChanges || g_Player.Playing)
+                if (Windowed || !_ignoreFullscreenResolutionChanges)
                 {
                   OnDisplayChange(ref msg);
                 }
@@ -4395,8 +4400,7 @@ public class MediaPortalApp : D3D, IRender
           // We need to do a refresh of screen when using madVR only if resolution screen has change during playback
           if (NeedRecreateSwapChain && GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
           {
-            RecreateSwapChain(true);
-            NeedRecreateSwapChain = false;
+            RecreateSwapChain(false);
             Log.Debug("Main: recreate swap chain for madVR done");
           }
           break;
