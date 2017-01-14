@@ -121,7 +121,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.UsbUirt.Config
       // 
       // listViewCommands
       // 
-      this.listViewCommands.AllowRowReorder = false;
       this.listViewCommands.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeaderCommand,
             this.columnHeaderStatus});

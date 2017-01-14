@@ -108,7 +108,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // listViewMapped
       // 
       this.listViewMapped.AllowDrop = true;
-      this.listViewMapped.AllowRowReorder = false;
       this.listViewMapped.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                   | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
@@ -147,7 +146,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // listViewNotMapped
       // 
       this.listViewNotMapped.AllowDrop = true;
-      this.listViewNotMapped.AllowRowReorder = false;
       this.listViewNotMapped.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                   | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
