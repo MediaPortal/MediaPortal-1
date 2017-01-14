@@ -97,7 +97,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
     private bool _isScanning = false;
 
     // timing
-    private TimeSpan _minimumTime = new TimeSpan(0, 0, 2);
+    private TimeSpan _timeMinimum = new TimeSpan(0, 0, 2);
     private TimeSpan _timeLimitSingleTransmitter = new TimeSpan(0, 0, 15);
     private TimeSpan _timeLimitCableCard = new TimeSpan(0, 5, 0);
 
@@ -278,13 +278,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
     {
       this.LogDebug("scan ATSC: reload configuration");
 
-      _minimumTime = new TimeSpan(0, 0, 0, 0, SettingsManagement.GetValue("minimumScanTime", 2000));
-      _timeLimitSingleTransmitter = new TimeSpan(0, 0, 0, 0, SettingsManagement.GetValue("timeLimitScanSingleTransmitter", 15000));
-      _timeLimitCableCard = new TimeSpan(0, 0, 0, 0, SettingsManagement.GetValue("timeLimitScanCableCard", 300000));
+      _timeMinimum = new TimeSpan(0, 0, 0, 0, SettingsManagement.GetValue("scanTimeMinimum", 2000));
+      _timeLimitSingleTransmitter = new TimeSpan(0, 0, 0, 0, SettingsManagement.GetValue("scanTimeLimitSingleTransmitter", 15000));
+      _timeLimitCableCard = new TimeSpan(0, 0, 0, 0, SettingsManagement.GetValue("scanTimeLimitCableCard", 300000));
       this.LogDebug("  timing...");
-      this.LogDebug("    minimum            = {0} ms", _minimumTime.TotalMilliseconds);
-      this.LogDebug("    single transmitter = {0} ms", _timeLimitSingleTransmitter.TotalMilliseconds);
-      this.LogDebug("    CableCARD          = {0} ms", _timeLimitCableCard.TotalMilliseconds);
+      this.LogDebug("    minimum              = {0} ms", _timeMinimum.TotalMilliseconds);
+      this.LogDebug("    maximum...");
+      this.LogDebug("      single transmitter = {0} ms", _timeLimitSingleTransmitter.TotalMilliseconds);
+      this.LogDebug("      CableCARD          = {0} ms", _timeLimitCableCard.TotalMilliseconds);
     }
 
     /// <summary>
@@ -366,7 +367,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
 
         // Enforce minimum scan time.
         DateTime start = DateTime.Now;
-        TimeSpan remainingTime = _minimumTime;
+        TimeSpan remainingTime = _timeMinimum;
         while (remainingTime > TimeSpan.Zero)
         {
           if (!_event.WaitOne(remainingTime))
@@ -377,7 +378,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
           {
             return;
           }
-          remainingTime = _minimumTime - (DateTime.Now - start);
+          remainingTime = _timeMinimum - (DateTime.Now - start);
         }
 
         if (_seenTables == TableType.None)

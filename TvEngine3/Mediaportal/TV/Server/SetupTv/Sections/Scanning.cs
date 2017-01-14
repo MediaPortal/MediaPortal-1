@@ -70,7 +70,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private int _originalProviderFreeviewSatellite;
     private string _originalProviderOpenTv;
     private bool _originalPreferProvider2ChannelDetails;
-    private int _originalMinimumScanTime;
+    private int _originalTimeMinimum;
     private int _originalTimeLimitSingleTransmitter;
     private int _originalTimeLimitNetworkInformation;
     private int _originalTimeLimitCableCard;
@@ -229,13 +229,13 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }
 
       // timing
-      _originalMinimumScanTime = ServiceAgents.Instance.SettingServiceAgent.GetValue("minimumScanTime", 2000);
-      numericUpDownTimingMinimum.Value = _originalMinimumScanTime;
-      _originalTimeLimitSingleTransmitter = ServiceAgents.Instance.SettingServiceAgent.GetValue("timeLimitScanSingleTransmitter", 15000);
+      _originalTimeMinimum = ServiceAgents.Instance.SettingServiceAgent.GetValue("scanTimeMinimum", 2000);
+      numericUpDownTimingMinimum.Value = _originalTimeMinimum;
+      _originalTimeLimitSingleTransmitter = ServiceAgents.Instance.SettingServiceAgent.GetValue("scanTimeLimitSingleTransmitter", 15000);
       numericUpDownTimingLimitSingleTransmitter.Value = _originalTimeLimitSingleTransmitter;
-      _originalTimeLimitNetworkInformation = ServiceAgents.Instance.SettingServiceAgent.GetValue("timeLimitScanNetworkInformation", 15000);
+      _originalTimeLimitNetworkInformation = ServiceAgents.Instance.SettingServiceAgent.GetValue("scanTimeLimitNetworkInformation", 15000);
       numericUpDownTimingLimitNetworkInformation.Value = _originalTimeLimitNetworkInformation;
-      _originalTimeLimitCableCard = ServiceAgents.Instance.SettingServiceAgent.GetValue("timeLimitScanCableCard", 300000);
+      _originalTimeLimitCableCard = ServiceAgents.Instance.SettingServiceAgent.GetValue("scanTimeLimitCableCard", 300000);
       numericUpDownTimingLimitCableCard.Value = _originalTimeLimitCableCard;
 
       // other
@@ -384,24 +384,24 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }
 
       // timing
-      if (_originalMinimumScanTime != numericUpDownTimingMinimum.Value)
+      if (_originalTimeMinimum != numericUpDownTimingMinimum.Value)
       {
-        ServiceAgents.Instance.SettingServiceAgent.SaveValue("minimumScanTime", (int)numericUpDownTimingMinimum.Value);
+        ServiceAgents.Instance.SettingServiceAgent.SaveValue("scanTimeMinimum", (int)numericUpDownTimingMinimum.Value);
         tunerIdsChanged.UnionWith(tunerIdsAll);
       }
       if (_originalTimeLimitSingleTransmitter != numericUpDownTimingLimitSingleTransmitter.Value)
       {
-        ServiceAgents.Instance.SettingServiceAgent.SaveValue("timeLimitScanSingleTransmitter", (int)numericUpDownTimingLimitSingleTransmitter.Value);
+        ServiceAgents.Instance.SettingServiceAgent.SaveValue("scanTimeLimitSingleTransmitter", (int)numericUpDownTimingLimitSingleTransmitter.Value);
         tunerIdsChanged.UnionWith(tunerIdsAll);
       }
       if (_originalTimeLimitNetworkInformation != numericUpDownTimingLimitNetworkInformation.Value)
       {
-        ServiceAgents.Instance.SettingServiceAgent.SaveValue("timeLimitScanNetworkInformation", (int)numericUpDownTimingLimitNetworkInformation.Value);
+        ServiceAgents.Instance.SettingServiceAgent.SaveValue("scanTimeLimitNetworkInformation", (int)numericUpDownTimingLimitNetworkInformation.Value);
         tunerIdsChanged.UnionWith(tunerIdsOther);
       }
       if (_originalTimeLimitCableCard != numericUpDownTimingLimitCableCard.Value)
       {
-        ServiceAgents.Instance.SettingServiceAgent.SaveValue("timeLimitScanCableCard", (int)numericUpDownTimingLimitCableCard.Value);
+        ServiceAgents.Instance.SettingServiceAgent.SaveValue("scanTimeLimitCableCard", (int)numericUpDownTimingLimitCableCard.Value);
         tunerIdsChanged.UnionWith(tunerIdsAtscScte);
       }
 
@@ -494,9 +494,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }
       this.LogDebug("  timing...");
       this.LogDebug("    minimum                 = {0} ms", numericUpDownTimingMinimum.Value);
-      this.LogDebug("    single transmitter      = {0} ms", numericUpDownTimingLimitSingleTransmitter.Value);
-      this.LogDebug("    network information     = {0} ms", numericUpDownTimingLimitNetworkInformation.Value);
-      this.LogDebug("    CableCARD               = {0} ms", numericUpDownTimingLimitCableCard.Value);
+      this.LogDebug("    maximum...");
+      this.LogDebug("      single transmitter    = {0} ms", numericUpDownTimingLimitSingleTransmitter.Value);
+      this.LogDebug("      network information   = {0} ms", numericUpDownTimingLimitNetworkInformation.Value);
+      this.LogDebug("      CableCARD             = {0} ms", numericUpDownTimingLimitCableCard.Value);
       this.LogDebug("  detect channel movement?  = {0}", checkBoxChannelMovementDetection.Checked);
       this.LogDebug("  prefer HD LCNs?           = {0}", checkBoxPreferHighDefinitionChannelNumbers.Checked);
       this.LogDebug("  store encrypted channels? = {0}", !checkBoxSkipEncryptedChannels.Checked);

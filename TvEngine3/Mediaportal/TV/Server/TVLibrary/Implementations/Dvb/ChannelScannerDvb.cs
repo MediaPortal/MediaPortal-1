@@ -127,7 +127,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
     private bool _isScanning = false;
 
     // timing
-    private TimeSpan _minimumTime = new TimeSpan(0, 0, 2);
+    private TimeSpan _timeMinimum = new TimeSpan(0, 0, 2);
     private TimeSpan _timeLimitSingleTransmitter = new TimeSpan(0, 0, 15);
     private TimeSpan _timeLimitNetworkInformation = new TimeSpan(0, 0, 15);
 
@@ -248,17 +248,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
       this.LogDebug("scan DVB: reload configuration");
 
       // timing
-      _minimumTime = new TimeSpan(0, 0, 0, 0, SettingsManagement.GetValue("minimumScanTime", 2000));
-      _timeLimitSingleTransmitter = new TimeSpan(0, 0, 0, 0, SettingsManagement.GetValue("timeLimitScanSingleTransmitter", 15000));
-      _timeLimitNetworkInformation = new TimeSpan(0, 0, 0, 0, SettingsManagement.GetValue("timeLimitScanNetworkInformation", 15000));
+      _timeMinimum = new TimeSpan(0, 0, 0, 0, SettingsManagement.GetValue("scanTimeMinimum", 2000));
+      _timeLimitSingleTransmitter = new TimeSpan(0, 0, 0, 0, SettingsManagement.GetValue("scanTimeLimitSingleTransmitter", 15000));
+      _timeLimitNetworkInformation = new TimeSpan(0, 0, 0, 0, SettingsManagement.GetValue("scanTimeLimitNetworkInformation", 15000));
       this.LogDebug("  timing...");
-      this.LogDebug("    minimum             = {0} ms", _minimumTime.TotalMilliseconds);
-      this.LogDebug("    single transmitter  = {0} ms", _timeLimitSingleTransmitter.TotalMilliseconds);
-      this.LogDebug("    network information = {0} ms", _timeLimitNetworkInformation.TotalMilliseconds);
+      this.LogDebug("    minimum               = {0} ms", _timeMinimum.TotalMilliseconds);
+      this.LogDebug("    maximum...");
+      this.LogDebug("      single transmitter  = {0} ms", _timeLimitSingleTransmitter.TotalMilliseconds);
+      this.LogDebug("      network information = {0} ms", _timeLimitNetworkInformation.TotalMilliseconds);
 
       // provider preferences
       string countryName = RegionInfo.CurrentRegion.EnglishName;
-      this.LogDebug("  country               = {0}", countryName);
+      this.LogDebug("  country                 = {0}", countryName);
       if (string.Equals(countryName, "United States"))
       {
         string[] configParts = SettingsManagement.GetValue("scanProviderDishNetwork", string.Empty).Split(',');
@@ -266,7 +267,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
         {
           _dishNetworkStateAbbreviation = configParts[1];
         }
-        this.LogDebug("  Dish Network state    = {0}", _dishNetworkStateAbbreviation);
+        this.LogDebug("  Dish Network state      = {0}", _dishNetworkStateAbbreviation);
         return;
       }
 
@@ -295,13 +296,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
       _preferHighDefinitionChannelNumbers = SettingsManagement.GetValue("scanPreferHighDefinitionChannelNumbers", true);
 
       this.LogDebug("  provider 1...");
-      this.LogDebug("    bouquet ID          = {0}", _provider1BouquetId);
-      this.LogDebug("    region ID           = {0}", _provider1RegionId);
+      this.LogDebug("    bouquet ID            = {0}", _provider1BouquetId);
+      this.LogDebug("    region ID             = {0}", _provider1RegionId);
       this.LogDebug("  provider 2...");
-      this.LogDebug("    bouquet ID          = {0}", _provider2BouquetId);
-      this.LogDebug("    region ID           = {0}", _provider2RegionId);
-      this.LogDebug("  prefer provider 2?    = {0}", _preferProvider2ChannelDetails);
-      this.LogDebug("  prefer HD LCNs?       = {0}", _preferHighDefinitionChannelNumbers);
+      this.LogDebug("    bouquet ID            = {0}", _provider2BouquetId);
+      this.LogDebug("    region ID             = {0}", _provider2RegionId);
+      this.LogDebug("  prefer provider 2?      = {0}", _preferProvider2ChannelDetails);
+      this.LogDebug("  prefer HD LCNs?         = {0}", _preferHighDefinitionChannelNumbers);
     }
 
     /// <summary>
@@ -353,7 +354,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
 
         // Enforce minimum scan time.
         DateTime start = DateTime.Now;
-        TimeSpan remainingTime = _minimumTime;
+        TimeSpan remainingTime = _timeMinimum;
         while (remainingTime > TimeSpan.Zero)
         {
           if (!_event.WaitOne(remainingTime))
@@ -364,7 +365,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
           {
             return;
           }
-          remainingTime = _minimumTime - (DateTime.Now - start);
+          remainingTime = _timeMinimum - (DateTime.Now - start);
         }
 
         if (!_seenTables.HasFlag(TableType.Pat))
@@ -574,7 +575,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
 
         // Enforce minimum scan time.
         DateTime start = DateTime.Now;
-        TimeSpan remainingTime = _minimumTime;
+        TimeSpan remainingTime = _timeMinimum;
         while (remainingTime > TimeSpan.Zero)
         {
           if (!_event.WaitOne(remainingTime))
@@ -585,7 +586,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
           {
             return transmitters;
           }
-          remainingTime = _minimumTime - (DateTime.Now - start);
+          remainingTime = _timeMinimum - (DateTime.Now - start);
         }
 
         if (!_seenTables.HasFlag(TableType.NitActual) && !_seenTables.HasFlag(TableType.NitOther))

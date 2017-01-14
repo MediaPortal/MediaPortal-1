@@ -46,7 +46,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.labelTimingLimitSingleTransmitterUnit = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.labelTimingLimitSingleTransmitter = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.groupBoxTiming = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
-      this.labelTimingLimits = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.labelTimingMaximum = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.labelTimingLimitCableCard = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.labelTimingLimitCableCardUnit = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.numericUpDownTimingLimitCableCard = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPNumericUpDown();
@@ -110,6 +110,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.numericUpDownTimingLimitNetworkInformation.Size = new System.Drawing.Size(60, 20);
       this.numericUpDownTimingLimitNetworkInformation.TabIndex = 8;
       this.numericUpDownTimingLimitNetworkInformation.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+      this.numericUpDownTimingLimitNetworkInformation.TruncateDecimalPlaces = false;
       this.numericUpDownTimingLimitNetworkInformation.Value = new decimal(new int[] {
             15000,
             0,
@@ -220,6 +221,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.numericUpDownTimingMinimum.Size = new System.Drawing.Size(60, 20);
       this.numericUpDownTimingMinimum.TabIndex = 1;
       this.numericUpDownTimingMinimum.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+      this.numericUpDownTimingMinimum.TruncateDecimalPlaces = false;
       this.numericUpDownTimingMinimum.Value = new decimal(new int[] {
             2000,
             0,
@@ -267,6 +269,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.numericUpDownTimingLimitSingleTransmitter.Size = new System.Drawing.Size(60, 20);
       this.numericUpDownTimingLimitSingleTransmitter.TabIndex = 5;
       this.numericUpDownTimingLimitSingleTransmitter.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+      this.numericUpDownTimingLimitSingleTransmitter.TruncateDecimalPlaces = false;
       this.numericUpDownTimingLimitSingleTransmitter.Value = new decimal(new int[] {
             15000,
             0,
@@ -294,7 +297,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       // groupBoxTiming
       // 
-      this.groupBoxTiming.Controls.Add(this.labelTimingLimits);
+      this.groupBoxTiming.Controls.Add(this.labelTimingMaximum);
       this.groupBoxTiming.Controls.Add(this.numericUpDownTimingMinimum);
       this.groupBoxTiming.Controls.Add(this.labelTimingMinimum);
       this.groupBoxTiming.Controls.Add(this.labelTimingLimitCableCard);
@@ -315,14 +318,14 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.groupBoxTiming.TabStop = false;
       this.groupBoxTiming.Text = "Timing";
       // 
-      // labelTimingLimits
+      // labelTimingMaximum
       // 
-      this.labelTimingLimits.AutoSize = true;
-      this.labelTimingLimits.Location = new System.Drawing.Point(6, 49);
-      this.labelTimingLimits.Name = "labelTimingLimits";
-      this.labelTimingLimits.Size = new System.Drawing.Size(88, 13);
-      this.labelTimingLimits.TabIndex = 3;
-      this.labelTimingLimits.Text = "Scan time limits...";
+      this.labelTimingMaximum.AutoSize = true;
+      this.labelTimingMaximum.Location = new System.Drawing.Point(6, 49);
+      this.labelTimingMaximum.Name = "labelTimingMaximum";
+      this.labelTimingMaximum.Size = new System.Drawing.Size(108, 13);
+      this.labelTimingMaximum.TabIndex = 3;
+      this.labelTimingMaximum.Text = "Maximum scan time...";
       // 
       // labelTimingLimitCableCard
       // 
@@ -364,6 +367,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.numericUpDownTimingLimitCableCard.Size = new System.Drawing.Size(60, 20);
       this.numericUpDownTimingLimitCableCard.TabIndex = 11;
       this.numericUpDownTimingLimitCableCard.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+      this.numericUpDownTimingLimitCableCard.TruncateDecimalPlaces = false;
       this.numericUpDownTimingLimitCableCard.Value = new decimal(new int[] {
             300000,
             0,
@@ -455,6 +459,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       // comboBoxProvidersProvider2Region
       // 
+      this.comboBoxProvidersProvider2Region.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxProvidersProvider2Region.DropDownWidth = 285;
       this.comboBoxProvidersProvider2Region.FormattingEnabled = true;
       this.comboBoxProvidersProvider2Region.Location = new System.Drawing.Point(102, 46);
@@ -464,6 +469,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       // comboBoxProvidersProvider1Region
       // 
+      this.comboBoxProvidersProvider1Region.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxProvidersProvider1Region.FormattingEnabled = true;
       this.comboBoxProvidersProvider1Region.Location = new System.Drawing.Point(102, 19);
       this.comboBoxProvidersProvider1Region.Name = "comboBoxProvidersProvider1Region";
@@ -498,8 +504,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       // textBoxAutomaticChannelGroupsChannelProviders
       // 
-      this.textBoxAutomaticChannelGroupsChannelProviders.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxAutomaticChannelGroupsChannelProviders.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxAutomaticChannelGroupsChannelProviders.Location = new System.Drawing.Point(174, 22);
       this.textBoxAutomaticChannelGroupsChannelProviders.Name = "textBoxAutomaticChannelGroupsChannelProviders";
       this.textBoxAutomaticChannelGroupsChannelProviders.Size = new System.Drawing.Size(292, 20);
@@ -507,8 +513,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       // textBoxAutomaticChannelGroupsDvbNetworks
       // 
-      this.textBoxAutomaticChannelGroupsDvbNetworks.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxAutomaticChannelGroupsDvbNetworks.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxAutomaticChannelGroupsDvbNetworks.Location = new System.Drawing.Point(174, 48);
       this.textBoxAutomaticChannelGroupsDvbNetworks.Name = "textBoxAutomaticChannelGroupsDvbNetworks";
       this.textBoxAutomaticChannelGroupsDvbNetworks.Size = new System.Drawing.Size(292, 20);
@@ -516,8 +522,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       // textBoxAutomaticChannelGroupsDvbBouquets
       // 
-      this.textBoxAutomaticChannelGroupsDvbBouquets.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxAutomaticChannelGroupsDvbBouquets.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxAutomaticChannelGroupsDvbBouquets.Location = new System.Drawing.Point(174, 74);
       this.textBoxAutomaticChannelGroupsDvbBouquets.Name = "textBoxAutomaticChannelGroupsDvbBouquets";
       this.textBoxAutomaticChannelGroupsDvbBouquets.Size = new System.Drawing.Size(292, 20);
@@ -525,8 +531,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       // textBoxAutomaticChannelGroupsDvbTargetRegions
       // 
-      this.textBoxAutomaticChannelGroupsDvbTargetRegions.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxAutomaticChannelGroupsDvbTargetRegions.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxAutomaticChannelGroupsDvbTargetRegions.Location = new System.Drawing.Point(174, 100);
       this.textBoxAutomaticChannelGroupsDvbTargetRegions.Name = "textBoxAutomaticChannelGroupsDvbTargetRegions";
       this.textBoxAutomaticChannelGroupsDvbTargetRegions.Size = new System.Drawing.Size(292, 20);
@@ -737,7 +743,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private MPCheckBox checkBoxProvidersProvider2IsHighDefinition;
     private MPCheckBox checkBoxProvidersProvider1IsHighDefinition;
     private MPCheckBox checkBoxPreferHighDefinitionChannelNumbers;
-    private MPLabel labelTimingLimits;
+    private MPLabel labelTimingMaximum;
     private MPTextBox textBoxAutomaticChannelGroupsChannelProviders;
     private MPCheckBox checkBoxSkipEncryptedChannels;
   }
