@@ -167,7 +167,6 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
            | System.Windows.Forms.AnchorStyles.Right)));
       this.gbSelection.Controls.Add(this.bClose);
       this.gbSelection.Controls.Add(this.bSelect);
-      this.gbSelection.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.gbSelection.Location = new System.Drawing.Point(0, 8);
       this.gbSelection.Name = "gbSelection";
       this.gbSelection.Size = new System.Drawing.Size(424, 352);

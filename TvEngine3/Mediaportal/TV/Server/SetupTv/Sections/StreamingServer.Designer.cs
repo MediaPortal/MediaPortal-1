@@ -108,7 +108,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxClients.Controls.Add(this.listViewClients);
       this.groupBoxClients.Controls.Add(this.buttonKick);
-      this.groupBoxClients.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxClients.Location = new System.Drawing.Point(6, 82);
       this.groupBoxClients.Name = "groupBoxClients";
       this.groupBoxClients.Size = new System.Drawing.Size(468, 328);
@@ -190,7 +189,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.groupBoxSettings.Controls.Add(this.labelPort);
       this.groupBoxSettings.Controls.Add(this.comboBoxInterface);
       this.groupBoxSettings.Controls.Add(this.labelInterface);
-      this.groupBoxSettings.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxSettings.Location = new System.Drawing.Point(6, 6);
       this.groupBoxSettings.Name = "groupBoxSettings";
       this.groupBoxSettings.Size = new System.Drawing.Size(425, 70);

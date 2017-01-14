@@ -49,7 +49,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.groupBoxMcs.Controls.Add(this.buttonMcs);
       this.groupBoxMcs.Controls.Add(this.labelMcsStatusValue);
       this.groupBoxMcs.Controls.Add(this.labelMcsStatus);
-      this.groupBoxMcs.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxMcs.Location = new System.Drawing.Point(6, 6);
       this.groupBoxMcs.Name = "groupBoxMcs";
       this.groupBoxMcs.Size = new System.Drawing.Size(468, 87);
@@ -92,7 +91,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.groupBoxBdaHotFix.Controls.Add(this.linkLabelBdaHotFix);
       this.groupBoxBdaHotFix.Controls.Add(this.labelBdaHotFixStatusValue);
       this.groupBoxBdaHotFix.Controls.Add(this.labelBdaHotFixStatus);
-      this.groupBoxBdaHotFix.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxBdaHotFix.Location = new System.Drawing.Point(6, 99);
       this.groupBoxBdaHotFix.Name = "groupBoxBdaHotFix";
       this.groupBoxBdaHotFix.Size = new System.Drawing.Size(468, 71);

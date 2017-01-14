@@ -497,7 +497,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // radioOnAllChannels
       // 
       this.radioOnAllChannels.AutoSize = true;
-      this.radioOnAllChannels.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.radioOnAllChannels.Location = new System.Drawing.Point(9, 19);
       this.radioOnAllChannels.Name = "radioOnAllChannels";
       this.radioOnAllChannels.Size = new System.Drawing.Size(97, 17);
@@ -516,7 +515,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // radioNotOnChannels
       // 
       this.radioNotOnChannels.AutoSize = true;
-      this.radioNotOnChannels.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.radioNotOnChannels.Location = new System.Drawing.Point(195, 19);
       this.radioNotOnChannels.Name = "radioNotOnChannels";
       this.radioNotOnChannels.Size = new System.Drawing.Size(102, 17);
@@ -528,7 +526,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       this.radioOnChannels.AutoSize = true;
       this.radioOnChannels.Checked = true;
-      this.radioOnChannels.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.radioOnChannels.Location = new System.Drawing.Point(112, 19);
       this.radioOnChannels.Name = "radioOnChannels";
       this.radioOnChannels.Size = new System.Drawing.Size(68, 17);
@@ -601,7 +598,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       this.mpRadioButtonInAllCategories.AutoSize = true;
       this.mpRadioButtonInAllCategories.Checked = true;
-      this.mpRadioButtonInAllCategories.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.mpRadioButtonInAllCategories.Location = new System.Drawing.Point(6, 20);
       this.mpRadioButtonInAllCategories.Name = "mpRadioButtonInAllCategories";
       this.mpRadioButtonInAllCategories.Size = new System.Drawing.Size(98, 17);
@@ -621,7 +617,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // mpRadioButtonNotInCategory
       // 
       this.mpRadioButtonNotInCategory.AutoSize = true;
-      this.mpRadioButtonNotInCategory.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.mpRadioButtonNotInCategory.Location = new System.Drawing.Point(187, 20);
       this.mpRadioButtonNotInCategory.Name = "mpRadioButtonNotInCategory";
       this.mpRadioButtonNotInCategory.Size = new System.Drawing.Size(104, 17);
@@ -632,7 +627,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // mpRadioButtonInCategory
       // 
       this.mpRadioButtonInCategory.AutoSize = true;
-      this.mpRadioButtonInCategory.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.mpRadioButtonInCategory.Location = new System.Drawing.Point(113, 20);
       this.mpRadioButtonInCategory.Name = "mpRadioButtonInCategory";
       this.mpRadioButtonInCategory.Size = new System.Drawing.Size(74, 17);

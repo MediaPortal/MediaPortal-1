@@ -82,7 +82,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.groupBoxType.Controls.Add(this.radioButtonSatellite);
       this.groupBoxType.Controls.Add(this.radioButtonCable);
       this.groupBoxType.Controls.Add(this.radioButtonAtsc);
-      this.groupBoxType.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxType.Location = new System.Drawing.Point(12, 12);
       this.groupBoxType.Name = "groupBoxType";
       this.groupBoxType.Size = new System.Drawing.Size(156, 251);
@@ -93,7 +92,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // radioButtonCapture
       // 
       this.radioButtonCapture.AutoSize = true;
-      this.radioButtonCapture.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.radioButtonCapture.Location = new System.Drawing.Point(6, 88);
       this.radioButtonCapture.Name = "radioButtonCapture";
       this.radioButtonCapture.Size = new System.Drawing.Size(61, 17);
@@ -103,7 +101,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // radioButtonFmRadio
       // 
       this.radioButtonFmRadio.AutoSize = true;
-      this.radioButtonFmRadio.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.radioButtonFmRadio.Location = new System.Drawing.Point(6, 157);
       this.radioButtonFmRadio.Name = "radioButtonFmRadio";
       this.radioButtonFmRadio.Size = new System.Drawing.Size(70, 17);
@@ -113,7 +110,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // radioButtonScte
       // 
       this.radioButtonScte.AutoSize = true;
-      this.radioButtonScte.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.radioButtonScte.Location = new System.Drawing.Point(6, 203);
       this.radioButtonScte.Name = "radioButtonScte";
       this.radioButtonScte.Size = new System.Drawing.Size(52, 17);
@@ -123,7 +119,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // radioButtonAnalogTv
       // 
       this.radioButtonAnalogTv.AutoSize = true;
-      this.radioButtonAnalogTv.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.radioButtonAnalogTv.Location = new System.Drawing.Point(6, 42);
       this.radioButtonAnalogTv.Name = "radioButtonAnalogTv";
       this.radioButtonAnalogTv.Size = new System.Drawing.Size(74, 17);
@@ -133,7 +128,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // radioButtonStream
       // 
       this.radioButtonStream.AutoSize = true;
-      this.radioButtonStream.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.radioButtonStream.Location = new System.Drawing.Point(6, 226);
       this.radioButtonStream.Name = "radioButtonStream";
       this.radioButtonStream.Size = new System.Drawing.Size(57, 17);
@@ -143,7 +137,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // radioButtonTerrestrial
       // 
       this.radioButtonTerrestrial.AutoSize = true;
-      this.radioButtonTerrestrial.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.radioButtonTerrestrial.Location = new System.Drawing.Point(6, 134);
       this.radioButtonTerrestrial.Name = "radioButtonTerrestrial";
       this.radioButtonTerrestrial.Size = new System.Drawing.Size(115, 17);
@@ -153,7 +146,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // radioButtonSatellite
       // 
       this.radioButtonSatellite.AutoSize = true;
-      this.radioButtonSatellite.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.radioButtonSatellite.Location = new System.Drawing.Point(6, 180);
       this.radioButtonSatellite.Name = "radioButtonSatellite";
       this.radioButtonSatellite.Size = new System.Drawing.Size(61, 17);
@@ -163,7 +155,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // radioButtonCable
       // 
       this.radioButtonCable.AutoSize = true;
-      this.radioButtonCable.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.radioButtonCable.Location = new System.Drawing.Point(6, 111);
       this.radioButtonCable.Name = "radioButtonCable";
       this.radioButtonCable.Size = new System.Drawing.Size(97, 17);
@@ -173,7 +164,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // radioButtonAtsc
       // 
       this.radioButtonAtsc.AutoSize = true;
-      this.radioButtonAtsc.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.radioButtonAtsc.Location = new System.Drawing.Point(6, 65);
       this.radioButtonAtsc.Name = "radioButtonAtsc";
       this.radioButtonAtsc.Size = new System.Drawing.Size(52, 17);
@@ -183,7 +173,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // radioButtonAmRadio
       // 
       this.radioButtonAmRadio.AutoSize = true;
-      this.radioButtonAmRadio.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.radioButtonAmRadio.Location = new System.Drawing.Point(6, 19);
       this.radioButtonAmRadio.Name = "radioButtonAmRadio";
       this.radioButtonAmRadio.Size = new System.Drawing.Size(71, 17);

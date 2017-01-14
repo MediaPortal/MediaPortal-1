@@ -89,7 +89,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // checkBoxUseAdvancedOptions
       // 
       this.checkBoxUseAdvancedOptions.AutoSize = true;
-      this.checkBoxUseAdvancedOptions.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxUseAdvancedOptions.Location = new System.Drawing.Point(9, 114);
       this.checkBoxUseAdvancedOptions.Name = "checkBoxUseAdvancedOptions";
       this.checkBoxUseAdvancedOptions.Size = new System.Drawing.Size(134, 17);
@@ -105,7 +104,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.groupBoxAdvancedOptions.Controls.Add(this.groupBoxManualTuning);
       this.groupBoxAdvancedOptions.Controls.Add(this.labelScanType);
       this.groupBoxAdvancedOptions.Controls.Add(this.comboBoxScanType);
-      this.groupBoxAdvancedOptions.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxAdvancedOptions.Location = new System.Drawing.Point(2, 197);
       this.groupBoxAdvancedOptions.Name = "groupBoxAdvancedOptions";
       this.groupBoxAdvancedOptions.Size = new System.Drawing.Size(476, 205);
@@ -117,7 +115,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // checkBoxUseManualTuning
       // 
       this.checkBoxUseManualTuning.AutoSize = true;
-      this.checkBoxUseManualTuning.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxUseManualTuning.Location = new System.Drawing.Point(7, 46);
       this.checkBoxUseManualTuning.Name = "checkBoxUseManualTuning";
       this.checkBoxUseManualTuning.Size = new System.Drawing.Size(123, 17);
@@ -140,7 +137,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.groupBoxManualTuning.Controls.Add(this.labelFrequencyUnit);
       this.groupBoxManualTuning.Controls.Add(this.numericTextBoxFrequency);
       this.groupBoxManualTuning.Enabled = false;
-      this.groupBoxManualTuning.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxManualTuning.Location = new System.Drawing.Point(7, 69);
       this.groupBoxManualTuning.Name = "groupBoxManualTuning";
       this.groupBoxManualTuning.Size = new System.Drawing.Size(463, 129);
@@ -275,7 +271,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.groupBoxProgress.Controls.Add(this.progressBarSignalStrength);
       this.groupBoxProgress.Controls.Add(this.progressBarSignalQuality);
       this.groupBoxProgress.Controls.Add(this.listViewProgress);
-      this.groupBoxProgress.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxProgress.Location = new System.Drawing.Point(2, 137);
       this.groupBoxProgress.Name = "groupBoxProgress";
       this.groupBoxProgress.Size = new System.Drawing.Size(476, 278);

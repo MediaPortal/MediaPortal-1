@@ -89,7 +89,6 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
       this.gbChannels.Controls.Add(this.bRemove);
       this.gbChannels.Controls.Add(this.label1);
       this.gbChannels.Controls.Add(this.GroupComboBox);
-      this.gbChannels.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.gbChannels.Location = new System.Drawing.Point(3, 3);
       this.gbChannels.Name = "gbChannels";
       this.gbChannels.Size = new System.Drawing.Size(474, 232);
@@ -195,7 +194,6 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
       this.gbChannelDetails.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.gbChannelDetails.Controls.Add(this.tcMappingDetails);
-      this.gbChannelDetails.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.gbChannelDetails.Location = new System.Drawing.Point(3, 241);
       this.gbChannelDetails.Name = "gbChannelDetails";
       this.gbChannelDetails.Size = new System.Drawing.Size(474, 176);
@@ -239,7 +237,6 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
       this.gbGrabber.Controls.Add(this.bGrabber);
       this.gbGrabber.Controls.Add(this.Grabber);
       this.gbGrabber.Controls.Add(this.tbGrabSite);
-      this.gbGrabber.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.gbGrabber.Location = new System.Drawing.Point(3, 38);
       this.gbGrabber.Name = "gbGrabber";
       this.gbGrabber.Size = new System.Drawing.Size(448, 81);

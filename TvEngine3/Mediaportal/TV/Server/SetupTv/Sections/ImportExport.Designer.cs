@@ -93,7 +93,6 @@ namespace SetupTv.Sections
       this.exCheckSettings.AutoSize = true;
       this.exCheckSettings.Checked = true;
       this.exCheckSettings.CheckState = System.Windows.Forms.CheckState.Checked;
-      this.exCheckSettings.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.exCheckSettings.Location = new System.Drawing.Point(9, 186);
       this.exCheckSettings.Name = "exCheckSettings";
       this.exCheckSettings.Size = new System.Drawing.Size(62, 17);
@@ -105,7 +104,6 @@ namespace SetupTv.Sections
       this.exCheckRadioGroups.AutoSize = true;
       this.exCheckRadioGroups.Checked = true;
       this.exCheckRadioGroups.CheckState = System.Windows.Forms.CheckState.Checked;
-      this.exCheckRadioGroups.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.exCheckRadioGroups.Location = new System.Drawing.Point(9, 140);
       this.exCheckRadioGroups.Name = "exCheckRadioGroups";
       this.exCheckRadioGroups.Size = new System.Drawing.Size(87, 17);
@@ -117,7 +115,6 @@ namespace SetupTv.Sections
       this.exCheckTVGroups.AutoSize = true;
       this.exCheckTVGroups.Checked = true;
       this.exCheckTVGroups.CheckState = System.Windows.Forms.CheckState.Checked;
-      this.exCheckTVGroups.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.exCheckTVGroups.Location = new System.Drawing.Point(9, 94);
       this.exCheckTVGroups.Name = "exCheckTVGroups";
       this.exCheckTVGroups.Size = new System.Drawing.Size(73, 17);
@@ -146,7 +143,6 @@ namespace SetupTv.Sections
       this.exCheckSchedules.AutoSize = true;
       this.exCheckSchedules.Checked = true;
       this.exCheckSchedules.CheckState = System.Windows.Forms.CheckState.Checked;
-      this.exCheckSchedules.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.exCheckSchedules.Location = new System.Drawing.Point(9, 163);
       this.exCheckSchedules.Name = "exCheckSchedules";
       this.exCheckSchedules.Size = new System.Drawing.Size(74, 17);
@@ -158,7 +154,6 @@ namespace SetupTv.Sections
       this.exCheckRadioChannels.AutoSize = true;
       this.exCheckRadioChannels.Checked = true;
       this.exCheckRadioChannels.CheckState = System.Windows.Forms.CheckState.Checked;
-      this.exCheckRadioChannels.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.exCheckRadioChannels.Location = new System.Drawing.Point(9, 117);
       this.exCheckRadioChannels.Name = "exCheckRadioChannels";
       this.exCheckRadioChannels.Size = new System.Drawing.Size(91, 17);
@@ -170,7 +165,6 @@ namespace SetupTv.Sections
       this.exCheckTVChannels.AutoSize = true;
       this.exCheckTVChannels.Checked = true;
       this.exCheckTVChannels.CheckState = System.Windows.Forms.CheckState.Checked;
-      this.exCheckTVChannels.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.exCheckTVChannels.Location = new System.Drawing.Point(9, 71);
       this.exCheckTVChannels.Name = "exCheckTVChannels";
       this.exCheckTVChannels.Size = new System.Drawing.Size(84, 17);
@@ -209,7 +203,6 @@ namespace SetupTv.Sections
       this.imCheckSettings.AutoSize = true;
       this.imCheckSettings.Checked = true;
       this.imCheckSettings.CheckState = System.Windows.Forms.CheckState.Checked;
-      this.imCheckSettings.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.imCheckSettings.Location = new System.Drawing.Point(9, 186);
       this.imCheckSettings.Name = "imCheckSettings";
       this.imCheckSettings.Size = new System.Drawing.Size(62, 17);
@@ -221,7 +214,6 @@ namespace SetupTv.Sections
       this.imCheckRadioGroups.AutoSize = true;
       this.imCheckRadioGroups.Checked = true;
       this.imCheckRadioGroups.CheckState = System.Windows.Forms.CheckState.Checked;
-      this.imCheckRadioGroups.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.imCheckRadioGroups.Location = new System.Drawing.Point(9, 140);
       this.imCheckRadioGroups.Name = "imCheckRadioGroups";
       this.imCheckRadioGroups.Size = new System.Drawing.Size(87, 17);
@@ -233,7 +225,6 @@ namespace SetupTv.Sections
       this.imCheckTvGroups.AutoSize = true;
       this.imCheckTvGroups.Checked = true;
       this.imCheckTvGroups.CheckState = System.Windows.Forms.CheckState.Checked;
-      this.imCheckTvGroups.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.imCheckTvGroups.Location = new System.Drawing.Point(9, 94);
       this.imCheckTvGroups.Name = "imCheckTvGroups";
       this.imCheckTvGroups.Size = new System.Drawing.Size(73, 17);
@@ -262,7 +253,6 @@ namespace SetupTv.Sections
       this.imCheckSchedules.AutoSize = true;
       this.imCheckSchedules.Checked = true;
       this.imCheckSchedules.CheckState = System.Windows.Forms.CheckState.Checked;
-      this.imCheckSchedules.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.imCheckSchedules.Location = new System.Drawing.Point(9, 163);
       this.imCheckSchedules.Name = "imCheckSchedules";
       this.imCheckSchedules.Size = new System.Drawing.Size(74, 17);
@@ -274,7 +264,6 @@ namespace SetupTv.Sections
       this.imCheckRadioChannels.AutoSize = true;
       this.imCheckRadioChannels.Checked = true;
       this.imCheckRadioChannels.CheckState = System.Windows.Forms.CheckState.Checked;
-      this.imCheckRadioChannels.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.imCheckRadioChannels.Location = new System.Drawing.Point(9, 117);
       this.imCheckRadioChannels.Name = "imCheckRadioChannels";
       this.imCheckRadioChannels.Size = new System.Drawing.Size(91, 17);
@@ -286,7 +275,6 @@ namespace SetupTv.Sections
       this.imCheckTvChannels.AutoSize = true;
       this.imCheckTvChannels.Checked = true;
       this.imCheckTvChannels.CheckState = System.Windows.Forms.CheckState.Checked;
-      this.imCheckTvChannels.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.imCheckTvChannels.Location = new System.Drawing.Point(9, 71);
       this.imCheckTvChannels.Name = "imCheckTvChannels";
       this.imCheckTvChannels.Size = new System.Drawing.Size(84, 17);

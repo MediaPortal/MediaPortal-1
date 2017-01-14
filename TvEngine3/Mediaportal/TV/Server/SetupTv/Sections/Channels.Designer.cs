@@ -325,7 +325,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.groupBoxGroup.Controls.Add(this.buttonGroupDelete);
       this.groupBoxGroup.Controls.Add(this.comboBoxChannelGroup);
       this.groupBoxGroup.Controls.Add(this.buttonGroupRename);
-      this.groupBoxGroup.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxGroup.Location = new System.Drawing.Point(3, 3);
       this.groupBoxGroup.Name = "groupBoxGroup";
       this.groupBoxGroup.Size = new System.Drawing.Size(466, 49);
@@ -394,7 +393,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.groupBoxGroupOrder.Controls.Add(this.buttonGroupOrderByNumber);
       this.groupBoxGroupOrder.Controls.Add(this.buttonGroupOrderDown);
       this.groupBoxGroupOrder.Controls.Add(this.buttonGroupOrderUp);
-      this.groupBoxGroupOrder.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxGroupOrder.Location = new System.Drawing.Point(354, 163);
       this.groupBoxGroupOrder.Name = "groupBoxGroupOrder";
       this.groupBoxGroupOrder.Size = new System.Drawing.Size(109, 134);
@@ -470,7 +468,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.groupBoxGroupChannels.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxGroupChannels.Controls.Add(this.buttonGroupChannelsAdd);
       this.groupBoxGroupChannels.Controls.Add(this.buttonGroupChannelsRemove);
-      this.groupBoxGroupChannels.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxGroupChannels.Location = new System.Drawing.Point(354, 80);
       this.groupBoxGroupChannels.Name = "groupBoxGroupChannels";
       this.groupBoxGroupChannels.Size = new System.Drawing.Size(109, 77);

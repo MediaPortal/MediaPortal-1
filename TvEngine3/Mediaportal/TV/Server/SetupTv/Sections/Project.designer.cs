@@ -64,7 +64,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.groupBoxInfo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxInfo.Controls.Add(this.labelInfo1);
-      this.groupBoxInfo.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxInfo.Location = new System.Drawing.Point(0, 0);
       this.groupBoxInfo.Name = "groupBoxInfo";
       this.groupBoxInfo.Size = new System.Drawing.Size(480, 104);
@@ -95,7 +94,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.groupBoxContact.Controls.Add(this.labelForums);
       this.groupBoxContact.Controls.Add(this.linkLabelHomepage);
       this.groupBoxContact.Controls.Add(this.labelHomepage);
-      this.groupBoxContact.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxContact.Location = new System.Drawing.Point(211, 112);
       this.groupBoxContact.Name = "groupBoxContact";
       this.groupBoxContact.Size = new System.Drawing.Size(269, 232);
@@ -216,7 +214,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.mpGroupBoxAbout.Controls.Add(this.labelVersion3);
       this.mpGroupBoxAbout.Controls.Add(this.labelVersion2);
       this.mpGroupBoxAbout.Controls.Add(this.labelVersion1);
-      this.mpGroupBoxAbout.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.mpGroupBoxAbout.Location = new System.Drawing.Point(213, 355);
       this.mpGroupBoxAbout.Name = "mpGroupBoxAbout";
       this.mpGroupBoxAbout.Size = new System.Drawing.Size(266, 52);

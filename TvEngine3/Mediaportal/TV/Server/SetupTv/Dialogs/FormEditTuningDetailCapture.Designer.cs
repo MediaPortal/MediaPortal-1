@@ -81,7 +81,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // checkBoxIsVcrSignal
       // 
       this.checkBoxIsVcrSignal.AutoSize = true;
-      this.checkBoxIsVcrSignal.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxIsVcrSignal.Location = new System.Drawing.Point(123, 213);
       this.checkBoxIsVcrSignal.Name = "checkBoxIsVcrSignal";
       this.checkBoxIsVcrSignal.Size = new System.Drawing.Size(27, 17);

@@ -358,7 +358,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.groupBoxUsalsLocation.Controls.Add(this.labelUsalsLatitudeUnit);
       this.groupBoxUsalsLocation.Controls.Add(this.numericUpDownUsalsLatitude);
       this.groupBoxUsalsLocation.Controls.Add(this.labelUsalsLongitude);
-      this.groupBoxUsalsLocation.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxUsalsLocation.Location = new System.Drawing.Point(6, 287);
       this.groupBoxUsalsLocation.Name = "groupBoxUsalsLocation";
       this.groupBoxUsalsLocation.Size = new System.Drawing.Size(240, 101);
@@ -411,7 +410,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.groupBoxDiseqcMotorSpeed.Controls.Add(this.labelDiseqcMotorSpeedSlow);
       this.groupBoxDiseqcMotorSpeed.Controls.Add(this.labelDiseqcMotorSpeedSlowUnit);
       this.groupBoxDiseqcMotorSpeed.Controls.Add(this.numericUpDownDiseqcMotorSpeedSlow);
-      this.groupBoxDiseqcMotorSpeed.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxDiseqcMotorSpeed.Location = new System.Drawing.Point(252, 287);
       this.groupBoxDiseqcMotorSpeed.Name = "groupBoxDiseqcMotorSpeed";
       this.groupBoxDiseqcMotorSpeed.Size = new System.Drawing.Size(128, 75);
@@ -521,7 +519,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.groupBoxTunerSatellites.Controls.Add(this.buttonTunerSatelliteEdit);
       this.groupBoxTunerSatellites.Controls.Add(this.buttonTunerSatelliteDelete);
       this.groupBoxTunerSatellites.Controls.Add(this.buttonTunerSatelliteAdd);
-      this.groupBoxTunerSatellites.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxTunerSatellites.Location = new System.Drawing.Point(6, 6);
       this.groupBoxTunerSatellites.Name = "groupBoxTunerSatellites";
       this.groupBoxTunerSatellites.Size = new System.Drawing.Size(460, 275);
@@ -584,7 +581,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.groupBoxDiseqcMotorSetupCheck.Controls.Add(this.progressBarDiseqcMotorSetupCheckSignalStrength);
       this.groupBoxDiseqcMotorSetupCheck.Controls.Add(this.comboBoxDiseqcMotorSetupCheckSatellite);
       this.groupBoxDiseqcMotorSetupCheck.Controls.Add(this.labelDiseqcMotorSetupCheckSignalQuality);
-      this.groupBoxDiseqcMotorSetupCheck.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxDiseqcMotorSetupCheck.Location = new System.Drawing.Point(6, 183);
       this.groupBoxDiseqcMotorSetupCheck.Name = "groupBoxDiseqcMotorSetupCheck";
       this.groupBoxDiseqcMotorSetupCheck.Size = new System.Drawing.Size(460, 182);
@@ -719,7 +715,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.groupBoxDiseqcMotorSetupMoveLimits.Controls.Add(this.buttonDiseqcMotorSetupMoveLimitsDisable);
       this.groupBoxDiseqcMotorSetupMoveLimits.Controls.Add(this.buttonDiseqcMotorSetupMoveLimitsSetEast);
       this.groupBoxDiseqcMotorSetupMoveLimits.Controls.Add(this.buttonDiseqcMotorSetupMoveLimitsSetWest);
-      this.groupBoxDiseqcMotorSetupMoveLimits.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxDiseqcMotorSetupMoveLimits.Location = new System.Drawing.Point(388, 39);
       this.groupBoxDiseqcMotorSetupMoveLimits.Name = "groupBoxDiseqcMotorSetupMoveLimits";
       this.groupBoxDiseqcMotorSetupMoveLimits.Size = new System.Drawing.Size(78, 138);
@@ -797,7 +792,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.groupBoxDiseqcMotorSetupPosition.Controls.Add(this.numericUpDownDiseqcMotorSetupPositionStored);
       this.groupBoxDiseqcMotorSetupPosition.Controls.Add(this.buttonDiseqcMotorSetupPositionStoredGoTo);
       this.groupBoxDiseqcMotorSetupPosition.Controls.Add(this.buttonDiseqcMotorSetupPositionStoredStore);
-      this.groupBoxDiseqcMotorSetupPosition.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxDiseqcMotorSetupPosition.Location = new System.Drawing.Point(6, 39);
       this.groupBoxDiseqcMotorSetupPosition.Name = "groupBoxDiseqcMotorSetupPosition";
       this.groupBoxDiseqcMotorSetupPosition.Size = new System.Drawing.Size(266, 138);
@@ -961,7 +955,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.groupBoxDiseqcMotorSetupManualMove.Controls.Add(this.buttonDiseqcMotorSetupManualMoveWest);
       this.groupBoxDiseqcMotorSetupManualMove.Controls.Add(this.buttonDiseqcMotorSetupManualMoveEast);
       this.groupBoxDiseqcMotorSetupManualMove.Controls.Add(this.buttonDiseqcMotorSetupManualMoveHalt);
-      this.groupBoxDiseqcMotorSetupManualMove.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxDiseqcMotorSetupManualMove.Location = new System.Drawing.Point(278, 39);
       this.groupBoxDiseqcMotorSetupManualMove.Name = "groupBoxDiseqcMotorSetupManualMove";
       this.groupBoxDiseqcMotorSetupManualMove.Size = new System.Drawing.Size(104, 138);

@@ -19,6 +19,7 @@
 #endregion
 
 using System.ComponentModel;
+using System.Windows.Forms;
 
 namespace Mediaportal.TV.Server.SetupControls.UserInterfaceControls
 {
@@ -29,9 +30,23 @@ namespace Mediaportal.TV.Server.SetupControls.UserInterfaceControls
   {
     public MPRadioButton()
     {
-      FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       AutoSize = true;
+      FlatStyle = FlatStyle.Popup;
       UseVisualStyleBackColor = true;
+    }
+
+    [DefaultValue(FlatStyle.Popup)]
+    public new FlatStyle FlatStyle
+    {
+      get
+      {
+        return base.FlatStyle;
+      }
+      set
+      {
+        base.FlatStyle = value;
+        Invalidate();
+      }
     }
 
     [DefaultValue(true)]

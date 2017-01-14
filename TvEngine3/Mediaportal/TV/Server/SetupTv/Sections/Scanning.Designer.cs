@@ -141,7 +141,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.groupBoxOther.Controls.Add(this.checkBoxPreferHighDefinitionChannelNumbers);
       this.groupBoxOther.Controls.Add(this.buttonUpdateTuningDetails);
       this.groupBoxOther.Controls.Add(this.checkBoxChannelMovementDetection);
-      this.groupBoxOther.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxOther.Location = new System.Drawing.Point(6, 265);
       this.groupBoxOther.Name = "groupBoxOther";
       this.groupBoxOther.Size = new System.Drawing.Size(227, 120);
@@ -152,7 +151,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // checkBoxSkipEncryptedChannels
       // 
       this.checkBoxSkipEncryptedChannels.AutoSize = true;
-      this.checkBoxSkipEncryptedChannels.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxSkipEncryptedChannels.Location = new System.Drawing.Point(9, 65);
       this.checkBoxSkipEncryptedChannels.Name = "checkBoxSkipEncryptedChannels";
       this.checkBoxSkipEncryptedChannels.Size = new System.Drawing.Size(174, 17);
@@ -162,7 +160,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // checkBoxPreferHighDefinitionChannelNumbers
       // 
       this.checkBoxPreferHighDefinitionChannelNumbers.AutoSize = true;
-      this.checkBoxPreferHighDefinitionChannelNumbers.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxPreferHighDefinitionChannelNumbers.Location = new System.Drawing.Point(9, 42);
       this.checkBoxPreferHighDefinitionChannelNumbers.Name = "checkBoxPreferHighDefinitionChannelNumbers";
       this.checkBoxPreferHighDefinitionChannelNumbers.Size = new System.Drawing.Size(207, 17);
@@ -181,7 +178,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // checkBoxChannelMovementDetection
       // 
       this.checkBoxChannelMovementDetection.AutoSize = true;
-      this.checkBoxChannelMovementDetection.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxChannelMovementDetection.Location = new System.Drawing.Point(9, 19);
       this.checkBoxChannelMovementDetection.Name = "checkBoxChannelMovementDetection";
       this.checkBoxChannelMovementDetection.Size = new System.Drawing.Size(200, 17);
@@ -191,7 +187,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // checkBoxProvidersPreferProvider2ChannelDetails
       // 
       this.checkBoxProvidersPreferProvider2ChannelDetails.AutoSize = true;
-      this.checkBoxProvidersPreferProvider2ChannelDetails.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxProvidersPreferProvider2ChannelDetails.Location = new System.Drawing.Point(9, 73);
       this.checkBoxProvidersPreferProvider2ChannelDetails.Name = "checkBoxProvidersPreferProvider2ChannelDetails";
       this.checkBoxProvidersPreferProvider2ChannelDetails.Size = new System.Drawing.Size(179, 17);
@@ -302,7 +297,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.groupBoxTiming.Controls.Add(this.labelTimingLimitNetworkInformation);
       this.groupBoxTiming.Controls.Add(this.labelTimingLimitNetworkInformationUnit);
       this.groupBoxTiming.Controls.Add(this.numericUpDownTimingLimitNetworkInformation);
-      this.groupBoxTiming.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxTiming.Location = new System.Drawing.Point(6, 112);
       this.groupBoxTiming.Name = "groupBoxTiming";
       this.groupBoxTiming.Size = new System.Drawing.Size(227, 147);
@@ -397,7 +391,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.groupBoxProviders.Controls.Add(this.labelProvidersProvider2Region);
       this.groupBoxProviders.Controls.Add(this.comboBoxProvidersProvider2Region);
       this.groupBoxProviders.Controls.Add(this.comboBoxProvidersProvider1Region);
-      this.groupBoxProviders.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxProviders.Location = new System.Drawing.Point(6, 6);
       this.groupBoxProviders.Name = "groupBoxProviders";
       this.groupBoxProviders.Size = new System.Drawing.Size(460, 100);
@@ -408,7 +401,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // checkBoxProvidersProvider2IsHighDefinition
       // 
       this.checkBoxProvidersProvider2IsHighDefinition.AutoSize = true;
-      this.checkBoxProvidersProvider2IsHighDefinition.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxProvidersProvider2IsHighDefinition.Location = new System.Drawing.Point(414, 47);
       this.checkBoxProvidersProvider2IsHighDefinition.Name = "checkBoxProvidersProvider2IsHighDefinition";
       this.checkBoxProvidersProvider2IsHighDefinition.Size = new System.Drawing.Size(40, 17);
@@ -418,7 +410,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // checkBoxProvidersProvider1IsHighDefinition
       // 
       this.checkBoxProvidersProvider1IsHighDefinition.AutoSize = true;
-      this.checkBoxProvidersProvider1IsHighDefinition.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxProvidersProvider1IsHighDefinition.Location = new System.Drawing.Point(414, 22);
       this.checkBoxProvidersProvider1IsHighDefinition.Name = "checkBoxProvidersProvider1IsHighDefinition";
       this.checkBoxProvidersProvider1IsHighDefinition.Size = new System.Drawing.Size(40, 17);
@@ -524,7 +515,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // checkBoxAutomaticChannelGroupsNorDigChannelLists
       // 
       this.checkBoxAutomaticChannelGroupsNorDigChannelLists.AutoSize = true;
-      this.checkBoxAutomaticChannelGroupsNorDigChannelLists.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxAutomaticChannelGroupsNorDigChannelLists.Location = new System.Drawing.Point(211, 126);
       this.checkBoxAutomaticChannelGroupsNorDigChannelLists.Name = "checkBoxAutomaticChannelGroupsNorDigChannelLists";
       this.checkBoxAutomaticChannelGroupsNorDigChannelLists.Size = new System.Drawing.Size(140, 17);
@@ -534,7 +524,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // checkBoxAutomaticChannelGroupsVirginMediaChannelCategories
       // 
       this.checkBoxAutomaticChannelGroupsVirginMediaChannelCategories.AutoSize = true;
-      this.checkBoxAutomaticChannelGroupsVirginMediaChannelCategories.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxAutomaticChannelGroupsVirginMediaChannelCategories.Location = new System.Drawing.Point(211, 149);
       this.checkBoxAutomaticChannelGroupsVirginMediaChannelCategories.Name = "checkBoxAutomaticChannelGroupsVirginMediaChannelCategories";
       this.checkBoxAutomaticChannelGroupsVirginMediaChannelCategories.Size = new System.Drawing.Size(194, 17);
@@ -544,7 +533,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // checkBoxAutomaticChannelGroupsFreesatChannelCategories
       // 
       this.checkBoxAutomaticChannelGroupsFreesatChannelCategories.AutoSize = true;
-      this.checkBoxAutomaticChannelGroupsFreesatChannelCategories.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxAutomaticChannelGroupsFreesatChannelCategories.Location = new System.Drawing.Point(9, 172);
       this.checkBoxAutomaticChannelGroupsFreesatChannelCategories.Name = "checkBoxAutomaticChannelGroupsFreesatChannelCategories";
       this.checkBoxAutomaticChannelGroupsFreesatChannelCategories.Size = new System.Drawing.Size(171, 17);
@@ -554,7 +542,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // checkBoxAutomaticChannelGroupsProvider1Region
       // 
       this.checkBoxAutomaticChannelGroupsProvider1Region.AutoSize = true;
-      this.checkBoxAutomaticChannelGroupsProvider1Region.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxAutomaticChannelGroupsProvider1Region.Location = new System.Drawing.Point(211, 172);
       this.checkBoxAutomaticChannelGroupsProvider1Region.Name = "checkBoxAutomaticChannelGroupsProvider1Region";
       this.checkBoxAutomaticChannelGroupsProvider1Region.Size = new System.Drawing.Size(164, 17);
@@ -564,7 +551,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // checkBoxAutomaticChannelGroupsProvider2Region
       // 
       this.checkBoxAutomaticChannelGroupsProvider2Region.AutoSize = true;
-      this.checkBoxAutomaticChannelGroupsProvider2Region.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxAutomaticChannelGroupsProvider2Region.Location = new System.Drawing.Point(9, 195);
       this.checkBoxAutomaticChannelGroupsProvider2Region.Name = "checkBoxAutomaticChannelGroupsProvider2Region";
       this.checkBoxAutomaticChannelGroupsProvider2Region.Size = new System.Drawing.Size(164, 17);
@@ -574,7 +560,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // checkBoxAutomaticChannelGroupsDvbTargetRegions
       // 
       this.checkBoxAutomaticChannelGroupsDvbTargetRegions.AutoSize = true;
-      this.checkBoxAutomaticChannelGroupsDvbTargetRegions.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxAutomaticChannelGroupsDvbTargetRegions.Location = new System.Drawing.Point(9, 101);
       this.checkBoxAutomaticChannelGroupsDvbTargetRegions.Name = "checkBoxAutomaticChannelGroupsDvbTargetRegions";
       this.checkBoxAutomaticChannelGroupsDvbTargetRegions.Size = new System.Drawing.Size(159, 17);
@@ -585,7 +570,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // checkBoxAutomaticChannelGroupsDvbBouquets
       // 
       this.checkBoxAutomaticChannelGroupsDvbBouquets.AutoSize = true;
-      this.checkBoxAutomaticChannelGroupsDvbBouquets.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxAutomaticChannelGroupsDvbBouquets.Location = new System.Drawing.Point(9, 75);
       this.checkBoxAutomaticChannelGroupsDvbBouquets.Name = "checkBoxAutomaticChannelGroupsDvbBouquets";
       this.checkBoxAutomaticChannelGroupsDvbBouquets.Size = new System.Drawing.Size(139, 17);
@@ -596,7 +580,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // checkBoxAutomaticChannelGroupsDvbNetworks
       // 
       this.checkBoxAutomaticChannelGroupsDvbNetworks.AutoSize = true;
-      this.checkBoxAutomaticChannelGroupsDvbNetworks.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxAutomaticChannelGroupsDvbNetworks.Location = new System.Drawing.Point(9, 49);
       this.checkBoxAutomaticChannelGroupsDvbNetworks.Name = "checkBoxAutomaticChannelGroupsDvbNetworks";
       this.checkBoxAutomaticChannelGroupsDvbNetworks.Size = new System.Drawing.Size(138, 17);
@@ -616,7 +599,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // checkBoxAutomaticChannelGroupsChannelProviders
       // 
       this.checkBoxAutomaticChannelGroupsChannelProviders.AutoSize = true;
-      this.checkBoxAutomaticChannelGroupsChannelProviders.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxAutomaticChannelGroupsChannelProviders.Location = new System.Drawing.Point(9, 23);
       this.checkBoxAutomaticChannelGroupsChannelProviders.Name = "checkBoxAutomaticChannelGroupsChannelProviders";
       this.checkBoxAutomaticChannelGroupsChannelProviders.Size = new System.Drawing.Size(154, 17);
@@ -627,7 +609,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // checkBoxAutomaticChannelGroupsBroadcastStandards
       // 
       this.checkBoxAutomaticChannelGroupsBroadcastStandards.AutoSize = true;
-      this.checkBoxAutomaticChannelGroupsBroadcastStandards.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxAutomaticChannelGroupsBroadcastStandards.Location = new System.Drawing.Point(9, 126);
       this.checkBoxAutomaticChannelGroupsBroadcastStandards.Name = "checkBoxAutomaticChannelGroupsBroadcastStandards";
       this.checkBoxAutomaticChannelGroupsBroadcastStandards.Size = new System.Drawing.Size(142, 17);
@@ -637,7 +618,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // checkBoxAutomaticChannelGroupsSatellites
       // 
       this.checkBoxAutomaticChannelGroupsSatellites.AutoSize = true;
-      this.checkBoxAutomaticChannelGroupsSatellites.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxAutomaticChannelGroupsSatellites.Location = new System.Drawing.Point(9, 149);
       this.checkBoxAutomaticChannelGroupsSatellites.Name = "checkBoxAutomaticChannelGroupsSatellites";
       this.checkBoxAutomaticChannelGroupsSatellites.Size = new System.Drawing.Size(86, 17);

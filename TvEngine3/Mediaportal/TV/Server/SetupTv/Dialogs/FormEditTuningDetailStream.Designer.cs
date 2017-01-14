@@ -138,7 +138,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.groupBoxEpgSource.Controls.Add(this.numericTextBoxEpgOriginalNetworkId);
       this.groupBoxEpgSource.Controls.Add(this.labelEpgTransportStreamId);
       this.groupBoxEpgSource.Controls.Add(this.labelEpgServiceId);
-      this.groupBoxEpgSource.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxEpgSource.Location = new System.Drawing.Point(409, 18);
       this.groupBoxEpgSource.Name = "groupBoxEpgSource";
       this.groupBoxEpgSource.Size = new System.Drawing.Size(167, 103);

@@ -140,7 +140,6 @@ namespace Mediaportal.TV.Server.Plugins.TvMovieImport.Config
       this.groupBoxMapping.Controls.Add(this.progressBarMappingsProgress);
       this.groupBoxMapping.Controls.Add(this.buttonMappingsSave);
       this.groupBoxMapping.Controls.Add(this.buttonMappingsLoad);
-      this.groupBoxMapping.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxMapping.Location = new System.Drawing.Point(6, 6);
       this.groupBoxMapping.Name = "groupBoxMapping";
       this.groupBoxMapping.Size = new System.Drawing.Size(460, 85);
@@ -167,7 +166,6 @@ namespace Mediaportal.TV.Server.Plugins.TvMovieImport.Config
       // checkBoxMappingsPartialMatch
       // 
       this.checkBoxMappingsPartialMatch.AutoSize = true;
-      this.checkBoxMappingsPartialMatch.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxMappingsPartialMatch.Location = new System.Drawing.Point(13, 38);
       this.checkBoxMappingsPartialMatch.Name = "checkBoxMappingsPartialMatch";
       this.checkBoxMappingsPartialMatch.Size = new System.Drawing.Size(137, 17);
@@ -325,7 +323,6 @@ namespace Mediaportal.TV.Server.Plugins.TvMovieImport.Config
       this.groupBoxSettings.Controls.Add(this.numericUpDownUpdateTimeFrequency);
       this.groupBoxSettings.Controls.Add(this.labelUpdateTimeHours);
       this.groupBoxSettings.Controls.Add(this.dateTimePickerUpdateTimeBetweenStart);
-      this.groupBoxSettings.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxSettings.Location = new System.Drawing.Point(6, 38);
       this.groupBoxSettings.Name = "groupBoxSettings";
       this.groupBoxSettings.Size = new System.Drawing.Size(460, 181);
@@ -384,7 +381,6 @@ namespace Mediaportal.TV.Server.Plugins.TvMovieImport.Config
       // radioButtonUpdateTimeStartup
       // 
       this.radioButtonUpdateTimeStartup.AutoSize = true;
-      this.radioButtonUpdateTimeStartup.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.radioButtonUpdateTimeStartup.Location = new System.Drawing.Point(9, 117);
       this.radioButtonUpdateTimeStartup.Name = "radioButtonUpdateTimeStartup";
       this.radioButtonUpdateTimeStartup.Size = new System.Drawing.Size(210, 17);
@@ -404,7 +400,6 @@ namespace Mediaportal.TV.Server.Plugins.TvMovieImport.Config
       // 
       this.radioButtonUpdateTimeBetween.AutoSize = true;
       this.radioButtonUpdateTimeBetween.Checked = true;
-      this.radioButtonUpdateTimeBetween.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.radioButtonUpdateTimeBetween.Location = new System.Drawing.Point(9, 93);
       this.radioButtonUpdateTimeBetween.Name = "radioButtonUpdateTimeBetween";
       this.radioButtonUpdateTimeBetween.Size = new System.Drawing.Size(66, 17);
@@ -477,7 +472,6 @@ namespace Mediaportal.TV.Server.Plugins.TvMovieImport.Config
       this.groupBoxImportStatus.Controls.Add(this.labelImportStatusProgramCountsLabel);
       this.groupBoxImportStatus.Controls.Add(this.labelImportStatusChannelCountsLabel);
       this.groupBoxImportStatus.Controls.Add(this.labelImportStatusDateTimeLabel);
-      this.groupBoxImportStatus.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxImportStatus.Location = new System.Drawing.Point(6, 269);
       this.groupBoxImportStatus.Name = "groupBoxImportStatus";
       this.groupBoxImportStatus.Size = new System.Drawing.Size(460, 119);

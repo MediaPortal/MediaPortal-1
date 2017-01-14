@@ -57,7 +57,6 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
       this.gbGrabber.Controls.Add(this.bGrabber);
       this.gbGrabber.Controls.Add(this.Grabber);
       this.gbGrabber.Controls.Add(this.tbGrabSite);
-      this.gbGrabber.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.gbGrabber.Location = new System.Drawing.Point(6, 32);
       this.gbGrabber.Name = "gbGrabber";
       this.gbGrabber.Size = new System.Drawing.Size(298, 65);

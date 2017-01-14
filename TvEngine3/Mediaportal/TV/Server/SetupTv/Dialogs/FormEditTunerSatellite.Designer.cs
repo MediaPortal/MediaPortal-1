@@ -95,7 +95,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // checkBoxIsToroidalDish
       // 
       this.checkBoxIsToroidalDish.AutoSize = true;
-      this.checkBoxIsToroidalDish.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxIsToroidalDish.Location = new System.Drawing.Point(133, 296);
       this.checkBoxIsToroidalDish.Name = "checkBoxIsToroidalDish";
       this.checkBoxIsToroidalDish.Size = new System.Drawing.Size(27, 17);
@@ -289,7 +288,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // checkBoxPolarisationsLinearHorizontal
       // 
       this.checkBoxPolarisationsLinearHorizontal.AutoSize = true;
-      this.checkBoxPolarisationsLinearHorizontal.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxPolarisationsLinearHorizontal.Location = new System.Drawing.Point(133, 268);
       this.checkBoxPolarisationsLinearHorizontal.Name = "checkBoxPolarisationsLinearHorizontal";
       this.checkBoxPolarisationsLinearHorizontal.Size = new System.Drawing.Size(71, 17);
@@ -309,7 +307,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // checkBoxPolarisationsLinearVertical
       // 
       this.checkBoxPolarisationsLinearVertical.AutoSize = true;
-      this.checkBoxPolarisationsLinearVertical.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxPolarisationsLinearVertical.Location = new System.Drawing.Point(133, 245);
       this.checkBoxPolarisationsLinearVertical.Name = "checkBoxPolarisationsLinearVertical";
       this.checkBoxPolarisationsLinearVertical.Size = new System.Drawing.Size(59, 17);
@@ -320,7 +317,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // checkBoxPolarisationsCircularLeft
       // 
       this.checkBoxPolarisationsCircularLeft.AutoSize = true;
-      this.checkBoxPolarisationsCircularLeft.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxPolarisationsCircularLeft.Location = new System.Drawing.Point(213, 268);
       this.checkBoxPolarisationsCircularLeft.Name = "checkBoxPolarisationsCircularLeft";
       this.checkBoxPolarisationsCircularLeft.Size = new System.Drawing.Size(42, 17);
@@ -331,7 +327,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // checkBoxPolarisationsCircularRight
       // 
       this.checkBoxPolarisationsCircularRight.AutoSize = true;
-      this.checkBoxPolarisationsCircularRight.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxPolarisationsCircularRight.Location = new System.Drawing.Point(213, 245);
       this.checkBoxPolarisationsCircularRight.Name = "checkBoxPolarisationsCircularRight";
       this.checkBoxPolarisationsCircularRight.Size = new System.Drawing.Size(49, 17);

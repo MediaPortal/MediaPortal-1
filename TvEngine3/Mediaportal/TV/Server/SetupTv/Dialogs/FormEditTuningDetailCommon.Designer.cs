@@ -120,7 +120,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // checkBoxIsEncrypted
       // 
       this.checkBoxIsEncrypted.AutoSize = true;
-      this.checkBoxIsEncrypted.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxIsEncrypted.Location = new System.Drawing.Point(123, 90);
       this.checkBoxIsEncrypted.Name = "checkBoxIsEncrypted";
       this.checkBoxIsEncrypted.Size = new System.Drawing.Size(27, 17);
@@ -166,7 +165,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // checkBoxIsHighDefinition
       // 
       this.checkBoxIsHighDefinition.AutoSize = true;
-      this.checkBoxIsHighDefinition.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxIsHighDefinition.Location = new System.Drawing.Point(123, 113);
       this.checkBoxIsHighDefinition.Name = "checkBoxIsHighDefinition";
       this.checkBoxIsHighDefinition.Size = new System.Drawing.Size(27, 17);
@@ -186,7 +184,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // checkBoxIsThreeDimensional
       // 
       this.checkBoxIsThreeDimensional.AutoSize = true;
-      this.checkBoxIsThreeDimensional.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxIsThreeDimensional.Location = new System.Drawing.Point(123, 136);
       this.checkBoxIsThreeDimensional.Name = "checkBoxIsThreeDimensional";
       this.checkBoxIsThreeDimensional.Size = new System.Drawing.Size(27, 17);

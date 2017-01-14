@@ -170,7 +170,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.mpGroupBox1.Controls.Add(this.label2);
       this.mpGroupBox1.Controls.Add(this.mpLabelTunerLocked);
       this.mpGroupBox1.Controls.Add(this.mpLabel3);
-      this.mpGroupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.mpGroupBox1.Location = new System.Drawing.Point(12, 12);
       this.mpGroupBox1.Name = "mpGroupBox1";
       this.mpGroupBox1.Size = new System.Drawing.Size(456, 177);
@@ -434,7 +433,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // mpCheckBoxAdvMode
       // 
       this.mpCheckBoxAdvMode.AutoSize = true;
-      this.mpCheckBoxAdvMode.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.mpCheckBoxAdvMode.Location = new System.Drawing.Point(9, 198);
       this.mpCheckBoxAdvMode.Name = "mpCheckBoxAdvMode";
       this.mpCheckBoxAdvMode.Size = new System.Drawing.Size(73, 17);

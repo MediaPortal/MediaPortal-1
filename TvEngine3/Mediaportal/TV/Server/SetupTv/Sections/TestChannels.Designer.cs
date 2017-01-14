@@ -120,7 +120,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.mpGroupBox1.Controls.Add(this.mpLabelRecording);
       this.mpGroupBox1.Controls.Add(this.mpLabelTimeShift);
       this.mpGroupBox1.Controls.Add(this.mpLabelChannel);
-      this.mpGroupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.mpGroupBox1.Location = new System.Drawing.Point(12, 12);
       this.mpGroupBox1.Name = "mpGroupBox1";
       this.mpGroupBox1.Size = new System.Drawing.Size(456, 199);
@@ -468,7 +467,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.chkRepeatTest.AutoSize = true;
       this.chkRepeatTest.Checked = true;
       this.chkRepeatTest.CheckState = System.Windows.Forms.CheckState.Checked;
-      this.chkRepeatTest.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.chkRepeatTest.Location = new System.Drawing.Point(349, 271);
       this.chkRepeatTest.Name = "chkRepeatTest";
       this.chkRepeatTest.Size = new System.Drawing.Size(104, 17);
@@ -501,7 +499,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.chkShareChannels.AutoSize = true;
       this.chkShareChannels.Checked = true;
       this.chkShareChannels.CheckState = System.Windows.Forms.CheckState.Checked;
-      this.chkShareChannels.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.chkShareChannels.Location = new System.Drawing.Point(332, 245);
       this.chkShareChannels.Name = "chkShareChannels";
       this.chkShareChannels.Size = new System.Drawing.Size(126, 17);
@@ -578,7 +575,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // chkSynch
       // 
       this.chkSynch.AutoSize = true;
-      this.chkSynch.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.chkSynch.Location = new System.Drawing.Point(278, 245);
       this.chkSynch.Name = "chkSynch";
       this.chkSynch.Size = new System.Drawing.Size(48, 17);
@@ -590,7 +586,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.chkRndPrio.AutoSize = true;
       this.chkRndPrio.Checked = true;
       this.chkRndPrio.CheckState = System.Windows.Forms.CheckState.Checked;
-      this.chkRndPrio.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.chkRndPrio.Location = new System.Drawing.Point(158, 219);
       this.chkRndPrio.Name = "chkRndPrio";
       this.chkRndPrio.Size = new System.Drawing.Size(110, 17);

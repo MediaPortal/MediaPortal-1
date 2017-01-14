@@ -60,7 +60,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       this.groupBoxGeneral.Controls.Add(this.labelServicePriority);
       this.groupBoxGeneral.Controls.Add(this.comboBoxServicePriority);
-      this.groupBoxGeneral.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxGeneral.Location = new System.Drawing.Point(3, 3);
       this.groupBoxGeneral.Name = "groupBoxGeneral";
       this.groupBoxGeneral.Size = new System.Drawing.Size(263, 51);
@@ -137,7 +136,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.groupBoxPreviewCodecs.Controls.Add(this.labelPreviewCodecAudio);
       this.groupBoxPreviewCodecs.Controls.Add(this.comboBoxPreviewCodecVideo);
       this.groupBoxPreviewCodecs.Controls.Add(this.labelPreviewCodecVideo);
-      this.groupBoxPreviewCodecs.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxPreviewCodecs.Location = new System.Drawing.Point(3, 60);
       this.groupBoxPreviewCodecs.Name = "groupBoxPreviewCodecs";
       this.groupBoxPreviewCodecs.Size = new System.Drawing.Size(414, 78);
@@ -238,7 +236,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.groupBoxTimeLimits.Controls.Add(this.labelTimeLimitReceiveStreamInfo);
       this.groupBoxTimeLimits.Controls.Add(this.labelTimeLimitSignalLockUnit);
       this.groupBoxTimeLimits.Controls.Add(this.numericUpDownTimeLimitSignalLock);
-      this.groupBoxTimeLimits.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxTimeLimits.Location = new System.Drawing.Point(3, 144);
       this.groupBoxTimeLimits.Name = "groupBoxTimeLimits";
       this.groupBoxTimeLimits.Size = new System.Drawing.Size(263, 104);

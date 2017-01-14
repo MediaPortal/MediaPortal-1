@@ -215,7 +215,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.groupBoxDebug.Controls.Add(this.checkBoxTsMuxerDumpInputs);
       this.groupBoxDebug.Controls.Add(this.checkBoxTsWriterDisableCrcCheck);
       this.groupBoxDebug.Controls.Add(this.checkBoxTsWriterDumpInputs);
-      this.groupBoxDebug.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxDebug.Location = new System.Drawing.Point(6, 282);
       this.groupBoxDebug.Name = "groupBoxDebug";
       this.groupBoxDebug.Size = new System.Drawing.Size(308, 114);
@@ -235,7 +234,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // checkBoxTsMuxerDumpInputs
       // 
       this.checkBoxTsMuxerDumpInputs.AutoSize = true;
-      this.checkBoxTsMuxerDumpInputs.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxTsMuxerDumpInputs.Location = new System.Drawing.Point(9, 85);
       this.checkBoxTsMuxerDumpInputs.Name = "checkBoxTsMuxerDumpInputs";
       this.checkBoxTsMuxerDumpInputs.Size = new System.Drawing.Size(130, 17);
@@ -245,7 +243,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // checkBoxTsWriterDisableCrcCheck
       // 
       this.checkBoxTsWriterDisableCrcCheck.AutoSize = true;
-      this.checkBoxTsWriterDisableCrcCheck.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxTsWriterDisableCrcCheck.Location = new System.Drawing.Point(9, 62);
       this.checkBoxTsWriterDisableCrcCheck.Name = "checkBoxTsWriterDisableCrcCheck";
       this.checkBoxTsWriterDisableCrcCheck.Size = new System.Drawing.Size(177, 17);
@@ -255,7 +252,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // checkBoxTsWriterDumpInputs
       // 
       this.checkBoxTsWriterDumpInputs.AutoSize = true;
-      this.checkBoxTsWriterDumpInputs.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxTsWriterDumpInputs.Location = new System.Drawing.Point(9, 39);
       this.checkBoxTsWriterDumpInputs.Name = "checkBoxTsWriterDumpInputs";
       this.checkBoxTsWriterDumpInputs.Size = new System.Drawing.Size(129, 17);
@@ -274,7 +270,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.groupBoxAdvanced.Controls.Add(this.labelAdvancedReadDocumentation);
       this.groupBoxAdvanced.Controls.Add(this.comboBoxIdleMode);
       this.groupBoxAdvanced.Controls.Add(this.labelIdleMode);
-      this.groupBoxAdvanced.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxAdvanced.Location = new System.Drawing.Point(6, 128);
       this.groupBoxAdvanced.Name = "groupBoxAdvanced";
       this.groupBoxAdvanced.Size = new System.Drawing.Size(308, 148);
@@ -285,7 +280,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // checkBoxUseCustomTuning
       // 
       this.checkBoxUseCustomTuning.AutoSize = true;
-      this.checkBoxUseCustomTuning.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxUseCustomTuning.Location = new System.Drawing.Point(9, 121);
       this.checkBoxUseCustomTuning.Name = "checkBoxUseCustomTuning";
       this.checkBoxUseCustomTuning.RightToLeft = System.Windows.Forms.RightToLeft.No;
@@ -362,7 +356,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.groupBoxGeneral.Controls.Add(this.checkBoxUseForEpgGrabbing);
       this.groupBoxGeneral.Controls.Add(this.textBoxTunerName);
       this.groupBoxGeneral.Controls.Add(this.checkBoxPreload);
-      this.groupBoxGeneral.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxGeneral.Location = new System.Drawing.Point(6, 6);
       this.groupBoxGeneral.Name = "groupBoxGeneral";
       this.groupBoxGeneral.Size = new System.Drawing.Size(308, 116);
@@ -373,7 +366,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // checkBoxAlwaysSendDiseqcCommands
       // 
       this.checkBoxAlwaysSendDiseqcCommands.AutoSize = true;
-      this.checkBoxAlwaysSendDiseqcCommands.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxAlwaysSendDiseqcCommands.Location = new System.Drawing.Point(9, 91);
       this.checkBoxAlwaysSendDiseqcCommands.Name = "checkBoxAlwaysSendDiseqcCommands";
       this.checkBoxAlwaysSendDiseqcCommands.RightToLeft = System.Windows.Forms.RightToLeft.No;
@@ -393,7 +385,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // checkBoxUseForEpgGrabbing
       // 
       this.checkBoxUseForEpgGrabbing.AutoSize = true;
-      this.checkBoxUseForEpgGrabbing.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxUseForEpgGrabbing.Location = new System.Drawing.Point(9, 45);
       this.checkBoxUseForEpgGrabbing.Name = "checkBoxUseForEpgGrabbing";
       this.checkBoxUseForEpgGrabbing.RightToLeft = System.Windows.Forms.RightToLeft.No;
@@ -413,7 +404,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // checkBoxPreload
       // 
       this.checkBoxPreload.AutoSize = true;
-      this.checkBoxPreload.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxPreload.Location = new System.Drawing.Point(9, 68);
       this.checkBoxPreload.Name = "checkBoxPreload";
       this.checkBoxPreload.RightToLeft = System.Windows.Forms.RightToLeft.No;
@@ -446,7 +436,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.groupBoxCaMenu.Controls.Add(this.buttonCaMenuOpen);
       this.groupBoxCaMenu.Controls.Add(this.labelCaMenuTitle);
       this.groupBoxCaMenu.Controls.Add(this.labelCaMenuSubTitle);
-      this.groupBoxCaMenu.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxCaMenu.Location = new System.Drawing.Point(6, 166);
       this.groupBoxCaMenu.Name = "groupBoxCaMenu";
       this.groupBoxCaMenu.Size = new System.Drawing.Size(311, 312);
@@ -559,7 +548,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.groupBoxConditionalAccess.Controls.Add(this.labelDecryptLimit1);
       this.groupBoxConditionalAccess.Controls.Add(this.labelDecryptLimit2);
       this.groupBoxConditionalAccess.Controls.Add(this.numericUpDownDecryptLimit);
-      this.groupBoxConditionalAccess.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxConditionalAccess.Location = new System.Drawing.Point(6, 6);
       this.groupBoxConditionalAccess.Name = "groupBoxConditionalAccess";
       this.groupBoxConditionalAccess.Size = new System.Drawing.Size(311, 154);
@@ -622,7 +610,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // checkBoxUseConditionalAccess
       // 
       this.checkBoxUseConditionalAccess.AutoSize = true;
-      this.checkBoxUseConditionalAccess.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxUseConditionalAccess.Location = new System.Drawing.Point(9, 18);
       this.checkBoxUseConditionalAccess.Name = "checkBoxUseConditionalAccess";
       this.checkBoxUseConditionalAccess.RightToLeft = System.Windows.Forms.RightToLeft.No;
@@ -703,7 +690,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.groupBoxEncoderSettings.Controls.Add(this.comboBoxEncoderBitRateModeTimeShifting);
       this.groupBoxEncoderSettings.Controls.Add(this.labelEncoderBitRateModeTimeShifting);
       this.groupBoxEncoderSettings.Controls.Add(this.labelEncoderBitRateValueTimeShifting);
-      this.groupBoxEncoderSettings.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxEncoderSettings.Location = new System.Drawing.Point(6, 339);
       this.groupBoxEncoderSettings.Name = "groupBoxEncoderSettings";
       this.groupBoxEncoderSettings.Size = new System.Drawing.Size(311, 120);
@@ -956,7 +942,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.groupBoxVideo.Controls.Add(this.comboBoxFrameRate);
       this.groupBoxVideo.Controls.Add(this.labelFrameRate);
       this.groupBoxVideo.Controls.Add(this.labelFrameSize);
-      this.groupBoxVideo.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxVideo.Location = new System.Drawing.Point(6, 6);
       this.groupBoxVideo.Name = "groupBoxVideo";
       this.groupBoxVideo.Size = new System.Drawing.Size(311, 106);
@@ -1025,7 +1010,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.groupBoxSoftwareEncoders.Controls.Add(this.labelSoftwareEncoderAudio);
       this.groupBoxSoftwareEncoders.Controls.Add(this.labelSoftwareEncoderVideo);
       this.groupBoxSoftwareEncoders.Controls.Add(this.comboBoxSoftwareEncoderVideo);
-      this.groupBoxSoftwareEncoders.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxSoftwareEncoders.Location = new System.Drawing.Point(6, 255);
       this.groupBoxSoftwareEncoders.Name = "groupBoxSoftwareEncoders";
       this.groupBoxSoftwareEncoders.Size = new System.Drawing.Size(311, 78);
@@ -1083,7 +1067,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.groupBoxVideoAndCameraProperties.Controls.Add(this.scrollBarVideoOrCameraPropertyValue);
       this.groupBoxVideoAndCameraProperties.Controls.Add(this.labelVideoOrCameraPropertyValueDisplay);
       this.groupBoxVideoAndCameraProperties.Controls.Add(this.buttonRestoreDefault);
-      this.groupBoxVideoAndCameraProperties.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxVideoAndCameraProperties.Location = new System.Drawing.Point(6, 118);
       this.groupBoxVideoAndCameraProperties.Name = "groupBoxVideoAndCameraProperties";
       this.groupBoxVideoAndCameraProperties.Size = new System.Drawing.Size(311, 131);
@@ -1094,7 +1077,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // checkBoxVideoOrCameraPropertyValue
       // 
       this.checkBoxVideoOrCameraPropertyValue.AutoSize = true;
-      this.checkBoxVideoOrCameraPropertyValue.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxVideoOrCameraPropertyValue.Location = new System.Drawing.Point(72, 52);
       this.checkBoxVideoOrCameraPropertyValue.Name = "checkBoxVideoOrCameraPropertyValue";
       this.checkBoxVideoOrCameraPropertyValue.RightToLeft = System.Windows.Forms.RightToLeft.No;
@@ -1189,7 +1171,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.groupBoxExternalTuner.Controls.Add(this.labelExternalTunerProgramArguments);
       this.groupBoxExternalTuner.Controls.Add(this.buttonExternalTunerProgramBrowse);
       this.groupBoxExternalTuner.Controls.Add(this.textBoxExternalTunerProgramArguments);
-      this.groupBoxExternalTuner.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxExternalTuner.Location = new System.Drawing.Point(6, 143);
       this.groupBoxExternalTuner.Name = "groupBoxExternalTuner";
       this.groupBoxExternalTuner.Size = new System.Drawing.Size(311, 77);
@@ -1255,7 +1236,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.groupBoxExternalInput.Controls.Add(this.labelExternalInputSourceVideo);
       this.groupBoxExternalInput.Controls.Add(this.comboBoxExternalInputSourceVideo);
       this.groupBoxExternalInput.Controls.Add(this.numericUpDownExternalInputPhysicalChannelNumber);
-      this.groupBoxExternalInput.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxExternalInput.Location = new System.Drawing.Point(6, 6);
       this.groupBoxExternalInput.Name = "groupBoxExternalInput";
       this.groupBoxExternalInput.Size = new System.Drawing.Size(311, 131);

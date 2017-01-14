@@ -18,6 +18,9 @@
 
 #endregion
 
+using System.ComponentModel;
+using System.Windows.Forms;
+
 namespace Mediaportal.TV.Server.SetupControls.UserInterfaceControls
 {
   /// <summary>
@@ -27,7 +30,21 @@ namespace Mediaportal.TV.Server.SetupControls.UserInterfaceControls
   {
     public MPGroupBox()
     {
-      FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      FlatStyle = FlatStyle.Popup;
+    }
+
+    [DefaultValue(FlatStyle.Popup)]
+    public new FlatStyle FlatStyle
+    {
+      get
+      {
+        return base.FlatStyle;
+      }
+      set
+      {
+        base.FlatStyle = value;
+        Invalidate();
+      }
     }
   }
 }

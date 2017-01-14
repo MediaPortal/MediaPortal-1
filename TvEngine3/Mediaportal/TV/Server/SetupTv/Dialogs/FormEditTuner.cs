@@ -112,14 +112,12 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
         {
           MPCheckBox checkBox = new MPCheckBox();
           checkBox.Checked = (_tuner.SupportedBroadcastStandards & (int)broadcastStandard) != 0;
-          checkBox.FlatStyle = FlatStyle.Popup;
           checkBox.Location = new Point(horizontalPosition, verticalPosition);
           checkBox.Name = "checkBoxBroadcastStandard" + broadcastStandard.ToString();
           checkBox.Width = horizontalIncrement - 8;
           checkBox.TabIndex = tabIndex++;
           checkBox.Tag = broadcastStandard;
           checkBox.Text = broadcastStandard.GetDescription();
-          checkBox.UseVisualStyleBackColor = true;
           groupBoxGeneral.Controls.Add(checkBox);
           _supportedBroadcastStandardCheckBoxes.Add(checkBox);
 

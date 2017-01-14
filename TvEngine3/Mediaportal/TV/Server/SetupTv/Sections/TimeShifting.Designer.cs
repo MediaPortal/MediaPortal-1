@@ -61,7 +61,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.groupBoxOther.Controls.Add(this.labelParkTimeLimit);
       this.groupBoxOther.Controls.Add(this.numericUpDownTunerLimit);
       this.groupBoxOther.Controls.Add(this.numericUpDownParkTimeLimit);
-      this.groupBoxOther.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxOther.Location = new System.Drawing.Point(3, 110);
       this.groupBoxOther.Name = "groupBoxOther";
       this.groupBoxOther.Size = new System.Drawing.Size(213, 75);
@@ -159,7 +158,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.groupBoxBuffer.Controls.Add(this.numericUpDownBufferSize);
       this.groupBoxBuffer.Controls.Add(this.labelBufferSizePaused);
       this.groupBoxBuffer.Controls.Add(this.labelBufferSize);
-      this.groupBoxBuffer.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxBuffer.Location = new System.Drawing.Point(3, 3);
       this.groupBoxBuffer.Name = "groupBoxBuffer";
       this.groupBoxBuffer.Size = new System.Drawing.Size(474, 101);

@@ -182,7 +182,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.groupBoxNaming.Controls.Add(this.labelNamingTemplateTags4);
       this.groupBoxNaming.Controls.Add(this.labelNamingTemplateTags1);
       this.groupBoxNaming.Controls.Add(this.labelNamingTemplateTags3);
-      this.groupBoxNaming.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxNaming.Location = new System.Drawing.Point(9, 166);
       this.groupBoxNaming.Name = "groupBoxNaming";
       this.groupBoxNaming.Size = new System.Drawing.Size(457, 114);
@@ -267,7 +266,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // checkBoxDiskManagementEnable
       // 
       this.checkBoxDiskManagementEnable.AutoSize = true;
-      this.checkBoxDiskManagementEnable.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxDiskManagementEnable.Location = new System.Drawing.Point(9, 42);
       this.checkBoxDiskManagementEnable.Name = "checkBoxDiskManagementEnable";
       this.checkBoxDiskManagementEnable.Size = new System.Drawing.Size(218, 17);
@@ -391,7 +389,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.groupBoxGeneral.Controls.Add(this.labelPreRecord2);
       this.groupBoxGeneral.Controls.Add(this.numericUpDownPreRecord);
       this.groupBoxGeneral.Controls.Add(this.labelPostRecord2);
-      this.groupBoxGeneral.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxGeneral.Location = new System.Drawing.Point(3, 3);
       this.groupBoxGeneral.Name = "groupBoxGeneral";
       this.groupBoxGeneral.Size = new System.Drawing.Size(466, 224);
@@ -402,7 +399,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // checkBoxDuplicateDetectionEpisodeNames
       // 
       this.checkBoxDuplicateDetectionEpisodeNames.AutoSize = true;
-      this.checkBoxDuplicateDetectionEpisodeNames.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxDuplicateDetectionEpisodeNames.Location = new System.Drawing.Point(25, 166);
       this.checkBoxDuplicateDetectionEpisodeNames.Name = "checkBoxDuplicateDetectionEpisodeNames";
       this.checkBoxDuplicateDetectionEpisodeNames.Size = new System.Drawing.Size(99, 17);
@@ -412,7 +408,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // checkBoxDuplicateDetectionSeasonEpisodeNumbers
       // 
       this.checkBoxDuplicateDetectionSeasonEpisodeNumbers.AutoSize = true;
-      this.checkBoxDuplicateDetectionSeasonEpisodeNumbers.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxDuplicateDetectionSeasonEpisodeNumbers.Location = new System.Drawing.Point(25, 143);
       this.checkBoxDuplicateDetectionSeasonEpisodeNumbers.Name = "checkBoxDuplicateDetectionSeasonEpisodeNumbers";
       this.checkBoxDuplicateDetectionSeasonEpisodeNumbers.Size = new System.Drawing.Size(167, 17);
@@ -422,7 +417,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // checkBoxDuplicateDetectionSeriesEpisodeIdentifers
       // 
       this.checkBoxDuplicateDetectionSeriesEpisodeIdentifers.AutoSize = true;
-      this.checkBoxDuplicateDetectionSeriesEpisodeIdentifers.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxDuplicateDetectionSeriesEpisodeIdentifers.Location = new System.Drawing.Point(25, 120);
       this.checkBoxDuplicateDetectionSeriesEpisodeIdentifers.Name = "checkBoxDuplicateDetectionSeriesEpisodeIdentifers";
       this.checkBoxDuplicateDetectionSeriesEpisodeIdentifers.Size = new System.Drawing.Size(220, 17);
@@ -589,7 +583,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.groupBoxThumbnailer.Controls.Add(this.numericUpDownThumbnailerColumnCount);
       this.groupBoxThumbnailer.Controls.Add(this.labelThumbnailerRowCount);
       this.groupBoxThumbnailer.Controls.Add(this.labelThumbnailerColumnCount);
-      this.groupBoxThumbnailer.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxThumbnailer.Location = new System.Drawing.Point(3, 233);
       this.groupBoxThumbnailer.Name = "groupBoxThumbnailer";
       this.groupBoxThumbnailer.Size = new System.Drawing.Size(466, 154);
@@ -609,7 +602,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // checkBoxThumbnailerEnable
       // 
       this.checkBoxThumbnailerEnable.AutoSize = true;
-      this.checkBoxThumbnailerEnable.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxThumbnailerEnable.Location = new System.Drawing.Point(6, 19);
       this.checkBoxThumbnailerEnable.Name = "checkBoxThumbnailerEnable";
       this.checkBoxThumbnailerEnable.Size = new System.Drawing.Size(198, 17);
@@ -629,7 +621,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // checkBoxThumbnailerCopyToRecordingFolder
       // 
       this.checkBoxThumbnailerCopyToRecordingFolder.AutoSize = true;
-      this.checkBoxThumbnailerCopyToRecordingFolder.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxThumbnailerCopyToRecordingFolder.Location = new System.Drawing.Point(25, 95);
       this.checkBoxThumbnailerCopyToRecordingFolder.Name = "checkBoxThumbnailerCopyToRecordingFolder";
       this.checkBoxThumbnailerCopyToRecordingFolder.Size = new System.Drawing.Size(187, 17);
