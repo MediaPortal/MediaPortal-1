@@ -946,7 +946,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.numericUpDownDiseqcMotorSetupPositionStored.Size = new System.Drawing.Size(50, 20);
       this.numericUpDownDiseqcMotorSetupPositionStored.TabIndex = 3;
       this.numericUpDownDiseqcMotorSetupPositionStored.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-      this.numericUpDownDiseqcMotorSetupPositionStored.TruncateDecimalPlaces = false;
       this.numericUpDownDiseqcMotorSetupPositionStored.Value = new decimal(new int[] {
             1,
             0,
@@ -1016,7 +1015,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.numericUpDownDiseqcMotorSetupManualMoveStepCount.Size = new System.Drawing.Size(45, 20);
       this.numericUpDownDiseqcMotorSetupManualMoveStepCount.TabIndex = 1;
       this.numericUpDownDiseqcMotorSetupManualMoveStepCount.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-      this.numericUpDownDiseqcMotorSetupManualMoveStepCount.TruncateDecimalPlaces = false;
       this.numericUpDownDiseqcMotorSetupManualMoveStepCount.Value = new decimal(new int[] {
             10,
             0,

@@ -513,7 +513,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.numericUpDownTunerEpgGrabberTimeShiftingRecordingTimeLimit.Size = new System.Drawing.Size(55, 20);
       this.numericUpDownTunerEpgGrabberTimeShiftingRecordingTimeLimit.TabIndex = 2;
       this.numericUpDownTunerEpgGrabberTimeShiftingRecordingTimeLimit.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-      this.numericUpDownTunerEpgGrabberTimeShiftingRecordingTimeLimit.TruncateDecimalPlaces = false;
       this.numericUpDownTunerEpgGrabberTimeShiftingRecordingTimeLimit.Value = new decimal(new int[] {
             30,
             0,
@@ -546,7 +545,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.numericUpDownTunerEpgGrabberIdleTimeLimit.Size = new System.Drawing.Size(55, 20);
       this.numericUpDownTunerEpgGrabberIdleTimeLimit.TabIndex = 6;
       this.numericUpDownTunerEpgGrabberIdleTimeLimit.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-      this.numericUpDownTunerEpgGrabberIdleTimeLimit.TruncateDecimalPlaces = false;
       this.numericUpDownTunerEpgGrabberIdleTimeLimit.Value = new decimal(new int[] {
             600,
             0,
@@ -619,7 +617,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.numericUpDownTunerEpgGrabberIdleRefresh.Size = new System.Drawing.Size(55, 20);
       this.numericUpDownTunerEpgGrabberIdleRefresh.TabIndex = 9;
       this.numericUpDownTunerEpgGrabberIdleRefresh.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-      this.numericUpDownTunerEpgGrabberIdleRefresh.TruncateDecimalPlaces = false;
       this.numericUpDownTunerEpgGrabberIdleRefresh.Value = new decimal(new int[] {
             240,
             0,

@@ -18,6 +18,7 @@
 
 #endregion
 
+using System.ComponentModel;
 using System.Windows.Forms;
 
 namespace Mediaportal.TV.Server.SetupControls.UserInterfaceControls
@@ -26,6 +27,7 @@ namespace Mediaportal.TV.Server.SetupControls.UserInterfaceControls
   {
     private bool _truncateDecimalPlaces = false;
 
+    [DefaultValue(false)]
     public bool TruncateDecimalPlaces
     {
       get
