@@ -19,6 +19,7 @@
 #endregion
 
 using System;
+using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -42,11 +43,12 @@ namespace Mediaportal.TV.Server.SetupControls.UserInterfaceControls
     {
       // This call is required by the Windows.Forms Form Designer.
       InitializeComponent();
-      AllowDrop = true;
+      //AllowDrop = true;
 
       // TODO: Add any initialization after the InitForm call
     }
 
+    [DefaultValue(false)]
     public bool AllowReorderTabs
     {
       get { return allowReorderTabs; }

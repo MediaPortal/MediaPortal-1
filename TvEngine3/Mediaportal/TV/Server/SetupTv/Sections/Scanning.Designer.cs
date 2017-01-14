@@ -373,8 +373,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       // tabControl
       // 
-      this.tabControl.AllowDrop = true;
-      this.tabControl.AllowReorderTabs = false;
       this.tabControl.Controls.Add(this.tabPageGeneral);
       this.tabControl.Controls.Add(this.tabPageAutomaticChannelGroups);
       this.tabControl.Location = new System.Drawing.Point(0, 0);

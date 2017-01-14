@@ -214,8 +214,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       // mpListViewLog
       // 
-      this.mpListViewLog.AllowDrop = true;
-      this.mpListViewLog.AllowRowReorder = true;
       this.mpListViewLog.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
@@ -517,8 +515,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       // mpListView1
       // 
-      this.mpListView1.AllowDrop = true;
-      this.mpListView1.AllowRowReorder = true;
       this.mpListView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));

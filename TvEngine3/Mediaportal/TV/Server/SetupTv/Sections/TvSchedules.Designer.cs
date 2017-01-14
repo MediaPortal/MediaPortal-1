@@ -140,8 +140,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       // tabControlTemplates
       // 
-      this.tabControlTemplates.AllowDrop = true;
-      this.tabControlTemplates.AllowReorderTabs = false;
       this.tabControlTemplates.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
