@@ -126,7 +126,6 @@ namespace Mediaportal.TV.Server.Plugins.TvMovieImport.Config
       this.tabPageMappings.Size = new System.Drawing.Size(472, 394);
       this.tabPageMappings.TabIndex = 0;
       this.tabPageMappings.Text = "Mappings";
-      this.tabPageMappings.UseVisualStyleBackColor = true;
       // 
       // groupBoxMapping
       // 
@@ -174,7 +173,6 @@ namespace Mediaportal.TV.Server.Plugins.TvMovieImport.Config
       this.checkBoxMappingsPartialMatch.Size = new System.Drawing.Size(137, 17);
       this.checkBoxMappingsPartialMatch.TabIndex = 2;
       this.checkBoxMappingsPartialMatch.Text = "Enable partial matching.";
-      this.checkBoxMappingsPartialMatch.UseVisualStyleBackColor = true;
       // 
       // textBoxMappingsAction
       // 
@@ -220,7 +218,6 @@ namespace Mediaportal.TV.Server.Plugins.TvMovieImport.Config
       this.buttonMappingsSave.Size = new System.Drawing.Size(60, 23);
       this.buttonMappingsSave.TabIndex = 4;
       this.buttonMappingsSave.Text = "&Save";
-      this.buttonMappingsSave.UseVisualStyleBackColor = true;
       this.buttonMappingsSave.Click += new System.EventHandler(this.buttonMappingsSave_Click);
       // 
       // buttonMappingsLoad
@@ -230,7 +227,6 @@ namespace Mediaportal.TV.Server.Plugins.TvMovieImport.Config
       this.buttonMappingsLoad.Size = new System.Drawing.Size(60, 23);
       this.buttonMappingsLoad.TabIndex = 3;
       this.buttonMappingsLoad.Text = "&Load";
-      this.buttonMappingsLoad.UseVisualStyleBackColor = true;
       this.buttonMappingsLoad.Click += new System.EventHandler(this.buttonMappingsLoad_Click);
       // 
       // dataGridViewMappings
@@ -312,7 +308,6 @@ namespace Mediaportal.TV.Server.Plugins.TvMovieImport.Config
       this.tabPageSettings.Size = new System.Drawing.Size(472, 394);
       this.tabPageSettings.TabIndex = 1;
       this.tabPageSettings.Text = "Settings";
-      this.tabPageSettings.UseVisualStyleBackColor = true;
       // 
       // groupBoxSettings
       // 
@@ -366,7 +361,6 @@ namespace Mediaportal.TV.Server.Plugins.TvMovieImport.Config
       this.buttonBrowse.Size = new System.Drawing.Size(24, 23);
       this.buttonBrowse.TabIndex = 2;
       this.buttonBrowse.Text = "...";
-      this.buttonBrowse.UseVisualStyleBackColor = true;
       this.buttonBrowse.Click += new System.EventHandler(this.buttonBrowse_Click);
       // 
       // textBoxDatabaseFile
@@ -385,7 +379,6 @@ namespace Mediaportal.TV.Server.Plugins.TvMovieImport.Config
       this.buttonImport.Size = new System.Drawing.Size(75, 23);
       this.buttonImport.TabIndex = 11;
       this.buttonImport.Text = "&Import Now";
-      this.buttonImport.UseVisualStyleBackColor = true;
       this.buttonImport.Click += new System.EventHandler(this.buttonImport_Click);
       // 
       // radioButtonUpdateTimeStartup
@@ -397,7 +390,6 @@ namespace Mediaportal.TV.Server.Plugins.TvMovieImport.Config
       this.radioButtonUpdateTimeStartup.Size = new System.Drawing.Size(210, 17);
       this.radioButtonUpdateTimeStartup.TabIndex = 10;
       this.radioButtonUpdateTimeStartup.Text = "When the TV service starts or resumes.";
-      this.radioButtonUpdateTimeStartup.UseVisualStyleBackColor = true;
       // 
       // labelUpdateTimeBetween
       // 
@@ -419,7 +411,6 @@ namespace Mediaportal.TV.Server.Plugins.TvMovieImport.Config
       this.radioButtonUpdateTimeBetween.TabIndex = 6;
       this.radioButtonUpdateTimeBetween.TabStop = true;
       this.radioButtonUpdateTimeBetween.Text = "Between";
-      this.radioButtonUpdateTimeBetween.UseVisualStyleBackColor = true;
       this.radioButtonUpdateTimeBetween.CheckedChanged += new System.EventHandler(this.radioUpdateTimeBetween_CheckedChanged);
       // 
       // labelUpdateTime

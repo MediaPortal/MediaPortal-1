@@ -158,7 +158,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.checkBoxSkipEncryptedChannels.Size = new System.Drawing.Size(174, 17);
       this.checkBoxSkipEncryptedChannels.TabIndex = 2;
       this.checkBoxSkipEncryptedChannels.Text = "Don\'t store encrypted channels.";
-      this.checkBoxSkipEncryptedChannels.UseVisualStyleBackColor = true;
       // 
       // checkBoxPreferHighDefinitionChannelNumbers
       // 
@@ -169,7 +168,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.checkBoxPreferHighDefinitionChannelNumbers.Size = new System.Drawing.Size(207, 17);
       this.checkBoxPreferHighDefinitionChannelNumbers.TabIndex = 1;
       this.checkBoxPreferHighDefinitionChannelNumbers.Text = "Prefer high definition channel numbers.";
-      this.checkBoxPreferHighDefinitionChannelNumbers.UseVisualStyleBackColor = true;
       // 
       // buttonUpdateTuningDetails
       // 
@@ -178,7 +176,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.buttonUpdateTuningDetails.Size = new System.Drawing.Size(130, 23);
       this.buttonUpdateTuningDetails.TabIndex = 3;
       this.buttonUpdateTuningDetails.Text = "&Update Tuning Details";
-      this.buttonUpdateTuningDetails.UseVisualStyleBackColor = true;
       this.buttonUpdateTuningDetails.Click += new System.EventHandler(this.buttonUpdateTuningDetails_Click);
       // 
       // checkBoxChannelMovementDetection
@@ -190,7 +187,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.checkBoxChannelMovementDetection.Size = new System.Drawing.Size(200, 17);
       this.checkBoxChannelMovementDetection.TabIndex = 0;
       this.checkBoxChannelMovementDetection.Text = "Enable channel movement detection.";
-      this.checkBoxChannelMovementDetection.UseVisualStyleBackColor = true;
       // 
       // checkBoxProvidersPreferProvider2ChannelDetails
       // 
@@ -201,7 +197,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.checkBoxProvidersPreferProvider2ChannelDetails.Size = new System.Drawing.Size(179, 17);
       this.checkBoxProvidersPreferProvider2ChannelDetails.TabIndex = 6;
       this.checkBoxProvidersPreferProvider2ChannelDetails.Text = "Prefer provider 2 channel details.";
-      this.checkBoxProvidersPreferProvider2ChannelDetails.UseVisualStyleBackColor = true;
       // 
       // numericUpDownTimingMinimum
       // 
@@ -392,7 +387,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.tabPageGeneral.Size = new System.Drawing.Size(472, 394);
       this.tabPageGeneral.TabIndex = 0;
       this.tabPageGeneral.Text = "General";
-      this.tabPageGeneral.UseVisualStyleBackColor = true;
       // 
       // groupBoxProviders
       // 
@@ -420,7 +414,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.checkBoxProvidersProvider2IsHighDefinition.Size = new System.Drawing.Size(40, 17);
       this.checkBoxProvidersProvider2IsHighDefinition.TabIndex = 5;
       this.checkBoxProvidersProvider2IsHighDefinition.Text = "HD";
-      this.checkBoxProvidersProvider2IsHighDefinition.UseVisualStyleBackColor = true;
       // 
       // checkBoxProvidersProvider1IsHighDefinition
       // 
@@ -431,7 +424,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.checkBoxProvidersProvider1IsHighDefinition.Size = new System.Drawing.Size(40, 17);
       this.checkBoxProvidersProvider1IsHighDefinition.TabIndex = 2;
       this.checkBoxProvidersProvider1IsHighDefinition.Text = "HD";
-      this.checkBoxProvidersProvider1IsHighDefinition.UseVisualStyleBackColor = true;
       // 
       // labelProvidersProvider1Region
       // 
@@ -492,7 +484,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.tabPageAutomaticChannelGroups.Size = new System.Drawing.Size(472, 394);
       this.tabPageAutomaticChannelGroups.TabIndex = 1;
       this.tabPageAutomaticChannelGroups.Text = "Automatic Channel Groups";
-      this.tabPageAutomaticChannelGroups.UseVisualStyleBackColor = true;
       // 
       // textBoxAutomaticChannelGroupsChannelProviders
       // 
@@ -539,7 +530,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.checkBoxAutomaticChannelGroupsNorDigChannelLists.Size = new System.Drawing.Size(140, 17);
       this.checkBoxAutomaticChannelGroupsNorDigChannelLists.TabIndex = 13;
       this.checkBoxAutomaticChannelGroupsNorDigChannelLists.Text = "each NorDig channel list";
-      this.checkBoxAutomaticChannelGroupsNorDigChannelLists.UseVisualStyleBackColor = true;
       // 
       // checkBoxAutomaticChannelGroupsVirginMediaChannelCategories
       // 
@@ -550,7 +540,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.checkBoxAutomaticChannelGroupsVirginMediaChannelCategories.Size = new System.Drawing.Size(194, 17);
       this.checkBoxAutomaticChannelGroupsVirginMediaChannelCategories.TabIndex = 14;
       this.checkBoxAutomaticChannelGroupsVirginMediaChannelCategories.Text = "each Virgin Media channel category";
-      this.checkBoxAutomaticChannelGroupsVirginMediaChannelCategories.UseVisualStyleBackColor = true;
       // 
       // checkBoxAutomaticChannelGroupsFreesatChannelCategories
       // 
@@ -561,7 +550,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.checkBoxAutomaticChannelGroupsFreesatChannelCategories.Size = new System.Drawing.Size(171, 17);
       this.checkBoxAutomaticChannelGroupsFreesatChannelCategories.TabIndex = 11;
       this.checkBoxAutomaticChannelGroupsFreesatChannelCategories.Text = "each Freesat channel category";
-      this.checkBoxAutomaticChannelGroupsFreesatChannelCategories.UseVisualStyleBackColor = true;
       // 
       // checkBoxAutomaticChannelGroupsProvider1Region
       // 
@@ -572,7 +560,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.checkBoxAutomaticChannelGroupsProvider1Region.Size = new System.Drawing.Size(164, 17);
       this.checkBoxAutomaticChannelGroupsProvider1Region.TabIndex = 15;
       this.checkBoxAutomaticChannelGroupsProvider1Region.Text = "the selected provider 1 region";
-      this.checkBoxAutomaticChannelGroupsProvider1Region.UseVisualStyleBackColor = true;
       // 
       // checkBoxAutomaticChannelGroupsProvider2Region
       // 
@@ -583,7 +570,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.checkBoxAutomaticChannelGroupsProvider2Region.Size = new System.Drawing.Size(164, 17);
       this.checkBoxAutomaticChannelGroupsProvider2Region.TabIndex = 12;
       this.checkBoxAutomaticChannelGroupsProvider2Region.Text = "the selected provider 2 region";
-      this.checkBoxAutomaticChannelGroupsProvider2Region.UseVisualStyleBackColor = true;
       // 
       // checkBoxAutomaticChannelGroupsDvbTargetRegions
       // 
@@ -594,7 +580,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.checkBoxAutomaticChannelGroupsDvbTargetRegions.Size = new System.Drawing.Size(159, 17);
       this.checkBoxAutomaticChannelGroupsDvbTargetRegions.TabIndex = 7;
       this.checkBoxAutomaticChannelGroupsDvbTargetRegions.Text = "matching DVB target regions";
-      this.checkBoxAutomaticChannelGroupsDvbTargetRegions.UseVisualStyleBackColor = true;
       this.checkBoxAutomaticChannelGroupsDvbTargetRegions.CheckedChanged += new System.EventHandler(this.checkBoxAutomaticChannelGroupsDvbTargetRegions_CheckedChanged);
       // 
       // checkBoxAutomaticChannelGroupsDvbBouquets
@@ -606,7 +591,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.checkBoxAutomaticChannelGroupsDvbBouquets.Size = new System.Drawing.Size(139, 17);
       this.checkBoxAutomaticChannelGroupsDvbBouquets.TabIndex = 5;
       this.checkBoxAutomaticChannelGroupsDvbBouquets.Text = "matching DVB bouquets";
-      this.checkBoxAutomaticChannelGroupsDvbBouquets.UseVisualStyleBackColor = true;
       this.checkBoxAutomaticChannelGroupsDvbBouquets.CheckedChanged += new System.EventHandler(this.checkBoxAutomaticChannelGroupsDvbBouquets_CheckedChanged);
       // 
       // checkBoxAutomaticChannelGroupsDvbNetworks
@@ -618,7 +602,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.checkBoxAutomaticChannelGroupsDvbNetworks.Size = new System.Drawing.Size(138, 17);
       this.checkBoxAutomaticChannelGroupsDvbNetworks.TabIndex = 3;
       this.checkBoxAutomaticChannelGroupsDvbNetworks.Text = "matching DVB networks";
-      this.checkBoxAutomaticChannelGroupsDvbNetworks.UseVisualStyleBackColor = true;
       this.checkBoxAutomaticChannelGroupsDvbNetworks.CheckedChanged += new System.EventHandler(this.checkBoxAutomaticChannelGroupsDvbNetworks_CheckedChanged);
       // 
       // labelAutomaticChannelGroups
@@ -639,7 +622,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.checkBoxAutomaticChannelGroupsChannelProviders.Size = new System.Drawing.Size(154, 17);
       this.checkBoxAutomaticChannelGroupsChannelProviders.TabIndex = 1;
       this.checkBoxAutomaticChannelGroupsChannelProviders.Text = "matching channel providers";
-      this.checkBoxAutomaticChannelGroupsChannelProviders.UseVisualStyleBackColor = true;
       this.checkBoxAutomaticChannelGroupsChannelProviders.CheckedChanged += new System.EventHandler(this.checkBoxAutomaticChannelGroupsChannelProviders_CheckedChanged);
       // 
       // checkBoxAutomaticChannelGroupsBroadcastStandards
@@ -651,7 +633,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.checkBoxAutomaticChannelGroupsBroadcastStandards.Size = new System.Drawing.Size(142, 17);
       this.checkBoxAutomaticChannelGroupsBroadcastStandards.TabIndex = 9;
       this.checkBoxAutomaticChannelGroupsBroadcastStandards.Text = "each broadcast standard";
-      this.checkBoxAutomaticChannelGroupsBroadcastStandards.UseVisualStyleBackColor = true;
       // 
       // checkBoxAutomaticChannelGroupsSatellites
       // 
@@ -662,7 +643,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.checkBoxAutomaticChannelGroupsSatellites.Size = new System.Drawing.Size(86, 17);
       this.checkBoxAutomaticChannelGroupsSatellites.TabIndex = 10;
       this.checkBoxAutomaticChannelGroupsSatellites.Text = "each satellite";
-      this.checkBoxAutomaticChannelGroupsSatellites.UseVisualStyleBackColor = true;
       // 
       // Scanning
       // 

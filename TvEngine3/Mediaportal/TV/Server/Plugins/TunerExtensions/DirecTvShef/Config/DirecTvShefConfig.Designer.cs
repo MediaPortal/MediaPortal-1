@@ -137,7 +137,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DirecTvShef.Config
       this.buttonTest.Size = new System.Drawing.Size(50, 23);
       this.buttonTest.TabIndex = 2;
       this.buttonTest.Text = "&Test";
-      this.buttonTest.UseVisualStyleBackColor = true;
       this.buttonTest.Click += new System.EventHandler(this.buttonTest_Click);
       // 
       // pictureBoxLogo
@@ -158,7 +157,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DirecTvShef.Config
       this.buttonSelectGenieMini.Size = new System.Drawing.Size(100, 23);
       this.buttonSelectGenieMini.TabIndex = 1;
       this.buttonSelectGenieMini.Text = "&Select Genie Mini";
-      this.buttonSelectGenieMini.UseVisualStyleBackColor = true;
       this.buttonSelectGenieMini.Click += new System.EventHandler(this.buttonSelectGenieMini_Click);
       // 
       // DirecTvShefConfig

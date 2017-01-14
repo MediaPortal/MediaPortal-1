@@ -90,7 +90,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeBlaster.Config
       this.buttonBlastCfg.Size = new System.Drawing.Size(100, 23);
       this.buttonBlastCfg.TabIndex = 5;
       this.buttonBlastCfg.Text = "Run BlastCfg";
-      this.buttonBlastCfg.UseVisualStyleBackColor = true;
       this.buttonBlastCfg.Click += new System.EventHandler(this.buttonBlastCfg_Click);
       // 
       // comboBoxTunerSelectionPort1

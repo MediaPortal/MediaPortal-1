@@ -137,7 +137,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.buttonTunerSatelliteDelete.Size = new System.Drawing.Size(55, 23);
       this.buttonTunerSatelliteDelete.TabIndex = 3;
       this.buttonTunerSatelliteDelete.Text = "&Delete";
-      this.buttonTunerSatelliteDelete.UseVisualStyleBackColor = true;
       this.buttonTunerSatelliteDelete.Click += new System.EventHandler(this.buttonTunerSatelliteDelete_Click);
       // 
       // buttonTunerSatelliteAdd
@@ -148,7 +147,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.buttonTunerSatelliteAdd.Size = new System.Drawing.Size(55, 23);
       this.buttonTunerSatelliteAdd.TabIndex = 1;
       this.buttonTunerSatelliteAdd.Text = "&Add";
-      this.buttonTunerSatelliteAdd.UseVisualStyleBackColor = true;
       this.buttonTunerSatelliteAdd.Click += new System.EventHandler(this.buttonTunerSatelliteAdd_Click);
       // 
       // buttonTunerSatelliteEdit
@@ -159,7 +157,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.buttonTunerSatelliteEdit.Size = new System.Drawing.Size(55, 23);
       this.buttonTunerSatelliteEdit.TabIndex = 2;
       this.buttonTunerSatelliteEdit.Text = "&Edit";
-      this.buttonTunerSatelliteEdit.UseVisualStyleBackColor = true;
       this.buttonTunerSatelliteEdit.Click += new System.EventHandler(this.buttonTunerSatelliteEdit_Click);
       // 
       // dataGridViewTunerSatellites
@@ -554,7 +551,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.tabPageSatellites.Size = new System.Drawing.Size(472, 394);
       this.tabPageSatellites.TabIndex = 0;
       this.tabPageSatellites.Text = "Satellites";
-      this.tabPageSatellites.UseVisualStyleBackColor = true;
       // 
       // tabPageDiseqcMotorSetup
       // 
@@ -570,7 +566,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.tabPageDiseqcMotorSetup.Size = new System.Drawing.Size(472, 394);
       this.tabPageDiseqcMotorSetup.TabIndex = 1;
       this.tabPageDiseqcMotorSetup.Text = "DiSEqC Motor Setup";
-      this.tabPageDiseqcMotorSetup.UseVisualStyleBackColor = true;
       // 
       // groupBoxDiseqcMotorSetupCheck
       // 
@@ -660,7 +655,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.buttonDiseqcMotorSetupCheckTune.Size = new System.Drawing.Size(65, 23);
       this.buttonDiseqcMotorSetupCheckTune.TabIndex = 4;
       this.buttonDiseqcMotorSetupCheckTune.Text = "Tune";
-      this.buttonDiseqcMotorSetupCheckTune.UseVisualStyleBackColor = true;
       this.buttonDiseqcMotorSetupCheckTune.Click += new System.EventHandler(this.buttonDiseqcMotorSetupCheckTune_Click);
       // 
       // progressBarDiseqcMotorSetupCheckSignalQuality
@@ -740,7 +734,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.buttonDiseqcMotorSetupMoveLimitsEnable.Size = new System.Drawing.Size(65, 23);
       this.buttonDiseqcMotorSetupMoveLimitsEnable.TabIndex = 3;
       this.buttonDiseqcMotorSetupMoveLimitsEnable.Text = "Enable";
-      this.buttonDiseqcMotorSetupMoveLimitsEnable.UseVisualStyleBackColor = true;
       this.buttonDiseqcMotorSetupMoveLimitsEnable.Click += new System.EventHandler(this.buttonDiseqcMotorSetupMoveLimitsEnable_Click);
       // 
       // buttonDiseqcMotorSetupMoveLimitsDisable
@@ -750,7 +743,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.buttonDiseqcMotorSetupMoveLimitsDisable.Size = new System.Drawing.Size(65, 23);
       this.buttonDiseqcMotorSetupMoveLimitsDisable.TabIndex = 0;
       this.buttonDiseqcMotorSetupMoveLimitsDisable.Text = "Disable";
-      this.buttonDiseqcMotorSetupMoveLimitsDisable.UseVisualStyleBackColor = true;
       this.buttonDiseqcMotorSetupMoveLimitsDisable.Click += new System.EventHandler(this.buttonDiseqcMotorSetupMoveLimitsDisable_Click);
       // 
       // buttonDiseqcMotorSetupMoveLimitsSetEast
@@ -760,7 +752,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.buttonDiseqcMotorSetupMoveLimitsSetEast.Size = new System.Drawing.Size(65, 23);
       this.buttonDiseqcMotorSetupMoveLimitsSetEast.TabIndex = 2;
       this.buttonDiseqcMotorSetupMoveLimitsSetEast.Text = "Set East";
-      this.buttonDiseqcMotorSetupMoveLimitsSetEast.UseVisualStyleBackColor = true;
       this.buttonDiseqcMotorSetupMoveLimitsSetEast.Click += new System.EventHandler(this.buttonDiseqcMotorSetupMoveLimitsSetEast_Click);
       // 
       // buttonDiseqcMotorSetupMoveLimitsSetWest
@@ -770,7 +761,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.buttonDiseqcMotorSetupMoveLimitsSetWest.Size = new System.Drawing.Size(65, 23);
       this.buttonDiseqcMotorSetupMoveLimitsSetWest.TabIndex = 1;
       this.buttonDiseqcMotorSetupMoveLimitsSetWest.Text = "Set West";
-      this.buttonDiseqcMotorSetupMoveLimitsSetWest.UseVisualStyleBackColor = true;
       this.buttonDiseqcMotorSetupMoveLimitsSetWest.Click += new System.EventHandler(this.buttonDiseqcMotorSetupMoveLimitsSetWest_Click);
       // 
       // labelDiseqcMotorSetupTuner
@@ -822,7 +812,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.buttonDiseqcMotorSetupPositionReferenceGoTo.Size = new System.Drawing.Size(139, 23);
       this.buttonDiseqcMotorSetupPositionReferenceGoTo.TabIndex = 12;
       this.buttonDiseqcMotorSetupPositionReferenceGoTo.Text = "Go To Reference Position";
-      this.buttonDiseqcMotorSetupPositionReferenceGoTo.UseVisualStyleBackColor = true;
       this.buttonDiseqcMotorSetupPositionReferenceGoTo.Click += new System.EventHandler(this.buttonDiseqcMotorSetupPositionReferenceGoTo_Click);
       // 
       // buttonDiseqcMotorSetupPositionReset
@@ -832,7 +821,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.buttonDiseqcMotorSetupPositionReset.Size = new System.Drawing.Size(50, 23);
       this.buttonDiseqcMotorSetupPositionReset.TabIndex = 11;
       this.buttonDiseqcMotorSetupPositionReset.Text = "Reset";
-      this.buttonDiseqcMotorSetupPositionReset.UseVisualStyleBackColor = true;
       this.buttonDiseqcMotorSetupPositionReset.Click += new System.EventHandler(this.buttonDiseqcMotorSetupPositionReset_Click);
       // 
       // labelDiseqcMotorSetupPositionUsalsDescription
@@ -903,7 +891,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.buttonDiseqcMotorSetupPositionUsalsGoTo.Size = new System.Drawing.Size(45, 23);
       this.buttonDiseqcMotorSetupPositionUsalsGoTo.TabIndex = 9;
       this.buttonDiseqcMotorSetupPositionUsalsGoTo.Text = "Go To";
-      this.buttonDiseqcMotorSetupPositionUsalsGoTo.UseVisualStyleBackColor = true;
       this.buttonDiseqcMotorSetupPositionUsalsGoTo.Click += new System.EventHandler(this.buttonDiseqcMotorSetupPositionUsalsGoTo_Click);
       // 
       // labelDiseqcMotorSetupPositionCurrent
@@ -954,7 +941,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.buttonDiseqcMotorSetupPositionStoredGoTo.Size = new System.Drawing.Size(45, 23);
       this.buttonDiseqcMotorSetupPositionStoredGoTo.TabIndex = 4;
       this.buttonDiseqcMotorSetupPositionStoredGoTo.Text = "Go To";
-      this.buttonDiseqcMotorSetupPositionStoredGoTo.UseVisualStyleBackColor = true;
       this.buttonDiseqcMotorSetupPositionStoredGoTo.Click += new System.EventHandler(this.buttonDiseqcMotorSetupPositionStoredGoTo_Click);
       // 
       // buttonDiseqcMotorSetupPositionStoredStore
@@ -964,7 +950,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.buttonDiseqcMotorSetupPositionStoredStore.Size = new System.Drawing.Size(45, 23);
       this.buttonDiseqcMotorSetupPositionStoredStore.TabIndex = 5;
       this.buttonDiseqcMotorSetupPositionStoredStore.Text = "Store";
-      this.buttonDiseqcMotorSetupPositionStoredStore.UseVisualStyleBackColor = true;
       this.buttonDiseqcMotorSetupPositionStoredStore.Click += new System.EventHandler(this.buttonDiseqcMotorSetupPositionStoredStore_Click);
       // 
       // groupBoxDiseqcMotorSetupManualMove
@@ -1023,7 +1008,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.buttonDiseqcMotorSetupManualMoveDown.Name = "buttonDiseqcMotorSetupManualMoveDown";
       this.buttonDiseqcMotorSetupManualMoveDown.Size = new System.Drawing.Size(25, 23);
       this.buttonDiseqcMotorSetupManualMoveDown.TabIndex = 6;
-      this.buttonDiseqcMotorSetupManualMoveDown.UseVisualStyleBackColor = true;
       this.buttonDiseqcMotorSetupManualMoveDown.Click += new System.EventHandler(this.buttonDiseqcMotorSetupManualMoveDown_Click);
       // 
       // buttonDiseqcMotorSetupManualMoveUp
@@ -1033,7 +1017,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.buttonDiseqcMotorSetupManualMoveUp.Name = "buttonDiseqcMotorSetupManualMoveUp";
       this.buttonDiseqcMotorSetupManualMoveUp.Size = new System.Drawing.Size(25, 23);
       this.buttonDiseqcMotorSetupManualMoveUp.TabIndex = 2;
-      this.buttonDiseqcMotorSetupManualMoveUp.UseVisualStyleBackColor = true;
       this.buttonDiseqcMotorSetupManualMoveUp.Click += new System.EventHandler(this.buttonDiseqcMotorSetupManualMoveUp_Click);
       // 
       // buttonDiseqcMotorSetupManualMoveWest
@@ -1043,7 +1026,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.buttonDiseqcMotorSetupManualMoveWest.Name = "buttonDiseqcMotorSetupManualMoveWest";
       this.buttonDiseqcMotorSetupManualMoveWest.Size = new System.Drawing.Size(25, 23);
       this.buttonDiseqcMotorSetupManualMoveWest.TabIndex = 3;
-      this.buttonDiseqcMotorSetupManualMoveWest.UseVisualStyleBackColor = true;
       this.buttonDiseqcMotorSetupManualMoveWest.Click += new System.EventHandler(this.buttonDiseqcMotorSetupManualMoveWest_Click);
       // 
       // buttonDiseqcMotorSetupManualMoveEast
@@ -1053,7 +1035,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.buttonDiseqcMotorSetupManualMoveEast.Name = "buttonDiseqcMotorSetupManualMoveEast";
       this.buttonDiseqcMotorSetupManualMoveEast.Size = new System.Drawing.Size(25, 23);
       this.buttonDiseqcMotorSetupManualMoveEast.TabIndex = 5;
-      this.buttonDiseqcMotorSetupManualMoveEast.UseVisualStyleBackColor = true;
       this.buttonDiseqcMotorSetupManualMoveEast.Click += new System.EventHandler(this.buttonDiseqcMotorSetupManualMoveEast_Click);
       // 
       // buttonDiseqcMotorSetupManualMoveHalt
@@ -1063,7 +1044,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.buttonDiseqcMotorSetupManualMoveHalt.Name = "buttonDiseqcMotorSetupManualMoveHalt";
       this.buttonDiseqcMotorSetupManualMoveHalt.Size = new System.Drawing.Size(25, 23);
       this.buttonDiseqcMotorSetupManualMoveHalt.TabIndex = 4;
-      this.buttonDiseqcMotorSetupManualMoveHalt.UseVisualStyleBackColor = true;
       this.buttonDiseqcMotorSetupManualMoveHalt.Click += new System.EventHandler(this.buttonDiseqcMotorSetupManualMoveHalt_Click);
       // 
       // Satellites

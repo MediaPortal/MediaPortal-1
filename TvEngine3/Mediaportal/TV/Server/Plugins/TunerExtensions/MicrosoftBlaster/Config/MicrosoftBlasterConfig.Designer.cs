@@ -153,7 +153,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster.Config
       this.buttonTest.Size = new System.Drawing.Size(60, 23);
       this.buttonTest.TabIndex = 3;
       this.buttonTest.Text = "&Test";
-      this.buttonTest.UseVisualStyleBackColor = true;
       this.buttonTest.Click += new System.EventHandler(this.buttonTest_Click);
       // 
       // channelNumberUpDown
@@ -189,7 +188,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster.Config
       this.buttonLearn.Size = new System.Drawing.Size(60, 23);
       this.buttonLearn.TabIndex = 1;
       this.buttonLearn.Text = "&Learn";
-      this.buttonLearn.UseVisualStyleBackColor = true;
       this.buttonLearn.Click += new System.EventHandler(this.buttonLearn_Click);
       // 
       // pictureBoxLogo

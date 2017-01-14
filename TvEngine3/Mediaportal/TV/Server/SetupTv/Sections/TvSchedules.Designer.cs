@@ -164,7 +164,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.tabPage1.Size = new System.Drawing.Size(472, 394);
       this.tabPage1.TabIndex = 0;
       this.tabPage1.Text = "Schedules";
-      this.tabPage1.UseVisualStyleBackColor = true;
       // 
       // listView1
       // 
@@ -232,7 +231,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.mpButtonDel.Size = new System.Drawing.Size(55, 23);
       this.mpButtonDel.TabIndex = 1;
       this.mpButtonDel.Text = "Delete";
-      this.mpButtonDel.UseVisualStyleBackColor = true;
       this.mpButtonDel.Click += new System.EventHandler(this.mpButtonDel_Click);
       // 
       // mpLabelChannelCount
@@ -258,7 +256,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.Programs.Size = new System.Drawing.Size(472, 394);
       this.Programs.TabIndex = 1;
       this.Programs.Text = "Programs";
-      this.Programs.UseVisualStyleBackColor = true;
       // 
       // mpLabel2
       // 
@@ -396,7 +393,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.Templates.Size = new System.Drawing.Size(472, 394);
       this.Templates.TabIndex = 2;
       this.Templates.Text = "Templates";
-      this.Templates.UseVisualStyleBackColor = true;
       // 
       // mpButtonAddNewTemplate
       // 
@@ -406,7 +402,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.mpButtonAddNewTemplate.Size = new System.Drawing.Size(113, 23);
       this.mpButtonAddNewTemplate.TabIndex = 6;
       this.mpButtonAddNewTemplate.Text = "Add new template";
-      this.mpButtonAddNewTemplate.UseVisualStyleBackColor = true;
       this.mpButtonAddNewTemplate.Click += new System.EventHandler(this.mpButtonAddNewTemplate_Click);
       // 
       // listViewTemplates

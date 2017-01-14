@@ -56,7 +56,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.buttonCancel.Size = new System.Drawing.Size(75, 23);
       this.buttonCancel.TabIndex = 13;
       this.buttonCancel.Text = "&Cancel";
-      this.buttonCancel.UseVisualStyleBackColor = true;
       this.buttonCancel.Click += new System.EventHandler(this.buttonCancel_Click);
       // 
       // buttonOkay
@@ -67,7 +66,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.buttonOkay.Size = new System.Drawing.Size(75, 23);
       this.buttonOkay.TabIndex = 12;
       this.buttonOkay.Text = "&OK";
-      this.buttonOkay.UseVisualStyleBackColor = true;
       this.buttonOkay.Click += new System.EventHandler(this.buttonOkay_Click);
       // 
       // labelNumber
@@ -129,7 +127,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.checkBoxIsEncrypted.TabIndex = 7;
       this.checkBoxIsEncrypted.Text = " ";
       this.checkBoxIsEncrypted.TextAlign = System.Drawing.ContentAlignment.TopRight;
-      this.checkBoxIsEncrypted.UseVisualStyleBackColor = true;
       // 
       // labelProvider
       // 
@@ -176,7 +173,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.checkBoxIsHighDefinition.TabIndex = 9;
       this.checkBoxIsHighDefinition.Text = " ";
       this.checkBoxIsHighDefinition.TextAlign = System.Drawing.ContentAlignment.TopRight;
-      this.checkBoxIsHighDefinition.UseVisualStyleBackColor = true;
       // 
       // labelIsThreeDimensional
       // 
@@ -197,7 +193,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.checkBoxIsThreeDimensional.TabIndex = 11;
       this.checkBoxIsThreeDimensional.Text = " ";
       this.checkBoxIsThreeDimensional.TextAlign = System.Drawing.ContentAlignment.TopRight;
-      this.checkBoxIsThreeDimensional.UseVisualStyleBackColor = true;
       // 
       // FormEditTuningDetailCommon
       // 

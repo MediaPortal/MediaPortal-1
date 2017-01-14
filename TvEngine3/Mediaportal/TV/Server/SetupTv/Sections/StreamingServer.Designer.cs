@@ -180,7 +180,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.buttonKick.Size = new System.Drawing.Size(55, 23);
       this.buttonKick.TabIndex = 1;
       this.buttonKick.Text = "&Kick";
-      this.buttonKick.UseVisualStyleBackColor = true;
       this.buttonKick.Click += new System.EventHandler(this.buttonKick_Click);
       // 
       // groupBoxSettings

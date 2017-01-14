@@ -59,7 +59,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.buttonOkay.Size = new System.Drawing.Size(75, 23);
       this.buttonOkay.TabIndex = 7;
       this.buttonOkay.Text = "&OK";
-      this.buttonOkay.UseVisualStyleBackColor = true;
       this.buttonOkay.Click += new System.EventHandler(this.buttonOkay_Click);
       // 
       // buttonCancel
@@ -71,7 +70,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.buttonCancel.Size = new System.Drawing.Size(75, 23);
       this.buttonCancel.TabIndex = 8;
       this.buttonCancel.Text = "&Cancel";
-      this.buttonCancel.UseVisualStyleBackColor = true;
       this.buttonCancel.Click += new System.EventHandler(this.buttonCancel_Click);
       // 
       // listViewItems
@@ -107,7 +105,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.buttonOrderDown.Name = "buttonOrderDown";
       this.buttonOrderDown.Size = new System.Drawing.Size(30, 23);
       this.buttonOrderDown.TabIndex = 6;
-      this.buttonOrderDown.UseVisualStyleBackColor = true;
       this.buttonOrderDown.Click += new System.EventHandler(this.buttonOrderDown_Click);
       // 
       // buttonOrderUp
@@ -118,7 +115,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.buttonOrderUp.Name = "buttonOrderUp";
       this.buttonOrderUp.Size = new System.Drawing.Size(30, 23);
       this.buttonOrderUp.TabIndex = 5;
-      this.buttonOrderUp.UseVisualStyleBackColor = true;
       this.buttonOrderUp.Click += new System.EventHandler(this.buttonOrderUp_Click);
       // 
       // buttonOrderByName
@@ -129,7 +125,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.buttonOrderByName.Name = "buttonOrderByName";
       this.buttonOrderByName.Size = new System.Drawing.Size(30, 23);
       this.buttonOrderByName.TabIndex = 3;
-      this.buttonOrderByName.UseVisualStyleBackColor = true;
       this.buttonOrderByName.Click += new System.EventHandler(this.buttonOrderByName_Click);
       // 
       // labelOrderManual

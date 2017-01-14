@@ -289,7 +289,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.mpButton1.Size = new System.Drawing.Size(75, 25);
       this.mpButton1.TabIndex = 71;
       this.mpButton1.Text = "Clipboard";
-      this.mpButton1.UseVisualStyleBackColor = true;
       this.mpButton1.Click += new System.EventHandler(this.mpButton1_Click);
       // 
       // lblTotal
@@ -378,7 +377,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.mpButtonTimeShift.Size = new System.Drawing.Size(115, 23);
       this.mpButtonTimeShift.TabIndex = 56;
       this.mpButtonTimeShift.Text = "Start test";
-      this.mpButtonTimeShift.UseVisualStyleBackColor = true;
       this.mpButtonTimeShift.Click += new System.EventHandler(this.mpButtonTimeShift_Click);
       // 
       // timer1
@@ -476,7 +474,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.chkRepeatTest.Size = new System.Drawing.Size(104, 17);
       this.chkRepeatTest.TabIndex = 71;
       this.chkRepeatTest.Text = "Repeat until stop";
-      this.chkRepeatTest.UseVisualStyleBackColor = true;
       this.chkRepeatTest.CheckedChanged += new System.EventHandler(this.chkRepeatTest_CheckedChanged);
       // 
       // txtTuneDelay
@@ -510,7 +507,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.chkShareChannels.Size = new System.Drawing.Size(126, 17);
       this.chkShareChannels.TabIndex = 74;
       this.chkShareChannels.Text = "Users share channels";
-      this.chkShareChannels.UseVisualStyleBackColor = true;
       // 
       // mpListView1
       // 
@@ -588,7 +584,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.chkSynch.Size = new System.Drawing.Size(48, 17);
       this.chkSynch.TabIndex = 76;
       this.chkSynch.Text = "Sync";
-      this.chkSynch.UseVisualStyleBackColor = true;
       // 
       // chkRndPrio
       // 
@@ -601,7 +596,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.chkRndPrio.Size = new System.Drawing.Size(110, 17);
       this.chkRndPrio.TabIndex = 79;
       this.chkRndPrio.Text = "Random user prio.";
-      this.chkRndPrio.UseVisualStyleBackColor = true;
       this.chkRndPrio.CheckedChanged += new System.EventHandler(this.chkRndPrio_CheckedChanged);
       // 
       // TestChannels

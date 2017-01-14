@@ -273,7 +273,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.mpButtonTimeShift.Size = new System.Drawing.Size(115, 23);
       this.mpButtonTimeShift.TabIndex = 56;
       this.mpButtonTimeShift.Text = "TimeShift";
-      this.mpButtonTimeShift.UseVisualStyleBackColor = true;
       this.mpButtonTimeShift.Click += new System.EventHandler(this.mpButtonTimeShift_Click);
       // 
       // mpButtonRec
@@ -284,7 +283,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.mpButtonRec.Size = new System.Drawing.Size(61, 23);
       this.mpButtonRec.TabIndex = 57;
       this.mpButtonRec.Text = "Record";
-      this.mpButtonRec.UseVisualStyleBackColor = true;
       this.mpButtonRec.Click += new System.EventHandler(this.mpButtonRec_Click);
       // 
       // timer1
@@ -367,7 +365,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.buttonRestart.Size = new System.Drawing.Size(115, 23);
       this.buttonRestart.TabIndex = 59;
       this.buttonRestart.Text = "Restart Service";
-      this.buttonRestart.UseVisualStyleBackColor = true;
       this.buttonRestart.Click += new System.EventHandler(this.buttonRestart_Click);
       // 
       // imageList1
@@ -416,7 +413,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.mpButtonPark.Size = new System.Drawing.Size(61, 23);
       this.mpButtonPark.TabIndex = 63;
       this.mpButtonPark.Text = "Park";
-      this.mpButtonPark.UseVisualStyleBackColor = true;
       this.mpButtonPark.Click += new System.EventHandler(this.mpButtonPark_Click);
       // 
       // txtUsername
@@ -444,7 +440,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.mpCheckBoxAdvMode.Size = new System.Drawing.Size(73, 17);
       this.mpCheckBoxAdvMode.TabIndex = 66;
       this.mpCheckBoxAdvMode.Text = "Advanced";
-      this.mpCheckBoxAdvMode.UseVisualStyleBackColor = true;
       this.mpCheckBoxAdvMode.CheckedChanged += new System.EventHandler(this.mpCheckBoxAdvMode_CheckedChanged);
       // 
       // mpButtonUnPark
@@ -454,7 +449,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.mpButtonUnPark.Size = new System.Drawing.Size(61, 23);
       this.mpButtonUnPark.TabIndex = 67;
       this.mpButtonUnPark.Text = "UnPark";
-      this.mpButtonUnPark.UseVisualStyleBackColor = true;
       this.mpButtonUnPark.Click += new System.EventHandler(this.mpButtonUnPark_Click);
       // 
       // mpButtonAdvStartTimeshift
@@ -464,7 +458,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.mpButtonAdvStartTimeshift.Size = new System.Drawing.Size(61, 23);
       this.mpButtonAdvStartTimeshift.TabIndex = 68;
       this.mpButtonAdvStartTimeshift.Text = "TimeShift";
-      this.mpButtonAdvStartTimeshift.UseVisualStyleBackColor = true;
       this.mpButtonAdvStartTimeshift.Click += new System.EventHandler(this.mpButtonAdvStartTimeshift_Click);
       // 
       // mpButtonAdvStopTimeshift
@@ -474,7 +467,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.mpButtonAdvStopTimeshift.Size = new System.Drawing.Size(61, 23);
       this.mpButtonAdvStopTimeshift.TabIndex = 69;
       this.mpButtonAdvStopTimeshift.Text = "Stop";
-      this.mpButtonAdvStopTimeshift.UseVisualStyleBackColor = true;
       this.mpButtonAdvStopTimeshift.Click += new System.EventHandler(this.mpButtonAdvStopTimeshift_Click);
       // 
       // txtPrio

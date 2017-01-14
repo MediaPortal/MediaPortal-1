@@ -87,7 +87,6 @@ namespace SetupTv.Sections
       this.exportTab.Size = new System.Drawing.Size(460, 380);
       this.exportTab.TabIndex = 0;
       this.exportTab.Text = "Export";
-      this.exportTab.UseVisualStyleBackColor = true;
       // 
       // exCheckSettings
       // 
@@ -100,7 +99,6 @@ namespace SetupTv.Sections
       this.exCheckSettings.Size = new System.Drawing.Size(62, 17);
       this.exCheckSettings.TabIndex = 9;
       this.exCheckSettings.Text = "Settings";
-      this.exCheckSettings.UseVisualStyleBackColor = true;
       // 
       // exCheckRadioGroups
       // 
@@ -113,7 +111,6 @@ namespace SetupTv.Sections
       this.exCheckRadioGroups.Size = new System.Drawing.Size(87, 17);
       this.exCheckRadioGroups.TabIndex = 8;
       this.exCheckRadioGroups.Text = "Radio groups";
-      this.exCheckRadioGroups.UseVisualStyleBackColor = true;
       // 
       // exCheckTVGroups
       // 
@@ -126,7 +123,6 @@ namespace SetupTv.Sections
       this.exCheckTVGroups.Size = new System.Drawing.Size(73, 17);
       this.exCheckTVGroups.TabIndex = 7;
       this.exCheckTVGroups.Text = "TV groups";
-      this.exCheckTVGroups.UseVisualStyleBackColor = true;
       // 
       // mpLabel3
       // 
@@ -143,7 +139,6 @@ namespace SetupTv.Sections
       this.exportButton.Size = new System.Drawing.Size(75, 23);
       this.exportButton.TabIndex = 4;
       this.exportButton.Text = "Export now";
-      this.exportButton.UseVisualStyleBackColor = true;
       this.exportButton.Click += new System.EventHandler(this.exportButton_Click);
       // 
       // exCheckSchedules
@@ -157,7 +152,6 @@ namespace SetupTv.Sections
       this.exCheckSchedules.Size = new System.Drawing.Size(74, 17);
       this.exCheckSchedules.TabIndex = 3;
       this.exCheckSchedules.Text = "Schedules";
-      this.exCheckSchedules.UseVisualStyleBackColor = true;
       // 
       // exCheckRadioChannels
       // 
@@ -170,7 +164,6 @@ namespace SetupTv.Sections
       this.exCheckRadioChannels.Size = new System.Drawing.Size(91, 17);
       this.exCheckRadioChannels.TabIndex = 2;
       this.exCheckRadioChannels.Text = "Radio stations";
-      this.exCheckRadioChannels.UseVisualStyleBackColor = true;
       // 
       // exCheckTVChannels
       // 
@@ -183,7 +176,6 @@ namespace SetupTv.Sections
       this.exCheckTVChannels.Size = new System.Drawing.Size(84, 17);
       this.exCheckTVChannels.TabIndex = 1;
       this.exCheckTVChannels.Text = "TV channels";
-      this.exCheckTVChannels.UseVisualStyleBackColor = true;
       // 
       // mpLabel1
       // 
@@ -211,7 +203,6 @@ namespace SetupTv.Sections
       this.importTab.Size = new System.Drawing.Size(460, 380);
       this.importTab.TabIndex = 1;
       this.importTab.Text = "Import";
-      this.importTab.UseVisualStyleBackColor = true;
       // 
       // imCheckSettings
       // 
@@ -224,7 +215,6 @@ namespace SetupTv.Sections
       this.imCheckSettings.Size = new System.Drawing.Size(62, 17);
       this.imCheckSettings.TabIndex = 15;
       this.imCheckSettings.Text = "Settings";
-      this.imCheckSettings.UseVisualStyleBackColor = true;
       // 
       // imCheckRadioGroups
       // 
@@ -237,7 +227,6 @@ namespace SetupTv.Sections
       this.imCheckRadioGroups.Size = new System.Drawing.Size(87, 17);
       this.imCheckRadioGroups.TabIndex = 14;
       this.imCheckRadioGroups.Text = "Radio groups";
-      this.imCheckRadioGroups.UseVisualStyleBackColor = true;
       // 
       // imCheckTvGroups
       // 
@@ -250,7 +239,6 @@ namespace SetupTv.Sections
       this.imCheckTvGroups.Size = new System.Drawing.Size(73, 17);
       this.imCheckTvGroups.TabIndex = 13;
       this.imCheckTvGroups.Text = "TV groups";
-      this.imCheckTvGroups.UseVisualStyleBackColor = true;
       // 
       // mpLabel2
       // 
@@ -267,7 +255,6 @@ namespace SetupTv.Sections
       this.importButton.Size = new System.Drawing.Size(75, 23);
       this.importButton.TabIndex = 11;
       this.importButton.Text = "Import now";
-      this.importButton.UseVisualStyleBackColor = true;
       this.importButton.Click += new System.EventHandler(this.importButton_Click);
       // 
       // imCheckSchedules
@@ -281,7 +268,6 @@ namespace SetupTv.Sections
       this.imCheckSchedules.Size = new System.Drawing.Size(74, 17);
       this.imCheckSchedules.TabIndex = 10;
       this.imCheckSchedules.Text = "Schedules";
-      this.imCheckSchedules.UseVisualStyleBackColor = true;
       // 
       // imCheckRadioChannels
       // 
@@ -294,7 +280,6 @@ namespace SetupTv.Sections
       this.imCheckRadioChannels.Size = new System.Drawing.Size(91, 17);
       this.imCheckRadioChannels.TabIndex = 9;
       this.imCheckRadioChannels.Text = "Radio stations";
-      this.imCheckRadioChannels.UseVisualStyleBackColor = true;
       // 
       // imCheckTvChannels
       // 
@@ -307,7 +292,6 @@ namespace SetupTv.Sections
       this.imCheckTvChannels.Size = new System.Drawing.Size(84, 17);
       this.imCheckTvChannels.TabIndex = 8;
       this.imCheckTvChannels.Text = "TV channels";
-      this.imCheckTvChannels.UseVisualStyleBackColor = true;
       // 
       // mpLabel4
       // 

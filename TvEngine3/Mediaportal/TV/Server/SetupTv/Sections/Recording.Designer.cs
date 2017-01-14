@@ -151,7 +151,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.tabPageStorage.Size = new System.Drawing.Size(472, 394);
       this.tabPageStorage.TabIndex = 1;
       this.tabPageStorage.Text = "Storage";
-      this.tabPageStorage.UseVisualStyleBackColor = true;
       // 
       // numericUpDownDiskManagement
       // 
@@ -274,7 +273,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.checkBoxDiskManagementEnable.Size = new System.Drawing.Size(218, 17);
       this.checkBoxDiskManagementEnable.TabIndex = 3;
       this.checkBoxDiskManagementEnable.Text = "Delete recordings when there is less than";
-      this.checkBoxDiskManagementEnable.UseVisualStyleBackColor = true;
       this.checkBoxDiskManagementEnable.CheckedChanged += new System.EventHandler(this.checkBoxDiskManagementEnable_CheckedChanged);
       // 
       // labelNamingTemplateSeries
@@ -352,7 +350,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.buttonRecordingFolderBrowse.Size = new System.Drawing.Size(26, 23);
       this.buttonRecordingFolderBrowse.TabIndex = 2;
       this.buttonRecordingFolderBrowse.Text = "...";
-      this.buttonRecordingFolderBrowse.UseVisualStyleBackColor = true;
       this.buttonRecordingFolderBrowse.Click += new System.EventHandler(this.buttonRecordingFolderBrowse_Click);
       // 
       // textBoxNamingTemplateSeries
@@ -375,7 +372,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.tabPageGeneral.Size = new System.Drawing.Size(472, 394);
       this.tabPageGeneral.TabIndex = 2;
       this.tabPageGeneral.Text = "General";
-      this.tabPageGeneral.UseVisualStyleBackColor = true;
       // 
       // groupBoxGeneral
       // 
@@ -412,7 +408,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.checkBoxDuplicateDetectionEpisodeNames.Size = new System.Drawing.Size(99, 17);
       this.checkBoxDuplicateDetectionEpisodeNames.TabIndex = 11;
       this.checkBoxDuplicateDetectionEpisodeNames.Text = "Episode names.";
-      this.checkBoxDuplicateDetectionEpisodeNames.UseVisualStyleBackColor = true;
       // 
       // checkBoxDuplicateDetectionSeasonEpisodeNumbers
       // 
@@ -423,7 +418,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.checkBoxDuplicateDetectionSeasonEpisodeNumbers.Size = new System.Drawing.Size(167, 17);
       this.checkBoxDuplicateDetectionSeasonEpisodeNumbers.TabIndex = 10;
       this.checkBoxDuplicateDetectionSeasonEpisodeNumbers.Text = "Season and episode numbers.";
-      this.checkBoxDuplicateDetectionSeasonEpisodeNumbers.UseVisualStyleBackColor = true;
       // 
       // checkBoxDuplicateDetectionSeriesEpisodeIdentifers
       // 
@@ -434,7 +428,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.checkBoxDuplicateDetectionSeriesEpisodeIdentifers.Size = new System.Drawing.Size(220, 17);
       this.checkBoxDuplicateDetectionSeriesEpisodeIdentifers.TabIndex = 9;
       this.checkBoxDuplicateDetectionSeriesEpisodeIdentifers.Text = "Series, episode and/or program identifers.";
-      this.checkBoxDuplicateDetectionSeriesEpisodeIdentifers.UseVisualStyleBackColor = true;
       // 
       // labelWeekEnd
       // 
@@ -611,7 +604,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.buttonThumbnailerDeleteExisting.Size = new System.Drawing.Size(100, 23);
       this.buttonThumbnailerDeleteExisting.TabIndex = 12;
       this.buttonThumbnailerDeleteExisting.Text = "&Delete Existing";
-      this.buttonThumbnailerDeleteExisting.UseVisualStyleBackColor = true;
       this.buttonThumbnailerDeleteExisting.Click += new System.EventHandler(this.buttonThumbnailerDeleteExisting_Click);
       // 
       // checkBoxThumbnailerEnable
@@ -623,7 +615,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.checkBoxThumbnailerEnable.Size = new System.Drawing.Size(198, 17);
       this.checkBoxThumbnailerEnable.TabIndex = 0;
       this.checkBoxThumbnailerEnable.Text = "Enable automatic thumbnail creation.";
-      this.checkBoxThumbnailerEnable.UseVisualStyleBackColor = true;
       this.checkBoxThumbnailerEnable.CheckedChanged += new System.EventHandler(this.checkBoxThumbnailerEnable_CheckedChanged);
       // 
       // labelThumbnailerTimeOffsetUnit
@@ -644,7 +635,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.checkBoxThumbnailerCopyToRecordingFolder.Size = new System.Drawing.Size(187, 17);
       this.checkBoxThumbnailerCopyToRecordingFolder.TabIndex = 6;
       this.checkBoxThumbnailerCopyToRecordingFolder.Text = "Add a copy to the recording folder.";
-      this.checkBoxThumbnailerCopyToRecordingFolder.UseVisualStyleBackColor = true;
       // 
       // comboBoxThumbnailerQualitySpeed
       // 
@@ -661,7 +651,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.buttonThumbnailerCreateMissing.Size = new System.Drawing.Size(100, 23);
       this.buttonThumbnailerCreateMissing.TabIndex = 11;
       this.buttonThumbnailerCreateMissing.Text = "&Create Missing";
-      this.buttonThumbnailerCreateMissing.UseVisualStyleBackColor = true;
       this.buttonThumbnailerCreateMissing.Click += new System.EventHandler(this.buttonThumbnailerCreateMissing_Click);
       // 
       // labelThumbnailerQualitySpeed
@@ -779,7 +768,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.tabPageDatabase.Size = new System.Drawing.Size(472, 394);
       this.tabPageDatabase.TabIndex = 4;
       this.tabPageDatabase.Text = "Database";
-      this.tabPageDatabase.UseVisualStyleBackColor = true;
       // 
       // buttonImport
       // 
@@ -789,7 +777,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.buttonImport.Size = new System.Drawing.Size(60, 23);
       this.buttonImport.TabIndex = 6;
       this.buttonImport.Text = "&Import";
-      this.buttonImport.UseVisualStyleBackColor = true;
       this.buttonImport.Click += new System.EventHandler(this.buttonImport_Click);
       // 
       // buttonRecordingDelete
@@ -800,7 +787,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.buttonRecordingDelete.Size = new System.Drawing.Size(60, 23);
       this.buttonRecordingDelete.TabIndex = 2;
       this.buttonRecordingDelete.Text = "&Delete";
-      this.buttonRecordingDelete.UseVisualStyleBackColor = true;
       this.buttonRecordingDelete.Click += new System.EventHandler(this.buttonRecordingDelete_Click);
       // 
       // listViewRecordings
@@ -898,7 +884,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.buttonImportBrowse.Size = new System.Drawing.Size(26, 23);
       this.buttonImportBrowse.TabIndex = 5;
       this.buttonImportBrowse.Text = "...";
-      this.buttonImportBrowse.UseVisualStyleBackColor = true;
       this.buttonImportBrowse.Click += new System.EventHandler(this.buttonImportBrowse_Click);
       // 
       // buttonRecordingChangeChannel
@@ -909,7 +894,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.buttonRecordingChangeChannel.Size = new System.Drawing.Size(100, 23);
       this.buttonRecordingChangeChannel.TabIndex = 1;
       this.buttonRecordingChangeChannel.Text = "&Change Channel";
-      this.buttonRecordingChangeChannel.UseVisualStyleBackColor = true;
       this.buttonRecordingChangeChannel.Click += new System.EventHandler(this.buttonRecordingChangeChannel_Click);
       // 
       // Recording

@@ -55,7 +55,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.buttonCancel.Size = new System.Drawing.Size(75, 23);
       this.buttonCancel.TabIndex = 2;
       this.buttonCancel.Text = "&Cancel";
-      this.buttonCancel.UseVisualStyleBackColor = true;
       this.buttonCancel.Click += new System.EventHandler(this.buttonCancel_Click);
       // 
       // buttonOkay
@@ -66,7 +65,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.buttonOkay.Size = new System.Drawing.Size(75, 23);
       this.buttonOkay.TabIndex = 1;
       this.buttonOkay.Text = "&OK";
-      this.buttonOkay.UseVisualStyleBackColor = true;
       this.buttonOkay.Click += new System.EventHandler(this.buttonOkay_Click);
       // 
       // groupBoxType
@@ -101,7 +99,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.radioButtonCapture.Size = new System.Drawing.Size(61, 17);
       this.radioButtonCapture.TabIndex = 3;
       this.radioButtonCapture.Text = "Capture";
-      this.radioButtonCapture.UseVisualStyleBackColor = true;
       // 
       // radioButtonFmRadio
       // 
@@ -112,7 +109,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.radioButtonFmRadio.Size = new System.Drawing.Size(70, 17);
       this.radioButtonFmRadio.TabIndex = 6;
       this.radioButtonFmRadio.Text = "FM Radio";
-      this.radioButtonFmRadio.UseVisualStyleBackColor = true;
       // 
       // radioButtonScte
       // 
@@ -123,7 +119,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.radioButtonScte.Size = new System.Drawing.Size(52, 17);
       this.radioButtonScte.TabIndex = 8;
       this.radioButtonScte.Text = "SCTE";
-      this.radioButtonScte.UseVisualStyleBackColor = true;
       // 
       // radioButtonAnalogTv
       // 
@@ -134,7 +129,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.radioButtonAnalogTv.Size = new System.Drawing.Size(74, 17);
       this.radioButtonAnalogTv.TabIndex = 1;
       this.radioButtonAnalogTv.Text = "Analog TV";
-      this.radioButtonAnalogTv.UseVisualStyleBackColor = true;
       // 
       // radioButtonStream
       // 
@@ -145,7 +139,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.radioButtonStream.Size = new System.Drawing.Size(57, 17);
       this.radioButtonStream.TabIndex = 9;
       this.radioButtonStream.Text = "Stream";
-      this.radioButtonStream.UseVisualStyleBackColor = true;
       // 
       // radioButtonTerrestrial
       // 
@@ -156,7 +149,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.radioButtonTerrestrial.Size = new System.Drawing.Size(115, 17);
       this.radioButtonTerrestrial.TabIndex = 5;
       this.radioButtonTerrestrial.Text = "DVB-T/T2, ISDB-T";
-      this.radioButtonTerrestrial.UseVisualStyleBackColor = true;
       // 
       // radioButtonSatellite
       // 
@@ -167,7 +159,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.radioButtonSatellite.Size = new System.Drawing.Size(61, 17);
       this.radioButtonSatellite.TabIndex = 7;
       this.radioButtonSatellite.Text = "Satellite";
-      this.radioButtonSatellite.UseVisualStyleBackColor = true;
       // 
       // radioButtonCable
       // 
@@ -178,7 +169,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.radioButtonCable.Size = new System.Drawing.Size(97, 17);
       this.radioButtonCable.TabIndex = 4;
       this.radioButtonCable.Text = "DVB-C, ISDB-C";
-      this.radioButtonCable.UseVisualStyleBackColor = true;
       // 
       // radioButtonAtsc
       // 
@@ -189,7 +179,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.radioButtonAtsc.Size = new System.Drawing.Size(52, 17);
       this.radioButtonAtsc.TabIndex = 2;
       this.radioButtonAtsc.Text = "ATSC";
-      this.radioButtonAtsc.UseVisualStyleBackColor = true;
       // 
       // radioButtonAmRadio
       // 
@@ -200,7 +189,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.radioButtonAmRadio.Size = new System.Drawing.Size(71, 17);
       this.radioButtonAmRadio.TabIndex = 0;
       this.radioButtonAmRadio.Text = "AM Radio";
-      this.radioButtonAmRadio.UseVisualStyleBackColor = true;
       // 
       // FormSelectTuningDetailType
       // 

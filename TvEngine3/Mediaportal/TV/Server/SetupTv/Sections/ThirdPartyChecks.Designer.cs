@@ -64,7 +64,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.buttonMcs.Size = new System.Drawing.Size(120, 23);
       this.buttonMcs.TabIndex = 2;
       this.buttonMcs.Text = "Re-enable Services";
-      this.buttonMcs.UseVisualStyleBackColor = true;
       this.buttonMcs.Click += new System.EventHandler(this.buttonMcs_Click);
       // 
       // labelMcsStatusValue

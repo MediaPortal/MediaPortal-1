@@ -60,7 +60,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster.Config
       this.buttonOkay.Size = new System.Drawing.Size(75, 23);
       this.buttonOkay.TabIndex = 13;
       this.buttonOkay.Text = "&OK";
-      this.buttonOkay.UseVisualStyleBackColor = true;
       this.buttonOkay.Click += new System.EventHandler(this.buttonOkay_Click);
       // 
       // buttonCancel
@@ -72,7 +71,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster.Config
       this.buttonCancel.Size = new System.Drawing.Size(75, 23);
       this.buttonCancel.TabIndex = 14;
       this.buttonCancel.Text = "&Cancel";
-      this.buttonCancel.UseVisualStyleBackColor = true;
       this.buttonCancel.Click += new System.EventHandler(this.buttonCancel_Click);
       // 
       // textBoxName
@@ -196,7 +194,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster.Config
       this.buttonLearn.Size = new System.Drawing.Size(60, 23);
       this.buttonLearn.TabIndex = 3;
       this.buttonLearn.Text = "&Learn";
-      this.buttonLearn.UseVisualStyleBackColor = true;
       this.buttonLearn.Click += new System.EventHandler(this.buttonLearn_Click);
       // 
       // buttonForget
@@ -206,7 +203,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster.Config
       this.buttonForget.Size = new System.Drawing.Size(60, 23);
       this.buttonForget.TabIndex = 4;
       this.buttonForget.Text = "&Forget";
-      this.buttonForget.UseVisualStyleBackColor = true;
       this.buttonForget.Click += new System.EventHandler(this.buttonForget_Click);
       // 
       // labelDigitCount

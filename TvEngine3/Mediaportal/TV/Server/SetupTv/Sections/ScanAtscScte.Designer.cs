@@ -97,7 +97,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.buttonScan.Size = new System.Drawing.Size(110, 23);
       this.buttonScan.TabIndex = 4;
       this.buttonScan.Text = "&Scan for channels";
-      this.buttonScan.UseVisualStyleBackColor = true;
       this.buttonScan.Click += new System.EventHandler(this.buttonScan_Click);
       // 
       // listViewProgress

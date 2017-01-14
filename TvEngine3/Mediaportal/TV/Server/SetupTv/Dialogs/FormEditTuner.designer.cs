@@ -168,7 +168,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.buttonOkay.Size = new System.Drawing.Size(75, 23);
       this.buttonOkay.TabIndex = 1;
       this.buttonOkay.Text = "&OK";
-      this.buttonOkay.UseVisualStyleBackColor = true;
       this.buttonOkay.Click += new System.EventHandler(this.buttonOkay_Click);
       // 
       // buttonCancel
@@ -180,7 +179,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.buttonCancel.Size = new System.Drawing.Size(75, 23);
       this.buttonCancel.TabIndex = 2;
       this.buttonCancel.Text = "&Cancel";
-      this.buttonCancel.UseVisualStyleBackColor = true;
       // 
       // tabControl
       // 
@@ -208,7 +206,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.tabPageGeneral.Size = new System.Drawing.Size(323, 487);
       this.tabPageGeneral.TabIndex = 0;
       this.tabPageGeneral.Text = "General";
-      this.tabPageGeneral.UseVisualStyleBackColor = true;
       // 
       // groupBoxDebug
       // 
@@ -244,7 +241,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.checkBoxTsMuxerDumpInputs.Size = new System.Drawing.Size(130, 17);
       this.checkBoxTsMuxerDumpInputs.TabIndex = 3;
       this.checkBoxTsMuxerDumpInputs.Text = "Dump TsMuxer inputs.";
-      this.checkBoxTsMuxerDumpInputs.UseVisualStyleBackColor = true;
       // 
       // checkBoxTsWriterDisableCrcCheck
       // 
@@ -255,7 +251,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.checkBoxTsWriterDisableCrcCheck.Size = new System.Drawing.Size(177, 17);
       this.checkBoxTsWriterDisableCrcCheck.TabIndex = 2;
       this.checkBoxTsWriterDisableCrcCheck.Text = "Disable TsWriter CRC checking.";
-      this.checkBoxTsWriterDisableCrcCheck.UseVisualStyleBackColor = true;
       // 
       // checkBoxTsWriterDumpInputs
       // 
@@ -266,7 +261,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.checkBoxTsWriterDumpInputs.Size = new System.Drawing.Size(129, 17);
       this.checkBoxTsWriterDumpInputs.TabIndex = 1;
       this.checkBoxTsWriterDumpInputs.Text = "Dump TsWriter inputs.";
-      this.checkBoxTsWriterDumpInputs.UseVisualStyleBackColor = true;
       // 
       // groupBoxAdvanced
       // 
@@ -298,7 +292,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.checkBoxUseCustomTuning.Size = new System.Drawing.Size(199, 17);
       this.checkBoxUseCustomTuning.TabIndex = 7;
       this.checkBoxUseCustomTuning.Text = "Use direct/custom tuning if available.";
-      this.checkBoxUseCustomTuning.UseVisualStyleBackColor = true;
       // 
       // labelBdaNetworkProvider
       // 
@@ -387,7 +380,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.checkBoxAlwaysSendDiseqcCommands.Size = new System.Drawing.Size(258, 17);
       this.checkBoxAlwaysSendDiseqcCommands.TabIndex = 4;
       this.checkBoxAlwaysSendDiseqcCommands.Text = "Send DiSEqC command(s) on every tune attempt.";
-      this.checkBoxAlwaysSendDiseqcCommands.UseVisualStyleBackColor = true;
       // 
       // labelTunerName
       // 
@@ -408,7 +400,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.checkBoxUseForEpgGrabbing.Size = new System.Drawing.Size(285, 17);
       this.checkBoxUseForEpgGrabbing.TabIndex = 2;
       this.checkBoxUseForEpgGrabbing.Text = "Use this tuner to grab electronic programme guide data.";
-      this.checkBoxUseForEpgGrabbing.UseVisualStyleBackColor = true;
       // 
       // textBoxTunerName
       // 
@@ -429,7 +420,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.checkBoxPreload.Size = new System.Drawing.Size(214, 17);
       this.checkBoxPreload.TabIndex = 3;
       this.checkBoxPreload.Text = "Load this tuner as soon as it is detected.";
-      this.checkBoxPreload.UseVisualStyleBackColor = true;
       // 
       // tabPageConditionalAccess
       // 
@@ -441,7 +431,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.tabPageConditionalAccess.Size = new System.Drawing.Size(323, 487);
       this.tabPageConditionalAccess.TabIndex = 1;
       this.tabPageConditionalAccess.Text = "Conditional Access";
-      this.tabPageConditionalAccess.UseVisualStyleBackColor = true;
       // 
       // groupBoxCaMenu
       // 
@@ -483,7 +472,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.buttonCaMenuOkaySelect.Size = new System.Drawing.Size(75, 23);
       this.buttonCaMenuOkaySelect.TabIndex = 7;
       this.buttonCaMenuOkaySelect.Text = "OK/&Select";
-      this.buttonCaMenuOkaySelect.UseVisualStyleBackColor = true;
       this.buttonCaMenuOkaySelect.Click += new System.EventHandler(this.buttonCaMenuOkaySelect_Click);
       // 
       // labelCaMenuFooter
@@ -516,7 +504,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.buttonCaMenuBackClose.Size = new System.Drawing.Size(75, 23);
       this.buttonCaMenuBackClose.TabIndex = 8;
       this.buttonCaMenuBackClose.Text = "&Back/Close";
-      this.buttonCaMenuBackClose.UseVisualStyleBackColor = true;
       this.buttonCaMenuBackClose.Click += new System.EventHandler(this.buttonCaMenuBackClose_Click);
       // 
       // labelCaMenuEnquiry
@@ -537,7 +524,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.buttonCaMenuOpen.Size = new System.Drawing.Size(75, 23);
       this.buttonCaMenuOpen.TabIndex = 6;
       this.buttonCaMenuOpen.Text = "&Open";
-      this.buttonCaMenuOpen.UseVisualStyleBackColor = true;
       this.buttonCaMenuOpen.Click += new System.EventHandler(this.buttonCaMenuOpen_Click);
       // 
       // labelCaMenuTitle
@@ -643,7 +629,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.checkBoxUseConditionalAccess.Size = new System.Drawing.Size(179, 17);
       this.checkBoxUseConditionalAccess.TabIndex = 0;
       this.checkBoxUseConditionalAccess.Text = "This tuner can decrypt channels.";
-      this.checkBoxUseConditionalAccess.UseVisualStyleBackColor = true;
       this.checkBoxUseConditionalAccess.CheckedChanged += new System.EventHandler(this.checkBoxConditionalAccessEnabled_CheckedChanged);
       // 
       // labelDecryptLimit1
@@ -694,7 +679,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.tabPageAnalog.Size = new System.Drawing.Size(323, 487);
       this.tabPageAnalog.TabIndex = 3;
       this.tabPageAnalog.Text = "Analog";
-      this.tabPageAnalog.UseVisualStyleBackColor = true;
       // 
       // groupBoxEncoderSettings
       // 
@@ -734,7 +718,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.buttonEncoderSettingsCheckSupport.Size = new System.Drawing.Size(110, 23);
       this.buttonEncoderSettingsCheckSupport.TabIndex = 0;
       this.buttonEncoderSettingsCheckSupport.Text = "Check For &Support";
-      this.buttonEncoderSettingsCheckSupport.UseVisualStyleBackColor = true;
       this.buttonEncoderSettingsCheckSupport.Click += new System.EventHandler(this.buttonEncoderSettingsCheckSupport_Click);
       // 
       // labelEncoderSettingsRecording
@@ -1118,7 +1101,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.checkBoxVideoOrCameraPropertyValue.Size = new System.Drawing.Size(109, 17);
       this.checkBoxVideoOrCameraPropertyValue.TabIndex = 3;
       this.checkBoxVideoOrCameraPropertyValue.Text = "Automatic control.";
-      this.checkBoxVideoOrCameraPropertyValue.UseVisualStyleBackColor = true;
       this.checkBoxVideoOrCameraPropertyValue.CheckedChanged += new System.EventHandler(this.checkBoxVideoOrCameraPropertyValue_CheckedChanged);
       // 
       // buttonRestoreAllDefaults
@@ -1128,7 +1110,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.buttonRestoreAllDefaults.Size = new System.Drawing.Size(110, 23);
       this.buttonRestoreAllDefaults.TabIndex = 7;
       this.buttonRestoreAllDefaults.Text = "Restore &All Defaults";
-      this.buttonRestoreAllDefaults.UseVisualStyleBackColor = true;
       this.buttonRestoreAllDefaults.Click += new System.EventHandler(this.buttonRestoreAllDefaults_Click);
       // 
       // labelVideoOrCameraPropertyValue
@@ -1187,7 +1168,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.buttonRestoreDefault.Size = new System.Drawing.Size(110, 23);
       this.buttonRestoreDefault.TabIndex = 6;
       this.buttonRestoreDefault.Text = "&Restore Default";
-      this.buttonRestoreDefault.UseVisualStyleBackColor = true;
       this.buttonRestoreDefault.Click += new System.EventHandler(this.buttonRestoreDefault_Click);
       // 
       // tabPageExternalInput
@@ -1199,7 +1179,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.tabPageExternalInput.Size = new System.Drawing.Size(323, 487);
       this.tabPageExternalInput.TabIndex = 4;
       this.tabPageExternalInput.Text = "External Input";
-      this.tabPageExternalInput.UseVisualStyleBackColor = true;
       // 
       // groupBoxExternalTuner
       // 
@@ -1253,7 +1232,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.buttonExternalTunerProgramBrowse.Size = new System.Drawing.Size(24, 23);
       this.buttonExternalTunerProgramBrowse.TabIndex = 2;
       this.buttonExternalTunerProgramBrowse.Text = "...";
-      this.buttonExternalTunerProgramBrowse.UseVisualStyleBackColor = true;
       this.buttonExternalTunerProgramBrowse.Click += new System.EventHandler(this.buttonExternalTunerProgramBrowse_Click);
       // 
       // textBoxExternalTunerProgramArguments

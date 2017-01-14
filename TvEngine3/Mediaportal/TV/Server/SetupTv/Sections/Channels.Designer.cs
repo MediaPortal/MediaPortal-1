@@ -187,7 +187,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.tabPageChannels.Size = new System.Drawing.Size(472, 394);
       this.tabPageChannels.TabIndex = 0;
       this.tabPageChannels.Text = "Channels";
-      this.tabPageChannels.UseVisualStyleBackColor = true;
       // 
       // textBoxChannelNumber
       // 
@@ -214,7 +213,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.buttonChannelAddToGroup.Size = new System.Drawing.Size(82, 23);
       this.buttonChannelAddToGroup.TabIndex = 6;
       this.buttonChannelAddToGroup.Text = "Add To &Group";
-      this.buttonChannelAddToGroup.UseVisualStyleBackColor = true;
       this.buttonChannelAddToGroup.Click += new System.EventHandler(this.buttonChannelAddToGroup_Click);
       // 
       // buttonChannelAdd
@@ -225,7 +223,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.buttonChannelAdd.Size = new System.Drawing.Size(40, 23);
       this.buttonChannelAdd.TabIndex = 3;
       this.buttonChannelAdd.Text = "&Add";
-      this.buttonChannelAdd.UseVisualStyleBackColor = true;
       this.buttonChannelAdd.Click += new System.EventHandler(this.buttonChannelAdd_Click);
       // 
       // buttonChannelDelete
@@ -236,7 +233,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.buttonChannelDelete.Size = new System.Drawing.Size(48, 23);
       this.buttonChannelDelete.TabIndex = 5;
       this.buttonChannelDelete.Text = "&Delete";
-      this.buttonChannelDelete.UseVisualStyleBackColor = true;
       this.buttonChannelDelete.Click += new System.EventHandler(this.buttonChannelDelete_Click);
       // 
       // buttonChannelTest
@@ -247,7 +243,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.buttonChannelTest.Size = new System.Drawing.Size(40, 23);
       this.buttonChannelTest.TabIndex = 10;
       this.buttonChannelTest.Text = "&Test";
-      this.buttonChannelTest.UseVisualStyleBackColor = true;
       this.buttonChannelTest.Click += new System.EventHandler(this.buttonChannelTest_Click);
       // 
       // buttonChannelSplit
@@ -258,7 +253,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.buttonChannelSplit.Size = new System.Drawing.Size(45, 23);
       this.buttonChannelSplit.TabIndex = 8;
       this.buttonChannelSplit.Text = "&Split";
-      this.buttonChannelSplit.UseVisualStyleBackColor = true;
       this.buttonChannelSplit.Click += new System.EventHandler(this.buttonChannelSplit_Click);
       // 
       // buttonChannelEdit
@@ -269,7 +263,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.buttonChannelEdit.Size = new System.Drawing.Size(40, 23);
       this.buttonChannelEdit.TabIndex = 4;
       this.buttonChannelEdit.Text = "&Edit";
-      this.buttonChannelEdit.UseVisualStyleBackColor = true;
       this.buttonChannelEdit.Click += new System.EventHandler(this.buttonChannelEdit_Click);
       // 
       // labelFilter
@@ -289,7 +282,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.buttonChannelMerge.Size = new System.Drawing.Size(45, 23);
       this.buttonChannelMerge.TabIndex = 7;
       this.buttonChannelMerge.Text = "&Merge";
-      this.buttonChannelMerge.UseVisualStyleBackColor = true;
       this.buttonChannelMerge.Click += new System.EventHandler(this.buttonChannelMerge_Click);
       // 
       // textBoxFilter
@@ -310,7 +302,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.buttonChannelPreview.Size = new System.Drawing.Size(53, 23);
       this.buttonChannelPreview.TabIndex = 9;
       this.buttonChannelPreview.Text = "&Preview";
-      this.buttonChannelPreview.UseVisualStyleBackColor = true;
       this.buttonChannelPreview.Click += new System.EventHandler(this.buttonChannelPreview_Click);
       // 
       // tabPageChannelGroups
@@ -324,7 +315,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.tabPageChannelGroups.Size = new System.Drawing.Size(472, 394);
       this.tabPageChannelGroups.TabIndex = 1;
       this.tabPageChannelGroups.Text = "Channel Groups";
-      this.tabPageChannelGroups.UseVisualStyleBackColor = true;
       // 
       // groupBoxGroup
       // 
@@ -351,7 +341,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.buttonGroupOrder.Size = new System.Drawing.Size(55, 23);
       this.buttonGroupOrder.TabIndex = 4;
       this.buttonGroupOrder.Text = "&Order";
-      this.buttonGroupOrder.UseVisualStyleBackColor = true;
       this.buttonGroupOrder.Click += new System.EventHandler(this.buttonGroupOrder_Click);
       // 
       // buttonGroupAdd
@@ -362,7 +351,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.buttonGroupAdd.Size = new System.Drawing.Size(55, 23);
       this.buttonGroupAdd.TabIndex = 1;
       this.buttonGroupAdd.Text = "&Add";
-      this.buttonGroupAdd.UseVisualStyleBackColor = true;
       this.buttonGroupAdd.Click += new System.EventHandler(this.buttonGroupAdd_Click);
       // 
       // buttonGroupDelete
@@ -373,7 +361,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.buttonGroupDelete.Size = new System.Drawing.Size(55, 23);
       this.buttonGroupDelete.TabIndex = 3;
       this.buttonGroupDelete.Text = "&Delete";
-      this.buttonGroupDelete.UseVisualStyleBackColor = true;
       this.buttonGroupDelete.Click += new System.EventHandler(this.buttonGroupDelete_Click);
       // 
       // comboBoxChannelGroup
@@ -395,7 +382,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.buttonGroupRename.Size = new System.Drawing.Size(55, 23);
       this.buttonGroupRename.TabIndex = 2;
       this.buttonGroupRename.Text = "&Rename";
-      this.buttonGroupRename.UseVisualStyleBackColor = true;
       this.buttonGroupRename.Click += new System.EventHandler(this.buttonGroupRename_Click);
       // 
       // groupBoxGroupOrder
@@ -450,7 +436,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.buttonGroupOrderByName.Name = "buttonGroupOrderByName";
       this.buttonGroupOrderByName.Size = new System.Drawing.Size(30, 23);
       this.buttonGroupOrderByName.TabIndex = 1;
-      this.buttonGroupOrderByName.UseVisualStyleBackColor = true;
       this.buttonGroupOrderByName.Click += new System.EventHandler(this.buttonGroupOrderByName_Click);
       // 
       // buttonGroupOrderByNumber
@@ -460,7 +445,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.buttonGroupOrderByNumber.Name = "buttonGroupOrderByNumber";
       this.buttonGroupOrderByNumber.Size = new System.Drawing.Size(30, 23);
       this.buttonGroupOrderByNumber.TabIndex = 3;
-      this.buttonGroupOrderByNumber.UseVisualStyleBackColor = true;
       this.buttonGroupOrderByNumber.Click += new System.EventHandler(this.buttonGroupOrderByNumber_Click);
       // 
       // buttonGroupOrderDown
@@ -470,7 +454,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.buttonGroupOrderDown.Name = "buttonGroupOrderDown";
       this.buttonGroupOrderDown.Size = new System.Drawing.Size(30, 23);
       this.buttonGroupOrderDown.TabIndex = 6;
-      this.buttonGroupOrderDown.UseVisualStyleBackColor = true;
       this.buttonGroupOrderDown.Click += new System.EventHandler(this.buttonGroupOrderDown_Click);
       // 
       // buttonGroupOrderUp
@@ -480,7 +463,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.buttonGroupOrderUp.Name = "buttonGroupOrderUp";
       this.buttonGroupOrderUp.Size = new System.Drawing.Size(30, 23);
       this.buttonGroupOrderUp.TabIndex = 5;
-      this.buttonGroupOrderUp.UseVisualStyleBackColor = true;
       this.buttonGroupOrderUp.Click += new System.EventHandler(this.buttonGroupOrderUp_Click);
       // 
       // groupBoxGroupChannels
@@ -504,7 +486,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.buttonGroupChannelsAdd.Size = new System.Drawing.Size(60, 23);
       this.buttonGroupChannelsAdd.TabIndex = 0;
       this.buttonGroupChannelsAdd.Text = "Add";
-      this.buttonGroupChannelsAdd.UseVisualStyleBackColor = true;
       this.buttonGroupChannelsAdd.Click += new System.EventHandler(this.buttonGroupChannelsAdd_Click);
       // 
       // buttonGroupChannelsRemove
@@ -515,7 +496,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.buttonGroupChannelsRemove.Size = new System.Drawing.Size(60, 23);
       this.buttonGroupChannelsRemove.TabIndex = 1;
       this.buttonGroupChannelsRemove.Text = "Remove";
-      this.buttonGroupChannelsRemove.UseVisualStyleBackColor = true;
       this.buttonGroupChannelsRemove.Click += new System.EventHandler(this.buttonGroupChannelsRemove_Click);
       // 
       // listViewChannelsInGroup

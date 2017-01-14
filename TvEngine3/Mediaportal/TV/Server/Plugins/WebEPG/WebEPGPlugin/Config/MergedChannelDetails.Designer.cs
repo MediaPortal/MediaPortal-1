@@ -88,7 +88,6 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
       this.bGrabber.Size = new System.Drawing.Size(22, 20);
       this.bGrabber.TabIndex = 6;
       this.bGrabber.Text = "...";
-      this.bGrabber.UseVisualStyleBackColor = true;
       this.bGrabber.Visible = false;
       this.bGrabber.Click += new System.EventHandler(this.bGrabber_Click);
       // 
@@ -115,7 +114,6 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
       this.bChannelID.Size = new System.Drawing.Size(22, 20);
       this.bChannelID.TabIndex = 18;
       this.bChannelID.Text = "...";
-      this.bChannelID.UseVisualStyleBackColor = true;
       this.bChannelID.Click += new System.EventHandler(this.bChannelID_Click);
       // 
       // l_cID
@@ -142,7 +140,6 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
       this.bOk.Size = new System.Drawing.Size(75, 23);
       this.bOk.TabIndex = 20;
       this.bOk.Text = "Ok";
-      this.bOk.UseVisualStyleBackColor = true;
       // 
       // bCancel
       // 
@@ -152,7 +149,6 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
       this.bCancel.Size = new System.Drawing.Size(75, 23);
       this.bCancel.TabIndex = 21;
       this.bCancel.Text = "Cancel";
-      this.bCancel.UseVisualStyleBackColor = true;
       this.bCancel.Click += new System.EventHandler(this.bCancel_Click);
       // 
       // gbMergeTime

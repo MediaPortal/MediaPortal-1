@@ -140,7 +140,6 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport.Config
       this.tabSettings.Size = new System.Drawing.Size(472, 394);
       this.tabSettings.TabIndex = 0;
       this.tabSettings.Text = "General";
-      this.tabSettings.UseVisualStyleBackColor = true;
       // 
       // groupBoxImport
       // 
@@ -178,7 +177,6 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport.Config
       this.buttonImport.Size = new System.Drawing.Size(75, 23);
       this.buttonImport.TabIndex = 4;
       this.buttonImport.Text = "&Import Now";
-      this.buttonImport.UseVisualStyleBackColor = true;
       this.buttonImport.Click += new System.EventHandler(this.buttonImport_Click);
       // 
       // labelDataOrListFile
@@ -198,7 +196,6 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport.Config
       this.buttonDataOrListFileBrowse.Size = new System.Drawing.Size(24, 23);
       this.buttonDataOrListFileBrowse.TabIndex = 2;
       this.buttonDataOrListFileBrowse.Text = "...";
-      this.buttonDataOrListFileBrowse.UseVisualStyleBackColor = true;
       this.buttonDataOrListFileBrowse.Click += new System.EventHandler(this.buttonDataOrListFileBrowse_Click);
       // 
       // textBoxDataOrListFile
@@ -283,7 +280,6 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport.Config
       this.checkBoxTimeCorrectionEnable.Size = new System.Drawing.Size(220, 17);
       this.checkBoxTimeCorrectionEnable.TabIndex = 0;
       this.checkBoxTimeCorrectionEnable.Text = "Adjust the times contained in the data file.";
-      this.checkBoxTimeCorrectionEnable.UseVisualStyleBackColor = true;
       this.checkBoxTimeCorrectionEnable.CheckedChanged += new System.EventHandler(this.checkBoxTimeCorrectionEnable_CheckedChanged);
       // 
       // labelTimeCorrectionHours
@@ -409,7 +405,6 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport.Config
       this.tabMappings.Size = new System.Drawing.Size(472, 394);
       this.tabMappings.TabIndex = 1;
       this.tabMappings.Text = "Mappings";
-      this.tabMappings.UseVisualStyleBackColor = true;
       // 
       // groupBoxMapping
       // 
@@ -457,7 +452,6 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport.Config
       this.checkBoxMappingsPartialMatch.Size = new System.Drawing.Size(137, 17);
       this.checkBoxMappingsPartialMatch.TabIndex = 2;
       this.checkBoxMappingsPartialMatch.Text = "Enable partial matching.";
-      this.checkBoxMappingsPartialMatch.UseVisualStyleBackColor = true;
       // 
       // textBoxMappingsAction
       // 
@@ -503,7 +497,6 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport.Config
       this.buttonMappingsSave.Size = new System.Drawing.Size(60, 23);
       this.buttonMappingsSave.TabIndex = 4;
       this.buttonMappingsSave.Text = "&Save";
-      this.buttonMappingsSave.UseVisualStyleBackColor = true;
       this.buttonMappingsSave.Click += new System.EventHandler(this.buttonMappingsSave_Click);
       // 
       // buttonMappingsLoad
@@ -513,7 +506,6 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport.Config
       this.buttonMappingsLoad.Size = new System.Drawing.Size(60, 23);
       this.buttonMappingsLoad.TabIndex = 3;
       this.buttonMappingsLoad.Text = "&Load";
-      this.buttonMappingsLoad.UseVisualStyleBackColor = true;
       this.buttonMappingsLoad.Click += new System.EventHandler(this.buttonMappingsLoad_Click);
       // 
       // dataGridViewMappings
@@ -556,7 +548,6 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport.Config
       this.tabSchedule.Size = new System.Drawing.Size(472, 394);
       this.tabSchedule.TabIndex = 2;
       this.tabSchedule.Text = "Schedule";
-      this.tabSchedule.UseVisualStyleBackColor = true;
       // 
       // groupBoxScheduledActionsTime
       // 
@@ -640,7 +631,6 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport.Config
       this.radioButtonScheduledActionsTimeStartup.Size = new System.Drawing.Size(210, 17);
       this.radioButtonScheduledActionsTimeStartup.TabIndex = 7;
       this.radioButtonScheduledActionsTimeStartup.Text = "When the TV service starts or resumes.";
-      this.radioButtonScheduledActionsTimeStartup.UseVisualStyleBackColor = true;
       // 
       // buttonScheduledActionsTimeNow
       // 
@@ -649,7 +639,6 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport.Config
       this.buttonScheduledActionsTimeNow.Size = new System.Drawing.Size(75, 23);
       this.buttonScheduledActionsTimeNow.TabIndex = 8;
       this.buttonScheduledActionsTimeNow.Text = "&Do It Now";
-      this.buttonScheduledActionsTimeNow.UseVisualStyleBackColor = true;
       this.buttonScheduledActionsTimeNow.Click += new System.EventHandler(this.buttonScheduledActionsTimeNow_Click);
       // 
       // radioButtonScheduledActionsTimeBetween
@@ -663,7 +652,6 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport.Config
       this.radioButtonScheduledActionsTimeBetween.TabIndex = 3;
       this.radioButtonScheduledActionsTimeBetween.TabStop = true;
       this.radioButtonScheduledActionsTimeBetween.Text = "Between";
-      this.radioButtonScheduledActionsTimeBetween.UseVisualStyleBackColor = true;
       this.radioButtonScheduledActionsTimeBetween.CheckedChanged += new System.EventHandler(this.radioScheduledActionsTimeBetween_CheckedChanged);
       // 
       // dateTimePickerScheduledActionsTimeBetweenStart
@@ -765,7 +753,6 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport.Config
       this.checkBoxScheduledActionsProgram.Size = new System.Drawing.Size(177, 17);
       this.checkBoxScheduledActionsProgram.TabIndex = 2;
       this.checkBoxScheduledActionsProgram.Text = "Run this program or batch script:";
-      this.checkBoxScheduledActionsProgram.UseVisualStyleBackColor = true;
       this.checkBoxScheduledActionsProgram.CheckedChanged += new System.EventHandler(this.checkBoxScheduledActionsProgram_CheckedChanged);
       // 
       // checkBoxScheduledActionsDownload
@@ -777,7 +764,6 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport.Config
       this.checkBoxScheduledActionsDownload.Size = new System.Drawing.Size(319, 17);
       this.checkBoxScheduledActionsDownload.TabIndex = 0;
       this.checkBoxScheduledActionsDownload.Text = "Download and unzip (optional) from this HTTP or FTP address:";
-      this.checkBoxScheduledActionsDownload.UseVisualStyleBackColor = true;
       this.checkBoxScheduledActionsDownload.CheckedChanged += new System.EventHandler(this.checkBoxScheduledActionsDownload_CheckedChanged);
       // 
       // buttonScheduledActionsProgramBrowse
@@ -788,7 +774,6 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport.Config
       this.buttonScheduledActionsProgramBrowse.Size = new System.Drawing.Size(24, 23);
       this.buttonScheduledActionsProgramBrowse.TabIndex = 4;
       this.buttonScheduledActionsProgramBrowse.Text = "...";
-      this.buttonScheduledActionsProgramBrowse.UseVisualStyleBackColor = true;
       this.buttonScheduledActionsProgramBrowse.Click += new System.EventHandler(this.buttonScheduledActionsProgramBrowse_Click);
       // 
       // textBoxScheduledActionsProgramLocation

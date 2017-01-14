@@ -105,7 +105,6 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
       this.bAutoMap.Size = new System.Drawing.Size(72, 23);
       this.bAutoMap.TabIndex = 23;
       this.bAutoMap.Text = "Auto Map";
-      this.bAutoMap.UseVisualStyleBackColor = true;
       this.bAutoMap.Click += new System.EventHandler(this.bAutoMap_Click);
       // 
       // bImport
@@ -116,7 +115,6 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
       this.bImport.Size = new System.Drawing.Size(72, 23);
       this.bImport.TabIndex = 11;
       this.bImport.Text = "Import";
-      this.bImport.UseVisualStyleBackColor = true;
       this.bImport.Click += new System.EventHandler(this.bImport_Click);
       // 
       // lvMapping
@@ -143,7 +141,6 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
       this.bClearMapping.Size = new System.Drawing.Size(90, 24);
       this.bClearMapping.TabIndex = 20;
       this.bClearMapping.Text = "Clear Mapping";
-      this.bClearMapping.UseVisualStyleBackColor = true;
       this.bClearMapping.Click += new System.EventHandler(this.bClearMapping_Click);
       // 
       // lCount
@@ -172,7 +169,6 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
       this.bRemove.Size = new System.Drawing.Size(81, 24);
       this.bRemove.TabIndex = 17;
       this.bRemove.Text = "Remove";
-      this.bRemove.UseVisualStyleBackColor = true;
       this.bRemove.Click += new System.EventHandler(this.bRemove_Click);
       // 
       // label1
@@ -233,7 +229,6 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
       this.tpSingle.Size = new System.Drawing.Size(454, 125);
       this.tpSingle.TabIndex = 0;
       this.tpSingle.Text = "Single";
-      this.tpSingle.UseVisualStyleBackColor = true;
       // 
       // gbGrabber
       // 
@@ -276,7 +271,6 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
       this.bGrabber.Size = new System.Drawing.Size(30, 20);
       this.bGrabber.TabIndex = 6;
       this.bGrabber.Text = "...";
-      this.bGrabber.UseVisualStyleBackColor = true;
       this.bGrabber.Visible = false;
       // 
       // Grabber
@@ -305,7 +299,6 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
       this.bChannelID.Size = new System.Drawing.Size(30, 20);
       this.bChannelID.TabIndex = 9;
       this.bChannelID.Text = "...";
-      this.bChannelID.UseVisualStyleBackColor = true;
       this.bChannelID.Click += new System.EventHandler(this.bChannelID_Click);
       // 
       // l_cID
@@ -338,7 +331,6 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
       this.tpMultiple.Size = new System.Drawing.Size(423, 125);
       this.tpMultiple.TabIndex = 1;
       this.tpMultiple.Text = "Multiple (Merged)";
-      this.tpMultiple.UseVisualStyleBackColor = true;
       // 
       // bMergedEdit
       // 
@@ -348,7 +340,6 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
       this.bMergedEdit.Size = new System.Drawing.Size(75, 23);
       this.bMergedEdit.TabIndex = 3;
       this.bMergedEdit.Text = "Edit";
-      this.bMergedEdit.UseVisualStyleBackColor = true;
       this.bMergedEdit.Visible = false;
       // 
       // bMergedRemove
@@ -359,7 +350,6 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
       this.bMergedRemove.Size = new System.Drawing.Size(75, 23);
       this.bMergedRemove.TabIndex = 2;
       this.bMergedRemove.Text = "Remove";
-      this.bMergedRemove.UseVisualStyleBackColor = true;
       this.bMergedRemove.Visible = false;
       // 
       // bMergedAdd
@@ -370,7 +360,6 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
       this.bMergedAdd.Size = new System.Drawing.Size(75, 23);
       this.bMergedAdd.TabIndex = 1;
       this.bMergedAdd.Text = "Add";
-      this.bMergedAdd.UseVisualStyleBackColor = true;
       this.bMergedAdd.Visible = false;
       // 
       // dgvMerged

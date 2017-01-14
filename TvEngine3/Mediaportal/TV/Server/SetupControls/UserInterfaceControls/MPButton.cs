@@ -18,6 +18,8 @@
 
 #endregion
 
+using System.ComponentModel;
+
 namespace Mediaportal.TV.Server.SetupControls.UserInterfaceControls
 {
   /// <summary>
@@ -27,8 +29,21 @@ namespace Mediaportal.TV.Server.SetupControls.UserInterfaceControls
   {
     public MPButton()
     {
-      FlatStyle = System.Windows.Forms.FlatStyle.Standard;
       UseVisualStyleBackColor = true;
+    }
+
+    [DefaultValue(true)]
+    public new bool UseVisualStyleBackColor
+    {
+      get
+      {
+        return base.UseVisualStyleBackColor;
+      }
+      set
+      {
+        base.UseVisualStyleBackColor = value;
+        Invalidate();
+      }
     }
   }
 }

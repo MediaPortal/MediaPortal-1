@@ -141,7 +141,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.mpButtonSave.Size = new System.Drawing.Size(98, 23);
       this.mpButtonSave.TabIndex = 1;
       this.mpButtonSave.Text = "Save schedule";
-      this.mpButtonSave.UseVisualStyleBackColor = true;
       this.mpButtonSave.Click += new System.EventHandler(this.mpButtonSave_Click);
       // 
       // mpButtonCancel
@@ -153,7 +152,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.mpButtonCancel.Size = new System.Drawing.Size(75, 23);
       this.mpButtonCancel.TabIndex = 6;
       this.mpButtonCancel.Text = "Cancel";
-      this.mpButtonCancel.UseVisualStyleBackColor = true;
       this.mpButtonCancel.Click += new System.EventHandler(this.mpButtonCancel_Click);
       // 
       // checkBoxMonday
@@ -165,7 +163,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.checkBoxMonday.Size = new System.Drawing.Size(41, 17);
       this.checkBoxMonday.TabIndex = 6;
       this.checkBoxMonday.Text = "Mo";
-      this.checkBoxMonday.UseVisualStyleBackColor = true;
       this.checkBoxMonday.CheckedChanged += new System.EventHandler(this.checkBoxMonday_CheckedChanged);
       // 
       // groupBox4
@@ -303,7 +300,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.checkBoxSunday.Size = new System.Drawing.Size(39, 17);
       this.checkBoxSunday.TabIndex = 16;
       this.checkBoxSunday.Text = "Su";
-      this.checkBoxSunday.UseVisualStyleBackColor = true;
       this.checkBoxSunday.CheckedChanged += new System.EventHandler(this.checkBoxSunday_CheckedChanged);
       // 
       // checkBoxTuesday
@@ -315,7 +311,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.checkBoxTuesday.Size = new System.Drawing.Size(39, 17);
       this.checkBoxTuesday.TabIndex = 11;
       this.checkBoxTuesday.Text = "Tu";
-      this.checkBoxTuesday.UseVisualStyleBackColor = true;
       this.checkBoxTuesday.CheckedChanged += new System.EventHandler(this.checkBoxTuesday_CheckedChanged);
       // 
       // checkBoxSaturday
@@ -327,7 +322,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.checkBoxSaturday.Size = new System.Drawing.Size(39, 17);
       this.checkBoxSaturday.TabIndex = 15;
       this.checkBoxSaturday.Text = "Sa";
-      this.checkBoxSaturday.UseVisualStyleBackColor = true;
       this.checkBoxSaturday.CheckedChanged += new System.EventHandler(this.checkBoxSaturday_CheckedChanged);
       // 
       // checkBoxWednesday
@@ -339,7 +333,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.checkBoxWednesday.Size = new System.Drawing.Size(43, 17);
       this.checkBoxWednesday.TabIndex = 12;
       this.checkBoxWednesday.Text = "We";
-      this.checkBoxWednesday.UseVisualStyleBackColor = true;
       this.checkBoxWednesday.CheckedChanged += new System.EventHandler(this.checkBoxWednesday_CheckedChanged);
       // 
       // checkBoxFriday
@@ -351,7 +344,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.checkBoxFriday.Size = new System.Drawing.Size(35, 17);
       this.checkBoxFriday.TabIndex = 14;
       this.checkBoxFriday.Text = "Fr";
-      this.checkBoxFriday.UseVisualStyleBackColor = true;
       this.checkBoxFriday.CheckedChanged += new System.EventHandler(this.checkBoxFriday_CheckedChanged);
       // 
       // checkBoxThursday
@@ -363,7 +355,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.checkBoxThursday.Size = new System.Drawing.Size(39, 17);
       this.checkBoxThursday.TabIndex = 13;
       this.checkBoxThursday.Text = "Th";
-      this.checkBoxThursday.UseVisualStyleBackColor = true;
       this.checkBoxThursday.CheckedChanged += new System.EventHandler(this.checkBoxThursday_CheckedChanged);
       // 
       // groupBox5
@@ -387,7 +378,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.mpButtonCreditAdd.Size = new System.Drawing.Size(75, 23);
       this.mpButtonCreditAdd.TabIndex = 11;
       this.mpButtonCreditAdd.Text = "Add";
-      this.mpButtonCreditAdd.UseVisualStyleBackColor = true;
       this.mpButtonCreditAdd.Click += new System.EventHandler(this.mpButtonCreditAdd_Click);
       // 
       // mpButtonCreditRemove
@@ -397,7 +387,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.mpButtonCreditRemove.Size = new System.Drawing.Size(75, 23);
       this.mpButtonCreditRemove.TabIndex = 10;
       this.mpButtonCreditRemove.Text = "Remove";
-      this.mpButtonCreditRemove.UseVisualStyleBackColor = true;
       this.mpButtonCreditRemove.Click += new System.EventHandler(this.mpButtonCreditRemove_Click);
       // 
       // mpTextBoxPerson
@@ -460,7 +449,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.mpButtonAddProgramCondition.Size = new System.Drawing.Size(75, 23);
       this.mpButtonAddProgramCondition.TabIndex = 11;
       this.mpButtonAddProgramCondition.Text = "Add";
-      this.mpButtonAddProgramCondition.UseVisualStyleBackColor = true;
       this.mpButtonAddProgramCondition.Click += new System.EventHandler(this.mpButton1_Click);
       // 
       // mpButtonRemoveProgramSchedule
@@ -470,7 +458,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.mpButtonRemoveProgramSchedule.Size = new System.Drawing.Size(75, 23);
       this.mpButtonRemoveProgramSchedule.TabIndex = 10;
       this.mpButtonRemoveProgramSchedule.Text = "Remove";
-      this.mpButtonRemoveProgramSchedule.UseVisualStyleBackColor = true;
       this.mpButtonRemoveProgramSchedule.Click += new System.EventHandler(this.mpButton2_Click);
       // 
       // mpTextBoxProgramValue
@@ -516,7 +503,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.radioOnAllChannels.Size = new System.Drawing.Size(97, 17);
       this.radioOnAllChannels.TabIndex = 16;
       this.radioOnAllChannels.Text = "On all channels";
-      this.radioOnAllChannels.UseVisualStyleBackColor = true;
       this.radioOnAllChannels.CheckedChanged += new System.EventHandler(this.radioOnAllChannels_CheckedChanged);
       // 
       // mpButtonAddAllChannelCondition
@@ -526,7 +512,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.mpButtonAddAllChannelCondition.Size = new System.Drawing.Size(75, 23);
       this.mpButtonAddAllChannelCondition.TabIndex = 15;
       this.mpButtonAddAllChannelCondition.Text = "Add All";
-      this.mpButtonAddAllChannelCondition.UseVisualStyleBackColor = true;
       // 
       // radioNotOnChannels
       // 
@@ -537,7 +522,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.radioNotOnChannels.Size = new System.Drawing.Size(102, 17);
       this.radioNotOnChannels.TabIndex = 14;
       this.radioNotOnChannels.Text = "Not on channels";
-      this.radioNotOnChannels.UseVisualStyleBackColor = true;
       this.radioNotOnChannels.CheckedChanged += new System.EventHandler(this.radioNotOnChannels_CheckedChanged);
       // 
       // radioOnChannels
@@ -551,7 +535,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.radioOnChannels.TabIndex = 13;
       this.radioOnChannels.TabStop = true;
       this.radioOnChannels.Text = "Channels";
-      this.radioOnChannels.UseVisualStyleBackColor = true;
       this.radioOnChannels.CheckedChanged += new System.EventHandler(this.radioOnChannels_CheckedChanged);
       // 
       // mpComboBoxChannels
@@ -569,7 +552,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.mpButtonAddChannelCondition.Size = new System.Drawing.Size(75, 23);
       this.mpButtonAddChannelCondition.TabIndex = 11;
       this.mpButtonAddChannelCondition.Text = "Add";
-      this.mpButtonAddChannelCondition.UseVisualStyleBackColor = true;
       this.mpButtonAddChannelCondition.Click += new System.EventHandler(this.mpButtonAddChannelCondition_Click);
       // 
       // mpButtonRemoveChannelCondition
@@ -579,7 +561,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.mpButtonRemoveChannelCondition.Size = new System.Drawing.Size(75, 23);
       this.mpButtonRemoveChannelCondition.TabIndex = 10;
       this.mpButtonRemoveChannelCondition.Text = "Remove";
-      this.mpButtonRemoveChannelCondition.UseVisualStyleBackColor = true;
       this.mpButtonRemoveChannelCondition.Click += new System.EventHandler(this.mpButtonRemoveChannelCondition_Click);
       // 
       // mpComboBoxChannelsGroup
@@ -627,7 +608,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.mpRadioButtonInAllCategories.TabIndex = 16;
       this.mpRadioButtonInAllCategories.TabStop = true;
       this.mpRadioButtonInAllCategories.Text = "In all categories";
-      this.mpRadioButtonInAllCategories.UseVisualStyleBackColor = true;
       this.mpRadioButtonInAllCategories.CheckedChanged += new System.EventHandler(this.mpRadioButtonInAllCategories_CheckedChanged);
       // 
       // mpButtonAddAllCategoryCondition
@@ -637,7 +617,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.mpButtonAddAllCategoryCondition.Size = new System.Drawing.Size(75, 23);
       this.mpButtonAddAllCategoryCondition.TabIndex = 15;
       this.mpButtonAddAllCategoryCondition.Text = "Add All";
-      this.mpButtonAddAllCategoryCondition.UseVisualStyleBackColor = true;
       // 
       // mpRadioButtonNotInCategory
       // 
@@ -648,7 +627,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.mpRadioButtonNotInCategory.Size = new System.Drawing.Size(104, 17);
       this.mpRadioButtonNotInCategory.TabIndex = 14;
       this.mpRadioButtonNotInCategory.Text = "Not in categories";
-      this.mpRadioButtonNotInCategory.UseVisualStyleBackColor = true;
       this.mpRadioButtonNotInCategory.CheckedChanged += new System.EventHandler(this.mpRadioButtonNotInCategory_CheckedChanged);
       // 
       // mpRadioButtonInCategory
@@ -660,7 +638,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.mpRadioButtonInCategory.Size = new System.Drawing.Size(74, 17);
       this.mpRadioButtonInCategory.TabIndex = 13;
       this.mpRadioButtonInCategory.Text = "Categories";
-      this.mpRadioButtonInCategory.UseVisualStyleBackColor = true;
       this.mpRadioButtonInCategory.CheckedChanged += new System.EventHandler(this.mpRadioButtonInCategory_CheckedChanged);
       // 
       // mpButtonAddCategoryCondition
@@ -670,7 +647,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.mpButtonAddCategoryCondition.Size = new System.Drawing.Size(75, 23);
       this.mpButtonAddCategoryCondition.TabIndex = 11;
       this.mpButtonAddCategoryCondition.Text = "Add";
-      this.mpButtonAddCategoryCondition.UseVisualStyleBackColor = true;
       this.mpButtonAddCategoryCondition.Click += new System.EventHandler(this.mpButtonAddCategoryCondition_Click);
       // 
       // mpButtonRemoveCategoryCondition
@@ -680,7 +656,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.mpButtonRemoveCategoryCondition.Size = new System.Drawing.Size(75, 23);
       this.mpButtonRemoveCategoryCondition.TabIndex = 10;
       this.mpButtonRemoveCategoryCondition.Text = "Remove";
-      this.mpButtonRemoveCategoryCondition.UseVisualStyleBackColor = true;
       this.mpButtonRemoveCategoryCondition.Click += new System.EventHandler(this.mpButtonRemoveCategoryCondition_Click);
       // 
       // mpComboBoxCategories
@@ -729,7 +704,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.checkBoxSkipRepeats.Size = new System.Drawing.Size(85, 17);
       this.checkBoxSkipRepeats.TabIndex = 9;
       this.checkBoxSkipRepeats.Text = "Skip repeats";
-      this.checkBoxSkipRepeats.UseVisualStyleBackColor = true;
       // 
       // checkBoxNewTitles
       // 
@@ -740,7 +714,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.checkBoxNewTitles.Size = new System.Drawing.Size(72, 17);
       this.checkBoxNewTitles.TabIndex = 8;
       this.checkBoxNewTitles.Text = "New titles";
-      this.checkBoxNewTitles.UseVisualStyleBackColor = true;
       // 
       // checkBoxOnlyNewEpisodes
       // 
@@ -751,7 +724,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.checkBoxOnlyNewEpisodes.Size = new System.Drawing.Size(93, 17);
       this.checkBoxOnlyNewEpisodes.TabIndex = 7;
       this.checkBoxOnlyNewEpisodes.Text = "New episodes";
-      this.checkBoxOnlyNewEpisodes.UseVisualStyleBackColor = true;
       // 
       // groupBox7
       // 
@@ -961,7 +933,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.mpButtonSaveTemplate.Size = new System.Drawing.Size(114, 23);
       this.mpButtonSaveTemplate.TabIndex = 19;
       this.mpButtonSaveTemplate.Text = "Save as template";
-      this.mpButtonSaveTemplate.UseVisualStyleBackColor = true;
       // 
       // mpButtonApplyTemplate
       // 
@@ -971,7 +942,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.mpButtonApplyTemplate.Size = new System.Drawing.Size(114, 23);
       this.mpButtonApplyTemplate.TabIndex = 20;
       this.mpButtonApplyTemplate.Text = "Apply template";
-      this.mpButtonApplyTemplate.UseVisualStyleBackColor = true;
       // 
       // mpComboBoxTemplates
       // 

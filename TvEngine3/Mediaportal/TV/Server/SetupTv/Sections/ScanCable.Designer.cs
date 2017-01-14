@@ -95,7 +95,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.checkBoxUseAdvancedOptions.Size = new System.Drawing.Size(134, 17);
       this.checkBoxUseAdvancedOptions.TabIndex = 7;
       this.checkBoxUseAdvancedOptions.Text = "Use advanced options.";
-      this.checkBoxUseAdvancedOptions.UseVisualStyleBackColor = true;
       this.checkBoxUseAdvancedOptions.CheckedChanged += new System.EventHandler(this.checkBoxUseAdvancedOptions_CheckedChanged);
       // 
       // groupBoxAdvancedOptions
@@ -124,7 +123,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.checkBoxUseManualTuning.Size = new System.Drawing.Size(123, 17);
       this.checkBoxUseManualTuning.TabIndex = 2;
       this.checkBoxUseManualTuning.Text = "Using manual tuning.";
-      this.checkBoxUseManualTuning.UseVisualStyleBackColor = true;
       this.checkBoxUseManualTuning.CheckedChanged += new System.EventHandler(this.checkBoxUseManualTuning_CheckedChanged);
       // 
       // groupBoxManualTuning
@@ -358,7 +356,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.buttonScan.Size = new System.Drawing.Size(110, 23);
       this.buttonScan.TabIndex = 6;
       this.buttonScan.Text = "&Scan for channels";
-      this.buttonScan.UseVisualStyleBackColor = true;
       this.buttonScan.Click += new System.EventHandler(this.buttonScan_Click);
       // 
       // labelRegionProvider

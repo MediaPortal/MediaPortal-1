@@ -80,7 +80,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.buttonUnmap.Size = new System.Drawing.Size(27, 23);
       this.buttonUnmap.TabIndex = 5;
       this.buttonUnmap.Text = "<";
-      this.buttonUnmap.UseVisualStyleBackColor = true;
       this.buttonUnmap.Click += new System.EventHandler(this.buttonUnmap_Click);
       // 
       // buttonMapAll
@@ -91,7 +90,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.buttonMapAll.Size = new System.Drawing.Size(27, 23);
       this.buttonMapAll.TabIndex = 4;
       this.buttonMapAll.Text = ">>";
-      this.buttonMapAll.UseVisualStyleBackColor = true;
       this.buttonMapAll.Click += new System.EventHandler(this.buttonMapAll_Click);
       // 
       // labelMapped
@@ -230,7 +228,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.buttonUnmapAll.Size = new System.Drawing.Size(27, 23);
       this.buttonUnmapAll.TabIndex = 9;
       this.buttonUnmapAll.Text = "<<";
-      this.buttonUnmapAll.UseVisualStyleBackColor = true;
       this.buttonUnmapAll.Click += new System.EventHandler(this.buttonUnmapAll_Click);
       // 
       // buttonMap
@@ -241,7 +238,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.buttonMap.Size = new System.Drawing.Size(27, 23);
       this.buttonMap.TabIndex = 8;
       this.buttonMap.Text = ">";
-      this.buttonMap.UseVisualStyleBackColor = true;
       this.buttonMap.Click += new System.EventHandler(this.buttonMap_Click);
       // 
       // TuningDetailMapping

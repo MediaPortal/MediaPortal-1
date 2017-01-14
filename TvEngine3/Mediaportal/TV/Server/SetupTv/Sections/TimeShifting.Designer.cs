@@ -193,7 +193,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.buttonBufferLocationBrowse.Size = new System.Drawing.Size(24, 23);
       this.buttonBufferLocationBrowse.TabIndex = 2;
       this.buttonBufferLocationBrowse.Text = "...";
-      this.buttonBufferLocationBrowse.UseVisualStyleBackColor = true;
       this.buttonBufferLocationBrowse.Click += new System.EventHandler(this.buttonBufferLocationBrowse_Click);
       // 
       // textBoxBufferLocation

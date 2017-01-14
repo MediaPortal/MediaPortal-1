@@ -71,7 +71,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.buttonCancel.Size = new System.Drawing.Size(75, 23);
       this.buttonCancel.TabIndex = 27;
       this.buttonCancel.Text = "&Cancel";
-      this.buttonCancel.UseVisualStyleBackColor = true;
       this.buttonCancel.Click += new System.EventHandler(this.buttonCancel_Click);
       // 
       // buttonOkay
@@ -82,7 +81,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.buttonOkay.Size = new System.Drawing.Size(75, 23);
       this.buttonOkay.TabIndex = 26;
       this.buttonOkay.Text = "&OK";
-      this.buttonOkay.UseVisualStyleBackColor = true;
       this.buttonOkay.Click += new System.EventHandler(this.buttonOkay_Click);
       // 
       // labelIsToroidalDish
@@ -104,7 +102,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.checkBoxIsToroidalDish.TabIndex = 25;
       this.checkBoxIsToroidalDish.Text = " ";
       this.checkBoxIsToroidalDish.TextAlign = System.Drawing.ContentAlignment.TopRight;
-      this.checkBoxIsToroidalDish.UseVisualStyleBackColor = true;
       // 
       // comboBoxTone22kState
       // 
@@ -299,7 +296,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.checkBoxPolarisationsLinearHorizontal.TabIndex = 20;
       this.checkBoxPolarisationsLinearHorizontal.Text = "Horizontal";
       this.checkBoxPolarisationsLinearHorizontal.TextAlign = System.Drawing.ContentAlignment.TopRight;
-      this.checkBoxPolarisationsLinearHorizontal.UseVisualStyleBackColor = true;
       // 
       // labelPolarisations
       // 
@@ -320,7 +316,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.checkBoxPolarisationsLinearVertical.TabIndex = 19;
       this.checkBoxPolarisationsLinearVertical.Text = "Vertical";
       this.checkBoxPolarisationsLinearVertical.TextAlign = System.Drawing.ContentAlignment.TopRight;
-      this.checkBoxPolarisationsLinearVertical.UseVisualStyleBackColor = true;
       // 
       // checkBoxPolarisationsCircularLeft
       // 
@@ -332,7 +327,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.checkBoxPolarisationsCircularLeft.TabIndex = 23;
       this.checkBoxPolarisationsCircularLeft.Text = "Left";
       this.checkBoxPolarisationsCircularLeft.TextAlign = System.Drawing.ContentAlignment.TopRight;
-      this.checkBoxPolarisationsCircularLeft.UseVisualStyleBackColor = true;
       // 
       // checkBoxPolarisationsCircularRight
       // 
@@ -344,7 +338,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.checkBoxPolarisationsCircularRight.TabIndex = 22;
       this.checkBoxPolarisationsCircularRight.Text = "Right";
       this.checkBoxPolarisationsCircularRight.TextAlign = System.Drawing.ContentAlignment.TopRight;
-      this.checkBoxPolarisationsCircularRight.UseVisualStyleBackColor = true;
       // 
       // labelPolarisationsLinear
       // 

@@ -88,7 +88,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.checkBoxIsVcrSignal.TabIndex = 17;
       this.checkBoxIsVcrSignal.TabStop = false;
       this.checkBoxIsVcrSignal.Text = " ";
-      this.checkBoxIsVcrSignal.UseVisualStyleBackColor = true;
       // 
       // comboBoxAudioSource
       // 

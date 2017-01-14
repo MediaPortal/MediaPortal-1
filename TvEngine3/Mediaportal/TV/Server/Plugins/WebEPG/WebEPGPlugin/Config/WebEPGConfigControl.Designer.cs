@@ -136,7 +136,6 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
       this.bAutoMap.Size = new System.Drawing.Size(72, 23);
       this.bAutoMap.TabIndex = 19;
       this.bAutoMap.Text = "Auto Map";
-      this.bAutoMap.UseVisualStyleBackColor = true;
       this.bAutoMap.Click += new System.EventHandler(this.bAutoMap_Click);
       // 
       // gbGlobal
@@ -165,7 +164,6 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
       this.checkBoxDeleteBeforeImport.Size = new System.Drawing.Size(268, 17);
       this.checkBoxDeleteBeforeImport.TabIndex = 35;
       this.checkBoxDeleteBeforeImport.Text = "Delete old programs before import (Recommended!)";
-      this.checkBoxDeleteBeforeImport.UseVisualStyleBackColor = true;
       // 
       // buttonBrowse
       // 
@@ -175,7 +173,6 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
       this.buttonBrowse.Size = new System.Drawing.Size(23, 23);
       this.buttonBrowse.TabIndex = 23;
       this.buttonBrowse.Text = "...";
-      this.buttonBrowse.UseVisualStyleBackColor = true;
       this.buttonBrowse.Click += new System.EventHandler(this.buttonBrowse_Click);
       // 
       // textBoxFolder
@@ -249,7 +246,6 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
       this.bSave.Size = new System.Drawing.Size(72, 24);
       this.bSave.TabIndex = 23;
       this.bSave.Text = "Save";
-      this.bSave.UseVisualStyleBackColor = true;
       this.bSave.Click += new System.EventHandler(this.bSave_Click);
       // 
       // tabMain
@@ -277,7 +273,6 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
       this.tabGeneral.Size = new System.Drawing.Size(472, 394);
       this.tabGeneral.TabIndex = 1;
       this.tabGeneral.Text = "General";
-      this.tabGeneral.UseVisualStyleBackColor = true;
       // 
       // groupBox1
       // 
@@ -315,7 +310,6 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
       this.buttonManualImport.Size = new System.Drawing.Size(72, 23);
       this.buttonManualImport.TabIndex = 26;
       this.buttonManualImport.Text = "Grab now!";
-      this.buttonManualImport.UseVisualStyleBackColor = true;
       this.buttonManualImport.Click += new System.EventHandler(this.buttonManualImport_Click);
       // 
       // labelPrograms
@@ -386,7 +380,6 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
       this.tabTVMappings.Size = new System.Drawing.Size(449, 429);
       this.tabTVMappings.TabIndex = 2;
       this.tabTVMappings.Text = "TV Mappings";
-      this.tabTVMappings.UseVisualStyleBackColor = true;
       // 
       // TvMappings
       // 
@@ -410,7 +403,6 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
       this.tabRadioMappings.Size = new System.Drawing.Size(472, 394);
       this.tabRadioMappings.TabIndex = 3;
       this.tabRadioMappings.Text = "Radio Mappings";
-      this.tabRadioMappings.UseVisualStyleBackColor = true;
       // 
       // RadioMappings
       // 
@@ -434,7 +426,6 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
       this.tabSchedule.Size = new System.Drawing.Size(449, 429);
       this.tabSchedule.TabIndex = 4;
       this.tabSchedule.Text = "Schedule";
-      this.tabSchedule.UseVisualStyleBackColor = true;
       // 
       // groupBox3
       // 
@@ -471,7 +462,6 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
       this.ScheduleGrabCheckBox.Size = new System.Drawing.Size(232, 17);
       this.ScheduleGrabCheckBox.TabIndex = 5;
       this.ScheduleGrabCheckBox.Text = "Grab EPG on the following days at this time:";
-      this.ScheduleGrabCheckBox.UseVisualStyleBackColor = true;
       // 
       // panel1
       // 
@@ -495,7 +485,6 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
       this.SundayCheckBox.Size = new System.Drawing.Size(62, 17);
       this.SundayCheckBox.TabIndex = 6;
       this.SundayCheckBox.Text = "Sunday";
-      this.SundayCheckBox.UseVisualStyleBackColor = true;
       // 
       // SaturdayCheckBox
       // 
@@ -505,7 +494,6 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
       this.SaturdayCheckBox.Size = new System.Drawing.Size(68, 17);
       this.SaturdayCheckBox.TabIndex = 5;
       this.SaturdayCheckBox.Text = "Saturday";
-      this.SaturdayCheckBox.UseVisualStyleBackColor = true;
       // 
       // FridayCheckBox
       // 
@@ -515,7 +503,6 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
       this.FridayCheckBox.Size = new System.Drawing.Size(54, 17);
       this.FridayCheckBox.TabIndex = 4;
       this.FridayCheckBox.Text = "Friday";
-      this.FridayCheckBox.UseVisualStyleBackColor = true;
       // 
       // ThursdayCheckBox
       // 
@@ -525,7 +512,6 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
       this.ThursdayCheckBox.Size = new System.Drawing.Size(70, 17);
       this.ThursdayCheckBox.TabIndex = 3;
       this.ThursdayCheckBox.Text = "Thursday";
-      this.ThursdayCheckBox.UseVisualStyleBackColor = true;
       // 
       // WednesdayCheckBox
       // 
@@ -535,7 +521,6 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
       this.WednesdayCheckBox.Size = new System.Drawing.Size(83, 17);
       this.WednesdayCheckBox.TabIndex = 2;
       this.WednesdayCheckBox.Text = "Wednesday";
-      this.WednesdayCheckBox.UseVisualStyleBackColor = true;
       // 
       // TuesdayCheckBox
       // 
@@ -545,7 +530,6 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
       this.TuesdayCheckBox.Size = new System.Drawing.Size(67, 17);
       this.TuesdayCheckBox.TabIndex = 1;
       this.TuesdayCheckBox.Text = "Tuesday";
-      this.TuesdayCheckBox.UseVisualStyleBackColor = true;
       // 
       // MondayCheckBox
       // 
@@ -555,7 +539,6 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
       this.MondayCheckBox.Size = new System.Drawing.Size(64, 17);
       this.MondayCheckBox.TabIndex = 0;
       this.MondayCheckBox.Text = "Monday";
-      this.MondayCheckBox.UseVisualStyleBackColor = true;
       // 
       // grabTimeTextBox
       // 

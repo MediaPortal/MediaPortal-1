@@ -65,7 +65,6 @@ namespace Mediaportal.TV.Server.SetupTV
       this.closeButton.Size = new System.Drawing.Size(75, 23);
       this.closeButton.TabIndex = 6;
       this.closeButton.Text = "&Close";
-      this.closeButton.UseVisualStyleBackColor = true;
       this.closeButton.Click += new System.EventHandler(this.closeButton_Click);
       // 
       // headerLabel
