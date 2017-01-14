@@ -728,7 +728,6 @@ namespace MediaPortal.Player
           // restart window manager
           GUIWindowManager.PreInit();
           GUIWindowManager.OnResize();
-          GUIWindowManager.ActivateWindow(GUIWindowManager.ActiveWindow);
           GUIWindowManager.OnDeviceRestored();
 
           GUIGraphicsContext.currentScreen = Screen.FromControl(GUIGraphicsContext.form);
