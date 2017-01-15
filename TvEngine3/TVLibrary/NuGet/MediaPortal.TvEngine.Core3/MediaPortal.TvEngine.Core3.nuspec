@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
         <id>MediaPortal.TvEngine.Core3</id>
-        <version>3.0.15.2</version>
+        <version>3.0.16.0</version>
         <authors>Morpheus_xx</authors>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <description>Binary package that contains TVE3 dependencies for MP2.</description>

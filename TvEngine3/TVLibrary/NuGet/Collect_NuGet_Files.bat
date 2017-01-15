@@ -109,6 +109,8 @@ REM #######################################
 :zip
 rmdir /S /Q _tmpzip
 mkdir _tmpzip
+REM Thumbs folder is not created by code, but tried to delete from. So add it here as dummy.
+mkdir _tmpzip\thumbs
 xcopy /S /Q "..\..\TvServer.Base\TuningParameters" _tmpzip\TuningParameters\*.*
 xcopy /S /Q "..\..\TvServer.Base\WebEPG" _tmpzip\WebEPG\*.*
 xcopy /S /Q "..\..\TvServer.Base\xmltv" _tmpzip\xmltv\*.*
