@@ -1050,6 +1050,10 @@ namespace MediaPortal.GUI.Library
           OnVideoWindowChanged?.Invoke();
         }
       }
+      else
+      {
+        OnVideoWindowChanged?.Invoke();
+      }
     }
 
     public static Rectangle rDest { get; set; }
