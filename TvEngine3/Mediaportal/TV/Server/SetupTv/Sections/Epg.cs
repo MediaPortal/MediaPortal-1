@@ -662,25 +662,22 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
     #region drag and drop
 
-    private void listViewLanguages_ItemDrag(object sender, ItemDragEventArgs e)
+    private void listViewLanguagesAvailable_ItemDrag(object sender, ItemDragEventArgs e)
     {
       listViewLanguagesAvailable.DoDragDrop(listViewLanguagesAvailable, DragDropEffects.Move);
     }
 
-    private void listViewLanguages_DragOver(object sender, DragEventArgs e)
-    {
-      if (IsValidDragDropData(e, listViewLanguagesPreferred))
-      {
-        listViewLanguagesAvailable.DefaultDragOverHandler(e);
-      }
-    }
-
-    private void listViewLanguages_DragEnter(object sender, DragEventArgs e)
+    private void listViewLanguagesAvailable_DragOver(object sender, DragEventArgs e)
     {
       IsValidDragDropData(e, listViewLanguagesPreferred);
     }
 
-    private void listViewLanguages_DragDrop(object sender, DragEventArgs e)
+    private void listViewLanguagesAvailable_DragEnter(object sender, DragEventArgs e)
+    {
+      IsValidDragDropData(e, listViewLanguagesPreferred);
+    }
+
+    private void listViewLanguagesAvailable_DragDrop(object sender, DragEventArgs e)
     {
       if (!IsValidDragDropData(e, listViewLanguagesPreferred))
       {
@@ -688,39 +685,21 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         return;
       }
 
-      // Determine where we're going to insert the dragged item(s).
-      Point cp = listViewLanguagesAvailable.PointToClient(new Point(e.X, e.Y));
-      ListViewItem dragToItem = listViewLanguagesAvailable.GetItemAt(cp.X, cp.Y);
-      int dropIndex;
-      if (dragToItem == null)
-      {
-        if (listViewLanguagesAvailable.Items.Count != 0)
-        {
-          return;
-        }
-        dropIndex = 0;
-      }
-      else
-      {
-        // Always drop below as there is no space to draw the insert line above the first item.
-        dropIndex = dragToItem.Index;
-        dropIndex++;
-      }
-
       listViewLanguagesAvailable.BeginUpdate();
       listViewLanguagesPreferred.BeginUpdate();
       try
       {
-        // Move the items.
+        // Move the items into the available language list.
         foreach (ListViewItem item in listViewLanguagesPreferred.SelectedItems)
         {
           listViewLanguagesPreferred.Items.RemoveAt(item.Index);
-          listViewLanguagesAvailable.Items.Insert(dropIndex++, item);
+          listViewLanguagesAvailable.Items.Add(item);
         }
       }
       finally
       {
         listViewLanguagesAvailable.EndUpdate();
+        listViewLanguagesAvailable.Sort();
         listViewLanguagesPreferred.EndUpdate();
       }
     }
@@ -732,9 +711,13 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
     private void listViewLanguagesPreferred_DragOver(object sender, DragEventArgs e)
     {
-      if (IsValidDragDropData(e, listViewLanguagesAvailable) || IsValidDragDropData(e, listViewLanguagesPreferred))
+      if (IsValidDragDropData(e, listViewLanguagesAvailable))
       {
-        listViewLanguagesPreferred.DefaultDragOverHandler(e);
+        listViewLanguagesPreferred.DefaultDragOverHandler(false, e);
+      }
+      else if (IsValidDragDropData(e, listViewLanguagesPreferred))
+      {
+        listViewLanguagesPreferred.DefaultDragOverHandler(true, e);
       }
     }
 
@@ -762,28 +745,26 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
       // Determine where we're going to insert the dragged item(s).
       Point cp = listViewLanguagesPreferred.PointToClient(new Point(e.X, e.Y));
-      ListViewItem dragToItem = listViewLanguagesPreferred.GetItemAt(cp.X, cp.Y);
-      int dropIndex;
-      if (dragToItem == null)
+      ListViewItem dropOnItem = listViewLanguagesPreferred.GetItemAt(cp.X, cp.Y);
+      int dropIndex = 0;
+      if (dropOnItem != null)
       {
-        if (listViewLanguagesPreferred.Items.Count != 0)
+        dropIndex = dropOnItem.Index;
+        if (cp.Y >= dropOnItem.Bounds.Top + (dropOnItem.Bounds.Height / 2))
         {
-          return;
+          dropIndex++;
         }
-        dropIndex = 0;
       }
-      else
+      else if (listViewLanguagesPreferred.Items.Count != 0 && cp.Y > listViewLanguagesPreferred.Items[listViewLanguagesPreferred.Items.Count - 1].Bounds.Bottom)
       {
-        // Always drop below as there is no space to draw the insert line above the first item.
-        dropIndex = dragToItem.Index;
-        dropIndex++;
+        dropIndex = listViewLanguagesPreferred.Items.Count;
       }
 
       listViewLanguagesAvailable.BeginUpdate();
       listViewLanguagesPreferred.BeginUpdate();
       try
       {
-        // Move the items.
+        // Move the items into the preferred language list.
         foreach (ListViewItem item in listViewLanguagesAvailable.SelectedItems)
         {
           listViewLanguagesAvailable.Items.RemoveAt(item.Index);

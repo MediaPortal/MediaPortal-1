@@ -42,7 +42,8 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.columnHeaderName = ((Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader)(new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader()));
       this.columnHeaderNumber = ((Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader)(new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader()));
       this.columnHeaderProvider = ((Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader)(new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader()));
-      this.columnHeaderBroadcastStandard = ((Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader)(new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader()));
+      this.columnHeaderType = ((Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader)(new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader()));
+      this.columnHeaderPriority = ((Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader)(new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader()));
       this.columnHeaderDetails = ((Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader)(new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader()));
       this.imageList1 = new System.Windows.Forms.ImageList(this.components);
       this.groupBoxTuningDetails = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
@@ -72,21 +73,18 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.buttonOkay.Size = new System.Drawing.Size(75, 23);
       this.buttonOkay.TabIndex = 2;
       this.buttonOkay.Text = "&OK";
-      this.buttonOkay.UseVisualStyleBackColor = true;
       this.buttonOkay.Click += new System.EventHandler(this.buttonOkay_Click);
       // 
       // checkBoxVisibleInGuide
       // 
       this.checkBoxVisibleInGuide.AutoSize = true;
       this.tableLayoutPanel.SetColumnSpan(this.checkBoxVisibleInGuide, 2);
-      this.checkBoxVisibleInGuide.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxVisibleInGuide.Location = new System.Drawing.Point(266, 55);
       this.checkBoxVisibleInGuide.Name = "checkBoxVisibleInGuide";
       this.checkBoxVisibleInGuide.Size = new System.Drawing.Size(172, 17);
       this.checkBoxVisibleInGuide.TabIndex = 8;
       this.checkBoxVisibleInGuide.Text = "Show this channel in the guide.";
       this.checkBoxVisibleInGuide.TextAlign = System.Drawing.ContentAlignment.TopRight;
-      this.checkBoxVisibleInGuide.UseVisualStyleBackColor = true;
       // 
       // textBoxName
       // 
@@ -119,14 +117,12 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.buttonCancel.Size = new System.Drawing.Size(75, 23);
       this.buttonCancel.TabIndex = 3;
       this.buttonCancel.Text = "&Cancel";
-      this.buttonCancel.UseVisualStyleBackColor = true;
       this.buttonCancel.Click += new System.EventHandler(this.buttonCancel_Click);
       // 
       // listViewTuningDetails
       // 
       this.listViewTuningDetails.AllowColumnReorder = true;
       this.listViewTuningDetails.AllowDrop = true;
-      this.listViewTuningDetails.AllowRowReorder = false;
       this.listViewTuningDetails.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
@@ -135,9 +131,11 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
             this.columnHeaderName,
             this.columnHeaderNumber,
             this.columnHeaderProvider,
-            this.columnHeaderBroadcastStandard,
+            this.columnHeaderType,
+            this.columnHeaderPriority,
             this.columnHeaderDetails});
       this.listViewTuningDetails.FullRowSelect = true;
+      this.listViewTuningDetails.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
       this.listViewTuningDetails.LargeImageList = this.imageList1;
       this.listViewTuningDetails.Location = new System.Drawing.Point(6, 19);
       this.listViewTuningDetails.Name = "listViewTuningDetails";
@@ -151,6 +149,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.listViewTuningDetails.DragDrop += new System.Windows.Forms.DragEventHandler(this.listViewTuningDetails_DragDrop);
       this.listViewTuningDetails.DragEnter += new System.Windows.Forms.DragEventHandler(this.listViewTuningDetails_DragEnter);
       this.listViewTuningDetails.DragOver += new System.Windows.Forms.DragEventHandler(this.listViewTuningDetails_DragOver);
+      this.listViewTuningDetails.KeyDown += new System.Windows.Forms.KeyEventHandler(this.listViewTuningDetails_KeyDown);
       this.listViewTuningDetails.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.listViewTuningDetails_MouseDoubleClick);
       // 
       // columnHeaderId
@@ -161,7 +160,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // columnHeaderName
       // 
       this.columnHeaderName.Text = "Name";
-      this.columnHeaderName.Width = 120;
+      this.columnHeaderName.Width = 80;
       // 
       // columnHeaderNumber
       // 
@@ -173,10 +172,15 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.columnHeaderProvider.Text = "Provider";
       this.columnHeaderProvider.Width = 80;
       // 
-      // columnHeaderBroadcastStandard
+      // columnHeaderType
       // 
-      this.columnHeaderBroadcastStandard.Text = "Standard";
-      this.columnHeaderBroadcastStandard.Width = 65;
+      this.columnHeaderType.Text = "Type";
+      this.columnHeaderType.Width = 50;
+      // 
+      // columnHeaderPriority
+      // 
+      this.columnHeaderPriority.Text = "Priority";
+      this.columnHeaderPriority.Width = 50;
       // 
       // columnHeaderDetails
       // 
@@ -204,7 +208,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.groupBoxTuningDetails.Controls.Add(this.buttonTuningDetailEdit);
       this.groupBoxTuningDetails.Controls.Add(this.buttonTuningDetailAdd);
       this.groupBoxTuningDetails.Controls.Add(this.listViewTuningDetails);
-      this.groupBoxTuningDetails.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxTuningDetails.Location = new System.Drawing.Point(12, 85);
       this.groupBoxTuningDetails.Name = "groupBoxTuningDetails";
       this.groupBoxTuningDetails.Size = new System.Drawing.Size(522, 189);
@@ -230,7 +233,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.buttonTuningDetailPriorityUp.Name = "buttonTuningDetailPriorityUp";
       this.buttonTuningDetailPriorityUp.Size = new System.Drawing.Size(30, 23);
       this.buttonTuningDetailPriorityUp.TabIndex = 5;
-      this.buttonTuningDetailPriorityUp.UseVisualStyleBackColor = true;
       this.buttonTuningDetailPriorityUp.Click += new System.EventHandler(this.buttonTuningDetailPriorityUp_Click);
       // 
       // buttonTuningDetailPriorityDown
@@ -241,7 +243,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.buttonTuningDetailPriorityDown.Name = "buttonTuningDetailPriorityDown";
       this.buttonTuningDetailPriorityDown.Size = new System.Drawing.Size(30, 23);
       this.buttonTuningDetailPriorityDown.TabIndex = 6;
-      this.buttonTuningDetailPriorityDown.UseVisualStyleBackColor = true;
       this.buttonTuningDetailPriorityDown.Click += new System.EventHandler(this.buttonTuningDetailPriorityDown_Click);
       // 
       // buttonTuningDetailDelete
@@ -253,7 +254,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.buttonTuningDetailDelete.Size = new System.Drawing.Size(55, 23);
       this.buttonTuningDetailDelete.TabIndex = 3;
       this.buttonTuningDetailDelete.Text = "&Delete";
-      this.buttonTuningDetailDelete.UseVisualStyleBackColor = true;
       this.buttonTuningDetailDelete.Click += new System.EventHandler(this.buttonTuningDetailDelete_Click);
       // 
       // buttonTuningDetailEdit
@@ -265,7 +265,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.buttonTuningDetailEdit.Size = new System.Drawing.Size(55, 23);
       this.buttonTuningDetailEdit.TabIndex = 2;
       this.buttonTuningDetailEdit.Text = "&Edit";
-      this.buttonTuningDetailEdit.UseVisualStyleBackColor = true;
       this.buttonTuningDetailEdit.Click += new System.EventHandler(this.buttonTuningDetailEdit_Click);
       // 
       // buttonTuningDetailAdd
@@ -276,7 +275,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.buttonTuningDetailAdd.Size = new System.Drawing.Size(55, 23);
       this.buttonTuningDetailAdd.TabIndex = 1;
       this.buttonTuningDetailAdd.Text = "&Add";
-      this.buttonTuningDetailAdd.UseVisualStyleBackColor = true;
       this.buttonTuningDetailAdd.Click += new System.EventHandler(this.buttonTuningDetailAdd_Click);
       // 
       // labelNumber
@@ -427,7 +425,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
     private MPColumnHeader columnHeaderId;
     private MPColumnHeader columnHeaderName;
     private MPColumnHeader columnHeaderProvider;
-    private MPColumnHeader columnHeaderBroadcastStandard;
+    private MPColumnHeader columnHeaderType;
     private System.Windows.Forms.ImageList imageList1;
     private MPColumnHeader columnHeaderDetails;
     private MPGroupBox groupBoxTuningDetails;
@@ -445,5 +443,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
     private MPLabel labelPriority;
     private MPTableLayoutPanel tableLayoutPanel;
     private MPChannelNumberUpDown channelNumberUpDownNumber;
+    private MPColumnHeader columnHeaderPriority;
   }
 }

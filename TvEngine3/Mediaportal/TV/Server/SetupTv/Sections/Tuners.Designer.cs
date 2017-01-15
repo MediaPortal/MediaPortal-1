@@ -51,13 +51,14 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.buttonTunerDelete = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
       this.labelStreamTunerCount = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.listViewTuners = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPListView();
-      this.columnHeaderEnabled = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader();
-      this.columnHeaderId = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader();
-      this.columnHeaderType = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader();
-      this.columnHeaderName = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader();
-      this.columnHeaderConditionalAccess = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader();
-      this.columnHeaderGrabEpg = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader();
-      this.columnHeaderExternalId = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader();
+      this.columnHeaderEnabled = ((Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader)(new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader()));
+      this.columnHeaderId = ((Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader)(new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader()));
+      this.columnHeaderType = ((Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader)(new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader()));
+      this.columnHeaderName = ((Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader)(new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader()));
+      this.columnHeaderPriority = ((Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader)(new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader()));
+      this.columnHeaderConditionalAccess = ((Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader)(new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader()));
+      this.columnHeaderGrabEpg = ((Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader)(new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader()));
+      this.columnHeaderExternalId = ((Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader)(new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader()));
       this.tabControl = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTabControl();
       this.tabPageTunerGroups.SuspendLayout();
       this.groupBoxTunerInGroup.SuspendLayout();
@@ -84,14 +85,12 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.tabPageTunerGroups.Size = new System.Drawing.Size(472, 394);
       this.tabPageTunerGroups.TabIndex = 1;
       this.tabPageTunerGroups.Text = "Tuner Groups";
-      this.tabPageTunerGroups.UseVisualStyleBackColor = true;
       // 
       // groupBoxTunerInGroup
       // 
       this.groupBoxTunerInGroup.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxTunerInGroup.Controls.Add(this.buttonTunerInGroupAdd);
       this.groupBoxTunerInGroup.Controls.Add(this.buttonTunerInGroupRemove);
-      this.groupBoxTunerInGroup.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxTunerInGroup.Location = new System.Drawing.Point(338, 338);
       this.groupBoxTunerInGroup.Name = "groupBoxTunerInGroup";
       this.groupBoxTunerInGroup.Size = new System.Drawing.Size(128, 50);
@@ -106,7 +105,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.buttonTunerInGroupAdd.Size = new System.Drawing.Size(55, 23);
       this.buttonTunerInGroupAdd.TabIndex = 0;
       this.buttonTunerInGroupAdd.Text = "Add";
-      this.buttonTunerInGroupAdd.UseVisualStyleBackColor = true;
       this.buttonTunerInGroupAdd.Click += new System.EventHandler(this.buttonTunerInGroupAdd_Click);
       // 
       // buttonTunerInGroupRemove
@@ -117,7 +115,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.buttonTunerInGroupRemove.Size = new System.Drawing.Size(55, 23);
       this.buttonTunerInGroupRemove.TabIndex = 1;
       this.buttonTunerInGroupRemove.Text = "Remove";
-      this.buttonTunerInGroupRemove.UseVisualStyleBackColor = true;
       this.buttonTunerInGroupRemove.Click += new System.EventHandler(this.buttonTunerInGroupRemove_Click);
       // 
       // groupBoxGroup
@@ -126,7 +123,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.groupBoxGroup.Controls.Add(this.buttonGroupRename);
       this.groupBoxGroup.Controls.Add(this.buttonGroupAdd);
       this.groupBoxGroup.Controls.Add(this.buttonGroupDelete);
-      this.groupBoxGroup.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxGroup.Location = new System.Drawing.Point(6, 338);
       this.groupBoxGroup.Name = "groupBoxGroup";
       this.groupBoxGroup.Size = new System.Drawing.Size(189, 50);
@@ -141,7 +137,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.buttonGroupRename.Size = new System.Drawing.Size(55, 23);
       this.buttonGroupRename.TabIndex = 1;
       this.buttonGroupRename.Text = "&Rename";
-      this.buttonGroupRename.UseVisualStyleBackColor = true;
       this.buttonGroupRename.Click += new System.EventHandler(this.buttonGroupRename_Click);
       // 
       // buttonGroupAdd
@@ -151,7 +146,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.buttonGroupAdd.Size = new System.Drawing.Size(55, 23);
       this.buttonGroupAdd.TabIndex = 0;
       this.buttonGroupAdd.Text = "&Add";
-      this.buttonGroupAdd.UseVisualStyleBackColor = true;
       this.buttonGroupAdd.Click += new System.EventHandler(this.buttonGroupAdd_Click);
       // 
       // buttonGroupDelete
@@ -161,14 +155,13 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.buttonGroupDelete.Size = new System.Drawing.Size(55, 23);
       this.buttonGroupDelete.TabIndex = 2;
       this.buttonGroupDelete.Text = "&Delete";
-      this.buttonGroupDelete.UseVisualStyleBackColor = true;
       this.buttonGroupDelete.Click += new System.EventHandler(this.buttonGroupDelete_Click);
       // 
       // treeViewTunerGroups
       // 
-      this.treeViewTunerGroups.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.treeViewTunerGroups.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.treeViewTunerGroups.ImageIndex = 0;
       this.treeViewTunerGroups.ImageList = this.imageList1;
       this.treeViewTunerGroups.Location = new System.Drawing.Point(6, 6);
@@ -195,7 +188,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.tabPageTuners.Size = new System.Drawing.Size(472, 394);
       this.tabPageTuners.TabIndex = 0;
       this.tabPageTuners.Text = "Tuners";
-      this.tabPageTuners.UseVisualStyleBackColor = true;
       // 
       // labelTunerPriority
       // 
@@ -215,7 +207,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.buttonTunerPriorityDown.Name = "buttonTunerPriorityDown";
       this.buttonTunerPriorityDown.Size = new System.Drawing.Size(30, 23);
       this.buttonTunerPriorityDown.TabIndex = 5;
-      this.buttonTunerPriorityDown.UseVisualStyleBackColor = true;
       this.buttonTunerPriorityDown.Click += new System.EventHandler(this.buttonTunerPriorityDown_Click);
       // 
       // buttonTunerPriorityUp
@@ -226,7 +217,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.buttonTunerPriorityUp.Name = "buttonTunerPriorityUp";
       this.buttonTunerPriorityUp.Size = new System.Drawing.Size(30, 23);
       this.buttonTunerPriorityUp.TabIndex = 4;
-      this.buttonTunerPriorityUp.UseVisualStyleBackColor = true;
       this.buttonTunerPriorityUp.Click += new System.EventHandler(this.buttonTunerPriorityUp_Click);
       // 
       // numericUpDownStreamTunerCount
@@ -236,7 +226,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.numericUpDownStreamTunerCount.Name = "numericUpDownStreamTunerCount";
       this.numericUpDownStreamTunerCount.Size = new System.Drawing.Size(47, 20);
       this.numericUpDownStreamTunerCount.TabIndex = 2;
-      this.numericUpDownStreamTunerCount.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       // 
       // buttonTunerEdit
       // 
@@ -247,7 +236,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.buttonTunerEdit.Size = new System.Drawing.Size(55, 23);
       this.buttonTunerEdit.TabIndex = 6;
       this.buttonTunerEdit.Text = "&Edit";
-      this.buttonTunerEdit.UseVisualStyleBackColor = true;
       this.buttonTunerEdit.Click += new System.EventHandler(this.buttonTunerEdit_Click);
       // 
       // buttonTunerDelete
@@ -259,7 +247,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.buttonTunerDelete.Size = new System.Drawing.Size(55, 23);
       this.buttonTunerDelete.TabIndex = 7;
       this.buttonTunerDelete.Text = "&Delete";
-      this.buttonTunerDelete.UseVisualStyleBackColor = true;
       this.buttonTunerDelete.Click += new System.EventHandler(this.buttonTunerDelete_Click);
       // 
       // labelStreamTunerCount
@@ -276,16 +263,16 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       this.listViewTuners.AllowColumnReorder = true;
       this.listViewTuners.AllowDrop = true;
-      this.listViewTuners.AllowRowReorder = true;
-      this.listViewTuners.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.listViewTuners.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.listViewTuners.CheckBoxes = true;
       this.listViewTuners.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeaderEnabled,
             this.columnHeaderId,
             this.columnHeaderType,
             this.columnHeaderName,
+            this.columnHeaderPriority,
             this.columnHeaderConditionalAccess,
             this.columnHeaderGrabEpg,
             this.columnHeaderExternalId});
@@ -299,7 +286,11 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.listViewTuners.UseCompatibleStateImageBehavior = false;
       this.listViewTuners.View = System.Windows.Forms.View.Details;
       this.listViewTuners.ItemChecked += new System.Windows.Forms.ItemCheckedEventHandler(this.listViewTuners_ItemChecked);
+      this.listViewTuners.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.listViewTuners_ItemDrag);
       this.listViewTuners.SelectedIndexChanged += new System.EventHandler(this.listViewTuners_SelectedIndexChanged);
+      this.listViewTuners.DragDrop += new System.Windows.Forms.DragEventHandler(this.listViewTuners_DragDrop);
+      this.listViewTuners.DragEnter += new System.Windows.Forms.DragEventHandler(this.listViewTuners_DragEnter);
+      this.listViewTuners.DragOver += new System.Windows.Forms.DragEventHandler(this.listViewTuners_DragOver);
       this.listViewTuners.KeyDown += new System.Windows.Forms.KeyEventHandler(this.listViewTuners_KeyDown);
       this.listViewTuners.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.listViewTuners_MouseDoubleClick);
       // 
@@ -323,6 +314,11 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.columnHeaderName.Text = "Name";
       this.columnHeaderName.Width = 130;
       // 
+      // columnHeaderPriority
+      // 
+      this.columnHeaderPriority.Text = "Priority";
+      this.columnHeaderPriority.Width = 50;
+      // 
       // columnHeaderConditionalAccess
       // 
       this.columnHeaderConditionalAccess.Text = "CA";
@@ -339,10 +335,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       // tabControl
       // 
-      this.tabControl.AccessibleName = "";
-      this.tabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.tabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.tabControl.Controls.Add(this.tabPageTuners);
       this.tabControl.Controls.Add(this.tabPageTunerGroups);
       this.tabControl.Location = new System.Drawing.Point(0, 0);
@@ -400,5 +395,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private MPButton buttonGroupDelete;
     private MPButton buttonGroupRename;
     private MPLabel labelTunerPriority;
+    private MPColumnHeader columnHeaderPriority;
   }
 }

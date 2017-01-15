@@ -36,6 +36,8 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
 {
   public partial class FormEditChannel : Form
   {
+    private const int SUBITEM_INDEX_PRIORITY = 5;
+
     private int _idChannel = -1;
     private int _newTuningDetailFakeId = -1;
     private MediaType _mediaType = MediaType.Television;
@@ -244,6 +246,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
           DebugTuningDetailSettings(tuningDetail);
           listViewTuningDetails.Items.Add(CreateItemForTuningDetail(tuningDetail));
         }
+        ConsolidateTuningDetailPriorities();
       }
       finally
       {
@@ -282,8 +285,31 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       item.SubItems.Add(tuningDetail.LogicalChannelNumber);
       item.SubItems.Add(tuningDetail.Provider);
       item.SubItems.Add(((BroadcastStandard)tuningDetail.BroadcastStandard).GetDescription());
+      item.SubItems.Add(tuningDetail.Priority.ToString());
       item.SubItems.Add(tuningDetail.GetTerseTuningDescription());
       return item;
+    }
+
+    private void ConsolidateTuningDetailPriorities(MPListView listView = null)
+    {
+      // Consolidate priority values such that there are no gaps in the
+      // sequence. Two or more tuning details may have the same priority.
+      if (listView == null)
+      {
+        listView = listViewTuningDetails;
+      }
+      int previousItemPriority = -1;
+      int nextItemPriority = 0;
+      foreach (ListViewItem item in listView.Items)
+      {
+        int currentPriority = int.Parse(item.SubItems[SUBITEM_INDEX_PRIORITY].Text);
+        if (currentPriority != previousItemPriority)
+        {
+          nextItemPriority++;
+        }
+        item.SubItems[SUBITEM_INDEX_PRIORITY].Text = nextItemPriority.ToString();
+        previousItemPriority = currentPriority;
+      }
     }
 
     #region button and mouse handlers
@@ -320,10 +346,10 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       _idChannel = _channel.IdChannel;
       DebugChannelSettings(_channel);
 
-      int priority = 1;
       foreach (ListViewItem item in listViewTuningDetails.Items)
       {
         TuningDetail tuningDetail = item.Tag as TuningDetail;
+        int newPriority = int.Parse(item.SubItems[SUBITEM_INDEX_PRIORITY].Text);
         if (tuningDetail.IdTuningDetail <= 0)
         {
           // New tuning detail.
@@ -331,28 +357,31 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
           tuningDetail.IdTuningDetail = 0;
           tuningDetail.IdChannel = _channel.IdChannel;
           tuningDetail.MediaType = (int)_mediaType;
-          tuningDetail.Priority = priority;
+          tuningDetail.Priority = newPriority;
           tuningDetail = ServiceAgents.Instance.ChannelServiceAgent.SaveTuningDetail(tuningDetail);
           this.LogInfo("channel: tuning detail {0} saved as {1}", originalId, tuningDetail.IdTuningDetail);
         }
         else
         {
-          if (tuningDetail.Priority != priority)
+          bool save = false;
+          if (tuningDetail.Priority != newPriority)
           {
             // Existing tuning detail priority change.
-            this.LogInfo("channel: tuning detail {0} priority changed from {1} to {2}", tuningDetail.IdTuningDetail, tuningDetail.Priority, priority);
-            tuningDetail.Priority = priority;
-            ServiceAgents.Instance.ChannelServiceAgent.SaveTuningDetail(tuningDetail);
+            this.LogInfo("channel: tuning detail {0} priority changed from {1} to {2}", tuningDetail.IdTuningDetail, tuningDetail.Priority, newPriority);
+            tuningDetail.Priority = newPriority;
+            save = true;
           }
-          else if (tuningDetail.IdChannel != _channel.IdChannel)
+          if (tuningDetail.IdChannel != _channel.IdChannel)
           {
             // Existing tuning detail moved to this channel.
             tuningDetail.IdChannel = _channel.IdChannel;
+            save = true;
+          }
+          if (save)
+          {
             ServiceAgents.Instance.ChannelServiceAgent.SaveTuningDetail(tuningDetail);
           }
         }
-
-        priority++;
       }
 
       DialogResult = DialogResult.OK;
@@ -426,7 +455,14 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       tuningDetail.IdTuningDetail = _newTuningDetailFakeId--;
       tuningDetail.IdChannel = _idChannel;
       tuningDetail.MediaType = (int)_mediaType;
-      tuningDetail.Priority = listViewTuningDetails.Items.Count + 1;
+      if (listViewTuningDetails.Items.Count == 0)
+      {
+        tuningDetail.Priority = 1;
+      }
+      else
+      {
+        tuningDetail.Priority = int.Parse(listViewTuningDetails.Items[listViewTuningDetails.Items.Count - 1].SubItems[SUBITEM_INDEX_PRIORITY].Text) + 1;
+      }
       this.LogInfo("channel: tuning detail {0} added", tuningDetail.IdTuningDetail);
       DebugTuningDetailSettings(tuningDetail);
       listViewTuningDetails.Items.Add(CreateItemForTuningDetail(tuningDetail));
@@ -441,53 +477,64 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       }
 
       IList<ListViewItem> itemsToReselect = new List<ListViewItem>(items.Count);
-      foreach (ListViewItem item in items)
+      listViewTuningDetails.BeginUpdate();
+      try
       {
-        TuningDetail tuningDetail = item.Tag as TuningDetail;
-        if (tuningDetail == null)
+        foreach (ListViewItem item in items)
         {
-          continue;
-        }
-
-        FormEditTuningDetailCommon form = FormSelectTuningDetailType.GetTuningDetailFormForBroadcastStandard((BroadcastStandard)tuningDetail.BroadcastStandard);
-        if (form == null)
-        {
-          continue;
-        }
-
-        try
-        {
-          form.TuningDetail = tuningDetail;
-          if (form.ShowDialog(this) != DialogResult.OK)
+          TuningDetail tuningDetail = item.Tag as TuningDetail;
+          if (tuningDetail == null)
           {
             continue;
           }
 
-          if (tuningDetail.IdTuningDetail > 0)
+          FormEditTuningDetailCommon form = FormSelectTuningDetailType.GetTuningDetailFormForBroadcastStandard((BroadcastStandard)tuningDetail.BroadcastStandard);
+          if (form == null)
           {
-            tuningDetail = ServiceAgents.Instance.ChannelServiceAgent.GetTuningDetail(tuningDetail.IdTuningDetail, TuningDetailRelation.Satellite);
+            continue;
           }
-          else
+
+          try
           {
-            tuningDetail = form.TuningDetail;
+            form.TuningDetail = tuningDetail;
+            if (form.ShowDialog(this) != DialogResult.OK)
+            {
+              continue;
+            }
+
+            if (tuningDetail.IdTuningDetail > 0)
+            {
+              tuningDetail = ServiceAgents.Instance.ChannelServiceAgent.GetTuningDetail(tuningDetail.IdTuningDetail, TuningDetailRelation.Satellite);
+            }
+            else
+            {
+              tuningDetail = form.TuningDetail;
+            }
           }
+          finally
+          {
+            form.Dispose();
+          }
+
+          DebugTuningDetailSettings(tuningDetail);
+          int index = item.Index;
+          string unsavedPriority = item.SubItems[SUBITEM_INDEX_PRIORITY].Text;
+          listViewTuningDetails.Items.RemoveAt(index);
+          ListViewItem newItem = CreateItemForTuningDetail(tuningDetail);
+          newItem.SubItems[SUBITEM_INDEX_PRIORITY].Text = unsavedPriority;
+          itemsToReselect.Add(listViewTuningDetails.Items.Insert(index, newItem));
         }
-        finally
+
+        foreach (ListViewItem item in itemsToReselect)
         {
-          form.Dispose();
+          item.Selected = true;
         }
-
-        DebugTuningDetailSettings(tuningDetail);
-        int index = item.Index;
-        listViewTuningDetails.Items.RemoveAt(index);
-        itemsToReselect.Add(listViewTuningDetails.Items.Insert(index, CreateItemForTuningDetail(tuningDetail)));
       }
-
-      foreach (ListViewItem item in itemsToReselect)
+      finally
       {
-        item.Selected = true;
+        listViewTuningDetails.EndUpdate();
+        listViewTuningDetails.Focus();
       }
-      listViewTuningDetails.Focus();
     }
 
     private void buttonTuningDetailDelete_Click(object sender, EventArgs e)
@@ -503,20 +550,34 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
         return;
       }
 
-      foreach (ListViewItem item in items)
+      int originalTunerCount = items.Count;
+      listViewTuningDetails.BeginUpdate();
+      try
       {
-        TuningDetail tuningDetail = item.Tag as TuningDetail;
-        if (tuningDetail == null)
+        foreach (ListViewItem item in items)
         {
-          continue;
+          TuningDetail tuningDetail = item.Tag as TuningDetail;
+          if (tuningDetail == null)
+          {
+            continue;
+          }
+
+          this.LogInfo("channel: tuning detail {0} deleted", tuningDetail.IdTuningDetail);
+          if (tuningDetail.IdTuningDetail > 0)
+          {
+            ServiceAgents.Instance.ChannelServiceAgent.DeleteTuningDetail(tuningDetail.IdTuningDetail);
+          }
+          item.Remove();
         }
 
-        this.LogInfo("channel: tuning detail {0} deleted", tuningDetail.IdTuningDetail);
-        if (tuningDetail.IdTuningDetail > 0)
+        if (listViewTuningDetails.Items.Count != originalTunerCount)
         {
-          ServiceAgents.Instance.ChannelServiceAgent.DeleteTuningDetail(tuningDetail.IdTuningDetail);
+          ConsolidateTuningDetailPriorities();
         }
-        item.Remove();
+      }
+      finally
+      {
+        listViewTuningDetails.EndUpdate();
       }
     }
 
@@ -533,13 +594,28 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       {
         foreach (ListViewItem item in items)
         {
-          int index = item.Index;
-          if (index > 0)
+          int newPriority = int.Parse(item.SubItems[SUBITEM_INDEX_PRIORITY].Text);
+          if (newPriority > 1)
           {
-            listViewTuningDetails.Items.RemoveAt(index);
-            listViewTuningDetails.Items.Insert(index - 1, item);
+            newPriority--;
+          }
+          item.SubItems[SUBITEM_INDEX_PRIORITY].Text = newPriority.ToString();
+
+          int newIndex = item.Index;
+          while (
+            newIndex > 0 &&
+            newPriority < int.Parse(listViewTuningDetails.Items[newIndex - 1].SubItems[SUBITEM_INDEX_PRIORITY].Text)
+          )
+          {
+            newIndex--;
+          }
+          if (newIndex != item.Index)
+          {
+            listViewTuningDetails.Items.RemoveAt(item.Index);
+            listViewTuningDetails.Items.Insert(newIndex, item);
           }
         }
+        ConsolidateTuningDetailPriorities();
       }
       finally
       {
@@ -558,20 +634,45 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       listViewTuningDetails.BeginUpdate();
       try
       {
+        int lastItemPriority = int.Parse(listViewTuningDetails.Items[listViewTuningDetails.Items.Count - 1].SubItems[SUBITEM_INDEX_PRIORITY].Text);
         for (int i = items.Count - 1; i >= 0; i--)
         {
           ListViewItem item = items[i];
-          int index = item.Index;
-          if (index + 1 < listViewTuningDetails.Items.Count)
+          int newPriority = int.Parse(item.SubItems[SUBITEM_INDEX_PRIORITY].Text);
+          if (newPriority < Math.Max(listViewTuningDetails.Items.Count, lastItemPriority))
           {
-            listViewTuningDetails.Items.RemoveAt(index);
-            listViewTuningDetails.Items.Insert(index + 1, item);
+            newPriority++;
+          }
+          item.SubItems[SUBITEM_INDEX_PRIORITY].Text = newPriority.ToString();
+
+          int newIndex = item.Index;
+          while (
+            newIndex + 1 < listViewTuningDetails.Items.Count &&
+            newPriority > int.Parse(listViewTuningDetails.Items[newIndex + 1].SubItems[SUBITEM_INDEX_PRIORITY].Text)
+          )
+          {
+            newIndex++;
+          }
+          if (newIndex != item.Index)
+          {
+            listViewTuningDetails.Items.RemoveAt(item.Index);
+            listViewTuningDetails.Items.Insert(newIndex, item);
           }
         }
+        ConsolidateTuningDetailPriorities();
       }
       finally
       {
         listViewTuningDetails.EndUpdate();
+      }
+    }
+
+    private void listViewTuningDetails_KeyDown(object sender, KeyEventArgs e)
+    {
+      if (e.KeyCode == Keys.Delete)
+      {
+        buttonTuningDetailDelete_Click(null, null);
+        e.Handled = true;
       }
     }
 
@@ -591,10 +692,10 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
 
     #region drag and drop
 
-    private bool IsValidDragDropData(DragEventArgs e)
+    private bool IsValidDragDropData(DragEventArgs e, out MPListView source)
     {
-      MPListView listView = e.Data.GetData(typeof(MPListView)) as MPListView;
-      if (listView == null)
+      source = e.Data.GetData(typeof(MPListView)) as MPListView;
+      if (source == null || source.Name != listViewTuningDetails.Name)
       {
         e.Effect = DragDropEffects.None;
         return false;
@@ -610,67 +711,119 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
 
     private void listViewTuningDetails_DragOver(object sender, DragEventArgs e)
     {
-      if (IsValidDragDropData(e))
+      MPListView source;
+      if (!IsValidDragDropData(e, out source))
       {
-        listViewTuningDetails.DefaultDragOverHandler(e);
+        e.Effect = DragDropEffects.None;
+        return;
       }
+      e.Effect = DragDropEffects.Move;
+      listViewTuningDetails.DefaultDragOverHandler(source == listViewTuningDetails, e);
     }
 
     private void listViewTuningDetails_DragEnter(object sender, DragEventArgs e)
     {
-      IsValidDragDropData(e);
+      MPListView source;
+      IsValidDragDropData(e, out source);
     }
 
     private void listViewTuningDetails_DragDrop(object sender, DragEventArgs e)
     {
-      if (!IsValidDragDropData(e))
+      MPListView source;
+      if (!IsValidDragDropData(e, out source) || source.SelectedItems.Count == 0)
       {
         return;
       }
 
-      MPListView listView = e.Data.GetData(typeof(MPListView)) as MPListView;
-      if (listView == listViewTuningDetails)
-      {
-        // Prioritising (row ordering).
-        listViewTuningDetails.DefaultDragDropHandler(e);
-        return;
-      }
-
-      // Moving between channels.
       // Determine where we're going to insert the dragged item(s).
       Point cp = listViewTuningDetails.PointToClient(new Point(e.X, e.Y));
-      ListViewItem dragToItem = listViewTuningDetails.GetItemAt(cp.X, cp.Y);
-      int dropIndex;
-      if (dragToItem == null)
+      ListViewItem dropOnItem = listViewTuningDetails.GetItemAt(cp.X, cp.Y);
+      int insertIndex = listViewTuningDetails.Items.Count;
+      if (dropOnItem != null)
       {
-        if (listViewTuningDetails.Items.Count != 0)
+        insertIndex = dropOnItem.Index;
+        if (cp.Y >= dropOnItem.Bounds.Top + (dropOnItem.Bounds.Height / 2))
         {
-          return;
+          insertIndex++;
         }
-        dropIndex = 0;
       }
       else
       {
-        // Always drop below as there is no space to draw the insert line above the first item.
-        dropIndex = dragToItem.Index;
-        dropIndex++;
+        foreach (ListViewItem item in listViewTuningDetails.Items)
+        {
+          if (cp.Y < item.Bounds.Top + (item.Bounds.Height / 2))
+          {
+            insertIndex = item.Index;
+            break;
+          }
+        }
       }
 
-      listView.BeginUpdate();
+      // Determine the priority adjustment for the dragged item(s). The
+      // priority of the first dragged item will become one more than the
+      // priority of the next item up that is not being moved.
+      int priorityBase = 1;
+      int aboveItemIndex = insertIndex - 1;
+      while (aboveItemIndex >= 0)
+      {
+        ListViewItem item = listViewTuningDetails.Items[aboveItemIndex];
+        if (source != listViewTuningDetails || !item.Selected)
+        {
+          priorityBase = int.Parse(item.SubItems[SUBITEM_INDEX_PRIORITY].Text) + 1;
+          break;
+        }
+        aboveItemIndex--;
+      }
+      int priorityOffset = int.Parse(source.SelectedItems[0].SubItems[SUBITEM_INDEX_PRIORITY].Text);
+      if (source == listViewTuningDetails && priorityOffset == priorityBase)
+      {
+        // No change in channel or priority => no need to continue.
+        listViewTuningDetails.Invalidate();
+        return;
+      }
+
       listViewTuningDetails.BeginUpdate();
+      if (source != listViewTuningDetails)
+      {
+        source.BeginUpdate();
+      }
       try
       {
-        // Move the items.
-        foreach (ListViewItem item in listView.SelectedItems)
+        // Remove the dragged item(s) from their source list view.
+        List<ListViewItem> selectedItems = new List<ListViewItem>(source.SelectedItems.Count);
+        foreach (ListViewItem item in source.SelectedItems)
         {
-          listView.Items.RemoveAt(item.Index);
-          listViewTuningDetails.Items.Insert(dropIndex++, item);
-          if (_channel != null)
+          selectedItems.Add(item);
+          if (source == listViewTuningDetails && item.Index < insertIndex)
+          {
+            insertIndex--;
+          }
+          item.Remove();
+        }
+
+        // Adjust priority values and insert the items in ascending priority
+        // order in our tuning detail list view.
+        foreach (ListViewItem item in selectedItems)
+        {
+          int newPriority = priorityBase + (int.Parse(item.SubItems[SUBITEM_INDEX_PRIORITY].Text) - priorityOffset);
+          item.SubItems[SUBITEM_INDEX_PRIORITY].Text = newPriority.ToString();
+          while (insertIndex < listViewTuningDetails.Items.Count)
+          {
+            if (int.Parse(listViewTuningDetails.Items[insertIndex].SubItems[SUBITEM_INDEX_PRIORITY].Text) > newPriority)
+            {
+              break;
+            }
+            insertIndex++;
+          }
+          listViewTuningDetails.Items.Insert(insertIndex++, item);
+
+          // If moving tuning details to this channel, save the tuning details.
+          if (_channel != null && source != listViewTuningDetails)
           {
             TuningDetail tuningDetail = item.Tag as TuningDetail;
             int originalChannelId = tuningDetail.IdChannel;
             tuningDetail.IdChannel = _channel.IdChannel;
-            tuningDetail.Priority = dropIndex;
+            tuningDetail.Priority = newPriority;
             if (tuningDetail.IdTuningDetail <= 0)
             {
               // New tuning detail.
@@ -687,11 +840,22 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
             item.Tag = tuningDetail;
           }
         }
+
+        // Finally, consolidate all priority values to remove gaps in the
+        // sequence. Don't forget the source list view.
+        ConsolidateTuningDetailPriorities(listViewTuningDetails);
+        if (source != listViewTuningDetails)
+        {
+          ConsolidateTuningDetailPriorities(source);
+        }
       }
       finally
       {
-        listView.EndUpdate();
         listViewTuningDetails.EndUpdate();
+        if (source != listViewTuningDetails)
+        {
+          source.EndUpdate();
+        }
       }
     }
 

@@ -21,7 +21,6 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 using System.Windows.Forms;
 using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.SetupControls;
@@ -36,6 +35,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 {
   public partial class Tuners : SectionSettings
   {
+    private const int SUBITEM_INDEX_PRIORITY = 4;
+
     private Dictionary<int, bool> _tunerStates = new Dictionary<int, bool>(20);   // ID => present?
     private HashSet<int> _changedTuners = new HashSet<int>();
     private int _originalStreamTunerCount = -1;
@@ -113,6 +114,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
           listViewTuners.Items.Add(CreateItemForTuner(tuner, isPresent));
         }
+        ConsolidateTunerPriorities();
         listViewTuners.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
       }
       catch
@@ -147,6 +149,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       item.SubItems.Add(tuner.IdTuner.ToString());
       item.SubItems.Add(string.Join(", ", typeof(BroadcastStandard).GetDescriptions((int)tuner.SupportedBroadcastStandards, false)));
       item.SubItems.Add(tuner.Name);
+      item.SubItems.Add(tuner.Priority.ToString());
 
       if (tuner.UseConditionalAccess)
       {
@@ -173,7 +176,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private HashSet<int> SaveTunerSettings()
     {
       HashSet<int> changedTuners = new HashSet<int>();
-      int priority = 1;
       foreach (ListViewItem item in listViewTuners.Items)
       {
         Tuner tuner = item.Tag as Tuner;
@@ -184,10 +186,11 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           tuner.IsEnabled = item.Checked;
           save = true;
         }
-        if (tuner.Priority != priority)
+        int newPriority = int.Parse(item.SubItems[SUBITEM_INDEX_PRIORITY].Text);
+        if (tuner.Priority != newPriority)
         {
-          this.LogInfo("tuners: tuner {0} priority changed from {1} to {2}", tuner.IdTuner, tuner.Priority, priority);
-          tuner.Priority = priority;
+          this.LogInfo("tuners: tuner {0} priority changed from {1} to {2}", tuner.IdTuner, tuner.Priority, newPriority);
+          tuner.Priority = newPriority;
           save = true;
         }
         if (save)
@@ -195,8 +198,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           ServiceAgents.Instance.TunerServiceAgent.SaveTuner(tuner);
           changedTuners.Add(tuner.IdTuner);
         }
-
-        priority++;
       }
       return changedTuners;
     }
@@ -226,6 +227,24 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.LogDebug("  TsWriter dump mask   = 0x{0:x}", tuner.TsWriterInputDumpMask);
       this.LogDebug("  TsWriter CRC check?  = {0}", !tuner.DisableTsWriterCrcChecking);
       this.LogDebug("  TsMuxer dump mask    = 0x{0:x}", tuner.TsMuxerInputDumpMask);
+    }
+
+    private void ConsolidateTunerPriorities()
+    {
+      // Consolidate priority values such that there are no gaps in the
+      // sequence. Two or more tuners may have the same priority.
+      int previousItemPriority = -1;
+      int nextItemPriority = 0;
+      foreach (ListViewItem item in listViewTuners.Items)
+      {
+        int currentPriority = int.Parse(item.SubItems[SUBITEM_INDEX_PRIORITY].Text);
+        if (currentPriority != previousItemPriority)
+        {
+          nextItemPriority++;
+        }
+        item.SubItems[SUBITEM_INDEX_PRIORITY].Text = nextItemPriority.ToString();
+        previousItemPriority = currentPriority;
+      }
     }
 
     private void listViewTuners_ItemChecked(object sender, ItemCheckedEventArgs e)
@@ -324,13 +343,28 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       {
         foreach (ListViewItem item in items)
         {
-          int index = item.Index;
-          if (index > 0)
+          int newPriority = int.Parse(item.SubItems[SUBITEM_INDEX_PRIORITY].Text);
+          if (newPriority > 1)
           {
-            listViewTuners.Items.RemoveAt(index);
-            listViewTuners.Items.Insert(index - 1, item);
+            newPriority--;
+          }
+          item.SubItems[SUBITEM_INDEX_PRIORITY].Text = newPriority.ToString();
+
+          int newIndex = item.Index;
+          while (
+            newIndex > 0 &&
+            newPriority < int.Parse(listViewTuners.Items[newIndex - 1].SubItems[SUBITEM_INDEX_PRIORITY].Text)
+          )
+          {
+            newIndex--;
+          }
+          if (newIndex != item.Index)
+          {
+            listViewTuners.Items.RemoveAt(item.Index);
+            listViewTuners.Items.Insert(newIndex, item);
           }
         }
+        ConsolidateTunerPriorities();
       }
       finally
       {
@@ -349,16 +383,32 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       listViewTuners.BeginUpdate();
       try
       {
+        int lastItemPriority = int.Parse(listViewTuners.Items[listViewTuners.Items.Count - 1].SubItems[SUBITEM_INDEX_PRIORITY].Text);
         for (int i = items.Count - 1; i >= 0; i--)
         {
           ListViewItem item = items[i];
-          int index = item.Index;
-          if (index + 1 < listViewTuners.Items.Count)
+          int newPriority = int.Parse(item.SubItems[SUBITEM_INDEX_PRIORITY].Text);
+          if (newPriority < Math.Max(listViewTuners.Items.Count, lastItemPriority))
           {
-            listViewTuners.Items.RemoveAt(index);
-            listViewTuners.Items.Insert(index + 1, item);
+            newPriority++;
+          }
+          item.SubItems[SUBITEM_INDEX_PRIORITY].Text = newPriority.ToString();
+
+          int newIndex = item.Index;
+          while (
+            newIndex + 1 < listViewTuners.Items.Count &&
+            newPriority > int.Parse(listViewTuners.Items[newIndex + 1].SubItems[SUBITEM_INDEX_PRIORITY].Text)
+          )
+          {
+            newIndex++;
+          }
+          if (newIndex != item.Index)
+          {
+            listViewTuners.Items.RemoveAt(item.Index);
+            listViewTuners.Items.Insert(newIndex, item);
           }
         }
+        ConsolidateTunerPriorities();
       }
       finally
       {
@@ -376,67 +426,78 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
       bool shownExplanation = false;
       IList<ListViewItem> itemsToReselect = new List<ListViewItem>(items.Count);
-      foreach (ListViewItem item in items)
+      listViewTuners.BeginUpdate();
+      try
       {
-        Tuner tuner = item.Tag as Tuner;
-        if (tuner == null)
+        foreach (ListViewItem item in items)
         {
-          continue;
-        }
-
-        if (_tunerStates[tuner.IdTuner])
-        {
-          using (FormEditTuner dlg = new FormEditTuner(tuner.IdTuner))
+          Tuner tuner = item.Tag as Tuner;
+          if (tuner == null)
           {
-            if (dlg.ShowDialog() != DialogResult.OK)
-            {
-              continue;
-            }
+            continue;
           }
 
-          tuner = ServiceAgents.Instance.TunerServiceAgent.GetTuner(tuner.IdTuner, TunerRelation.None);
-          DebugTunerSettings(tuner);
-          _changedTuners.Add(tuner.IdTuner);
-          int index = item.Index;
-          listViewTuners.Items.RemoveAt(index);
-          itemsToReselect.Add(listViewTuners.Items.Insert(index, CreateItemForTuner(tuner, true)));
-
-          // Update the name in the tuner group tree view.
-          if (tuner.IdTunerGroup.HasValue)
+          if (_tunerStates[tuner.IdTuner])
           {
-            bool found = false;
-            foreach (TreeNode n in treeViewTunerGroups.Nodes)
+            using (FormEditTuner dlg = new FormEditTuner(tuner.IdTuner))
             {
-              foreach (TreeNode sn in n.Nodes)
+              if (dlg.ShowDialog() != DialogResult.OK)
               {
-                Tuner t = sn.Tag as Tuner;
-                if (t != null && t.IdTuner == tuner.IdTuner)
+                continue;
+              }
+            }
+
+            tuner = ServiceAgents.Instance.TunerServiceAgent.GetTuner(tuner.IdTuner, TunerRelation.None);
+            DebugTunerSettings(tuner);
+            _changedTuners.Add(tuner.IdTuner);
+            int index = item.Index;
+            string unsavedPriority = item.SubItems[SUBITEM_INDEX_PRIORITY].Text;
+            listViewTuners.Items.RemoveAt(index);
+            ListViewItem newItem = CreateItemForTuner(tuner, true);
+            newItem.SubItems[SUBITEM_INDEX_PRIORITY].Text = unsavedPriority;
+            itemsToReselect.Add(listViewTuners.Items.Insert(index, newItem));
+
+            // Update the name in the tuner group tree view.
+            if (tuner.IdTunerGroup.HasValue)
+            {
+              bool found = false;
+              foreach (TreeNode n in treeViewTunerGroups.Nodes)
+              {
+                foreach (TreeNode sn in n.Nodes)
                 {
-                  sn.Tag = tuner;
-                  sn.Text = tuner.Name;
-                  found = true;
+                  Tuner t = sn.Tag as Tuner;
+                  if (t != null && t.IdTuner == tuner.IdTuner)
+                  {
+                    sn.Tag = tuner;
+                    sn.Text = tuner.Name;
+                    found = true;
+                    break;
+                  }
+                }
+                if (found)
+                {
                   break;
                 }
               }
-              if (found)
-              {
-                break;
-              }
             }
           }
+          else if (!shownExplanation)
+          {
+            shownExplanation = true;
+            MessageBox.Show("It is not possible to edit settings for tuners that are not connected/detected.", MESSAGE_CAPTION);
+          }
         }
-        else if (!shownExplanation)
-        {
-          shownExplanation = true;
-          MessageBox.Show("It is not possible to edit settings for tuners that are not connected/detected.", MESSAGE_CAPTION);
-        }
-      }
 
-      foreach (ListViewItem item in itemsToReselect)
-      {
-        item.Selected = true;
+        foreach (ListViewItem item in itemsToReselect)
+        {
+          item.Selected = true;
+        }
       }
-      listViewTuners.Focus();
+      finally
+      {
+        listViewTuners.EndUpdate();
+        listViewTuners.Focus();
+      }
     }
 
     private void buttonTunerDelete_Click(object sender, EventArgs e)
@@ -453,62 +514,203 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }
 
       bool shownExplanation = false;
-      foreach (ListViewItem item in items)
+      int originalTunerCount = listViewTuners.Items.Count;
+      listViewTuners.BeginUpdate();
+      try
       {
-        Tuner tuner = item.Tag as Tuner;
-        if (tuner == null)
+        foreach (ListViewItem item in items)
         {
-          continue;
-        }
-
-        if (!_tunerStates[tuner.IdTuner])
-        {
-          int id = tuner.IdTuner;
-          this.LogInfo("tuners: tuner {0} deleted", id);
-          ServiceAgents.Instance.ControllerServiceAgent.CardRemove(id);
-          item.Remove();
-
-          // Remove the tuner from the tuner group tree view, and delete the
-          // tuner group too if this leaves the tuner group empty.
-          for (int n = 0; n < treeViewTunerGroups.Nodes.Count; n++)
+          Tuner tuner = item.Tag as Tuner;
+          if (tuner == null)
           {
-            bool removedNode = false;
-            TreeNode groupNode = treeViewTunerGroups.Nodes[n];
-            for (int sn = 0; sn < groupNode.Nodes.Count; sn++)
+            continue;
+          }
+
+          if (!_tunerStates[tuner.IdTuner])
+          {
+            int id = tuner.IdTuner;
+            this.LogInfo("tuners: tuner {0} deleted", id);
+            ServiceAgents.Instance.ControllerServiceAgent.CardRemove(id);
+            item.Remove();
+
+            // Remove the tuner from the tuner group tree view, and delete the
+            // tuner group too if this leaves the tuner group empty.
+            for (int n = 0; n < treeViewTunerGroups.Nodes.Count; n++)
             {
-              TreeNode tunerNode = groupNode.Nodes[sn];
-              Tuner t = tunerNode.Tag as Tuner;
-              if (t != null && t.IdTuner == id)
+              bool removedNode = false;
+              TreeNode groupNode = treeViewTunerGroups.Nodes[n];
+              for (int sn = 0; sn < groupNode.Nodes.Count; sn++)
               {
-                groupNode.Nodes.RemoveAt(sn);
-                removedNode = true;
+                TreeNode tunerNode = groupNode.Nodes[sn];
+                Tuner t = tunerNode.Tag as Tuner;
+                if (t != null && t.IdTuner == id)
+                {
+                  groupNode.Nodes.RemoveAt(sn);
+                  removedNode = true;
+                  break;
+                }
+              }
+
+              if (removedNode)
+              {
+                if (groupNode.Nodes.Count == 0)
+                {
+                  TunerGroup g = groupNode.Tag as TunerGroup;
+                  if (g != null)
+                  {
+                    this.LogInfo("tuners: empty tuner group {0} deleted", g.IdTunerGroup);
+                    ServiceAgents.Instance.TunerServiceAgent.DeleteTunerGroup(g.IdTunerGroup);
+                    treeViewTunerGroups.Nodes.RemoveAt(n);
+                  }
+                }
                 break;
               }
             }
-
-            if (removedNode)
-            {
-              if (groupNode.Nodes.Count == 0)
-              {
-                TunerGroup g = groupNode.Tag as TunerGroup;
-                if (g != null)
-                {
-                  this.LogInfo("tuners: empty tuner group {0} deleted", g.IdTunerGroup);
-                  ServiceAgents.Instance.TunerServiceAgent.DeleteTunerGroup(g.IdTunerGroup);
-                  treeViewTunerGroups.Nodes.RemoveAt(n);
-                }
-              }
-              break;
-            }
+          }
+          else if (!shownExplanation)
+          {
+            shownExplanation = true;
+            MessageBox.Show("It is not possible to remove tuners that are still connected. They would simply be redetected again. Consider disabling the tuner(s) instead.", MESSAGE_CAPTION);
           }
         }
-        else if (!shownExplanation)
+
+        if (listViewTuners.Items.Count != originalTunerCount)
         {
-          shownExplanation = true;
-          MessageBox.Show("It is not possible to remove tuners that are still connected. They would simply be redetected again. Consider disabling the tuner(s) instead.", MESSAGE_CAPTION);
+          ConsolidateTunerPriorities();
         }
       }
+      finally
+      {
+        listViewTuners.EndUpdate();
+      }
     }
+
+    #region priority drag and drop
+
+    private bool IsValidDragDropData(DragEventArgs e)
+    {
+      if (e.Data.GetData(typeof(Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPListView)) == listViewTuners)
+      {
+        e.Effect = DragDropEffects.Move;
+        return true;
+      }
+      e.Effect = DragDropEffects.None;
+      return false;
+    }
+
+    private void listViewTuners_ItemDrag(object sender, ItemDragEventArgs e)
+    {
+      listViewTuners.DoDragDrop(listViewTuners, DragDropEffects.Move);
+    }
+
+    private void listViewTuners_DragOver(object sender, DragEventArgs e)
+    {
+      if (IsValidDragDropData(e))
+      {
+        listViewTuners.DefaultDragOverHandler(true, e);
+      }
+    }
+
+    private void listViewTuners_DragEnter(object sender, DragEventArgs e)
+    {
+      IsValidDragDropData(e);
+    }
+
+    private void listViewTuners_DragDrop(object sender, DragEventArgs e)
+    {
+      if (listViewTuners.SelectedItems.Count == 0 || !IsValidDragDropData(e))
+      {
+        return;
+      }
+
+      // Determine where we're going to insert the dragged item(s).
+      Point cp = listViewTuners.PointToClient(new Point(e.X, e.Y));
+      ListViewItem dropOnItem = listViewTuners.GetItemAt(cp.X, cp.Y);
+      int insertIndex = listViewTuners.Items.Count;
+      if (dropOnItem != null)
+      {
+        insertIndex = dropOnItem.Index;
+        if (cp.Y >= dropOnItem.Bounds.Top + (dropOnItem.Bounds.Height / 2))
+        {
+          insertIndex++;
+        }
+      }
+      else
+      {
+        foreach (ListViewItem item in listViewTuners.Items)
+        {
+          if (cp.Y < item.Bounds.Top + (item.Bounds.Height / 2))
+          {
+            insertIndex = item.Index;
+            break;
+          }
+        }
+      }
+
+      // Determine the priority adjustment for the dragged item(s). The
+      // priority of the first dragged item will become one more than the
+      // priority of the next item up that is not being moved.
+      int priorityBase = 1;
+      int aboveItemIndex = insertIndex - 1;
+      while (aboveItemIndex >= 0)
+      {
+        ListViewItem item = listViewTuners.Items[aboveItemIndex];
+        if (!item.Selected)
+        {
+          priorityBase = int.Parse(item.SubItems[SUBITEM_INDEX_PRIORITY].Text) + 1;
+          break;
+        }
+        aboveItemIndex--;
+      }
+      int priorityOffset = int.Parse(listViewTuners.SelectedItems[0].SubItems[SUBITEM_INDEX_PRIORITY].Text);
+      if (priorityOffset == priorityBase)
+      {
+        // No change in priority => no need to continue.
+        listViewTuners.Invalidate();
+        return;
+      }
+
+      listViewTuners.BeginUpdate();
+      try
+      {
+        // Remove the dragged item(s).
+        List<ListViewItem> selectedItems = new List<ListViewItem>(listViewTuners.SelectedItems.Count);
+        foreach (ListViewItem item in listViewTuners.SelectedItems)
+        {
+          selectedItems.Add(item);
+          if (item.Index < insertIndex)
+          {
+            insertIndex--;
+          }
+          item.Remove();
+        }
+
+        // Adjust priority values, reinsert the items in ascending priority
+        // order, and finally consolidate all priority values to remove gaps in
+        // the sequence.
+        foreach (ListViewItem item in selectedItems)
+        {
+          int newPriority = priorityBase + (int.Parse(item.SubItems[SUBITEM_INDEX_PRIORITY].Text) - priorityOffset);
+          item.SubItems[SUBITEM_INDEX_PRIORITY].Text = newPriority.ToString();
+          while (insertIndex < listViewTuners.Items.Count)
+          {
+            if (int.Parse(listViewTuners.Items[insertIndex].SubItems[SUBITEM_INDEX_PRIORITY].Text) > newPriority)
+            {
+              break;
+            }
+            insertIndex++;
+          }
+          listViewTuners.Items.Insert(insertIndex++, item);
+        }
+        ConsolidateTunerPriorities();
+      }
+      finally
+      {
+        listViewTuners.EndUpdate();
+      }
+    }
+
+    #endregion
 
     #endregion
 

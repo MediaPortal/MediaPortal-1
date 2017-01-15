@@ -19,7 +19,7 @@
 #endregion
 
 using System;
-using System.Collections;
+using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -32,9 +32,10 @@ namespace Mediaportal.TV.Server.SetupControls.UserInterfaceControls
   {
     private const string REORDER = "Reorder";
     private bool _allowRowReorder = false;
-    private ListViewItem _lastItem = null;
+    private int _lastDragOverInsertIndex = -1;
     private bool _supressItemCheckChange = false;
 
+    [DefaultValue(false)]
     public bool AllowRowReorder
     {
       get
@@ -76,24 +77,22 @@ namespace Mediaportal.TV.Server.SetupControls.UserInterfaceControls
     protected override void OnItemDrag(ItemDragEventArgs e)
     {
       base.OnItemDrag(e);
-      if (!AllowRowReorder)
-      {
-        return;
-      }
 
-      // Support simple reordering of rows.
-      DoDragDrop(REORDER, DragDropEffects.Move);
+      if (AllowRowReorder)
+      {
+        // Support simple reordering of rows.
+        DoDragDrop(REORDER, DragDropEffects.Move);
+      }
     }
 
     protected override void OnDragEnter(DragEventArgs e)
     {
       base.OnDragEnter(e);
-      if (!AllowRowReorder)
-      {
-        return;
-      }
 
-      e.Effect = GetDragDropEffect(e);
+      if (AllowRowReorder)
+      {
+        e.Effect = GetDragDropEffect(e);
+      }
     }
 
     protected override void OnDragLeave(EventArgs e)
@@ -105,94 +104,158 @@ namespace Mediaportal.TV.Server.SetupControls.UserInterfaceControls
     protected override void OnDragOver(DragEventArgs e)
     {
       base.OnDragOver(e);
-      if (!AllowRowReorder)
-      {
-        return;
-      }
 
-      e.Effect = GetDragDropEffect(e);
-      if (e.Effect == DragDropEffects.None)
+      if (AllowRowReorder)
       {
-        return;
+        e.Effect = GetDragDropEffect(e);
+        if (e.Effect != DragDropEffects.None)
+        {
+          DefaultDragOverHandler(true, e);
+        }
       }
-
-      DefaultDragOverHandler(e);
     }
 
-    public void DefaultDragOverHandler(DragEventArgs e)
+    public void DefaultDragOverHandler(bool isReorderingRows, DragEventArgs e)
     {
-      ListViewItem hoverItem = null;
-      if (Items.Count != 0)
+      // Draw a line across the list view to show the insert position.
+
+      // Determine where the line should be drawn.
+      int lineStartX = 0;
+      int lineY = 0;
+      int insertIndex = -1;
+      if (Items.Count == 0)
+      {
+        // This doesn't work. The line flickers. I guess it isn't valid to draw
+        // the line in the item area when there are no items.
+        /*BeginUpdate();
+        Items.Add(new ListViewItem());
+        lineStartX = Items[0].Bounds.Left;
+        lineY = Items[0].Bounds.Top;
+        Items.RemoveAt(0);
+        EndUpdate();*/
+      }
+      else
       {
         Point cp = PointToClient(new Point(e.X, e.Y));
-        hoverItem = GetItemAt(cp.X, cp.Y);
-      }
-      if (AllowRowReorder && hoverItem == null)
-      {
-        Invalidate();
-        e.Effect = DragDropEffects.None;
-        return;
+        ListViewItem dragOverItem = GetItemAt(cp.X, cp.Y);
+        if (dragOverItem == null)
+        {
+          // Find the closest matching item.
+          foreach (ListViewItem item in Items)
+          {
+            if (cp.Y < item.Bounds.Top + (item.Bounds.Height / 2))
+            {
+              lineStartX = item.Bounds.Left;
+              lineY = item.Bounds.Top;
+              insertIndex = item.Index;
+              break;
+            }
+          }
+          if (lineY == 0)
+          {
+            lineStartX = Items[Items.Count - 1].Bounds.Left;
+            lineY = Items[Items.Count - 1].Bounds.Bottom;
+            insertIndex = Items.Count;
+          }
+        }
+        else
+        {
+          // Should we draw the line above or below the drag-over item?
+          insertIndex = dragOverItem.Index;
+          if (cp.Y < dragOverItem.Bounds.Top + (dragOverItem.Bounds.Height / 2))
+          {
+            // (above)
+            lineStartX = dragOverItem.Bounds.Left;
+            lineY = dragOverItem.Bounds.Top;
+          }
+          else
+          {
+            insertIndex++;
+            if (insertIndex < Items.Count)
+            {
+              lineStartX = Items[insertIndex].Bounds.Left;
+              lineY = Items[insertIndex].Bounds.Top;
+            }
+            else
+            {
+              lineStartX = Items[Items.Count - 1].Bounds.Left;
+              lineY = Items[Items.Count - 1].Bounds.Bottom;
+            }
+          }
+        }
       }
 
-      // Can't drop onto one of the items that is selected for dragging.
-      foreach (ListViewItem moveItem in SelectedItems)
+      // If moving items within a list view, check if the drag is valid (items
+      // actually need to be moved).
+      if (isReorderingRows)
       {
-        if (AllowRowReorder && moveItem.Index == hoverItem.Index)
+        bool isValidDrag = insertIndex != -1 && insertIndex != SelectedItems[0].Index && (insertIndex == Items.Count || !Items[insertIndex].Selected);
+        if (isValidDrag && SelectedItems[0].Index < insertIndex)
         {
-          e.Effect = DragDropEffects.None;
-          hoverItem.EnsureVisible();
+          isValidDrag = false;
+          for (int i = SelectedItems[0].Index + 1; i < insertIndex; i++)
+          {
+            if (!Items[i].Selected)
+            {
+              isValidDrag = true;
+              break;
+            }
+          }
+        }
+
+        if (!isValidDrag)
+        {
           Invalidate();
+          e.Effect = DragDropEffects.None;
+          if (insertIndex < Items.Count)
+          {
+            Items[insertIndex].EnsureVisible();
+          }
+          else
+          {
+            Items[Items.Count - 1].EnsureVisible();
+          }
           return;
         }
       }
 
-      // We draw a line across the list view to show the insert position.
       // Remove the old line.
-      if (hoverItem != _lastItem)
+      if (insertIndex != _lastDragOverInsertIndex)
       {
         Invalidate();
       }
-      _lastItem = hoverItem;
+      _lastDragOverInsertIndex = insertIndex;
 
       // Draw the new line.
       Color lineColor = SystemColors.Highlight;
-      if (hoverItem != null && (View == View.Details || View == View.List))
+      if (insertIndex != -1 && (View == View.Details || View == View.List))
       {
         using (Graphics g = CreateGraphics())
         {
           int totalColWidth = 0;
-
           for (int i = 0; i < Columns.Count; i++)
           {
             totalColWidth += Columns[i].Width;
           }
 
           g.DrawLine(new Pen(lineColor, 2),
-                      new Point(hoverItem.Bounds.X,
-                                hoverItem.Bounds.Y + hoverItem.Bounds.Height),
-                      new Point(hoverItem.Bounds.X + totalColWidth,
-                                hoverItem.Bounds.Y + hoverItem.Bounds.Height));
+                      new Point(lineStartX, lineY),
+                      new Point(lineStartX + totalColWidth, lineY));
 
           g.FillPolygon(new SolidBrush(lineColor),
                         new Point[]
                           {
-                            new Point(hoverItem.Bounds.X,
-                                      hoverItem.Bounds.Y + hoverItem.Bounds.Height - 7),
-                            new Point(hoverItem.Bounds.X + 6,
-                                      hoverItem.Bounds.Y + hoverItem.Bounds.Height - 1),
-                            new Point(hoverItem.Bounds.X,
-                                      hoverItem.Bounds.Y + hoverItem.Bounds.Height + 6)
+                            new Point(lineStartX, lineY - 7),
+                            new Point(lineStartX + 7, lineY - 1),
+                            new Point(lineStartX, lineY + 7)
                           });
 
           g.FillPolygon(new SolidBrush(lineColor),
                         new Point[]
                           {
-                            new Point(totalColWidth,
-                                      hoverItem.Bounds.Y + hoverItem.Bounds.Height - 7),
-                            new Point(totalColWidth - 7,
-                                      hoverItem.Bounds.Y + hoverItem.Bounds.Height - 1),
-                            new Point(totalColWidth,
-                                      hoverItem.Bounds.Y + hoverItem.Bounds.Height + 7)
+                            new Point(totalColWidth, lineY - 7),
+                            new Point(totalColWidth - 7, lineY - 1),
+                            new Point(totalColWidth, lineY + 7)
                           });
         }
       }
@@ -201,12 +264,11 @@ namespace Mediaportal.TV.Server.SetupControls.UserInterfaceControls
     protected override void OnDragDrop(DragEventArgs e)
     {
       base.OnDragDrop(e);
-      if (!AllowRowReorder)
-      {
-        return;
-      }
 
-      DefaultDragDropHandler(e);
+      if (AllowRowReorder)
+      {
+        DefaultDragDropHandler(e);
+      }
     }
 
     public void DefaultDragDropHandler(DragEventArgs e)
@@ -218,32 +280,74 @@ namespace Mediaportal.TV.Server.SetupControls.UserInterfaceControls
 
       // Determine where we're going to insert the dragged item(s).
       Point cp = PointToClient(new Point(e.X, e.Y));
-      ListViewItem dragToItem = GetItemAt(cp.X, cp.Y);
-      if (dragToItem == null)
+      ListViewItem dropOnItem = GetItemAt(cp.X, cp.Y);
+      int insertIndex = Items.Count;
+      if (dropOnItem != null)
       {
-        return;
+        insertIndex = dropOnItem.Index;
+        if (cp.Y >= dropOnItem.Bounds.Top + (dropOnItem.Bounds.Height / 2))
+        {
+          insertIndex++;
+        }
       }
-
-      // Always drop below as there is no space to draw the insert line above the first item.
-      int dropIndex = dragToItem.Index;
-      dropIndex++;
+      else
+      {
+        foreach (ListViewItem item in Items)
+        {
+          if (cp.Y < item.Bounds.Top + (item.Bounds.Height / 2))
+          {
+            insertIndex = item.Index;
+            break;
+          }
+        }
+      }
 
       BeginUpdate();
       try
       {
-        // Move the items.
+        // Move the item(s). If moving multiple items, maintain relative
+        // positions where possible. For example, if there are two items
+        // between the first and second selected items, there will still be two
+        // items between the first and second selected items after they've been
+        // moved.
+        int offset = SelectedItems[0].Index - insertIndex;
+        bool isMoveUp = offset >= 0;
+        if (!isMoveUp)
+        {
+          for (int i = SelectedItems[0].Index + 1; i < insertIndex; i++)
+          {
+            if (Items[i].Selected)
+            {
+              offset++;
+            }
+          }
+        }
+        if (offset == 0 || offset == -1)
+        {
+          Invalidate();
+          return;
+        }
         foreach (ListViewItem item in SelectedItems)
         {
           int index = item.Index;
           Items.RemoveAt(index);
-          if (index <= dropIndex)
+          if (isMoveUp)
           {
-            Items.Insert(dropIndex - 1, item);
+            index = index - offset;
           }
           else
           {
-            Items.Insert(dropIndex++, item);
+            int moved = 0;
+            while (moved > offset && index < Items.Count)
+            {
+              if (!Items[index].Selected && --moved == offset)
+              {
+                break;
+              }
+              index++;
+            }
           }
+          Items.Insert(index, item);
         }
       }
       finally
