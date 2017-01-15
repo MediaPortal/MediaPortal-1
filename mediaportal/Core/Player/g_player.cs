@@ -3180,7 +3180,6 @@ namespace MediaPortal.Player
         return;
       }
       _player.SetVideoWindow();
-      GUIGraphicsContext.VideoWindowChangedDone = false;
 
       //// madVR
       //if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
@@ -3935,30 +3934,88 @@ namespace MediaPortal.Player
     {
       switch (message.Message)
       {
-        case GUIMessage.MessageType.GUI_MSG_ONVIDEOWINDOWCHANGED:
-          GUIGraphicsContext.VideoWindow = new Rectangle(0, 0, 0, 0);
-          Rectangle[] _videoWindows = new Rectangle[1];
-          _videoWindows[0].X = message.Param1;
-          _videoWindows[0].Y = message.Param2;
-          _videoWindows[0].Width = message.Param3;
-          _videoWindows[0].Height = message.Param4;
-          GUIGraphicsContext.VideoWindow = _videoWindows[0];
-
-          // Resize OSD/Screen when resolution change
-          if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && GUIGraphicsContext.InVmr9Render&& GUIGraphicsContext.ForceMadVRRefresh)
+        case GUIMessage.MessageType.GUI_MSG_ONDISPLAYMADVRCHANGED:
+          lock (GUIGraphicsContext.RenderLock)
           {
+            // Resize OSD/Screen when resolution change
+            if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
+                GUIGraphicsContext.InVmr9Render && GUIGraphicsContext.ForceMadVRRefresh)
+            {
+              GUIGraphicsContext.form.ClientSize = GUIGraphicsContext.currentScreen.Bounds.Size;
+              Size client = GUIGraphicsContext.form.ClientSize;
+
+              GUIWindowManager.Dispose();
+              GUIFontManager.Dispose();
+              GUITextureManager.Dispose();
+
+              GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferWidth = client.Width;
+              GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferHeight = client.Height;
+              // load resources
+              GUIGraphicsContext.Load();
+
+              GUIFontManager.LoadFonts(GUIGraphicsContext.GetThemedSkinFile(@"\fonts.xml"));
+              GUIFontManager.InitializeDeviceObjects();
+
+              // restart window manager
+              GUIWindowManager.PreInit();
+              GUIWindowManager.OnResize();
+              GUIWindowManager.OnDeviceRestored();
+
+              // send C++ displayChange
+              if (!GUIGraphicsContext.ForceMadVRRefresh3D)
+              {
+                VMR9Util.g_vmr9?.MadVrScreenResize(0, 0, client.Width, client.Height, true);
+              }
+              else
+              {
+                VMR9Util.g_vmr9?.MadVrScreenResize(0, 0, client.Width, client.Height, false);
+                GUIGraphicsContext.ForceMadVRRefresh3D = false;
+              }
+              GUIGraphicsContext.NoneDone = false;
+              GUIGraphicsContext.TopAndBottomDone = false;
+              GUIGraphicsContext.SideBySideDone = false;
+              GUIGraphicsContext.ForceMadVRRefresh = false;
+              Log.Debug("g_player VideoWindowChanged() resize OSD/Screen when resolution change for madVR");
+            }
+            else if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
+                     GUIGraphicsContext.InVmr9Render && GUIGraphicsContext.ForceMadVRRefresh3D)
+            {
+              Size client = GUIGraphicsContext.form.ClientSize;
+              VMR9Util.g_vmr9?.MadVrScreenResize(0, 0, client.Width, client.Height, false);
+              GUIGraphicsContext.NoneDone = false;
+              GUIGraphicsContext.TopAndBottomDone = false;
+              GUIGraphicsContext.SideBySideDone = false;
+              GUIGraphicsContext.ForceMadVRRefresh3D = false;
+              Log.Debug("g_player VideoWindowChanged() resize OSD/OSD 3D/Screen when resolution change for madVR");
+            }
+
+            // Refresh madVR
+            RefreshMadVrVideo();
+          }
+          break;
+
+        case GUIMessage.MessageType.GUI_MSG_ONVIDEOWINDOWCHANGED:
+          lock (GUIGraphicsContext.RenderLock)
+          {
+            GUIGraphicsContext.VideoWindow = new Rectangle(0, 0, 0, 0);
+            Rectangle[] videoWindows = new Rectangle[1];
+            videoWindows[0].X = message.Param1;
+            videoWindows[0].Y = message.Param2;
+            videoWindows[0].Width = message.Param3;
+            videoWindows[0].Height = message.Param4;
+            GUIGraphicsContext.VideoWindow = videoWindows[0];
+
             Size client = GUIGraphicsContext.form.ClientSize;
-            VMR9Util.g_vmr9?.MadVrScreenResize(0, 0, client.Width, client.Height);
+            VMR9Util.g_vmr9?.MadVrScreenResize(0, 0, client.Width, client.Height, false);
             GUIGraphicsContext.NoneDone = false;
             GUIGraphicsContext.TopAndBottomDone = false;
             GUIGraphicsContext.SideBySideDone = false;
-            GUIGraphicsContext.ForceMadVRRefresh = false;
-            Log.Debug("g_player VideoWindowChanged() resize OSD/Screen when resolution change for madVR");
-          }
 
-          SetVideoWindow();
-          Log.Debug("g_player VideoWindowChanged() SendThreadMessage received");
-          break;
+            SetVideoWindow();
+            GUIGraphicsContext.VideoWindowChangedDone = false;
+            Log.Debug("g_player VideoWindowChanged() SendThreadMessage received");
+            break;
+          }
       }
     }
 

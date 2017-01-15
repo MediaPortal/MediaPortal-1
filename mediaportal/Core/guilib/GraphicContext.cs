@@ -1043,12 +1043,17 @@ namespace MediaPortal.GUI.Library
       {
         if (Thread.CurrentThread.Name != "MPMain")
         {
-          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ONVIDEOWINDOWCHANGED, 0, 0, 0, 0, 0, null);
-          msg.Param1 = GUIGraphicsContext.VideoWindow.X;
-          msg.Param2 = GUIGraphicsContext.VideoWindow.Y;
-          msg.Param3 = GUIGraphicsContext.VideoWindow.Width;
-          msg.Param4 = GUIGraphicsContext.VideoWindow.Height;
-          GUIWindowManager.SendThreadMessage(msg);
+          //if (!GUIGraphicsContext.VideoWindowChangedDone)
+          {
+            GUIGraphicsContext.VideoWindowChangedDone = true;
+            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ONVIDEOWINDOWCHANGED, 0, 0, 0, 0, 0, null);
+            msg.Param1 = GUIGraphicsContext.VideoWindow.X;
+            msg.Param2 = GUIGraphicsContext.VideoWindow.Y;
+            msg.Param3 = GUIGraphicsContext.VideoWindow.Width;
+            msg.Param4 = GUIGraphicsContext.VideoWindow.Height;
+            GUIWindowManager.SendThreadMessage(msg);
+            Log.Debug("GUIGraphicsContext: VideoWindowChanged() SendThreadMessage sended");
+          }
         }
         else
         {
@@ -1795,6 +1800,7 @@ namespace MediaPortal.GUI.Library
     public static bool TopAndBottomDone { get; set; }
     public static bool NoneDone { get; set; }
     public static bool ForceMadVRRefresh { get; set; }
+    public static bool ForceMadVRRefresh3D { get; set; }
 
     /// <summary>
     /// Enable/Disable bypassing of UI Calibration transforms

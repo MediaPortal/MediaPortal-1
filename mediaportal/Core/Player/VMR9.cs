@@ -172,7 +172,7 @@ namespace MediaPortal.Player
     private static extern unsafe void MadVr3DEnable(bool Enable);
 
     [DllImport("dshowhelper.dll", CallingConvention = CallingConvention.Cdecl)]
-    private static extern unsafe void MadVrScreenResizeForce(int x, int y, int width, int height);
+    private static extern unsafe void MadVrScreenResizeForce(int x, int y, int width, int height, bool displayChange);
 
     #endregion
 
@@ -532,11 +532,11 @@ namespace MediaPortal.Player
     /// <summary>
     /// Send screen resize for madVR
     /// </summary>
-    public void MadVrScreenResize(int x, int y, int width, int height)
+    public void MadVrScreenResize(int x, int y, int width, int height, bool displayChange)
     {
       if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
       {
-        MadVrScreenResizeForce(x, y, width, height);
+        MadVrScreenResizeForce(x, y, width, height, displayChange);
       }
     }
 
@@ -714,14 +714,18 @@ namespace MediaPortal.Player
           GUIGraphicsContext.MadVrStop = false;
           IMediaControl mPMediaControl = (IMediaControl) graphBuilder;
           // Get Client size
+          GUIGraphicsContext.form.ClientSize = GUIGraphicsContext.currentScreen.Bounds.Size;
           Size client = GUIGraphicsContext.form.ClientSize;
+
+          GUIWindowManager.Dispose();
+          GUIFontManager.Dispose();
+          GUITextureManager.Dispose();
 
           GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferWidth = client.Width;
           GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferHeight = client.Height;
-
           // load resources
           GUIGraphicsContext.Load();
-          GUITextureManager.Init();
+
           GUIFontManager.LoadFonts(GUIGraphicsContext.GetThemedSkinFile(@"\fonts.xml"));
           GUIFontManager.InitializeDeviceObjects();
 
@@ -730,16 +734,12 @@ namespace MediaPortal.Player
           GUIWindowManager.OnResize();
           GUIWindowManager.OnDeviceRestored();
 
-          GUIGraphicsContext.currentScreen = Screen.FromControl(GUIGraphicsContext.form);
-          GUIGraphicsContext.form.Location = new Point(GUIGraphicsContext.currentScreen.Bounds.X, GUIGraphicsContext.currentScreen.Bounds.Y);
-          GUIGraphicsContext.form.ClientSize = GUIGraphicsContext.currentScreen.Bounds.Size;
-
           MadInit(_scene, client.Width, client.Height, (uint)upDevice.ToInt32(),
             (uint)GUIGraphicsContext.ActiveForm.ToInt32(), ref _vmr9Filter, mPMediaControl);
           hr = new HResult(graphBuilder.AddFilter(_vmr9Filter, "madVR"));
           Log.Info("VMR9: added madVR Renderer to graph");
 
-          VMR9Util.g_vmr9?.MadVrScreenResize(0, 0, client.Width, client.Height);
+          VMR9Util.g_vmr9?.MadVrScreenResize(0, 0, client.Width, client.Height, true);
           GUIGraphicsContext.NoneDone = false;
           GUIGraphicsContext.TopAndBottomDone = false;
           GUIGraphicsContext.SideBySideDone = false;
