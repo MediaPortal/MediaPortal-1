@@ -161,6 +161,8 @@ namespace MediaPortal.GUI.Library
     private static Screen _currentScreen;
     private static Screen _currentStartScreen;
     private static int _currentMonitorIdx = -1;
+    private static string _currentAudioRenderer = "";
+
     private static readonly bool IsDX9EXused = OSInfo.OSInfo.VistaOrLater();
     private static bool _allowRememberLastFocusedItem = true;
     private static bool _fullHD3DFormat = false;
@@ -1639,6 +1641,21 @@ namespace MediaPortal.GUI.Library
       set
       {
         m_volumeOverlayOffsetY = value;
+      }
+    }
+
+    /// <summary>
+    /// Get/set current audio renderer name
+    /// </summary>
+    public static string CurrentAudioRenderer
+    {
+      set
+      {
+        _currentAudioRenderer = value;
+      }
+      get
+      {
+        return _currentAudioRenderer;
       }
     }
 

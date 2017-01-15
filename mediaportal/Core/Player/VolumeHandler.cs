@@ -40,7 +40,7 @@ namespace MediaPortal.Player
     #region Vars
 
     static HideVolumeOSD.HideVolumeOSDLib VolumeOSD;
-
+    private static bool IsDigital;
     #endregion
 
     #region Constructors
@@ -51,7 +51,6 @@ namespace MediaPortal.Player
     {
       if (GUIGraphicsContext.DeviceAudioConnected > 0)
       {
-        bool isDigital;
         bool hideWindowsOSD;
 
         using (Settings reader = new MPSettings())
@@ -72,7 +71,7 @@ namespace MediaPortal.Player
             _startupVolume = Math.Max(0, Math.Min(65535, reader.GetValueAsInt("volume", "startuplevel", 52428)));
           }
 
-          isDigital = reader.GetValueAsBool("volume", "digital", false);
+          IsDigital = reader.GetValueAsBool("volume", "digital", false);
 
           _showVolumeOSD = reader.GetValueAsBool("volume", "defaultVolumeOSD", true);
 
@@ -82,7 +81,7 @@ namespace MediaPortal.Player
         try
         {
           _mixer = new Mixer.Mixer();
-          _mixer.Open(0, isDigital);
+          _mixer.Open(0, IsDigital);
           _volumeTable = volumeTable;
           _mixer.ControlChanged += mixer_ControlChanged;
         }
@@ -246,6 +245,17 @@ namespace MediaPortal.Player
     {
       if (_mixer != null)
       {
+        // Check if mixer is still attached to the audio device we started with
+        if (_mixer._audioDefaultDevice.DeviceId != _mixer._audioDefaultDevice.DeviceIdCurrent)
+        {
+          _mixer = new Mixer.Mixer();
+          _mixer.Open(0, IsDigital, true);
+          _mixer.ControlChanged += mixer_ControlChanged;
+
+          if (_mixer == null)
+            return;
+        }
+
         if (_mixer.IsMuted)
         {
           _mixer.IsMuted = false;
