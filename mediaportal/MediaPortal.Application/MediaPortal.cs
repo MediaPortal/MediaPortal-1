@@ -1658,10 +1658,25 @@ public class MediaPortalApp : D3D, IRender
             OnDisplayChange(ref msg);
             PluginManager.WndProc(ref msg);
           }
-          if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && AppActive)
+          Screen screen = Screen.FromControl(this);
+          if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && AppActive &&
+              (!Equals(screen.Bounds.Size.Width, GUIGraphicsContext.currentScreen.Bounds.Width) ||
+               !Equals(screen.Bounds.Size.Height, GUIGraphicsContext.currentScreen.Bounds.Height)))
           {
             NeedRecreateSwapChain = true;
             GUIGraphicsContext.ForceMadVRRefresh = true;
+
+            // Force message to avoid crash in madVR
+            GUIGraphicsContext.currentScreen = Screen.FromControl(this);
+            GUIGraphicsContext.form.ClientSize = GUIGraphicsContext.currentScreen.Bounds.Size;
+            if (GUIGraphicsContext.InVmr9Render)
+            {
+              GUIMessage message = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ONDISPLAYMADVRCHANGED, 0, 0, 0, 0, 0, null);
+              GUIWindowManager.SendMessage(message);
+            }
+
+            Log.Debug("Main: WM_DISPLAYCHANGE madVR screen change");
+            Log.Debug("Main: WM_DISPLAYCHANGE madVR Width x Height : {0} x {1}", screen.Bounds.Size.Width, screen.Bounds.Size.Height);
           }
           break;
 

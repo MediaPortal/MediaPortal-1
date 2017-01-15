@@ -184,12 +184,20 @@ void MPMadPresenter::MadVr3DSizeLeft(uint16_t x, uint16_t y, DWORD width, DWORD 
   }
 }
 
-void MPMadPresenter::MadVrScreenResize(uint16_t x, uint16_t y, DWORD width, DWORD height)
+void MPMadPresenter::MadVrScreenResize(uint16_t x, uint16_t y, DWORD width, DWORD height, bool displayChange)
 {
   if (m_pMadD3DDev)
   {
     Log("%s : done : %d x %d", __FUNCTION__, width, height);
     SetWindowPos(m_hWnd, 0, 0, 0, width, height, SWP_ASYNCWINDOWPOS);
+
+    // Needed to update OSD/GUI when changing directx present parameter on resolution change.
+    if (displayChange)
+    {
+      m_pReInitOSD = true;
+      m_dwGUIWidth = width;
+      m_dwGUIHeight = height;
+    }
   }
 }
 
@@ -575,7 +583,7 @@ HRESULT MPMadPresenter::ClearBackground(LPCSTR name, REFERENCE_TIME frameStart, 
 
   if (m_pShutdown)
   {
-    Log("MPMadPresenter::ClearBackground() shutdown");
+    Log("MPMadPresenter::ClearBackground() shutdown or init OSD");
     return hr;
   }
 
@@ -586,6 +594,8 @@ HRESULT MPMadPresenter::ClearBackground(LPCSTR name, REFERENCE_TIME frameStart, 
   WORD videoWidth = (WORD)activeVideoRect->right - (WORD)activeVideoRect->left;
 
   CAutoLock cAutoLock(this);
+
+  ReinitOSD();
 
   //// Ugly hack to avoid flickering (most occurs on Intel GPU)
   //bool isFullScreen = m_pCallback->IsFullScreen();
@@ -682,6 +692,8 @@ HRESULT MPMadPresenter::RenderOsd(LPCSTR name, REFERENCE_TIME frameStart, RECT* 
   WORD videoWidth = (WORD)activeVideoRect->right - (WORD)activeVideoRect->left;
 
   CAutoLock cAutoLock(this);
+
+  ReinitOSD();
 
   //// Ugly hack to avoid flickering (most occurs on Intel GPU)
   //bool isFullScreen = m_pCallback->IsFullScreen();
@@ -913,6 +925,31 @@ HRESULT MPMadPresenter::SetupOSDVertex3D(IDirect3DVertexBuffer9* pVertextBuf)
   }
 
   return hr;
+}
+
+void MPMadPresenter::ReinitOSD()
+{
+  // Needed to update OSD/GUI when changing directx present parameter on resolution change.
+  if (m_pReInitOSD)
+  {
+    m_pReInitOSD = false;
+    if (m_pMPTextureGui) m_pMPTextureGui.Release();
+    if (m_pMPTextureOsd) m_pMPTextureOsd.Release();
+    if (m_pMadGuiVertexBuffer) m_pMadGuiVertexBuffer.Release();
+    if (m_pMadOsdVertexBuffer) m_pMadOsdVertexBuffer.Release();
+    if (m_pRenderTextureGui) m_pRenderTextureGui.Release();
+    if (m_pRenderTextureOsd) m_pRenderTextureOsd.Release();
+    m_hSharedGuiHandle = nullptr;
+    m_hSharedOsdHandle = nullptr;
+    m_pDevice->CreateTexture(m_dwGUIWidth, m_dwGUIHeight, 0, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &m_pMPTextureGui.p, &m_hSharedGuiHandle);
+    m_pDevice->CreateTexture(m_dwGUIWidth, m_dwGUIHeight, 0, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &m_pMPTextureOsd.p, &m_hSharedOsdHandle);
+    m_pMadD3DDev->CreateVertexBuffer(sizeof(VID_FRAME_VERTEX) * 4, D3DUSAGE_WRITEONLY, D3DFVF_VID_FRAME_VERTEX, D3DPOOL_DEFAULT, &m_pMadGuiVertexBuffer.p, NULL);
+    m_pMadD3DDev->CreateVertexBuffer(sizeof(VID_FRAME_VERTEX) * 4, D3DUSAGE_WRITEONLY, D3DFVF_VID_FRAME_VERTEX, D3DPOOL_DEFAULT, &m_pMadOsdVertexBuffer.p, NULL);
+    m_pMadD3DDev->CreateTexture(m_dwGUIWidth, m_dwGUIHeight, 0, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &m_pRenderTextureGui.p, &m_hSharedGuiHandle);
+    m_pMadD3DDev->CreateTexture(m_dwGUIWidth, m_dwGUIHeight, 0, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &m_pRenderTextureOsd.p, &m_hSharedOsdHandle);
+
+    Log("%s : ReinitOSD for : %d x %d", __FUNCTION__, m_dwGUIWidth, m_dwGUIHeight);
+  }
 }
 
 HRESULT MPMadPresenter::SetupMadDeviceState()

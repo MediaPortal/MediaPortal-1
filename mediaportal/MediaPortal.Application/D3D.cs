@@ -604,7 +604,7 @@ namespace MediaPortal
       // Don't need to resize when using madVR
       if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && GUIGraphicsContext.Vmr9Active)
       {
-        GUIGraphicsContext.ForceMadVRRefresh = true;
+        GUIGraphicsContext.ForceMadVRRefresh3D = true;
         return;
       }
 
@@ -1916,6 +1916,7 @@ namespace MediaPortal
         // Force a madVR refresh to resize MP window
         // TODO how to handle it better
         g_Player.RefreshMadVrVideo();
+        GUIGraphicsContext.ForceMadVRRefresh3D = true;
       }
     }
 

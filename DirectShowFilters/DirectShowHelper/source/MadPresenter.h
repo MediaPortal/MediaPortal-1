@@ -154,7 +154,7 @@ class MPMadPresenter : public CUnknown, public CCritSec
     void RepeatFrame();
     void MadVr3DSizeRight(uint16_t x, uint16_t y, DWORD width, DWORD height);
     void MadVr3DSizeLeft(uint16_t x, uint16_t y, DWORD width, DWORD height);
-    void MadVrScreenResize(uint16_t x, uint16_t y, DWORD width, DWORD height);    
+    void MadVrScreenResize(uint16_t x, uint16_t y, DWORD width, DWORD height, bool displayChange);
     void MadVr3D(bool Enable);
     HRESULT Shutdown();
     HRESULT Stopping();
@@ -190,6 +190,7 @@ class MPMadPresenter : public CUnknown, public CCritSec
 
     bool m_pShutdown = false;
     bool m_pInitOSD = false;
+    bool m_pReInitOSD = false;
     IVMR9Callback* m_pCallback = nullptr;
     CCritSec m_dsLock;
 
@@ -199,6 +200,7 @@ class MPMadPresenter : public CUnknown, public CCritSec
 
     HRESULT SetupOSDVertex(IDirect3DVertexBuffer9* pVertextBuf);
     HRESULT SetupOSDVertex3D(IDirect3DVertexBuffer9* pVertextBuf);
+    void ReinitOSD();
     HRESULT SetupMadDeviceState();
 
     OAHWND m_hParent = reinterpret_cast<OAHWND>(nullptr);
