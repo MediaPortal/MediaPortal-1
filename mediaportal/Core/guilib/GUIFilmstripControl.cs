@@ -2389,9 +2389,9 @@ namespace MediaPortal.GUI.Library
         {
           _cursorX--;
         }
-        if (iPage == iPages && (_cursorX < iItemPerPage - 1) && (_offset + _cursorX == iItem))
+        if (iPage == iPages && (_cursorX < iItemsPerPage - 1) && (_offset + _cursorX == iItem))
         {
-          _cursorX = iItemPerPage - 1;
+          _cursorX = iItemsPerPage - 1;
           _offset = iItem - _cursorX;
         }
       }
