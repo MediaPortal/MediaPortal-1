@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2017 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2017 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -948,12 +948,14 @@ namespace MediaPortal.GUI.Video
         item.Rating = movie.Rating;
         item.UserRating = movie.UserRating;
         item.IsPlayed = movie.Watched > 0;
+        item.IsCollection = !string.IsNullOrEmpty(movie.SingleMovieCollection);
+        item.IsUserGroup = !string.IsNullOrEmpty(movie.SingleUserGroup);
 
         try
         {
           if (item.Path.ToUpperInvariant().Contains(@"\VIDEO_TS"))
           {
-            item.Label3 = MediaTypes.DVD.ToString() + " #" + movie.WatchedCount;;
+            item.Label3 = MediaTypes.DVD.ToString() + " #" + movie.WatchedCount;
           }
           else if (item.Path.ToUpperInvariant().Contains(@"\BDMV"))
           {
@@ -961,7 +963,7 @@ namespace MediaPortal.GUI.Video
           }
           else if (VirtualDirectory.IsImageFile(Path.GetExtension(item.Path)))
           {
-            item.Label3 = MediaTypes.ISO.ToString() + " #" + movie.WatchedCount; ;
+            item.Label3 = MediaTypes.ISO.ToString() + " #" + movie.WatchedCount;
           }
           else
           {
