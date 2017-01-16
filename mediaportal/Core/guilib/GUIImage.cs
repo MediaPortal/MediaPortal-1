@@ -2789,7 +2789,7 @@ namespace MediaPortal.GUI.Library
         }
         _posXproperty = value;
         _posXHasProperty = !string.IsNullOrEmpty(_posXproperty);
-        _recalculate = true;
+        _reCalculate = true;
         if (_posXHasProperty)
         {
           string _property = GUIPropertyManager.Parse(_posXproperty);
@@ -2813,7 +2813,7 @@ namespace MediaPortal.GUI.Library
         }
         _posYproperty = value;
         _posYHasProperty = !string.IsNullOrEmpty(_posYproperty);
-        _recalculate = true;
+        _reCalculate = true;
         if (_posYHasProperty)
         {
           string _property = GUIPropertyManager.Parse(_posYproperty);
