@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2012 Team MediaPortal
+#region Copyright (C) 2005-2017 Team MediaPortal
 
-// Copyright (C) 2005-2012 Team MediaPortal
+// Copyright (C) 2005-2017 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -105,6 +105,12 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("shouldCache")] private bool _shouldCache = false;
     // hint from the skin that the particular texture should be cached for perf reasons
 
+    [XMLSkin("posX", "property")] protected string _posXproperty = string.Empty;
+    [XMLSkin("posY", "property")] protected string _posYproperty = string.Empty;
+
+    private bool _posXHasProperty = false;
+    private bool _posYHasProperty = false;
+
     private int _blendableTexWidth = 0;
     private int _blendableTexHeight = 0;
     private Texture _blendableTexture = null;
@@ -116,6 +122,7 @@ namespace MediaPortal.GUI.Library
 
     //TODO GIF PALLETTE
     //private PaletteEntry						m_pPalette=null;
+
     /// <summary>The width of in which the texture will be rendered after scaling texture.</summary>
     private int m_iRenderWidth = 0;
 
@@ -341,6 +348,29 @@ namespace MediaPortal.GUI.Library
       else if (_overlayFileName.Length > 0)
       {
         OverlayFileName = _overlayFileName;
+      }
+
+      if (!string.IsNullOrEmpty(_posXproperty))
+      {
+        _posXHasProperty = true;
+        string _property = GUIPropertyManager.Parse(_posXproperty);
+        int _value;
+        if (Int32.TryParse(_property, out _value))
+        {
+          _positionX = _value;
+          _reCalculate = true;
+        }
+      }
+      if (!string.IsNullOrEmpty(_posYproperty))
+      {
+        _posYHasProperty = true;
+        string _property = GUIPropertyManager.Parse(_posYproperty);
+        int _value;
+        if (Int32.TryParse(_property, out _value))
+        {
+          _positionY = _value;
+          _reCalculate = true;
+        }
       }
 
       FinalizeBorder();
@@ -660,7 +690,7 @@ namespace MediaPortal.GUI.Library
           return;
         }
 
-        if (_registeredForEvent == false && _containsProperty)
+        if (_registeredForEvent == false && (_containsProperty || _posXHasProperty || _posYHasProperty))
         {
           GUIPropertyManager.OnPropertyChanged -= GUIPropertyManager_OnPropertyChanged;
           GUIPropertyManager.OnPropertyChanged += GUIPropertyManager_OnPropertyChanged;
@@ -815,6 +845,36 @@ namespace MediaPortal.GUI.Library
 
     private void GUIPropertyManager_OnPropertyChanged(string tag, string tagValue)
     {
+      if (string.IsNullOrEmpty(tag))
+      {
+        return;
+      }
+
+      if (_posXHasProperty || _posYHasProperty)
+      {
+        if (_posXHasProperty && _posXproperty.IndexOf(tag, StringComparison.Ordinal) >= 0)
+        {
+          string _property = GUIPropertyManager.Parse(_posXproperty);
+          int _value;
+          if (Int32.TryParse(_property, out _value))
+          {
+            _positionX = _value;
+            _reCalculate = true;
+          }
+        }
+
+        if (_posYHasProperty && _posYproperty.IndexOf(tag, StringComparison.Ordinal) >= 0)
+        {
+          string _property = GUIPropertyManager.Parse(_posYproperty);
+          int _value;
+          if (Int32.TryParse(_property, out _value))
+          {
+            _positionY = _value;
+            _reCalculate = true;
+          }
+        }
+      }
+
       if (!_containsProperty)
       {
         return;
@@ -829,7 +889,8 @@ namespace MediaPortal.GUI.Library
     private void FreeResourcesAndRegEvent()
     {
       Dispose();
-      if (_registeredForEvent == false && _containsProperty)
+      // if (_registeredForEvent == false && _containsProperty)
+      if (_registeredForEvent == false && (_containsProperty || _posXHasProperty || _posYHasProperty))
       {
         GUIPropertyManager.OnPropertyChanged -=
           new GUIPropertyManager.OnPropertyChangedHandler(GUIPropertyManager_OnPropertyChanged);
@@ -947,6 +1008,7 @@ namespace MediaPortal.GUI.Library
     protected void Calculate()
     {
       _reCalculate = false;
+      
       float x = (float)_positionX;
       float y = (float)_positionY;
       if (_packedTexture != null)
@@ -2358,7 +2420,7 @@ namespace MediaPortal.GUI.Library
       {
         _containsProperty = true;
       }
-      else
+      else if (!_posXHasProperty && !_posYHasProperty) 
       {
         if (_containsProperty) //we had a property before, not anymore, therefor, unsubscribe
           GUIPropertyManager.OnPropertyChanged -=
@@ -2715,5 +2777,54 @@ namespace MediaPortal.GUI.Library
       get { return _tileFill; }
       set { _tileFill = value; }
     }
+
+    public string PosXProperty
+    {
+      get { return _posXproperty; }
+      set 
+      { 
+        if (_posXproperty == value)
+        {
+          return;
+        }
+        _posXproperty = value;
+        _posXHasProperty = !string.IsNullOrEmpty(_posXproperty);
+        _recalculate = true;
+        if (_posXHasProperty)
+        {
+          string _property = GUIPropertyManager.Parse(_posXproperty);
+          int _value;
+          if (Int32.TryParse(_property, out _value))
+          {
+            _positionX = _value;
+          }
+        }
+      }
+    }
+
+    public string PosYProperty
+    {
+      get { return _posYproperty; }
+      set 
+      { 
+        if (_posYproperty == value)
+        {
+          return;
+        }
+        _posYproperty = value;
+        _posYHasProperty = !string.IsNullOrEmpty(_posYproperty);
+        _recalculate = true;
+        if (_posYHasProperty)
+        {
+          string _property = GUIPropertyManager.Parse(_posYproperty);
+          int _value;
+          if (Int32.TryParse(_property, out _value))
+          {
+            _positionY = _value;
+          }
+        }
+      }
+    }
+
   }
 }
