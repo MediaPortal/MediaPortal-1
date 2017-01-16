@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2017 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2017 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -52,6 +52,8 @@ namespace MediaPortal.GUI.Library
     protected GUIImage _imageBigPinIcon = null; // pointer to CImage containing the icon
     protected bool _isSelected = false; // item is selected or not
     protected bool _isFolder = false; // indicated if the item is a folder or a path
+    protected bool _isUserGroup = false; // indicated if the item is a UserGroup
+    protected bool _isCollection = false; // indicated if the item is a Collection
     protected bool _hasProgressBar = false;
     protected int _progressBarPercentage = 0;
     protected string _folder = string.Empty; // path + filename of the item
@@ -109,6 +111,8 @@ namespace MediaPortal.GUI.Library
       _tagTv = item._tagTv;
       _tagAlbumInfo = item._tagAlbumInfo;
       _isBdDvdFolder = item._isBdDvdFolder;
+      _isUserGroup = item._isUserGroup;
+      _isCollection = item._isCollection;
     }
 
     public GUIListItem(string aLabel, string aLabel2, string aPath, bool aIsFolder, FileInformation aFileInformation)
@@ -417,6 +421,24 @@ namespace MediaPortal.GUI.Library
     {
       get { return _isBdDvdFolder; }
       set { _isBdDvdFolder = value; }
+    }
+
+    /// <summary>
+    /// Get/set if item is UserGroup
+    /// </summary>
+    public bool IsUserGroup
+    {
+      get { return _isUserGroup; }
+      set { _isUserGroup = value; }
+    }
+
+    /// <summary>
+    /// Get/set if item is Collection
+    /// </summary>
+    public bool IsCollection
+    {
+      get { return _isCollection; }
+      set { _isCollection = value; }
     }
 
     /// <summary>
