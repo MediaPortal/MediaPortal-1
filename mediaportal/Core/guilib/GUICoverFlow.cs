@@ -307,8 +307,18 @@ namespace MediaPortal.GUI.Library
           }
         }
       }
+
+      GUIPropertyManager.SetProperty("#facadeview.focus.X", string.Empty);
+      GUIPropertyManager.SetProperty("#facadeview.focus.Y", string.Empty);
+      GUIPropertyManager.SetProperty("#facadeview.focus.Width", string.Empty);
+      GUIPropertyManager.SetProperty("#facadeview.focus.Height", string.Empty);
     }
 
+    /// <summary>
+    /// Make OverlayImages list for GUIListItem 
+    /// </summary>
+    /// <param name="pItem"></param>
+    /// <param name="itemFocused"></param>
     private List<GUIOverlayImage> GetOverlayListForItem(GUIListItem pItem, bool itemFocused)
     {
       List<GUIOverlayImage> _overlayList = new List<GUIOverlayImage>();
@@ -317,6 +327,52 @@ namespace MediaPortal.GUI.Library
         return _overlayList; 
       }
 
+      // 1. Rating images
+      int _rating = (int)Math.Round(pItem.Rating);
+      int _userRating = pItem.UserRating;
+      if (_showRatingImage && (_rating > 0 || (_userRating > 0 && _showUserRatingImage)))
+      {
+        GUIOverlayImage _overlayImage = null;
+        if (_userRating > 0 && _showUserRatingImage)
+        {
+          string _fileName = _ratingUserImageTexturePrefix + _userRating;
+          _fileName = _fileName + (string.IsNullOrEmpty(_ratingUserImageTextureSuffix) ? ".png" : _ratingUserImageTextureSuffix);
+          _overlayImage = new GUIOverlayImage(_ratingImagePosX, _ratingImagePosY, _ratingImageWidth, _ratingImageHeight, _fileName);
+        }
+        else if (_rating > 0)
+        {
+          string _fileName = _ratingImageTexturePrefix + _rating;
+          _fileName = _fileName + (string.IsNullOrEmpty(_ratingImageTextureSuffix) ? ".png" : _ratingImageTextureSuffix);
+          _overlayImage = new GUIOverlayImage(_ratingImagePosX, _ratingImagePosY, _ratingImageWidth, _ratingImageHeight, _fileName);
+        }
+        if (_overlayImage != null)
+        {
+          _overlayList.Add(_overlayImage);
+        }
+      }
+
+      // 2. Watched/UnWatched images
+      if (_showWatchedImage && (!pItem.IsFolder || (pItem.IsFolder && _showWatchedImageOnFolder && pItem.Label != "..")))
+      {
+        GUIOverlayImage _overlayImage = null;
+        if (itemFocused || (!itemFocused && !_showWatchedImageOnlyOnFocus))
+        {
+          if (pItem.IsPlayed && !string.IsNullOrEmpty(_watchedImageWatchedTexture))
+          {
+            _overlayImage = new GUIOverlayImage(_watchedImagePosX, _watchedImagePosY, _watchedImageWidth, _watchedImageHeight, _watchedImageWatchedTexture);
+          }
+          else if (!pItem.IsPlayed && !string.IsNullOrEmpty(_watchedImageUnWatchedTexture)) 
+          {
+            _overlayImage = new GUIOverlayImage(_watchedImagePosX, _watchedImagePosY, _watchedImageWidth, _watchedImageHeight, _watchedImageUnWatchedTexture);
+          }
+        }
+        if (_overlayImage != null)
+        {
+          _overlayList.Add(_overlayImage);
+        }
+      }
+
+      // 3. Folder images
       if (_showFolderStatusImage && pItem.IsFolder)
       {
         GUIOverlayImage _overlayImage = null;
@@ -354,48 +410,6 @@ namespace MediaPortal.GUI.Library
         }
       }
 
-      int _rating = (int)Math.Round(pItem.Rating);
-      int _userRating = pItem.UserRating;
-      if (_showRatingImage && (_rating > 0 || (_userRating > 0 && _showUserRatingImage)))
-      {
-        GUIOverlayImage _overlayImage = null;
-        if (_userRating > 0 && _showUserRatingImage)
-        {
-          string _fileName = _ratingUserImageTexturePrefix + _userRating;
-          _fileName = _fileName + (string.IsNullOrEmpty(_ratingUserImageTextureSuffix) ? ".png" : _ratingUserImageTextureSuffix);
-          _overlayImage = new GUIOverlayImage(_ratingImagePosX, _ratingImagePosY, _ratingImageWidth, _ratingImageHeight, _fileName);
-        }
-        else if (_rating > 0)
-        {
-          string _fileName = _ratingImageTexturePrefix + _rating;
-          _fileName = _fileName + (string.IsNullOrEmpty(_ratingImageTextureSuffix) ? ".png" : _ratingImageTextureSuffix);
-          _overlayImage = new GUIOverlayImage(_ratingImagePosX, _ratingImagePosY, _ratingImageWidth, _ratingImageHeight, _fileName);
-        }
-        if (_overlayImage != null)
-        {
-          _overlayList.Add(_overlayImage);
-        }
-      }
-
-      if (_showWatchedImage && (!pItem.IsFolder || (pItem.IsFolder && _showWatchedImageOnFolder && pItem.Label != "..")))
-      {
-        GUIOverlayImage _overlayImage = null;
-        if (itemFocused || (!itemFocused && !_showWatchedImageOnlyOnFocus))
-        {
-          if (pItem.IsPlayed && !string.IsNullOrEmpty(_watchedImageWatchedTexture))
-          {
-            _overlayImage = new GUIOverlayImage(_watchedImagePosX, _watchedImagePosY, _watchedImageWidth, _watchedImageHeight, _watchedImageWatchedTexture);
-          }
-          else if (!pItem.IsPlayed && !string.IsNullOrEmpty(_watchedImageUnWatchedTexture)) 
-          {
-            _overlayImage = new GUIOverlayImage(_watchedImagePosX, _watchedImagePosY, _watchedImageWidth, _watchedImageHeight, _watchedImageUnWatchedTexture);
-          }
-        }
-        if (_overlayImage != null)
-        {
-          _overlayList.Add(_overlayImage);
-        }
-      }
       return _overlayList;
     }
 
@@ -506,6 +520,7 @@ namespace MediaPortal.GUI.Library
                                                      ref _backgroundWidth, ref _backgroundHeight);
       GUIGraphicsContext.ScaleRectToScreenResolution(ref _foregroundPositionX, ref _foregroundPositionY,
                                                      ref _foregroundWidth, ref _foregroundHeight);
+
       GUIGraphicsContext.ScaleHorizontal(ref _cardWidth);
       GUIGraphicsContext.ScaleVertical(ref _cardHeight);
       GUIGraphicsContext.ScaleHorizontal(ref _frameWidth);
@@ -518,6 +533,13 @@ namespace MediaPortal.GUI.Library
       GUIGraphicsContext.ScaleVertical(ref _scrollbarOffsetY);
       GUIGraphicsContext.ScaleVertical(ref _label1OffsetY);
       GUIGraphicsContext.ScaleVertical(ref _label2OffsetY);
+
+      GUIGraphicsContext.ScaleRectToScreenResolution(ref _watchedImagePosX, ref _watchedImagePosY,
+                                                     ref _watchedImageWidth,  ref _watchedImageHeight);
+      GUIGraphicsContext.ScaleRectToScreenResolution(ref _folderStatusImagePosX, ref _folderStatusImagePosY,
+                                                     ref _folderStatusImageWidth,  ref _folderStatusImageHeight);
+      GUIGraphicsContext.ScaleRectToScreenResolution(ref _ratingImagePosX, ref _ratingImagePosY,
+                                                     ref _ratingImageWidth,  ref _ratingImageHeight);
 
       // Reallocate the card images using the new sizes.
       _reAllocate = true;
