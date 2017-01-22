@@ -173,9 +173,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Dvb
         return string.Empty;
       }
 
-      // Figure out the encoding used.
-      int len = stringBytes.Length;
-      int encoding = 20269; // ISO/IEC 6937
+      // Select a compatible Windows code page.
+      int stringByteCount = stringBytes.Length;
+      int codePage = 20269; // ISO/IEC 6937
       int encodingByteCount = 0;
       byte b1 = stringBytes[offset];
       byte b2 = 0;
@@ -189,16 +189,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Dvb
           {
             case 0x00:
               return string.Empty;
-            case 0x07:
-              encoding = 874;   // ISO/IEC 8859-11
-              break;
             case 0x10:
               // This code is very intentional. TsWriter removes the second
               // encoding byte to avoid premature NULL termination. However,
               // this function is also used to process DVB text originating
               // from CI/CAMs. Do NOT change unless you know what you are
               // doing!
-              if (len <= offset + encodingByteCount)
+              if (stringByteCount <= offset + encodingByteCount)
               {
                 Log.Warn("DVB text: unexpected end of byte sequence after three byte encoding indicator, byte count = {0}, encoded byte count = {1}, offset = {2}", stringBytes.Length, encodedByteCount, offset);
                 Dump.DumpBinary(stringBytes);
@@ -207,7 +204,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Dvb
               b1 = stringBytes[offset + encodingByteCount++];
               if (b1 == 0)
               {
-                if (len <= offset + encodingByteCount)
+                if (stringByteCount <= offset + encodingByteCount)
                 {
                   Log.Warn("DVB text: unexpected end of byte sequence after three byte encoding reserved byte, byte count = {0}, encoded byte count = {1}, offset = {2}", stringBytes.Length, encodedByteCount, offset);
                   Dump.DumpBinary(stringBytes);
@@ -221,13 +218,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Dvb
                 Dump.DumpBinary(stringBytes);
                 return string.Empty;
               }
-              if (b1 == 0xb)
+              else if (b1 < 0x10) // ISO/IEC 8859-1..15
               {
-                encoding = 874;   // ISO/IEC 8859-11
-              }
-              else if (b1 < 0x10)
-              {
-                encoding = 28590 + b1;  // ISO/IEC 8859-1..15
+                codePage = 28590 + b1;
               }
               else
               {
@@ -237,19 +230,19 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Dvb
               }
               break;
             case 0x11:
-              encoding = 1200;  // ISO/IEC 10646-1
+              codePage = 1200;  // ISO/IEC 10646-1 little endian
               break;
             case 0x12:
-              encoding = 949;   // KSC5601-1987
+              codePage = 949;   // KSX1001-2004 / KSC5601-1987
               break;
             case 0x13:
-              encoding = 936;   // GB-2312-1980
+              codePage = 936;   // GB-2312-1980
               break;
             case 0x14:
-              encoding = 950;   // Big5
+              codePage = 950;   // Big5
               break;
             case 0x15:
-              encoding = 65001; // UTF-8
+              codePage = 65001; // UTF-8
               break;
             default:
               if (b1 > 0xb)
@@ -258,8 +251,16 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Dvb
                 Dump.DumpBinary(stringBytes);
                 return string.Empty;
               }
-              encoding = 28594 + b1;  // ISO/IEC 8859-5..15
+              codePage = 28594 + b1;  // ISO/IEC 8859-5..15
               break;
+          }
+
+          if (codePage == 28601)  // ISO/IEC 8859-11
+          {
+            // Windows doesn't directly support ISO/IEC 8859-11. Use compatible
+            // code page 874, which is an extension of TIS-620 (TIS-620 is
+            // compatible with ISO/IEC 8859-11).
+            codePage = 874;
           }
         }
       }
@@ -273,11 +274,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Dvb
       if (encodedByteCount == -1)
       {
         decodedByteCount += offset;
-        while (decodedByteCount < len)
+        while (decodedByteCount < stringByteCount)
         {
-          if (encoding == 1200)
+          if (codePage == 1200)
           {
-            if (decodedByteCount >= len - 1)
+            if (decodedByteCount >= stringByteCount - 1)
             {
               break;
             }
@@ -309,18 +310,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Dvb
       }
 
       int bytesToConvertCount = decodedByteCount - encodingByteCount - nullTerminationByteCount;
-      switch (encoding)
+      switch (codePage)
       {
         case 20269:   // ISO/IEC 6937-1
         case 28600:   // ISO/IEC 8859-10
         case 28604:   // ISO/IEC 8859-14
           byte[] bytes = new byte[bytesToConvertCount];
           Buffer.BlockCopy(stringBytes, offset + encodingByteCount, bytes, 0, bytesToConvertCount);
-          if (encoding == 20269)
+          if (codePage == 20269)
           {
             return IsoIec6937ToUnicode(bytes);
           }
-          if (encoding == 28600)
+          if (codePage == 28600)
           {
             return IsoIec8859P10ToUnicode(bytes);
           }
@@ -330,7 +331,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Dvb
           Dump.DumpBinary(stringBytes);
           return string.Empty;
         default:
-          return Encoding.GetEncoding(encoding).GetString(stringBytes, offset + encodingByteCount, bytesToConvertCount);
+          return Encoding.GetEncoding(codePage).GetString(stringBytes, offset + encodingByteCount, bytesToConvertCount);
       }
     }
 
@@ -338,7 +339,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Dvb
     /// Convert ISO/IEC 8859-10 (Latin/Nordic) to Unicode.
     /// </summary>
     /// <remarks>
-    /// Microsoft has not yet implemented a .NET decoder for codepage 20600.
+    /// Microsoft has not yet implemented a .NET decoder for codepage 28600.
     /// </remarks>
     private static string IsoIec8859P10ToUnicode(byte[] bytes)
     {
@@ -509,7 +510,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Dvb
           default:
             if (0x7f <= b && b <= 0x9f)
             {
-              Log.Warn("DVB text: unexpected byte/character 0x{0:x} in ISO/IEC 8859-14 string", b);
+              Log.Warn("DVB text: unexpected byte/character 0x{0:x} in ISO/IEC 8859-10 string", b);
             }
             else
             {
@@ -525,7 +526,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Dvb
     /// Convert ISO/IEC 8859-14 (Latin/Celtic) to Unicode.
     /// </summary>
     /// <remarks>
-    /// Microsoft has not yet implemented a .NET decoder for codepage 20604.
+    /// Microsoft has not yet implemented a .NET decoder for codepage 28604.
     /// </remarks>
     private static string IsoIec8859P14ToUnicode(byte[] bytes)
     {
@@ -676,7 +677,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Dvb
     /// The Microsoft .NET ISO/IEC 6937-1 decoder implementation (codepage
     /// 20269) does not convert composite characters correctly. It expects a
     /// base character followed by combining character. ISO/IEC 6937-1 expects
-    /// the diacritical sign to preceed the base character.
+    /// the diacritical sign to precede the base character.
     /// </remarks>
     private static string IsoIec6937ToUnicode(byte[] bytes)
     {
