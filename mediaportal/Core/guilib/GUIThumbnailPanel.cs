@@ -2746,7 +2746,7 @@ namespace MediaPortal.GUI.Library
         _ratingImagePosX = _ratingImagePosXBig;
         _ratingImagePosY = _ratingImagePosYBig;
         _ratingImageWidth = _ratingImageWidthBig;
-        _ratingImageHeight = _ratingImageHeightBig;
+        _ratingImageHeight = _ratingImageHeightLow;
       }
       else
       {
