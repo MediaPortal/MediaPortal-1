@@ -24,6 +24,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
+using Mediaportal.TV.Server.Common.Types.Channel;
 using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.Plugins.XmlTvImport.Service;
 using Mediaportal.TV.Server.SetupControls;
@@ -490,27 +491,26 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport.Config
               this.LogWarn("XMLTV import config: found multiple channels with ID {0}, won't be able to distinguish which data to use", id);
             }
 
-            int majorChannelNumber;
-            int minorChannelNumber;
+            ushort majorChannelNumber;
+            ushort minorChannelNumber;
             string internalIdentifier;
             string organisation;
             if (Mc2XmlId.GetComponents(channel.Key, out majorChannelNumber, out minorChannelNumber, out internalIdentifier, out organisation))
             {
               // We use channel number matching with mc2xml. We must use/match
               // the format that TVE uses.
-              string mpChannelNumber = majorChannelNumber.ToString();
-              if (minorChannelNumber > 0)
+              string tveChannelNumber;
+              if (!LogicalChannelNumber.Create(majorChannelNumber, out tveChannelNumber, minorChannelNumber))
               {
-                mpChannelNumber = string.Format("{0}.{1}", majorChannelNumber, minorChannelNumber);
+                this.LogWarn("XMLTV import config: failed to convert mc2xml ID to channel number, ID = {0}", channel.Key);
+                continue;
               }
-              if (!mc2xmlMatchingDictionary.ContainsKey(mpChannelNumber))
+              if (mc2xmlMatchingDictionary.ContainsKey(tveChannelNumber))
               {
-                mc2xmlMatchingDictionary.Add(mpChannelNumber, id);
+                this.LogWarn("XMLTV import config: found multiple channels with channel number {0}, might match to wrong channel", tveChannelNumber);
+                continue;
               }
-              else
-              {
-                this.LogWarn("XMLTV import config: found multiple channels with channel number {0}, might match to wrong channel", mpChannelNumber);
-              }
+              mc2xmlMatchingDictionary.Add(tveChannelNumber, id);
             }
 
             foreach (string displayName in channel.Value)

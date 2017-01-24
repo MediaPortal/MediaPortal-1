@@ -32,10 +32,10 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
     // I15.28460357.microsoft.com = 15 DSC (The Discovery Channel [West])
     private static readonly Regex REGEX_MC2XML_ID_FORMAT = new Regex(@"^I(\d+)\.((\d+)\.)?(\d+)\.(microsoft\.com|schedulesdirect\.org)$");
 
-    public static bool GetComponents(string identifier, out int majorChannelNumber, out int minorChannelNumber, out string internalIdentifier, out string organisation)
+    public static bool GetComponents(string identifier, out ushort majorChannelNumber, out ushort minorChannelNumber, out string internalIdentifier, out string organisation)
     {
-      majorChannelNumber = -1;
-      minorChannelNumber = -1;
+      majorChannelNumber = 0;
+      minorChannelNumber = 0;
       internalIdentifier = string.Empty;
       organisation = string.Empty;
       if (string.IsNullOrEmpty(identifier))
@@ -44,16 +44,15 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
       }
 
       Match m = REGEX_MC2XML_ID_FORMAT.Match(identifier);
-      if (!m.Success)
+      if (
+        !m.Success ||
+        !ushort.TryParse(m.Groups[1].Captures[0].Value, out majorChannelNumber) ||
+        (m.Groups[3].Success && !ushort.TryParse(m.Groups[3].Captures[0].Value, out minorChannelNumber))
+      )
       {
         return false;
       }
 
-      majorChannelNumber = int.Parse(m.Groups[1].Captures[0].Value);
-      if (m.Groups[3].Success)
-      {
-        minorChannelNumber = int.Parse(m.Groups[3].Captures[0].Value);
-      }
       internalIdentifier = m.Groups[4].Captures[0].Value;
       organisation = m.Groups[5].Captures[0].Value;
       return true;
