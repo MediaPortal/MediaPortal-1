@@ -2163,11 +2163,6 @@ namespace MediaPortal.GUI.Library
 
         _listLabels.Add(fadelabel);
       }
-
-      GUIPropertyManager.SetProperty("#facadeview.focus.X", string.Empty);
-      GUIPropertyManager.SetProperty("#facadeview.focus.Y", string.Empty);
-      GUIPropertyManager.SetProperty("#facadeview.focus.Width", string.Empty);
-      GUIPropertyManager.SetProperty("#facadeview.focus.Height", string.Empty);
     }
 
     public override void AllocResources()
