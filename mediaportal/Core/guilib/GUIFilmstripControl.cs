@@ -706,14 +706,6 @@ namespace MediaPortal.GUI.Library
         iOverSized = (_thumbNailWidth + _thumbNailHeight) / THUMBNAIL_OVERSIZED_DIVIDER;
       }
 
-      if (itemFocused)
-      {
-        GUIPropertyManager.SetProperty("#facadeview.focus.X", ((int)(_thumbNailPositionX - iOverSized + dwPosX)).ToString());
-        GUIPropertyManager.SetProperty("#facadeview.focus.Y", ((int)(_thumbNailPositionY - iOverSized + dwPosY)).ToString());
-        GUIPropertyManager.SetProperty("#facadeview.focus.Width", ((int)(_thumbNailWidth + 2 * iOverSized)).ToString());
-        GUIPropertyManager.SetProperty("#facadeview.focus.Height", ((int)(_thumbNailHeight + 2 * iOverSized)).ToString());
-      }
-
       GUIImage pImage = null;
 
       if (pItem.HasThumbnail)
@@ -783,6 +775,11 @@ namespace MediaPortal.GUI.Library
         if (itemFocused)
         {
           pImage.ColourDiffuse = 0xffffffff;
+
+          GUIPropertyManager.SetProperty("#facadeview.focus.X", ((int)(_thumbNailPositionX - iOverSized + dwPosX)).ToString());
+          GUIPropertyManager.SetProperty("#facadeview.focus.Y", ((int)(_thumbNailPositionY - iOverSized + dwPosY)).ToString());
+          GUIPropertyManager.SetProperty("#facadeview.focus.Width", ((int)(_thumbNailWidth + 2 * iOverSized)).ToString());
+          GUIPropertyManager.SetProperty("#facadeview.focus.Height", ((int)(_thumbNailHeight + 2 * iOverSized)).ToString());
         }
         else
         {
@@ -2086,11 +2083,6 @@ namespace MediaPortal.GUI.Library
         _upDownControl.SetRange(1, iPages);
         _upDownControl.Value = 1;
       }
-
-      GUIPropertyManager.SetProperty("#facadeview.focus.X", string.Empty);
-      GUIPropertyManager.SetProperty("#facadeview.focus.Y", string.Empty);
-      GUIPropertyManager.SetProperty("#facadeview.focus.Width", string.Empty);
-      GUIPropertyManager.SetProperty("#facadeview.focus.Height", string.Empty);
     }
 
     public override void AllocResources()
@@ -2635,7 +2627,7 @@ namespace MediaPortal.GUI.Library
         _ratingImagePosX = _ratingImagePosXBig;
         _ratingImagePosY = _ratingImagePosYBig;
         _ratingImageWidth = _ratingImageWidthBig;
-        _ratingImageHeight = _ratingImageHeightLow;
+        _ratingImageHeight = _ratingImageHeightBig;
       }
       else
       {
