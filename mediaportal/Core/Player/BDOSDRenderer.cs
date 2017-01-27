@@ -219,9 +219,14 @@ namespace MediaPortal.Player
     {
       if (_vertexBuffer == null)
       {
+        Usage usage = Usage.None;
+        if (OSInfo.OSInfo.VistaOrLater())
+        {
+          usage = Usage.Dynamic | Usage.WriteOnly;
+        }
         _vertexBuffer = new VertexBuffer(typeof(CustomVertex.TransformedTextured),
                                         4, GUIGraphicsContext.DX9Device,
-                                        Usage.Dynamic | Usage.WriteOnly, 
+                                        usage, 
                                         CustomVertex.TransformedTextured.Format,
                                         GUIGraphicsContext.GetTexturePoolType());
         _wx = _wy = _wwidth = _wheight = 0;
