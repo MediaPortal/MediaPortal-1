@@ -61,11 +61,18 @@ CMPIPTV_UDP::CMPIPTV_UDP()
   this->sourcePort = 0;
   this->configurationParameters = new CParameterCollection();
   this->loadParameters = new CParameterCollection();
-  this->receiveDataTimeout = 0;
+
+  this->receiveDataTimeout = UDP_RECEIVE_DATA_TIMEOUT_DEFAULT;
   this->openConnetionMaximumAttempts = UDP_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT;
+  this->dumpInputPackets = DUMP_INPUT_PACKETS_DEFAULT;
 
   this->defaultBufferSize = 0;
   this->maxBufferSize = 0;
+
+  this->local = NULL;
+  this->source = NULL;
+  this->currentLocalAddr = NULL;
+  this->currentSourceAddr = NULL;
 
   this->logger.Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CONSTRUCTOR_NAME);
 }
