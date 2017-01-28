@@ -84,7 +84,8 @@ namespace MediaPortal.Configuration.Sections
         radioBtnBlankScreen.Checked = xmlreader.GetValueAsBool("general", "IdleBlanking", true);
         radioButtonLoadPlugin.Checked = xmlreader.GetValueAsBool("general", "IdlePlugin", false);
         windowid = xmlreader.GetValueAsInt("general", "IdlePluginWindow", 0);
-      }    
+      }
+      radioBtnFPSReduce.Checked = !radioBtnBlankScreen.Checked && !radioButtonLoadPlugin.Checked;
       pluginsComboBox.DataSource = loadedPlugins;
       pluginsComboBox.DisplayMember = "PluginName";
       pluginsComboBox.ValueMember = "PluginName";
