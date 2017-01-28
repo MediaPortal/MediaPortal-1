@@ -218,7 +218,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper
       {
         try
         {
-          notifierWindow = new NotifierWindow(OnDeviceInterfaceChange, OnPowerBroadcast);
+          notifierWindow = new NotifierWindow(InternalOnDeviceInterfaceChange, InternalOnPowerBroadcastDelegate);
         }
         catch (System.Exception ex)
         {
@@ -246,6 +246,24 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper
           notifierWindow.Dispose();
         }
         Thread.EndThreadAffinity();
+      }
+    }
+
+    private void InternalOnDeviceInterfaceChange(NativeMethods.DBT_MANAGEMENT_EVENT eventType, Guid classGuid, string devicePath)
+    {
+      var onDeviceInterfaceChangeSubscribers = OnDeviceInterfaceChange;
+      if (onDeviceInterfaceChangeSubscribers != null)
+      {
+        onDeviceInterfaceChangeSubscribers(eventType, classGuid, devicePath);
+      }
+    }
+
+    private void InternalOnPowerBroadcastDelegate(NativeMethods.PBT_MANAGEMENT_EVENT eventType)
+    {
+      var onPowerBroadcastSubscribers = OnPowerBroadcast;
+      if (onPowerBroadcastSubscribers != null)
+      {
+        onPowerBroadcastSubscribers(eventType);
       }
     }
   }

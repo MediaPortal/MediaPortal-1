@@ -54,17 +54,19 @@ namespace Mediaportal.TV.Server.SetupControls.UserInterfaceControls
 
     protected virtual void OnFormatError(EventArgs e)
     {
-      if (FormatError != null)
+      EventHandler handlers = FormatError;
+      if (handlers != null)
       {
-        FormatError(this, e);
+        handlers(this, e);
       }
     }
 
     protected virtual void OnFormatValid(EventArgs e)
     {
-      if (FormatValid != null)
+      EventHandler handlers = FormatValid;
+      if (handlers != null)
       {
-        FormatValid(this, e);
+        handlers(this, e);
       }
     }
 

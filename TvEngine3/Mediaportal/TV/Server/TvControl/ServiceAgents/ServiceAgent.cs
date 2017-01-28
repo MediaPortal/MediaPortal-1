@@ -14,7 +14,6 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
 
     protected ServiceAgent ()
     {
-      
     }
 
     protected ServiceAgent (string hostname)
@@ -22,7 +21,7 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
       if (!String.IsNullOrEmpty(hostname))
       {
         var binding = ServiceHelper.GetHttpBinding();
-        var endpoint = new EndpointAddress(ServiceHelper.GetEndpointURL(typeof (T), hostname));
+        var endpoint = new EndpointAddress(ServiceHelper.GetEndPointUrl(typeof (T), hostname));
 
         var channelFactory = new ChannelFactory<T>(binding, endpoint);
 
@@ -39,11 +38,11 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
         ((IClientChannel)_channel).Faulted += new EventHandler(ServiceAgent_Faulted);
         ((IClientChannel)_channel).Closed += new EventHandler(ServiceAgent_Closed);
       }
-    }    
+    }
 
     public virtual void Dispose()
     {
-      var clientChannel = _channel as IClientChannel;            
+      var clientChannel = _channel as IClientChannel;
       if (clientChannel == null)
       {
         return;
@@ -56,7 +55,7 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
       {
         if (clientChannel.State != CommunicationState.Faulted)
         {
-          // we need this timeout, otherwise the call to 'Close' will block until any ongoing parallel WCF calls are still active          
+          // we need this timeout, otherwise the call to 'Close' will block until any ongoing parallel WCF calls are still active
           // so instead of having to wait for the default timeout of 1min, we instead wait 1 sec, before giving up and instead calls 'Abort'
           var timeout = new TimeSpan(0,0,0,1); 
           clientChannel.Close(timeout);
@@ -76,7 +75,7 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
       }
       catch (Exception)
       {
-        clientChannel.Abort();        
+        clientChannel.Abort();
       }
       finally
       {
@@ -87,21 +86,21 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
 
     private void ServiceAgent_Closed(object sender, EventArgs e)
     {
-      if (ServiceAgentClosed != null)
+      var tempEventSubscribers = ServiceAgentClosed;
+      if (tempEventSubscribers != null)
       {
-        ServiceAgentClosed(sender, e);
+        tempEventSubscribers(sender, e);
       }
     }
 
     private void ServiceAgent_Faulted(object sender, EventArgs e)
     {
-      if (ServiceAgentFaulted != null)
+      var tempEventSubscribers = ServiceAgentFaulted;
+      if (tempEventSubscribers != null)
       {
-        ServiceAgentFaulted(sender, e);
+        tempEventSubscribers(sender, e);
       }
     }
     
   }
-
-  
 }

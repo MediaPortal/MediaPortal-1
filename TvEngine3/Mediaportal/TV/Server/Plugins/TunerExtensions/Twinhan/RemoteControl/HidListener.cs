@@ -295,7 +295,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan.RemoteControl
       {
         try
         {
-          _listenerWindow = new ListenerWindow(OnInput);
+          _listenerWindow = new ListenerWindow(InternalOnInputDelegate);
           try
           {
             _listenerWindow.CreateHandle(new CreateParams()
@@ -355,6 +355,15 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan.RemoteControl
           _listenerWindow.DestroyHandle();
         }
         Thread.EndThreadAffinity();
+      }
+    }
+
+    private void InternalOnInputDelegate(IntPtr input)
+    {
+      var onInputSubscribers = OnInput;
+      if (onInputSubscribers != null)
+      {
+        onInputSubscribers(input);
       }
     }
   }

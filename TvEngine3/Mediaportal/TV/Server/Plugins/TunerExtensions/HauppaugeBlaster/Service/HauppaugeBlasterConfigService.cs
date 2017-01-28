@@ -92,9 +92,10 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeBlaster.Service
     {
       SettingsManagement.SaveValue("hauppaugeBlasterTunerPort1", tunerExternalIdPort1);
       SettingsManagement.SaveValue("hauppaugeBlasterTunerPort2", tunerExternalIdPort2);
-      if (OnConfigChange != null)
+      var onConfigChangeSubscribers = OnConfigChange;
+      if (onConfigChangeSubscribers != null)
       {
-        OnConfigChange(tunerExternalIdPort1, tunerExternalIdPort2);
+        onConfigChangeSubscribers(tunerExternalIdPort1, tunerExternalIdPort2);
       }
     }
 

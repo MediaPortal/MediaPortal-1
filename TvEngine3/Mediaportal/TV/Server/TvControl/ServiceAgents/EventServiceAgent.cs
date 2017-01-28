@@ -10,9 +10,6 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
 {
   public class EventServiceAgent : ServiceAgent<IEventService>, IEventService, IServerEventCallback
   {
-
-
-
     #region events & delegates
 
     public delegate void HeartbeatRequestReceivedDelegate();
@@ -29,8 +26,8 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
 
     #endregion
 
-    private readonly DuplexChannelFactory<IEventService> _channelFactory;    
-    private static string _hostname;    
+    private readonly DuplexChannelFactory<IEventService> _channelFactory;
+    private static string _hostname;
 
     #region ctor's
     /// <summary>
@@ -40,9 +37,9 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
     {
       _hostname = hostname;
       NetTcpBinding binding = ServiceHelper.GetTcpBinding();
-      if (!String.IsNullOrWhiteSpace(_hostname))
+      if (!string.IsNullOrWhiteSpace(_hostname))
       {
-        var endpoint = new EndpointAddress(ServiceHelper.GetTcpEndpointURL(typeof(IEventService), _hostname));
+        var endpoint = new EndpointAddress(ServiceHelper.GetTcpEndPointUrl(typeof(IEventService), _hostname));
         var callbackInstance = new InstanceContext(this);
         _channelFactory = new DuplexChannelFactory<IEventService>(callbackInstance, binding, endpoint);
         _channel = _channelFactory.CreateChannel();
@@ -54,8 +51,8 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
         _channelFactory.Closed += new EventHandler(EventServiceAgent_Closed);
 
         ((IClientChannel)_channel).Faulted += new EventHandler(EventServiceAgent_Faulted);
-        ((IClientChannel)_channel).Closed += new EventHandler(EventServiceAgent_Closed);        
-      }      
+        ((IClientChannel)_channel).Closed += new EventHandler(EventServiceAgent_Closed);
+      }
     }
 
     #endregion
@@ -68,7 +65,7 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
        comm.Abort();
        comm.Close();
        Dispose();
-      }      
+      }
     }
 
     void EventServiceAgent_Faulted(object sender, EventArgs e)
@@ -79,14 +76,14 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
         comm.Abort();
         comm.Close();
         Dispose();
-      }    
+      }
     }
 
     private IEventService Channel
     {
       get
-      {        
-        return _channel;                         
+      {
+        return _channel;
       }
     }
 
@@ -96,7 +93,7 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
     {
       try
       {
-        Channel.Subscribe(username);                
+        Channel.Subscribe(username);
       }
       catch (CommunicationObjectFaultedException)
       {
@@ -133,15 +130,16 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
                                         {
                                           try
                                           {
-                                            if (OnTvServerEventReceived != null)
+                                            var tempEventSubscribers = OnTvServerEventReceived;
+                                            if (tempEventSubscribers != null)
                                             {
-                                              OnTvServerEventReceived(eventArgs);
+                                              tempEventSubscribers(eventArgs);
                                             } 
                                           }
                                           catch (Exception ex)
                                           {
                                             this.LogError("BeginOnCallbackTvServerEvent exception : {0}", ex);
-                                          }                
+                                          }
                                         };
       try
       {
@@ -150,7 +148,7 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
       catch (Exception)
       {
         return null;
-      }      
+      }
     }
 
     public void EndOnCallbackTvServerEvent(IAsyncResult result)
@@ -158,12 +156,12 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
       try
       {
         var act = (Action<TvServerEventArgs>)((System.Runtime.Remoting.Messaging.AsyncResult)result).AsyncDelegate;
-        act.EndInvoke(result);        
+        act.EndInvoke(result);
       }
       catch (Exception ex)
       {
         this.LogError("EndOnCallbackTvServerEvent exception : {0}", ex);
-      }              
+      }
     }
 
     public IAsyncResult BeginOnCallbackCiMenuEvent(CiMenu menu, AsyncCallback callback, object asyncState)
@@ -172,15 +170,16 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
       {
         try
         {
-          if (OnCiMenuCallbackReceived != null)
+          var tempEventSubscribers = OnCiMenuCallbackReceived;
+          if (tempEventSubscribers != null)
           {
-            OnCiMenuCallbackReceived(ciMenu);
+            tempEventSubscribers(ciMenu);
           }
         }
         catch (Exception ex)
         {
           this.LogError("BeginOnCallbackCiMenuEvent exception : {0}", ex);
-        }        
+        }
       };
       return act.BeginInvoke(menu, callback, asyncState); 
     }
@@ -195,23 +194,24 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
       catch (Exception ex)
       {
         this.LogError("EndOnCallbackCiMenuEvent exception : {0}", ex);
-      }        
+      }
     }
 
     public IAsyncResult BeginOnCallbackHeartBeatEvent(AsyncCallback callback, object asyncState)
     {
       Action act = () =>
       {
-        if (OnHeartbeatRequestReceived != null)
+        var tempEventSubscribers = OnHeartbeatRequestReceived;
+        if (tempEventSubscribers != null)
         {
           try
           {
-            OnHeartbeatRequestReceived();
+            tempEventSubscribers();
           }
           catch (Exception ex)
           {
             this.LogError("BeginOnCallbackHeartBeatEvent exception : {0}", ex);
-          }          
+          }
         }
       };
       return act.BeginInvoke(callback, asyncState); 
@@ -227,10 +227,10 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
       catch (Exception ex)
       {
         this.LogError("EndOnCallbackHeartBeatEvent exception : {0}", ex);
-      }                
+      }
     }
 
-    #endregion    
+    #endregion
 
     public override void Dispose ()
     {
@@ -241,5 +241,4 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
       }
     }
   }
-
 }

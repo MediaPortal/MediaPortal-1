@@ -6,8 +6,6 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
 {
   public class ServerMonitor
   {
-    
-
     #region events & delegates
 
     public delegate void ServerDisconnectedDelegate();
@@ -88,17 +86,19 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
         finally
         {
           if (!_isConnected && isconnected)
-          {            
-            if (OnServerConnected != null)
+          {
+            var tempEventSubscribers = OnServerConnected;
+            if (tempEventSubscribers != null)
             {
-              OnServerConnected();
+              tempEventSubscribers();
             }
           }
           else if (_isConnected && !isconnected)
-          {            
-            if (OnServerDisconnected != null)
+          {
+            var tempEventSubscribers = OnServerDisconnected;
+            if (tempEventSubscribers != null)
             {
-              OnServerDisconnected();
+              tempEventSubscribers();
             }
           }
           _isConnected = isconnected;

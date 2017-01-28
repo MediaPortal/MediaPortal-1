@@ -58,9 +58,10 @@ namespace Mediaportal.TV.Server.SetupControls
 
     protected virtual void OnServerConfigurationChanged(object sender, bool reloadConfigController, HashSet<int> reloadConfigTuners)
     {
-      if (_onServerConfigurationChanged != null)
+      ServerConfigurationChangedEventHandler onServerConfigChangedSubscribers = _onServerConfigurationChanged;
+      if (onServerConfigChangedSubscribers != null)
       {
-        _onServerConfigurationChanged(sender, reloadConfigController, reloadConfigTuners);
+        onServerConfigChangedSubscribers(sender, reloadConfigController, reloadConfigTuners);
       }
     }
 

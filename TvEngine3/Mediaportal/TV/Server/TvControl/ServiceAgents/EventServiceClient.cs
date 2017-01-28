@@ -11,7 +11,6 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
 {
   public class EventServiceClient : IEventServiceAgent
   {
-  
     #region events & delegates
 
     private delegate void HeartbeatRequestReceivedDelegate();
@@ -29,10 +28,10 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
     private EventServiceAgent _eventServiceAgent;
 
     public EventServiceClient(string hostname)
-    {      
-      _hostname = hostname;      
+    {
+      _hostname = hostname;
     }
-    
+
     private EventServiceAgent EventServiceAgent
     {
       get
@@ -43,18 +42,13 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
           RegisterEventServiceIfNeeded();
           RegisterUserForServerEvents();
         }
-        return _eventServiceAgent;        
+        return _eventServiceAgent;
       }
     }
 
     private void CreateEventService()
     {
       _eventServiceAgent = new EventServiceAgent(_hostname);
-      AddEventHandlers();
-    }
-
-    private void AddEventHandlers()
-    {
       _eventServiceAgent.OnCiMenuCallbackReceived += _eventServiceAgent_OnCiMenuCallbackReceived;
       _eventServiceAgent.OnHeartbeatRequestReceived += _eventServiceAgent_OnHeartbeatRequestReceived;
       _eventServiceAgent.OnTvServerEventReceived += _eventServiceAgent_OnTvServerEventReceived;
@@ -65,7 +59,10 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
 
     private void _eventServiceAgent_OnConnectionLost()
     {
-      RemoveEventHandlers();
+      _eventServiceAgent.OnCiMenuCallbackReceived -= _eventServiceAgent_OnCiMenuCallbackReceived;
+      _eventServiceAgent.OnHeartbeatRequestReceived -= _eventServiceAgent_OnHeartbeatRequestReceived;
+      _eventServiceAgent.OnTvServerEventReceived -= _eventServiceAgent_OnTvServerEventReceived;
+      _eventServiceAgent.OnConnectionLost -= _eventServiceAgent_OnConnectionLost;
       _eventServiceAgent = null;
       if (!_serverDown)
       {
@@ -73,35 +70,30 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
       }
     }
 
-    private void RemoveEventHandlers()
-    {
-      _eventServiceAgent.OnCiMenuCallbackReceived -= _eventServiceAgent_OnCiMenuCallbackReceived;
-      _eventServiceAgent.OnHeartbeatRequestReceived -= _eventServiceAgent_OnHeartbeatRequestReceived;
-      _eventServiceAgent.OnTvServerEventReceived -= _eventServiceAgent_OnTvServerEventReceived;
-      _eventServiceAgent.OnConnectionLost -= _eventServiceAgent_OnConnectionLost;
-    }
-
     private void _eventServiceAgent_OnTvServerEventReceived(TvServerEventArgs eventArgs)
     {
-      if (OnTvServerEventReceived != null)
+      var tempEventSubscribers = OnTvServerEventReceived;
+      if (tempEventSubscribers != null)
       {
-        OnTvServerEventReceived(eventArgs);
+        tempEventSubscribers(eventArgs);
       }
     }
 
     private void _eventServiceAgent_OnHeartbeatRequestReceived()
     {
-      if (OnHeartbeatRequestReceived != null)
+      var tempEventSubscribers = OnHeartbeatRequestReceived;
+      if (tempEventSubscribers != null)
       {
-        OnHeartbeatRequestReceived();
+        tempEventSubscribers();
       }
     }
 
     private void _eventServiceAgent_OnCiMenuCallbackReceived(CiMenu menu)
     {
-      if (OnCiMenuCallbackReceived != null)
+      var tempEventSubscribers = OnCiMenuCallbackReceived;
+      if (tempEventSubscribers != null)
       {
-        OnCiMenuCallbackReceived(menu);
+        tempEventSubscribers(menu);
       }
     }
 
@@ -140,12 +132,12 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
       if (_eventServiceAgent != null)
       {
         _eventServiceAgent.Dispose();
-      }      
+      }
     }
 
     #region register/unregister callback events
 
-    private int _isRunningRegisterCiMenuCallbacks;    
+    private int _isRunningRegisterCiMenuCallbacks;
     public void RegisterCiMenuCallbacks(ICiMenuEventCallback handler)
     {
       if (Interlocked.Exchange(ref _isRunningRegisterCiMenuCallbacks, 1) == 1)
@@ -312,7 +304,6 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
     }
     #endregion
 
-
     private bool AreAnyEventHandlersInUse()
     {
       return (OnCiMenuCallbackReceived != null ||
@@ -330,21 +321,19 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
 
     private void UnRegisterEventServiceIfNeeded()
     {
-      if (OnCiMenuCallbackReceived == null && OnHeartbeatRequestReceived == null && OnTvServerEventReceived == null)
+      if (!AreAnyEventHandlersInUse())
       {
-        //if (IsConnectionReady ())
+        //if (IsConnectionReady())
         if (_eventServiceAgent != null)
         {
           EventServiceAgent.Unsubscribe(_hostname); 
-        }        
+        }
       }
     }
 
     private static bool IsConnectionReady(ICommunicationObject callback)
     {
-      bool connectionReady = callback != null && (callback.State == CommunicationState.Opened);
-      return connectionReady;
+      return callback != null && callback.State == CommunicationState.Opened;
     }
-
   }
 }

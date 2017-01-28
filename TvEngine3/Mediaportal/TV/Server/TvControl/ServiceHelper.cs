@@ -6,48 +6,33 @@ namespace Mediaportal.TV.Server.TVControl
 {
   public static class ServiceHelper
   {
-    public const int PortHttpService = 8000;
-    public const int PortTcpService = 8001;
-    private const int ReaderQuotasMaxDepth = Int32.MaxValue;
-    private const int ReaderQuotasMaxStringContentLength = Int32.MaxValue;
-    private const int ReaderQuotasMaxArrayLength = Int32.MaxValue;
-    private const int ReaderQuotasMaxBytesPerRead = Int32.MaxValue;
-    private const int ReaderQuotasMaxNameTableCharCount = Int32.MaxValue;
-    private const int MaxBufferSize = Int32.MaxValue;
-    private const int MaxReceivedMessageSize = Int32.MaxValue;
-    private const string Tvservice = "/TVService/";
-    private const BasicHttpSecurityMode HttpSecurityMode = BasicHttpSecurityMode.None;
-    private const string NetTcpBindingName = "netTcpBinding";
-    private const string DefaultBasicHttpBindingName = "defaultBasicHttpBinding";
+    public const int PORT_HTTP_SERVICE = 8000;
 
-    private static readonly TimeSpan TcpReceiveTimeout = new TimeSpan(0, 0, 0, 3600);
-    private static readonly TimeSpan TcpSendTimeout = new TimeSpan(0, 0, 0, 3600);
-    private static readonly TimeSpan TcpCloseTimeout = new TimeSpan(0, 0, 0, 3600);
-    private static readonly TimeSpan TcpOpenTimeout = new TimeSpan(0, 0, 0, 3600);
-    private static readonly TimeSpan TcpInactivityTimeout = new TimeSpan(0, 0, 0, 3600);
+    // TODO Is the fact that this is a constant going to prevent multiple
+    // clients running simultaneously on a single system?
+    public const int PORT_TCP_SERVICE = 8001;
 
-    private static readonly TimeSpan HttpReceiveTimeout = new TimeSpan(0, 0, 0, 3600);
-    private static readonly TimeSpan HttpSendTimeout = new TimeSpan(0, 0, 0, 3600);
-    private static readonly TimeSpan HttpCloseTimeout = new TimeSpan(0, 0, 0, 3600);
-    private static readonly TimeSpan HttpOpenTimeout = new TimeSpan(0, 0, 0, 3600);
-    private static readonly TimeSpan HttpInactivityTimeout = new TimeSpan(0, 0, 0, 3600);
+    private const int MAX_BUFFER_SIZE = Int32.MaxValue;
+    private const int MAX_RECEIVED_MESSAGE_SIZE = Int32.MaxValue;
+    private const string SERVICE_NAME = "/TvService/";
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <returns></returns>
+    // If necessary we can have different time-out periods for HTTP, TCP,
+    // send, receive, open, close and inactivity. For now use the same period
+    // for all.
+    private static readonly TimeSpan TIME_OUT = new TimeSpan(0, 60, 0);
+
     public static NetTcpBinding GetTcpBinding()
     {
       var netTcpBinding = new NetTcpBinding
       {
-        Name = NetTcpBindingName,
-        MaxBufferSize = MaxBufferSize,
-        MaxReceivedMessageSize = MaxReceivedMessageSize,
-        ReceiveTimeout = TcpReceiveTimeout,
-        SendTimeout = TcpSendTimeout,
+        Name = "netTcpBinding",
+        MaxBufferSize = MAX_BUFFER_SIZE,
+        MaxReceivedMessageSize = MAX_RECEIVED_MESSAGE_SIZE,
+        ReceiveTimeout = TIME_OUT,
+        SendTimeout = TIME_OUT,
         //TransactionFlow = false,
-        CloseTimeout = TcpCloseTimeout,
-        OpenTimeout = TcpOpenTimeout
+        CloseTimeout = TIME_OUT,
+        OpenTimeout = TIME_OUT
       };
 
       /*netTcpBinding.ReliableSession.Enabled = true;
@@ -62,14 +47,14 @@ namespace Mediaportal.TV.Server.TVControl
     {
       var basicHttpBinding = new BasicHttpBinding
       {
-        Name = DefaultBasicHttpBindingName,
-        MaxBufferSize = MaxBufferSize,
-        MaxReceivedMessageSize = MaxReceivedMessageSize,
-        ReceiveTimeout = HttpReceiveTimeout,
-        SendTimeout = HttpSendTimeout,
+        Name = "defaultBasicHttpBinding",
+        MaxBufferSize = MAX_BUFFER_SIZE,
+        MaxReceivedMessageSize = MAX_RECEIVED_MESSAGE_SIZE,
+        ReceiveTimeout = TIME_OUT,
+        SendTimeout = TIME_OUT,
         Security =
           {
-            Mode = HttpSecurityMode,
+            Mode = BasicHttpSecurityMode.None,
             Transport = { ClientCredentialType = HttpClientCredentialType.None }
           }
       };
@@ -79,26 +64,26 @@ namespace Mediaportal.TV.Server.TVControl
 
     private static void SetReaderQuotas(XmlDictionaryReaderQuotas readerQuotas)
     {
-      readerQuotas.MaxDepth = ReaderQuotasMaxDepth;
-      readerQuotas.MaxStringContentLength = ReaderQuotasMaxStringContentLength;
-      readerQuotas.MaxArrayLength = ReaderQuotasMaxArrayLength;
-      readerQuotas.MaxBytesPerRead = ReaderQuotasMaxBytesPerRead;
-      readerQuotas.MaxNameTableCharCount = ReaderQuotasMaxNameTableCharCount;
+      readerQuotas.MaxDepth = Int32.MaxValue;
+      readerQuotas.MaxStringContentLength = Int32.MaxValue;
+      readerQuotas.MaxArrayLength = Int32.MaxValue;
+      readerQuotas.MaxBytesPerRead = Int32.MaxValue;
+      readerQuotas.MaxNameTableCharCount = Int32.MaxValue;
     }
 
-    public static string GetEndpointRootURL()
+    public static string GetEndPointRootUrl()
     {
-      return @"http://+:" + PortHttpService + Tvservice;
+      return @"http://+:" + PORT_HTTP_SERVICE + SERVICE_NAME;
     }
 
-    public static string GetEndpointURL(Type type, string hostName)
+    public static string GetEndPointUrl(Type type, string hostName)
     {
-      return @"http://" + hostName + ":" + PortHttpService + Tvservice + type.Name;
+      return @"http://" + hostName + ":" + PORT_HTTP_SERVICE + SERVICE_NAME + type.Name;
     }
 
-    public static string GetTcpEndpointURL(Type type, string hostName)
+    public static string GetTcpEndPointUrl(Type type, string hostName)
     {
-      return @"net.tcp://" + hostName + ":" + PortTcpService + Tvservice + type.Name;
+      return @"net.tcp://" + hostName + ":" + PORT_TCP_SERVICE + SERVICE_NAME + type.Name;
     }
   }
 }

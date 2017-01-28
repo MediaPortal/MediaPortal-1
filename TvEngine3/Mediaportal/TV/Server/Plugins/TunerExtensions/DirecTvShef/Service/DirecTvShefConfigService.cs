@@ -41,9 +41,10 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DirecTvShef.Service
       foreach (TunerSetTopBoxConfig c in config)
       {
         c.Save();
-        if (OnConfigChange != null)
+        var onConfigChangeSubscribers = OnConfigChange;
+        if (onConfigChangeSubscribers != null)
         {
-          OnConfigChange(c);
+          onConfigChangeSubscribers(c);
         }
       }
     }

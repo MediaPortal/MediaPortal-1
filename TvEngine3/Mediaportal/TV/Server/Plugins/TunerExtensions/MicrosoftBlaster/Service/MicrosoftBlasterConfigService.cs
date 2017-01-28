@@ -132,9 +132,10 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster.Service
       {
         c.Save();
       }
-      if (OnConfigChange != null)
+      var onConfigChangeSubscribers = OnConfigChange;
+      if (onConfigChangeSubscribers != null)
       {
-        OnConfigChange();
+        onConfigChangeSubscribers();
       }
     }
 

@@ -320,7 +320,7 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
       if (!String.IsNullOrEmpty(_hostname))
       {
         var binding = ServiceHelper.GetHttpBinding();
-        var endpoint = new EndpointAddress(ServiceHelper.GetEndpointURL(typeof(I), _hostname));
+        var endpoint = new EndpointAddress(ServiceHelper.GetEndPointUrl(typeof(I), _hostname));
 
         var channelFactory = new ChannelFactory<I>(binding, endpoint);
 

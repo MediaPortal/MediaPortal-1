@@ -114,9 +114,10 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.UsbUirt.Service
       {
         c.Save();
       }
-      if (OnConfigChange != null)
+      var onConfigChangeSubscribers = OnConfigChange;
+      if (onConfigChangeSubscribers != null)
       {
-        OnConfigChange();
+        onConfigChangeSubscribers();
       }
     }
 
