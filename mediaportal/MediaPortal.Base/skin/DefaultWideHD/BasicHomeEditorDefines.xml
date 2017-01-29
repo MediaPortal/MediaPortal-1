@@ -438,6 +438,18 @@
   <define property="true" evaluateNow="true">#VIDEO8.active:#(iif(or(eq(#VIDEO8.plugin,''),plugin.isenabled(#VIDEO8.plugin)),' ',''))</define>
   <define property="true" evaluateNow="true">#VIDEO8:#(string.format('{0}{1}',#VIDEO8.name,iif(eq(#VIDEO8.active,' '),'',#PLUGERROR)))</define>
   
+  <!-- SkyGoDE -->
+  <define property="true" evaluateNow="true">#VIDEO9.name:SkyGo DE</define>
+  <define property="true" evaluateNow="true">#VIDEO9.plugin:Skygo.de</define>
+  <define property="true" evaluateNow="true">#VIDEO9.hyperlink:14755</define>
+  <define property="true" evaluateNow="true">#VIDEO9.parameter:</define>
+  <define property="true" evaluateNow="true">#VIDEO9.hover:hover_SkyGoDe.png</define>
+  <define property="true" evaluateNow="true">#VIDEO9.background:Animations\BasicHome\videos.jpg</define>
+  <define property="true" evaluateNow="true">#VIDEO9.iconfocus:tb_video.png</define>
+  <define property="true" evaluateNow="true">#VIDEO9.iconnofocus:tb_videoNF.png</define>
+  <define property="true" evaluateNow="true">#VIDEO9.active:#(iif(or(eq(#VIDEO9.plugin,''),plugin.isenabled(#VIDEO9.plugin)),' ',''))</define>
+  <define property="true" evaluateNow="true">#VIDEO9:#(string.format('{0}{1}',#VIDEO9.name,iif(eq(#VIDEO9.active,' '),'',#PLUGERROR)))</define>
+  
   <!--     *******************************************************************************************  -->
   <!--     **************************************    AUDIO ITEMS   ***********************************  -->
   <!--     *******************************************************************************************  -->
