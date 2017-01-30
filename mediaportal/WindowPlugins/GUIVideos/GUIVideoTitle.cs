@@ -1786,31 +1786,31 @@ namespace MediaPortal.GUI.Video
         {
           FilterDefinition defCurrent = (FilterDefinition) handler.View.Filters[handler.CurrentLevel - 1];
           string selectedValue = defCurrent.SelectedValue;
+          string _strView = defCurrent.Where.ToLowerInvariant();
           Int32 iSelectedValue;
           
           if (Int32.TryParse(selectedValue, out iSelectedValue))
           {
-            if (strView == "actor" || strView == "director")
+            if (_strView == "actor" || _strView == "director")
             {
               selectedValue = VideoDatabase.GetActorNameById(iSelectedValue);
             }
 
-            if (strView == "genre")
+            if (_strView == "genre")
             {
               selectedValue = VideoDatabase.GetGenreById(iSelectedValue);
             }
 
-            if (strView == "user groups" || strView == "user groups only")
+            if (_strView == "user groups" || _strView == "user groups only")
             {
               selectedValue = VideoDatabase.GetUserGroupById(iSelectedValue);
             }
 
-            if (strView == "movie collections" || strView == "movie collections only")
+            if (_strView == "movie collections" || _strView == "movie collections only")
             {
               selectedValue = VideoDatabase.GetCollectionById(iSelectedValue);
             }
           }
-
           GUIPropertyManager.SetProperty("#currentmodule",
                                          String.Format("{0}/{1} - {2}", GUILocalizeStrings.Get(100006),
                                                        handler.LocalizedCurrentView, selectedValue));
