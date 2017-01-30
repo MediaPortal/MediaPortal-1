@@ -1816,6 +1816,14 @@ namespace MediaPortal.Player
       }
     }
 
+    public override void OnZapping(int info)
+    {
+      // Reset the audio stream selection. After successful channel change, TsReader
+      // will prompt for preferred audio stream selection if there are two or more
+      // streams to select between.
+      _curAudioStream = 0;
+    }
+
     /// <summary> create the used COM components and get the interfaces. </summary>
     protected virtual bool GetInterfaces(string filename) { return true; }
 
