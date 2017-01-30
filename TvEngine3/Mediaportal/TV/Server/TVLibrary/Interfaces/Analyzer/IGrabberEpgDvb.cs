@@ -45,18 +45,20 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     /// The grabber is stopped if all supported protocols are disabled.
     /// </remarks>
     /// <param name="grabDvbEit"><c>True</c> to enable DVB EIT grabbing.</param>
-    /// <param name="grabBellExpressVu"><c>True</c> to enable Bell ExpressVu (satellite, Canada) grabbing.</param>
+    /// <param name="grabBellTv"><c>True</c> to enable Bell TV (satellite, Canada) grabbing.</param>
     /// <param name="grabDish"><c>True</c> to enable Dish (satellite, USA) grabbing.</param>
     /// <param name="grabFreesat"><c>True</c> to enable Freesat (satellite, UK) grabbing.</param>
     /// <param name="grabMultiChoice"><c>True</c> to enable MultiChoice (satellite, South Africa) grabbing.</param>
+    /// <param name="grabOrbitShowtimeNetwork"><c>True</c> to enable Orbit Showtime Network (satellite, Middle East and North Africa).</param>
     /// <param name="grabPremiere"><c>True</c> to enable Premiere (satellite/cable, Sky Germany) grabbing.</param>
     /// <param name="grabViasatSweden"><c>True</c> to enable Viasat Sweden (satellite, Sweden) grabbing.</param>
     [PreserveSig]
     void SetProtocols([MarshalAs(UnmanagedType.I1)] bool grabDvbEit,
-                      [MarshalAs(UnmanagedType.I1)] bool grabBellExpressVu,
+                      [MarshalAs(UnmanagedType.I1)] bool grabBellTv,
                       [MarshalAs(UnmanagedType.I1)] bool grabDish,
                       [MarshalAs(UnmanagedType.I1)] bool grabFreesat,
                       [MarshalAs(UnmanagedType.I1)] bool grabMultiChoice,
+                      [MarshalAs(UnmanagedType.I1)] bool grabOrbitShowtimeNetwork,
                       [MarshalAs(UnmanagedType.I1)] bool grabPremiere,
                       [MarshalAs(UnmanagedType.I1)] bool grabViasatSweden);
 

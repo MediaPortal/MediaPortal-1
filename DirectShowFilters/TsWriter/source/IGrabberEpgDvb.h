@@ -35,10 +35,11 @@ DECLARE_INTERFACE_(IGrabberEpgDvb, IGrabber)
 
   // IGrabberEpgEit
   STDMETHOD_(void, SetProtocols)(THIS_ bool grabDvbEit,
-                                  bool grabBellExpressVu,
+                                  bool grabBellTv,
                                   bool grabDish,
                                   bool grabFreesat,
                                   bool grabMultiChoice,
+                                  bool grabOrbitShowtimeNetwork,
                                   bool grabPremiere,
                                   bool grabViasatSweden)PURE;
 

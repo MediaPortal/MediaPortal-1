@@ -51,6 +51,12 @@
 #define ORIGINAL_NETWORK_ID_DISH_START          0x1001
 #define ORIGINAL_NETWORK_ID_DISH_END            0x100b
 
+#define ORIGINAL_NETWORK_ID_OSN_1               0x2c
+#define ORIGINAL_NETWORK_ID_OSN_2               0x6e
+#define ORIGINAL_NETWORK_ID_OSN_3               0x77e   // registered/official: Eutelsat 7W
+#define ORIGINAL_NETWORK_ID_OSN_4               0x800   // registered/official: Nilesat 101
+#define ORIGINAL_NETWORK_ID_OSN_5               0x5000
+
 
 extern void LogDebug(const wchar_t* fmt, ...);
 
@@ -245,16 +251,17 @@ void CParserEitDvb::SetFreesatPids(unsigned short pidBat,
 }
 
 STDMETHODIMP_(void) CParserEitDvb::SetProtocols(bool grabDvbEit,
-                                                bool grabBellExpressVu,
+                                                bool grabBellTv,
                                                 bool grabDish,
                                                 bool grabFreesat,
                                                 bool grabMultiChoice,
+                                                bool grabOrbitShowtimeNetwork,
                                                 bool grabPremiere,
                                                 bool grabViasatSweden)
 {
-  LogDebug(L"EIT DVB: set protocols, DVB EIT = %d, Bell ExpressVu = %d, Dish = %d, Freesat = %d, MultiChoice = %d, Premiere = %d, Viasat Sweden = %d",
-            grabDvbEit, grabBellExpressVu, grabDish, grabFreesat,
-            grabMultiChoice, grabPremiere, grabViasatSweden);
+  LogDebug(L"EIT DVB: set protocols, DVB EIT = %d, Bell TV = %d, Dish = %d, Freesat = %d, MultiChoice = %d, OSN = %d, Premiere = %d, Viasat = %d",
+            grabDvbEit, grabBellTv, grabDish, grabFreesat, grabMultiChoice,
+            grabOrbitShowtimeNetwork, grabPremiere, grabViasatSweden);
   CEnterCriticalSection lock(m_section);
 
   vector<unsigned short> pidsAdd;
@@ -266,9 +273,10 @@ STDMETHODIMP_(void) CParserEitDvb::SetProtocols(bool grabDvbEit,
   bool currentlyRequireSiPids = false;
   if (
     m_grabPids[PID_EIT_DVB] ||
-    m_grabPids[PID_EIT_BELL_EXPRESSVU] ||
+    m_grabPids[PID_EIT_BELL_TV] ||
     m_grabPids[PID_EIT_DISH] ||
     m_grabPids[PID_EIT_MULTICHOICE] ||
+    m_grabPids[PID_EIT_ORBIT_SHOWTIME_NETWORK] ||
     m_grabPids[PID_EIT_PREMIERE_DIREKT] ||
     m_grabPids[PID_EIT_PREMIERE_SELECT] ||
     m_grabPids[PID_EIT_PREMIERE_SPORT] ||
@@ -280,9 +288,10 @@ STDMETHODIMP_(void) CParserEitDvb::SetProtocols(bool grabDvbEit,
   bool requireSiPids = false;
   if (
     grabDvbEit ||
-    grabBellExpressVu ||
+    grabBellTv ||
     grabDish ||
     grabMultiChoice ||
+    grabOrbitShowtimeNetwork ||
     grabPremiere ||
     grabViasatSweden
   )
@@ -317,17 +326,17 @@ STDMETHODIMP_(void) CParserEitDvb::SetProtocols(bool grabDvbEit,
     }
     m_grabPids[PID_EIT_DVB] = grabDvbEit;
   }
-  if (grabBellExpressVu != m_grabPids[PID_EIT_BELL_EXPRESSVU])
+  if (grabBellTv != m_grabPids[PID_EIT_BELL_TV])
   {
-    if (grabBellExpressVu)
+    if (grabBellTv)
     {
-      pidsAdd.push_back(PID_EIT_BELL_EXPRESSVU);
+      pidsAdd.push_back(PID_EIT_BELL_TV);
     }
     else
     {
-      pidsRemove.push_back(PID_EIT_BELL_EXPRESSVU);
+      pidsRemove.push_back(PID_EIT_BELL_TV);
     }
-    m_grabPids[PID_EIT_BELL_EXPRESSVU] = grabBellExpressVu;
+    m_grabPids[PID_EIT_BELL_TV] = grabBellTv;
   }
   if (grabDish != m_grabPids[PID_EIT_DISH])
   {
@@ -352,6 +361,18 @@ STDMETHODIMP_(void) CParserEitDvb::SetProtocols(bool grabDvbEit,
       pidsRemove.push_back(PID_EIT_MULTICHOICE);
     }
     m_grabPids[PID_EIT_MULTICHOICE] = grabMultiChoice;
+  }
+  if (grabOrbitShowtimeNetwork != m_grabPids[PID_EIT_ORBIT_SHOWTIME_NETWORK])
+  {
+    if (grabOrbitShowtimeNetwork)
+    {
+      pidsAdd.push_back(PID_EIT_ORBIT_SHOWTIME_NETWORK);
+    }
+    else
+    {
+      pidsRemove.push_back(PID_EIT_ORBIT_SHOWTIME_NETWORK);
+    }
+    m_grabPids[PID_EIT_ORBIT_SHOWTIME_NETWORK] = grabOrbitShowtimeNetwork;
   }
   if (grabPremiere != m_grabPids[PID_EIT_PREMIERE_DIREKT])
   {
@@ -1242,56 +1263,69 @@ void CParserEitDvb::OnNewSection(int pid, int tableId, CSection& section)
     }
 
     bool isPremiereTable = false;
-    switch (pid)
+    unsigned short originalNetworkId = 0;
+    if (
+      pid == PID_EIT_PREMIERE_DIREKT ||
+      pid == PID_EIT_PREMIERE_SELECT ||
+      pid == PID_EIT_PREMIERE_SPORT
+    )
     {
-      case PID_EIT_DVB:
-      case PID_EIT_VIASAT_SWEDEN:
-      case PID_EIT_MULTICHOICE:
-        if (
-          (m_grabFreesat && (m_freesatPidEitPf > 0 || m_freesatPidEitSchedule > 0)) ||
-          tableId < TABLE_ID_EIT_DVB_START || tableId > TABLE_ID_EIT_DVB_END
-        )
-        {
-          return;
-        }
-        break;
-      case PID_EIT_DISH:
+      if (tableId != TABLE_ID_EIT_PREMIERE)
       {
-        if (section.section_length < 12)
-        {
-          return;
-        }
-        unsigned short tempOriginalNetworkId = (section.Data[10] << 8) | section.Data[11];
-        if (
-          tempOriginalNetworkId < ORIGINAL_NETWORK_ID_DISH_START ||
-          tempOriginalNetworkId > ORIGINAL_NETWORK_ID_DISH_END
-        )
-        {
-          return;
-        }
+        return;
       }
-      case PID_EIT_BELL_EXPRESSVU:
-        if (tableId < TABLE_ID_EIT_DISH_START || tableId > TABLE_ID_EIT_DISH_END)
-        {
-          return;
-        }
-        break;
-      case PID_EIT_PREMIERE_DIREKT:
-      case PID_EIT_PREMIERE_SELECT:
-      case PID_EIT_PREMIERE_SPORT:
-        if (tableId != TABLE_ID_EIT_PREMIERE)
-        {
-          return;
-        }
-        isPremiereTable = true;
-        break;
-      default:
-        // Freesat
-        if (tableId < TABLE_ID_EIT_DVB_START || tableId > TABLE_ID_EIT_DVB_END)
-        {
-          return;
-        }
-        break;
+      isPremiereTable = true;
+    }
+    else if (section.section_length < 12)
+    {
+      return;
+    }
+    else
+    {
+      originalNetworkId = (section.Data[10] << 8) | section.Data[11];
+      if (
+        (
+          (pid == PID_EIT_BELL_TV || pid == PID_EIT_DISH) &&
+          (
+            tableId < TABLE_ID_EIT_DISH_START ||
+            tableId > TABLE_ID_EIT_DISH_END ||
+            (
+              pid == PID_EIT_DISH &&
+              (
+                originalNetworkId < ORIGINAL_NETWORK_ID_DISH_START ||
+                originalNetworkId > ORIGINAL_NETWORK_ID_DISH_END
+              )
+            )
+            // TODO Add an ONID filter for Bell TV. Bell TV ONID(s) currently unknown.
+          )
+        ) ||
+        (
+          pid != PID_EIT_BELL_TV &&
+          pid != PID_EIT_DISH &&
+          (
+            tableId < TABLE_ID_EIT_DVB_START ||
+            tableId > TABLE_ID_EIT_DVB_END ||
+            (
+              pid == PID_EIT_ORBIT_SHOWTIME_NETWORK &&
+              originalNetworkId != ORIGINAL_NETWORK_ID_OSN_1 &&
+              originalNetworkId != ORIGINAL_NETWORK_ID_OSN_2 &&
+              originalNetworkId != ORIGINAL_NETWORK_ID_OSN_3 &&
+              originalNetworkId != ORIGINAL_NETWORK_ID_OSN_4 &&
+              originalNetworkId != ORIGINAL_NETWORK_ID_OSN_5
+            ) ||
+            // Throw away DVB (Sky) data if Freesat grabbing is enabled and Freesat data is seen/expected.
+            (
+              pid == PID_EIT_DVB &&
+              m_grabFreesat &&
+              (m_freesatPidEitPf > 0 || m_freesatPidEitSchedule > 0)
+            )
+            // TODO Add an ONID filter for MultiChoice and Viasat. ONID(s) currently unknown.
+          )
+        )
+      )
+      {
+        return;
+      }
     }
 
     if (
@@ -1308,13 +1342,11 @@ void CParserEitDvb::OnNewSection(int pid, int tableId, CSection& section)
     unsigned char* data = section.Data;
     unsigned short serviceId = section.table_id_extension;
     unsigned short transportStreamId = 0;
-    unsigned short originalNetworkId = 0;
     unsigned char segmentLastSectionNumber = 0;
     unsigned char lastTableId = 0;
     if (!isPremiereTable)
     {
       transportStreamId = (data[8] << 8) | data[9];
-      originalNetworkId = (data[10] << 8) | data[11];
       segmentLastSectionNumber = data[12];
       lastTableId = data[13];
     }
@@ -1604,7 +1636,7 @@ void CParserEitDvb::OnNewSection(int pid, int tableId, CSection& section)
     bool isDishOrBellData = false;
     if (
       pid == PID_EIT_DISH ||
-      pid == PID_EIT_BELL_EXPRESSVU ||
+      pid == PID_EIT_BELL_TV ||
       (originalNetworkId >= ORIGINAL_NETWORK_ID_DISH_START && originalNetworkId <= ORIGINAL_NETWORK_ID_DISH_END)
     )
     {
@@ -1733,10 +1765,11 @@ void CParserEitDvb::PrivateReset(bool removeFreesatDecoders)
   AddOrResetDecoder(PID_EIT_VIASAT_SWEDEN, m_enableCrcCheck);
   AddOrResetDecoder(PID_EIT_DISH, m_enableCrcCheck);
   AddOrResetDecoder(PID_EIT_MULTICHOICE, m_enableCrcCheck);
-  AddOrResetDecoder(PID_EIT_BELL_EXPRESSVU, m_enableCrcCheck);
+  AddOrResetDecoder(PID_EIT_BELL_TV, m_enableCrcCheck);
   AddOrResetDecoder(PID_EIT_PREMIERE_DIREKT, m_enableCrcCheck);
   AddOrResetDecoder(PID_EIT_PREMIERE_SELECT, m_enableCrcCheck);
   AddOrResetDecoder(PID_EIT_PREMIERE_SPORT, m_enableCrcCheck);
+  AddOrResetDecoder(PID_EIT_ORBIT_SHOWTIME_NETWORK, m_enableCrcCheck);
   if (removeFreesatDecoders)
   {
     ResetFreesatGrabState();

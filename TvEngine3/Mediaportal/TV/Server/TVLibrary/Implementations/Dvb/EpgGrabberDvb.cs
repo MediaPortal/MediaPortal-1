@@ -1893,7 +1893,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
       byte level1Id = (byte)(contentTypeId >> 12);
       if (level1Id == 0xf)  // user defined
       {
-        // Echostar Communications (Dish, Bell ExpressVu) - refer to http://www.dvbservices.com/identifiers/original_network_id&tab=table
+        // Echostar Communications (Dish, Bell TV) - refer to http://www.dvbservices.com/identifiers/original_network_id&tab=table
         if (
           (originalNetworkId >= 0x1001 && originalNetworkId <= 0x100b) ||
           (originalNetworkId >= 0x1700 && originalNetworkId <= 0x1713)
@@ -2454,41 +2454,89 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
       string countryName = RegionInfo.CurrentRegion.EnglishName;
       if (countryName != null)
       {
-        if (countryName.Equals("Australia"))
+        if (countryName.Equals("Algeria"))
         {
-          protocols = TunerEpgGrabberProtocol.OpenTv;          // Foxtel
+          protocols = TunerEpgGrabberProtocol.OrbitShowtimeNetwork;
+        }
+        else if (countryName.Equals("Australia"))
+        {
+          protocols = TunerEpgGrabberProtocol.OpenTv;           // Foxtel
+        }
+        else if (countryName.Equals("Bahrain"))
+        {
+          protocols = TunerEpgGrabberProtocol.OrbitShowtimeNetwork;
         }
         else if (countryName.Equals("Canada"))
         {
           protocols = TunerEpgGrabberProtocol.AtscEit | TunerEpgGrabberProtocol.BellTv | TunerEpgGrabberProtocol.ScteAeit;
         }
+        else if (countryName.Equals("Egypt"))
+        {
+          protocols = TunerEpgGrabberProtocol.OrbitShowtimeNetwork;
+        }
         else if (countryName.Equals("France"))
         {
-          protocols = TunerEpgGrabberProtocol.MediaHighway1;   // Canalsat
+          protocols = TunerEpgGrabberProtocol.MediaHighway1;    // Canalsat
         }
         else if (countryName.Equals("Germany"))
         {
           protocols = TunerEpgGrabberProtocol.Premiere;
         }
+        else if (countryName.Equals("Iraq"))
+        {
+          protocols = TunerEpgGrabberProtocol.OrbitShowtimeNetwork;
+        }
         else if (countryName.Equals("Italy"))
         {
-          protocols = TunerEpgGrabberProtocol.OpenTv;          // Sky
+          protocols = TunerEpgGrabberProtocol.OpenTv;           // Sky
+        }
+        else if (countryName.Equals("Jordan"))
+        {
+          protocols = TunerEpgGrabberProtocol.OrbitShowtimeNetwork;
+        }
+        else if (countryName.Equals("Kuwait"))
+        {
+          protocols = TunerEpgGrabberProtocol.OrbitShowtimeNetwork;
+        }
+        else if (countryName.Equals("Lebanon"))
+        {
+          protocols = TunerEpgGrabberProtocol.OrbitShowtimeNetwork;
+        }
+        else if (countryName.Equals("Libya"))
+        {
+          protocols = TunerEpgGrabberProtocol.OrbitShowtimeNetwork;
+        }
+        else if (countryName.Equals("Morocco"))
+        {
+          protocols = TunerEpgGrabberProtocol.OrbitShowtimeNetwork;
         }
         else if (countryName.Equals("Netherlands, The"))
         {
-          protocols = TunerEpgGrabberProtocol.MediaHighway1;   // Canal Digitaal
+          protocols = TunerEpgGrabberProtocol.MediaHighway1;    // Canal Digitaal
         }
         else if (countryName.Equals("New Zealand"))
         {
-          protocols = TunerEpgGrabberProtocol.OpenTv;          // Sky
+          protocols = TunerEpgGrabberProtocol.OpenTv;           // Sky
+        }
+        else if (countryName.Equals("Oman"))
+        {
+          protocols = TunerEpgGrabberProtocol.OrbitShowtimeNetwork;
         }
         else if (countryName.Equals("Poland"))
         {
-          protocols = TunerEpgGrabberProtocol.MediaHighway1;   // Cyfra+
+          protocols = TunerEpgGrabberProtocol.MediaHighway1;    // Cyfra+
+        }
+        else if (countryName.Equals("Qatar"))
+        {
+          protocols = TunerEpgGrabberProtocol.OrbitShowtimeNetwork;
+        }
+        else if (countryName.Equals("Saudi Arabia"))
+        {
+          protocols = TunerEpgGrabberProtocol.OrbitShowtimeNetwork;
         }
         else if (countryName.Equals("Spain"))
         {
-          protocols = TunerEpgGrabberProtocol.MediaHighway2;   // Canal+/Digital+
+          protocols = TunerEpgGrabberProtocol.MediaHighway2;    // Canal+/Digital+
         }
         else if (countryName.Equals("South Africa"))
         {
@@ -2498,13 +2546,25 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
         {
           protocols = TunerEpgGrabberProtocol.ViasatSweden;
         }
+        else if (countryName.Equals("Syria"))
+        {
+          protocols = TunerEpgGrabberProtocol.OrbitShowtimeNetwork;
+        }
+        else if (countryName.Equals("Tunisia"))
+        {
+          protocols = TunerEpgGrabberProtocol.OrbitShowtimeNetwork;
+        }
         else if (countryName.Equals("United Kingdom"))
         {
-          protocols = TunerEpgGrabberProtocol.Freesat | TunerEpgGrabberProtocol.OpenTv;  // Sky
+          protocols = TunerEpgGrabberProtocol.Freesat | TunerEpgGrabberProtocol.OpenTv;   // Sky
         }
         else if (countryName.Equals("United States"))
         {
           protocols = TunerEpgGrabberProtocol.AtscEit | TunerEpgGrabberProtocol.DishNetwork | TunerEpgGrabberProtocol.ScteAeit;
+        }
+        else if (countryName.Equals("Yemen"))
+        {
+          protocols = TunerEpgGrabberProtocol.OrbitShowtimeNetwork;
         }
       }
       protocols |= TunerEpgGrabberProtocol.DvbEit;
@@ -2528,7 +2588,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
       this.LogDebug("EPG DVB: set protocols");
       if (_grabberDvb != null && (protocols & PROTOCOLS_DVB) != (_grabProtocols & PROTOCOLS_DVB))
       {
-        _grabberDvb.SetProtocols(protocols.HasFlag(TunerEpgGrabberProtocol.DvbEit), protocols.HasFlag(TunerEpgGrabberProtocol.BellTv), protocols.HasFlag(TunerEpgGrabberProtocol.DishNetwork), protocols.HasFlag(TunerEpgGrabberProtocol.Freesat), protocols.HasFlag(TunerEpgGrabberProtocol.MultiChoice), protocols.HasFlag(TunerEpgGrabberProtocol.Premiere), protocols.HasFlag(TunerEpgGrabberProtocol.ViasatSweden));
+        _grabberDvb.SetProtocols(protocols.HasFlag(TunerEpgGrabberProtocol.DvbEit), protocols.HasFlag(TunerEpgGrabberProtocol.BellTv), protocols.HasFlag(TunerEpgGrabberProtocol.DishNetwork), protocols.HasFlag(TunerEpgGrabberProtocol.Freesat), protocols.HasFlag(TunerEpgGrabberProtocol.MultiChoice), protocols.HasFlag(TunerEpgGrabberProtocol.OrbitShowtimeNetwork), protocols.HasFlag(TunerEpgGrabberProtocol.Premiere), protocols.HasFlag(TunerEpgGrabberProtocol.ViasatSweden));
       }
       if (_grabberMhw != null && (protocols & PROTOCOLS_MEDIA_HIGHWAY) != (_grabProtocols & PROTOCOLS_MEDIA_HIGHWAY))
       {

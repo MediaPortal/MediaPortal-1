@@ -43,24 +43,25 @@ using namespace MediaPortal;
 using namespace std;
 
 
-#define PID_EIT_DVB                 0x12    // DVB standard
-#define PID_EIT_VIASAT_SWEDEN       0x39    // Viasat (Sweden satellite); custom PID
-#define PID_EIT_DISH                0x300   // DISH Network (USA satellite) 9 day EPG; custom descriptors
-#define PID_EIT_MULTICHOICE         0x3fa   // MultiChoice (South Africa satellite); custom PID
-#define PID_EIT_BELL_EXPRESSVU      0x441   // Bell ExpressVu (Canada satellite) 9 day EPG; custom descriptors
-#define PID_EIT_PREMIERE_SELECT     0xb09   // Germany, now owned by Sky; custom format
-#define PID_EIT_PREMIERE_DIREKT     0xb11   // Germany, now owned by Sky; custom format
-#define PID_EIT_PREMIERE_SPORT      0xb12   // Germany, now owned by Sky; custom format
-#define PID_EIT_DVB_CALL_BACK       PID_EIT_DVB
+#define PID_EIT_DVB                     0x12    // DVB standard
+#define PID_EIT_VIASAT_SWEDEN           0x39    // Viasat (Sweden satellite); custom PID
+#define PID_EIT_DISH                    0x300   // DISH Network (USA satellite) 9 day EPG; custom descriptors
+#define PID_EIT_MULTICHOICE             0x3fa   // MultiChoice (South Africa satellite); custom PID
+#define PID_EIT_BELL_TV                 0x441   // Bell TV (Canada satellite) 9 day EPG; custom descriptors
+#define PID_EIT_PREMIERE_SELECT         0xb09   // Germany, now owned by Sky; custom format
+#define PID_EIT_PREMIERE_DIREKT         0xb11   // Germany, now owned by Sky; custom format
+#define PID_EIT_PREMIERE_SPORT          0xb12   // Germany, now owned by Sky; custom format
+#define PID_EIT_ORBIT_SHOWTIME_NETWORK  0x1012  // Orbit Showtime Network [OSN] (Middle East and North Africa satellite) full EPG; custom PID
+#define PID_EIT_DVB_CALL_BACK           PID_EIT_DVB
 
-#define TABLE_ID_EIT_DVB_START      0x4e
-#define TABLE_ID_EIT_DVB_END        0x6f
-#define TABLE_ID_EIT_DISH_START     0x80
-#define TABLE_ID_EIT_DISH_END       0xfe
-#define TABLE_ID_EIT_DVB_PF_ACTUAL  0x4e
-#define TABLE_ID_EIT_DVB_PF_OTHER   0x4f
-#define TABLE_ID_EIT_PREMIERE       0xa0
-#define TABLE_ID_EIT_DVB_CALL_BACK  TABLE_ID_EIT_DVB_START
+#define TABLE_ID_EIT_DVB_START          0x4e
+#define TABLE_ID_EIT_DVB_END            0x6f
+#define TABLE_ID_EIT_DISH_START         0x80
+#define TABLE_ID_EIT_DISH_END           0xfe
+#define TABLE_ID_EIT_DVB_PF_ACTUAL      0x4e
+#define TABLE_ID_EIT_DVB_PF_OTHER       0x4f
+#define TABLE_ID_EIT_PREMIERE           0xa0
+#define TABLE_ID_EIT_DVB_CALL_BACK      TABLE_ID_EIT_DVB_START
 
 // We don't use this table. It seems to carry duplicate incomplete data.
 // Perhaps it is an alternative running status table for accurate recording?
@@ -89,10 +90,11 @@ class CParserEitDvb : public CUnknown, public IGrabberEpgDvb, ISectionCallback
                         unsigned short pidNit,
                         unsigned short pidSdt);
     STDMETHODIMP_(void) SetProtocols(bool grabDvbEit,
-                                      bool grabBellExpressVu,
+                                      bool grabBellTv,
                                       bool grabDish,
                                       bool grabFreesat,
                                       bool grabMultiChoice,
+                                      bool grabOrbitShowtimeNetwork,
                                       bool grabPremiere,
                                       bool grabViasatSweden);
     void Reset(bool enableCrcCheck);
