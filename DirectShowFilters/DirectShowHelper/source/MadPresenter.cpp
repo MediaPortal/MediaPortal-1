@@ -588,7 +588,7 @@ HRESULT MPMadPresenter::ClearBackground(LPCSTR name, REFERENCE_TIME frameStart, 
   }
 
   // Lock madVR thread while Shutdown()
-  CAutoLock lock(&m_dsLock);
+  //CAutoLock lock(&m_dsLock);
 
   WORD videoHeight = (WORD)activeVideoRect->bottom - (WORD)activeVideoRect->top;
   WORD videoWidth = (WORD)activeVideoRect->right - (WORD)activeVideoRect->left;
@@ -686,7 +686,7 @@ HRESULT MPMadPresenter::RenderOsd(LPCSTR name, REFERENCE_TIME frameStart, RECT* 
   }
 
   // Lock madVR thread while Shutdown()
-  CAutoLock lock(&m_dsLock);
+  //CAutoLock lock(&m_dsLock);
 
   WORD videoHeight = (WORD)activeVideoRect->bottom - (WORD)activeVideoRect->top;
   WORD videoWidth = (WORD)activeVideoRect->right - (WORD)activeVideoRect->left;
@@ -985,7 +985,7 @@ HRESULT MPMadPresenter::SetDeviceOsd(IDirect3DDevice9* pD3DDev)
   }
 
   // Lock madVR thread while Shutdown()
-  CAutoLock lock(&m_dsLock);
+  //CAutoLock lock(&m_dsLock);
 
   //CAutoLock cAutoLock(this);
   if (!pD3DDev)
@@ -1010,7 +1010,7 @@ HRESULT MPMadPresenter::SetDevice(IDirect3DDevice9* pD3DDev)
   }
 
   // Lock madVR thread while Shutdown()
-  CAutoLock lock(&m_dsLock);
+  //CAutoLock lock(&m_dsLock);
 
   CAutoLock cAutoLock(this);
 
@@ -1076,7 +1076,7 @@ HRESULT MPMadPresenter::RenderEx3(REFERENCE_TIME rtStart, REFERENCE_TIME rtStop,
     }
 
     // Lock madVR thread while Shutdown()
-    CAutoLock lock(&m_dsLock);
+    //CAutoLock lock(&m_dsLock);
 
     CAutoLock cAutoLock(this);
 
