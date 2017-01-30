@@ -1377,6 +1377,7 @@ namespace MediaPortal.Player
               xmlreader.SetValue("tvservice", "dvbdefttxtsubtitles", "999;999");
       }
       catch { }
+      base.OnZapping(info);
     }
   }
 }
