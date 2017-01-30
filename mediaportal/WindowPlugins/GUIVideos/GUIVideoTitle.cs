@@ -1622,6 +1622,9 @@ namespace MediaPortal.GUI.Video
 
           case "user groups":
           case "user groups only":
+            listItem.IconImageBig = "defaultVideoBig.png";
+            listItem.IconImage = "defaultVideo.png";
+            listItem.ThumbnailImage = "defaultVideoBig.png";
             break;
 
           case "movie collections":
