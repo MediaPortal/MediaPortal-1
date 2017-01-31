@@ -864,13 +864,32 @@ namespace MediaPortal.GUI.Library
           }
         }
       }
+
+      if (itemFocused && pFocusImage != null)
+      {
+        if (!_scrollingUp && !_scrollingDown)
+        {
+          int _focusX = dwPosX - (_zoomXPixels / 2);
+          int _focusY = dwPosY - (_zoomYPixels / 2);
+          int _focusW = _textureWidth + _zoomXPixels;
+          int _focusH = _textureHeight + _zoomYPixels;
+
+          GUIPropertyManager.SetProperty("#facadeview.focus.X", _focusX.ToString());
+          GUIPropertyManager.SetProperty("#facadeview.focus.Y", _focusY.ToString());
+          GUIPropertyManager.SetProperty("#facadeview.focus.Width", _focusW.ToString());
+          GUIPropertyManager.SetProperty("#facadeview.focus.Height", _focusH.ToString());
+        }
+        else
+        {
+          GUIPropertyManager.SetProperty("#facadeview.focus.X", string.Empty);
+          GUIPropertyManager.SetProperty("#facadeview.focus.Y", string.Empty);
+          GUIPropertyManager.SetProperty("#facadeview.focus.Width", string.Empty);
+          GUIPropertyManager.SetProperty("#facadeview.focus.Height", string.Empty);
+        }
+      }
+
       if (itemFocused)
       {
-        GUIPropertyManager.SetProperty("#facadeview.focus.X", ((int)(dwPosX - (_zoomXPixels / 2))).ToString());
-        GUIPropertyManager.SetProperty("#facadeview.focus.Y", ((int)(dwPosY - (_zoomYPixels / 2))).ToString());
-        GUIPropertyManager.SetProperty("#facadeview.focus.Width", ((int)(_textureWidth + _zoomXPixels)).ToString());
-        GUIPropertyManager.SetProperty("#facadeview.focus.Height", ((int)(_textureHeight + _zoomYPixels)).ToString());
-
         btn.Width = _textureWidth + _zoomXPixels;
         btn.Height = _textureHeight + _zoomYPixels;
         btn.SetPosition(dwPosX - (_zoomXPixels / 2), dwPosY - (_zoomYPixels / 2));
