@@ -717,8 +717,10 @@ namespace MediaPortal.GUI.Library
                                                                        _thumbNailWidth, _thumbNailHeight,
                                                                        GetOverlayListForItem(pItem, itemFocused));
           pImage = new GUIImage(0, 0, _thumbNailPositionX - iOverSized + dwPosX,
-                                _thumbNailPositionY - iOverSized + dwPosY, _thumbNailWidth + 2 * iOverSized,
-                                _thumbNailHeight + 2 * iOverSized, _guiImageTexture, 0x0);
+                                      _thumbNailPositionY - iOverSized + dwPosY, 
+                                      _thumbNailWidth + 2 * iOverSized,
+                                      _thumbNailHeight + 2 * iOverSized, 
+                                      _guiImageTexture, 0x0);
           pImage.ParentControl = this;
           pImage.AllocResources();
           pImage.SetAnimations(_allThumbAnimations);
@@ -738,8 +740,10 @@ namespace MediaPortal.GUI.Library
                                                                          _thumbNailWidth, _thumbNailHeight,
                                                                          GetOverlayListForItem(pItem, itemFocused));
             pImage = new GUIImage(0, 0, _thumbNailPositionX - iOverSized + dwPosX,
-                                  _thumbNailPositionY - iOverSized + dwPosY, _thumbNailWidth + 2 * iOverSized,
-                                  _thumbNailHeight + 2 * iOverSized, _guiImageTexture, 0x0);
+                                        _thumbNailPositionY - iOverSized + dwPosY, 
+                                        _thumbNailWidth + 2 * iOverSized,
+                                        _thumbNailHeight + 2 * iOverSized, 
+                                        _guiImageTexture, 0x0);
             pImage.ParentControl = this;
             pImage.AllocResources();
             pImage.SetAnimations(_allThumbAnimations);
@@ -776,10 +780,25 @@ namespace MediaPortal.GUI.Library
         {
           pImage.ColourDiffuse = 0xffffffff;
 
-          GUIPropertyManager.SetProperty("#facadeview.focus.X", ((int)(_thumbNailPositionX - iOverSized + dwPosX)).ToString());
-          GUIPropertyManager.SetProperty("#facadeview.focus.Y", ((int)(_thumbNailPositionY - iOverSized + dwPosY)).ToString());
-          GUIPropertyManager.SetProperty("#facadeview.focus.Width", ((int)(_thumbNailWidth + 2 * iOverSized)).ToString());
-          GUIPropertyManager.SetProperty("#facadeview.focus.Height", ((int)(_thumbNailHeight + 2 * iOverSized)).ToString());
+          if (!_scrollingLeft && !_scrollingRight)
+          {
+            int _focusX = _thumbNailPositionX - iOverSized + dwPosX;
+            int _focusY = _thumbNailPositionY - iOverSized + dwPosY;
+            int _focusW = _thumbNailWidth + 2 * iOverSized;
+            int _focusH = _thumbNailHeight + 2 * iOverSized;
+
+            GUIPropertyManager.SetProperty("#facadeview.focus.X", _focusX.ToString());
+            GUIPropertyManager.SetProperty("#facadeview.focus.Y", _focusY.ToString());
+            GUIPropertyManager.SetProperty("#facadeview.focus.Width", _focusW.ToString());
+            GUIPropertyManager.SetProperty("#facadeview.focus.Height", _focusH.ToString());
+          }
+          else
+          {
+            GUIPropertyManager.SetProperty("#facadeview.focus.X", string.Empty);
+            GUIPropertyManager.SetProperty("#facadeview.focus.Y", string.Empty);
+            GUIPropertyManager.SetProperty("#facadeview.focus.Width", string.Empty);
+            GUIPropertyManager.SetProperty("#facadeview.focus.Height", string.Empty);
+          }
         }
         else
         {
@@ -1595,26 +1614,39 @@ namespace MediaPortal.GUI.Library
 
     private void SelectItemIndex(int iItem)
     {
-      if (iItem < 0) iItem = 0;
-      if (iItem >= _listItems.Count) iItem = _listItems.Count - 1;
-
       int iPage = 1;
-      _cursorX = 0;
-      _offset = 0;
-      while (iItem >= (_columns) && _columns != 0)
+      int itemCount = _listItems.Count;
+      int itemsPerPage = _columns;
+
+      if (iItem < 0) iItem = 0;
+      if (iItem >= itemCount) iItem = itemCount - 1;
+
+      if (iItem >= itemCount - (itemCount % itemsPerPage) && itemCount > itemsPerPage)
       {
-        _offset += (_columns);
-        iItem -= (_columns);
-        iPage++;
+        // Special case, jump to last page, but fill entire page
+        _offset = itemCount - itemsPerPage;
+        iItem = itemsPerPage - (itemCount - iItem);
+        iPage = ((_offset + _cursorX) / itemsPerPage) + 1;
       }
-      if ((iItem != _scrollStartOffset) && (_listItems.Count > _scrollStartOffset))
+      else
       {
-        // adjust in the middle
-        int delta = _scrollStartOffset - iItem;
-        if (_offset >= delta)
+        _cursorX = 0;
+        _offset = 0;
+        while (iItem >= (_columns) && _columns != 0)
         {
-        iItem += delta;
-        _offset -= delta;
+          _offset += (_columns);
+          iItem -= (_columns);
+          iPage++;
+        }
+        if ((iItem != _scrollStartOffset) && (_listItems.Count > _scrollStartOffset))
+        {
+          // adjust in the middle
+          int delta = _scrollStartOffset - iItem;
+          if (_offset >= delta)
+          {
+            iItem += delta;
+            _offset -= delta;
+          }
         }
       }
       if (_upDownControl != null)
@@ -1622,6 +1654,7 @@ namespace MediaPortal.GUI.Library
         _upDownControl.Value = iPage;
       }
       _cursorX = iItem;
+
       OnSelectionChanged();
       _refresh = true;
     }
@@ -2433,7 +2466,8 @@ namespace MediaPortal.GUI.Library
       else
       {
         int iPages = _listItems.Count / iItemsPerPage;
-        if ((_listItems.Count % iItemsPerPage) != 0)
+        int itemsOnLastPage = _listItems.Count % iItemsPerPage;
+        if (itemsOnLastPage != 0)
         {
           iPages++;
         }
@@ -2443,16 +2477,24 @@ namespace MediaPortal.GUI.Library
         {
           iPage++;
           _upDownControl.Value = iPage;
-          _offset = (_upDownControl.Value - 1) * iItemsPerPage;
+
+          if (iPage == iPages && _cursorX <= itemsOnLastPage) 
+          {
+            _offset = _listItems.Count - iItemsPerPage;
+          }
+          else
+          {
+            _offset += iItemsPerPage;
+          }
         }
-        while (_cursorX > 0 && _offset + _cursorX >= _listItems.Count)
-        {
-          _cursorX--;
-        }
-        if (iPage == iPages && (_cursorX < iItemsPerPage - 1) && (_offset + _cursorX == iItem))
+        else // Already on Last page
         {
           _cursorX = iItemsPerPage - 1;
-          _offset = iItem - _cursorX;
+          _offset = iItem - _cursorX; 
+        }
+        while (_offset > 0 && _offset + iItemsPerPage >= iItem)
+        {
+          _offset--;
         }
       }
       OnSelectionChanged();
