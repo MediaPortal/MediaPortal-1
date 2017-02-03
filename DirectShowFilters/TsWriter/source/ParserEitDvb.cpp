@@ -2308,8 +2308,8 @@ bool CParserEitDvb::DecodeEventDescriptors(unsigned char* sectionData,
     unsigned char tag = sectionData[pointer++];
     unsigned char length = sectionData[pointer++];
     unsigned short endOfDescriptor = pointer + length;
-    //LogDebug(L"EIT DVB: descriptor, tag = 0x%hhx, length = %hhu, pointer = %hu",
-    //          tag, length, pointer);
+    //LogDebug(L"EIT DVB: descriptor, tag = 0x%hhx, length = %hhu, pointer = %hu, private data specifier = %lu",
+    //          tag, length, pointer, privateDataSpecifier);
     if (endOfDescriptor > endOfDescriptorLoop)
     {
       LogDebug(L"EIT DVB: invalid event record, descriptor length = %hhu, pointer = %hu, end of descriptor loop = %hu, tag = 0x%hhx",

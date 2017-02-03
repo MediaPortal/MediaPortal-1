@@ -2025,7 +2025,12 @@ bool CParserNitDvb::DecodeExtensionDescriptors(unsigned char* sectionData,
       }
       else if (tag == 0x7f) // DVB extended descriptors
       {
-        if (length < 1)
+        unsigned char tagExtension = 0;
+        if (length > 0)
+        {
+          tagExtension = sectionData[pointer];
+        }
+        else if (privateDataSpecifier != 0x2b00)  // unknown Sky Network Television (Igloo NZ)
         {
           LogDebug(L"%s: invalid section, extension extended descriptor length = %hhu, pointer = %hu, end of extension descriptors = %hu",
                     m_name, length, pointer, endOfExtensionDescriptors);
@@ -2033,7 +2038,6 @@ bool CParserNitDvb::DecodeExtensionDescriptors(unsigned char* sectionData,
           break;
         }
 
-        unsigned char tagExtension = sectionData[pointer];
         if (tagExtension == 0x09)       // target region descriptor
         {
           result = DecodeTargetRegionDescriptor(&sectionData[pointer], length, targetRegionIds);
