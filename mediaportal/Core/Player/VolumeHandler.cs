@@ -246,7 +246,7 @@ namespace MediaPortal.Player
       if (_mixer != null)
       {
         // Check if mixer is still attached to the audio device we started with
-        if (_mixer._audioDefaultDevice.DeviceId != _mixer._audioDefaultDevice.DeviceIdCurrent)
+        if (_mixer._audioDefaultDevice != null && _mixer._audioDefaultDevice.DeviceId != _mixer._audioDefaultDevice.DeviceIdCurrent)
         {
           _mixer = new Mixer.Mixer();
           _mixer.Open(0, IsDigital, true);
