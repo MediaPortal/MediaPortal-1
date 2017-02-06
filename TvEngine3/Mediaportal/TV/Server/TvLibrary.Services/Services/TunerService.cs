@@ -96,6 +96,20 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
 
     #endregion
 
+    #region stream tuner settings
+
+    public StreamTunerSettings GetStreamTunerSettings(int idStreamTunerSettings)
+    {
+      return StreamTunerSettingsManagement.GetStreamTunerSettings(idStreamTunerSettings);
+    }
+
+    public StreamTunerSettings SaveStreamTunerSettings(StreamTunerSettings settings)
+    {
+      return StreamTunerSettingsManagement.SaveStreamTunerSettings(settings);
+    }
+
+    #endregion
+
     #region tuner satellites
 
     public IList<TunerSatellite> ListAllTunerSatellites(TunerSatelliteRelation includeRelations)
@@ -149,6 +163,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
     public IList<BdaNetworkProvider> ListAvailableBdaNetworkProviders()
     {
       return SystemInformation.ListAvailableBdaNetworkProviders();
+    }
+
+    #endregion
+
+    #region network interface names
+
+    public IList<string> ListAvailableNetworkInterfaceNames()
+    {
+      return SystemInformation.ListAvailableNetworkInterfaceNames();
     }
 
     #endregion

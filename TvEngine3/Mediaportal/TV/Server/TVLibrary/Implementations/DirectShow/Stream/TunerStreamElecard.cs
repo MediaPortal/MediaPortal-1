@@ -19,25 +19,31 @@
 #endregion
 
 using System;
+using DirectShowLib;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Stream
 {
   /// <summary>
-  /// An implementation of <see cref="ITuner"/> for receiving DVB-compliant
+  /// An implementation of <see cref="ITuner"/> for receiving MPEG 2 transport
   /// streams with the Elecard IPTV source filter.
   /// </summary>
-  internal class TunerStreamElecard : TunerStream
+  internal class TunerStreamElecard : TunerStreamBase
   {
     public static readonly Guid CLSID = new Guid(0x62341545, 0x9318, 0x4671, 0x9d, 0x62, 0x9c, 0xaa, 0xcd, 0xd5, 0xd2, 0x0a);
 
     /// <summary>
     /// Initialise a new instance of the <see cref="TunerStreamElecard"/> class.
     /// </summary>
-    /// <param name="sequenceNumber">A sequence number or index for this instance.</param>
+    /// <param name="sequenceNumber">A unique sequence number or index for this instance.</param>
     public TunerStreamElecard(int sequenceNumber)
       : base("Elecard Stream Source", sequenceNumber)
     {
-      _sourceFilterClsid = CLSID;
+    }
+
+    protected override IBaseFilter AddSourceFilter()
+    {
+      return FilterGraphTools.AddFilterFromRegisteredClsid(Graph, CLSID, Name);
     }
   }
 }

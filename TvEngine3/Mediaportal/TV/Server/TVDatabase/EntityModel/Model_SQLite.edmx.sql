@@ -43,6 +43,7 @@ DROP TABLE IF EXISTS "AnalogTunerSettings";
 DROP TABLE IF EXISTS "VideoEncoders";
 DROP TABLE IF EXISTS "AudioEncoders";
 DROP TABLE IF EXISTS "TunerSatellites";
+DROP TABLE IF EXISTS "StreamTunerSettings";
 
 -- ------------------------------------------------------------------------------
 -- Creating all tables
@@ -688,7 +689,7 @@ CREATE TABLE "AnalogTunerSettings"  (
 CREATE INDEX Idx_AnalogTunerSettings_1 ON  "AnalogTunerSettings" (IdVideoEncoder);
 CREATE INDEX Idx_AnalogTunerSettings_2 ON  "AnalogTunerSettings" (IdAudioEncoder);
 
-/* mm1352000: IdAnalogTunerSettings is a foreign key to Tuner.IdTuner, so no trigger required.
+/* mm1352000: IdAnalogTunerSettings is a foreign key to Tuners.IdTuner, so no trigger required.
 CREATE TRIGGER "AnalogTunerSettings_autoincrement" AFTER INSERT ON "AnalogTunerSettings"
   FOR EACH ROW BEGIN
     UPDATE AnalogTunerSettings SET IdAnalogTunerSettings = Id WHERE Id = NEW.Id; 
@@ -726,16 +727,16 @@ CREATE TRIGGER "AudioEncoders_autoincrement" AFTER INSERT ON "AudioEncoders"
 -- Table "TunerSatellites"
 CREATE TABLE "TunerSatellites"  (
     "Id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-    "IdTunerSatellite" int UNIQUE, 
-    "IdSatellite" int NOT NULL, 
-    "IdTuner" int NULL, 
-    "SatIpSource" int NOT NULL, 
-    "IdLnbType" int NOT NULL, 
-    "DiseqcPort" int NOT NULL, 
-    "DiseqcMotorPosition" int NOT NULL, 
-    "Tone22kState" int NOT NULL, 
-    "ToneBurst" int NOT NULL, 
-    "Polarisations" int NOT NULL, 
+    "IdTunerSatellite" int UNIQUE,
+    "IdSatellite" int NOT NULL,
+    "IdTuner" int NULL,
+    "SatIpSource" int NOT NULL,
+    "IdLnbType" int NOT NULL,
+    "DiseqcPort" int NOT NULL,
+    "DiseqcMotorPosition" int NOT NULL,
+    "Tone22kState" int NOT NULL,
+    "ToneBurst" int NOT NULL,
+    "Polarisations" int NOT NULL,
     "IsToroidalDish" bit NOT NULL,
     CONSTRAINT "FK_SatelliteTunerSatellite" FOREIGN KEY ("IdSatellite")
     REFERENCES "Satellites" ("IdSatellite") ON DELETE CASCADE,
@@ -753,4 +754,29 @@ CREATE TRIGGER "TunerSatellites_autoincrement" AFTER INSERT ON "TunerSatellites"
   FOR EACH ROW BEGIN
     UPDATE TunerSatellites SET IdTunerSatellite = Id WHERE Id = NEW.Id; 
   END;
+
+-- Table "StreamTunerSettings"
+CREATE TABLE "StreamTunerSettings"  (
+    "Id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    "IdStreamTunerSettings" int UNIQUE,
+    "ReceiveDataTimeLimit" int NOT NULL,
+    "BufferSize" int NULL,
+    "BufferSizeMaximum" int NOT NULL,
+    "OpenConnectionAttemptLimit" int NOT NULL,
+    "DumpInput" bit NOT NULL,
+    "RtspCommandResponseTimeLimit" int NOT NULL,
+    "RtspSendCommandOptions" bit NOT NULL,
+    "RtspSendCommandDescribe" bit NOT NULL,
+    "NetworkInterface" varchar(200) NOT NULL COLLATE NOCASE,
+    "FileRepeatCount" int NOT NULL,
+    "RtpSwitchToUdpPacketCount" int NOT NULL,
+    CONSTRAINT "FK_TunerStreamTunerSettings" FOREIGN KEY ("IdStreamTunerSettings")
+    REFERENCES "Tuners" ("IdTuner") ON DELETE CASCADE
+);
+
+/* mm1352000: IdStreamTunerSettings is a foreign key to Tuners.IdTuner, so no trigger required.
+CREATE TRIGGER "StreamTunerSettings_autoincrement" AFTER INSERT ON "StreamTunerSettings"
+  FOR EACH ROW BEGIN
+    UPDATE StreamTunerSettings SET IdStreamTunerSettings = Id WHERE Id = NEW.Id; 
+  END;*/
 

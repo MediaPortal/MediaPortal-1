@@ -23,7 +23,6 @@ using System.Collections.Generic;
 using DirectShowLib;
 using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Enum;
-using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Exception;
@@ -34,16 +33,10 @@ using MediaType = DirectShowLib.MediaType;
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Stream
 {
   /// <summary>
-  /// An implementation of <see cref="ITuner"/> for receiving DVB-compliant
-  /// streams with the MediaPortal stream source filter.
+  /// A base implementation of <see cref="ITuner"/> for DirectShow stream tuners.
   /// </summary>
-  internal class TunerStream : TunerDirectShowMpeg2TsBase
+  internal abstract class TunerStreamBase : TunerDirectShowMpeg2TsBase
   {
-    /// <summary>
-    /// The MediaPortal IPTV/DVB-IP/URL stream source filter class ID.
-    /// </summary>
-    private static readonly Guid CLSID = new Guid(0xd3dd4c59, 0xd3a7, 0x4b82, 0x97, 0x27, 0x7b, 0x92, 0x03, 0xeb, 0x67, 0xc0);
-
     #region variables
 
     /// <summary>
@@ -57,11 +50,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Stream
     private AMMediaType _sourceMediaType = null;
 
     /// <summary>
-    /// The class ID (CLSID) for the source filter main class.
-    /// </summary>
-    protected Guid _sourceFilterClsid = Guid.Empty;
-
-    /// <summary>
     /// The tuner's current state.
     /// </summary>
     private TunerState _state = TunerState.NotLoaded;
@@ -71,34 +59,23 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Stream
     #region constructor
 
     /// <summary>
-    /// Initialise a new instance of the <see cref="TunerStream"/> class.
-    /// </summary>
-    /// <param name="sequenceNumber">A unique sequence number or index for this instance.</param>
-    public TunerStream(int sequenceNumber)
-      : this("MediaPortal Stream Source", sequenceNumber)
-    {
-    }
-
-    /// <summary>
-    /// Initialise a new instance of the <see cref="TunerStream"/> class.
+    /// Initialise a new instance of the <see cref="TunerStreamBase"/> class.
     /// </summary>
     /// <param name="name">A short name or description for the tuner.</param>
     /// <param name="sequenceNumber">A unique sequence number or index for this instance.</param>
-    public TunerStream(string name, int sequenceNumber)
+    public TunerStreamBase(string name, int sequenceNumber)
       : this(name + " " + sequenceNumber, name + " " + sequenceNumber)
     {
     }
 
     /// <summary>
-    /// Initialise a new instance of the <see cref="TunerStream"/> class.
+    /// Initialise a new instance of the <see cref="TunerStreamBase"/> class.
     /// </summary>
     /// <param name="name">The tuner's name.</param>
     /// <param name="externalId">The external identifier for the tuner.</param>
-    protected TunerStream(string name, string externalId)
+    protected TunerStreamBase(string name, string externalId)
       : base(name, externalId, null, null, BroadcastStandard.DvbIp)
     {
-      _sourceFilterClsid = CLSID;
-
       _sourceMediaType = new AMMediaType();
       _sourceMediaType.majorType = MediaType.Stream;
       _sourceMediaType.subType = MediaSubType.Mpeg2Transport;
@@ -113,14 +90,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Stream
 
     #endregion
 
-    private IBaseFilter AddSourceFilter()
-    {
-      if (_sourceFilterClsid == CLSID)
-      {
-        return FilterGraphTools.AddFilterFromFile(Graph, "MPIPTVSource.ax", CLSID, Name);
-      }
-      return FilterGraphTools.AddFilterFromRegisteredClsid(Graph, _sourceFilterClsid, Name);
-    }
+    protected abstract IBaseFilter AddSourceFilter();
 
     #region ITunerInternal members
 
@@ -133,7 +103,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Stream
     /// <returns>the set of extensions loaded for the tuner, in priority order</returns>
     public override IList<ITunerExtension> PerformLoading(StreamFormat streamFormat = StreamFormat.Default)
     {
-      this.LogDebug("DirectShow stream: perform loading");
+      this.LogDebug("DirectShow stream base: perform loading");
       InitialiseGraph();
 
       // Start with the source filter.
@@ -166,7 +136,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Stream
     /// <param name="isFinalising"><c>True</c> if the tuner is being finalised.</param>
     public override void PerformUnloading(bool isFinalising = false)
     {
-      this.LogDebug("DirectShow stream: perform unloading");
+      this.LogDebug("DirectShow stream base: perform unloading");
 
       if (!isFinalising)
       {
@@ -193,7 +163,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Stream
     /// <param name="channel">The channel to tune to.</param>
     public override void PerformTuning(IChannel channel)
     {
-      this.LogDebug("DirectShow stream: perform tuning");
+      this.LogDebug("DirectShow stream base: perform tuning");
       ChannelStream streamChannel = channel as ChannelStream;
       if (streamChannel == null)
       {
@@ -205,7 +175,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Stream
       {
         // We have to replace the source filter. This is a workaround for the
         // filter's inability to change URLs.
-        this.LogDebug("DirectShow stream: replacing source filter");
+        this.LogDebug("DirectShow stream base: replacing source filter");
         restart = true;
         base.PerformSetTunerState(TunerState.Stopped);
         IPin pinOutput = DsFindPin.ByDirection(_filterStreamSource, PinDirection.Output, 0);

@@ -23,6 +23,7 @@
 #endregion
 
 using System;
+using Mediaportal.TV.Server.Common.Types.Enum;
 
 namespace Mediaportal.TV.Server.TVLibrary.IntegrationProvider.Interfaces
 {
@@ -31,6 +32,14 @@ namespace Mediaportal.TV.Server.TVLibrary.IntegrationProvider.Interfaces
   /// </summary>
   public interface ILogger
   {
+    /// <summary>
+    /// Get the log level(s) that are enabled.
+    /// </summary>
+    LogLevel LogLevel
+    {
+      get;
+    }
+
     /// <summary>
     /// Writes a debug message to the log.
     /// </summary>

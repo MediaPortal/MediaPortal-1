@@ -85,6 +85,7 @@
     <Compile Include="ChannelManagement.cs" />
     <Compile Include="ChannelGroupManagement.cs" />
     <Compile Include="AnalogTunerSettingsManagement.cs" />
+    <Compile Include="StreamTunerSettingsManagement.cs" />
     <Compile Include="TunerSatelliteManagement.cs" />
     <Compile Include="SatelliteManagement.cs" />
     <Compile Include="TuningDetailManagement.cs" />

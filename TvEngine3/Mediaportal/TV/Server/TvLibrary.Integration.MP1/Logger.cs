@@ -22,6 +22,7 @@ using System;
 using System.Collections.Generic;
 using Castle.Core.Logging;
 using Castle.Windsor;
+using Mediaportal.TV.Server.Common.Types.Enum;
 using MediaPortal.Common.Utils;
 
 namespace Mediaportal.TV.Server.TVLibrary.Integration.MP1
@@ -56,6 +57,41 @@ namespace Mediaportal.TV.Server.TVLibrary.Integration.MP1
         }
       }
       return logger;
+    }
+
+    /// <summary>
+    /// Get the log level(s) that are enabled.
+    /// </summary>
+    public LogLevel LogLevel
+    {
+      get
+      {
+        LogLevel level = LogLevel.None;
+        var e = _logCache.Keys.GetEnumerator();
+        e.MoveNext();
+        var logger = _logCache[e.Current];
+        if (logger.IsDebugEnabled)
+        {
+          level |= LogLevel.Debug;
+        }
+        if (logger.IsInfoEnabled)
+        {
+          level |= LogLevel.Info;
+        }
+        if (logger.IsWarnEnabled)
+        {
+          level |= LogLevel.Warn;
+        }
+        if (logger.IsErrorEnabled)
+        {
+          level |= LogLevel.Error;
+        }
+        if (logger.IsFatalEnabled)
+        {
+          level |= LogLevel.Critical;
+        }
+        return level;
+      }
     }
    
     /// <summary>

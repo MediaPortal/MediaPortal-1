@@ -67,6 +67,16 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
 
     #endregion
 
+    #region stream tuner settings
+
+    [OperationContract]
+    StreamTunerSettings GetStreamTunerSettings(int idStreamTunerSettings);
+
+    [OperationContract]
+    StreamTunerSettings SaveStreamTunerSettings(StreamTunerSettings settings);
+
+    #endregion
+
     #region tuner satellites
 
     [OperationContract]
@@ -103,6 +113,13 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
 
     [OperationContract]
     IList<BdaNetworkProvider> ListAvailableBdaNetworkProviders();
+
+    #endregion
+
+    #region network interface names
+
+    [OperationContract]
+    IList<string> ListAvailableNetworkInterfaceNames();
 
     #endregion
 

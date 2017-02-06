@@ -46,6 +46,10 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
       {
         query = query.Include(t => t.TunerSatellites.Select(ts => ts.Satellite));
       }
+      if (includeRelations.HasFlag(TunerRelation.StreamTunerSettings))
+      {
+        query = query.Include(t => t.StreamTunerSettings);
+      }
       return query;
     }
   }

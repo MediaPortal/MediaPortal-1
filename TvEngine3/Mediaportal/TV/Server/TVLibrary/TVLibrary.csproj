@@ -126,6 +126,7 @@
     <Compile Include="Implementations\DirectShow\Bda\TunerBdaAnalogTv.cs" />
     <Compile Include="Implementations\DirectShow\Bda\TunerBdaAuxiliaryInput.cs" />
     <Compile Include="Implementations\DirectShow\Bda\TunerDetectorBda.cs" />
+    <Compile Include="Implementations\DirectShow\Stream\TunerStreamTve.cs" />
     <Compile Include="Implementations\DirectShow\TunerDirectShowMpeg2TsBase.cs" />
     <Compile Include="Implementations\DirectShow\Wdm\Analog\Component\BaseComponent.cs" />
     <Compile Include="Implementations\Dri\ChannelScannerDriCeton.cs" />
@@ -232,7 +233,7 @@
     <Compile Include="Implementations\DiseqcController.cs" />
     <Compile Include="Implementations\DirectShow\TunerDirectShowBase.cs" />
     <Compile Include="Implementations\Rtsp\RtspClient.cs" />
-    <Compile Include="Implementations\DirectShow\Stream\TunerStream.cs" />
+    <Compile Include="Implementations\DirectShow\Stream\TunerStreamBase.cs" />
     <Compile Include="Implementations\DirectShow\Stream\TunerStreamElecard.cs" />
     <Compile Include="Implementations\Mpeg2Ts\SubChannelManagerMpeg2Ts.cs" />
     <Compile Include="Implementations\Rtsp\RtspMethod.cs" />

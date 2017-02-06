@@ -237,9 +237,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
     public override void ReloadConfiguration(Tuner configuration)
     {
       this.LogDebug("DirectShow MPEG 2 base: reload configuration");
-      _tsWriterInputDumpMask = configuration.TsWriterInputDumpMask;
-      _tsWriterDisableCrcChecking = configuration.DisableTsWriterCrcChecking;
 
+      if (configuration == null)
+      {
+        _tsWriterInputDumpMask = 0;
+        _tsWriterDisableCrcChecking = false;
+      }
+      else
+      {
+        _tsWriterInputDumpMask = configuration.TsWriterInputDumpMask;
+        _tsWriterDisableCrcChecking = configuration.DisableTsWriterCrcChecking;
+      }
       this.LogDebug("  TsWriter input dump mask = 0x{0:x}", _tsWriterInputDumpMask);
       this.LogDebug("  TsWriter CRC check?      = {0}", !_tsWriterDisableCrcChecking);
 

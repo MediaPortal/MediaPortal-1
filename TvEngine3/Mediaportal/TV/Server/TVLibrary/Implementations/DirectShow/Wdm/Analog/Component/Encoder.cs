@@ -211,9 +211,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
     {
       this.LogDebug("WDM analog encoder: reload configuration");
 
-      _encoderVideo = configuration.AnalogTunerSettings.VideoEncoder;
-      _encoderAudio = configuration.AnalogTunerSettings.AudioEncoder;
-      _tsMuxerInputDumpMask = configuration.TsWriterInputDumpMask;
+      if (configuration == null)
+      {
+        _encoderVideo = null;
+        _encoderAudio = null;
+        _tsMuxerInputDumpMask = 0;
+      }
+      else
+      {
+        _encoderVideo = configuration.AnalogTunerSettings.VideoEncoder;
+        _encoderAudio = configuration.AnalogTunerSettings.AudioEncoder;
+        _tsMuxerInputDumpMask = configuration.TsMuxerInputDumpMask;
+      }
 
       this.LogDebug("  software video encoder  = {0}", _encoderVideo == null ? "[auto]" : string.Format("{0} ({1})", _encoderVideo.Name, _encoderVideo.ClassId));
       this.LogDebug("  software audio encoder  = {0}", _encoderAudio == null ? "[auto]" : string.Format("{0} ({1})", _encoderAudio.Name, _encoderAudio.ClassId));

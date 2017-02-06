@@ -126,7 +126,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Stream
           }
           else
           {
-            newTuners.Add(new TunerStream(i));
+            newTuners.Add(new TunerStreamTve(i));
           }
         }
 

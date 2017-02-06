@@ -112,13 +112,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
             BroadcastStandard supportedBroadcastStandardsAnalog = supportedBroadcastStandards & (BroadcastStandard.AnalogTelevision | BroadcastStandard.ExternalInput);
             if (supportedBroadcastStandardsAnalog != BroadcastStandard.Unknown)
             {
-              tuners.Add(new TunerDriAnalog(deviceDescriptor, tunerInstanceId, productInstanceId, supportedBroadcastStandards, controlPoint, new TunerStream(string.Format("MediaPortal DRI Analog {0} Stream Source", uuid), 1)));
+              tuners.Add(new TunerDriAnalog(deviceDescriptor, tunerInstanceId, productInstanceId, supportedBroadcastStandards, controlPoint, new TunerStreamTve(string.Format("MediaPortal DRI Analog {0} Stream Source", uuid), 1)));
             }
 
             BroadcastStandard supportedBroadcastStandardsDigital = supportedBroadcastStandards & (BroadcastStandard.Atsc | BroadcastStandard.Scte);
             if (supportedBroadcastStandardsDigital != BroadcastStandard.Unknown)
             {
-              tuners.Add(new TunerDriAtsc(deviceDescriptor, tunerInstanceId, productInstanceId, supportedBroadcastStandards, supportedModulationSchemes, controlPoint, new TunerStream(string.Format("MediaPortal DRI ATSC {0} Stream Source", uuid), 1)));
+              tuners.Add(new TunerDriAtsc(deviceDescriptor, tunerInstanceId, productInstanceId, supportedBroadcastStandards, supportedModulationSchemes, controlPoint, new TunerStreamTve(string.Format("MediaPortal DRI ATSC {0} Stream Source", uuid), 1)));
             }
             break;
           }

@@ -256,6 +256,12 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
             get { return _tunerSatellites  ?? (_tunerSatellites = CreateObjectSet<TunerSatellite>("TunerSatellites")); }
         }
         private ObjectSet<TunerSatellite> _tunerSatellites;
+    
+        public ObjectSet<StreamTunerSettings> StreamTunerSettings
+        {
+            get { return _streamTunerSettings  ?? (_streamTunerSettings = CreateObjectSet<StreamTunerSettings>("StreamTunerSettings")); }
+        }
+        private ObjectSet<StreamTunerSettings> _streamTunerSettings;
 
         #endregion
     }

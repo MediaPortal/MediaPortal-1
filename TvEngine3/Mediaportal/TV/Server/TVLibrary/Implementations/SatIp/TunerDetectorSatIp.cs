@@ -203,13 +203,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
       int j = 0;
       for (; i <= feCountC; i++)
       {
-        tuners.Add(new TunerSatIpCable(descriptor, i, new TunerStream(string.Format("MediaPortal SAT>IP {0} DVB-C Stream Source", descriptor.DeviceUUID), i)));
+        tuners.Add(new TunerSatIpCable(descriptor, i, new TunerStreamTve(string.Format("MediaPortal SAT>IP {0} DVB-C Stream Source", descriptor.DeviceUUID), i)));
       }
       j += feCountC;
       for (; i <= feCountC2 + j; i++)
       {
         // Note: DVB-C2 not supported for now.
-        tuners.Add(new TunerSatIpCable(descriptor, i, new TunerStream(string.Format("MediaPortal SAT>IP {0} DVB-C/C2 Stream Source", descriptor.DeviceUUID), i)));
+        tuners.Add(new TunerSatIpCable(descriptor, i, new TunerStreamTve(string.Format("MediaPortal SAT>IP {0} DVB-C/C2 Stream Source", descriptor.DeviceUUID), i)));
       }
       j += feCountC2;
 
@@ -225,18 +225,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
 
       for (; i <= feCountT + j; i++)
       {
-        tuners.Add(new TunerSatIpTerrestrial(descriptor, i, BroadcastStandard.DvbT, new TunerStream(string.Format("MediaPortal SAT>IP {0} DVB-T Stream Source", descriptor.DeviceUUID), i)));
+        tuners.Add(new TunerSatIpTerrestrial(descriptor, i, BroadcastStandard.DvbT, new TunerStreamTve(string.Format("MediaPortal SAT>IP {0} DVB-T Stream Source", descriptor.DeviceUUID), i)));
       }
       j += feCountT;
       for (; i <= feCountT2 + j; i++)
       {
-        tuners.Add(new TunerSatIpTerrestrial(descriptor, i, BroadcastStandard.DvbT | BroadcastStandard.DvbT2, new TunerStream(string.Format("MediaPortal SAT>IP {0} DVB-T/T2 Stream Source", descriptor.DeviceUUID), i)));
+        tuners.Add(new TunerSatIpTerrestrial(descriptor, i, BroadcastStandard.DvbT | BroadcastStandard.DvbT2, new TunerStreamTve(string.Format("MediaPortal SAT>IP {0} DVB-T/T2 Stream Source", descriptor.DeviceUUID), i)));
       }
       j += feCountT2;
 
       for (; i <= feCountS2 + j; i++)
       {
-        tuners.Add(new TunerSatIpSatellite(descriptor, i, new TunerStream(string.Format("MediaPortal SAT>IP {0} DVB-S/S2 Stream Source", descriptor.DeviceUUID), i)));
+        tuners.Add(new TunerSatIpSatellite(descriptor, i, new TunerStreamTve(string.Format("MediaPortal SAT>IP {0} DVB-S/S2 Stream Source", descriptor.DeviceUUID), i)));
       }
 
       return tuners;

@@ -24,6 +24,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
     [KnownType(typeof(AnalogTunerSettings))]
     [KnownType(typeof(Conflict))]
     [KnownType(typeof(TunerSatellite))]
+    [KnownType(typeof(StreamTunerSettings))]
     public partial class Tuner: IObjectWithChangeTracker, INotifyPropertyChanged
     {
         #region Primitive Properties
@@ -594,6 +595,23 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
             }
         }
         private TrackableCollection<TunerSatellite> _tunerSatellites;
+    
+        [DataMember]
+        public StreamTunerSettings StreamTunerSettings
+        {
+            get { return _streamTunerSettings; }
+            set
+            {
+                if (!ReferenceEquals(_streamTunerSettings, value))
+                {
+                    var previousValue = _streamTunerSettings;
+                    _streamTunerSettings = value;
+                    FixupStreamTunerSettings(previousValue);
+                    OnNavigationPropertyChanged("StreamTunerSettings");
+                }
+            }
+        }
+        private StreamTunerSettings _streamTunerSettings;
 
         #endregion
         #region ChangeTracking
@@ -679,6 +697,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
             AnalogTunerSettings = null;
             Conflicts.Clear();
             TunerSatellites.Clear();
+            StreamTunerSettings = null;
         }
 
         #endregion
@@ -777,6 +796,59 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                 if (AnalogTunerSettings != null && !AnalogTunerSettings.ChangeTracker.ChangeTrackingEnabled)
                 {
                     AnalogTunerSettings.StartTracking();
+                }
+            }
+        }
+    
+        private void FixupStreamTunerSettings(StreamTunerSettings previousValue)
+        {
+            // This is the principal end in an association that performs cascade deletes.
+            // Update the event listener to refer to the new dependent.
+            if (previousValue != null)
+            {
+                ChangeTracker.ObjectStateChanging -= previousValue.HandleCascadeDelete;
+            }
+    
+            if (StreamTunerSettings != null)
+            {
+                ChangeTracker.ObjectStateChanging += StreamTunerSettings.HandleCascadeDelete;
+            }
+    
+            if (IsDeserializing)
+            {
+                return;
+            }
+    
+            if (previousValue != null && ReferenceEquals(previousValue.Tuner, this))
+            {
+                previousValue.Tuner = null;
+            }
+    
+            if (StreamTunerSettings != null)
+            {
+                StreamTunerSettings.Tuner = this;
+            }
+    
+            if (ChangeTracker.ChangeTrackingEnabled)
+            {
+                if (ChangeTracker.OriginalValues.ContainsKey("StreamTunerSettings")
+                    && (ChangeTracker.OriginalValues["StreamTunerSettings"] == StreamTunerSettings))
+                {
+                    ChangeTracker.OriginalValues.Remove("StreamTunerSettings");
+                }
+                else
+                {
+                    ChangeTracker.RecordOriginalValue("StreamTunerSettings", previousValue);
+                    // This is the principal end of an identifying association, so the dependent must be deleted when the relationship is removed.
+                    // If the current state of the dependent is Added, the relationship can be changed without causing the dependent to be deleted.
+                    if (previousValue != null && previousValue.ChangeTracker.State != ObjectState.Added)
+                    {
+                        previousValue.MarkAsDeleted();
+                    }
+                }
+                if (StreamTunerSettings != null && !StreamTunerSettings.ChangeTracker.ChangeTrackingEnabled)
+                {
+                    StreamTunerSettings.StartTracking();
                 }
             }
         }

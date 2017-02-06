@@ -33,10 +33,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog
   {
     #region variables
 
-    private CaptureSourceVideo _externalInputSourceVideo;
-    private CaptureSourceAudio _externalInputSourceAudio;
-    private int _externalInputCountryId;
-    private short _externalInputPhysicalChannelNumber;
+    private CaptureSourceVideo _externalInputSourceVideo = CaptureSourceVideo.TunerDefault;
+    private CaptureSourceAudio _externalInputSourceAudio = CaptureSourceAudio.TunerDefault;
+    private int _externalInputCountryId = CountryCollection.Instance.GetCountryByIsoCode("US").Id;
+    private short _externalInputPhysicalChannelNumber = 7;
     private string _externalTunerProgram = string.Empty;
     private string _externalTunerProgramArguments = string.Empty;
 
@@ -46,16 +46,32 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog
     {
       this.LogDebug("external tuner: reload configuration");
 
-      _externalInputSourceVideo = (CaptureSourceVideo)configuration.ExternalInputSourceVideo;
-      _externalInputSourceAudio = (CaptureSourceAudio)configuration.ExternalInputSourceAudio;
-      _externalInputCountryId = configuration.ExternalInputCountryId;
-      _externalInputPhysicalChannelNumber = (short)configuration.ExternalInputPhysicalChannelNumber;
-      _externalTunerProgram = configuration.ExternalTunerProgram;
-      _externalTunerProgramArguments = configuration.ExternalTunerProgramArguments;
+      CaptureSourceVideo supportedVideoSources = CaptureSourceVideo.TunerDefault;
+      CaptureSourceAudio supportedAudioSources = CaptureSourceAudio.TunerDefault;
+      if (configuration == null)
+      {
+        _externalInputSourceVideo = CaptureSourceVideo.TunerDefault;
+        _externalInputSourceAudio = CaptureSourceAudio.TunerDefault;
+        _externalInputCountryId = CountryCollection.Instance.GetCountryByIsoCode("US").Id;
+        _externalInputPhysicalChannelNumber = 7;
+        _externalTunerProgram = string.Empty;
+        _externalTunerProgramArguments = string.Empty;
+      }
+      else
+      {
+        _externalInputSourceVideo = (CaptureSourceVideo)configuration.ExternalInputSourceVideo;
+        supportedVideoSources = (CaptureSourceVideo)configuration.SupportedVideoSources;
+        _externalInputSourceAudio = (CaptureSourceAudio)configuration.ExternalInputSourceAudio;
+        supportedAudioSources = (CaptureSourceAudio)configuration.SupportedAudioSources;
+        _externalInputCountryId = configuration.ExternalInputCountryId;
+        _externalInputPhysicalChannelNumber = (short)configuration.ExternalInputPhysicalChannelNumber;
+        _externalTunerProgram = configuration.ExternalTunerProgram;
+        _externalTunerProgramArguments = configuration.ExternalTunerProgramArguments;
+      }
 
       this.LogDebug("  external input...");
-      this.LogDebug("    video source  = {0} [{1}]", _externalInputSourceVideo, (CaptureSourceVideo)configuration.SupportedVideoSources);
-      this.LogDebug("    audio source  = {0} [{1}]", _externalInputSourceAudio, (CaptureSourceAudio)configuration.SupportedAudioSources);
+      this.LogDebug("    video source  = {0} [{1}]", _externalInputSourceVideo, supportedVideoSources);
+      this.LogDebug("    audio source  = {0} [{1}]", _externalInputSourceAudio, supportedAudioSources);
       this.LogDebug("    country       = {0}", _externalInputCountryId);
       this.LogDebug("    phys. channel = {0}", _externalInputPhysicalChannelNumber);
       this.LogDebug("  external tuner...");

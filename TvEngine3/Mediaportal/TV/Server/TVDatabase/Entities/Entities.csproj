@@ -229,6 +229,11 @@
       <SubType>
       </SubType>
     </Compile>
+    <Compile Include="StreamTunerSettings.cs">
+      <DependentUpon>Model.tt</DependentUpon>
+      <SubType>
+      </SubType>
+    </Compile>
     <Compile Include="Tuner.cs">
       <DependentUpon>Model.tt</DependentUpon>
       <SubType>

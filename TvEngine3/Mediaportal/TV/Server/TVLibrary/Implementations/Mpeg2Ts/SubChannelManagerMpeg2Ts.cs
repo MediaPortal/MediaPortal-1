@@ -1009,6 +1009,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Mpeg2Ts
     /// <param name="configuration">The tuner's configuration.</param>
     public override void ReloadConfiguration(Tuner configuration)
     {
+      if (configuration == null)
+      {
+        _pidFilterMode = PidFilterMode.Automatic;
+        _useConditionalAccessInterface = true;
+        _multiChannelDecryptMode = MultiChannelDecryptMode.List;
+        _camType = CamType.Default;
+        return;
+      }
+
       _pidFilterMode = (PidFilterMode)configuration.PidFilterMode;
       _useConditionalAccessInterface = configuration.UseConditionalAccess;
       _multiChannelDecryptMode = (MultiChannelDecryptMode)configuration.MultiChannelDecryptMode;

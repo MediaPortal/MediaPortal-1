@@ -10,6 +10,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities.Enums
     TunerGroup = 2,
     TunerProperties = 4,
     AnalogTunerSettings = 8,
-    TunerSatellites = 16
+    TunerSatellites = 16,
+    StreamTunerSettings = 32
   }
 }

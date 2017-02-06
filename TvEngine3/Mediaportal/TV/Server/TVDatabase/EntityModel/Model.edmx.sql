@@ -5,7 +5,7 @@
 -- -----------------------------------------------------------
 -- Entity Designer DDL Script for MySQL Server 4.1 and higher
 -- -----------------------------------------------------------
--- Date Created: 11/04/2016 12:08:46
+-- Date Created: 02/01/2017 11:54:47
 -- Generated from EDMX file: F:\sdev\Code\MediaPortal\MediaPortal-1_TVE35\TvEngine3\Mediaportal\TV\Server\TVDatabase\EntityModel\Model.edmx
 -- Target version: 2.0.0.0
 -- --------------------------------------------------
@@ -49,6 +49,7 @@
 --    ALTER TABLE `TunerSatellites` DROP CONSTRAINT `FK_LnbTypeTunerSatellite`;
 --    ALTER TABLE `TuningDetails` DROP CONSTRAINT `FK_SatelliteTuningDetail`;
 --    ALTER TABLE `TunerTuningDetailMappings` DROP CONSTRAINT `FK_TuningDetailTunerTuningDetailMapping`;
+--    ALTER TABLE `StreamTunerSettings` DROP CONSTRAINT `FK_TunerStreamTunerSettings`;
 
 -- --------------------------------------------------
 -- Dropping existing tables
@@ -84,6 +85,7 @@ SET foreign_key_checks = 0;
     DROP TABLE IF EXISTS `VideoEncoders`;
     DROP TABLE IF EXISTS `AudioEncoders`;
     DROP TABLE IF EXISTS `TunerSatellites`;
+    DROP TABLE IF EXISTS `StreamTunerSettings`;
 SET foreign_key_checks = 1;
 
 -- --------------------------------------------------
@@ -590,6 +592,25 @@ ALTER TABLE `TunerSatellites` ADD PRIMARY KEY (IdTunerSatellite);
 
 
 
+CREATE TABLE `StreamTunerSettings`(
+	`IdStreamTunerSettings` int NOT NULL, 
+	`ReceiveDataTimeLimit` int NOT NULL, 
+	`BufferSize` int NOT NULL, 
+	`BufferSizeMaximum` int NOT NULL, 
+	`OpenConnectionAttemptLimit` int NOT NULL, 
+	`DumpInput` bool NOT NULL, 
+	`RtspCommandResponseTimeLimit` int NOT NULL, 
+	`RtspSendCommandOptions` bool NOT NULL, 
+	`RtspSendCommandDescribe` bool NOT NULL, 
+	`NetworkInterface` varchar (200) NOT NULL, 
+	`FileRepeatCount` int NOT NULL, 
+	`RtpSwitchToUdpPacketCount` int NOT NULL);
+
+ALTER TABLE `StreamTunerSettings` ADD PRIMARY KEY (IdStreamTunerSettings);
+
+
+
+
 
 
 -- --------------------------------------------------
@@ -1084,6 +1105,15 @@ ADD CONSTRAINT `FK_TuningDetailTunerTuningDetailMapping`
 CREATE INDEX `IX_FK_TuningDetailTunerTuningDetailMapping` 
     ON `TunerTuningDetailMappings`
     (`IdTuningDetail`);
+
+-- Creating foreign key on `IdStreamTunerSettings` in table 'StreamTunerSettings'
+
+ALTER TABLE `StreamTunerSettings`
+ADD CONSTRAINT `FK_TunerStreamTunerSettings`
+    FOREIGN KEY (`IdStreamTunerSettings`)
+    REFERENCES `Tuners`
+        (`IdTuner`)
+    ON DELETE CASCADE ON UPDATE NO ACTION;
 
 -- --------------------------------------------------
 -- Script has ended

@@ -1597,17 +1597,26 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
       this.LogDebug("DRI analog: reload configuration");
       base.ReloadConfiguration(configuration);
 
-      if (configuration.AnalogTunerSettings == null)
+      if (configuration == null)
       {
-        configuration.AnalogTunerSettings = CreateDefaultConfiguration();
+        _externalTuner.ReloadConfiguration(null);
+
+        _tunableSourcesVideo = CaptureSourceVideo.TunerDefault;
+        _tunableSourcesAudio = CaptureSourceAudio.Automatic | CaptureSourceAudio.TunerDefault;
       }
+      else
+      {
+        if (configuration.AnalogTunerSettings == null)
+        {
+          configuration.AnalogTunerSettings = CreateDefaultConfiguration();
+        }
+        _externalTuner.ReloadConfiguration(configuration.AnalogTunerSettings);
 
-      _tunableSourcesVideo = (CaptureSourceVideo)configuration.AnalogTunerSettings.SupportedVideoSources;
-      _tunableSourcesVideo |= CaptureSourceVideo.TunerDefault;
-      _tunableSourcesAudio = (CaptureSourceAudio)configuration.AnalogTunerSettings.SupportedAudioSources;
-      _tunableSourcesAudio |= CaptureSourceAudio.Automatic | CaptureSourceAudio.TunerDefault;
-
-      _externalTuner.ReloadConfiguration(configuration.AnalogTunerSettings);
+        _tunableSourcesVideo = (CaptureSourceVideo)configuration.AnalogTunerSettings.SupportedVideoSources;
+        _tunableSourcesVideo |= CaptureSourceVideo.TunerDefault;
+        _tunableSourcesAudio = (CaptureSourceAudio)configuration.AnalogTunerSettings.SupportedAudioSources;
+        _tunableSourcesAudio |= CaptureSourceAudio.Automatic | CaptureSourceAudio.TunerDefault;
+      }
     }
 
     #endregion

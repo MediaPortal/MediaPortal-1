@@ -84,6 +84,7 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.ObjContext
       model.ScheduleRulesTemplates.MergeOption = MergeOption.NoTracking;
       model.Schedules.MergeOption = MergeOption.NoTracking;
       model.Settings.MergeOption = MergeOption.NoTracking;
+      model.StreamTunerSettings.MergeOption = MergeOption.NoTracking;
       model.TunerGroups.MergeOption = MergeOption.NoTracking;
       model.TunerProperties.MergeOption = MergeOption.NoTracking;
       model.TunerSatellites.MergeOption = MergeOption.NoTracking;

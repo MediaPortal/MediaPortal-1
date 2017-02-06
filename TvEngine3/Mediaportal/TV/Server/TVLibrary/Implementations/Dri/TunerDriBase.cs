@@ -26,6 +26,7 @@ using System.Net.NetworkInformation;
 using System.Text.RegularExpressions;
 using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Dri.Enum;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Dri.Service;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Enum;
@@ -86,6 +87,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
     private IPAddress _localIpAddress = null;
     protected string _serverIpAddress = string.Empty;
     protected ChannelStream _streamChannel = new ChannelStream();
+    private int _rtpPortMinimum = 49152;
+    private int _rtpPortMaximum = 65535;
 
     // UPnP AV
     private int _connectionId = VALUE_NOT_SET;
@@ -472,7 +475,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
           usedPorts.Add(listener.Port);
         }
       }
-      for (int port = 40000; port <= 65534; port += 2)  // By convention the port should be even.
+      for (int port = _rtpPortMinimum + (_rtpPortMinimum % 2); port <= _rtpPortMaximum; port += 2)  // By convention the port should be even.
       {
         if (!usedPorts.Contains(port))
         {
@@ -480,6 +483,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
           break;
         }
       }
+      if (rtpClientPort == 0)
+      {
+        throw new TvException("Failed to start streaming, not able to find free port within configured range ({0} to {1}).", _rtpPortMinimum, _rtpPortMaximum);
+      }
+
       this.LogDebug("DRI base: send RTSP SETUP, RTP client port = {0}", rtpClientPort);
       RtspRequest request = new RtspRequest(RtspMethod.Setup, _rtspUri);
       request.Headers.Add("Transport", string.Format("RTP/AVP;unicast;client_port={0}-{1}", rtpClientPort, rtpClientPort + 1));
@@ -689,6 +697,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
     /// <param name="configuration">The tuner's configuration.</param>
     public override void ReloadConfiguration(Tuner configuration)
     {
+      this.LogDebug("DRI base: reload configuration");
+
+      _rtpPortMinimum = SettingsManagement.GetValue("streamTunersPortMinimum", 49152);
+      _rtpPortMaximum = SettingsManagement.GetValue("streamTunersPortMaximum", 65535);
+      this.LogDebug("  RTP port range = {0} - {1}", _rtpPortMinimum, _rtpPortMaximum);
+
       ITuner tuner = _streamTuner as ITuner;
       if (tuner != null)
       {

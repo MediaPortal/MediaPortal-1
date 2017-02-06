@@ -48,21 +48,31 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.numericUpDownTimeLimitReceiveVideoAudio = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPNumericUpDown();
       this.labelTimeLimitReceiveVideoAudioUnit = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.labelTimeLimitReceiveVideoAudio = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.labelStreamTunerPorts = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.numericUpDownStreamTunerPortMinimum = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPNumericUpDown();
+      this.numericUpDownStreamTunerPortMaximum = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPNumericUpDown();
+      this.labelStreamTunerPortsSeparator = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.groupBoxGeneral.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTimeLimitSignalLock)).BeginInit();
       this.groupBoxPreviewCodecs.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTimeLimitReceiveStreamInfo)).BeginInit();
       this.groupBoxTimeLimits.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTimeLimitReceiveVideoAudio)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownStreamTunerPortMinimum)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownStreamTunerPortMaximum)).BeginInit();
       this.SuspendLayout();
       // 
       // groupBoxGeneral
       // 
+      this.groupBoxGeneral.Controls.Add(this.labelStreamTunerPortsSeparator);
+      this.groupBoxGeneral.Controls.Add(this.numericUpDownStreamTunerPortMaximum);
+      this.groupBoxGeneral.Controls.Add(this.numericUpDownStreamTunerPortMinimum);
+      this.groupBoxGeneral.Controls.Add(this.labelStreamTunerPorts);
       this.groupBoxGeneral.Controls.Add(this.labelServicePriority);
       this.groupBoxGeneral.Controls.Add(this.comboBoxServicePriority);
       this.groupBoxGeneral.Location = new System.Drawing.Point(3, 3);
       this.groupBoxGeneral.Name = "groupBoxGeneral";
-      this.groupBoxGeneral.Size = new System.Drawing.Size(263, 51);
+      this.groupBoxGeneral.Size = new System.Drawing.Size(280, 77);
       this.groupBoxGeneral.TabIndex = 0;
       this.groupBoxGeneral.TabStop = false;
       this.groupBoxGeneral.Text = "General";
@@ -81,7 +91,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.comboBoxServicePriority.FormattingEnabled = true;
       this.comboBoxServicePriority.Location = new System.Drawing.Point(125, 19);
       this.comboBoxServicePriority.Name = "comboBoxServicePriority";
-      this.comboBoxServicePriority.Size = new System.Drawing.Size(120, 21);
+      this.comboBoxServicePriority.Size = new System.Drawing.Size(140, 21);
       this.comboBoxServicePriority.TabIndex = 1;
       // 
       // numericUpDownTimeLimitSignalLock
@@ -135,7 +145,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.groupBoxPreviewCodecs.Controls.Add(this.labelPreviewCodecAudio);
       this.groupBoxPreviewCodecs.Controls.Add(this.comboBoxPreviewCodecVideo);
       this.groupBoxPreviewCodecs.Controls.Add(this.labelPreviewCodecVideo);
-      this.groupBoxPreviewCodecs.Location = new System.Drawing.Point(3, 60);
+      this.groupBoxPreviewCodecs.Location = new System.Drawing.Point(3, 86);
       this.groupBoxPreviewCodecs.Name = "groupBoxPreviewCodecs";
       this.groupBoxPreviewCodecs.Size = new System.Drawing.Size(414, 78);
       this.groupBoxPreviewCodecs.TabIndex = 1;
@@ -234,9 +244,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.groupBoxTimeLimits.Controls.Add(this.labelTimeLimitReceiveStreamInfo);
       this.groupBoxTimeLimits.Controls.Add(this.labelTimeLimitSignalLockUnit);
       this.groupBoxTimeLimits.Controls.Add(this.numericUpDownTimeLimitSignalLock);
-      this.groupBoxTimeLimits.Location = new System.Drawing.Point(3, 144);
+      this.groupBoxTimeLimits.Location = new System.Drawing.Point(3, 170);
       this.groupBoxTimeLimits.Name = "groupBoxTimeLimits";
-      this.groupBoxTimeLimits.Size = new System.Drawing.Size(263, 104);
+      this.groupBoxTimeLimits.Size = new System.Drawing.Size(280, 104);
       this.groupBoxTimeLimits.TabIndex = 2;
       this.groupBoxTimeLimits.TabStop = false;
       this.groupBoxTimeLimits.Text = "Tuning Time Limits";
@@ -286,6 +296,70 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.labelTimeLimitReceiveVideoAudio.TabIndex = 6;
       this.labelTimeLimitReceiveVideoAudio.Text = "Wait for video/audio:";
       // 
+      // labelStreamTunerPorts
+      // 
+      this.labelStreamTunerPorts.AutoSize = true;
+      this.labelStreamTunerPorts.Location = new System.Drawing.Point(6, 48);
+      this.labelStreamTunerPorts.Name = "labelStreamTunerPorts";
+      this.labelStreamTunerPorts.Size = new System.Drawing.Size(96, 13);
+      this.labelStreamTunerPorts.TabIndex = 2;
+      this.labelStreamTunerPorts.Text = "Stream tuner ports:";
+      // 
+      // numericUpDownStreamTunerPortMinimum
+      // 
+      this.numericUpDownStreamTunerPortMinimum.Location = new System.Drawing.Point(125, 46);
+      this.numericUpDownStreamTunerPortMinimum.Maximum = new decimal(new int[] {
+            65535,
+            0,
+            0,
+            0});
+      this.numericUpDownStreamTunerPortMinimum.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+      this.numericUpDownStreamTunerPortMinimum.Name = "numericUpDownStreamTunerPortMinimum";
+      this.numericUpDownStreamTunerPortMinimum.Size = new System.Drawing.Size(60, 20);
+      this.numericUpDownStreamTunerPortMinimum.TabIndex = 3;
+      this.numericUpDownStreamTunerPortMinimum.Value = new decimal(new int[] {
+            49152,
+            0,
+            0,
+            0});
+      this.numericUpDownStreamTunerPortMinimum.ValueChanged += new System.EventHandler(this.numericUpDownStreamTunerPortMinimum_ValueChanged);
+      // 
+      // numericUpDownStreamTunerPortMaximum
+      // 
+      this.numericUpDownStreamTunerPortMaximum.Location = new System.Drawing.Point(205, 46);
+      this.numericUpDownStreamTunerPortMaximum.Maximum = new decimal(new int[] {
+            65535,
+            0,
+            0,
+            0});
+      this.numericUpDownStreamTunerPortMaximum.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+      this.numericUpDownStreamTunerPortMaximum.Name = "numericUpDownStreamTunerPortMaximum";
+      this.numericUpDownStreamTunerPortMaximum.Size = new System.Drawing.Size(60, 20);
+      this.numericUpDownStreamTunerPortMaximum.TabIndex = 5;
+      this.numericUpDownStreamTunerPortMaximum.Value = new decimal(new int[] {
+            65535,
+            0,
+            0,
+            0});
+      this.numericUpDownStreamTunerPortMaximum.ValueChanged += new System.EventHandler(this.numericUpDownStreamTunerPortMaximum_ValueChanged);
+      // 
+      // labelStreamTunerPortsSeparator
+      // 
+      this.labelStreamTunerPortsSeparator.AutoSize = true;
+      this.labelStreamTunerPortsSeparator.Location = new System.Drawing.Point(187, 48);
+      this.labelStreamTunerPortsSeparator.Name = "labelStreamTunerPortsSeparator";
+      this.labelStreamTunerPortsSeparator.Size = new System.Drawing.Size(16, 13);
+      this.labelStreamTunerPortsSeparator.TabIndex = 4;
+      this.labelStreamTunerPortsSeparator.Text = "to";
+      // 
       // General
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -305,6 +379,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.groupBoxTimeLimits.ResumeLayout(false);
       this.groupBoxTimeLimits.PerformLayout();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTimeLimitReceiveVideoAudio)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownStreamTunerPortMinimum)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownStreamTunerPortMaximum)).EndInit();
       this.ResumeLayout(false);
 
     }
@@ -329,5 +405,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private MPNumericUpDown numericUpDownTimeLimitReceiveVideoAudio;
     private MPLabel labelTimeLimitReceiveVideoAudioUnit;
     private MPLabel labelTimeLimitReceiveVideoAudio;
+    private MPNumericUpDown numericUpDownStreamTunerPortMinimum;
+    private MPLabel labelStreamTunerPorts;
+    private MPLabel labelStreamTunerPortsSeparator;
+    private MPNumericUpDown numericUpDownStreamTunerPortMaximum;
   }
 }

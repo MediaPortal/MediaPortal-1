@@ -229,12 +229,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
       this.LogDebug("BDA analog TV: reload configuration");
       base.ReloadConfiguration(configuration);
 
-      if (configuration.AnalogTunerSettings == null)
+      if (configuration == null)
       {
-        configuration.AnalogTunerSettings = CreateDefaultConfiguration();
+        _externalTuner.ReloadConfiguration(null);
       }
-
-      _externalTuner.ReloadConfiguration(configuration.AnalogTunerSettings);
+      else
+      {
+        if (configuration.AnalogTunerSettings == null)
+        {
+          configuration.AnalogTunerSettings = CreateDefaultConfiguration();
+        }
+        _externalTuner.ReloadConfiguration(configuration.AnalogTunerSettings);
+      }
     }
 
     /// <summary>

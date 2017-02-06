@@ -1,11 +1,20 @@
 using System;
-using MediaPortal.Common.Utils;
+using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVLibrary.IntegrationProvider.Interfaces;
+using MediaPortal.Common.Utils;
 
 namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Logging
 {
   public static class Log
   {
+    public static LogLevel Level
+    {
+      get
+      {
+        return GlobalServiceProvider.Instance.Get<IIntegrationProvider>().Logger.LogLevel;
+      }
+    }
+
     public static void Debug(Type callerType, string message, params object[] args)
     {
       GlobalServiceProvider.Instance.Get<IIntegrationProvider>().Logger.Debug(callerType, message, args);

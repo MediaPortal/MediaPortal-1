@@ -22,6 +22,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Net.NetworkInformation;
 using DirectShowLib;
 using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVDatabase.Entities;
@@ -88,6 +89,24 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         }
       }
       return availableEncoders;
+    }
+
+    public static IList<string> ListAvailableNetworkInterfaceNames()
+    {
+      NetworkInterface[] interfaces = NetworkInterface.GetAllNetworkInterfaces();
+      if (interfaces == null)
+      {
+        return new List<string>(0);
+      }
+      List<string> interfaceNames = new List<string>(interfaces.Length);
+      foreach (var i in interfaces)
+      {
+        if (i != null && !string.IsNullOrEmpty(i.Name))
+        {
+          interfaceNames.Add(i.Name);
+        }
+      }
+      return interfaceNames;
     }
 
     public static void GetBdaFixStatus(out bool isApplicable, out bool isNeeded)

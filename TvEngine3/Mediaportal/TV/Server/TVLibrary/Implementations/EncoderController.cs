@@ -241,7 +241,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       }
 
       this.LogDebug("encoder: reload configuration");
-      if (configuration.AnalogTunerSettings == null)
+      if (configuration == null || configuration.AnalogTunerSettings == null)
       {
         _settingsTimeShift.EncodeMode = EncodeMode.ConstantBitRate;
         _settingsTimeShift.BitRateAverage = 100;

@@ -92,6 +92,10 @@
       <Project>{F6EDA1F3-3DCD-43F4-8A90-E32DA70C8227}</Project>
       <Name>Common.Utils</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Common.Types\Common.Types.csproj">
+      <Project>{F9F4E5C1-9A6A-42F8-8452-4BDAFEA0E798}</Project>
+      <Name>Common.Types</Name>
+    </ProjectReference>
     <ProjectReference Include="..\TvLibrary.IntegrationProvider.Interfaces\TvLibrary.IntegrationProvider.Interfaces.csproj">
       <Project>{34BCC448-B298-463E-B3B1-C031EBF0B4DB}</Project>
       <Name>TvLibrary.IntegrationProvider.Interfaces</Name>

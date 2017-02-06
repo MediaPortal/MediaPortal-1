@@ -76,6 +76,34 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.labelDecryptLimit1 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.labelDecryptLimit2 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.numericUpDownDecryptLimit = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPNumericUpDown();
+      this.tabPageStream = new System.Windows.Forms.TabPage();
+      this.groupBoxStreamOtherProtocols = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
+      this.labelStreamHttpRtpUdpInterface = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.labelStreamRtpSwitchToUdpPacketCountUnit = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.comboBoxStreamHttpRtpUdpInterface = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
+      this.labelStreamRtpSwitchToUdpPacketCount = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.numericUpDownStreamFileRepeatCount = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPNumericUpDown();
+      this.numericUpDownStreamRtpSwitchToUdpPacketCount = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPNumericUpDown();
+      this.labelStreamFileRepeatCount = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.groupBoxStreamRtsp = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
+      this.labelStreamRtspCommandResponseTimeLimit = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.checkBoxStreamRtspSendCommandOptions = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
+      this.checkBoxStreamRtspSendCommandDescribe = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
+      this.numericUpDownStreamRtspCommandResponseTimeLimit = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPNumericUpDown();
+      this.labelStreamRtspCommandResponseTimeLimitUnit = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.groupBoxStreamGeneral = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
+      this.numericUpDownStreamReceiveDataTimeLimit = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPNumericUpDown();
+      this.labelStreamReceiveDataTimeLimit = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.labelStreamOpenConnectionAttemptLimit = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.labelStreamReceiveDataTimeLimitUnit = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.numericUpDownStreamOpenConnectionAttemptLimit = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPNumericUpDown();
+      this.checkBoxStreamDumpInput = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
+      this.labelStreamBufferSizeMaximum = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.numericUpDownStreamBufferSize = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPNumericUpDown();
+      this.labelStreamBufferSizeMaximumUnit = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.labelStreamBufferSizeUnit = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.numericUpDownStreamBufferSizeMaximum = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPNumericUpDown();
+      this.labelStreamBufferSize = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.tabPageAnalog = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTabPage();
       this.groupBoxEncoderSettings = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
       this.buttonEncoderSettingsCheckSupport = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
@@ -144,6 +172,17 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.groupBoxCaMenu.SuspendLayout();
       this.groupBoxConditionalAccess.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownDecryptLimit)).BeginInit();
+      this.tabPageStream.SuspendLayout();
+      this.groupBoxStreamOtherProtocols.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownStreamFileRepeatCount)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownStreamRtpSwitchToUdpPacketCount)).BeginInit();
+      this.groupBoxStreamRtsp.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownStreamRtspCommandResponseTimeLimit)).BeginInit();
+      this.groupBoxStreamGeneral.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownStreamReceiveDataTimeLimit)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownStreamOpenConnectionAttemptLimit)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownStreamBufferSize)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownStreamBufferSizeMaximum)).BeginInit();
       this.tabPageAnalog.SuspendLayout();
       this.groupBoxEncoderSettings.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownEncoderBitRateValuePeakRecording)).BeginInit();
@@ -187,6 +226,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
             | System.Windows.Forms.AnchorStyles.Right)));
       this.tabControl.Controls.Add(this.tabPageGeneral);
       this.tabControl.Controls.Add(this.tabPageConditionalAccess);
+      this.tabControl.Controls.Add(this.tabPageStream);
       this.tabControl.Controls.Add(this.tabPageAnalog);
       this.tabControl.Controls.Add(this.tabPageExternalInput);
       this.tabControl.Location = new System.Drawing.Point(0, 0);
@@ -652,6 +692,365 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
             0,
             0,
             0});
+      // 
+      // tabPageStream
+      // 
+      this.tabPageStream.Controls.Add(this.groupBoxStreamOtherProtocols);
+      this.tabPageStream.Controls.Add(this.groupBoxStreamRtsp);
+      this.tabPageStream.Controls.Add(this.groupBoxStreamGeneral);
+      this.tabPageStream.Location = new System.Drawing.Point(4, 22);
+      this.tabPageStream.Name = "tabPageStream";
+      this.tabPageStream.Size = new System.Drawing.Size(323, 487);
+      this.tabPageStream.TabIndex = 5;
+      this.tabPageStream.Text = "Stream";
+      this.tabPageStream.UseVisualStyleBackColor = true;
+      // 
+      // groupBoxStreamOtherProtocols
+      // 
+      this.groupBoxStreamOtherProtocols.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxStreamOtherProtocols.Controls.Add(this.labelStreamHttpRtpUdpInterface);
+      this.groupBoxStreamOtherProtocols.Controls.Add(this.labelStreamRtpSwitchToUdpPacketCountUnit);
+      this.groupBoxStreamOtherProtocols.Controls.Add(this.comboBoxStreamHttpRtpUdpInterface);
+      this.groupBoxStreamOtherProtocols.Controls.Add(this.labelStreamRtpSwitchToUdpPacketCount);
+      this.groupBoxStreamOtherProtocols.Controls.Add(this.numericUpDownStreamFileRepeatCount);
+      this.groupBoxStreamOtherProtocols.Controls.Add(this.numericUpDownStreamRtpSwitchToUdpPacketCount);
+      this.groupBoxStreamOtherProtocols.Controls.Add(this.labelStreamFileRepeatCount);
+      this.groupBoxStreamOtherProtocols.Location = new System.Drawing.Point(6, 262);
+      this.groupBoxStreamOtherProtocols.Name = "groupBoxStreamOtherProtocols";
+      this.groupBoxStreamOtherProtocols.Size = new System.Drawing.Size(311, 102);
+      this.groupBoxStreamOtherProtocols.TabIndex = 2;
+      this.groupBoxStreamOtherProtocols.TabStop = false;
+      this.groupBoxStreamOtherProtocols.Text = "Other Protocols";
+      // 
+      // labelStreamHttpRtpUdpInterface
+      // 
+      this.labelStreamHttpRtpUdpInterface.AutoSize = true;
+      this.labelStreamHttpRtpUdpInterface.Location = new System.Drawing.Point(6, 22);
+      this.labelStreamHttpRtpUdpInterface.Name = "labelStreamHttpRtpUdpInterface";
+      this.labelStreamHttpRtpUdpInterface.Size = new System.Drawing.Size(138, 13);
+      this.labelStreamHttpRtpUdpInterface.TabIndex = 0;
+      this.labelStreamHttpRtpUdpInterface.Text = "HTTP/RTP/UDP interface:";
+      // 
+      // labelStreamRtpSwitchToUdpPacketCountUnit
+      // 
+      this.labelStreamRtpSwitchToUdpPacketCountUnit.AutoSize = true;
+      this.labelStreamRtpSwitchToUdpPacketCountUnit.Location = new System.Drawing.Point(184, 74);
+      this.labelStreamRtpSwitchToUdpPacketCountUnit.Name = "labelStreamRtpSwitchToUdpPacketCountUnit";
+      this.labelStreamRtpSwitchToUdpPacketCountUnit.Size = new System.Drawing.Size(76, 13);
+      this.labelStreamRtpSwitchToUdpPacketCountUnit.TabIndex = 6;
+      this.labelStreamRtpSwitchToUdpPacketCountUnit.Text = "failed packets.";
+      // 
+      // comboBoxStreamHttpRtpUdpInterface
+      // 
+      this.comboBoxStreamHttpRtpUdpInterface.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+      this.comboBoxStreamHttpRtpUdpInterface.FormattingEnabled = true;
+      this.comboBoxStreamHttpRtpUdpInterface.Location = new System.Drawing.Point(162, 19);
+      this.comboBoxStreamHttpRtpUdpInterface.Name = "comboBoxStreamHttpRtpUdpInterface";
+      this.comboBoxStreamHttpRtpUdpInterface.Size = new System.Drawing.Size(143, 21);
+      this.comboBoxStreamHttpRtpUdpInterface.TabIndex = 1;
+      // 
+      // labelStreamRtpSwitchToUdpPacketCount
+      // 
+      this.labelStreamRtpSwitchToUdpPacketCount.AutoSize = true;
+      this.labelStreamRtpSwitchToUdpPacketCount.Location = new System.Drawing.Point(6, 74);
+      this.labelStreamRtpSwitchToUdpPacketCount.Name = "labelStreamRtpSwitchToUdpPacketCount";
+      this.labelStreamRtpSwitchToUdpPacketCount.Size = new System.Drawing.Size(124, 13);
+      this.labelStreamRtpSwitchToUdpPacketCount.TabIndex = 4;
+      this.labelStreamRtpSwitchToUdpPacketCount.Text = "RTP switch to UDP after";
+      // 
+      // numericUpDownStreamFileRepeatCount
+      // 
+      this.numericUpDownStreamFileRepeatCount.Location = new System.Drawing.Point(162, 46);
+      this.numericUpDownStreamFileRepeatCount.Name = "numericUpDownStreamFileRepeatCount";
+      this.numericUpDownStreamFileRepeatCount.Size = new System.Drawing.Size(60, 20);
+      this.numericUpDownStreamFileRepeatCount.TabIndex = 3;
+      // 
+      // numericUpDownStreamRtpSwitchToUdpPacketCount
+      // 
+      this.numericUpDownStreamRtpSwitchToUdpPacketCount.Location = new System.Drawing.Point(132, 72);
+      this.numericUpDownStreamRtpSwitchToUdpPacketCount.Maximum = new decimal(new int[] {
+            10000,
+            0,
+            0,
+            0});
+      this.numericUpDownStreamRtpSwitchToUdpPacketCount.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+      this.numericUpDownStreamRtpSwitchToUdpPacketCount.Name = "numericUpDownStreamRtpSwitchToUdpPacketCount";
+      this.numericUpDownStreamRtpSwitchToUdpPacketCount.Size = new System.Drawing.Size(50, 20);
+      this.numericUpDownStreamRtpSwitchToUdpPacketCount.TabIndex = 5;
+      this.numericUpDownStreamRtpSwitchToUdpPacketCount.Value = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+      // 
+      // labelStreamFileRepeatCount
+      // 
+      this.labelStreamFileRepeatCount.AutoSize = true;
+      this.labelStreamFileRepeatCount.Location = new System.Drawing.Point(6, 48);
+      this.labelStreamFileRepeatCount.Name = "labelStreamFileRepeatCount";
+      this.labelStreamFileRepeatCount.Size = new System.Drawing.Size(89, 13);
+      this.labelStreamFileRepeatCount.TabIndex = 2;
+      this.labelStreamFileRepeatCount.Text = "File repeat count:";
+      // 
+      // groupBoxStreamRtsp
+      // 
+      this.groupBoxStreamRtsp.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxStreamRtsp.Controls.Add(this.labelStreamRtspCommandResponseTimeLimit);
+      this.groupBoxStreamRtsp.Controls.Add(this.checkBoxStreamRtspSendCommandOptions);
+      this.groupBoxStreamRtsp.Controls.Add(this.checkBoxStreamRtspSendCommandDescribe);
+      this.groupBoxStreamRtsp.Controls.Add(this.numericUpDownStreamRtspCommandResponseTimeLimit);
+      this.groupBoxStreamRtsp.Controls.Add(this.labelStreamRtspCommandResponseTimeLimitUnit);
+      this.groupBoxStreamRtsp.Location = new System.Drawing.Point(6, 162);
+      this.groupBoxStreamRtsp.Name = "groupBoxStreamRtsp";
+      this.groupBoxStreamRtsp.Size = new System.Drawing.Size(311, 94);
+      this.groupBoxStreamRtsp.TabIndex = 1;
+      this.groupBoxStreamRtsp.TabStop = false;
+      this.groupBoxStreamRtsp.Text = "RTSP";
+      // 
+      // labelStreamRtspCommandResponseTimeLimit
+      // 
+      this.labelStreamRtspCommandResponseTimeLimit.AutoSize = true;
+      this.labelStreamRtspCommandResponseTimeLimit.Location = new System.Drawing.Point(6, 21);
+      this.labelStreamRtspCommandResponseTimeLimit.Name = "labelStreamRtspCommandResponseTimeLimit";
+      this.labelStreamRtspCommandResponseTimeLimit.Size = new System.Drawing.Size(142, 13);
+      this.labelStreamRtspCommandResponseTimeLimit.TabIndex = 0;
+      this.labelStreamRtspCommandResponseTimeLimit.Text = "Wait for command response:";
+      // 
+      // checkBoxStreamRtspSendCommandOptions
+      // 
+      this.checkBoxStreamRtspSendCommandOptions.AutoSize = true;
+      this.checkBoxStreamRtspSendCommandOptions.Location = new System.Drawing.Point(9, 45);
+      this.checkBoxStreamRtspSendCommandOptions.Name = "checkBoxStreamRtspSendCommandOptions";
+      this.checkBoxStreamRtspSendCommandOptions.Size = new System.Drawing.Size(152, 17);
+      this.checkBoxStreamRtspSendCommandOptions.TabIndex = 3;
+      this.checkBoxStreamRtspSendCommandOptions.Text = "Send OPTIONS command.";
+      // 
+      // checkBoxStreamRtspSendCommandDescribe
+      // 
+      this.checkBoxStreamRtspSendCommandDescribe.AutoSize = true;
+      this.checkBoxStreamRtspSendCommandDescribe.Location = new System.Drawing.Point(9, 68);
+      this.checkBoxStreamRtspSendCommandDescribe.Name = "checkBoxStreamRtspSendCommandDescribe";
+      this.checkBoxStreamRtspSendCommandDescribe.Size = new System.Drawing.Size(158, 17);
+      this.checkBoxStreamRtspSendCommandDescribe.TabIndex = 4;
+      this.checkBoxStreamRtspSendCommandDescribe.Text = "Send DESCRIBE command.";
+      // 
+      // numericUpDownStreamRtspCommandResponseTimeLimit
+      // 
+      this.numericUpDownStreamRtspCommandResponseTimeLimit.Location = new System.Drawing.Point(162, 19);
+      this.numericUpDownStreamRtspCommandResponseTimeLimit.Maximum = new decimal(new int[] {
+            60000,
+            0,
+            0,
+            0});
+      this.numericUpDownStreamRtspCommandResponseTimeLimit.Minimum = new decimal(new int[] {
+            25,
+            0,
+            0,
+            0});
+      this.numericUpDownStreamRtspCommandResponseTimeLimit.Name = "numericUpDownStreamRtspCommandResponseTimeLimit";
+      this.numericUpDownStreamRtspCommandResponseTimeLimit.Size = new System.Drawing.Size(60, 20);
+      this.numericUpDownStreamRtspCommandResponseTimeLimit.TabIndex = 1;
+      this.numericUpDownStreamRtspCommandResponseTimeLimit.Value = new decimal(new int[] {
+            500,
+            0,
+            0,
+            0});
+      // 
+      // labelStreamRtspCommandResponseTimeLimitUnit
+      // 
+      this.labelStreamRtspCommandResponseTimeLimitUnit.AutoSize = true;
+      this.labelStreamRtspCommandResponseTimeLimitUnit.Location = new System.Drawing.Point(225, 21);
+      this.labelStreamRtspCommandResponseTimeLimitUnit.Name = "labelStreamRtspCommandResponseTimeLimitUnit";
+      this.labelStreamRtspCommandResponseTimeLimitUnit.Size = new System.Drawing.Size(20, 13);
+      this.labelStreamRtspCommandResponseTimeLimitUnit.TabIndex = 2;
+      this.labelStreamRtspCommandResponseTimeLimitUnit.Text = "ms";
+      // 
+      // groupBoxStreamGeneral
+      // 
+      this.groupBoxStreamGeneral.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxStreamGeneral.Controls.Add(this.numericUpDownStreamReceiveDataTimeLimit);
+      this.groupBoxStreamGeneral.Controls.Add(this.labelStreamReceiveDataTimeLimit);
+      this.groupBoxStreamGeneral.Controls.Add(this.labelStreamOpenConnectionAttemptLimit);
+      this.groupBoxStreamGeneral.Controls.Add(this.labelStreamReceiveDataTimeLimitUnit);
+      this.groupBoxStreamGeneral.Controls.Add(this.numericUpDownStreamOpenConnectionAttemptLimit);
+      this.groupBoxStreamGeneral.Controls.Add(this.checkBoxStreamDumpInput);
+      this.groupBoxStreamGeneral.Controls.Add(this.labelStreamBufferSizeMaximum);
+      this.groupBoxStreamGeneral.Controls.Add(this.numericUpDownStreamBufferSize);
+      this.groupBoxStreamGeneral.Controls.Add(this.labelStreamBufferSizeMaximumUnit);
+      this.groupBoxStreamGeneral.Controls.Add(this.labelStreamBufferSizeUnit);
+      this.groupBoxStreamGeneral.Controls.Add(this.numericUpDownStreamBufferSizeMaximum);
+      this.groupBoxStreamGeneral.Controls.Add(this.labelStreamBufferSize);
+      this.groupBoxStreamGeneral.Location = new System.Drawing.Point(6, 6);
+      this.groupBoxStreamGeneral.Name = "groupBoxStreamGeneral";
+      this.groupBoxStreamGeneral.Size = new System.Drawing.Size(311, 150);
+      this.groupBoxStreamGeneral.TabIndex = 0;
+      this.groupBoxStreamGeneral.TabStop = false;
+      this.groupBoxStreamGeneral.Text = "General";
+      // 
+      // numericUpDownStreamReceiveDataTimeLimit
+      // 
+      this.numericUpDownStreamReceiveDataTimeLimit.Location = new System.Drawing.Point(162, 19);
+      this.numericUpDownStreamReceiveDataTimeLimit.Maximum = new decimal(new int[] {
+            60000,
+            0,
+            0,
+            0});
+      this.numericUpDownStreamReceiveDataTimeLimit.Minimum = new decimal(new int[] {
+            25,
+            0,
+            0,
+            0});
+      this.numericUpDownStreamReceiveDataTimeLimit.Name = "numericUpDownStreamReceiveDataTimeLimit";
+      this.numericUpDownStreamReceiveDataTimeLimit.Size = new System.Drawing.Size(60, 20);
+      this.numericUpDownStreamReceiveDataTimeLimit.TabIndex = 1;
+      this.numericUpDownStreamReceiveDataTimeLimit.Value = new decimal(new int[] {
+            2000,
+            0,
+            0,
+            0});
+      // 
+      // labelStreamReceiveDataTimeLimit
+      // 
+      this.labelStreamReceiveDataTimeLimit.AutoSize = true;
+      this.labelStreamReceiveDataTimeLimit.Location = new System.Drawing.Point(6, 21);
+      this.labelStreamReceiveDataTimeLimit.Name = "labelStreamReceiveDataTimeLimit";
+      this.labelStreamReceiveDataTimeLimit.Size = new System.Drawing.Size(71, 13);
+      this.labelStreamReceiveDataTimeLimit.TabIndex = 0;
+      this.labelStreamReceiveDataTimeLimit.Text = "Wait for data:";
+      // 
+      // labelStreamOpenConnectionAttemptLimit
+      // 
+      this.labelStreamOpenConnectionAttemptLimit.AutoSize = true;
+      this.labelStreamOpenConnectionAttemptLimit.Location = new System.Drawing.Point(6, 99);
+      this.labelStreamOpenConnectionAttemptLimit.Name = "labelStreamOpenConnectionAttemptLimit";
+      this.labelStreamOpenConnectionAttemptLimit.Size = new System.Drawing.Size(150, 13);
+      this.labelStreamOpenConnectionAttemptLimit.TabIndex = 9;
+      this.labelStreamOpenConnectionAttemptLimit.Text = "Open connection attempt limit:";
+      // 
+      // labelStreamReceiveDataTimeLimitUnit
+      // 
+      this.labelStreamReceiveDataTimeLimitUnit.AutoSize = true;
+      this.labelStreamReceiveDataTimeLimitUnit.Location = new System.Drawing.Point(224, 21);
+      this.labelStreamReceiveDataTimeLimitUnit.Name = "labelStreamReceiveDataTimeLimitUnit";
+      this.labelStreamReceiveDataTimeLimitUnit.Size = new System.Drawing.Size(20, 13);
+      this.labelStreamReceiveDataTimeLimitUnit.TabIndex = 2;
+      this.labelStreamReceiveDataTimeLimitUnit.Text = "ms";
+      // 
+      // numericUpDownStreamOpenConnectionAttemptLimit
+      // 
+      this.numericUpDownStreamOpenConnectionAttemptLimit.Location = new System.Drawing.Point(162, 97);
+      this.numericUpDownStreamOpenConnectionAttemptLimit.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+      this.numericUpDownStreamOpenConnectionAttemptLimit.Name = "numericUpDownStreamOpenConnectionAttemptLimit";
+      this.numericUpDownStreamOpenConnectionAttemptLimit.Size = new System.Drawing.Size(60, 20);
+      this.numericUpDownStreamOpenConnectionAttemptLimit.TabIndex = 10;
+      this.numericUpDownStreamOpenConnectionAttemptLimit.Value = new decimal(new int[] {
+            3,
+            0,
+            0,
+            0});
+      // 
+      // checkBoxStreamDumpInput
+      // 
+      this.checkBoxStreamDumpInput.AutoSize = true;
+      this.checkBoxStreamDumpInput.Location = new System.Drawing.Point(9, 123);
+      this.checkBoxStreamDumpInput.Name = "checkBoxStreamDumpInput";
+      this.checkBoxStreamDumpInput.Size = new System.Drawing.Size(109, 17);
+      this.checkBoxStreamDumpInput.TabIndex = 11;
+      this.checkBoxStreamDumpInput.Text = "Dump input to file.";
+      // 
+      // labelStreamBufferSizeMaximum
+      // 
+      this.labelStreamBufferSizeMaximum.AutoSize = true;
+      this.labelStreamBufferSizeMaximum.Location = new System.Drawing.Point(6, 73);
+      this.labelStreamBufferSizeMaximum.Name = "labelStreamBufferSizeMaximum";
+      this.labelStreamBufferSizeMaximum.Size = new System.Drawing.Size(105, 13);
+      this.labelStreamBufferSizeMaximum.TabIndex = 6;
+      this.labelStreamBufferSizeMaximum.Text = "Maximum buffer size:";
+      // 
+      // numericUpDownStreamBufferSize
+      // 
+      this.numericUpDownStreamBufferSize.Location = new System.Drawing.Point(162, 45);
+      this.numericUpDownStreamBufferSize.Maximum = new decimal(new int[] {
+            2147483647,
+            0,
+            0,
+            0});
+      this.numericUpDownStreamBufferSize.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+      this.numericUpDownStreamBufferSize.Name = "numericUpDownStreamBufferSize";
+      this.numericUpDownStreamBufferSize.Size = new System.Drawing.Size(60, 20);
+      this.numericUpDownStreamBufferSize.TabIndex = 4;
+      this.numericUpDownStreamBufferSize.Value = new decimal(new int[] {
+            256,
+            0,
+            0,
+            0});
+      this.numericUpDownStreamBufferSize.ValueChanged += new System.EventHandler(this.numericUpDownStreamBufferSize_ValueChanged);
+      // 
+      // labelStreamBufferSizeMaximumUnit
+      // 
+      this.labelStreamBufferSizeMaximumUnit.AutoSize = true;
+      this.labelStreamBufferSizeMaximumUnit.Location = new System.Drawing.Point(224, 73);
+      this.labelStreamBufferSizeMaximumUnit.Name = "labelStreamBufferSizeMaximumUnit";
+      this.labelStreamBufferSizeMaximumUnit.Size = new System.Drawing.Size(20, 13);
+      this.labelStreamBufferSizeMaximumUnit.TabIndex = 8;
+      this.labelStreamBufferSizeMaximumUnit.Text = "kB";
+      // 
+      // labelStreamBufferSizeUnit
+      // 
+      this.labelStreamBufferSizeUnit.AutoSize = true;
+      this.labelStreamBufferSizeUnit.Location = new System.Drawing.Point(224, 47);
+      this.labelStreamBufferSizeUnit.Name = "labelStreamBufferSizeUnit";
+      this.labelStreamBufferSizeUnit.Size = new System.Drawing.Size(20, 13);
+      this.labelStreamBufferSizeUnit.TabIndex = 5;
+      this.labelStreamBufferSizeUnit.Text = "kB";
+      // 
+      // numericUpDownStreamBufferSizeMaximum
+      // 
+      this.numericUpDownStreamBufferSizeMaximum.Location = new System.Drawing.Point(162, 71);
+      this.numericUpDownStreamBufferSizeMaximum.Maximum = new decimal(new int[] {
+            2147483647,
+            0,
+            0,
+            0});
+      this.numericUpDownStreamBufferSizeMaximum.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+      this.numericUpDownStreamBufferSizeMaximum.Name = "numericUpDownStreamBufferSizeMaximum";
+      this.numericUpDownStreamBufferSizeMaximum.Size = new System.Drawing.Size(60, 20);
+      this.numericUpDownStreamBufferSizeMaximum.TabIndex = 7;
+      this.numericUpDownStreamBufferSizeMaximum.Value = new decimal(new int[] {
+            32768,
+            0,
+            0,
+            0});
+      this.numericUpDownStreamBufferSizeMaximum.ValueChanged += new System.EventHandler(this.numericUpDownStreamBufferSizeMaximum_ValueChanged);
+      // 
+      // labelStreamBufferSize
+      // 
+      this.labelStreamBufferSize.AutoSize = true;
+      this.labelStreamBufferSize.Location = new System.Drawing.Point(6, 47);
+      this.labelStreamBufferSize.Name = "labelStreamBufferSize";
+      this.labelStreamBufferSize.Size = new System.Drawing.Size(104, 13);
+      this.labelStreamBufferSize.TabIndex = 3;
+      this.labelStreamBufferSize.Text = "Standard buffer size:";
       // 
       // tabPageAnalog
       // 
@@ -1360,6 +1759,20 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.groupBoxConditionalAccess.ResumeLayout(false);
       this.groupBoxConditionalAccess.PerformLayout();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownDecryptLimit)).EndInit();
+      this.tabPageStream.ResumeLayout(false);
+      this.groupBoxStreamOtherProtocols.ResumeLayout(false);
+      this.groupBoxStreamOtherProtocols.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownStreamFileRepeatCount)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownStreamRtpSwitchToUdpPacketCount)).EndInit();
+      this.groupBoxStreamRtsp.ResumeLayout(false);
+      this.groupBoxStreamRtsp.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownStreamRtspCommandResponseTimeLimit)).EndInit();
+      this.groupBoxStreamGeneral.ResumeLayout(false);
+      this.groupBoxStreamGeneral.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownStreamReceiveDataTimeLimit)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownStreamOpenConnectionAttemptLimit)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownStreamBufferSize)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownStreamBufferSizeMaximum)).EndInit();
       this.tabPageAnalog.ResumeLayout(false);
       this.groupBoxEncoderSettings.ResumeLayout(false);
       this.groupBoxEncoderSettings.PerformLayout();
@@ -1490,5 +1903,33 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
     private System.Windows.Forms.OpenFileDialog openFileDialogExternalTunerProgram;
     private MPGroupBox groupBoxExternalTuner;
     private MPButton buttonEncoderSettingsCheckSupport;
+    private System.Windows.Forms.TabPage tabPageStream;
+    private MPLabel labelStreamReceiveDataTimeLimit;
+    private MPNumericUpDown numericUpDownStreamReceiveDataTimeLimit;
+    private MPLabel labelStreamBufferSizeMaximum;
+    private MPLabel labelStreamBufferSizeMaximumUnit;
+    private MPNumericUpDown numericUpDownStreamBufferSizeMaximum;
+    private MPLabel labelStreamBufferSize;
+    private MPLabel labelStreamBufferSizeUnit;
+    private MPNumericUpDown numericUpDownStreamBufferSize;
+    private MPCheckBox checkBoxStreamDumpInput;
+    private MPLabel labelStreamReceiveDataTimeLimitUnit;
+    private MPGroupBox groupBoxStreamOtherProtocols;
+    private MPGroupBox groupBoxStreamRtsp;
+    private MPLabel labelStreamRtspCommandResponseTimeLimit;
+    private MPCheckBox checkBoxStreamRtspSendCommandOptions;
+    private MPCheckBox checkBoxStreamRtspSendCommandDescribe;
+    private MPNumericUpDown numericUpDownStreamRtspCommandResponseTimeLimit;
+    private MPLabel labelStreamRtspCommandResponseTimeLimitUnit;
+    private MPLabel labelStreamHttpRtpUdpInterface;
+    private MPComboBox comboBoxStreamHttpRtpUdpInterface;
+    private MPLabel labelStreamRtpSwitchToUdpPacketCountUnit;
+    private MPLabel labelStreamRtpSwitchToUdpPacketCount;
+    private MPNumericUpDown numericUpDownStreamRtpSwitchToUdpPacketCount;
+    private MPLabel labelStreamFileRepeatCount;
+    private MPNumericUpDown numericUpDownStreamFileRepeatCount;
+    private MPLabel labelStreamOpenConnectionAttemptLimit;
+    private MPNumericUpDown numericUpDownStreamOpenConnectionAttemptLimit;
+    private MPGroupBox groupBoxStreamGeneral;
   }
 }

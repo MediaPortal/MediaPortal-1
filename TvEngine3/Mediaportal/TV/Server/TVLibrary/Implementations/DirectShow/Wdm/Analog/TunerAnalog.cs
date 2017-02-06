@@ -100,25 +100,36 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
       this.LogDebug("WDM analog: reload configuration");
       base.ReloadConfiguration(configuration);
 
-      if (configuration.AnalogTunerSettings == null)
+      if (configuration == null)
       {
-        TVDatabase.Entities.AnalogTunerSettings settings;
-        IEnumerable<TVDatabase.Entities.TunerProperty> properties;
-        CreateDefaultConfiguration(out settings, out properties);
-        configuration.AnalogTunerSettings = settings;
-        if (properties != null)
+        _externalTuner.ReloadConfiguration(null);
+
+        _tunableSourcesVideo = CaptureSourceVideo.TunerDefault;
+        _tunableSourcesAudio = CaptureSourceAudio.Automatic | CaptureSourceAudio.TunerDefault;
+      }
+      else
+      {
+        if (configuration.AnalogTunerSettings == null)
         {
-          foreach (var p in properties)
+          TVDatabase.Entities.AnalogTunerSettings settings;
+          IEnumerable<TVDatabase.Entities.TunerProperty> properties;
+          CreateDefaultConfiguration(out settings, out properties);
+          configuration.AnalogTunerSettings = settings;
+          if (properties != null)
           {
-            configuration.TunerProperties.Add(p);
+            foreach (var p in properties)
+            {
+              configuration.TunerProperties.Add(p);
+            }
           }
         }
-      }
+        _externalTuner.ReloadConfiguration(configuration.AnalogTunerSettings);
 
-      _tunableSourcesVideo = (CaptureSourceVideo)configuration.AnalogTunerSettings.SupportedVideoSources;
-      _tunableSourcesVideo |= CaptureSourceVideo.TunerDefault;
-      _tunableSourcesAudio = (CaptureSourceAudio)configuration.AnalogTunerSettings.SupportedAudioSources;
-      _tunableSourcesAudio |= CaptureSourceAudio.Automatic | CaptureSourceAudio.TunerDefault;
+        _tunableSourcesVideo = (CaptureSourceVideo)configuration.AnalogTunerSettings.SupportedVideoSources;
+        _tunableSourcesVideo |= CaptureSourceVideo.TunerDefault;
+        _tunableSourcesAudio = (CaptureSourceAudio)configuration.AnalogTunerSettings.SupportedAudioSources;
+        _tunableSourcesAudio |= CaptureSourceAudio.Automatic | CaptureSourceAudio.TunerDefault;
+      }
 
       if (_capture != null)
       {
@@ -128,7 +139,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
       {
         _encoder.ReloadConfiguration(configuration);
       }
-      _externalTuner.ReloadConfiguration(configuration.AnalogTunerSettings);
     }
 
     /// <summary>

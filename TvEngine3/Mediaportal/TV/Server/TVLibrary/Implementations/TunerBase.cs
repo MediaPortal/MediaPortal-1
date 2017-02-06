@@ -670,7 +670,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       Tuner config = null;
       if (ExternalId != null)
       {
-        config = TunerManagement.GetTunerByExternalId(ExternalId, TunerRelation.AnalogTunerSettings | TunerRelation.TunerProperties);
+        config = TunerManagement.GetTunerByExternalId(ExternalId, TunerRelation.AnalogTunerSettings | TunerRelation.StreamTunerSettings | TunerRelation.TunerProperties);
         if (config != null)
         {
           this.LogDebug("  ID                  = {0}", config.IdTuner);

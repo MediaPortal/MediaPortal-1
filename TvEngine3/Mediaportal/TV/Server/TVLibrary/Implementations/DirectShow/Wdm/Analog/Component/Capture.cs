@@ -798,7 +798,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
     /// <param name="configuration">The tuner's configuration.</param>
     public void ReloadConfiguration(TVDatabase.Entities.Tuner configuration)
     {
-      if (_configuration == null || _filterVideo == null)
+      if (
+        configuration == null ||
+        configuration.AnalogTunerSettings == null ||
+        _configuration == null ||
+        _filterVideo == null
+      )
       {
         // Not loaded yet or video not supported.
         _configuration = configuration;
@@ -1246,7 +1251,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
     /// <param name="newPropertySettings">The amplifier property settings.</param>
     private void ConfigureVideoProcessingAmplifier(ICollection<TunerProperty> newPropertySettings)
     {
-      if (_filterVideo == null)
+      if (_filterVideo == null || newPropertySettings == null)
       {
         return;
       }
@@ -1330,7 +1335,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
     /// <param name="newPropertySettings">The control property settings.</param>
     private void ConfigureCameraControl(ICollection<TunerProperty> newPropertySettings)
     {
-      if (_filterVideo == null)
+      if (_filterVideo == null || newPropertySettings == null)
       {
         return;
       }

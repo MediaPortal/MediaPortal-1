@@ -27,6 +27,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Enum;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Rtsp;
@@ -108,6 +109,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
     /// </summary>
     private ManualResetEvent _streamingKeepAliveThreadStopEvent = null;
 
+    #region RTCP
+
     /// <summary>
     /// A thread, used to listen for RTCP reports containing signal status
     /// updates.
@@ -128,6 +131,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
     /// The port that the RTCP listener thread listens to.
     /// </summary>
     private int _rtcpServerPort = -1;
+
+    #endregion
 
     // PID filter control variables
     private bool _isPidFilterDisabled = false;
@@ -150,6 +155,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
     /// The tuner's channel scanning interface.
     /// </summary>
     private IChannelScannerInternal _channelScanner = null;
+
+    // The port range to use for the RTP and RTCP connections.
+    private int _rtpRtcpPortMinimum = 49152;
+    private int _rtpRtcpPortMaximum = 65535;
 
     #endregion
 
@@ -240,7 +249,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
           usedPorts.Add(listener.Port);
         }
       }
-      for (int port = 40000; port <= 65534; port += 2)
+      for (int port = _rtpRtcpPortMinimum + (_rtpRtcpPortMinimum % 2); port < _rtpRtcpPortMaximum; port += 2)
       {
         // We need two adjacent UDP ports. One for RTP; one for RTCP. By
         // convention, the RTP port is even.
@@ -250,6 +259,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
           _rtcpClientPort = port + 1;
           break;
         }
+      }
+      if (rtpClientPort == 0)
+      {
+        throw new TvException("Failed to tune, not able to find free ports for streaming within configured range ({0} to {1}).", _rtpRtcpPortMinimum, _rtpRtcpPortMaximum);
       }
 
       // SETUP a session.
@@ -627,6 +640,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
     /// <param name="configuration">The tuner's configuration.</param>
     public override void ReloadConfiguration(Tuner configuration)
     {
+      this.LogDebug("SAT>IP base: reload configuration");
+
+      _rtpRtcpPortMinimum = SettingsManagement.GetValue("streamTunersPortMinimum", 49152);
+      _rtpRtcpPortMaximum = SettingsManagement.GetValue("streamTunersPortMaximum", 65535);
+      this.LogDebug("  RTP/RTCP port range = {0} - {1}", _rtpRtcpPortMinimum, _rtpRtcpPortMaximum);
+
       ITuner tuner = _streamTuner as ITuner;
       if (tuner != null)
       {

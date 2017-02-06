@@ -818,7 +818,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
       this.LogDebug("RTL283x FM: reload configuration");
       base.ReloadConfiguration(configuration);
 
-      if (configuration.AnalogTunerSettings == null)
+      if (configuration != null && configuration.AnalogTunerSettings == null)
       {
         AnalogTunerSettings settings = new TVDatabase.Entities.AnalogTunerSettings();
         settings.IdAnalogTunerSettings = TunerId;

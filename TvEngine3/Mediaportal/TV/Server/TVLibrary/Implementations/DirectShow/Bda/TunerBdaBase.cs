@@ -1040,16 +1040,21 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
       this.LogDebug("BDA base: reload configuration");
       base.ReloadConfiguration(configuration);
 
-      this.LogDebug("  network provider = {0}", (BdaNetworkProvider)configuration.BdaNetworkProvider);
+      BdaNetworkProvider configuredNetworkProvider = BdaNetworkProvider.Generic;
+      if (configuration != null)
+      {
+        configuredNetworkProvider = (BdaNetworkProvider)configuration.BdaNetworkProvider;
+      }
+      this.LogDebug("  network provider = {0}", configuredNetworkProvider);
 
       bool save = false;
       _networkProviderClsid = NetworkProviderClsid; // specific network provider
-      if (configuration.BdaNetworkProvider == (int)BdaNetworkProvider.MediaPortal)
+      if (configuredNetworkProvider == BdaNetworkProvider.MediaPortal)
       {
         if (!File.Exists(PathManager.BuildAssemblyRelativePath("NetworkProvider.ax")))
         {
           this.LogWarn("BDA base: MediaPortal network provider is not available, try Microsoft generic network provider");
-          configuration.BdaNetworkProvider = (int)BdaNetworkProvider.Generic;
+          configuredNetworkProvider = BdaNetworkProvider.Generic;
           save = true;
         }
         else
@@ -1057,12 +1062,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
           _networkProviderClsid = typeof(MediaPortalNetworkProvider).GUID;
         }
       }
-      if (configuration.BdaNetworkProvider == (int)BdaNetworkProvider.Generic)
+      if (configuredNetworkProvider == BdaNetworkProvider.Generic)
       {
         if (!FilterGraphTools.IsThisComObjectInstalled(typeof(NetworkProvider).GUID))
         {
           this.LogWarn("BDA base: Microsoft generic network provider is not available, try Microsoft specific network provider");
-          configuration.BdaNetworkProvider = (int)BdaNetworkProvider.Specific;
+          configuredNetworkProvider = BdaNetworkProvider.Specific;
           save = true;
         }
         else
@@ -1070,8 +1075,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
           _networkProviderClsid = typeof(NetworkProvider).GUID;
         }
       }
-      if (save)
+      if (configuration != null && save)
       {
+        configuration.BdaNetworkProvider = (int)configuredNetworkProvider;
         TunerManagement.SaveTuner(configuration);
       }
     }

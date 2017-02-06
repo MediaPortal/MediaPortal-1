@@ -54,6 +54,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
     #region constants
 
+    private const int MINIMUM_STREAM_TUNER_PORT_COUNT = 4;
+
     private static readonly Guid MEDIA_SUB_TYPE_AVC = new Guid(0x31435641, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71);
     private static readonly Guid MEDIA_SUB_TYPE_LATM_AAC = new Guid(0x00001ff, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71);
     private static readonly Guid MEDIA_SUB_TYPE_DOLBY_DIGITAL = new Guid(0xe06d802c, 0xdb46, 0x11cf, 0xb4, 0xd1, 0x00, 0x80, 0x5f, 0x6c, 0xbb, 0xea);
@@ -84,6 +86,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }
 
       comboBoxServicePriority.SelectedItem = ((ServicePriority)ServiceAgents.Instance.SettingServiceAgent.GetValue("servicePriority", (int)ServicePriority.Normal)).GetDescription();
+      numericUpDownStreamTunerPortMinimum.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("streamTunersPortMinimum", 49152);
+      numericUpDownStreamTunerPortMaximum.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("streamTunersPortMaximum", 65535);
 
       Codec codecVideo = Codec.Deserialise(ServiceAgents.Instance.SettingServiceAgent.GetValue("previewCodecVideo", Codec.DEFAULT_VIDEO.Serialise()));
       if (codecVideo != null)
@@ -120,6 +124,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
       int servicePriority = Convert.ToInt32(typeof(ServicePriority).GetEnumFromDescription((string)comboBoxServicePriority.SelectedItem));
       ServiceAgents.Instance.SettingServiceAgent.SaveValue("servicePriority", servicePriority);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("streamTunersPortMinimum", (int)numericUpDownStreamTunerPortMinimum.Value);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("streamTunersPortMaximum", (int)numericUpDownStreamTunerPortMaximum.Value);
 
       ServiceAgents.Instance.SettingServiceAgent.SaveValue("previewCodecVideo", ((Codec)comboBoxPreviewCodecVideo.SelectedItem).Serialise());
       ServiceAgents.Instance.SettingServiceAgent.SaveValue("previewCodecAudio", ((Codec)comboBoxPreviewCodecAudio.SelectedItem).Serialise());
@@ -130,7 +136,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
       DebugSettings();
 
-      // TODO trigger server-side config reloading for service priority and time limits
+      // TODO trigger server-side config reloading for service priority and time limits (and stream tuner port range???)
 
       base.OnSectionDeActivated();
     }
@@ -139,6 +145,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     {
       this.LogDebug("general: settings...");
       this.LogDebug("  service priority      = {0}", comboBoxServicePriority.SelectedItem);
+      this.LogDebug("  stream tuner ports...");
+      this.LogDebug("    minimum             = {0}", numericUpDownStreamTunerPortMinimum.Value);
+      this.LogDebug("    maximum             = {0}", numericUpDownStreamTunerPortMaximum.Value);
       this.LogDebug("  preview codecs...");
       Codec c = (Codec)comboBoxPreviewCodecVideo.SelectedItem;
       this.LogDebug("    video               = {0} ({1})", c.Name, c.ClassId);
@@ -148,6 +157,38 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.LogDebug("    signal lock         = {0} ms", numericUpDownTimeLimitSignalLock.Value);
       this.LogDebug("    receive stream info = {0} ms", numericUpDownTimeLimitReceiveStreamInfo.Value);
       this.LogDebug("    receive video/audio = {0} ms", numericUpDownTimeLimitReceiveVideoAudio.Value);
+    }
+
+    private void numericUpDownStreamTunerPortMinimum_ValueChanged(object sender, EventArgs e)
+    {
+      if (numericUpDownStreamTunerPortMinimum.Value + MINIMUM_STREAM_TUNER_PORT_COUNT > numericUpDownStreamTunerPortMaximum.Value)
+      {
+        if (numericUpDownStreamTunerPortMinimum.Value + MINIMUM_STREAM_TUNER_PORT_COUNT - 1 > numericUpDownStreamTunerPortMaximum.Maximum)
+        {
+          numericUpDownStreamTunerPortMinimum.Value = numericUpDownStreamTunerPortMaximum.Value - MINIMUM_STREAM_TUNER_PORT_COUNT + 1;
+          numericUpDownStreamTunerPortMaximum.Value = numericUpDownStreamTunerPortMaximum.Maximum;
+        }
+        else
+        {
+          numericUpDownStreamTunerPortMaximum.Value = numericUpDownStreamTunerPortMinimum.Value + MINIMUM_STREAM_TUNER_PORT_COUNT - 1;
+        }
+      }
+    }
+
+    private void numericUpDownStreamTunerPortMaximum_ValueChanged(object sender, EventArgs e)
+    {
+      if (numericUpDownStreamTunerPortMinimum.Value + MINIMUM_STREAM_TUNER_PORT_COUNT > numericUpDownStreamTunerPortMaximum.Value)
+      {
+        if (numericUpDownStreamTunerPortMaximum.Value - MINIMUM_STREAM_TUNER_PORT_COUNT + 1 < numericUpDownStreamTunerPortMinimum.Minimum)
+        {
+          numericUpDownStreamTunerPortMinimum.Value = numericUpDownStreamTunerPortMinimum.Minimum;
+          numericUpDownStreamTunerPortMaximum.Value = numericUpDownStreamTunerPortMinimum.Value + MINIMUM_STREAM_TUNER_PORT_COUNT - 1;
+        }
+        else
+        {
+          numericUpDownStreamTunerPortMinimum.Value = numericUpDownStreamTunerPortMaximum.Value - MINIMUM_STREAM_TUNER_PORT_COUNT + 1;
+        }
+      }
     }
 
     private static Codec[] GetCodecs(Guid mediaType, Guid[] mediaSubTypes)

@@ -54,6 +54,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
     private Tuner _tuner;
     private IList<MPCheckBox> _supportedBroadcastStandardCheckBoxes = null;
     private AnalogTunerSettings _analogSettings = null;
+    private StreamTunerSettings _streamSettings = null;
     private CiMenuState _caMenuState = CiMenuState.Closed;
     private int _caMenuChoiceCount = 0;
     private bool _enableVideoOrCameraPropertyValueUpdate = true;
@@ -203,6 +204,56 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
 
       UpdateCaMenuFieldStates();
       ServiceAgents.Instance.EventServiceAgent.RegisterCiMenuCallbacks(this);
+
+      // stream tab
+      if (!((BroadcastStandard)_tuner.SupportedBroadcastStandards).HasFlag(BroadcastStandard.DvbIp))
+      {
+        tabPageStream.Dispose();
+      }
+      else
+      {
+        _streamSettings = ServiceAgents.Instance.TunerServiceAgent.GetStreamTunerSettings(_tuner.IdTuner);
+        if (_streamSettings == null)
+        {
+          // This should not happen!
+          this.LogWarn("tuner: failed to load stream settings");
+          tabPageStream.Dispose();
+        }
+        else
+        {
+          DebugStreamTunerSettings(_streamSettings);
+
+          numericUpDownStreamReceiveDataTimeLimit.Value = _streamSettings.ReceiveDataTimeLimit;
+          numericUpDownStreamBufferSize.Value = _streamSettings.BufferSize;
+          numericUpDownStreamBufferSizeMaximum.Value = _streamSettings.BufferSizeMaximum;
+          numericUpDownStreamOpenConnectionAttemptLimit.Value = _streamSettings.OpenConnectionAttemptLimit;
+          checkBoxStreamDumpInput.Checked = _streamSettings.DumpInput;
+          numericUpDownStreamRtspCommandResponseTimeLimit.Value = _streamSettings.RtspCommandResponseTimeLimit;
+          checkBoxStreamRtspSendCommandOptions.Checked = _streamSettings.RtspSendCommandOptions;
+          checkBoxStreamRtspSendCommandDescribe.Checked = _streamSettings.RtspSendCommandDescribe;
+          numericUpDownStreamFileRepeatCount.Value = _streamSettings.FileRepeatCount;
+          numericUpDownStreamRtpSwitchToUdpPacketCount.Value = _streamSettings.RtpSwitchToUdpPacketCount;
+
+          comboBoxStreamHttpRtpUdpInterface.BeginUpdate();
+          try
+          {
+            comboBoxStreamHttpRtpUdpInterface.Items.Add("Default");
+            comboBoxStreamHttpRtpUdpInterface.SelectedIndex = 0;
+            foreach (string interfaceName in ServiceAgents.Instance.TunerServiceAgent.ListAvailableNetworkInterfaceNames())
+            {
+              comboBoxStreamHttpRtpUdpInterface.Items.Add(interfaceName);
+              if (string.Equals(interfaceName, _streamSettings.NetworkInterface))
+              {
+                comboBoxStreamHttpRtpUdpInterface.SelectedIndex = comboBoxStreamHttpRtpUdpInterface.Items.Count - 1;
+              }
+            }
+          }
+          finally
+          {
+            comboBoxStreamHttpRtpUdpInterface.EndUpdate();
+          }
+        }
+      }
 
       // analog and external input tabs
       if (!isAnalogOrCaptureTuner)
@@ -386,6 +437,31 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
 
       ServiceAgents.Instance.TunerServiceAgent.SaveTuner(_tuner);
 
+      if (_streamSettings != null)
+      {
+        _streamSettings.ReceiveDataTimeLimit = (int)numericUpDownStreamReceiveDataTimeLimit.Value;
+        _streamSettings.BufferSize = (int)numericUpDownStreamBufferSize.Value;
+        _streamSettings.BufferSizeMaximum = (int)numericUpDownStreamBufferSizeMaximum.Value;
+        _streamSettings.OpenConnectionAttemptLimit = (int)numericUpDownStreamOpenConnectionAttemptLimit.Value;
+        _streamSettings.DumpInput = checkBoxStreamDumpInput.Checked;
+        _streamSettings.RtspCommandResponseTimeLimit = (int)numericUpDownStreamRtspCommandResponseTimeLimit.Value;
+        _streamSettings.RtspSendCommandOptions = checkBoxStreamRtspSendCommandOptions.Checked;
+        _streamSettings.RtspSendCommandDescribe = checkBoxStreamRtspSendCommandDescribe.Checked;
+        if (comboBoxStreamHttpRtpUdpInterface.SelectedIndex == 0)
+        {
+          _streamSettings.NetworkInterface = string.Empty;
+        }
+        else
+        {
+          _streamSettings.NetworkInterface = (string)comboBoxStreamHttpRtpUdpInterface.SelectedItem;
+        }
+        _streamSettings.FileRepeatCount = (int)numericUpDownStreamFileRepeatCount.Value;
+        _streamSettings.RtpSwitchToUdpPacketCount = (int)numericUpDownStreamRtpSwitchToUdpPacketCount.Value;
+
+        DebugStreamTunerSettings(_streamSettings);
+        ServiceAgents.Instance.TunerServiceAgent.SaveStreamTunerSettings(_streamSettings);
+      }
+
       if (_analogSettings == null)
       {
         return;
@@ -487,32 +563,50 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       Close();
     }
 
+    private void DebugStreamTunerSettings(StreamTunerSettings settings)
+    {
+      this.LogDebug("tuner: stream settings...");
+      this.LogDebug("  ID                      = {0}", settings.IdStreamTunerSettings);
+      this.LogDebug("  receive data time limit = {0} ms", settings.ReceiveDataTimeLimit);
+      this.LogDebug("  buffer size             = {0} kB", settings.BufferSize);
+      this.LogDebug("  buffer size maximum     = {0} kB", settings.BufferSizeMaximum);
+      this.LogDebug("  connect attempt limit   = {0}", settings.OpenConnectionAttemptLimit);
+      this.LogDebug("  dump input              = {0}", settings.DumpInput);
+      this.LogDebug("  RTSP...");
+      this.LogDebug("    response time limit   = {0} ms", settings.RtspCommandResponseTimeLimit);
+      this.LogDebug("    send OPTIONS command  = {0}", settings.RtspSendCommandOptions);
+      this.LogDebug("    send DESCRIBE command = {0}", settings.RtspSendCommandDescribe);
+      this.LogDebug("  network interface       = {0}", settings.NetworkInterface);
+      this.LogDebug("  file repeat count       = {0}", settings.FileRepeatCount);
+      this.LogDebug("  RTP to UDP packet count = {0}", settings.RtpSwitchToUdpPacketCount);
+    }
+
     private void DebugAnalogTunerSettings(AnalogTunerSettings settings)
     {
       this.LogDebug("tuner: analog settings...");
-      this.LogDebug("  ID               = {0}", settings.IdAnalogTunerSettings);
-      this.LogDebug("  video standard   = {0} ({1})", (AnalogVideoStandard)settings.VideoStandard, (AnalogVideoStandard)settings.SupportedVideoStandards);
-      this.LogDebug("  frame size       = {0} ({1})", (FrameSize)settings.FrameSize, (FrameSize)settings.SupportedFrameSizes);
-      this.LogDebug("  frame rate       = {0} ({1})", (FrameRate)settings.FrameRate, (FrameRate)settings.SupportedFrameRates);
+      this.LogDebug("  ID                 = {0}", settings.IdAnalogTunerSettings);
+      this.LogDebug("  video standard     = {0} ({1})", (AnalogVideoStandard)settings.VideoStandard, (AnalogVideoStandard)settings.SupportedVideoStandards);
+      this.LogDebug("  frame size         = {0} ({1})", (FrameSize)settings.FrameSize, (FrameSize)settings.SupportedFrameSizes);
+      this.LogDebug("  frame rate         = {0} ({1})", (FrameRate)settings.FrameRate, (FrameRate)settings.SupportedFrameRates);
       this.LogDebug("  encoders...");
-      this.LogDebug("    video ID       = {0}", settings.IdVideoEncoder ?? 0);
-      this.LogDebug("    audio ID       = {0}", settings.IdAudioEncoder ?? 0);
+      this.LogDebug("    video ID         = {0}", settings.IdVideoEncoder ?? 0);
+      this.LogDebug("    audio ID         = {0}", settings.IdAudioEncoder ?? 0);
       this.LogDebug("  encoder timeshifting...");
-      this.LogDebug("    mode           = {0}", (EncodeMode)settings.EncoderBitRateModeTimeShifting);
-      this.LogDebug("    bit-rate       = {0} %", settings.EncoderBitRateTimeShifting);
-      this.LogDebug("    peak bit-rate  = {0} %", settings.EncoderBitRatePeakTimeShifting);
+      this.LogDebug("    mode             = {0}", (EncodeMode)settings.EncoderBitRateModeTimeShifting);
+      this.LogDebug("    bit-rate         = {0} %", settings.EncoderBitRateTimeShifting);
+      this.LogDebug("    peak bit-rate    = {0} %", settings.EncoderBitRatePeakTimeShifting);
       this.LogDebug("  encoder recording...");
-      this.LogDebug("    mode           = {0}", (EncodeMode)settings.EncoderBitRateModeRecording);
-      this.LogDebug("    bit-rate       = {0} %", settings.EncoderBitRateRecording);
-      this.LogDebug("    peak bit-rate  = {0} %", settings.EncoderBitRatePeakRecording);
+      this.LogDebug("    mode             = {0}", (EncodeMode)settings.EncoderBitRateModeRecording);
+      this.LogDebug("    bit-rate         = {0} %", settings.EncoderBitRateRecording);
+      this.LogDebug("    peak bit-rate    = {0} %", settings.EncoderBitRatePeakRecording);
       this.LogDebug("  external input...");
-      this.LogDebug("    video source   = {0} ({1})", (CaptureSourceVideo)settings.ExternalInputSourceVideo, (CaptureSourceVideo)settings.SupportedVideoSources);
-      this.LogDebug("    audio source   = {0} ({1})", (CaptureSourceAudio)settings.ExternalInputSourceAudio, (CaptureSourceAudio)settings.SupportedAudioSources);
-      this.LogDebug("    country        = {0}", settings.ExternalInputCountryId);
-      this.LogDebug("    phys. channel  = {0}", settings.ExternalInputPhysicalChannelNumber);
+      this.LogDebug("    video source     = {0} ({1})", (CaptureSourceVideo)settings.ExternalInputSourceVideo, (CaptureSourceVideo)settings.SupportedVideoSources);
+      this.LogDebug("    audio source     = {0} ({1})", (CaptureSourceAudio)settings.ExternalInputSourceAudio, (CaptureSourceAudio)settings.SupportedAudioSources);
+      this.LogDebug("    country          = {0}", settings.ExternalInputCountryId);
+      this.LogDebug("    physical channel = {0}", settings.ExternalInputPhysicalChannelNumber);
       this.LogDebug("  external tuner...");
-      this.LogDebug("    program        = {0}", settings.ExternalTunerProgram ?? string.Empty);
-      this.LogDebug("    program args   = {0}", settings.ExternalTunerProgramArguments ?? string.Empty);
+      this.LogDebug("    program          = {0}", settings.ExternalTunerProgram ?? string.Empty);
+      this.LogDebug("    program args     = {0}", settings.ExternalTunerProgramArguments ?? string.Empty);
     }
 
     private void SetConditionalAccessFieldAvailability()
@@ -735,6 +829,26 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       foreach (string entry in listBoxCaMenuChoices.Items)
       {
         this.LogDebug("    {0}", entry);
+      }
+    }
+
+    #endregion
+
+    #region stream
+
+    private void numericUpDownStreamBufferSize_ValueChanged(object sender, EventArgs e)
+    {
+      if (numericUpDownStreamBufferSize.Value > numericUpDownStreamBufferSizeMaximum.Value)
+      {
+        numericUpDownStreamBufferSizeMaximum.Value = numericUpDownStreamBufferSize.Value;
+      }
+    }
+
+    private void numericUpDownStreamBufferSizeMaximum_ValueChanged(object sender, EventArgs e)
+    {
+      if (numericUpDownStreamBufferSizeMaximum.Value < numericUpDownStreamBufferSize.Value)
+      {
+        numericUpDownStreamBufferSize.Value = numericUpDownStreamBufferSizeMaximum.Value;
       }
     }
 
