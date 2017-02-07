@@ -48,7 +48,21 @@
       </control>		  
 	  
 	<import>custom\Allscreens\user_dialog.xml</import>	
-	
+
+	    <control>
+         <type>label</type>
+         <id>0</id>
+         <posX>#Xposition</posX>
+		 <posY>#Yposition</posY>
+         <height>43</height>
+         <width>1000</width>
+         <font>fontBold2</font>
+         <label>#itemcount items</label>
+         <align>right</align>
+         <textcolor>ffffffff</textcolor>
+        </control>	
+
+		
     <control>
       <type>actiongroup</type>
       <description>action menu</description>

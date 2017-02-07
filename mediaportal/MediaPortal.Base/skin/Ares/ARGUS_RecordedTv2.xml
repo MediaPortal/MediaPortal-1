@@ -48,6 +48,19 @@
         <texture>Inf_gfx.png</texture>
       </control>
 	  
+	    <control>
+         <type>label</type>
+         <id>0</id>
+         <posX>#Xposition</posX>
+		 <posY>#Yposition</posY>
+         <height>43</height>
+         <width>1000</width>
+         <font>fontBold2</font>
+         <label>#itemcount items</label>
+         <align>right</align>
+         <textcolor>ffffffff</textcolor>
+        </control>		  
+	  
 <import>common.facade.recordingsExt.xml</import>  
 
     <control>

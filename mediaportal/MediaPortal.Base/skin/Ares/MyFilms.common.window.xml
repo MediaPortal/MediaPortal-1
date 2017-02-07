@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<window>
+  <controls>
+
+    <!--  Current Module, Number of Files, Config/DB name, User name (if set)  -->
+	
+	    <control>
+         <type>label</type>
+         <id>0</id>
+         <posX>#Xposition</posX>
+		 <posY>#Yposition</posY>
+         <height>43</height>
+         <width>1000</width>
+         <font>fontBold2</font>
+         <label>#myfilms.config.pluginname\#myfilms.view\#myfilms.select#(iif(gte(#selectedindex,'1'),' - #selectedindex|#myfilms.nbobjects.value #itemtype',''))</label>
+         <align>right</align>
+         <textcolor>ffffffff</textcolor>
+        </control>		
+
+		<!--
+    <control>
+      <description>Config, User Name, Test Mode</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>10</posX>
+      <posY>52</posY>
+      <width>750</width>
+      <align>left</align>
+      <font>font10</font>
+      <textcolor>ff6FAFE1</textcolor>
+      <label>#myfilms.config.currentconfig#(iif(neq(#myfilms.user.name.value,''),': #myfilms.user.name.value',''))#(iif(eq(#myfilms.user.onlinestatus,'online'),' (Trakt)',''))#(iif(neq(#myfilms.config.pluginmode,'normal'),' | #myfilms.config.pluginmode mode',''))</label>
+    </control>
+	-->
+	
+    <!-- GLOBAL FILTERS -->
+    <control>
+      <description>Global Filter Icons group</description>
+      <type>group</type>
+      <posX>45</posX>
+      <posY>120</posY>
+      <layout>StackLayout(5,Horizontal,true)</layout>
+      <dimColor>ffffffff</dimColor>
+      <control>
+        <type>image</type>
+        <description>UnWatched Global Filter Icon</description>
+        <id>0</id>
+        <width>28</width>
+        <keepaspectratio>yes</keepaspectratio>
+        <texture>MyFilms\overlayunwatched.png</texture>
+        <visible>string.contains(#myfilms.globalfilter.unwatched,True)</visible>
+      </control>
+      <control>
+        <type>image</type>
+        <description>Media Available Global Filter Icon</description>
+        <id>0</id>
+        <width>30</width>
+        <keepaspectratio>yes</keepaspectratio>
+        <texture>MyFilms\online.png</texture>
+        <visible>string.contains(#myfilms.globalfilter.isonline,True)</visible>
+      </control>
+      <control>
+        <type>image</type>
+        <description>Trailer Global Filter Icon</description>
+        <id>0</id>
+        <width>40</width>
+        <keepaspectratio>yes</keepaspectratio>
+        <texture>MyFilms\Trailer.png</texture>
+        <visible>string.contains(#myfilms.globalfilter.trailersonly,True)</visible>
+      </control>
+      <control>
+        <type>image</type>
+        <description>Rating Global Filter Icon</description>
+        <id>0</id>
+        <width>33</width>
+        <keepaspectratio>yes</keepaspectratio>
+        <texture>stargood.png</texture>
+        <visible>string.contains(#myfilms.globalfilter.minrating,True)</visible>
+      </control>
+      <!-- <control>
+        <type>label</type>
+        <description>Rating Global Filter Value</description>
+        <id>1</id>
+        <label>#myfilms.globalfilter.minratingvalue</label>
+        <visible>string.contains(#myfilms.globalfilter.minratingvalue)</visible>
+      </control> -->
+    </control>
+    <!-- END GLOBAL FILTER SECTION -->
+    <!-- DOWNLOAD/STATUS INDICATORS/Message -->
+    <control>
+      <description>Download Icon - whenever background downloading is in process</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>85</posX>
+      <posY>150</posY>
+      <width>32</width>
+      <texture>alldownloads.png</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <visible>[string.equals(#myfilms.statusmessage)|string.equals(#myfilms.details.downloads.count)|[plugin.isenabled(OnlineVideos)+!string.equals(#OnlineVideos.currentDownloads,0)]]</visible>
+      <animation effect="fade" time="250">visiblechange</animation>
+    </control>
+    <control>
+      <description>Global Updates Status Message</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>140</posX>
+      <posY>157</posY>
+      <width>601</width>
+      <align>left</align>
+      <font>font10</font>
+      <textcolor>90ffffff</textcolor>
+      <label>#myfilms.statusmessage</label>
+      <!-- "Global update active" message -->
+      <animation effect="fade" time="250">visiblechange</animation>
+    </control>
+    <control>
+      <description>Person Image/Info Download Status Messages</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>140</posX>
+      <posY>157</posY>
+      <width>601</width>
+      <align>left</align>
+      <font>font10</font>
+      <textcolor>90ffffff</textcolor>
+      <label>#myfilms.details.downloads.count - #myfilms.details.downloads.name</label>
+      <visible>string.equals(#myfilms.details.downloads.count)</visible>
+      <animation effect="fade" time="250">visiblechange</animation>
+    </control>
+    <!-- OnlineVideos Trailer download indicator -->
+    <control>
+      <description>OnlineVideos icon</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>85</posX>
+      <posY>150</posY>
+      <width>32</width>
+      <keepaspectratio>yes</keepaspectratio>	  
+      <texture>earth.png</texture>
+      <visible>!string.equals(#myfilms.statusmessage)+[plugin.isenabled(OnlineVideos)+!string.equals(#OnlineVideos.currentDownloads,0)]</visible>
+      <animation effect="fade" time="250">visiblechange</animation>
+    </control>
+    <control>
+      <description>OnlineVideos Trailer downloads count</description>
+      <type>label</type>
+      <id>47016</id>
+      <posX>140</posX>
+      <posY>157</posY>
+      <align>left</align>
+      <font>font10</font>
+      <label>#OnlineVideos.currentDownloads</label>
+      <textcolor>90ffffff</textcolor>
+      <visible>!string.equals(#myfilms.statusmessage)+[plugin.isenabled(OnlineVideos)+!string.equals(#OnlineVideos.currentDownloads,0)]</visible>
+      <animation effect="fade" time="250">visiblechange</animation>
+    </control>
+    <!-- END DOWNLOAD/STATUS INDICATORS/Message -->
+  </controls>
+</window>

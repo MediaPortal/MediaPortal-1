@@ -15,19 +15,54 @@
     
 	<import>custom\Allscreens\user_dialog.xml</import>
 	
+    <import>Trakt.Common.Fanart.xml</import>
     <control>
-      <description>Current View</description>
-      <type>label</type>
+      <description>Backdrop</description>
+      <type>image</type>
       <id>0</id>
-      <posX>138</posX>
-      <posY>48</posY>
-      <align>left</align>
-      <width>1800</width>
-      <font>font18</font>	
-      <textcolor>ffffffff</textcolor>
-      <label>#Trakt.Translation.Comments.Label | #Trakt.Shout.CurrentItem</label>
-	  <visible>!player.hasmedia+!player.hasaudio+!control.hastext(80000)</visible>
-    </control>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>#overlaycolour</texture>
+	</control>		
+ 	  <control>
+        <description>Cover Art</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>40</posX>
+        <posY>190</posY>
+        <width>1845</width>
+        <height>624</height>
+        <texture>D_over1.png</texture>
+      </control>	
+
+  	  <control>
+        <description>Cover Art</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>40</posX>
+        <posY>821</posY>
+        <width>1845</width>
+        <height>209</height>
+        <texture>Inf_gfx.png</texture>
+      </control>  
+	  
+	  
+		<control>
+		  <description>Date / Time</description>
+		  <type>label</type>
+		  <id>0</id>
+          <posX>#Xposition</posX>
+          <posY>#Yposition</posY>
+          <height>43</height>
+          <width>1000</width>
+          <font>fontBold2</font>
+		  <label>#Trakt.Translation.Comments.Label | #Trakt.Shout.CurrentItem</label>
+		  <align>right</align>
+		  <textcolor>ffffffff</textcolor>
+		</control>	  
+
 
     <control>
       <description>group element</description>
@@ -39,9 +74,10 @@
           <description>listcontrol</description>
           <type>listcontrol</type>
           <id>50</id>
-          <posX>115</posX>
-          <posY>240</posY>
-          <width>1020</width>
+		  <width>1387</width>
+		  <posX>57</posX>
+		  <posY>225</posY>
+		  <height>620</height>
           <textcolor>ffffffff</textcolor>
 		  <textcolorNoFocus>ff999999</textcolorNoFocus>
 		  <textureFocus>btn_list.png</textureFocus>
@@ -49,13 +85,14 @@
 		  <playedColor>FFB2D4F5</playedColor>
 		  <textcolor2>ff999999</textcolor2>
 		  <textcolor3>ffffffff</textcolor3>
-		  <textXOff>-25</textXOff>
-          <textXOff2>1010</textXOff2>
-          <textYOff2>2</textYOff2>
+		  <textXOff>-15</textXOff>
+          <textXOff2>1370</textXOff2>
+		  <textYOff>3</textYOff>
+          <textYOff2>3</textYOff2>
           <textXOff3>2544</textXOff3>
           <textYOff3>8</textYOff3>
           <textalign3>right</textalign3>
-          <font3>font9</font3>
+          <font3>font13</font3>
           <scrollOffset>2</scrollOffset>
           <spinCanFocus>no</spinCanFocus>
           <unfocusedAlpha>160</unfocusedAlpha>
@@ -169,55 +206,86 @@
       </control>
     </control>
 	
+
 	  <control>
         <description>Little Poster</description>
         <type>image</type>
         <id>0</id>
-        <posX>135</posX>
-        <posY>875</posY>
-		<height>170</height>
-		<width>120</width>
-		<centered>yes</centered>
-        <keepaspectratio>yes</keepaspectratio>
-	    <zoom>yes</zoom>
-        <texture mask="postermask.png">#selectedthumb</texture>
-        <colordiffuse>ffffffff</colordiffuse>
+        <posX>56</posX>
+        <posY>828</posY>
+		<height>190</height>
+		<width>137</width>
+        <texture mask="CAmask_small.png">blue.png</texture>
       </control>
-	  
-	  <control>
-        <description>BasicHome tile3</description>
+	<control>
+        <description>Little Poster</description>
         <type>image</type>
         <id>0</id>
-        <posX>134</posX>
-        <posY>875</posY>
-		<height>176</height>
-		<width>126</width>
-        <texture>postershadow.png</texture>
+		<centered>yes</centered>
+        <keepaspectratio>yes</keepaspectratio>
+        <posX>56</posX>
+        <posY>828</posY>
+		<height>190</height>
+		<width>137</width>
+        <texture>#selectedthumb</texture>
         <colordiffuse>ffffffff</colordiffuse>
+      </control>
+    <control>
+      <description>Movie Poster</description>
+      <id>0</id>
+      <type>image</type>
+        <posX>1444</posX>
+        <posY>197</posY>
+        <width>422</width>
+        <height>605</height>
+        <texture mask="CAmask.png">blue.png</texture>
+    </control>	  
+    <control>
+      <description>Movie Poster</description>
+      <id>0</id>
+      <type>image</type>
+        <posX>1444</posX>
+        <posY>197</posY>
+        <width>422</width>
+        <height>605</height>
+		<centered>yes</centered>
+		<keepaspectratio>yes</keepaspectratio>
+        <texture>#selectedthumb</texture>
+    </control>
+	  <control>
+        <description>Cover Art</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>1416</posX>
+        <posY>185</posY>
+        <width>28</width>
+        <height>619</height>
+        <texture>D_side.png</texture>
       </control>	  
+	    
 	  
     <control>
       <description>Join Date | Location</description>
       <id>0</id>
       <label>#(iif(eq(#Trakt.User.FullName,'N/A'),'#Trakt.User.Username','#Trakt.User.FullName')) #(iif(eq(#Trakt.User.Location,'N/A'),'','| #Trakt.User.Location')) | #Trakt.Shout.Likes #Trakt.Translation.Likes.Label  #Trakt.Shout.Replies #Trakt.Translation.Replies.Label</label>
       <type>label</type>
-      <posX>270</posX>
-      <posY>890</posY>
+      <posX>215</posX>
+      <posY>840</posY>
       <width>1550</width>
-      <height>140</height>
+      <height>30</height>
       <textcolor>eaeaea</textcolor>
-      <font>font11</font>
+      <font>font13</font>
       <visible>!string.equals(#Trakt.User.JoinDate,)</visible>
     </control>
     <control>
       <description>Shout</description>
       <type>textboxscrollup</type>
       <id>0</id>
-      <posX>270</posX>
-      <posY>940</posY>
-      <width>1550</width>
-      <height>80</height>
-      <font>font11</font>
+      <posX>215</posX>
+      <posY>885</posY>
+      <width>1600</width>
+      <height>125</height>
+      <font>font13</font>
       <label>#Trakt.Shout.Text</label>
       <scrollStartDelaySec>4</scrollStartDelaySec>
       <seperator>-----------------------------------------------------------------------------</seperator>

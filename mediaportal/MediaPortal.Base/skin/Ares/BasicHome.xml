@@ -85,6 +85,7 @@
 	<import>BasicHome_Settings5Img.xml</import>
 	<import>BasicHomeDesc.xml</import>
 	<import>BasicHomeEdit.xml</import>
+	<import>mytvrecordings.locationDefines.xml</import>	
     <import>PluginDefines.xml</import>	
   </controls>
 </window>
