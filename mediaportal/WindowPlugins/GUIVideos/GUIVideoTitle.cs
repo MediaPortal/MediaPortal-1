@@ -845,7 +845,7 @@ namespace MediaPortal.GUI.Video
                      "movieinfo.country," +
                      "movieinfo.language," +
                      "movieinfo.lastupdate, " +
-			               "movieinfo.strSortTitle " +
+			         "movieinfo.strSortTitle " +
                      "movieinfo.TMDBNumber, " +
                      "movieinfo.LocalDBNumber, " +
                      "movieinfo.iUserRating," +

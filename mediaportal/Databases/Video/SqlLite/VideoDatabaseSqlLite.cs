@@ -387,6 +387,34 @@ namespace MediaPortal.Video.Database
           m_db.Execute(strSQL);
         }
         #endregion
+
+        #region movieView
+        if (DatabaseUtility.ViewExists(m_db, "movieView") == false)
+        {
+          DatabaseUtility.AddView(m_db, "movieView",
+                               "CREATE VIEW movieView AS  " +
+                                      "SELECT movieinfo.*, " + 
+                                             "genre.idGenre as idSingleGenre, genre.strGenre as strSingleGenre, " +
+                                             "moviecollection.*, " + 
+                                             "usergroup.*, " +
+                                             "movie.hasSubtitles, movie.discid, movie.watched, movie.iwatchedPercent, movie.timeswatched, movie.iduration, " +
+                                             "path.idPath, path.strPath, path.cdlabel, " +
+                                             "director.idActor as idActorDirector, director.strActor as strActorDirector, director.IMDBActorID as strIMDBActorDirectorID," +
+                                             "actors.idActor, actors.strActor, actors.IMDBActorID " + 
+                                      "FROM movieinfo " +
+                                      "LEFT JOIN genrelinkmovie ON movieinfo.idMovie = genrelinkmovie.idMovie " +
+                                      "LEFT JOIN genre ON genre.idGenre = genrelinkmovie.idGenre " +
+                                      "LEFT JOIN moviecollectionlinkmovie ON movieinfo.idMovie = moviecollectionlinkmovie.idMovie " +
+                                      "LEFT JOIN moviecollection ON moviecollection.idCollection = moviecollectionlinkmovie.idCollection " +
+                                      "LEFT JOIN usergrouplinkmovie ON movieinfo.idMovie = usergrouplinkmovie.idMovie " +
+                                      "LEFT JOIN usergroup ON usergroup.idGroup = usergrouplinkmovie.idGroup " +
+                                      "LEFT JOIN movie ON movieinfo.idMovie = movie.idMovie " +
+                                      "LEFT JOIN path ON movie.idPath = path.idPath " +
+                                      "LEFT JOIN actors director ON movieinfo.idDirector = director.idActor " +
+                                      "LEFT JOIN actorlinkmovie ON movieinfo.idMovie = actorlinkmovie.idMovie " +
+                                      "LEFT JOIN actors ON actors.idActor = actorlinkmovie.idActor;");
+        }
+        #endregion
       }
 
       catch (Exception ex)
@@ -469,6 +497,8 @@ namespace MediaPortal.Video.Database
                               "CREATE UNIQUE INDEX idxactors_idActor ON actors(idActor ASC)");
       DatabaseUtility.AddIndex(m_db, "idxactors_idIMDB",
                               "CREATE INDEX idxactors_idIMDB ON actors(IMDBActorID ASC)");
+      DatabaseUtility.AddIndex(m_db, "idxactors_idxActor",
+                              "CREATE INDEX idxactors_idxActor ON actors(UPPER(SUBSTR(strActor,1,1)) ASC)");
       // Files
       DatabaseUtility.AddIndex(m_db, "idxfiles_idFile", "CREATE UNIQUE INDEX idxfiles_idFile ON files(idFile ASC)");
       DatabaseUtility.AddIndex(m_db, "idxfiles_idMovie", "CREATE INDEX idxfiles_idMovie ON files(idMovie ASC)");
@@ -496,6 +526,8 @@ namespace MediaPortal.Video.Database
                                "CREATE INDEX idxmovieinfo_strTitle ON movieinfo(strTitle ASC)");
       DatabaseUtility.AddIndex(m_db, "idxmovieinfo_idIMDB",
                                "CREATE INDEX idxmovieinfo_idIMDB ON movieinfo(IMDBID ASC)");
+      DatabaseUtility.AddIndex(m_db, "idxmovieinfo_idxTitle",
+                               "CREATE INDEX idxmovieinfo_idxTitle ON movieinfo(UPPER(SUBSTR(strTitle,1,1)) ASC)");
       // Path
       DatabaseUtility.AddIndex(m_db, "idxpath_idPath", "CREATE INDEX idxpath_idPath ON path(idPath ASC)");
       DatabaseUtility.AddIndex(m_db, "idxpath_strPath", "CREATE INDEX idxpath_strPath ON path(strPath ASC)");
