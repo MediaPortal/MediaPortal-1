@@ -731,8 +731,10 @@ namespace MediaPortal.Player
 
           // restart window manager
           GUIWindowManager.PreInit();
-          GUIWindowManager.OnResize();
-          GUIWindowManager.OnDeviceRestored();
+
+          // Don't resize to avoid wrong dialog opened
+          //GUIWindowManager.OnResize();
+          //GUIWindowManager.OnDeviceRestored();
 
           MadInit(_scene, client.Width, client.Height, (uint)upDevice.ToInt32(),
             (uint)GUIGraphicsContext.ActiveForm.ToInt32(), ref _vmr9Filter, mPMediaControl);

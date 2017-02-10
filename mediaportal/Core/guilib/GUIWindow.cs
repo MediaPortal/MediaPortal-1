@@ -494,6 +494,11 @@ namespace MediaPortal.GUI.Library
     {
       if (Thread.CurrentThread.Name != "MPMain" && Thread.CurrentThread.Name != "Config Main")
       {
+        if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
+            GUIGraphicsContext.InVmr9Render && GUIGraphicsContext.Vmr9Active)
+        {
+          return LoadSkinBool();
+        }
         if (!GUIWindow._loadSkinDone)
         {
           GUIWindow._loadSkinDone = true;
@@ -521,18 +526,22 @@ namespace MediaPortal.GUI.Library
     /// <returns></returns>
     public bool LoadSkinBool()
     {
-      // add thread check to log calls not running in main thread/GUI
-      String threadName = Thread.CurrentThread.Name;
-      if (threadName != "MPMain" && threadName != "Config Main")
+      // don't alert loadskin in wrong thread for madVR (madVR works in non MP main thread)
+      if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
       {
-        if (threadName != null)
+        // add thread check to log calls not running in main thread/GUI
+        String threadName = Thread.CurrentThread.Name;
+        if (threadName != "MPMain" && threadName != "Config Main")
         {
-          Log.Error("LoadSkin: Running on wrong thread name [{0}] - StackTrace: '{1}'", threadName,
-            Environment.StackTrace);
-        }
-        else
-        {
-          Log.Error("LoadSkin: Running on wrong thread - StackTrace: '{0}'", Environment.StackTrace);
+          if (threadName != null)
+          {
+            Log.Error("LoadSkin: Running on wrong thread name [{0}] - StackTrace: '{1}'", threadName,
+              Environment.StackTrace);
+          }
+          else
+          {
+            Log.Error("LoadSkin: Running on wrong thread - StackTrace: '{0}'", Environment.StackTrace);
+          }
         }
       }
 
