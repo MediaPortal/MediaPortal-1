@@ -3936,6 +3936,7 @@ public class MediaPortalApp : D3D, IRender
       {
         GUIWindowManager.DispatchThreadMessages();
         GUIWindowManager.ProcessWindows();
+        GUIGraphicsContext.VideoWindowChangedCallBack();
       }
       catch (FileNotFoundException ex)
       {

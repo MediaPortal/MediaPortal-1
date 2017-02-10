@@ -1002,10 +1002,13 @@ namespace MediaPortal.GUI.Library
         if (value != _isFullScreenVideo)
         {
           _isFullScreenVideo = value;
+          GUIGraphicsContext.VideoWindowFullscreen = _isFullScreenVideo;
           VideoWindowChanged();
         }
       }
     }
+
+    public static bool VideoWindowFullscreen { get; set; }
 
     /// <summary>
     /// Get/Set render GUI for madVR
@@ -1034,35 +1037,51 @@ namespace MediaPortal.GUI.Library
     }
 
     /// <summary>
-    /// Delegates video window size/position change notify to be done by main thread
+    /// Delegates video window size/position change notify
     /// </summary>
     public static void VideoWindowChanged()
     {
       // madVR
       if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
       {
-        if (Thread.CurrentThread.Name != "MPMain")
-        {
-          //if (!GUIGraphicsContext.VideoWindowChangedDone)
-          {
-            GUIGraphicsContext.VideoWindowChangedDone = true;
-            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ONVIDEOWINDOWCHANGED, 0, 0, 0, 0, 0, null);
-            msg.Param1 = GUIGraphicsContext.VideoWindow.X;
-            msg.Param2 = GUIGraphicsContext.VideoWindow.Y;
-            msg.Param3 = GUIGraphicsContext.VideoWindow.Width;
-            msg.Param4 = GUIGraphicsContext.VideoWindow.Height;
-            GUIWindowManager.SendThreadMessage(msg);
-            Log.Debug("GUIGraphicsContext: VideoWindowChanged() SendThreadMessage sended");
-          }
-        }
-        else
-        {
-          OnVideoWindowChanged?.Invoke();
-        }
+        GUIGraphicsContext.VideoWindowChangedDone = true;
       }
       else
       {
         OnVideoWindowChanged?.Invoke();
+      }
+    }
+
+    /// <summary>
+    /// Callback video window size/position done by main thread
+    /// </summary>
+    public static void VideoWindowChangedCallBack()
+    {
+      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+      {
+        if (GUIGraphicsContext.VideoWindowChangedDone)
+        {
+          GUIGraphicsContext.OnVideoWindowChanged?.Invoke();
+          GUIGraphicsContext.VideoWindowChangedDone = false;
+
+          // madVR
+          //set video window position
+          if (GUIGraphicsContext.Vmr9Active && !GUIGraphicsContext.VideoWindowFullscreen)
+          {
+            GUIGraphicsContext.VideoWindow = new Rectangle(0, 0, 5, 5);
+            VMR9Util.g_vmr9.SceneMadVr();
+            GUIGraphicsContext.VideoWindowFullscreen = true;
+          }
+
+          if (GUIGraphicsContext.ForceMadVRRefresh)
+          {
+            Size client = GUIGraphicsContext.form.ClientSize;
+            VMR9Util.g_vmr9?.MadVrScreenResize(0, 0, client.Width, client.Height, false);
+            GUIGraphicsContext.NoneDone = false;
+            GUIGraphicsContext.TopAndBottomDone = false;
+            GUIGraphicsContext.SideBySideDone = false;
+          }
+        }
       }
     }
 
