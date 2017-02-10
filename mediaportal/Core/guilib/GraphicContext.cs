@@ -1042,7 +1042,7 @@ namespace MediaPortal.GUI.Library
     public static void VideoWindowChanged()
     {
       // madVR
-      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && GUIGraphicsContext.InVmr9Render)
       {
         GUIGraphicsContext.VideoWindowChangedDone = true;
       }
@@ -1061,16 +1061,16 @@ namespace MediaPortal.GUI.Library
       {
         if (GUIGraphicsContext.VideoWindowChangedDone)
         {
-          GUIGraphicsContext.OnVideoWindowChanged?.Invoke();
           GUIGraphicsContext.VideoWindowChangedDone = false;
+          GUIGraphicsContext.OnVideoWindowChanged?.Invoke();
 
           // madVR
           //set video window position
           if (GUIGraphicsContext.Vmr9Active && !GUIGraphicsContext.VideoWindowFullscreen)
           {
+            GUIGraphicsContext.VideoWindowFullscreen = true;
             GUIGraphicsContext.VideoWindow = new Rectangle(0, 0, 5, 5);
             VMR9Util.g_vmr9.SceneMadVr();
-            GUIGraphicsContext.VideoWindowFullscreen = true;
           }
 
           if (GUIGraphicsContext.ForceMadVRRefresh)
