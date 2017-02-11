@@ -720,12 +720,6 @@ namespace MediaPortal.Player
             (uint)GUIGraphicsContext.ActiveForm.ToInt32(), ref _vmr9Filter, mPMediaControl);
           hr = new HResult(graphBuilder.AddFilter(_vmr9Filter, "madVR"));
           Log.Info("VMR9: added madVR Renderer to graph");
-
-          GUIMessage message = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ONDISPLAYMADVRCHANGED, 0, 0, 0, 0, 0, null);
-          GUIWindowManager.SendMessage(message);
-
-          GUIGraphicsContext.ForceMadVRFirstStart = false;
-          Log.Debug("VMR9:  resize OSD/Screen when resolution change for madVR");
         }
         else
         {
@@ -1039,6 +1033,15 @@ namespace MediaPortal.Player
         GUIGraphicsContext.Vmr9FPS = 0f;
         currentVmr9State = Vmr9PlayState.Repaint;
         if (_scene != null) _scene.DrawVideo = false;
+      }
+
+      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
+          GUIGraphicsContext.ForceMadVRFirstStart)
+      {
+        GUIMessage message = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ONDISPLAYMADVRCHANGED, 0, 0, 0, 0, 0, null);
+        GUIWindowManager.SendMessage(message);
+        GUIGraphicsContext.ForceMadVRFirstStart = false;
+        Log.Debug("VMR9:  resize OSD/Screen when resolution change for madVR");
       }
     }
 
