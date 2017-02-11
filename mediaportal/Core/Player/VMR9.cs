@@ -712,40 +712,19 @@ namespace MediaPortal.Player
         {
           GUIGraphicsContext.MadVrOsd = false;
           GUIGraphicsContext.MadVrStop = false;
+          GUIGraphicsContext.ForceMadVRFirstStart = true;
           IMediaControl mPMediaControl = (IMediaControl) graphBuilder;
           // Get Client size
-          GUIGraphicsContext.form.ClientSize = GUIGraphicsContext.currentScreen.Bounds.Size;
           Size client = GUIGraphicsContext.form.ClientSize;
-
-          GUIWindowManager.Dispose();
-          GUIFontManager.Dispose();
-          GUITextureManager.Dispose();
-
-          GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferWidth = client.Width;
-          GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferHeight = client.Height;
-          // load resources
-          GUIGraphicsContext.Load();
-
-          GUIFontManager.LoadFonts(GUIGraphicsContext.GetThemedSkinFile(@"\fonts.xml"));
-          GUIFontManager.InitializeDeviceObjects();
-
-          // restart window manager
-          GUIWindowManager.PreInit();
-
-          // Don't resize to avoid wrong dialog opened
-          //GUIWindowManager.OnResize();
-          //GUIWindowManager.OnDeviceRestored();
-
           MadInit(_scene, client.Width, client.Height, (uint)upDevice.ToInt32(),
             (uint)GUIGraphicsContext.ActiveForm.ToInt32(), ref _vmr9Filter, mPMediaControl);
           hr = new HResult(graphBuilder.AddFilter(_vmr9Filter, "madVR"));
           Log.Info("VMR9: added madVR Renderer to graph");
 
-          VMR9Util.g_vmr9?.MadVrScreenResize(0, 0, client.Width, client.Height, true);
-          GUIGraphicsContext.NoneDone = false;
-          GUIGraphicsContext.TopAndBottomDone = false;
-          GUIGraphicsContext.SideBySideDone = false;
-          GUIGraphicsContext.ForceMadVRRefresh = false;
+          GUIMessage message = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ONDISPLAYMADVRCHANGED, 0, 0, 0, 0, 0, null);
+          GUIWindowManager.SendMessage(message);
+
+          GUIGraphicsContext.ForceMadVRFirstStart = false;
           Log.Debug("VMR9:  resize OSD/Screen when resolution change for madVR");
         }
         else
@@ -1480,7 +1459,6 @@ namespace MediaPortal.Player
 
         GUIGraphicsContext.currentScreen = Screen.FromControl(GUIGraphicsContext.form);
         GUIGraphicsContext.form.Location = new Point(GUIGraphicsContext.currentScreen.Bounds.X, GUIGraphicsContext.currentScreen.Bounds.Y);
-        GUIGraphicsContext.form.ClientSize = GUIGraphicsContext.currentScreen.Bounds.Size;
 
         // Send action message to refresh screen
         Action actionScreenRefresh = new Action(Action.ActionType.ACTION_MADVR_SCREEN_REFRESH, 0, 0);

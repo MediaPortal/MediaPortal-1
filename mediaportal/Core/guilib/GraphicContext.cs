@@ -1820,6 +1820,7 @@ namespace MediaPortal.GUI.Library
     public static bool NoneDone { get; set; }
     public static bool ForceMadVRRefresh { get; set; }
     public static bool ForceMadVRRefresh3D { get; set; }
+    public static bool ForceMadVRFirstStart { get; set; }
 
     /// <summary>
     /// Enable/Disable bypassing of UI Calibration transforms

@@ -4441,7 +4441,7 @@ public class MediaPortalApp : D3D, IRender
 
         case Action.ActionType.ACTION_MADVR_SCREEN_REFRESH:
           // We need to do a refresh of screen when using madVR only if resolution screen has change during playback
-          if (NeedRecreateSwapChain && GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+          if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && (NeedRecreateSwapChain || Windowed))
           {
             RecreateSwapChain(false);
             Log.Debug("Main: recreate swap chain for madVR done");
