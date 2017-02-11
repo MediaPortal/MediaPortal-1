@@ -2755,7 +2755,7 @@ namespace MediaPortal.Player
     public static void RefreshMadVrVideo()
     {
       if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
-          GUIGraphicsContext.Vmr9Active)
+          (GUIGraphicsContext.Vmr9Active || GUIGraphicsContext.ForceMadVRFirstStart))
       {
         // TODO find a better way to restore madVR rendering (right now i send an 'X' to force refresh a current window)
         var key = new Key(120, 0);
@@ -3939,9 +3939,8 @@ namespace MediaPortal.Player
           {
             // Resize OSD/Screen when resolution change
             if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
-                GUIGraphicsContext.InVmr9Render && GUIGraphicsContext.ForceMadVRRefresh)
+                (GUIGraphicsContext.InVmr9Render && GUIGraphicsContext.ForceMadVRRefresh) || GUIGraphicsContext.ForceMadVRFirstStart)
             {
-              GUIGraphicsContext.form.ClientSize = GUIGraphicsContext.currentScreen.Bounds.Size;
               Size client = GUIGraphicsContext.form.ClientSize;
 
               GUIWindowManager.Dispose();
@@ -3958,8 +3957,10 @@ namespace MediaPortal.Player
 
               // restart window manager
               GUIWindowManager.PreInit();
-              GUIWindowManager.OnResize();
-              GUIWindowManager.OnDeviceRestored();
+
+              // Don't resize to avoid wrong dialog opened
+              //GUIWindowManager.OnResize();
+              //GUIWindowManager.OnDeviceRestored();
 
               // send C++ displayChange
               if (!GUIGraphicsContext.ForceMadVRRefresh3D)

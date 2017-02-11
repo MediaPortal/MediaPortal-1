@@ -147,6 +147,7 @@ namespace MediaPortal
     protected int                  MouseTimeOutMP;           // Mouse activity timeout while in MP in seconds
     protected int                  MouseTimeOutFullscreen;   // Mouse activity timeout while in Fullscreen in seconds
     protected KeyPressEventArgs    PreviousKeyEvent;
+    protected bool                 IsToggleMiniTV;           // madVR check to know if we need to do a resize when Toggle
 
     #endregion
 
@@ -532,6 +533,7 @@ namespace MediaPortal
         // exist miniTVMode
         if (_menuItemMiniTv.Checked)
         {
+          IsToggleMiniTV = true;
           ToggleMiniTV();
         }
 
@@ -588,6 +590,15 @@ namespace MediaPortal
       // Force a madVR refresh to resize MP window
       // TODO how to handle it better
       g_Player.RefreshMadVrVideo();
+
+      // madVR resize OSD/Video window
+      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
+          GUIGraphicsContext.InVmr9Render)
+      {
+        GUIMessage message = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ONDISPLAYMADVRCHANGED, 0, 0, 0, 0, 0, null);
+        GUIWindowManager.SendMessage(message);
+        NeedRecreateSwapChain = true;
+      }
 
       // enable event handlers
       if (GUIGraphicsContext.DX9Device != null)
@@ -1961,6 +1972,16 @@ namespace MediaPortal
         // TODO how to handle it better
         g_Player.RefreshMadVrVideo();
         GUIGraphicsContext.ForceMadVRRefresh3D = true;
+
+        if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
+            GUIGraphicsContext.InVmr9Render && !IsToggleMiniTV)
+        {
+          GUIMessage message = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ONDISPLAYMADVRCHANGED, 0, 0, 0, 0, 0, null);
+          GUIWindowManager.SendMessage(message);
+          NeedRecreateSwapChain = true;
+        }
+        // for madVR resize
+        IsToggleMiniTV = false;
       }
     }
 
