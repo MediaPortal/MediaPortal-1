@@ -845,7 +845,7 @@ namespace MediaPortal.GUI.Video
                      "movieinfo.country," +
                      "movieinfo.language," +
                      "movieinfo.lastupdate, " +
-			         "movieinfo.strSortTitle " +
+			               "movieinfo.strSortTitle " +
                      "movieinfo.TMDBNumber, " +
                      "movieinfo.LocalDBNumber, " +
                      "movieinfo.iUserRating," +
@@ -1922,21 +1922,29 @@ namespace MediaPortal.GUI.Video
       string collectionDescription = string.Empty;
       IMDBMovie movie = item.AlbumInfoTag as IMDBMovie;
 
+      string whereClause = ((VideoViewHandler)handler).ParentWhere;
+
       switch (view)
       {
         case "genre":
-        strMovies = VideoDatabase.GetMovieTitlesByGenre(item.Label);
+          sql = string.Format("SELECT DISTINCT strTitle FROM movieView WHERE strSingleGenre = '{0}' {1} ORDER BY strTitle ASC", 
+                              item.Label, (!string.IsNullOrEmpty(whereClause) ? "AND " + whereClause : ""));
           break;
       
         case "user groups":
         case "user groups only":
           int grpId = VideoDatabase.GetUserGroupId(item.Label);
           groupDescription = VideoDatabase.GetUserGroupDescriptionById(grpId);
-          strMovies = VideoDatabase.GetMovieTitlesByUserGroup(grpId);
+          sql = string.Format("SELECT DISTINCT strTitle FROM movieView WHERE idGroup = {0} {1} ORDER BY strTitle ASC",
+                              grpId, (!string.IsNullOrEmpty(whereClause) ? "AND " + whereClause : ""));
 
           if (!string.IsNullOrEmpty(groupDescription))
           {
             groupDescription += ("\n\n" + GUILocalizeStrings.Get(342) + ":\n"); //Movies
+          }
+          else
+          {
+            groupDescription = (GUILocalizeStrings.Get(342) + ":\n"); //Movies
           }
           break;
       
@@ -1944,76 +1952,82 @@ namespace MediaPortal.GUI.Video
         case "movie collections only":
           int mcolId = VideoDatabase.GetCollectionId(item.Label);
           collectionDescription = VideoDatabase.GetCollectionDescriptionById(mcolId);
-          /*
-          strMovies = VideoDatabase.GetMovieTitlesByCollection(item.Label);
-          if (!string.IsNullOrEmpty(collectionDescription))
-          {
-            collectionDescription += ("\n\n" + GUILocalizeStrings.Get(342) + ":\n"); // Movies
-          }
-          */
+
           if (!string.IsNullOrEmpty(collectionDescription))
           {
             strMovies = collectionDescription;
           }
           else
           {
-            strMovies = VideoDatabase.GetMovieTitlesByCollection(item.Label);
+            collectionDescription = (GUILocalizeStrings.Get(342) + ":\n"); //Movies
+            sql = string.Format("SELECT DISTINCT strTitle FROM movieView WHERE idCollection = {0} {1} ORDER BY strTitle ASC",
+                                                 mcolId, (!string.IsNullOrEmpty(whereClause) ? "AND " + whereClause : ""));
           }
           break;
 
         case "actor":
           if (movie != null)
           {
-            strMovies = VideoDatabase.GetMovieTitlesByActor(movie.ActorID);
+            sql = String.Format("SELECT DISTINCT strTitle FROM movieView WHERE idActor = {0}  {1} ORDER BY strTitle ASC",
+                                                 movie.ActorID, (!string.IsNullOrEmpty(whereClause) ? "AND " + whereClause : ""));
           }
           break;
 
         case "director":
           if (movie != null)
           {
-            strMovies = VideoDatabase.GetMovieTitlesByDirector(movie.ActorID);
+            sql = String.Format("SELECT DISTINCT strTitle FROM movieView WHERE idActorDirector = {0}  {1} ORDER BY strTitle ASC",
+                                                 movie.ActorID, (!string.IsNullOrEmpty(whereClause) ? "AND " + whereClause : ""));
           }
           break;
         
         case "year":
-          strMovies = VideoDatabase.GetMovieTitlesByYear(item.Label);
+          sql = String.Format("SELECT DISTINCT strTitle FROM movieView WHERE iYear = {0}  {1} ORDER BY strTitle ASC",
+                                               item.Label, (!string.IsNullOrEmpty(whereClause) ? "AND " + whereClause : ""));
           break;
         
-        case"actorindex":
+        case "actorindex":
           value = DatabaseUtility.RemoveInvalidChars(item.Label);
           where = SetWhere(value, "strActor");
-          sql = "SELECT strActor FROM actors " + where +
-                     "AND idActor NOT IN (SELECT idDirector FROM movieinfo) GROUP BY strActor ORDER BY strActor ASC";
-          strMovies = VideoDatabase.GetMovieTitlesByIndex(sql);
+          sql = "SELECT DISTINCT strActor FROM movieView " +
+                        where +
+                        (!string.IsNullOrEmpty(whereClause) ? " AND " + whereClause : "") +
+                        "GROUP BY strActor ORDER BY strActor ASC";
           break;
       
         case "directorindex":
           value = DatabaseUtility.RemoveInvalidChars(item.Label);
           where = SetWhere(value, "strActor");
-          sql = "SELECT strActor FROM actors INNER JOIN movieinfo ON movieinfo.idDirector = actors.idActor " + where + 
-                     "GROUP BY strActor ORDER BY strActor ASC";
-          strMovies = VideoDatabase.GetMovieTitlesByIndex(sql);
+          sql = "SELECT strActorDirector FROM movieView " +
+                        where +
+                        (!string.IsNullOrEmpty(whereClause) ? " AND " + whereClause : "") +
+                        "GROUP BY strActorDirector ORDER BY strActorDirector ASC";
           break;
         
         case "titleindex":
           value = DatabaseUtility.RemoveInvalidChars(item.Label);
           where = SetWhere(value, "strTitle");
-          sql = "SELECT strTitle FROM movieinfo " + where +
+          sql = "SELECT strTitle FROM movieView " + 
+                     where + (!string.IsNullOrEmpty(whereClause) ? " AND " + whereClause : "") +
                      "GROUP BY strTitle ORDER BY strTitle ASC ";
-          strMovies = VideoDatabase.GetMovieTitlesByIndex(sql);
           break;
+      }
+
+      if (!string.IsNullOrEmpty(sql))
+      {
+        strMovies = VideoDatabase.GetMovieTitlesByIndex(sql);
       }
 
       if (!string.IsNullOrEmpty(groupDescription))
       {
         strMovies = groupDescription + strMovies;
       }
-      /*
-      if (!string.IsNullOrEmpty(collectionDescription))
+      
+      if (!string.IsNullOrEmpty(collectionDescription) && !string.IsNullOrEmpty(sql))
       {
         strMovies = collectionDescription + strMovies;
       }
-      */
+      
       return strMovies;
     }
 
