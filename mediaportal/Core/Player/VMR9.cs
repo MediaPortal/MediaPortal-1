@@ -1034,15 +1034,6 @@ namespace MediaPortal.Player
         currentVmr9State = Vmr9PlayState.Repaint;
         if (_scene != null) _scene.DrawVideo = false;
       }
-
-      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
-          GUIGraphicsContext.ForceMadVRFirstStart)
-      {
-        GUIMessage message = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ONDISPLAYMADVRCHANGED, 0, 0, 0, 0, 0, null);
-        GUIWindowManager.SendMessage(message);
-        GUIGraphicsContext.ForceMadVRFirstStart = false;
-        Log.Debug("VMR9:  resize OSD/Screen when resolution change for madVR");
-      }
     }
 
     public void ProcessMadVrOsd()
@@ -1059,6 +1050,13 @@ namespace MediaPortal.Player
             GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_REGISTER_MADVR_OSD, 0, 0, 0, 0, 0, null);
             GUIWindowManager.SendThreadMessage(msg);
           }
+        }
+        if (GUIGraphicsContext.ForceMadVRFirstStart)
+        {
+          GUIMessage message = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ONDISPLAYMADVRCHANGED, 0, 0, 0, 0, 0, null);
+          GUIWindowManager.SendMessage(message);
+          GUIGraphicsContext.ForceMadVRFirstStart = false;
+          Log.Debug("VMR9:  resize OSD/Screen when resolution change for madVR");
         }
       }
     }
