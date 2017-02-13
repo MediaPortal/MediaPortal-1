@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2017 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2017 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -88,11 +88,7 @@ namespace MediaPortal.GUI.Video
       string orderClause = string.Empty;
       string fromClause = string.Empty;
 
-      string defViewFields = "idMovie, idDirector, strPlotOutline, strPlot, strTagLine, strVotes, fRating, strCast, " +
-                             "strCredits, iYear, strGenre, strPictureURL, strTitle, IMDBID, mpaa, runtime, iswatched, " + 
-                             "strUserReview, strFanartURL, strDirector, dateAdded, dateWatched, studios, country, " + 
-                             "language, lastupdate, strSortTitle, TMDBNumber, LocalDBNumber, iUserRating, " +
-                             "discid, strPath, cdlabel";
+      string defViewFields = VideoDatabase.DefaultVideoViewFields;
       
       for (int i = 0; i < CurrentLevel; ++i)
       {

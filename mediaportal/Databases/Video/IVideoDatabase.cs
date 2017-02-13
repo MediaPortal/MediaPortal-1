@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2017 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2017 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -120,6 +120,10 @@ namespace MediaPortal.Video.Database
     void GetMovieInfoById(int lMovieId, ref IMDBMovie details);
     void SetWatched(IMDBMovie details);
     void SetDateWatched(IMDBMovie details);
+    void SetMovieTitleById(int lMovieId, string lmovieTitle);
+    void SetMovieTitleById(int lMovieId, string lmovieTitle, out bool error, out string errorMessage);
+    void SetMovieSortTitleById(int lMovieId, string lmovieTitle);
+    void SetMovieSortTitleById(int lMovieId, string lmovieTitle, out bool error, out string errorMessage);
     
     // Stop time & duration
     void DeleteMovieStopTime(int iFileId);
@@ -159,22 +163,37 @@ namespace MediaPortal.Video.Database
     void GetYears(ArrayList years);
     void GetMoviesByGenre(string strGenre1, ref ArrayList movies);
     void GetRandomMoviesByGenre(string strGenre1, ref ArrayList movies, int limit);
+    void GetRandomMoviesByGenre(string strGenre1, ref ArrayList movies, int limit, string whereClause);
     string GetMovieTitlesByGenre(string strGenre);
+    string GetMovieTitlesByGenre(string strGenre, string whereClause);
     void GetMoviesByCollection(string strCollection1, ref ArrayList movies);
     void GetRandomMoviesByCollection(string strCollection1, ref ArrayList movies, int limit);
+    void GetRandomMoviesByCollection(string strCollection1, ref ArrayList movies, int limit, string whereClause);
     string GetMovieTitlesByCollection(string strCollection);
+    string GetMovieTitlesByCollection(string strCollection, string whereClause);
+    string GetMovieTitlesByCollection(int idCollection, string whereClause);
     void GetMoviesByUserGroup(string strUserGroup1, ref ArrayList movies);
     void GetRandomMoviesByUserGroup(string strUserGroup, ref ArrayList movies, int limit);
+    void GetRandomMoviesByUserGroup(string strUserGroup, ref ArrayList movies, int limit, string whereClause);
     string GetMovieTitlesByUserGroup(int idGroup);
+    string GetMovieTitlesByUserGroup(int idGroup, string whereClause);
     void GetMoviesByActor(string strActor1, ref ArrayList movies);
     void GetRandomMoviesByActor(string strActor1, ref ArrayList movies, int limit);
+    void GetRandomMoviesByActor(string strActor1, ref ArrayList movies, int limit, string whereClause);
+    void GetRandomMoviesByActorDirector(string strActor1, ref ArrayList movies, int limit, string whereClause);
     string GetMovieTitlesByActor(int actorId);
+    string GetMovieTitlesByActor(int actorId, string whereClause);
     string GetMovieTitlesByDirector(int directorId);
+    string GetMovieTitlesByDirector(int directorId, string whereClause);
     void GetMoviesByYear(string strYear, ref ArrayList movies);
     void GetRandomMoviesByYear(string strYear, ref ArrayList movies, int limit);
+    void GetRandomMoviesByYear(string strYear, ref ArrayList movies, int limit, string whereClause);
     string GetMovieTitlesByYear(string strYear);
+    string GetMovieTitlesByYear(string strYear, string whereClause);
+    string GetFieldDataByIndex(string dbField, string dbValue, string whereClause);
     void GetMoviesByPath(string strPath1, ref ArrayList movies);
     void GetRandomMoviesByPath(string strPath1, ref ArrayList movies, int limit);
+    void GetRandomMoviesByIndex(string strDBField, string strIndexValue, ref ArrayList movies, int limit, string whereClause);
     void GetMoviesByFilter(string sql, out ArrayList movies, bool actorTable, bool movieinfoTable, bool genreTable, bool usergroupTable);
     void GetMoviesByFilter(string sql, out ArrayList movies, bool actorTable, bool movieinfoTable, bool genreTable, bool usergroupTable, bool collectionTable);
     void GetIndexByFilter(string sql, bool filterNonWordChar, out ArrayList movieList);
@@ -191,6 +210,10 @@ namespace MediaPortal.Video.Database
     bool VideoThumbRemoveFromBlacklist(string path);
     void RemoveExpiredVideoThumbBlacklistEntries();
     void RemoveAllVideoThumbBlacklistEntries();
+
+    // Search
+    void SearchMoviesByView(string dbField, string dbValue, out ArrayList movies);
+    void SearchActorsByView(string dbActor, out ArrayList movies, bool director);
     
     // Other
     SQLiteResultSet GetResults(string sql);
@@ -208,5 +231,6 @@ namespace MediaPortal.Video.Database
     void FlushTransactionsToDisk();
     void RevertFlushTransactionsToDisk();
     bool DbHealth { get; }
+    string DefaultVideoViewFields {get; }
   }
 }
