@@ -3915,10 +3915,6 @@ namespace MediaPortal.Player
             {
               Size client = GUIGraphicsContext.form.ClientSize;
 
-              GUIWindowManager.Dispose();
-              GUIFontManager.Dispose();
-              GUITextureManager.Dispose();
-
               GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferWidth = client.Width;
               GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferHeight = client.Height;
               // load resources
