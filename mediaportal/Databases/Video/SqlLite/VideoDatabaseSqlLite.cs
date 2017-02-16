@@ -103,6 +103,7 @@ namespace MediaPortal.Video.Database
                                 "strCredits, iYear, strGenre, strPictureURL, strTitle, IMDBID, mpaa, runtime, iswatched, " + 
                                 "strUserReview, strFanartURL, strDirector, dateAdded, dateWatched, studios, country, " + 
                                 "language, lastupdate, strSortTitle, TMDBNumber, LocalDBNumber, iUserRating, " +
+                                "MPAAText, Awards, " +
                                 "discid, strPath, cdlabel";
 
       Log.Info("video database opened");
@@ -242,6 +243,16 @@ namespace MediaPortal.Video.Database
           m_db.Execute(strSQL);
         }
 
+        if (DatabaseUtility.TableColumnExists(m_db, "movieinfo", "MPAAText") == false)
+        {
+          string strSQL = "ALTER TABLE \"main\".\"movieinfo\" ADD COLUMN \"MPAAText\" TEXT DEFAULT ''";
+          m_db.Execute(strSQL);
+        }
+        if (DatabaseUtility.TableColumnExists(m_db, "movieinfo", "Awards") == false)
+        {
+          string strSQL = "ALTER TABLE \"main\".\"movieinfo\" ADD COLUMN \"Awards\" TEXT DEFAULT ''";
+          m_db.Execute(strSQL);
+        }
         #endregion
 
         #region Movie table
@@ -454,6 +465,9 @@ namespace MediaPortal.Video.Database
       {
         return;
       }
+
+      #region Tables
+      // Tables
       DatabaseUtility.AddTable(m_db, "bookmark",
                                "CREATE TABLE bookmark ( idBookmark integer primary key, idFile integer, fPercentage text)");
       DatabaseUtility.AddTable(m_db, "genre",
@@ -494,6 +508,9 @@ namespace MediaPortal.Video.Database
                                "CREATE TABLE VideoThumbBList ( idVideoThumbBList integer primary key, strPath text, strExpires text, strFileDate text, strFileSize text)");
       DatabaseUtility.AddTable(m_db, "filesmediainfo",
                                "CREATE TABLE filesmediainfo ( idFile integer primary key, videoCodec text, videoResolution text, aspectRatio text, hasSubtitles bool, audioCodec text, audioChannels text)");
+      #endregion
+
+      #region Indexes
       // Indexes
       // ActorInfo
       DatabaseUtility.AddIndex(m_db, "idxactorinfo_idActor",
@@ -507,7 +524,8 @@ namespace MediaPortal.Video.Database
       DatabaseUtility.AddIndex(m_db, "idxactorlinkmovie_idMovie",
                                "CREATE INDEX idxactorlinkmovie_idMovie ON actorlinkmovie(idMovie ASC)");
       // Actors
-      DatabaseUtility.AddIndex(m_db, "idxactors_strActor", "CREATE INDEX idxactors_strActor ON actors(strActor ASC)");
+      DatabaseUtility.AddIndex(m_db, "idxactors_strActor", 
+                               "CREATE INDEX idxactors_strActor ON actors(strActor ASC)");
       DatabaseUtility.AddIndex(m_db, "idxactors_idActor", 
                               "CREATE UNIQUE INDEX idxactors_idActor ON actors(idActor ASC)");
       DatabaseUtility.AddIndex(m_db, "idxactors_idIMDB",
@@ -515,24 +533,40 @@ namespace MediaPortal.Video.Database
       DatabaseUtility.AddIndex(m_db, "idxactors_idxActor",
                               "CREATE INDEX idxactors_idxActor ON actors(UPPER(SUBSTR(strActor,1,1)) ASC)");
       // Files
-      DatabaseUtility.AddIndex(m_db, "idxfiles_idFile", "CREATE UNIQUE INDEX idxfiles_idFile ON files(idFile ASC)");
-      DatabaseUtility.AddIndex(m_db, "idxfiles_idMovie", "CREATE INDEX idxfiles_idMovie ON files(idMovie ASC)");
-      DatabaseUtility.AddIndex(m_db, "idxfiles_idPath", "CREATE INDEX idxfiles_idPath ON files(idPath ASC)");
+      DatabaseUtility.AddIndex(m_db, "idxfiles_idFile", 
+                               "CREATE UNIQUE INDEX idxfiles_idFile ON files(idFile ASC)");
+      DatabaseUtility.AddIndex(m_db, "idxfiles_idMovie", 
+                               "CREATE INDEX idxfiles_idMovie ON files(idMovie ASC)");
+      DatabaseUtility.AddIndex(m_db, "idxfiles_idPath", 
+                               "CREATE INDEX idxfiles_idPath ON files(idPath ASC)");
+      // Genre
+      DatabaseUtility.AddIndex(m_db, "idxgenre_idGenre",
+                               "CREATE UNIQUE INDEX idxgenre_idGenre ON genre (idGenre ASC)");
+      DatabaseUtility.AddIndex(m_db, "idxgenre_strGenre",
+                               "CREATE UNIQUE INDEX idxgenre_strGenre ON genre (strGenre ASC)");
       // GenreLinkMovie
       DatabaseUtility.AddIndex(m_db, "idxgenrelinkmovie_idGenre",
                                "CREATE INDEX idxgenrelinkmovie_idGenre ON genrelinkmovie(idGenre ASC)");
       DatabaseUtility.AddIndex(m_db, "idxgenrelinkmovie_idMovie",
                                "CREATE INDEX idxgenrelinkmovie_idMovie ON genrelinkmovie(idMovie ASC)");
+      // Collection
+      DatabaseUtility.AddIndex(m_db, "idxmoviecollection_idCollection",
+                               "CREATE UNIQUE INDEX idxmoviecollection_idCollection ON moviecollection (idCollection ASC)");
+      DatabaseUtility.AddIndex(m_db, "idxmoviecollection_strCollection",
+                               "CREATE INDEX idxmoviecollection_strCollection ON moviecollection (strCollection ASC)");
       // CollectionLinkMovie
       DatabaseUtility.AddIndex(m_db, "idxmoviecollectionlinkmovie_idCollection",
                                "CREATE INDEX idxmoviecollectionlinkmovie_idCollection ON moviecollectionlinkmovie(idCollection ASC)");
       DatabaseUtility.AddIndex(m_db, "idxmoviecollectionlinkmovie_idMovie",
                                "CREATE INDEX idxmoviecollectionlinkmovie_idMovie ON moviecollectionlinkmovie(idMovie ASC)");
       // Movie
-      DatabaseUtility.AddIndex(m_db, "idxmovie_idMovie", "CREATE UNIQUE INDEX idxmovie_idMovie ON movie(idMovie ASC)");
-      DatabaseUtility.AddIndex(m_db, "idxmovie_idPath", "CREATE INDEX idxmovie_idPath ON movie(idPath ASC)");
+      DatabaseUtility.AddIndex(m_db, "idxmovie_idMovie", 
+                               "CREATE UNIQUE INDEX idxmovie_idMovie ON movie(idMovie ASC)");
+      DatabaseUtility.AddIndex(m_db, "idxmovie_idPath", 
+                               "CREATE INDEX idxmovie_idPath ON movie(idPath ASC)");
       // MovieInfo
-      DatabaseUtility.AddIndex(m_db, "idxmovieinfo_iYear", "CREATE INDEX idxmovieinfo_iYear ON movieinfo(iYear ASC)");
+      DatabaseUtility.AddIndex(m_db, "idxmovieinfo_iYear", 
+                               "CREATE INDEX idxmovieinfo_iYear ON movieinfo(iYear ASC)");
       DatabaseUtility.AddIndex(m_db, "idxmovieinfo_idDirector",
                                "CREATE INDEX idxmovieinfo_idDirector ON movieinfo(idDirector ASC)");
       DatabaseUtility.AddIndex(m_db, "idxmovieinfo_idMovie",
@@ -544,8 +578,10 @@ namespace MediaPortal.Video.Database
       DatabaseUtility.AddIndex(m_db, "idxmovieinfo_idxTitle",
                                "CREATE INDEX idxmovieinfo_idxTitle ON movieinfo(UPPER(SUBSTR(strTitle,1,1)) ASC)");
       // Path
-      DatabaseUtility.AddIndex(m_db, "idxpath_idPath", "CREATE INDEX idxpath_idPath ON path(idPath ASC)");
-      DatabaseUtility.AddIndex(m_db, "idxpath_strPath", "CREATE INDEX idxpath_strPath ON path(strPath ASC)");
+      DatabaseUtility.AddIndex(m_db, "idxpath_idPath", 
+                               "CREATE INDEX idxpath_idPath ON path(idPath ASC)");
+      DatabaseUtility.AddIndex(m_db, "idxpath_strPath", 
+                               "CREATE INDEX idxpath_strPath ON path(strPath ASC)");
       // VideThumbList
       DatabaseUtility.AddIndex(m_db, "idxVideoThumbBList_strPath",
                                "CREATE INDEX idxVideoThumbBList_strPath ON VideoThumbBList(strPath ASC, strExpires ASC)");
@@ -570,6 +606,7 @@ namespace MediaPortal.Video.Database
       // IMDBMovies
       DatabaseUtility.AddIndex(m_db, "idximdbmovies_idIMDB",
                                "CREATE UNIQUE INDEX idximdbmovies_idIMDB ON IMDBmovies (idIMDB ASC)");
+      #endregion
 
       return;
     }
@@ -3065,6 +3102,10 @@ namespace MediaPortal.Video.Database
         strLine = details1.MPARating;
         DatabaseUtility.RemoveInvalidChars(ref strLine);
         details1.MPARating = strLine;
+        // MPAA Rating Text
+        strLine = details1.MPAAText;
+        DatabaseUtility.RemoveInvalidChars(ref strLine);
+        details1.MPAAText = strLine;
         // Studios
         strLine = details1.Studios;
         DatabaseUtility.RemoveInvalidChars(ref strLine);
@@ -3077,6 +3118,10 @@ namespace MediaPortal.Video.Database
         strLine = details1.Language;
         DatabaseUtility.RemoveInvalidChars(ref strLine);
         details1.Language = strLine;
+        // Awards
+        strLine = details1.MovieAwards;
+        DatabaseUtility.RemoveInvalidChars(ref strLine);
+        details1.MovieAwards = strLine;
         // Last update
         if (updateTimeStamp)
         {
@@ -3169,7 +3214,7 @@ namespace MediaPortal.Video.Database
           // Insert new movie info - no date watched update
           strSQL =
             String.Format(
-              "INSERT INTO movieinfo ( idMovie, idDirector, strPlotOutline, strPlot, strTagLine, strVotes, fRating, strCast, strCredits, iYear, strGenre, strPictureURL, strTitle, IMDBID, mpaa, runtime, iswatched, strUserReview, strFanartURL, strDirector, dateAdded, studios, country, language, lastupdate, strSortTitle, TMDBNumber, LocalDBNumber, iUserRating) VALUES({0},{1},'{2}','{3}','{4}','{5}','{6}','{7}','{8}',{9},'{10}','{11}','{12}','{13}','{14}',{15},{16},'{17}','{18}','{19}','{20}','{21}','{22}','{23}','{24}','{25}','{26}','{27}',{28})",
+              "INSERT INTO movieinfo ( idMovie, idDirector, strPlotOutline, strPlot, strTagLine, strVotes, fRating, strCast, strCredits, iYear, strGenre, strPictureURL, strTitle, IMDBID, mpaa, runtime, iswatched, strUserReview, strFanartURL, strDirector, dateAdded, studios, country, language, lastupdate, strSortTitle, TMDBNumber, LocalDBNumber, iUserRating, MPAAText, Awards) VALUES({0},{1},'{2}','{3}','{4}','{5}','{6}','{7}','{8}',{9},'{10}','{11}','{12}','{13}','{14}',{15},{16},'{17}','{18}','{19}','{20}','{21}','{22}','{23}','{24}','{25}','{26}','{27}',{28}, {29}, {30})",
               lMovieId, lDirector, details1.PlotOutline,
               details1.Plot, details1.TagLine,
               details1.Votes, strRating,
@@ -3184,7 +3229,9 @@ namespace MediaPortal.Video.Database
               details1.Language, details1.LastUpdate, 
               details1.SortTitle, 
               details1.TMDBNumber, details1.LocalDBNumber, 
-              details1.UserRating);
+              details1.UserRating, 
+              details1.MPAAText, 
+              details1.MovieAwards);
 
           //			Log.Error("dbs:{0}", strSQL);
           m_db.Execute(strSQL);
@@ -3196,7 +3243,7 @@ namespace MediaPortal.Video.Database
           // Update movie info (no dateAdded update)
           strSQL =
             String.Format(
-              "UPDATE movieinfo SET idDirector={0}, strPlotOutline='{1}', strPlot='{2}', strTagLine='{3}', strVotes='{4}', fRating='{5}', strCast='{6}',strCredits='{7}', iYear={8}, strGenre='{9}', strPictureURL='{10}', strTitle='{11}', IMDBID='{12}', mpaa='{13}', runtime={14}, iswatched={15} , strUserReview='{16}', strFanartURL='{17}' , strDirector ='{18}', dateWatched='{19}', studios = '{20}', country = '{21}', language = '{22}' , lastupdate = '{23}', strSortTitle = '{24}', TMDBNumber = '{25}', LocalDBNumber = '{26}', iUserRating = {27} WHERE idMovie = {28}",
+              "UPDATE movieinfo SET idDirector={0}, strPlotOutline='{1}', strPlot='{2}', strTagLine='{3}', strVotes='{4}', fRating='{5}', strCast='{6}',strCredits='{7}', iYear={8}, strGenre='{9}', strPictureURL='{10}', strTitle='{11}', IMDBID='{12}', mpaa='{13}', runtime={14}, iswatched={15} , strUserReview='{16}', strFanartURL='{17}' , strDirector ='{18}', dateWatched='{19}', studios = '{20}', country = '{21}', language = '{22}' , lastupdate = '{23}', strSortTitle = '{24}', TMDBNumber = '{25}', LocalDBNumber = '{26}', iUserRating = {27}, MPAAText = '{28}', Awards = '{29}' WHERE idMovie = {30}",
               lDirector, details1.PlotOutline,
               details1.Plot, details1.TagLine,
               details1.Votes, strRating,
@@ -3212,6 +3259,8 @@ namespace MediaPortal.Video.Database
               details1.LastUpdate, details1.SortTitle,
               details1.TMDBNumber, details1.LocalDBNumber,
               details1.UserRating,  
+              details1.MPAAText, 
+              details1.MovieAwards, 
               lMovieId);
 
           //		Log.Error("dbs:{0}", strSQL);
@@ -6200,6 +6249,7 @@ namespace MediaPortal.Video.Database
             XmlNode nodeImdbNumber = nodeMovie.SelectSingleNode("imdb");
             XmlNode nodeIdImdbNumber = nodeMovie.SelectSingleNode("id");
             XmlNode nodeMpaa = nodeMovie.SelectSingleNode("mpaa");
+            XmlNode nodeMpaaText = nodeMovie.SelectSingleNode("mpaatext");
             XmlNode nodeTop250 = nodeMovie.SelectSingleNode("top250");
             XmlNode nodeVotes = nodeMovie.SelectSingleNode("votes");
             XmlNode nodeStudio = nodeMovie.SelectSingleNode("studio");
@@ -6213,6 +6263,7 @@ namespace MediaPortal.Video.Database
             XmlNode nodeCredits = nodeMovie.SelectSingleNode("credits");
             XmlNode nodeTMDBNumber = nodeMovie.SelectSingleNode("tmdb");
             XmlNode nodeLocalDBNumber = nodeMovie.SelectSingleNode("localdb");
+            XmlNode nodeAwards = nodeMovie.SelectSingleNode("awards");
             
             #endregion
 
@@ -6526,6 +6577,16 @@ namespace MediaPortal.Video.Database
               movie.MPARating = "NR";
             }
             
+            // MPAA Text
+            if (nodeMpaaText != null)
+            {
+              movie.MPAAText = nodeMpaaText.InnerText;
+            }
+            else
+            {
+              movie.MPAAText = string.Empty;
+            }
+            
             #endregion
             
             #region Plot/Short plot
@@ -6757,6 +6818,19 @@ namespace MediaPortal.Video.Database
 
             #endregion
 
+            #region Awards
+
+            // Awards
+            if (nodeAwards != null)
+            {
+              movie.MovieAwards = nodeAwards.InnerText;
+            }
+            else
+            {
+              movie.MovieAwards = string.Empty;
+            }
+
+            #endregion
             #region poster
 
             // Poster
@@ -7419,6 +7493,8 @@ namespace MediaPortal.Video.Database
           CreateXmlNode(mainNode, doc, "runtime", movieDetails.RunTime.ToString());
           // MPAA
           CreateXmlNode(mainNode, doc, "mpaa", movieDetails.MPARating);
+          // MPAA Text
+          CreateXmlNode(mainNode, doc, "mpaatext", movieDetails.MPAAText);
           // Votes
           CreateXmlNode(mainNode, doc, "votes", movieDetails.Votes);
           // TOp 250
@@ -7443,6 +7519,8 @@ namespace MediaPortal.Video.Database
           CreateXmlNode(mainNode, doc, "tmdb", movieDetails.TMDBNumber);
           //  movie LocalDB number
           CreateXmlNode(mainNode, doc, "localdb", movieDetails.LocalDBNumber);
+          //  movie Awards
+          CreateXmlNode(mainNode, doc, "awards", movieDetails.MovieAwards);
           // Watched
           string watched = "false";
 
@@ -7889,6 +7967,7 @@ namespace MediaPortal.Video.Database
       details.SearchString = String.Format("{0}", details.Title);
       details.CDLabel = DatabaseUtility.Get(results, iRow, "path.cdlabel");
       details.MPARating = DatabaseUtility.Get(results, iRow, "movieinfo.mpaa");
+      details.MPAAText = DatabaseUtility.Get(results, iRow, "movieinfo.MPAAText");
       int runtime = 0;
       Int32.TryParse(DatabaseUtility.Get(results, iRow, "movieinfo.runtime"), out runtime);
       details.RunTime = runtime;
@@ -7903,6 +7982,7 @@ namespace MediaPortal.Video.Database
       details.SortTitle = DatabaseUtility.Get(results, iRow, "movieinfo.strSortTitle").Replace("''", "'");
       details.TMDBNumber = DatabaseUtility.Get(results, iRow, "movieinfo.TMDBNumber");
       details.LocalDBNumber = DatabaseUtility.Get(results, iRow, "movieinfo.LocalDBNumber");
+      details.MovieAwards = DatabaseUtility.Get(results, iRow, "movieinfo.Awards");
 
       if (string.IsNullOrEmpty(details.Path) && details.ID > 0)
       {
