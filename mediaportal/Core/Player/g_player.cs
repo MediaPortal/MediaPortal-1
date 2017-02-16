@@ -3955,7 +3955,7 @@ namespace MediaPortal.Player
               GUIWindowManager.PreInit();
 
               // Don't resize to avoid wrong dialog opened
-              //GUIWindowManager.OnResize();
+              GUIWindowManager.OnResize();
               //GUIWindowManager.OnDeviceRestored();
 
               // send C++ displayChange
