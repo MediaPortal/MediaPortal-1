@@ -815,39 +815,15 @@ namespace MediaPortal.GUI.Video
       GUIControl.ClearControl(GetID, facadeLayout.GetID);
       ArrayList itemlist = new ArrayList();
       ArrayList movies = new ArrayList();
+      string view = handler.CurrentLevelWhere.ToLowerInvariant();
 
       if (_searchMovie)
       {
-        /*
-        string defViewFields = VideoDatabase.DefaultVideoViewFields;
-        string sql = string.Format("SELECT DISTINCT {0} " +
-                                   "FROM movieView " +
-                                   "WHERE {1} LIKE '%{2}%' " +
-                                   "ORDER BY strTitle ASC", defViewFields, _searchMovieDbField, _searchMovieString);
-        VideoDatabase.GetMoviesByFilter(sql, out movies, false, true, false, false, false);
-        */
         VideoDatabase.SearchMoviesByView(_searchMovieDbField, _searchMovieString, out movies);
       }
-      else if (_searchActor && handler.CurrentLevelWhere != "title")
+      else if (_searchActor && view != "title")
       {
-        VideoDatabase.SearchActorsByView(_searchActorString, out movies, handler.CurrentLevelWhere == "director");
-        /*
-        string sql = string.Empty;
-        
-        if (handler.CurrentLevelWhere == "director")
-        {
-          sql = "SELECT DISTINCT idActorDirector, strActorDirector, strIMDBActorDirectorID " + 
-                "FROM movieView " + 
-                "WHERE strActorDirector LIKE '%" + _searchActorString + "%' ORDER BY strActorDirector ASC"
-        }
-        else
-        {
-          sql = "SELECT DISTINCT idActor, strActor, IMDBActorID " + 
-                "FROM movieView " + 
-                "WHERE strActor LIKE '%" + _searchActorString + "%' ORDER BY strActor ASC"
-        }
-        VideoDatabase.GetMoviesByFilter(sql, out movies, true, false, false, false, false);
-        */
+        VideoDatabase.SearchActorsByView(_searchActorString, out movies, view == "director");
       }
       else
       {
@@ -879,8 +855,8 @@ namespace MediaPortal.GUI.Video
         GUIListItem item = new GUIListItem();
         item.Label = movie.Title;
 
-        if (handler.CurrentLevelWhere != "user groups" && handler.CurrentLevelWhere != "user groups only" &&
-            handler.CurrentLevelWhere != "movie collections" && handler.CurrentLevelWhere != "movie collections only")
+        if (view != "user groups" && view != "user groups only" &&
+            view != "movie collections" && view != "movie collections only")
         {
           if (handler.CurrentLevel + 1 < handler.MaxLevels)
           {
@@ -928,7 +904,7 @@ namespace MediaPortal.GUI.Video
         {
           if (item.Path.ToUpperInvariant().Contains(@"\VIDEO_TS"))
           {
-            item.Label3 = MediaTypes.DVD.ToString() + " #" + movie.WatchedCount;;
+            item.Label3 = MediaTypes.DVD.ToString() + " #" + movie.WatchedCount;
           }
           else if (item.Path.ToUpperInvariant().Contains(@"\BDMV"))
           {
@@ -936,7 +912,7 @@ namespace MediaPortal.GUI.Video
           }
           else if (VirtualDirectory.IsImageFile(Path.GetExtension(item.Path)))
           {
-            item.Label3 = MediaTypes.ISO.ToString() + " #" + movie.WatchedCount; ;
+            item.Label3 = MediaTypes.ISO.ToString() + " #" + movie.WatchedCount;
           }
           else
           {
@@ -1017,7 +993,7 @@ namespace MediaPortal.GUI.Video
           itemIndex++;
         }
         
-        switch (handler.CurrentLevelWhere.ToLowerInvariant())
+        switch (view)
         {
           case "genre":
             SetGenreThumbs(itemlist);
@@ -1045,12 +1021,7 @@ namespace MediaPortal.GUI.Video
           case "actorindex":
           case "directorindex":
           case "titleindex":
-            foreach (GUIListItem itemAbc in itemlist)
-            {
-              itemAbc.IconImageBig = @"alpha\" + itemAbc.Label + ".png";
-              itemAbc.IconImage = @"alpha\" + itemAbc.Label + ".png";
-              itemAbc.ThumbnailImage = @"alpha\" + itemAbc.Label + ".png";
-            }
+            SetAlphaThumbs(itemlist);
             break;
 
           default:
@@ -1331,6 +1302,20 @@ namespace MediaPortal.GUI.Video
 
     #region SetThumbs
 
+    protected void SetAlphaThumbs(ArrayList itemlist)
+    {
+      foreach (GUIListItem itemAbc in itemlist)
+      {
+        /*
+        itemAbc.IconImageBig = @"alpha\" + itemAbc.Label + ".png";
+        itemAbc.IconImage = @"alpha\" + itemAbc.Label + ".png";
+        itemAbc.ThumbnailImage = @"alpha\" + itemAbc.Label + ".png";
+        */
+        string alphaCover = @"alpha\" + itemAbc.Label + ".png";
+        SetItemThumb(itemAbc, alphaCover);
+      }
+    }
+
     protected void SetGenreThumbs(ArrayList itemlist)
     {
       foreach (GUIListItem item in itemlist)
@@ -1508,28 +1493,9 @@ namespace MediaPortal.GUI.Video
             {
               string titleExt = movie.Title + "{" + movie.ID + "}";
               coverArtImage = Util.Utils.GetCoverArt(Thumbs.MovieTitle, titleExt);
-              
-              if (Util.Utils.FileExistsInCache(coverArtImage))
-              {
-                listItem.ThumbnailImage = coverArtImage;
-                listItem.IconImageBig = coverArtImage;
-                listItem.IconImage = coverArtImage;
-              }
             }
           }
-          // let's try to assign better covers
-          if (!string.IsNullOrEmpty(coverArtImage))
-          {
-            coverArtImage = Util.Utils.ConvertToLargeCoverArt(coverArtImage);
-            if (Util.Utils.FileExistsInCache(coverArtImage))
-            {
-              listItem.ThumbnailImage = coverArtImage;
-            }
-          }
-          else
-          {
-            SetDefaultIcon(listItem);
-          }
+          SetItemThumb(listItem, coverArtImage);
         }
         SelectItem();
       }
@@ -1574,13 +1540,16 @@ namespace MediaPortal.GUI.Video
       {
         switch (handler.CurrentLevelWhere.ToLowerInvariant())
         {
+          case "titleindex":
           case "title":
             listItem.IconImageBig = "defaultVideoBig.png";
             listItem.IconImage = "defaultVideo.png";
             listItem.ThumbnailImage = "defaultVideoBig.png";
             break;
 
+          case "actorindex":
           case "actor":
+          case "directorindex":
           case "director":
             listItem.IconImageBig = "defaultActorBig.png";
             listItem.IconImage = "defaultActor.png";
@@ -1595,6 +1564,9 @@ namespace MediaPortal.GUI.Video
 
           case "user groups":
           case "user groups only":
+            listItem.IconImageBig = "defaultVideoBig.png";
+            listItem.IconImage = "defaultVideo.png";
+            listItem.ThumbnailImage = "defaultVideoBig.png";
             break;
 
           case "movie collections":
@@ -1608,11 +1580,6 @@ namespace MediaPortal.GUI.Video
             listItem.IconImageBig = "defaultYearBig.png";
             listItem.IconImage = "defaultYear.png";
             listItem.ThumbnailImage = "defaultYearBig.png";
-            break;
-
-          case "actorindex":
-          case "directorindex":
-          case "titleindex":
             break;
 
           default: // For user custom views
@@ -1759,26 +1726,27 @@ namespace MediaPortal.GUI.Video
         {
           FilterDefinition defCurrent = (FilterDefinition) handler.View.Filters[handler.CurrentLevel - 1];
           string selectedValue = defCurrent.SelectedValue;
+          string _strView = defCurrent.Where.ToLowerInvariant();
           Int32 iSelectedValue;
           
           if (Int32.TryParse(selectedValue, out iSelectedValue))
           {
-            if (strView == "actor" || strView == "director")
+            if (_strView == "actor" || _strView == "director")
             {
               selectedValue = VideoDatabase.GetActorNameById(iSelectedValue);
             }
 
-            if (strView == "genre")
+            if (_strView == "genre")
             {
               selectedValue = VideoDatabase.GetGenreById(iSelectedValue);
             }
 
-            if (strView == "user groups" || strView == "user groups only")
+            if (_strView == "user groups" || _strView == "user groups only")
             {
               selectedValue = VideoDatabase.GetUserGroupById(iSelectedValue);
             }
 
-            if (strView == "movie collections" || strView == "movie collections only")
+            if (_strView == "movie collections" || _strView == "movie collections only")
             {
               selectedValue = VideoDatabase.GetCollectionById(iSelectedValue);
             }
@@ -1889,11 +1857,6 @@ namespace MediaPortal.GUI.Video
     private string SetMovieListGroupedBy(GUIListItem item)
     {
       string strMovies = string.Empty;
-      /*
-      string where = string.Empty;
-      string value = string.Empty;
-      string sql = string.Empty;
-      */
       string view = handler.CurrentLevelWhere.ToLowerInvariant();
       string groupDescription = string.Empty;
       string collectionDescription = string.Empty;
@@ -1903,12 +1866,6 @@ namespace MediaPortal.GUI.Video
       switch (view)
       {
         case "genre":
-          // strMovies = VideoDatabase.GetMovieTitlesByGenre(item.Label);
-          /*
-          value = DatabaseUtility.RemoveInvalidChars(item.Label);
-          sql = string.Format("SELECT DISTINCT strTitle FROM movieView WHERE strSingleGenre = '{0}' {1} ORDER BY strTitle ASC", 
-                              value, (!string.IsNullOrEmpty(whereClause) ? "AND " + whereClause : ""));
-          */
           strMovies = VideoDatabase.GetMovieTitlesByGenre(item.Label, whereClause);
           break;
       
@@ -1916,11 +1873,6 @@ namespace MediaPortal.GUI.Video
         case "user groups only":
           int grpId = VideoDatabase.GetUserGroupId(item.Label);
           groupDescription = VideoDatabase.GetUserGroupDescriptionById(grpId);
-          // strMovies = VideoDatabase.GetMovieTitlesByUserGroup(grpId);
-          /*
-          sql = string.Format("SELECT DISTINCT strTitle FROM movieView WHERE idGroup = {0} {1} ORDER BY strTitle ASC",
-                              grpId, (!string.IsNullOrEmpty(whereClause) ? "AND " + whereClause : ""));
-          */
           strMovies = VideoDatabase.GetMovieTitlesByUserGroup(grpId, whereClause);
           if (!string.IsNullOrEmpty(groupDescription))
           {
@@ -1944,12 +1896,7 @@ namespace MediaPortal.GUI.Video
           }
           else
           {
-            // strMovies = VideoDatabase.GetMovieTitlesByCollection(item.Label);
             collectionDescription = (GUILocalizeStrings.Get(342) + ":\n"); // Movies
-            /*
-            sql = string.Format("SELECT DISTINCT strTitle FROM movieView WHERE idCollection = {0} {1} ORDER BY strTitle ASC",
-                                                 mcolId, (!string.IsNullOrEmpty(whereClause) ? "AND " + whereClause : ""));
-            */
             strMovies = VideoDatabase.GetMovieTitlesByCollection(mcolId, whereClause);
             strMovies = collectionDescription + strMovies;
           }
@@ -1958,11 +1905,6 @@ namespace MediaPortal.GUI.Video
         case "actor":
           if (movie != null)
           {
-            // strMovies = VideoDatabase.GetMovieTitlesByActor(movie.ActorID);
-            /*
-            sql = String.Format("SELECT DISTINCT strTitle FROM movieView WHERE idActor = {0} {1} ORDER BY strTitle ASC",
-                                                 movie.ActorID, (!string.IsNullOrEmpty(whereClause) ? "AND " + whereClause : ""));
-            */
             strMovies = VideoDatabase.GetMovieTitlesByActor(movie.ActorID, whereClause);
           }
           break;
@@ -1970,99 +1912,29 @@ namespace MediaPortal.GUI.Video
         case "director":
           if (movie != null)
           {
-            // strMovies = VideoDatabase.GetMovieTitlesByDirector(movie.ActorID);
-            /*
-            sql = String.Format("SELECT DISTINCT strTitle FROM movieView WHERE idActorDirector = {0} {1} ORDER BY strTitle ASC",
-                                                 movie.ActorID, (!string.IsNullOrEmpty(whereClause) ? "AND " + whereClause : ""));
-            */
             strMovies = VideoDatabase.GetMovieTitlesByDirector(movie.ActorID, whereClause);
           }
           break;
         
         case "year":
-          // strMovies = VideoDatabase.GetMovieTitlesByYear(item.Label);
-          /*
-          sql = String.Format("SELECT DISTINCT strTitle FROM movieView WHERE iYear = {0} {1} ORDER BY strTitle ASC",
-                                               item.Label, (!string.IsNullOrEmpty(whereClause) ? "AND " + whereClause : ""));
-          */
           strMovies = VideoDatabase.GetMovieTitlesByYear(item.Label, whereClause);
           break;
         
         case "actorindex":
-          /*
-          value = DatabaseUtility.RemoveInvalidChars(item.Label);
-          where = SetWhere(value, "strActor");
-          sql = "SELECT DISTINCT strActor FROM movieView " +
-                        where +
-                        (!string.IsNullOrEmpty(whereClause) ? " AND " + whereClause : "") +
-                        "GROUP BY strActor ORDER BY strActor ASC";
-          */
           strMovies = VideoDatabase.GetFieldDataByIndex("strActor", item.Label, whereClause);
           break;
       
         case "directorindex":
-          /*
-          value = DatabaseUtility.RemoveInvalidChars(item.Label);
-          where = SetWhere(value, "strActorDirector");
-          sql = "SELECT strActorDirector FROM movieView " +
-                        where +
-                        (!string.IsNullOrEmpty(whereClause) ? " AND " + whereClause : "") +
-                        "GROUP BY strActorDirector ORDER BY strActorDirector ASC";
-          */
           strMovies = VideoDatabase.GetFieldDataByIndex("strActorDirector", item.Label, whereClause);
           break;
         
         case "titleindex":
-          /*
-          value = DatabaseUtility.RemoveInvalidChars(item.Label);
-          where = SetWhere(value, "strTitle");
-          sql = "SELECT strTitle FROM movieView " + 
-                        where + (!string.IsNullOrEmpty(whereClause) ? " AND " + whereClause : "") +
-                        "GROUP BY strTitle ORDER BY strTitle ASC ";
-          */
           strMovies = VideoDatabase.GetFieldDataByIndex("strTitle", item.Label, whereClause);
           break;
       }
 
-      /*
-      if (!string.IsNullOrEmpty(sql))
-      {
-        strMovies = VideoDatabase.GetMovieTitlesByIndex(sql);
-      }
-      
-
-      if (!string.IsNullOrEmpty(groupDescription))
-      {
-        strMovies = groupDescription + strMovies;
-      }
-      
-      if (!string.IsNullOrEmpty(collectionDescription) && !string.IsNullOrEmpty(sql))
-      {
-        strMovies = collectionDescription + strMovies;
-      }
-      */
       return strMovies;
     }
-
-    /*
-    private string SetWhere(string value, string field)
-    {
-      string where;
-      string nWordChar = VideoDatabase.NonwordCharacters();
-
-      if (Regex.Match(value, @"\W|\d").Success)
-      {
-        where =
-          @"WHERE SUBSTR(" + field + @",1,1) IN (" + nWordChar + ") ";
-      }
-      else
-      {
-        where = @"WHERE SUBSTR(" + field + ",1,1) = '" + value + "' ";
-      }
-
-      return where;
-    }
-    */
 
     // Show or hide protected content
     private void OnContentLock()
@@ -2207,10 +2079,6 @@ namespace MediaPortal.GUI.Video
         // update db
         bool error;
         string errorMessage = string.Empty;
-        /*
-        string sql = string.Format("UPDATE movieinfo SET strTitle = '{0}' WHERE idMovie = {1}", movieTitle, movie.ID);
-        VideoDatabase.ExecuteSql(sql, out error, out errorMessage);
-        */
         VideoDatabase.SetMovieTitleById(movie.ID, movieTitle, out error, out errorMessage);
 
         if (error)
@@ -2449,10 +2317,6 @@ namespace MediaPortal.GUI.Video
       // update db
       bool error;
       string errorMessage = string.Empty;
-      /*
-      string sql = string.Format("UPDATE movieinfo SET strSortTitle = '{0}' WHERE idMovie = {1}", movieSortTitle, movie.ID);
-      VideoDatabase.ExecuteSql(sql, out error, out  errorMessage);
-      */
       VideoDatabase.SetMovieSortTitleById(movie.ID, movieSortTitle, out error, out errorMessage);
 
       if (error)
@@ -2799,7 +2663,6 @@ namespace MediaPortal.GUI.Video
       {
         string selectedLabel = facadeLayout.SelectedListItem.Label;
         string whereClause = ((VideoViewHandler)handler).ParentWhere;
-        string sql = string.Empty;
         IMDBMovie movie = null;
 
         if (!string.IsNullOrEmpty(view))
@@ -2808,13 +2671,6 @@ namespace MediaPortal.GUI.Video
           {
             case "genre":
               m_history.Set(selectedLabel, view);
-              // VideoDatabase.GetRandomMoviesByGenre(selectedLabel, ref mList, 1);
-              // SetRandomMovieId(mList);
-              /*
-              string value = DatabaseUtility.RemoveInvalidChars(selectedLabel);
-              sql = string.Format("SELECT DISTINCT {2} FROM movieView WHERE strSingleGenre = '{0}' {1} ORDER BY RANDOM() LIMIT 1", 
-                                  value, (!string.IsNullOrEmpty(whereClause) ? "AND " + whereClause : ""), defViewFields);
-              */
               VideoDatabase.GetRandomMoviesByGenre(selectedLabel, ref mList, 1, whereClause);
               SetRandomMovieId(mList);
               break;
@@ -2825,13 +2681,6 @@ namespace MediaPortal.GUI.Video
               movie = facadeLayout.SelectedListItem.AlbumInfoTag as IMDBMovie;
               if (movie == null || movie.ID == -1)
               {
-                // VideoDatabase.GetRandomMoviesByUserGroup(selectedLabel, ref mList, 1);
-                // SetRandomMovieId(mList);
-                /*
-                string value = DatabaseUtility.RemoveInvalidChars(selectedLabel);
-                sql = string.Format("SELECT DISTINCT {2} FROM movieView WHERE strGroup = '{0}' {1} ORDER BY RANDOM() LIMIT 1",
-                                    value, (!string.IsNullOrEmpty(whereClause) ? "AND " + whereClause : ""), defViewFields);
-                */
                 VideoDatabase.GetRandomMoviesByUserGroup(selectedLabel, ref mList, 1, whereClause);
                 SetRandomMovieId(mList);
               }
@@ -2843,13 +2692,6 @@ namespace MediaPortal.GUI.Video
               movie = facadeLayout.SelectedListItem.AlbumInfoTag as IMDBMovie;
               if (movie == null || movie.ID == -1)
               {
-                // VideoDatabase.GetRandomMoviesByCollection(selectedLabel, ref mList, 1);
-                // SetRandomMovieId(mList);
-                /*
-                string value = DatabaseUtility.RemoveInvalidChars(selectedLabel);
-                sql = string.Format("SELECT DISTINCT {2} FROM movieView WHERE strCollection = '{0}' {1} ORDER BY RANDOM() LIMIT 1",
-                                     value, (!string.IsNullOrEmpty(whereClause) ? "AND " + whereClause : ""), defViewFields);
-                */
                 VideoDatabase.GetRandomMoviesByCollection(selectedLabel, ref mList, 1, whereClause);
                 SetRandomMovieId(mList);
               }
@@ -2857,38 +2699,17 @@ namespace MediaPortal.GUI.Video
 
             case "actor":
               m_history.Set(selectedLabel, view);
-              // VideoDatabase.GetRandomMoviesByActor(selectedLabel, ref mList, 1);
-              // SetRandomMovieId(mList);
-              /*
-              string value = DatabaseUtility.RemoveInvalidChars(selectedLabel);
-              sql = String.Format("SELECT DISTINCT {2} FROM movieView WHERE strActor = '{0}' {1} ORDER BY RANDOM() LIMIT 1",
-                                   value, (!string.IsNullOrEmpty(whereClause) ? "AND " + whereClause : ""), defViewFields);
-              */
               VideoDatabase.GetRandomMoviesByActor(selectedLabel, ref mList, 1, whereClause);
               SetRandomMovieId(mList);
               break;
             case "director":
               m_history.Set(selectedLabel, view);
-              // VideoDatabase.GetRandomMoviesByActor(selectedLabel, ref mList, 1);
-              // SetRandomMovieId(mList);
-              /*
-              string value = DatabaseUtility.RemoveInvalidChars(selectedLabel);
-              sql = String.Format("SELECT DISTINCT {2} FROM movieView WHERE strActorDirector = '{0}' {1} ORDER BY RANDOM() LIMIT 1",
-                                   value, (!string.IsNullOrEmpty(whereClause) ? "AND " + whereClause : ""), defViewFields);
-              */
               VideoDatabase.GetRandomMoviesByActorDirector(selectedLabel, ref mList, 1, whereClause);
               SetRandomMovieId(mList);
               break;
 
             case "year":
               m_history.Set(selectedLabel, view);
-              // VideoDatabase.GetRandomMoviesByYear(selectedLabel, ref mList, 1);
-              // SetRandomMovieId(mList);
-              /*
-              string value = DatabaseUtility.RemoveInvalidChars(selectedLabel);
-              sql = String.Format("SELECT DISTINCT {2} FROM movieView WHERE iYear = {0} {1} ORDER BY RANDOM() LIMIT 1",
-                                   value, (!string.IsNullOrEmpty(whereClause) ? "AND " + whereClause : ""), defViewFields);
-              */
               VideoDatabase.GetRandomMoviesByYear(selectedLabel, ref mList, 1, whereClause);
               SetRandomMovieId(mList);
               break;
@@ -2923,30 +2744,12 @@ namespace MediaPortal.GUI.Video
 
             case "actorindex":
               m_history.Set(selectedLabel, view);
-              /*
-              string value = DatabaseUtility.RemoveInvalidChars(selectedLabel);
-              string where = SetWhere(value, "strActor");
-              sql = string.Format("SELECT DISTINCT {0} FROM movieView " +
-                                   where + (!string.IsNullOrEmpty(whereClause) ? " AND " + whereClause : " ") +
-                                  "ORDER BY RANDOM() LIMIT 1", defViewFields) ;
-              // VideoDatabase.GetMoviesByFilter(sql, out mList, false, true, false, false, false);
-              // SetRandomMovieId(mList);
-              */
               VideoDatabase.GetRandomMoviesByIndex("strActor", selectedLabel, ref mList, 1, whereClause);
               SetRandomMovieId(mList);
               break;
           
             case "directorindex":
               m_history.Set(selectedLabel, view);
-              /*
-              string value = DatabaseUtility.RemoveInvalidChars(selectedLabel);
-              string where = SetWhere(value, "strActorDirector");
-              sql = string.Format("SELECT DISTINCT {0} FROM movieView " +
-                                   where + (!string.IsNullOrEmpty(whereClause) ? " AND " + whereClause : " ") +
-                                  "ORDER BY RANDOM() LIMIT 1", defViewFields) ;
-              // VideoDatabase.GetMoviesByFilter(sql, out mList, false, true, false, false, false);
-              // SetRandomMovieId(mList);
-              */
               VideoDatabase.GetRandomMoviesByIndex("strActorDirector", selectedLabel, ref mList, 1, whereClause);
               SetRandomMovieId(mList);
               break;
@@ -2955,15 +2758,6 @@ namespace MediaPortal.GUI.Video
               // if (currentLvl == 0)
               {
                 m_history.Set(selectedLabel, view);
-                /*
-                string value = DatabaseUtility.RemoveInvalidChars(selectedLabel);
-                string where = SetWhere(value, "strTitle");
-                sql = string.Format("SELECT DISTINCT {0} FROM movieView " +
-                                     where + (!string.IsNullOrEmpty(whereClause) ? " AND " + whereClause : " ") +
-                                    "ORDER BY RANDOM() LIMIT 1", defViewFields) ;
-                // VideoDatabase.GetMoviesByFilter(sql, out mList, false, true, false, false, false);
-                // SetRandomMovieId(mList);
-                */
                 VideoDatabase.GetRandomMoviesByIndex("strTitle", selectedLabel, ref mList, 1, whereClause);
                 SetRandomMovieId(mList);
               }
@@ -2973,14 +2767,6 @@ namespace MediaPortal.GUI.Video
               m_history.Set(selectedLabel, view);
               break;
           }
-
-          /*
-          if (!string.IsNullOrEmpty(sql))
-          {
-            VideoDatabase.GetMoviesByFilter(sql, out mList, false, true, false, false, false);
-            SetRandomMovieId(mList);
-          }
-          */
         }
       }
     }

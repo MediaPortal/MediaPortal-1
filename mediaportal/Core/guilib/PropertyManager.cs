@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2017 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2017 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -88,6 +88,7 @@ namespace MediaPortal.GUI.Library
       _properties["#moviepath"] = string.Empty; // Movie path
       _properties["#isgroup"] = string.Empty; // Is Groups
       _properties["#iscollection"] = string.Empty; // Is Movie Collection
+      _properties["#groupmovielist"] = string.Empty; // Movie List by ViewHandler
       
       _properties["#music.title"] = string.Empty;
       _properties["#music.artist"] = string.Empty;
