@@ -4405,11 +4405,6 @@ namespace MediaPortal.Video.Database
           return;
         }
 
-        /*
-        string strSQL = String.Format(
-          "SELECT * FROM genrelinkmovie,genre,movie,movieinfo,path WHERE path.idpath=movie.idpath AND genrelinkmovie.idGenre=genre.idGenre AND genrelinkmovie.idmovie=movie.idmovie AND movieinfo.idmovie=movie.idmovie AND genre.strGenre='{0}' ORDER BY RANDOM() LIMIT {1};", 
-          strGenre, limit);
-        */
         string strSQL = string.Format("SELECT DISTINCT {0} FROM movieView WHERE strSingleGenre = '{1}' {2} ORDER BY RANDOM() LIMIT {3}", 
                                        _defaultVideoViewFields, strGenre, (!string.IsNullOrEmpty(whereClause) ? "AND " + whereClause : ""), limit);
         SQLiteResultSet results = m_db.Execute(strSQL);
@@ -4451,11 +4446,7 @@ namespace MediaPortal.Video.Database
 
         string strSQLGenre = strGenre;
         DatabaseUtility.RemoveInvalidChars(ref strSQLGenre);
-        /*
-        string strSQL = String.Format(
-          "SELECT DISTINCT movieinfo.strTitle FROM movieinfo WHERE movieinfo.strGenre LIKE '%{0}%' ORDER BY movieinfo.strTitle ASC",
-          strSQLGenre);
-        */
+
         string strSQL = string.Format("SELECT DISTINCT strTitle FROM movieView WHERE strSingleGenre = '{0}' {1} ORDER BY strTitle ASC", 
                                        strSQLGenre, (!string.IsNullOrEmpty(whereClause) ? "AND " + whereClause : ""));
         SQLiteResultSet results = m_db.Execute(strSQL);
@@ -4532,11 +4523,7 @@ namespace MediaPortal.Video.Database
         {
           return;
         }
-        /*
-        string strSQL = String.Format(
-          "SELECT * FROM moviecollectionlinkmovie,moviecollection,movie,movieinfo,path WHERE path.idpath=movie.idpath AND moviecollectionlinkmovie.idCollection=moviecollection.idCollection AND moviecollectionlinkmovie.idMovie=movie.idMovie AND movieinfo.idmovie=movie.idmovie AND moviecollection.strCollection='{0}' ORDER BY RANDOM() LIMIT {1};",
-          strCollection, limit);
-        */
+
         string strSQL = string.Format("SELECT DISTINCT {0} FROM movieView WHERE strCollection = '{1}' {2} ORDER BY RANDOM() LIMIT {3}",
                                        _defaultVideoViewFields, strCollection, (!string.IsNullOrEmpty(whereClause) ? "AND " + whereClause : ""), limit);
         SQLiteResultSet results = m_db.Execute(strSQL);
@@ -4583,16 +4570,6 @@ namespace MediaPortal.Video.Database
           return titles;
         }
 
-        /*
-        string strSQL = String.Format(
-          "SELECT DISTINCT movieinfo.strTitle "+
-          "FROM movieinfo "+
-          "WHERE movieinfo.idMovie IN "+
-            "(SELECT idMovie FROM moviecollectionlinkmovie WHERE idCollection IN "+
-              "(SELECT idCollection FROM moviecollection WHERE strCollection LIKE '%{0}%')) "+
-          "ORDER BY movieinfo.strTitle ASC",
-          strSQLCollection);
-        */
         string strSQL = string.Format("SELECT DISTINCT strTitle FROM movieView WHERE strCollection = {0} {1} ORDER BY strTitle ASC",
                                        strSQLCollection, (!string.IsNullOrEmpty(whereClause) ? "AND " + whereClause : ""));
         SQLiteResultSet results = m_db.Execute(strSQL);
@@ -4707,11 +4684,7 @@ namespace MediaPortal.Video.Database
         {
           return titles;
         }
-        /*
-        string strSQL = String.Format(
-          "SELECT DISTINCT movieinfo.strTitle FROM movieinfo INNER JOIN usergrouplinkmovie ON movieinfo.idMovie = usergrouplinkmovie.idMovie WHERE usergrouplinkmovie.idgroup = {0} ORDER BY movieinfo.strTitle ASC",
-          idGroup);
-        */
+
         string strSQL = string.Format("SELECT DISTINCT strTitle FROM movieView WHERE idGroup = {0} {1} ORDER BY strTitle ASC",
                                       idGroup, (!string.IsNullOrEmpty(whereClause) ? "AND " + whereClause : ""));
         SQLiteResultSet results = m_db.Execute(strSQL);
@@ -4750,11 +4723,7 @@ namespace MediaPortal.Video.Database
         {
           return;
         }
-        /*
-        string strSQL = String.Format(
-          "SELECT * FROM usergrouplinkmovie,usergroup,movie,movieinfo,path WHERE path.idpath=movie.idpath AND usergrouplinkmovie.idGroup=usergroup.idGroup AND usergrouplinkmovie.idmovie=movie.idmovie AND movieinfo.idmovie=movie.idmovie AND usergroup.strGroup='{0}' ORDER BY RANDOM() LIMIT {1}",
-          strUserGroup, limit);
-        */
+
         string strSQL = string.Format("SELECT DISTINCT {0} FROM movieView WHERE strGroup = '{1}' {2} ORDER BY RANDOM() LIMIT {3}",
                                        _defaultVideoViewFields, strUserGroup, (!string.IsNullOrEmpty(whereClause) ? "AND " + whereClause : ""), limit);
 
@@ -4834,11 +4803,7 @@ namespace MediaPortal.Video.Database
         {
           return;
         }
-        /*
-        string strSQL = String.Format(
-          "SELECT * FROM actorlinkmovie,actors,movie,movieinfo,path WHERE path.idpath=movie.idpath AND actors.idActor=actorlinkmovie.idActor AND actorlinkmovie.idmovie=movie.idmovie AND movieinfo.idmovie=movie.idmovie AND actors.stractor='{0}' ORDER BY RANDOM() LIMIT {1}",
-          strActor, limit);
-        */
+
         string strSQL = String.Format("SELECT DISTINCT {0} FROM movieView WHERE strActor = '{1}' {2} ORDER BY RANDOM() LIMIT {3}",
                                        _defaultVideoViewFields, strActor, (!string.IsNullOrEmpty(whereClause) ? "AND " + whereClause : ""), limit);
         SQLiteResultSet results = m_db.Execute(strSQL);
@@ -4917,11 +4882,7 @@ namespace MediaPortal.Video.Database
         {
           return titles;
         }
-        /*
-        string strSQL = String.Format(
-          "SELECT DISTINCT movieinfo.strTitle FROM movieinfo INNER JOIN actorlinkmovie ON movieinfo.idMovie = actorlinkmovie.idMovie WHERE actorlinkmovie.idActor = {0} ORDER BY movieinfo.strTitle ASC",
-          actorId);
-        */
+
         string strSQL = string.Format("SELECT DISTINCT strTitle FROM movieView WHERE idActor = {0} {1} ORDER BY strTitle ASC",
                                        actorId, (!string.IsNullOrEmpty(whereClause) ? "AND " + whereClause : ""));
         SQLiteResultSet results = m_db.Execute(strSQL);
@@ -4963,11 +4924,7 @@ namespace MediaPortal.Video.Database
         {
           return titles;
         }
-        /*
-        string strSQL = String.Format(
-          "SELECT DISTINCT movieinfo.strTitle FROM movieinfo WHERE movieinfo.idDirector = {0} ORDER BY movieinfo.strTitle ASC",
-          directorId);
-        */
+
         string strSQL = string.Format("SELECT DISTINCT strTitle FROM movieView WHERE idActorDirector = {0} {1} ORDER BY strTitle ASC",
                                        directorId, (!string.IsNullOrEmpty(whereClause) ? "AND " + whereClause : ""));
         SQLiteResultSet results = m_db.Execute(strSQL);
@@ -5045,11 +5002,7 @@ namespace MediaPortal.Video.Database
         {
           return;
         }
-        /*
-        string strSQL = String.Format(
-          "SELECT * FROM movie,movieinfo,path WHERE path.idpath=movie.idpath AND movieinfo.idmovie=movie.idmovie AND movieinfo.iYear={0} ORDER BY RANDOM() LIMIT {1}",
-          iYear, limit);
-        */
+
         string strSQL = string.Format("SELECT DISTINCT {0} FROM movieView WHERE iYear = {1} {2} ORDER BY RANDOM() LIMIT {3}",
                                        _defaultVideoViewFields, iYear, (!string.IsNullOrEmpty(whereClause) ? "AND " + whereClause : ""), limit);
         SQLiteResultSet results = m_db.Execute(strSQL);
@@ -5091,11 +5044,7 @@ namespace MediaPortal.Video.Database
         {
           return titles;
         }
-        /*
-        string strSQL = String.Format(
-          "SELECT DISTINCT movieinfo.strTitle FROM movieinfo WHERE movieinfo.iYear = {0} ORDER BY movieinfo.strTitle ASC",
-          iYear);
-        */
+
         string strSQL = string.Format("SELECT DISTINCT strTitle FROM movieView WHERE iYear = {0} {1} ORDER BY strTitle ASC",
                                        iYear, (!string.IsNullOrEmpty(whereClause) ? "AND " + whereClause : ""));
         SQLiteResultSet results = m_db.Execute(strSQL);
