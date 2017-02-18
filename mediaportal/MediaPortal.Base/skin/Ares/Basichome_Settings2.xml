@@ -10,7 +10,7 @@
 		<posY>420</posY>
 		<!-- Remove and Gaps when buttons are not visible -->
 		<layout>StackLayout(0, Horizontal, false)</layout>
-		<visible allowhiddenfocus="true">control.hasfocus(240)|control.hasfocus(241)|control.hasfocus(242)|control.hasfocus(243)|control.hasfocus(244)|control.hasfocus(245)|control.hasfocus(246)|control.hasfocus(247)|control.hasfocus(248)|control.hasfocus(249)|control.hasfocus(340)|control.hasfocus(341)|control.hasfocus(342)|control.hasfocus(343)|control.hasfocus(344)|control.hasfocus(406)|control.hasfocus(407)|control.hasfocus(408)|control.hasfocus(409)|control.hasfocus(410)</visible>   
+		<visible allowhiddenfocus="true">control.hasfocus(240)|control.hasfocus(241)|control.hasfocus(242)|control.hasfocus(243)|control.hasfocus(244)|control.hasfocus(245)|control.hasfocus(246)|control.hasfocus(247)|control.hasfocus(248)|control.hasfocus(249)|control.hasfocus(340)|control.hasfocus(341)|control.hasfocus(342)|control.hasfocus(343)|control.hasfocus(344)|control.hasfocus(406)|control.hasfocus(407)|control.hasfocus(408)|control.hasfocus(409)|control.hasfocus(410)|control.hasfocus(606)|control.hasfocus(607)|control.hasfocus(608)|control.hasfocus(609)|control.hasfocus(610)</visible>   
 	  <control>
         <description>Page1 Button1</description>
         <type>menubutton</type>
@@ -20,6 +20,7 @@
 		<textXOff>5</textXOff>
         <textYOff>3</textYOff>
 		<oninfo>#(skin.setfocus(35,00505))</oninfo>
+		<onESC>#(skin.setfocus(35,cint(#skin.currentTile)))</onESC>
         <mode>dialoglist</mode>
         <dialogTitle>Choose a plugin</dialogTitle>
         <valueTextInButton>no</valueTextInButton>
@@ -45,8 +46,9 @@
         <width>69</width>
         <height>66</height>
 		<oninfo>#(skin.setfocus(35,00505))</oninfo>
+		<onESC>#(skin.setfocus(35,cint(#skin.currentTile)))</onESC>
         <label></label>
-		<font>font111</font>
+		<font>font11</font>
 		<textcolorNoFocus>99ffffff</textcolorNoFocus>
         <onclick>#(skin.setstring('#tile6plugin.name'))</onclick>
         <textureFocus>lblfocus.png</textureFocus>
@@ -65,7 +67,7 @@
         <width>10</width>
 		<height>32</height>
         <label></label>
-		<font>font111</font>
+		<font>font11</font>
 		<textcolorNoFocus>99ffffff</textcolorNoFocus>
 		<textureFocus></textureFocus>
 		<textureNoFocus></textureNoFocus>
@@ -79,8 +81,9 @@
         <width>69</width>
         <height>66</height>
 		<oninfo>#(skin.setfocus(35,00505))</oninfo>
+		<onESC>#(skin.setfocus(35,cint(#skin.currentTile)))</onESC>
         <label></label>
-		<font>font111</font>
+		<font>font11</font>
 		<textcolorNoFocus>99ffffff</textcolorNoFocus>
 		<textureFocus>menu.png</textureFocus>
 		<textureNoFocus></textureNoFocus>
@@ -99,7 +102,7 @@
         <width>150</width>
 		<height>32</height>
         <label></label>
-		<font>font111</font>
+		<font>font11</font>
 		<textcolorNoFocus>99ffffff</textcolorNoFocus>
 		<textureFocus></textureFocus>
 		<textureNoFocus></textureNoFocus>
@@ -118,6 +121,7 @@
 		<textXOff>5</textXOff>
         <textYOff>3</textYOff>
 		<oninfo>#(skin.setfocus(35,00506))</oninfo>
+		<onESC>#(skin.setfocus(35,cint(#skin.currentTile)))</onESC>
         <mode>dialoglist</mode>
         <dialogTitle>Choose a plugin</dialogTitle>
         <valueTextInButton>no</valueTextInButton>
@@ -143,8 +147,9 @@
         <width>69</width>
         <height>66</height>
 		<oninfo>#(skin.setfocus(35,00506))</oninfo>
+		<onESC>#(skin.setfocus(35,cint(#skin.currentTile)))</onESC>
         <label></label>
-		<font>font111</font>
+		<font>font11</font>
 		<textcolorNoFocus>99ffffff</textcolorNoFocus>
         <onclick>#(skin.setstring('#tile7plugin.name'))</onclick>
         <textureFocus>lblfocus.png</textureFocus>
@@ -163,7 +168,7 @@
         <width>10</width>
 		<height>32</height>
         <label></label>
-		<font>font111</font>
+		<font>font11</font>
 		<textcolorNoFocus>99ffffff</textcolorNoFocus>
 		<textureFocus></textureFocus>
 		<textureNoFocus></textureNoFocus>
@@ -177,8 +182,9 @@
         <width>69</width>
         <height>66</height>
 		<oninfo>#(skin.setfocus(35,00506))</oninfo>
+		<onESC>#(skin.setfocus(35,cint(#skin.currentTile)))</onESC>
         <label></label>
-		<font>font111</font>
+		<font>font11</font>
 		<textcolorNoFocus>99ffffff</textcolorNoFocus>
 		<textureFocus>menu.png</textureFocus>
 		<textureNoFocus></textureNoFocus>
@@ -197,7 +203,7 @@
         <width>153</width>
 		<height>32</height>
         <label></label>
-		<font>font111</font>
+		<font>font11</font>
 		<textcolorNoFocus>99ffffff</textcolorNoFocus>
 		<textureFocus></textureFocus>
 		<textureNoFocus></textureNoFocus>
@@ -216,6 +222,7 @@
 		<textXOff>5</textXOff>
         <textYOff>3</textYOff>
 		<oninfo>#(skin.setfocus(35,00507))</oninfo>
+		<onESC>#(skin.setfocus(35,cint(#skin.currentTile)))</onESC>
         <mode>dialoglist</mode>
         <dialogTitle>Choose a plugin</dialogTitle>
         <valueTextInButton>no</valueTextInButton>
@@ -241,8 +248,9 @@
         <width>69</width>
         <height>66</height>
 		<oninfo>#(skin.setfocus(35,00507))</oninfo>
+		<onESC>#(skin.setfocus(35,cint(#skin.currentTile)))</onESC>
         <label></label>
-		<font>font111</font>
+		<font>font11</font>
 		<textcolorNoFocus>99ffffff</textcolorNoFocus>
         <onclick>#(skin.setstring('#tile8plugin.name'))</onclick>
         <textureFocus>lblfocus.png</textureFocus>
@@ -260,7 +268,7 @@
         <width>10</width>
 		<height>32</height>
         <label></label>
-		<font>font111</font>
+		<font>font11</font>
 		<textcolorNoFocus>99ffffff</textcolorNoFocus>
 		<textureFocus></textureFocus>
 		<textureNoFocus></textureNoFocus>
@@ -274,8 +282,9 @@
         <width>69</width>
         <height>66</height>
 		<oninfo>#(skin.setfocus(35,00507))</oninfo>
+		<onESC>#(skin.setfocus(35,cint(#skin.currentTile)))</onESC>
         <label></label>
-		<font>font111</font>
+		<font>font11</font>
 		<textcolorNoFocus>99ffffff</textcolorNoFocus>
 		<textureFocus>menu.png</textureFocus>
 		<textureNoFocus></textureNoFocus>
@@ -294,7 +303,7 @@
         <width>153</width>
 		<height>32</height>
         <label></label>
-		<font>font111</font>
+		<font>font11</font>
 		<textcolorNoFocus>99ffffff</textcolorNoFocus>
 		<textureFocus></textureFocus>
 		<textureNoFocus></textureNoFocus>
@@ -313,6 +322,7 @@
 		<textXOff>5</textXOff>
         <textYOff>3</textYOff>
 		<oninfo>#(skin.setfocus(35,00508))</oninfo>
+		<onESC>#(skin.setfocus(35,cint(#skin.currentTile)))</onESC>
         <mode>dialoglist</mode>
         <dialogTitle>Choose a plugin</dialogTitle>
         <valueTextInButton>no</valueTextInButton>
@@ -338,8 +348,9 @@
         <width>69</width>
         <height>66</height>
 		<oninfo>#(skin.setfocus(35,00508))</oninfo>
+		<onESC>#(skin.setfocus(35,cint(#skin.currentTile)))</onESC>
         <label></label>
-		<font>font111</font>
+		<font>font11</font>
 		<textcolorNoFocus>99ffffff</textcolorNoFocus>
         <onclick>#(skin.setstring('#tile9plugin.name'))</onclick>
         <textureFocus>lblfocus.png</textureFocus>
@@ -357,7 +368,7 @@
         <width>10</width>
 		<height>32</height>
         <label></label>
-		<font>font111</font>
+		<font>font11</font>
 		<textcolorNoFocus>99ffffff</textcolorNoFocus>
 		<textureFocus></textureFocus>
 		<textureNoFocus></textureNoFocus>
@@ -371,8 +382,9 @@
         <width>69</width>
         <height>66</height>
 		<oninfo>#(skin.setfocus(35,00508))</oninfo>
+		<onESC>#(skin.setfocus(35,cint(#skin.currentTile)))</onESC>
         <label></label>
-		<font>font111</font>
+		<font>font11</font>
 		<textcolorNoFocus>99ffffff</textcolorNoFocus>
 		<textureFocus>menu.png</textureFocus>
 		<textureNoFocus></textureNoFocus>
@@ -391,7 +403,7 @@
         <width>155</width>
 		<height>32</height>
         <label></label>
-		<font>font111</font>
+		<font>font11</font>
 		<textcolorNoFocus>99ffffff</textcolorNoFocus>
 		<textureFocus></textureFocus>
 		<textureNoFocus></textureNoFocus>
@@ -411,6 +423,7 @@
 		<textXOff>5</textXOff>
         <textYOff>3</textYOff>
 		<oninfo>#(skin.setfocus(35,00509))</oninfo>
+		<onESC>#(skin.setfocus(35,cint(#skin.currentTile)))</onESC>
         <mode>dialoglist</mode>
         <dialogTitle>Choose a plugin</dialogTitle>
         <valueTextInButton>no</valueTextInButton>
@@ -436,8 +449,9 @@
         <width>69</width>
         <height>66</height>
 		<oninfo>#(skin.setfocus(35,00509))</oninfo>
+		<onESC>#(skin.setfocus(35,cint(#skin.currentTile)))</onESC>
         <label></label>
-		<font>font111</font>
+		<font>font11</font>
 		<textcolorNoFocus>99ffffff</textcolorNoFocus>
         <onclick>#(skin.setstring('#tile10plugin.name'))</onclick>
         <textureFocus>lblfocus.png</textureFocus>
@@ -456,7 +470,7 @@
         <width>10</width>
 		<height>32</height>
         <label></label>
-		<font>font111</font>
+		<font>font11</font>
 		<textcolorNoFocus>99ffffff</textcolorNoFocus>
 		<textureFocus></textureFocus>
 		<textureNoFocus></textureNoFocus>
@@ -471,8 +485,9 @@
         <width>69</width>
         <height>66</height>
 		<oninfo>#(skin.setfocus(35,00509))</oninfo>
+		<onESC>#(skin.setfocus(35,cint(#skin.currentTile)))</onESC>
         <label></label>
-		<font>font111</font>
+		<font>font11</font>
 		<textcolorNoFocus>99ffffff</textcolorNoFocus>
 		<textureFocus>menu.png</textureFocus>
 		<textureNoFocus></textureNoFocus>
@@ -491,7 +506,7 @@
         <width>155</width>
 		<height>32</height>
         <label></label>
-		<font>font111</font>
+		<font>font11</font>
 		<textcolorNoFocus>99ffffff</textcolorNoFocus>
 		<textureFocus></textureFocus>
 		<textureNoFocus></textureNoFocus>

@@ -28,17 +28,30 @@
       <!-- if not using properties, then set to 0 -->
       <propertiesmaxitems>0</propertiesmaxitems>
     </activities>
-    <trending>
-      <facadetype>Filmstrip</facadetype>
-      <facademaxitems>4</facademaxitems>
-      <propertiesmaxitems>4</propertiesmaxitems>
-      <shows>
-        <windows>87258</windows>
-      </shows>
-      <movies>
-        <windows>87258</windows>
-      </movies>
-    </trending>
+  <trending>
+    <facadetype>Filmstrip</facadetype>
+    <facademaxitems>5</facademaxitems>
+    <propertiesmaxitems>5</propertiesmaxitems>
+    <shows>
+      <windows>87258</windows>
+    </shows>
+    <movies>
+      <windows>87258</windows>
+    </movies>
+  </trending>
+  <trending>
+    <facadetype>Filmstrip</facadetype>
+    <facademaxitems>3</facademaxitems>
+    <propertiesmaxitems>3</propertiesmaxitems>
+    <shows>
+      <windows>35</windows>
+    </shows>
+    <movies>
+      <windows>35</windows>
+    </movies>
+  </trending>
+  <!-- User Statistics e.g. No of Episodes collected/watched -->
+  <statistics>false</statistics>
     <!-- User Statistics e.g. No of Episodes collected/watched -->
     <statistics>false</statistics>
   </dashboard>

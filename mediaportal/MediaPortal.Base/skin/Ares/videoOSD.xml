@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
   <id>2901</id>
-  <defaultcontrol>1237</defaultcontrol>
+  <defaultcontrol>214</defaultcontrol>
   <allowoverlay>no</allowoverlay>
   <controls>
   
@@ -16,7 +16,7 @@
       <width>329</width>
       <height>175</height>
       <texture>#TVSeries.Play.ClearArt</texture>
-      <visible>!control.hasfocus(1237)+!control.isvisible(45678)</visible>
+      <visible>!control.hasfocus(8997)+!control.isvisible(45678)</visible>
     </control>
 	
     <control>
@@ -29,7 +29,7 @@
       <width>329</width>
       <height>175</height>
       <texture>#TVSeries.Play.ClearArt</texture>
-      <visible>control.hasfocus(1237)+!control.isvisible(45678)</visible>
+      <visible>control.hasfocus(8997)+!control.isvisible(45678)</visible>
     </control>
 	
     <control>
@@ -53,10 +53,10 @@
         <width>1845</width>
         <height>209</height>
         <texture>Inf_gfx.png</texture>
-	  <visible>control.hasfocus(1237)</visible>
+	  <visible>control.hasfocus(8997)</visible>
     </control>
 	
-	
+	<import>common.osd.buttons2.xml</import>
     <control>
       <description>Time Info</description>
       <type>label</type>
@@ -150,11 +150,29 @@
       <font>font11</font>
       <textcolor>eaeaea</textcolor>
       <visible>!control.isVisible(111)</visible>
-    </control>	
+    </control>
+
 	
+    
+	  
+      <control>
+        <description>Display Menu</description>
+        <type>button</type>
+        <id>8997</id>
+        <width>54</width>
+        <height>54</height>
+		<onclick>#(skin.setfocus(2901,1237))</onclick>
+        <textureFocus></textureFocus>
+        <textureNoFocus></textureNoFocus>
+        <font></font>
+        <onleft>1237</onleft>
+        <onright>218</onright>
+        <onup>997</onup>
+        <ondown>997</ondown>
+      </control>	
 	
-    <import>common.osd.buttons.xml</import>
-	<import>VideoOSDmediaInfo.xml</import>
+
+	<include condition="#(eq(#skin.osd.logosvideo,'True'))">VideoOSDmediaInfo.xml</include>
 
 	
     <control>
@@ -166,7 +184,7 @@
       <height>565</height>
       <width>1253</width>
       <texture></texture>
-      <visible>control.hasfocus(1237)</visible>
+      <visible>control.hasfocus(8997)</visible>
       <colordiffuse>ffffffff</colordiffuse>
       <animation effect="slide" start="0,75" time="100" reversible="true">visible</animation>
     </control>
@@ -182,7 +200,7 @@
       <label>#Play.Current.Plot</label>
       <font>font13</font>
       <textcolor>eaeaea</textcolor>
-      <visible>control.hasfocus(1237)</visible>
+      <visible>control.hasfocus(8997)</visible>
       <shadowAngle>0</shadowAngle>
       <shadowDistance>0</shadowDistance>
     </control>

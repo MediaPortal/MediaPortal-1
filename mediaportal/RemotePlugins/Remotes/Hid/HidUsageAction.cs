@@ -333,9 +333,8 @@ namespace MediaPortal.InputDevices
         return false;
       }
 
-#if DEBUG
-      Log.Info("{0} / {1} / {2} / {3}", aAction.Condition, aAction.ConProperty, aAction.Command, aAction.CmdProperty);
-#endif
+      HidListener.LogInfo("Action: {0} / {1} / {2} / {3}", aAction.Condition, aAction.ConProperty, aAction.Command, aAction.CmdProperty);
+
       Action action;
       if (aAction.Sound != string.Empty)
       {
@@ -353,11 +352,11 @@ namespace MediaPortal.InputDevices
       {
         case "ACTION": // execute Action x
           var key = new Key(aAction.CmdKeyChar, aAction.CmdKeyCode);
-#if DEBUG
-          Log.Info("Executing: key {0} / {1} / Action: {2} / {3}", aAction.CmdKeyChar, aAction.CmdKeyCode,
+
+          HidListener.LogInfo("Executing: key {0} / {1} / Action: {2} / {3}", aAction.CmdKeyChar, aAction.CmdKeyCode,
             aAction.CmdProperty,
             ((Action.ActionType)Convert.ToInt32(aAction.CmdProperty)).ToString());
-#endif
+
           action = new Action(key, (Action.ActionType)Convert.ToInt32(aAction.CmdProperty), 0, 0);
           GUIGraphicsContext.OnAction(action);
           break;

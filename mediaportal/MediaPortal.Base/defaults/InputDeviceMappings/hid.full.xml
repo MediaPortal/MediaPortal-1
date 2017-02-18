@@ -73,6 +73,12 @@
 
     <!-- Digit 0 -->
     <button code="D0" repeat="true">
+      <!-- From WINDOW_TVFULLSCREEN do ACTION_KEY_PRESSED: Send key for zapping -->
+      <action layer="0" condition="WINDOW" conproperty="602" command="ACTION" cmdproperty="93" cmdkeychar="48" cmdkeycode="0" sound="click.wav" />
+      <!-- From WINDOW_TELETEXT do ACTION_KEY_PRESSED: Send key for page selection -->     
+      <action layer="0" condition="WINDOW" conproperty="7700" command="ACTION" cmdproperty="93" cmdkeychar="48" cmdkeycode="0" sound="click.wav" />
+      <!-- From WINDOW_FULLSCREEN_TELETEXT do ACTION_KEY_PRESSED: Send key for page selection -->      
+      <action layer="0" condition="WINDOW" conproperty="7701" command="ACTION" cmdproperty="93" cmdkeychar="48" cmdkeycode="0" sound="click.wav" />
       <!-- From WINDOW_VIDEOS do ACTION_DELETE_ITEM: Delete item-->
       <action layer="0" condition="WINDOW" conproperty="6" command="ACTION" cmdproperty="80" sound="click.wav"/>
       <!-- From WINDOW_VIDEO_TITLE do ACTION_DELETE_ITEM: Delete item-->
@@ -91,6 +97,12 @@
 
     <!-- Digit 1 -->
     <button code="D1" repeat="true">
+      <!-- From WINDOW_TVFULLSCREEN do ACTION_KEY_PRESSED: Send key for zapping -->
+      <action layer="0" condition="WINDOW" conproperty="602" command="ACTION" cmdproperty="93" cmdkeychar="49" cmdkeycode="1" sound="click.wav" />
+      <!-- From WINDOW_TELETEXT do ACTION_KEY_PRESSED: Send key for page selection -->
+      <action layer="0" condition="WINDOW" conproperty="7700" command="ACTION" cmdproperty="93" cmdkeychar="49" cmdkeycode="1" sound="click.wav" />
+      <!-- From WINDOW_FULLSCREEN_TELETEXT do ACTION_KEY_PRESSED: Send key for page selection -->
+      <action layer="0" condition="WINDOW" conproperty="7701" command="ACTION" cmdproperty="93" cmdkeychar="49" cmdkeycode="1" sound="click.wav" />
       <!-- From WINDOW_SLIDESHOW do ACTION_ZOOM_LEVEL_NORMAL: Zoom level normal -->
       <action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="37" sound="click.wav"/>
       <!-- For any other case do REMOTE_1: Digit 1 -->
@@ -99,6 +111,12 @@
 
     <!-- Digit 2 -->
     <button code="D2" repeat="true">
+      <!-- From WINDOW_TVFULLSCREEN do ACTION_KEY_PRESSED: Send key for zapping -->
+      <action layer="0" condition="WINDOW" conproperty="602" command="ACTION" cmdproperty="93" cmdkeychar="50" cmdkeycode="2" sound="click.wav" />
+      <!-- From WINDOW_TELETEXT do ACTION_KEY_PRESSED: Send key for page selection -->
+      <action layer="0" condition="WINDOW" conproperty="7700" command="ACTION" cmdproperty="93" cmdkeychar="50" cmdkeycode="2" sound="click.wav" />
+      <!-- From WINDOW_FULLSCREEN_TELETEXT do ACTION_KEY_PRESSED: Send key for page selection -->
+      <action layer="0" condition="WINDOW" conproperty="7701" command="ACTION" cmdproperty="93" cmdkeychar="50" cmdkeycode="2" sound="click.wav" />
       <!-- From WINDOW_SLIDESHOW do ACTION_ZOOM_LEVEL_1: Zoom level 1 -->
       <action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="38" sound="click.wav"/>
       <!-- From WINDOW_FILES do ACTION_COPY_ITEM: Copy item -->
@@ -109,6 +127,12 @@
 
     <!-- Digit 3 -->
     <button code="D3" repeat="true">
+      <!-- From WINDOW_TVFULLSCREEN do ACTION_KEY_PRESSED: Send key for zapping -->
+      <action layer="0" condition="WINDOW" conproperty="602" command="ACTION" cmdproperty="93" cmdkeychar="51" cmdkeycode="3" sound="click.wav" />
+      <!-- From WINDOW_TELETEXT do ACTION_KEY_PRESSED: Send key for page selection -->
+      <action layer="0" condition="WINDOW" conproperty="7700" command="ACTION" cmdproperty="93" cmdkeychar="51" cmdkeycode="3" sound="click.wav" />
+      <!-- From WINDOW_FULLSCREEN_TELETEXT do ACTION_KEY_PRESSED: Send key for page selection -->
+      <action layer="0" condition="WINDOW" conproperty="7701" command="ACTION" cmdproperty="93" cmdkeychar="51" cmdkeycode="3" sound="click.wav" />
       <!-- From WINDOW_SLIDESHOW do ACTION_ZOOM_LEVEL_2: Zoom level 2 -->
       <action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="39" sound="click.wav"/>
       <!-- From WINDOW_FILES do ACTION_MOVE_ITEM: Move item -->
@@ -119,6 +143,12 @@
 
     <!-- Digit 4 -->
     <button code="D4" repeat="true">
+      <!-- From WINDOW_TVFULLSCREEN do ACTION_KEY_PRESSED: Send key for zapping -->
+      <action layer="0" condition="WINDOW" conproperty="602" command="ACTION" cmdproperty="93" cmdkeychar="52" cmdkeycode="4" sound="click.wav" />
+      <!-- From WINDOW_TELETEXT do ACTION_KEY_PRESSED: Send key for page selection -->
+      <action layer="0" condition="WINDOW" conproperty="7700" command="ACTION" cmdproperty="93" cmdkeychar="52" cmdkeycode="4" sound="click.wav" />
+      <!-- From WINDOW_FULLSCREEN_TELETEXT do ACTION_KEY_PRESSED: Send key for page selection -->
+      <action layer="0" condition="WINDOW" conproperty="7701" command="ACTION" cmdproperty="93" cmdkeychar="52" cmdkeycode="4" sound="click.wav" />
       <!-- From WINDOW_SLIDESHOW do ACTION_ZOOM_LEVEL_3: Zoom level 3 -->
       <action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="40" sound="click.wav"/>
       <!-- For any other case do REMOTE_4: Digit 4 -->
@@ -127,6 +157,12 @@
 
     <!-- Digit 5 -->
     <button code="D5" repeat="true">
+      <!-- From WINDOW_TVFULLSCREEN do ACTION_KEY_PRESSED: Send key for zapping -->
+      <action layer="0" condition="WINDOW" conproperty="602" command="ACTION" cmdproperty="93" cmdkeychar="53" cmdkeycode="5" sound="click.wav" />
+      <!-- From WINDOW_TELETEXT do ACTION_KEY_PRESSED: Send key for page selection -->
+      <action layer="0" condition="WINDOW" conproperty="7700" command="ACTION" cmdproperty="93" cmdkeychar="53" cmdkeycode="5" sound="click.wav" />
+      <!-- From WINDOW_FULLSCREEN_TELETEXT do ACTION_KEY_PRESSED: Send key for page selection -->
+      <action layer="0" condition="WINDOW" conproperty="7701" command="ACTION" cmdproperty="93" cmdkeychar="53" cmdkeycode="5" sound="click.wav" />
       <!-- From WINDOW_SLIDESHOW do ACTION_ZOOM_LEVEL_4: Zoom level 4 -->
       <action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="41" sound="click.wav"/>
       <!-- For any other case do REMOTE_5: Digit 5 -->
@@ -135,6 +171,12 @@
 
     <!-- Digit 6 -->
     <button code="D6" repeat="true">
+      <!-- From WINDOW_TVFULLSCREEN do ACTION_KEY_PRESSED: Send key for zapping -->
+      <action layer="0" condition="WINDOW" conproperty="602" command="ACTION" cmdproperty="93" cmdkeychar="54" cmdkeycode="6" sound="click.wav" />
+      <!-- From WINDOW_TELETEXT do ACTION_KEY_PRESSED: Send key for page selection -->
+      <action layer="0" condition="WINDOW" conproperty="7700" command="ACTION" cmdproperty="93" cmdkeychar="54" cmdkeycode="6" sound="click.wav" />
+      <!-- From WINDOW_FULLSCREEN_TELETEXT do ACTION_KEY_PRESSED: Send key for page selection -->
+      <action layer="0" condition="WINDOW" conproperty="7701" command="ACTION" cmdproperty="93" cmdkeychar="54" cmdkeycode="6" sound="click.wav" />
       <!-- From WINDOW_SLIDESHOW do ACTION_ZOOM_LEVEL_5: Zoom level 5 -->
       <action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="42" sound="click.wav"/>
       <!-- For any other case do REMOTE_6: Digit 6 -->
@@ -143,6 +185,12 @@
 
     <!-- Digit 7 -->
     <button code="D7" repeat="true">
+      <!-- From WINDOW_TVFULLSCREEN do ACTION_KEY_PRESSED: Send key for zapping -->
+      <action layer="0" condition="WINDOW" conproperty="602" command="ACTION" cmdproperty="93" cmdkeychar="55" cmdkeycode="7" sound="click.wav" />
+      <!-- From WINDOW_TELETEXT do ACTION_KEY_PRESSED: Send key for page selection -->
+      <action layer="0" condition="WINDOW" conproperty="7700" command="ACTION" cmdproperty="93" cmdkeychar="55" cmdkeycode="7" sound="click.wav" />
+      <!-- From WINDOW_FULLSCREEN_TELETEXT do ACTION_KEY_PRESSED: Send key for page selection -->
+      <action layer="0" condition="WINDOW" conproperty="7701" command="ACTION" cmdproperty="93" cmdkeychar="55" cmdkeycode="7" sound="click.wav" />
       <!-- From WINDOW_SLIDESHOW do ACTION_ZOOM_LEVEL_6: Zoom level 6 -->
       <action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="43" sound="click.wav"/>
       <!-- For any other case do REMOTE_7: Digit 7 -->
@@ -151,6 +199,12 @@
 
     <!-- Digit 8 -->
     <button code="D8" repeat="true">
+      <!-- From WINDOW_TVFULLSCREEN do ACTION_KEY_PRESSED: Send key for zapping -->
+      <action layer="0" condition="WINDOW" conproperty="602" command="ACTION" cmdproperty="93" cmdkeychar="56" cmdkeycode="8" sound="click.wav" />
+      <!-- From WINDOW_TELETEXT do ACTION_KEY_PRESSED: Send key for page selection -->
+      <action layer="0" condition="WINDOW" conproperty="7700" command="ACTION" cmdproperty="93" cmdkeychar="56" cmdkeycode="8" sound="click.wav" />
+      <!-- From WINDOW_FULLSCREEN_TELETEXT do ACTION_KEY_PRESSED: Send key for page selection -->
+      <action layer="0" condition="WINDOW" conproperty="7701" command="ACTION" cmdproperty="93" cmdkeychar="56" cmdkeycode="8" sound="click.wav" />
       <!-- From WINDOW_SLIDESHOW do ACTION_ZOOM_LEVEL_7: Zoom level 7 -->
       <action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="44" sound="click.wav"/>
       <!-- For any other case do REMOTE_8: Digit 8 -->
@@ -159,6 +213,12 @@
 
     <!-- Digit 9 -->
     <button code="D9" repeat="true">
+      <!-- From WINDOW_TVFULLSCREEN do ACTION_KEY_PRESSED: Send key for zapping -->
+      <action layer="0" condition="WINDOW" conproperty="602" command="ACTION" cmdproperty="93" cmdkeychar="57" cmdkeycode="9" sound="click.wav" />
+      <!-- From WINDOW_TELETEXT do ACTION_KEY_PRESSED: Send key for page selection -->
+      <action layer="0" condition="WINDOW" conproperty="7700" command="ACTION" cmdproperty="93" cmdkeychar="57" cmdkeycode="9" sound="click.wav" />
+      <!-- From WINDOW_FULLSCREEN_TELETEXT do ACTION_KEY_PRESSED: Send key for page selection -->
+      <action layer="0" condition="WINDOW" conproperty="7701" command="ACTION" cmdproperty="93" cmdkeychar="57" cmdkeycode="9" sound="click.wav" />
       <!-- From WINDOW_SLIDESHOW do ACTION_ZOOM_LEVEL_8: Zoom level 8 -->
       <action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="45" sound="click.wav"/>
       <!-- For any other case do REMOTE_9: Digit 9 -->

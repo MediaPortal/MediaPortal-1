@@ -484,6 +484,10 @@ namespace MediaPortal.Player
       {
         _isVisible = false;
       }
+      if (GUIGraphicsContext.VideoControl || GUIGraphicsContext.Overlay)
+      {
+        _isVisible = true;
+      }
       if (GUIGraphicsContext.IsWindowVisible && !_isVisible)
       {
         GUIGraphicsContext.IsWindowVisible = false;

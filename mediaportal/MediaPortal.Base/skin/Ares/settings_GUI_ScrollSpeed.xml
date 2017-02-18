@@ -97,7 +97,7 @@
         <id>1</id>
         <posX>1180</posX>
         <posY>443</posY>
-		<font>font111</font>
+		<font>font11</font>
         <label>#fps</label>
       </control>
       <control>
@@ -117,7 +117,7 @@
         <posY>501</posY>
         <width>800</width>
         <label>-</label>
-        <font>font111</font>
+        <font>font11</font>
         <textcolor>ffffffff</textcolor>
       </control>
       <control>
@@ -129,7 +129,7 @@
         <width>820</width>
         <height>310</height>
         <label>-</label>
-        <font>font111</font>
+        <font>font11</font>
         <textcolor>ffffffff</textcolor>
       </control>
     </control>

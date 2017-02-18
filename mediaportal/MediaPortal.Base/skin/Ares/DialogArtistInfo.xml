@@ -207,7 +207,7 @@
       <posY>457</posY>
       <width>250</width>
       <label>Intruments:</label>
-      <font>font111</font>
+      <font>font11</font>
       <align>left</align>
       <textcolor>eaeaea</textcolor>
     </control>    
@@ -219,7 +219,7 @@
       <posY>457</posY>
       <label>#ArtistInfo.Instruments</label>
       <width>600</width>
-      <font>font111</font>
+      <font>font11</font>
       <textcolor>eaeaea</textcolor>
     </control>-->
 	

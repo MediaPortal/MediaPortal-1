@@ -27,6 +27,7 @@
 		  <width>1920</width>
 		  <height>1080</height>
 		  <texture>ww.jpg</texture>
+		  <colordiffuse>30ffffff</colordiffuse>
 		</control>		
 		
 		

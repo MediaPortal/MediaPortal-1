@@ -54,7 +54,7 @@
       <posY>-75</posY>
       <width>0</width>
       <textcolor>d4d2d2</textcolor>
-      <font>font101</font>
+      <font>font10</font>
       <label>
       </label>
       <visible>false</visible>
@@ -69,7 +69,7 @@
       <posY>-75</posY>
       <width>0</width>
       <textcolor>d4d2d2</textcolor>
-      <font>font101</font>
+      <font>font10</font>
       <label>
       </label>
       <visible>false</visible>
@@ -84,7 +84,7 @@
       <posY>-75</posY>
       <width>0</width>
       <textcolor>d4d2d2</textcolor>
-      <font>font101</font>
+      <font>font10</font>
       <label>
       </label>
       <visible>false</visible>
@@ -99,7 +99,7 @@
       <posY>-75</posY>
       <width>0</width>
       <textcolor>d4d2d2</textcolor>
-      <font>font101</font>
+      <font>font10</font>
       <label>
       </label>
       <visible>false</visible>

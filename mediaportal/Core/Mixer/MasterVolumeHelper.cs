@@ -753,12 +753,16 @@ namespace MediaPortal.Mixer
     private IAudioEndpointVolume _AudioEndPointVolume;
     private AudioEndpointVolumeCallback _CallBack;
     public event AudioEndpointVolumeNotificationDelegate OnVolumeNotification;
-    private static string _devId = String.Empty;
+    public static string _devId = String.Empty;
     private int _volumeValueForDeviceNotAvailable = 300;
 
-    public AEDev()
+    public AEDev(bool resetDevice = false)
     {
       IMMDevice _Device = null;
+      if (resetDevice)
+        _devId = "";
+
+      _realEnumerator = new _AEDeviceEnumerator() as IMMDeviceEnumerator;
       try
       {
         if (String.IsNullOrEmpty(_devId))
@@ -773,7 +777,7 @@ namespace MediaPortal.Mixer
         devstatus state;
         Marshal.ThrowExceptionForHR(_Device.GetState(out state));
         if (state != devstatus.DEVICE_STATE_ACTIVE)
-          throw new ApplicationException(String.Format("audio device is not active ({0})", state.ToString()));
+          throw new ApplicationException($"audio device is not active ({state.ToString()})");
         _RealDevice = _Device;
         object result;
         Marshal.ThrowExceptionForHR(_RealDevice.Activate(ref IID_IAudioEndpointVolume, CTX.ALL, IntPtr.Zero, out result));
@@ -791,7 +795,7 @@ namespace MediaPortal.Mixer
           devstatus state;
           Marshal.ThrowExceptionForHR(_Device.GetState(out state));
           if (state != devstatus.DEVICE_STATE_ACTIVE)
-            throw new ApplicationException(String.Format("audio device is not active ({0})", state.ToString()));
+            throw new ApplicationException($"audio device is not active ({state.ToString()})");
           _RealDevice = _Device;
           object result;
           Marshal.ThrowExceptionForHR(_RealDevice.Activate(ref IID_IAudioEndpointVolume, CTX.ALL, IntPtr.Zero, out result));
@@ -885,6 +889,36 @@ namespace MediaPortal.Mixer
         {
           // Catch if no device is found
         }
+      }
+    }
+
+    public string DeviceIdCurrent
+    {
+      get
+      {
+        if (_realEnumerator == null)
+          return "";
+
+        string currentDeviceID = "";
+        IMMDevice tempDevice;
+        Marshal.ThrowExceptionForHR(_realEnumerator.GetDefaultAudioEndpoint(0, 1, out tempDevice));
+        tempDevice?.GetId(out currentDeviceID);
+
+        return currentDeviceID;
+      }
+      set { _devId = value; }
+    }
+
+    public string DeviceId
+    {
+      get { return _devId; }
+      set
+      {
+        if (_RealDevice == null)
+          return;
+
+        Marshal.ThrowExceptionForHR(_RealDevice.GetId(out _devId));
+        _devId = value;
       }
     }
   }

@@ -95,7 +95,7 @@ namespace MediaPortal.Dialogs
       {
         case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
           {
-            lblHeading.Label = string.Empty;
+            if (lblHeading != null) lblHeading.Label = string.Empty;
             base.OnMessage(message);
             return true;
           }
@@ -127,7 +127,7 @@ namespace MediaPortal.Dialogs
       AllocResources();
       InitControls();
 
-      lblHeading.Label = strLine;
+      if (lblHeading != null) lblHeading.Label = strLine;
     }
 
 

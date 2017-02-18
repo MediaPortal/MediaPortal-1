@@ -9,6 +9,7 @@
   <define>#indexcount:</define>
   <define>#usePlayFanart:Yes</define>
   <controls>
+  <import>PluginDefines.xml</import>	
     <control>
       <description>BG</description>
       <type>image</type>

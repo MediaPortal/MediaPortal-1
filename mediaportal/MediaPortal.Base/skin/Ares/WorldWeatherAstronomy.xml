@@ -84,7 +84,7 @@
       <width>1920</width>
       <align>center</align>
       <label>#WorldWeather.TodayZodiac</label>
-      <font>font121</font>
+      <font>font12</font>
       <animation effect="fade" time="700">visiblechange</animation>
       <visible>string.equals(#WorldWeather.View,Astronomy)+string.equals(#WorldWeather.ImageZodiacEnabled,true)+control.hasfocus(21)</visible>
     </control>

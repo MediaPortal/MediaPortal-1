@@ -49,7 +49,7 @@
       <description>Buffering Label</description>
       <type>label</type>
       <id>0</id>
-      <posX>1865</posX>
+      <posX>#Xposition</posX>
       <posY>150</posY>
       <label>#OnlineVideos.buffered % #OnlineVideos.Translation.Buffered.Label</label>
       <align>right</align>
@@ -63,8 +63,8 @@
       <description>Label for Current, Total Amount and Localized Type of items</description>
       <type>label</type>
       <id>0</id>
-          <posX>1865</posX>
-          <posY>110</posY>
+          <posX>#Xposition</posX>
+          <posY>#Yposition</posY>
           <height>43</height>
           <width>500</width>
       <label>#selectedindex / #itemcount</label>
@@ -77,8 +77,8 @@
       <description>Label for Total Amount and Localized Type of items</description>
       <type>label</type>
       <id>0</id>
-          <posX>1865</posX>
-          <posY>110</posY>
+          <posX>#Xposition</posX>
+          <posY>#Yposition</posY>
           <height>43</height>
           <width>500</width>
       <label>#itemcount</label>

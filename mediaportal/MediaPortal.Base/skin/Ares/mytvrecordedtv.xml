@@ -16,7 +16,7 @@
       <description>BG</description>
       <type>image</type>
       <id>1</id>
-      <texture>\\nas4free\nasmedia2\Recordings\series\#selecteditem\fanart.jpg</texture>
+      <texture>#seriesloc#selecteditem\fanart.jpg</texture>
       <width>1920</width>
       <height>1080</height>
 	  <colordiffuse>40ffffff</colordiffuse>
@@ -25,7 +25,7 @@
       <description>BG</description>
       <type>image</type>
       <id>1</id>
-      <texture>\\nas4free\nasmedia2\Recordings\movies\#selecteditem\fanart.jpg</texture>
+      <texture>#moviesloc#selecteditem\fanart.jpg</texture>
       <width>1920</width>
       <height>1080</height>
 	  <colordiffuse>40ffffff</colordiffuse>
@@ -66,7 +66,7 @@
       </control>
 	  
 	  
-    <import>common.facade.recordings.xml</import>	
+    <import>common.facade.recordingsExt.xml</import>	
 	
     <control>
       <id>0</id>
@@ -132,7 +132,7 @@
         <posY>197</posY>
         <width>422</width>
         <height>605</height>
-        <texture mask="CAmask.png">\\nas4free\nasmedia2\Recordings\series\#selecteditem\poster.jpg</texture>
+        <texture mask="CAmask.png">#seriesloc#selecteditem\poster.jpg</texture>
       <visible>[!facadeview.coverflow+!facadeview.filmstrip]</visible>
     </control>
 	
@@ -143,7 +143,7 @@
         <posY>197</posY>
         <width>422</width>
         <height>605</height>
-        <texture mask="CAmask.png">\\nas4free\nasmedia2\Recordings\movies\#selecteditem\poster.jpg</texture>
+        <texture mask="CAmask.png">#moviesloc#selecteditem\poster.jpg</texture>
       <visible>[!facadeview.coverflow+!facadeview.filmstrip]</visible>
     </control>	
 

@@ -72,7 +72,7 @@
 !define MEMENTO_REGISTRY_ROOT HKLM
 !define MEMENTO_REGISTRY_KEY  "${REG_UNINSTALL}"
 !define COMMON_APPDATA        "$APPDATA\Team MediaPortal\MediaPortal TV Server"
-!define MP_COMMON_APPDATA	  "$APPDATA\Team MediaPortal\MediaPortal"
+!define MP_COMMON_APPDATA     "$APPDATA\Team MediaPortal\MediaPortal"
 !define STARTMENU_GROUP       "$SMPROGRAMS\Team MediaPortal\MediaPortal TV Server"
 
 ; import version from shared file
@@ -470,7 +470,7 @@ ${MementoSection} "MediaPortal TV Server" SecServer
 
   ${IfNot} ${MPIsInstalled}
     !insertmacro SecMpeInstaller
-  !insertmacro SecWatchdog
+    !insertmacro SecWatchdog
   ${EndIf}
 
   SetOverwrite on
@@ -758,7 +758,7 @@ ${MementoSectionEnd}
   
   ${IfNot} ${MPIsInstalled}
     !insertmacro Remove_SecMpeInstaller
-  !insertmacro Remove_SecWatchdog
+    !insertmacro Remove_SecWatchdog
   ${EndIf}
   
 !macroend

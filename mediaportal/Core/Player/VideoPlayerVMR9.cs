@@ -248,6 +248,10 @@ namespace MediaPortal.Player
         DirectShowUtil.FindFilterByClassID(graphBuilder, ClassId.DirectVobSubAutoload, out basefilter);
         if (basefilter == null)
           DirectShowUtil.FindFilterByClassID(graphBuilder, ClassId.DirectVobSubNormal, out basefilter);
+        if (basefilter == null)
+          DirectShowUtil.FindFilterByClassID(graphBuilder, ClassId.XySubFilterAutoload, out basefilter);
+        if (basefilter == null)
+          DirectShowUtil.FindFilterByClassID(graphBuilder, ClassId.XySubFilterNormal, out basefilter);
         if (basefilter != null)
         {
           DirectShowUtil.RemoveFilter(graphBuilder, basefilter);

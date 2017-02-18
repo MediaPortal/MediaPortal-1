@@ -49,7 +49,7 @@
       <posX>500</posX>
       <posY>400</posY>
       <ondown>8</ondown>
-      <font>font111</font>
+      <font>font11</font>
     </control>
     <!--Music-->
     <control>
@@ -85,7 +85,7 @@
     <posY>360</posY>
     <onup>2</onup>
     <ondown>4</ondown>
-    <font>font111</font>
+    <font>font11</font>
   </control>
   <control>
     <description>Autoshuffle</description>
@@ -96,7 +96,7 @@
     <posY>427</posY>
     <onup>3</onup>
     <ondown>5</ondown>
-    <font>font111</font>
+    <font>font11</font>
   </control>
   <control>
     <description>Save current</description>
@@ -107,7 +107,7 @@
     <posY>495</posY>
     <onup>4</onup>
     <ondown>6</ondown>
-    <font>font111</font>
+    <font>font11</font>
   </control>
   <control>
     <description>Load default</description>
@@ -118,7 +118,7 @@
     <posY>562</posY>
     <onup>5</onup>
     <ondown>7</ondown>
-    <font>font111</font>
+    <font>font11</font>
   </control>
   <control>
     <description>Playlist screen</description>
@@ -128,7 +128,7 @@
     <posX>500</posX>
     <posY>630</posY>
     <ondown>2</ondown>
-    <font>font111</font>
+    <font>font11</font>
   </control>
 </controls>
 </window>

@@ -28,7 +28,7 @@
        <texture>black.png</texture>
         <colordiffuse>59000000</colordiffuse>
 	   <animation effect="fade" time="350" reversible="true">hidden</animation>
-	   <visible>control.isvisible(20800)|control.hasfocus(20801)|control.hasfocus(20802)|control.hasfocus(20803)|control.hasfocus(20804)|control.hasfocus(20805)|control.hasfocus(20806)|control.hasfocus(20807)|control.hasfocus(20808)|control.hasfocus(20809)|control.hasfocus(20810)</visible>    
+	   <visible>control.isvisible(20800)|control.hasfocus(20801)|control.hasfocus(20802)|control.hasfocus(20803)|control.hasfocus(20804)|control.hasfocus(20805)|control.hasfocus(20806)|control.hasfocus(20807)|control.hasfocus(20808)|control.hasfocus(20809)|control.hasfocus(20810)|control.hasfocus(20811)|control.hasfocus(20812)|control.hasfocus(20813)|control.hasfocus(20814)</visible>    
 	 </control>
 		
 	  <control>
@@ -40,7 +40,7 @@
         <width>1845</width>
         <height>624</height>
         <texture>D_over1.png</texture>
-		<visible>control.isvisible(20800)|control.hasfocus(20801)|control.hasfocus(20802)|control.hasfocus(20803)|control.hasfocus(20804)|control.hasfocus(20805)|control.hasfocus(20806)|control.hasfocus(20807)|control.hasfocus(20808)|control.hasfocus(20809)|control.hasfocus(20810)</visible>
+		<visible>control.isvisible(20800)|control.hasfocus(20801)|control.hasfocus(20802)|control.hasfocus(20803)|control.hasfocus(20804)|control.hasfocus(20805)|control.hasfocus(20806)|control.hasfocus(20807)|control.hasfocus(20808)|control.hasfocus(20809)|control.hasfocus(20810)|control.hasfocus(20811)|control.hasfocus(20812)|control.hasfocus(20813)|control.hasfocus(20814)</visible>
       </control>
 	  <control>
         <description>Cover Art</description>
@@ -51,7 +51,7 @@
         <width>1845</width>
         <height>209</height>
         <texture>Inf_gfx.png</texture>
-		<visible>control.isvisible(20800)|control.hasfocus(20801)|control.hasfocus(20802)|control.hasfocus(20803)|control.hasfocus(20804)|control.hasfocus(20805)|control.hasfocus(20806)|control.hasfocus(20807)|control.hasfocus(20808)|control.hasfocus(20809)|control.hasfocus(20810)</visible>
+		<visible>control.isvisible(20800)|control.hasfocus(20801)|control.hasfocus(20802)|control.hasfocus(20803)|control.hasfocus(20804)|control.hasfocus(20805)|control.hasfocus(20806)|control.hasfocus(20807)|control.hasfocus(20808)|control.hasfocus(20809)|control.hasfocus(20810)|control.hasfocus(20811)|control.hasfocus(20812)|control.hasfocus(20813)|control.hasfocus(20814)</visible>
       </control>	  
 
     <control>
@@ -65,7 +65,7 @@
       <label>Quick skin settings...</label>
       <font>font13</font>
       <textcolor>eaeaea</textcolor>
-	  <visible>control.isvisible(20800)|control.hasfocus(20801)|control.hasfocus(20802)|control.hasfocus(20803)|control.hasfocus(20804)|control.hasfocus(20805)|control.hasfocus(20806)|control.hasfocus(20807)|control.hasfocus(20808)|control.hasfocus(20809)|control.hasfocus(20810)</visible>
+	  <visible>control.isvisible(20800)|control.hasfocus(20801)|control.hasfocus(20802)|control.hasfocus(20803)|control.hasfocus(20804)|control.hasfocus(20805)|control.hasfocus(20806)|control.hasfocus(20807)|control.hasfocus(20808)|control.hasfocus(20809)|control.hasfocus(20810)|control.hasfocus(20811)|control.hasfocus(20812)|control.hasfocus(20813)|control.hasfocus(20814)</visible>
     </control>		  
 		
 			<control>
@@ -78,7 +78,7 @@
 					<posY>260</posY>
 					<!-- Remove and Gaps when buttons are not visible -->
 					<layout>TableLayout(1850, 3, 50, 0)</layout>
-					<visible allowhiddenfocus="true">control.hasfocus(20800)|control.hasfocus(20801)|control.hasfocus(20802)|control.hasfocus(20803)|control.hasfocus(20804)|control.hasfocus(20805)|control.hasfocus(20806)|control.hasfocus(20807)|control.hasfocus(20808)|control.hasfocus(20809)|control.hasfocus(20810)</visible>   
+					<visible allowhiddenfocus="true">control.hasfocus(20800)|control.hasfocus(20801)|control.hasfocus(20802)|control.hasfocus(20803)|control.hasfocus(20804)|control.hasfocus(20805)|control.hasfocus(20806)|control.hasfocus(20807)|control.hasfocus(20808)|control.hasfocus(20809)|control.hasfocus(20810)|control.hasfocus(20811)|control.hasfocus(20812)|control.hasfocus(20813)|control.hasfocus(20814)</visible>   
 				
 					<control>
                        <description>Enable weather in homescreen</description>
@@ -93,11 +93,11 @@
 					   <onfocus>#(skin.setstring('#skin.test','Switch weather on or off for all screens'))</onfocus>
                        <selected>#(skin.hassetting('#skin.weather.home'))</selected>
                        <onclick>#(skin.togglesetting('#skin.weather.home'))</onclick>
+					   <onESC>#(skin.setfocus(35,cint(#skin.setnav)))</onESC>
                        <onup>20800</onup>
-		               <onright>20810</onright>
+		               <onright>20801</onright>
 					   <onleft>#(cint(#skin.setnav))</onleft>
-                       <ondown>20801</ondown>
-					   <layoutDetail>TableCell(1, 1, 1)</layoutDetail>
+                       <ondown>20802</ondown>
                     </control>
 					<control>
                        <description>Enable LatestMedia in homescreen</description>
@@ -112,11 +112,11 @@
 					   <onfocus>#(skin.setstring('#skin.test','Enable latest media items in homescreen'))</onfocus>
                        <selected>#(skin.hassetting('#skin.no.latestmedia'))</selected>
                        <onclick>#(skin.togglesetting('#skin.no.latestmedia'))</onclick>
-                       <onup>20800</onup>
-		               <onright>20810</onright>
-					   <onleft>#(cint(#skin.setnav))</onleft>
-                       <ondown>20809</ondown>
-					   <layoutDetail>TableCell(1, 1, 1)</layoutDetail>
+					   <onESC>#(skin.setfocus(35,cint(#skin.setnav)))</onESC>
+                       <onup>20801</onup>
+		               <onright>20809</onright>
+					   <onleft>20800</onleft>
+                       <ondown>20803</ondown>
                     </control>
 					<control>
                        <description>Enable LatestMedia Overview</description>
@@ -131,11 +131,11 @@
 					   <onfocus>#(skin.setstring('#skin.test','Enable latest media overview as default instead of latest media item information'))</onfocus>
                        <selected>#(skin.hassetting('#skin.latest.overview'))</selected>
                        <onclick>#(skin.togglesetting('#skin.latest.overview'))</onclick>
-                       <onup>20801</onup>
-		               <onright>20810</onright>
-					   <onleft>#(cint(#skin.setnav))</onleft>
-                       <ondown>20802</ondown>
-					   <layoutDetail>TableCell(1, 1, 1)</layoutDetail>
+					   <onESC>#(skin.setfocus(35,cint(#skin.setnav)))</onESC>
+                       <onup>20809</onup>
+		               <onright>#(cint(#skin.setnav))</onright>
+					   <onleft>20801</onleft>
+                       <ondown>20804</ondown>
                     </control>					
 			        <control>
                        <description>fanart option</description>
@@ -159,11 +159,11 @@
                        <textcolorNoFocus>99ffffff</textcolorNoFocus>
                        <textureFocus>btn_list_blue2.png</textureFocus>
 		               <textureNoFocus></textureNoFocus>
-		               <onup>20809</onup>
+					   <onESC>#(skin.setfocus(35,cint(#skin.setnav)))</onESC>
+		               <onup>20800</onup>
                        <onleft>#(cint(#skin.setnav))</onleft>
-                       <ondown>20803</ondown>
-                       <onright>20810</onright>
-					   <layoutDetail>TableCell(1, 1, 1)</layoutDetail>
+                       <ondown>20805</ondown>
+                       <onright>20803</onright>
                     </control>
 				    <control>
                        <description>tvguide rows</description>
@@ -186,11 +186,11 @@
                        <textcolorNoFocus>99ffffff</textcolorNoFocus>
                        <textureFocus>btn_list_blue2.png</textureFocus>
 		               <textureNoFocus></textureNoFocus>
-		               <onup>20802</onup>
-                       <onleft>#(cint(#skin.setnav))</onleft>
-                       <ondown>20804</ondown>
-                       <onright>20810</onright>
-					   <layoutDetail>TableCell(1, 1, 1)</layoutDetail>
+					   <onESC>#(skin.setfocus(35,cint(#skin.setnav)))</onESC>
+		               <onup>20801</onup>
+                       <onleft>20802</onleft>
+                       <ondown>20806</ondown>
+                       <onright>20804</onright>
                     </control>
                     <control>
                        <description>Backgrounds</description>
@@ -214,11 +214,11 @@
                        <textcolorNoFocus>99ffffff</textcolorNoFocus>
                        <textureFocus>btn_list_blue2.png</textureFocus>
 		               <textureNoFocus></textureNoFocus>
-                       <onup>20803</onup>
-                       <onleft>#(cint(#skin.setnav))</onleft>
-                       <ondown>20805</ondown>
-                       <onright>20810</onright>
-					   <layoutDetail>TableCell(1, 1, 1)</layoutDetail>
+					   <onESC>#(skin.setfocus(35,cint(#skin.setnav)))</onESC>
+                       <onup>20809</onup>
+                       <onleft>20803</onleft>
+                       <ondown>20807</ondown>
+                       <onright>#(cint(#skin.setnav))</onright>
                     </control>
 					<control>
                        <description>Backgrounds</description>
@@ -245,14 +245,14 @@
                        <textcolorNoFocus>99ffffff</textcolorNoFocus>
                        <textureFocus>btn_list_blue2.png</textureFocus>
 		               <textureNoFocus></textureNoFocus>
-                       <onup>20804</onup>
+					   <onESC>#(skin.setfocus(35,cint(#skin.setnav)))</onESC>
+                       <onup>20802</onup>
                        <onleft>#(cint(#skin.setnav))</onleft>
-                       <ondown>20806</ondown>
-                       <onright>20810</onright>
-					   <layoutDetail>TableCell(1, 1, 1)</layoutDetail>
+                       <ondown>20808</ondown>
+                       <onright>20806</onright>
                     </control>
 					<control>
-                       <description>Enable weather in homescreen</description>
+                       <description>Time</description>
                        <type>checkbutton</type>
                        <id>20806</id>
                        <label>24hr time format</label>
@@ -264,39 +264,30 @@
 		               <textureNoFocus></textureNoFocus>
                        <selected>#(skin.hassetting('#Dtimeformat'))</selected>
                        <onclick>#(skin.togglesetting('#Dtimeformat'))</onclick>
+					   <onESC>#(skin.setfocus(35,cint(#skin.setnav)))</onESC>
                        <onup>20805</onup>
-		               <onright>20810</onright>
-					   <onleft>#(cint(#skin.setnav))</onleft>
-                       <ondown>20807</ondown>
-					   <layoutDetail>TableCell(1, 1, 1)</layoutDetail>
+		               <onright>20807</onright>
+					   <onleft>20805</onleft>
+                       <ondown>20810</ondown>
                     </control>	
 					<control>
                        <description>Backgrounds</description>
-                       <type>menubutton</type>
+                       <type>checkbutton</type>
                        <id>20807</id>
-                       <width>550</width>
-                       <height>50</height>
-		               <textXOff>5</textXOff>
-                       <textYOff>3</textYOff>
-                       <mode>spinlist</mode>
-					   <onfocus>#(skin.setstring('#skin.test','Choose yes to enable the showing of your defined custom names of tiles'))</onfocus>
-                       <dialogTitle>Set a custom tile name..</dialogTitle>
-                       <valueTextInButton>yes</valueTextInButton>
-                       <valuePrefixText> Custom tile names: </valuePrefixText>
-                       <onclick>#(skin.setstring('#skin.manualnames',#selectedlabel20807))</onclick>
-                       <binding>#skin.manualnames</binding>
-                       <subitems>
-                       <subitem>yes</subitem>
-                       <subitem>no</subitem>
-                       </subitems>
-                       <textcolorNoFocus>99ffffff</textcolorNoFocus>
-                       <textureFocus>btn_list_blue2.png</textureFocus>
+                       <label>Enable weather forecast</label>
+		               <font>font12</font>
+					   <width>550</width>
+		               <textcolorNoFocus>99ffffff</textcolorNoFocus>
+		               <textureFocus>btn_list_blue2.png</textureFocus>
 		               <textureNoFocus></textureNoFocus>
-                       <onup>20806</onup>
-                       <onleft>#(cint(#skin.setnav))</onleft>
-                       <ondown>20808</ondown>
-                       <onright>20810</onright>
-					   <layoutDetail>TableCell(1, 1, 1)</layoutDetail>
+					   <onfocus>#(skin.setstring('#skin.test','Enable weather forecast when weather tile has focus'))</onfocus>
+                       <selected>#(skin.hassetting('#skin.no.weather'))</selected>
+                       <onclick>#(skin.togglesetting('#skin.no.weather'))</onclick>
+					   <onESC>#(skin.setfocus(35,cint(#skin.setnav)))</onESC>
+                       <onup>20804</onup>
+                       <onleft>20806</onleft>
+                       <ondown>20811</ondown>
+                       <onright>#(cint(#skin.setnav))</onright>
                     </control>	
 					<control>
                        <description>Enable RSS in homescreen</description>
@@ -311,11 +302,11 @@
 					   <onfocus>#(skin.setstring('#skin.test','Use RSS feed instead of seeing number of pages indicator in the bottom area'))</onfocus>
                        <selected>#(skin.hassetting('#skin.rss.info'))</selected>
                        <onclick>#(skin.togglesetting('#skin.rss.info'))</onclick>
-                       <onup>20807</onup>
+					   <onESC>#(skin.setfocus(35,cint(#skin.setnav)))</onESC>
+                       <onup>20805</onup>
 		               <onright>20810</onright>
 					   <onleft>#(cint(#skin.setnav))</onleft>
-                       <ondown>#(cint(#skin.setnav))</ondown>
-					   <layoutDetail>TableCell(1, 1, 1)</layoutDetail>
+                       <ondown>20812</ondown>
                     </control>	
 					<control>
                        <description>Enable custom tiles</description>
@@ -339,9 +330,99 @@
                        <textcolorNoFocus>99ffffff</textcolorNoFocus>
                        <textureFocus>btn_list_blue2.png</textureFocus>
 		               <textureNoFocus></textureNoFocus>
+					   <onESC>#(skin.setfocus(35,cint(#skin.setnav)))</onESC>
 					   <onleft>20808</onleft>
-					   <layoutDetail>TableCell(1, 1, 2)</layoutDetail>
+					   <onup>20806</onup>
+		               <onright>20811</onright>
+					   <ondown>20813</ondown>
                     </control>							
+					<control>
+                       <description>Enable RSS in homescreen</description>
+                       <type>checkbutton</type>
+                       <id>20811</id>
+                       <label>Enable TV Info logos</label>
+		               <font>font12</font>
+					   <width>550</width>
+		               <textcolorNoFocus>99ffffff</textcolorNoFocus>
+		               <textureFocus>btn_list_blue2.png</textureFocus>
+		               <textureNoFocus></textureNoFocus>
+					   <onfocus>#(skin.setstring('#skin.test','Enable info logos in tvosd description'))</onfocus>
+                       <selected>#(skin.hassetting('#skin.osd.logos'))</selected>
+					   <onESC>#(skin.setfocus(35,cint(#skin.setnav)))</onESC>
+                       <onclick>#(skin.togglesetting('#skin.osd.logos'))</onclick>
+                       <onup>20807</onup>
+		               <onright>#(cint(#skin.setnav))</onright>
+					   <onleft>20810</onleft>
+                       <ondown>20814</ondown>
+                    </control>
+					<control>
+                       <description>Enable RSS in homescreen</description>
+                       <type>checkbutton</type>
+                       <id>20812</id>
+                       <label>Enable Movie/Series Info logos</label>
+		               <font>font12</font>
+					   <width>550</width>
+		               <textcolorNoFocus>99ffffff</textcolorNoFocus>
+		               <textureFocus>btn_list_blue2.png</textureFocus>
+		               <textureNoFocus></textureNoFocus>
+					   <onfocus>#(skin.setstring('#skin.test','Enable info logos in movie/series osd description'))</onfocus>
+                       <selected>#(skin.hassetting('#skin.osd.logosvideo'))</selected>
+					   <onESC>#(skin.setfocus(35,cint(#skin.setnav)))</onESC>
+                       <onclick>#(skin.togglesetting('#skin.osd.logosvideo'))</onclick>
+                       <onup>20808</onup>
+		               <onright>20813</onright>
+					   <onleft>#(cint(#skin.setnav))</onleft>
+                       <ondown>#(cint(#skin.setnav))</ondown>
+                    </control>	
+			        <control>
+                       <description>fanart option</description>
+                       <type>menubutton</type>
+                       <id>20813</id>
+                       <width>550</width>
+                       <height>50</height>
+		               <textXOff>5</textXOff>
+                       <textYOff>3</textYOff>
+                       <mode>spinlist</mode>
+					   <onfocus>#(skin.setstring('#skin.test','Choose how to display OnlineVideos latest info'))</onfocus>
+                       <valueTextInButton>yes</valueTextInButton>
+                       <valuePrefixText> OV Latest Display type:  </valuePrefixText>
+                       <onclick>#(skin.setstring('#skin.latestOV',#selectedlabel20813))</onclick>
+                       <binding>#skin.latestOV</binding>
+                       <subitems>
+                       <subitem>cover</subitem>
+		               <subitem>thumb</subitem>
+                       <subitem>square</subitem>
+					   <subitem>icon</subitem>
+                       </subitems>
+                       <textcolorNoFocus>99ffffff</textcolorNoFocus>
+                       <textureFocus>btn_list_blue2.png</textureFocus>
+		               <textureNoFocus></textureNoFocus>
+					   <onESC>#(skin.setfocus(35,cint(#skin.setnav)))</onESC>
+		               <onup>20810</onup>
+                       <onleft>20812</onleft>
+                       <ondown>#(cint(#skin.setnav))</ondown>
+                       <onright>20814</onright>
+                    </control>	
+					<control>
+                       <description>Enable full day and month</description>
+                       <type>checkbutton</type>
+                       <id>20814</id>
+                       <label>Disable short day and month</label>
+		               <font>font12</font>
+					   <width>550</width>
+		               <textcolorNoFocus>99ffffff</textcolorNoFocus>
+		               <textureFocus>btn_list_blue2.png</textureFocus>
+		               <textureNoFocus></textureNoFocus>
+					   <onfocus>#(skin.setstring('#skin.test','Disable the short display of day and month in top right'))</onfocus>
+                       <selected>#(skin.hassetting('#skin.fullday'))</selected>
+					   <onESC>#(skin.setfocus(35,cint(#skin.setnav)))</onESC>
+                       <onclick>#(skin.togglesetting('#skin.fullday'))</onclick>
+                       <onup>20811</onup>
+		               <onright>#(cint(#skin.setnav))</onright>
+					   <onleft>20813</onleft>
+                       <ondown>#(cint(#skin.setnav))</ondown>
+                    </control>						
+				
 				</control>	
             </control>	
 			
@@ -353,16 +434,17 @@
 	
 	<control>
       <description>label</description>
-      <type>label</type>
+      <type>textbox</type>
       <id>0</id>
       <posX>97</posX>
       <posY>900</posY>
-	  <width>1200</width>
+	  <width>1700</width>
+	  <height>125</height>
       <align>left</align>
       <label>#skin.test</label>
       <font>font13</font>
       <textcolor>eaeaea</textcolor>
-	  <visible>true</visible>
+	   <visible>control.isvisible(20800)|control.hasfocus(20801)|control.hasfocus(20802)|control.hasfocus(20803)|control.hasfocus(20804)|control.hasfocus(20805)|control.hasfocus(20806)|control.hasfocus(20807)|control.hasfocus(20808)|control.hasfocus(20809)|control.hasfocus(20810)|control.hasfocus(20811)|control.hasfocus(20812)</visible>    
     </control>	
 	
 	

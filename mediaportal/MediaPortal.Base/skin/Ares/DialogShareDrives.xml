@@ -36,7 +36,7 @@
         <posY>240</posY>
 				<width>750</width>
         <label>#folderName</label>
-				<font>font111</font>
+				<font>font11</font>
       </control>
       <control>
         <description>Edit/Add share name button</description>
@@ -61,7 +61,7 @@
         <posY>315</posY>
 				<width>750</width>
         <label>#folder</label>
-				<font>font111</font>
+				<font>font11</font>
       </control>
 			<control>
         <description>Edit/Add share folder button</description>
@@ -86,7 +86,7 @@
         <posY>382</posY>
 				<width>750</width>
         <label>#layout</label>
-				<font>font111</font>
+				<font>font11</font>
       </control>
 			<control>
         <description>Default layout button</description>
@@ -111,7 +111,7 @@
         <posY>465</posY>
 				<width>750</width>
         <label>#pinCode</label>
-				<font>font111</font>
+				<font>font11</font>
       </control>
       <control>
         <description>Pincode button</description>
@@ -185,8 +185,8 @@
           <IconXOff>15</IconXOff>
           <IconYOff>6</IconYOff>
           <keepaspectratio>yes</keepaspectratio>
-          <font>font111</font>
-          <font2>font111</font2>
+          <font>font11</font>
+          <font2>font11</font2>
           <textcolor>ffffffff</textcolor>
           <textcolor2>ffffffff</textcolor2>
           <textcolor3>ffffffff</textcolor3>
@@ -295,8 +295,8 @@
 				<IconYOff>6</IconYOff>
 				<keepaspectratio>yes</keepaspectratio>
 				<font>font13</font>
-				<font2>font111</font2>
-				<font3>font111</font3>
+				<font2>font11</font2>
+				<font3>font11</font3>
 				<textcolor>ffffffff</textcolor>
 				<textcolor2>ffffffff</textcolor2>
 				<textcolor3>ffffffff</textcolor3>

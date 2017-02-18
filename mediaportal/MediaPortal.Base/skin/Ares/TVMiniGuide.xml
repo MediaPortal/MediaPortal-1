@@ -80,29 +80,29 @@
       <height>700</height>
       <width>1059</width>
       <textXOff>30</textXOff>
-      <textYOff>35</textYOff>
-      <textXOff2>0</textXOff2>
-      <textYOff2>0</textYOff2>
+      <textYOff>34</textYOff>
+      <textXOff2>1040</textXOff2>
+      <textYOff2>34</textYOff2>
       <textXOff3>92</textXOff3>
-      <textYOff3>0</textYOff3>
+      <textYOff3>3</textYOff3>
       <IconXOff>20</IconXOff>
       <IconYOff>5</IconYOff>
       <PinIconXOff>1008</PinIconXOff>
-      <PinIconYOff>32</PinIconYOff>
+      <PinIconYOff>0</PinIconYOff>
       <PinIconWidth>35</PinIconWidth>
       <PinIconHeight>35</PinIconHeight>
       <spinPosX>4400</spinPosX>
       <spinPosY>930</spinPosY>
       <itemWidth>52</itemWidth>
       <itemHeight>52</itemHeight>
-      <spaceBetweenItems>5</spaceBetweenItems>
-      <textureHeight>68</textureHeight>
+      <spaceBetweenItems>0</spaceBetweenItems>
+      <textureHeight>72</textureHeight>
 	  <textureFocus>miniguidebar.png</textureFocus>
       <textureNoFocus></textureNoFocus>
       <keepaspectratio>no</keepaspectratio>
       <font>font10</font>
-      <font2>font11</font2>
-      <font3>font12</font3>
+      <font2>font10</font2>
+      <font3>font11</font3>
       <shadedColor>20ffffff</shadedColor>
       <selectedColor3>ffffffff</selectedColor3>
       <selectedColor2>ffffffff</selectedColor2>
@@ -124,6 +124,14 @@
       <onleft>36</onleft>
       <onright>34</onright>
       <showScrollbar>no</showScrollbar>
+      <texturebg>-</texturebg>
+      <lefttexture>-</lefttexture>
+      <midtexture>white_p.png</midtexture>
+      <righttexture>-</righttexture>
+      <ProgressBarWidth>920</ProgressBarWidth>
+      <ProgressBarHeight>2</ProgressBarHeight>
+      <ProgressBarXOffset>82</ProgressBarXOffset>
+      <ProgressBarYOffset>69</ProgressBarYOffset>	  
     </control>
     <control>
       <description>list to show channels with channel state logos</description>
@@ -134,29 +142,29 @@
       <height>700</height>
       <width>1059</width>
       <textXOff>30</textXOff>
-      <textYOff>35</textYOff>
-      <textXOff2>0</textXOff2>
-      <textYOff2>0</textYOff2>
+      <textYOff>34</textYOff>
+      <textXOff2>1040</textXOff2>
+      <textYOff2>34</textYOff2>
       <textXOff3>92</textXOff3>
-      <textYOff3>0</textYOff3>
+      <textYOff3>3</textYOff3>
       <IconXOff>20</IconXOff>
       <IconYOff>5</IconYOff>
       <PinIconXOff>1008</PinIconXOff>
-      <PinIconYOff>32</PinIconYOff>
+      <PinIconYOff>0</PinIconYOff>
       <PinIconWidth>35</PinIconWidth>
       <PinIconHeight>35</PinIconHeight>
       <spinPosX>4400</spinPosX>
       <spinPosY>930</spinPosY>
       <itemWidth>52</itemWidth>
       <itemHeight>52</itemHeight>
-      <spaceBetweenItems>5</spaceBetweenItems>
-      <textureHeight>68</textureHeight>
+      <spaceBetweenItems>0</spaceBetweenItems>
+      <textureHeight>72</textureHeight>
 	  <textureFocus>miniguidebar.png</textureFocus>
       <textureNoFocus></textureNoFocus>
       <keepaspectratio>no</keepaspectratio>
       <font>font10</font>
-      <font2>font11</font2>
-      <font3>font12</font3>
+      <font2>font10</font2>
+      <font3>font11</font3>
       <shadedColor>20ffffff</shadedColor>
       <selectedColor3>ffffffff</selectedColor3>
       <selectedColor2>ffffffff</selectedColor2>
@@ -164,7 +172,7 @@
       <playedColor>ff787878</playedColor>
       <playedColor2>ff787878</playedColor2>
       <textcolor>ffffffff</textcolor>
-      <textcolorNoFocus>ff666666</textcolorNoFocus>
+      <textcolorNoFocus>ff888888</textcolorNoFocus>
       <textcolor2>ffffffff</textcolor2>
       <textcolor3>ffffffff</textcolor3>
       <colordiffuse>ffffffff</colordiffuse>
@@ -178,6 +186,14 @@
       <onleft>36</onleft>
       <onright>34</onright>
       <showScrollbar>no</showScrollbar>
+      <texturebg>-</texturebg>
+      <lefttexture>-</lefttexture>
+      <midtexture>white_p.png</midtexture>
+      <righttexture>-</righttexture>
+      <ProgressBarWidth>920</ProgressBarWidth>
+      <ProgressBarHeight>2</ProgressBarHeight>
+      <ProgressBarXOffset>82</ProgressBarXOffset>
+      <ProgressBarYOffset>69</ProgressBarYOffset>	  
     </control>
     <control>
       <description>groups spin control</description>
@@ -189,6 +205,11 @@
       <orientation>horizontal</orientation>
       <align>right</align>
       <font>font10</font>
+	  <width>32</width>
+	  <textureUp>playlist_item_up_nofocus.png</textureUp>
+      <textureDown>playlist_item_down_nofocus.png</textureDown>
+      <textureUpFocus>playlist_item_up_focus.png</textureUpFocus>
+      <textureDownFocus>playlist_item_down_focus.png</textureDownFocus>
       <textcolor>ffffffff</textcolor>
       <ondown>35</ondown>
       <onup>36</onup>
@@ -204,7 +225,7 @@
       <posY>96</posY>
       <label>#time</label>
       <align>right</align>
-      <font>font111</font>
+      <font>font11</font>
       <textcolor>ff666666</textcolor>
     </control>
 	-->

@@ -622,7 +622,7 @@ Section "MediaPortal core files (required)" SecCore
   File "${git_ROOT}\Packages\SharpLibWin32.0.0.9\lib\net20\SharpLibWin32.dll"
   ; SharpLibDisplay
   SetOutPath "$MPdir.Base\"
-  File "${git_ROOT}\Packages\SharpLibDisplay.0.2.5\lib\net40\SharpLibDisplay.dll"
+  File "${git_ROOT}\Packages\SharpLibDisplay.0.2.6\lib\net40\SharpLibDisplay.dll"
   ; Doc
   SetOutPath "$MPdir.Base\Docs"
   File "${git_MP}\Docs\BASS License.txt"
@@ -681,12 +681,9 @@ Section "MediaPortal core files (required)" SecCore
   Delete "${MEDIAPORTAL.BASE}\skin\DefaultWideHD\MPDefaultFonts\Lato-Medium.ttf"
   Delete "${MEDIAPORTAL.BASE}\skin\DefaultWideHD\MPDefaultFonts\Lato-Light.ttf"
   Delete "${MEDIAPORTAL.BASE}\skin\DefaultWideHD\MPDefaultFonts\NotoSans-Regular.ttf"
-  Delete "${MEDIAPORTAL.BASE}\skin\Ares\MPDefaultFonts\AvalonType.ttf"
-  Delete "${MEDIAPORTAL.BASE}\skin\Ares\MPDefaultFonts\AvalonTypeBold.ttf"
   Delete "${MEDIAPORTAL.BASE}\skin\Ares\MPDefaultFonts\AvalonTypeLight.ttf"
   Delete "${MEDIAPORTAL.BASE}\skin\Ares\MPDefaultFonts\HELN.TTF"
   Delete "${MEDIAPORTAL.BASE}\skin\Ares\MPDefaultFonts\HindVadodara-SemiBold.ttf"
-  Delete "${MEDIAPORTAL.BASE}\skin\Ares\MPDefaultFonts\Lato-Regular.ttf"
   Delete "${MEDIAPORTAL.BASE}\skin\Ares\MPDefaultFonts\MediaPortalDefault.ttf"
 
   ; used for Default and Titan Skin Font
@@ -697,12 +694,9 @@ Section "MediaPortal core files (required)" SecCore
   !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Titan\Fonts\Titan.ttf"
   !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Titan\Fonts\TitanLight.ttf"
   !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Titan\Fonts\TitanMedium.ttf"
-  !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Ares\MPDefaultFonts\AvalonType.ttf"
-  !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Ares\MPDefaultFonts\AvalonTypeBold.ttf"
   !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Ares\MPDefaultFonts\AvalonTypeLight.ttf"
   !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Ares\MPDefaultFonts\HELN.TTF"
   !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Ares\MPDefaultFonts\HindVadodara-SemiBold.ttf"
-  !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Ares\MPDefaultFonts\Lato-Regular.ttf"
   !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Ares\MPDefaultFonts\MediaPortalDefault.ttf"
 
   SendMessage ${HWND_BROADCAST} ${WM_FONTCHANGE} 0 0 /TIMEOUT=1000
@@ -1031,6 +1025,9 @@ Section -Post
     ${LOG_TEXT} "INFO" "Starting MPTray..."
     Exec '"$MPdir.Base\MPTray.exe"'
   ${EndIf}
+
+  ; run AresBackupRestore.exe
+  Exec '"$MPdir.Base\AresBackupRestore.exe"'
 SectionEnd
 
 #---------------------------------------------------------------------------

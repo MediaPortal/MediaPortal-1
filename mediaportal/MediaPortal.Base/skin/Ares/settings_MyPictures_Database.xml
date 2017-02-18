@@ -32,7 +32,7 @@
       <id>1</id>
       <posX>45</posX>
       <posY>60</posY>
-      <font>font101</font>
+      <font>font10</font>
       <width>900</width>
       <label>#scanstatus</label>
     </control>
@@ -63,9 +63,9 @@
       <IconXOff>15</IconXOff>
       <IconYOff>6</IconYOff>
       <keepaspectratio>yes</keepaspectratio>
-      <font>font111</font>
-      <font2>font101</font2>
-      <font3>font111</font3>
+      <font>font11</font>
+      <font2>font10</font2>
+      <font3>font11</font3>
       <textcolor>ffffffff</textcolor>
       <textcolor2>ffffffff</textcolor2>
       <textcolor3>ffffffff</textcolor3>
@@ -92,7 +92,7 @@
 	  <textYOff>7</textYOff>
 	  <width>820</width>
       <height>50</height>
-      <font>font111</font>
+      <font>font11</font>
       <ondown>4</ondown>
       <onup>2</onup>
     </control>
@@ -108,7 +108,7 @@
 	  <textYOff>7</textYOff>
 	  <width>820</width>
       <height>50</height>
-      <font>font111</font>
+      <font>font11</font>
       <onup>3</onup>
       <ondown>4</ondown>
     </control>

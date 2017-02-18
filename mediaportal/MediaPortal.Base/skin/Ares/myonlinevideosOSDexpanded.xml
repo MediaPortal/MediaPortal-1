@@ -29,7 +29,7 @@
       <posY>810</posY>
       <label>#time</label>
       <align>right</align>
-      <font>font121</font>
+      <font>font12</font>
       <textcolor>ivory</textcolor>
       <visible>control.hasfocus(1237)</visible>
     </control>

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
+
   <controls>
     <!--     *******************************************************************************************  -->
     <!--     *************************   INFOS ON BASIC HOME (RECENTLY ADDED)   ************************  -->
@@ -15,7 +16,7 @@
         <height>209</height>
         <texture>Inf_gfx.png</texture>
 		<animation effect="fade" time="500" reversible="true">visible</animation>
-	  <visible>control.isvisible(010004)|control.isvisible(010008)|control.isvisible(010012)|control.isvisible(010016)|control.isvisible(010020)</visible>	  
+	  <visible>control.isvisible(010004)|control.isvisible(010008)|control.isvisible(010012)|control.isvisible(010016)|control.isvisible(010020)|control.isvisible(012016)|control.isvisible(013016)|control.isvisible(5521125)</visible>	  
     </control>	
 	
 	
@@ -730,20 +731,6 @@
 	  <animation effect="fade" time="500" reversible="true">visible</animation>
     </control>	
 
-	<!--
-	  <control>
-        <description>BasicHome thumb</description>
-        <type>image</type>
-        <id>0</id>
-        <posX>48</posX>
-        <posY>198</posY>
-		<height>190</height>
-		<width>190</width>
-        <texture mask="ltlmusic_mask.png">defaultAudio.png</texture>
-        <colordiffuse>ffffffff</colordiffuse>
-        <visible>control.isvisible(010016)</visible>
-      </control>
-	  -->
 	  
 	  <control>
         <description>BasicHome tile3</description>
@@ -759,20 +746,6 @@
 		<animation effect="fade" time="500" reversible="true">visible</animation>
       </control>	
 
-	   <!--
-	  <control>
-        <description>BasicHome thumb</description>
-        <type>image</type>
-        <id>0</id>
-        <posX>241</posX>
-        <posY>170</posY>
-		<height>160</height>
-		<width>160</width>
-        <texture mask="ltlmusic_mask.png">defaultAudio.png</texture>
-        <colordiffuse>ffffffff</colordiffuse>
-        <visible>control.isvisible(010016)</visible>
-      </control>	
-	  -->
 	  
 	  <control>
         <description>BasicHome tile3</description>
@@ -788,20 +761,6 @@
 		<animation effect="fade" time="500" reversible="true">visible</animation>
       </control>	
   
-	  <!--
-	  <control>
-        <description>BasicHome thumb</description>
-        <type>image</type>
-        <id>0</id>
-        <posX>421</posX>
-        <posY>170</posY>
-		<height>160</height>
-		<width>160</width>
-        <texture mask="ltlmusic_mask.png">defaultAudio.png</texture>
-        <colordiffuse>ffffffff</colordiffuse>
-        <visible>control.isvisible(010016)</visible>
-      </control>	
--->
 	  
 	  <control>
         <description>BasicHome tile3</description>
@@ -1110,6 +1069,876 @@
         <visible>control.isvisible(010016)</visible>
 		<animation effect="fade" time="500" reversible="true">visible</animation>
       </control>
+	  
+	
+      <!-- ******************************************************************************************** -->
+      <!-- ******************************** RECENTLY ADDED TRAKT ************************************** -->
+      <!-- ******************************************************************************************** -->
+	
+	  
+ <control>
+        <description>Trending Movies</description>
+        <type>facadeview</type>
+        <id>98302</id>
+        <visible>control.isvisible(012016)</visible>
+        <control>
+          <type>filmstrip</type>
+          <dimColor>ffffffff</dimColor>
+          <id>98302</id>
+          <onup>2</onup>
+          <onleft>#skin.traktnav</onleft>
+          <ondown>#skin.traktnav</ondown>
+		  <onright>98301</onright>
+          <posX>85</posX>
+          <posY>199</posY>
+          <width>492</width>
+          <height>212</height>
+          <thumbWidth>132</thumbWidth>
+          <thumbHeight>189</thumbHeight>
+          <thumbPosX>0</thumbPosX>
+          <thumbPosY>0</thumbPosY>
+          <itemWidth>132</itemWidth>
+          <itemHeight>189</itemHeight>
+          <textureWidth>132</textureWidth>
+          <textureHeight>189</textureHeight>
+          <textYOff>-2000</textYOff>
+          <imageFolderFocus>-</imageFolderFocus>
+          <frame></frame>
+          <frameFocus>play_overlayframe.png</frameFocus>
+          <background>-</background>
+          <thumbs></thumbs>
+		  <spinCanFocus>no</spinCanFocus>
+          <showFrame>yes</showFrame>
+          <showFolder>no</showFolder>
+          <showBackGround>no</showBackGround>
+          <showInfoImage>no</showInfoImage>
+          <scrollbarBackground>-</scrollbarBackground>
+          <scrollbarLeft>-</scrollbarLeft>
+          <scrollbarRight>-</scrollbarRight>
+          <scrollbarWidth>717</scrollbarWidth>
+          <scrollbarHeight>8</scrollbarHeight>
+          <scrollbarYOff>375</scrollbarYOff>
+          <keepaspectratio>no</keepaspectratio>
+          <visible>control.isvisible(012016)</visible>
+		  <animation effect="fade" time="500" reversible="true">visible</animation>
+        </control>
+      </control>
+      <control>
+        <description>Trending Shows</description>
+        <type>facadeview</type>
+        <id>98301</id>
+        <visible>control.isvisible(012016)</visible>
+        <control>
+          <type>filmstrip</type>
+          <dimColor>ffffffff</dimColor>
+          <id>98301</id>
+          <onup>2</onup>
+          <onleft>98302</onleft>
+		  <onright>#skin.traktnav</onright>
+		  <ondown>#skin.traktnav</ondown>
+          <posX>950</posX>
+          <posY>199</posY>
+          <width>492</width>
+          <height>212</height>
+          <thumbWidth>132</thumbWidth>
+          <thumbHeight>189</thumbHeight>
+          <thumbPosX>0</thumbPosX>
+          <thumbPosY>0</thumbPosY>
+          <itemWidth>132</itemWidth>
+          <itemHeight>189</itemHeight>
+          <textureWidth>132</textureWidth>
+          <textureHeight>189</textureHeight>
+          <textYOff>-2000</textYOff>
+          <imageFolderFocus>-</imageFolderFocus>
+          <frame></frame>
+          <frameFocus>play_overlayframe.png</frameFocus>
+          <background>-</background>
+          <thumbs></thumbs>
+          <showFrame>yes</showFrame>
+          <showFolder>no</showFolder>
+          <showBackGround>no</showBackGround>
+          <showInfoImage>no</showInfoImage>
+		  <spinCanFocus>no</spinCanFocus>
+          <scrollbarBackground>-</scrollbarBackground>
+          <scrollbarLeft>-</scrollbarLeft>
+          <scrollbarRight>-</scrollbarRight>
+          <scrollbarWidth>717</scrollbarWidth>
+          <scrollbarHeight>8</scrollbarHeight>
+          <scrollbarYOff>375</scrollbarYOff>
+          <keepaspectratio>no</keepaspectratio>
+          <visible>control.isvisible(012016)</visible>
+		  <animation effect="fade" time="500" reversible="true">visible</animation>
+        </control>
+        </control>
+		
+	  <control>
+      <description>group element</description>
+      <type>group</type>	
+	  <posX>500</posX>
+      <posY>220</posY>
+	  <visible>control.isvisible(012016)</visible>
+	  <animation effect="fade" time="500" reversible="true">visible</animation>
+	  <layout>StackLayout(50, Vertical, true)</layout>
+      <!--            :: Movie Titles ::            -->
+      <control>
+        <type>fadelabel</type>
+        <id>1</id>
+        <posX>87</posX>
+        <posY>455</posY>
+        <width>420</width>
+        <label>#Trakt.Movie.0.Title</label>
+        <textcolor>ffffffff</textcolor>
+        <font>font12</font>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <id>1</id>
+        <posX>87</posX>
+        <posY>493</posY>
+        <width>420</width>
+        <label>#Trakt.Movie.1.Title</label>
+        <textcolor>ffffffff</textcolor>
+        <font>font12</font>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <id>1</id>
+        <posX>87</posX>
+        <posY>531</posY>
+        <width>420</width>
+        <label>#Trakt.Movie.2.Title</label>
+        <textcolor>ffffffff</textcolor>
+        <font>font12</font>
+      </control>
+	  </control>
+	  
+	  <control>
+      <description>group element</description>
+      <type>group</type>
+	  <posX>1370</posX>
+      <posY>220</posY>
+	  <visible>control.isvisible(012016)</visible>
+	  <animation effect="fade" time="500" reversible="true">visible</animation>	  
+	  <layout>StackLayout(50, Vertical, true)</layout>
+      <!--            :: Series Titles ::            -->
+      <control>
+        <type>fadelabel</type>
+        <id>1</id>
+        <posX>1474</posX>
+        <posY>455</posY>
+        <width>420</width>
+        <label>#Trakt.Show.0.Title</label>
+        <textcolor>ffffffff</textcolor>
+        <font>font12</font>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <id>1</id>
+        <posX>1474</posX>
+        <posY>493</posY>
+        <width>420</width>
+        <label>#Trakt.Show.1.Title</label>
+        <textcolor>ffffffff</textcolor>
+        <font>font12</font>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <id>1</id>
+        <posX>1474</posX>
+        <posY>531</posY>
+        <width>420</width>
+        <label>#Trakt.Show.2.Title</label>
+        <textcolor>ffffffff</textcolor>
+        <font>font12</font>
+      </control>	
+      </control>	  
+	  
+	  <!--************************************************************************ MYPICTURES *******************************************************************************-->
+
+	  
+	  <control>
+        <description>BasicHome tile3</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>56</posX>
+        <posY>198</posY>
+		<height>190</height>
+		<width>190</width>
+        <texture mask="MAmask.png">blue.png</texture>
+        <colordiffuse>ffffffff</colordiffuse>
+        <visible>control.isvisible(013016)</visible>
+		<animation effect="fade" time="500" reversible="true">visible</animation>
+      </control>	
+
+	  
+	  <control>
+        <description>BasicHome tile3</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>246</posX>
+        <posY>198</posY>
+		<height>190</height>
+		<width>190</width>
+        <texture mask="">blue.png</texture>
+        <colordiffuse>ffffffff</colordiffuse>
+        <visible>control.isvisible(013016)</visible>
+		<animation effect="fade" time="500" reversible="true">visible</animation>
+      </control>	
+  
+	  
+	  <control>
+        <description>BasicHome tile3</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>436</posX>
+        <posY>198</posY>
+		<height>190</height>
+		<width>190</width>
+        <texture mask="">blue.png</texture>
+        <colordiffuse>ffffffff</colordiffuse>
+        <visible>control.isvisible(013016)</visible>
+		<animation effect="fade" time="500" reversible="true">visible</animation>
+      </control>	  
+	  <control>
+        <description>BasicHome tile3</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>76</posX>
+        <posY>218</posY>
+		<height>150</height>
+		<width>150</width>
+		<keepaspectratio>true</keepaspectratio>
+        <texture mask="">#latestMediaHandler.picture.latest1.thumb</texture>
+        <colordiffuse>ffffffff</colordiffuse>
+        <visible>control.isvisible(013016)</visible>
+		<animation effect="fade" time="500" reversible="true">visible</animation>
+      </control>	
+
+	  
+	  <control>
+        <description>BasicHome tile3</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>266</posX>
+        <posY>218</posY>
+		<height>150</height>
+		<width>150</width>
+		<keepaspectratio>true</keepaspectratio>
+        <texture mask="">#latestMediaHandler.picture.latest2.thumb</texture>
+        <colordiffuse>ffffffff</colordiffuse>
+        <visible>control.isvisible(013016)</visible>
+		<animation effect="fade" time="500" reversible="true">visible</animation>
+      </control>	
+  
+	  
+	  <control>
+        <description>BasicHome tile3</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>456</posX>
+        <posY>218</posY>
+		<height>150</height>
+		<width>150</width>
+		<keepaspectratio>true</keepaspectratio>
+        <texture mask="">#latestMediaHandler.picture.latest3.thumb</texture>
+        <colordiffuse>ffffffff</colordiffuse>
+        <visible>control.isvisible(013016)</visible>
+		<animation effect="fade" time="500" reversible="true">visible</animation>
+      </control>
+	  
+      <control>
+        <description>Play Button</description>
+        <type>button</type>
+        <id>91919971</id>
+        <posX>90</posX>
+        <posY>230</posY>
+        <width>130</width>
+        <height>130</height>
+        <textureFocus>play_shad1.png</textureFocus>
+        <textureNoFocus>play_shad1.png</textureNoFocus>
+        <label></label>
+        <onleft>91919971</onleft>
+        <onright>91919972</onright>
+        <onup>2</onup>
+		<ondown>#skin.picsnav</ondown>
+        <font>font12</font>
+        <animation effect="zoom" start="10,10" end="100,100" center="0,0" time="400" acceleration="-0.9" reversible="false">visible</animation>	
+        <visible allowhiddenfocus="true">control.hasfocus(91919971)</visible>
+    </control>
+      <control>
+        <description>Play Button</description>
+        <type>button</type>
+        <id>91919972</id>
+        <posX>278</posX>
+        <posY>230</posY>
+        <width>130</width>
+        <height>130</height>
+        <textureFocus>play_shad1.png</textureFocus>
+        <textureNoFocus>play_shad1.png</textureNoFocus>
+        <label></label>
+        <onleft>91919971</onleft>
+        <onright>91919973</onright>
+        <onup>2</onup>
+		<ondown>#skin.picsnav</ondown>
+        <font>font12</font>
+        <animation effect="zoom" start="10,10" end="100,100" center="0,0" time="400" acceleration="-0.9" reversible="false">visible</animation>
+        <visible allowhiddenfocus="true">control.hasfocus(91919972)</visible>
+    </control>
+      <control>
+        <description>Play Button</description>
+        <type>button</type>
+        <id>91919973</id>
+        <posX>468</posX>
+        <posY>230</posY>
+        <width>130</width>
+        <height>130</height>
+        <textureFocus>play_shad1.png</textureFocus>
+        <textureNoFocus>play_shad1.png</textureNoFocus>
+        <label></label>
+        <onleft>91919972</onleft>
+        <onright>91919973</onright>
+        <onup>2</onup>
+		<ondown>#skin.picsnav</ondown>
+        <font>font12</font>
+        <animation effect="zoom" start="10,10" end="100,100" center="0,0" time="400" acceleration="-0.9" reversible="false">visible</animation>
+        <visible allowhiddenfocus="true">control.hasfocus(91919973)</visible>
+    </control>	
+	
+	<control>
+	  <description>DUMMY CONTROL FOR MOVIES VISIBILITY</description>
+      <type>textbox</type>
+      <id>0</id>
+      <posX>643</posX>
+      <posY>215</posY>
+      <width>1550</width>
+      <height>30</height>
+      <label>#latestMediaHandler.picture.latest1.title</label>
+      <align>left</align>
+      <font>font12</font>
+      <textcolor>eaeaea</textcolor>
+      <visible>control.isvisible(013016)</visible>
+	  <animation effect="fade" time="500" reversible="true">visible</animation>
+	  </control>	
+
+	<control>
+	  <description>DUMMY CONTROL FOR MOVIES VISIBILITY</description>
+      <type>textbox</type>
+      <id>0</id>
+      <posX>643</posX>
+      <posY>265</posY>
+      <width>1550</width>
+      <height>30</height>
+      <label>#latestMediaHandler.picture.latest2.title</label>
+      <align>left</align>
+      <font>font12</font>
+      <textcolor>eaeaea</textcolor>
+      <visible>control.isvisible(013016)</visible>
+	  <animation effect="fade" time="500" reversible="true">visible</animation>
+    </control>	
+	<control>
+	  <description>DUMMY CONTROL FOR MOVIES VISIBILITY</description>
+      <type>textbox</type>
+      <id>0</id>
+      <posX>643</posX>
+      <posY>320</posY>
+      <width>1550</width>
+      <height>30</height>
+      <label>#latestMediaHandler.picture.latest3.title</label>
+      <align>left</align>
+      <font>font12</font>
+      <textcolor>eaeaea</textcolor>
+      <visible>control.isvisible(013016)</visible>
+	  <animation effect="fade" time="500" reversible="true">visible</animation>
+    </control>		
+
+	  <control>
+        <description>BasicHome tile3</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>246</posX>
+        <posY>198</posY>
+		<height>190</height>
+		<width>209</width>
+        <texture mask="">home_shadows2.png</texture>
+        <colordiffuse>ffffffff</colordiffuse>
+        <visible>control.isvisible(013016)</visible>
+		<animation effect="fade" time="500" reversible="true">visible</animation>
+      </control>	
+	  
+	  
+	<!--**********************************************************************  RecentlyAdded OnlineVideos ****************************************************************-->  
+    <control>
+      <description>GROUP: RecentlyAdded OnlineVideos</description>
+      <type>group</type>
+      <dimColor>0xffffffff</dimColor>
+      <visible>control.isvisible(5521125)</visible>
+      <!-- COVER -->
+
+	   <control>
+        <description>blue</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>56</posX>
+        <posY>198</posY>
+		<height>190</height>
+		<width>137</width>
+        <texture mask="CAmask_small.png">blue.png</texture>
+        <visible>control.isvisible(5521125)</visible>
+		<animation effect="fade" time="500" reversible="true">visible</animation>
+      </control>
+	   <control>
+        <description>blue</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>193</posX>
+        <posY>198</posY>
+		<height>190</height>
+		<width>137</width>
+        <texture mask="">blue.png</texture>
+        <visible>control.isvisible(5521125)</visible>
+		<animation effect="fade" time="500" reversible="true">visible</animation>
+      </control>
+	   <control>
+        <description>blue</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>330</posX>
+        <posY>198</posY>
+		<height>190</height>
+		<width>137</width>
+        <texture mask="">blue.png</texture>
+        <visible>control.isvisible(5521125)</visible>
+		<animation effect="fade" time="500" reversible="true">visible</animation>
+      </control>
+	   <control>
+        <description>blue</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>467</posX>
+        <posY>198</posY>
+		<height>190</height>
+		<width>137</width>
+        <texture mask="">blue.png</texture>
+        <visible>[control.isvisible(5521125)+string.equals(#skin.latestOV, Thumb)]|[control.isvisible(5521125)+string.equals(#skin.latestOV, icon)]</visible>
+		<animation effect="fade" time="500" reversible="true">visible</animation>
+      </control>
+	   <control>
+        <description>blue</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>604</posX>
+        <posY>198</posY>
+		<height>190</height>
+		<width>137</width>
+        <texture mask="">blue.png</texture>
+        <visible>[control.isvisible(5521125)+string.equals(#skin.latestOV, icon)]</visible>
+		<animation effect="fade" time="500" reversible="true">visible</animation>
+      </control>	  
+
+	  
+      <control>
+        <description>Thumb 1 (cover)</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>56</posX>
+        <posY>198</posY>
+		<height>190</height>
+		<width>137</width>
+        <texture mask="CAmask_small.png">#OnlineVideos.LatestVideo1.Thumb</texture>
+        <shouldCache>true</shouldCache>
+        <visible>string.equals(#skin.latestOV, cover)</visible>
+		<animation effect="fade" time="500" reversible="true">visible</animation>
+      </control>
+      <control>
+        <description>Video 1 title (cover)</description>
+        <type>fadelabel</type>
+        <id>0</id>
+        <posX>490</posX>
+        <posY>220</posY>
+        <width>931</width>
+        <label>#OnlineVideos.LatestVideo1.Title</label>
+        <font>font12</font>
+        <textcolor>ffffffff</textcolor>
+        <scrollStartDelaySec>10</scrollStartDelaySec>
+        <visible>string.equals(#skin.latestOV, cover)</visible>
+		<animation effect="fade" time="500" reversible="true">visible</animation>
+      </control>
+      <control>
+        <description>Thumb 2 (cover)</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>193</posX>
+        <posY>198</posY>
+		<height>190</height>
+		<width>137</width>
+        <texture>#OnlineVideos.LatestVideo2.Thumb</texture>
+        <shouldCache>true</shouldCache>
+        <visible>string.equals(#skin.latestOV, cover)</visible>
+		<animation effect="fade" time="500" reversible="true">visible</animation>
+      </control>
+      <control>
+        <description>Video 2 title (cover)</description>
+        <type>fadelabel</type>
+        <id>0</id>
+        <posX>490</posX>
+        <posY>270</posY>
+        <width>931</width>
+        <label>#OnlineVideos.LatestVideo2.Title</label>
+        <font>font12</font>
+        <textcolor>ffffffff</textcolor>
+        <scrollStartDelaySec>10</scrollStartDelaySec>
+        <visible>string.equals(#skin.latestOV, cover)</visible>
+		<animation effect="fade" time="500" reversible="true">visible</animation>
+      </control>
+      <control>
+        <description>Thumb 3 (cover)</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>330</posX>
+        <posY>198</posY>
+		<height>190</height>
+		<width>137</width>
+        <texture>#OnlineVideos.LatestVideo3.Thumb</texture>
+        <shouldCache>true</shouldCache>
+        <visible>string.equals(#skin.latestOV, cover)</visible>
+		<animation effect="fade" time="500" reversible="true">visible</animation>
+      </control>
+      <control>
+        <description>Video 3 Title (cover)</description>
+        <type>fadelabel</type>
+        <id>0</id>
+        <posX>490</posX>
+        <posY>320</posY>
+        <width>931</width>
+        <label>#OnlineVideos.LatestVideo3.Title</label>
+        <font>font12</font>
+        <textcolor>ffffffff</textcolor>
+        <scrollStartDelaySec>10</scrollStartDelaySec>
+        <visible>string.equals(#skin.latestOV, cover)</visible>
+		<animation effect="fade" time="500" reversible="true">visible</animation>
+      </control>
+	  <control>
+        <description>BasicHome tile3</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>193</posX>
+        <posY>198</posY>
+		<height>190</height>
+		<width>156</width>
+        <texture mask="">home_shadows.png</texture>
+        <colordiffuse>ffffffff</colordiffuse>
+        <visible>string.equals(#skin.latestOV, cover)</visible>
+		<animation effect="fade" time="500" reversible="true">visible</animation>
+       </control>		  
+
+      <!-- THUMB -->
+
+      <control>
+        <description>Thumb 1 (thumb)</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>85</posX>
+        <posY>235</posY>
+        <width>159</width>
+        <height>118</height>
+        <zoom>true</zoom>
+        <keepaspectratio>true</keepaspectratio>
+        <texture>#OnlineVideos.LatestVideo1.Thumb</texture>
+        <shouldCache>true</shouldCache>
+        <visible>string.equals(#skin.latestOV, thumb)</visible>
+		<animation effect="fade" time="500" reversible="true">visible</animation>
+      </control>
+      <control>
+        <description>Video 1 title (thumb)</description>
+        <type>fadelabel</type>
+        <id>0</id>
+        <posX>636</posX>
+        <posY>220</posY>
+        <width>859</width>
+        <label>#OnlineVideos.LatestVideo1.Title</label>
+        <font>font12</font>
+        <textcolor>ffffffff</textcolor>
+        <scrollStartDelaySec>10</scrollStartDelaySec>
+        <visible>string.equals(#skin.latestOV, thumb)</visible>
+		<animation effect="fade" time="500" reversible="true">visible</animation>
+      </control>
+      <control>
+        <description>Thumb 2 (thumb)</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>259</posX>
+        <posY>235</posY>
+        <width>159</width>
+        <height>118</height>
+        <zoom>true</zoom>
+        <keepaspectratio>true</keepaspectratio>
+        <texture>#OnlineVideos.LatestVideo2.Thumb</texture>
+        <shouldCache>true</shouldCache>
+        <visible>string.equals(#skin.latestOV, thumb)</visible>
+		<animation effect="fade" time="500" reversible="true">visible</animation>
+      </control>
+      <control>
+        <description>Video 2 title (thumb)</description>
+        <type>fadelabel</type>
+        <id>0</id>
+        <posX>636</posX>
+        <posY>270</posY>
+        <width>859</width>
+        <label>#OnlineVideos.LatestVideo2.Title</label>
+        <font>font12</font>
+        <textcolor>ffffffff</textcolor>
+        <scrollStartDelaySec>10</scrollStartDelaySec>
+        <visible>string.equals(#skin.latestOV, thumb)</visible>
+		<animation effect="fade" time="500" reversible="true">visible</animation>
+      </control>
+      <control>
+        <description>Thumb 3 (thumb)</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>433</posX>
+        <posY>235</posY>
+        <width>159</width>
+        <height>118</height>
+        <zoom>true</zoom>
+        <keepaspectratio>true</keepaspectratio>
+        <texture>#OnlineVideos.LatestVideo3.Thumb</texture>
+        <shouldCache>true</shouldCache>
+        <visible>string.equals(#skin.latestOV, thumb)</visible>
+		<animation effect="fade" time="500" reversible="true">visible</animation>
+      </control>
+      <control>
+        <description>Video 3 Title (thumb)</description>
+        <type>fadelabel</type>
+        <id>0</id>
+        <posX>636</posX>
+        <posY>320</posY>
+        <width>859</width>
+        <label>#OnlineVideos.LatestVideo3.Title</label>
+        <font>font12</font>
+        <textcolor>ffffffff</textcolor>
+        <scrollStartDelaySec>10</scrollStartDelaySec>
+        <visible>string.equals(#skin.latestOV, thumb)</visible>
+		<animation effect="fade" time="500" reversible="true">visible</animation>
+      </control>
+
+      <!-- SQUARE -->
+	  
+
+      <control>
+        <description>Thumb 1 (square)</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>95</posX>
+        <posY>198</posY>
+        <width>191</width>
+        <height>191</height>
+        <zoom>true</zoom>
+        <keepaspectratio>true</keepaspectratio>
+        <texture>#OnlineVideos.LatestVideo1.Thumb</texture>
+        <shouldCache>true</shouldCache>
+        <visible>string.equals(#skin.latestOV, square)</visible>
+		<animation effect="fade" time="500" reversible="true">visible</animation>
+      </control>
+      <control>
+        <description>Video 1 title (square)</description>
+        <type>fadelabel</type>
+        <id>0</id>
+        <posX>700</posX>
+        <posY>220</posY>
+        <width>766</width>
+        <label>#OnlineVideos.LatestVideo1.Title</label>
+        <font>font12</font>
+        <textcolor>ffffffff</textcolor>
+        <scrollStartDelaySec>10</scrollStartDelaySec>
+        <visible>string.equals(#skin.latestOV, square)</visible>
+		<animation effect="fade" time="500" reversible="true">visible</animation>
+      </control>
+      <control>
+        <description>Thumb 2 (square)</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>286</posX>
+        <posY>198</posY>
+        <width>191</width>
+        <height>191</height>
+        <zoom>true</zoom>
+        <keepaspectratio>true</keepaspectratio>
+        <texture>#OnlineVideos.LatestVideo2.Thumb</texture>
+        <shouldCache>true</shouldCache>
+        <visible>string.equals(#skin.latestOV, square)</visible>
+		<animation effect="fade" time="500" reversible="true">visible</animation>
+      </control>
+      <control>
+        <description>Video 2 title (square)</description>
+        <type>fadelabel</type>
+        <id>0</id>
+        <posX>700</posX>
+        <posY>270</posY>
+        <width>766</width>
+        <label>#OnlineVideos.LatestVideo2.Title</label>
+        <font>font12</font>
+        <textcolor>ffffffff</textcolor>
+        <scrollStartDelaySec>10</scrollStartDelaySec>
+        <visible>string.equals(#skin.latestOV, square)</visible>
+		<animation effect="fade" time="500" reversible="true">visible</animation>
+      </control>
+      <control>
+        <description>Thumb 3 (square)</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>477</posX>
+        <posY>198</posY>
+        <width>191</width>
+        <height>191</height>
+        <zoom>true</zoom>
+        <keepaspectratio>true</keepaspectratio>
+        <texture>#OnlineVideos.LatestVideo3.Thumb</texture>
+        <shouldCache>true</shouldCache>
+        <visible>string.equals(#skin.latestOV, square)</visible>
+		<animation effect="fade" time="500" reversible="true">visible</animation>
+      </control>
+      <control>
+        <description>Video 3 Title (square)</description>
+        <type>fadelabel</type>
+        <id>0</id>
+        <posX>700</posX>
+        <posY>320</posY>
+        <width>766</width>
+        <label>#OnlineVideos.LatestVideo3.Title</label>
+        <font>font12</font>
+        <textcolor>ffffffff</textcolor>
+        <scrollStartDelaySec>10</scrollStartDelaySec>
+        <visible>string.equals(#skin.latestOV, square)</visible>
+		<animation effect="fade" time="500" reversible="true">visible</animation>
+      </control>
+
+      <!-- ICON -->
+
+      <control>
+        <description>Thumb 1 (icon)</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>95</posX>
+        <posY>208</posY>
+        <width>170</width>
+        <height>170</height>
+        <zoom>true</zoom>
+        <keepaspectratio>true</keepaspectratio>
+        <texture>#OnlineVideos.LatestVideo1.SiteIcon</texture>
+        <shouldCache>true</shouldCache>
+        <visible>string.equals(#skin.latestOV, icon)</visible>
+		<animation effect="fade" time="500" reversible="true">visible</animation>
+      </control>
+      <control>
+        <description>Video 1 title (icon)</description>
+        <type>fadelabel</type>
+        <id>0</id>
+        <posX>769</posX>
+        <posY>220</posY>
+        <width>766</width>
+        <label>#OnlineVideos.LatestVideo1.Title</label>
+        <font>font12</font>
+        <textcolor>ffffffff</textcolor>
+        <scrollStartDelaySec>10</scrollStartDelaySec>
+        <visible>string.equals(#skin.latestOV, icon)</visible>
+		<animation effect="fade" time="500" reversible="true">visible</animation>
+      </control>
+      <control>
+        <description>Thumb 2 (icon)</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>301</posX>
+        <posY>208</posY>
+        <width>170</width>
+        <height>170</height>
+        <zoom>true</zoom>
+        <keepaspectratio>true</keepaspectratio>
+        <texture>#OnlineVideos.LatestVideo2.SiteIcon</texture>
+        <shouldCache>true</shouldCache>
+        <visible>string.equals(#skin.latestOV, icon)</visible>
+		<animation effect="fade" time="500" reversible="true">visible</animation>
+      </control>
+      <control>
+        <description>Video 2 title (icon)</description>
+        <type>fadelabel</type>
+        <id>0</id>
+        <posX>769</posX>
+        <posY>270</posY>
+        <width>766</width>
+        <label>#OnlineVideos.LatestVideo2.Title</label>
+        <font>font12</font>
+        <textcolor>ffffffff</textcolor>
+        <scrollStartDelaySec>10</scrollStartDelaySec>
+        <visible>string.equals(#skin.latestOV, icon)</visible>
+		<animation effect="fade" time="500" reversible="true">visible</animation>
+      </control>
+      <control>
+        <description>Thumb 3 (icon)</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>507</posX>
+        <posY>208</posY>
+        <width>170</width>
+        <height>170</height>
+        <zoom>true</zoom>
+        <keepaspectratio>true</keepaspectratio>
+        <texture>#OnlineVideos.LatestVideo3.SiteIcon</texture>
+        <shouldCache>true</shouldCache>
+        <visible>string.equals(#skin.latestOV, icon)</visible>
+		<animation effect="fade" time="500" reversible="true">visible</animation>
+      </control>
+      <control>
+        <description>Video 3 Title (icon)</description>
+        <type>fadelabel</type>
+        <id>0</id>
+        <posX>769</posX>
+        <posY>320</posY>
+        <width>766</width>
+        <label>#OnlineVideos.LatestVideo3.Title</label>
+        <font>font12</font>
+        <textcolor>ffffffff</textcolor>
+        <scrollStartDelaySec>10</scrollStartDelaySec>
+        <visible>string.equals(#skin.latestOV, icon)</visible>
+		<animation effect="fade" time="500" reversible="true">visible</animation>
+      </control>
+
+      <control>
+        <description>Site 1</description>
+        <type>label</type>
+        <id>0</id>
+        <posX>1580</posX>
+        <posY>220</posY>
+        <width>280</width>
+        <label>#OnlineVideos.LatestVideo1.Site</label>
+        <font>font12</font>
+        <textcolor>ffffffff</textcolor>
+		<animation effect="fade" time="500" reversible="true">visible</animation>
+      </control>
+      <control>
+        <description>Site 2</description>
+        <type>label</type>
+        <id>0</id>
+        <posX>1580</posX>
+        <posY>270</posY>
+        <width>280</width>
+        <label>#OnlineVideos.LatestVideo2.Site</label>
+        <font>font12</font>
+        <textcolor>ffffffff</textcolor>
+		<animation effect="fade" time="500" reversible="true">visible</animation>
+      </control>
+      <control>
+        <description>Site 3</description>
+        <type>label</type>
+        <id>0</id>
+        <posX>1580</posX>
+        <posY>320</posY>
+        <width>280</width>
+        <label>#OnlineVideos.LatestVideo3.Site</label>
+        <font>font12</font>
+        <textcolor>ffffffff</textcolor>
+		<animation effect="fade" time="500" reversible="true">visible</animation>
+      </control>
+    </control>	  
 	  
 	  
     </control>

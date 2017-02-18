@@ -71,8 +71,8 @@
       <description>Number of Files Label</description>
       <type>label</type>
       <id>12</id>
-      <posX>1865</posX>
-      <posY>110</posY>
+      <posX>#Xposition</posX>
+      <posY>#Yposition</posY>
       <height>43</height>
       <width>500</width>
       <font>fontBold2</font>
@@ -195,7 +195,7 @@
 		  <height>50</height>			  
         </control>
       </control>
-	  
+	  </control>
 	  
 	  
 
@@ -203,63 +203,63 @@
         <description>channel</description>
         <id>0</id>
         <type>fadelabel</type>
-        <posX>828</posX>
-        <posY>700</posY>
+        <posX>270</posX>
+        <posY>840</posY>
         <align>left</align>
         <width>1011</width>
-        <textcolor>ff6FAFE1</textcolor>
-        <label>#Radio.Recorded.Channel</label>
-        <font>font121</font>
+        <textcolor>FFFFFFFF</textcolor>
+        <label>#Radio.Recorded.Title - #Radio.Recorded.Time</label>
+        <font>font12</font>
       </control>
       <control>
         <description>Current program time</description>
         <id>14</id>
         <type>label</type>
-        <posX>828</posX>
-        <posY>742</posY>
-        <width>420</width>
+        <posX>9270</posX>
+        <posY>890</posY>
+        <width>1500</width>
         <label>#Radio.Recorded.Time</label>
         <align>left</align>
-        <font>font121</font>
-        <textcolor>ff6FAFE1</textcolor>
+        <font>font12</font>
+        <textcolor>FFEAEAEA</textcolor>
       </control>
       <control>
         <description>Current program genre</description>
         <type>label</type>
         <id>0</id>
-        <posX>1822</posX>
+        <posX>9822</posX>
         <posY>742</posY>
         <width>570</width>
         <label>#Radio.Recorded.Genre</label>
         <align>right</align>
-        <font>font121</font>
-        <textcolor>FFFFFFFF</textcolor>
+        <font>font12</font>
+        <textcolor>FFEAEAEA</textcolor>
         <visible>!string.equals(#Radio.Recorded.Genre,-)</visible>
       </control>
       <control>
         <description>Current program title</description>
         <type>fadelabel</type>
         <id>13</id>
-        <posX>828</posX>
+        <posX>9828</posX>
         <posY>784</posY>
         <width>996</width>
         <label>#Radio.Recorded.Title</label>
-        <font>font121</font>
+        <font>font12</font>
         <textcolor>FFFFFFFF</textcolor>
       </control>
       <control>
         <description>Description1</description>
         <type>textboxscrollup</type>
         <id>15</id>
-        <posX>693</posX>
-        <posY>840</posY>
-        <height>127</height>
-        <width>1132</width>
-        <label>#Radio.Recorded.Description</label>
-        <font>font111</font>
+        <posX>270</posX>
+        <posY>890</posY>
+        <height>85</height>
+        <width>1600</width>
+        <label>#Radio.Recorded.Description TETSETESTSTEST</label>
+        <font>font11</font>
         <textcolor>FFFFFFFF</textcolor>
       </control>
-    </control>
+    
     <import>common.facade.recordings.xml</import>
 	
 	  <control>
