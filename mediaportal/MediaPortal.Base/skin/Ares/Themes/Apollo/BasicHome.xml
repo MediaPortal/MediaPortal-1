@@ -60,7 +60,7 @@
     <import>custom\Allscreens\user_dialog.xml</import>
 	<import>BasicHomePage1.xml</import>	
 	<import>BasicHomePage2.xml</import>	
-    <import>BasicHomePage3.xml</import>	
+    <import>BasicHomePage3.xml</import>
     <import>BasicHomePage4.xml</import>		
     <import>BasicHomePage5.xml</import>
 	<import>BasicHome_CustomNames1.xml</import>
