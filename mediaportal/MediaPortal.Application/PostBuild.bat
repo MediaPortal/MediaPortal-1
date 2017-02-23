@@ -157,7 +157,7 @@ xcopy %1\..\Packages\BASS.NET.2.4.12.5\lib\net40\Bass.Net.dll . /Y /D
 xcopy %1\..\Packages\BassRegistration.2.4.12.5\lib\net40\BassRegistration.dll . /Y /D
 
 REM Bass AddOns
-xcopy %1\..\Packages\bass.asio.1.3.1.1\bassasio.dll . /Y /D
+xcopy %1\..\Packages\bass.asio.1.3.1\bassasio.dll . /Y /D
 xcopy %1\..\Packages\bass.fx.2.4.11.1\bass_fx.dll . /Y /D
 xcopy %1\..\Packages\bass.mix.2.4.8.0\bassmix.dll . /Y /D
 xcopy %1\..\Packages\bass.vst.2.4.5\bass_vst.dll . /Y /D

@@ -1695,6 +1695,7 @@ xcopy $(TargetDir)core.* $(SolutionDir)MediaPortal.Application\bin\$(Configurati
     <Error Condition="!Exists('..\..\Packages\bass.wasapi.2.4.1.2\build\bass.wasapi.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\bass.wasapi.2.4.1.2\build\bass.wasapi.targets'))" />
     <Error Condition="!Exists('..\..\Packages\bass.wma.2.4.5.1\build\bass.wma.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\bass.wma.2.4.5.1\build\bass.wma.targets'))" />
     <Error Condition="!Exists('..\..\Packages\bass.wv.2.4.6.0\build\bass.wv.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\bass.wv.2.4.6.0\build\bass.wv.targets'))" />
+    <Error Condition="!Exists('..\..\Packages\bass.asio.1.3.1\build\bass.asio.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\bass.asio.1.3.1\build\bass.asio.targets'))" />
   </Target>
   <Import Project="..\..\Packages\bass.alac.2.4.3\build\bass.alac.targets" Condition="Exists('..\..\Packages\bass.alac.2.4.3\build\bass.alac.targets')" />
   <Import Project="..\..\Packages\bass.ofr.2.4.0.2\build\bass.ofr.targets" Condition="Exists('..\..\Packages\bass.ofr.2.4.0.2\build\bass.ofr.targets')" />
@@ -1718,4 +1719,5 @@ xcopy $(TargetDir)core.* $(SolutionDir)MediaPortal.Application\bin\$(Configurati
   <Import Project="..\..\Packages\bass.wasapi.2.4.1.2\build\bass.wasapi.targets" Condition="Exists('..\..\Packages\bass.wasapi.2.4.1.2\build\bass.wasapi.targets')" />
   <Import Project="..\..\Packages\bass.wma.2.4.5.1\build\bass.wma.targets" Condition="Exists('..\..\Packages\bass.wma.2.4.5.1\build\bass.wma.targets')" />
   <Import Project="..\..\Packages\bass.wv.2.4.6.0\build\bass.wv.targets" Condition="Exists('..\..\Packages\bass.wv.2.4.6.0\build\bass.wv.targets')" />
+  <Import Project="..\..\Packages\bass.asio.1.3.1\build\bass.asio.targets" Condition="Exists('..\..\Packages\bass.asio.1.3.1\build\bass.asio.targets')" />
 </Project>
