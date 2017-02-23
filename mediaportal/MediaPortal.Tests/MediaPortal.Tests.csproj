@@ -138,6 +138,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="Core\Playlists\TestData\exampleList.b4s">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

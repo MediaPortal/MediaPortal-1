@@ -259,6 +259,9 @@
     <EmbeddedResource Include="Video.gif" />
     <EmbeddedResource Include="VideoDisabled.gif" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>
