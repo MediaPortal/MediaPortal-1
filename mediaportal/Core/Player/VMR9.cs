@@ -572,6 +572,7 @@ namespace MediaPortal.Player
             IVideoWindow videoWin = (IVideoWindow)_graphBuilder;
             if (videoWin != null)
             {
+              videoWin.put_FullScreenMode(OABool.False);
               videoWin.put_WindowStyle((WindowStyle)((int)WindowStyle.Child + (int)WindowStyle.ClipChildren + (int)WindowStyle.ClipSiblings));
               videoWin.put_MessageDrain(GUIGraphicsContext.ActiveForm);
             }
@@ -1364,7 +1365,7 @@ namespace MediaPortal.Player
     {
       lock (this)
       {
-        if (!UseMadVideoRenderer3D || g_Player.IsTimeShifting || GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
+        if (!UseMadVideoRenderer3D || g_Player.IsTV || g_Player.IsTimeShifting || GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
         {
           IVideoWindow videoWin = (IVideoWindow)_graphBuilder;
           if (videoWin != null)
@@ -1372,6 +1373,15 @@ namespace MediaPortal.Player
             videoWin.put_WindowStyle((WindowStyle) ((int) WindowStyle.Child + (int) WindowStyle.ClipChildren + (int) WindowStyle.ClipSiblings));
             videoWin.put_MessageDrain(GUIGraphicsContext.form.Handle);
             Log.Debug("VMR9: StartMediaCtrl start put_WindowStyle");
+          }
+        }
+        else if (UseMadVideoRenderer3D && GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+        {
+          IVideoWindow videoWin = (IVideoWindow)_graphBuilder;
+          if (videoWin != null)
+          {
+            videoWin.put_FullScreenMode(OABool.True);
+            Log.Debug("VMR9: StartMediaCtrl start UseMadVideoRenderer3D put_WindowStyle");
           }
         }
 
