@@ -49,6 +49,14 @@ namespace MediaPortal.GUI.Library
 
     private static Stopwatch clockWatchMadVr = new Stopwatch();
 
+    #region Value before/after Route
+
+    private static string _selecteditem = string.Empty;
+    private static string _selectedindex = string.Empty;
+    private static string _highlightedbutton = string.Empty;
+
+    #endregion
+
     #region Frame limiting code
 
     private static void WaitForFrameClock()
@@ -1500,11 +1508,22 @@ namespace MediaPortal.GUI.Library
           GUIMessage msgDlg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, currentRoutedWindow.GetID, 0, 0,
                                  currentRoutedWindow.PreviousWindowId, 0, null);
           currentRoutedWindow.OnMessage(msgDlg);
+
+ //         Log.Debug("*** UnROUTE BEFORE *** V: Selected: {0} High: {1}", _selecteditem, _highlightedbutton);
+ //         Log.Debug("*** UnROUTE BEFORE *** P: Selected: {0} High: {1}", GUIPropertyManager.GetProperty("#selecteditem"), GUIPropertyManager.GetProperty("#highlightedbutton"));
+
+          GUIPropertyManager.SetProperty("#selecteditem", _selecteditem);
+          GUIPropertyManager.SetProperty("#selectedindex", _selectedindex);
+          GUIPropertyManager.SetProperty("#highlightedbutton", _highlightedbutton);
+        
         }
         //if (_currentWindowName != string.Empty && _routedWindow != null)
         {
           GUIPropertyManager.SetProperty("#currentmodule", _currentWindowName);
         }
+
+ //       Log.Debug("*** UnROUTE AFTER *** V: Selected: {0} High: {1}", _selecteditem, _highlightedbutton);
+ //       Log.Debug("*** UnROUTE AFTER *** P: Selected: {0} High: {1}", GUIPropertyManager.GetProperty("#selecteditem"), GUIPropertyManager.GetProperty("#highlightedbutton"));
 
         _routedWindow = null;
         _shouldRefresh = true;
@@ -1520,6 +1539,13 @@ namespace MediaPortal.GUI.Library
         Log.Debug("WindowManager: route {0}:{1}->{2}:{3}",
                   GetWindow(ActiveWindow), ActiveWindow, _routedWindow, dialogId);
         _currentWindowName = GUIPropertyManager.GetProperty("#currentmodule");
+
+        _selecteditem = GUIPropertyManager.GetProperty("#selecteditem");
+        _selectedindex = GUIPropertyManager.GetProperty("#selectedindex");
+        _highlightedbutton = GUIPropertyManager.GetProperty("#highlightedbutton");
+
+        Log.Debug("*** ROUTETOWINDOW ***  V: Selected: {0} High: {1}", _selecteditem, _highlightedbutton);
+        Log.Debug("*** ROUTETOWINDOW ***  P: Selected: {0} High: {1}", GUIPropertyManager.GetProperty("#selecteditem"), GUIPropertyManager.GetProperty("#highlightedbutton"));
       }
     }
 
