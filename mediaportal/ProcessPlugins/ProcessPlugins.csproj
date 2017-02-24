@@ -312,9 +312,6 @@
     <EmbeddedResource Include="LastFMScrobbler\LastFMScrobbler.gif" />
     <EmbeddedResource Include="LastFMScrobbler\LastFMScrobblerDisabled.gif" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="app.config" />
-  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>

@@ -231,9 +231,6 @@
   <ItemGroup>
     <EmbeddedResource Include="Itunes\iTunesLogoDisabled.png" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="app.config" />
-  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>

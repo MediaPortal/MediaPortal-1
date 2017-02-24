@@ -1653,7 +1653,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
     <None Include="UserInterfaceControls\Resources\config.ico" />
   </ItemGroup>
   <ItemGroup>

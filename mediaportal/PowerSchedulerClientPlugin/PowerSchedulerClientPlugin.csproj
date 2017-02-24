@@ -140,9 +140,6 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="app.config" />
-  </ItemGroup>
   <PropertyGroup>
     <PreBuildEvent>xcopy "$(ProjectDir)..\..\TvEngine3\TVLibrary\Plugins\PowerScheduler\Setup\*" "$(ProjectDir)Setup" /D /Y
 xcopy "$(ProjectDir)Setup\*" "$(ProjectDir)..\..\TvEngine3\TVLibrary\Plugins\PowerScheduler\Setup" /D /Y</PreBuildEvent>
