@@ -82,6 +82,11 @@ namespace MediaPortal.GUI.Library
         SkinString skin = enumer.Current.Value;
         if (skin.Name == line)
         {
+          if (skin.Kind == Kind.TRANSIENT && kind == Kind.PERSISTENT)
+          {
+            skin.Kind = kind;
+            _skinStringSettings[enumer.Current.Key] = skin;
+          }
           return enumer.Current.Key;
         }
       }
@@ -185,6 +190,11 @@ namespace MediaPortal.GUI.Library
         SkinBool skin = enumer.Current.Value;
         if (skin.Name == setting)
         {
+          if (skin.Kind == Kind.TRANSIENT && kind == Kind.PERSISTENT)
+          {
+            skin.Kind = kind;
+            _skinBoolSettings[enumer.Current.Key] = skin;
+          }
           return enumer.Current.Key;
         }
       }
