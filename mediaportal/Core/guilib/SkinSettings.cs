@@ -173,7 +173,7 @@ namespace MediaPortal.GUI.Library
     /// <returns></returns>
     public static int TranslateSkinBool(string setting)
     {
-      return TranslateSkinString(setting, Kind.TRANSIENT);
+      return TranslateSkinBool(setting, Kind.TRANSIENT);
     }
 
     /// <summary>
