@@ -3907,12 +3907,13 @@ namespace MediaPortal.Player
       switch (message.Message)
       {
         case GUIMessage.MessageType.GUI_MSG_ONDISPLAYMADVRCHANGED:
-          //lock (GUIGraphicsContext.RenderLock)
+          lock (GUIGraphicsContext.RenderLock)
           {
             // Resize OSD/Screen when resolution change
             if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
                 (GUIGraphicsContext.InVmr9Render && GUIGraphicsContext.ForceMadVRRefresh) || GUIGraphicsContext.ForceMadVRFirstStart)
             {
+              GUIGraphicsContext.ForceMadVRRefresh = false;
               Size client = GUIGraphicsContext.form.ClientSize;
 
               GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferWidth = client.Width;
@@ -3943,7 +3944,6 @@ namespace MediaPortal.Player
               GUIGraphicsContext.NoneDone = false;
               GUIGraphicsContext.TopAndBottomDone = false;
               GUIGraphicsContext.SideBySideDone = false;
-              GUIGraphicsContext.ForceMadVRRefresh = false;
               Log.Debug("g_player VideoWindowChanged() resize OSD/Screen when resolution change for madVR");
             }
             else if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
