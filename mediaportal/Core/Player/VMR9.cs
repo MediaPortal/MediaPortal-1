@@ -572,7 +572,7 @@ namespace MediaPortal.Player
             IVideoWindow videoWin = (IVideoWindow)_graphBuilder;
             if (videoWin != null)
             {
-              videoWin.put_FullScreenMode(OABool.False);
+              //videoWin.put_FullScreenMode(OABool.False);
               videoWin.put_WindowStyle((WindowStyle)((int)WindowStyle.Child + (int)WindowStyle.ClipChildren + (int)WindowStyle.ClipSiblings));
               videoWin.put_MessageDrain(GUIGraphicsContext.ActiveForm);
             }
@@ -1052,7 +1052,7 @@ namespace MediaPortal.Player
             GUIWindowManager.SendThreadMessage(msg);
           }
         }
-        if (GUIGraphicsContext.ForceMadVRFirstStart)
+        if (GUIGraphicsContext.ForceMadVRRefresh)
         {
           GUIMessage message = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ONDISPLAYMADVRCHANGED, 0, 0, 0, 0, 0, null);
           GUIWindowManager.SendMessage(message);
@@ -1375,15 +1375,15 @@ namespace MediaPortal.Player
             Log.Debug("VMR9: StartMediaCtrl start put_WindowStyle");
           }
         }
-        else if (UseMadVideoRenderer3D && GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
-        {
-          IVideoWindow videoWin = (IVideoWindow)_graphBuilder;
-          if (videoWin != null)
-          {
-            videoWin.put_FullScreenMode(OABool.True);
-            Log.Debug("VMR9: StartMediaCtrl start UseMadVideoRenderer3D put_WindowStyle");
-          }
-        }
+        //else if (UseMadVideoRenderer3D && GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+        //{
+        //  IVideoWindow videoWin = (IVideoWindow)_graphBuilder;
+        //  if (videoWin != null)
+        //  {
+        //    videoWin.put_FullScreenMode(OABool.True);
+        //    Log.Debug("VMR9: StartMediaCtrl start UseMadVideoRenderer3D put_WindowStyle");
+        //  }
+        //}
 
         var hr = mediaCtrl.Run();
         Log.Debug("VMR9: StartMediaCtrl start hr: {0}", hr);

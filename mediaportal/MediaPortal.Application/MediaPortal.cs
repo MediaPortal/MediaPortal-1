@@ -1629,16 +1629,7 @@ public class MediaPortalApp : D3D, IRender
             NeedRecreateSwapChain = true;
             GUIGraphicsContext.ForceMadVRRefresh = true;
 
-            // Force message to avoid crash in madVR
-            GUIGraphicsContext.currentScreen = Screen.FromControl(this);
-            GUIGraphicsContext.form.ClientSize = GUIGraphicsContext.currentScreen.Bounds.Size;
-            if (GUIGraphicsContext.InVmr9Render)
-            {
-              GUIMessage message = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ONDISPLAYMADVRCHANGED, 0, 0, 0, 0, 0, null);
-              GUIWindowManager.SendMessage(message);
-            }
-
-            Log.Debug("Main: WM_DISPLAYCHANGE madVR screen change");
+            Log.Debug("Main: WM_DISPLAYCHANGE madVR screen change triggered");
             Log.Debug("Main: WM_DISPLAYCHANGE madVR Width x Height : {0} x {1}", screen.Bounds.Size.Width, screen.Bounds.Size.Height);
           }
           break;
