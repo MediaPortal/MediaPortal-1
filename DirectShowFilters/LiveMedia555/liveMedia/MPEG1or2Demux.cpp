@@ -1,7 +1,7 @@
 /**********
 This library is free software; you can redistribute it and/or modify it under
 the terms of the GNU Lesser General Public License as published by the
-Free Software Foundation; either version 2.1 of the License, or (at your
+Free Software Foundation; either version 3 of the License, or (at your
 option) any later version. (See <http://www.gnu.org/copyleft/lesser.html>.)
 
 This library is distributed in the hope that it will be useful, but WITHOUT
@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2016 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2017 Live Networks, Inc.  All rights reserved.
 // Demultiplexer for a MPEG 1 or 2 Program Stream
 // Implementation
 
@@ -389,15 +389,6 @@ void MPEGProgramStreamParser::parsePackHeader() {
 
     // We're supposed to have a pack header here, but check also for
     // a system header or a PES packet, just in case:
-    // START Team MediaPortal modification - for MPFileWriter compatibility.
-    // I'm not sure of the specifics. Perhaps this it relates to a certain
-    // muxer, demuxer or encoder?
-    if ((first4Bytes & 0xffffff00) == 0x0001ba00)
-    {
-      skipBytes(3);
-      break;
-    }
-    // END Team MediaPortal modification
     if (first4Bytes == PACK_START_CODE) {
       skipBytes(4);
       break;
