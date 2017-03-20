@@ -473,7 +473,8 @@ namespace MediaPortal.GUI.Library
       _windowXmlFileName = skinFileName;
 
       // if windows supports delayed loading then do nothing else load the xml file now
-      if (SupportsDelayedLoad)
+      // Why we need to force to load dialogProgress now to avoid error in some plugin like GuiRSS
+      if (SupportsDelayedLoad && !skinFileName.ToLowerInvariant().Contains("dialogprogress.xml"))
       {
         return true;
       }
