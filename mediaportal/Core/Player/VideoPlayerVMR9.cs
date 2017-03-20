@@ -681,14 +681,16 @@ namespace MediaPortal.Player
         }
 
         // Another check to verify is the source filter has a video PIN.
-        IPin pinFrom = DirectShowUtil.FindPin(_interfaceSourceFilter, PinDirection.Output, "video");
-        if (pinFrom != null)
+        if (!VMR9AlreadyAdded)
         {
-          AudioOnly = false;
-          DirectShowUtil.ReleaseComObject(pinFrom); pinFrom = null;
-
-          if (!VMR9AlreadyAdded)
+          IPin pinFrom = DirectShowUtil.FindPin(_interfaceSourceFilter, PinDirection.Output, "video");
+          if (pinFrom != null)
           {
+            AudioOnly = false;
+            DirectShowUtil.ReleaseComObject(pinFrom);
+            pinFrom = null;
+
+            // Add video renderer etc.
             Vmr9 = VMR9Util.g_vmr9 = new VMR9Util();
             bool AddVMR9 = VMR9Util.g_vmr9.AddVMR9(graphBuilder);
             if (!AddVMR9)
