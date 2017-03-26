@@ -1,19 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.ComponentModel;
 using System.Drawing;
-using System.Data;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Web;
 using System.Windows.Forms;
 using MediaPortal.Playlists;
-using MediaPortal.UserInterface.Controls;
 using SetupTv;
 using TvControl;
 using TvDatabase;
@@ -40,6 +36,7 @@ namespace AVMTuner
     private int _cardNumber = 2; //TODO:???
     private bool _stopScanning;
     private PlayList _playlist;
+    private Dictionary<string, string> _tuningUrls;
 
     private class DescriptorBag
     {
@@ -49,6 +46,18 @@ namespace AVMTuner
     public AVMTuner()
     {
       InitializeComponent();
+    }
+
+    public override void OnSectionActivated()
+    {
+      base.OnSectionActivated();
+      StartDetection();
+    }
+
+    public override void OnSectionDeActivated()
+    {
+      base.OnSectionDeActivated();
+      CloseConnection();
     }
 
     private void StartDetection()
@@ -92,13 +101,15 @@ namespace AVMTuner
       if (deviceDescriptor == null)
         return;
 
-      ListViewItem deviceItem = new ListViewItem();
-      deviceItem.Text = rootDeviceDescriptor.FriendlyName;
+      ListViewItem deviceItem = new ListViewItem(rootDeviceDescriptor.FriendlyName);
       deviceItem.Tag = new DescriptorBag { RootDescriptor = rootDescriptor, DeviceDescriptor = deviceDescriptor };
       listDevices.Items.Add(deviceItem);
+      // Auto select
+      if (listDevices.SelectedItem == null)
+        listDevices.SetSelected(0, true);
     }
 
-    private PlayList CombineM3Us(List<string> m3uLists)
+    private void CombineM3Us(List<string> m3uLists)
     {
       List<string> playListLines = new List<string>();
       using (var webClient = new WebClient())
@@ -119,7 +130,7 @@ namespace AVMTuner
 
       Dictionary<string, HashSet<int>> transponderUrls = new Dictionary<string, HashSet<int>>();
       // Key is the Frequencey.pmtPID, which is the 6th pid in the source url
-      Dictionary<string, string> tuningUrls = new Dictionary<string, string>();
+      _tuningUrls = new Dictionary<string, string>();
       foreach (var rtspLine in playListLines.Where(l => l.StartsWith("rtsp://", StringComparison.InvariantCultureIgnoreCase)))
       {
         var parts = rtspLine.Split(new[] { "&pids=" }, StringSplitOptions.RemoveEmptyEntries);
@@ -131,7 +142,7 @@ namespace AVMTuner
           foreach (int pid in parts[1].Split(',').Select(int.Parse))
             transponderUrls[parts[0]].Add(pid);
 
-          tuningUrls.Add(GetUrlKey(rtspLine), rtspLine);
+          _tuningUrls.Add(GetUrlKey(rtspLine), rtspLine);
         }
       }
 
@@ -151,7 +162,8 @@ namespace AVMTuner
         playList.Add(new PlayListItem(transponderName, rtspUrl));
       }
       File.WriteAllLines(PLAYLIST_NAME, combinedTransponderList);
-      return playList;
+
+      _playlist = playList;
     }
 
     private string GetUrlKey(string rtspLine)
@@ -175,8 +187,22 @@ namespace AVMTuner
       return string.Empty;
     }
 
+    private string GetFrequency(string rtspLine)
+    {
+      //# EXTINF:0,Das Erste
+      //# EXTVLCOPT:network-caching=1000
+      //rtsp://192.168.2.80:554/?freq=786&bw=8&msys=dvbc&mtype=64qam&sr=6900&specinv=1&pids=0,16,17,18,20,100,101,102,103,104,106,84,105,1176,2070,2171
+      Uri myUri = new Uri(rtspLine);
+      NameValueCollection parameters = HttpUtility.ParseQueryString(myUri.Query);
+      int freq;
+      return int.TryParse(parameters["freq"], out freq) ? freq.ToString() : string.Empty;
+    }
+
     private void listDevices_SelectedIndexChanged(object sender, EventArgs args)
     {
+      if (_isScanning)
+        return;
+
       mpButtonScanTv.Enabled = false;
       lblTunerNumber.Text = "";
       var selectedItem = (ListViewItem)listDevices.SelectedItems[0];
@@ -219,11 +245,6 @@ namespace AVMTuner
       _connection = null;
     }
 
-    private void mpDetect_Click(object sender, EventArgs e)
-    {
-      StartDetection();
-    }
-
     private void btnImport_Click(object sender, EventArgs e)
     {
       if (_isScanning == false)
@@ -242,7 +263,7 @@ namespace AVMTuner
         if (chkScanRadio.Checked && !string.IsNullOrEmpty(listRadio))
           m3uLists.Add(listRadio);
 
-        _playlist = CombineM3Us(m3uLists);
+        CombineM3Us(m3uLists);
 
         //bool isUsed;
         //bool hasLock;
@@ -370,12 +391,11 @@ namespace AVMTuner
               channel.Name = name;
             }
             bool exists;
-            TuningDetail currentDetail;
             //Check if we already have this tuningdetail. According to DVB-IP specifications there are two ways to identify DVB-IP
             //services: one ONID + SID based, the other domain/URL based. At this time we don't fully and properly implement the DVB-IP
             //specifications, so the safest method for service identification is the URL. The user has the option to enable the use of
             //ONID + SID identification and channel move detection...
-            currentDetail = layer.GetTuningDetail(channel.NetworkId, channel.ServiceId, TvBusinessLayer.GetChannelType(channel));
+            var currentDetail = layer.GetTuningDetail(channel.NetworkId, channel.ServiceId, TvBusinessLayer.GetChannelType(channel));
             if (currentDetail == null)
             {
               //add new channel
@@ -402,6 +422,22 @@ namespace AVMTuner
             {
               layer.AddChannelToGroup(dbChannel, channel.Provider);
             }
+
+            // Replace the url by the correct channel url (tuning used full transponder with all channel pids)
+            var pmtPid = channel.PmtPid;
+            var freq = GetFrequency(url);
+            string streamUrl;
+            string urlKey = string.Format("{0}.{1}", freq, pmtPid);
+            if (_tuningUrls.TryGetValue(urlKey, out streamUrl))
+            {
+              channel.Url = streamUrl;
+            }
+            else
+            {
+              item.Text = "Skipping channel that was not part of the playlist.";
+              continue;
+            }
+
             if (currentDetail == null)
             {
               layer.AddTuningDetails(dbChannel, channel);
@@ -458,13 +494,8 @@ namespace AVMTuner
         _isScanning = false;
       }
       ListViewItem lastItem = listViewStatus.Items.Add(new ListViewItem("Scan done..."));
-      lastItem =
-        listViewStatus.Items.Add(
-          new ListViewItem(String.Format("Total radio channels new:{0} updated:{1}", radioChannelsNew,
-                                         radioChannelsUpdated)));
-      lastItem =
-        listViewStatus.Items.Add(
-          new ListViewItem(String.Format("Total tv channels new:{0} updated:{1}", tvChannelsNew, tvChannelsUpdated)));
+      lastItem = listViewStatus.Items.Add(new ListViewItem(String.Format("Total radio channels new:{0} updated:{1}", radioChannelsNew, radioChannelsUpdated)));
+      lastItem = listViewStatus.Items.Add(new ListViewItem(String.Format("Total tv channels new:{0} updated:{1}", tvChannelsNew, tvChannelsUpdated)));
       lastItem.EnsureVisible();
     }
 

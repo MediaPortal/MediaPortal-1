@@ -29,7 +29,6 @@
     private void InitializeComponent()
     {
       this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.mpDetect = new MediaPortal.UserInterface.Controls.MPButton();
       this.listDevices = new System.Windows.Forms.ListBox();
       this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.lblTunerNumber = new MediaPortal.UserInterface.Controls.MPLabel();
@@ -52,31 +51,22 @@
       this.mpLabel1.TabIndex = 1;
       this.mpLabel1.Text = "Imports channels from AVM FritzBox / WLAN Repeater DVB-C";
       // 
-      // mpDetect
-      // 
-      this.mpDetect.Location = new System.Drawing.Point(7, 139);
-      this.mpDetect.Name = "mpDetect";
-      this.mpDetect.Size = new System.Drawing.Size(75, 23);
-      this.mpDetect.TabIndex = 0;
-      this.mpDetect.Text = "Detect";
-      this.mpDetect.UseVisualStyleBackColor = true;
-      this.mpDetect.Click += new System.EventHandler(this.mpDetect_Click);
-      // 
       // listDevices
       // 
       this.listDevices.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+      this.listDevices.DisplayMember = "Text";
       this.listDevices.FormattingEnabled = true;
       this.listDevices.Location = new System.Drawing.Point(6, 36);
       this.listDevices.Name = "listDevices";
-      this.listDevices.Size = new System.Drawing.Size(883, 69);
+      this.listDevices.Size = new System.Drawing.Size(883, 43);
       this.listDevices.TabIndex = 3;
       this.listDevices.SelectedIndexChanged += new System.EventHandler(this.listDevices_SelectedIndexChanged);
       // 
       // mpLabel2
       // 
       this.mpLabel2.AutoSize = true;
-      this.mpLabel2.Location = new System.Drawing.Point(6, 112);
+      this.mpLabel2.Location = new System.Drawing.Point(7, 82);
       this.mpLabel2.Name = "mpLabel2";
       this.mpLabel2.Size = new System.Drawing.Size(91, 13);
       this.mpLabel2.TabIndex = 4;
@@ -85,7 +75,7 @@
       // lblTunerNumber
       // 
       this.lblTunerNumber.AutoSize = true;
-      this.lblTunerNumber.Location = new System.Drawing.Point(118, 112);
+      this.lblTunerNumber.Location = new System.Drawing.Point(119, 82);
       this.lblTunerNumber.Name = "lblTunerNumber";
       this.lblTunerNumber.Size = new System.Drawing.Size(0, 13);
       this.lblTunerNumber.TabIndex = 4;
@@ -97,9 +87,9 @@
             | System.Windows.Forms.AnchorStyles.Right)));
       this.listViewStatus.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1});
-      this.listViewStatus.Location = new System.Drawing.Point(6, 296);
+      this.listViewStatus.Location = new System.Drawing.Point(6, 244);
       this.listViewStatus.Name = "listViewStatus";
-      this.listViewStatus.Size = new System.Drawing.Size(883, 122);
+      this.listViewStatus.Size = new System.Drawing.Size(883, 285);
       this.listViewStatus.TabIndex = 9;
       this.listViewStatus.UseCompatibleStateImageBehavior = false;
       this.listViewStatus.View = System.Windows.Forms.View.Details;
@@ -114,7 +104,7 @@
       // 
       this.progressBar1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-      this.progressBar1.Location = new System.Drawing.Point(7, 266);
+      this.progressBar1.Location = new System.Drawing.Point(7, 214);
       this.progressBar1.Name = "progressBar1";
       this.progressBar1.Size = new System.Drawing.Size(882, 10);
       this.progressBar1.TabIndex = 8;
@@ -122,7 +112,7 @@
       // checkBoxCreateGroups
       // 
       this.checkBoxCreateGroups.AutoSize = true;
-      this.checkBoxCreateGroups.Location = new System.Drawing.Point(10, 168);
+      this.checkBoxCreateGroups.Location = new System.Drawing.Point(10, 116);
       this.checkBoxCreateGroups.Name = "checkBoxCreateGroups";
       this.checkBoxCreateGroups.Size = new System.Drawing.Size(175, 17);
       this.checkBoxCreateGroups.TabIndex = 11;
@@ -131,7 +121,7 @@
       // 
       // mpButtonScanTv
       // 
-      this.mpButtonScanTv.Location = new System.Drawing.Point(88, 139);
+      this.mpButtonScanTv.Location = new System.Drawing.Point(295, 112);
       this.mpButtonScanTv.Name = "mpButtonScanTv";
       this.mpButtonScanTv.Size = new System.Drawing.Size(131, 23);
       this.mpButtonScanTv.TabIndex = 13;
@@ -144,7 +134,7 @@
       this.chkScanSD.AutoSize = true;
       this.chkScanSD.Checked = true;
       this.chkScanSD.CheckState = System.Windows.Forms.CheckState.Checked;
-      this.chkScanSD.Location = new System.Drawing.Point(10, 191);
+      this.chkScanSD.Location = new System.Drawing.Point(10, 139);
       this.chkScanSD.Name = "chkScanSD";
       this.chkScanSD.Size = new System.Drawing.Size(105, 17);
       this.chkScanSD.TabIndex = 11;
@@ -156,7 +146,7 @@
       this.chkScanHD.AutoSize = true;
       this.chkScanHD.Checked = true;
       this.chkScanHD.CheckState = System.Windows.Forms.CheckState.Checked;
-      this.chkScanHD.Location = new System.Drawing.Point(10, 214);
+      this.chkScanHD.Location = new System.Drawing.Point(10, 162);
       this.chkScanHD.Name = "chkScanHD";
       this.chkScanHD.Size = new System.Drawing.Size(106, 17);
       this.chkScanHD.TabIndex = 11;
@@ -168,7 +158,7 @@
       this.chkScanRadio.AutoSize = true;
       this.chkScanRadio.Checked = true;
       this.chkScanRadio.CheckState = System.Windows.Forms.CheckState.Checked;
-      this.chkScanRadio.Location = new System.Drawing.Point(10, 237);
+      this.chkScanRadio.Location = new System.Drawing.Point(10, 185);
       this.chkScanRadio.Name = "chkScanRadio";
       this.chkScanRadio.Size = new System.Drawing.Size(101, 17);
       this.chkScanRadio.TabIndex = 11;
@@ -190,7 +180,6 @@
       this.Controls.Add(this.mpLabel2);
       this.Controls.Add(this.listDevices);
       this.Controls.Add(this.mpLabel1);
-      this.Controls.Add(this.mpDetect);
       this.Name = "AVMTuner";
       this.Size = new System.Drawing.Size(902, 543);
       this.ResumeLayout(false);
@@ -200,7 +189,6 @@
 
     #endregion
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel1;
-    private MediaPortal.UserInterface.Controls.MPButton mpDetect;
     private System.Windows.Forms.ListBox listDevices;
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel2;
     private MediaPortal.UserInterface.Controls.MPLabel lblTunerNumber;
