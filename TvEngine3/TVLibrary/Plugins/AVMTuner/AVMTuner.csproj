@@ -105,6 +105,9 @@
       <Name>PluginBase</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="Logo.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>xcopy  $(TargetPath) "C:\Program Files (x86)\Team MediaPortal\MP2-Server\Plugins\SlimTv.Service3\Plugins" /y</PostBuildEvent>

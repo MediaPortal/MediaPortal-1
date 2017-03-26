@@ -106,7 +106,10 @@ namespace AVMTuner
       listDevices.Items.Add(deviceItem);
       // Auto select
       if (listDevices.SelectedItem == null)
+      {
         listDevices.SetSelected(0, true);
+        listDevices_SelectedIndexChanged(listDevices, EventArgs.Empty);
+      }
     }
 
     private void CombineM3Us(List<string> m3uLists)
@@ -500,11 +503,6 @@ namespace AVMTuner
     }
 
     private void UpdateStatus()
-    {
-
-    }
-
-    private void listViewStatus_SelectedIndexChanged(object sender, EventArgs e)
     {
 
     }
