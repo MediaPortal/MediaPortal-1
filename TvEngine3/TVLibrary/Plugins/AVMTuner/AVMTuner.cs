@@ -36,6 +36,7 @@ namespace AVMTuner
     private bool _stopScanning;
     private PlayList _playlist;
     private Dictionary<string, string> _tuningUrls;
+    private byte _numberOfTuners;
 
     private class DescriptorBag
     {
@@ -232,8 +233,8 @@ namespace AVMTuner
         _avmProxy = new AvmProxy(_avmTunerService);
         mpButtonScanTv.Enabled = true;
 
-        var tuners = _avmProxy.GetNumberOfTuners();
-        lblTunerNumber.Text = tuners.ToString();
+        _numberOfTuners = _avmProxy.GetNumberOfTuners();
+        lblTunerNumber.Text = _numberOfTuners.ToString();
       }
 
     }
@@ -465,6 +466,16 @@ namespace AVMTuner
               //update tuning details...
               TuningDetail td = layer.UpdateTuningDetails(dbChannel, channel, currentDetail);
               td.Persist();
+            }
+
+            // Auto map to all DVB-IP cards for the number of available tuners
+            if (chkAutoMapTuner.Checked)
+            {
+              IList<Card> otherDvbIpCards = Card.ListAll().Where(c => RemoteControl.Instance.Type(c.IdCard) == CardType.DvbIP && c.IdCard != _cardNumber).Take(_numberOfTuners - 1).ToList();
+              foreach (var otherDvbIpCard in otherDvbIpCards)
+              {
+                layer.MapChannelToCard(otherDvbIpCard, dbChannel, false);
+              }
             }
 
             if (channel.IsTv)

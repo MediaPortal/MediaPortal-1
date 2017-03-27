@@ -49,6 +49,7 @@ namespace AVMTuner
       this.chkScanSD = new System.Windows.Forms.CheckBox();
       this.checkBoxCreateGroups = new System.Windows.Forms.CheckBox();
       this.btnDetect = new MediaPortal.UserInterface.Controls.MPButton();
+      this.chkAutoMapTuner = new System.Windows.Forms.CheckBox();
       this.panel1.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
       this.grpTuningOptions.SuspendLayout();
@@ -61,9 +62,9 @@ namespace AVMTuner
             | System.Windows.Forms.AnchorStyles.Right)));
       this.listViewStatus.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1});
-      this.listViewStatus.Location = new System.Drawing.Point(3, 249);
+      this.listViewStatus.Location = new System.Drawing.Point(3, 224);
       this.listViewStatus.Name = "listViewStatus";
-      this.listViewStatus.Size = new System.Drawing.Size(896, 131);
+      this.listViewStatus.Size = new System.Drawing.Size(896, 133);
       this.listViewStatus.TabIndex = 9;
       this.listViewStatus.UseCompatibleStateImageBehavior = false;
       this.listViewStatus.View = System.Windows.Forms.View.Details;
@@ -77,16 +78,16 @@ namespace AVMTuner
       // 
       this.progressBar1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-      this.progressBar1.Location = new System.Drawing.Point(3, 233);
+      this.progressBar1.Location = new System.Drawing.Point(3, 208);
       this.progressBar1.Name = "progressBar1";
       this.progressBar1.Size = new System.Drawing.Size(896, 10);
       this.progressBar1.TabIndex = 8;
       // 
       // mpButtonScanTv
       // 
-      this.mpButtonScanTv.Location = new System.Drawing.Point(216, 113);
+      this.mpButtonScanTv.Location = new System.Drawing.Point(326, 119);
       this.mpButtonScanTv.Name = "mpButtonScanTv";
-      this.mpButtonScanTv.Size = new System.Drawing.Size(91, 60);
+      this.mpButtonScanTv.Size = new System.Drawing.Size(91, 37);
       this.mpButtonScanTv.TabIndex = 13;
       this.mpButtonScanTv.Text = "Scan for channels";
       this.mpButtonScanTv.UseVisualStyleBackColor = true;
@@ -172,11 +173,12 @@ namespace AVMTuner
       this.grpTuningOptions.Controls.Add(this.chkScanRadio);
       this.grpTuningOptions.Controls.Add(this.chkScanHD);
       this.grpTuningOptions.Controls.Add(this.chkScanSD);
+      this.grpTuningOptions.Controls.Add(this.chkAutoMapTuner);
       this.grpTuningOptions.Controls.Add(this.checkBoxCreateGroups);
       this.grpTuningOptions.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.grpTuningOptions.Location = new System.Drawing.Point(3, 113);
       this.grpTuningOptions.Name = "grpTuningOptions";
-      this.grpTuningOptions.Size = new System.Drawing.Size(200, 114);
+      this.grpTuningOptions.Size = new System.Drawing.Size(317, 89);
       this.grpTuningOptions.TabIndex = 17;
       this.grpTuningOptions.TabStop = false;
       this.grpTuningOptions.Text = "Tuning options";
@@ -186,7 +188,7 @@ namespace AVMTuner
       this.chkScanRadio.AutoSize = true;
       this.chkScanRadio.Checked = true;
       this.chkScanRadio.CheckState = System.Windows.Forms.CheckState.Checked;
-      this.chkScanRadio.Location = new System.Drawing.Point(16, 89);
+      this.chkScanRadio.Location = new System.Drawing.Point(196, 63);
       this.chkScanRadio.Name = "chkScanRadio";
       this.chkScanRadio.Size = new System.Drawing.Size(101, 17);
       this.chkScanRadio.TabIndex = 12;
@@ -198,7 +200,7 @@ namespace AVMTuner
       this.chkScanHD.AutoSize = true;
       this.chkScanHD.Checked = true;
       this.chkScanHD.CheckState = System.Windows.Forms.CheckState.Checked;
-      this.chkScanHD.Location = new System.Drawing.Point(16, 66);
+      this.chkScanHD.Location = new System.Drawing.Point(196, 40);
       this.chkScanHD.Name = "chkScanHD";
       this.chkScanHD.Size = new System.Drawing.Size(106, 17);
       this.chkScanHD.TabIndex = 13;
@@ -210,7 +212,7 @@ namespace AVMTuner
       this.chkScanSD.AutoSize = true;
       this.chkScanSD.Checked = true;
       this.chkScanSD.CheckState = System.Windows.Forms.CheckState.Checked;
-      this.chkScanSD.Location = new System.Drawing.Point(16, 43);
+      this.chkScanSD.Location = new System.Drawing.Point(196, 17);
       this.chkScanSD.Name = "chkScanSD";
       this.chkScanSD.Size = new System.Drawing.Size(105, 17);
       this.chkScanSD.TabIndex = 14;
@@ -230,13 +232,25 @@ namespace AVMTuner
       // btnDetect
       // 
       this.btnDetect.ImageAlign = System.Drawing.ContentAlignment.TopLeft;
-      this.btnDetect.Location = new System.Drawing.Point(313, 113);
+      this.btnDetect.Location = new System.Drawing.Point(326, 162);
       this.btnDetect.Name = "btnDetect";
-      this.btnDetect.Size = new System.Drawing.Size(91, 60);
+      this.btnDetect.Size = new System.Drawing.Size(91, 37);
       this.btnDetect.TabIndex = 13;
       this.btnDetect.Text = "Detect Devices";
       this.btnDetect.UseVisualStyleBackColor = true;
       this.btnDetect.Click += new System.EventHandler(this.btnDetect_Click);
+      // 
+      // chkAutoMapTuner
+      // 
+      this.chkAutoMapTuner.AutoSize = true;
+      this.chkAutoMapTuner.Checked = true;
+      this.chkAutoMapTuner.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.chkAutoMapTuner.Location = new System.Drawing.Point(16, 43);
+      this.chkAutoMapTuner.Name = "chkAutoMapTuner";
+      this.chkAutoMapTuner.Size = new System.Drawing.Size(160, 17);
+      this.chkAutoMapTuner.TabIndex = 15;
+      this.chkAutoMapTuner.Text = "Auto map to available tuners";
+      this.chkAutoMapTuner.UseVisualStyleBackColor = true;
       // 
       // AVMTuner
       // 
@@ -249,7 +263,7 @@ namespace AVMTuner
       this.Controls.Add(this.progressBar1);
       this.Controls.Add(this.panel1);
       this.Name = "AVMTuner";
-      this.Size = new System.Drawing.Size(902, 382);
+      this.Size = new System.Drawing.Size(902, 369);
       this.panel1.ResumeLayout(false);
       this.panel1.PerformLayout();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
@@ -277,5 +291,6 @@ namespace AVMTuner
     private System.Windows.Forms.CheckBox chkScanSD;
     private System.Windows.Forms.CheckBox checkBoxCreateGroups;
     private MediaPortal.UserInterface.Controls.MPButton btnDetect;
+    private System.Windows.Forms.CheckBox chkAutoMapTuner;
   }
 }
