@@ -343,8 +343,6 @@ namespace AVMTuner
         RemoteControl.Instance.EpgGrabberEnabled = false;
         listViewStatus.Items.Clear();
 
-
-        checkBoxCreateGroups.Enabled = false;
         TvBusinessLayer layer = new TvBusinessLayer();
         Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
 
