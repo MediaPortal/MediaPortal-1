@@ -19,7 +19,6 @@ using TvLibrary.Log;
 using UPnP.Infrastructure.CP;
 using UPnP.Infrastructure.CP.Description;
 using UPnP.Infrastructure.CP.DeviceTree;
-using UPnPDeviceSpy;
 
 namespace AVMTuner
 {
@@ -33,7 +32,7 @@ namespace AVMTuner
     private CpService _avmTunerService;
     private AvmProxy _avmProxy;
     private bool _isScanning;
-    private int _cardNumber = 2; //TODO:???
+    private int _cardNumber;
     private bool _stopScanning;
     private PlayList _playlist;
     private Dictionary<string, string> _tuningUrls;
@@ -266,6 +265,12 @@ namespace AVMTuner
         if (chkScanRadio.Checked && !string.IsNullOrEmpty(listRadio))
           m3uLists.Add(listRadio);
 
+        if (m3uLists.Count == 0)
+        {
+          MessageBox.Show(this, "Please select at least one type of channels you want to import.");
+          return;
+        }
+
         CombineM3Us(m3uLists);
 
         //bool isUsed;
@@ -277,6 +282,15 @@ namespace AVMTuner
         //string ipAddresses;
         //var infos = _avmProxy.GetTunerInfos(0, out isUsed, out hasLock, out signalPower, out snr, out channelName, out clientCount, out ipAddresses);
 
+        // Find DVB-IP cards for tuning
+        IList<Card> dbsCards = Card.ListAll().Where(c => RemoteControl.Instance.Type(c.IdCard) == CardType.DvbIP).ToList();
+        if (dbsCards.Count == 0)
+        {
+          MessageBox.Show(this, "No DVB-IP tuner found. Please make sure you set the number of DVB-IP tuners inside TV card setup at least to one.");
+          return;
+        }
+
+        _cardNumber = dbsCards.First().IdCard;
 
         TvBusinessLayer layer = new TvBusinessLayer();
         Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
@@ -297,7 +311,7 @@ namespace AVMTuner
           MessageBox.Show(this, "Tuner is locked. Scanning is not possible at the moment. Perhaps you are using another part of a hybrid card?");
           return;
         }
-        Thread scanThread = new Thread(new ThreadStart(DoScan));
+        Thread scanThread = new Thread(DoScan);
         scanThread.Name = "DVB-IP scan thread";
         scanThread.Start();
       }
@@ -324,6 +338,7 @@ namespace AVMTuner
         _isScanning = true;
         _stopScanning = false;
         mpButtonScanTv.Text = "Cancel...";
+        grpTuningOptions.Enabled = false;
         RemoteControl.Instance.EpgGrabberEnabled = false;
         listViewStatus.Items.Clear();
 
@@ -361,14 +376,14 @@ namespace AVMTuner
           {
             if (RemoteControl.Instance.TunerLocked(_cardNumber) == false)
             {
-              line = String.Format("{0}- {1} - {2} :No Signal", 1 + index, tuneChannel.Url, tuneChannel.Name);
+              line = String.Format("{0}- {1} - {2}: No Signal", 1 + index, tuneChannel.Url, tuneChannel.Name);
               item.Text = line;
               item.ForeColor = Color.Red;
               continue;
             }
             else
             {
-              line = String.Format("{0}- {1} - {2} :Nothing found", 1 + index, tuneChannel.Url, tuneChannel.Name);
+              line = String.Format("{0}- {1} - {2}: Nothing found", 1 + index, tuneChannel.Url, tuneChannel.Name);
               item.Text = line;
               item.ForeColor = Color.Red;
               continue;
@@ -479,7 +494,7 @@ namespace AVMTuner
               }
             }
             layer.MapChannelToCard(card, dbChannel, false);
-            line = String.Format("{0}- {1} :New:{2} Updated:{3}", 1 + index, tuneChannel.Name, newChannels, updatedChannels);
+            line = String.Format("{0}- {1}: New:{2} Updated:{3}", 1 + index, tuneChannel.Name, newChannels, updatedChannels);
             item.Text = line;
           }
         }
@@ -495,6 +510,8 @@ namespace AVMTuner
         RemoteControl.Instance.EpgGrabberEnabled = true;
         progressBar1.Value = 100;
         _isScanning = false;
+        mpButtonScanTv.Text = "Scan for channels";
+        grpTuningOptions.Enabled = true;
       }
       ListViewItem lastItem = listViewStatus.Items.Add(new ListViewItem("Scan done..."));
       lastItem = listViewStatus.Items.Add(new ListViewItem(String.Format("Total radio channels new:{0} updated:{1}", radioChannelsNew, radioChannelsUpdated)));
@@ -505,6 +522,15 @@ namespace AVMTuner
     private void UpdateStatus()
     {
 
+    }
+
+    private void btnDetect_Click(object sender, EventArgs e)
+    {
+      if (_networkTracker == null || _networkTracker.SharedControlPointData == null ||
+          _networkTracker.SharedControlPointData.SSDPController == null)
+        return;
+
+      _networkTracker.SharedControlPointData.SSDPController.SearchAll(null);
     }
   }
 }

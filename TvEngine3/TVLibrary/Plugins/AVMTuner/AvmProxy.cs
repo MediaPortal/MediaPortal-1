@@ -4,8 +4,11 @@ using System.Globalization;
 using MediaPortal.Common.UPnP;
 using UPnP.Infrastructure.CP.DeviceTree;
 
-namespace UPnPDeviceSpy
+namespace AVMTuner
 {
+  /// <summary>
+  /// Proxy class for communication with the AVM device.
+  /// </summary>
   public class AvmProxy : UPnPServiceProxyBase
   {
     public AvmProxy(CpService serviceStub)
