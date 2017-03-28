@@ -214,29 +214,28 @@ namespace AVMTuner
       if (bag == null)
         return;
 
-      DeviceConnection connection;
       string deviceUuid = bag.DeviceDescriptor.DeviceUUID;
       try
       {
         CloseConnection();
-        connection = _connection = _cp.Connect(bag.RootDescriptor, deviceUuid, null /*UPnPExtendedDataTypes.ResolveDataType*/);
+        var connection = _connection = _cp.Connect(bag.RootDescriptor, deviceUuid, null /*UPnPExtendedDataTypes.ResolveDataType*/);
+        connection.DeviceDisconnected += OnUPnPDeviceDisconnected;
+
+        _avmTunerService = connection.Device.FindServiceByServiceId("urn:ses-com:serviceId:satip");
+        if (_avmTunerService != null)
+        {
+          _avmProxy = new AvmProxy(_avmTunerService);
+          mpButtonScanTv.Enabled = true;
+
+          _numberOfTuners = _avmProxy.GetNumberOfTuners();
+          lblTunerNumber.Text = _numberOfTuners.ToString();
+        }
       }
       catch (Exception e)
       {
         MessageBox.Show(string.Format("Error connecting the device {0}", deviceUuid));
-        return;
+        CloseConnection();
       }
-      connection.DeviceDisconnected += OnUPnPDeviceDisconnected;
-      _avmTunerService = connection.Device.FindServiceByServiceId("urn:ses-com:serviceId:satip");
-      if (_avmTunerService != null)
-      {
-        _avmProxy = new AvmProxy(_avmTunerService);
-        mpButtonScanTv.Enabled = true;
-
-        _numberOfTuners = _avmProxy.GetNumberOfTuners();
-        lblTunerNumber.Text = _numberOfTuners.ToString();
-      }
-
     }
 
     private void CloseConnection()
@@ -273,15 +272,6 @@ namespace AVMTuner
         }
 
         CombineM3Us(m3uLists);
-
-        //bool isUsed;
-        //bool hasLock;
-        //double signalPower;
-        //double snr;
-        //string channelName;
-        //byte clientCount;
-        //string ipAddresses;
-        //var infos = _avmProxy.GetTunerInfos(0, out isUsed, out hasLock, out signalPower, out snr, out channelName, out clientCount, out ipAddresses);
 
         // Find DVB-IP cards for tuning
         IList<Card> dbsCards = Card.ListAll().Where(c => RemoteControl.Instance.Type(c.IdCard) == CardType.DvbIP).ToList();
@@ -331,6 +321,7 @@ namespace AVMTuner
       int tvChannelsUpdated = 0;
       int radioChannelsUpdated = 0;
 
+      // Note: Code is taken from DvbIPCard scan code and slighly modified
       IUser user = new User();
       user.CardId = _cardNumber;
       try
@@ -361,28 +352,25 @@ namespace AVMTuner
           string url = enumerator.Current.FileName.Substring(enumerator.Current.FileName.LastIndexOf('\\') + 1);
           string name = enumerator.Current.Description;
 
-          DVBIPChannel tuneChannel = new DVBIPChannel();
-          tuneChannel.Url = url;
-          tuneChannel.Name = name;
-          string line = String.Format("{0}- {1} - {2}", 1 + index, tuneChannel.Name, tuneChannel.Url);
+          DVBIPChannel tuneChannel = new DVBIPChannel { Url = url, Name = name };
+          string line = string.Format("{0}- {1} - {2}", 1 + index, tuneChannel.Name, tuneChannel.Url);
           ListViewItem item = listViewStatus.Items.Add(new ListViewItem(line));
           item.EnsureVisible();
           RemoteControl.Instance.Tune(ref user, tuneChannel, -1);
-          IChannel[] channels;
-          channels = RemoteControl.Instance.Scan(_cardNumber, tuneChannel);
+          var channels = RemoteControl.Instance.Scan(_cardNumber, tuneChannel);
           UpdateStatus();
           if (channels == null || channels.Length == 0)
           {
             if (RemoteControl.Instance.TunerLocked(_cardNumber) == false)
             {
-              line = String.Format("{0}- {1} - {2}: No Signal", 1 + index, tuneChannel.Url, tuneChannel.Name);
+              line = string.Format("{0}- {1} - {2}: No Signal", 1 + index, tuneChannel.Url, tuneChannel.Name);
               item.Text = line;
               item.ForeColor = Color.Red;
               continue;
             }
             else
             {
-              line = String.Format("{0}- {1} - {2}: Nothing found", 1 + index, tuneChannel.Url, tuneChannel.Name);
+              line = string.Format("{0}- {1} - {2}: Nothing found", 1 + index, tuneChannel.Url, tuneChannel.Name);
               item.Text = line;
               item.ForeColor = Color.Red;
               continue;
@@ -394,7 +382,7 @@ namespace AVMTuner
 
           for (int i = 0; i < channels.Length; ++i)
           {
-            Channel dbChannel;
+            Channel dbChannel = null;
             DVBIPChannel channel = (DVBIPChannel)channels[i];
             if (channels.Length > 1)
             {
@@ -413,7 +401,20 @@ namespace AVMTuner
             //specifications, so the safest method for service identification is the URL. The user has the option to enable the use of
             //ONID + SID identification and channel move detection...
             var currentDetail = layer.GetTuningDetail(channel.NetworkId, channel.ServiceId, TvBusinessLayer.GetChannelType(channel));
-            if (currentDetail == null)
+
+            // Auto combine with existing DVB-C channels. This is intended for setups where already a DVB-C tuner is installed.
+            // In this case the existing channel will get 2 tuning details, one for DVB-C and on for IPTV.
+            if (currentDetail == null && chkAutoCombine.Checked)
+            {
+              var dvbcTuning = layer.GetTuningDetail(channel.NetworkId, channel.ServiceId, TvBusinessLayer.GetChannelType(new DVBCChannel()));
+              if (dvbcTuning != null)
+              {
+                dbChannel = dvbcTuning.ReferencedChannel();
+              }
+            }
+
+            // Either IPTV tuning or combined DVB-C
+            if (currentDetail == null && dbChannel == null)
             {
               //add new channel
               exists = false;
@@ -430,14 +431,15 @@ namespace AVMTuner
             else
             {
               exists = true;
-              dbChannel = currentDetail.ReferencedChannel();
+              if (currentDetail != null)
+                dbChannel = currentDetail.ReferencedChannel();
             }
 
-            layer.AddChannelToGroup(dbChannel, TvConstants.TvGroupNames.AllChannels);
+            AddToGroup(layer, dbChannel, TvConstants.TvGroupNames.AllChannels);
 
             if (checkBoxCreateGroups.Checked)
             {
-              layer.AddChannelToGroup(dbChannel, channel.Provider);
+              AddToGroup(layer, dbChannel, channel.Provider);
             }
 
             // Replace the url by the correct channel url (tuning used full transponder with all channel pids)
@@ -503,11 +505,10 @@ namespace AVMTuner
               }
             }
             layer.MapChannelToCard(card, dbChannel, false);
-            line = String.Format("{0}- {1}: New:{2} Updated:{3}", 1 + index, tuneChannel.Name, newChannels, updatedChannels);
+            line = string.Format("{0}- {1}: New:{2} Updated:{3}", 1 + index, tuneChannel.Name, newChannels, updatedChannels);
             item.Text = line;
           }
         }
-        //DatabaseManager.Instance.SaveChanges();
       }
       catch (Exception ex)
       {
@@ -522,15 +523,30 @@ namespace AVMTuner
         mpButtonScanTv.Text = "Scan for channels";
         grpTuningOptions.Enabled = true;
       }
-      ListViewItem lastItem = listViewStatus.Items.Add(new ListViewItem("Scan done..."));
-      lastItem = listViewStatus.Items.Add(new ListViewItem(String.Format("Total radio channels new:{0} updated:{1}", radioChannelsNew, radioChannelsUpdated)));
-      lastItem = listViewStatus.Items.Add(new ListViewItem(String.Format("Total tv channels new:{0} updated:{1}", tvChannelsNew, tvChannelsUpdated)));
+      listViewStatus.Items.Add(new ListViewItem("Scan done..."));
+      listViewStatus.Items.Add(new ListViewItem(string.Format("Total radio channels new:{0} updated:{1}", radioChannelsNew, radioChannelsUpdated)));
+      ListViewItem lastItem = listViewStatus.Items.Add(new ListViewItem(string.Format("Total tv channels new:{0} updated:{1}", tvChannelsNew, tvChannelsUpdated)));
       lastItem.EnsureVisible();
+    }
+
+    private void AddToGroup(TvBusinessLayer layer, Channel dbChannel, string groupName)
+    {
+      if (dbChannel.IsTv)
+        layer.AddChannelToGroup(dbChannel, groupName);
+      else
+        layer.AddChannelToRadioGroup(dbChannel, groupName);
     }
 
     private void UpdateStatus()
     {
-
+      //bool isUsed;
+      //bool hasLock;
+      //double signalPower;
+      //double snr;
+      //string channelName;
+      //byte clientCount;
+      //string ipAddresses;
+      //var infos = _avmProxy.GetTunerInfos(0, out isUsed, out hasLock, out signalPower, out snr, out channelName, out clientCount, out ipAddresses);
     }
 
     private void btnDetect_Click(object sender, EventArgs e)

@@ -47,9 +47,10 @@ namespace AVMTuner
       this.chkScanRadio = new System.Windows.Forms.CheckBox();
       this.chkScanHD = new System.Windows.Forms.CheckBox();
       this.chkScanSD = new System.Windows.Forms.CheckBox();
+      this.chkAutoMapTuner = new System.Windows.Forms.CheckBox();
       this.checkBoxCreateGroups = new System.Windows.Forms.CheckBox();
       this.btnDetect = new MediaPortal.UserInterface.Controls.MPButton();
-      this.chkAutoMapTuner = new System.Windows.Forms.CheckBox();
+      this.chkAutoCombine = new System.Windows.Forms.CheckBox();
       this.panel1.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
       this.grpTuningOptions.SuspendLayout();
@@ -173,6 +174,7 @@ namespace AVMTuner
       this.grpTuningOptions.Controls.Add(this.chkScanRadio);
       this.grpTuningOptions.Controls.Add(this.chkScanHD);
       this.grpTuningOptions.Controls.Add(this.chkScanSD);
+      this.grpTuningOptions.Controls.Add(this.chkAutoCombine);
       this.grpTuningOptions.Controls.Add(this.chkAutoMapTuner);
       this.grpTuningOptions.Controls.Add(this.checkBoxCreateGroups);
       this.grpTuningOptions.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
@@ -219,6 +221,18 @@ namespace AVMTuner
       this.chkScanSD.Text = "TV Channels SD";
       this.chkScanSD.UseVisualStyleBackColor = true;
       // 
+      // chkAutoMapTuner
+      // 
+      this.chkAutoMapTuner.AutoSize = true;
+      this.chkAutoMapTuner.Checked = true;
+      this.chkAutoMapTuner.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.chkAutoMapTuner.Location = new System.Drawing.Point(16, 43);
+      this.chkAutoMapTuner.Name = "chkAutoMapTuner";
+      this.chkAutoMapTuner.Size = new System.Drawing.Size(160, 17);
+      this.chkAutoMapTuner.TabIndex = 15;
+      this.chkAutoMapTuner.Text = "Auto map to available tuners";
+      this.chkAutoMapTuner.UseVisualStyleBackColor = true;
+      // 
       // checkBoxCreateGroups
       // 
       this.checkBoxCreateGroups.AutoSize = true;
@@ -240,17 +254,17 @@ namespace AVMTuner
       this.btnDetect.UseVisualStyleBackColor = true;
       this.btnDetect.Click += new System.EventHandler(this.btnDetect_Click);
       // 
-      // chkAutoMapTuner
+      // chkAutoCombine
       // 
-      this.chkAutoMapTuner.AutoSize = true;
-      this.chkAutoMapTuner.Checked = true;
-      this.chkAutoMapTuner.CheckState = System.Windows.Forms.CheckState.Checked;
-      this.chkAutoMapTuner.Location = new System.Drawing.Point(16, 43);
-      this.chkAutoMapTuner.Name = "chkAutoMapTuner";
-      this.chkAutoMapTuner.Size = new System.Drawing.Size(160, 17);
-      this.chkAutoMapTuner.TabIndex = 15;
-      this.chkAutoMapTuner.Text = "Auto map to available tuners";
-      this.chkAutoMapTuner.UseVisualStyleBackColor = true;
+      this.chkAutoCombine.AutoSize = true;
+      this.chkAutoCombine.Checked = true;
+      this.chkAutoCombine.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.chkAutoCombine.Location = new System.Drawing.Point(16, 63);
+      this.chkAutoCombine.Name = "chkAutoCombine";
+      this.chkAutoCombine.Size = new System.Drawing.Size(137, 17);
+      this.chkAutoCombine.TabIndex = 15;
+      this.chkAutoCombine.Text = "Auto combine channels";
+      this.chkAutoCombine.UseVisualStyleBackColor = true;
       // 
       // AVMTuner
       // 
@@ -292,5 +306,6 @@ namespace AVMTuner
     private System.Windows.Forms.CheckBox checkBoxCreateGroups;
     private MediaPortal.UserInterface.Controls.MPButton btnDetect;
     private System.Windows.Forms.CheckBox chkAutoMapTuner;
+    private System.Windows.Forms.CheckBox chkAutoCombine;
   }
 }
