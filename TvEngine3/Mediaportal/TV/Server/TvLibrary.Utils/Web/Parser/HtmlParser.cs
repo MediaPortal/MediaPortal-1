@@ -156,7 +156,7 @@ namespace Mediaportal.TV.Server.TvLibrary.Utils.Web.Parser
     /// <returns>string found</returns>
     public string SearchRegex(int index, string regex, bool caseinsensitive, bool remove)
     {
-      return SearchRegex(index, regex, false, caseinsensitive, string.Empty);
+      return SearchRegex(index, regex, caseinsensitive, remove, string.Empty);
     }
 
     /// <summary>
