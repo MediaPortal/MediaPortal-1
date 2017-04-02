@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ArrayOfDVBTTuning xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <!-- SBS -->
+  <DVBTTuning>
+    <Frequency>662500</Frequency>
+    <BandWidth>7</BandWidth>
+    <Offset>125</Offset>
+  </DVBTTuning>
+  <!-- ABC -->
+  <DVBTTuning>
+    <Frequency>669500</Frequency>
+    <BandWidth>7</BandWidth>
+    <Offset>125</Offset>
+  </DVBTTuning>
+</ArrayOfDVBTTuning>

@@ -1375,15 +1375,6 @@ namespace MediaPortal.Player
             Log.Debug("VMR9: StartMediaCtrl start put_WindowStyle");
           }
         }
-        //else if (UseMadVideoRenderer3D && GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
-        //{
-        //  IVideoWindow videoWin = (IVideoWindow)_graphBuilder;
-        //  if (videoWin != null)
-        //  {
-        //    videoWin.put_FullScreenMode(OABool.True);
-        //    Log.Debug("VMR9: StartMediaCtrl start UseMadVideoRenderer3D put_WindowStyle");
-        //  }
-        //}
 
         var hr = mediaCtrl.Run();
         Log.Debug("VMR9: StartMediaCtrl start hr: {0}", hr);

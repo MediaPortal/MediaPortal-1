@@ -367,7 +367,7 @@ namespace MediaPortal.GUI.Library
       }
 
       Log.Debug("SendThreadCallbackAndWait - Waitone");
-      env.finished.WaitOne(10);
+      env.finished.WaitOne(200);
 
       return env.result;
     }

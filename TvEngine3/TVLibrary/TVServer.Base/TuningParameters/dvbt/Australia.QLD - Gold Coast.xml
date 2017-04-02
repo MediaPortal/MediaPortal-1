@@ -1,42 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ArrayOfDVBTTuning xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <!-- SBS -->
   <DVBTTuning>
-    <Frequency>585625</Frequency>
+    <Frequency>613500</Frequency>
     <BandWidth>7</BandWidth>
     <Offset>125</Offset>
   </DVBTTuning>
+  <!-- ABC -->
   <DVBTTuning>
-    <Frequency>634625</Frequency>
+    <Frequency>620500</Frequency>
     <BandWidth>7</BandWidth>
     <Offset>125</Offset>
   </DVBTTuning>
+  <!-- BTQ -->
   <DVBTTuning>
-    <Frequency>704625</Frequency>
+    <Frequency>627500</Frequency>
     <BandWidth>7</BandWidth>
     <Offset>125</Offset>
   </DVBTTuning>
+  <!-- UA -->
   <DVBTTuning>
-    <Frequency>725625</Frequency>
+    <Frequency>634500</Frequency>
     <BandWidth>7</BandWidth>
     <Offset>125</Offset>
   </DVBTTuning>
+  <!-- TVQ -->
   <DVBTTuning>
-    <Frequency>746625</Frequency>
+    <Frequency>641500</Frequency>
     <BandWidth>7</BandWidth>
     <Offset>125</Offset>
   </DVBTTuning>
-   <DVBTTuning>
-    <Frequency>767625</Frequency>
+  <!-- QTQ -->
+  <DVBTTuning>
+    <Frequency>648500</Frequency>
     <BandWidth>7</BandWidth>
     <Offset>125</Offset>
   </DVBTTuning>
-   <DVBTTuning>
-    <Frequency>788625</Frequency>
+  <!-- NEN -->
+  <DVBTTuning>
+    <Frequency>655500</Frequency>
     <BandWidth>7</BandWidth>
     <Offset>125</Offset>
   </DVBTTuning>
-   <DVBTTuning>
-    <Frequency>809625</Frequency>
+  <!-- NBN -->
+  <DVBTTuning>
+    <Frequency>662500</Frequency>
+    <BandWidth>7</BandWidth>
+    <Offset>125</Offset>
+  </DVBTTuning>
+  <!-- NRN -->
+  <DVBTTuning>
+    <Frequency>669500</Frequency>
     <BandWidth>7</BandWidth>
     <Offset>125</Offset>
   </DVBTTuning>
