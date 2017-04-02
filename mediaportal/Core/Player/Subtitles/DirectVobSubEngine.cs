@@ -351,14 +351,14 @@ namespace MediaPortal.Player.Subtitles
       set { vobSub?.put_SubtitleTiming(value, 1, 1); }
     }
 
-    public void DelayPlus()
+    public void DelayPlus(int subtitleDelay)
     {
-      Delay = Delay + delayInterval;
+      Delay = delayInterval * subtitleDelay;
     }
 
-    public void DelayMinus()
+    public void DelayMinus(int subtitleDelay)
     {
-      Delay = Delay - delayInterval;
+      Delay = (delayInterval * (subtitleDelay * -1)) * -1;
     }
 
     public void SetTime(long nsSampleTime) { }

@@ -65,8 +65,8 @@ namespace MediaPortal.Player.Subtitles
 
     int DelayInterval { get; }
 
-    void DelayPlus();
-    void DelayMinus();
+    void DelayPlus(int subtitleDelay);
+    void DelayMinus(int subtitleDelay);
 
     bool AutoShow { get; set; }
   }
@@ -184,9 +184,9 @@ namespace MediaPortal.Player.Subtitles
         get { return 0; }
       }
 
-      public void DelayPlus() {}
+      public void DelayPlus(int subtitleDelay) {}
 
-      public void DelayMinus() {}
+      public void DelayMinus(int subtitleDelay) {}
 
       public bool AutoShow
       {
