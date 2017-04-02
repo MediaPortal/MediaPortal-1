@@ -1051,7 +1051,7 @@ namespace MediaPortal.Player
             GUIWindowManager.SendThreadMessage(msg);
           }
         }
-        if (GUIGraphicsContext.ForceMadVRFirstStart)
+        if (GUIGraphicsContext.ForceMadVRRefresh)
         {
           GUIMessage message = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ONDISPLAYMADVRCHANGED, 0, 0, 0, 0, 0, null);
           GUIWindowManager.SendMessage(message);
