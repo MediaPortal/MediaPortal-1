@@ -1,0 +1,331 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <controls>
+
+
+		<control>
+		  <type>actiongroup</type>
+		  <description>action menu</description>
+		  <defaultcontrol>12</defaultcontrol>
+		  <onexit>50</onexit>
+		  <buttonX>0</buttonX>
+		  <buttonY>0</buttonY>
+		  <buttonwidth>100</buttonwidth>
+          <buttonheight>1080</buttonheight>
+          <textureFocus>-</textureFocus>
+          <textureNoFocus>-</textureNoFocus>
+		  <width>800</width>
+		  <height>800</height>
+		  <dimColor>00ffffff</dimColor>
+
+		  
+     <control>
+	   <type>image</type>
+	   <posX>0</posX>
+	   <posY>0</posY>
+	   <width>1920</width>
+	   <height>1080</height>
+       <texture>black.png</texture>
+        <colordiffuse>99000000</colordiffuse>
+	   <animation effect="fade" time="350" reversible="true">hidden</animation>
+	   <visible>!Control.HasFocus(50)</visible>    
+	 </control>
+		
+	  <control>
+        <type>image</type>
+        <id>0</id>
+        <posX>420</posX>
+        <posY>150</posY>
+        <width>975</width>
+        <height>836</height>
+        <texture>dialogglowbig.png</texture>
+		<visible>!Control.HasFocus(50)</visible>    
+      </control>		
+		
+			<control>
+				<description>group element</description>
+				<type>group</type>
+		        <animation effect="fade" time="350" reversible="true">hidden</animation>
+				<visible>!Control.HasFocus(50)</visible>     			
+				<control>
+					<description>button group</description>
+					<type>group</type>
+					<posX>500</posX>
+					<posY>250</posY>
+					<!-- Remove and Gaps when buttons are not visible -->
+					<layout>StackLayout(0, Vertical, true)</layout>
+					<visible>!Control.HasFocus(50)</visible>
+		<control>
+		  <description>Switch User</description>
+		  <type>button</type>
+		  <id>12</id>
+		  <textureFocus>btn_list_blue2.png</textureFocus>
+          <textureNoFocus></textureNoFocus>
+		  <textYOff>3</textYOff>
+		  <width>820</width>
+		  <height>50</height>
+		  <label>Switch User</label>
+		  <onleft>50</onleft>
+		  <onright>50</onright>
+		  <ondown>11</ondown>
+		  <onup>926</onup>
+		</control>
+
+		<control>
+		  <description>Change Layout</description>
+		  <type>button</type>
+		  <id>11</id>
+		  <textureFocus>btn_list_blue2.png</textureFocus>
+          <textureNoFocus></textureNoFocus>
+		  <textYOff>3</textYOff>
+		  <width>820</width>
+		  <height>50</height>
+		  <label>Change Layout</label>
+		  <onleft>50</onleft>
+		  <onright>50</onright>
+		  <ondown>13</ondown>
+		  <onup>12</onup>
+		</control>
+
+        <control>
+            <description>Filters</description>
+            <type>button</type>
+            <id>13</id>
+		  <textureFocus>btn_list_blue2.png</textureFocus>
+          <textureNoFocus></textureNoFocus>
+		  <textYOff>3</textYOff>
+		  <width>820</width>
+		  <height>50</height>
+            <label>Filters...</label>
+            <onleft>50</onleft>
+            <onright>50</onright>
+            <ondown>4</ondown>
+            <onup>11</onup>
+        </control>
+
+		<control>
+		  <description>Options</description>
+		  <type>button</type>
+		  <id>4</id>
+		  <textureFocus>btn_list_blue2.png</textureFocus>
+          <textureNoFocus></textureNoFocus>
+		  <textYOff>3</textYOff>
+		  <width>820</width>
+		  <height>50</height>
+		  <label>Options</label>
+		  <onleft>50</onleft>
+		  <onright>50</onright>
+		  <ondown>920</ondown>
+		  <onup>13</onup>
+		</control>
+
+		<control>
+		  <description>Empty button</description>
+		  <type>button</type>
+		  <id>0</id>
+		  <textureFocus></textureFocus>
+          <textureNoFocus></textureNoFocus>
+		  <textYOff>3</textYOff>
+		  <width>820</width>
+		  <height>25</height>
+		  <label>-</label>
+		  <visible>true</visible>
+		</control>
+		<control>
+		  <description>Line</description>
+		  <type>image</type>
+		  <id>0</id>
+		  <texture>white.png</texture>
+		  <width>820</width>
+		  <height>1</height>
+		  <visible>true</visible>
+		  <colordiffuse>20ffffff</colordiffuse>
+		</control>	
+		<control>
+		  <description>Empty button</description>
+		  <type>button</type>
+		  <id>0</id>
+		  <textureFocus></textureFocus>
+          <textureNoFocus></textureNoFocus>
+		  <textYOff>3</textYOff>
+		  <width>820</width>
+		  <height>25</height>
+		  <label>-</label>
+		  <visible>true</visible>
+		</control>		
+
+		<control>
+		  <description>Continue Watching...</description>
+		  <type>button</type>
+		  <id>920</id>
+		  <textureFocus>btn_list_blue2.png</textureFocus>
+          <textureNoFocus></textureNoFocus>
+		  <textYOff>3</textYOff>
+		  <width>820</width>
+		  <height>50</height>
+		  <label>Continue Watching...</label>
+		  <onleft>50</onleft>
+		  <onright>50</onright>
+		  <ondown>921</ondown>
+		  <onup>4</onup>
+		</control>
+		
+		<control>
+		  <description>Utilities</description>
+		  <type>button</type>
+		  <id>921</id>
+		  <textureFocus>btn_list_blue2.png</textureFocus>
+          <textureNoFocus></textureNoFocus>
+		  <textYOff>3</textYOff>
+		  <width>820</width>
+		  <height>50</height>
+		  <label>Utilities</label>
+		  <onleft>50</onleft>
+		  <onright>50</onright>
+		  <ondown>922</ondown>
+		  <onup>920</onup>
+		</control>
+
+		<control>
+		  <description>Calendar</description>
+		  <type>button</type>
+		  <id>922</id>
+		  <textureFocus>btn_list_blue2.png</textureFocus>
+          <textureNoFocus></textureNoFocus>
+		  <textYOff>3</textYOff>
+		  <width>820</width>
+		  <height>50</height>
+		  <label>Calendar</label>
+		  <onleft>50</onleft>
+		  <onright>50</onright>
+		  <ondown>923</ondown>
+		  <onup>921</onup>
+		</control>
+
+		<control>
+		  <description>Downloads</description>
+		  <type>button</type>
+		  <id>923</id>
+		  <textureFocus>btn_list_blue2.png</textureFocus>
+          <textureNoFocus></textureNoFocus>
+		  <textYOff>3</textYOff>
+		  <width>820</width>
+		  <height>50</height>
+		  <label>Downloads</label>
+		  <onleft>50</onleft>
+		  <onright>50</onright>
+		  <ondown>925</ondown>
+		  <onup>922</onup>
+		</control>
+
+		<control>
+		  <description>Recommendations</description>
+		  <type>button</type>
+		  <id>925</id>
+		  <textureFocus>btn_list_blue2.png</textureFocus>
+          <textureNoFocus></textureNoFocus>
+		  <textYOff>3</textYOff>
+		  <width>820</width>
+		  <height>50</height>
+		  <label>Recommendations</label>
+		  <onleft>50</onleft>
+		  <onright>50</onright>
+		  <ondown>926</ondown>
+		  <onup>923</onup>
+		</control>
+
+		<control>
+		  <description>Something Random</description>
+		  <type>button</type>
+		  <id>926</id>
+		  <textureFocus>btn_list_blue2.png</textureFocus>
+          <textureNoFocus></textureNoFocus>
+		  <textYOff>3</textYOff>
+		  <width>820</width>
+		  <height>50</height>
+		  <label>Something Random</label>
+		  <onleft>50</onleft>
+		  <onright>50</onright>
+		  <ondown>12</ondown>
+		  <onup>925</onup>
+		</control>
+
+        </control>
+		</control>
+
+	  
+	  	//QUEUE STATUS
+	<control>
+		  <type>image</type>
+		  <posX>524</posX>
+		  <posY>860</posY>
+		  <width>32</width>
+		  <height>32</height>
+		  <texture>MyAnime3\anime3_anidb.png</texture>
+		  <visible>Control.IsVisible(3401)+!player.hasmedia+!Control.HasFocus(50)</visible>			
+		</control>
+		
+		<control>
+			<description>Queue Count - AniDB</description>
+			<type>label</type>
+			<label>#Anime3.GeneralQueueCount</label>
+			<posX>564</posX>
+			<posY>860</posY>
+			<font>font12</font>
+			<textcolor>393939</textcolor>
+			<width>50</width>
+			<align>left</align>
+			<visible>Control.IsVisible(3401)+!player.hasmedia+!Control.HasFocus(50)</visible>			
+		</control>
+		
+		<control>
+		  <type>image</type>
+		  <posX>674</posX>
+		  <posY>860</posY>
+		  <width>32</width>
+		  <height>32</height>
+		  <texture>MyAnime3\anime3_hash.png</texture>
+			<visible>Control.IsVisible(3402)+!player.hasmedia+!Control.HasFocus(50)</visible>			
+		</control>
+
+		<control>
+			<description>Queue Count - Hasher</description>
+			<type>label</type>
+			<label>#Anime3.HasherQueueCount</label>
+			<posX>714</posX>
+			<posY>860</posY>
+			<font>font12</font>
+			<textcolor>393939</textcolor>
+			<width>50</width>
+			<align>left</align>
+			<visible>Control.IsVisible(3402)+!player.hasmedia+!Control.HasFocus(50)</visible>			
+		</control>
+
+		<control>
+		  <type>image</type>
+		  <posX>824</posX>
+		  <posY>860</posY>
+		  <width>32</width>
+		  <height>32</height>
+		  <texture>MyAnime3\anime3_image.png</texture>
+			<visible>Control.IsVisible(3403)+!player.hasmedia+!Control.HasFocus(50)</visible>			
+		</control>
+		
+		<control>
+			<description>Queue Count - Images</description>
+			<type>label</type>
+			<label>#Anime3.ImagesQueueCount</label>
+			<posX>864</posX>
+			<posY>860</posY>
+			<width>50</width>
+			<font>font12</font>
+			<textcolor>393939</textcolor>
+			<align>left</align>
+			<visible>Control.IsVisible(3403)+!player.hasmedia+!Control.HasFocus(50)</visible>			
+		</control>
+	  
+	</control>
+	
+
+  </controls>
+</window>

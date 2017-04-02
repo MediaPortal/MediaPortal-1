@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <controls>
+
+    <!-- FILMS COVER -->
+	
+	  <control>
+        <description>Cover Art</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>56</posX>
+        <posY>828</posY>
+		<height>190</height>
+		<width>137</width>
+        <texture mask="CAmask_small.png">defaultVideoBig.png</texture>
+      </control>		
+	  <control>
+        <description>Little Poster</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>56</posX>
+        <posY>828</posY>
+		<height>190</height>
+		<width>137</width>
+        <texture mask="CAmask_small.png">#myfilms.coverimage</texture>
+        <colordiffuse>ffffffff</colordiffuse>
+		<visible>[Control.isvisible(36)|Control.isvisible(39)]</visible>
+      </control>
+	  
+	  <control>
+        <description>Cover Art</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>1444</posX>
+        <posY>197</posY>
+        <width>422</width>
+        <height>605</height>
+        <texture mask="CAmask.png">blue.png</texture>
+        <visible>!facadeview.filmstrip+!facadeview.coverflow</visible>
+      </control>
+	  <control>
+        <description>Cover Art</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>1444</posX>
+        <posY>197</posY>
+        <width>422</width>
+        <height>605</height>
+        <texture mask="CAmask.png">defaultVideoBig.png</texture>
+        <visible>[Control.isvisible(36)|Control.isvisible(39)]+!facadeview.coverflow+!facadeview.filmstrip</visible>
+      </control>
+	  <control>
+        <description>Cover Art</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>1444</posX>
+        <posY>197</posY>
+        <width>422</width>
+        <height>605</height>
+		<keepaspectratio>no</keepaspectratio>
+        <zoomfromtop>no</zoomfromtop>
+        <texture mask="CAmask.png">#myfilms.coverimage</texture>
+        <visible>[Control.isvisible(36)|Control.isvisible(39)]+!facadeview.coverflow+!facadeview.filmstrip</visible>
+      </control>	
+	  
+	  <!-- VIEWS COVER NOT DONE YET-->
+    <control>
+      <description>Collection Banner</description>
+      <id>0</id>
+      <type>image</type>
+        <posX>1444</posX>
+        <posY>196</posY>
+        <width>163</width>
+        <height>163</height>
+      <texture>myfilms\collection.png</texture>
+      <visible>[Control.isvisible(36)|Control.isvisible(39)]+!string.equals(#myfilms.user.mastertitle.groupcount,)+!control.isvisible(34)+!facadeview.coverflow+!facadeview.filmstrip</visible>
+    </control>
+	
+    <!-- VIEWS COVER -->
+    <control>
+      <description>Cover Art for Views</description>
+      <type>image</type>
+      <id>0</id>
+        <posX>1444</posX>
+        <posY>197</posY>
+        <width>422</width>
+        <height>605</height>
+		<keepaspectratio>no</keepaspectratio>
+        <zoomfromtop>no</zoomfromtop>
+        <texture mask="CAmask.png">#myfilms.viewcoverimage</texture>
+      <visible>[facadeview.list|facadeview.album]+control.isvisible(37)</visible>
+    </control>
+	
+	
+    <!-- PERSONS COVER -->
+    <control>
+      <description>Cover Art for Persons</description>
+      <type>image</type>
+      <id>0</id>
+        <posX>1444</posX>
+        <posY>197</posY>
+        <width>422</width>
+        <height>605</height>
+		<keepaspectratio>no</keepaspectratio>
+        <zoomfromtop>no</zoomfromtop>
+        <texture mask="CAmask.png">#myfilms.personcoverimage</texture>
+        <visible>[facadeview.list|facadeview.album]+control.isvisible(38)</visible>
+    </control>
+    
+    <!-- FILMS COLLECTIONS COVER -->
+    <control>
+      <description>Cover Art for Groups or Hierarchies or Collections</description>
+      <type>image</type>
+      <id>0</id>
+        <posX>1444</posX>
+        <posY>197</posY>
+        <width>422</width>
+        <height>605</height>
+		<keepaspectratio>no</keepaspectratio>
+        <zoomfromtop>no</zoomfromtop>
+        <texture mask="CAmask.png">#myfilms.groupcoverimage</texture>
+      <visible>facadeview.list|facadeview.album</visible>
+    </control>
+    <control>
+      <description>Cover Art for Groups or Hierarchies or Collections</description>
+      <type>image</type>
+      <id>0</id>
+        <posX>56</posX>
+        <posY>828</posY>
+		<height>190</height>
+		<width>137</width>
+        <texture mask="CAmask_small.png">#myfilms.groupcoverimage</texture>
+      <visible>facadeview.list|facadeview.album</visible>
+    </control>
+	
+    <control>
+      <description>Collection Banner</description>
+      <id>0</id>
+      <type>image</type>
+        <posX>1444</posX>
+        <posY>196</posY>
+        <width>163</width>
+        <height>163</height>
+      <texture>myfilms\collection.png</texture>
+      <visible>[facadeview.list|facadeview.album]+[Control.isvisible(39)]</visible>
+    </control>
+	
+	  <control>
+        <description>Cover Art</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>1416</posX>
+        <posY>182</posY>
+        <width>28</width>
+        <height>619</height>
+        <texture>D_side.png</texture>
+		<visible>!facadeview.coverflow+!facadeview.filmstrip</visible>
+      </control>		
+	  
+      <control>
+	    <posX>1460</posX>
+        <posY>715</posY>
+        <description>Certification</description>
+        <type>image</type>
+        <id>0</id>
+		<valign>middle</valign>
+        <keepaspectratio>yes</keepaspectratio>
+		<height>70</height>
+        <texture>Logos\Age\#skin.movie.logos\#myfilms.db.certification.logo.value.png</texture>
+		<visible>!control.isvisible(51)+!facadeview.coverflow+!facadeview.filmstrip</visible>
+      </control>	  
+	  
+
+  </controls>
+</window>

@@ -64,8 +64,8 @@
 		<id>38</id>
     <textureFocusedLeft overlay="tvguide_arrow_left_colorize_overlay.png">tvguide_arrow_left_colorize.png</textureFocusedLeft>
     <textureNonFocusedLeft overlay="tvguide_arrow_left_colorize_overlay.png">tvguide_arrow_left_colorize.png</textureNonFocusedLeft>
-		<textureFocusedMid overlay="tvguide_button_middle_colorize_overlay.png">tvguide_recButton_Focus_middle.png</textureFocusedMid>
-		<textureNonFocusedMid overlay="tvguide_button_middle_colorize_overlay.png">tvguide_recButton_noFocus_middle.png</textureNonFocusedMid>
+		<textureFocusedMid overlay="tvguide_button_middle_colorize_overlay.png">tvguide_button_middle_colorize.png</textureFocusedMid>
+		<textureNonFocusedMid overlay="tvguide_button_middle_colorize_overlay.png">tvguide_button_middle_colorize.png</textureNonFocusedMid>
     <textureFocusedRight overlay="tvguide_arrow_right_colorize_overlay.png">tvguide_arrow_right_colorize.png</textureFocusedRight>
     <textureNonFocusedRight overlay="tvguide_arrow_right_colorize_overlay.png">tvguide_arrow_right_colorize.png</textureNonFocusedRight>
 		<!-- The textureIcon is used for the record indicator; these attributes help position the icon -->

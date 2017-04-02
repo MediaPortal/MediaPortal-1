@@ -1,0 +1,579 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<!--version="1.0" encoding="utf-8"-->
+<window>
+  <allowoverlay>no</allowoverlay>
+  <controls>
+    <!-- *** Section Gauges *** -->
+    <!-- *** Processor Gauge *** -->
+    <control>
+      <type>group</type>
+      <description>group element</description>
+      <posX>620</posX>
+      <posY>215</posY>
+	  <layout>StackLayout(35, Vertical, true)</layout>		  
+      <visible>Control.IsVisible(52)</visible>
+
+      <!-- *** Label Processor Gauge *** -->
+      <control>
+        <description>Processor Gauge Label</description>
+        <type>label</type>
+        <id>1</id>
+        <posX>655</posX>
+        <posY>159</posY>
+        <width>468</width>
+        <label>#HTPCInfo.TranslationProcessor</label>
+        <align>left</align>
+        <font>font10</font>
+        <textcolor>ffffffff</textcolor>
+      </control>
+      <!-- *** Processor Usage *** -->
+      <control>
+        <description>Processor Usage Label</description>
+        <type>label</type>
+        <id>1</id>
+        <posX>730</posX>
+        <posY>192</posY>
+        <width>468</width>
+        <label>#HTPCInfo.TranslationProcessorUsage</label>
+        <align>left</align>
+        <font>font10</font>
+        <textcolor>eaeaea</textcolor>
+      </control>
+      <control>
+        <description>Processor Usage</description>
+        <type>label</type>
+        <id>1</id>
+        <posX>740</posX>
+        <posY>192</posY>
+        <width>468</width>
+        <label>#HTPCInfo.ProcessorUsage%</label>
+        <align>left</align>
+        <font>font10</font>
+        <textcolor>eaeaea</textcolor>
+      </control>
+      <!-- *** Label Processor Core Count *** -->
+      <control>
+        <description>Processor Core Count Label</description>
+        <type>label</type>
+        <id>1</id>
+        <posX>730</posX>
+        <posY>215</posY>
+        <width>468</width>
+        <label>#HTPCInfo.TranslationProcessorCore</label>
+        <align>left</align>
+        <font>font10</font>
+        <textcolor>eaeaea</textcolor>
+      </control>
+      <control>
+        <description>Processor Core Count</description>
+        <type>label</type>
+        <id>1</id>
+        <posX>740</posX>
+        <posY>215</posY>
+        <width>515</width>
+        <label>#HTPCInfo.ProcessorCoresx</label>
+        <align>left</align>
+        <font>font10</font>
+        <textcolor>eaeaea</textcolor>
+      </control>
+      <!-- *** Label Processor Name *** -->
+      <control>
+        <description>Processor Usage Gauge Label</description>
+        <type>label</type>
+        <id>1</id>
+        <posX>730</posX>
+        <posY>238</posY>
+        <width>468</width>
+        <label>#HTPCInfo.TranslationProcessorType</label>
+        <align>left</align>
+        <font>font10</font>
+        <textcolor>eaeaea</textcolor>
+      </control>
+      <control>
+        <description>Processor Core Count</description>
+        <type>label</type>
+        <id>1</id>
+        <posX>740</posX>
+        <posY>238</posY>
+        <width>468</width>
+        <label>#HTPCInfo.ProcessorName</label>
+        <align>left</align>
+        <font>font10</font>
+        <textcolor>eaeaea</textcolor>
+      </control>
+
+      <!-- *** Label Memory Gauge *** -->
+      <control>
+        <description>Memory Gauge Label</description>
+        <type>label</type>
+        <id>1</id>
+        <posX>655</posX>
+        <posY>287</posY>
+        <width>468</width>
+        <label>#HTPCInfo.TranslationMemory</label>
+        <align>left</align>
+        <font>font10</font>
+        <textcolor>eaeaea</textcolor>
+      </control>
+      <!-- *** Memory Usage *** -->
+      <control>
+        <description>Memory Usage Label</description>
+        <type>label</type>
+        <id>1</id>
+        <posX>730</posX>
+        <posY>320</posY>
+        <width>468</width>
+        <label>#HTPCInfo.TranslationMemoryUsage</label>
+        <align>left</align>
+        <font>font10</font>
+        <textcolor>eaeaea</textcolor>
+      </control>
+      <control>
+        <description>Memory Usage</description>
+        <type>label</type>
+        <id>1</id>
+        <posX>740</posX>
+        <posY>320</posY>
+        <width>468</width>
+        <label>#HTPCInfo.MemoryPercentUsed% (#HTPCInfo.MemoryAvailable #HTPCInfo.TranslationFree)</label>
+        <align>left</align>
+        <font>font10</font>
+        <textcolor>eaeaea</textcolor>
+      </control>
+      <!-- *** Label Processor Name *** -->
+      <control>
+        <description>Pagefile Usage Label</description>
+        <type>label</type>
+        <id>1</id>
+        <posX>730</posX>
+        <posY>344</posY>
+        <width>468</width>
+        <label>#HTPCInfo.TranslationMemoryPagefileUsage</label>
+        <align>left</align>
+        <font>font10</font>
+        <textcolor>eaeaea</textcolor>
+      </control>
+      <control>
+        <description>Pagefile Usage</description>
+        <type>label</type>
+        <id>1</id>
+        <posX>740</posX>
+        <posY>344</posY>
+        <width>468</width>
+        <label>#HTPCInfo.PagefileUsed%</label>
+        <align>left</align>
+        <font>font10</font>
+        <textcolor>eaeaea</textcolor>
+      </control>
+      <!-- *** Label Processor Core Count *** -->
+      <control>
+        <description>Memory Size Label</description>
+        <type>label</type>
+        <id>1</id>
+        <posX>730</posX>
+        <posY>367</posY>
+        <width>468</width>
+        <label>#HTPCInfo.TranslationMemorySize</label>
+        <align>left</align>
+        <font>font10</font>
+        <textcolor>eaeaea</textcolor>
+      </control>
+      <control>
+        <description>Memory Size</description>
+        <type>label</type>
+        <id>1</id>
+        <posX>740</posX>
+        <posY>367</posY>
+        <width>468</width>
+        <label>#HTPCInfo.MemoryPhysical</label>
+        <align>left</align>
+        <font>font10</font>
+        <textcolor>eaeaea</textcolor>
+      </control>
+	 
+    </control>
+    <!-- ******************************************* Section Progressbar **************************************** -->
+    <!-- *** Processor Progressbar *** -->
+    <!-- *** Processor Gauge *** -->
+	<control>
+      <type>group</type>
+      <description>group element</description>
+      <posX>620</posX>
+      <posY>225</posY>
+	  <layout>StackLayout(35, Vertical, true)</layout>	  
+
+
+    <control>
+      <description>Processor Usage Label</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>379</posX>
+      <posY>187</posY>
+      <label>#HTPCInfo.TranslationProcessorUsage: #HTPCInfo.ProcessorUsage%</label>
+      <visible>Control.IsVisible(53)</visible>
+      <font>font10</font>
+      <textcolor>eaeaea</textcolor>
+    </control>
+    <control>
+      <description>Progress Bar</description>
+      <type>progress</type>
+      <id>1</id>
+      <posX>585</posX>
+      <posY>167</posY>
+      <width>187</width>
+      <offset>0</offset>
+      <height>6</height>
+      <innerheight>6</innerheight>
+      <lefttexture></lefttexture>
+      <midtexture>osd_mid.png</midtexture>
+      <righttexture></righttexture>
+      <label>#HTPCInfo.ProcessorUsage</label>
+      <visible>Control.IsVisible(53)</visible>
+    </control>	
+
+    <control>
+      <description>Processor Core Count Label</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>379</posX>
+      <posY>210</posY>
+      <label>#HTPCInfo.TranslationProcessorCore: #HTPCInfo.ProcessorCoresx</label>
+      <visible>Control.IsVisible(53)</visible>
+      <font>font10</font>
+      <textcolor>eaeaea</textcolor>
+    </control>
+
+    <control>
+      <description>Processor Usage Gauge Label</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>379</posX>
+      <posY>234</posY>
+      <label>#HTPCInfo.TranslationProcessorType</label>
+      <visible>Control.IsVisible(53)</visible>
+      <font>font10</font>
+      <textcolor>eaeaea</textcolor>
+    </control>
+    <control>
+      <description>Processor Core Count</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>585</posX>
+      <posY>234</posY>
+      <label>#HTPCInfo.ProcessorManufacturer</label>
+      <visible>Control.IsVisible(53)</visible>
+      <font>font10</font>
+      <textcolor>eaeaea</textcolor>
+    </control>
+    <control>
+      <description>Processor Actual Values Gauge Label</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>379</posX>
+      <posY>257</posY>
+      <label>Temperature</label>
+      <visible>Control.IsVisible(53)</visible>
+      <font>font10</font>
+      <textcolor>eaeaea</textcolor>
+    </control>
+    <control>
+      <description>Processor Actual Values</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>585</posX>
+      <posY>257</posY>
+      <label>#HTPCInfo.SensorTemperatureCPUPackage</label>
+      <visible>Control.IsVisible(53)</visible>
+      <font>font10</font>
+      <textcolor>eaeaea</textcolor>
+    </control>
+    <control>
+      <description>Processor Actual Values Gauge Label</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>379</posX>
+      <posY>280</posY>
+      <label>Voltage</label>
+      <visible>Control.IsVisible(53)</visible>
+      <font>font10</font>
+      <textcolor>eaeaea</textcolor>
+    </control>
+    <control>
+      <description>Processor Actual Values</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>585</posX>
+      <posY>280</posY>
+      <label>#HTPCInfo.SensorVoltageVCC3V</label>
+      <visible>Control.IsVisible(53)</visible>
+      <font>font10</font>
+      <textcolor>eaeaea</textcolor>
+    </control>
+    <control>
+      <description>Processor Actual Values Gauge Label</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>379</posX>
+      <posY>304</posY>
+      <label>Fanspeed</label>
+      <visible>Control.IsVisible(53)</visible>
+      <font>font10</font>
+      <textcolor>eaeaea</textcolor>
+    </control>
+    <control>
+      <description>Processor Actual Values</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>585</posX>
+      <posY>304</posY>
+      <label>#HTPCInfo.SensorFanCPU</label>
+      <visible>Control.IsVisible(53)</visible>
+      <font>font10</font>
+      <textcolor>eaeaea</textcolor>
+    </control>
+    <!-- *** Memory Gauge *** -->
+
+    <control>
+      <description>Progress Bar</description>
+      <type>progress</type>
+      <id>1</id>
+      <posX>585</posX>
+      <posY>392</posY>
+      <width>187</width>
+      <offset>0</offset>
+      <height>6</height>
+      <innerheight>6</innerheight>
+      <lefttexture></lefttexture>
+      <midtexture>osd_mid.png</midtexture>
+      <righttexture></righttexture>
+      <label>#HTPCInfo.MemoryPercentUsed</label>
+      <textcolor>eaeaea</textcolor>
+      <visible>Control.IsVisible(53)</visible>
+    </control>
+
+    <control>
+      <description>Memory Usage Label</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>379</posX>
+      <posY>412</posY>
+      <label>#HTPCInfo.TranslationMemoryUsage: #HTPCInfo.MemoryPercentUsed% (#HTPCInfo.MemoryAvailable #HTPCInfo.TranslationFree)</label>
+      <font>font10</font>
+      <textcolor>eaeaea</textcolor>
+      <visible>Control.IsVisible(53)</visible>
+    </control>
+
+    <control>
+      <description>Pagefile Usage Label</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>379</posX>
+      <posY>435</posY>
+      <label>#HTPCInfo.TranslationMemoryPagefileUsage: #HTPCInfo.PagefileUsed%</label>
+      <font>font10</font>
+      <textcolor>eaeaea</textcolor>
+      <visible>Control.IsVisible(53)</visible>
+    </control>
+
+    <control>
+      <description>Memory Size Label</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>379</posX>
+      <posY>459</posY>
+      <label>#HTPCInfo.TranslationMemorySize</label>
+      <font>font10</font>
+      <textcolor>eaeaea</textcolor>
+      <visible>Control.IsVisible(53)</visible>
+    </control>
+    <control>
+      <description>Memory Size</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>585</posX>
+      <posY>459</posY>
+      <label>#HTPCInfo.MemoryPhysical</label>
+      <font>font10</font>
+      <textcolor>eaeaea</textcolor>
+      <visible>Control.IsVisible(53)</visible>
+    </control>
+	</control>
+	
+    <!-- *** All Drives (4 are available) *** -->
+    <!-- *** Label Drives Gauge *** -->
+	
+	<control>
+      <type>group</type>
+      <description>group element</description>
+      <posX>1220</posX>
+      <posY>225</posY>
+	  <layout>StackLayout(35, Vertical, true)</layout>	 	
+
+    <!-- *** Drive C Usage *** -->
+
+
+    <control>
+      <description>Drive C Usage Label</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>843</posX>
+      <posY>201</posY>
+      <label>#HTPCInfo.Drive1Name #HTPCInfo.Drive1Size</label>
+      <textcolor>eaeaea</textcolor>
+      <font>font10</font>
+      <visible>Control.IsVisible(53)</visible>
+    </control>
+    <control>
+      <description>Drive C Usage</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>843</posX>
+      <posY>224</posY>
+      <label>#HTPCInfo.Drive1PercentUsedSpace% #HTPCInfo.TranslationUsed (#HTPCInfo.Drive1FreeSpace #HTPCInfo.TranslationFree)</label>
+      <textcolor>eaeaea</textcolor>
+      <font>font10</font>
+      <visible>Control.IsVisible(53)</visible>
+    </control>
+    <control>
+      <description>Progress Bar</description>
+      <type>progress</type>
+      <id>1</id>
+      <posX>843</posX>
+      <posY>254</posY>
+      <width>187</width>
+      <offset>0</offset>
+      <height>6</height>
+      <innerheight>6</innerheight>
+      <lefttexture></lefttexture>
+      <midtexture>osd_mid.png</midtexture>
+      <righttexture></righttexture>
+      <label>#HTPCInfo.Drive1PercentUsedSpace</label>
+      <visible>Control.IsVisible(53)</visible>
+    </control>	
+    <!-- *** Drive D Usage *** -->
+
+
+    <control>
+      <description>Drive D Usage Label</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>843</posX>
+      <posY>314</posY>
+      <label>#HTPCInfo.Drive2Name #HTPCInfo.Drive2Size</label>
+      <textcolor>eaeaea</textcolor>
+      <font>font10</font>
+      <visible>Control.IsVisible(53)</visible>
+    </control>
+    <control>
+      <description>Drive D Usage</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>843</posX>
+      <posY>337</posY>
+      <label>#HTPCInfo.Drive2PercentUsedSpace% #HTPCInfo.TranslationUsed (#HTPCInfo.Drive2FreeSpace #HTPCInfo.TranslationFree)</label>
+      <textcolor>eaeaea</textcolor>
+      <font>font10</font>
+      <visible>Control.IsVisible(53)</visible>
+    </control>
+    <control>
+      <description>Progress Bar</description>
+      <type>progress</type>
+      <id>1</id>
+      <posX>843</posX>
+      <posY>367</posY>
+      <width>187</width>
+      <offset>0</offset>
+      <height>6</height>
+      <innerheight>6</innerheight>
+      <lefttexture></lefttexture>
+      <midtexture>osd_mid.png</midtexture>
+      <righttexture></righttexture>
+      <label>#HTPCInfo.Drive2PercentUsedSpace</label>
+      <visible>Control.IsVisible(53)</visible>
+    </control>	
+    <!-- *** Drive E Usage *** To deactivate add comment marks ! -->
+
+
+    <control>
+      <description>Drive E Usage Label</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>843</posX>
+      <posY>426</posY>
+      <label>#HTPCInfo.Drive3Name #HTPCInfo.Drive3Size</label>
+      <textcolor>eaeaea</textcolor>
+      <font>font10</font>
+      <visible>Control.IsVisible(53)</visible>
+    </control>
+    <control>
+      <description>Drive E Usage</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>843</posX>
+      <posY>450</posY>
+      <label>#HTPCInfo.Drive3PercentUsedSpace% #HTPCInfo.TranslationUsed (#HTPCInfo.Drive3FreeSpace #HTPCInfo.TranslationFree)</label>
+      <textcolor>eaeaea</textcolor>
+      <font>font10</font>
+      <visible>Control.IsVisible(53)</visible>
+    </control>
+    <control>
+      <description>Progress Bar</description>
+      <type>progress</type>
+      <id>1</id>
+      <posX>843</posX>
+      <posY>480</posY>
+      <width>187</width>
+      <offset>0</offset>
+      <height>6</height>
+      <innerheight>6</innerheight>
+      <lefttexture></lefttexture>
+      <midtexture>osd_mid.png</midtexture>
+      <righttexture></righttexture>
+      <label>#HTPCInfo.Drive3PercentUsedSpace</label>
+      <visible>Control.IsVisible(53)</visible>
+    </control>	
+    <!-- *** Drive F Usage *** To activate delete comment marks !  -->
+
+
+    <control>
+      <description>Drive F Usage Label</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>843</posX>
+      <posY>538</posY>
+      <label>#HTPCInfo.Drive4Name #HTPCInfo.Drive4Size</label>
+      <textcolor>eaeaea</textcolor>
+      <font>font10</font>
+      <visible>Control.IsVisible(53)</visible>
+    </control>
+    <control>
+      <description>Drive F Usage</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>843</posX>
+      <posY>562</posY>
+      <label>#HTPCInfo.Drive4PercentUsedSpace% #HTPCInfo.TranslationUsed (#HTPCInfo.Drive4FreeSpace #HTPCInfo.TranslationFree)</label>
+      <textcolor>eaeaea</textcolor>
+      <font>font10</font>
+      <visible>Control.IsVisible(53)</visible>
+    </control>
+    <control>
+      <description>Progress Bar</description>
+      <type>progress</type>
+      <id>1</id>
+      <posX>843</posX>
+      <posY>592</posY>
+      <width>187</width>
+      <offset>0</offset>
+      <height>6</height>
+      <innerheight>6</innerheight>
+      <lefttexture></lefttexture>
+      <midtexture>osd_mid.png</midtexture>
+      <righttexture></righttexture>
+      <label>#HTPCInfo.Drive4PercentUsedSpace</label>
+      <visible>Control.IsVisible(53)</visible>
+    </control>	
+	</control>
+  </controls>
+</window>

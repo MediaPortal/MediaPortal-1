@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <controls>
+
+    <control>
+      <description>group element</description>
+      <type>group</type>
+	  <visible>!control.isvisible(010004)+!control.isvisible(010008)+!control.isvisible(010012)+!control.isvisible(010021)+!control.isvisible(010016)+!control.isvisible(010020)+!control.isvisible(012016)+!control.isvisible(013016)+!control.isvisible(5521125)+!control.isVisible(5100000)+!control.isVisible(5100001)</visible>	  
+
+	  
+	<control>
+      <description>background</description>
+      <type>image</type>
+      <id>0</id>
+        <posX>40</posX>
+        <posY>821</posY>
+        <width>1845</width>
+        <height>209</height>
+        <texture>Inf_gfx.png</texture>
+		<animation effect="fade" time="500" reversible="true">visible</animation>
+	  <visible>true</visible>	  
+    </control>	
+
+
+	  <control>
+        <description>BasicHome music</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>56</posX>
+        <posY>828</posY>
+		<height>190</height>
+		<width>278</width>
+		<zoomfromtop>middle</zoomfromtop>
+        <texture mask="VAmask.png">#LatestMovieNewsImg</texture>
+        <colordiffuse>ffffffff</colordiffuse>
+	    <visible>true</visible>
+		<animation effect="fade" time="500" reversible="true">visible</animation>
+      </control>
+
+	<control>
+      <description>background</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>370</posX>
+      <posY>845</posY>
+      <width>1380</width>
+      <height>30</height>
+      <label>#LatestMovieNewsTitle</label>
+      <align>left</align>
+      <font>font13</font>
+      <textcolor>eaeaea</textcolor>	  
+	  <visible>true</visible>
+    </control>	
+
+	<control>
+      <description>background</description>
+      <type>textboxscrollup</type>
+      <id>0</id>
+      <posX>370</posX>
+      <posY>895</posY>
+      <width>1450</width>
+      <height>85</height>
+      <label>#LatestMovieNewsDesc</label>
+      <align>left</align>
+      <font>font13</font>
+      <textcolor>99ffffff</textcolor>
+	  <scrollStartDelaySec>20</scrollStartDelaySec>
+      <spaceBetweenItems>1</spaceBetweenItems> 
+	  <visible>true</visible>
+    </control>		
+	</control>	
+	
+
+  </controls>
+</window>

@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="utf-8"?>
+<window> 
+	<controls>
+
+
+	  <control>
+		<description>Cover Art</description>
+		<type>image</type>
+		<id>0</id>
+        <posX>1444</posX>
+        <posY>197</posY>
+        <width>422</width>
+        <height>605</height>
+		<keepaspectratio>no</keepaspectratio>
+        <zoomfromtop>no</zoomfromtop>
+        <texture mask="CAmask.png">blue.png</texture>
+		<visible>!facadeview.coverflow+!facadeview.filmstrip</visible>
+	  </control>
+	<control>
+		<description>Cover Art</description>
+		<type>image</type>
+		<id>500</id>
+        <posX>1444</posX>
+        <posY>197</posY>
+        <width>422</width>
+        <height>605</height>
+		<keepaspectratio>no</keepaspectratio>
+        <zoomfromtop>no</zoomfromtop>
+        <texture mask="CAmask.png">#Anime3.GroupSeriesPoster</texture>
+		<visible>facadeview.list+!Control.IsVisible(1250)</visible>
+	  </control>
+	 <control>
+        <description>Little Poster</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>56</posX>
+        <posY>828</posY>
+		<height>190</height>
+		<width>137</width>
+        <texture mask="CAmask_small.png">blue.png</texture>
+        <colordiffuse>ffffffff</colordiffuse>
+		<visible>!facadeview.filmstrip</visible>
+      </control>
+	  
+	 <control>
+        <description>Little Poster</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>56</posX>
+        <posY>828</posY>
+		<height>190</height>
+		<width>137</width>
+        <texture mask="CAmask_small.png">#Anime3.GroupSeriesPoster</texture>
+        <colordiffuse>ffffffff</colordiffuse>
+		<visible>!Control.IsVisible(1250)</visible>
+      </control>		  
+	  <control>
+        <description>Cover Art</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>1416</posX>
+        <posY>182</posY>
+        <width>28</width>
+        <height>619</height>
+        <texture>D_side.png</texture>
+		<visible>!facadeview.coverflow+!facadeview.filmstrip</visible>
+      </control>	
+
+	
+		
+		
+
+	    <control>
+         <type>label</type>
+         <id>0</id>
+         <posX>#Xposition</posX>
+		 <posY>#Yposition</posY>
+         <height>43</height>
+         <width>1000</width>
+         <font>fontBold2</font>
+         <label>#Anime3.GroupCount Groups / #(L(97))#Anime3.SimpleCurrentView</label>
+         <align>right</align>
+         <textcolor>ffffffff</textcolor>
+	     <visible>Control.IsVisible(1238)</visible>
+        </control>	
+	    <control>
+         <type>label</type>
+         <id>0</id>
+         <posX>#Xposition</posX>
+		 <posY>#Yposition</posY>
+         <height>43</height>
+         <width>1000</width>
+         <font>fontBold2</font>
+         <label>#Anime3.SeriesCount Series / #(L(97))#Anime3.SimpleCurrentView</label>
+         <align>right</align>
+         <textcolor>ffffffff</textcolor>
+	     <visible>Control.IsVisible(1237)</visible>
+        </control>	
+	    <control>
+         <type>label</type>
+         <id>0</id>
+         <posX>#Xposition</posX>
+		 <posY>#Yposition</posY>
+         <height>43</height>
+         <width>1000</width>
+         <font>fontBold2</font>
+         <label>#Anime3.EpisodeCount Episodes / #(L(97))Episodes / #(L(97))#Anime3.SimpleCurrentView</label>
+         <align>right</align>
+         <textcolor>ffffffff</textcolor>
+	     <visible>Control.IsVisible(1239)</visible>
+        </control>			
+
+
+	  <!-- 			:: SERIES/Group Filter INFO LABELS ::		-->
+
+	  <control>
+		<type>fadelabel</type>
+		<description>Series Title - Groups/Series</description>
+		<id>640</id>
+		<posX>215</posX>
+		<posY>840</posY>
+		<font>font13</font>
+		<textcolor>ffffffff</textcolor>
+		<label>#Anime3.Title #Anime3.SeriesGroup.Year</label>
+		<visible>[facadeview.list | facadeview.largeicons | facadeview.filmstrip | facadeview.coverflow] + [Control.IsVisible(1238)|Control.IsVisible(1237)|Control.IsVisible(1250)]</visible>
+	  </control>
+
+
+	  <control>
+		<type>fadelabel</type>
+		<description>Series Title - Groups/Series</description>
+		<id>640</id>
+		<posX>215</posX>
+		<posY>840</posY>
+		<font>font13</font>
+		<textcolor>ffffffff</textcolor>
+		<label>#Anime3.SeriesTitle #Anime3.SeriesGroup.Year</label>
+		<visible>[facadeview.list | facadeview.largeicons | facadeview.filmstrip | facadeview.coverflow] + [Control.IsVisible(1240)]</visible>
+	  </control>
+
+
+	  <control>
+		<type>textboxscrollup</type>
+		<description>Description (grouplist)</description>
+		<id>0</id>
+		<posX>215</posX>
+		<posY>880</posY>
+		<width>1555</width>
+		<height>125</height>
+		<font>font13</font>
+		<textcolor>99ffffff</textcolor>
+		<label>#Anime3.Description</label>
+		<lineSpacing>0.92</lineSpacing>
+		<seperator>---------------------------------------------------------------------------------------------------------------------</seperator>
+		<visible>facadeview.list+[Control.IsVisible(1238)|Control.IsVisible(1237)|Control.IsVisible(1240)]</visible>
+	  </control>
+
+
+
+<!--
+
+	  <control>
+		<description>Genre Value (Series)</description>
+		<type>fadelabel</type>
+		<label>#Anime3.SeriesGroup.Genre</label>
+		<id>0</id>
+		<posX>798</posX>
+		<posY>476</posY>
+		<font>font13</font>
+		<textcolor>99ffffff</textcolor>		
+		<visible>facadeview.list+[Control.IsVisible(1238)|Control.IsVisible(1237)|Control.IsVisible(1240)]</visible>
+	  </control>
+
+
+	  <control>
+		<description>Episodes Value</description>
+		<type>label</type>
+		<label>#Anime3.SeriesGroup.Episodes</label>
+		<id>0</id>
+		<posX>798</posX>
+		<posY>444</posY>
+		<font>font13</font>
+		<textcolor>99ffffff</textcolor>		
+		<visible>facadeview.list+[Control.IsVisible(1238)|Control.IsVisible(1237)|Control.IsVisible(1240)]</visible>
+	  </control>
+-->
+
+	
+	
+	
+		<control>
+		<description>Dummy image that have the texture placeholder for off star</description>
+		<type>image</type>
+		<id>1300</id>
+		<posX>-50</posX>
+		<posY>-50</posY>
+		<width>32</width>
+		<height>27</height>
+		<texture>starblack.png</texture>
+		<visible>false</visible>
+	  </control>
+
+		<control>
+		<description>Dummy image that have the texture placeholder for on star</description>
+		<type>image</type>
+		<id>1301</id>
+		<posX>-50</posX>
+		<posY>-50</posY>
+		<width>32</width>
+		<height>27</height>
+		<texture>starblue.png</texture>
+		<visible>false</visible>
+	  </control>
+	  
+	  <control>
+		<description>Dummy image that have the texture placeholder for custom star</description>
+		<type>image</type>
+		<id>1302</id>
+		<posX>-50</posX>
+		<posY>-50</posY>
+		<width>32</width>
+		<height>27</height>
+		<texture>starwhite.png</texture>
+		<visible>false</visible>
+	  </control>
+	
+	  
+	<control>
+		<type>image</type>
+		<id>101</id>
+		<posX>4561</posX>
+		<posY>345</posY>
+		<width>320</width>
+		<height>27</height>
+		<texture>#Anime3.RatingImage</texture>
+		<visible>[facadeview.list+[Control.IsVisible(1238)|Control.IsVisible(1237)|Control.IsVisible(1240)]]+[!string.equals(#Anime3.SeriesGroup.RawRating, 0)]</visible>
+	</control>
+	<!--
+	<control>
+		<description>Rating Value</description>
+		<type>label</type>
+		<id>0</id>
+		<posX>10</posX>
+		<posY>10</posY>
+		<label>#Anime3.SeriesGroup.Rating   </label>
+		<font>font12</font>
+		<textcolor>ffffffff</textcolor>
+		<visible>[facadeview.list+[Control.IsVisible(1238)|Control.IsVisible(1237)|Control.IsVisible(1240)]]+[!string.equals(#Anime3.SeriesGroup.RawRating, 0)]</visible>			
+	</control>
+	-->
+	<control>
+		<type>image</type>
+		<id>101</id>
+		<posX>4561</posX>
+		<posY>377</posY>
+		<width>320</width>
+		<height>27</height>
+		<texture>#Anime3.CustomRatingImage</texture>
+		<visible>facadeview.list+[Control.IsVisible(1238)|Control.IsVisible(1237)|Control.IsVisible(1240)]+[!string.equals(#Anime3.SeriesGroup.MyRating, )]</visible>
+	</control>
+	<!--
+	<control>
+		<description>Rating Value</description>
+		<type>label</type>
+		<id>0</id>
+		<posX>10</posX>
+		<posY>50</posY>
+		<label>#Anime3.SeriesGroup.MyRating (your vote)</label>
+		<font>font12</font>
+		<textcolor>FFffffff</textcolor>
+		<visible>facadeview.list+[Control.IsVisible(1238)|Control.IsVisible(1237)|Control.IsVisible(1240)]+[!string.equals(#Anime3.SeriesGroup.MyRating, )]</visible>			
+	</control>
+	
+	-->
+	
+
+
+
+	</controls>
+</window>

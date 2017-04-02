@@ -280,7 +280,6 @@ multiple view modes.
 		  <label>#MovingPictures.general.totalmoviecount Movies</label>
 		  <align>right</align>
 		  <textcolor>ffffffff</textcolor>
-		  <visible>!player.hasmedia</visible>
 		</control>
 	
 

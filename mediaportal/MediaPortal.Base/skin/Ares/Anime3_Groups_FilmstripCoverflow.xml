@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<window> 
+	<controls>
+
+  <control>
+		<type>imagelist</type>
+		<id>1</id>
+		<posX>5434</posX>
+		<posY>998</posY>
+		<width>315</width>
+		<height>29</height>
+		<textureWidth>32</textureWidth>
+		<textureHeight>27</textureHeight>
+		<subitems>
+		<subitem>starblue2.png</subitem>
+		<subitem>starblack2.png</subitem>
+		</subitems>
+		<orientation>horizontal</orientation>
+		<align>left</align>
+		<imagesToDraw>10</imagesToDraw>
+		<percentage>#Anime3.SeriesGroup.RawRating</percentage>
+		<visible>[facadeview.filmstrip | facadeview.coverflow+[Control.IsVisible(1237)|Control.IsVisible(1238)]]+[!string.equals(#Anime3.SeriesGroup.RawRating, 0)]</visible>
+	</control>
+
+	<control>
+		<description>Rating Value</description>
+		<type>label</type>
+		<id>0</id>
+		<posX>-10</posX>
+		<posY>997</posY>
+		<label>#Anime3.SeriesGroup.RawRating</label>
+		<font>fontB11</font>
+		<textcolor>000000</textcolor>
+		<visible>[facadeview.filmstrip | facadeview.coverflow+[Control.IsVisible(1237)|Control.IsVisible(1238)]]+[!string.equals(#Anime3.SeriesGroup.RawRating, 0)]</visible>			
+	</control>
+	
+	<control>
+		<description>Rating Value</description>
+		<type>label</type>
+		<id>0</id>
+		<posX>-10</posX>
+		<posY>997</posY>
+		<label>#Anime3.SeriesGroup.MyRating</label>
+		<font>fontB11</font>
+		<textcolor>FFFFFFFF</textcolor>
+		<visible>[facadeview.filmstrip | facadeview.coverflow+[Control.IsVisible(1237)|Control.IsVisible(1238)]]+[!string.equals(#Anime3.SeriesGroup.MyRating, )]</visible>			
+	</control>
+	
+	  <control>
+		<type>textboxscrollup</type>
+		<description>Description (grouplist)</description>
+		<id>0</id>
+		<posX>215</posX>
+		<posY>880</posY>
+		<width>1555</width>
+		<height>125</height>
+		<font>font13</font>
+		<textcolor>99ffffff</textcolor>
+		<label>#Anime3.Description</label>
+		<lineSpacing>0.92</lineSpacing>
+		<seperator>---------------------------------------------------------------------------------------------------------------------</seperator>
+		<visible>[facadeview.filmstrip | facadeview.coverflow+[Control.IsVisible(1237)|Control.IsVisible(1238)]]</visible>		
+	  </control>	
+
+
+		
+
+	</controls>
+</window>

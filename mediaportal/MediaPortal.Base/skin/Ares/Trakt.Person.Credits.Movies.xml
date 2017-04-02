@@ -53,18 +53,20 @@
         <texture>Inf_gfx.png</texture>
       </control>  
 
-    <control>
-      <type>label</type>
-      <id>1</id>
-      <label>#Trakt.Items</label>
-      <posX>1865</posX>
-      <posY>110</posY>
-      <height>43</height>
-      <width>500</width>
-      <font>fontBold2</font>
-      <align>right</align>
-      <textcolor>ffffffff</textcolor>
-    </control>
+		<control>
+		  <description>Date / Time</description>
+		  <type>label</type>
+		  <id>0</id>
+          <posX>#Xposition</posX>
+          <posY>#Yposition</posY>
+          <height>43</height>
+          <width>1000</width>
+          <font>fontBold2</font>
+		  <label>#Trakt.Items</label>
+		  <align>right</align>
+		  <textcolor>ffffffff</textcolor>
+		</control>	 	  
+
     <import>Trakt.Common.Facade.xml</import>
     <!-- Hidden Menu -->
     <control>

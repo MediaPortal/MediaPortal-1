@@ -1,0 +1,501 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<window>
+  <allowoverlay>yes</allowoverlay>
+  <controls>
+    <!-- ************************************************ System Information labels ******************************** -->
+    <control>
+      <type>group</type>
+      <description>group element</description>
+      <posX>620</posX>
+      <posY>215</posY>
+	  <layout>StackLayout(35, Vertical, true)</layout>	  
+      <visible>Control.IsVisible(50)+!control.hasfocus(99)+!control.hasfocus(9999)</visible>
+      <control>
+        <description>Uptime</description>
+        <type>label</type>
+        <id>1</id>
+        <posX>365</posX>
+        <posY>187</posY>
+        <label>#HTPCInfo.TranslationUpTime: #HTPCInfo.Uptime</label>
+        <font>font10</font>
+        <textcolor>eaeaea</textcolor>
+      </control>
+      <control>
+        <description>CPU Usage</description>
+        <type>label</type>
+        <id>1</id>
+        <posX>365</posX>
+        <posY>234</posY>
+        <label>#HTPCInfo.TranslationProcessorUsage: #HTPCInfo.ProcessorUsage%</label>
+        <font>font10</font>
+        <textcolor>eaeaea</textcolor>
+      </control>
+
+      <control>
+        <description>Memory Usage</description>
+        <type>label</type>
+        <id>1</id>
+        <posX>365</posX>
+        <posY>280</posY>
+        <label>#HTPCInfo.TranslationMemoryUsage: #HTPCInfo.MemoryPhysical #HTPCInfo.TranslationMemorySize - #HTPCInfo.MemoryAvailable #HTPCInfo.TranslationFree</label>
+        <font>font10</font>
+        <textcolor>eaeaea</textcolor>
+      </control>
+      <control>
+        <description>Memory Usage Value</description>
+        <type>label</type>
+        <id>1</id>
+        <posX>365</posX>
+        <posY>304</posY>
+        <label>(#HTPCInfo.PagefileUsed% #HTPCInfo.TranslationMemoryPagefileUsage)</label>
+        <font>font10</font>
+        <textcolor>eaeaea</textcolor>
+      </control>
+      <control>
+        <description>Disk Usage</description>
+        <type>label</type>
+        <id>1</id>
+        <posX>365</posX>
+        <posY>328</posY>
+        <label>#HTPCInfo.TranslationDriveUsage:</label>
+        <font>font10</font>
+        <textcolor>eaeaea</textcolor>
+      </control>
+      <control>
+        <description>Disk Usage Value</description>
+        <type>label</type>
+        <id>1</id>
+        <posX>365</posX>
+        <posY>351</posY>
+        <label>#HTPCInfo.Drive1Name: #HTPCInfo.Drive1Size - #HTPCInfo.Drive1FreeSpace #HTPCInfo.TranslationFree</label>
+        <font>font10</font>
+        <textcolor>eaeaea</textcolor>
+      </control>
+      <control>
+        <description>Disk Usage Value</description>
+        <type>label</type>
+        <id>1</id>
+        <posX>365</posX>
+        <posY>374</posY>
+        <label>#HTPCInfo.Drive2Name: #HTPCInfo.Drive2Size - #HTPCInfo.Drive2FreeSpace #HTPCInfo.TranslationFree</label>
+        <font>font10</font>
+        <textcolor>eaeaea</textcolor>
+      </control>
+      <control>
+        <description>Disk Usage Value</description>
+        <type>label</type>
+        <id>1</id>
+        <posX>365</posX>
+        <posY>398</posY>
+        <label>#HTPCInfo.Drive3Name: #HTPCInfo.Drive3Size - #HTPCInfo.Drive3FreeSpace #HTPCInfo.TranslationFree </label>
+        <font>font10</font>
+        <textcolor>eaeaea</textcolor>
+      </control>
+      <control>
+        <description>Disk Usage Value</description>
+        <type>label</type>
+        <id>1</id>
+        <posX>365</posX>
+        <posY>421</posY>
+        <label>#HTPCInfo.DiskRead #HTPCInfo.TranslationDriveRead / #HTPCInfo.DiskWrite #HTPCInfo.TranslationDriveWrite</label>
+        <font>font10</font>
+        <textcolor>eaeaea</textcolor>
+      </control>
+      <!-- *** Sensor Informations labels *** -->
+
+      <control>
+        <description>Temperature Sensors</description>
+        <type>label</type>
+        <id>1</id>
+        <posX>365</posX>
+        <posY>506</posY>
+        <label>#HTPCInfo.TranslationSensorTemperature:</label>
+        <font>font10</font>
+        <textcolor>eaeaea</textcolor>
+      </control>
+      <control>
+        <description>Temperature Sensors Value</description>
+        <type>fadelabel</type>
+        <id>1</id>
+        <posX>365</posX>
+        <posY>529</posY>
+		<width>1200</width>
+        <label>GPU: #HTPCInfo.SensorTemperatureGPU / PC: #HTPCInfo.SensorTemperatureSystem / CPU1: #HTPCInfo.SensorTemperatureCPU1 / CPU2: #HTPCInfo.SensorTemperatureCPU2 / CPU3: #HTPCInfo.SensorTemperatureCPU3 / CPU4: #HTPCInfo.SensorTemperatureCPU4 / HDD: #HTPCInfo.SensorTemperatureHD0</label>
+        <font>font10</font>
+        <textcolor>eaeaea</textcolor>
+      </control>
+      <control>
+        <description>Fan Sensors</description>
+        <type>label</type>
+        <id>1</id>
+        <posX>365</posX>
+        <posY>552</posY>
+        <label>#HTPCInfo.TranslationSensorFan:</label>
+        <font>font10</font>
+        <textcolor>eaeaea</textcolor>
+      </control>
+      <control>
+        <description>Fan Sensors Value</description>
+        <type>label</type>
+        <id>1</id>
+        <posX>365</posX>
+        <posY>576</posY>
+        <label>Case-Fan: #HTPCInfo.SensorFanCase / CPU-Fan: #HTPCInfo.SensorFanCPU / GPU-Fan: #HTPCInfo.SensorFanGPUFan</label>
+        <font>font10</font>
+        <textcolor>eaeaea</textcolor>
+      </control>
+      <control>
+        <description>Voltage Sensors</description>
+        <type>label</type>
+        <id>1</id>
+        <posX>365</posX>
+        <posY>600</posY>
+        <label>#HTPCInfo.TranslationSensorVoltage:</label>
+        <font>font10</font>
+        <textcolor>eaeaea</textcolor>
+      </control>
+      <control>
+        <description>Voltage Sensors Value</description>
+        <type>label</type>
+        <id>1</id>
+        <posX>365</posX>
+        <posY>623</posY>
+        <label>VCC3V: #HTPCInfo.SensorVoltageVCC3V / VSB3V: #HTPCInfo.SensorVoltageVSB3V / Battery: #HTPCInfo.SensorVoltageBattery</label>
+        <font>font10</font>
+        <textcolor>eaeaea</textcolor>
+      </control>
+    </control>
+    <!-- ************************************ MENU STYLE INFO WINDOW ******************************* -->
+    <!-- *** HTPC Machine Info labels *** -->
+    <control>
+      <type>group</type>
+      <description>group element</description>
+      <posX>620</posX>
+      <posY>215</posY>
+	  <layout>StackLayout(35, Vertical, true)</layout>		  
+      <visible>Control.IsVisible(50)+!control.hasfocus(9999)+control.hasfocus(99)</visible>
+      <control>
+        <description>Machine Name</description>
+        <type>label</type>
+        <id>1</id>
+        <label>#HTPCInfo.TranslationMachineName:</label>
+        <posX>365</posX>
+        <posY>187</posY>
+        <font>font10</font>
+        <textcolor>eaeaea</textcolor>
+      </control>
+      <control>
+        <description>Machine Name Value</description>
+        <type>label</type>
+        <id>1</id>
+        <posX>365</posX>
+        <posY>210</posY>
+        <label>#HTPCInfo.MachineName</label>
+        <font>font10</font>
+        <textcolor>eaeaea</textcolor>
+      </control>
+      <control>
+        <description>Model</description>
+        <type>label</type>
+        <id>1</id>
+        <posX>365</posX>
+        <posY>234</posY>
+        <label>#HTPCInfo.TranslationMachineModel:</label>
+        <font>font10</font>
+        <textcolor>eaeaea</textcolor>
+      </control>
+      <control>
+        <description>Model Value</description>
+        <type>label</type>
+        <id>1</id>
+        <posX>365</posX>
+        <posY>257</posY>
+        <label>#HTPCInfo.Model (#HTPCInfo.MotherboardManufacturer), #HTPCInfo.SystemType</label>
+        <font>font10</font>
+        <textcolor>eaeaea</textcolor>
+      </control>
+      <control>
+        <description>BIOS</description>
+        <type>label</type>
+        <id>1</id>
+        <posX>365</posX>
+        <posY>280</posY>
+        <label>#HTPCInfo.TranslationMachineBIOS:</label>
+        <font>font10</font>
+        <textcolor>eaeaea</textcolor>
+      </control>
+      <control>
+        <description>BIOS Value</description>
+        <type>label</type>
+        <id>1</id>
+        <posX>365</posX>
+        <posY>304</posY>
+        <label>#HTPCInfo.BIOSManufacturer, #HTPCInfo.BIOSDescription</label>
+        <font>font10</font>
+        <textcolor>eaeaea</textcolor>
+      </control>
+      <control>
+        <description>Processor</description>
+        <type>label</type>
+        <id>1</id>
+        <posX>365</posX>
+        <posY>328</posY>
+        <label>#HTPCInfo.TranslationProcessor:</label>
+        <font>font10</font>
+        <textcolor>eaeaea</textcolor>
+      </control>
+      <control>
+        <description>Processor Value</description>
+        <type>label</type>
+        <id>1</id>
+        <posX>365</posX>
+        <posY>351</posY>
+        <label>#HTPCInfo.ProcessorCount #HTPCInfo.TranslationProcessorCore #HTPCInfo.ProcessorManufacturer, #HTPCInfo.ProcessorDescription</label>
+        <font>font10</font>
+        <textcolor>eaeaea</textcolor>
+      </control>
+      <control>
+        <description>Input Devices</description>
+        <type>label</type>
+        <id>1</id>
+        <posX>365</posX>
+        <posY>374</posY>
+        <label>#HTPCInfo.TranslationKeyboardDevice/#HTPCInfo.TranslationPointingDevice:</label>
+        <font>font10</font>
+        <textcolor>eaeaea</textcolor>
+      </control>
+      <control>
+        <description>Input Devices Value</description>
+        <type>label</type>
+        <id>1</id>
+        <posX>365</posX>
+        <posY>398</posY>
+        <label>#HTPCInfo.KeyboardDevice1Name / #HTPCInfo.PointingDevice1Name</label>
+        <font>font10</font>
+        <textcolor>eaeaea</textcolor>
+      </control>
+      <control>
+        <description>GFX Card</description>
+        <type>label</type>
+        <id>1</id>
+        <posX>365</posX>
+        <posY>421</posY>
+        <label>#HTPCInfo.TranslationDisplayDevice:</label>
+        <font>font10</font>
+        <textcolor>eaeaea</textcolor>
+      </control>
+      <control>
+        <description>GFX Card Value</description>
+        <type>label</type>
+        <id>1</id>
+        <posX>365</posX>
+        <posY>444</posY>
+        <label>#HTPCInfo.DisplayDevice1Description (#HTPCInfo.DisplayDevice1DriverVersion)</label>
+        <font>font10</font>
+        <textcolor>eaeaea</textcolor>
+      </control>
+      <control>
+        <description>Sound Card</description>
+        <type>label</type>
+        <id>1</id>
+        <posX>365</posX>
+        <posY>468</posY>
+        <label>#HTPCInfo.TranslationSoundDevice:</label>
+        <font>font10</font>
+        <textcolor>eaeaea</textcolor>
+      </control>
+      <control>
+        <description>Sound Card Value</description>
+        <type>label</type>
+        <id>1</id>
+        <posX>365</posX>
+        <posY>492</posY>
+        <label>#HTPCInfo.SoundDevice1Name (#HTPCInfo.SoundDevice1Manufacturer)</label>
+        <font>font10</font>
+        <textcolor>eaeaea</textcolor>
+      </control>
+      <!-- ******************************** OS Information labels ****************************** -->
+
+      <control>
+        <description>OS Version</description>
+        <type>label</type>
+        <id>1</id>
+        <posX>365</posX>
+        <posY>590</posY>
+        <label>#HTPCInfo.TranslationOS:</label>
+        <font>font10</font>
+        <textcolor>eaeaea</textcolor>
+      </control>
+      <control>
+        <description>OS Version Value</description>
+        <type>label</type>
+        <id>1</id>
+        <posX>365</posX>
+        <posY>614</posY>
+        <font>font10</font>
+        <label>#HTPCInfo.OSDescription (#HTPCInfo.OSVersionName)</label>
+        <textcolor>eaeaea</textcolor>
+      </control>
+    </control>
+    <!-- ************************************ MENU STYLE INFO WINDOW ******************************* -->
+    <!-- *** Network Information labels *** -->
+    <control>
+      <type>group</type>
+      <description>group element</description>
+      <posX>620</posX>
+      <posY>215</posY>
+	  <layout>StackLayout(35, Vertical, true)</layout>		  
+      <visible>Control.IsVisible(50)+control.hasfocus(9999)+!control.hasfocus(99)</visible>
+
+      <control>
+        <description>Network Value</description>
+        <type>label</type>
+        <id>1</id>
+        <posX>365</posX>
+        <posY>210</posY>
+        <label>Server Mode #HTPCInfo.NetworkServerModeIsEnabled, #HTPCInfo.NetworkWorkgroup</label>
+        <font>font10</font>
+        <textcolor>eaeaea</textcolor>
+      </control>
+      <control>
+        <description>Internal/External IP</description>
+        <type>label</type>
+        <id>1</id>
+        <posX>365</posX>
+        <posY>234</posY>
+        <label>#HTPCInfo.TranslationNetworkIPAddress/#HTPCInfo.TranslationNetworkExternalIPAddress: #HTPCInfo.NetworkIPv4Address1 / #HTPCInfo.NetworkExternalIPAddress (IPv6 support #HTPCInfo.NetworkIPv6Enabled)</label>
+        <font>font10</font>
+        <textcolor>eaeaea</textcolor>
+      </control>
+
+      <control>
+        <description>Network Traffic</description>
+        <type>label</type>
+        <id>1</id>
+        <posX>365</posX>
+        <posY>280</posY>
+        <label>#HTPCInfo.TranslationNetworkTraffic:</label>
+        <font>font10</font>
+        <textcolor>eaeaea</textcolor>
+      </control>
+      <control>
+        <description>Network Traffic Value</description>
+        <type>label</type>
+        <id>1</id>
+        <posX>365</posX>
+        <posY>304</posY>
+        <label>#HTPCInfo.NetworkTotalSent #HTPCInfo.TranslationNetworkSent / #HTPCInfo.NetworkTotalReceived #HTPCInfo.TranslationNetworkReceived</label>
+        <font>font10</font>
+        <textcolor>eaeaea</textcolor>
+      </control>
+      <!-- *** TV Card Information labels *** -->
+      <control>
+        <description>TVCard</description>
+        <type>label</type>
+        <id>1</id>
+        <posX>365</posX>
+        <posY>393</posY>
+        <label>#HTPCInfo.TranslationTVDeviceType:</label>
+        <font>font10</font>
+        <textcolor>eaeaea</textcolor>
+      </control>
+      <control>
+        <description>TVCard Value</description>
+        <type>label</type>
+        <id>1</id>
+        <posX>365</posX>
+        <posY>416</posY>
+        <label>#HTPCInfo.TVDevice2Name (#HTPCInfo.TVDevice2Type), #HTPCInfo.TVDevice2Enabled</label>
+        <font>font10</font>
+        <textcolor>eaeaea</textcolor>
+      </control>
+      <control>
+        <description>TVCard Signal Quality</description>
+        <type>label</type>
+        <id>1</id>
+        <posX>365</posX>
+        <posY>440</posY>
+        <label>#HTPCInfo.TranslationTVDeviceSignalQuality: #HTPCInfo.TVDevice2SignalQuality</label>
+        <font>font10</font>
+        <textcolor>eaeaea</textcolor>
+      </control>
+
+      <control>
+        <description>TVCard Signal Level</description>
+        <type>label</type>
+        <id>1</id>
+        <posX>365</posX>
+        <posY>487</posY>
+        <label>#HTPCInfo.TranslationTVDeviceSignalLevel: #HTPCInfo.TVDevice2SignalLevel</label>
+        <font>font10</font>
+        <textcolor>eaeaea</textcolor>
+      </control>
+
+      <!-- *** TV Server *** -->
+      <control>
+        <description>TV Server Name</description>
+        <type>label</type>
+        <id>1</id>
+        <posX>393</posX>
+        <posY>534</posY>
+        <label>#HTPCInfo.TranslationTVServer:</label>
+        <font>font10</font>
+        <textcolor>eaeaea</textcolor>
+      </control>
+      <control>
+        <description>TV Server Connected?</description>
+        <type>image</type>
+        <id>1</id>
+        <posX>365</posX>
+        <posY>538</posY>
+        <width>16</width>
+        <height>16</height>
+        <keepaspectratio>no</keepaspectratio>
+        <texture>#HTPCInfo.TVServerConnectionState</texture>
+      </control>
+      <control>
+        <description>TV Server Values</description>
+        <type>label</type>
+        <id>1</id>
+        <posX>365</posX>
+        <posY>557</posY>
+        <font>font10</font>
+        <textcolor>eaeaea</textcolor>
+        <label>IP: #HTPCInfo.TVServerIPAddress (#HTPCInfo.TVServerDescription) - Grab EPG: #HTPCInfo.TVDevice2GrabbingEPG - Timeshift: #HTPCInfo.TVDevice2TimeShifting - Record: #HTPCInfo.TVDevice2Recording</label>
+      </control>
+      <!-- *** TV Clients *** -->
+      <control>
+        <description>TV Client 1</description>
+        <type>label</type>
+        <id>1</id>
+        <posX>393</posX>
+        <posY>580</posY>
+        <font>font10</font>
+        <textcolor>eaeaea</textcolor>
+        <label>#HTPCInfo.TranslationTVClient:</label>
+      </control>
+      <control>
+        <description>TV Client 1 Connected?</description>
+        <type>image</type>
+        <id>1</id>
+        <posX>365</posX>
+        <posY>584</posY>
+        <width>16</width>
+        <height>16</height>
+        <keepaspectratio>no</keepaspectratio>
+        <texture>#HTPCInfo.TVClientConnectionState</texture>
+      </control>
+      <control>
+        <description>TV Client 1 Value</description>
+        <type>label</type>
+        <id>1</id>
+        <posX>365</posX>
+        <posY>604</posY>
+        <font>font10</font>
+        <textcolor>eaeaea</textcolor>
+        <label>Name: #HTPCInfo.TVClient1Name - active: #HTPCInfo.TVClient1Active - Stream: #HTPCInfo.TVClient1Stream</label>
+      </control>
+    </control>
+  </controls>
+</window>

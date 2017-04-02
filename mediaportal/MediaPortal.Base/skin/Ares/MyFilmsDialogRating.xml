@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<window>
+  <id>7988</id>
+  <defaultcontrol>10</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <controls>
+    <control>
+      <type>image</type>
+      <id>0</id>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>black.png</texture>
+      <colordiffuse>99000000</colordiffuse>
+      <visible>!window.isvisible(2005)</visible>
+    </control>
+    <control>
+      <type>image</type>
+      <id>0</id>
+      <posX>410</posX>
+      <posY>319</posY>
+      <width>1048</width>
+      <height>473</height>
+      <texture>dialogglow.png</texture>
+      <visible>!window.isvisible(602)+!window.isvisible(2005)</visible>
+    </control>
+    <control>
+      <type>image</type>
+      <id>0</id>
+      <posX>410</posX>
+      <posY>319</posY>
+      <width>1048</width>
+      <height>473</height>
+      <texture>dialogglow.png</texture>
+      <visible>window.isvisible(602)|window.isvisible(2005)</visible>
+    </control>
+    <control>
+      <description>dialog Heading</description>
+      <type>fadelabel</type>
+      <id>2</id>
+      <posX>514</posX>
+      <posY>408</posY>
+      <width>786</width>
+      <label>934</label>
+      <font>font12</font>
+      <textcolor>ffffffff</textcolor>
+    </control>
+    <!-- <control>
+            <description>Rating label</description>
+            <type>label</type>
+            <id>3</id>
+            <posX>707</posX>
+            <posY>360</posY>
+            <label>#myfilms.db.rating.label</label>
+            <font>font13</font>
+            <textcolor>ffffffff</textcolor>
+            <animation effect="fade" time="250">WindowOpen</animation>
+            <animation effect="fade" time="250">WindowClose</animation>
+        </control> -->
+    <control>
+      <description>Rating value</description>
+      <type>label</type>
+      <id>4</id>
+      <posX>900</posX>
+      <posY>480</posY>
+      <label>#myfilms.rating</label>
+      <font>fontBold</font>
+      <textcolor>ffffffff</textcolor>
+    </control>
+    <control>
+      <description>right button</description>
+      <type>button</type>
+      <id>10</id>
+      <posX>1180</posX>
+      <posY>555</posY>
+      <width>52</width>
+      <height>52</height>
+      <textureFocus>arrow_round_right_focus.png</textureFocus>
+      <textureNoFocus>arrow_round_right_nofocus.png</textureNoFocus>
+      <label />
+      <onleft>11</onleft>
+      <onright>12</onright>
+      <onup>12</onup>
+      <ondown>12</ondown>
+    </control>
+    <control>
+      <description>left button</description>
+      <type>button</type>
+      <id>11</id>
+      <posX>665</posX>
+      <posY>555</posY>
+      <width>52</width>
+      <height>52</height>
+      <textureFocus>arrow_round_left_focus.png</textureFocus>
+      <textureNoFocus>arrow_round_left_nofocus.png</textureNoFocus>
+      <label />
+      <onleft>12</onleft>
+      <onright>10</onright>
+      <onup>12</onup>
+      <ondown>12</ondown>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>OK button</description>
+      <type>button</type>
+      <id>12</id>
+      <posX>1328</posX>
+      <posY>400</posY>
+      <textYOff>13</textYOff>
+      <width>42</width>
+      <height>42</height>
+      <textureFocus>top_exit_enabled.png</textureFocus>
+      <textureNoFocus>top_exit_disabled.png</textureNoFocus>
+      <label></label>
+      <onleft>11</onleft>
+      <onright>10</onright>
+      <onup>11</onup>
+      <ondown>10</ondown>
+    </control>
+    <control>
+      <type>imagelist</type>
+      <id>100</id>
+      <posX>780</posX>
+      <posY>567</posY>
+      <width>63</width>
+      <height>480</height>
+      <textureWidth>33</textureWidth>
+      <textureHeight>33</textureHeight>
+      <subitems>
+        <subitem>greystar.png</subitem>
+        <subitem>stargood.png</subitem>
+      </subitems>
+      <orientation>horizontal</orientation>
+      <percentage>#myfilms.rating</percentage>
+      <imagesToDraw>10</imagesToDraw>
+    </control>
+  </controls>
+</window>

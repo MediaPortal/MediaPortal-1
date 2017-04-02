@@ -15,6 +15,8 @@
       <height>1080</height>
     </control>    	
 
+	<include condition="#(eq(#Music.fanart.enable,'Now Playing only'))">common.music.play.fanart.xml</include>
+	<include condition="#(eq(#Music.fanart.enable,'All Screens'))">common.music.play.fanart.xml</include>
 	
     <control>
       <description>Backdrop</description>
@@ -26,6 +28,7 @@
       <height>1080</height>
       <texture>radiotime_back.jpg</texture>
 	  <colordiffuse>25ffffff</colordiffuse>
+	  <visible>!string.equals(#Music.fanart.enable,Now Playing only)+!string.equals(#Music.fanart.enable,All Screens)</visible>   
 	</control>
     <control>
       <description>Backdrop</description>
@@ -62,20 +65,19 @@
 	
 	<import>custom\Allscreens\user_dialog.xml</import>
 
-
-    <control>
-      <description>Time / Item Count / Play station</description>
-      <type>label</type>
-      <id>0</id>
-      <posX>1862</posX>
-      <posY>110</posY>
-      <height>43</height>
-      <width>500</width>
-	  <align>right</align>
-      <font>fontBold2</font>
-	  <label>#itemcount</label>
-      <textcolor>white</textcolor>  
-    </control>
+		<control>
+		  <description>Date / Time</description>
+		  <type>label</type>
+		  <id>0</id>
+          <posX>#Xposition</posX>
+          <posY>#Yposition</posY>
+          <height>43</height>
+          <width>500</width>
+          <font>fontBold2</font>
+		  <label>#itemcount</label>
+		  <align>right</align>
+		  <textcolor>ffffffff</textcolor>
+		</control>
 
     <control>
       <type>actiongroup</type>

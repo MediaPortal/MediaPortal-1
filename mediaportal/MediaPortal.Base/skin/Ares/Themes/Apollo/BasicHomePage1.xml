@@ -1,0 +1,329 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <controls>
+  
+  
+
+  
+  	  <!-- NAVIGATION CONTROLS FOR TILES IN BASICHOME -->
+	  
+	  <control>
+        <description>left</description>
+        <type>image</type>
+        <id>666001</id>
+        <posX>0</posX>
+        <posY>0</posY>
+        <width>5</width>
+        <height>5</height>
+        <texture></texture>
+        <colordiffuse>ffffffff</colordiffuse>
+		<visible>control.hasfocus(00524)|control.hasfocus(00523)</visible>
+      </control>
+	  
+	  <control>
+        <description>right</description>
+        <type>image</type>
+        <id>666002</id>
+        <posX>0</posX>
+        <posY>0</posY>
+        <width>5</width>
+        <height>5</height>
+        <texture></texture>
+        <colordiffuse>ffffffff</colordiffuse>
+		<visible>control.hasfocus(00505)</visible>
+      </control>
+
+	  
+	  
+    <control>
+      <description>group element</description>
+      <type>group</type>
+	  <visible allowhiddenfocus="true">control.hasfocus(00500)|control.hasfocus(00501)|control.hasfocus(00502)|control.hasfocus(00503)|control.hasfocus(00504)|control.hasfocus(230)|control.hasfocus(231)|control.hasfocus(232)|control.hasfocus(233)|control.hasfocus(234)|control.hasfocus(235)|control.hasfocus(236)|control.hasfocus(237)|control.hasfocus(238)|control.hasfocus(239)|control.hasfocus(330)|control.hasfocus(331)|control.hasfocus(332)|control.hasfocus(333)|control.hasfocus(334)|control.hasfocus(335)|control.hasfocus(8001121)|control.hasfocus(400)|control.hasfocus(401)|control.hasfocus(402)|control.hasfocus(403)|control.hasfocus(404)|control.hasfocus(605)|control.hasfocus(604)|control.hasfocus(603)|control.hasfocus(602)|control.hasfocus(601)|control.hasfocus(8206555)|control.hasfocus(8205555)|control.hasfocus(8201123)|string.equals(#skin.currentTile,00500)|string.equals(#skin.currentTile,00501)|string.equals(#skin.currentTile,00502)|string.equals(#skin.currentTile,00503)|string.equals(#skin.currentTile,00504)</visible>
+	  <control>
+        <description></description>
+        <type>image</type>
+        <id>0</id>
+        <posX>0</posX>
+        <posY>0</posY>
+        <width>1920</width>
+        <height>1080</height>
+        <texture>shadow_m.png</texture>
+        <colordiffuse>ffffffff</colordiffuse>
+		<animation effect="slide" start="0,0" end="-2500,0" reversible="true" time="350" condition="control.isVisible(666002)">Conditional</animation>
+		<animation effect="slide" start="0,0" end="2500,0" reversible="true" time="350" condition="control.isVisible(666001)">Conditional</animation>
+		<animation effect="slide" start="0,0" end="2500,0" reversible="true" time="350" condition="control.hasfocus(55512)">Conditional</animation>
+		<animation effect="fade" time="350" reversible="true">hidden</animation>	
+      </control>	  
+	  <control>
+        <description>BasicHome btn1</description>
+        <type>button</type>
+        <id>00500</id>
+		<posX>55</posX>
+        <posY>205</posY>
+		<height>600</height>
+		<width>650</width>
+		<onfocus>#(skin.setstring('#skin.currentTile','00500'))</onfocus>
+        <label>#(iif(eq(#skin.tile1cne,'True'),'#tile1plugin.name','#tile1.name'))</label>
+		<oninfo>#(skin.setfocus(35,230))</oninfo>
+		<hyperlink>#tile1.hyperlink</hyperlink>
+		<textcolorNoFocus>ff888888</textcolorNoFocus>
+		<textcolor>ffffffff</textcolor>
+		<textureFocus overlay="t_overlayB.png" mask="large_m.png">#(iif(eq(#skin.manualimg,'yes'),'btn\focus\focus_#tile1pluginImg.png','btn\focus\focus_#tile1plugin.hyperlink_Large.png'))</textureFocus>
+		<textureNoFocus mask="large_m.png">#(iif(eq(#skin.manualimg,'yes'),'btn\unfocus\#tile1pluginImg.png','btn\unfocus\#tile1plugin.hyperlink_Large.png'))</textureNoFocus>
+		<textalign>center</textalign>
+		<textYOff>265</textYOff>
+		<font>font13</font>
+        <onESC>#(skin.setfocus(35,cint(#skin.Anav1)))</onESC>
+        <onleft>00#skin.page1navleft</onleft>
+        <ondown>#(cint(switch( and( eq(#tile1plugin.hyperlink,'MovPics'), eq(#latestMediaHandler.movingpicture.latest.enabled,'True')),91919991, and(eq(#tile1plugin.hyperlink,'TVSeries'),eq(#latestMediaHandler.tvseries.latest.enabled,'True')),91919994, and(eq(#tile1plugin.hyperlink,'MyMusic'),eq(#latestMediaHandler.music.latest.enabled,'True')),91919997, and(eq(#tile1plugin.hyperlink,'MyVideo'),eq(#latestMediaHandler.myvideo.latest.enabled,'True')),91915991, and(eq(#tile1plugin.hyperlink,'LiveTV'),eq(#latestMediaHandler.tvrecordings.latest.enabled,'True')),91919984, and(eq(#tile1plugin.hyperlink,'Recordedtv'),eq(#latestMediaHandler.tvrecordings.latest.enabled,'True')),91919984, and(eq(#tile1plugin.hyperlink,'Trakt'),eq(#skin.no.latestmedia,'True')),98302, and(eq(#tile1plugin.hyperlink,'Pictures'),eq(#latestMediaHandler.picture.latest.enabled,'True')),91919971, eq(1,1),21)))</ondown>
+		<onup>8206555</onup>
+		<onright>00501</onright>
+		<animation effect="slide" start="0,0" end="-2500,0" reversible="true" time="350" condition="control.isVisible(666002)">Conditional</animation>
+		<animation effect="slide" start="0,0" end="2500,0" reversible="true" time="350" condition="control.isVisible(666001)">Conditional</animation>
+		<animation effect="slide" start="0,0" end="2500,0" reversible="true" time="350" condition="control.hasfocus(55512)">Conditional</animation>
+		<animation effect="fade" time="350" reversible="true">hidden</animation>
+      </control>
+	  
+	  <control>
+        <description>BasicHome btn2</description>
+        <type>button</type>
+        <id>00501</id>
+		<posX>715</posX>
+        <posY>205</posY>
+		<height>295</height>
+		<width>570</width>
+		<onfocus>#(skin.setstring('#skin.currentTile','00501'))</onfocus>
+        <label>#(iif(eq(#skin.tile2cne,'True'),'#tile2plugin.name','#tile2.name'))</label>
+		<oninfo>#(skin.setfocus(35,232))</oninfo>
+		<hyperlink>#tile2.hyperlink</hyperlink>
+		<textcolorNoFocus>ff888888</textcolorNoFocus>
+		<textcolor>ffffffff</textcolor>
+		<textureFocus overlay="t_overlayA.png">#(switch( eq(#tile2plugin.hyperlink,'LATEST_TVSERIES1'),'#latestMediaHandler.tvseries.latest1.fanart', eq(#tile2plugin.hyperlink,'LATEST_TVSERIES2'),'#latestMediaHandler.tvseries.latest2.fanart', eq(#tile2plugin.hyperlink,'LATEST_MOVPICS1'),'#latestMediaHandler.movingpicture.latest1.fanart', eq(#tile2plugin.hyperlink,'LATEST_MOVPICS2'),'#latestMediaHandler.movingpicture.latest2.fanart', eq(#tile2plugin.hyperlink,'LATEST_MYVIDS1'),'#latestMediaHandler.myvideo.latest1.fanart', eq(#tile2plugin.hyperlink,'LATEST_MYVIDS2'),'#latestMediaHandler.myvideo.latest2.fanart', eq(#skin.manualimg,'yes'),'btn\focus\focus_#tile2pluginImg.png', eq(1,1),'btn\focus\focus_#tile2plugin.hyperlink.png'))</textureFocus>
+		<textureNoFocus>#(switch( eq(#tile2plugin.hyperlink,'LATEST_TVSERIES1'),'#latestMediaHandler.tvseries.latest1.fanart', eq(#tile2plugin.hyperlink,'LATEST_TVSERIES2'),'#latestMediaHandler.tvseries.latest2.fanart', eq(#tile2plugin.hyperlink,'LATEST_MOVPICS1'),'#latestMediaHandler.movingpicture.latest1.fanart', eq(#tile2plugin.hyperlink,'LATEST_MOVPICS2'),'#latestMediaHandler.movingpicture.latest2.fanart', eq(#tile2plugin.hyperlink,'LATEST_MYVIDS1'),'#latestMediaHandler.myvideo.latest1.fanart', eq(#tile2plugin.hyperlink,'LATEST_MYVIDS2'),'#latestMediaHandler.myvideo.latest2.fanart', eq(#skin.manualimg,'yes'),'btn\focus\focus_#tile2pluginImg.png', eq(1,1),'btn\focus\focus_#tile2plugin.hyperlink.png'))</textureNoFocus>
+		<textalign>center</textalign>
+		<textYOff>110</textYOff>
+		<font>font13</font>
+		<onESC>#(skin.setfocus(35,cint(#skin.Anav2)))</onESC>
+        <onleft>00500</onleft>
+        <onup>8206555</onup>
+		<ondown>00502</ondown>
+		<onright>00503</onright>
+		<animation effect="slide" start="0,0" end="-2500,0" reversible="true" time="350" condition="control.isVisible(666002)">Conditional</animation>
+		<animation effect="slide" start="0,0" end="2500,0" reversible="true" time="350" condition="control.isVisible(666001)">Conditional</animation>
+		<animation effect="slide" start="0,0" end="2500,0" reversible="true" time="350" condition="control.hasfocus(55512)">Conditional</animation>
+		<animation effect="fade" time="350" reversible="true">hidden</animation>
+      </control>	  
+	  
+	  <control>
+        <description>BasicHome btn3</description>
+        <type>button</type>
+        <id>00502</id>
+		<posX>715</posX>
+        <posY>510</posY>
+		<height>295</height>
+		<width>570</width>
+		<onfocus>#(skin.setstring('#skin.currentTile','00502'))</onfocus>
+        <label>#(iif(eq(#skin.tile3cne,'True'),'#tile3plugin.name','#tile3.name'))</label>
+		<oninfo>#(skin.setfocus(35,234))</oninfo>
+		<hyperlink>#tile3.hyperlink</hyperlink>
+		<textcolorNoFocus>ff888888</textcolorNoFocus>
+		<textcolor>ffffffff</textcolor>
+		<textureFocus overlay="t_overlayA.png">#(switch( eq(#tile3plugin.hyperlink,'LATEST_TVSERIES1'),'#latestMediaHandler.tvseries.latest1.fanart', eq(#tile3plugin.hyperlink,'LATEST_TVSERIES2'),'#latestMediaHandler.tvseries.latest2.fanart', eq(#tile3plugin.hyperlink,'LATEST_MOVPICS1'),'#latestMediaHandler.movingpicture.latest1.fanart', eq(#tile3plugin.hyperlink,'LATEST_MOVPICS2'),'#latestMediaHandler.movingpicture.latest2.fanart', eq(#tile3plugin.hyperlink,'LATEST_MYVIDS1'),'#latestMediaHandler.myvideo.latest1.fanart', eq(#tile3plugin.hyperlink,'LATEST_MYVIDS2'),'#latestMediaHandler.myvideo.latest2.fanart', eq(#skin.manualimg,'yes'),'btn\focus\focus_#tile3pluginImg.png', eq(1,1),'btn\focus\focus_#tile3plugin.hyperlink.png'))</textureFocus>
+		<textureNoFocus>#(switch( eq(#tile3plugin.hyperlink,'LATEST_TVSERIES1'),'#latestMediaHandler.tvseries.latest1.fanart', eq(#tile3plugin.hyperlink,'LATEST_TVSERIES2'),'#latestMediaHandler.tvseries.latest2.fanart', eq(#tile3plugin.hyperlink,'LATEST_MOVPICS1'),'#latestMediaHandler.movingpicture.latest1.fanart', eq(#tile3plugin.hyperlink,'LATEST_MOVPICS2'),'#latestMediaHandler.movingpicture.latest2.fanart', eq(#tile3plugin.hyperlink,'LATEST_MYVIDS1'),'#latestMediaHandler.myvideo.latest1.fanart', eq(#tile3plugin.hyperlink,'LATEST_MYVIDS2'),'#latestMediaHandler.myvideo.latest2.fanart', eq(#skin.manualimg,'yes'),'btn\focus\focus_#tile3pluginImg.png', eq(1,1),'btn\focus\focus_#tile3plugin.hyperlink.png'))</textureNoFocus>
+		<textalign>center</textalign>
+		<textYOff>110</textYOff>
+		<font>font13</font>
+		<onESC>#(skin.setfocus(35,cint(#skin.Anav3)))</onESC>
+        <onleft>00500</onleft>
+        <ondown>#(cint(switch( and( eq(#tile3plugin.hyperlink,'MovPics'), eq(#latestMediaHandler.movingpicture.latest.enabled,'True')),91919991, and(eq(#tile3plugin.hyperlink,'TVSeries'),eq(#latestMediaHandler.tvseries.latest.enabled,'True')),91919994, and(eq(#tile3plugin.hyperlink,'MyMusic'),eq(#latestMediaHandler.music.latest.enabled,'True')),91919997, and(eq(#tile3plugin.hyperlink,'MyVideo'),eq(#latestMediaHandler.myvideo.latest.enabled,'True')),91915991, and(eq(#tile3plugin.hyperlink,'LiveTV'),eq(#latestMediaHandler.tvrecordings.latest.enabled,'True')),91919984, and(eq(#tile3plugin.hyperlink,'Recordedtv'),eq(#latestMediaHandler.tvrecordings.latest.enabled,'True')),91919984, and(eq(#tile3plugin.hyperlink,'Trakt'),eq(#skin.no.latestmedia,'True')),98302, and(eq(#tile3plugin.hyperlink,'Pictures'),eq(#latestMediaHandler.picture.latest.enabled,'True')),91919971, eq(1,1),21)))</ondown>
+		<onup>00501</onup>
+		<onright>00504</onright>
+		<animation effect="slide" start="0,0" end="-2500,0" reversible="true" time="350" condition="control.isVisible(666002)">Conditional</animation>
+		<animation effect="slide" start="0,0" end="2500,0" reversible="true" time="350" condition="control.isVisible(666001)">Conditional</animation>
+		<animation effect="slide" start="0,0" end="2500,0" reversible="true" time="350" condition="control.hasfocus(55512)">Conditional</animation>
+		<animation effect="fade" time="350" reversible="true">hidden</animation>
+      </control>
+
+	  <control>
+        <description>BasicHome btn4</description>
+        <type>button</type>
+        <id>00503</id>
+		<posX>1295</posX>
+        <posY>205</posY>
+		<height>295</height>
+		<width>570</width>
+		<onfocus>#(skin.setstring('#skin.currentTile','00503'))</onfocus>
+        <label>#(iif(eq(#skin.tile4cne,'True'),'#tile4plugin.name','#tile4.name'))</label>
+		<oninfo>#(skin.setfocus(35,236))</oninfo>
+		<hyperlink>#tile4.hyperlink</hyperlink>
+		<textcolorNoFocus>ff888888</textcolorNoFocus>
+		<textcolor>ffffffff</textcolor>
+		<textureFocus overlay="t_overlayA.png" mask="top_m.png">#(switch( eq(#tile4plugin.hyperlink,'LATEST_TVSERIES1'),'#latestMediaHandler.tvseries.latest1.fanart', eq(#tile4plugin.hyperlink,'LATEST_TVSERIES2'),'#latestMediaHandler.tvseries.latest2.fanart', eq(#tile4plugin.hyperlink,'LATEST_MOVPICS1'),'#latestMediaHandler.movingpicture.latest1.fanart', eq(#tile4plugin.hyperlink,'LATEST_MOVPICS2'),'#latestMediaHandler.movingpicture.latest2.fanart', eq(#tile4plugin.hyperlink,'LATEST_MYVIDS1'),'#latestMediaHandler.myvideo.latest1.fanart', eq(#tile4plugin.hyperlink,'LATEST_MYVIDS2'),'#latestMediaHandler.myvideo.latest2.fanart', eq(#skin.manualimg,'yes'),'btn\focus\focus_#tile4pluginImg.png', eq(1,1),'btn\focus\focus_#tile4plugin.hyperlink.png'))</textureFocus>
+		<textureNoFocus mask="top_m.png">#(switch( eq(#tile4plugin.hyperlink,'LATEST_TVSERIES1'),'#latestMediaHandler.tvseries.latest1.fanart', eq(#tile4plugin.hyperlink,'LATEST_TVSERIES2'),'#latestMediaHandler.tvseries.latest2.fanart', eq(#tile4plugin.hyperlink,'LATEST_MOVPICS1'),'#latestMediaHandler.movingpicture.latest1.fanart', eq(#tile4plugin.hyperlink,'LATEST_MOVPICS2'),'#latestMediaHandler.movingpicture.latest2.fanart', eq(#tile4plugin.hyperlink,'LATEST_MYVIDS1'),'#latestMediaHandler.myvideo.latest1.fanart', eq(#tile4plugin.hyperlink,'LATEST_MYVIDS2'),'#latestMediaHandler.myvideo.latest2.fanart', eq(#skin.manualimg,'yes'),'btn\focus\focus_#tile4pluginImg.png', eq(1,1),'btn\focus\focus_#tile4plugin.hyperlink.png'))</textureNoFocus>
+		<textalign>center</textalign>
+		<textYOff>110</textYOff>
+		<font>font13</font>
+		<onESC>#(skin.setfocus(35,cint(#skin.Anav4)))</onESC>
+        <onleft>00501</onleft>
+        <onup>8206555</onup>
+		<ondown>00504</ondown>
+		<onright>00#skin.page1navright</onright>
+		<animation effect="slide" start="0,0" end="-2500,0" reversible="true" time="350" condition="control.isVisible(666002)">Conditional</animation>
+		<animation effect="slide" start="0,0" end="2500,0" reversible="true" time="350" condition="control.isVisible(666001)">Conditional</animation>
+		<animation effect="slide" start="0,0" end="2500,0" reversible="true" time="350" condition="control.hasfocus(55512)">Conditional</animation>
+		<animation effect="fade" time="350" reversible="true">hidden</animation>
+      </control>
+
+	  <control>
+        <description>BasicHome btn5</description>
+        <type>button</type>
+        <id>00504</id>
+		<posX>1295</posX>
+        <posY>510</posY>
+		<height>295</height>
+		<width>570</width>
+		<onfocus>#(skin.setstring('#skin.currentTile','00504'))</onfocus>
+        <label>#(iif(eq(#skin.tile5cne,'True'),'#tile5plugin.name','#tile5.name'))</label>
+		<oninfo>#(skin.setfocus(35,238))</oninfo>
+		<hyperlink>#tile5.hyperlink</hyperlink>
+		<textcolorNoFocus>ff888888</textcolorNoFocus>
+		<textcolor>ffffffff</textcolor>
+		<textureFocus overlay="t_overlayA.png" mask="btm_m.png">#(switch( eq(#tile5plugin.hyperlink,'LATEST_TVSERIES1'),'#latestMediaHandler.tvseries.latest1.fanart', eq(#tile5plugin.hyperlink,'LATEST_TVSERIES2'),'#latestMediaHandler.tvseries.latest2.fanart', eq(#tile5plugin.hyperlink,'LATEST_MOVPICS1'),'#latestMediaHandler.movingpicture.latest1.fanart', eq(#tile5plugin.hyperlink,'LATEST_MOVPICS2'),'#latestMediaHandler.movingpicture.latest2.fanart', eq(#tile5plugin.hyperlink,'LATEST_MYVIDS1'),'#latestMediaHandler.myvideo.latest1.fanart', eq(#tile5plugin.hyperlink,'LATEST_MYVIDS2'),'#latestMediaHandler.myvideo.latest2.fanart', eq(#skin.manualimg,'yes'),'btn\focus\focus_#tile5pluginImg.png', eq(1,1),'btn\focus\focus_#tile5plugin.hyperlink.png'))</textureFocus>
+		<textureNoFocus mask="btm_m.png">#(switch( eq(#tile5plugin.hyperlink,'LATEST_TVSERIES1'),'#latestMediaHandler.tvseries.latest1.fanart', eq(#tile5plugin.hyperlink,'LATEST_TVSERIES2'),'#latestMediaHandler.tvseries.latest2.fanart', eq(#tile5plugin.hyperlink,'LATEST_MOVPICS1'),'#latestMediaHandler.movingpicture.latest1.fanart', eq(#tile5plugin.hyperlink,'LATEST_MOVPICS2'),'#latestMediaHandler.movingpicture.latest2.fanart', eq(#tile5plugin.hyperlink,'LATEST_MYVIDS1'),'#latestMediaHandler.myvideo.latest1.fanart', eq(#tile5plugin.hyperlink,'LATEST_MYVIDS2'),'#latestMediaHandler.myvideo.latest2.fanart', eq(#skin.manualimg,'yes'),'btn\focus\focus_#tile5pluginImg.png', eq(1,1),'btn\focus\focus_#tile5plugin.hyperlink.png'))</textureNoFocus>
+		<textalign>center</textalign>
+		<textYOff>110</textYOff>
+		<font>font13</font>
+		<onESC>#(skin.setfocus(35,cint(#skin.Anav5)))</onESC>
+        <onleft>00502</onleft>
+        <ondown>#(cint(switch( and( eq(#tile5plugin.hyperlink,'MovPics'), eq(#latestMediaHandler.movingpicture.latest.enabled,'True')),91919991, and(eq(#tile5plugin.hyperlink,'TVSeries'),eq(#latestMediaHandler.tvseries.latest.enabled,'True')),91919994, and(eq(#tile5plugin.hyperlink,'MyMusic'),eq(#latestMediaHandler.music.latest.enabled,'True')),91919997, and(eq(#tile5plugin.hyperlink,'MyVideo'),eq(#latestMediaHandler.myvideo.latest.enabled,'True')),91915991, and(eq(#tile5plugin.hyperlink,'LiveTV'),eq(#latestMediaHandler.tvrecordings.latest.enabled,'True')),91919984, and(eq(#tile5plugin.hyperlink,'Recordedtv'),eq(#latestMediaHandler.tvrecordings.latest.enabled,'True')),91919984, and(eq(#tile5plugin.hyperlink,'Trakt'),eq(#skin.no.latestmedia,'True')),98302, and(eq(#tile5plugin.hyperlink,'Pictures'),eq(#latestMediaHandler.picture.latest.enabled,'True')),91919971, eq(1,1),21)))</ondown>
+		<onup>00503</onup>
+		<onright>00#skin.page1navright</onright>
+		<animation effect="slide" start="0,0" end="-2500,0" reversible="true" time="350" condition="control.isVisible(666002)">Conditional</animation>
+		<animation effect="slide" start="0,0" end="2500,0" reversible="true" time="350" condition="control.isVisible(666001)">Conditional</animation>
+		<animation effect="slide" start="0,0" end="2500,0" reversible="true" time="350" condition="control.hasfocus(55512)">Conditional</animation>
+		<animation effect="fade" time="350" reversible="true">hidden</animation>
+      </control>
+	  
+	  
+	<control>
+      <description>background</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>42</posX>
+      <posY>188</posY>
+      <width>196</width>
+      <height>60</height>
+      <texture>p_btn_bac.png</texture>
+	  <animation effect="zoom" start="0.5,100" end="100,100" time="200" center="85,1017" condition="control.isvisible(8205555)">conditional</animation>
+	  <animation effect="zoom" start="100,100" end="0.5,100" time="150" center="85,1017">Hidden</animation>
+	  <visible allowhiddenfocus="true">control.hasfocus(8201123)|control.hasfocus(8205555)|control.hasfocus(8206555)</visible>
+    </control>	
+	
+	 
+	 <control Style="BasicHomeButton">
+        <description>BasicHome settings</description>
+        <type>button</type>
+        <id>8201123</id>
+		<posX>110</posX>
+        <posY>195</posY>
+		<hyperlink>4</hyperlink>
+		<height>43</height>
+		<width>43</width>
+        <label></label>
+		<textcolorNoFocus>ff6c7880</textcolorNoFocus>
+		<textcolor>ffffffff</textcolor>
+		<textureFocus>setting.png</textureFocus>
+		<textureNoFocus>setting.png</textureNoFocus>
+		<align>center</align>
+		<font>font14</font>
+        <onleft>8206555</onleft>
+        <onup>21</onup>
+		<ondown>#skin.currentTile</ondown>
+		<onright>8205555</onright>
+		<animation effect="rotate" delay="0" end="-360" centre="475,258" time="20000" loop="true" condition="control.hasFocus(8201123)">Conditional</animation>
+        <animation effect="fade" delay="0" reversible="false" time="200">focus</animation>
+		<animation effect="fade" delay="0" reversible="false" time="100">Hidden</animation>
+		<animation effect="slide" end="-70,0" time="150">Hidden</animation>
+		<animation effect="slide" start="-70,0" time="200">Visible</animation>
+		<visible allowhiddenfocus="true">control.hasfocus(8201123)|control.hasfocus(8205555)|control.hasfocus(8206555)</visible>
+	 </control> 
+
+	 <control Style="BasicHomeButton">
+        <description>BasicHome settings</description>
+        <type>button</type>
+        <id>8205555</id>
+		<posX>170</posX>
+        <posY>200</posY>
+		<onclick>#(skin.setfocus(35,20800))#(skin.setstring('#skin.setnav','8205555'))</onclick>
+		<height>33</height>
+		<width>33</width>
+        <label></label>
+		<textcolorNoFocus>ff6c7880</textcolorNoFocus>
+		<textcolor>ffffffff</textcolor>
+		<textureFocus>editorfocus.png</textureFocus>
+		<textureNoFocus>editor.png</textureNoFocus>
+		<align>center</align>
+        <onleft>8201123</onleft>
+        <onup>21</onup>
+		<ondown>#skin.currentTile</ondown>
+		<onright>8205555</onright>
+        <animation effect="fade" delay="0" reversible="false" time="200">focus</animation>
+		<animation effect="fade" delay="0" reversible="false" time="100">Hidden</animation>
+		<animation effect="slide" end="-120,0" time="150">Hidden</animation>
+		<animation effect="slide" start="-120,0" time="200">Visible</animation>
+		<visible allowhiddenfocus="true">control.hasfocus(8201123)|control.hasfocus(8205555)|control.hasfocus(8206555)</visible>
+	 </control> 
+
+	 <control>
+        <description>background</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>37</posX>
+        <posY>186</posY>
+        <width>69</width>
+        <height>68</height>
+        <texture>p_btn_shad.png</texture>
+		<animation effect="fade" delay="0" reversible="false" time="300">Visible</animation>
+		<animation effect="fade" delay="0" reversible="false" time="200">Hidden</animation>
+		<animation effect="slide" start="0,0" end="-2500,0" reversible="true" time="350" condition="control.isVisible(666002)">Conditional</animation>
+		<animation effect="slide" start="0,0" end="2500,0" reversible="true" time="350" condition="control.isVisible(666001)">Conditional</animation>
+		<animation effect="slide" start="0,0" end="2500,0" reversible="true" time="350" condition="control.hasfocus(55512)">Conditional</animation>
+		<animation effect="fade" time="350" reversible="true">hidden</animation>		
+		<visible allowhiddenfocus="true">control.isvisible(00500)|control.hasfocus(8201123)|control.hasfocus(8205555)|control.hasfocus(8206555)</visible>
+	 </control> 
+
+	 <control Style="BasicHomeButton">
+        <description>BasicHome settings</description>
+        <type>button</type>
+        <id>8206555</id>
+		<posX>40</posX>
+        <posY>187</posY>
+		<action>99</action>
+		<height>61</height>
+		<width>61</width>
+        <label></label>
+		<textcolorNoFocus>ff6c7880</textcolorNoFocus>
+		<textcolor>ffffffff</textcolor>
+		<textureFocus>p_btn_focus.png</textureFocus>
+		<textureNoFocus>p_btn.png</textureNoFocus>
+		<align>center</align>
+        <onleft>8206555</onleft>
+        <onup>21</onup>
+		<ondown>#skin.currentTile</ondown>
+		<onright>8201123</onright>
+		<animation effect="fade" delay="0" reversible="false" time="300">Visible</animation>
+		<animation effect="fade" delay="0" reversible="false" time="200">Hidden</animation>
+		<animation effect="slide" start="0,0" end="-2500,0" reversible="true" time="350" condition="control.isVisible(666002)">Conditional</animation>
+		<animation effect="slide" start="0,0" end="2500,0" reversible="true" time="350" condition="control.isVisible(666001)">Conditional</animation>
+		<animation effect="slide" start="0,0" end="2500,0" reversible="true" time="350" condition="control.hasfocus(55512)">Conditional</animation>
+		<animation effect="fade" time="350" reversible="true">hidden</animation>		
+		<visible allowhiddenfocus="true">control.isvisible(00500)|control.hasfocus(8201123)|control.hasfocus(8205555)|control.hasfocus(8206555)</visible>
+	 </control> 	  
+	  	
+	  
+    </control>
+  </controls>
+</window>
+
+
+

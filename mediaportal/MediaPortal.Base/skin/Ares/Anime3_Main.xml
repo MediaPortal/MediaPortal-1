@@ -1,0 +1,146 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>6101</id>
+  <defaultcontrol>50</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <define>#header.label:Anime</define>
+  <controls>
+    <!-- Import Dummy Controls to handle visibility -->
+	<import>Anime3_Dummy.xml</import>
+	<!-- ********************** BACKGROUNDS************************************** -->
+	
+    <control>
+      <description>BG</description>
+      <type>image</type>
+      <id>1</id>
+      <texture>#backgroundcolour</texture>
+      <width>1920</width>
+      <height>1080</height>
+    </control>
+	
+    <control>
+      <description>Fanart Background #1</description>
+      <type>image</type>
+      <id>524</id>
+      <posY>0</posY>
+      <posX>0</posX>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>#Anime3.Fanart.1</texture>
+	  <colordiffuse>35ffffff</colordiffuse>
+      <animation effect="fade" time="100">visible</animation>
+      <animation effect="fade" time="100" delay="100">hidden</animation>
+    </control>	
+	
+    <control>
+      <description></description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>#overlaycolour</texture>
+	</control>	
+	
+	  <control>
+        <description>Cover Art</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>40</posX>
+        <posY>190</posY>
+        <width>1845</width>
+        <height>624</height>
+        <texture>D_over1.png</texture>
+      </control>	
+
+	  <control>
+        <description>Cover Art</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>40</posX>
+        <posY>821</posY>
+        <width>1845</width>
+        <height>209</height>
+        <texture>Inf_gfx.png</texture>
+      </control>		  
+	  
+	<import>Anime3_mediainfo.xml</import>
+
+
+	
+   	
+	<!-- *********************** FIND PANEL *********************************** -->
+	<!-- List / banner view 
+
+	
+	
+	<control>
+	  <description>Find Label</description>
+	  <type>label</type>
+	  <id>0</id>
+	  <posX>812</posX>
+	  <posY>130</posY>
+	  <width>300</width>
+	  <label>Find:</label>
+	  <visible>[facadeview.list]+control.isvisible(3463)</visible>
+	</control>
+	<control>
+	  <description>find text</description>
+	  <type>label</type>
+	  <id>0</id>
+	  <posX>910</posX>
+	  <posY>130</posY>
+	  <width>570</width>
+	  <label>#Anime3.FindText</label>
+	  <visible>[facadeview.list]+control.isvisible(3463)</visible>
+	</control>
+	<control>
+	  <description>Find description *-key (T9)</description>
+	  <type>fadelabel</type>
+	  <id>0</id>
+	  <posX>812</posX>
+	  <posY>170</posY>
+	  <width>900</width>
+	  <label>*=#Anime3.FindAsteriskMode #=#Anime3.FindSharpMode</label>
+	  <visible>Control.IsVisible(3463)+Control.IsVisible(3464)+!Player.hasmedia</visible>
+	</control>
+	<control>
+	  <description>Find description W-key (text)</description>
+	  <type>fadelabel</type>
+	  <id>0</id>
+	  <posX>812</posX>
+	  <posY>170</posY>
+	  <width>900</width>
+	  <label>#Anime3.StartTextToggle =Start Word (#Anime3.FindStartWord) TAB=Next Match</label>
+	  <visible>Control.IsVisible(3463)+Control.IsVisible(3465)+!Player.hasmedia</visible>
+	</control>
+	<control>
+	  <description>Find description M-key</description>
+	  <type>label</type>
+	  <id>0</id>
+	  <posX>1200</posX>
+	  <posY>130</posY>
+	  <width>600</width>
+	  <align>left</align>
+	  <label>#Anime3.ModeToggleKey =Mode (#Anime3.FindMode)</label>
+	  <visible>Control.IsVisible(3463)</visible>
+	</control>
+	-->
+
+    <import>custom\Allscreens\user_dialog.xml</import>
+		
+		
+    <!--            :: HEADER ::            -->
+	<import>anime3_HiddenMenu.xml</import>
+	<import>anime3_Facade.xml</import>
+	<import>anime3_Groups_ListPosters.xml</import>
+	<import>anime3_Groups_FilmstripCoverflow.xml</import>
+	<import>anime3_Groups_Banners.xml</import>
+	<import>anime3_EpisodeList.xml</import>
+	<import>Anime3_SkinSettings.xml</import>
+    
+    <!-- ********************** IMPORT PROCESS *************************************** -->
+    
+  </controls>
+</window>
