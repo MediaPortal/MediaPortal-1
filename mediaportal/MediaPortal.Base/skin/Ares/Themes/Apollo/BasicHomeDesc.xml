@@ -7,7 +7,7 @@
       <type>label</type>
       <id>0</id>
       <posX>0</posX>
-      <posY>950</posY>
+      <posY>170</posY>
 	  <width>1920</width>
       <align>center</align>
       <label>Select the plugin you would like to use for this tile...</label>
@@ -20,7 +20,7 @@
       <type>label</type>
       <id>0</id>
       <posX>0</posX>
-      <posY>950</posY>
+      <posY>170</posY>
 	  <width>1920</width>
       <align>center</align>
       <label>Set a custom tile name (make sure you have enabled this in quick settings below)...</label>
@@ -33,7 +33,7 @@
       <type>label</type>
       <id>0</id>
       <posX>0</posX>
-      <posY>950</posY>
+      <posY>170</posY>
 	  <width>1920</width>
       <align>center</align>
       <label>Set a hyperlink parameter for the tile to jump directly to a specific category...</label>
@@ -46,7 +46,7 @@
       <type>label</type>
       <id>0</id>
       <posX>0</posX>
-      <posY>950</posY>
+      <posY>170</posY>
 	  <width>1920</width>
       <align>center</align>
       <label>Select to change the tile image if you have enabled custom tiles in quick settings...</label>
@@ -59,7 +59,7 @@
       <type>label</type>
       <id>0</id>
       <posX>0</posX>
-      <posY>950</posY>
+      <posY>170</posY>
 	  <width>1920</width>
       <align>center</align>
       <label>#skin.test2</label>

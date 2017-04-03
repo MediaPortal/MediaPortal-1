@@ -109,7 +109,7 @@
         <onclick>#(skin.setstring('#tile17plugin.hyperlink',#selectedlabel262))</onclick>
         <binding>#tile17plugin.hyperlink</binding>
         <subitems>
-        <subitem>#pluginlist</subitem>
+        <subitem>#pluginlistApollo</subitem>
         </subitems>
         <textcolorNoFocus>70ffffff</textcolorNoFocus>
         <textureFocus>pluge.png</textureFocus>
@@ -191,7 +191,7 @@
         <onclick>#(skin.setstring('#tile18plugin.hyperlink',#selectedlabel264))</onclick>
         <binding>#tile18plugin.hyperlink</binding>
         <subitems>
-        <subitem>#pluginlist</subitem>
+        <subitem>#pluginlistApollo</subitem>
         </subitems>
         <textcolorNoFocus>70ffffff</textcolorNoFocus>
         <textureFocus>pluge.png</textureFocus>
@@ -274,7 +274,7 @@
         <onclick>#(skin.setstring('#tile19plugin.hyperlink',#selectedlabel266))</onclick>
         <binding>#tile19plugin.hyperlink</binding>
         <subitems>
-        <subitem>#pluginlist</subitem>
+        <subitem>#pluginlistApollo</subitem>
         </subitems>
         <textcolorNoFocus>70ffffff</textcolorNoFocus>
         <textureFocus>pluge.png</textureFocus>
@@ -358,7 +358,7 @@
         <onclick>#(skin.setstring('#tile20plugin.hyperlink',#selectedlabel268))</onclick>
         <binding>#tile20plugin.hyperlink</binding>
         <subitems>
-        <subitem>#pluginlist</subitem>
+        <subitem>#pluginlistApollo</subitem>
         </subitems>
         <textcolorNoFocus>70ffffff</textcolorNoFocus>
         <textureFocus>pluge.png</textureFocus>

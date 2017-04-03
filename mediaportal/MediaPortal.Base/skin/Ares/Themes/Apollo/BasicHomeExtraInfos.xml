@@ -257,7 +257,7 @@
       <font>font13</font>
       <textcolor>eaeaea</textcolor>
       <animation effect="fade" time="500" reversible="true">visible</animation>
-      <visible>control.isvisible(010005)+plugin.isenabled(Latest Media Handler)</visible>
+      <visible>control.isvisible(010005)+plugin.isenabled(Latest Media Handler)+string.equals(#latestMediaHandler.tvseries.latest1.serieName)</visible>
 	  </control>	
 	<control>
       <type>textboxscrollup</type>

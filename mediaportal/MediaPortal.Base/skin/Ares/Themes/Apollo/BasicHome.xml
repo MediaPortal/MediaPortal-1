@@ -34,20 +34,10 @@
       <height>1080</height>
       <texture>#overlaycolour</texture>
     </control>	
-		
+	
+	
 
 
-	<control>
-      <description>background</description>
-      <type>image</type>
-      <id>0</id>
-      <posX>150</posX>
-      <posY>1000</posY>
-      <width>32</width>
-      <height>32</height>
-      <texture>updates.png</texture>
-	  <visible>string.equals(#skin.updates.available,True)</visible>
-    </control>	
 	
 
 		
@@ -73,6 +63,7 @@
     <include condition="#(and(eq(#skin.no.latestmedia,'True'),eq(#skin.latest.overview,'False')))">BasicHomeExtraInfos.xml</include>	
     <include condition="#(and(eq(#skin.no.latestmedia,'True'),eq(#skin.latest.overview,'True')))">BasicHomeExtraInfosOverview.xml</include>	
     <include condition="#(eq(#skin.no.weather,'True'))">BasicHomeExtraInfosWeather.xml</include>
+	<include condition="#(eq(#skin.home.movienews,'True'))">BasicHomeExtraInfosMovieNews.xml</include>
     <import>BasicHomeDummyVisibility.xml</import>	
 	<import>BasicHome_Settings1.xml</import>
     <import>BasicHome_Settings2.xml</import>	
@@ -88,6 +79,19 @@
 	<import>BasicHomeEdit.xml</import>
 	<import>mytvrecordings.locationDefines.xml</import>	
     <import>PluginDefines.xml</import>	
+	
+	<control>
+      <description>background</description>
+      <type>image</type>
+      <id>0</id>
+		<posX>40</posX>
+        <posY>187</posY>
+		<height>61</height>
+		<width>61</width>
+      <texture>updates.png</texture>
+	  <visible>string.equals(#skin.updates.available,True)</visible>
+    </control>		
+	
   </controls>
 </window>
 

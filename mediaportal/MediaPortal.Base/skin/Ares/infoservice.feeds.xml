@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>16001</id>
+  <defaultcontrol>50</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <controls>
+
+    <control>
+      <description>BG</description>
+      <type>image</type>
+      <id>1</id>
+      <texture>#backgroundcolour</texture>
+      <width>1920</width>
+      <height>1080</height>
+    </control>
+	
+    <control>
+      <description>Backdrop</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>wishlistback.jpg</texture>
+	  <colordiffuse>25ffffff</colordiffuse>
+	</control>
+    <control>
+      <description>Backdrop</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>#overlaycolour</texture>
+	</control>		
+	
+	<control>
+      <description>Cover Art</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>40</posX>
+      <posY>190</posY>
+      <width>1845</width>
+      <height>624</height>
+      <texture>D_over1.png</texture>
+    </control>	
+
+  	  <control>
+        <description>Cover Art</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>40</posX>
+        <posY>821</posY>
+        <width>1845</width>
+        <height>209</height>
+        <texture>Inf_gfx.png</texture>
+      </control>		
+    
+	<import>custom\Allscreens\user_dialog.xml</import>
+	
+	
+    <control>
+      <description>Channel name label</description>
+      <type>label</type>
+      <id>12</id>
+      <posX>52</posX>
+      <posY>15</posY>
+      <label></label>
+      <font>font12</font>
+      <textcolor>FF666666</textcolor>
+    </control>
+	
+      <control>
+        <id>1</id>
+        <type>image</type>
+        <posX>56</posX>
+        <posY>828</posY>
+		<height>190</height>
+		<width>190</width>
+        <texture mask="MAmask.png">blue.png</texture>
+      </control>	
+
+    <control>
+      <description>Site Logo</description>
+      <type>image</type>
+      <id>101</id>
+      <posX>56</posX>
+      <posY>863</posY>
+      <width>190</width>
+      <texture>#infoservice.feed.selected.itemimg</texture>
+      <centered>yes</centered>
+      <keepaspectratio>yes</keepaspectratio>
+    </control>
+    <control>
+      <type>actiongroup</type>
+      <description>action menu</description>
+      <defaultcontrol>2</defaultcontrol>
+      <onexit>50</onexit>
+      <buttonX>0</buttonX>
+      <buttonY>0</buttonY>
+      <buttonwidth>100</buttonwidth>
+      <buttonheight>1080</buttonheight> 
+      <textureFocus>-</textureFocus>
+      <textureNoFocus>-</textureNoFocus>
+      <width>800</width>
+      <height>800</height>
+      <dimColor>00ffffff</dimColor>
+	  
+     <control>
+	   <type>image</type>
+	   <posX>0</posX>
+	   <posY>0</posY>
+	   <width>1920</width>
+	   <height>1080</height>
+       <texture>black.png</texture>
+        <colordiffuse>99000000</colordiffuse>
+	   <animation effect="fade" time="350" reversible="true">hidden</animation>
+	   <visible>!Control.HasFocus(50)</visible>    
+	 </control>
+		
+	  <control>
+        <type>image</type>
+        <id>0</id>
+        <posX>420</posX>
+        <posY>150</posY>
+        <width>975</width>
+        <height>836</height>
+        <texture>dialogglowbig.png</texture>
+		<visible>!Control.HasFocus(50)</visible>    
+      </control>	
+	  
+      <control>
+        <type>group</type>
+        <description>group element</description>
+        <visible>!Control.HasFocus(50)</visible>
+        <posX>500</posX>
+        <posY>250</posY>
+        <layout>StackLayout</layout>
+        <control>
+          <description>Refresh Button</description>
+          <type>button</type>
+          <id>2</id>
+          <label>184</label>
+		  <textureFocus>btn_list_blue2.png</textureFocus>
+          <textureNoFocus></textureNoFocus>
+	      <textYOff>7</textYOff>
+		  <width>820</width>
+		  <height>50</height>
+          <onleft>2</onleft>
+          <onright>50</onright>
+          <onup>17</onup>
+          <ondown>4</ondown>
+        </control>
+        <control>
+          <description>RSS feed select</description>
+          <type>button</type>
+          <id>4</id>
+          <label>706</label>
+		  <textureFocus>btn_list_blue2.png</textureFocus>
+          <textureNoFocus></textureNoFocus>
+	      <textYOff>7</textYOff>
+		  <width>820</width>
+		  <height>50</height>
+          <onleft>4</onleft>
+          <onright>50</onright>
+          <onup>2</onup>
+          <ondown>5</ondown>
+        </control>
+		<control>
+          <description>All feeds</description>
+          <type>button</type>
+          <id>5</id>
+          <label>Show all feeds on home</label>
+		  <textureFocus>btn_list_blue2.png</textureFocus>
+          <textureNoFocus></textureNoFocus>
+	      <textYOff>7</textYOff>
+		  <width>820</width>
+		  <height>50</height>
+          <onleft>5</onleft>
+          <onright>50</onright>
+          <onup>4</onup>
+          <ondown>2</ondown>
+        </control>
+      </control>
+    </control>
+    <control>
+      <type>group</type>
+      <description>group element</description>
+      <control>
+        <description>listcontrol</description>
+        <type>listcontrol</type>
+        <id>50</id>
+		<font>font12</font>
+					<onleft>4</onleft>
+					<onright>4</onright>
+					<width>1020</width>
+					<posX>57</posX>
+					<posY>225</posY>
+					<height>620</height>
+					<textureFocus>btn_list.png</textureFocus>
+					<textXOff>-25</textXOff>
+					<textYOff>5</textYOff>
+					<textYOff2>5</textYOff2>
+					<textXOff2>1010</textXOff2>
+					<textXOff3>15</textXOff3>
+					<IconXOff>3000</IconXOff> 
+                    <textureHeight>50</textureHeight>					
+					<spinWidth>45</spinWidth>
+					<spinHeight>42</spinHeight>
+					<spinPosX>2760</spinPosX>
+					<spinPosY>380</spinPosY>
+					<spinAlign>right</spinAlign>
+					<spinColor>99ffffff</spinColor>
+					<spinCanFocus>no</spinCanFocus>
+					<!-- group headers -->
+					<textcolor>ffffffff</textcolor>
+					<textcolorNoFocus>ff888888</textcolorNoFocus>
+					<playedColor>FFB2D4F5</playedColor>
+					<textcolor2>ff888888</textcolor2>
+					<textcolor3>ffffffff</textcolor3>
+		            <animation effect="fade" time="350" reversible="true">hidden</animation>
+      </control>
+	  
+	  <control>
+        <description>Cover Art</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>1050</posX>
+        <posY>182</posY>
+        <width>28</width>
+        <height>619</height>
+        <texture>D_side.png</texture>
+		<visible>true</visible>
+      </control>	  
+
+      <control>
+        <description>Chosen Story description</description>
+        <type>textboxscrollup</type>
+        <id>506</id>
+        <posX>1110</posX>
+        <posY>235</posY>
+        <width>700</width>
+        <height>533</height>
+        <label></label>
+        <font>font12</font>
+		<textcolor>99ffffff</textcolor>
+      </control>
+    </control>
+  </controls>
+</window>
+

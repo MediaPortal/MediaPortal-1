@@ -13,7 +13,7 @@
     <entry name="#skin.weather.swap">True</entry>
     <entry name="#skin.myvid.dvdart">True</entry>
     <entry name="#skin.tv.enable">False</entry>
-    <entry name="#skin.no.latestmedia">True</entry>
+    <entry name="#skin.no.latestmedia">False</entry>
     <entry name="#skin.no.weather">True</entry>
     <entry name="#skin.video.advanced">False</entry>
     <entry name="#AlbumInfo.ShowTracks">True</entry>
@@ -51,14 +51,15 @@
     <entry name="#skin.osd.logos">True</entry>
     <entry name="#skin.osd.logosvideo">True</entry>
     <entry name="#skin.no.category.fanart">False</entry>
+    <entry name="#skin.home.movienews">True</entry>
   </section>
   <section name="theme">
-    <entry name="name">Skin default</entry>
+    <entry name="name">Apollo</entry>
   </section>
   <section name="stringsettings">
-    <entry name="#skin.test">Choose yes to enable custom tile images instead of defaults</entry>
+    <entry name="#skin.test">Enable weather forecast when weather tile has focus</entry>
     <entry name="#skin.test2">Enable custom name for this tile</entry>
-    <entry name="#skin.currentTile">00512</entry>
+    <entry name="#skin.currentTile">00510</entry>
     <entry name="#skin.setnav">8005555</entry>
     <entry name="#background.colour">dark</entry>
     <entry name="#skin.latestOV">icon</entry>
@@ -122,22 +123,22 @@
     <entry name="#tile15plugin.name">recorded tv</entry>
     <entry name="#tile15plugin.parameter">Empty</entry>
     <entry name="#tile15pluginImg">noplugin</entry>
-    <entry name="#tile16plugin.hyperlink">NoPlugin</entry>
+    <entry name="#tile16plugin.hyperlink">WorldWeatherLite</entry>
     <entry name="#tile16plugin.name">scheduled recordings</entry>
     <entry name="#tile16plugin.parameter">Empty</entry>
     <entry name="#tile16pluginImg">NoPlugin</entry>
-    <entry name="#tile17plugin.hyperlink">NoPlugin</entry>
+    <entry name="#tile17plugin.hyperlink">PluginList</entry>
     <entry name="#tile17plugin.name">tv wishlist</entry>
     <entry name="#tile17plugin.parameter">Empty</entry>
     <entry name="#tile17pluginImg">NoPlugin</entry>
     <entry name="#tile18plugin.hyperlink">NoPlugin</entry>
     <entry name="#tile18plugin.name">logo manager</entry>
     <entry name="#tile18plugin.parameter">Empty</entry>
-    <entry name="#tile18pluginImg">NoPlugin</entry>
+    <entry name="#tile18pluginImg">imdb</entry>
     <entry name="#tile19plugin.hyperlink">NoPlugin</entry>
     <entry name="#tile19plugin.name">Configure name</entry>
     <entry name="#tile19plugin.parameter">Empty</entry>
-    <entry name="#tile19pluginImg">NoPlugin</entry>
+    <entry name="#tile19pluginImg">Emulators2</entry>
     <entry name="#tile20plugin.hyperlink">NoPlugin</entry>
     <entry name="#tile20plugin.name">tv home</entry>
     <entry name="#tile20plugin.parameter">Empty</entry>

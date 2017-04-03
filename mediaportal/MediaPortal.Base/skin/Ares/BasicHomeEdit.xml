@@ -266,7 +266,7 @@
                        <selected>#(skin.hassetting('#Dtimeformat'))</selected>
                        <onclick>#(skin.togglesetting('#Dtimeformat'))</onclick>
 					   <onESC>#(skin.setfocus(35,cint(#skin.setnav)))</onESC>
-                       <onup>20805</onup>
+                       <onup>20803</onup>
 		               <onright>20807</onright>
 					   <onleft>20805</onleft>
                        <ondown>20810</ondown>
