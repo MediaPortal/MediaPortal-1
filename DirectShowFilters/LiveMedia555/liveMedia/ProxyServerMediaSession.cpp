@@ -1,7 +1,7 @@
 /**********
 This library is free software; you can redistribute it and/or modify it under
 the terms of the GNU Lesser General Public License as published by the
-Free Software Foundation; either version 2.1 of the License, or (at your
+Free Software Foundation; either version 3 of the License, or (at your
 option) any later version. (See <http://www.gnu.org/copyleft/lesser.html>.)
 
 This library is distributed in the hope that it will be useful, but WITHOUT
@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2016 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2017 Live Networks, Inc.  All rights reserved.
 // A subclass of "ServerMediaSession" that can be used to create a (unicast) RTSP servers that acts as a 'proxy' for
 // another (unicast or multicast) RTSP/RTP stream.
 // Implementation
@@ -223,7 +223,7 @@ static void continueAfterOPTIONS(RTSPClient* rtspClient, int resultCode, char* r
     // Note whether the server told us that it supports the "GET_PARAMETER" command:
     serverSupportsGetParameter = RTSPOptionIsSupported("GET_PARAMETER", resultString);
   } 
- ((ProxyRTSPClient*)rtspClient)->continueAfterLivenessCommand(resultCode, serverSupportsGetParameter);
+  ((ProxyRTSPClient*)rtspClient)->continueAfterLivenessCommand(resultCode, serverSupportsGetParameter);
   delete[] resultString;
 }
 
@@ -248,8 +248,8 @@ ProxyRTSPClient::ProxyRTSPClient(ProxyServerMediaSession& ourServerMediaSession,
 	       tunnelOverHTTPPortNum == (portNumBits)(~0) ? 0 : tunnelOverHTTPPortNum, socketNumToServer),
     fOurServerMediaSession(ourServerMediaSession), fOurURL(strDup(rtspURL)), fStreamRTPOverTCP(tunnelOverHTTPPortNum != 0),
     fSetupQueueHead(NULL), fSetupQueueTail(NULL), fNumSetupsDone(0), fNextDESCRIBEDelay(1),
-    fServerSupportsGetParameter(False), fLastCommandWasPLAY(False), fResetOnNextLivenessTest(False),
-    fLivenessCommandTask(NULL), fDESCRIBECommandTask(NULL), fSubsessionTimerTask(NULL) { 
+    fServerSupportsGetParameter(False), fLastCommandWasPLAY(False), fDoneDESCRIBE(False),
+    fLivenessCommandTask(NULL), fDESCRIBECommandTask(NULL), fSubsessionTimerTask(NULL), fResetTask(NULL) {
   if (username != NULL && password != NULL) {
     fOurAuthenticator = new Authenticator(username, password);
   } else {
@@ -261,11 +261,13 @@ void ProxyRTSPClient::reset() {
   envir().taskScheduler().unscheduleDelayedTask(fLivenessCommandTask); fLivenessCommandTask = NULL;
   envir().taskScheduler().unscheduleDelayedTask(fDESCRIBECommandTask); fDESCRIBECommandTask = NULL;
   envir().taskScheduler().unscheduleDelayedTask(fSubsessionTimerTask); fSubsessionTimerTask = NULL;
+  envir().taskScheduler().unscheduleDelayedTask(fResetTask); fResetTask = NULL;
 
   fSetupQueueHead = fSetupQueueTail = NULL;
   fNumSetupsDone = 0;
   fNextDESCRIBEDelay = 1;
   fLastCommandWasPLAY = False;
+  fDoneDESCRIBE = False;
 
   RTSPClient::reset();
 }
@@ -275,6 +277,20 @@ ProxyRTSPClient::~ProxyRTSPClient() {
 
   delete fOurAuthenticator;
   delete[] fOurURL;
+}
+
+int ProxyRTSPClient::connectToServer(int socketNum, portNumBits remotePortNum) {
+  int res;
+  res = RTSPClient::connectToServer(socketNum, remotePortNum);
+  
+  if (res == 0 && fDoneDESCRIBE && fStreamRTPOverTCP) {
+    if (fVerbosityLevel > 0) {
+      envir() << "ProxyRTSPClient::connectToServer calling scheduleReset()\n";
+    }
+    scheduleReset();
+  }
+  
+  return res;
 }
 
 void ProxyRTSPClient::continueAfterDESCRIBE(char const* sdpDescription) {
@@ -292,14 +308,10 @@ void ProxyRTSPClient::continueAfterDESCRIBE(char const* sdpDescription) {
     // Reschedule another "DESCRIBE" command to take place later:
     scheduleDESCRIBECommand();
   }
+  fDoneDESCRIBE = True;
 }
 
 void ProxyRTSPClient::continueAfterLivenessCommand(int resultCode, Boolean serverSupportsGetParameter) {
-  if (fResetOnNextLivenessTest) {
-    // Hack: We've arranged to reset the connection with the server (regardless of "resultCode"):
-    fResetOnNextLivenessTest = False;
-    resultCode = 2; // arbitrary > 0
-  }
   if (resultCode != 0) {
     // The periodic 'liveness' command failed, suggesting that the back-end stream is no longer alive.
     // We handle this by resetting our connection state with this server.  Any current clients will be closed, but
@@ -312,15 +324,12 @@ void ProxyRTSPClient::continueAfterLivenessCommand(int resultCode, Boolean serve
       // The 'liveness' command failed without getting a response from the server (otherwise "resultCode" would have been > 0).
       // This suggests that the RTSP connection itself has failed.  Print this error code, in case it's useful for debugging:
       if (fVerbosityLevel > 0) {
-	envir() << *this << ": lost connection to server ('errno': " << -resultCode << ").  Resetting...\n";
+	envir() << *this << ": lost connection to server ('errno': " << -resultCode << ").  Scheduling reset...\n";
       }
     }
 
-    reset();
-    fOurServerMediaSession.resetDESCRIBEState();
 
-    setBaseURL(fOurURL); // because we'll be sending an initial "DESCRIBE" all over again
-    sendDESCRIBE(this);
+    scheduleReset();
     return;
   }
 
@@ -334,11 +343,9 @@ void ProxyRTSPClient::continueAfterLivenessCommand(int resultCode, Boolean serve
 
 void ProxyRTSPClient::continueAfterSETUP(int resultCode) {
   if (resultCode != 0) {
-    // The "SETUP" command failed, so arrange to reset the state after the next RTSP 'liveness'
-    // command.  (We don't do this now, because it deletes the "ProxyServerMediaSubsession",
-    // and we can't do that during "ProxyServerMediaSubsession::createNewStreamSource()".)
-    fResetOnNextLivenessTest = True;
-    envir().taskScheduler().rescheduleDelayedTask(fLivenessCommandTask, 0, sendLivenessCommand, this);
+    // The "SETUP" command failed, so arrange to reset the state. (We don't do this now, because it deletes the
+    // "ProxyServerMediaSubsession", and we can't do that during "ProxyServerMediaSubsession::createNewStreamSource()".)
+    scheduleReset();
     return;
   }
 
@@ -385,11 +392,9 @@ void ProxyRTSPClient::continueAfterSETUP(int resultCode) {
 
 void ProxyRTSPClient::continueAfterPLAY(int resultCode) {
   if (resultCode != 0) {
-    // The "PLAY" command failed, so arrange to reset the state after the next RTSP 'liveness'
-    // command.  (We don't do this now, because it deletes the "ProxyServerMediaSubsession",
-    // and we can't do that during "ProxyServerMediaSubsession::createNewStreamSource()".)
-    fResetOnNextLivenessTest = True;
-    envir().taskScheduler().rescheduleDelayedTask(fLivenessCommandTask, 0, sendLivenessCommand, this);
+    // The "PLAY" command failed, so arrange to reset the state. (We don't do this now, because it deletes the
+    // "ProxyServerMediaSubsession", and we can't do that during "ProxyServerMediaSubsession::createNewStreamSource()".)
+    scheduleReset();
     return;
   }
 }
@@ -430,6 +435,30 @@ void ProxyRTSPClient::sendLivenessCommand(void* clientData) {
 #ifdef SEND_GET_PARAMETER_IF_SUPPORTED
   }
 #endif
+}
+
+void ProxyRTSPClient::scheduleReset() {
+  if (fVerbosityLevel > 0) {
+    envir() << "ProxyRTSPClient::scheduleReset\n";
+  }
+  envir().taskScheduler().rescheduleDelayedTask(fResetTask, 0, doReset, this);
+}
+
+void ProxyRTSPClient::doReset() {
+  if (fVerbosityLevel > 0) {
+    envir() << *this << "::doReset\n";
+  }
+
+  reset();
+  fOurServerMediaSession.resetDESCRIBEState();
+
+  setBaseURL(fOurURL); // because we'll be sending an initial "DESCRIBE" all over again
+  sendDESCRIBE(this);
+}
+
+void ProxyRTSPClient::doReset(void* clientData) {
+  ProxyRTSPClient* rtspClient = (ProxyRTSPClient*)clientData;
+  rtspClient->doReset();
 }
 
 void ProxyRTSPClient::scheduleDESCRIBECommand() {
@@ -783,7 +812,7 @@ void ProxyServerMediaSubsession::subsessionByeHandler() {
   // and can reestablish streaming from it only by sending another "DESCRIBE":
   ProxyServerMediaSession* const sms = (ProxyServerMediaSession*)fParentSession;
   ProxyRTSPClient* const proxyRTSPClient = sms->fProxyRTSPClient;
-  proxyRTSPClient->continueAfterLivenessCommand(1/*hack*/, proxyRTSPClient->fServerSupportsGetParameter);
+  proxyRTSPClient->scheduleReset();
 }
 
 
