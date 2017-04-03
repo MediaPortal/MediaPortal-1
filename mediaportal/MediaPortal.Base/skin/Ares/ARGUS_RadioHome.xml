@@ -1,0 +1,246 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<window>
+  <id>1</id>
+  <defaultcontrol>2</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <define>#currentmodule:#currentmodule   #Radio.View.channel</define>
+  <controls>
+    <control>
+      <description>BG</description>
+      <type>image</type>
+      <id>1</id>
+      <texture>#backgroundcolour</texture>
+      <width>1920</width>
+      <height>1080</height>
+    </control>
+	
+    <control>
+      <description></description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>#overlaycolour</texture>
+	</control>	
+	
+	  <control>
+        <description>Cover Art</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>40</posX>
+        <posY>190</posY>
+        <width>1845</width>
+        <height>624</height>
+        <texture>D_over1.png</texture>
+      </control>	
+
+	  <control>
+        <description>Cover Art</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>40</posX>
+        <posY>821</posY>
+        <width>1845</width>
+        <height>209</height>
+        <texture>Inf_gfx.png</texture>
+      </control>		  
+	  
+	<import>custom\Allscreens\user_dialog.xml</import>	
+   
+    <control>
+      <type>group</type>
+      <layout>StackLayout(0,Vertical,true)</layout>
+      <description>group element</description>
+      <posX>57</posX>
+      <posY>225</posY>
+      <control>
+        <description>TVGuide</description>
+        <type>button</type>
+        <id>2</id>
+        <label>TV Guide</label>
+        <onup>9</onup>
+        <ondown>3</ondown>
+        <onright>99</onright>
+		<width>775</width>
+      </control>
+      <control>
+        <description>Search TVGuide</description>
+        <type>button</type>
+        <id>3</id>
+        <label>Search</label>
+        <onup>2</onup>
+        <ondown>4</ondown>
+        <onright>99</onright>
+		<width>775</width>
+      </control>
+      <control>
+        <description>Recordings</description>
+        <type>button</type>
+        <id>4</id>
+        <label>Recorded TV</label>
+        <onup>3</onup>
+        <ondown>5</ondown>
+        <onright>99</onright>
+		<width>775</width>
+      </control>
+      <control>
+        <description>Channel button</description>
+        <type>button</type>
+        <id>5</id>
+        <label>602</label>
+        <onup>4</onup>
+        <ondown>6</ondown>
+        <onright>99</onright>
+		<width>775</width>
+      </control>
+      <control>
+        <description>TV On/Off button</description>
+        <type>checkbutton</type>
+        <id>6</id>
+        <label>707</label>
+        <onup>5</onup>
+        <ondown>7</ondown>
+        <onright>99</onright>
+	    <textureFocus>btn_list.png</textureFocus>
+        <textureNoFocus></textureNoFocus>
+	    <width>775</width>
+		<textXOff>25</textXOff>
+	    <markWidth>33</markWidth>
+        <markHeight>32</markHeight>
+        <markXOff>15</markXOff>
+        <markYOff>10</markYOff>
+        <markalign>right</markalign>
+        <markvalign>middle</markvalign>
+      </control>
+      <control>
+        <description>UpcomingPrograms</description>
+        <type>button</type>
+        <id>7</id>
+        <label>Upcoming Programs</label>
+        <onup>6</onup>
+        <ondown>8</ondown>
+        <onright>99</onright>
+		<width>775</width>
+      </control>
+      <control>
+        <description>ActiveRecordings</description>
+        <type>button</type>
+        <id>8</id>
+        <label>Active Recordings</label>
+        <onup>7</onup>
+        <ondown>2</ondown>
+        <onright>99</onright>
+		<width>775</width>
+      </control>
+    </control>
+
+    <control>
+      <description>video window</description>
+      <type>videowindow</type>
+      <id>99</id>
+    <posX>830</posX>
+    <posY>215</posY>
+    <width>1000</width>
+    <height>570</height>
+      <onleft>2</onleft>
+      <onright>2</onright>
+      <action>18</action>
+      <textureFocus>tv_green_border.png</textureFocus>
+    </control>
+  	  <control>
+        <description>Cover Art</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>802</posX>
+        <posY>184</posY>
+        <width>28</width>
+        <height>619</height>
+        <texture>D_side.png</texture>
+      </control>    
+  <control>
+    <description>Progress Bar</description>
+    <type>progress</type>
+    <id>1</id>
+    <posX>0</posX>
+    <posY>1077</posY>
+    <width>1920</width>
+    <height>3</height>
+    <label>#Radio.View.Percentage</label>
+    <texturebg>black.png</texturebg>
+    <onlymidtexture>yes</onlymidtexture>
+    <midwidth>1920</midwidth>
+    <midheight>3</midheight>
+    <midoffsetX>-</midoffsetX>
+    <midoffsetY>0</midoffsetY>
+    <midtexture>osd_progress_mid.png</midtexture>
+    <visible>yes</visible>
+  </control>
+
+    <control>
+      <description>TV Channel Logo</description>
+      <type>image</type>
+      <id>1</id>
+        <posX>56</posX>
+        <posY>828</posY>
+		<height>190</height>
+		<width>190</width>
+        <texture mask="MAmask.png">blue.png</texture>
+    </control>
+	
+    <control>
+      <description>TV Channel Logo</description>
+      <type>image</type>
+      <id>1</id>
+        <posX>56</posX>
+        <posY>828</posY>
+		<height>190</height>
+		<width>190</width>
+        <texture mask="MAmask.png">#Radio.View.thumb</texture>
+    </control>  
+
+  <control Style="NoShadow">
+    <description>Current program title</description>
+    <type>fadelabel</type>
+    <id>131</id>
+    <width>1250</width>
+    <height>20</height>
+    <posX>280</posX>
+    <posY>850</posY>
+    <label>#Radio.View.channel #Radio.View.start - #Radio.View.stop  #Radio.View.title</label>
+    <font>font13</font>
+    <align>left</align>
+    <textcolor>eaeaea</textcolor>
+  </control>
+    <control>
+      <description>Description1</description>
+      <type>textboxscrollup</type>
+      <id>15</id>
+     <posX>280</posX>
+      <posY>900</posY>
+      <width>1530</width>
+      <height>85</height>
+      <textcolor>99ffffff</textcolor>
+      <label>#Radio.View.description</label>
+      <font>font13</font>
+    </control>
+    <control>
+      <description>record pin</description>
+      <type>image</type>
+      <id>24</id>
+      <posX>622</posX>
+      <posY>915</posY>
+      <texture>tvguide_record_button.png</texture>
+      <visible>no</visible>
+    </control>
+    <control>
+      <description>Dummy label to hold global settings for this skin!</description>
+      <type>label</type>
+      <id>420</id>
+      <label>#settings:logo-icon-size=84,84;guide_time=Center</label>
+      <visible>no</visible>
+    </control>
+  </controls>
+</window>

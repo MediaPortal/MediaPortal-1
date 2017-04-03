@@ -120,6 +120,7 @@
 <Enabled>1<Format><Episode.localPlaytime><FormatAs><Episode.localPlaytime>
 <Enabled>1<Format><Season.TotalOnlineEpisodes><FormatAs>Eval(<Season.TotalOnlineEp>)
 <Enabled>1<Format><Episode.TotalOnlineEpisodes><FormatAs>Eval(<Episode.TotalOnlineEp>)
+<Enabled>1<Format><Episode.AudioCodec><FormatAs>Eval(<Episode.AudioCodec>)
 <Enabled>1<Format><Episode.DataPanelLine3Key><FormatAs>Trans(Rating)
 <Enabled>1<Format><Episode.DataPanelLine31Value><FormatAs>Eval(Round(<Episode.Rating>*10)/10)/10
 <Enabled>1<Format><Episode.DataPanelLine32Value><FormatAs> (Trans(Rated): <Episode.myRating>)

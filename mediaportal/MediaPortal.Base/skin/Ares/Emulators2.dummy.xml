@@ -1,0 +1,83 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <controls>
+    <control>
+      <description>FanArt Dummy 1</description>
+      <type>image</type>
+      <id>1230</id>
+      <posX>-5</posX>
+      <posY>0</posY>
+      <width>1</width>
+      <height>1</height>
+    </control>
+    <control>
+      <description>FanArt Dummy 2</description>
+      <type>image</type>
+      <id>1231</id>
+      <posX>-5</posX>
+      <posY>0</posY>
+      <width>1</width>
+      <height>1</height>
+    </control>
+    <control>
+      <type>label</type>
+      <description>Dummy Label for Fanart Loading</description>
+      <id>1232</id>
+      <posX>-50</posX>
+      <posY>-50</posY>
+      <width>620</width>
+      <textcolor>d4d2d2</textcolor>
+      <font>font14</font>
+      <label>
+      </label>
+      <visible>false</visible>
+      <!-- to make a control visible only when FANART is enabled do this: <visible>control.isvisible(1232)</visible> -->
+      <!-- to make a control invisible when FANART is enabled do this: <visible>!control.isvisible(1232)</visible> -->
+    </control>
+    <control>
+      <type>label</type>
+      <description>Dummy Label for Gameart Loading</description>
+      <id>1233</id>
+      <posX>-50</posX>
+      <posY>-50</posY>
+      <width>620</width>
+      <textcolor>d4d2d2</textcolor>
+      <font>font14</font>
+      <label>
+      </label>
+      <visible>false</visible>
+      <!-- to make a control visible only when GAMEART is enabled do this: <visible>control.isvisible(1233)</visible> -->
+      <!-- to make a control invisible when GAMEART is enabled do this: <visible>!control.isvisible(1233)</visible> -->
+    </control>
+
+    <control>
+      <type>label</type>
+      <description>Dummy Label for video preview visibility</description>
+      <id>1234</id>
+      <posX>-50</posX>
+      <posY>-50</posY>
+      <width>620</width>
+      <textcolor>d4d2d2</textcolor>
+      <font>font14</font>
+      <label>
+      </label>
+      <visible>control.isvisible(1235)</visible>
+      <!-- to make a control visible only when video preview is enabled do this: <visible>control.isvisible(1234)</visible> -->
+      <!-- to make a control invisible when video preview is enabled do this: <visible>!control.isvisible(1234)</visible> -->
+    </control>
+    
+    <control>
+      <type>label</type>
+      <description>Dummy Label for video preview visibility</description>
+      <id>1235</id>
+      <posX>-50</posX>
+      <posY>-50</posY>
+      <width>620</width>
+      <textcolor>d4d2d2</textcolor>
+      <font>font14</font>
+      <label>
+      </label>
+      <visible>false</visible>
+    </control>
+  </controls>
+</window>

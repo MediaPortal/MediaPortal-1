@@ -28,7 +28,7 @@
        <texture>black.png</texture>
         <colordiffuse>59000000</colordiffuse>
 	   <animation effect="fade" time="350" reversible="true">hidden</animation>
-	   <visible>control.isvisible(20800)|control.hasfocus(20801)|control.hasfocus(20802)|control.hasfocus(20803)|control.hasfocus(20804)|control.hasfocus(20805)|control.hasfocus(20806)|control.hasfocus(20807)|control.hasfocus(20808)|control.hasfocus(20809)|control.hasfocus(20810)|control.hasfocus(20811)|control.hasfocus(20812)|control.hasfocus(20813)|control.hasfocus(20814)</visible>    
+	   <visible>control.isvisible(20800)|control.hasfocus(20801)|control.hasfocus(20802)|control.hasfocus(20803)|control.hasfocus(20804)|control.hasfocus(20805)|control.hasfocus(20806)|control.hasfocus(20807)|control.hasfocus(20808)|control.hasfocus(20809)|control.hasfocus(20810)|control.hasfocus(20811)|control.hasfocus(20812)|control.hasfocus(20813)|control.hasfocus(20814)|control.hasfocus(20815)</visible>    
 	 </control>
 		
 	  <control>
@@ -40,7 +40,7 @@
         <width>1845</width>
         <height>624</height>
         <texture>D_over1.png</texture>
-		<visible>control.isvisible(20800)|control.hasfocus(20801)|control.hasfocus(20802)|control.hasfocus(20803)|control.hasfocus(20804)|control.hasfocus(20805)|control.hasfocus(20806)|control.hasfocus(20807)|control.hasfocus(20808)|control.hasfocus(20809)|control.hasfocus(20810)|control.hasfocus(20811)|control.hasfocus(20812)|control.hasfocus(20813)|control.hasfocus(20814)</visible>
+		<visible>control.isvisible(20800)|control.hasfocus(20801)|control.hasfocus(20802)|control.hasfocus(20803)|control.hasfocus(20804)|control.hasfocus(20805)|control.hasfocus(20806)|control.hasfocus(20807)|control.hasfocus(20808)|control.hasfocus(20809)|control.hasfocus(20810)|control.hasfocus(20811)|control.hasfocus(20812)|control.hasfocus(20813)|control.hasfocus(20814)|control.hasfocus(20815)</visible>
       </control>
 	  <control>
         <description>Cover Art</description>
@@ -51,7 +51,7 @@
         <width>1845</width>
         <height>209</height>
         <texture>Inf_gfx.png</texture>
-		<visible>control.isvisible(20800)|control.hasfocus(20801)|control.hasfocus(20802)|control.hasfocus(20803)|control.hasfocus(20804)|control.hasfocus(20805)|control.hasfocus(20806)|control.hasfocus(20807)|control.hasfocus(20808)|control.hasfocus(20809)|control.hasfocus(20810)|control.hasfocus(20811)|control.hasfocus(20812)|control.hasfocus(20813)|control.hasfocus(20814)</visible>
+		<visible>control.isvisible(20800)|control.hasfocus(20801)|control.hasfocus(20802)|control.hasfocus(20803)|control.hasfocus(20804)|control.hasfocus(20805)|control.hasfocus(20806)|control.hasfocus(20807)|control.hasfocus(20808)|control.hasfocus(20809)|control.hasfocus(20810)|control.hasfocus(20811)|control.hasfocus(20812)|control.hasfocus(20813)|control.hasfocus(20814)|control.hasfocus(20815)</visible>
       </control>	  
 
     <control>
@@ -65,7 +65,7 @@
       <label>Quick skin settings...</label>
       <font>font13</font>
       <textcolor>eaeaea</textcolor>
-	  <visible>control.isvisible(20800)|control.hasfocus(20801)|control.hasfocus(20802)|control.hasfocus(20803)|control.hasfocus(20804)|control.hasfocus(20805)|control.hasfocus(20806)|control.hasfocus(20807)|control.hasfocus(20808)|control.hasfocus(20809)|control.hasfocus(20810)|control.hasfocus(20811)|control.hasfocus(20812)|control.hasfocus(20813)|control.hasfocus(20814)</visible>
+	  <visible>control.isvisible(20800)|control.hasfocus(20801)|control.hasfocus(20802)|control.hasfocus(20803)|control.hasfocus(20804)|control.hasfocus(20805)|control.hasfocus(20806)|control.hasfocus(20807)|control.hasfocus(20808)|control.hasfocus(20809)|control.hasfocus(20810)|control.hasfocus(20811)|control.hasfocus(20812)|control.hasfocus(20813)|control.hasfocus(20814)|control.hasfocus(20815)</visible>
     </control>		  
 		
 			<control>
@@ -78,7 +78,7 @@
 					<posY>260</posY>
 					<!-- Remove and Gaps when buttons are not visible -->
 					<layout>TableLayout(1850, 3, 50, 0)</layout>
-					<visible allowhiddenfocus="true">control.hasfocus(20800)|control.hasfocus(20801)|control.hasfocus(20802)|control.hasfocus(20803)|control.hasfocus(20804)|control.hasfocus(20805)|control.hasfocus(20806)|control.hasfocus(20807)|control.hasfocus(20808)|control.hasfocus(20809)|control.hasfocus(20810)|control.hasfocus(20811)|control.hasfocus(20812)|control.hasfocus(20813)|control.hasfocus(20814)</visible>   
+					<visible allowhiddenfocus="true">control.hasfocus(20800)|control.hasfocus(20801)|control.hasfocus(20802)|control.hasfocus(20803)|control.hasfocus(20804)|control.hasfocus(20805)|control.hasfocus(20806)|control.hasfocus(20807)|control.hasfocus(20808)|control.hasfocus(20809)|control.hasfocus(20810)|control.hasfocus(20811)|control.hasfocus(20812)|control.hasfocus(20813)|control.hasfocus(20814)|control.hasfocus(20815)</visible>   
 				
 					<control>
                        <description>Enable weather in homescreen</description>
@@ -182,6 +182,7 @@
                        <subitems>
                        <subitem> 7</subitem>
                        <subitem> 12</subitem>
+					   <subitem> 16</subitem>
                        </subitems>
                        <textcolorNoFocus>99ffffff</textcolorNoFocus>
                        <textureFocus>btn_list_blue2.png</textureFocus>
@@ -265,7 +266,7 @@
                        <selected>#(skin.hassetting('#Dtimeformat'))</selected>
                        <onclick>#(skin.togglesetting('#Dtimeformat'))</onclick>
 					   <onESC>#(skin.setfocus(35,cint(#skin.setnav)))</onESC>
-                       <onup>20805</onup>
+                       <onup>20803</onup>
 		               <onright>20807</onright>
 					   <onleft>20805</onleft>
                        <ondown>20810</ondown>
@@ -372,7 +373,7 @@
                        <onup>20808</onup>
 		               <onright>20813</onright>
 					   <onleft>#(cint(#skin.setnav))</onleft>
-                       <ondown>#(cint(#skin.setnav))</ondown>
+                       <ondown>20815</ondown>
                     </control>	
 			        <control>
                        <description>fanart option</description>
@@ -421,6 +422,35 @@
 		               <onright>#(cint(#skin.setnav))</onright>
 					   <onleft>20813</onleft>
                        <ondown>#(cint(#skin.setnav))</ondown>
+                    </control>		
+			        <control>
+                       <description>fanart option</description>
+                       <type>menubutton</type>
+                       <id>20815</id>
+                       <width>550</width>
+                       <height>50</height>
+		               <textXOff>5</textXOff>
+                       <textYOff>3</textYOff>
+                       <mode>spinlist</mode>
+					   <onfocus>#(skin.setstring('#skin.test','Set which type of logos you want to display on movie poster'))</onfocus>
+                       <valueTextInButton>yes</valueTextInButton>
+                       <valuePrefixText> Movie logo type:  </valuePrefixText>
+                       <onclick>#(skin.setstring('#skin.movie.logos',#selectedlabel20815))</onclick>
+                       <binding>#skin.movie.logos</binding>
+                       <subitems>
+                       <subitem>clean</subitem>
+		               <subitem>gb</subitem>
+                       <subitem>de</subitem>
+					   <subitem>custom</subitem>
+                       </subitems>
+                       <textcolorNoFocus>99ffffff</textcolorNoFocus>
+                       <textureFocus>btn_list_blue2.png</textureFocus>
+		               <textureNoFocus></textureNoFocus>
+					   <onESC>#(skin.setfocus(35,cint(#skin.setnav)))</onESC>
+		               <onup>20812</onup>
+                       <onleft>20815</onleft>
+                       <ondown>#(cint(#skin.setnav))</ondown>
+                       <onright>20815</onright>
                     </control>						
 				
 				</control>	

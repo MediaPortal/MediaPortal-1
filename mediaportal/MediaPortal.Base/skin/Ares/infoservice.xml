@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>16000</id>
+  <defaultcontrol>1</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <controls>
+    <control>
+      <description>BG</description>
+      <type>image</type>
+      <id>1</id>
+      <texture>#backgroundcolour</texture>
+      <width>1920</width>
+      <height>1080</height>
+    </control>
+    
+	<import>custom\Allscreens\user_dialog.xml</import>
+	
+	<control>
+      <description>Cover Art</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>40</posX>
+      <posY>190</posY>
+      <width>1845</width>
+      <height>624</height>
+      <texture>D_over1.png</texture>
+    </control>	
+
+  	  <control>
+        <description>Cover Art</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>40</posX>
+        <posY>821</posY>
+        <width>1845</width>
+        <height>209</height>
+        <texture>Inf_gfx.png</texture>
+      </control>	
+			
+    	
+  </controls>
+</window>
