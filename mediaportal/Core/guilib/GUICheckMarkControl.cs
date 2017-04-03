@@ -166,14 +166,7 @@ namespace MediaPortal.GUI.Library
 
       if (Focus)
       {
-        if (!string.IsNullOrEmpty(_label) && (_label.IndexOf("#") >= 0))
-        {
-          GUIPropertyManager.SetProperty("#highlightedbutton", GUIPropertyManager.Parse(_label) ?? String.Empty);
-        }
-        else
-        {
-          GUIPropertyManager.SetProperty("#highlightedbutton", _label);
-        }
+        GUIPropertyManager.SetProperty("#highlightedbutton", _label);
       }
       int dwTextPosX = _positionX;
       int dwCheckMarkPosX = _positionX;
