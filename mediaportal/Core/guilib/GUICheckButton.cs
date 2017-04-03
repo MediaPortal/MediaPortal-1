@@ -18,7 +18,6 @@
 
 #endregion
 
-using System;
 using System.Diagnostics;
 using System.IO;
 using MediaPortal.ExtensionMethods;
@@ -211,14 +210,7 @@ namespace MediaPortal.GUI.Library
             {
               _imageFocused.Begin();
             }
-            if (!string.IsNullOrEmpty(Label) && (Label.IndexOf("#") >= 0))
-            {
-              GUIPropertyManager.SetProperty("#highlightedbutton", GUIPropertyManager.Parse(Label) ?? String.Empty);
-            }
-            else
-            {
-              GUIPropertyManager.SetProperty("#highlightedbutton", Label);
-            }
+            GUIPropertyManager.SetProperty("#highlightedbutton", Label);
             // When button focus is obtained, the GUIFadeLabel (if specified) is allowed to scroll.
             if (_labelControl is GUIFadeLabel)
             {

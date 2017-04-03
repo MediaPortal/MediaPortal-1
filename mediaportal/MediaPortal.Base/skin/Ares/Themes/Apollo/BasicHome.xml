@@ -37,17 +37,7 @@
 	
 	
 
-	<control>
-      <description>background</description>
-      <type>image</type>
-      <id>0</id>
-      <posX>150</posX>
-      <posY>1000</posY>
-      <width>32</width>
-      <height>32</height>
-      <texture>updates.png</texture>
-	  <visible>string.equals(#skin.updates.available,True)</visible>
-    </control>	
+
 	
 
 		
@@ -89,6 +79,19 @@
 	<import>BasicHomeEdit.xml</import>
 	<import>mytvrecordings.locationDefines.xml</import>	
     <import>PluginDefines.xml</import>	
+	
+	<control>
+      <description>background</description>
+      <type>image</type>
+      <id>0</id>
+		<posX>40</posX>
+        <posY>187</posY>
+		<height>61</height>
+		<width>61</width>
+      <texture>updates.png</texture>
+	  <visible>string.equals(#skin.updates.available,True)</visible>
+    </control>		
+	
   </controls>
 </window>
 

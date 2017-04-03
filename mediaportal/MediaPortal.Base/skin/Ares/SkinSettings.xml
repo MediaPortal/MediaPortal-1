@@ -7,17 +7,17 @@
     <entry name="#skin.tvguide.sheduled">True</entry>
     <entry name="#skin.tvguide.showgenrekey">False</entry>
     <entry name="#skin.record.info">False</entry>
-    <entry name="#skin.rss.info">True</entry>
+    <entry name="#skin.rss.info">False</entry>
     <entry name="#skin.section.lm3">True</entry>
     <entry name="#skin.movie.swap">False</entry>
     <entry name="#skin.weather.swap">True</entry>
     <entry name="#skin.myvid.dvdart">True</entry>
     <entry name="#skin.tv.enable">False</entry>
-    <entry name="#skin.no.latestmedia">True</entry>
+    <entry name="#skin.no.latestmedia">False</entry>
     <entry name="#skin.no.weather">True</entry>
     <entry name="#skin.video.advanced">False</entry>
     <entry name="#AlbumInfo.ShowTracks">True</entry>
-    <entry name="#skin.weather.home">True</entry>
+    <entry name="#skin.weather.home">False</entry>
     <entry name="#skin.fullday">False</entry>
     <entry name="#skin.tips">True</entry>
     <entry name="#ArtistInfo.ShowAlbums">False</entry>
@@ -57,9 +57,9 @@
     <entry name="name">Apollo</entry>
   </section>
   <section name="stringsettings">
-    <entry name="#skin.test">Use RSS feed instead of seeing number of pages indicator in the bottom area</entry>
+    <entry name="#skin.test">Enable weather forecast when weather tile has focus</entry>
     <entry name="#skin.test2">Enable custom name for this tile</entry>
-    <entry name="#skin.currentTile">00516</entry>
+    <entry name="#skin.currentTile">00510</entry>
     <entry name="#skin.setnav">8005555</entry>
     <entry name="#background.colour">dark</entry>
     <entry name="#skin.latestOV">icon</entry>
