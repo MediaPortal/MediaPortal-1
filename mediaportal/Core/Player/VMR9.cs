@@ -33,6 +33,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 using MediaPortal.Util;
 using Microsoft.DirectX.Direct3D;
+using Action = MediaPortal.GUI.Library.Action;
 using Filter = Microsoft.DirectX.Direct3D.Filter;
 using Geometry = MediaPortal.GUI.Library.Geometry;
 
@@ -160,6 +161,18 @@ namespace MediaPortal.Player
 
     [DllImport("dshowhelper.dll", CallingConvention = CallingConvention.Cdecl)]
     private static extern unsafe void MadVrRepeatFrameSend();
+
+    [DllImport("dshowhelper.dll", CallingConvention = CallingConvention.Cdecl)]
+    private static extern unsafe void MadVr3DRight(int x, int y, int width, int height);
+
+    [DllImport("dshowhelper.dll", CallingConvention = CallingConvention.Cdecl)]
+    private static extern unsafe void MadVr3DLeft(int x, int y, int width, int height);
+
+    [DllImport("dshowhelper.dll", CallingConvention = CallingConvention.Cdecl)]
+    private static extern unsafe void MadVr3DEnable(bool Enable);
+
+    [DllImport("dshowhelper.dll", CallingConvention = CallingConvention.Cdecl)]
+    private static extern unsafe void MadVrScreenResizeForce(int x, int y, int width, int height, bool displayChange);
 
     #endregion
 
@@ -484,6 +497,50 @@ namespace MediaPortal.Player
     }
 
     /// <summary>
+    /// Send Right 3D for madVR
+    /// </summary>
+    public void MadVr3DSizeRight(int x, int y, int width, int height)
+    {
+      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+      {
+        MadVr3DRight(x, y, width, height);
+      }
+    }
+
+    /// <summary>
+    /// Send Left 3D for madVR
+    /// </summary>
+    public void MadVr3DSizeLeft(int x, int y, int width, int height)
+    {
+      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+      {
+        MadVr3DLeft(x, y, width, height);
+      }
+    }
+
+    /// <summary>
+    /// Send 3D enable for madVR
+    /// </summary>
+    public void MadVr3DOnOff(bool Enable)
+    {
+      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+      {
+        MadVr3DEnable(Enable);
+      }
+    }
+
+    /// <summary>
+    /// Send screen resize for madVR
+    /// </summary>
+    public void MadVrScreenResize(int x, int y, int width, int height, bool displayChange)
+    {
+      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+      {
+        MadVrScreenResizeForce(x, y, width, height, displayChange);
+      }
+    }
+
+    /// <summary>
     /// Register madVR OSD callback
     /// </summary>
     public void RegisterOsd()
@@ -655,17 +712,14 @@ namespace MediaPortal.Player
         {
           GUIGraphicsContext.MadVrOsd = false;
           GUIGraphicsContext.MadVrStop = false;
+          GUIGraphicsContext.ForceMadVRFirstStart = true;
           IMediaControl mPMediaControl = (IMediaControl) graphBuilder;
-          var backbuffer = GUIGraphicsContext.DX9Device.PresentationParameters;
-          MadInit(_scene, backbuffer.BackBufferWidth, backbuffer.BackBufferHeight, (uint) upDevice.ToInt32(),
-            (uint) GUIGraphicsContext.ActiveForm.ToInt32(), ref _vmr9Filter, mPMediaControl);
+          // Get Client size
+          Size client = GUIGraphicsContext.form.ClientSize;
+          MadInit(_scene, client.Width, client.Height, (uint)upDevice.ToInt32(),
+            (uint)GUIGraphicsContext.ActiveForm.ToInt32(), ref _vmr9Filter, mPMediaControl);
           hr = new HResult(graphBuilder.AddFilter(_vmr9Filter, "madVR"));
           Log.Info("VMR9: added madVR Renderer to graph");
-          backbuffer.SafeDispose();
-          //IVideoWindow videoWin = (IVideoWindow)graphBuilder;
-          //videoWin.put_Owner(GUIGraphicsContext.ActiveForm);
-          //videoWin.put_WindowStyle((WindowStyle)((int)WindowStyle.Child + (int)WindowStyle.ClipChildren + (int)WindowStyle.ClipSiblings));
-          //videoWin.put_MessageDrain(GUIGraphicsContext.ActiveForm);
         }
         else
         {
@@ -997,6 +1051,13 @@ namespace MediaPortal.Player
             GUIWindowManager.SendThreadMessage(msg);
           }
         }
+        if (GUIGraphicsContext.ForceMadVRRefresh)
+        {
+          GUIMessage message = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ONDISPLAYMADVRCHANGED, 0, 0, 0, 0, 0, null);
+          GUIWindowManager.SendMessage(message);
+          GUIGraphicsContext.ForceMadVRFirstStart = false;
+          Log.Debug("VMR9:  resize OSD/Screen when resolution change for madVR");
+        }
       }
     }
 
@@ -1303,7 +1364,7 @@ namespace MediaPortal.Player
     {
       lock (this)
       {
-        if (!UseMadVideoRenderer3D || g_Player.IsTimeShifting || GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
+        if (!UseMadVideoRenderer3D || g_Player.IsTV || g_Player.IsTimeShifting || GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
         {
           IVideoWindow videoWin = (IVideoWindow)_graphBuilder;
           if (videoWin != null)
@@ -1396,6 +1457,14 @@ namespace MediaPortal.Player
         GUIGraphicsContext.DX9Device.SetRenderTarget(0, MadVrRenderTargetVMR9);
         MadVrRenderTargetVMR9.Dispose();
         MadVrRenderTargetVMR9 = null;
+
+        GUIGraphicsContext.currentScreen = Screen.FromControl(GUIGraphicsContext.form);
+        GUIGraphicsContext.form.Location = new Point(GUIGraphicsContext.currentScreen.Bounds.X, GUIGraphicsContext.currentScreen.Bounds.Y);
+
+        // Send action message to refresh screen
+        Action actionScreenRefresh = new Action(Action.ActionType.ACTION_MADVR_SCREEN_REFRESH, 0, 0);
+        GUIGraphicsContext.OnAction(actionScreenRefresh);
+
         if ((GUIGraphicsContext.form.WindowState != FormWindowState.Minimized))
         {
           // Make MediaPortal window normal ( if minimized )

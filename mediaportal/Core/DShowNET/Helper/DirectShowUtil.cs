@@ -2005,7 +2005,7 @@ namespace DShowNET.Helper
               PinInfo info;
               pins[0].QueryPinInfo(out info);
               DsUtils.FreePinInfo(info);
-              if (String.CompareOrdinal(info.name, strPinName) == 0)
+              if (String.CompareOrdinal(info.name.ToLowerInvariant(), strPinName.ToLowerInvariant()) == 0)
               {
                 ReleaseComObject(pinEnum);
                 return pins[0];

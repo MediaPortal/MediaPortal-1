@@ -1658,6 +1658,17 @@ public class MediaPortalApp : D3D, IRender
             OnDisplayChange(ref msg);
             PluginManager.WndProc(ref msg);
           }
+          Screen screen = Screen.FromControl(this);
+          if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && AppActive &&
+              (!Equals(screen.Bounds.Size.Width, GUIGraphicsContext.currentScreen.Bounds.Width) ||
+               !Equals(screen.Bounds.Size.Height, GUIGraphicsContext.currentScreen.Bounds.Height)))
+          {
+            NeedRecreateSwapChain = true;
+            GUIGraphicsContext.ForceMadVRRefresh = true;
+
+            Log.Debug("Main: WM_DISPLAYCHANGE madVR screen change triggered");
+            Log.Debug("Main: WM_DISPLAYCHANGE madVR Width x Height : {0} x {1}", screen.Bounds.Size.Width, screen.Bounds.Size.Height);
+          }
           break;
 
         // handle device changes
@@ -3943,6 +3954,7 @@ public class MediaPortalApp : D3D, IRender
       {
         GUIWindowManager.DispatchThreadMessages();
         GUIWindowManager.ProcessWindows();
+        GUIGraphicsContext.VideoWindowChangedCallBack();
       }
       catch (FileNotFoundException ex)
       {
@@ -4415,6 +4427,15 @@ public class MediaPortalApp : D3D, IRender
           if (!GUIGraphicsContext.IsFullScreenVideo && g_Player.ShowFullScreenWindow())
           {
             return;
+          }
+          break;
+
+        case Action.ActionType.ACTION_MADVR_SCREEN_REFRESH:
+          // We need to do a refresh of screen when using madVR only if resolution screen has change during playback
+          if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && (NeedRecreateSwapChain || Windowed))
+          {
+            RecreateSwapChain(false);
+            Log.Debug("Main: recreate swap chain for madVR done");
           }
           break;
       }

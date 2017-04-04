@@ -133,23 +133,14 @@ void MPMadPresenter::SetMadVrPaused(bool paused)
   {
     if (paused)
     {
-      if (!m_pPaused)
+      int counter = 0;
+      OAFilterState state = -1;
+      m_pMediaControl->GetState(100, &state);
+      if (state != State_Paused)
       {
-        int counter = 0;
-        OAFilterState state = -1;
-        m_pMediaControl->GetState(100, &state);
-        if (state != State_Paused)
-        {
-          m_pPaused = false;
-        }
         m_pMediaControl->Pause();
-        m_pPaused = true;
         Log("MPMadPresenter:::SetMadVrPaused() pause");
       }
-    }
-    else
-    {
-      m_pPaused = false;
     }
   }
 }
@@ -167,6 +158,52 @@ void MPMadPresenter::RepeatFrame()
   // Render frame to try to fix HD4XXX GPU flickering issue
   Com::SmartQIPtr<IMadVROsdServices> pOR = m_pMad;
   pOR->OsdRedrawFrame();
+}
+
+void MPMadPresenter::MadVr3DSizeRight(uint16_t x, uint16_t y, DWORD width, DWORD height)
+{
+  if (m_pMadD3DDev)
+  {
+    m_dwLeft = x;
+    m_dwTop = y;
+    m_dwWidth = width;
+    m_dwHeight = height;
+    Log("%s : init ok for Auto D3D : %d x %d", __FUNCTION__, width, height);
+  }
+}
+
+void MPMadPresenter::MadVr3DSizeLeft(uint16_t x, uint16_t y, DWORD width, DWORD height)
+{
+  if (m_pMadD3DDev)
+  {
+    m_dwLeftLeft = x;
+    m_dwTopLeft = y;
+    m_dwWidthLeft = width;
+    m_dwHeightLeft = height;
+    Log("%s : init ok for Auto D3D : %d x %d", __FUNCTION__, width, height);
+  }
+}
+
+void MPMadPresenter::MadVrScreenResize(uint16_t x, uint16_t y, DWORD width, DWORD height, bool displayChange)
+{
+  if (m_pMadD3DDev)
+  {
+    Log("%s : done : %d x %d", __FUNCTION__, width, height);
+    SetWindowPos(m_hWnd, 0, 0, 0, width, height, SWP_ASYNCWINDOWPOS);
+
+    // Needed to update OSD/GUI when changing directx present parameter on resolution change.
+    if (displayChange)
+    {
+      m_pReInitOSD = true;
+      m_dwGUIWidth = width;
+      m_dwGUIHeight = height;
+    }
+  }
+}
+
+void MPMadPresenter::MadVr3D(bool Enable)
+{
+  m_madVr3DEnable = Enable;
 }
 
 IBaseFilter* MPMadPresenter::Initialize()
@@ -546,7 +583,7 @@ HRESULT MPMadPresenter::ClearBackground(LPCSTR name, REFERENCE_TIME frameStart, 
 
   if (m_pShutdown)
   {
-    Log("MPMadPresenter::ClearBackground() shutdown");
+    Log("MPMadPresenter::ClearBackground() shutdown or init OSD");
     return hr;
   }
 
@@ -557,6 +594,8 @@ HRESULT MPMadPresenter::ClearBackground(LPCSTR name, REFERENCE_TIME frameStart, 
   WORD videoWidth = (WORD)activeVideoRect->right - (WORD)activeVideoRect->left;
 
   CAutoLock cAutoLock(this);
+
+  ReinitOSD();
 
   //// Ugly hack to avoid flickering (most occurs on Intel GPU)
   //bool isFullScreen = m_pCallback->IsFullScreen();
@@ -619,6 +658,14 @@ HRESULT MPMadPresenter::ClearBackground(LPCSTR name, REFERENCE_TIME frameStart, 
         // Draw MP texture on madVR device's side
         RenderTexture(m_pMadGuiVertexBuffer, m_pRenderTextureGui);
 
+  // For 3D
+  if (m_madVr3DEnable)
+  {
+    if (SUCCEEDED(hr = SetupOSDVertex3D(m_pMadGuiVertexBuffer)))
+      // Draw MP texture on madVR device's side
+      RenderTexture(m_pMadGuiVertexBuffer, m_pRenderTextureGui);
+  }
+
   m_deviceState.Restore();
 
   //// if we don't unlock, OSD will be slow because it will reach the timeout set in SetOSDCallback()
@@ -645,6 +692,8 @@ HRESULT MPMadPresenter::RenderOsd(LPCSTR name, REFERENCE_TIME frameStart, RECT* 
   WORD videoWidth = (WORD)activeVideoRect->right - (WORD)activeVideoRect->left;
 
   CAutoLock cAutoLock(this);
+
+  ReinitOSD();
 
   //// Ugly hack to avoid flickering (most occurs on Intel GPU)
   //bool isFullScreen = m_pCallback->IsFullScreen();
@@ -725,6 +774,14 @@ HRESULT MPMadPresenter::RenderOsd(LPCSTR name, REFERENCE_TIME frameStart, RECT* 
         // Draw MP texture on madVR device's side
         RenderTexture(m_pMadOsdVertexBuffer, m_pRenderTextureOsd);
 
+  // For 3D
+  if (m_madVr3DEnable)
+  {
+    if (SUCCEEDED(hr = SetupOSDVertex3D(m_pMadOsdVertexBuffer)))
+      // Draw MP texture on madVR device's side
+      RenderTexture(m_pMadOsdVertexBuffer, m_pRenderTextureOsd);
+  }
+
   m_deviceState.Restore();
 
   //// if we don't unlock, OSD will be slow because it will reach the timeout set in SetOSDCallback()
@@ -779,9 +836,9 @@ HRESULT MPMadPresenter::SetupOSDVertex(IDirect3DVertexBuffer9* pVertextBuf)
   {
     RECT rDest;
     rDest.bottom = m_dwHeight;
-    rDest.left = 0;
+    rDest.left =  m_dwLeft;
     rDest.right = m_dwWidth;
-    rDest.top = 0;
+    rDest.top = m_dwTop;
 
     vertices[0].x = (float)rDest.left - 0.5f;
     vertices[0].y = (float)rDest.top - 0.5f;
@@ -817,6 +874,82 @@ HRESULT MPMadPresenter::SetupOSDVertex(IDirect3DVertexBuffer9* pVertextBuf)
   }
 
   return hr;
+}
+
+HRESULT MPMadPresenter::SetupOSDVertex3D(IDirect3DVertexBuffer9* pVertextBuf)
+{
+  VID_FRAME_VERTEX* vertices = nullptr;
+
+  // Lock the vertex buffer
+  HRESULT hr = pVertextBuf->Lock(0, 0, (void**)&vertices, D3DLOCK_DISCARD);
+
+  if (SUCCEEDED(hr))
+  {
+    RECT rDest;
+    rDest.bottom = m_dwHeightLeft;
+    rDest.left = m_dwLeftLeft;
+    rDest.right = m_dwWidthLeft;
+    rDest.top = m_dwTopLeft;
+
+    vertices[0].x = (float)rDest.left - 0.5f;
+    vertices[0].y = (float)rDest.top - 0.5f;
+    vertices[0].z = 0.0f;
+    vertices[0].rhw = 1.0f;
+    vertices[0].u = 0.0f;
+    vertices[0].v = 0.0f;
+
+    vertices[1].x = (float)rDest.right - 0.5f;
+    vertices[1].y = (float)rDest.top - 0.5f;
+    vertices[1].z = 0.0f;
+    vertices[1].rhw = 1.0f;
+    vertices[1].u = 1.0f;
+    vertices[1].v = 0.0f;
+
+    vertices[2].x = (float)rDest.right - 0.5f;
+    vertices[2].y = (float)rDest.bottom - 0.5f;
+    vertices[2].z = 0.0f;
+    vertices[2].rhw = 1.0f;
+    vertices[2].u = 1.0f;
+    vertices[2].v = 1.0f;
+
+    vertices[3].x = (float)rDest.left - 0.5f;
+    vertices[3].y = (float)rDest.bottom - 0.5f;
+    vertices[3].z = 0.0f;
+    vertices[3].rhw = 1.0f;
+    vertices[3].u = 0.0f;
+    vertices[3].v = 1.0f;
+
+    hr = pVertextBuf->Unlock();
+    if (FAILED(hr))
+      return hr;
+  }
+
+  return hr;
+}
+
+void MPMadPresenter::ReinitOSD()
+{
+  // Needed to update OSD/GUI when changing directx present parameter on resolution change.
+  if (m_pReInitOSD)
+  {
+    m_pReInitOSD = false;
+    if (m_pMPTextureGui) m_pMPTextureGui.Release();
+    if (m_pMPTextureOsd) m_pMPTextureOsd.Release();
+    if (m_pMadGuiVertexBuffer) m_pMadGuiVertexBuffer.Release();
+    if (m_pMadOsdVertexBuffer) m_pMadOsdVertexBuffer.Release();
+    if (m_pRenderTextureGui) m_pRenderTextureGui.Release();
+    if (m_pRenderTextureOsd) m_pRenderTextureOsd.Release();
+    m_hSharedGuiHandle = nullptr;
+    m_hSharedOsdHandle = nullptr;
+    m_pDevice->CreateTexture(m_dwGUIWidth, m_dwGUIHeight, 0, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &m_pMPTextureGui.p, &m_hSharedGuiHandle);
+    m_pDevice->CreateTexture(m_dwGUIWidth, m_dwGUIHeight, 0, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &m_pMPTextureOsd.p, &m_hSharedOsdHandle);
+    m_pMadD3DDev->CreateVertexBuffer(sizeof(VID_FRAME_VERTEX) * 4, D3DUSAGE_WRITEONLY, D3DFVF_VID_FRAME_VERTEX, D3DPOOL_DEFAULT, &m_pMadGuiVertexBuffer.p, NULL);
+    m_pMadD3DDev->CreateVertexBuffer(sizeof(VID_FRAME_VERTEX) * 4, D3DUSAGE_WRITEONLY, D3DFVF_VID_FRAME_VERTEX, D3DPOOL_DEFAULT, &m_pMadOsdVertexBuffer.p, NULL);
+    m_pMadD3DDev->CreateTexture(m_dwGUIWidth, m_dwGUIHeight, 0, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &m_pRenderTextureGui.p, &m_hSharedGuiHandle);
+    m_pMadD3DDev->CreateTexture(m_dwGUIWidth, m_dwGUIHeight, 0, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &m_pRenderTextureOsd.p, &m_hSharedOsdHandle);
+
+    Log("%s : ReinitOSD for : %d x %d", __FUNCTION__, m_dwGUIWidth, m_dwGUIHeight);
+  }
 }
 
 HRESULT MPMadPresenter::SetupMadDeviceState()

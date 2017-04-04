@@ -151,17 +151,12 @@
           <label>#WorldWeather.ForecastDay4Condition</label>
         </control>
       </control>
-      <control>
-        <type>group</type>
-        <description>group element</description>
-        <layout>StackLayout(260, Horizontal, true)</layout>
-		<animation effect="fade" time="500" reversible="true">visible</animation>
-        <posX>90</posX>
-        <posY>220</posY>
         <control>
           <description>Weather image</description>
           <type>image</type>
           <id>0</id>
+          <posX>90</posX>
+          <posY>220</posY>		  
           <width>150</width>
           <height>150</height>
           <texture>#WorldWeather.ForecastDay1IconImage</texture>
@@ -170,6 +165,8 @@
           <description>Weather image</description>
           <type>image</type>
           <id>0</id>
+          <posX>500</posX>
+          <posY>220</posY>			  
           <width>150</width>
           <height>150</height>
           <texture>#WorldWeather.ForecastDay2IconImage</texture>
@@ -178,6 +175,8 @@
           <description>Weather image</description>
           <type>image</type>
           <id>0</id>
+          <posX>910</posX>
+          <posY>220</posY>			  
           <width>150</width>
           <height>150</height>
           <texture>#WorldWeather.ForecastDay3IconImage</texture>
@@ -186,11 +185,13 @@
           <description>Weather image</description>
           <type>image</type>
           <id>0</id>
+          <posX>1320</posX>
+          <posY>220</posY>			  
           <width>150</width>
           <height>150</height>
           <texture>#WorldWeather.ForecastDay4IconImage</texture>
         </control>
-      </control>
+
  
  
  

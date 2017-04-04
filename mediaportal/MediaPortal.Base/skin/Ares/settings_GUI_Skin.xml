@@ -2,7 +2,7 @@
 <window>
   <id>705</id>
   <defaultcontrol>10</defaultcontrol>
-  <allowoverlay>no</allowoverlay>
+  <allowoverlay>yes</allowoverlay>
   <controls>
   <import>common.settings.xml</import>
 	

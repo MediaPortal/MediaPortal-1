@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<window> 
+	<controls>
+
+
+	  <control>
+		<type>image</type>
+		<description>Logos</description>
+		<id>66</id>		
+		<posX>4665</posX>
+		<posY>891</posY>
+		<width>870</width>
+		<height>65</height>
+		<texture>#Anime3.Logos</texture>
+		<keepaspectratio>yes</keepaspectratio>
+		<spaceBetweenItems>0</spaceBetweenItems>
+		<visible>control.isvisible(1239)+facadeview.list</visible>
+	  </control>
+
+	  <!-- Episode Name -->
+	  <control>
+		<type>fadelabel</type>
+		<id>0</id>
+		<posX>215</posX>
+		<posY>840</posY>
+		<width>1550</width>
+		<font>font13</font>
+		<textcolor>ffffffff</textcolor>
+		<label>#Anime3.Episode.EpisodeDisplayName - #Anime3.Episode.AirDate</label>
+		<visible>Control.IsVisible(1239)</visible>
+	  </control>
+
+	  <!-- Rating -->
+	  
+	  
+	  <control>
+		<type>imagelist</type>
+		<id>101</id>
+		<posX>4561</posX>
+		<posY>345</posY>
+		<width>315</width>
+		<height>29</height>
+		<textureWidth>32</textureWidth>
+		<textureHeight>27</textureHeight>
+		<subitems>
+		<subitem></subitem>
+		<subitem>star.png</subitem>
+		</subitems>
+		<orientation>horizontal</orientation>
+		<align>left</align>
+		<imagesToDraw>10</imagesToDraw>
+		<percentage>#Anime3.Episode.RawRating</percentage>
+		<visible>[facadeview.list+Control.IsVisible(1239)]+[!string.equals(#Anime3.Episode.RawRating, 0)]</visible>
+	</control>
+	
+
+	  <!-- Episode Description -->
+
+	  <control>
+		<type>textboxscrollup</type>
+		<description>Summary (list)</description>
+		<id>631</id>
+		<posX>215</posX>
+		<posY>880</posY>
+		<width>1555</width>
+		<height>125</height>
+		<font>font13</font>
+		<textcolor>99ffffff</textcolor>
+		<label>#Anime3.Episode.Description</label>
+		<seperator>---------------------------------------------------------------------------------------------------------</seperator>
+		<onleft>1026</onleft>
+		<onright>1026</onright>
+		<onup>1026</onup>
+		<ondown>1026</ondown>
+		<lineSpacing>0.92</lineSpacing>
+		<visible>facadeview.list+Control.IsVisible(1239)+string.equals(#skin.tvseries.extra,no)</visible>
+	  </control>
+	  <control>
+		<type>textboxscrollup</type>
+		<description>Summary (list)</description>
+		<id>0</id>
+		<posX>215</posX>
+		<posY>880</posY>
+		<width>1555</width>
+		<height>85</height>
+		<font>font13</font>
+		<textcolor>99ffffff</textcolor>
+		<label>#Anime3.Episode.Description</label>
+		<seperator>---------------------------------------------------------------------------------------------------------</seperator>
+		<onleft>1026</onleft>
+		<onright>1026</onright>
+		<onup>1026</onup>
+		<ondown>1026</ondown>
+		<lineSpacing>0.92</lineSpacing>
+		<visible>facadeview.list+Control.IsVisible(1239)+string.equals(#skin.tvseries.extra,yes)</visible>
+	  </control>	  
+	  
+	  
+
+		<!-- Episode Thumbnail -->
+
+  
+	  
+	  <control>
+		<description>Big Episode Thumb</description>
+		<type>image</type>
+		<id>68</id>
+        <posX>4056</posX>
+        <posY>828</posY>
+		<height>190</height>
+        <valign>middle</valign>
+		<keepaspectratio>yes</keepaspectratio>
+		<width>137</width>
+		<texture>#Anime3.Episode.Image</texture>
+		<visible>facadeview.list+Control.IsVisible(1239)</visible>
+	  </control>
+
+
+	  
+
+
+	
+	  
+
+		
+
+	</controls>
+</window>

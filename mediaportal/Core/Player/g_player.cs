@@ -2633,8 +2633,8 @@ namespace MediaPortal.Player
       if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
           GUIGraphicsContext.Vmr9Active && VMR9Util.g_vmr9 != null)
       {
-        // Moved to planescene in madVR rendering thread
-        //VMR9Util.g_vmr9.StartMadVrPaused();
+        // Added back from planescene madVR rendering thread
+        VMR9Util.g_vmr9.StartMadVrPaused();
 
         // HACK : If madVR is running but stuck in not rendering anymore, we need to force a refresh
         TimeSpan tsPlay = DateTime.Now - VMR9Util.g_vmr9.PlaneSceneMadvrTimer;
@@ -2727,7 +2727,7 @@ namespace MediaPortal.Player
     public static void RefreshMadVrVideo()
     {
       if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
-          GUIGraphicsContext.Vmr9Active)
+          (GUIGraphicsContext.Vmr9Active || GUIGraphicsContext.ForceMadVRFirstStart))
       {
         // TODO find a better way to restore madVR rendering (right now i send an 'X' to force refresh a current window)
         var key = new Key(120, 0);
@@ -3152,7 +3152,6 @@ namespace MediaPortal.Player
         return;
       }
       _player.SetVideoWindow();
-      GUIGraphicsContext.VideoWindowChangedDone = false;
 
       //// madVR
       //if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
@@ -3907,17 +3906,61 @@ namespace MediaPortal.Player
     {
       switch (message.Message)
       {
-        case GUIMessage.MessageType.GUI_MSG_ONVIDEOWINDOWCHANGED:
-          GUIGraphicsContext.VideoWindow = new Rectangle(0, 0, 0, 0);
-          Rectangle[] _videoWindows = new Rectangle[1];
-          _videoWindows[0].X = message.Param1;
-          _videoWindows[0].Y = message.Param2;
-          _videoWindows[0].Width = message.Param3;
-          _videoWindows[0].Height = message.Param4;
-          GUIGraphicsContext.VideoWindow = _videoWindows[0];
-          GUIGraphicsContext.UpdateVideoWindow = true;
-          SetVideoWindow();
-          Log.Debug("g_player VideoWindowChanged() SendThreadMessage received");
+        case GUIMessage.MessageType.GUI_MSG_ONDISPLAYMADVRCHANGED:
+          lock (GUIGraphicsContext.RenderLock)
+          {
+            // Resize OSD/Screen when resolution change
+            if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
+                (GUIGraphicsContext.InVmr9Render && GUIGraphicsContext.ForceMadVRRefresh) || GUIGraphicsContext.ForceMadVRFirstStart)
+            {
+              GUIGraphicsContext.ForceMadVRRefresh = false;
+              Size client = GUIGraphicsContext.form.ClientSize;
+
+              GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferWidth = client.Width;
+              GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferHeight = client.Height;
+              // load resources
+              GUIGraphicsContext.Load();
+
+              GUIFontManager.LoadFonts(GUIGraphicsContext.GetThemedSkinFile(@"\fonts.xml"));
+              GUIFontManager.InitializeDeviceObjects();
+
+              // restart window manager
+              GUIWindowManager.PreInit();
+
+              // Don't resize to avoid wrong dialog opened
+              GUIWindowManager.OnResize();
+              //GUIWindowManager.OnDeviceRestored();
+
+              // send C++ displayChange
+              if (!GUIGraphicsContext.ForceMadVRRefresh3D)
+              {
+                VMR9Util.g_vmr9?.MadVrScreenResize(0, 0, client.Width, client.Height, true);
+              }
+              else
+              {
+                VMR9Util.g_vmr9?.MadVrScreenResize(0, 0, client.Width, client.Height, false);
+                GUIGraphicsContext.ForceMadVRRefresh3D = false;
+              }
+              GUIGraphicsContext.NoneDone = false;
+              GUIGraphicsContext.TopAndBottomDone = false;
+              GUIGraphicsContext.SideBySideDone = false;
+              Log.Debug("g_player VideoWindowChanged() resize OSD/Screen when resolution change for madVR");
+            }
+            else if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
+                     GUIGraphicsContext.InVmr9Render && GUIGraphicsContext.ForceMadVRRefresh3D)
+            {
+              Size client = GUIGraphicsContext.form.ClientSize;
+              VMR9Util.g_vmr9?.MadVrScreenResize(0, 0, client.Width, client.Height, false);
+              GUIGraphicsContext.NoneDone = false;
+              GUIGraphicsContext.TopAndBottomDone = false;
+              GUIGraphicsContext.SideBySideDone = false;
+              GUIGraphicsContext.ForceMadVRRefresh3D = false;
+              Log.Debug("g_player VideoWindowChanged() resize OSD/OSD 3D/Screen when resolution change for madVR");
+            }
+
+            // Refresh madVR
+            RefreshMadVrVideo();
+          }
           break;
       }
     }

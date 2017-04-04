@@ -43,7 +43,7 @@ This file should contain the details view
       <textcolor>ffb9bcc0</textcolor>
       <font>fontBold2</font>
 	  <align>center</align>
-      <label>#(switch(eq(#VideoResolution,'720p'),'HD', eq(#VideoResolution,'1080p'),'FHD', eq(#VideoResolution,'SD'),'SD', eq(#VideoResolution,'240'),'SD', eq(#VideoResolution,'480'),'SD', eq(1,1),'NA'))</label>
+      <label>#(switch(eq(#VideoResolution,'720p'),'HD', eq(#VideoResolution,'1080p'),'FHD', eq(#VideoResolution,'SD'),'SD', eq(#VideoResolution,'240'),'SD', eq(#VideoResolution,'480'),'SD', eq(#VideoResolution,'2160p'),'4K', eq(#VideoResolution,'4320p'),'8K', eq(1,1),'NA'))</label>
       <visible>!control.isvisible(24)+!control.isvisible(23)+!control.hasfocus(70116)</visible>  
     </control>	
 	<control>
@@ -89,23 +89,45 @@ This file should contain the details view
       <label>#(string.trim(#strrating,'(,)'))</label>
       <visible>!control.isvisible(24)+!control.isvisible(23)+!control.hasfocus(70116)</visible>  
     </control>	
-	<!--
+	<control>
+      <description>TV Channel Logo</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>612</posX>
+      <posY>621</posY>
+      <width>260</width>
+      <height>33</height>
+      <texture>#(string.toupper(switch( eq(#AudioCodec,'AC-3 TrueHD'),'Einfoaudio_long1.png', eq(#AudioCodec,'dolbytruehd'),'Einfoaudio_long1.png', eq(#AudioCodec,'dtmsa-1'),'Einfoaudio_long1.png', eq(#AudioCodec,'dts 96'),'Einfoaudio_long1.png', eq(#AudioCodec,'dts 96_24'),'Einfoaudio_long1.png', eq(#AudioCodec,'dts_96_24'),'Einfoaudio_long1.png', eq(#AudioCodec,'dts es 96_24'),'Einfoaudio_long1.png', eq(#AudioCodec,'eac3'),'Einfoaudio_long1.png', eq(1,1),'Einfoaudio_SHORT1.png')))</texture>
+      <visible>control.isvisible(6)</visible>	  
+    </control>
 	<control>
       <description>summery</description>
       <type>label</type>
       <id>0</id>
-	  <textalign>left</textalign>
-      <posX>482</posX>
-      <posY>624</posY>
-      <width>100</width>
+      <posX>647</posX>
+      <posY>620</posY>
+      <width>120</width>
       <height>35</height>
       <textcolor>ffb9bcc0</textcolor>
       <font>fontBold2</font>
-	  <align>center</align>
-      <label>#strrating</label>
+	  <align>CENTER</align>
+      <label>#(string.toupper(switch( eq(#AudioCodec,'aac he-aac'),'AAC', eq(#AudioCodec,'AAC LC'),'AAC', eq(#AudioCodec,'AAC VERSION 4 LC'),'AAC', eq(#AudioCodec,'aac version 4 main'),'AAC', eq(#AudioCodec,'AAC'),'AAC', eq(#AudioCodec,'ac-3 dolby digital'),'DTS AC3', eq(#AudioCodec,'AC3'),'DTS AC3', eq(#AudioCodec,'AC-3'),'DTS AC3', eq(#AudioCodec,'AC-3Plus'),'DTS+', eq(#AudioCodec,'AMR'),'AMR', eq(#AudioCodec,'ASF'),'ASF', eq(#AudioCodec,'DCA'),'DTS', eq(#AudioCodec,'dolbydigital'),'DTS', eq(#AudioCodec,'dolbydigitalplus'),'DTS+', eq(#AudioCodec,'dolbypro'),'DTS pro', eq(#AudioCodec,'DTS ES'),'DTS ES', eq(#AudioCodec,'DTS HRA'),'DTS HRA', eq(#AudioCodec,'DTS MA'),'DTS MA', eq(#AudioCodec,'DTS'),'DTS', eq(#AudioCodec,'dtsex'),'dts ex', eq(#AudioCodec,'DTSHD'),'DTS HD', eq(#AudioCodec,'dtshd_hra'),'dts hra', eq(#AudioCodec,'dtshd_ma'),'DTS MA', eq(#AudioCodec,'dtshra'),'dts hra', eq(#AudioCodec,'dtsma'),'DTS MA', eq(#AudioCodec,'E-AC-3'),'DTS EX', eq(#AudioCodec,'mp3'),'mp3', eq(#AudioCodec,'MPEG AUDIO VERSION 1 LAYER 2'),'MPEG2', eq(#AudioCodec,'MPEG AUDIO VERSION 1 LAYER 3'),'MP3', eq(#AudioCodec,'PCM'),'PCM', eq(#AudioCodec,'realaudio'),'REAL', eq(#AudioCodec,'stereo'),'stereo', eq(1,1),'')))</label>
       <visible>control.isvisible(6)</visible>	  
-    </control>		
-	-->
+    </control>	
+	<control>
+      <description>summery</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>650</posX>
+      <posY>620</posY>
+      <width>165</width>
+      <height>35</height>
+      <textcolor>ffb9bcc0</textcolor>
+      <font>fontBold2</font>
+	  <align>CENTER</align>
+      <label>#(string.toupper(switch( eq(#AudioCodec,'AC-3 TrueHD'),'DTS TrueHD', eq(#AudioCodec,'dolbytruehd'),'DTS truehd', eq(#AudioCodec,'dtmsa-1'),'DTS MASTER', eq(#AudioCodec,'dts 96'),'DTS 96.24', eq(#AudioCodec,'dts 96_24'),'DTS 96.24', eq(#AudioCodec,'dts es 96_24'),'DTS 96.24', eq(#AudioCodec,'dts_96_24'),'DTS 96.24', eq(#AudioCodec,'eac3'),'DTS PLUS+', eq(1,1),'')))</label>
+      <visible>control.isvisible(6)</visible>	  
+    </control>	
   
   </controls>
 </window>

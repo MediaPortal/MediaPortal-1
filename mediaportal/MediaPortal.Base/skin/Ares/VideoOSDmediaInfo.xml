@@ -43,7 +43,7 @@ This file should contain the details view
       <textcolor>ffb9bcc0</textcolor>
       <font>fontBold2</font>
 	  <align>center</align>
-      <label>#(switch(eq(#Play.Current.VideoResolution,'720p'),'HD', eq(#Play.Current.VideoResolution,'1080p'),'FHD', eq(#Play.Current.VideoResolution,'SD'),'SD', eq(#Play.Current.VideoResolution,'240'),'SD', eq(#Play.Current.VideoResolution,'480'),'SD', eq(#Play.Current.VideoResolution,'576'),'SD', eq(#Play.Current.VideoResolution,'360'),'SD', eq(1,1),'NA'))</label>
+      <label>#(switch(eq(#Play.Current.VideoResolution,'720p'),'HD', eq(#Play.Current.VideoResolution,'1080p'),'FHD', eq(#Play.Current.VideoResolution,'SD'),'SD', eq(#Play.Current.VideoResolution,'240'),'SD', eq(#Play.Current.VideoResolution,'480'),'SD', eq(#Play.Current.VideoResolution,'576'),'SD', eq(#Play.Current.VideoResolution,'360'),'SD', eq(#Play.Current.VideoResolution,'2160p'),'4K', eq(#Play.Current.VideoResolution,'4320p'),'8K', eq(1,1),'NA'))</label>
       <visible>control.hasfocus(8997)</visible>	  
     </control>	
 	<control>
@@ -104,55 +104,45 @@ This file should contain the details view
       <label>#(switch(gte(cint(#Play.Current.Votes),5000),'5000+', eq(#Play.Current.Votes,''),'-', eq(1,1),#Play.Current.Votes))</label>
       <visible>control.hasfocus(8997)</visible>	  
     </control>
-<!--	
+	<control>
+      <description>TV Channel Logo</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>642</posX>
+      <posY>772</posY>
+      <width>260</width>
+      <height>33</height>
+      <texture>#(string.toupper(switch( eq(#Play.Current.AudioCodec.Texture,'AC-3 TrueHD'),'Einfoaudio_long1.png', eq(#Play.Current.AudioCodec.Texture,'dolbytruehd'),'Einfoaudio_long1.png', eq(#Play.Current.AudioCodec.Texture,'dtmsa-1'),'Einfoaudio_long1.png', eq(#Play.Current.AudioCodec.Texture,'dts 96'),'Einfoaudio_long1.png', eq(#Play.Current.AudioCodec.Texture,'dts 96_24'),'Einfoaudio_long1.png', eq(#Play.Current.AudioCodec.Texture,'dts_96_24'),'Einfoaudio_long1.png', eq(#Play.Current.AudioCodec.Texture,'dts es 96_24'),'Einfoaudio_long1.png', eq(#Play.Current.AudioCodec.Texture,'eac3'),'Einfoaudio_long1.png', eq(1,1),'Einfoaudio_SHORT1.png')))</texture>
+      <visible>control.hasfocus(8997)</visible>	   
+    </control>
 	<control>
       <description>summery</description>
       <type>label</type>
       <id>0</id>
-	  <textalign>left</textalign>
-      <posX>777</posX>
-      <posY>819</posY>
-      <width>50</width>
+      <posX>677</posX>
+      <posY>771</posY>
+      <width>120</width>
       <height>35</height>
       <textcolor>ffb9bcc0</textcolor>
       <font>fontBold2</font>
-	  <align>center</align>
-      <label>#TVSeries.Episode.Rating</label>
-      <visible>control.hasfocus(8997)</visible>	  
-    </control>		
+	  <align>CENTER</align>
+      <label>#(string.toupper(switch( eq(#Play.Current.AudioCodec.Texture,'aac he-aac'),'AAC', eq(#Play.Current.AudioCodec.Texture,'AAC LC'),'AAC', eq(#Play.Current.AudioCodec.Texture,'AAC VERSION 4 LC'),'AAC', eq(#Play.Current.AudioCodec.Texture,'aac version 4 main'),'AAC', eq(#Play.Current.AudioCodec.Texture,'AAC'),'AAC', eq(#Play.Current.AudioCodec.Texture,'ac-3 dolby digital'),'DTS AC3', eq(#Play.Current.AudioCodec.Texture,'AC3'),'DTS AC3', eq(#Play.Current.AudioCodec.Texture,'AC-3'),'DTS AC3', eq(#Play.Current.AudioCodec.Texture,'AC-3Plus'),'DTS+', eq(#Play.Current.AudioCodec.Texture,'AMR'),'AMR', eq(#Play.Current.AudioCodec.Texture,'ASF'),'ASF', eq(#Play.Current.AudioCodec.Texture,'DCA'),'DTS', eq(#Play.Current.AudioCodec.Texture,'dolbydigital'),'DTS', eq(#Play.Current.AudioCodec.Texture,'dolbydigitalplus'),'DTS+', eq(#Play.Current.AudioCodec.Texture,'dolbypro'),'DTS pro', eq(#Play.Current.AudioCodec.Texture,'DTS ES'),'DTS ES', eq(#Play.Current.AudioCodec.Texture,'DTS HRA'),'DTS HRA', eq(#Play.Current.AudioCodec.Texture,'DTS MA'),'DTS MA', eq(#Play.Current.AudioCodec.Texture,'DTS'),'DTS', eq(#Play.Current.AudioCodec.Texture,'dtsex'),'dts ex', eq(#Play.Current.AudioCodec.Texture,'DTSHD'),'DTS HD', eq(#Play.Current.AudioCodec.Texture,'dtshd_hra'),'dts hra', eq(#Play.Current.AudioCodec.Texture,'dtshd_ma'),'DTS MA', eq(#Play.Current.AudioCodec.Texture,'dtshra'),'dts hra', eq(#Play.Current.AudioCodec.Texture,'dtsma'),'DTS MA', eq(#Play.Current.AudioCodec.Texture,'E-AC-3'),'DTS EX', eq(#Play.Current.AudioCodec.Texture,'mp3'),'mp3', eq(#Play.Current.AudioCodec.Texture,'MPEG AUDIO VERSION 1 LAYER 2'),'MPEG2', eq(#Play.Current.AudioCodec.Texture,'MPEG AUDIO VERSION 1 LAYER 3'),'MP3', eq(#Play.Current.AudioCodec.Texture,'PCM'),'PCM', eq(#Play.Current.AudioCodec.Texture,'realaudio'),'REAL', eq(#Play.Current.AudioCodec.Texture,'stereo'),'stereo', eq(1,1),'')))</label>
+      <visible>control.hasfocus(8997)</visible>	    
+    </control>	
 	<control>
       <description>summery</description>
       <type>label</type>
       <id>0</id>
-	  <textalign>left</textalign>
-      <posX>837</posX>
-      <posY>819</posY>
-      <width>100</width>
+      <posX>680</posX>
+      <posY>771</posY>
+      <width>165</width>
       <height>35</height>
       <textcolor>ffb9bcc0</textcolor>
       <font>fontBold2</font>
-	  <align>center</align>
-      <label>#(string.trim(iif(gte(cint(#TVSeries.Episode.RatingCount),5000),'5000+','#TVSeries.Episode.RatingCount')))</label>
+	  <align>CENTER</align>
+      <label>#(string.toupper(switch( eq(#Play.Current.AudioCodec.Texture,'AC-3 TrueHD'),'DTS TrueHD', eq(#Play.Current.AudioCodec.Texture,'dolbytruehd'),'DTS truehd', eq(#Play.Current.AudioCodec.Texture,'dtmsa-1'),'DTS MASTER', eq(#Play.Current.AudioCodec.Texture,'dts 96'),'DTS 96.24', eq(#Play.Current.AudioCodec.Texture,'dts 96_24'),'DTS 96.24', eq(#Play.Current.AudioCodec.Texture,'dts es 96_24'),'DTS 96.24', eq(#Play.Current.AudioCodec.Texture,'dts_96_24'),'DTS 96.24', eq(#Play.Current.AudioCodec.Texture,'eac3'),'DTS PLUS+', eq(1,1),'')))</label>
       <visible>control.hasfocus(8997)</visible>	  
     </control>	
--->	
-<!-- TEST	
-	<control>
-      <description>summery</description>
-      <type>label</type>
-      <id>0</id>
-	  <textalign>left</textalign>
-      <posX>937</posX>
-      <posY>1004</posY>
-      <width>100</width>
-      <height>35</height>
-      <textcolor>ffb9bcc0</textcolor>
-      <font>fontBold2</font>
-	  <align>center</align>
-      <label>#(date.extract('hh',cdate(#TVSeries.Episode.PrettyLocalPlaytime)))#(date.extract('nn',cdate(#TVSeries.Episode.PrettyLocalPlaytime)))</label>
-      <visible>[facadeview.list|facadeview.smallicons]+control.isvisible(1239)</visible>	  
-    </control>			
--->	
   
   </controls>
 </window>

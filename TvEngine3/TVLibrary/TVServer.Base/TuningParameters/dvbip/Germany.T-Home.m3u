@@ -31,16 +31,12 @@ rtp://@239.35.10.17:10000
 rtp://@239.35.10.18:10000
 #EXTINF:0,ARTE
 rtp://@239.35.10.20:10000
-#EXTINF:0,Einsfestival
+#EXTINF:0,ONE
 rtp://@239.35.10.21:10000
-#EXTINF:0,zdf.kultur
-rtp://@239.35.10.23:10000
-#EXTINF:0,BR-alpha
+#EXTINF:0,ARD-alpha
 rtp://@239.35.10.24:10000
 #EXTINF:0,Tagesschau24
 rtp://@239.35.10.25:10000
-#EXTINF:0,EinsPlus
-rtp://@239.35.10.26:10000
 #EXTINF:0,ZDFneo
 rtp://@239.35.10.27:10000
 #EXTINF:0,ZDFinfo
@@ -85,6 +81,8 @@ rtp://@239.35.10.1:10000
 rtp://@239.35.10.2:10000
 #EXTINF:0,KIKA HD
 rtp://@239.35.10.11:10000
+#EXTINF:0,SR HD
+rtp://@239.35.10.64:10000
 #EXTINF:0,3sat HD
 rtp://@239.35.10.47:10000
 #EXTINF:0,PHOENIX HD
@@ -101,8 +99,6 @@ rtp://@239.35.10.52:10000
 rtp://@239.35.10.53:10000
 #EXTINF:0,ARTE HD
 rtp://@239.35.10.3:10000
-#EXTINF:0,zdf.kultur HD
-rtp://@239.35.10.54:10000
 #EXTINF:0,zdf_neo HD
 rtp://@239.35.10.55:10000
 #EXTINF:0,ZDFinfo HD
@@ -131,12 +127,10 @@ rtp://@239.35.10.60:10000
 rtp://@239.35.10.61:10000
 #EXTINF:0,rbb Berlin HD
 rtp://@239.35.10.62:10000
-#EXTINF:0,Einsfestival HD
+#EXTINF:0,ONE HD
 rtp://@239.35.10.58:10000
 #EXTINF:0,tagesschau24 HD
 rtp://@239.35.10.63:10000
-#EXTINF:0,EinsPlus HD
-rtp://@239.35.10.59:10000
 #EXTINF:0,Sat.1
 rtp://@239.35.20.20:10000
 #EXTINF:0,ProSieben
@@ -157,5 +151,43 @@ rtp://@239.35.20.12:10000
 rtp://@239.35.20.13:10000
 #EXTINF:0,Sat.1 NRW
 rtp://@239.35.20.14:10000
-#EXTINF:0,Sat.1 RhlPf Hessen
-rtp://@239.35.20.15:10000
+#EXTINF:0,RTLplus
+rtp://@239.35.20.57:10000
+#EXTINF:0,kabel eins Doku
+rtp://@239.35.20.67:10000
+#EXTINF:0,a.tv
+rtp://@239.35.50.39:10000
+#EXTINF:0,allgäu.tv
+rtp://@239.35.50.53:10000
+#EXTINF:0,Donau TV
+rtp://@239.35.50.23:10000
+#EXTINF:0,Franken Fernsehen	
+rtp://@239.35.50.43:10000
+#EXTINF:0,intv
+rtp://@239.35.50.1:10000
+#EXTINF:0,ISAR TV	
+rtp://@239.35.50.42:10000
+#EXTINF:0,main.tv	
+rtp://@239.35.50.49:10000
+#EXTINF:0,münchen.tv	
+rtp://@239.35.50.6:10000
+#EXTINF:0,Oberpfalz TV	
+rtp://@239.35.50.50:10000
+#EXTINF:0,RFO	
+rtp://@239.35.50.51:10000
+#EXTINF:0,TRP1	
+rtp://@239.35.50.52:10000
+#EXTINF:0,TV Oberfranken	
+rtp://@239.35.50.54:10000
+#EXTINF:0,TV touring Schweinft	
+rtp://@239.35.50.55:10000
+#EXTINF:0,TV touring Würzburg	
+rtp://@239.35.50.56:10000
+#EXTINF:0,TVA Ostbayern	
+rtp://@239.35.50.57:10000
+#EXTINF:0,center.tv Düsseldorf	
+rtp://@239.35.50.7:10000
+#EXTINF:0,DRF1	
+rtp://@239.35.50.15:10000
+#EXTINF:0,TOGGO Plus
+rtp://@232.0.11.7:10000

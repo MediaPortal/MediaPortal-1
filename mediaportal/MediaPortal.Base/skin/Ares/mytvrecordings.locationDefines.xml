@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <!--     *******************************************************************************************  -->
+  <!--     ****************************  DEFINES FOR RECORDED TV FANART  *****************************  -->
+  <!--     *******************************************************************************************  -->
+  <define property="true" evaluateNow="true">#seriesloc:\\nas4free\nasmedia2\Recordings\series\</define>
+  <define property="true" evaluateNow="true">#moviesloc:\\nas4free\nasmedia2\Recordings\movies\</define>
+  <controls>
+  </controls>
+</window>

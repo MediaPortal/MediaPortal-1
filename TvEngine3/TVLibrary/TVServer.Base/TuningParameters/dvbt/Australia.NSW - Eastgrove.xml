@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ArrayOfDVBTTuning xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <!-- SBS -->
+  <DVBTTuning>
+    <Frequency>529500</Frequency>
+    <BandWidth>7</BandWidth>
+    <Offset>125</Offset>
+  </DVBTTuning>
+  <!-- ABC -->
+  <DVBTTuning>
+    <Frequency>536500</Frequency>
+    <BandWidth>7</BandWidth>
+    <Offset>125</Offset>
+  </DVBTTuning>
+  <!-- UA -->
+  <DVBTTuning>
+    <Frequency>543500</Frequency>
+    <BandWidth>7</BandWidth>
+    <Offset>125</Offset>
+  </DVBTTuning>
+  <!-- WIN -->
+  <DVBTTuning>
+    <Frequency>550500</Frequency>
+    <BandWidth>7</BandWidth>
+    <Offset>125</Offset>
+  </DVBTTuning>
+  <!-- CBN -->
+  <DVBTTuning>
+    <Frequency>557500</Frequency>
+    <BandWidth>7</BandWidth>
+    <Offset>125</Offset>
+  </DVBTTuning>
+  <!-- CTC -->
+  <DVBTTuning>
+    <Frequency>564500</Frequency>
+    <BandWidth>7</BandWidth>
+    <Offset>125</Offset>
+  </DVBTTuning>
+</ArrayOfDVBTTuning>
