@@ -570,6 +570,7 @@ namespace MediaPortal.Player
 
         // add the VMR9 in the graph
         // after enabeling exclusive mode, if done first it causes MediPortal to minimize if for example the "Windows key" is pressed while playing a video
+        bool VMR9AlreadyAdded = false;
         if (File.Exists(m_strCurrentFile) && extension != ".dts" && extension != ".mp3" && extension != ".mka" && extension != ".ac3")
         {
           if (g_Player._mediaInfo != null && !g_Player._mediaInfo.MediaInfoNotloaded && !g_Player._mediaInfo.hasVideo)
@@ -586,6 +587,7 @@ namespace MediaPortal.Player
               return false;
             }
             VMR9Util.g_vmr9.Enable(false);
+            VMR9AlreadyAdded = true;
           }
         }
         else
@@ -675,6 +677,28 @@ namespace MediaPortal.Player
             {
               Splitter = DirectShowUtil.AddFilterToGraph(graphBuilder, filterConfig.strsplitterfilefilter);
             }
+          }
+        }
+
+        // Another check to verify is the source filter has a video PIN.
+        if (!VMR9AlreadyAdded)
+        {
+          IPin pinFrom = DirectShowUtil.FindPin(_interfaceSourceFilter, PinDirection.Output, "video");
+          if (pinFrom != null)
+          {
+            AudioOnly = false;
+            DirectShowUtil.ReleaseComObject(pinFrom);
+            pinFrom = null;
+
+            // Add video renderer etc.
+            Vmr9 = VMR9Util.g_vmr9 = new VMR9Util();
+            bool AddVMR9 = VMR9Util.g_vmr9.AddVMR9(graphBuilder);
+            if (!AddVMR9)
+            {
+              Log.Error("VideoPlayer9:Failed to add VMR9 to graph");
+              return false;
+            }
+            VMR9Util.g_vmr9.Enable(false);
           }
         }
 

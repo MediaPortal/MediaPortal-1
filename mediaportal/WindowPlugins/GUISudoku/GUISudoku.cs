@@ -519,7 +519,7 @@ namespace MediaPortal.GUI.Sudoku
           textLine += GUILocalizeStrings.Get(19110); // difficult
           break;
       }
-      GUIControl.SetControlLabel(GetID, btnLevel.GetID, textLine);
+      if (btnLevel != null) GUIControl.SetControlLabel(GetID, btnLevel.GetID, textLine);
     }
 
     private void ResetGame()

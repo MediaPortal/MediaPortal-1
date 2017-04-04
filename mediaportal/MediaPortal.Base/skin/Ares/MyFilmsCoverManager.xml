@@ -1,0 +1,410 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<window>
+  <id>7992</id>
+  <defaultcontrol>50</defaultcontrol>
+  <allowoverlay>false</allowoverlay>
+  <define>#header.label:MyFilms Cover Manager</define>
+  <controls>
+     <control>
+      <description>BG</description>
+      <type>image</type>
+      <id>1</id>
+      <texture>#backgroundcolour</texture>
+      <width>1920</width>
+      <height>1080</height>
+    </control> 
+    <control>
+      <description>fanart</description>
+      <type>image</type>
+      <id>1000</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <keepaspectratio>yes</keepaspectratio>
+      <centered>yes</centered>
+      <zoom>yes</zoom>
+      <texture>#myfilms.fanart</texture>
+      <animation effect="fade" time="300">visible</animation>
+      <animation effect="fade" time="300">hidden</animation>
+    </control>
+     <control>
+      <description>BG</description>
+      <type>image</type>
+      <id>1</id>
+      <texture>myfilmoverlay.png</texture>
+      <width>1920</width>
+      <height>1080</height>
+    </control> 	
+
+	
+    <control>
+      <description></description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>#overlaycolour</texture>
+	</control>	
+	
+	  <control>
+        <description>Cover Art</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>40</posX>
+        <posY>190</posY>
+        <width>1845</width>
+        <height>624</height>
+        <texture>D_over1.png</texture>
+      </control>	
+
+	  <control>
+        <description>Cover Art</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>40</posX>
+        <posY>821</posY>
+        <width>1845</width>
+        <height>209</height>
+        <texture>Inf_gfx.png</texture>
+      </control>		  
+	  
+	  <import>custom\Allscreens\user_dialog.xml</import>	
+	  
+    <control>
+      <description>Item Count</description>
+      <type>label</type>
+      <id>0</id>
+	  <posX>#Xposition</posX>
+	  <posY>#Yposition</posY>
+      <label>#currentmodule / #myfilms.cover.filterresolution (#selectedindex/#myfilms.cover.count)</label>
+	  <align>right</align>
+	  <font>fontBold2</font>
+      <textcolor>eaeaea</textcolor>
+    </control>    
+
+	
+
+    <control>
+      <description>Movie name</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>85</posX>
+      <posY>850</posY>
+      <width>1600</width>
+      <font>font13</font>
+      <textcolor>ffffffff</textcolor>
+      <label>#myfilms.cover.currentmoviename</label>
+    </control>
+
+	<!--
+    <control>
+      <description>Current Cover Label</description>
+      <type>label</type>
+      <label>Current Default</label>
+      <id>0</id>
+      <posX>352</posX>
+      <posY>150</posY>
+      <width>270</width>
+      <font>font10</font>
+      <textcolor>ff6FAFE1</textcolor>
+    </control>
+	-->
+
+	
+	  <control>
+        <description>Cover Art</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>57</posX>
+        <posY>197</posY>
+        <width>422</width>
+        <height>605</height>
+        <texture mask="CAmaskOPPO.png">blue.png</texture>
+      </control>	
+	  <control>
+        <description>Cover Art</description>
+        <type>image</type>
+        <id>4560</id>
+        <posX>57</posX>
+        <posY>197</posY>
+        <width>422</width>
+        <height>605</height>
+        <texture mask="CAmaskOPPO.png">#myfilms.picture</texture>
+      </control>	
+
+	  
+
+    <!-- VIEW SELECT COVER -->
+	  <control>
+        <description>Cover Art</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>1444</posX>
+        <posY>197</posY>
+        <width>422</width>
+        <height>605</height>
+        <texture mask="CAmask.png">blue.png</texture>
+      </control>	
+	  <control>
+        <description>Cover Art</description>
+        <type>image</type>
+        <id>4560</id>
+        <posX>1444</posX>
+        <posY>197</posY>
+        <width>422</width>
+        <height>605</height>
+        <texture mask="CAmask.png">#myfilms.cover.selectedpreview</texture>
+      </control>		  
+
+    <control>
+      <description>Cover Filename</description>
+      <type>fadelabel</type>
+      <label>#myfilms.cover.selectedcovername</label>
+      <id>0</id>
+      <posX>85</posX>
+      <posY>900</posY>
+      <width>795</width>
+      <font>font13</font>
+      <textcolor>ffffffff</textcolor>
+      <align>left</align>
+    </control>
+    <control>
+      <description>Quality</description>
+      <type>fadelabel</type>
+      <label>#myfilms.cover.selectedcoverresolutionclass [#myfilms.cover.selectedcoverresolution] #myfilms.cover.selectedcoversize</label>
+      <id>0</id>
+      <posX>85</posX>
+      <posY>950</posY>
+      <width>795</width>
+      <font>font13</font>
+      <align>left</align>
+      <textcolor>ffffffff</textcolor>
+      <visible>string.equals(#myfilms.cover.selectedcoverresolution)</visible>
+    </control>
+    <!-- Facade Layouts  -->
+    <control>
+      <type>group</type>
+      <description>group element</description>
+      <id>28</id>
+      <control>
+        <description>composite control consisting of a list control and a thumbnail panel</description>
+        <type>facadeview</type>
+        <id>50</id>
+        <control>
+          <description>Thumbnail Panel</description>
+          <type>thumbnailpanel</type>
+                    <posX>482</posX>
+                    <posY>203</posY>
+                    <width>1000</width>
+                    <height>750</height>
+					<onleft>2</onleft>
+					<onright>2</onright>				
+					<textureUp></textureUp>
+					<textureDown></textureDown>
+					<textXOff>0</textXOff>
+					<textYOff>-50</textYOff>
+					<textalign>center</textalign>
+					<!-- Small Icons 0.66 aspect ratio -->
+					<itemWidth>137</itemWidth>
+				    <itemHeight>197</itemHeight>
+				    <textureWidth>136</textureWidth>
+				    <textureHeight>195</textureHeight>
+				    <thumbWidth>137</thumbWidth>
+				    <thumbHeight>195</thumbHeight>
+				    <thumbPosX>0</thumbPosX>
+				    <thumbPosY>0</thumbPosY>				
+					<!-- Large Icons 0.66 aspect ratio -->
+					<textureWidthBig>193</textureWidthBig>
+					<textureHeightBig>287</textureHeightBig>
+					<itemWidthBig>192</itemWidthBig>
+					<itemHeightBig>291</itemHeightBig>
+					<thumbWidthBig>192</thumbWidthBig>
+					<thumbHeightBig>287</thumbHeightBig>
+					<thumbPosXBig>0</thumbPosXBig>
+					<thumbPosYBig>0</thumbPosYBig>
+					<font>font10</font>
+					<suffix>|</suffix>					
+					<enableFocusZoom>no</enableFocusZoom>
+					<spinWidth>45</spinWidth>
+					<spinHeight>45</spinHeight>
+					<spinPosX>3660</spinPosX>
+					<spinPosY>950</spinPosY>
+					<spinAlign>left</spinAlign>
+					<scrollOffset>1</scrollOffset>
+					<spinColor>ffffffff</spinColor>
+					<spinCanFocus>no</spinCanFocus>
+					<renderFocusText>no</renderFocusText>
+					<renderUnfocusText>no</renderUnfocusText>
+					<textureUp>page_up_nofocus.png</textureUp>
+					<textureDown>page_down_nofocus.png</textureDown>
+					<textureUpFocus>page_up_focus.png</textureUpFocus>
+					<textureDownFocus>page_down_focus.png</textureDownFocus>	.
+					<textureMask>D_moviemask.png</textureMask>
+					<frameNoFocus>D_movieshad.png</frameNoFocus>
+                    <frameFocus>D_movieshadfocus.png</frameFocus>
+					<zoomXPixels>60</zoomXPixels>
+                    <zoomYPixels>90</zoomYPixels>
+					<keepaspectratio>no</keepaspectratio>
+					<unfocusedAlpha>160</unfocusedAlpha>
+					<dimColor>90ffffff</dimColor>
+					<visible allowhiddenfocus="true"></visible>
+        </control>
+        <control>
+          <description>Filmstrip view</description>
+          <type>filmstrip</type>
+          <id>50</id>
+          <posX>510</posX>
+          <posY>315</posY>
+          <width>1000</width>          
+          <spinPosX>-1200</spinPosX>
+          <spinPosY>832</spinPosY>
+          <onleft>2</onleft>
+          <onright>2</onright>
+          <onup>2</onup>
+          <ondown>2</ondown>
+          <frame>coverflowshadow.png</frame>
+          <frameFocus>coverflowshadow.png</frameFocus>
+          <itemWidth>312</itemWidth>
+          <itemHeight>386</itemHeight>
+          <textureWidth>281</textureWidth>
+          <textureHeight>395</textureHeight>
+          <thumbWidth>272</thumbWidth>
+          <thumbHeight>386</thumbHeight>
+          <thumbPosX>4</thumbPosX>
+          <thumbPosY>3</thumbPosY>
+          <thumbs mask="coverartm.png"/>
+          <font>font11</font>
+          <InfoImage></InfoImage>
+	      <imageFolder>-</imageFolder>
+	      <imageFolderFocus>-</imageFolderFocus>
+          <showFrame>yes</showFrame>
+          <showFolder>yes</showFolder>
+          <showBackGround>no</showBackGround>
+          <showInfoImage>no</showInfoImage>
+          <enableFocusZoom>no</enableFocusZoom>
+          <scrollOffset>3</scrollOffset>
+          <keepaspectratio>no</keepaspectratio>
+          <suffix>|</suffix>
+          <folderPrefix />
+          <folderSuffix />
+          <spinCanFocus>no</spinCanFocus>   
+          <unfocusedAlpha>150</unfocusedAlpha>		  
+          <thumbAnimation effect="zoom" start="100,100" end="115,115" time="50">focus</thumbAnimation>  	
+        </control>
+      </control>
+    </control>
+    <!-- Hidden Side Menu -->
+		<control>
+		  <type>actiongroup</type>
+		  <description>action menu</description>
+		  <defaultcontrol>2</defaultcontrol>
+		  <onexit>50</onexit>
+		  <buttonX>0</buttonX>
+		  <buttonY>0</buttonY>
+		  <buttonwidth>100</buttonwidth>
+          <buttonheight>1080</buttonheight>
+          <textureFocus>-</textureFocus>
+          <textureNoFocus>-</textureNoFocus>
+		  <width>800</width>
+		  <height>800</height>
+		  <dimColor>00ffffff</dimColor>
+
+		  
+     <control>
+	   <type>image</type>
+	   <posX>0</posX>
+	   <posY>0</posY>
+	   <width>1920</width>
+	   <height>1080</height>
+       <texture>black.png</texture>
+        <colordiffuse>99000000</colordiffuse>
+	   <animation effect="fade" time="350" reversible="true">hidden</animation>
+	   <visible>!Control.HasFocus(50)+!Control.isVisible(6)+!Control.isVisible(51)</visible>    
+	 </control>
+		
+	  <control>
+        <type>image</type>
+        <id>0</id>
+        <posX>420</posX>
+        <posY>150</posY>
+        <width>975</width>
+        <height>836</height>
+        <texture>dialogglowbig.png</texture>
+		<visible>!Control.HasFocus(50)+!Control.isVisible(6)+!Control.isVisible(51)</visible>    
+      </control>		
+		
+			<control>
+				<description>group element</description>
+				<type>group</type>
+		        <animation effect="fade" time="350" reversible="true">hidden</animation>
+				<visible>!Control.HasFocus(50)+!Control.isVisible(6)+!Control.isVisible(51)</visible>     			
+				<control>
+					<description>button group</description>
+					<type>group</type>
+					<posX>500</posX>
+					<posY>250</posY>
+					<!-- Remove and Gaps when buttons are not visible -->
+					<layout>StackLayout(0, Vertical, true)</layout>
+					<visible>!Control.HasFocus(50)</visible>
+        <control>
+          <description>Change Layout</description>
+          <type>button</type>
+          <id>2</id>
+		  <textureFocus>btn_list_blue2.png</textureFocus>
+          <textureNoFocus></textureNoFocus>
+		  <textYOff>3</textYOff>
+		  <width>820</width>
+		  <height>50</height>		  
+          <onright>50</onright>
+          <onup>13</onup>
+          <ondown>12</ondown>
+        </control>
+        <control>
+          <description>Resolution Filter</description>
+          <type>button</type>
+          <id>12</id>
+		  <textureFocus>btn_list_blue2.png</textureFocus>
+          <textureNoFocus></textureNoFocus>
+		  <textYOff>3</textYOff>
+		  <width>820</width>
+		  <height>50</height>		  
+          <onright>50</onright>
+          <onup>2</onup>
+          <ondown>13</ondown>
+        </control>
+        <control>
+          <description>Download Cover</description>
+          <type>button</type>
+          <id>13</id>
+		  <textureFocus>btn_list_blue2.png</textureFocus>
+          <textureNoFocus></textureNoFocus>
+		  <textYOff>3</textYOff>
+		  <width>820</width>
+		  <height>50</height>		  
+          <onright>50</onright>
+          <onup>12</onup>
+          <ondown>2</ondown>
+        </control>
+      </control>
+    </control>
+	</control>
+	
+    <control>
+      <type>animation</type>
+      <description>Waiting during search</description>
+      <id>2080</id>
+      <posX>900</posX>
+      <posY>492</posY>
+      <width>96</width>
+      <height>96</height>
+      <textures>common.waiting.1.png;common.waiting.2.png;common.waiting.3.png;common.waiting.4.png;common.waiting.5.png;common.waiting.6.png;common.waiting.7.png;common.waiting.8.png</textures>
+      <Duration>0:0:01.5</Duration>
+      <visible>no</visible>
+      <keepaspectratio>yes</keepaspectratio>
+    </control>
+  </controls>
+</window>

@@ -27,3 +27,7 @@ MadDeinit               @22
 MadStopping             @23
 MadVrPaused             @24
 MadVrRepeatFrameSend    @25
+MadVr3DRight            @26
+MadVr3DLeft             @27
+MadVr3DEnable           @28
+MadVrScreenResizeForce  @29

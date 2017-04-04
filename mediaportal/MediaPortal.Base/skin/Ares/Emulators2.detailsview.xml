@@ -1,0 +1,456 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<window>
+  <controls>
+    <!-- Details View Buttons  -->
+    <control>
+      <type>group</type>
+      <description>group element</description>
+      <posX>57</posX>
+      <posY>620</posY>
+      <visible>!control.isvisible(50)</visible>
+      <layout>StackLayout(0, Vertical, false)</layout>  
+      <control>
+        <description>Play Button</description>
+        <type>button</type>
+        <id>6</id>
+        <onright>6</onright>
+        <onleft>6</onleft>
+        <onup>9</onup>
+        <ondown>7</ondown>
+        <label>208</label>
+		<width>1387</width>
+		<textureFocus>btn_list.png</textureFocus>
+        <visible>!control.isvisible(50)</visible>
+      </control>
+      <control>
+        <description>Properties Button</description>
+        <id>7</id>
+        <type>button</type>
+        <label>940</label>
+        <hyperlink>84623</hyperlink>
+        <onright>7</onright>
+        <onleft>7</onleft>
+        <onup>6</onup>
+        <ondown>8</ondown>
+		<width>1387</width>
+		<textureFocus>btn_list.png</textureFocus>
+        <visible>!control.isvisible(50)</visible>
+      </control>
+      <control>
+        <description>Images Button</description>
+        <id>8</id>
+        <type>button</type>
+        <label>750</label>
+        <onright>8</onright>
+        <onleft>8</onleft>
+        <onup>7</onup>
+        <ondown>9</ondown>
+		<width>1387</width>
+		<textureFocus>btn_list.png</textureFocus>
+        <visible>!control.isvisible(50)</visible>
+      </control>
+      <control>
+        <description>Goodmerge Button</description>
+        <type>button</type>
+        <id>9</id>
+        <onup>8</onup>
+        <ondown>6</ondown>
+        <onright>51</onright>
+        <onleft>51</onleft>
+		<textureFocus>btn_list.png</textureFocus>
+		<width>1387</width>
+        <label>#Emulators2.Label.goodmerge</label>
+        <visible>!control.isvisible(50)+string.contains(#Emulators2.CurrentItem.goodmerge,yes)</visible>
+      </control>		  
+
+    </control>
+
+
+	
+	
+	<control>
+      <id>0</id>
+      <type>label</type>
+      <label>#Emulators2.CurrentItem.grade / 10</label>
+      <posX>1290</posX>
+      <posY>225</posY>
+      <width>200</width>
+      <align>left</align>
+      <font>font12</font>
+      <textcolor>ffFFFFFF</textcolor>
+      <visible>!control.isvisible(50)+!control.hasfocus(7)+!control.hasfocus(8)</visible>
+    </control>
+    <control>
+      <description>10 star rating</description>
+      <type>imagelist</type>
+      <id>0</id>
+      <posX>1030</posX>
+      <posY>229</posY>
+      <width>302</width>
+      <height>25</height>
+      <textureWidth>25</textureWidth>
+      <textureHeight>25</textureHeight>
+      <subitems>
+        <subitem>starbad.png</subitem>
+        <subitem>star.png</subitem>
+      </subitems>
+      <orientation>horizontal</orientation>
+      <align>left</align>
+      <imagesToDraw>10</imagesToDraw>
+      <percentage>#Emulators2.CurrentItem.grade</percentage>
+      <visible>!control.isvisible(50)+!control.hasfocus(7)+!control.hasfocus(8)</visible>
+    </control>
+	
+	
+	
+    <!-- Details Box -->
+	<control>
+      <description>group element</description>
+      <type>group</type>
+      <posX>85</posX>
+      <posY>215</posY>
+	  <layout>StackLayout(45, Vertical, false)</layout>
+	
+    <control>
+      <description>Developer Label</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>730</posX>
+      <posY>200</posY>
+      <label>#Emulators2.Label.developer</label>
+      <font>font12</font>
+      <align>left</align>
+      <textcolor>ffffffff</textcolor>
+      <visible>!control.isvisible(50)+!control.hasfocus(7)+!control.hasfocus(8)</visible>
+    </control>
+    <control>
+      <description>Developer</description>
+      <type>fadelabel</type>
+      <label>#Emulators2.CurrentItem.company</label>
+      <id>0</id>
+      <posX>730</posX>
+      <posY>219</posY>
+      <width>310</width>
+      <font>font12</font>
+      <textcolor>eaeaea</textcolor>
+      <visible>!control.isvisible(50)+!control.hasfocus(7)+!control.hasfocus(8)</visible>
+    </control>
+
+    <control>
+      <description>Last Played Label</description>
+      <id>0</id>
+      <type>label</type>
+      <label>#Emulators2.Label.lastplayed</label>
+      <posX>730</posX>
+      <posY>353</posY>
+      <font>font12</font>
+      <align>left</align>
+      <textcolor>ffffffff</textcolor>
+      <visible>!control.isvisible(50)+!control.hasfocus(7)+!control.hasfocus(8)</visible>
+    </control>
+    <control>
+      <description>Last Played</description>
+      <id>0</id>
+      <type>label</type>
+      <label>#Emulators2.CurrentItem.latestplaydate</label>
+      <posX>730</posX>
+      <posY>372</posY>
+      <width>150</width>
+      <font>font12</font>
+      <textcolor>eaeaea</textcolor>
+      <visible>!control.isvisible(50)+!control.hasfocus(7)+!control.hasfocus(8)</visible>
+    </control>
+    <control>
+      <description>Play Count Label</description>
+      <id>0</id>
+      <type>label</type>
+      <label>#Emulators2.Label.playcount</label>
+      <posX>885</posX>
+      <posY>353</posY>
+      <font>font12</font>
+      <align>left</align>
+      <textcolor>ffffffff</textcolor>
+      <visible>!control.isvisible(50)+!control.hasfocus(7)+!control.hasfocus(8)</visible>
+    </control>
+    <control>
+      <description>Play Count</description>
+      <id>0</id>
+      <type>label</type>
+      <label>#Emulators2.CurrentItem.playcount</label>
+      <posX>885</posX>
+      <posY>372</posY>
+      <width>155</width>
+      <font>font12</font>
+      <textcolor>eaeaea</textcolor>
+      <visible>!control.isvisible(50)+!control.hasfocus(7)+!control.hasfocus(8)</visible>
+    </control>
+    <control>
+      <description>Disc Label</description>
+      <id>0</id>
+      <type>label</type>
+      <label>#Emulators2.Label.disc</label>
+      <posX>730</posX>
+      <posY>404</posY>
+      <font>font12</font>
+      <align>left</align>
+      <textcolor>ffffffff</textcolor>
+      <visible>!control.isvisible(50)+!control.hasfocus(7)+!control.hasfocus(8)</visible>
+    </control>
+    <control>
+      <description>Disc</description>
+      <id>0</id>
+      <type>label</type>
+      <label>#Emulators2.CurrentItem.currentdisc / #Emulators2.CurrentItem.totaldiscs</label>
+      <posX>730</posX>
+      <posY>423</posY>
+      <width>310</width>
+      <font>font12</font>
+      <visible>!control.isvisible(50)+!control.hasfocus(7)+!control.hasfocus(8)</visible>
+    </control>
+<!--
+    <control>
+      <keepaspectratio>yes</keepaspectratio>
+      <description>Back Cover</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1050</posX>
+      <posY>200</posY>
+      <width>200</width>
+      <height>250</height>
+      <keepaspectratio>yes</keepaspectratio>
+      <align>center</align>
+      <valign>middle</valign>
+      <texture flipY="true" diffuse="Thumb_Mask.png">#Emulators2.CurrentItem.backcoverpath</texture>
+      <visible>!control.isvisible(50)+!control.hasfocus(7)+!control.hasfocus(8)</visible>
+    </control>
+	-->
+    </control>
+	
+	
+	
+	
+    <control>
+      <description>Summary</description>
+      <type>textboxscrollup</type>
+      <id>0</id>
+	  <textalign>left</textalign>
+      <posX>215</posX>
+      <posY>850</posY>
+      <width>1650</width>
+      <height>85</height>
+      <textcolor>99ffffff</textcolor>
+      <font>font13</font>
+      <label>#Emulators2.CurrentItem.description</label>
+      <visible>true</visible>
+
+    </control>	
+	
+	<control>
+      <description>summery</description>
+      <type>textboxscrollup</type>
+      <id>0</id>
+	  <textalign>left</textalign>
+      <posX>215</posX>
+      <posY>960</posY>
+      <width>1650</width>
+      <height>40</height>
+      <textcolor>99ffffff</textcolor>
+      <font>font13</font>
+      <label>#(iif(eq(#Emulators2.CurrentItem.year,''),'','#Emulators2.Label.year : #Emulators2.CurrentItem.year  |'))  #(iif(eq(#Emulators2.CurrentItem.genre,''),'','#Emulators2.Label.genre : #Emulators2.CurrentItem.genre'))</label>
+      <visible>true</visible>
+    </control>	
+	
+
+    <!-- Details Box -->
+	<control>
+      <description>group element</description>
+      <type>group</type>
+      <posX>85</posX>
+      <posY>215</posY>
+	  <layout>StackLayout(40, Vertical, false)</layout>
+		
+    <!-- Current Settings -->
+
+    <control>
+      <description>Path</description>
+      <type>fadelabel</type>
+      <label>#Emulators2.CurrentItem.path</label>
+      <id>0</id>
+      <posX>730</posX>
+      <posY>199</posY>
+      <width>1000</width>
+      <font>font12</font>
+      <textcolor>eaeaea</textcolor>
+      <visible>!control.isvisible(50)+control.hasfocus(7)</visible>
+    </control>
+    <control>
+      <description>Profile Label</description>
+      <id>0</id>
+      <type>label</type>
+      <label>#Emulators2.Label.currentprofile</label>
+      <posX>730</posX>
+      <posY>231</posY>
+      <font>font12</font>
+      <align>left</align>
+      <textcolor>ffffffff</textcolor>
+      <visible>!control.isvisible(50)+control.hasfocus(7)</visible>
+    </control>
+    <control>
+      <description>Profile</description>
+      <id>0</id>
+      <type>fadelabel</type>
+      <label>#Emulators2.CurrentItem.Profile.title</label>
+      <posX>730</posX>
+      <posY>250</posY>
+      <width>1000</width>
+      <font>font12</font>
+      <textcolor>eaeaea</textcolor>
+      <visible>!control.isvisible(50)+control.hasfocus(7)</visible>
+    </control>
+
+    <control>
+      <description>Emu Path Label</description>
+      <id>0</id>
+      <type>label</type>
+      <label>#Emulators2.Label.emulatorpath</label>
+      <posX>730</posX>
+      <posY>290</posY>
+      <font>font12</font>
+      <align>left</align>
+      <textcolor>ffffffff</textcolor>
+      <visible>!control.isvisible(50)+control.hasfocus(7)</visible>
+    </control>
+    <control>
+      <description>Emu Path</description>
+      <id>0</id>
+      <type>fadelabel</type>
+      <label>#Emulators2.CurrentItem.Profile.emulatorpath</label>
+      <posX>730</posX>
+      <posY>309</posY>
+      <font>font12</font>
+      <width>1000</width>
+      <textcolor>ffffffff</textcolor>
+      <visible>!control.isvisible(50)+control.hasfocus(7)</visible>
+    </control>
+    <control>
+      <description>Arguments Label</description>
+      <id>0</id>
+      <type>label</type>
+      <label>#Emulators2.Label.arguments</label>
+      <posX>730</posX>
+      <posY>341</posY>
+      <font>font12</font>
+      <align>left</align>
+      <textcolor>eaeaea</textcolor>
+      <visible>!control.isvisible(50)+control.hasfocus(7)</visible>
+    </control>
+    <control>
+      <description>Arguments</description>
+      <id>0</id>
+      <type>fadelabel</type>
+      <label>#Emulators2.CurrentItem.Profile.arguments</label>
+      <posX>730</posX>
+      <posY>360</posY>
+      <width>1000</width>
+      <font>font12</font>
+      <textcolor>ffffffff</textcolor>
+      <visible>!control.isvisible(50)+control.hasfocus(7)</visible>
+    </control>
+    <control>
+      <description>Working Dir Label</description>
+      <id>0</id>
+      <type>label</type>
+      <label>#Emulators2.Label.workingdirectory</label>
+      <posX>730</posX>
+      <posY>392</posY>
+      <font>font12</font>
+      <align>left</align>
+      <textcolor>eaeaea</textcolor>
+      <visible>!control.isvisible(50)+control.hasfocus(7)</visible>
+    </control>
+    <control>
+      <description>Working Dir</description>
+      <id>0</id>
+      <type>fadelabel</type>
+      <label>#Emulators2.CurrentItem.Profile.workingdirectory</label>
+      <posX>730</posX>
+      <posY>411</posY>
+      <width>1000</width>
+      <font>font12</font>
+      <visible>!control.isvisible(50)+control.hasfocus(7)</visible>
+    </control>
+    </control>
+
+	
+
+    
+    <!-- Goodmerge List -->
+    <control>
+      <visible>!control.isvisible(50)+[control.hasfocus(9)|control.hasfocus(51)]</visible>
+      <description>Goodmerge List</description>
+      <type>listcontrol</type>
+      <id>51</id>
+      <posX>140</posX>
+      <posY>225</posY>
+      <width>277</width>
+      <height>400</height>
+      <onleft>9</onleft>
+      <onright>9</onright>
+      <font>font12</font>
+      <textXOff>-30</textXOff>
+      <textXOff2>0</textXOff2>
+      <!-- Spin Controls -->
+      <spinWidth>46</spinWidth>
+      <spinHeight>33</spinHeight>
+      <spinPosX>1113</spinPosX>
+      <spinPosY>632</spinPosY>
+      <spinAlign>Right</spinAlign>
+      <spinColor>ffffffff</spinColor>
+      <spinCanFocus>no</spinCanFocus>
+      <scrollOffset>1</scrollOffset>
+    </control>
+
+    <!-- Screenshots -->
+    <control>
+      <description>Title Screen</description>
+      <type>image</type>
+      <id>603</id>
+      <posX>140</posX>
+      <posY>225</posY>
+      <width>420</width>
+      <height>380</height>
+      <keepaspectratio>yes</keepaspectratio>
+      <align>center</align>
+      <valign>middle</valign>
+      <texture>#Emulators2.CurrentItem.titlescreenpath</texture>
+      <visible>!control.isvisible(50)+control.hasfocus(8)</visible>
+    </control>
+    <control>
+      <description>Ingame Screen</description>
+      <type>image</type>
+      <id>604</id>
+      <posX>630</posX>
+      <posY>225</posY>
+      <width>420</width>
+      <height>380</height>
+      <keepaspectratio>yes</keepaspectratio>
+      <align>center</align>
+      <valign>middle</valign>
+      <texture>#Emulators2.CurrentItem.ingamescreenpath</texture>
+      <visible>!control.isvisible(50)+control.hasfocus(8)</visible>
+    </control>
+
+	  <control>
+        <description>Cover Art</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>1416</posX>
+        <posY>182</posY>
+        <width>28</width>
+        <height>619</height>
+        <texture>D_side.png</texture>
+      </control>		
+	
+	
+  </controls>
+</window>

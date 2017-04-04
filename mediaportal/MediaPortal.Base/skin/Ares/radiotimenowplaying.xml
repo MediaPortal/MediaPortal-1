@@ -29,6 +29,7 @@
       <height>1080</height>
       <texture>radiotime_back.jpg</texture>
 	  <colordiffuse>25ffffff</colordiffuse>
+	  <visible>!string.equals(#Music.fanart.enable,Now Playing only)+!string.equals(#Music.fanart.enable,All Screens)</visible>   
 	</control>
     <control>
       <description>Backdrop</description>
@@ -68,29 +69,7 @@
 
 
 	  
-      <control>
-        <id>1</id>
-        <type>image</type>
-        <posX>1261</posX>
-        <posY>197</posY>
-        <width>605</width>
-        <height>605</height>
-		<keepaspectratio>no</keepaspectratio>
-        <zoomfromtop>no</zoomfromtop>
-        <texture mask="MA_mask.png">blue.png</texture>
-      </control>
-	  
-      <control>
-        <id>112</id>
-        <type>image</type>
-        <posX>1281</posX>
-        <posY>217</posY>
-        <width>565</width>
-        <height>565</height>
-		<keepaspectratio>yes</keepaspectratio>
-		<centered>yes</centered>
-        <texture>#RadioTime.Play.Image</texture>
-      </control>
+
 
 
     <control>
@@ -98,12 +77,12 @@
       <description>track label</description>
       <type>fadelabel</type>
       <posX>260</posX>
-      <posY>950</posY>
+      <posY>967</posY>
       <width>1590</width>
       <height>120</height>
       <font>font12</font>
-      <textcolor>ffffffff</textcolor>
-      <label>#RadioTime.Play.Location - #RadioTime.Play.Slogan</label>
+      <textcolor>99ffffff</textcolor>
+      <label>#RadioTime.Play.Location</label>
     </control>
 
     
@@ -140,7 +119,7 @@
       <type>label</type>
       <visible>player.hasmedia</visible>
       <posX>260</posX>
-      <posY>850</posY>
+      <posY>840</posY>
       <width>1590</width>
       <font>font12</font>
       <textcolor>ffffffff</textcolor>
@@ -150,16 +129,29 @@
     <control>
       <id>0</id>
       <description>track progress label</description>
-      <type>label</type>
+      <type>fadelabel</type>
       <visible>player.hasmedia</visible>
       <posX>260</posX>
-      <posY>900</posY>
+      <posY>880</posY>
       <width>1590</width>
       <font>font12</font>
       <textcolor>ffffffff</textcolor>
       <align>left</align>
-      <label>#RadioTime.Play.Station</label>
-    </control>	
+      <label>#Play.Current.Artist - #Play.Current.Title</label>
+    </control>
+    <control>
+      <id>0</id>
+      <description>track progress label</description>
+      <type>fadelabel</type>
+      <visible>player.hasmedia</visible>
+      <posX>260</posX>
+      <posY>925</posY>
+      <width>1590</width>
+      <font>font12</font>
+      <textcolor>ffffffff</textcolor>
+      <align>left</align>
+      <label>#Play.Current.Album</label>
+    </control>		
 	
 	
 
@@ -244,6 +236,56 @@
       <onright>53</onright>
       <onleft>53</onleft>
     </control>     
+	
+	<control>
+      <id>1</id>
+      <type>image</type>
+      <posX>1021</posX>
+      <posY>250</posY>
+      <width>525</width>
+      <height>525</height>
+      <texture>cdblank.png</texture>
+      <visible>player.hasAudio+!control.hasthumb(11922)</visible>
+	  <animation effect="rotate" delay="0" end="-360" centre="475,258" time="30000" loop="true" condition="player.hasAudio">Conditional</animation>
+	  <colordiffuse>ffffffff</colordiffuse>
+    </control>
+	
+	
+	<control>
+      <id>11922</id>
+      <type>image</type>
+      <posX>1021</posX>
+      <posY>250</posY>
+      <width>525</width>
+      <height>525</height>
+      <texture>..\..\..\Thumbs\CDArt\Music\#Play.Current.AlbumArtist - #Play.Current.Album.png</texture>
+	  <animation effect="rotate" delay="0" end="-360" centre="475,258" time="30000" loop="true" condition="player.hasAudio">Conditional</animation>
+	  <colordiffuse>ffffffff</colordiffuse>
+    </control>	
+
+      <control>
+        <id>1</id>
+        <type>image</type>
+        <posX>1261</posX>
+        <posY>197</posY>
+        <width>605</width>
+        <height>605</height>
+		<keepaspectratio>no</keepaspectratio>
+        <zoomfromtop>no</zoomfromtop>
+        <texture mask="MA_mask.png">blue.png</texture>
+      </control>
+	  
+      <control>
+        <id>112</id>
+        <type>image</type>
+        <posX>1281</posX>
+        <posY>217</posY>
+        <width>565</width>
+        <height>565</height>
+		<keepaspectratio>yes</keepaspectratio>
+		<centered>yes</centered>
+        <texture>#RadioTime.Play.Image</texture>
+      </control>	
 	
 	  <control>
         <description>Cover Art</description>

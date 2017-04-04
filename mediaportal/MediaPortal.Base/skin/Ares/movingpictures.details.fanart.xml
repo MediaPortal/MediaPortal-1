@@ -193,7 +193,7 @@ This file should contain the details view
 	<control>
       <description>Label</description>
       <type>label</type>
-      <label>#MovingPictures.SelectedMovie.title</label>
+      <label>#MovingPictures.SelectedMovie.title - #MovingPictures.SelectedMovie.year</label>
       <id>0</id>
       <posX>880</posX>
       <posY>697</posY>
@@ -294,7 +294,7 @@ This file should contain the details view
       <textureNoFocus>-</textureNoFocus>
 	  <width>800</width>
 	  <height>800</height>
-      <visible allowhiddenfocus="true">control.isvisible(6)+control.hasfocus(10000)|control.hasfocus(10001)|control.hasfocus(97258)|control.hasfocus(97259)|control.hasfocus(97260)</visible>
+      <visible allowhiddenfocus="true">control.isvisible(6)+control.hasfocus(10000)|control.hasfocus(10001)|control.hasfocus(97270)</visible>
       
 	  <control>
         <type>image</type>
@@ -327,7 +327,7 @@ This file should contain the details view
           <id>10000</id>
           <label>IMDb #(L(5900))</label>
           <ondown>10001</ondown>
-          <onup>17</onup>
+          <onup>97270</onup>
           <onleft>6</onleft>
           <onright>6</onright>
           <hyperlink>4755</hyperlink>
@@ -343,48 +343,20 @@ This file should contain the details view
           <label>287</label>
           <hyperlink>84623</hyperlink>
           <onup>10000</onup>
-          <ondown>97259</ondown>
+          <ondown>97270</ondown>
           <onleft>6</onleft>
           <onright>6</onright>
 		  <width>820</width>
 		  <textureFocus>btn_list_blue2.png</textureFocus>
-          <visible allowhiddenfocus="true">plugin.isenabled(SubCentral)</visible>
+          <visible>plugin.isenabled(SubCentral)</visible>
         </control>
         <control>
           <description>Trakt Rate Movie</description>
           <type>button</type>
-          <!-- ID:97259 for Trakt Rate -->
-          <id>97259</id>
-          <label>Trakt #Trakt.Translation.Rate.Label</label>
+          <!-- ID:97270 for Trakt -->
+          <id>97270</id>
+          <label>Trakt</label>
           <onup>10001</onup>
-          <ondown>97260</ondown>
-          <onleft>6</onleft>
-          <onright>6</onright>
-		  <width>820</width>
-		  <textureFocus>btn_list_blue2.png</textureFocus>
-          <visible allowhiddenfocus="true">plugin.isenabled(Trakt)</visible>
-        </control>
-        <control>
-          <description>Trakt Shouts</description>
-          <type>button</type>
-          <!-- ID:97260 for Trakt Shouts -->
-          <id>97260</id>
-          <label>Trakt #Trakt.Translation.Shouts.Label</label>
-          <onup>97259</onup>
-          <ondown>97258</ondown>
-          <onleft>6</onleft>
-          <onright>6</onright>
-		  <width>820</width>
-		  <textureFocus>btn_list_blue2.png</textureFocus>
-          <visible allowhiddenfocus="true">plugin.isenabled(Trakt)</visible>
-        </control>
-        <control>
-          <description>Trakt Add to Watchlist</description>
-          <type>button</type>
-          <!-- ID:97258 for Add to Watchlist -->
-          <id>97258</id>
-          <label>Trakt +#Trakt.Translation.WatchList.Label</label>
-          <onup>97260</onup>
           <ondown>10000</ondown>
           <onleft>6</onleft>
           <onright>6</onright>
@@ -395,7 +367,17 @@ This file should contain the details view
       </control>
     </control>
 	
-	
+    <control>
+      <description>background</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>50</posX>
+      <posY>15</posY>
+      <width>347</width>
+      <height>163</height>
+      <texture>tvbackground.png</texture>
+	  <visible>player.hasmedia</visible>
+	</control>	
 
   </controls>
 </window>

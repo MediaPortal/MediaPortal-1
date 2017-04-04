@@ -270,6 +270,7 @@
     <None Include="groupsock\include\IOHandlers.hh" />
     <None Include="groupsock\include\NetAddress.hh" />
     <None Include="groupsock\include\NetInterface.hh" />
+    <None Include="liveMedia\include\MPEG2TransportStreamAccumulator.hh" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="liveMedia\AC3AudioFileServerMediaSubsession.cpp" />
@@ -457,6 +458,8 @@
     <ClCompile Include="groupsock\NetInterface.cpp" />
     <ClCompile Include="MediaPortal\MPRTSPServer.cpp" />
     <ClCompile Include="MediaPortal\MPTaskScheduler.cpp" />
+    <ClCompile Include="liveMedia/MPEG2TransportStreamAccumulator.cpp" />
+    <ClCompile Include="liveMedia/RTSPServerRegister.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="liveMedia\rtcp_from_spec.h" />
