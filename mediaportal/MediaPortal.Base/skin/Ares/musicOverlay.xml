@@ -26,6 +26,7 @@
       <width>140</width>
       <height>140</height>
       <texture>cdfx_small.png</texture>
+	  <keepaspectratio>true</keepaspectratio>
       <visible>Player.HasAudio+!Player.HasVideo+!control.hasthumb(11922)</visible>
       <animation effect="fade" time="2000" delay="1500" reversible="false">visible</animation>
 	  <animation effect="fade" time="500" reversible="false">hidden</animation>
@@ -42,6 +43,7 @@
       <posY>25</posY>
       <width>140</width>
       <height>140</height>
+	  <keepaspectratio>true</keepaspectratio>
       <texture>..\..\..\thumbs\CDArt\Music\#Play.Current.Artist - #Play.Current.Album.png</texture>
       <visible>Player.HasAudio+!Player.HasVideo</visible>
       <animation effect="fade" time="2000" delay="1500" reversible="false">visible</animation>

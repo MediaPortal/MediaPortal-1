@@ -16,7 +16,7 @@
         <height>209</height>
         <texture>Inf_gfx.png</texture>
 		<animation effect="fade" time="500" reversible="true">visible</animation>
-	  <visible>control.isvisible(010004)|control.isvisible(010008)|control.isvisible(010012)|control.isvisible(010016)|control.isvisible(010020)|control.isvisible(012016)|control.isvisible(013016)|control.isvisible(5521125)</visible>	  
+	  <visible>control.isvisible(010004)|control.isvisible(010008)|control.isvisible(010012)|control.isvisible(010021)|control.isvisible(010016)|control.isvisible(010020)|control.isvisible(012016)|control.isvisible(013016)|control.isvisible(5521125)</visible>	  
     </control>	
 	
 	
@@ -27,12 +27,12 @@
 	  <!--     *************************   Latest movie   ************************  -->
 	<control>
 	  <description>DUMMY CONTROL FOR MOVIES VISIBILITY</description>
-      <type>textbox</type>
+      <type>fadelabel</type>
       <id>041000</id>
       <posX>478</posX>
       <posY>215</posY>
-      <width>1550</width>
-      <height>140</height>
+      <width>1380</width>
+      <height>30</height>
       <label>#latestMediaHandler.movingpicture.latest1.title #latestMediaHandler.movingpicture.latest1.year</label>
       <align>left</align>
       <font>font13</font>
@@ -64,12 +64,12 @@
 	
 	<control>
 	  <description>DUMMY CONTROL FOR MOVIES VISIBILITY</description>
-      <type>textbox</type>
+      <type>fadelabel</type>
       <id>041001</id>
       <posX>478</posX>
       <posY>215</posY>
-      <width>1550</width>
-      <height>140</height>
+      <width>1380</width>
+      <height>30</height>
       <label>#latestMediaHandler.movingpicture.latest2.title #latestMediaHandler.movingpicture.latest2.year</label>
       <align>left</align>
       <font>font13</font>
@@ -98,12 +98,12 @@
 	
 	<control>
 	  <description>DUMMY CONTROL FOR MOVIES VISIBILITY</description>
-      <type>textbox</type>
+      <type>fadelabel</type>
       <id>041002</id>
       <posX>478</posX>
       <posY>215</posY>
-      <width>1550</width>
-      <height>140</height>
+      <width>1380</width>
+      <height>30</height>
       <label>#latestMediaHandler.movingpicture.latest3.title #latestMediaHandler.movingpicture.latest3.year</label>
       <align>left</align>
       <font>font13</font>
@@ -229,7 +229,7 @@
         <onleft>91919991</onleft>
         <onright>91919992</onright>
         <onup>2</onup>
-		<ondown>#skin.movpicsnav</ondown>
+		<ondown>#skin.currentTile</ondown>
         <font>font12</font>
       <animation effect="zoom" start="10,10" end="100,100" center="0,0" time="400" acceleration="-0.9" reversible="false">visible</animation>
         <visible allowhiddenfocus="true">control.hasfocus(91919991)</visible>
@@ -248,7 +248,7 @@
         <onleft>91919991</onleft>
         <onright>91919993</onright>
         <onup>2</onup>
-		<ondown>#skin.movpicsnav</ondown>
+		<ondown>#skin.currentTile</ondown>
         <font>font12</font>
       <animation effect="zoom" start="10,10" end="100,100" center="0,0" time="400" acceleration="-0.9" reversible="false">visible</animation>
         <visible allowhiddenfocus="true">control.hasfocus(91919992)</visible>
@@ -267,7 +267,7 @@
         <onleft>91919992</onleft>
         <onright>91919993</onright>
         <onup>2</onup>
-		<ondown>#skin.movpicsnav</ondown>
+		<ondown>#skin.currentTile</ondown>
         <font>font12</font>
       <animation effect="zoom" start="10,10" end="100,100" center="0,0" time="400" acceleration="-0.9" reversible="false">visible</animation>	
         <visible allowhiddenfocus="true">control.hasfocus(91919993)</visible>
@@ -282,12 +282,12 @@
 	  
 	<control>
 	  <description>DUMMY CONTROL FOR MOVIES VISIBILITY</description>
-      <type>textbox</type>
+      <type>fadelabel</type>
       <id>041003</id>
       <posX>478</posX>
       <posY>215</posY>
-      <width>1550</width>
-      <height>140</height>
+      <width>1380</width>
+      <height>30</height>
       <label>#latestMediaHandler.tvseries.latest1.serieName #(iif(neq(#latestMediaHandler.tvseries.latest1.seasonIndex,''),'S',''))#(string.format('{0:00}', cint(#latestMediaHandler.tvseries.latest1.seasonIndex)))#(iif(neq(#latestMediaHandler.tvseries.latest1.episodeIndex,''),'E',''))#(string.format('{0:00}', cint(#latestMediaHandler.tvseries.latest1.episodeIndex))) - #latestMediaHandler.tvseries.latest1.episodeName</label>
       <align>left</align>
       <font>font13</font>
@@ -446,7 +446,7 @@
         <onleft>91919994</onleft>
         <onright>91919995</onright>
         <onup>2</onup>
-		<ondown>#skin.tvseriesnav</ondown>
+		<ondown>#skin.currentTile</ondown>
         <font>font12</font>
       <animation effect="zoom" start="10,10" end="100,100" center="0,0" time="400" acceleration="-0.9" reversible="false">visible</animation>	
         <visible allowhiddenfocus="true">control.hasfocus(91919994)</visible>
@@ -465,7 +465,7 @@
         <onleft>91919994</onleft>
         <onright>91919996</onright>
         <onup>2</onup>
-		<ondown>#skin.tvseriesnav</ondown>
+		<ondown>#skin.currentTile</ondown>
         <font>font12</font>
       <animation effect="zoom" start="10,10" end="100,100" center="0,0" time="400" acceleration="-0.9" reversible="false">visible</animation>
         <visible allowhiddenfocus="true">control.hasfocus(91919995)</visible>
@@ -484,7 +484,7 @@
         <onleft>91919995</onleft>
         <onright>91919996</onright>
         <onup>2</onup>
-		<ondown>#skin.tvseriesnav</ondown>
+		<ondown>#skin.currentTile</ondown>
         <font>font12</font>
       <animation effect="zoom" start="10,10" end="100,100" center="0,0" time="400" acceleration="-0.9" reversible="false">visible</animation>
         <visible allowhiddenfocus="true">control.hasfocus(91919996)</visible>
@@ -527,31 +527,31 @@
     </control>		
 
 	<control>
-      <type>textbox</type>
+      <type>fadelabel</type>
       <id>030303</id>
       <posX>628</posX>
       <posY>215</posY>
-      <width>1550</width>
-      <height>118</height>
+      <width>1380</width>
+      <height>30</height>
       <label>#latestMediaHandler.tvrecordings.latest1.title #(iif(neq(#latestMediaHandler.tvrecordings.latest1.series,''),'S',''))#(string.format('{0:00}', cint(#latestMediaHandler.tvrecordings.latest1.series)))#(iif(neq(#latestMediaHandler.tvrecordings.latest1.episode,''),'E',''))#(string.format('{0:00}', cint(#latestMediaHandler.tvrecordings.latest1.episode)))</label>
       <align>left</align>
       <font>font13</font>
       <textcolor>eaeaea</textcolor>
-	  <visible>control.isvisible(010009)+string.equals(#latestMediaHandler.tvrecordings.latest1.episode)+plugin.isenabled(Latest Media Handler)</visible>
+	  <visible>[control.isvisible(010009)|control.isvisible(019021)]+string.equals(#latestMediaHandler.tvrecordings.latest1.episode)+plugin.isenabled(Latest Media Handler)</visible>
 	  <animation effect="fade" time="500" reversible="true">visible</animation>
     </control>		
 	<control>
-      <type>textbox</type>
+      <type>fadelabel</type>
       <id>0</id>
       <posX>628</posX>
       <posY>215</posY>
-      <width>1550</width>
-      <height>118</height>
+      <width>1380</width>
+      <height>30</height>
       <label>#latestMediaHandler.tvrecordings.latest1.title</label>
       <align>left</align>
       <font>font13</font>
       <textcolor>eaeaea</textcolor>
-	  <visible>control.isvisible(010009)+!control.isvisible(030303)+plugin.isenabled(Latest Media Handler)</visible>
+	  <visible>[control.isvisible(010009)|control.isvisible(019021)]+!control.isvisible(030303)+plugin.isenabled(Latest Media Handler)</visible>
 	  <animation effect="fade" time="500" reversible="true">visible</animation>
     </control>		
 	
@@ -568,18 +568,18 @@
       <textcolor>99ffffff</textcolor>
 	  <scrollStartDelaySec>20</scrollStartDelaySec>
       <spaceBetweenItems>1</spaceBetweenItems>
-	  <visible>control.isvisible(010009)+control.hastext(041006)+plugin.isenabled(Latest Media Handler)</visible>
+	  <visible>[control.isvisible(010009)|control.isvisible(019021)]+control.hastext(041006)+plugin.isenabled(Latest Media Handler)</visible>
 	  <animation effect="fade" time="500" reversible="true">visible</animation>
     </control>
 	
 
 	<control>
-      <type>textbox</type>
+      <type>fadelabel</type>
       <id>041007</id>
       <posX>628</posX>
       <posY>215</posY>
-      <width>1540</width>
-      <height>118</height>
+      <width>1380</width>
+      <height>30</height>
       <label>#latestMediaHandler.tvrecordings.latest2.title #(iif(neq(#latestMediaHandler.tvrecordings.latest2.series,''),'S',''))#(string.format('{0:00}', cint(#latestMediaHandler.tvrecordings.latest2.series)))#(iif(neq(#latestMediaHandler.tvrecordings.latest2.episode,''),'E',''))#(string.format('{0:00}', cint(#latestMediaHandler.tvrecordings.latest2.episode)))</label>
       <align>left</align>
       <font>font13</font>
@@ -617,7 +617,7 @@
 		<zoomfromtop>middle</zoomfromtop>
         <texture mask="VAmask.png">#latestMediaHandler.tvrecordings.latest1.thumb</texture>
         <colordiffuse>ffffffff</colordiffuse>
-	    <visible>control.isvisible(010012)</visible>
+	    <visible>control.isvisible(010012)|control.isvisible(019021)</visible>
 		<animation effect="fade" time="500" reversible="true">visible</animation>
       </control>
 	  
@@ -633,7 +633,7 @@
 		<zoomfromtop>middle</zoomfromtop>
         <texture mask="">#latestMediaHandler.tvrecordings.latest2.thumb</texture>
         <colordiffuse>ffffffff</colordiffuse>
-	    <visible>control.isvisible(010012)</visible>
+	    <visible>control.isvisible(010012)|control.isvisible(019021)</visible>
 		<animation effect="fade" time="500" reversible="true">visible</animation>
       </control>
 	  
@@ -652,7 +652,7 @@
         <onleft>91919984</onleft>
         <onright>91919985</onright>
         <onup>2</onup>
-		<ondown>#skin.tvrecnav</ondown>
+		<ondown>#skin.currentTile</ondown>
         <font>font12</font>
       <animation effect="zoom" start="10,10" end="100,100" center="0,0" time="400" acceleration="-0.9" reversible="false">visible</animation>	
         <visible allowhiddenfocus="true">control.hasfocus(91919984)</visible>
@@ -671,7 +671,7 @@
         <onleft>91919984</onleft>
         <onright>91919985</onright>
         <onup>2</onup>
-		<ondown>#skin.tvrecnav</ondown>
+		<ondown>#skin.currentTile</ondown>
         <font>font12</font>
       <animation effect="zoom" start="10,10" end="100,100" center="0,0" time="400" acceleration="-0.9" reversible="false">visible</animation>
         <visible allowhiddenfocus="true">control.hasfocus(91919985)</visible>
@@ -686,11 +686,11 @@
 	  
 	<control>
 	  <description>DUMMY CONTROL FOR MOVIES VISIBILITY</description>
-      <type>textbox</type>
+      <type>fadelabel</type>
       <id>041008</id>
       <posX>638</posX>
       <posY>215</posY>
-      <width>1550</width>
+      <width>1380</width>
       <height>30</height>
       <label>#latestMediaHandler.music.latest1.artist#(iif(neq(#latestMediaHandler.music.latest1.album,''),' - ','No album information available...'))#latestMediaHandler.music.latest1.album</label>
       <align>left</align>
@@ -702,11 +702,11 @@
 
 	<control>
 	  <description>DUMMY CONTROL FOR MOVIES VISIBILITY</description>
-      <type>textbox</type>
+      <type>fadelabel</type>
       <id>041009</id>
       <posX>638</posX>
       <posY>215</posY>
-      <width>1550</width>
+      <width>1380</width>
       <height>30</height>
       <label>#latestMediaHandler.music.latest2.artist#(iif(neq(#latestMediaHandler.music.latest2.album,''),' - ','No album information available...'))#latestMediaHandler.music.latest2.album</label>
       <align>left</align>
@@ -717,11 +717,11 @@
     </control>	
 	<control>
 	  <description>DUMMY CONTROL FOR MOVIES VISIBILITY</description>
-      <type>textbox</type>
+      <type>fadelabel</type>
       <id>041010</id>
       <posX>638</posX>
       <posY>215</posY>
-      <width>1550</width>
+      <width>1380</width>
       <height>30</height>
       <label>#latestMediaHandler.music.latest3.artist#(iif(neq(#latestMediaHandler.music.latest3.album,''),' - ','No album information available...'))#latestMediaHandler.music.latest3.album</label>
       <align>left</align>
@@ -790,7 +790,7 @@
         <onleft>91919997</onleft>
         <onright>91919998</onright>
         <onup>2</onup>
-		<ondown>#skin.mymusicnav</ondown>
+		<ondown>#skin.currentTile</ondown>
         <font>font12</font>
       <animation effect="zoom" start="10,10" end="100,100" center="0,0" time="400" acceleration="-0.9" reversible="false">visible</animation>	
         <visible allowhiddenfocus="true">control.hasfocus(91919997)</visible>
@@ -809,7 +809,7 @@
         <onleft>91919997</onleft>
         <onright>91919999</onright>
         <onup>2</onup>
-		<ondown>#skin.mymusicnav</ondown>
+		<ondown>#skin.currentTile</ondown>
         <font>font12</font>
       <animation effect="zoom" start="10,10" end="100,100" center="0,0" time="400" acceleration="-0.9" reversible="false">visible</animation>
         <visible allowhiddenfocus="true">control.hasfocus(91919998)</visible>
@@ -828,7 +828,7 @@
         <onleft>91919998</onleft>
         <onright>91919999</onright>
         <onup>2</onup>
-		<ondown>#skin.mymusicnav</ondown>
+		<ondown>#skin.currentTile</ondown>
         <font>font12</font>
       <animation effect="zoom" start="10,10" end="100,100" center="0,0" time="400" acceleration="-0.9" reversible="false">visible</animation>
         <visible allowhiddenfocus="true">control.hasfocus(91919999)</visible>
@@ -999,7 +999,7 @@
         <onleft>91915991</onleft>
         <onright>91915992</onright>
         <onup>2</onup>
-		<ondown>#skin.myvideonav</ondown>
+		<ondown>#skin.currentTile</ondown>
         <font>font12</font>
       <animation effect="zoom" start="10,10" end="100,100" center="0,0" time="400" acceleration="-0.9" reversible="false">visible</animation>	
         <visible allowhiddenfocus="true">control.hasfocus(91915991)</visible>
@@ -1018,7 +1018,7 @@
         <onleft>91915991</onleft>
         <onright>91915993</onright>
         <onup>2</onup>
-		<ondown>#skin.myvideonav</ondown>
+		<ondown>#skin.currentTile</ondown>
         <font>font12</font>
       <animation effect="zoom" start="10,10" end="100,100" center="0,0" time="400" acceleration="-0.9" reversible="false">visible</animation>
         <visible allowhiddenfocus="true">control.hasfocus(91915992)</visible>
@@ -1037,7 +1037,7 @@
         <onleft>91915992</onleft>
         <onright>91915993</onright>
         <onup>2</onup>
-		<ondown>#skin.myvideonav</ondown>
+		<ondown>#skin.currentTile</ondown>
         <font>font12</font>
       <animation effect="zoom" start="10,10" end="100,100" center="0,0" time="400" acceleration="-0.9" reversible="false">visible</animation>
         <visible allowhiddenfocus="true">control.hasfocus(91915993)</visible>
@@ -1086,8 +1086,8 @@
           <dimColor>ffffffff</dimColor>
           <id>98302</id>
           <onup>2</onup>
-          <onleft>#skin.traktnav</onleft>
-          <ondown>#skin.traktnav</ondown>
+          <onleft>#skin.currentTile</onleft>
+          <ondown>#skin.currentTile</ondown>
 		  <onright>98301</onright>
           <posX>85</posX>
           <posY>199</posY>
@@ -1134,8 +1134,8 @@
           <id>98301</id>
           <onup>2</onup>
           <onleft>98302</onleft>
-		  <onright>#skin.traktnav</onright>
-		  <ondown>#skin.traktnav</ondown>
+		  <onright>#skin.currentTile</onright>
+		  <ondown>#skin.currentTile</ondown>
           <posX>950</posX>
           <posY>199</posY>
           <width>492</width>
@@ -1360,7 +1360,7 @@
         <onleft>91919971</onleft>
         <onright>91919972</onright>
         <onup>2</onup>
-		<ondown>#skin.picsnav</ondown>
+		<ondown>#skin.currentTile</ondown>
         <font>font12</font>
         <animation effect="zoom" start="10,10" end="100,100" center="0,0" time="400" acceleration="-0.9" reversible="false">visible</animation>	
         <visible allowhiddenfocus="true">control.hasfocus(91919971)</visible>
@@ -1379,7 +1379,7 @@
         <onleft>91919971</onleft>
         <onright>91919973</onright>
         <onup>2</onup>
-		<ondown>#skin.picsnav</ondown>
+		<ondown>#skin.currentTile</ondown>
         <font>font12</font>
         <animation effect="zoom" start="10,10" end="100,100" center="0,0" time="400" acceleration="-0.9" reversible="false">visible</animation>
         <visible allowhiddenfocus="true">control.hasfocus(91919972)</visible>
@@ -1398,7 +1398,7 @@
         <onleft>91919972</onleft>
         <onright>91919973</onright>
         <onup>2</onup>
-		<ondown>#skin.picsnav</ondown>
+		<ondown>#skin.currentTile</ondown>
         <font>font12</font>
         <animation effect="zoom" start="10,10" end="100,100" center="0,0" time="400" acceleration="-0.9" reversible="false">visible</animation>
         <visible allowhiddenfocus="true">control.hasfocus(91919973)</visible>

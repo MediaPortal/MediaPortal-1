@@ -2,7 +2,7 @@
 <window>
   <id>700</id>
   <defaultcontrol>30</defaultcontrol>
-  <allowoverlay>no</allowoverlay>
+  <allowoverlay>yes</allowoverlay>
   <define>#header.label:6014</define>
   <define>#header.hover:hover_my tv.png</define>
   <controls>

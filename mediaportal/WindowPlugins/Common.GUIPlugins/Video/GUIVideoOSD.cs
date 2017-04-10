@@ -1098,11 +1098,11 @@ namespace MediaPortal.GUI.Video
             {
               if (pControl.FloatValue < m_subtitleDelay)
               {
-                MediaPortal.Player.Subtitles.SubEngine.GetInstance().DelayMinus();
+                MediaPortal.Player.Subtitles.SubEngine.GetInstance().DelayMinus((int)pControl.FloatValue);
               }
               else if (pControl.FloatValue > m_subtitleDelay)
               {
-                MediaPortal.Player.Subtitles.SubEngine.GetInstance().DelayPlus();
+                MediaPortal.Player.Subtitles.SubEngine.GetInstance().DelayPlus((int)pControl.FloatValue);
               }
               m_subtitleDelay = (int)pControl.FloatValue;
             }

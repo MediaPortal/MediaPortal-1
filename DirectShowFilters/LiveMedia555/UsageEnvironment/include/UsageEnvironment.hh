@@ -1,7 +1,7 @@
 /**********
 This library is free software; you can redistribute it and/or modify it under
 the terms of the GNU Lesser General Public License as published by the
-Free Software Foundation; either version 2.1 of the License, or (at your
+Free Software Foundation; either version 3 of the License, or (at your
 option) any later version. (See <http://www.gnu.org/copyleft/lesser.html>.)
 
 This library is distributed in the hope that it will be useful, but WITHOUT
@@ -13,7 +13,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
-// Copyright (c) 1996-2016 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2017 Live Networks, Inc.  All rights reserved.
 // Usage Environment
 // C++ header
 
@@ -113,17 +113,20 @@ public:
 	// reach a scheduling point.
 	// (Does not delay if "microseconds" <= 0)
 	// Returns a token that can be used in a subsequent call to
-	// unscheduleDelayedTask()
+	// unscheduleDelayedTask() or rescheduleDelayedTask()
+        // (but only if the task has not yet occurred).
 
   virtual void unscheduleDelayedTask(TaskToken& prevTask) = 0;
 	// (Has no effect if "prevTask" == NULL)
         // Sets "prevTask" to NULL afterwards.
+        // Note: This MUST NOT be called if the scheduled task has already occurred.
 
   virtual void rescheduleDelayedTask(TaskToken& task,
 				     int64_t microseconds, TaskFunc* proc,
 				     void* clientData);
-  // Combines "unscheduleDelayedTask()" with "scheduleDelayedTask()"
-  // (setting "task" to the new task token).
+        // Combines "unscheduleDelayedTask()" with "scheduleDelayedTask()"
+        // (setting "task" to the new task token).
+        // Note: This MUST NOT be called if the scheduled task has already occurred.
 
   // For handling socket operations in the background (from the event loop):
   typedef void BackgroundHandlerProc(void* clientData, int mask);
@@ -150,7 +153,9 @@ public:
   virtual void triggerEvent(EventTriggerId eventTriggerId, void* clientData = NULL) = 0;
       // Causes the (previously-registered) handler function for the specified event to be handled (from the event loop).
       // The handler function is called with "clientData" as parameter.
-      // Note: This function (unlike other library functions) may be called from an external thread - to signal an external event.
+      // Note: This function (unlike other library functions) may be called from an external thread
+      // - to signal an external event.  (However, "triggerEvent()" should not be called with the
+      // same 'event trigger id' from different threads.)
 
   // The following two functions are deprecated, and are provided for backwards-compatibility only:
   void turnOnBackgroundReadHandling(int socketNum, BackgroundHandlerProc* handlerProc, void* clientData) {

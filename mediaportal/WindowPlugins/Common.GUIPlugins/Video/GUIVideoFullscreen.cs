@@ -908,14 +908,14 @@ namespace MediaPortal.GUI.Video
         case Action.ActionType.ACTION_SUBTITLE_DELAY_MIN:
           if (g_Player.EnableSubtitle)
           {
-            SubEngine.GetInstance().DelayMinus();
+            SubEngine.GetInstance().DelayMinus(0);
             ShowSubtitleDelayStatus();
           }
           break;
         case Action.ActionType.ACTION_SUBTITLE_DELAY_PLUS:
           if (g_Player.EnableSubtitle)
           {
-            SubEngine.GetInstance().DelayPlus();
+            SubEngine.GetInstance().DelayPlus(0);
             ShowSubtitleDelayStatus();
           }
           break;

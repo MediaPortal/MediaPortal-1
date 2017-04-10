@@ -325,7 +325,6 @@
         <zoomfromtop>no</zoomfromtop>
         <texture mask="MA_mask.png">missing_Coverart.png</texture>
         <visible>[facadeview.largeicons|facadeview.smallicons]</visible>
-        <animation effect="fade" time="350" reversible="true">hidden</animation>
       </control>
       <control>
         <id>500</id>
@@ -338,7 +337,6 @@
         <zoomfromtop>no</zoomfromtop>
         <texture mask="MA_mask.png">#selectedthumb</texture>
         <visible>[facadeview.largeicons|facadeview.smallicons]</visible>
-        <animation effect="fade" time="350" reversible="true">hidden</animation>
       </control>
  
   
@@ -353,7 +351,6 @@
         <zoomfromtop>no</zoomfromtop>
         <texture mask="MA_mask.png">missing_Coverart.png</texture>
         <visible>[facadeview.list|facadeview.album]+[Control.HasFocus(50)+!control.hasthumb(500)]</visible>
-        <animation effect="fade" time="350" reversible="true">hidden</animation>
       </control>
       <control>
         <id>500</id>
@@ -366,7 +363,6 @@
         <zoomfromtop>no</zoomfromtop>
         <texture mask="MA_mask.png">#selectedthumb</texture>
         <visible>[facadeview.list|facadeview.album]</visible>
-        <animation effect="fade" time="350" reversible="true">hidden</animation>
       </control>   
 
 	  

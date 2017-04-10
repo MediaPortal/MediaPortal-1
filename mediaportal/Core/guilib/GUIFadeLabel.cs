@@ -431,7 +431,7 @@ namespace MediaPortal.GUI.Library
         {
           _font.GetTextExtent(originalText, ref textWidth, ref textHeight);
           originalText += _labelTail;
-        } while (textWidth >= 0 && textWidth < maxWidth);
+        } while (textWidth > 0 && textWidth < maxWidth);
       }
 
       string scrollText = "";

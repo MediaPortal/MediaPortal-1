@@ -161,6 +161,8 @@ namespace MediaPortal.GUI.Library
     private static Screen _currentScreen;
     private static Screen _currentStartScreen;
     private static int _currentMonitorIdx = -1;
+    private static string _currentAudioRenderer = "";
+
     private static readonly bool IsDX9EXused = OSInfo.OSInfo.VistaOrLater();
     private static bool _allowRememberLastFocusedItem = true;
     private static bool _fullHD3DFormat = false;
@@ -213,6 +215,9 @@ namespace MediaPortal.GUI.Library
     {
       Render3DMode = eRender3DMode.None;
       Switch3DSides = false;
+      SideBySideDone = false;
+      TopAndBottomDone = false;
+      NoneDone = false;
       Convert2Dto3DSkewFactor = 0;
       LastFrames = new List<Texture>();
       LastFramesIndex = 0;
@@ -997,10 +1002,13 @@ namespace MediaPortal.GUI.Library
         if (value != _isFullScreenVideo)
         {
           _isFullScreenVideo = value;
+          GUIGraphicsContext.VideoWindowFullscreen = _isFullScreenVideo;
           VideoWindowChanged();
         }
       }
     }
+
+    public static bool VideoWindowFullscreen { get; set; }
 
     /// <summary>
     /// Get/Set render GUI for madVR
@@ -1029,30 +1037,51 @@ namespace MediaPortal.GUI.Library
     }
 
     /// <summary>
-    /// Delegates video window size/position change notify to be done by main thread
+    /// Delegates video window size/position change notify
     /// </summary>
     public static void VideoWindowChanged()
     {
       // madVR
-      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && GUIGraphicsContext.InVmr9Render)
       {
-        if (Thread.CurrentThread.Name != "MPMain")
-        {
-          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ONVIDEOWINDOWCHANGED, 0, 0, 0, 0, 0, null);
-          msg.Param1 = GUIGraphicsContext.VideoWindow.X;
-          msg.Param2 = GUIGraphicsContext.VideoWindow.Y;
-          msg.Param3 = GUIGraphicsContext.VideoWindow.Width;
-          msg.Param4 = GUIGraphicsContext.VideoWindow.Height;
-          GUIWindowManager.SendThreadMessage(msg);
-        }
-        else
-        {
-          OnVideoWindowChanged?.Invoke();
-        }
+        GUIGraphicsContext.VideoWindowChangedDone = true;
       }
       else
       {
         OnVideoWindowChanged?.Invoke();
+      }
+    }
+
+    /// <summary>
+    /// Callback video window size/position done by main thread
+    /// </summary>
+    public static void VideoWindowChangedCallBack()
+    {
+      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+      {
+        if (GUIGraphicsContext.VideoWindowChangedDone)
+        {
+          GUIGraphicsContext.VideoWindowChangedDone = false;
+          GUIGraphicsContext.OnVideoWindowChanged?.Invoke();
+
+          // madVR
+          //set video window position
+          if (GUIGraphicsContext.Vmr9Active && !GUIGraphicsContext.VideoWindowFullscreen)
+          {
+            GUIGraphicsContext.VideoWindowFullscreen = true;
+            GUIGraphicsContext.VideoWindow = new Rectangle(0, 0, 5, 5);
+            VMR9Util.g_vmr9.SceneMadVr();
+          }
+
+          if (GUIGraphicsContext.ForceMadVRRefresh)
+          {
+            Size client = GUIGraphicsContext.form.ClientSize;
+            VMR9Util.g_vmr9?.MadVrScreenResize(0, 0, client.Width, client.Height, false);
+            GUIGraphicsContext.NoneDone = false;
+            GUIGraphicsContext.TopAndBottomDone = false;
+            GUIGraphicsContext.SideBySideDone = false;
+          }
+        }
       }
     }
 
@@ -1643,6 +1672,21 @@ namespace MediaPortal.GUI.Library
     }
 
     /// <summary>
+    /// Get/set current audio renderer name
+    /// </summary>
+    public static string CurrentAudioRenderer
+    {
+      set
+      {
+        _currentAudioRenderer = value;
+      }
+      get
+      {
+        return _currentAudioRenderer;
+      }
+    }
+
+    /// <summary>
     /// Returns true if the active window belongs to the my tv plugin
     /// </summary>
     /// <returns>
@@ -1771,6 +1815,12 @@ namespace MediaPortal.GUI.Library
     public static bool VideoWindowChangedDone { get; set; }
     public static bool SetVideoWindowDone { get; set; }
     public static bool VideoControl { get; set; }
+    public static bool SideBySideDone { get; set; }
+    public static bool TopAndBottomDone { get; set; }
+    public static bool NoneDone { get; set; }
+    public static bool ForceMadVRRefresh { get; set; }
+    public static bool ForceMadVRRefresh3D { get; set; }
+    public static bool ForceMadVRFirstStart { get; set; }
 
     /// <summary>
     /// Enable/Disable bypassing of UI Calibration transforms

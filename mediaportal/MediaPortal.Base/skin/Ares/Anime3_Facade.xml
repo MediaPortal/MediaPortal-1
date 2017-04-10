@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="utf-8"?>
+<window> 
+	<controls>
+
+	
+	  <control>
+		<type>group</type>
+		<description>group element</description>
+		<id>28</id>
+		<layout>StackLayout</layout>
+		<control>
+		  <description>composite control consisting of a list control and a thumbnail panel</description>
+		  <type>facadeview</type>
+		  <id>50</id>
+		  <control>
+			<description>graphical list (series and seasons if set)</description>
+			<type>listcontrol</type>
+			<subtype>album</subtype>
+			<id>50</id>
+			<onleft>12</onleft>
+			<onright>50</onright>
+					<width>1387</width>
+					<posX>57</posX>
+					<posY>225</posY>
+					<height>620</height>
+					<textureFocus>btn_list.png</textureFocus>
+					<textXOff>-95</textXOff>
+					<textYOff>6</textYOff>
+					<textYOff2>4</textYOff2>
+					<textYOff3>6</textYOff3>
+					<textXOff2>1365</textXOff2>
+					<textXOff3>1215</textXOff3>
+					<IconXOff>1190</IconXOff>
+		            <IconYOff>8</IconYOff>
+					<itemWidth>116</itemWidth>
+			        <itemHeight>34</itemHeight>
+					<scrollbarXOff>440</scrollbarXOff>
+                    <textureHeight>50</textureHeight>					
+					<spinWidth>45</spinWidth>
+					<spinHeight>42</spinHeight>
+					<spinPosX>2760</spinPosX>
+					<spinPosY>380</spinPosY>
+					<spinAlign>right</spinAlign>
+					<spinColor>99ffffff</spinColor>
+					<spinCanFocus>no</spinCanFocus>
+					<font>font12</font>
+					<font2>font11</font2>
+					<font3>font11</font3>
+					<!-- group headers -->
+					<textcolor>ffeaeaea</textcolor>
+					<textcolorNoFocus>a5a5a5</textcolorNoFocus>
+					<playedColor>FF4085b0</playedColor>
+					<textcolor2>ffeaeaea</textcolor2>
+					<textcolor3>ffeaeaea</textcolor3>
+		  </control>
+		  
+
+<control>
+		<description>graphical thumbpanel (series and/or seasons if set)</description>
+        <type>thumbnailpanel</type>
+		<dimColor>90ffffff</dimColor>
+        <id>50</id>
+          <onleft>12</onleft>
+          <onright>50</onright>
+          <posX>60</posX>
+          <posY>205</posY>
+          <width>1600</width>
+          <height>650</height>
+          <textXOff>0</textXOff>
+		  <textYOff>0</textYOff>
+		  <textureMask>tvseries_listbanner_mask.png</textureMask>
+		  <frameNoFocus>tvseries_listbanner_nofocus.png</frameNoFocus>
+          <frameFocus>tvseries_listbanner_focus.png</frameFocus>
+		  <zoomXPixels>35</zoomXPixels>
+          <zoomYPixels>15</zoomYPixels>
+		  <keepaspectratio>no</keepaspectratio>
+		  <enableFocusZoom>no</enableFocusZoom>
+          <scrollOffset>1</scrollOffset>
+          <dimColor>80ffffff</dimColor>
+          <itemWidthBig>687</itemWidthBig>
+          <itemHeightBig>119</itemHeightBig>
+          <textureWidthBig>680</textureWidthBig>
+          <textureHeightBig>119</textureHeightBig>
+          <thumbWidthBig>680</thumbWidthBig>
+          <thumbHeightBig>119</thumbHeightBig>
+          <thumbPosXBig>0</thumbPosXBig>
+          <thumbPosYBig>0</thumbPosYBig>
+          <thumbZoom>no</thumbZoom>
+          <textXOff>0</textXOff>
+          <textYOff>0</textYOff>
+		  <onright>2</onright>
+		  <spinCanFocus>no</spinCanFocus>
+		  <unfocusedAlpha>160</unfocusedAlpha>
+		  <textcolorNoFocus>ff808080</textcolorNoFocus>
+		  <textcolour>ffffffff</textcolour>
+    </control>
+
+
+
+		<control>
+			<description>Filmstrip view</description>
+			<type>filmstrip</type>
+			<dimColor>90ffffff</dimColor>
+			<id>50</id>
+          <posX>70</posX>
+          <posY>245</posY>
+          <width>1850</width>          
+          <spinPosX>-1200</spinPosX>
+          <spinPosY>832</spinPosY>
+          <onleft>50</onleft>
+          <onright>50</onright>
+          <onup>12</onup>
+          <ondown>50</ondown>
+          <frame>coverflowshadow.png</frame>
+          <frameFocus>coverflowshadow.png</frameFocus>
+          <itemWidth>362</itemWidth>
+          <itemHeight>486</itemHeight>
+          <textureWidth>331</textureWidth>
+          <textureHeight>495</textureHeight>
+          <thumbWidth>322</thumbWidth>
+          <thumbHeight>486</thumbHeight>
+          <thumbPosX>4</thumbPosX>
+          <thumbPosY>3</thumbPosY>
+          <thumbs mask="coverartm.png"/>
+          <font>font11</font>
+          <InfoImage></InfoImage>
+	      <imageFolder>-</imageFolder>
+	      <imageFolderFocus>-</imageFolderFocus>
+          <showFrame>yes</showFrame>
+          <showFolder>yes</showFolder>
+          <showBackGround>no</showBackGround>
+          <showInfoImage>no</showInfoImage>
+          <enableFocusZoom>no</enableFocusZoom>
+          <scrollOffset>3</scrollOffset>
+          <keepaspectratio>no</keepaspectratio>
+          <suffix>|</suffix>
+          <folderPrefix />
+          <folderSuffix />
+          <spinCanFocus>no</spinCanFocus>   
+          <unfocusedAlpha>150</unfocusedAlpha>		  
+          <thumbAnimation effect="zoom" start="100,100" end="115,115" time="50">focus</thumbAnimation>  
+		</control>
+		
+
+		  <control>
+			<description>Cover Flow view</description>
+			<type>coverflow</type>
+			<colordiffuse>90ffffff</colordiffuse>
+			<dimColor>90ffffff</dimColor>
+			<id>50</id>
+          <onleft>50</onleft>
+          <onright>50</onright>
+          <onup>12</onup>
+          <ondown>50</ondown>			
+          <posX>0</posX>
+		  <posY>240</posY>
+		  <width>1920</width>
+		  <height>1080</height>	  
+		  <selectedCard>0</selectedCard>
+		  <cardWidth>380</cardWidth>
+		  <cardHeight>540</cardHeight>
+		  <angle>45</angle>
+		  <sideShift>310</sideShift>
+		  <sideGap>100</sideGap>
+		  <sideDepth>270</sideDepth>
+	      <offsetY>0</offsetY>
+		  <selectedOffsetY>0</selectedOffsetY>
+		  <speed>8</speed>
+		  <showFrame>yes</showFrame>				  
+		  <keepaspectratio>no</keepaspectratio>		  
+		  <frame>coverflowshadow.png</frame>
+          <frameFocus>coverflowshadow.png</frameFocus>
+          <frameWidth>392</frameWidth>
+          <frameHeight>553</frameHeight>
+		  <spinSpeed>8</spinSpeed>
+		  <unfocusedAlpha>FF</unfocusedAlpha>
+		  <folderPrefix></folderPrefix>
+		  <folderSuffix></folderSuffix>
+		  <font1>font12</font1>
+		  <font2>font11</font2>
+		  <label1>#title</label1>
+		  <label2>#genre</label2>
+		  <textColor>FFFFFFFF</textColor>
+		  <remoteColor>FFFF0000</remoteColor>
+		  <playedColor>FFA0D0FF</playedColor>
+		  <downloadColor>FF00FF00</downloadColor>
+		  <selectedColor>FFFFFFFF</selectedColor>
+		  <shadowAngle>45</shadowAngle>
+		  <shadowDistance>1</shadowDistance>
+		  <shadowColor>FF000000</shadowColor>
+		  <label1YOff>1430</label1YOff>
+		  <label2YOff>1390</label2YOff>
+		  <pageSize>5</pageSize>
+          <scrollbarBackground>scrollbar_bg.png</scrollbarBackground>
+          <scrollbarLeft>scrollbar_left_hor.png</scrollbarLeft>
+          <scrollbarRight>scrollbar_right_hor.png</scrollbarRight>
+          <scrollbarWidth>689</scrollbarWidth>
+		  <scrollbarHeight>4</scrollbarHeight>
+          <scrollbarYOff>538</scrollbarYOff>
+		  <keepaspectratio>no</keepaspectratio>
+          <spinPosX>-2000</spinPosX>
+          <spinPosY>730</spinPosY>
+		  <cards mask="coverartm.png"></cards>
+		  <cardAlign>Center</cardAlign>
+		  </control>
+
+		  <control>
+			<description>Text List</description>
+			<type>listcontrol</type>
+			<id>50</id>
+			<onleft>12</onleft>
+			<onright>12</onright>
+					<width>1387</width>
+					<posX>57</posX>
+					<posY>225</posY>
+					<height>620</height>
+					<textureFocus>btn_list.png</textureFocus>
+					<textXOff>-95</textXOff>
+					<textYOff>6</textYOff>
+					<textYOff2>4</textYOff2>
+					<textYOff3>6</textYOff3>
+					<textXOff2>1365</textXOff2>
+					<textXOff3>1215</textXOff3>
+					<IconXOff>1190</IconXOff>
+		            <IconYOff>8</IconYOff>
+					<itemWidth>116</itemWidth>
+			        <itemHeight>34</itemHeight>
+					<scrollbarXOff>440</scrollbarXOff>
+                    <textureHeight>50</textureHeight>					
+					<spinWidth>45</spinWidth>
+					<spinHeight>42</spinHeight>
+					<spinPosX>2760</spinPosX>
+					<spinPosY>380</spinPosY>
+					<spinAlign>right</spinAlign>
+					<spinColor>99ffffff</spinColor>
+					<spinCanFocus>no</spinCanFocus>
+					<font>font12</font>
+					<font2>font11</font2>
+					<font3>font11</font3>
+					<!-- group headers -->
+					<textcolor>ffeaeaea</textcolor>
+					<textcolorNoFocus>a5a5a5</textcolorNoFocus>
+					<playedColor>FF4085b0</playedColor>
+					<textcolor2>ffeaeaea</textcolor2>
+					<textcolor3>ffeaeaea</textcolor3>
+		  </control>
+		</control>
+	  </control>
+
+	</controls>
+  </window>
+  

@@ -37,9 +37,9 @@
       <type>image</type>
       <id>0</id>
       <posX>85</posX>
-      <posY>820</posY>
-      <width>199</width>
-      <height>201</height>
+      <posY>850</posY>
+      <width>150</width>
+      <height>150</height>
       <texture>#WorldWeather.TodayIconImage</texture>
       <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)</visible>
     </control>
@@ -347,8 +347,8 @@
       <id>0</id>
       <posX>1030</posX>
       <posY>295</posY>
-      <width>121</width>
-      <height>163</height>
+      <width>110</width>
+      <height>110</height>
       <texture>#WorldWeather.ForecastDay0IconImage</texture>
       <keepaspectratio>yes</keepaspectratio>
       <visible>string.equals(#WorldWeather.View,Condition)+[string.equals(#WorldWeather.ForecastProvider,Google)]+string.equals(#WorldWeather.ConditionView,Normal)</visible>
@@ -388,8 +388,8 @@
       <id>0</id>
       <posX>1030</posX>
       <posY>390</posY>
-      <width>121</width>
-      <height>163</height>
+      <width>110</width>
+      <height>110</height>
       <texture>#WorldWeather.ForecastDay1IconImage</texture>
       <keepaspectratio>yes</keepaspectratio>
       <visible>string.equals(#WorldWeather.View,Condition)+[string.equals(#WorldWeather.ForecastProvider,Google)]+string.equals(#WorldWeather.ConditionView,Normal)</visible>
@@ -440,8 +440,8 @@
       <id>0</id>
       <posX>1030</posX>
       <posY>485</posY>
-      <width>121</width>
-      <height>163</height>
+      <width>110</width>
+      <height>110</height>
       <texture>#WorldWeather.ForecastDay2IconImage</texture>
       <keepaspectratio>yes</keepaspectratio>
       <visible>string.equals(#WorldWeather.View,Condition)+[string.equals(#WorldWeather.ForecastProvider,Google)]+string.equals(#WorldWeather.ConditionView,Normal)</visible>
@@ -492,8 +492,8 @@
       <id>0</id>
       <posX>1030</posX>
       <posY>577</posY>
-      <width>121</width>
-      <height>163</height>
+      <width>110</width>
+      <height>110</height>
       <texture>#WorldWeather.ForecastDay3IconImage</texture>
       <keepaspectratio>yes</keepaspectratio>
       <visible>string.equals(#WorldWeather.View,Condition)+[string.equals(#WorldWeather.ForecastProvider,Google)]+string.equals(#WorldWeather.ConditionView,Normal)</visible>
@@ -559,8 +559,8 @@
       <id>0</id>
       <posX>1030</posX>
       <posY>295</posY>
-      <width>121</width>
-      <height>163</height>
+      <width>110</width>
+      <height>110</height>
       <texture>#WorldWeather.ForecastDay0IconImage</texture>
       <keepaspectratio>yes</keepaspectratio>
       <visible>string.equals(#WorldWeather.View,Condition)+[string.equals(#WorldWeather.ForecastProvider,World Weather Online)|string.equals(#WorldWeather.ForecastProvider,AccuWeather)]+string.equals(#WorldWeather.ConditionView,Normal)</visible>
@@ -600,8 +600,8 @@
       <id>0</id>
       <posX>1030</posX>
       <posY>390</posY>
-      <width>121</width>
-      <height>163</height>
+      <width>110</width>
+      <height>110</height>
       <texture>#WorldWeather.ForecastDay1IconImage</texture>
       <keepaspectratio>yes</keepaspectratio>
       <visible>string.equals(#WorldWeather.View,Condition)+[string.equals(#WorldWeather.ForecastProvider,World Weather Online)|string.equals(#WorldWeather.ForecastProvider,AccuWeather)]+string.equals(#WorldWeather.ConditionView,Normal)</visible>
@@ -652,8 +652,8 @@
       <id>0</id>
       <posX>1030</posX>
       <posY>485</posY>
-      <width>121</width>
-      <height>163</height>
+      <width>110</width>
+      <height>110</height>
       <texture>#WorldWeather.ForecastDay2IconImage</texture>
       <keepaspectratio>yes</keepaspectratio>
       <visible>string.equals(#WorldWeather.View,Condition)+[string.equals(#WorldWeather.ForecastProvider,World Weather Online)|string.equals(#WorldWeather.ForecastProvider,AccuWeather)]+string.equals(#WorldWeather.ConditionView,Normal)</visible>
@@ -704,8 +704,8 @@
       <id>0</id>
       <posX>1030</posX>
       <posY>577</posY>
-      <width>121</width>
-      <height>163</height>
+      <width>110</width>
+      <height>110</height>
       <texture>#WorldWeather.ForecastDay3IconImage</texture>
       <keepaspectratio>yes</keepaspectratio>
       <visible>string.equals(#WorldWeather.View,Condition)+[string.equals(#WorldWeather.ForecastProvider,World Weather Online)|string.equals(#WorldWeather.ForecastProvider,AccuWeather)]+string.equals(#WorldWeather.ConditionView,Normal)</visible>
@@ -756,8 +756,8 @@
       <id>0</id>
       <posX>1030</posX>
       <posY>675</posY>
-      <width>121</width>
-      <height>163</height>
+      <width>110</width>
+      <height>110</height>
       <texture>#WorldWeather.ForecastDay4IconImage</texture>
       <keepaspectratio>yes</keepaspectratio>
       <visible>string.equals(#WorldWeather.View,Condition)+[string.equals(#WorldWeather.ForecastProvider,World Weather Online)|string.equals(#WorldWeather.ForecastProvider,AccuWeather)]+string.equals(#WorldWeather.ConditionView,Normal)</visible>
@@ -825,8 +825,8 @@
       <id>0</id>
       <posX>1030</posX>
       <posY>295</posY>
-      <width>121</width>
-      <height>163</height>
+      <width>110</width>
+      <height>110</height>
       <texture>#WorldWeather.ForecastDay0IconImage</texture>
       <keepaspectratio>yes</keepaspectratio>
       <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ForecastProvider,wetter.com)+string.equals(#WorldWeather.ConditionView,Normal)</visible>
@@ -866,8 +866,8 @@
       <id>0</id>
       <posX>1030</posX>
       <posY>390</posY>
-      <width>121</width>
-      <height>163</height>
+      <width>110</width>
+      <height>110</height>
       <texture>#WorldWeather.ForecastDay1IconImage</texture>
       <keepaspectratio>yes</keepaspectratio>
       <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ForecastProvider,wetter.com)+string.equals(#WorldWeather.ConditionView,Normal)</visible>
@@ -918,8 +918,8 @@
       <id>0</id>
       <posX>1030</posX>
       <posY>485</posY>
-      <width>121</width>
-      <height>163</height>
+      <width>110</width>
+      <height>110</height>
       <texture>#WorldWeather.ForecastDay2IconImage</texture>
       <keepaspectratio>yes</keepaspectratio>
       <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ForecastProvider,wetter.com)+string.equals(#WorldWeather.ConditionView,Normal)</visible>
@@ -970,8 +970,8 @@
       <id>0</id>
       <posX>1030</posX>
       <posY>577</posY>
-      <width>121</width>
-      <height>163</height>
+      <width>110</width>
+      <height>110</height>
       <texture>#WorldWeather.ForecastDay3IconImage</texture>
       <keepaspectratio>yes</keepaspectratio>
       <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ForecastProvider,wetter.com)+string.equals(#WorldWeather.ConditionView,Normal)</visible>
@@ -1022,8 +1022,8 @@
       <id>0</id>
       <posX>1030</posX>
       <posY>675</posY>
-      <width>121</width>
-      <height>163</height>
+      <width>110</width>
+      <height>110</height>
       <texture>#WorldWeather.ForecastDay4IconImage</texture>
       <keepaspectratio>yes</keepaspectratio>
       <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ForecastProvider,wetter.com)+string.equals(#WorldWeather.ConditionView,Normal)</visible>

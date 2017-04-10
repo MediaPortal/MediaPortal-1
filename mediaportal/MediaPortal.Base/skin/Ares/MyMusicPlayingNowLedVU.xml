@@ -126,7 +126,7 @@
       <posY>250</posY>
       <width>525</width>
       <height>525</height>
-      <texture>..\..\..\thumbs\Music\CDArt\Fullsize\#Play.Current.Artist - #Play.Current.Album.png</texture>
+      <texture>..\..\..\Thumbs\CDArt\Music\#Play.Current.AlbumArtist - #Play.Current.Album.png</texture>
 	  <animation effect="rotate" delay="0" end="-360" centre="475,258" time="30000" loop="true" condition="player.hasAudio">Conditional</animation>
 	  <colordiffuse>ffffffff</colordiffuse>
     </control>		
@@ -213,7 +213,7 @@
         <posY>828</posY>
 		<height>190</height>
 		<width>190</width>
-        <texture mask="MAmask.png">##Play.Next.Thumb</texture>      
+        <texture mask="MAmask.png">#Play.Next.Thumb</texture>      
     </control>	
 	
 	<control>
@@ -232,14 +232,14 @@
       <description>progress bar</description>
       <type>progress</type>
       <id>118</id>
-      <posX>0</posX>
-      <posY>1077</posY>
-      <width>1920</width>
+      <posX>180</posX>
+      <posY>440</posY>
+      <width>720</width>
       <height>3</height>
       <label>#percentage</label>
       <texturebg>black.png</texturebg>
       <onlymidtexture>yes</onlymidtexture>
-      <midwidth>1920</midwidth>
+      <midwidth>720</midwidth>
       <midheight>3</midheight>
       <midoffsetX>-</midoffsetX>
       <midoffsetY>0</midoffsetY>
@@ -254,9 +254,9 @@
 	<control>
       <description>group element</description>
       <type>group</type>
-      <posX>260</posX>
+      <posX>270</posX>
       <posY>840</posY>
-	  <layout>StackLayout(15, Vertical, true)</layout>
+	  <layout>StackLayout(10, Vertical, true)</layout>
 	  
     <control>
       <type>label</type>
@@ -280,7 +280,18 @@
       <textcolor>eaeaea</textcolor>
 	  <visible>!control.isvisible(20)</visible>
     </control>	  
-		   
+    <control>
+      <type>fadelabel</type>
+      <description>next artist label</description>
+      <id>0</id>
+      <width>1500</width>
+	  <height>28</height>
+      <label>#Play.Next.Title</label>
+	  <wrapString>   |   </wrapString>
+      <align>left</align>
+      <font>font12</font>
+      <textcolor>99ffffff</textcolor>
+    </control>		   
     <control>
       <type>fadelabel</type>
       <description>next artist label</description>
@@ -299,19 +310,7 @@
       <id>123</id>
       <width>1500</width>
 	  <height>28</height>
-      <label>#Play.Next.Title</label>
-	  <wrapString>   |   </wrapString>
-      <align>left</align>
-      <font>font12</font>
-      <textcolor>99ffffff</textcolor>
-    </control>
-    <control>
-      <type>fadelabel</type>
-      <description>next artist label</description>
-      <id>0</id>
-      <width>1500</width>
-	  <height>28</height>
-      <label>#Play.Next.Album</label>
+      <label>#(iif(neq(#Play.Next.Album,''),'#Play.Next.Album','No Album info'))#(iif(neq(#Play.Next.Year,''),' (#Play.Next.Year)',''))</label>
 	  <wrapString>   |   </wrapString>
       <align>left</align>
       <font>font12</font>
@@ -319,6 +318,82 @@
     </control>
 	</control>
 	
+	<control>
+      <description>group element</description>
+      <type>group</type>
+      <posX>80</posX>
+      <posY>420</posY>
+	  <layout>StackLayout(15, Horizontal, true)</layout>
+	  <animation effect="fade" delay="0" reversible="false" time="250">visible</animation>
+			
+	<control>
+      <type>label</type>
+      <id>1</id>
+	  <posX>80</posX>
+      <posY>260</posY>
+      <width>80</width>
+	  <height>30</height>
+      <label>#currentplaytime</label>
+      <align>left</align>
+      <textcolor>eaeaea</textcolor>
+      <font>font12</font>
+      <visible>Player.HasAudio+string.equals(#Play.Current.Lastfm.CurrentStream,)</visible>
+    </control>
+    <control>
+      <type>fadelabel</type>
+      <id>1</id>
+	  <posX>80</posX>
+      <posY>260</posY>
+      <width>80</width>
+	  <height>30</height>
+      <label>#currentplaytime</label>
+      <align>left</align>
+      <textcolor>eaeaea</textcolor>
+      <font>font12</font>
+      <visible>Player.HasAudio+!string.equals(#Play.Current.Lastfm.CurrentStream,)</visible>
+    </control>	
+    <control>
+      <type>fadelabel</type>
+      <id>1</id>
+	  <posX>80</posX>
+      <posY>260</posY>
+      <width>750</width>
+	  <height>30</height>
+      <label></label>
+      <align>left</align>
+      <textcolor>eaeaea</textcolor>
+      <font>font12</font>
+      <visible>Player.HasAudio</visible>
+    </control>		
+	<control>
+      <type>label</type>
+      <id>1</id>
+	  <posX>80</posX>
+      <posY>260</posY>
+      <width>80</width>
+	  <height>30</height>
+      <label>#currentremaining</label>
+      <align>left</align>
+      <textcolor>eaeaea</textcolor>
+      <font>font12</font>
+      <visible>Player.HasAudio+string.equals(#Play.Current.Lastfm.CurrentStream,)</visible>
+    </control>
+    <control>
+      <type>fadelabel</type>
+      <id>1</id>
+	  <posX>80</posX>
+      <posY>260</posY>
+      <width>80</width>
+	  <height>30</height>
+      <label>#currentremaining</label>
+      <align>left</align>
+      <textcolor>eaeaea</textcolor>
+      <font>font12</font>
+      <visible>Player.HasAudio+!string.equals(#Play.Current.Lastfm.CurrentStream,)</visible>
+    </control>	
+	</control>
+
+
 	
 	
 	<!-- Details -->
@@ -335,43 +410,43 @@
       <description>next artist label</description>
       <id>0</id>
       <width>620</width>
-	  <height>75</height>
-      <label>Current Track Details :</label>
+	  <height>60</height>
+      <label>Current Track Details</label>
       <align>left</align>
       <font>fontBold</font>
       <textcolor>eaeaea</textcolor>
 	  <visible>!control.isvisible(089)</visible>
     </control>
+		
 	
-	<control>
-      <type>label</type>
-      <id>1</id>
-      <width>350</width>
-	  <height>28</height>
-      <label>#currentplaytime - #currentremaining</label>
-      <align>left</align>
-      <textcolor>eaeaea</textcolor>
-      <font>font12</font>
-      <visible>Player.HasAudio+string.equals(#Play.Current.Lastfm.CurrentStream,)</visible>
-    </control>
     <control>
       <type>fadelabel</type>
       <id>1</id>
-      <width>350</width>
-	  <height>28</height>
-      <label>#currentplaytime - #currentremaining</label>
+	  <height>30</height>
+	  <width>950</width>
+      <label>#Play.Current.Title</label>
+	  <wrapString>   |   </wrapString>
       <align>left</align>
-      <textcolor>eaeaea</textcolor>
       <font>font12</font>
-      <visible>Player.HasAudio+!string.equals(#Play.Current.Lastfm.CurrentStream,)</visible>
+      <textcolor>eaeaea</textcolor>
+    </control>	
+   <control>
+      <type>fadelabel</type>
+      <id>1</id>
+	  <height>30</height>
+	  <width>950</width>
+      <label>#(iif(neq(#Play.Current.Artist,''),'#Play.Current.Artist','No Artist info'))</label>
+	  <wrapString>   |   </wrapString>
+      <align>left</align>
+      <font>font12</font>
+      <textcolor>eaeaea</textcolor>
     </control>		
-	
     <control>
       <type>fadelabel</type>
       <id>1</id>
-	  <height>60</height>
+	  <height>120</height>
 	  <width>900</width>
-      <label>#Play.Current.Artist - #Play.Current.Title</label>
+      <label>#(iif(neq(#Play.Current.Album,''),'#Play.Current.Album','No Album info'))#(iif(neq(#Play.Current.Year,''),' (#Play.Current.Year)',''))</label>
 	  <wrapString>   |   </wrapString>
       <align>left</align>
       <font>font12</font>
@@ -383,7 +458,7 @@
       <description>next artist label</description>
       <id>0</id>
       <width>620</width>
-	  <height>40</height>
+	  <height>30</height>
       <label>Bitrate: #Play.Current.BitRate</label>
       <align>left</align>
       <font>font12</font>
@@ -396,21 +471,8 @@
       <description>next artist label</description>
       <id>0</id>
       <width>620</width>
-	  <height>40</height>
-      <label>Released: #Play.Current.Year</label>
-      <align>left</align>
-      <font>font12</font>
-      <textcolor>99ffffff</textcolor>
-	  <visible>!control.isvisible(089)</visible>
-    </control>	
-
-	<control>
-      <type>fadelabel</type>
-      <description>next artist label</description>
-      <id>0</id>
-      <width>620</width>
-	  <height>40</height>
-      <label>Codec: #Play.Current.Codec</label>
+	  <height>30</height>
+      <label>Track: #(iif(neq(#Play.Current.Track,''),'#Play.Current.Track','-'))#(iif(neq(#Play.Current.TrackTotal,''),'/#Play.Current.TrackTotal','')) Disc: #(iif(neq(#Play.Current.DiscID,''),'#Play.Current.DiscID','1'))/#(iif(neq(#Play.Current.DiscTotal,''),'#Play.Current.DiscTotal','1'))</label>
       <align>left</align>
       <font>font12</font>
       <textcolor>99ffffff</textcolor>
@@ -422,7 +484,7 @@
       <description>next artist label</description>
       <id>0</id>
       <width>620</width>
-	  <height>40</height>
+	  <height>30</height>
       <label>Sample Rate: #Play.Current.SampleRate</label>
       <align>left</align>
       <font>font12</font>
@@ -435,7 +497,7 @@
       <description>next artist label</description>
       <id>0</id>
       <width>620</width>
-	  <height>40</height>
+	  <height>30</height>
       <label>Channels: #Play.Current.Channels</label>
       <align>left</align>
       <font>font12</font>
@@ -476,7 +538,7 @@
       <visible>plugin.isenabled(MusicInfoHandler GUI)</visible>
     </control>	
 	-->
-
+ 
 
 	
 	
@@ -514,7 +576,17 @@
       <visible>Player.HasAudio</visible>
     </control>	
 	
-
+   <control>
+      <description>music logo when no thumb</description>
+      <type>image</type>
+      <id>1</id>
+        <posX>1280</posX>
+        <posY>735</posY>
+		<height>50</height>
+		<width>91</width>
+        <texture>Logos\audio\#Play.Current.FileType.png</texture>
+      <visible>control.hasthumb(12345)</visible>	  
+    </control>
 	
     <import>MyMusicPlayingNow.HiddenMenu.xml</import>
     <!-- *************************************************************************************************** -->
@@ -523,48 +595,78 @@
     <control>
       <type>image</type>
       <id>0</id>
-      <posX>1625</posX>
-      <posY>900</posY>
-      <width>195</width>
-      <height>25</height>
+      <posX>1765</posX>
+      <posY>870</posY>
+      <width>20</width>
+      <height>104</height>
       <texture>Animations\LedVu\vu1.png</texture>
       <visible>Player.HasAudio+Player.paused</visible>
+	  <colordiffuse>99ffffff</colordiffuse>
 	  <shouldCache>true</shouldCache>
     </control>
     <control>
       <type>image</type>
       <id>999</id>
-      <posX>1625</posX>
-      <posY>900</posY>
-      <width>195</width>
-      <height>25</height>
+      <posX>1765</posX>
+      <posY>870</posY>
+      <width>20</width>
+      <height>104</height>
       <imagepath>Animations\LedVu</imagepath>
       <texture>#VUMeterL</texture>
       <visible>Player.HasAudio+Player.playing+!Player.paused</visible>
+	  <colordiffuse>99ffffff</colordiffuse>
 	  <shouldCache>true</shouldCache>
     </control>
     <control>
       <type>image</type>
       <id>0</id>
-      <posX>1625</posX>
-      <posY>920</posY>
-      <width>195</width>
-      <height>25</height>
+      <posX>1795</posX>
+      <posY>870</posY>
+      <width>20</width>
+      <height>104</height>
       <texture>Animations\LedVu\vu1.png</texture>
       <visible>Player.HasAudio+Player.paused</visible>
+	  <colordiffuse>99ffffff</colordiffuse>
 	  <shouldCache>true</shouldCache>
     </control>
     <control>
       <type>image</type>
       <id>998</id>
-      <posX>1625</posX>
-      <posY>920</posY>
-      <width>195</width>
-      <height>25</height>
+      <posX>1795</posX>
+      <posY>870</posY>
+      <width>20</width>
+      <height>104</height>
       <imagepath>Animations\LedVu</imagepath>
       <texture>#VUMeterR</texture>
       <visible>Player.HasAudio+Player.playing+!Player.paused</visible>
+	  <colordiffuse>99ffffff</colordiffuse>
 	  <shouldCache>true</shouldCache>
+    </control>
+	
+	<control>
+      <type>fadelabel</type>
+      <description>next artist label</description>
+      <id>089</id>
+      <posX>1770</posX>
+      <posY>980</posY>
+      <width>620</width>
+      <label>L</label>
+      <align>left</align>
+      <font>font8</font>
+      <textcolor>99ffffff</textcolor>
+	  <visible>Player.HasAudio+Player.playing</visible>
+    </control>
+	<control>
+      <type>label</type>
+      <description>label</description>
+      <id>089</id>
+      <posX>1800</posX>
+      <posY>980</posY>
+      <label>R</label>
+      <align>left</align>
+      <font>font8</font>
+      <textcolor>99ffffff</textcolor>
+	  <visible>Player.HasAudio+Player.playing</visible>
     </control>
 	
 	<import>MyMusicPlayingNow.HiddenMenu.xml</import>
