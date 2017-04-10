@@ -158,7 +158,7 @@ namespace AVMTuner
         i++;
         string transponderName = string.Format("Transponder {0}", i);
         string transponderText = string.Format("#EXTINF:0,{0}", transponderName);
-        var rtspUrl = string.Format("{0}&pids={1}", url.Key, string.Join(",", url.Value.ToArray()));
+        var rtspUrl = string.Format("{0}&pids={1}", url.Key, string.Join(",", url.Value.Take(50).ToArray()));
 
         combinedTransponderList.Add(transponderText);
         combinedTransponderList.Add(rtspUrl);
@@ -321,7 +321,7 @@ namespace AVMTuner
       int tvChannelsUpdated = 0;
       int radioChannelsUpdated = 0;
 
-      // Note: Code is taken from DvbIPCard scan code and slighly modified
+      // Note: Code is taken from DvbIPCard scan code and slightly modified
       IUser user = new User();
       user.CardId = _cardNumber;
       try
