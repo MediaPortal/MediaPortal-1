@@ -83,6 +83,7 @@ xcopy "..\..\..\..\DirectShowFilters\MPIPTVSource\bin\%TARGET%\*.*" "content\Ref
 xcopy "..\..\..\..\DirectShowFilters\MPIPTVSource\MPIPTVSource\MPIPTVSource.ini" "content\References" /R /Y
 xcopy "..\..\..\..\DirectShowFilters\TsReader\bin\%TARGET%\TsReader.ax" "content\References" /R /Y
 xcopy "..\..\..\..\DirectShowFilters\TsWriter\bin\%TARGET%\TsWriter.ax" "content\References" /R /Y
+xcopy "..\..\..\..\DirectShowFilters\DXerr9\bin\%TARGET%\dxerr9.dll" "content\References" /R /Y
 xcopy "..\..\..\..\DirectShowFilters\bin\Release\PDMpgMux.ax" "content\References" /R /Y
 
 REM #######################################
