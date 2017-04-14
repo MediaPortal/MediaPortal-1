@@ -19,15 +19,6 @@
     <Rolloff>NotSet</Rolloff>
   </Transponder>
   <Transponder>
-    <CarrierFrequency>3721000</CarrierFrequency>
-    <Polarisation>CircularR</Polarisation>
-    <SymbolRate>4882</SymbolRate>
-    <Modulation>ModNotSet</Modulation>
-    <InnerFecRate>Rate2_3</InnerFecRate>
-    <Pilot>NotSet</Pilot>
-    <Rolloff>NotSet</Rolloff>
-  </Transponder>
-  <Transponder>
     <CarrierFrequency>3760000</CarrierFrequency>
     <Polarisation>CircularL</Polarisation>
     <SymbolRate>2790</SymbolRate>
@@ -37,11 +28,11 @@
     <Rolloff>NotSet</Rolloff>
   </Transponder>
   <Transponder>
-    <CarrierFrequency>3772000</CarrierFrequency>
-    <Polarisation>CircularL</Polarisation>
-    <SymbolRate>2222</SymbolRate>
+    <CarrierFrequency>3775000</CarrierFrequency>
+    <Polarisation>CircularR</Polarisation>
+    <SymbolRate>1438</SymbolRate>
     <Modulation>ModNotSet</Modulation>
-    <InnerFecRate>Rate3_4</InnerFecRate>
+    <InnerFecRate>Rate2_3</InnerFecRate>
     <Pilot>NotSet</Pilot>
     <Rolloff>NotSet</Rolloff>
   </Transponder>
@@ -57,7 +48,7 @@
   <Transponder>
     <CarrierFrequency>3893000</CarrierFrequency>
     <Polarisation>CircularL</Polarisation>
-    <SymbolRate>4440</SymbolRate>
+    <SymbolRate>3072</SymbolRate>
     <Modulation>ModNotSet</Modulation>
     <InnerFecRate>Rate1_2</InnerFecRate>
     <Pilot>NotSet</Pilot>
@@ -161,24 +152,6 @@
     <InnerFecRate>Rate3_4</InnerFecRate>
     <Pilot>NotSet</Pilot>
     <Rolloff>NotSet</Rolloff>
-  </Transponder>
-  <Transponder>
-    <CarrierFrequency>3765000</CarrierFrequency>
-    <Polarisation>CircularR</Polarisation>
-    <SymbolRate>1413</SymbolRate>
-    <Modulation>ModQpsk</Modulation>
-    <InnerFecRate>Rate3_4</InnerFecRate>
-    <Pilot>Off</Pilot>
-    <Rolloff>ThirtyFive</Rolloff>
-  </Transponder>
-  <Transponder>
-    <CarrierFrequency>4136000</CarrierFrequency>
-    <Polarisation>CircularR</Polarisation>
-    <SymbolRate>8850</SymbolRate>
-    <Modulation>ModQpsk</Modulation>
-    <InnerFecRate>Rate2_3</InnerFecRate>
-    <Pilot>Off</Pilot>
-    <Rolloff>ThirtyFive</Rolloff>
   </Transponder>
   <Transponder>
     <CarrierFrequency>10990000</CarrierFrequency>
