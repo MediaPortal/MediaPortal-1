@@ -71,12 +71,42 @@ namespace MediaPortal.GUI.Library
         return;
       }
 
-      Size _spacing = _layout.Spacing;
-
-      GUIGraphicsContext.ScaleHorizontal(ref _spacing.Width);
-      GUIGraphicsContext.ScaleVertical(ref _spacing.Height);
-
-      _layout.Spacing = _spacing; 
+      if (_layout is StackLayout)
+      {
+        StackLayout layout = _layout as StackLayout;
+        int _width = (int)System.Math.Truncate(layout.Spacing.Width);
+        int _height = (int)System.Math.Truncate(layout.Spacing.Height);
+        GUIGraphicsContext.ScaleHorizontal(ref _width);
+        GUIGraphicsContext.ScaleVertical(ref _height);
+        layout.Spacing = new Drawing.Size(_width,_height);
+      }
+      else if (_layout is GridLayout)
+      {
+        GridLayout layout = _layout as GridLayout;
+        int _width = (int)System.Math.Truncate(layout.Spacing.Width);
+        int _height = (int)System.Math.Truncate(layout.Spacing.Height);
+        GUIGraphicsContext.ScaleHorizontal(ref _width);
+        GUIGraphicsContext.ScaleVertical(ref _height);
+        layout.Spacing = new Drawing.Size(_width, _height);
+      }
+      else if (_layout is RingLayout)
+      {
+        RingLayout layout = _layout as RingLayout;
+        int _width = (int)System.Math.Truncate(layout.Spacing.Width);
+        int _height = (int)System.Math.Truncate(layout.Spacing.Height);
+        GUIGraphicsContext.ScaleHorizontal(ref _width);
+        GUIGraphicsContext.ScaleVertical(ref _height);
+        layout.Spacing = new Drawing.Size(_width, _height);
+      }
+      else if (_layout is TableLayout)
+      {
+        TableLayout layout = _layout as TableLayout;
+        int _width = (int)System.Math.Truncate(layout.Spacing.Width);
+        int _height = (int)System.Math.Truncate(layout.Spacing.Height);
+        GUIGraphicsContext.ScaleHorizontal(ref _width);
+        GUIGraphicsContext.ScaleVertical(ref _height);
+        layout.Spacing = new Drawing.Size(_width, _height);
+      }
     }
 
     public void AddControl(GUIControl control)
