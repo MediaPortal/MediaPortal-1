@@ -218,7 +218,9 @@ namespace MediaPortal.GUI.Library
       {
         return "false";
       }
-      return ((CultureInfo.InvariantCulture.CompareInfo.Compare(text, part, CompareOptions.IgnoreCase) == 0) ? "true" : "false");
+      // return ((CultureInfo.InvariantCulture.CompareInfo.Compare(text, part, CompareOptions.IgnoreCase) == 0) ? "true" : "false");
+      int condition = GUIInfoManager.TranslateSingleString("string.equals(" + text + "," + part + ")");
+      return GUIInfoManager.GetBool(condition, 0) ? "true" : "false";
     }
 
     [XMLSkinFunction("string.contains")]
@@ -228,7 +230,57 @@ namespace MediaPortal.GUI.Library
       {
         return "false";
       }
-      return ((CultureInfo.InvariantCulture.CompareInfo.IndexOf(text, part, CompareOptions.IgnoreCase) >= 0) ? "true" : "false");
+      // return ((CultureInfo.InvariantCulture.CompareInfo.IndexOf(text, part, CompareOptions.IgnoreCase) >= 0) ? "true" : "false");
+      int condition = GUIInfoManager.TranslateSingleString("string.contains(" + text + "," + part + ")");
+      return GUIInfoManager.GetBool(condition, 0) ? "true" : "false";
+    }
+
+    [XMLSkinFunction("string.starts(")]
+    public static string StartsString(string text, string part)
+    {
+      if ((text == null) || (part == null))
+      {
+        return "false";
+      }
+      // return ((CultureInfo.InvariantCulture.CompareInfo.IndexOf(text, part, CompareOptions.IgnoreCase) == 0) ? "true" : "false");
+      int condition = GUIInfoManager.TranslateSingleString("string.starts(" + text + "," + part + ")");
+      return GUIInfoManager.GetBool(condition, 0) ? "true" : "false";
+    }
+
+    [XMLSkinFunction("string.valueequals")]
+    public static string EqualsStringV(string text, string part)
+    {
+      if ((text == null) || (part == null))
+      {
+        return "false";
+      }
+      // return ((CultureInfo.InvariantCulture.CompareInfo.Compare(text, part, CompareOptions.IgnoreCase) == 0) ? "true" : "false");
+      int condition = GUIInfoManager.TranslateSingleString("string.valueequals(" + text + "," + part + ")");
+      return GUIInfoManager.GetBool(condition, 0) ? "true" : "false";
+    }
+
+    [XMLSkinFunction("string.valuecontains")]
+    public static string ContainsStringV(string text, string part)
+    {
+      if ((text == null) || (part == null))
+      {
+        return "false";
+      }
+      // return ((CultureInfo.InvariantCulture.CompareInfo.IndexOf(text, part, CompareOptions.IgnoreCase) >= 0) ? "true" : "false");
+      int condition = GUIInfoManager.TranslateSingleString("string.valuecontains(" + text + "," + part + ")");
+      return GUIInfoManager.GetBool(condition, 0) ? "true" : "false";
+    }
+
+    [XMLSkinFunction("string.valuestarts(")]
+    public static string StartsStringV(string text, string part)
+    {
+      if ((text == null) || (part == null))
+      {
+        return "false";
+      }
+      // return ((CultureInfo.InvariantCulture.CompareInfo.IndexOf(text, part, CompareOptions.IgnoreCase) == 0) ? "true" : "false");
+      int condition = GUIInfoManager.TranslateSingleString("string.valuestarts(" + text + "," + part + ")");
+      return GUIInfoManager.GetBool(condition, 0) ? "true" : "false";
     }
 
     #endregion
