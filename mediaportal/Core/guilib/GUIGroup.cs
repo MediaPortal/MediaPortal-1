@@ -58,6 +58,27 @@ namespace MediaPortal.GUI.Library
       _animator = new Animator(_animatorType);
     }
 
+    /// <summary>
+    /// Does any scaling on the inital size\position values to fit them to screen 
+    /// resolution. 
+    /// </summary>
+    public override void ScaleToScreenResolution()
+    {
+      base.ScaleToScreenResolution();
+
+      if (_layout == null)
+      {
+        return;
+      }
+
+      Size _spacing = _layout.Spacing;
+
+      GUIGraphicsContext.ScaleHorizontal(ref _spacing.Width);
+      GUIGraphicsContext.ScaleVertical(ref _spacing.Height);
+
+      _layout.Spacing = _spacing; 
+    }
+
     public void AddControl(GUIControl control)
     {
       //control.AddAnimations(base.Animations);
