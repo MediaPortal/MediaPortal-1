@@ -58,6 +58,57 @@ namespace MediaPortal.GUI.Library
       _animator = new Animator(_animatorType);
     }
 
+    /// <summary>
+    /// Does any scaling on the inital size\position values to fit them to screen 
+    /// resolution. 
+    /// </summary>
+    public override void ScaleToScreenResolution()
+    {
+      base.ScaleToScreenResolution();
+
+      if (_layout == null)
+      {
+        return;
+      }
+
+      if (_layout is StackLayout)
+      {
+        StackLayout layout = _layout as StackLayout;
+        int _width = (int)System.Math.Truncate(layout.Spacing.Width);
+        int _height = (int)System.Math.Truncate(layout.Spacing.Height);
+        GUIGraphicsContext.ScaleHorizontal(ref _width);
+        GUIGraphicsContext.ScaleVertical(ref _height);
+        layout.Spacing = new Drawing.Size(_width,_height);
+      }
+      else if (_layout is GridLayout)
+      {
+        GridLayout layout = _layout as GridLayout;
+        int _width = (int)System.Math.Truncate(layout.Spacing.Width);
+        int _height = (int)System.Math.Truncate(layout.Spacing.Height);
+        GUIGraphicsContext.ScaleHorizontal(ref _width);
+        GUIGraphicsContext.ScaleVertical(ref _height);
+        layout.Spacing = new Drawing.Size(_width, _height);
+      }
+      else if (_layout is RingLayout)
+      {
+        RingLayout layout = _layout as RingLayout;
+        int _width = (int)System.Math.Truncate(layout.Spacing.Width);
+        int _height = (int)System.Math.Truncate(layout.Spacing.Height);
+        GUIGraphicsContext.ScaleHorizontal(ref _width);
+        GUIGraphicsContext.ScaleVertical(ref _height);
+        layout.Spacing = new Drawing.Size(_width, _height);
+      }
+      else if (_layout is TableLayout)
+      {
+        TableLayout layout = _layout as TableLayout;
+        int _width = (int)System.Math.Truncate(layout.Spacing.Width);
+        int _height = (int)System.Math.Truncate(layout.Spacing.Height);
+        GUIGraphicsContext.ScaleHorizontal(ref _width);
+        GUIGraphicsContext.ScaleVertical(ref _height);
+        layout.Spacing = new Drawing.Size(_width, _height);
+      }
+    }
+
     public void AddControl(GUIControl control)
     {
       //control.AddAnimations(base.Animations);
