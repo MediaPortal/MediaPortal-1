@@ -1327,7 +1327,7 @@ namespace MediaPortal.GUI.Library
           int pos = strTestKeepCase.IndexOf(",");
           if (pos >= 0)
           {
-            Log.Warn("*** string.valuecontains - [{0}] [{1}] - [{2}]", strTestKeepCase.Substring(21, pos - 21), strTestKeepCase.Substring(pos + 1, strTestKeepCase.Length - (pos + 2)), strTestKeepCase);
+            // Log.Warn("*** string.valuecontains - [{0}] [{1}] - [{2}]", strTestKeepCase.Substring(21, pos - 21), strTestKeepCase.Substring(pos + 1, strTestKeepCase.Length - (pos + 2)), strTestKeepCase);
             skinOffset = SkinSettings.TranslateSkinString(strTestKeepCase.Substring(21, pos - 21));
             string strParams = strTestKeepCase.Substring(pos + 1, strTestKeepCase.Length - (pos + 2));
             int compareString = ConditionalStringParameter(strParams);
@@ -1700,11 +1700,11 @@ namespace MediaPortal.GUI.Library
       {
         if (parameter == m_stringParameters[i])
         {
-          Log.Warn("+++ Found string parameter: {0} - > {1}", parameter, i);
+          // Log.Warn("+++ Found string parameter: {0} - > {1}", parameter, i);
           return (int)i;
         }
       }
-      Log.Warn("+++ Added string parameter: {0} - > {1}", parameter, m_stringParameters.Count);
+      // Log.Warn("+++ Added string parameter: {0} - > {1}", parameter, m_stringParameters.Count);
       // return the new offset
       m_stringParameters.Add(parameter);
       return (int)m_stringParameters.Count - 1;
@@ -2577,9 +2577,11 @@ namespace MediaPortal.GUI.Library
             {
               AddMultiInfoBoolResult(info, bReturn);
             }
+            /*
             Log.Error("*** Prop 1: [{0}]>[{1}]=[{2}] | Prop 2: [{3}]>[{4}]=[{5}] | Cond: {6} | Res: {7}", prop1Name, prop1, value1, "*", prop2, value2, condition, bReturn);
             Log.Error("*** Val1 [{3}] | Val2 [{4}] Contains: {0} | Equals: {1} | Start: {2}", string.IsNullOrEmpty(value2) ? (value1 == value2) : value1.Contains(value2), (value1 == value2), string.IsNullOrEmpty(value2) ? (value1 == value2) : value1.StartsWith(value2), value1, value2);
             Log.Error("***");
+            */
           }
           else
           {
@@ -2782,14 +2784,14 @@ namespace MediaPortal.GUI.Library
           set.Add(info);
           m_cacheMultiInfoBoolProperties[property] = set;
           m_cacheMultiInfoBoolPropertiesLookup[info.m_data1] = property;
-          Log.Warn("+++ Added Info: N:{4}:[{0}/{1}/{2}/{3}]", info.m_info, info.m_data1, info.m_data2, info.m_stringData, property);
+          // Log.Warn("+++ Added Info: N:{4}:[{0}/{1}/{2}/{3}]", info.m_info, info.m_data1, info.m_data2, info.m_stringData, property);
         }
         else
         {
           if (!set.Contains(info))
           {
             set.Add(info);
-            Log.Warn("+++ Added Info: A:{4}:[{0}/{1}/{2}/{3}]", info.m_info, info.m_data1, info.m_data2, info.m_stringData, property);
+            // Log.Warn("+++ Added Info: A:{4}:[{0}/{1}/{2}/{3}]", info.m_info, info.m_data1, info.m_data2, info.m_stringData, property);
           }
         }
       }
@@ -2820,7 +2822,7 @@ namespace MediaPortal.GUI.Library
       lock (lockCache)
       {
         m_cacheMultiInfoBoolResults[info] = result;
-        Log.Warn("+++ Added Result: R:{4}:[{0}/{1}/{2}/{3}]", info.m_info, info.m_data1, info.m_data2, info.m_stringData, result);
+        // Log.Warn("+++ Added Result: R:{4}:[{0}/{1}/{2}/{3}]", info.m_info, info.m_data1, info.m_data2, info.m_stringData, result);
       }
     }
 
@@ -2857,7 +2859,7 @@ namespace MediaPortal.GUI.Library
           {
             if (m_cacheMultiInfoBoolResults.ContainsKey(info))
             {
-              Log.Debug("--- Prop changed: [{0}={1}] Info: [{2}/{3}/{4}/{5}]", tag, tagValue, info.m_info, info.m_data1, info.m_data2, info.m_stringData);
+              // Log.Debug("--- Prop changed: [{0}={1}] Info: [{2}/{3}/{4}/{5}]", tag, tagValue, info.m_info, info.m_data1, info.m_data2, info.m_stringData);
               m_cacheMultiInfoBoolResults.Remove(info);
             }
           }
@@ -2885,7 +2887,7 @@ namespace MediaPortal.GUI.Library
                 {
                   if (m_cacheMultiInfoBoolResults.ContainsKey(info))
                   {
-                    Log.Debug("--- Prop changed: Data [{6}={7}] - [{0}={1}] Info: [{2}/{3}/{4}/{5}]", tag, tagValue, info.m_info, info.m_data1, info.m_data2, info.m_stringData, i, m_stringParameters[i]);
+                    // Log.Debug("--- Prop changed: Data [{6}={7}] - [{0}={1}] Info: [{2}/{3}/{4}/{5}]", tag, tagValue, info.m_info, info.m_data1, info.m_data2, info.m_stringData, i, m_stringParameters[i]);
                     m_cacheMultiInfoBoolResults.Remove(info);
                   }
                 }
