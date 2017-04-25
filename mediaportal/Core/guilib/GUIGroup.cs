@@ -26,6 +26,7 @@ using MediaPortal.Drawing;
 using MediaPortal.Drawing.Layouts;
 using MediaPortal.ExtensionMethods;
 using Point = MediaPortal.Drawing.Point;
+using Size = MediaPortal.Drawing.Size;
 
 namespace MediaPortal.GUI.Library
 {
@@ -71,42 +72,13 @@ namespace MediaPortal.GUI.Library
         return;
       }
 
-      if (_layout is StackLayout)
-      {
-        StackLayout layout = _layout as StackLayout;
-        int _width = (int)System.Math.Truncate(layout.Spacing.Width);
-        int _height = (int)System.Math.Truncate(layout.Spacing.Height);
-        GUIGraphicsContext.ScaleHorizontal(ref _width);
-        GUIGraphicsContext.ScaleVertical(ref _height);
-        layout.Spacing = new Drawing.Size(_width,_height);
-      }
-      else if (_layout is GridLayout)
-      {
-        GridLayout layout = _layout as GridLayout;
-        int _width = (int)System.Math.Truncate(layout.Spacing.Width);
-        int _height = (int)System.Math.Truncate(layout.Spacing.Height);
-        GUIGraphicsContext.ScaleHorizontal(ref _width);
-        GUIGraphicsContext.ScaleVertical(ref _height);
-        layout.Spacing = new Drawing.Size(_width, _height);
-      }
-      else if (_layout is RingLayout)
-      {
-        RingLayout layout = _layout as RingLayout;
-        int _width = (int)System.Math.Truncate(layout.Spacing.Width);
-        int _height = (int)System.Math.Truncate(layout.Spacing.Height);
-        GUIGraphicsContext.ScaleHorizontal(ref _width);
-        GUIGraphicsContext.ScaleVertical(ref _height);
-        layout.Spacing = new Drawing.Size(_width, _height);
-      }
-      else if (_layout is TableLayout)
-      {
-        TableLayout layout = _layout as TableLayout;
-        int _width = (int)System.Math.Truncate(layout.Spacing.Width);
-        int _height = (int)System.Math.Truncate(layout.Spacing.Height);
-        GUIGraphicsContext.ScaleHorizontal(ref _width);
-        GUIGraphicsContext.ScaleVertical(ref _height);
-        layout.Spacing = new Drawing.Size(_width, _height);
-      }
+      int width = (int)System.Math.Round(_layout.Spacing.Width);
+      int height = (int)System.Math.Round(_layout.Spacing.Height);
+
+      GUIGraphicsContext.ScaleHorizontal(ref width);
+      GUIGraphicsContext.ScaleVertical(ref height);
+
+      _layout.Spacing = new Size(width, height);
     }
 
     public void AddControl(GUIControl control)
