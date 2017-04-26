@@ -54,6 +54,20 @@ namespace MediaPortal.Support
         File.Copy(gentleConfigPath, destGentleConfigPath);
       }
 
+      var iptvSourceConfigPath = Path.Combine(basePath, "MPIPTVSource.ini");
+      if (File.Exists(iptvSourceConfigPath))
+      {
+        var destIptvSourceConfigPath = Path.Combine(destinationFolder, "tvserver_MPIPTVSource.ini");
+        File.Copy(iptvSourceConfigPath, destIptvSourceConfigPath, true);
+      }
+
+      var webEpgConfigPath = Path.Combine(basePath, "WebEPG", "WebEPG.xml");
+      if (File.Exists(webEpgConfigPath))
+      {
+        var destWebEpgConfigPath = Path.Combine(destinationFolder, "tvserver_WebEPG.xml");
+        File.Copy(webEpgConfigPath, destWebEpgConfigPath, true);
+      }
+
       string AnalogPath = basePath + "\\AnalogCard";
       if (Directory.Exists(AnalogPath))
       {
