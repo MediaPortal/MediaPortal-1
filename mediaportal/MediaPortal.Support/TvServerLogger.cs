@@ -27,9 +27,8 @@ namespace MediaPortal.Support
   {
     public void CreateLogs(string destinationFolder)
     {
-      string basePath = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) +
-                        "\\Team MediaPortal\\MediaPortal TV Server";
-      string logPath = basePath + "\\log";
+      string basePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "Team MediaPortal", "MediaPortal TV Server");
+      string logPath = Path.Combine(basePath, "log");
       if (!Directory.Exists(logPath))
       {
         return;
@@ -38,13 +37,13 @@ namespace MediaPortal.Support
       FileInfo[] logFiles = dir.GetFiles("*.log");
       foreach (FileInfo logFile in logFiles)
       {
-        logFile.CopyTo(destinationFolder + "\\tvserver_" + logFile.Name, true);
+        logFile.CopyTo(Path.Combine(destinationFolder, "tvserver_" + logFile.Name), true);
       }
 
       FileInfo[] bakfiles = dir.GetFiles("*.bak");
       foreach (FileInfo bakFile in bakfiles)
       {
-        bakFile.CopyTo(destinationFolder + "\\tvserver_" + bakFile.Name, true);
+        bakFile.CopyTo(Path.Combine(destinationFolder, "tvserver_" + bakFile.Name), true);
       }
 
       var gentleConfigPath = Path.Combine(basePath, "Gentle.config");
@@ -68,20 +67,20 @@ namespace MediaPortal.Support
         File.Copy(webEpgConfigPath, destWebEpgConfigPath, true);
       }
 
-      string AnalogPath = basePath + "\\AnalogCard";
-      if (Directory.Exists(AnalogPath))
+      string analogTunerInfoPath = Path.Combine(basePath, "AnalogCard");
+      if (Directory.Exists(analogTunerInfoPath))
       {
-        FileInfo[] xmlFiles = new DirectoryInfo(AnalogPath).GetFiles("*.xml");
+        FileInfo[] xmlFiles = new DirectoryInfo(analogTunerInfoPath).GetFiles("*.xml");
         foreach (FileInfo xmlFile in xmlFiles)
         {
-          xmlFile.CopyTo(destinationFolder + "\\tvserver_AnalogCard_" + xmlFile.Name, true);
+          xmlFile.CopyTo(Path.Combine(destinationFolder, "tvserver_AnalogCard_" + xmlFile.Name), true);
         }
       }
     }
 
     public string ActionMessage
     {
-      get { return "Gathering TvServer log information if any..."; }
+      get { return "Gathering TV Server log files and configuration if any..."; }
     }
   }
 }
