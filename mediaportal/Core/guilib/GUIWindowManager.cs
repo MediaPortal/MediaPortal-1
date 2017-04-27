@@ -1509,9 +1509,6 @@ namespace MediaPortal.GUI.Library
                                  currentRoutedWindow.PreviousWindowId, 0, null);
           currentRoutedWindow.OnMessage(msgDlg);
 
- //         Log.Debug("*** UnROUTE BEFORE *** V: Selected: {0} High: {1}", _selecteditem, _highlightedbutton);
- //         Log.Debug("*** UnROUTE BEFORE *** P: Selected: {0} High: {1}", GUIPropertyManager.GetProperty("#selecteditem"), GUIPropertyManager.GetProperty("#highlightedbutton"));
-
           GUIPropertyManager.SetProperty("#selecteditem", _selecteditem);
           GUIPropertyManager.SetProperty("#selectedindex", _selectedindex);
           GUIPropertyManager.SetProperty("#highlightedbutton", _highlightedbutton);
@@ -1521,9 +1518,6 @@ namespace MediaPortal.GUI.Library
         {
           GUIPropertyManager.SetProperty("#currentmodule", _currentWindowName);
         }
-
- //       Log.Debug("*** UnROUTE AFTER *** V: Selected: {0} High: {1}", _selecteditem, _highlightedbutton);
- //       Log.Debug("*** UnROUTE AFTER *** P: Selected: {0} High: {1}", GUIPropertyManager.GetProperty("#selecteditem"), GUIPropertyManager.GetProperty("#highlightedbutton"));
 
         _routedWindow = null;
         _shouldRefresh = true;
@@ -1543,9 +1537,6 @@ namespace MediaPortal.GUI.Library
         _selecteditem = GUIPropertyManager.GetProperty("#selecteditem");
         _selectedindex = GUIPropertyManager.GetProperty("#selectedindex");
         _highlightedbutton = GUIPropertyManager.GetProperty("#highlightedbutton");
-
-        Log.Debug("*** ROUTETOWINDOW ***  V: Selected: {0} High: {1}", _selecteditem, _highlightedbutton);
-        Log.Debug("*** ROUTETOWINDOW ***  P: Selected: {0} High: {1}", GUIPropertyManager.GetProperty("#selecteditem"), GUIPropertyManager.GetProperty("#highlightedbutton"));
       }
     }
 
