@@ -322,6 +322,9 @@ namespace MediaPortal.GUI.Library
     public const int STRING_CONTAINS = 603;
     public const int SKIN_STRING = 604;
     public const int SKIN_THEME = 605;
+    public const int STRING_EQUALS_V = 606;
+    public const int STRING_STARTS_V = 607;
+    public const int STRING_CONTAINS_V = 608;
 
     public const int XLINK_KAI_USERNAME = 701;
 
@@ -452,7 +455,7 @@ namespace MediaPortal.GUI.Library
 
       bool bNegate = strTest[0] == '!';
       int ret = 0;
-      string strCategory = "";
+      string strCategory = string.Empty;
 
       if (bNegate)
       {
@@ -473,7 +476,6 @@ namespace MediaPortal.GUI.Library
         strCategory = strTest.Substring(0, strTest.IndexOf("."));
       }
 
-      
       if (strCategory == "topbar")
       {
         if (strTest == "topbar.focused")
@@ -1227,17 +1229,12 @@ namespace MediaPortal.GUI.Library
           {
             strTestKeepCase = strTestKeepCase.Remove(0, 1);
           }
-
           int skinOffset;
           int pos = strTestKeepCase.IndexOf(",");
           if (pos >= 0)
           {
             skinOffset = SkinSettings.TranslateSkinString(strTestKeepCase.Substring(14, pos - 14));
             string strParams = strTestKeepCase.Substring(pos + 1, strTestKeepCase.Length - (pos + 2));
-            if (!string.IsNullOrEmpty(strParams) && (strParams.IndexOf('#') > -1))
-            {
-              strParams = GUIPropertyManager.Parse(strParams) ?? String.Empty;
-            }
             int compareString = ConditionalStringParameter(strParams);
             return AddMultiInfo(new GUIInfo(bNegate ? -STRING_EQUALS : STRING_EQUALS, skinOffset, compareString));
           }
@@ -1261,10 +1258,6 @@ namespace MediaPortal.GUI.Library
           {
             skinOffset = SkinSettings.TranslateSkinString(strTestKeepCase.Substring(16, pos - 16));
             string strParams = strTestKeepCase.Substring(pos + 1, strTestKeepCase.Length - (pos + 2));
-            if (!string.IsNullOrEmpty(strParams) && (strParams.IndexOf('#') > -1))
-            {
-              strParams = GUIPropertyManager.Parse(strParams) ?? String.Empty;
-            }
             int compareString = ConditionalStringParameter(strParams);
             return AddMultiInfo(new GUIInfo(bNegate ? -STRING_CONTAINS : STRING_CONTAINS, skinOffset, compareString));
           }
@@ -1288,15 +1281,84 @@ namespace MediaPortal.GUI.Library
           {
             skinOffset = SkinSettings.TranslateSkinString(strTestKeepCase.Substring(14, pos - 14));
             string strParams = strTestKeepCase.Substring(pos + 1, strTestKeepCase.Length - (pos + 2));
-            if (!string.IsNullOrEmpty(strParams) && (strParams.IndexOf('#') > -1))
-            {
-              strParams = GUIPropertyManager.Parse(strParams) ?? String.Empty;
-            }
             int compareString = ConditionalStringParameter(strParams);
             return AddMultiInfo(new GUIInfo(bNegate ? -STRING_STARTS : STRING_STARTS, skinOffset, compareString));
           }
           skinOffset = SkinSettings.TranslateSkinString(strTestKeepCase.Substring(14, strTestKeepCase.Length - 15));
           return AddMultiInfo(new GUIInfo(bNegate ? -STRING_STARTS : STRING_STARTS, skinOffset));
+        }
+        // The string can be smaller, which causes an error. skin.hastheme(x) < string.valuecontains(
+        else if (strTest.Length > 19 && strTest.Substring(0, 19) == "string.valueequals(")
+        {
+          // this condition uses GUIPropertyManager.Parse, which is case sensitive.
+          string strTestKeepCase = strCondition;
+          strTestKeepCase = strTestKeepCase.TrimStart(new char[] {' '});
+          strTestKeepCase = strTestKeepCase.TrimEnd(new char[] {' '});
+          if (bNegate)
+          {
+            strTestKeepCase = strTestKeepCase.Remove(0, 1);
+          }
+
+          int skinOffset;
+          int pos = strTestKeepCase.IndexOf(",");
+          if (pos >= 0)
+          {
+            skinOffset = SkinSettings.TranslateSkinString(strTestKeepCase.Substring(19, pos - 19));
+            string strParams = strTestKeepCase.Substring(pos + 1, strTestKeepCase.Length - (pos + 2));
+            int compareString = ConditionalStringParameter(strParams);
+            return AddMultiInfo(new GUIInfo(bNegate ? -STRING_EQUALS_V : STRING_EQUALS_V, skinOffset, compareString));
+          }
+          skinOffset = SkinSettings.TranslateSkinString(strTestKeepCase.Substring(19, strTestKeepCase.Length - 20));
+          return AddMultiInfo(new GUIInfo(bNegate ? -STRING_EQUALS_V : STRING_EQUALS_V, skinOffset));
+        }
+        // The string can be smaller, which causes an error. skin.hastheme(x) < string.valuecontains(
+        else if (strTest.Length > 21 && strTest.Substring(0, 21) == "string.valuecontains(")
+        {
+          // this condition uses GUIPropertyManager.Parse, which is case sensitive.
+          string strTestKeepCase = strCondition;
+          strTestKeepCase = strTestKeepCase.TrimStart(new char[] {' '});
+          strTestKeepCase = strTestKeepCase.TrimEnd(new char[] {' '});
+          if (bNegate)
+          {
+            strTestKeepCase = strTestKeepCase.Remove(0, 1);
+          }
+
+          int skinOffset;
+          int pos = strTestKeepCase.IndexOf(",");
+          if (pos >= 0)
+          {
+            // Log.Warn("*** string.valuecontains - [{0}] [{1}] - [{2}]", strTestKeepCase.Substring(21, pos - 21), strTestKeepCase.Substring(pos + 1, strTestKeepCase.Length - (pos + 2)), strTestKeepCase);
+            skinOffset = SkinSettings.TranslateSkinString(strTestKeepCase.Substring(21, pos - 21));
+            string strParams = strTestKeepCase.Substring(pos + 1, strTestKeepCase.Length - (pos + 2));
+            int compareString = ConditionalStringParameter(strParams);
+            return AddMultiInfo(new GUIInfo(bNegate ? -STRING_CONTAINS_V : STRING_CONTAINS_V, skinOffset, compareString));
+          }
+          skinOffset = SkinSettings.TranslateSkinString(strTestKeepCase.Substring(21, strTestKeepCase.Length - 22));
+          return AddMultiInfo(new GUIInfo(bNegate ? -STRING_CONTAINS_V : STRING_CONTAINS_V, skinOffset));
+        }
+        // The string can be smaller, which causes an error. skin.hastheme(x) < string.valuestarts(
+        else if (strTest.Length > 19 && strTest.Substring(0, 19) == "string.valuestarts(")
+        {
+          // this condition uses GUIPropertyManager.Parse, which is case sensitive.
+          string strTestKeepCase = strCondition;
+          strTestKeepCase = strTestKeepCase.TrimStart(new char[] {' '});
+          strTestKeepCase = strTestKeepCase.TrimEnd(new char[] {' '});
+          if (bNegate)
+          {
+            strTestKeepCase = strTestKeepCase.Remove(0, 1);
+          }
+
+          int skinOffset;
+          int pos = strTestKeepCase.IndexOf(",");
+          if (pos >= 0)
+          {
+            skinOffset = SkinSettings.TranslateSkinString(strTestKeepCase.Substring(19, pos - 19));
+            string strParams = strTestKeepCase.Substring(pos + 1, strTestKeepCase.Length - (pos + 2));
+            int compareString = ConditionalStringParameter(strParams);
+            return AddMultiInfo(new GUIInfo(bNegate ? -STRING_STARTS_V : STRING_STARTS_V, skinOffset, compareString));
+          }
+          skinOffset = SkinSettings.TranslateSkinString(strTestKeepCase.Substring(19, strTestKeepCase.Length - 20));
+          return AddMultiInfo(new GUIInfo(bNegate ? -STRING_STARTS_V : STRING_STARTS_V, skinOffset));
         }
         else if (strTest.Substring(0, 16) == "skin.hassetting(")
         {
@@ -1329,10 +1391,6 @@ namespace MediaPortal.GUI.Library
           {
             skinOffset = SkinSettings.TranslateSkinString(strTestKeepCase.Substring(12, pos - 12), SkinSettings.Kind.PERSISTENT);
             string strParams = strTestKeepCase.Substring(pos + 1, strTestKeepCase.Length - (pos + 2));
-            if (!string.IsNullOrEmpty(strParams) && (strParams.IndexOf('#') > -1))
-            {
-              strParams = GUIPropertyManager.Parse(strParams) ?? String.Empty;
-            }
             int compareString = ConditionalStringParameter(strParams);
             return AddMultiInfo(new GUIInfo(bNegate ? -SKIN_STRING : SKIN_STRING, skinOffset, compareString));
           }
@@ -1385,7 +1443,8 @@ namespace MediaPortal.GUI.Library
           skinOffset = SkinSettings.TranslateSkinBool(strTestKeepCase.Substring(13, strTestKeepCase.Length - 14), SkinSettings.Kind.PERSISTENT);
           return AddMultiInfo(new GUIInfo(bNegate ? -SKIN_BOOL : SKIN_BOOL, skinOffset));
         }
-        else if (strTest.Substring(0, 19) == "skin.togglesetting(")
+        // The string can be smaller, which causes an error. skin.hastheme(x) < string.togglesetting(
+        else if (strTest.Length > 19 && strTest.Substring(0, 19) == "skin.togglesetting(")
         {
           // this condition uses GUIPropertyManager, which is case sensitive.
           string strTestKeepCase = strCondition;
@@ -1409,8 +1468,7 @@ namespace MediaPortal.GUI.Library
             strTestKeepCase = strTestKeepCase.Remove(0, 1);
           }
 
-          int compareString =
-            ConditionalStringParameter(strTestKeepCase.Substring(14, strTestKeepCase.Length - 15));
+          int compareString = ConditionalStringParameter(strTestKeepCase.Substring(14, strTestKeepCase.Length - 15));
           return AddMultiInfo(new GUIInfo(bNegate ? -SKIN_THEME : SKIN_THEME, 0, compareString));
         }
       }
@@ -1642,9 +1700,11 @@ namespace MediaPortal.GUI.Library
       {
         if (parameter == m_stringParameters[i])
         {
+          // Log.Warn("+++ Found string parameter: {0} - > {1}", parameter, i);
           return (int)i;
         }
       }
+      // Log.Warn("+++ Added string parameter: {0} - > {1}", parameter, m_stringParameters.Count);
       // return the new offset
       m_stringParameters.Add(parameter);
       return (int)m_stringParameters.Count - 1;
@@ -1666,7 +1726,7 @@ namespace MediaPortal.GUI.Library
       // operator stack
       Stack<char> save = new Stack<char>();
 
-      string operand = "";
+      string operand = string.Empty;
 
       for (int i = 0; i < expression.Length; i++)
       {
@@ -1680,7 +1740,7 @@ namespace MediaPortal.GUI.Library
             {
               comb.m_postfix.Add(iOp);
             }
-            operand = "";
+            operand = string.Empty;
           }
 
           // handle closing parenthesis
@@ -2025,7 +2085,7 @@ namespace MediaPortal.GUI.Library
 
     public static string GetString(int condition1, int dwContextWindow)
     {
-      string result = "";
+      string result = string.Empty;
       int condition = Math.Abs(condition1);
 
       if (condition >= MULTI_INFO_START && condition <= MULTI_INFO_END)
@@ -2419,7 +2479,7 @@ namespace MediaPortal.GUI.Library
     /// <returns></returns>
     private static string GetMultiInfoString(GUIInfo info, int dwContextWindow)
     {
-      string strReturn = "";
+      string strReturn = string.Empty;
 
       int condition = Math.Abs(info.m_info);
       switch (condition)
@@ -2453,10 +2513,13 @@ namespace MediaPortal.GUI.Library
         case STRING_EQUALS:
         case STRING_STARTS:
         case STRING_CONTAINS:
+        case STRING_EQUALS_V:
+        case STRING_STARTS_V:
+        case STRING_CONTAINS_V:
         case SKIN_STRING:
           if (info.m_data2 != 0)
           {
-            string prop1 = "";
+            string prop1 = string.Empty;
             string prop1Name = GetMultiBoolInfoProperty(info.m_data1);
             if (string.IsNullOrEmpty(prop1Name))
             {
@@ -2469,14 +2532,31 @@ namespace MediaPortal.GUI.Library
             }
 
             string prop2 = m_stringParameters[info.m_data2];
+
             string value1 = GUIPropertyManager.Parse(prop1).Trim().ToLowerInvariant();
             string value2 = GUIPropertyManager.Parse(prop2).Trim().ToLowerInvariant();
 
-            if ((condition == STRING_EQUALS) || (condition == SKIN_STRING))
+            if ((condition == STRING_EQUALS_V) || (condition == STRING_STARTS_V) || (condition == STRING_CONTAINS_V))
+            {
+              if (!string.IsNullOrEmpty(value1) && (value1.IndexOf('#') > -1))
+              {
+                // We try to get the final value of all properties and functions.
+                // One pass is not always enough, we do three.
+                value1 = GUIPropertyManager.Parse(GUIPropertyManager.Parse(GUIPropertyManager.Parse(prop1))).Trim().ToLowerInvariant();
+              }
+              if (!string.IsNullOrEmpty(value2) && (value2.IndexOf('#') > -1))
+              {
+                // We try to get the final value of all properties and functions.
+                // One pass is not always enough, we do three.
+                value2 = GUIPropertyManager.Parse(GUIPropertyManager.Parse(GUIPropertyManager.Parse(prop2))).Trim().ToLowerInvariant();
+              }
+            }
+            
+            if ((condition == STRING_EQUALS) || (condition == STRING_EQUALS_V) || (condition == SKIN_STRING) || string.IsNullOrEmpty(value2))
             {
               bReturn = (value1 == value2);
             }
-            else if (condition == STRING_STARTS)
+            else if ((condition == STRING_STARTS) || (condition == STRING_STARTS_V))
             {
               bReturn = value1.StartsWith(value2);
             }
@@ -2487,17 +2567,25 @@ namespace MediaPortal.GUI.Library
 
             bReturn = (info.m_info < 0) ? !bReturn : bReturn;
             AddMultiBoolInfoProperty(info, prop1Name);
-            AddMultiBoolInfoProperty(info, prop2);
+            // Removed it, because If the second parameter is a property, 
+            // then it overwrites the original value in the m_cacheMultiInfoBoolPropertiesLookup dictionary. 
+            // And the call to the GetMultiBoolInfoProperty function returns the invalid property name.
+            // AddMultiBoolInfoProperty(info, prop2);
 
             // Do not cache the result for skin settings.  The results change based on user interactions.
             if (condition != SKIN_STRING)
             {
               AddMultiInfoBoolResult(info, bReturn);
             }
+            /*
+            Log.Error("*** Prop 1: [{0}]>[{1}]=[{2}] | Prop 2: [{3}]>[{4}]=[{5}] | Cond: {6} | Res: {7}", prop1Name, prop1, value1, "*", prop2, value2, condition, bReturn);
+            Log.Error("*** Val1 [{3}] | Val2 [{4}] Contains: {0} | Equals: {1} | Start: {2}", string.IsNullOrEmpty(value2) ? (value1 == value2) : value1.Contains(value2), (value1 == value2), string.IsNullOrEmpty(value2) ? (value1 == value2) : value1.StartsWith(value2), value1, value2);
+            Log.Error("***");
+            */
           }
           else
           {
-            string skinProperty = "";
+            string skinProperty = string.Empty;
             string skinPropertyName = GetMultiBoolInfoProperty(info.m_data1);
             if (string.IsNullOrEmpty(skinPropertyName))
             {
@@ -2696,12 +2784,14 @@ namespace MediaPortal.GUI.Library
           set.Add(info);
           m_cacheMultiInfoBoolProperties[property] = set;
           m_cacheMultiInfoBoolPropertiesLookup[info.m_data1] = property;
+          // Log.Warn("+++ Added Info: N:{4}:[{0}/{1}/{2}/{3}]", info.m_info, info.m_data1, info.m_data2, info.m_stringData, property);
         }
         else
         {
           if (!set.Contains(info))
           {
             set.Add(info);
+            // Log.Warn("+++ Added Info: A:{4}:[{0}/{1}/{2}/{3}]", info.m_info, info.m_data1, info.m_data2, info.m_stringData, property);
           }
         }
       }
@@ -2716,6 +2806,7 @@ namespace MediaPortal.GUI.Library
     {
       if (m_cacheMultiInfoBoolPropertiesLookup.ContainsKey(key))
       {
+        Log.Warn("^^^ Get Info: [{0}={1}]", key, m_cacheMultiInfoBoolPropertiesLookup[key]);
         return m_cacheMultiInfoBoolPropertiesLookup[key];
       }
       return null;
@@ -2731,6 +2822,7 @@ namespace MediaPortal.GUI.Library
       lock (lockCache)
       {
         m_cacheMultiInfoBoolResults[info] = result;
+        // Log.Warn("+++ Added Result: R:{4}:[{0}/{1}/{2}/{3}]", info.m_info, info.m_data1, info.m_data2, info.m_stringData, result);
       }
     }
 
@@ -2760,16 +2852,47 @@ namespace MediaPortal.GUI.Library
       lock (lockCache)
       {
         HashSet<GUIInfo> GUIInfos = null;
-        if (!m_cacheMultiInfoBoolProperties.TryGetValue(tag, out GUIInfos))
+        // If changed property in first parameter, remove cached Result
+        if (m_cacheMultiInfoBoolProperties.TryGetValue(tag, out GUIInfos))
         {
-          return;
+          foreach (GUIInfo info in GUIInfos)
+          {
+            if (m_cacheMultiInfoBoolResults.ContainsKey(info))
+            {
+              // Log.Debug("--- Prop changed: [{0}={1}] Info: [{2}/{3}/{4}/{5}]", tag, tagValue, info.m_info, info.m_data1, info.m_data2, info.m_stringData);
+              m_cacheMultiInfoBoolResults.Remove(info);
+            }
+          }
         }
 
-        foreach (GUIInfo info in GUIInfos)
+        // If changed property in second parameter, remove cached Result
+        if (!string.IsNullOrEmpty(tag))
         {
-          if (m_cacheMultiInfoBoolResults.ContainsKey(info))
+          HashSet<GUIInfo> GUIInfosData = new HashSet<GUIInfo>();
+          for (int i = 0; i < m_stringParameters.Count; i++)
           {
-            m_cacheMultiInfoBoolResults.Remove(info);
+            if ((m_stringParameters[i].IndexOf('#') > -1) && m_stringParameters[i].Contains(tag))
+            {
+              GUIInfosData.Clear();
+              foreach (KeyValuePair<GUIInfo, bool> entry in m_cacheMultiInfoBoolResults)
+              {
+                if (entry.Key.m_data2 == (int)i)
+                {
+                  GUIInfosData.Add(entry.Key);
+                }
+              }
+              if (GUIInfosData != null)
+              {
+                foreach (GUIInfo info in GUIInfosData)
+                {
+                  if (m_cacheMultiInfoBoolResults.ContainsKey(info))
+                  {
+                    // Log.Debug("--- Prop changed: Data [{6}={7}] - [{0}={1}] Info: [{2}/{3}/{4}/{5}]", tag, tagValue, info.m_info, info.m_data1, info.m_data2, info.m_stringData, i, m_stringParameters[i]);
+                    m_cacheMultiInfoBoolResults.Remove(info);
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -2789,12 +2912,12 @@ namespace MediaPortal.GUI.Library
     /// \brief Obtains the filename of the image to show from whichever subsystem is needed
     public static string GetImage(int info, uint contextWindow)
     {
-      return "";
+      return string.Empty;
     }
 
     public static string GetLabel(int info, uint contextWindow)
     {
-      return "";
+      return string.Empty;
     }
 
     private static int TranslateListItem(string info)
