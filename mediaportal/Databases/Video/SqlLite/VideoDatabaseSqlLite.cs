@@ -3214,7 +3214,7 @@ namespace MediaPortal.Video.Database
           // Insert new movie info - no date watched update
           strSQL =
             String.Format(
-              "INSERT INTO movieinfo ( idMovie, idDirector, strPlotOutline, strPlot, strTagLine, strVotes, fRating, strCast, strCredits, iYear, strGenre, strPictureURL, strTitle, IMDBID, mpaa, runtime, iswatched, strUserReview, strFanartURL, strDirector, dateAdded, studios, country, language, lastupdate, strSortTitle, TMDBNumber, LocalDBNumber, iUserRating, MPAAText, Awards) VALUES({0},{1},'{2}','{3}','{4}','{5}','{6}','{7}','{8}',{9},'{10}','{11}','{12}','{13}','{14}',{15},{16},'{17}','{18}','{19}','{20}','{21}','{22}','{23}','{24}','{25}','{26}','{27}',{28}, {29}, {30})",
+              "INSERT INTO movieinfo ( idMovie, idDirector, strPlotOutline, strPlot, strTagLine, strVotes, fRating, strCast, strCredits, iYear, strGenre, strPictureURL, strTitle, IMDBID, mpaa, runtime, iswatched, strUserReview, strFanartURL, strDirector, dateAdded, studios, country, language, lastupdate, strSortTitle, TMDBNumber, LocalDBNumber, iUserRating, MPAAText, Awards) VALUES({0},{1},'{2}','{3}','{4}','{5}','{6}','{7}','{8}',{9},'{10}','{11}','{12}','{13}','{14}',{15},{16},'{17}','{18}','{19}','{20}','{21}','{22}','{23}','{24}','{25}','{26}','{27}',{28}, '{29}', '{30}')",
               lMovieId, lDirector, details1.PlotOutline,
               details1.Plot, details1.TagLine,
               details1.Votes, strRating,
