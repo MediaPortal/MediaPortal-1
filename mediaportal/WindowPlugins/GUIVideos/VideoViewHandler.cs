@@ -89,22 +89,22 @@ namespace MediaPortal.GUI.Video
       string fromClause = string.Empty;
 
       string defViewFields = VideoDatabase.DefaultVideoViewFields;
-      
+
       for (int i = 0; i < CurrentLevel; ++i)
       {
         BuildSelect((FilterDefinition)currentView.Filters[i], ref whereClause, ref fromClause);
       }
-      
+
       BuildWhere((FilterDefinition)currentView.Filters[CurrentLevel], ref whereClause);
       BuildRestriction((FilterDefinition)currentView.Filters[CurrentLevel], ref whereClause);
       BuildOrder((FilterDefinition)currentView.Filters[CurrentLevel], ref orderClause);
 
-      _parentWhere = whereClause; 
+      _parentWhere = whereClause;
 
       //execute the query
       string sql;
-      
-      if ((CurrentLevel >= 0) && (CurrentLevel < MaxLevels - 1))
+
+      if ((CurrentLevel >= 0) && (CurrentLevel < MaxLevels))
       {
         bool useMovieInfoTable = false;
         bool useAlbumTable = false;
@@ -114,16 +114,16 @@ namespace MediaPortal.GUI.Video
         bool useMovieCollectionTable = false;
         string join = string.Empty;
         string fields = defViewFields;
-        
+
         FilterDefinition defCurrent = (FilterDefinition)currentView.Filters[CurrentLevel];
         string view = defCurrent.Where;
-        
+
         // Actor, Director, Title Index
         if ((view == "actorindex") || (view == "directorindex") || (view == "titleindex"))
         {
-          sql = String.Format("SELECT {0} AS IX, COUNT ({1}) " + 
-                              "FROM movieView " + 
-                              "WHERE {1} <> 'unknown' AND {1} IS NOT NULL {2} GROUP BY IX ", 
+          sql = String.Format("SELECT {0} AS IX, COUNT ({1}) " +
+                              "FROM movieView " +
+                              "WHERE {1} <> 'unknown' AND {1} IS NOT NULL {2} GROUP BY IX ",
                               GetFieldId(view), GetFieldName(view), (!string.IsNullOrEmpty(whereClause) ? "AND " + whereClause : ""));
           VideoDatabase.GetIndexByFilter(sql, true, out movies);
           return movies;
@@ -132,7 +132,7 @@ namespace MediaPortal.GUI.Video
         // Year
         if (view == "year")
         {
-          sql = String.Format("SELECT DISTINCT {0} FROM movieView {1}", 
+          sql = String.Format("SELECT DISTINCT {0} FROM movieView {1}",
                               GetFieldId(view), (!string.IsNullOrEmpty(whereClause) ? "WHERE " + whereClause : ""));
           SQLiteResultSet results = VideoDatabase.GetResults(sql);
 
@@ -147,7 +147,7 @@ namespace MediaPortal.GUI.Video
 
         string table = GetTable(view, ref useMovieInfoTable, ref useAlbumTable, ref useActorsTable,
                                       ref useGenreTable, ref useUserGroupsTable, ref useMovieCollectionTable);
-        
+
         // Recently added, Recently watched
         if ((view == "recently added") || (view == "recently watched"))
         {
@@ -162,7 +162,7 @@ namespace MediaPortal.GUI.Video
             DateTime searchDate = DateTime.Today - ts;
 
             whereClause = String.Format("WHERE {0} >= '{1}'",
-                                        GetFieldId(view), 
+                                        GetFieldName(view),
                                         searchDate.ToString("yyyy-MM-dd" + " 00:00:00"));
             useMovieInfoTable = true;
           }
@@ -177,7 +177,7 @@ namespace MediaPortal.GUI.Video
         // Actor
         else if (view == "actor")
         {
-          fields = "idActor, strActor, imdbActorId" ;
+          fields = "idActor, strActor, imdbActorId";
           whereClause = "WHERE strActor <> 'unknown' AND strActor IS NOT NULL";
         }
         // Genre
@@ -201,6 +201,8 @@ namespace MediaPortal.GUI.Video
         // Title
         else
         {
+          fields = defViewFields;
+          whereClause = string.Empty; // Already storred in ParentWhere
           useMovieInfoTable = true;
         }
 
@@ -216,7 +218,7 @@ namespace MediaPortal.GUI.Video
             whereClause = "WHERE " + ParentWhere;
           }
         }
-        
+
         sql = String.Format("SELECT DISTINCT {0} FROM {1} {2} {3} {4}",
                             fields, table, join, whereClause, orderClause);
         VideoDatabase.GetMoviesByFilter(sql, out movies, useActorsTable, useMovieInfoTable, useGenreTable, useUserGroupsTable, useMovieCollectionTable);
@@ -224,21 +226,11 @@ namespace MediaPortal.GUI.Video
         if ((view == "user groups") || (view == "movie collections"))
         {
           ArrayList moviesExt = new ArrayList();
-          sql = String.Format("SELECT DISTINCT {0} FROM {1} WHERE {2} IS NULL {3} ORDER BY strTitle", 
+          sql = String.Format("SELECT DISTINCT {0} FROM {1} WHERE {2} IS NULL {3} ORDER BY strTitle",
                               defViewFields, table, GetFieldId(view), (!string.IsNullOrEmpty(ParentWhere) ? "AND " + ParentWhere : ""));
           VideoDatabase.GetMoviesByFilter(sql, out moviesExt, false, true, false, false, false);
           movies.AddRange(moviesExt);
         }
-      }
-      else // Last level always Movies
-      {
-        if (whereClause != string.Empty)
-        {
-          whereClause = "WHERE " + whereClause;
-        }
-        sql = String.Format("SELECT DISTINCT {0} FROM movieView {1} {2}", 
-                             defViewFields, whereClause, orderClause);
-        VideoDatabase.GetMoviesByFilter(sql, out movies, true, true, true, true, true);
       }
       return movies;
     }
