@@ -101,6 +101,7 @@ namespace Mediaportal.TV.TvPlugin
 
     private StringBuilder sb = new StringBuilder();
     private StringBuilder sbTmp = new StringBuilder();
+    private static bool _forceResetTvGroupChannelListCache = false;
 
     #region Serialisation
 
@@ -335,6 +336,12 @@ namespace Mediaportal.TV.TvPlugin
       return lstChannels;
     }
 
+    public static void ResetTvGroupChannelListCache()
+    {
+      _forceResetTvGroupChannelListCache = true;
+    }
+
+
     private void OnGroupChanged()
     {
       Stopwatch bClock = Stopwatch.StartNew();
@@ -387,9 +394,10 @@ namespace Mediaportal.TV.TvPlugin
     {
       int idGroup = TVHome.Navigator.CurrentGroup.IdGroup;
 
-      if (_tvGroupChannelListCache == null)
+      if (_tvGroupChannelListCache == null || _forceResetTvGroupChannelListCache)
       {
         _tvGroupChannelListCache = new Dictionary<int, List<Server.TVDatabase.Entities.Channel>>();
+        _forceResetTvGroupChannelListCache = false;
       }
 
       List<Server.TVDatabase.Entities.Channel> channels = null;
