@@ -3213,6 +3213,22 @@ namespace MediaPortal.GUI.Video
           // set label 1 & 2
           SetLabel(item);
 
+          // Set Ratings and LastUpdate
+          if (movieId > 0)
+          {
+            IMDBMovie movie = new IMDBMovie();
+            VideoDatabase.GetMovieInfoById(movieId, ref movie);
+            item.Rating = movie.Rating;
+            item.UserRating = movie.UserRating;
+
+            DateTime lastUpdate;
+            DateTime.TryParseExact(movie.LastUpdate, "yyyy-MM-dd HH:mm:ss",
+                                   CultureInfo.CurrentCulture,
+                                   DateTimeStyles.None,
+                                   out lastUpdate);
+            item.Updated = lastUpdate;
+          }
+
           // Set watched status and label 3
           if (item.IsBdDvdFolder || Util.Utils.IsVideo(item.Path))
           {

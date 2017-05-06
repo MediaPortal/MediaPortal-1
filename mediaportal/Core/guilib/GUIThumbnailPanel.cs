@@ -179,6 +179,20 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("RatingUserImageTexturePrefix")] protected string _ratingUserImageTexturePrefix = string.Empty; // Filename -> Prefix + UserRatingNumber + Suffix (if Suffix empty then .png)
     [XMLSkinElement("RatingUserImageTextureSuffix")] protected string _ratingUserImageTextureSuffix = string.Empty; // For Prefix = Rating, UserRating = 10, Suffix = Red.png -> Rating10Red.png
 
+    [XMLSkinElement("showNewImage")] protected bool _showNewImage = false;
+    [XMLSkin("showNewImage", "HotDays")] protected int _newImageHotDays = -1; // -1 Disable
+    [XMLSkin("showNewImage", "NewDays")] protected int _newImageNewDays = 3; // -1 Disable
+    [XMLSkinElement("NewImagePosX")] protected int _newImagePosXLow = 0;
+    [XMLSkin("NewImagePosX", "Big")] protected int _newImagePosXBig = 0;
+    [XMLSkinElement("NewImagePosY")] protected int _newImagePosYLow = 0;
+    [XMLSkin("NewImagePosY", "Big")] protected int _newImagePosYBig = 0;
+    [XMLSkinElement("NewImageWidth")] protected int _newImageWidthLow = 0;
+    [XMLSkin("NewImageWidth", "Big")] protected int _newImageWidthBig = 0;
+    [XMLSkinElement("NewImageHeight")] protected int _newImageHeightLow = 0;
+    [XMLSkin("NewImageHeight", "Big")] protected int _newImageHeightBig = 0;
+    [XMLSkinElement("NewImageTexture")] protected string _newImageTexture = "hot.png";
+    [XMLSkinElement("NewImageHotTexture")] protected string _newImageTextureHot = "new.png";
+
     #endregion
 
     private int _watchedImagePosX = 0;
@@ -195,6 +209,11 @@ namespace MediaPortal.GUI.Library
     private int _ratingImagePosY = 0;
     private int _ratingImageWidth = 0;
     private int _ratingImageHeight = 0;
+
+    private int _newImagePosX = 0;
+    private int _newImagePosY = 0;
+    private int _newImageWidth = 0;
+    private int _newImageHeight = 0;
 
     protected int _lowItemHeight;
     protected int _lowItemWidth;
@@ -371,6 +390,11 @@ namespace MediaPortal.GUI.Library
       _ratingImageWidth = _ratingImageWidthLow;
       _ratingImageHeight = _ratingImageHeightLow;
 
+      _newImagePosX = _newImagePosXLow;
+      _newImagePosY = _newImagePosYLow;
+      _newImageWidth = _newImageWidthLow;
+      _newImageHeight = _newImageHeightLow;
+
       GUIImageAllocator.ClearCachedAllocatorImages();
 
       GUIPropertyManager.SetProperty("#facadeview.focus.X", string.Empty);
@@ -400,13 +424,17 @@ namespace MediaPortal.GUI.Library
                                                      ref _folderStatusImageWidthLow,  ref _folderStatusImageHeightLow);
       GUIGraphicsContext.ScaleRectToScreenResolution(ref _ratingImagePosXLow, ref _ratingImagePosYLow,
                                                      ref _ratingImageWidthLow,  ref _ratingImageHeightLow);
+      GUIGraphicsContext.ScaleRectToScreenResolution(ref _newImagePosXLow, ref _newImagePosYLow,
+                                                     ref _newImageWidthLow, ref _newImageHeightLow);
 
       GUIGraphicsContext.ScaleRectToScreenResolution(ref _watchedImagePosXBig, ref _watchedImagePosYBig,
                                                      ref _watchedImageWidthBig,  ref _watchedImageHeightBig);
       GUIGraphicsContext.ScaleRectToScreenResolution(ref _folderStatusImagePosXBig, ref _folderStatusImagePosYBig,
                                                      ref _folderStatusImageWidthBig,  ref _folderStatusImageHeightBig);
       GUIGraphicsContext.ScaleRectToScreenResolution(ref _ratingImagePosXBig, ref _ratingImagePosYBig,
-                                                     ref _ratingImageWidthBig,  ref _ratingImageHeightBig);
+                                                     ref _ratingImageWidthBig, ref _ratingImageHeightBig);
+      GUIGraphicsContext.ScaleRectToScreenResolution(ref _newImagePosXBig, ref _newImagePosYBig,
+                                                     ref _newImageWidthBig, ref _newImageHeightBig);
     }
 
     /// <summary>
@@ -501,6 +529,31 @@ namespace MediaPortal.GUI.Library
         if (!string.IsNullOrEmpty(_folderStatusImageRemoteTexture))
         {
           _overlayImage = new GUIOverlayImage(_folderStatusImagePosX, _folderStatusImagePosY, _folderStatusImageWidth, _folderStatusImageHeight, _folderStatusImageRemoteTexture);
+          _overlayList.Add(_overlayImage);
+        }
+      }
+
+      // 4. New images
+      if (_showNewImage && (_newImageHotDays > -1 || _newImageNewDays > -1) && pItem.Updated != DateTime.MinValue)
+      {
+        int diffDays = (DateTime.Now - pItem.Updated).Days;
+        GUIOverlayImage _overlayImage = null;
+        if (_newImageHotDays > 0 && !string.IsNullOrEmpty(_newImageTextureHot))
+        {
+          if (diffDays <= _newImageHotDays)
+          {
+            _overlayImage = new GUIOverlayImage(_newImagePosX, _newImagePosY, _newImageWidth, _newImageHeight, _newImageTextureHot);
+          }
+        }
+        if (_newImageNewDays > 0 && !string.IsNullOrEmpty(_newImageTexture))
+        {
+          if (diffDays > _newImageHotDays && diffDays <= _newImageNewDays)
+          {
+            _overlayImage = new GUIOverlayImage(_newImagePosX, _newImagePosY, _newImageWidth, _newImageHeight, _newImageTexture);
+          }
+        }
+        if (_overlayImage != null)
+        {
           _overlayList.Add(_overlayImage);
         }
       }
@@ -2761,6 +2814,11 @@ namespace MediaPortal.GUI.Library
         _ratingImagePosY = _ratingImagePosYBig;
         _ratingImageWidth = _ratingImageWidthBig;
         _ratingImageHeight = _ratingImageHeightBig;
+
+        _newImagePosX = _newImagePosXBig;
+        _newImagePosY = _newImagePosYBig;
+        _newImageWidth = _newImageWidthBig;
+        _newImageHeight = _newImageHeightBig;
       }
       else
       {
@@ -2786,6 +2844,11 @@ namespace MediaPortal.GUI.Library
         _ratingImagePosY = _ratingImagePosYLow;
         _ratingImageWidth = _ratingImageWidthLow;
         _ratingImageHeight = _ratingImageHeightLow;
+
+        _newImagePosX = _newImagePosXLow;
+        _newImagePosY = _newImagePosYLow;
+        _newImageWidth = _newImageWidthLow;
+        _newImageHeight = _newImageHeightLow;
       }
       Calculate();
       _refresh = true;

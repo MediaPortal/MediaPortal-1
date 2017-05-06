@@ -140,6 +140,16 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("RatingUserImageTexturePrefix")] protected string _ratingUserImageTexturePrefix = string.Empty; // Filename -> Prefix + UserRatingNumber + Suffix (if Suffix empty then .png)
     [XMLSkinElement("RatingUserImageTextureSuffix")] protected string _ratingUserImageTextureSuffix = string.Empty; // For Prefix = Rating, UserRating = 10, Suffix = Red.png -> Rating10Red.png
 
+    [XMLSkinElement("showNewImage")] protected bool _showNewImage = false;
+    [XMLSkin("showNewImage", "HotDays")] protected int _newImageHotDays = -1; // -1 Disable
+    [XMLSkin("showNewImage", "NewDays")] protected int _newImageNewDays = 3; // -1 Disable
+    [XMLSkinElement("NewImagePosX")] protected int _newImagePosX = 0;
+    [XMLSkinElement("NewImagePosY")] protected int _newImagePosY = 0;
+    [XMLSkinElement("NewImageWidth")] protected int _newImageWidth = 0;
+    [XMLSkinElement("NewImageHeight")] protected int _newImageHeight = 0;
+    [XMLSkinElement("NewImageTexture")] protected string _newImageTexture = "hot.png";
+    [XMLSkinElement("NewImageHotTexture")] protected string _newImageTextureHot = "new.png";
+
     #endregion
 
     #region Member variables
@@ -410,6 +420,31 @@ namespace MediaPortal.GUI.Library
         }
       }
 
+      // 4. New images
+      if (_showNewImage && (_newImageHotDays > -1 || _newImageNewDays > -1) && pItem.Updated != DateTime.MinValue)
+      {
+        int diffDays = (DateTime.Now - pItem.Updated).Days;
+        GUIOverlayImage _overlayImage = null;
+        if (_newImageHotDays > 0 && !string.IsNullOrEmpty(_newImageTextureHot))
+        {
+          if (diffDays <= _newImageHotDays)
+          {
+            _overlayImage = new GUIOverlayImage(_newImagePosX, _newImagePosY, _newImageWidth, _newImageHeight, _newImageTextureHot);
+          }
+        }
+        if (_newImageNewDays > 0 && !string.IsNullOrEmpty(_newImageTexture))
+        {
+          if (diffDays > _newImageHotDays && diffDays <= _newImageNewDays)
+          {
+            _overlayImage = new GUIOverlayImage(_newImagePosX, _newImagePosY, _newImageWidth, _newImageHeight, _newImageTexture);
+          }
+        }
+        if (_overlayImage != null)
+        {
+          _overlayList.Add(_overlayImage);
+        }
+      }
+
       return _overlayList;
     }
 
@@ -540,6 +575,8 @@ namespace MediaPortal.GUI.Library
                                                      ref _folderStatusImageWidth,  ref _folderStatusImageHeight);
       GUIGraphicsContext.ScaleRectToScreenResolution(ref _ratingImagePosX, ref _ratingImagePosY,
                                                      ref _ratingImageWidth,  ref _ratingImageHeight);
+      GUIGraphicsContext.ScaleRectToScreenResolution(ref _newImagePosX, ref _newImagePosY,
+                                                     ref _newImageWidth, ref _newImageHeight);
 
       // Reallocate the card images using the new sizes.
       _reAllocate = true;

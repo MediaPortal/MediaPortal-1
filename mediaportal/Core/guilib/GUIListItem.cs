@@ -77,6 +77,7 @@ namespace MediaPortal.GUI.Library
     private bool _retrieveCoverArtAllowed = true;
     private int _dimColor = 0x60ffffff;
     private bool _isBdDvdFolder = false; // is DVD or BD rip folder
+    private DateTime _dtUpdated = DateTime.MinValue;
 
     /// <summary>
     /// The (empty) constructor of the GUIListItem.
@@ -113,6 +114,7 @@ namespace MediaPortal.GUI.Library
       _isBdDvdFolder = item._isBdDvdFolder;
       _isUserGroup = item._isUserGroup;
       _isCollection = item._isCollection;
+      _dtUpdated = item._dtUpdated;
     }
 
     public GUIListItem(string aLabel, string aLabel2, string aPath, bool aIsFolder, FileInformation aFileInformation)
@@ -598,6 +600,15 @@ namespace MediaPortal.GUI.Library
     {
       get { return _hasProgressBar; }
       set { _hasProgressBar = value; }
+    }
+
+    /// <summary>
+    /// Get/set the last updated date/time of the movie/song.
+    /// </summary>
+    public DateTime Updated
+    {
+      get { return _dtUpdated; }
+      set { _dtUpdated = value; }
     }
 
     /// <summary>

@@ -950,6 +950,13 @@ namespace MediaPortal.GUI.Video
         item.IsPlayed = movie.Watched > 0;
         item.IsCollection = !string.IsNullOrEmpty(movie.SingleMovieCollection);
         item.IsUserGroup = !string.IsNullOrEmpty(movie.SingleUserGroup);
+        
+        DateTime lastUpdate;
+        DateTime.TryParseExact(movie.LastUpdate, "yyyy-MM-dd HH:mm:ss",
+                               CultureInfo.CurrentCulture,
+                               DateTimeStyles.None,
+                               out lastUpdate);
+        item.Updated = lastUpdate;
 
         try
         {
