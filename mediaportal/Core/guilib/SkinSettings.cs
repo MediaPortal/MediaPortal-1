@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2017 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2017 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -18,13 +18,13 @@
 
 #endregion
 
-using MediaPortal.Configuration;
 using MediaPortal.Profile;
 using MediaPortal.Services;
 using MediaPortal.Threading;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace MediaPortal.GUI.Library
 {
@@ -76,18 +76,20 @@ namespace MediaPortal.GUI.Library
     /// <returns></returns>
     public static int TranslateSkinString(string line, Kind kind)
     {
-      Dictionary<int, SkinString>.Enumerator enumer = _skinStringSettings.GetEnumerator();
-      while (enumer.MoveNext())
+      lock (_skinStringSettings)
       {
-        SkinString skin = enumer.Current.Value;
-        if (skin.Name == line)
+        foreach (int iKey in _skinStringSettings.Keys.ToList())
         {
-          if (skin.Kind == Kind.TRANSIENT && kind == Kind.PERSISTENT)
+          SkinString skin = _skinStringSettings[iKey];
+          if (skin.Name == line)
           {
-            skin.Kind = kind;
-            _skinStringSettings[enumer.Current.Key] = skin;
+            if (skin.Kind == Kind.TRANSIENT && kind == Kind.PERSISTENT)
+            {
+              skin.Kind = kind;
+              _skinStringSettings[iKey] = skin;
+            }
+            return iKey;
           }
-          return enumer.Current.Key;
         }
       }
 
@@ -184,20 +186,23 @@ namespace MediaPortal.GUI.Library
     /// <returns></returns>
     public static int TranslateSkinBool(string setting, Kind kind)
     {
-      Dictionary<int, SkinBool>.Enumerator enumer = _skinBoolSettings.GetEnumerator();
-      while (enumer.MoveNext())
+      lock (_skinBoolSettings)
       {
-        SkinBool skin = enumer.Current.Value;
-        if (skin.Name == setting)
+        foreach (int iKey in _skinBoolSettings.Keys.ToList())
         {
-          if (skin.Kind == Kind.TRANSIENT && kind == Kind.PERSISTENT)
+          SkinBool skin = _skinBoolSettings[iKey];
+          if (skin.Name == setting)
           {
-            skin.Kind = kind;
-            _skinBoolSettings[enumer.Current.Key] = skin;
+            if (skin.Kind == Kind.TRANSIENT && kind == Kind.PERSISTENT)
+            {
+              skin.Kind = kind;
+              _skinBoolSettings[iKey] = skin;
+            }
+            return iKey;
           }
-          return enumer.Current.Key;
         }
       }
+
       SkinBool newBool = new SkinBool();
       newBool.Name = setting;
       newBool.Value = false;
