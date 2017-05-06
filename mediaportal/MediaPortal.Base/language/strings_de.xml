@@ -136,7 +136,7 @@
 		<String id="170">Album: </String>
 		<String id="171">Interpret: </String>
 		<String id="172">Veröffentlichung: </String>
-		<String id="173">Bewertung: </String>
+		<String id="173">Altersfreigabe: </String>
 		<String id="174">Kategorie: </String>
 		<String id="175">Einflüsse: </String>
 		<String id="176">Stile: </String>
@@ -1321,6 +1321,9 @@
 		<String id="2145">Aktuelle Wiedergabeliste verwenden</String>
 		<String id="2146">Nicht genug Platz auf der CD</String>
 		<String id="2147">Nicht genug Platz auf der DVD</String>
+                <String id="2162">Kanal löschen</String>
+                <String id="2163">Kanal zu einer Gruppe hinzufügen</String>
+                <String id="2164">Kanal aus Gruppe entfernen</String>
 		<String id="2200" prefix="Mein ">Explorer</String>
 		<String id="2201">Quelle wählen</String>
 		<String id="2202">Ziel wählen</String>
