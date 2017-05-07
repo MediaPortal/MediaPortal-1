@@ -80,6 +80,7 @@ namespace TvPlugin
     private bool _byIndex = false;
     private bool _showChannelNumber = false;
     private int _channelNumberMaxLength = 3;
+    private static bool _forceResetTvGroupChannelListCache = false;
 
     private Dictionary<int, DateTime> _nextEPGupdate = new Dictionary<int, DateTime>();
     private Dictionary<int, Dictionary<int, NowAndNext>> _listNowNext = new Dictionary<int, Dictionary<int, NowAndNext>>();
@@ -448,13 +449,20 @@ namespace TvPlugin
       Log.Debug("TvMiniGuide: FillGroupList finished after {0} ms", benchClock.ElapsedMilliseconds.ToString());
     }
 
+    public static void ResetTvGroupChannelListCache()
+    {
+      _forceResetTvGroupChannelListCache = true;
+      Log.Debug("TvMiniGuide: ResetTvGroupChannelListCache()");
+    }
+
     private List<Channel> GetChannelListByGroup()
     {
       int idGroup = TVHome.Navigator.CurrentGroup.IdGroup;
 
-      if (_tvGroupChannelListCache == null)
+      if (_tvGroupChannelListCache == null || _forceResetTvGroupChannelListCache)
       {
         _tvGroupChannelListCache = new Dictionary<int, List<Channel>>();
+        _forceResetTvGroupChannelListCache = false;
       }
 
       List<Channel> channels = null;

@@ -1,0 +1,131 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <controls>
+	
+
+	  <control>
+		<description>button group</description>
+		<type>group</type>
+		<visible allowhiddenfocus="true">control.hasfocus(260)|control.hasfocus(261)|control.hasfocus(262)|control.hasfocus(263)|control.hasfocus(264)|control.hasfocus(265)|control.hasfocus(266)|control.hasfocus(267)|control.hasfocus(268)|control.hasfocus(269)|control.hasfocus(360)|control.hasfocus(361)|control.hasfocus(362)|control.hasfocus(363)|control.hasfocus(364)|control.hasfocus(416)|control.hasfocus(417)|control.hasfocus(418)|control.hasfocus(419)|control.hasfocus(420)|control.hasfocus(616)|control.hasfocus(617)|control.hasfocus(618)|control.hasfocus(619)|control.hasfocus(620)</visible>   
+		
+
+		<control>
+         <description>Enable weather in homescreen</description>
+         <type>checkbutton</type>
+         <id>616</id>
+		 <posX>70</posX>
+		 <posY>360</posY>			 
+         <label></label>
+		 <font>font12</font>
+		 <width>50</width>
+		 <textcolorNoFocus>99ffffff</textcolorNoFocus>
+		 <onESC>#(skin.setfocus(35,cint(#skin.currentTile)))</onESC>
+         <textureFocus>check_fo.png</textureFocus>
+		 <textureNoFocus></textureNoFocus>
+         <onfocus>#(skin.setstring('#skin.test2','Enable custom name for this tile'))</onfocus>
+         <selected>#(skin.hassetting('#skin.tile16cne'))</selected>
+         <onclick>#(skin.togglesetting('#skin.tile16cne'))</onclick>
+         <onup>416</onup>
+		 <onright>616</onright>
+		 <onleft>616</onleft>
+         <ondown>00515</ondown>
+        </control>	  
+	  
+
+	  
+		<control>
+         <description>Enable weather in homescreen</description>
+         <type>checkbutton</type>
+         <id>617</id>
+		 <posX>735</posX>
+		 <posY>360</posY>			 
+         <label></label>
+		 <font>font12</font>
+		 <width>50</width>
+		 <textcolorNoFocus>99ffffff</textcolorNoFocus>
+		 <onESC>#(skin.setfocus(35,cint(#skin.currentTile)))</onESC>
+         <textureFocus>check_fo.png</textureFocus>
+		 <textureNoFocus></textureNoFocus>
+         <onfocus>#(skin.setstring('#skin.test2','Enable custom name for this tile'))</onfocus>
+         <selected>#(skin.hassetting('#skin.tile17cne'))</selected>
+         <onclick>#(skin.togglesetting('#skin.tile17cne'))</onclick>
+         <onup>417</onup>
+		 <onright>617</onright>
+		 <onleft>617</onleft>
+         <ondown>00516</ondown>
+        </control>	 	  
+	  
+	    
+		<control>
+         <description>Enable weather in homescreen</description>
+         <type>checkbutton</type>
+         <id>618</id>
+		 <posX>735</posX>
+		 <posY>675</posY>			 
+         <label></label>
+		 <font>font12</font>
+		 <width>50</width>
+		 <textcolorNoFocus>99ffffff</textcolorNoFocus>
+		 <onESC>#(skin.setfocus(35,cint(#skin.currentTile)))</onESC>
+         <textureFocus>check_fo.png</textureFocus>
+		 <textureNoFocus></textureNoFocus>
+         <onfocus>#(skin.setstring('#skin.test2','Enable custom name for this tile'))</onfocus>
+         <selected>#(skin.hassetting('#skin.tile18cne'))</selected>
+         <onclick>#(skin.togglesetting('#skin.tile18cne'))</onclick>
+         <onup>418</onup>
+		 <onright>618</onright>
+		 <onleft>618</onleft>
+         <ondown>00517</ondown>
+        </control>	
+
+	  
+		<control>
+         <description>Enable weather in homescreen</description>
+         <type>checkbutton</type>
+         <id>619</id>
+		 <posX>1320</posX>
+		 <posY>360</posY>			 
+         <label></label>
+		 <font>font12</font>
+		 <width>50</width>
+		 <textcolorNoFocus>99ffffff</textcolorNoFocus>
+		 <onESC>#(skin.setfocus(35,cint(#skin.currentTile)))</onESC>
+         <textureFocus>check_fo.png</textureFocus>
+		 <textureNoFocus></textureNoFocus>
+         <onfocus>#(skin.setstring('#skin.test2','Enable custom name for this tile'))</onfocus>
+         <selected>#(skin.hassetting('#skin.tile19cne'))</selected>
+         <onclick>#(skin.togglesetting('#skin.tile19cne'))</onclick>
+         <onup>419</onup>
+		 <onright>619</onright>
+		 <onleft>619</onleft>
+         <ondown>00518</ondown>
+        </control>	
+	  
+	  
+		<control>
+         <description>Enable weather in homescreen</description>
+         <type>checkbutton</type>
+         <id>620</id>
+		 <posX>1320</posX>
+		 <posY>675</posY>		 
+         <label></label>
+		 <font>font12</font>
+		 <width>50</width>
+		 <textcolorNoFocus>99ffffff</textcolorNoFocus>
+		 <onESC>#(skin.setfocus(35,cint(#skin.currentTile)))</onESC>
+         <textureFocus>check_fo.png</textureFocus>
+		 <textureNoFocus></textureNoFocus>
+         <onfocus>#(skin.setstring('#skin.test2','Enable custom name for this tile'))</onfocus>
+         <selected>#(skin.hassetting('#skin.tile20cne'))</selected>
+         <onclick>#(skin.togglesetting('#skin.tile20cne'))</onclick>
+         <onup>420</onup>
+		 <onright>620</onright>
+		 <onleft>620</onleft>
+         <ondown>00519</ondown>
+        </control>	
+		
+		
+	  </control>	
+
+  </controls>
+</window>

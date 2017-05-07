@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<window> 
+	<controls>
+
+	  <control>
+		<description>Cover Art</description>
+		<type>image</type>
+		<id>0</id>
+        <posX>1444</posX>
+        <posY>197</posY>
+        <width>422</width>
+        <height>605</height>
+		<keepaspectratio>no</keepaspectratio>
+        <zoomfromtop>no</zoomfromtop>
+        <texture mask="CAmask.png">blue.png</texture>
+		<visible>facadeview.largeicons+[Control.IsVisible(1237)|Control.IsVisible(1238)]</visible>
+	  </control>
+
+	  <control>
+		<description>Cover Art</description>
+		<type>image</type>
+		<id>500</id>
+        <posX>1444</posX>
+        <posY>197</posY>
+        <width>422</width>
+        <height>605</height>
+		<keepaspectratio>no</keepaspectratio>
+        <zoomfromtop>no</zoomfromtop>
+        <texture mask="CAmask.png">#Anime3.GroupSeriesPoster</texture>
+		<visible>facadeview.largeicons+[Control.IsVisible(1237)|Control.IsVisible(1238)]</visible>
+	  </control>
+	  
+	 <control>
+        <description>Little Poster</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>56</posX>
+        <posY>828</posY>
+		<height>190</height>
+		<width>137</width>
+        <texture mask="CAmask_small.png">blue.png</texture>
+        <colordiffuse>ffffffff</colordiffuse>
+		<visible>facadeview.largeicons+[Control.IsVisible(1237)|Control.IsVisible(1238)]</visible>
+      </control>
+	  
+	 <control>
+        <description>Little Poster</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>56</posX>
+        <posY>828</posY>
+		<height>190</height>
+		<width>137</width>
+        <texture mask="CAmask_small.png">#Anime3.GroupSeriesPoster</texture>
+        <colordiffuse>ffffffff</colordiffuse>
+		<visible>facadeview.largeicons+[Control.IsVisible(1237)|Control.IsVisible(1238)]</visible>
+      </control>
+	  
+	  <control>
+        <description>Cover Art</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>1416</posX>
+        <posY>182</posY>
+        <width>28</width>
+        <height>619</height>
+        <texture>D_side.png</texture>
+		<visible>facadeview.largeicons+[Control.IsVisible(1237)|Control.IsVisible(1238)]</visible>
+      </control>
+
+	  
+	  <control>
+		<type>textboxscrollup</type>
+		<description>Description (grouplist)</description>
+		<id>0</id>
+		<posX>215</posX>
+		<posY>880</posY>
+		<width>1555</width>
+		<height>125</height>
+		<font>font13</font>
+		<textcolor>99ffffff</textcolor>
+		<label>#Anime3.Description</label>
+		<lineSpacing>0.92</lineSpacing>
+		<seperator>---------------------------------------------------------------------------------------------------------------------</seperator>
+		<visible>facadeview.largeicons+[Control.IsVisible(1237)|Control.IsVisible(1238)]</visible>
+	  </control>
+	  
+
+	<control>
+		<type>imagelist</type>
+		<id>101</id>
+		<posX>5561</posX>
+		<posY>345</posY>
+		<width>315</width>
+		<height>29</height>
+		<textureWidth>32</textureWidth>
+		<textureHeight>27</textureHeight>
+		<subitems>
+		<subitem>starblack.png</subitem>
+		<subitem>starblue.png</subitem>
+		</subitems>
+		<orientation>horizontal</orientation>
+		<align>left</align>
+		<imagesToDraw>10</imagesToDraw>
+		<percentage>#Anime3.SeriesGroup.RawRating</percentage>
+		<visible>[facadeview.largeicons+[Control.IsVisible(1237)|Control.IsVisible(1238)]]+[!string.equals(#Anime3.SeriesGroup.RawRating, 0)]</visible>
+	</control>
+	
+	<control>
+		<description>Rating Value</description>
+		<type>label</type>
+		<id>0</id>
+		<posX>-10</posX>
+		<posY>10</posY>
+		<label>#Anime3.SeriesGroup.Rating</label>
+		<font>font12</font>
+		<textcolor>ffffffff</textcolor>
+		<visible>[facadeview.largeicons+[Control.IsVisible(1237)|Control.IsVisible(1238)]]+[!string.equals(#Anime3.SeriesGroup.RawRating, 0)]</visible>			
+	</control>
+		<control>
+		<type>imagelist</type>
+		<id>101</id>
+		<posX>5561</posX>
+		<posY>377</posY>
+		<width>315</width>
+		<height>29</height>
+		<textureWidth>32</textureWidth>
+		<textureHeight>27</textureHeight>
+		<subitems>
+		<subitem>starblack.png</subitem>
+		<subitem>starwhite.png</subitem>
+		</subitems>
+		<orientation>horizontal</orientation>
+		<align>left</align>
+		<imagesToDraw>10</imagesToDraw>
+		<percentage>#Anime3.SeriesGroup.MyRating</percentage>
+		<visible>facadeview.largeicons+[Control.IsVisible(1237)|Control.IsVisible(1238)]+[!string.equals(#Anime3.SeriesGroup.MyRating, )]</visible>
+	</control>
+	<control>
+		<description>Rating Value</description>
+		<type>label</type>
+		<id>0</id>
+		<posX>-10</posX>
+		<posY>50</posY>
+		<label>#Anime3.SeriesGroup.MyRating (your vote)</label>
+		<font>font12</font>
+		<textcolor>FFffffff</textcolor>
+		<visible>facadeview.largeicons+[Control.IsVisible(1237)|Control.IsVisible(1238)]+[!string.equals(#Anime3.SeriesGroup.MyRating, )]</visible>			
+	</control>
+	
+	
+	
+		
+
+	</controls>
+</window>

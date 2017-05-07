@@ -1,0 +1,77 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- 
+This file should contain the list view
+-->
+<window>
+  <controls>
+  
+	
+	  <control>
+        <description>Cover Art</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>1444</posX>
+        <posY>197</posY>
+        <width>422</width>
+        <height>605</height>
+        <texture mask="CAmask.png">defaultVideoBig.png</texture>
+        <visible>facadeview.list|facadeview.smallicons|facadeview.largeicons+[!control.hasthumb(40000)]</visible>
+      </control>
+	  
+
+	  <control>
+        <description>Cover Art</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>1444</posX>
+        <posY>197</posY>
+        <width>422</width>
+        <height>605</height>
+		<keepaspectratio>no</keepaspectratio>
+        <zoomfromtop>no</zoomfromtop>
+        <texture mask="CAmask.png">#Emulators2.CurrentItem.coverpath</texture>
+        <visible>facadeview.list|facadeview.smallicons|facadeview.largeicons+[!facadeview.smallicons+!control.isvisible(51)]</visible>
+      </control>	
+
+	  
+	
+	  <control>
+        <description>Cover Art</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>56</posX>
+        <posY>828</posY>
+		<height>190</height>
+		<width>137</width>
+        <texture mask="CAmask_small.png">defaultVideoBig.png</texture>
+        <visible>!control.hasthumb(40000)</visible>
+      </control>		
+	  
+	  
+	  <control>
+        <description>Little Poster</description>
+        <type>image</type>
+        <id>400000</id>
+        <posX>56</posX>
+        <posY>828</posY>
+		<height>190</height>
+		<width>137</width>
+        <texture mask="CAmask_small.png">#Emulators2.CurrentItem.coverpath</texture>
+        <colordiffuse>ffffffff</colordiffuse>
+      </control>	
+	  
+	  <control>
+        <description>Cover Art</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>1416</posX>
+        <posY>182</posY>
+        <width>28</width>
+        <height>619</height>
+        <texture>D_side.png</texture>
+		<visible>!facadeview.coverflow+!facadeview.filmstrip</visible>
+      </control>		  
+        
+
+  </controls>
+</window>

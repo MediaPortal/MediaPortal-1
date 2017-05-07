@@ -1,7 +1,7 @@
 /**********
 This library is free software; you can redistribute it and/or modify it under
 the terms of the GNU Lesser General Public License as published by the
-Free Software Foundation; either version 2.1 of the License, or (at your
+Free Software Foundation; either version 3 of the License, or (at your
 option) any later version. (See <http://www.gnu.org/copyleft/lesser.html>.)
 
 This library is distributed in the hope that it will be useful, but WITHOUT
@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2016 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2017 Live Networks, Inc.  All rights reserved.
 // A generic media server class, used to implement a RTSP server, and any other server that uses
 //  "ServerMediaSession" objects to describe media to be served.
 // Implementation
@@ -229,7 +229,7 @@ GenericMediaServer::ClientConnection::~ClientConnection() {
 void GenericMediaServer::ClientConnection::closeSockets() {
   // Turn off background handling on our socket:
   envir().taskScheduler().disableBackgroundHandling(fOurSocket);
-  ::closeSocket(fOurSocket);
+  if (fOurSocket>= 0) ::closeSocket(fOurSocket);
 
   fOurSocket = -1;
 }
@@ -324,7 +324,7 @@ GenericMediaServer::ClientSession* GenericMediaServer::createNewClientSessionWit
   } while (sessionId == 0 || lookupClientSession(sessionIdStr) != NULL);
 
   ClientSession* clientSession = createNewClientSession(sessionId);
-  fClientSessions->Add(sessionIdStr, clientSession);
+  if (clientSession != NULL) fClientSessions->Add(sessionIdStr, clientSession);
 
   return clientSession;
 }

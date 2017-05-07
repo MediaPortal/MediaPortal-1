@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+<controls>	
+	    
+    <control Style="BasicHomeFade">
+      <description>Feed items</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>270</posX>
+      <posY>150</posY>
+      <width>1300</width>
+      <align>left</align>
+      <font>font11</font>
+      <textcolor>90ffffff</textcolor>
+      <label>#infoservice.feed.titles</label>
+      <wrapString> :-: </wrapString>
+      <shadowAngle>0</shadowAngle>
+      <shadowDistance>0</shadowDistance>
+      <shadowColor></shadowColor>
+      <animation effect="slide" end="150,0" reversible="false" time="200" condition="player.hasmedia">conditional</animation>
+	  <animation effect="slide" end="0,0" reversible="false" time="100" condition="!player.hasmedia">conditional</animation>
+	  <visible>plugin.isenabled(InfoService)</visible>
+    </control>
+	  
+</controls>
+</window>

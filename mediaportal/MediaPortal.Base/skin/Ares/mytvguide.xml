@@ -9,6 +9,7 @@
 	
     <include condition="#(eq(#skin.tvguide.rows,' 7'))">mytvguide.7rows.xml</include>
     <include condition="#(eq(#skin.tvguide.rows,' 12'))">mytvguide.12rows.xml</include>
+	<include condition="#(eq(#skin.tvguide.rows,' 16'))">mytvguide.16rows.xml</include>
 	<include condition="#(skin.hassetting('#skin.tvguide.usecolorsforbuttons'))">mytvguide.colors.xml</include>
 	
     <import>custom\Allscreens\user_dialog.xml</import>
