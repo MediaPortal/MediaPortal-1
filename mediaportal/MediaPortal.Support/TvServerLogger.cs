@@ -50,7 +50,7 @@ namespace MediaPortal.Support
       if (File.Exists(gentleConfigPath))
       {
         var destGentleConfigPath = Path.Combine(destinationFolder, "tvserver_Gentle.config");
-        File.Copy(gentleConfigPath, destGentleConfigPath);
+        File.Copy(gentleConfigPath, destGentleConfigPath, true);
       }
 
       var iptvSourceConfigPath = Path.Combine(basePath, "MPIPTVSource.ini");
