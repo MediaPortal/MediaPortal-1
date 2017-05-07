@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2017 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2017 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -1081,6 +1081,22 @@ namespace MediaPortal.Video.Database
             {
               info.Duration += VideoDatabase.GetVideoDuration(VideoDatabase.GetFileId(file));
             }
+          }
+
+          // Set Ratings and LastUpdate
+          if (info.ID > 0)
+          {
+            IMDBMovie movie = new IMDBMovie();
+            VideoDatabase.GetMovieInfoById(info.ID, ref movie);
+            item.Rating = movie.Rating;
+            item.UserRating = movie.UserRating;
+
+            DateTime lastUpdate;
+            DateTime.TryParseExact(movie.LastUpdate, "yyyy-MM-dd HH:mm:ss",
+                                   CultureInfo.CurrentCulture,
+                                   DateTimeStyles.None,
+                                   out lastUpdate);
+            item.Updated = lastUpdate;
           }
 
           int percent = 0;
