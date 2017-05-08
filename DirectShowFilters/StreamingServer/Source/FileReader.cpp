@@ -114,17 +114,11 @@ HRESULT FileReader::SetFileName(LPCOLESTR pszFileName)
 HRESULT FileReader::OpenFile()
 {
   CAutoLockFR rLock (&m_accessLock);
-	WCHAR *pFileName = NULL;
-	DWORD Tmo=14 ;
-  HANDLE hFileUnbuff = INVALID_HANDLE_VALUE;
-  
-  //Can be used to open files in random-access mode to workaround SMB caching problems
-  DWORD accessModeFlags = (m_bUseRandomAccess ? FILE_FLAG_RANDOM_ACCESS : FILE_FLAG_SEQUENTIAL_SCAN);     
   
 	// Is the file already opened
 	if (m_hFile != INVALID_HANDLE_VALUE) 
   {
-    LogDebug("FileReader::OpenFile() file already open");
+    //LogDebug("FileReader::OpenFile() file already open");
 		return NOERROR;
 	}
 
@@ -134,6 +128,13 @@ HRESULT FileReader::OpenFile()
     LogDebug("FileReader::OpenFile() no filename");
 		return ERROR_INVALID_NAME;
 	}
+  
+	WCHAR *pFileName = NULL;
+	DWORD Tmo=14 ;
+  HANDLE hFileUnbuff = INVALID_HANDLE_VALUE;
+  
+  //Can be used to open files in random-access mode to workaround SMB caching problems
+  DWORD accessModeFlags = (m_bUseRandomAccess ? FILE_FLAG_RANDOM_ACCESS : FILE_FLAG_SEQUENTIAL_SCAN);       
 	
   m_bIsStopping = false;
 
@@ -406,6 +407,12 @@ HRESULT FileReader::Read(PBYTE pbData, ULONG lDataLength, ULONG *dwReadBytes, __
 __int64 FileReader::GetFileSize()
 {
   CAutoLockFR rLock (&m_accessLock);
+
+	if (m_hFile == INVALID_HANDLE_VALUE) 
+  {
+    //LogDebug("FileReader::GetFileSize() no open file");
+		return -1;
+	}
   
   BY_HANDLE_FILE_INFORMATION fileinfo;
 		
@@ -458,9 +465,10 @@ void FileReader::SetFileNext(BOOL useFileNext)
 {
 }
 
-//for MultiFileReader() compatibility only
+//Used by TsDuration to close files
 void FileReader::CloseBufferFiles()
 {
+  CloseFile();
 }
 
 void FileReader::SetStopping(BOOL isStopping)
