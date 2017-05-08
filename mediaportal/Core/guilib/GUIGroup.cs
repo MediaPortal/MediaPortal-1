@@ -26,6 +26,7 @@ using MediaPortal.Drawing;
 using MediaPortal.Drawing.Layouts;
 using MediaPortal.ExtensionMethods;
 using Point = MediaPortal.Drawing.Point;
+using Size = MediaPortal.Drawing.Size;
 
 namespace MediaPortal.GUI.Library
 {
@@ -46,6 +47,7 @@ namespace MediaPortal.GUI.Library
       HasCamera = _hasCamera;
       Camera = new System.Drawing.Point(_cameraXPos, _cameraYPos);
       base.FinalizeConstruction();
+      _sizefromSkin = new Size(Width, Height);
     }
 
     #endregion Constructors
@@ -77,6 +79,8 @@ namespace MediaPortal.GUI.Library
 
     public override void Render(float timePassed)
     {
+      Arrange();
+
       if (GUIGraphicsContext.Animations)
       {
         if (_animator != null)
@@ -317,6 +321,21 @@ namespace MediaPortal.GUI.Library
       }
     }
 
+    /// <summary>
+    /// Get/set the alignment of the Group
+    /// </summary>
+    public Alignment GroupAlignment
+    {
+      get { return _groupAlignment; }
+      set
+      {
+        if (_groupAlignment != value)
+        {
+          _groupAlignment = value;
+        }
+      }
+    }
+    
     #endregion Properties
 
     ////////////////////////////
@@ -353,7 +372,8 @@ namespace MediaPortal.GUI.Library
         return;
       }
 
-      this.Size = _layout.Measure(this, this.Size);
+      // this.Size = _layout.Measure(this, this.Size);
+      this.Size = _layout.Measure(this, _sizefromSkin);
 
       _layout.Arrange(this);
       DoUpdate();
@@ -457,7 +477,10 @@ namespace MediaPortal.GUI.Library
     [XMLSkin("camera", "xpos")] protected int _cameraXPos = 0;
     [XMLSkin("camera", "ypos")] protected int _cameraYPos = 0;
 
+    [XMLSkinElement("align")] private Alignment _groupAlignment = Alignment.ALIGN_LEFT;
+
     private bool _startAnimation;
+    private Size _sizefromSkin = Size.Empty;
 
     #endregion Fields
 
