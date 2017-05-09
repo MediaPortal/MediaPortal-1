@@ -276,12 +276,23 @@
       <description>Collection banner</description>
       <id>0</id>
       <type>image</type>
-      <posX>1677</posX>
-      <posY>300</posY>
-      <width>183</width>
-      <height>183</height>
+      <posX>1591</posX>
+      <posY>302</posY>
+      <width>100</width>
+      <height>100</height>
       <texture>collection.png</texture>
-      <visible>facadeview.list+string.equals(#hideinfo, true)+string.equals(#hideActorinfo, true)</visible>
+      <visible>facadeview.list+string.equals(#moviecollection)</visible>
+    </control>
+    <control>
+      <description>Usergroup banner</description>
+      <id>0</id>
+      <type>image</type>
+      <posX>1591</posX>
+      <posY>302</posY>
+      <width>100</width>
+      <height>100</height>
+      <texture>group.png</texture>
+      <visible>facadeview.list+string.equals(#usergroups)</visible>
     </control>
     <control>
       <type>image</type>

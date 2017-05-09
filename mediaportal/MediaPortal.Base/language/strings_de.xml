@@ -1040,8 +1040,8 @@
 		<String id="1267">Ungesehen</String>
 		<String id="1268">Suche Regisseur</String>
 		<String id="1269">Regisseure</String>
-		<String id="1270">Film zu benutzerdefinierter Gruppe hinzufügen</String>
-		<String id="1271">Film aus benutzerdefinierter Gruppe löschen</String>
+		<String id="1270">Diesen Film zu benutzerdefinierter Gruppe hinzufügen</String>
+		<String id="1271">Diesen Film aus benutzerdefinierter Gruppe löschen</String>
 		<String id="1272">Neue benutzerdefinierte Gruppe anlegen</String>
 		<String id="1273">Diese benutzerdefinierte Gruppe löschen</String>
 		<String id="1274">Studio: </String>
@@ -1091,6 +1091,14 @@
 		<String id="1318">Untertitel speichern</String>
 		<String id="1319">Geänderte Untertiteldatei speichern?</String>
 		<String id="1320">{0} als {1} &#10;</String>
+		<String id="1331">Filmsammlung und Filme</String>
+    <String id="1332">Nur Filmsammlung</String>
+    <String id="1333">Diesen Film zu Filmsammlung hinzufügen</String>
+    <String id="1334">Diesen Film aus Filmsammlung löschen</String>
+    <String id="1335">Cover aktualisieren</String>
+    <String id="1337">Neue Filmsammlung anlegen</String>
+    <String id="1338">Diese Filmsammlung löschen</String>
+    <String id="1336">Bibliothek</String>
 		<String id="1440" prefix="Mein ">Videotext</String>
 		<String id="1441">Videotext</String>
 		<String id="1442">Textlauf horizontal</String>
