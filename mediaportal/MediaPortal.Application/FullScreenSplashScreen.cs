@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2013 Team MediaPortal
+#region Copyright (C) 2005-2017 Team MediaPortal
 
-// Copyright (C) 2005-2013 Team MediaPortal
+// Copyright (C) 2005-2017 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -108,6 +108,7 @@ namespace MediaPortal
         Log.Debug("FullScreenSplash: Splashscreen.xml not found!: {0}", skinFilePath);
         return;
       }
+      bool needInvalidate = false;
 
       Log.Debug("FullScreenSplash: Splashscreen.xml found: {0}", skinFilePath);
 
@@ -178,8 +179,10 @@ namespace MediaPortal
                   if (Int32.TryParse(_value, out _number))
                   {
                     lblMain.Dock = System.Windows.Forms.DockStyle.None;
-                    lblMain.Left = _number;
-                    Log.Debug("FullScreenSplash: Main Label PosX successfully set: {0}", _number);
+                    int newNumber = GUIGraphicsContext.ScaleHorizontal(_number);
+                    lblMain.Left = newNumber;
+                    Log.Debug("FullScreenSplash: Main Label PosX successfully set: {0}/{1}", _number, newNumber);
+                    needInvalidate = true;
                   }
                 }
               }
@@ -194,8 +197,10 @@ namespace MediaPortal
                   if (Int32.TryParse(_value, out _number))
                   {
                     lblMain.Dock = System.Windows.Forms.DockStyle.None;
-                    lblMain.Top = _number;
-                    Log.Debug("FullScreenSplash: Main Label PosY successfully set: {0}", _number);
+                    int newNumber = GUIGraphicsContext.ScaleVertical(_number);
+                    lblMain.Top = newNumber;
+                    Log.Debug("FullScreenSplash: Main Label PosY successfully set: {0}/{1}", _number, newNumber);
+                    needInvalidate = true;
                   }
                 }
               }
@@ -210,8 +215,10 @@ namespace MediaPortal
                   if (Int32.TryParse(_value, out _number))
                   {
                     lblMain.Dock = System.Windows.Forms.DockStyle.None;
-                    lblMain.Width = _number;
-                    Log.Debug("FullScreenSplash: Main Label Width successfully set: {0}", _number);
+                    int newNumber = GUIGraphicsContext.ScaleHorizontal(_number);
+                    lblMain.Width = newNumber;
+                    Log.Debug("FullScreenSplash: Main Label Width successfully set: {0}/{1}", _number, newNumber);
+                    needInvalidate = true;
                   }
                 }
               }
@@ -226,8 +233,10 @@ namespace MediaPortal
                   if (Int32.TryParse(_value, out _number))
                   {
                     lblMain.Dock = System.Windows.Forms.DockStyle.None;
-                    lblMain.Height = _number;
-                    Log.Debug("FullScreenSplash: Main Label Height successfully set: {0}", _number);
+                    int newNumber = GUIGraphicsContext.ScaleVertical(_number);
+                    lblMain.Height = newNumber;
+                    Log.Debug("FullScreenSplash: Main Label Height successfully set: {0}/{1}", _number, newNumber);
+                    needInvalidate = true;
                   }
                 }
               }
@@ -284,6 +293,10 @@ namespace MediaPortal
               }
             }
           }
+      }
+      if (needInvalidate)
+      {
+        this.Invalidate(true);
       }
     }
 
