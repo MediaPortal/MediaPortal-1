@@ -509,6 +509,8 @@ namespace MediaPortal.GUI.Video
 
         if (CurrentBaseView == "movie collections" || CurrentBaseView == "movie collections only")
         {
+          dlg.AddLocalizedString(1337); // Add Collection
+
           ArrayList movieCollectionsList = new ArrayList();
           ArrayList movieMovieCollectionsList = new ArrayList();
           VideoDatabase.GetCollections(movieCollectionsList);
@@ -517,18 +519,18 @@ namespace MediaPortal.GUI.Video
           // Add movie to collection if there is available collections for that movie
           if (movieMovieCollectionsList.Count < movieCollectionsList.Count)
           {
-            dlg.AddLocalizedString(1333); //add movie to collection
+            dlg.AddLocalizedString(1333); // Add movie to collection
           }
 
           if (handler.CurrentLevel > 0)
           {
-            dlg.AddLocalizedString(1334); //remove from collection
+            dlg.AddLocalizedString(1334); // Remove from collection
           }
         }
 
         if (CurrentBaseView == "user groups" || CurrentBaseView == "user groups only")
         {
-          dlg.AddLocalizedString(1272); //Add new usergroup
+          dlg.AddLocalizedString(1272); // Add new usergroup
 
           ArrayList userGroups = new ArrayList();
           ArrayList movieUserGroups = new ArrayList();
@@ -538,12 +540,12 @@ namespace MediaPortal.GUI.Video
           // Add movie to user group if there is available user groups for that movie
           if (movieUserGroups.Count < userGroups.Count)
           {
-            dlg.AddLocalizedString(1270); //add movie to usergroup
+            dlg.AddLocalizedString(1270); // Add movie to usergroup
           }
 
           if (handler.CurrentLevel > 0)
           {
-            dlg.AddLocalizedString(1271); //remove from usergroup
+            dlg.AddLocalizedString(1271); // Remove from usergroup
           }
         }
 
