@@ -4619,7 +4619,7 @@ namespace MediaPortal.Video.Database
           return titles;
         }
 
-        string strSQL = string.Format("SELECT DISTINCT strTitle FROM movieView WHERE strCollection = {0} {1} ORDER BY strTitle ASC",
+        string strSQL = string.Format("SELECT DISTINCT strTitle FROM movieView WHERE strCollection = '{0}' {1} ORDER BY strTitle ASC",
                                        strSQLCollection, (!string.IsNullOrEmpty(whereClause) ? "AND " + whereClause : ""));
         SQLiteResultSet results = m_db.Execute(strSQL);
 
