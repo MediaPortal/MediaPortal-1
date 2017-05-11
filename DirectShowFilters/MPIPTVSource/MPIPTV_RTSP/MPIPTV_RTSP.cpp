@@ -442,6 +442,7 @@ DWORD WINAPI CMPIPTV_RTSP::Live555Worker(LPVOID lpParam)
       protocolInstance->keepAliveWithOptions &&
       protocolInstance->udpSink != NULL &&
       protocolInstance->rtspSessionTimeout > 0 &&
+      startWaitingForTeardownResponse == 0 &&
       (
         previousKeepAlive == 0 ||
         (ElapsedMillis(previousKeepAlive) / 1000) > (protocolInstance->rtspSessionTimeout * 3 / 4)
