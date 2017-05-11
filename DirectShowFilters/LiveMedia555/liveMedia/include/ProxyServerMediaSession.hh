@@ -1,7 +1,7 @@
 /**********
 This library is free software; you can redistribute it and/or modify it under
 the terms of the GNU Lesser General Public License as published by the
-Free Software Foundation; either version 2.1 of the License, or (at your
+Free Software Foundation; either version 3 of the License, or (at your
 option) any later version. (See <http://www.gnu.org/copyleft/lesser.html>.)
 
 This library is distributed in the hope that it will be useful, but WITHOUT
@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2016 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2017 Live Networks, Inc.  All rights reserved.
 // A subclass of "ServerMediaSession" that can be used to create a (unicast) RTSP servers that acts as a 'proxy' for
 // another (unicast or multicast) RTSP/RTP stream.
 // C++ header
@@ -50,14 +50,18 @@ public:
   void continueAfterLivenessCommand(int resultCode, Boolean serverSupportsGetParameter);
   void continueAfterSETUP(int resultCode);
   void continueAfterPLAY(int resultCode);
+  void scheduleReset();
 
 private:
   void reset();
+  int connectToServer(int socketNum, portNumBits remotePortNum);
 
   Authenticator* auth() { return fOurAuthenticator; }
 
   void scheduleLivenessCommand();
   static void sendLivenessCommand(void* clientData);
+  void doReset();
+  static void doReset(void* clientData);
 
   void scheduleDESCRIBECommand();
   static void sendDESCRIBE(void* clientData);
@@ -75,8 +79,8 @@ private:
   class ProxyServerMediaSubsession *fSetupQueueHead, *fSetupQueueTail;
   unsigned fNumSetupsDone;
   unsigned fNextDESCRIBEDelay; // in seconds
-  Boolean fServerSupportsGetParameter, fLastCommandWasPLAY, fResetOnNextLivenessTest;
-  TaskToken fLivenessCommandTask, fDESCRIBECommandTask, fSubsessionTimerTask;
+  Boolean fServerSupportsGetParameter, fLastCommandWasPLAY, fDoneDESCRIBE;
+  TaskToken fLivenessCommandTask, fDESCRIBECommandTask, fSubsessionTimerTask, fResetTask;
 };
 
 
