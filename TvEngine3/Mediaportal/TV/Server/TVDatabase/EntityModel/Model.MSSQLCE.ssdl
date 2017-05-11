@@ -619,9 +619,10 @@
     <Property Name="BufferSizeMaximum" Type="int" Nullable="false" />
     <Property Name="OpenConnectionAttemptLimit" Type="int" Nullable="false" />
     <Property Name="DumpInput" Type="bit" Nullable="false" />
-    <Property Name="RtspCommandResponseTimeLimit" Type="int" Nullable="false" />
+    <Property Name="RtspOpenConnectionTimeLimit" Type="int" Nullable="false" />
     <Property Name="RtspSendCommandOptions" Type="bit" Nullable="false" />
     <Property Name="RtspSendCommandDescribe" Type="bit" Nullable="false" />
+    <Property Name="RtspKeepAliveWithOptions" Type="bit" Nullable="false" />
     <Property Name="NetworkInterface" Type="nvarchar" Nullable="false" />
     <Property Name="FileRepeatCount" Type="int" Nullable="false" />
     <Property Name="RtpSwitchToUdpPacketCount" Type="int" Nullable="false" />

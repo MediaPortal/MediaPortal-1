@@ -599,9 +599,10 @@ CREATE TABLE `StreamTunerSettings`(
 	`BufferSizeMaximum` int NOT NULL, 
 	`OpenConnectionAttemptLimit` int NOT NULL, 
 	`DumpInput` bool NOT NULL, 
-	`RtspCommandResponseTimeLimit` int NOT NULL, 
+	`RtspOpenConnectionTimeLimit` int NOT NULL, 
 	`RtspSendCommandOptions` bool NOT NULL, 
 	`RtspSendCommandDescribe` bool NOT NULL, 
+	`RtspKeepAliveWithOptions` bool NOT NULL, 
 	`NetworkInterface` varchar (200) NOT NULL, 
 	`FileRepeatCount` int NOT NULL, 
 	`RtpSwitchToUdpPacketCount` int NOT NULL);

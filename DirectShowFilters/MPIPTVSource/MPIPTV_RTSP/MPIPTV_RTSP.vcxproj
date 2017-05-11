@@ -97,7 +97,6 @@ copy /Y "$(TargetPath)" "$(SolutionDir)\MPIPTVSource\bin\Release\$(TargetFileNam
   <ItemGroup>
     <ClInclude Include="MPIPTV_RTSP.h" />
     <ClInclude Include="MPIPTV_RTSP_Exports.h" />
-    <ClInclude Include="RtspTaskScheduler.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
@@ -111,7 +110,6 @@ copy /Y "$(TargetPath)" "$(SolutionDir)\MPIPTVSource\bin\Release\$(TargetFileNam
       </PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="MPIPTV_RTSP.cpp" />
-    <ClCompile Include="RtspTaskScheduler.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>

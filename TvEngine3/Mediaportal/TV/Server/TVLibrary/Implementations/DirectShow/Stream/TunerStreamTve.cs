@@ -222,37 +222,39 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Stream
       config.AppendLine(string.Format("RtspUdpSinkMaxPayloadSize = {0}", rtspUdpMaximumPayloadByteCount));
       config.AppendLine(string.Format("RtspUdpPortRangeStart = {0}", rtpPortMaximum + 1));
       config.AppendLine(string.Format("RtspUdpPortRangeEnd = {0}", portMaximum));
-      config.AppendLine(string.Format("RtspCommandResponseTimeout = {0}", settings.RtspCommandResponseTimeLimit));
+      config.AppendLine(string.Format("RtspOpenConnectionTimeout = {0}", settings.RtspOpenConnectionTimeLimit));
       config.AppendLine(string.Format("RtspOpenConnectionMaximumAttempts = {0}", settings.OpenConnectionAttemptLimit));
       config.AppendLine(string.Format("RtspSendCommandOptions = {0}", settings.RtspSendCommandOptions ? 1 : 0));
       config.AppendLine(string.Format("RtspSendCommandDescribe = {0}", settings.RtspSendCommandDescribe ? 1 : 0));
+      config.AppendLine(string.Format("RtspKeepAliveWithOptions = {0}", settings.RtspKeepAliveWithOptions ? 1 : 0));
 
       this.LogDebug("  shared/global...");
       this.LogDebug("    logging...");
-      this.LogDebug("      verbosity             = {0}", logVerbosity);
-      this.LogDebug("      maximum file size     = {0} bytes", maximumLogFileSize);
-      this.LogDebug("    CA wait time            = {0} ms", caWaitTime);
-      this.LogDebug("    maximum plugin count    = {0}", maximumPluginCount);
-      this.LogDebug("    buffer chunk size       = {0} bytes", bufferChunkByteCount);
-      this.LogDebug("    transfer chunk count    = {0}", transferBufferChunkCount);
-      this.LogDebug("    check discontinuities   = {0}", analyseDiscontinuities);
-      this.LogDebug("    dump output             = {0}", dumpOutput);
-      this.LogDebug("    RTP port range          = {0} - {1}", portMinimum + (portMinimum % 2), rtpPortMaximum);
-      this.LogDebug("    UDP port range          = {0} - {1}", rtpPortMaximum + 1, portMaximum);
-      this.LogDebug("    RTSP UDP max payload    = {0} bytes", rtspUdpMaximumPayloadByteCount);
+      this.LogDebug("      verbosity               = {0}", logVerbosity);
+      this.LogDebug("      maximum file size       = {0} bytes", maximumLogFileSize);
+      this.LogDebug("    CA wait time              = {0} ms", caWaitTime);
+      this.LogDebug("    maximum plugin count      = {0}", maximumPluginCount);
+      this.LogDebug("    buffer chunk size         = {0} bytes", bufferChunkByteCount);
+      this.LogDebug("    transfer chunk count      = {0}", transferBufferChunkCount);
+      this.LogDebug("    check discontinuities     = {0}", analyseDiscontinuities);
+      this.LogDebug("    dump output               = {0}", dumpOutput);
+      this.LogDebug("    RTP port range            = {0} - {1}", portMinimum + (portMinimum % 2), rtpPortMaximum);
+      this.LogDebug("    UDP port range            = {0} - {1}", rtpPortMaximum + 1, portMaximum);
+      this.LogDebug("    RTSP UDP max payload      = {0} bytes", rtspUdpMaximumPayloadByteCount);
       this.LogDebug("  tuner-specific...");
-      this.LogDebug("    receive data time limit = {0} ms", settings.ReceiveDataTimeLimit);
-      this.LogDebug("    buffer chunk count      = {0} ({1} kB)", bufferChunkCount, settings.BufferSize);
-      this.LogDebug("    buffer chunk count max  = {0} ({1} kB)", bufferChunkCountMaximum, settings.BufferSizeMaximum);
-      this.LogDebug("    connect attempt limit   = {0}", settings.OpenConnectionAttemptLimit);
-      this.LogDebug("    dump input              = {0}", settings.DumpInput);
+      this.LogDebug("    receive data time limit   = {0} ms", settings.ReceiveDataTimeLimit);
+      this.LogDebug("    buffer chunk count        = {0} ({1} kB)", bufferChunkCount, settings.BufferSize);
+      this.LogDebug("    buffer chunk count max    = {0} ({1} kB)", bufferChunkCountMaximum, settings.BufferSizeMaximum);
+      this.LogDebug("    connect attempt limit     = {0}", settings.OpenConnectionAttemptLimit);
+      this.LogDebug("    dump input                = {0}", settings.DumpInput);
       this.LogDebug("    RTSP...");
-      this.LogDebug("      response time limit   = {0} ms", settings.RtspCommandResponseTimeLimit);
-      this.LogDebug("      send OPTIONS command  = {0}", settings.RtspSendCommandOptions);
-      this.LogDebug("      send DESCRIBE command = {0}", settings.RtspSendCommandDescribe);
-      this.LogDebug("    network interface       = {0}", settings.NetworkInterface);
-      this.LogDebug("    file repeat count       = {0}", settings.FileRepeatCount);
-      this.LogDebug("    RTP to UDP packet count = {0}", settings.RtpSwitchToUdpPacketCount);
+      this.LogDebug("      open conn. time limit   = {0} ms", settings.RtspOpenConnectionTimeLimit);
+      this.LogDebug("      send OPTIONS command    = {0}", settings.RtspSendCommandOptions);
+      this.LogDebug("      send DESCRIBE command   = {0}", settings.RtspSendCommandDescribe);
+      this.LogDebug("      keep-alive with OPTIONS = {0}", settings.RtspKeepAliveWithOptions);
+      this.LogDebug("    network interface         = {0}", settings.NetworkInterface);
+      this.LogDebug("    file repeat count         = {0}", settings.FileRepeatCount);
+      this.LogDebug("    RTP to UDP packet count   = {0}", settings.RtpSwitchToUdpPacketCount);
 
       lock (_configLock)
       {
@@ -277,9 +279,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Stream
       settings.OpenConnectionAttemptLimit = 3;
       settings.ReceiveDataTimeLimit = 2000;         // ms
       settings.RtpSwitchToUdpPacketCount = 5;
-      settings.RtspCommandResponseTimeLimit = 500;  // ms
+      settings.RtspOpenConnectionTimeLimit = 1000;  // ms
       settings.RtspSendCommandDescribe = true;
       settings.RtspSendCommandOptions = true;
+      settings.RtspKeepAliveWithOptions = false;
       if (save)
       {
         return StreamTunerSettingsManagement.SaveStreamTunerSettings(settings);
@@ -308,7 +311,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Stream
           )
         )
         {
-          streamChannel.Url = string.Format("c:|interface={0}|{1}", _httpRtpUdpnetworkInterface, streamChannel.Url);
+          streamChannel.Url = string.Format("c:|interface={0}|url={1}", _httpRtpUdpnetworkInterface, streamChannel.Url);
         }
       }
       base.PerformTuning(channel);

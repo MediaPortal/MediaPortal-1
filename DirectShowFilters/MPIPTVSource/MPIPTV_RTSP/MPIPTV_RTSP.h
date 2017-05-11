@@ -27,11 +27,11 @@
 #include "MPIPTV_UDP.h"
 
 #include "MPRTSPClient.h"
+#include "MPTaskScheduler.h"
 #include "BasicUsageEnvironment.hh"
-#include "MPEG2TransportStreamFromESSource.hh"
 #include "Groupsock.hh"
 #include "BasicUDPSink.hh"
-#include "RtspTaskScheduler.h"
+#include <ctime>
 
 // we should get data in ten seconds
 #define RTSP_RECEIVE_DATA_TIMEOUT_DEFAULT                   10000
@@ -42,10 +42,11 @@
 #define RTSP_UDP_SINK_MAX_PAYLOAD_SIZE_DEFAULT              12288
 #define RTSP_UDP_PORT_RANGE_START_DEFAULT                   45000
 #define RTSP_UDP_PORT_RANGE_END_DEFAULT                     46000
-#define RTSP_COMMAND_RESPONSE_TIMEOUT_DEFAULT               500
+#define RTSP_OPEN_CONNECTION_TIMEOUT_DEFAULT                1000
 #define RTSP_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT       3
 #define RTSP_SEND_COMMAND_OPTIONS_DEFAULT                   true
 #define RTSP_SEND_COMMAND_DESCRIBE_DEFAULT                  true
+#define RTSP_KEEP_ALIVE_WITH_OPTIONS_DEFAULT                false
 
 #define CONFIGURATION_SECTION_RTSP                          _T("RTSP")
 
@@ -55,10 +56,11 @@
 #define CONFIGURATION_RTSP_UDP_SINK_MAX_PAYLOAD_SIZE        _T("RtspUdpSinkMaxPayloadSize")
 #define CONFIGURATION_RTSP_UDP_PORT_RANGE_START             _T("RtspUdpPortRangeStart")
 #define CONFIGURATION_RTSP_UDP_PORT_RANGE_END               _T("RtspUdpPortRangeEnd")
-#define CONFIGURATION_RTSP_COMMAND_RESPONSE_TIMEOUT         _T("RtspCommandResponseTimeout")
+#define CONFIGURATION_RTSP_OPEN_CONNECTION_TIMEOUT          _T("RtspOpenConnectionTimeout")
 #define CONFIGURATION_RTSP_OPEN_CONNECTION_MAXIMUM_ATTEMPTS _T("RtspOpenConnectionMaximumAttempts")
 #define CONFIGURATION_RTSP_SEND_COMMAND_OPTIONS             _T("RtspSendCommandOptions")
 #define CONFIGURATION_RTSP_SEND_COMMAND_DESCRIBE            _T("RtspSendCommandDescribe")
+#define CONFIGURATION_RTSP_KEEP_ALIVE_WITH_OPTIONS          _T("RtspKeepAliveWithOptions")
 
 // returns protocol class instance
 PIProtocol CreateProtocolInstance(void);
@@ -94,53 +96,58 @@ public:
 
 protected:
   TCHAR *rtspUrl;
-
-  // RTSP variables
-  TaskScheduler *rtspScheduler;
-  UsageEnvironment *rtspEnvironment; 
   MPRTSPClient *rtspClient;
-  HANDLE rtspResponseEvent;
-  int rtspResponseResultCode;
-  char rtspResponseResultString[RTSP_MAX_RESPONSE_BYTE_COUNT];
   MediaSession *rtspSession;
   bool isRtspSessionSetup;
-  unsigned int rtspRtpClientPortRangeStart;
-  unsigned int rtspRtpClientPortRangeEnd;
-  Groupsock *rtspUdpGroupsock;
-  MediaSink *rtspUdpSink;
-  unsigned int rtspUdpSinkMaxPayloadSize;
-  unsigned int rtspUdpPortRangeStart;
-  unsigned int rtspUdpPortRangeEnd;
-  unsigned int rtspCommandResponseTimeout;
+  unsigned int rtspSessionTimeout;
+  unsigned int openConnectionTimeout;
+  HANDLE openConnectionResultEvent;
   bool sendRtspCommandOptions;
   bool sendRtspCommandDescribe;
+  bool keepAliveWithOptions;
 
-  // variable for signaling exit for rtspScheduler
-  char rtspThreadShouldExit;
-  // variables for RTSP scheduler thread
-  DWORD rtspSchedulerThreadId;
-  HANDLE rtspSchedulerThreadHandle;
+  FramedSource *rtpSource;
+  unsigned int rtpClientPortRangeStart;
+  unsigned int rtpClientPortRangeEnd;
 
-  int SendRtspCommand(const TCHAR *method, const TCHAR *command, MediaSubsession *subsession = NULL);
+  TCHAR *udpUrl;
+  Groupsock *udpGroupsock;
+  MediaSink *udpSink;
+  unsigned int udpSinkMaxPayloadSize;
+  unsigned int udpPortRangeStart;
+  unsigned int udpPortRangeEnd;
 
-  // RTSP request asynchronous response handler.
-  static void OnRtspResponseReceived(RTSPClient *client, int resultCode, char *resultString);
+  MPTaskScheduler *live555Scheduler;
+  UsageEnvironment *live555Environment; 
+  volatile char live555WorkerThreadShouldExit;
+  DWORD live555WorkerThreadId;
+  HANDLE live555WorkerThreadHandle;
 
-  // log RTSP message
-  void LogRtspMessage(unsigned int loggerLevel, const TCHAR *method, const TCHAR *message);
+  static unsigned long ElapsedMillis(clock_t start)
+  {
+    return (clock() - start) * 1000 / CLOCKS_PER_SEC;
+  }
 
-  // RTSP scheduler worker method
+  // log the most recent LIVE555 message
+  void LogLive555Message(unsigned int loggerLevel, const TCHAR *method, const TCHAR *message);
+
+  // LIVE555 worker thread function, for all RTSP handling
   // @param lpParam : reference to instance of CMPIPTV_RTSP class
-  static DWORD WINAPI RtspSchedulerWorker(LPVOID lpParam);
+  static DWORD WINAPI Live555Worker(LPVOID lpParam);
 
-  // RTSP subsession 'Bye' handler
-  static void SubsessionByeHandler(void *lpCMPIPTV_RTSP);
+  int StartOpenConnection(void);
+  void OnGenericResponseReceived(const TCHAR *command, RTSPClient *client, int resultCode, char *resultString);
+  static void OnOptionsResponseReceived(RTSPClient *client, int resultCode, char *resultString);
+  static void OnDescribeResponseReceived(RTSPClient *client, int resultCode, char *resultString);
+  void SetupRtspSession(void);
+  static void OnSetupResponseReceived(RTSPClient *client, int resultCode, char *resultString);
+  static void OnPlayResponseReceived(RTSPClient *client, int resultCode, char *resultString);
+  void SetupLocalUdpConnection(void);
 
-  // tear down media session
-  // @param forceTeardown : if true than session and client will be deleted in any case
-  // @result : true if successful, false otherwise
-  bool TeardownMediaSession(bool forceTeardown);
+  static void OnTeardownResponseReceived(RTSPClient *client, int resultCode, char *resultString);
+  void CleanUpLive555(void);
 
+  static void RtspSessionByeHandler(void *lpCMPIPTV_RTSP);
 };
 
 #endif

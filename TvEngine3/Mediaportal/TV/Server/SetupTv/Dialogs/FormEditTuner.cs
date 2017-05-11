@@ -228,9 +228,10 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
           numericUpDownStreamBufferSizeMaximum.Value = _streamSettings.BufferSizeMaximum;
           numericUpDownStreamOpenConnectionAttemptLimit.Value = _streamSettings.OpenConnectionAttemptLimit;
           checkBoxStreamDumpInput.Checked = _streamSettings.DumpInput;
-          numericUpDownStreamRtspCommandResponseTimeLimit.Value = _streamSettings.RtspCommandResponseTimeLimit;
+          numericUpDownStreamRtspOpenConnectionTimeLimit.Value = _streamSettings.RtspOpenConnectionTimeLimit;
           checkBoxStreamRtspSendCommandOptions.Checked = _streamSettings.RtspSendCommandOptions;
           checkBoxStreamRtspSendCommandDescribe.Checked = _streamSettings.RtspSendCommandDescribe;
+          checkBoxStreamRtspKeepAliveWithOptions.Checked = _streamSettings.RtspKeepAliveWithOptions;
           numericUpDownStreamFileRepeatCount.Value = _streamSettings.FileRepeatCount;
           numericUpDownStreamRtpSwitchToUdpPacketCount.Value = _streamSettings.RtpSwitchToUdpPacketCount;
 
@@ -444,9 +445,10 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
         _streamSettings.BufferSizeMaximum = (int)numericUpDownStreamBufferSizeMaximum.Value;
         _streamSettings.OpenConnectionAttemptLimit = (int)numericUpDownStreamOpenConnectionAttemptLimit.Value;
         _streamSettings.DumpInput = checkBoxStreamDumpInput.Checked;
-        _streamSettings.RtspCommandResponseTimeLimit = (int)numericUpDownStreamRtspCommandResponseTimeLimit.Value;
+        _streamSettings.RtspOpenConnectionTimeLimit = (int)numericUpDownStreamRtspOpenConnectionTimeLimit.Value;
         _streamSettings.RtspSendCommandOptions = checkBoxStreamRtspSendCommandOptions.Checked;
         _streamSettings.RtspSendCommandDescribe = checkBoxStreamRtspSendCommandDescribe.Checked;
+        _streamSettings.RtspKeepAliveWithOptions = checkBoxStreamRtspKeepAliveWithOptions.Checked;
         if (comboBoxStreamHttpRtpUdpInterface.SelectedIndex == 0)
         {
           _streamSettings.NetworkInterface = string.Empty;
@@ -566,19 +568,20 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
     private void DebugStreamTunerSettings(StreamTunerSettings settings)
     {
       this.LogDebug("tuner: stream settings...");
-      this.LogDebug("  ID                      = {0}", settings.IdStreamTunerSettings);
-      this.LogDebug("  receive data time limit = {0} ms", settings.ReceiveDataTimeLimit);
-      this.LogDebug("  buffer size             = {0} kB", settings.BufferSize);
-      this.LogDebug("  buffer size maximum     = {0} kB", settings.BufferSizeMaximum);
-      this.LogDebug("  connect attempt limit   = {0}", settings.OpenConnectionAttemptLimit);
-      this.LogDebug("  dump input              = {0}", settings.DumpInput);
+      this.LogDebug("  ID                        = {0}", settings.IdStreamTunerSettings);
+      this.LogDebug("  receive data time limit   = {0} ms", settings.ReceiveDataTimeLimit);
+      this.LogDebug("  buffer size               = {0} kB", settings.BufferSize);
+      this.LogDebug("  buffer size maximum       = {0} kB", settings.BufferSizeMaximum);
+      this.LogDebug("  connect attempt limit     = {0}", settings.OpenConnectionAttemptLimit);
+      this.LogDebug("  dump input                = {0}", settings.DumpInput);
       this.LogDebug("  RTSP...");
-      this.LogDebug("    response time limit   = {0} ms", settings.RtspCommandResponseTimeLimit);
-      this.LogDebug("    send OPTIONS command  = {0}", settings.RtspSendCommandOptions);
-      this.LogDebug("    send DESCRIBE command = {0}", settings.RtspSendCommandDescribe);
-      this.LogDebug("  network interface       = {0}", settings.NetworkInterface);
-      this.LogDebug("  file repeat count       = {0}", settings.FileRepeatCount);
-      this.LogDebug("  RTP to UDP packet count = {0}", settings.RtpSwitchToUdpPacketCount);
+      this.LogDebug("    open conn. time limit   = {0} ms", settings.RtspOpenConnectionTimeLimit);
+      this.LogDebug("    send OPTIONS command    = {0}", settings.RtspSendCommandOptions);
+      this.LogDebug("    send DESCRIBE command   = {0}", settings.RtspSendCommandDescribe);
+      this.LogDebug("    keep-alive with OPTIONS = {0}", settings.RtspKeepAliveWithOptions);
+      this.LogDebug("  network interface         = {0}", settings.NetworkInterface);
+      this.LogDebug("  file repeat count         = {0}", settings.FileRepeatCount);
+      this.LogDebug("  RTP to UDP packet count   = {0}", settings.RtpSwitchToUdpPacketCount);
     }
 
     private void DebugAnalogTunerSettings(AnalogTunerSettings settings)

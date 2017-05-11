@@ -86,11 +86,12 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.numericUpDownStreamRtpSwitchToUdpPacketCount = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPNumericUpDown();
       this.labelStreamFileRepeatCount = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.groupBoxStreamRtsp = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
-      this.labelStreamRtspCommandResponseTimeLimit = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.checkBoxStreamRtspKeepAliveWithOptions = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
+      this.labelStreamRtspOpenConnectionTimeLimit = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.checkBoxStreamRtspSendCommandOptions = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
       this.checkBoxStreamRtspSendCommandDescribe = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
-      this.numericUpDownStreamRtspCommandResponseTimeLimit = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPNumericUpDown();
-      this.labelStreamRtspCommandResponseTimeLimitUnit = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.numericUpDownStreamRtspOpenConnectionTimeLimit = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPNumericUpDown();
+      this.labelStreamRtspOpenConnectionTimeLimitUnit = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.groupBoxStreamGeneral = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
       this.numericUpDownStreamReceiveDataTimeLimit = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPNumericUpDown();
       this.labelStreamReceiveDataTimeLimit = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
@@ -177,7 +178,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownStreamFileRepeatCount)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownStreamRtpSwitchToUdpPacketCount)).BeginInit();
       this.groupBoxStreamRtsp.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownStreamRtspCommandResponseTimeLimit)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownStreamRtspOpenConnectionTimeLimit)).BeginInit();
       this.groupBoxStreamGeneral.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownStreamReceiveDataTimeLimit)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownStreamOpenConnectionAttemptLimit)).BeginInit();
@@ -716,7 +717,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.groupBoxStreamOtherProtocols.Controls.Add(this.numericUpDownStreamFileRepeatCount);
       this.groupBoxStreamOtherProtocols.Controls.Add(this.numericUpDownStreamRtpSwitchToUdpPacketCount);
       this.groupBoxStreamOtherProtocols.Controls.Add(this.labelStreamFileRepeatCount);
-      this.groupBoxStreamOtherProtocols.Location = new System.Drawing.Point(6, 262);
+      this.groupBoxStreamOtherProtocols.Location = new System.Drawing.Point(6, 283);
       this.groupBoxStreamOtherProtocols.Name = "groupBoxStreamOtherProtocols";
       this.groupBoxStreamOtherProtocols.Size = new System.Drawing.Size(311, 102);
       this.groupBoxStreamOtherProtocols.TabIndex = 2;
@@ -802,26 +803,36 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       this.groupBoxStreamRtsp.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-      this.groupBoxStreamRtsp.Controls.Add(this.labelStreamRtspCommandResponseTimeLimit);
+      this.groupBoxStreamRtsp.Controls.Add(this.checkBoxStreamRtspKeepAliveWithOptions);
+      this.groupBoxStreamRtsp.Controls.Add(this.labelStreamRtspOpenConnectionTimeLimit);
       this.groupBoxStreamRtsp.Controls.Add(this.checkBoxStreamRtspSendCommandOptions);
       this.groupBoxStreamRtsp.Controls.Add(this.checkBoxStreamRtspSendCommandDescribe);
-      this.groupBoxStreamRtsp.Controls.Add(this.numericUpDownStreamRtspCommandResponseTimeLimit);
-      this.groupBoxStreamRtsp.Controls.Add(this.labelStreamRtspCommandResponseTimeLimitUnit);
+      this.groupBoxStreamRtsp.Controls.Add(this.numericUpDownStreamRtspOpenConnectionTimeLimit);
+      this.groupBoxStreamRtsp.Controls.Add(this.labelStreamRtspOpenConnectionTimeLimitUnit);
       this.groupBoxStreamRtsp.Location = new System.Drawing.Point(6, 162);
       this.groupBoxStreamRtsp.Name = "groupBoxStreamRtsp";
-      this.groupBoxStreamRtsp.Size = new System.Drawing.Size(311, 94);
+      this.groupBoxStreamRtsp.Size = new System.Drawing.Size(311, 115);
       this.groupBoxStreamRtsp.TabIndex = 1;
       this.groupBoxStreamRtsp.TabStop = false;
       this.groupBoxStreamRtsp.Text = "RTSP";
       // 
-      // labelStreamRtspCommandResponseTimeLimit
+      // checkBoxStreamRtspKeepAliveWithOptions
       // 
-      this.labelStreamRtspCommandResponseTimeLimit.AutoSize = true;
-      this.labelStreamRtspCommandResponseTimeLimit.Location = new System.Drawing.Point(6, 21);
-      this.labelStreamRtspCommandResponseTimeLimit.Name = "labelStreamRtspCommandResponseTimeLimit";
-      this.labelStreamRtspCommandResponseTimeLimit.Size = new System.Drawing.Size(142, 13);
-      this.labelStreamRtspCommandResponseTimeLimit.TabIndex = 0;
-      this.labelStreamRtspCommandResponseTimeLimit.Text = "Wait for command response:";
+      this.checkBoxStreamRtspKeepAliveWithOptions.AutoSize = true;
+      this.checkBoxStreamRtspKeepAliveWithOptions.Location = new System.Drawing.Point(9, 91);
+      this.checkBoxStreamRtspKeepAliveWithOptions.Name = "checkBoxStreamRtspKeepAliveWithOptions";
+      this.checkBoxStreamRtspKeepAliveWithOptions.Size = new System.Drawing.Size(150, 17);
+      this.checkBoxStreamRtspKeepAliveWithOptions.TabIndex = 5;
+      this.checkBoxStreamRtspKeepAliveWithOptions.Text = "Keep-alive with OPTIONS.";
+      // 
+      // labelStreamRtspOpenConnectionTimeLimit
+      // 
+      this.labelStreamRtspOpenConnectionTimeLimit.AutoSize = true;
+      this.labelStreamRtspOpenConnectionTimeLimit.Location = new System.Drawing.Point(6, 21);
+      this.labelStreamRtspOpenConnectionTimeLimit.Name = "labelStreamRtspOpenConnectionTimeLimit";
+      this.labelStreamRtspOpenConnectionTimeLimit.Size = new System.Drawing.Size(134, 13);
+      this.labelStreamRtspOpenConnectionTimeLimit.TabIndex = 0;
+      this.labelStreamRtspOpenConnectionTimeLimit.Text = "Open connection time limit:";
       // 
       // checkBoxStreamRtspSendCommandOptions
       // 
@@ -841,36 +852,36 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.checkBoxStreamRtspSendCommandDescribe.TabIndex = 4;
       this.checkBoxStreamRtspSendCommandDescribe.Text = "Send DESCRIBE command.";
       // 
-      // numericUpDownStreamRtspCommandResponseTimeLimit
+      // numericUpDownStreamRtspOpenConnectionTimeLimit
       // 
-      this.numericUpDownStreamRtspCommandResponseTimeLimit.Location = new System.Drawing.Point(162, 19);
-      this.numericUpDownStreamRtspCommandResponseTimeLimit.Maximum = new decimal(new int[] {
+      this.numericUpDownStreamRtspOpenConnectionTimeLimit.Location = new System.Drawing.Point(162, 19);
+      this.numericUpDownStreamRtspOpenConnectionTimeLimit.Maximum = new decimal(new int[] {
             60000,
             0,
             0,
             0});
-      this.numericUpDownStreamRtspCommandResponseTimeLimit.Minimum = new decimal(new int[] {
+      this.numericUpDownStreamRtspOpenConnectionTimeLimit.Minimum = new decimal(new int[] {
             25,
             0,
             0,
             0});
-      this.numericUpDownStreamRtspCommandResponseTimeLimit.Name = "numericUpDownStreamRtspCommandResponseTimeLimit";
-      this.numericUpDownStreamRtspCommandResponseTimeLimit.Size = new System.Drawing.Size(60, 20);
-      this.numericUpDownStreamRtspCommandResponseTimeLimit.TabIndex = 1;
-      this.numericUpDownStreamRtspCommandResponseTimeLimit.Value = new decimal(new int[] {
-            500,
+      this.numericUpDownStreamRtspOpenConnectionTimeLimit.Name = "numericUpDownStreamRtspOpenConnectionTimeLimit";
+      this.numericUpDownStreamRtspOpenConnectionTimeLimit.Size = new System.Drawing.Size(60, 20);
+      this.numericUpDownStreamRtspOpenConnectionTimeLimit.TabIndex = 1;
+      this.numericUpDownStreamRtspOpenConnectionTimeLimit.Value = new decimal(new int[] {
+            1000,
             0,
             0,
             0});
       // 
-      // labelStreamRtspCommandResponseTimeLimitUnit
+      // labelStreamRtspOpenConnectionTimeLimitUnit
       // 
-      this.labelStreamRtspCommandResponseTimeLimitUnit.AutoSize = true;
-      this.labelStreamRtspCommandResponseTimeLimitUnit.Location = new System.Drawing.Point(225, 21);
-      this.labelStreamRtspCommandResponseTimeLimitUnit.Name = "labelStreamRtspCommandResponseTimeLimitUnit";
-      this.labelStreamRtspCommandResponseTimeLimitUnit.Size = new System.Drawing.Size(20, 13);
-      this.labelStreamRtspCommandResponseTimeLimitUnit.TabIndex = 2;
-      this.labelStreamRtspCommandResponseTimeLimitUnit.Text = "ms";
+      this.labelStreamRtspOpenConnectionTimeLimitUnit.AutoSize = true;
+      this.labelStreamRtspOpenConnectionTimeLimitUnit.Location = new System.Drawing.Point(225, 21);
+      this.labelStreamRtspOpenConnectionTimeLimitUnit.Name = "labelStreamRtspOpenConnectionTimeLimitUnit";
+      this.labelStreamRtspOpenConnectionTimeLimitUnit.Size = new System.Drawing.Size(20, 13);
+      this.labelStreamRtspOpenConnectionTimeLimitUnit.TabIndex = 2;
+      this.labelStreamRtspOpenConnectionTimeLimitUnit.Text = "ms";
       // 
       // groupBoxStreamGeneral
       // 
@@ -1766,7 +1777,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownStreamRtpSwitchToUdpPacketCount)).EndInit();
       this.groupBoxStreamRtsp.ResumeLayout(false);
       this.groupBoxStreamRtsp.PerformLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownStreamRtspCommandResponseTimeLimit)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownStreamRtspOpenConnectionTimeLimit)).EndInit();
       this.groupBoxStreamGeneral.ResumeLayout(false);
       this.groupBoxStreamGeneral.PerformLayout();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownStreamReceiveDataTimeLimit)).EndInit();
@@ -1916,11 +1927,11 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
     private MPLabel labelStreamReceiveDataTimeLimitUnit;
     private MPGroupBox groupBoxStreamOtherProtocols;
     private MPGroupBox groupBoxStreamRtsp;
-    private MPLabel labelStreamRtspCommandResponseTimeLimit;
+    private MPLabel labelStreamRtspOpenConnectionTimeLimit;
     private MPCheckBox checkBoxStreamRtspSendCommandOptions;
     private MPCheckBox checkBoxStreamRtspSendCommandDescribe;
-    private MPNumericUpDown numericUpDownStreamRtspCommandResponseTimeLimit;
-    private MPLabel labelStreamRtspCommandResponseTimeLimitUnit;
+    private MPNumericUpDown numericUpDownStreamRtspOpenConnectionTimeLimit;
+    private MPLabel labelStreamRtspOpenConnectionTimeLimitUnit;
     private MPLabel labelStreamHttpRtpUdpInterface;
     private MPComboBox comboBoxStreamHttpRtpUdpInterface;
     private MPLabel labelStreamRtpSwitchToUdpPacketCountUnit;
@@ -1931,5 +1942,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
     private MPLabel labelStreamOpenConnectionAttemptLimit;
     private MPNumericUpDown numericUpDownStreamOpenConnectionAttemptLimit;
     private MPGroupBox groupBoxStreamGeneral;
+    private MPCheckBox checkBoxStreamRtspKeepAliveWithOptions;
   }
 }

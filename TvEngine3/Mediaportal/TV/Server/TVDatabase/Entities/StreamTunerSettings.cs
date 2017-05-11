@@ -125,19 +125,19 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private bool _dumpInput;
     
         [DataMember]
-        public int RtspCommandResponseTimeLimit
+        public int RtspOpenConnectionTimeLimit
         {
-            get { return _rtspCommandResponseTimeLimit; }
+            get { return _rtspOpenConnectionTimeLimit; }
             set
             {
-                if (_rtspCommandResponseTimeLimit != value)
+                if (_rtspOpenConnectionTimeLimit != value)
                 {
-                    _rtspCommandResponseTimeLimit = value;
-                    OnPropertyChanged("RtspCommandResponseTimeLimit");
+                    _rtspOpenConnectionTimeLimit = value;
+                    OnPropertyChanged("RtspOpenConnectionTimeLimit");
                 }
             }
         }
-        private int _rtspCommandResponseTimeLimit;
+        private int _rtspOpenConnectionTimeLimit;
     
         [DataMember]
         public bool RtspSendCommandOptions
@@ -168,6 +168,21 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
             }
         }
         private bool _rtspSendCommandDescribe;
+    
+        [DataMember]
+        public bool RtspKeepAliveWithOptions
+        {
+            get { return _rtspKeepAliveWithOptions; }
+            set
+            {
+                if (_rtspKeepAliveWithOptions != value)
+                {
+                    _rtspKeepAliveWithOptions = value;
+                    OnPropertyChanged("RtspKeepAliveWithOptions");
+                }
+            }
+        }
+        private bool _rtspKeepAliveWithOptions;
     
         [DataMember]
         public string NetworkInterface
