@@ -17,6 +17,7 @@ extern DWORD m_tGTStartTime;
 
 // unit = milliseconds
 #define TIMEOUT_GENERIC_RTSP_RESPONSE 500
+#define TIMEOUT_FILE_ACTION_RTSP_RESPONSE 2000
 
 //Size in bytes of the CMemorySink buffer (TRANSPORT_PACKET_SIZE * TRANSPORT_PACKETS_PER_NETWORK_PACKET * 15)
 #define MEM_SINK_BUF_SIZE (188*7*15)
@@ -26,7 +27,7 @@ CRTSPClient::CRTSPClient(CMemoryBuffer& buffer)
   : m_buffer(buffer)
 {
   LogDebug("CRTSPClient::CRTSPClient()");
-  m_duration = 7200 * 1000;
+  m_duration = 7200.0 * 1000.0;
   m_session = NULL;
   m_client = NULL;
   m_isSetup = false;
@@ -201,7 +202,7 @@ bool CRTSPClient::OpenStream(char* url)
     Shutdown();
     return false;
   }
-  LogDebug("CRTSPClient::OpenStream(): duration = %d", m_duration);
+  LogDebug("CRTSPClient::OpenStream(): duration = %f", (float)m_duration);
 
   // Create a media session object from the SDP description:
   m_session = MediaSession::createNew(*m_env, m_durationDescribeResponseResultString);
@@ -320,7 +321,7 @@ void CRTSPClient::StopBufferThread()
 
 long CRTSPClient::Duration()
 {
-  return m_duration;
+  return (long)m_duration;
 }
 
 void CRTSPClient::ThreadProc()
@@ -389,7 +390,7 @@ bool CRTSPClient::Play(double start, double duration)
   }
 
   //Sanity check the start value
-  double dur = ((double)m_duration) / 1000.0;
+  double dur = m_duration / 1000.0;
   double maxDur = fmax(dur, duration); //Allow for m_duration being too low when timeshifting (value only updated every 4 seconds)
   if (maxDur > 0.0)
   {
@@ -429,7 +430,7 @@ bool CRTSPClient::InternalPlay(double startPoint)
   {
     ResetEvent(m_genericResponseEvent);
     m_client->sendPlayCommand(*m_session, &CRTSPClient::OnGenericResponseReceived, startPoint);
-    if (WaitForSingleObject(m_genericResponseEvent, TIMEOUT_GENERIC_RTSP_RESPONSE) == WAIT_TIMEOUT)
+    if (WaitForSingleObject(m_genericResponseEvent, TIMEOUT_FILE_ACTION_RTSP_RESPONSE) == WAIT_TIMEOUT)
     {
       LogDebug("CRTSPClient::InternalPlay(): RTSP PLAY timed out");
       return false;
@@ -503,7 +504,7 @@ bool CRTSPClient::UpdateDuration()
   m_updateDuration = true;
 
   // Wait for a response. Don't wait longer than the calling period (currently ~5000 ms).
-  if (WaitForSingleObject(m_durationDescribeResponseEvent, 500) == WAIT_TIMEOUT)
+  if (WaitForSingleObject(m_durationDescribeResponseEvent, TIMEOUT_FILE_ACTION_RTSP_RESPONSE) == WAIT_TIMEOUT)
   {
     LogDebug("CRTSPClient::UpdateDuration(): RTSP DESCRIBE timed out, message = %s", m_env->getResultMsg());
     return false;

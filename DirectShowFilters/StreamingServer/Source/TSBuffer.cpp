@@ -155,7 +155,7 @@ HRESULT CTSBuffer::Require(long nBytes, long *lReadBytes)
 	UINT totalBytesRead = 0;
 	UINT iteration = 0;
 
-  __int64 filePointer = m_pFileReader->GetFilePointer(); //store current pointer
+  //__int64 filePointer = m_pFileReader->GetFilePointer(); //store current pointer
 
 	do
 	{
@@ -169,7 +169,8 @@ HRESULT CTSBuffer::Require(long nBytes, long *lReadBytes)
 		{
 			LogDebug("CTSBuffer::Require() - Failed to read buffer file, iteration %d", iteration);
 			m_maxReadIterations = 0;			
-      m_pFileReader->SetFilePointer(filePointer,FILE_BEGIN); //Restore file read position
+      //m_pFileReader->SetFilePointer(filePointer,FILE_BEGIN); //Restore file read position
+      m_pFileReader->SetFilePointer( -((__int64)totalBytesRead),FILE_CURRENT); //Restore file pointer to original position        
 			delete[] readBuffer;
 			return hr;
 		}
@@ -182,7 +183,8 @@ HRESULT CTSBuffer::Require(long nBytes, long *lReadBytes)
       DWORD readTime = timeGetTime();
       if (m_bWasEmpty && ((readTime - m_lastEmptyReadTime) < MIN_FILE_BUFFER_TIME))
       {
-        m_pFileReader->SetFilePointer(filePointer,FILE_BEGIN); //Restore file read position
+        // m_pFileReader->SetFilePointer(filePointer,FILE_BEGIN); //Restore file read position
+        m_pFileReader->SetFilePointer( -((__int64)totalBytesRead),FILE_CURRENT); //Restore file pointer to original position        
   			delete[] readBuffer;
 			  return E_FAIL;
       }
@@ -198,7 +200,8 @@ HRESULT CTSBuffer::Require(long nBytes, long *lReadBytes)
 	    if (discardBytes > 0)
 	    {
   	    totalBytesRead -= discardBytes;
-        m_pFileReader->SetFilePointer(filePointer+totalBytesRead, FILE_BEGIN);
+        //m_pFileReader->SetFilePointer(filePointer+totalBytesRead, FILE_BEGIN);
+        m_pFileReader->SetFilePointer( -((__int64)discardBytes), FILE_CURRENT);
       }
 	    break;
 	  }
@@ -210,7 +213,8 @@ HRESULT CTSBuffer::Require(long nBytes, long *lReadBytes)
 			  LogDebug("CTSBuffer::Require() - End of file, bytes available %d, bytes requested %d", (bytesAvailable + totalBytesRead), nBytes);
 			}
 			m_maxReadIterations = 0;			
-      m_pFileReader->SetFilePointer(filePointer,FILE_BEGIN); //Restore file read position
+      //m_pFileReader->SetFilePointer(filePointer,FILE_BEGIN); //Restore file read position
+      m_pFileReader->SetFilePointer( -((__int64)totalBytesRead),FILE_CURRENT); //Restore file pointer to original position        
 			delete[] readBuffer;
 			m_lastEmptyReadTime = timeGetTime();
 			m_bWasEmpty = true;

@@ -91,13 +91,12 @@ void TsMPEG2TransportFileServerMediaSubsession::seekStreamSource(FramedSource* i
 	double fileDuration=duration();
 
 	if (seekNPT>(fileDuration-0.1)) seekNPT=(fileDuration-0.1);
-	if (seekNPT <0) seekNPT=0;
-
-	double pos=seekNPT / fileDuration;
-	__int64 fileSize=source->fileSize();
-	pos*=fileSize;
-	pos/=188;
-	pos*=188;
+	  
+	if (seekNPT<=0.0)
+	{
+		source->seekToByteAbsolute(0LL);
+		return;
+	}
 
   source->seekToTimeAbsolute(CRefTime((LONG)(seekNPT*1000.0)), *m_pDuration) ;
   

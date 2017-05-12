@@ -79,17 +79,31 @@ bool CTsFileSeek::Seek(CRefTime refTime)
     return true; //EOF
   }
 
-  double fileDuration=(double)m_duration.Duration().Millisecs();
-  double seekTimeStamp=(double)refTime.Millisecs();
-  
-  //sanity checks...
-  if (seekTimeStamp < 0) seekTimeStamp=0;
-  //if (seekTimeStamp > fileDuration) seekTimeStamp=fileDuration;
-
   __int64 fileSize=m_reader->GetFileSize();
-  if (fileSize < 0)
+  double fileDuration=(double)m_duration.Duration().Millisecs();
+  //sanity check...
+  if (fileSize < 0 || fileDuration <= 0)
   {
     return true; //Error
+  }
+  double seekTimeStamp=(double)refTime.Millisecs();
+  //sanity check...
+  if (seekTimeStamp < 0) seekTimeStamp=0;
+
+  double bytesPerMS = (double)fileSize/fileDuration;
+  double mSfromEnd = fileDuration - seekTimeStamp;
+  __int64 offsetBytesFromEnd; 
+       
+  bool jumpToEnd = false;
+  if (m_reader->GetTimeshift())
+  {
+    offsetBytesFromEnd = (__int64)(-500.0 * bytesPerMS); //0.5s
+    if (mSfromEnd < 500.0) jumpToEnd = true; //0.5s
+  }
+  else
+  {
+    offsetBytesFromEnd = (__int64)(-3000.0 * bytesPerMS); //3s 
+    if (mSfromEnd < 3000.0) jumpToEnd = true; //3s
   }
 
   //make a guess where should start looking in the file
@@ -102,7 +116,7 @@ bool CTsFileSeek::Seek(CRefTime refTime)
   seekTimeStamp /= 1000.0f; // convert to seconds.
 
   m_seekPid=m_duration.GetPid();
-  LogDebug("FileSeek: seek to %f filepos:%x pid:%x", seekTimeStamp,(DWORD)filePos, m_seekPid);
+  LogDebug("FileSeek: seek to:%f fileDur:%f filepos:%x pid:%x isEnd:%d tShift:%d", seekTimeStamp, (fileDuration/1000.0f), (DWORD)filePos, m_seekPid, jumpToEnd, m_reader->GetTimeshift());
   
   __int64 binaryMax=fileSize;
   __int64 binaryMin=0;
@@ -124,12 +138,13 @@ bool CTsFileSeek::Seek(CRefTime refTime)
       return false;
     }
     
-    if (filePos+SEEK_READ_SIZE > fileSize)
+    if ((filePos+SEEK_READ_SIZE > fileSize) || jumpToEnd)
     {
-      //no need to seek when we want to seek to end of file
-      //simply set the pointer at the end of the file
-      m_reader->SetFilePointer(0,FILE_END);
-      return true;
+      //No need to seek when we want to seek to end of file.
+      //Simply set the pointer at the end of the file minus some time 
+      //(to avoid end-of-file triggering annoyances)
+      m_reader->SetFilePointer(offsetBytesFromEnd, FILE_END);
+      return false;
     }
 
     //set filepointer to filePos

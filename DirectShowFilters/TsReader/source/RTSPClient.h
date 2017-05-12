@@ -51,7 +51,7 @@ class CRTSPClient: public TSThread
     UsageEnvironment* m_env;
     MPRTSPClient* m_client;
     MediaSession* m_session;
-    long m_duration;
+    double m_duration;
     char m_url[2048];
     bool m_isSetup;
     volatile bool m_isBufferThreadActive;
