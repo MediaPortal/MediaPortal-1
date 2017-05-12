@@ -857,7 +857,7 @@ void CMPIPTV_RTSP::OnTeardownResponseReceived(RTSPClient *client, int resultCode
 
 void CMPIPTV_RTSP::CleanUpLive555(void)
 {
-  this->logger.Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CLEAN_UP_LIVE555_NAME);
+  this->logger.Log(LOGGER_INFO, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CLEAN_UP_LIVE555_NAME);
 
   // close all media sinks before closing the RTSP session and client
   if (this->udpSink != NULL)
