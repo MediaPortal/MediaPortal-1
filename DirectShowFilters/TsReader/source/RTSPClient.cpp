@@ -202,7 +202,7 @@ bool CRTSPClient::OpenStream(char* url)
     Shutdown();
     return false;
   }
-  LogDebug("CRTSPClient::OpenStream(): duration = %f", (float)m_duration);
+  LogDebug("CRTSPClient::OpenStream(): duration = %f s", (float)(m_duration/1000.0));
 
   // Create a media session object from the SDP description:
   m_session = MediaSession::createNew(*m_env, m_durationDescribeResponseResultString);

@@ -83,25 +83,34 @@ void TsMPEG2TransportFileServerMediaSubsession::seekStreamSource(FramedSource* i
 
 	TsMPEG2TransportStreamFramer* framer=(TsMPEG2TransportStreamFramer*)inputSource;
 	TsStreamFileSource* source=(TsStreamFileSource*)framer->inputSource();
-	if (seekNPT==0.0)
-	{
-		source->seekToByteAbsolute(0LL);
-		return;
-	}
-	double fileDuration=duration();
 
-	if (seekNPT>(fileDuration-0.1)) seekNPT=(fileDuration-0.1);
-	  
-	if (seekNPT<=0.0)
+  m_iDurationCount = 0;
+
+	double fileDuration=duration();
+	
+	//Check that there is at least 500ms of data in the file,
+	//otherwise wait up to 300ms to allow data to build up in file.
+	//This is to ensure we start streaming with a sensible amount of data in the file
+	//(seekStreamSource() is called when streaming starts)
+	if (fileDuration < 0.3)
 	{
-		source->seekToByteAbsolute(0LL);
-		return;
+	  double sleepTimeMs = fmax(3.0, fmin(300.0, (300.0 - (fileDuration*1000.0)) ) );
+	  LogDebug("TsMp2TFSMediaSubsession::seekStreamSource - wait for data %f ms", (float)sleepTimeMs);
+	  Sleep((DWORD)sleepTimeMs);
 	}
+
+  //	if (seekNPT<=0.0)
+  //	{
+  //		source->seekToByteAbsolute(0LL);
+  //		return;
+  //	}		
+  //	seekNPT = fmin(seekNPT, fileDuration);
+	
+	//Sanity check/adjust seekNPT value
+	seekNPT = fmin(fmax(seekNPT,0.0), fileDuration);
 
   source->seekToTimeAbsolute(CRefTime((LONG)(seekNPT*1000.0)), *m_pDuration) ;
-  
-  m_iDurationCount = 0;
-  
+    
 	//LogDebug("TsMp2TFSMediaSubsession::seekStreamSource %f / %f", seekNPT, fileDuration);
 }
 

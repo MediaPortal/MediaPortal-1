@@ -97,8 +97,8 @@ bool CTsFileSeek::Seek(CRefTime refTime)
   bool jumpToEnd = false;
   if (m_reader->GetTimeshift())
   {
-    offsetBytesFromEnd = (__int64)(-500.0 * bytesPerMS); //0.5s
-    if (mSfromEnd < 500.0) jumpToEnd = true; //0.5s
+    offsetBytesFromEnd = (__int64)(-300.0 * bytesPerMS); //0.3s
+    if (mSfromEnd < 300.0) jumpToEnd = true; //0.5s
   }
   else
   {
@@ -112,11 +112,11 @@ bool CTsFileSeek::Seek(CRefTime refTime)
 
   filePos/=188;
   filePos*=188;
-
+      
   seekTimeStamp /= 1000.0f; // convert to seconds.
 
   m_seekPid=m_duration.GetPid();
-  LogDebug("FileSeek: seek to:%f fileDur:%f filepos:%x pid:%x isEnd:%d tShift:%d", seekTimeStamp, (fileDuration/1000.0f), (DWORD)filePos, m_seekPid, jumpToEnd, m_reader->GetTimeshift());
+  LogDebug("FileSeek: seek to:%f fileDur:%f filepos:%d pid:%x isEnd:%d tShift:%d", seekTimeStamp, (fileDuration/1000.0f), (DWORD)filePos, m_seekPid, jumpToEnd, m_reader->GetTimeshift());
   
   __int64 binaryMax=fileSize;
   __int64 binaryMin=0;
@@ -130,10 +130,11 @@ bool CTsFileSeek::Seek(CRefTime refTime)
   while (true)
   {
     //sanity checks
-    if (filePos<=0)
+    if ((filePos<=0) || (seekTimeStamp < 0.05)) //Less than 50ms from beginning of file
     {
       //no need to seek for timestamp 0,
       //simply set the pointer at the beginning of the file
+      LogDebug("FileSeek: stop seek at start-of-file, target time: %f", (float)seekTimeStamp);
       m_reader->SetFilePointer(0,FILE_BEGIN);
       return false;
     }
@@ -143,6 +144,7 @@ bool CTsFileSeek::Seek(CRefTime refTime)
       //No need to seek when we want to seek to end of file.
       //Simply set the pointer at the end of the file minus some time 
       //(to avoid end-of-file triggering annoyances)
+      LogDebug("FileSeek: stop seek at end-of-file: offsetBytesFromEnd %d, target time: %f", (DWORD)offsetBytesFromEnd, (float)seekTimeStamp);
       m_reader->SetFilePointer(offsetBytesFromEnd, FILE_END);
       return false;
     }
@@ -154,12 +156,12 @@ bool CTsFileSeek::Seek(CRefTime refTime)
     DWORD dwBytesRead;
     if (!SUCCEEDED(m_reader->Read(m_pFileReadBuffer, SEEK_READ_SIZE,&dwBytesRead)))
     {
-      LogDebug("FileSeek: read failed at filePos: %x - target time: %f, iterations: %d", (DWORD)filePos, seekTimeStamp, seekingIteration);
+      LogDebug("FileSeek: read failed at filePos: %d - target time: %f, iterations: %d", (DWORD)filePos, seekTimeStamp, seekingIteration);
       return true;
     }
     if (dwBytesRead <= 0) //end-of-file
     {
-      LogDebug("FileSeek: end-of-file at filePos: %x - target time: %f, iterations: %d", (DWORD)filePos, seekTimeStamp, seekingIteration);
+      LogDebug("FileSeek: end-of-file at filePos: %d - target time: %f, iterations: %d", (DWORD)filePos, seekTimeStamp, seekingIteration);
       return true;
     }
     //process data
@@ -172,12 +174,12 @@ bool CTsFileSeek::Seek(CRefTime refTime)
       //yes. pcr found
       double clockFound=m_pcrFound.ToClock();
       double diff = clockFound - seekTimeStamp;
-      //LogDebug(" got %f at filepos %x diff %f ( %I64x, %I64x )", clockFound, (DWORD)filePos, diff, binaryMin, binaryMax);
+      //LogDebug(" got %f at filepos %d diff %f ( %I64x, %I64x )", clockFound, (DWORD)filePos, diff, binaryMin, binaryMax);
 
       // Make sure that seeking position is at least the target one
       if (0 <= diff && diff <= SEEKING_ACCURACY)
       {
-        LogDebug("FileSeek: stop seek: %f at %x - target: %f, diff: %f, iterations: %d",
+        LogDebug("FileSeek: stop seek: %f at %d - target: %f, diff: %f, iterations: %d",
           clockFound, (DWORD)filePos, seekTimeStamp, diff, seekingIteration);
         m_reader->SetFilePointer(filePos,FILE_BEGIN);
         return false;
@@ -187,7 +189,7 @@ bool CTsFileSeek::Seek(CRefTime refTime)
       seekingIteration++;
       if( seekingIteration > MAX_SEEKING_ITERATIONS )
       {
-        LogDebug("FileSeek: stop seek max iterations reached (%d): %f at %x - target: %f, diff: %f",
+        LogDebug("FileSeek: stop seek max iterations reached (%d): %f at %d - target: %f, diff: %f",
           MAX_SEEKING_ITERATIONS, clockFound, (DWORD)filePos, seekTimeStamp, diff);
           
         if (fabs(diff) < 2.0)
@@ -219,7 +221,7 @@ bool CTsFileSeek::Seek(CRefTime refTime)
 
       if (lastFilePos==filePos)
       {
-        LogDebug("FileSeek: stop seek closer target found : %f at %x - target: %f, diff: %f",
+        LogDebug("FileSeek: stop seek closer target found : %f at %d - target: %f, diff: %f",
           clockFound, (DWORD)filePos, seekTimeStamp, diff);
         m_reader->SetFilePointer(filePos,FILE_BEGIN);
         return false;
