@@ -26,6 +26,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
 using System.Windows.Media.Animation;
+using Gentle.Framework;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.GUI.Video;
@@ -35,6 +36,7 @@ using MediaPortal.Util;
 using MediaPortal.Video.Database;
 using TvControl;
 using TvDatabase;
+using TvLibrary.Interfaces;
 using Action = MediaPortal.GUI.Library.Action;
 using TvLibrary.Epg;
 
@@ -3481,6 +3483,19 @@ namespace TvPlugin
 
         dlg.AddLocalizedString(368); // IMDB
 
+        if (!_singleChannelView)
+        {
+          dlg.AddLocalizedString(2162); // Remove channel
+
+          dlg.AddLocalizedString(2163); // Add channel to a group
+
+          if (TVHome.Navigator.CurrentGroup != null 
+            && TVHome.Navigator.CurrentGroup.GroupName != TvConstants.TvGroupNames.AllChannels)
+          {
+            dlg.AddLocalizedString(2164); // Remove channel from this group
+          }
+        }
+
         dlg.DoModal(GetID);
         if (dlg.SelectedLabel == -1)
         {
@@ -3526,6 +3541,22 @@ namespace TvPlugin
             break;
 
           case 637: // edit recording
+
+          case 2162: // Remove channel
+            OnRemoveChannel();
+
+            break;
+
+          case 2163: // Add channel to a group
+            OnAddChannelToGroup();
+
+            break;
+
+          case 2164: // Remove channel from this group
+            OnRemoveChannelFromGroup();
+
+            break;
+
           case 264: // record
             if (_currentProgram.IdProgram == 0)
             {
@@ -3540,6 +3571,125 @@ namespace TvPlugin
             break;
         }
       }
+    }
+
+    private void OnRemoveChannel()
+    {
+      GUIDialogYesNo GUIDialogYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
+
+      if (GUIDialogYesNo == null)
+      {
+        return;
+      }
+
+      GUIDialogYesNo.SetHeading(GUILocalizeStrings.Get(2162));
+
+      GUIDialogYesNo.SetLine(1, GUILocalizeStrings.Get(2165));
+      GUIDialogYesNo.SetLine(2, _currentChannel.DisplayName);
+
+      GUIDialogYesNo.SetDefaultToYes(false);
+      GUIDialogYesNo.DoModal(GUIWindowManager.ActiveWindow);
+
+      if (GUIDialogYesNo.IsConfirmed)
+      {
+        Log.Debug("TvGuideBase: RemoveChannel {0}", _currentChannel.DisplayName);
+
+        if (TVHome.Card.Channel != null && TVHome.Card.Channel.Name == _currentChannel.DisplayName)
+        {
+          Log.Debug("TvGuideBase: call OnNextChannel() becasue of the current channel will be removed {0}", _currentChannel.DisplayName);
+          TVHome.OnNextChannel();
+        }
+
+        IList<Schedule> schedules = Schedule.ListAll();
+        TvServer server = new TvServer();
+
+        if (schedules != null)
+        {
+          for (int i = schedules.Count - 1; i > -1; i--)
+          {
+            Schedule schedule = schedules[i];
+            if (schedule.IdChannel == _currentChannel.IdChannel)
+            {
+              server.StopRecordingSchedule(schedule.IdSchedule);
+              schedule.Delete();
+              schedules.RemoveAt(i);
+            }
+          }
+        }
+        _currentChannel.Delete();
+
+        TvMiniGuide.ResetTvGroupChannelListCache();
+        TVHome.Navigator.ReLoad();
+
+        GetChannels(true);
+        LoadSchedules(true);
+        _needUpdate = true;
+      }
+    }
+
+    private void OnAddChannelToGroup()
+    {
+      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
+      if (dlg == null)
+      {
+        return;
+      }
+      dlg.Reset();
+      dlg.SetHeading(971); // group
+      int selected = 0;
+
+      for (int i = 0; i < TVHome.Navigator.Groups.Count; ++i)
+      {
+        dlg.Add(TVHome.Navigator.Groups[i].GroupName);
+        if (TVHome.Navigator.Groups[i].GroupName == TVHome.Navigator.CurrentGroup.GroupName)
+        {
+          selected = i;
+        }
+      }
+
+      dlg.SelectedLabel = selected;
+      dlg.DoModal(GUIWindowManager.ActiveWindow);
+      if (dlg.SelectedLabel < 0)
+      {
+        return;
+      }
+
+      Log.Debug("TvGuideBase: Add channel {0} to group {1}", _currentChannel.DisplayName, dlg.SelectedLabelText);
+
+      TvBusinessLayer layer = new TvBusinessLayer();
+      layer.AddChannelToGroup(_currentChannel, dlg.SelectedLabelText);
+
+      TvMiniGuide.ResetTvGroupChannelListCache();
+      TVHome.Navigator.ReLoad();
+
+      GetChannels(true);
+      LoadSchedules(true);
+      _needUpdate = true;
+    }
+
+    private void OnRemoveChannelFromGroup()
+    {
+      Log.Debug("TvGuideBase: Remove channel {0} from group {1}", _currentChannel.DisplayName, TVHome.Navigator.CurrentGroup.GroupName);
+
+      GroupMap groupMap = null;
+
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(GroupMap));
+
+      sb.AddConstraint(Operator.Equals, "idChannel", _currentChannel.IdChannel);
+      sb.AddConstraint(Operator.Equals, "idGroup", TVHome.Navigator.CurrentGroup.IdGroup);
+
+      SqlStatement stmt = sb.GetStatement(true);
+
+      groupMap = ObjectFactory.GetInstance<GroupMap>(stmt.Execute());
+
+      groupMap.Remove();
+
+      GetChannels(true);
+      LoadSchedules(true);
+      _needUpdate = true;
+
+      TvMiniGuide.ResetTvGroupChannelListCache();
+      TVHome.Navigator.ReLoad();
     }
 
     private void OnSwitchMode(bool returnPreviousMenu)

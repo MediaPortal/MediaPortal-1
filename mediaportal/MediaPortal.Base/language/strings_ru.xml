@@ -1102,6 +1102,8 @@
         <String id="1334">Удалить фильм из коллекции</String>
         <String id="1335">Обновить обложку</String>
         <String id="1336">Библиотека</String>
+        <String id="1337">Добавить новую коллекцию</String>
+        <String id="1338">Удалить выбранную коллекцию</String>
 		<String id="1440" prefix="Мой ">Телетекст</String>
 		<String id="1441">Телетекст</String>
 		<String id="1442">Скорость прокрутки (гор.)</String>

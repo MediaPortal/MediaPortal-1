@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2017 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2017 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -136,7 +136,84 @@ namespace MediaPortal.GUI.Library
 
     [XMLSkinElement("bdDvdDirectoryColor")] protected long _bdDvdDirectoryColor = 0xFFFFFFFF;
 
+    [XMLSkinElement("showWatchedImage")] protected bool _showWatchedImage = false;
+    [XMLSkin("showWatchedImage", "OnFolder")] protected bool _showWatchedImageOnFolder = false;
+    [XMLSkin("showWatchedImage", "OnlyOnFocus")] protected bool _showWatchedImageOnlyOnFocus = false;
+    [XMLSkinElement("WatchedImagePosX")] protected int _watchedImagePosXLow = 0;
+    [XMLSkin("WatchedImagePosX", "Big")] protected int _watchedImagePosXBig = 0;
+    [XMLSkinElement("WatchedImagePosY")] protected int _watchedImagePosYLow = 0;
+    [XMLSkin("WatchedImagePosY", "Big")] protected int _watchedImagePosYBig = 0;
+    [XMLSkinElement("WatchedImageWidth")] protected int _watchedImageWidthLow = 0;
+    [XMLSkin("WatchedImageWidth", "Big")] protected int _watchedImageWidthBig = 0;
+    [XMLSkinElement("WatchedImageHeight")] protected int _watchedImageHeightLow = 0;
+    [XMLSkin("WatchedImageHeight", "Big")] protected int _watchedImageHeightBig = 0;
+    [XMLSkinElement("WatchedImageWatchedTexture")] protected string _watchedImageWatchedTexture = string.Empty;
+    [XMLSkinElement("WatchedImageUnWatchedTexture")] protected string _watchedImageUnWatchedTexture = string.Empty;
+
+    [XMLSkinElement("showFolderStatusImage")] protected bool _showFolderStatusImage = false;
+    [XMLSkinElement("FolderStatusImagePosX")] protected int _folderStatusImagePosXLow = 0;
+    [XMLSkin("FolderStatusImagePosX", "Big")] protected int _folderStatusImagePosXBig = 0;
+    [XMLSkinElement("FolderStatusImagePosY")] protected int _folderStatusImagePosYLow = 0;
+    [XMLSkin("FolderStatusImagePosY", "Big")] protected int _folderStatusImagePosYBig = 0;
+    [XMLSkinElement("FolderStatusImageWidth")] protected int _folderStatusImageWidthLow = 0;
+    [XMLSkin("FolderStatusImageWidth", "Big")] protected int _folderStatusImageWidthBig = 0;
+    [XMLSkinElement("FolderStatusImageHeight")] protected int _folderStatusImageHeightLow = 0;
+    [XMLSkin("FolderStatusImageHeight", "Big")] protected int _folderStatusImageHeightBig = 0;
+    [XMLSkinElement("FolderStatusImageUserGroupTexture")] protected string _folderStatusImageUserGroupTexture = string.Empty; // Movie User group
+    [XMLSkinElement("FolderStatusImageCollectionTexture")] protected string _folderStatusImageCollectionTexture = string.Empty; // Movie Collection
+    [XMLSkinElement("FolderStatusImageBdDvdFolderTexture")] protected string _folderStatusImageBdDvdFolderTexture = string.Empty; // BD/DVD
+    [XMLSkinElement("FolderStatusImageRemoteTexture")] protected string _folderStatusImageRemoteTexture = string.Empty; // Remote
+
+    [XMLSkinElement("showRatingImage")] protected bool _showRatingImage = false; // Show Rating if Rating greater than 0
+    [XMLSkin("showRatingImage", "UserRating")] protected bool _showUserRatingImage = false; // Show UserRating instead Rating if UserRating greater than 0
+    [XMLSkinElement("RatingImagePosX")] protected int _ratingImagePosXLow = 0;
+    [XMLSkin("RatingImagePosX", "Big")] protected int _ratingImagePosXBig = 0;
+    [XMLSkinElement("RatingImagePosY")] protected int _ratingImagePosYLow = 0;
+    [XMLSkin("RatingImagePosY", "Big")] protected int _ratingImagePosYBig = 0;
+    [XMLSkinElement("RatingImageWidth")] protected int _ratingImageWidthLow = 0;
+    [XMLSkin("RatingImageWidth", "Big")] protected int _ratingImageWidthBig = 0;
+    [XMLSkinElement("RatingImageHeight")] protected int _ratingImageHeightLow = 0;
+    [XMLSkin("RatingImageHeight", "Big")] protected int _ratingImageHeightBig = 0;
+    [XMLSkinElement("RatingImageTexturePrefix")] protected string _ratingImageTexturePrefix = string.Empty; // Filename -> Prefix + RatingNumber + Suffix (if Suffix empty then .png)
+    [XMLSkinElement("RatingImageTextureSuffix")] protected string _ratingImageTextureSuffix = string.Empty; // For Prefix = Rating, Rating = 5, Suffix = White.png -> Rating5White.png
+    [XMLSkinElement("RatingUserImageTexturePrefix")] protected string _ratingUserImageTexturePrefix = string.Empty; // Filename -> Prefix + UserRatingNumber + Suffix (if Suffix empty then .png)
+    [XMLSkinElement("RatingUserImageTextureSuffix")] protected string _ratingUserImageTextureSuffix = string.Empty; // For Prefix = Rating, UserRating = 10, Suffix = Red.png -> Rating10Red.png
+
+    [XMLSkinElement("showNewImage")] protected bool _showNewImage = false;
+    [XMLSkin("showNewImage", "HotDays")] protected int _newImageHotDays = -1; // -1 Disable
+    [XMLSkin("showNewImage", "NewDays")] protected int _newImageNewDays = 3; // -1 Disable
+    [XMLSkinElement("NewImagePosX")] protected int _newImagePosXLow = 0;
+    [XMLSkin("NewImagePosX", "Big")] protected int _newImagePosXBig = 0;
+    [XMLSkinElement("NewImagePosY")] protected int _newImagePosYLow = 0;
+    [XMLSkin("NewImagePosY", "Big")] protected int _newImagePosYBig = 0;
+    [XMLSkinElement("NewImageWidth")] protected int _newImageWidthLow = 0;
+    [XMLSkin("NewImageWidth", "Big")] protected int _newImageWidthBig = 0;
+    [XMLSkinElement("NewImageHeight")] protected int _newImageHeightLow = 0;
+    [XMLSkin("NewImageHeight", "Big")] protected int _newImageHeightBig = 0;
+    [XMLSkinElement("NewImageTexture")] protected string _newImageTexture = "hot.png";
+    [XMLSkinElement("NewImageHotTexture")] protected string _newImageTextureHot = "new.png";
+
     #endregion
+
+    private int _watchedImagePosX = 0;
+    private int _watchedImagePosY = 0;
+    private int _watchedImageWidth = 0;
+    private int _watchedImageHeight = 0;
+
+    private int _folderStatusImagePosX = 0;
+    private int _folderStatusImagePosY = 0;
+    private int _folderStatusImageWidth = 0;
+    private int _folderStatusImageHeight = 0;
+
+    private int _ratingImagePosX = 0;
+    private int _ratingImagePosY = 0;
+    private int _ratingImageWidth = 0;
+    private int _ratingImageHeight = 0;
+
+    private int _newImagePosX = 0;
+    private int _newImagePosY = 0;
+    private int _newImageWidth = 0;
+    private int _newImageHeight = 0;
 
     protected int _lowItemHeight;
     protected int _lowItemWidth;
@@ -297,6 +374,33 @@ namespace MediaPortal.GUI.Library
       {
         _loopDelay = xmlreader.GetValueAsInt("gui", "listLoopDelay", 100);
       }
+
+      _watchedImagePosX = _watchedImagePosXLow;
+      _watchedImagePosY = _watchedImagePosYLow;
+      _watchedImageWidth = _watchedImageWidthLow;
+      _watchedImageHeight = _watchedImageHeightLow;
+
+      _folderStatusImagePosX = _folderStatusImagePosXLow;
+      _folderStatusImagePosY = _folderStatusImagePosYLow;
+      _folderStatusImageWidth = _folderStatusImageWidthLow;
+      _folderStatusImageHeight = _folderStatusImageHeightLow;
+
+      _ratingImagePosX = _ratingImagePosXLow;
+      _ratingImagePosY = _ratingImagePosYLow;
+      _ratingImageWidth = _ratingImageWidthLow;
+      _ratingImageHeight = _ratingImageHeightLow;
+
+      _newImagePosX = _newImagePosXLow;
+      _newImagePosY = _newImagePosYLow;
+      _newImageWidth = _newImageWidthLow;
+      _newImageHeight = _newImageHeightLow;
+
+      GUIImageAllocator.ClearCachedAllocatorImages();
+
+      GUIPropertyManager.SetProperty("#facadeview.focus.X", string.Empty);
+      GUIPropertyManager.SetProperty("#facadeview.focus.Y", string.Empty);
+      GUIPropertyManager.SetProperty("#facadeview.focus.Width", string.Empty);
+      GUIPropertyManager.SetProperty("#facadeview.focus.Height", string.Empty);
     }
 
     public override void ScaleToScreenResolution()
@@ -313,8 +417,149 @@ namespace MediaPortal.GUI.Library
                                                      ref _heightThumbBig);
       GUIGraphicsContext.ScalePosToScreenResolution(ref _bigItemWidth, ref _bigItemHeight);
       GUIGraphicsContext.ScalePosToScreenResolution(ref _itemWidth, ref _itemHeight);
+
+      GUIGraphicsContext.ScaleRectToScreenResolution(ref _watchedImagePosXLow, ref _watchedImagePosYLow,
+                                                     ref _watchedImageWidthLow,  ref _watchedImageHeightLow);
+      GUIGraphicsContext.ScaleRectToScreenResolution(ref _folderStatusImagePosXLow, ref _folderStatusImagePosYLow,
+                                                     ref _folderStatusImageWidthLow,  ref _folderStatusImageHeightLow);
+      GUIGraphicsContext.ScaleRectToScreenResolution(ref _ratingImagePosXLow, ref _ratingImagePosYLow,
+                                                     ref _ratingImageWidthLow,  ref _ratingImageHeightLow);
+      GUIGraphicsContext.ScaleRectToScreenResolution(ref _newImagePosXLow, ref _newImagePosYLow,
+                                                     ref _newImageWidthLow, ref _newImageHeightLow);
+
+      GUIGraphicsContext.ScaleRectToScreenResolution(ref _watchedImagePosXBig, ref _watchedImagePosYBig,
+                                                     ref _watchedImageWidthBig,  ref _watchedImageHeightBig);
+      GUIGraphicsContext.ScaleRectToScreenResolution(ref _folderStatusImagePosXBig, ref _folderStatusImagePosYBig,
+                                                     ref _folderStatusImageWidthBig,  ref _folderStatusImageHeightBig);
+      GUIGraphicsContext.ScaleRectToScreenResolution(ref _ratingImagePosXBig, ref _ratingImagePosYBig,
+                                                     ref _ratingImageWidthBig, ref _ratingImageHeightBig);
+      GUIGraphicsContext.ScaleRectToScreenResolution(ref _newImagePosXBig, ref _newImagePosYBig,
+                                                     ref _newImageWidthBig, ref _newImageHeightBig);
     }
 
+    /// <summary>
+    /// Make OverlayImages list for GUIListItem 
+    /// </summary>
+    /// <param name="pItem"></param>
+    /// <param name="itemFocused"></param>
+    private List<GUIOverlayImage> GetOverlayListForItem(GUIListItem pItem, bool itemFocused)
+    {
+      List<GUIOverlayImage> _overlayList = new List<GUIOverlayImage>();
+      if (pItem == null)
+      {
+        return _overlayList; 
+      }
+
+      // 1. Rating images
+      int _rating = (int)Math.Round(pItem.Rating);
+      int _userRating = pItem.UserRating;
+      if (_showRatingImage && (_rating > 0 || (_userRating > 0 && _showUserRatingImage)))
+      {
+        GUIOverlayImage _overlayImage = null;
+        if (_userRating > 0 && _showUserRatingImage)
+        {
+          string _fileName = _ratingUserImageTexturePrefix + _userRating;
+          _fileName = _fileName + (string.IsNullOrEmpty(_ratingUserImageTextureSuffix) ? ".png" : _ratingUserImageTextureSuffix);
+          _overlayImage = new GUIOverlayImage(_ratingImagePosX, _ratingImagePosY, _ratingImageWidth, _ratingImageHeight, _fileName);
+        }
+        else if (_rating > 0)
+        {
+          string _fileName = _ratingImageTexturePrefix + _rating;
+          _fileName = _fileName + (string.IsNullOrEmpty(_ratingImageTextureSuffix) ? ".png" : _ratingImageTextureSuffix);
+          _overlayImage = new GUIOverlayImage(_ratingImagePosX, _ratingImagePosY, _ratingImageWidth, _ratingImageHeight, _fileName);
+        }
+        if (_overlayImage != null)
+        {
+          _overlayList.Add(_overlayImage);
+        }
+      }
+
+      // 2. Watched/UnWatched images
+      if (_showWatchedImage && (!pItem.IsFolder || (pItem.IsFolder && _showWatchedImageOnFolder && pItem.Label != "..")))
+      {
+        GUIOverlayImage _overlayImage = null;
+        if (itemFocused || (!itemFocused && !_showWatchedImageOnlyOnFocus))
+        {
+          if (pItem.IsPlayed && !string.IsNullOrEmpty(_watchedImageWatchedTexture))
+          {
+            _overlayImage = new GUIOverlayImage(_watchedImagePosX, _watchedImagePosY, _watchedImageWidth, _watchedImageHeight, _watchedImageWatchedTexture);
+          }
+          else if (!pItem.IsPlayed && !string.IsNullOrEmpty(_watchedImageUnWatchedTexture)) 
+          {
+            _overlayImage = new GUIOverlayImage(_watchedImagePosX, _watchedImagePosY, _watchedImageWidth, _watchedImageHeight, _watchedImageUnWatchedTexture);
+          }
+        }
+        if (_overlayImage != null)
+        {
+          _overlayList.Add(_overlayImage);
+        }
+      }
+
+      // 3. Folder images
+      if (_showFolderStatusImage && pItem.IsFolder)
+      {
+        GUIOverlayImage _overlayImage = null;
+        if (pItem.IsUserGroup && !string.IsNullOrEmpty(_folderStatusImageUserGroupTexture))
+        {
+          _overlayImage = new GUIOverlayImage(_folderStatusImagePosX, _folderStatusImagePosY, _folderStatusImageWidth, _folderStatusImageHeight, _folderStatusImageUserGroupTexture);
+        }
+        if (pItem.IsCollection && !string.IsNullOrEmpty(_folderStatusImageCollectionTexture))
+        {
+          _overlayImage = new GUIOverlayImage(_folderStatusImagePosX, _folderStatusImagePosY, _folderStatusImageWidth, _folderStatusImageHeight, _folderStatusImageCollectionTexture);
+        }
+        if (_overlayImage != null)
+        {
+          _overlayList.Add(_overlayImage);
+        }
+      }
+
+      if (_showFolderStatusImage && pItem.IsBdDvdFolder)
+      {
+        GUIOverlayImage _overlayImage = null;
+        if (!string.IsNullOrEmpty(_folderStatusImageBdDvdFolderTexture))
+        {
+          _overlayImage = new GUIOverlayImage(_folderStatusImagePosX, _folderStatusImagePosY, _folderStatusImageWidth, _folderStatusImageHeight, _folderStatusImageBdDvdFolderTexture);
+          _overlayList.Add(_overlayImage);
+        }
+      }
+
+      if (_showFolderStatusImage && pItem.IsRemote)
+      {
+        GUIOverlayImage _overlayImage = null;
+        if (!string.IsNullOrEmpty(_folderStatusImageRemoteTexture))
+        {
+          _overlayImage = new GUIOverlayImage(_folderStatusImagePosX, _folderStatusImagePosY, _folderStatusImageWidth, _folderStatusImageHeight, _folderStatusImageRemoteTexture);
+          _overlayList.Add(_overlayImage);
+        }
+      }
+
+      // 4. New images
+      if (_showNewImage && (_newImageHotDays > -1 || _newImageNewDays > -1) && pItem.Updated != DateTime.MinValue)
+      {
+        int diffDays = (DateTime.Now - pItem.Updated).Days;
+        GUIOverlayImage _overlayImage = null;
+        if (_newImageHotDays > 0 && !string.IsNullOrEmpty(_newImageTextureHot))
+        {
+          if (diffDays <= _newImageHotDays)
+          {
+            _overlayImage = new GUIOverlayImage(_newImagePosX, _newImagePosY, _newImageWidth, _newImageHeight, _newImageTextureHot);
+          }
+        }
+        if (_newImageNewDays > 0 && !string.IsNullOrEmpty(_newImageTexture))
+        {
+          if (diffDays > _newImageHotDays && diffDays <= _newImageNewDays)
+          {
+            _overlayImage = new GUIOverlayImage(_newImagePosX, _newImagePosY, _newImageWidth, _newImageHeight, _newImageTexture);
+          }
+        }
+        if (_overlayImage != null)
+        {
+          _overlayList.Add(_overlayImage);
+        }
+      }
+
+      return _overlayList;
+    }
 
     protected void OnSelectionChanged()
     {
@@ -388,8 +633,10 @@ namespace MediaPortal.GUI.Library
       btn.Width = _textureWidth;
       btn.Height = _textureHeight;
 
+      bool itemFocused = bFocus && Focus;
+
       bool clipping = false;
-      if (bFocus && Focus)
+      if (itemFocused)
       {
         Rectangle clipRect = new Rectangle();
         clipRect.X = _positionX - _zoomXPixels / 2;
@@ -443,7 +690,7 @@ namespace MediaPortal.GUI.Library
         dwColor &= DimColor;
       }
 
-      if (bFocus == true && Focus && m_iSelect == GUIListControl.ListType.CONTROL_LIST)
+      if (itemFocused && m_iSelect == GUIListControl.ListType.CONTROL_LIST)
       {
         if (buttonOnly)
         {
@@ -514,7 +761,7 @@ namespace MediaPortal.GUI.Library
 
       // Set oversized value
       int iOverSized = 0;
-      if (bFocus && Focus && _enableFocusZoom && _zoomXPixels == 0 && _zoomYPixels == 0)
+      if (itemFocused && _enableFocusZoom && _zoomXPixels == 0 && _zoomYPixels == 0)
       {
         iOverSized = (_thumbNailWidth + _thumbNailHeight) / THUMBNAIL_OVERSIZED_DIVIDER;
       }
@@ -526,9 +773,12 @@ namespace MediaPortal.GUI.Library
         pFocusImage = pImage;
         if (null == pImage /*&& _sleeper==0 */&& !IsAnimating)
         {
+          string _guiImageTexture = GUIImageAllocator.BuildConcatImage("ThumbnailPanel:Thumb", pItem.ThumbnailImage, 
+                                                                       _thumbNailWidth, _thumbNailHeight,
+                                                                       GetOverlayListForItem(pItem, itemFocused));
           pImage = new GUIImage(0, 0, _xPositionThumbNail - iOverSized + dwPosX,
                                 _yPositionThumbNail - iOverSized + dwPosY, _thumbNailWidth + 2 * iOverSized,
-                                _thumbNailHeight + 2 * iOverSized, pItem.ThumbnailImage, 0x0);
+                                _thumbNailHeight + 2 * iOverSized, _guiImageTexture, 0x0);
 
           if (pImage != null)
           {
@@ -600,9 +850,12 @@ namespace MediaPortal.GUI.Library
           pFocusImage = pImage;
           if (null == pImage /*&& _sleeper==0 */&& !IsAnimating)
           {
+            string _guiImageTexture = GUIImageAllocator.BuildConcatImage("ThumbnailPanel:Big", pItem.IconImageBig, 
+                                                                         _thumbNailWidth, _thumbNailHeight,
+                                                                         GetOverlayListForItem(pItem, itemFocused));
             pImage = new GUIImage(0, 0, _xPositionThumbNail - iOverSized + dwPosX,
                                   _yPositionThumbNail - iOverSized + dwPosY, _thumbNailWidth + 2 * iOverSized,
-                                  _thumbNailHeight + 2 * iOverSized, pItem.IconImageBig, 0x0);
+                                  _thumbNailHeight + 2 * iOverSized, _guiImageTexture, 0x0);
             pImage.ParentControl = this;
             pImage.KeepAspectRatio = _keepAspectRatio;
             pImage.ImageAlignment = Alignment.ALIGN_CENTER;
@@ -664,7 +917,31 @@ namespace MediaPortal.GUI.Library
           }
         }
       }
-      if (bFocus && Focus)
+
+      if (itemFocused && pFocusImage != null)
+      {
+        if (!_scrollingUp && !_scrollingDown)
+        {
+          int _focusX = dwPosX - (_zoomXPixels / 2);
+          int _focusY = dwPosY - (_zoomYPixels / 2);
+          int _focusW = _textureWidth + _zoomXPixels;
+          int _focusH = _textureHeight + _zoomYPixels;
+
+          GUIPropertyManager.SetProperty("#facadeview.focus.X", _focusX.ToString());
+          GUIPropertyManager.SetProperty("#facadeview.focus.Y", _focusY.ToString());
+          GUIPropertyManager.SetProperty("#facadeview.focus.Width", _focusW.ToString());
+          GUIPropertyManager.SetProperty("#facadeview.focus.Height", _focusH.ToString());
+        }
+        else
+        {
+          GUIPropertyManager.SetProperty("#facadeview.focus.X", string.Empty);
+          GUIPropertyManager.SetProperty("#facadeview.focus.Y", string.Empty);
+          GUIPropertyManager.SetProperty("#facadeview.focus.Width", string.Empty);
+          GUIPropertyManager.SetProperty("#facadeview.focus.Height", string.Empty);
+        }
+      }
+
+      if (itemFocused)
       {
         btn.Width = _textureWidth + _zoomXPixels;
         btn.Height = _textureHeight + _zoomYPixels;
@@ -1321,6 +1598,7 @@ namespace MediaPortal.GUI.Library
         }
         if (message.Message == GUIMessage.MessageType.GUI_MSG_REFRESH)
         {
+          GUIImageAllocator.ClearCachedAllocatorImages();
           GUITextureManager.CleanupThumbs();
           foreach (GUIListItem item in _listItems)
           {
@@ -2518,8 +2796,29 @@ namespace MediaPortal.GUI.Library
         _itemHeight = _bigItemHeight;
         _textureWidth = _bigTextureWidth;
         _textureHeight = _bigTextureHeight;
+
         SetThumbDimensions(_positionXThumbBig, _positionYThumbBig, _widthThumbBig, _heightThumbBig);
         SetTextureDimensions(_textureWidth, _textureHeight);
+
+        _watchedImagePosX = _watchedImagePosXBig;
+        _watchedImagePosY = _watchedImagePosYBig;
+        _watchedImageWidth = _watchedImageWidthBig;
+        _watchedImageHeight = _watchedImageHeightBig;
+
+        _folderStatusImagePosX = _folderStatusImagePosXBig;
+        _folderStatusImagePosY = _folderStatusImagePosYBig;
+        _folderStatusImageWidth = _folderStatusImageWidthBig;
+        _folderStatusImageHeight = _folderStatusImageHeightBig;
+
+        _ratingImagePosX = _ratingImagePosXBig;
+        _ratingImagePosY = _ratingImagePosYBig;
+        _ratingImageWidth = _ratingImageWidthBig;
+        _ratingImageHeight = _ratingImageHeightBig;
+
+        _newImagePosX = _newImagePosXBig;
+        _newImagePosY = _newImagePosYBig;
+        _newImageWidth = _newImageWidthBig;
+        _newImageHeight = _newImageHeightBig;
       }
       else
       {
@@ -2527,8 +2826,29 @@ namespace MediaPortal.GUI.Library
         _itemHeight = _lowItemHeight;
         _textureWidth = _lowTextureWidth;
         _textureHeight = _lowTextureHeight;
+
         SetThumbDimensions(_xPositionThumbNailLow, _yPositionThumbNailLow, _widthThumbNailLow, _heightThumbNailLow);
         SetTextureDimensions(_textureWidth, _textureHeight);
+
+        _watchedImagePosX = _watchedImagePosXLow;
+        _watchedImagePosY = _watchedImagePosYLow;
+        _watchedImageWidth = _watchedImageWidthLow;
+        _watchedImageHeight = _watchedImageHeightLow;
+
+        _folderStatusImagePosX = _folderStatusImagePosXLow;
+        _folderStatusImagePosY = _folderStatusImagePosYLow;
+        _folderStatusImageWidth = _folderStatusImageWidthLow;
+        _folderStatusImageHeight = _folderStatusImageHeightLow;
+
+        _ratingImagePosX = _ratingImagePosXLow;
+        _ratingImagePosY = _ratingImagePosYLow;
+        _ratingImageWidth = _ratingImageWidthLow;
+        _ratingImageHeight = _ratingImageHeightLow;
+
+        _newImagePosX = _newImagePosXLow;
+        _newImagePosY = _newImagePosYLow;
+        _newImageWidth = _newImageWidthLow;
+        _newImageHeight = _newImageHeightLow;
       }
       Calculate();
       _refresh = true;
@@ -3023,6 +3343,12 @@ namespace MediaPortal.GUI.Library
 
     public void Clear()
     {
+      GUIImageAllocator.ClearCachedAllocatorImages();
+      GUIPropertyManager.SetProperty("#facadeview.focus.X", string.Empty);
+      GUIPropertyManager.SetProperty("#facadeview.focus.Y", string.Empty);
+      GUIPropertyManager.SetProperty("#facadeview.focus.Width", string.Empty);
+      GUIPropertyManager.SetProperty("#facadeview.focus.Height", string.Empty);
+
       _listItems.DisposeAndClear();
       //GUITextureManager.CleanupThumbs();
       _controlUpDown.SetRange(1, 1);
@@ -3146,7 +3472,7 @@ namespace MediaPortal.GUI.Library
     //  }
     //  else
     //  {
-    //    string file = System.IO.Path.GetFileName(item.Path); ;
+    //    string file = System.IO.Path.GetFileName(item.Path);
     //    string path = item.Path.Substring(0, item.Path.Length - (file.Length + 1));
     //    ThumbnailDatabase dbs = ThumbnailDatabaseCache.Get(path);
     //    ThumbNail thumb = dbs.Get(file);

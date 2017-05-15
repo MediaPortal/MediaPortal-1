@@ -585,8 +585,8 @@
         <align>left</align>
         <label>#Play.Current.Album</label>
         <textcolor>ffffffff</textcolor>
-        <animation effect="rotatey" time="1000" center="1300,0" start="0" end="-180" condition="string.equals(string.equals(#currentplaytime,0:09)|string.equals(#currentplaytime,0:10)">conditional</animation>
-        <animation effect="fade" delay="450" time="100" start="100" end="0" condition="string.equals(string.equals(#currentplaytime,0:09)|string.equals(#currentplaytime,0:10)">conditional</animation>
+        <animation effect="rotatey" time="1000" center="1300,0" start="0" end="-180" condition="string.equals(#currentplaytime,0:10)|string.equals(#currentplaytime,0:11)|string.equals(#currentplaytime,0:12)">conditional</animation>
+        <animation effect="fade" delay="450" time="100" start="100" end="0" condition="string.equals(#currentplaytime,0:10)|string.equals(#currentplaytime,0:11)|string.equals(#currentplaytime,0:12)">conditional</animation>
         <visible>string.equals(#currentplaytime,0:08)|string.equals(#currentplaytime,0:09)|string.equals(#currentplaytime,0:10)</visible>
       </control>
       <control>
@@ -598,8 +598,8 @@
         <align>left</align>
         <label>#Play.Current.Artist</label>
         <textcolor>ffffffff</textcolor>
-        <animation effect="rotatey" time="1000" center="1300,0" start="0" end="-180" condition="string.equals(string.equals(#currentplaytime,0:09)|string.equals(#currentplaytime,0:10)">conditional</animation>
-        <animation effect="fade" delay="450" time="100" start="100" end="0" condition="string.equals(string.equals(#currentplaytime,0:09)|string.equals(#currentplaytime,0:10)">conditional</animation>
+        <animation effect="rotatey" time="1000" center="1300,0" start="0" end="-180" condition="string.equals(#currentplaytime,0:10)|string.equals(#currentplaytime,0:11)|string.equals(#currentplaytime,0:12)">conditional</animation>
+        <animation effect="fade" delay="450" time="100" start="100" end="0" condition="string.equals(#currentplaytime,0:10)|string.equals(#currentplaytime,0:11)|string.equals(#currentplaytime,0:12)">conditional</animation>
         <visible>string.equals(#currentplaytime,0:08)|string.equals(#currentplaytime,0:09)|string.equals(#currentplaytime,0:10)</visible>
       </control>
       <control>
@@ -611,8 +611,8 @@
         <align>left</align>
         <label>#Play.Current.Track.  #Play.Current.Title</label>
         <textcolor>ffffffff</textcolor>
-        <animation effect="rotatey" time="1000" center="1300,0" start="0" end="-180" condition="string.equals(string.equals(#currentplaytime,0:09)|string.equals(#currentplaytime,0:10)">conditional</animation>
-        <animation effect="fade" delay="450" time="100" start="100" end="0" condition="string.equals(string.equals(#currentplaytime,0:09)|string.equals(#currentplaytime,0:10)">conditional</animation>
+        <animation effect="rotatey" time="1000" center="1300,0" start="0" end="-180" condition="string.equals(#currentplaytime,0:10)|string.equals(#currentplaytime,0:11)|string.equals(#currentplaytime,0:12)">conditional</animation>
+        <animation effect="fade" delay="450" time="100" start="100" end="0" condition="string.equals(#currentplaytime,0:10)|string.equals(#currentplaytime,0:11)|string.equals(#currentplaytime,0:12)">conditional</animation>
         <visible>string.equals(#currentplaytime,0:08)|string.equals(#currentplaytime,0:09)|string.equals(#currentplaytime,0:10)</visible>
       </control>
       <control>
@@ -624,8 +624,8 @@
         <align>left</align>
         <label>#Play.Next.Track.  #Play.Next.Title</label>
         <textcolor>ffffffff</textcolor>
-        <animation effect="rotatey" time="1000" center="1300,0" start="0" end="-180" condition="string.equals(string.equals(#currentplaytime,0:09)|string.equals(#currentplaytime,0:10)">conditional</animation>
-        <animation effect="fade" delay="450" time="100" start="100" end="0" condition="string.equals(string.equals(#currentplaytime,0:09)|string.equals(#currentplaytime,0:10)">conditional</animation>
+        <animation effect="rotatey" time="1000" center="1300,0" start="0" end="-180" condition="string.equals(#currentplaytime,0:10)|string.equals(#currentplaytime,0:11)|string.equals(#currentplaytime,0:12)">conditional</animation>
+        <animation effect="fade" delay="450" time="100" start="100" end="0" condition="string.equals(#currentplaytime,0:10)|string.equals(#currentplaytime,0:11)|string.equals(#currentplaytime,0:12)">conditional</animation>
         <visible>string.equals(#currentplaytime,0:08)|string.equals(#currentplaytime,0:09)|string.equals(#currentplaytime,0:10)</visible>
       </control>
     </control>

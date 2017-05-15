@@ -26,6 +26,7 @@ using MediaPortal.Drawing;
 using MediaPortal.Drawing.Layouts;
 using MediaPortal.ExtensionMethods;
 using Point = MediaPortal.Drawing.Point;
+using Size = MediaPortal.Drawing.Size;
 
 namespace MediaPortal.GUI.Library
 {
@@ -56,6 +57,28 @@ namespace MediaPortal.GUI.Library
     {
       _startAnimation = true;
       _animator = new Animator(_animatorType);
+    }
+
+    /// <summary>
+    /// Does any scaling on the inital size\position values to fit them to screen 
+    /// resolution. 
+    /// </summary>
+    public override void ScaleToScreenResolution()
+    {
+      base.ScaleToScreenResolution();
+
+      if (_layout == null)
+      {
+        return;
+      }
+
+      int width = (int)System.Math.Round(_layout.Spacing.Width);
+      int height = (int)System.Math.Round(_layout.Spacing.Height);
+
+      GUIGraphicsContext.ScaleHorizontal(ref width);
+      GUIGraphicsContext.ScaleVertical(ref height);
+
+      _layout.Spacing = new Size(width, height);
     }
 
     public void AddControl(GUIControl control)

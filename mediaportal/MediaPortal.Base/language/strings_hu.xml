@@ -1257,6 +1257,10 @@
     <String id="2149">Kérdés</String>
     <String id="2160">Média információ frissítése az alkönyvtárban lévő videókról</String>
     <String id="2161">A háttérben futó méda információt frissítő folyamat megszakítása</String>
+    <String id="2162">A csatorna törlése</String>
+    <String id="2163">A csatorna hozzáadása egy csoporthoz</String>
+    <String id="2164">A csatorna törlése ebből a csoportból</String>
+    <String id="2165">Biztosan törölni szeretnéd ezt a csatornát a TvServer-ről?</String>
     <String id="2200">Intéző</String>
     <String id="2201">Forrás kiválasztása</String>
     <String id="2202">Cél kiválasztása</String>

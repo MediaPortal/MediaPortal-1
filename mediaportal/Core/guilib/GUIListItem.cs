@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2017 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2017 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -52,6 +52,8 @@ namespace MediaPortal.GUI.Library
     protected GUIImage _imageBigPinIcon = null; // pointer to CImage containing the icon
     protected bool _isSelected = false; // item is selected or not
     protected bool _isFolder = false; // indicated if the item is a folder or a path
+    protected bool _isUserGroup = false; // indicated if the item is a UserGroup
+    protected bool _isCollection = false; // indicated if the item is a Collection
     protected bool _hasProgressBar = false;
     protected int _progressBarPercentage = 0;
     protected string _folder = string.Empty; // path + filename of the item
@@ -75,6 +77,7 @@ namespace MediaPortal.GUI.Library
     private bool _retrieveCoverArtAllowed = true;
     private int _dimColor = 0x60ffffff;
     private bool _isBdDvdFolder = false; // is DVD or BD rip folder
+    private DateTime _dtUpdated = DateTime.MinValue;
 
     /// <summary>
     /// The (empty) constructor of the GUIListItem.
@@ -109,6 +112,9 @@ namespace MediaPortal.GUI.Library
       _tagTv = item._tagTv;
       _tagAlbumInfo = item._tagAlbumInfo;
       _isBdDvdFolder = item._isBdDvdFolder;
+      _isUserGroup = item._isUserGroup;
+      _isCollection = item._isCollection;
+      _dtUpdated = item._dtUpdated;
     }
 
     public GUIListItem(string aLabel, string aLabel2, string aPath, bool aIsFolder, FileInformation aFileInformation)
@@ -420,6 +426,24 @@ namespace MediaPortal.GUI.Library
     }
 
     /// <summary>
+    /// Get/set if item is UserGroup
+    /// </summary>
+    public bool IsUserGroup
+    {
+      get { return _isUserGroup; }
+      set { _isUserGroup = value; }
+    }
+
+    /// <summary>
+    /// Get/set if item is Collection
+    /// </summary>
+    public bool IsCollection
+    {
+      get { return _isCollection; }
+      set { _isCollection = value; }
+    }
+
+    /// <summary>
     /// Get/set the path + filename of the item.
     /// </summary>
     public string Path
@@ -576,6 +600,15 @@ namespace MediaPortal.GUI.Library
     {
       get { return _hasProgressBar; }
       set { _hasProgressBar = value; }
+    }
+
+    /// <summary>
+    /// Get/set the last updated date/time of the movie/song.
+    /// </summary>
+    public DateTime Updated
+    {
+      get { return _dtUpdated; }
+      set { _dtUpdated = value; }
     }
 
     /// <summary>
