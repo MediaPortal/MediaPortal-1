@@ -1102,6 +1102,8 @@
     <String id="1333">Add Movie to Collection</String>
     <String id="1334">Remove selected movie from Collection</String>
     <String id="1335">Refresh cover</String>
+    <String id="1337">Add New Collection</String>
+    <String id="1338">Remove Selected Collection</String>
     <String id="1440" prefix="My ">Teletext</String>
     <String id="1441">Teletext</String>
     <String id="1442">Scroll speed (horizontal)</String>
