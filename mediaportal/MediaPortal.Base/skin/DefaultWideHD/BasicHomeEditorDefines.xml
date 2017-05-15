@@ -982,7 +982,7 @@
 
   <define property="true" evaluateNow="true">#HOME12.name:FRITZ!Box Manager</define>
   <define property="true" evaluateNow="true">#HOME12.plugin:FRITZ!Box Manager</define>
-  <define property="true" evaluateNow="true">#HOME12.hyperlink:464554880</define>
+  <define property="true" evaluateNow="true">#HOME12.hyperlink:464554871</define>
   <define property="true" evaluateNow="true">#HOME12.parameter:</define>
   <define property="true" evaluateNow="true">#HOME12.hover:hover_FritzBox.png</define>
   <define property="true" evaluateNow="true">#HOME12.background:Animations\BasicHome\plugins.jpg</define>
