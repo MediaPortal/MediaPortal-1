@@ -662,7 +662,7 @@ namespace MediaPortal.GUI.Library
         {
           try
           {
-            //Log.Debug("TextureManager: Dispose:{0} Frames:{1} Total:{2} Mem left:{3}", oldImage.Name, oldImage.Frames, _cache.Count, Convert.ToString(GUIGraphicsContext.DX9Device.AvailableTextureMemory / 1000));                
+            // Log.Debug("TextureManager: Dispose:{0} Frames:{1} Total:{2} Mem left:{3}", oldImage.Name, oldImage.Frames, _cacheTextures.Count, ((uint)GUIGraphicsContext.DX9Device.AvailableTextureMemory / 1048576));
             CachedTexture removedItem;
             _cacheTextures.TryRemove(cacheKey, out removedItem);
             oldImage.SafeDispose();

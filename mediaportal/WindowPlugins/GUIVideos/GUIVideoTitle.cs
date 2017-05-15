@@ -954,12 +954,21 @@ namespace MediaPortal.GUI.Video
         item.Rating = movie.Rating;
         item.UserRating = movie.UserRating;
         item.IsPlayed = movie.Watched > 0;
+        item.IsCollection = !string.IsNullOrEmpty(movie.SingleMovieCollection);
+        item.IsUserGroup = !string.IsNullOrEmpty(movie.SingleUserGroup);
+        
+        DateTime lastUpdate;
+        DateTime.TryParseExact(movie.LastUpdate, "yyyy-MM-dd HH:mm:ss",
+                               CultureInfo.CurrentCulture,
+                               DateTimeStyles.None,
+                               out lastUpdate);
+        item.Updated = lastUpdate;
 
         try
         {
           if (item.Path.ToUpperInvariant().Contains(@"\VIDEO_TS"))
           {
-            item.Label3 = MediaTypes.DVD.ToString() + " #" + movie.WatchedCount;;
+            item.Label3 = MediaTypes.DVD.ToString() + " #" + movie.WatchedCount;
           }
           else if (item.Path.ToUpperInvariant().Contains(@"\BDMV"))
           {
@@ -967,7 +976,7 @@ namespace MediaPortal.GUI.Video
           }
           else if (VirtualDirectory.IsImageFile(Path.GetExtension(item.Path)))
           {
-            item.Label3 = MediaTypes.ISO.ToString() + " #" + movie.WatchedCount; ;
+            item.Label3 = MediaTypes.ISO.ToString() + " #" + movie.WatchedCount;
           }
           else
           {
@@ -1643,6 +1652,9 @@ namespace MediaPortal.GUI.Video
 
           case "user groups":
           case "user groups only":
+            listItem.IconImageBig = "defaultVideoBig.png";
+            listItem.IconImage = "defaultVideo.png";
+            listItem.ThumbnailImage = "defaultVideoBig.png";
             break;
 
           case "movie collections":
@@ -1807,31 +1819,31 @@ namespace MediaPortal.GUI.Video
         {
           FilterDefinition defCurrent = (FilterDefinition) handler.View.Filters[handler.CurrentLevel - 1];
           string selectedValue = defCurrent.SelectedValue;
+          string _strView = defCurrent.Where.ToLowerInvariant();
           Int32 iSelectedValue;
           
           if (Int32.TryParse(selectedValue, out iSelectedValue))
           {
-            if (strView == "actor" || strView == "director")
+            if (_strView == "actor" || _strView == "director")
             {
               selectedValue = VideoDatabase.GetActorNameById(iSelectedValue);
             }
 
-            if (strView == "genre")
+            if (_strView == "genre")
             {
               selectedValue = VideoDatabase.GetGenreById(iSelectedValue);
             }
 
-            if (strView == "user groups" || strView == "user groups only")
+            if (_strView == "user groups" || _strView == "user groups only")
             {
               selectedValue = VideoDatabase.GetUserGroupById(iSelectedValue);
             }
 
-            if (strView == "movie collections" || strView == "movie collections only")
+            if (_strView == "movie collections" || _strView == "movie collections only")
             {
               selectedValue = VideoDatabase.GetCollectionById(iSelectedValue);
             }
           }
-
           GUIPropertyManager.SetProperty("#currentmodule",
                                          String.Format("{0}/{1} - {2}", GUILocalizeStrings.Get(100006),
                                                        handler.LocalizedCurrentView, selectedValue));
