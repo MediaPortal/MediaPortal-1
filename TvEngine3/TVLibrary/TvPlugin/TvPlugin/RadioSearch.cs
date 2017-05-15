@@ -632,11 +632,6 @@ namespace TvPlugin
                 continue;
               }
 
-              strTime = String.Format("{0} {1} - {2}",
-                                      Utils.GetShortDayString(program.StartTime),
-                                      program.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-                                      program.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
-
               item = new GUIListItem();
               
               //check if we are filtering for specific show or just letter
@@ -651,7 +646,7 @@ namespace TvPlugin
               {
                   //searching for specific show so add episode data to display
                   item.Label = TVUtil.GetDisplayTitle(program);
-                  item.Label2 = strTime;
+                  item.Label2 = TVUtil.GetRecordingDateStringFull(program);
                   item.IsFolder = false;
               }
               item.Path = program.Title;
@@ -778,11 +773,6 @@ namespace TvPlugin
                 continue;
               }
 
-              string strTime = String.Format("{0} {1} - {2}",
-                                             Utils.GetShortDayString(program.StartTime),
-                                             program.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-                                             program.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
-
               GUIListItem item = new GUIListItem();
               
 
@@ -802,7 +792,7 @@ namespace TvPlugin
                   //moved this if statement but can not see it is doing anything?
                   //if (program.StartTime > DateTime.MinValue)
                   //{
-                      item.Label2 = strTime;
+                      item.Label2 = TVUtil.GetRecordingDateStringFull(program);
                   //}
               }
 
@@ -891,15 +881,10 @@ namespace TvPlugin
                 continue;
               }
 
-              strTime = String.Format("{0} {1} - {2}",
-                                      Utils.GetShortDayString(program.StartTime),
-                                      program.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-                                      program.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
-
               GUIListItem item = new GUIListItem();
               item.IsFolder = false;
               item.Label = TVUtil.GetDisplayTitle(program);
-              item.Label2 = strTime;
+              item.Label2 = TVUtil.GetRecordingDateStringFull(program);
               
 
               item.Path = program.Title;
@@ -1358,10 +1343,7 @@ namespace TvPlugin
         return;
       }
       
-      string strTime = String.Format("{0} {1} - {2}",
-                                     Utils.GetShortDayString(prog.StartTime),
-                                     prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-                                     prog.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+      string strTime = TVUtil.GetRecordingDateStringFull(prog);
       
       GUIPropertyManager.SetProperty("#Radio.Search.Title", TVUtil.GetDisplayTitle(prog));      
       GUIPropertyManager.SetProperty("#Radio.Search.Time", strTime);

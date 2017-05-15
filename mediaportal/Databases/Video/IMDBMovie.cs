@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2017 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2017 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -669,6 +669,7 @@ namespace MediaPortal.Video.Database
       GUIPropertyManager.SetProperty("#moviepath", Path);
       GUIPropertyManager.SetProperty("#isgroup", (string.IsNullOrEmpty(SingleUserGroup) ? "no" : "yes"));
       GUIPropertyManager.SetProperty("#iscollection", (string.IsNullOrEmpty(SingleMovieCollection) ? "no" : "yes"));
+      GUIPropertyManager.SetProperty("#dateadded", DateAdded);
       DateTime lastUpdate;
       DateTime.TryParseExact(LastUpdate, "yyyy-MM-dd HH:mm:ss", 
                              CultureInfo.CurrentCulture, 
@@ -1081,6 +1082,22 @@ namespace MediaPortal.Video.Database
             {
               info.Duration += VideoDatabase.GetVideoDuration(VideoDatabase.GetFileId(file));
             }
+          }
+
+          // Set Ratings and LastUpdate
+          if (info.ID > 0)
+          {
+            IMDBMovie movie = new IMDBMovie();
+            VideoDatabase.GetMovieInfoById(info.ID, ref movie);
+            item.Rating = movie.Rating;
+            item.UserRating = movie.UserRating;
+
+            DateTime lastUpdate;
+            DateTime.TryParseExact(movie.LastUpdate, "yyyy-MM-dd HH:mm:ss",
+                                   CultureInfo.CurrentCulture,
+                                   DateTimeStyles.None,
+                                   out lastUpdate);
+            item.Updated = lastUpdate;
           }
 
           int percent = 0;
@@ -1935,6 +1952,7 @@ namespace MediaPortal.Video.Database
         GUIPropertyManager.SetProperty("#moviepath", info.Path); 
         GUIPropertyManager.SetProperty("#isgroup", (string.IsNullOrEmpty(info.SingleUserGroup) ? "no" : "yes"));
         GUIPropertyManager.SetProperty("#iscollection", (string.IsNullOrEmpty(info.SingleMovieCollection) ? "no" : "yes"));
+        GUIPropertyManager.SetProperty("#dateadded", info.DateAdded);
         // Last update date
         DateTime lastUpdate;
         DateTime.TryParseExact(info.LastUpdate, "yyyy-MM-dd HH:mm:ss", CultureInfo.CurrentCulture, DateTimeStyles.None, out lastUpdate);
@@ -2096,6 +2114,7 @@ namespace MediaPortal.Video.Database
       GUIPropertyManager.SetProperty("#studios", string.Empty);
       GUIPropertyManager.SetProperty("#country", string.Empty);
       GUIPropertyManager.SetProperty("#language", string.Empty);
+      GUIPropertyManager.SetProperty("#dateadded", string.Empty);
       GUIPropertyManager.SetProperty("#lastupdate", string.Empty);
       GUIPropertyManager.SetProperty("#movieid", "-1");
       GUIPropertyManager.SetProperty("#hideinfo", "true");

@@ -21,7 +21,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Runtime.CompilerServices;
 using MediaPortal.Configuration;
@@ -336,14 +335,6 @@ namespace TvPlugin
 
     #region Static methods
 
-    private static string GetRecordingDateTime(Schedule rec)
-    {
-      return String.Format("{0} {1} - {2}",
-                           Utils.GetShortDayString(rec.StartTime),
-                           rec.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-                           rec.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
-    }
-
     public static bool IsRecordingProgram(Program program, out Schedule recordingSchedule,
                                            bool filterCanceledRecordings)
     {
@@ -427,13 +418,8 @@ namespace TvPlugin
         //Log.Debug("TVProgrammInfo.UpdateProgramDescription: {0} - {1}", episode.Title, episode.Description);
 
         lblProgramChannel.Label = Channel.Retrieve(episode.IdChannel).DisplayName;
-        string strTime = String.Format("{0} {1} - {2}",
-                                       Utils.GetShortDayString(episode.StartTime),
-                                       episode.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-                                       episode.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
-
         lblProgramGenre.Label = episode.Genre;
-        lblProgramTime.Label = strTime;
+        lblProgramTime.Label = TVUtil.GetRecordingDateStringFull(episode);
         lblProgramDescription.Label = episode.Description;
         lblProgramTitle.Label = episode.Title;
       }
@@ -613,10 +599,7 @@ namespace TvPlugin
         item.MusicTag = episode;
         item.ThumbnailImage = item.IconImageBig = item.IconImage = logo;
 
-        item.Label2 = String.Format("{0} {1} - {2}",
-                                    Utils.GetShortDayString(episode.StartTime),
-                                    episode.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-                                    episode.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+        item.Label2 = TVUtil.GetRecordingDateStringFull(episode);
 
         if (lastSelectedProgram != null)
         {
@@ -1197,7 +1180,7 @@ namespace TvPlugin
             Log.Debug("TVProgramInfo.CreateProgram: Conflicts = " + conflict);
 
             GUIListItem item = new GUIListItem(conflict.ProgramName);
-            item.Label2 = GetRecordingDateTime(conflict);
+            item.Label2 = TVUtil.GetRecordingDateStringFull(conflict);
             Channel channel = Channel.Retrieve(conflict.IdChannel);
             if (channel != null && !string.IsNullOrEmpty(channel.DisplayName))
             {
@@ -1269,7 +1252,7 @@ namespace TvPlugin
             Log.Debug("TVProgramInfo.CreateProgram: NotViewable = " + notViewable);
 
             GUIListItem item = new GUIListItem(notViewable.ProgramName);
-            item.Label2 = GetRecordingDateTime(notViewable);
+            item.Label2 = TVUtil.GetRecordingDateStringFull(notViewable);
             Channel channel = Channel.Retrieve(notViewable.IdChannel);
             if (channel != null && !string.IsNullOrEmpty(channel.DisplayName))
             {

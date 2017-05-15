@@ -21,7 +21,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Globalization;
 using System.IO;
 using System.Threading;
 using System.Windows.Forms;
@@ -985,16 +984,11 @@ namespace TvPlugin
             continue;
           }
           Recording rec = (Recording)item1.TVTag;
-          TimeSpan ts = rec.EndTime - rec.StartTime;
-
-          string strTime = String.Format("{0} ({1})",
-                                         Utils.GetNamedDate(rec.StartTime),
-                                         Utils.SecondsToHMString((int)ts.TotalSeconds));
 
           // Do not display a duration in top level of History view
           if (_currentDbView != DBView.History || _currentLabel != String.Empty)
           {
-            item1.Label2 = strTime;
+            item1.Label2 = TVUtil.GetRecordingDateString(rec);
           }
           if (currentLayout != Layout.List)
           {
@@ -1405,14 +1399,10 @@ namespace TvPlugin
           GUIPropertyManager.SetProperty("#Radio.Recorded.thumb", "");
           return;
         }
-        string strTime = string.Format("{0} {1} - {2}",
-                                       Utils.GetShortDayString(rec.StartTime),
-                                       rec.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-                                       rec.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
 
         GUIPropertyManager.SetProperty("#Radio.Recorded.Title", rec.Title);
         GUIPropertyManager.SetProperty("#Radio.Recorded.Genre", rec.Genre);
-        GUIPropertyManager.SetProperty("#Radio.Recorded.Time", strTime);
+        GUIPropertyManager.SetProperty("#Radio.Recorded.Time", TVUtil.GetRecordingDateStringFull(rec));
         GUIPropertyManager.SetProperty("#Radio.Recorded.Description", rec.Description);
 
         string strLogo = "";

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2013 Team MediaPortal
+#region Copyright (C) 2005-2017 Team MediaPortal
 
-// Copyright (C) 2005-2013 Team MediaPortal
+// Copyright (C) 2005-2017 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -25,6 +25,7 @@ using System.Threading;
 using System.Xml;
 using MediaPortal.GUI.Library;
 using MediaPortal.UserInterface.Controls;
+using MediaPortal.Util;
 
 namespace MediaPortal
 {
@@ -89,6 +90,7 @@ namespace MediaPortal
     /// </summary>
     public void RetrieveSplashScreenInfo()
     {
+      InitSkinSizeFromReferenceXML();
       ReadSplashScreenXML();
       if (pbBackground.Image == null)
       {
@@ -108,6 +110,7 @@ namespace MediaPortal
         Log.Debug("FullScreenSplash: Splashscreen.xml not found!: {0}", skinFilePath);
         return;
       }
+      bool needInvalidate = false;
 
       Log.Debug("FullScreenSplash: Splashscreen.xml found: {0}", skinFilePath);
 
@@ -178,8 +181,10 @@ namespace MediaPortal
                   if (Int32.TryParse(_value, out _number))
                   {
                     lblMain.Dock = System.Windows.Forms.DockStyle.None;
-                    lblMain.Left = _number;
-                    Log.Debug("FullScreenSplash: Main Label PosX successfully set: {0}", _number);
+                    int newNumber = ScaleHorizontal(_number);
+                    lblMain.Left = newNumber;
+                    Log.Debug("FullScreenSplash: Main Label PosX successfully set: {0}/{1}", _number, newNumber);
+                    needInvalidate = true;
                   }
                 }
               }
@@ -194,8 +199,10 @@ namespace MediaPortal
                   if (Int32.TryParse(_value, out _number))
                   {
                     lblMain.Dock = System.Windows.Forms.DockStyle.None;
-                    lblMain.Top = _number;
-                    Log.Debug("FullScreenSplash: Main Label PosY successfully set: {0}", _number);
+                    int newNumber = ScaleVertical(_number);
+                    lblMain.Top = newNumber;
+                    Log.Debug("FullScreenSplash: Main Label PosY successfully set: {0}/{1}", _number, newNumber);
+                    needInvalidate = true;
                   }
                 }
               }
@@ -210,8 +217,10 @@ namespace MediaPortal
                   if (Int32.TryParse(_value, out _number))
                   {
                     lblMain.Dock = System.Windows.Forms.DockStyle.None;
-                    lblMain.Width = _number;
-                    Log.Debug("FullScreenSplash: Main Label Width successfully set: {0}", _number);
+                    int newNumber = ScaleHorizontal(_number);
+                    lblMain.Width = newNumber;
+                    Log.Debug("FullScreenSplash: Main Label Width successfully set: {0}/{1}", _number, newNumber);
+                    needInvalidate = true;
                   }
                 }
               }
@@ -226,8 +235,10 @@ namespace MediaPortal
                   if (Int32.TryParse(_value, out _number))
                   {
                     lblMain.Dock = System.Windows.Forms.DockStyle.None;
-                    lblMain.Height = _number;
-                    Log.Debug("FullScreenSplash: Main Label Height successfully set: {0}", _number);
+                    int newNumber = ScaleVertical(_number);
+                    lblMain.Height = newNumber;
+                    Log.Debug("FullScreenSplash: Main Label Height successfully set: {0}/{1}", _number, newNumber);
+                    needInvalidate = true;
                   }
                 }
               }
@@ -285,6 +296,40 @@ namespace MediaPortal
             }
           }
       }
+      if (needInvalidate)
+      {
+        this.Invalidate(true);
+      }
+    }
+
+    private void InitSkinSizeFromReferenceXML()
+    {
+      string skinReferenceFilePath = GUIGraphicsContext.GetThemedSkinFile("\\references.xml");
+
+      Log.Debug("FullScreenSplash: Try to init Skin size from reference.xml: {0}", skinReferenceFilePath);
+
+      var doc = new XmlDocument();
+      doc.Load(skinReferenceFilePath);
+      if (doc.DocumentElement != null)
+      {
+        XmlNode nodeSkinWidth = doc.DocumentElement.SelectSingleNodeFast("/controls/skin/width/text()");
+        XmlNode nodeSkinHeight = doc.DocumentElement.SelectSingleNodeFast("/controls/skin/height/text()");
+        if (nodeSkinWidth != null && nodeSkinHeight != null)
+        {
+          try
+          {
+            int iWidth = Convert.ToInt16(nodeSkinWidth.Value);
+            int iHeight = Convert.ToInt16(nodeSkinHeight.Value);
+            Log.Debug("FullScreenSplash: Original skin size: {0}x{1}", iWidth, iHeight);
+            GUIGraphicsContext.SkinSize = new Size(iWidth, iHeight);
+            return;
+          }
+          catch (FormatException) // Size values were invalid.
+          {  }
+        }
+      }
+      Log.Debug("FullScreenSplash: Fallback to Default skin size: 1920x1080");
+      GUIGraphicsContext.SkinSize = new Size(1920, 1080);
     }
 
     /// <summary>
@@ -323,5 +368,34 @@ namespace MediaPortal
           }
       }
     }
+
+    /// <summary>
+    /// Scale x position for current resolution
+    /// </summary>
+    /// <param name="x">X coordinate to scale.</param>
+    private int ScaleHorizontal(int x)
+    {
+      if (GUIGraphicsContext.SkinSize.Width != 0)
+      {
+        float percentX = (float)GUIGraphicsContext.currentScreen.Bounds.Width / (float)GUIGraphicsContext.SkinSize.Width;
+        x = (int)Math.Round((float)x * percentX);
+      }
+      return x;
+    }
+
+    /// <summary>
+    /// Scale y position for current resolution
+    /// </summary>
+    /// <param name="y">Y coordinate to scale.</param>
+    private int ScaleVertical(int y)
+    {
+      if (GUIGraphicsContext.SkinSize.Height != 0)
+      {
+        float percentY = (float)GUIGraphicsContext.currentScreen.Bounds.Height / (float)GUIGraphicsContext.SkinSize.Height;
+        y = (int)Math.Round((float)y * percentY);
+      }
+      return y;
+    }
+
   }
 }

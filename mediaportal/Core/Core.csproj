@@ -857,6 +857,9 @@
     <Compile Include="guilib\GUIAnimation.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="guilib\GUIImageAllocator.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="guilib\GUIButton3PartControl.cs">
       <SubType>Code</SubType>
     </Compile>
