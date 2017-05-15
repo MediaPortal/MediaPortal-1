@@ -444,6 +444,12 @@ namespace MediaPortal.GUI.Library
         GUIPropertyManager.SetProperty("#selectedindex", strIndex);
         GUIPropertyManager.SetProperty("#highlightedbutton", strSelected);
       }
+      else
+      {
+        GUIPropertyManager.SetProperty("#selecteditem", strSelected);
+        GUIPropertyManager.SetProperty("#selectedindex", strIndex);
+        GUIPropertyManager.SetProperty("#highlightedbutton", strSelected);
+      }
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_FOCUS_CHANGED, WindowId, GetID, ParentID, 0, 0, null)
                          {
                            SendToTargetWindow = true

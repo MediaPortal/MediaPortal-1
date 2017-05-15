@@ -160,6 +160,7 @@
     </Compile>
     <Compile Include="ControlDevices\Util\AbstractControlPlugin.cs" />
     <Compile Include="ControlDevices\Util\AbstractControlSettings.cs" />
+    <None Include="App.config" />
     <None Include="ControlDevices\Util\AbstractLearnCode.cs" />
     <Compile Include="ControlDevices\Util\LearnCodePanel.cs">
       <SubType>UserControl</SubType>
