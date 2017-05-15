@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <Language name="English" characters="255">
   <Section name="unmapped">
     <String id="0" prefix="My ">Programs</String>
@@ -1102,6 +1102,9 @@
     <String id="1333">Add Movie to Collection</String>
     <String id="1334">Remove selected movie from Collection</String>
     <String id="1335">Refresh cover</String>
+    <String id="1336">Library</String>
+    <String id="1337">Add New Collection</String>
+    <String id="1338">Remove Selected Collection</String>
     <String id="1440" prefix="My ">Teletext</String>
     <String id="1441">Teletext</String>
     <String id="1442">Scroll speed (horizontal)</String>
@@ -1354,6 +1357,10 @@
     <String id="2149">Question</String>
     <String id="2160">Update Mediainfo in selected folder</String>
     <String id="2161">Abort update Mediainfo thread</String>
+    <String id="2162">Remove channel</String>
+    <String id="2163">Add channel to a group</String>
+    <String id="2164">Remove channel from this group</String>
+    <String id="2165">Do you want to remove this channel from the TvServer?</String>
     <String id="2200" prefix="My ">Explorer</String>
     <String id="2201">Select source</String>
     <String id="2202">Select destination</String>

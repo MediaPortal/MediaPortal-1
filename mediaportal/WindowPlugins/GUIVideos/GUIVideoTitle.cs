@@ -509,6 +509,8 @@ namespace MediaPortal.GUI.Video
 
         if (CurrentBaseView == "movie collections" || CurrentBaseView == "movie collections only")
         {
+          dlg.AddLocalizedString(1337); // Add Collection
+
           ArrayList movieCollectionsList = new ArrayList();
           ArrayList movieMovieCollectionsList = new ArrayList();
           VideoDatabase.GetCollections(movieCollectionsList);
@@ -517,18 +519,18 @@ namespace MediaPortal.GUI.Video
           // Add movie to collection if there is available collections for that movie
           if (movieMovieCollectionsList.Count < movieCollectionsList.Count)
           {
-            dlg.AddLocalizedString(1333); //add movie to collection
+            dlg.AddLocalizedString(1333); // Add movie to collection
           }
 
           if (handler.CurrentLevel > 0)
           {
-            dlg.AddLocalizedString(1334); //remove from collection
+            dlg.AddLocalizedString(1334); // Remove from collection
           }
         }
 
         if (CurrentBaseView == "user groups" || CurrentBaseView == "user groups only")
         {
-          dlg.AddLocalizedString(1272); //Add new usergroup
+          dlg.AddLocalizedString(1272); // Add new usergroup
 
           ArrayList userGroups = new ArrayList();
           ArrayList movieUserGroups = new ArrayList();
@@ -538,12 +540,12 @@ namespace MediaPortal.GUI.Video
           // Add movie to user group if there is available user groups for that movie
           if (movieUserGroups.Count < userGroups.Count)
           {
-            dlg.AddLocalizedString(1270); //add movie to usergroup
+            dlg.AddLocalizedString(1270); // Add movie to usergroup
           }
 
           if (handler.CurrentLevel > 0)
           {
-            dlg.AddLocalizedString(1271); //remove from usergroup
+            dlg.AddLocalizedString(1271); // Remove from usergroup
           }
         }
 
@@ -636,7 +638,11 @@ namespace MediaPortal.GUI.Video
         case 1334: // Remove from Collection
           OnRemoveFromCollection(movie, itemNo);
           break;
-        
+
+        case 1337: // Add New Collection
+          OnAddCollection();
+          break;
+
         case 1270: // Add to user group
           OnAddToUserGroup(movie, itemNo);
           break;
@@ -899,6 +905,15 @@ namespace MediaPortal.GUI.Video
         item.Rating = movie.Rating;
         item.UserRating = movie.UserRating;
         item.IsPlayed = movie.Watched > 0;
+        item.IsCollection = !string.IsNullOrEmpty(movie.SingleMovieCollection);
+        item.IsUserGroup = !string.IsNullOrEmpty(movie.SingleUserGroup);
+        
+        DateTime lastUpdate;
+        DateTime.TryParseExact(movie.LastUpdate, "yyyy-MM-dd HH:mm:ss",
+                               CultureInfo.CurrentCulture,
+                               DateTimeStyles.None,
+                               out lastUpdate);
+        item.Updated = lastUpdate;
 
         try
         {
@@ -1232,10 +1247,15 @@ namespace MediaPortal.GUI.Video
       {
         dlg.AddLocalizedString(1293); //Search movie
 
+        if (handler.CurrentLevelWhere == "movie collections" || handler.CurrentLevelWhere == "movie collections only")
+        {
+          dlg.AddLocalizedString(1337); // Add Collection
+          dlg.AddLocalizedString(1338); // Remove selected Collection
+        }
         if (handler.CurrentLevelWhere == "user groups" || handler.CurrentLevelWhere == "user groups only")
         {
-          dlg.AddLocalizedString(1272); //Add usergroup
-          dlg.AddLocalizedString(1273); //Remove selected usergroup
+          dlg.AddLocalizedString(1272); // Add usergroup
+          dlg.AddLocalizedString(1273); // Remove selected usergroup
         }
       }
 
@@ -1288,7 +1308,19 @@ namespace MediaPortal.GUI.Video
 
           OnRemoveUserGroup(item.Label);
           break;
-        
+        case 1337: // Add New Collection
+          OnAddCollection();
+          break;
+        case 1338: // Remove Collection
+          GUIListItem selitem = facadeLayout.SelectedListItem;
+
+          if (selitem == null)
+          {
+            return;
+          }
+
+          OnRemoveCollection(selitem.Label);
+          break;
       }
     }
 
@@ -1751,7 +1783,6 @@ namespace MediaPortal.GUI.Video
               selectedValue = VideoDatabase.GetCollectionById(iSelectedValue);
             }
           }
-
           GUIPropertyManager.SetProperty("#currentmodule",
                                          String.Format("{0}/{1} - {2}", GUILocalizeStrings.Get(100006),
                                                        handler.LocalizedCurrentView, selectedValue));
@@ -2170,8 +2201,49 @@ namespace MediaPortal.GUI.Video
 
     private void OnRemoveFromCollection(IMDBMovie movie, int itemIndex)
     {
-      // string group = m_history.Get("movie collections");
-      string strCollection = m_history.Get(handler.CurrentLevelWhere);
+      ArrayList movieCollections = new ArrayList();
+      VideoDatabase.GetMovieCollections(movie.ID, movieCollections);
+      if (movieCollections.Count == 0)
+      {
+        return;
+      }
+
+      string strCollection = string.Empty;
+      if (movieCollections.Count > 1)
+      {
+        GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
+
+        if (dlg == null)
+        {
+          return;
+        }
+
+        dlg.Reset();
+        dlg.SetHeading(1334); // Remove from Collection
+
+        foreach (string strColl in movieCollections)
+        {
+          dlg.Add(strColl);
+        }
+
+        dlg.DoModal(GetID);
+
+        if (dlg.SelectedId == -1)
+        {
+          return;
+        }
+        strCollection = dlg.SelectedLabelText;
+      }
+      else
+      {
+        strCollection = movieCollections[0].ToString();
+      }
+
+      if (string.IsNullOrEmpty(strCollection))
+      {
+        return;
+      }
+
       VideoDatabase.RemoveCollectionFromMovie(movie.ID, VideoDatabase.AddCollection(strCollection));
 
       currentSelectedItem = itemIndex;
@@ -2191,6 +2263,26 @@ namespace MediaPortal.GUI.Video
           GUIControl.SelectItemControl(GetID, facadeLayout.GetID, currentSelectedItem);
         }
       }
+    }
+
+    private void OnAddCollection()
+    {
+      string newCollection = string.Empty;
+      VirtualKeyboard.GetKeyboard(ref newCollection, GetID);
+
+      if (string.IsNullOrEmpty(newCollection))
+      {
+        return;
+      }
+
+      VideoDatabase.AddCollection(newCollection);
+      LoadDirectory(currentFolder);
+    }
+
+    private void OnRemoveCollection(string collection)
+    {
+      VideoDatabase.DeleteCollection(collection);
+      LoadDirectory(currentFolder);
     }
 
     private void OnAddToUserGroup(IMDBMovie movie, int itemIndex)
@@ -2248,8 +2340,49 @@ namespace MediaPortal.GUI.Video
 
     private void OnRemoveFromUserGroup(IMDBMovie movie, int itemIndex)
     {
-      // string group = m_history.Get("user groups");
-      string group = m_history.Get(handler.CurrentLevelWhere);
+      ArrayList movieGroups = new ArrayList();
+      VideoDatabase.GetMovieUserGroups(movie.ID, movieGroups);
+      if (movieGroups.Count == 0)
+      {
+        return;
+      }
+
+      string group = string.Empty;
+      if (movieGroups.Count > 1)
+      {
+        GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
+
+        if (dlg == null)
+        {
+          return;
+        }
+
+        dlg.Reset();
+        dlg.SetHeading(1271); // Remove from user group
+
+        foreach (string strGroup in movieGroups)
+        {
+          dlg.Add(strGroup);
+        }
+
+        dlg.DoModal(GetID);
+
+        if (dlg.SelectedId == -1)
+        {
+          return;
+        }
+        group = dlg.SelectedLabelText;
+      }
+      else
+      {
+        group = movieGroups[0].ToString();
+      }
+
+      if (string.IsNullOrEmpty(group))
+      {
+        return;
+      }
+
       VideoDatabase.RemoveUserGroupFromMovie(movie.ID, VideoDatabase.AddUserGroup(group));
       
       currentSelectedItem = itemIndex;

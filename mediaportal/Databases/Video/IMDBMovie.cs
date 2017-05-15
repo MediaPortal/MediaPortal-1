@@ -687,6 +687,7 @@ namespace MediaPortal.Video.Database
       GUIPropertyManager.SetProperty("#isgroup", (string.IsNullOrEmpty(SingleUserGroup) ? "no" : "yes"));
       GUIPropertyManager.SetProperty("#iscollection", (string.IsNullOrEmpty(SingleMovieCollection) ? "no" : "yes"));
       GUIPropertyManager.SetProperty("#awards", MovieAwards);
+      GUIPropertyManager.SetProperty("#dateadded", DateAdded);
       DateTime lastUpdate;
       DateTime.TryParseExact(LastUpdate, "yyyy-MM-dd HH:mm:ss", 
                              CultureInfo.CurrentCulture, 
@@ -1100,6 +1101,22 @@ namespace MediaPortal.Video.Database
             {
               info.Duration += VideoDatabase.GetVideoDuration(VideoDatabase.GetFileId(file));
             }
+          }
+
+          // Set Ratings and LastUpdate
+          if (info.ID > 0)
+          {
+            IMDBMovie movie = new IMDBMovie();
+            VideoDatabase.GetMovieInfoById(info.ID, ref movie);
+            item.Rating = movie.Rating;
+            item.UserRating = movie.UserRating;
+
+            DateTime lastUpdate;
+            DateTime.TryParseExact(movie.LastUpdate, "yyyy-MM-dd HH:mm:ss",
+                                   CultureInfo.CurrentCulture,
+                                   DateTimeStyles.None,
+                                   out lastUpdate);
+            item.Updated = lastUpdate;
           }
 
           int percent = 0;
@@ -1982,6 +1999,7 @@ namespace MediaPortal.Video.Database
         GUIPropertyManager.SetProperty("#isgroup", (string.IsNullOrEmpty(info.SingleUserGroup) ? "no" : "yes"));
         GUIPropertyManager.SetProperty("#iscollection", (string.IsNullOrEmpty(info.SingleMovieCollection) ? "no" : "yes"));
         GUIPropertyManager.SetProperty("#awards", info.MovieAwards); 
+        GUIPropertyManager.SetProperty("#dateadded", info.DateAdded);
         // Last update date
         DateTime lastUpdate;
         DateTime.TryParseExact(info.LastUpdate, "yyyy-MM-dd HH:mm:ss", CultureInfo.CurrentCulture, DateTimeStyles.None, out lastUpdate);
@@ -2144,6 +2162,7 @@ namespace MediaPortal.Video.Database
       GUIPropertyManager.SetProperty("#studios", string.Empty);
       GUIPropertyManager.SetProperty("#country", string.Empty);
       GUIPropertyManager.SetProperty("#language", string.Empty);
+      GUIPropertyManager.SetProperty("#dateadded", string.Empty);
       GUIPropertyManager.SetProperty("#lastupdate", string.Empty);
       GUIPropertyManager.SetProperty("#movieid", "-1");
       GUIPropertyManager.SetProperty("#hideinfo", "true");
