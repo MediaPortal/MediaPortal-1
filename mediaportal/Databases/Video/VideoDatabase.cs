@@ -1,6 +1,6 @@
-﻿#region Copyright (C) 2005-2011 Team MediaPortal
+﻿#region Copyright (C) 2005-2017 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2017 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -55,6 +55,18 @@ namespace MediaPortal.Video.Database
           return _database.DatabaseName;
         }
         return "";
+      }
+    }
+
+    public static string DefaultVideoViewFields
+    {
+      get
+      {
+        if (_database != null)
+        {
+          return _database.DefaultVideoViewFields;
+        }
+        return "*";
       }
     }
 
@@ -456,6 +468,26 @@ namespace MediaPortal.Video.Database
       _database.GetMovieInfoById(lMovieId, ref details);
     }
 
+    public static void SetMovieTitleById(int lMovieId, string lmovieTitle)
+    {
+      _database.SetMovieTitleById(lMovieId, lmovieTitle);
+    }
+
+    public static void SetMovieTitleById(int lMovieId, string lmovieTitle, out bool error, out string errorMessage)
+    {
+      _database.SetMovieTitleById(lMovieId, lmovieTitle, out error, out errorMessage);
+    }
+
+    public static void SetMovieSortTitleById(int lMovieId, string lmovieTitle)
+    {
+      _database.SetMovieSortTitleById(lMovieId, lmovieTitle);
+    }
+
+    public static void SetMovieSortTitleById(int lMovieId, string lmovieTitle, out bool error, out string errorMessage)
+    {
+      _database.SetMovieSortTitleById(lMovieId, lmovieTitle, out error, out errorMessage);
+    }
+
     #endregion
 
     #region Watched status, stoptime
@@ -641,9 +673,19 @@ namespace MediaPortal.Video.Database
       _database.GetRandomMoviesByGenre(strGenre1, ref movies, limit);
     }
 
+    public static void GetRandomMoviesByGenre(string strGenre1, ref ArrayList movies, int limit, string whereClause)
+    {
+      _database.GetRandomMoviesByGenre(strGenre1, ref movies, limit, whereClause);
+    }
+
     public static string GetMovieTitlesByGenre(string strGenre)
     {
       return _database.GetMovieTitlesByGenre(strGenre);
+    }
+
+    public static string GetMovieTitlesByGenre(string strGenre, string whereClause)
+    {
+      return _database.GetMovieTitlesByGenre(strGenre, whereClause);
     }
 
     public static void GetMoviesByUserGroup(string strUserGroup, ref ArrayList movies)
@@ -656,9 +698,19 @@ namespace MediaPortal.Video.Database
       _database.GetRandomMoviesByUserGroup(strUserGroup, ref movies, limit);
     }
 
+    public static void GetRandomMoviesByUserGroup(string strUserGroup, ref ArrayList movies, int limit, string whereClause)
+    {
+      _database.GetRandomMoviesByUserGroup(strUserGroup, ref movies, limit, whereClause);
+    }
+
     public static string GetMovieTitlesByUserGroup(int idGroup)
     {
       return _database.GetMovieTitlesByUserGroup(idGroup);
+    }
+
+    public static string GetMovieTitlesByUserGroup(int idGroup, string whereClause)
+    {
+      return _database.GetMovieTitlesByUserGroup(idGroup, whereClause);
     }
 
     public static void GetMoviesByCollection(string strCollection1, ref ArrayList movies)
@@ -671,9 +723,24 @@ namespace MediaPortal.Video.Database
       _database.GetRandomMoviesByCollection(strCollection1, ref movies, limit);
     }
 
+    public static void GetRandomMoviesByCollection(string strCollection1, ref ArrayList movies, int limit, string whereClause)
+    {
+      _database.GetRandomMoviesByCollection(strCollection1, ref movies, limit, whereClause);
+    }
+
     public static string GetMovieTitlesByCollection(string strCollection)
     {
       return _database.GetMovieTitlesByCollection(strCollection);
+    }
+
+    public static string GetMovieTitlesByCollection(string strCollection, string whereClause)
+    {
+      return _database.GetMovieTitlesByCollection(strCollection, whereClause);
+    }
+
+    public static string GetMovieTitlesByCollection(int idCollection, string whereClause)
+    {
+      return _database.GetMovieTitlesByCollection(idCollection, whereClause);
     }
 
     public static void GetMoviesByActor(string strActor1, ref ArrayList movies)
@@ -686,14 +753,34 @@ namespace MediaPortal.Video.Database
       _database.GetRandomMoviesByActor(strActor1, ref movies, limit);
     }
 
+    public static void GetRandomMoviesByActor(string strActor1, ref ArrayList movies, int limit, string whereClause)
+    {
+      _database.GetRandomMoviesByActor(strActor1, ref movies, limit, whereClause);
+    }
+
+    public static void GetRandomMoviesByActorDirector(string strActor1, ref ArrayList movies, int limit, string whereClause)
+    {
+      _database.GetRandomMoviesByActor(strActor1, ref movies, limit, whereClause);
+    }
+
     public static string GetMovieTitlesByActor(int actorId)
     {
       return _database.GetMovieTitlesByActor(actorId);
     }
 
+    public static string GetMovieTitlesByActor(int actorId, string whereClause)
+    {
+      return _database.GetMovieTitlesByActor(actorId, whereClause);
+    }
+
     public static string GetMovieTitlesByDirector(int directorId)
     {
       return _database.GetMovieTitlesByDirector(directorId);
+    }
+
+    public static string GetMovieTitlesByDirector(int directorId, string whereClause)
+    {
+      return _database.GetMovieTitlesByDirector(directorId, whereClause);
     }
 
     public static void GetMoviesByYear(string strYear, ref ArrayList movies)
@@ -706,9 +793,24 @@ namespace MediaPortal.Video.Database
       _database.GetRandomMoviesByYear(strYear, ref movies, limit);
     }
 
+    public static void GetRandomMoviesByYear(string strYear, ref ArrayList movies, int limit, string whereClause)
+    {
+      _database.GetRandomMoviesByYear(strYear, ref movies, limit, whereClause);
+    }
+
     public static string GetMovieTitlesByYear(string strYear)
     {
       return _database.GetMovieTitlesByYear(strYear);
+    }
+
+    public static string GetMovieTitlesByYear(string strYear, string whereClause)
+    {
+      return _database.GetMovieTitlesByYear(strYear, whereClause);
+    }
+
+    public static string GetFieldDataByIndex(string dbField, string dbValue, string whereClause)
+    {
+      return _database.GetFieldDataByIndex(dbField, dbValue, whereClause);
     }
 
     public static void GetMoviesByPath(string strPath1, ref ArrayList movies)
@@ -719,6 +821,11 @@ namespace MediaPortal.Video.Database
     public static void GetRandomMoviesByPath(string strPath1, ref ArrayList movies, int limit)
     {
       _database.GetRandomMoviesByPath(strPath1, ref movies, limit);
+    }
+
+    public static void GetRandomMoviesByIndex(string strDBField, string strIndexValue, ref ArrayList movies, int limit, string whereClause)
+    {
+      _database.GetRandomMoviesByIndex(strDBField, strIndexValue, ref movies, limit, whereClause);
     }
 
     /// <summary>
@@ -835,6 +942,20 @@ namespace MediaPortal.Video.Database
     public static void ImportNfoUsingVideoFile(string videoFile, bool skipExisting, bool refreshdbOnly)
     {
       _database.ImportNfoUsingVideoFile(videoFile, skipExisting, refreshdbOnly);
+    }
+
+    #endregion
+
+    #region Search by View
+
+    public static void SearchMoviesByView(string dbField, string dbValue, out ArrayList movies)
+    {
+      _database.SearchMoviesByView(dbField, dbValue, out movies);
+    }
+
+    public static void SearchActorsByView(string dbActor, out ArrayList movies, bool director)
+    {
+      _database.SearchActorsByView(dbActor, out movies, director);
     }
 
     #endregion
