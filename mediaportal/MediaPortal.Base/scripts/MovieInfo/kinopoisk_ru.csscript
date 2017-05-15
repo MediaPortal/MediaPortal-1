@@ -13,6 +13,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Web;
 using System.Xml;
+
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using MediaPortal.Common.Utils;
@@ -20,7 +21,7 @@ using MediaPortal.Video.Database;
 
 class Grabber : MarshalByRefObject, MediaPortal.Video.Database.IIMDBScriptGrabber
 {
-    const string strKinopoiskVersion = "20160419.01 by ajs";
+    const string strKinopoiskVersion = "20170217.01 by ajs";
 
     public Grabber()
     {
@@ -155,6 +156,7 @@ class Grabber : MarshalByRefObject, MediaPortal.Video.Database.IIMDBScriptGrabbe
         // URL
         // url.URL = "http://www.kinopoisk.ru/level/1/film/"+movieID+"/view_info/ok/";
         url.URL = "http://www.kinopoisk.ru/film/"+movieID+"/view_info/fact/";
+        // url.URL = "https://www.kinopoisk.ru/film/"+movieID+"/view_info/fact/";
         DebugLog(detailsConfig.Debug, "URL: {0} {1} {2}", movieID, movieDetails.IMDBNumber, url.URL);
         
         WebSession webSession = new WebSession();
@@ -230,6 +232,7 @@ class Grabber : MarshalByRefObject, MediaPortal.Video.Database.IIMDBScriptGrabbe
             if (detailsConfig.MovieAwards) 
             {         
               string _awardsURL        = string.Format("http://www.kinopoisk.ru/film/{0}/awards/", movieID);
+              // string _awardsURL        = string.Format("https://www.kinopoisk.ru/film/{0}/awards/", movieID);
               string _awardsPage       = string.Empty;
               string _awardsList       = string.Empty;
               WebSession awardsSession = new WebSession();
@@ -389,13 +392,17 @@ class Grabber : MarshalByRefObject, MediaPortal.Video.Database.IIMDBScriptGrabbe
                 }
               }
               if (!string.IsNullOrEmpty(_awardsList))
-                movieDetails.UserReview = _awardsList + "\n";
+              {
+                // movieDetails.UserReview = _awardsList + "\n";
+                movieDetails.MovieAwards = _awardsList; // MP1-4846
+              }
             }
 
             // Review (Trivia)
             string triviaPage          = detailsPage;
             if (detailsConfig.MovieFullTriviaError) {         
               string _triviaURL        = string.Format("http://www.kinopoisk.ru/film/{0}/view_info/blooper/", movieID);
+              // string _triviaURL        = string.Format("https://www.kinopoisk.ru/film/{0}/view_info/blooper/", movieID);
               string _triviaPage       = string.Empty;
               WebSession triviaSession = new WebSession();
               if (triviaSession.Retrieve(_triviaURL, null, out _triviaPage)) {
@@ -496,7 +503,15 @@ class Grabber : MarshalByRefObject, MediaPortal.Video.Database.IIMDBScriptGrabbe
                     movieDetails.MPARating = MPARating;
                 }
                 Log.Info("MPAA : {0} ({1})", movieDetails.MPARating, FullMPARating.Replace("\n"," "));
-                movieDetails.Plot += "\n\n"+FullMPARating;
+                
+                if (detailsConfig.AddTextRatingToPlot && !string.IsNullOrEmpty(FullMPARating))
+                {
+                  movieDetails.Plot += "\n\n"+FullMPARating;
+                }
+                if (!string.IsNullOrEmpty(FullMPARating))
+                {
+                  movieDetails.MPAAText = FullMPARating.Trim().Replace("\n", "\r"); // MP1-4846
+                }
             }
 
             // Runtime
@@ -524,6 +539,7 @@ class Grabber : MarshalByRefObject, MediaPortal.Video.Database.IIMDBScriptGrabbe
 
             // Studios from Kinopoisk.ru
             string studioURL         = string.Format("http://www.kinopoisk.ru/film/{0}/studio/", movieID);
+            // string studioURL         = string.Format("https://www.kinopoisk.ru/film/{0}/studio/", movieID);
             string studioPage        = string.Empty;
             WebSession studioSession = new WebSession();
             if (studioSession.Retrieve(studioURL, null, out studioPage)) 
@@ -623,7 +639,8 @@ class Grabber : MarshalByRefObject, MediaPortal.Video.Database.IIMDBScriptGrabbe
                 if (string.IsNullOrEmpty(movieDetails.Studios))
                 {
                     regexBlockPattern = @"<h4\sclass=""inline"">Production\sCo:</h4>.*?href=""companycredits";
-                    regexPattern = @"href=""/company[^""]+""\s+.*?>(?<movieStudios>.*?)</a>";
+                    // regexPattern = @"href=""/company[^""]+""\s+.*?>(?<movieStudios>.*?)</a>";
+                    regexPattern = @"href=.[^>]+?company[^>]+?>(?:<span[^>]+?>)?(?<movieStudios>[^<]+?)<";
                     block = Regex.Match(aiimdbPage, regexBlockPattern, RegexOptions.Singleline).Value;
                     MatchCollection mcStudios = Regex.Matches(block, regexPattern, RegexOptions.Singleline);
                     string studio = string.Empty;
@@ -642,7 +659,8 @@ class Grabber : MarshalByRefObject, MediaPortal.Video.Database.IIMDBScriptGrabbe
 
                 // Language from IMDB
                 regexBlockPattern = @"<h4\sclass=""inline"">Language:</h4>.*?</div>";
-                regexPattern = @"href=./language/[^>]+>(?<language>[^<]+)</a>";
+                // regexPattern = @"href=./language/[^>]+>(?<language>[^<]+)</a>";
+                regexPattern = @"href=.[^>]+?language[^>]+?>(?<language>[^<]+)</a>";
                 block = Regex.Match(aiimdbPage, regexBlockPattern, RegexOptions.Singleline).Value;
                 MatchCollection mcLanguages = Regex.Matches(block, regexPattern, RegexOptions.Singleline);
                 string languages = string.Empty;
@@ -659,11 +677,22 @@ class Grabber : MarshalByRefObject, MediaPortal.Video.Database.IIMDBScriptGrabbe
                 }
 
                 // MPAA Description
-                regexPattern = @"MPAA[\s\S]+?contentRating.>(?<CertDesc>[^<]+?)<";
+                regexPattern = @"MPAA[\s\S]+?(contentRating|info-content).>(?<CertDesc>[^<]+?)<";
                 string CertDescription = Regex.Match(aiimdbPage, regexPattern).Groups["CertDesc"].Value;
                 if (!string.IsNullOrEmpty(CertDescription)) 
                 {
-                  movieDetails.Plot += "\nMPAA: "+CertDescription.Replace("\n"," ");
+                  if (detailsConfig.AddTextRatingToPlot)
+                  {
+                    movieDetails.Plot += "\nMPAA: "+CertDescription.Replace("\n"," ");
+                  }
+                  if (!string.IsNullOrEmpty(movieDetails.MPAAText))  // MP1-4846
+                  {
+                    movieDetails.MPAAText = CertDescription.Replace("\n"," ") + "\r" + movieDetails.MPAAText;
+                  }
+                  else
+                  {
+                    movieDetails.MPAAText = CertDescription.Replace("\n"," ");
+                  }
                   Log.Debug("MPAA Description: {0}", CertDescription.Replace("\n"," "));
                 }
               }
@@ -788,6 +817,7 @@ class Grabber : MarshalByRefObject, MediaPortal.Video.Database.IIMDBScriptGrabbe
                     {
                         // Try to get picture from covers page
                         string coverPageUrl = string.Format("http://www.kinopoisk.ru/level/17/film/{0}/adv_type/cover", movieID);
+                        // string coverPageUrl = string.Format("https://www.kinopoisk.ru/level/17/film/{0}/adv_type/cover", movieID);
                         string coverPage = string.Empty;
                         
                         if (webSession.Retrieve(coverPageUrl, null, out coverPage)) 
@@ -797,6 +827,7 @@ class Grabber : MarshalByRefObject, MediaPortal.Video.Database.IIMDBScriptGrabbe
                             if (!string.IsNullOrEmpty(posterID) && posterID.IndexOf("<title>Обложки") > 0) 
                             {
                                 movieDetails.ThumbURL = string.Format("http://www.kinopoisk.ru/images/poster/{0}.jpg", posterID);
+                                // movieDetails.ThumbURL = string.Format("https://www.kinopoisk.ru/images/poster/{0}.jpg", posterID);
                                 Log.Info("2. Cover Picture URL: {0}", movieDetails.ThumbURL);
                             }
                         }
@@ -805,6 +836,7 @@ class Grabber : MarshalByRefObject, MediaPortal.Video.Database.IIMDBScriptGrabbe
                         {
                             // Try to get picture from posters page
                             string posterPageUrl = string.Format("http://www.kinopoisk.ru/level/17/film/{0}", movieID);
+                            // string posterPageUrl = string.Format("https://www.kinopoisk.ru/level/17/film/{0}", movieID);
                             string posterPage = string.Empty;
                             
                             if (webSession.Retrieve(posterPageUrl, null, out posterPage)) 
@@ -813,8 +845,9 @@ class Grabber : MarshalByRefObject, MediaPortal.Video.Database.IIMDBScriptGrabbe
                                 string posterID = ParseSingleValue(posterPage, rx_poster_id, "posterID", true);
                                 if (!string.IsNullOrEmpty(posterID) && posterID.IndexOf("<title>Постеры") > 0) 
                                 {
-                                    movieDetails.ThumbURL = string.Format("http://www.kinopoisk.ru/images/poster/{0}.jpg", posterID);
-                                Log.Info("3. Poster Picture URL: {0}", movieDetails.ThumbURL);
+                                  movieDetails.ThumbURL = string.Format("http://www.kinopoisk.ru/images/poster/{0}.jpg", posterID);
+                                  // movieDetails.ThumbURL = string.Format("https://www.kinopoisk.ru/images/poster/{0}.jpg", posterID);
+                                  Log.Info("3. Poster Picture URL: {0}", movieDetails.ThumbURL);
                                 }
                             }
                         }
@@ -826,6 +859,7 @@ class Grabber : MarshalByRefObject, MediaPortal.Video.Database.IIMDBScriptGrabbe
                             if (!string.IsNullOrEmpty(pictureUrl)) 
                             {
                                 movieDetails.ThumbURL = string.Format("http://www.kinopoisk.ru{0}", pictureUrl);
+                                // movieDetails.ThumbURL = string.Format("https://www.kinopoisk.ru{0}", pictureUrl);
                                 Log.Info("4. Small Picture URL: {0}", movieDetails.ThumbURL);
                             }
                         }
@@ -864,7 +898,7 @@ class Grabber : MarshalByRefObject, MediaPortal.Video.Database.IIMDBScriptGrabbe
 
                     if (!string.IsNullOrEmpty(strL))
                     {
-                      // movieDetails.SingleUserGroup += (string.IsNullOrEmpty(movieDetails.SingleUserGroup) ? "" : "|") + strL;
+                      // movieDetails.SingleUserGroup += (string.IsNullOrEmpty(movieDetails.SingleUserGroup) ? "" : "|") + strL; // Pre MP1-4761
                       movieDetails.MovieCollection += (string.IsNullOrEmpty(movieDetails.MovieCollection) ? "" : "|") + strL; // MP1-4761
 
                       int.TryParse(mL.Groups["colID"].Value, out iMovieColID);
@@ -893,7 +927,7 @@ class Grabber : MarshalByRefObject, MediaPortal.Video.Database.IIMDBScriptGrabbe
                         if (!string.IsNullOrEmpty(strP))
                         {
                           strP = string.Format("http://image.tmdb.org/t/p/w1000/{0}", strP); // w500 or w1000 or w1280 or w1920 (image width)
-                          // IMDBFetcher.DownloadCoverArt(Thumbs.MovieUserGroups, strP, strL);
+                          // IMDBFetcher.DownloadCoverArt(Thumbs.MovieUserGroups, strP, strL); // Pre MP1-4761
                           IMDBFetcher.DownloadCoverArt(Thumbs.MovieCollection, strP, strL); // MP1-4761
                         }
                         if (!string.IsNullOrEmpty(strB))
@@ -1009,6 +1043,8 @@ class Grabber : MarshalByRefObject, MediaPortal.Video.Database.IIMDBScriptGrabbe
                 }
 
                 string searchUrl = string.Format("http://www.kinopoisk.ru/index.php?set_result_type=simple&kp_query={0}", searchStr);
+                // string searchUrl = string.Format("https://www.kinopoisk.ru/index.php?set_result_type=simple&kp_query={0}", searchStr);
+                // string searchUrl = string.Format("https://www.kinopoisk.ru/s/type/all/find/{0}/", searchStr);
                 if (webSession.Retrieve(searchUrl, Encoding.GetEncoding("windows-1251"), out responseUrl, out searchResult)) 
                 {
                     // Check if it's Details Page
@@ -1037,6 +1073,7 @@ class Grabber : MarshalByRefObject, MediaPortal.Video.Database.IIMDBScriptGrabbe
                         
                         // Movie ID
                         string rx_movie_id = @"http://www.kinopoisk.ru/level/1/film/(?<movieID>[0-9]+)";
+                        // string rx_movie_id = @"https://www.kinopoisk.ru/level/1/film/(?<movieID>[0-9]+)";
                         string movieID = ParseSingleValue(responseUrl, rx_movie_id, "movieID", true);
                         
                         AddSearchResult(movieTitle, movieAlternate, Normalize(movieYear), movieID, elements, imdbIDFound, imdbMovieID, imdbMovieTitle, imdbMovieYear);
@@ -1248,7 +1285,7 @@ class Grabber : MarshalByRefObject, MediaPortal.Video.Database.IIMDBScriptGrabbe
           string omdbYear    = string.Empty;
           string omdbID      = string.Empty;
           string omdbPage    = string.Empty;
-          string omdbUrl     = string.Format("http://www.omdbapi.com/?s={0}&y={1}", searchTitle, year);
+          string omdbUrl     = string.Format("http://www.omdbapi.com/?s={0}&y={1}&type=movie", searchTitle, year);
           string omdbSearch  = @"Title.{3}(?<omdbTitle>[^+"+"\""+@"]+).{3}Year.{3}(?<omdbYear>[^"+"\""+@"]+).{3}imdbID.{3}(?<omdbID>[^"+"\""+@"]+).{3}Type.{3}movie";
           int    omdbResult  = 0;
 
@@ -1291,7 +1328,7 @@ class Grabber : MarshalByRefObject, MediaPortal.Video.Database.IIMDBScriptGrabbe
             if (omdbResult == 0) 
             {
               // Kinopoisk.ru doesn't provide IMDB_ID. Try to retrieve IMDB_ID from IMDB.com using Alternate Title
-              omdbUrl = string.Format("http://akas.imdb.com/find?s=tt&q={0}", searchTitle);
+              omdbUrl = string.Format("http://akas.imdb.com/find?s=tt&ttype=ft&q={0}", searchTitle);
               DebugLog(searchConfig.Debug, "IMDB: URL {0}", omdbUrl);
               if (omdbWebSession.Retrieve(omdbUrl, null, out omdbPage)) 
               {
@@ -1362,99 +1399,127 @@ class WebSession {
   
     public bool Retrieve(string requestUrl, Encoding encoding, out string responseUrl, out string data)
     {
-        responseUrl = string.Empty;
-        data        = string.Empty;
+      responseUrl = string.Empty;
+      data        = string.Empty;
+
+      NetworkConfig networkConfig = NetworkConfig.GetInstance();
         
-        HttpWebRequest request      = (HttpWebRequest)WebRequest.Create(requestUrl);
-        NetworkConfig networkConfig = NetworkConfig.GetInstance();
-        
-        int timeout          = networkConfig.TimeOut;
-        int timeoutIncrement = networkConfig.TimeOutIncrement;
-        int maxRetries       = networkConfig.Retries;
-        int tryCount         = 0;
+      int timeout          = networkConfig.TimeOut;
+      int timeoutIncrement = networkConfig.TimeOutIncrement;
+      int maxRetries       = networkConfig.Retries;
+      int tryCount         = 0;
 
-        while (data == string.Empty) {
-            tryCount++;
-            Log.Debug("Connection start: {0}/{1}:{2} - {3}", tryCount, maxRetries,timeout + (timeoutIncrement * tryCount),requestUrl);
-            try {
-                request.UserAgent        = "Mozilla/5.0 (Windows; U; MSIE 7.0; Windows NT 6.0; en-US)";
-                // request.UserAgent       = "Mozilla/5.0 (Windows NT 5.1) AppleWebKit/535.1 (KHTML, like Gecko) Chrome/14.0.835.186 Safari/535.1";    
-                // request.UserAgent       = "Mozilla/8.0 (compatible; MSIE 9.0; Windows NT 6.1; .NET CLR 1.0.3705;)";
-                request.Accept           = "text/xml,application/xml,application/xhtml+xml,application/json,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5";
-                request.Referer          = "http:\\www.kinopoisk.ru";
-                request.Headers.Add("Accept-Language", "ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.5");
-                if (networkConfig.noCache) 
-                { 
-                    request.Headers.Add("Pragma: no-cache");
+      while (data == string.Empty) 
+      {
+        HttpWebRequest request = (HttpWebRequest)WebRequest.Create(requestUrl);
+
+        tryCount++;
+        Log.Debug("Connection start: {0}/{1}:{2} - {3}", tryCount, maxRetries,timeout + (timeoutIncrement * tryCount),requestUrl);
+        try 
+        {
+          request.UserAgent        = "Mozilla/5.0 (Windows; U; MSIE 7.0; Windows NT 6.0; en-US)";
+          // request.UserAgent       = "Mozilla/5.0 (Windows NT 5.1) AppleWebKit/535.1 (KHTML, like Gecko) Chrome/14.0.835.186 Safari/535.1";    
+          // request.UserAgent       = "Mozilla/8.0 (compatible; MSIE 9.0; Windows NT 6.1; .NET CLR 1.0.3705;)";
+          request.Accept           = "text/xml,application/xml,application/xhtml+xml,application/json,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5";
+          request.Referer          = "http://www.kinopoisk.ru";
+          // request.Referer          = "https://www.kinopoisk.ru";
+          request.Headers.Add("Accept-Language", "ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.5");
+          if (networkConfig.noCache) 
+          { 
+            request.Headers.Add("Pragma: no-cache");
+          }
+          request.Timeout          = timeout + (timeoutIncrement * tryCount);
+          request.ReadWriteTimeout = request.Timeout;
+          request.CookieContainer  = new CookieContainer();
+          if (m_cookieHeader != null)
+          {
+            request.CookieContainer.SetCookies(request.RequestUri, m_cookieHeader);
+          }
+
+          // Get response from site
+          using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+          {
+            m_cookieHeader = request.CookieContainer.GetCookieHeader(request.RequestUri);
+            responseUrl    = response.ResponseUri.AbsoluteUri;
+
+            // Get result as stream
+            using(Stream resultData = response.GetResponseStream())
+            {
+              // If encoding was not set manually try to detect it
+              if (encoding == null) 
+              {
+                try 
+                {
+                  // Try to get the encoding using the characterset
+                  encoding = Encoding.GetEncoding(response.CharacterSet);
                 }
-                request.Timeout          = timeout + (timeoutIncrement * tryCount);
-                request.ReadWriteTimeout = request.Timeout;
-                request.CookieContainer  = new CookieContainer();
-                if (m_cookieHeader != null)
-                    request.CookieContainer.SetCookies(request.RequestUri, m_cookieHeader);
-                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-                m_cookieHeader           = request.CookieContainer.GetCookieHeader(request.RequestUri);
-                responseUrl              = response.ResponseUri.AbsoluteUri;
-
-                // Get result as stream
-                Stream resultData = response.GetResponseStream();
-
-                // If encoding was not set manually try to detect it
-                if (encoding == null) {
-                    try {
-                        // Try to get the encoding using the characterset
-                        encoding = Encoding.GetEncoding(response.CharacterSet);
-                    }
-                    catch { // (Exception e) {
-                        // If this fails default to the system's default encoding
-                        encoding = Encoding.Default;
-                    }
+                catch 
+                { // (Exception e) {
+                  // If this fails default to the system's default encoding
+                  encoding = Encoding.Default;
                 }
+              }
 
-                // Converts the stream to a string
-                StreamReader reader = new StreamReader(resultData, encoding, true);
+              // Converts the stream to a string
+              using (StreamReader reader = new StreamReader(resultData, encoding, true))
+              {
                 data = reader.ReadToEnd();
-
-                // Close stream and response objects
-                resultData.Close();
                 reader.Close();
-                response.Close();
+              }
+              resultData.Close();
             }
-            catch (WebException e) {
-                // Skip retry logic on protocol errors
-                if (e.Status == WebExceptionStatus.ProtocolError) {
-                    HttpStatusCode statusCode = ((HttpWebResponse)e.Response).StatusCode;
-                    switch (statusCode) {
-                        // Currently the only exception is the service temporarily unavailable status
-                        // So keep retrying when this is the case
-                        case HttpStatusCode.ServiceUnavailable: 
-                            break; 
-                        // all other status codes mostly indicate problems that won't be
-                        // solved within the retry period so fail these immediatly
-                        default:
-                            Log.Error("Connection failed: URL={0}, Status={1}, Description={2}.", requestUrl, statusCode, ((HttpWebResponse)e.Response).StatusDescription);
-                            return false;
-                    }
-                }
-                // Return when hitting maximum retries.
-                if (tryCount == maxRetries) {
-                    Log.Error("Connection failed: Reached retry limit of {0}. URL={1}", maxRetries, requestUrl);
-                    Log.Error(e);
-                    return false;
-                } else {
-                    Log.Debug("Connection retry ({0}): Timeout={4}, URL={1}, Status={2}. Exception: {3} ", tryCount.ToString(), requestUrl, e.Status.ToString(), e.Message, request.Timeout);
-                }               
-                // If we did not experience a timeout but some other error
-                // use the timeout value as a pause between retries
-                if (e.Status != WebExceptionStatus.Timeout) {
-                    // Log.Debug("Connection sleep: Timeout={0}", request.Timeout);
-                    // Thread.Sleep(request.Timeout);
-                    Log.Debug("Connection sleep: Timeout={0}", timeout);
-                    Thread.Sleep(timeout);
-                }
-            }
+            response.Close();
+          }
         }
-        return true;
+        catch (WebException e) 
+        {
+          // Skip retry logic on protocol errors
+          if (e.Status == WebExceptionStatus.ProtocolError) 
+          {
+            HttpStatusCode statusCode = ((HttpWebResponse)e.Response).StatusCode;
+            switch (statusCode) 
+            {
+              // Currently the only exception is the service temporarily unavailable status
+              // So keep retrying when this is the case
+              case HttpStatusCode.ServiceUnavailable: 
+                break; 
+              // all other status codes mostly indicate problems that won't be
+              // solved within the retry period so fail these immediatly
+              default:
+                Log.Error("Connection failed: URL={0}, Status={1}, Description={2}.", requestUrl, statusCode, ((HttpWebResponse)e.Response).StatusDescription);
+                return false;
+            }
+          }
+          // Return when hitting maximum retries.
+          if (tryCount == maxRetries) 
+          {
+            Log.Error("Connection failed: Reached retry limit of {0}. URL={1}", maxRetries, requestUrl);
+            Log.Error(e);
+            return false;
+          } 
+          else 
+          {
+            Log.Debug("Connection retry ({0}): Timeout={4}, URL={1}, Status={2}. Exception: {3} ", tryCount.ToString(), requestUrl, e.Status.ToString(), e.Message, request.Timeout);
+          }               
+          // If we did not experience a timeout but some other error
+          // use the timeout value as a pause between retries
+          if (e.Status != WebExceptionStatus.Timeout) 
+          {
+            // Log.Debug("Connection sleep: Timeout={0}", request.Timeout);
+            // Thread.Sleep(request.Timeout);
+            Log.Debug("Connection sleep: Timeout={0}", timeout);
+            Thread.Sleep(timeout);
+          }
+        }
+        catch (Exception ex) 
+        {
+          // Code to catch other exceptions goes here.
+          Log.Error("Connection failed: {0}:{1} URL={2} - {3}", tryCount, maxRetries, requestUrl, ex.Message);
+          Log.Debug(ex.StackTrace);
+          return false;
+        }
+      }
+      return true;
     }
 }
 
@@ -1597,7 +1662,8 @@ class DetailsConfig {
     private bool   m_fullTriviaError       = false;
     private bool   m_tmdbGroups            = false;
     private bool   m_tmdbGroupsPoster      = false;
-    private bool   m_movieAwards           = false;
+    private bool   m_movieAwards           = true;
+    private bool   m_addTextRatingToPlot   = false;
     
     private static DetailsConfig m_detailsConfig = null;
 
@@ -1677,6 +1743,11 @@ class DetailsConfig {
     public bool MovieAwards {
         get {
             return m_movieAwards;
+        }
+    }
+    public bool AddTextRatingToPlot {
+        get {
+            return m_addTextRatingToPlot;
         }
     }
     public static DetailsConfig GetInstance() {
@@ -1759,6 +1830,10 @@ class DetailsConfig {
                 node = root.SelectSingleNode("//details/MovieAwards");
                 if (node != null && node.FirstChild != null) {
                     m_movieAwards = "true".Equals(node.FirstChild.Value.ToLower());
+                }
+                node = root.SelectSingleNode("//details/addTextRatingToPlot");
+                if (node != null && node.FirstChild != null) {
+                    m_addTextRatingToPlot = "true".Equals(node.FirstChild.Value.ToLower());
                 }
             }
         } 
