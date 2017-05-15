@@ -20,7 +20,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -749,10 +748,7 @@ namespace TvPlugin
                 if (singleRecording)
                 {
                   item = BuildItemFromRecording(folder, channels.FirstOrDefault(chan => folder.IdChannel == chan.IdChannel));
-                  TimeSpan ts = folder.EndTime - folder.StartTime;
-                  item.Label2 = String.Format("{0} ({1})",
-                                           Utils.GetNamedDate(folder.StartTime),
-                                           Utils.SecondsToHMString((int)ts.TotalSeconds));
+                  item.Label2 = TVUtil.GetRecordingDateString(folder);
                 }
                 else
                 {
@@ -827,12 +823,8 @@ namespace TvPlugin
             item = BuildItemFromRecording(rec, channels.FirstOrDefault(chan => rec.IdChannel == chan.IdChannel));
             if (activerecordings.Contains(rec)) item.PinImage = Thumbs.TvRecordingIcon;
             item.Label = TVUtil.GetDisplayTitle(rec);
-            var ts = rec.EndTime - rec.StartTime;
 
-            var strTime = String.Format("{0} ({1})",
-                                           Utils.GetNamedDate(rec.StartTime),
-                                           Utils.SecondsToHMString((int)ts.TotalSeconds));
-            item.Label2 = strTime;
+            item.Label2 = TVUtil.GetRecordingDateString(rec);
             facadeLayout.Add(item);
           }
           #endregion
@@ -1031,16 +1023,11 @@ namespace TvPlugin
             continue;
           }
           Recording rec = (Recording)item1.TVTag;
-          TimeSpan ts = rec.EndTime - rec.StartTime;
-
-          string strTime = String.Format("{0} ({1})",
-                                         Utils.GetNamedDate(rec.StartTime),
-                                         Utils.SecondsToHMString((int)ts.TotalSeconds));
 
           // Do not display a duration in top level of History view
           if (_currentDbView != DBView.History || _currentLabel != String.Empty)
           {
-            item1.Label2 = strTime;
+            item1.Label2 = TVUtil.GetRecordingDateString(rec);
           }
           if (currentLayout != Layout.List)
           {
@@ -1507,10 +1494,7 @@ namespace TvPlugin
           GUIPropertyManager.SetProperty("#TV.RecordedTV.thumb", "");
           return;
         }
-        string strTime = string.Format("{0} {1} - {2}",
-                                       Utils.GetShortDayString(rec.StartTime),
-                                       rec.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-                                       rec.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+        string strTime = TVUtil.GetRecordingDateStringFull(rec);
 
         GUIPropertyManager.SetProperty("#TV.RecordedTV.Title", TVUtil.GetDisplayTitle(rec));
         GUIPropertyManager.SetProperty("#TV.RecordedTV.Genre", rec.Genre);
