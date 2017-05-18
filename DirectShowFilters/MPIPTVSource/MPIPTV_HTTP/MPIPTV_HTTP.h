@@ -77,12 +77,6 @@ public:
   unsigned int GetReceiveDataTimeout(void);
   GUID GetInstanceId(void);
   unsigned int GetOpenConnectionMaximumAttempts(void);
-  
-  // gets internal receive buffer
-  LinearBuffer *GetBuffer(void);
-
-  // gets internal buffer for chunked encoding
-  LinearBuffer *GetChunkedBuffer(void);
 
 protected:
   CLogger logger;

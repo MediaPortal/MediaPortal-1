@@ -901,16 +901,6 @@ unsigned int CMPIPTV_HTTP::GetReceiveDataTimeout(void)
   return this->receiveDataTimeout;
 }
 
-LinearBuffer *CMPIPTV_HTTP::GetBuffer(void)
-{
-  return &this->buffer;
-}
-
-LinearBuffer *CMPIPTV_HTTP::GetChunkedBuffer(void)
-{
-  return &this->chunkedBuffer;
-}
-
 GUID CMPIPTV_HTTP::GetInstanceId(void)
 {
   return this->logger.loggerInstance;
