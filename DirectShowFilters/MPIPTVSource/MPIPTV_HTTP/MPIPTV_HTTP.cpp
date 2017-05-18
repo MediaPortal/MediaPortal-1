@@ -123,7 +123,10 @@ int CMPIPTV_HTTP::Initialize(HANDLE lockMutex, CParameterCollection *configurati
 
   if (this->defaultBufferSize > 0)
   {
-    this->receiveBuffer = ALLOC_MEM(char, this->defaultBufferSize);
+    // Add one additional byte so we have guaranteed space for NULL
+    // terminating (refer to ReceiveData()). This is critical for avoiding
+    // heap corruption.
+    this->receiveBuffer = ALLOC_MEM(char, this->defaultBufferSize + 1);
     if (this->receiveBuffer == NULL)
     {
       this->logger.Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_INITIALIZE_NAME, _T("cannot initialize internal buffer"));
@@ -133,7 +136,12 @@ int CMPIPTV_HTTP::Initialize(HANDLE lockMutex, CParameterCollection *configurati
     this->logger.Log(LOGGER_VERBOSE, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_INITIALIZE_NAME, _T("internal buffer initialized"));
 
     // initialize internal buffer
-    this->buffer.InitializeBuffer(this->defaultBufferSize);
+    if (!this->buffer.InitializeBuffer(this->defaultBufferSize))
+    {
+      this->logger.Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_INITIALIZE_NAME, _T("cannot initialize internal linear buffer"));
+      this->logger.Log(LOGGER_INFO, METHOD_END_FAIL_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_INITIALIZE_NAME);
+      return STATUS_ERROR;
+    }
     this->logger.Log(LOGGER_VERBOSE, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_INITIALIZE_NAME, _T("internal linear buffer initialized"));
   }
   else
@@ -750,10 +758,14 @@ void CMPIPTV_HTTP::ReceiveData(bool *shouldExit)
         }
         else if (length > 0)
         {
-          this->GetSafeBufferSizes(this->lockMutex, &freeSpace, &occupiedSpace, &bufferSize);
-
-          while (((unsigned int)length > freeSpace) && (!(*shouldExit)))
+          while (!(*shouldExit))
           {
+            this->GetSafeBufferSizes(this->lockMutex, &freeSpace, &occupiedSpace, &bufferSize);
+            if ((unsigned int)length <= freeSpace)
+            {
+              break;
+            }
+
             // if length of data is greater than free space in buffer
             // must wait for free space
             this->logger.Log(LOGGER_WARNING, _T("%s: %s: data received, buffer free space too small, buffer size: %u, free buffer size: %u, occupied buffer size: %u, data length: %i"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, bufferSize, freeSpace, occupiedSpace, length);
@@ -762,7 +774,6 @@ void CMPIPTV_HTTP::ReceiveData(bool *shouldExit)
               // buffer cannot be resized
               // just wait
               Sleep(10);
-              this->GetSafeBufferSizes(this->lockMutex, &freeSpace, &occupiedSpace, &bufferSize);
             }
           }
 
