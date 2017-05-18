@@ -135,7 +135,6 @@ int CMPIPTV_HTTP::Initialize(HANDLE lockMutex, CParameterCollection *configurati
     }
     this->logger.Log(LOGGER_VERBOSE, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_INITIALIZE_NAME, _T("internal buffer initialized"));
 
-    // initialize internal buffer
     if (!this->buffer.InitializeBuffer(this->defaultBufferSize))
     {
       this->logger.Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_INITIALIZE_NAME, _T("cannot initialize internal linear buffer"));
@@ -168,8 +167,6 @@ int CMPIPTV_HTTP::ClearSession(void)
     this->CloseConnection();
   }
 
-  this->buffer.DeleteBuffer();
-  this->buffer.InitializeBuffer(this->defaultBufferSize);
   this->loadParameters->Clear();
 
   FREE_MEM(this->server);
@@ -177,8 +174,16 @@ int CMPIPTV_HTTP::ClearSession(void)
   this->serverPort = 0;
   this->chunkedEncoding = false;
   this->receivedHttpResponse = false;
-  this->logger.Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CLEAR_SESSION_NAME);
 
+  this->buffer.DeleteBuffer();
+  if (!this->buffer.InitializeBuffer(this->defaultBufferSize))
+  {
+    this->logger.Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CLEAR_SESSION_NAME, _T("cannot initialize internal linear buffer"));
+    this->logger.Log(LOGGER_INFO, METHOD_END_FAIL_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CLEAR_SESSION_NAME);
+    return STATUS_ERROR;
+  }
+
+  this->logger.Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CLEAR_SESSION_NAME);
   return STATUS_OK;
 }
 

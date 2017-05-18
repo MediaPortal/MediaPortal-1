@@ -145,8 +145,12 @@ int CMPIPTV_FILE::Initialize(HANDLE lockMutex, CParameterCollection *configurati
     }
     this->logger.Log(LOGGER_VERBOSE, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_INITIALIZE_NAME, _T("internal buffer initialized"));
 
-    // initialize internal buffer
-    this->buffer.InitializeBuffer(this->defaultBufferSize);
+    if (!this->buffer.InitializeBuffer(this->defaultBufferSize))
+    {
+      this->logger.Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_INITIALIZE_NAME, _T("cannot initialize internal linear buffer"));
+      this->logger.Log(LOGGER_INFO, METHOD_END_FAIL_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_INITIALIZE_NAME);
+      return STATUS_ERROR;
+    }
     this->logger.Log(LOGGER_VERBOSE, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_INITIALIZE_NAME, _T("internal linear buffer initialized"));
   }
   else
