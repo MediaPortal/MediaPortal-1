@@ -17,18 +17,18 @@
     <control>
       <type>image</type>
       <id>0</id>
-      <posX>448</posX>
-      <posY>390</posY>
-      <width>1099</width>
-      <height>510</height>
+      <posX>421</posX>
+      <posY>27</posY>
+      <width>1053</width>
+      <height>1024</height>
       <texture>context_background.png</texture>
     </control>
     <control>
       <description>Heading text label</description>
       <type>label</type>
       <id>4</id>
-      <posX>520</posX>
-      <posY>424</posY>
+      <posX>489</posX>
+      <posY>69</posY>
       <width>973</width>
       <label>181</label>
       <textcolor>red</textcolor>
@@ -38,15 +38,18 @@
       <description>options listcontrol</description>
       <type>listcontrol</type>
       <id>3</id>
-      <posX>508</posX>
-      <posY>508</posY>
-      <width>973</width>
-      <height>318</height>
+      <posX>477</posX>
+      <posY>390</posY>
+      <width>913</width>
+      <height>600</height>
       <textXOff>19</textXOff>
-      <textXOff2>943</textXOff2>
-      <textYOff2>70</textYOff2>
-      <textXOff3>130</textXOff3>
-      <textYOff3>70</textYOff3>
+      <textXOff2>885</textXOff2>
+      <textYOff2>67</textYOff2>
+      <textXOff3>123</textXOff3>
+      <textYOff3>67</textYOff3>
+      <IconYOff>8</IconYOff>
+      <itemWidth>91</itemWidth>
+      <itemHeight>91</itemHeight>
       <IconYOff>7</IconYOff>
       <itemWidth>96</itemWidth>
       <itemHeight>96</itemHeight>
@@ -60,13 +63,21 @@
       <font2>font12</font2>
       <font3>font12</font3>
       <ondown>11</ondown>
+      <scrollbarHeight>400</scrollbarHeight>
+          <scrollbarbg>bar_vert.png</scrollbarbg>
+          <scrollbartop>mouse_left_horizontal.png</scrollbartop>
+          <scrollbarbottom>mouse_right_horizontal.png</scrollbarbottom>
+          <scrollbarXOff>15</scrollbarXOff>
+          <scrollbarYOff>0</scrollbarYOff>
+          <showScrollbar>yes</showScrollbar>
+          <scrollbarwidth>20</scrollbarwidth>
     </control>
     <control>
       <type>group</type>
       <layout>StackLayout</layout>
       <description>group element</description>
-      <posX>613</posX>
-      <posY>673</posY>
+      <posX>576</posX>
+      <posY>130</posY>
       <control>
         <description>Skip new Recording</description>
         <type>button</type>
