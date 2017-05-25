@@ -233,6 +233,7 @@ HRESULT CAudioPin::CompleteConnect(IPin *pReceivePin)
   m_bInFillBuffer = false;
   m_bPinNoAddPMT = false;
   m_bAddPMT = true;
+  m_bDisableSlowPlayDiscontinuity=false;
   //LogDebug("audPin:CompleteConnect()");
   HRESULT hr = CBaseOutputPin::CompleteConnect(pReceivePin);
   if (!SUCCEEDED(hr)) return E_FAIL;
@@ -602,9 +603,9 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
             {
               int cntA, cntV;
               CRefTime firstAudio, lastAudio;
-              CRefTime firstVideo, lastVideo;
+              CRefTime firstVideo, lastVideo, zeroVideo;
               cntA = demux.GetAudioBufferPts(firstAudio, lastAudio); 
-              cntV = demux.GetVideoBufferPts(firstVideo, lastVideo);
+              cntV = demux.GetVideoBufferPts(firstVideo, lastVideo, zeroVideo);
               
               LogDebug("Aud/Ref : %03.3f, Compensated = %03.3f ( %0.3f A/V buffers=%02d/%02d), Clk : %f, SampCnt %d, Sleep %d ms, stallPt %03.3f", (float)RefTime.Millisecs()/1000.0f, (float)cRefTime.Millisecs()/1000.0f, fTime,cntA,cntV, clock, m_sampleCount, m_FillBuffSleepTime, (float)stallPoint);
             }

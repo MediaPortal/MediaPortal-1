@@ -135,6 +135,7 @@ CDeMultiplexer::CDeMultiplexer(CTsDuration& duration,CTsReaderFilter& filter)
   m_lastStreamType=-1;
   m_FirstVideoSample = 0x7FFFFFFF00000000LL;
   m_LastVideoSample = 0;
+  m_ZeroVideoSample = 0;
   
   m_sampleTime = 0;
   m_sampleTimePrev = 0;
@@ -630,6 +631,7 @@ void CDeMultiplexer::FlushVideo(bool isMidStream)
 
   m_FirstVideoSample = 0x7FFFFFFF00000000LL;
   m_LastVideoSample = 0;
+  m_ZeroVideoSample = 0;
   m_lastVideoPTS.IsValid = false;
   m_lastVideoDTS.IsValid = false;
   m_bLogFPSfromDTSPTS = false;
@@ -957,9 +959,9 @@ bool CDeMultiplexer::CheckCompensation(CRefTime rtStartTime)
   {
     int cntA,cntV ;
     CRefTime firstAudio, lastAudio;
-    CRefTime firstVideo, lastVideo;
+    CRefTime firstVideo, lastVideo, zeroVideo;
     cntA = GetAudioBufferPts(firstAudio, lastAudio); // this one...
-    cntV = GetVideoBufferPts(firstVideo, lastVideo);
+    cntV = GetVideoBufferPts(firstVideo, lastVideo, zeroVideo);
     
     // Goal is to start with at least 500mS audio and 400mS video ahead. ( LiveTv and RTSP as TsReader cannot go ahead by itself)
     if (lastAudio.Millisecs() - firstAudio.Millisecs() < (MIN_AUD_BUFF_TIME + m_filter.m_regInitialBuffDelay)) return false ;       // Not enough audio to start.
@@ -969,11 +971,11 @@ bool CDeMultiplexer::CheckCompensation(CRefTime rtStartTime)
     {
       if (!m_bFrame0Found) return NULL ;
         
-      if (lastVideo.Millisecs() - firstVideo.Millisecs() < (MIN_VID_BUFF_TIME + m_filter.m_regInitialBuffDelay)) return false ;   // Not enough video to start.
+      if (lastVideo.Millisecs() - zeroVideo.Millisecs() < (MIN_VID_BUFF_TIME + m_filter.m_regInitialBuffDelay)) return false ;   // Not enough video to start.
       
       if (!m_filter.m_EnableSlowMotionOnZapping)
       {
-        if (lastAudio.Millisecs() - firstVideo.Millisecs() < 10) return false ;   // Not enough simultaneous audio & video to start.
+        if (lastAudio.Millisecs() - zeroVideo.Millisecs() < 100) return false ;   // Not enough simultaneous audio & video to start.
       }  
            
       //Set video prefetch threshold
@@ -991,7 +993,7 @@ bool CDeMultiplexer::CheckCompensation(CRefTime rtStartTime)
     m_dfAudSampleDuration = faudSampleDuration/1000.0;
 
     LogDebug("Audio Samples : %d, First : %03.3f, Last : %03.3f, buffThresh : %d, pfLoopDel : %d",cntA, (float)firstAudio.Millisecs()/1000.0f,(float)lastAudio.Millisecs()/1000.0f, m_initialAudioSamples, m_prefetchLoopDelay);
-    LogDebug("Video Samples : %d, First : %03.3f, Last : %03.3f, buffThresh : %d",cntV, (float)firstVideo.Millisecs()/1000.0f,(float)lastVideo.Millisecs()/1000.0f, m_initialVideoSamples);
+    LogDebug("Video Samples : %d, First : %03.3f, Last : %03.3f, Zero : %03.3f, buffThresh : %d",cntV, (float)firstVideo.Millisecs()/1000.0f,(float)lastVideo.Millisecs()/1000.0f, (float)zeroVideo.Millisecs()/1000.0f, m_initialVideoSamples);
 
     // Ambass : Find out the best compensation to apply in order to have fast Audio/Video delivery
     CRefTime BestCompensation;
@@ -999,7 +1001,7 @@ bool CDeMultiplexer::CheckCompensation(CRefTime rtStartTime)
               
     if (m_filter.GetVideoPin()->IsConnected())
     {
-      if (firstAudio < firstVideo)
+      if (firstAudio < zeroVideo)
       {
         //Make sure there is a minimum amount of audio available at the start
         CRefTime targFirstAudio = lastAudio - (REFERENCE_TIME)(max((double)(m_filter.m_regInitialBuffDelay + MIN_AUD_BUFF_TIME), faudSampleDuration*1.5) * 10000);
@@ -1009,8 +1011,14 @@ bool CDeMultiplexer::CheckCompensation(CRefTime rtStartTime)
           targFirstAudio = firstAudio;
         }
         
+        if (zeroVideo < targFirstAudio)
+        {
+          //Align audio start with video start
+          targFirstAudio = zeroVideo;
+        }
+        
         BestCompensation = (targFirstAudio - rtStartTime) - m_filter.m_RandomCompensation ;
-        AddVideoCompensation = firstVideo - targFirstAudio;
+        AddVideoCompensation = zeroVideo - targFirstAudio;
         AddVideoCompensation = (AddVideoCompensation > (5000*10000)) ? (5000*10000) : AddVideoCompensation; //Limit to 5.0 seconds
         LogDebug("Compensation : ( AudBackBuff : %03.3f ) Audio pts < Video pts . Add %03.3f sec of extra video comp to start now !...", (float)(lastAudio.Millisecs()-targFirstAudio.Millisecs())/1000.0f,(float)AddVideoCompensation.Millisecs()/1000.0f) ;       
       }
@@ -2752,6 +2760,7 @@ void CDeMultiplexer::FillVideoHEVC(CTsHeader& header, byte* tsPacket)
               if (m_bFirstGopFound && foundIRAP && !m_bFrame0Found)
               {
                 LogDebug("  HEVC: First random access frame found. RefFVS = %f, Ref = %f, IRAP = %d ", m_FirstVideoSample.Millisecs()/1000.0f, Ref.Millisecs()/1000.0f, foundIRAP);
+                m_ZeroVideoSample = Ref; //We start filling the main sample buffer at this point
                 m_bFrame0Found = true;
               }
               m_LastValidFrameCount++;
@@ -3327,6 +3336,7 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
               if (m_bFirstGopFound && foundIRAP && !m_bFrame0Found)  /*&& m_LastValidFrameCount>=5*/ /*(frame_count==0)*/
               {
                 LogDebug("  H264: First random access frame found. RefFVS = %f, Ref = %f", m_FirstVideoSample.Millisecs()/1000.0f, Ref.Millisecs()/1000.0f);
+                m_ZeroVideoSample = Ref; //We start filling the main sample buffer at this point
                 m_bFrame0Found = true;
               }
               m_LastValidFrameCount++;
@@ -3775,13 +3785,14 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader& header, byte* tsPacket)
                   m_bFirstGopFound=true ;
                   LogDebug("  MPEG I-FRAME found %f ", Ref.Millisecs()/1000.0f);
                 }
-                if (m_bFirstGopFound && !m_bFrame0Found && (frame_count==0))
-                {
-                  LogDebug("  MPEG First '0' frame found. %f ", Ref.Millisecs()/1000.0f);
-                  m_bFrame0Found = true;
-                }
                 if (Ref < m_FirstVideoSample) m_FirstVideoSample = Ref;
                 if (Ref > m_LastVideoSample) m_LastVideoSample = Ref;
+                if (m_bFirstGopFound && !m_bFrame0Found && (frame_count==0))
+                {
+                  LogDebug("  MPEG: First random access frame found. RefFVS = %f, Ref = %f", m_FirstVideoSample.Millisecs()/1000.0f, Ref.Millisecs()/1000.0f);
+                  m_ZeroVideoSample = Ref; //We start filling the main sample buffer at this point
+                  m_bFrame0Found = true;
+                }
               }
 
               pCurrentVideoBuffer->SetFrameType(frame_type);
@@ -4035,10 +4046,11 @@ void CDeMultiplexer::GetBufferCounts(int* ACnt, int* VCnt)
   *VCnt = m_vecVideoBuffers.size();
 }
 
-int CDeMultiplexer::GetVideoBufferPts(CRefTime& First, CRefTime& Last)
+int CDeMultiplexer::GetVideoBufferPts(CRefTime& First, CRefTime& Last, CRefTime& Zero)
 {
   First = m_FirstVideoSample;
   Last = m_LastVideoSample;
+  Zero = m_ZeroVideoSample;
   return m_vecVideoBuffers.size();
 }
 

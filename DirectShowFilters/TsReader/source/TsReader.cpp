@@ -2173,9 +2173,9 @@ void CTsReaderFilter::ThreadProc()
       if (durationUpdateLoop==0)
       {
         CRefTime firstAudio, lastAudio;
-        CRefTime firstVideo, lastVideo;
+        CRefTime firstVideo, lastVideo, zeroVideo;
         int cntA = m_demultiplexer.GetAudioBufferPts(firstAudio, lastAudio);
-        int cntV = m_demultiplexer.GetVideoBufferPts(firstVideo, lastVideo);
+        int cntV = m_demultiplexer.GetVideoBufferPts(firstVideo, lastVideo, zeroVideo);
         long rtspBuffSize = m_demultiplexer.GetRTSPBufferSize();
                 
         if ((cntA > AUD_BUF_SIZE_LOG_LIM) || (cntV > VID_BUF_SIZE_LOG_LIM) || m_bEnableBufferLogging)
