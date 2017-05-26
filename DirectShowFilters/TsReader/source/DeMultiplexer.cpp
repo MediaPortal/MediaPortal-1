@@ -967,6 +967,7 @@ bool CDeMultiplexer::CheckCompensation(CRefTime rtStartTime)
     if (lastAudio.Millisecs() - firstAudio.Millisecs() < (MIN_AUD_BUFF_TIME + m_filter.m_regInitialBuffDelay)) return false ;       // Not enough audio to start.
 
     int vidSampDuration = PF_LOOP_DELAY_MAX;
+    double fvidSampleDuration = 0;
     if (m_filter.GetVideoPin()->IsConnected())
     {
       if (!m_bFrame0Found) return NULL ;
@@ -979,7 +980,7 @@ bool CDeMultiplexer::CheckCompensation(CRefTime rtStartTime)
       }  
            
       //Set video prefetch threshold
-      double fvidSampleDuration = ((double)(lastVideo.Millisecs() - firstVideo.Millisecs())/(double)cntV);
+      fvidSampleDuration = ((double)(lastVideo.Millisecs() - firstVideo.Millisecs())/(double)cntV);
       m_initialVideoSamples = (int)(((double)(MIN_VID_BUFF_TIME + m_filter.m_regInitialBuffDelay))/fvidSampleDuration);    
       m_initialVideoSamples = max(12, m_initialVideoSamples);
       vidSampDuration = max(PF_LOOP_DELAY_MIN,(int)fvidSampleDuration);
@@ -992,8 +993,8 @@ bool CDeMultiplexer::CheckCompensation(CRefTime rtStartTime)
     m_prefetchLoopDelay = (DWORD)(min(PF_LOOP_DELAY_MAX, min(vidSampDuration,(max(PF_LOOP_DELAY_MIN,(int)faudSampleDuration)))));
     m_dfAudSampleDuration = faudSampleDuration/1000.0;
 
-    LogDebug("Audio Samples : %d, First : %03.3f, Last : %03.3f, buffThresh : %d, pfLoopDel : %d",cntA, (float)firstAudio.Millisecs()/1000.0f,(float)lastAudio.Millisecs()/1000.0f, m_initialAudioSamples, m_prefetchLoopDelay);
-    LogDebug("Video Samples : %d, First : %03.3f, Last : %03.3f, Zero : %03.3f, buffThresh : %d",cntV, (float)firstVideo.Millisecs()/1000.0f,(float)lastVideo.Millisecs()/1000.0f, (float)zeroVideo.Millisecs()/1000.0f, m_initialVideoSamples);
+    LogDebug("demux:CheckCompensation(): Audio Samples : %d, First : %03.3f, Last : %03.3f, buffThresh : %d, pfLoopDel : %d, SampDur : %03.1f ms",cntA, (float)firstAudio.Millisecs()/1000.0f,(float)lastAudio.Millisecs()/1000.0f, m_initialAudioSamples, m_prefetchLoopDelay, (float)faudSampleDuration);
+    LogDebug("demux:CheckCompensation(): Video Samples : %d, First : %03.3f, Last : %03.3f, Zero : %03.3f, buffThresh : %d, SampDur : %03.1f ms",cntV, (float)firstVideo.Millisecs()/1000.0f,(float)lastVideo.Millisecs()/1000.0f, (float)zeroVideo.Millisecs()/1000.0f, m_initialVideoSamples, (float)fvidSampleDuration);
 
     // Ambass : Find out the best compensation to apply in order to have fast Audio/Video delivery
     CRefTime BestCompensation;
@@ -1020,13 +1021,13 @@ bool CDeMultiplexer::CheckCompensation(CRefTime rtStartTime)
         BestCompensation = (targFirstAudio - rtStartTime) - m_filter.m_RandomCompensation ;
         AddVideoCompensation = zeroVideo - targFirstAudio;
         AddVideoCompensation = (AddVideoCompensation > (5000*10000)) ? (5000*10000) : AddVideoCompensation; //Limit to 5.0 seconds
-        LogDebug("Compensation : ( AudBackBuff : %03.3f ) Audio pts < Video pts . Add %03.3f sec of extra video comp to start now !...", (float)(lastAudio.Millisecs()-targFirstAudio.Millisecs())/1000.0f,(float)AddVideoCompensation.Millisecs()/1000.0f) ;       
+        LogDebug("demux:CheckCompensation(): (AudBackBuff : %03.3f) Audio pts < Video pts. Add %03.3f sec of extra video comp", (float)(lastAudio.Millisecs()-targFirstAudio.Millisecs())/1000.0f,(float)AddVideoCompensation.Millisecs()/1000.0f) ;       
       }
       else
       {
         BestCompensation = (firstAudio-rtStartTime) - m_filter.m_RandomCompensation  ;
         AddVideoCompensation = 0 ;
-        LogDebug("Compensation : Audio pts > Video Pts ( Recover skipping Video ) ....") ;
+        LogDebug("demux:CheckCompensation() : Audio pts > Video Pts (Recover skipping Video)...") ;
       }
       m_filter.m_RandomCompensation += 500000 ;   // Stupid feature required to have FFRW working with DVXA ( at least ATI.. ) to avoid frozen picture. ( it just moves the sample time a bit !! )
       m_filter.m_RandomCompensation = m_filter.m_RandomCompensation % 1000000 ;
@@ -1049,7 +1050,7 @@ bool CDeMultiplexer::CheckCompensation(CRefTime rtStartTime)
       m_filter.m_ClockOnStart = RefClock - rtStartTime.m_time ;
       if (m_filter.m_bLiveTv)
       {
-        LogDebug("CheckCompensation() - Elapsed time from pause to Audio/Video ( total zapping time ) : %d mS",GET_TIME_NOW()-m_filter.m_lastPauseRun);
+        LogDebug("demux:CheckCompensation(): Elapsed time from pause to Audio/Video ( total zapping time ) : %d mS",GET_TIME_NOW()-m_filter.m_lastPauseRun);
       }
     }
     else
@@ -1063,7 +1064,7 @@ bool CDeMultiplexer::CheckCompensation(CRefTime rtStartTime)
     m_filter.SetCompensation(compTemp);
     m_filter.AddVideoComp = (AddVideoCompensation < 0) ? 0 : AddVideoCompensation;
 
-    LogDebug("demux:Compensation:%03.3f, Clock on start %03.3f m_rtStart:%d ",(float)m_filter.Compensation.Millisecs()/1000.0f, m_filter.m_ClockOnStart.Millisecs()/1000.0f, rtStartTime.Millisecs());
+    LogDebug("demux:CheckCompensation(): Compensation = %03.3f, Clock on start %03.3f m_rtStart:%d ",(float)m_filter.Compensation.Millisecs()/1000.0f, m_filter.m_ClockOnStart.Millisecs()/1000.0f, rtStartTime.Millisecs());
 
     m_targetAVready = GET_TIME_NOW() + AV_READY_DELAY;
     //set flag so we dont keep compensating
@@ -1077,7 +1078,7 @@ bool CDeMultiplexer::CheckCompensation(CRefTime rtStartTime)
     IDVBSubtitle* pDVBSubtitleFilter(m_filter.GetSubtitleFilter());
     if(pDVBSubtitleFilter)
     {
-      LogDebug("demux:pDVBSubtitleFilter->SetTimeCompensation");
+      LogDebug("demux:CheckCompensation(): pDVBSubtitleFilter->SetTimeCompensation");
       pDVBSubtitleFilter->SetTimeCompensation(m_filter.GetCompensation());
       m_bSubtitleCompensationSet=true;
     }
@@ -2761,6 +2762,8 @@ void CDeMultiplexer::FillVideoHEVC(CTsHeader& header, byte* tsPacket)
               {
                 LogDebug("  HEVC: First random access frame found. RefFVS = %f, Ref = %f, IRAP = %d ", m_FirstVideoSample.Millisecs()/1000.0f, Ref.Millisecs()/1000.0f, foundIRAP);
                 m_ZeroVideoSample = Ref; //We start filling the main sample buffer at this point
+                m_LastVideoSample = Ref;
+                m_FirstVideoSample = Ref;
                 m_bFrame0Found = true;
               }
               m_LastValidFrameCount++;
@@ -3337,6 +3340,8 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
               {
                 LogDebug("  H264: First random access frame found. RefFVS = %f, Ref = %f", m_FirstVideoSample.Millisecs()/1000.0f, Ref.Millisecs()/1000.0f);
                 m_ZeroVideoSample = Ref; //We start filling the main sample buffer at this point
+                m_LastVideoSample = Ref;
+                m_FirstVideoSample = Ref;
                 m_bFrame0Found = true;
               }
               m_LastValidFrameCount++;
@@ -3791,6 +3796,8 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader& header, byte* tsPacket)
                 {
                   LogDebug("  MPEG: First random access frame found. RefFVS = %f, Ref = %f", m_FirstVideoSample.Millisecs()/1000.0f, Ref.Millisecs()/1000.0f);
                   m_ZeroVideoSample = Ref; //We start filling the main sample buffer at this point
+	                m_LastVideoSample = Ref;
+	                m_FirstVideoSample = Ref;
                   m_bFrame0Found = true;
                 }
               }
