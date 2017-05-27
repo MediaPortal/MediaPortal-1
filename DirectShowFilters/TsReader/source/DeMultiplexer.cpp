@@ -1001,11 +1001,11 @@ bool CDeMultiplexer::CheckCompensation(CRefTime rtStartTime)
     CRefTime AddVideoCompensation;   
               
     if (m_filter.GetVideoPin()->IsConnected())
-    {
+    {        
       if (firstAudio < zeroVideo)
       {
         //Make sure there is a minimum amount of audio available at the start
-        CRefTime targFirstAudio = lastAudio - (REFERENCE_TIME)(max((double)(m_filter.m_regInitialBuffDelay + MIN_AUD_BUFF_TIME), faudSampleDuration*1.5) * 10000);
+        CRefTime targFirstAudio = lastAudio - (REFERENCE_TIME)(fmax((double)(m_filter.m_regInitialBuffDelay + MIN_AUD_BUFF_TIME), faudSampleDuration*1.5) * 10000);
         if (targFirstAudio < firstAudio)
         {
           //Use the timestamp of the earliest audio sample we have

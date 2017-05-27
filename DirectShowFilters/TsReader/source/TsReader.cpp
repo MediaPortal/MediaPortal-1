@@ -286,10 +286,10 @@ void LogDebug(const wchar_t *fmt, ...)
   SYSTEMTIME systemTime;
   GetLocalTime(&systemTime);
   wchar_t msg[5000];
-  swprintf_s(msg, 5000,L"[%04.4d-%02.2d-%02.2d %02.2d:%02.2d:%02.2d,%03.3d] [%8x] [%4x] - %s\n",
+  swprintf_s(msg, 5000,L"[%04.4d-%02.2d-%02.2d %02.2d:%02.2d:%02.2d,%03.3d] [%p] [%4x] - %s\n",
     systemTime.wYear, systemTime.wMonth, systemTime.wDay,
     systemTime.wHour, systemTime.wMinute, systemTime.wSecond, systemTime.wMilliseconds,
-    instanceID,
+	(void*)instanceID,
     GetCurrentThreadId(),
     buffer);
   CAutoLock l(&m_qLock);
@@ -555,6 +555,36 @@ CTsReaderFilter::CTsReaderFilter(IUnknown *pUnk, HRESULT *phr):
     ReadRegistryKeyDword(key, autoSpeedAdjust_RRK, keyValue);
     m_AutoSpeedAdjust = (int)keyValue;
     LogDebug("--- AutoSpeedAdjust = %d", m_AutoSpeedAdjust);
+    
+
+    keyValue = m_rtspClient.m_regRtspGenericTimeout;
+    LPCTSTR rtspGenericTimeout_RRK = _T("RtspGenericTimeoutInMilliSeconds");
+    ReadRegistryKeyDword(key, rtspGenericTimeout_RRK, keyValue);
+    if ((keyValue >= 10) && (keyValue <= 10000))
+    {
+      m_rtspClient.m_regRtspGenericTimeout = keyValue;
+      LogDebug("--- RTSP generic timeout = %d ms", m_rtspClient.m_regRtspGenericTimeout);
+    }
+    else
+    {
+      m_rtspClient.m_regRtspGenericTimeout = TIMEOUT_GENERIC_RTSP_RESPONSE;
+      LogDebug("--- RTSP generic timeout = %d ms (default value, allowed range is %d - %d)", m_rtspClient.m_regRtspGenericTimeout, 10, 10000);
+    }
+
+    keyValue = m_rtspClient.m_regRtspFileTimeout;
+    LPCTSTR rtspFileTimeout_RRK = _T("RtspFileTimeoutInMilliSeconds");
+    ReadRegistryKeyDword(key, rtspFileTimeout_RRK, keyValue);
+    if ((keyValue >= 10) && (keyValue <= 10000))
+    {
+      m_rtspClient.m_regRtspFileTimeout = keyValue;
+      LogDebug("--- RTSP file timeout = %d ms", m_rtspClient.m_regRtspFileTimeout);
+    }
+    else
+    {
+      m_rtspClient.m_regRtspFileTimeout = TIMEOUT_FILE_ACTION_RTSP_RESPONSE;
+      LogDebug("--- RTSP file timeout = %d ms (default value, allowed range is %d - %d)", m_rtspClient.m_regRtspFileTimeout, 10, 10000);
+    }
+
 
     RegCloseKey(key);
   }
@@ -2069,7 +2099,7 @@ void CTsReaderFilter::ThreadProc()
             double start = pcrStartLast.ToClock() ;
             double end = pcrEndLast.ToClock() ; 
 
-            end += min(3.5, ((double)(GET_TIME_NOW() - lastDurUpdate)/1000.0));
+            end += fmin(3.5, ((double)(GET_TIME_NOW() - lastDurUpdate)/1000.0));
 
             //LogDebug("CTsReaderFilter::Duration, predicted start = %f, predicted end = %f", (float)start, (float)end);
             

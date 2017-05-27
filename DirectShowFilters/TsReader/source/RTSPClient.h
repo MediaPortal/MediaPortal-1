@@ -11,6 +11,10 @@
 
 #define MAX_DURATION_DESCRIBE_RESPONSE_BYTE_COUNT 4096
 
+//RTSP request response timeouts in milliseconds
+#define TIMEOUT_GENERIC_RTSP_RESPONSE 500
+#define TIMEOUT_FILE_ACTION_RTSP_RESPONSE 2000
+
 class CRTSPClient: public TSThread
 {
   public:
@@ -26,6 +30,8 @@ class CRTSPClient: public TSThread
     bool Pause();
     bool UpdateDuration();
     void Stop();
+    DWORD  m_regRtspGenericTimeout;
+    DWORD  m_regRtspFileTimeout;
 
   private:
     bool SetupStreams();
