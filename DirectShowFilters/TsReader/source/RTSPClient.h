@@ -11,7 +11,8 @@
 
 #define MAX_DURATION_DESCRIBE_RESPONSE_BYTE_COUNT 4096
 
-//RTSP request response timeouts in milliseconds
+//RTSP response - default timeouts in milliseconds
+//Actual values are set via registry keya (in TsReader.cpp)
 #define TIMEOUT_GENERIC_RTSP_RESPONSE 500
 #define TIMEOUT_FILE_ACTION_RTSP_RESPONSE 2000
 

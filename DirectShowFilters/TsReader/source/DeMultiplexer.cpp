@@ -140,7 +140,7 @@ CDeMultiplexer::CDeMultiplexer(CTsDuration& duration,CTsReaderFilter& filter)
   m_sampleTime = 0;
   m_sampleTimePrev = 0;
   m_byteRead = 0;
-  m_bitRate = 0;
+  m_bitRate = 5000000.0f; //Nominal value...
   m_LastDataFromRtsp = GET_TIME_NOW();
   m_targetAVready = m_LastDataFromRtsp;
   m_tWaitForMediaChange=m_LastDataFromRtsp ;
@@ -245,7 +245,7 @@ bool CDeMultiplexer::SetAudioStream(int stream)
   CAutoLock lock (&m_sectionSetAudioStream);
   LogDebug("SetAudioStream : %d",stream);
   //is stream index valid?
-  if (stream < 0 || stream >= m_audioStreams.size())
+  if (stream < 0 || stream >= (int)m_audioStreams.size())
     return S_FALSE;
 
   //set index
@@ -297,7 +297,7 @@ bool CDeMultiplexer::GetAudioStream(__int32 &audioIndex)
 
 void CDeMultiplexer::GetAudioStreamInfo(int stream,char* szName)
 {
-  if (stream < 0 || stream>=m_audioStreams.size())
+  if (stream < 0 || stream >= (int)m_audioStreams.size())
   {
     szName[0] = szName[1] = szName[2] = 0;
     return;
@@ -319,7 +319,7 @@ bool CDeMultiplexer::GetAudioStreamType(int stream,CMediaType& pmt, int iPositio
 {
   //LogDebug("GetAudioStreamType() : Stream %d, iPosition %d, audioIsValid %d", stream, iPosition, m_mpegPesParser->basicAudioInfo.isValid);
 
-  if (stream < 0 || stream >= m_audioStreams.size() || m_mpegPesParser == NULL )
+  if (stream < 0 || stream >= (int)m_audioStreams.size() || m_mpegPesParser == NULL )
   {
     pmt.InitMediaType();
     pmt.SetType      (& MEDIATYPE_Audio);
@@ -454,7 +454,7 @@ bool CDeMultiplexer::GetAudioStreamType(int stream,CMediaType& pmt, int iPositio
 bool CDeMultiplexer::SetSubtitleStream(__int32 stream)
 {
   //is stream index valid?
-  if (stream < 0 || stream >= m_subtitleStreams.size())
+  if (stream < 0 || stream >= (int)m_subtitleStreams.size())
     return S_FALSE;
 
   //set index
@@ -471,7 +471,7 @@ bool CDeMultiplexer::GetCurrentSubtitleStream(__int32 &stream)
 
 bool CDeMultiplexer::GetSubtitleStreamLanguage(__int32 stream,char* szLanguage)
 {
-  if (stream <0 || stream >= m_subtitleStreams.size())
+  if (stream <0 || stream >= (int)m_subtitleStreams.size())
   {
     szLanguage[0] = szLanguage[1] = szLanguage[2] = 0;
     return S_FALSE;
@@ -1259,7 +1259,7 @@ int CDeMultiplexer::ReadFromFile(ULONG lDataLength)
     {
       m_maxFileReadLatency = m_fileReadLatency;
     }
-    if (dwReadBytes < lDataLength)
+    if (dwReadBytes < (int)lDataLength)
     {
       m_bAudioAtEof = true;
       m_bVideoAtEof = true;
@@ -1316,7 +1316,7 @@ int CDeMultiplexer::ReadFromFile(ULONG lDataLength)
 
     if (SUCCEEDED(readResult))
     {
-      if ((m_filter.IsTimeShifting()) && (dwReadBytes < lDataLength))
+      if ((m_filter.IsTimeShifting()) && (dwReadBytes < (int)lDataLength))
       {
         m_bAudioAtEof = true;
         m_bVideoAtEof = true;
@@ -1414,7 +1414,7 @@ void CDeMultiplexer::OnTsPacket(byte* tsPacket, int bufferOffset, int bufferLeng
       {
         TeletextServiceInfo& info = *vit;
         LogDebug("Calling Teletext Service info callback");
-        (*pTeletextServiceInfoCallback)(info.page, info.type, (byte)info.lang[0],(byte)info.lang[1],(byte)info.lang[2]);
+        (*pTeletextServiceInfoCallback)(info.page, (byte)info.type, (byte)info.lang[0],(byte)info.lang[1],(byte)info.lang[2]);
         vit++;
       }
       m_currentTeletextPid = m_pids.TeletextPid;
@@ -1579,7 +1579,7 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket, int bufferOffs
           m_filter.GetMediaPosition(&MediaTime);
           if (m_filter.m_bStreamCompensated && m_bAudioAtEof && !m_filter.m_bRenderingClockTooFast)
           {
-            float Delta = pts.ToClock()-(float)((double)(m_filter.Compensation.m_time+MediaTime)/10000000.0) ;
+            float Delta = (float)(pts.ToClock()-((double)(m_filter.Compensation.m_time+MediaTime)/10000000.0)) ;
             if (Delta < m_MinAudioDelta)
             {
               m_MinAudioDelta=Delta;
@@ -2659,22 +2659,22 @@ void CDeMultiplexer::FillVideoHEVC(CTsHeader& header, byte* tsPacket)
                 {
                   //Insert SPS NAL
                   size_t currCount = p->GetCount();
-                  p->SetCount (currCount + m_mpegPesParser->basicVideoInfo.spslen);
-                  memcpy (p->GetData() + currCount, m_mpegPesParser->basicVideoInfo.sps, m_mpegPesParser->basicVideoInfo.spslen);
+                  p->SetCount (currCount + (size_t)m_mpegPesParser->basicVideoInfo.spslen);
+                  memcpy (p->GetData() + currCount, m_mpegPesParser->basicVideoInfo.sps, (size_t)m_mpegPesParser->basicVideoInfo.spslen);
                 }
                 if (m_mpegPesParser->basicVideoInfo.ppslen > 0)
                 {
                   //Insert PPS NAL
                   size_t currCount = p->GetCount();
-                  p->SetCount (currCount + m_mpegPesParser->basicVideoInfo.ppslen);
-                  memcpy (p->GetData() + currCount, m_mpegPesParser->basicVideoInfo.pps, m_mpegPesParser->basicVideoInfo.ppslen);
+                  p->SetCount (currCount + (size_t)m_mpegPesParser->basicVideoInfo.ppslen);
+                  memcpy (p->GetData() + currCount, m_mpegPesParser->basicVideoInfo.pps, (size_t)m_mpegPesParser->basicVideoInfo.ppslen);
                 }
                 if (m_mpegPesParser->basicVideoInfo.vpslen > 0)
                 {
                   //Insert VPS NAL
                   size_t currCount = p->GetCount();
-                  p->SetCount (currCount + m_mpegPesParser->basicVideoInfo.vpslen);
-                  memcpy (p->GetData() + currCount, m_mpegPesParser->basicVideoInfo.vps, m_mpegPesParser->basicVideoInfo.vpslen);
+                  p->SetCount (currCount + (size_t)m_mpegPesParser->basicVideoInfo.vpslen);
+                  memcpy (p->GetData() + currCount, m_mpegPesParser->basicVideoInfo.vps, (size_t)m_mpegPesParser->basicVideoInfo.vpslen);
                 }
               }
             }
@@ -2723,7 +2723,7 @@ void CDeMultiplexer::FillVideoHEVC(CTsHeader& header, byte* tsPacket)
           	if (elapsedTime > 5.0f)
           	{
               m_bitRate = ((float)m_byteRead*8.0f)/elapsedTime;
-          	  m_filter.OnBitRateChanged(m_bitRate);
+          	  m_filter.OnBitRateChanged((int)m_bitRate);
           	  m_sampleTimePrev = m_sampleTime;
           	  m_byteRead = 0;
           	  LOG_VID_BITRATE("HEVC: Rolling bitrate = %f", m_bitRate/1000000.0f);
@@ -3250,19 +3250,19 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
                 {
                   //Insert SPS NAL
                   size_t currCount = p->GetCount();                  
-                  DWORD dwNalLength = _byteswap_ulong(m_mpegPesParser->basicVideoInfo.spslen);  //dwNalLength is big-endian format
-                  p->SetCount (currCount + m_mpegPesParser->basicVideoInfo.spslen + sizeof(dwNalLength));                  
+                  DWORD dwNalLength = _byteswap_ulong((unsigned long)m_mpegPesParser->basicVideoInfo.spslen);  //dwNalLength is big-endian format
+                  p->SetCount (currCount + (size_t)m_mpegPesParser->basicVideoInfo.spslen + sizeof(dwNalLength));
                   memcpy (p->GetData() + currCount, &dwNalLength, sizeof(dwNalLength)); //Insert NAL length                  
-                  memcpy (p->GetData() + currCount + sizeof(dwNalLength), m_mpegPesParser->basicVideoInfo.sps, m_mpegPesParser->basicVideoInfo.spslen);
+                  memcpy (p->GetData() + currCount + sizeof(dwNalLength), m_mpegPesParser->basicVideoInfo.sps, (size_t)m_mpegPesParser->basicVideoInfo.spslen);
                 }
                 if (m_mpegPesParser->basicVideoInfo.ppslen > 0)
                 {
                   //Insert PPS NAL
                   size_t currCount = p->GetCount();                  
-                  DWORD dwNalLength = _byteswap_ulong(m_mpegPesParser->basicVideoInfo.ppslen);  //dwNalLength is big-endian format
-                  p->SetCount (currCount + m_mpegPesParser->basicVideoInfo.ppslen + sizeof(dwNalLength));                  
+                  DWORD dwNalLength = _byteswap_ulong((unsigned long)m_mpegPesParser->basicVideoInfo.ppslen);  //dwNalLength is big-endian format
+                  p->SetCount (currCount + (size_t)m_mpegPesParser->basicVideoInfo.ppslen + sizeof(dwNalLength));
                   memcpy (p->GetData() + currCount, &dwNalLength, sizeof(dwNalLength)); //Insert NAL length                  
-                  memcpy (p->GetData() + currCount + sizeof(dwNalLength), m_mpegPesParser->basicVideoInfo.pps, m_mpegPesParser->basicVideoInfo.ppslen);
+                  memcpy (p->GetData() + currCount + sizeof(dwNalLength), m_mpegPesParser->basicVideoInfo.pps, (size_t)m_mpegPesParser->basicVideoInfo.ppslen);
                 }
               }              
             }
@@ -3301,7 +3301,7 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
           	if (elapsedTime > 5.0f)
           	{
               m_bitRate = ((float)m_byteRead*8.0f)/elapsedTime;
-          	  m_filter.OnBitRateChanged(m_bitRate);
+          	  m_filter.OnBitRateChanged((int)m_bitRate);
           	  m_sampleTimePrev = m_sampleTime;
           	  m_byteRead = 0;
           	  LOG_VID_BITRATE("H264: Rolling bitrate = %f", m_bitRate/1000000.0f);
@@ -3759,22 +3759,22 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader& header, byte* tsPacket)
 
               //Bitrate info calculation for MP player
               m_byteRead = m_byteRead + p->GetCount();
-            	m_sampleTime = (float)m_CurrentVideoPts.ToClock();
-            	float elapsedTime = m_sampleTime - m_sampleTimePrev;
+              m_sampleTime = (float)m_CurrentVideoPts.ToClock();
+              float elapsedTime = m_sampleTime - m_sampleTimePrev;
             
-            	if (elapsedTime > 5.0f)
-            	{
+              if (elapsedTime > 5.0f)
+              {
                 m_bitRate = ((float)m_byteRead*8.0f)/elapsedTime;
-            	  m_filter.OnBitRateChanged(m_bitRate);
+            	  m_filter.OnBitRateChanged((int)m_bitRate);
             	  m_sampleTimePrev = m_sampleTime;
             	  m_byteRead = 0;
           	    LOG_VID_BITRATE("MPEG2: Rolling bitrate = %f", m_bitRate/1000000.0f);
               }
-            	else if (elapsedTime < -0.5) 
-            	{
-            	  m_sampleTimePrev = m_sampleTime;
-            	  m_byteRead = 0;
-            	}
+              else if (elapsedTime < -0.5) 
+              {
+                m_sampleTimePrev = m_sampleTime;
+                m_byteRead = 0;
+              }
 
               CRefTime Ref;
               CBuffer *pCurrentVideoBuffer = new CBuffer(p->GetCount());
@@ -4022,11 +4022,11 @@ bool CDeMultiplexer::CheckPrefetchState(bool isNormal, bool isForced)
   //Normal play
   if (isNormal)
   {
-    if (m_filter.GetAudioPin()->IsConnected() && (m_vecAudioBuffers.size() < m_initialAudioSamples))
+    if (m_filter.GetAudioPin()->IsConnected() && ((int)m_vecAudioBuffers.size() < m_initialAudioSamples))
     {
       return true;
     }
-    if (m_filter.GetVideoPin()->IsConnected() && (m_vecVideoBuffers.size() < m_initialVideoSamples))
+    if (m_filter.GetVideoPin()->IsConnected() && ((int)m_vecVideoBuffers.size() < m_initialVideoSamples))
     {
       return true;
     }
@@ -4197,7 +4197,7 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
   //update audio streams etc..
   m_audioStreams.clear();
 
-  for(int i(0) ; i < m_pids.audioPids.size() ; i++)
+  for(int i(0) ; i < (int)m_pids.audioPids.size() ; i++)
   {
     struct stAudioStream audio;
     audio.pid=m_pids.audioPids[i].Pid;
@@ -4214,7 +4214,7 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
 
   m_subtitleStreams.clear();
   
-  for(int i(0) ; i < m_pids.subtitlePids.size() ; i++)
+  for(int i(0) ; i < (int)m_pids.subtitlePids.size() ; i++)
   {
     struct stSubtitleStream subtitle;
     subtitle.pid=m_pids.subtitlePids[i].Pid;
@@ -4427,7 +4427,7 @@ void CDeMultiplexer::CheckMediaChange(unsigned int Pid, bool isVideo)
       if (m_lastVidResX!=m_mpegPesParser->basicVideoInfo.width || m_lastVidResY!=m_mpegPesParser->basicVideoInfo.height)
       {
         LogDebug("DeMultiplexer: %x new video format, %dx%d @ %d:%d, %.3fHz %s",Pid,m_mpegPesParser->basicVideoInfo.width,m_mpegPesParser->basicVideoInfo.height,m_mpegPesParser->basicVideoInfo.arx,m_mpegPesParser->basicVideoInfo.ary,(float)m_mpegPesParser->basicVideoInfo.fps,m_mpegPesParser->basicVideoInfo.isInterlaced ? "interlaced":"progressive");
-        m_filter.OnVideoFormatChanged(m_mpegPesParser->basicVideoInfo.streamType,m_mpegPesParser->basicVideoInfo.width,m_mpegPesParser->basicVideoInfo.height,m_mpegPesParser->basicVideoInfo.arx,m_mpegPesParser->basicVideoInfo.ary,15000000,m_mpegPesParser->basicVideoInfo.isInterlaced);
+        m_filter.OnVideoFormatChanged(m_mpegPesParser->basicVideoInfo.streamType,m_mpegPesParser->basicVideoInfo.width,m_mpegPesParser->basicVideoInfo.height,m_mpegPesParser->basicVideoInfo.arx,m_mpegPesParser->basicVideoInfo.ary,(int)m_bitRate,m_mpegPesParser->basicVideoInfo.isInterlaced);
       }
 
       m_lastVidResX     = m_mpegPesParser->basicVideoInfo.width;
@@ -4447,13 +4447,13 @@ void CDeMultiplexer::CheckMediaChange(unsigned int Pid, bool isVideo)
           && m_lastVidResX==m_mpegPesParser->basicVideoInfo.width && m_lastVidResY==m_mpegPesParser->basicVideoInfo.height)
     {
       LogDebug("DeMultiplexer: Video aspect ratio change to %d:%d", m_mpegPesParser->basicVideoInfo.arx, m_mpegPesParser->basicVideoInfo.ary);
-      m_filter.OnVideoFormatChanged(m_mpegPesParser->basicVideoInfo.streamType, m_mpegPesParser->basicVideoInfo.width, m_mpegPesParser->basicVideoInfo.height, m_mpegPesParser->basicVideoInfo.arx, m_mpegPesParser->basicVideoInfo.ary, m_bitRate, m_mpegPesParser->basicVideoInfo.isInterlaced);
+      m_filter.OnVideoFormatChanged(m_mpegPesParser->basicVideoInfo.streamType, m_mpegPesParser->basicVideoInfo.width, m_mpegPesParser->basicVideoInfo.height, m_mpegPesParser->basicVideoInfo.arx, m_mpegPesParser->basicVideoInfo.ary,(int)m_bitRate, m_mpegPesParser->basicVideoInfo.isInterlaced);
     }
         
     if (m_lastVidResX!=m_mpegPesParser->basicVideoInfo.width || m_lastVidResY!=m_mpegPesParser->basicVideoInfo.height || m_lastStreamType != m_mpegPesParser->basicVideoInfo.streamType)
     {
       LogDebug("DeMultiplexer: %x video format changed, %dx%d @ %d:%d, %.3fHz %s",Pid,m_mpegPesParser->basicVideoInfo.width,m_mpegPesParser->basicVideoInfo.height,m_mpegPesParser->basicVideoInfo.arx,m_mpegPesParser->basicVideoInfo.ary,(float)m_mpegPesParser->basicVideoInfo.fps,m_mpegPesParser->basicVideoInfo.isInterlaced ? "interlaced":"progressive");
-      m_filter.OnVideoFormatChanged(m_mpegPesParser->basicVideoInfo.streamType,m_mpegPesParser->basicVideoInfo.width,m_mpegPesParser->basicVideoInfo.height,m_mpegPesParser->basicVideoInfo.arx,m_mpegPesParser->basicVideoInfo.ary,15000000,m_mpegPesParser->basicVideoInfo.isInterlaced);
+      m_filter.OnVideoFormatChanged(m_mpegPesParser->basicVideoInfo.streamType,m_mpegPesParser->basicVideoInfo.width,m_mpegPesParser->basicVideoInfo.height,m_mpegPesParser->basicVideoInfo.arx,m_mpegPesParser->basicVideoInfo.ary,(int)m_bitRate,m_mpegPesParser->basicVideoInfo.isInterlaced);
       m_videoChanged = true;
 
       if (m_mpegPesParser->basicAudioInfo.isValid && !IsAudioChanging())

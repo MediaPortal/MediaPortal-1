@@ -560,7 +560,7 @@ CTsReaderFilter::CTsReaderFilter(IUnknown *pUnk, HRESULT *phr):
     keyValue = m_rtspClient.m_regRtspGenericTimeout;
     LPCTSTR rtspGenericTimeout_RRK = _T("RtspGenericTimeoutInMilliSeconds");
     ReadRegistryKeyDword(key, rtspGenericTimeout_RRK, keyValue);
-    if ((keyValue >= 10) && (keyValue <= 10000))
+    if ((keyValue >= 100) && (keyValue <= 2000))
     {
       m_rtspClient.m_regRtspGenericTimeout = keyValue;
       LogDebug("--- RTSP generic timeout = %d ms", m_rtspClient.m_regRtspGenericTimeout);
@@ -568,13 +568,13 @@ CTsReaderFilter::CTsReaderFilter(IUnknown *pUnk, HRESULT *phr):
     else
     {
       m_rtspClient.m_regRtspGenericTimeout = TIMEOUT_GENERIC_RTSP_RESPONSE;
-      LogDebug("--- RTSP generic timeout = %d ms (default value, allowed range is %d - %d)", m_rtspClient.m_regRtspGenericTimeout, 10, 10000);
+      LogDebug("--- RTSP generic timeout = %d ms (default value, allowed range is %d - %d)", m_rtspClient.m_regRtspGenericTimeout, 100, 2000);
     }
 
     keyValue = m_rtspClient.m_regRtspFileTimeout;
     LPCTSTR rtspFileTimeout_RRK = _T("RtspFileTimeoutInMilliSeconds");
     ReadRegistryKeyDword(key, rtspFileTimeout_RRK, keyValue);
-    if ((keyValue >= 10) && (keyValue <= 10000))
+    if ((keyValue >= 100) && (keyValue <= 10000))
     {
       m_rtspClient.m_regRtspFileTimeout = keyValue;
       LogDebug("--- RTSP file timeout = %d ms", m_rtspClient.m_regRtspFileTimeout);
@@ -582,7 +582,7 @@ CTsReaderFilter::CTsReaderFilter(IUnknown *pUnk, HRESULT *phr):
     else
     {
       m_rtspClient.m_regRtspFileTimeout = TIMEOUT_FILE_ACTION_RTSP_RESPONSE;
-      LogDebug("--- RTSP file timeout = %d ms (default value, allowed range is %d - %d)", m_rtspClient.m_regRtspFileTimeout, 10, 10000);
+      LogDebug("--- RTSP file timeout = %d ms (default value, allowed range is %d - %d)", m_rtspClient.m_regRtspFileTimeout, 100, 10000);
     }
 
 
@@ -1400,7 +1400,7 @@ STDMETHODIMP CTsReaderFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pm
     m_duration.CloseBufferFiles();
     m_bRecording = true; //Force duration thread to update
 
-    float milli = m_duration.Duration().Millisecs();
+    float milli = (float)m_duration.Duration().Millisecs();
     milli /= 1000.0;
     LogDebug("CTsReaderFilter::Load(), duration - start:%x end:%x %f",
       (DWORD)m_duration.StartPcr().PcrReferenceBase, (DWORD) m_duration.EndPcr().PcrReferenceBase, milli);
@@ -1567,7 +1567,7 @@ HRESULT CTsReaderFilter::SeekPreStart(CRefTime& rtAbsSeek)
   
   //get the earliest timestamp available in the file
   float earliesTimeStamp = 0;
-  earliesTimeStamp = m_duration.StartPcr().ToClock() - m_duration.FirstStartPcr().ToClock();
+  earliesTimeStamp = (float)(m_duration.StartPcr().ToClock() - m_duration.FirstStartPcr().ToClock());
 
   if (earliesTimeStamp < 0) earliesTimeStamp = 0;
 

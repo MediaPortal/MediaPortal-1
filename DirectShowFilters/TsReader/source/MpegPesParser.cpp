@@ -62,7 +62,7 @@ bool CMpegPesParser::ParseVideo(byte* tsPacket,int vidType,bool reset)
 	if (vidType == VIDEO_STREAM_TYPE_MPEG2)
 	{
 		seqhdr seq;
-		if (hdrParser.Read(seq,framesize,&pmt,reset))
+		if (hdrParser.Read(seq,(int)framesize,&pmt,reset))
 		{
 			//hdrParser.DumpSequenceHeader(seq);
 			basicVideoInfo.width=seq.width;
@@ -85,7 +85,7 @@ bool CMpegPesParser::ParseVideo(byte* tsPacket,int vidType,bool reset)
 	else if (vidType == VIDEO_STREAM_TYPE_H264)
 	{
 	  // avchdr avc;
-		if (hdrParser.Read(avc,framesize,&pmt,reset))
+		if (hdrParser.Read(avc,(int)framesize,&pmt,reset))
 		{
 			//hdrParser.DumpAvcHeader(avc);
 			basicVideoInfo.width=avc.width;
@@ -115,7 +115,7 @@ bool CMpegPesParser::ParseVideo(byte* tsPacket,int vidType,bool reset)
 	}
 	else if (vidType == VIDEO_STREAM_TYPE_HEVC)
 	{
-		if (hdrParser.Read(hevc,framesize,&pmt,reset))
+		if (hdrParser.Read(hevc,(int)framesize,&pmt,reset))
 		{
 			//hdrParser.DumpHevcHeader(hevc);
 			basicVideoInfo.width=hevc.width;
@@ -190,7 +190,7 @@ bool CMpegPesParser::ParseAudio(byte* audioPacket, int streamType, bool reset)
       {
         mpahdr mpa;
     	  __int64 framesize=hdrParser.GetSize();
-      	if (hdrParser.Read(mpa,framesize,false,&audPmt)) //Don't allow v2.5
+      	if (hdrParser.Read(mpa,(int)framesize,false,&audPmt)) //Don't allow v2.5
       	{
           basicAudioInfo.sampleRate=mpa.nSamplesPerSec;
           basicAudioInfo.channels = (mpa.channels == 3) ? 1 : 2;
@@ -207,7 +207,7 @@ bool CMpegPesParser::ParseAudio(byte* audioPacket, int streamType, bool reset)
       {
         aachdr aac;
     	  __int64 framesize=hdrParser.GetSize();
-      	if (hdrParser.Read(aac,framesize,&audPmt))
+      	if (hdrParser.Read(aac,(int)framesize,&audPmt))
       	{
           basicAudioInfo.sampleRate=aac.nSamplesPerSec;
           basicAudioInfo.channels=aac.channels;    
@@ -224,7 +224,7 @@ bool CMpegPesParser::ParseAudio(byte* audioPacket, int streamType, bool reset)
       {
         ac3hdr ac3;
     	  __int64 framesize=hdrParser.GetSize();
-      	if (hdrParser.Read(ac3,framesize,&audPmt))
+      	if (hdrParser.Read(ac3,(int)framesize,&audPmt))
       	{
         	basicAudioInfo.sampleRate = ac3.nSamplesPerSec;        
 	        basicAudioInfo.channels = ac3.nChannels;
@@ -242,7 +242,7 @@ bool CMpegPesParser::ParseAudio(byte* audioPacket, int streamType, bool reset)
       {
         eac3hdr eac3;
     	  __int64 framesize=hdrParser.GetSize();
-      	if (hdrParser.Read(eac3,framesize,&audPmt))
+      	if (hdrParser.Read(eac3,(int)framesize,&audPmt))
       	{
         	basicAudioInfo.sampleRate = eac3.nSamplesPerSec;        
 	        basicAudioInfo.channels = eac3.nChannels;
