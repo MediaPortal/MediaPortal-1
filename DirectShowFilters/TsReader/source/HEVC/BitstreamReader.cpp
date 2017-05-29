@@ -75,7 +75,7 @@ bool BitstreamReader::getBit()
   if(m_posBase >= m_size)
     throw std::runtime_error("BitstreamReader: not enough data");
 
-  bool res = m_ptr[m_posBase] & 1 << m_posInBase;
+  bool res = (m_ptr[m_posBase] & (1 << m_posInBase)) != 0;
 
   m_posInBase--;
 

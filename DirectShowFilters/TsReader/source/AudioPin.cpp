@@ -21,8 +21,7 @@
 
 #pragma warning(disable:4996)
 #pragma warning(disable:4995)
-#include <afx.h>
-#include <afxwin.h>
+#include "StdAfx.h"
 
 #include <winsock2.h>
 #include <ws2tcpip.h>
