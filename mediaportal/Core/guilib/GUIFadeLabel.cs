@@ -180,6 +180,16 @@ namespace MediaPortal.GUI.Library
     }
 
     /// <summary>
+    /// This method gets called when the control is created and all properties has been set
+    /// It allows the control to scale itself to the current screen resolution
+    /// </summary>
+    public override void ScaleToScreenResolution()
+    {
+      base.ScaleToScreenResolution();
+      GUIGraphicsContext.ScalePosToScreenResolution(ref _maxWidth, ref _maxHeight);
+    }
+
+    /// <summary>
     /// Renders the control.
     /// </summary>
     public override void Render(float timePassed)
@@ -278,7 +288,7 @@ namespace MediaPortal.GUI.Library
       _labelControl.TextAlignment = _textAlignment;
       _labelControl.TextVAlignment = _textVAlignment;
       _labelControl.TextColor = _textColor;
-      _labelControl.CacheFont = _labelControl.TextWidth < (_maxWidth == 0 ? _width : _maxWidth);
+      _labelControl.CacheFont = _labelControl.TextWidth < (_maxWidth > 0 ? _maxWidth : _width);
       if (GUIGraphicsContext.graphics != null)
       {
         _labelControl.Render(timePassed);
@@ -287,7 +297,7 @@ namespace MediaPortal.GUI.Library
       }
 
       // if there is only one label just draw the text
-      if (_listLabels.Count == 1 && _labelControl.TextWidth < (_maxWidth == 0 ? _width : _maxWidth))
+      if (_listLabels.Count == 1 && _labelControl.TextWidth <= (_maxWidth > 0 ? _maxWidth : _width))
       {
         _labelControl.Render(timePassed);
         base.Render(timePassed);

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2013 Team MediaPortal
+#region Copyright (C) 2005-2017 Team MediaPortal
 
-// Copyright (C) 2005-2013 Team MediaPortal
+// Copyright (C) 2005-2017 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -97,6 +97,9 @@ namespace MediaPortal.GUI.Library
     [XMLSkin("hover", "tileFill")] protected bool _hoverTileFill = false;
     [XMLSkin("hover", "overlay")] protected string _overlayH = "";
 
+    [XMLSkinElement("maxWidth")] protected int _maxWidth = 0;
+    [XMLSkinElement("maxHeight")] protected int _maxHeight = 0;
+
     protected int _frameCounter = 0;
     protected GUIAnimation _imageFocused = null;
     protected GUIAnimation _imageNonFocused = null;
@@ -104,8 +107,11 @@ namespace MediaPortal.GUI.Library
     protected GUIControl _labelControl = null;
     private bool _keepLook = false;
 
+    private int labelDiffX = 0;
+    private int labelDiffY = 0;
+
     public GUIButtonControl(int dwParentID)
-      : base(dwParentID) {}
+      : base(dwParentID) { }
 
     /// <summary>
     /// The constructor of the GUIButtonControl class.
@@ -131,6 +137,7 @@ namespace MediaPortal.GUI.Library
       _shadowAngle = dwShadowAngle;
       _shadowDistance = dwShadowDistance;
       _shadowColor = dwShadowColor;
+
       FinalizeConstruction();
     }
 
@@ -147,6 +154,40 @@ namespace MediaPortal.GUI.Library
       _shadowAngle = dwShadowAngle;
       _shadowDistance = dwShadowDistance;
       _shadowColor = dwShadowColor;
+
+      FinalizeConstruction();
+    }
+
+    /// <summary>
+    /// The constructor of the GUIButtonControl class.
+    /// </summary>
+    /// <param name="dwParentID">The parent of this control.</param>
+    /// <param name="dwControlId">The ID of this control.</param>
+    /// <param name="dwPosX">The X position of this control.</param>
+    /// <param name="dwPosY">The Y position of this control.</param>
+    /// <param name="dwWidth">The width of this control.</param>
+    /// <param name="dwHeight">The height of this control.</param>
+    /// <param name="strTextureFocus">The filename containing the texture of the butten, when the button has the focus.</param>
+    /// <param name="strTextureNoFocus">The filename containing the texture of the butten, when the button does not have the focus.</param>
+    /// <param name="dwShadowAngle">The angle of the shadow; zero degress along x-axis.</param>
+    /// <param name="dwShadowDistance">The distance of the shadow.</param>
+    /// <param name="dwShadowColor">The color of the shadow.</param>
+    /// <param name="dwMaxWidth">Max Width for autosized Button. From Width to MaxWidth.</param>
+    /// <param name="dwMaxHeight">Max Height for autosized Button. From Height to MaxHeight.</param>
+    public GUIButtonControl(int dwParentID, int dwControlId, int dwPosX, int dwPosY, int dwWidth, int dwHeight,
+                            string strTextureFocus, string strTextureNoFocus,
+                            int dwShadowAngle, int dwShadowDistance, long dwShadowColor,
+                            int dwMaxWidth, int dwMaxHeight)
+      : base(dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight)
+    {
+      _focusedTextureName = strTextureFocus;
+      _nonFocusedTextureName = strTextureNoFocus;
+      _shadowAngle = dwShadowAngle;
+      _shadowDistance = dwShadowDistance;
+      _shadowColor = dwShadowColor;
+      _maxWidth = dwMaxWidth;
+      _maxHeight = dwMaxHeight;
+
       FinalizeConstruction();
     }
 
@@ -157,7 +198,7 @@ namespace MediaPortal.GUI.Library
     public override void FinalizeConstruction()
     {
       base.FinalizeConstruction();
-      _imageFocused = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _width, _height,
+      _imageFocused = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, /*_width, _height,*/ Width, Height,
                                            _focusedTextureName);
       _imageFocused.ParentControl = this;
       _imageFocused.Filtering = false;
@@ -170,7 +211,7 @@ namespace MediaPortal.GUI.Library
       _imageFocused.MaskFileName = _focusedTextureMask;
       _imageFocused.OverlayFileName = _overlayTF;
 
-      _imageNonFocused = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _width, _height,
+      _imageNonFocused = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, /*_width, _height,*/ Width, Height,
                                               _nonFocusedTextureName);
       _imageNonFocused.ParentControl = this;
       _imageNonFocused.Filtering = false;
@@ -203,18 +244,21 @@ namespace MediaPortal.GUI.Library
       // Use a GUIFadeLabel if a valid scrollStartDelay is specified, otherwise use a GUILabelControl (default)
       if (_scrollStartDelay < 0)
       {
-        _labelControl = new GUILabelControl(_parentControlId, 0, _positionX, _positionY, _width, _height, _fontName,
+        _labelControl = new GUILabelControl(_parentControlId, 0, _positionX, _positionY, _width - labelDiffX, _height, _fontName,
                                             _label, _textColor, Alignment.ALIGN_LEFT, VAlignment.ALIGN_TOP, false,
-                                            _shadowAngle, _shadowDistance, _shadowColor);
+                                            _shadowAngle, _shadowDistance, _shadowColor,
+                                            _maxWidth, _maxHeight);
         ((GUILabelControl)_labelControl).TextAlignment = _textAlignment;
         ((GUILabelControl)_labelControl).TextVAlignment = _textVAlignment;
+        ((GUILabelControl)_labelControl).TrimText = true;
       }
       else
       {
-        _labelControl = new GUIFadeLabel(_parentControlId, 0, _positionX, _positionY, _width, _height, _fontName,
+        _labelControl = new GUIFadeLabel(_parentControlId, 0, _positionX, _positionY, _width - labelDiffX, _height, _fontName,
                                          _textColor, Alignment.ALIGN_LEFT, VAlignment.ALIGN_TOP,
                                          _shadowAngle, _shadowDistance, _shadowColor,
-                                         _userWrapString);
+                                         _userWrapString,
+                                         _maxWidth, _maxHeight);
         ((GUIFadeLabel)_labelControl).TextAlignment = _textAlignment;
         ((GUIFadeLabel)_labelControl).TextVAlignment = _textVAlignment;
         ((GUIFadeLabel)_labelControl).AllowScrolling = false;
@@ -222,6 +266,9 @@ namespace MediaPortal.GUI.Library
       }
       _labelControl.DimColor = DimColor;
       _labelControl.ParentControl = this;
+
+      // Recalc Labels Width, Height
+      ReCalcLabelSize();
     }
 
     /// <summary>
@@ -232,6 +279,48 @@ namespace MediaPortal.GUI.Library
     {
       base.ScaleToScreenResolution();
       GUIGraphicsContext.ScalePosToScreenResolution(ref _textOffsetX, ref _textOffsetY);
+      GUIGraphicsContext.ScalePosToScreenResolution(ref _maxWidth, ref _maxHeight);
+
+      if (_textPadding > 0)
+      {
+        _textPadding = GUIGraphicsContext.ScaleHorizontal(_textPadding);
+      }
+
+      // Calc margins for Labels
+      ReCalcLabelSize();
+    }
+
+    private void ReCalcLabelSize()
+    {
+      // Calc margins for Labels
+      labelDiffX = _textOffsetX;
+      labelDiffY = _textOffsetY;
+      if (_textOffsetXHasMargin)
+      {
+        labelDiffX += _textOffsetX;
+      }
+      if (_textPadding > 0)
+      {
+        labelDiffX += _textPadding;
+      }
+
+      if (_labelControl != null)
+      {
+        if (_labelControl is GUILabelControl)
+        {
+          ((GUILabelControl)_labelControl).MinWidth = MinWidth - labelDiffX;
+          ((GUILabelControl)_labelControl).MaxWidth = MaxWidth - labelDiffX;
+          ((GUILabelControl)_labelControl).MinHeight = MinHeight - labelDiffY;
+          ((GUILabelControl)_labelControl).MaxHeight = MaxHeight - labelDiffY;
+        }
+        else
+        {
+          ((GUIFadeLabel)_labelControl).MinWidth = MinWidth - labelDiffX;
+          ((GUIFadeLabel)_labelControl).MaxWidth = MaxWidth - labelDiffX;
+          ((GUIFadeLabel)_labelControl).MinHeight = MinHeight - labelDiffY;
+          ((GUIFadeLabel)_labelControl).MaxHeight = MaxHeight - labelDiffY;
+        }
+      }
     }
 
 
@@ -314,6 +403,7 @@ namespace MediaPortal.GUI.Library
         _imageNonFocused.Render(timePassed);
       }
 
+      /*
       int labelWidth = _width;
       if (_textOffsetXHasMargin)
       {
@@ -322,7 +412,21 @@ namespace MediaPortal.GUI.Library
 
       if (_textPadding > 0)
       {
-        labelWidth -= GUIGraphicsContext.ScaleHorizontal(_textPadding);
+        labelWidth -= _textPadding;
+      }
+      */
+      int labelWidth = -1;
+      int labelHeight = -1;
+
+      if (_labelControl is GUILabelControl)
+      {
+        labelWidth = ((GUILabelControl)_labelControl).Width;
+        labelHeight = ((GUILabelControl)_labelControl).Height;
+      }
+      else
+      {
+        labelWidth = ((GUIFadeLabel)_labelControl).Width;
+        labelHeight = ((GUIFadeLabel)_labelControl).Height;
       }
 
       if (labelWidth <= 0)
@@ -330,7 +434,7 @@ namespace MediaPortal.GUI.Library
         base.Render(timePassed);
         return;
       }
-      _labelControl.Width = labelWidth;
+      // _labelControl.Width = labelWidth;
 
       if (_labelControl is GUILabelControl)
       {
@@ -358,12 +462,12 @@ namespace MediaPortal.GUI.Library
           break;
 
         case Alignment.ALIGN_RIGHT:
-          x = _positionX + _width - _textOffsetX;
+          x = _positionX + /*_width*/ Width - _textOffsetX;
           break;
 
         case Alignment.ALIGN_CENTER:
-          x = _positionX + _width / 2 - labelWidth / 2;
-          if (labelWidth > _width)
+          x = _positionX + /*_width*/ Width / 2 - labelWidth / 2;
+          if (labelWidth > /*_width*/ Width)
           {
             x += TextOffsetX;
           }
@@ -377,11 +481,11 @@ namespace MediaPortal.GUI.Library
           break;
 
         case VAlignment.ALIGN_BOTTOM:
-          y = _positionY + _height - _textOffsetY;
+          y = _positionY + /*_height*/ Height - _textOffsetY;
           break;
 
         case VAlignment.ALIGN_MIDDLE:
-          y = _positionY + _height / 2 - _labelControl.Height / 2;
+          y = _positionY + /*_height*/ Height / 2 - /*_labelControl.Height*/ labelHeight / 2;
           break;
       }
 
@@ -559,15 +663,15 @@ namespace MediaPortal.GUI.Library
         _hoverImage.AllocResources();
       }
 
-      _width = _imageFocused.Width;
-      _height = _imageFocused.Height;
+      //_width = _imageFocused.Width;
+      //_height = _imageFocused.Height;
 
       if (SubItemCount > 0)
       {
         Label = (string)GetSubItem(SelectedItem);
       }
-      _labelControl.Width = _width;
-      _labelControl.Height = _height;
+      //_labelControl.Width = _width;
+      //_labelControl.Height = _height;
       _labelControl.AllocResources();
     }
 
@@ -822,6 +926,7 @@ namespace MediaPortal.GUI.Library
           return;
         }
         _textOffsetX = value;
+        ReCalcLabelSize();
       }
     }
 
@@ -838,6 +943,7 @@ namespace MediaPortal.GUI.Library
           return;
         }
         _textOffsetY = value;
+        ReCalcLabelSize();
       }
     }
 
@@ -925,12 +1031,12 @@ namespace MediaPortal.GUI.Library
       base.Update();
 
       _imageFocused.ColourDiffuse = ColourDiffuse;
-      _imageFocused.Width = _width;
-      _imageFocused.Height = _height;
+      _imageFocused.Width = /*_width*/ Width;
+      _imageFocused.Height = /*_height*/ Height;
 
       _imageNonFocused.ColourDiffuse = ColourDiffuse;
-      _imageNonFocused.Width = _width;
-      _imageNonFocused.Height = _height;
+      _imageNonFocused.Width = /*_width*/ Width;
+      _imageNonFocused.Height = /*_height*/ Height;
 
       _imageFocused.SetPosition(_positionX, _positionY);
       _imageNonFocused.SetPosition(_positionX, _positionY);
@@ -1003,6 +1109,214 @@ namespace MediaPortal.GUI.Library
         else
         {
           _selectedItem = 0;
+        }
+      }
+    }
+
+    public override int Width
+    {
+      get 
+      { 
+        if (_maxWidth > 0 && _labelControl != null)
+        {
+          if (_labelControl is GUILabelControl)
+          {
+            return ((GUILabelControl)_labelControl).Width + labelDiffX;
+          }
+          else
+          {
+            return ((GUIFadeLabel)_labelControl).Width  + labelDiffX;
+          }
+        }
+        else
+        {
+          return base.Width;
+        }
+      }
+      set
+      {
+        if (base.Width != value)
+        {
+          base.Width = value;
+
+          if (_maxWidth > 0 && _maxWidth < value)
+          {
+            _maxWidth = value;
+          }
+
+          if (_labelControl != null)
+          {
+            if (_labelControl is GUILabelControl)
+            {
+              ((GUILabelControl)_labelControl).Width = value - labelDiffX;
+            }
+            else
+            {
+              ((GUIFadeLabel)_labelControl).Width = value - labelDiffX;
+            }
+          }
+        }
+      }
+    }
+
+    public override int Height
+    {
+      get 
+      {  
+        if (_maxHeight > 0 && _labelControl != null)
+        {
+          if (_labelControl is GUILabelControl)
+          {
+            return ((GUILabelControl)_labelControl).Height + labelDiffY;
+          }
+          else
+          {
+            return ((GUIFadeLabel)_labelControl).Height  + labelDiffY;
+          }
+        }
+        else
+        {
+          return base.Height;
+        }
+      }
+      set
+      {
+        if (base.Height != value)
+        {
+          base.Height = value;
+
+          if (_maxHeight > 0 && _maxHeight < value)
+          {
+            _maxHeight = value;
+          }
+
+          if (_labelControl != null)
+          {
+            if (_labelControl is GUILabelControl)
+            {
+              ((GUILabelControl)_labelControl).Height = value - labelDiffY;
+            }
+            else
+            {
+              ((GUIFadeLabel)_labelControl).Height = value - labelDiffY;
+            }
+          }
+        }
+      }
+    }
+
+    public int MinWidth
+    {
+      get { return base.Width; }
+      set
+      {
+        if (base.Width != value)
+        {
+          base.Width = value;
+
+          if (_maxWidth > 0 && _maxWidth < value)
+          {
+            _maxWidth = value;
+          }
+
+          if (_labelControl != null)
+          {
+            if (_labelControl is GUILabelControl)
+            {
+              ((GUILabelControl)_labelControl).MinWidth = value - labelDiffX;
+            }
+            else
+            {
+              ((GUIFadeLabel)_labelControl).MinWidth = value - labelDiffX;
+            }
+          }
+        }
+      }
+    }
+
+    public int MinHeight
+    {
+      get { return base.Height; }
+      set
+      {
+        if (base.Height != value)
+        {
+          base.Height = value;
+
+          if (_maxHeight > 0 && _maxHeight < value)
+          {
+            _maxHeight = value;
+          }
+
+          if (_labelControl != null)
+          {
+            if (_labelControl is GUILabelControl)
+            {
+              ((GUILabelControl)_labelControl).MinHeight = value - labelDiffY;
+            }
+            else
+            {
+              ((GUIFadeLabel)_labelControl).MinHeight = value - labelDiffY;
+            }
+          }
+        }
+      }
+    }
+
+    public int MaxWidth
+    {
+      get { return _maxWidth; }
+      set
+      {
+        if (_maxWidth != value)
+        {
+          _maxWidth = value;
+
+          if (_maxWidth > 0 && _maxWidth < base.Width)
+          {
+            base.Width = _maxWidth;
+          }
+
+          if (_labelControl != null)
+          {
+            if (_labelControl is GUILabelControl)
+            {
+              ((GUILabelControl)_labelControl).MaxWidth = value - labelDiffX;
+            }
+            else
+            {
+              ((GUIFadeLabel)_labelControl).MaxWidth = value - labelDiffX;
+            }
+          }
+        }
+      }
+    }
+
+    public int MaxHeight
+    {
+      get { return _maxHeight; }
+      set
+      {
+        if (_maxHeight != value)
+        {
+          _maxHeight = value;
+
+          if (_maxHeight > 0 && _maxHeight < base.Height)
+          {
+            base.Height = _maxHeight;
+          }
+
+          if (_labelControl != null)
+          {
+            if (_labelControl is GUILabelControl)
+            {
+              ((GUILabelControl)_labelControl).MaxHeight = value - labelDiffY;
+            }
+            else
+            {
+              ((GUIFadeLabel)_labelControl).MaxHeight = value - labelDiffY;
+            }
+          }
         }
       }
     }
