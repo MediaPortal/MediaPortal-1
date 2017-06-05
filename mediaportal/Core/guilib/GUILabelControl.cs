@@ -158,6 +158,16 @@ namespace MediaPortal.GUI.Library
     }
 
     /// <summary>
+    /// This method gets called when the control is created and all properties has been set
+    /// It allows the control to scale itself to the current screen resolution
+    /// </summary>
+    public override void ScaleToScreenResolution()
+    {
+      base.ScaleToScreenResolution();
+      GUIGraphicsContext.ScalePosToScreenResolution(ref _maxWidth, ref _maxHeight);
+    }
+
+    /// <summary>
     /// Renders the text onscreen.
     /// </summary>
     public override void Render(float timePassed)
