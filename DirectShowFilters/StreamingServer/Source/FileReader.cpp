@@ -37,7 +37,7 @@ FileReader::FileReader() :
 	m_hFile(INVALID_HANDLE_VALUE),
 	m_pFileName(0),
   m_bUseDummyWrites(FALSE),
-  m_bUseRandomAccess(FALSE),
+  m_dwAccessModeFlags(0),
   m_bIsStopping(FALSE),
   m_isTimeshift(FALSE),
   m_pKernel32LibHandle(NULL),
@@ -134,7 +134,7 @@ HRESULT FileReader::OpenFile()
   HANDLE hFileUnbuff = INVALID_HANDLE_VALUE;
   
   //Can be used to open files in random-access mode to workaround SMB caching problems
-  DWORD accessModeFlags = (m_bUseRandomAccess ? FILE_FLAG_RANDOM_ACCESS : FILE_FLAG_SEQUENTIAL_SCAN);       
+  //DWORD accessModeFlags = (m_bUseRandomAccess ? FILE_FLAG_RANDOM_ACCESS : FILE_FLAG_SEQUENTIAL_SCAN);       
 	
   m_bIsStopping = false;
 
@@ -188,7 +188,7 @@ HRESULT FileReader::OpenFile()
 						 (DWORD) FILE_SHARE_READ,     // Share access
 						 NULL,                        // Security
 						 (DWORD) OPEN_EXISTING,       // Open flags
-						 (DWORD) accessModeFlags,     // More flags
+						 (DWORD) m_dwAccessModeFlags,     // More flags
 						 NULL);                       // Template
 			if (m_hFile != INVALID_HANDLE_VALUE) break ;
 			  
@@ -198,7 +198,7 @@ HRESULT FileReader::OpenFile()
   							(DWORD) (FILE_SHARE_READ | FILE_SHARE_WRITE), // Share access
   							NULL,						            // Security
   							(DWORD) OPEN_EXISTING,		  // Open flags
-  							(DWORD) accessModeFlags,	                // More flags
+  							(DWORD) m_dwAccessModeFlags,	                // More flags
   							NULL);						          // Template 
   		if (m_hFile != INVALID_HANDLE_VALUE) break ;
 		}
@@ -210,7 +210,7 @@ HRESULT FileReader::OpenFile()
   							(DWORD) (FILE_SHARE_READ | FILE_SHARE_WRITE), // Share access
   							NULL,						            // Security
   							(DWORD) OPEN_EXISTING,		  // Open flags
-  							(DWORD) accessModeFlags,	  // More flags
+  							(DWORD) m_dwAccessModeFlags,	  // More flags
   							NULL);						                // Template 
   		if (m_hFile != INVALID_HANDLE_VALUE) break ;
 	  }
@@ -452,12 +452,12 @@ void FileReader::SetDummyWrites(BOOL useDummyWrites)
 	//LogDebug("FileReader::SetDummyWrites, useDummyWrites = %d", useDummyWrites);
 }
 
-//Enable 'random access' mode when opening files
-void FileReader::SetRandomAccess(BOOL useRandomAccess)
+//Set access mode mode when opening files
+void FileReader::SetAccessMode(DWORD accessModeFlags)
 {
   CAutoLockFR rLock (&m_accessLock);
-	m_bUseRandomAccess = useRandomAccess;
-	//LogDebug("FileReader::SetRandomAccess, useRandomAccess = %d", useRandomAccess);
+	m_dwAccessModeFlags = accessModeFlags;
+	//LogDebug("FileReader::SetAccessMode, accessModeFlags = 0x%x", accessModeFlags);
 }
 
 //for MultiFileReader() compatibility only
