@@ -656,7 +656,7 @@ void CMPIPTV_HTTP::ReceiveData(bool *shouldExit)
 
         // parse HTTP response
         // set end of string
-        this->receiveBuffer[length + 1] = '\0';
+        this->receiveBuffer[length] = '\0';
 
         int httpReturnCode = 0;
 
@@ -666,6 +666,7 @@ void CMPIPTV_HTTP::ReceiveData(bool *shouldExit)
         // do not try to parse data if we received HTTP response earlier
         if (!(this->receivedHttpResponse))
         {
+          // Note: the code below assumes receive buffer and data size will be at least 12 bytes.
           if(!strncmp(this->receiveBuffer, "HTTP/1.", 7))
           {
             this->receivedHttpResponse = TRUE;
