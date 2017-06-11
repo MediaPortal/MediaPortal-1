@@ -475,6 +475,12 @@ namespace MediaPortal.Player
             return _shouldRenderTexture;
           }
 
+          // Todo why add this hack for XySubFilter subtitle engine
+          if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && _subEngineType.Equals("XySubFilter"))
+          {
+            return false;
+          }
+
           //settings (position,size,aspect ratio) changed.
           //Store these settings and start calucating the new video window
           _rectPrevious = new Rectangle((int) x, (int) y, (int) nw, (int) nh);
