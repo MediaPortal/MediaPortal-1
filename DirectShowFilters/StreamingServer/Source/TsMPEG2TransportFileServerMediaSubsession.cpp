@@ -110,6 +110,7 @@ float TsMPEG2TransportFileServerMediaSubsession::duration() const
 {
   if (m_pDuration && m_pFileDuration)
   {
+    CAutoLock rLock (&m_durationLock);
     // void CTsDuration::UpdateDuration(bool logging, bool background)
     m_pDuration->UpdateDuration(false, false);      
 
@@ -127,9 +128,13 @@ float TsMPEG2TransportFileServerMediaSubsession::duration() const
 __int64 TsMPEG2TransportFileServerMediaSubsession::filelength() const
 {  
 	__int64	fileSize = 0;
+	
   if (m_pFileDuration)
   {
+    CAutoLock rLock (&m_durationLock);
+    m_pFileDuration->OpenFile();
     fileSize = m_pFileDuration->GetFileSize();
+  	m_pFileDuration->CloseFile();
 	  //LogDebug("TsMp2TFSMediaSubsession::filelength() %I64d", fileSize);
 	  if (fileSize < 0) fileSize = 0;
   }

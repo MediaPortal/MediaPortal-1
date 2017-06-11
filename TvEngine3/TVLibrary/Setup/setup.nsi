@@ -547,6 +547,7 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   File "${TVSERVER.BASE}\Ionic.Zip.dll"
 
   ; MediaInfo
+  ;File "${git_ROOT}\Packages\MediaInfo.0.7.95\MediaInfo.dll"
   File "${git_ROOT}\Packages\MediaInfo.0.7.69\MediaInfo.dll"
 
   ; thumbnail software

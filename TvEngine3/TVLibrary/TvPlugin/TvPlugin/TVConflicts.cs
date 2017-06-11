@@ -238,11 +238,7 @@ namespace TvPlugin
         switch (rec.ScheduleType)
         {
           case (int)ScheduleRecordingType.Once:
-            item.Label2 = String.Format("{0} {1} - {2}",
-                                        Utils.GetShortDayString(rec.StartTime),
-                                        rec.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-                                        rec.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
-            ;
+            item.Label2 = TVUtil.GetRecordingDateStringFull(rec);
             break;
           case (int)ScheduleRecordingType.Daily:
             strTime = String.Format("{0}-{1}",
