@@ -1682,7 +1682,7 @@ xcopy $(TargetDir)core.* $(SolutionDir)MediaPortal.Application\bin\$(Configurati
     <Error Condition="!Exists('..\..\Packages\bass.ofr.2.4.0.2\build\bass.ofr.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\bass.ofr.2.4.0.2\build\bass.ofr.targets'))" />
     <Error Condition="!Exists('..\..\Packages\bass.vst.2.4.5\build\bass.vst.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\bass.vst.2.4.5\build\bass.vst.targets'))" />
     <Error Condition="!Exists('..\..\Packages\bass.wadsp.2.4.1\build\bass.wadsp.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\bass.wadsp.2.4.1\build\bass.wadsp.targets'))" />
-    <Error Condition="!Exists('..\..\Packages\BASS.2.4.12.1\build\native\bass.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\BASS.2.4.12.1\build\native\bass.targets'))" />
+    <Error Condition="!Exists('..\..\Packages\BASS.2.4.12.1\build\bass.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\BASS.2.4.12.1\build\bass.targets'))" />
     <Error Condition="!Exists('..\..\Packages\bass.aac.2.4.5.1\build\bass.aac.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\bass.aac.2.4.5.1\build\bass.aac.targets'))" />
     <Error Condition="!Exists('..\..\Packages\bass.ac3.2.4.0.5\build\bass.ac3.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\bass.ac3.2.4.0.5\build\bass.ac3.targets'))" />
     <Error Condition="!Exists('..\..\Packages\bass.ape.2.4.2.0\build\bass.ape.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\bass.ape.2.4.2.0\build\bass.ape.targets'))" />
@@ -1699,6 +1699,7 @@ xcopy $(TargetDir)core.* $(SolutionDir)MediaPortal.Application\bin\$(Configurati
     <Error Condition="!Exists('..\..\Packages\bass.wasapi.2.4.1.2\build\bass.wasapi.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\bass.wasapi.2.4.1.2\build\bass.wasapi.targets'))" />
     <Error Condition="!Exists('..\..\Packages\bass.wma.2.4.5.1\build\bass.wma.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\bass.wma.2.4.5.1\build\bass.wma.targets'))" />
     <Error Condition="!Exists('..\..\Packages\bass.wv.2.4.6.0\build\bass.wv.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\bass.wv.2.4.6.0\build\bass.wv.targets'))" />
+    <Error Condition="!Exists('..\..\Packages\BASS.2.4.12.1\build\bass.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\BASS.2.4.12.1\build\bass.targets'))" />
   </Target>
   <Import Project="..\..\Packages\bass.alac.2.4.3\build\bass.alac.targets" Condition="Exists('..\..\Packages\bass.alac.2.4.3\build\bass.alac.targets')" />
   <Import Project="..\..\Packages\bass.ofr.2.4.0.2\build\bass.ofr.targets" Condition="Exists('..\..\Packages\bass.ofr.2.4.0.2\build\bass.ofr.targets')" />
@@ -1722,4 +1723,5 @@ xcopy $(TargetDir)core.* $(SolutionDir)MediaPortal.Application\bin\$(Configurati
   <Import Project="..\..\Packages\bass.wasapi.2.4.1.2\build\bass.wasapi.targets" Condition="Exists('..\..\Packages\bass.wasapi.2.4.1.2\build\bass.wasapi.targets')" />
   <Import Project="..\..\Packages\bass.wma.2.4.5.1\build\bass.wma.targets" Condition="Exists('..\..\Packages\bass.wma.2.4.5.1\build\bass.wma.targets')" />
   <Import Project="..\..\Packages\bass.wv.2.4.6.0\build\bass.wv.targets" Condition="Exists('..\..\Packages\bass.wv.2.4.6.0\build\bass.wv.targets')" />
+  <Import Project="..\..\Packages\BASS.2.4.12.1\build\bass.targets" Condition="Exists('..\..\Packages\BASS.2.4.12.1\build\bass.targets')" />
 </Project>
