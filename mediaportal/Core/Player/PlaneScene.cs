@@ -476,7 +476,8 @@ namespace MediaPortal.Player
           }
 
           // Todo why add this hack for XySubFilter subtitle engine
-          if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && _subEngineType.Equals("XySubFilter"))
+          if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
+              _subEngineType.Equals("XySubFilter") && IsFullScreen() && g_Player.Player is VideoPlayerVMR9)
           {
             Size client = GUIGraphicsContext.form.ClientSize;
             if (client.Width == videoSize.Width || _prevVideoWidth == videoSize.Width)
