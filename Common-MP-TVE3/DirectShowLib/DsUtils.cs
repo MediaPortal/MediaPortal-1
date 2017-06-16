@@ -32,6 +32,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.ComTypes;
 using System.Text;
+using System.Threading;
 using DirectShowLib.Dvd;
 #if !USING_NET11
 
@@ -1060,6 +1061,32 @@ namespace DirectShowLib
 
       return 0;
     }
+
+    public static int FinalReleaseComObject(object obj)
+    {
+      if (obj != null)
+      {
+        if (Marshal.IsComObject(obj))
+          while (true)
+          {
+            if (Marshal.ReleaseComObject(obj) > 0)
+            {
+              Thread.Sleep(100);
+            }
+            else
+            {
+              Marshal.FinalReleaseComObject(obj);
+              obj = null;
+              break;
+            }
+          }
+      }
+
+      StackTrace st = new StackTrace(true);
+      //Log.Error("Exception while releasing COM object (NULL) - stacktrace: {0}", st);
+
+      return 0;
+    }
   }
 
 
@@ -1167,7 +1194,7 @@ namespace DirectShowLib
         }
         finally
         {
-          DsUtils.ReleaseComObject(rot);
+          DsUtils.FinalReleaseComObject(rot);
           rot = null;
         }
       }

@@ -1557,7 +1557,7 @@ namespace MediaPortal.Player
 
         if (graphBuilder != null)
         {
-          //DirectShowUtil.RemoveFilters(graphBuilder);
+          DirectShowUtil.RemoveFilters(graphBuilder);
           if (_rotEntry != null)
           {
             Log.Debug("VideoPlayer9: rotEntry Dispose 1");

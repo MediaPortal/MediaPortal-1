@@ -335,6 +335,9 @@ HRESULT MPMadPresenter::Shutdown()
   { // Scope for autolock for the local variable (lock, which when deleted releases the lock)
     CAutoLock lock(this);
 
+    // destroy the hidden window need to be done here for example when tool (Graphstudio) hold the graph)
+    DestroyWindow(m_hWnd);
+
     Log("MPMadPresenter::Shutdown() start");
 
     if (m_pCallback)
