@@ -358,12 +358,42 @@ HRESULT MPMadPresenter::Shutdown()
       }
     }
 
+    if (m_pSRCB)
+    {
+      // nasty, but we have to let it know about our death somehow
+      static_cast<CSubRenderCallback*>(static_cast<ISubRenderCallback*>(m_pSRCB))->SetDXRAPSUB(nullptr);
+      Log("MPMadPresenter::Shutdown() - m_pSRCB");
+    }
+
+    if (m_pORCB)
+    {
+      // nasty, but we have to let it know about our death somehow
+      static_cast<COsdRenderCallback*>(static_cast<IOsdRenderCallback*>(m_pORCB))->SetDXRAP(nullptr);
+      Log("MPMadPresenter::Shutdown() - m_pORCB");
+    }
+
+    Log("MPMadPresenter::Shutdown() - m_pSRCB release 1");
+    if (m_pSRCB)
+      m_pSRCB.Release();
+    Log("MPMadPresenter::Shutdown() - m_pSRCB release 2");
+
+    Log("MPMadPresenter::Shutdown() - m_pORCB release 1");
+    if (m_pORCB)
+      m_pORCB.Release();
+    Log("MPMadPresenter::Shutdown() - m_pORCB release 2");
+
     Log("MPMadPresenter::Shutdown() - m_pMad release 1");
     if (m_pMad)
     {
       m_pMad.FullRelease();
     }
     Log("MPMadPresenter::Shutdown() - m_pMad release 2");
+
+    // Detroy create madVR window and need to be here to avoid some crash
+    DeInitMadvrWindow();
+
+    Log("MPMadPresenter::Shutdown() - instance 0x%x", this);
+    Sleep(500);
 
     Log("MPMadPresenter::Shutdown() stop");
     return S_OK;
