@@ -951,6 +951,14 @@ namespace MediaPortal.Player
       }
     }
 
+    public void DestroyHWnd(uint phWnd)
+    {
+      if (GUIGraphicsContext.DX9Device != null)
+      {
+        VMR9Util.g_vmr9.HWnd = (IntPtr)phWnd;
+      }
+    }
+
     public void SetRenderTarget(uint target)
     {
       lock (_lockobj)
