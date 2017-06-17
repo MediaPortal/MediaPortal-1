@@ -1140,7 +1140,7 @@ namespace DirectShowLib
         IntPtr iuPtr = Marshal.GetIUnknownForObject(graph);
         int iuInt = (int) iuPtr;
         Marshal.Release(iuPtr);
-        string item = string.Format("FilterGraph {0} pid {1}", iuInt.ToString("x8"), id.ToString("x8"));
+        string item = string.Format("FilterGraph {0} pid {1} - {2}", iuInt.ToString("x8"), id.ToString("x8"), "(MediaPortal)");
         hr = CreateItemMoniker("!", item, out mk);
         DsError.ThrowExceptionForHR(hr);
 
@@ -1191,6 +1191,10 @@ namespace DirectShowLib
           // Remove our entry
           rot.Revoke(m_cookie);
           m_cookie = 0;
+        }
+        catch (Exception ex)
+        {
+          // ignored
         }
         finally
         {
