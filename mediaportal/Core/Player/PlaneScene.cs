@@ -579,10 +579,11 @@ namespace MediaPortal.Player
             _destinationRect.X, _destinationRect.Y, _destinationRect.X + _destinationRect.Width,
             _destinationRect.Y + _destinationRect.Height);
 
-          if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
-          {
-            Util.Utils.SwitchFocus();
-          }
+          // Comment that part because it steal focus of other window
+          //if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
+          //{
+          //  Util.Utils.SwitchFocus();
+          //}
 
           return true;
         }
