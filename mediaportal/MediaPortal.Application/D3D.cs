@@ -509,6 +509,11 @@ namespace MediaPortal
       if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
       {
         GUIGraphicsContext.ForceMadVRRefresh3D = true;
+      }
+      // Force OSD resize when no video has started to display OSD GUI correctly
+      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
+               !GUIGraphicsContext.InVmr9Render)
+      { 
         GUIGraphicsContext.ForceMadVRRefresh = true;
       }
 
