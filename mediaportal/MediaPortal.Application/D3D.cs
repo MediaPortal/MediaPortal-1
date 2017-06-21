@@ -504,6 +504,18 @@ namespace MediaPortal
         GUIGraphicsContext.DX9Device.DeviceLost -= OnDeviceLost;
       }
 
+      // if we do ToggleFullscreen when using madVR (needed to resize OSD)
+      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+      {
+        GUIGraphicsContext.ForceMadVRRefresh3D = true;
+      }
+      // Force OSD resize when no video has started to display OSD GUI correctly
+      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
+               !GUIGraphicsContext.InVmr9Render)
+      { 
+        GUIGraphicsContext.ForceMadVRRefresh = true;
+      }
+
       // Reset DialogMenu to avoid freeze when going to fullscreen/windowed
       var dialogMenu = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
       if (dialogMenu != null &&

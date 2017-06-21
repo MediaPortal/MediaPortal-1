@@ -3938,7 +3938,8 @@ namespace MediaPortal.Player
               }
               else
               {
-                VMR9Util.g_vmr9?.MadVrScreenResize(0, 0, client.Width, client.Height, false);
+                // Changed the false to true, need to figure out why regression is present when it's false
+                VMR9Util.g_vmr9?.MadVrScreenResize(0, 0, client.Width, client.Height, true);
                 GUIGraphicsContext.ForceMadVRRefresh3D = false;
               }
               GUIGraphicsContext.NoneDone = false;
