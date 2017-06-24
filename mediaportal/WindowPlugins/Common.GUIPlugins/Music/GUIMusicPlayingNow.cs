@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2017 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2017 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -24,7 +24,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -508,6 +507,7 @@ namespace MediaPortal.GUI.Music
       // Start the VUMeter Update Timer, when it is enabled in skin file
       GUIPropertyManager.SetProperty("#VUMeterL", @"VU1.png");
       GUIPropertyManager.SetProperty("#VUMeterR", @"VU1.png");
+
       if (VUMeterTimer == null && _usingBassEngine &&
           _vuMeter.ToLowerInvariant() != "none")
       {
@@ -786,7 +786,8 @@ namespace MediaPortal.GUI.Music
         {
           file = "VU15.png";
         }
-        GUIPropertyManager.SetProperty("#VUMeterL", Path.Combine(VUMeterLeft.ImagePath, file));
+        // GUIPropertyManager.SetProperty("#VUMeterL", Path.Combine(VUMeterLeft.ImagePath, file));
+        GUIPropertyManager.SetProperty("#VUMeterL", file);
 
         if ((int) dbLevelR < -15)
         {
@@ -848,7 +849,8 @@ namespace MediaPortal.GUI.Music
         {
           file = "VU15.png";
         }
-        GUIPropertyManager.SetProperty("#VUMeterR", Path.Combine(VUMeterRight.ImagePath, file));
+        // GUIPropertyManager.SetProperty("#VUMeterR", Path.Combine(VUMeterRight.ImagePath, file));
+        GUIPropertyManager.SetProperty("#VUMeterR", file);
       }
     }
 
