@@ -76,6 +76,7 @@ CAudioPin::CAudioPin(LPUNKNOWN pUnk, CTsReaderFilter *pFilter, HRESULT *phr,CCri
   m_bAddPMT = false;
   m_bDisableSlowPlayDiscontinuity=false;
   m_nMaxAFT = -1;
+  m_bThreadRunning = false;
 }
 
 CAudioPin::~CAudioPin()
@@ -310,10 +311,12 @@ HRESULT CAudioPin::DoBufferProcessingLoop(void)
   if (!m_bConnected) 
   {
     return S_OK;
+    m_bThreadRunning = false;
   }
     
   Command com;
   OnThreadStartPlay();
+  m_bThreadRunning = true;
   SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_NORMAL);
 
   do 
@@ -353,6 +356,7 @@ HRESULT CAudioPin::DoBufferProcessingLoop(void)
         if(hr != S_OK)
         {
           DbgLog((LOG_TRACE, 2, TEXT("Deliver() returned %08x; stopping"), hr));
+          m_bThreadRunning = false;
           return S_OK;
         }
       } 
@@ -361,6 +365,7 @@ HRESULT CAudioPin::DoBufferProcessingLoop(void)
         // derived class wants us to stop pushing data
         pSample->Release();
         DeliverEndOfStream();
+        m_bThreadRunning = false;
         return S_OK;
       } 
       else 
@@ -370,6 +375,7 @@ HRESULT CAudioPin::DoBufferProcessingLoop(void)
         DbgLog((LOG_ERROR, 1, TEXT("Error %08lX from FillBuffer!!!"), hr));
         DeliverEndOfStream();
         m_pFilter->NotifyEvent(EC_ERRORABORT, hr, 0);
+        m_bThreadRunning = false;
         return hr;
       }
      // all paths release the sample
@@ -385,7 +391,8 @@ HRESULT CAudioPin::DoBufferProcessingLoop(void)
       DbgLog((LOG_ERROR, 1, TEXT("Unexpected command!!!")));
 	  }
   } while (com != CMD_STOP);
-  
+
+  m_bThreadRunning = false;  
   return S_FALSE;
 }
 
@@ -733,6 +740,12 @@ double CAudioPin::GetAudioPresToRefDiff()
   {
     return  0.0;
   }
+}
+
+bool CAudioPin::IsThreadRunning(CRefTime *pRtStartTime)
+{
+  *pRtStartTime = m_rtStart;
+  return m_bThreadRunning;
 }
 
 bool CAudioPin::IsInFillBuffer()

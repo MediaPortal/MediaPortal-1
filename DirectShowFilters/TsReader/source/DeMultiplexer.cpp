@@ -922,10 +922,10 @@ CBuffer* CDeMultiplexer::GetAudio(bool earlyStall, CRefTime rtStartTime)
     PrefetchData();
   }
 
-  if (!CheckCompensation(rtStartTime)) 
-  {
-    return NULL; //Not enough audio/video to start
-  }
+  //  if (!CheckCompensation(rtStartTime)) 
+  //  {
+  //    return NULL; //Not enough audio/video to start
+  //  }
 
   //Return the next buffer
   CAutoLock lock (&m_sectionAudio);
@@ -4616,6 +4616,7 @@ void CDeMultiplexer::ThreadProc()
   int sizeRead = 0;
   bool retryRead = false;
   DWORD pfLoopDelay = PF_LOOP_DELAY_MIN;
+  CRefTime rtStartTime;
 
   //Set basic thread priority
   ::SetThreadPriority(GetCurrentThread(),THREAD_PRIORITY_NORMAL);
@@ -4677,7 +4678,12 @@ void CDeMultiplexer::ThreadProc()
       {
         lastRetryLoopTime = timeNow;
         retryRead = true;
-      }
+      }      
+    }
+
+    if (m_filter.GetAudioPin()->IsThreadRunning(&rtStartTime))
+    {
+      CheckCompensation(rtStartTime);
     }
     
     pfLoopDelay = retryRead ? (m_filter.IsRTSP() ? 2 : (m_prefetchLoopDelay/2)) : m_prefetchLoopDelay;              
