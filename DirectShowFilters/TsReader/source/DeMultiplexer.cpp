@@ -922,11 +922,6 @@ CBuffer* CDeMultiplexer::GetAudio(bool earlyStall, CRefTime rtStartTime)
     PrefetchData();
   }
 
-  //  if (!CheckCompensation(rtStartTime)) 
-  //  {
-  //    return NULL; //Not enough audio/video to start
-  //  }
-
   //Return the next buffer
   CAutoLock lock (&m_sectionAudio);
 
