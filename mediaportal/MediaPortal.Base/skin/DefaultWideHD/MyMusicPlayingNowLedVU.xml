@@ -268,7 +268,7 @@
       <height>132</height>
       <texture>menuBG.png</texture>
       <colordiffuse>ccffffff</colordiffuse>
-      <visible>Player.HasAudio+!string.equals(#spectrumanalyzer.vumeter.available,)</visible>
+      <visible>Player.HasAudio+!string.equals(#spectrumanalyzer.available,true)</visible>
     </control>
     <control>
       <description>background image</description>
@@ -280,7 +280,7 @@
       <height>145</height>
       <texture>menuBG.png</texture>
       <colordiffuse>ccffffff</colordiffuse>
-      <visible>Player.HasAudio+string.equals(#spectrumanalyzer.vumeter.available,)</visible>
+      <visible>Player.HasAudio+string.equals(#spectrumanalyzer.available,true)</visible>
     </control>
     <control>
       <description>Music Spectrum</description>
@@ -302,7 +302,7 @@
       <height>105</height>
       <texture>Animations\LedVu\vu1.png</texture>
       <shouldCache>true</shouldCache>
-      <visible>Player.HasAudio+Player.paused+!string.equals(#spectrumanalyzer.vumeter.available,)</visible>
+      <visible>Player.HasAudio+Player.paused+!string.equals(#spectrumanalyzer.available,true)</visible>
     </control>
     <control>
       <type>image</type>
@@ -314,7 +314,7 @@
       <imagepath>Animations\LedVu</imagepath>
       <texture>#VUMeterL</texture>
       <shouldCache>true</shouldCache>
-      <visible>Player.HasAudio+Player.playing+!Player.paused+!string.equals(#spectrumanalyzer.vumeter.available,)</visible>
+      <visible>Player.HasAudio+Player.playing+!Player.paused+!string.equals(#spectrumanalyzer.available,true)</visible>
     </control>
     <control>
       <type>image</type>
@@ -325,7 +325,7 @@
       <height>105</height>
       <texture>Animations\LedVu\vu1.png</texture>
       <shouldCache>true</shouldCache>
-      <visible>Player.HasAudio+Player.paused+!string.equals(#spectrumanalyzer.vumeter.available,)</visible>
+      <visible>Player.HasAudio+Player.paused+!string.equals(#spectrumanalyzer.available,true)</visible>
     </control>
     <control>
       <type>image</type>
@@ -337,7 +337,7 @@
       <shouldCache>true</shouldCache>
       <imagepath>Animations\LedVu</imagepath>
       <texture>#VUMeterR</texture>
-      <visible>Player.HasAudio+Player.playing+!Player.paused+!string.equals(#spectrumanalyzer.vumeter.available,)</visible>
+      <visible>Player.HasAudio+Player.playing+!Player.paused+!string.equals(#spectrumanalyzer.available,true)</visible>
     </control>
     <!-- *************************************************************************************************** -->
     <!-- ************************************** Here is the ClearArt *************************************** -->
