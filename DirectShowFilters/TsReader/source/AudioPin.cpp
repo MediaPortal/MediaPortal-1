@@ -437,16 +437,20 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
       //if the filter is currently seeking to a new position
       //or this pin is currently seeking to a new position then
       //we dont try to read any packets, but simply return...
-      if (m_pTsReaderFilter->IsSeeking() || m_pTsReaderFilter->IsStopping() || demux.m_bFlushRunning)
+      if (m_pTsReaderFilter->IsSeeking() || m_pTsReaderFilter->IsStopping() || demux.m_bFlushRunning || !m_pTsReaderFilter->m_bStreamCompensated)
       {
         m_FillBuffSleepTime = 5;
         CreateEmptySample(pSample);
         m_bInFillBuffer = false;
-        if (demux.m_bFlushRunning)
+        if (demux.m_bFlushRunning || !m_pTsReaderFilter->m_bStreamCompensated)
         {
           //Force discon on next good sample
           m_sampleCount = 0;
           m_bDiscontinuity=true;
+        }
+        if (!m_pTsReaderFilter->m_bStreamCompensated && (m_nNextAFT != 0))
+        {
+          ClearAverageFtime();
         }
         return NOERROR;
       }
@@ -459,24 +463,9 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
       // Get next audio buffer from demultiplexer
       buffer=demux.GetAudio(earlyStall, m_rtStart);
 
-
-      //Wait until we have audio (and video, if pin connected) 
-      if (!m_pTsReaderFilter->m_bStreamCompensated || (buffer==NULL))
+      if (buffer==NULL)
       {
         m_FillBuffSleepTime = 5;
-        buffer=NULL; //Continue looping
-        if (!m_pTsReaderFilter->m_bStreamCompensated && (m_nNextAFT != 0))
-        {
-          ClearAverageFtime();
-        }
-        
-        if (!m_pTsReaderFilter->m_bStreamCompensated)
-        {
-          m_sampleCount = 0;
-          CreateEmptySample(pSample);
-          m_bInFillBuffer = false;
-          return NOERROR;
-        }
       }
       else
       {

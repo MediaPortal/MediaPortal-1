@@ -819,11 +819,6 @@ CBuffer* CDeMultiplexer::GetSubtitle()
 
   if ((m_pids.subtitlePids.size() > 0 && m_pids.subtitlePids[0].Pid==0) || IsMediaChanging())
   {
-    if (CheckPrefetchState(false, true))
-    {
-      //Read some data
-      PrefetchData();
-    }
     return NULL;
   }
   //if there is no subtitle pid, then simply return NULL
@@ -857,11 +852,6 @@ CBuffer* CDeMultiplexer::GetVideo(bool earlyStall)
   //if there is no video pid, then simply return NULL
   if ((m_pids.videoPids.size() > 0 && m_pids.videoPids[0].Pid==0) || IsMediaChanging())
   {
-    if (CheckPrefetchState(false, true))
-    {
-      //Read some data
-      PrefetchData();
-    }
     return NULL;
   }
 
@@ -908,11 +898,6 @@ CBuffer* CDeMultiplexer::GetAudio(bool earlyStall, CRefTime rtStartTime)
   // if there is no audio pid, then simply return NULL
   if ((m_audioPid==0) || IsMediaChanging())
   {
-    if (CheckPrefetchState(false, true))
-    {
-      //Read some data
-      PrefetchData();
-    }
     return NULL;
   }
 
@@ -4653,6 +4638,15 @@ void CDeMultiplexer::ThreadProc()
     }
 
     //File read prefetch
+    if (!m_filter.m_bStreamCompensated) //Prefetch for initial parsing and buffering
+    {
+      if (CheckPrefetchState(false, true))
+      {
+        //Read some data
+        m_bReadAheadFromFile = m_filter.GetAudioPin()->IsThreadRunning(&rtStartTime);
+      }
+    }
+
     if (m_bReadAheadFromFile && (timeNow > (lastFileReadTime + pfLoopDelay - 1)) )
     {
       lastFileReadTime = timeNow; 
