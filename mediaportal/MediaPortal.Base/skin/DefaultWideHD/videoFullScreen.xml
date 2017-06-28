@@ -76,7 +76,7 @@
       <posY>975</posY>
       <width>940</width>
       <height>26</height>
-      <texture>osd_progress_background.png</texture>
+      <texture>horizontal_bar2.png</texture>
       <visible>control.isVisible(111)</visible>
     </control>
     <control>
@@ -113,9 +113,9 @@
       <offset>0</offset>
       <height>23</height>
       <innerheight>23</innerheight>
-      <lefttexture>osd_progress_left.png</lefttexture>
-      <midtexture>osd_progress_mid.png</midtexture>
-      <righttexture>osd_progress_right.png</righttexture>
+      <lefttexture></lefttexture>
+      <midtexture></midtexture>
+      <righttexture>osd_progress_right2.png</righttexture>
       <label>#percentage</label>
       <visible>control.isVisible(111)</visible>
     </control>
@@ -128,14 +128,14 @@
       <posY>977</posY>
       <width>937</width>
       <height>23</height>
-      <toptexture></toptexture>
-      <TextureOffsetY>29</TextureOffsetY>
-      <lefttexture>osd_progress_left.png</lefttexture>
-      <fillbgxoff>-3</fillbgxoff>
+      <toptexture>osd_progress_right2.png</toptexture>
+      <TextureOffsetY>25</TextureOffsetY>
+      <lefttexture></lefttexture>
+      <fillbgxoff>10</fillbgxoff>
       <fillbgyoff>0</fillbgyoff>
-      <filltexture1>osd_progress_mid.png</filltexture1>
-      <filltexture2>osd_progress_mid.png</filltexture2>
-      <filltexture3>osd_progress_mid_orange.png</filltexture3>
+      <filltexture1>osd_progress_mid_tv2.png</filltexture1>
+      <filltexture2>osd_progress_mid_tv2.png</filltexture2>
+      <filltexture3>osd_progress_mid_orange_tv2.png</filltexture3>
       <markertexture>osd_progress_mid_orange.png</markertexture>
       <fillheight>23</fillheight>
       <label>#percentage</label>

@@ -146,19 +146,19 @@
       <type>image</type>
       <id>0</id>
       <posX>1484</posX>
-      <posY>94</posY>
+      <posY>98</posY>
       <width>283</width>
-      <height>19</height>
-      <texture>osd_progress_background_medium.png</texture>
+      <height>16</height>
+      <texture>horizontal_bar2.png</texture>
       <visible>Player.HasAudio+!Player.HasVideo+string.equals(#duration)</visible>
     </control>
     <control>
       <description>Progress Bar</description>
       <type>progress</type>
       <id>0</id>
-      <posX>1473</posX>
-      <posY>96</posY>
-      <width>281</width>
+      <posX>1472</posX>
+      <posY>98</posY>
+      <width>292</width>
       <height>16</height>
       <label>#percentage</label>
       <texturebg>-</texturebg>
@@ -167,9 +167,9 @@
       <midheight>16</midheight>
       <midoffsetX>0</midoffsetX>
       <midoffsetY>0</midoffsetY>
-      <lefttexture>osd_progress_left.png</lefttexture>
-      <midtexture>osd_progress_mid.png</midtexture>
-      <righttexture>osd_progress_right.png</righttexture>
+      <lefttexture>osd_progress_mid_tv2.png</lefttexture>
+      <midtexture>osd_progress_mid_tv2.png</midtexture>
+      <righttexture>osd_progress_right2.png</righttexture>
       <visible>Player.HasAudio+!Player.HasVideo+string.equals(#duration)</visible>
     </control>
     <control>
@@ -340,19 +340,19 @@
       <type>image</type>
       <id>0</id>
       <posX>1484</posX>
-      <posY>94</posY>
+      <posY>98</posY>
       <width>283</width>
-      <height>19</height>
-      <texture>osd_progress_background_medium.png</texture>
-      <visible>player.hasvideo+!string.contains(#Play.Current.File,tsbuffer)</visible>
+      <height>16</height>
+      <texture>horizontal_bar2.png</texture>
+      <visible>!control.isvisible(777)+player.hasvideo+!string.contains(#Play.Current.File,tsbuffer)</visible>
     </control>
     <control>
       <description>Progress Bar</description>
       <type>progress</type>
       <id>0</id>
-      <posX>1473</posX>
-      <posY>96</posY>
-      <width>281</width>
+      <posX>1472</posX>
+      <posY>98</posY>
+      <width>293</width>
       <height>16</height>
       <label>#percentage</label>
       <texturebg>-</texturebg>
@@ -361,10 +361,10 @@
       <midheight>16</midheight>
       <midoffsetX>0</midoffsetX>
       <midoffsetY>0</midoffsetY>
-      <lefttexture>osd_progress_left.png</lefttexture>
-      <midtexture>osd_progress_mid.png</midtexture>
-      <righttexture>osd_progress_right.png</righttexture>
-      <visible>player.hasvideo+!string.contains(#Play.Current.File,tsbuffer)</visible>
+      <lefttexture>osd_progress_mid_tv2.png</lefttexture>
+      <midtexture>osd_progress_mid_tv2.png</midtexture>
+      <righttexture>osd_progress_right2.png</righttexture>
+      <visible>!control.isvisible(777)+player.hasvideo+!string.contains(#Play.Current.File,tsbuffer)</visible>
     </control>
     <control>
       <description>TV logo</description>
