@@ -855,12 +855,6 @@ CBuffer* CDeMultiplexer::GetVideo(bool earlyStall)
     return NULL;
   }
 
-  if (CheckPrefetchState(true, false))
-  {
-    //Read some data
-    PrefetchData();
-  }
-
   //We should have a video packet available
   CAutoLock lock (&m_sectionVideo);
 
@@ -899,12 +893,6 @@ CBuffer* CDeMultiplexer::GetAudio(bool earlyStall, CRefTime rtStartTime)
   if ((m_audioPid==0) || IsMediaChanging())
   {
     return NULL;
-  }
-
-  if (CheckPrefetchState(true, false))
-  {
-    //Read some data
-    PrefetchData();
   }
 
   //Return the next buffer
@@ -3993,7 +3981,7 @@ bool CDeMultiplexer::CheckPrefetchState(bool isNormal, bool isForced)
   }
 
   //Start-of-play situation
-  if (!m_filter.m_bStreamCompensated || isForced)
+  if (isForced)
   {
     return true;
   }
@@ -4637,12 +4625,14 @@ void CDeMultiplexer::ThreadProc()
       }
     }
 
-    //File read prefetch
-    if (!m_filter.m_bStreamCompensated) //Prefetch for initial parsing and buffering
+    //File read prefetch section...
+
+    //Prefetch control
+    if (!IsAudioChanging())
     {
-      if (CheckPrefetchState(false, true) && !IsAudioChanging())
+      if (CheckPrefetchState(m_filter.m_bStreamCompensated, !m_filter.m_bStreamCompensated)) //Forced for initial parsing and buffering, normal mode otherwise
       {
-        //Read some data
+        //Read some data if the audio pin thread is running
         m_bReadAheadFromFile = m_filter.GetAudioPin()->IsThreadRunning(&rtStartTime);
       }
     }
