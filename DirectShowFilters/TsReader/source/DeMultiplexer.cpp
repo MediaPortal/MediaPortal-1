@@ -4640,7 +4640,7 @@ void CDeMultiplexer::ThreadProc()
     //File read prefetch
     if (!m_filter.m_bStreamCompensated) //Prefetch for initial parsing and buffering
     {
-      if (CheckPrefetchState(false, true))
+      if (CheckPrefetchState(false, true) && !IsAudioChanging())
       {
         //Read some data
         m_bReadAheadFromFile = m_filter.GetAudioPin()->IsThreadRunning(&rtStartTime);
@@ -4670,7 +4670,7 @@ void CDeMultiplexer::ThreadProc()
       }      
     }
 
-    if (m_filter.GetAudioPin()->IsThreadRunning(&rtStartTime))
+    if (m_filter.GetAudioPin()->IsThreadRunning(&rtStartTime) && !IsMediaChanging() && !m_filter.IsSeeking())
     {
       CheckCompensation(rtStartTime);
     }
