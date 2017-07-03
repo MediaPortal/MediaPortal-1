@@ -74,22 +74,34 @@
     <!-- ***************************************   Progressbar and time info ******************************* -->
     <!-- *************************************************************************************************** -->
     <control>
+      <description>background image</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1250</posX>
+      <posY>655</posY>
+      <width>510</width>
+      <height>60</height>
+      <texture>menuBG.png</texture>
+      <colordiffuse>ccffffff</colordiffuse>
+      <visible>Player.HasAudio+string.equals(#duration)</visible>
+    </control>
+    <control>
       <type>image</type>
       <id>117</id>
       <posX>1373</posX>
-      <posY>655</posY>
+      <posY>675</posY>
       <width>258</width>
-      <height>26</height>
-      <texture>osd_progress_background.png</texture>
+      <height>23</height>
+      <texture>horizontal_bar2.png</texture>
       <visible>Player.HasAudio+!Player.HasVideo+string.equals(#duration)</visible>
     </control>
     <control>
       <description>progress bar</description>
       <type>progress</type>
       <id>118</id>
-      <posX>1362</posX>
-      <posY>656</posY>
-      <width>286</width>
+      <posX>1355</posX>
+      <posY>674</posY>
+      <width>296</width>
       <height>23</height>
       <label>#percentage</label>
       <texturebg>-</texturebg>
@@ -98,9 +110,9 @@
       <midheight>23</midheight>
       <midoffsetX>0</midoffsetX>
       <midoffsetY>0</midoffsetY>
-      <lefttexture>osd_progress_left.png</lefttexture>
-      <midtexture>osd_progress_mid.png</midtexture>
-      <righttexture>osd_progress_right.png</righttexture>
+      <lefttexture>osd_progress_mid_tv2.png</lefttexture>
+      <midtexture>osd_progress_mid_tv2.png</midtexture>
+      <righttexture>osd_progress_right2.png</righttexture>
       <visible>Player.HasAudio+!Player.HasVideo+string.equals(#duration)</visible>
     </control>
     <control>
@@ -108,7 +120,7 @@
       <description>track progress label</description>
       <id>119</id>
       <posX>1361</posX>
-      <posY>648</posY>
+      <posY>663</posY>
       <label>#currentplaytime</label>
       <font>Label</font>
       <align>right</align>
@@ -120,7 +132,7 @@
       <description>track duration label</description>
       <id>110</id>
       <posX>1645</posX>
-      <posY>649</posY>
+      <posY>663</posY>
       <label>#currentremaining</label>
       <font>Label</font>
       <align>left</align>
