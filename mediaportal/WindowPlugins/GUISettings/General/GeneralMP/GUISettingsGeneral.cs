@@ -231,11 +231,11 @@ namespace WindowPlugins.GUISettings
       {
         if (type == 2135) // Audio
         {
-          strType = "autoplay_video";
+          strType = "autoplay_audio";
         }
         if (type == 2134) // Video
         {
-          strType = "autoplay_audio";
+          strType = "autoplay_video";
         }
         if (type == 300006) // photo
         {
