@@ -1636,11 +1636,8 @@ public class MediaPortalApp : D3D, IRender
 
         // handle device changes
         case WM_DEVICECHANGE:
-          if (Windowed || !_ignoreFullscreenResolutionChanges)
-          {
-            OnDeviceChange(ref msg);
-            PluginManager.WndProc(ref msg);
-          }
+          OnDeviceChange(ref msg);
+          PluginManager.WndProc(ref msg);
           break;
 
         case WM_QUERYENDSESSION:
@@ -2141,7 +2138,10 @@ public class MediaPortalApp : D3D, IRender
         Log.Debug("Main: Device type is {0} - Name: {1}", Enum.GetName(typeof(DBT_DEV_TYPE), hdr.dbcc_devicetype), deviceName);
 
         // special chanding for audio renderer
-        if (deviceInterface.dbcc_classguid == KSCATEGORY_VIDEO || deviceInterface.dbcc_classguid == KSCATEGORY_SCREEN)
+        if (
+          (deviceInterface.dbcc_classguid == KSCATEGORY_VIDEO || deviceInterface.dbcc_classguid == KSCATEGORY_SCREEN) &&
+          (Windowed || !_ignoreFullscreenResolutionChanges)
+        )
         {
           switch (msg.WParam.ToInt32())
           {
