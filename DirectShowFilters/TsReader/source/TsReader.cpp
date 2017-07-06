@@ -1687,14 +1687,15 @@ HRESULT CTsReaderFilter::SeekPreStart(CRefTime& rtAbsSeek)
       LONG minMsFromEOF = MIN_AUD_BUFF_TIME + m_regInitialBuffDelay + 3000;      
       if ((rtSeek.Millisecs() + minMsFromEOF) > m_duration.Duration().Millisecs())
       {
-        //Too close to end of a recording file, seek to an earlier position
+        //Too close to end-of-file, seek to an earlier position
         REFERENCE_TIME rollBackTime = minMsFromEOF * 10000; //hns units    
         if ((rtSeek.m_time - rollBackTime) > 0)
         {
           rtSeek.m_time -= rollBackTime;
-          rtAbsSeek.m_time -= rollBackTime;
-          //m_seekTime=rtSeek ;
-          //m_absSeekTime=rtAbsSeek ;
+        }
+        else //very short file, so just seek to the beginning
+        {
+          rtSeek.m_time = 0;
         }
       }
     }
@@ -1710,13 +1711,12 @@ HRESULT CTsReaderFilter::SeekPreStart(CRefTime& rtAbsSeek)
         if ((rtSeek.m_time - rollBackTime) > 0)
         {
           rtSeek.m_time -= rollBackTime;
-          rtAbsSeek.m_time -= rollBackTime;
-          //m_seekTime=rtSeek ;
-          //m_absSeekTime=rtAbsSeek ;
         }
-        else
+        else //very short file, so just seek to the beginning
         {
-          break; //very short file....
+          rtSeek.m_time = 0;
+          Seek(rtSeek);
+          break;
         }
       }
       else
