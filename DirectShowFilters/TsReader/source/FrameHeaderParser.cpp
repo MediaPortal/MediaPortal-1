@@ -425,7 +425,7 @@ bool CFrameHeaderParser::Read(seqhdr& h, int len, CMediaType* pmt, bool reset)
 		pmt->subtype = MEDIASUBTYPE_MPEG1Payload;
 		pmt->formattype = FORMAT_MPEGVideo;
 		pmt->bTemporalCompression = TRUE;
-		int len = FIELD_OFFSET(MPEG1VIDEOINFO, bSequenceHeader) + shlen + shextlen;
+		int len = (int)(FIELD_OFFSET(MPEG1VIDEOINFO, bSequenceHeader) + shlen + shextlen);
 		MPEG1VIDEOINFO* vi = (MPEG1VIDEOINFO*)DNew BYTE[len];
 		memset(vi, 0, len);
 		vi->hdr.dwBitRate = h.bitrate;
@@ -442,7 +442,7 @@ bool CFrameHeaderParser::Read(seqhdr& h, int len, CMediaType* pmt, bool reset)
 		vi->hdr.bmiHeader.biClrUsed=0;
     vi->hdr.bmiHeader.biSizeImage = DIBSIZE(vi->hdr.bmiHeader);
 		vi->hdr.bmiHeader.biSize = sizeof(vi->hdr.bmiHeader);
-		vi->cbSequenceHeader = shlen + shextlen;
+		vi->cbSequenceHeader = (DWORD)(shlen + shextlen);
 		Seek(shpos);
 		ByteRead((BYTE*)&vi->bSequenceHeader[0], shlen);
 		if(shextpos && shextlen) Seek(shextpos);
@@ -455,7 +455,7 @@ bool CFrameHeaderParser::Read(seqhdr& h, int len, CMediaType* pmt, bool reset)
 		pmt->subtype = MEDIASUBTYPE_MPEG2_VIDEO;
 		pmt->formattype = FORMAT_MPEG2_VIDEO;
 		pmt->bTemporalCompression = TRUE;
-		int len = FIELD_OFFSET(MPEG2VIDEOINFO, dwSequenceHeader) + shlen + shextlen;
+		int len = (int)(FIELD_OFFSET(MPEG2VIDEOINFO, dwSequenceHeader) + shlen + shextlen);
 		MPEG2VIDEOINFO* vi = (MPEG2VIDEOINFO*)pmt->AllocFormatBuffer(len);
 		memset(vi, 0, len);
 		vi->hdr.dwBitRate = h.bitrate;
@@ -476,7 +476,7 @@ bool CFrameHeaderParser::Read(seqhdr& h, int len, CMediaType* pmt, bool reset)
 		vi->hdr.bmiHeader.biSize = sizeof(vi->hdr.bmiHeader);
 		vi->dwProfile = h.profile;
 		vi->dwLevel = h.level;
-		vi->cbSequenceHeader = shlen + shextlen;
+		vi->cbSequenceHeader = (DWORD)(shlen + shextlen);
 		Seek(shpos);
 		ByteRead((BYTE*)&vi->dwSequenceHeader[0], shlen);
 		if(shextpos && shextlen) Seek(shextpos);
@@ -644,7 +644,7 @@ bool CFrameHeaderParser::Read(aachdr& h, int len, CMediaType* pmt)
 	h.adts_buffer_fullness = BitRead(11);
 	h.no_raw_data_blocks_in_frame = BitRead(2);
 
-	if(h.fcrc == 0) h.crc = BitRead(16);
+	if(h.fcrc == 0) h.crc = (WORD)BitRead(16);
 
 	if(h.layer != 0 || h.freq >= 12 || h.aac_frame_length <= (h.fcrc == 0 ? 9 : 7))
 		return(false);
@@ -880,7 +880,7 @@ bool CFrameHeaderParser::Read(hdmvlpcmhdr& h, CMediaType* pmt)
 {
 	memset(&h, 0, sizeof(h));
 
-	h.size			= BitRead(16);
+	h.size			= (WORD)BitRead(16);
 	h.channels		= BitRead(4);
 	h.samplerate	= BitRead(4);
 	h.bitpersample	= BitRead(2);
@@ -1201,19 +1201,19 @@ bool CFrameHeaderParser::Read(trhdr& h, bool fSync)
 
 bool CFrameHeaderParser::Read(trsechdr& h)
 {
-	BYTE pointer_field = BitRead(8);
+	BYTE pointer_field = (BYTE)BitRead(8);
 	while(pointer_field-- > 0) BitRead(8);
-	h.table_id = BitRead(8);
+	h.table_id = (BYTE)BitRead(8);
 	h.section_syntax_indicator = BitRead(1);
 	h.zero = BitRead(1);
 	h.reserved1 = BitRead(2);
 	h.section_length = BitRead(12);
-	h.transport_stream_id = BitRead(16);
+	h.transport_stream_id = (WORD)BitRead(16);
 	h.reserved2 = BitRead(2);
 	h.version_number = BitRead(5);
 	h.current_next_indicator = BitRead(1);
-	h.section_number = BitRead(8);
-	h.last_section_number = BitRead(8);
+	h.section_number = (BYTE)BitRead(8);
+	h.last_section_number = (BYTE)BitRead(8);
 	return h.section_syntax_indicator == 1 && h.zero == 0;
 }
 
@@ -1266,7 +1266,7 @@ bool CFrameHeaderParser::Read(pvahdr& h, bool fSync)
 
 	BitRead(8*h.prebytes);
 
-	h.length -= GetPos() - pos;
+	h.length -= (WORD)(GetPos() - pos);
 
 	return(true);
 }
@@ -1320,9 +1320,9 @@ bool CFrameHeaderParser::Read(avchdr& h, int len, CMediaType* pmt, bool reset)
 
 	if ((len <= 5) || (len > 65534)) return(false); //Sanity check
   
-	int nal_len = BitRead(32);
+	int nal_len = (int)BitRead(32);
 	INT64 next_nal = GetPos()+nal_len;
-	BYTE id=BitRead(8);
+	BYTE id=(BYTE)BitRead(8);
 	BYTE nal_type=id & 0x9f;
 
   //LogDebug("nal_len = %d, next_nal = %d", nal_len, next_nal);
@@ -1354,7 +1354,7 @@ bool CFrameHeaderParser::Read(avchdr& h, int len, CMediaType* pmt, bool reset)
 		h.spslen = next_nal - pos; //length excluding length and ID bytes
 		if (h.sps == NULL)
 		{
-			h.sps = (BYTE*) malloc(h.spslen);
+			h.sps = (BYTE*) malloc((size_t)h.spslen);
 		}
 		if (h.sps == NULL) { h.spslen = 0; return(false); } //malloc error...
 		ByteRead(h.sps, h.spslen);
@@ -1363,10 +1363,10 @@ bool CFrameHeaderParser::Read(avchdr& h, int len, CMediaType* pmt, bool reset)
 
 		// Manage H264 escape codes (see "remove escapes (very rare 1:2^22)" in ffmpeg h264.c file)
 		//ByteRead((BYTE*)SPSTemp, min(MAX_SPS, GetRemaining()));
-		BYTE* buff = (BYTE*) malloc(h.spslen);
+		BYTE* buff = (BYTE*) malloc((size_t)h.spslen);
 		if (buff == NULL) return(false); //malloc error...
-		CGolombBuffer	gb (buff, h.spslen);
-		RemoveMpegEscapeCode (buff, h.sps, h.spslen);
+		CGolombBuffer	gb (buff, (int)h.spslen);
+		RemoveMpegEscapeCode (buff, h.sps, (int)h.spslen);
 
 		h.profile = (BYTE)gb.BitRead(8);
 		gb.BitRead(8);
@@ -1425,8 +1425,8 @@ bool CFrameHeaderParser::Read(avchdr& h, int len, CMediaType* pmt, bool reset)
 		BYTE frame_mbs_only_flag = (BYTE)gb.BitRead(1);
 
 		h.progressive = (frame_mbs_only_flag != 0);
-		h.width = (pic_width_in_mbs_minus1 + 1) * 16;
-		h.height = (2 - frame_mbs_only_flag) * (pic_height_in_map_units_minus1 + 1) * 16;
+		h.width = (unsigned int)((pic_width_in_mbs_minus1 + 1) * 16);
+		h.height = (unsigned int)((2 - frame_mbs_only_flag) * (pic_height_in_map_units_minus1 + 1) * 16);
 
 		if (h.height == 1088) h.height = 1080;	// Prevent blur lines 
 
@@ -1448,8 +1448,8 @@ bool CFrameHeaderParser::Read(avchdr& h, int len, CMediaType* pmt, bool reset)
 				h.ar = (BYTE)gb.BitRead(8); //aspect_ratio_idc
     		if(h.ar == 255) //EXTENDED_SAR
     		{
-					h.arx = gb.BitRead(16);   //sar_width
-					h.ary = gb.BitRead(16);   //sar_height
+					h.arx = (int)gb.BitRead(16);   //sar_width
+					h.ary = (int)gb.BitRead(16);   //sar_height
     			// make sure that both are 0 if one is 0
     			if(h.arx == 0 || h.ary == 0)
     			{
@@ -1504,7 +1504,7 @@ bool CFrameHeaderParser::Read(avchdr& h, int len, CMediaType* pmt, bool reset)
 			{
 				num_units_in_tick		  = (double)gb.BitRead(32);
 				time_scale				    = (double)gb.BitRead(32);
-				fixed_frame_rate_flag	= (bool)gb.BitRead(1);
+				fixed_frame_rate_flag	= (gb.BitRead(1) != 0);
 
 				if ((time_scale > 0) && (num_units_in_tick > 0))
 				{
@@ -1534,7 +1534,7 @@ bool CFrameHeaderParser::Read(avchdr& h, int len, CMediaType* pmt, bool reset)
 		h.ppslen = next_nal - pos; //length excluding length and ID bytes
 		if (h.pps == NULL)
 		{
-			h.pps = (BYTE*) malloc(h.ppslen);
+			h.pps = (BYTE*) malloc((size_t)h.ppslen);
 		}
 		if (h.pps == NULL) { h.ppslen = 0; return(false); } //malloc error...
 		ByteRead(h.pps, h.ppslen);
@@ -1555,7 +1555,7 @@ bool CFrameHeaderParser::Read(avchdr& h, int len, CMediaType* pmt, bool reset)
 	}
   else
 	{
-		int extra = 2+1+h.spslen + 2+1+h.ppslen;
+		int extra = (int)(2+1+h.spslen + 2+1+h.ppslen);
 		pmt->SetType(&MEDIATYPE_Video);
 		//pmt->SetSubtype(&MEDIASUBTYPE_H264);
 		pmt->SetSubtype(&MPG4_SubType);
@@ -1608,16 +1608,16 @@ bool CFrameHeaderParser::Read(avchdr& h, int len, CMediaType* pmt, bool reset)
 		
 		BYTE* p = (BYTE*)&vi->dwSequenceHeader[0];
 
-		*p++ = (h.spslen+1) >> 8;
+		*p++ = (BYTE)((h.spslen+1) >> 8);
 		*p++ = (h.spslen+1) & 0xff;
 		*p++ = h.spsid;
-		memcpy(p, h.sps, h.spslen);
+		memcpy(p, h.sps, (size_t)h.spslen);
 		p += h.spslen;
 		
-		*p++ = (h.ppslen+1) >> 8;
+		*p++ = (BYTE)((h.ppslen+1) >> 8);
 		*p++ = (h.ppslen+1) & 0xff;
 		*p++ = h.ppsid;
-		memcpy(p, h.pps, h.ppslen);
+		memcpy(p, h.pps, (size_t)h.ppslen);
 		//p += h.ppslen;		
 		
 		pmt->SetFormat((BYTE*)vi, len);
@@ -1726,7 +1726,7 @@ bool CFrameHeaderParser::Read(hevchdr& h, int len, CMediaType* pmt, bool reset)
 	}
   else //Fill out PMT data
 	{
-		int extra =  h.vpslen + h.spslen + h.ppslen;
+		int extra = (int)(h.vpslen + h.spslen + h.ppslen);
 		pmt->SetType(&MEDIATYPE_Video);
 		pmt->SetSubtype(&MEDIASUBTYPE_HEVC);
 		pmt->formattype = FORMAT_MPEG2_VIDEO;
@@ -1777,13 +1777,13 @@ bool CFrameHeaderParser::Read(hevchdr& h, int len, CMediaType* pmt, bool reset)
 		
 		BYTE* p = (BYTE*)&vi->dwSequenceHeader[0];
 
-		memcpy(p, h.vps, h.vpslen);
+		memcpy(p, h.vps, (size_t)h.vpslen);
 		p += h.vpslen;
 
-		memcpy(p, h.sps, h.spslen);
+		memcpy(p, h.sps, (size_t)h.spslen);
 		p += h.spslen;
 		
-		memcpy(p, h.pps, h.ppslen);
+		memcpy(p, h.pps, (size_t)h.ppslen);
 		
 		pmt->SetFormat((BYTE*)vi, len);
 	}
@@ -1803,36 +1803,36 @@ bool CFrameHeaderParser::Read(vc1hdr& h, int len, CMediaType* pmt)
 
 		BitRead(32);
 
-		h.profile	= BitRead(2);
+		h.profile	= (BYTE)BitRead(2);
 
 		// Check if advanced profile
 		if (h.profile != 3) return(false);
 
-		h.level = BitRead (3);
-		h.chromaformat = BitRead (2);
+		h.level = (BYTE)BitRead(3);
+		h.chromaformat = (BYTE)BitRead(2);
 
 		// (fps-2)/4 (->30)
-		h.frmrtq_postproc	= BitRead (3); //common
+		h.frmrtq_postproc	= (BYTE)BitRead(3); //common
 		// (bitrate-32kbps)/64kbps
-		h.bitrtq_postproc	= BitRead (5); //common
-		h.postprocflag		= BitRead (1); //common
+		h.bitrtq_postproc	= (BYTE)BitRead(5); //common
+		h.postprocflag		= (BYTE)BitRead(1); //common
 
-		h.width				= (BitRead (12) + 1) << 1;
-		h.height			= (BitRead (12) + 1) << 1;
+		h.width				= (unsigned int)((BitRead(12) + 1) << 1);
+		h.height			= (unsigned int)((BitRead(12) + 1) << 1);
 
-		h.broadcast			= BitRead (1);
-		h.interlace			= BitRead (1);
-		h.tfcntrflag		= BitRead (1);
-		h.finterpflag		= BitRead (1);
+		h.broadcast			= (BYTE)BitRead(1);
+		h.interlace			= (BYTE)BitRead(1);
+		h.tfcntrflag		= (BYTE)BitRead(1);
+		h.finterpflag		= (BYTE)BitRead(1);
 		BitRead (1); // reserved
-		h.psf				= BitRead (1);
-		if(BitRead (1))
+		h.psf				= (BYTE)BitRead(1);
+		if(BitRead(1))
 		{
 			int ar = 0;
-			h.ArX  = BitRead (14) + 1;
-			h.ArY  = BitRead (14) + 1;
+			h.ArX  = (UINT)(BitRead(14) + 1);
+			h.ArY  = (UINT)(BitRead(14) + 1);
 			if(BitRead (1))
-				ar = BitRead (4);
+				ar = (int)BitRead(4);
 			// TODO : next is not the true A/R! 
 			if(ar && ar < 14)
 			{
@@ -1841,8 +1841,8 @@ bool CFrameHeaderParser::Read(vc1hdr& h, int len, CMediaType* pmt)
 			}
 			else if(ar == 15)
 			{
-				/*h.ArX =*/ BitRead (8);
-				/*h.ArY =*/ BitRead (8);
+				/*h.ArX =*/ BitRead(8);
+				/*h.ArY =*/ BitRead(8);
 			}
 
 			// Read framerate
@@ -1854,11 +1854,11 @@ bool CFrameHeaderParser::Read(vc1hdr& h, int len, CMediaType* pmt)
 				if(BitRead (1)) 
 				{
 					nFrameRateNum = 32;
-					nFrameRateDen = BitRead (16) + 1;
+					nFrameRateDen = (int)(BitRead(16) + 1);
 				} else {
 					int nr, dr;
-					nr = BitRead (8);
-					dr = BitRead (4);
+					nr = (int)BitRead(8);
+					dr = (int)BitRead(4);
 					if(nr && nr < 8 && dr && dr < 3)
 					{
 						nFrameRateNum = ff_vc1_fps_dr[dr - 1];
@@ -1875,7 +1875,7 @@ bool CFrameHeaderParser::Read(vc1hdr& h, int len, CMediaType* pmt)
 
 		while (GetPos() < endpos+4 && ((parse == 0x0000010E) || (parse & 0xFFFFFF00) != 0x00000100))
 		{
-			parse = (parse<<8) | BitRead(8);
+			parse = (parse<<8) | (long)BitRead(8);
 			extralen++;
 		}
 	}
@@ -1915,7 +1915,7 @@ bool CFrameHeaderParser::Read(vc1hdr& h, int len, CMediaType* pmt)
 		pmt->subtype = FOURCCMap('1CVW');
 		pmt->formattype = FORMAT_VIDEOINFO2;
 		pmt->bTemporalCompression = TRUE;
-		int len = sizeof(VIDEOINFOHEADER2) + extralen + 1;
+		int len = sizeof(VIDEOINFOHEADER2) + (int)extralen + 1;
 		VIDEOINFOHEADER2* vi = (VIDEOINFOHEADER2*)DNew BYTE[len];
 		memset(vi, 0, len);
 		vi->AvgTimePerFrame = (10000000I64*nFrameRateNum)/nFrameRateDen;

@@ -1,5 +1,4 @@
-#include <afx.h>
-#include <afxwin.h>
+#include "StdAfx.h"
 
 #include <winsock2.h>
 #include <ws2tcpip.h>
@@ -15,9 +14,6 @@
 extern void LogDebug(const char* fmt, ...);
 extern DWORD m_tGTStartTime;
 
-// unit = milliseconds
-#define TIMEOUT_GENERIC_RTSP_RESPONSE 500
-#define TIMEOUT_FILE_ACTION_RTSP_RESPONSE 2000
 
 //Size in bytes of the CMemorySink buffer (TRANSPORT_PACKET_SIZE * TRANSPORT_PACKETS_PER_NETWORK_PACKET * 15)
 #define MEM_SINK_BUF_SIZE (188*7*15)
@@ -34,6 +30,8 @@ CRTSPClient::CRTSPClient(CMemoryBuffer& buffer)
   m_isBufferThreadActive = false;
   m_isPaused = false;
   m_updateDuration = false;
+  m_regRtspGenericTimeout = TIMEOUT_GENERIC_RTSP_RESPONSE;
+  m_regRtspFileTimeout    = TIMEOUT_FILE_ACTION_RTSP_RESPONSE;
 
   m_genericResponseEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
   m_durationDescribeResponseEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
@@ -105,7 +103,7 @@ bool CRTSPClient::SetupStreams()
     LogDebug("CRTSPClient::SetupStreams(): send RTSP SETUP");
     ResetEvent(m_genericResponseEvent);
     m_client->sendSetupCommand(*subsession, &CRTSPClient::OnGenericResponseReceived);
-    if (WaitForSingleObject(m_genericResponseEvent, TIMEOUT_GENERIC_RTSP_RESPONSE) == WAIT_TIMEOUT)
+    if (WaitForSingleObject(m_genericResponseEvent, m_regRtspGenericTimeout) == WAIT_TIMEOUT)
     {
       LogDebug("CRTSPClient::SetupStreams(): RTSP SETUP timed out");
     }
@@ -132,7 +130,7 @@ void CRTSPClient::Shutdown()
     LogDebug("CRTSPClient::Shutdown(): send RTSP TEARDOWN");
     ResetEvent(m_genericResponseEvent);
     m_client->sendTeardownCommand(*m_session, &CRTSPClient::OnGenericResponseReceived);
-    if (WaitForSingleObject(m_genericResponseEvent, TIMEOUT_GENERIC_RTSP_RESPONSE) == WAIT_TIMEOUT)
+    if (WaitForSingleObject(m_genericResponseEvent, m_regRtspGenericTimeout) == WAIT_TIMEOUT)
     {
       LogDebug("CRTSPClient::Shutdown(): RTSP TEARDOWN timed out");
     }
@@ -430,7 +428,7 @@ bool CRTSPClient::InternalPlay(double startPoint)
   {
     ResetEvent(m_genericResponseEvent);
     m_client->sendPlayCommand(*m_session, &CRTSPClient::OnGenericResponseReceived, startPoint);
-    if (WaitForSingleObject(m_genericResponseEvent, TIMEOUT_FILE_ACTION_RTSP_RESPONSE) == WAIT_TIMEOUT)
+    if (WaitForSingleObject(m_genericResponseEvent, m_regRtspFileTimeout) == WAIT_TIMEOUT)
     {
       LogDebug("CRTSPClient::InternalPlay(): RTSP PLAY timed out");
       return false;
@@ -459,7 +457,7 @@ bool CRTSPClient::Pause()
   {
     ResetEvent(m_genericResponseEvent);
     m_client->sendPauseCommand(*m_session, &CRTSPClient::OnGenericResponseReceived);
-    if (WaitForSingleObject(m_genericResponseEvent, TIMEOUT_GENERIC_RTSP_RESPONSE) == WAIT_TIMEOUT)
+    if (WaitForSingleObject(m_genericResponseEvent, m_regRtspGenericTimeout) == WAIT_TIMEOUT)
     {
       LogDebug("CRTSPClient::Pause(): RTSP PAUSE timed out");
       return false;
@@ -504,7 +502,7 @@ bool CRTSPClient::UpdateDuration()
   m_updateDuration = true;
 
   // Wait for a response. Don't wait longer than the calling period (currently ~5000 ms).
-  if (WaitForSingleObject(m_durationDescribeResponseEvent, TIMEOUT_FILE_ACTION_RTSP_RESPONSE) == WAIT_TIMEOUT)
+  if (WaitForSingleObject(m_durationDescribeResponseEvent, m_regRtspFileTimeout) == WAIT_TIMEOUT)
   {
     LogDebug("CRTSPClient::UpdateDuration(): RTSP DESCRIBE timed out, message = %s", m_env->getResultMsg());
     return false;

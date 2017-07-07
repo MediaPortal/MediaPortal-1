@@ -161,6 +161,7 @@ void TsMPEG2TransportFileServerMediaSubsession::InitFileDuration()
     else
     {
       m_pFileDuration = new FileReader();
+      m_pFileDuration->SetAccessMode(0);
     }
 
     if(m_pFileDuration==NULL)

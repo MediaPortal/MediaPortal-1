@@ -65,6 +65,7 @@ public:
   DWORD  m_FillBuffSleepTime;
   double GetAudioPresToRefDiff();
   int GetPMTiPosition();
+  bool IsThreadRunning(CRefTime *pRtStartTime);
 
 protected:
   HRESULT   UpdateFromSeek();
@@ -94,6 +95,7 @@ protected:
   bool  m_bAddPMT;
   bool  m_bDisableSlowPlayDiscontinuity;
   int   m_iPosition;
+  bool  m_bThreadRunning;
   
 };
 

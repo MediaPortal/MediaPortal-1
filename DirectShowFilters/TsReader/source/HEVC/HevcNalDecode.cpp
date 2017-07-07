@@ -535,7 +535,7 @@ ScalingListData HevcNalDecode::processScalingListData(BitstreamReader &bs)
         sc.scaling_list_dc_coef_minus8[sizeId-2].resize(6);
     }
 
-    for(std::size_t matrixId = 0; matrixId<((sizeId == 3)?2:6); matrixId++)
+    for(std::size_t matrixId = 0; matrixId<(size_t)((sizeId == 3)?2:6); matrixId++)
     {
       sc.scaling_list_pred_mode_flag[sizeId][matrixId] = bs.getBits(1);
       if(!sc.scaling_list_pred_mode_flag[sizeId][matrixId])

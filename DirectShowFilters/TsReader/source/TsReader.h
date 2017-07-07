@@ -324,7 +324,7 @@ public:
   CTsDuration     m_duration;
   
   DWORD           m_regLAV_AutoAVSync; //LAV Audio Decoder 'AutoAVSync' registry value
-
+  
 protected:
   void ThreadProc();
 

@@ -55,6 +55,7 @@ TsStreamFileSource::createNew(UsageEnvironment& env, wchar_t const* fileName,
 	{
 		reader = new FileReader();
     reader->SetTimeshift(false);
+    reader->SetAccessMode(0);
 	}
 	reader->SetFileName(fileName);
 	reader->OpenFile();
