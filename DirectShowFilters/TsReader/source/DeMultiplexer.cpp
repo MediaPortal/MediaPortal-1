@@ -1031,7 +1031,7 @@ bool CDeMultiplexer::CheckCompensation(CRefTime rtStartTime)
     m_filter.SetCompensation(compTemp);
     m_filter.AddVideoComp = (AddVideoCompensation < 0) ? 0 : AddVideoCompensation;
 
-    LogDebug("demux:CheckCompensation(): Compensation = %03.3f, Clock on start %03.3f m_rtStart:%d ",(float)m_filter.Compensation.Millisecs()/1000.0f, m_filter.m_ClockOnStart.Millisecs()/1000.0f, rtStartTime.Millisecs());
+    LogDebug("demux:CheckCompensation(): Compensation = %03.3f, Clock on start %03.3f rtStartTime:%d ",(float)m_filter.Compensation.Millisecs()/1000.0f, m_filter.m_ClockOnStart.Millisecs()/1000.0f, rtStartTime.Millisecs());
 
     m_targetAVready = GET_TIME_NOW() + AV_READY_DELAY;
     //set flag so we dont keep compensating

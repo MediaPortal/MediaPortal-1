@@ -1702,6 +1702,25 @@ HRESULT CTsReaderFilter::SeekPreStart(CRefTime& rtAbsSeek)
   //do the seek...
   if (doSeek && !m_demultiplexer.IsMediaChanging()&& !m_demultiplexer.IsAudioChanging()) 
   {
+    if (!m_bTimeShifting) //It's a recording
+    {
+      //Check how close we are to end-of-file
+      LONG minMsFromEOF = MIN_AUD_BUFF_TIME + m_regInitialBuffDelay + 3000;      
+      if ((rtSeek.Millisecs() + minMsFromEOF) > m_duration.Duration().Millisecs())
+      {
+        //Too close to end-of-file, seek to an earlier position
+        REFERENCE_TIME rollBackTime = minMsFromEOF * 10000; //hns units    
+        if ((rtSeek.m_time - rollBackTime) > 0)
+        {
+          rtSeek.m_time -= rollBackTime;
+        }
+        else //very short file, so just seek to the beginning
+        {
+          rtSeek.m_time = 0;
+        }
+      }
+    }
+
     //LogDebug("CTsReaderFilter::--SeekPreStart() Do Seek");
     for(int i(0) ; i < 4 ; i++)
     {
@@ -1713,13 +1732,12 @@ HRESULT CTsReaderFilter::SeekPreStart(CRefTime& rtAbsSeek)
         if ((rtSeek.m_time - rollBackTime) > 0)
         {
           rtSeek.m_time -= rollBackTime;
-          rtAbsSeek.m_time -= rollBackTime;
-          m_seekTime=rtSeek ;
-          m_absSeekTime=rtAbsSeek ;
         }
-        else
+        else //very short file, so just seek to the beginning
         {
-          break; //very short file....
+          rtSeek.m_time = 0;
+          Seek(rtSeek);
+          break;
         }
       }
       else
@@ -1740,14 +1758,14 @@ HRESULT CTsReaderFilter::SeekPreStart(CRefTime& rtAbsSeek)
   if (GetVideoPin()->IsConnected())
   {      
     GetVideoPin()->DeliverEndFlush();
-    GetVideoPin()->SetStart(rtAbsSeek) ;
+    GetVideoPin()->SetStart(m_absSeekTime) ;
     GetVideoPin()->Run();
   }
 
   if (GetSubtitlePin()->IsConnected())
   {
     // Update m_rtStart in case of has not seeked yet
-    GetSubtitlePin()->SetStart(rtAbsSeek) ;
+    GetSubtitlePin()->SetStart(m_absSeekTime) ;
   }
 
   m_demultiplexer.CallTeletextEventCallback(TELETEXT_EVENT_SEEK_END,TELETEXT_EVENTVALUE_NONE);
@@ -1755,14 +1773,14 @@ HRESULT CTsReaderFilter::SeekPreStart(CRefTime& rtAbsSeek)
   if (m_pDVBSubtitle)
   {
     m_pDVBSubtitle->SetFirstPcr(m_duration.FirstStartPcr().PcrReferenceBase);
-    m_pDVBSubtitle->SeekDone(rtSeek);
+    m_pDVBSubtitle->SeekDone(m_absSeekTime);
   }
 
   if (GetAudioPin()->IsConnected())
   {
     // deliver a end-flush to the codec filter so it will start asking for data again
     GetAudioPin()->DeliverEndFlush();
-    GetAudioPin()->SetStart(rtAbsSeek) ;
+    GetAudioPin()->SetStart(m_absSeekTime) ;
     // and restart the thread
     GetAudioPin()->Run();
   }     
