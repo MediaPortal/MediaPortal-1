@@ -158,7 +158,7 @@ int StreamSetupEx(char* ipAdress, int port)
 	swprintf(fileName, MAX_PATH, L"%s\\Team MediaPortal\\MediaPortal TV Server\\log\\streaming server.Log", folder);
 	::DeleteFileW(fileName);
 
-	LogDebug("-------------- v1.1.7 ---------------");
+	LogDebug("-------------- v1.1.8 (random access duration for recordings) ---------------");
   StreamShutdown();
 	if (port == DEFAULT_RTSP_PORT) {
 		LogDebug("Stream server:Setup stream server for ip: %s", ipAdress);
