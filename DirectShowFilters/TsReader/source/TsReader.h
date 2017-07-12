@@ -70,8 +70,11 @@
 
 //File read prefetch 'looping retry' timeout limit (in ms)
 #define MAX_PREFETCH_LOOP_TIME 500
+
+//File read prefetch min/max limits (in ms)
 #define PF_LOOP_DELAY_MIN 10
 #define PF_LOOP_DELAY_MAX 50
+#define PF_LOOP_DEL_VID_MAX 20
 
 //Timeout for RTSP 'no data available' end-of-file detection (in ms)
 #define RTSP_EOF_TIMEOUT 2000
