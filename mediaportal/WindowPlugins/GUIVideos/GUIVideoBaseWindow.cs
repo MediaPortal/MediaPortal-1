@@ -583,6 +583,7 @@ namespace MediaPortal.GUI.Video
           {
             strSize1 = Util.Utils.GetSize(item.FileInfo.Length);
           }
+
           if (item.FileInfo != null && !item.IsFolder)
           {
             if (CurrentSortMethod == VideoSort.SortMethod.Modified)
@@ -592,6 +593,7 @@ namespace MediaPortal.GUI.Video
               strDate = item.FileInfo.CreationTime.ToShortDateString() + " " +
                         item.FileInfo.CreationTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
           }
+
           if (CurrentSortMethod == VideoSort.SortMethod.Name || CurrentSortMethod == VideoSort.SortMethod.NameAll)
           {
             if (item.IsFolder)
@@ -603,6 +605,7 @@ namespace MediaPortal.GUI.Video
               item.Label2 = strSize1;
             }
           }
+
           if (CurrentSortMethod == VideoSort.SortMethod.Name_With_Duration && !item.IsFolder && item.Label != "..")
           {
             if (_stackedFolder)
@@ -627,6 +630,14 @@ namespace MediaPortal.GUI.Video
           }
           else if (CurrentSortMethod == VideoSort.SortMethod.Created || CurrentSortMethod == VideoSort.SortMethod.Date || CurrentSortMethod == VideoSort.SortMethod.Modified)
           {
+            if (GUIWindowManager.ActiveWindow == (int)Window.WINDOW_VIDEO_TITLE && CurrentSortMethod == VideoSort.SortMethod.Date)
+            {
+              if (!item.IsFolder && movie != null)
+              {
+                strDate = movie.DateAdded;
+              }
+            }
+
             item.Label2 = strDate;
           }
           else

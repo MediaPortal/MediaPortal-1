@@ -1175,35 +1175,45 @@ namespace MediaPortal.GUI.Video
             item.Label2 = Util.Utils.SecondsToHMString(movie.RunTime * 60);
           }
         }
+        else if (CurrentSortMethod == VideoSort.SortMethod.Date)
+        {
+          string strDate = string.Empty;
+
+          if (movie != null && !item.IsFolder)
+          {
+            strDate = movie.DateAdded;
+          }
+
+          item.Label2 = strDate;
+        }
       }
       else
       {
-        string strSize1 = string.Empty, strDate = string.Empty;
+        if (CurrentSortMethod == VideoSort.SortMethod.Created || CurrentSortMethod == VideoSort.SortMethod.Date || CurrentSortMethod == VideoSort.SortMethod.Modified)
+        {
+          string strDate = string.Empty;
 
-        if (item.FileInfo != null && !item.IsFolder)
-        {
-          strSize1 = Util.Utils.GetSize(item.FileInfo.Length);
-        }
+          if (item.FileInfo != null && !item.IsFolder)
+          {
+            if (CurrentSortMethod == VideoSort.SortMethod.Modified)
+              strDate = item.FileInfo.ModificationTime.ToShortDateString() + " " +
+                        item.FileInfo.ModificationTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
+            else
+              strDate = item.FileInfo.CreationTime.ToShortDateString() + " " +
+                        item.FileInfo.CreationTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
+          }
 
-        if (item.FileInfo != null && !item.IsFolder)
-        {
-          if (CurrentSortMethod == VideoSort.SortMethod.Modified)
-            strDate = item.FileInfo.ModificationTime.ToShortDateString() + " " +
-                      item.FileInfo.ModificationTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
-          else
-            strDate = item.FileInfo.CreationTime.ToShortDateString() + " " +
-                      item.FileInfo.CreationTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
-        }
-        if (CurrentSortMethod == VideoSort.SortMethod.Name)
-        {
-          item.Label2 = strSize1;
-        }
-        else if (CurrentSortMethod == VideoSort.SortMethod.Created || CurrentSortMethod == VideoSort.SortMethod.Date || CurrentSortMethod == VideoSort.SortMethod.Modified)
-        {
           item.Label2 = strDate;
         }
         else
         {
+          string strSize1 = string.Empty;
+
+          if (item.FileInfo != null && !item.IsFolder)
+          {
+            strSize1 = Util.Utils.GetSize(item.FileInfo.Length);
+          }
+
           item.Label2 = strSize1;
         }
       }
