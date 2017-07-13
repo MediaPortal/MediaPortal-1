@@ -992,6 +992,17 @@ namespace MediaPortal.GUI.Library
       return GUIInfoManager.GetBool(condition, 0);
     }
 
+    [XMLSkinFunction("window.isvisible")]
+    public static bool WindowIsVisible(string id)
+    {
+      if ((id == null))
+      {
+        return false;
+      }
+      int condition = GUIInfoManager.TranslateSingleString("window.isvisible(" + id + ")");
+      return GUIInfoManager.GetBool(condition, 0);
+    }
+
     #endregion
 
   }
