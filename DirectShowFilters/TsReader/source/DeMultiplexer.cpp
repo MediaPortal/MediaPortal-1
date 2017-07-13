@@ -172,10 +172,7 @@ CDeMultiplexer::CDeMultiplexer(CTsDuration& duration,CTsReaderFilter& filter)
   LogDebug(" ");
   LogDebug("=================== New filter instance =========================================");
   LogDebug("  Logging format: [Date Time] [InstanceID-instanceCount] [ThreadID] Message....  ");
-  LogDebug("==================================================================================");
-  LogDebug("demux: Start file read thread");
-    
-  StartThread();
+  LogDebug("=================================================================================");
 }
 
 CDeMultiplexer::~CDeMultiplexer()
@@ -933,7 +930,7 @@ bool CDeMultiplexer::CheckCompensation(CRefTime rtStartTime)
     // Goal is to start with at least 500mS audio and 400mS video ahead. ( LiveTv and RTSP as TsReader cannot go ahead by itself)
     if (lastAudio.Millisecs() - firstAudio.Millisecs() < (MIN_AUD_BUFF_TIME + m_filter.m_regInitialBuffDelay)) return false ;       // Not enough audio to start.
 
-    int vidSampDuration = PF_LOOP_DELAY_MAX;
+    int vidSampDurPrefetch = PF_LOOP_DELAY_MAX;
     double fvidSampleDuration = 0;
     if (m_filter.GetVideoPin()->IsConnected())
     {
@@ -950,14 +947,15 @@ bool CDeMultiplexer::CheckCompensation(CRefTime rtStartTime)
       fvidSampleDuration = ((double)(lastVideo.Millisecs() - firstVideo.Millisecs())/(double)cntV);
       m_initialVideoSamples = (int)(((double)(MIN_VID_BUFF_TIME + m_filter.m_regInitialBuffDelay))/fvidSampleDuration);    
       m_initialVideoSamples = max(12, m_initialVideoSamples);
-      vidSampDuration = max(PF_LOOP_DELAY_MIN,(int)fvidSampleDuration);
+      vidSampDurPrefetch = min(PF_LOOP_DEL_VID_MAX, max(PF_LOOP_DELAY_MIN,(int)fvidSampleDuration));
     }
 
     //Set audio prefetch threshold
     double faudSampleDuration = ((double)(lastAudio.Millisecs() - firstAudio.Millisecs())/(double)cntA);
     m_initialAudioSamples = (int)(((double)(MIN_AUD_BUFF_TIME + m_filter.m_regInitialBuffDelay))/faudSampleDuration);
     m_initialAudioSamples = max(3, m_initialAudioSamples);
-    m_prefetchLoopDelay = (DWORD)(min(PF_LOOP_DELAY_MAX, min(vidSampDuration,(max(PF_LOOP_DELAY_MIN,(int)faudSampleDuration)))));
+    int audSampDurPrefetch = max(PF_LOOP_DELAY_MIN,(int)faudSampleDuration);
+    m_prefetchLoopDelay = (DWORD)(min(PF_LOOP_DELAY_MAX, min(vidSampDurPrefetch, audSampDurPrefetch)));
     m_dfAudSampleDuration = faudSampleDuration/1000.0;
 
     LogDebug("demux:CheckCompensation(): Audio Samples : %d, First : %03.3f, Last : %03.3f, buffThresh : %d, pfLoopDel : %d, SampDur : %03.1f ms",cntA, (float)firstAudio.Millisecs()/1000.0f,(float)lastAudio.Millisecs()/1000.0f, m_initialAudioSamples, m_prefetchLoopDelay, (float)faudSampleDuration);
@@ -4628,12 +4626,22 @@ void CDeMultiplexer::ThreadProc()
     //File read prefetch section...
 
     //Prefetch control
+    //    if (!IsAudioChanging())
+    //    {
+    //      if (CheckPrefetchState(m_filter.m_bStreamCompensated, !m_filter.m_bStreamCompensated)) //Forced for initial parsing and buffering, normal mode otherwise
+    //      {
+    //        //Read some data if the audio pin thread is running
+    //        m_bReadAheadFromFile = m_filter.GetAudioPin()->IsThreadRunning(&rtStartTime);
+    //      }
+    //    }
+
     if (!IsAudioChanging())
     {
-      if (CheckPrefetchState(m_filter.m_bStreamCompensated, !m_filter.m_bStreamCompensated)) //Forced for initial parsing and buffering, normal mode otherwise
+      if (m_filter.GetAudioPin()->IsThreadRunning(&rtStartTime)) //Check the audio pin thread is running
       {
-        //Read some data if the audio pin thread is running
-        m_bReadAheadFromFile = m_filter.GetAudioPin()->IsThreadRunning(&rtStartTime);
+        
+        //Forced for initial parsing and buffering, normal mode otherwise
+        m_bReadAheadFromFile = CheckPrefetchState(m_filter.m_bStreamCompensated, !m_filter.m_bStreamCompensated);
       }
     }
 

@@ -372,6 +372,8 @@ CUnknown * WINAPI CTsReaderFilter::CreateInstance(LPUNKNOWN punk, HRESULT *phr)
 CTsReaderFilter::CTsReaderFilter(IUnknown *pUnk, HRESULT *phr):
   CSource(NAME("CTsReaderFilter"), pUnk, CLSID_TSReader),
   m_pAudioPin(NULL),
+  m_pVideoPin(NULL),
+  m_pSubtitlePin(NULL),
   m_demultiplexer( m_duration, *this),
   m_rtspClient(m_buffer),
   m_pDVBSubtitle(NULL),
@@ -417,7 +419,7 @@ CTsReaderFilter::CTsReaderFilter(IUnknown *pUnk, HRESULT *phr):
   m_pVideoPin = new CVideoPin(GetOwner(), this, phr,&m_section);
   m_pSubtitlePin = new CSubtitlePin(GetOwner(), this, phr,&m_section);
 
-  if (m_pAudioPin == NULL)
+  if (m_pAudioPin == NULL || m_pVideoPin == NULL || m_pSubtitlePin == NULL)
   {
     *phr = E_OUTOFMEMORY;
     return;
@@ -646,9 +648,21 @@ CTsReaderFilter::CTsReaderFilter(IUnknown *pUnk, HRESULT *phr):
   m_bEVRhasConnected = false;
   m_MPmainThreadID = GetCurrentThreadId() ;
   m_lastPauseRun = GET_TIME_NOW();
+
+  LogDebug("CTsReaderFilter::Start demux thread");
+  if (m_demultiplexer.StartThread() != S_OK)
+  {
+    *phr = E_OUTOFMEMORY;
+    return;
+  }
   
   LogDebug("CTsReaderFilter::Start duration thread");
-  StartThread();
+  if (StartThread() != S_OK)
+  {
+    *phr = E_OUTOFMEMORY;
+    return;
+  }
+
   LogDebug("CTsReaderFilter::timeGetTime():0x%x, m_tGTStartTime:0x%x, GET_TIME_NOW:0x%x, timer res:%d ms", timeGetTime(), m_tGTStartTime, GET_TIME_NOW(), dwResolution);
 }
 
