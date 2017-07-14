@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2017 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2017 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -515,8 +515,8 @@ namespace MediaPortal.GUI.Video
         GUIListItem item = facadeLayout[i];
         IMDBMovie movie = item.AlbumInfoTag as IMDBMovie;
 
-        if (movie != null && movie.ID > 0  && !isShareView && 
-            (!item.IsFolder || CurrentSortMethod == VideoSort.SortMethod.NameAll ))
+        if (movie != null && movie.ID > 0 && !isShareView &&
+            (!item.IsFolder || CurrentSortMethod == VideoSort.SortMethod.NameAll))
         {
           if (CurrentSortMethod == VideoSort.SortMethod.Name || CurrentSortMethod == VideoSort.SortMethod.NameAll
              || CurrentSortMethod == VideoSort.SortMethod.Name_With_Duration)
@@ -574,11 +574,28 @@ namespace MediaPortal.GUI.Video
               item.Label2 = Util.Utils.SecondsToHMString(movie.RunTime * 60);
             }
           }
+          else if (!isShareView && CurrentSortMethod == VideoSort.SortMethod.Date)
+          {
+            string strDate = string.Empty;
+
+            if (!item.IsFolder && movie != null)
+            {
+              if (movie.DateAdded != "0001-01-01 00:00:00")
+              {
+                strDate = movie.DateAdded; 
+              }
+              else
+              {
+                strDate = movie.LastUpdate;
+              }
+            }
+            item.Label2 = strDate;
+          }
         }
         else
         {
           string strSize1 = string.Empty, strDate = string.Empty;
-          
+
           if (item.FileInfo != null && !item.IsFolder)
           {
             strSize1 = Util.Utils.GetSize(item.FileInfo.Length);
@@ -630,14 +647,20 @@ namespace MediaPortal.GUI.Video
           }
           else if (CurrentSortMethod == VideoSort.SortMethod.Created || CurrentSortMethod == VideoSort.SortMethod.Date || CurrentSortMethod == VideoSort.SortMethod.Modified)
           {
-            if (GUIWindowManager.ActiveWindow == (int)Window.WINDOW_VIDEO_TITLE && CurrentSortMethod == VideoSort.SortMethod.Date)
+            if (!isShareView && CurrentSortMethod == VideoSort.SortMethod.Date && string.IsNullOrWhiteSpace(strDate))
             {
               if (!item.IsFolder && movie != null)
               {
-                strDate = movie.DateAdded;
+                if (movie.DateAdded != "0001-01-01 00:00:00")
+                {
+                  strDate = movie.DateAdded; 
+                }
+                else
+                {
+                  strDate = movie.LastUpdate;
+                }
               }
             }
-
             item.Label2 = strDate;
           }
           else

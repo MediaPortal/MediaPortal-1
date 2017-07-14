@@ -1181,9 +1181,15 @@ namespace MediaPortal.GUI.Video
 
           if (movie != null && !item.IsFolder)
           {
-            strDate = movie.DateAdded;
+            if (movie.DateAdded != "0001-01-01 00:00:00")
+            {
+              strDate = movie.DateAdded; 
+            }
+            else
+            {
+              strDate = movie.LastUpdate;
+            }
           }
-
           item.Label2 = strDate;
         }
       }
@@ -1203,6 +1209,20 @@ namespace MediaPortal.GUI.Video
                         item.FileInfo.CreationTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
           }
 
+          if (CurrentSortMethod == VideoSort.SortMethod.Date && string.IsNullOrWhiteSpace(strDate))
+          {
+            if (!item.IsFolder && movie != null)
+            {
+              if (movie.DateAdded != "0001-01-01 00:00:00")
+              {
+                strDate = movie.DateAdded; 
+              }
+              else
+              {
+                strDate = movie.LastUpdate;
+              }
+            }
+          }
           item.Label2 = strDate;
         }
         else
@@ -1213,7 +1233,6 @@ namespace MediaPortal.GUI.Video
           {
             strSize1 = Util.Utils.GetSize(item.FileInfo.Length);
           }
-
           item.Label2 = strSize1;
         }
       }
