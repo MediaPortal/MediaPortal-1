@@ -2076,6 +2076,56 @@ namespace MediaPortal.GUI.Video
         _BDDetect = true;
       }
 
+      if (_BDDetect)
+      {
+        // Set MP to have already done this dialog
+        GUIGraphicsContext.BlurayMenu = true;
+
+        IDialogbox dialog = (IDialogbox) GUIWindowManager.GetWindow((int) GUIWindow.Window.WINDOW_DIALOG_MENU);
+        while (true)
+        {
+          // todo: translation for all string
+          dialog.Reset();
+          dialog.SetHeading("Select bluray player type");
+
+          // Add play with internal BDReader menu
+          //dialog.AddLocalizedString(222);
+          GUIListItem itemBlurayMenu = new GUIListItem("Play bluray with menu");
+          dialog.Add(itemBlurayMenu);
+
+          // Add play with normal MP player (LAV)
+          //dialog.AddLocalizedString(222);
+          GUIListItem itemLav = new GUIListItem("Play bluray with no menu");
+          dialog.Add(itemLav);
+
+          dialog.DoModal(GUIWindowManager.ActiveWindow);
+
+          if (dialog.SelectedId == itemBlurayMenu.ItemId)
+          {
+            _BDInternalMenu = true;
+          }
+          if (dialog.SelectedId == itemLav.ItemId)
+          {
+            _BDInternalMenu = false;
+          }
+
+          // Write the new detected settings
+          using (Settings xmlwriter = new MPSettings())
+          {
+            xmlwriter.SetValueAsBool("bdplayer", "useInternalBDPlayer", _BDInternalMenu);
+          }
+
+          if (dialog.SelectedId < 1)
+          {
+            // user cancelled so we return
+            return;
+          }
+
+          // end dialog
+          break;
+        }
+      }
+
       using (Profile.Settings xmlreader = new MPSettings())
       {
         BDInternalMenu = xmlreader.GetValueAsBool("bdplayer", "useInternalBDPlayer", true);
