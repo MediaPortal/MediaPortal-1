@@ -2030,6 +2030,7 @@ namespace MediaPortal.GUI.Video
       bool BDInternalMenu = false;
       bool NoBDResume = false;
       _BDDetect = false;
+      bool _NoBDMenu = false;
       g_Player.ForcePlay = false;
       g_Player.SetResumeBDTitleState = g_Player.BdDefaultTitle;
       string filename;
@@ -2076,7 +2077,12 @@ namespace MediaPortal.GUI.Video
         _BDDetect = true;
       }
 
-      if (_BDDetect)
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.MPSettings())
+      {
+        _NoBDMenu = xmlreader.GetValueAsBool("bdplayer", "DisableSelectMenuBDPlayer", true);
+      }
+
+      if (_BDDetect && !_NoBDMenu)
       {
         // Set MP to have already done this dialog
         GUIGraphicsContext.BlurayMenu = true;

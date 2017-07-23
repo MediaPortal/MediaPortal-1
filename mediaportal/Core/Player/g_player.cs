@@ -1508,6 +1508,7 @@ namespace MediaPortal.Player
 
         g_Player.SetResumeBDTitleState = title;
         bool UseEVRMadVRForTV = false;
+        bool _NoBDMenu = false;
 
         IsPicture = false;
         IsExtTS = false;
@@ -1616,9 +1617,10 @@ namespace MediaPortal.Player
             {
               _BDInternalMenu = xmlreader.GetValueAsBool("bdplayer", "useInternalBDPlayer", true);
               UseEVRMadVRForTV = xmlreader.GetValueAsBool("general", "useEVRMadVRForTV", false);
+              _NoBDMenu = xmlreader.GetValueAsBool("bdplayer", "DisableSelectMenuBDPlayer", true);
             }
 
-            if (extension == ".bdmv" && !GUIGraphicsContext.BlurayMenu)
+            if (extension == ".bdmv" && !GUIGraphicsContext.BlurayMenu && !_NoBDMenu)
             {
               IDialogbox dialog = (IDialogbox)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
               while (true)
