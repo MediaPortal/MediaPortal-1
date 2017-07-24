@@ -99,6 +99,9 @@ namespace MediaPortal.Player
 
     [PreserveSig]
     int ReduceMadvrFrame();
+
+    [PreserveSig]
+    void DestroyHWnd(uint phWnd);
   }
 
   #endregion
@@ -174,6 +177,9 @@ namespace MediaPortal.Player
     [DllImport("dshowhelper.dll", CallingConvention = CallingConvention.Cdecl)]
     private static extern unsafe void MadVrScreenResizeForce(int x, int y, int width, int height, bool displayChange);
 
+    [DllImport("user32.dll")]
+    static extern bool DestroyWindow(IntPtr hWnd);
+
     #endregion
 
     #region static vars
@@ -217,6 +223,7 @@ namespace MediaPortal.Player
     private string medianFiltering = "";
     private int _freeframeCounter = 0;
     public Surface MadVrRenderTargetVMR9 = null;
+    public IntPtr HWnd;
     protected bool UseMadVideoRenderer;      // is madVR used?
     protected bool UseEVRMadVRForTV;
     protected bool UseMadVideoRenderer3D;
@@ -1056,7 +1063,7 @@ namespace MediaPortal.Player
           GUIMessage message = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ONDISPLAYMADVRCHANGED, 0, 0, 0, 0, 0, null);
           GUIWindowManager.SendMessage(message);
           GUIGraphicsContext.ForceMadVRFirstStart = false;
-          Log.Debug("VMR9:  resize OSD/Screen when resolution change for madVR");
+          Log.Debug("VMR9: resize OSD/Screen when resolution change for madVR");
         }
       }
     }
@@ -1688,19 +1695,29 @@ namespace MediaPortal.Player
           GC.Collect();
           MadvrInterface.restoreDisplayModeNow(_vmr9Filter);
           DirectShowUtil.FinalReleaseComObject(_vmr9Filter);
+          _vmr9Filter = null;
+          DestroyWindow(HWnd);
           Log.Debug("VMR9: Dispose 2");
         }
         else
         {
           Vmr9Deinit();
+          if (_vmr9Filter != null)
+          {
+            DirectShowUtil.RemoveFilter(_graphBuilder, _vmr9Filter);
+            DirectShowUtil.ReleaseComObject(_vmr9Filter);
+            _vmr9Filter = null;
+            Log.Debug("VMR9: Dispose 3");
+          }
         }
 
-        if (_vmr9Filter != null)
+        if (_graphBuilder != null)
         {
-          DirectShowUtil.RemoveFilter(_graphBuilder, _vmr9Filter);
-          DirectShowUtil.ReleaseComObject(_vmr9Filter);
-          Log.Debug("VMR9: Dispose 3");
+          DirectShowUtil.RemoveFilters(_graphBuilder);
+          DirectShowUtil.ReleaseComObject(_graphBuilder);
         }
+        _graphBuilder = null;
+
         g_vmr9.Enable(false);
         _scene = null;
         g_vmr9 = null;
@@ -1719,9 +1736,12 @@ namespace MediaPortal.Player
       finally
       {
         RestoreGuiForMadVr();
-        DirectShowUtil.TryRelease(ref _vmr9Filter);
+        if (_vmr9Filter != null)
+        {
+          DirectShowUtil.TryRelease(ref _vmr9Filter);
+          _vmr9Filter = null;
+        }
         GUIWindowManager.MadVrProcess();
-        _vmr9Filter = null;
         Log.Debug("VMR9: Dispose done");
       }
     }

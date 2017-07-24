@@ -475,6 +475,17 @@ namespace MediaPortal.Player
             return _shouldRenderTexture;
           }
 
+          // Todo why add this hack for XySubFilter subtitle engine
+          if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
+              _subEngineType.Equals("XySubFilter") && IsFullScreen() && g_Player.Player is VideoPlayerVMR9)
+          {
+            Size client = GUIGraphicsContext.form.ClientSize;
+            if (client.Width == videoSize.Width || _prevVideoWidth == videoSize.Width)
+            {
+              return false;
+            }
+          }
+
           //settings (position,size,aspect ratio) changed.
           //Store these settings and start calucating the new video window
           _rectPrevious = new Rectangle((int) x, (int) y, (int) nw, (int) nh);
@@ -568,10 +579,11 @@ namespace MediaPortal.Player
             _destinationRect.X, _destinationRect.Y, _destinationRect.X + _destinationRect.Width,
             _destinationRect.Y + _destinationRect.Height);
 
-          if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
-          {
-            Util.Utils.SwitchFocus();
-          }
+          // Comment that part because it steal focus of other window
+          //if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
+          //{
+          //  Util.Utils.SwitchFocus();
+          //}
 
           return true;
         }
@@ -935,6 +947,14 @@ namespace MediaPortal.Player
       {
         Surface surface = new Surface((IntPtr)pSurfaceDevice);
         VMR9Util.g_vmr9.MadVrRenderTargetVMR9 = surface;
+      }
+    }
+
+    public void DestroyHWnd(uint phWnd)
+    {
+      if (GUIGraphicsContext.DX9Device != null)
+      {
+        VMR9Util.g_vmr9.HWnd = (IntPtr)phWnd;
       }
     }
 

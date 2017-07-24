@@ -31,4 +31,5 @@ DECLARE_INTERFACE_(IVMR9Callback, IUnknown)
   STDMETHOD(IsUiVisible)()PURE;
   STDMETHOD(RestoreDeviceSurface)(DWORD pSurfaceDevice)PURE;
   STDMETHOD(ReduceMadvrFrame)()PURE;
+  STDMETHOD(DestroyHWnd)(HWND phWnd)PURE;
 };

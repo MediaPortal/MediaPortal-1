@@ -268,6 +268,28 @@
       <visible>facadeview.list</visible>
     </control>
     <control>
+      <description>Collection banner</description>
+      <id>0</id>
+      <type>image</type>
+      <posX>1591</posX>
+      <posY>302</posY>
+      <width>100</width>
+      <height>100</height>
+      <texture>collection.png</texture>
+      <visible>facadeview.list+string.equals(#moviecollection)+string.equals(#hideinfo, False)</visible>
+    </control>
+    <control>
+      <description>Usergroup banner</description>
+      <id>0</id>
+      <type>image</type>
+      <posX>1591</posX>
+      <posY>302</posY>
+      <width>100</width>
+      <height>100</height>
+      <texture>group.png</texture>
+      <visible>facadeview.list+string.equals(#usergroups)+string.equals(#hideinfo, False)</visible>
+    </control>
+    <control>
       <type>image</type>
       <id>1</id>
       <posX>1590</posX>

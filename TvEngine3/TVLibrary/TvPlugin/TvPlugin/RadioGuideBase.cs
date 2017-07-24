@@ -35,6 +35,7 @@ using MediaPortal.Util;
 using TvControl;
 using TvDatabase;
 using Action = MediaPortal.GUI.Library.Action;
+using Gentle.Framework;
 
 #endregion
 
@@ -3267,6 +3268,18 @@ namespace TvPlugin
           dlg.AddLocalizedString(971); // Group
         }
 
+        if (!_singleChannelView)
+        {
+          dlg.AddLocalizedString(2162); // Remove channel
+
+          dlg.AddLocalizedString(2163); // Add channel to a group
+
+          if (Radio.SelectedGroup.GroupName != TvLibrary.Interfaces.TvConstants.RadioGroupNames.AllChannels)
+          {
+            dlg.AddLocalizedString(2164); // Remove channel from this group
+          }
+        }
+
         dlg.DoModal(GetID);
         if (dlg.SelectedLabel == -1)
         {
@@ -3309,6 +3322,22 @@ namespace TvPlugin
             break;
 
           case 637: // edit recording
+
+          case 2162: // Remove channel
+            OnRemoveChannel();
+
+            break;
+
+          case 2163: // Add channel to a group
+            OnAddChannelToGroup();
+
+            break;
+
+          case 2164: // Remove channel from this group
+            OnRemoveChannelFromGroup();
+
+            break;
+
           case 264: // record
             if (_currentProgram.IdProgram == 0)
             {
@@ -3323,6 +3352,116 @@ namespace TvPlugin
             break;
         }
       }
+    }
+
+    private void OnRemoveChannel()
+    {
+      GUIDialogYesNo GUIDialogYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
+
+      if (GUIDialogYesNo == null)
+      {
+        return;
+      }
+
+      GUIDialogYesNo.SetHeading(GUILocalizeStrings.Get(2162));
+
+      GUIDialogYesNo.SetLine(1, GUILocalizeStrings.Get(2165));
+      GUIDialogYesNo.SetLine(2, _currentChannel.DisplayName);
+
+      GUIDialogYesNo.SetDefaultToYes(false);
+      GUIDialogYesNo.DoModal(GUIWindowManager.ActiveWindow);
+
+      if (GUIDialogYesNo.IsConfirmed)
+      {
+        Log.Debug("RadioGuideBase: RemoveChannel {0}", _currentChannel.DisplayName);
+
+        if (Radio.CurrentChannel == _currentChannel && g_Player.Playing && g_Player.IsRadio)
+        {
+          Log.Debug("RadioGuideBase: call OnNextChannel() becasue of the current channel will be removed {0}", _currentChannel.DisplayName);
+          g_Player.Stop(true);
+        }
+
+        IList<Schedule> schedules = Schedule.ListAll();
+        TvServer server = new TvServer();
+
+        if (schedules != null)
+        {
+          for (int i = schedules.Count - 1; i > -1; i--)
+          {
+            Schedule schedule = schedules[i];
+            if (schedule.IdChannel == _currentChannel.IdChannel)
+            {
+              server.StopRecordingSchedule(schedule.IdSchedule);
+              schedule.Delete();
+              schedules.RemoveAt(i);
+            }
+          }
+        }
+        _currentChannel.Delete();
+
+        GetChannels(true);
+        LoadSchedules(true);
+        _needUpdate = true;
+      }
+    }
+
+    private void OnAddChannelToGroup()
+    {
+      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
+      if (dlg == null)
+      {
+        return;
+      }
+      dlg.Reset();
+      dlg.SetHeading(971); // group
+      int selected = 0;
+
+      for (int i = 0; i < Radio.AllRadioGroups.Count; ++i)
+      {
+        dlg.Add(Radio.AllRadioGroups[i].GroupName);
+        if (Radio.AllRadioGroups[i].GroupName == Radio.SelectedGroup.GroupName)
+        {
+          selected = i;
+        }
+      }
+
+      dlg.SelectedLabel = selected;
+      dlg.DoModal(GUIWindowManager.ActiveWindow);
+      if (dlg.SelectedLabel < 0)
+      {
+        return;
+      }
+
+      Log.Debug("RadioGuideBase: Add channel {0} to group {1}", _currentChannel.DisplayName, dlg.SelectedLabelText);
+
+      TvBusinessLayer layer = new TvBusinessLayer();
+      layer.AddChannelToRadioGroup(_currentChannel, dlg.SelectedLabelText);
+
+      GetChannels(true);
+      LoadSchedules(true);
+      _needUpdate = true;
+    }
+
+    private void OnRemoveChannelFromGroup()
+    {
+      Log.Debug("RadioGuideBase: Remove channel {0} from group {1}", _currentChannel.DisplayName, Radio.SelectedGroup.GroupName);
+      
+      RadioGroupMap groupMap = null;
+
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(RadioGroupMap));
+
+      sb.AddConstraint(Operator.Equals, "idChannel", _currentChannel.IdChannel);
+      sb.AddConstraint(Operator.Equals, "idGroup", Radio.SelectedGroup.IdGroup);
+
+      SqlStatement stmt = sb.GetStatement(true);
+
+      groupMap = ObjectFactory.GetInstance<RadioGroupMap>(stmt.Execute());
+
+      groupMap.Remove();
+
+      GetChannels(true);
+      LoadSchedules(true);
+      _needUpdate = true;
     }
 
     private void OnSwitchMode(bool returnPreviousMenu)

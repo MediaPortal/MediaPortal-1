@@ -24,13 +24,13 @@ namespace MediaPortal.Configuration.Sections
     private void InitializeComponent()
     {
       this.components = new System.ComponentModel.Container();
-      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
+      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
+      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle9 = new System.Windows.Forms.DataGridViewCellStyle();
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MovieDatabase));
-      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
-      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
-      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
+      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle10 = new System.Windows.Forms.DataGridViewCellStyle();
+      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle11 = new System.Windows.Forms.DataGridViewCellStyle();
+      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle12 = new System.Windows.Forms.DataGridViewCellStyle();
       this.toolTipMPvdb = new System.Windows.Forms.ToolTip(this.components);
       this.useFanartCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this._fuzzyMatchingCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
@@ -124,6 +124,12 @@ namespace MediaPortal.Configuration.Sections
       this.label13 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.tbReview = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.mpLabel16 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.tabPageAdditional = new MediaPortal.UserInterface.Controls.MPTabPage();
+      this.mpGroupBox13 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.tbMPAARatingText = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.mpLabel34 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.tbAwards = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.mpLabel44 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.tabPageFiles = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.groupBox6 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.tbAdded = new MediaPortal.UserInterface.Controls.MPLabel();
@@ -346,6 +352,8 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox3.SuspendLayout();
       this.tabPageReview.SuspendLayout();
       this.mpGroupBox2.SuspendLayout();
+      this.tabPageAdditional.SuspendLayout();
+      this.mpGroupBox13.SuspendLayout();
       this.tabPageFiles.SuspendLayout();
       this.groupBox6.SuspendLayout();
       this.tabPageActors.SuspendLayout();
@@ -1007,6 +1015,7 @@ namespace MediaPortal.Configuration.Sections
             | System.Windows.Forms.AnchorStyles.Right)));
       this.tabControl2.Controls.Add(this.tabPageTitle);
       this.tabControl2.Controls.Add(this.tabPageReview);
+      this.tabControl2.Controls.Add(this.tabPageAdditional);
       this.tabControl2.Controls.Add(this.tabPageFiles);
       this.tabControl2.Controls.Add(this.tabPageActors);
       this.tabControl2.Controls.Add(this.tabPageActorDetails);
@@ -1529,6 +1538,71 @@ namespace MediaPortal.Configuration.Sections
       this.mpLabel16.TabIndex = 37;
       this.mpLabel16.Text = "User review:";
       // 
+      // tabPageAdditional
+      // 
+      this.tabPageAdditional.Controls.Add(this.mpGroupBox13);
+      this.tabPageAdditional.Location = new System.Drawing.Point(4, 22);
+      this.tabPageAdditional.Name = "tabPageAdditional";
+      this.tabPageAdditional.Size = new System.Drawing.Size(459, 320);
+      this.tabPageAdditional.TabIndex = 3;
+      this.tabPageAdditional.Text = "Additional";
+      this.tabPageAdditional.UseVisualStyleBackColor = true;
+      // 
+      // mpGroupBox13
+      // 
+      this.mpGroupBox13.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGroupBox13.Controls.Add(this.tbMPAARatingText);
+      this.mpGroupBox13.Controls.Add(this.mpLabel34);
+      this.mpGroupBox13.Controls.Add(this.tbAwards);
+      this.mpGroupBox13.Controls.Add(this.mpLabel44);
+      this.mpGroupBox13.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.mpGroupBox13.Location = new System.Drawing.Point(3, 4);
+      this.mpGroupBox13.Name = "mpGroupBox13";
+      this.mpGroupBox13.Size = new System.Drawing.Size(453, 313);
+      this.mpGroupBox13.TabIndex = 2;
+      this.mpGroupBox13.TabStop = false;
+      // 
+      // tbMPAARatingText
+      // 
+      this.tbMPAARatingText.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.tbMPAARatingText.BorderColor = System.Drawing.Color.Empty;
+      this.tbMPAARatingText.Location = new System.Drawing.Point(70, 12);
+      this.tbMPAARatingText.Multiline = true;
+      this.tbMPAARatingText.Name = "tbMPAARatingText";
+      this.tbMPAARatingText.Size = new System.Drawing.Size(375, 22);
+      this.tbMPAARatingText.TabIndex = 40;
+      // 
+      // mpLabel34
+      // 
+      this.mpLabel34.Location = new System.Drawing.Point(0, 12);
+      this.mpLabel34.Name = "mpLabel34";
+      this.mpLabel34.Size = new System.Drawing.Size(64, 21);
+      this.mpLabel34.TabIndex = 39;
+      this.mpLabel34.Text = "MPAA Text:";
+      // 
+      // tbAwards
+      // 
+      this.tbAwards.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+      this.tbAwards.BorderColor = System.Drawing.Color.Empty;
+      this.tbAwards.Location = new System.Drawing.Point(70, 163);
+      this.tbAwards.Multiline = true;
+      this.tbAwards.Name = "tbAwards";
+      this.tbAwards.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+      this.tbAwards.Size = new System.Drawing.Size(375, 136);
+      this.tbAwards.TabIndex = 38;
+      // 
+      // mpLabel44
+      // 
+      this.mpLabel44.Location = new System.Drawing.Point(0, 163);
+      this.mpLabel44.Name = "mpLabel44";
+      this.mpLabel44.Size = new System.Drawing.Size(64, 33);
+      this.mpLabel44.TabIndex = 37;
+      this.mpLabel44.Text = "Awards:";
+      // 
       // tabPageFiles
       // 
       this.tabPageFiles.Controls.Add(this.groupBox6);
@@ -1930,14 +2004,14 @@ namespace MediaPortal.Configuration.Sections
       this.dgActorMovies.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
       this.dgActorMovies.BackgroundColor = System.Drawing.SystemColors.Window;
       this.dgActorMovies.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-      dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-      dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-      dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-      dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-      dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-      dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-      dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-      this.dgActorMovies.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+      dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+      dataGridViewCellStyle7.BackColor = System.Drawing.SystemColors.Control;
+      dataGridViewCellStyle7.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+      dataGridViewCellStyle7.ForeColor = System.Drawing.SystemColors.WindowText;
+      dataGridViewCellStyle7.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+      dataGridViewCellStyle7.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+      dataGridViewCellStyle7.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+      this.dgActorMovies.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle7;
       this.dgActorMovies.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
       this.dgActorMovies.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.Year,
@@ -1957,8 +2031,8 @@ namespace MediaPortal.Configuration.Sections
       // Year
       // 
       this.Year.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
-      dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-      this.Year.DefaultCellStyle = dataGridViewCellStyle2;
+      dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+      this.Year.DefaultCellStyle = dataGridViewCellStyle8;
       this.Year.HeaderText = "Year";
       this.Year.MinimumWidth = 60;
       this.Year.Name = "Year";
@@ -1967,8 +2041,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // Title
       // 
-      dataGridViewCellStyle3.SelectionForeColor = System.Drawing.Color.White;
-      this.Title.DefaultCellStyle = dataGridViewCellStyle3;
+      dataGridViewCellStyle9.SelectionForeColor = System.Drawing.Color.White;
+      this.Title.DefaultCellStyle = dataGridViewCellStyle9;
       this.Title.HeaderText = "Title";
       this.Title.MinimumWidth = 220;
       this.Title.Name = "Title";
@@ -2436,8 +2510,8 @@ namespace MediaPortal.Configuration.Sections
       this.tbCollectionDescription.ScrollBars = System.Windows.Forms.ScrollBars.Both;
       this.tbCollectionDescription.Size = new System.Drawing.Size(447, 218);
       this.tbCollectionDescription.TabIndex = 75;
-      this.toolTipMPvdb.SetToolTip(this.tbCollectionDescription, "Add optional collection description which will be visible \r\non collection select in movie p" +
-        "lot area in GUI.\r\n");
+      this.toolTipMPvdb.SetToolTip(this.tbCollectionDescription, "Add optional collection description which will be visible \r\non collection select " +
+        "in movie plot area in GUI.\r\n");
       // 
       // cbCollectionsMisc
       // 
@@ -3697,14 +3771,14 @@ namespace MediaPortal.Configuration.Sections
       this.dgShares.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
       this.dgShares.BackgroundColor = System.Drawing.SystemColors.Window;
       this.dgShares.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-      dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-      dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
-      dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-      dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
-      dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-      dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-      dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-      this.dgShares.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle4;
+      dataGridViewCellStyle10.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+      dataGridViewCellStyle10.BackColor = System.Drawing.SystemColors.Control;
+      dataGridViewCellStyle10.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+      dataGridViewCellStyle10.ForeColor = System.Drawing.SystemColors.WindowText;
+      dataGridViewCellStyle10.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+      dataGridViewCellStyle10.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+      dataGridViewCellStyle10.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+      this.dgShares.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle10;
       this.dgShares.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
       this.dgShares.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.shareName,
@@ -3723,8 +3797,8 @@ namespace MediaPortal.Configuration.Sections
       // shareName
       // 
       this.shareName.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-      dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-      this.shareName.DefaultCellStyle = dataGridViewCellStyle5;
+      dataGridViewCellStyle11.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+      this.shareName.DefaultCellStyle = dataGridViewCellStyle11;
       this.shareName.HeaderText = "Name";
       this.shareName.Name = "shareName";
       this.shareName.ReadOnly = true;
@@ -3733,8 +3807,8 @@ namespace MediaPortal.Configuration.Sections
       // sharePath
       // 
       this.sharePath.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-      dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-      this.sharePath.DefaultCellStyle = dataGridViewCellStyle6;
+      dataGridViewCellStyle12.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+      this.sharePath.DefaultCellStyle = dataGridViewCellStyle12;
       this.sharePath.HeaderText = "Folder";
       this.sharePath.MinimumWidth = 50;
       this.sharePath.Name = "sharePath";
@@ -4175,6 +4249,9 @@ namespace MediaPortal.Configuration.Sections
       this.tabPageReview.ResumeLayout(false);
       this.mpGroupBox2.ResumeLayout(false);
       this.mpGroupBox2.PerformLayout();
+      this.tabPageAdditional.ResumeLayout(false);
+      this.mpGroupBox13.ResumeLayout(false);
+      this.mpGroupBox13.PerformLayout();
       this.tabPageFiles.ResumeLayout(false);
       this.groupBox6.ResumeLayout(false);
       this.tabPageActors.ResumeLayout(false);
@@ -4254,6 +4331,7 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPTabPage tabPageTitle;
     private MediaPortal.UserInterface.Controls.MPTabPage tabPageGenres;
     private MediaPortal.UserInterface.Controls.MPTabPage tabPageActors;
+    private MediaPortal.UserInterface.Controls.MPTabPage tabPageAdditional;
     private MediaPortal.UserInterface.Controls.MPTabPage tabPageFiles;
     private MediaPortal.UserInterface.Controls.MPTabPage tabPageCoverArt;
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBox3;
@@ -4554,5 +4632,10 @@ namespace MediaPortal.Configuration.Sections
     private UserInterface.Controls.MPLabel lbDescCollectionDesc;
     private UserInterface.Controls.MPTextBox tbCollectionDescription;
     private UserInterface.Controls.MPComboBox cbCollectionsMisc;
+    private UserInterface.Controls.MPGroupBox mpGroupBox13;
+    private UserInterface.Controls.MPTextBox tbMPAARatingText;
+    private UserInterface.Controls.MPLabel mpLabel34;
+    private UserInterface.Controls.MPTextBox tbAwards;
+    private UserInterface.Controls.MPLabel mpLabel44;
   }
 }
