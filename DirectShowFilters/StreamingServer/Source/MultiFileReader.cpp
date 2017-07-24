@@ -76,10 +76,9 @@ MultiFileReader::MultiFileReader(BOOL useFileNext, BOOL useDummyWrites, CCritSec
   m_TSFile.SetDummyWrites(useDummyWrites);
   m_TSFileNext.SetDummyWrites(FALSE);
 
-  DWORD accessModeFlags = (useRandomAccess ? FILE_FLAG_RANDOM_ACCESS : 0);
-  m_TSBufferFile.SetAccessMode(accessModeFlags);
-  m_TSFile.SetAccessMode(accessModeFlags);
-  m_TSFileNext.SetAccessMode(accessModeFlags);
+  m_TSBufferFile.SetRandomAccess(useRandomAccess);
+  m_TSFile.SetRandomAccess(useRandomAccess);
+  m_TSFileNext.SetRandomAccess(useRandomAccess);
 
   m_pFileReadNextBuffer = NULL;
   m_pInfoFileBuffer1 = NULL;
