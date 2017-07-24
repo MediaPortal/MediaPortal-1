@@ -4625,16 +4625,6 @@ void CDeMultiplexer::ThreadProc()
 
     //File read prefetch section...
 
-    //Prefetch control
-    //    if (!IsAudioChanging())
-    //    {
-    //      if (CheckPrefetchState(m_filter.m_bStreamCompensated, !m_filter.m_bStreamCompensated)) //Forced for initial parsing and buffering, normal mode otherwise
-    //      {
-    //        //Read some data if the audio pin thread is running
-    //        m_bReadAheadFromFile = m_filter.GetAudioPin()->IsThreadRunning(&rtStartTime);
-    //      }
-    //    }
-
     if (!IsAudioChanging())
     {
       if (m_filter.GetAudioPin()->IsThreadRunning(&rtStartTime)) //Check the audio pin thread is running
