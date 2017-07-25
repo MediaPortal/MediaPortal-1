@@ -395,6 +395,8 @@ struct pshdr
 		BYTE * pps;
 		__int64 spslen;
 		__int64 ppslen;
+    __int64 spspos;
+    __int64 ppspos;
 		__int64 AvgTimePerFrame;
 		int arx, ary;
 		BYTE ar;
@@ -407,6 +409,8 @@ struct pshdr
 		  pps = NULL;
 			spslen = 0;
 			ppslen = 0;
+      spspos = 0;
+      ppspos = 0;
 			AvgTimePerFrame = 370000;  //27 Hz
 			ar = 0;
 			arx = 0;
