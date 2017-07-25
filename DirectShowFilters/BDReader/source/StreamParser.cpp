@@ -112,6 +112,26 @@ bool StreamParser::Parse(byte* tsPacket, int serviceType)
 			parsed = true;
 		}
 	}
+  else if (serviceType == BLURAY_STREAM_TYPE_VIDEO_HEVC)
+  {
+    HEVC::hevchdr hevc;
+    if (hdrParser.Read(hevc, framesize, &pmt))
+    {
+      //hdrParser.DumpAvcHeader(avc);
+      basicVideoInfo.width = hevc.width;
+      basicVideoInfo.height = hevc.height;
+      basicVideoInfo.fps = 1000 / (hevc.AvgTimePerFrame / 10000);
+      //basicVideoInfo.arx=avc.arx;
+      //basicVideoInfo.ary=avc.ary;
+      if (!hevc.progressive)
+        basicVideoInfo.isInterlaced = 1;
+      else
+        basicVideoInfo.isInterlaced = 0;
+      basicVideoInfo.streamType = 2; // H264
+      basicVideoInfo.isValid = true;
+      parsed = true;
+    }
+  }
   else if (serviceType == BLURAY_STREAM_TYPE_AUDIO_MPEG1 ||
            serviceType == BLURAY_STREAM_TYPE_AUDIO_MPEG2)
   {

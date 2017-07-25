@@ -194,7 +194,7 @@ void CVideoPin::SetVideoDecoder(int format, GUID* decoder)
   AM_MEDIA_TYPE tmp;
   tmp.cbFormat = 0;
 
-  if (format == BLURAY_STREAM_TYPE_VIDEO_H264)
+  if (format == BLURAY_STREAM_TYPE_VIDEO_H264 /*|| format == BLURAY_STREAM_TYPE_VIDEO_HEVC*/)
   {
     m_H264decoder = tmp.subtype = *decoder;
     LogDebug("vid: SetVideoDecoder for H264");
@@ -544,6 +544,8 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
             // This should only happen when the stream enters into paused state
             LogDebug("vid: FillBuffer - DeliverEndOfStream");
             DeliverEndOfStream();
+            // TODO madVR hack to fix rendering start
+            m_pFilter->IssueCommand(FAKESEEK, m_rtStreamOffset);
             m_bClipEndingNotified = true;
           }
           else

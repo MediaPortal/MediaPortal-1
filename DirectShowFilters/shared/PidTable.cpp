@@ -1,5 +1,5 @@
 /* 
- *	Copyright (C) 2006-2009 Team MediaPortal
+ *	Copyright (C) 2006-2013 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -107,7 +107,7 @@ void CPidTable::Copy(const CPidTable &pids)
   subtitlePids=pids.subtitlePids;
 
   TeletextPid=pids.TeletextPid;
-  //TeletextInfo=pids.TeletextInfo;
+  TeletextInfo=pids.TeletextInfo;
 }
 
 
@@ -130,33 +130,38 @@ bool CPidTable::HasTeletextPageInfo(int page)
 void CPidTable::LogPIDs()
 {
   USES_CONVERSION;
-  LogDebug(" pcr      pid: %4x ",PcrPid);
-  LogDebug(" pmt      pid: %4x ",PmtPid);
+
+  LogDebug(" pcr      pid: 0x%4x ",PcrPid);
+  LogDebug(" pmt      pid: 0x%4x ",PmtPid);
 
   // Log all video streams (Blu-ray can have multiple video streams)
   for(unsigned int i(0) ; i < videoPids.size() ; i++)
   {
-    LogDebug(" video    pid: %4x type: %s",
+    LogDebug(" Video    pid: 0x%4x type: %s (0x%2x) DescriptorData: 0x%2x",
       videoPids[i].Pid, 
-      T2A(StreamFormatAsString(videoPids[i].VideoServiceType)));
+      T2A(StreamFormatAsString(videoPids[i].VideoServiceType)),
+      videoPids[i].VideoServiceType,
+      videoPids[i].DescriptorData);
   }
 
   // Log all audio streams
   for(unsigned int i(0) ; i < audioPids.size() ; i++)
   {
-	  LogDebug(" audio    pid: %4x language: %3s type: %s",
+	  LogDebug(" Audio    pid: 0x%4x type: %s (0x%2x) language: %3s",
       audioPids[i].Pid, 
-      audioPids[i].Lang,
-      T2A(StreamFormatAsString(audioPids[i].AudioServiceType)));
+      T2A(StreamFormatAsString(audioPids[i].AudioServiceType)),
+      audioPids[i].AudioServiceType,
+      audioPids[i].Lang);
   }
   
   // Log all subtitle streams
   for(unsigned int i(0) ; i < subtitlePids.size() ; i++)
   {
-	  LogDebug(" Subtitle pid: %4x language: %3s type: %s",
+	  LogDebug(" Subtitle pid: 0x%4x type: %s (0x%2x) language: %3s",
       subtitlePids[i].Pid, 
-      subtitlePids[i].Lang,
-      T2A(StreamFormatAsString(subtitlePids[i].SubtitleServiceType)));  
+      T2A(StreamFormatAsString(subtitlePids[i].SubtitleServiceType)),
+      subtitlePids[i].SubtitleServiceType, 
+      subtitlePids[i].Lang); 
   }  
 }
 
@@ -199,8 +204,10 @@ LPCTSTR CPidTable::StreamFormatAsString(int streamType)
 		return _T("DTS-HD");
 	case 0x86:
 		return _T("DTS-HD Master Audio");
+	case 0x87:
+		return _T("DD+");
   case 0x0f:
-		return _T("AAC");
+		return _T("ADTS AAC");
 	case 0x11:
 		return _T("LATM AAC");
   case 0xA1:

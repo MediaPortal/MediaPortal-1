@@ -181,6 +181,12 @@
       <TargetMachine>MachineX86</TargetMachine>
       <ImageHasSafeExceptionHandlers>true</ImageHasSafeExceptionHandlers>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy $(TargetDir)bdreader.ax $(SolutionDir)..\mediaportal\MediaPortal.Application\bin\$(ConfigurationName)\ /Y /T
+xcopy $(TargetDir)bdreader.pdb $(SolutionDir)..\mediaportal\MediaPortal.Application\bin\$(ConfigurationName)\ /Y /T
+xcopy $(TargetDir)bdreader.ax $(SolutionDir)..\mediaportal\MediaPortal.Application\bin\$(ConfigurationName)\ /Y
+xcopy $(TargetDir)bdreader.pdb $(SolutionDir)..\mediaportal\MediaPortal.Application\bin\$(ConfigurationName)\ /Y</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="source\AudioPin.cpp" />
@@ -190,12 +196,16 @@
     <ClCompile Include="source\FrameHeaderParser.cpp" />
     <ClCompile Include="source\GolombBuffer.cpp" />
     <ClCompile Include="source\H264Nalu.cpp" />
+    <ClCompile Include="source\HEVC\BitstreamReader.cpp" />
+    <ClCompile Include="source\HEVC\Hevc.cpp" />
+    <ClCompile Include="source\HEVC\HevcNalDecode.cpp" />
     <ClCompile Include="source\LibBlurayWrapper.cpp" />
     <ClCompile Include="source\OverlayRenderer.cpp" />
     <ClCompile Include="source\Packet.cpp" />
     <ClCompile Include="source\PcrDecoder.cpp" />
     <ClCompile Include="source\Playlist.cpp" />
     <ClCompile Include="source\PlaylistManager.cpp" />
+    <ClCompile Include="source\PmtParser.cpp" />
     <ClCompile Include="source\StreamParser.cpp" />
     <ClCompile Include="source\utils.cpp" />
     <ClCompile Include="source\VideoPin.cpp" />
@@ -213,6 +223,9 @@
     <ClInclude Include="source\FrameHeaderParser.h" />
     <ClInclude Include="source\GolombBuffer.h" />
     <ClInclude Include="source\H264Nalu.h" />
+    <ClInclude Include="source\HEVC\BitstreamReader.h" />
+    <ClInclude Include="source\HEVC\Hevc.h" />
+    <ClInclude Include="source\HEVC\HevcNalDecode.h" />
     <ClInclude Include="source\IAudioStream.h" />
     <ClInclude Include="source\ISubtitleStream.h" />
     <ClInclude Include="source\LibBlurayWrapper.h" />
@@ -223,6 +236,7 @@
     <ClInclude Include="source\PcrDecoder.h" />
     <ClInclude Include="source\Playlist.h" />
     <ClInclude Include="source\PlaylistManager.h" />
+    <ClInclude Include="source\PmtParser.h" />
     <ClInclude Include="source\StdAfx.h" />
     <ClInclude Include="source\StreamParser.h" />
     <ClInclude Include="source\VideoPin.h" />

@@ -147,18 +147,20 @@ bool CDeMultiplexer::SetAudioStream(int stream)
   }
 
   // Get the new audio stream type
-  int newAudioStreamType =  m_audioStreams[stream].audioType;   
+  int newAudioStreamType =  m_audioStreams[stream].audioType;
   m_iAudioStream = stream;
   m_iAudioIdx = stream;
 
   if (m_AudioStreamType != newAudioStreamType)
   {
     LogDebug("demux: old %s new audio %s", StreamFormatAsString(m_AudioStreamType), StreamFormatAsString(newAudioStreamType));
-		m_AudioStreamType = newAudioStreamType;
+    m_AudioStreamType = newAudioStreamType;
+    //// TODO madVR hack to fix rendering start
+    //m_filter.IssueCommand(FAKESEEK, m_rtOffset);
   }
   else
   {
-    LogDebug("demux: no change in audio type (%s)", StreamFormatAsString(m_AudioStreamType));      
+    LogDebug("demux: no change in audio type (%s)", StreamFormatAsString(m_AudioStreamType));
   }
 
   delete m_pCurrentAudioBuffer;
@@ -816,6 +818,8 @@ void CDeMultiplexer::FlushPESBuffers(bool bDiscardData, bool bSetCurrentClipFill
       FillVideoH264PESPacket(NULL, m_pBuild, true);
     else if (m_videoServiceType == BLURAY_STREAM_TYPE_VIDEO_VC1)
       FillVideoVC1PESPacket(NULL, m_pBuild, true);
+    else if (m_videoServiceType == BLURAY_STREAM_TYPE_VIDEO_HEVC)
+      FillVideoVC1PESPacket(NULL, m_pBuild, true);
   }
 
   m_p.Free();
@@ -1160,7 +1164,7 @@ void CDeMultiplexer::FillVideoH264(CTsHeader* header, byte* tsPacket)
     
     m_WaitHeaderPES = m_pBuild->GetCount();
 
-    if (m_videoServiceType == BLURAY_STREAM_TYPE_VIDEO_VC1 && m_pBuild->GetCount() > 0)
+    if (m_videoServiceType == BLURAY_STREAM_TYPE_VIDEO_VC1 /*|| m_videoServiceType == BLURAY_STREAM_TYPE_VIDEO_HEVC*/ && m_pBuild->GetCount() > 0)
     {
       FillVideoVC1PESPacket(header, m_pBuild);
       m_pBuild.Free();
@@ -1237,7 +1241,7 @@ void CDeMultiplexer::FillVideoH264(CTsHeader* header, byte* tsPacket)
         
           if (m_bVideoFormatParsed)
           {
-            if (m_videoServiceType == BLURAY_STREAM_TYPE_VIDEO_VC1)
+            if (m_videoServiceType == BLURAY_STREAM_TYPE_VIDEO_VC1 /*|| m_videoServiceType == BLURAY_STREAM_TYPE_VIDEO_HEVC*/)
               m_pBuild->rtStop = m_pBuild->rtStart + ((VIDEOINFOHEADER*)m_videoParser->pmt.pbFormat)->AvgTimePerFrame;
             else
               m_pBuild->rtStop = m_pBuild->rtStart + ((MPEG2VIDEOINFO*)m_videoParser->pmt.pbFormat)->hdr.AvgTimePerFrame;
@@ -1514,6 +1518,575 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader* header, byte* tsPacket, bool pFlu
   }
 }
 
+/*void CDeMultiplexer::FillVideoHEVC(CTsHeader& header, byte* tsPacket)
+{
+  int headerlen = header.PayLoadStart;
+
+  if (!m_p)
+  {
+    m_p.Attach(new Packet());
+    m_p->rtStart = Packet::INVALID_TIME;
+    m_p->rtPrevStart = Packet::INVALID_TIME;
+    m_lastStart = 0;
+    m_isNewNALUTimestamp = false;
+    m_minVideoPTSdiff = DBL_MAX;
+    m_minVideoDTSdiff = DBL_MAX;
+    m_vidPTScount = 0;
+    m_vidDTScount = 0;
+    m_bVideoPTSroff = false;
+    m_bLogFPSfromDTSPTS = false;
+    m_bUsingGOPtimestamp = false;
+    m_mVideoValidPES = false;
+    m_VideoValidPES = false;
+    m_WaitHeaderPES = -1;
+    m_curFramePeriod = 0.0;
+    LOG_SAMPLES_HEVC("DeMultiplexer::FillVideoHEVC New m_p");
+  }
+
+  if (header.PayloadUnitStart)
+  {
+    m_WaitHeaderPES = m_p->GetCount();
+    m_mVideoValidPES = m_VideoValidPES;
+    LOG_SAMPLES_HEVC("DeMultiplexer::FillVideoHEVC PayLoad Unit Start");
+  }
+
+  CAutoPtr<Packet> p(new Packet());
+
+  if (headerlen < 188)
+  {
+    int dataLen = 188 - headerlen;
+
+    p->SetCount(dataLen);
+    p->SetData(&tsPacket[headerlen], dataLen);
+
+    m_p->Append(*p);
+
+    if (m_p->GetCount() > 4194303) //Sanity check
+    {
+      //Let's start again...
+      m_p.Free();
+      m_pl.RemoveAll();
+      m_bSetVideoDiscontinuity = true;
+      m_mpegParserReset = true;
+      m_VideoValidPES = false;
+      m_mVideoValidPES = false;
+      m_WaitHeaderPES = -1;
+      LogDebug("DeMux: HEVC PES size out-of-bounds");
+      return;
+    }
+  }
+  else
+  {
+    return;
+  }
+
+  if (m_WaitHeaderPES >= 0)
+  {
+    int AvailablePESlength = m_p->GetCount() - m_WaitHeaderPES;
+    BYTE* start = m_p->GetData() + m_WaitHeaderPES;
+
+    if (AvailablePESlength < 9)
+    {
+      LogDebug("demux:vid Incomplete PES ( Avail %d )", AvailablePESlength);
+      return;
+    }
+
+    if (
+      ((start[0] != 0) || (start[1] != 0) || (start[2] != 1)) //Invalid start code
+      || ((start[3] & 0x80) == 0)    //Invalid stream ID
+      || ((start[6] & 0xC0) != 0x80) //Invalid marker bits
+      || ((start[6] & 0x20) == 0x20) //Payload scrambled
+      )
+    {
+      if (m_hadPESfail < 256)
+      {
+        m_hadPESfail++;
+      }
+      //LogDebug("PES HEVC 0-0-1 fail");
+      LogDebug("PES HEVC 0-0-1 fail, PES hdr = %x-%x-%x-%x-%x-%x-%x-%x, TS hdr = %x-%x-%x-%x-%x-%x-%x-%x-%x-%x",
+        start[0], start[1], start[2], start[3], start[4], start[5], start[6], start[7],
+        tsPacket[0], tsPacket[1], tsPacket[2], tsPacket[3], tsPacket[4],
+        tsPacket[5], tsPacket[6], tsPacket[7], tsPacket[8], tsPacket[9]);
+      //header.LogHeader();
+      m_VideoValidPES = false;
+      m_mVideoValidPES = false;
+      m_p->rtStart = Packet::INVALID_TIME;
+      m_p->rtPrevStart = Packet::INVALID_TIME;
+      m_WaitHeaderPES = -1;
+      m_bSetVideoDiscontinuity = true;
+      //Flushing is delegated to CDeMultiplexer::ThreadProc()
+      DelegatedFlush(false, false);
+      return;
+    }
+    else
+    {
+      if (AvailablePESlength < 9 + start[8])
+      {
+        LogDebug("demux:vid Incomplete PES ( Avail %d/%d )", AvailablePESlength, AvailablePESlength + 9 + start[8]);
+        return;
+      }
+      else
+      { // full PES header is available.
+        CPcr pts;
+        CPcr dts;
+        bool isSamePTS = false;
+
+        m_VideoValidPES = true;
+        if (CPcr::DecodeFromPesHeader(start, 0, pts, dts))
+        {
+          double diff = 0.0;
+          if (pts.IsValid)
+          {
+            if (!m_lastVideoPTS.IsValid)
+              m_lastVideoPTS = pts;
+            if (m_lastVideoPTS>pts)
+              diff = m_lastVideoPTS.ToClock() - pts.ToClock();
+            else
+              diff = pts.ToClock() - m_lastVideoPTS.ToClock();
+
+            if (diff > 0.005)
+              m_vidPTScount++;
+          }
+
+          double diffDTS = 0.0;
+          if (dts.IsValid)
+          {
+            if (!m_lastVideoDTS.IsValid)
+              m_lastVideoDTS = dts;
+            if (m_lastVideoDTS>dts)
+              diffDTS = m_lastVideoDTS.ToClock() - dts.ToClock();
+            else
+              diffDTS = dts.ToClock() - m_lastVideoDTS.ToClock();
+
+            if (diffDTS > 0.005)
+              m_vidDTScount++;
+          }
+
+          if (diff > m_dVidPTSJumpLimit)
+          {
+            //Large PTS jump - flush the world...
+            LogDebug("DeMultiplexer::FillVideoHEVC pts jump found : %f %f, %f", (float)diff, (float)pts.ToClock(), (float)m_lastVideoPTS.ToClock());
+            m_lastAudioPTS.IsValid = false;
+            m_lastVideoPTS.IsValid = false;
+            m_lastVideoDTS.IsValid = false;
+            //Flushing is delegated to CDeMultiplexer::ThreadProc()
+            DelegatedFlush(false, false);
+          }
+          else
+          {
+            if (pts.IsValid)
+            {
+              m_lastVideoPTS = pts;
+            }
+            if ((diff < m_minVideoPTSdiff) && (diff > 0.005))
+            {
+              m_minVideoPTSdiff = diff;
+            }
+
+            if (dts.IsValid)
+            {
+              m_lastVideoDTS = dts;
+            }
+            if ((diffDTS < m_minVideoDTSdiff) && (diffDTS > 0.005))
+            {
+              m_minVideoDTSdiff = diffDTS;
+            }
+
+            if ((diff < 0.002) && (pts.IsValid) && !m_fHasAccessUnitDelimiters)
+            {
+              LOG_SAMPLES_HEVC("DeMultiplexer::FillVideoHEVC - PTS is same, diff %f, pts %f ", (float)diff, (float)pts.ToClock());
+              double d = pts.ToClock();
+              if (m_minVideoPTSdiff < 0.05) //We've seen a few PES timestamps/video frames
+              {
+                d += m_minVideoPTSdiff;
+              }
+              else //Guess - add 36.6 ms
+              {
+                d += 0.0366;
+              }
+              d += (m_bVideoPTSroff ? 0.0015 : 0.0025); //Ensure PTS always changes
+              m_bVideoPTSroff = !m_bVideoPTSroff;
+              pts.FromClock(d);
+              pts.IsValid = true;
+              isSamePTS = true;
+            }
+            LOG_SAMPLES_HEVC("DeMultiplexer::FillVideoHEVC pts: %f, dts: %f, diff %f, minDiff %f, rtStart : %d ", (float)pts.ToClock(), (float)dts.ToClock(), (float)diff, (float)m_minVideoPTSdiff, pts.PcrReferenceBase);
+          }
+        }
+        m_lastStart -= 9 + start[8];
+        m_p->RemoveAt(m_WaitHeaderPES, 9 + start[8]);
+
+        if (pts.IsValid)
+        {
+          if (!isSamePTS)
+          {
+            m_p->rtPrevStart = m_p->rtStart;
+          }
+          m_p->rtStart = (pts.PcrReferenceBase);
+        }
+        m_WaitHeaderPES = -1;
+        //LogDebug("m_p->rtStart: %d, m_p->rtPrevStart: %d",(int)m_p->rtStart, (int)m_p->rtPrevStart);
+      }
+    }
+  }
+
+  if (m_p->GetCount())
+  {
+    BYTE* start = m_p->GetData();
+    BYTE* end = start + m_p->GetCount();
+    bool fourByte;
+
+    MOVE_TO_HEVC_START_CODE(start, end, fourByte);
+
+
+    while (start <= end - 4)
+    {
+      BYTE* next = start + 1;
+      if (next < m_p->GetData() + m_lastStart)
+      {
+        next = m_p->GetData() + m_lastStart;
+      }
+
+      MOVE_TO_HEVC_START_CODE(next, end, fourByte);
+
+      if (next >= end - 4)
+      {
+        m_lastStart = next - m_p->GetData();
+        break;
+      }
+
+      CAutoPtr<Packet> p2(new Packet());
+      p2->rtStart = Packet::INVALID_TIME;
+      bool isNewTimestamp = false;
+
+      int size = next - start;
+
+      //Copy complete NALU into p2 buffer
+
+      size -= (fourByte ? 4 : 3); //Adjust to allow for start code
+
+      if ((size <= 0) || (size > 4194303)) //Sanity check
+      {
+        //Let's start again...
+        m_p.Free();
+        m_pl.RemoveAll();
+        m_bSetVideoDiscontinuity = true;
+        m_mpegParserReset = true;
+        m_VideoValidPES = false;
+        m_mVideoValidPES = false;
+        m_WaitHeaderPES = -1;
+        LogDebug("DeMux: HEVC NALU size out-of-bounds %d", size);
+        return;
+      }
+
+
+      DWORD dwNalStart = 0x01000000;  //NAL start code 
+
+                                      //LogDebug("DeMux: NALU size %d", size);
+
+      p2->SetCount(size + sizeof(dwNalStart));
+
+      memcpy(p2->GetData(), &dwNalStart, sizeof(dwNalStart)); //Insert NAL start code
+      memcpy(p2->GetData() + sizeof(dwNalStart), (start + 3), size);
+
+      //Get the NAL ID
+      char nalIDp2 = ((*(p2->GetData() + 4) & 0xfe) >> 1); //Note the 'forbidden_zero_bit' is included i.e. it must be zero for a valid NAL ID
+
+      LOG_SAMPLES_HEVC("HEVC: Input p2 NALU Type: %d (%d), m_p->rtStart: %d, m_p->rtPrevStart: %d", nalIDp2, p2->GetCount(), (int)m_p->rtStart, (int)m_p->rtPrevStart);
+
+      if ((m_p->rtStart != m_p->rtPrevStart) && (m_p->rtPrevStart != Packet::INVALID_TIME))
+      {
+        // new rtStart/PES packet transition - use previous rtStart value as this NALU started in the previous PES packet.
+        // This is important for streams without Access Unit Delimiters e.g. some IPTV streams
+        p2->rtStart = m_p->rtPrevStart;
+        m_p->rtPrevStart = m_p->rtStart;
+        isNewTimestamp = true;
+      }
+      else
+      {
+        p2->rtStart = m_p->rtStart;
+      }
+
+      //Decide if we should transfer NALU packets to output sample
+      if (nalIDp2 == HEVC_NAL_AUD) //Check for AUD
+      {
+        m_fHasAccessUnitDelimiters = true;
+      }
+
+      if ((nalIDp2 == HEVC_NAL_AUD) || (!m_fHasAccessUnitDelimiters && m_isNewNALUTimestamp)) //Check for AUD
+      {
+        m_isNewNALUTimestamp = false;
+        if ((m_pl.GetCount()>0) && m_mVideoValidPES)
+        {
+          //Transfer NALU packets to output sample
+          bool Gop = false;
+          bool foundIRAP = false;
+
+          //Copy available NALUs into new packet 'p' (for the next video buffer)
+          CAutoPtr<Packet> p(new Packet());
+          p->rtStart = Packet::INVALID_TIME;
+
+          LOG_OUTSAMPLES_HEVC("HEVC: Transfer to p, p->len = %d, m_pl.len = %d, hasAUD = %d", p->GetCount(), m_pl.GetCount(), m_fHasAccessUnitDelimiters);
+
+          if (!m_fHasAccessUnitDelimiters)
+          {
+            //Add fake AUD....
+            DWORD dwNalStart = 0x01000000;  //Insert NAL start code 
+            DWORD dwFakeAUD = 0x00500146;  //AUD with IPB pic_type        
+
+            p->SetCount(sizeof(dwNalStart) + sizeof(dwFakeAUD));
+
+            memcpy(p->GetData(), &dwNalStart, sizeof(dwNalStart));  //Insert NAL start code
+            memcpy(p->GetData() + sizeof(dwNalStart), &dwFakeAUD, sizeof(dwFakeAUD));
+            //LogDebug("HEVC: Insert Fake AUD: %x %x %x %x %x %x %x %x",  p->GetAt(0), p->GetAt(1), p->GetAt(2), p->GetAt(3), p->GetAt(4), p->GetAt(5), p->GetAt(6), p->GetAt(7));
+          }
+
+          while (m_pl.GetCount()>0)
+          {
+            CAutoPtr<Packet> p4(new Packet());
+            p4 = m_pl.RemoveHead();
+
+            //if (!iFrameScanner.SeenEnough())
+            //  iFrameScanner.ProcessNALU(p2);
+            LOG_OUTSAMPLES_HEVC("HEVC: Output p4 NALU Type: %d (%d), rtStart: %d", (p4->GetAt(4) & 0xfe) >> 1, p4->GetCount(), (int)p->rtStart);
+
+            char nalIDp4 = ((p4->GetAt(4) & 0xfe) >> 1);
+            //LogDebug("HEVC: All NAL, type = %d", nalIDp4);
+            if ((nalIDp4 == HEVC_NAL_VPS) || (nalIDp4 == HEVC_NAL_SPS) || (nalIDp4 == HEVC_NAL_PPS)) //Process VPS, SPS & PPS data
+            {
+              //LogDebug("HEVC: VPS/SPS/PPS NAL, type = %d", nalIDp4);
+              Gop = m_mpegPesParser->OnTsPacket(p4->GetData(), p4->GetCount(), VIDEO_STREAM_TYPE_HEVC, m_mpegParserReset);
+              m_mpegParserReset = false;
+            }
+
+            //Check for random-access entry points in the stream
+            if ((nalIDp4 >= HEVC_NAL_BLA_W_LP) && (nalIDp4 <= HEVC_NAL_CRA_NUT))
+            {
+              foundIRAP = true;
+
+              if (!m_bFrame0Found)  //First random access point after stream start or seek - add SPS/PPS/VPS
+              {
+                LogDebug("HEVC: Random access point, insert SPS(%I64d), PPS(%I64d), VPS(%I64d)", m_mpegPesParser->basicVideoInfo.spslen, m_mpegPesParser->basicVideoInfo.ppslen, m_mpegPesParser->basicVideoInfo.vpslen);
+                if (m_mpegPesParser->basicVideoInfo.spslen > 0)
+                {
+                  //Insert SPS NAL
+                  size_t currCount = p->GetCount();
+                  p->SetCount(currCount + (size_t)m_mpegPesParser->basicVideoInfo.spslen);
+                  memcpy(p->GetData() + currCount, m_mpegPesParser->basicVideoInfo.sps, (size_t)m_mpegPesParser->basicVideoInfo.spslen);
+                }
+                if (m_mpegPesParser->basicVideoInfo.ppslen > 0)
+                {
+                  //Insert PPS NAL
+                  size_t currCount = p->GetCount();
+                  p->SetCount(currCount + (size_t)m_mpegPesParser->basicVideoInfo.ppslen);
+                  memcpy(p->GetData() + currCount, m_mpegPesParser->basicVideoInfo.pps, (size_t)m_mpegPesParser->basicVideoInfo.ppslen);
+                }
+                if (m_mpegPesParser->basicVideoInfo.vpslen > 0)
+                {
+                  //Insert VPS NAL
+                  size_t currCount = p->GetCount();
+                  p->SetCount(currCount + (size_t)m_mpegPesParser->basicVideoInfo.vpslen);
+                  memcpy(p->GetData() + currCount, m_mpegPesParser->basicVideoInfo.vps, (size_t)m_mpegPesParser->basicVideoInfo.vpslen);
+                }
+              }
+            }
+
+            if (p->rtStart == Packet::INVALID_TIME)
+            {
+              p->rtStart = p4->rtStart;
+              //LogDebug("Fake AUD2: %x %x %x %x %x %x",  p4->GetAt(0), p4->GetAt(1), p4->GetAt(2), p4->GetAt(3), p4->GetAt(4), p4->GetAt(5));
+            }
+            if (p->GetCount()>0)
+            {
+              p->Append(*p4);
+            }
+            else
+            {
+              p = p4;
+            }
+          }
+
+          if (Gop)
+          {
+            // m_mpegParserReset = true; //Reset next time around (so that it always searches for a full 'Gop' header)
+            if (!m_bFirstGopParsed)
+            {
+              m_bFirstGopParsed = true;
+              LogDebug("DeMultiplexer: HEVC: First Gop after new PAT, %dx%d @ %d:%d, %.3fHz %s", m_mpegPesParser->basicVideoInfo.width, m_mpegPesParser->basicVideoInfo.height, m_mpegPesParser->basicVideoInfo.arx, m_mpegPesParser->basicVideoInfo.ary, (float)m_mpegPesParser->basicVideoInfo.fps, m_mpegPesParser->basicVideoInfo.isInterlaced ? "interlaced" : "progressive");
+            }
+          }
+
+          CPcr timestamp;
+          if (p->rtStart != Packet::INVALID_TIME)
+          {
+            timestamp.PcrReferenceBase = p->rtStart;
+            timestamp.IsValid = true;
+          }
+          //LogDebug("NALU Type: %d (%d) %d, p->timestamp %f, p->rtStart %d",  p->GetAt(4)&0x1f, p->GetCount(), timestamp.ToClock(), (int)p->rtStart);
+
+
+          if ((Gop || m_bFirstGopFound) && m_filter.GetVideoPin()->IsConnected())
+          {
+            //Bitrate info calculation for MP player
+            m_byteRead = m_byteRead + p->GetCount();
+            m_sampleTime = (float)timestamp.ToClock();
+            float elapsedTime = m_sampleTime - m_sampleTimePrev;
+
+            if (elapsedTime > 5.0f)
+            {
+              m_bitRate = ((float)m_byteRead*8.0f) / elapsedTime;
+              m_filter.OnBitRateChanged((int)m_bitRate);
+              m_sampleTimePrev = m_sampleTime;
+              m_byteRead = 0;
+              LOG_VID_BITRATE("HEVC: Rolling bitrate = %f", m_bitRate / 1000000.0f);
+            }
+            else if (elapsedTime < -0.5)
+            {
+              m_sampleTimePrev = m_sampleTime;
+              m_byteRead = 0;
+            }
+
+            CRefTime Ref;
+            CBuffer *pCurrentVideoBuffer = new CBuffer(p->GetCount());
+            pCurrentVideoBuffer->Add(p->GetData(), p->GetCount());
+            pCurrentVideoBuffer->SetPts(timestamp);
+            pCurrentVideoBuffer->SetPcr(m_duration.FirstStartPcr(), m_duration.MaxPcr());
+            pCurrentVideoBuffer->MediaTime(Ref);
+            LOG_OUTSAMPLES_HEVC("...> HEVC: Store NALU type (length) = %d (%d), p->rtStart = %d, timestamp %f, IRAP = %d", (*(p->GetData() + 4) & 0x1F), p->GetCount(), (int)p->rtStart, timestamp.ToClock(), foundIRAP);
+            // Must use p->rtStart as CPcr is UINT64 and INVALID_TIME is LONGLONG
+            // Too risky to change CPcr implementation at this time 
+            if (p->rtStart != Packet::INVALID_TIME)
+            {
+              if (foundIRAP && m_bFirstGopFound && !m_bSecondGopFound)
+              {
+                m_bSecondGopFound = true;
+                LogDebug("  HEVC: 2nd random access frame found %f ", Ref.Millisecs() / 1000.0f);
+              }
+              if (Gop && !m_bFirstGopFound)
+              {
+                m_bFirstGopFound = true;
+                LogDebug("  HEVC: SPS/PPS/VPS found %f ", Ref.Millisecs() / 1000.0f);
+                m_LastValidFrameCount = 0;
+              }
+              if (Ref < m_FirstVideoSample) m_FirstVideoSample = Ref;
+              if (Ref > m_LastVideoSample) m_LastVideoSample = Ref;
+              if (m_bFirstGopFound && foundIRAP && !m_bFrame0Found)
+              {
+                LogDebug("  HEVC: First random access frame found. RefFVS = %f, Ref = %f, IRAP = %d ", m_FirstVideoSample.Millisecs() / 1000.0f, Ref.Millisecs() / 1000.0f, foundIRAP);
+                m_ZeroVideoSample = Ref; //We start filling the main sample buffer at this point
+                m_LastVideoSample = Ref;
+                m_FirstVideoSample = Ref;
+                m_bFrame0Found = true;
+              }
+              m_LastValidFrameCount++;
+            }
+
+            pCurrentVideoBuffer->SetFrameType(foundIRAP ? 'I' : '?');
+            pCurrentVideoBuffer->SetFrameCount(0);
+            pCurrentVideoBuffer->SetVideoServiceType(m_pids.videoPids[0].VideoServiceType);
+            if (m_bSetVideoDiscontinuity)
+            {
+              m_bSetVideoDiscontinuity = false;
+              pCurrentVideoBuffer->SetDiscontinuity();
+            }
+
+            REFERENCE_TIME MediaTime;
+            m_filter.GetMediaPosition(&MediaTime);
+            if (m_filter.m_bStreamCompensated && m_bVideoAtEof && !m_filter.m_bRenderingClockTooFast)
+            {
+              float Delta = (float)((double)Ref.Millisecs() / 1000.0) - (float)((double)(m_filter.Compensation.m_time + MediaTime) / 10000000.0);
+              if (Delta < m_MinVideoDelta)
+              {
+                m_MinVideoDelta = Delta;
+                if (Delta < -2.0)
+                {
+                  //Large negative delta - flush the world...
+                  LogDebug("Demux : Video to render too late= %03.3f Sec, FileReadLatency: %d ms, flushing", Delta, m_fileReadLatency);
+                  m_MinAudioDelta += 1.0;
+                  m_MinVideoDelta += 1.0;
+                  //Flushing is delegated to CDeMultiplexer::ThreadProc()
+                  DelegatedFlush(false, false);
+                }
+                else if (Delta < 0.2)
+                {
+                  LogDebug("Demux : Video to render too late= %03.3f Sec, FileReadLatency: %d ms", Delta, m_fileReadLatency);
+                  _InterlockedIncrement(&m_AVDataLowCount);
+                  m_MinAudioDelta += 1.0;
+                  m_MinVideoDelta += 1.0;
+                }
+                else
+                {
+                  LogDebug("Demux : Video to render %03.3f Sec", Delta);
+                }
+              }
+            }
+            m_bVideoAtEof = false;
+
+            { //Scoped for CAutoLock
+              CAutoLock lock(&m_sectionVideo);
+              if (m_vecVideoBuffers.size() <= MAX_VID_BUF_SIZE)
+              {
+                if (m_bFrame0Found) //if (m_bFirstGopFound)
+                {
+                  // ownership is transfered to vector
+                  m_vecVideoBuffers.push_back(pCurrentVideoBuffer);
+                  // Parse the sample buffer for Closed Caption data (testing...)
+                  //m_CcParserHEVC->parseAVC1sample(pCurrentVideoBuffer->Data(), pCurrentVideoBuffer->Length(), 4);
+                }
+                else
+                {
+                  delete pCurrentVideoBuffer;
+                  pCurrentVideoBuffer = NULL;
+                  m_bSetVideoDiscontinuity = true;
+                  //LogDebug("DeMultiplexer: Delete video buffer");
+                }
+              }
+              else
+              {
+                delete pCurrentVideoBuffer;
+                pCurrentVideoBuffer = NULL;
+                m_bSetVideoDiscontinuity = true;
+                //Something is going wrong...
+                //LogDebug("DeMultiplexer: Video buffer overrun, A/V buffers = %d/%d", m_vecAudioBuffers.size(), m_vecVideoBuffers.size());
+                //m_filter.SetErrorAbort();  
+              }
+            }
+          }
+
+          if (Gop)
+          {
+            CheckMediaChange(header.Pid, true);
+          }
+        }
+        else
+        {
+          m_bSetVideoDiscontinuity = !m_mVideoValidPES;
+        }
+
+        m_pl.RemoveAll();
+
+        //p2->rtStart = m_p->rtStart; 
+        //m_p->rtStart = Packet::INVALID_TIME;
+      }
+
+      LOG_OUTSAMPLES_HEVC(".......> HEVC: Store NALU type (length) = %d (%d), p2->rtStart = %d, newtimestamp = %d", (*(p2->GetData() + 4) & 0x7e) >> 1, p2->GetCount(), (int)p2->rtStart, isNewTimestamp);
+      m_pl.AddTail(p2);
+      m_isNewNALUTimestamp = isNewTimestamp;
+      isNewTimestamp = false;
+
+      start = next;
+      m_lastStart = start - m_p->GetData() + 1;
+    }
+
+    if (start > m_p->GetData())
+    {
+      m_lastStart -= (start - m_p->GetData());
+      m_p->RemoveAt(0, start - m_p->GetData());
+    }
+  }
+  return;
+}*/
+
 void CDeMultiplexer::ParseVideoStream(BLURAY_CLIP_INFO* clip)
 {
   if (clip)
@@ -1716,6 +2289,8 @@ char* CDeMultiplexer::StreamFormatAsString(int pStreamType)
     return "H264";
   case BLURAY_STREAM_TYPE_VIDEO_VC1:
     return "VC1";
+  case BLURAY_STREAM_TYPE_VIDEO_HEVC:
+    return "HEVC";
   case BLURAY_STREAM_TYPE_AUDIO_LPCM:
     return "LPCM";
   case BLURAY_STREAM_TYPE_AUDIO_AC3:

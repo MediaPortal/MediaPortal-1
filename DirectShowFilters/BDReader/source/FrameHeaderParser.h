@@ -1,5 +1,5 @@
 /* 
- *	Copyright (C) 2005-2011 Team MediaPortal
+ *	Copyright (C) 2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -17,53 +17,80 @@
  *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
  *  http://www.gnu.org/copyleft/gpl.html
  *
- *  Major part of this file's content is based on MPC-HC's source code 
- *  http://mpc-hc.sourceforge.net/
- *
  */
-
-#pragma once
+#ifndef FRAMEHEADERPARSER_H
+#define FRAMEHEADERPARSER_H
 
 #include "StdAfx.h"
-#include <strmif.h>
-#include <streams.h>
 
+#include <strmif.h>
+//#include <mtype.h>
 #include "GolombBuffer.h"
-static const byte pixel_aspect[17][2]={
-	{0, 1},
-	{1, 1},
-	{12, 11},
-	{10, 11},
-	{16, 11},
-	{40, 33},
-	{24, 11},
-	{20, 11},
-	{32, 11},
-	{80, 33},
-	{18, 11},
-	{15, 11},
-	{64, 33},
-	{160,99},
-	{4, 3},
-	{3, 2},
-	{2, 1},
-};
+#include "PmtParser.h"
+#include "HEVC\HevcNalDecode.h"
+
+//H264 NAL type numbers
+#define  H264_NAL_SLICE     1
+#define  H264_NAL_DPA       2
+#define  H264_NAL_DPB       3
+#define  H264_NAL_DPC       4
+#define  H264_NAL_IDR       5
+#define  H264_NAL_SEI       6
+#define  H264_NAL_SPS       7
+#define  H264_NAL_PPS       8
+#define  H264_NAL_AUD       9
+#define  H264_NAL_EOSEQ     10
+#define  H264_NAL_EOSTREAM  11
+#define  H264_NAL_FILL      12
+
+//HEVC NAL type numbers
+#define  HEVC_NAL_TRAIL_N       0
+#define  HEVC_NAL_TRAIL_R       1
+#define  HEVC_NAL_TSA_N         2
+#define  HEVC_NAL_TSA_R         3
+#define  HEVC_NAL_STSA_N        4
+#define  HEVC_NAL_STSA_R        5
+#define  HEVC_NAL_RADL_N        6
+#define  HEVC_NAL_RADL_R        7
+#define  HEVC_NAL_RASL_N        8
+#define  HEVC_NAL_RASL_R        9
+#define  HEVC_NAL_BLA_W_LP     16
+#define  HEVC_NAL_BLA_W_RADL   17
+#define  HEVC_NAL_BLA_N_LP     18
+#define  HEVC_NAL_IDR_W_RADL   19
+#define  HEVC_NAL_IDR_N_LP     20
+#define  HEVC_NAL_CRA_NUT      21
+#define  HEVC_NAL_IRAP_VCL23   23 
+#define  HEVC_NAL_VPS          32
+#define  HEVC_NAL_SPS          33
+#define  HEVC_NAL_PPS          34
+#define  HEVC_NAL_AUD          35
+#define  HEVC_NAL_EOS_NUT      36
+#define  HEVC_NAL_EOB_NUT      37
+#define  HEVC_NAL_FD_NUT       38
+#define  HEVC_NAL_SEI_PREFIX   39
+#define  HEVC_NAL_SEI_SUFFIX   40
+#define  HEVC_NAL_RESERVED    255
+
 
 enum mpeg_t {mpegunk, mpeg1, mpeg2};
 
-	struct pshdr {
+struct pshdr
+	{
 		mpeg_t type;
 		UINT64 scr, bitrate;
 	};
 
-	struct pssyshdr {
+	struct pssyshdr
+	{
 		DWORD rate_bound;
 		BYTE video_bound, audio_bound;
 		bool fixed_rate, csps;
 		bool sys_video_loc_flag, sys_audio_loc_flag;
 	};
 
-	struct peshdr {
+	struct peshdr
+	{
 		WORD len;
 
 		BYTE type:2, fpts:1, fdts:1;
@@ -77,9 +104,7 @@ enum mpeg_t {mpegunk, mpeg1, mpeg2};
 		BYTE escr:1, esrate:1, dsmtrickmode:1, morecopyright:1, crc:1, extension:1;
 		BYTE hdrlen;
 
-		struct peshdr() {
-			memset(this, 0, sizeof(*this));
-		}
+		struct peshdr() {memset(this, 0, sizeof(*this));}
 	};
 
 	class seqhdr
@@ -124,7 +149,7 @@ enum mpeg_t {mpegunk, mpeg1, mpeg2};
 		WORD copyright:1;
 		WORD original:1;
 		WORD emphasis:2;
-
+		
 		int nSamplesPerSec, FrameSize, nBytesPerSec;
 		REFERENCE_TIME rtDuration;
 	};
@@ -151,14 +176,8 @@ enum mpeg_t {mpegunk, mpeg1, mpeg2};
 
 		WORD crc;
 
-		int FrameSize, nBytesPerSec;
+		int FrameSize, nBytesPerSec, nSamplesPerSec;
 		REFERENCE_TIME rtDuration;
-	};
-
-	class latm_aachdr
-	{
-	public:
-		// nothing ;)
 	};
 
 	class ac3hdr
@@ -184,6 +203,26 @@ enum mpeg_t {mpegunk, mpeg1, mpeg2};
 		WORD sample_rate;
 		BYTE num_blocks;
 		// the rest is unimportant for us
+		int nBytesPerSec, nSamplesPerSec;
+		WORD nChannels;
+	};
+
+	class eac3hdr
+	{
+	public:
+		WORD sync;
+		BYTE strmtyp:2;
+		BYTE substreamid:3;
+		WORD frmsiz;
+		BYTE fscod:2;
+		BYTE fscod2:2;
+		BYTE acmod:3;
+		BYTE lfeon:1;
+		BYTE bsid:5;
+		BYTE bsmod:3;
+		// the rest is unimportant for us
+		int nBytesPerSec, nSamplesPerSec;
+		WORD nChannels;
 	};
 
 	class dtshdr
@@ -255,7 +294,7 @@ enum mpeg_t {mpegunk, mpeg1, mpeg2};
 	public:
 		// nothing ;)
 	};
-
+	
 	class svcdspuhdr
 	{
 	public:
@@ -287,7 +326,8 @@ enum mpeg_t {mpegunk, mpeg1, mpeg2};
 		// nothing ;)
 	};
 
-	struct trhdr {
+	struct trhdr
+	{
 		BYTE sync; // 0x47
 		BYTE error:1;
 		BYTE payloadstart:1;
@@ -302,19 +342,19 @@ enum mpeg_t {mpegunk, mpeg1, mpeg2};
 		BYTE discontinuity:1;
 		BYTE randomaccess:1;
 		BYTE priority:1;
-		BYTE fPCR:1;
+		BYTE PCR:1;
 		BYTE OPCR:1;
 		BYTE splicingpoint:1;
 		BYTE privatedata:1;
 		BYTE extension:1;
 		// TODO: add more fields here when the flags above are set (they aren't very interesting...)
-		__int64 PCR;
 
 		int bytes;
 		__int64 next;
 	};
 
-	struct trsechdr {
+	struct trsechdr
+	{
 		BYTE table_id;
 		WORD section_syntax_indicator:1;
 		WORD zero:1;
@@ -330,7 +370,8 @@ enum mpeg_t {mpegunk, mpeg1, mpeg2};
 
 	// http://www.technotrend.de/download/av_format_v1.pdf
 
-	struct pvahdr {
+	struct pvahdr
+	{
 		WORD sync; // 'VA'
 		BYTE streamid; // 1 - video, 2 - audio
 		BYTE counter;
@@ -346,26 +387,42 @@ enum mpeg_t {mpegunk, mpeg1, mpeg2};
 	struct avchdr
 	{
 		BYTE profile, level;
+		UINT64 chromaFormat;
+		WORD lumaDepth, chromaDepth;
 		unsigned int width, height;
-    bool progressive;
-		__int64 spspos, spslen;
-		__int64 ppspos, ppslen;
+		bool progressive;
+		BYTE * sps;
+		BYTE * pps;
+		__int64 spslen;
+		__int64 ppslen;
 		__int64 AvgTimePerFrame;
 		int arx, ary;
 		BYTE ar;
+		BYTE spsid;
+		BYTE ppsid;
 		avchdr()
 		{
-      progressive = true;
-			spspos = 0;
+			progressive = true;
+		  sps = NULL;
+		  pps = NULL;
 			spslen = 0;
-			ppspos = 0;
 			ppslen = 0;
-			AvgTimePerFrame = 0;
-      ar = 0;
-      arx = 0;
-      ary = 0;
+			AvgTimePerFrame = 370000;  //27 Hz
+			ar = 0;
+			arx = 0;
+			ary = 0;
+			width = 0;
+			height = 0;
+		}
+	  ~avchdr()
+		{
+		  if (sps != NULL) free(sps);
+		  if (pps != NULL) free(pps);
+		  sps = NULL;
+		  pps = NULL;
 		}
 	};
+
 
 	struct vc1hdr
 	{
@@ -380,6 +437,8 @@ enum mpeg_t {mpegunk, mpeg1, mpeg2};
 		BYTE		tfcntrflag;
 		BYTE		finterpflag;
 		BYTE		psf;
+		UINT		ArX;
+		UINT		ArY;
 		unsigned int width, height;
 		struct sar{
 			BYTE num;
@@ -415,6 +474,12 @@ struct BasicVideoInfo
 	int isInterlaced;
 	bool isValid;
 	int streamType;
+	BYTE * sps;
+	BYTE * pps;
+	BYTE * vps;
+	__int64 spslen;
+	__int64 ppslen;
+	__int64 vpslen;
 
 	BasicVideoInfo()
 	{
@@ -424,12 +489,43 @@ struct BasicVideoInfo
 		arx=0;
 		ary=0;
 		isInterlaced=0;
-		streamType;
+		streamType=0;
 		isValid=false;
+		spslen=0;
+    ppslen=0;
+    vpslen=0;
+	  sps = NULL;
+	  pps = NULL;
+	  vps = NULL;
+	}	
+};
+
+struct BasicAudioInfo
+{
+	int sampleRate;
+	int channels;
+	int streamType;
+	unsigned int streamIndex;
+	int bitrate;
+	int aacObjectType;
+	bool isValid;
+	bool pmtValid;
+
+	BasicAudioInfo()
+	{
+		sampleRate=0;
+		channels=0;
+		streamType = SERVICE_TYPE_AUDIO_UNKNOWN;
+		streamIndex=0;
+	  bitrate=0;
+		aacObjectType=0;
+		isValid=false;
+		pmtValid=false;
 	}
 };
 
-class CFrameHeaderParser:public CGolombBuffer
+
+class CFrameHeaderParser:public CGolombBuffer, public HEVC::HevcNalDecode
 {
 	int m_tslen; // transport stream packet length (188 or 192 bytes, auto-detected)
 
@@ -439,12 +535,12 @@ public:
 	bool Read(pshdr& h);
 	bool Read(pssyshdr& h);
 	bool Read(peshdr& h, BYTE code);
-	bool Read(seqhdr& h, int len, CMediaType* pmt = NULL);
+	bool Read(seqhdr& h, int len, CMediaType* pmt = NULL, bool reset = true);
 	bool Read(mpahdr& h, int len, bool fAllowV25, CMediaType* pmt = NULL);
 	bool Read(aachdr& h, int len, CMediaType* pmt = NULL);
-	bool Read(latm_aachdr& h, int len, CMediaType* pmt = NULL);
-	bool Read(ac3hdr& h, int len, CMediaType* pmt = NULL, bool find_sync = true);
-	bool Read(dtshdr& h, int len, CMediaType* pmt = NULL, bool find_sync = true);
+	bool Read(ac3hdr& h, int len, CMediaType* pmt = NULL);
+	bool Read(eac3hdr& h, int len, CMediaType* pmt = NULL);
+	bool Read(dtshdr& h, int len, CMediaType* pmt = NULL);
 	bool Read(lpcmhdr& h, CMediaType* pmt = NULL);
 	bool Read(hdmvlpcmhdr& h, CMediaType* pmt = NULL);
 	bool Read(dvdspuhdr& h, CMediaType* pmt = NULL);
@@ -456,16 +552,20 @@ public:
 	bool Read(trhdr& h, bool fSync = true);
 	bool Read(trsechdr& h);
 	bool Read(pvahdr& h, bool fSync = true);
-	bool Read(avchdr& h, int len, CMediaType* pmt = NULL);
+	bool Read(avchdr& h, int len, CMediaType* pmt = NULL, bool reset = true);
+	bool Read(HEVC::hevchdr& h, int len, CMediaType* pmt = NULL, bool reset = true);
 	bool Read(vc1hdr& h, int len, CMediaType* pmt = NULL);
-    bool Read(bdlpcmhdr& h, int len, CMediaType* pmt = NULL);
-    bool Read(thdhdr& h, int len, CMediaType* pmt = NULL);
+  bool Read(bdlpcmhdr& h, int len, CMediaType* pmt = NULL);
+  bool Read(thdhdr& h, int len, CMediaType* pmt = NULL);
 
 	void RemoveMpegEscapeCode(BYTE* dst, BYTE* src, int length);
 
 	void DumpSequenceHeader(seqhdr h);
 	void DumpAvcHeader(avchdr h);
+	void DumpHevcHeader(HEVC::hevchdr h);
 
 private:
   REFERENCE_TIME m_rtPTSOffset;
 };
+
+#endif

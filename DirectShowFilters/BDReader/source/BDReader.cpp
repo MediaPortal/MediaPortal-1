@@ -318,6 +318,7 @@ STDMETHODIMP CBDReaderFilter::SetVideoDecoder(int format, GUID* decoder)
 {
   if (format != BLURAY_STREAM_TYPE_VIDEO_H264 &&
       format != BLURAY_STREAM_TYPE_VIDEO_VC1 &&
+      format != BLURAY_STREAM_TYPE_VIDEO_HEVC &&
       format != BLURAY_STREAM_TYPE_VIDEO_MPEG2)
       return E_INVALIDARG;
 
@@ -559,6 +560,17 @@ DWORD WINAPI CBDReaderFilter::CommandThread()
             break;
           }
 
+        case FAKESEEK:
+        {
+          // TODO madVR hack to fix rendering start
+          LogDebug("CBDReaderFilter::Command thread: fakeseek requested - pos: %06.3f", cmd.refTime.Millisecs() / 1000.0);
+          HRESULT hr = m_pMediaSeeking->SetPositions((LONGLONG*)&cmd.refTime.m_time, AM_SEEKING_AbsolutePositioning | AM_SEEKING_FakeSeek, &posEnd, AM_SEEKING_NoPositioning);
+          //m_pMediaSeeking->SetRate(2);
+          //m_pMediaSeeking->SetRate(1);
+
+          break;
+        }
+
         case PAUSE:
           if (!m_pLibPaused && m_pMediaControl)
           {
@@ -597,7 +609,7 @@ STDMETHODIMP CBDReaderFilter::Run(REFERENCE_TIME tStart)
   
   CAutoLock cObjectLock(m_pLock);
   lib.SetState(State_Running);
-  
+
   HRESULT hr = CSource::Run(tStart);
 
   lib.SetRate((UINT32((double)BLURAY_RATE_NORMAL * m_dRate)));
@@ -609,6 +621,21 @@ STDMETHODIMP CBDReaderFilter::Run(REFERENCE_TIME tStart)
 
   return hr;
 }
+
+//void CBDReaderFilter::FakeSeek(REFERENCE_TIME tStart)
+//{
+//  // Needed for madVR to start rendering on madVR side
+//  if (m_pMediaSeeking)
+//  {
+//    LogDebug("CBDReaderFilter::FakeSeek(%05.2f) state %d", tStart / 10000000.0, m_State);
+//    LONGLONG posEnd = 0;
+//    HRESULT hr = m_pMediaSeeking->GetDuration(&posEnd);
+//    hr = m_pMediaSeeking->SetPositions(static_cast<LONGLONG*>(&tStart), AM_SEEKING_AbsolutePositioning | AM_SEEKING_FakeSeek, &posEnd, AM_SEEKING_NoPositioning);
+//    m_demultiplexer.FlushVideo();
+//    Seek(1);
+//    OnPlaybackPositionChange();
+//  }
+//}
 
 STDMETHODIMP CBDReaderFilter::Stop()
 {
@@ -864,14 +891,20 @@ STDMETHODIMP CBDReaderFilter::Count(DWORD* streamCount)
 STDMETHODIMP CBDReaderFilter::Enable(long index, DWORD flags)
 {
   int subtitleOffset = m_demultiplexer.GetAudioStreamCount();
+  char szName[40];
+
+  bool enable = flags & AMSTREAMSELECTENABLE_ENABLE;
 
   if (index < subtitleOffset)
+  {
+    m_demultiplexer.GetAudioStreamInfo((int)index, szName);
+    lib.SetAudioStream((int)index, enable, szName) ? S_OK : S_FALSE;
     return m_demultiplexer.SetAudioStream((int)index) ? S_OK : S_FALSE;
+  }
   else
   {
-    bool enable = flags & AMSTREAMSELECTENABLE_ENABLE;
-    
-    return lib.SetSubtitleStream((int)index - subtitleOffset, enable) ? S_OK : S_FALSE;
+    m_demultiplexer.GetSubtitleStreamLanguage((int)index - subtitleOffset, szName);
+    return lib.SetSubtitleStream((int)index - subtitleOffset, enable, szName) ? S_OK : S_FALSE;
   }
 }
 
