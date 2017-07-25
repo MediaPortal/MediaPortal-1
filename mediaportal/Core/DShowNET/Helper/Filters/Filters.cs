@@ -61,6 +61,21 @@ namespace DShowNET.Helper
     public static FilterCollection BDAReceivers;
     public static FilterCollection AllFilters;
 
+    public static void FilterCollectionReload()
+    {
+      VideoInputDevices = new FilterCollection(FilterCategory.VideoInputDevice, true);
+      AudioInputDevices = new FilterCollection(FilterCategory.AudioInputDevice, true);
+      VideoCompressors = new FilterCollection(FilterCategory.VideoCompressorCategory, true);
+      AudioCompressors = new FilterCollection(FilterCategory.AudioCompressorCategory, true);
+      LegacyFilters = new FilterCollection(FilterCategory.LegacyAmFilterCategory, true);
+      AudioRenderers = new FilterCollection(FilterCategory.AudioRendererDevice, true);
+      WDMEncoders = new FilterCollection(FilterCategory.AM_KSEncoder, true);
+      WDMcrossbars = new FilterCollection(FilterCategory.AM_KSCrossBar, true);
+      WDMTVTuners = new FilterCollection(FilterCategory.AM_KSTvTuner, true);
+      BDAReceivers = new FilterCollection(FilterCategory.AM_KS_BDA_RECEIVER_COMPONENT, true);
+      AllFilters = new FilterCollection(FilterCategory.ActiveMovieCategory, true);
+    }
+
     static Filters()
     {
       VideoInputDevices = new FilterCollection(FilterCategory.VideoInputDevice, true);

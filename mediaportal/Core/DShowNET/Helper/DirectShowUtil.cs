@@ -57,37 +57,63 @@ namespace DShowNET.Helper
         IBaseFilter NewFilter = null;
         foreach (Filter filter in Filters.LegacyFilters)
         {
-          if (String.Compare(filter.Name, strFilterName, true) == 0 && (clsid == Guid.Empty || filter.CLSID == clsid))
+          if (String.Compare(filter.Name, strFilterName, StringComparison.OrdinalIgnoreCase) == 0 && (clsid == Guid.Empty || filter.CLSID == clsid))
           {
             NewFilter = (IBaseFilter)Marshal.BindToMoniker(filter.MonikerString);
 
             int hr = graphBuilder.AddFilter(NewFilter, strFilterName);
             if (hr < 0)
             {
-              Log.Error("Failed: Unable to add filter: {0} to graph", strFilterName);
+              Log.Error("DirectShowUtil: Failed: Unable to add filter: {0} to graph", strFilterName);
               NewFilter = null;
             }
             else
             {
-              Log.Info("Added filter: {0} to graph", strFilterName);
+              Log.Info("DirectShowUtil: Added filter: {0} to graph", strFilterName);
             }
             break;
           }
         }
         if (NewFilter == null)
         {
-          Log.Error("Failed filter: {0} not found", strFilterName);
+          Log.Error("DirectShowUtil: Failed filter: {0} not found", strFilterName);
         }
         return NewFilter;
       }
       catch (Exception ex)
       {
-        Log.Error("Failed filter: {0} not found {0}", strFilterName, ex.Message);
+        Log.Error("DirectShowUtil: Failed filter: {0} not found {0}", strFilterName, ex.Message);
         return null;
       }
     }
 
-    public static IBaseFilter AddAudioRendererToGraph(IGraphBuilder graphBuilder, string strFilterName,
+    public static IBaseFilter AddAudioRendererToGraph(IGraphBuilder graphBuilder, string strFilterName, bool setAsReferenceClock)
+    {
+      try
+      {
+        IBaseFilter newFilter = AddAudioRenderer(graphBuilder, strFilterName, setAsReferenceClock);
+
+        if (newFilter == null)
+        {
+          Log.Error("DirectShowUtil: AddAudioRendererToGraph failed filter: {0} not found", strFilterName);
+          Log.Error("DirectShowUtil: AddAudioRendererToGraph wait 5 secs before trying to adding back audio renderer device");
+          Thread.Sleep(5000);
+          FilterHelper.ReloadFilterCollection();
+          return AddAudioRenderer(graphBuilder, strFilterName, setAsReferenceClock);
+        }
+        return newFilter;
+      }
+      catch (Exception ex)
+      {
+        Log.Error("DirectShowUtil: AddAudioRendererToGraph failed filter: {0} not found Exception : {1}", strFilterName, ex.Message);
+        Log.Error("DirectShowUtil: AddAudioRendererToGraph Wait 5 secs before trying to adding back audio renderer device Exception : {0}", ex.Message);
+        Thread.Sleep(5000);
+        FilterHelper.ReloadFilterCollection();
+        return AddAudioRenderer(graphBuilder, strFilterName, setAsReferenceClock);
+      }
+    }
+
+    private static IBaseFilter AddAudioRenderer(IGraphBuilder graphBuilder, string strFilterName,
                                                       bool setAsReferenceClock)
     {
       try
@@ -96,26 +122,27 @@ namespace DShowNET.Helper
         IBaseFilter NewFilter = null;
         IEnumFilters enumFilters;
         HResult hr = new HResult(graphBuilder.EnumFilters(out enumFilters));
-        Log.Info("DirectShowUtils: First try to insert new audio renderer {0} ", strFilterName);
+        Log.Info("DirectShowUtil: First try to insert new audio renderer {0} ", strFilterName);
 
         GUIGraphicsContext.CurrentAudioRenderer = strFilterName;
 
         // next add the new one...
         foreach (Filter filter in Filters.AudioRenderers)
         {
-          if (String.Compare(filter.Name, strFilterName, true) == 0)
+          Log.Debug("DirectShowUtil: List AddAudioRenderer filter: {0} to graph for {1}", filter.Name, strFilterName);
+          if (String.Compare(filter.Name, strFilterName, StringComparison.OrdinalIgnoreCase) == 0)
           {
-            Log.Info("DirectShowUtils: Found audio renderer");
+            Log.Info("DirectShowUtil: Found audio renderer");
             NewFilter = (IBaseFilter)Marshal.BindToMoniker(filter.MonikerString);
             hr.Set(graphBuilder.AddFilter(NewFilter, strFilterName));
             if (hr < 0)
             {
-              Log.Error("DirectShowUtils: unable to add filter:{0} to graph", strFilterName);
+              Log.Error("DirectShowUtil: unable to add filter:{0} to graph", strFilterName);
               NewFilter = null;
             }
             else
             {
-              Log.Debug("DirectShowUtils: added filter:{0} to graph", strFilterName);
+              Log.Debug("DirectShowUtil: added filter:{0} to graph", strFilterName);
               if (pinOut != null)
               {
                 hr.Set(graphBuilder.Render(pinOut));
@@ -133,7 +160,7 @@ namespace DShowNET.Helper
                 hr.Set((graphBuilder as IMediaFilter).SetSyncSource(NewFilter as IReferenceClock));
                 if (hr != 0)
                 {
-                  Log.Warn("setAsReferenceClock sync source " + hr.ToDXString());
+                  Log.Warn("DirectShowUtil: setAsReferenceClock sync source " + hr.ToDXString());
                 }
               }
               return NewFilter;
@@ -142,31 +169,32 @@ namespace DShowNET.Helper
         } //foreach (Filter filter in filters.AudioRenderers)
         if (NewFilter == null)
         {
-          Log.Error("DirectShowUtils: failed filter {0} not found", strFilterName);
+          Log.Error("DirectShowUtil: failed filter {0} not found", strFilterName);
         }
       }
       catch {}
-      Log.Info("DirectShowUtils: First try to insert new audio renderer {0} failed ", strFilterName);
+      Log.Info("DirectShowUtil: inserting new audio renderer {0} failed - try a new method", strFilterName);
 
       try
       {
         IPin pinOut = null;
         IBaseFilter NewFilter = null;
-        Log.Info("add filter:{0} to graph clock:{1}", strFilterName, setAsReferenceClock);
+        Log.Info("DirectShowUtil: add filter:{0} to graph clock:{1}", strFilterName, setAsReferenceClock);
 
         //check first if audio renderer exists!
         bool bRendererExists = false;
         foreach (Filter filter in Filters.AudioRenderers)
         {
-          if (String.Compare(filter.Name, strFilterName, true) == 0)
+          Log.Debug("DirectShowUtil: List 'check if already exist' AddAudioRendererToGraph filter: {0} to graph for {1}", filter.Name, strFilterName);
+          if (String.Compare(filter.Name, strFilterName, StringComparison.OrdinalIgnoreCase) == 0)
           {
             bRendererExists = true;
-            Log.Info("DirectShowUtils: found renderer - {0}", filter.Name);
+            Log.Info("DirectShowUtil: found audio renderer - {0}", filter.Name);
           }
         }
         if (!bRendererExists)
         {
-          Log.Error("FAILED: audio renderer:{0} doesnt exists", strFilterName);
+          Log.Error("DirectShowUtil: FAILED: audio renderer:{0} doesnt exists", strFilterName);
           return null;
         }
 
@@ -199,7 +227,7 @@ namespace DShowNET.Helper
               if (filter.Name == "ReClock Audio Renderer")
               {
                 Log.Warn(
-                  "Reclock is installed - if this method fails, reinstall and regsvr32 /u reclock and then uninstall");
+                  "DirectShowUtil: Reclock is installed - if this method fails, reinstall and regsvr32 /u reclock and then uninstall");
                 //   return null;
               }
 
@@ -208,13 +236,13 @@ namespace DShowNET.Helper
                 NewFilter = (IBaseFilter)Marshal.BindToMoniker(filter.MonikerString);
                 if (NewFilter == null)
                 {
-                  Log.Info("NewFilter = null");
+                  Log.Info("DirectShowUtil: NewFilter = null");
                   continue;
                 }
               }
               catch (Exception e)
               {
-                Log.Info("Exception in BindToMoniker({0}): {1}", filter.MonikerString, e.Message);
+                Log.Info("DirectShowUtil: Exception in BindToMoniker({0}): {1}", filter.MonikerString, e.Message);
                 continue;
               }
               NewFilter.GetClassID(out classId2);
@@ -225,14 +253,14 @@ namespace DShowNET.Helper
               {
                 if (filter.Name == strFilterName)
                 {
-                  Log.Info("filter already in graph");
+                  Log.Info("DirectShowUtil: filter already in graph");
 
                   if (setAsReferenceClock)
                   {
                     hr.Set((graphBuilder as IMediaFilter).SetSyncSource(pBasefilter[0] as IReferenceClock));
                     if (hr != 0)
                     {
-                      Log.Warn("setAsReferenceClock sync source " + hr.ToDXString());
+                      Log.Warn("DirectShowUtil: setAsReferenceClock sync source " + hr.ToDXString());
                     }
                   }
                   ReleaseComObject(pBasefilter[0]);
@@ -242,7 +270,7 @@ namespace DShowNET.Helper
                 }
                 else
                 {
-                  Log.Info("remove " + filter.Name + " from graph");
+                  Log.Info("DirectShowUtil: remove " + filter.Name + " from graph");
                   pinOut = FindSourcePinOf(pBasefilter[0]);
                   RemoveFilter(graphBuilder, pBasefilter[0]);
                   bAllRemoved = true;
@@ -257,7 +285,7 @@ namespace DShowNET.Helper
           } //while(!bAllRemoved)
           ReleaseComObject(enumFilters);
         } //if (hr>=0 && enumFilters!=null)
-        Log.Info("DirectShowUtils: Passed removing audio renderer");
+        Log.Info("DirectShowUtil: Passed removing audio renderer");
         if (!bNeedAdd)
         {
           return null;
@@ -265,29 +293,29 @@ namespace DShowNET.Helper
         // next add the new one...
         foreach (Filter filter in Filters.AudioRenderers)
         {
-          if (String.Compare(filter.Name, strFilterName, true) == 0)
+          if (String.Compare(filter.Name, strFilterName, StringComparison.OrdinalIgnoreCase) == 0)
           {
-            Log.Info("DirectShowUtils: Passed finding Audio Renderer");
+            Log.Info("DirectShowUtil: Passed finding Audio Renderer");
             NewFilter = (IBaseFilter)Marshal.BindToMoniker(filter.MonikerString);
             hr.Set(graphBuilder.AddFilter(NewFilter, strFilterName));
             if (hr < 0)
             {
-              Log.Error("failed:unable to add filter:{0} to graph", strFilterName);
+              Log.Error("DirectShowUtil: failed:unable to add filter:{0} to graph", strFilterName);
               NewFilter = null;
             }
             else
             {
-              Log.Debug("added filter:{0} to graph", strFilterName);
+              Log.Debug("DirectShowUtil: added filter:{0} to graph", strFilterName);
               if (pinOut != null)
               {
                 hr.Set(graphBuilder.Render(pinOut));
                 if (hr == 0)
                 {
-                  Log.Info(" pinout rendererd");
+                  Log.Info("DirectShowUtil:  pinout rendererd");
                 }
                 else
                 {
-                  Log.Error(" failed: pinout render");
+                  Log.Error("DirectShowUtil:  failed: pinout render");
                 }
               }
               if (setAsReferenceClock)
@@ -295,7 +323,7 @@ namespace DShowNET.Helper
                 hr.Set((graphBuilder as IMediaFilter).SetSyncSource(NewFilter as IReferenceClock));
                 if (hr != 0)
                 {
-                  Log.Warn("setAsReferenceClock sync source " + hr.ToDXString());
+                  Log.Warn("DirectShowUtil: setAsReferenceClock sync source " + hr.ToDXString());
                 }
               }
               return NewFilter;
@@ -304,12 +332,12 @@ namespace DShowNET.Helper
         } //foreach (Filter filter in filters.AudioRenderers)
         if (NewFilter == null)
         {
-          Log.Error("failed filter:{0} not found", strFilterName);
+          Log.Error("DirectShowUtil: failed filter:{0} not found", strFilterName);
         }
       }
       catch (Exception ex)
       {
-        Log.Error("DirectshowUtil. Failed to add filter:{0} to graph :{1} {2} {3}",
+        Log.Error("DirectshowUtil: Failed to add filter:{0} to graph :{1} {2} {3}",
                   strFilterName, ex.Message, ex.Source, ex.StackTrace);
       }
       return null;

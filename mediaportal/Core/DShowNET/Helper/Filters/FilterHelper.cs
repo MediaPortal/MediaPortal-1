@@ -144,6 +144,11 @@ namespace DShowNET.Helper
       return renderers;
     }
 
+    public static void ReloadFilterCollection()
+    {
+      Filters.FilterCollectionReload();
+    }
+
     public static ArrayList GetDVDNavigators()
     {
       ArrayList navigators = new ArrayList();
