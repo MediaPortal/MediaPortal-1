@@ -19,6 +19,8 @@
 #endregion
 
 using DirectShowLib;
+using DShowNET.Helper;
+using FilterCategory = DirectShowLib.FilterCategory;
 
 #region usings
 
@@ -2230,6 +2232,7 @@ public class MediaPortalApp : D3D, IRender
                     Thread.Sleep(100);
                   }
                 }
+                FilterHelper.ReloadFilterCollection();
               }
               catch (Exception exception)
               {
@@ -2257,6 +2260,7 @@ public class MediaPortalApp : D3D, IRender
                   BassMusicPlayer.FreeBass();
                   BassMusicPlayer.CreatePlayerAsync();
                 }
+                FilterHelper.ReloadFilterCollection();
               }
               catch (Exception exception)
               {
