@@ -622,21 +622,6 @@ STDMETHODIMP CBDReaderFilter::Run(REFERENCE_TIME tStart)
   return hr;
 }
 
-//void CBDReaderFilter::FakeSeek(REFERENCE_TIME tStart)
-//{
-//  // Needed for madVR to start rendering on madVR side
-//  if (m_pMediaSeeking)
-//  {
-//    LogDebug("CBDReaderFilter::FakeSeek(%05.2f) state %d", tStart / 10000000.0, m_State);
-//    LONGLONG posEnd = 0;
-//    HRESULT hr = m_pMediaSeeking->GetDuration(&posEnd);
-//    hr = m_pMediaSeeking->SetPositions(static_cast<LONGLONG*>(&tStart), AM_SEEKING_AbsolutePositioning | AM_SEEKING_FakeSeek, &posEnd, AM_SEEKING_NoPositioning);
-//    m_demultiplexer.FlushVideo();
-//    Seek(1);
-//    OnPlaybackPositionChange();
-//  }
-//}
-
 STDMETHODIMP CBDReaderFilter::Stop()
 {
   CAutoLock cObjectLock(m_pLock);
@@ -900,20 +885,14 @@ STDMETHODIMP CBDReaderFilter::Count(DWORD* streamCount)
 STDMETHODIMP CBDReaderFilter::Enable(long index, DWORD flags)
 {
   int subtitleOffset = m_demultiplexer.GetAudioStreamCount();
-  char szName[40];
-
-  bool enable = flags & AMSTREAMSELECTENABLE_ENABLE;
 
   if (index < subtitleOffset)
-  {
-    m_demultiplexer.GetAudioStreamInfo((int)index, szName);
-    lib.SetAudioStream((int)index, enable, szName) ? S_OK : S_FALSE;
     return m_demultiplexer.SetAudioStream((int)index) ? S_OK : S_FALSE;
-  }
   else
   {
-    m_demultiplexer.GetSubtitleStreamLanguage((int)index - subtitleOffset, szName);
-    return lib.SetSubtitleStream((int)index - subtitleOffset, enable, szName) ? S_OK : S_FALSE;
+    bool enable = flags & AMSTREAMSELECTENABLE_ENABLE;
+
+    return lib.SetSubtitleStream((int)index - subtitleOffset, enable) ? S_OK : S_FALSE;
   }
 }
 
