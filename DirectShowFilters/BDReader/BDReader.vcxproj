@@ -191,6 +191,7 @@ xcopy $(TargetDir)bdreader.pdb $(SolutionDir)..\mediaportal\MediaPortal.Applicat
   <ItemGroup>
     <ClCompile Include="source\AudioPin.cpp" />
     <ClCompile Include="source\BDReader.cpp" />
+    <ClCompile Include="source\Buffer.cpp" />
     <ClCompile Include="source\Clip.cpp" />
     <ClCompile Include="source\DeMultiplexer.cpp" />
     <ClCompile Include="source\FrameHeaderParser.cpp" />
@@ -200,6 +201,7 @@ xcopy $(TargetDir)bdreader.pdb $(SolutionDir)..\mediaportal\MediaPortal.Applicat
     <ClCompile Include="source\HEVC\Hevc.cpp" />
     <ClCompile Include="source\HEVC\HevcNalDecode.cpp" />
     <ClCompile Include="source\LibBlurayWrapper.cpp" />
+    <ClCompile Include="source\MpegPesParser.cpp" />
     <ClCompile Include="source\OverlayRenderer.cpp" />
     <ClCompile Include="source\Packet.cpp" />
     <ClCompile Include="source\PcrDecoder.cpp" />
@@ -218,6 +220,7 @@ xcopy $(TargetDir)bdreader.pdb $(SolutionDir)..\mediaportal\MediaPortal.Applicat
     <ClInclude Include="source\AudioPin.h" />
     <ClInclude Include="source\BDEventObserver.h" />
     <ClInclude Include="source\BDReader.h" />
+    <ClInclude Include="source\Buffer.h" />
     <ClInclude Include="source\Clip.h" />
     <ClInclude Include="source\DeMultiplexer.h" />
     <ClInclude Include="source\FrameHeaderParser.h" />
@@ -230,6 +233,7 @@ xcopy $(TargetDir)bdreader.pdb $(SolutionDir)..\mediaportal\MediaPortal.Applicat
     <ClInclude Include="source\ISubtitleStream.h" />
     <ClInclude Include="source\LibBlurayWrapper.h" />
     <ClInclude Include="source\mediaformats.h" />
+    <ClInclude Include="source\MpegPesParser.h" />
     <ClInclude Include="source\OSDTexture.h" />
     <ClInclude Include="source\OverlayRenderer.h" />
     <ClInclude Include="source\Packet.h" />

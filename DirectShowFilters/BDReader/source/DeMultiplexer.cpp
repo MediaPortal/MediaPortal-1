@@ -33,12 +33,22 @@
 #include "videoPin.h"
 #include "mediaFormats.h"
 #include "h264nalu.h"
+#include "Buffer.h"
+
 
 // For more details for memory leak detection see the alloctracing.h header
 #include "..\..\alloctracing.h"
 
 #define NO_STREAM -1
 #define PACKET_GRANULARITY 80000
+#define MOVE_TO_HEVC_START_CODE(b, e, fb) fb=false; while(b <= e-4 && !((*(DWORD *)b == 0x01000000) || ((*(DWORD *)b & 0x00FFFFFF) == 0x00010000))) b++; if((b <= e-4) && *(DWORD *)b == 0x01000000) {b++; fb=true;}
+
+#define LOG_SAMPLES //LogDebug
+#define LOG_OUTSAMPLES //LogDebug
+#define LOG_SAMPLES_HEVC //LogDebug
+#define LOG_OUTSAMPLES_HEVC //LogDebug
+#define LOG_VID_BITRATE //LogDebug
+#define MAX_VID_BUF_SIZE 800
 
 extern void LogDebug(const char *fmt, ...);
 
@@ -850,6 +860,11 @@ void CDeMultiplexer::FillVideo(CTsHeader& header, byte* tsPacket)
   {
     FillVideoMPEG2(&header, tsPacket);
   }
+  else if (m_videoServiceType == BLURAY_STREAM_TYPE_VIDEO_HEVC)
+  {
+    //LogDebug("HEVC ts packet found, VideoServiceType = %x", m_pids.videoPids[0].VideoServiceType);
+    FillVideoHEVC(&header, tsPacket);
+  }
   else
   {
     FillVideoH264(&header, tsPacket);
@@ -1518,9 +1533,9 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader* header, byte* tsPacket, bool pFlu
   }
 }
 
-/*void CDeMultiplexer::FillVideoHEVC(CTsHeader& header, byte* tsPacket)
+void CDeMultiplexer::FillVideoHEVC(CTsHeader* header, byte* tsPacket)
 {
-  int headerlen = header.PayLoadStart;
+  int headerlen = header->PayLoadStart;
 
   if (!m_p)
   {
@@ -1540,10 +1555,10 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader* header, byte* tsPacket, bool pFlu
     m_VideoValidPES = false;
     m_WaitHeaderPES = -1;
     m_curFramePeriod = 0.0;
-    LOG_SAMPLES_HEVC("DeMultiplexer::FillVideoHEVC New m_p");
+    //LOG_SAMPLES_HEVC("DeMultiplexer::FillVideoHEVC New m_p");
   }
 
-  if (header.PayloadUnitStart)
+  if (header->PayloadUnitStart)
   {
     m_WaitHeaderPES = m_p->GetCount();
     m_mVideoValidPES = m_VideoValidPES;
@@ -1615,7 +1630,7 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader* header, byte* tsPacket, bool pFlu
       m_WaitHeaderPES = -1;
       m_bSetVideoDiscontinuity = true;
       //Flushing is delegated to CDeMultiplexer::ThreadProc()
-      DelegatedFlush(false, false);
+      //DelegatedFlush(false, false);
       return;
     }
     else
@@ -1670,7 +1685,7 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader* header, byte* tsPacket, bool pFlu
             m_lastVideoPTS.IsValid = false;
             m_lastVideoDTS.IsValid = false;
             //Flushing is delegated to CDeMultiplexer::ThreadProc()
-            DelegatedFlush(false, false);
+            //DelegatedFlush(false, false);
           }
           else
           {
@@ -1855,8 +1870,9 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader* header, byte* tsPacket, bool pFlu
             if ((nalIDp4 == HEVC_NAL_VPS) || (nalIDp4 == HEVC_NAL_SPS) || (nalIDp4 == HEVC_NAL_PPS)) //Process VPS, SPS & PPS data
             {
               //LogDebug("HEVC: VPS/SPS/PPS NAL, type = %d", nalIDp4);
-              Gop = m_mpegPesParser->OnTsPacket(p4->GetData(), p4->GetCount(), VIDEO_STREAM_TYPE_HEVC, m_mpegParserReset);
-              m_mpegParserReset = false;
+              //Gop = m_mpegPesParser->OnTsPacket(p4->GetData(), p4->GetCount(), VIDEO_STREAM_TYPE_HEVC, m_mpegParserReset);
+              //m_mpegParserReset = false;
+              OnTsPacket(&m_readBuffer[4]);
             }
 
             //Check for random-access entry points in the stream
@@ -1935,7 +1951,7 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader* header, byte* tsPacket, bool pFlu
             if (elapsedTime > 5.0f)
             {
               m_bitRate = ((float)m_byteRead*8.0f) / elapsedTime;
-              m_filter.OnBitRateChanged((int)m_bitRate);
+              //m_filter.OnBitRateChanged((int)m_bitRate);
               m_sampleTimePrev = m_sampleTime;
               m_byteRead = 0;
               LOG_VID_BITRATE("HEVC: Rolling bitrate = %f", m_bitRate / 1000000.0f);
@@ -1950,7 +1966,7 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader* header, byte* tsPacket, bool pFlu
             CBuffer *pCurrentVideoBuffer = new CBuffer(p->GetCount());
             pCurrentVideoBuffer->Add(p->GetData(), p->GetCount());
             pCurrentVideoBuffer->SetPts(timestamp);
-            pCurrentVideoBuffer->SetPcr(m_duration.FirstStartPcr(), m_duration.MaxPcr());
+            //pCurrentVideoBuffer->SetPcr(m_duration.FirstStartPcr(), m_duration.MaxPcr());
             pCurrentVideoBuffer->MediaTime(Ref);
             LOG_OUTSAMPLES_HEVC("...> HEVC: Store NALU type (length) = %d (%d), p->rtStart = %d, timestamp %f, IRAP = %d", (*(p->GetData() + 4) & 0x1F), p->GetCount(), (int)p->rtStart, timestamp.ToClock(), foundIRAP);
             // Must use p->rtStart as CPcr is UINT64 and INVALID_TIME is LONGLONG
@@ -1991,35 +2007,35 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader* header, byte* tsPacket, bool pFlu
             }
 
             REFERENCE_TIME MediaTime;
-            m_filter.GetMediaPosition(&MediaTime);
-            if (m_filter.m_bStreamCompensated && m_bVideoAtEof && !m_filter.m_bRenderingClockTooFast)
-            {
-              float Delta = (float)((double)Ref.Millisecs() / 1000.0) - (float)((double)(m_filter.Compensation.m_time + MediaTime) / 10000000.0);
-              if (Delta < m_MinVideoDelta)
-              {
-                m_MinVideoDelta = Delta;
-                if (Delta < -2.0)
-                {
-                  //Large negative delta - flush the world...
-                  LogDebug("Demux : Video to render too late= %03.3f Sec, FileReadLatency: %d ms, flushing", Delta, m_fileReadLatency);
-                  m_MinAudioDelta += 1.0;
-                  m_MinVideoDelta += 1.0;
-                  //Flushing is delegated to CDeMultiplexer::ThreadProc()
-                  DelegatedFlush(false, false);
-                }
-                else if (Delta < 0.2)
-                {
-                  LogDebug("Demux : Video to render too late= %03.3f Sec, FileReadLatency: %d ms", Delta, m_fileReadLatency);
-                  _InterlockedIncrement(&m_AVDataLowCount);
-                  m_MinAudioDelta += 1.0;
-                  m_MinVideoDelta += 1.0;
-                }
-                else
-                {
-                  LogDebug("Demux : Video to render %03.3f Sec", Delta);
-                }
-              }
-            }
+            //m_filter.GetMediaPosition(&MediaTime);
+            //if (m_filter.m_bStreamCompensated && m_bVideoAtEof && !m_filter.m_bRenderingClockTooFast)
+            //{
+            //  float Delta = (float)((double)Ref.Millisecs() / 1000.0) - (float)((double)(m_filter.Compensation.m_time + MediaTime) / 10000000.0);
+            //  if (Delta < m_MinVideoDelta)
+            //  {
+            //    m_MinVideoDelta = Delta;
+            //    if (Delta < -2.0)
+            //    {
+            //      //Large negative delta - flush the world...
+            //      LogDebug("Demux : Video to render too late= %03.3f Sec, FileReadLatency: %d ms, flushing", Delta, m_fileReadLatency);
+            //      m_MinAudioDelta += 1.0;
+            //      m_MinVideoDelta += 1.0;
+            //      //Flushing is delegated to CDeMultiplexer::ThreadProc()
+            //      //DelegatedFlush(false, false);
+            //    }
+            //    else if (Delta < 0.2)
+            //    {
+            //      LogDebug("Demux : Video to render too late= %03.3f Sec, FileReadLatency: %d ms", Delta, m_fileReadLatency);
+            //      _InterlockedIncrement(&m_AVDataLowCount);
+            //      m_MinAudioDelta += 1.0;
+            //      m_MinVideoDelta += 1.0;
+            //    }
+            //    else
+            //    {
+            //      LogDebug("Demux : Video to render %03.3f Sec", Delta);
+            //    }
+            //  }
+            //}
             m_bVideoAtEof = false;
 
             { //Scoped for CAutoLock
@@ -2053,10 +2069,10 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader* header, byte* tsPacket, bool pFlu
             }
           }
 
-          if (Gop)
-          {
-            CheckMediaChange(header.Pid, true);
-          }
+          //if (Gop)
+          //{
+          //  CheckMediaChange(header->Pid, true);
+          //}
         }
         else
         {
@@ -2085,7 +2101,7 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader* header, byte* tsPacket, bool pFlu
     }
   }
   return;
-}*/
+}
 
 void CDeMultiplexer::ParseVideoStream(BLURAY_CLIP_INFO* clip)
 {
@@ -2336,4 +2352,32 @@ LPCTSTR CDeMultiplexer::StreamAudioFormatAsString(int pStreamAudioChannel)
     return _T("Unknown");
   }
 }
+
+//void CDeMultiplexer::DelegatedFlush(bool forceNow, bool waitForFlush)
+//{
+//  if (m_bFlushDelgNow || m_bFlushRunning) //Flush already pending or in progress
+//  {
+//    return;
+//  }
+//
+//  if (forceNow)
+//  {
+//    m_bFlushDelgNow = true;
+//  }
+//  else
+//  {
+//    m_bFlushDelegated = true;
+//  }
+//
+//  WakeThread();
+//
+//  if (waitForFlush && forceNow)
+//  {
+//    for (int i(0); ((i < 500) && (m_bFlushDelgNow || m_bFlushRunning)); i++)
+//    {
+//      Sleep(1);
+//    }
+//  }
+//}
+
 

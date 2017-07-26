@@ -52,6 +52,7 @@ public:
   static const REFERENCE_TIME INVALID_TIME = _I64_MIN;
 
   REFERENCE_TIME rtStart;
+  REFERENCE_TIME rtPrevStart;
   REFERENCE_TIME rtStop;
   REFERENCE_TIME rtOffset;
   REFERENCE_TIME rtPlaylistTime;

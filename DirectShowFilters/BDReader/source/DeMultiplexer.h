@@ -35,6 +35,8 @@
 #include "BDEventObserver.h"
 #include "Packet.h"
 #include "PlaylistManager.h"
+#include "MpegPesParser.h"
+#include "Buffer.h"
 
 using namespace std;
 class CBDReaderFilter;
@@ -63,6 +65,7 @@ public:
   void       FillVideoH264PESPacket(CTsHeader* header, CAutoPtr<Packet> p, bool pFlushBuffers = false);
   void       FillVideoVC1PESPacket(CTsHeader* header, CAutoPtr<Packet> p, bool pFlushBuffers = false);
   void       FillVideoH264(CTsHeader* header, byte* tsPacket);
+  void       FillVideoHEVC(CTsHeader* header, byte* tsPacket);
   void       FillVideoMPEG2(CTsHeader* header, byte* tsPacket, bool pFlushBuffers = false);
 
   bool       ParseVideoFormat(Packet* p);
@@ -123,7 +126,27 @@ public:
 
   CCritSec m_sectionRead;
 
-    REFERENCE_TIME m_rtOffset;
+  REFERENCE_TIME m_rtOffset;
+  double m_dVidPTSJumpLimit;
+  unsigned long m_byteRead;
+
+  bool m_DisableDiscontinuitiesFiltering;
+  DWORD m_LastDataFromRtsp;
+  bool m_bFlushDelegated;
+  bool m_bFlushDelgNow;
+  bool m_bFlushRunning;
+  bool m_bReadAheadFromFile;
+  float m_sampleTime;
+  float m_sampleTimePrev;
+  float m_bitRate;
+  bool m_bAudioSampleLate;
+  long m_AVDataLowCount;
+  long m_AudioDataLowPauseTime;
+  DWORD m_targetAVready;
+  bool  m_bSubtitleCompensationSet;
+  bool m_bShuttingDown;
+  double m_dfAudSampleDuration;
+  DWORD  m_lastFlushTime;
 
 private:
   void PacketDelivery(CAutoPtr<Packet> p);
@@ -208,7 +231,6 @@ private:
   int m_LastValidFrameCount;
   CPcr m_LastValidFramePts;
 
-  bool m_bShuttingDown;
   bool m_bFlushBuffersOnPause;
 
   byte m_readBuffer[READ_SIZE];
@@ -229,4 +251,145 @@ private:
   unsigned int m_iReadErrors;
   // Used for playlist/clip tracking
   CPlaylistManager* m_playlistManager;
+  //vector<struct stAudioStream> m_audioStreams;
+  //vector<struct stSubtitleStream> m_subtitleStreams;
+  int ReadFromFile(ULONG lDataLength);
+  //bool m_bEndOfFile;
+  HRESULT RenderFilterPin(CBasePin* pin, bool isAudio, bool isVideo);
+  CCritSec m_sectionFlushAudio;
+  CCritSec m_sectionFlushVideo;
+  CCritSec m_sectionFlushSubtitle;
+  //CCritSec m_sectionAudio;
+  //CCritSec m_sectionVideo;
+  //CCritSec m_sectionSubtitle;
+  //CCritSec m_sectionRead;
+  //CCritSec m_sectionAudioChanging;
+  //CCritSec m_sectionMediaChanging;
+  //CCritSec m_sectionSetAudioStream;
+  //FileReader* m_reader;
+  //CPatParser m_patParser;
+  CMpegPesParser *m_mpegPesParser;
+  CPidTable m_pids;
+  //vector<CBuffer*> m_vecSubtitleBuffers;
+  vector<CBuffer*> m_vecVideoBuffers;
+  //vector<CBuffer*> m_vecAudioBuffers;
+  //vector<CBuffer*> m_t_vecAudioBuffers;
+  //typedef vector<CBuffer*>::iterator ivecBuffers;
+  int  m_AudioPrevCC;
+  int  m_VideoPrevCC;
+  //bool m_AudioValidPES;
+  //bool m_VideoValidPES;
+  bool m_mVideoValidPES;
+  //int  m_WaitHeaderPES;
+  CRefTime  m_FirstAudioSample;
+  CRefTime  m_LastAudioSample;
+  CRefTime  m_FirstVideoSample;
+  CRefTime  m_LastVideoSample;
+  CRefTime  m_ZeroVideoSample;
+
+  //CBuffer* m_pCurrentTeletextBuffer;
+  //CBuffer* m_pCurrentSubtitleBuffer;
+  //CBuffer* m_pCurrentAudioBuffer;
+  CPcr     m_streamPcr;
+  CPcr     m_lastVideoPTS;
+  CPcr     m_lastVideoDTS;
+  CPcr     m_lastAudioPTS;
+  double   m_minVideoPTSdiff;
+  double   m_minVideoDTSdiff;
+  int      m_vidPTScount;
+  int      m_vidDTScount;
+  bool     m_bLogFPSfromDTSPTS;
+  bool     m_bUsingGOPtimestamp;
+  //CTsDuration& m_duration;
+  //CTsReaderFilter& m_filter;
+  //unsigned int m_iAudioStream;
+  //int m_AudioStreamType;
+
+  //unsigned int m_audioPid;
+  unsigned int m_currentSubtitlePid;
+  unsigned int m_iSubtitleStream;
+  unsigned int m_currentTeletextPid;
+
+  unsigned int m_iAudioReadCount;
+
+  //int m_iAudioIdx;
+  int m_iPatVersion;
+  int m_ReqPatVersion;
+  DWORD m_WaitNewPatTmo;
+  DWORD m_WaitGoodPatTmo;
+  bool m_bWaitGoodPat;
+
+  bool m_bFirstGopFound;
+  bool m_bSecondGopFound;
+  bool m_bFrame0Found;
+
+  //bool  m_bWaitForMediaChange;
+  DWORD m_tWaitForMediaChange;
+  bool  m_bWaitForAudioSelection;
+  DWORD m_tWaitForAudioSelection;
+
+  bool m_bStarting;
+
+  bool m_videoChanged;
+  bool m_audioChanged;
+  bool m_bSetAudioDiscontinuity;
+  bool m_bSetVideoDiscontinuity;
+  CPcr m_subtitlePcr;
+
+  int (CALLBACK *pTeletextServiceInfoCallback)(int, byte, byte, byte, byte);
+  int (CALLBACK *pTeletextPacketCallback)(byte*, int);
+  int (CALLBACK *pTeletextEventCallback)(int, DWORD64);
+  int (CALLBACK *pSubUpdateCallback)(int c, void* opts, int* bi);
+
+  // Used only for H.264 stream demuxing
+  //CAutoPtr<Packet> m_p;
+  //CAutoPtrList<Packet> m_pl;
+  //bool m_fHasAccessUnitDelimiters;
+  //DWORD m_lastStart;
+  //CPcr m_VideoPts;
+  //CPcr m_CurrentVideoPts;
+  //bool m_bInBlock;
+  double m_curFramePeriod;
+  //int m_LastValidFrameCount;
+  //CPcr m_LastValidFramePts;
+
+  bool m_bAudioAtEof;
+  bool m_bVideoAtEof;
+
+  float m_MinAudioDelta;
+  float m_MinVideoDelta;
+
+
+  int m_lastVidResX;
+  int m_lastVidResY;
+
+  int m_lastARX;
+  int m_lastARY;
+
+  int m_lastStreamType;
+
+  bool m_mpegParserReset;
+  bool m_bFirstGopParsed;
+  bool m_bPatParsed;
+
+  bool m_isNewNALUTimestamp;
+  bool m_bVideoPTSroff;
+
+  int  m_initialAudioSamples;
+  int  m_initialVideoSamples;
+  DWORD  m_prefetchLoopDelay;
+
+  byte* m_pFileReadBuffer;
+
+  DWORD m_currentAudHeader;
+  DWORD m_lastAudHeader;
+  int m_audHeaderCount;
+  int m_hadPESfail;
+
+  DWORD m_fileReadLatency;
+  DWORD m_maxFileReadLatency;
+  DWORD m_fileReadLatSum;
+  DWORD m_fileReadLatCount;
+
+  int m_audioBytesRead;
 };
