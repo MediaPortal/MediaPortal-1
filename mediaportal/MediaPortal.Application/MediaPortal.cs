@@ -2952,7 +2952,10 @@ public class MediaPortalApp : D3D, IRender
       GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.RUNNING;
     }
 
-    RestoreFromTray();
+    if (!_suspended)
+    {
+      RestoreFromTray();
+    }
 
     // Force focus after resume done (really weird sequence) disable for now
     ForceMPFocus();
