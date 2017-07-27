@@ -1411,7 +1411,6 @@ namespace MediaPortal.Player
 
     public void Vmr9MediaCtrl(IMediaControl mediaCtrl)
     {
-      // Disable exclusive mode here to avoid madVR window staying on top
       try
       {
         if (mediaCtrl != null)
@@ -1419,21 +1418,41 @@ namespace MediaPortal.Player
           Log.Debug("VMR9: mediaCtrl.Stop() 1");
           if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
           {
-            //GUIGraphicsContext.MadVrStop = true;
-            //finished.WaitOne(5000);
-
-            //// Check if the stop was done on from madVR thread
-            //if (GUIGraphicsContext.MadVrStop)
+            IVideoWindow videoWin = (IVideoWindow) _graphBuilder;
+            if (videoWin != null)
             {
-              Log.Debug("VMR9: Vmr9MediaCtrl MadDeinit()");
-              MadStopping();
+              videoWin.put_Owner(IntPtr.Zero);
+              videoWin.put_Visible(OABool.False);
             }
+            Log.Debug("VMR9: restoreDisplayModeNow for madVR");
+            MadvrInterface.restoreDisplayModeNow(_vmr9Filter);
+            RestoreGuiForMadVr();
+            DestroyWindow(HWnd);
+            Log.Debug("VMR9: Vmr9MediaCtrl MadStopping()");
+            MadStopping();
           }
-          //else
+
+          // Stop mediaCtrl
+          int counter = 0;
+          FilterState state;
+          var hr = mediaCtrl.Stop();
+          hr = mediaCtrl.GetState(10, out state);
+          while (state != FilterState.Stopped)
           {
-            var hr = mediaCtrl.Stop();
-            DsError.ThrowExceptionForHR(hr);
+            Log.Debug("VideoPlayer9: graph still running");
+            Thread.Sleep(100);
+            mediaCtrl.Stop();
+            hr = mediaCtrl.GetState(10, out state);
+            counter++;
+            if (counter < 30) continue;
+            if (state != FilterState.Stopped)
+              Log.Debug("VideoPlayer9: graph still running");
+            if (GUIGraphicsContext.InVmr9Render)
+              Log.Debug("VideoPlayer9: in renderer");
+            break;
           }
+          DsError.ThrowExceptionForHR(hr);
+
           Log.Debug("VMR9: mediaCtrl.Stop() 2");
 
           if (GUIGraphicsContext.InVmr9Render)
@@ -1442,6 +1461,7 @@ namespace MediaPortal.Player
             {
               case GUIGraphicsContext.VideoRendererType.madVR:
                 GUIGraphicsContext.InVmr9Render = false;
+                // Disable exclusive mode here to avoid madVR window staying on top
                 //if (_vmr9Filter != null) MadvrInterface.EnableExclusiveMode(false, _vmr9Filter);
                 break;
               default:
