@@ -1003,7 +1003,6 @@ namespace MediaPortal.Player
             VMR9Util.g_vmr9 = null;
           }
 
-          _state = PlayState.Init;
           Log.Debug("TSReaderPlayer: Cleanup done");
         }
         catch (Exception ex)

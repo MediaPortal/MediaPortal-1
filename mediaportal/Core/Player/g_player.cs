@@ -1094,6 +1094,14 @@ namespace MediaPortal.Player
       }
     }
 
+    public static void ReleaseForMadVr()
+    {
+      if (_player != null)
+      {
+        _player.StopMadVr();
+      }
+    }
+
     public static bool PlayDVD()
     {
       return PlayDVD("");
