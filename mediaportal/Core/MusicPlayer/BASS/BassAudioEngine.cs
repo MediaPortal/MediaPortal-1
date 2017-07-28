@@ -1782,6 +1782,14 @@ namespace MediaPortal.MusicPlayer.BASS
     }
 
     /// <summary>
+    /// Stopping Playback
+    /// </summary>
+    public override void StopMadVr()
+    {
+      Stop();
+    }
+
+    /// <summary>
     /// Handle Stop of a song
     /// </summary>
     private void HandleSongEnded()

@@ -257,6 +257,7 @@ namespace MediaPortal.Player
     public override void Dispose()
     {
       CloseInterfaces();
+      _state = PlayState.Stopped;
     }
 
     #endregion
@@ -461,7 +462,6 @@ namespace MediaPortal.Player
           DirectShowUtil.FinalReleaseComObject(_dvdGraph);
           _dvdGraph = null;
         }
-        _state = PlayState.Init;
 
         GUIGraphicsContext.form.Invalidate(true);
         GUIGraphicsContext.form.Activate();
@@ -1085,6 +1085,29 @@ namespace MediaPortal.Player
       if (hr >= 0)
       {
         _state = PlayState.Stopped;
+        UpdateMenu();
+      }
+      CloseInterfaces();
+      GUIGraphicsContext.IsFullScreenVideo = false;
+      GUIGraphicsContext.IsPlaying = false;
+    }
+
+    public override void StopMadVr()
+    {
+      int hr = 0;
+      if (_mediaCtrl == null || !Playing)
+      {
+        return;
+      }
+      Log.Info("DVDPlayer:Stop()");
+      if (_mediaEvt != null)
+      {
+        hr = _mediaEvt.SetNotifyWindow(IntPtr.Zero, WM_DVD_EVENT, IntPtr.Zero);
+      }
+
+      hr = _mediaCtrl.Stop();
+      if (hr >= 0)
+      {
         UpdateMenu();
       }
       CloseInterfaces();

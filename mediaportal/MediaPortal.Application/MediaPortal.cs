@@ -4511,7 +4511,15 @@ public class MediaPortalApp : D3D, IRender
             if (!g_Player.IsTV || !GUIGraphicsContext.IsFullScreenVideo)
             {
               Log.Info("Main: Stopping media");
-              g_Player.Stop();
+              // Need to delay full stop for madVR to avoid blank screen on stop when dialog will be displayed on stop
+              if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && GUIGraphicsContext.InVmr9Render)
+              {
+                g_Player.ReleaseForMadVr();
+              }
+              else
+              {
+                g_Player.Stop();
+              }
             }
             break;
 

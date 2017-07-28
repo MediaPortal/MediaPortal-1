@@ -327,6 +327,11 @@ namespace MediaPortal.Player
     public virtual void Stop() {}
 
     /// <summary>
+    /// Method to stop playing for madVR
+    /// </summary>
+    public virtual void StopMadVr() { }
+
+    /// <summary>
     /// Method to stop playing
     /// </summary>
     public virtual void Stop(bool keepExclusiveModeOn)
