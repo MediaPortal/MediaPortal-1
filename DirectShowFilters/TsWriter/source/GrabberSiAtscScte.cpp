@@ -21,6 +21,7 @@
 #include "GrabberSiAtscScte.h"
 #include <algorithm>      // min()
 #include "..\..\shared\EnterCriticalSection.h"
+#include "Utils.h"
 
 
 extern void LogDebug(const wchar_t* fmt, ...);
@@ -50,6 +51,8 @@ CGrabberSiAtscScte::CGrabberSiAtscScte(unsigned short pid,
   m_parserMgt.SetCallBack(this);
   m_parserNit.SetCallBack(this);
   m_parserNtt.SetCallBack(this);
+  m_parserSttAtsc.SetCallBack(this);
+  m_parserSttScte.SetCallBack(this);
   m_parserSvct.SetCallBack(this);
 }
 
@@ -93,6 +96,8 @@ void CGrabberSiAtscScte::Reset(bool enableCrcCheck)
   m_parserMgt.Reset();
   m_parserNit.Reset();
   m_parserNtt.Reset();
+  m_parserSttAtsc.Reset();
+  m_parserSttScte.Reset();
   m_parserSvct.Reset();
 }
 
@@ -137,6 +142,12 @@ void CGrabberSiAtscScte::OnNewSection(int pid, int tableId, CSection& section, b
       break;
     case TABLE_ID_NTT:
       m_parserNtt.OnNewSection(section);
+      break;
+    case TABLE_ID_STT_ATSC:
+      m_parserSttAtsc.OnNewSection(section);
+      break;
+    case TABLE_ID_STT_SCTE:
+      m_parserSttScte.OnNewSection(section);
       break;
     case TABLE_ID_SVCT:
       m_parserSvct.OnNewSection(section);
@@ -346,6 +357,30 @@ bool CGrabberSiAtscScte::GetMasterGuideTable(unsigned short index,
   return m_parserMgt.GetTable(index, tableType, pid, versionNumber, numberBytes);
 }
 
+bool CGrabberSiAtscScte::GetSystemTimeDetail(unsigned long& systemTime,
+                                              unsigned char& gpsUtcOffset,
+                                              bool& isDaylightSavingStateKnown,
+                                              bool& isDaylightSaving,
+                                              unsigned char& daylightSavingDayOfMonth,
+                                              unsigned char& daylightSavingHour) const
+{
+  if (!m_parserSttAtsc.GetSystemTimeDetail(systemTime,
+                                            gpsUtcOffset,
+                                            isDaylightSavingStateKnown,
+                                            isDaylightSaving,
+                                            daylightSavingDayOfMonth,
+                                            daylightSavingHour))
+  {
+    return m_parserSttScte.GetSystemTimeDetail(systemTime,
+                                                gpsUtcOffset,
+                                                isDaylightSavingStateKnown,
+                                                isDaylightSaving,
+                                                daylightSavingDayOfMonth,
+                                                daylightSavingHour);
+  }
+  return true;
+}
+
 STDMETHODIMP_(unsigned short) CGrabberSiAtscScte::GetSvctVirtualChannelCount()
 {
   return m_parserSvct.GetVirtualChannelCount();
@@ -467,6 +502,7 @@ STDMETHODIMP_(bool) CGrabberSiAtscScte::GetSvctVirtualChannel(unsigned short ind
     *majorChannelNumber = virtualChannelNumber;
   }
 
+  unsigned short requiredBufferSize = 0;
   if (sourceName == NULL)
   {
     *sourceNameBufferSize = 0;
@@ -481,7 +517,7 @@ STDMETHODIMP_(bool) CGrabberSiAtscScte::GetSvctVirtualChannel(unsigned short ind
     LogDebug(L"SI ATSC/SCTE %d: missing source name, transmission medium = %hhu, application VC = %d, source ID = %hu",
               m_sectionDecoder.GetPid(), *transmissionMedium,
               *applicationVirtualChannel, *sourceId);
-    *sourceNameBufferSize = 0;
+    CUtils::CopyStringToBuffer(NULL, sourceName, *sourceNameBufferSize, requiredBufferSize);
   }
 
   if (mapName == NULL)
@@ -496,38 +532,14 @@ STDMETHODIMP_(bool) CGrabberSiAtscScte::GetSvctVirtualChannel(unsigned short ind
   {
     LogDebug(L"SI ATSC/SCTE %d: missing VCT/map name, transmission medium = %hhu, VCT ID = %hu",
               m_sectionDecoder.GetPid(), *transmissionMedium, *vctId);
-    *mapNameBufferSize = 0;
+    CUtils::CopyStringToBuffer(NULL, mapName, *mapNameBufferSize, requiredBufferSize);
   }
 
   if (*channelType == 3 || *transmissionMedium != 1)  // NVOD access or non-satellite
   {
-    if (transponderName == NULL || *transponderNameBufferSize == 0)
-    {
-      *transponderNameBufferSize = 0;
-    }
-    else
-    {
-      transponderName[0] = NULL;
-      *transponderNameBufferSize = 1;
-    }
-    if (satelliteReferenceName == NULL && *satelliteReferenceNameBufferSize == 0)
-    {
-      *satelliteReferenceNameBufferSize = 0;
-    }
-    else
-    {
-      satelliteReferenceName[0] = NULL;
-      *satelliteReferenceNameBufferSize = 1;
-    }
-    if (satelliteFullName != NULL && *satelliteFullNameBufferSize != 0)
-    {
-      *satelliteFullNameBufferSize = 0;
-    }
-    else
-    {
-      satelliteFullName[0] = NULL;
-      *satelliteFullNameBufferSize = 1;
-    }
+    CUtils::CopyStringToBuffer(NULL, transponderName, *transponderNameBufferSize, requiredBufferSize);
+    CUtils::CopyStringToBuffer(NULL, satelliteReferenceName, *satelliteReferenceNameBufferSize, requiredBufferSize);
+    CUtils::CopyStringToBuffer(NULL, satelliteFullName, *satelliteFullNameBufferSize, requiredBufferSize);
 
     if (*channelType == 3)
     {
@@ -549,7 +561,7 @@ STDMETHODIMP_(bool) CGrabberSiAtscScte::GetSvctVirtualChannel(unsigned short ind
     {
       LogDebug(L"SI ATSC/SCTE %d: missing transponder name, satellite ID = %hhu, transponder number = %hhu",
                 m_sectionDecoder.GetPid(), *satelliteId, *transponderNumber);
-      *transponderNameBufferSize = 0;
+      CUtils::CopyStringToBuffer(NULL, transponderName, *transponderNameBufferSize, requiredBufferSize);
     }
 
     if (satelliteReferenceName == NULL && satelliteFullName == NULL)
@@ -567,8 +579,8 @@ STDMETHODIMP_(bool) CGrabberSiAtscScte::GetSvctVirtualChannel(unsigned short ind
     {
       LogDebug(L"SI ATSC/SCTE %d: missing satellite name, satellite ID = %hhu",
                 m_sectionDecoder.GetPid(), *satelliteId);
-      *satelliteReferenceNameBufferSize = 0;
-      *satelliteFullNameBufferSize = 0;
+      CUtils::CopyStringToBuffer(NULL, satelliteReferenceName, *satelliteReferenceNameBufferSize, requiredBufferSize);
+      CUtils::CopyStringToBuffer(NULL, satelliteFullName, *satelliteFullNameBufferSize, requiredBufferSize);
     }
 
     unsigned char numberOfTransponders;

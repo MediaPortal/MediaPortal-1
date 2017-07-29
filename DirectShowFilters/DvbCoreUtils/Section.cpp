@@ -107,8 +107,14 @@ bool CSection::IsComplete()
 bool CSection::IsValid()
 {
   unsigned long crc = 0;
-  // Only sections with the syntax indicator set have a CRC.
-  if (SectionSyntaxIndicator)
+  // With a few exceptions, only sections with the syntax indicator set have a
+  // CRC.
+  if (
+    SectionSyntaxIndicator ||
+    table_id == 0x73 ||   // DVB TOT
+    table_id == 0xc5 ||   // SCTE STT
+    table_id == 0xcd      // ATSC STT
+  )
   {
     // Is the CRC actually populated? Some providers fill the CRC with
     // zeroes or ones instead of setting it correctly.

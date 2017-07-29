@@ -34,5 +34,7 @@ class ICallBackSiMpeg
                                 unsigned short pidEitPresentFollowing,
                                 unsigned short pidSdt,
                                 unsigned short pidBat,
+                                unsigned short pidTdt,
+                                unsigned short pidTot,
                                 unsigned short pidNit) = 0;
 };

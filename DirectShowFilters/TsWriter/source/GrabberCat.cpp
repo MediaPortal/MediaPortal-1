@@ -77,7 +77,7 @@ void CGrabberCat::OnNewSection(CSection& section)
     }
     if (section.SectionNumber != 0 || section.LastSectionNumber != 0)
     {
-      LogDebug(L"CAT: unsupported multi-section table, version number = %d, section number = %d, last section number = %d",
+      LogDebug(L"CAT: unsupported multi-section table, version number = %d, section number = %hhu, last section number = %hhu",
                 section.version_number, section.SectionNumber,
                 section.LastSectionNumber);
       return;

@@ -22,7 +22,6 @@
 #include <algorithm>    // find()
 #include <cstring>      // memcpy(), strcmp(), strlen(), strncpy()
 #include <iomanip>
-#include <time.h>       // gmtime(), mktime(), time_t, tm
 #include <typeinfo>     // bad_cast
 #include "..\..\shared\EnterCriticalSection.h"
 #include "..\..\shared\TimeUtils.h"
@@ -556,7 +555,7 @@ STDMETHODIMP_(bool) CParserEitDvb::GetEvent(unsigned short serviceIndex,
                                             unsigned short eventIndex,
                                             unsigned long long* eventId,
                                             unsigned long long* startDateTime,
-                                            unsigned short* duration,
+                                            unsigned long* duration,
                                             unsigned char* runningStatus,
                                             bool* freeCaMode,
                                             unsigned short* referenceServiceId,
@@ -1351,7 +1350,7 @@ void CParserEitDvb::OnNewSection(int pid, int tableId, CSection& section)
       lastTableId = data[13];
     }
 
-    //LogDebug(L"EIT DVB: PID = %d, table ID = 0x%x, service ID = %hu, TSID = %hu, ONID = %hu, version number = %d, section length = %d, section number = %d, last section number = %d, segment last section number = %hhu, last table ID = 0x%hhx",
+    //LogDebug(L"EIT DVB: PID = %d, table ID = 0x%x, service ID = %hu, TSID = %hu, ONID = %hu, version number = %d, section length = %d, section number = %hhu, last section number = %hhu, segment last section number = %hhu, last table ID = 0x%hhx",
     //          pid, tableId, serviceId, transportStreamId, originalNetworkId,
     //          section.version_number, section.section_length,
     //          section.SectionNumber, section.LastSectionNumber,
@@ -1378,7 +1377,7 @@ void CParserEitDvb::OnNewSection(int pid, int tableId, CSection& section)
     if (sectionIt != service->SeenSections.end())
     {
       // Yes. We might be ready!
-      //LogDebug(L"EIT DVB: previously seen section, PID = %d, table ID = 0x%x, service ID = %hu, TSID = %hu, ONID = %hu, section number = %d",
+      //LogDebug(L"EIT DVB: previously seen section, PID = %d, table ID = 0x%x, service ID = %hu, TSID = %hu, ONID = %hu, section number = %hhu",
       //          pid, tableId, serviceId, transportStreamId,
       //          originalNetworkId, section.SectionNumber);
       if (
@@ -1527,7 +1526,7 @@ void CParserEitDvb::OnNewSection(int pid, int tableId, CSection& section)
 
       if (isChange)
       {
-        LogDebug(L"EIT DVB: changed, PID = %d, table ID = 0x%x, service ID = %hu, TSID = %hu, ONID = %hu, version number = %d, section number = %d, last section number = %d, segment last section number = %hhu, last table ID = 0x%hhx",
+        LogDebug(L"EIT DVB: changed, PID = %d, table ID = 0x%x, service ID = %hu, TSID = %hu, ONID = %hu, version number = %d, section number = %hhu, last section number = %hhu, segment last section number = %hhu, last table ID = 0x%hhx",
                   pid, tableId, serviceId, transportStreamId,
                   originalNetworkId, section.version_number,
                   section.SectionNumber, section.LastSectionNumber,
@@ -1541,7 +1540,7 @@ void CParserEitDvb::OnNewSection(int pid, int tableId, CSection& section)
       }
       else
       {
-        LogDebug(L"EIT DVB: received, PID = %d, table ID = 0x%x, service ID = %hu, TSID = %hu, ONID = %hu, version number = %d, section number = %d, last section number = %d, segment last section number = %hhu, last table ID = 0x%hhx",
+        LogDebug(L"EIT DVB: received, PID = %d, table ID = 0x%x, service ID = %hu, TSID = %hu, ONID = %hu, version number = %d, section number = %hhu, last section number = %hhu, segment last section number = %hhu, last table ID = 0x%hhx",
                   pid, tableId, serviceId, transportStreamId,
                   originalNetworkId, section.version_number,
                   section.SectionNumber, section.LastSectionNumber,
@@ -1614,7 +1613,7 @@ void CParserEitDvb::OnNewSection(int pid, int tableId, CSection& section)
     }
     else
     {
-      //LogDebug(L"EIT DVB: new section, PID = %d, table ID = 0x%x, service ID = %hu, TSID = %hu, ONID = %hu, version number = %d, section number = %d",
+      //LogDebug(L"EIT DVB: new section, PID = %d, table ID = 0x%x, service ID = %hu, TSID = %hu, ONID = %hu, version number = %d, section number = %hhu",
       //          pid, tableId, serviceId, transportStreamId,
       //          originalNetworkId, section.version_number,
       //          section.SectionNumber);
@@ -1658,7 +1657,7 @@ void CParserEitDvb::OnNewSection(int pid, int tableId, CSection& section)
       }
       if (event == NULL)
       {
-        LogDebug(L"EIT DVB: failed to allocate event record, PID = %d, table ID = 0x%x, service ID = %hu, TSID = %hu, ONID = %hu, version number = %d, section number = %d",
+        LogDebug(L"EIT DVB: failed to allocate event record, PID = %d, table ID = 0x%x, service ID = %hu, TSID = %hu, ONID = %hu, version number = %d, section number = %hhu",
                   pid, tableId, serviceId, transportStreamId,
                   originalNetworkId, section.version_number,
                   section.SectionNumber);
@@ -1673,7 +1672,7 @@ void CParserEitDvb::OnNewSection(int pid, int tableId, CSection& section)
       map<unsigned long long, vector<unsigned long long>*> premiereShowings;  // ONID [16 bits] | TSID [16 bits] | SID [16 bits] => [ epoch ]
       if (!DecodeEventRecord(data, pointer, endOfSection, *event, premiereShowings))
       {
-        LogDebug(L"EIT DVB: invalid section, PID = %d, table ID = 0x%x, service ID = %hu, TSID = %hu, ONID = %hu, version number = %d, section number = %d, event ID = %llu",
+        LogDebug(L"EIT DVB: invalid section, PID = %d, table ID = 0x%x, service ID = %hu, TSID = %hu, ONID = %hu, version number = %d, section number = %hhu, event ID = %llu",
                   pid, tableId, serviceId, transportStreamId,
                   originalNetworkId, section.version_number,
                   section.SectionNumber, event->EventId);
@@ -1711,7 +1710,7 @@ void CParserEitDvb::OnNewSection(int pid, int tableId, CSection& section)
 
     if (pointer != endOfSection)
     {
-      LogDebug(L"EIT DVB: section parsing error, pointer = %hu, end of section = %hu, PID = %d, table ID = 0x%x, service ID = %hu, TSID = %hu, ONID = %hu, version number = %d, section number = %d",
+      LogDebug(L"EIT DVB: section parsing error, pointer = %hu, end of section = %hu, PID = %d, table ID = 0x%x, service ID = %hu, TSID = %hu, ONID = %hu, version number = %d, section number = %hhu",
                 pointer, endOfSection, pid, tableId, serviceId,
                 transportStreamId, originalNetworkId, section.version_number,
                 section.SectionNumber);
@@ -2254,15 +2253,16 @@ bool CParserEitDvb::DecodeEventRecord(unsigned char* sectionData,
       pointer += 2;
       unsigned long startTimeBcd = (sectionData[pointer] << 16) | (sectionData[pointer + 1] << 8) | sectionData[pointer + 2];
       pointer += 3;
-      event.StartDateTime = DecodeDateTime(startDateMjd, startTimeBcd);
+      event.StartDateTime = CTimeUtils::DecodeMjDateBcdTime(startDateMjd, startTimeBcd);
     }
 
-    // Convert BCD HH:MM:SS to minutes.
-    event.Duration = ((sectionData[pointer] >> 4) * 10) + (sectionData[pointer] & 0x0f);
+    // Convert BCD HH:MM:SS to seconds.
+    event.Duration = 3600 * (((sectionData[pointer] >> 4) * 10) + (sectionData[pointer] & 0x0f));
     pointer++;
-    event.Duration *= 60;
+    event.Duration += 60 * (((sectionData[pointer] >> 4) * 10) + (sectionData[pointer] & 0x0f));
+    pointer++;
     event.Duration += ((sectionData[pointer] >> 4) * 10) + (sectionData[pointer] & 0x0f);
-    pointer += 2; // Ignore the seconds byte.
+    pointer++;
 
     event.RunningStatus = sectionData[pointer] >> 5;
     event.FreeCaMode = (sectionData[pointer] & 0x10) != 0;
@@ -2270,7 +2270,7 @@ bool CParserEitDvb::DecodeEventRecord(unsigned char* sectionData,
     unsigned short descriptorsLoopLength = ((sectionData[pointer] & 0xf) << 8) | sectionData[pointer + 1];
     pointer += 2;
 
-    //LogDebug(L"EIT DVB: event ID = %llu, start date/time = %llu, duration = %hu m, running status = %hhu, free CA mode = %d, descriptors loop length = %hu",
+    //LogDebug(L"EIT DVB: event ID = %llu, start date/time = %llu, duration = %lu s, running status = %hhu, free CA mode = %d, descriptors loop length = %hu",
     //          event.Id, event.StartDateTime, event.Duration,
     //          event.RunningStatus, event.FreeCaMode, descriptorsLoopLength);
 
@@ -3992,7 +3992,7 @@ bool CParserEitDvb::DecodePremiereContentTransmissionDescriptor(unsigned char* d
         unsigned long startTimeBcd = (data[pointer] << 16) | (data[pointer + 1] << 8) | data[pointer + 2];
         pointer += 3;
         //LogDebug(L"  start time = %lu", startTimeBcd);
-        showings.push_back(DecodeDateTime(startDateMjd, startTimeBcd));
+        showings.push_back(CTimeUtils::DecodeMjDateBcdTime(startDateMjd, startTimeBcd));
       }
     }
     return true;
@@ -4002,34 +4002,4 @@ bool CParserEitDvb::DecodePremiereContentTransmissionDescriptor(unsigned char* d
     LogDebug(L"EIT DVB: unhandled exception in DecodePremiereContentTransmissionDescriptor()");
   }
   return false;
-}
-
-unsigned long long CParserEitDvb::DecodeDateTime(unsigned short dateMjd, unsigned long timeBcd)
-{
-  if (dateMjd == 0xffff && timeBcd == 0xffffff)
-  {
-    // NVOD reference service event.
-    return 0;
-  }
-
-  // Decode the MJD-encoded date. ***The casts are important.***
-  tm dateTime;
-  dateTime.tm_year = (long)((dateMjd - 15078.2) / 365.25);
-  dateTime.tm_mon = (long)((dateMjd - 14956.1 - (long)(dateTime.tm_year * 365.25)) / 30.6001);
-  dateTime.tm_mday = (long)(dateMjd - 14956 - (long)(dateTime.tm_year * 365.25) - (long)(dateTime.tm_mon * 30.6001));
-  unsigned char adjustment = (dateTime.tm_mon == 14 || dateTime.tm_mon == 15) ? 1 : 0;
-  dateTime.tm_year += adjustment;
-  dateTime.tm_mon = dateTime.tm_mon - 2 - adjustment * 12;
-
-  dateTime.tm_hour = ((timeBcd >> 20) * 10) + ((timeBcd >> 16) & 0x0f);
-  dateTime.tm_min = (((timeBcd >> 12) & 0x0f) * 10) + ((timeBcd >> 8) & 0x0f);
-  dateTime.tm_sec = (((timeBcd >> 4) & 0x0f) * 10) + (timeBcd & 0x0f);
-  dateTime.tm_isdst = -1;
-
-  // The EIT date/time is UTC. mktime() will give us an epoch as if the
-  // time were a local time. We need to convert it back to UTC.
-  time_t localDateTime = mktime(&dateTime);
-  tm* tempConversion = gmtime(&localDateTime);
-  tempConversion->tm_isdst = -1;  // DST status unknown
-  return 2 * localDateTime - mktime(tempConversion);
 }

@@ -80,6 +80,8 @@ class CParserOpenTv
     CParserOpenTv(ICallBackPidConsumer* callBack, LPUNKNOWN unk, HRESULT* hr);
     virtual ~CParserOpenTv();
 
+    static bool IsItalianText(unsigned short originalNetworkId);
+
     DECLARE_IUNKNOWN
 
     STDMETHODIMP NonDelegatingQueryInterface(REFIID iid, void** ppv);
@@ -100,7 +102,8 @@ class CParserOpenTv
     STDMETHODIMP_(bool) IsSeen();
     STDMETHODIMP_(bool) IsReady();
 
-    STDMETHODIMP_(unsigned long) GetEventCount();
+    STDMETHODIMP_(void) GetEventCount(unsigned long* eventCount,
+                                      unsigned long* textLanguage);
     STDMETHODIMP_(bool) GetEvent(unsigned long index,
                                   unsigned short* channelId,
                                   unsigned short* eventId,
@@ -194,7 +197,7 @@ class CParserOpenTv
         unsigned char TableId;
         unsigned short ChannelId;
         unsigned short EventId;
-        unsigned long long StartDateTime; // unit = UTC epoch
+        unsigned long long StartDateTime; // epoch/Unix/POSIX time-stamp
         unsigned short Duration;          // unit = minutes
         char* Title;
         unsigned char CategoryId;
@@ -320,6 +323,7 @@ class CParserOpenTv
     vector<unsigned long long> m_seenSections;
     vector<unsigned long long> m_unseenSections;
     bool m_isGrabbing;
+    unsigned short m_originalNetworkId;
     bool m_isItalianText;
     bool m_useAlternativeProgramCategoryHandling;
     bool m_isDescriptionPhase;

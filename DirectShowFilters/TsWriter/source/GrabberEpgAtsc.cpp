@@ -20,18 +20,29 @@
  */
 #include "GrabberEpgAtsc.h"
 #include "..\..\shared\EnterCriticalSection.h"
+#include "GrabberSiAtscScte.h"
+#include "ParserSttAtsc.h"
 #include "PidUsage.h"
 #include "Utils.h"
 
 
 extern void LogDebug(const wchar_t* fmt, ...);
 
-CGrabberEpgAtsc::CGrabberEpgAtsc(ICallBackPidConsumer* callBack, LPUNKNOWN unk, HRESULT* hr)
+CGrabberEpgAtsc::CGrabberEpgAtsc(ICallBackPidConsumer* callBack,
+                                  ISystemTimeInfoProviderAtscScte* systemTimeInfoProvider,
+                                  LPUNKNOWN unk,
+                                  HRESULT* hr)
   : CUnknown(NAME("ATSC EPG Grabber"), unk)
 {
   if (callBack == NULL)
   {
     LogDebug(L"EPG ATSC: call back not supplied");
+    *hr = E_INVALIDARG;
+    return;
+  }
+  if (systemTimeInfoProvider == NULL)
+  {
+    LogDebug(L"EPG ATSC: system time information provider not supplied");
     *hr = E_INVALIDARG;
     return;
   }
@@ -42,6 +53,8 @@ CGrabberEpgAtsc::CGrabberEpgAtsc(ICallBackPidConsumer* callBack, LPUNKNOWN unk, 
 
   m_callBackGrabber = NULL;
   m_callBackPidConsumer = callBack;
+  m_systemTimeInfoProvider = systemTimeInfoProvider;
+  m_gpsUtcOffset = 0;
   m_enableCrcCheck = true;
 
   m_currentEventParser = NULL;
@@ -256,6 +269,91 @@ void CGrabberEpgAtsc::RemoveEttDecoders(const vector<unsigned short>& pids)
   }
 }
 
+void CGrabberEpgAtsc::OnTableSeen(unsigned char tableId)
+{
+  if (tableId == TABLE_ID_STT_ATSC)
+  {
+    // Seeing the STT doesn't mean we've seen EPG.
+    return;
+  }
+  CEnterCriticalSection lock(m_section);
+  if (!m_isSeen && m_callBackGrabber != NULL)
+  {
+    m_callBackGrabber->OnTableSeen(PID_EIT_ATSC_CALL_BACK, TABLE_ID_EIT_ATSC_CALL_BACK);
+  }
+  m_isSeen = true;
+  m_isReady = false;
+}
+
+void CGrabberEpgAtsc::OnTableComplete(unsigned char tableId)
+{
+  CEnterCriticalSection lock(m_section);
+  if (!m_isReady)
+  {
+    if (m_parsersEit.size() == 0 && m_parsersEtt.size() == 0)
+    {
+      return;
+    }
+
+    map<unsigned short, CParserEitAtsc*>::const_iterator parserEitIt = m_parsersEit.begin();
+    for ( ; parserEitIt != m_parsersEit.end(); parserEitIt++)
+    {
+      if (parserEitIt->second != NULL && !parserEitIt->second->IsReady())
+      {
+        return;
+      }
+    }
+
+    map<unsigned short, CParserEtt*>::const_iterator parserEttIt = m_parsersEtt.begin();
+    for ( ; parserEttIt != m_parsersEtt.end(); parserEttIt++)
+    {
+      if (parserEttIt->second != NULL && !parserEttIt->second->IsReady())
+      {
+        return;
+      }
+    }
+
+    // System time information must be available too.
+    unsigned long systemTime;
+    unsigned char gpsUtcOffset;
+    bool isDaylightSavingStateKnown;
+    bool isDaylightSaving;
+    unsigned char daylightSavingDayOfMonth;
+    unsigned char daylightSavingHour;
+    if (!m_systemTimeInfoProvider->GetSystemTimeDetail(systemTime,
+                                                        gpsUtcOffset,
+                                                        isDaylightSavingStateKnown,
+                                                        isDaylightSaving,
+                                                        daylightSavingDayOfMonth,
+                                                        daylightSavingHour))
+    {
+      return;
+    }
+
+    m_gpsUtcOffset = gpsUtcOffset;
+    m_isReady = true;
+    if (m_callBackGrabber != NULL)
+    {
+      m_callBackGrabber->OnTableComplete(PID_EIT_ATSC_CALL_BACK, TABLE_ID_EIT_ATSC_CALL_BACK);
+    }
+  }
+}
+
+void CGrabberEpgAtsc::OnTableChange(unsigned char tableId)
+{
+  // Careful! Seeing the STT change doesn't mean we've seen EPG.
+  CEnterCriticalSection lock(m_section);
+  if (m_isReady)
+  {
+    if (m_callBackGrabber != NULL)
+    {
+      m_callBackGrabber->OnTableChange(PID_EIT_ATSC_CALL_BACK, TABLE_ID_EIT_ATSC_CALL_BACK);
+    }
+    m_isSeen = true;
+    m_isReady = false;
+  }
+}
+
 STDMETHODIMP_(void) CGrabberEpgAtsc::Start()
 {
   LogDebug(L"EPG ATSC: start");
@@ -267,6 +365,8 @@ STDMETHODIMP_(void) CGrabberEpgAtsc::Start()
     if (m_callBackPidConsumer != NULL)
     {
       vector<unsigned short> pids;
+      pids.push_back(PID_ATSC_BASE);    // For the MGT, which gives us the EIT and ETT PIDs.
+      pids.push_back(PID_SCTE_BASE);    // ...in case SCTE transport streams carry in band data for unencrypted channels.
       map<unsigned short, CParserEitAtsc*>::const_iterator parserEitIt = m_parsersEit.begin();
       for ( ; parserEitIt != m_parsersEit.end(); parserEitIt++)
       {
@@ -293,6 +393,8 @@ STDMETHODIMP_(void) CGrabberEpgAtsc::Stop()
     m_isReady = false;
 
     vector<unsigned short> pids;
+    pids.push_back(PID_ATSC_BASE);
+    pids.push_back(PID_SCTE_BASE);
     map<unsigned short, CParserEitAtsc*>::const_iterator parserEitIt = m_parsersEit.begin();
     for ( ; parserEitIt != m_parsersEit.end(); parserEitIt++)
     {
@@ -348,6 +450,7 @@ void CGrabberEpgAtsc::Reset(bool enableCrcCheck)
 
   m_isSeen = false;
   m_isReady = false;
+  m_gpsUtcOffset = 0;
   m_enableCrcCheck = enableCrcCheck;
   m_currentEventParser = NULL;
   m_currentEventIndex = 0xffffffff;
@@ -422,7 +525,7 @@ STDMETHODIMP_(bool) CGrabberEpgAtsc::GetEvent(unsigned long index,
                                               unsigned short* sourceId,
                                               unsigned short* eventId,
                                               unsigned long long* startDateTime,
-                                              unsigned short* duration,
+                                              unsigned long* duration,
                                               unsigned char* textCount,
                                               unsigned long* audioLanguages,
                                               unsigned char* audioLanguageCount,
@@ -440,21 +543,32 @@ STDMETHODIMP_(bool) CGrabberEpgAtsc::GetEvent(unsigned long index,
     return false;
   }
 
-  return m_currentEventParser->GetEvent(index - m_currentEventIndexOffset,
-                                        *sourceId,
-                                        *eventId,
-                                        *startDateTime,
-                                        *duration,
-                                        *textCount,
-                                        audioLanguages,
-                                        *audioLanguageCount,
-                                        captionsLanguages,
-                                        *captionsLanguageCount,
-                                        genreIds,
-                                        *genreIdCount,
-                                        *vchipRating,
-                                        *mpaaClassification,
-                                        *advisories);
+  unsigned long startDateTimeGps;
+  bool result = m_currentEventParser->GetEvent(index - m_currentEventIndexOffset,
+                                                *sourceId,
+                                                *eventId,
+                                                startDateTimeGps,
+                                                *duration,
+                                                *textCount,
+                                                audioLanguages,
+                                                *audioLanguageCount,
+                                                captionsLanguages,
+                                                *captionsLanguageCount,
+                                                genreIds,
+                                                *genreIdCount,
+                                                *vchipRating,
+                                                *mpaaClassification,
+                                                *advisories);
+  if (result)
+  {
+    // Start date/time is a GPS time. To convert to epoch/Unix/POSIX time we
+    // must subtract the number of leap seconds between 1980 and now (because
+    // GPS time includes leap seconds but epoch/Unix/POSIX time doesn't), and
+    // add the number of seconds between the start of epoch/Unix/POSIX time and
+    // GPS time.
+    *startDateTime = startDateTimeGps + GPS_TIME_START_OFFSET - m_gpsUtcOffset;
+  }
+  return result;
 }
 
 STDMETHODIMP_(bool) CGrabberEpgAtsc::GetEventTextByIndex(unsigned long eventIndex,
@@ -499,11 +613,8 @@ STDMETHODIMP_(bool) CGrabberEpgAtsc::GetEventTextByIndex(unsigned long eventInde
 
   LogDebug(L"EPG ATSC: missing event text, source ID = %hu, event ID = %hu, language = %S",
             m_currentEventSourceId, m_currentEventId, (char*)language);
-  if (text != NULL && *textBufferSize != 0)
-  {
-    text[0] = NULL;
-    *textBufferSize = 0;
-  }
+  unsigned short requiredBufferSize;
+  CUtils::CopyStringToBuffer(NULL, text, *textBufferSize, requiredBufferSize);
   return true;
 }
 
@@ -547,11 +658,8 @@ STDMETHODIMP_(bool) CGrabberEpgAtsc::GetEventTextByLanguage(unsigned long eventI
 
   LogDebug(L"EPG ATSC: missing event text, source ID = %hu, event ID = %hu, language = %S",
             m_currentEventSourceId, m_currentEventId, (char*)&language);
-  if (text != NULL && *textBufferSize != 0)
-  {
-    text[0] = NULL;
-    *textBufferSize = 0;
-  }
+  unsigned short requiredBufferSize;
+  CUtils::CopyStringToBuffer(NULL, text, *textBufferSize, requiredBufferSize);
   return true;
 }
 
@@ -592,57 +700,4 @@ bool CGrabberEpgAtsc::SelectEventByIndex(unsigned long index)
   LogDebug(L"EPG ATSC: invalid event index, index = %lu, record count = %lu",
             index, eventCount);
   return false;
-}
-
-void CGrabberEpgAtsc::OnTableSeen(unsigned char tableId)
-{
-  CEnterCriticalSection lock(m_section);
-  if (!m_isSeen && m_callBackGrabber != NULL)
-  {
-    m_callBackGrabber->OnTableSeen(PID_EIT_ATSC_CALL_BACK, TABLE_ID_EIT_ATSC_CALL_BACK);
-  }
-  m_isSeen = true;
-  m_isReady = false;
-}
-
-void CGrabberEpgAtsc::OnTableComplete(unsigned char tableId)
-{
-  CEnterCriticalSection lock(m_section);
-  if (!m_isReady)
-  {
-    map<unsigned short, CParserEitAtsc*>::const_iterator parserEitIt = m_parsersEit.begin();
-    for ( ; parserEitIt != m_parsersEit.end(); parserEitIt++)
-    {
-      if (parserEitIt->second != NULL && !parserEitIt->second->IsReady())
-      {
-        return;
-      }
-    }
-
-    map<unsigned short, CParserEtt*>::const_iterator parserEttIt = m_parsersEtt.begin();
-    for ( ; parserEttIt != m_parsersEtt.end(); parserEttIt++)
-    {
-      if (parserEttIt->second != NULL && !parserEttIt->second->IsReady())
-      {
-        return;
-      }
-    }
-
-    m_isReady = true;
-    if (m_callBackGrabber != NULL)
-    {
-      m_callBackGrabber->OnTableComplete(PID_EIT_ATSC_CALL_BACK, TABLE_ID_EIT_ATSC_CALL_BACK);
-    }
-  }
-}
-
-void CGrabberEpgAtsc::OnTableChange(unsigned char tableId)
-{
-  CEnterCriticalSection lock(m_section);
-  if (m_isReady && m_callBackGrabber != NULL)
-  {
-    m_callBackGrabber->OnTableChange(PID_EIT_ATSC_CALL_BACK, TABLE_ID_EIT_ATSC_CALL_BACK);
-  }
-  m_isSeen = true;
-  m_isReady = false;
 }

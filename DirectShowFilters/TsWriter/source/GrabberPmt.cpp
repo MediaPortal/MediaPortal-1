@@ -116,7 +116,7 @@ void CGrabberPmt::OnNewSection(CSection& section)
     if (section.SectionNumber != 0 || section.LastSectionNumber != 0)
     {
       // According to ISO/IEC 13818-1 PMT should only have one section per program.
-      LogDebug(L"PMT %d %hu: unsupported multi-section table, version number = %d, section number = %d, last section number = %d",
+      LogDebug(L"PMT %d %hu: unsupported multi-section table, version number = %d, section number = %hhu, last section number = %hhu",
                 GetPid(), m_programNumber, section.version_number,
                 section.SectionNumber, section.LastSectionNumber);
       return;
@@ -424,6 +424,8 @@ bool CGrabberPmt::GetFreesatPids(bool& isFreesatProgram,
                                   unsigned short& pidEitPresentFollowing,
                                   unsigned short& pidSdt,
                                   unsigned short& pidBat,
+                                  unsigned short& pidTdt,
+                                  unsigned short& pidTot,
                                   unsigned short& pidNit)
 {
   CEnterCriticalSection lock(m_section);
@@ -490,7 +492,12 @@ bool CGrabberPmt::GetFreesatPids(bool& isFreesatProgram,
             case 4:   // SDT or BAT - carried on same PID -> not possible to distinguish => guess
               pidBat = pid->Pid;
               break;
-            // 5, 6 = TDT, TOT
+            case 5:   // TDT or TOT - carried on same PID -> not possible to distinguish => guess
+              pidTdt = pid->Pid;
+              break;
+            case 6:   // TDT or TOT - carried on same PID -> not possible to distinguish => guess
+              pidTot = pid->Pid;
+              break;
             case 7:
               pidNit = pid->Pid;
               break;

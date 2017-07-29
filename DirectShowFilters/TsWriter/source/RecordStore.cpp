@@ -53,7 +53,10 @@ bool CRecordStore::AddOrUpdateRecord(IRecord** record, void* callBack)
   }
 
   IRecord* existingRecord = existingRecordIt->second;
-  if (CTimeUtils::ElapsedMillis(existingRecord->LastSeen) <= m_expiryTimeout)
+  if (
+    existingRecord->LastSeen != 0 &&
+    CTimeUtils::ElapsedMillis(existingRecord->LastSeen) <= m_expiryTimeout
+  )
   {
     existingRecord->Debug(L"key duplicate 1 [old]");
     newRecord->Debug(L"key duplicate 2 [new]");
@@ -102,33 +105,13 @@ void CRecordStore::MarkExpiredRecords(unsigned long long key)
 
 unsigned long CRecordStore::RemoveExpiredRecords(void* callBack)
 {
-  unsigned long expiredRecordCount = 0;
-  map<unsigned long long, IRecord*>::iterator recordIt = m_records.begin();
-  while (recordIt != m_records.end())
-  {
-    IRecord* record = recordIt->second;
-    if (record == NULL)
-    {
-      m_records.erase(recordIt++);
-    }
-    else if (
-      (m_expireNaturally && CTimeUtils::ElapsedMillis(record->LastSeen) >= m_expiryTimeout) ||
-      (!m_expireNaturally && record->LastSeen == 0)
-    )
-    {
-      record->Debug(L"removed");
-      record->OnRemoved(callBack);
-      delete record;
-      recordIt->second = NULL;
-      m_records.erase(recordIt++);
-      expiredRecordCount++;
-    }
-    else
-    {
-      recordIt++;
-    }
-  }
-  return expiredRecordCount;
+  return InternalRemoveExpiredRecords(callBack, false, 0);
+}
+
+unsigned long CRecordStore::RemoveExpiredRecords(void* callBack,
+                                                  unsigned long long subsetKey)
+{
+  return InternalRemoveExpiredRecords(callBack, true, subsetKey);
 }
 
 void CRecordStore::RemoveAllRecords()
@@ -185,4 +168,44 @@ bool CRecordStore::GetRecordByKey(unsigned long long key, IRecord** record) cons
 
   *record = NULL;
   return false;
+}
+
+unsigned long CRecordStore::InternalRemoveExpiredRecords(void* callBack,
+                                                          bool isSubsetKeyValid,
+                                                          unsigned long long subsetKey)
+{
+  unsigned long expiredRecordCount = 0;
+  map<unsigned long long, IRecord*>::iterator recordIt = m_records.begin();
+  while (recordIt != m_records.end())
+  {
+    IRecord* record = recordIt->second;
+    if (record == NULL)
+    {
+      m_records.erase(recordIt++);
+    }
+    else if (
+      (m_expireNaturally && CTimeUtils::ElapsedMillis(record->LastSeen) >= m_expiryTimeout) ||
+      (
+        !m_expireNaturally &&
+        record->LastSeen == 0 &&
+        (
+          !isSubsetKeyValid ||
+          subsetKey == record->GetExpiryKey()
+        )
+      )
+    )
+    {
+      record->Debug(L"removed");
+      record->OnRemoved(callBack);
+      delete record;
+      recordIt->second = NULL;
+      m_records.erase(recordIt++);
+      expiredRecordCount++;
+    }
+    else
+    {
+      recordIt++;
+    }
+  }
+  return expiredRecordCount;
 }

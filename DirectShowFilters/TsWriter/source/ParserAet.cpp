@@ -22,6 +22,8 @@
 #include <algorithm>    // find()
 #include "..\..\shared\EnterCriticalSection.h"
 #include "..\..\shared\TimeUtils.h"
+#include "GrabberSiAtscScte.h"
+#include "ParserSttScte.h"
 #include "PidUsage.h"
 #include "TextUtil.h"
 
@@ -31,21 +33,13 @@
 #define MINIMUM_RECORD_BYTE_COUNT_AEIT_EVENT 12
 #define MINIMUM_RECORD_BYTE_COUNT_AETT 6
 
-// Number of UTC seconds between the start of Unix time (1 January 1970
-// 00:00:00) and the start of GPS time (6 January 1980 00:00:00):
-// = ((10 years x 365 days per year) + 2 leap year days + 5 days from 1980) x 24 hours per day x 60 minutes per hour x 60 seconds per minute
-#define GPS_TIME_START_OFFSET 315964800
-
-// There are 16 leap seconds between the start of GPS time (6 January 1980
-// 00:00:00) and 1 January 2015. This constant should be updated each time the
-// IERS decides to schedule a leap second. The next leap second is scheduled
-// for June 30 2015.
-#define LEAP_SECONDS_SINCE_GPS_TIME_START 16
-
 
 extern void LogDebug(const wchar_t* fmt, ...);
 
-CParserAet::CParserAet(ICallBackPidConsumer* callBack, LPUNKNOWN unk, HRESULT* hr)
+CParserAet::CParserAet(ICallBackPidConsumer* callBack,
+                        ISystemTimeInfoProviderAtscScte* systemTimeInfoProvider,
+                        LPUNKNOWN unk,
+                        HRESULT* hr)
   : CUnknown(NAME("SCTE EPG Grabber"), unk), m_recordsAeit(600000),
     m_recordsAett(600000)
 {
@@ -55,13 +49,22 @@ CParserAet::CParserAet(ICallBackPidConsumer* callBack, LPUNKNOWN unk, HRESULT* h
     *hr = E_INVALIDARG;
     return;
   }
+  if (systemTimeInfoProvider == NULL)
+  {
+    LogDebug(L"AET: system time information provider not supplied");
+    *hr = E_INVALIDARG;
+    return;
+  }
 
   m_isGrabbing = false;
-  m_isReady = false;
+  m_isReadyAet = false;
   m_completeTime = 0;
 
   m_callBackGrabber = NULL;
   m_callBackPidConsumer = callBack;
+  m_systemTimeInfoProvider = systemTimeInfoProvider;
+  m_isReadyStt = false;
+  m_gpsUtcOffset = 0;
   m_enableCrcCheck = true;
 
   m_currentRecordAeit = NULL;
@@ -177,6 +180,51 @@ void CParserAet::RemoveDecoders(const vector<unsigned short>& pids)
   }
 }
 
+void CParserAet::OnTableSeen(unsigned char tableId)
+{
+  // Nothing to do. Seeing STT doesn't mean we've seen EPG.
+}
+
+void CParserAet::OnTableComplete(unsigned char tableId)
+{
+  // Careful! Seeing the STT complete doesn't mean we've seen EPG.
+  CEnterCriticalSection lock(m_section);
+  if (tableId == TABLE_ID_STT_SCTE && !m_isReadyStt)
+  {
+    m_isReadyStt = true;
+
+    unsigned long systemTime;
+    bool isDaylightSavingStateKnown;
+    bool isDaylightSaving;
+    unsigned char daylightSavingDayOfMonth;
+    unsigned char daylightSavingHour;
+    m_systemTimeInfoProvider->GetSystemTimeDetail(systemTime,
+                                                  m_gpsUtcOffset,
+                                                  isDaylightSavingStateKnown,
+                                                  isDaylightSaving,
+                                                  daylightSavingDayOfMonth,
+                                                  daylightSavingHour);
+    if (m_isReadyAet && m_callBackGrabber != NULL)
+    {
+      m_callBackGrabber->OnTableComplete(PID_AET_CALL_BACK, TABLE_ID_AET_CALL_BACK);
+    }
+  }
+}
+
+void CParserAet::OnTableChange(unsigned char tableId)
+{
+  // Careful! Seeing the STT change doesn't mean we've seen EPG.
+  CEnterCriticalSection lock(m_section);
+  if (tableId == TABLE_ID_STT_SCTE && m_isReadyStt)
+  {
+    m_isReadyStt = false;
+    if (m_isReadyAet && m_callBackGrabber != NULL)
+    {
+      m_callBackGrabber->OnTableChange(PID_AET_CALL_BACK, TABLE_ID_AET_CALL_BACK);
+    }
+  }
+}
+
 STDMETHODIMP_(void) CParserAet::Start()
 {
   LogDebug(L"AET: start");
@@ -188,6 +236,7 @@ STDMETHODIMP_(void) CParserAet::Start()
     if (m_callBackPidConsumer != NULL)
     {
       vector<unsigned short> pids;
+      pids.push_back(PID_SCTE_BASE);    // For the MGT, which gives us the AEIT and AETT PIDs.
       map<unsigned short, CSectionDecoder*>::iterator it = m_decoders.begin();
       for ( ; it != m_decoders.end(); it++)
       {
@@ -210,6 +259,7 @@ STDMETHODIMP_(void) CParserAet::Stop()
     if (m_callBackPidConsumer != NULL)
     {
       vector<unsigned short> pids;
+      pids.push_back(PID_SCTE_BASE);
       map<unsigned short, CSectionDecoder*>::iterator it = m_decoders.begin();
       for ( ; it != m_decoders.end(); it++)
       {
@@ -258,7 +308,7 @@ STDMETHODIMP_(bool) CParserAet::IsSeen()
 STDMETHODIMP_(bool) CParserAet::IsReady()
 {
   CEnterCriticalSection lock(m_section);
-  return m_isReady;
+  return m_isReadyAet && m_isReadyStt;
 }
 
 STDMETHODIMP_(unsigned long) CParserAet::GetEventCount()
@@ -271,7 +321,7 @@ STDMETHODIMP_(bool) CParserAet::GetEvent(unsigned long index,
                                           unsigned short* sourceId,
                                           unsigned short* eventId,
                                           unsigned long long* startDateTime,
-                                          unsigned short* duration,
+                                          unsigned long* duration,
                                           unsigned char* titleCount,
                                           unsigned long* audioLanguages,
                                           unsigned char* audioLanguageCount,
@@ -291,7 +341,14 @@ STDMETHODIMP_(bool) CParserAet::GetEvent(unsigned long index,
 
   *sourceId = m_currentRecordAeit->SourceId;
   *eventId = m_currentRecordAeit->EventId;
-  *startDateTime = m_currentRecordAeit->StartDateTime;
+
+  // Start date/time is a GPS time. To convert to epoch/Unix/POSIX time we
+  // must subtract the number of leap seconds between 1980 and now (because
+  // GPS time includes leap seconds but epoch/Unix/POSIX time doesn't), and
+  // add the number of seconds between the start of epoch/Unix/POSIX time and
+  // GPS time.
+  *startDateTime = m_currentRecordAeit->StartDateTime + GPS_TIME_START_OFFSET - m_gpsUtcOffset;
+
   *duration = m_currentRecordAeit->Duration;
   *titleCount = m_currentRecordAeit->Titles.size();
   *vchipRating = m_currentRecordAeit->VchipRating;
@@ -559,7 +616,7 @@ void CParserAet::OnNewSection(int pid, int tableId, CSection& section)
       // Yes. We might be ready!
       //LogDebug(L"AET: previously seen section, PID = %d, table ID = 0x%x, sub-type = %hhu, MGT tag = %hhu, section number = %d",
       //          pid, tableId, subtype, mgtTag, section.SectionNumber);
-      if (m_isReady || m_unseenSections.size() != 0)
+      if (m_isReadyAet || m_unseenSections.size() != 0)
       {
         return;
       }
@@ -575,8 +632,11 @@ void CParserAet::OnNewSection(int pid, int tableId, CSection& section)
                   (unsigned long long)m_seenSections.size(),
                   m_recordsAeit.GetRecordCount(),
                   m_recordsAett.GetRecordCount());
-        m_isReady = true;
-        if (m_callBackGrabber != NULL)
+        m_isReadyAet = true;
+        // Only notify that we're ready when both AEIT/AETT and STT are ready.
+        // We need STT in order to convert time-stamps from GPS to
+        // epoch/Unix/POSIX.
+        if (m_isReadyStt && m_callBackGrabber != NULL)
         {
           m_callBackGrabber->OnTableComplete(PID_AET_CALL_BACK, TABLE_ID_AET_CALL_BACK);
         }
@@ -589,7 +649,7 @@ void CParserAet::OnNewSection(int pid, int tableId, CSection& section)
     if (sectionIt == m_unseenSections.end())
     {
       // No. Is this a change/update, or just a new section group?
-      bool isChange = m_isReady;
+      bool isChange = m_isReadyAet;
       vector<unsigned long long>::const_iterator tempSectionIt = m_unseenSections.begin();
       while (tempSectionIt != m_unseenSections.end())
       {
@@ -643,12 +703,16 @@ void CParserAet::OnNewSection(int pid, int tableId, CSection& section)
           m_recordsAett.MarkExpiredRecords(mgtTag);
         }
 
-        if (m_isReady && m_callBackGrabber != NULL)
+        if (m_isReadyAet)
         {
-          m_isReady = false;
-          m_callBackGrabber->OnTableChange(PID_AET_CALL_BACK, TABLE_ID_AET_CALL_BACK);
+          m_isReadyAet = false;
+          // Only notify that we're changing when both AEIT/AETT and STT were
+          // ready.
+          if (m_isReadyStt && m_callBackGrabber != NULL)
+          {
+            m_callBackGrabber->OnTableChange(PID_AET_CALL_BACK, TABLE_ID_AET_CALL_BACK);
+          }
         }
-        m_isReady = false;
       }
 
       unsigned long long baseKey = sectionKey & 0xffffffffffffff00;
@@ -802,7 +866,10 @@ void CParserAet::PrivateReset(bool removeDecoders)
   m_recordsAett.RemoveAllRecords();
   m_seenSections.clear();
   m_unseenSections.clear();
-  m_isReady = false;
+  m_isReadyAet = false;
+
+  m_isReadyStt = false;
+  m_gpsUtcOffset = 0;
 
   m_currentRecordAeit = NULL;
   m_currentRecordAett = NULL;
@@ -825,25 +892,17 @@ bool CParserAet::DecodeAeitRecord(unsigned char* sectionData,
     record.EventId = ((sectionData[pointer] & 0x3f) << 8) | sectionData[pointer + 1];
     pointer += 2;
 
-    // Start date/time is the number of GPS seconds since January 6 1980
-    // 00:00:00. To convert to UTC epoch we must subtract the number of leap
-    // seconds between 1980 and now, and add the number of UTC seconds between
-    // the start of GPS time and UTC time.
     record.StartDateTime = (sectionData[pointer] << 24) | (sectionData[pointer + 1] << 16) | (sectionData[pointer + 2] << 8) | sectionData[pointer + 3];
     pointer += 4;
-    record.StartDateTime += GPS_TIME_START_OFFSET;
-    record.StartDateTime -= LEAP_SECONDS_SINCE_GPS_TIME_START;
 
     record.EtmPresent = (sectionData[pointer] & 0x30) >> 4;
-
-    unsigned long lengthInSeconds = ((sectionData[pointer] & 0xf) << 16) | (sectionData[pointer + 1] << 8) | sectionData[pointer + 2];
+    record.Duration = ((sectionData[pointer] & 0xf) << 16) | (sectionData[pointer + 1] << 8) | sectionData[pointer + 2];
     pointer += 3;
-    record.Duration = (unsigned short)(lengthInSeconds / 60);   // duration in minutes
 
     unsigned char titleLength = sectionData[pointer++];
-    //LogDebug(L"AEIT: event ID = %hu, start date/time = %llu, ETM present = %hhu, length in seconds = %lu, title length = %hhu",
+    //LogDebug(L"AEIT: event ID = %hu, start date/time = %lu, ETM present = %hhu, length in seconds = %lu, title length = %hhu",
     //          record.Id, record.StartDateTime, record.EtmPresent,
-    //          lengthInSeconds, titleLength);
+    //          record.Duration, titleLength);
     if (titleLength > 0)
     {
       if (

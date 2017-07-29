@@ -67,6 +67,8 @@ class CGrabberPmt : public CSectionDecoder
                         unsigned short& pidEitPresentFollowing,
                         unsigned short& pidSdt,
                         unsigned short& pidBat,
+                        unsigned short& pidTdt,
+                        unsigned short& pidTot,
                         unsigned short& pidNit);
     bool GetOpenTvEpgPids(bool& isOpenTvEpgProgram,
                           vector<unsigned short>& pidsEvent,

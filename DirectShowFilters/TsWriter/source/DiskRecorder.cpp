@@ -614,8 +614,8 @@ void CDiskRecorder::OnTsPacket(CTsHeader& header, unsigned char* tsPacket)
       }
 
       // Second and last requirement is that we see PCR.
-      // ISO/IEC 13818-1 says the maximum gap between PCR timestamps is 100 ms.
-      // If we've seen video/audio but then haven't seen PCR after 100 ms
+      // ISO/IEC 13818-1 says the maximum gap between PCR time-stamps is 100
+      // ms. If we've seen video/audio but then haven't seen PCR after 100 ms
       // assume that we're going to have to generate PCR from PTS.
       if (
         m_waitingForPcr &&
@@ -727,16 +727,16 @@ void CDiskRecorder::OnTsPacket(CTsHeader& header, unsigned char* tsPacket)
 
       //-----------------------------------------------------------------------
       // MAIN PCR HANDLING
-      // Normal PCR case: PCR timestamps carried in a main stream, and not
+      // Normal PCR case: PCR time-stamps carried in a main stream, and not
       // generating PCR from PTS.
       unsigned char localTsPacket[TS_PACKET_LEN];
       memcpy(localTsPacket, tsPacket, TS_PACKET_LEN);
       if (!m_generatePcrFromPts && header.Pid == m_originalPcrPid)
       {
-        // Overwrite the PCR timestamps.
+        // Overwrite the PCR time-stamps.
         PatchPcr(localTsPacket, header);
       }
-      // Corner PCR case: undesirable PCR timestamps.
+      // Corner PCR case: undesirable PCR time-stamps.
       else if (
         info.FakePid == m_fakePcrPid &&
         header.HasAdaptionField &&
@@ -744,10 +744,10 @@ void CDiskRecorder::OnTsPacket(CTsHeader& header, unsigned char* tsPacket)
         (localTsPacket[ADAPTATION_FIELD_FLAG_OFFSET] & PCR_FLAG_BIT) != 0
       )
       {
-        // If we get to here then we've found a PCR timestamp in a packet that
-        // is not expected to contain PCR timestamps. That isn't a problem...
+        // If we get to here then we've found a PCR time-stamp in a packet that
+        // is not expected to contain PCR time-stamps. That isn't a problem...
         // unless this packet comes from the stream that we are *inserting* PCR
-        // timestamps into. In that case a "rogue" PCR would create a random
+        // time-stamps into. In that case a "rogue" PCR would create a random
         // PCR discontinuity and so break TsReader's ability to skip,
         // fast-forward and rewind. The solution is simple: remove this PCR!
 
@@ -810,7 +810,7 @@ void CDiskRecorder::OnTsPacket(CTsHeader& header, unsigned char* tsPacket)
 
     //-------------------------------------------------------------------------
     // ALTERNATE PCR HANDLING
-    // Handling for PCR timestamps when they are *not* carried in one of the
+    // Handling for PCR time-stamps when they are *not* carried in one of the
     // main streams.
     if (
       header.Pid == m_originalPcrPid &&
@@ -1797,7 +1797,7 @@ void CDiskRecorder::UpdatePesHeader(PidInfo& info)
 
 long long CDiskRecorder::PcrDifference(long long newTs, long long prevTs)
 {
-  // Compute a signed difference between the new and previous timestamps.
+  // Compute a signed difference between the new and previous time-stamps.
   long long difference = newTs - prevTs;
   if (difference & 0x100000000)
   {

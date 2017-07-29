@@ -109,6 +109,8 @@ void CSectionDecoder::OnTsPacket(CTsHeader& header, unsigned char* tsPacket)
         LogDebug(L"section %d: discontinuity, value = %hhu, previous = %hhu, expected = %hhu, signal quality, descrambling, or HDD load problem?",
                   m_pid, header.ContinuityCounter, m_continuityCounter,
                   expectedContinuityCounter);
+        m_section.Reset();
+        return; 
       }
     }
     m_continuityCounter = header.ContinuityCounter;
@@ -120,6 +122,7 @@ void CSectionDecoder::OnTsPacket(CTsHeader& header, unsigned char* tsPacket)
       // example, the EPG grabber may create a section decoder for PID 0x300.
       // That PID carries EPG for Dish Network... but may well be used for
       // something else by other providers.
+      m_section.Reset();
       return;
     }
 
@@ -130,6 +133,7 @@ void CSectionDecoder::OnTsPacket(CTsHeader& header, unsigned char* tsPacket)
       {
         LogDebug(L"section %d: invalid payload start, position = %hhu",
                   m_pid, packetPointer);
+        m_section.Reset();
         return;
       }
 
@@ -150,6 +154,7 @@ void CSectionDecoder::OnTsPacket(CTsHeader& header, unsigned char* tsPacket)
       {
         if (!header.PayloadUnitStart)
         {
+          // We need to wait for the start of the next section.
           return;
         }
         if (tsPacket[packetPointer] == 0xff)

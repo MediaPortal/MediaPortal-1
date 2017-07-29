@@ -25,7 +25,6 @@
 #include "..\..\shared\Section.h"
 #include "ICallBackEam.h"
 #include "IRecord.h"
-#include "RecordStore.h"
 #include "Utils.h"
 
 using namespace MediaPortal;

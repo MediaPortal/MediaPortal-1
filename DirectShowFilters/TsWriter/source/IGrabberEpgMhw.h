@@ -39,9 +39,11 @@ DECLARE_INTERFACE_(IGrabberEpgMhw, IGrabber)
   STDMETHOD_(bool, IsSeen)(THIS)PURE;
   STDMETHOD_(bool, IsReady)(THIS)PURE;
 
-  STDMETHOD_(unsigned long, GetEventCount)(THIS)PURE;
+  STDMETHOD_(void, GetEventCount)(THIS_ unsigned long* eventCount,
+                                  unsigned long* textLanguage)PURE;
   STDMETHOD_(bool, GetEvent)(THIS_ unsigned long index,
-                              unsigned long long* eventId,
+                              unsigned char* version,
+                              unsigned long* eventId,
                               unsigned short* originalNetworkId,
                               unsigned short* transportStreamId,
                               unsigned short* serviceId,
@@ -51,16 +53,23 @@ DECLARE_INTERFACE_(IGrabberEpgMhw, IGrabber)
                               unsigned short* duration,
                               char* title,
                               unsigned short* titleBufferSize,
-                              unsigned long* payPerViewId,
                               char* description,
                               unsigned short* descriptionBufferSize,
                               unsigned char* descriptionLineCount,
+                              unsigned long* seriesId,
+                              unsigned char* seasonNumber,
+                              unsigned long* episodeId,
+                              unsigned short* episodeNumber,
+                              char* episodeName,
+                              unsigned short* episodeNameBufferSize,
                               char* themeName,
                               unsigned short* themeNameBufferSize,
                               char* subThemeName,
-                              unsigned short* subThemeNameBufferSize)PURE;
-  STDMETHOD_(bool, GetDescriptionLine)(THIS_ unsigned long long eventId,
-                                        unsigned char index,
+                              unsigned short* subThemeNameBufferSize,
+                              unsigned char* classification,
+                              unsigned long* payPerViewId)PURE;
+  STDMETHOD_(bool, GetDescriptionLine)(THIS_ unsigned long eventIndex,
+                                        unsigned char lineIndex,
                                         char* line,
                                         unsigned short* lineBufferSize)PURE;
 };

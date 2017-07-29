@@ -287,6 +287,8 @@ bool CGrabberSiMpeg::GetFreesatPids(bool& isFreesatSiPresent,
                                     unsigned short& pidEitPresentFollowing,
                                     unsigned short& pidSdt,
                                     unsigned short& pidBat,
+                                    unsigned short& pidTdt,
+                                    unsigned short& pidTot,
                                     unsigned short& pidNit)
 {
   CEnterCriticalSection lock(m_section);
@@ -313,6 +315,8 @@ bool CGrabberSiMpeg::GetFreesatPids(bool& isFreesatSiPresent,
                                       pidEitPresentFollowing,
                                       pidSdt,
                                       pidBat,
+                                      pidTdt,
+                                      pidTot,
                                       pidNit);
     }
   }
@@ -533,23 +537,29 @@ void CGrabberSiMpeg::OnPmtReceived(unsigned short programNumber,
         unsigned short pidEitPresentFollowing;
         unsigned short pidSdt;
         unsigned short pidBat;
+        unsigned short pidTdt;
+        unsigned short pidTot;
         unsigned short pidNit;
         if (it->second->GetFreesatPids(isFreesatSiPresent,
                                         pidEitSchedule,
                                         pidEitPresentFollowing,
                                         pidSdt,
                                         pidBat,
+                                        pidTdt,
+                                        pidTot,
                                         pidNit) && isFreesatSiPresent)
         {
-          LogDebug(L"  Freesat PIDs, EIT schedule = %hu, EIT P/F = %hu, SDT = %hu, BAT = %hu, NIT = %hu",
+          LogDebug(L"  Freesat PIDs, EIT schedule = %hu, EIT P/F = %hu, SDT = %hu, BAT = %hu, TDT = %hu, TOT = %hu, NIT = %hu",
                     pidEitSchedule, pidEitPresentFollowing, pidSdt, pidBat,
-                    pidNit);
+                    pidTdt, pidTot, pidNit);
           if (m_callBackSiMpeg != NULL)
           {
             m_callBackSiMpeg->OnFreesatPids(pidEitSchedule,
                                             pidEitPresentFollowing,
                                             pidSdt,
                                             pidBat,
+                                            pidTdt,
+                                            pidTot,
                                             pidNit);
           }
         }

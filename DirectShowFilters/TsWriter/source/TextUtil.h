@@ -23,6 +23,7 @@
 #pragma once
 #include <map>
 #include <vector>
+#include "MhwProvider.h"
 
 using namespace std;
 
@@ -42,6 +43,10 @@ class CTextUtil
                                   char** text);
     static bool DvbTextToString(unsigned char* data, unsigned short dataLength, char** text);
     static bool IsoIec10646ToString(unsigned char* data, unsigned short dataLength, char** text);
+    static bool MhwTextToString(unsigned char* data,
+                                unsigned short dataLength,
+                                MhwProvider provider,
+                                char** text);
     static bool OpenTvTextToString(unsigned char* data,
                                     unsigned char dataLength,
                                     bool isItalian,
@@ -54,6 +59,12 @@ class CTextUtil
       unsigned long EncodedSequence;
       unsigned char DecodedSequenceByteCount;
       char* DecodedSequence;
+    };
+
+    struct CodePageEntry
+    {
+      unsigned char Utf8EncodedByteCount;
+      char* Utf8Encoding;
     };
 
     static bool AtscScteTextToString(unsigned char* data,
@@ -94,4 +105,6 @@ class CTextUtil
     static const HuffmanSequence HUFFMAN_TABLE_DISH_NETWORK_255[];
     static const HuffmanSequence HUFFMAN_TABLE_OPENTV_DEFAULT[];
     static const HuffmanSequence HUFFMAN_TABLE_OPENTV_SKY_ITALY[];
+
+    static const CodePageEntry WIN1250_TO_UTF8[];
 };

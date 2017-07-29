@@ -117,7 +117,7 @@ bool CBasePmtParser::DecodePmtSection(const CSection& section)
     unsigned short pointer = 12;
     unsigned short endOfProgramInfo = pointer + programInfoLength;
     unsigned short endOfSection = section.section_length - 1;
-    //LogDebug(L"PMT: program number = %d, version number = %d, section number = %d, last section number = %d, PCR PID = %hu, program info length = %hu, section length = %d",
+    //LogDebug(L"PMT: program number = %d, version number = %d, section number = %hhu, last section number = %hhu, PCR PID = %hu, program info length = %hu, section length = %d",
     //          section.table_id_extension, section.version_number,
     //          section.SectionNumber, section.LastSectionNumber, pcrPid,
     //          programInfoLength, section.section_length);

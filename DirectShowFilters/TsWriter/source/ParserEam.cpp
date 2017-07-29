@@ -100,18 +100,19 @@ void CParserEam::OnNewSection(CSection& section)
     if (section.SectionNumber != 0 || section.LastSectionNumber != 0)
     {
       // According to SCTE 18 EAM should only have one section per message.
-      LogDebug(L"EAM %hu: unsupported multi-section message, protocol version = %hhu, sequence number = %d, section number = %d, last section number = %d",
-                m_pid, protocolVersion, section.version_number,
-                section.SectionNumber, section.LastSectionNumber);
+      LogDebug(L"EAM %hu: unsupported multi-section message, extension ID = %d, protocol version = %hhu, sequence number = %d, section number = %hhu, last section number = %hhu",
+                m_pid, section.table_id_extension, protocolVersion,
+                section.version_number, section.SectionNumber,
+                section.LastSectionNumber);
       return;
     }
 
     CEnterCriticalSection lock(m_section);
     if (section.version_number == m_sequenceNumber)
     {
-      //LogDebug(L"EAM %hu: previously seen message, protocol version = %hhu, sequence number = %d, section length = %d",
-      //          m_pid, protocolVersion, section.version_number,
-      //          section.section_length);
+      //LogDebug(L"EAM %hu: previously seen message, extension ID = %d, protocol version = %hhu, sequence number = %d",
+      //          m_pid, section.table_id_extension, protocolVersion,
+      //          section.version_number);
       return;
     }
     else if (m_latestRecord == NULL && m_callBack != NULL)
@@ -122,8 +123,9 @@ void CParserEam::OnNewSection(CSection& section)
     CRecordEam* record = new CRecordEam();
     if (record == NULL)
     {
-      LogDebug(L"EAM %hu: failed to allocate record, protocol version = %hhu, sequence number = %d",
-                m_pid, protocolVersion, section.version_number);
+      LogDebug(L"EAM %hu: failed to allocate record, extension ID = %d, protocol version = %hhu, sequence number = %d",
+                m_pid, section.table_id_extension, protocolVersion,
+                section.version_number);
       return;
     }
 
@@ -131,9 +133,10 @@ void CParserEam::OnNewSection(CSection& section)
     record->Id = (data[9] << 8) | data[10];
     record->OriginatorCode = data[11] | (data[12] << 8) | (data[13] << 16);
     unsigned char eventCodeLength = data[14];
-    //LogDebug(L"EAM %hu: protocol version = %hhu, sequence number = %d, section length = %d, event ID = %hu, originator code = %S, event code length = %hhu",
-    //          m_pid, protocolVersion, section.version_number,
-    //          section.section_length, record->Id,
+    //LogDebug(L"EAM %hu: extension ID = %d, protocol version = %hhu, sequence number = %d, section length = %d, section number = %hhu, last section number = %hhu, event ID = %hu, originator code = %S, event code length = %hhu",
+    //          m_pid, section.table_id_extension, protocolVersion,
+    //          section.version_number, section.section_length,
+    //          section.SectionNumber, section.LastSectionNumber, record->Id,
     //          (char*)&(record->OriginatorCode), eventCodeLength);
 
     unsigned short minimumSectionLength = MINIMUM_SECTION_LENGTH + eventCodeLength;
@@ -141,9 +144,10 @@ void CParserEam::OnNewSection(CSection& section)
     {
       if (minimumSectionLength > section.section_length)
       {
-        LogDebug(L"EAM %hu: invalid section, event code length = %hhu, section length = %d, protocol version = %hhu, sequence number = %d, event ID = %hu",
+        LogDebug(L"EAM %hu: invalid section, event code length = %hhu, section length = %d, extension ID = %d, protocol version = %hhu, sequence number = %d, section number = %hhu, event ID = %hu",
                   m_pid, eventCodeLength, section.section_length,
-                  protocolVersion, section.version_number, record->Id);
+                  section.table_id_extension, protocolVersion,
+                  section.version_number, section.SectionNumber, record->Id);
         delete record;
         return;
       }
@@ -151,9 +155,10 @@ void CParserEam::OnNewSection(CSection& section)
       record->EventCode = new char[eventCodeLength + 1];
       if (record->EventCode == NULL)
       {
-        LogDebug(L"EAM %hu: failed to allocate %hu byte(s) for an event code, protocol version = %hhu, sequence number = %d, event ID = %hu",
-                  m_pid, eventCodeLength + 1, protocolVersion,
-                  section.version_number, record->Id);
+        LogDebug(L"EAM %hu: failed to allocate %hu byte(s) for an event code, extension ID = %d, protocol version = %hhu, sequence number = %d, section number = %hhu, event ID = %hu",
+                  m_pid, eventCodeLength + 1, section.table_id_extension,
+                  protocolVersion, section.version_number,
+                  section.SectionNumber, record->Id);
       }
       else
       {
@@ -178,19 +183,21 @@ void CParserEam::OnNewSection(CSection& section)
                                                               record->NatureOfActivationTexts)
       )
       {
-        LogDebug(L"EAM %hu: invalid section, nature of activation text length = %hhu, pointer = %hu, event code length = %hhu, section length = %d, protocol version = %hhu, sequence number = %d, event ID = %hu",
+        LogDebug(L"EAM %hu: invalid section, nature of activation text length = %hhu, pointer = %hu, event code length = %hhu, section length = %d, extension ID = %d, protocol version = %hhu, sequence number = %d, section number = %hhu, event ID = %hu",
                   m_pid, natureOfActivationTextLength, pointer,
-                  eventCodeLength, section.section_length, protocolVersion,
-                  section.version_number, record->Id);
+                  eventCodeLength, section.section_length,
+                  section.table_id_extension, protocolVersion,
+                  section.version_number, section.SectionNumber, record->Id);
         delete record;
         return;
       }
 
       if (record->NatureOfActivationTexts.size() == 0)
       {
-        LogDebug(L"EAM %hu: failed to allocate nature of activation text(s), nature of activation text length = %hhu, pointer = %hu, protocol version = %hhu, sequence number = %d, event ID = %hu, section length = %d",
+        LogDebug(L"EAM %hu: failed to allocate nature of activation text(s), nature of activation text length = %hhu, pointer = %hu, extension ID = %d, protocol version = %hhu, sequence number = %d, section number = %hhu, event ID = %hu, section length = %d",
                   m_pid, natureOfActivationTextLength, pointer,
-                  protocolVersion, section.version_number, record->Id,
+                  section.table_id_extension, protocolVersion,
+                  section.version_number, section.SectionNumber, record->Id,
                   section.section_length);
       }
 
@@ -239,19 +246,21 @@ void CParserEam::OnNewSection(CSection& section)
                                                               record->AlertTexts)
       )
       {
-        LogDebug(L"EAM %hu: invalid section, alert text length = %hu, pointer = %hu, event code length = %hhu, nature of activation text length = %hhu, section length = %d, protocol version = %hhu, sequence number = %d, event ID = %hu",
+        LogDebug(L"EAM %hu: invalid section, alert text length = %hu, pointer = %hu, event code length = %hhu, nature of activation text length = %hhu, section length = %d, extension ID = %d, protocol version = %hhu, sequence number = %d, section number = %hhu, event ID = %hu",
                   m_pid, alertTextLength, pointer, eventCodeLength,
                   natureOfActivationTextLength, section.section_length,
-                  protocolVersion, section.version_number, record->Id);
+                  section.table_id_extension, protocolVersion,
+                  section.version_number, section.SectionNumber, record->Id);
         delete record;
         return;
       }
 
       if (record->AlertTexts.size() == 0)
       {
-        LogDebug(L"EAM %hu: failed to allocate alert text(s), alert text length = %hu, pointer = %hu, protocol version = %hhu, sequence number = %d, event ID = %hu, section length = %d",
-                  m_pid, alertTextLength, pointer, protocolVersion,
-                  section.version_number, record->Id, section.section_length);
+        LogDebug(L"EAM %hu: failed to allocate alert text(s), alert text length = %hu, pointer = %hu, extension ID = %d, protocol version = %hhu, sequence number = %d, section number = %hhu, event ID = %hu, section length = %d",
+                  m_pid, alertTextLength, pointer, section.table_id_extension,
+                  protocolVersion, section.version_number,
+                  section.SectionNumber, record->Id, section.section_length);
       }
 
       pointer += alertTextLength;
@@ -264,11 +273,12 @@ void CParserEam::OnNewSection(CSection& section)
     minimumSectionLength += (locationCodeCount * 3);
     if (minimumSectionLength > section.section_length)
     {
-      LogDebug(L"EAM %hu: invalid section, location code count = %hhu, pointer = %hu, event code length = %hhu, nature of activation text length = %hhu, alert text length = %hu, section length = %d, protocol version = %hhu, sequence number = %d, event ID = %hu",
+      LogDebug(L"EAM %hu: invalid section, location code count = %hhu, pointer = %hu, event code length = %hhu, nature of activation text length = %hhu, alert text length = %hu, section length = %d, extension ID = %d, protocol version = %hhu, sequence number = %d, section number = %hhu, event ID = %hu",
                 m_pid, locationCodeCount, pointer, eventCodeLength,
                 natureOfActivationTextLength, alertTextLength,
-                section.section_length, protocolVersion,
-                section.version_number, record->Id);
+                section.section_length, section.table_id_extension,
+                protocolVersion, section.version_number, section.SectionNumber,
+                record->Id);
       delete record;
       return;
     }
@@ -290,11 +300,12 @@ void CParserEam::OnNewSection(CSection& section)
     minimumSectionLength += (exceptionCount * 5);
     if (minimumSectionLength > section.section_length)
     {
-      LogDebug(L"EAM %hu: invalid section, exception count = %hhu, pointer = %hu, event code length = %hhu, nature of activation text length = %hhu, alert text length = %hu, location code count = %hhu, section length = %d, protocol version = %hhu, sequence number = %d, event ID = %hu",
+      LogDebug(L"EAM %hu: invalid section, exception count = %hhu, pointer = %hu, event code length = %hhu, nature of activation text length = %hhu, alert text length = %hu, location code count = %hhu, section length = %d, extension ID = %d, protocol version = %hhu, sequence number = %d, section number = %hhu, event ID = %hu",
                 m_pid, exceptionCount, pointer, eventCodeLength,
                 natureOfActivationTextLength, alertTextLength,
-                locationCodeCount, section.section_length, protocolVersion,
-                section.version_number, record->Id);
+                locationCodeCount, section.section_length,
+                section.table_id_extension, protocolVersion,
+                section.version_number, section.SectionNumber, record->Id);
       delete record;
       return;
     }
@@ -334,11 +345,12 @@ void CParserEam::OnNewSection(CSection& section)
     pointer += 2;
     if (minimumSectionLength + descriptorsLength > section.section_length)
     {
-      LogDebug(L"EAM %hu: invalid section, descriptors length = %hu, pointer = %hu, event code length = %hhu, nature of activation text length = %hhu, alert text length = %hu, location code count = %hhu, exception count = %hhu, section length = %d, protocol version = %hhu, sequence number = %d, event ID = %hu",
+      LogDebug(L"EAM %hu: invalid section, descriptors length = %hu, pointer = %hu, event code length = %hhu, nature of activation text length = %hhu, alert text length = %hu, location code count = %hhu, exception count = %hhu, section length = %d, extension ID = %d, protocol version = %hhu, sequence number = %d, section number = %hhu, event ID = %hu",
                 m_pid, descriptorsLength, pointer, eventCodeLength,
                 natureOfActivationTextLength, alertTextLength,
                 locationCodeCount, exceptionCount, section.section_length,
-                protocolVersion, section.version_number, record->Id);
+                section.table_id_extension, protocolVersion,
+                section.version_number, section.SectionNumber, record->Id);
       delete record;
       return;
     }
@@ -352,11 +364,12 @@ void CParserEam::OnNewSection(CSection& section)
       //          m_pid, tag, length, pointer);
       if (pointer + length > endOfDescriptors)
       {
-        LogDebug(L"EAM %hu: invalid section, descriptor length = %hhu, pointer = %hu, end of descriptors = %hu, event code length = %hhu, nature of activation text length = %hhu, alert text length = %hu, location code count = %hhu, exception count = %hhu, section length = %d, tag = %d, protocol version = %hhu, sequence number = %d, event ID = %hu",
+        LogDebug(L"EAM %hu: invalid section, descriptor length = %hhu, pointer = %hu, end of descriptors = %hu, event code length = %hhu, nature of activation text length = %hhu, alert text length = %hu, location code count = %hhu, exception count = %hhu, section length = %d, tag = %d, extension ID = %d, protocol version = %hhu, sequence number = %d, section number = %hhu, event ID = %hu",
                   m_pid, length, pointer, endOfDescriptors, eventCodeLength,
                   natureOfActivationTextLength, alertTextLength,
                   locationCodeCount, exceptionCount, section.section_length,
-                  tag, protocolVersion, section.version_number, record->Id);
+                  tag, section.table_id_extension, protocolVersion,
+                  section.version_number, section.SectionNumber, record->Id);
         delete record;
         return;
       }
@@ -379,9 +392,10 @@ void CParserEam::OnNewSection(CSection& section)
 
       if (!result)
       {
-        LogDebug(L"EAM %hu: invalid descriptor, tag = 0x%hhx, length = %hhu, pointer = %hu, end of descriptors = %hu, protocol version = %hhu, sequence number = %d, event ID = %hu",
+        LogDebug(L"EAM %hu: invalid descriptor, tag = 0x%hhx, length = %hhu, pointer = %hu, end of descriptors = %hu, extension ID = %d, protocol version = %hhu, sequence number = %d, section number = %hhu, event ID = %hu",
                   m_pid, tag, length, pointer, endOfDescriptors,
-                  protocolVersion, section.version_number, record->Id);
+                  section.table_id_extension, protocolVersion,
+                  section.version_number, section.SectionNumber, record->Id);
         delete record;
         return;
       }
@@ -390,11 +404,12 @@ void CParserEam::OnNewSection(CSection& section)
 
     if (pointer != section.section_length - 1)
     {
-      LogDebug(L"EAM %hu: section parsing error, pointer = %hu, event code length = %hhu, nature of activation text length = %hhu, alert text length = %hu, location code count = %hhu, exception count = %hhu, descriptors length = %d, section length = %d, protocol version = %hhu, sequence number = %d, event ID = %hu",
+      LogDebug(L"EAM %hu: section parsing error, pointer = %hu, event code length = %hhu, nature of activation text length = %hhu, alert text length = %hu, location code count = %hhu, exception count = %hhu, descriptors length = %d, section length = %d, extension ID = %d, protocol version = %hhu, sequence number = %d, section number = %hhu, event ID = %hu",
                 m_pid, pointer, eventCodeLength, natureOfActivationTextLength,
                 alertTextLength, locationCodeCount, exceptionCount,
-                descriptorsLength, section.section_length, protocolVersion,
-                section.version_number, record->Id);
+                descriptorsLength, section.section_length,
+                section.table_id_extension, protocolVersion,
+                section.version_number, section.SectionNumber, record->Id);
       delete record;
       return;
     }
@@ -402,14 +417,16 @@ void CParserEam::OnNewSection(CSection& section)
     bool doCompleteCallBack = true;
     if (m_seenEventIds[record->Id])
     {
-      //LogDebug(L"EAM %hu: previously seen message, protocol version = %hhu, sequence number = %d, event ID = %hu",
-      //          m_pid, protocolVersion, section.version_number, record->Id);
+      //LogDebug(L"EAM %hu: previously seen message, extension ID = %d, protocol version = %hhu, sequence number = %d, event ID = %hu",
+      //          m_pid, section.table_id_extension, protocolVersion,
+      //          section.version_number, record->Id);
       doCompleteCallBack = false;
     }
     else if (record->AlertPriority == 0)
     {
-      //LogDebug(L"EAM %hu: test and/or sequence establishment message, protocol version = %hhu, sequence number = %d, event ID = %hu",
-      //          m_pid, protocolVersion, section.version_number, record->Id);
+      //LogDebug(L"EAM %hu: test and/or sequence establishment message, extension ID = %d, protocol version = %hhu, sequence number = %d, event ID = %hu",
+      //          m_pid, section.table_id_extension, protocolVersion,
+      //          section.version_number, record->Id);
       m_seenEventIds[record->Id] = true;
       doCompleteCallBack = m_latestRecord == NULL;
     }

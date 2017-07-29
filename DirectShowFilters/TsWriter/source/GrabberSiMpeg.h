@@ -102,6 +102,8 @@ class CGrabberSiMpeg
                         unsigned short& pidEitPresentFollowing,
                         unsigned short& pidSdt,
                         unsigned short& pidBat,
+                        unsigned short& pidTdt,
+                        unsigned short& pidTot,
                         unsigned short& pidNit);
     bool GetOpenTvEpgPids(unsigned short programNumber,
                           unsigned short& pmtPid,

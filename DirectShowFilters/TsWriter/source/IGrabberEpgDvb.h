@@ -56,7 +56,7 @@ DECLARE_INTERFACE_(IGrabberEpgDvb, IGrabber)
                               unsigned short eventIndex,
                               unsigned long long* eventId,
                               unsigned long long* startDateTime,
-                              unsigned short* duration,
+                              unsigned long* duration,
                               unsigned char* runningStatus,
                               bool* freeCaMode,
                               unsigned short* referenceServiceId,

@@ -95,7 +95,10 @@ DECLARE_INTERFACE_(IGrabberSiDvb, IGrabber)
                                 unsigned char* openTvRegionIdCount,
                                 unsigned short* freesatChannelCategoryIds,
                                 unsigned char* freesatChannelCategoryIdCount,
-                                unsigned char* openTvChannelCategoryId,
+                                unsigned short* mediaHighwayChannelCategoryIds,
+                                unsigned char* mediaHighwayChannelCategoryIdCount,
+                                unsigned char* openTvChannelCategoryIds,
+                                unsigned char* openTvChannelCategoryIdCount,
                                 unsigned char* virginMediaChannelCategoryId,
                                 unsigned short* dishMarketId,
                                 unsigned char* norDigChannelListIds,
@@ -174,6 +177,10 @@ DECLARE_INTERFACE_(IGrabberSiDvb, IGrabber)
                                                             unsigned long language,
                                                             char* name,
                                                             unsigned short* nameBufferSize)PURE;
+
+  STDMETHOD_(bool, GetMediaHighwayChannelCategoryName)(THIS_ unsigned short categoryId,
+                                                        char* name,
+                                                        unsigned short* nameBufferSize)PURE;
 
   STDMETHOD_(unsigned char, GetNorDigChannelListNameCount)(THIS_ unsigned char channelListId)PURE;
   STDMETHOD_(bool, GetNorDigChannelListNameByIndex)(THIS_ unsigned char channelListId,

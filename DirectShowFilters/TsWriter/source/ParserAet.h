@@ -30,8 +30,10 @@
 #include "..\..\shared\TsHeader.h"
 #include "ICallBackGrabber.h"
 #include "ICallBackPidConsumer.h"
+#include "ICallBackTableParser.h"
 #include "IGrabberEpgScte.h"
 #include "IRecord.h"
+#include "ISystemTimeInfoProviderAtscScte.h"
 #include "RecordStore.h"
 #include "Utils.h"
 
@@ -49,10 +51,14 @@ using namespace std;
 extern void LogDebug(const wchar_t* fmt, ...);
 
 class CParserAet
-  : public CUnknown, public IGrabberEpgScte, public ISectionCallback
+  : public CUnknown, public ICallBackTableParser, public IGrabberEpgScte,
+    public ISectionCallback
 {
   public:
-    CParserAet(ICallBackPidConsumer* callBack, LPUNKNOWN unk, HRESULT* hr);
+    CParserAet(ICallBackPidConsumer* callBack,
+                ISystemTimeInfoProviderAtscScte* systemTimeInfoProvider,
+                LPUNKNOWN unk,
+                HRESULT* hr);
     virtual ~CParserAet();
 
     DECLARE_IUNKNOWN
@@ -61,6 +67,10 @@ class CParserAet
 
     void AddDecoders(const vector<unsigned short>& pids);
     void RemoveDecoders(const vector<unsigned short>& pids);
+
+    void OnTableSeen(unsigned char tableId);
+    void OnTableComplete(unsigned char tableId);
+    void OnTableChange(unsigned char tableId);
 
     STDMETHODIMP_(void) Start();
     STDMETHODIMP_(void) Stop();
@@ -77,7 +87,7 @@ class CParserAet
                                   unsigned short* sourceId,
                                   unsigned short* eventId,
                                   unsigned long long* startDateTime,
-                                  unsigned short* duration,
+                                  unsigned long* duration,
                                   unsigned char* textCount,
                                   unsigned long* audioLanguages,
                                   unsigned char* audioLanguageCount,
@@ -163,7 +173,7 @@ class CParserAet
 
         void Debug(const wchar_t* situation) const
         {
-          LogDebug(L"AEIT: event %s, PID = %hu, MGT tag = %hhu, source ID = %hu, event ID = %hu, start date/time = %llu, duration = %hu m, ETM present = %hhu, title count = %llu, audio language count = %llu, captions language count = %llu, genre count = %llu, V-CHIP rating = %hhu, MPAA classification = %hhu, advisories = %hu",
+          LogDebug(L"AEIT: event %s, PID = %hu, MGT tag = %hhu, source ID = %hu, event ID = %hu, start date/time = %lu, duration = %lu s, ETM present = %hhu, title count = %llu, audio language count = %llu, captions language count = %llu, genre count = %llu, V-CHIP rating = %hhu, MPAA classification = %hhu, advisories = %hu",
                     situation, Pid, MgtTag, SourceId, EventId, StartDateTime,
                     Duration, EtmPresent, (unsigned long long)Titles.size(),
                     (unsigned long long)AudioLanguages.size(),
@@ -181,9 +191,9 @@ class CParserAet
         unsigned char MgtTag;
         unsigned short SourceId;
         unsigned short EventId;
-        unsigned long long StartDateTime; // unit = UTC epoch
+        unsigned long StartDateTime;    // GPS time-stamp
         unsigned char EtmPresent;
-        unsigned short Duration;          // unit = minutes
+        unsigned long Duration;         // unit = seconds
         map<unsigned long, char*> Titles;
         vector<unsigned long> AudioLanguages;
         vector<unsigned long> CaptionsLanguages;
@@ -287,10 +297,13 @@ class CParserAet
     bool m_isGrabbing;
     vector<unsigned long long> m_seenSections;
     vector<unsigned long long> m_unseenSections;
-    bool m_isReady;
+    bool m_isReadyAet;
     clock_t m_completeTime;
     ICallBackGrabber* m_callBackGrabber;
     ICallBackPidConsumer* m_callBackPidConsumer;
+    ISystemTimeInfoProviderAtscScte* m_systemTimeInfoProvider;
+    bool m_isReadyStt;
+    unsigned char m_gpsUtcOffset;
     map<unsigned short, CSectionDecoder*> m_decoders;
     CRecordStore m_recordsAeit;
     CRecordStore m_recordsAett;

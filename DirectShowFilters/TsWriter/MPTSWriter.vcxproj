@@ -181,7 +181,10 @@
     <ClCompile Include="source\ParserEam.cpp" />
     <ClCompile Include="source\ParserMgt.cpp" />
     <ClCompile Include="source\ParserOpenTv.cpp" />
+    <ClCompile Include="source\ParserSttAtsc.cpp" />
+    <ClCompile Include="source\ParserSttScte.cpp" />
     <ClCompile Include="source\ParserSvct.cpp" />
+    <ClCompile Include="source\ParserTot.cpp" />
     <ClCompile Include="source\RecordStore.cpp" />
     <ClCompile Include="source\TextUtil.cpp" />
     <ClCompile Include="source\TsChannel.cpp" />
@@ -216,6 +219,7 @@
     <ClInclude Include="source\ICallBackEncryptionAnalyser.h" />
     <ClInclude Include="source\ICallBackLvct.h" />
     <ClInclude Include="source\ICallBackMgt.h" />
+    <ClInclude Include="source\ICallBackMhw.h" />
     <ClInclude Include="source\ICallBackNitAtsc.h" />
     <ClInclude Include="source\ICallBackNitDvb.h" />
     <ClInclude Include="source\ICallBackNtt.h" />
@@ -227,8 +231,10 @@
     <ClInclude Include="source\ICallBackSiDvb.h" />
     <ClInclude Include="source\ICallBackGrabber.h" />
     <ClInclude Include="source\ICallBackSiMpeg.h" />
+    <ClInclude Include="source\ICallBackStt.h" />
     <ClInclude Include="source\ICallBackSvct.h" />
     <ClInclude Include="source\ICallBackTableParser.h" />
+    <ClInclude Include="source\ICallBackTot.h" />
     <ClInclude Include="source\IChannelObserver.h" />
     <ClInclude Include="source\IDefaultAuthorityProvider.h" />
     <ClInclude Include="source\IEncryptionAnalyser.h" />
@@ -237,6 +243,7 @@
     <ClInclude Include="source\IGrabberEpgMhw.h" />
     <ClInclude Include="source\IGrabberEpgOpenTv.h" />
     <ClInclude Include="source\IGrabberEpgScte.h" />
+    <ClInclude Include="source\IMhwChannelInfoProvider.h" />
     <ClInclude Include="source\IObserver.h" />
     <ClInclude Include="source\IRecord.h" />
     <ClInclude Include="source\IGrabber.h" />
@@ -245,7 +252,10 @@
     <ClInclude Include="source\IGrabberSiFreesat.h" />
     <ClInclude Include="source\IGrabberSiMpeg.h" />
     <ClInclude Include="source\IGrabberSiScte.h" />
+    <ClInclude Include="source\ISystemTimeInfoProviderAtscScte.h" />
+    <ClInclude Include="source\ISystemTimeInfoProviderDvb.h" />
     <ClInclude Include="source\ITsWriter.h" />
+    <ClInclude Include="source\MhwProvider.h" />
     <ClInclude Include="source\ParserAet.h" />
     <ClInclude Include="source\ParserEitAtsc.h" />
     <ClInclude Include="source\GrabberSiAtscScte.h" />
@@ -262,7 +272,10 @@
     <ClInclude Include="source\ParserEam.h" />
     <ClInclude Include="source\ParserMgt.h" />
     <ClInclude Include="source\ParserOpenTv.h" />
+    <ClInclude Include="source\ParserSttAtsc.h" />
+    <ClInclude Include="source\ParserSttScte.h" />
     <ClInclude Include="source\ParserSvct.h" />
+    <ClInclude Include="source\ParserTot.h" />
     <ClInclude Include="source\PidUsage.h" />
     <ClInclude Include="source\RecorderMode.h" />
     <ClInclude Include="source\RecordStore.h" />

@@ -23,6 +23,7 @@
 #include <cstring>      // strcmp(), strncmp(), strncpy()
 #include "..\..\shared\EnterCriticalSection.h"
 #include "..\..\shared\TimeUtils.h"
+#include "ParserOpenTv.h"
 #include "TextUtil.h"
 #include "Utils.h"
 
@@ -105,7 +106,7 @@ void CParserSdt::OnNewSection(CSection& section)
     unsigned char* data = section.Data;
     unsigned short transportStreamId = section.table_id_extension;
     unsigned short originalNetworkId = (data[8] << 8) | data[9];
-    //LogDebug(L"SDT %d: table ID = 0x%x, TSID = %hu, ONID = %hu, version number = %d, section length = %d, section number = %d, last section number = %d",
+    //LogDebug(L"SDT %d: table ID = 0x%x, TSID = %hu, ONID = %hu, version number = %d, section length = %d, section number = %hhu, last section number = %hhu",
     //          GetPid(), section.table_id, transportStreamId,
     //          originalNetworkId, section.version_number,
     //          section.section_length, section.SectionNumber,
@@ -136,7 +137,7 @@ void CParserSdt::OnNewSection(CSection& section)
     if (sectionIt != seenSections->end())
     {
       // Yes. We might be ready!
-      //LogDebug(L"SDT %d: previously seen section, table ID = 0x%x, TSID = %hu, ONID = %hu, section number = %d",
+      //LogDebug(L"SDT %d: previously seen section, table ID = 0x%x, TSID = %hu, ONID = %hu, section number = %hhu",
       //          GetPid(), section.table_id, transportStreamId,
       //          originalNetworkId, section.SectionNumber);
       if (m_isOtherReady || m_unseenSectionsOther.size() != 0)
@@ -211,7 +212,7 @@ void CParserSdt::OnNewSection(CSection& section)
 
       if (isChange)
       {
-        LogDebug(L"SDT %d: changed, table ID = 0x%x, TSID = %hu, ONID = %hu, version number = %d, section number = %d, last section number = %d",
+        LogDebug(L"SDT %d: changed, table ID = 0x%x, TSID = %hu, ONID = %hu, version number = %d, section number = %hhu, last section number = %hhu",
                   GetPid(), section.table_id, transportStreamId,
                   originalNetworkId, section.version_number,
                   section.SectionNumber, section.LastSectionNumber);
@@ -237,7 +238,7 @@ void CParserSdt::OnNewSection(CSection& section)
       }
       else
       {
-        LogDebug(L"SDT %d: received, table ID = 0x%x, TSID = %hu, ONID = %hu, version number = %d, section number = %d, last section number = %d",
+        LogDebug(L"SDT %d: received, table ID = 0x%x, TSID = %hu, ONID = %hu, version number = %d, section number = %hhu, last section number = %hhu",
                   GetPid(), section.table_id, transportStreamId,
                   originalNetworkId, section.version_number,
                   section.SectionNumber, section.LastSectionNumber);
@@ -262,7 +263,7 @@ void CParserSdt::OnNewSection(CSection& section)
     }
     else
     {
-      //LogDebug(L"SDT %d: new section, table ID = 0x%x, TSID = %hu, ONID = %hu, version number = %d, section number = %d",
+      //LogDebug(L"SDT %d: new section, table ID = 0x%x, TSID = %hu, ONID = %hu, version number = %d, section number = %hhu",
       //          GetPid(), section.table_id, transportStreamId,
       //          originalNetworkId, section.version_number,
       //          section.SectionNumber);
@@ -275,7 +276,7 @@ void CParserSdt::OnNewSection(CSection& section)
       CRecordSdt* record = new CRecordSdt();
       if (record == NULL)
       {
-        LogDebug(L"SDT %d: failed to allocate record, table ID = 0x%x, TSID = %hu, ONID = %hu, version number = %d, section number = %d",
+        LogDebug(L"SDT %d: failed to allocate record, table ID = 0x%x, TSID = %hu, ONID = %hu, version number = %d, section number = %hhu",
                   GetPid(), section.table_id, transportStreamId,
                   originalNetworkId, section.version_number,
                   section.SectionNumber);
@@ -287,7 +288,7 @@ void CParserSdt::OnNewSection(CSection& section)
       record->TransportStreamId = transportStreamId;
       if (!DecodeServiceRecord(data, pointer, endOfSection, *record))
       {
-        LogDebug(L"SDT %d: invalid section, table ID = 0x%x, TSID = %hu, ONID = %hu, version number = %d, section number = %d, service ID = %hu",
+        LogDebug(L"SDT %d: invalid section, table ID = 0x%x, TSID = %hu, ONID = %hu, version number = %d, section number = %hhu, service ID = %hu",
                   GetPid(), section.table_id, transportStreamId,
                   originalNetworkId, section.version_number,
                   section.SectionNumber, record->ServiceId);
@@ -300,7 +301,7 @@ void CParserSdt::OnNewSection(CSection& section)
 
     if (pointer != endOfSection)
     {
-      LogDebug(L"SDT %d: section parsing error, pointer = %hu, end of section = %hu, table ID = 0x%x, TSID = %hu, ONID = %hu, version number = %d, section number = %d",
+      LogDebug(L"SDT %d: section parsing error, pointer = %hu, end of section = %hu, table ID = 0x%x, TSID = %hu, ONID = %hu, version number = %d, section number = %hhu",
                 GetPid(), pointer, endOfSection, section.table_id,
                 transportStreamId, originalNetworkId,
                 section.version_number, section.SectionNumber);
@@ -396,7 +397,8 @@ bool CParserSdt::GetService(unsigned short index,
                             unsigned char& audioLanguageCount,
                             unsigned long* subtitlesLanguages,
                             unsigned char& subtitlesLanguageCount,
-                            unsigned char& openTvCategoryId,
+                            unsigned char* openTvCategoryIds,
+                            unsigned char& openTvCategoryIdCount,
                             unsigned char& virginMediaCategoryId,
                             unsigned short& dishMarketId,
                             unsigned long* availableInCountries,
@@ -460,7 +462,6 @@ bool CParserSdt::GetService(unsigned short index,
   isThreeDimensional = m_currentRecord->IsThreeDimensional;
   streamCountVideo = m_currentRecord->StreamCountVideo;
   streamCountAudio = m_currentRecord->StreamCountAudio;
-  openTvCategoryId = m_currentRecord->OpenTvCategoryId;
   virginMediaCategoryId = m_currentRecord->VirginMediaCategoryId;
   dishMarketId = m_currentRecord->DishMarketId;
   previousOriginalNetworkId = m_currentRecord->PreviousOriginalNetworkId;
@@ -490,6 +491,16 @@ bool CParserSdt::GetService(unsigned short index,
               GetPid(), index, tableId, originalNetworkId, transportStreamId,
               serviceId, referenceServiceId, requiredCount,
               subtitlesLanguageCount);
+  }
+  if (!CUtils::CopyVectorToArray(m_currentRecord->OpenTvCategoryIds,
+                                  openTvCategoryIds,
+                                  openTvCategoryIdCount,
+                                  requiredCount) && openTvCategoryIds != NULL)
+  {
+    LogDebug(L"SDT %d: insufficient OpenTV channel category ID array size, service index = %hu, table ID = 0x%hhx, ONID = %hu, TSID = %hu, service ID = %hu, reference service ID = %hu, required size = %hhu, actual size = %hhu",
+              GetPid(), index, tableId, originalNetworkId, transportStreamId,
+              serviceId, referenceServiceId, requiredCount,
+              openTvCategoryIdCount);
   }
 
   // Assumption: for time-shifted/NVOD services, the following details are only
@@ -1105,7 +1116,8 @@ bool CParserSdt::DecodeServiceDescriptors(unsigned char* sectionData,
       {
         descriptorParseResult = DecodeOpenTvChannelDescriptionDescriptor(&sectionData[pointer],
                                                                           length,
-                                                                          record.OpenTvCategoryId);
+                                                                          CParserOpenTv::IsItalianText(record.OriginalNetworkId),
+                                                                          record.OpenTvCategoryIds);
       }
       else if (tag == 0xc0) // OpenTV NVOD time-shifted service name descriptor
       {
@@ -1854,18 +1866,19 @@ bool CParserSdt::DecodeDishSubChannelDescriptor(unsigned char* data,
 
 bool CParserSdt::DecodeOpenTvChannelDescriptionDescriptor(unsigned char* data,
                                                           unsigned char dataLength,
-                                                          unsigned char& categoryId)
+                                                          bool isItalianText,
+                                                          vector<unsigned char>& categoryIds)
 {
-  // channel type - 1 byte
-  // flags - 1 byte; AU, NZ = always 1, UK = varies, pattern not obvious
-  // category ID / unknown - 4 bits
-  // following byte count - 4 bits
-  // if (following byte count != 0) {
-  //   category ID - 1 byte; country-specific interpretation
-  //   unknown - [following byte count - 1] bytes
+  // unknown - 1 byte; IT = 0x1c or 0, AU/UK = 0x1d or 0, NZ = 0x20 or 0
+  // unknown - 1 byte; AU/NZ = always 1, IT/UK = various; related to bundle/package/encryption, or flags???
+  // category ID 0 - 4 bits; country-specific interpretation
+  // category count - 4 bits
+  // for (i = 1; i <= category count; i++) {
+  //   category ID i - 4 bits; country-specific interpretation
+  //   unknown - 4 bits; always seems to be 0xf
   // }
   // channel description - [remaining] bytes; Huffman encoded
-  if (dataLength < 3)
+  if (dataLength < 4)
   {
     LogDebug(L"SDT: invalid OpenTV channel description descriptor, length = %hhu",
               dataLength);
@@ -1873,27 +1886,50 @@ bool CParserSdt::DecodeOpenTvChannelDescriptionDescriptor(unsigned char* data,
   }
   try
   {
-    unsigned char channelType = data[0];
-    unsigned char flags = data[1];
-    unsigned char categoryIdOrUnknown = data[2];
-    unsigned char followingByteCount = categoryIdOrUnknown & 0xf;
-    if (followingByteCount == 0)
+    unsigned char unknown1 = data[0];
+    unsigned char unknown2 = data[1];
+    unsigned char categoryCount = (data[2] & 0xf) + 1;
+    //LogDebug(L"SDT: OpenTV channel description descriptor, unknown 1 = %hhu, unknown 2 = 0x%hhx, category count = %hhu",
+    //          unknown1, unknown2, categoryCount);
+    unsigned char pointer = 2;
+    unsigned char endOfCategoryIds = pointer + categoryCount;
+    if (endOfCategoryIds >= dataLength)
     {
-      categoryId = categoryIdOrUnknown;
+      LogDebug(L"SDT: invalid OpenTV channel description descriptor, length = %hhu, unknown 1 = %hhu, unknown 2 = 0x%hhx, category count = %hhu",
+                dataLength, unknown1, unknown2, categoryCount);
+      return false;
+    }
+
+    // In theory providers can associate each channel with up to 16 categories.
+    // In practise I've never seen a channel associated with more than 3
+    // categories, and 99.9% of the time channels are only associated with 1 or
+    // 2 categories. I'm not sure whether the associations are hierarchial.
+    // Keep all of them and let the caller decide how they want to interpret
+    // them.
+    while (pointer < endOfCategoryIds)
+    {
+      unsigned char categoryId = data[pointer] >> 4;
+      unsigned char unknown3 = data[pointer++] & 0xf;
+      categoryIds.push_back(categoryId);
+      //LogDebug(L"  category ID = %hhu, unknown = %hhu", categoryId, unknown3);
+    }
+
+    char* description = NULL;
+    if (!CTextUtil::OpenTvTextToString(&data[pointer], dataLength - pointer, isItalianText, &description))
+    {
+      LogDebug(L"SDT: invalid OpenTV channel description descriptor, length = %hhu, unknown 1 = %hhu, unknown 2 = 0x%hhx, category count = %hhu, is Italian text = %d",
+                dataLength, unknown1, unknown2, categoryCount, isItalianText);
+      return false;
+    }
+    if (description == NULL)
+    {
+      LogDebug(L"SDT: failed to allocate OpenTV channel description");
     }
     else
     {
-      if (dataLength < 3 + followingByteCount)
-      {
-        LogDebug(L"SDT: invalid OpenTV channel description descriptor, length = %hhu, channel type = %hhu, flags = 0x%hhx, category ID/unknown = %hhu",
-                  dataLength, channelType, flags, categoryIdOrUnknown);
-        return false;
-      }
-      categoryId = data[3];
+      LogDebug(L"SDT: description = %S", description);
+      delete description;
     }
-
-    //LogDebug(L"SDT: OpenTV channel description descriptor, channel type = %hhu, flags = 0x%hhx, category ID/unknown = %hhu, category ID = %hhu",
-    //          channelType, flags, categoryIdOrUnknown, categoryId);
     return true;
   }
   catch (...)
@@ -1951,7 +1987,7 @@ bool CParserSdt::DecodeVirginMediaChannelDescriptor(unsigned char* data,
   // flags 2 - 1 byte
   // unique - 2 bytes; channel ID???
   // zero - 1 byte
-  // flags 2 - 1 bytes
+  // flags 2 - 1 byte
   if (dataLength < 9)
   {
     LogDebug(L"SDT: invalid Virgin Media channel descriptor, length = %hhu",

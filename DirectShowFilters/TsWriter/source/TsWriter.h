@@ -143,6 +143,8 @@ class CTsWriter
                         unsigned short pidEitPresentFollowing,
                         unsigned short pidSdt,
                         unsigned short pidBat,
+                        unsigned short pidTdt,
+                        unsigned short pidTot,
                         unsigned short pidNit);
 
     void OnSdtRunningStatus(unsigned short serviceId, unsigned char runningStatus);

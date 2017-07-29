@@ -83,7 +83,7 @@ void CParserPat::OnNewSection(CSection& section)
       return;
     }
 
-    //LogDebug(L"PAT: TSID = %d, version number = %d, section length = %d, section number = %d, last section number = %d",
+    //LogDebug(L"PAT: TSID = %d, version number = %d, section length = %d, section number = %hhu, last section number = %hhu",
     //          section.table_id_extension, section.version_number,
     //          section.section_length, section.SectionNumber,
     //          section.LastSectionNumber);
@@ -96,7 +96,7 @@ void CParserPat::OnNewSection(CSection& section)
 
       if (m_version != VERSION_NOT_SET)
       {
-        LogDebug(L"PAT: changed, TSID = %d, version number = %d, prev. TSID = %hu, prev. version number = %hhu, section number = %d, last section number = %d",
+        LogDebug(L"PAT: changed, TSID = %d, version number = %d, prev. TSID = %hu, prev. version number = %hhu, section number = %hhu, last section number = %hhu",
                   section.table_id_extension, section.version_number,
                   m_transportStreamId, m_version, section.SectionNumber,
                   section.LastSectionNumber);
@@ -112,7 +112,7 @@ void CParserPat::OnNewSection(CSection& section)
       }
       else
       {
-        LogDebug(L"PAT: received, TSID = %d, version number = %d, section number = %d, last section number = %d",
+        LogDebug(L"PAT: received, TSID = %d, version number = %d, section number = %hhu, last section number = %hhu",
                   section.table_id_extension, section.version_number,
                   section.SectionNumber, section.LastSectionNumber);
         if (m_callBack != NULL)
@@ -177,7 +177,7 @@ void CParserPat::OnNewSection(CSection& section)
       CRecordPat* record = new CRecordPat();
       if (record == NULL)
       {
-        LogDebug(L"PAT: failed to allocate record, version number = %d, section number = %d, program number = %hu, PMT PID = %hu",
+        LogDebug(L"PAT: failed to allocate record, version number = %d, section number = %hhu, program number = %hu, PMT PID = %hu",
                   section.version_number, section.SectionNumber,
                   programNumber, pmtPid);
         continue;
@@ -189,7 +189,7 @@ void CParserPat::OnNewSection(CSection& section)
 
     if (pointer != endOfSection)
     {
-      LogDebug(L"PAT: section parsing error, pointer = %hu, end of section = %hu, version number = %d, section number = %d",
+      LogDebug(L"PAT: section parsing error, pointer = %hu, end of section = %hu, version number = %d, section number = %hhu",
                 pointer, endOfSection, section.version_number,
                 section.SectionNumber);
       return;

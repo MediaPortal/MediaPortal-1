@@ -27,6 +27,10 @@
 #include <string>
 #include <Windows.h>  // MAX_PATH
 #include "EncryptionState.h"
+#include "ParserMgt.h"
+#include "ParserPat.h"
+#include "ParserSdt.h"
+#include "ParserSttAtsc.h"
 #include "Version.h"
 
 
@@ -169,58 +173,6 @@ CTsWriter::CTsWriter(LPUNKNOWN unk, HRESULT* hr)
     return;
   }
 
-  // electronic programme guide grabbers
-  m_grabberEpgAtsc = new CGrabberEpgAtsc(this, GetOwner(), hr);
-  if (m_grabberEpgAtsc == NULL || !SUCCEEDED(*hr)) 
-  {
-    if (SUCCEEDED(*hr))
-    {
-      *hr = E_OUTOFMEMORY;
-    }
-    LogDebug(L"writer: failed to allocate ATSC EPG grabber, hr = 0x%x", *hr);
-    return;
-  }
-  m_grabberEpgDvb = new CParserEitDvb(this, this, GetOwner(), hr);
-  if (m_grabberEpgDvb == NULL || !SUCCEEDED(*hr)) 
-  {
-    if (SUCCEEDED(*hr))
-    {
-      *hr = E_OUTOFMEMORY;
-    }
-    LogDebug(L"writer: failed to allocate DVB EPG grabber, hr = 0x%x", *hr);
-    return;
-  }
-  m_grabberEpgMhw = new CParserMhw(this, GetOwner(), hr);
-  if (m_grabberEpgMhw == NULL || !SUCCEEDED(*hr)) 
-  {
-    if (SUCCEEDED(*hr))
-    {
-      *hr = E_OUTOFMEMORY;
-    }
-    LogDebug(L"writer: failed to allocate MHW EPG grabber, hr = 0x%x", *hr);
-    return;
-  }
-  m_grabberEpgOpenTv = new CParserOpenTv(this, GetOwner(), hr);
-  if (m_grabberEpgOpenTv == NULL || !SUCCEEDED(*hr)) 
-  {
-    if (SUCCEEDED(*hr))
-    {
-      *hr = E_OUTOFMEMORY;
-    }
-    LogDebug(L"writer: failed to allocate OpenTV EPG grabber, hr = 0x%x", *hr);
-    return;
-  }
-  m_grabberEpgScte = new CParserAet(this, GetOwner(), hr);
-  if (m_grabberEpgScte == NULL || !SUCCEEDED(*hr)) 
-  {
-    if (SUCCEEDED(*hr))
-    {
-      *hr = E_OUTOFMEMORY;
-    }
-    LogDebug(L"writer: failed to allocate SCTE EPG grabber, hr = 0x%x", *hr);
-    return;
-  }
-
   // service information grabbers
   m_grabberSiAtsc = new CGrabberSiAtscScte(PID_ATSC_BASE, this, GetOwner(), hr);
   if (m_grabberSiAtsc == NULL || !SUCCEEDED(*hr)) 
@@ -273,6 +225,61 @@ CTsWriter::CTsWriter(LPUNKNOWN unk, HRESULT* hr)
     return;
   }
 
+  // electronic programme guide grabbers
+  m_grabberEpgAtsc = new CGrabberEpgAtsc(this, m_grabberSiAtsc, GetOwner(), hr);
+  if (m_grabberEpgAtsc == NULL || !SUCCEEDED(*hr)) 
+  {
+    if (SUCCEEDED(*hr))
+    {
+      *hr = E_OUTOFMEMORY;
+    }
+    LogDebug(L"writer: failed to allocate ATSC EPG grabber, hr = 0x%x", *hr);
+    return;
+  }
+  m_grabberEpgDvb = new CParserEitDvb(this, this, GetOwner(), hr);
+  if (m_grabberEpgDvb == NULL || !SUCCEEDED(*hr)) 
+  {
+    if (SUCCEEDED(*hr))
+    {
+      *hr = E_OUTOFMEMORY;
+    }
+    LogDebug(L"writer: failed to allocate DVB EPG grabber, hr = 0x%x", *hr);
+    return;
+  }
+  m_grabberEpgMhw = new CParserMhw(this, m_grabberSiDvb, GetOwner(), hr);
+  if (m_grabberEpgMhw == NULL || !SUCCEEDED(*hr)) 
+  {
+    if (SUCCEEDED(*hr))
+    {
+      *hr = E_OUTOFMEMORY;
+    }
+    LogDebug(L"writer: failed to allocate MHW EPG grabber, hr = 0x%x", *hr);
+    return;
+  }
+  m_grabberEpgOpenTv = new CParserOpenTv(this, GetOwner(), hr);
+  if (m_grabberEpgOpenTv == NULL || !SUCCEEDED(*hr)) 
+  {
+    if (SUCCEEDED(*hr))
+    {
+      *hr = E_OUTOFMEMORY;
+    }
+    LogDebug(L"writer: failed to allocate OpenTV EPG grabber, hr = 0x%x", *hr);
+    return;
+  }
+  m_grabberEpgScte = new CParserAet(this, m_grabberSiScte, GetOwner(), hr);
+  if (m_grabberEpgScte == NULL || !SUCCEEDED(*hr)) 
+  {
+    if (SUCCEEDED(*hr))
+    {
+      *hr = E_OUTOFMEMORY;
+    }
+    LogDebug(L"writer: failed to allocate SCTE EPG grabber, hr = 0x%x", *hr);
+    return;
+  }
+
+  m_grabberSiDvb->SetMediaHighwayChannelInfoProvider(m_grabberEpgMhw);
+  m_grabberSiFreesat->SetMediaHighwayChannelInfoProvider(m_grabberEpgMhw);
+
   m_nextChannelId = 0;
 
   m_openTvEpgServiceId = 0;
@@ -287,6 +294,20 @@ CTsWriter::CTsWriter(LPUNKNOWN unk, HRESULT* hr)
   m_checkSectionCrcs = true;
   m_observer = NULL;
   LogDebug(L"writer: completed");
+
+  // To test EPG grabbing.
+  /*m_grabberEpgAtsc->Reset(true);
+  m_grabberEpgAtsc->Start();
+  m_grabberEpgDvb->Reset(true);
+  m_grabberEpgDvb->SetProtocols(true, true, true, true, true, true, true, true);
+  m_grabberEpgMhw->Reset(true);
+  m_grabberEpgMhw->SetProtocols(true, true);
+  m_grabberEpgOpenTv->Reset(true);
+  m_grabberEpgOpenTv->Start();
+  m_grabberEpgScte->Reset(true);
+  m_grabberEpgScte->Start();
+
+  m_isRunning = true;*/
 }
 
 CTsWriter::~CTsWriter()
@@ -896,11 +917,27 @@ bool CTsWriter::GetDefaultAuthority(unsigned short originalNetworkId,
 
 void CTsWriter::OnTableSeen(unsigned char tableId)
 {
+  if (tableId == TABLE_ID_STT_ATSC)
+  {
+    m_grabberEpgAtsc->OnTableSeen(tableId);
+  }
+  else if (tableId == TABLE_ID_STT_SCTE)
+  {
+    m_grabberEpgScte->OnTableSeen(tableId);
+  }
 }
 
 void CTsWriter::OnTableComplete(unsigned char tableId)
 {
-  if (tableId == 0 && m_observer != NULL)
+  if (tableId == TABLE_ID_STT_ATSC)
+  {
+    m_grabberEpgAtsc->OnTableSeen(tableId);
+  }
+  else if (tableId == TABLE_ID_STT_SCTE)
+  {
+    m_grabberEpgScte->OnTableSeen(tableId);
+  }
+  else if (tableId == TABLE_ID_PAT)
   {
     unsigned short transportStreamId;
     unsigned short networkPid;
@@ -908,12 +945,39 @@ void CTsWriter::OnTableComplete(unsigned char tableId)
     m_grabberSiMpeg->GetTransportStreamDetail(&transportStreamId,
                                               &networkPid,
                                               &programCount);
-    m_observer->OnProgramAssociationTable(transportStreamId,
-                                          networkPid,
-                                          programCount);
-    return;
+    if (m_observer != NULL)
+    {
+      m_observer->OnProgramAssociationTable(transportStreamId,
+                                            networkPid,
+                                            programCount);
+    }
+    if (m_grabberSiDvb->IsReadySdtActual())
+    {
+      unsigned short originalNetworkId;
+      unsigned short serviceCount;
+      m_grabberSiDvb->GetServiceCount(&originalNetworkId, &serviceCount);
+    }
   }
-  if (tableId != 0xc7)
+  else if (tableId == TABLE_ID_SDT_ACTUAL)
+  {
+    unsigned short originalNetworkId;
+    unsigned short serviceCount;
+    m_grabberSiDvb->GetServiceCount(&originalNetworkId, &serviceCount);
+    m_grabberEpgOpenTv->SetOriginalNetworkId(originalNetworkId);
+    if (m_grabberSiMpeg->IsReadyPat())
+    {
+      unsigned short transportStreamId;
+      unsigned short networkPid;
+      unsigned short programCount;
+      m_grabberSiMpeg->GetTransportStreamDetail(&transportStreamId,
+                                                &networkPid,
+                                                &programCount);
+      m_grabberEpgMhw->SetTransportStream(originalNetworkId,
+                                          transportStreamId);
+    }
+  }
+
+  if (tableId != TABLE_ID_MGT)
   {
     return;
   }
@@ -1108,6 +1172,14 @@ void CTsWriter::OnTableComplete(unsigned char tableId)
 
 void CTsWriter::OnTableChange(unsigned char tableId)
 {
+  if (tableId == TABLE_ID_STT_ATSC)
+  {
+    m_grabberEpgAtsc->OnTableSeen(tableId);
+  }
+  else if (tableId == TABLE_ID_STT_SCTE)
+  {
+    m_grabberEpgScte->OnTableSeen(tableId);
+  }
 }
 
 void CTsWriter::OnEncryptionStateChange(unsigned short pid,
@@ -1140,11 +1212,13 @@ void CTsWriter::OnFreesatPids(unsigned short pidEitSchedule,
                               unsigned short pidEitPresentFollowing,
                               unsigned short pidSdt,
                               unsigned short pidBat,
+                              unsigned short pidTdt,
+                              unsigned short pidTot,
                               unsigned short pidNit)
 {
   m_isFreesatTransportStream = true;
 
-  m_grabberSiFreesat->SetPids(pidBat, pidNit, pidSdt);
+  m_grabberSiFreesat->SetPids(pidBat, pidNit, pidSdt, pidTot);
   if (m_observer != NULL)
   {
     unsigned short pids[3];
@@ -1161,6 +1235,7 @@ void CTsWriter::OnFreesatPids(unsigned short pidEitSchedule,
     {
       pids[pidCount++] = pidNit;
     }
+    // Don't request the TDT/TOT PID. It isn't required for SI grabbing.
     if (pidCount != 0)
     {
       m_observer->OnPidsRequired(pids, pidCount, (unsigned long)Si);
@@ -1181,15 +1256,10 @@ void CTsWriter::OnSdtRunningStatus(unsigned short serviceId, unsigned char runni
     {
       m_observer->OnProgramDetail(serviceId, 0, false, NULL, 0);
     }
-
-    if (m_openTvEpgServiceId != serviceId)
-    {
-      return;
-    }
     isRunning = false;
   }
 
-  if (m_isOpenTvEpgServiceRunning == isRunning)
+  if (m_openTvEpgServiceId != serviceId || m_isOpenTvEpgServiceRunning == isRunning)
   {
     return;
   }
@@ -1228,8 +1298,6 @@ void CTsWriter::OnOpenTvEpgService(unsigned short serviceId, unsigned short orig
     // services in the same transport stream.
     return;
   }
-
-  m_grabberEpgOpenTv->SetOriginalNetworkId(originalNetworkId);
 
   // If we've received PMT for this service then we can immediately determine
   // whether it's a valid OpenTV EPG service. Otherwise it becomes a candidate
@@ -1441,7 +1509,7 @@ void CTsWriter::OnPatTsidChanged(unsigned short oldTransportStreamId,
 
 void CTsWriter::OnPatNetworkPidChanged(unsigned short oldNetworkPid, unsigned short newNetworkPid)
 {
-  m_grabberSiDvb->SetPids(0, newNetworkPid, 0);
+  m_grabberSiDvb->SetPids(0, newNetworkPid, 0, 0);
 
   if (m_observer == NULL)
   {

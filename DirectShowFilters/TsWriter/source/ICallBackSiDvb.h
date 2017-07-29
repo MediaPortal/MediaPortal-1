@@ -20,7 +20,7 @@
  */
 #pragma once
 
-class ICallBackSiDvb
+class ICallBackSiDvb : public ICallBackTableParser
 {
   public:
     virtual ~ICallBackSiDvb() {}

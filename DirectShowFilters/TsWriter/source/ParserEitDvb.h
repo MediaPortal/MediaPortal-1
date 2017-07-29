@@ -113,7 +113,7 @@ class CParserEitDvb : public CUnknown, public IGrabberEpgDvb, ISectionCallback
                                   unsigned short eventIndex,
                                   unsigned long long* eventId,
                                   unsigned long long* startDateTime,
-                                  unsigned short* duration,
+                                  unsigned long* duration,
                                   unsigned char* runningStatus,
                                   bool* freeCaMode,
                                   unsigned short* referenceServiceId,
@@ -482,7 +482,7 @@ class CParserEitDvb : public CUnknown, public IGrabberEpgDvb, ISectionCallback
 
         virtual void Debug(const wchar_t* situation) const
         {
-          LogDebug(L"EIT DVB: event %s, table ID = 0x%hhx, ONID = %hu, TSID = %hu, service ID = %hu, event ID = %llu, start date/time = %llu, duration = %hu m, running status = %hhu, free CA mode = %d, series ID = %S, episode ID = %S, is previously shown = %d, DVB content type count = %llu, star rating = %hhu, MPAA classification = %hhu, Dish/BEV advisories = %hu, V-CHIP rating = %hhu, text count = %llu",
+          LogDebug(L"EIT DVB: event %s, table ID = 0x%hhx, ONID = %hu, TSID = %hu, service ID = %hu, event ID = %llu, start date/time = %llu, duration = %lu s, running status = %hhu, free CA mode = %d, series ID = %S, episode ID = %S, is previously shown = %d, DVB content type count = %llu, star rating = %hhu, MPAA classification = %hhu, Dish/BEV advisories = %hu, V-CHIP rating = %hhu, text count = %llu",
                     situation, TableId, OriginalNetworkId, TransportStreamId,
                     ServiceId, EventId, StartDateTime, Duration, RunningStatus,
                     FreeCaMode, SeriesId == NULL ? "" : SeriesId,
@@ -508,18 +508,18 @@ class CParserEitDvb : public CUnknown, public IGrabberEpgDvb, ISectionCallback
         unsigned short TransportStreamId;
 
         unsigned long long EventId;
-        unsigned long long StartDateTime; // unit = UTC epoch
+        unsigned long long StartDateTime; // epoch/Unix/POSIX time-stamp
 
+        unsigned long Duration;           // unit = seconds
         unsigned short ServiceId;
-        unsigned short Duration;          // unit = minutes
         unsigned char TableId;
         unsigned char RunningStatus;
-        bool FreeCaMode;
-        bool AreSeriesAndEpisodeIdsCrids;
 
         char* SeriesId;
         char* EpisodeId;
 
+        bool FreeCaMode;
+        bool AreSeriesAndEpisodeIdsCrids;
         bool IsPreviouslyShown;
         unsigned char StarRating;
         unsigned char MpaaClassification;
@@ -578,7 +578,7 @@ class CParserEitDvb : public CUnknown, public IGrabberEpgDvb, ISectionCallback
 
         void Debug(const wchar_t* situation) const
         {
-          LogDebug(L"EIT DVB: event %s, table ID = 0x%hhx, ONID = %hu, TSID = %hu, service ID = %hu, event ID = %llu, start date/time = %llu, duration = %hu m, running status = %hhu, free CA mode = %d, reference service ID = %hu, reference event ID = %llu, series ID = %S, episode ID = %S, is HD = %d, is SD = %d, is 3D = %d, is previously shown = %d, audio language count = %llu, subtitles language count = %llu, DVB content type count = %llu, DVB parental rating count = %llu, star rating = %hhu, MPAA classification = %hhu, Dish/BEV advisories = %hu, V-CHIP rating = %hhu, text count = %llu",
+          LogDebug(L"EIT DVB: event %s, table ID = 0x%hhx, ONID = %hu, TSID = %hu, service ID = %hu, event ID = %llu, start date/time = %llu, duration = %lu s, running status = %hhu, free CA mode = %d, reference service ID = %hu, reference event ID = %llu, series ID = %S, episode ID = %S, is HD = %d, is SD = %d, is 3D = %d, is previously shown = %d, audio language count = %llu, subtitles language count = %llu, DVB content type count = %llu, DVB parental rating count = %llu, star rating = %hhu, MPAA classification = %hhu, Dish/BEV advisories = %hu, V-CHIP rating = %hhu, text count = %llu",
                     situation, TableId, OriginalNetworkId, TransportStreamId,
                     ServiceId, EventId, StartDateTime, Duration, RunningStatus,
                     FreeCaMode, ReferenceServiceId, ReferenceEventId,
@@ -781,8 +781,6 @@ class CParserEitDvb : public CUnknown, public IGrabberEpgDvb, ISectionCallback
                                                             unsigned short& transportStreamId,
                                                             unsigned short& serviceId,
                                                             vector<unsigned long long>& showings);
-
-    static unsigned long long DecodeDateTime(unsigned short dateMjd, unsigned long timeBcd);
 
     CCriticalSection m_section;
     map<unsigned short, bool> m_grabPids;

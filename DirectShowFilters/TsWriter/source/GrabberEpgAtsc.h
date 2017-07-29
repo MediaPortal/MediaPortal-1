@@ -31,6 +31,7 @@
 #include "ICallBackPidConsumer.h"
 #include "ICallBackTableParser.h"
 #include "IGrabberEpgAtsc.h"
+#include "ISystemTimeInfoProviderAtscScte.h"
 #include "ParserEitAtsc.h"
 #include "ParserEtt.h"
 
@@ -43,10 +44,13 @@ using namespace std;
 
 
 class CGrabberEpgAtsc
-  : public CUnknown, ICallBackTableParser, public IGrabberEpgAtsc
+  : public CUnknown, public ICallBackTableParser, public IGrabberEpgAtsc
 {
   public:
-    CGrabberEpgAtsc(ICallBackPidConsumer* callBack, LPUNKNOWN unk, HRESULT* hr);
+    CGrabberEpgAtsc(ICallBackPidConsumer* callBack,
+                    ISystemTimeInfoProviderAtscScte* systemTimeInfoProvider,
+                    LPUNKNOWN unk,
+                    HRESULT* hr);
     virtual ~CGrabberEpgAtsc();
 
     DECLARE_IUNKNOWN
@@ -57,6 +61,10 @@ class CGrabberEpgAtsc
     void RemoveEitDecoders(const vector<unsigned short>& pids);
     void AddEttDecoders(const vector<unsigned short>& pids);
     void RemoveEttDecoders(const vector<unsigned short>& pids);
+
+    void OnTableSeen(unsigned char tableId);
+    void OnTableComplete(unsigned char tableId);
+    void OnTableChange(unsigned char tableId);
 
     STDMETHODIMP_(void) Start();
     STDMETHODIMP_(void) Stop();
@@ -72,7 +80,7 @@ class CGrabberEpgAtsc
                                   unsigned short* sourceId,
                                   unsigned short* eventId,
                                   unsigned long long* startDateTime,
-                                  unsigned short* duration,
+                                  unsigned long* duration,
                                   unsigned char* textCount,
                                   unsigned long* audioLanguages,
                                   unsigned char* audioLanguageCount,
@@ -100,16 +108,14 @@ class CGrabberEpgAtsc
   private:
     bool SelectEventByIndex(unsigned long index);
 
-    void OnTableSeen(unsigned char tableId);
-    void OnTableComplete(unsigned char tableId);
-    void OnTableChange(unsigned char tableId);
-
     CCriticalSection m_section;
     bool m_isGrabbing;
     bool m_isSeen;
     bool m_isReady;
     ICallBackGrabber* m_callBackGrabber;
     ICallBackPidConsumer* m_callBackPidConsumer;
+    ISystemTimeInfoProviderAtscScte* m_systemTimeInfoProvider;
+    unsigned char m_gpsUtcOffset;
     map<unsigned short, CParserEitAtsc*> m_parsersEit;
     map<unsigned short, CParserEtt*> m_parsersEtt;
     bool m_enableCrcCheck;

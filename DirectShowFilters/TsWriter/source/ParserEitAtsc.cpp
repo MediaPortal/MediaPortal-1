@@ -29,17 +29,6 @@
 #define MINIMUM_SECTION_LENGTH 11
 #define MINIMUM_RECORD_BYTE_COUNT 12
 
-// Number of UTC seconds between the start of Unix time (1 January 1970
-// 00:00:00) and the start of GPS time (6 January 1980 00:00:00):
-// = ((10 years x 365 days per year) + 2 leap year days + 5 days from 1980) x 24 hours per day x 60 minutes per hour x 60 seconds per minute
-#define GPS_TIME_START_OFFSET 315964800
-
-// There are 16 leap seconds between the start of GPS time (6 January 1980
-// 00:00:00) and 1 January 2015. This constant should be updated each time the
-// IERS decides to schedule a leap second. The next leap second is scheduled
-// for June 30 2015.
-#define LEAP_SECONDS_SINCE_GPS_TIME_START 16
-
 
 extern void LogDebug(const wchar_t* fmt, ...);
 
@@ -108,14 +97,14 @@ void CParserEitAtsc::OnNewSection(CSection& section)
     unsigned char* data = section.Data;
     unsigned short sourceId = section.table_id_extension;
     unsigned char numEventsInSection = data[9];
-    //LogDebug(L"EIT ATSC %d: source Id = %hu, protocol version = %hhu, version number = %d, section length = %d, section number = %d, last section number = %d, num. events in section = %hhu",
+    //LogDebug(L"EIT ATSC %d: source Id = %hu, protocol version = %hhu, version number = %d, section length = %d, section number = %hhu, last section number = %hhu, num. events in section = %hhu",
     //          GetPid(), sourceId, protocolVersion, section.version_number,
     //          section.section_length, section.SectionNumber,
     //          section.LastSectionNumber, numEventsInSection);
 
     if (MINIMUM_SECTION_LENGTH + (numEventsInSection * MINIMUM_RECORD_BYTE_COUNT) > section.section_length)
     {
-      LogDebug(L"EIT ATSC %d: invalid section, num. events in section = %hhu, section length = %d, table ID = 0x%x, source Id = %hu, protocol version = %hhu, version number = %d, section number = %d",
+      LogDebug(L"EIT ATSC %d: invalid section, num. events in section = %hhu, section length = %d, table ID = 0x%x, source Id = %hu, protocol version = %hhu, version number = %d, section number = %hhu",
                 GetPid(), numEventsInSection, section.section_length,
                 section.table_id, sourceId, protocolVersion,
                 section.version_number, section.SectionNumber);
@@ -132,7 +121,7 @@ void CParserEitAtsc::OnNewSection(CSection& section)
     if (sectionIt != m_seenSections.end())
     {
       // Yes. We might be ready!
-      //LogDebug(L"EIT ATSC %d: previously seen section, source Id = %hu, protocol version = %hhu, section number = %d",
+      //LogDebug(L"EIT ATSC %d: previously seen section, source Id = %hu, protocol version = %hhu, section number = %hhu",
       //          GetPid(), sourceId, protocolVersion, section.SectionNumber);
       if (m_isReady || m_unseenSections.size() != 0)
       {
@@ -195,7 +184,7 @@ void CParserEitAtsc::OnNewSection(CSection& section)
 
       if (!isChange)
       {
-        LogDebug(L"EIT ATSC %d: received, source Id = %hu, protocol version = %hhu, version number = %d, section number = %d, last section number = %d",
+        LogDebug(L"EIT ATSC %d: received, source Id = %hu, protocol version = %hhu, version number = %d, section number = %hhu, last section number = %hhu",
                   GetPid(), sourceId, protocolVersion, section.version_number,
                   section.SectionNumber, section.LastSectionNumber);
         if (m_callBack != NULL && m_seenSections.size() == 0)
@@ -205,7 +194,7 @@ void CParserEitAtsc::OnNewSection(CSection& section)
       }
       else
       {
-        LogDebug(L"EIT ATSC %d: changed, source Id = %hu, protocol version = %hhu, version number = %d, section number = %d, last section number = %d",
+        LogDebug(L"EIT ATSC %d: changed, source Id = %hu, protocol version = %hhu, version number = %d, section number = %hhu, last section number = %hhu",
                   GetPid(), sourceId, protocolVersion, section.version_number,
                   section.SectionNumber, section.LastSectionNumber);
         m_records.MarkExpiredRecords(sourceId);
@@ -226,7 +215,7 @@ void CParserEitAtsc::OnNewSection(CSection& section)
     }
     else
     {
-      //LogDebug(L"EIT ATSC %d: new section, source Id = %hu, protocol version = %hhu, version number = %d, section number = %d",
+      //LogDebug(L"EIT ATSC %d: new section, source Id = %hu, protocol version = %hhu, version number = %d, section number = %hhu",
       //            GetPid(), sourceId, protocolVersion,
       //            section.version_number, section.SectionNumber);
     }
@@ -238,7 +227,7 @@ void CParserEitAtsc::OnNewSection(CSection& section)
       CRecordEit* record = new CRecordEit();
       if (record == NULL)
       {
-        LogDebug(L"EIT ATSC %d: failed to allocate record, source Id = %hu, protocol version = %hhu, version number = %d, section number = %d, num. events in section = %hhu, index = %hhu",
+        LogDebug(L"EIT ATSC %d: failed to allocate record, source Id = %hu, protocol version = %hhu, version number = %d, section number = %hhu, num. events in section = %hhu, index = %hhu",
                   GetPid(), sourceId, protocolVersion, section.version_number,
                   section.SectionNumber, numEventsInSection, i);
         return;
@@ -247,7 +236,7 @@ void CParserEitAtsc::OnNewSection(CSection& section)
       record->SourceId = sourceId;
       if (!DecodeEventRecord(data, pointer, endOfSection, *record))
       {
-        LogDebug(L"EIT ATSC %d: invalid section, source Id = %hu, protocol version = %hhu, version number = %d, section number = %d, num. events in section = %hhu, index = %hhu, event ID = %hu",
+        LogDebug(L"EIT ATSC %d: invalid section, source Id = %hu, protocol version = %hhu, version number = %d, section number = %hhu, num. events in section = %hhu, index = %hhu, event ID = %hu",
                   GetPid(), sourceId, protocolVersion, section.version_number,
                   section.SectionNumber, numEventsInSection, i,
                   record->EventId);
@@ -260,7 +249,7 @@ void CParserEitAtsc::OnNewSection(CSection& section)
 
     if (pointer != endOfSection)
     {
-      LogDebug(L"EIT ATSC %d: section parsing error, pointer = %hu, end of section = %hu, source Id = %hu, protocol version = %hhu, version number = %d, section number = %d, num. events in section = %hhu",
+      LogDebug(L"EIT ATSC %d: section parsing error, pointer = %hu, end of section = %hu, source Id = %hu, protocol version = %hhu, version number = %d, section number = %hhu, num. events in section = %hhu",
                 GetPid(), pointer, endOfSection, sourceId, protocolVersion,
                 section.version_number, section.SectionNumber,
                 numEventsInSection);
@@ -303,8 +292,8 @@ unsigned long CParserEitAtsc::GetEventCount() const
 bool CParserEitAtsc::GetEvent(unsigned long index,
                               unsigned short& sourceId,
                               unsigned short& eventId,
-                              unsigned long long& startDateTime,
-                              unsigned short& duration,
+                              unsigned long& startDateTime,
+                              unsigned long& duration,
                               unsigned char& titleCount,
                               unsigned long* audioLanguages,
                               unsigned char& audioLanguageCount,
@@ -494,25 +483,17 @@ bool CParserEitAtsc::DecodeEventRecord(unsigned char* sectionData,
     record.EventId = ((sectionData[pointer] & 0x3f) << 8) | sectionData[pointer + 1];
     pointer += 2;
 
-    // Start date/time is the number of GPS seconds since January 6 1980
-    // 00:00:00. To convert to UTC epoch we must subtract the number of leap
-    // seconds between 1980 and now, and add the number of UTC seconds between
-    // the start of GPS time and UTC time.
     record.StartDateTime = (sectionData[pointer] << 24) | (sectionData[pointer + 1] << 16) | (sectionData[pointer + 2] << 8) | sectionData[pointer + 3];
     pointer += 4;
-    record.StartDateTime += GPS_TIME_START_OFFSET;
-    record.StartDateTime -= LEAP_SECONDS_SINCE_GPS_TIME_START;
 
     record.EtmLocation = (sectionData[pointer] & 0x30) >> 4;
-
-    unsigned long lengthInSeconds = ((sectionData[pointer] & 0xf) << 16) | (sectionData[pointer + 1] << 8) | sectionData[pointer + 2];
+    record.Duration = ((sectionData[pointer] & 0xf) << 16) | (sectionData[pointer + 1] << 8) | sectionData[pointer + 2];
     pointer += 3;
-    record.Duration = (unsigned short)(lengthInSeconds / 60);   // duration in minutes
 
     unsigned char titleLength = sectionData[pointer++];
-    //LogDebug(L"EIT ATSC: event ID = %hu, start date/time = %llu, ETM location = %hhu, length in seconds = %lu, title length = %hhu",
+    //LogDebug(L"EIT ATSC: event ID = %hu, start date/time = %lu, ETM location = %hhu, length in seconds = %lu, title length = %hhu",
     //          record.Id, record.StartDateTime, record.EtmLocation,
-    //          lengthInSeconds, titleLength);
+    //          record.Duration, titleLength);
     if (titleLength > 0)
     {
       if (

@@ -29,19 +29,24 @@
 #include "ICallBackNitDvb.h"
 #include "ICallBackSdt.h"
 #include "ICallBackSiDvb.h"
+#include "ICallBackTot.h"
 #include "IDefaultAuthorityProvider.h"
 #include "IGrabberSiFreesat.h"
+#include "IMhwChannelInfoProvider.h"
+#include "ISystemTimeInfoProviderDvb.h"
 #include "ParserBat.h"
 #include "ParserNitDvb.h"
 #include "ParserSdt.h"
+#include "ParserTot.h"
 
 using namespace MediaPortal;
 using namespace std;
 
 
 class CGrabberSiDvb
-  : public CUnknown, ICallBackNitDvb, ICallBackSdt,
-    public IDefaultAuthorityProvider, public IGrabberSiFreesat
+  : public CUnknown, ICallBackNitDvb, ICallBackSdt, ICallBackTot,
+    public IDefaultAuthorityProvider, public IGrabberSiFreesat,
+    public ISystemTimeInfoProviderDvb
 {
   public:
     CGrabberSiDvb(ICallBackSiDvb* callBack, LPUNKNOWN unk, HRESULT* hr);
@@ -51,7 +56,11 @@ class CGrabberSiDvb
 
     STDMETHODIMP NonDelegatingQueryInterface(REFIID iid, void** ppv);
 
-    void SetPids(unsigned short pidBat, unsigned short pidNit, unsigned short pidSdt);
+    void SetMediaHighwayChannelInfoProvider(IMhwChannelInfoProvider* mhwChannelInfoProvider);
+    void SetPids(unsigned short pidBat,
+                  unsigned short pidNit,
+                  unsigned short pidSdt,
+                  unsigned short pidTot);
     void Reset(bool enableCrcCheck);
     STDMETHODIMP_(void) SetCallBack(ICallBackGrabber* callBack);
     bool OnTsPacket(CTsHeader& header, unsigned char* tsPacket);
@@ -116,7 +125,10 @@ class CGrabberSiDvb
                                     unsigned char* openTvRegionIdCount,
                                     unsigned short* freesatChannelCategoryIds,
                                     unsigned char* freesatChannelCategoryIdCount,
-                                    unsigned char* openTvChannelCategoryId,
+                                    unsigned short* mediaHighwayChannelCategoryIds,
+                                    unsigned char* mediaHighwayChannelCategoryIdCount,
+                                    unsigned char* openTvChannelCategoryIds,
+                                    unsigned char* openTvChannelCategoryIdCount,
                                     unsigned char* virginMediaChannelCategoryId,
                                     unsigned short* dishMarketId,
                                     unsigned char* norDigChannelListIds,
@@ -201,6 +213,10 @@ class CGrabberSiDvb
                                                                 char* name,
                                                                 unsigned short* nameBufferSize);
 
+    STDMETHODIMP_(bool) GetMediaHighwayChannelCategoryName(unsigned short categoryId,
+                                                            char* name,
+                                                            unsigned short* nameBufferSize);
+
     STDMETHODIMP_(unsigned char) GetNorDigChannelListNameCount(unsigned char channelListId);
     STDMETHODIMP_(bool) GetNorDigChannelListNameByIndex(unsigned char channelListId,
                                                         unsigned char index,
@@ -234,6 +250,20 @@ class CGrabberSiDvb
                                         bool* isMultipleInputStream,
                                         unsigned char* plpId);
 
+    bool GetSystemTimeDetail(unsigned long long& systemTime,
+                              unsigned char& localTimeOffsetCount) const;
+    bool GetLocalTimeOffsetByIndex(unsigned char index,
+                                    unsigned long& countryCode,
+                                    unsigned char& countryRegionId,
+                                    long& localTimeOffsetCurrent,
+                                    unsigned long long& localTimeOffsetNextChangeDateTime,
+                                    long& localTimeOffsetNext) const;
+    bool GetLocalTimeOffsetByCountryAndRegion(unsigned long countryCode,
+                                              unsigned char countryRegionId,
+                                              long& localTimeOffsetCurrent,
+                                              unsigned long long& localTimeOffsetNextChangeDateTime,
+                                              long& localTimeOffsetNext) const;
+
   private:
     void OnTableSeen(unsigned char tableId);
     void OnTableComplete(unsigned char tableId);
@@ -261,7 +291,7 @@ class CGrabberSiDvb
                         unsigned short streamCountAudio,
                         const vector<unsigned long>& audioLanguages,
                         const vector<unsigned long>& subtitlesLanguages,
-                        unsigned char openTvCategoryId,
+                        const vector<unsigned char>& openTvCategoryIds,
                         unsigned char virginMediaCategoryId,
                         unsigned short dishMarketId,
                         const vector<unsigned long>& availableInCountries,
@@ -298,7 +328,7 @@ class CGrabberSiDvb
                         unsigned short streamCountAudio,
                         const vector<unsigned long>& audioLanguages,
                         const vector<unsigned long>& subtitlesLanguages,
-                        unsigned char openTvCategoryId,
+                        const vector<unsigned char>& openTvCategoryIds,
                         unsigned char virginMediaCategoryId,
                         unsigned short dishMarketId,
                         const vector<unsigned long>& availableInCountries,
@@ -335,7 +365,7 @@ class CGrabberSiDvb
                         unsigned short streamCountAudio,
                         const vector<unsigned long>& audioLanguages,
                         const vector<unsigned long>& subtitlesLanguages,
-                        unsigned char openTvCategoryId,
+                        const vector<unsigned char>& openTvCategoryIds,
                         unsigned char virginMediaCategoryId,
                         unsigned short dishMarketId,
                         const vector<unsigned long>& availableInCountries,
@@ -355,8 +385,10 @@ class CGrabberSiDvb
     CParserBat m_parserBat;
     CParserNitDvb m_parserNit;
     CParserSdt m_parserSdt;
+    CParserTot m_parserTot;
     ICallBackGrabber* m_callBackGrabber;
     ICallBackSiDvb* m_callBackSiDvb;
+    IMhwChannelInfoProvider* m_mhwChannelInfoProvider;
     bool m_enableCrcCheck;
     bool m_isNitExpected;
 };

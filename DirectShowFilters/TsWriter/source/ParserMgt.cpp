@@ -82,7 +82,7 @@ void CParserMgt::OnNewSection(CSection& section)
     unsigned char* data = section.Data;
     unsigned short mapId = section.table_id_extension;  // SCTE 65
     unsigned short tablesDefined = (data[9] << 8) | data[10];
-    //LogDebug(L"MGT %hu: map ID = %hu, protocol version = %hhu, version number = %d, section length = %d, section number = %d, last section number = %d, tables defined = %hu",
+    //LogDebug(L"MGT %hu: map ID = %hu, protocol version = %hhu, version number = %d, section length = %d, section number = %hhu, last section number = %hhu, tables defined = %hu",
     //          m_pid, mapId, protocolVersion, section.version_number,
     //          section.section_length, section.SectionNumber,
     //          section.LastSectionNumber, tablesDefined);
@@ -93,7 +93,7 @@ void CParserMgt::OnNewSection(CSection& section)
     vector<unsigned short>::const_iterator sectionIt = find(m_seenSections.begin(), m_seenSections.end(), sectionKey);
     if (sectionIt != m_seenSections.end())
     {
-      //LogDebug(L"MGT %hu: previously seen section, map ID = %hu, protocol version = %hhu, section number = %d",
+      //LogDebug(L"MGT %hu: previously seen section, map ID = %hu, protocol version = %hhu, section number = %hhu",
       //          m_pid, mapId, protocolVersion, section.SectionNumber);
       return;
     }
@@ -105,7 +105,7 @@ void CParserMgt::OnNewSection(CSection& section)
       // No. Is this a change/update, or the first section?
       if (m_unseenSections.size() != 0 || m_seenSections.size() != 0)
       {
-        LogDebug(L"MGT %hu: changed, map ID = %hu, protocol version = %hhu, version number = %d, section number = %d, last section number = %d",
+        LogDebug(L"MGT %hu: changed, map ID = %hu, protocol version = %hhu, version number = %d, section number = %hhu, last section number = %hhu",
                   m_pid, mapId, protocolVersion, section.version_number,
                   section.SectionNumber, section.LastSectionNumber);
         m_records.MarkExpiredRecords(0);
@@ -118,7 +118,7 @@ void CParserMgt::OnNewSection(CSection& section)
       }
       else
       {
-        LogDebug(L"MGT %hu: received, map ID = %hu, protocol version = %hhu, version number = %d, section number = %d, last section number = %d",
+        LogDebug(L"MGT %hu: received, map ID = %hu, protocol version = %hhu, version number = %d, section number = %hhu, last section number = %hhu",
                   m_pid, mapId, protocolVersion, section.version_number,
                   section.SectionNumber, section.LastSectionNumber);
         if (m_callBack != NULL)
@@ -136,7 +136,7 @@ void CParserMgt::OnNewSection(CSection& section)
     }
     else
     {
-      //LogDebug(L"MGT %hu: new section, map ID = %hu, protocol version = %hhu, version number = %d, section number = %d",
+      //LogDebug(L"MGT %hu: new section, map ID = %hu, protocol version = %hhu, version number = %d, section number = %hhu",
       //          m_pid, mapId, protocolVersion, section.version_number,
       //          section.SectionNumber);
     }
@@ -148,7 +148,7 @@ void CParserMgt::OnNewSection(CSection& section)
       CRecordMgt* record = new CRecordMgt();
       if (record == NULL)
       {
-        LogDebug(L"MGT %hu: failed to allocate record, map ID = %hu, protocol version = %hhu, version number = %d, section number = %d",
+        LogDebug(L"MGT %hu: failed to allocate record, map ID = %hu, protocol version = %hhu, version number = %d, section number = %hhu",
                   m_pid, mapId, protocolVersion, section.version_number,
                   section.SectionNumber);
         return;
@@ -156,7 +156,7 @@ void CParserMgt::OnNewSection(CSection& section)
 
       if (!DecodeTableRecord(data, pointer, endOfSection, *record))
       {
-        LogDebug(L"MGT %hu: invalid section, map ID = %hu, protocol version = %hhu, version number = %d, section number = %d, table type = %hu, PID = %hu",
+        LogDebug(L"MGT %hu: invalid section, map ID = %hu, protocol version = %hhu, version number = %d, section number = %hhu, table type = %hu, PID = %hu",
                   m_pid, mapId, protocolVersion, section.version_number,
                   section.SectionNumber, record->TableType, record->Pid);
         delete record;
@@ -172,7 +172,7 @@ void CParserMgt::OnNewSection(CSection& section)
     unsigned short endOfDescriptors = pointer + descriptorsLength;
     if (endOfDescriptors != endOfSection)
     {
-      LogDebug(L"MGT %hu: invalid section, descriptors length = %hu, pointer = %hu, end of section = %hu, map ID = %hu, protocol version = %hhu, version number = %d, section number = %d",
+      LogDebug(L"MGT %hu: invalid section, descriptors length = %hu, pointer = %hu, end of section = %hu, map ID = %hu, protocol version = %hhu, version number = %d, section number = %hhu",
                 m_pid, descriptorsLength, pointer, endOfSection, mapId,
                 protocolVersion, section.version_number,
                 section.SectionNumber);
@@ -187,7 +187,7 @@ void CParserMgt::OnNewSection(CSection& section)
       //          m_pid, tag, length, pointer);
       if (pointer + length > endOfDescriptors)
       {
-        LogDebug(L"MGT %hu: invalid section, descriptor length = %hhu, pointer = %hu, end of descriptors = %hu, map ID = %hu, protocol version = %hhu, version number = %d, section number = %d, tag = 0x%hhx, end of section = %hu",
+        LogDebug(L"MGT %hu: invalid section, descriptor length = %hhu, pointer = %hu, end of descriptors = %hu, map ID = %hu, protocol version = %hhu, version number = %d, section number = %hhu, tag = 0x%hhx, end of section = %hu",
                   m_pid, length, pointer, endOfDescriptors, mapId, protocolVersion,
                   section.version_number, section.SectionNumber, tag,
                   endOfSection);
@@ -199,7 +199,7 @@ void CParserMgt::OnNewSection(CSection& section)
 
     if (pointer != endOfSection)
     {
-      LogDebug(L"MGT %hu: section parsing error, pointer = %hu, end of section = %hu, map ID = %hu, protocol version = %hhu, version number = %d, section number = %d",
+      LogDebug(L"MGT %hu: section parsing error, pointer = %hu, end of section = %hu, map ID = %hu, protocol version = %hhu, version number = %d, section number = %hhu",
                 m_pid, pointer, endOfSection, mapId, protocolVersion,
                 section.version_number, section.SectionNumber);
       return;

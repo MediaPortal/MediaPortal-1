@@ -45,7 +45,7 @@ DECLARE_INTERFACE_(IGrabberEpgAtsc, IGrabber)
                               unsigned short* sourceId,
                               unsigned short* eventId,
                               unsigned long long* startDateTime,
-                              unsigned short* duration,
+                              unsigned long* duration,
                               unsigned char* textCount,
                               unsigned long* audioLanguages,
                               unsigned char* audioLanguageCount,

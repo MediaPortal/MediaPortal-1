@@ -151,8 +151,12 @@ class CUtils
         if (destination != NULL && destinationBufferSize != 0)
         {
           destination[0] = NULL;
+          destinationBufferSize = 1;
         }
-        destinationBufferSize = 1;
+        else
+        {
+          destinationBufferSize = 0;
+        }
         requiredBufferSize = 1;
         return true;
       }

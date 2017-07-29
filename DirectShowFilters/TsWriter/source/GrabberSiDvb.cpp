@@ -36,11 +36,13 @@ CGrabberSiDvb::CGrabberSiDvb(ICallBackSiDvb* callBack, LPUNKNOWN unk, HRESULT* h
 
   m_callBackGrabber = NULL;
   m_callBackSiDvb = callBack;
+  m_mhwChannelInfoProvider = NULL;
   m_enableCrcCheck = true;
   m_isNitExpected = true;
   m_parserBat.SetCallBack(this);
   m_parserNit.SetCallBack(this);
   m_parserSdt.SetCallBack(this);
+  m_parserTot.SetCallBack(this);
 }
 
 CGrabberSiDvb::~CGrabberSiDvb()
@@ -72,7 +74,15 @@ STDMETHODIMP CGrabberSiDvb::NonDelegatingQueryInterface(REFIID iid, void** ppv)
   return CUnknown::NonDelegatingQueryInterface(iid, ppv);
 }
 
-void CGrabberSiDvb::SetPids(unsigned short pidBat, unsigned short pidNit, unsigned short pidSdt)
+void CGrabberSiDvb::SetMediaHighwayChannelInfoProvider(IMhwChannelInfoProvider* mhwChannelInfoProvider)
+{
+  m_mhwChannelInfoProvider = mhwChannelInfoProvider;
+}
+
+void CGrabberSiDvb::SetPids(unsigned short pidBat,
+                            unsigned short pidNit,
+                            unsigned short pidSdt,
+                            unsigned short pidTot)
 {
   if (pidBat == 0)
   {
@@ -85,8 +95,8 @@ void CGrabberSiDvb::SetPids(unsigned short pidBat, unsigned short pidNit, unsign
     return;
   }
 
-  LogDebug(L"SI DVB: set PIDs, BAT = %hu, NIT = %hu, SDT = %hu",
-            pidBat, pidNit, pidSdt);
+  LogDebug(L"SI DVB: set PIDs, BAT = %hu, NIT = %hu, SDT = %hu, TOT = %hu",
+            pidBat, pidNit, pidSdt, pidTot);
   if (m_parserBat.GetPid() != pidBat)
   {
     m_parserBat.SetPid(pidBat);
@@ -102,6 +112,11 @@ void CGrabberSiDvb::SetPids(unsigned short pidBat, unsigned short pidNit, unsign
     m_parserSdt.SetPid(pidSdt);
     m_parserSdt.Reset(m_enableCrcCheck);
   }
+  if (m_parserTot.GetPid() != pidTot)
+  {
+    m_parserTot.SetPid(pidTot);
+    m_parserTot.Reset(m_enableCrcCheck);
+  }
 }
 
 void CGrabberSiDvb::Reset(bool enableCrcCheck)
@@ -111,6 +126,7 @@ void CGrabberSiDvb::Reset(bool enableCrcCheck)
   m_parserBat.Reset(enableCrcCheck);
   m_parserNit.Reset(enableCrcCheck);
   m_parserSdt.Reset(enableCrcCheck);
+  m_parserTot.Reset(enableCrcCheck);
 }
 
 STDMETHODIMP_(void) CGrabberSiDvb::SetCallBack(ICallBackGrabber* callBack)
@@ -135,6 +151,11 @@ bool CGrabberSiDvb::OnTsPacket(CTsHeader& header, unsigned char* tsPacket)
   if (header.Pid == m_parserSdt.GetPid())
   {
     m_parserSdt.OnTsPacket(header, tsPacket);
+    result = true;
+  }
+  if (header.Pid == m_parserTot.GetPid())
+  {
+    m_parserTot.OnTsPacket(header, tsPacket);
     result = true;
   }
   return result;
@@ -243,7 +264,10 @@ STDMETHODIMP_(bool) CGrabberSiDvb::GetService(unsigned short index,
                                               unsigned char* openTvRegionIdCount,
                                               unsigned short* freesatChannelCategoryIds,
                                               unsigned char* freesatChannelCategoryIdCount,
-                                              unsigned char* openTvChannelCategoryId,
+                                              unsigned short* mediaHighwayChannelCategoryIds,
+                                              unsigned char* mediaHighwayChannelCategoryIdCount,
+                                              unsigned char* openTvChannelCategoryIds,
+                                              unsigned char* openTvChannelCategoryIdCount,
                                               unsigned char* virginMediaChannelCategoryId,
                                               unsigned short* dishMarketId,
                                               unsigned char* norDigChannelListIds,
@@ -285,7 +309,8 @@ STDMETHODIMP_(bool) CGrabberSiDvb::GetService(unsigned short index,
                               *audioLanguageCount,
                               subtitlesLanguages,
                               *subtitlesLanguageCount,
-                              *openTvChannelCategoryId,
+                              openTvChannelCategoryIds,
+                              *openTvChannelCategoryIdCount,
                               *virginMediaChannelCategoryId,
                               *dishMarketId,
                               availableInCountries,
@@ -564,6 +589,21 @@ STDMETHODIMP_(bool) CGrabberSiDvb::GetService(unsigned short index,
     }
   }
 
+  // Finally, MediaHighway channel details.
+  if (
+    m_mhwChannelInfoProvider == NULL ||
+    !m_mhwChannelInfoProvider->GetService(*originalNetworkId,
+                                          *transportStreamId,
+                                          *referenceServiceId == 0 ? *serviceId : *referenceServiceId,
+                                          isHighDefinition,
+                                          isStandardDefinition,
+                                          mediaHighwayChannelCategoryIds,
+                                          mediaHighwayChannelCategoryIdCount)
+  )
+  {
+    *mediaHighwayChannelCategoryIdCount = 0;
+  }
+
   return true;
 }
 
@@ -795,6 +835,19 @@ STDMETHODIMP_(bool) CGrabberSiDvb::GetFreesatChannelCategoryNameByLanguage(unsig
                                                               *nameBufferSize);
 }
 
+STDMETHODIMP_(bool) CGrabberSiDvb::GetMediaHighwayChannelCategoryName(unsigned short categoryId,
+                                                                      char* name,
+                                                                      unsigned short* nameBufferSize)
+{
+  if (m_mhwChannelInfoProvider == NULL)
+  {
+    return false;
+  }
+  return m_mhwChannelInfoProvider->GetChannelCategoryName(categoryId,
+                                                          name,
+                                                          nameBufferSize);
+}
+
 STDMETHODIMP_(unsigned char) CGrabberSiDvb::GetNorDigChannelListNameCount(unsigned char channelListId)
 {
   return m_parserBat.GetNorDigChannelListNameCount(channelListId) + m_parserNit.GetNorDigChannelListNameCount(channelListId);
@@ -891,12 +944,50 @@ STDMETHODIMP_(bool) CGrabberSiDvb::GetTransmitter(unsigned short index,
                                     *plpId);
 }
 
+bool CGrabberSiDvb::GetSystemTimeDetail(unsigned long long& systemTime,
+                                        unsigned char& localTimeOffsetCount) const
+{
+  return m_parserTot.GetSystemTimeDetail(systemTime, localTimeOffsetCount);
+}
+
+bool CGrabberSiDvb::GetLocalTimeOffsetByIndex(unsigned char index,
+                                              unsigned long& countryCode,
+                                              unsigned char& countryRegionId,
+                                              long& localTimeOffsetCurrent,
+                                              unsigned long long& localTimeOffsetNextChangeDateTime,
+                                              long& localTimeOffsetNext) const
+{
+  return m_parserTot.GetLocalTimeOffsetByIndex(index,
+                                                countryCode,
+                                                countryRegionId,
+                                                localTimeOffsetCurrent,
+                                                localTimeOffsetNextChangeDateTime,
+                                                localTimeOffsetNext);
+}
+
+bool CGrabberSiDvb::GetLocalTimeOffsetByCountryAndRegion(unsigned long countryCode,
+                                                          unsigned char countryRegionId,
+                                                          long& localTimeOffsetCurrent,
+                                                          unsigned long long& localTimeOffsetNextChangeDateTime,
+                                                          long& localTimeOffsetNext) const
+{
+  return m_parserTot.GetLocalTimeOffsetByCountryAndRegion(countryCode,
+                                                          countryRegionId,
+                                                          localTimeOffsetCurrent,
+                                                          localTimeOffsetNextChangeDateTime,
+                                                          localTimeOffsetNext);
+}
+
 void CGrabberSiDvb::OnTableSeen(unsigned char tableId)
 {
   CEnterCriticalSection lock(m_section);
   if (m_callBackGrabber != NULL)
   {
     m_callBackGrabber->OnTableSeen(m_parserSdt.GetPid(), tableId);
+  }
+  if (m_callBackSiDvb != NULL)
+  {
+    m_callBackSiDvb->OnTableSeen(tableId);
   }
   if (
     !m_isNitExpected &&
@@ -920,6 +1011,10 @@ void CGrabberSiDvb::OnTableComplete(unsigned char tableId)
       m_callBackGrabber->OnTableComplete(m_parserSdt.GetPid(), TABLE_ID_NIT_DVB_OTHER);
     }
   }
+  if (m_callBackSiDvb != NULL)
+  {
+    m_callBackSiDvb->OnTableComplete(tableId);
+  }
 }
 
 void CGrabberSiDvb::OnTableChange(unsigned char tableId)
@@ -928,6 +1023,10 @@ void CGrabberSiDvb::OnTableChange(unsigned char tableId)
   if (m_callBackGrabber != NULL)
   {
     m_callBackGrabber->OnTableChange(m_parserSdt.GetPid(), tableId);
+  }
+  if (m_callBackSiDvb != NULL)
+  {
+    m_callBackSiDvb->OnTableChange(tableId);
   }
 }
 
@@ -953,7 +1052,7 @@ void CGrabberSiDvb::OnSdtReceived(unsigned char tableId,
                                   unsigned short streamCountAudio,
                                   const vector<unsigned long>& audioLanguages,
                                   const vector<unsigned long>& subtitlesLanguages,
-                                  unsigned char openTvCategoryId,
+                                  const vector<unsigned char>& openTvCategoryIds,
                                   unsigned char virginMediaCategoryId,
                                   unsigned short dishMarketId,
                                   const vector<unsigned long>& availableInCountries,
@@ -1005,7 +1104,7 @@ void CGrabberSiDvb::OnSdtChanged(unsigned char tableId,
                                   unsigned short streamCountAudio,
                                   const vector<unsigned long>& audioLanguages,
                                   const vector<unsigned long>& subtitlesLanguages,
-                                  unsigned char openTvCategoryId,
+                                  const vector<unsigned char>& openTvCategoryIds,
                                   unsigned char virginMediaCategoryId,
                                   unsigned short dishMarketId,
                                   const vector<unsigned long>& availableInCountries,
@@ -1053,7 +1152,7 @@ void CGrabberSiDvb::OnSdtRemoved(unsigned char tableId,
                                   unsigned short streamCountAudio,
                                   const vector<unsigned long>& audioLanguages,
                                   const vector<unsigned long>& subtitlesLanguages,
-                                  unsigned char openTvCategoryId,
+                                  const vector<unsigned char>& openTvCategoryIds,
                                   unsigned char virginMediaCategoryId,
                                   unsigned short dishMarketId,
                                   const vector<unsigned long>& availableInCountries,

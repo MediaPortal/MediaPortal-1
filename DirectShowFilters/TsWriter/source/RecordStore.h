@@ -34,6 +34,8 @@ class CRecordStore
     bool AddOrUpdateRecord(IRecord** record, void* callBack);
     void MarkExpiredRecords(unsigned long long key);
     unsigned long RemoveExpiredRecords(void* callBack);
+    unsigned long RemoveExpiredRecords(void* callBack,
+                                        unsigned long long subsetKey);
     void RemoveAllRecords();
 
     unsigned long GetRecordCount() const;
@@ -41,6 +43,10 @@ class CRecordStore
     bool GetRecordByKey(unsigned long long key, IRecord** record) const;
 
   private:
+    unsigned long InternalRemoveExpiredRecords(void* callBack,
+                                                bool isSubsetKeyValid,
+                                                unsigned long long subsetKey);
+
     map<unsigned long long, IRecord*> m_records;
     bool m_expireNaturally;
     unsigned long m_expiryTimeout;

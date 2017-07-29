@@ -35,14 +35,18 @@
 #include "ICallBackNitAtsc.h"
 #include "ICallBackNtt.h"
 #include "ICallBackSiAtscScte.h"
+#include "ICallBackStt.h"
 #include "ICallBackSvct.h"
 #include "IGrabberSiAtsc.h"
 #include "IGrabberSiScte.h"
+#include "ISystemTimeInfoProviderAtscScte.h"
 #include "ParserEam.h"
 #include "ParserLvct.h"
 #include "ParserMgt.h"
 #include "ParserNtt.h"
 #include "ParserNitAtsc.h"
+#include "ParserSttAtsc.h"
+#include "ParserSttScte.h"
 #include "ParserSvct.h"
 
 using namespace MediaPortal;
@@ -55,8 +59,9 @@ using namespace std;
 
 class CGrabberSiAtscScte
   : public CUnknown, ICallBackEam, ICallBackLvct, ICallBackMgt,
-    ICallBackNitAtsc, ICallBackNtt, ICallBackSvct, public IGrabberSiScte,
-    public ISectionCallback
+    ICallBackNitAtsc, ICallBackNtt, ICallBackStt, ICallBackSvct,
+    public IGrabberSiScte, public ISectionCallback,
+    public ISystemTimeInfoProviderAtscScte
 {
   public:
     CGrabberSiAtscScte(unsigned short pid,
@@ -162,6 +167,14 @@ class CGrabberSiAtscScte
                               unsigned short& pid,
                               unsigned char& versionNumber,
                               unsigned long& numberBytes) const;
+
+
+    bool GetSystemTimeDetail(unsigned long& systemTime,
+                              unsigned char& gpsUtcOffset,
+                              bool& isDaylightSavingStateKnown,
+                              bool& isDaylightSaving,
+                              unsigned char& daylightSavingDayOfMonth,
+                              unsigned char& daylightSavingHour) const;
 
 
     STDMETHODIMP_(unsigned short) GetSvctVirtualChannelCount();
@@ -317,6 +330,8 @@ class CGrabberSiAtscScte
     CParserMgt m_parserMgt;
     CParserNitAtsc m_parserNit;
     CParserNtt m_parserNtt;
+    CParserSttAtsc m_parserSttAtsc;
+    CParserSttScte m_parserSttScte;
     CParserSvct m_parserSvct;
     ICallBackGrabber* m_callBackGrabber;
     ICallBackSiAtscScte* m_callBackSiAtscScte;

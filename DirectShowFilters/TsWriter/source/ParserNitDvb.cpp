@@ -128,7 +128,7 @@ void CParserNitDvb::OnNewSection(CSection& section)
 
     unsigned char* data = section.Data;
     unsigned short extensionDescriptorsLength = ((data[8] & 0xf) << 8) | data[9];   // network or bouquet descriptors length
-    //LogDebug(L"%s: table ID = 0x%x, extension ID = %d, version number = %d, section length = %d, section number = %d, last section number = %d, extension descriptors length = %hu",
+    //LogDebug(L"%s: table ID = 0x%x, extension ID = %d, version number = %d, section length = %d, section number = %hhu, last section number = %hhu, extension descriptors length = %hu",
     //          m_name, section.table_id, section.table_id_extension,
     //          section.version_number, section.section_length,
     //          section.SectionNumber, section.LastSectionNumber,
@@ -183,7 +183,7 @@ void CParserNitDvb::OnNewSection(CSection& section)
     if (sectionIt != seenSections->end())
     {
       // Yes. We might be ready!
-      //LogDebug(L"%s: previously seen section, table ID = 0x%x, extension ID = %d, section number = %d",
+      //LogDebug(L"%s: previously seen section, table ID = 0x%x, extension ID = %d, section number = %hhu",
       //          m_name, section.table_id, section.table_id_extension,
       //          section.SectionNumber);
       if (m_isOtherReady || m_unseenSectionsOther.size() != 0)
@@ -278,7 +278,7 @@ void CParserNitDvb::OnNewSection(CSection& section)
 
       if (isChange)
       {
-        LogDebug(L"%s: changed, table ID = 0x%x, extension ID = %d, version number = %d, section number = %d, last section number = %d",
+        LogDebug(L"%s: changed, table ID = 0x%x, extension ID = %d, version number = %d, section number = %hhu, last section number = %hhu",
                   m_name, section.table_id, section.table_id_extension,
                   section.version_number, section.SectionNumber,
                   section.LastSectionNumber);
@@ -305,7 +305,7 @@ void CParserNitDvb::OnNewSection(CSection& section)
       }
       else
       {
-        LogDebug(L"%s: received, table ID = 0x%x, extension ID = %d, version number = %d, section number = %d, last section number = %d",
+        LogDebug(L"%s: received, table ID = 0x%x, extension ID = %d, version number = %d, section number = %hhu, last section number = %hhu",
                   m_name, section.table_id, section.table_id_extension,
                   section.version_number, section.SectionNumber,
                   section.LastSectionNumber);
@@ -330,7 +330,7 @@ void CParserNitDvb::OnNewSection(CSection& section)
     }
     else
     {
-      //LogDebug(L"%s: new section, table ID = 0x%x, extension ID = %d, version number = %d, section number = %d",
+      //LogDebug(L"%s: new section, table ID = 0x%x, extension ID = %d, version number = %d, section number = %hhu",
       //            m_name, section.table_id, section.table_id_extension,
       //            section.version_number, section.SectionNumber);
     }
@@ -340,7 +340,7 @@ void CParserNitDvb::OnNewSection(CSection& section)
     unsigned short endOfExtensionDescriptors = pointer + extensionDescriptorsLength;
     if (endOfExtensionDescriptors > endOfSection - 2)         // - 2 for the transport stream loop length bytes
     {
-      LogDebug(L"%s: invalid section, extension descriptors length = %hu, pointer = %hu, end of section = %hu, table ID = 0x%x, extension ID = %d, version number = %d, section number = %d",
+      LogDebug(L"%s: invalid section, extension descriptors length = %hu, pointer = %hu, end of section = %hu, table ID = 0x%x, extension ID = %d, version number = %d, section number = %hhu",
                 m_name, extensionDescriptorsLength, endOfSection,
                 section.table_id, section.table_id_extension,
                 section.version_number, section.SectionNumber);
@@ -397,7 +397,7 @@ void CParserNitDvb::OnNewSection(CSection& section)
     //          m_name, transportStreamLoopLength, pointer);
     if (pointer + transportStreamLoopLength != endOfSection)
     {
-      LogDebug(L"%s: invalid section, transport stream loop length = %hu, pointer = %hu, end of section = %hu, table ID = 0x%x, extension ID = %d, version number = %d, section number = %d",
+      LogDebug(L"%s: invalid section, transport stream loop length = %hu, pointer = %hu, end of section = %hu, table ID = 0x%x, extension ID = %d, version number = %d, section number = %hhu",
                 m_name, transportStreamLoopLength, pointer, endOfSection,
                 section.table_id, section.table_id_extension,
                 section.version_number, section.SectionNumber);
@@ -428,7 +428,7 @@ void CParserNitDvb::OnNewSection(CSection& section)
       unsigned short endOfTransportDescriptors = pointer + transportDescriptorsLength;
       if (endOfTransportDescriptors > endOfSection)
       {
-        LogDebug(L"%s: invalid section, transport descriptors length = %hu, pointer = %hu, end of section = %hu, table ID = 0x%x, extension ID = %d, version number = %d, section number = %d, TSID = %hu, ONID = %hu",
+        LogDebug(L"%s: invalid section, transport descriptors length = %hu, pointer = %hu, end of section = %hu, table ID = 0x%x, extension ID = %d, version number = %d, section number = %hhu, TSID = %hu, ONID = %hu",
                   m_name, transportDescriptorsLength, pointer, endOfSection,
                   section.table_id, section.table_id_extension,
                   section.version_number, section.SectionNumber,
@@ -480,7 +480,7 @@ void CParserNitDvb::OnNewSection(CSection& section)
                                             recordSatellite,
                                             recordTerrestrial))
       {
-        LogDebug(L"%s: invalid section, table ID = 0x%x, extension ID = %d, version number = %d, section number = %d, TSID = %hu, ONID = %hu, end of section = %hu",
+        LogDebug(L"%s: invalid section, table ID = 0x%x, extension ID = %d, version number = %d, section number = %hhu, TSID = %hu, ONID = %hu, end of section = %hu",
                   m_name, section.table_id, section.table_id_extension,
                   section.version_number, section.SectionNumber,
                   transportStreamId, originalNetworkId, endOfSection);
@@ -560,7 +560,7 @@ void CParserNitDvb::OnNewSection(CSection& section)
 
     if (pointer != endOfSection)
     {
-      LogDebug(L"%s: section parsing error, pointer = %hu, end of section = %hu, table ID = 0x%x, extension ID = %d, version number = %d, section number = %d",
+      LogDebug(L"%s: section parsing error, pointer = %hu, end of section = %hu, table ID = 0x%x, extension ID = %d, version number = %d, section number = %hhu",
                 m_name, pointer, endOfSection, section.table_id,
                 section.table_id_extension, section.version_number,
                 section.SectionNumber);
@@ -2179,6 +2179,8 @@ bool CParserNitDvb::DecodeTransportStreamDescriptors(unsigned char* sectionData,
 {
   try
   {
+    unsigned char tableId = sectionData[0];
+    unsigned short groupId = (sectionData[3] << 8) | sectionData[4];
     unsigned long privateDataSpecifier = groupPrivateDataSpecifier;
     bool result = true;
     while (pointer + 1 < endOfTransportDescriptors)
@@ -2287,7 +2289,19 @@ bool CParserNitDvb::DecodeTransportStreamDescriptors(unsigned char* sectionData,
         }
       }
       else if (
-        (tag == 0x82 && privateDataSpecifier == 0x31) ||      // Sagem logical channel number descriptor
+        (
+          tag == 0x82 &&
+          (
+            privateDataSpecifier == 0x31 ||                   // Sagem logical channel number descriptor
+            privateDataSpecifier == 0x41444250 ||             // StarHub TV (formerly Singapore Cable Vision) - Singapore DVB-C
+            (                                                 // Sogecable bouquets don't include a PDS
+              tableId != TABLE_ID_NIT_DVB_ACTUAL &&
+              tableId != TABLE_ID_NIT_DVB_OTHER &&
+              groupId >= 0x20 &&
+              groupId <= 0x22
+            )
+          )
+        ) ||
         (tag == 0x93 && privateDataSpecifier == 0x362275) ||  // Irdeto logical channel number descriptor (Austar Australia)
         (tag == 0xe2 && privateDataSpecifier == 0x6001)       // News Data Com [NDC] logical channel number descriptor (Sky NZ)
       )
@@ -2387,9 +2401,12 @@ bool CParserNitDvb::DecodeNameDescriptor(unsigned char* data,
 {
   if (dataLength == 0)
   {
-    LogDebug(L"%s: invalid name descriptor, length = %hhu",
+    // Allow zero-length name descriptors.
+    /*LogDebug(L"%s: invalid name descriptor, length = %hhu",
               m_name, dataLength);
-    return false;
+    return false;*/
+    *name = NULL;
+    return true;
   }
   try
   {
@@ -3544,6 +3561,7 @@ bool CParserNitDvb::DecodeLogicalChannelNumberDescriptor(unsigned char* data,
   // - Italy, Portugal DTT (EACEM - IEC/CENELEC 62 216 standard) = 0x28
   // - NorDig = 0x29
   // - Freeview NZ = 0x37
+  // - Canal+ Cyfrowy = 0xa5
   // - Freeview UK = 0x233a
   // - Freeview AU = 0x3200 - 0x320f
   if (dataLength == 0 || dataLength % 4 != 0)

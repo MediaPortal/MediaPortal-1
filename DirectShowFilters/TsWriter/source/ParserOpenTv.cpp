@@ -21,12 +21,15 @@
 #include "ParserOpenTv.h"
 #include <algorithm>    // find()
 #include <cstring>      // strcmp()
-#include <time.h>       // gmtime(), mktime(), time_t, tm
 #include "..\..\shared\EnterCriticalSection.h"
 #include "..\..\shared\TimeUtils.h"
 #include "PidUsage.h"
 #include "TextUtil.h"
 #include "Utils.h"
+
+
+#define LANG_ENG    0x676e65
+#define LANG_ITA    0x617469
 
 
 extern void LogDebug(const wchar_t* fmt, ...);
@@ -43,6 +46,7 @@ CParserOpenTv::CParserOpenTv(ICallBackPidConsumer* callBack, LPUNKNOWN unk, HRES
   }
 
   m_isGrabbing = false;
+  m_originalNetworkId = 0;
   m_isItalianText = false;
   m_useAlternativeProgramCategoryHandling = false;
   m_isDescriptionPhase = false;
@@ -72,6 +76,11 @@ CParserOpenTv::~CParserOpenTv()
   m_decoders.clear();
 }
 
+bool CParserOpenTv::IsItalianText(unsigned short originalNetworkId)
+{
+  return originalNetworkId == 64511;  // Sky Italia
+}
+
 STDMETHODIMP CParserOpenTv::NonDelegatingQueryInterface(REFIID iid, void** ppv)
 {
   if (ppv == NULL)
@@ -93,7 +102,7 @@ STDMETHODIMP CParserOpenTv::NonDelegatingQueryInterface(REFIID iid, void** ppv)
 void CParserOpenTv::SetOriginalNetworkId(unsigned short originalNetworkId)
 {
   LogDebug(L"OpenTV: set original network ID, ONID = %hu", originalNetworkId);
-  bool isItalianText = originalNetworkId == 64511;  // Sky Italia
+  bool isItalianText = IsItalianText(originalNetworkId);
   bool useAltProgCatHandling = false;
   if (
     originalNetworkId == 47 ||    // Freeview Satellite NZ (TVNZ)
@@ -108,6 +117,7 @@ void CParserOpenTv::SetOriginalNetworkId(unsigned short originalNetworkId)
   }
 
   CEnterCriticalSection lock(m_section);
+  m_originalNetworkId = originalNetworkId;
   if (
     isItalianText == m_isItalianText &&
     useAltProgCatHandling == m_useAlternativeProgramCategoryHandling
@@ -173,11 +183,11 @@ void CParserOpenTv::SetPmtPid(unsigned short pid)
     }
   }
 
-  bool isGrabbing = m_isGrabbing;
+  unsigned short originalNetworkId = m_originalNetworkId;
   bool isItalianText = m_isItalianText;
   bool useAlternativeProgramCategoryHandling = m_useAlternativeProgramCategoryHandling;
   Reset(m_enableCrcCheck);
-  m_isGrabbing = isGrabbing;
+  m_originalNetworkId = originalNetworkId;
   m_isItalianText = isItalianText;
   m_useAlternativeProgramCategoryHandling = useAlternativeProgramCategoryHandling;
 
@@ -433,7 +443,7 @@ void CParserOpenTv::Reset(bool enableCrcCheck)
   m_pidPmt = 0;
   m_pidsEvent.clear();
   m_pidsDescription.clear();
-  m_isGrabbing = false;
+  m_originalNetworkId = 0;
   m_isItalianText = false;
   m_useAlternativeProgramCategoryHandling = false;
   m_isDescriptionPhase = false;
@@ -451,7 +461,7 @@ STDMETHODIMP_(void) CParserOpenTv::SetCallBack(ICallBackGrabber* callBack)
 bool CParserOpenTv::OnTsPacket(CTsHeader& header, unsigned char* tsPacket)
 {
   CEnterCriticalSection lock(m_section);
-  if (m_isGrabbing)
+  if (m_isGrabbing && m_originalNetworkId != 0)
   {
     map<unsigned short, CSectionDecoder*>::const_iterator it = m_decoders.find(header.Pid);
     if (it != m_decoders.end() && it->second != NULL)
@@ -475,10 +485,19 @@ STDMETHODIMP_(bool) CParserOpenTv::IsReady()
   return m_isReady;
 }
 
-STDMETHODIMP_(unsigned long) CParserOpenTv::GetEventCount()
+STDMETHODIMP_(void) CParserOpenTv::GetEventCount(unsigned long* eventCount,
+                                                  unsigned long* textLanguage)
 {
   CEnterCriticalSection lock(m_section);
-  return m_recordsEvent.GetRecordCount();
+  *eventCount = m_recordsEvent.GetRecordCount();
+  if (m_isItalianText)
+  {
+    *textLanguage = LANG_ITA;
+  }
+  else
+  {
+    *textLanguage = LANG_ENG;
+  }
 }
 
 STDMETHODIMP_(bool) CParserOpenTv::GetEvent(unsigned long index,
@@ -570,16 +589,8 @@ STDMETHODIMP_(bool) CParserOpenTv::GetEvent(unsigned long index,
   }
 
   *seriesLinkId = 0xffff;
-  if (shortDescription != NULL && *shortDescriptionBufferSize != 0)
-  {
-    shortDescription[0] = NULL;
-  }
-  *shortDescriptionBufferSize = 0;
-  if (extendedDescription != NULL && *extendedDescriptionBufferSize != 0)
-  {
-    extendedDescription[0] = NULL;
-  }
-  *extendedDescriptionBufferSize = 0;
+  CUtils::CopyStringToBuffer(NULL, shortDescription, *shortDescriptionBufferSize, requiredBufferSize);
+  CUtils::CopyStringToBuffer(NULL, extendedDescription, *extendedDescriptionBufferSize, requiredBufferSize);
   return true;
 }
 
@@ -627,31 +638,10 @@ void CParserOpenTv::OnNewSection(int pid, int tableId, CSection& section)
 
     unsigned char* data = section.Data;
     unsigned short channelId = section.table_id_extension;
-
-    // Decode the MJD-encoded start date.
     unsigned short startDateMjd = (data[8] << 8) | data[9];
-    long j = startDateMjd + 2400001 + 68569;
-    long c = 4 * j / 146097;
-    j = j - (146097 * c + 3) / 4;
-    long y = 4000 * (j + 1) / 1461001;
-    j = j - 1461 * y / 4 + 31;
-    long m = 80 * j / 2447;
+    unsigned long long baseStartDateTime = CTimeUtils::DecodeMjDateBcdTime(startDateMjd, 0);
 
-    tm startDateTime;
-    startDateTime.tm_sec = 0;
-    startDateTime.tm_min = 0;
-    startDateTime.tm_hour = 0;
-    startDateTime.tm_mday = j - 2447 * m / 80;
-    j = m / 11;
-    startDateTime.tm_mon = m + 2 - 12 * j - 1;              // 0..11
-    startDateTime.tm_year = 100 * (c - 49) + y + j - 1900;  // year - 1900
-    startDateTime.tm_isdst = -1;
-
-    // As far as I know the date/time is a local time. mktime() will give us
-    // the corresponding UTC epoch, as required.
-    unsigned long long baseStartDateTime = mktime(&startDateTime);
-
-    //LogDebug(L"OpenTV: PID = %d, table ID = 0x%x, channel ID = %hu, version number = %d, section length = %d, section number = %d, last section number = %d, base start date/time = %llu (%hu)",
+    //LogDebug(L"OpenTV: PID = %d, table ID = 0x%x, channel ID = %hu, version number = %d, section length = %d, section number = %hhu, last section number = %hhu, base start date/time = %llu (%hu)",
     //          pid, tableId, channelId, section.version_number,
     //          section.section_length, section.SectionNumber,
     //          section.LastSectionNumber, baseStartDateTime, startDateMjd);
@@ -666,7 +656,7 @@ void CParserOpenTv::OnNewSection(int pid, int tableId, CSection& section)
     if (sectionIt != m_seenSections.end())
     {
       // Yes. We might be ready!
-      //LogDebug(L"OpenTV: previously seen section, PID = %D, table ID = 0x%x, channel ID = %hu, section number = %d",
+      //LogDebug(L"OpenTV: previously seen section, PID = %D, table ID = 0x%x, channel ID = %hu, section number = %hhu",
       //          pid, tableId, channelId, section.SectionNumber);
       if (m_isReady || m_unseenSections.size() > 0)
       {
@@ -739,7 +729,7 @@ void CParserOpenTv::OnNewSection(int pid, int tableId, CSection& section)
 
       if (isChange)
       {
-        LogDebug(L"OpenTV: changed, PID = %d, table ID = 0x%x, channel ID = %hu, version number = %d, section number = %d, last section number = %d",
+        LogDebug(L"OpenTV: changed, PID = %d, table ID = 0x%x, channel ID = %hu, version number = %d, section number = %hhu, last section number = %hhu",
                   pid, tableId, channelId, section.version_number,
                   section.SectionNumber, section.LastSectionNumber);
         unsigned long expiryKey = ((unsigned long long)pid << 24) | (tableId << 16) | channelId;
@@ -759,7 +749,7 @@ void CParserOpenTv::OnNewSection(int pid, int tableId, CSection& section)
       }
       else
       {
-        LogDebug(L"OpenTV: received, PID = %d, table ID = 0x%x, channel ID = %hu, version number = %d, section number = %d, last section number = %d",
+        LogDebug(L"OpenTV: received, PID = %d, table ID = 0x%x, channel ID = %hu, version number = %d, section number = %hhu, last section number = %hhu",
                   pid, tableId, channelId, section.version_number,
                   section.SectionNumber, section.LastSectionNumber);
         if (
@@ -781,7 +771,7 @@ void CParserOpenTv::OnNewSection(int pid, int tableId, CSection& section)
     }
     else
     {
-      //LogDebug(L"OpenTV: new section, PID = %d, table ID = 0x%x, channel ID = %hu, version number = %d, section number = %d",
+      //LogDebug(L"OpenTV: new section, PID = %d, table ID = 0x%x, channel ID = %hu, version number = %d, section number = %hhu",
       //          pid, tableId, channelId, section.version_number,
       //          section.SectionNumber);
     }
@@ -795,7 +785,7 @@ void CParserOpenTv::OnNewSection(int pid, int tableId, CSection& section)
         CRecordOpenTvEvent* recordEvent = new CRecordOpenTvEvent();
         if (recordEvent == NULL)
         {
-          LogDebug(L"OpenTV: failed to allocate event record, PID = %d, table ID = 0x%x, channel ID = %hu, version number = %d, section number = %d",
+          LogDebug(L"OpenTV: failed to allocate event record, PID = %d, table ID = 0x%x, channel ID = %hu, version number = %d, section number = %hhu",
                     pid, tableId, channelId, section.version_number,
                     section.SectionNumber);
           return;
@@ -812,7 +802,7 @@ void CParserOpenTv::OnNewSection(int pid, int tableId, CSection& section)
                                 m_useAlternativeProgramCategoryHandling,
                                 *recordEvent))
         {
-          LogDebug(L"OpenTV: invalid section, PID = %d, table ID = 0x%x, channel ID = %hu, version number = %d, section number = %d, event ID = %hu",
+          LogDebug(L"OpenTV: invalid section, PID = %d, table ID = 0x%x, channel ID = %hu, version number = %d, section number = %hhu, event ID = %hu",
                     pid, tableId, channelId, section.version_number,
                     section.SectionNumber, recordEvent->EventId);
           delete recordEvent;
@@ -826,7 +816,7 @@ void CParserOpenTv::OnNewSection(int pid, int tableId, CSection& section)
         CRecordOpenTvEventDescription* recordEventDescription = new CRecordOpenTvEventDescription();
         if (recordEventDescription == NULL)
         {
-          LogDebug(L"OpenTV: failed to allocate event description record, PID = %d, table ID = 0x%x, channel ID = %hu, version number = %d, section number = %d",
+          LogDebug(L"OpenTV: failed to allocate event description record, PID = %d, table ID = 0x%x, channel ID = %hu, version number = %d, section number = %hhu",
                     pid, tableId, channelId, section.version_number,
                     section.SectionNumber);
           return;
@@ -841,7 +831,7 @@ void CParserOpenTv::OnNewSection(int pid, int tableId, CSection& section)
                                           m_isItalianText,
                                           *recordEventDescription))
         {
-          LogDebug(L"OpenTV: invalid section, PID = %d, table ID = 0x%x, channel ID = %hu, version number = %d, section number = %d, event ID = %hu",
+          LogDebug(L"OpenTV: invalid section, PID = %d, table ID = 0x%x, channel ID = %hu, version number = %d, section number = %hhu, event ID = %hu",
                     pid, tableId, channelId, section.version_number,
                     section.SectionNumber, recordEventDescription->EventId);
           delete recordEventDescription;
@@ -854,7 +844,7 @@ void CParserOpenTv::OnNewSection(int pid, int tableId, CSection& section)
 
     if (pointer != endOfSection)
     {
-      LogDebug(L"OpenTV: section parsing error, pointer = %hu, end of section = %hu, PID = %d, table ID = 0x%x, channel ID = %hu, version number = %d, section number = %d",
+      LogDebug(L"OpenTV: section parsing error, pointer = %hu, end of section = %hu, PID = %d, table ID = 0x%x, channel ID = %hu, version number = %d, section number = %hhu",
                 pointer, endOfSection, pid, tableId, channelId,
                 section.version_number, section.SectionNumber);
       return;
@@ -1225,8 +1215,9 @@ bool CParserOpenTv::DecodeOpenTvEventDescriptor(unsigned char* data,
       hasAudioDescription = false;
     }
 
-    //LogDebug(L"OpenTV: OpenTV event descriptor, start date/time offset = %lu s, duration = %lu s, category ID = %hhu, sub-category ID = %hhu, audio mode = %hhu, unknown 1 = %d, has subtitles = %d, is wide screen = %d, is HD = %d, is copy protected = %d, has audio description = %d, is PPV = %d, is series continuing = %d, unknown 2 = %hhu, parental rating = %hhu, title = %S",
-    //          startDateTimeOffset, durationSeconds, categoryId, subCategoryId,
+    //LogDebug(L"OpenTV: OpenTV event descriptor, start date/time offset = %lu s, duration = %lu s, is alt. cat. handling = %d, category ID = %hhu, sub-category ID = %hhu, audio mode = %hhu, unknown 1 = %d, has subtitles = %d, is wide screen = %d, is HD = %d, is copy protected = %d, has audio description = %d, is PPV = %d, is series continuing = %d, unknown 2 = %hhu, parental rating = %hhu, title = %S",
+    //          startDateTimeOffset, durationSeconds,
+    //          useAlternativeProgramCategoryHandling, categoryId, subCategoryId,
     //          audioMode, unknown1, hasSubtitles, isWideScreen,
     //          isHighDefinition, isCopyProtected, hasAudioDescription,
     //          isPayPerView, isSeriesContinuing, unknown2, parentalRating,

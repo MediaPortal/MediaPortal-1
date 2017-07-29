@@ -82,7 +82,8 @@ class CParserSdt : public CSectionDecoder, public IDefaultAuthorityProvider
                       unsigned char& audioLanguageCount,
                       unsigned long* subtitlesLanguages,
                       unsigned char& subtitlesLanguageCount,
-                      unsigned char& openTvCategoryId,
+                      unsigned char* openTvCategoryIds,
+                      unsigned char& openTvCategoryIdCount,
                       unsigned char& virginMediaCategoryId,
                       unsigned short& dishMarketId,
                       unsigned long* availableInCountries,
@@ -144,7 +145,6 @@ class CParserSdt : public CSectionDecoder, public IDefaultAuthorityProvider
           IsThreeDimensional = false;
           StreamCountVideo = 0;
           StreamCountAudio = 0;
-          OpenTvCategoryId = 0;
           VirginMediaCategoryId = 0;
           DishMarketId = 0;
           PreviousOriginalNetworkId = 0;
@@ -195,7 +195,7 @@ class CParserSdt : public CSectionDecoder, public IDefaultAuthorityProvider
             StreamCountAudio != recordSdt->StreamCountAudio ||
             !CUtils::CompareVectors(AudioLanguages, recordSdt->AudioLanguages) ||
             !CUtils::CompareVectors(SubtitlesLanguages, recordSdt->SubtitlesLanguages) ||
-            OpenTvCategoryId != recordSdt->OpenTvCategoryId ||
+            !CUtils::CompareVectors(OpenTvCategoryIds, recordSdt->OpenTvCategoryIds) ||
             VirginMediaCategoryId != recordSdt->VirginMediaCategoryId ||
             DishMarketId != recordSdt->DishMarketId ||
             !CUtils::CompareVectors(AvailableInCountries, recordSdt->AvailableInCountries) ||
@@ -229,7 +229,7 @@ class CParserSdt : public CSectionDecoder, public IDefaultAuthorityProvider
 
         void Debug(const wchar_t* situation) const
         {
-          LogDebug(L"SDT: service %s, table ID = 0x%hhx, ONID = %hu, TSID = %hu, service ID = %hu, EIT schedule flag = %d, EIT present following flag = %d, running status = %hhu, free CA mode = %d, service type = %hhu, provider name count = %llu, service name count = %llu, LCN = %hu, Dish sub-channel number = %hhu, visible in guide = %d, reference service ID = %hu, is HD = %d, is SD = %d, is 3D = %d, video stream count = %hu, audio stream count = %hu, audio language count = %llu, subtitles language count = %llu, OpenTV category ID = %hhu, Virgin Media category ID = %hhu, Dish market ID = %hu, country counts = %llu / %llu, cell counts = %llu / %llu, target region count = %llu, prev. ONID = %hu, prev. TSID = %hu, prev. service ID = %hu, EPG ONID = %hu, EPG TSID = %hu, EPG service ID = %hu, default authority = %S",
+          LogDebug(L"SDT: service %s, table ID = 0x%hhx, ONID = %hu, TSID = %hu, service ID = %hu, EIT schedule flag = %d, EIT present following flag = %d, running status = %hhu, free CA mode = %d, service type = %hhu, provider name count = %llu, service name count = %llu, LCN = %hu, Dish sub-channel number = %hhu, visible in guide = %d, reference service ID = %hu, is HD = %d, is SD = %d, is 3D = %d, video stream count = %hu, audio stream count = %hu, audio language count = %llu, subtitles language count = %llu, OpenTV category ID count = %llu, Virgin Media category ID = %hhu, Dish market ID = %hu, country counts = %llu / %llu, cell counts = %llu / %llu, target region count = %llu, prev. ONID = %hu, prev. TSID = %hu, prev. service ID = %hu, EPG ONID = %hu, EPG TSID = %hu, EPG service ID = %hu, default authority = %S",
                     situation, TableId, OriginalNetworkId, TransportStreamId,
                     ServiceId, EitScheduleFlag, EitPresentFollowingFlag,
                     RunningStatus, FreeCaMode, ServiceType,
@@ -240,7 +240,8 @@ class CParserSdt : public CSectionDecoder, public IDefaultAuthorityProvider
                     IsThreeDimensional, StreamCountVideo, StreamCountAudio,
                     (unsigned long long)AudioLanguages.size(),
                     (unsigned long long)SubtitlesLanguages.size(),
-                    OpenTvCategoryId, VirginMediaCategoryId, DishMarketId,
+                    (unsigned long long)OpenTvCategoryIds.size(),
+                    VirginMediaCategoryId, DishMarketId,
                     (unsigned long long)AvailableInCountries.size(),
                     (unsigned long long)UnavailableInCountries.size(),
                     (unsigned long long)AvailableInCells.size(),
@@ -255,6 +256,7 @@ class CParserSdt : public CSectionDecoder, public IDefaultAuthorityProvider
           CUtils::DebugStringMap(ProviderNames, L"provider name(s)", L"language", L"name");
           CUtils::DebugVector(AudioLanguages, L"audio language(s)", true);
           CUtils::DebugVector(SubtitlesLanguages, L"subtitles language(s)", true);
+          CUtils::DebugVector(OpenTvCategoryIds, L"OpenTV category ID(s)", false);
           CUtils::DebugVector(AvailableInCountries, L"available in countries", true);
           CUtils::DebugVector(UnavailableInCountries, L"unavailable in countries", true);
           CUtils::DebugVector(AvailableInCells, L"available in cell(s)", false);
@@ -289,7 +291,7 @@ class CParserSdt : public CSectionDecoder, public IDefaultAuthorityProvider
                                         StreamCountAudio,
                                         AudioLanguages,
                                         SubtitlesLanguages,
-                                        OpenTvCategoryId,
+                                        OpenTvCategoryIds,
                                         VirginMediaCategoryId,
                                         DishMarketId,
                                         AvailableInCountries,
@@ -334,7 +336,7 @@ class CParserSdt : public CSectionDecoder, public IDefaultAuthorityProvider
                                         StreamCountAudio,
                                         AudioLanguages,
                                         SubtitlesLanguages,
-                                        OpenTvCategoryId,
+                                        OpenTvCategoryIds,
                                         VirginMediaCategoryId,
                                         DishMarketId,
                                         AvailableInCountries,
@@ -379,7 +381,7 @@ class CParserSdt : public CSectionDecoder, public IDefaultAuthorityProvider
                                         StreamCountAudio,
                                         AudioLanguages,
                                         SubtitlesLanguages,
-                                        OpenTvCategoryId,
+                                        OpenTvCategoryIds,
                                         VirginMediaCategoryId,
                                         DishMarketId,
                                         AvailableInCountries,
@@ -419,7 +421,7 @@ class CParserSdt : public CSectionDecoder, public IDefaultAuthorityProvider
         unsigned short StreamCountAudio;
         vector<unsigned long> AudioLanguages;
         vector<unsigned long> SubtitlesLanguages;
-        unsigned char OpenTvCategoryId;
+        vector<unsigned char> OpenTvCategoryIds;
         unsigned char VirginMediaCategoryId;
         unsigned short DishMarketId;
         vector<unsigned long> AvailableInCountries;
@@ -506,7 +508,8 @@ class CParserSdt : public CSectionDecoder, public IDefaultAuthorityProvider
                                                 unsigned char& minorChannelNumber);
     static bool DecodeOpenTvChannelDescriptionDescriptor(unsigned char* data,
                                                           unsigned char dataLength,
-                                                          unsigned char& categoryId);
+                                                          bool isItalianText,
+                                                          vector<unsigned char>& categoryIds);
     static bool DecodeOpenTvNvodTimeShiftedServiceNameDescriptor(unsigned char* data,
                                                                   unsigned char dataLength,
                                                                   char** serviceName);

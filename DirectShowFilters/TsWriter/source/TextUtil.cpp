@@ -1,4 +1,4 @@
-/*
+Ôªø/*
  *  Copyright (C) 2006-2008 Team MediaPortal
  *  http://www.team-mediaportal.com
  *
@@ -48,6 +48,8 @@
 #define HUFFMAN_TABLE_OPENTV_ITALY_ES_BIT_COUNT_MIN       2
 #define HUFFMAN_TABLE_OPENTV_ITALY_ES_BIT_COUNT_MAX       29
 #define HUFFMAN_TABLE_OPENTV_ITALY_DS_BYTE_COUNT          22    // note: this is the maximum; range is 1 - 22
+
+#define CODE_PAGE_UTF8_ENCODED_MAX_BYTE_COUNT_WIN1250     3     // range is 1 - 3
 
 
 extern void LogDebug(const wchar_t* fmt, ...);
@@ -355,7 +357,7 @@ bool CTextUtil::DishTextToString(unsigned char* data,
 
 bool CTextUtil::DvbTextToString(unsigned char* data, unsigned short dataLength, char** text)
 {
-  if (data == NULL || dataLength < 1)
+  if (data == NULL || dataLength == 0)
   {
     LogDebug(L"DVB text: invalid input parameters, data = %d, data length = %hu",
               data == NULL, dataLength);
@@ -586,6 +588,99 @@ bool CTextUtil::IsoIec10646ToString(unsigned char* data, unsigned short dataLeng
   t[textIndex] = NULL;
   MinimiseMemoryUsage(t, textIndex + 1, text);
   return true;
+}
+
+bool CTextUtil::MhwTextToString(unsigned char* data,
+                                unsigned short dataLength,
+                                MhwProvider provider,
+                                char** text)
+{
+  if (data == NULL || dataLength == 0)
+  {
+    LogDebug(L"MHW text: invalid input parameters, data = %d, data length = %hhu, provider = %d",
+              data == NULL, dataLength, provider);
+    return false;
+  }
+
+  // Most MHW1 text sources are fixed length and padded with spaces.
+  unsigned short originalDataLength = dataLength;
+  while (dataLength > 0)
+  {
+    if (data[dataLength - 1] != 0x20)
+    {
+      break;
+    }
+    dataLength--;
+  }
+
+  //LogDebug(L"MHW text: data length = %hu, actual data length = %hu, ONID = %hu",
+  //          originalDataLength, dataLength, originalNetworkId);
+  if (dataLength == 0)
+  {
+    *text = new char[1];
+    if (*text != NULL)
+    {
+      (*text)[0] = NULL;
+    }
+    return true;
+  }
+
+  bool result = true;
+  if (provider == CanalsatFrance || provider == MovistarPlusSpain)
+  {
+    // Identify as ISO/IEC 8859-15. Could also be ISO/IEC 8859-1 or ISO/IEC 8859-9.
+    unsigned short bufferSize = dataLength + 3;   // + 2 for encoding indicator bytes, + 1 for NULL termination
+    *text = new char[bufferSize];
+    if (*text == NULL)
+    {
+      LogDebug(L"MHW text: failed to allocate %hu byte(s) for ISO/IEC 8859-15 identification", bufferSize);
+      return true;
+    }
+
+    // EN 300 468 annex A table A.4: ISO/IEC 8859-15.
+    (*text)[0] = 0x10;
+    (*text)[1] = 0xf;     // skip the 0 byte to avoid premature NULL termination, same as DvbTextToString()
+    memcpy(&(*text)[2], data, dataLength);
+    (*text)[dataLength + 2] = NULL;
+  }
+  else if (provider == CyfraPoland)
+  {
+    // Convert Windows 1250 code page to UTF-8.
+    unsigned short bufferSize = (dataLength * CODE_PAGE_UTF8_ENCODED_MAX_BYTE_COUNT_WIN1250) + 2;   // + 1 for encoding indicator byte, + 1 for NULL termination
+    char* t = new char[bufferSize];
+    if (t == NULL)
+    {
+      LogDebug(L"MHW text: failed to allocate %hu byte(s) for Windows 1250 to UTF-8 conversion", bufferSize);
+      *text = NULL;
+      return true;
+    }
+
+    t[0] = 0x15;   // EN 300 468 annex A table A.3: UTF-8 encoding of ISO/IEC 10646 BMP
+    unsigned short textIndex = 1;
+    for (unsigned short c = 0; c < dataLength; c++)
+    {
+      CodePageEntry cpe = WIN1250_TO_UTF8[data[c]];
+      if (cpe.Utf8EncodedByteCount != 0)
+      {
+        memcpy(&t[textIndex], cpe.Utf8Encoding, cpe.Utf8EncodedByteCount);
+        textIndex += cpe.Utf8EncodedByteCount;
+      }
+    }
+    t[textIndex] = NULL;
+
+    MinimiseMemoryUsage(t, textIndex + 1, text);
+  }
+  else
+  {
+    // Unknown encoding. Assume DVB-compatibility (unfortunately unlikely).
+    result = DvbTextToString(data, dataLength, text);
+  }
+
+  if (result)
+  {
+    //LogDebug(L"  %S", *text == NULL ? "" : *text);
+  }
+  return result;
 }
 
 bool CTextUtil::OpenTvTextToString(unsigned char* data,
@@ -2265,100 +2360,100 @@ const CTextUtil::HuffmanSequence CTextUtil::HUFFMAN_TABLE_DISH_NETWORK_255[255] 
   0x0c, 0x0fa7, 0x01, "{",
   0x0c, 0x0fa8, 0x01, "`",
   0x0c, 0x0fa9, 0x01, "&",
-  0x0d, 0x1f54, 0x02, "\xC3\xBE",    // ˛
-  0x0d, 0x1f55, 0x02, "\xC3\xBD",    // ˝
-  0x0d, 0x1f56, 0x02, "\xC3\xBC",    // ¸
-  0x0d, 0x1f57, 0x02, "\xC3\xBB",    // ˚
-  0x0d, 0x1f58, 0x02, "\xC3\xBA",    // ˙
-  0x0d, 0x1f59, 0x02, "\xC3\xB9",    // ˘
-  0x0d, 0x1f5a, 0x02, "\xC3\xB8",    // ¯
-  0x0d, 0x1f5b, 0x02, "\xC3\xB7",    // ˜
-  0x0d, 0x1f5c, 0x02, "\xC3\xB6",    // ˆ
-  0x0d, 0x1f5d, 0x02, "\xC3\xB5",    // ı
-  0x0d, 0x1f5e, 0x02, "\xC3\xB4",    // Ù
-  0x0d, 0x1f5f, 0x02, "\xC3\xB3",    // Û
-  0x0d, 0x1f60, 0x02, "\xC3\xB2",    // Ú
-  0x0d, 0x1f61, 0x02, "\xC3\xB1",    // Ò
-  0x0d, 0x1f62, 0x02, "\xC3\xB0",    // 
-  0x0d, 0x1f63, 0x02, "\xC3\xAF",    // Ô
-  0x0d, 0x1f64, 0x02, "\xC3\xAE",    // Ó
-  0x0d, 0x1f65, 0x02, "\xC3\xAD",    // Ì
-  0x0d, 0x1f66, 0x02, "\xC3\xAC",    // Ï
-  0x0d, 0x1f67, 0x02, "\xC3\xAB",    // Î
-  0x0d, 0x1f68, 0x02, "\xC3\xAA",    // Í
-  0x0d, 0x1f69, 0x02, "\xC3\xA9",    // È
-  0x0d, 0x1f6a, 0x02, "\xC3\xA8",    // Ë
-  0x0d, 0x1f6b, 0x02, "\xC3\xA7",    // Á
-  0x0d, 0x1f6c, 0x02, "\xC3\xA6",    // Ê
-  0x0d, 0x1f6d, 0x02, "\xC3\xA5",    // Â
-  0x0d, 0x1f6e, 0x02, "\xC3\xA4",    // ‰
-  0x0d, 0x1f6f, 0x02, "\xC3\xA3",    // „
-  0x0d, 0x1f70, 0x02, "\xC3\xA2",    // ‚
-  0x0d, 0x1f71, 0x02, "\xC3\xA1",    // ·
-  0x0d, 0x1f72, 0x02, "\xC3\xA0",    // ‡
-  0x0d, 0x1f73, 0x02, "\xC3\x9F",    // ﬂ
-  0x0d, 0x1f74, 0x02, "\xC3\x9E",    // ﬁ
-  0x0d, 0x1f75, 0x02, "\xC3\x9D",    // ›
-  0x0d, 0x1f76, 0x02, "\xC3\x9C",    // ‹
-  0x0d, 0x1f77, 0x02, "\xC3\x9B",    // €
-  0x0d, 0x1f78, 0x02, "\xC3\x9A",    // ⁄
-  0x0d, 0x1f79, 0x02, "\xC3\x99",    // Ÿ
-  0x0d, 0x1f7a, 0x02, "\xC3\x98",    // ÿ
-  0x0d, 0x1f7b, 0x02, "\xC3\x97",    // ◊
-  0x0d, 0x1f7c, 0x02, "\xC3\x96",    // ÷
-  0x0d, 0x1f7d, 0x02, "\xC3\x95",    // ’
-  0x0d, 0x1f7e, 0x02, "\xC3\x94",    // ‘
-  0x0d, 0x1f7f, 0x02, "\xC3\x93",    // ”
-  0x0d, 0x1f80, 0x02, "\xC3\x92",    // “
-  0x0d, 0x1f81, 0x02, "\xC3\x91",    // —
-  0x0d, 0x1f82, 0x02, "\xC3\x90",    // –
-  0x0d, 0x1f83, 0x02, "\xC3\x8F",    // œ
-  0x0d, 0x1f84, 0x02, "\xC3\x8E",    // Œ
-  0x0d, 0x1f85, 0x02, "\xC3\x8D",    // Õ
-  0x0d, 0x1f86, 0x02, "\xC3\x8C",    // Ã
-  0x0d, 0x1f87, 0x02, "\xC3\x8B",    // À
-  0x0d, 0x1f88, 0x02, "\xC3\x8A",    //  
-  0x0d, 0x1f89, 0x02, "\xC3\x89",    // …
-  0x0d, 0x1f8a, 0x02, "\xC3\x88",    // »
-  0x0d, 0x1f8b, 0x02, "\xC3\x87",    // «
-  0x0d, 0x1f8c, 0x02, "\xC3\x86",    // ∆
-  0x0d, 0x1f8d, 0x02, "\xC3\x85",    // ≈
-  0x0d, 0x1f8e, 0x02, "\xC3\x84",    // ƒ
-  0x0d, 0x1f8f, 0x02, "\xC3\x83",    // √
-  0x0d, 0x1f90, 0x02, "\xC3\x82",    // ¬
-  0x0d, 0x1f91, 0x02, "\xC3\x81",    // ¡
-  0x0d, 0x1f92, 0x02, "\xC3\x80",    // ¿
-  0x0d, 0x1f93, 0x02, "\xC2\xBF",    // ø
-  0x0d, 0x1f94, 0x02, "\xC2\xBE",    // æ
-  0x0d, 0x1f95, 0x02, "\xC2\xBD",    // Ω
-  0x0d, 0x1f96, 0x02, "\xC2\xBC",    // º
-  0x0d, 0x1f97, 0x02, "\xC2\xBB",    // ª
-  0x0d, 0x1f98, 0x02, "\xC2\xBA",    // ∫
-  0x0d, 0x1f99, 0x02, "\xC2\xB9",    // π
-  0x0d, 0x1f9a, 0x02, "\xC2\xB8",    // ∏
-  0x0d, 0x1f9b, 0x02, "\xC2\xB7",    // ∑
-  0x0d, 0x1f9c, 0x02, "\xC2\xB6",    // ∂
-  0x0d, 0x1f9d, 0x02, "\xC2\xB5",    // µ
-  0x0d, 0x1f9e, 0x02, "\xC2\xB4",    // ¥
-  0x0d, 0x1f9f, 0x02, "\xC2\xB3",    // ≥
-  0x0d, 0x1fa0, 0x02, "\xC2\xB2",    // ≤
-  0x0d, 0x1fa1, 0x02, "\xC2\xB1",    // ±
-  0x0d, 0x1fa2, 0x02, "\xC2\xB0",    // ∞
-  0x0d, 0x1fa3, 0x02, "\xC2\xAF",    // Ø
-  0x0d, 0x1fa4, 0x02, "\xC2\xAE",    // Æ
-  0x0d, 0x1fa5, 0x02, "\xC2\xAD",    // ≠
-  0x0d, 0x1fa6, 0x02, "\xC2\xAC",    // ¨
-  0x0d, 0x1fa7, 0x02, "\xC2\xAB",    // ´
-  0x0d, 0x1fa8, 0x02, "\xC2\xAA",    // ™
-  0x0d, 0x1fa9, 0x02, "\xC2\xA9",    // ©
-  0x0d, 0x1faa, 0x02, "\xC2\xA8",    // ®
-  0x0d, 0x1fab, 0x02, "\xC2\xA7",    // ß
-  0x0d, 0x1fac, 0x02, "\xC2\xA6",    // ¶
-  0x0d, 0x1fad, 0x02, "\xC2\xA5",    // •
-  0x0d, 0x1fae, 0x02, "\xC2\xA4",    // §
-  0x0d, 0x1faf, 0x02, "\xC2\xA3",    // £
-  0x0d, 0x1fb0, 0x02, "\xC2\xA2",    // ¢
-  0x0d, 0x1fb1, 0x02, "\xC2\xA1",    // °
+  0x0d, 0x1f54, 0x02, "\xC3\xBE",    // √æ
+  0x0d, 0x1f55, 0x02, "\xC3\xBD",    // √Ω
+  0x0d, 0x1f56, 0x02, "\xC3\xBC",    // √º
+  0x0d, 0x1f57, 0x02, "\xC3\xBB",    // √ª
+  0x0d, 0x1f58, 0x02, "\xC3\xBA",    // √∫
+  0x0d, 0x1f59, 0x02, "\xC3\xB9",    // √π
+  0x0d, 0x1f5a, 0x02, "\xC3\xB8",    // √∏
+  0x0d, 0x1f5b, 0x02, "\xC3\xB7",    // √∑
+  0x0d, 0x1f5c, 0x02, "\xC3\xB6",    // √∂
+  0x0d, 0x1f5d, 0x02, "\xC3\xB5",    // √µ
+  0x0d, 0x1f5e, 0x02, "\xC3\xB4",    // √¥
+  0x0d, 0x1f5f, 0x02, "\xC3\xB3",    // √≥
+  0x0d, 0x1f60, 0x02, "\xC3\xB2",    // √≤
+  0x0d, 0x1f61, 0x02, "\xC3\xB1",    // √±
+  0x0d, 0x1f62, 0x02, "\xC3\xB0",    // √∞
+  0x0d, 0x1f63, 0x02, "\xC3\xAF",    // √Ø
+  0x0d, 0x1f64, 0x02, "\xC3\xAE",    // √Æ
+  0x0d, 0x1f65, 0x02, "\xC3\xAD",    // √≠
+  0x0d, 0x1f66, 0x02, "\xC3\xAC",    // √¨
+  0x0d, 0x1f67, 0x02, "\xC3\xAB",    // √´
+  0x0d, 0x1f68, 0x02, "\xC3\xAA",    // √™
+  0x0d, 0x1f69, 0x02, "\xC3\xA9",    // √©
+  0x0d, 0x1f6a, 0x02, "\xC3\xA8",    // √®
+  0x0d, 0x1f6b, 0x02, "\xC3\xA7",    // √ß
+  0x0d, 0x1f6c, 0x02, "\xC3\xA6",    // √¶
+  0x0d, 0x1f6d, 0x02, "\xC3\xA5",    // √•
+  0x0d, 0x1f6e, 0x02, "\xC3\xA4",    // √§
+  0x0d, 0x1f6f, 0x02, "\xC3\xA3",    // √£
+  0x0d, 0x1f70, 0x02, "\xC3\xA2",    // √¢
+  0x0d, 0x1f71, 0x02, "\xC3\xA1",    // √°
+  0x0d, 0x1f72, 0x02, "\xC3\xA0",    // √†
+  0x0d, 0x1f73, 0x02, "\xC3\x9F",    // √ü
+  0x0d, 0x1f74, 0x02, "\xC3\x9E",    // √û
+  0x0d, 0x1f75, 0x02, "\xC3\x9D",    // √ù
+  0x0d, 0x1f76, 0x02, "\xC3\x9C",    // √ú
+  0x0d, 0x1f77, 0x02, "\xC3\x9B",    // √õ
+  0x0d, 0x1f78, 0x02, "\xC3\x9A",    // √ö
+  0x0d, 0x1f79, 0x02, "\xC3\x99",    // √ô
+  0x0d, 0x1f7a, 0x02, "\xC3\x98",    // √ò
+  0x0d, 0x1f7b, 0x02, "\xC3\x97",    // √ó
+  0x0d, 0x1f7c, 0x02, "\xC3\x96",    // √ñ
+  0x0d, 0x1f7d, 0x02, "\xC3\x95",    // √ï
+  0x0d, 0x1f7e, 0x02, "\xC3\x94",    // √î
+  0x0d, 0x1f7f, 0x02, "\xC3\x93",    // √ì
+  0x0d, 0x1f80, 0x02, "\xC3\x92",    // √í
+  0x0d, 0x1f81, 0x02, "\xC3\x91",    // √ë
+  0x0d, 0x1f82, 0x02, "\xC3\x90",    // √ê
+  0x0d, 0x1f83, 0x02, "\xC3\x8F",    // √è
+  0x0d, 0x1f84, 0x02, "\xC3\x8E",    // √é
+  0x0d, 0x1f85, 0x02, "\xC3\x8D",    // √ç
+  0x0d, 0x1f86, 0x02, "\xC3\x8C",    // √å
+  0x0d, 0x1f87, 0x02, "\xC3\x8B",    // √ã
+  0x0d, 0x1f88, 0x02, "\xC3\x8A",    // √ä
+  0x0d, 0x1f89, 0x02, "\xC3\x89",    // √â
+  0x0d, 0x1f8a, 0x02, "\xC3\x88",    // √à
+  0x0d, 0x1f8b, 0x02, "\xC3\x87",    // √á
+  0x0d, 0x1f8c, 0x02, "\xC3\x86",    // √Ü
+  0x0d, 0x1f8d, 0x02, "\xC3\x85",    // √Ö
+  0x0d, 0x1f8e, 0x02, "\xC3\x84",    // √Ñ
+  0x0d, 0x1f8f, 0x02, "\xC3\x83",    // √É
+  0x0d, 0x1f90, 0x02, "\xC3\x82",    // √Ç
+  0x0d, 0x1f91, 0x02, "\xC3\x81",    // √Å
+  0x0d, 0x1f92, 0x02, "\xC3\x80",    // √Ä
+  0x0d, 0x1f93, 0x02, "\xC2\xBF",    // ¬ø
+  0x0d, 0x1f94, 0x02, "\xC2\xBE",    // ¬æ
+  0x0d, 0x1f95, 0x02, "\xC2\xBD",    // ¬Ω
+  0x0d, 0x1f96, 0x02, "\xC2\xBC",    // ¬º
+  0x0d, 0x1f97, 0x02, "\xC2\xBB",    // ¬ª
+  0x0d, 0x1f98, 0x02, "\xC2\xBA",    // ¬∫
+  0x0d, 0x1f99, 0x02, "\xC2\xB9",    // ¬π
+  0x0d, 0x1f9a, 0x02, "\xC2\xB8",    // ¬∏
+  0x0d, 0x1f9b, 0x02, "\xC2\xB7",    // ¬∑
+  0x0d, 0x1f9c, 0x02, "\xC2\xB6",    // ¬∂
+  0x0d, 0x1f9d, 0x02, "\xC2\xB5",    // ¬µ
+  0x0d, 0x1f9e, 0x02, "\xC2\xB4",    // ¬¥
+  0x0d, 0x1f9f, 0x02, "\xC2\xB3",    // ¬≥
+  0x0d, 0x1fa0, 0x02, "\xC2\xB2",    // ¬≤
+  0x0d, 0x1fa1, 0x02, "\xC2\xB1",    // ¬±
+  0x0d, 0x1fa2, 0x02, "\xC2\xB0",    // ¬∞
+  0x0d, 0x1fa3, 0x02, "\xC2\xAF",    // ¬Ø
+  0x0d, 0x1fa4, 0x02, "\xC2\xAE",    // ¬Æ
+  0x0d, 0x1fa5, 0x02, "\xC2\xAD",    // ¬≠
+  0x0d, 0x1fa6, 0x02, "\xC2\xAC",    // ¬¨
+  0x0d, 0x1fa7, 0x02, "\xC2\xAB",    // ¬´
+  0x0d, 0x1fa8, 0x02, "\xC2\xAA",    // ¬™
+  0x0d, 0x1fa9, 0x02, "\xC2\xA9",    // ¬©
+  0x0d, 0x1faa, 0x02, "\xC2\xA8",    // ¬®
+  0x0d, 0x1fab, 0x02, "\xC2\xA7",    // ¬ß
+  0x0d, 0x1fac, 0x02, "\xC2\xA6",    // ¬¶
+  0x0d, 0x1fad, 0x02, "\xC2\xA5",    // ¬•
+  0x0d, 0x1fae, 0x02, "\xC2\xA4",    // ¬§
+  0x0d, 0x1faf, 0x02, "\xC2\xA3",    // ¬£
+  0x0d, 0x1fb0, 0x02, "\xC2\xA2",    // ¬¢
+  0x0d, 0x1fb1, 0x02, "\xC2\xA1",    // ¬°
   0x0d, 0x1fb2, 0x02, "\xC2\xA0",
   0x0d, 0x1fb3, 0x02, "\xC2\x9F",
   0x0d, 0x1fb4, 0x02, "\xC2\x9E",
@@ -2848,101 +2943,101 @@ const CTextUtil::HuffmanSequence CTextUtil::HUFFMAN_TABLE_OPENTV_DEFAULT[512] =
   0x1b, 0x055c6194, 0x02, "\xC2\x9E",
   0x1b, 0x055c6195, 0x02, "\xC2\x9F",
   0x1b, 0x055c6196, 0x02, "\xC2\xA0",
-  0x1b, 0x055c6197, 0x02, "\xC2\xA1",    // °
-  0x1b, 0x055c6198, 0x02, "\xC2\xA2",    // ¢
-  0x1b, 0x055c6199, 0x02, "\xC2\xA3",    // £
-  0x1b, 0x055c619a, 0x02, "\xC2\xA4",    // §
-  0x1b, 0x055c619b, 0x02, "\xC2\xA5",    // •
-  0x1b, 0x055c619c, 0x02, "\xC2\xA6",    // ¶
-  0x1b, 0x055c619d, 0x02, "\xC2\xA7",    // ß
-  0x1b, 0x055c619e, 0x02, "\xC2\xA8",    // ®
-  0x1b, 0x055c619f, 0x02, "\xC2\xA9",    // ©
-  0x1b, 0x055c61a0, 0x02, "\xC2\xAA",    // ™
-  0x1b, 0x055c61a1, 0x02, "\xC2\xAB",    // ´
-  0x1b, 0x055c61a2, 0x02, "\xC2\xAC",    // ¨
-  0x1b, 0x055c61a3, 0x02, "\xC2\xAD",    // ≠
-  0x1b, 0x055c61a4, 0x02, "\xC2\xAE",    // Æ
-  0x1b, 0x055c61a5, 0x02, "\xC2\xAF",    // Ø
-  0x1b, 0x055c61a6, 0x02, "\xC2\xB0",    // ∞
-  0x1b, 0x055c61a7, 0x02, "\xC2\xB1",    // ±
-  0x1b, 0x055c61a8, 0x02, "\xC2\xB2",    // ≤
-  0x1b, 0x055c61a9, 0x02, "\xC2\xB3",    // ≥
-  0x1b, 0x055c61aa, 0x02, "\xC2\xB4",    // ¥
-  0x1b, 0x055c61ab, 0x02, "\xC2\xB5",    // µ
-  0x1b, 0x055c61ac, 0x02, "\xC2\xB6",    // ∂
-  0x1b, 0x055c61ad, 0x02, "\xC2\xB7",    // ∑
-  0x1b, 0x055c61ae, 0x02, "\xC2\xB8",    // ∏
-  0x1b, 0x055c61af, 0x02, "\xC2\xB9",    // π
-  0x1b, 0x055c61b0, 0x02, "\xC2\xBA",    // ∫
-  0x1b, 0x055c61b1, 0x02, "\xC2\xBB",    // ª
-  0x1b, 0x055c61b2, 0x02, "\xC2\xBC",    // º
-  0x1b, 0x055c61b3, 0x02, "\xC2\xBD",    // Ω
-  0x1b, 0x055c61b4, 0x02, "\xC2\xBE",    // æ
-  0x1b, 0x055c61b5, 0x02, "\xC2\xBF",    // ø
-  0x1b, 0x055c61b6, 0x02, "\xC3\x80",    // ¿
-  0x1b, 0x055c61b7, 0x02, "\xC3\x81",    // ¡
-  0x1b, 0x055c61b8, 0x02, "\xC3\x82",    // ¬
-  0x1b, 0x055c61b9, 0x02, "\xC3\x83",    // √
-  0x1b, 0x055c61ba, 0x02, "\xC3\x84",    // ƒ
-  0x1b, 0x055c61bb, 0x02, "\xC3\x85",    // ≈
-  0x1b, 0x055c61bc, 0x02, "\xC3\x86",    // ∆
-  0x1b, 0x055c61bd, 0x02, "\xC3\x87",    // «
-  0x1b, 0x055c61be, 0x02, "\xC3\x88",    // »
-  0x1b, 0x055c61bf, 0x02, "\xC3\x89",    // …
-  0x1b, 0x055c61c0, 0x02, "\xC3\x8A",    //  
-  0x1b, 0x055c61c1, 0x02, "\xC3\x8B",    // À
-  0x1b, 0x055c61c2, 0x02, "\xC3\x8C",    // Ã
-  0x1b, 0x055c61c3, 0x02, "\xC3\x8D",    // Õ
-  0x1b, 0x055c61c4, 0x02, "\xC3\x8E",    // Œ
-  0x1b, 0x055c61c5, 0x02, "\xC3\x8F",    // œ
-  0x1b, 0x055c61c6, 0x02, "\xC3\x90",    // –
-  0x1b, 0x055c61c7, 0x02, "\xC3\x91",    // —
-  0x1b, 0x055c61c8, 0x02, "\xC3\x92",    // “
-  0x1b, 0x055c61c9, 0x02, "\xC3\x93",    // ”
-  0x1b, 0x055c61ca, 0x02, "\xC3\x94",    // ‘
-  0x1b, 0x055c61cb, 0x02, "\xC3\x95",    // ’
-  0x1b, 0x055c61cc, 0x02, "\xC3\x96",    // ÷
-  0x1b, 0x055c61cd, 0x02, "\xC3\x97",    // ◊
-  0x1b, 0x055c61ce, 0x02, "\xC3\x98",    // ÿ
-  0x1b, 0x055c61cf, 0x02, "\xC3\x99",    // Ÿ
-  0x1b, 0x055c61d0, 0x02, "\xC3\x9A",    // ⁄
-  0x1b, 0x055c61d1, 0x02, "\xC3\x9B",    // €
-  0x1b, 0x055c61d2, 0x02, "\xC3\x9C",    // ‹
-  0x1b, 0x055c61d3, 0x02, "\xC3\x9D",    // ›
-  0x1b, 0x055c61d4, 0x02, "\xC3\x9E",    // ﬁ
-  0x1b, 0x055c61d5, 0x02, "\xC3\x9F",    // ﬂ
-  0x1b, 0x055c61d6, 0x02, "\xC3\xA0",    // ‡
-  0x1b, 0x055c61d7, 0x02, "\xC3\xA1",    // ·
-  0x1b, 0x055c61d8, 0x02, "\xC3\xA2",    // ‚
-  0x1b, 0x055c61d9, 0x02, "\xC3\xA3",    // „
-  0x1b, 0x055c61da, 0x02, "\xC3\xA4",    // ‰
-  0x1b, 0x055c61db, 0x02, "\xC3\xA5",    // Â
-  0x1b, 0x055c61dc, 0x02, "\xC3\xA6",    // Ê
-  0x1b, 0x055c61dd, 0x02, "\xC3\xA7",    // Á
-  0x1b, 0x055c61de, 0x02, "\xC3\xA8",    // Ë
-  0x1b, 0x055c61df, 0x02, "\xC3\xA9",    // È
-  0x1b, 0x055c61e0, 0x02, "\xC3\xAA",    // Í
-  0x1b, 0x055c61e1, 0x02, "\xC3\xAB",    // Î
-  0x1b, 0x055c61e2, 0x02, "\xC3\xAC",    // Ï
-  0x1b, 0x055c61e3, 0x02, "\xC3\xAD",    // Ì
-  0x1b, 0x055c61e4, 0x02, "\xC3\xAE",    // Ó
-  0x1b, 0x055c61e5, 0x02, "\xC3\xAF",    // Ô
-  0x1b, 0x055c61e6, 0x02, "\xC3\xB0",    // 
-  0x1b, 0x055c61e7, 0x02, "\xC3\xB1",    // Ò
-  0x1b, 0x055c61e8, 0x02, "\xC3\xB2",    // Ú
-  0x1b, 0x055c61e9, 0x02, "\xC3\xB3",    // Û
-  0x1b, 0x055c61ea, 0x02, "\xC3\xB4",    // Ù
-  0x1b, 0x055c61eb, 0x02, "\xC3\xB5",    // ı
-  0x1b, 0x055c61ec, 0x02, "\xC3\xB6",    // ˆ
-  0x1b, 0x055c61ed, 0x02, "\xC3\xB7",    // ˜
-  0x1b, 0x055c61ee, 0x02, "\xC3\xB8",    // ¯
-  0x1b, 0x055c61ef, 0x02, "\xC3\xB9",    // ˘
-  0x1b, 0x055c61f0, 0x02, "\xC3\xBA",    // ˙
-  0x1b, 0x055c61f1, 0x02, "\xC3\xBB",    // ˚
-  0x1b, 0x055c61f2, 0x02, "\xC3\xBC",    // ¸
-  0x1b, 0x055c61f3, 0x02, "\xC3\xBD",    // ˝
-  0x1b, 0x055c61f4, 0x02, "\xC3\xBE",    // ˛
-  0x1b, 0x055c61f5, 0x02, "\xC3\xBF",    // ˇ
+  0x1b, 0x055c6197, 0x02, "\xC2\xA1",    // ¬°
+  0x1b, 0x055c6198, 0x02, "\xC2\xA2",    // ¬¢
+  0x1b, 0x055c6199, 0x02, "\xC2\xA3",    // ¬£
+  0x1b, 0x055c619a, 0x02, "\xC2\xA4",    // ¬§
+  0x1b, 0x055c619b, 0x02, "\xC2\xA5",    // ¬•
+  0x1b, 0x055c619c, 0x02, "\xC2\xA6",    // ¬¶
+  0x1b, 0x055c619d, 0x02, "\xC2\xA7",    // ¬ß
+  0x1b, 0x055c619e, 0x02, "\xC2\xA8",    // ¬®
+  0x1b, 0x055c619f, 0x02, "\xC2\xA9",    // ¬©
+  0x1b, 0x055c61a0, 0x02, "\xC2\xAA",    // ¬™
+  0x1b, 0x055c61a1, 0x02, "\xC2\xAB",    // ¬´
+  0x1b, 0x055c61a2, 0x02, "\xC2\xAC",    // ¬¨
+  0x1b, 0x055c61a3, 0x02, "\xC2\xAD",    // ¬≠
+  0x1b, 0x055c61a4, 0x02, "\xC2\xAE",    // ¬Æ
+  0x1b, 0x055c61a5, 0x02, "\xC2\xAF",    // ¬Ø
+  0x1b, 0x055c61a6, 0x02, "\xC2\xB0",    // ¬∞
+  0x1b, 0x055c61a7, 0x02, "\xC2\xB1",    // ¬±
+  0x1b, 0x055c61a8, 0x02, "\xC2\xB2",    // ¬≤
+  0x1b, 0x055c61a9, 0x02, "\xC2\xB3",    // ¬≥
+  0x1b, 0x055c61aa, 0x02, "\xC2\xB4",    // ¬¥
+  0x1b, 0x055c61ab, 0x02, "\xC2\xB5",    // ¬µ
+  0x1b, 0x055c61ac, 0x02, "\xC2\xB6",    // ¬∂
+  0x1b, 0x055c61ad, 0x02, "\xC2\xB7",    // ¬∑
+  0x1b, 0x055c61ae, 0x02, "\xC2\xB8",    // ¬∏
+  0x1b, 0x055c61af, 0x02, "\xC2\xB9",    // ¬π
+  0x1b, 0x055c61b0, 0x02, "\xC2\xBA",    // ¬∫
+  0x1b, 0x055c61b1, 0x02, "\xC2\xBB",    // ¬ª
+  0x1b, 0x055c61b2, 0x02, "\xC2\xBC",    // ¬º
+  0x1b, 0x055c61b3, 0x02, "\xC2\xBD",    // ¬Ω
+  0x1b, 0x055c61b4, 0x02, "\xC2\xBE",    // ¬æ
+  0x1b, 0x055c61b5, 0x02, "\xC2\xBF",    // ¬ø
+  0x1b, 0x055c61b6, 0x02, "\xC3\x80",    // √Ä
+  0x1b, 0x055c61b7, 0x02, "\xC3\x81",    // √Å
+  0x1b, 0x055c61b8, 0x02, "\xC3\x82",    // √Ç
+  0x1b, 0x055c61b9, 0x02, "\xC3\x83",    // √É
+  0x1b, 0x055c61ba, 0x02, "\xC3\x84",    // √Ñ
+  0x1b, 0x055c61bb, 0x02, "\xC3\x85",    // √Ö
+  0x1b, 0x055c61bc, 0x02, "\xC3\x86",    // √Ü
+  0x1b, 0x055c61bd, 0x02, "\xC3\x87",    // √á
+  0x1b, 0x055c61be, 0x02, "\xC3\x88",    // √à
+  0x1b, 0x055c61bf, 0x02, "\xC3\x89",    // √â
+  0x1b, 0x055c61c0, 0x02, "\xC3\x8A",    // √ä
+  0x1b, 0x055c61c1, 0x02, "\xC3\x8B",    // √ã
+  0x1b, 0x055c61c2, 0x02, "\xC3\x8C",    // √å
+  0x1b, 0x055c61c3, 0x02, "\xC3\x8D",    // √ç
+  0x1b, 0x055c61c4, 0x02, "\xC3\x8E",    // √é
+  0x1b, 0x055c61c5, 0x02, "\xC3\x8F",    // √è
+  0x1b, 0x055c61c6, 0x02, "\xC3\x90",    // √ê
+  0x1b, 0x055c61c7, 0x02, "\xC3\x91",    // √ë
+  0x1b, 0x055c61c8, 0x02, "\xC3\x92",    // √í
+  0x1b, 0x055c61c9, 0x02, "\xC3\x93",    // √ì
+  0x1b, 0x055c61ca, 0x02, "\xC3\x94",    // √î
+  0x1b, 0x055c61cb, 0x02, "\xC3\x95",    // √ï
+  0x1b, 0x055c61cc, 0x02, "\xC3\x96",    // √ñ
+  0x1b, 0x055c61cd, 0x02, "\xC3\x97",    // √ó
+  0x1b, 0x055c61ce, 0x02, "\xC3\x98",    // √ò
+  0x1b, 0x055c61cf, 0x02, "\xC3\x99",    // √ô
+  0x1b, 0x055c61d0, 0x02, "\xC3\x9A",    // √ö
+  0x1b, 0x055c61d1, 0x02, "\xC3\x9B",    // √õ
+  0x1b, 0x055c61d2, 0x02, "\xC3\x9C",    // √ú
+  0x1b, 0x055c61d3, 0x02, "\xC3\x9D",    // √ù
+  0x1b, 0x055c61d4, 0x02, "\xC3\x9E",    // √û
+  0x1b, 0x055c61d5, 0x02, "\xC3\x9F",    // √ü
+  0x1b, 0x055c61d6, 0x02, "\xC3\xA0",    // √†
+  0x1b, 0x055c61d7, 0x02, "\xC3\xA1",    // √°
+  0x1b, 0x055c61d8, 0x02, "\xC3\xA2",    // √¢
+  0x1b, 0x055c61d9, 0x02, "\xC3\xA3",    // √£
+  0x1b, 0x055c61da, 0x02, "\xC3\xA4",    // √§
+  0x1b, 0x055c61db, 0x02, "\xC3\xA5",    // √•
+  0x1b, 0x055c61dc, 0x02, "\xC3\xA6",    // √¶
+  0x1b, 0x055c61dd, 0x02, "\xC3\xA7",    // √ß
+  0x1b, 0x055c61de, 0x02, "\xC3\xA8",    // √®
+  0x1b, 0x055c61df, 0x02, "\xC3\xA9",    // √©
+  0x1b, 0x055c61e0, 0x02, "\xC3\xAA",    // √™
+  0x1b, 0x055c61e1, 0x02, "\xC3\xAB",    // √´
+  0x1b, 0x055c61e2, 0x02, "\xC3\xAC",    // √¨
+  0x1b, 0x055c61e3, 0x02, "\xC3\xAD",    // √≠
+  0x1b, 0x055c61e4, 0x02, "\xC3\xAE",    // √Æ
+  0x1b, 0x055c61e5, 0x02, "\xC3\xAF",    // √Ø
+  0x1b, 0x055c61e6, 0x02, "\xC3\xB0",    // √∞
+  0x1b, 0x055c61e7, 0x02, "\xC3\xB1",    // √±
+  0x1b, 0x055c61e8, 0x02, "\xC3\xB2",    // √≤
+  0x1b, 0x055c61e9, 0x02, "\xC3\xB3",    // √≥
+  0x1b, 0x055c61ea, 0x02, "\xC3\xB4",    // √¥
+  0x1b, 0x055c61eb, 0x02, "\xC3\xB5",    // √µ
+  0x1b, 0x055c61ec, 0x02, "\xC3\xB6",    // √∂
+  0x1b, 0x055c61ed, 0x02, "\xC3\xB7",    // √∑
+  0x1b, 0x055c61ee, 0x02, "\xC3\xB8",    // √∏
+  0x1b, 0x055c61ef, 0x02, "\xC3\xB9",    // √π
+  0x1b, 0x055c61f0, 0x02, "\xC3\xBA",    // √∫
+  0x1b, 0x055c61f1, 0x02, "\xC3\xBB",    // √ª
+  0x1b, 0x055c61f2, 0x02, "\xC3\xBC",    // √º
+  0x1b, 0x055c61f3, 0x02, "\xC3\xBD",    // √Ω
+  0x1b, 0x055c61f4, 0x02, "\xC3\xBE",    // √æ
+  0x1b, 0x055c61f5, 0x02, "\xC3\xBF",    // √ø
   0x1b, 0x055c61f6, 0x07, "Minutes",
   0x1b, 0x055c61f7, 0x04, "More",
   0x1b, 0x055c61f8, 0x07, "Morning",
@@ -3285,9 +3380,9 @@ const CTextUtil::HuffmanSequence CTextUtil::HUFFMAN_TABLE_OPENTV_SKY_ITALY[510] 
   0x0d, 0x00001ef1, 0x07, "giovani",
   0x0e, 0x000002d7, 0x01, "`",
   0x0e, 0x00003885, 0x01, "&",
-  0x0f, 0x000005ad, 0x02, "\xC3\x86",    // ∆
+  0x0f, 0x000005ad, 0x02, "\xC3\x86",    // √Ü
   0x0f, 0x00007109, 0x01, "/",
-  0x10, 0x00000b59, 0x02, "\xC2\xB7",    // ∑
+  0x10, 0x00000b59, 0x02, "\xC2\xB7",    // ¬∑
   0x10, 0x0000e210, 0x01, "@",
   0x11, 0x0001c422, 0x02, "\xC2\x88",
   0x11, 0x0001c423, 0x01, "\"",
@@ -3295,90 +3390,90 @@ const CTextUtil::HuffmanSequence CTextUtil::HUFFMAN_TABLE_OPENTV_SKY_ITALY[510] 
   0x12, 0x00002d61, 0x02, "\xC2\x89",
   0x13, 0x00005ac4, 0x01, "^",
   0x13, 0x00005ac5, 0x02, "\xC2\x97",
-  0x13, 0x00005ac6, 0x02, "\xC3\xA0",    // ‡
+  0x13, 0x00005ac6, 0x02, "\xC3\xA0",    // √†
   0x14, 0x0000b58e, 0x02, "\xC2\x92",
   0x15, 0x00016b1f, 0x01, "+",
-  0x1c, 0x00b58f00, 0x02, "\xC2\xAC",    // ¨
-  0x1c, 0x00b58f01, 0x02, "\xC2\xAD",    // ≠
-  0x1c, 0x00b58f02, 0x02, "\xC2\xAE",    // Æ
-  0x1c, 0x00b58f03, 0x02, "\xC2\xAF",    // Ø
-  0x1c, 0x00b58f04, 0x02, "\xC2\xB0",    // ∞
-  0x1c, 0x00b58f05, 0x02, "\xC2\xB1",    // ±
-  0x1c, 0x00b58f06, 0x02, "\xC2\xB2",    // ≤
-  0x1c, 0x00b58f07, 0x02, "\xC2\xB3",    // ≥
-  0x1c, 0x00b58f08, 0x02, "\xC2\xB4",    // ¥
-  0x1c, 0x00b58f09, 0x02, "\xC2\xB5",    // µ
-  0x1c, 0x00b58f0a, 0x02, "\xC2\xB6",    // ∂
-  0x1c, 0x00b58f0b, 0x02, "\xC2\xB8",    // ∏
-  0x1c, 0x00b58f0c, 0x02, "\xC2\xB9",    // π
-  0x1c, 0x00b58f0d, 0x02, "\xC2\xBA",    // ∫
-  0x1c, 0x00b58f0e, 0x02, "\xC2\xBB",    // ª
-  0x1c, 0x00b58f0f, 0x02, "\xC2\xBC",    // º
-  0x1c, 0x00b58f10, 0x02, "\xC2\xBD",    // Ω
-  0x1c, 0x00b58f11, 0x02, "\xC2\xBE",    // æ
-  0x1c, 0x00b58f12, 0x02, "\xC2\xBF",    // ø
-  0x1c, 0x00b58f13, 0x02, "\xC3\x80",    // ¿
-  0x1c, 0x00b58f14, 0x02, "\xC3\x81",    // ¡
-  0x1c, 0x00b58f15, 0x02, "\xC3\x82",    // ¬
-  0x1c, 0x00b58f16, 0x02, "\xC3\x83",    // √
-  0x1c, 0x00b58f17, 0x02, "\xC3\x84",    // ƒ
-  0x1c, 0x00b58f18, 0x02, "\xC3\x85",    // ≈
-  0x1c, 0x00b58f19, 0x02, "\xC3\x87",    // «
-  0x1c, 0x00b58f1a, 0x02, "\xC3\x88",    // »
-  0x1c, 0x00b58f1b, 0x02, "\xC3\x89",    // …
-  0x1c, 0x00b58f1c, 0x02, "\xC3\x8A",    //  
-  0x1c, 0x00b58f1d, 0x02, "\xC3\x8B",    // À
-  0x1c, 0x00b58f1e, 0x02, "\xC3\x8C",    // Ã
-  0x1c, 0x00b58f1f, 0x02, "\xC3\x8D",    // Õ
-  0x1c, 0x00b58f20, 0x02, "\xC3\x8E",    // Œ
-  0x1c, 0x00b58f21, 0x02, "\xC3\x8F",    // œ
-  0x1c, 0x00b58f22, 0x02, "\xC3\x90",    // –
-  0x1c, 0x00b58f23, 0x02, "\xC3\x91",    // —
-  0x1c, 0x00b58f24, 0x02, "\xC3\x92",    // “
-  0x1c, 0x00b58f25, 0x02, "\xC3\x93",    // ”
-  0x1c, 0x00b58f26, 0x02, "\xC3\x94",    // ‘
-  0x1c, 0x00b58f27, 0x02, "\xC3\x95",    // ’
-  0x1c, 0x00b58f28, 0x02, "\xC3\x96",    // ÷
-  0x1c, 0x00b58f29, 0x02, "\xC3\x97",    // ◊
-  0x1c, 0x00b58f2a, 0x02, "\xC3\x98",    // ÿ
-  0x1c, 0x00b58f2b, 0x02, "\xC3\x99",    // Ÿ
-  0x1c, 0x00b58f2c, 0x02, "\xC3\x9A",    // ⁄
-  0x1c, 0x00b58f2d, 0x02, "\xC3\x9B",    // €
-  0x1c, 0x00b58f2e, 0x02, "\xC3\x9C",    // ‹
-  0x1c, 0x00b58f2f, 0x02, "\xC3\x9D",    // ›
-  0x1c, 0x00b58f30, 0x02, "\xC3\x9E",    // ﬁ
-  0x1c, 0x00b58f31, 0x02, "\xC3\x9F",    // ﬂ
-  0x1c, 0x00b58f32, 0x02, "\xC3\xA1",    // ·
-  0x1c, 0x00b58f33, 0x02, "\xC3\xA2",    // ‚
-  0x1c, 0x00b58f34, 0x02, "\xC3\xA3",    // „
-  0x1c, 0x00b58f35, 0x02, "\xC3\xA4",    // ‰
-  0x1c, 0x00b58f36, 0x02, "\xC3\xA5",    // Â
-  0x1c, 0x00b58f37, 0x02, "\xC3\xA6",    // Ê
-  0x1c, 0x00b58f38, 0x02, "\xC3\xA7",    // Á
-  0x1c, 0x00b58f39, 0x02, "\xC3\xA8",    // Ë
-  0x1c, 0x00b58f3a, 0x02, "\xC3\xA9",    // È
-  0x1c, 0x00b58f3b, 0x02, "\xC3\xAA",    // Í
-  0x1c, 0x00b58f3c, 0x02, "\xC3\xAB",    // Î
-  0x1c, 0x00b58f3d, 0x02, "\xC3\xAC",    // Ï
-  0x1c, 0x00b58f3e, 0x02, "\xC3\xAD",    // Ì
-  0x1c, 0x00b58f3f, 0x02, "\xC3\xAE",    // Ó
-  0x1c, 0x00b58f40, 0x02, "\xC3\xAF",    // Ô
-  0x1c, 0x00b58f41, 0x02, "\xC3\xB0",    // 
-  0x1c, 0x00b58f42, 0x02, "\xC3\xB1",    // Ò
-  0x1c, 0x00b58f43, 0x02, "\xC3\xB2",    // Ú
-  0x1c, 0x00b58f44, 0x02, "\xC3\xB3",    // Û
-  0x1c, 0x00b58f45, 0x02, "\xC3\xB4",    // Ù
-  0x1c, 0x00b58f46, 0x02, "\xC3\xB5",    // ı
-  0x1c, 0x00b58f47, 0x02, "\xC3\xB6",    // ˆ
-  0x1c, 0x00b58f48, 0x02, "\xC3\xB7",    // ˜
-  0x1c, 0x00b58f49, 0x02, "\xC3\xB8",    // ¯
-  0x1c, 0x00b58f4a, 0x02, "\xC3\xB9",    // ˘
-  0x1c, 0x00b58f4b, 0x02, "\xC3\xBA",    // ˙
-  0x1c, 0x00b58f4c, 0x02, "\xC3\xBB",    // ˚
-  0x1c, 0x00b58f4d, 0x02, "\xC3\xBC",    // ¸
-  0x1c, 0x00b58f4e, 0x02, "\xC3\xBD",    // ˝
-  0x1c, 0x00b58f4f, 0x02, "\xC3\xBE",    // ˛
-  0x1c, 0x00b58f50, 0x02, "\xC3\xBF",    // ˇ
+  0x1c, 0x00b58f00, 0x02, "\xC2\xAC",    // ¬¨
+  0x1c, 0x00b58f01, 0x02, "\xC2\xAD",    // ¬≠
+  0x1c, 0x00b58f02, 0x02, "\xC2\xAE",    // ¬Æ
+  0x1c, 0x00b58f03, 0x02, "\xC2\xAF",    // ¬Ø
+  0x1c, 0x00b58f04, 0x02, "\xC2\xB0",    // ¬∞
+  0x1c, 0x00b58f05, 0x02, "\xC2\xB1",    // ¬±
+  0x1c, 0x00b58f06, 0x02, "\xC2\xB2",    // ¬≤
+  0x1c, 0x00b58f07, 0x02, "\xC2\xB3",    // ¬≥
+  0x1c, 0x00b58f08, 0x02, "\xC2\xB4",    // ¬¥
+  0x1c, 0x00b58f09, 0x02, "\xC2\xB5",    // ¬µ
+  0x1c, 0x00b58f0a, 0x02, "\xC2\xB6",    // ¬∂
+  0x1c, 0x00b58f0b, 0x02, "\xC2\xB8",    // ¬∏
+  0x1c, 0x00b58f0c, 0x02, "\xC2\xB9",    // ¬π
+  0x1c, 0x00b58f0d, 0x02, "\xC2\xBA",    // ¬∫
+  0x1c, 0x00b58f0e, 0x02, "\xC2\xBB",    // ¬ª
+  0x1c, 0x00b58f0f, 0x02, "\xC2\xBC",    // ¬º
+  0x1c, 0x00b58f10, 0x02, "\xC2\xBD",    // ¬Ω
+  0x1c, 0x00b58f11, 0x02, "\xC2\xBE",    // ¬æ
+  0x1c, 0x00b58f12, 0x02, "\xC2\xBF",    // ¬ø
+  0x1c, 0x00b58f13, 0x02, "\xC3\x80",    // √Ä
+  0x1c, 0x00b58f14, 0x02, "\xC3\x81",    // √Å
+  0x1c, 0x00b58f15, 0x02, "\xC3\x82",    // √Ç
+  0x1c, 0x00b58f16, 0x02, "\xC3\x83",    // √É
+  0x1c, 0x00b58f17, 0x02, "\xC3\x84",    // √Ñ
+  0x1c, 0x00b58f18, 0x02, "\xC3\x85",    // √Ö
+  0x1c, 0x00b58f19, 0x02, "\xC3\x87",    // √á
+  0x1c, 0x00b58f1a, 0x02, "\xC3\x88",    // √à
+  0x1c, 0x00b58f1b, 0x02, "\xC3\x89",    // √â
+  0x1c, 0x00b58f1c, 0x02, "\xC3\x8A",    // √ä
+  0x1c, 0x00b58f1d, 0x02, "\xC3\x8B",    // √ã
+  0x1c, 0x00b58f1e, 0x02, "\xC3\x8C",    // √å
+  0x1c, 0x00b58f1f, 0x02, "\xC3\x8D",    // √ç
+  0x1c, 0x00b58f20, 0x02, "\xC3\x8E",    // √é
+  0x1c, 0x00b58f21, 0x02, "\xC3\x8F",    // √è
+  0x1c, 0x00b58f22, 0x02, "\xC3\x90",    // √ê
+  0x1c, 0x00b58f23, 0x02, "\xC3\x91",    // √ë
+  0x1c, 0x00b58f24, 0x02, "\xC3\x92",    // √í
+  0x1c, 0x00b58f25, 0x02, "\xC3\x93",    // √ì
+  0x1c, 0x00b58f26, 0x02, "\xC3\x94",    // √î
+  0x1c, 0x00b58f27, 0x02, "\xC3\x95",    // √ï
+  0x1c, 0x00b58f28, 0x02, "\xC3\x96",    // √ñ
+  0x1c, 0x00b58f29, 0x02, "\xC3\x97",    // √ó
+  0x1c, 0x00b58f2a, 0x02, "\xC3\x98",    // √ò
+  0x1c, 0x00b58f2b, 0x02, "\xC3\x99",    // √ô
+  0x1c, 0x00b58f2c, 0x02, "\xC3\x9A",    // √ö
+  0x1c, 0x00b58f2d, 0x02, "\xC3\x9B",    // √õ
+  0x1c, 0x00b58f2e, 0x02, "\xC3\x9C",    // √ú
+  0x1c, 0x00b58f2f, 0x02, "\xC3\x9D",    // √ù
+  0x1c, 0x00b58f30, 0x02, "\xC3\x9E",    // √û
+  0x1c, 0x00b58f31, 0x02, "\xC3\x9F",    // √ü
+  0x1c, 0x00b58f32, 0x02, "\xC3\xA1",    // √°
+  0x1c, 0x00b58f33, 0x02, "\xC3\xA2",    // √¢
+  0x1c, 0x00b58f34, 0x02, "\xC3\xA3",    // √£
+  0x1c, 0x00b58f35, 0x02, "\xC3\xA4",    // √§
+  0x1c, 0x00b58f36, 0x02, "\xC3\xA5",    // √•
+  0x1c, 0x00b58f37, 0x02, "\xC3\xA6",    // √¶
+  0x1c, 0x00b58f38, 0x02, "\xC3\xA7",    // √ß
+  0x1c, 0x00b58f39, 0x02, "\xC3\xA8",    // √®
+  0x1c, 0x00b58f3a, 0x02, "\xC3\xA9",    // √©
+  0x1c, 0x00b58f3b, 0x02, "\xC3\xAA",    // √™
+  0x1c, 0x00b58f3c, 0x02, "\xC3\xAB",    // √´
+  0x1c, 0x00b58f3d, 0x02, "\xC3\xAC",    // √¨
+  0x1c, 0x00b58f3e, 0x02, "\xC3\xAD",    // √≠
+  0x1c, 0x00b58f3f, 0x02, "\xC3\xAE",    // √Æ
+  0x1c, 0x00b58f40, 0x02, "\xC3\xAF",    // √Ø
+  0x1c, 0x00b58f41, 0x02, "\xC3\xB0",    // √∞
+  0x1c, 0x00b58f42, 0x02, "\xC3\xB1",    // √±
+  0x1c, 0x00b58f43, 0x02, "\xC3\xB2",    // √≤
+  0x1c, 0x00b58f44, 0x02, "\xC3\xB3",    // √≥
+  0x1c, 0x00b58f45, 0x02, "\xC3\xB4",    // √¥
+  0x1c, 0x00b58f46, 0x02, "\xC3\xB5",    // √µ
+  0x1c, 0x00b58f47, 0x02, "\xC3\xB6",    // √∂
+  0x1c, 0x00b58f48, 0x02, "\xC3\xB7",    // √∑
+  0x1c, 0x00b58f49, 0x02, "\xC3\xB8",    // √∏
+  0x1c, 0x00b58f4a, 0x02, "\xC3\xB9",    // √π
+  0x1c, 0x00b58f4b, 0x02, "\xC3\xBA",    // √∫
+  0x1c, 0x00b58f4c, 0x02, "\xC3\xBB",    // √ª
+  0x1c, 0x00b58f4d, 0x02, "\xC3\xBC",    // √º
+  0x1c, 0x00b58f4e, 0x02, "\xC3\xBD",    // √Ω
+  0x1c, 0x00b58f4f, 0x02, "\xC3\xBE",    // √æ
+  0x1c, 0x00b58f50, 0x02, "\xC3\xBF",    // √ø
   0x1c, 0x00b58f51, 0x16, "decidG266  :  dedicato",
   0x1c, 0x00b58f52, 0x07, "eventiG",
   0x1d, 0x016b1eaa, 0x01, "\x00",
@@ -3456,15 +3551,277 @@ const CTextUtil::HuffmanSequence CTextUtil::HUFFMAN_TABLE_OPENTV_SKY_ITALY[510] 
   0x1d, 0x016b1ef2, 0x02, "\xC2\x9E",
   0x1d, 0x016b1ef3, 0x02, "\xC2\x9F",
   0x1d, 0x016b1ef4, 0x02, "\xC2\xA0",
-  0x1d, 0x016b1ef5, 0x02, "\xC2\xA1",    // °
-  0x1d, 0x016b1ef6, 0x02, "\xC2\xA2",    // ¢
-  0x1d, 0x016b1ef7, 0x02, "\xC2\xA3",    // £
-  0x1d, 0x016b1ef8, 0x02, "\xC2\xA4",    // §
-  0x1d, 0x016b1ef9, 0x02, "\xC2\xA5",    // •
-  0x1d, 0x016b1efa, 0x02, "\xC2\xA6",    // ¶
-  0x1d, 0x016b1efb, 0x02, "\xC2\xA7",    // ß
-  0x1d, 0x016b1efc, 0x02, "\xC2\xA8",    // ®
-  0x1d, 0x016b1efd, 0x02, "\xC2\xA9",    // ©
-  0x1d, 0x016b1efe, 0x02, "\xC2\xAA",    // ™
-  0x1d, 0x016b1eff, 0x02, "\xC2\xAB"     // ´
+  0x1d, 0x016b1ef5, 0x02, "\xC2\xA1",    // ¬°
+  0x1d, 0x016b1ef6, 0x02, "\xC2\xA2",    // ¬¢
+  0x1d, 0x016b1ef7, 0x02, "\xC2\xA3",    // ¬£
+  0x1d, 0x016b1ef8, 0x02, "\xC2\xA4",    // ¬§
+  0x1d, 0x016b1ef9, 0x02, "\xC2\xA5",    // ¬•
+  0x1d, 0x016b1efa, 0x02, "\xC2\xA6",    // ¬¶
+  0x1d, 0x016b1efb, 0x02, "\xC2\xA7",    // ¬ß
+  0x1d, 0x016b1efc, 0x02, "\xC2\xA8",    // ¬®
+  0x1d, 0x016b1efd, 0x02, "\xC2\xA9",    // ¬©
+  0x1d, 0x016b1efe, 0x02, "\xC2\xAA",    // ¬™
+  0x1d, 0x016b1eff, 0x02, "\xC2\xAB"     // ¬´
+};
+
+const CTextUtil::CodePageEntry CTextUtil::WIN1250_TO_UTF8[256] =
+{
+  // standard ASCII
+  1, "\x00",
+  1, "\x01",
+  1, "\x02",
+  1, "\x03",
+  1, "\x04",
+  1, "\x05",
+  1, "\x06",
+  1, "\x07",
+  1, "\x08",
+  1, "\x09",
+  1, "\x0A",
+  1, "\x0B",
+  1, "\x0C",
+  1, "\x0D",
+  1, "\x0E",
+  1, "\x0F",
+  1, "\x10",
+  1, "\x11",
+  1, "\x12",
+  1, "\x13",
+  1, "\x14",
+  1, "\x15",
+  1, "\x16",
+  1, "\x17",
+  1, "\x18",
+  1, "\x19",
+  1, "\x1A",
+  1, "\x1B",
+  1, "\x1C",
+  1, "\x1D",
+  1, "\x1E",
+  1, "\x1F",
+  1, " ",
+  1, "!",
+  1, "\"",
+  1, "#",
+  1, "$",
+  1, "%",
+  1, "&",
+  1, "'",
+  1, "(",
+  1, ")",
+  1, "*",
+  1, "+",
+  1, ",",
+  1, "-",
+  1, ".",
+  1, "/",
+  1, "0",
+  1, "1",
+  1, "2",
+  1, "3",
+  1, "4",
+  1, "5",
+  1, "6",
+  1, "7",
+  1, "8",
+  1, "9",
+  1, ":",
+  1, ";",
+  1, "<",
+  1, "=",
+  1, ">",
+  1, "?",
+  1, "@",
+  1, "A",
+  1, "B",
+  1, "C",
+  1, "D",
+  1, "E",
+  1, "F",
+  1, "G",
+  1, "H",
+  1, "I",
+  1, "J",
+  1, "K",
+  1, "L",
+  1, "M",
+  1, "N",
+  1, "O",
+  1, "P",
+  1, "Q",
+  1, "R",
+  1, "S",
+  1, "T",
+  1, "U",
+  1, "V",
+  1, "W",
+  1, "X",
+  1, "Y",
+  1, "Z",
+  1, "[",
+  1, "\\",
+  1, "]",
+  1, "^",
+  1, "_",
+  1, "`",
+  1, "a",
+  1, "b",
+  1, "c",
+  1, "d",
+  1, "e",
+  1, "f",
+  1, "g",
+  1, "h",
+  1, "i",
+  1, "j",
+  1, "k",
+  1, "l",
+  1, "m",
+  1, "n",
+  1, "o",
+  1, "p",
+  1, "q",
+  1, "r",
+  1, "s",
+  1, "t",
+  1, "u",
+  1, "v",
+  1, "w",
+  1, "x",
+  1, "y",
+  1, "z",
+  1, "{",
+  1, "|",
+  1, "}",
+  1, "~",
+  1, "\x7F",
+
+  3, "\xE2\x82\xAC",   // ‚Ç¨
+  1, "\x00",
+  3, "\xE2\x80\x9A",   // ‚Äö
+  1, "\x00",
+  3, "\xE2\x80\x9E",   // ‚Äû
+  3, "\xE2\x80\xA6",   // ‚Ä¶
+  3, "\xE2\x80\xA0",   // ‚Ä†
+  3, "\xE2\x80\xA1",   // ‚Ä°
+  1, "\x00",
+  3, "\xE2\x80\xB0",   // ‚Ä∞
+  2, "\xC5\xA0",       // ≈†
+  3, "\xE2\x80\xB9",   // ‚Äπ
+  2, "\xC5\x9A",       // ≈ö
+  2, "\xC5\xA4",       // ≈§
+  2, "\xC5\xBD",       // ≈Ω
+  2, "\xC5\xB9",       // ≈π
+  1, "\x00",
+  3, "\xE2\x80\x98",   // ‚Äò
+  3, "\xE2\x80\x99",   // ‚Äô
+  3, "\xE2\x80\x9C",   // ‚Äú
+  3, "\xE2\x80\x9D",   // ‚Äù
+  3, "\xE2\x80\xA2",   // ‚Ä¢
+  3, "\xE2\x80\x93",   // ‚Äì
+  3, "\xE2\x80\x94",   // ‚Äî
+  1, "\x00",
+  3, "\xE2\x84\xA2",   // ‚Ñ¢
+  2, "\xC5\xA1",       // ≈°
+  3, "\xE2\x80\xBA",   // ‚Ä∫
+  2, "\xC5\x9B",       // ≈õ
+  2, "\xC5\xA5",       // ≈•
+  2, "\xC5\xBE",       // ≈æ
+  2, "\xC5\xBA",       // ≈∫
+  2, "\xC2\xA0",       // NBSP
+  2, "\xCB\x87",       // Àá
+  2, "\xCB\x98",       // Àò
+  2, "\xC5\x81",       // ≈Å
+  2, "\xC2\xA4",       // ¬§
+  2, "\xC4\x84",       // ƒÑ
+  2, "\xC2\xA6",       // ¬¶
+  2, "\xC2\xA7",       // ¬ß
+  2, "\xC2\xA8",       // ¬®
+  2, "\xC2\xA9",       // ¬©
+  2, "\xC5\x9E",       // ≈û
+  2, "\xC2\xAB",       // ¬´
+  2, "\xC2\xAC",       // ¬¨
+  2, "\xC2\xAD",       // SHY
+  2, "\xC2\xAE",       // ¬Æ
+  2, "\xC5\xBB",       // ≈ª
+  2, "\xC2\xB0",       // ¬∞
+  2, "\xC2\xB1",       // ¬±
+  2, "\xCB\x9B",       // Àõ
+  2, "\xC5\x82",       // ≈Ç
+  2, "\xC2\xB4",       // ¬¥
+  2, "\xC2\xB5",       // ¬µ
+  2, "\xC2\xB6",       // ¬∂
+  2, "\xC2\xB7",       // ¬∑
+  2, "\xC2\xB8",       // ¬∏
+  2, "\xC4\x85",       // ƒÖ
+  2, "\xC5\x9F",       // ≈ü
+  2, "\xC2\xBB",       // ¬ª
+  2, "\xC4\xBD",       // ƒΩ
+  2, "\xCB\x9D",       // Àù
+  2, "\xC4\xBE",       // ƒæ
+  2, "\xC5\xBC",       // ≈º
+  2, "\xC5\x94",       // ≈î
+  2, "\xC3\x81",       // √Å
+  2, "\xC3\x82",       // √Ç
+  2, "\xC4\x82",       // ƒÇ
+  2, "\xC3\x84",       // √Ñ
+  2, "\xC4\xB9",       // ƒπ
+  2, "\xC4\x86",       // ƒÜ
+  2, "\xC3\x87",       // √á
+  2, "\xC4\x8C",       // ƒå
+  2, "\xC3\x89",       // √â
+  2, "\xC4\x98",       // ƒò
+  2, "\xC3\x8B",       // √ã
+  2, "\xC4\x9A",       // ƒö
+  2, "\xC3\x8D",       // √ç
+  2, "\xC3\x8E",       // √é
+  2, "\xC4\x8E",       // ƒé
+  2, "\xC4\x90",       // ƒê
+  2, "\xC5\x83",       // ≈É
+  2, "\xC5\x87",       // ≈á
+  2, "\xC3\x93",       // √ì
+  2, "\xC3\x94",       // √î
+  2, "\xC5\x90",       // ≈ê
+  2, "\xC3\x96",       // √ñ
+  2, "\xC3\x97",       // √ó
+  2, "\xC5\x98",       // ≈ò
+  2, "\xC5\xAE",       // ≈Æ
+  2, "\xC3\x9A",       // √ö
+  2, "\xC5\xB0",       // ≈∞
+  2, "\xC3\x9C",       // √ú
+  2, "\xC3\x9D",       // √ù
+  2, "\xC5\xA2",       // ≈¢
+  2, "\xC3\x9F",       // √ü
+  2, "\xC5\x95",       // ≈ï
+  2, "\xC3\xA1",       // √°
+  2, "\xC3\xA2",       // √¢
+  2, "\xC4\x83",       // ƒÉ
+  2, "\xC3\xA4",       // √§
+  2, "\xC4\xBA",       // ƒ∫
+  2, "\xC4\x87",       // ƒá
+  2, "\xC3\xA7",       // √ß
+  2, "\xC4\x8D",       // ƒç
+  2, "\xC3\xA9",       // √©
+  2, "\xC4\x99",       // ƒô
+  2, "\xC3\xAB",       // √´
+  2, "\xC4\x9B",       // ƒõ
+  2, "\xC3\xAD",       // √≠
+  2, "\xC3\xAE",       // √Æ
+  2, "\xC4\x8F",       // ƒè
+  2, "\xC4\x91",       // ƒë
+  2, "\xC5\x84",       // ≈Ñ
+  2, "\xC5\x88",       // ≈à
+  2, "\xC3\xB3",       // √≥
+  2, "\xC3\xB4",       // √¥
+  2, "\xC5\x91",       // ≈ë
+  2, "\xC3\xB6",       // √∂
+  2, "\xC3\xB7",       // √∑
+  2, "\xC5\x99",       // ≈ô
+  2, "\xC5\xAF",       // ≈Ø
+  2, "\xC3\xBA",       // √∫
+  2, "\xC5\xB1",       // ≈±
+  2, "\xC3\xBC",       // √º
+  2, "\xC3\xBD",       // √Ω
+  2, "\xC5\xA3",       // ≈£
+  2, "\xCB\x99"        // Àô
 };

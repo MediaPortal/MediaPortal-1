@@ -54,8 +54,8 @@ class CParserEitAtsc : public CSectionDecoder
     bool GetEvent(unsigned long index,
                   unsigned short& sourceId,
                   unsigned short& eventId,
-                  unsigned long long& startDateTime,
-                  unsigned short& duration,
+                  unsigned long& startDateTime,
+                  unsigned long& duration,
                   unsigned char& titleCount,
                   unsigned long* audioLanguages,
                   unsigned char& audioLanguageCount,
@@ -134,7 +134,7 @@ class CParserEitAtsc : public CSectionDecoder
 
         void Debug(const wchar_t* situation) const
         {
-          LogDebug(L"ATSC EIT: event %s, source ID = %hu, event ID = %hu, start date/time = %llu, duration = %hu m, ETM location = %hhu, title count = %llu, audio language count = %llu, captions language count = %llu, genre count = %llu, V-CHIP rating = %hhu, MPAA classification = %hhu, advisories = %hu",
+          LogDebug(L"ATSC EIT: event %s, source ID = %hu, event ID = %hu, start date/time = %lu, duration = %lu s, ETM location = %hhu, title count = %llu, audio language count = %llu, captions language count = %llu, genre count = %llu, V-CHIP rating = %hhu, MPAA classification = %hhu, advisories = %hu",
                     situation, SourceId, EventId, StartDateTime, Duration,
                     EtmLocation, (unsigned long long)Titles.size(),
                     (unsigned long long)AudioLanguages.size(),
@@ -150,9 +150,9 @@ class CParserEitAtsc : public CSectionDecoder
 
         unsigned short SourceId;
         unsigned short EventId;
-        unsigned long long StartDateTime; // unit = UTC epoch
+        unsigned long StartDateTime;  // GPS time-stamp
         unsigned char EtmLocation;
-        unsigned short Duration;          // unit = minutes
+        unsigned long Duration;       // unit = seconds
         map<unsigned long, char*> Titles;
         vector<unsigned long> AudioLanguages;
         vector<unsigned long> CaptionsLanguages;

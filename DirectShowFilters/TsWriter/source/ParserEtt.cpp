@@ -94,7 +94,7 @@ void CParserEtt::OnNewSection(CSection& section)
     if (section.SectionNumber != 0 || section.LastSectionNumber != 0)
     {
       // According to ATSC A/65 ETT should only have one section.
-      LogDebug(L"ETT %d: unsupported multi-section table, protocol version = %hhu, version number = %d, section number = %d, last section number = %d",
+      LogDebug(L"ETT %d: unsupported multi-section table, protocol version = %hhu, version number = %d, section number = %hhu, last section number = %hhu",
                 GetPid(), protocolVersion, section.version_number,
                 section.SectionNumber, section.LastSectionNumber);
       return;
