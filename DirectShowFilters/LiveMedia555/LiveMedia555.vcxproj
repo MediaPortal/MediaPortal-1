@@ -254,7 +254,7 @@
     <None Include="liveMedia\include\SimpleRTPSink.hh" />
     <None Include="liveMedia\include\SimpleRTPSource.hh" />
     <None Include="liveMedia\include\SIPClient.hh" />
-    <None Include="liveMedia\streamparser.hh" />
+    <None Include="liveMedia\StreamParser.hh" />
     <None Include="liveMedia\include\uLawAudioFilter.hh" />
     <None Include="liveMedia\include\VideoRTPSink.hh" />
     <None Include="liveMedia\include\WAVAudioFileServerMediaSubsession.hh" />
