@@ -789,6 +789,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Mpeg2Ts
       return ChannelMpeg2TsBase.PROGRAM_NUMBER_NOT_KNOWN_SELECT_FIRST;
     }
 
+    protected virtual HashSet<ushort> GetScanningPids()
+    {
+      return new HashSet<ushort>();
+    }
+
     #region sub-channel manager base implementations/overrides
 
     /// <summary>
@@ -1094,7 +1099,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Mpeg2Ts
           }
         }
         _programs.Clear();
-        _programs[PROGRAM_NUMBER_SI] = new ProgramInformation { ProgramNumber = PROGRAM_NUMBER_SI, IsEncryptedConfig = false, IsRunning = true, Pids = new HashSet<ushort>(_alwaysRequiredPids) };
+        HashSet<ushort> siProgramPids = new HashSet<ushort>(_alwaysRequiredPids);
+        siProgramPids.UnionWith(GetScanningPids());
+        _programs[PROGRAM_NUMBER_SI] = new ProgramInformation { ProgramNumber = PROGRAM_NUMBER_SI, IsEncryptedConfig = false, IsRunning = true, Pids = siProgramPids };
         _programs[PROGRAM_NUMBER_EPG] = new ProgramInformation { ProgramNumber = PROGRAM_NUMBER_EPG, IsEncryptedConfig = false, IsRunning = true, Pids = new HashSet<ushort>(_alwaysRequiredPids) };
 
         // PID filter state after tuning is indeterminate. To be safe, explicitly

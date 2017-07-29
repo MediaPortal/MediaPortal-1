@@ -108,15 +108,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     /// <param name="serviceIndex">The event's service's index. Should be in the range 0 to GetServiceCount() - 1.</param>
     /// <param name="eventIndex">The index of the event to retrieve. Should be in the range 0 to eventCount - 1 for the service.</param>
     /// <param name="eventId">The event's identifier. Only unique when combined with the service's original network ID, transport stream ID and service ID.</param>
-    /// <param name="startDateTime">The event's start date/time, encoded as a UTC Unix epoch reference.</param>
-    /// <param name="duration">The event's duration in minutes.</param>
+    /// <param name="startDateTime">The event's start date/time, encoded as an epoch/Unix/POSIX time-stamp.</param>
+    /// <param name="duration">The event's duration in seconds.</param>
     /// <param name="runningStatus">The event's running status, encoded according to DVB specifications.</param>
     /// <param name="freeCaMode">An indication of whether the event's streams will be encrypted or not.</param>
     /// <param name="referenceServiceId">The service identifier associated with the service's NVOD reference service, if any.</param>
     /// <param name="referenceEventId">The event identifier associated with the event's NVOD reference event, if any.</param>
     /// <param name="seriesId">A buffer containing the identifier that links this event to other events from the same series, encoded as DVB-compatible text. The caller must allocate and free this buffer.</param>
     /// <param name="seriesIdBufferSize">As an input, the size of the <paramref name="seriesId">series identifier buffer</paramref>; as an output, the consumed buffer size.</param>
-    /// <param name="episodeId">A buffer containing the event's episode identifier, encoded as DVB-compatible text. The caller must allocate and free this buffer.</param>
+    /// <param name="episodeId">A buffer containing the identifier of the episode or program that the event is associated with, encoded as DVB-compatible text. The caller must allocate and free this buffer.</param>
     /// <param name="episodeIdBufferSize">As an input, the size of the <paramref name="episodeId">episode identifier buffer</paramref>; as an output, the consumed buffer size.</param>
     /// <param name="isHighDefinition">An indication of whether the event's video will be high definition.</param>
     /// <param name="isStandardDefinition">An indication of whether the event's video will be standard definition.</param>
@@ -143,7 +143,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
                   ushort eventIndex,
                   out ulong eventId,
                   out ulong startDateTime,
-                  out ushort duration,
+                  out uint duration,
                   out RunningStatus runningStatus,
                   [MarshalAs(UnmanagedType.I1)] out bool freeCaMode,
                   out ushort referenceServiceId,

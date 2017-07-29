@@ -60,6 +60,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.comboBoxProvidersProvider2Region = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
       this.comboBoxProvidersProvider1Region = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
       this.tabPageAutomaticChannelGroups = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTabPage();
+      this.checkBoxAutomaticChannelGroupsOpenTvChannelCategories = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
+      this.checkBoxAutomaticChannelGroupsMediaHighwayChannelCategories = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
       this.textBoxAutomaticChannelGroupsChannelProviders = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTextBox();
       this.textBoxAutomaticChannelGroupsDvbNetworks = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTextBox();
       this.textBoxAutomaticChannelGroupsDvbBouquets = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTextBox();
@@ -449,6 +451,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       // tabPageAutomaticChannelGroups
       // 
+      this.tabPageAutomaticChannelGroups.Controls.Add(this.checkBoxAutomaticChannelGroupsOpenTvChannelCategories);
+      this.tabPageAutomaticChannelGroups.Controls.Add(this.checkBoxAutomaticChannelGroupsMediaHighwayChannelCategories);
       this.tabPageAutomaticChannelGroups.Controls.Add(this.textBoxAutomaticChannelGroupsChannelProviders);
       this.tabPageAutomaticChannelGroups.Controls.Add(this.textBoxAutomaticChannelGroupsDvbNetworks);
       this.tabPageAutomaticChannelGroups.Controls.Add(this.textBoxAutomaticChannelGroupsDvbBouquets);
@@ -471,6 +475,24 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.tabPageAutomaticChannelGroups.Size = new System.Drawing.Size(472, 394);
       this.tabPageAutomaticChannelGroups.TabIndex = 1;
       this.tabPageAutomaticChannelGroups.Text = "Automatic Channel Groups";
+      // 
+      // checkBoxAutomaticChannelGroupsOpenTvChannelCategories
+      // 
+      this.checkBoxAutomaticChannelGroupsOpenTvChannelCategories.AutoSize = true;
+      this.checkBoxAutomaticChannelGroupsOpenTvChannelCategories.Location = new System.Drawing.Point(246, 149);
+      this.checkBoxAutomaticChannelGroupsOpenTvChannelCategories.Name = "checkBoxAutomaticChannelGroupsOpenTvChannelCategories";
+      this.checkBoxAutomaticChannelGroupsOpenTvChannelCategories.Size = new System.Drawing.Size(176, 17);
+      this.checkBoxAutomaticChannelGroupsOpenTvChannelCategories.TabIndex = 15;
+      this.checkBoxAutomaticChannelGroupsOpenTvChannelCategories.Text = "each OpenTV channel category";
+      // 
+      // checkBoxAutomaticChannelGroupsMediaHighwayChannelCategories
+      // 
+      this.checkBoxAutomaticChannelGroupsMediaHighwayChannelCategories.AutoSize = true;
+      this.checkBoxAutomaticChannelGroupsMediaHighwayChannelCategories.Location = new System.Drawing.Point(9, 195);
+      this.checkBoxAutomaticChannelGroupsMediaHighwayChannelCategories.Name = "checkBoxAutomaticChannelGroupsMediaHighwayChannelCategories";
+      this.checkBoxAutomaticChannelGroupsMediaHighwayChannelCategories.Size = new System.Drawing.Size(206, 17);
+      this.checkBoxAutomaticChannelGroupsMediaHighwayChannelCategories.TabIndex = 12;
+      this.checkBoxAutomaticChannelGroupsMediaHighwayChannelCategories.Text = "each MediaHighway channel category";
       // 
       // textBoxAutomaticChannelGroupsChannelProviders
       // 
@@ -511,19 +533,19 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // checkBoxAutomaticChannelGroupsNorDigChannelLists
       // 
       this.checkBoxAutomaticChannelGroupsNorDigChannelLists.AutoSize = true;
-      this.checkBoxAutomaticChannelGroupsNorDigChannelLists.Location = new System.Drawing.Point(211, 126);
+      this.checkBoxAutomaticChannelGroupsNorDigChannelLists.Location = new System.Drawing.Point(246, 126);
       this.checkBoxAutomaticChannelGroupsNorDigChannelLists.Name = "checkBoxAutomaticChannelGroupsNorDigChannelLists";
       this.checkBoxAutomaticChannelGroupsNorDigChannelLists.Size = new System.Drawing.Size(140, 17);
-      this.checkBoxAutomaticChannelGroupsNorDigChannelLists.TabIndex = 13;
+      this.checkBoxAutomaticChannelGroupsNorDigChannelLists.TabIndex = 14;
       this.checkBoxAutomaticChannelGroupsNorDigChannelLists.Text = "each NorDig channel list";
       // 
       // checkBoxAutomaticChannelGroupsVirginMediaChannelCategories
       // 
       this.checkBoxAutomaticChannelGroupsVirginMediaChannelCategories.AutoSize = true;
-      this.checkBoxAutomaticChannelGroupsVirginMediaChannelCategories.Location = new System.Drawing.Point(211, 149);
+      this.checkBoxAutomaticChannelGroupsVirginMediaChannelCategories.Location = new System.Drawing.Point(246, 172);
       this.checkBoxAutomaticChannelGroupsVirginMediaChannelCategories.Name = "checkBoxAutomaticChannelGroupsVirginMediaChannelCategories";
       this.checkBoxAutomaticChannelGroupsVirginMediaChannelCategories.Size = new System.Drawing.Size(194, 17);
-      this.checkBoxAutomaticChannelGroupsVirginMediaChannelCategories.TabIndex = 14;
+      this.checkBoxAutomaticChannelGroupsVirginMediaChannelCategories.TabIndex = 16;
       this.checkBoxAutomaticChannelGroupsVirginMediaChannelCategories.Text = "each Virgin Media channel category";
       // 
       // checkBoxAutomaticChannelGroupsFreesatChannelCategories
@@ -538,19 +560,19 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // checkBoxAutomaticChannelGroupsProvider1Region
       // 
       this.checkBoxAutomaticChannelGroupsProvider1Region.AutoSize = true;
-      this.checkBoxAutomaticChannelGroupsProvider1Region.Location = new System.Drawing.Point(211, 172);
+      this.checkBoxAutomaticChannelGroupsProvider1Region.Location = new System.Drawing.Point(246, 195);
       this.checkBoxAutomaticChannelGroupsProvider1Region.Name = "checkBoxAutomaticChannelGroupsProvider1Region";
       this.checkBoxAutomaticChannelGroupsProvider1Region.Size = new System.Drawing.Size(164, 17);
-      this.checkBoxAutomaticChannelGroupsProvider1Region.TabIndex = 15;
+      this.checkBoxAutomaticChannelGroupsProvider1Region.TabIndex = 17;
       this.checkBoxAutomaticChannelGroupsProvider1Region.Text = "the selected provider 1 region";
       // 
       // checkBoxAutomaticChannelGroupsProvider2Region
       // 
       this.checkBoxAutomaticChannelGroupsProvider2Region.AutoSize = true;
-      this.checkBoxAutomaticChannelGroupsProvider2Region.Location = new System.Drawing.Point(9, 195);
+      this.checkBoxAutomaticChannelGroupsProvider2Region.Location = new System.Drawing.Point(9, 218);
       this.checkBoxAutomaticChannelGroupsProvider2Region.Name = "checkBoxAutomaticChannelGroupsProvider2Region";
       this.checkBoxAutomaticChannelGroupsProvider2Region.Size = new System.Drawing.Size(164, 17);
-      this.checkBoxAutomaticChannelGroupsProvider2Region.TabIndex = 12;
+      this.checkBoxAutomaticChannelGroupsProvider2Region.TabIndex = 13;
       this.checkBoxAutomaticChannelGroupsProvider2Region.Text = "the selected provider 2 region";
       // 
       // checkBoxAutomaticChannelGroupsDvbTargetRegions
@@ -694,5 +716,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private MPLabel labelTimingMaximum;
     private MPTextBox textBoxAutomaticChannelGroupsChannelProviders;
     private MPCheckBox checkBoxSkipEncryptedChannels;
+    private MPCheckBox checkBoxAutomaticChannelGroupsMediaHighwayChannelCategories;
+    private MPCheckBox checkBoxAutomaticChannelGroupsOpenTvChannelCategories;
   }
 }

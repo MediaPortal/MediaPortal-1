@@ -75,6 +75,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private int _originalTimeLimitNetworkInformation;
     private int _originalTimeLimitCableCard;
     private bool _originalPreferHighDefinitionChannelNumbers;
+    private ChannelGroupType _originalAutomaticChannelGroupTypes;
 
     public Scanning(ServerConfigurationChangedEventHandler handler)
       : base("Scanning", handler)
@@ -245,24 +246,26 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       checkBoxSkipEncryptedChannels.Checked = !ServiceAgents.Instance.SettingServiceAgent.GetValue("scanStoreEncryptedChannels", true);
 
       // automatic channel groups
-      ChannelGroupType channelGroupTypes = ChannelGroupType.FreesatChannelCategory | ChannelGroupType.NorDigChannelList | ChannelGroupType.VirginMediaChannelCategory;
-      channelGroupTypes = (ChannelGroupType)ServiceAgents.Instance.SettingServiceAgent.GetValue("scanAutoCreateChannelGroups", (int)channelGroupTypes);
-      checkBoxAutomaticChannelGroupsBroadcastStandards.Checked = channelGroupTypes.HasFlag(ChannelGroupType.BroadcastStandard);
-      checkBoxAutomaticChannelGroupsSatellites.Checked = channelGroupTypes.HasFlag(ChannelGroupType.Satellite);
-      checkBoxAutomaticChannelGroupsNorDigChannelLists.Checked = channelGroupTypes.HasFlag(ChannelGroupType.NorDigChannelList);
-      checkBoxAutomaticChannelGroupsVirginMediaChannelCategories.Checked = channelGroupTypes.HasFlag(ChannelGroupType.VirginMediaChannelCategory);
-      checkBoxAutomaticChannelGroupsFreesatChannelCategories.Checked = channelGroupTypes.HasFlag(ChannelGroupType.FreesatChannelCategory);
+      ChannelGroupType defaultChannelGroupTypes = ChannelGroupType.FreesatChannelCategory | ChannelGroupType.MediaHighwayChannelCategory | ChannelGroupType.NorDigChannelList | ChannelGroupType.OpenTvChannelCategory | ChannelGroupType.VirginMediaChannelCategory;
+      _originalAutomaticChannelGroupTypes = (ChannelGroupType)ServiceAgents.Instance.SettingServiceAgent.GetValue("scanAutoCreateChannelGroups", (int)defaultChannelGroupTypes);
+      checkBoxAutomaticChannelGroupsBroadcastStandards.Checked = _originalAutomaticChannelGroupTypes.HasFlag(ChannelGroupType.BroadcastStandard);
+      checkBoxAutomaticChannelGroupsSatellites.Checked = _originalAutomaticChannelGroupTypes.HasFlag(ChannelGroupType.Satellite);
+      checkBoxAutomaticChannelGroupsFreesatChannelCategories.Checked = _originalAutomaticChannelGroupTypes.HasFlag(ChannelGroupType.FreesatChannelCategory);
+      checkBoxAutomaticChannelGroupsMediaHighwayChannelCategories.Checked = _originalAutomaticChannelGroupTypes.HasFlag(ChannelGroupType.MediaHighwayChannelCategory);
+      checkBoxAutomaticChannelGroupsNorDigChannelLists.Checked = _originalAutomaticChannelGroupTypes.HasFlag(ChannelGroupType.NorDigChannelList);
+      checkBoxAutomaticChannelGroupsOpenTvChannelCategories.Checked = _originalAutomaticChannelGroupTypes.HasFlag(ChannelGroupType.OpenTvChannelCategory);
+      checkBoxAutomaticChannelGroupsVirginMediaChannelCategories.Checked = _originalAutomaticChannelGroupTypes.HasFlag(ChannelGroupType.VirginMediaChannelCategory);
 
-      checkBoxAutomaticChannelGroupsChannelProviders.Checked = channelGroupTypes.HasFlag(ChannelGroupType.ChannelProvider);
+      checkBoxAutomaticChannelGroupsChannelProviders.Checked = _originalAutomaticChannelGroupTypes.HasFlag(ChannelGroupType.ChannelProvider);
       string[] tempArray = ServiceAgents.Instance.SettingServiceAgent.GetValue("scanAutoCreateChannelGroupsChannelProviders", string.Empty).Split('|');
       textBoxAutomaticChannelGroupsChannelProviders.Text = string.Join(", ", tempArray);
-      checkBoxAutomaticChannelGroupsDvbNetworks.Checked = channelGroupTypes.HasFlag(ChannelGroupType.DvbNetwork);
+      checkBoxAutomaticChannelGroupsDvbNetworks.Checked = _originalAutomaticChannelGroupTypes.HasFlag(ChannelGroupType.DvbNetwork);
       tempArray = ServiceAgents.Instance.SettingServiceAgent.GetValue("scanAutoCreateChannelGroupsDvbNetworks", string.Empty).Split('|');
       textBoxAutomaticChannelGroupsDvbNetworks.Text = string.Join(", ", tempArray);
-      checkBoxAutomaticChannelGroupsDvbBouquets.Checked = channelGroupTypes.HasFlag(ChannelGroupType.DvbBouquet);
+      checkBoxAutomaticChannelGroupsDvbBouquets.Checked = _originalAutomaticChannelGroupTypes.HasFlag(ChannelGroupType.DvbBouquet);
       tempArray = ServiceAgents.Instance.SettingServiceAgent.GetValue("scanAutoCreateChannelGroupsDvbBouquets", string.Empty).Split('|');
       textBoxAutomaticChannelGroupsDvbBouquets.Text = string.Join(", ", tempArray);
-      checkBoxAutomaticChannelGroupsDvbTargetRegions.Checked = channelGroupTypes.HasFlag(ChannelGroupType.DvbTargetRegion);
+      checkBoxAutomaticChannelGroupsDvbTargetRegions.Checked = _originalAutomaticChannelGroupTypes.HasFlag(ChannelGroupType.DvbTargetRegion);
       tempArray = ServiceAgents.Instance.SettingServiceAgent.GetValue("scanAutoCreateChannelGroupsDvbTargetRegions", string.Empty).Split('|');
       textBoxAutomaticChannelGroupsDvbTargetRegions.Text = string.Join(", ", tempArray);
 
@@ -270,22 +273,22 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       {
         if (string.Equals(countryName, "United States"))
         {
-          checkBoxAutomaticChannelGroupsProvider1Region.Checked = channelGroupTypes.HasFlag(ChannelGroupType.DishNetworkMarket);
+          checkBoxAutomaticChannelGroupsProvider1Region.Checked = _originalAutomaticChannelGroupTypes.HasFlag(ChannelGroupType.DishNetworkMarket);
         }
         else
         {
-          checkBoxAutomaticChannelGroupsProvider1Region.Checked = channelGroupTypes.HasFlag(ChannelGroupType.OpenTvRegion);
+          checkBoxAutomaticChannelGroupsProvider1Region.Checked = _originalAutomaticChannelGroupTypes.HasFlag(ChannelGroupType.OpenTvRegion);
         }
       }
       if (checkBoxAutomaticChannelGroupsProvider2Region.Visible)
       {
         if (string.Equals(countryName, "New Zealand"))
         {
-          checkBoxAutomaticChannelGroupsProvider2Region.Checked = channelGroupTypes.HasFlag(ChannelGroupType.FreeviewSatellite);
+          checkBoxAutomaticChannelGroupsProvider2Region.Checked = _originalAutomaticChannelGroupTypes.HasFlag(ChannelGroupType.FreeviewSatellite);
         }
         else
         {
-          checkBoxAutomaticChannelGroupsProvider2Region.Checked = channelGroupTypes.HasFlag(ChannelGroupType.FreesatRegion);
+          checkBoxAutomaticChannelGroupsProvider2Region.Checked = _originalAutomaticChannelGroupTypes.HasFlag(ChannelGroupType.FreesatRegion);
         }
       }
 
@@ -443,13 +446,27 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       {
         channelGroupTypes |= ChannelGroupType.FreesatChannelCategory;
       }
+      if (checkBoxAutomaticChannelGroupsMediaHighwayChannelCategories.Checked)
+      {
+        channelGroupTypes |= ChannelGroupType.MediaHighwayChannelCategory;
+      }
       if (checkBoxAutomaticChannelGroupsNorDigChannelLists.Checked)
       {
         channelGroupTypes |= ChannelGroupType.NorDigChannelList;
       }
+      if (checkBoxAutomaticChannelGroupsOpenTvChannelCategories.Checked)
+      {
+        channelGroupTypes |= ChannelGroupType.OpenTvChannelCategory;
+      }
       if (checkBoxAutomaticChannelGroupsVirginMediaChannelCategories.Checked)
       {
         channelGroupTypes |= ChannelGroupType.VirginMediaChannelCategory;
+      }
+      if (_originalAutomaticChannelGroupTypes.HasFlag(ChannelGroupType.MediaHighwayChannelCategory) != channelGroupTypes.HasFlag(ChannelGroupType.MediaHighwayChannelCategory))
+      {
+        // Auto-creating MHW channel category groups requires access to
+        // additional PIDs.
+        tunerIdsChanged.UnionWith(tunerIdsOther);
       }
       ServiceAgents.Instance.SettingServiceAgent.SaveValue("scanAutoCreateChannelGroups", (int)channelGroupTypes);
 
@@ -509,7 +526,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.LogDebug("    broadcast standards     = {0}", checkBoxAutomaticChannelGroupsBroadcastStandards.Checked);
       this.LogDebug("    satellites              = {0}", checkBoxAutomaticChannelGroupsSatellites.Checked);
       this.LogDebug("    Freesat categories      = {0}", checkBoxAutomaticChannelGroupsFreesatChannelCategories.Checked);
+      this.LogDebug("    MediaHighway categories = {0}", checkBoxAutomaticChannelGroupsMediaHighwayChannelCategories.Checked);
       this.LogDebug("    NorDig channel lists    = {0}", checkBoxAutomaticChannelGroupsNorDigChannelLists.Checked);
+      this.LogDebug("    OpenTV categories       = {0}", checkBoxAutomaticChannelGroupsOpenTvChannelCategories.Checked);
       this.LogDebug("    Virgin Media categories = {0}", checkBoxAutomaticChannelGroupsVirginMediaChannelCategories.Checked);
     }
 

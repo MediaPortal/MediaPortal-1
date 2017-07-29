@@ -50,6 +50,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
     private const TunerEpgGrabberProtocol PROTOCOLS_DVB = PROTOCOLS_SUPPORTED & ~PROTOCOLS_MEDIA_HIGHWAY & ~TunerEpgGrabberProtocol.OpenTv;
     private const TunerEpgGrabberProtocol PROTOCOLS_MEDIA_HIGHWAY = TunerEpgGrabberProtocol.MediaHighway1 | TunerEpgGrabberProtocol.MediaHighway2;
 
+    private const string LANG_CODE_ENG = "eng";
+
     private static readonly IDictionary<byte, string> MAPPING_CONTENT_TYPES_DVB = new Dictionary<byte, string>(16)
     {
       { 0x01, "Movie/Drama" },
@@ -1051,8 +1053,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
 
     private IDictionary<IChannel, IList<EpgProgram>> CollectMediaHighwayData(IChannelDvb currentTuningDetail)
     {
-      uint eventCount = _grabberMhw.GetEventCount();
-      this.LogDebug("EPG DVB: MediaHighway, initial event count = {0}", eventCount);
+      uint eventCount;
+      Iso639Code language;
+      _grabberMhw.GetEventCount(out eventCount, out language);
+      this.LogDebug("EPG DVB: MediaHighway, event count = {0}, text language = {1}", eventCount, language.Code);
       IDictionary<ulong, List<EpgProgram>> channels = new Dictionary<ulong, List<EpgProgram>>(100);
 
       const ushort BUFFER_SIZE_SERVICE_NAME = 300;
@@ -1061,6 +1065,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
       IntPtr bufferTitle = Marshal.AllocCoTaskMem(BUFFER_SIZE_TITLE);
       const ushort BUFFER_SIZE_DESCRIPTION = 1000;
       IntPtr bufferDescription = Marshal.AllocCoTaskMem(BUFFER_SIZE_DESCRIPTION);
+      const ushort BUFFER_SIZE_EPISODE_NAME = 1000;
+      IntPtr bufferEpisodeName = Marshal.AllocCoTaskMem(BUFFER_SIZE_EPISODE_NAME);
       const ushort BUFFER_SIZE_THEME_NAME = 50;
       IntPtr bufferThemeName = Marshal.AllocCoTaskMem(BUFFER_SIZE_THEME_NAME);
       const ushort BUFFER_SIZE_SUB_THEME_NAME = 50;
@@ -1073,13 +1079,19 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
         ushort serviceId;
         ulong startDateTimeEpoch;
         ushort duration;
-        uint payPerViewId;
         byte descriptionLineCount;
+        uint seriesId;
+        byte seasonNumber;
+        uint episodeId;
+        ushort episodeNumber;
+        byte classification;
+        uint payPerViewId;
         for (uint i = 0; i < eventCount; i++)
         {
           ushort bufferSizeServiceName = BUFFER_SIZE_SERVICE_NAME;
           ushort bufferSizeTitle = BUFFER_SIZE_TITLE;
           ushort bufferSizeDescription = BUFFER_SIZE_DESCRIPTION;
+          ushort bufferSizeEpisodeName = BUFFER_SIZE_EPISODE_NAME;
           ushort bufferSizeThemeName = BUFFER_SIZE_THEME_NAME;
           ushort bufferSizeSubThemeName = BUFFER_SIZE_SUB_THEME_NAME;
           bool result = _grabberMhw.GetEvent(i,
@@ -1093,14 +1105,21 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
                                               out duration,
                                               bufferTitle,
                                               ref bufferSizeTitle,
-                                              out payPerViewId,
                                               bufferDescription,
                                               ref bufferSizeDescription,
                                               out descriptionLineCount,
+                                              out seriesId,
+                                              out seasonNumber,
+                                              out episodeId,
+                                              out episodeNumber,
+                                              bufferEpisodeName,
+                                              ref bufferSizeEpisodeName,
                                               bufferThemeName,
                                               ref bufferSizeThemeName,
                                               bufferSubThemeName,
-                                              ref bufferSizeSubThemeName);
+                                              ref bufferSizeSubThemeName,
+                                              out classification,
+                                              out payPerViewId);
           if (!result)
           {
             this.LogWarn("EPG DVB: failed to get MediaHighway event, event index = {0}, event count = {1}", i, eventCount);
@@ -1118,7 +1137,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
           programStartTime.AddSeconds(startDateTimeEpoch);
           programStartTime = programStartTime.ToLocalTime();
           EpgProgram program = new EpgProgram(programStartTime, programStartTime.AddMinutes(duration));
-          program.Titles.Add("und", title);
+          program.Titles.Add(language.Code, title);
 
           string description = TidyString(DvbTextConverter.Convert(bufferDescription, bufferSizeDescription));
           for (byte j = 0; j < descriptionLineCount; j++)
@@ -1134,7 +1153,29 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
               description = string.Format("{0} {1}", description, TidyString(DvbTextConverter.Convert(bufferDescription, bufferSizeDescription)));
             }
           }
-          program.Descriptions.Add("und", description);
+          program.Descriptions.Add(language.Code, description);
+
+          if (seriesId != 0xffffffff)
+          {
+            program.SeriesId = string.Format("MediaHighway:{0}", seriesId);
+          }
+          if (seasonNumber != 0)
+          {
+            program.SeasonNumber = seasonNumber;
+          }
+          if (episodeId != 0xffffffff)
+          {
+            program.EpisodeId = string.Format("MediaHighway:{0}", episodeId);
+          }
+          if (episodeNumber != 0)
+          {
+            program.EpisodeNumber = episodeNumber;
+          }
+          string episodeName = TidyString(DvbTextConverter.Convert(bufferEpisodeName, bufferSizeEpisodeName));
+          if (!string.IsNullOrEmpty(episodeName))
+          {
+            program.EpisodeNames.Add(language.Code, episodeName);
+          }
 
           string themeName = TidyString(DvbTextConverter.Convert(bufferThemeName, bufferSizeThemeName));
           if (!string.IsNullOrEmpty(themeName))
@@ -1145,6 +1186,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
               themeName = string.Format("{0}: {1}", themeName, subThemeName);
             }
             program.Categories.Add(themeName);
+          }
+
+          string classificationString = GetMediaHighwayClassificationDescription(classification);
+          if (classificationString != null)
+          {
+            program.Classifications.Add("MediaHighway", classificationString);
           }
 
           ulong channelKey = ((ulong)originalNetworkId << 32) | ((ulong)transportStreamId << 16) | serviceId;
@@ -1192,6 +1239,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
         {
           Marshal.FreeCoTaskMem(bufferDescription);
         }
+        if (bufferEpisodeName != IntPtr.Zero)
+        {
+          Marshal.FreeCoTaskMem(bufferEpisodeName);
+        }
         if (bufferThemeName != IntPtr.Zero)
         {
           Marshal.FreeCoTaskMem(bufferThemeName);
@@ -1205,8 +1256,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
 
     private IDictionary<IChannel, IList<EpgProgram>> CollectOpenTvData(IChannelOpenTv currentTuningDetail)
     {
-      uint eventCount = _grabberOpenTv.GetEventCount();
-      this.LogDebug("EPG DVB: OpenTV, initial event count = {0}", eventCount);
+      uint eventCount;
+      Iso639Code language;
+      _grabberOpenTv.GetEventCount(out eventCount, out language);
+      this.LogDebug("EPG DVB: OpenTV, initial event count = {0}, text language = {1}", eventCount, language.Code);
       IDictionary<ushort, List<EpgProgram>> channels = new Dictionary<ushort, List<EpgProgram>>(100);
 
       const ushort BUFFER_SIZE_TITLE = 300;
@@ -1266,22 +1319,16 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
           programStartTime.AddSeconds(startDateTimeEpoch);
           programStartTime = programStartTime.ToLocalTime();
           EpgProgram program = new EpgProgram(programStartTime, programStartTime.AddMinutes(duration));
-          string language = "eng";
-          if (string.Equals(RegionInfo.CurrentRegion.EnglishName, "Italy"))
-          {
-            language = "ita";
-          }
-
-          program.Titles.Add(language, title);
+          program.Titles.Add(language.Code, title);
           program.Categories.Add(GetOpenTvProgramCategoryDescription(categoryId, subCategoryId));
           program.IsHighDefinition = isHighDefinition;
           if (hasSubtitles)
           {
             // assumption: subtitles language matches the country
-            program.SubtitlesLanguages.Add(language);
+            program.SubtitlesLanguages.Add(language.Code);
           }
           string classification = GetOpenTvParentalRatingDescription(parentalRating);
-          if (!string.IsNullOrEmpty(classification))
+          if (classification != null)
           {
             program.Classifications.Add("OpenTV", classification);
           }
@@ -1308,7 +1355,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
               description += Environment.NewLine + extendedDescription;
             }
           }
-          program.Descriptions.Add(language, description);
+          program.Descriptions.Add(language.Code, description);
 
           List<EpgProgram> programs;
           if (!channels.TryGetValue(channelId, out programs))
@@ -1382,7 +1429,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
         ushort eventCount;
         ulong eventId;
         ulong startDateTimeEpoch;
-        ushort duration;
+        uint duration;
         RunningStatus runningStatus;
         bool freeCaMode;
         ushort referenceServiceId;
@@ -1460,7 +1507,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
             DateTime programStartTime = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
             programStartTime.AddSeconds(startDateTimeEpoch);
             programStartTime = programStartTime.ToLocalTime();
-            EpgProgram program = new EpgProgram(programStartTime, programStartTime.AddMinutes(duration));
+            EpgProgram program = new EpgProgram(programStartTime, programStartTime.AddSeconds(duration));
 
             bool isPlaceholderOrDummyEvent = false;
             for (byte k = 0; k < textCount; k++)
@@ -1710,7 +1757,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
             {
               if (sectionType == 1)
               {
-                program.EpisodeName = parts[1];
+                program.EpisodeNames.Add(LANG_CODE_ENG, parts[1]);
               }
               else if (sectionType >= 31 && sectionType <= 49)  // Note: only seen 31, 32 and 33. Assuming 34-49 are the same.
               {
@@ -1739,9 +1786,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
               }
               else if (sectionType == 6)
               {
-                if (parts[1].Equals("CC") && !program.SubtitlesLanguages.Contains("eng"))
+                if (parts[1].Equals("CC") && !program.SubtitlesLanguages.Contains(LANG_CODE_ENG))
                 {
-                  program.SubtitlesLanguages.Add("eng");
+                  program.SubtitlesLanguages.Add(LANG_CODE_ENG);
                 }
               }
               else if (sectionType == 7)
@@ -1771,6 +1818,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
         string.Equals(itemName, "int", StringComparison.InvariantCultureIgnoreCase)
       )
       {
+        // EPG Collector: int (case unknown); CSV
+        // Euskaltel (Spain DVB-C): actors (case unknown)
+        // StarHub TV (Singapore DVB-C): Actors; CSV with spaces
+        // Welho (Finland DVB-C): Actors; CSV without spaces
         foreach (string actor in itemText.Split(','))
         {
           string actorTemp = actor.Trim();
@@ -1787,6 +1838,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
         string.Equals(itemName, "dir", StringComparison.InvariantCultureIgnoreCase)
       )
       {
+        // EPG Collector: director/directors/dir (case unknown); CSV
+        // StarHub TV (Singapore DVB-C): Directors; CSV with spaces
+        // Welho (Finland DVB-C): Directors; CSV without spaces
         foreach (string director in itemText.Split(','))
         {
           string directorTemp = director.Trim();
@@ -1800,6 +1854,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
 
       if (string.Equals(itemName, "gui", StringComparison.InvariantCultureIgnoreCase))
       {
+        // EPG Collector: gui (case unknown); CSV
         foreach (string writer in itemText.Split(','))
         {
           string writerTemp = writer.Trim();
@@ -1817,6 +1872,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
         string.Equals(itemName, "año", StringComparison.InvariantCultureIgnoreCase)
       )
       {
+        // EPG Collector: year/production year/año (case unknown)
+        // Welho (Finland DVB-C): Production Year; 4 digit numeric string
         ushort year;
         if (ushort.TryParse(itemText, out year))
         {
@@ -1834,18 +1891,26 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
         string.Equals(itemName, "nac", StringComparison.InvariantCultureIgnoreCase)
       )
       {
+        // EPG Collector: country/nac (case unknown)
+        // Welho (Finland DVB-C): Country; 3 letter ISO code
         program.ProductionCountry = itemText;
         return;
       }
 
-      if (string.Equals(itemName, "episode", StringComparison.InvariantCultureIgnoreCase))
+      if (
+        string.Equals(itemName, "episode", StringComparison.InvariantCultureIgnoreCase) ||
+        string.Equals(itemName, "episodetitle", StringComparison.InvariantCultureIgnoreCase)
+      )
       {
-        program.EpisodeName = itemText;
+        // EPG Collector: episode (case unknown)
+        // StarHub TV (Singapore DVB-C): EpisodeTitle
+        program.EpisodeNames.Add(LANG_CODE_ENG, itemText);
         return;
       }
 
       if (string.Equals(itemName, "tep", StringComparison.InvariantCultureIgnoreCase))
       {
+        // EPG Collector: tep (case unknown); format "<season number>:<episode number>"
         string[] parts = itemText.Split(':');
         if (parts.Length == 2)
         {
@@ -1861,15 +1926,64 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
         Log.Warn("EPG DVB: failed to interpret season/episode number description item, item text = {0}", itemText);
         return;
       }
+      if (string.Equals(itemName, "episodeno", StringComparison.InvariantCultureIgnoreCase))
+      {
+        // StarHub TV (Singapore DVB-C): EpisodeNo; CSV or ampersand-SV "[Ep ]\d+\s*([a-zA-Z]\s*)?(\+\s*\d+\s*([a-zA-Z]\s*)?)*(\/\s*\d+\s*)?"; examples
+        // - Ep 13
+        // - Ep 7A, Ep 7B, Ep 21B
+        // - 0047, 0048, 0049 & 0050
+        // - Ep 18/22
+        // - 42
+        // - Ep 326+327/365
+        // - Ep 17+18
+        string[] episodeNumbers = itemText.Split(new char[] { ',', '&' });
+        foreach (string episodeNumberString in episodeNumbers)
+        {
+          string numberString = episodeNumberString;
+          if (episodeNumberString.StartsWith("Ep "))
+          {
+            numberString = episodeNumberString.Substring(3);
+          }
+
+          // episode count is sometimes included
+          string[] parts = numberString.Split(new char[1] { '/' });
+          numberString = parts[0];
+
+          // multiple episodes specified
+          parts = numberString.Split(new char[1] { '+' });
+          numberString = parts[0];
+
+          Match m = Regex.Match(numberString, @"^\s*(\d+)\s*([a-zA-Z])?\s*$");
+          int episodeNumber;
+          if (m.Success && int.TryParse(m.Groups[1].Captures[0].Value, out episodeNumber))
+          {
+            program.EpisodeNumber = episodeNumber;
+            if (m.Groups[2].Captures.Count == 1)
+            {
+              program.EpisodePartNumber = m.Groups[2].Captures[0].Value[0] - 64;
+              if (program.EpisodePartNumber > 26)
+              {
+                program.EpisodePartNumber -= 32;
+              }
+            }
+            return;
+          }
+          break;
+        }
+        Log.Warn("EPG DVB: failed to interpret episode number description item, item text = {0}", itemText);
+        return;
+      }
 
       if (string.Equals(itemName, "seriesid", StringComparison.InvariantCultureIgnoreCase))
       {
+        // EPG Collector: seriesid (case unknown)
         program.SeriesId = itemText;
         return;
       }
 
       if (string.Equals(itemName, "seasonid", StringComparison.InvariantCultureIgnoreCase))
       {
+        // EPG Collector: seasonid (case unknown)
         if (string.IsNullOrEmpty(program.SeriesId))   // Prefer series ID over season ID.
         {
           program.SeriesId = itemText;
@@ -1879,9 +1993,67 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
 
       if (string.Equals(itemName, "episodeid", StringComparison.InvariantCultureIgnoreCase))
       {
+        // EPG Collector: episodeid (case unknown)
+        // StarHub TV (Singapore DVB-C): Contentid_ref; examples "T0019319077", "TA0018483678"
         program.EpisodeId = itemText;
         return;
       }
+
+      if (string.Equals(itemName, "AudioTrack", StringComparison.InvariantCultureIgnoreCase))
+      {
+        // StarHub TV (Singapore DVB-C): CSV 3 letter ISO language codes, lower case
+        return;
+      }
+      if (string.Equals(itemName, "BlackedOutInternet", StringComparison.InvariantCultureIgnoreCase))
+      {
+        // StarHub TV (Singapore DVB-C): examples "0", "1"; probably 0/1 boolean, but meaning uncertain
+        return;
+      }
+      if (string.Equals(itemName, "CatchupInternet", StringComparison.InvariantCultureIgnoreCase))
+      {
+        // StarHub TV (Singapore DVB-C): examples "0", "1"; probably 0/1 boolean, but meaning uncertain
+        return;
+      }
+      if (string.Equals(itemName, "CatchupIPTV", StringComparison.InvariantCultureIgnoreCase))
+      {
+        // StarHub TV (Singapore DVB-C): examples "0", "1"; probably 0/1 boolean, but meaning uncertain
+        return;
+      }
+      if (string.Equals(itemName, "DelayTV", StringComparison.InvariantCultureIgnoreCase))
+      {
+        // StarHub TV (Singapore DVB-C): examples "0", "1"; probably 0/1 boolean, but meaning uncertain
+        return;
+      }
+      if (string.Equals(itemName, "MasterProductionID", StringComparison.InvariantCultureIgnoreCase))
+      {
+        // Welho (Finland DVB-C): example "IT_SKY000032"; perhaps an episode ID?
+        return;
+      }
+      if (string.Equals(itemName, "ProgrammeStatus", StringComparison.InvariantCultureIgnoreCase))
+      {
+        // StarHub TV (Singapore DVB-C): examples "E", "L" (= live???), "S", "FirstRun"
+        return;
+      }
+      if (string.Equals(itemName, "Start_over_flag", StringComparison.InvariantCultureIgnoreCase))
+      {
+        // StarHub TV (Singapore DVB-C): examples "0", "1"; probably 0/1 boolean, but meaning uncertain
+        return;
+      }
+      if (string.Equals(itemName, "Trick_mode_ctrl_DTV", StringComparison.InvariantCultureIgnoreCase))
+      {
+        // StarHub TV (Singapore DVB-C): examples "0", "2"
+        return;
+      }
+      if (string.Equals(itemName, "Trick_mode_ctrl_SO", StringComparison.InvariantCultureIgnoreCase))
+      {
+        // StarHub TV (Singapore DVB-C): examples "0", "2"
+        return;
+      }
+
+      // unhandled items referenced by EPG Collector
+      // - ppd (previous play date)
+      // - star (star rating)
+      // - tv ratings
 
       Log.Warn("EPG DVB: failed to interpret description item, item name = {0}, item text = {1}", itemName, itemText);
     }
@@ -2007,6 +2179,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
 
     private static string GetOpenTvProgramCategoryDescription(byte categoryId, byte subCategoryId)
     {
+      // Out-of-region reception currently not supported. Support would require
+      // logic based on the original network ID instead of the current region
+      // name.
       IDictionary<byte, string> categoryNames = null;
       IDictionary<ushort, string> subCategoryNames = null;
       string countryName = RegionInfo.CurrentRegion.EnglishName;
@@ -2071,8 +2246,41 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
       return string.Format("{0}: {1}", categoryName, subCategoryName);
     }
 
+    private static string GetMediaHighwayClassificationDescription(byte classification)
+    {
+      // Assume Spanish MHW 2 encoding.
+      switch (classification)
+      {
+        case 1:
+          return "TP";    // "Todos los públicos"
+        case 2:
+          return "+13";
+        case 3:
+          return "+18";
+        case 4:
+          return "X";
+        case 5:
+          return "SC";    // "Sin calificación"
+        case 6:
+          return "+7";
+        case 7:
+          return "INF";   // "Especialmente recomendada para la infancia"
+        case 8:
+          return "+12";
+        case 9:
+          return "+16";
+        case 10:
+          return "TP/INF";
+        default:
+          return null;
+      }
+    }
+
     private static string GetOpenTvParentalRatingDescription(byte rating)
     {
+      // Out-of-region reception currently not supported. Support would require
+      // logic based on the original network ID instead of the current region
+      // name.
       string countryName = RegionInfo.CurrentRegion.EnglishName;
       if (countryName != null)
       {
@@ -2157,7 +2365,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
           }
         }
       }
-      return string.Empty;
+      return null;
     }
 
     private static string GetParentalRatingDescription(byte rating)
@@ -2270,7 +2478,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
       int index = description.IndexOf((char)0xd);
       if (index > 0)
       {
-        program.EpisodeName = description.Substring(0, index);
+        program.EpisodeNames.Add(LANG_CODE_ENG, description.Substring(0, index));
         description = description.Substring(index);
       }
       description = description.Trim();
@@ -2316,9 +2524,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
       if (index >= 0)
       {
         // assumption: language is English
-        if (!program.SubtitlesLanguages.Contains("eng"))
+        if (!program.SubtitlesLanguages.Contains(LANG_CODE_ENG))
         {
-          program.SubtitlesLanguages.Add("eng");
+          program.SubtitlesLanguages.Add(LANG_CODE_ENG);
         }
         description = description.Remove(index, " (CC)".Length);
       }

@@ -445,7 +445,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
     {
       try
       {
-        while (!_streamingKeepAliveThreadStopEvent.WaitOne((int)(_rtspSessionTimeout - new TimeSpan(0, 0, 5)).TotalMilliseconds * 1000))  // -5 seconds to avoid time-out
+        while (!_streamingKeepAliveThreadStopEvent.WaitOne(_rtspSessionTimeout - new TimeSpan(0, 0, 5)))  // -5 seconds to avoid time-out
         {
           RtspRequest request = new RtspRequest(RtspMethod.Options, string.Format("rtsp://{0}/", _serverIpAddress));
           request.Headers.Add("Session", _rtspSessionId);

@@ -33,11 +33,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations
     public DateTime EndTime { get; set; }
     public IDictionary<string, string> Titles { get; set; }
     public IDictionary<string, string> Descriptions { get; set; }
-    public string EpisodeName { get; set; }
+    public IDictionary<string, string> EpisodeNames { get; set; }
     public string SeriesId { get; set; }
     public int? SeasonNumber { get; set; }
     public string EpisodeId { get; set; }
     public int? EpisodeNumber { get; set; }
+    public int? EpisodePartNumber { get; set; }
     public bool? IsPreviouslyShown { get; set; }
     public IList<string> Categories { get; set; }
     public IDictionary<string, string> Classifications { get; set; }
@@ -66,11 +67,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations
       EndTime = endTime;
       Titles = new Dictionary<string, string>();
       Descriptions = new Dictionary<string, string>();
-      EpisodeName = null;
+      EpisodeNames = new Dictionary<string, string>();
       SeriesId = null;
       SeasonNumber = null;
       EpisodeId = null;
       EpisodeNumber = null;
+      EpisodePartNumber = null;
       IsPreviouslyShown = null;
       Categories = new List<string>();
       Classifications = new Dictionary<string, string>();

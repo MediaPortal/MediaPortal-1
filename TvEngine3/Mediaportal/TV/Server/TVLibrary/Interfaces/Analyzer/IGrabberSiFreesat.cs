@@ -179,6 +179,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     /// <param name="openTvRegionIdCount">As an input, the size of the <paramref name="openTvRegionIds">OpenTV region identifiers array</paramref>; as an output, the consumed array size.</param>
     /// <param name="freesatChannelCategoryIds">The identifiers of the Freesat channel categories which the service is associated with. The caller must allocate this array.</param>
     /// <param name="freesatChannelCategoryIdCount">As an input, the size of the <paramref name="freesatChannelCategoryIds">Freesat channel category identifiers array</paramref>; as an output, the consumed array size.</param>
+    /// <param name="mediaHighwayChannelCategoryIds">The identifiers of the MediaHighway channel categories which the service is associated with. The caller must allocate this array.</param>
+    /// <param name="mediaHighwayChannelCategoryIdCount">As an input, the size of the <paramref name="mediaHighwayChannelCategoryIds">MediaHighway channel category identifiers array</paramref>; as an output, the consumed array size.</param>
+    /// <param name="openTvChannelCategoryIds">The identifiers of the OpenTV channel categories that the service is associated with. The caller must allocate this array.</param>
+    /// <param name="openTvChannelCategoryIdCount">As an input, the size of the <paramref name="openTvChannelCategoryIds">OpenTV channel category identifiers array</paramref>; as an output, the consumed array size.</param>
     /// <param name="virginMediaChannelCategoryId">The identifier of the Virgin Media channel category that the service is associated with, if any.</param>
     /// <param name="dishMarketId">The identifier of the Dish Network market (region) that the channel is intended for, if any.</param>
     /// <param name="norDigChannelListIds">The identifiers of the NorDig channel lists which the service is associated with. The caller must allocate this array.</param>
@@ -239,9 +243,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
                         ref byte openTvRegionIdCount,
                         [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 46)] ushort[] freesatChannelCategoryIds,
                         ref byte freesatChannelCategoryIdCount,
+                        [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 48)] ushort[] mediaHighwayChannelCategoryIds,
+                        ref byte mediaHighwayChannelCategoryIdCount,
+                        [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 50)] byte[] openTvChannelCategoryIds,
+                        ref byte openTvChannelCategoryIdCount,
                         out byte virginMediaChannelCategoryId,
                         out ushort dishMarketId,
-                        [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 50)] byte[] norDigChannelListIds,
+                        [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 54)] byte[] norDigChannelListIds,
                         ref byte norDigChannelListIdCount,
                         out ushort previousOriginalNetworkId,
                         out ushort previousTransportStreamId,
@@ -489,6 +497,19 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
                                                       Iso639Code language,
                                                       IntPtr name,
                                                       ref ushort nameBufferSize);
+
+    /// <summary>
+    /// Retrieve a MediaHighway channel category's name from the grabber.
+    /// </summary>
+    /// <param name="categoryId">The MediaHighway channel category's identifier.</param>
+    /// <param name="name">A buffer containing the MediaHighway channel category's name, encoded as DVB-compatible text. The caller must allocate and free this buffer.</param>
+    /// <param name="nameBufferSize">As an input, the size of the <paramref name="name">name buffer</paramref>; as an output, the consumed buffer size.</param>
+    /// <returns><c>true</c> if the MediaHighway channel category's name is successfully retrieved, otherwise <c>false</c></returns>
+    [PreserveSig]
+    [return: MarshalAs(UnmanagedType.I1)]
+    new bool GetMediaHighwayChannelCategoryName(ushort categoryId,
+                                                IntPtr name,
+                                                ref ushort nameBufferSize);
 
     /// <summary>
     /// Get the number of names received by the grabber for a given NorDig channel list.

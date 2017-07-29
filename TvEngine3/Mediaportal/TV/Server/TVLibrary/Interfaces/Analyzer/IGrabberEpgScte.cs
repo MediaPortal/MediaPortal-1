@@ -78,8 +78,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     /// <param name="index">The index of the event to retrieve. Should be in the range 0 to GetEventCount() - 1.</param>
     /// <param name="sourceId">The identifier of the source that the event is associated with.</param>
     /// <param name="eventId">The event's identifier. Only unique when combined with a <paramref name="sourceId">source identifier</paramref>.</param>
-    /// <param name="startDateTime">The event's start date/time, encoded as a UTC Unix epoch reference.</param>
-    /// <param name="duration">The event's duration in minutes.</param>
+    /// <param name="startDateTime">The event's start date/time, encoded as an epoch/Unix/POSIX time-stamp.</param>
+    /// <param name="duration">The event's duration in seconds.</param>
     /// <param name="textCount">The number of languages in which the event's text is available.</param>
     /// <param name="audioLanguages">The languages in which the event's audio will be available. The caller must allocate this array.</param>
     /// <param name="audioLanguageCount">As an input, the size of the <paramref name="audioLanguages">audio languages array</paramref>; as an output, the consumed array size.</param>
@@ -97,7 +97,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
                       out ushort sourceId,
                       out ushort eventId,
                       out ulong startDateTime,
-                      out ushort duration,
+                      out uint duration,
                       out byte textCount,
                       [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 7)] Iso639Code[] audioLanguages,
                       ref byte audioLanguageCount,

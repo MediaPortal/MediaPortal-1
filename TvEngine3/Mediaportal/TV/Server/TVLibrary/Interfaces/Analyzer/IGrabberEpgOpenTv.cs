@@ -68,9 +68,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     /// <summary>
     /// Get the number of OpenTV events received by the grabber.
     /// </summary>
-    /// <returns>the number of OpenTV events received by the grabber</returns>
+    /// <param name="eventCount">The number of OpenTV events received by the grabber.</param>
+    /// <param name="textLanguage">The language for all event text.</param>
     [PreserveSig]
-    uint GetEventCount();
+    void GetEventCount(out uint eventCount, out Iso639Code textLanguage);
 
     /// <summary>
     /// Retrieve an OpenTV event's details from the grabber.
@@ -78,7 +79,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     /// <param name="index">The index of the event to retrieve. Should be in the range 0 to GetEventCount() - 1.</param>
     /// <param name="channelId">The identifier of the channel that the event is associated with.</param>
     /// <param name="eventId">The event's identifier. Only unique when combined with a <paramref name="channelId">channel identifier</paramref>.</param>
-    /// <param name="startDateTime">The event's start date/time, encoded as a UTC Unix epoch reference.</param>
+    /// <param name="startDateTime">The event's start date/time, encoded as an epoch/Unix/POSIX time-stamp.</param>
     /// <param name="duration">The event's duration in minutes.</param>
     /// <param name="title">A buffer containing the event's title, encoded as DVB-compatible text. The caller must allocate and free this buffer.</param>
     /// <param name="titleBufferSize">As an input, the size of the <paramref name="title">title buffer</paramref>; as an output, the consumed buffer size.</param>

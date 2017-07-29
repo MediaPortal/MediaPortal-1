@@ -68,9 +68,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     /// <summary>
     /// Get the number of MediaHighway events received by the grabber.
     /// </summary>
-    /// <returns>the number of MediaHighway events received by the grabber</returns>
+    /// <param name="eventCount">The number of MediaHighway events received by the grabber.</param>
+    /// <param name="textLanguage">The language for all event text.</param>
     [PreserveSig]
-    uint GetEventCount();
+    void GetEventCount(out uint eventCount, out Iso639Code textLanguage);
 
     /// <summary>
     /// Retrieve a MediaHighway event's details from the grabber.
@@ -82,18 +83,25 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     /// <param name="serviceId">The service identifier of the service that the event is associated with.</param>
     /// <param name="serviceName">A buffer containing the name of the service that the event is associated with, encoded as DVB-compatible text. The caller must allocate and free this buffer.</param>
     /// <param name="serviceNameBufferSize">As an input, the size of the <paramref name="serviceName">service name buffer</paramref>; as an output, the consumed buffer size.</param>
-    /// <param name="startDateTime">The event's start date/time, encoded as a UTC Unix epoch reference.</param>
+    /// <param name="startDateTime">The event's start date/time, encoded as an epoch/Unix/POSIX time-stamp.</param>
     /// <param name="duration">The event's duration in minutes.</param>
     /// <param name="title">A buffer containing the event's title, encoded as DVB-compatible text. The caller must allocate and free this buffer.</param>
     /// <param name="titleBufferSize">As an input, the size of the <paramref name="title">title buffer</paramref>; as an output, the consumed buffer size.</param>
-    /// <param name="payPerViewId">The event's pay-per-view identifier, if any.</param>
     /// <param name="description">A buffer containing the event's description, encoded as DVB-compatible text. The caller must allocate and free this buffer.</param>
     /// <param name="descriptionBufferSize">As an input, the size of the <paramref name="description">description buffer</paramref>; as an output, the consumed buffer size.</param>
     /// <param name="descriptionLineCount">The number of additional description lines associated with the event.</param>
+    /// <param name="seriesId">The identifier that links this event to other events from the same series. Value is <c>0xffffffff</c> if not available.</param>
+    /// <param name="seasonNumber">The human-readable identifier for the series or season that the event is associated with. Value is <c>0</c> if not available.</param>
+    /// <param name="episodeId">The identifier of the episode or program that the event is associated with. Value is <c>0xffffffff</c> if not available.</param>
+    /// <param name="episodeNumber">The human-readable identifier for the episode or program that the event is associated with. Value is <c>0</c> if not available.</param>
+    /// <param name="episodeName">A buffer containing the name of the episode that the event is associated with, encoded as DVB-compatible text. The caller must allocate and free this buffer.</param>
+    /// <param name="episodeNameBufferSize">As an input, the size of the <paramref name="episodeName">episode name buffer</paramref>; as an output, the consumed buffer size.</param>
     /// <param name="themeName">A buffer containing the name of the theme that the event is associated with, encoded as DVB-compatible text. The caller must allocate and free this buffer.</param>
     /// <param name="themeNameBufferSize">As an input, the size of the <paramref name="themeName">theme name buffer</paramref>; as an output, the consumed buffer size.</param>
     /// <param name="subThemeName">A buffer containing the name of the sub-theme that the event is associated with, encoded as DVB-compatible text. The caller must allocate and free this buffer.</param>
     /// <param name="subThemeNameBufferSize">As an input, the size of the <paramref name="subThemeName">sub-theme name buffer</paramref>; as an output, the consumed buffer size.</param>
+    /// <param name="classification">The event's classification (parental rating). Value is <c>0xff</c> if not available.</param>
+    /// <param name="payPerViewId">The event's pay-per-view identifier, if any.</param>
     /// <returns><c>true</c> if the event's details are successfully retrieved, otherwise <c>false</c></returns>
     [PreserveSig]
     [return: MarshalAs(UnmanagedType.I1)]
@@ -108,14 +116,21 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
                   out ushort duration,
                   IntPtr title,
                   ref ushort titleBufferSize,
-                  out uint payPerViewId,
                   IntPtr description,
                   ref ushort descriptionBufferSize,
                   out byte descriptionLineCount,
+                  out uint seriesId,
+                  out byte seasonNumber,
+                  out uint episodeId,
+                  out ushort episodeNumber,
+                  IntPtr episodeName,
+                  ref ushort episodeNameBufferSize,
                   IntPtr themeName,
                   ref ushort themeNameBufferSize,
                   IntPtr subThemeName,
-                  ref ushort subThemeNameBufferSize);
+                  ref ushort subThemeNameBufferSize,
+                  out byte classification,
+                  out uint payPerViewId);
 
     /// <summary>
     /// Retrieve a description line for a MediaHighway event from the grabber.

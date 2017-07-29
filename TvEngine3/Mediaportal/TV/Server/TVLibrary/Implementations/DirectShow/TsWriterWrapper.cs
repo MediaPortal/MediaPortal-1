@@ -437,6 +437,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
                             ref byte openTvRegionIdCount,
                             ushort[] freesatChannelCategoryIds,
                             ref byte freesatChannelCategoryIdCount,
+                            ushort[] mediaHighwayChannelCategoryIds,
+                            ref byte mediaHighwayChannelCategoryIdCount,
+                            byte[] openTvChannelCategoryIds,
+                            ref byte openTvChannelCategoryIdCount,
                             out byte virginMediaChannelCategoryId,
                             out ushort dishMarketId,
                             byte[] norDigChannelListIds,
@@ -476,7 +480,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
       epgOriginalNetworkId = 0;
       epgTransportStreamId = 0;
       epgServiceId = 0;
-      object[] parameters = new object[57]
+      object[] parameters = new object[61]
       {
         index,
         tableId,
@@ -525,6 +529,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
         openTvRegionIdCount,
         freesatChannelCategoryIds,
         freesatChannelCategoryIdCount,
+        mediaHighwayChannelCategoryIds,
+        mediaHighwayChannelCategoryIdCount,
+        openTvChannelCategoryIds,
+        openTvChannelCategoryIdCount,
         virginMediaChannelCategoryId,
         dishMarketId,
         norDigChannelListIds,
@@ -570,15 +578,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
       freesatRegionIdCount = (byte)parameters[42];
       openTvRegionIdCount = (byte)parameters[44];
       freesatChannelCategoryIdCount = (byte)parameters[46];
-      virginMediaChannelCategoryId = (byte)parameters[47];
-      dishMarketId = (ushort)parameters[48];
-      norDigChannelListIdCount = (byte)parameters[50];
-      previousOriginalNetworkId = (ushort)parameters[51];
-      previousTransportStreamId = (ushort)parameters[52];
-      previousServiceId = (ushort)parameters[53];
-      epgOriginalNetworkId = (ushort)parameters[54];
-      epgTransportStreamId = (ushort)parameters[55];
-      epgServiceId = (ushort)parameters[56];
+      mediaHighwayChannelCategoryIdCount = (byte)parameters[48];
+      openTvChannelCategoryIdCount = (byte)parameters[50];
+      virginMediaChannelCategoryId = (byte)parameters[51];
+      dishMarketId = (ushort)parameters[52];
+      norDigChannelListIdCount = (byte)parameters[54];
+      previousOriginalNetworkId = (ushort)parameters[55];
+      previousTransportStreamId = (ushort)parameters[56];
+      previousServiceId = (ushort)parameters[57];
+      epgOriginalNetworkId = (ushort)parameters[58];
+      epgTransportStreamId = (ushort)parameters[59];
+      epgServiceId = (ushort)parameters[60];
       return result;
     }
 
@@ -782,6 +792,16 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
       object[] parameters = new object[4] { categoryId, language, name, nameBufferSize };
       bool result = (bool)_delegateGrabberSiDvb("GetFreesatChannelCategoryNameByLanguage", ref parameters);
       nameBufferSize = (ushort)parameters[3];
+      return result;
+    }
+
+    public bool GetMediaHighwayChannelCategoryName(ushort categoryId,
+                                                    IntPtr name,
+                                                    ref ushort nameBufferSize)
+    {
+      object[] parameters = new object[3] { categoryId, name, nameBufferSize };
+      bool result = (bool)_delegateGrabberSiDvb("GetMediaHighwayChannelCategoryName", ref parameters);
+      nameBufferSize = (ushort)parameters[2];
       return result;
     }
 

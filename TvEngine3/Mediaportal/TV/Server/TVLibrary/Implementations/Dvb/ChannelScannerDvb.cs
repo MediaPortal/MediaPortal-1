@@ -52,8 +52,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
   /// </summary>
   internal class ChannelScannerDvb : IChannelScannerInternal, ICallBackGrabber
   {
-    #region enums, constants and private classes
-
     [Flags]
     private enum TableType
     {
@@ -73,6 +71,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
       FreesatBat = 0x04000000
     }
 
+    #region constants
+
     private const int NAME_BUFFER_SIZE = 1000;
 
     private const byte COUNT_AUDIO_LANGUAGES = 15;
@@ -83,15 +83,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
     private const byte COUNT_FREESAT_REGION_IDS = 100;
     private const byte COUNT_FREQUENCIES = 50;
     private const ushort COUNT_LOGICAL_CHANNEL_NUMBERS = 500;
+    private const byte COUNT_MEDIAHIGHWAY_CHANNEL_CATEGORY_IDS = 50;
     private const byte COUNT_NETWORK_IDS = 15;
     private const byte COUNT_NORDIG_CHANNEL_LIST_IDS = 50;
+    private const byte COUNT_OPENTV_CHANNEL_CATEGORY_IDS = 50;
     private const byte COUNT_OPENTV_REGION_IDS = 100;
     private const byte COUNT_SUBTITLES_LANGUAGES = 15;
     private const byte COUNT_TARGET_REGION_IDS = 100;
     private const byte COUNT_UNAVAILABLE_IN_CELLS = 100;
     private const byte COUNT_UNAVAILABLE_IN_COUNTRIES = 15;
 
-    private static readonly IDictionary<ulong, string> VIRGIN_MEDIA_CHANNEL_CATEGORY_NAMES = new Dictionary<ulong, string>
+    private static readonly IDictionary<ulong, string> CHANNEL_CATEGORY_NAMES_VIRGIN_MEDIA = new Dictionary<ulong, string>
     {
       { 1, "Factual" },
       { 2, "Entertainment" },
@@ -110,6 +112,97 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
       //{ 15, string.Empty }      "Top Left 4KTV test", "Bot Left 4KTV test"
     };
 
+    private static readonly IDictionary<ulong, string> CHANNEL_CATEGORY_NAMES_OPENTV_FOXTEL = new Dictionary<ulong, string>
+    {
+      { 0x10, "HD" },
+      { 0x12, "Entertainment" },
+      { 0x13, "7/9/10/ABC/SBS" },
+      { 0x14, "Movies" },
+      { 0x16, "Sports" },
+      { 0x19, "News & Documentaries" },
+      { 0x1a, "Kids & Family" },
+      { 0x1c, "Music & Radio" },
+      { 0x1e, "Special Interest" }
+    };
+
+    private static readonly IDictionary<ulong, string> CHANNEL_CATEGORY_NAMES_OPENTV_SKY_IT = new Dictionary<ulong, string>
+    {
+      { 0x20, "Intrattenimento" },
+      { 0x30, "Intrattenimento" },
+      { 0x40, "Sport" },
+      { 0x47, "Sport" },
+      { 0x50, "Sport" },
+      { 0x57, "Sport" },
+      { 0x60, "Cinema" },
+      { 0x70, "Cinema" },
+      { 0x80, "Doc e Lifestyle" },
+      { 0x90, "Doc e Lifestyle" },
+      { 0xa0, "News" },
+      { 0xb0, "News" },
+      { 0xc3, "Bambini" },
+      { 0xc5, "Musica e Radio" },
+      { 0xd3, "Bambini" },
+      { 0xd5, "Musica e Radio" },
+      { 0xe0, "Altro" },
+      { 0xf0, "Altro" }
+    };
+
+    private static readonly IDictionary<ulong, string> CHANNEL_CATEGORY_NAMES_OPENTV_SKY_NZ = new Dictionary<ulong, string>
+    {
+      { 0x10, "Information" },
+      { 0x11, "Movies" },
+      { 0x12, "News & Current Affairs" },
+      { 0x13, "Entertainment" },
+      { 0x14, "Sports" },
+      { 0x15, "Kids" },
+      { 0x16, "Music & Radio" },
+      { 0x17, "Arts & Culture" },
+      { 0x19, "Factual" },
+      { 0x1a, "Leisure & Lifestyle" },
+      { 0x1b, "Special Interest" },
+      { 0x1f, "Adult" }
+    };
+
+    // Obviously there are patterns here. The second digit may be the only
+    // relevant digit.
+    private static readonly IDictionary<ulong, string> CHANNEL_CATEGORY_NAMES_OPENTV_SKY_UK = new Dictionary<ulong, string>
+    {
+      { 0x11, "Entertainment" },
+      { 0x13, "Adult" },
+      { 0x17, "Documentaries" },
+      { 0x1d, "International" },
+      { 0x30, "Shopping" },
+      { 0x31, "Entertainment" },
+      { 0x33, "Adult" },
+      { 0x35, "Gaming" },
+      { 0x39, "Music" },
+      { 0x3b, "Religion" },
+      { 0x3d, "International" },
+      { 0x3f, "Specialist" },
+      { 0x50, "Kids" },
+      { 0x55, "Gaming" },
+      { 0x59, "Music" },
+      { 0x70, "Entertainment" },
+      { 0x71, "Entertainment" },
+      { 0x73, "Adult" },
+      { 0x75, "Gaming" },
+      { 0x77, "Documentaries" },
+      { 0x79, "Music" },
+      { 0x7d, "International" },
+      { 0x90, "Radio" },
+      { 0x99, "Music" },
+      { 0xb0, "News" },
+      { 0xb7, "Documentaries" },
+      { 0xbb, "Religion" },
+      { 0xbd, "International" },
+      { 0xd0, "Movies" },
+      { 0xdd, "International" },
+      { 0xf0, "Sports" },
+      { 0xfd, "International" }
+    };
+
+    #endregion
+
     private class ProgramInfo
     {
       public MediaType? MediaType;
@@ -119,8 +212,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
       public bool IsEncryptionDetectionAccurate;
       public bool IsThreeDimensional;
     }
-
-    #endregion
 
     #region variables
 
@@ -956,6 +1047,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
       uint[] openTvRegionIds = new uint[openTvRegionIdCount];
       byte freesatChannelCategoryIdCount = COUNT_FREESAT_CHANNEL_CATEGORY_IDS;
       ushort[] freesatChannelCategoryIds = new ushort[freesatChannelCategoryIdCount];
+      byte mediaHighwayChannelCategoryIdCount = COUNT_MEDIAHIGHWAY_CHANNEL_CATEGORY_IDS;
+      ushort[] mediaHighwayChannelCategoryIds = new ushort[mediaHighwayChannelCategoryIdCount];
+      byte openTvChannelCategoryIdCount = COUNT_OPENTV_CHANNEL_CATEGORY_IDS;
+      byte[] openTvChannelCategoryIds = new byte[openTvChannelCategoryIdCount];
       byte virginMediaChannelCategoryId;
       ushort dishNetworkMarketId;
       byte norDigChannelListIdCount = COUNT_NORDIG_CHANNEL_LIST_IDS;
@@ -988,6 +1083,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
         freesatRegionIdCount = COUNT_FREESAT_REGION_IDS;
         openTvRegionIdCount = COUNT_OPENTV_REGION_IDS;
         freesatChannelCategoryIdCount = COUNT_FREESAT_CHANNEL_CATEGORY_IDS;
+        mediaHighwayChannelCategoryIdCount = COUNT_MEDIAHIGHWAY_CHANNEL_CATEGORY_IDS;
+        openTvChannelCategoryIdCount = COUNT_OPENTV_CHANNEL_CATEGORY_IDS;
         norDigChannelListIdCount = COUNT_NORDIG_CHANNEL_LIST_IDS;
         if (!grabber.GetService(i,
                                 out tableId, out originalNetworkId, out transportStreamId, out serviceId, out referenceServiceId,
@@ -1007,6 +1104,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
                                 freesatRegionIds, ref freesatRegionIdCount,
                                 openTvRegionIds, ref openTvRegionIdCount,
                                 freesatChannelCategoryIds, ref freesatChannelCategoryIdCount,
+                                mediaHighwayChannelCategoryIds, ref mediaHighwayChannelCategoryIdCount,
+                                openTvChannelCategoryIds, ref openTvChannelCategoryIdCount,
                                 out virginMediaChannelCategoryId,
                                 out dishNetworkMarketId,
                                 norDigChannelListIds, ref norDigChannelListIdCount,
@@ -1114,28 +1213,21 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
         {
           groups.Add(ChannelGroupType.FreesatChannelCategory, BuildGroup(grabber, groupNames, ChannelGroupType.FreesatChannelCategory, freesatChannelCategoryIds, freesatChannelCategoryIdCount));
         }
+        if (mediaHighwayChannelCategoryIdCount > 0)
+        {
+          groups.Add(ChannelGroupType.MediaHighwayChannelCategory, BuildGroup(grabber, groupNames, ChannelGroupType.MediaHighwayChannelCategory, mediaHighwayChannelCategoryIds, mediaHighwayChannelCategoryIdCount));
+        }
         if (norDigChannelListIdCount > 0)
         {
           groups.Add(ChannelGroupType.NorDigChannelList, BuildGroup(grabber, groupNames, ChannelGroupType.NorDigChannelList, norDigChannelListIds, norDigChannelListIdCount));
         }
-
+        if (openTvChannelCategoryIdCount > 0)
+        {
+          groups.Add(ChannelGroupType.OpenTvChannelCategory, BuildGroup(grabber, groupNames, ChannelGroupType.OpenTvChannelCategory, openTvChannelCategoryIds, openTvChannelCategoryIdCount));
+        }
         if (virginMediaChannelCategoryId > 0)
         {
-          groups.Add(ChannelGroupType.VirginMediaChannelCategory, new List<ulong> { virginMediaChannelCategoryId });
-
-          string vmCategoryName;
-          if (VIRGIN_MEDIA_CHANNEL_CATEGORY_NAMES.TryGetValue(virginMediaChannelCategoryId, out vmCategoryName))
-          {
-            this.LogDebug("    Virgin Media channel category = {0} [{1}]", vmCategoryName, virginMediaChannelCategoryId);
-          }
-          else
-          {
-            this.LogDebug("    Virgin Media channel category = {0}", virginMediaChannelCategoryId);
-          }
-          if (!groupNames.ContainsKey(ChannelGroupType.VirginMediaChannelCategory))
-          {
-            groupNames.Add(ChannelGroupType.VirginMediaChannelCategory, VIRGIN_MEDIA_CHANNEL_CATEGORY_NAMES);
-          }
+          groups.Add(ChannelGroupType.VirginMediaChannelCategory, BuildGroup(grabber, groupNames, ChannelGroupType.VirginMediaChannelCategory, new byte[1] { virginMediaChannelCategoryId }, 1));
         }
 
         if (dishNetworkMarketId > 0)
@@ -1143,7 +1235,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
           groups.Add(ChannelGroupType.DishNetworkMarket, new List<ulong> { dishNetworkMarketId });
 
           DishNetworkMarket market = DishNetworkMarket.GetValue(dishNetworkMarketId, _dishNetworkStateAbbreviation);
-          if (market != null)
+          if (market == null)
+          {
+            this.LogDebug("    Dish Network market = {0}", dishNetworkMarketId);
+          }
+          else
           {
             this.LogDebug("    Dish Network market = {0} [{1}]", market, dishNetworkMarketId);
 
@@ -1154,10 +1250,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
               groupNames.Add(ChannelGroupType.DishNetworkMarket, dishNetworkMarketGroupNames);
             }
             dishNetworkMarketGroupNames[(ulong)market.Id] = market.ToString();
-          }
-          else
-          {
-            this.LogDebug("    Dish Network market = {0}", dishNetworkMarketId);
           }
         }
 
@@ -1532,6 +1624,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
                 nameString = DvbTextConverter.Convert(nameBuffer, nameBufferSize);
               }*/
             }
+            else if (groupType == ChannelGroupType.MediaHighwayChannelCategory)
+            {
+              logFormat = "    MHW channel category count     = {0}, categories = [{1}]";
+              if (grabber.GetMediaHighwayChannelCategoryName((ushort)groupId, nameBuffer, ref nameBufferSize))
+              {
+                nameString = DvbTextConverter.Convert(nameBuffer, nameBufferSize);
+              }
+            }
             else if (groupType == ChannelGroupType.NorDigChannelList)
             {
               logFormat = "    NorDig channel list count      = {0}, lists      = [{1}]";
@@ -1564,6 +1664,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
                 nameString = ((RegionOpenTvSkyUk)regionId).ToString();
               }
             }
+            else if (groupType == ChannelGroupType.VirginMediaChannelCategory)
+            {
+              logFormat = "    VM channel category count      = {0}, categories = [{1}]";
+              CHANNEL_CATEGORY_NAMES_VIRGIN_MEDIA.TryGetValue(groupId, out nameString);
+            }
 
             if (!string.IsNullOrWhiteSpace(nameString))
             {
@@ -1592,7 +1697,52 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
         Marshal.FreeCoTaskMem(nameBuffer);
       }
 
-      Log.Debug(logFormat, groupCount, string.Join(", ", logNames));
+      // Special handling for OpenTV channel categories. Each channel is
+      // associated with one category, and that category is identified by
+      // combining the IDs.
+      if (groupType != ChannelGroupType.OpenTvChannelCategory)
+      {
+        Log.Debug(logFormat, groupCount, string.Join(", ", logNames));
+      }
+      else
+      {
+        byte categoryId = (byte)(Convert.ToByte(groupIds.GetValue(0)) << 4);
+        if (groupCount > 1)
+        {
+          categoryId |= Convert.ToByte(groupIds.GetValue(1));
+        }
+        groupIdList.Clear();
+        groupIdList.Add(categoryId);
+        string categoryName;
+        bool gotName;
+        if (string.Equals(countryName, "Australia"))
+        {
+          gotName = CHANNEL_CATEGORY_NAMES_OPENTV_FOXTEL.TryGetValue(categoryId, out categoryName);
+        }
+        else if (string.Equals(countryName, "Italy"))
+        {
+          gotName = CHANNEL_CATEGORY_NAMES_OPENTV_SKY_IT.TryGetValue(categoryId, out categoryName);
+        }
+        else if (string.Equals(countryName, "New Zealand"))
+        {
+          gotName = CHANNEL_CATEGORY_NAMES_OPENTV_SKY_NZ.TryGetValue(categoryId, out categoryName);
+        }
+        else
+        {
+          // assume Sky UK
+          gotName = CHANNEL_CATEGORY_NAMES_OPENTV_SKY_UK.TryGetValue(categoryId, out categoryName);
+        }
+        if (!gotName)
+        {
+          Log.Debug("    OpenTV channel category count  = {0}, categories = [{1}]", groupCount, string.Join(", ", logNames));
+        }
+        else
+        {
+          Log.Debug("    OpenTV channel category count  = {0}, categories = [{1}] => {2}", groupCount, string.Join(", ", logNames), categoryName);
+          names[categoryId] = categoryName;
+        }
+      }
+
       return groupIdList;
     }
 

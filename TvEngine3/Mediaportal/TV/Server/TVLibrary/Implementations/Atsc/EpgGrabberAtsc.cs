@@ -293,7 +293,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
         ushort sourceId;
         ushort eventId;
         ulong startDateTimeEpoch;
-        ushort duration;
+        uint duration;
         byte textCount;
         Iso639Code[] audioLanguages = new Iso639Code[ARRAY_SIZE_AUDIO_LANGUAGES];
         Iso639Code[] captionsLanguages = new Iso639Code[ARRAY_SIZE_CAPTIONS_LANGUAGES];
@@ -331,7 +331,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
           DateTime programStartTime = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
           programStartTime.AddSeconds(startDateTimeEpoch);
           programStartTime = programStartTime.ToLocalTime();
-          EpgProgram program = new EpgProgram(programStartTime, programStartTime.AddMinutes(duration));
+          EpgProgram program = new EpgProgram(programStartTime, programStartTime.AddSeconds(duration));
 
           bool isPlaceholderOrDummyEvent = false;
           for (byte j = 0; j < textCount; j++)

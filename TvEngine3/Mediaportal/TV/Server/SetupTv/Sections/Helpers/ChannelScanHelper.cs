@@ -37,7 +37,6 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVService.Interfaces.Enums;
-using Mediaportal.TV.Server.TVService.Interfaces.Services;
 using MediaPortal.Common.Utils.ExtensionMethods;
 using DbTuningDetail = Mediaportal.TV.Server.TVDatabase.Entities.TuningDetail;
 using FileTuningDetail = Mediaportal.TV.Server.SetupTV.Sections.Helpers.TuningDetail;
@@ -146,13 +145,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
         MessageBox.Show("Tuner not found. Please ensure the tuner is connected, enabled, available and accessible.", SectionSettings.MESSAGE_CAPTION);
         return false;
       }
-      IUser user;
-      if (ServiceAgents.Instance.ControllerServiceAgent.IsCardInUse(_tunerId, out user))
-      {
-        this.LogInfo("channel scan: tuner {0} in use", _tunerId);
-        MessageBox.Show("Tuner is being used. Scanning is not possible right now.", SectionSettings.MESSAGE_CAPTION);
-        return false;
-      }
 
       this.LogInfo("channel scan: tuner {0} start scan, type = {1}", _tunerId, scanType);
       _signalStatusUpdateTimer.Start();
@@ -196,7 +188,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
       try
       {
         TvResult result = ServiceAgents.Instance.ControllerServiceAgent.Scan(string.Format("{0} - TV Server Configuration tuner {1} scanner", System.Net.Dns.GetHostName(), _tunerId), _tunerId, tuningDetails[0].GetTuningChannel());
-        if (result == TvResult.SWEncoderMissing)
+        if (result == TvResult.TunerLoadFailedSoftwareEncoderRequired)
         {
           this.LogError("channel scan: failed to scan, missing software encoder(s)");
           _listViewProgress.Invoke((MethodInvoker)delegate
@@ -205,7 +197,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
           });
           return;
         }
-        if (result == TvResult.GraphBuildingFailed)
+        if (result == TvResult.TunerLoadFailed)
         {
           this.LogError("channel scan: failed to scan, tuner loading failed");
           _listViewProgress.Invoke((MethodInvoker)delegate
@@ -618,7 +610,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
       {
         IChannel tuneChannel = tuningDetail.GetTuningChannel();
         TvResult result = ServiceAgents.Instance.ControllerServiceAgent.Scan(string.Format("{0} - TV Server Configuration tuner {1} NIT scanner", System.Net.Dns.GetHostName(), _tunerId), _tunerId, tuneChannel);
-        if (result == TvResult.GraphBuildingFailed)
+        if (result == TvResult.TunerLoadFailed)
         {
           this.LogError("channel scan: failed to scan, tuner loading failed");
           _listViewProgress.Invoke((MethodInvoker)delegate
@@ -796,7 +788,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
             foreach (string configuredGroupIdString in groupType.Value)
             {
               ulong configuredGroupId;
-              if (ulong.TryParse(configuredGroupIdString, out configuredGroupId) && !groupIds.Contains(groupId))
+              if (ulong.TryParse(configuredGroupIdString, out configuredGroupId) && !groupIds.Contains(configuredGroupId))
               {
                 actualGroupIds.Add(configuredGroupId);
               }
@@ -872,7 +864,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
     private Dictionary<ChannelGroupType, string[]> ReadAutomaticChannelGroupConfig()
     {
       Dictionary<ChannelGroupType, string[]> channelGroupConfiguration = new Dictionary<ChannelGroupType, string[]>(30);
-      ChannelGroupType channelGroupTypes = ChannelGroupType.FreesatChannelCategory | ChannelGroupType.NorDigChannelList | ChannelGroupType.VirginMediaChannelCategory;
+      ChannelGroupType channelGroupTypes = ChannelGroupType.FreesatChannelCategory | ChannelGroupType.MediaHighwayChannelCategory | ChannelGroupType.NorDigChannelList | ChannelGroupType.OpenTvChannelCategory | ChannelGroupType.VirginMediaChannelCategory;
       channelGroupTypes = (ChannelGroupType)ServiceAgents.Instance.SettingServiceAgent.GetValue("scanAutoCreateChannelGroups", (int)channelGroupTypes);
 
       if (channelGroupTypes.HasFlag(ChannelGroupType.ChannelProvider))
