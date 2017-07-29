@@ -34,14 +34,16 @@ namespace Mediaportal.TV.Server.Common.Types.Enum
     DvbTargetRegion = 0x0008,
     BroadcastStandard = 0x0010,
     Satellite = 0x0020,
-    FreesatChannelCategory = 0x0040,      // UK satellite
-    NorDigChannelList = 0x0080,
-    VirginMediaChannelCategory = 0x0100,  // UK cable
+    FreesatChannelCategory = 0x0040,        // UK satellite
+    MediaHighwayChannelCategory = 0x0080,   // Spain satellite
+    NorDigChannelList = 0x0100,
+    OpenTvChannelCategory = 0x0200,         // Foxtel, Sky IT, Sky NZ, Sky UK
+    VirginMediaChannelCategory = 0x0400,    // UK cable
 
     // automatic, provider-specific
-    OpenTvRegion = 0x10000,               // Foxtel, Sky NZ, Sky UK
-    FreesatRegion = 0x20000,              // UK satellite
-    DishNetworkMarket = 0x40000,          // US satellite
-    FreeviewSatellite = 0x80000           // NZ satellite
+    OpenTvRegion = 0x10000,                 // Foxtel, Sky NZ, Sky UK
+    FreesatRegion = 0x20000,                // UK satellite
+    DishNetworkMarket = 0x40000,            // US satellite
+    FreeviewSatellite = 0x80000             // NZ satellite
   }
 }
