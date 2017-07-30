@@ -2092,7 +2092,7 @@ namespace MediaPortal.GUI.Video
         {
           // todo: translation for all string
           dialog.Reset();
-          dialog.SetHeading("Select bluray player type");
+          dialog.SetHeading("Select blu-ray player mode");
 
           // Add play with internal BDReader menu
           //dialog.AddLocalizedString(222);
