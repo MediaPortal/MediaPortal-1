@@ -2096,12 +2096,12 @@ namespace MediaPortal.GUI.Video
 
           // Add play with internal BDReader menu
           //dialog.AddLocalizedString(222);
-          GUIListItem itemBlurayMenu = new GUIListItem("Play bluray with menu");
+          GUIListItem itemBlurayMenu = new GUIListItem("Play blu-ray with menu");
           dialog.Add(itemBlurayMenu);
 
           // Add play with normal MP player (LAV)
           //dialog.AddLocalizedString(222);
-          GUIListItem itemLav = new GUIListItem("Play bluray with no menu");
+          GUIListItem itemLav = new GUIListItem("Play blu-ray without menu");
           dialog.Add(itemLav);
 
           dialog.DoModal(GUIWindowManager.ActiveWindow);
