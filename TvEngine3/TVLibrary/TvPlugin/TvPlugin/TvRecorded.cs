@@ -687,9 +687,6 @@ namespace TvPlugin
         // load the active recordings once to mark them later in GUI lists and groups
         List<Recording> activerecordings = Recording.ListAllActive().ToList();
 
-
-        // add parent item
-
         var actualLabel = _currentLabel == GUILocalizeStrings.Get(2014) ? string.Empty : _currentLabel;
 
         foreach (var rec in recordings)
