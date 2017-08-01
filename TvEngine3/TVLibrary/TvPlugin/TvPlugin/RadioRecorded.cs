@@ -412,7 +412,7 @@ namespace TvPlugin
 
       if (pItem.IsFolder)
       {
-        dlg.AddLocalizedString(656); //Delete recorded tv
+        dlg.AddLocalizedString(618); //Delete recorded tv
       }
       else
       {
