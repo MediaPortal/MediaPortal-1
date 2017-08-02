@@ -544,8 +544,6 @@ namespace Mediaportal.TV.TvPlugin.EPG
             Update(true); //remove RED marker
             break;
 
-          case 637: // edit recording
-
           case 2162: // Remove channel
             OnRemoveChannel();
 
@@ -561,6 +559,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
 
             break;
 
+          case 637: // edit recording
           case 264: // record
             if (_currentProgram != null && _currentProgram.Entity.IdProgram == 0)
             {
