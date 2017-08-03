@@ -1179,6 +1179,26 @@ namespace TvPlugin
 
         foreach (Recording rec in recItems)
         {
+          if (g_Player.Playing)
+          {
+            FileInfo fInfo = new FileInfo(g_Player.currentFileName);
+            if (rec.FileName.IndexOf(fInfo.Name) > -1)
+            {
+              g_Player.Stop();
+            }
+          }
+
+          bool isRec = IsRecordingActual(rec);
+
+          if (isRec)
+          {
+            TvDatabase.Schedule sched = rec.ReferencedSchedule();
+            if (!TVUtil.DeleteRecAndSchedWithPrompt(sched, rec.IdChannel))
+            {
+              continue;
+            }
+          }
+
           DeleteRecordingAndUpdateGUI(rec);
         }
       }
@@ -1193,7 +1213,7 @@ namespace TvPlugin
         }
 
         bool isRecPlaying = false;
-        if (g_Player.currentFileName.Length > 0 && g_Player.IsTVRecording && g_Player.Playing)
+        if (g_Player.currentFileName.Length > 0 && (g_Player.IsTVRecording || g_Player.Playing))
         {
           FileInfo fInfo = new FileInfo(g_Player.currentFileName);
           isRecPlaying = (rec.FileName.IndexOf(fInfo.Name) > -1);
@@ -1201,7 +1221,7 @@ namespace TvPlugin
 
         dlgYesNo.SetDefaultToYes(false);
         bool isRec = IsRecordingActual(rec);
-        TvServer server = new TvServer();
+
         bool remove = false;
         if (isRec)
         {
