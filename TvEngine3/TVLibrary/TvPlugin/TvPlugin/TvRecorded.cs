@@ -1277,10 +1277,12 @@ namespace TvPlugin
           return;
         }
 
+        String savedCurrentLabel = _currentLabel;
         _currentLabel = pItem.Label;
         List<Recording> recItems = ListFolder();
+        _currentLabel = savedCurrentLabel;
 
-        foreach(Recording rec in recItems)
+        foreach (Recording rec in recItems)
         {
           if (g_Player.Playing)
           {

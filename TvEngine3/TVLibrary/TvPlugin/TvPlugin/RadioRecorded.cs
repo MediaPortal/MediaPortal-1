@@ -1174,8 +1174,10 @@ namespace TvPlugin
           return;
         }
 
+        String savedCurrentLabel = _currentLabel;
         _currentLabel = pItem.Label;
         List<Recording> recItems = ListFolder();
+        _currentLabel = savedCurrentLabel;
 
         foreach (Recording rec in recItems)
         {
@@ -1271,19 +1273,33 @@ namespace TvPlugin
 
       TryDeleteRecordingAndNotifyUser(rec);
 
+      UpdateGUI();
+
+      _resetSMSsearchDelay = DateTime.Now;
+      _resetSMSsearch = true;
+    }
+
+    private void UpdateGUI()
+    {
       CacheManager.Clear();
 
       LoadDirectory();
+
       while (_iSelectedItem >= GetItemCount() && _iSelectedItem > 0)
       {
         _iSelectedItem--;
       }
       GUIControl.SelectItemControl(GetID, facadeLayout.GetID, _iSelectedItem);
 
-      _resetSMSsearchDelay = DateTime.Now;
-      _resetSMSsearch = true;
-    }
+      if (facadeLayout != null && facadeLayout.SelectedListItem != null && facadeLayout.SelectedListItem.Label == "..")
+      {
+        _currentLabel = string.Empty;
+        LoadDirectory();
+        GUIControl.SelectItemControl(GetID, facadeLayout.GetID, _rootItem);
+        _rootItem = 0;
+      }
 
+    }
 
     private void TryDeleteRecordingAndNotifyUser(Recording rec)
     {
