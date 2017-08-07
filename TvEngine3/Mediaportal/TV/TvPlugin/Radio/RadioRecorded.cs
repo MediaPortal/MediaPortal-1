@@ -1097,11 +1097,33 @@ namespace Mediaportal.TV.TvPlugin.Radio
           return;
         }
 
+        String savedCurrentLabel = _currentLabel;
         _currentLabel = pItem.Label;
         List<Recording> recItems = ListFolder();
+        _currentLabel = savedCurrentLabel;
 
         foreach (Recording rec in recItems)
         {
+          if (g_Player.Playing)
+          {
+            FileInfo fInfo = new FileInfo(g_Player.currentFileName);
+            if (rec.FileName.IndexOf(fInfo.Name) > -1)
+            {
+              g_Player.Stop();
+            }
+          }
+
+          bool isRec = IsRecordingActual(rec);
+
+          if (isRec)
+          {
+            Schedule sched = rec.Schedule;
+            if (!TVUtil.DeleteRecAndSchedWithPrompt(sched))
+            {
+              continue;
+            }
+          }
+
           DeleteRecordingAndUpdateGUI(rec);
         }
       }
