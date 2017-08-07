@@ -12,7 +12,8 @@
   </trustInfo>
   <asmv3:application>
     <asmv3:windowsSettings xmlns="http://schemas.microsoft.com/SMI/2005/WindowsSettings">
-      <dpiAware>true</dpiAware>
+     <dpiAware xmlns="http://schemas.microsoft.com/SMI/2005/WindowsSettings">True/PM</dpiAware> <!-- fall back for Windows 7 and 8 -->
+     <dpiAwareness xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings">permonitorv2,permonitor</dpiAwareness> <!-- falls back to per-monitor if per-monitorv2 is not available -->
     </asmv3:windowsSettings>
   </asmv3:application>
   <compatibility xmlns="urn:schemas-microsoft-com:compatibility.v1">
