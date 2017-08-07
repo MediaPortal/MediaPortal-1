@@ -1562,8 +1562,11 @@ namespace MediaPortal
         {
           try
           {
-            capabilities = Manager.GetDeviceCaps(AdapterInfo.AdapterOrdinal, DeviceType.Hardware);
-            successful = true;
+            if (AdapterInfo != null)
+            {
+              capabilities = Manager.GetDeviceCaps(AdapterInfo.AdapterOrdinal, DeviceType.Hardware);
+              successful = true;
+            }
           }
           catch (Exception)
           {
