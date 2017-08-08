@@ -121,6 +121,6 @@ void CGolombBuffer::SkipBytes(int nCount)
 
 HRESULT CGolombBuffer::ByteRead(BYTE* pData, __int64 len)
 {
-	ReadBuffer(pData,len);
+	ReadBuffer(pData,(int)len);
 	return 0;
 }

@@ -60,7 +60,7 @@ public:
 	__int64 GetRemaining() {return max(0, GetSize() - GetPos());}
 	void Seek(__int64 pos) 
 	{
-		m_nBitPos=pos;
+		m_nBitPos=(int)pos;
 	}
 	HRESULT ByteRead(BYTE* pData, __int64 len);
 
