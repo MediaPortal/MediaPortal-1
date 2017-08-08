@@ -124,6 +124,7 @@ namespace MediaPortal.GUI.Music
     private static readonly Random Randomizer = new Random();
     private bool _lookupSimilarTracks;
     private bool _isStopped = false;
+    private byte _spectrumcount = 16;
 
     #endregion
 
@@ -508,6 +509,11 @@ namespace MediaPortal.GUI.Music
       // Start the VUMeter Update Timer, when it is enabled in skin file
       GUIPropertyManager.SetProperty("#VUMeterL", @"VU1.png");
       GUIPropertyManager.SetProperty("#VUMeterR", @"VU1.png");
+      for (int i = 1; i <= _spectrumcount; i++)
+      {
+        GUIPropertyManager.SetProperty("#VUSpectrum" + i, @"VU1.png");
+      }
+
       if (VUMeterTimer == null && _usingBassEngine &&
           _vuMeter.ToLowerInvariant() != "none")
       {
@@ -786,7 +792,8 @@ namespace MediaPortal.GUI.Music
         {
           file = "VU15.png";
         }
-        GUIPropertyManager.SetProperty("#VUMeterL", Path.Combine(VUMeterLeft.ImagePath, file));
+        // GUIPropertyManager.SetProperty("#VUMeterL", Path.Combine(VUMeterLeft.ImagePath, file));
+        GUIPropertyManager.SetProperty("#VUMeterL", file);
 
         if ((int) dbLevelR < -15)
         {
@@ -848,7 +855,32 @@ namespace MediaPortal.GUI.Music
         {
           file = "VU15.png";
         }
-        GUIPropertyManager.SetProperty("#VUMeterR", Path.Combine(VUMeterRight.ImagePath, file));
+        // GUIPropertyManager.SetProperty("#VUMeterR", Path.Combine(VUMeterRight.ImagePath, file));
+        GUIPropertyManager.SetProperty("#VUMeterR", file);
+
+        #region Spectrum analyzer
+
+        List<int> _spectrum = new List<int>();
+        bool _spectrumpresent = false;
+        _spectrumpresent = BassMusicPlayer.Player.GetSpectrum(_spectrum, _spectrumcount, 1, 15);
+        _spectrumpresent = _spectrumpresent && (_spectrum != null && _spectrum.Count > 0 && _spectrum.Count == _spectrumcount);
+        if (_spectrumpresent)
+        {
+          for (int i = 1; i <= _spectrumcount; i++)
+          {
+            GUIPropertyManager.SetProperty("#VUSpectrum" + i, @"VU" + _spectrum[i-1] + ".png");
+          }
+        }
+        else
+        {
+          _spectrum.Clear();
+          for (int i = 1; i <= _spectrumcount; i++)
+          {
+            GUIPropertyManager.SetProperty("#VUSpectrum" + i, @"VU1.png");
+          }
+        }
+
+        #endregion
       }
     }
 
