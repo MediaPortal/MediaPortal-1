@@ -541,14 +541,17 @@ namespace MediaPortal.GUI.Library
           if (pWindow.GetFocusControlId() < 0)
           {
             FocusState focusState = FocusState.NOT_FOCUSED;
-            Delegate[] delegates = OnPostRenderAction.GetInvocationList();
-            for (int i = 0; i < delegates.Length; ++i)
+            if (OnPostRenderAction != null)
             {
-              int iActiveWindow = ActiveWindow;
-              focusState = (FocusState)delegates[i].DynamicInvoke(new object[] {action, null, true});
-              if (focusState == FocusState.FOCUSED || iActiveWindow != ActiveWindow)
+              Delegate[] delegates = OnPostRenderAction.GetInvocationList();
+              for (int i = 0; i < delegates.Length; ++i)
               {
-                break;
+                int iActiveWindow = ActiveWindow;
+                focusState = (FocusState)delegates[i].DynamicInvoke(new object[] {action, null, true});
+                if (focusState == FocusState.FOCUSED || iActiveWindow != ActiveWindow)
+                {
+                  break;
+                }
               }
             }
             if (focusState != FocusState.FOCUSED)

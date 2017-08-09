@@ -237,6 +237,7 @@ namespace MediaPortal.GUI.Library
     private static bool _loadSkinResult = false;
     protected internal static bool _loadSkinDone = false;
     private static bool isSkinXMLLoading = false;
+    private static int FocusID { get; set; }
 
     //-1=default from topbar.xml 
     // 0=flase from skin.xml
@@ -1478,6 +1479,8 @@ namespace MediaPortal.GUI.Library
           if (iFocusedControlId >= 0)
           {
             _previousFocusedControlId = iFocusedControlId;
+            // Store new ID for the rendering optimisation
+            FocusID = iFocusedControlId;
             return iFocusedControlId;
           }
         }
@@ -1488,12 +1491,23 @@ namespace MediaPortal.GUI.Library
             var guicontrol = child;
             if (guicontrol.Focus)
             {
+              // Store new ID for the rendering optimisation
+              FocusID = guicontrol.GetID;
               return guicontrol.GetID;
             }
           }
         }
       }
       return -1;
+    }
+
+    /// <summary>
+    /// returns the ID of the control which has the focus on rendering
+    /// </summary>
+    /// <returns>id of control or -1 if no control has the focus</returns>
+    public virtual int GetFocusControlIdRender()
+    {
+      return FocusID;
     }
 
     /// <summary>
