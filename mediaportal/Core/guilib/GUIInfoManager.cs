@@ -2684,7 +2684,7 @@ namespace MediaPortal.GUI.Library
           GUIWindow fWindow = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
           if (fWindow != null)
           {
-            bReturn = (fWindow.GetFocusControlId() == info.m_data1);
+            bReturn = (fWindow.GetFocusControlIdRender() == info.m_data1);
           }
           break;
         case BUTTON_SCROLLER_HAS_ICON:
