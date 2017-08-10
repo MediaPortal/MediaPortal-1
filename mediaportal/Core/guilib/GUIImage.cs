@@ -352,6 +352,10 @@ namespace MediaPortal.GUI.Library
       {
         _containsProperty = true;
       }
+      if (!string.IsNullOrEmpty(_imagePath))
+      {
+        _textureFileNameTag = Path.Combine(_imagePath, _textureFileNameTag);
+      }
 
       // Choose one of the blendable files to use.  Specifying more than one of the optional filenames results in unpredictable behavior.
       if (_diffuseFileName.Length > 0)
@@ -2513,6 +2517,10 @@ namespace MediaPortal.GUI.Library
       if (fileName == null)
       {
         return;
+      }
+      if (!string.IsNullOrEmpty(_imagePath))
+      {
+        fileName = Path.Combine(_imagePath, fileName);
       }
       if (_textureFileNameTag == fileName)
       {
