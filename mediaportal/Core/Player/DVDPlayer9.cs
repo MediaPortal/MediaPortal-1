@@ -332,6 +332,7 @@ namespace MediaPortal.Player
     {
       if (_graphBuilder == null)
       {
+        _state = PlayState.Init;
         return;
       }
       int hr;
@@ -453,8 +454,6 @@ namespace MediaPortal.Player
           VMR9Util.g_vmr9.SafeDispose();
           VMR9Util.g_vmr9 = null;
         }
-
-        _state = PlayState.Init;
       }
       catch (Exception ex)
       {
