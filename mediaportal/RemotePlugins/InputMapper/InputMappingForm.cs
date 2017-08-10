@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2017 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2017 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -52,12 +52,12 @@ namespace MediaPortal.InputDevices
     private string[] nativePlayerList = new string[] {"TV", "DVD", "MEDIA", "MUSIC"};
     private string[] playerList = new string[] {"TV is running", "DVD is playing", "Media is playing", "Music is playing"};
 
-    private string[] nativePowerList = new string[] {"EXIT", "REBOOT", "SHUTDOWN", "STANDBY", "HIBERNATE"};
+    private string[] nativePowerList = new string[] {"EXIT", "REBOOT", "SHUTDOWN", "STANDBY", "HIBERNATE", "POWEROFF"};
 
     private string[] powerList = new string[]
                                    {
                                      "Exit MediaPortal", "Reboot Windows", "Shutdown Windows", "Standby Windows",
-                                     "Hibernate Windows"
+                                     "Hibernate Windows", "Power Off"
                                    };
 
     private string[] nativeProcessList = new string[] {"CLOSE", "KILL"};

@@ -1,4 +1,3 @@
-#define _WINSOCK_DEPRECATED_NO_WARNINGS
 #include "StdAfx.h"
 #include <winsock2.h>
 #include <ws2tcpip.h>
@@ -137,7 +136,7 @@ void StreamGetClientDetail(unsigned short index, char** ipAddress, char** stream
   }
   *streamId = &szStreamId[0];
   *isActive = client->IsPaused() ? 0 : 1;
-  *connectionTickCount = (long)client->StartDateTime();
+  *connectionTickCount = client->StartDateTime();
 }
 
 //**************************************************************************************
@@ -158,7 +157,7 @@ int StreamSetupEx(char* ipAdress, int port)
 	swprintf(fileName, MAX_PATH, L"%s\\Team MediaPortal\\MediaPortal TV Server\\log\\streaming server.Log", folder);
 	::DeleteFileW(fileName);
 
-	LogDebug("-------------- v1.1.8 (random access duration for recordings) ---------------");
+	LogDebug("-------------- v1.1.5 ---------------");
   StreamShutdown();
 	if (port == DEFAULT_RTSP_PORT) {
 		LogDebug("Stream server:Setup stream server for ip: %s", ipAdress);

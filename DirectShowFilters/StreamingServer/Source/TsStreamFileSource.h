@@ -51,8 +51,8 @@ public:
 	u_int64_t fileSize() const { return fFileSize; }
 	// 0 means zero-length, unbounded, or unknown
 
-//	void seekToByteAbsolute(u_int64_t byteNumber);
-//	void seekToByteRelative(int64_t offset);
+	void seekToByteAbsolute(u_int64_t byteNumber);
+	void seekToByteRelative(int64_t offset);
 	void seekToTimeAbsolute(CRefTime& seekTime, CTsDuration& duration); 
 
 protected:
