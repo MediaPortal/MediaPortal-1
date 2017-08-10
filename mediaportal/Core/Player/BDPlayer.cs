@@ -1581,6 +1581,11 @@ namespace MediaPortal.Player
       MovieEnded();
     }
 
+    public override void StopMadVr()
+    {
+      Stop();
+    }
+
     public override int Volume
     {
       get { return _volume; }

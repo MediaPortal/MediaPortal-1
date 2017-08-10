@@ -1333,6 +1333,11 @@ namespace MediaPortal.Player
       Stop(false);
     }
 
+    public override void StopMadVr()
+    {
+      Stop();
+    }
+
     public override void Stop(bool keepExclsuiveModeOn)
     {
       // set the current audio stream to the first one

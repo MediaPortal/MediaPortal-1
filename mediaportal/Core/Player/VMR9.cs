@@ -1762,6 +1762,12 @@ namespace MediaPortal.Player
           DirectShowUtil.TryRelease(ref _vmr9Filter);
           _vmr9Filter = null;
         }
+
+        if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+        {
+          Action action = new Action(Action.ActionType.ACTION_STOP, 0f, 0f);
+          GUIGraphicsContext.OnAction(action);
+        }
         GUIWindowManager.MadVrProcess();
         Log.Debug("VMR9: Dispose done");
       }
