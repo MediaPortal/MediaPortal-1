@@ -808,14 +808,17 @@ namespace OSInfo
     {
       var session = new UpdateSession();
       var updateSearcher = session.CreateUpdateSearcher();
-      updateSearcher.Online = false;
-      int count = updateSearcher.GetTotalHistoryCount();
-      var history = updateSearcher.QueryHistory(0, count);
-      for (int i = 0; i < count; ++i)
+      if (updateSearcher.ClientApplicationID != null)
       {
-        if ((history[i].ResultCode == OperationResultCode.orcSucceeded) &&
-            (!history[i].Title.Contains("Security Essentials")))
-          return history[i].Date;
+        updateSearcher.Online = false;
+        int count = updateSearcher.GetTotalHistoryCount();
+        var history = updateSearcher.QueryHistory(0, count);
+        for (int i = 0; i < count; ++i)
+        {
+          if ((history[i].ResultCode == OperationResultCode.orcSucceeded) &&
+              (!history[i].Title.Contains("Security Essentials")))
+            return history[i].Date;
+        }
       }
       return DateTime.MinValue;
     }
