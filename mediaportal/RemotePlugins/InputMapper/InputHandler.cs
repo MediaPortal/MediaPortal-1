@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2017 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2017 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -479,6 +479,10 @@ namespace MediaPortal.InputDevices
               break;
             case "HIBERNATE":
               action = new Action(Action.ActionType.ACTION_HIBERNATE, 1, 0); //1 = ignore prompt
+              GUIGraphicsContext.OnAction(action);
+              break;
+            case "POWEROFF":
+              action = new Action(Action.ActionType.ACTION_POWER_OFF, 1, 0); //1 = ignore prompt
               GUIGraphicsContext.OnAction(action);
               break;
           }
