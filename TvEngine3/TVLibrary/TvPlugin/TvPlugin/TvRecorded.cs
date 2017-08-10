@@ -1331,12 +1331,6 @@ namespace TvPlugin
           return;
         }
 
-      bool isRecPlaying = false;
-      if (g_Player.currentFileName.Length > 0 && g_Player.IsTVRecording && g_Player.Playing)
-      {
-        FileInfo fInfo = new FileInfo(g_Player.currentFileName);
-        isRecPlaying = (rec.FileName.IndexOf(fInfo.Name, StringComparison.Ordinal) > -1);
-      }
         String savedCurrentLabel = _currentLabel;
         _currentLabel = pItem.Label;
         List<Recording> recItems = ListFolder();
@@ -1347,7 +1341,7 @@ namespace TvPlugin
           if (g_Player.Playing)
           {
             FileInfo fInfo = new FileInfo(g_Player.currentFileName);
-            if (rec.FileName.IndexOf(fInfo.Name) > -1)
+            if (rec.FileName.IndexOf(fInfo.Name, StringComparison.Ordinal) > -1)
             {
               g_Player.Stop();
             }
@@ -1381,7 +1375,7 @@ namespace TvPlugin
         if (g_Player.currentFileName.Length > 0 && (g_Player.IsTVRecording || g_Player.Playing))
         {
           FileInfo fInfo = new FileInfo(g_Player.currentFileName);
-          isRecPlaying = (rec.FileName.IndexOf(fInfo.Name) > -1);
+          isRecPlaying = (rec.FileName.IndexOf(fInfo.Name, StringComparison.Ordinal) > -1);
         }
 
         dlgYesNo.SetDefaultToYes(false);
