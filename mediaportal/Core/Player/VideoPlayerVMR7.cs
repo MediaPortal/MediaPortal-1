@@ -991,6 +991,30 @@ namespace MediaPortal.Player
       }
     }
 
+    public override void StopMadVr()
+    {
+      if (m_state != PlayState.Init)
+      {
+        // Need to delay m_state for madVR to avoid blank screen on stop when dialog will be displayed on stop
+        if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
+            GUIGraphicsContext.InVmr9Render)
+        {
+          Log.Info("VideoPlayer:ended {0} for madVR", m_strCurrentFile);
+          m_strCurrentFile = "";
+          CloseInterfaces();
+        }
+        else
+        {
+          m_state = PlayState.Init;
+          Log.Info("VideoPlayer:ended {0}", m_strCurrentFile);
+          m_strCurrentFile = "";
+          CloseInterfaces();
+          m_state = PlayState.Init;
+          GUIGraphicsContext.IsPlaying = false;
+        }
+      }
+    }
+
     private void TrySpeed(double rate, int speed)
     {
       m_speedRate = speed;
@@ -2526,6 +2550,7 @@ namespace MediaPortal.Player
     public override void Dispose()
     {
       CloseInterfaces();
+      m_state = PlayState.Init;
     }
 
     #endregion

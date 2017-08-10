@@ -1583,7 +1583,6 @@ namespace MediaPortal.Player
         }
 
         GUIGraphicsContext.form.Invalidate(true);
-        m_state = PlayState.Init;
         Log.Debug("VideoPlayer9: Cleanup done");
       }
       catch (Exception ex)

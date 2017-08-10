@@ -225,6 +225,8 @@ IBaseFilter* MPMadPresenter::Initialize()
         //pWindow->put_MessageDrain(reinterpret_cast<OAHWND>(m_hWnd));
         Sleep(100);
         Log("%s : Create DSPlayer window - hWnd: %i", __FUNCTION__, m_hWnd);
+        m_pCallback->DestroyHWnd(m_hWnd);
+        Log("MPMadPresenter::Initialize() send DestroyHWnd value on C# side");
       }
     }
     return baseFilter;
@@ -463,10 +465,40 @@ HRESULT MPMadPresenter::Stopping()
   { // Scope for autolock for the local variable (lock, which when deleted releases the lock)
     //CAutoLock lock(this);
 
+    if (m_pMediaControl)
+    {
+      Log("MPMadPresenter::Stopping() m_pMediaControl stop 1");
+      int counter = 0;
+      OAFilterState state = -1;
+      m_pMediaControl->Stop();
+      m_pMediaControl->GetState(100, &state);
+      while (state != State_Stopped)
+      {
+        Log("MPMadPresenter::Stopping() m_pMediaControl: graph still running");
+        Sleep(100);
+        m_pMediaControl->GetState(10, &state);
+        counter++;
+        if (counter >= 30)
+        {
+          if (state != State_Stopped)
+          {
+            Log("MPMadPresenter::Stopping() m_pMediaControl: graph still running");
+          }
+          break;
+        }
+      }
+      m_pMediaControl = nullptr;
+      Log("MPMadPresenter::Stopping() m_pMediaControl stop 2");
+    }
+
+    Log("MPMadPresenter::Stopping() start to stop instance - 1");
+
     if (Com::SmartQIPtr<IMadVRSettings> m_pSettings = m_pMad)
     {
+      Log("MPMadPresenter::Stopping() start to stop instance - 2");
       // Read enableOverlay settings
       m_pSettings->SettingsGetBoolean(L"enableOverlay", &m_enableOverlay);
+      Log("MPMadPresenter::Stopping() start to stop instance - 3");
 
       if (m_enableOverlay)
       {
@@ -516,32 +548,6 @@ HRESULT MPMadPresenter::Stopping()
     if (m_pORCB)
       m_pORCB.Release();
     Log("MPMadPresenter::Stopping() m_pORCB release 2");
-
-    if (m_pMediaControl)
-    {
-      Log("MPMadPresenter::Stopping() m_pMediaControl stop 1");
-      int counter = 0;
-      OAFilterState state = -1;
-      m_pMediaControl->Stop();
-      m_pMediaControl->GetState(100, &state);
-      while (state != State_Stopped)
-      {
-        Log("MPMadPresenter::Stopping() m_pMediaControl: graph still running");
-        Sleep(100);
-        m_pMediaControl->GetState(10, &state);
-        counter++;
-        if (counter >= 30)
-        {
-          if (state != State_Stopped)
-          {
-            Log("MPMadPresenter::Stopping() m_pMediaControl: graph still running");
-          }
-          break;
-        }
-      }
-      m_pMediaControl = nullptr;
-      Log("MPMadPresenter::Stopping() m_pMediaControl stop 2");
-    }
 
     Log("MPMadPresenter::Stopping() stopped");
     return S_OK;
