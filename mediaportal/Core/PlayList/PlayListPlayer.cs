@@ -469,6 +469,13 @@ namespace MediaPortal.Playlists
         iSong = 0;
       }
 
+      // Tell is a next file that doesn't need the final stop on dispose for madVR
+      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
+          GUIGraphicsContext.InVmr9Render)
+      {
+        GUIGraphicsContext.keepExclusiveModeOn = setFullScreenVideo;
+      }
+
       if (!Play(iSong, setFullScreenVideo))
       {
         if (!g_Player.Playing)
@@ -500,6 +507,13 @@ namespace MediaPortal.Playlists
       if (iSong < 0)
       {
         iSong = playlist.Count - 1;
+      }
+
+      // Tell is a next file that doesn't need the final stop on dispose for madVR
+      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
+          GUIGraphicsContext.InVmr9Render)
+      {
+        GUIGraphicsContext.keepExclusiveModeOn = setFullScreenVideo;
       }
 
       if (!Play(iSong, setFullScreenVideo))

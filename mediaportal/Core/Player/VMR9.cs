@@ -1778,8 +1778,8 @@ namespace MediaPortal.Player
 
         if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
         {
-          // For LiveTV Zapping not doing stop here
-          if (!g_Player.IsTV || !GUIGraphicsContext.keepExclusiveModeOn)
+          // For LiveTV Zapping or playlist don't stop here
+          if (!GUIGraphicsContext.keepExclusiveModeOn)
           {
             Action action = new Action(Action.ActionType.ACTION_STOP, 0f, 0f);
             GUIGraphicsContext.OnAction(action);
