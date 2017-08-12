@@ -19,8 +19,7 @@
  *
  */
 
-#include <afx.h>
-#include <afxwin.h>
+#include "StdAfx.h"
 
 #include <winsock2.h>
 #include <ws2tcpip.h>
@@ -186,7 +185,7 @@ void CBuffer::SetPcr(CPcr& firstPcr,CPcr& maxPcr)
 // Adds data contained in pBuffer to this pes packet
 void CBuffer::Add(CBuffer* pBuffer)
 {
-	if(pBuffer && ( m_iSize >= m_iLength + pBuffer->Length()))
+	if(pBuffer && ( (int)m_iSize >= m_iLength + pBuffer->Length()))
   {
     memcpy(&m_pBuffer[m_iLength], pBuffer->Data(), pBuffer->Length());
     m_iLength+=pBuffer->Length();
@@ -205,7 +204,7 @@ void CBuffer::Add(CBuffer* pBuffer)
 // Adds data contained to this pes packet
 void CBuffer::Add(byte* data, int len)
 {
-	if((m_iSize >= m_iLength + len ) && data) 
+	if(((int)m_iSize >= m_iLength + len ) && data) 
   {
     memcpy(&m_pBuffer[m_iLength], data, len);
     m_iLength+=len;

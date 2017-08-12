@@ -58,7 +58,9 @@ namespace TvPlugin
     [SkinControl(11)] protected GUICheckButton btnSeries = null;
 
     private SortMethod currentSortMethod = SortMethod.Date;
+    private SortMethod currentSortMethodSeries = SortMethod.Name;
     private bool m_bSortAscending = true;
+    private bool m_bSortAscendingSeries = true;
     private int m_iSelectedItem = 0;
     private bool needUpdate = false;
     private Schedule selectedItem = null;
@@ -101,7 +103,24 @@ namespace TvPlugin
             currentSortMethod = SortMethod.Name;
           }
         }
+        strTmp = (string)xmlreader.GetValue("tvscheduler", "sortseries");
+        if (strTmp != null)
+        {
+          if (strTmp == "channel")
+          {
+            currentSortMethodSeries = SortMethod.Channel;
+          }
+          else if (strTmp == "date")
+          {
+            currentSortMethodSeries = SortMethod.Date;
+          }
+          else if (strTmp == "name")
+          {
+            currentSortMethodSeries = SortMethod.Name;
+          }
+        }
         m_bSortAscending = xmlreader.GetValueAsBool("tvscheduler", "sortascending", true);
+        m_bSortAscendingSeries = xmlreader.GetValueAsBool("tvscheduler", "sortascendingseries", true);
         if (btnSeries != null)
         {
           btnSeries.Selected = xmlreader.GetValueAsBool("tvscheduler", "series", false);
@@ -125,7 +144,20 @@ namespace TvPlugin
             xmlwriter.SetValue("tvscheduler", "sort", "name");
             break;
         }
+        switch (currentSortMethodSeries)
+        {
+          case SortMethod.Channel:
+            xmlwriter.SetValue("tvscheduler", "sortseries", "channel");
+            break;
+          case SortMethod.Date:
+            xmlwriter.SetValue("tvscheduler", "sortseries", "date");
+            break;
+          case SortMethod.Name:
+            xmlwriter.SetValue("tvscheduler", "sortseries", "name");
+            break;
+        }
         xmlwriter.SetValueAsBool("tvscheduler", "sortascending", m_bSortAscending);
+        xmlwriter.SetValueAsBool("tvscheduler", "sortascendingseries", m_bSortAscendingSeries);
         xmlwriter.SetValueAsBool("tvscheduler", "series", btnSeries.Selected);
       }
     }
@@ -241,7 +273,7 @@ namespace TvPlugin
         dlg.AddLocalizedString(268); //title
 
         // set the focus to currently used sort method
-        dlg.SelectedLabel = (int)currentSortMethod;
+        dlg.SelectedLabel = (int)(btnSeries.Selected ? currentSortMethodSeries : currentSortMethod);
 
         // show dialog and wait for result
         dlg.DoModal(GetID);
@@ -250,7 +282,14 @@ namespace TvPlugin
           return;
         }
 
-        currentSortMethod = (SortMethod)dlg.SelectedLabel;
+        if (btnSeries.Selected)
+        {
+          currentSortMethodSeries = (SortMethod)dlg.SelectedLabel;
+        }
+        else
+        {
+          currentSortMethod = (SortMethod)dlg.SelectedLabel;
+        }
         OnSort();
       }
       if (control == listSchedules)
@@ -414,10 +453,13 @@ namespace TvPlugin
         return 1;
       }
 
-      switch (currentSortMethod)
+      SortMethod sortMethod = (btnSeries.Selected ? currentSortMethodSeries : currentSortMethod);
+      bool sortAscending = (btnSeries.Selected ? m_bSortAscendingSeries : m_bSortAscending);
+
+      switch (sortMethod)
       {
         case SortMethod.Name:
-          if (m_bSortAscending)
+          if (sortAscending)
           {
             iComp = String.Compare(rec1.ProgramName, rec2.ProgramName, true);
             if (iComp == 0)
@@ -443,7 +485,7 @@ namespace TvPlugin
           }
 
         case SortMethod.Channel:
-          if (m_bSortAscending)
+          if (sortAscending)
           {
             iComp = String.Compare(rec1.ReferencedChannel().DisplayName, rec2.ReferencedChannel().DisplayName, true);
             if (iComp == 0)
@@ -469,7 +511,7 @@ namespace TvPlugin
           }
 
         case SortMethod.Date:
-          if (m_bSortAscending)
+          if (sortAscending)
           {
             if (rec1.StartTime == rec2.StartTime)
             {
@@ -666,7 +708,8 @@ namespace TvPlugin
     private void UpdateButtonStates()
     {
       string strLine = String.Empty;
-      switch (currentSortMethod)
+      SortMethod sortMethod = (btnSeries.Selected ? currentSortMethodSeries : currentSortMethod);
+      switch (sortMethod)
       {
         case SortMethod.Channel:
           strLine = GUILocalizeStrings.Get(620); // Sort by: Channel
@@ -680,7 +723,7 @@ namespace TvPlugin
       }
 
       GUIControl.SetControlLabel(GetID, btnSortBy.GetID, strLine);
-      btnSortBy.IsAscending = m_bSortAscending;
+      btnSortBy.IsAscending = (btnSeries.Selected ? m_bSortAscendingSeries : m_bSortAscending);
     }
 
     private void SetLabels()
@@ -1359,8 +1402,14 @@ namespace TvPlugin
 
     private void SortChanged(object sender, SortEventArgs e)
     {
-      m_bSortAscending = e.Order != SortOrder.Descending;
-
+      if (btnSeries.Selected)
+      {
+        m_bSortAscendingSeries = e.Order != SortOrder.Descending;
+      }
+      else
+      {
+        m_bSortAscending = e.Order != SortOrder.Descending;
+      }
       OnSort();
     }
   }

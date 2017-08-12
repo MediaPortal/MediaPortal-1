@@ -629,9 +629,9 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
             {
               int cntA, cntV;
               CRefTime firstAudio, lastAudio;
-              CRefTime firstVideo, lastVideo;
+              CRefTime firstVideo, lastVideo, zeroVideo;
               cntA = demux.GetAudioBufferPts(firstAudio, lastAudio); 
-              cntV = demux.GetVideoBufferPts(firstVideo, lastVideo);
+              cntV = demux.GetVideoBufferPts(firstVideo, lastVideo, zeroVideo);
 
               LogDebug("Vid/Ref : %03.3f, %c-frame(%02d), Compensated = %03.3f ( %0.3f A/V buffers=%02d/%02d), Clk : %f, SampCnt %d, stallPt %03.3f", (float)RefTime.Millisecs()/1000.0f,buffer->GetFrameType(),buffer->GetFrameCount(), (float)cRefTime.Millisecs()/1000.0f, fTime, cntA,cntV,clock, m_sampleCount, (float)stallPoint);              
             }

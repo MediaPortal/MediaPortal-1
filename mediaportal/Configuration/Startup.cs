@@ -67,6 +67,8 @@ namespace MediaPortal.Configuration
       FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(Application.ExecutablePath);
 
       Log.Info("Configuration v" + versionInfo.FileVersion + " is starting up on " + OSInfo.OSInfo.GetOSDisplayVersion());
+      Log.Info(OSInfo.OSInfo.GetLastInstalledWindowsUpdateTimestampAsString());
+      Log.Info("Windows Media Player: [{0}]", OSInfo.OSInfo.GetWMPVersion());
 #if DEBUG
       Log.Info("Debug build: " + Application.ProductVersion);
 #else

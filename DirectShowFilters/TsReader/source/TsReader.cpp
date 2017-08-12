@@ -286,10 +286,10 @@ void LogDebug(const wchar_t *fmt, ...)
   SYSTEMTIME systemTime;
   GetLocalTime(&systemTime);
   wchar_t msg[5000];
-  swprintf_s(msg, 5000,L"[%04.4d-%02.2d-%02.2d %02.2d:%02.2d:%02.2d,%03.3d] [%8x] [%4x] - %s\n",
+  swprintf_s(msg, 5000,L"[%04.4d-%02.2d-%02.2d %02.2d:%02.2d:%02.2d,%03.3d] [%p] [%4x] - %s\n",
     systemTime.wYear, systemTime.wMonth, systemTime.wDay,
     systemTime.wHour, systemTime.wMinute, systemTime.wSecond, systemTime.wMilliseconds,
-    instanceID,
+	(void*)instanceID,
     GetCurrentThreadId(),
     buffer);
   CAutoLock l(&m_qLock);
@@ -372,6 +372,8 @@ CUnknown * WINAPI CTsReaderFilter::CreateInstance(LPUNKNOWN punk, HRESULT *phr)
 CTsReaderFilter::CTsReaderFilter(IUnknown *pUnk, HRESULT *phr):
   CSource(NAME("CTsReaderFilter"), pUnk, CLSID_TSReader),
   m_pAudioPin(NULL),
+  m_pVideoPin(NULL),
+  m_pSubtitlePin(NULL),
   m_demultiplexer( m_duration, *this),
   m_rtspClient(m_buffer),
   m_pDVBSubtitle(NULL),
@@ -417,7 +419,7 @@ CTsReaderFilter::CTsReaderFilter(IUnknown *pUnk, HRESULT *phr):
   m_pVideoPin = new CVideoPin(GetOwner(), this, phr,&m_section);
   m_pSubtitlePin = new CSubtitlePin(GetOwner(), this, phr,&m_section);
 
-  if (m_pAudioPin == NULL)
+  if (m_pAudioPin == NULL || m_pVideoPin == NULL || m_pSubtitlePin == NULL)
   {
     *phr = E_OUTOFMEMORY;
     return;
@@ -555,6 +557,36 @@ CTsReaderFilter::CTsReaderFilter(IUnknown *pUnk, HRESULT *phr):
     ReadRegistryKeyDword(key, autoSpeedAdjust_RRK, keyValue);
     m_AutoSpeedAdjust = (int)keyValue;
     LogDebug("--- AutoSpeedAdjust = %d", m_AutoSpeedAdjust);
+    
+
+    keyValue = m_rtspClient.m_regRtspGenericTimeout;
+    LPCTSTR rtspGenericTimeout_RRK = _T("RtspGenericTimeoutInMilliSeconds");
+    ReadRegistryKeyDword(key, rtspGenericTimeout_RRK, keyValue);
+    if ((keyValue >= 100) && (keyValue <= 2000))
+    {
+      m_rtspClient.m_regRtspGenericTimeout = keyValue;
+      LogDebug("--- RTSP generic timeout = %d ms", m_rtspClient.m_regRtspGenericTimeout);
+    }
+    else
+    {
+      m_rtspClient.m_regRtspGenericTimeout = TIMEOUT_GENERIC_RTSP_RESPONSE;
+      LogDebug("--- RTSP generic timeout = %d ms (default value, allowed range is %d - %d)", m_rtspClient.m_regRtspGenericTimeout, 100, 2000);
+    }
+
+    keyValue = m_rtspClient.m_regRtspFileTimeout;
+    LPCTSTR rtspFileTimeout_RRK = _T("RtspFileTimeoutInMilliSeconds");
+    ReadRegistryKeyDword(key, rtspFileTimeout_RRK, keyValue);
+    if ((keyValue >= 100) && (keyValue <= 10000))
+    {
+      m_rtspClient.m_regRtspFileTimeout = keyValue;
+      LogDebug("--- RTSP file timeout = %d ms", m_rtspClient.m_regRtspFileTimeout);
+    }
+    else
+    {
+      m_rtspClient.m_regRtspFileTimeout = TIMEOUT_FILE_ACTION_RTSP_RESPONSE;
+      LogDebug("--- RTSP file timeout = %d ms (default value, allowed range is %d - %d)", m_rtspClient.m_regRtspFileTimeout, 100, 10000);
+    }
+
 
     RegCloseKey(key);
   }
@@ -616,9 +648,21 @@ CTsReaderFilter::CTsReaderFilter(IUnknown *pUnk, HRESULT *phr):
   m_bEVRhasConnected = false;
   m_MPmainThreadID = GetCurrentThreadId() ;
   m_lastPauseRun = GET_TIME_NOW();
+
+  LogDebug("CTsReaderFilter::Start demux thread");
+  if (m_demultiplexer.StartThread() != S_OK)
+  {
+    *phr = E_OUTOFMEMORY;
+    return;
+  }
   
   LogDebug("CTsReaderFilter::Start duration thread");
-  StartThread();
+  if (StartThread() != S_OK)
+  {
+    *phr = E_OUTOFMEMORY;
+    return;
+  }
+
   LogDebug("CTsReaderFilter::timeGetTime():0x%x, m_tGTStartTime:0x%x, GET_TIME_NOW:0x%x, timer res:%d ms", timeGetTime(), m_tGTStartTime, GET_TIME_NOW(), dwResolution);
 }
 
@@ -1370,7 +1414,7 @@ STDMETHODIMP CTsReaderFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pm
     m_duration.CloseBufferFiles();
     m_bRecording = true; //Force duration thread to update
 
-    float milli = m_duration.Duration().Millisecs();
+    float milli = (float)m_duration.Duration().Millisecs();
     milli /= 1000.0;
     LogDebug("CTsReaderFilter::Load(), duration - start:%x end:%x %f",
       (DWORD)m_duration.StartPcr().PcrReferenceBase, (DWORD) m_duration.EndPcr().PcrReferenceBase, milli);
@@ -1537,7 +1581,7 @@ HRESULT CTsReaderFilter::SeekPreStart(CRefTime& rtAbsSeek)
   
   //get the earliest timestamp available in the file
   float earliesTimeStamp = 0;
-  earliesTimeStamp = m_duration.StartPcr().ToClock() - m_duration.FirstStartPcr().ToClock();
+  earliesTimeStamp = (float)(m_duration.StartPcr().ToClock() - m_duration.FirstStartPcr().ToClock());
 
   if (earliesTimeStamp < 0) earliesTimeStamp = 0;
 
@@ -1651,6 +1695,25 @@ HRESULT CTsReaderFilter::SeekPreStart(CRefTime& rtAbsSeek)
   //do the seek...
   if (doSeek && !m_demultiplexer.IsMediaChanging()&& !m_demultiplexer.IsAudioChanging()) 
   {
+    if (!m_bTimeShifting) //It's a recording
+    {
+      //Check how close we are to end-of-file
+      LONG minMsFromEOF = MIN_AUD_BUFF_TIME + m_regInitialBuffDelay + 3000;      
+      if ((rtSeek.Millisecs() + minMsFromEOF) > m_duration.Duration().Millisecs())
+      {
+        //Too close to end-of-file, seek to an earlier position
+        REFERENCE_TIME rollBackTime = minMsFromEOF * 10000; //hns units    
+        if ((rtSeek.m_time - rollBackTime) > 0)
+        {
+          rtSeek.m_time -= rollBackTime;
+        }
+        else //very short file, so just seek to the beginning
+        {
+          rtSeek.m_time = 0;
+        }
+      }
+    }
+
     //LogDebug("CTsReaderFilter::--SeekPreStart() Do Seek");
     for(int i(0) ; i < 4 ; i++)
     {
@@ -1662,13 +1725,12 @@ HRESULT CTsReaderFilter::SeekPreStart(CRefTime& rtAbsSeek)
         if ((rtSeek.m_time - rollBackTime) > 0)
         {
           rtSeek.m_time -= rollBackTime;
-          rtAbsSeek.m_time -= rollBackTime;
-          m_seekTime=rtSeek ;
-          m_absSeekTime=rtAbsSeek ;
         }
-        else
+        else //very short file, so just seek to the beginning
         {
-          break; //very short file....
+          rtSeek.m_time = 0;
+          Seek(rtSeek);
+          break;
         }
       }
       else
@@ -1689,14 +1751,14 @@ HRESULT CTsReaderFilter::SeekPreStart(CRefTime& rtAbsSeek)
   if (GetVideoPin()->IsConnected())
   {      
     GetVideoPin()->DeliverEndFlush();
-    GetVideoPin()->SetStart(rtAbsSeek) ;
+    GetVideoPin()->SetStart(m_absSeekTime) ;
     GetVideoPin()->Run();
   }
 
   if (GetSubtitlePin()->IsConnected())
   {
     // Update m_rtStart in case of has not seeked yet
-    GetSubtitlePin()->SetStart(rtAbsSeek) ;
+    GetSubtitlePin()->SetStart(m_absSeekTime) ;
   }
 
   m_demultiplexer.CallTeletextEventCallback(TELETEXT_EVENT_SEEK_END,TELETEXT_EVENTVALUE_NONE);
@@ -1704,14 +1766,14 @@ HRESULT CTsReaderFilter::SeekPreStart(CRefTime& rtAbsSeek)
   if (m_pDVBSubtitle)
   {
     m_pDVBSubtitle->SetFirstPcr(m_duration.FirstStartPcr().PcrReferenceBase);
-    m_pDVBSubtitle->SeekDone(rtSeek);
+    m_pDVBSubtitle->SeekDone(m_absSeekTime);
   }
 
   if (GetAudioPin()->IsConnected())
   {
     // deliver a end-flush to the codec filter so it will start asking for data again
     GetAudioPin()->DeliverEndFlush();
-    GetAudioPin()->SetStart(rtAbsSeek) ;
+    GetAudioPin()->SetStart(m_absSeekTime) ;
     // and restart the thread
     GetAudioPin()->Run();
   }     
@@ -2069,7 +2131,7 @@ void CTsReaderFilter::ThreadProc()
             double start = pcrStartLast.ToClock() ;
             double end = pcrEndLast.ToClock() ; 
 
-            end += min(3.5, ((double)(GET_TIME_NOW() - lastDurUpdate)/1000.0));
+            end += fmin(3.5, ((double)(GET_TIME_NOW() - lastDurUpdate)/1000.0));
 
             //LogDebug("CTsReaderFilter::Duration, predicted start = %f, predicted end = %f", (float)start, (float)end);
             
@@ -2173,9 +2235,9 @@ void CTsReaderFilter::ThreadProc()
       if (durationUpdateLoop==0)
       {
         CRefTime firstAudio, lastAudio;
-        CRefTime firstVideo, lastVideo;
+        CRefTime firstVideo, lastVideo, zeroVideo;
         int cntA = m_demultiplexer.GetAudioBufferPts(firstAudio, lastAudio);
-        int cntV = m_demultiplexer.GetVideoBufferPts(firstVideo, lastVideo);
+        int cntV = m_demultiplexer.GetVideoBufferPts(firstVideo, lastVideo, zeroVideo);
         long rtspBuffSize = m_demultiplexer.GetRTSPBufferSize();
                 
         if ((cntA > AUD_BUF_SIZE_LOG_LIM) || (cntV > VID_BUF_SIZE_LOG_LIM) || m_bEnableBufferLogging)

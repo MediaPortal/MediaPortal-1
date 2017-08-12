@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <Language name="English" characters="255">
   <Section name="unmapped">
     <String id="0" prefix="My ">Programs</String>
@@ -1361,6 +1361,7 @@
     <String id="2163">Add channel to a group</String>
     <String id="2164">Remove channel from this group</String>
     <String id="2165">Do you want to remove this channel from the TvServer?</String>
+    <String id="2166">Delete all recordings in this folder?</String>
     <String id="2200" prefix="My ">Explorer</String>
     <String id="2201">Select source</String>
     <String id="2202">Select destination</String>
