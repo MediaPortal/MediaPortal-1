@@ -1589,6 +1589,7 @@ public class MediaPortalApp : D3D, IRender
 
           // Force a madVR refresh to resize MP window
           // TODO how to handle it better
+          GUIGraphicsContext.ForceMadVRRefresh = true;
           g_Player.RefreshMadVrVideo();
           break;
 
@@ -4497,6 +4498,7 @@ public class MediaPortalApp : D3D, IRender
               // Need to delay full stop for madVR to avoid blank screen on stop when dialog will be displayed on stop
               if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && GUIGraphicsContext.InVmr9Render)
               {
+                GUIGraphicsContext.keepExclusiveModeOn = false;
                 g_Player.ReleaseForMadVr();
               }
               else

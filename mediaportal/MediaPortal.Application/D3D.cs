@@ -1360,7 +1360,7 @@ namespace MediaPortal
       }
 
       Log.Debug("D3D: BuildPresentParams()");
-      Size size = CalcMaxClientArea();
+      var size = windowed ? GUIGraphicsContext.form.ClientSize : CalcMaxClientArea();
       _presentParams.BackBufferWidth  = windowed ? size.Width  : GUIGraphicsContext.currentScreen.Bounds.Width;
       _presentParams.BackBufferHeight = windowed ? size.Height : GUIGraphicsContext.currentScreen.Bounds.Height;
       _presentParams.BackBufferFormat = Format.Unknown;
@@ -1615,6 +1615,22 @@ namespace MediaPortal
     /// </summary>
     private void CreateDirectX9ExDevice()
     {
+      // This part need to be checked for restoring correct BackBuffer
+      int backupSizeWidth = 0;
+      int backupSizeHeight = 0;
+
+      using (Settings xmlreader = new MPSettings())
+      {
+        backupSizeWidth = xmlreader.GetValueAsInt("gui", "backupsizewidth", 0);
+        backupSizeHeight = xmlreader.GetValueAsInt("gui", "backupsizeheight", 0);
+      }
+
+      if ((backupSizeWidth != 0) && (backupSizeHeight != 0) && Windowed)
+      {
+        _presentParams.BackBufferWidth = backupSizeWidth;
+        _presentParams.BackBufferHeight = backupSizeHeight;
+      }
+
       var param = new D3DPRESENT_PARAMETERS
                     {
                       BackBufferWidth            = (uint)_presentParams.BackBufferWidth,

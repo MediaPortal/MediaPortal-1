@@ -657,6 +657,10 @@ namespace MediaPortal.Player
       {
         Log.Debug("g_Player.doStop() keepTimeShifting = {0} keepExclusiveModeOn = {1}", keepTimeShifting,
                   keepExclusiveModeOn);
+
+        // Keep keepExclusiveModeOn value to know if we are in zapping mode
+        GUIGraphicsContext.keepExclusiveModeOn = keepExclusiveModeOn;
+
         // Get playing file for unmount handling
         string currentFile = g_Player.currentFileName;
         OnStopped();
@@ -2880,6 +2884,11 @@ namespace MediaPortal.Player
       }
       else
       {
+        if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+        {
+          // For LiveTV Zapping
+          GUIGraphicsContext.keepExclusiveModeOn = true;
+        }
         OnTVChannelChanged();
         _player.OnZapping(info);
         return;
@@ -3998,41 +4007,46 @@ namespace MediaPortal.Player
           {
             // Resize OSD/Screen when resolution change
             if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
-                (GUIGraphicsContext.InVmr9Render && GUIGraphicsContext.ForceMadVRRefresh) || GUIGraphicsContext.ForceMadVRFirstStart)
+                (GUIGraphicsContext.InVmr9Render && GUIGraphicsContext.ForceMadVRRefresh) ||
+                (GUIGraphicsContext.ForceMadVRFirstStart && !GUIGraphicsContext.keepExclusiveModeOn))
             {
               GUIGraphicsContext.ForceMadVRRefresh = false;
               Size client = GUIGraphicsContext.form.ClientSize;
 
-              GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferWidth = client.Width;
-              GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferHeight = client.Height;
-              // load resources
-              GUIGraphicsContext.Load();
-
-              GUIFontManager.LoadFonts(GUIGraphicsContext.GetThemedSkinFile(@"\fonts.xml"));
-              GUIFontManager.InitializeDeviceObjects();
-
-              // restart window manager
-              GUIWindowManager.PreInit();
-
-              // Don't resize to avoid wrong dialog opened
-              GUIWindowManager.OnResize();
-              //GUIWindowManager.OnDeviceRestored();
-
-              // send C++ displayChange
-              if (!GUIGraphicsContext.ForceMadVRRefresh3D)
+              if (GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferWidth != client.Width ||
+                  GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferHeight != client.Height)
               {
-                VMR9Util.g_vmr9?.MadVrScreenResize(0, 0, client.Width, client.Height, true);
+                GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferWidth = client.Width;
+                GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferHeight = client.Height;
+                // load resources
+                GUIGraphicsContext.Load();
+
+                GUIFontManager.LoadFonts(GUIGraphicsContext.GetThemedSkinFile(@"\fonts.xml"));
+                GUIFontManager.InitializeDeviceObjects();
+
+                // restart window manager
+                GUIWindowManager.PreInit();
+
+                // Don't resize to avoid wrong dialog opened
+                GUIWindowManager.OnResize();
+                //GUIWindowManager.OnDeviceRestored();
+
+                // send C++ displayChange
+                if (!GUIGraphicsContext.ForceMadVRRefresh3D)
+                {
+                  VMR9Util.g_vmr9?.MadVrScreenResize(0, 0, client.Width, client.Height, true);
+                }
+                else
+                {
+                  // Changed the false to true, need to figure out why regression is present when it's false
+                  VMR9Util.g_vmr9?.MadVrScreenResize(0, 0, client.Width, client.Height, true);
+                  GUIGraphicsContext.ForceMadVRRefresh3D = false;
+                }
+                GUIGraphicsContext.NoneDone = false;
+                GUIGraphicsContext.TopAndBottomDone = false;
+                GUIGraphicsContext.SideBySideDone = false;
+                Log.Debug("g_player VideoWindowChanged() resize OSD/Screen when resolution change for madVR");
               }
-              else
-              {
-                // Changed the false to true, need to figure out why regression is present when it's false
-                VMR9Util.g_vmr9?.MadVrScreenResize(0, 0, client.Width, client.Height, true);
-                GUIGraphicsContext.ForceMadVRRefresh3D = false;
-              }
-              GUIGraphicsContext.NoneDone = false;
-              GUIGraphicsContext.TopAndBottomDone = false;
-              GUIGraphicsContext.SideBySideDone = false;
-              Log.Debug("g_player VideoWindowChanged() resize OSD/Screen when resolution change for madVR");
             }
             else if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
                      GUIGraphicsContext.InVmr9Render && GUIGraphicsContext.ForceMadVRRefresh3D)
