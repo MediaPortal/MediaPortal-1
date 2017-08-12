@@ -821,6 +821,7 @@ namespace MediaPortal.Player
       {
         if (_graphBuilder == null)
         {
+          _state = PlayState.Init;
           return;
         }
         Log.Info("TSReaderPlayer: Cleanup DShow graph {0}", GUIGraphicsContext.InVmr9Render);
@@ -984,12 +985,17 @@ namespace MediaPortal.Player
           {
             DirectShowUtil.ReleaseComObject(_basicVideo);
           }
+          if (_interfaceTSReader != null)
+          {
+            DirectShowUtil.ReleaseComObject(_interfaceTSReader);
+          }
           _mediaCtrl = null;
           _mediaSeeking = null;
           _videoWin = null;
           _basicAudio = null;
           _basicVideo = null;
           _ireader = null;
+          _interfaceTSReader = null;
 
           if (VMR9Util.g_vmr9 != null)
           {

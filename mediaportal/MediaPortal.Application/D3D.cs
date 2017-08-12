@@ -625,7 +625,8 @@ namespace MediaPortal
     internal void RecreateSwapChain(bool useBackup)
     {
       // Don't need to resize when using madVR
-      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && GUIGraphicsContext.Vmr9Active)
+      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
+          GUIGraphicsContext.Vmr9Active)
       {
         GUIGraphicsContext.ForceMadVRRefresh3D = true;
         return;
@@ -666,7 +667,6 @@ namespace MediaPortal
         GUIWindowManager.Dispose();
         GUIFontManager.Dispose();
         GUITextureManager.Dispose();
-        if (GUIGraphicsContext.DX9Device != null)
         // Don't need to resize when using madVR
         if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR ||
             !GUIGraphicsContext.Vmr9Active)
@@ -1316,7 +1316,7 @@ namespace MediaPortal
       }
 
       Log.Debug("D3D: BuildPresentParams()");
-      Size size = CalcMaxClientArea();
+      var size = windowed ? GUIGraphicsContext.form.ClientSize : CalcMaxClientArea();
       _presentParams.BackBufferWidth  = windowed ? size.Width  : GUIGraphicsContext.currentScreen.Bounds.Width;
       _presentParams.BackBufferHeight = windowed ? size.Height : GUIGraphicsContext.currentScreen.Bounds.Height;
       _presentParams.BackBufferFormat = Format.Unknown;
@@ -1518,8 +1518,11 @@ namespace MediaPortal
         {
           try
           {
-            capabilities = Manager.GetDeviceCaps(AdapterInfo.AdapterOrdinal, DeviceType.Hardware);
-            successful = true;
+            if (AdapterInfo != null)
+            {
+              capabilities = Manager.GetDeviceCaps(AdapterInfo.AdapterOrdinal, DeviceType.Hardware);
+              successful = true;
+            }
           }
           catch (Exception)
           {
@@ -1568,6 +1571,22 @@ namespace MediaPortal
     /// </summary>
     private void CreateDirectX9ExDevice()
     {
+      // This part need to be checked for restoring correct BackBuffer
+      int backupSizeWidth = 0;
+      int backupSizeHeight = 0;
+
+      using (Settings xmlreader = new MPSettings())
+      {
+        backupSizeWidth = xmlreader.GetValueAsInt("gui", "backupsizewidth", 0);
+        backupSizeHeight = xmlreader.GetValueAsInt("gui", "backupsizeheight", 0);
+      }
+
+      if ((backupSizeWidth != 0) && (backupSizeHeight != 0) && Windowed)
+      {
+        _presentParams.BackBufferWidth = backupSizeWidth;
+        _presentParams.BackBufferHeight = backupSizeHeight;
+      }
+
       var param = new D3DPRESENT_PARAMETERS
                     {
                       BackBufferWidth            = (uint)_presentParams.BackBufferWidth,
