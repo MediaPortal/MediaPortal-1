@@ -1769,6 +1769,7 @@ namespace MediaPortal.Player
       }
       finally
       {
+        RestoreGuiForMadVr();
         if (_vmr9Filter != null)
         {
           DirectShowUtil.TryRelease(ref _vmr9Filter);
@@ -1780,7 +1781,6 @@ namespace MediaPortal.Player
           // For LiveTV Zapping not doing stop here
           if (!g_Player.IsTV || !GUIGraphicsContext.keepExclusiveModeOn)
           {
-            RestoreGuiForMadVr();
             Action action = new Action(Action.ActionType.ACTION_STOP, 0f, 0f);
             GUIGraphicsContext.OnAction(action);
           }
