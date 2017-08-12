@@ -579,7 +579,6 @@ namespace MediaPortal.Player
             IVideoWindow videoWin = (IVideoWindow)_graphBuilder;
             if (videoWin != null)
             {
-              //videoWin.put_FullScreenMode(OABool.False);
               videoWin.put_WindowStyle((WindowStyle)((int)WindowStyle.Child + (int)WindowStyle.ClipChildren + (int)WindowStyle.ClipSiblings));
               videoWin.put_MessageDrain(GUIGraphicsContext.ActiveForm);
             }
