@@ -1058,12 +1058,13 @@ namespace MediaPortal.Player
             GUIWindowManager.SendThreadMessage(msg);
           }
         }
-        if (GUIGraphicsContext.ForceMadVRRefresh)
+        if (GUIGraphicsContext.ForceMadVRRefresh ||
+            (GUIGraphicsContext.ForceMadVRFirstStart && !GUIGraphicsContext.keepExclusiveModeOn))
         {
           GUIMessage message = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ONDISPLAYMADVRCHANGED, 0, 0, 0, 0, 0, null);
           GUIWindowManager.SendMessage(message);
           GUIGraphicsContext.ForceMadVRFirstStart = false;
-          Log.Debug("VMR9: resize OSD/Screen when resolution change for madVR");
+          Log.Debug("VMR9: send resize OSD/Screen message for madVR");
         }
       }
     }
@@ -1418,18 +1419,27 @@ namespace MediaPortal.Player
           Log.Debug("VMR9: mediaCtrl.Stop() 1");
           if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
           {
-            IVideoWindow videoWin = (IVideoWindow) _graphBuilder;
-            if (videoWin != null)
+            // For LiveTV Zapping
+            if (g_Player.IsTV && GUIGraphicsContext.keepExclusiveModeOn)
             {
-              videoWin.put_Owner(IntPtr.Zero);
-              videoWin.put_Visible(OABool.False);
+              Log.Debug("VMR9: Vmr9MediaCtrl MadStopping() Zapping mode");
+              MadStopping();
             }
-            Log.Debug("VMR9: restoreDisplayModeNow for madVR");
-            MadvrInterface.restoreDisplayModeNow(_vmr9Filter);
-            RestoreGuiForMadVr();
-            DestroyWindow(HWnd);
-            Log.Debug("VMR9: Vmr9MediaCtrl MadStopping()");
-            MadStopping();
+            else
+            {
+              IVideoWindow videoWin = (IVideoWindow) _graphBuilder;
+              if (videoWin != null)
+              {
+                videoWin.put_Owner(IntPtr.Zero);
+                videoWin.put_Visible(OABool.False);
+              }
+              Log.Debug("VMR9: restoreDisplayModeNow for madVR");
+              MadvrInterface.restoreDisplayModeNow(_vmr9Filter);
+              RestoreGuiForMadVr();
+              DestroyWindow(HWnd);
+              Log.Debug("VMR9: Vmr9MediaCtrl MadStopping()");
+              MadStopping();
+            }
           }
 
           // Stop mediaCtrl
@@ -1713,10 +1723,14 @@ namespace MediaPortal.Player
           GC.Collect();
           MadDeinit();
           GC.Collect();
-          MadvrInterface.restoreDisplayModeNow(_vmr9Filter);
+          // Tv Zapping mode do not restore GUI
+          if (!GUIGraphicsContext.keepExclusiveModeOn)
+          {
+            MadvrInterface.restoreDisplayModeNow(_vmr9Filter);
+            DestroyWindow(HWnd);
+          }
           DirectShowUtil.FinalReleaseComObject(_vmr9Filter);
           _vmr9Filter = null;
-          DestroyWindow(HWnd);
           Log.Debug("VMR9: Dispose 2");
         }
         else
@@ -1755,7 +1769,6 @@ namespace MediaPortal.Player
       }
       finally
       {
-        RestoreGuiForMadVr();
         if (_vmr9Filter != null)
         {
           DirectShowUtil.TryRelease(ref _vmr9Filter);
@@ -1764,8 +1777,13 @@ namespace MediaPortal.Player
 
         if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
         {
-          Action action = new Action(Action.ActionType.ACTION_STOP, 0f, 0f);
-          GUIGraphicsContext.OnAction(action);
+          // For LiveTV Zapping not doing stop here
+          if (!g_Player.IsTV || !GUIGraphicsContext.keepExclusiveModeOn)
+          {
+            RestoreGuiForMadVr();
+            Action action = new Action(Action.ActionType.ACTION_STOP, 0f, 0f);
+            GUIGraphicsContext.OnAction(action);
+          }
         }
         GUIWindowManager.MadVrProcess();
         Log.Debug("VMR9: Dispose done");

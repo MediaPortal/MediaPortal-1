@@ -1626,6 +1626,7 @@ public class MediaPortalApp : D3D, IRender
 
           // Force a madVR refresh to resize MP window
           // TODO how to handle it better
+          GUIGraphicsContext.ForceMadVRRefresh = true;
           g_Player.RefreshMadVrVideo();
           break;
 
@@ -1670,6 +1671,12 @@ public class MediaPortalApp : D3D, IRender
 
             Log.Debug("Main: WM_DISPLAYCHANGE madVR screen change triggered");
             Log.Debug("Main: WM_DISPLAYCHANGE madVR Width x Height : {0} x {1}", screen.Bounds.Size.Width, screen.Bounds.Size.Height);
+          }
+          // Restore bounds from the currentScreen value (to restore original startup MP screen after turned off used HDMI device
+          if (!Windowed && _ignoreFullscreenResolutionChanges)
+          {
+            SetBounds(GUIGraphicsContext.currentScreen.Bounds.X, GUIGraphicsContext.currentScreen.Bounds.Y, GUIGraphicsContext.currentScreen.Bounds.Width, GUIGraphicsContext.currentScreen.Bounds.Height);
+            Log.Debug("Main: WM_DISPLAYCHANGE restore current screen position");
           }
           break;
 
@@ -2378,7 +2385,7 @@ public class MediaPortalApp : D3D, IRender
           info.Size = (uint)Marshal.SizeOf(info);
           GetMonitorInfo(hMon, ref info);
           var rect = Screen.FromRectangle(info.MonitorRectangle).Bounds;
-          if (Equals(Manager.Adapters[GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal].Information.DeviceName, GetCleanDisplayName(GUIGraphicsContext.currentStartScreen)) && rect.Equals(screen.Bounds))
+          if (GUIGraphicsContext.DX9Device != null && (Equals(Manager.Adapters[GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal].Information.DeviceName, GetCleanDisplayName(GUIGraphicsContext.currentStartScreen)) && rect.Equals(screen.Bounds)))
           {
             GUIGraphicsContext.currentScreen = GUIGraphicsContext.currentStartScreen;
             break;
@@ -4518,6 +4525,7 @@ public class MediaPortalApp : D3D, IRender
               // Need to delay full stop for madVR to avoid blank screen on stop when dialog will be displayed on stop
               if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && GUIGraphicsContext.InVmr9Render)
               {
+                GUIGraphicsContext.keepExclusiveModeOn = false;
                 g_Player.ReleaseForMadVr();
               }
               else
