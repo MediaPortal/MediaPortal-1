@@ -5,8 +5,8 @@
 -- -----------------------------------------------------------
 -- Entity Designer DDL Script for MySQL Server 4.1 and higher
 -- -----------------------------------------------------------
--- Date Created: 02/01/2017 11:54:47
--- Generated from EDMX file: F:\sdev\Code\MediaPortal\MediaPortal-1_TVE35\TvEngine3\Mediaportal\TV\Server\TVDatabase\EntityModel\Model.edmx
+-- Date Created: 08/13/2017 21:20:13
+-- Generated from EDMX file: D:\sdev\Code\MediaPortal\MediaPortal-1_TVE35\TvEngine3\Mediaportal\TV\Server\TVDatabase\EntityModel\Model.edmx
 -- Target version: 2.0.0.0
 -- --------------------------------------------------
 
@@ -231,7 +231,8 @@ ALTER TABLE `Histories` ADD PRIMARY KEY (IdHistory);
 
 CREATE TABLE `PendingDeletions`(
 	`IdPendingDeletion` int NOT NULL AUTO_INCREMENT UNIQUE, 
-	`FileName` longtext NOT NULL);
+	`FileName` longtext NOT NULL, 
+	`DeleteAttemptCount` int NOT NULL);
 
 ALTER TABLE `PendingDeletions` ADD PRIMARY KEY (IdPendingDeletion);
 

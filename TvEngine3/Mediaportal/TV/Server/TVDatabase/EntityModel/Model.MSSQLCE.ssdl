@@ -292,6 +292,7 @@
     </Key>
     <Property Name="IdPendingDeletion" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="FileName" Type="nvarchar" Nullable="false" MaxLength="4000"/>
+    <Property Name="DeleteAttemptCount" Type="int" Nullable="false" />
   </EntityType>
   <EntityType Name="Programs">
     <Key>

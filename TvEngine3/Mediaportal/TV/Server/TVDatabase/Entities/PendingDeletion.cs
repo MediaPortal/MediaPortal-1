@@ -55,6 +55,21 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
             }
         }
         private string _fileName;
+    
+        [DataMember]
+        public int DeleteAttemptCount
+        {
+            get { return _deleteAttemptCount; }
+            set
+            {
+                if (_deleteAttemptCount != value)
+                {
+                    _deleteAttemptCount = value;
+                    OnPropertyChanged("DeleteAttemptCount");
+                }
+            }
+        }
+        private int _deleteAttemptCount;
 
         #endregion
         #region ChangeTracking

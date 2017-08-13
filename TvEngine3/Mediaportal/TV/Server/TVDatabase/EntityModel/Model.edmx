@@ -297,6 +297,7 @@
     </Key>
     <Property Name="IdPendingDeletion" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="FileName" Type="longtext" Nullable="false" />
+    <Property Name="DeleteAttemptCount" Type="int" Nullable="false" />
   </EntityType>
   <EntityType Name="Programs">
     <Key>
@@ -1405,6 +1406,7 @@
           </Key>
           <Property Name="IdPendingDeletion" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="FileName" Type="String" Nullable="false" MaxLength="Max" Unicode="false" FixedLength="false" />
+          <Property Type="Int32" Name="DeleteAttemptCount" Nullable="false" />
         </EntityType>
         <EntityType Name="Program">
           <Key>
@@ -2362,6 +2364,7 @@
         <MappingFragment StoreEntitySet="PendingDeletions">
           <ScalarProperty Name="IdPendingDeletion" ColumnName="IdPendingDeletion" />
           <ScalarProperty Name="FileName" ColumnName="FileName" />
+          <ScalarProperty Name="DeleteAttemptCount" ColumnName="DeleteAttemptCount" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
@@ -2751,12 +2754,12 @@
         <EntityTypeShape EntityType="TVDatabaseModel.Conflict" Width="1.5" PointX="7.875" PointY="11.625" Height="2.9417936197916656" IsExpanded="true" />
         <EntityTypeShape EntityType="TVDatabaseModel.ChannelGroupChannelMapping" Width="2.375" PointX="5" PointY="16.875" Height="2.1725878906249996" IsExpanded="true" />
         <EntityTypeShape EntityType="TVDatabaseModel.History" Width="1.5" PointX="8" PointY="20.875" Height="3.1340950520833353" IsExpanded="true" />
-        <EntityTypeShape EntityType="TVDatabaseModel.PendingDeletion" Width="1.625" PointX="16.25" PointY="4" Height="1.4033821614583326" IsExpanded="true" />
+        <EntityTypeShape EntityType="TVDatabaseModel.PendingDeletion" Width="1.875" PointX="15.875" PointY="4" Height="1.5956835937499996" IsExpanded="true" />
         <EntityTypeShape EntityType="TVDatabaseModel.Program" Width="1.625" PointX="5.625" PointY="20.25" Height="7.5570279947916674" IsExpanded="true" />
         <EntityTypeShape EntityType="TVDatabaseModel.ProgramCategory" Width="1.75" PointX="7.875" PointY="24.375" Height="2.364889322916671" IsExpanded="true" />
         <EntityTypeShape EntityType="TVDatabaseModel.ProgramCredit" Width="1.5" PointX="3.25" PointY="24.375" Height="1.9802864583333353" IsExpanded="true" />
         <EntityTypeShape EntityType="TVDatabaseModel.Recording" Width="1.625" PointX="10.25" PointY="20.25" Height="7.9416308593750031" IsExpanded="true" />
-        <EntityTypeShape EntityType="TVDatabaseModel.RuleBasedSchedule" Width="1.875" PointX="14.125" PointY="2.875" Height="3.1340950520833326" IsExpanded="true" />
+        <EntityTypeShape EntityType="TVDatabaseModel.RuleBasedSchedule" Width="1.875" PointX="13.875" PointY="2.875" Height="3.1340950520833326" IsExpanded="true" />
         <EntityTypeShape EntityType="TVDatabaseModel.Satellite" Width="1.5" PointX="2.875" PointY="11.625" Height="1.9802864583333335" IsExpanded="true" />
         <EntityTypeShape EntityType="TVDatabaseModel.Schedule" Width="1.5" PointX="12.375" PointY="15.25" Height="5.6340136718750031" IsExpanded="true" />
         <EntityTypeShape EntityType="TVDatabaseModel.ScheduleRulesTemplate" Width="2.125" PointX="13.875" PointY="0.5" Height="1.9210009765624996" IsExpanded="true" />

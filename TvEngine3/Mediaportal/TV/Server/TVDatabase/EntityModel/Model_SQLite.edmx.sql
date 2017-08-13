@@ -269,7 +269,8 @@ CREATE TRIGGER "Histories_autoincrement" AFTER INSERT ON "Histories"
 CREATE TABLE "PendingDeletions"  ( 
     "Id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
     "IdPendingDeletion" int UNIQUE,
-    "FileName" text NOT NULL
+    "FileName" text NOT NULL,
+    "DeleteAttemptCount" int NOT NULL
 );
 
 CREATE TRIGGER "PendingDeletions_autoincrement" AFTER INSERT ON "PendingDeletions"

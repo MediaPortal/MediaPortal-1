@@ -71,7 +71,7 @@ namespace Mediaportal.TV.Server.TVLibrary.DiskManagement
       }
       if (!TVDatabase.TVBusinessLayer.RecordingManagement.HasRecordingPendingDeletion(recording.FileName))
       {
-        PendingDeletion pd = TVDatabase.TVBusinessLayer.RecordingManagement.SaveRecordingPendingDeletion(new PendingDeletion { FileName = fileName });
+        PendingDeletion pd = TVDatabase.TVBusinessLayer.RecordingManagement.SaveRecordingPendingDeletion(new PendingDeletion { FileName = fileName, DeleteAttemptCount = 1 });
         Log.Debug("recording management: add pending deletion, ID = {0}, file name = {1}", pd.IdPendingDeletion, fileName);
       }
       return false;
@@ -79,14 +79,27 @@ namespace Mediaportal.TV.Server.TVLibrary.DiskManagement
 
     private void OnTimerElapsed(object sender, ElapsedEventArgs e)
     {
-      // Re-attempt deletion for files that we have not been able to delete previously.
+      // Re-attempt deletion for files that we haven't been able to delete previously.
       IList<PendingDeletion> pendingDeletions = TVDatabase.TVBusinessLayer.RecordingManagement.ListAllPendingRecordingDeletions();
       foreach (var pendingDeletion in pendingDeletions)
       {
-        this.LogInfo("recording management: execute pending deletion, ID = {0}, file name = {1}", pendingDeletion.IdPendingDeletion, pendingDeletion.FileName);
+        this.LogInfo("recording management: execute pending deletion, ID = {0}, delete attempt count = {1}, file name = {2}", pendingDeletion.IdPendingDeletion, pendingDeletion.DeleteAttemptCount, pendingDeletion.FileName);
         if (DeleteRecordingOnDisk(pendingDeletion.FileName))
         {
           TVDatabase.TVBusinessLayer.RecordingManagement.DeletePendingRecordingDeletion(pendingDeletion.IdPendingDeletion);
+        }
+        else
+        {
+          pendingDeletion.DeleteAttemptCount++;
+          if (pendingDeletion.DeleteAttemptCount < 100)
+          {
+            TVDatabase.TVBusinessLayer.RecordingManagement.SaveRecordingPendingDeletion(pendingDeletion);
+          }
+          else
+          {
+            this.LogWarn("recording management: pending deletion failed, ID = {0}, delete attempt count = {1}, file name = {2}", pendingDeletion.IdPendingDeletion, pendingDeletion.DeleteAttemptCount, pendingDeletion.FileName);
+            TVDatabase.TVBusinessLayer.RecordingManagement.DeletePendingRecordingDeletion(pendingDeletion.IdPendingDeletion);
+          }
         }
       }
 
@@ -191,8 +204,11 @@ namespace Mediaportal.TV.Server.TVLibrary.DiskManagement
       try
       {
         string thumbnailFileName = Thumbnailer.Thumbnailer.GetThumbnailFileName(recordingFileName);
-        Log.Info("  file, {0}", thumbnailFileName);
-        File.Delete(thumbnailFileName);
+        if (File.Exists(thumbnailFileName))
+        {
+          Log.Info("  file, {0}", thumbnailFileName);
+          File.Delete(thumbnailFileName);
+        }
 
         // Find and delete all files with same name in the recording folder.
         string directoryName = Path.GetDirectoryName(recordingFileName);
