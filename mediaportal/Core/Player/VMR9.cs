@@ -1722,16 +1722,22 @@ namespace MediaPortal.Player
           Log.Debug("VMR9: Dispose MadDeinit - thread : {0}", Thread.CurrentThread.Name);
           GC.Collect();
           MadDeinit();
+          Log.Debug("VMR9: Dispose 2");
           GC.Collect();
           // Tv Zapping mode do not restore GUI
           if (!GUIGraphicsContext.keepExclusiveModeOn)
           {
             MadvrInterface.restoreDisplayModeNow(_vmr9Filter);
-            DestroyWindow(HWnd);
           }
+          Log.Debug("VMR9: Dispose 2.1");
           DirectShowUtil.FinalReleaseComObject(_vmr9Filter);
+          if (!GUIGraphicsContext.keepExclusiveModeOn)
+          {
+            DestroyWindow(HWnd);
+            Log.Debug("VMR9: Dispose 2.2");
+          }
           _vmr9Filter = null;
-          Log.Debug("VMR9: Dispose 2");
+          Log.Debug("VMR9: Dispose 2.3");
         }
         else
         {
