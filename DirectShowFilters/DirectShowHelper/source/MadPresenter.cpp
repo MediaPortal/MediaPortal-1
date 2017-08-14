@@ -55,12 +55,16 @@ MPMadPresenter::MPMadPresenter(IVMR9Callback* pCallback, DWORD width, DWORD heig
   Log("MPMadPresenter::Constructor() - instance 0x%x", this);
   m_pShutdown = false;
   m_pDevice->GetRenderTarget(0, &m_pSurfaceDevice);
+  // Store device surface MP GUI for later
+  m_pCallback->RestoreDeviceSurface(reinterpret_cast<DWORD>(m_pSurfaceDevice));
+  Log("MPMadPresenter::Constructor() Store Device Surface");
 }
 
 MPMadPresenter::~MPMadPresenter()
 {
   {
-    CAutoLock cAutoLock(this);
+    // TODO need to be commented to avoid deadlock.
+    //CAutoLock cAutoLock(this);
 
     if (m_pSRCB)
     {
@@ -335,20 +339,12 @@ void MPMadPresenter::ConfigureMadvr()
 HRESULT MPMadPresenter::Shutdown()
 {
   { // Scope for autolock for the local variable (lock, which when deleted releases the lock)
-    CAutoLock lock(this);
-
     Log("MPMadPresenter::Shutdown() start");
 
     if (m_pCallback)
     {
       m_pCallback->SetSubtitleDevice(reinterpret_cast<DWORD>(nullptr));
       Log("MPMadPresenter::Shutdown() reset subtitle device");
-      m_pCallback->RestoreDeviceSurface(reinterpret_cast<DWORD>(m_pSurfaceDevice));
-      Log("MPMadPresenter::Shutdown() RestoreDeviceSurface");
-      m_pCallback->DestroyHWnd(m_hWnd);
-      Log("MPMadPresenter::Shutdown() send DestroyHWnd on C# side");
-      m_pCallback->Release();
-      Log("MPMadPresenter::Shutdown() m_pCallback release");
     }
 
     // Restore windowed overlay settings
@@ -596,7 +592,7 @@ HRESULT MPMadPresenter::ClearBackground(LPCSTR name, REFERENCE_TIME frameStart, 
   }
 
   // Lock madVR thread while Shutdown()
-  CAutoLock lock(&m_dsLock);
+  //CAutoLock lock(&m_dsLock);
 
   WORD videoHeight = (WORD)activeVideoRect->bottom - (WORD)activeVideoRect->top;
   WORD videoWidth = (WORD)activeVideoRect->right - (WORD)activeVideoRect->left;
@@ -694,7 +690,7 @@ HRESULT MPMadPresenter::RenderOsd(LPCSTR name, REFERENCE_TIME frameStart, RECT* 
   }
 
   // Lock madVR thread while Shutdown()
-  CAutoLock lock(&m_dsLock);
+  //CAutoLock lock(&m_dsLock);
 
   WORD videoHeight = (WORD)activeVideoRect->bottom - (WORD)activeVideoRect->top;
   WORD videoWidth = (WORD)activeVideoRect->right - (WORD)activeVideoRect->left;
@@ -993,7 +989,7 @@ HRESULT MPMadPresenter::SetDeviceOsd(IDirect3DDevice9* pD3DDev)
   }
 
   // Lock madVR thread while Shutdown()
-  CAutoLock lock(&m_dsLock);
+  //CAutoLock lock(&m_dsLock);
 
   //CAutoLock cAutoLock(this);
   if (!pD3DDev)
@@ -1009,53 +1005,55 @@ HRESULT MPMadPresenter::SetDeviceOsd(IDirect3DDevice9* pD3DDev)
 
 HRESULT MPMadPresenter::SetDevice(IDirect3DDevice9* pD3DDev)
 {
-  HRESULT hr = S_FALSE;
+  { // Scope for autolock for the local variable (lock, which when deleted releases the lock)
+    HRESULT hr = S_FALSE;
 
-  if (m_pShutdown)
-  {
-    Log("MPMadPresenter::SetDevice() shutdown");
+    if (m_pShutdown)
+    {
+      Log("MPMadPresenter::SetDevice() shutdown");
+      return hr;
+    }
+
+    // Lock madVR thread while Shutdown()
+    //CAutoLock lock(&m_dsLock);
+
+    CAutoLock cAutoLock(this);
+
+    Log("MPMadPresenter::SetDevice() device 0x:%x", pD3DDev);
+
+    if (!pD3DDev)
+    {
+      if (m_pMadD3DDev) m_pMadD3DDev->Release();
+      m_pMadD3DDev = nullptr;
+    }
+
+    m_pMadD3DDev = static_cast<IDirect3DDevice9Ex*>(pD3DDev);
+
+    if (m_pMadD3DDev)
+    {
+      m_deviceState.SetDevice(m_pMadD3DDev);
+
+      if (SUCCEEDED(hr = m_pDevice->CreateTexture(m_dwGUIWidth, m_dwGUIHeight, 0, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &m_pMPTextureGui.p, &m_hSharedGuiHandle)))
+        if (SUCCEEDED(hr = m_pDevice->CreateTexture(m_dwGUIWidth, m_dwGUIHeight, 0, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &m_pMPTextureOsd.p, &m_hSharedOsdHandle)))
+
+          m_pInitOSDRender = false;
+    }
+    else
+    {
+      if (m_pCallback)
+      {
+        m_pCallback->SetSubtitleDevice((DWORD)m_pMadD3DDev);
+        Log("MPMadPresenter::SetDevice() reset subtitle device");
+      }
+      Log("MPMadPresenter::SetDevice() Shutdown() 1");
+      m_deviceState.Shutdown();
+      Log("MPMadPresenter::SetDevice() Shutdown() 2");
+    }
+
+    Log("MPMadPresenter::SetDevice() init madVR Window");
+
     return hr;
   }
-
-  // Lock madVR thread while Shutdown()
-  CAutoLock lock(&m_dsLock);
-
-  CAutoLock cAutoLock(this);
-
-  Log("MPMadPresenter::SetDevice() device 0x:%x", pD3DDev);
-
-  if (!pD3DDev)
-  {
-    if (m_pMadD3DDev) m_pMadD3DDev->Release();
-    m_pMadD3DDev = nullptr;
-  }
-
-  m_pMadD3DDev = static_cast<IDirect3DDevice9Ex*>(pD3DDev);
-
-  if (m_pMadD3DDev)
-  {
-    m_deviceState.SetDevice(m_pMadD3DDev);
-
-    if (SUCCEEDED(hr = m_pDevice->CreateTexture(m_dwGUIWidth, m_dwGUIHeight, 0, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &m_pMPTextureGui.p, &m_hSharedGuiHandle)))
-      if (SUCCEEDED(hr = m_pDevice->CreateTexture(m_dwGUIWidth, m_dwGUIHeight, 0, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &m_pMPTextureOsd.p, &m_hSharedOsdHandle)))
-
-    m_pInitOSDRender = false;
-  }
-  else
-  {
-    if (m_pCallback)
-    {
-      m_pCallback->SetSubtitleDevice((DWORD)m_pMadD3DDev);
-      Log("MPMadPresenter::SetDevice() reset subtitle device");
-    }
-    Log("MPMadPresenter::SetDevice() Shutdown() 1");
-    m_deviceState.Shutdown();
-    Log("MPMadPresenter::SetDevice() Shutdown() 2");
-  }
-
-  Log("MPMadPresenter::SetDevice() init madVR Window");
-
-  return hr;
 }
 
 HRESULT MPMadPresenter::Render(REFERENCE_TIME frameStart, int left, int top, int right, int bottom, int width, int height)
@@ -1084,7 +1082,7 @@ HRESULT MPMadPresenter::RenderEx3(REFERENCE_TIME rtStart, REFERENCE_TIME rtStop,
     }
 
     // Lock madVR thread while Shutdown()
-    CAutoLock lock(&m_dsLock);
+    //CAutoLock lock(&m_dsLock);
 
     CAutoLock cAutoLock(this);
 
