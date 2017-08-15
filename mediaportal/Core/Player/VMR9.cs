@@ -759,7 +759,6 @@ namespace MediaPortal.Player
             GC.Collect();
             DirectShowUtil.FinalReleaseComObject(_vmr9Filter);
             Thread.Sleep(200);
-            RestoreGuiForMadVr();
           }
           else
           {
@@ -1493,8 +1492,8 @@ namespace MediaPortal.Player
       if (GUIGraphicsContext.MadVrRenderTargetVMR9 != null && !GUIGraphicsContext.MadVrRenderTargetVMR9.Disposed)
       {
         GUIGraphicsContext.DX9Device.SetRenderTarget(0, GUIGraphicsContext.MadVrRenderTargetVMR9);
-        GUIGraphicsContext.MadVrRenderTargetVMR9.Dispose();
-        GUIGraphicsContext.MadVrRenderTargetVMR9 = null;
+        //GUIGraphicsContext.MadVrRenderTargetVMR9.Dispose();
+        //GUIGraphicsContext.MadVrRenderTargetVMR9 = null;
 
         GUIGraphicsContext.currentScreen = Screen.FromControl(GUIGraphicsContext.form);
         GUIGraphicsContext.form.Location = new Point(GUIGraphicsContext.currentScreen.Bounds.X, GUIGraphicsContext.currentScreen.Bounds.Y);
