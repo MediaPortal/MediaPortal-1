@@ -542,7 +542,10 @@ namespace TvPlugin
                     detail = details[0];
                     break;
                 }
-                GUIPropertyManager.SetProperty("#TV.TuningDetails.FreeToAir", detail.FreeToAir.ToString());
+                if (detail != null)
+                {
+                  GUIPropertyManager.SetProperty("#TV.TuningDetails.FreeToAir", detail.FreeToAir.ToString());
+                }
               }
             }
           }

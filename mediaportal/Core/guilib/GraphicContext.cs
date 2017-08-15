@@ -168,6 +168,10 @@ namespace MediaPortal.GUI.Library
     private static bool _fullHD3DFormat = false;
     private static bool _tabWithBlackBars = false;
 
+    // For madVR
+    public static Surface MadVrRenderTargetVMR9 = null;
+    public static IntPtr HWnd;
+
     // Stacks for matrix transformations.
     private static readonly Stack<Matrix> ProjectionMatrixStack = new Stack<Matrix>();
     private static readonly Stack<FinalTransformBucket> FinalTransformStack = new Stack<FinalTransformBucket>();

@@ -505,18 +505,6 @@ namespace MediaPortal
         GUIGraphicsContext.DX9Device.DeviceLost -= OnDeviceLost;
       }
 
-      // if we do ToggleFullscreen when using madVR (needed to resize OSD)
-      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
-      {
-        GUIGraphicsContext.ForceMadVRRefresh3D = true;
-      }
-      // Force OSD resize when no video has started to display OSD GUI correctly
-      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
-               !GUIGraphicsContext.InVmr9Render)
-      { 
-        GUIGraphicsContext.ForceMadVRRefresh = true;
-      }
-
       // Reset DialogMenu to avoid freeze when going to fullscreen/windowed
       var dialogMenu = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
       if (dialogMenu != null &&
@@ -598,6 +586,19 @@ namespace MediaPortal
       Log.Info("D3D: Client Size: {0}x{1}", ClientSize.Width, ClientSize.Height);
       Log.Info("D3D: Screen size: {0}x{1}", GUIGraphicsContext.currentScreen.Bounds.Width,
         GUIGraphicsContext.currentScreen.Bounds.Height);
+
+      // if we do ToggleFullscreen when using madVR (needed to resize OSD)
+      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+      {
+        GUIGraphicsContext.ForceMadVRRefresh3D = true;
+        GUIGraphicsContext.ForceMadVRRefresh = true;
+      }
+      // Force OSD resize when no video has started to display OSD GUI correctly
+      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
+               !GUIGraphicsContext.InVmr9Render)
+      {
+        GUIGraphicsContext.ForceMadVRRefresh = true;
+      }
 
       // Force a madVR refresh to resize MP window
       // TODO how to handle it better
