@@ -21,6 +21,7 @@
 using System;
 using System.Runtime.InteropServices;
 using MediaPortal.ExtensionMethods;
+using MediaPortal.Player;
 
 namespace MediaPortal.Mixer
 {
@@ -88,7 +89,7 @@ namespace MediaPortal.Mixer
       Open(0, false);
     }
 
-    public void Open(int mixerIndex, bool isDigital)
+    public void Open(int mixerIndex, bool isDigital, bool resetDevice = false)
     {
       lock (this)
       {
@@ -101,7 +102,6 @@ namespace MediaPortal.Mixer
         {
           _componentType = MixerComponentType.DestinationSpeakers;
         }
-        // not enough to change this..
 
         // Use Endpoint Volume API for Vista/Win7 if master volume is selected and always for Win8 to handle muting of master volume
         if ((OSInfo.OSInfo.VistaOrLater() && _componentType == MixerComponentType.DestinationSpeakers) ||
@@ -109,7 +109,7 @@ namespace MediaPortal.Mixer
         {
           try
           {
-            _audioDefaultDevice = new AEDev();
+            _audioDefaultDevice = new AEDev(resetDevice);
             if (_audioDefaultDevice != null)
             {
               _audioDefaultDevice.OnVolumeNotification +=
@@ -271,10 +271,7 @@ namespace MediaPortal.Mixer
 
     private void OnLineChanged(object sender, MixerEventArgs e)
     {
-      if (LineChanged != null)
-      {
-        LineChanged(sender, e);
-      }
+      LineChanged?.Invoke(sender, e);
     }
 
     private void OnControlChanged(object sender, MixerEventArgs e)
@@ -310,7 +307,6 @@ namespace MediaPortal.Mixer
         }
       }
     }
-
     #endregion Methods
 
     #region Properties
@@ -398,7 +394,7 @@ namespace MediaPortal.Mixer
     private int _volume;
     private MixerNativeMethods.MixerControlDetails _mixerControlDetailsVolume;
     private MixerNativeMethods.MixerControlDetails _mixerControlDetailsMute;
-    private AEDev _audioDefaultDevice;
+    public AEDev _audioDefaultDevice;
     private bool _waveVolume;
 
     #endregion Fields

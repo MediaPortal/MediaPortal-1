@@ -1,6 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ArrayOfTransponder xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Transponder>
+    <CarrierFrequency>3754000</CarrierFrequency>
+    <Polarisation>CircularL</Polarisation>
+    <SymbolRate>7500</SymbolRate>
+    <Modulation>ModNotSet</Modulation>
+    <InnerFecRate>Rate3_4</InnerFecRate>
+    <Pilot>NotSet</Pilot>
+    <Rolloff>NotSet</Rolloff>
+  </Transponder>
+  <Transponder>
+    <CarrierFrequency>3962000</CarrierFrequency>
+    <Polarisation>CircularL</Polarisation>
+    <SymbolRate>11931</SymbolRate>
+    <Modulation>ModNotSet</Modulation>
+    <InnerFecRate>Rate3_4</InnerFecRate>
+    <Pilot>NotSet</Pilot>
+    <Rolloff>NotSet</Rolloff>
+  </Transponder>
+  <Transponder>
+    <CarrierFrequency>3981000</CarrierFrequency>
+    <Polarisation>CircularL</Polarisation>
+    <SymbolRate>2730</SymbolRate>
+    <Modulation>ModNotSet</Modulation>
+    <InnerFecRate>Rate3_4</InnerFecRate>
+    <Pilot>NotSet</Pilot>
+    <Rolloff>NotSet</Rolloff>
+  </Transponder>
+  <Transponder>
+    <CarrierFrequency>4067000</CarrierFrequency>
+    <Polarisation>CircularR</Polarisation>
+    <SymbolRate>6111</SymbolRate>
+    <Modulation>ModNotSet</Modulation>
+    <InnerFecRate>Rate3_4</InnerFecRate>
+    <Pilot>NotSet</Pilot>
+    <Rolloff>NotSet</Rolloff>
+  </Transponder>
+  <Transponder>
     <CarrierFrequency>12541000</CarrierFrequency>
     <Polarisation>LinearH</Polarisation>
     <SymbolRate>2300</SymbolRate>
@@ -10,21 +46,21 @@
     <Rolloff>NotSet</Rolloff>
   </Transponder>
   <Transponder>
-    <CarrierFrequency>12645000</CarrierFrequency>
-    <Polarisation>LinearH</Polarisation>
-    <SymbolRate>20000</SymbolRate>
-    <Modulation>Mod16Apsk</Modulation>
+    <CarrierFrequency>3724000</CarrierFrequency>
+    <Polarisation>CircularL</Polarisation>
+    <SymbolRate>16073</SymbolRate>
+    <Modulation>Mod8Psk</Modulation>
     <InnerFecRate>Rate3_4</InnerFecRate>
     <Pilot>On</Pilot>
     <Rolloff>ThirtyFive</Rolloff>
   </Transponder>
   <Transponder>
-    <CarrierFrequency>12688000</CarrierFrequency>
-    <Polarisation>LinearH</Polarisation>
-    <SymbolRate>2016</SymbolRate>
-    <Modulation>ModQpsk</Modulation>
-    <InnerFecRate>Rate3_4</InnerFecRate>
-    <Pilot>Off</Pilot>
+    <CarrierFrequency>3831000</CarrierFrequency>
+    <Polarisation>CircularL</Polarisation>
+    <SymbolRate>17430</SymbolRate>
+    <Modulation>Mod8Psk</Modulation>
+    <InnerFecRate>Rate3_5</InnerFecRate>
+    <Pilot>On</Pilot>
     <Rolloff>ThirtyFive</Rolloff>
   </Transponder>
 </ArrayOfTransponder>

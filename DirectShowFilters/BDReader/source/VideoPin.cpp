@@ -633,10 +633,13 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
 
               if (m_pReceiver && CheckVideoFormat(&buffer->pmt->subtype, &m_currentDecoder))
               {
-                // Currently no other video decoders than LAV seems to be compatible with
-                // the dynamic format changes
-                if (m_currentDecoder == CLSID_LAVVideo)
-                hrAccept = m_pReceiver->QueryAccept(buffer->pmt);
+                // Currently only LAV Video Decoder seems to be capable of handling
+                // dynamic format changes. Even LAV doesn't handle it perfectly. Sometimes
+                // the change results in a black screen (LAV v0.68.1). We disable internal
+                // handling to avoid such problems *and* enable external handlers to update
+                // the refresh rate.
+                //if (m_currentDecoder == CLSID_LAVVideo)
+                //  hrAccept = m_pReceiver->QueryAccept(buffer->pmt);
               }
 
               if (hrAccept != S_OK)

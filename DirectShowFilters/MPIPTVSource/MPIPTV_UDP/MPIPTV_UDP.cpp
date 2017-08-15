@@ -67,6 +67,11 @@ CMPIPTV_UDP::CMPIPTV_UDP()
   this->defaultBufferSize = 0;
   this->maxBufferSize = 0;
 
+  this->local = NULL;
+  this->source = NULL;
+  this->currentLocalAddr = NULL;
+  this->currentSourceAddr = NULL;
+
   this->logger.Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CONSTRUCTOR_NAME);
 }
 
