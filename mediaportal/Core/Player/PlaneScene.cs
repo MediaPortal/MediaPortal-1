@@ -946,7 +946,7 @@ namespace MediaPortal.Player
       if (GUIGraphicsContext.DX9Device != null)
       {
         Surface surface = new Surface((IntPtr)pSurfaceDevice);
-        VMR9Util.g_vmr9.MadVrRenderTargetVMR9 = surface;
+        GUIGraphicsContext.MadVrRenderTargetVMR9 = surface;
       }
     }
 
@@ -954,7 +954,7 @@ namespace MediaPortal.Player
     {
       if (GUIGraphicsContext.DX9Device != null)
       {
-        VMR9Util.g_vmr9.HWnd = (IntPtr)phWnd;
+        GUIGraphicsContext.HWnd = (IntPtr) phWnd;
       }
     }
 

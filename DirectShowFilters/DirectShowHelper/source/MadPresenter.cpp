@@ -97,7 +97,8 @@ MPMadPresenter::~MPMadPresenter()
     Log("MPMadPresenter::Destructor() - m_pMad release 1");
     if (m_pMad)
     {
-      m_pMad.FullRelease();
+      // Let's try to do a m_pMad.Release() instead of m_pMad.FullRelease() (somehow it can take long time otherwise)
+      m_pMad.Release();
     }
     Log("MPMadPresenter::Destructor() - m_pMad release 2");
 
@@ -345,6 +346,7 @@ HRESULT MPMadPresenter::Shutdown()
     {
       m_pCallback->SetSubtitleDevice(reinterpret_cast<DWORD>(nullptr));
       Log("MPMadPresenter::Shutdown() reset subtitle device");
+      m_pCallback = nullptr;
     }
 
     // Restore windowed overlay settings
