@@ -45,66 +45,107 @@ not visible in filmstripview, but visible in details view
       <description>background</description>
       <type>image</type>
       <id>0</id>
-      <posX>20</posX>
-      <posY>10</posY>
-      <width>275</width>
-      <height>172</height>
-      <texture>tvbac.png</texture>
-	  <shouldCache>true</shouldCache>
-      <colordiffuse>99000000</colordiffuse>
-	  <visible>player.hasaudio</visible>
+      <posX>50</posX>
+      <posY>15</posY>
+      <width>347</width>
+      <height>163</height>
+      <texture>tvbackground.png</texture>
+	  <visible>Player.HasAudio+!Player.HasVideo</visible>
 	</control>
+	
 	
 	<control>
       <id>1</id>
       <type>image</type>
-      <posX>110</posX>
-      <posY>38</posY>
-      <width>110</width>
-      <height>110</height>
+      <posX>163</posX>
+      <posY>25</posY>
+      <width>140</width>
+      <height>140</height>
       <texture>cdfx_small.png</texture>
-      <visible>Player.HasAudio+!Player.HasVideo</visible>
+	  <keepaspectratio>true</keepaspectratio>
+      <visible>Player.HasAudio+!Player.HasVideo+!control.hasthumb(11922)</visible>
+      <animation effect="fade" time="2000" delay="1500" reversible="false">visible</animation>
+	  <animation effect="fade" time="500" reversible="false">hidden</animation>
+	  <animation effect="fade" time="2000" delay="1500" reversible="false">windowopen</animation>
+	  <animation effect="fade" time="100" reversible="false">windowclose</animation>
 	  <animation effect="slide" start="-70,0" delay="1500" end="0,0" time="300">visible</animation>
 	  <animation effect="slide" start="-70,0" delay="1500" end="0,0" time="300">windowopen</animation>
 	  <animation effect="rotate" delay="0" end="-360" centre="475,258" time="20000" loop="true" condition="player.hasaudio+player.playing">Conditional</animation>
     </control>
-	
-	<control>
-      <description>background</description>
+    <control>
+      <id>11922</id>
       <type>image</type>
-      <id>0</id>
-      <posX>36</posX>
+      <posX>163</posX>
       <posY>25</posY>
       <width>140</width>
       <height>140</height>
-      <texture>s_cdshad.png</texture>
-	  <shouldCache>true</shouldCache>
-      <colordiffuse>ffffffff</colordiffuse>
-	  <visible>Player.HasAudio+!Player.HasVideo</visible>
-	</control>
+	  <keepaspectratio>true</keepaspectratio>
+      <texture>..\..\..\thumbs\CDArt\Music\#Play.Current.Artist - #Play.Current.Album.png</texture>
+      <visible>Player.HasAudio+!Player.HasVideo</visible>
+      <animation effect="fade" time="2000" delay="1500" reversible="false">visible</animation>
+	  <animation effect="fade" time="500" reversible="false">hidden</animation>
+	  <animation effect="fade" time="2000" delay="1500" reversible="false">windowopen</animation>
+	  <animation effect="fade" time="100" reversible="false">windowclose</animation>
+	  <animation effect="slide" start="-70,0" delay="1500" end="0,0" time="300">visible</animation>
+	  <animation effect="slide" start="-70,0" delay="1500" end="0,0" time="300">windowopen</animation>
+	  <animation effect="rotate" delay="0" end="-360" centre="475,258" time="20000" loop="true" condition="player.hasaudio+player.playing">Conditional</animation>
+    </control>	
 	
-	<control>
-      <description>default</description>
-      <type>image</type>
-      <id>1</id>
-      <posX>40</posX>
-      <posY>30</posY>
-      <width>131</width>
-      <height>131</height>
-      <visible>Player.HasAudio+!Player.HasVideo+!control.hasthumb(12345)+!control.hasthumb(77)</visible>
-      <texture mask="s_cdmask.png">defaultArtistBig.png</texture>
-    </control>
+
 	
+
     <control>
       <description>music logo</description>
       <type>image</type>
       <id>0</id>
-      <posX>40</posX>
-      <posY>30</posY>
-      <width>131</width>
-      <height>131</height>
-      <texture mask="s_cdmask.png">#Play.Current.Thumb</texture>
-      <visible>player.hasaudio</visible>
+      <posX>90</posX>
+      <posY>20</posY>
+      <width>149</width>
+      <height>149</height>
+      <centered>yes</centered>
+      <keepaspectratio>true</keepaspectratio>
+      <visible>Player.HasAudio+!Player.HasVideo</visible>
+      <texture mask="">blue.png</texture>
+	  <animation effect="fade" time="1500" reversible="true">windowopen</animation>
+	  <animation effect="fade" time="100" reversible="true">windowclose</animation>
+	  <animation effect="fade" time="1500" reversible="true">visible</animation>
+	  <animation effect="fade" time="1500" reversible="true">hidden</animation>
+    </control>
+
+	
+    <control>
+      <description>music logo</description>
+      <type>image</type>
+      <id>12345</id>
+      <posX>90</posX>
+      <posY>20</posY>
+      <width>149</width>
+      <height>149</height>
+      <centered>yes</centered>
+      <keepaspectratio>true</keepaspectratio>
+      <visible>Player.HasAudio+!Player.HasVideo</visible>
+      <texture mask="">#Play.Current.Thumb</texture>
+	  <animation effect="fade" time="1500" reversible="true">windowopen</animation>
+	  <animation effect="fade" time="100" reversible="true">windowclose</animation>
+	  <animation effect="fade" time="1500" reversible="true">visible</animation>
+	  <animation effect="fade" time="1500" reversible="true">hidden</animation>
+    </control>
+    <control>
+      <description>music logo</description>
+      <type>image</type>
+      <id>77</id>
+      <posX>90</posX>
+      <posY>20</posY>
+      <width>149</width>
+      <height>149</height>
+      <centered>yes</centered>
+      <keepaspectratio>true</keepaspectratio>
+      <texture mask="">#Play.Current.ArtistThumb</texture>
+      <visible>Player.HasAudio+!Player.HasVideo+!control.hasthumb(12345)</visible>
+	  <animation effect="fade" time="1500" reversible="true">windowopen</animation>
+	  <animation effect="fade" time="100" reversible="true">windowclose</animation>
+	  <animation effect="fade" time="1500" reversible="true">visible</animation>
+	  <animation effect="fade" time="1500" reversible="true">hidden</animation>
     </control>
 	
 
@@ -116,31 +157,26 @@ not visible in filmstripview, but visible in details view
       <description>background</description>
       <type>image</type>
       <id>0</id>
-      <posX>20</posX>
-      <posY>10</posY>
-      <width>275</width>
-      <height>172</height>
-      <texture>tvbac.png</texture>
-	  <shouldCache>true</shouldCache>
-      <colordiffuse>99000000</colordiffuse>
-	  <visible>player.hasmedia+!control.isvisible(3337)</visible>
-	  <animation effect="fade" time="1500" reversible="true">visible</animation>
-	  <animation effect="fade" time="1500" reversible="true">hidden</animation>
+      <posX>50</posX>
+      <posY>15</posY>
+      <width>347</width>
+      <height>163</height>
+      <texture>tvbackground.png</texture>
+	  <visible>player.hasmedia+!Player.HasAudio</visible>
 	</control>
+
 	
-	    <control>
+	<control>
       <description>video preview window</description>
       <type>videowindow</type>
       <id>99</id>
-      <posX>35</posX>
-      <posY>28</posY>
-      <width>241</width>
-      <height>135</height>
-      <visible>player.hasmedia+!control.isvisible(3337)</visible>
+      <posX>90</posX>
+      <posY>21</posY>
+      <width>270</width>
+      <height>147</height>
+      <visible>player.hasmedia+!Player.HasAudio</visible>
       <action>18</action>
-      <textureFocus>tv_green_border.png</textureFocus>
-	  <animation effect="fade" time="1500" reversible="true">visible</animation>
-	  <animation effect="fade" time="0" reversible="true">hidden</animation>
+      <textureFocus>tvguide_button_selected_middle.png</textureFocus>
     </control>
 	
   </controls>
