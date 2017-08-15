@@ -27,7 +27,7 @@
         <onclick>#(skin.setstring('#tile16pluginImg',#selectedlabel416))</onclick>
         <binding>#tile16pluginImg</binding>
         <subitems>
-        <subitem>#PluginTileList</subitem>
+        <subitem>#PluginTileListApollo</subitem>
         </subitems>
         <textcolorNoFocus>70ffffff</textcolorNoFocus>
         <textureFocus>picBtnEdit_focus.png</textureFocus>
@@ -58,7 +58,7 @@
         <onclick>#(skin.setstring('#tile17pluginImg',#selectedlabel417))</onclick>
         <binding>#tile17pluginImg</binding>
         <subitems>
-        <subitem>#PluginTileList</subitem>
+        <subitem>#PluginTileListApollo</subitem>
         </subitems>
         <textcolorNoFocus>70ffffff</textcolorNoFocus>
         <textureFocus>picBtnEdit_focus.png</textureFocus>
@@ -89,7 +89,7 @@
         <onclick>#(skin.setstring('#tile18pluginImg',#selectedlabel418))</onclick>
         <binding>#tile18pluginImg</binding>
         <subitems>
-        <subitem>#PluginTileList</subitem>
+        <subitem>#PluginTileListApollo</subitem>
         </subitems>
         <textcolorNoFocus>70ffffff</textcolorNoFocus>
         <textureFocus>picBtnEdit_focus.png</textureFocus>
@@ -120,7 +120,7 @@
         <onclick>#(skin.setstring('#tile19pluginImg',#selectedlabel419))</onclick>
         <binding>#tile19pluginImg</binding>
         <subitems>
-        <subitem>#PluginTileList</subitem>
+        <subitem>#PluginTileListApollo</subitem>
         </subitems>
         <textcolorNoFocus>70ffffff</textcolorNoFocus>
         <textureFocus>picBtnEdit_focus.png</textureFocus>
@@ -151,7 +151,7 @@
         <onclick>#(skin.setstring('#tile20pluginImg',#selectedlabel420))</onclick>
         <binding>#tile20pluginImg</binding>
         <subitems>
-        <subitem>#PluginTileList</subitem>
+        <subitem>#PluginTileListApollo</subitem>
         </subitems>
         <textcolorNoFocus>70ffffff</textcolorNoFocus>
         <textureFocus>picBtnEdit_focus.png</textureFocus>

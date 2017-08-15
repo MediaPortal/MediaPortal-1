@@ -86,9 +86,10 @@
       <description>Site Logo</description>
       <type>image</type>
       <id>101</id>
-      <posX>56</posX>
-      <posY>863</posY>
-      <width>190</width>
+      <posX>66</posX>
+      <posY>838</posY>
+	  <height>170</height>
+      <width>170</width>
       <texture>#infoservice.feed.selected.itemimg</texture>
       <centered>yes</centered>
       <keepaspectratio>yes</keepaspectratio>

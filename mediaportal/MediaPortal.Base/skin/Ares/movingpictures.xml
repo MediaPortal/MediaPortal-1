@@ -7,7 +7,7 @@ multiple view modes.
 <window>
 	<id>96742</id>
 	<defaultcontrol>50</defaultcontrol>
-	<allowoverlay>yes</allowoverlay>
+	<allowoverlay>no</allowoverlay>
 
 	<!--
 	This set of defines are read by the plug-in and used to determine aspects of it's behavior. These
@@ -295,6 +295,7 @@ multiple view modes.
 		  <texture>lock.png</texture>
 		</control>
 		
+        <import>movingpictures.overlay.xml</import>
 
 		<!-- Dim background when movie starts -->
 		<!-- This is to provide feedback to the user something is happening when there are long pauses before playback -->
