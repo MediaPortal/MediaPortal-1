@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
   <id>35</id>
-  <defaultcontrol>00516</defaultcontrol>
+  <defaultcontrol>00512</defaultcontrol>
   <allowoverlay>yes</allowoverlay>
   <rememberLastFocusedControl>yes</rememberLastFocusedControl>
   <controls>
