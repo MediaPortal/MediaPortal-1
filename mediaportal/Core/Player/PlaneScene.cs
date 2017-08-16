@@ -302,7 +302,10 @@ namespace MediaPortal.Player
         GUIGraphicsContext.InVmr9Render = false;
         if (VMR9Util.g_vmr9 != null)
         {
-          VMR9Util.g_vmr9.RestoreGuiForMadVr();
+          if (GUIGraphicsContext.MadVrRenderTargetVMR9 != null && !GUIGraphicsContext.MadVrRenderTargetVMR9.Disposed)
+          {
+            GUIGraphicsContext.DX9Device.SetRenderTarget(0, GUIGraphicsContext.MadVrRenderTargetVMR9);
+          }
         }
       }
     }
@@ -680,9 +683,9 @@ namespace MediaPortal.Player
       return 0;
     }
 
-    public void RenderFrame(Int16 width, Int16 height, Int16 arWidth, Int16 arHeight, uint pSurface)
+    public void RenderFrame(Int16 width, Int16 height, Int16 arWidth, Int16 arHeight, IntPtr pSurface)
     {
-      IntPtr ptrMadVr = (IntPtr)pSurface;
+      IntPtr ptrMadVr = pSurface;
       Surface surfaceMadVr = new Surface(ptrMadVr);
       try
       {
@@ -943,11 +946,11 @@ namespace MediaPortal.Player
       }
     }
 
-    public void RestoreDeviceSurface(uint pSurfaceDevice)
+    public void RestoreDeviceSurface(IntPtr pSurfaceDevice)
     {
       if (GUIGraphicsContext.DX9Device != null)
       {
-        Surface surface = new Surface((IntPtr)pSurfaceDevice);
+        Surface surface = new Surface(pSurfaceDevice);
         GUIGraphicsContext.MadVrRenderTargetVMR9 = surface;
       }
     }
@@ -960,11 +963,11 @@ namespace MediaPortal.Player
       }
     }
 
-    public void SetRenderTarget(uint target)
+    public void SetRenderTarget(IntPtr target)
     {
       lock (_lockobj)
       {
-        Surface surface = new Surface((IntPtr) target);
+        Surface surface = new Surface(target);
         if (GUIGraphicsContext.DX9Device != null)
         {
           GUIGraphicsContext.DX9Device.SetRenderTarget(0, surface);

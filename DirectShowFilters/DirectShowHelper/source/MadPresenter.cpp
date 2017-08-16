@@ -56,7 +56,7 @@ MPMadPresenter::MPMadPresenter(IVMR9Callback* pCallback, DWORD width, DWORD heig
   m_pShutdown = false;
   m_pDevice->GetRenderTarget(0, &m_pSurfaceDevice);
   // Store device surface MP GUI for later
-  m_pCallback->RestoreDeviceSurface(reinterpret_cast<DWORD>(m_pSurfaceDevice));
+  m_pCallback->RestoreDeviceSurface(reinterpret_cast<LONG>(m_pSurfaceDevice));
   Log("MPMadPresenter::Constructor() Store Device Surface");
 }
 
@@ -344,7 +344,7 @@ HRESULT MPMadPresenter::Shutdown()
 
     if (m_pCallback)
     {
-      m_pCallback->SetSubtitleDevice(reinterpret_cast<DWORD>(nullptr));
+      m_pCallback->SetSubtitleDevice(reinterpret_cast<LONG>(nullptr));
       Log("MPMadPresenter::Shutdown() reset subtitle device");
       m_pCallback = nullptr;
     }
@@ -740,7 +740,7 @@ HRESULT MPMadPresenter::RenderOsd(LPCSTR name, REFERENCE_TIME frameStart, RECT* 
   {
     if (SUCCEEDED(hr = m_pMadD3DDev->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &SurfaceMadVr)))
     {
-      if (SUCCEEDED(hr = m_pCallback->RenderFrame(videoWidth, videoHeight, videoWidth, videoHeight, reinterpret_cast<DWORD>(SurfaceMadVr))))
+      if (SUCCEEDED(hr = m_pCallback->RenderFrame(videoWidth, videoHeight, videoWidth, videoHeight, reinterpret_cast<LONG>(SurfaceMadVr))))
       {
         SurfaceMadVr->Release();
       }
@@ -805,7 +805,7 @@ void MPMadPresenter::RenderToTexture(IDirect3DTexture9* pTexture)
   IDirect3DSurface9* pSurface = nullptr; // This will be released by C# side
   if (SUCCEEDED(hr = pTexture->GetSurfaceLevel(0, &pSurface)))
   {
-    if (SUCCEEDED(hr = m_pCallback->SetRenderTarget(reinterpret_cast<DWORD>(pSurface))))
+    if (SUCCEEDED(hr = m_pCallback->SetRenderTarget(reinterpret_cast<LONG>(pSurface))))
     {
       // TODO is it needed ?
       hr = m_pDevice->Clear(0, nullptr, D3DCLEAR_TARGET, D3DXCOLOR(0, 0, 0, 0), 1.0f, 0);
@@ -1000,7 +1000,7 @@ HRESULT MPMadPresenter::SetDeviceOsd(IDirect3DDevice9* pD3DDev)
     //m_pSubPicQueue = nullptr;
     //m_pAllocator = nullptr;
     if (m_pCallback)
-      m_pCallback->SetSubtitleDevice(reinterpret_cast<DWORD>(pD3DDev));
+      m_pCallback->SetSubtitleDevice(reinterpret_cast<LONG>(pD3DDev));
   }
   return S_OK;
 }
@@ -1044,7 +1044,7 @@ HRESULT MPMadPresenter::SetDevice(IDirect3DDevice9* pD3DDev)
     {
       if (m_pCallback)
       {
-        m_pCallback->SetSubtitleDevice((DWORD)m_pMadD3DDev);
+        m_pCallback->SetSubtitleDevice(reinterpret_cast<LONG>(m_pMadD3DDev));
         Log("MPMadPresenter::SetDevice() reset subtitle device");
       }
       Log("MPMadPresenter::SetDevice() Shutdown() 1");
@@ -1105,7 +1105,7 @@ HRESULT MPMadPresenter::RenderEx3(REFERENCE_TIME rtStart, REFERENCE_TIME rtStop,
             }
       if (m_pCallback)
       {
-        m_pCallback->SetSubtitleDevice((DWORD)m_pMadD3DDev);
+        m_pCallback->SetSubtitleDevice(reinterpret_cast<LONG>(m_pMadD3DDev));
         Log("%s : SetDevice() SetSubtitleDevice for D3D : 0x:%x", __FUNCTION__, m_pMadD3DDev);
       }
 
