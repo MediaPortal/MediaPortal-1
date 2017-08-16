@@ -74,7 +74,7 @@ namespace MediaPortal.Player
     int RenderOverlay(Int16 cx, Int16 cy, Int16 arx, Int16 ary);
 
     [PreserveSig]
-    void SetRenderTarget(uint target);
+    void SetRenderTarget(IntPtr target);
 
     [PreserveSig]
     void SetSubtitleDevice(IntPtr device);
@@ -83,7 +83,7 @@ namespace MediaPortal.Player
     void RenderSubtitle(long frameStart, int left, int top, int right, int bottom, int width, int height, int xOffsetInPixels);
 
     [PreserveSig]
-    void RenderFrame(Int16 cx, Int16 cy, Int16 arx, Int16 ary, uint pSurface);
+    void RenderFrame(Int16 cx, Int16 cy, Int16 arx, Int16 ary, IntPtr pSurface);
 
     [PreserveSig]
     void ForceOsdUpdate(bool pForce);
@@ -95,7 +95,7 @@ namespace MediaPortal.Player
     bool IsUiVisible();
 
     [PreserveSig]
-    void RestoreDeviceSurface(uint pSurfaceDevice);
+    void RestoreDeviceSurface(IntPtr pSurfaceDevice);
 
     [PreserveSig]
     int ReduceMadvrFrame();
@@ -1419,8 +1419,8 @@ namespace MediaPortal.Player
           Log.Debug("VMR9: mediaCtrl.Stop() 1");
           if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
           {
-            // For LiveTV Zapping
-            if (g_Player.IsTV && GUIGraphicsContext.keepExclusiveModeOn)
+            // For LiveTV Zapping or playlist
+            if (GUIGraphicsContext.keepExclusiveModeOn)
             {
               Log.Debug("VMR9: Vmr9MediaCtrl MadStopping() Zapping mode");
               MadStopping();
@@ -1435,7 +1435,10 @@ namespace MediaPortal.Player
               }
               Log.Debug("VMR9: restoreDisplayModeNow for madVR");
               MadvrInterface.restoreDisplayModeNow(_vmr9Filter);
-              RestoreGuiForMadVr();
+              if (GUIGraphicsContext.MadVrRenderTargetVMR9 != null && !GUIGraphicsContext.MadVrRenderTargetVMR9.Disposed)
+              {
+                GUIGraphicsContext.DX9Device.SetRenderTarget(0, GUIGraphicsContext.MadVrRenderTargetVMR9);
+              }
               DestroyWindow(GUIGraphicsContext.HWnd);
               Log.Debug("VMR9: Vmr9MediaCtrl MadStopping()");
               MadStopping();
@@ -1789,6 +1792,15 @@ namespace MediaPortal.Player
           {
             Action action = new Action(Action.ActionType.ACTION_STOP, 0f, 0f);
             GUIGraphicsContext.OnAction(action);
+          }
+          else
+          {
+            GUIGraphicsContext.keepExclusiveModeOn = false;
+          }
+          if (GUIGraphicsContext.MadVrRenderTargetVMR9 != null && !GUIGraphicsContext.MadVrRenderTargetVMR9.Disposed)
+          {
+            GUIGraphicsContext.MadVrRenderTargetVMR9.Dispose();
+            GUIGraphicsContext.MadVrRenderTargetVMR9 = null;
           }
         }
         GUIWindowManager.MadVrProcess();

@@ -658,9 +658,6 @@ namespace MediaPortal.Player
         Log.Debug("g_Player.doStop() keepTimeShifting = {0} keepExclusiveModeOn = {1}", keepTimeShifting,
                   keepExclusiveModeOn);
 
-        // Keep keepExclusiveModeOn value to know if we are in zapping mode
-        GUIGraphicsContext.keepExclusiveModeOn = keepExclusiveModeOn;
-
         // Get playing file for unmount handling
         string currentFile = g_Player.currentFileName;
         OnStopped();
@@ -1590,6 +1587,12 @@ namespace MediaPortal.Player
           {
             if (_player != null)
             {
+              // When we already are running a video or LiveTV or playlist
+              if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+              {
+                GUIGraphicsContext.keepExclusiveModeOn = true;
+              }
+
               _player.Stop();
 
               if (BassMusicPlayer.IsDefaultMusicPlayer && type != MediaType.Music)

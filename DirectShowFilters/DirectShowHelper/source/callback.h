@@ -22,14 +22,14 @@ DECLARE_INTERFACE_(IVMR9Callback, IUnknown)
   STDMETHOD(SetSampleTime)(REFERENCE_TIME nsSampleTime)PURE;
   STDMETHOD(RenderGui)(WORD cx, WORD cy, WORD arx, WORD ary)PURE;
   STDMETHOD(RenderOverlay)(WORD cx, WORD cy, WORD arx, WORD ary)PURE;
-  STDMETHOD(SetRenderTarget)(DWORD pTarget)PURE;
-  STDMETHOD(SetSubtitleDevice)(DWORD pDevice)PURE;
+  STDMETHOD(SetRenderTarget)(LONG pTarget)PURE;
+  STDMETHOD(SetSubtitleDevice)(LONG pDevice)PURE;
   STDMETHOD(RenderSubtitle)(REFERENCE_TIME frameStart, int left, int top, int right, int bottom, int width, int height, int xOffsetInPixels)PURE;
-  STDMETHOD(RenderFrame)(WORD cx, WORD cy, WORD arx, WORD ary, DWORD pTargetmadVr)PURE;
+  STDMETHOD(RenderFrame)(WORD cx, WORD cy, WORD arx, WORD ary, LONG pTargetmadVr)PURE;
   STDMETHOD(ForceOsdUpdate)(BOOL pForce)PURE;
   STDMETHOD(IsFullScreen)()PURE;
   STDMETHOD(IsUiVisible)()PURE;
-  STDMETHOD(RestoreDeviceSurface)(DWORD pSurfaceDevice)PURE;
+  STDMETHOD(RestoreDeviceSurface)(LONG pSurfaceDevice)PURE;
   STDMETHOD(ReduceMadvrFrame)()PURE;
   STDMETHOD(DestroyHWnd)(HWND phWnd)PURE;
 };
