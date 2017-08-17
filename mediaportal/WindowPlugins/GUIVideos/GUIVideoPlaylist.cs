@@ -193,6 +193,10 @@ namespace MediaPortal.GUI.Video
       {
         btnRepeatPlaylist.Selected = playlistPlayer.RepeatPlaylist;
       }
+
+      // Why need this workaround to remove dialog displayed ?
+      Action action = new Action { wID = Action.ActionType.ACTION_MOVE_RIGHT };
+      base.OnAction(action);
     }
 
     protected override void OnPageDestroy(int newWindowId)
