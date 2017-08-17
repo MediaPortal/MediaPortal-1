@@ -1095,14 +1095,6 @@ namespace MediaPortal.Player
       }
     }
 
-    public static void ReleaseForMadVr()
-    {
-      if (_player != null)
-      {
-        _player.StopMadVr();
-      }
-    }
-
     public static bool PlayDVD()
     {
       return PlayDVD("");
@@ -1587,11 +1579,6 @@ namespace MediaPortal.Player
           {
             if (_player != null)
             {
-              // When we already are running a video or LiveTV or playlist
-              if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
-              {
-                GUIGraphicsContext.keepExclusiveModeOn = true;
-              }
 
               _player.Stop();
 
@@ -2812,11 +2799,6 @@ namespace MediaPortal.Player
       }
       else
       {
-        if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
-        {
-          // For LiveTV Zapping
-          GUIGraphicsContext.keepExclusiveModeOn = true;
-        }
         OnTVChannelChanged();
         _player.OnZapping(info);
         return;

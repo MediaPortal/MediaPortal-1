@@ -450,10 +450,6 @@ namespace MediaPortal.Player
       }
     }
 
-    public override void StopMadVr()
-    {
-      Stop();
-    }
 
     public override int Volume
     {

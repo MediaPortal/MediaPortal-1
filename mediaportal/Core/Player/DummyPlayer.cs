@@ -133,11 +133,6 @@ namespace MediaPortal.Player
       // Console.WriteLine(String.Format("player: stop{0}", CurrentFile));
     }
 
-    public override void StopMadVr()
-    {
-      Stop();
-    }
-
     public override bool Stopped
     {
       get

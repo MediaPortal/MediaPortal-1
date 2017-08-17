@@ -164,12 +164,6 @@ namespace MediaPortal.GUI.Video
     {
       base.OnPageLoad();
 
-      // Set are running a video on playlist
-      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
-      {
-        GUIGraphicsContext.keepExclusiveModeOn = true;
-      }
-
       currentLayout = Layout.Playlist;
       facadeLayout.CurrentLayout = currentLayout;
 
