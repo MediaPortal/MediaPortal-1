@@ -536,6 +536,7 @@ namespace MediaPortal.Player
         }
 
         GUIGraphicsContext.form.Invalidate(true);
+        _state = PlayState.Init;
 
         if (_mpegDemux != null)
         {
@@ -979,19 +980,6 @@ namespace MediaPortal.Player
       }
     }
 
-    public override void StopMadVr()
-    {
-      if (_state != PlayState.Init)
-      {
-        Log.Info("RTSPPlayer:ended {0}", m_strCurrentFile);
-        m_strCurrentFile = "";
-        CloseInterfaces();
-        GUIGraphicsContext.IsPlaying = false;
-        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_STOP_SERVER_TIMESHIFTING, 0, 0, 0, 0, 0, null);
-        GUIWindowManager.SendMessage(msg);
-      }
-    }
-
     public override int Speed
     {
       get
@@ -1400,7 +1388,6 @@ namespace MediaPortal.Player
     public override void Dispose()
     {
       CloseInterfaces();
-      _state = PlayState.Init;
     }
 
     #endregion

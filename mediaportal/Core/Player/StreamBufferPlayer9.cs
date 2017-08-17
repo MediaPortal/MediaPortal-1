@@ -462,9 +462,5 @@ namespace MediaPortal.Player
       //CloseInterfaces();
     }
 
-    public override void StopMadVr()
-    {
-      Stop();
-    }
   }
 }

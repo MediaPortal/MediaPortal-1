@@ -910,10 +910,6 @@ namespace MediaPortal.Player
       }
     }
 
-    public override void StopMadVr()
-    {
-      Stop();
-    }
 
     /*
         public override int Speed
@@ -1415,6 +1411,8 @@ namespace MediaPortal.Player
           _mediaCtrl = null;
         }
 
+        _state = PlayState.Init;
+
         _mediaEvt = null;
         GUIGraphicsContext.IsWindowVisible = false;
         _isVisible = false;
@@ -1471,6 +1469,7 @@ namespace MediaPortal.Player
           _graphBuilder = null;
         }
 
+        _state = PlayState.Init;
         GUIGraphicsContext.form.Invalidate(true);
       }
       catch (Exception ex)

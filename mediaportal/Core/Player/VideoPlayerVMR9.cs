@@ -1424,7 +1424,6 @@ namespace MediaPortal.Player
     {
       if (graphBuilder == null)
       {
-        m_state = PlayState.Init;
         return;
       }
       Log.Info("VideoPlayer9: Cleanup DShow graph");
@@ -1594,6 +1593,7 @@ namespace MediaPortal.Player
         }
 
         GUIGraphicsContext.form.Invalidate(true);
+        m_state = PlayState.Init;
         Log.Debug("VideoPlayer9: Cleanup done");
       }
       catch (Exception ex)
