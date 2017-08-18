@@ -1569,10 +1569,6 @@ namespace MediaPortal.Player
       MovieEnded();
     }
 
-    public override void StopMadVr()
-    {
-      Stop();
-    }
 
     public override int Volume
     {
@@ -2310,6 +2306,7 @@ namespace MediaPortal.Player
     {
       _currentFile = "";
       CloseInterfaces();
+      _state = PlayState.Ended;
     }
 
     protected void CheckVideoResolutionChanges()
@@ -3179,6 +3176,8 @@ namespace MediaPortal.Player
           VMR9Util.g_vmr9.SafeDispose();
           VMR9Util.g_vmr9 = null;
         }
+
+        _state = PlayState.Init;
       }
       catch (Exception ex)
       {
@@ -3363,7 +3362,6 @@ namespace MediaPortal.Player
     public override void Dispose()
     {
       CloseInterfaces();
-      _state = PlayState.Ended;
     }
 
     #endregion

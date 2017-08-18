@@ -658,9 +658,6 @@ namespace MediaPortal.Player
         Log.Debug("g_Player.doStop() keepTimeShifting = {0} keepExclusiveModeOn = {1}", keepTimeShifting,
                   keepExclusiveModeOn);
 
-        // Keep keepExclusiveModeOn value to know if we are in zapping mode
-        GUIGraphicsContext.keepExclusiveModeOn = keepExclusiveModeOn;
-
         // Get playing file for unmount handling
         string currentFile = g_Player.currentFileName;
         OnStopped();
@@ -1095,14 +1092,6 @@ namespace MediaPortal.Player
       {
         _player.Stop();
         CachePlayer();
-      }
-    }
-
-    public static void ReleaseForMadVr()
-    {
-      if (_player != null)
-      {
-        _player.StopMadVr();
       }
     }
 
@@ -2742,6 +2731,10 @@ namespace MediaPortal.Player
           (GUIGraphicsContext.Vmr9Active || GUIGraphicsContext.ForceMadVRFirstStart))
       {
         // TODO find a better way to restore madVR rendering (right now i send an 'X' to force refresh a current window)
+        if (GUIGraphicsContext.ForceMadVRFirstStart)
+        {
+          GUIGraphicsContext.ForceMadVRFirstStart = false;
+        }
         var key = new Key(120, 0);
         var action = new Action(key, Action.ActionType.ACTION_KEY_PRESSED, 0, 0);
         if (ActionTranslator.GetAction(GUIWindowManager.ActiveWindowEx, key, ref action))
@@ -2805,11 +2798,6 @@ namespace MediaPortal.Player
       }
       else
       {
-        if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
-        {
-          // For LiveTV Zapping
-          GUIGraphicsContext.keepExclusiveModeOn = true;
-        }
         OnTVChannelChanged();
         _player.OnZapping(info);
         return;
@@ -3928,10 +3916,17 @@ namespace MediaPortal.Player
           {
             // Resize OSD/Screen when resolution change
             if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
-                (GUIGraphicsContext.InVmr9Render && GUIGraphicsContext.ForceMadVRRefresh) ||
-                (GUIGraphicsContext.ForceMadVRFirstStart && !GUIGraphicsContext.keepExclusiveModeOn))
+                (GUIGraphicsContext.InVmr9Render && (GUIGraphicsContext.ForceMadVRRefresh) ||
+                GUIGraphicsContext.ForceMadVRFirstStart))
             {
-              GUIGraphicsContext.ForceMadVRRefresh = false;
+              if (GUIGraphicsContext.ForceMadVRRefresh)
+              {
+                GUIGraphicsContext.ForceMadVRRefresh = false;
+              }
+              if (GUIGraphicsContext.ForceMadVRFirstStart)
+              {
+                GUIGraphicsContext.ForceMadVRFirstStart = false;
+              }
               Size client = GUIGraphicsContext.form.ClientSize;
 
               if (GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferWidth != client.Width ||
@@ -3967,6 +3962,9 @@ namespace MediaPortal.Player
                 GUIGraphicsContext.TopAndBottomDone = false;
                 GUIGraphicsContext.SideBySideDone = false;
                 Log.Debug("g_player VideoWindowChanged() resize OSD/Screen when resolution change for madVR");
+
+                // Refresh madVR
+                RefreshMadVrVideo();
               }
             }
             else if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
@@ -3979,10 +3977,10 @@ namespace MediaPortal.Player
               GUIGraphicsContext.SideBySideDone = false;
               GUIGraphicsContext.ForceMadVRRefresh3D = false;
               Log.Debug("g_player VideoWindowChanged() resize OSD/OSD 3D/Screen when resolution change for madVR");
-            }
 
-            // Refresh madVR
-            RefreshMadVrVideo();
+              // Refresh madVR
+              RefreshMadVrVideo();
+            }
           }
           break;
       }
