@@ -1302,10 +1302,6 @@ namespace MediaPortal.Player
       Stop(false);
     }
 
-    public override void StopMadVr()
-    {
-      Stop();
-    }
 
     public override void Stop(bool keepExclsuiveModeOn)
     {
@@ -2203,7 +2199,6 @@ namespace MediaPortal.Player
     public override void Dispose()
     {
       CloseInterfaces();
-      _state = PlayState.Init;
     }
 
     #endregion

@@ -163,7 +163,7 @@ namespace MediaPortal.GUI.Video
     protected override void OnPageLoad()
     {
       base.OnPageLoad();
-      
+
       currentLayout = Layout.Playlist;
       facadeLayout.CurrentLayout = currentLayout;
 

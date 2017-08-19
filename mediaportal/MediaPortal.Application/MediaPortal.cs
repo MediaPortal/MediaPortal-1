@@ -1623,11 +1623,6 @@ public class MediaPortalApp : D3D, IRender
 
         // handle display changes
         case WM_DISPLAYCHANGE:
-          if (Windowed || !_ignoreFullscreenResolutionChanges)
-          {
-            OnDisplayChange(ref msg);
-            PluginManager.WndProc(ref msg);
-          }
           Screen screen = Screen.FromControl(this);
           if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && AppActive &&
               (!Equals(screen.Bounds.Size.Width, GUIGraphicsContext.currentScreen.Bounds.Width) ||
@@ -1639,6 +1634,14 @@ public class MediaPortalApp : D3D, IRender
             Log.Debug("Main: WM_DISPLAYCHANGE madVR screen change triggered");
             Log.Debug("Main: WM_DISPLAYCHANGE madVR Width x Height : {0} x {1}", screen.Bounds.Size.Width, screen.Bounds.Size.Height);
           }
+
+          // Handle this message here needed for madVR
+          if (Windowed || !_ignoreFullscreenResolutionChanges)
+          {
+            OnDisplayChange(ref msg);
+            PluginManager.WndProc(ref msg);
+          }
+
           // Restore bounds from the currentScreen value (to restore original startup MP screen after turned off used HDMI device
           if (!Windowed && _ignoreFullscreenResolutionChanges)
           {
@@ -4489,16 +4492,7 @@ public class MediaPortalApp : D3D, IRender
             if (!g_Player.IsTV || !GUIGraphicsContext.IsFullScreenVideo)
             {
               Log.Info("Main: Stopping media");
-              // Need to delay full stop for madVR to avoid blank screen on stop when dialog will be displayed on stop
-              if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && GUIGraphicsContext.InVmr9Render)
-              {
-                GUIGraphicsContext.keepExclusiveModeOn = false;
-                g_Player.ReleaseForMadVr();
-              }
-              else
-              {
-                g_Player.Stop();
-              }
+              g_Player.Stop();
             }
             break;
 
