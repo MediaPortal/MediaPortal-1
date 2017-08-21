@@ -102,6 +102,8 @@ namespace MediaPortal.GUI.Library
 
     public static Device DX9DeviceMadVr = null; // pointer to current DX9 madVR device
 
+    public static IntPtr SubDeviceMadVr = IntPtr.Zero; // pointer to current DX9 madVR device
+
     // ReSharper disable InconsistentNaming
     public static Graphics graphics = null; // GDI+ Graphics object
     public static Form form = null; // Current GDI form

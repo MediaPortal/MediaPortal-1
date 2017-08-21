@@ -64,7 +64,7 @@ MPMadPresenter::~MPMadPresenter()
 {
   {
     // TODO need to be commented to avoid deadlock.
-    //CAutoLock cAutoLock(this);
+    CAutoLock cAutoLock(this);
 
     if (m_pSRCB)
     {
@@ -93,14 +93,6 @@ MPMadPresenter::~MPMadPresenter()
     if (m_pORCB)
       m_pORCB.Release();
     Log("MPMadPresenter::Destructor() - m_pORCB release 2");
-
-    Log("MPMadPresenter::Destructor() - m_pMad release 1");
-    if (m_pMad)
-    {
-      // Let's try to do a m_pMad.Release() instead of m_pMad.FullRelease() (somehow it can take long time otherwise)
-      m_pMad.Release();
-    }
-    Log("MPMadPresenter::Destructor() - m_pMad release 2");
 
     // Detroy create madVR window and need to be here to avoid some crash
     DeInitMadvrWindow();
@@ -346,7 +338,6 @@ HRESULT MPMadPresenter::Shutdown()
     {
       m_pCallback->SetSubtitleDevice(reinterpret_cast<LONG>(nullptr));
       Log("MPMadPresenter::Shutdown() reset subtitle device");
-      m_pCallback = nullptr;
     }
 
     // Restore windowed overlay settings

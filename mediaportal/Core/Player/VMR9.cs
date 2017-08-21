@@ -1419,18 +1419,6 @@ namespace MediaPortal.Player
           Log.Debug("VMR9: mediaCtrl.Stop() 1");
           if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
           {
-            IVideoWindow videoWin = (IVideoWindow) _graphBuilder;
-            if (videoWin != null)
-            {
-              videoWin.put_Owner(IntPtr.Zero);
-              videoWin.put_Visible(OABool.False);
-            }
-            Log.Debug("VMR9: restoreDisplayModeNow for madVR");
-            MadvrInterface.restoreDisplayModeNow(_vmr9Filter);
-            if (GUIGraphicsContext.MadVrRenderTargetVMR9 != null && !GUIGraphicsContext.MadVrRenderTargetVMR9.Disposed)
-            {
-              GUIGraphicsContext.DX9Device.SetRenderTarget(0, GUIGraphicsContext.MadVrRenderTargetVMR9);
-            }
             DestroyWindow(GUIGraphicsContext.HWnd);
             Log.Debug("VMR9: Vmr9MediaCtrl MadStopping()");
             MadStopping();
@@ -1720,11 +1708,8 @@ namespace MediaPortal.Player
           GC.Collect();
           MadvrInterface.restoreDisplayModeNow(_vmr9Filter);
           Log.Debug("VMR9: Dispose 2.1");
-          DirectShowUtil.FinalReleaseComObject(_vmr9Filter);
           DestroyWindow(GUIGraphicsContext.HWnd);
           Log.Debug("VMR9: Dispose 2.2");
-          _vmr9Filter = null;
-          Log.Debug("VMR9: Dispose 2.3");
         }
         else
         {
@@ -1763,19 +1748,27 @@ namespace MediaPortal.Player
       finally
       {
         RestoreGuiForMadVr();
-        if (_vmr9Filter != null)
-        {
-          DirectShowUtil.TryRelease(ref _vmr9Filter);
-          _vmr9Filter = null;
-        }
 
         if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
         {
+          if (_vmr9Filter != null)
+          {
+            Log.Debug("VMR9: Dispose 5");
+            DirectShowUtil.FinalReleaseComObject(_vmr9Filter);
+            Log.Debug("VMR9: Dispose 6");
+            _vmr9Filter = null;
+          }
+
           if (GUIGraphicsContext.MadVrRenderTargetVMR9 != null && !GUIGraphicsContext.MadVrRenderTargetVMR9.Disposed)
           {
             GUIGraphicsContext.MadVrRenderTargetVMR9.Dispose();
             GUIGraphicsContext.MadVrRenderTargetVMR9 = null;
           }
+        }
+        else if (_vmr9Filter != null)
+        {
+          DirectShowUtil.TryRelease(ref _vmr9Filter);
+          _vmr9Filter = null;
         }
 
         // Commented out seems not needed anymore
