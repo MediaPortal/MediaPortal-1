@@ -1761,8 +1761,10 @@ namespace MediaPortal.Player
 
           if (GUIGraphicsContext.MadVrRenderTargetVMR9 != null && !GUIGraphicsContext.MadVrRenderTargetVMR9.Disposed)
           {
+            Log.Debug("VMR9: Dispose 7");
             GUIGraphicsContext.MadVrRenderTargetVMR9.Dispose();
             GUIGraphicsContext.MadVrRenderTargetVMR9 = null;
+            Log.Debug("VMR9: Dispose 8");
           }
         }
         else if (_vmr9Filter != null)
