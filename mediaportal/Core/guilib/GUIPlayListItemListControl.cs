@@ -426,65 +426,68 @@ namespace MediaPortal.GUI.Library
         case Action.ActionType.ACTION_MOUSE_CLICK:
         case Action.ActionType.ACTION_SELECT_ITEM:
           {
-            GUIPlayListButtonControl btn = (GUIPlayListButtonControl)_listButtons[_cursorX];
-
-            if (btn != null)
+            if (_cursorX >= 0)
             {
-              Action newAction = new Action();
+              GUIPlayListButtonControl btn = (GUIPlayListButtonControl)_listButtons[_cursorX];
 
-              if (btn.CurrentActiveButton == GUIPlayListButtonControl.ActiveButton.Up)
+              if (btn != null)
               {
-                if (btn.UpButtonEnabled)
-                {
-                  newAction.wID = Action.ActionType.ACTION_MOVE_SELECTED_ITEM_UP;
-                  GUIPlayListButtonControl.LastActiveButton = GUIPlayListButtonControl.ActiveButton.Up;
-                  GUIPlayListButtonControl.SuppressActiveButtonReset = true;
-                }
-                else
-                {
-                  return;
-                }
-              }
-              else if (btn.CurrentActiveButton == GUIPlayListButtonControl.ActiveButton.Down)
-              {
-                if (btn.DownButtonEnabled)
-                {
-                  newAction.wID = Action.ActionType.ACTION_MOVE_SELECTED_ITEM_DOWN;
-                  GUIPlayListButtonControl.LastActiveButton = GUIPlayListButtonControl.ActiveButton.Down;
-                  GUIPlayListButtonControl.SuppressActiveButtonReset = true;
-                }
-                else
-                {
-                  return;
-                }
-              }
-              else if (btn.CurrentActiveButton == GUIPlayListButtonControl.ActiveButton.Delete)
-              {
-                if (btn.DownButtonEnabled)
-                {
-                  newAction.wID = Action.ActionType.ACTION_DELETE_SELECTED_ITEM;
-                  GUIPlayListButtonControl.LastActiveButton = GUIPlayListButtonControl.ActiveButton.Delete;
-                  GUIPlayListButtonControl.SuppressActiveButtonReset = true;
-                }
-                else
-                {
-                  return;
-                }
-              }
-              else if (btn.CurrentActiveButton == GUIPlayListButtonControl.ActiveButton.Main)
-              {
-                GUIPlayListButtonControl.LastActiveButton = GUIPlayListButtonControl.ActiveButton.None;
-                GUIPlayListButtonControl.SuppressActiveButtonReset = false;
-                break;
-              }
-              else
-              {
-                break;
-              }
+                Action newAction = new Action();
 
-              GUIGraphicsContext.OnAction(newAction);
-              Console.WriteLine("\t**action modified:{0}", newAction.wID);
-              return;
+                if (btn.CurrentActiveButton == GUIPlayListButtonControl.ActiveButton.Up)
+                {
+                  if (btn.UpButtonEnabled)
+                  {
+                    newAction.wID = Action.ActionType.ACTION_MOVE_SELECTED_ITEM_UP;
+                    GUIPlayListButtonControl.LastActiveButton = GUIPlayListButtonControl.ActiveButton.Up;
+                    GUIPlayListButtonControl.SuppressActiveButtonReset = true;
+                  }
+                  else
+                  {
+                    return;
+                  }
+                }
+                else if (btn.CurrentActiveButton == GUIPlayListButtonControl.ActiveButton.Down)
+                {
+                  if (btn.DownButtonEnabled)
+                  {
+                    newAction.wID = Action.ActionType.ACTION_MOVE_SELECTED_ITEM_DOWN;
+                    GUIPlayListButtonControl.LastActiveButton = GUIPlayListButtonControl.ActiveButton.Down;
+                    GUIPlayListButtonControl.SuppressActiveButtonReset = true;
+                  }
+                  else
+                  {
+                    return;
+                  }
+                }
+                else if (btn.CurrentActiveButton == GUIPlayListButtonControl.ActiveButton.Delete)
+                {
+                  if (btn.DownButtonEnabled)
+                  {
+                    newAction.wID = Action.ActionType.ACTION_DELETE_SELECTED_ITEM;
+                    GUIPlayListButtonControl.LastActiveButton = GUIPlayListButtonControl.ActiveButton.Delete;
+                    GUIPlayListButtonControl.SuppressActiveButtonReset = true;
+                  }
+                  else
+                  {
+                    return;
+                  }
+                }
+                else if (btn.CurrentActiveButton == GUIPlayListButtonControl.ActiveButton.Main)
+                {
+                  GUIPlayListButtonControl.LastActiveButton = GUIPlayListButtonControl.ActiveButton.None;
+                  GUIPlayListButtonControl.SuppressActiveButtonReset = false;
+                  break;
+                }
+                else
+                {
+                  break;
+                }
+
+                GUIGraphicsContext.OnAction(newAction);
+                Console.WriteLine("\t**action modified:{0}", newAction.wID);
+                return;
+              }
             }
             break;
           }
