@@ -95,7 +95,7 @@ MPMadPresenter::~MPMadPresenter()
     Log("MPMadPresenter::Destructor() - m_pORCB release 2");
 
     // Detroy create madVR window and need to be here to avoid some crash
-    DeInitMadvrWindow();
+    //DeInitMadvrWindow();
 
     Log("MPMadPresenter::Destructor() - instance 0x%x", this);
     Sleep(500);
