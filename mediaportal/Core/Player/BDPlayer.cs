@@ -3081,7 +3081,7 @@ namespace MediaPortal.Player
 
         if (_audioRendererFilter != null)
         {
-          DirectShowUtil.FinalReleaseComObject(_audioRendererFilter);
+          DirectShowUtil.ReleaseComObject(_audioRendererFilter);
           _audioRendererFilter = null;
           Log.Info("BDPlayer: Cleanup AudioRenderer");
         }

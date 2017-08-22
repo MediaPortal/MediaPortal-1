@@ -850,7 +850,7 @@ namespace MediaPortal.Player
 
           if (filterCodec != null && filterCodec._audioRendererFilter != null)
           {
-            DirectShowUtil.FinalReleaseComObject(filterCodec._audioRendererFilter);
+            DirectShowUtil.ReleaseComObject(filterCodec._audioRendererFilter);
             filterCodec._audioRendererFilter = null;
             Log.Debug("TSReaderPlayer: Cleanup _audioRendererFilter");
           }

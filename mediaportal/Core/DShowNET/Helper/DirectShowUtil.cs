@@ -339,6 +339,17 @@ namespace DShowNET.Helper
       {
         Log.Error("DirectshowUtil: Failed to add filter:{0} to graph :{1} {2} {3}",
                   strFilterName, ex.Message, ex.Source, ex.StackTrace);
+        // try to detect VolumeHandler
+        #pragma warning disable 168
+        VolumeHandler vh = VolumeHandler.Instance;
+        #pragma warning restore 168
+        Log.Debug("DirectShowUtil: volume handler value {0}", vh.Volume);
+        // vh.Volume = 19660500 that means Audio endpoint device are not available.
+        // Check if new audio device is connected
+        VolumeHandler.Dispose();
+        #pragma warning disable 168
+        vh = VolumeHandler.Instance;
+        #pragma warning restore 168
       }
       return null;
     }
@@ -2306,11 +2317,12 @@ namespace DShowNET.Helper
             {
               if (Marshal.ReleaseComObject(obj) > 0)
               {
-                Thread.Sleep(100);
+                Thread.Sleep(200);
               }
               else
               {
-                Marshal.FinalReleaseComObject(obj);
+                Thread.Sleep(200);
+                Marshal.ReleaseComObject(obj);
                 obj = null;
                 break;
               }
