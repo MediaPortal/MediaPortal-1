@@ -127,11 +127,14 @@ namespace MediaPortal.GUI.Library
     {
       if (_cachedAllocatorImages != null)
       {
-        foreach (String sTextureName in _cachedAllocatorImages)
+        if (_cachedAllocatorImages.Count > 0)
         {
-          Flush(sTextureName);
+          foreach (String sTextureName in _cachedAllocatorImages)
+          {
+            if (sTextureName != null) Flush(sTextureName);
+          }
+          _cachedAllocatorImages.Clear();
         }
-        _cachedAllocatorImages.Clear();
       }
       _cachedAllocatorImages = null;
       _cachedAllocatorImages = new List<string>();

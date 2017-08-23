@@ -2317,12 +2317,11 @@ namespace DShowNET.Helper
             {
               if (Marshal.ReleaseComObject(obj) > 0)
               {
-                Thread.Sleep(200);
+                Thread.Sleep(100);
               }
               else
               {
-                Thread.Sleep(200);
-                Marshal.ReleaseComObject(obj);
+                Marshal.FinalReleaseComObject(obj);
                 obj = null;
                 break;
               }

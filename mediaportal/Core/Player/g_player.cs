@@ -657,7 +657,6 @@ namespace MediaPortal.Player
       {
         Log.Debug("g_Player.doStop() keepTimeShifting = {0} keepExclusiveModeOn = {1}", keepTimeShifting,
                   keepExclusiveModeOn);
-
         // Get playing file for unmount handling
         string currentFile = g_Player.currentFileName;
         OnStopped();
@@ -1579,7 +1578,6 @@ namespace MediaPortal.Player
           {
             if (_player != null)
             {
-
               _player.Stop();
 
               if (BassMusicPlayer.IsDefaultMusicPlayer && type != MediaType.Music)
