@@ -450,7 +450,6 @@ namespace MediaPortal.Player
       }
     }
 
-
     public override int Volume
     {
       get

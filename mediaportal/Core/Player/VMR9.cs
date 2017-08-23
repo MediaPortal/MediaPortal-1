@@ -1417,34 +1417,16 @@ namespace MediaPortal.Player
         if (mediaCtrl != null)
         {
           Log.Debug("VMR9: mediaCtrl.Stop() 1");
+          int hr;
           if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
           {
-            DestroyWindow(GUIGraphicsContext.HWnd);
+            hr = mediaCtrl.Stop();
+            DsError.ThrowExceptionForHR(hr);
             Log.Debug("VMR9: Vmr9MediaCtrl MadStopping()");
             MadStopping();
           }
-
-          // Stop mediaCtrl
-          int counter = 0;
-          FilterState state;
-          var hr = mediaCtrl.Stop();
-          hr = mediaCtrl.GetState(10, out state);
-          while (state != FilterState.Stopped)
-          {
-            Log.Debug("VideoPlayer9: graph still running");
-            Thread.Sleep(100);
-            mediaCtrl.Stop();
-            hr = mediaCtrl.GetState(10, out state);
-            counter++;
-            if (counter < 30) continue;
-            if (state != FilterState.Stopped)
-              Log.Debug("VideoPlayer9: graph still running");
-            if (GUIGraphicsContext.InVmr9Render)
-              Log.Debug("VideoPlayer9: in renderer");
-            break;
-          }
+          hr = mediaCtrl.Stop();
           DsError.ThrowExceptionForHR(hr);
-
           Log.Debug("VMR9: mediaCtrl.Stop() 2");
 
           if (GUIGraphicsContext.InVmr9Render)
@@ -1474,9 +1456,6 @@ namespace MediaPortal.Player
       if (GUIGraphicsContext.MadVrRenderTargetVMR9 != null && !GUIGraphicsContext.MadVrRenderTargetVMR9.Disposed)
       {
         GUIGraphicsContext.DX9Device.SetRenderTarget(0, GUIGraphicsContext.MadVrRenderTargetVMR9);
-        //GUIGraphicsContext.MadVrRenderTargetVMR9.Dispose();
-        //GUIGraphicsContext.MadVrRenderTargetVMR9 = null;
-
         GUIGraphicsContext.currentScreen = Screen.FromControl(GUIGraphicsContext.form);
         GUIGraphicsContext.form.Location = new Point(GUIGraphicsContext.currentScreen.Bounds.X, GUIGraphicsContext.currentScreen.Bounds.Y);
 
@@ -1703,13 +1682,17 @@ namespace MediaPortal.Player
         {
           Log.Debug("VMR9: Dispose MadDeinit - thread : {0}", Thread.CurrentThread.Name);
           GC.Collect();
-          MadDeinit();
           Log.Debug("VMR9: Dispose 2");
+          MadDeinit();
+          Log.Debug("VMR9: Dispose 2.1");
           GC.Collect();
           MadvrInterface.restoreDisplayModeNow(_vmr9Filter);
-          Log.Debug("VMR9: Dispose 2.1");
-          DestroyWindow(GUIGraphicsContext.HWnd);
           Log.Debug("VMR9: Dispose 2.2");
+          DirectShowUtil.FinalReleaseComObject(_vmr9Filter);
+          Log.Debug("VMR9: Dispose 2.3");
+          _vmr9Filter = null;
+          DestroyWindow(GUIGraphicsContext.HWnd);
+          Log.Debug("VMR9: Dispose 3");
         }
         else
         {
@@ -1748,29 +1731,21 @@ namespace MediaPortal.Player
       finally
       {
         RestoreGuiForMadVr();
-
-        if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
-        {
-          if (_vmr9Filter != null)
-          {
-            Log.Debug("VMR9: Dispose 5");
-            DirectShowUtil.FinalReleaseComObject(_vmr9Filter);
-            Log.Debug("VMR9: Dispose 6");
-            _vmr9Filter = null;
-          }
-
-          if (GUIGraphicsContext.MadVrRenderTargetVMR9 != null && !GUIGraphicsContext.MadVrRenderTargetVMR9.Disposed)
-          {
-            Log.Debug("VMR9: Dispose 7");
-            GUIGraphicsContext.MadVrRenderTargetVMR9.Dispose();
-            GUIGraphicsContext.MadVrRenderTargetVMR9 = null;
-            Log.Debug("VMR9: Dispose 8");
-          }
-        }
-        else if (_vmr9Filter != null)
+        if (_vmr9Filter != null)
         {
           DirectShowUtil.TryRelease(ref _vmr9Filter);
           _vmr9Filter = null;
+        }
+
+        if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+        {
+          if (GUIGraphicsContext.MadVrRenderTargetVMR9 != null && !GUIGraphicsContext.MadVrRenderTargetVMR9.Disposed)
+          {
+            Log.Debug("VMR9: Dispose 5");
+            GUIGraphicsContext.MadVrRenderTargetVMR9.Dispose();
+            GUIGraphicsContext.MadVrRenderTargetVMR9 = null;
+            Log.Debug("VMR9: Dispose 6");
+          }
         }
 
         // Commented out seems not needed anymore

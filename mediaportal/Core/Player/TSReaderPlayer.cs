@@ -821,7 +821,6 @@ namespace MediaPortal.Player
       {
         if (_graphBuilder == null)
         {
-          _state = PlayState.Init;
           return;
         }
         Log.Info("TSReaderPlayer: Cleanup DShow graph {0}", GUIGraphicsContext.InVmr9Render);

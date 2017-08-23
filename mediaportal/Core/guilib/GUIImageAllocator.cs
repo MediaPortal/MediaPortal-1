@@ -133,8 +133,8 @@ namespace MediaPortal.GUI.Library
           {
             if (sTextureName != null) Flush(sTextureName);
           }
+          _cachedAllocatorImages.Clear();
         }
-        _cachedAllocatorImages.Clear();
       }
       _cachedAllocatorImages = null;
       _cachedAllocatorImages = new List<string>();

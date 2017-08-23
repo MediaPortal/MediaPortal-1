@@ -69,26 +69,20 @@ class MPMadPresenter : public CUnknown, public CCritSec
 
     STDMETHODIMP ClearBackground(LPCSTR name, REFERENCE_TIME frameStart, RECT *fullOutputRect, RECT *activeVideoRect)
     {
-      { // Scope for autolock for the local variable (lock, which when deleted releases the lock)
-        //CAutoLock cAutoLock(this);
-        return m_pDXRAP ? m_pDXRAP->ClearBackground(name, frameStart, fullOutputRect, activeVideoRect) : E_UNEXPECTED;
-      }
+      CAutoLock cAutoLock(this);
+      return m_pDXRAP ? m_pDXRAP->ClearBackground(name, frameStart, fullOutputRect, activeVideoRect) : E_UNEXPECTED;
     }
 
     STDMETHODIMP RenderOsd(LPCSTR name, REFERENCE_TIME frameStart, RECT *fullOutputRect, RECT *activeVideoRect)
     {
-      { // Scope for autolock for the local variable (lock, which when deleted releases the lock)
-        //CAutoLock cAutoLock(this);
-        return m_pDXRAP ? m_pDXRAP->RenderOsd(name, frameStart, fullOutputRect, activeVideoRect) : E_UNEXPECTED;
-      }
+      CAutoLock cAutoLock(this);
+      return m_pDXRAP ? m_pDXRAP->RenderOsd(name, frameStart, fullOutputRect, activeVideoRect) : E_UNEXPECTED;
     }
 
     STDMETHODIMP SetDevice(IDirect3DDevice9* pD3DDev)
     {
-      { // Scope for autolock for the local variable (lock, which when deleted releases the lock)
-        //CAutoLock cAutoLock(this);
-        return m_pDXRAP ? m_pDXRAP->SetDeviceOsd(pD3DDev) : E_UNEXPECTED;
-      }
+      CAutoLock cAutoLock(this);
+      return m_pDXRAP ? m_pDXRAP->SetDeviceOsd(pD3DDev) : E_UNEXPECTED;
     }
   };
 
@@ -116,42 +110,32 @@ class MPMadPresenter : public CUnknown, public CCritSec
 
     STDMETHODIMP SetDevice(IDirect3DDevice9* pD3DDev)
     {
-      { // Scope for autolock for the local variable (lock, which when deleted releases the lock)
-        //CAutoLock cAutoLock(this);
-        return m_pDXRAPSUB ? m_pDXRAPSUB->SetDevice(pD3DDev) : E_UNEXPECTED;
-      }
+      CAutoLock cAutoLock(this);
+      return m_pDXRAPSUB ? m_pDXRAPSUB->SetDevice(pD3DDev) : E_UNEXPECTED;
     }
 
     STDMETHODIMP Render(REFERENCE_TIME rtStart, int left, int top, int right, int bottom, int width, int height)
     {
-      { // Scope for autolock for the local variable (lock, which when deleted releases the lock)
-        //CAutoLock cAutoLock(this);
-        return m_pDXRAPSUB ? m_pDXRAPSUB->Render(rtStart, left, top, right, bottom, width, height) : E_UNEXPECTED;
-      }
+      CAutoLock cAutoLock(this);
+      return m_pDXRAPSUB ? m_pDXRAPSUB->Render(rtStart, left, top, right, bottom, width, height) : E_UNEXPECTED;
     }
 
     STDMETHODIMP RenderEx(REFERENCE_TIME frameStart, REFERENCE_TIME frameStop, REFERENCE_TIME avgTimePerFrame, int left, int top, int right, int bottom, int width, int height)
     {
-      { // Scope for autolock for the local variable (lock, which when deleted releases the lock)
-        //CAutoLock cAutoLock(this);
-        return m_pDXRAPSUB ? m_pDXRAPSUB->Render(frameStart, left, top, right, bottom, width, height) : E_UNEXPECTED;
-      }
+      CAutoLock cAutoLock(this);
+      return m_pDXRAPSUB ? m_pDXRAPSUB->Render(frameStart, left, top, right, bottom, width, height) : E_UNEXPECTED;
     }
 
     STDMETHODIMP RenderEx2(REFERENCE_TIME frameStart, REFERENCE_TIME frameStop, REFERENCE_TIME avgTimePerFrame, RECT croppedVideoRect, RECT originalVideoRect, RECT viewportRect, const double videoStretchFactor = 1.0)
     {
-      { // Scope for autolock for the local variable (lock, which when deleted releases the lock)
-        //CAutoLock cAutoLock(this);
-        return m_pDXRAPSUB ? m_pDXRAPSUB->Render(frameStart, croppedVideoRect.left, croppedVideoRect.top, croppedVideoRect.right, croppedVideoRect.bottom, viewportRect.top, viewportRect.right) : E_UNEXPECTED;
-      }
+      CAutoLock cAutoLock(this);
+      return m_pDXRAPSUB ? m_pDXRAPSUB->Render(frameStart, croppedVideoRect.left, croppedVideoRect.top, croppedVideoRect.right, croppedVideoRect.bottom, viewportRect.top, viewportRect.right) : E_UNEXPECTED;
     }
 
     STDMETHODIMP RenderEx3(REFERENCE_TIME frameStart, REFERENCE_TIME frameStop, REFERENCE_TIME avgTimePerFrame, RECT croppedVideoRect, RECT originalVideoRect, RECT viewportRect, const double videoStretchFactor = 1.0, int xOffsetInPixels = 0, DWORD flags = 0)
     {
-      { // Scope for autolock for the local variable (lock, which when deleted releases the lock)
-        //CAutoLock cAutoLock(this);
-        return m_pDXRAPSUB ? m_pDXRAPSUB->RenderEx3(std::move(frameStart), std::move(frameStop), std::move(avgTimePerFrame), std::move(croppedVideoRect), std::move(originalVideoRect), std::move(viewportRect), std::move(videoStretchFactor), xOffsetInPixels) : E_UNEXPECTED;
-      }
+      CAutoLock cAutoLock(this);
+      return m_pDXRAPSUB ? m_pDXRAPSUB->RenderEx3(std::move(frameStart), std::move(frameStop), std::move(avgTimePerFrame), std::move(croppedVideoRect), std::move(originalVideoRect), std::move(viewportRect), std::move(videoStretchFactor), xOffsetInPixels) : E_UNEXPECTED;
     }
   };
 

@@ -1741,7 +1741,6 @@ namespace DShowNET.Helper
     {
       try
       {
-        //DisconnectAllPins(graphBuilder, filter);
         return graphBuilder.RemoveFilter(filter);
       }
       catch (Exception)
@@ -2299,7 +2298,6 @@ namespace DShowNET.Helper
             Marshal.ReleaseComObject(obj);
         }
         obj = null;
-        //GC.Collect();
       }
       catch (Exception)
       {
@@ -2319,12 +2317,11 @@ namespace DShowNET.Helper
             {
               if (Marshal.ReleaseComObject(obj) > 0)
               {
-                Thread.Sleep(200);
+                Thread.Sleep(100);
               }
               else
               {
-                Thread.Sleep(200);
-                Marshal.ReleaseComObject(obj);
+                Marshal.FinalReleaseComObject(obj);
                 obj = null;
                 break;
               }

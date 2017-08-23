@@ -94,11 +94,21 @@ MPMadPresenter::~MPMadPresenter()
       m_pORCB.Release();
     Log("MPMadPresenter::Destructor() - m_pORCB release 2");
 
+    Sleep(1000);
+
+    Log("MPMadPresenter::Destructor() - m_pMad release 1");
+    if (m_pMad)
+    {
+      m_pMad.FullRelease();
+      m_pMad.m_ptr = nullptr;
+    }
+    Log("MPMadPresenter::Destructor() - m_pMad release 2");
+
     // Detroy create madVR window and need to be here to avoid some crash
-    //DeInitMadvrWindow();
+    DeInitMadvrWindow();
 
     Log("MPMadPresenter::Destructor() - instance 0x%x", this);
-    Sleep(500);
+    Sleep(1000);
   }
 }
 
@@ -332,12 +342,20 @@ void MPMadPresenter::ConfigureMadvr()
 HRESULT MPMadPresenter::Shutdown()
 {
   { // Scope for autolock for the local variable (lock, which when deleted releases the lock)
+    CAutoLock lock(this);
+
     Log("MPMadPresenter::Shutdown() start");
 
     if (m_pCallback)
     {
       m_pCallback->SetSubtitleDevice(reinterpret_cast<LONG>(nullptr));
       Log("MPMadPresenter::Shutdown() reset subtitle device");
+      m_pCallback->RestoreDeviceSurface(reinterpret_cast<DWORD>(m_pSurfaceDevice));
+      Log("MPMadPresenter::Shutdown() RestoreDeviceSurface");
+      m_pCallback->DestroyHWnd(m_hWnd);
+      Log("MPMadPresenter::Shutdown() send DestroyHWnd on C# side");
+      m_pCallback->Release();
+      Log("MPMadPresenter::Shutdown() m_pCallback release");
     }
 
     // Restore windowed overlay settings
@@ -454,32 +472,6 @@ HRESULT MPMadPresenter::Stopping()
   { // Scope for autolock for the local variable (lock, which when deleted releases the lock)
     //CAutoLock lock(this);
 
-    if (m_pMediaControl)
-    {
-      Log("MPMadPresenter::Stopping() m_pMediaControl stop 1");
-      int counter = 0;
-      OAFilterState state = -1;
-      m_pMediaControl->Stop();
-      m_pMediaControl->GetState(100, &state);
-      while (state != State_Stopped)
-      {
-        Log("MPMadPresenter::Stopping() m_pMediaControl: graph still running");
-        Sleep(100);
-        m_pMediaControl->GetState(10, &state);
-        counter++;
-        if (counter >= 30)
-        {
-          if (state != State_Stopped)
-          {
-            Log("MPMadPresenter::Stopping() m_pMediaControl: graph still running");
-          }
-          break;
-        }
-      }
-      m_pMediaControl = nullptr;
-      Log("MPMadPresenter::Stopping() m_pMediaControl stop 2");
-    }
-
     Log("MPMadPresenter::Stopping() start to stop instance - 1");
 
     if (Com::SmartQIPtr<IMadVRSettings> m_pSettings = m_pMad)
@@ -537,6 +529,32 @@ HRESULT MPMadPresenter::Stopping()
     if (m_pORCB)
       m_pORCB.Release();
     Log("MPMadPresenter::Stopping() m_pORCB release 2");
+
+    if (m_pMediaControl)
+    {
+      Log("MPMadPresenter::Stopping() m_pMediaControl stop 1");
+      int counter = 0;
+      OAFilterState state = -1;
+      m_pMediaControl->Stop();
+      m_pMediaControl->GetState(100, &state);
+      while (state != State_Stopped)
+      {
+        Log("MPMadPresenter::Stopping() m_pMediaControl: graph still running");
+        Sleep(100);
+        m_pMediaControl->GetState(10, &state);
+        counter++;
+        if (counter >= 30)
+        {
+          if (state != State_Stopped)
+          {
+            Log("MPMadPresenter::Stopping() m_pMediaControl: graph still running");
+          }
+          break;
+        }
+      }
+      m_pMediaControl = nullptr;
+      Log("MPMadPresenter::Stopping() m_pMediaControl stop 2");
+    }
 
     Log("MPMadPresenter::Stopping() stopped");
     return S_OK;
