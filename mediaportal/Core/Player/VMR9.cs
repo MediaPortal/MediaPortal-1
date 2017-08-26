@@ -1687,11 +1687,12 @@ namespace MediaPortal.Player
           Log.Debug("VMR9: Dispose 2.1");
           GC.Collect();
           MadvrInterface.restoreDisplayModeNow(_vmr9Filter);
+          DestroyWindow(GUIGraphicsContext.HWnd);
+          RestoreGuiForMadVr();
           Log.Debug("VMR9: Dispose 2.2");
           DirectShowUtil.FinalReleaseComObject(_vmr9Filter);
           Log.Debug("VMR9: Dispose 2.3");
           _vmr9Filter = null;
-          DestroyWindow(GUIGraphicsContext.HWnd);
           Log.Debug("VMR9: Dispose 3");
         }
         else
