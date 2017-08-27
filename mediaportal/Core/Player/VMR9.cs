@@ -1425,8 +1425,11 @@ namespace MediaPortal.Player
             Log.Debug("VMR9: Vmr9MediaCtrl MadStopping()");
             MadStopping();
           }
-          hr = mediaCtrl.Stop();
-          DsError.ThrowExceptionForHR(hr);
+          else
+          {
+            hr = mediaCtrl.Stop();
+            DsError.ThrowExceptionForHR(hr);
+          }
           Log.Debug("VMR9: mediaCtrl.Stop() 2");
 
           if (GUIGraphicsContext.InVmr9Render)
