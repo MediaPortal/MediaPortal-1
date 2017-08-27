@@ -188,7 +188,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         }
 
         // Play
-        if (g_Player.Playing & !g_Player.Paused & (g_Player.RealSpeed == 1) & !g_Player.IsDVDMenu)
+        if (g_Player.Playing & !g_Player.Paused & (g_Player.Speed == 1) & !g_Player.IsDVDMenu)
         {
           vfd.updateSymbol(control.VFDSymbols.Play, true);
         }
@@ -208,7 +208,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         }
 
         // Forward
-        if (g_Player.RealSpeed > 1)
+        if (g_Player.Speed > 1)
         {
           vfd.updateSymbol(control.VFDSymbols.Forward, true);
         }
@@ -218,7 +218,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         }
 
         // Rewind
-        if (g_Player.RealSpeed < 0)
+        if (g_Player.Speed < -1)
         {
           vfd.updateSymbol(control.VFDSymbols.Rewind, true);
         }

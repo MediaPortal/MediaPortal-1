@@ -2050,7 +2050,6 @@ namespace MediaPortal.Player
       }
     }
 
-    [Obsolete("This method is obsolete; use method RealSpeed() instead.")]
     public static int Speed
     {
       get
@@ -2059,14 +2058,7 @@ namespace MediaPortal.Player
         {
           return 1;
         }
-        if (RealSpeed > 0 && RealSpeed < 1)
-        {
-          return 1;
-        }
-        else
-        {
-          return (int)RealSpeed;
-        }
+        return _player.Speed;
       }
       set
       {
@@ -2074,27 +2066,7 @@ namespace MediaPortal.Player
         {
           return;
         }
-        RealSpeed = value;
-      }
-    }
-
-    public static double RealSpeed
-    {
-      get
-      {
-        if (_player == null)
-        {
-          return 1;
-        }
-        return _player.RealSpeed;
-      }
-      set
-      {
-        if (_player == null)
-        {
-          return;
-        }
-        _player.RealSpeed = value;
+        _player.Speed = value;
         _currentStep = 0;
         _currentStepIndex = -1;
         _seekTimer = DateTime.MinValue;

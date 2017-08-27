@@ -141,7 +141,7 @@ namespace MediaPortal.MusicPlayer.BASS
     private bool NotifyPlaying = true;
 
     private bool _isCDDAFile = false;
-    private double _speed = 1;
+    private int _speed = 1;
     private DateTime _seekUpdate = DateTime.Now;
 
     private StreamCopy _streamcopy; // To Clone the Stream for Visualisation
@@ -318,12 +318,6 @@ namespace MediaPortal.MusicPlayer.BASS
     /// </summary>
     public override int Speed
     {
-      get { return (int)_speed; }
-      set { _speed = (double)value; }
-    }
-
-    public override double RealSpeed
-    {
       get { return _speed; }
       set { _speed = value; }
     }
@@ -452,7 +446,7 @@ namespace MediaPortal.MusicPlayer.BASS
               }
               else
               {
-                Log.Info("BASS: Playback speed {0}", g_Player.RealSpeed);
+                Log.Info("BASS: Playback speed {0}", g_Player.Speed);
               }
             }
             break;
@@ -471,7 +465,7 @@ namespace MediaPortal.MusicPlayer.BASS
               }
               else
               {
-                Log.Info("BASS: Playback speed {0}", g_Player.RealSpeed);
+                Log.Info("BASS: Playback speed {0}", g_Player.Speed);
               }
             }
             break;
@@ -2099,12 +2093,12 @@ namespace MediaPortal.MusicPlayer.BASS
         TimeSpan ts = DateTime.Now - _seekUpdate;
         if (_speed > 1 && ts.TotalMilliseconds > 120)
         {
-          SeekForward(Convert.ToInt32(80 * _speed));
+          SeekForward(80 * _speed);
           _seekUpdate = DateTime.Now;
         }
         else if (_speed < 0 && ts.TotalMilliseconds > 120)
         {
-          SeekReverse(-Convert.ToInt32(80 * _speed) + (int)ts.TotalMilliseconds);
+          SeekReverse(80 * -_speed + (int)ts.TotalMilliseconds);
           _seekUpdate = DateTime.Now;
         }
       }

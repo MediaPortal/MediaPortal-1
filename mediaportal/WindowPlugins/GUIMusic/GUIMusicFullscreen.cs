@@ -156,7 +156,7 @@ namespace MediaPortal.GUI.Video
         case Action.ActionType.ACTION_MUSIC_PLAY:
           {
             g_Player.StepNow();
-            g_Player.RealSpeed = 1;
+            g_Player.Speed = 1;
 
             if (g_Player.Paused)
             {

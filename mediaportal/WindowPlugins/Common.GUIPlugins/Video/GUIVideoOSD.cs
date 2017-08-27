@@ -230,7 +230,7 @@ namespace MediaPortal.GUI.Video
         case Action.ActionType.ACTION_PLAY:
         case Action.ActionType.ACTION_MUSIC_PLAY:
           {
-            g_Player.RealSpeed = 1; // Single speed
+            g_Player.Speed = 1; // Single speed
             ToggleButton((int)Controls.OSD_REWIND, false); // pop all the relevant
             ToggleButton((int)Controls.OSD_FFWD, false); // buttons back to
             ToggleButton((int)Controls.OSD_PLAY, false); // their up state
@@ -385,7 +385,7 @@ namespace MediaPortal.GUI.Video
               {
                 ToggleButton((int)Controls.OSD_PLAY, false);
                 // make sure play button is up (so it shows the play symbol)
-                if (g_Player.RealSpeed < 0) // are we not playing back at normal speed
+                if (g_Player.Speed < 1) // are we not playing back at normal speed
                 {
                   ToggleButton((int)Controls.OSD_REWIND, true); // make sure out button is in the down position
                   ToggleButton((int)Controls.OSD_FFWD, false); // pop the button back to it's up state
@@ -393,7 +393,7 @@ namespace MediaPortal.GUI.Video
                 else
                 {
                   ToggleButton((int)Controls.OSD_REWIND, false); // pop the button back to it's up state
-                  if (g_Player.RealSpeed == 1)
+                  if (g_Player.Speed == 1)
                   {
                     ToggleButton((int)Controls.OSD_FFWD, false); // pop the button back to it's up state
                   }
@@ -404,10 +404,10 @@ namespace MediaPortal.GUI.Video
             if (iControl == (int)Controls.OSD_PLAY)
             {
               //TODO
-              double iSpeed = g_Player.RealSpeed;
+              int iSpeed = g_Player.Speed;
               if (iSpeed != 1) // we're in ffwd or rewind mode
               {
-                g_Player.RealSpeed = 1; // drop back to single speed
+                g_Player.Speed = 1; // drop back to single speed
                 ToggleButton((int)Controls.OSD_REWIND, false); // pop all the relevant
                 ToggleButton((int)Controls.OSD_FFWD, false); // buttons back to
                 ToggleButton((int)Controls.OSD_PLAY, false); // their up state
@@ -448,7 +448,7 @@ namespace MediaPortal.GUI.Video
                 g_Player.Pause(); // Unpause playback
               }
 
-              if (g_Player.RealSpeed < 0) // are we not playing back at normal speed
+              if (g_Player.Speed < 1) // are we not playing back at normal speed
               {
                 ToggleButton((int)Controls.OSD_REWIND, true); // make sure out button is in the down position
                 ToggleButton((int)Controls.OSD_FFWD, false); // pop the button back to it's up state
@@ -456,7 +456,7 @@ namespace MediaPortal.GUI.Video
               else
               {
                 ToggleButton((int)Controls.OSD_REWIND, false); // pop the button back to it's up state
-                if (g_Player.RealSpeed == 1)
+                if (g_Player.Speed == 1)
                 {
                   ToggleButton((int)Controls.OSD_FFWD, false); // pop the button back to it's up state
                 }
@@ -470,7 +470,7 @@ namespace MediaPortal.GUI.Video
                 g_Player.Pause(); // Unpause playback
               }
 
-              if (g_Player.RealSpeed > 1) // are we not playing back at normal speed
+              if (g_Player.Speed > 1) // are we not playing back at normal speed
               {
                 ToggleButton((int)Controls.OSD_FFWD, true); // make sure out button is in the down position
                 ToggleButton((int)Controls.OSD_REWIND, false); // pop the button back to it's up state
@@ -478,7 +478,7 @@ namespace MediaPortal.GUI.Video
               else
               {
                 ToggleButton((int)Controls.OSD_FFWD, false); // pop the button back to it's up state
-                if (g_Player.RealSpeed == 1)
+                if (g_Player.Speed == 1)
                 {
                   ToggleButton((int)Controls.OSD_REWIND, false); // pop the button back to it's up state
                 }

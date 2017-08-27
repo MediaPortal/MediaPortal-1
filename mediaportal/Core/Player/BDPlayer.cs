@@ -634,7 +634,7 @@ namespace MediaPortal.Player
     protected int _titleToPlay = 0;
     protected VMR9Util _vmr9 = null;
     protected IBDReader _ireader = null;
-    protected double iSpeed = 1;
+    protected int iSpeed = 1;
     protected int _positionX = 0;
     protected int _positionY = 0;
     protected int _width = 200;
@@ -1350,18 +1350,6 @@ namespace MediaPortal.Player
     }
 
     public override int Speed
-    {
-      get
-      {
-        return (int)RealSpeed;
-      }
-      set
-      {
-        RealSpeed = (double)value;
-      }
-    }
-
-    public override double RealSpeed
     {
       get
       {
@@ -2490,7 +2478,7 @@ namespace MediaPortal.Player
         {
           lTimerInterval = 1000;
         }
-        rewind = _currentPosDS + Convert.ToInt32((long)lTimerInterval * Speed * 10000);
+        rewind = _currentPosDS + (long)lTimerInterval * Speed * 10000;
         int hr;
         pStop = 0;
         // if we end up before the first moment of time then just

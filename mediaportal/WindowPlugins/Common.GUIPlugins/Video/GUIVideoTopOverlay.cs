@@ -88,8 +88,8 @@ namespace MediaPortal.GUI.Video
     public override void PostRender(float timePassed, int iLayer)
     {
       imagePause.Visible = g_Player.Paused;
-      imageRewind.Visible = (g_Player.RealSpeed < 0);
-      imageFastForward.Visible = (g_Player.RealSpeed > 1);
+      imageRewind.Visible = (g_Player.Speed < 0);
+      imageFastForward.Visible = (g_Player.Speed > 1);
       base.Render(timePassed);
     }
 

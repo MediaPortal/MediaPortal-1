@@ -966,7 +966,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                 _vfd.SetSymbol(FutabaCOM.SymbolID.record, FutabaCOM.SymbolState.off);
             //
             // show play symbol depending on playback state
-            if (g_Player.Playing & !g_Player.Paused & (g_Player.RealSpeed == 1) & !g_Player.IsDVDMenu)
+            if (g_Player.Playing & !g_Player.Paused & (g_Player.Speed == 1) & !g_Player.IsDVDMenu)
                 _vfd.SetSymbol(FutabaCOM.SymbolID.play, FutabaCOM.SymbolState.on_low);
             else
                 _vfd.SetSymbol(FutabaCOM.SymbolID.play, FutabaCOM.SymbolState.off);

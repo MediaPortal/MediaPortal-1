@@ -123,9 +123,9 @@ namespace MediaPortal.GUI.Music
           && GUIWindowManager.ActiveWindow == GetID)
       {
         // if we do ff or rew, then reset speed to normal and ignore the play command
-        if (g_Player.IsMusic && g_Player.RealSpeed != 1)
+        if (g_Player.IsMusic && g_Player.Speed != 1)
         {
-          g_Player.RealSpeed = 1;
+          g_Player.Speed = 1;
           return;
         }
 

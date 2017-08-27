@@ -3018,14 +3018,9 @@ namespace MediaPortal.Util
     [DllImport("winmm.dll")]
     private static extern int PlaySound(byte[] pszSound, Int16 hMod, long fdwSound);
 
-    public static double GetNextForwardSpeed(double iCurSpeed)
+    public static int GetNextForwardSpeed(int iCurSpeed)
     {
-      if (iCurSpeed == 0.25 || iCurSpeed == 0.2)
-      {
-        return 1;
-      }
-
-      switch ((int)iCurSpeed)
+      switch (iCurSpeed)
       {
         case -32:
           return -16;
@@ -3052,14 +3047,9 @@ namespace MediaPortal.Util
       return 1;
     }
 
-    public static double GetNextRewindSpeed(double iCurSpeed)
+    public static int GetNextRewindSpeed(int iCurSpeed)
     {
-      if (iCurSpeed == 0.25 || iCurSpeed == 0.2)
-      {
-        return 1;
-      }
-
-      switch ((int)iCurSpeed)
+      switch (iCurSpeed)
       {
         case -16:
           return -32;
