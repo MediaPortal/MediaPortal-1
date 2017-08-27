@@ -801,7 +801,7 @@ namespace TvPlugin
                 int count = 0;
                 foreach (Recording recording in recordings)
                 {
-                  if (recording.Title != title) continue;
+                  if (!recording.Title.Equals(title, StringComparison.InvariantCultureIgnoreCase)) continue;
                   count++;
                   if (count <= 1) continue;
                   singleRecording = false;
