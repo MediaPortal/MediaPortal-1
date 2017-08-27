@@ -33,11 +33,11 @@ DeviceState::~DeviceState()
   catch (...) {}
   try
   {
-    if (m_pTexture)
+    /*if (m_pTexture)
     {
       m_pTexture->Release();
       m_pTexture = nullptr;
-    }
+    }*/
   }
   catch (...) {}
   try
