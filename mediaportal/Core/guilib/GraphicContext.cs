@@ -1828,6 +1828,7 @@ namespace MediaPortal.GUI.Library
     public static bool ForceMadVRRefresh3D { get; set; }
     public static bool ForceMadVRFirstStart { get; set; }
     public static bool BlurayMenu { get; set; }
+    public static bool InitMadVRWindowPosition { get; set; }
 
     /// <summary>
     /// Enable/Disable bypassing of UI Calibration transforms

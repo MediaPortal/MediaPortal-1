@@ -980,6 +980,11 @@ void MadVrRepeatFrameSend()
   m_madPresenter->RepeatFrame();
 }
 
+void MadVrWindowPosition()
+{
+  m_madPresenter->InitMadVRWindowPosition();
+}
+
 void MadVr3DRight(uint16_t x, uint16_t y, DWORD width, DWORD height)
 {
   m_madPresenter->MadVr3DSizeRight(x, y, width, height);

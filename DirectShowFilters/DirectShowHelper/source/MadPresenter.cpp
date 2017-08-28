@@ -156,7 +156,7 @@ void MPMadPresenter::RepeatFrame()
 {
   if (m_pShutdown)
   {
-    Log("MPMadPresenter::ClearBackground() shutdown");
+    Log("MPMadPresenter::RepeatFrame() shutdown");
     return;
   }
 
@@ -165,6 +165,26 @@ void MPMadPresenter::RepeatFrame()
   // Render frame to try to fix HD4XXX GPU flickering issue
   Com::SmartQIPtr<IMadVROsdServices> pOR = m_pMad;
   pOR->OsdRedrawFrame();
+}
+
+void MPMadPresenter::InitMadVRWindowPosition()
+{
+  if (m_pShutdown)
+  {
+    Log("MPMadPresenter::InitMadVRWindowPosition() shutdown");
+    return;
+  }
+
+  CAutoLock cAutoLock(this);
+
+  // Init created madVR window instance.
+  SetDsWndVisible(true);
+  if (Com::SmartQIPtr<IVideoWindow> pWindow = m_pMad)
+  {
+    pWindow->put_Owner(reinterpret_cast<OAHWND>(m_hWnd));
+    pWindow->put_Visible(reinterpret_cast<OAHWND>(m_hWnd));
+    pWindow->SetWindowPosition(0, 0, m_dwGUIWidth, m_dwGUIHeight);
+  }
 }
 
 void MPMadPresenter::MadVr3DSizeRight(uint16_t x, uint16_t y, DWORD width, DWORD height)
@@ -1134,14 +1154,6 @@ HRESULT MPMadPresenter::RenderEx3(REFERENCE_TIME rtStart, REFERENCE_TIME rtStop,
       m_pMadVRFrameCount = m_pCallback->ReduceMadvrFrame();
       Log("%s : reduce madVR frame to : %i", __FUNCTION__, m_pMadVRFrameCount);
 
-      // Init created madVR window instance.
-      SetDsWndVisible(true);
-      if (Com::SmartQIPtr<IVideoWindow> pWindow = m_pMad)
-      {
-        pWindow->put_Owner(reinterpret_cast<OAHWND>(m_hWnd));
-        pWindow->put_Visible(reinterpret_cast<OAHWND>(m_hWnd));
-        pWindow->SetWindowPosition(0, 0, m_dwGUIWidth, m_dwGUIHeight);
-      }
     }
     m_deviceState.Store();
     SetupMadDeviceState();

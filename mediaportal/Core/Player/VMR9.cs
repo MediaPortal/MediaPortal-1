@@ -166,6 +166,9 @@ namespace MediaPortal.Player
     private static extern unsafe void MadVrRepeatFrameSend();
 
     [DllImport("dshowhelper.dll", CallingConvention = CallingConvention.Cdecl)]
+    private static extern unsafe void MadVrWindowPosition();
+
+    [DllImport("dshowhelper.dll", CallingConvention = CallingConvention.Cdecl)]
     private static extern unsafe void MadVr3DRight(int x, int y, int width, int height);
 
     [DllImport("dshowhelper.dll", CallingConvention = CallingConvention.Cdecl)]
@@ -502,6 +505,19 @@ namespace MediaPortal.Player
     }
 
     /// <summary>
+    /// Send call to set madVR window position
+    /// </summary>
+    public void IniMadVrWindowPosition()
+    {
+      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+      {
+        Log.Debug("VMR9 : madVR reposition window");
+        MadVrWindowPosition();
+      }
+    }
+    
+
+    /// <summary>
     /// Send Right 3D for madVR
     /// </summary>
     public void MadVr3DSizeRight(int x, int y, int width, int height)
@@ -718,6 +734,7 @@ namespace MediaPortal.Player
           GUIGraphicsContext.MadVrOsd = false;
           GUIGraphicsContext.MadVrStop = false;
           GUIGraphicsContext.ForceMadVRFirstStart = true;
+          GUIGraphicsContext.InitMadVRWindowPosition = true;
           IMediaControl mPMediaControl = (IMediaControl) graphBuilder;
           // Get Client size
           Size client = GUIGraphicsContext.form.ClientSize;
@@ -1065,6 +1082,12 @@ namespace MediaPortal.Player
             GUIGraphicsContext.ForceMadVRFirstStart = false;
           }
           Log.Debug("VMR9: send resize OSD/Screen message for madVR");
+        }
+        if (GUIGraphicsContext.InitMadVRWindowPosition)
+        {
+          GUIGraphicsContext.InitMadVRWindowPosition = false;
+          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_MADVRREPOSITION, 0, 0, 0, 0, 0, null);
+          GUIWindowManager.SendThreadMessage(msg);
         }
       }
     }
