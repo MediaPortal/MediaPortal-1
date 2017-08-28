@@ -365,6 +365,10 @@ namespace MediaPortal.Player
           if (VMR9Util.g_vmr9 != null)
             VMR9Util.g_vmr9.WindowsMessageMp();
           break;
+        case GUIMessage.MessageType.GUI_MSG_MADVRREPOSITION:
+          if (VMR9Util.g_vmr9 != null)
+            VMR9Util.g_vmr9.IniMadVrWindowPosition();
+          break;
       }
     }
 
