@@ -269,4 +269,5 @@ private:
   CAMEvent m_eRebuild;
 
   bool m_pLibPaused;
+  bool m_pMadVRPausedInit;
 };
