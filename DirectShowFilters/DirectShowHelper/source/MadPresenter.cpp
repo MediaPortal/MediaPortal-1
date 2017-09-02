@@ -64,7 +64,7 @@ MPMadPresenter::~MPMadPresenter()
 {
   {
     // TODO need to be commented to avoid deadlock.
-    CAutoLock cAutoLock(this);
+    //CAutoLock cAutoLock(this);
 
     if (m_pSRCB)
     {
