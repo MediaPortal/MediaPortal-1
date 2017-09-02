@@ -1716,102 +1716,112 @@ namespace MediaPortal.Player
       return 0;
     }
 
+    public void DoGraphRebuildStop()
+    {
+      var hr = 0;
+      try
+      {
+        Log.Debug("DoGraphRebuild: mediaCtrl.Stop() 1");
+        hr = _mediaCtrl.StopWhenReady();
+        hr = _mediaCtrl.Stop();
+        Log.Debug("DoGraphRebuild: mediaCtrl.Stop() 2");
+        DsError.ThrowExceptionForHR(hr);
+      }
+      catch (Exception ex)
+      {
+        Log.Error("DoGraphRebuild: Error while stopping graph : {0}", ex);
+      }
+    }
+
     public void DoGraphRebuild()
     {
-      bool needRebuild = true; // GraphNeedsRebuild(); forcing is equal in speed
       if (_mediaCtrl != null)
       {
         lock (_mediaCtrl)
         {
-          var hr = 0;
-          try
+          // this is a hack for MS Video Decoder and AC3 audio change
+          // would suggest to always do full audio and video rendering for all filters
+          IBaseFilter MSVideoCodec = null;
+          _graphBuilder.FindFilterByName("Microsoft DTV-DVD Video Decoder", out MSVideoCodec);
+          if (MSVideoCodec != null)
           {
-            Log.Debug("DoGraphRebuild: mediaCtrl.Stop() 1");
-            hr = _mediaCtrl.StopWhenReady();
-            hr = _mediaCtrl.Stop();
-            Log.Debug("DoGraphRebuild: mediaCtrl.Stop() 2");
-            DsError.ThrowExceptionForHR(hr);
+            iChangedMediaTypes = 3;
+            DirectShowUtil.ReleaseComObject(MSVideoCodec);
+            MSVideoCodec = null;
           }
-          catch (Exception ex)
+          // hack end
+          switch (iChangedMediaTypes)
           {
-            Log.Error("DoGraphRebuild: Error while stopping graph : {0}", ex);
-          }
-          if (needRebuild)
-          {
-            // this is a hack for MS Video Decoder and AC3 audio change
-            // would suggest to always do full audio and video rendering for all filters
-            IBaseFilter MSVideoCodec = null;
-            _graphBuilder.FindFilterByName("Microsoft DTV-DVD Video Decoder", out MSVideoCodec);
-            if (MSVideoCodec != null)
-            {
-              iChangedMediaTypes = 3;
-              DirectShowUtil.ReleaseComObject(MSVideoCodec);
-              MSVideoCodec = null;
-            }
-            // hack end
-            switch (iChangedMediaTypes)
-            {
-              case 1: // audio changed
-                Log.Info("Rerendering audio pin of tsreader filter.");
-                UpdateFilters("Audio");
-                break;
-              case 2: // video changed
+            case 1: // audio changed
+              DoGraphRebuildStop();
+              Log.Info("Rerendering audio pin of tsreader filter.");
+              UpdateFilters("Audio");
+              break;
+            case 2: // video changed
+              if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
+              {
+                DoGraphRebuildStop();
                 Log.Info("Rerendering video pin of tsreader filter.");
                 UpdateFilters("Video");
-                break;
-              case 3: // both changed
-                Log.Info("Rerendering audio and video pins of tsreader filter.");
-                UpdateFilters("Audio");
+              }
+              break;
+            case 3: // both changed
+              DoGraphRebuildStop();
+              Log.Info("Rerendering audio pins of tsreader filter.");
+              UpdateFilters("Audio");
+              if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
+              {
+                Log.Info("Rerendering video pin of tsreader filter.");
                 UpdateFilters("Video");
-                break;
-            }
+              }
+              break;
+          }
 
-            if (iChangedMediaTypes != 1 && VideoChange)
+          if (iChangedMediaTypes != 1 && VideoChange)
+          {
+            if (filterConfig != null && filterConfig.enableCCSubtitles)
             {
-              if (filterConfig != null && filterConfig.enableCCSubtitles)
+              CleanupCC();
+              DirectShowUtil.RenderGraphBuilderOutputPins(_graphBuilder, _fileSource);
+              DirectShowUtil.RenderUnconnectedOutputPins(_graphBuilder, filterCodec.VideoCodec);
+              EnableCC();
+              if (CoreCCPresent)
               {
-                CleanupCC();
-                DirectShowUtil.RenderGraphBuilderOutputPins(_graphBuilder, _fileSource);
-                DirectShowUtil.RenderUnconnectedOutputPins(_graphBuilder, filterCodec.VideoCodec);
-                EnableCC();
-                if (CoreCCPresent)
-                {
-                  DirectShowUtil.RenderUnconnectedOutputPins(_graphBuilder, filterCodec.CoreCCParser);
-                  EnableCC2();
-                }
-              }
-              else
-              {
-                DirectShowUtil.RenderGraphBuilderOutputPins(_graphBuilder, _fileSource);
-                CleanupCC();
-              }
-              if (PostProcessingEngine.engine != null)
-                PostProcessingEngine.GetInstance().FreePostProcess();
-
-              IPostProcessingEngine postengine = PostProcessingEngine.GetInstance(true);
-              if (!postengine.LoadPostProcessing(_graphBuilder))
-              {
-                PostProcessingEngine.engine = new PostProcessingEngine.DummyEngine();
+                DirectShowUtil.RenderUnconnectedOutputPins(_graphBuilder, filterCodec.CoreCCParser);
+                EnableCC2();
               }
             }
             else
             {
               DirectShowUtil.RenderGraphBuilderOutputPins(_graphBuilder, _fileSource);
+              CleanupCC();
             }
-            DirectShowUtil.RemoveUnusedFiltersFromGraph(_graphBuilder);
+            if (PostProcessingEngine.engine != null)
+              PostProcessingEngine.GetInstance().FreePostProcess();
 
-            try
+            IPostProcessingEngine postengine = PostProcessingEngine.GetInstance(true);
+            if (!postengine.LoadPostProcessing(_graphBuilder))
             {
-              hr = _mediaCtrl.Run();
-              DsError.ThrowExceptionForHR(hr);
+              PostProcessingEngine.engine = new PostProcessingEngine.DummyEngine();
             }
-            catch (Exception error)
-            {
-              Log.Error("Error starting graph: {0}", error.Message);
-              return;
-            }
-            Log.Info("Reconfigure graph done");
           }
+          else
+          {
+            DirectShowUtil.RenderGraphBuilderOutputPins(_graphBuilder, _fileSource);
+          }
+          DirectShowUtil.RemoveUnusedFiltersFromGraph(_graphBuilder);
+
+          try
+          {
+            var hr = _mediaCtrl.Run();
+            DsError.ThrowExceptionForHR(hr);
+          }
+          catch (Exception error)
+          {
+            Log.Error("Error starting graph: {0}", error.Message);
+            return;
+          }
+          Log.Info("Reconfigure graph done");
         }
       }
     }
