@@ -108,7 +108,7 @@ MPMadPresenter::~MPMadPresenter()
     DeInitMadvrWindow();
 
     Log("MPMadPresenter::Destructor() - instance 0x%x", this);
-    Sleep(1000);
+    //Sleep(1000);
   }
 }
 
