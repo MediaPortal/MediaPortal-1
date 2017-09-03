@@ -56,12 +56,12 @@ void CParserTot::SetCallBack(ICallBackTot* callBack)
   m_callBack = callBack;
 }
 
-void CParserTot::OnNewSection(CSection& section)
+void CParserTot::OnNewSection(const CSection& section)
 {
   try
   {
     if (
-      section.table_id != TABLE_ID_TOT ||
+      section.TableId != TABLE_ID_TOT ||
       section.SectionSyntaxIndicator ||
       !section.PrivateIndicator ||
       !section.CurrentNextIndicator
@@ -69,9 +69,9 @@ void CParserTot::OnNewSection(CSection& section)
     {
       return;
     }
-    if (section.section_length < 11)
+    if (section.SectionLength < 11)
     {
-      LogDebug(L"TOT: invalid section, length = %d", section.section_length);
+      LogDebug(L"TOT: invalid section, length = %hu", section.SectionLength);
       return;
     }
 
@@ -80,8 +80,8 @@ void CParserTot::OnNewSection(CSection& section)
     unsigned long systemTimeBcd = (section.Data[5] << 16) | (section.Data[6] << 8) | section.Data[7];
     unsigned long long systemTime = CTimeUtils::DecodeMjDateBcdTime(systemDateMjd, systemTimeBcd);
     unsigned short descriptorsLoopLength = ((section.Data[8] & 0xf) << 8) | section.Data[9];
-    //LogDebug(L"TOT: section length = %d, system time = %llu, descriptors loop length = %hu",
-    //          section.section_length, systemTime, descriptorsLoopLength);
+    //LogDebug(L"TOT: section length = %hu, system time = %llu, descriptors loop length = %hu",
+    //          section.SectionLength, systemTime, descriptorsLoopLength);
 
     vector<CRecordLocalTimeOffset*> offsets;
     unsigned short pointer = 10;
@@ -226,7 +226,7 @@ bool CParserTot::GetLocalTimeOffsetByCountryAndRegion(unsigned long countryCode,
   return true;
 }
 
-bool CParserTot::DecodeLocalTimeOffsetDescriptor(unsigned char* data,
+bool CParserTot::DecodeLocalTimeOffsetDescriptor(const unsigned char* data,
                                                   unsigned char dataLength,
                                                   vector<CRecordLocalTimeOffset*>& localTimeOffsets)
 {

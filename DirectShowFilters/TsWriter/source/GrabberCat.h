@@ -39,7 +39,7 @@ class CGrabberCat : public CSectionDecoder
 
     void Reset();
     void SetCallBack(ICallBackCat* callBack);
-    void OnNewSection(CSection& section);
+    void OnNewSection(const CSection& section);
     bool IsReady() const;
 
     bool GetTable(unsigned char* table, unsigned short& tableBufferSize) const;

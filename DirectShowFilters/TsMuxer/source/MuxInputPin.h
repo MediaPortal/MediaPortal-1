@@ -167,7 +167,7 @@ class CMuxInputPin : public CRenderedInputPin, CPacketSync, public IMuxInputPin
     HRESULT StopDumping();
 
   private:
-    void OnTsPacket(unsigned char* tsPacket);
+    void OnTsPacket(const unsigned char* tsPacket);
 
     unsigned char m_pinId;
     bool m_isRdsConnectionAllowed;

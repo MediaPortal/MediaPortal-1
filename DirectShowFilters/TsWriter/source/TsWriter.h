@@ -69,8 +69,8 @@ class CTsWriter
 
     DECLARE_IUNKNOWN
 
-    void AnalyseOobSiSection(CSection& section);
-    void AnalyseTsPacket(unsigned char* tsPacket);
+    void AnalyseOobSiSection(const CSection& section);
+    void AnalyseTsPacket(const unsigned char* tsPacket);
 
     STDMETHODIMP ConfigureLogging(wchar_t* path);
     STDMETHODIMP_(void) DumpInput(bool enableTs, bool enableOobSi);

@@ -24,10 +24,10 @@ class CTsHeader
 {
   public:
     CTsHeader();
-    CTsHeader(unsigned char* tsPacket);
+    CTsHeader(const unsigned char* tsPacket);
     virtual ~CTsHeader();
 
-    void Decode(unsigned char* data);
+    void Decode(const unsigned char* data);
     void LogHeader() const;
     bool PayLoadOnly() const;
     bool AdaptionFieldOnly() const;
@@ -47,5 +47,5 @@ class CTsHeader
     bool HasPayload;
 
   private:
-    unsigned char* m_packet;
+    const unsigned char* m_packet;
 };

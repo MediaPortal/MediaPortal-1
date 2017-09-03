@@ -46,7 +46,7 @@ class CParserLvct
 
     void Reset();
     void SetCallBack(ICallBackLvct* callBack);
-    void OnNewSection(CSection& section, bool isOutOfBandSection);
+    void OnNewSection(const CSection& section, bool isOutOfBandSection);
     bool IsSeen() const;
     bool IsReady() const;
 
@@ -318,22 +318,22 @@ class CParserLvct
 
     bool SelectChannelRecordByIndex(unsigned short index);
 
-    static bool DecodeChannelRecord(unsigned char* sectionData,
+    static bool DecodeChannelRecord(const unsigned char* sectionData,
                                     unsigned short& pointer,
                                     unsigned short endOfSection,
                                     CRecordLvct& record);
 
-    static bool DecodeParameterizedServiceDescriptor(unsigned char* data,
+    static bool DecodeParameterizedServiceDescriptor(const unsigned char* data,
                                                       unsigned char dataLength,
                                                       bool& isThreeDimensional);
-    static bool DecodeServiceLocationDescriptor(unsigned char* data,
+    static bool DecodeServiceLocationDescriptor(const unsigned char* data,
                                                 unsigned char dataLength,
                                                 unsigned char& streamCountVideo,
                                                 unsigned char& streamCountAudio,
                                                 bool& isThreeDimensional,
                                                 vector<unsigned long>& audioLanguages,
                                                 vector<unsigned long>& captionsLanguages);
-    static bool DecodeComponentListDescriptor(unsigned char* data,
+    static bool DecodeComponentListDescriptor(const unsigned char* data,
                                               unsigned char dataLength,
                                               unsigned char& streamCountVideo,
                                               unsigned char& streamCountAudio,

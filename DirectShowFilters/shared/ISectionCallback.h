@@ -21,8 +21,9 @@
 #pragma once
 #include "Section.h"
 
+
 class ISectionCallback
 {
-public:
-  virtual void OnNewSection(int pid, int tableId, CSection& section)=0;
+  public:
+    virtual void OnNewSection(unsigned short pid, unsigned char tableId, const CSection& section) = 0;
 };

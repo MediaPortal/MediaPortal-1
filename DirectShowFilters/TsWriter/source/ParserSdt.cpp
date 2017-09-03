@@ -83,12 +83,12 @@ void CParserSdt::SetCallBack(ICallBackSdt* callBack)
   m_callBack = callBack;
 }
 
-void CParserSdt::OnNewSection(CSection& section)
+void CParserSdt::OnNewSection(const CSection& section)
 {
   try
   {
     if (
-      (section.table_id != TABLE_ID_SDT_ACTUAL && section.table_id != TABLE_ID_SDT_OTHER) ||
+      (section.TableId != TABLE_ID_SDT_ACTUAL && section.TableId != TABLE_ID_SDT_OTHER) ||
       !section.SectionSyntaxIndicator ||
       !section.PrivateIndicator ||
       !section.CurrentNextIndicator
@@ -96,26 +96,26 @@ void CParserSdt::OnNewSection(CSection& section)
     {
       return;
     }
-    if (section.section_length > 1021 || section.section_length < 12)
+    if (section.SectionLength > 1021 || section.SectionLength < 12)
     {
-      LogDebug(L"SDT %d: invalid section, length = %d, table ID = 0x%x",
-                GetPid(), section.section_length, section.table_id);
+      LogDebug(L"SDT %d: invalid section, length = %hu, table ID = 0x%hhx",
+                GetPid(), section.SectionLength, section.TableId);
       return;
     }
 
-    unsigned char* data = section.Data;
-    unsigned short transportStreamId = section.table_id_extension;
+    const unsigned char* data = section.Data;
+    unsigned short transportStreamId = section.TableIdExtension;
     unsigned short originalNetworkId = (data[8] << 8) | data[9];
-    //LogDebug(L"SDT %d: table ID = 0x%x, TSID = %hu, ONID = %hu, version number = %d, section length = %d, section number = %hhu, last section number = %hhu",
-    //          GetPid(), section.table_id, transportStreamId,
-    //          originalNetworkId, section.version_number,
-    //          section.section_length, section.SectionNumber,
+    //LogDebug(L"SDT %d: table ID = 0x%hhx, TSID = %hu, ONID = %hu, version number = %hhu, section length = %hu, section number = %hhu, last section number = %hhu",
+    //          GetPid(), section.TableId, transportStreamId,
+    //          originalNetworkId, section.VersionNumber,
+    //          section.SectionLength, section.SectionNumber,
     //          section.LastSectionNumber);
 
     CEnterCriticalSection lock(m_section);
     vector<unsigned long long>* seenSections;
     vector<unsigned long long>* unseenSections;
-    if (section.table_id == TABLE_ID_SDT_ACTUAL)
+    if (section.TableId == TABLE_ID_SDT_ACTUAL)
     {
       m_actualOriginalNetworkId = originalNetworkId;
       seenSections = &m_seenSectionsActual;
@@ -128,7 +128,7 @@ void CParserSdt::OnNewSection(CSection& section)
     }
 
     // Have we seen this section before?
-    unsigned long long sectionKey = ((unsigned long long)section.table_id << 48) | ((unsigned long long)section.version_number << 40) | ((unsigned long long)originalNetworkId << 24) | ((unsigned long long)transportStreamId << 8) | section.SectionNumber;
+    unsigned long long sectionKey = ((unsigned long long)section.TableId << 48) | ((unsigned long long)section.VersionNumber << 40) | ((unsigned long long)originalNetworkId << 24) | ((unsigned long long)transportStreamId << 8) | section.SectionNumber;
     unsigned long long sectionGroupMask = 0xffff00ffffffff00;
     unsigned long long sectionGroupKey = sectionKey & sectionGroupMask;
     vector<unsigned long long>::const_iterator sectionIt = find(seenSections->begin(),
@@ -137,8 +137,8 @@ void CParserSdt::OnNewSection(CSection& section)
     if (sectionIt != seenSections->end())
     {
       // Yes. We might be ready!
-      //LogDebug(L"SDT %d: previously seen section, table ID = 0x%x, TSID = %hu, ONID = %hu, section number = %hhu",
-      //          GetPid(), section.table_id, transportStreamId,
+      //LogDebug(L"SDT %d: previously seen section, table ID = 0x%hhx, TSID = %hu, ONID = %hu, section number = %hhu",
+      //          GetPid(), section.TableId, transportStreamId,
       //          originalNetworkId, section.SectionNumber);
       if (m_isOtherReady || m_unseenSectionsOther.size() != 0)
       {
@@ -174,7 +174,7 @@ void CParserSdt::OnNewSection(CSection& section)
     {
       // No. Is this a change/update, or just a new section group?
       bool isChange = false;
-      if (section.table_id == TABLE_ID_SDT_ACTUAL)
+      if (section.TableId == TABLE_ID_SDT_ACTUAL)
       {
         isChange = m_unseenSectionsActual.size() != 0 || m_seenSectionsActual.size() != 0;
       }
@@ -212,13 +212,13 @@ void CParserSdt::OnNewSection(CSection& section)
 
       if (isChange)
       {
-        LogDebug(L"SDT %d: changed, table ID = 0x%x, TSID = %hu, ONID = %hu, version number = %d, section number = %hhu, last section number = %hhu",
-                  GetPid(), section.table_id, transportStreamId,
-                  originalNetworkId, section.version_number,
+        LogDebug(L"SDT %d: changed, table ID = 0x%hhx, TSID = %hu, ONID = %hu, version number = %hhu, section number = %hhu, last section number = %hhu",
+                  GetPid(), section.TableId, transportStreamId,
+                  originalNetworkId, section.VersionNumber,
                   section.SectionNumber, section.LastSectionNumber);
-        m_records.MarkExpiredRecords(((unsigned long long)section.table_id << 32) | (originalNetworkId << 16) | transportStreamId);
+        m_records.MarkExpiredRecords(((unsigned long long)section.TableId << 32) | (originalNetworkId << 16) | transportStreamId);
 
-        if (section.table_id == TABLE_ID_SDT_ACTUAL)
+        if (section.TableId == TABLE_ID_SDT_ACTUAL)
         {
           seenSections->clear();
           unseenSections->clear();
@@ -238,19 +238,19 @@ void CParserSdt::OnNewSection(CSection& section)
       }
       else
       {
-        LogDebug(L"SDT %d: received, table ID = 0x%x, TSID = %hu, ONID = %hu, version number = %d, section number = %hhu, last section number = %hhu",
-                  GetPid(), section.table_id, transportStreamId,
-                  originalNetworkId, section.version_number,
+        LogDebug(L"SDT %d: received, table ID = 0x%hhx, TSID = %hu, ONID = %hu, version number = %hhu, section number = %hhu, last section number = %hhu",
+                  GetPid(), section.TableId, transportStreamId,
+                  originalNetworkId, section.VersionNumber,
                   section.SectionNumber, section.LastSectionNumber);
         if (
           m_callBack != NULL &&
           (
-            (section.table_id == TABLE_ID_SDT_ACTUAL && m_seenSectionsActual.size() == 0) ||
-            (section.table_id == TABLE_ID_SDT_OTHER && m_seenSectionsOther.size() == 0)
+            (section.TableId == TABLE_ID_SDT_ACTUAL && m_seenSectionsActual.size() == 0) ||
+            (section.TableId == TABLE_ID_SDT_OTHER && m_seenSectionsOther.size() == 0)
           )
         )
         {
-          m_callBack->OnTableSeen(section.table_id);
+          m_callBack->OnTableSeen(section.TableId);
         }
       }
 
@@ -263,34 +263,34 @@ void CParserSdt::OnNewSection(CSection& section)
     }
     else
     {
-      //LogDebug(L"SDT %d: new section, table ID = 0x%x, TSID = %hu, ONID = %hu, version number = %d, section number = %hhu",
-      //          GetPid(), section.table_id, transportStreamId,
-      //          originalNetworkId, section.version_number,
+      //LogDebug(L"SDT %d: new section, table ID = 0x%hhx, TSID = %hu, ONID = %hu, version number = %hhu, section number = %hhu",
+      //          GetPid(), section.TableId, transportStreamId,
+      //          originalNetworkId, section.VersionNumber,
       //          section.SectionNumber);
     }
 
     unsigned short pointer = 11;                              // points to the first byte in the service loop
-    unsigned short endOfSection = section.section_length - 1; // points to the first byte in the CRC
+    unsigned short endOfSection = section.SectionLength - 1;  // points to the first byte in the CRC
     while (pointer + 4 < endOfSection)
     {
       CRecordSdt* record = new CRecordSdt();
       if (record == NULL)
       {
-        LogDebug(L"SDT %d: failed to allocate record, table ID = 0x%x, TSID = %hu, ONID = %hu, version number = %d, section number = %hhu",
-                  GetPid(), section.table_id, transportStreamId,
-                  originalNetworkId, section.version_number,
+        LogDebug(L"SDT %d: failed to allocate record, table ID = 0x%hhx, TSID = %hu, ONID = %hu, version number = %hhu, section number = %hhu",
+                  GetPid(), section.TableId, transportStreamId,
+                  originalNetworkId, section.VersionNumber,
                   section.SectionNumber);
         return;
       }
 
-      record->TableId = section.table_id;
+      record->TableId = section.TableId;
       record->OriginalNetworkId = originalNetworkId;
       record->TransportStreamId = transportStreamId;
       if (!DecodeServiceRecord(data, pointer, endOfSection, *record))
       {
-        LogDebug(L"SDT %d: invalid section, table ID = 0x%x, TSID = %hu, ONID = %hu, version number = %d, section number = %hhu, service ID = %hu",
-                  GetPid(), section.table_id, transportStreamId,
-                  originalNetworkId, section.version_number,
+        LogDebug(L"SDT %d: invalid section, table ID = 0x%hhx, TSID = %hu, ONID = %hu, version number = %hhu, section number = %hhu, service ID = %hu",
+                  GetPid(), section.TableId, transportStreamId,
+                  originalNetworkId, section.VersionNumber,
                   section.SectionNumber, record->ServiceId);
         delete record;
         return;
@@ -301,10 +301,10 @@ void CParserSdt::OnNewSection(CSection& section)
 
     if (pointer != endOfSection)
     {
-      LogDebug(L"SDT %d: section parsing error, pointer = %hu, end of section = %hu, table ID = 0x%x, TSID = %hu, ONID = %hu, version number = %d, section number = %hhu",
-                GetPid(), pointer, endOfSection, section.table_id,
+      LogDebug(L"SDT %d: section parsing error, pointer = %hu, end of section = %hu, table ID = 0x%hhx, TSID = %hu, ONID = %hu, version number = %hhu, section number = %hhu",
+                GetPid(), pointer, endOfSection, section.TableId,
                 transportStreamId, originalNetworkId,
-                section.version_number, section.SectionNumber);
+                section.VersionNumber, section.SectionNumber);
       return;
     }
 
@@ -312,7 +312,7 @@ void CParserSdt::OnNewSection(CSection& section)
     unseenSections->erase(sectionIt);
     if (unseenSections->size() == 0)
     {
-      if (section.table_id == TABLE_ID_SDT_ACTUAL)
+      if (section.TableId == TABLE_ID_SDT_ACTUAL)
       {
         if (m_isOtherReady)
         {
@@ -802,7 +802,7 @@ bool CParserSdt::SelectServiceRecordByIndex(unsigned short index)
   return true;
 }
 
-bool CParserSdt::DecodeServiceRecord(unsigned char* sectionData,
+bool CParserSdt::DecodeServiceRecord(const unsigned char* sectionData,
                                       unsigned short& pointer,
                                       unsigned short endOfSection,
                                       CRecordSdt& record)
@@ -855,7 +855,7 @@ bool CParserSdt::DecodeServiceRecord(unsigned char* sectionData,
   return false;
 }
 
-bool CParserSdt::DecodeServiceDescriptors(unsigned char* sectionData,
+bool CParserSdt::DecodeServiceDescriptors(const unsigned char* sectionData,
                                           unsigned short& pointer,
                                           unsigned short endOfDescriptorLoop,
                                           CRecordSdt& record)
@@ -1179,7 +1179,7 @@ bool CParserSdt::DecodeServiceDescriptors(unsigned char* sectionData,
   return true;
 }
 
-bool CParserSdt::DecodeServiceDescriptor(unsigned char* data,
+bool CParserSdt::DecodeServiceDescriptor(const unsigned char* data,
                                           unsigned char dataLength,
                                           unsigned char& serviceType,
                                           char** providerName,
@@ -1249,7 +1249,7 @@ bool CParserSdt::DecodeServiceDescriptor(unsigned char* data,
   return false;
 }
 
-bool CParserSdt::DecodeCountryAvailabilityDescriptor(unsigned char* data,
+bool CParserSdt::DecodeCountryAvailabilityDescriptor(const unsigned char* data,
                                                       unsigned char dataLength,
                                                       vector<unsigned long>& availableInCountries,
                                                       vector<unsigned long>& unavailableInCountries)
@@ -1289,7 +1289,7 @@ bool CParserSdt::DecodeCountryAvailabilityDescriptor(unsigned char* data,
   return false;
 }
 
-bool CParserSdt::DecodeTimeShiftedServiceDescriptor(unsigned char* data,
+bool CParserSdt::DecodeTimeShiftedServiceDescriptor(const unsigned char* data,
                                                     unsigned char dataLength,
                                                     unsigned short& referenceServiceId)
 {
@@ -1313,7 +1313,7 @@ bool CParserSdt::DecodeTimeShiftedServiceDescriptor(unsigned char* data,
   return false;
 }
 
-bool CParserSdt::DecodeComponentDescriptor(unsigned char* data,
+bool CParserSdt::DecodeComponentDescriptor(const unsigned char* data,
                                             unsigned char dataLength,
                                             bool& isVideo,
                                             bool& isAudio,
@@ -1411,7 +1411,7 @@ bool CParserSdt::DecodeComponentDescriptor(unsigned char* data,
   return false;
 }
 
-bool CParserSdt::DecodeMultilingualServiceNameDescriptor(unsigned char* data,
+bool CParserSdt::DecodeMultilingualServiceNameDescriptor(const unsigned char* data,
                                                           unsigned char dataLength,
                                                           map<unsigned long, char*> serviceNames,
                                                           map<unsigned long, char*> providerNames)
@@ -1533,7 +1533,7 @@ bool CParserSdt::DecodeMultilingualServiceNameDescriptor(unsigned char* data,
   return false;
 }
 
-bool CParserSdt::DecodePrivateDataSpecifierDescriptor(unsigned char* data,
+bool CParserSdt::DecodePrivateDataSpecifierDescriptor(const unsigned char* data,
                                                       unsigned char dataLength,
                                                       unsigned long& privateDataSpecifier)
 {
@@ -1557,7 +1557,7 @@ bool CParserSdt::DecodePrivateDataSpecifierDescriptor(unsigned char* data,
   return false;
 }
 
-bool CParserSdt::DecodeServiceAvailabilityDescriptor(unsigned char* data,
+bool CParserSdt::DecodeServiceAvailabilityDescriptor(const unsigned char* data,
                                                       unsigned char dataLength,
                                                       vector<unsigned long>& availableInCells,
                                                       vector<unsigned long>& unavailableInCells)
@@ -1597,7 +1597,7 @@ bool CParserSdt::DecodeServiceAvailabilityDescriptor(unsigned char* data,
   return false;
 }
 
-bool CParserSdt::DecodeDefaultAuthorityDescriptor(unsigned char* data,
+bool CParserSdt::DecodeDefaultAuthorityDescriptor(const unsigned char* data,
                                                   unsigned char dataLength,
                                                   char** defaultAuthority)
 {
@@ -1649,7 +1649,7 @@ bool CParserSdt::DecodeDefaultAuthorityDescriptor(unsigned char* data,
   return false;
 }
 
-bool CParserSdt::DecodeTargetRegionDescriptor(unsigned char* data,
+bool CParserSdt::DecodeTargetRegionDescriptor(const unsigned char* data,
                                               unsigned char dataLength,
                                               vector<unsigned long long>& targetRegionIds)
 {
@@ -1730,7 +1730,7 @@ bool CParserSdt::DecodeTargetRegionDescriptor(unsigned char* data,
   return false;
 }
 
-bool CParserSdt::DecodeServiceRelocatedDescriptor(unsigned char* data,
+bool CParserSdt::DecodeServiceRelocatedDescriptor(const unsigned char* data,
                                                   unsigned char dataLength,
                                                   unsigned short& previousOriginalNetworkId,
                                                   unsigned short& previousTransportStreamId,
@@ -1759,7 +1759,7 @@ bool CParserSdt::DecodeServiceRelocatedDescriptor(unsigned char* data,
   return false;
 }
 
-bool CParserSdt::DecodeDishChannelDescriptor(unsigned char* data,
+bool CParserSdt::DecodeDishChannelDescriptor(const unsigned char* data,
                                               unsigned char dataLength,
                                               unsigned short& marketId,
                                               unsigned short& logicalChannelNumber)
@@ -1795,7 +1795,7 @@ bool CParserSdt::DecodeDishChannelDescriptor(unsigned char* data,
   return false;
 }
 
-bool CParserSdt::DecodeDishEpgLinkDescriptor(unsigned char* data,
+bool CParserSdt::DecodeDishEpgLinkDescriptor(const unsigned char* data,
                                               unsigned char dataLength,
                                               unsigned short& originalNetworkId,
                                               unsigned short& transportStreamId,
@@ -1829,7 +1829,7 @@ bool CParserSdt::DecodeDishEpgLinkDescriptor(unsigned char* data,
   return false;
 }
 
-bool CParserSdt::DecodeDishSubChannelDescriptor(unsigned char* data,
+bool CParserSdt::DecodeDishSubChannelDescriptor(const unsigned char* data,
                                                 unsigned char dataLength,
                                                 bool& isHighDefinition,
                                                 unsigned short& majorChannelNumber,
@@ -1864,7 +1864,7 @@ bool CParserSdt::DecodeDishSubChannelDescriptor(unsigned char* data,
   return false;
 }
 
-bool CParserSdt::DecodeOpenTvChannelDescriptionDescriptor(unsigned char* data,
+bool CParserSdt::DecodeOpenTvChannelDescriptionDescriptor(const unsigned char* data,
                                                           unsigned char dataLength,
                                                           bool isItalianText,
                                                           vector<unsigned char>& categoryIds)
@@ -1939,7 +1939,7 @@ bool CParserSdt::DecodeOpenTvChannelDescriptionDescriptor(unsigned char* data,
   return false;
 }
 
-bool CParserSdt::DecodeOpenTvNvodTimeShiftedServiceNameDescriptor(unsigned char* data,
+bool CParserSdt::DecodeOpenTvNvodTimeShiftedServiceNameDescriptor(const unsigned char* data,
                                                                   unsigned char dataLength,
                                                                   char** serviceName)
 {
@@ -1973,7 +1973,7 @@ bool CParserSdt::DecodeOpenTvNvodTimeShiftedServiceNameDescriptor(unsigned char*
   return false;
 }
 
-bool CParserSdt::DecodeVirginMediaChannelDescriptor(unsigned char* data,
+bool CParserSdt::DecodeVirginMediaChannelDescriptor(const unsigned char* data,
                                                     unsigned char dataLength,
                                                     unsigned short& logicalChannelNumber,
                                                     bool& visibleInGuide,

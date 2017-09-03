@@ -44,7 +44,7 @@ class CParserSvct
 
     void Reset();
     void SetCallBack(ICallBackSvct* callBack);
-    void OnNewSection(CSection& section);
+    void OnNewSection(const CSection& section);
     bool IsSeen() const;
     bool IsReady() const;
 
@@ -584,7 +584,7 @@ class CParserSvct
     bool IsReadyPrivate() const;
     template<class T> static void CleanUpRecords(vector<T*>& records);
 
-    static bool DecodeSection(CSection& section,
+    static bool DecodeSection(const CSection& section,
                               unsigned char& protocolVersion,
                               unsigned char& transmissionMedium,
                               unsigned char& tableSubtype,
@@ -595,33 +595,33 @@ class CParserSvct
                               unsigned char& sectionNumber,
                               unsigned char& lastSectionNumber);
 
-    static bool DecodeDefinedChannelMap(unsigned char* data,
+    static bool DecodeDefinedChannelMap(const unsigned char* data,
                                         unsigned short& pointer,
                                         unsigned short endOfSection,
                                         vector<CRecordSvctDefinedChannel*>& records);
-    static bool DecodeVirtualChannelMap(unsigned char* data,
+    static bool DecodeVirtualChannelMap(const unsigned char* data,
                                         unsigned short& pointer,
                                         unsigned short endOfSection,
                                         unsigned char transmissionMedium,
                                         vector<CRecordSvctVirtualChannel*>& records);
-    static bool DecodeInverseChannelMap(unsigned char* data,
+    static bool DecodeInverseChannelMap(const unsigned char* data,
                                         unsigned short& pointer,
                                         unsigned short endOfSection,
                                         vector<CRecordSvctInverseChannel*>& records);
 
-    static bool DecodeFrequencySpecDescriptor(unsigned char* data,
+    static bool DecodeFrequencySpecDescriptor(const unsigned char* data,
                                               unsigned char dataLength,
                                               unsigned long& carrierFrequency);
-    static bool DecodeRevisionDetectionDescriptor(unsigned char* data,
+    static bool DecodeRevisionDetectionDescriptor(const unsigned char* data,
                                                   unsigned char dataLength,
                                                   unsigned char& tableVersionNumber,
                                                   unsigned char& sectionNumber,
                                                   unsigned char& lastSectionNumber);
-    static bool DecodeTwoPartChannelNumberDescriptor(unsigned char* data,
+    static bool DecodeTwoPartChannelNumberDescriptor(const unsigned char* data,
                                                       unsigned char dataLength,
                                                       unsigned short& majorChannelNumber,
                                                       unsigned short& minorChannelNumber);
-    static bool DecodeChannelPropertiesDescriptor(unsigned char* data,
+    static bool DecodeChannelPropertiesDescriptor(const unsigned char* data,
                                                   unsigned char dataLength,
                                                   unsigned short& channelTsid,
                                                   bool& outOfBand,

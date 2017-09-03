@@ -31,23 +31,27 @@ using namespace std;
 class CTextUtil
 {
   public:
-    static bool AtscScteMultipleStringStructureToStrings(unsigned char* data,
+    static bool AtscScteMultipleStringStructureToStrings(const unsigned char* data,
                                                           unsigned short dataLength,
                                                           map<unsigned long, char*>& strings);
-    static bool AtscScteMultilingualTextToString(unsigned char* data,
+    static bool AtscScteMultilingualTextToString(const unsigned char* data,
                                                   unsigned short dataLength,
                                                   char** text);
-    static bool DishTextToString(unsigned char* data,
+    static bool DishTextToString(const unsigned char* data,
                                   unsigned char dataLength,
                                   unsigned char tableId,
                                   char** text);
-    static bool DvbTextToString(unsigned char* data, unsigned short dataLength, char** text);
-    static bool IsoIec10646ToString(unsigned char* data, unsigned short dataLength, char** text);
-    static bool MhwTextToString(unsigned char* data,
+    static bool DvbTextToString(const unsigned char* data,
+                                unsigned short dataLength,
+                                char** text);
+    static bool IsoIec10646ToString(const unsigned char* data,
+                                    unsigned short dataLength,
+                                    char** text);
+    static bool MhwTextToString(const unsigned char* data,
                                 unsigned short dataLength,
                                 MhwProvider provider,
                                 char** text);
-    static bool OpenTvTextToString(unsigned char* data,
+    static bool OpenTvTextToString(const unsigned char* data,
                                     unsigned char dataLength,
                                     bool isItalian,
                                     char** text);
@@ -67,23 +71,23 @@ class CTextUtil
       char* Utf8Encoding;
     };
 
-    static bool AtscScteTextToString(unsigned char* data,
+    static bool AtscScteTextToString(const unsigned char* data,
                                       unsigned short dataLength,
                                       unsigned char compressionType,
                                       unsigned char mode,
                                       char** text);
     static bool AtscScteCombineSegments(vector<char*>& segments, char** text);
-    static bool BbcHuffmanToString(unsigned char* data,
+    static bool BbcHuffmanToString(const unsigned char* data,
                                     unsigned short dataLength,
                                     unsigned char tableId,
                                     char** text);
     static unsigned char GetBit(unsigned long bitIndex, const unsigned char* data);
-    static bool MultiRootHuffmanToString(unsigned char* data,
+    static bool MultiRootHuffmanToString(const unsigned char* data,
                                           unsigned short dataLength,
                                           unsigned char* huffmanTable,
                                           bool isUtf8UncompressedContext,
                                           char** text);
-    static bool SingleRootHuffmanToString(unsigned char* data,
+    static bool SingleRootHuffmanToString(const unsigned char* data,
                                           unsigned short dataLength,
                                           unsigned char dataBitOffset,
                                           HuffmanSequence* huffmanTable,
@@ -92,7 +96,9 @@ class CTextUtil
                                           unsigned char encodedSequenceBitCountMaximum,
                                           unsigned char decodedSequenceByteCountMaximum,
                                           char** text);
-    static void MinimiseMemoryUsage(char* input, unsigned long actualInputLength, char** output);
+    static void MinimiseMemoryUsage(char* input,
+                                    unsigned long actualInputLength,
+                                    char** output);
 
     // multi-root tables
     static const unsigned char HUFFMAN_TABLE_BBC_1[];

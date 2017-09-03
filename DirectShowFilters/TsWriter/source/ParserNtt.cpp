@@ -72,7 +72,7 @@ void CParserNtt::SetCallBack(ICallBackNtt* callBack)
   m_callBack = callBack;
 }
 
-void CParserNtt::OnNewSection(CSection& section)
+void CParserNtt::OnNewSection(const CSection& section)
 {
   try
   {
@@ -802,7 +802,7 @@ template<class T> void CParserNtt::CleanUpRecords(vector<T*>& records)
   records.clear();
 }
 
-bool CParserNtt::DecodeSection(CSection& section,
+bool CParserNtt::DecodeSection(const CSection& section,
                                 unsigned char& tableSubtype6Interpretation,
                                 unsigned char& protocolVersion,
                                 unsigned long& iso639LanguageCode,
@@ -819,20 +819,20 @@ bool CParserNtt::DecodeSection(CSection& section,
   try
   {
     if (
-      section.table_id != TABLE_ID_NTT ||
+      section.TableId != TABLE_ID_NTT ||
       section.SectionSyntaxIndicator ||
       section.PrivateIndicator
     )
     {
       return false;
     }
-    if (section.section_length < 9)
+    if (section.SectionLength < 9)
     {
-      LogDebug(L"NTT: invalid section, length = %d", section.section_length);
+      LogDebug(L"NTT: invalid section, length = %hu", section.SectionLength);
       return false;
     }
 
-    unsigned char* data = section.Data;
+    const unsigned char* data = section.Data;
     protocolVersion = data[3] & 0x1f;
     if (protocolVersion != 0)
     {
@@ -843,8 +843,8 @@ bool CParserNtt::DecodeSection(CSection& section,
     iso639LanguageCode = data[4] | (data[5] << 8) | (data[6] << 16);
     transmissionMedium = data[7] >> 4;
     tableSubtype = data[7] & 0xf;
-    //LogDebug(L"NTT: protocol version = %hhu, section length = %d, language = %S, transmission medium = %hhu, table sub-type = %hhu",
-    //          protocolVersion, section.section_length,
+    //LogDebug(L"NTT: protocol version = %hhu, section length = %hu, language = %S, transmission medium = %hhu, table sub-type = %hhu",
+    //          protocolVersion, section.SectionLength,
     //          (char*)&iso639LanguageCode, transmissionMedium, tableSubtype);
     if (tableSubtype == 0 || tableSubtype > 7)
     {
@@ -889,7 +889,7 @@ bool CParserNtt::DecodeSection(CSection& section,
     }
 
     unsigned short pointer = 8;
-    unsigned short endOfSection = section.section_length - 1;
+    unsigned short endOfSection = section.SectionLength - 1;
     bool result = true;
     switch (tableSubtype)
     {
@@ -1091,7 +1091,7 @@ bool CParserNtt::DecodeSection(CSection& section,
   return false;
 }
 
-bool CParserNtt::DecodeTransponderNameSubTable(unsigned char* data,
+bool CParserNtt::DecodeTransponderNameSubTable(const unsigned char* data,
                                                 unsigned short& pointer,
                                                 unsigned short endOfSection,
                                                 unsigned char& satelliteId,
@@ -1214,7 +1214,7 @@ bool CParserNtt::DecodeTransponderNameSubTable(unsigned char* data,
   return false;
 }
 
-bool CParserNtt::DecodeSatelliteTextSubTable(unsigned char* data,
+bool CParserNtt::DecodeSatelliteTextSubTable(const unsigned char* data,
                                               unsigned short& pointer,
                                               unsigned short endOfSection,
                                               vector<CRecordNttSatelliteText*>& records)
@@ -1357,7 +1357,7 @@ bool CParserNtt::DecodeSatelliteTextSubTable(unsigned char* data,
   return false;
 }
 
-bool CParserNtt::DecodeRatingsTextSubTable(unsigned char* data,
+bool CParserNtt::DecodeRatingsTextSubTable(const unsigned char* data,
                                             unsigned short& pointer,
                                             unsigned short endOfSection,
                                             unsigned char& ratingRegion,
@@ -1514,7 +1514,7 @@ bool CParserNtt::DecodeRatingsTextSubTable(unsigned char* data,
   return false;
 }
 
-bool CParserNtt::DecodeRatingSystemSubTable(unsigned char* data,
+bool CParserNtt::DecodeRatingSystemSubTable(const unsigned char* data,
                                             unsigned short& pointer,
                                             unsigned short endOfSection,
                                             vector<CRecordNttRatingSystem*>& records)
@@ -1636,7 +1636,7 @@ bool CParserNtt::DecodeRatingSystemSubTable(unsigned char* data,
   return false;
 }
 
-bool CParserNtt::DecodeSourceNameSubTable(unsigned char* data,
+bool CParserNtt::DecodeSourceNameSubTable(const unsigned char* data,
                                           unsigned short& pointer,
                                           unsigned short endOfSection,
                                           vector<CRecordNttSourceName*>& records)
@@ -1753,7 +1753,7 @@ bool CParserNtt::DecodeSourceNameSubTable(unsigned char* data,
   return false;
 }
 
-bool CParserNtt::DecodeMapNameSubTable(unsigned char* data,
+bool CParserNtt::DecodeMapNameSubTable(const unsigned char* data,
                                         unsigned short& pointer,
                                         unsigned short endOfSection,
                                         vector<CRecordNttMapName*>& records)
@@ -1867,7 +1867,7 @@ bool CParserNtt::DecodeMapNameSubTable(unsigned char* data,
   return false;
 }
 
-bool CParserNtt::DecodeCurrencySystemSubTable(unsigned char* data,
+bool CParserNtt::DecodeCurrencySystemSubTable(const unsigned char* data,
                                               unsigned short& pointer,
                                               unsigned short endOfSection,
                                               vector<CRecordNttCurrencySystem*>& records)
@@ -1988,7 +1988,7 @@ bool CParserNtt::DecodeCurrencySystemSubTable(unsigned char* data,
   return false;
 }
 
-bool CParserNtt::DecodeRevisionDetectionDescriptor(unsigned char* data,
+bool CParserNtt::DecodeRevisionDetectionDescriptor(const unsigned char* data,
                                                     unsigned char dataLength,
                                                     unsigned char& tableVersionNumber,
                                                     unsigned char& sectionNumber,

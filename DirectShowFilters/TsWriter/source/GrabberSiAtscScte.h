@@ -76,9 +76,12 @@ class CGrabberSiAtscScte
 
     void Reset(bool enableCrcCheck);
     STDMETHODIMP_(void) SetCallBack(ICallBackGrabber* callBack);
-    bool OnTsPacket(CTsHeader& header, unsigned char* tsPacket);
-    void OnNewSection(int pid, int tableId, CSection& section);
-    void OnNewSection(int pid, int tableId, CSection& section, bool isOutOfBandSection);
+    bool OnTsPacket(const CTsHeader& header, const unsigned char* tsPacket);
+    void OnNewSection(unsigned short pid, unsigned char tableId, const CSection& section);
+    void OnNewSection(unsigned short pid,
+                      unsigned char tableId,
+                      const CSection& section,
+                      bool isOutOfBandSection);
 
     STDMETHODIMP_(bool) IsSeenLvct();
     bool IsSeenMgt() const;

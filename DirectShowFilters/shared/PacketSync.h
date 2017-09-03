@@ -32,7 +32,8 @@ public:
   virtual ~CPacketSync();
   void OnRawData(unsigned char* pData, int nDataLen);
   void OnRawData2(unsigned char* pData, int nDataLen);
-  virtual void OnTsPacket(unsigned char* tsPacket);
+  virtual void OnTsPacket(const unsigned char* tsPacket);
+  // TODO add const modifier on tsPacket; however that would require TsReader code changes
   virtual void OnTsPacket(unsigned char* tsPacket, int bufferOffset, int bufferLength);
   void Reset();
 

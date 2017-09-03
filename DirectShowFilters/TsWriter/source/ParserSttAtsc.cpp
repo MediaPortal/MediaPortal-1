@@ -58,12 +58,12 @@ void CParserSttAtsc::SetCallBack(ICallBackStt* callBack)
   m_callBack = callBack;
 }
 
-void CParserSttAtsc::OnNewSection(CSection& section)
+void CParserSttAtsc::OnNewSection(const CSection& section)
 {
   try
   {
     if (
-      section.table_id != TABLE_ID_STT_ATSC ||
+      section.TableId != TABLE_ID_STT_ATSC ||
       !section.SectionSyntaxIndicator ||
       !section.PrivateIndicator ||
       !section.CurrentNextIndicator
@@ -71,10 +71,10 @@ void CParserSttAtsc::OnNewSection(CSection& section)
     {
       return;
     }
-    if (section.section_length < 17)
+    if (section.SectionLength < 17)
     {
-      LogDebug(L"STT ATSC: invalid section, length = %d",
-                section.section_length);
+      LogDebug(L"STT ATSC: invalid section, length = %hu",
+                section.SectionLength);
       return;
     }
     unsigned char protocolVersion = section.Data[8];
@@ -87,8 +87,8 @@ void CParserSttAtsc::OnNewSection(CSection& section)
     if (section.SectionNumber != 0 || section.LastSectionNumber != 0)
     {
       // According to ATSC A/65 STT should only have one section.
-      LogDebug(L"STT ATSC: unsupported multi-section table, extension ID = %d, version number = %d, section number = %hhu, last section number = %hhu, protocol version = %hhu",
-                section.table_id_extension, section.version_number,
+      LogDebug(L"STT ATSC: unsupported multi-section table, extension ID = %hu, version number = %hhu, section number = %hhu, last section number = %hhu, protocol version = %hhu",
+                section.TableIdExtension, section.VersionNumber,
                 section.SectionNumber, section.LastSectionNumber,
                 protocolVersion);
       return;
@@ -100,14 +100,14 @@ void CParserSttAtsc::OnNewSection(CSection& section)
     bool isDaylightSaving = (section.Data[14] & 0x80) != 0;
     unsigned char daylightSavingDayOfMonth = section.Data[14] & 0x1f;
     unsigned char daylightSavingHour = section.Data[15];
-    //LogDebug(L"STT ATSC: extension ID = %d, version number = %d, section length = %d, section number = %hhu, protocol version = %hhu, system time = %lu, GPS UTC offset = %hhu, is daylight saving = %d, DS day of month = %hhu, DS hour = %hhu",
-    //          section.table_id_extension, section.version_number,
-    //          section.section_length, section.SectionNumber, protocolVersion,
+    //LogDebug(L"STT ATSC: extension ID = %hu, version number = %hhu, section length = %hu, section number = %hhu, protocol version = %hhu, system time = %lu, GPS UTC offset = %hhu, is daylight saving = %d, DS day of month = %hhu, DS hour = %hhu",
+    //          section.TableIdExtension, section.VersionNumber,
+    //          section.SectionLength, section.SectionNumber, protocolVersion,
     //          systemTime, gpsUtcOffset, isDaylightSaving,
     //          daylightSavingDayOfMonth, daylightSavingHour);
 
     unsigned short pointer = 16;
-    unsigned short endOfSection = section.section_length - 1; // points to the first byte in the CRC
+    unsigned short endOfSection = section.SectionLength - 1;  // points to the first byte in the CRC
     while (pointer + 1 < endOfSection)
     {
       unsigned char tag = section.Data[pointer++];
@@ -116,10 +116,10 @@ void CParserSttAtsc::OnNewSection(CSection& section)
       //          tag, length, pointer);
       if (pointer + length > endOfSection)
       {
-        LogDebug(L"STT ATSC: invalid table, descriptor length = %hhu, pointer = %hu, tag = 0x%hhx, end of section = %hu, extension ID = %d, version number = %d, section number = %hhu, protocol version = %hhu",
-                  length, pointer, tag, endOfSection,
-                  section.table_id_extension, section.version_number,
-                  section.SectionNumber, protocolVersion);
+        LogDebug(L"STT ATSC: invalid table, descriptor length = %hhu, pointer = %hu, tag = 0x%hhx, end of section = %hu, extension ID = %hu, version number = %hhu, section number = %hhu, protocol version = %hhu",
+                  length, pointer, tag, endOfSection, section.TableIdExtension,
+                  section.VersionNumber, section.SectionNumber,
+                  protocolVersion);
         return;
       }
 
@@ -128,9 +128,9 @@ void CParserSttAtsc::OnNewSection(CSection& section)
 
     if (pointer != endOfSection)
     {
-      LogDebug(L"STT ATSC: section parsing error, pointer = %hu, end of section = %hu, extension ID = %d, version number = %d, section number = %hhu, protocol version = %hhu",
-                pointer, endOfSection, section.table_id_extension,
-                section.version_number, section.SectionNumber,
+      LogDebug(L"STT ATSC: section parsing error, pointer = %hu, end of section = %hu, extension ID = %hu, version number = %hhu, section number = %hhu, protocol version = %hhu",
+                pointer, endOfSection, section.TableIdExtension,
+                section.VersionNumber, section.SectionNumber,
                 protocolVersion);
     }
 

@@ -169,7 +169,7 @@ int CTsMuxerFilter::GetPinCount()
   return 1 + m_inputPins.size();
 }
 
-HRESULT CTsMuxerFilter::Deliver(unsigned char* data, long dataLength)
+HRESULT CTsMuxerFilter::Deliver(const unsigned char* data, long dataLength)
 {
   return m_outputPin->Deliver(data, dataLength);
 }

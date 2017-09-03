@@ -96,7 +96,7 @@ class CParserMhw
     STDMETHODIMP_(void) SetProtocols(bool grabMhw1, bool grabMhw2);
     void Reset(bool enableCrcCheck);
     STDMETHODIMP_(void) SetCallBack(ICallBackGrabber* callBack);
-    bool OnTsPacket(CTsHeader& header, unsigned char* tsPacket);
+    bool OnTsPacket(const CTsHeader& header, const unsigned char* tsPacket);
     STDMETHODIMP_(bool) IsSeen();
     STDMETHODIMP_(bool) IsReady();
 
@@ -858,42 +858,42 @@ class CParserMhw
 
     bool SelectEventRecordByIndex(unsigned long index);
 
-    void OnNewSection(int pid, int tableId, CSection& section);
+    void OnNewSection(unsigned short pid, unsigned char tableId, const CSection& section);
 
     void AddOrResetDecoder(unsigned short pid, bool enableCrcCheck);
 
-    unsigned long DecodeVersion1ChannelSection(unsigned char* data,
+    unsigned long DecodeVersion1ChannelSection(const unsigned char* data,
                                                 unsigned short dataLength);
-    unsigned long DecodeVersion1DescriptionSection(unsigned char* data,
+    unsigned long DecodeVersion1DescriptionSection(const unsigned char* data,
                                                     unsigned short dataLength);
-    unsigned long DecodeVersion1EventSection(unsigned char* data,
+    unsigned long DecodeVersion1EventSection(const unsigned char* data,
                                               unsigned short dataLength);
-    unsigned long DecodeVersion1ThemeSection(unsigned char* data,
+    unsigned long DecodeVersion1ThemeSection(const unsigned char* data,
                                               unsigned short dataLength);
     bool GetVersion1DateTimeReference(unsigned long long& referenceDateTime,
                                       unsigned char& referenceDayOfWeek);
 
-    unsigned long DecodeVersion2ChannelSection(unsigned char* data,
+    unsigned long DecodeVersion2ChannelSection(const unsigned char* data,
                                                 unsigned short dataLength);
-    unsigned long DecodeVersion2DescriptionSection(unsigned char* data,
+    unsigned long DecodeVersion2DescriptionSection(const unsigned char* data,
                                                     unsigned short dataLength);
-    unsigned long DecodeVersion2EventsByChannelSection(unsigned char* data,
+    unsigned long DecodeVersion2EventsByChannelSection(const unsigned char* data,
                                                         unsigned short dataLength,
                                                         bool isTerrestrial);
-    unsigned long DecodeVersion2EventsByThemeSection(unsigned char* data,
+    unsigned long DecodeVersion2EventsByThemeSection(const unsigned char* data,
                                                       unsigned short dataLength);
-    unsigned long DecodeVersion2ProgramSection(unsigned char* data,
+    unsigned long DecodeVersion2ProgramSection(const unsigned char* data,
                                                 unsigned short dataLength);
-    unsigned long DecodeVersion2SeriesSection(unsigned char* data,
+    unsigned long DecodeVersion2SeriesSection(const unsigned char* data,
                                               unsigned short dataLength);
-    unsigned long DecodeVersion2ThemeSection(unsigned char* data,
+    unsigned long DecodeVersion2ThemeSection(const unsigned char* data,
                                               unsigned short dataLength);
-    unsigned long DecodeVersion2ThemeDescriptionSection(unsigned char* data,
+    unsigned long DecodeVersion2ThemeDescriptionSection(const unsigned char* data,
                                                         unsigned short dataLength);
 
     static MhwProvider DetermineProvider(unsigned short originalNetworkId,
                                           unsigned short transportStreamId);
-    void CompleteTable(CSection& section,
+    void CompleteTable(const CSection& section,
                         unsigned char** tableBuffer,
                         unsigned short& tableBufferSize,
                         unsigned char& expectedSectionNumber);

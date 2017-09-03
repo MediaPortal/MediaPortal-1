@@ -80,7 +80,7 @@ void CParserRds::SetCallBack(ICallBackRds* callBack)
   m_callBack = callBack;
 }
 
-HRESULT CParserRds::Receive(unsigned char* data, long dataLength)
+HRESULT CParserRds::Receive(const unsigned char* inputData, long dataLength)
 {
   if (dataLength != 8)
   {
@@ -89,11 +89,11 @@ HRESULT CParserRds::Receive(unsigned char* data, long dataLength)
 
   // The blocks are received in order, however the bytes within each block are
   // reversed. Swap them back.
+  unsigned char data[8];
   for (unsigned char i = 0; i < 8; i += 2)
   {
-    unsigned char temp = data[i];
-    data[i] = data[i + 1];
-    data[i + 1] = temp;
+    data[i] = inputData[i + 1];
+    data[i + 1] = inputData[i];
   }
 
   //unsigned short programmeIdentification = (data[0] << 8) | data[1];
@@ -297,7 +297,7 @@ void CParserRds::Reset()
   m_isProgrammeTypeNameB = false;
 }
 
-HRESULT CParserRds::HandleTextChange(unsigned char* data,
+HRESULT CParserRds::HandleTextChange(const unsigned char* data,
                                       unsigned char* text1,
                                       unsigned char* text2,
                                       TextType textType,
@@ -415,7 +415,7 @@ HRESULT CParserRds::HandleTextChange(unsigned char* data,
   return S_OK;
 }
 
-void CParserRds::RdsTextToString(unsigned char* data,
+void CParserRds::RdsTextToString(const unsigned char* data,
                                   unsigned long dataLength,
                                   TextType textType,
                                   char** text)

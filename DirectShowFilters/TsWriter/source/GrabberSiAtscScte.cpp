@@ -107,7 +107,7 @@ STDMETHODIMP_(void) CGrabberSiAtscScte::SetCallBack(ICallBackGrabber* callBack)
   m_callBackGrabber = callBack;
 }
 
-bool CGrabberSiAtscScte::OnTsPacket(CTsHeader& header, unsigned char* tsPacket)
+bool CGrabberSiAtscScte::OnTsPacket(const CTsHeader& header, const unsigned char* tsPacket)
 {
   if (header.Pid == m_sectionDecoder.GetPid())
   {
@@ -117,12 +117,17 @@ bool CGrabberSiAtscScte::OnTsPacket(CTsHeader& header, unsigned char* tsPacket)
   return false;
 }
 
-void CGrabberSiAtscScte::OnNewSection(int pid, int tableId, CSection& section)
+void CGrabberSiAtscScte::OnNewSection(unsigned short pid,
+                                      unsigned char tableId,
+                                      const CSection& section)
 {
   OnNewSection(pid, tableId, section, false);
 }
 
-void CGrabberSiAtscScte::OnNewSection(int pid, int tableId, CSection& section, bool isOutOfBandSection)
+void CGrabberSiAtscScte::OnNewSection(unsigned short pid,
+                                      unsigned char tableId,
+                                      const CSection& section,
+                                      bool isOutOfBandSection)
 {
   CEnterCriticalSection lock(m_section);
   switch (tableId)
@@ -721,8 +726,8 @@ STDMETHODIMP_(void) CGrabberSiAtscScte::OnOutOfBandSectionReceived(unsigned char
   s.AppendData(&sectionData[2], min(sizeof(s.Data), sectionDataBufferSize - 2));
   if (!s.IsComplete())
   {
-    LogDebug(L"SI ATSC/SCTE %hu: received incomplete out-of-band section, section data buffer size = %hu, section length = %d",
-              pid, sectionDataBufferSize, s.section_length);
+    LogDebug(L"SI ATSC/SCTE %hu: received incomplete out-of-band section, section data buffer size = %hu, section length = %hu",
+              pid, sectionDataBufferSize, s.SectionLength);
     return;
   }
   else if (m_enableCrcCheck && !s.IsValid())
@@ -730,7 +735,7 @@ STDMETHODIMP_(void) CGrabberSiAtscScte::OnOutOfBandSectionReceived(unsigned char
     LogDebug(L"SI ATSC/SCTE %hu: received invalid section", pid);
     return;
   }
-  OnNewSection(pid, s.table_id, s, true);
+  OnNewSection(pid, s.TableId, s, true);
 }
 
 void CGrabberSiAtscScte::OnTableSeen(unsigned char tableId)

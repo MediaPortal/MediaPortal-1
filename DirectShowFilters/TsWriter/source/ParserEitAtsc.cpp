@@ -66,12 +66,12 @@ void CParserEitAtsc::SetCallBack(ICallBackTableParser* callBack)
   m_callBack = callBack;
 }
 
-void CParserEitAtsc::OnNewSection(CSection& section)
+void CParserEitAtsc::OnNewSection(const CSection& section)
 {
   try
   {
     if (
-      section.table_id != TABLE_ID_EIT_ATSC ||
+      section.TableId != TABLE_ID_EIT_ATSC ||
       !section.SectionSyntaxIndicator ||
       !section.PrivateIndicator ||
       !section.CurrentNextIndicator
@@ -79,10 +79,10 @@ void CParserEitAtsc::OnNewSection(CSection& section)
     {
       return;
     }
-    if (section.section_length < MINIMUM_SECTION_LENGTH || section.section_length > 4093)
+    if (section.SectionLength < MINIMUM_SECTION_LENGTH || section.SectionLength > 4093)
     {
-      LogDebug(L"EIT ATSC %d: invalid section, length = %d",
-                GetPid(), section.section_length);
+      LogDebug(L"EIT ATSC %d: invalid section, length = %hu",
+                GetPid(), section.SectionLength);
       return;
     }
     unsigned char protocolVersion = section.Data[8];
@@ -94,25 +94,25 @@ void CParserEitAtsc::OnNewSection(CSection& section)
     }
 
     CEnterCriticalSection lock(m_section);
-    unsigned char* data = section.Data;
-    unsigned short sourceId = section.table_id_extension;
+    const unsigned char* data = section.Data;
+    unsigned short sourceId = section.TableIdExtension;
     unsigned char numEventsInSection = data[9];
-    //LogDebug(L"EIT ATSC %d: source Id = %hu, protocol version = %hhu, version number = %d, section length = %d, section number = %hhu, last section number = %hhu, num. events in section = %hhu",
-    //          GetPid(), sourceId, protocolVersion, section.version_number,
-    //          section.section_length, section.SectionNumber,
+    //LogDebug(L"EIT ATSC %d: source Id = %hu, protocol version = %hhu, version number = %hhu, section length = %hu, section number = %hhu, last section number = %hhu, num. events in section = %hhu",
+    //          GetPid(), sourceId, protocolVersion, section.VersionNumber,
+    //          section.SectionLength, section.SectionNumber,
     //          section.LastSectionNumber, numEventsInSection);
 
-    if (MINIMUM_SECTION_LENGTH + (numEventsInSection * MINIMUM_RECORD_BYTE_COUNT) > section.section_length)
+    if (MINIMUM_SECTION_LENGTH + (numEventsInSection * MINIMUM_RECORD_BYTE_COUNT) > section.SectionLength)
     {
-      LogDebug(L"EIT ATSC %d: invalid section, num. events in section = %hhu, section length = %d, table ID = 0x%x, source Id = %hu, protocol version = %hhu, version number = %d, section number = %hhu",
-                GetPid(), numEventsInSection, section.section_length,
-                section.table_id, sourceId, protocolVersion,
-                section.version_number, section.SectionNumber);
+      LogDebug(L"EIT ATSC %d: invalid section, num. events in section = %hhu, section length = %hu, table ID = 0x%hhx, source Id = %hu, protocol version = %hhu, version number = %hhu, section number = %hhu",
+                GetPid(), numEventsInSection, section.SectionLength,
+                section.TableId, sourceId, protocolVersion,
+                section.VersionNumber, section.SectionNumber);
       return;
     }
 
     // Have we seen this section before?
-    unsigned long sectionKey = (section.version_number << 24) | (sourceId << 8) | section.SectionNumber;
+    unsigned long sectionKey = (section.VersionNumber << 24) | (sourceId << 8) | section.SectionNumber;
     unsigned long sectionGroupMask = 0x00ffff00;
     unsigned long sectionGroupKey = sectionKey & sectionGroupMask;
     vector<unsigned long>::const_iterator sectionIt = find(m_seenSections.begin(),
@@ -184,8 +184,8 @@ void CParserEitAtsc::OnNewSection(CSection& section)
 
       if (!isChange)
       {
-        LogDebug(L"EIT ATSC %d: received, source Id = %hu, protocol version = %hhu, version number = %d, section number = %hhu, last section number = %hhu",
-                  GetPid(), sourceId, protocolVersion, section.version_number,
+        LogDebug(L"EIT ATSC %d: received, source Id = %hu, protocol version = %hhu, version number = %hhu, section number = %hhu, last section number = %hhu",
+                  GetPid(), sourceId, protocolVersion, section.VersionNumber,
                   section.SectionNumber, section.LastSectionNumber);
         if (m_callBack != NULL && m_seenSections.size() == 0)
         {
@@ -194,8 +194,8 @@ void CParserEitAtsc::OnNewSection(CSection& section)
       }
       else
       {
-        LogDebug(L"EIT ATSC %d: changed, source Id = %hu, protocol version = %hhu, version number = %d, section number = %hhu, last section number = %hhu",
-                  GetPid(), sourceId, protocolVersion, section.version_number,
+        LogDebug(L"EIT ATSC %d: changed, source Id = %hu, protocol version = %hhu, version number = %hhu, section number = %hhu, last section number = %hhu",
+                  GetPid(), sourceId, protocolVersion, section.VersionNumber,
                   section.SectionNumber, section.LastSectionNumber);
         m_records.MarkExpiredRecords(sourceId);
         if (m_isReady && m_callBack != NULL)
@@ -215,20 +215,20 @@ void CParserEitAtsc::OnNewSection(CSection& section)
     }
     else
     {
-      //LogDebug(L"EIT ATSC %d: new section, source Id = %hu, protocol version = %hhu, version number = %d, section number = %hhu",
+      //LogDebug(L"EIT ATSC %d: new section, source Id = %hu, protocol version = %hhu, version number = %hhu, section number = %hhu",
       //            GetPid(), sourceId, protocolVersion,
-      //            section.version_number, section.SectionNumber);
+      //            section.VersionNumber, section.SectionNumber);
     }
 
     unsigned short pointer = 10;                              // points to the first byte in the event loop
-    unsigned short endOfSection = section.section_length - 1; // points to the first byte in the CRC
+    unsigned short endOfSection = section.SectionLength - 1;  // points to the first byte in the CRC
     for (unsigned char i = 0; i < numEventsInSection && pointer + ((numEventsInSection - i) * MINIMUM_RECORD_BYTE_COUNT) - 1 < endOfSection; i++)
     {
       CRecordEit* record = new CRecordEit();
       if (record == NULL)
       {
-        LogDebug(L"EIT ATSC %d: failed to allocate record, source Id = %hu, protocol version = %hhu, version number = %d, section number = %hhu, num. events in section = %hhu, index = %hhu",
-                  GetPid(), sourceId, protocolVersion, section.version_number,
+        LogDebug(L"EIT ATSC %d: failed to allocate record, source Id = %hu, protocol version = %hhu, version number = %hhu, section number = %hhu, num. events in section = %hhu, index = %hhu",
+                  GetPid(), sourceId, protocolVersion, section.VersionNumber,
                   section.SectionNumber, numEventsInSection, i);
         return;
       }
@@ -236,8 +236,8 @@ void CParserEitAtsc::OnNewSection(CSection& section)
       record->SourceId = sourceId;
       if (!DecodeEventRecord(data, pointer, endOfSection, *record))
       {
-        LogDebug(L"EIT ATSC %d: invalid section, source Id = %hu, protocol version = %hhu, version number = %d, section number = %hhu, num. events in section = %hhu, index = %hhu, event ID = %hu",
-                  GetPid(), sourceId, protocolVersion, section.version_number,
+        LogDebug(L"EIT ATSC %d: invalid section, source Id = %hu, protocol version = %hhu, version number = %hhu, section number = %hhu, num. events in section = %hhu, index = %hhu, event ID = %hu",
+                  GetPid(), sourceId, protocolVersion, section.VersionNumber,
                   section.SectionNumber, numEventsInSection, i,
                   record->EventId);
         delete record;
@@ -249,9 +249,9 @@ void CParserEitAtsc::OnNewSection(CSection& section)
 
     if (pointer != endOfSection)
     {
-      LogDebug(L"EIT ATSC %d: section parsing error, pointer = %hu, end of section = %hu, source Id = %hu, protocol version = %hhu, version number = %d, section number = %hhu, num. events in section = %hhu",
+      LogDebug(L"EIT ATSC %d: section parsing error, pointer = %hu, end of section = %hu, source Id = %hu, protocol version = %hhu, version number = %hhu, section number = %hhu, num. events in section = %hhu",
                 GetPid(), pointer, endOfSection, sourceId, protocolVersion,
-                section.version_number, section.SectionNumber,
+                section.VersionNumber, section.SectionNumber,
                 numEventsInSection);
       return;
     }
@@ -467,7 +467,7 @@ bool CParserEitAtsc::SelectEventRecordByIndex(unsigned long index)
   return true;
 }
 
-bool CParserEitAtsc::DecodeEventRecord(unsigned char* sectionData,
+bool CParserEitAtsc::DecodeEventRecord(const unsigned char* sectionData,
                                         unsigned short& pointer,
                                         unsigned short endOfSection,
                                         CRecordEit& record)
@@ -595,7 +595,7 @@ bool CParserEitAtsc::DecodeEventRecord(unsigned char* sectionData,
   return false;
 }
 
-bool CParserEitAtsc::DecodeAc3AudioStreamDescriptor(unsigned char* data,
+bool CParserEitAtsc::DecodeAc3AudioStreamDescriptor(const unsigned char* data,
                                                     unsigned char dataLength,
                                                     vector<unsigned long>& audioLanguages)
 {
@@ -715,7 +715,7 @@ bool CParserEitAtsc::DecodeAc3AudioStreamDescriptor(unsigned char* data,
   return false;
 }
 
-bool CParserEitAtsc::DecodeCaptionServiceDescriptor(unsigned char* data,
+bool CParserEitAtsc::DecodeCaptionServiceDescriptor(const unsigned char* data,
                                                     unsigned char dataLength,
                                                     vector<unsigned long>& captionsLanguages)
 {
@@ -780,7 +780,7 @@ bool CParserEitAtsc::DecodeCaptionServiceDescriptor(unsigned char* data,
   return false;
 }
 
-bool CParserEitAtsc::DecodeContentAdvisoryDescriptor(unsigned char* data,
+bool CParserEitAtsc::DecodeContentAdvisoryDescriptor(const unsigned char* data,
                                                       unsigned char dataLength,
                                                       unsigned char& vchipRating,
                                                       unsigned char& mpaaClassification,
@@ -937,7 +937,7 @@ bool CParserEitAtsc::DecodeContentAdvisoryDescriptor(unsigned char* data,
   return false;
 }
 
-bool CParserEitAtsc::DecodeGenreDescriptor(unsigned char* data,
+bool CParserEitAtsc::DecodeGenreDescriptor(const unsigned char* data,
                                             unsigned char dataLength,
                                             vector<unsigned char>& genreIds)
 {
@@ -975,7 +975,7 @@ bool CParserEitAtsc::DecodeGenreDescriptor(unsigned char* data,
   return false;
 }
 
-bool CParserEitAtsc::DecodeEnhancedAc3AudioDescriptor(unsigned char* data,
+bool CParserEitAtsc::DecodeEnhancedAc3AudioDescriptor(const unsigned char* data,
                                                       unsigned char dataLength,
                                                       vector<unsigned long>& audioLanguages)
 {

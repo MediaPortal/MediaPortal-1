@@ -70,7 +70,7 @@ void CSectionDecoder::EnableCrcCheck(bool enable)
   m_isCrcCheckEnabled = enable;
 }
 
-void CSectionDecoder::OnTsPacket(unsigned char* tsPacket)
+void CSectionDecoder::OnTsPacket(const unsigned char* tsPacket)
 {
   if (m_pid < 0 || tsPacket == NULL)
   {
@@ -81,7 +81,7 @@ void CSectionDecoder::OnTsPacket(unsigned char* tsPacket)
   OnTsPacket(m_header, tsPacket);
 }
 
-void CSectionDecoder::OnTsPacket(CTsHeader& header, unsigned char* tsPacket)
+void CSectionDecoder::OnTsPacket(const CTsHeader& header, const unsigned char* tsPacket)
 {
   try
   {
@@ -179,14 +179,14 @@ void CSectionDecoder::OnTsPacket(CTsHeader& header, unsigned char* tsPacket)
             OnNewSection(m_section);
             if (m_callback != NULL)
             {
-              m_callback->OnNewSection(header.Pid, m_section.table_id, m_section);
+              m_callback->OnNewSection(header.Pid, m_section.TableId, m_section);
             }
           }
           else
           {
-            LogDebug(L"section %d: bad section CRC, table ID = 0x%hhx, table ID extension = %d, section length = %d, signal quality, descrambling, or HDD load problem?",
-                      m_pid, m_section.table_id, m_section.table_id_extension,
-                      m_section.section_length);
+            LogDebug(L"section %d: bad section CRC, table ID = 0x%hhx, table ID extension = %hu, section length = %hu, signal quality, descrambling, or HDD load problem?",
+                      m_pid, m_section.TableId, m_section.TableIdExtension,
+                      m_section.SectionLength);
           }
         }
         m_section.Reset();
@@ -194,9 +194,9 @@ void CSectionDecoder::OnTsPacket(CTsHeader& header, unsigned char* tsPacket)
 
       if (loopCount > 100)
       {
-        LogDebug(L"section %d: entered infinite loop, packet pointer = %hhu, buffer position = %hu, section length = %d, discarding packet/section",
+        LogDebug(L"section %d: entered infinite loop, packet pointer = %hhu, buffer position = %hu, section length = %hu, discarding packet/section",
                   m_pid, packetPointer, m_section.BufferPos,
-                  m_section.section_length);
+                  m_section.SectionLength);
         m_section.Reset();
         return;
       }
@@ -208,6 +208,14 @@ void CSectionDecoder::OnTsPacket(CTsHeader& header, unsigned char* tsPacket)
   }
 }
 
+void CSectionDecoder::OnNewSection(const CSection& section)
+{
+}
+
 void CSectionDecoder::OnNewSection(CSection& section)
 {
+  // TODO Remove. TsWriter overrides OnNewSection(const). All section handling
+  // will be broken without this default implementation. This non-const
+  // OnNewSection() is only kept for compatibility with TsReader.
+  OnNewSection((const CSection&)section);
 }

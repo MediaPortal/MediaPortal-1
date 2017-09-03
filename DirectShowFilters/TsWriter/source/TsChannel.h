@@ -29,7 +29,7 @@ class CTsChannel
     CTsChannel(unsigned long id);
     virtual ~CTsChannel();
 
-    void OnTsPacket(CTsHeader& header, unsigned char* tsPacket);
+    void OnTsPacket(const CTsHeader& header, const unsigned char* tsPacket);
 
     unsigned long Id;
     CDiskRecorder Recorder;

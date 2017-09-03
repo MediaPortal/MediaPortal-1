@@ -101,7 +101,7 @@ void CParserNitDvb::SetCallBack(ICallBackNitDvb* callBack)
   m_callBack = callBack;
 }
 
-void CParserNitDvb::OnNewSection(CSection& section)
+void CParserNitDvb::OnNewSection(const CSection& section)
 {
   try
   {
@@ -111,7 +111,7 @@ void CParserNitDvb::OnNewSection(CSection& section)
     }
     vector<unsigned char>::const_iterator tableIt = find(m_tableIds.begin(),
                                                           m_tableIds.end(),
-                                                          section.table_id);
+                                                          section.TableId);
     if (tableIt == m_tableIds.end())
     {
       return;
@@ -119,32 +119,33 @@ void CParserNitDvb::OnNewSection(CSection& section)
 
     // Don't check the section length upper bound. Some providers ignore the
     // specification and use the top two bits which should be set to zero.
-    if (section.section_length < 13)
+    if (section.SectionLength < 13)
     {
-      LogDebug(L"%s: invalid section, length = %d, table ID = 0x%x",
-                m_name, section.section_length, section.table_id);
+      LogDebug(L"%s: invalid section, length = %hu, table ID = 0x%hhx",
+                m_name, section.SectionLength, section.TableId);
       return;
     }
 
-    unsigned char* data = section.Data;
+    const unsigned char* data = section.Data;
     unsigned short extensionDescriptorsLength = ((data[8] & 0xf) << 8) | data[9];   // network or bouquet descriptors length
-    //LogDebug(L"%s: table ID = 0x%x, extension ID = %d, version number = %d, section length = %d, section number = %hhu, last section number = %hhu, extension descriptors length = %hu",
-    //          m_name, section.table_id, section.table_id_extension,
-    //          section.version_number, section.section_length,
+    //LogDebug(L"%s: table ID = 0x%hhx, extension ID = %hu, version number = %hhu, section length = %hu, section number = %hhu, last section number = %hhu, extension descriptors length = %hu",
+    //          m_name, section.TableId, section.TableIdExtension,
+    //          section.VersionNumber, section.SectionLength,
     //          section.SectionNumber, section.LastSectionNumber,
     //          extensionDescriptorsLength);
 
-    if (section.table_id == TABLE_ID_NIT_DVB_ACTUAL)
+    unsigned char effectiveTableId = section.TableId;
+    if (effectiveTableId == TABLE_ID_NIT_DVB_ACTUAL)
     {
       if (m_useCompatibilityMode)
       {
-        section.table_id = TABLE_ID_NIT_DVB_OTHER;
+        effectiveTableId = TABLE_ID_NIT_DVB_OTHER;
       }
       else if (m_networkId == 0)
       {
-        m_networkId = section.table_id_extension;
+        m_networkId = section.TableIdExtension;
       }
-      else if (m_networkId != section.table_id_extension)
+      else if (m_networkId != section.TableIdExtension)
       {
         // We've detected multiple network definitions in NIT actual. This
         // stream is not DVB-compliant (!!!), and our table change/complete
@@ -155,14 +156,14 @@ void CParserNitDvb::OnNewSection(CSection& section)
         LogDebug(L"%s: switching to compatibility mode", m_name);
         Reset(m_enableCrcCheck);
         m_useCompatibilityMode = true;
-        m_networkId = section.table_id_extension;
+        m_networkId = section.TableIdExtension;
         return;
       }
     }
 
     vector<unsigned long long>* seenSections;
     vector<unsigned long long>* unseenSections;
-    if (section.table_id == TABLE_ID_NIT_DVB_ACTUAL)
+    if (effectiveTableId == TABLE_ID_NIT_DVB_ACTUAL)
     {
       seenSections = &m_seenSectionsActual;
       unseenSections = &m_unseenSectionsActual;
@@ -174,7 +175,7 @@ void CParserNitDvb::OnNewSection(CSection& section)
     }
 
     CEnterCriticalSection lock(m_section);
-    unsigned long long sectionKey = ((unsigned long long)section.table_id << 32) | ((unsigned long long)section.version_number << 24) | ((unsigned long long)section.table_id_extension << 8) | section.SectionNumber;
+    unsigned long long sectionKey = ((unsigned long long)effectiveTableId << 32) | ((unsigned long long)section.VersionNumber << 24) | ((unsigned long long)section.TableIdExtension << 8) | section.SectionNumber;
     unsigned long long sectionGroupMask = 0xffffffff00ffff00;
     unsigned long long sectionGroupKey = sectionKey & sectionGroupMask;
     vector<unsigned long long>::const_iterator sectionIt = find(seenSections->begin(),
@@ -183,8 +184,8 @@ void CParserNitDvb::OnNewSection(CSection& section)
     if (sectionIt != seenSections->end())
     {
       // Yes. We might be ready!
-      //LogDebug(L"%s: previously seen section, table ID = 0x%x, extension ID = %d, section number = %hhu",
-      //          m_name, section.table_id, section.table_id_extension,
+      //LogDebug(L"%s: previously seen section, table ID = 0x%hhx, extension ID = %hu, section number = %hhu",
+      //          m_name, effectiveTableId, section.TableIdExtension,
       //          section.SectionNumber);
       if (m_isOtherReady || m_unseenSectionsOther.size() != 0)
       {
@@ -207,8 +208,8 @@ void CParserNitDvb::OnNewSection(CSection& section)
 
         m_isOtherReady = true;
         if (
-          section.table_id == TABLE_ID_NIT_DVB_ACTUAL ||
-          section.table_id == TABLE_ID_NIT_DVB_OTHER
+          effectiveTableId == TABLE_ID_NIT_DVB_ACTUAL ||
+          effectiveTableId == TABLE_ID_NIT_DVB_OTHER
         )
         {
           LogDebug(L"%s: other ready, sections parsed = %llu, service count = %lu, transmitter count = %lu",
@@ -227,7 +228,7 @@ void CParserNitDvb::OnNewSection(CSection& section)
                     m_recordsService.GetRecordCount());
           if (m_callBack != NULL)
           {
-            m_callBack->OnTableComplete(section.table_id);
+            m_callBack->OnTableComplete(effectiveTableId);
           }
         }
       }
@@ -240,7 +241,7 @@ void CParserNitDvb::OnNewSection(CSection& section)
     {
       // No. Is this a change/update, or just a new section group?
       bool isChange = false;
-      if (section.table_id == TABLE_ID_NIT_DVB_ACTUAL)
+      if (effectiveTableId == TABLE_ID_NIT_DVB_ACTUAL)
       {
         isChange = m_seenSectionsActual.size() != 0;
       }
@@ -278,14 +279,14 @@ void CParserNitDvb::OnNewSection(CSection& section)
 
       if (isChange)
       {
-        LogDebug(L"%s: changed, table ID = 0x%x, extension ID = %d, version number = %d, section number = %hhu, last section number = %hhu",
-                  m_name, section.table_id, section.table_id_extension,
-                  section.version_number, section.SectionNumber,
+        LogDebug(L"%s: changed, table ID = 0x%hhx, extension ID = %hu, version number = %hhu, section number = %hhu, last section number = %hhu",
+                  m_name, effectiveTableId, section.TableIdExtension,
+                  section.VersionNumber, section.SectionNumber,
                   section.LastSectionNumber);
-        m_recordsService.MarkExpiredRecords((section.table_id << 16) | section.table_id_extension);
-        m_recordsTransmitter.MarkExpiredRecords((section.table_id << 16) | section.table_id_extension);
+        m_recordsService.MarkExpiredRecords((effectiveTableId << 16) | section.TableIdExtension);
+        m_recordsTransmitter.MarkExpiredRecords((effectiveTableId << 16) | section.TableIdExtension);
 
-        if (section.table_id == TABLE_ID_NIT_DVB_ACTUAL)
+        if (effectiveTableId == TABLE_ID_NIT_DVB_ACTUAL)
         {
           seenSections->clear();
           unseenSections->clear();
@@ -299,25 +300,25 @@ void CParserNitDvb::OnNewSection(CSection& section)
           m_isOtherReady = false;
           if (m_callBack != NULL)
           {
-            m_callBack->OnTableChange(section.table_id);
+            m_callBack->OnTableChange(effectiveTableId);
           }
         }
       }
       else
       {
-        LogDebug(L"%s: received, table ID = 0x%x, extension ID = %d, version number = %d, section number = %hhu, last section number = %hhu",
-                  m_name, section.table_id, section.table_id_extension,
-                  section.version_number, section.SectionNumber,
+        LogDebug(L"%s: received, table ID = 0x%hhx, extension ID = %hu, version number = %hhu, section number = %hhu, last section number = %hhu",
+                  m_name, effectiveTableId, section.TableIdExtension,
+                  section.VersionNumber, section.SectionNumber,
                   section.LastSectionNumber);
         if (
           m_callBack != NULL &&
           (
-            (section.table_id == TABLE_ID_NIT_DVB_ACTUAL && m_seenSectionsActual.size() == 0) ||
-            (section.table_id != TABLE_ID_NIT_DVB_ACTUAL && m_seenSectionsOther.size() == 0)
+            (effectiveTableId == TABLE_ID_NIT_DVB_ACTUAL && m_seenSectionsActual.size() == 0) ||
+            (effectiveTableId != TABLE_ID_NIT_DVB_ACTUAL && m_seenSectionsOther.size() == 0)
           )
         )
         {
-          m_callBack->OnTableSeen(section.table_id);
+          m_callBack->OnTableSeen(effectiveTableId);
         }
       }
 
@@ -330,20 +331,20 @@ void CParserNitDvb::OnNewSection(CSection& section)
     }
     else
     {
-      //LogDebug(L"%s: new section, table ID = 0x%x, extension ID = %d, version number = %d, section number = %hhu",
-      //            m_name, section.table_id, section.table_id_extension,
-      //            section.version_number, section.SectionNumber);
+      //LogDebug(L"%s: new section, table ID = 0x%hhx, extension ID = %hu, version number = %hhu, section number = %hhu",
+      //            m_name, effectiveTableId, section.TableIdExtension,
+      //            section.VersionNumber, section.SectionNumber);
     }
 
     unsigned short pointer = 10;                              // points to the first byte in the extension descriptor loop
-    unsigned short endOfSection = section.section_length - 1; // points to the first byte in the CRC
+    unsigned short endOfSection = section.SectionLength - 1;  // points to the first byte in the CRC
     unsigned short endOfExtensionDescriptors = pointer + extensionDescriptorsLength;
     if (endOfExtensionDescriptors > endOfSection - 2)         // - 2 for the transport stream loop length bytes
     {
-      LogDebug(L"%s: invalid section, extension descriptors length = %hu, pointer = %hu, end of section = %hu, table ID = 0x%x, extension ID = %d, version number = %d, section number = %hhu",
+      LogDebug(L"%s: invalid section, extension descriptors length = %hu, pointer = %hu, end of section = %hu, table ID = 0x%hhx, extension ID = %hu, version number = %hhu, section number = %hhu",
                 m_name, extensionDescriptorsLength, endOfSection,
-                section.table_id, section.table_id_extension,
-                section.version_number, section.SectionNumber);
+                effectiveTableId, section.TableIdExtension,
+                section.VersionNumber, section.SectionNumber);
       return;
     }
 
@@ -373,8 +374,8 @@ void CParserNitDvb::OnNewSection(CSection& section)
                                     freesatChannelCategoryIds,
                                     freesatChannelCategoryNames))
     {
-      LogDebug(L"%s: invalid section, table ID = 0x%x, extension ID = %d, end of section = %hu",
-                m_name, section.table_id, section.table_id_extension,
+      LogDebug(L"%s: invalid section, table ID = 0x%hhx, extension ID = %hu, end of section = %hu",
+                m_name, effectiveTableId, section.TableIdExtension,
                 endOfSection);
       return;
     }
@@ -386,7 +387,7 @@ void CParserNitDvb::OnNewSection(CSection& section)
       bouquetFreesatRegionIds.push_back(regionIdIt->first);
     }
 
-    AddGroupNames(NetworkOrBouquet, section.table_id_extension, groupNames);
+    AddGroupNames(NetworkOrBouquet, section.TableIdExtension, groupNames);
     AddGroupNameSets(TargetRegion, targetRegionNames);
     AddGroupNameSets(FreesatRegion, freesatRegionNames);
     AddGroupNameSets(FreesatChannelCategory, freesatChannelCategoryNames);
@@ -397,10 +398,10 @@ void CParserNitDvb::OnNewSection(CSection& section)
     //          m_name, transportStreamLoopLength, pointer);
     if (pointer + transportStreamLoopLength != endOfSection)
     {
-      LogDebug(L"%s: invalid section, transport stream loop length = %hu, pointer = %hu, end of section = %hu, table ID = 0x%x, extension ID = %d, version number = %d, section number = %hhu",
+      LogDebug(L"%s: invalid section, transport stream loop length = %hu, pointer = %hu, end of section = %hu, table ID = 0x%hhx, extension ID = %hu, version number = %hhu, section number = %hhu",
                 m_name, transportStreamLoopLength, pointer, endOfSection,
-                section.table_id, section.table_id_extension,
-                section.version_number, section.SectionNumber);
+                effectiveTableId, section.TableIdExtension,
+                section.VersionNumber, section.SectionNumber);
       if (groupDefaultAuthority != NULL)
       {
         delete[] groupDefaultAuthority;
@@ -428,10 +429,10 @@ void CParserNitDvb::OnNewSection(CSection& section)
       unsigned short endOfTransportDescriptors = pointer + transportDescriptorsLength;
       if (endOfTransportDescriptors > endOfSection)
       {
-        LogDebug(L"%s: invalid section, transport descriptors length = %hu, pointer = %hu, end of section = %hu, table ID = 0x%x, extension ID = %d, version number = %d, section number = %hhu, TSID = %hu, ONID = %hu",
+        LogDebug(L"%s: invalid section, transport descriptors length = %hu, pointer = %hu, end of section = %hu, table ID = 0x%hhx, extension ID = %hu, version number = %hhu, section number = %hhu, TSID = %hu, ONID = %hu",
                   m_name, transportDescriptorsLength, pointer, endOfSection,
-                  section.table_id, section.table_id_extension,
-                  section.version_number, section.SectionNumber,
+                  effectiveTableId, section.TableIdExtension,
+                  section.VersionNumber, section.SectionNumber,
                   transportStreamId, originalNetworkId);
         if (groupDefaultAuthority != NULL)
         {
@@ -480,9 +481,9 @@ void CParserNitDvb::OnNewSection(CSection& section)
                                             recordSatellite,
                                             recordTerrestrial))
       {
-        LogDebug(L"%s: invalid section, table ID = 0x%x, extension ID = %d, version number = %d, section number = %hhu, TSID = %hu, ONID = %hu, end of section = %hu",
-                  m_name, section.table_id, section.table_id_extension,
-                  section.version_number, section.SectionNumber,
+        LogDebug(L"%s: invalid section, table ID = 0x%hhx, extension ID = %hu, version number = %hhu, section number = %hhu, TSID = %hu, ONID = %hu, end of section = %hu",
+                  m_name, effectiveTableId, section.TableIdExtension,
+                  section.VersionNumber, section.SectionNumber,
                   transportStreamId, originalNetworkId, endOfSection);
         if (groupDefaultAuthority != NULL)
         {
@@ -503,8 +504,8 @@ void CParserNitDvb::OnNewSection(CSection& section)
 
       // We now have a bunch of network/bouquet and transport stream details
       // that have to be recorded per-service.
-      AddServices(section.table_id,
-                  section.table_id_extension,
+      AddServices(effectiveTableId,
+                  section.TableIdExtension,
                   section.SectionNumber,
                   originalNetworkId,
                   transportStreamId,
@@ -541,8 +542,8 @@ void CParserNitDvb::OnNewSection(CSection& section)
         recordSatellite.IsHomeTransmitter = true;
         recordTerrestrial.IsHomeTransmitter = true;
       }
-      AddTransmitters(section.table_id,
-                      section.table_id_extension,
+      AddTransmitters(effectiveTableId,
+                      section.TableIdExtension,
                       originalNetworkId,
                       transportStreamId,
                       recordCable,
@@ -560,9 +561,9 @@ void CParserNitDvb::OnNewSection(CSection& section)
 
     if (pointer != endOfSection)
     {
-      LogDebug(L"%s: section parsing error, pointer = %hu, end of section = %hu, table ID = 0x%x, extension ID = %d, version number = %d, section number = %hhu",
-                m_name, pointer, endOfSection, section.table_id,
-                section.table_id_extension, section.version_number,
+      LogDebug(L"%s: section parsing error, pointer = %hu, end of section = %hu, table ID = 0x%hhx, extension ID = %hu, version number = %hhu, section number = %hhu",
+                m_name, pointer, endOfSection, effectiveTableId,
+                section.TableIdExtension, section.VersionNumber,
                 section.SectionNumber);
       return;
     }
@@ -571,7 +572,7 @@ void CParserNitDvb::OnNewSection(CSection& section)
     unseenSections->erase(sectionIt);
     if (unseenSections->size() == 0)
     {
-      if (section.table_id == TABLE_ID_NIT_DVB_ACTUAL)
+      if (effectiveTableId == TABLE_ID_NIT_DVB_ACTUAL)
       {
         if (m_isOtherReady)
         {
@@ -1923,7 +1924,7 @@ void CParserNitDvb::AddLogicalChannelNumber(unsigned short serviceId,
   }
 }
 
-bool CParserNitDvb::DecodeExtensionDescriptors(unsigned char* sectionData,
+bool CParserNitDvb::DecodeExtensionDescriptors(const unsigned char* sectionData,
                                                 unsigned short& pointer,
                                                 unsigned short endOfExtensionDescriptors,
                                                 map<unsigned long, char*>& names,
@@ -2155,7 +2156,7 @@ bool CParserNitDvb::DecodeExtensionDescriptors(unsigned char* sectionData,
   return false;
 }
 
-bool CParserNitDvb::DecodeTransportStreamDescriptors(unsigned char* sectionData,
+bool CParserNitDvb::DecodeTransportStreamDescriptors(const unsigned char* sectionData,
                                                       unsigned short& pointer,
                                                       unsigned short endOfTransportDescriptors,
                                                       unsigned long groupPrivateDataSpecifier,
@@ -2395,7 +2396,7 @@ bool CParserNitDvb::DecodeTransportStreamDescriptors(unsigned char* sectionData,
   return false;
 }
 
-bool CParserNitDvb::DecodeNameDescriptor(unsigned char* data,
+bool CParserNitDvb::DecodeNameDescriptor(const unsigned char* data,
                                           unsigned char dataLength,
                                           char** name) const
 {
@@ -2433,7 +2434,7 @@ bool CParserNitDvb::DecodeNameDescriptor(unsigned char* data,
   return false;
 }
 
-bool CParserNitDvb::DecodeCountryAvailabilityDescriptor(unsigned char* data,
+bool CParserNitDvb::DecodeCountryAvailabilityDescriptor(const unsigned char* data,
                                                         unsigned char dataLength,
                                                         vector<unsigned long>& availableInCountries,
                                                         vector<unsigned long>& unavailableInCountries) const
@@ -2474,7 +2475,7 @@ bool CParserNitDvb::DecodeCountryAvailabilityDescriptor(unsigned char* data,
   return false;
 }
 
-bool CParserNitDvb::DecodeLinkageDescriptor(unsigned char* data,
+bool CParserNitDvb::DecodeLinkageDescriptor(const unsigned char* data,
                                             unsigned char dataLength,
                                             vector<unsigned long>& homeTransmitterKeys) const
 {
@@ -2506,7 +2507,7 @@ bool CParserNitDvb::DecodeLinkageDescriptor(unsigned char* data,
   return false;
 }
 
-bool CParserNitDvb::DecodeMultilingualNameDescriptor(unsigned char* data,
+bool CParserNitDvb::DecodeMultilingualNameDescriptor(const unsigned char* data,
                                                       unsigned char dataLength,
                                                       map<unsigned long, char*>& names) const
 {
@@ -2580,7 +2581,7 @@ bool CParserNitDvb::DecodeMultilingualNameDescriptor(unsigned char* data,
   return false;
 }
 
-bool CParserNitDvb::DecodePrivateDataSpecifierDescriptor(unsigned char* data,
+bool CParserNitDvb::DecodePrivateDataSpecifierDescriptor(const unsigned char* data,
                                                           unsigned char dataLength,
                                                           unsigned long& privateDataSpecifier) const
 {
@@ -2605,7 +2606,7 @@ bool CParserNitDvb::DecodePrivateDataSpecifierDescriptor(unsigned char* data,
   return false;
 }
 
-bool CParserNitDvb::DecodeDefaultAuthorityDescriptor(unsigned char* data,
+bool CParserNitDvb::DecodeDefaultAuthorityDescriptor(const unsigned char* data,
                                                       unsigned char dataLength,
                                                       char** defaultAuthority) const
 {
@@ -2658,7 +2659,7 @@ bool CParserNitDvb::DecodeDefaultAuthorityDescriptor(unsigned char* data,
   return false;
 }
 
-bool CParserNitDvb::DecodeFreesatRegionNameListDescriptor(unsigned char* data,
+bool CParserNitDvb::DecodeFreesatRegionNameListDescriptor(const unsigned char* data,
                                                           unsigned char dataLength,
                                                           map<unsigned short, map<unsigned long, char*>*>& names) const
 {
@@ -2757,7 +2758,7 @@ bool CParserNitDvb::DecodeFreesatRegionNameListDescriptor(unsigned char* data,
   return false;
 }
 
-bool CParserNitDvb::DecodeFreesatChannelCategoryMappingDescriptor(unsigned char* data,
+bool CParserNitDvb::DecodeFreesatChannelCategoryMappingDescriptor(const unsigned char* data,
                                                                   unsigned char dataLength,
                                                                   map<unsigned short, vector<unsigned short>*>& channels) const
 {
@@ -2841,7 +2842,7 @@ bool CParserNitDvb::DecodeFreesatChannelCategoryMappingDescriptor(unsigned char*
   return false;
 }
 
-bool CParserNitDvb::DecodeFreesatChannelCategoryNameListDescriptor(unsigned char* data,
+bool CParserNitDvb::DecodeFreesatChannelCategoryNameListDescriptor(const unsigned char* data,
                                                                     unsigned char dataLength,
                                                                     map<unsigned short, map<unsigned long, char*>*>& names) const
 {
@@ -2961,7 +2962,7 @@ bool CParserNitDvb::DecodeFreesatChannelCategoryNameListDescriptor(unsigned char
   return false;
 }
 
-bool CParserNitDvb::DecodeTargetRegionDescriptor(unsigned char* data,
+bool CParserNitDvb::DecodeTargetRegionDescriptor(const unsigned char* data,
                                                   unsigned char dataLength,
                                                   vector<unsigned long long>& targetRegionIds) const
 {
@@ -3043,7 +3044,7 @@ bool CParserNitDvb::DecodeTargetRegionDescriptor(unsigned char* data,
   return false;
 }
 
-bool CParserNitDvb::DecodeTargetRegionNameDescriptor(unsigned char* data,
+bool CParserNitDvb::DecodeTargetRegionNameDescriptor(const unsigned char* data,
                                                       unsigned char dataLength,
                                                       map<unsigned long long, char*>& names,
                                                       unsigned long& language) const
@@ -3121,7 +3122,7 @@ bool CParserNitDvb::DecodeTargetRegionNameDescriptor(unsigned char* data,
   return false;
 }
 
-bool CParserNitDvb::DecodeServiceListDescriptor(unsigned char* data,
+bool CParserNitDvb::DecodeServiceListDescriptor(const unsigned char* data,
                                                 unsigned char dataLength,
                                                 vector<unsigned short>& serviceIds) const
 {
@@ -3155,7 +3156,7 @@ bool CParserNitDvb::DecodeServiceListDescriptor(unsigned char* data,
   return false;
 }
 
-bool CParserNitDvb::DecodeSatelliteDeliverySystemDescriptor(unsigned char* data,
+bool CParserNitDvb::DecodeSatelliteDeliverySystemDescriptor(const unsigned char* data,
                                                             unsigned char dataLength,
                                                             CRecordNitTransmitterSatellite& record) const
 {
@@ -3208,7 +3209,7 @@ bool CParserNitDvb::DecodeSatelliteDeliverySystemDescriptor(unsigned char* data,
   return false;
 }
 
-bool CParserNitDvb::DecodeCableDeliverySystemDescriptor(unsigned char* data,
+bool CParserNitDvb::DecodeCableDeliverySystemDescriptor(const unsigned char* data,
                                                         unsigned char dataLength,
                                                         CRecordNitTransmitterCable& record) const
 {
@@ -3250,7 +3251,7 @@ bool CParserNitDvb::DecodeCableDeliverySystemDescriptor(unsigned char* data,
   return false;
 }
 
-bool CParserNitDvb::DecodeTerrestrialDeliverySystemDescriptor(unsigned char* data,
+bool CParserNitDvb::DecodeTerrestrialDeliverySystemDescriptor(const unsigned char* data,
                                                               unsigned char dataLength,
                                                               CRecordNitTransmitterTerrestrial& record) const
 {
@@ -3311,7 +3312,7 @@ bool CParserNitDvb::DecodeTerrestrialDeliverySystemDescriptor(unsigned char* dat
   return false;
 }
 
-bool CParserNitDvb::DecodeFrequencyListDescriptor(unsigned char* data,
+bool CParserNitDvb::DecodeFrequencyListDescriptor(const unsigned char* data,
                                                   unsigned char dataLength,
                                                   vector<unsigned long>& frequencies) const
 {
@@ -3363,7 +3364,7 @@ bool CParserNitDvb::DecodeFrequencyListDescriptor(unsigned char* data,
   return false;
 }
 
-bool CParserNitDvb::DecodeCellFrequencyLinkDescriptor(unsigned char* data,
+bool CParserNitDvb::DecodeCellFrequencyLinkDescriptor(const unsigned char* data,
                                                       unsigned char dataLength,
                                                       map<unsigned long, unsigned long>& frequencies) const
 {
@@ -3419,7 +3420,7 @@ bool CParserNitDvb::DecodeCellFrequencyLinkDescriptor(unsigned char* data,
   return false;
 }
 
-bool CParserNitDvb::DecodeS2SatelliteDeliverySystemDescriptor(unsigned char* data,
+bool CParserNitDvb::DecodeS2SatelliteDeliverySystemDescriptor(const unsigned char* data,
                                                               unsigned char dataLength,
                                                               CRecordNitTransmitterSatellite& record) const
 {
@@ -3488,7 +3489,7 @@ bool CParserNitDvb::DecodeS2SatelliteDeliverySystemDescriptor(unsigned char* dat
   return false;
 }
 
-bool CParserNitDvb::DecodeAlternativeLogicalChannelNumberDescriptor(unsigned char* data,
+bool CParserNitDvb::DecodeAlternativeLogicalChannelNumberDescriptor(const unsigned char* data,
                                                                     unsigned char dataLength,
                                                                     map<unsigned short, bool>& visibleInGuideFlags,
                                                                     map<unsigned short, map<unsigned long, unsigned short>*>& logicalChannelNumbers) const
@@ -3539,7 +3540,7 @@ bool CParserNitDvb::DecodeAlternativeLogicalChannelNumberDescriptor(unsigned cha
   return false;
 }
 
-bool CParserNitDvb::DecodeLogicalChannelNumberDescriptor(unsigned char* data,
+bool CParserNitDvb::DecodeLogicalChannelNumberDescriptor(const unsigned char* data,
                                                           unsigned char dataLength,
                                                           unsigned char tag,
                                                           unsigned long privateDataSpecifier,
@@ -3629,7 +3630,7 @@ bool CParserNitDvb::DecodeLogicalChannelNumberDescriptor(unsigned char* data,
   return false;
 }
 
-bool CParserNitDvb::DecodeServiceAttributeDescriptor(unsigned char* data,
+bool CParserNitDvb::DecodeServiceAttributeDescriptor(const unsigned char* data,
                                                       unsigned char dataLength,
                                                       map<unsigned short, bool>& visibleInGuideFlags) const
 {
@@ -3673,7 +3674,7 @@ bool CParserNitDvb::DecodeServiceAttributeDescriptor(unsigned char* data,
   return false;
 }
 
-bool CParserNitDvb::DecodeNorDigLogicalChannelDescriptorVersion2(unsigned char* data,
+bool CParserNitDvb::DecodeNorDigLogicalChannelDescriptorVersion2(const unsigned char* data,
                                                                   unsigned char dataLength,
                                                                   map<unsigned char, char*>& channelListNames,
                                                                   map<unsigned short, vector<unsigned char>*>& channelListIds,
@@ -3804,7 +3805,7 @@ bool CParserNitDvb::DecodeNorDigLogicalChannelDescriptorVersion2(unsigned char* 
   return false;
 }
 
-bool CParserNitDvb::DecodeOpenTvChannelDescriptor(unsigned char* data,
+bool CParserNitDvb::DecodeOpenTvChannelDescriptor(const unsigned char* data,
                                                   unsigned char dataLength,
                                                   map<unsigned short, vector<unsigned short>*>& regionIds,
                                                   map<unsigned short, unsigned short>& channelIds,
@@ -3881,7 +3882,7 @@ bool CParserNitDvb::DecodeOpenTvChannelDescriptor(unsigned char* data,
   return false;
 }
 
-bool CParserNitDvb::DecodeFreesatChannelDescriptor(unsigned char* data,
+bool CParserNitDvb::DecodeFreesatChannelDescriptor(const unsigned char* data,
                                                     unsigned char dataLength,
                                                     const vector<unsigned short> bouquetRegionIds,
                                                     map<unsigned short, bool>& visibleInGuideFlags,
@@ -4023,7 +4024,7 @@ bool CParserNitDvb::DecodeFreesatChannelDescriptor(unsigned char* data,
   return false;
 }
 
-bool CParserNitDvb::DecodeT2TerrestrialDeliverySystemDescriptor(unsigned char* data,
+bool CParserNitDvb::DecodeT2TerrestrialDeliverySystemDescriptor(const unsigned char* data,
                                                                 unsigned char dataLength,
                                                                 CRecordNitTransmitterTerrestrial& record,
                                                                 map<unsigned long, unsigned long>& frequencies) const
@@ -4165,7 +4166,7 @@ bool CParserNitDvb::DecodeT2TerrestrialDeliverySystemDescriptor(unsigned char* d
   return false;
 }
 
-bool CParserNitDvb::DecodeC2CableDeliverySystemDescriptor(unsigned char* data,
+bool CParserNitDvb::DecodeC2CableDeliverySystemDescriptor(const unsigned char* data,
                                                           unsigned char dataLength,
                                                           CRecordNitTransmitterCable& record) const
 {
@@ -4202,7 +4203,7 @@ bool CParserNitDvb::DecodeC2CableDeliverySystemDescriptor(unsigned char* data,
   return false;
 }
 
-unsigned long CParserNitDvb::DecodeCableFrequency(unsigned char* data)
+unsigned long CParserNitDvb::DecodeCableFrequency(const unsigned char* data)
 {
   // Frequency in MHz is encoded with BCD digits. The DP is after the 4th
   // digit. We want the frequency in kHz.
@@ -4216,7 +4217,7 @@ unsigned long CParserNitDvb::DecodeCableFrequency(unsigned char* data)
   return frequency;
 }
 
-unsigned long CParserNitDvb::DecodeSatelliteFrequency(unsigned char* data)
+unsigned long CParserNitDvb::DecodeSatelliteFrequency(const unsigned char* data)
 {
   // Frequency in GHz is encoded with BCD digits. The DP is after the 3rd
   // digit. We want the frequency in kHz.
@@ -4231,7 +4232,7 @@ unsigned long CParserNitDvb::DecodeSatelliteFrequency(unsigned char* data)
   return frequency;
 }
 
-unsigned long CParserNitDvb::DecodeTerrestrialFrequency(unsigned char* data)
+unsigned long CParserNitDvb::DecodeTerrestrialFrequency(const unsigned char* data)
 {
   // Frequency is specified in units of 10 Hz. We want the value in kHz.
   return ((data[0] << 24) + (data[1] << 16) + (data[2] << 8) + data[3]) / 100;

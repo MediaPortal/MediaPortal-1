@@ -77,8 +77,8 @@ class CParserAet
 
     void Reset(bool enableCrcCheck);
     STDMETHODIMP_(void) SetCallBack(ICallBackGrabber* callBack);
-    bool OnTsPacket(CTsHeader& header, unsigned char* tsPacket);
-    void OnNewSection(int pid, int tableId, CSection& section);
+    bool OnTsPacket(const CTsHeader& header, const unsigned char* tsPacket);
+    void OnNewSection(unsigned short pid, unsigned char tableId, const CSection& section);
     STDMETHODIMP_(bool) IsSeen();
     STDMETHODIMP_(bool) IsReady();
 
@@ -266,30 +266,30 @@ class CParserAet
 
     void PrivateReset(bool removeDecoders);
 
-    static bool DecodeAeitRecord(unsigned char* sectionData,
+    static bool DecodeAeitRecord(const unsigned char* sectionData,
                                   unsigned short& pointer,
                                   unsigned short endOfSection,
                                   CRecordAeit& record);
-    static bool DecodeAettRecord(unsigned char* sectionData,
+    static bool DecodeAettRecord(const unsigned char* sectionData,
                                   unsigned short& pointer,
                                   unsigned short endOfSection,
                                   CRecordAett& record);
 
-    static bool DecodeAc3AudioStreamDescriptor(unsigned char* data,
+    static bool DecodeAc3AudioStreamDescriptor(const unsigned char* data,
                                                 unsigned char dataLength,
                                                 vector<unsigned long>& audioLanguages);
-    static bool DecodeCaptionServiceDescriptor(unsigned char* data,
+    static bool DecodeCaptionServiceDescriptor(const unsigned char* data,
                                                 unsigned char dataLength,
                                                 vector<unsigned long>& captionsLanguages);
-    static bool DecodeContentAdvisoryDescriptor(unsigned char* data,
+    static bool DecodeContentAdvisoryDescriptor(const unsigned char* data,
                                                 unsigned char dataLength,
                                                 unsigned char& vchipRating,
                                                 unsigned char& mpaaClassification,
                                                 unsigned short& advisories);
-    static bool DecodeGenreDescriptor(unsigned char* data,
+    static bool DecodeGenreDescriptor(const unsigned char* data,
                                       unsigned char dataLength,
                                       vector<unsigned char>& genreIds);
-    static bool DecodeEnhancedAc3AudioDescriptor(unsigned char* data,
+    static bool DecodeEnhancedAc3AudioDescriptor(const unsigned char* data,
                                                   unsigned char dataLength,
                                                   vector<unsigned long>& audioLanguages);
 

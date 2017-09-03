@@ -60,22 +60,22 @@ void CParserSttScte::SetCallBack(ICallBackStt* callBack)
   m_callBack = callBack;
 }
 
-void CParserSttScte::OnNewSection(CSection& section)
+void CParserSttScte::OnNewSection(const CSection& section)
 {
   try
   {
     if (
-      section.table_id != TABLE_ID_STT_SCTE ||
+      section.TableId != TABLE_ID_STT_SCTE ||
       section.SectionSyntaxIndicator ||
       section.PrivateIndicator
     )
     {
       return;
     }
-    if (section.section_length < 11)
+    if (section.SectionLength < 11)
     {
-      LogDebug(L"STT SCTE: invalid section, length = %d",
-                section.section_length);
+      LogDebug(L"STT SCTE: invalid section, length = %hu",
+                section.SectionLength);
       return;
     }
     unsigned char protocolVersion = section.Data[3] & 0x1f;
@@ -89,8 +89,8 @@ void CParserSttScte::OnNewSection(CSection& section)
     CEnterCriticalSection lock(m_section);
     unsigned long systemTime = (section.Data[4] << 24) | (section.Data[5] << 16) | (section.Data[6] << 8) | section.Data[7];
     unsigned char gpsUtcOffset = section.Data[8];
-    //LogDebug(L"STT SCTE: section length = %d, protocol version = %hhu, system time = %lu, GPS UTC offset = %hhu",
-    //          section.section_length, protocolVersion, systemTime,
+    //LogDebug(L"STT SCTE: section length = %hu, protocol version = %hhu, system time = %lu, GPS UTC offset = %hhu",
+    //          section.SectionLength, protocolVersion, systemTime,
     //          gpsUtcOffset);
 
     bool isDaylightSavingStateKnown = false;
@@ -98,7 +98,7 @@ void CParserSttScte::OnNewSection(CSection& section)
     unsigned char daylightSavingDayOfMonth;
     unsigned char daylightSavingHour;
     unsigned short pointer = 16;
-    unsigned short endOfSection = section.section_length - 1; // points to the first byte in the CRC
+    unsigned short endOfSection = section.SectionLength - 1;  // points to the first byte in the CRC
     while (pointer + 1 < endOfSection)
     {
       unsigned char tag = section.Data[pointer++];
@@ -244,7 +244,7 @@ bool CParserSttScte::GetSystemTimeDetail(unsigned long& systemTime,
   return true;
 }
 
-bool CParserSttScte::DecodeDaylightSavingsTimeDescriptor(unsigned char* data,
+bool CParserSttScte::DecodeDaylightSavingsTimeDescriptor(const unsigned char* data,
                                                           unsigned char dataLength,
                                                           bool& isDaylightSaving,
                                                           unsigned char& dayOfMonth,

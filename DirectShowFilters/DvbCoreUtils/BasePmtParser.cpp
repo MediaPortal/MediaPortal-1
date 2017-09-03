@@ -81,7 +81,7 @@ bool CBasePmtParser::IsReady()
   return m_isFound;
 }
 
-void CBasePmtParser::OnTsPacket(unsigned char* tsPacket)
+void CBasePmtParser::OnTsPacket(const unsigned char* tsPacket)
 {
   if (m_isFound)
   {
@@ -95,7 +95,7 @@ bool CBasePmtParser::DecodePmtSection(const CSection& section)
   try
   {
     if (
-      section.table_id != 0x02 ||         // 0x02 = standard PMT table ID
+      section.TableId != 0x02 ||          // 0x02 = standard PMT table ID
       !section.SectionSyntaxIndicator ||
       section.PrivateIndicator ||
       !section.CurrentNextIndicator       // Details do not apply yet...
@@ -104,9 +104,9 @@ bool CBasePmtParser::DecodePmtSection(const CSection& section)
       return false;
     }
 
-    if (section.section_length > 1021 || section.section_length < 13)
+    if (section.SectionLength > 1021 || section.SectionLength < 13)
     {
-      LogDebug(L"PMT: invalid section, length = %d", section.section_length);
+      LogDebug(L"PMT: invalid section, length = %hu", section.SectionLength);
       return false;
     }
 
@@ -116,22 +116,22 @@ bool CBasePmtParser::DecodePmtSection(const CSection& section)
 
     unsigned short pointer = 12;
     unsigned short endOfProgramInfo = pointer + programInfoLength;
-    unsigned short endOfSection = section.section_length - 1;
-    //LogDebug(L"PMT: program number = %d, version number = %d, section number = %hhu, last section number = %hhu, PCR PID = %hu, program info length = %hu, section length = %d",
-    //          section.table_id_extension, section.version_number,
+    unsigned short endOfSection = section.SectionLength - 1;
+    //LogDebug(L"PMT: program number = %hu, version number = %hhu, section number = %hhu, last section number = %hhu, PCR PID = %hu, program info length = %hu, section length = %hu",
+    //          section.TableIdExtension, section.VersionNumber,
     //          section.SectionNumber, section.LastSectionNumber, pcrPid,
-    //          programInfoLength, section.section_length);
+    //          programInfoLength, section.SectionLength);
     if (endOfProgramInfo > endOfSection)
     {
-      LogDebug(L"PMT: invalid section, program info length = %hu, pointer = %hu, section length = %d",
-                programInfoLength, pointer, section.section_length);
+      LogDebug(L"PMT: invalid section, program info length = %hu, pointer = %hu, section length = %hu",
+                programInfoLength, pointer, section.SectionLength);
       return false;
     }
 
     m_pidInfo.Reset();
     m_pidInfo.PmtPid = GetPid();
-    m_pidInfo.PmtVersion = section.version_number;
-    m_pidInfo.ProgramNumber = section.table_id_extension;
+    m_pidInfo.PmtVersion = section.VersionNumber;
+    m_pidInfo.ProgramNumber = section.TableIdExtension;
     m_pidInfo.PcrPid = pcrPid;
     m_pidInfo.DescriptorsLength = programInfoLength;
     if (programInfoLength != 0)
@@ -156,8 +156,8 @@ bool CBasePmtParser::DecodePmtSection(const CSection& section)
       //          tag, length, pointer);
       if (endOfDescriptor > endOfProgramInfo)
       {
-        LogDebug(L"PMT: invalid section, program descriptor length = %hhu, pointer = %hu, end of program info = %hu, section length = %d",
-                  length, pointer, endOfProgramInfo, section.section_length);
+        LogDebug(L"PMT: invalid section, program descriptor length = %hhu, pointer = %hu, end of program info = %hu, section length = %hu",
+                  length, pointer, endOfProgramInfo, section.SectionLength);
         return false;
       }
 
@@ -190,8 +190,8 @@ bool CBasePmtParser::DecodePmtSection(const CSection& section)
       //          streamType, elementaryPid, esInfoLength, endOfEsInfo);
       if (endOfEsInfo > endOfSection)
       {
-        LogDebug(L"PMT: invalid section, elementary stream info length = %hu, pointer = %hu, section length = %d",
-                  esInfoLength, pointer, section.section_length);
+        LogDebug(L"PMT: invalid section, elementary stream info length = %hu, pointer = %hu, section length = %hu",
+                  esInfoLength, pointer, section.SectionLength);
         return false;
       }
 
@@ -286,8 +286,8 @@ bool CBasePmtParser::DecodePmtSection(const CSection& section)
         //          tag, length, pointer);
         if (endOfDescriptor > endOfEsInfo)
         {
-          LogDebug(L"PMT: invalid descriptor length = %hhu, pointer = %hu, end of elementary stream info = %hu, section length = %d",
-                    length, pointer, endOfEsInfo, section.section_length);
+          LogDebug(L"PMT: invalid descriptor length = %hhu, pointer = %hu, end of elementary stream info = %hu, section length = %hu",
+                    length, pointer, endOfEsInfo, section.SectionLength);
           return false;
         }
 
@@ -626,7 +626,7 @@ CPidTable& CBasePmtParser::GetPidInfo()
   return m_pidInfo;
 }
 
-void CBasePmtParser::OnNewSection(CSection& section)
+void CBasePmtParser::OnNewSection(const CSection& section)
 { 
   // Can be overriden by derived classes.
   DecodePmtSection(section);

@@ -38,16 +38,22 @@ class CSection
     CSection& operator = (const CSection& section);
     void Copy(const CSection &section);
 
-    int table_id;
+    unsigned char TableId;
     bool SectionSyntaxIndicator;
     bool PrivateIndicator;
-    int section_length;
-    int table_id_extension;
-    int version_number;
+    unsigned short SectionLength;
+    unsigned short TableIdExtension;
+    unsigned char VersionNumber;
     bool CurrentNextIndicator;
     unsigned char SectionNumber;
     unsigned char LastSectionNumber;
 
     unsigned short BufferPos;
     unsigned char Data[MAX_SECTION_LENGTH];
+
+    // TODO Kept only for compatibility with TsReader PAT and PMT parsers. Remove if/when possible.
+    int table_id;
+    int section_length;
+    int table_id_extension;
+    int version_number;
 };

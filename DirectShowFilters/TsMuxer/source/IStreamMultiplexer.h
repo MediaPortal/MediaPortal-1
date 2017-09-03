@@ -32,7 +32,7 @@ class IStreamMultiplexer
     virtual HRESULT BreakConnect(IMuxInputPin* pin) = 0;
     virtual HRESULT CompleteConnect(IMuxInputPin* pin) = 0;
     virtual bool IsStarted() const = 0;
-    virtual HRESULT Receive(IMuxInputPin* pin, unsigned char* data, long dataLength, REFERENCE_TIME dataStartTime) = 0;
+    virtual HRESULT Receive(IMuxInputPin* pin, const unsigned char* data, long dataLength, REFERENCE_TIME dataStartTime) = 0;
     virtual HRESULT Reset() = 0;
     virtual HRESULT StreamTypeChange(IMuxInputPin* pin, unsigned char oldStreamType, unsigned char newStreamType) = 0;
 };

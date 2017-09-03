@@ -46,7 +46,7 @@ class CParserTot : public CSectionDecoder, public ISystemTimeInfoProviderDvb
 
     void Reset(bool enableCrcCheck);
     void SetCallBack(ICallBackTot* callBack);
-    void OnNewSection(CSection& section);
+    void OnNewSection(const CSection& section);
 
     bool GetSystemTimeDetail(unsigned long long& systemTime,
                               unsigned char& localTimeOffsetCount) const;
@@ -156,7 +156,7 @@ class CParserTot : public CSectionDecoder, public ISystemTimeInfoProviderDvb
         long NextOffset;                    // unit = minutes
     };
 
-    static bool DecodeLocalTimeOffsetDescriptor(unsigned char* data,
+    static bool DecodeLocalTimeOffsetDescriptor(const unsigned char* data,
                                                 unsigned char dataLength,
                                                 vector<CRecordLocalTimeOffset*>& localTimeOffsets);
 

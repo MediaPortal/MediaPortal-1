@@ -39,7 +39,7 @@ class CTsOutputPin : public CBaseOutputPin
 
     HRESULT CheckMediaType(const CMediaType* mediaType);
     HRESULT DecideBufferSize(IMemAllocator* allocator, ALLOCATOR_PROPERTIES* properties);
-    HRESULT Deliver(unsigned char* data, long dataLength);
+    HRESULT Deliver(const unsigned char* data, long dataLength);
     HRESULT GetMediaType(int position, CMediaType* mediaType);
 
     HRESULT StartDumping(const wchar_t* fileName);

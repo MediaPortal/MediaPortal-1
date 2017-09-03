@@ -16,7 +16,7 @@ public:
   };
   CTsFileSeek( CTsDuration& duration );
   virtual ~CTsFileSeek(void);
-	void OnTsPacket(byte* tsPacket);
+	void OnTsPacket(const byte* tsPacket);
   void Seek(CRefTime refTime);
   void SetFileReader(FileReader* reader);
 

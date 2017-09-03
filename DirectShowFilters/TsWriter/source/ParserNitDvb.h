@@ -50,7 +50,7 @@ class CParserNitDvb : public CSectionDecoder, public IDefaultAuthorityProvider
     void SetPid(unsigned short pid);
     void Reset(bool enableCrcCheck);
     void SetCallBack(ICallBackNitDvb* callBack);
-    void OnNewSection(CSection& section);
+    void OnNewSection(const CSection& section);
     bool IsSeenActual() const;
     bool IsSeenOther() const;
     bool IsReadyActual() const;
@@ -1120,7 +1120,7 @@ class CParserNitDvb : public CSectionDecoder, public IDefaultAuthorityProvider
                                   const wchar_t* lcnType,
                                   map<unsigned short, map<unsigned long, unsigned short>*>& logicalChannelNumbers) const;
 
-    bool DecodeExtensionDescriptors(unsigned char* sectionData,
+    bool DecodeExtensionDescriptors(const unsigned char* sectionData,
                                     unsigned short& pointer,
                                     unsigned short endOfExtensionDescriptors,
                                     map<unsigned long, char*>& names,
@@ -1134,7 +1134,7 @@ class CParserNitDvb : public CSectionDecoder, public IDefaultAuthorityProvider
                                     map<unsigned short, map<unsigned long, char*>*>& freesatRegionNames,
                                     map<unsigned short, vector<unsigned short>*>& freesatChannelCategoryIds,
                                     map<unsigned short, map<unsigned long, char*>*>& freesatChannelCategoryNames) const;
-    bool DecodeTransportStreamDescriptors(unsigned char* sectionData,
+    bool DecodeTransportStreamDescriptors(const unsigned char* sectionData,
                                           unsigned short& pointer,
                                           unsigned short endOfTransportDescriptors,
                                           unsigned long groupPrivateDataSpecifier,
@@ -1156,105 +1156,105 @@ class CParserNitDvb : public CSectionDecoder, public IDefaultAuthorityProvider
                                           CRecordNitTransmitterSatellite& recordSatellite,
                                           CRecordNitTransmitterTerrestrial& recordTerrestrial) const;
 
-    bool DecodeNameDescriptor(unsigned char* data,
+    bool DecodeNameDescriptor(const unsigned char* data,
                               unsigned char dataLength,
                               char** name) const;
-    bool DecodeCountryAvailabilityDescriptor(unsigned char* data,
+    bool DecodeCountryAvailabilityDescriptor(const unsigned char* data,
                                               unsigned char dataLength,
                                               vector<unsigned long>& availableInCountries,
                                               vector<unsigned long>& unavailableInCountries) const;
-    bool DecodeLinkageDescriptor(unsigned char* data,
+    bool DecodeLinkageDescriptor(const unsigned char* data,
                                   unsigned char dataLength,
                                   vector<unsigned long>& homeTransmitterKeys) const;
-    bool DecodeMultilingualNameDescriptor(unsigned char* data,
+    bool DecodeMultilingualNameDescriptor(const unsigned char* data,
                                           unsigned char dataLength,
                                           map<unsigned long, char*>& names) const;
-    bool DecodePrivateDataSpecifierDescriptor(unsigned char* data,
+    bool DecodePrivateDataSpecifierDescriptor(const unsigned char* data,
                                               unsigned char dataLength,
                                               unsigned long& privateDataSpecifier) const;
-    bool DecodeDefaultAuthorityDescriptor(unsigned char* data,
+    bool DecodeDefaultAuthorityDescriptor(const unsigned char* data,
                                           unsigned char dataLength,
                                           char** defaultAuthority) const;
-    bool DecodeFreesatRegionNameListDescriptor(unsigned char* data,
+    bool DecodeFreesatRegionNameListDescriptor(const unsigned char* data,
                                                 unsigned char dataLength,
                                                 map<unsigned short, map<unsigned long, char*>*>& names) const;
-    bool DecodeFreesatChannelCategoryMappingDescriptor(unsigned char* data,
+    bool DecodeFreesatChannelCategoryMappingDescriptor(const unsigned char* data,
                                                         unsigned char dataLength,
                                                         map<unsigned short, vector<unsigned short>*>& channels) const;
-    bool DecodeFreesatChannelCategoryNameListDescriptor(unsigned char* data,
+    bool DecodeFreesatChannelCategoryNameListDescriptor(const unsigned char* data,
                                                         unsigned char dataLength,
                                                         map<unsigned short, map<unsigned long, char*>*>& names) const;
-    bool DecodeTargetRegionDescriptor(unsigned char* data,
+    bool DecodeTargetRegionDescriptor(const unsigned char* data,
                                       unsigned char dataLength,
                                       vector<unsigned long long>& targetRegionIds) const;
-    bool DecodeTargetRegionNameDescriptor(unsigned char* data,
+    bool DecodeTargetRegionNameDescriptor(const unsigned char* data,
                                           unsigned char dataLength,
                                           map<unsigned long long, char*>& names,
                                           unsigned long& language) const;
 
-    bool DecodeServiceListDescriptor(unsigned char* data,
+    bool DecodeServiceListDescriptor(const unsigned char* data,
                                       unsigned char dataLength,
                                       vector<unsigned short>& serviceIds) const;
-    bool DecodeSatelliteDeliverySystemDescriptor(unsigned char* data,
+    bool DecodeSatelliteDeliverySystemDescriptor(const unsigned char* data,
                                                   unsigned char dataLength,
                                                   CRecordNitTransmitterSatellite& record) const;
-    bool DecodeCableDeliverySystemDescriptor(unsigned char* data,
+    bool DecodeCableDeliverySystemDescriptor(const unsigned char* data,
                                               unsigned char dataLength,
                                               CRecordNitTransmitterCable& record) const;
-    bool DecodeTerrestrialDeliverySystemDescriptor(unsigned char* data,
+    bool DecodeTerrestrialDeliverySystemDescriptor(const unsigned char* data,
                                                     unsigned char dataLength,
                                                     CRecordNitTransmitterTerrestrial& record) const;
-    bool DecodeFrequencyListDescriptor(unsigned char* data,
+    bool DecodeFrequencyListDescriptor(const unsigned char* data,
                                         unsigned char dataLength,
                                         vector<unsigned long>& frequencies) const;
-    bool DecodeCellFrequencyLinkDescriptor(unsigned char* data,
+    bool DecodeCellFrequencyLinkDescriptor(const unsigned char* data,
                                             unsigned char dataLength,
                                             map<unsigned long, unsigned long>& cellFrequencies) const;
-    bool DecodeS2SatelliteDeliverySystemDescriptor(unsigned char* data,
+    bool DecodeS2SatelliteDeliverySystemDescriptor(const unsigned char* data,
                                                     unsigned char dataLength,
                                                     CRecordNitTransmitterSatellite& record) const;
-    bool DecodeAlternativeLogicalChannelNumberDescriptor(unsigned char* data,
+    bool DecodeAlternativeLogicalChannelNumberDescriptor(const unsigned char* data,
                                                           unsigned char dataLength,
                                                           map<unsigned short, bool>& visibleInGuideFlags,
                                                           map<unsigned short, map<unsigned long, unsigned short>*>& logicalChannelNumbers) const;
-    bool DecodeLogicalChannelNumberDescriptor(unsigned char* data,
+    bool DecodeLogicalChannelNumberDescriptor(const unsigned char* data,
                                               unsigned char dataLength,
                                               unsigned char tag,
                                               unsigned long privateDataSpecifier,
                                               map<unsigned short, bool>& visibleInGuideFlags,
                                               map<unsigned short, map<unsigned long, unsigned short>*>& logicalChannelNumbers) const;
-    bool DecodeServiceAttributeDescriptor(unsigned char* data,
+    bool DecodeServiceAttributeDescriptor(const unsigned char* data,
                                           unsigned char dataLength,
                                           map<unsigned short, bool>& visibleInGuideFlags) const;
-    bool DecodeNorDigLogicalChannelDescriptorVersion2(unsigned char* data,
+    bool DecodeNorDigLogicalChannelDescriptorVersion2(const unsigned char* data,
                                                       unsigned char dataLength,
                                                       map<unsigned char, char*>& channelListNames,
                                                       map<unsigned short, vector<unsigned char>*>& channelListIds,
                                                       map<unsigned short, map<unsigned long, unsigned short>*>& logicalChannelNumbers,
                                                       map<unsigned short, bool>& visibleInGuideFlags) const;
-    bool DecodeOpenTvChannelDescriptor(unsigned char* data,
+    bool DecodeOpenTvChannelDescriptor(const unsigned char* data,
                                         unsigned char dataLength,
                                         map<unsigned short, vector<unsigned short>*>& regionIds,
                                         map<unsigned short, unsigned short>& channelIds,
                                         map<unsigned short, map<unsigned long, unsigned short>*>& logicalChannelNumbers) const;
-    bool DecodeFreesatChannelDescriptor(unsigned char* data,
+    bool DecodeFreesatChannelDescriptor(const unsigned char* data,
                                         unsigned char dataLength,
                                         const vector<unsigned short> bouquetRegionIds,
                                         map<unsigned short, bool>& visibleInGuideFlags,
                                         map<unsigned short, unsigned short>& channelIds,
                                         map<unsigned short, map<unsigned long, unsigned short>*>& logicalChannelNumbers,
                                         map<unsigned short, vector<unsigned short>*>& regionIds) const;
-    bool DecodeT2TerrestrialDeliverySystemDescriptor(unsigned char* data,
+    bool DecodeT2TerrestrialDeliverySystemDescriptor(const unsigned char* data,
                                                       unsigned char dataLength,
                                                       CRecordNitTransmitterTerrestrial& record,
                                                       map<unsigned long, unsigned long>& cellFrequencies) const;
-    bool DecodeC2CableDeliverySystemDescriptor(unsigned char* data,
+    bool DecodeC2CableDeliverySystemDescriptor(const unsigned char* data,
                                                 unsigned char dataLength,
                                                 CRecordNitTransmitterCable& record) const;
 
-    static unsigned long DecodeCableFrequency(unsigned char* data);
-    static unsigned long DecodeSatelliteFrequency(unsigned char* data);
-    static unsigned long DecodeTerrestrialFrequency(unsigned char* data);
+    static unsigned long DecodeCableFrequency(const unsigned char* data);
+    static unsigned long DecodeSatelliteFrequency(const unsigned char* data);
+    static unsigned long DecodeTerrestrialFrequency(const unsigned char* data);
 
     static unsigned long GetLinkageKey(unsigned short originalNetworkId,
                                         unsigned short transportStreamId);

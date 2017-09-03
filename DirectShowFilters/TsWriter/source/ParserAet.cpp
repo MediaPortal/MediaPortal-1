@@ -284,7 +284,7 @@ STDMETHODIMP_(void) CParserAet::SetCallBack(ICallBackGrabber* callBack)
   m_callBackGrabber = callBack;
 }
 
-bool CParserAet::OnTsPacket(CTsHeader& header, unsigned char* tsPacket)
+bool CParserAet::OnTsPacket(const CTsHeader& header, const unsigned char* tsPacket)
 {
   CEnterCriticalSection lock(m_section);
   if (m_isGrabbing)
@@ -550,7 +550,7 @@ bool CParserAet::SelectEventRecordByIndex(unsigned long index)
   return true;
 }
 
-void CParserAet::OnNewSection(int pid, int tableId, CSection& section)
+void CParserAet::OnNewSection(unsigned short pid, unsigned char tableId, const CSection& section)
 {
   try
   {
@@ -563,27 +563,27 @@ void CParserAet::OnNewSection(int pid, int tableId, CSection& section)
     {
       return;
     }
-    if (section.section_length < MINIMUM_SECTION_LENGTH || section.section_length > 4093)
+    if (section.SectionLength < MINIMUM_SECTION_LENGTH || section.SectionLength > 4093)
     {
-      LogDebug(L"AET: invalid section, length = %d, table ID = 0x%x, PID = %d",
-                section.section_length, tableId, pid);
+      LogDebug(L"AET: invalid section, length = %hu, table ID = 0x%hhx, PID = %hu",
+                section.SectionLength, tableId, pid);
       return;
     }
     unsigned char subtype = section.Data[3];
     if (subtype != 0)
     {
-      LogDebug(L"AET: unsupported sub-type, PID = %d, table ID = 0x%x, sub-type = %hhu",
+      LogDebug(L"AET: unsupported sub-type, PID = %hu, table ID = 0x%hhx, sub-type = %hhu",
                 pid, tableId, subtype);
       return;
     }
 
     CEnterCriticalSection lock(m_section);
-    unsigned char* data = section.Data;
+    const unsigned char* data = section.Data;
     unsigned char mgtTag = data[4];
     unsigned char numRecordsInSection = data[8];  // sources or blocks
-    //LogDebug(L"AET: PID = %d, table ID = 0x%x, sub-type = %hhu, MGT tag = %hhu, version number = %d, section length = %d, section number = %d, last section number = %d, num. records in section = %hhu",
-    //          pid, tableId, subtype, mgtTag, section.version_number,
-    //          section.section_length, section.SectionNumber,
+    //LogDebug(L"AET: PID = %hu, table ID = 0x%hhx, sub-type = %hhu, MGT tag = %hhu, version number = %hhu, section length = %hu, section number = %d, last section number = %d, num. records in section = %hhu",
+    //          pid, tableId, subtype, mgtTag, section.VersionNumber,
+    //          section.SectionLength, section.SectionNumber,
     //          section.LastSectionNumber, numRecordsInSection);
 
     unsigned char minimumRecordByteCount;
@@ -595,17 +595,17 @@ void CParserAet::OnNewSection(int pid, int tableId, CSection& section)
     {
       minimumRecordByteCount = MINIMUM_RECORD_BYTE_COUNT_AETT;
     }
-    if (MINIMUM_SECTION_LENGTH + (numRecordsInSection * minimumRecordByteCount) > section.section_length)
+    if (MINIMUM_SECTION_LENGTH + (numRecordsInSection * minimumRecordByteCount) > section.SectionLength)
     {
-      LogDebug(L"AET: invalid section, num. records in section = %hhu, section length = %d, PID = %d, table ID = 0x%x, sub-type = %hhu, MGT tag = %hhu, version number = %d, section number = %d",
-                numRecordsInSection, section.section_length, tableId, pid,
-                subtype, mgtTag, section.version_number,
+      LogDebug(L"AET: invalid section, num. records in section = %hhu, section length = %hu, PID = %hu, table ID = 0x%hhx, sub-type = %hhu, MGT tag = %hhu, version number = %hhu, section number = %d",
+                numRecordsInSection, section.SectionLength, pid, tableId,
+                subtype, mgtTag, section.VersionNumber,
                 section.SectionNumber);
       return;
     }
 
     // Have we seen this section before?
-    unsigned long long sectionKey = ((unsigned long long)pid << 32) | (tableId << 24) | (section.version_number << 16) | (mgtTag << 8) | section.SectionNumber;
+    unsigned long long sectionKey = ((unsigned long long)pid << 32) | (tableId << 24) | (section.VersionNumber << 16) | (mgtTag << 8) | section.SectionNumber;
     unsigned long long sectionGroupMask = 0xffffffffff00ff00;
     unsigned long long sectionGroupKey = sectionKey & sectionGroupMask;
     vector<unsigned long long>::const_iterator sectionIt = find(m_seenSections.begin(),
@@ -614,7 +614,7 @@ void CParserAet::OnNewSection(int pid, int tableId, CSection& section)
     if (sectionIt != m_seenSections.end())
     {
       // Yes. We might be ready!
-      //LogDebug(L"AET: previously seen section, PID = %d, table ID = 0x%x, sub-type = %hhu, MGT tag = %hhu, section number = %d",
+      //LogDebug(L"AET: previously seen section, PID = %hu, table ID = 0x%hhx, sub-type = %hhu, MGT tag = %hhu, section number = %d",
       //          pid, tableId, subtype, mgtTag, section.SectionNumber);
       if (m_isReadyAet || m_unseenSections.size() != 0)
       {
@@ -680,8 +680,8 @@ void CParserAet::OnNewSection(int pid, int tableId, CSection& section)
 
       if (!isChange)
       {
-        LogDebug(L"AET: received, PID = %d, table ID = 0x%x, sub-type = %hhu, MGT tag = %hhu, version number = %d, section number = %d, last section number = %d",
-                  pid, tableId, subtype, mgtTag, section.version_number,
+        LogDebug(L"AET: received, PID = %hu, table ID = 0x%hhx, sub-type = %hhu, MGT tag = %hhu, version number = %hhu, section number = %d, last section number = %d",
+                  pid, tableId, subtype, mgtTag, section.VersionNumber,
                   section.SectionNumber, section.LastSectionNumber);
         if (m_callBackGrabber != NULL && m_seenSections.size() == 0)
         {
@@ -690,8 +690,8 @@ void CParserAet::OnNewSection(int pid, int tableId, CSection& section)
       }
       else
       {
-        LogDebug(L"AET: changed, PID = %d, table ID = 0x%x, sub-type = %hhu, MGT tag = %hhu, version number = %d, section number = %d, last section number = %d",
-                  pid, tableId, subtype, mgtTag, section.version_number,
+        LogDebug(L"AET: changed, PID = %hu, table ID = 0x%hhx, sub-type = %hhu, MGT tag = %hhu, version number = %hhu, section number = %d, last section number = %d",
+                  pid, tableId, subtype, mgtTag, section.VersionNumber,
                   section.SectionNumber, section.LastSectionNumber);
 
         if (tableId == TABLE_ID_AEIT)
@@ -724,13 +724,13 @@ void CParserAet::OnNewSection(int pid, int tableId, CSection& section)
     }
     else
     {
-      //LogDebug(L"AET: new section, PID = %d, table ID = 0x%x, sub-type = %hhu, MGT tag = %hhu, version number = %d, section number = %d",
-      //          pid, tableId, subtype, mgtTag, section.version_number,
+      //LogDebug(L"AET: new section, PID = %hu, table ID = 0x%hhx, sub-type = %hhu, MGT tag = %hhu, version number = %hhu, section number = %d",
+      //          pid, tableId, subtype, mgtTag, section.VersionNumber,
       //          section.SectionNumber);
     }
 
     unsigned short pointer = 9;                               // points to the first byte in the source/block loop
-    unsigned short endOfSection = section.section_length - 1; // points to the first byte in the CRC
+    unsigned short endOfSection = section.SectionLength - 1;  // points to the first byte in the CRC
     for (unsigned char i = 0; i < numRecordsInSection && pointer + ((numRecordsInSection - i) * minimumRecordByteCount) - 1 < endOfSection; i++)
     {
       if (tableId == TABLE_ID_AETT)
@@ -738,8 +738,8 @@ void CParserAet::OnNewSection(int pid, int tableId, CSection& section)
         CRecordAett* record = new CRecordAett();
         if (record == NULL)
         {
-          LogDebug(L"AET: failed to allocate record, PID = %d, table ID = 0x%x, sub-type = %hhu, MGT tag = %hhu, version number = %d, section number = %d, num. blocks in section = %hhu, block index = %hhu, source ID = %hu, event ID = %hu",
-                    pid, tableId, subtype, mgtTag, section.version_number,
+          LogDebug(L"AET: failed to allocate record, PID = %hu, table ID = 0x%hhx, sub-type = %hhu, MGT tag = %hhu, version number = %hhu, section number = %d, num. blocks in section = %hhu, block index = %hhu, source ID = %hu, event ID = %hu",
+                    pid, tableId, subtype, mgtTag, section.VersionNumber,
                     section.SectionNumber, numRecordsInSection, i,
                     record->SourceId, record->EventId);
           return;
@@ -748,8 +748,8 @@ void CParserAet::OnNewSection(int pid, int tableId, CSection& section)
         record->MgtTag = mgtTag;
         if (!DecodeAettRecord(data, pointer, endOfSection, *record))
         {
-          LogDebug(L"AET: invalid section, PID = %d, table ID = 0x%x, sub-type = %hhu, MGT tag = %hhu, version number = %d, section number = %d, num. blocks in section = %hhu, block index = %hhu, source ID = %hu, event ID = %hu",
-                    pid, tableId, subtype, mgtTag, section.version_number,
+          LogDebug(L"AET: invalid section, PID = %hu, table ID = 0x%hhx, sub-type = %hhu, MGT tag = %hhu, version number = %hhu, section number = %d, num. blocks in section = %hhu, block index = %hhu, source ID = %hu, event ID = %hu",
+                    pid, tableId, subtype, mgtTag, section.VersionNumber,
                     section.SectionNumber, numRecordsInSection, i,
                     record->SourceId, record->EventId);
           delete record;
@@ -768,9 +768,9 @@ void CParserAet::OnNewSection(int pid, int tableId, CSection& section)
 
         if (pointer + ((numRecordsInSection - 1 - i) * minimumRecordByteCount) + (numEvents * MINIMUM_RECORD_BYTE_COUNT_AEIT_EVENT) > endOfSection)
         {
-          LogDebug(L"AET: invalid section, num. events = %hhu, pointer = %hu, end of section = %hu, PID = %d, table ID = 0x%x, sub-type = %hhu, MGT tag = %hhu, version number = %d, section number = %d, num. sources in section = %hhu, source index = %hhu, source ID = %hu",
+          LogDebug(L"AET: invalid section, num. events = %hhu, pointer = %hu, end of section = %hu, PID = %hu, table ID = 0x%hhx, sub-type = %hhu, MGT tag = %hhu, version number = %hhu, section number = %d, num. sources in section = %hhu, source index = %hhu, source ID = %hu",
                     numEvents, pointer, endOfSection, pid, tableId, subtype,
-                    mgtTag, section.version_number, section.SectionNumber,
+                    mgtTag, section.VersionNumber, section.SectionNumber,
                     numRecordsInSection, i, sourceId);
           return;
         }
@@ -780,8 +780,8 @@ void CParserAet::OnNewSection(int pid, int tableId, CSection& section)
           CRecordAeit* record = new CRecordAeit();
           if (record == NULL)
           {
-            LogDebug(L"AET: failed to allocate record, PID = %d, table ID = 0x%x, sub-type = %hhu, MGT tag = %hhu, version number = %d, section number = %d, num. sources in section = %hhu, source index = %hhu, source ID = %hu, num. events = %hhu, event index = %hhu",
-                      pid, tableId, subtype, mgtTag, section.version_number,
+            LogDebug(L"AET: failed to allocate record, PID = %hu, table ID = 0x%hhx, sub-type = %hhu, MGT tag = %hhu, version number = %hhu, section number = %d, num. sources in section = %hhu, source index = %hhu, source ID = %hu, num. events = %hhu, event index = %hhu",
+                      pid, tableId, subtype, mgtTag, section.VersionNumber,
                       section.SectionNumber, numRecordsInSection, i, sourceId,
                       numEvents, j);
             return;
@@ -791,8 +791,8 @@ void CParserAet::OnNewSection(int pid, int tableId, CSection& section)
           record->SourceId = sourceId;
           if (!DecodeAeitRecord(data, pointer, endOfSection, *record))
           {
-            LogDebug(L"AET: invalid section, PID = %d, table ID = 0x%x, sub-type = %hhu, MGT tag = %hhu, version number = %d, section number = %d, num. sources in section = %hhu, source index = %hhu, source ID = %hu, num. events = %hhu, event index = %hhu, event ID = %hu",
-                      pid, tableId, subtype, mgtTag, section.version_number,
+            LogDebug(L"AET: invalid section, PID = %hu, table ID = 0x%hhx, sub-type = %hhu, MGT tag = %hhu, version number = %hhu, section number = %d, num. sources in section = %hhu, source index = %hhu, source ID = %hu, num. events = %hhu, event index = %hhu, event ID = %hu",
+                      pid, tableId, subtype, mgtTag, section.VersionNumber,
                       section.SectionNumber, numRecordsInSection, i, sourceId,
                       numEvents, j, record->EventId);
             delete record;
@@ -806,9 +806,9 @@ void CParserAet::OnNewSection(int pid, int tableId, CSection& section)
 
     if (pointer != endOfSection)
     {
-      LogDebug(L"AET: section parsing error, pointer = %hu, end of section = %hu, PID = %d, table ID = 0x%x, sub-type = %hhu, MGT tag = %hhu, version number = %d, section number = %d, num. records in section = %hhu",
+      LogDebug(L"AET: section parsing error, pointer = %hu, end of section = %hu, PID = %hu, table ID = 0x%hhx, sub-type = %hhu, MGT tag = %hhu, version number = %hhu, section number = %d, num. records in section = %hhu",
                 pointer, endOfSection, pid, tableId, subtype, mgtTag,
-                section.version_number, section.SectionNumber,
+                section.VersionNumber, section.SectionNumber,
                 numRecordsInSection);
       return;
     }
@@ -876,7 +876,7 @@ void CParserAet::PrivateReset(bool removeDecoders)
   m_currentRecordIndex = 0xffffffff;
 }
 
-bool CParserAet::DecodeAeitRecord(unsigned char* sectionData,
+bool CParserAet::DecodeAeitRecord(const unsigned char* sectionData,
                                   unsigned short& pointer,
                                   unsigned short endOfSection,
                                   CRecordAeit& record)
@@ -1004,7 +1004,7 @@ bool CParserAet::DecodeAeitRecord(unsigned char* sectionData,
   return false;
 }
 
-bool CParserAet::DecodeAettRecord(unsigned char* sectionData,
+bool CParserAet::DecodeAettRecord(const unsigned char* sectionData,
                                   unsigned short& pointer,
                                   unsigned short endOfSection,
                                   CRecordAett& record)
@@ -1059,7 +1059,7 @@ bool CParserAet::DecodeAettRecord(unsigned char* sectionData,
   return false;
 }
 
-bool CParserAet::DecodeAc3AudioStreamDescriptor(unsigned char* data,
+bool CParserAet::DecodeAc3AudioStreamDescriptor(const unsigned char* data,
                                                 unsigned char dataLength,
                                                 vector<unsigned long>& audioLanguages)
 {
@@ -1179,7 +1179,7 @@ bool CParserAet::DecodeAc3AudioStreamDescriptor(unsigned char* data,
   return false;
 }
 
-bool CParserAet::DecodeCaptionServiceDescriptor(unsigned char* data,
+bool CParserAet::DecodeCaptionServiceDescriptor(const unsigned char* data,
                                                 unsigned char dataLength,
                                                 vector<unsigned long>& captionsLanguages)
 {
@@ -1244,7 +1244,7 @@ bool CParserAet::DecodeCaptionServiceDescriptor(unsigned char* data,
   return false;
 }
 
-bool CParserAet::DecodeContentAdvisoryDescriptor(unsigned char* data,
+bool CParserAet::DecodeContentAdvisoryDescriptor(const unsigned char* data,
                                                   unsigned char dataLength,
                                                   unsigned char& vchipRating,
                                                   unsigned char& mpaaClassification,
@@ -1400,7 +1400,7 @@ bool CParserAet::DecodeContentAdvisoryDescriptor(unsigned char* data,
   return false;
 }
 
-bool CParserAet::DecodeGenreDescriptor(unsigned char* data,
+bool CParserAet::DecodeGenreDescriptor(const unsigned char* data,
                                         unsigned char dataLength,
                                         vector<unsigned char>& genreIds)
 {
@@ -1438,7 +1438,7 @@ bool CParserAet::DecodeGenreDescriptor(unsigned char* data,
   return false;
 }
 
-bool CParserAet::DecodeEnhancedAc3AudioDescriptor(unsigned char* data,
+bool CParserAet::DecodeEnhancedAc3AudioDescriptor(const unsigned char* data,
                                                   unsigned char dataLength,
                                                   vector<unsigned long>& audioLanguages)
 {

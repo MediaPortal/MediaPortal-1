@@ -38,7 +38,7 @@ class CParserSttAtsc : public ISystemTimeInfoProviderAtscScte
 
     void Reset();
     void SetCallBack(ICallBackStt* callBack);
-    void OnNewSection(CSection& section);
+    void OnNewSection(const CSection& section);
 
     bool GetSystemTimeDetail(unsigned long& systemTime,
                               unsigned char& gpsUtcOffset,

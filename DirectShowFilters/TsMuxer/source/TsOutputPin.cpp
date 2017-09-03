@@ -82,7 +82,7 @@ HRESULT CTsOutputPin::DecideBufferSize(IMemAllocator* allocator, ALLOCATOR_PROPE
   return S_OK;
 }
 
-HRESULT CTsOutputPin::Deliver(unsigned char* data, long dataLength)
+HRESULT CTsOutputPin::Deliver(const unsigned char* data, long dataLength)
 {
   if (m_isDumpEnabled)
   {

@@ -73,14 +73,14 @@ void CParserLvct::SetCallBack(ICallBackLvct* callBack)
   m_callBack = callBack;
 }
 
-void CParserLvct::OnNewSection(CSection& section, bool isOutOfBandSection)
+void CParserLvct::OnNewSection(const CSection& section, bool isOutOfBandSection)
 {
   try
   {
     if (
       (
-        section.table_id != TABLE_ID_LVCT_CABLE &&
-        section.table_id != TABLE_ID_LVCT_TERRESTRIAL
+        section.TableId != TABLE_ID_LVCT_CABLE &&
+        section.TableId != TABLE_ID_LVCT_TERRESTRIAL
       ) ||
       !section.SectionSyntaxIndicator ||
       !section.PrivateIndicator ||
@@ -90,24 +90,24 @@ void CParserLvct::OnNewSection(CSection& section, bool isOutOfBandSection)
       return;
     }
     if (
-      section.section_length < MINIMUM_SECTION_LENGTH ||
-      (section.table_id == TABLE_ID_LVCT_CABLE && section.section_length > 4093) ||
-      (section.table_id != TABLE_ID_LVCT_TERRESTRIAL && section.section_length > 1021)
+      section.SectionLength < MINIMUM_SECTION_LENGTH ||
+      (section.TableId == TABLE_ID_LVCT_CABLE && section.SectionLength > 4093) ||
+      (section.TableId != TABLE_ID_LVCT_TERRESTRIAL && section.SectionLength > 1021)
     )
     {
-      LogDebug(L"LVCT %hu: invalid section, length = %d, table ID = 0x%x",
-                m_pid, section.section_length, section.table_id);
+      LogDebug(L"LVCT %hu: invalid section, length = %hu, table ID = 0x%hhx",
+                m_pid, section.SectionLength, section.TableId);
       return;
     }
     unsigned char protocolVersion = section.Data[8];
     if (protocolVersion != 0)
     {
-      LogDebug(L"LVCT %hu: unsupported protocol version, protocol version = %hhu, table ID = 0x%x",
-                m_pid, protocolVersion, section.table_id);
+      LogDebug(L"LVCT %hu: unsupported protocol version, protocol version = %hhu, table ID = 0x%hhx",
+                m_pid, protocolVersion, section.TableId);
       return;
     }
 
-    unsigned char* data = section.Data;
+    const unsigned char* data = section.Data;
 
     // In ATSC A/65 the table ID extension is the transport stream identifier
     // for the current transport stream; in SCTE 65 it is the "map ID" -
@@ -116,31 +116,31 @@ void CParserLvct::OnNewSection(CSection& section, bool isOutOfBandSection)
     unsigned short mapId = 0;
     if (isOutOfBandSection)
     {
-      mapId = section.table_id_extension;
+      mapId = section.TableIdExtension;
     }
     else
     {
-      transportStreamId = section.table_id_extension;
+      transportStreamId = section.TableIdExtension;
     }
 
     unsigned char numChannelsInSection = data[9];
-    //LogDebug(L"LVCT %hu: table ID = 0x%x, TSID = %hu, map ID = %hu, protocol version = %hhu, version number = %d, section length = %d, section number = %hhu, last section number = %hhu, num. channels in section = %hhu",
-    //          m_pid, section.table_id, transportStreamId, mapId,
-    //          protocolVersion, section.version_number, section.section_length,
+    //LogDebug(L"LVCT %hu: table ID = 0x%hhx, TSID = %hu, map ID = %hu, protocol version = %hhu, version number = %hhu, section length = %hu, section number = %hhu, last section number = %hhu, num. channels in section = %hhu",
+    //          m_pid, section.TableId, transportStreamId, mapId,
+    //          protocolVersion, section.VersionNumber, section.SectionLength,
     //          section.SectionNumber, section.LastSectionNumber,
     //          numChannelsInSection);
 
-    if (MINIMUM_SECTION_LENGTH + (numChannelsInSection * MINIMUM_RECORD_BYTE_COUNT) > section.section_length)
+    if (MINIMUM_SECTION_LENGTH + (numChannelsInSection * MINIMUM_RECORD_BYTE_COUNT) > section.SectionLength)
     {
-      LogDebug(L"LVCT %hu: invalid section, num. channels in section = %hhu, section length = %d, table ID = 0x%x, TSID = %hu, map ID = %hu, protocol version = %hhu, version number = %d, section number = %hhu",
-                m_pid, numChannelsInSection, section.section_length,
-                section.table_id, transportStreamId, mapId, protocolVersion,
-                section.version_number, section.SectionNumber);
+      LogDebug(L"LVCT %hu: invalid section, num. channels in section = %hhu, section length = %hu, table ID = 0x%hhx, TSID = %hu, map ID = %hu, protocol version = %hhu, version number = %hhu, section number = %hhu",
+                m_pid, numChannelsInSection, section.SectionLength,
+                section.TableId, transportStreamId, mapId, protocolVersion,
+                section.VersionNumber, section.SectionNumber);
       return;
     }
 
     // Have we seen this section before?
-    unsigned long long sectionKey = ((unsigned long long)section.table_id << 32) | ((unsigned long long)section.version_number << 24) | ((unsigned long long)section.table_id_extension << 8) | section.SectionNumber;
+    unsigned long long sectionKey = ((unsigned long long)section.TableId << 32) | ((unsigned long long)section.VersionNumber << 24) | ((unsigned long long)section.TableIdExtension << 8) | section.SectionNumber;
     unsigned long long sectionGroupMask = 0xffffffff00ffff00;
     unsigned long long sectionGroupKey = sectionKey & sectionGroupMask;
     CEnterCriticalSection lock(m_section);
@@ -150,8 +150,8 @@ void CParserLvct::OnNewSection(CSection& section, bool isOutOfBandSection)
     if (sectionIt != m_seenSections.end())
     {
       // Yes. We might be ready!
-      //LogDebug(L"LVCT %hu: previously seen section, table ID = 0x%x, TSID = %hu, map ID = %hu, protocol version = %hhu, section number = %hhu",
-      //          m_pid, section.table_id, transportStreamId, mapId,
+      //LogDebug(L"LVCT %hu: previously seen section, table ID = 0x%hhx, TSID = %hu, map ID = %hu, protocol version = %hhu, section number = %hhu",
+      //          m_pid, section.TableId, transportStreamId, mapId,
       //          protocolVersion, section.SectionNumber);
       if (m_isReady || m_unseenSections.size() != 0)
       {
@@ -223,11 +223,11 @@ void CParserLvct::OnNewSection(CSection& section, bool isOutOfBandSection)
 
       if (!isChange)
       {
-        LogDebug(L"LVCT %hu: received, table ID = 0x%x, TSID = %hu, map ID = %hu, protocol version = %hhu, version number = %d, section number = %hhu, last section number = %hhu",
-                  m_pid, section.table_id, transportStreamId, mapId,
-                  protocolVersion, section.version_number,
+        LogDebug(L"LVCT %hu: received, table ID = 0x%hhx, TSID = %hu, map ID = %hu, protocol version = %hhu, version number = %hhu, section number = %hhu, last section number = %hhu",
+                  m_pid, section.TableId, transportStreamId, mapId,
+                  protocolVersion, section.VersionNumber,
                   section.SectionNumber, section.LastSectionNumber);
-        if (section.table_id == TABLE_ID_LVCT_CABLE)
+        if (section.TableId == TABLE_ID_LVCT_CABLE)
         {
           m_isSeenCable = true;
         }
@@ -237,20 +237,20 @@ void CParserLvct::OnNewSection(CSection& section, bool isOutOfBandSection)
         }
         if (m_callBack != NULL)
         {
-          m_callBack->OnTableSeen(section.table_id);
+          m_callBack->OnTableSeen(section.TableId);
         }
       }
       else
       {
-        LogDebug(L"LVCT %hu: changed, table ID = 0x%x, TSID = %hu, map ID = %hu, protocol version = %hhu, version number = %d, section number = %hhu, last section number = %hhu",
-                  m_pid, section.table_id, transportStreamId, mapId,
-                  protocolVersion, section.version_number,
+        LogDebug(L"LVCT %hu: changed, table ID = 0x%hhx, TSID = %hu, map ID = %hu, protocol version = %hhu, version number = %hhu, section number = %hhu, last section number = %hhu",
+                  m_pid, section.TableId, transportStreamId, mapId,
+                  protocolVersion, section.VersionNumber,
                   section.SectionNumber, section.LastSectionNumber);
-        m_records.MarkExpiredRecords((section.table_id << 16) | section.table_id_extension);
+        m_records.MarkExpiredRecords((section.TableId << 16) | section.TableIdExtension);
         if (m_isReady && m_callBack != NULL)
         {
           m_isReady = false;
-          m_callBack->OnTableChange(section.table_id);
+          m_callBack->OnTableChange(section.TableId);
         }
         m_isReady = false;
       }
@@ -264,34 +264,34 @@ void CParserLvct::OnNewSection(CSection& section, bool isOutOfBandSection)
     }
     else
     {
-      //LogDebug(L"LVCT %hu: new section, table ID = 0x%x, TSID = %hu, map ID = %hu, protocol version = %hhu, version number = %d, section number = %hhu",
-      //          m_pid, section.table_id, transportStreamId, mapId,
-      //          protocolVersion, section.version_number,
+      //LogDebug(L"LVCT %hu: new section, table ID = 0x%hhx, TSID = %hu, map ID = %hu, protocol version = %hhu, version number = %hhu, section number = %hhu",
+      //          m_pid, section.TableId, transportStreamId, mapId,
+      //          protocolVersion, section.VersionNumber,
       //          section.SectionNumber);
     }
 
     unsigned short pointer = 10;                              // points to the first byte in the channel loop
-    unsigned short endOfSection = section.section_length - 1; // points to the first byte in the CRC
+    unsigned short endOfSection = section.SectionLength - 1;  // points to the first byte in the CRC
     for (unsigned char i = 0; i < numChannelsInSection && pointer + ((numChannelsInSection - i) * MINIMUM_RECORD_BYTE_COUNT) - 1 < endOfSection - 2; i++)   // - 2 for the additional descriptors length bytes
     {
       CRecordLvct* record = new CRecordLvct();
       if (record == NULL)
       {
-        LogDebug(L"LVCT %hu: failed to allocate record, table ID = 0x%x, TSID = %hu, map ID = %hu, protocol version = %hhu, version number = %d, section number = %hhu, num. channels in section = %hhu, index = %hhu",
-                  m_pid, section.table_id, transportStreamId, mapId,
-                  protocolVersion, section.version_number,
+        LogDebug(L"LVCT %hu: failed to allocate record, table ID = 0x%hhx, TSID = %hu, map ID = %hu, protocol version = %hhu, version number = %hhu, section number = %hhu, num. channels in section = %hhu, index = %hhu",
+                  m_pid, section.TableId, transportStreamId, mapId,
+                  protocolVersion, section.VersionNumber,
                   section.SectionNumber, numChannelsInSection, i);
         return;
       }
 
-      record->TableId = section.table_id;
+      record->TableId = section.TableId;
       record->SectionTransportStreamId = transportStreamId;
       record->MapId = mapId;
       if (!DecodeChannelRecord(data, pointer, endOfSection, *record))
       {
-        LogDebug(L"LVCT %hu: invalid section, table ID = 0x%x, TSID = %hu, map ID = %hu, protocol version = %hhu, version number = %d, section number = %hhu, num. channels in section = %hhu, index = %hhu, channel TSID = %hu, program number = %hu, major channel number = %hu, minor channel number = %hu",
-                  m_pid, section.table_id, transportStreamId, mapId,
-                  protocolVersion, section.version_number,
+        LogDebug(L"LVCT %hu: invalid section, table ID = 0x%hhx, TSID = %hu, map ID = %hu, protocol version = %hhu, version number = %hhu, section number = %hhu, num. channels in section = %hhu, index = %hhu, channel TSID = %hu, program number = %hu, major channel number = %hu, minor channel number = %hu",
+                  m_pid, section.TableId, transportStreamId, mapId,
+                  protocolVersion, section.VersionNumber,
                   section.SectionNumber, numChannelsInSection, i,
                   record->TransportStreamId, record->ProgramNumber,
                   record->MajorChannelNumber, record->MinorChannelNumber);
@@ -310,10 +310,10 @@ void CParserLvct::OnNewSection(CSection& section, bool isOutOfBandSection)
     unsigned short endOfAdditionalDescriptors = pointer + additionalDescriptorsLength;
     if (endOfAdditionalDescriptors != endOfSection)
     {
-      LogDebug(L"LVCT %hu: invalid section, additional descriptors length = %hu, pointer = %hu, end of section = %hu, table ID = 0x%x, TSID = %hu, map ID = %hu, protocol version = %hhu, version number = %d, section number = %hhu, num. channels in section = %hhu",
+      LogDebug(L"LVCT %hu: invalid section, additional descriptors length = %hu, pointer = %hu, end of section = %hu, table ID = 0x%hhx, TSID = %hu, map ID = %hu, protocol version = %hhu, version number = %hhu, section number = %hhu, num. channels in section = %hhu",
                 m_pid, additionalDescriptorsLength, pointer, endOfSection,
-                section.table_id, transportStreamId, mapId, protocolVersion,
-                section.version_number, section.SectionNumber,
+                section.TableId, transportStreamId, mapId, protocolVersion,
+                section.VersionNumber, section.SectionNumber,
                 numChannelsInSection);
       return;
     }
@@ -326,10 +326,10 @@ void CParserLvct::OnNewSection(CSection& section, bool isOutOfBandSection)
       //          m_pid, tag, length, pointer);
       if (pointer + length > endOfAdditionalDescriptors)
       {
-        LogDebug(L"LVCT %hu: invalid section, additional descriptor length = %hhu, pointer = %hu, end of additional descriptors = %hu, table ID = 0x%x, TSID = %hu, map ID = %hu, protocol version = %hhu, version number = %d, section number = %hhu, num. channels in section = %hhu, tag = 0x%hhx, end of section = %hu",
+        LogDebug(L"LVCT %hu: invalid section, additional descriptor length = %hhu, pointer = %hu, end of additional descriptors = %hu, table ID = 0x%hhx, TSID = %hu, map ID = %hu, protocol version = %hhu, version number = %hhu, section number = %hhu, num. channels in section = %hhu, tag = 0x%hhx, end of section = %hu",
                   m_pid, length, pointer, endOfAdditionalDescriptors,
-                  section.table_id, transportStreamId, mapId, protocolVersion,
-                  section.version_number, section.SectionNumber,
+                  section.TableId, transportStreamId, mapId, protocolVersion,
+                  section.VersionNumber, section.SectionNumber,
                   numChannelsInSection, tag, endOfSection);
         return;
       }
@@ -339,10 +339,10 @@ void CParserLvct::OnNewSection(CSection& section, bool isOutOfBandSection)
 
     if (pointer != endOfSection)
     {
-      LogDebug(L"LVCT %hu: section parsing error, pointer = %hu, end of section = %hu, table ID = 0x%x, TSID = %hu, map ID = %hu, protocol version = %hhu, version number = %d, section number = %hhu, num. channels in section = %hhu",
-                m_pid, pointer, endOfSection, section.table_id,
+      LogDebug(L"LVCT %hu: section parsing error, pointer = %hu, end of section = %hu, table ID = 0x%hhx, TSID = %hu, map ID = %hu, protocol version = %hhu, version number = %hhu, section number = %hhu, num. channels in section = %hhu",
+                m_pid, pointer, endOfSection, section.TableId,
                 transportStreamId, mapId, protocolVersion,
-                section.version_number, section.SectionNumber,
+                section.VersionNumber, section.SectionNumber,
                 numChannelsInSection);
       return;
     }
@@ -590,7 +590,7 @@ bool CParserLvct::SelectChannelRecordByIndex(unsigned short index)
   return true;
 }
 
-bool CParserLvct::DecodeChannelRecord(unsigned char* sectionData,
+bool CParserLvct::DecodeChannelRecord(const unsigned char* sectionData,
                                       unsigned short& pointer,
                                       unsigned short endOfSection,
                                       CRecordLvct& record)
@@ -778,7 +778,7 @@ bool CParserLvct::DecodeChannelRecord(unsigned char* sectionData,
   return false;
 }
 
-bool CParserLvct::DecodeParameterizedServiceDescriptor(unsigned char* data,
+bool CParserLvct::DecodeParameterizedServiceDescriptor(const unsigned char* data,
                                                         unsigned char dataLength,
                                                         bool& isThreeDimensional)
 {
@@ -809,7 +809,7 @@ bool CParserLvct::DecodeParameterizedServiceDescriptor(unsigned char* data,
   return false;
 }
 
-bool CParserLvct::DecodeServiceLocationDescriptor(unsigned char* data,
+bool CParserLvct::DecodeServiceLocationDescriptor(const unsigned char* data,
                                                   unsigned char dataLength,
                                                   unsigned char& streamCountVideo,
                                                   unsigned char& streamCountAudio,
@@ -894,7 +894,7 @@ bool CParserLvct::DecodeServiceLocationDescriptor(unsigned char* data,
   return false;
 }
 
-bool CParserLvct::DecodeComponentListDescriptor(unsigned char* data,
+bool CParserLvct::DecodeComponentListDescriptor(const unsigned char* data,
                                                 unsigned char dataLength,
                                                 unsigned char& streamCountVideo,
                                                 unsigned char& streamCountAudio,

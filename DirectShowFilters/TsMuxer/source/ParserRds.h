@@ -38,7 +38,7 @@ class CParserRds
     virtual ~CParserRds();
 
     void SetCallBack(ICallBackRds* callBack);
-    HRESULT Receive(unsigned char* data, long dataLength);
+    HRESULT Receive(const unsigned char* data, long dataLength);
     void Reset();
 
   private:
@@ -49,7 +49,7 @@ class CParserRds
       Utf16 = 2
     };
 
-    static HRESULT HandleTextChange(unsigned char* data,
+    static HRESULT HandleTextChange(const unsigned char* data,
                                     unsigned char* text1,
                                     unsigned char* text2,
                                     TextType textType,
@@ -58,7 +58,7 @@ class CParserRds
                                     unsigned char byteCountPerSegment,
                                     unsigned long& seenSegmentMask,
                                     unsigned char totalSegmentCount);
-    static void RdsTextToString(unsigned char* data,
+    static void RdsTextToString(const unsigned char* data,
                                 unsigned long dataLength,
                                 TextType textType,
                                 char** text);

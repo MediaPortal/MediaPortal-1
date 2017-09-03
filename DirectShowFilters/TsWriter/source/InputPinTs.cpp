@@ -172,7 +172,7 @@ HRESULT CInputPinTs::Run(REFERENCE_TIME startTime)
   return CRenderedInputPin::Run(startTime);
 }
 
-void CInputPinTs::OnTsPacket(unsigned char* tsPacket)
+void CInputPinTs::OnTsPacket(const unsigned char* tsPacket)
 {
   m_analyser->AnalyseTsPacket(tsPacket);
 }

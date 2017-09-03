@@ -574,7 +574,7 @@ bool CTsMuxer::IsStarted() const
 }
 
 HRESULT CTsMuxer::Receive(IMuxInputPin* pin,
-                          unsigned char* data,
+                          const unsigned char* data,
                           long dataLength,
                           REFERENCE_TIME dataStartTime)
 {
@@ -1126,7 +1126,7 @@ bool CTsMuxer::CanDeliver()
 }
 
 HRESULT CTsMuxer::ReceiveTransportStream(IMuxInputPin* pin,
-                                          unsigned char* data,
+                                          const unsigned char* data,
                                           long dataLength,
                                           REFERENCE_TIME dataStartTime)
 {
@@ -1309,7 +1309,7 @@ HRESULT CTsMuxer::ReceiveTransportStream(IMuxInputPin* pin,
 }
 
 HRESULT CTsMuxer::ReceiveProgramOrSystemStream(IMuxInputPin* pin,
-                                                unsigned char* data,
+                                                const unsigned char* data,
                                                 long dataLength,
                                                 REFERENCE_TIME dataStartTime)
 {
@@ -1549,7 +1549,7 @@ HRESULT CTsMuxer::ReceiveProgramOrSystemStream(IMuxInputPin* pin,
   return S_OK;
 }
 
-void CTsMuxer::OnRdsProgrammeServiceNameReceived(char* programmeServiceName)
+void CTsMuxer::OnRdsProgrammeServiceNameReceived(const char* programmeServiceName)
 {
   unsigned long programmeServiceNameLength = min(strlen(programmeServiceName), SERVICE_NAME_LENGTH);
   memcpy(m_serviceName, programmeServiceName, programmeServiceNameLength);
@@ -1557,7 +1557,7 @@ void CTsMuxer::OnRdsProgrammeServiceNameReceived(char* programmeServiceName)
   UpdateSdt();
 }
 
-HRESULT CTsMuxer::ReadProgramAssociationTable(unsigned char* data,
+HRESULT CTsMuxer::ReadProgramAssociationTable(const unsigned char* data,
                                               long dataLength,
                                               TransportStreamInfo& info)
 {
@@ -1599,13 +1599,13 @@ HRESULT CTsMuxer::ReadProgramAssociationTable(unsigned char* data,
   return S_OK;
 }
 
-HRESULT CTsMuxer::ReadProgramMapTable(unsigned char* data,
+HRESULT CTsMuxer::ReadProgramMapTable(const unsigned char* data,
                                       long dataLength,
                                       TransportStreamInfo& info)
 {
   CSection section;
   section.AppendData(data, dataLength);
-  if (!section.IsComplete() || section.section_length + 4 > TS_PACKET_LEN) // + 4 for pointer field, table ID, section length bytes
+  if (!section.IsComplete() || section.SectionLength + 4 > TS_PACKET_LEN) // + 4 for pointer field, table ID, section length bytes
   {
     // Section doesn't fit in one packet.
     LogDebug(L"muxer: pin %hhu larger-than-TS-packet PMT section not supported",
@@ -1618,7 +1618,7 @@ HRESULT CTsMuxer::ReadProgramMapTable(unsigned char* data,
     LogDebug(L"muxer: pin %hhu PMT section is invalid", info.PinId);
     return S_OK;
   }
-  if (info.PmtVersion == section.version_number || info.ServiceId != section.table_id_extension)
+  if (info.PmtVersion == section.VersionNumber || info.ServiceId != section.TableIdExtension)
   {
     return S_OK;
   }
@@ -1630,7 +1630,7 @@ HRESULT CTsMuxer::ReadProgramMapTable(unsigned char* data,
     info.IsCompatible = false;
     return S_FALSE;
   }
-  info.PmtVersion = section.version_number;
+  info.PmtVersion = section.VersionNumber;
 
   CPidTable& pidTable = pmtParser.GetPidInfo();
   LogDebug(L"muxer: pin %hhu new program map table, version = %hhu, program number = %hu, PCR PID = %hu",
@@ -1715,7 +1715,9 @@ HRESULT CTsMuxer::ReadProgramMapTable(unsigned char* data,
   return UpdatePmt();
 }
 
-HRESULT CTsMuxer::CreateOrUpdateTsPmtEs(TransportStreamInfo& info, BasePid* pid, bool isIgnored)
+HRESULT CTsMuxer::CreateOrUpdateTsPmtEs(const TransportStreamInfo& info,
+                                        const BasePid* pid,
+                                        bool isIgnored)
 {
   unsigned long streamKey = (pid->Pid << 8) | info.PinId;
   StreamInfo* streamInfo = NULL;
@@ -1777,7 +1779,7 @@ HRESULT CTsMuxer::CreateOrUpdateTsPmtEs(TransportStreamInfo& info, BasePid* pid,
   return S_OK;
 }
 
-HRESULT CTsMuxer::ReadProgramOrSystemPack(unsigned char* data,
+HRESULT CTsMuxer::ReadProgramOrSystemPack(const unsigned char* data,
                                           long dataLength,
                                           const ProgramStreamInfo& info,
                                           bool isFirstReceive,
@@ -1863,7 +1865,7 @@ HRESULT CTsMuxer::ReadProgramOrSystemPack(unsigned char* data,
   return S_OK;
 }
 
-HRESULT CTsMuxer::ReadProgramOrSystemHeader(unsigned char* data,
+HRESULT CTsMuxer::ReadProgramOrSystemHeader(const unsigned char* data,
                                             long dataLength,
                                             ProgramStreamInfo& info,
                                             bool isFirstReceive)
@@ -1916,7 +1918,7 @@ HRESULT CTsMuxer::ReadProgramOrSystemHeader(unsigned char* data,
   return S_OK;
 }
 
-HRESULT CTsMuxer::ReadProgramStreamMap(unsigned char* data,
+HRESULT CTsMuxer::ReadProgramStreamMap(const unsigned char* data,
                                         long dataLength,
                                         ProgramStreamInfo& info)
 {
@@ -2006,7 +2008,7 @@ HRESULT CTsMuxer::ReadProgramStreamMap(unsigned char* data,
   return S_OK;
 }
 
-HRESULT CTsMuxer::ReadVideoStreamInfo(unsigned char* data,
+HRESULT CTsMuxer::ReadVideoStreamInfo(const unsigned char* data,
                                       long dataLength,
                                       StreamInfo& info)
 {
@@ -2105,7 +2107,7 @@ HRESULT CTsMuxer::ReadVideoStreamInfo(unsigned char* data,
   return S_OK;
 }
 
-HRESULT CTsMuxer::ReadAudioStreamInfo(unsigned char* data,
+HRESULT CTsMuxer::ReadAudioStreamInfo(const unsigned char* data,
                                       long dataLength,
                                       StreamInfo& info)
 {
@@ -2324,7 +2326,7 @@ HRESULT CTsMuxer::UpdateSdt()
 }
 
 HRESULT CTsMuxer::WrapVbiData(const StreamInfo& info,
-                              unsigned char* inputData,
+                              const unsigned char* inputData,
                               long inputDataLength,
                               long long systemClockReference,
                               unsigned char** outputData,
@@ -2427,7 +2429,7 @@ HRESULT CTsMuxer::WrapVbiData(const StreamInfo& info,
     return E_OUTOFMEMORY;
   }
 
-  unsigned char* inputPointer = inputData;
+  const unsigned char* inputPointer = inputData;
   unsigned char* esPointer = &esBuffer[stuffingLength + 1];   // + 1 for data identifier
   while (inputDataLength >= lineLength)
   {
@@ -2437,13 +2439,14 @@ HRESULT CTsMuxer::WrapVbiData(const StreamInfo& info,
       *esPointer++ = dataUnitId;
       *esPointer++ = VBI_DATA_UNIT_LENGTH;
       *esPointer++ = (0xc0 | (fieldParity << 5) | lineOffset);
-      if (info.StreamType == STREAM_TYPE_TELETEXT)
-      {
-        *inputPointer = 0xe4;   // overwrite the framing code
-      }
       for (unsigned char i = 0; i < lineLength; i++)
       {
-        *esPointer++ = REVERSE_BITS[*inputPointer++];   // Reverse because the TS packet bits must be in transmission order.
+        unsigned char input = *inputPointer++;
+        if (i == 0 && info.StreamType == STREAM_TYPE_TELETEXT)
+        {
+          input = 0xe4;   // overwrite the framing code
+        }
+        *esPointer++ = REVERSE_BITS[input];   // Reverse because the TS packet bits must be in transmission order.
       }
       for (unsigned char i = lineLength; i < VBI_DATA_UNIT_LENGTH - 1; i++)
       {
@@ -2484,19 +2487,20 @@ HRESULT CTsMuxer::WrapVbiData(const StreamInfo& info,
   return hr;
 }
 
-HRESULT CTsMuxer::ReadChannelNameFromVbiTeletextData(unsigned char* inputData, long inputDataLength)
+HRESULT CTsMuxer::ReadChannelNameFromVbiTeletextData(const unsigned char* inputData,
+                                                      long inputDataLength)
 {
   if (m_isCniName)
   {
     return S_OK;
   }
 
-  unsigned char* input = inputData;
+  const unsigned char* input = inputData;
   HRESULT hr = S_OK;
   while (inputDataLength >= TELETEXT_LINE_LENGTH)
   {
     inputDataLength -= TELETEXT_LINE_LENGTH;
-    unsigned char* inputPointer = input;
+    const unsigned char* inputPointer = input;
     input += TELETEXT_LINE_LENGTH;
 
     // If this line has real content...
@@ -2648,19 +2652,20 @@ HRESULT CTsMuxer::ReadChannelNameFromVbiTeletextData(unsigned char* inputData, l
   return hr;
 }
 
-HRESULT CTsMuxer::ReadChannelNameFromVbiVpsData(unsigned char* inputData, long inputDataLength)
+HRESULT CTsMuxer::ReadChannelNameFromVbiVpsData(const unsigned char* inputData,
+                                                long inputDataLength)
 {
   if (m_isCniName)
   {
     return S_OK;
   }
 
-  unsigned char* input = inputData;
+  const unsigned char* input = inputData;
   HRESULT hr = S_OK;
   while (inputDataLength >= VPS_LINE_LENGTH)
   {
     inputDataLength -= VPS_LINE_LENGTH;
-    unsigned char* inputPointer = input;
+    const unsigned char* inputPointer = input;
     input += VPS_LINE_LENGTH;
 
     // If this line has real content...
@@ -2703,7 +2708,7 @@ HRESULT CTsMuxer::ReadChannelNameFromVbiVpsData(unsigned char* inputData, long i
 }
 
 HRESULT CTsMuxer::WrapElementaryStreamData(const StreamInfo& info,
-                                            unsigned char* inputData,
+                                            const unsigned char* inputData,
                                             long inputDataLength,
                                             long long systemClockReference,
                                             unsigned char** outputData,
@@ -2780,7 +2785,7 @@ HRESULT CTsMuxer::WrapElementaryStreamData(const StreamInfo& info,
 }
 
 HRESULT CTsMuxer::WrapPacketisedElementaryStreamData(StreamInfo& info,
-                                                      unsigned char* inputData,
+                                                      const unsigned char* inputData,
                                                       long inputDataLength,
                                                       long long systemClockReference,
                                                       unsigned short pcrPid,
@@ -2817,7 +2822,7 @@ HRESULT CTsMuxer::WrapPacketisedElementaryStreamData(StreamInfo& info,
               outputBufferSize);
     return E_OUTOFMEMORY;
   }
-  unsigned char* inputPointer = inputData;
+  const unsigned char* inputPointer = inputData;
   unsigned char* outputPointer = *outputData;
   outputDataLength = 0;
   unsigned char firstPacketFlags = 0x40;   // payload start
@@ -2894,7 +2899,7 @@ HRESULT CTsMuxer::WrapPacketisedElementaryStreamData(StreamInfo& info,
   return S_OK;
 }
 
-HRESULT CTsMuxer::DeliverTransportStreamData(unsigned char* inputData, long inputDataLength)
+HRESULT CTsMuxer::DeliverTransportStreamData(const unsigned char* inputData, long inputDataLength)
 {
   if (inputDataLength == 0)
   {

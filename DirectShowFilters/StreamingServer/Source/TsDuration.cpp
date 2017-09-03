@@ -184,7 +184,7 @@ void CTsDuration::UpdateDuration()
   m_reader->Read(buffer,1,&dwBytesRead);
 }
 
-void CTsDuration::OnTsPacket(byte* tsPacket)
+void CTsDuration::OnTsPacket(const byte* tsPacket)
 {
   CTsHeader header(tsPacket);
   CAdaptionField field;

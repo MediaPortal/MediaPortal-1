@@ -69,8 +69,8 @@ class CBasePmtParser : public CSectionDecoder
     void Reset();
     void SetFilter(unsigned short pid, unsigned short programNumber);
     void GetFilter(unsigned short& pid, unsigned short& programNumber);
-    void OnTsPacket(unsigned char* tsPacket);
-    virtual void OnNewSection(CSection& section);
+    void OnTsPacket(const unsigned char* tsPacket);
+    virtual void OnNewSection(const CSection& section);
     bool DecodePmtSection(const CSection& section);
     bool IsReady();
     CPidTable& GetPidInfo();

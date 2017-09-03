@@ -73,7 +73,7 @@ void CGrabberPmt::SetCallBack(ICallBackPmt* callBack)
   m_callBack = callBack;
 }
 
-void CGrabberPmt::OnTsPacket(CTsHeader& header, unsigned char* tsPacket)
+void CGrabberPmt::OnTsPacket(const CTsHeader& header, const unsigned char* tsPacket)
 {
   if (m_lastSeenTime != 0 && CTimeUtils::ElapsedMillis(m_lastSeenTime) >= 30000)
   {
@@ -89,12 +89,12 @@ void CGrabberPmt::OnTsPacket(CTsHeader& header, unsigned char* tsPacket)
   CSectionDecoder::OnTsPacket(header, tsPacket);
 }
 
-void CGrabberPmt::OnNewSection(CSection& section)
+void CGrabberPmt::OnNewSection(const CSection& section)
 {
   try
   {
     if (
-      section.table_id != TABLE_ID_PMT ||
+      section.TableId != TABLE_ID_PMT ||
       !section.SectionSyntaxIndicator ||
       section.PrivateIndicator ||
       !section.CurrentNextIndicator
@@ -104,11 +104,11 @@ void CGrabberPmt::OnNewSection(CSection& section)
     }
 
     CEnterCriticalSection lock(m_section);
-    if (section.table_id_extension != m_programNumber)
+    if (section.TableIdExtension != m_programNumber)
     {
       return;
     }
-    if (section.version_number == m_version)
+    if (section.VersionNumber == m_version)
     {
       m_lastSeenTime = clock();
       return;
@@ -116,49 +116,49 @@ void CGrabberPmt::OnNewSection(CSection& section)
     if (section.SectionNumber != 0 || section.LastSectionNumber != 0)
     {
       // According to ISO/IEC 13818-1 PMT should only have one section per program.
-      LogDebug(L"PMT %d %hu: unsupported multi-section table, version number = %d, section number = %hhu, last section number = %hhu",
-                GetPid(), m_programNumber, section.version_number,
+      LogDebug(L"PMT %d %hu: unsupported multi-section table, version number = %hhu, section number = %hhu, last section number = %hhu",
+                GetPid(), m_programNumber, section.VersionNumber,
                 section.SectionNumber, section.LastSectionNumber);
       return;
     }
-    if (section.section_length > 1021 || section.section_length < 13)
+    if (section.SectionLength > 1021 || section.SectionLength < 13)
     {
-      LogDebug(L"PMT %d %hu: invalid section, length = %d",
-                GetPid(), m_programNumber, section.section_length);
+      LogDebug(L"PMT %d %hu: invalid section, length = %hu",
+                GetPid(), m_programNumber, section.SectionLength);
       return;
     }
 
-    //LogDebug(L"PMT %d %hu: version number = %d, section length = %d",
-    //          GetPid(), m_programNumber, section.version_number,
-    //          section.section_length);
+    //LogDebug(L"PMT %d %hu: version number = %hhu, section length = %hu",
+    //          GetPid(), m_programNumber, section.VersionNumber,
+    //          section.SectionLength);
 
     m_isReady = true;
     if (m_version != VERSION_NOT_SET)
     {
-      LogDebug(L"PMT %d %hu: changed, version number = %d, prev. version number = %hhu",
-                GetPid(), m_programNumber, section.version_number, m_version);
+      LogDebug(L"PMT %d %hu: changed, version number = %hhu, prev. version number = %hhu",
+                GetPid(), m_programNumber, section.VersionNumber, m_version);
       if (m_callBack != NULL)
       {
         m_callBack->OnPmtChanged(m_programNumber,
                                   GetPid(),
                                   section.Data,
-                                  section.section_length + 3);  // + 3 for table ID and section length bytes
+                                  section.SectionLength + 3);   // + 3 for table ID and section length bytes
       }
-      m_version = section.version_number;
+      m_version = section.VersionNumber;
       m_pmtSection = section;
     }
     else
     {
-      LogDebug(L"PMT %d %hu: received, version number = %d",
-                GetPid(), m_programNumber, section.version_number);
-      m_version = section.version_number;
+      LogDebug(L"PMT %d %hu: received, version number = %hhu",
+                GetPid(), m_programNumber, section.VersionNumber);
+      m_version = section.VersionNumber;
       m_pmtSection = section;   // must be before call back due to trigger of Freesat PID check
       if (m_callBack != NULL)
       {
         m_callBack->OnPmtReceived(m_programNumber,
                                   GetPid(),
                                   section.Data,
-                                  section.section_length + 3);  // + 3 for table ID and section length bytes
+                                  section.SectionLength + 3);   // + 3 for table ID and section length bytes
       }
     }
     m_lastSeenTime = clock();
@@ -592,7 +592,7 @@ bool CGrabberPmt::GetTable(unsigned char* table, unsigned short& tableBufferSize
     tableBufferSize = 0;
     return false;
   }
-  unsigned short requiredBufferSize = m_pmtSection.section_length + 3;  // + 3 for table ID and section length bytes
+  unsigned short requiredBufferSize = m_pmtSection.SectionLength + 3;   // + 3 for table ID and section length bytes
   if (table == NULL || tableBufferSize < requiredBufferSize)
   {
     LogDebug(L"PMT %d %hu: insufficient buffer size, required = %d, actual = %hu",

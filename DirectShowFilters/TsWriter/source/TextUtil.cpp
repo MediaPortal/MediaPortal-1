@@ -54,7 +54,7 @@
 
 extern void LogDebug(const wchar_t* fmt, ...);
 
-bool CTextUtil::AtscScteMultipleStringStructureToStrings(unsigned char* data,
+bool CTextUtil::AtscScteMultipleStringStructureToStrings(const unsigned char* data,
                                                           unsigned short dataLength,
                                                           map<unsigned long, char*>& strings)
 {
@@ -173,7 +173,7 @@ bool CTextUtil::AtscScteMultipleStringStructureToStrings(unsigned char* data,
   return true;
 }
 
-bool CTextUtil::AtscScteMultilingualTextToString(unsigned char* data,
+bool CTextUtil::AtscScteMultilingualTextToString(const unsigned char* data,
                                                   unsigned short dataLength,
                                                   char** text)
 {
@@ -285,7 +285,7 @@ bool CTextUtil::AtscScteMultilingualTextToString(unsigned char* data,
   return result;
 }
 
-bool CTextUtil::DishTextToString(unsigned char* data,
+bool CTextUtil::DishTextToString(const unsigned char* data,
                                   unsigned char dataLength,
                                   unsigned char tableId,
                                   char** text)
@@ -307,7 +307,7 @@ bool CTextUtil::DishTextToString(unsigned char* data,
     return true;
   }
 
-  unsigned char* compressedText = &data[1];
+  const unsigned char* compressedText = &data[1];
   unsigned char compressedLength = dataLength - 1;
   if ((data[0] & 0x80) == 0)
   {
@@ -355,7 +355,9 @@ bool CTextUtil::DishTextToString(unsigned char* data,
   return result;
 }
 
-bool CTextUtil::DvbTextToString(unsigned char* data, unsigned short dataLength, char** text)
+bool CTextUtil::DvbTextToString(const unsigned char* data,
+                                unsigned short dataLength,
+                                char** text)
 {
   if (data == NULL || dataLength == 0)
   {
@@ -487,7 +489,9 @@ bool CTextUtil::DvbTextToString(unsigned char* data, unsigned short dataLength, 
   return true;
 }
 
-bool CTextUtil::IsoIec10646ToString(unsigned char* data, unsigned short dataLength, char** text)
+bool CTextUtil::IsoIec10646ToString(const unsigned char* data,
+                                    unsigned short dataLength,
+                                    char** text)
 {
   if (data == NULL || dataLength < 2 || dataLength % 2 != 0)
   {
@@ -590,7 +594,7 @@ bool CTextUtil::IsoIec10646ToString(unsigned char* data, unsigned short dataLeng
   return true;
 }
 
-bool CTextUtil::MhwTextToString(unsigned char* data,
+bool CTextUtil::MhwTextToString(const unsigned char* data,
                                 unsigned short dataLength,
                                 MhwProvider provider,
                                 char** text)
@@ -683,7 +687,7 @@ bool CTextUtil::MhwTextToString(unsigned char* data,
   return result;
 }
 
-bool CTextUtil::OpenTvTextToString(unsigned char* data,
+bool CTextUtil::OpenTvTextToString(const unsigned char* data,
                                     unsigned char dataLength,
                                     bool isItalian,
                                     char** text)
@@ -738,7 +742,7 @@ bool CTextUtil::OpenTvTextToString(unsigned char* data,
   return result;
 }
 
-bool CTextUtil::AtscScteTextToString(unsigned char* data,
+bool CTextUtil::AtscScteTextToString(const unsigned char* data,
                                       unsigned short dataLength,
                                       unsigned char compressionType,
                                       unsigned char mode,
@@ -923,7 +927,7 @@ bool CTextUtil::AtscScteCombineSegments(vector<char*>& segments, char** text)
   return true;
 }
 
-bool CTextUtil::BbcHuffmanToString(unsigned char* data,
+bool CTextUtil::BbcHuffmanToString(const unsigned char* data,
                                     unsigned short dataLength,
                                     unsigned char tableId,
                                     char** text)
@@ -960,7 +964,7 @@ unsigned char CTextUtil::GetBit(unsigned long bitIndex, const unsigned char* dat
   return 0;
 }
 
-bool CTextUtil::MultiRootHuffmanToString(unsigned char* data,
+bool CTextUtil::MultiRootHuffmanToString(const unsigned char* data,
                                           unsigned short dataLength,
                                           unsigned char* huffmanTable,
                                           bool isUtf8UncompressedContext,
@@ -1091,7 +1095,7 @@ bool CTextUtil::MultiRootHuffmanToString(unsigned char* data,
   return true;
 }
 
-bool CTextUtil::SingleRootHuffmanToString(unsigned char* data,
+bool CTextUtil::SingleRootHuffmanToString(const unsigned char* data,
                                           unsigned short dataLength,
                                           unsigned char dataBitOffset,
                                           HuffmanSequence* huffmanTable,
@@ -1229,7 +1233,9 @@ bool CTextUtil::SingleRootHuffmanToString(unsigned char* data,
   return true;
 }
 
-void CTextUtil::MinimiseMemoryUsage(char* input, unsigned long actualInputLength, char** output)
+void CTextUtil::MinimiseMemoryUsage(char* input,
+                                    unsigned long actualInputLength,
+                                    char** output)
 {
   *output = new char[actualInputLength];
   if (*output == NULL)

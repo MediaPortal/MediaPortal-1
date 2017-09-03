@@ -466,7 +466,7 @@ STDMETHODIMP_(void) CGrabberEpgAtsc::SetCallBack(ICallBackGrabber* callBack)
   m_callBackGrabber = callBack;
 }
 
-bool CGrabberEpgAtsc::OnTsPacket(CTsHeader& header, unsigned char* tsPacket)
+bool CGrabberEpgAtsc::OnTsPacket(const CTsHeader& header, const unsigned char* tsPacket)
 {
   CEnterCriticalSection lock(m_section);
   if (m_isGrabbing)

@@ -62,12 +62,12 @@ void CGrabberCat::SetCallBack(ICallBackCat* callBack)
   m_callBack = callBack;
 }
 
-void CGrabberCat::OnNewSection(CSection& section)
+void CGrabberCat::OnNewSection(const CSection& section)
 {
   try
   {
     if (
-      section.table_id != TABLE_ID_CAT ||
+      section.TableId != TABLE_ID_CAT ||
       !section.SectionSyntaxIndicator ||
       section.PrivateIndicator ||
       !section.CurrentNextIndicator
@@ -77,45 +77,45 @@ void CGrabberCat::OnNewSection(CSection& section)
     }
     if (section.SectionNumber != 0 || section.LastSectionNumber != 0)
     {
-      LogDebug(L"CAT: unsupported multi-section table, version number = %d, section number = %hhu, last section number = %hhu",
-                section.version_number, section.SectionNumber,
+      LogDebug(L"CAT: unsupported multi-section table, version number = %hhu, section number = %hhu, last section number = %hhu",
+                section.VersionNumber, section.SectionNumber,
                 section.LastSectionNumber);
       return;
     }
-    if (section.section_length > 1021 || section.section_length < 9)
+    if (section.SectionLength > 1021 || section.SectionLength < 9)
     {
-      LogDebug(L"CAT: invalid section, length = %d", section.section_length);
+      LogDebug(L"CAT: invalid section, length = %hu", section.SectionLength);
       return;
     }
 
     CEnterCriticalSection lock(m_section);
-    if (m_version == section.version_number)
+    if (m_version == section.VersionNumber)
     {
       return;
     }
 
-    //LogDebug(L"CAT: version number = %d, section length = %d",
-    //          section.version_number, section.section_length);
+    //LogDebug(L"CAT: version number = %hhu, section length = %hu",
+    //          section.VersionNumber, section.SectionLength);
 
     m_isReady = true;
     if (m_version != VERSION_NOT_SET)
     {
-      LogDebug(L"CAT: changed, version number = %d, prev. version number = %hhu",
-                section.version_number, m_version);
+      LogDebug(L"CAT: changed, version number = %hhu, prev. version number = %hhu",
+                section.VersionNumber, m_version);
       if (m_callBack != NULL)
       {
-        m_callBack->OnCatChanged(section.Data, section.section_length + 3);   // + 3 for table ID and section length bytes
+        m_callBack->OnCatChanged(section.Data, section.SectionLength + 3);    // + 3 for table ID and section length bytes
       }
     }
     else
     {
-      LogDebug(L"CAT: received, version number = %d", section.version_number);
+      LogDebug(L"CAT: received, version number = %hhu", section.VersionNumber);
       if (m_callBack != NULL)
       {
-        m_callBack->OnCatReceived(section.Data, section.section_length + 3);  // + 3 for table ID and section length bytes
+        m_callBack->OnCatReceived(section.Data, section.SectionLength + 3);   // + 3 for table ID and section length bytes
       }
     }
-    m_version = section.version_number;
+    m_version = section.VersionNumber;
     m_catSection = section;
   }
   catch (...)
@@ -139,7 +139,7 @@ bool CGrabberCat::GetTable(unsigned char* table, unsigned short& tableBufferSize
     tableBufferSize = 0;
     return false;
   }
-  unsigned short requiredBufferSize = m_catSection.section_length + 3;  // + 3 for table ID and section length bytes
+  unsigned short requiredBufferSize = m_catSection.SectionLength + 3;   // + 3 for table ID and section length bytes
   if (table == NULL || tableBufferSize < requiredBufferSize)
   {
     LogDebug(L"CAT: insufficient buffer size, required = %d, actual = %hu",

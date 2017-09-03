@@ -57,7 +57,7 @@ class CGrabberSiMpeg
 
     void Reset();
     STDMETHODIMP_(void) SetCallBack(ICallBackGrabber* callBack);
-    bool OnTsPacket(CTsHeader& header, unsigned char* tsPacket);
+    bool OnTsPacket(const CTsHeader& header, const unsigned char* tsPacket);
 
     STDMETHODIMP_(bool) IsReadyPat();
     STDMETHODIMP_(bool) IsReadyCat();

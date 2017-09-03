@@ -43,7 +43,7 @@ class CParserMgt
 
     void Reset();
     void SetCallBack(ICallBackMgt* callBack);
-    void OnNewSection(CSection& section);
+    void OnNewSection(const CSection& section);
     bool IsSeen() const;
     bool IsReady() const;
 
@@ -135,7 +135,7 @@ class CParserMgt
         unsigned long NumberBytes;
     };
 
-    static bool DecodeTableRecord(unsigned char* sectionData,
+    static bool DecodeTableRecord(const unsigned char* sectionData,
                                   unsigned short& pointer,
                                   unsigned short endOfSection,
                                   CRecordMgt& record);

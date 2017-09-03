@@ -46,7 +46,7 @@ class CParserEtt : public CSectionDecoder
 
     void Reset(bool enableCrcCheck);
     void SetCallBack(ICallBackTableParser* callBack);
-    void OnNewSection(CSection& section);
+    void OnNewSection(const CSection& section);
     bool IsSeen() const;
     bool IsReady() const;
 

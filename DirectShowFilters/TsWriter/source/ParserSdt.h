@@ -50,7 +50,7 @@ class CParserSdt : public CSectionDecoder, public IDefaultAuthorityProvider
 
     void Reset(bool enableCrcCheck);
     void SetCallBack(ICallBackSdt* callBack);
-    void OnNewSection(CSection& section);
+    void OnNewSection(const CSection& section);
     bool IsSeenActual() const;
     bool IsSeenOther() const;
     bool IsReadyActual() const;
@@ -440,28 +440,28 @@ class CParserSdt : public CSectionDecoder, public IDefaultAuthorityProvider
 
     bool SelectServiceRecordByIndex(unsigned short index);
 
-    static bool DecodeServiceRecord(unsigned char* sectionData,
+    static bool DecodeServiceRecord(const unsigned char* sectionData,
                                     unsigned short& pointer,
                                     unsigned short endOfSection,
                                     CRecordSdt& record);
-    static bool DecodeServiceDescriptors(unsigned char* sectionData,
+    static bool DecodeServiceDescriptors(const unsigned char* sectionData,
                                           unsigned short& pointer,
                                           unsigned short endOfDescriptorLoop,
                                           CRecordSdt& record);
 
-    static bool DecodeServiceDescriptor(unsigned char* data,
+    static bool DecodeServiceDescriptor(const unsigned char* data,
                                         unsigned char dataLength,
                                         unsigned char& serviceType,
                                         char** providerName,
                                         char** serviceName);
-    static bool DecodeCountryAvailabilityDescriptor(unsigned char* data,
+    static bool DecodeCountryAvailabilityDescriptor(const unsigned char* data,
                                                     unsigned char dataLength,
                                                     vector<unsigned long>& availableInCountries,
                                                     vector<unsigned long>& unavailableInCountries);
-    static bool DecodeTimeShiftedServiceDescriptor(unsigned char* data,
+    static bool DecodeTimeShiftedServiceDescriptor(const unsigned char* data,
                                                     unsigned char dataLength,
                                                     unsigned short& referenceServiceId);
-    static bool DecodeComponentDescriptor(unsigned char* data,
+    static bool DecodeComponentDescriptor(const unsigned char* data,
                                           unsigned char dataLength,
                                           bool& isVideo,
                                           bool& isAudio,
@@ -470,50 +470,50 @@ class CParserSdt : public CSectionDecoder, public IDefaultAuthorityProvider
                                           bool& isStandardDefinition,
                                           bool& isThreeDimensional,
                                           unsigned long& language);
-    static bool DecodeMultilingualServiceNameDescriptor(unsigned char* data,
+    static bool DecodeMultilingualServiceNameDescriptor(const unsigned char* data,
                                                         unsigned char dataLength,
                                                         map<unsigned long, char*> serviceNames,
                                                         map<unsigned long, char*> providerNames);
-    static bool DecodePrivateDataSpecifierDescriptor(unsigned char* data,
+    static bool DecodePrivateDataSpecifierDescriptor(const unsigned char* data,
                                                       unsigned char dataLength,
                                                       unsigned long& privateDataSpecifier);
-    static bool DecodeServiceAvailabilityDescriptor(unsigned char* data,
+    static bool DecodeServiceAvailabilityDescriptor(const unsigned char* data,
                                                     unsigned char dataLength,
                                                     vector<unsigned long>& availableInCells,
                                                     vector<unsigned long>& unavailableInCells);
-    static bool DecodeDefaultAuthorityDescriptor(unsigned char* data,
+    static bool DecodeDefaultAuthorityDescriptor(const unsigned char* data,
                                                   unsigned char dataLength,
                                                   char** defaultAuthority);
-    static bool DecodeTargetRegionDescriptor(unsigned char* data,
+    static bool DecodeTargetRegionDescriptor(const unsigned char* data,
                                               unsigned char dataLength,
                                               vector<unsigned long long>& targetRegionIds);
-    static bool DecodeServiceRelocatedDescriptor(unsigned char* data,
+    static bool DecodeServiceRelocatedDescriptor(const unsigned char* data,
                                                   unsigned char dataLength,
                                                   unsigned short& previousOriginalNetworkId,
                                                   unsigned short& previousTransportStreamId,
                                                   unsigned short& previousServiceId);
-    static bool DecodeDishChannelDescriptor(unsigned char* data,
+    static bool DecodeDishChannelDescriptor(const unsigned char* data,
                                             unsigned char dataLength,
                                             unsigned short& marketId,
                                             unsigned short& logicalChannelNumber);
-    static bool DecodeDishEpgLinkDescriptor(unsigned char* data,
+    static bool DecodeDishEpgLinkDescriptor(const unsigned char* data,
                                             unsigned char dataLength,
                                             unsigned short& originalNetworkId,
                                             unsigned short& transportStreamId,
                                             unsigned short& serviceId);
-    static bool DecodeDishSubChannelDescriptor(unsigned char* data,
+    static bool DecodeDishSubChannelDescriptor(const unsigned char* data,
                                                 unsigned char dataLength,
                                                 bool& isHighDefinition,
                                                 unsigned short& majorChannelNumber,
                                                 unsigned char& minorChannelNumber);
-    static bool DecodeOpenTvChannelDescriptionDescriptor(unsigned char* data,
+    static bool DecodeOpenTvChannelDescriptionDescriptor(const unsigned char* data,
                                                           unsigned char dataLength,
                                                           bool isItalianText,
                                                           vector<unsigned char>& categoryIds);
-    static bool DecodeOpenTvNvodTimeShiftedServiceNameDescriptor(unsigned char* data,
+    static bool DecodeOpenTvNvodTimeShiftedServiceNameDescriptor(const unsigned char* data,
                                                                   unsigned char dataLength,
                                                                   char** serviceName);
-    static bool DecodeVirginMediaChannelDescriptor(unsigned char* data,
+    static bool DecodeVirginMediaChannelDescriptor(const unsigned char* data,
                                                     unsigned char dataLength,
                                                     unsigned short& logicalChannelNumber,
                                                     bool& visibleInGuide,

@@ -71,7 +71,7 @@ class CGrabberEpgAtsc
 
     void Reset(bool enableCrcCheck);
     STDMETHODIMP_(void) SetCallBack(ICallBackGrabber* callBack);
-    bool OnTsPacket(CTsHeader& header, unsigned char* tsPacket);
+    bool OnTsPacket(const CTsHeader& header, const unsigned char* tsPacket);
     STDMETHODIMP_(bool) IsSeen();
     STDMETHODIMP_(bool) IsReady();
 

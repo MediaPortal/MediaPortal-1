@@ -62,7 +62,7 @@ class CInputPinTs : public CRenderedInputPin, CPacketSync
     HRESULT StopDumping();
 
   private:
-    void OnTsPacket(unsigned char* tsPacket);
+    void OnTsPacket(const unsigned char* tsPacket);
 
     ITsAnalyser* m_analyser;
     clock_t m_receiveTime;

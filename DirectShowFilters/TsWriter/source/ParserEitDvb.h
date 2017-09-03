@@ -99,7 +99,7 @@ class CParserEitDvb : public CUnknown, public IGrabberEpgDvb, ISectionCallback
                                       bool grabViasatSweden);
     void Reset(bool enableCrcCheck);
     STDMETHODIMP_(void) SetCallBack(ICallBackGrabber* callBack);
-    bool OnTsPacket(CTsHeader& header, unsigned char* tsPacket);
+    bool OnTsPacket(const CTsHeader& header, const unsigned char* tsPacket);
     STDMETHODIMP_(bool) IsSeen();
     STDMETHODIMP_(bool) IsReady();
 
@@ -669,7 +669,7 @@ class CParserEitDvb : public CUnknown, public IGrabberEpgDvb, ISectionCallback
     bool SelectEventRecordByIndex(unsigned short index);
     bool SelectTextRecordByIndex(unsigned char index);
 
-    void OnNewSection(int pid, int tableId, CSection& section);
+    void OnNewSection(unsigned short pid, unsigned char tableId, const CSection& section);
 
     void PrivateReset(bool removeFreesatDecoders);
     bool AddOrResetDecoder(unsigned short pid, bool enableCrcCheck);
@@ -697,32 +697,32 @@ class CParserEitDvb : public CUnknown, public IGrabberEpgDvb, ISectionCallback
                                       char* text);
     static void CopyString(const char* input, char** output, wchar_t* debug);
 
-    static bool DecodeEventRecord(unsigned char* sectionData,
+    static bool DecodeEventRecord(const unsigned char* sectionData,
                                   unsigned short& pointer,
                                   unsigned short endOfSection,
                                   CRecordEitEventMinimal& event,
                                   map<unsigned long long, vector<unsigned long long>*>& premiereShowings);
-    static bool DecodeEventDescriptors(unsigned char* sectionData,
+    static bool DecodeEventDescriptors(const unsigned char* sectionData,
                                         unsigned short& pointer,
                                         unsigned short endOfDescriptorLoop,
                                         CRecordEitEventMinimal& event,
                                         map<unsigned long long, vector<unsigned long long>*>& premiereShowings);
 
-    static bool DecodeShortEventDescriptor(unsigned char* data,
+    static bool DecodeShortEventDescriptor(const unsigned char* data,
                                             unsigned char dataLength,
                                             unsigned long& language,
                                             char** eventName,
                                             char** text);
-    static bool DecodeExtendedEventDescriptor(unsigned char* data,
+    static bool DecodeExtendedEventDescriptor(const unsigned char* data,
                                               unsigned char dataLength,
                                               unsigned long& language,
                                               vector<CRecordEitEventDescriptionItem*>& items,
                                               char** text);
-    static bool DecodeTimeShiftedEventDescriptor(unsigned char* data,
+    static bool DecodeTimeShiftedEventDescriptor(const unsigned char* data,
                                                   unsigned char dataLength,
                                                   unsigned short& referenceServiceId,
                                                   unsigned short& referenceEventId);
-    static bool DecodeComponentDescriptor(unsigned char* data,
+    static bool DecodeComponentDescriptor(const unsigned char* data,
                                           unsigned char dataLength,
                                           bool& isAudio,
                                           bool& isSubtitles,
@@ -730,52 +730,52 @@ class CParserEitDvb : public CUnknown, public IGrabberEpgDvb, ISectionCallback
                                           bool& isStandardDefinition,
                                           bool& isThreeDimensional,
                                           unsigned long& language);
-    static bool DecodeContentDescriptor(unsigned char* data,
+    static bool DecodeContentDescriptor(const unsigned char* data,
                                         unsigned char dataLength,
                                         vector<unsigned short>& contentTypeIds);
-    static bool DecodeParentalRatingDescriptor(unsigned char* data,
+    static bool DecodeParentalRatingDescriptor(const unsigned char* data,
                                                 unsigned char dataLength,
                                                 map<unsigned long, unsigned char>& ratings);
-    static bool DecodePrivateDataSpecifierDescriptor(unsigned char* data,
+    static bool DecodePrivateDataSpecifierDescriptor(const unsigned char* data,
                                                       unsigned char dataLength,
                                                       unsigned long& privateDataSpecifier);
-    static bool DecodeContentIdentifierDescriptor(unsigned char* data,
+    static bool DecodeContentIdentifierDescriptor(const unsigned char* data,
                                                   unsigned char dataLength,
                                                   map<unsigned char, char*>& crids);
-    static bool DecodeDishBevRatingDescriptor(unsigned char* data,
+    static bool DecodeDishBevRatingDescriptor(const unsigned char* data,
                                               unsigned char dataLength,
                                               unsigned char& starRating,
                                               unsigned char& mpaaClassification,
                                               unsigned short& advisories);
-    static bool DecodeDishTextDescriptor(unsigned char* data,
+    static bool DecodeDishTextDescriptor(const unsigned char* data,
                                           unsigned char dataLength,
                                           unsigned char tableId,
                                           char** text);
-    static bool DecodeDishEpisodeInformationDescriptor(unsigned char* data,
+    static bool DecodeDishEpisodeInformationDescriptor(const unsigned char* data,
                                                         unsigned char dataLength,
                                                         unsigned char tableId,
                                                         char** information);
-    static bool DecodeDishVchipDescriptor(unsigned char* data,
+    static bool DecodeDishVchipDescriptor(const unsigned char* data,
                                           unsigned char dataLength,
                                           unsigned char& vchipRating,
                                           unsigned short& advisories);
-    static bool DecodeDishBevSeriesDescriptor(unsigned char* data,
+    static bool DecodeDishBevSeriesDescriptor(const unsigned char* data,
                                               unsigned char dataLength,
                                               char** seriesId,
                                               char** episodeId,
                                               bool& isPreviouslyShown);
-    static bool DecodePremiereOrderInformationDescriptor(unsigned char* data,
+    static bool DecodePremiereOrderInformationDescriptor(const unsigned char* data,
                                                           unsigned char dataLength,
                                                           char** orderNumber,
                                                           char** price,
                                                           char** phoneNumber,
                                                           char** smsNumber,
                                                           char** url);
-    static bool DecodePremiereParentInformationDescriptor(unsigned char* data,
+    static bool DecodePremiereParentInformationDescriptor(const unsigned char* data,
                                                           unsigned char dataLength,
                                                           unsigned char& rating,
                                                           char** text);
-    static bool DecodePremiereContentTransmissionDescriptor(unsigned char* data,
+    static bool DecodePremiereContentTransmissionDescriptor(const unsigned char* data,
                                                             unsigned char dataLength,
                                                             unsigned short& originalNetworkId,
                                                             unsigned short& transportStreamId,

@@ -54,7 +54,7 @@ class CTsMuxerFilter : public CBaseFilter
     CBasePin* GetPin(int n);
     HRESULT AddPin();
     int GetPinCount();
-    HRESULT Deliver(unsigned char* data, long dataLength);
+    HRESULT Deliver(const unsigned char* data, long dataLength);
 
     STDMETHODIMP Pause();
     STDMETHODIMP Run(REFERENCE_TIME startTime);

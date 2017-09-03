@@ -32,7 +32,7 @@ extern void LogDebug(const wchar_t* fmt, ...);
 CTsHeader::CTsHeader()
 {
 }
-CTsHeader::CTsHeader(byte* tsPacket)
+CTsHeader::CTsHeader(const byte* tsPacket)
 {
   Decode(tsPacket);
 }
@@ -56,7 +56,7 @@ bool CTsHeader::AdaptionFieldAndPayLoad() const
   return (AdaptionControl==3);
 }
 
-void CTsHeader::Decode(byte *data)
+void CTsHeader::Decode(const byte *data)
 {
   m_packet=data;
   //47 40 d2 10

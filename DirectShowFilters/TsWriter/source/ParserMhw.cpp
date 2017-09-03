@@ -340,7 +340,7 @@ STDMETHODIMP_(void) CParserMhw::SetCallBack(ICallBackGrabber* callBack)
   m_callBackGrabber = callBack;
 }
 
-bool CParserMhw::OnTsPacket(CTsHeader& header, unsigned char* tsPacket)
+bool CParserMhw::OnTsPacket(const CTsHeader& header, const unsigned char* tsPacket)
 {
   if (
     m_provider == MhwProviderUnknown ||
@@ -918,16 +918,16 @@ bool CParserMhw::SelectEventRecordByIndex(unsigned long index)
   return true;
 }
 
-void CParserMhw::OnNewSection(int pid, int tableId, CSection& section)
+void CParserMhw::OnNewSection(unsigned short pid, unsigned char tableId, const CSection& section)
 {
   try
   {
     CEnterCriticalSection lock(m_section);
 
-    //LogDebug(L"MHW: PID = %d, table ID = 0x%x, section length = %d",
-    //          pid, tableId, section.section_length);
+    //LogDebug(L"MHW: PID = %hu, table ID = 0x%hhx, section length = %hu",
+    //          pid, tableId, section.SectionLength);
     unsigned long updateCount = 0;
-    unsigned short dataLength = section.section_length + 3;   // + 3 for table ID and section length bytes
+    unsigned short dataLength = section.SectionLength + 3;    // + 3 for table ID and section length bytes
     if (section.SectionSyntaxIndicator)
     {
       if (!section.CurrentNextIndicator)
@@ -937,28 +937,28 @@ void CParserMhw::OnNewSection(int pid, int tableId, CSection& section)
       dataLength -= 4;                                        // - 4 for CRC
     }
 
-    if (pid == PID_MHW1_EVENTS && section.table_id == TABLE_ID_MHW1_EVENTS)
+    if (pid == PID_MHW1_EVENTS && tableId == TABLE_ID_MHW1_EVENTS)
     {
       updateCount = DecodeVersion1EventSection(section.Data, dataLength);
     }
     else if (pid == PID_MHW1_OTHER)
     {
-      if (section.table_id == TABLE_ID_MHW1_CHANNELS)
+      if (tableId == TABLE_ID_MHW1_CHANNELS)
       {
         updateCount = DecodeVersion1ChannelSection(section.Data, dataLength);
       }
-      else if (section.table_id == TABLE_ID_MHW1_DESCRIPTIONS)
+      else if (tableId == TABLE_ID_MHW1_DESCRIPTIONS)
       {
         updateCount = DecodeVersion1DescriptionSection(section.Data, dataLength);
       }
-      else if (section.table_id == TABLE_ID_MHW1_THEMES)
+      else if (tableId == TABLE_ID_MHW1_THEMES)
       {
         updateCount = DecodeVersion1ThemeSection(section.Data, dataLength);
       }
     }
     else if (
       pid == PID_MHW2_CHANNELS_AND_THEMES &&
-      section.table_id == TABLE_ID_MHW2_CHANNELS_AND_THEMES
+      tableId == TABLE_ID_MHW2_CHANNELS_AND_THEMES
     )
     {
       if (dataLength >= 4)
@@ -978,19 +978,19 @@ void CParserMhw::OnNewSection(int pid, int tableId, CSection& section)
         pid == PID_MHW2_EVENTS_BY_CHANNEL_SATELLITE ||
         pid == PID_MHW2_EVENTS_BY_CHANNEL_TERRESTRIAL
       ) &&
-      section.table_id == TABLE_ID_MHW2_EVENTS
+      tableId == TABLE_ID_MHW2_EVENTS
     )
     {
       updateCount = DecodeVersion2EventsByChannelSection(section.Data,
-                                                        dataLength,
-                                                        pid == PID_MHW2_EVENTS_BY_CHANNEL_TERRESTRIAL);
+                                                          dataLength,
+                                                          pid == PID_MHW2_EVENTS_BY_CHANNEL_TERRESTRIAL);
     }
     // Currently not used. We get event details from other PIDs.
-    /*else if (pid == PID_MHW2_EVENTS_BY_THEME && section.table_id == TABLE_ID_MHW2_EVENTS_BY_THEME)
+    /*else if (pid == PID_MHW2_EVENTS_BY_THEME && tableId == TABLE_ID_MHW2_EVENTS_BY_THEME)
     {
       updateCount = DecodeVersion2EventsByThemeSection(section.Data, dataLength);
     }*/
-    else if (pid == PID_MHW2_DESCRIPTIONS && section.table_id == TABLE_ID_MHW2_DESCRIPTIONS)
+    else if (pid == PID_MHW2_DESCRIPTIONS && tableId == TABLE_ID_MHW2_DESCRIPTIONS)
     {
       if (section.LastSectionNumber == 0)
       {
@@ -1016,7 +1016,7 @@ void CParserMhw::OnNewSection(int pid, int tableId, CSection& section)
     // Currently not used.
     /*else if (
       pid == PID_MHW2_THEME_DESCRIPTIONS &&
-      section.table_id == TABLE_ID_MHW2_THEME_DESCRIPTIONS
+      tableId == TABLE_ID_MHW2_THEME_DESCRIPTIONS
     )
     {
       if (section.LastSectionNumber == 0)
@@ -1045,11 +1045,11 @@ void CParserMhw::OnNewSection(int pid, int tableId, CSection& section)
     }*/
     else if (pid == PID_MHW2_PROGRAMS_AND_SERIES)
     {
-      if (section.table_id == TABLE_ID_MHW2_PROGRAMS)
+      if (tableId == TABLE_ID_MHW2_PROGRAMS)
       {
         updateCount = DecodeVersion2ProgramSection(section.Data, dataLength);
       }
-      else if (section.table_id == TABLE_ID_MHW2_SERIES)
+      else if (tableId == TABLE_ID_MHW2_SERIES)
       {
         updateCount = DecodeVersion2SeriesSection(section.Data, dataLength);
       }
@@ -1059,8 +1059,7 @@ void CParserMhw::OnNewSection(int pid, int tableId, CSection& section)
     {
       if (!m_isSeen)
       {
-        LogDebug(L"MHW: received, PID = %d, table ID = 0x%x",
-                  pid, section.table_id);
+        LogDebug(L"MHW: received, PID = %hu, table ID = 0x%hhx", pid, tableId);
         m_isSeen = true;
         if (m_callBackGrabber != NULL)
         {
@@ -1069,8 +1068,7 @@ void CParserMhw::OnNewSection(int pid, int tableId, CSection& section)
       }
       else if (m_isReady)
       {
-        LogDebug(L"MHW: changed, PID = %d, table ID = 0x%x",
-                  pid, section.table_id);
+        LogDebug(L"MHW: changed, PID = %hu, table ID = 0x%hhx", pid, tableId);
         m_isReady = false;
         if (m_callBackGrabber != NULL)
         {
@@ -1135,7 +1133,7 @@ void CParserMhw::AddOrResetDecoder(unsigned short pid, bool enableCrcCheck)
   decoder->EnableCrcCheck(enableCrcCheck);
 }
 
-unsigned long CParserMhw::DecodeVersion1ChannelSection(unsigned char* data,
+unsigned long CParserMhw::DecodeVersion1ChannelSection(const unsigned char* data,
                                                         unsigned short dataLength)
 {
   // table ID [0x91] - 1 byte
@@ -1217,7 +1215,7 @@ unsigned long CParserMhw::DecodeVersion1ChannelSection(unsigned char* data,
   return updateCount;
 }
 
-unsigned long CParserMhw::DecodeVersion1DescriptionSection(unsigned char* data,
+unsigned long CParserMhw::DecodeVersion1DescriptionSection(const unsigned char* data,
                                                             unsigned short dataLength)
 {
   // table ID [0x90] - 1 byte
@@ -1333,7 +1331,7 @@ unsigned long CParserMhw::DecodeVersion1DescriptionSection(unsigned char* data,
   return updateCount;
 }
 
-unsigned long CParserMhw::DecodeVersion1EventSection(unsigned char* data,
+unsigned long CParserMhw::DecodeVersion1EventSection(const unsigned char* data,
                                                       unsigned short dataLength)
 {
   // table ID [0x90] - 1 byte
@@ -1475,7 +1473,7 @@ unsigned long CParserMhw::DecodeVersion1EventSection(unsigned char* data,
   return updateCount;
 }
 
-unsigned long CParserMhw::DecodeVersion1ThemeSection(unsigned char* data,
+unsigned long CParserMhw::DecodeVersion1ThemeSection(const unsigned char* data,
                                                       unsigned short dataLength)
 {
   // table ID [0x92] - 1 byte
@@ -1710,7 +1708,7 @@ bool CParserMhw::GetVersion1DateTimeReference(unsigned long long& referenceDateT
   return true;
 }
 
-unsigned long CParserMhw::DecodeVersion2ChannelSection(unsigned char* data,
+unsigned long CParserMhw::DecodeVersion2ChannelSection(const unsigned char* data,
                                                         unsigned short dataLength)
 {
   // table ID [0xc8] - 1 byte
@@ -2114,7 +2112,7 @@ unsigned long CParserMhw::DecodeVersion2ChannelSection(unsigned char* data,
   return updateCount;
 }
 
-unsigned long CParserMhw::DecodeVersion2DescriptionSection(unsigned char* data,
+unsigned long CParserMhw::DecodeVersion2DescriptionSection(const unsigned char* data,
                                                             unsigned short dataLength)
 {
   // table ID [0x96] - 1 byte
@@ -2346,7 +2344,7 @@ unsigned long CParserMhw::DecodeVersion2DescriptionSection(unsigned char* data,
   return updateCount;
 }
 
-unsigned long CParserMhw::DecodeVersion2EventsByChannelSection(unsigned char* data,
+unsigned long CParserMhw::DecodeVersion2EventsByChannelSection(const unsigned char* data,
                                                                 unsigned short dataLength,
                                                                 bool isTerrestrial)
 {
@@ -2559,7 +2557,7 @@ unsigned long CParserMhw::DecodeVersion2EventsByChannelSection(unsigned char* da
   return updateCount;
 }
 
-unsigned long CParserMhw::DecodeVersion2EventsByThemeSection(unsigned char* data,
+unsigned long CParserMhw::DecodeVersion2EventsByThemeSection(const unsigned char* data,
                                                               unsigned short dataLength)
 {
   // table ID [0xe6] - 1 byte
@@ -2747,7 +2745,7 @@ unsigned long CParserMhw::DecodeVersion2EventsByThemeSection(unsigned char* data
   return updateCount;
 }
 
-unsigned long CParserMhw::DecodeVersion2ProgramSection(unsigned char* data,
+unsigned long CParserMhw::DecodeVersion2ProgramSection(const unsigned char* data,
                                                         unsigned short dataLength)
 {
   // table ID [0x96] - 1 byte
@@ -3027,7 +3025,7 @@ unsigned long CParserMhw::DecodeVersion2ProgramSection(unsigned char* data,
   return updateCount;
 }
 
-unsigned long CParserMhw::DecodeVersion2SeriesSection(unsigned char* data,
+unsigned long CParserMhw::DecodeVersion2SeriesSection(const unsigned char* data,
                                                       unsigned short dataLength)
 {
   // table ID [0x97] - 1 byte
@@ -3265,7 +3263,7 @@ unsigned long CParserMhw::DecodeVersion2SeriesSection(unsigned char* data,
   return updateCount;
 }
 
-unsigned long CParserMhw::DecodeVersion2ThemeSection(unsigned char* data,
+unsigned long CParserMhw::DecodeVersion2ThemeSection(const unsigned char* data,
                                                       unsigned short dataLength)
 {
   // table ID [0xc8] - 1 byte
@@ -3398,7 +3396,7 @@ unsigned long CParserMhw::DecodeVersion2ThemeSection(unsigned char* data,
   return updateCount;
 }
 
-unsigned long CParserMhw::DecodeVersion2ThemeDescriptionSection(unsigned char* data,
+unsigned long CParserMhw::DecodeVersion2ThemeDescriptionSection(const unsigned char* data,
                                                                 unsigned short dataLength)
 {
   // table ID [0xdd] - 1 byte
@@ -3544,7 +3542,7 @@ MhwProvider CParserMhw::DetermineProvider(unsigned short originalNetworkId,
   return MhwProviderUnknown;
 }
 
-void CParserMhw::CompleteTable(CSection& section,
+void CParserMhw::CompleteTable(const CSection& section,
                                 unsigned char** tableBuffer,
                                 unsigned short& tableBufferSize,
                                 unsigned char& expectedSectionNumber)
@@ -3581,10 +3579,10 @@ void CParserMhw::CompleteTable(CSection& section,
   }
 
   unsigned short newBufferSize = tableBufferSize;
-  unsigned short sectionLength = section.section_length - 9;  // - 9 for the table ID extension, version, section number, last section number and CRC
+  unsigned short sectionLength = section.SectionLength - 9;   // - 9 for the table ID extension, version, section number, last section number and CRC
   if (section.SectionNumber == 0)
   {
-    sectionLength = section.section_length - 1;   // + 3 for the table ID and section length, - 4 for the CRC
+    sectionLength = section.SectionLength - 1;    // + 3 for the table ID and section length, - 4 for the CRC
   }
   newBufferSize += sectionLength;
   

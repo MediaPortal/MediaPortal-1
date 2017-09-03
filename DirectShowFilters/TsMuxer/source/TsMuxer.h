@@ -66,7 +66,7 @@ class CTsMuxer :
     HRESULT CompleteConnect(IMuxInputPin* pin);
     bool IsStarted() const;
     HRESULT Receive(IMuxInputPin* pin,
-                    unsigned char* data,
+                    const unsigned char* data,
                     long dataLength,
                     REFERENCE_TIME dataStartTime);
     HRESULT Reset();
@@ -129,40 +129,42 @@ class CTsMuxer :
     STDMETHODIMP NonDelegatingQueryInterface(REFIID iid, void** ppv);
     bool CanDeliver();
     HRESULT ReceiveTransportStream(IMuxInputPin* pin,
-                                    unsigned char* data,
+                                    const unsigned char* data,
                                     long dataLength,
                                     REFERENCE_TIME dataStartTime);
     HRESULT ReceiveProgramOrSystemStream(IMuxInputPin* pin,
-                                          unsigned char* data,
+                                          const unsigned char* data,
                                           long dataLength,
                                           REFERENCE_TIME dataStartTime);
 
-    void OnRdsProgrammeServiceNameReceived(char* programmeServiceName);
+    void OnRdsProgrammeServiceNameReceived(const char* programmeServiceName);
 
-    static HRESULT ReadProgramAssociationTable(unsigned char* data,
+    static HRESULT ReadProgramAssociationTable(const unsigned char* data,
                                                 long dataLength,
                                                 TransportStreamInfo& info);
-    HRESULT ReadProgramMapTable(unsigned char* data,
+    HRESULT ReadProgramMapTable(const unsigned char* data,
                                 long dataLength,
                                 TransportStreamInfo& info);
-    HRESULT CreateOrUpdateTsPmtEs(TransportStreamInfo& info, BasePid* pid, bool isIgnored);
-    static HRESULT ReadProgramOrSystemPack(unsigned char* data,
+    HRESULT CreateOrUpdateTsPmtEs(const TransportStreamInfo& info,
+                                  const BasePid* pid,
+                                  bool isIgnored);
+    static HRESULT ReadProgramOrSystemPack(const unsigned char* data,
                                             long dataLength,
                                             const ProgramStreamInfo& info,
                                             bool isFirstReceive,
                                             unsigned short& length,
                                             long long& systemClockReference);
-    static HRESULT ReadProgramOrSystemHeader(unsigned char* data,
+    static HRESULT ReadProgramOrSystemHeader(const unsigned char* data,
                                               long dataLength,
                                               ProgramStreamInfo& info,
                                               bool isFirstReceive);
-    static HRESULT ReadProgramStreamMap(unsigned char* data,
+    static HRESULT ReadProgramStreamMap(const unsigned char* data,
                                         long dataLength,
                                         ProgramStreamInfo& info);
-    static HRESULT ReadVideoStreamInfo(unsigned char* data,
+    static HRESULT ReadVideoStreamInfo(const unsigned char* data,
                                         long dataLength,
                                         StreamInfo& info);
-    static HRESULT ReadAudioStreamInfo(unsigned char* data,
+    static HRESULT ReadAudioStreamInfo(const unsigned char* data,
                                         long dataLength,
                                         StreamInfo& info);
 
@@ -172,28 +174,29 @@ class CTsMuxer :
     HRESULT UpdateSdt();
 
     HRESULT WrapVbiData(const StreamInfo& info,
-                        unsigned char* inputData,
+                        const unsigned char* inputData,
                         long inputDataLength,
                         long long systemClockReference,
                         unsigned char** outputData,
                         long& outputDataLength);
-    HRESULT ReadChannelNameFromVbiTeletextData(unsigned char* inputData, long inputDataLength);
-    HRESULT ReadChannelNameFromVbiVpsData(unsigned char* inputData, long inputDataLength);
+    HRESULT ReadChannelNameFromVbiTeletextData(const unsigned char* inputData,
+                                                long inputDataLength);
+    HRESULT ReadChannelNameFromVbiVpsData(const unsigned char* inputData, long inputDataLength);
 
     static HRESULT WrapElementaryStreamData(const StreamInfo& info,
-                                            unsigned char* inputData,
+                                            const unsigned char* inputData,
                                             long inputDataLength,
                                             long long systemClockReference,
                                             unsigned char** outputData,
                                             long& outputDataLength);
     static HRESULT WrapPacketisedElementaryStreamData(StreamInfo& info,
-                                                      unsigned char* inputData,
+                                                      const unsigned char* inputData,
                                                       long inputDataLength,
                                                       long long systemClockReference,
                                                       unsigned short pcrPid,
                                                       unsigned char** outputData,
                                                       long& outputDataLength);
-    HRESULT DeliverTransportStreamData(unsigned char* inputData, long inputDataLength);
+    HRESULT DeliverTransportStreamData(const unsigned char* inputData, long inputDataLength);
 
     CTsMuxerFilter* m_filter;
     CCritSec m_filterLock;                  // filter control lock

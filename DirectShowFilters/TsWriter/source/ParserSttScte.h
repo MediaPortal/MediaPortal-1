@@ -38,7 +38,7 @@ class CParserSttScte : public ISystemTimeInfoProviderAtscScte
 
     void Reset();
     void SetCallBack(ICallBackStt* callBack);
-    void OnNewSection(CSection& section);
+    void OnNewSection(const CSection& section);
 
     bool GetSystemTimeDetail(unsigned long& systemTime,
                               unsigned char& gpsUtcOffset,
@@ -48,7 +48,7 @@ class CParserSttScte : public ISystemTimeInfoProviderAtscScte
                               unsigned char& daylightSavingHour) const;
 
   private:
-    static bool DecodeDaylightSavingsTimeDescriptor(unsigned char* data,
+    static bool DecodeDaylightSavingsTimeDescriptor(const unsigned char* data,
                                                     unsigned char dataLength,
                                                     bool& isDaylightSaving,
                                                     unsigned char& dayOfMonth,

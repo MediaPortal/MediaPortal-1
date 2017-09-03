@@ -39,8 +39,11 @@ class CSectionDecoder
     int GetPid() const;
     void EnableCrcCheck(bool enable);
 
-    virtual void OnTsPacket(unsigned char* tsPacket);
-    virtual void OnTsPacket(CTsHeader& header, unsigned char* tsPacket);
+    virtual void OnTsPacket(const unsigned char* tsPacket);
+    virtual void OnTsPacket(const CTsHeader& header, const unsigned char* tsPacket);
+    virtual void OnNewSection(const CSection& section);
+
+    // TODO Kept only for compatibility with TsReader PAT and PMT parsers. Remove if/when possible.
     virtual void OnNewSection(CSection& section);
 
   private:

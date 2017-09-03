@@ -27,6 +27,6 @@ class ITsAnalyser
   public:
     virtual ~ITsAnalyser() {}
 
-    virtual void AnalyseOobSiSection(CSection& section) = 0;
-    virtual void AnalyseTsPacket(unsigned char* tsPacket) = 0;
+    virtual void AnalyseOobSiSection(const CSection& section) = 0;
+    virtual void AnalyseTsPacket(const unsigned char* tsPacket) = 0;
 };

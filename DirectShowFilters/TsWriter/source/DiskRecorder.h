@@ -67,7 +67,7 @@ class CDiskRecorder
                                     unsigned long long& fileSizeBytes);
     void GetTimeShiftingFilePosition(unsigned long long& position, unsigned long& bufferId);
 
-    void OnTsPacket(const CTsHeader& header, unsigned char* tsPacket);
+    void OnTsPacket(const CTsHeader& header, const unsigned char* tsPacket);
 
   private:
     typedef struct
@@ -103,7 +103,7 @@ class CDiskRecorder
         clock_t PrevDtsTimeStamp;
     } PidInfo;
 
-    bool CheckDiscontinuityFlag(const CTsHeader& header, unsigned char* tsPacket);
+    bool CheckDiscontinuityFlag(const CTsHeader& header, const unsigned char* tsPacket);
     bool IsVideoOrAudioSeen(const CTsHeader& header, const PidInfo* pidInfo);
     bool ConfirmAudioStreams(PidInfo* pidInfo);
     void CheckContinuityCounter(const CTsHeader& header,

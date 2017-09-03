@@ -45,7 +45,7 @@ class CParserNtt
 
     void Reset();
     void SetCallBack(ICallBackNtt* callBack);
-    void OnNewSection(CSection& section);
+    void OnNewSection(const CSection& section);
     bool IsSeen() const;
     bool IsReady() const;
 
@@ -760,7 +760,7 @@ class CParserNtt
     bool IsReadyPrivate(unsigned char transmissionMedium) const;
     template<class T> static void CleanUpRecords(vector<T*>& records);
 
-    static bool DecodeSection(CSection& section,
+    static bool DecodeSection(const CSection& section,
                               unsigned char& tableSubtype6Interpretation,
                               unsigned char& protocolVersion,
                               unsigned long& iso639LanguageCode,
@@ -774,38 +774,38 @@ class CParserNtt
                               unsigned char& sectionNumber,
                               unsigned char& lastSectionNumber);
 
-    static bool DecodeTransponderNameSubTable(unsigned char* data,
+    static bool DecodeTransponderNameSubTable(const unsigned char* data,
                                               unsigned short& pointer,
                                               unsigned short endOfSection,
                                               unsigned char& satelliteId,
                                               vector<CRecordNttTransponderName*>& records);
-    static bool DecodeSatelliteTextSubTable(unsigned char* data,
+    static bool DecodeSatelliteTextSubTable(const unsigned char* data,
                                             unsigned short& pointer,
                                             unsigned short endOfSection,
                                             vector<CRecordNttSatelliteText*>& records);
-    static bool DecodeRatingsTextSubTable(unsigned char* data,
+    static bool DecodeRatingsTextSubTable(const unsigned char* data,
                                           unsigned short& pointer,
                                           unsigned short endOfSection,
                                           unsigned char& ratingRegion,
                                           vector<CRecordNttRatingsText*>& records);
-    static bool DecodeRatingSystemSubTable(unsigned char* data,
+    static bool DecodeRatingSystemSubTable(const unsigned char* data,
                                             unsigned short& pointer,
                                             unsigned short endOfSection,
                                             vector<CRecordNttRatingSystem*>& records);
-    static bool DecodeSourceNameSubTable(unsigned char* data,
+    static bool DecodeSourceNameSubTable(const unsigned char* data,
                                           unsigned short& pointer,
                                           unsigned short endOfSection,
                                           vector<CRecordNttSourceName*>& records);
-    static bool DecodeMapNameSubTable(unsigned char* data,
+    static bool DecodeMapNameSubTable(const unsigned char* data,
                                       unsigned short& pointer,
                                       unsigned short endOfSection,
                                       vector<CRecordNttMapName*>& records);
-    static bool DecodeCurrencySystemSubTable(unsigned char* data,
+    static bool DecodeCurrencySystemSubTable(const unsigned char* data,
                                               unsigned short& pointer,
                                               unsigned short endOfSection,
                                               vector<CRecordNttCurrencySystem*>& records);
 
-    static bool DecodeRevisionDetectionDescriptor(unsigned char* data,
+    static bool DecodeRevisionDetectionDescriptor(const unsigned char* data,
                                                   unsigned char dataLength,
                                                   unsigned char& tableVersionNumber,
                                                   unsigned char& sectionNumber,

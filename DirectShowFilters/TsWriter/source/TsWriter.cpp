@@ -388,23 +388,23 @@ CUnknown* WINAPI CTsWriter::CreateInstance(LPUNKNOWN unk, HRESULT* hr)
   return writer;
 }
 
-void CTsWriter::AnalyseOobSiSection(CSection& section)
+void CTsWriter::AnalyseOobSiSection(const CSection& section)
 {
   if (!m_isRunning)
   {
     return;
   }
 
-  if (section.table_id == TABLE_ID_AEIT || section.table_id == TABLE_ID_AETT)
+  if (section.TableId == TABLE_ID_AEIT || section.TableId == TABLE_ID_AETT)
   {
-    m_grabberEpgScte->OnNewSection(PID_SCTE_BASE, section.table_id, section);
+    m_grabberEpgScte->OnNewSection(PID_SCTE_BASE, section.TableId, section);
     return;
   }
 
-  m_grabberSiScte->OnNewSection(PID_SCTE_BASE, section.table_id, section, true);
+  m_grabberSiScte->OnNewSection(PID_SCTE_BASE, section.TableId, section, true);
 }
 
-void CTsWriter::AnalyseTsPacket(unsigned char* tsPacket)
+void CTsWriter::AnalyseTsPacket(const unsigned char* tsPacket)
 {
   try
   {
@@ -446,13 +446,15 @@ void CTsWriter::AnalyseTsPacket(unsigned char* tsPacket)
     m_grabberEpgOpenTv->OnTsPacket(header, tsPacket);
 
     // If the packet content is not encrypted...
-    if (!m_encryptionAnalyser.OnTsPacket(header, tsPacket))
+    unsigned char tsPacket2[TS_PACKET_LEN];
+    memcpy(tsPacket2, tsPacket, TS_PACKET_LEN);
+    if (!m_encryptionAnalyser.OnTsPacket(header, tsPacket2))
     {
       CAutoLock lock(&m_channelLock);
       vector<CTsChannel*>::const_iterator it = m_channels.begin();
       for ( ; it != m_channels.end(); it++)
       {
-        (*it)->OnTsPacket(header, tsPacket);
+        (*it)->OnTsPacket(header, tsPacket2);
       }
     }
   }

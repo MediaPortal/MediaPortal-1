@@ -65,7 +65,7 @@ void CParserNitAtsc::SetCallBack(ICallBackNitAtsc* callBack)
   m_callBack = callBack;
 }
 
-void CParserNitAtsc::OnNewSection(CSection& section)
+void CParserNitAtsc::OnNewSection(const CSection& section)
 {
   try
   {
@@ -564,7 +564,7 @@ void CParserNitAtsc::CleanUpRecords(vector<CRecordNit*>& records)
   records.clear();
 }
 
-bool CParserNitAtsc::DecodeSection(CSection& section,
+bool CParserNitAtsc::DecodeSection(const CSection& section,
                                     unsigned char& protocolVersion,
                                     unsigned char& transmissionMedium,
                                     unsigned char& tableSubtype,
@@ -577,18 +577,18 @@ bool CParserNitAtsc::DecodeSection(CSection& section,
 {
   try
   {
-    if (section.table_id != TABLE_ID_NIT_ATSC || section.SectionSyntaxIndicator)
+    if (section.TableId != TABLE_ID_NIT_ATSC || section.SectionSyntaxIndicator)
     {
       return false;
     }
-    if (section.section_length < 8)
+    if (section.SectionLength < 8)
     {
-      LogDebug(L"NIT ATSC: invalid section, length = %d",
-                section.section_length);
+      LogDebug(L"NIT ATSC: invalid section, length = %hu",
+                section.SectionLength);
       return false;
     }
 
-    unsigned char* data = section.Data;
+    const unsigned char* data = section.Data;
     protocolVersion = data[3] & 0x1f;
     if (protocolVersion != 0)
     {
@@ -600,8 +600,8 @@ bool CParserNitAtsc::DecodeSection(CSection& section,
     unsigned char numberOfRecords = data[5];
     transmissionMedium = data[6] >> 4;
     tableSubtype = data[6] & 0xf;
-    //LogDebug(L"NIT ATSC: protocol version = %hhu, section length = %d, number of records = %hhu, first index = %hhu, transmission medium = %hhu, table sub-type = %hhu",
-    //          protocolVersion, section.section_length, numberOfRecords,
+    //LogDebug(L"NIT ATSC: protocol version = %hhu, section length = %hu, number of records = %hhu, first index = %hhu, transmission medium = %hhu, table sub-type = %hhu",
+    //          protocolVersion, section.SectionLength, numberOfRecords,
     //          firstIndex, transmissionMedium, tableSubtype);
     if (tableSubtype == 0 || tableSubtype > 4)
     {
@@ -610,14 +610,14 @@ bool CParserNitAtsc::DecodeSection(CSection& section,
     }
 
     unsigned short pointer = 7;
-    unsigned short endOfSection = section.section_length - 1;
+    unsigned short endOfSection = section.SectionLength - 1;
     satelliteId = 0;
     if (tableSubtype == 4)
     {
       if (pointer >= endOfSection)
       {
-        LogDebug(L"NIT ATSC: invalid section, section length = %d, pointer = %hu",
-                  section.section_length, pointer);
+        LogDebug(L"NIT ATSC: invalid section, section length = %hu, pointer = %hu",
+                  section.SectionLength, pointer);
         return false;
       }
       satelliteId = data[pointer++];
@@ -888,7 +888,7 @@ bool CParserNitAtsc::DecodeSection(CSection& section,
   return false;
 }
 
-bool CParserNitAtsc::DecodeCarrierDefinitionSubTable(unsigned char* data,
+bool CParserNitAtsc::DecodeCarrierDefinitionSubTable(const unsigned char* data,
                                                       unsigned short& pointer,
                                                       unsigned short endOfSection,
                                                       unsigned char& numberOfCarriers,
@@ -935,7 +935,7 @@ bool CParserNitAtsc::DecodeCarrierDefinitionSubTable(unsigned char* data,
   return false;
 }
 
-bool CParserNitAtsc::DecodeModulationModeSubTable(unsigned char* data,
+bool CParserNitAtsc::DecodeModulationModeSubTable(const unsigned char* data,
                                                   unsigned short& pointer,
                                                   unsigned short endOfSection,
                                                   CRecordNitModulationMode& record)
@@ -968,7 +968,7 @@ bool CParserNitAtsc::DecodeModulationModeSubTable(unsigned char* data,
   return false;
 }
 
-bool CParserNitAtsc::DecodeSatelliteInformationSubTable(unsigned char* data,
+bool CParserNitAtsc::DecodeSatelliteInformationSubTable(const unsigned char* data,
                                                         unsigned short& pointer,
                                                         unsigned short endOfSection,
                                                         CRecordNitSatelliteInformation& record)
@@ -1004,7 +1004,7 @@ bool CParserNitAtsc::DecodeSatelliteInformationSubTable(unsigned char* data,
   return false;
 }
 
-bool CParserNitAtsc::DecodeTransponderDataSubTable(unsigned char* data,
+bool CParserNitAtsc::DecodeTransponderDataSubTable(const unsigned char* data,
                                                     unsigned short& pointer,
                                                     unsigned short endOfSection,
                                                     CRecordNitTransponderData& record)
@@ -1062,7 +1062,7 @@ bool CParserNitAtsc::DecodeTransponderDataSubTable(unsigned char* data,
   return false;
 }
 
-bool CParserNitAtsc::DecodeFrequencySpecDescriptor(unsigned char* data,
+bool CParserNitAtsc::DecodeFrequencySpecDescriptor(const unsigned char* data,
                                                     unsigned char dataLength,
                                                     unsigned long& carrierFrequency)
 {
@@ -1093,7 +1093,7 @@ bool CParserNitAtsc::DecodeFrequencySpecDescriptor(unsigned char* data,
   return false;
 }
 
-bool CParserNitAtsc::DecodeRevisionDetectionDescriptor(unsigned char* data,
+bool CParserNitAtsc::DecodeRevisionDetectionDescriptor(const unsigned char* data,
                                                         unsigned char dataLength,
                                                         unsigned char& tableVersionNumber,
                                                         unsigned char& sectionNumber,

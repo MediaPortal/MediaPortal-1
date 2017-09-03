@@ -61,7 +61,7 @@ void CParserSvct::SetCallBack(ICallBackSvct* callBack)
   m_callBack = callBack;
 }
 
-void CParserSvct::OnNewSection(CSection& section)
+void CParserSvct::OnNewSection(const CSection& section)
 {
   try
   {
@@ -569,7 +569,7 @@ template<class T> void CParserSvct::CleanUpRecords(vector<T*>& records)
   records.clear();
 }
 
-bool CParserSvct::DecodeSection(CSection& section,
+bool CParserSvct::DecodeSection(const CSection& section,
                                 unsigned char& protocolVersion,
                                 unsigned char& transmissionMedium,
                                 unsigned char& tableSubtype,
@@ -583,20 +583,20 @@ bool CParserSvct::DecodeSection(CSection& section,
   try
   {
     if (
-      section.table_id != TABLE_ID_SVCT ||
+      section.TableId != TABLE_ID_SVCT ||
       section.SectionSyntaxIndicator ||
       section.PrivateIndicator
     )
     {
       return false;
     }
-    if (section.section_length < 8)
+    if (section.SectionLength < 8)
     {
-      LogDebug(L"SVCT: invalid section, length = %d", section.section_length);
+      LogDebug(L"SVCT: invalid section, length = %hu", section.SectionLength);
       return false;
     }
 
-    unsigned char* data = section.Data;
+    const unsigned char* data = section.Data;
     protocolVersion = data[3] & 0x1f;
     if (protocolVersion != 0)
     {
@@ -607,12 +607,12 @@ bool CParserSvct::DecodeSection(CSection& section,
     transmissionMedium = data[4] >> 4;
     tableSubtype = data[4] & 0xf;
     vctId = (data[5] << 8) | data[6];
-    //LogDebug(L"SVCT: protocol version = %hhu, transmission medium = %hhu, table sub-type = %hhu, VCT ID = %hu, section length = %d",
+    //LogDebug(L"SVCT: protocol version = %hhu, transmission medium = %hhu, table sub-type = %hhu, VCT ID = %hu, section length = %hu",
     //          protocolVersion, transmissionMedium, tableSubtype, vctId,
-    //          section.section_length);
+    //          section.SectionLength);
 
     unsigned short pointer = 7;
-    unsigned short endOfSection = section.section_length - 1;
+    unsigned short endOfSection = section.SectionLength - 1;
     bool result = true;
     switch (tableSubtype)
     {
@@ -748,7 +748,7 @@ bool CParserSvct::DecodeSection(CSection& section,
   return false;
 }
 
-bool CParserSvct::DecodeDefinedChannelMap(unsigned char* data,
+bool CParserSvct::DecodeDefinedChannelMap(const unsigned char* data,
                                           unsigned short& pointer,
                                           unsigned short endOfSection,
                                           vector<CRecordSvctDefinedChannel*>& records)
@@ -808,7 +808,7 @@ bool CParserSvct::DecodeDefinedChannelMap(unsigned char* data,
   return false;
 }
 
-bool CParserSvct::DecodeVirtualChannelMap(unsigned char* data,
+bool CParserSvct::DecodeVirtualChannelMap(const unsigned char* data,
                                           unsigned short& pointer,
                                           unsigned short endOfSection,
                                           unsigned char transmissionMedium,
@@ -1097,7 +1097,7 @@ bool CParserSvct::DecodeVirtualChannelMap(unsigned char* data,
   return false;
 }
 
-bool CParserSvct::DecodeInverseChannelMap(unsigned char* data,
+bool CParserSvct::DecodeInverseChannelMap(const unsigned char* data,
                                           unsigned short& pointer,
                                           unsigned short endOfSection,
                                           vector<CRecordSvctInverseChannel*>& records)
@@ -1151,7 +1151,7 @@ bool CParserSvct::DecodeInverseChannelMap(unsigned char* data,
   return false;
 }
 
-bool CParserSvct::DecodeFrequencySpecDescriptor(unsigned char* data,
+bool CParserSvct::DecodeFrequencySpecDescriptor(const unsigned char* data,
                                                 unsigned char dataLength,
                                                 unsigned long& carrierFrequency)
 {
@@ -1182,7 +1182,7 @@ bool CParserSvct::DecodeFrequencySpecDescriptor(unsigned char* data,
   return false;
 }
 
-bool CParserSvct::DecodeRevisionDetectionDescriptor(unsigned char* data,
+bool CParserSvct::DecodeRevisionDetectionDescriptor(const unsigned char* data,
                                                     unsigned char dataLength,
                                                     unsigned char& tableVersionNumber,
                                                     unsigned char& sectionNumber,
@@ -1210,7 +1210,7 @@ bool CParserSvct::DecodeRevisionDetectionDescriptor(unsigned char* data,
   return false;
 }
 
-bool CParserSvct::DecodeTwoPartChannelNumberDescriptor(unsigned char* data,
+bool CParserSvct::DecodeTwoPartChannelNumberDescriptor(const unsigned char* data,
                                                         unsigned char dataLength,
                                                         unsigned short& majorChannelNumber,
                                                         unsigned short& minorChannelNumber)
@@ -1235,7 +1235,7 @@ bool CParserSvct::DecodeTwoPartChannelNumberDescriptor(unsigned char* data,
   return false;
 }
 
-bool CParserSvct::DecodeChannelPropertiesDescriptor(unsigned char* data,
+bool CParserSvct::DecodeChannelPropertiesDescriptor(const unsigned char* data,
                                                     unsigned char dataLength,
                                                     unsigned short& channelTsid,
                                                     bool& outOfBand,

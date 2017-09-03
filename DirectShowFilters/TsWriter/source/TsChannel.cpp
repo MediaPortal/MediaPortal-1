@@ -34,7 +34,7 @@ CTsChannel::~CTsChannel()
 {
 }
 
-void CTsChannel::OnTsPacket(CTsHeader& header, unsigned char* tsPacket)
+void CTsChannel::OnTsPacket(const CTsHeader& header, const unsigned char* tsPacket)
 {
   try
   {

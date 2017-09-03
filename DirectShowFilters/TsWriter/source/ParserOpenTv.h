@@ -98,7 +98,7 @@ class CParserOpenTv
 
     void Reset(bool enableCrcCheck);
     STDMETHODIMP_(void) SetCallBack(ICallBackGrabber* callBack);
-    bool OnTsPacket(CTsHeader& header, unsigned char* tsPacket);
+    bool OnTsPacket(const CTsHeader& header, const unsigned char* tsPacket);
     STDMETHODIMP_(bool) IsSeen();
     STDMETHODIMP_(bool) IsReady();
 
@@ -281,25 +281,25 @@ class CParserOpenTv
         unsigned short SeriesLinkId;
     };
 
-    void OnNewSection(int pid, int tableId, CSection& section);
+    void OnNewSection(unsigned short pid, unsigned char tableId, const CSection& section);
 
     bool AddOrResetDecoder(unsigned short pid, bool enableCrcCheck);
     void CleanUpSections(vector<unsigned short>& keepPids);
     void SwitchToPhase(bool descriptionPhase);
 
-    static bool DecodeEventRecord(unsigned char* sectionData,
+    static bool DecodeEventRecord(const unsigned char* sectionData,
                                   unsigned short& pointer,
                                   unsigned short endOfSection,
                                   bool isItalianText,
                                   bool useAlternativeProgramCategoryHandling,
                                   CRecordOpenTvEvent& record);
-    static bool DecodeEventDescriptionRecord(unsigned char* sectionData,
+    static bool DecodeEventDescriptionRecord(const unsigned char* sectionData,
                                               unsigned short& pointer,
                                               unsigned short endOfSection,
                                               bool isItalianText,
                                               CRecordOpenTvEventDescription& record);
 
-    static bool DecodeOpenTvEventDescriptor(unsigned char* data,
+    static bool DecodeOpenTvEventDescriptor(const unsigned char* data,
                                             unsigned char dataLength,
                                             bool isItalianText,
                                             bool useAlternativeProgramCategoryHandling,
@@ -311,11 +311,11 @@ class CParserOpenTv
                                             bool& hasSubtitles,
                                             unsigned char& parentalRating,
                                             char** title);
-    static bool DecodeOpenTvEventDescriptionDescriptor(unsigned char* data,
+    static bool DecodeOpenTvEventDescriptionDescriptor(const unsigned char* data,
                                                         unsigned char dataLength,
                                                         bool isItalianText,
                                                         char** description);
-    static bool DecodeOpenTvSeriesLinkDescriptor(unsigned char* data,
+    static bool DecodeOpenTvSeriesLinkDescriptor(const unsigned char* data,
                                                   unsigned char dataLength,
                                                   unsigned short& seriesLinkId);
 

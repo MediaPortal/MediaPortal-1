@@ -117,7 +117,7 @@ STDMETHODIMP_(void) CGrabberSiMpeg::SetCallBack(ICallBackGrabber* callBack)
   m_isSeenPmt = false;
 }
 
-bool CGrabberSiMpeg::OnTsPacket(CTsHeader& header, unsigned char* tsPacket)
+bool CGrabberSiMpeg::OnTsPacket(const CTsHeader& header, const unsigned char* tsPacket)
 {
   if (header.Pid == m_catGrabber.GetPid())
   {

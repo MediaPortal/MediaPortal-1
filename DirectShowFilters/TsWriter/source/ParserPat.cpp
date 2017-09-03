@@ -69,7 +69,7 @@ void CParserPat::OnNewSection(CSection& section)
   try
   {
     if (
-      section.table_id != TABLE_ID_PAT ||
+      section.TableId != TABLE_ID_PAT ||
       !section.SectionSyntaxIndicator ||
       section.PrivateIndicator ||
       !section.CurrentNextIndicator
@@ -77,43 +77,43 @@ void CParserPat::OnNewSection(CSection& section)
     {
       return;
     }
-    if (section.section_length > 1021 || section.section_length < 9)
+    if (section.SectionLength > 1021 || section.SectionLength < 9)
     {
-      LogDebug(L"PAT: invalid section, length = %d", section.section_length);
+      LogDebug(L"PAT: invalid section, length = %hu", section.SectionLength);
       return;
     }
 
-    //LogDebug(L"PAT: TSID = %d, version number = %d, section length = %d, section number = %hhu, last section number = %hhu",
-    //          section.table_id_extension, section.version_number,
-    //          section.section_length, section.SectionNumber,
+    //LogDebug(L"PAT: TSID = %hu, version number = %hhu, section length = %hu, section number = %hhu, last section number = %hhu",
+    //          section.TableIdExtension, section.VersionNumber,
+    //          section.SectionLength, section.SectionNumber,
     //          section.LastSectionNumber);
 
     CEnterCriticalSection lock(m_section);
     unsigned short oldTransportStreamId = m_transportStreamId;
-    if (section.table_id_extension != m_transportStreamId || section.version_number != m_version)
+    if (section.TableIdExtension != m_transportStreamId || section.VersionNumber != m_version)
     {
       m_isReady = false;
 
       if (m_version != VERSION_NOT_SET)
       {
-        LogDebug(L"PAT: changed, TSID = %d, version number = %d, prev. TSID = %hu, prev. version number = %hhu, section number = %hhu, last section number = %hhu",
-                  section.table_id_extension, section.version_number,
+        LogDebug(L"PAT: changed, TSID = %hu, version number = %hhu, prev. TSID = %hu, prev. version number = %hhu, section number = %hhu, last section number = %hhu",
+                  section.TableIdExtension, section.VersionNumber,
                   m_transportStreamId, m_version, section.SectionNumber,
                   section.LastSectionNumber);
         if (m_callBack != NULL)
         {
           m_callBack->OnTableChange(TABLE_ID_PAT);
-          if (section.table_id_extension != m_transportStreamId)
+          if (section.TableIdExtension != m_transportStreamId)
           {
-            m_callBack->OnPatTsidChanged(m_transportStreamId, section.table_id_extension);
+            m_callBack->OnPatTsidChanged(m_transportStreamId, section.TableIdExtension);
           }
         }
         m_records.MarkExpiredRecords(0);
       }
       else
       {
-        LogDebug(L"PAT: received, TSID = %d, version number = %d, section number = %hhu, last section number = %hhu",
-                  section.table_id_extension, section.version_number,
+        LogDebug(L"PAT: received, TSID = %hu, version number = %hhu, section number = %hhu, last section number = %hhu",
+                  section.TableIdExtension, section.VersionNumber,
                   section.SectionNumber, section.LastSectionNumber);
         if (m_callBack != NULL)
         {
@@ -126,8 +126,8 @@ void CParserPat::OnNewSection(CSection& section)
       {
         m_unseenSections.push_back(s);
       }
-      m_version = section.version_number;
-      m_transportStreamId = section.table_id_extension;
+      m_version = section.VersionNumber;
+      m_transportStreamId = section.TableIdExtension;
     }
 
     vector<unsigned char>::const_iterator sectionIt = find(m_unseenSections.begin(),
@@ -146,7 +146,7 @@ void CParserPat::OnNewSection(CSection& section)
     bool seenNetworkPid = false;
     unsigned char* data = section.Data;
     unsigned short pointer = 8;                               // points to the first byte in the program loop
-    unsigned short endOfSection = section.section_length - 1; // points to the first byte in the CRC
+    unsigned short endOfSection = section.SectionLength - 1;  // points to the first byte in the CRC
     while (pointer + 3 < endOfSection)
     {
       unsigned short programNumber = (data[pointer] << 8) | data[pointer + 1];
@@ -177,8 +177,8 @@ void CParserPat::OnNewSection(CSection& section)
       CRecordPat* record = new CRecordPat();
       if (record == NULL)
       {
-        LogDebug(L"PAT: failed to allocate record, version number = %d, section number = %hhu, program number = %hu, PMT PID = %hu",
-                  section.version_number, section.SectionNumber,
+        LogDebug(L"PAT: failed to allocate record, version number = %hhu, section number = %hhu, program number = %hu, PMT PID = %hu",
+                  section.VersionNumber, section.SectionNumber,
                   programNumber, pmtPid);
         continue;
       }
@@ -189,8 +189,8 @@ void CParserPat::OnNewSection(CSection& section)
 
     if (pointer != endOfSection)
     {
-      LogDebug(L"PAT: section parsing error, pointer = %hu, end of section = %hu, version number = %d, section number = %hhu",
-                pointer, endOfSection, section.version_number,
+      LogDebug(L"PAT: section parsing error, pointer = %hu, end of section = %hu, version number = %hhu, section number = %hhu",
+                pointer, endOfSection, section.VersionNumber,
                 section.SectionNumber);
       return;
     }

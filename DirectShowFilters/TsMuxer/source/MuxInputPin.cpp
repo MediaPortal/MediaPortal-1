@@ -332,7 +332,7 @@ HRESULT CMuxInputPin::StopDumping()
   return S_OK;
 }
 
-void CMuxInputPin::OnTsPacket(unsigned char* tsPacket)
+void CMuxInputPin::OnTsPacket(const unsigned char* tsPacket)
 {
   memcpy(&m_tsReceiveBuffer[m_tsReceiveBufferOffset], tsPacket, TS_PACKET_LEN);
   m_tsReceiveBufferOffset += TS_PACKET_LEN;

@@ -287,7 +287,7 @@ void CPacketSync::OnRawData2(unsigned char* pData, int nDataLen)
   }
 }
 
-void CPacketSync::OnTsPacket(unsigned char* tsPacket)
+void CPacketSync::OnTsPacket(const unsigned char* tsPacket)
 {
 }
 

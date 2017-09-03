@@ -498,7 +498,7 @@ STDMETHODIMP_(void) CParserEitDvb::SetCallBack(ICallBackGrabber* callBack)
   m_callBackGrabber = callBack;
 }
 
-bool CParserEitDvb::OnTsPacket(CTsHeader& header, unsigned char* tsPacket)
+bool CParserEitDvb::OnTsPacket(const CTsHeader& header, const unsigned char* tsPacket)
 {
   CEnterCriticalSection lock(m_section);
   map<unsigned short, bool>::const_iterator it = m_grabPids.find(header.Pid);
@@ -1252,7 +1252,7 @@ bool CParserEitDvb::SelectTextRecordByIndex(unsigned char index)
   return true;
 }
 
-void CParserEitDvb::OnNewSection(int pid, int tableId, CSection& section)
+void CParserEitDvb::OnNewSection(unsigned short pid, unsigned char tableId, const CSection& section)
 {
   try
   {
@@ -1275,7 +1275,7 @@ void CParserEitDvb::OnNewSection(int pid, int tableId, CSection& section)
       }
       isPremiereTable = true;
     }
-    else if (section.section_length < 12)
+    else if (section.SectionLength < 12)
     {
       return;
     }
@@ -1328,18 +1328,18 @@ void CParserEitDvb::OnNewSection(int pid, int tableId, CSection& section)
     }
 
     if (
-      section.section_length > 4093 ||
-      (isPremiereTable && section.section_length < 9) ||    // Note: Premiere *may* use the least significant 15 (out of 16) bits.
-      (!isPremiereTable && section.section_length < 15)
+      section.SectionLength > 4093 ||
+      (isPremiereTable && section.SectionLength < 9) ||     // Note: Premiere *may* use the least significant 15 (out of 16) bits.
+      (!isPremiereTable && section.SectionLength < 15)
     )
     {
-      LogDebug(L"EIT DVB: invalid section, length = %d, table ID = 0x%x, PID = %d",
-                section.section_length, tableId, pid);
+      LogDebug(L"EIT DVB: invalid section, length = %hu, table ID = 0x%hhx, PID = %hu",
+                section.SectionLength, tableId, pid);
       return;
     }
 
-    unsigned char* data = section.Data;
-    unsigned short serviceId = section.table_id_extension;
+    const unsigned char* data = section.Data;
+    unsigned short serviceId = section.TableIdExtension;
     unsigned short transportStreamId = 0;
     unsigned char segmentLastSectionNumber = 0;
     unsigned char lastTableId = 0;
@@ -1350,9 +1350,9 @@ void CParserEitDvb::OnNewSection(int pid, int tableId, CSection& section)
       lastTableId = data[13];
     }
 
-    //LogDebug(L"EIT DVB: PID = %d, table ID = 0x%x, service ID = %hu, TSID = %hu, ONID = %hu, version number = %d, section length = %d, section number = %hhu, last section number = %hhu, segment last section number = %hhu, last table ID = 0x%hhx",
+    //LogDebug(L"EIT DVB: PID = %hu, table ID = 0x%hhx, service ID = %hu, TSID = %hu, ONID = %hu, version number = %hhu, section length = %hu, section number = %hhu, last section number = %hhu, segment last section number = %hhu, last table ID = 0x%hhx",
     //          pid, tableId, serviceId, transportStreamId, originalNetworkId,
-    //          section.version_number, section.section_length,
+    //          section.VersionNumber, section.SectionLength,
     //          section.SectionNumber, section.LastSectionNumber,
     //          segmentLastSectionNumber, lastTableId);
 
@@ -1368,7 +1368,7 @@ void CParserEitDvb::OnNewSection(int pid, int tableId, CSection& section)
     }
 
     // Have we seen this section before?
-    unsigned long sectionKey = (tableId << 16) | (section.version_number << 8) | section.SectionNumber;
+    unsigned long sectionKey = (tableId << 16) | (section.VersionNumber << 8) | section.SectionNumber;
     unsigned long segmentKeyMask = 0xfffffff8;
     unsigned long segmentKey = sectionKey & segmentKeyMask;
     vector<unsigned long>::const_iterator sectionIt = find(service->SeenSections.begin(),
@@ -1377,7 +1377,7 @@ void CParserEitDvb::OnNewSection(int pid, int tableId, CSection& section)
     if (sectionIt != service->SeenSections.end())
     {
       // Yes. We might be ready!
-      //LogDebug(L"EIT DVB: previously seen section, PID = %d, table ID = 0x%x, service ID = %hu, TSID = %hu, ONID = %hu, section number = %hhu",
+      //LogDebug(L"EIT DVB: previously seen section, PID = %hu, table ID = 0x%hhx, service ID = %hu, TSID = %hu, ONID = %hu, section number = %hhu",
       //          pid, tableId, serviceId, transportStreamId,
       //          originalNetworkId, section.SectionNumber);
       if (
@@ -1449,7 +1449,7 @@ void CParserEitDvb::OnNewSection(int pid, int tableId, CSection& section)
       RemoveExpiredEntries(service->UnseenSections,
                             false,
                             tableId,
-                            section.version_number,
+                            section.VersionNumber,
                             !isSingleTableGroup,
                             lastTableId,
                             erasedTableIds);
@@ -1457,7 +1457,7 @@ void CParserEitDvb::OnNewSection(int pid, int tableId, CSection& section)
       RemoveExpiredEntries(service->SeenSections,
                             false,
                             tableId,
-                            section.version_number,
+                            section.VersionNumber,
                             !isSingleTableGroup,
                             lastTableId,
                             erasedTableIds);
@@ -1469,7 +1469,7 @@ void CParserEitDvb::OnNewSection(int pid, int tableId, CSection& section)
         RemoveExpiredEntries(service->UnseenTables,
                               true,
                               tableId,
-                              section.version_number,
+                              section.VersionNumber,
                               !isSingleTableGroup,
                               lastTableId,
                               erasedTableIds);
@@ -1477,7 +1477,7 @@ void CParserEitDvb::OnNewSection(int pid, int tableId, CSection& section)
         RemoveExpiredEntries(service->SeenTables,
                               true,
                               tableId,
-                              section.version_number,
+                              section.VersionNumber,
                               !isSingleTableGroup,
                               lastTableId,
                               erasedTableIds);
@@ -1510,7 +1510,7 @@ void CParserEitDvb::OnNewSection(int pid, int tableId, CSection& section)
         RemoveExpiredEntries(service->UnseenSegments,
                               false,
                               tableId,
-                              section.version_number,
+                              section.VersionNumber,
                               !isSingleTableGroup,
                               lastTableId,
                               erasedTableIds);
@@ -1518,7 +1518,7 @@ void CParserEitDvb::OnNewSection(int pid, int tableId, CSection& section)
         RemoveExpiredEntries(service->SeenSegments,
                               false,
                               tableId,
-                              section.version_number,
+                              section.VersionNumber,
                               !isSingleTableGroup,
                               lastTableId,
                               erasedTableIds);
@@ -1526,9 +1526,9 @@ void CParserEitDvb::OnNewSection(int pid, int tableId, CSection& section)
 
       if (isChange)
       {
-        LogDebug(L"EIT DVB: changed, PID = %d, table ID = 0x%x, service ID = %hu, TSID = %hu, ONID = %hu, version number = %d, section number = %hhu, last section number = %hhu, segment last section number = %hhu, last table ID = 0x%hhx",
+        LogDebug(L"EIT DVB: changed, PID = %hu, table ID = 0x%hhx, service ID = %hu, TSID = %hu, ONID = %hu, version number = %hhu, section number = %hhu, last section number = %hhu, segment last section number = %hhu, last table ID = 0x%hhx",
                   pid, tableId, serviceId, transportStreamId,
-                  originalNetworkId, section.version_number,
+                  originalNetworkId, section.VersionNumber,
                   section.SectionNumber, section.LastSectionNumber,
                   segmentLastSectionNumber, lastTableId);
         service->Events.MarkExpiredRecords(tableId);
@@ -1540,9 +1540,9 @@ void CParserEitDvb::OnNewSection(int pid, int tableId, CSection& section)
       }
       else
       {
-        LogDebug(L"EIT DVB: received, PID = %d, table ID = 0x%x, service ID = %hu, TSID = %hu, ONID = %hu, version number = %d, section number = %hhu, last section number = %hhu, segment last section number = %hhu, last table ID = 0x%hhx",
+        LogDebug(L"EIT DVB: received, PID = %hu, table ID = 0x%hhx, service ID = %hu, TSID = %hu, ONID = %hu, version number = %hhu, section number = %hhu, last section number = %hhu, segment last section number = %hhu, last table ID = 0x%hhx",
                   pid, tableId, serviceId, transportStreamId,
-                  originalNetworkId, section.version_number,
+                  originalNetworkId, section.VersionNumber,
                   section.SectionNumber, section.LastSectionNumber,
                   segmentLastSectionNumber, lastTableId);
         if (m_callBackGrabber != NULL && !m_isSeen)
@@ -1613,14 +1613,14 @@ void CParserEitDvb::OnNewSection(int pid, int tableId, CSection& section)
     }
     else
     {
-      //LogDebug(L"EIT DVB: new section, PID = %d, table ID = 0x%x, service ID = %hu, TSID = %hu, ONID = %hu, version number = %d, section number = %hhu",
+      //LogDebug(L"EIT DVB: new section, PID = %hu, table ID = 0x%hhx, service ID = %hu, TSID = %hu, ONID = %hu, version number = %hhu, section number = %hhu",
       //          pid, tableId, serviceId, transportStreamId,
-      //          originalNetworkId, section.version_number,
+      //          originalNetworkId, section.VersionNumber,
       //          section.SectionNumber);
     }
 
     unsigned short pointer;                                   // points to the first byte in the event loop
-    unsigned short endOfSection = section.section_length - 1; // points to the first byte in the CRC
+    unsigned short endOfSection = section.SectionLength - 1;  // points to the first byte in the CRC
     unsigned char eventByteCount;
     if (isPremiereTable)
     {
@@ -1657,9 +1657,9 @@ void CParserEitDvb::OnNewSection(int pid, int tableId, CSection& section)
       }
       if (event == NULL)
       {
-        LogDebug(L"EIT DVB: failed to allocate event record, PID = %d, table ID = 0x%x, service ID = %hu, TSID = %hu, ONID = %hu, version number = %d, section number = %hhu",
+        LogDebug(L"EIT DVB: failed to allocate event record, PID = %hu, table ID = 0x%hhx, service ID = %hu, TSID = %hu, ONID = %hu, version number = %hhu, section number = %hhu",
                   pid, tableId, serviceId, transportStreamId,
-                  originalNetworkId, section.version_number,
+                  originalNetworkId, section.VersionNumber,
                   section.SectionNumber);
         return;
       }
@@ -1672,9 +1672,9 @@ void CParserEitDvb::OnNewSection(int pid, int tableId, CSection& section)
       map<unsigned long long, vector<unsigned long long>*> premiereShowings;  // ONID [16 bits] | TSID [16 bits] | SID [16 bits] => [ epoch ]
       if (!DecodeEventRecord(data, pointer, endOfSection, *event, premiereShowings))
       {
-        LogDebug(L"EIT DVB: invalid section, PID = %d, table ID = 0x%x, service ID = %hu, TSID = %hu, ONID = %hu, version number = %d, section number = %hhu, event ID = %llu",
+        LogDebug(L"EIT DVB: invalid section, PID = %hu, table ID = 0x%hhx, service ID = %hu, TSID = %hu, ONID = %hu, version number = %hhu, section number = %hhu, event ID = %llu",
                   pid, tableId, serviceId, transportStreamId,
-                  originalNetworkId, section.version_number,
+                  originalNetworkId, section.VersionNumber,
                   section.SectionNumber, event->EventId);
         delete event;
         return;
@@ -1710,9 +1710,9 @@ void CParserEitDvb::OnNewSection(int pid, int tableId, CSection& section)
 
     if (pointer != endOfSection)
     {
-      LogDebug(L"EIT DVB: section parsing error, pointer = %hu, end of section = %hu, PID = %d, table ID = 0x%x, service ID = %hu, TSID = %hu, ONID = %hu, version number = %d, section number = %hhu",
+      LogDebug(L"EIT DVB: section parsing error, pointer = %hu, end of section = %hu, PID = %hu, table ID = 0x%hhx, service ID = %hu, TSID = %hu, ONID = %hu, version number = %hhu, section number = %hhu",
                 pointer, endOfSection, pid, tableId, serviceId,
-                transportStreamId, originalNetworkId, section.version_number,
+                transportStreamId, originalNetworkId, section.VersionNumber,
                 section.SectionNumber);
       return;
     }
@@ -2217,7 +2217,7 @@ void CParserEitDvb::CopyString(const char* input, char** output, wchar_t* debug)
   }
 }
 
-bool CParserEitDvb::DecodeEventRecord(unsigned char* sectionData,
+bool CParserEitDvb::DecodeEventRecord(const unsigned char* sectionData,
                                       unsigned short& pointer,
                                       unsigned short endOfSection,
                                       CRecordEitEventMinimal& event,
@@ -2295,7 +2295,7 @@ bool CParserEitDvb::DecodeEventRecord(unsigned char* sectionData,
   return false;
 }
 
-bool CParserEitDvb::DecodeEventDescriptors(unsigned char* sectionData,
+bool CParserEitDvb::DecodeEventDescriptors(const unsigned char* sectionData,
                                             unsigned short& pointer,
                                             unsigned short endOfDescriptorLoop,
                                             CRecordEitEventMinimal& event,
@@ -2945,7 +2945,7 @@ bool CParserEitDvb::DecodeEventDescriptors(unsigned char* sectionData,
   return result;
 }
 
-bool CParserEitDvb::DecodeShortEventDescriptor(unsigned char* data,
+bool CParserEitDvb::DecodeShortEventDescriptor(const unsigned char* data,
                                                 unsigned char dataLength,
                                                 unsigned long& language,
                                                 char** eventName,
@@ -3016,7 +3016,7 @@ bool CParserEitDvb::DecodeShortEventDescriptor(unsigned char* data,
   return false;
 }
 
-bool CParserEitDvb::DecodeExtendedEventDescriptor(unsigned char* data,
+bool CParserEitDvb::DecodeExtendedEventDescriptor(const unsigned char* data,
                                                   unsigned char dataLength,
                                                   unsigned long& language,
                                                   vector<CRecordEitEventDescriptionItem*>& items,
@@ -3173,7 +3173,7 @@ bool CParserEitDvb::DecodeExtendedEventDescriptor(unsigned char* data,
   return false;
 }
 
-bool CParserEitDvb::DecodeTimeShiftedEventDescriptor(unsigned char* data,
+bool CParserEitDvb::DecodeTimeShiftedEventDescriptor(const unsigned char* data,
                                                       unsigned char dataLength,
                                                       unsigned short& referenceServiceId,
                                                       unsigned short& referenceEventId)
@@ -3199,7 +3199,7 @@ bool CParserEitDvb::DecodeTimeShiftedEventDescriptor(unsigned char* data,
   return false;
 }
 
-bool CParserEitDvb::DecodeComponentDescriptor(unsigned char* data,
+bool CParserEitDvb::DecodeComponentDescriptor(const unsigned char* data,
                                               unsigned char dataLength,
                                               bool& isAudio,
                                               bool& isSubtitles,
@@ -3295,7 +3295,7 @@ bool CParserEitDvb::DecodeComponentDescriptor(unsigned char* data,
   return false;
 }
 
-bool CParserEitDvb::DecodeContentDescriptor(unsigned char* data,
+bool CParserEitDvb::DecodeContentDescriptor(const unsigned char* data,
                                             unsigned char dataLength,
                                             vector<unsigned short>& contentTypeIds)
 {
@@ -3324,7 +3324,7 @@ bool CParserEitDvb::DecodeContentDescriptor(unsigned char* data,
   return false;
 }
 
-bool CParserEitDvb::DecodeParentalRatingDescriptor(unsigned char* data,
+bool CParserEitDvb::DecodeParentalRatingDescriptor(const unsigned char* data,
                                                     unsigned char dataLength,
                                                     map<unsigned long, unsigned char>& ratings)
 {
@@ -3354,7 +3354,7 @@ bool CParserEitDvb::DecodeParentalRatingDescriptor(unsigned char* data,
   return false;
 }
 
-bool CParserEitDvb::DecodePrivateDataSpecifierDescriptor(unsigned char* data,
+bool CParserEitDvb::DecodePrivateDataSpecifierDescriptor(const unsigned char* data,
                                                           unsigned char dataLength,
                                                           unsigned long& privateDataSpecifier)
 {
@@ -3378,7 +3378,7 @@ bool CParserEitDvb::DecodePrivateDataSpecifierDescriptor(unsigned char* data,
   return false;
 }
 
-bool CParserEitDvb::DecodeContentIdentifierDescriptor(unsigned char* data,
+bool CParserEitDvb::DecodeContentIdentifierDescriptor(const unsigned char* data,
                                                       unsigned char dataLength,
                                                       map<unsigned char, char*>& crids)
 {
@@ -3471,7 +3471,7 @@ bool CParserEitDvb::DecodeContentIdentifierDescriptor(unsigned char* data,
   return false;
 }
 
-bool CParserEitDvb::DecodeDishBevRatingDescriptor(unsigned char* data,
+bool CParserEitDvb::DecodeDishBevRatingDescriptor(const unsigned char* data,
                                                   unsigned char dataLength,
                                                   unsigned char& starRating,
                                                   unsigned char& mpaaClassification,
@@ -3527,7 +3527,7 @@ bool CParserEitDvb::DecodeDishBevRatingDescriptor(unsigned char* data,
   return false;
 }
 
-bool CParserEitDvb::DecodeDishTextDescriptor(unsigned char* data,
+bool CParserEitDvb::DecodeDishTextDescriptor(const unsigned char* data,
                                               unsigned char dataLength,
                                               unsigned char tableId,
                                               char** text)
@@ -3585,7 +3585,7 @@ bool CParserEitDvb::DecodeDishTextDescriptor(unsigned char* data,
   return false;
 }
 
-bool CParserEitDvb::DecodeDishEpisodeInformationDescriptor(unsigned char* data,
+bool CParserEitDvb::DecodeDishEpisodeInformationDescriptor(const unsigned char* data,
                                                             unsigned char dataLength,
                                                             unsigned char tableId,
                                                             char** information)
@@ -3624,7 +3624,7 @@ bool CParserEitDvb::DecodeDishEpisodeInformationDescriptor(unsigned char* data,
   return false;
 }
 
-bool CParserEitDvb::DecodeDishVchipDescriptor(unsigned char* data,
+bool CParserEitDvb::DecodeDishVchipDescriptor(const unsigned char* data,
                                               unsigned char dataLength,
                                               unsigned char& vchipRating,
                                               unsigned short& advisories)
@@ -3691,7 +3691,7 @@ bool CParserEitDvb::DecodeDishVchipDescriptor(unsigned char* data,
   return false;
 }
 
-bool CParserEitDvb::DecodeDishBevSeriesDescriptor(unsigned char* data,
+bool CParserEitDvb::DecodeDishBevSeriesDescriptor(const unsigned char* data,
                                                   unsigned char dataLength,
                                                   char** seriesId,
                                                   char** episodeId,
@@ -3764,7 +3764,7 @@ bool CParserEitDvb::DecodeDishBevSeriesDescriptor(unsigned char* data,
   return false;
 }
 
-bool CParserEitDvb::DecodePremiereOrderInformationDescriptor(unsigned char* data,
+bool CParserEitDvb::DecodePremiereOrderInformationDescriptor(const unsigned char* data,
                                                               unsigned char dataLength,
                                                               char** orderNumber,
                                                               char** price,
@@ -3892,7 +3892,7 @@ bool CParserEitDvb::DecodePremiereOrderInformationDescriptor(unsigned char* data
   return false;
 }
 
-bool CParserEitDvb::DecodePremiereParentInformationDescriptor(unsigned char* data,
+bool CParserEitDvb::DecodePremiereParentInformationDescriptor(const unsigned char* data,
                                                               unsigned char dataLength,
                                                               unsigned char& rating,
                                                               char** text)
@@ -3940,7 +3940,7 @@ bool CParserEitDvb::DecodePremiereParentInformationDescriptor(unsigned char* dat
   return false;
 }
 
-bool CParserEitDvb::DecodePremiereContentTransmissionDescriptor(unsigned char* data,
+bool CParserEitDvb::DecodePremiereContentTransmissionDescriptor(const unsigned char* data,
                                                                 unsigned char dataLength,
                                                                 unsigned short& originalNetworkId,
                                                                 unsigned short& transportStreamId,

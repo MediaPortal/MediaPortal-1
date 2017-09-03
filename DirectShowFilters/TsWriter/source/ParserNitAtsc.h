@@ -43,7 +43,7 @@ class CParserNitAtsc
 
     void Reset();
     void SetCallBack(ICallBackNitAtsc* callBack);
-    void OnNewSection(CSection& section);
+    void OnNewSection(const CSection& section);
     bool IsSeen() const;
     bool IsReady() const;
 
@@ -592,7 +592,7 @@ class CParserNitAtsc
     bool IsReadyPrivate(unsigned char transmissionMedium) const;
     static void CleanUpRecords(vector<CRecordNit*>& records);
 
-    static bool DecodeSection(CSection& section,
+    static bool DecodeSection(const CSection& section,
                               unsigned char& protocolVersion,
                               unsigned char& transmissionMedium,
                               unsigned char& tableSubtype,
@@ -603,29 +603,29 @@ class CParserNitAtsc
                               unsigned char& sectionNumber,
                               unsigned char& lastSectionNumber);
 
-    static bool DecodeCarrierDefinitionSubTable(unsigned char* data,
+    static bool DecodeCarrierDefinitionSubTable(const unsigned char* data,
                                                 unsigned short& pointer,
                                                 unsigned short endOfSection,
                                                 unsigned char& numberOfCarriers,
                                                 unsigned long& frequencySpacing,
                                                 unsigned long& firstCarrierFrequency);
-    static bool DecodeModulationModeSubTable(unsigned char* data,
+    static bool DecodeModulationModeSubTable(const unsigned char* data,
                                               unsigned short& pointer,
                                               unsigned short endOfSection,
                                               CRecordNitModulationMode& record);
-    static bool DecodeSatelliteInformationSubTable(unsigned char* data,
+    static bool DecodeSatelliteInformationSubTable(const unsigned char* data,
                                                     unsigned short& pointer,
                                                     unsigned short endOfSection,
                                                     CRecordNitSatelliteInformation& record);
-    static bool DecodeTransponderDataSubTable(unsigned char* data,
+    static bool DecodeTransponderDataSubTable(const unsigned char* data,
                                               unsigned short& pointer,
                                               unsigned short endOfSection,
                                               CRecordNitTransponderData& record);
 
-    static bool DecodeFrequencySpecDescriptor(unsigned char* data,
+    static bool DecodeFrequencySpecDescriptor(const unsigned char* data,
                                               unsigned char dataLength,
                                               unsigned long& carrierFrequency);
-    static bool DecodeRevisionDetectionDescriptor(unsigned char* data,
+    static bool DecodeRevisionDetectionDescriptor(const unsigned char* data,
                                                   unsigned char dataLength,
                                                   unsigned char& tableVersionNumber,
                                                   unsigned char& sectionNumber,

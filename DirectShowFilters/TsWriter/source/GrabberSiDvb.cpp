@@ -135,7 +135,7 @@ STDMETHODIMP_(void) CGrabberSiDvb::SetCallBack(ICallBackGrabber* callBack)
   m_callBackGrabber = callBack;
 }
 
-bool CGrabberSiDvb::OnTsPacket(CTsHeader& header, unsigned char* tsPacket)
+bool CGrabberSiDvb::OnTsPacket(const CTsHeader& header, const unsigned char* tsPacket)
 {
   bool result = false;
   if (header.Pid == m_parserBat.GetPid())

@@ -46,7 +46,7 @@ class CParserEitAtsc : public CSectionDecoder
 
     void Reset(bool enableCrcCheck);
     void SetCallBack(ICallBackTableParser* callBack);
-    void OnNewSection(CSection& section);
+    void OnNewSection(const CSection& section);
     bool IsSeen() const;
     bool IsReady() const;
 
@@ -164,26 +164,26 @@ class CParserEitAtsc : public CSectionDecoder
 
     bool SelectEventRecordByIndex(unsigned long index);
 
-    static bool DecodeEventRecord(unsigned char* sectionData,
+    static bool DecodeEventRecord(const unsigned char* sectionData,
                                   unsigned short& pointer,
                                   unsigned short endOfSection,
                                   CRecordEit& record);
 
-    static bool DecodeAc3AudioStreamDescriptor(unsigned char* data,
+    static bool DecodeAc3AudioStreamDescriptor(const unsigned char* data,
                                                 unsigned char dataLength,
                                                 vector<unsigned long>& audioLanguages);
-    static bool DecodeCaptionServiceDescriptor(unsigned char* data,
+    static bool DecodeCaptionServiceDescriptor(const unsigned char* data,
                                                 unsigned char dataLength,
                                                 vector<unsigned long>& captionsLanguages);
-    static bool DecodeContentAdvisoryDescriptor(unsigned char* data,
+    static bool DecodeContentAdvisoryDescriptor(const unsigned char* data,
                                                 unsigned char dataLength,
                                                 unsigned char& vchipRating,
                                                 unsigned char& mpaaClassification,
                                                 unsigned short& advisories);
-    static bool DecodeGenreDescriptor(unsigned char* data,
+    static bool DecodeGenreDescriptor(const unsigned char* data,
                                       unsigned char dataLength,
                                       vector<unsigned char>& genreIds);
-    static bool DecodeEnhancedAc3AudioDescriptor(unsigned char* data,
+    static bool DecodeEnhancedAc3AudioDescriptor(const unsigned char* data,
                                                   unsigned char dataLength,
                                                   vector<unsigned long>& audioLanguages);
 

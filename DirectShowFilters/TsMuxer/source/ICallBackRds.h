@@ -26,5 +26,5 @@ class ICallBackRds
   public:
     virtual ~ICallBackRds() {}
 
-    virtual void OnRdsProgrammeServiceNameReceived(char* programmeServiceName) = 0;
+    virtual void OnRdsProgrammeServiceNameReceived(const char* programmeServiceName) = 0;
 };

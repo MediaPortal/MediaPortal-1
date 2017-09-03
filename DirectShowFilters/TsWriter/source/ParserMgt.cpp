@@ -52,12 +52,12 @@ void CParserMgt::SetCallBack(ICallBackMgt* callBack)
   m_callBack = callBack;
 }
 
-void CParserMgt::OnNewSection(CSection& section)
+void CParserMgt::OnNewSection(const CSection& section)
 {
   try
   {
     if (
-      section.table_id != TABLE_ID_MGT ||
+      section.TableId != TABLE_ID_MGT ||
       !section.SectionSyntaxIndicator ||
       !section.PrivateIndicator ||
       !section.CurrentNextIndicator
@@ -65,10 +65,10 @@ void CParserMgt::OnNewSection(CSection& section)
     {
       return;
     }
-    if (section.section_length > 4093 || section.section_length < 14)
+    if (section.SectionLength > 4093 || section.SectionLength < 14)
     {
-      LogDebug(L"MGT %hu: invalid section, length = %d",
-                m_pid, section.section_length);
+      LogDebug(L"MGT %hu: invalid section, length = %hu",
+                m_pid, section.SectionLength);
       return;
     }
     unsigned char protocolVersion = section.Data[8];
@@ -79,16 +79,16 @@ void CParserMgt::OnNewSection(CSection& section)
       return;
     }
 
-    unsigned char* data = section.Data;
-    unsigned short mapId = section.table_id_extension;  // SCTE 65
+    const unsigned char* data = section.Data;
+    unsigned short mapId = section.TableIdExtension;    // SCTE 65
     unsigned short tablesDefined = (data[9] << 8) | data[10];
-    //LogDebug(L"MGT %hu: map ID = %hu, protocol version = %hhu, version number = %d, section length = %d, section number = %hhu, last section number = %hhu, tables defined = %hu",
-    //          m_pid, mapId, protocolVersion, section.version_number,
-    //          section.section_length, section.SectionNumber,
+    //LogDebug(L"MGT %hu: map ID = %hu, protocol version = %hhu, version number = %hhu, section length = %hu, section number = %hhu, last section number = %hhu, tables defined = %hu",
+    //          m_pid, mapId, protocolVersion, section.VersionNumber,
+    //          section.SectionLength, section.SectionNumber,
     //          section.LastSectionNumber, tablesDefined);
 
     // Have we seen this section before?
-    unsigned short sectionKey = (section.version_number << 8) | section.SectionNumber;
+    unsigned short sectionKey = (section.VersionNumber << 8) | section.SectionNumber;
     CEnterCriticalSection lock(m_section);
     vector<unsigned short>::const_iterator sectionIt = find(m_seenSections.begin(), m_seenSections.end(), sectionKey);
     if (sectionIt != m_seenSections.end())
@@ -105,8 +105,8 @@ void CParserMgt::OnNewSection(CSection& section)
       // No. Is this a change/update, or the first section?
       if (m_unseenSections.size() != 0 || m_seenSections.size() != 0)
       {
-        LogDebug(L"MGT %hu: changed, map ID = %hu, protocol version = %hhu, version number = %d, section number = %hhu, last section number = %hhu",
-                  m_pid, mapId, protocolVersion, section.version_number,
+        LogDebug(L"MGT %hu: changed, map ID = %hu, protocol version = %hhu, version number = %hhu, section number = %hhu, last section number = %hhu",
+                  m_pid, mapId, protocolVersion, section.VersionNumber,
                   section.SectionNumber, section.LastSectionNumber);
         m_records.MarkExpiredRecords(0);
         m_seenSections.clear();
@@ -118,8 +118,8 @@ void CParserMgt::OnNewSection(CSection& section)
       }
       else
       {
-        LogDebug(L"MGT %hu: received, map ID = %hu, protocol version = %hhu, version number = %d, section number = %hhu, last section number = %hhu",
-                  m_pid, mapId, protocolVersion, section.version_number,
+        LogDebug(L"MGT %hu: received, map ID = %hu, protocol version = %hhu, version number = %hhu, section number = %hhu, last section number = %hhu",
+                  m_pid, mapId, protocolVersion, section.VersionNumber,
                   section.SectionNumber, section.LastSectionNumber);
         if (m_callBack != NULL)
         {
@@ -136,28 +136,28 @@ void CParserMgt::OnNewSection(CSection& section)
     }
     else
     {
-      //LogDebug(L"MGT %hu: new section, map ID = %hu, protocol version = %hhu, version number = %d, section number = %hhu",
-      //          m_pid, mapId, protocolVersion, section.version_number,
+      //LogDebug(L"MGT %hu: new section, map ID = %hu, protocol version = %hhu, version number = %hhu, section number = %hhu",
+      //          m_pid, mapId, protocolVersion, section.VersionNumber,
       //          section.SectionNumber);
     }
 
     unsigned short pointer = 11;                              // points to the first byte in the table loop
-    unsigned short endOfSection = section.section_length - 1; // points to the first byte in the CRC
+    unsigned short endOfSection = section.SectionLength - 1;  // points to the first byte in the CRC
     while (pointer + 10 < endOfSection - 2)
     {
       CRecordMgt* record = new CRecordMgt();
       if (record == NULL)
       {
-        LogDebug(L"MGT %hu: failed to allocate record, map ID = %hu, protocol version = %hhu, version number = %d, section number = %hhu",
-                  m_pid, mapId, protocolVersion, section.version_number,
+        LogDebug(L"MGT %hu: failed to allocate record, map ID = %hu, protocol version = %hhu, version number = %hhu, section number = %hhu",
+                  m_pid, mapId, protocolVersion, section.VersionNumber,
                   section.SectionNumber);
         return;
       }
 
       if (!DecodeTableRecord(data, pointer, endOfSection, *record))
       {
-        LogDebug(L"MGT %hu: invalid section, map ID = %hu, protocol version = %hhu, version number = %d, section number = %hhu, table type = %hu, PID = %hu",
-                  m_pid, mapId, protocolVersion, section.version_number,
+        LogDebug(L"MGT %hu: invalid section, map ID = %hu, protocol version = %hhu, version number = %hhu, section number = %hhu, table type = %hu, PID = %hu",
+                  m_pid, mapId, protocolVersion, section.VersionNumber,
                   section.SectionNumber, record->TableType, record->Pid);
         delete record;
         return;
@@ -172,9 +172,9 @@ void CParserMgt::OnNewSection(CSection& section)
     unsigned short endOfDescriptors = pointer + descriptorsLength;
     if (endOfDescriptors != endOfSection)
     {
-      LogDebug(L"MGT %hu: invalid section, descriptors length = %hu, pointer = %hu, end of section = %hu, map ID = %hu, protocol version = %hhu, version number = %d, section number = %hhu",
+      LogDebug(L"MGT %hu: invalid section, descriptors length = %hu, pointer = %hu, end of section = %hu, map ID = %hu, protocol version = %hhu, version number = %hhu, section number = %hhu",
                 m_pid, descriptorsLength, pointer, endOfSection, mapId,
-                protocolVersion, section.version_number,
+                protocolVersion, section.VersionNumber,
                 section.SectionNumber);
       return;
     }
@@ -187,9 +187,9 @@ void CParserMgt::OnNewSection(CSection& section)
       //          m_pid, tag, length, pointer);
       if (pointer + length > endOfDescriptors)
       {
-        LogDebug(L"MGT %hu: invalid section, descriptor length = %hhu, pointer = %hu, end of descriptors = %hu, map ID = %hu, protocol version = %hhu, version number = %d, section number = %hhu, tag = 0x%hhx, end of section = %hu",
+        LogDebug(L"MGT %hu: invalid section, descriptor length = %hhu, pointer = %hu, end of descriptors = %hu, map ID = %hu, protocol version = %hhu, version number = %hhu, section number = %hhu, tag = 0x%hhx, end of section = %hu",
                   m_pid, length, pointer, endOfDescriptors, mapId, protocolVersion,
-                  section.version_number, section.SectionNumber, tag,
+                  section.VersionNumber, section.SectionNumber, tag,
                   endOfSection);
         return;
       }
@@ -199,9 +199,9 @@ void CParserMgt::OnNewSection(CSection& section)
 
     if (pointer != endOfSection)
     {
-      LogDebug(L"MGT %hu: section parsing error, pointer = %hu, end of section = %hu, map ID = %hu, protocol version = %hhu, version number = %d, section number = %hhu",
+      LogDebug(L"MGT %hu: section parsing error, pointer = %hu, end of section = %hu, map ID = %hu, protocol version = %hhu, version number = %hhu, section number = %hhu",
                 m_pid, pointer, endOfSection, mapId, protocolVersion,
-                section.version_number, section.SectionNumber);
+                section.VersionNumber, section.SectionNumber);
       return;
     }
 
@@ -271,7 +271,7 @@ bool CParserMgt::GetTable(unsigned short index,
   return true;
 }
 
-bool CParserMgt::DecodeTableRecord(unsigned char* sectionData,
+bool CParserMgt::DecodeTableRecord(const unsigned char* sectionData,
                                     unsigned short& pointer,
                                     unsigned short endOfSection,
                                     CRecordMgt& record)

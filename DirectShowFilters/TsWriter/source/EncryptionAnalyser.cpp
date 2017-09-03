@@ -82,6 +82,7 @@ bool CEncryptionAnalyser::OnTsPacket(CTsHeader& header, unsigned char* tsPacket)
       // Ensure the packet is marked as not scrambled. This fixes compatibility
       // with certain streams.
       tsPacket[3] = tsPacket[3] & 0x3f;
+      header.TScrambling = 0;
       return false;
     }
 

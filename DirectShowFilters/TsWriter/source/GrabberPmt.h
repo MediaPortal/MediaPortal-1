@@ -45,8 +45,8 @@ class CGrabberPmt : public CSectionDecoder
     void Reset();
     void SetFilter(unsigned short pid, unsigned short programNumber);
     void SetCallBack(ICallBackPmt* callBack);
-    void OnTsPacket(CTsHeader& header, unsigned char* tsPacket);
-    void OnNewSection(CSection& section);
+    void OnTsPacket(const CTsHeader& header, const unsigned char* tsPacket);
+    void OnNewSection(const CSection& section);
     bool IsReady();
 
     void GetFilter(unsigned short& pid, unsigned short& programNumber) const;

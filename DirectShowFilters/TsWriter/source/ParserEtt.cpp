@@ -65,12 +65,12 @@ void CParserEtt::SetCallBack(ICallBackTableParser* callBack)
   m_callBack = callBack;
 }
 
-void CParserEtt::OnNewSection(CSection& section)
+void CParserEtt::OnNewSection(const CSection& section)
 {
   try
   {
     if (
-      section.table_id != TABLE_ID_ETT ||
+      section.TableId != TABLE_ID_ETT ||
       !section.SectionSyntaxIndicator ||
       !section.PrivateIndicator ||
       !section.CurrentNextIndicator
@@ -78,10 +78,10 @@ void CParserEtt::OnNewSection(CSection& section)
     {
       return;
     }
-    if (section.section_length > 4093 || section.section_length < 14)
+    if (section.SectionLength > 4093 || section.SectionLength < 14)
     {
-      LogDebug(L"ETT %d: invalid section, length = %d",
-                GetPid(), section.section_length);
+      LogDebug(L"ETT %d: invalid section, length = %hu",
+                GetPid(), section.SectionLength);
       return;
     }
     unsigned char protocolVersion = section.Data[8];
@@ -94,37 +94,37 @@ void CParserEtt::OnNewSection(CSection& section)
     if (section.SectionNumber != 0 || section.LastSectionNumber != 0)
     {
       // According to ATSC A/65 ETT should only have one section.
-      LogDebug(L"ETT %d: unsupported multi-section table, protocol version = %hhu, version number = %d, section number = %hhu, last section number = %hhu",
-                GetPid(), protocolVersion, section.version_number,
+      LogDebug(L"ETT %d: unsupported multi-section table, protocol version = %hhu, version number = %hhu, section number = %hhu, last section number = %hhu",
+                GetPid(), protocolVersion, section.VersionNumber,
                 section.SectionNumber, section.LastSectionNumber);
       return;
     }
 
     CEnterCriticalSection lock(m_section);
-    if (section.version_number == m_versionNumber && m_isReady)
+    if (section.VersionNumber == m_versionNumber && m_isReady)
     {
-      //LogDebug(L"ETT %d: previously seen section, extension ID = %d, protocol version = %hhu, version number = %d",
-      //          GetPid(), section.table_id_extension, protocolVersion,
-      //          section.version_number);
+      //LogDebug(L"ETT %d: previously seen section, extension ID = %hu, protocol version = %hhu, version number = %hhu",
+      //          GetPid(), section.TableIdExtension, protocolVersion,
+      //          section.VersionNumber);
       return;
     }
 
     m_isReady = false;
-    if (section.version_number == VERSION_NOT_SET)
+    if (section.VersionNumber == VERSION_NOT_SET)
     {
-      LogDebug(L"ETT %d: received, extension ID = %d, protocol version = %hhu, version number = %d",
-                GetPid(), section.table_id_extension, protocolVersion,
-                section.version_number);
+      LogDebug(L"ETT %d: received, extension ID = %hu, protocol version = %hhu, version number = %hhu",
+                GetPid(), section.TableIdExtension, protocolVersion,
+                section.VersionNumber);
       if (m_callBack != NULL)
       {
         m_callBack->OnTableSeen(TABLE_ID_ETT);
       }
     }
-    else if (section.version_number != m_versionNumber)
+    else if (section.VersionNumber != m_versionNumber)
     {
-      LogDebug(L"ETT %d: changed, extension ID = %d, protocol version = %hhu, version number = %d",
-                GetPid(), section.table_id_extension, protocolVersion,
-                section.version_number);
+      LogDebug(L"ETT %d: changed, extension ID = %hu, protocol version = %hhu, version number = %hhu",
+                GetPid(), section.TableIdExtension, protocolVersion,
+                section.VersionNumber);
       m_records.MarkExpiredRecords(0);
       m_completeTime = clock();
       if (m_callBack != NULL)
@@ -132,45 +132,45 @@ void CParserEtt::OnNewSection(CSection& section)
         m_callBack->OnTableChange(TABLE_ID_ETT);
       }
     }
-    m_versionNumber = section.version_number;
+    m_versionNumber = section.VersionNumber;
 
     CRecordEtt* record = new CRecordEtt();
     if (record == NULL)
     {
-      LogDebug(L"ETT %d: failed to allocate record, extension ID = %d, protocol version = %hhu, version number = %d",
-                GetPid(), section.table_id_extension, protocolVersion,
-                section.version_number);
+      LogDebug(L"ETT %d: failed to allocate record, extension ID = %hu, protocol version = %hhu, version number = %hhu",
+                GetPid(), section.TableIdExtension, protocolVersion,
+                section.VersionNumber);
       return;
     }
 
-    unsigned char* data = section.Data;
-    record->Id = section.table_id_extension;
+    const unsigned char* data = section.Data;
+    record->Id = section.TableIdExtension;
     record->SourceId = (data[9] << 8) | data[10];
     record->EventId = (data[11] << 6) | (data[12] >> 2);
 
-    //LogDebug(L"ETT %d: extension ID = %d, protocol version = %hhu, version number = %d, section length = %d, source ID = %hu, event ID = %hu",
-    //          GetPid(), section.table_id_extension, protocolVersion,
-    //          section.version_number, section.section_length,
-    //          record->SourceId, record->EventId);
+    //LogDebug(L"ETT %d: extension ID = %hu, protocol version = %hhu, version number = %hhu, section length = %hu, source ID = %hu, event ID = %hu",
+    //          GetPid(), section.TableIdExtension, protocolVersion,
+    //          section.VersionNumber, section.SectionLength, record->SourceId,
+    //          record->EventId);
 
-    if (section.section_length - 14 > 0)
+    if (section.SectionLength - 14 > 0)
     {
       if (!CTextUtil::AtscScteMultipleStringStructureToStrings(&data[13],
-                                                                section.section_length - 14,
+                                                                section.SectionLength - 14,
                                                                 record->Texts))
       {
-        LogDebug(L"ETT %d: invalid section, section length = %d, extension ID = %d, protocol version = %hhu, version number = %d, source ID = %hu, event ID = %hu",
-                  GetPid(), section.section_length, section.table_id_extension,
-                  protocolVersion, section.version_number, record->SourceId,
+        LogDebug(L"ETT %d: invalid section, section length = %hu, extension ID = %hu, protocol version = %hhu, version number = %hhu, source ID = %hu, event ID = %hu",
+                  GetPid(), section.SectionLength, section.TableIdExtension,
+                  protocolVersion, section.VersionNumber, record->SourceId,
                   record->EventId);
         delete record;
         return;
       }
       if (record->Texts.size() == 0)
       {
-        LogDebug(L"ETT %d: failed to allocate event texts, section length = %d, extension ID = %d, protocol version = %hhu, version number = %d, source ID = %hu, event ID = %hu",
-                  GetPid(), section.section_length, section.table_id_extension,
-                  protocolVersion, section.version_number, record->SourceId,
+        LogDebug(L"ETT %d: failed to allocate event texts, section length = %hu, extension ID = %hu, protocol version = %hhu, version number = %hhu, source ID = %hu, event ID = %hu",
+                  GetPid(), section.SectionLength, section.TableIdExtension,
+                  protocolVersion, section.VersionNumber, record->SourceId,
                   record->EventId);
         delete record;
         return;

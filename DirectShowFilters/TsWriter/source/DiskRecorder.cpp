@@ -555,7 +555,7 @@ void CDiskRecorder::GetTimeShiftingFilePosition(unsigned long long& position,
   bufferId = 0;
 }
 
-void CDiskRecorder::OnTsPacket(const CTsHeader& header, unsigned char* tsPacket)
+void CDiskRecorder::OnTsPacket(const CTsHeader& header, const unsigned char* tsPacket)
 {
   try
   {
@@ -690,7 +690,7 @@ void CDiskRecorder::OnTsPacket(const CTsHeader& header, unsigned char* tsPacket)
 }
 
 bool CDiskRecorder::CheckDiscontinuityFlag(const CTsHeader& header,
-                                            unsigned char* tsPacket)
+                                            const unsigned char* tsPacket)
 {
   if (
     header.AdaptionFieldLength == 0 ||

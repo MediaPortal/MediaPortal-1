@@ -44,7 +44,7 @@ class CParserEam
 
     void Reset();
     void SetCallBack(ICallBackEam* callBack);
-    void OnNewSection(CSection& section);
+    void OnNewSection(const CSection& section);
 
     bool GetLatestMessage(unsigned short& id,
                           unsigned long& originatorCode,
@@ -294,14 +294,14 @@ class CParserEam
         vector<unsigned long> AlternativeExceptions;  // in band exception channels descriptor: RF channel [8 bits] | program number [16 bits]
     };
 
-    static bool DecodeInBandDetailsChannelDescriptor(unsigned char* data,
+    static bool DecodeInBandDetailsChannelDescriptor(const unsigned char* data,
                                                       unsigned char dataLength,
                                                       unsigned char& rfChannel,
                                                       unsigned short& programNumber);
-    static bool DecodeInBandExceptionChannelDescriptor(unsigned char* data,
+    static bool DecodeInBandExceptionChannelDescriptor(const unsigned char* data,
                                                         unsigned char dataLength,
                                                         vector<unsigned long>& channels);
-    static bool DecodeAudioFileDescriptor(unsigned char* data, unsigned char dataLength);
+    static bool DecodeAudioFileDescriptor(const unsigned char* data, unsigned char dataLength);
 
     CCriticalSection m_section;
     unsigned short m_pid;
