@@ -28,10 +28,10 @@ class CTsHeader
     virtual ~CTsHeader();
 
     void Decode(unsigned char* data);
-    void LogHeader();
-    bool PayLoadOnly();
-    bool AdaptionFieldOnly();
-    bool AdaptionFieldAndPayLoad();
+    void LogHeader() const;
+    bool PayLoadOnly() const;
+    bool AdaptionFieldOnly() const;
+    bool AdaptionFieldAndPayLoad() const;
 
     unsigned char SyncByte;
     bool TransportError;

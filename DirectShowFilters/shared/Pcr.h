@@ -30,8 +30,8 @@ public:
   CPcr(const CPcr& pcr);
   virtual ~CPcr();
   void   Reset();
-  void   Decode(unsigned char* data);
-  static bool DecodeFromPesHeader(unsigned char* pesHeader,int payloadStart,CPcr& pts, CPcr& dts);
+  void   Decode(const unsigned char* data);
+  static bool DecodeFromPesHeader(const unsigned char* pesHeader,int payloadStart,CPcr& pts, CPcr& dts);
   void   FromClock(double clock);
   double ToClock() const;
   void   Time(int& day, int& hour, int &minutes, int& seconds, int & millsecs);

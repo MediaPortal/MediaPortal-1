@@ -69,7 +69,7 @@ static unsigned long CRC_TABLE[256] =
   0xbcb4666d, 0xb8757bda, 0xb5365d03, 0xb1f740b4
 };
 
-unsigned long CalculatCrc32(unsigned char* data, unsigned short dataLength)
+unsigned long CalculatCrc32(const unsigned char* data, unsigned short dataLength)
 {
   unsigned long crc = 0xffffffff;
   register unsigned short i;

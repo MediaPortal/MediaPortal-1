@@ -213,7 +213,7 @@ class CPidTable
     virtual ~CPidTable();
 
     void Reset();
-    void LogPids();
+    void LogPids() const;
 
     static const wchar_t* StreamFormatAsString(unsigned char streamType);
     static bool IsVideoStream(unsigned char streamType);

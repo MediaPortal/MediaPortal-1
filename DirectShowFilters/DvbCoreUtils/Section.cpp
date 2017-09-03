@@ -99,12 +99,12 @@ unsigned short CSection::AppendData(const unsigned char* data, unsigned long dat
   return copyByteCount;
 }
 
-bool CSection::IsComplete()
+bool CSection::IsComplete() const
 {
   return section_length != SECTION_LENGTH_NOT_SET && BufferPos >= section_length + 3;
 }
 
-bool CSection::IsValid()
+bool CSection::IsValid() const
 {
   unsigned long crc = 0;
   // With a few exceptions, only sections with the syntax indicator set have a
@@ -118,7 +118,7 @@ bool CSection::IsValid()
   {
     // Is the CRC actually populated? Some providers fill the CRC with
     // zeroes or ones instead of setting it correctly.
-    unsigned char* crcPointer = &(Data[section_length - 1]);
+    const unsigned char* crcPointer = &(Data[section_length - 1]);
     if (
       (*crcPointer != 0 && *crcPointer != 0xff) ||
       *crcPointer != *(crcPointer + 1) ||

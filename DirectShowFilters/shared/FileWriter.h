@@ -45,13 +45,13 @@ class FileWriter
     HRESULT OpenFile(const wchar_t* fileName, bool isLoggingEnabled);
     HRESULT CloseFile();
 
-    HRESULT Write(unsigned char* data, unsigned long dataLength);
-    HRESULT Write(unsigned char* data, unsigned long dataLength, bool isErrorLoggingEnabled);
+    HRESULT Write(const unsigned char* data, unsigned long dataLength);
+    HRESULT Write(const unsigned char* data, unsigned long dataLength, bool isErrorLoggingEnabled);
 
-    bool IsFileOpen();
+    bool IsFileOpen() const;
 
     HRESULT SetFilePointer(unsigned long long pointer, bool isErrorLoggingEnabled);
-    HRESULT GetFilePointer(unsigned long long& pointer, bool isErrorLoggingEnabled);
+    HRESULT GetFilePointer(unsigned long long& pointer, bool isErrorLoggingEnabled) const;
 
     void SetReservationConfiguration(unsigned long long reservationChunkSize);
 
@@ -68,7 +68,7 @@ class FileWriter
           }
         }
 
-        static CWriteBuffer* CreateBuffer(unsigned char* data,
+        static CWriteBuffer* CreateBuffer(const unsigned char* data,
                                           unsigned long dataSize,
                                           HRESULT& hr)
         {
@@ -80,7 +80,7 @@ class FileWriter
           return CreateBuffer(NULL, 0, position, hr);
         }
 
-        unsigned char* Buffer() const
+        const unsigned char* Buffer() const
         {
           return m_buffer;
         }
@@ -120,7 +120,7 @@ class FileWriter
           m_retryCount = 0;
         }
 
-        static CWriteBuffer* CreateBuffer(unsigned char* data,
+        static CWriteBuffer* CreateBuffer(const unsigned char* data,
                                           unsigned long dataSize,
                                           long long position,
                                           HRESULT& hr)
@@ -169,12 +169,12 @@ class FileWriter
     HRESULT OpenFile(const wchar_t* fileName, bool isLoggingEnabled, bool isPartFile);
     HRESULT CloseFile(bool isPartFile);
 
-    HRESULT WriteInternal(unsigned char* data,
+    HRESULT WriteInternal(const unsigned char* data,
                           unsigned long dataLength,
                           bool isErrorLoggingEnabled,
                           bool isRecursive);
 
-    HRESULT GetFilePointerInternal(unsigned long long& pointer, bool isErrorLoggingEnabled);
+    HRESULT GetFilePointerInternal(unsigned long long& pointer, bool isErrorLoggingEnabled) const;
     HRESULT SetFilePointer(long long distanceToMove, DWORD moveMethod, bool isErrorLoggingEnabled);
 
     static bool __cdecl AsyncThreadFunction(void* arg);

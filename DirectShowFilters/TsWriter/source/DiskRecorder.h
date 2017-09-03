@@ -37,8 +37,8 @@ using namespace MediaPortal;
 using namespace std;
 
 
-#define MAX_TS_PACKET_QUEUE 4
-#define MAX_PES_HEADER_BYTES 19     // The maximum number of bytes required to hold the contents of a PES packet up to and including the last DTS byte.
+#define MAX_TS_PACKET_QUEUE         4
+#define MAX_PES_HEADER_BYTE_COUNT   19    // The maximum number of bytes required to hold the contents of a PES packet up to and including the last DTS byte.
 
 class CDiskRecorder
 {
@@ -46,11 +46,11 @@ class CDiskRecorder
     CDiskRecorder(RecorderMode mode);
     ~CDiskRecorder();
   
-    HRESULT SetPmt(unsigned char* pmt,
+    HRESULT SetPmt(const unsigned char* pmt,
                     unsigned short pmtSize,
                     bool isDynamicPmtChange);
     void SetObserver(IChannelObserver* observer);
-    HRESULT SetFileName(wchar_t* fileName);
+    HRESULT SetFileName(const wchar_t* fileName);
     HRESULT Start();
     void Pause(bool isPause);
     void GetStreamQualityCounters(unsigned long long& countTsPackets,
@@ -67,7 +67,7 @@ class CDiskRecorder
                                     unsigned long long& fileSizeBytes);
     void GetTimeShiftingFilePosition(unsigned long long& position, unsigned long& bufferId);
 
-    void OnTsPacket(CTsHeader& header, unsigned char* tsPacket);
+    void OnTsPacket(const CTsHeader& header, unsigned char* tsPacket);
 
   private:
     typedef struct
@@ -75,49 +75,73 @@ class CDiskRecorder
       public:
         unsigned short OriginalPid;
         unsigned short FakePid;
-        bool IsStillPresent;
-        bool SeenStart;
+        unsigned char StreamType;
+        bool IsSeen;
+        bool IsStartSeen;
         unsigned char PrevContinuityCounter;
 
-        // Used to patch and/or generate PCR.
-        // The main purpose is to be able to reassemble PES packet headers which
-        // are split over multiple TS packets.
+        // Used to patch PTS and/or DTS.
+        // 1. A PES packet header is built up in PesHeader from the TS packets
+        // in TsPacketQueue. Refer to GetPesHeader().
+        // 2. Any PTS and DTS in the PES packet header is patched based on PCR
+        // information. Refer to PatchPtsDts().
+        // 3. The PES packet header is written back into the TS packets in
+        // TsPacketQueue. Refer to UpdatePesHeader().
+        // 4. Finally, the TS packets in TsPacketQueue are written to file.
+        // This process may seem overly convoluted. Unfortunately the
+        // complication is necessary. It's necessary because PES packets may be
+        // split over TS packets due to the presence of adaptation fields.
         unsigned char TsPacketQueueLength;
         unsigned char TsPacketQueue[MAX_TS_PACKET_QUEUE][TS_PACKET_LEN];
         unsigned char TsPacketPayloadStartQueue[MAX_TS_PACKET_QUEUE];
-        unsigned char PesHeader[MAX_PES_HEADER_BYTES];
-        unsigned short PesHeaderLength;
+        unsigned char PesHeader[MAX_PES_HEADER_BYTE_COUNT];
+        unsigned short PesHeaderByteCount;
 
         long long PrevPts;
         clock_t PrevPtsTimeStamp;
         long long PrevDts;
         clock_t PrevDtsTimeStamp;
-    }PidInfo;
+    } PidInfo;
+
+    bool CheckDiscontinuityFlag(const CTsHeader& header, unsigned char* tsPacket);
+    bool IsVideoOrAudioSeen(const CTsHeader& header, const PidInfo* pidInfo);
+    bool ConfirmAudioStreams(PidInfo* pidInfo);
+    void CheckContinuityCounter(const CTsHeader& header,
+                                PidInfo& pidInfo,
+                                bool isExpectingJump);
+    bool StartStream(const CTsHeader& header, PidInfo& pidInfo);
 
     void WriteLog(const wchar_t* fmt, ...);
 
-    void WritePacket(unsigned char* tsPacket);
-    void WritePacketDirect(unsigned char* tsPacket);
+    void WritePacket(const unsigned char* tsPacket);
+    void WritePacketDirect(const unsigned char* tsPacket);
 
     void CreateFakePat();
-    void CreateFakePmt(CPidTable& pidTable);
-    void ClearPids();
-    void AddPidToPmt(BasePid* pid,
-                      const string& pidType,
-                      unsigned short& nextFakePid,
-                      unsigned short& pmtOffset);
+    void CreateFakePmt();
+    void AddPidToPmt(const BasePid* pid, unsigned short fakePid, unsigned short& pmtOffset);
     void WriteFakeServiceInfo();
+
+    void UpdatePids(const CPidTable& pidTable);
+    void ClearPids();
+    bool AddPid(const BasePid* pid,
+                const string& pidType,
+                unsigned short& nextFakePid);
 
     bool ReadParameters();
     void WriteParameters();
 
-    void InjectPcrFromPts(PidInfo& info);
-    void PatchPcr(unsigned char* tsPacket, CTsHeader& header);
-    void HandlePcrInstability(CPcr& pcrNew, long long pcrChange);
-    void PatchPtsDts(unsigned char* tsPacket, PidInfo& pidInfo);
+    bool HandlePcr(const CTsHeader& header, unsigned short fakePid, unsigned char* tsPacket);
+    void InjectPcrFromPts(const unsigned char* pesHeader);
+    void PatchPcr(const CPcr& pcrNew, unsigned char* tsPacket);
+    void HandlePcrInstability(const CPcr& pcrNew, long long pcrChange);
+    void PatchPtsDts(PidInfo& pidInfo);
 
-    static unsigned char GetPesHeader(unsigned char* tsPacket, CTsHeader& header, PidInfo& info);
-    static void UpdatePesHeader(PidInfo& info);
+    static void GetPesHeader(const unsigned char* tsPacket,
+                              const CTsHeader& header,
+                              PidInfo& pidInfo,
+                              bool& isMoreDataNeeded,
+                              bool& isPtsOrDtsPresent);
+    static void UpdatePesHeader(PidInfo& pidInfo);
     static long long PcrDifference(long long newTs, long long prevTs);
     static void SetPcrBase(unsigned char* tsPacket, long long pcrBaseValue);
 
@@ -128,6 +152,8 @@ class CDiskRecorder
     map<unsigned short, PidInfo*> m_pids;
     IChannelObserver* m_observer;
     clock_t m_videoAudioStartTimeStamp;
+    bool m_confirmAudioStreams;
+    bool m_isAudioConfirmed;
 
     unsigned long long m_tsPacketCount;
     unsigned long long m_discontinuityCount;
@@ -156,11 +182,12 @@ class CDiskRecorder
     unsigned char m_serviceInfoPacketCounter;
 
     // PCR.
-    unsigned short m_originalPcrPid;
-    unsigned short m_substitutePcrSourcePid;
-    unsigned short m_fakePcrPid;
+    unsigned short m_originalPcrPid;          // The PID in the input transport stream that contains PCR.
+    unsigned short m_substitutePcrSourcePid;  // The audio PID in the input transport stream from which PCR is generated when PCR is generated from PTS.
+    unsigned short m_fakePcrPid;              // The PID in the output transport stream that contains PCR.
+    unsigned short m_fakePcrOriginalPid;      // The PID in the input transport stream associated with the fake PCR PID. This is usually but not always the same as m_originalPcrPid.
     bool m_waitingForPcr;
-    bool m_generatePcrFromPts;                // Used in the [rare] case that the stream does not contain PCR.
+    bool m_generatePcrFromPts;                // Used in the [rare] case that the input transport stream does not contain PCR.
     CPcr m_prevPcr;
     clock_t m_prevPcrReceiveTimeStamp;
     double m_averagePcrIncrement;             // Average difference between PCR values. PCR frequency/timing is assumed to be regular.

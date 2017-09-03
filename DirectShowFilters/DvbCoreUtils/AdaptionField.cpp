@@ -40,7 +40,7 @@
 CAdaptionField::CAdaptionField()
 {
 }
-CAdaptionField::CAdaptionField(CTsHeader& header, byte* tsPacket)
+CAdaptionField::CAdaptionField(const CTsHeader& header, const byte* tsPacket)
 {
 	Decode(header,tsPacket);
 }
@@ -49,7 +49,7 @@ CAdaptionField::~CAdaptionField(void)
 {
 }
 
-void CAdaptionField::Decode(CTsHeader& header,byte* tsPacket)
+void CAdaptionField::Decode(const CTsHeader& header, const byte* tsPacket)
 {
   if (header.PayLoadOnly() || tsPacket[ADAPTION_FIELD_LENGTH_OFFSET] < 7) 
   {

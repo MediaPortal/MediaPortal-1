@@ -81,12 +81,14 @@ HRESULT FileWriter::CloseFile()
   return CloseFile(false);
 }
 
-HRESULT FileWriter::Write(unsigned char* data, unsigned long dataLength)
+HRESULT FileWriter::Write(const unsigned char* data, unsigned long dataLength)
 {
   return Write(data, dataLength, true);
 }
 
-HRESULT FileWriter::Write(unsigned char* data, unsigned long dataLength, bool isErrorLoggingEnabled)
+HRESULT FileWriter::Write(const unsigned char* data,
+                          unsigned long dataLength,
+                          bool isErrorLoggingEnabled)
 {
   if (!m_isFileOpen)
   {
@@ -116,7 +118,7 @@ HRESULT FileWriter::Write(unsigned char* data, unsigned long dataLength, bool is
   return EnqueueBuffer(buffer, isErrorLoggingEnabled);
 }
 
-bool FileWriter::IsFileOpen()
+bool FileWriter::IsFileOpen() const
 {
   return m_isFileOpen;
 }
@@ -151,7 +153,7 @@ HRESULT FileWriter::SetFilePointer(unsigned long long pointer, bool isErrorLoggi
   return EnqueueBuffer(buffer, isErrorLoggingEnabled);
 }
 
-HRESULT FileWriter::GetFilePointer(unsigned long long& pointer, bool isErrorLoggingEnabled)
+HRESULT FileWriter::GetFilePointer(unsigned long long& pointer, bool isErrorLoggingEnabled) const
 {
   if (m_useAsyncAccess)
   {
@@ -391,7 +393,7 @@ HRESULT FileWriter::CloseFile(bool isPartFile)
   return hr;
 }
 
-HRESULT FileWriter::WriteInternal(unsigned char* data,
+HRESULT FileWriter::WriteInternal(const unsigned char* data,
                                   unsigned long dataLength,
                                   bool isErrorLoggingEnabled,
                                   bool isRecursive)
@@ -510,7 +512,7 @@ HRESULT FileWriter::WriteInternal(unsigned char* data,
   return S_OK;
 }
 
-HRESULT FileWriter::GetFilePointerInternal(unsigned long long& pointer, bool isErrorLoggingEnabled)
+HRESULT FileWriter::GetFilePointerInternal(unsigned long long& pointer, bool isErrorLoggingEnabled) const
 {
   pointer = 0;
   LARGE_INTEGER temp;
@@ -650,7 +652,7 @@ void FileWriter::WriteNextAsyncBuffer()
                         SUCCEEDED(m_asyncAccessResult) && !buffer->IsRetry());
   }
 
-  unsigned char* data = buffer->Buffer();
+  const unsigned char* data = buffer->Buffer();
   if (SUCCEEDED(hr) && data != NULL)
   {
     hr = WriteInternal(data,

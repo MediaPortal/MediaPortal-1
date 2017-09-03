@@ -20,4 +20,4 @@
  */
 #pragma once
 
-unsigned long CalculatCrc32(unsigned char* data, unsigned short dataLength);
+unsigned long CalculatCrc32(const unsigned char* data, unsigned short dataLength);

@@ -56,7 +56,7 @@ void CPidTable::Reset()
   }
 }
 
-void CPidTable::LogPids()
+void CPidTable::LogPids() const
 {
   LogDebug(L"  program = %hu", ProgramNumber);
   LogDebug(L"  PMT PID = %hu, version = %hhu", PmtPid, PmtVersion);

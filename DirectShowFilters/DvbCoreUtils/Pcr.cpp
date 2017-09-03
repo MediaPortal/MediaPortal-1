@@ -69,7 +69,7 @@ void CPcr::Reset()
   PcrReferenceExtension=0LL;
 }
 
-void CPcr::Decode(unsigned char* data)
+void CPcr::Decode(const unsigned char* data)
 {
   // pcr reference base       33 bits  [0]      [1]        [2]     [3]     [4]     [5] 
   // reserved                  6 bits pppppppp-pppppppp-pppppppp-pppppppp-prrrrrre-eeeeeeee
@@ -87,7 +87,7 @@ void CPcr::Decode(unsigned char* data)
 	IsValid=true;
 }
 
-bool CPcr::DecodeFromPesHeader(unsigned char* pesHeader,int payloadStart,CPcr& pts, CPcr& dts)
+bool CPcr::DecodeFromPesHeader(const unsigned char* pesHeader,int payloadStart,CPcr& pts, CPcr& dts)
 {
   pts.Reset();
 	dts.Reset();

@@ -41,17 +41,17 @@ CTsHeader::~CTsHeader(void)
 {
 }
 
-bool CTsHeader::PayLoadOnly()
+bool CTsHeader::PayLoadOnly() const
 {
   return (AdaptionControl==1);
 }
 
-bool CTsHeader::AdaptionFieldOnly()
+bool CTsHeader::AdaptionFieldOnly() const
 {
   return (AdaptionControl==2);
 }
 
-bool CTsHeader::AdaptionFieldAndPayLoad()
+bool CTsHeader::AdaptionFieldAndPayLoad() const
 {
   return (AdaptionControl==3);
 }
@@ -116,7 +116,7 @@ void CTsHeader::Decode(byte *data)
   }
 }
 
-void CTsHeader::LogHeader()
+void CTsHeader::LogHeader() const
 {
   LogDebug(L"tsheader:%02.2x%02.2x%02.2x%02.2x%02.2x%02.2x%02.2x%02.2x%02.2x%02.2x",
           m_packet[0],m_packet[1],m_packet[2],m_packet[3],m_packet[4],m_packet[5],m_packet[6],m_packet[7],m_packet[8],m_packet[9]);

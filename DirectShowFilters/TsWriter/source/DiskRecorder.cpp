@@ -52,25 +52,41 @@
 #define PROGRAM_NUMBER                    0x89
 
 #define CONTINUITY_COUNTER_NOT_SET        0xff
+#define STUFFING_BYTE                     0xff
 
 // TS header flags
-#define DISCONTINUITY_FLAG_BIT            0x80    // bitmask for the DISCONTINUITY flag
+#define TS_HEADER_BYTE_COUNT              4
+#define PAYLOAD_UNIT_START                0x40
+#define NOT_SCRAMBLED                     0x00
 #define ADAPTATION_ONLY                   0x20
+#define PAYLOAD_ONLY                      0x10
 
 // adaptation field flags
-#define ADAPTATION_FIELD_FLAG_OFFSET      5       // byte offset from the start of a TS packet to the adaption field flags byte
+#define ADAPTATION_FIELD_FLAG_OFFSET      5       // byte offset from the start of a TS packet to the adaptation field flags byte
+#define DISCONTINUITY_FLAG_BIT            0x80    // bitmask for the adaptation field DISCONTINUITY flag
 #define PCR_FLAG_BIT                      0x10    // bitmask for the PCR flag
 #define PCR_OFFSET                        6       // byte offset from the start of a TS packet to the start of the PCR field
-#define PCR_LENGTH                        6       // the length of the PCR field in bytes
+#define PCR_BYTE_COUNT                    6       // the number of bytes in (length of) the PCR field
 
-// PES header flags
+// PES header flags and fields
+#define PES_HEADER_STREAM_ID_OFFSET       3       // byte offset from the start of a PES packet to the stream ID
 #define PES_HEADER_ATTRIBUTES_OFFSET      6       // byte offset from the start of a PES packet to the attributes byte
 #define PES_HEADER_FLAG_OFFSET            7       // byte offset from the start of a PES packet to the flags byte
 #define PTS_FLAG_BIT                      0x80    // bitmask for the PTS flag
 #define DTS_FLAG_BIT                      0x40    // bitmask for the DTS flag
 #define PTS_OFFSET                        9       // byte offset from the start of a PES packet to the start of the PTS field
-#define PTS_OR_DTS_LENGTH                 5       // the length of the PTS (or DTS) field in bytes
-#define PTS_AND_DTS_LENGTH                10      // the length of the combined PTS/DTS field in bytes
+#define PTS_OR_DTS_BYTE_COUNT             5       // the number of bytes in (length of) the PTS (or DTS) field
+#define PTS_AND_DTS_BYTE_COUNT            10      // the number of bytes in (length of) the combined PTS/DTS field
+
+// PES packet stream IDs
+#define STREAM_ID_PROGRAM_STREAM_MAP      0xbc
+#define STREAM_ID_PADDING_STREAM          0xbe
+#define STREAM_ID_PRIVATE_STREAM_2        0xbf
+#define STREAM_ID_ECM                     0xf0
+#define STREAM_ID_EMM                     0xf1
+#define STREAM_ID_DSMCC                   0xf2
+#define STREAM_ID_H222_TYPE_E             0xf8
+#define STREAM_ID_PROGRAM_STREAM_DIR      0xff
 
 #define RECORD_BUFFER_SIZE                255680  // needs to be divisible by TS_PACKET_LEN
 #define PARAM_BUFFER_SIZE                 69      // (sizeof(unsigned char) * 5) + (sizeof(unsigned long) * 2) + (sizeof(unsigned long long) * 5) + (sizeof(long long) * 2)
@@ -107,8 +123,11 @@ CDiskRecorder::CDiskRecorder(RecorderMode mode)
   m_recorderMode = mode;
   m_isRunning = false;
   m_isDropping = false;
-
+  m_observer = NULL;
   m_videoAudioStartTimeStamp = -1;
+  m_confirmAudioStreams = mode == Record;
+  m_isAudioConfirmed = false;
+
   m_tsPacketCount = 0;
   m_discontinuityCount = 0;
   m_droppedByteCount = 0;
@@ -128,6 +147,7 @@ CDiskRecorder::CDiskRecorder(RecorderMode mode)
   m_originalPcrPid = 0;
   m_substitutePcrSourcePid = PID_NOT_SET;
   m_fakePcrPid = PID_PCR;
+  m_fakePcrOriginalPid = PID_NOT_SET;
   m_waitingForPcr = true;
   m_generatePcrFromPts = false;
   m_prevPcrReceiveTimeStamp = 0;
@@ -150,7 +170,6 @@ CDiskRecorder::CDiskRecorder(RecorderMode mode)
   m_timeShiftingParameters.ReservationChunkSize = m_timeShiftingParameters.MaximumFileSize;
 
   m_pmtParser.Reset();
-  m_observer = NULL;
 }
 
 CDiskRecorder::~CDiskRecorder()
@@ -165,7 +184,7 @@ CDiskRecorder::~CDiskRecorder()
   ClearPids();
 }
 
-HRESULT CDiskRecorder::SetPmt(unsigned char* pmt,
+HRESULT CDiskRecorder::SetPmt(const unsigned char* pmt,
                               unsigned short pmtSize,
                               bool isDynamicPmtChange)
 {
@@ -199,63 +218,53 @@ HRESULT CDiskRecorder::SetPmt(unsigned char* pmt,
     m_isWriteBufferThrottleFullyOpen = false;
     m_writeBufferThrottleStep = 0;
 
-    if (m_isRunning)
+    bool preservePcrConfig = true;
+    if (m_isRunning && isDynamicPmtChange)
     {
-      if (isDynamicPmtChange)
+      WriteLog(L"dynamic PMT change, program number = %hu, version = %hhu, PCR PID = %hu",
+                pidTable.ProgramNumber, pidTable.PmtVersion, pidTable.PcrPid);
+      if (m_originalPcrPid != pidTable.PcrPid)
       {
-        WriteLog(L"dynamic PMT change, program number = %hu, version = %hhu, PCR PID = %hu",
-                  pidTable.ProgramNumber, pidTable.PmtVersion,
-                  pidTable.PcrPid);
-        if (m_originalPcrPid != pidTable.PcrPid)
-        {
-          // If the PCR PID changed, treat this like a channel change.
-          m_videoAudioStartTimeStamp = clock();
-
-          m_originalPcrPid = pidTable.PcrPid;
-          m_substitutePcrSourcePid = PID_NOT_SET;
-          m_fakePcrPid = PID_PCR;
-          m_generatePcrFromPts = pidTable.PcrPid == 0x1fff;
-          m_waitingForPcr = true;
-        }
-      }
-      else
-      {
-        WriteLog(L"program change, program number = %hu, version = %hhu, PCR PID = %hu",
-                  pidTable.ProgramNumber, pidTable.PmtVersion,
-                  pidTable.PcrPid);
-        m_videoAudioStartTimeStamp = -1;
-        ClearPids();
-        // Keep statistics.
-        //m_tsPacketCount = 0;
-        //m_discontinuityCount = 0;
-        //m_droppedByteCount = 0;
-
-        m_nextFakePidVideo = PID_VIDEO_FIRST;
-        m_nextFakePidAudio = PID_AUDIO_FIRST;
-        m_nextFakePidSubtitles = PID_SUBTITLES_FIRST;
-        m_nextFakePidTeletext = PID_TELETEXT_FIRST;
-        m_nextFakePidVbi = PID_VBI_FIRST;
-
-        m_patVersion = (m_patVersion + 1) & 0xf;
-        CreateFakePat();
-
-        m_originalPcrPid = pidTable.PcrPid;
-        m_substitutePcrSourcePid = PID_NOT_SET;
-        m_fakePcrPid = PID_PCR;
-        m_generatePcrFromPts = m_originalPcrPid == 0x1fff;
-        m_waitingForPcr = true;
+        // If the PCR PID changed, treat this like a channel change.
+        preservePcrConfig = false;
+        m_videoAudioStartTimeStamp = clock();
       }
       m_pmtVersion = (m_pmtVersion + 1) & 0xf;
     }
     else
     {
-      WriteLog(L"program selection, program number = %hu, version = %hhu, PCR PID = %hu",
-                pidTable.ProgramNumber, pidTable.PmtVersion, pidTable.PcrPid);
+      preservePcrConfig = false;
+      if (m_isRunning)
+      {
+        WriteLog(L"program change, program number = %hu, version = %hhu, PCR PID = %hu",
+                  pidTable.ProgramNumber, pidTable.PmtVersion,
+                  pidTable.PcrPid);
+        m_patVersion = (m_patVersion + 1) & 0xf;
+        m_pmtVersion = (m_pmtVersion + 1) & 0xf;
+
+        // Keep statistics.
+        //m_tsPacketCount = 0;
+        //m_discontinuityCount = 0;
+        //m_droppedByteCount = 0;
+      }
+      else
+      {
+        WriteLog(L"program selection, program number = %hu, version = %hhu, PCR PID = %hu",
+                  pidTable.ProgramNumber, pidTable.PmtVersion, pidTable.PcrPid);
+        m_patContinuityCounter = CONTINUITY_COUNTER_NOT_SET;
+        m_patVersion = 0;
+        m_pmtContinuityCounter = CONTINUITY_COUNTER_NOT_SET;
+        m_pmtVersion = 0;
+        m_pcrCompensation = 0;
+
+        m_tsPacketCount = 0;
+        m_discontinuityCount = 0;
+        m_droppedByteCount = 0;
+      }
+
       m_videoAudioStartTimeStamp = -1;
       ClearPids();
-      m_tsPacketCount = 0;
-      m_discontinuityCount = 0;
-      m_droppedByteCount = 0;
+      m_writeBufferPosition = 0;
 
       m_nextFakePidVideo = PID_VIDEO_FIRST;
       m_nextFakePidAudio = PID_AUDIO_FIRST;
@@ -263,26 +272,20 @@ HRESULT CDiskRecorder::SetPmt(unsigned char* pmt,
       m_nextFakePidTeletext = PID_TELETEXT_FIRST;
       m_nextFakePidVbi = PID_VBI_FIRST;
 
-      m_patContinuityCounter = CONTINUITY_COUNTER_NOT_SET;
-      m_patVersion = 0;
       CreateFakePat();
-      m_pmtContinuityCounter = CONTINUITY_COUNTER_NOT_SET;
-      m_pmtVersion = 0;
+    }
 
+    if (!preservePcrConfig)
+    {
       m_originalPcrPid = pidTable.PcrPid;
       m_substitutePcrSourcePid = PID_NOT_SET;
       m_fakePcrPid = PID_PCR;
-      m_generatePcrFromPts = m_originalPcrPid == 0x1fff;
+      m_fakePcrOriginalPid = PID_NOT_SET;
+      m_generatePcrFromPts = pidTable.PcrPid == 0x1fff;
       m_waitingForPcr = true;
-      m_pcrCompensation = 0;
     }
 
-    //TODO should we really clear the write buffer in all cases?
-    m_writeBufferPosition = 0;
-    m_writeBufferThrottleStep = 0;
-    m_isWriteBufferThrottleFullyOpen = false;
-
-    CreateFakePmt(pidTable);
+    UpdatePids(pidTable);
     return S_OK;
   }
   catch (...)
@@ -298,7 +301,7 @@ void CDiskRecorder::SetObserver(IChannelObserver* observer)
   m_observer = observer;
 }
 
-HRESULT CDiskRecorder::SetFileName(wchar_t* fileName)
+HRESULT CDiskRecorder::SetFileName(const wchar_t* fileName)
 {
   try
   {
@@ -552,7 +555,7 @@ void CDiskRecorder::GetTimeShiftingFilePosition(unsigned long long& position,
   bufferId = 0;
 }
 
-void CDiskRecorder::OnTsPacket(CTsHeader& header, unsigned char* tsPacket)
+void CDiskRecorder::OnTsPacket(const CTsHeader& header, unsigned char* tsPacket)
 {
   try
   {
@@ -562,290 +565,329 @@ void CDiskRecorder::OnTsPacket(CTsHeader& header, unsigned char* tsPacket)
     }
 
     CEnterCriticalSection lock(m_section);
+    PidInfo* info = NULL;
     map<unsigned short, PidInfo*>::const_iterator it = m_pids.find(header.Pid);
     if (it != m_pids.end())
     {
-      if (header.TransportError)
-      {
-        WriteLog(L"PID %hu transport error flag set, signal quality problem?",
-                  header.Pid);
-        m_discontinuityCount++;
-        return;
-      }
-      bool expectingPcrOrContinuityCounterJump = false;
-      if (
-        header.AdaptionFieldLength > 0 &&
-        (tsPacket[ADAPTATION_FIELD_FLAG_OFFSET] & DISCONTINUITY_FLAG_BIT) != 0
-      )
-      {
-        expectingPcrOrContinuityCounterJump = true;
-        if (header.Pid == m_originalPcrPid)
-        {
-          WriteLog(L"PID %hu discontinuity flag set, expecting PCR and/or continuity counter jump",
-                    header.Pid);
-        }
-        else
-        {
-          WriteLog(L"PID %hu discontinuity flag set, expecting continuity counter jump",
-                    header.Pid);
-        }
-      }
-
-      // First requirement is that we see unencrypted video or audio. Note any
-      // packet that reaches us is not encrypted.
-      PidInfo& info = *(it->second);
-      if (m_videoAudioStartTimeStamp == -1)
-      {
-        if (
-          header.HasPayload &&
-          (
-            (info.FakePid & 0xff0) == PID_VIDEO_FIRST ||
-            (info.FakePid & 0xff0) == PID_AUDIO_FIRST
-          )
-        )
-        {
-          WriteLog(L"start of video and/or audio detected, wait for PCR");
-          m_videoAudioStartTimeStamp = clock();
-        }
-        else
-        {
-          return;
-        }
-      }
-
-      // Second and last requirement is that we see PCR.
-      // ISO/IEC 13818-1 says the maximum gap between PCR time-stamps is 100
-      // ms. If we've seen video/audio but then haven't seen PCR after 100 ms
-      // assume that we're going to have to generate PCR from PTS.
-      if (
-        m_waitingForPcr &&
-        !m_generatePcrFromPts &&
-        CTimeUtils::ElapsedMillis(m_videoAudioStartTimeStamp) > 100
-      )
-      {
-        WriteLog(L"PCR wait time limit reached, generate PCR from PTS");
-        m_generatePcrFromPts = true;
-        m_fakePcrPid = PID_PCR;
-      }
-
-      // Check the continuity counter is as expected. Do this here because
-      // below this clause we may block packets leading to false positive
-      // discontinuity detections.
-      if (info.PrevContinuityCounter != CONTINUITY_COUNTER_NOT_SET)
-      {
-        unsigned char expectedContinuityCounter = info.PrevContinuityCounter;
-        if (header.HasPayload)
-        {
-          expectedContinuityCounter = (info.PrevContinuityCounter + 1) & 0x0f;
-        }
-        if (header.ContinuityCounter != expectedContinuityCounter)
-        {
-          if (expectingPcrOrContinuityCounterJump)
-          {
-            WriteLog(L"PID %hu signaled discontinuity, value = %hhu, previous = %hhu",
-                      header.Pid, header.ContinuityCounter,
-                      info.PrevContinuityCounter);
-          }
-          else
-          {
-            m_discontinuityCount++;
-            WriteLog(L"PID %hu unsignaled discontinuity, value = %hhu, previous = %hhu, expected = %hhu, count = %llu, signal quality, descrambling, or HDD load problem?",
-                      header.Pid, header.ContinuityCounter,
-                      info.PrevContinuityCounter, expectedContinuityCounter,
-                      m_discontinuityCount);
-          }
-        }
-      }
-      info.PrevContinuityCounter = header.ContinuityCounter;
-
-      // Should we take a closer look at this packet?
-      if (!info.SeenStart)
-      {
-        // When waiting for PCR, don't let the packet through unless it might
-        // contain the PCR (or PTS) that we're waiting for.
-        // Otherwise, don't let the packet through unless it contains the start
-        // of a payload. We make an exception for the PCR stream because
-        // stopping those packets might create discontinuities (there is no
-        // gurantee that the first PCR was in a TS packet containing the start
-        // of a PES packet).
-        if (
-          (
-            !m_waitingForPcr &&
-            !header.PayloadUnitStart &&
-            (
-              (!m_generatePcrFromPts && header.Pid != m_originalPcrPid) ||
-              (m_generatePcrFromPts && header.Pid != m_substitutePcrSourcePid)
-            )
-          ) ||
-          (
-            m_waitingForPcr &&
-            (
-              (!m_generatePcrFromPts && header.Pid != m_originalPcrPid) ||
-              (m_generatePcrFromPts && (info.FakePid & 0xff0) != PID_AUDIO_FIRST)
-            )
-          )
-        )
-        {
-          return;
-        }
-
-        if (!m_waitingForPcr && header.PayloadUnitStart)
-        {
-          info.SeenStart = true;
-          CPidTable& pidTable = m_pmtParser.GetPidInfo();
-          bool foundPid = false;
-          for (vector<VideoPid*>::const_iterator it2 = pidTable.VideoPids.begin(); it2 != pidTable.VideoPids.end(); it2++)
-          {
-            if ((*it2)->Pid == info.OriginalPid)
-            {
-              foundPid = true;
-              WriteLog(L"PID %hu start of video detected", info.OriginalPid);
-              if (m_observer != NULL)
-              {
-                m_observer->OnSeen(info.OriginalPid, (unsigned long)Video);
-              }
-              break;
-            }
-          }
-          if (!foundPid)
-          {
-            for (vector<AudioPid*>::const_iterator it2 = pidTable.AudioPids.begin(); it2 != pidTable.AudioPids.end(); it2++)
-            {
-              if ((*it2)->Pid == info.OriginalPid)
-              {
-                WriteLog(L"PID %hu start of audio detected", info.OriginalPid);
-                if (m_observer != NULL)
-                {
-                  m_observer->OnSeen(info.OriginalPid, (unsigned long)Audio);
-                }
-                break;
-              }
-            }
-          }
-        }
-      }
-
-      //-----------------------------------------------------------------------
-      // MAIN PCR HANDLING
-      // Normal PCR case: PCR time-stamps carried in a main stream, and not
-      // generating PCR from PTS.
-      unsigned char localTsPacket[TS_PACKET_LEN];
-      memcpy(localTsPacket, tsPacket, TS_PACKET_LEN);
-      if (!m_generatePcrFromPts && header.Pid == m_originalPcrPid)
-      {
-        // Overwrite the PCR time-stamps.
-        PatchPcr(localTsPacket, header);
-      }
-      // Corner PCR case: undesirable PCR time-stamps.
-      else if (
-        info.FakePid == m_fakePcrPid &&
-        header.HasAdaptionField &&
-        header.AdaptionFieldLength >= 1 + PCR_LENGTH &&
-        (localTsPacket[ADAPTATION_FIELD_FLAG_OFFSET] & PCR_FLAG_BIT) != 0
-      )
-      {
-        // If we get to here then we've found a PCR time-stamp in a packet that
-        // is not expected to contain PCR time-stamps. That isn't a problem...
-        // unless this packet comes from the stream that we are *inserting* PCR
-        // time-stamps into. In that case a "rogue" PCR would create a random
-        // PCR discontinuity and so break TsReader's ability to skip,
-        // fast-forward and rewind. The solution is simple: remove this PCR!
-
-        // Clear the PCR flag.
-        localTsPacket[ADAPTATION_FIELD_FLAG_OFFSET] &= (~PCR_FLAG_BIT);
-        // Overwrite the PCR with the rest of the adaption field. The -1 is for the adaption field flag byte.
-        memcpy(&localTsPacket[PCR_OFFSET],
-                &tsPacket[PCR_OFFSET + PCR_LENGTH],
-                header.AdaptionFieldLength - PCR_LENGTH - 1);
-        // The end of the adaption field is now stuffing.
-        memset(&localTsPacket[PCR_OFFSET + header.AdaptionFieldLength - PCR_LENGTH - 1],
-                0xff,
-                PCR_LENGTH);
-      }
-      //-----------------------------------------------------------------------
-
-      // Should we process this packet?
-      if (m_waitingForPcr && !m_generatePcrFromPts) 
-      {
-        return; // No, still waiting for PCR.
-      }
-
-      // Yes. Overwrite the PID.
-      localTsPacket[1] = (localTsPacket[1] & 0xe0) + ((info.FakePid >> 8) & 0x1f);
-      localTsPacket[2] = info.FakePid & 0xff;
-
-      if (!header.PayloadUnitStart && info.TsPacketQueueLength == 0)
-      {
-        WritePacket(localTsPacket);
-        return;
-      }
-
-      unsigned char result = GetPesHeader(localTsPacket, header, info);
-      if (result == 2)
-      {
-        return; // Need more bytes to complete the PES header.
-      }
-
-      if (result == 1)
-      {
-        // Found PTS and maybe DTS.
-        if (m_generatePcrFromPts)
-        {
-          InjectPcrFromPts(info);
-        }
-        if (!m_waitingForPcr)
-        {
-          PatchPtsDts(info.PesHeader, info);
-          UpdatePesHeader(info);
-        }
-      }
-      unsigned char i = 0;
-      do
-      {
-        WritePacket(&info.TsPacketQueue[i++][0]);
-      }
-      while (--info.TsPacketQueueLength);
+      info = it->second;
+    }
+    else if (header.Pid != m_originalPcrPid || m_generatePcrFromPts)
+    {
+      // No interest in these packets.
       return;
     }
 
-    //-------------------------------------------------------------------------
-    // ALTERNATE PCR HANDLING
-    // Handling for PCR time-stamps when they are *not* carried in one of the
-    // main streams.
-    if (
-      header.Pid == m_originalPcrPid &&
-      !m_generatePcrFromPts &&
-      m_videoAudioStartTimeStamp != -1 &&
-      header.HasAdaptionField &&
-      header.AdaptionFieldLength >= 1 + PCR_LENGTH &&
-      (tsPacket[ADAPTATION_FIELD_FLAG_OFFSET] & PCR_FLAG_BIT) != 0
-    )
+    if (header.TransportError)
     {
-      // Patch the PCR.
-      unsigned char localTsPacket[TS_PACKET_LEN];
-      memcpy(localTsPacket, tsPacket, TS_PACKET_LEN);
-      PatchPcr(localTsPacket, header);
+      WriteLog(L"PID %hu transport error flag set, signal quality problem?",
+                header.Pid);
+      m_discontinuityCount++;
+      return;
+    }
+    bool isExpectingPcrOrContinuityCounterJump = CheckDiscontinuityFlag(header, tsPacket);
 
+    // Requirement #1: unencrypted video or audio must be seen.
+    // A file that doesn't contain video or audio is unplayable and pointless.
+    // Note any packet that reaches here is not encrypted by definition.
+    if (!IsVideoOrAudioSeen(header, info))
+    {
+      return;
+    }
+
+    // Requirement #2 [configurable/optional]: confirm audio streams for
+    //  accurate and stable PMT.
+    // In some cases the PMT declares streams that aren't actually available
+    // (ie. the packets aren't present in the stream). This can cause various
+    // down-stream problems. For example:
+    // https://forum.team-mediaportal.com/threads/tsreader-gets-stuck-when-audio-streams-are-advertised-in-pmt-but-not-found-in-stream.136842/
+    // Audio stream confirmation is a workaround. Any audio stream that is not
+    // seen within 100 ms (arbitrary) of seeing the first video/audio packet
+    // will be excluded from the down-stream PMT.
+    if (!ConfirmAudioStreams(info))
+    {
+      return;
+    }
+
+    // Check the continuity counter is as expected. Do this now because packets
+    // may be dropped after this, leading to false positive discontinuity
+    // detections.
+    unsigned short fakePid = PID_NOT_SET;
+    if (info != NULL)
+    {
+      fakePid = info->FakePid;
+      CheckContinuityCounter(header, *info, isExpectingPcrOrContinuityCounterJump);
+    }
+
+    // Requirement #3: PCR must be seen.
+    // Down-stream seek functions (skip, fast-forward, rewind) require PCR.
+    // PCR/PTS/DTS compensation and PCR smoothing also require an initial
+    // time-stamp. ISO/IEC 13818-1 says the maximum time between PCR deliveries
+    // should be 100 ms. If PCR isn't seen within 100 ms of the first
+    // video/audio packet, assume PCR must be generated from audio PTS.
+    unsigned char localTsPacket[TS_PACKET_LEN];
+    memcpy(localTsPacket, tsPacket, TS_PACKET_LEN);
+    if (!HandlePcr(header, fakePid, localTsPacket))
+    {
+      return;
+    }
+
+    // Requirement #4: sub-streams must be started cleanly.
+    // Start each sub-stream at the start of a PES packet. The sub-stream that
+    // carries PCR is the only exception (because there's no guarantee that the
+    // first PCR will coincide with the start of a PES packet).
+    PidInfo& infoRef = *info;
+    if (!StartStream(header, infoRef))
+    {
+      return;
+    }
+
+    // Overwrite the PID.
+    localTsPacket[1] = (localTsPacket[1] & 0xe0) | ((fakePid >> 8) & 0x1f);
+    localTsPacket[2] = fakePid & 0xff;
+
+    if (!header.PayloadUnitStart && infoRef.TsPacketQueueLength == 0)
+    {
       if (!m_waitingForPcr)
       {
-        // Overwrite the PID.
-        localTsPacket[1] = (m_fakePcrPid >> 8) & 0x1f;
-        localTsPacket[2] = m_fakePcrPid & 0xff;
-
-        // Hard-code the continuity counter and ensure any payload is ignored.
-        // Adaptation field control == adaptation field only, no payload.
-        localTsPacket[3] = ADAPTATION_ONLY;
-        localTsPacket[4] = TS_PACKET_LEN - 5;   // -4 for header, -1 for adaptation field length byte
-
         WritePacket(localTsPacket);
       }
+      return;
     }
-    //-------------------------------------------------------------------------
+
+    bool isMoreDataNeeded = false;
+    bool isPtsOrDtsPresent = false;
+    GetPesHeader(localTsPacket, header, infoRef, isMoreDataNeeded, isPtsOrDtsPresent);
+    if (isMoreDataNeeded)
+    {
+      return;
+    }
+
+    if (isPtsOrDtsPresent)
+    {
+      if (m_generatePcrFromPts && header.Pid == m_substitutePcrSourcePid)
+      {
+        InjectPcrFromPts(infoRef.PesHeader);
+      }
+      PatchPtsDts(infoRef);
+      UpdatePesHeader(infoRef);
+    }
+    else if (m_waitingForPcr)
+    {
+      infoRef.TsPacketQueueLength = 0;
+      return;
+    }
+    unsigned char i = 0;
+    do
+    {
+      WritePacket(&infoRef.TsPacketQueue[i++][0]);
+    }
+    while (--infoRef.TsPacketQueueLength);
   }
   catch (...)
   {
     WriteLog(L"unhandled exception in OnTsPacket()");
   }
+}
+
+bool CDiskRecorder::CheckDiscontinuityFlag(const CTsHeader& header,
+                                            unsigned char* tsPacket)
+{
+  if (
+    header.AdaptionFieldLength == 0 ||
+    (tsPacket[ADAPTATION_FIELD_FLAG_OFFSET] & DISCONTINUITY_FLAG_BIT) == 0
+  )
+  {
+    return false;
+  }
+
+  if (header.Pid == m_originalPcrPid)
+  {
+    WriteLog(L"PID %hu discontinuity flag set, expecting PCR and/or continuity counter jump",
+              header.Pid);
+  }
+  else
+  {
+    WriteLog(L"PID %hu discontinuity flag set, expecting continuity counter jump",
+              header.Pid);
+  }
+  return true;
+}
+
+bool CDiskRecorder::IsVideoOrAudioSeen(const CTsHeader& header,
+                                        const PidInfo* pidInfo)
+{
+  if (m_videoAudioStartTimeStamp == -1)
+  {
+    if (
+      !header.HasPayload ||
+      pidInfo == NULL ||
+      (
+        (pidInfo->FakePid & 0xff0) != PID_VIDEO_FIRST &&
+        (pidInfo->FakePid & 0xff0) != PID_AUDIO_FIRST
+      )
+    )
+    {
+      return false;
+    }
+
+    if (!m_confirmAudioStreams)
+    {
+      WriteLog(L"start of video and/or audio detected, wait for PCR");
+    }
+    else if (m_isAudioConfirmed)
+    {
+      WriteLog(L"start of video and/or audio detected, audio streams confirmed, wait for PCR");
+    }
+    else
+    {
+      WriteLog(L"start of video and/or audio detected, confirm audio streams");
+    }
+    m_videoAudioStartTimeStamp = clock();
+  }
+  return true;
+}
+
+bool CDiskRecorder::ConfirmAudioStreams(PidInfo* pidInfo)
+{
+  if (!m_confirmAudioStreams)
+  {
+    if (pidInfo != NULL)
+    {
+      pidInfo->IsSeen = true;
+    }
+    return true;
+  }
+
+  if (pidInfo != NULL && !pidInfo->IsSeen)
+  {
+    pidInfo->IsSeen = true;
+    if ((pidInfo->FakePid & 0xff0) == PID_AUDIO_FIRST)
+    {
+      // This is the first time we've seen this audio stream.
+      if (m_isAudioConfirmed)
+      {
+        WriteLog(L"missing audio stream has started, PID = %hu, fake PID = %hu",
+                  pidInfo->OriginalPid, pidInfo->FakePid);
+        CreateFakePmt();
+        return true;
+      }
+
+      // Have we seen all audio PIDs now?
+      m_isAudioConfirmed = true;
+      CPidTable& pidTable = m_pmtParser.GetPidInfo();
+      for (vector<AudioPid*>::const_iterator it = pidTable.AudioPids.begin(); it != pidTable.AudioPids.end(); it++)
+      {
+        PidInfo* audioPidInfo = m_pids[(*it)->Pid];
+        if (!audioPidInfo->IsSeen)
+        {
+          m_isAudioConfirmed = false;
+          break;
+        }
+      }
+    }
+  }
+
+  if (m_isAudioConfirmed)
+  {
+    return true;
+  }
+  if (CTimeUtils::ElapsedMillis(m_videoAudioStartTimeStamp) <= 100)
+  {
+    return false;
+  }
+
+  // Any audio PIDs that haven't been seen yet won't be included in the PMT for
+  // the output transport stream. The PMT can be updated as necessary if we see
+  // them later.
+  WriteLog(L"one or more audio streams defined in the original PMT are not actually present");
+  m_isAudioConfirmed = true;
+
+  // Reset the video/audio start time-stamp to ensure there's a fair chance for
+  // PCR to be received (PCR is expected within 100 ms of video/audio start).
+  m_videoAudioStartTimeStamp = clock();
+  return true;
+}
+
+void CDiskRecorder::CheckContinuityCounter(const CTsHeader& header,
+                                            PidInfo& pidInfo,
+                                            bool isExpectingJump)
+{
+  if (pidInfo.PrevContinuityCounter != CONTINUITY_COUNTER_NOT_SET)
+  {
+    unsigned char expectedContinuityCounter = pidInfo.PrevContinuityCounter;
+    if (header.HasPayload)
+    {
+      expectedContinuityCounter = (pidInfo.PrevContinuityCounter + 1) & 0x0f;
+    }
+    if (header.ContinuityCounter != expectedContinuityCounter)
+    {
+      if (isExpectingJump)
+      {
+        WriteLog(L"PID %hu signaled discontinuity, value = %hhu, previous = %hhu",
+                  header.Pid, header.ContinuityCounter,
+                  pidInfo.PrevContinuityCounter);
+        return;
+      }
+
+      m_discontinuityCount++;
+      WriteLog(L"PID %hu unsignaled discontinuity, value = %hhu, previous = %hhu, expected = %hhu, count = %llu, signal quality, descrambling, or HDD load problem?",
+                header.Pid, header.ContinuityCounter,
+                pidInfo.PrevContinuityCounter, expectedContinuityCounter,
+                m_discontinuityCount);
+    }
+  }
+  pidInfo.PrevContinuityCounter = header.ContinuityCounter;
+}
+
+bool CDiskRecorder::StartStream(const CTsHeader& header, PidInfo& pidInfo)
+{
+  if (pidInfo.IsStartSeen)
+  {
+    return true;
+  }
+  if (
+    !header.PayloadUnitStart &&
+    (
+      (!m_generatePcrFromPts && pidInfo.OriginalPid != m_originalPcrPid) ||
+      (m_generatePcrFromPts && pidInfo.OriginalPid != m_substitutePcrSourcePid)
+    )
+  )
+  {
+    return false;
+  }
+
+  pidInfo.IsStartSeen = true;
+  CPidTable& pidTable = m_pmtParser.GetPidInfo();
+  bool foundPid = false;
+  for (vector<VideoPid*>::const_iterator it = pidTable.VideoPids.begin(); it != pidTable.VideoPids.end(); it++)
+  {
+    if ((*it)->Pid == pidInfo.OriginalPid)
+    {
+      foundPid = true;
+      WriteLog(L"PID %hu start of video detected", pidInfo.OriginalPid);
+      if (m_observer != NULL)
+      {
+        m_observer->OnSeen(pidInfo.OriginalPid, (unsigned long)Video);
+      }
+      break;
+    }
+  }
+  if (!foundPid)
+  {
+    for (vector<AudioPid*>::const_iterator it = pidTable.AudioPids.begin(); it != pidTable.AudioPids.end(); it++)
+    {
+      if ((*it)->Pid == pidInfo.OriginalPid)
+      {
+        WriteLog(L"PID %hu start of audio detected", pidInfo.OriginalPid);
+        if (m_observer != NULL)
+        {
+          m_observer->OnSeen(pidInfo.OriginalPid, (unsigned long)Audio);
+        }
+        break;
+      }
+    }
+  }
+  return true;
 }
 
 void CDiskRecorder::WriteLog(const wchar_t* fmt, ...)
@@ -866,12 +908,8 @@ void CDiskRecorder::WriteLog(const wchar_t* fmt, ...)
   }
 }
 
-void CDiskRecorder::WritePacket(unsigned char* tsPacket)
+void CDiskRecorder::WritePacket(const unsigned char* tsPacket)
 {
-  if (m_waitingForPcr)
-  {
-    return;
-  }
   if (m_serviceInfoPacketCounter >= SERVICE_INFO_INJECT_RATE)
   {
     WriteFakeServiceInfo();
@@ -882,7 +920,7 @@ void CDiskRecorder::WritePacket(unsigned char* tsPacket)
   m_serviceInfoPacketCounter++;
 }
 
-void CDiskRecorder::WritePacketDirect(unsigned char* tsPacket)
+void CDiskRecorder::WritePacketDirect(const unsigned char* tsPacket)
 {
   try
   {
@@ -1028,7 +1066,7 @@ void CDiskRecorder::CreateFakePat()
   m_serviceInfoPacketCounter = SERVICE_INFO_INJECT_RATE;
 }
 
-void CDiskRecorder::CreateFakePmt(CPidTable& pidTable)
+void CDiskRecorder::CreateFakePmt()
 {
   m_fakePmt[0] = 0; // pointer
   m_fakePmt[1] = TABLE_ID_PMT;
@@ -1039,76 +1077,42 @@ void CDiskRecorder::CreateFakePmt(CPidTable& pidTable)
   m_fakePmt[6] = ((m_pmtVersion & 0x1f) << 1) | 0xc1;
   m_fakePmt[7] = 0; // section number - standard for PMT
   m_fakePmt[8] = 0; // last section number - standard for PMT
-  m_fakePmt[9] = 0; // PCR PID - we fill this once we know what the fake PID is
-  m_fakePmt[10] = 0;
+  m_fakePmt[9] = ((m_fakePcrPid >> 8) & 0x1f) | 0xe0;
+  m_fakePmt[10] = m_fakePcrPid & 0xff;
   m_fakePmt[11] = 0xf0; // program info length - we won't include program descriptors
   m_fakePmt[12] = 0;
-  unsigned short fakePmtOffset = 13;
-
-  // Mark all PIDs as not present so we can identify the PIDs that really
-  // aren't present after the loop.
-  map<unsigned short, PidInfo*>::iterator infoIt = m_pids.begin();
-  for ( ; infoIt != m_pids.end(); infoIt++)
-  {
-    (infoIt->second)->IsStillPresent = false;
-  }
 
   // Write the elementary stream section of the PMT.
+  unsigned short fakePmtOffset = 13;
+  CPidTable& pidTable = m_pmtParser.GetPidInfo();
   vector<VideoPid*>::const_iterator vPidIt = pidTable.VideoPids.begin();
   for ( ; vPidIt != pidTable.VideoPids.end(); vPidIt++)
   {
-    AddPidToPmt(*vPidIt, "video", m_nextFakePidVideo, fakePmtOffset);
+    AddPidToPmt(*vPidIt, m_pids[(*vPidIt)->Pid]->FakePid, fakePmtOffset);
   }
   vector<AudioPid*>::const_iterator aPidIt = pidTable.AudioPids.begin();
   for ( ; aPidIt != pidTable.AudioPids.end(); aPidIt++)
   {
-    AddPidToPmt(*aPidIt, "audio", m_nextFakePidAudio, fakePmtOffset);
+    PidInfo* info = m_pids[(*aPidIt)->Pid];
+    if (!m_confirmAudioStreams || info->IsSeen)
+    {
+      AddPidToPmt(*aPidIt, m_pids[(*aPidIt)->Pid]->FakePid, fakePmtOffset);
+    }
   }
   vector<SubtitlePid*>::const_iterator sPidIt = pidTable.SubtitlePids.begin();
   for ( ; sPidIt != pidTable.SubtitlePids.end(); sPidIt++)
   {
-    AddPidToPmt(*sPidIt, "subtitles", m_nextFakePidSubtitles, fakePmtOffset);
+    AddPidToPmt(*sPidIt, m_pids[(*sPidIt)->Pid]->FakePid, fakePmtOffset);
   }
   vector<TeletextPid*>::const_iterator tPidIt = pidTable.TeletextPids.begin();
   for ( ; tPidIt != pidTable.TeletextPids.end(); tPidIt++)
   {
-    AddPidToPmt(*tPidIt, "teletext", m_nextFakePidTeletext, fakePmtOffset);
+    AddPidToPmt(*tPidIt, m_pids[(*tPidIt)->Pid]->FakePid, fakePmtOffset);
   }
   vector<VbiPid*>::const_iterator vbiPidIt = pidTable.VbiPids.begin();
   for ( ; vbiPidIt != pidTable.VbiPids.end(); vbiPidIt++)
   {
-    AddPidToPmt(*tPidIt, "VBI", m_nextFakePidVbi, fakePmtOffset);
-  }
-
-  // All PIDs that are still marked as not present should be removed.
-  PidInfo* info = NULL;
-  infoIt = m_pids.begin();
-  while (infoIt != m_pids.end())
-  {
-    info = infoIt->second;
-    if (!info->IsStillPresent)
-    {
-      WriteLog(L"remove stream, PID = %hu, fake PID = %hu",
-                info->OriginalPid, info->FakePid);
-
-      // We lost our PTS source for PCR conversion.
-      if (m_generatePcrFromPts && info->OriginalPid == m_substitutePcrSourcePid)
-      {
-        WriteLog(L"unset PTS source PID");
-        m_substitutePcrSourcePid = PID_NOT_SET;
-      }
-
-      if (infoIt->second != NULL)
-      {
-        delete infoIt->second;
-        infoIt->second = NULL;
-      }
-      m_pids.erase(infoIt++);
-    }
-    else
-    {
-      infoIt++;
-    }
+    AddPidToPmt(*vbiPidIt, m_pids[(*vbiPidIt)->Pid]->FakePid, fakePmtOffset);
   }
 
   // Fill in the section length. At this point, fakePmtOffset is the length of what we've created.
@@ -1116,10 +1120,6 @@ void CDiskRecorder::CreateFakePmt(CPidTable& pidTable)
   // bytes, plus the four CRC bytes that we haven't yet written.
   m_fakePmt[2] = ((fakePmtOffset >> 8) & 0xf) | 0xb0;
   m_fakePmt[3] = fakePmtOffset & 0xff;
-
-  // Fill in the PCR PID.
-  m_fakePmt[9] = ((m_fakePcrPid >> 8) & 0x1f) | 0xe0;
-  m_fakePmt[10] = m_fakePcrPid & 0xff;
 
   // The CRC covers everything we've written so far, except the one pointer byte.
   unsigned long crc = CalculatCrc32(&m_fakePmt[1], fakePmtOffset - 1);
@@ -1129,6 +1129,165 @@ void CDiskRecorder::CreateFakePmt(CPidTable& pidTable)
   m_fakePmt[fakePmtOffset++] = crc & 0xff;
 
   m_serviceInfoPacketCounter = SERVICE_INFO_INJECT_RATE;
+}
+
+void CDiskRecorder::AddPidToPmt(const BasePid* pid,
+                                unsigned short fakePid,
+                                unsigned short& pmtOffset)
+{
+  m_fakePmt[pmtOffset++] = pid->StreamType;
+  m_fakePmt[pmtOffset++] = ((fakePid >> 8) & 0x1f) | 0xe0;
+  m_fakePmt[pmtOffset++] = fakePid & 0xff;
+  m_fakePmt[pmtOffset++] = ((pid->DescriptorsLength >> 8) & 0xf) | 0xf0;
+  m_fakePmt[pmtOffset++] = pid->DescriptorsLength & 0xff;
+  if (pid->DescriptorsLength != 0)
+  {
+    memcpy(&m_fakePmt[pmtOffset], pid->Descriptors, pid->DescriptorsLength);
+    pmtOffset += pid->DescriptorsLength;
+  }
+}
+
+void CDiskRecorder::WriteFakeServiceInfo()
+{
+  // PAT
+  unsigned char packet[TS_PACKET_LEN];
+  packet[0] = TS_PACKET_SYNC;
+  packet[1] = ((PID_PAT >> 8) & 0x1f) | PAYLOAD_UNIT_START;
+  packet[2] = PID_PAT & 0xff;
+  m_patContinuityCounter = (m_patContinuityCounter + 1) & 0xf;
+  packet[3] = NOT_SCRAMBLED | PAYLOAD_ONLY | m_patContinuityCounter;
+  unsigned short fakePatLength = 17;
+  memcpy(&packet[TS_HEADER_BYTE_COUNT], &m_fakePat[0], fakePatLength);
+  memset(&packet[TS_HEADER_BYTE_COUNT + fakePatLength],
+          STUFFING_BYTE,
+          TS_PACKET_LEN - TS_HEADER_BYTE_COUNT - fakePatLength);
+  WritePacketDirect(packet);
+
+  // PMT
+  unsigned short fakePmtLength = ((m_fakePmt[2] & 0xf) << 8) + m_fakePmt[3] + 4; // + 4 to include pointer byte, table ID and section length bytes
+  unsigned short pointer = 0;
+  packet[1] = ((PID_PMT >> 8) & 0x1f) | PAYLOAD_UNIT_START;
+  packet[2] = PID_PMT & 0xff;
+  unsigned char packetPayloadSize = TS_PACKET_LEN - TS_HEADER_BYTE_COUNT;
+  while (fakePmtLength > 0)
+  {
+    m_pmtContinuityCounter = (m_pmtContinuityCounter + 1) & 0xf;
+    packet[3] = NOT_SCRAMBLED | PAYLOAD_ONLY | m_pmtContinuityCounter;
+    if (fakePmtLength >= packetPayloadSize)
+    {
+      memcpy(&packet[TS_HEADER_BYTE_COUNT], &m_fakePmt[pointer], packetPayloadSize);
+      fakePmtLength -= packetPayloadSize;
+    }
+    else
+    {
+      memcpy(&packet[TS_HEADER_BYTE_COUNT], &m_fakePmt[pointer], fakePmtLength);
+      memset(&packet[TS_HEADER_BYTE_COUNT + fakePmtLength],
+              STUFFING_BYTE,
+              packetPayloadSize - fakePmtLength);
+      fakePmtLength = 0;
+    }
+    WritePacketDirect(packet);
+    pointer += packetPayloadSize;
+
+    packet[1] &= (~PAYLOAD_UNIT_START);   // unset payload unit start indicator
+  }
+}
+
+void CDiskRecorder::UpdatePids(const CPidTable& pidTable)
+{
+  // Record all PIDs that are currently present so we can identify any PIDs
+  // that have been removed.
+  map<unsigned short, bool> startingPids;
+  map<unsigned short, PidInfo*>::iterator infoIt = m_pids.begin();
+  for ( ; infoIt != m_pids.end(); infoIt++)
+  {
+    startingPids[infoIt->first] = false;
+  }
+
+  // Add new PIDs and update existing ones.
+  vector<VideoPid*>::const_iterator vPidIt = pidTable.VideoPids.begin();
+  for ( ; vPidIt != pidTable.VideoPids.end(); vPidIt++)
+  {
+    AddPid(*vPidIt, "video", m_nextFakePidVideo);
+    startingPids[(*vPidIt)->Pid] = true;
+  }
+
+  unsigned char unconfirmedAudioStreamCount = 0;
+  vector<AudioPid*>::const_iterator aPidIt = pidTable.AudioPids.begin();
+  for ( ; aPidIt != pidTable.AudioPids.end(); aPidIt++)
+  {
+    if (AddPid(*aPidIt, "audio", m_nextFakePidAudio))
+    {
+      m_isAudioConfirmed = false;
+      unconfirmedAudioStreamCount++;
+    }
+    startingPids[(*aPidIt)->Pid] = true;
+  }
+
+  vector<SubtitlePid*>::const_iterator sPidIt = pidTable.SubtitlePids.begin();
+  for ( ; sPidIt != pidTable.SubtitlePids.end(); sPidIt++)
+  {
+    AddPid(*sPidIt, "subtitles", m_nextFakePidSubtitles);
+    startingPids[(*sPidIt)->Pid] = true;
+  }
+  vector<TeletextPid*>::const_iterator tPidIt = pidTable.TeletextPids.begin();
+  for ( ; tPidIt != pidTable.TeletextPids.end(); tPidIt++)
+  {
+    AddPid(*tPidIt, "teletext", m_nextFakePidTeletext);
+    startingPids[(*tPidIt)->Pid] = true;
+  }
+  vector<VbiPid*>::const_iterator vbiPidIt = pidTable.VbiPids.begin();
+  for ( ; vbiPidIt != pidTable.VbiPids.end(); vbiPidIt++)
+  {
+    AddPid(*tPidIt, "VBI", m_nextFakePidVbi);
+    startingPids[(*vbiPidIt)->Pid] = true;
+  }
+
+  // Identify and remove the PIDs that have been removed.
+  PidInfo* info = NULL;
+  map<unsigned short, bool>::const_iterator pidIt = startingPids.begin();
+  for ( ; pidIt != startingPids.end(); pidIt++)
+  {
+    info = m_pids[pidIt->first];
+    if (!pidIt->second)
+    {
+      if (info != NULL)
+      {
+        WriteLog(L"remove stream, PID = %hu, fake PID = %hu, stream type = 0x%hhx",
+                  info->OriginalPid, info->FakePid, info->StreamType);
+
+        // We lost our PTS source for PCR conversion.
+        if (m_generatePcrFromPts && info->OriginalPid == m_substitutePcrSourcePid)
+        {
+          WriteLog(L"unset PCR-from-PTS source PID");
+          m_substitutePcrSourcePid = PID_NOT_SET;
+        }
+
+        delete info;
+      }
+
+      m_pids.erase(pidIt->first);
+    }
+    else if (
+      m_fakePcrOriginalPid == PID_NOT_SET &&
+      info->FakePid == m_fakePcrPid
+    )
+    {
+      WriteLog(L"non-PCR input PID coincidentally associated with PCR output PID, input PID = %hu, output PID = %hu",
+                info->OriginalPid, info->FakePid);
+      m_fakePcrOriginalPid = info->OriginalPid;
+    }
+  }
+
+  if (m_isAudioConfirmed)
+  {
+    WriteLog(L"all %llu audio streams are confirmed",
+              (unsigned long long)pidTable.AudioPids.size());
+    return;
+  }
+  WriteLog(L"%hhu of %llu audio streams are not confirmed",
+            unconfirmedAudioStreamCount,
+            (unsigned long long)pidTable.AudioPids.size());
 }
 
 void CDiskRecorder::ClearPids()
@@ -1145,11 +1304,11 @@ void CDiskRecorder::ClearPids()
   m_pids.clear();
 }
 
-void CDiskRecorder::AddPidToPmt(BasePid* pid,
-                                const string& pidType,
-                                unsigned short& nextFakePid,
-                                unsigned short& pmtOffset)
+bool CDiskRecorder::AddPid(const BasePid* pid,
+                            const string& pidType,
+                            unsigned short& nextFakePid)
 {
+  bool isNew = false;
   PidInfo* info = NULL;
   map<unsigned short, PidInfo*>::const_iterator infoIt = m_pids.find(pid->Pid);
   if (infoIt == m_pids.end())
@@ -1157,16 +1316,19 @@ void CDiskRecorder::AddPidToPmt(BasePid* pid,
     info = new PidInfo();
     if (info == NULL)
     {
-      WriteLog(L"failed to allocate PidInfo in AddPidToPmt()");
-      return;
+      WriteLog(L"failed to allocate PidInfo in AddPid()");
+      return isNew;
     }
 
+    isNew = true;
     info->OriginalPid = pid->Pid;
     info->FakePid = nextFakePid++;
-    info->SeenStart = false;
+    info->StreamType = pid->StreamType;
+    info->IsSeen = false;
+    info->IsStartSeen = false;
     info->PrevContinuityCounter = CONTINUITY_COUNTER_NOT_SET;
     info->TsPacketQueueLength = 0;
-    info->PesHeaderLength = 0;
+    info->PesHeaderByteCount = 0;
     info->PrevPts = -1;
     info->PrevPtsTimeStamp = 0;
     info->PrevDts = -1;
@@ -1184,64 +1346,13 @@ void CDiskRecorder::AddPidToPmt(BasePid* pid,
               pid->LogicalStreamType);
   }
 
-  info->IsStillPresent = true;
-  m_fakePmt[pmtOffset++] = pid->StreamType;
-  m_fakePmt[pmtOffset++] = ((info->FakePid >> 8) & 0x1f) | 0xe0;
-  m_fakePmt[pmtOffset++] = info->FakePid & 0xff;
-  m_fakePmt[pmtOffset++] = ((pid->DescriptorsLength >> 8) & 0xf) | 0xf0;
-  m_fakePmt[pmtOffset++] = pid->DescriptorsLength & 0xff;
-  if (pid->DescriptorsLength != 0)
-  {
-    memcpy(&m_fakePmt[pmtOffset], pid->Descriptors, pid->DescriptorsLength);
-    pmtOffset += pid->DescriptorsLength;
-  }
-
   if (pid->Pid == m_originalPcrPid)
   {
     WriteLog(L"  set fake PCR PID");
     m_fakePcrPid = info->FakePid;
+    m_fakePcrOriginalPid = info->OriginalPid;
   }
-}
-
-void CDiskRecorder::WriteFakeServiceInfo()
-{
-  // PAT
-  unsigned char packet[TS_PACKET_LEN];
-  packet[0] = TS_PACKET_SYNC;
-  packet[1] = ((PID_PAT >> 8) & 0x1f) | 0x40;
-  packet[2] = PID_PAT & 0xff;
-  m_patContinuityCounter = (m_patContinuityCounter + 1) & 0xf;
-  packet[3] = 0x10 | m_patContinuityCounter;
-  unsigned short fakePatLength = 17;
-  memcpy(&packet[4], &m_fakePat[0], fakePatLength);
-  memset(&packet[4 + fakePatLength], 0xff, TS_PACKET_LEN - 4 - fakePatLength);
-  WritePacketDirect(packet);
-
-  // PMT
-  unsigned short fakePmtLength = ((m_fakePmt[2] & 0xf) << 8) + m_fakePmt[3] + 4; // + 4 to include pointer byte, table ID and section length bytes
-  unsigned short pointer = 0;
-  packet[1] = ((PID_PMT >> 8) & 0x1f) | 0x40;
-  packet[2] = PID_PMT & 0xff;
-  while (fakePmtLength > 0)
-  {
-    m_pmtContinuityCounter = (m_pmtContinuityCounter + 1) & 0xf;
-    packet[3] = 0x10 | m_pmtContinuityCounter;
-    if (fakePmtLength >= 184)
-    {
-      memcpy(&packet[4], &m_fakePmt[pointer], 184);
-      fakePmtLength -= 184;
-    }
-    else
-    {
-      memcpy(&packet[4], &m_fakePmt[pointer], fakePmtLength);
-      memset(&packet[4 + fakePmtLength], 0xff, TS_PACKET_LEN - 4 - fakePmtLength);
-      fakePmtLength = 0;
-    }
-    WritePacketDirect(packet);
-    pointer += TS_PACKET_LEN - 4;
-
-    packet[1] &= 0x1f;  // unset payload unit start indicator
-  }
+  return isNew;
 }
 
 bool CDiskRecorder::ReadParameters()
@@ -1366,15 +1477,129 @@ void CDiskRecorder::WriteParameters()
   }
 }
 
-void CDiskRecorder::InjectPcrFromPts(PidInfo& info)
+bool CDiskRecorder::HandlePcr(const CTsHeader& header,
+                              unsigned short fakePid,
+                              unsigned char* tsPacket)
 {
-  // We only use PTS from audio PIDs because it is guaranteed to be sequential.
-  if (m_substitutePcrSourcePid == PID_NOT_SET && (info.FakePid & 0xff0) == PID_AUDIO_FIRST)
+  if (m_waitingForPcr && !m_generatePcrFromPts)
   {
-    WriteLog(L"PID %hu found first PTS", info.OriginalPid);
-    m_substitutePcrSourcePid = info.OriginalPid;
+    if (CTimeUtils::ElapsedMillis(m_videoAudioStartTimeStamp) > 100)
+    {
+      WriteLog(L"PCR wait time limit reached, generate PCR from PTS");
+      m_generatePcrFromPts = true;
+      unsigned short originalFakePcrPid = m_fakePcrPid;
+      m_fakePcrPid = PID_PCR;
+      m_fakePcrOriginalPid = PID_NOT_SET;
+      if (originalFakePcrPid != m_fakePcrPid)
+      {
+        map<unsigned short, PidInfo*>::const_iterator it = m_pids.begin();
+        for ( ; it != m_pids.end(); it++)
+        {
+          if (it->second->FakePid == m_fakePcrPid)
+          {
+            m_fakePcrOriginalPid = it->second->OriginalPid;
+            WriteLog(L"non-PCR input PID coincidentally associated with PCR output PID, input PID = %hu, output PID = %hu",
+                      m_fakePcrOriginalPid, m_fakePcrPid);
+            break;
+          }
+        }
+      }
+    }
+    else if (header.Pid != m_originalPcrPid)
+    {
+      return false;
+    }
+  }
 
-    // Update the PMT - PCR PID and CRC.
+  if (!m_generatePcrFromPts && header.Pid == m_originalPcrPid)
+  {
+    CAdaptionField adaptationField(header, tsPacket);
+    if (adaptationField.PcrFlag)
+    {
+      PatchPcr(adaptationField.Pcr, tsPacket);
+    }
+
+    if (fakePid != PID_NOT_SET)
+    {
+      // PCR delivery via a sub-stream which also contains wanted payload.
+      return !m_waitingForPcr;
+    }
+
+    // PCR delivery via a sub-stream which may contain unwanted payload.
+    // Remove the payload, but leave the PCR intact.
+    tsPacket[1] = ((~PAYLOAD_UNIT_START) & 0xe0 & tsPacket[1]) | ((m_fakePcrPid >> 8) & 0x1f);
+    tsPacket[2] = m_fakePcrPid & 0xff;
+    tsPacket[3] = NOT_SCRAMBLED | ADAPTATION_ONLY;
+    if (m_fakePcrOriginalPid != PID_NOT_SET)
+    {
+      unsigned char continuityCounter = m_pids[m_fakePcrOriginalPid]->PrevContinuityCounter;
+      if (continuityCounter != CONTINUITY_COUNTER_NOT_SET)
+      {
+        tsPacket[3] |= continuityCounter;
+      }
+    }
+    tsPacket[4] = TS_PACKET_LEN - TS_HEADER_BYTE_COUNT - 1;  // -1 for adaptation field length byte
+    unsigned char endOfPcr = PCR_OFFSET + PCR_BYTE_COUNT;
+    memset(&tsPacket[endOfPcr], STUFFING_BYTE, TS_PACKET_LEN - endOfPcr);
+
+    WritePacket(tsPacket);
+    return false;
+  }
+
+  if (fakePid == PID_NOT_SET)
+  {
+    // Defunct PCR sub-stream which may contain unwanted payload.
+    return false;
+  }
+
+  if (fakePid == m_fakePcrPid)
+  {
+    CAdaptionField adaptationField(header, tsPacket);
+    if (adaptationField.PcrFlag)
+    {
+      // Unexpected PCR in the output stream into which PCR is being injected.
+      // If left untouched, this PCR would create discontinuities in the output
+      // stream. Discontinuities break down-stream seek functions (skip,
+      // fast-forward, rewind).
+
+      // Clear the PCR flag.
+      tsPacket[ADAPTATION_FIELD_FLAG_OFFSET] &= (~PCR_FLAG_BIT);
+
+      // Overwrite the unwanted PCR with the remainder of the adaptation field.
+      unsigned char tempBuffer[TS_PACKET_LEN];
+      unsigned char adaptationFieldPostPcrByteCount = header.AdaptionFieldLength - PCR_BYTE_COUNT - 1;  // -1 for the flags byte
+      if (adaptationFieldPostPcrByteCount > 0)
+      {
+        memcpy(tempBuffer,
+                &tsPacket[PCR_OFFSET + PCR_BYTE_COUNT],
+                adaptationFieldPostPcrByteCount);
+        memcpy(&tsPacket[PCR_OFFSET], tempBuffer, adaptationFieldPostPcrByteCount);
+      }
+
+      // Use stuffing to refill the adaptation field.
+      memset(&tsPacket[PCR_OFFSET + adaptationFieldPostPcrByteCount],
+              STUFFING_BYTE,
+              PCR_BYTE_COUNT);
+    }
+  }
+  if (!m_generatePcrFromPts)
+  {
+    return !m_waitingForPcr;
+  }
+
+  if (m_substitutePcrSourcePid == PID_NOT_SET)
+  {
+    // Obviously PCR must be sequential. Video PTS isn't guaranteed to be
+    // sequential, so we can't use it to generate PCR.    
+    if ((fakePid & 0xff0) != PID_AUDIO_FIRST)
+    {
+      return false;
+    }
+    WriteLog(L"selected PTS-from-PCR source PID, original PID = %hu, fake PID = %u",
+              header.Pid, fakePid);
+    m_substitutePcrSourcePid = header.Pid;
+
+    // Minimal PMT update (PCR PID and CRC).
     m_fakePcrPid = PID_PCR;
     m_fakePmt[9] = ((m_fakePcrPid >> 8) & 0x1f) | 0xe0;
     m_fakePmt[10] = m_fakePcrPid & 0xff;
@@ -1388,54 +1613,51 @@ void CDiskRecorder::InjectPcrFromPts(PidInfo& info)
 
     m_serviceInfoPacketCounter = SERVICE_INFO_INJECT_RATE;
   }
-  if (info.OriginalPid == m_substitutePcrSourcePid)
-  {
-    CPcr pts;
-    CPcr dts;
-    if (!CPcr::DecodeFromPesHeader(info.PesHeader, 0, pts, dts))
-    {
-      WriteLog(L"failed to decode PTS for PCR generation");
-    }
-    else
-    {
-      long long adjustedPts = (pts.PcrReferenceBase - 27000) & MAX_PCR_BASE;  // offset PCR from PTS by 300 ms to give time for demuxing and decoding
-      unsigned char pcrPacket[TS_PACKET_LEN];
-      pcrPacket[0] = TS_PACKET_SYNC;
-      pcrPacket[1] = (m_fakePcrPid >> 8) & 0x1f;
-      pcrPacket[2] = m_fakePcrPid & 0xff;
-      pcrPacket[3] = ADAPTATION_ONLY;
-      pcrPacket[4] = TS_PACKET_LEN - 5;   // -4 for header, -1 for adaptation field length byte
-      pcrPacket[5] = PCR_FLAG_BIT;
-      memset(&pcrPacket[12], 0xff, TS_PACKET_LEN - 12);   // stuffing
-
-      // Set the PCR extension. PTS won't give us this value.
-      pcrPacket[10] = 0x7e;
-      pcrPacket[11] = 0;
-      SetPcrBase(pcrPacket, adjustedPts);
-
-      CTsHeader header(pcrPacket);
-      PatchPcr(pcrPacket, header);
-      if (!m_waitingForPcr)
-      {
-        WritePacketDirect(pcrPacket);
-      }
-    }
-  }
+  return !m_waitingForPcr || header.Pid == m_substitutePcrSourcePid;
 }
 
-void CDiskRecorder::PatchPcr(unsigned char* tsPacket, CTsHeader& header)
+void CDiskRecorder::InjectPcrFromPts(const unsigned char* pesHeader)
 {
-  if (header.PayLoadOnly())
+  CPcr pts;
+  CPcr dts;
+  if (!CPcr::DecodeFromPesHeader(pesHeader, 0, pts, dts))
   {
+    WriteLog(L"failed to decode PTS for PCR generation");
     return;
   }
-  CAdaptionField adaptationField;
-  adaptationField.Decode(header, tsPacket);
-  if (!adaptationField.PcrFlag)
+
+  unsigned char pcrPacket[TS_PACKET_LEN];
+  pcrPacket[0] = TS_PACKET_SYNC;
+  pcrPacket[1] = (m_fakePcrPid >> 8) & 0x1f;
+  pcrPacket[2] = m_fakePcrPid & 0xff;
+  pcrPacket[3] = NOT_SCRAMBLED | ADAPTATION_ONLY;
+  if (m_fakePcrOriginalPid != PID_NOT_SET)
   {
-    return;
+    unsigned char continuityCounter = m_pids[m_fakePcrOriginalPid]->PrevContinuityCounter;
+    if (continuityCounter != CONTINUITY_COUNTER_NOT_SET)
+    {
+      pcrPacket[3] |= continuityCounter;
+    }
   }
-  CPcr pcrNew = adaptationField.Pcr;
+  pcrPacket[4] = TS_PACKET_LEN - TS_HEADER_BYTE_COUNT - 1;  // -1 for adaptation field length byte
+  pcrPacket[5] = PCR_FLAG_BIT;
+  unsigned char endOfPcr = PCR_OFFSET + PCR_BYTE_COUNT;
+  memset(&pcrPacket[endOfPcr], STUFFING_BYTE, TS_PACKET_LEN - endOfPcr);
+
+  // Offset PCR from PTS by 300 ms to give time for demuxing and decoding.
+  pts.PcrReferenceBase = (pts.PcrReferenceBase - 27000) & MAX_PCR_BASE;
+  SetPcrBase(pcrPacket, pts.PcrReferenceBase);
+
+  // Set the PCR extension. PTS won't give us this value.
+  pcrPacket[10] = 0x7e;
+  pcrPacket[11] = 0;
+
+  PatchPcr(pts, pcrPacket);
+  WritePacket(pcrPacket);
+}
+
+void CDiskRecorder::PatchPcr(const CPcr& pcrNew, unsigned char* tsPacket)
+{
   clock_t timeStamp = clock();
   
   if (m_waitingForPcr)
@@ -1532,7 +1754,8 @@ void CDiskRecorder::PatchPcr(unsigned char* tsPacket, CTsHeader& header)
   m_prevPcrReceiveTimeStamp = timeStamp;
 }
 
-void CDiskRecorder::HandlePcrInstability(CPcr& pcrNew, long long pcrChange)
+void CDiskRecorder::HandlePcrInstability(const CPcr& pcrNew,
+                                          long long pcrChange)
 {
   // Estimate the expected PCR value. This estimate should be slower/less than reality to avoid
   // falling into the negative PCR change case and perpetual instability.
@@ -1577,13 +1800,16 @@ void CDiskRecorder::HandlePcrInstability(CPcr& pcrNew, long long pcrChange)
   }
 }
 
-void CDiskRecorder::PatchPtsDts(unsigned char* pesHeader, PidInfo& pidInfo)
+void CDiskRecorder::PatchPtsDts(PidInfo& pidInfo)
 {
   clock_t timeStamp = clock();
 
   // Sanity check PES header bytes.
+  unsigned char* pesHeader = pidInfo.PesHeader;
   if (pesHeader[0] != 0 || pesHeader[1] != 0 || pesHeader[2] != 1)
   {
+    WriteLog(L"invalid PES header start code prefix, prefix = 0x%hhx-%hhx-%hhx",
+              pesHeader[0], pesHeader[1], pesHeader[2]);
     return;
   }
 
@@ -1598,13 +1824,7 @@ void CDiskRecorder::PatchPtsDts(unsigned char* pesHeader, PidInfo& pidInfo)
   if (pts.IsValid)
   {
     // Check for PTS jumps.
-    /*if (
-      pidInfo.PrevPts != -1 &&
-      (
-        (pidInfo.FakePid & 0xff0) == PID_VIDEO_FIRST ||
-        (pidInfo.FakePid & 0xff0) == PID_AUDIO_FIRST)
-      )
-    )
+    /*if (pidInfo.PrevPts != -1)
     {
       long long ptsDifference = PcrDifference(pts.PcrReferenceBase, pidInfo.PrevPts);   // # 90 kHz broadcast clock ticks since previous PTS
       long long expectedPtsDifference = (timeStamp - pidInfo.PrevPtsTimeStamp) * 90;    // # 90 kHz ticks expected based on the local system clock
@@ -1635,13 +1855,7 @@ void CDiskRecorder::PatchPtsDts(unsigned char* pesHeader, PidInfo& pidInfo)
 
     if (dts.IsValid)
     {
-      /*if (
-        pidInfo.PrevDts != -1 &&
-        (
-          (pidInfo.FakePid & 0xff0) == PID_VIDEO_FIRST ||
-          (pidInfo.FakePid & 0xff0) == PID_AUDIO_FIRST)
-        )
-      )
+      /*if (pidInfo.PrevDts != -1)
       {
         long long dtsDifference = PcrDifference(dts.PcrReferenceBase, pidInfo.PrevDts); // # 90 kHz broadcast clock ticks since previous DTS
         long long expectedDtsDifference = (timeStamp - pidInfo.PrevPtsTimeStamp) * 90;  // # 90 kHz ticks expected based on the local system clock
@@ -1672,127 +1886,165 @@ void CDiskRecorder::PatchPtsDts(unsigned char* pesHeader, PidInfo& pidInfo)
   }
 }
 
-unsigned char CDiskRecorder::GetPesHeader(unsigned char* tsPacket,
-                                          CTsHeader& header,
-                                          PidInfo& info)
+void CDiskRecorder::GetPesHeader(const unsigned char* tsPacket,
+                                  const CTsHeader& header,
+                                  PidInfo& pidInfo,
+                                  bool& isMoreDataNeeded,
+                                  bool& isPtsOrDtsPresent)
 {
-  // Update/populate the PES header in info.PesHeader.
+  // Update/populate the PES packet header in pidInfo.PesHeader.
+  isMoreDataNeeded = true;
+  isPtsOrDtsPresent = false;
 
-  // Does this TS packet start a new PES packet?
+  // Does this TS packet contain the start of a new PES packet?
   if (header.PayloadUnitStart)
   {
-    if (info.TsPacketQueueLength != 0)
+    if (pidInfo.TsPacketQueueLength != 0)
     {
-      LogDebug(L"disk recorder: PID %hu has non-empty TS packet queue at start of new PES packet, %hhu TS packet(s) will be lost",
-                header.Pid, info.TsPacketQueueLength);
-      info.TsPacketQueueLength = 0;
+      LogDebug(L"disk recorder: PID %hu has non-empty TS packet queue at start of new PES packet, %hhu packet(s) will be lost",
+                header.Pid, pidInfo.TsPacketQueueLength);
+      pidInfo.TsPacketQueueLength = 0;
     }
-    info.PesHeaderLength = 0;
+    pidInfo.PesHeaderByteCount = 0;
   }
-  else if (info.TsPacketQueueLength >= MAX_TS_PACKET_QUEUE) 
+  // Is the current PES packet header split over too many TS packets?
+  else if (pidInfo.TsPacketQueueLength >= MAX_TS_PACKET_QUEUE) 
   {
+    // Yes. Flush the TS packet queue to disk without modifying any PTS or DTS
+    // which may or may not be present in the PES packet header.
+    isMoreDataNeeded = false;
     LogDebug(L"disk recorder: PID %hu PES header starts after or is split over more than %hhu TS packets",
               header.Pid, MAX_TS_PACKET_QUEUE);
-    return 0; // Flush the TS packet queue to disk.
+    return;
   }
 
-  // Copy this TS packet onto the end of the queue.
-  memcpy(&info.TsPacketQueue[info.TsPacketQueueLength][0], tsPacket, TS_PACKET_LEN);
-  if (header.HasPayload)
+  // Copy this TS packet into the queue.
+  memcpy(&pidInfo.TsPacketQueue[pidInfo.TsPacketQueueLength][0], tsPacket, TS_PACKET_LEN);
+  if (!header.HasPayload)
   {
-    info.TsPacketPayloadStartQueue[info.TsPacketQueueLength++] = header.PayLoadStart;
+    // If the TS packet doesn't contain any payload then it doesn't help with
+    // the completion of the PES packet header. We still need more data.
+    pidInfo.TsPacketPayloadStartQueue[pidInfo.TsPacketQueueLength++] = 0xff;
+    return;
   }
-  else
-  {
-    info.TsPacketPayloadStartQueue[info.TsPacketQueueLength++] = 0xff;
-    // If the packet doesn't have any payload then no point in continuing.
-    return 2;
-  }
+  pidInfo.TsPacketPayloadStartQueue[pidInfo.TsPacketQueueLength++] = header.PayLoadStart;
 
   // Add any PES packet bytes to our PES header buffer. Be careful not to
   // overflow the buffer.
   unsigned char tsPacketPesByteCount = TS_PACKET_LEN - header.PayLoadStart;
-  if (info.PesHeaderLength + tsPacketPesByteCount > MAX_PES_HEADER_BYTES)
+  if (pidInfo.PesHeaderByteCount + tsPacketPesByteCount > MAX_PES_HEADER_BYTE_COUNT)
   {
-    tsPacketPesByteCount = MAX_PES_HEADER_BYTES - info.PesHeaderLength;
+    tsPacketPesByteCount = MAX_PES_HEADER_BYTE_COUNT - pidInfo.PesHeaderByteCount;
   }
-  memcpy(&info.PesHeader[info.PesHeaderLength],
+  memcpy(&pidInfo.PesHeader[pidInfo.PesHeaderByteCount],
           &tsPacket[header.PayLoadStart],
           tsPacketPesByteCount);
-  info.PesHeaderLength += tsPacketPesByteCount;
+  pidInfo.PesHeaderByteCount += tsPacketPesByteCount;
 
-  // Do we have enough of the PES header to determine whether PTS and/or DTS
-  // might be present?
-  if (info.PesHeaderLength < PES_HEADER_ATTRIBUTES_OFFSET + 1)
+  // Is the stream ID compatible with a header that might contain PTS and/or
+  // DTS?
+  if (pidInfo.PesHeaderByteCount < PES_HEADER_STREAM_ID_OFFSET + 1)
   {
-    return 2; // No, not yet.
+    // We can't yet say.
+    return;
+  }
+  unsigned char streamId = pidInfo.PesHeader[PES_HEADER_STREAM_ID_OFFSET];
+  if (
+    streamId == STREAM_ID_DSMCC ||
+    streamId == STREAM_ID_ECM ||
+    streamId == STREAM_ID_EMM ||
+    streamId == STREAM_ID_H222_TYPE_E ||
+    streamId == STREAM_ID_PADDING_STREAM ||
+    streamId == STREAM_ID_PRIVATE_STREAM_2 ||
+    streamId == STREAM_ID_PROGRAM_STREAM_DIR ||
+    streamId == STREAM_ID_PROGRAM_STREAM_MAP
+  )
+  {
+    // No. Flush the TS packet queue to disk.
+    isMoreDataNeeded = false;
+    return;
   }
 
-  // Might the header contain PTS and/or DTS?
-  unsigned char pesPacketHeaderAttributes = info.PesHeader[PES_HEADER_ATTRIBUTES_OFFSET] & (PTS_FLAG_BIT | DTS_FLAG_BIT);
-  if (pesPacketHeaderAttributes == 0)
+  // Are the most significant bits in the attributes byte compatible with a
+  // header that might contain PTS and/or DTS?
+  if (pidInfo.PesHeaderByteCount < PES_HEADER_STREAM_ID_OFFSET + 1)
   {
-    return 0; // No, flush the packet queue to disk.
+    // We can't yet say.
+    return;
+  }
+  unsigned char pesPacketHeaderAttributes = pidInfo.PesHeader[PES_HEADER_ATTRIBUTES_OFFSET];
+  if ((pesPacketHeaderAttributes & 0xc0) != 0x80)
+  {
+    // No. Flush the TS packet queue to disk.
+    isMoreDataNeeded = false;
+    return;
   }
 
-  // Do we have enough of the PES header to determine whether PTS and/or DTS
-  // are present?
-  if (info.PesHeaderLength < PES_HEADER_FLAG_OFFSET + 1)
+  // What do the PTS and/or DTS flags indicate?
+  if (pidInfo.PesHeaderByteCount < PES_HEADER_FLAG_OFFSET + 1)
   {
-    // No, not yet.
-    return 2;
+    // We can't yet say.
+    return;
   }
-
-  // Yes... so what do we have?
-  switch (pesPacketHeaderAttributes)
+  isPtsOrDtsPresent = true;
+  unsigned char pesPacketHeaderFlags = pidInfo.PesHeader[PES_HEADER_FLAG_OFFSET] & (PTS_FLAG_BIT | DTS_FLAG_BIT);
+  switch (pesPacketHeaderFlags)
   {
     // PTS OR DTS
     case PTS_FLAG_BIT:
     case DTS_FLAG_BIT:
-      if (info.PesHeaderLength >= PTS_OFFSET + PTS_OR_DTS_LENGTH)
+      if (pidInfo.PesHeaderByteCount >= PTS_OFFSET + PTS_OR_DTS_BYTE_COUNT)
       {
-        return 1;  // Ready!
+        isMoreDataNeeded = false;
+        return;
       }
-      return 2; // We can tell that PTS or DTS are present, but we don't have enough PTS/DTS bytes yet.
+      // PTS or DTS are present, but we don't have the full PTS/DTS field yet.
+      return;
     // PTS AND DTS
     case (PTS_FLAG_BIT | DTS_FLAG_BIT):
-      if (info.PesHeaderLength >= PTS_OFFSET + PTS_AND_DTS_LENGTH)
+      if (pidInfo.PesHeaderByteCount >= PTS_OFFSET + PTS_AND_DTS_BYTE_COUNT)
       {
-        return 1; // Ready!
+        isMoreDataNeeded = false;
+        return;
       }
-      return 2; // We can tell that PTS and DTS are present, but we don't have enough PTS/DTS bytes yet.
+      // PTS and DTS are present, but we don't have the full PTS/DTS field yet.
+      return;
     // neither
     default:
-      return 0; // Nothing interesting in this packet, flush the packet queue to disk.
+      // No processing required for this PES packet header. Flush the TS packet
+      // queue to disk.
+      isPtsOrDtsPresent = false;
+      isMoreDataNeeded = false;
+      return;
   }
 }
 
-void CDiskRecorder::UpdatePesHeader(PidInfo& info)
+void CDiskRecorder::UpdatePesHeader(PidInfo& pidInfo)
 {
   // Overwrite the PTS and/or DTS in the queued packets with patched PTS and/or DTS.
   unsigned char i = 0;
   unsigned short pesUpdatedByteCount = 0;
   do
   {
-    unsigned char tsPacketPayloadStart = info.TsPacketPayloadStartQueue[i];
+    unsigned char tsPacketPayloadStart = pidInfo.TsPacketPayloadStartQueue[i];
     if (tsPacketPayloadStart != 0xff)
     {
       unsigned char tsPacketPesByteCount = TS_PACKET_LEN - tsPacketPayloadStart;
-      if (tsPacketPesByteCount + pesUpdatedByteCount > info.PesHeaderLength)
+      if (tsPacketPesByteCount + pesUpdatedByteCount > pidInfo.PesHeaderByteCount)
       {
-        tsPacketPesByteCount = info.PesHeaderLength - pesUpdatedByteCount;
+        tsPacketPesByteCount = pidInfo.PesHeaderByteCount - pesUpdatedByteCount;
       }
-      if (info.PesHeaderLength > pesUpdatedByteCount)
+      if (pidInfo.PesHeaderByteCount > pesUpdatedByteCount)
       {
-        memcpy(&info.TsPacketQueue[i][tsPacketPayloadStart],
-                &info.PesHeader[pesUpdatedByteCount],
+        memcpy(&pidInfo.TsPacketQueue[i][tsPacketPayloadStart],
+                &pidInfo.PesHeader[pesUpdatedByteCount],
                 tsPacketPesByteCount);
       }
       pesUpdatedByteCount += tsPacketPesByteCount;
     }
     i++;
   }
-  while (i < info.TsPacketQueueLength);
+  while (i < pidInfo.TsPacketQueueLength);
 }
 
 long long CDiskRecorder::PcrDifference(long long newTs, long long prevTs)
