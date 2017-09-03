@@ -1454,7 +1454,6 @@ namespace MediaPortal.Player
 
         if (Splitter != null)
         {
-          //DirectShowUtil.RemoveFilter(graphBuilder, Splitter);
           DirectShowUtil.FinalReleaseComObject(Splitter);
           Splitter = null;
           Log.Info("VideoPlayer9: Cleanup Splitter");
@@ -1462,7 +1461,6 @@ namespace MediaPortal.Player
 
         if (filterCodec != null && filterCodec.VideoCodec != null)
         {
-          //DirectShowUtil.RemoveFilter(graphBuilder, filterCodec.VideoCodec);
           DirectShowUtil.FinalReleaseComObject(filterCodec.VideoCodec);
           filterCodec.VideoCodec = null;
           Log.Info("VideoPlayer9: Cleanup VideoCodec");
@@ -1478,7 +1476,6 @@ namespace MediaPortal.Player
 
         if (filterCodec != null && filterCodec._audioRendererFilter != null)
         {
-          //DirectShowUtil.RemoveFilter(graphBuilder, filterCodec._audioRendererFilter);
           DirectShowUtil.ReleaseComObject(filterCodec._audioRendererFilter);
           filterCodec._audioRendererFilter = null;
           Log.Info("VideoPlayer9: Cleanup AudioRenderer");
@@ -1486,7 +1483,6 @@ namespace MediaPortal.Player
 
         if (_interfaceSourceFilter != null)
         {
-          //DirectShowUtil.RemoveFilter(graphBuilder, _interfaceSourceFilter);
           DirectShowUtil.FinalReleaseComObject(_interfaceSourceFilter);
           _interfaceSourceFilter = null;
           Log.Info("VideoPlayer9: Cleanup InterfaceSourceFilter");
@@ -1497,7 +1493,6 @@ namespace MediaPortal.Player
         {
           if (ppFilter.Value != null)
           {
-            //DirectShowUtil.RemoveFilter(graphBuilder, ppFilter.Value as IBaseFilter);
             DirectShowUtil.FinalReleaseComObject(ppFilter.Value);
           }
         }
@@ -1506,7 +1501,6 @@ namespace MediaPortal.Player
         {
           if (ppFilter.Value != null)
           {
-            //DirectShowUtil.RemoveFilter(graphBuilder, ppFilter.Value as IBaseFilter);
             DirectShowUtil.FinalReleaseComObject(ppFilter.Value);
           }
         }
@@ -1516,7 +1510,6 @@ namespace MediaPortal.Player
         {
           if (ppFilter.Value != null)
           {
-            //DirectShowUtil.RemoveFilter(graphBuilder, ppFilter.Value as IBaseFilter);
             DirectShowUtil.FinalReleaseComObject(ppFilter.Value);
           }
         }
@@ -1525,14 +1518,12 @@ namespace MediaPortal.Player
 
         if (_FFDShowAudio != null)
         {
-          //DirectShowUtil.RemoveFilter(graphBuilder, _FFDShowAudio);
           DirectShowUtil.FinalReleaseComObject(_FFDShowAudio);
           _FFDShowAudio = null;
           Log.Info("VideoPlayer9: Cleanup _FFDShowAudio");
         }
         if (_audioSwitcher != null)
         {
-          //DirectShowUtil.RemoveFilter(graphBuilder, _audioSwitcher);
           DirectShowUtil.FinalReleaseComObject(_audioSwitcher);
           _audioSwitcher = null;
           Log.Info("VideoPlayer9: Cleanup MediaPortal AudioSwitcher (for external audio files)");
