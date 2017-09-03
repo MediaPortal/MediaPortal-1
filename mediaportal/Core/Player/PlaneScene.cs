@@ -365,6 +365,10 @@ namespace MediaPortal.Player
           if (VMR9Util.g_vmr9 != null)
             VMR9Util.g_vmr9.WindowsMessageMp();
           break;
+        case GUIMessage.MessageType.GUI_MSG_MADVRREPOSITION:
+          if (VMR9Util.g_vmr9 != null)
+            VMR9Util.g_vmr9.IniMadVrWindowPosition();
+          break;
       }
     }
 
@@ -979,6 +983,7 @@ namespace MediaPortal.Player
     {
       // Set madVR D3D Device
       GUIGraphicsContext.DX9DeviceMadVr = device != IntPtr.Zero ? new Device(device) : null;
+      GUIGraphicsContext.SubDeviceMadVr = device;
       // No need to set subtitle engine when using XySubFilter and madVR.
       if (!_subEngineType.Equals("XySubFilter"))
       {
@@ -993,11 +998,14 @@ namespace MediaPortal.Player
 
     public void RenderSubtitle(long frameStart, int left, int top, int right, int bottom, int width, int height, int xOffsetInPixels)
     {
-      ISubEngine engine = SubEngine.GetInstance();
-      if (engine != null)
+      if (GUIGraphicsContext.SubDeviceMadVr != IntPtr.Zero)
       {
-        engine.SetTime(frameStart);
-        engine.Render(_subsRect, _destinationRect, xOffsetInPixels);
+        ISubEngine engine = SubEngine.GetInstance();
+        if (engine != null)
+        {
+          engine.SetTime(frameStart);
+          engine.Render(_subsRect, _destinationRect, xOffsetInPixels);
+        }
       }
     }
 

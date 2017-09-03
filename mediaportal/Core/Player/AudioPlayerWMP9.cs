@@ -450,7 +450,6 @@ namespace MediaPortal.Player
       }
     }
 
-
     public override int Volume
     {
       get
@@ -845,7 +844,7 @@ namespace MediaPortal.Player
             {
               _wmp10Player.settings.rate = (double)value;
             }
-            catch (Exception) {}
+            catch (Exception) { }
             VMR9Util.g_vmr9.EVRProvidePlaybackRate((double)value);
           }
         }

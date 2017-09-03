@@ -1475,7 +1475,7 @@ namespace MediaPortal.Player
 
         if (filterCodec != null && filterCodec._audioRendererFilter != null)
         {
-          DirectShowUtil.FinalReleaseComObject(filterCodec._audioRendererFilter);
+          DirectShowUtil.ReleaseComObject(filterCodec._audioRendererFilter);
           filterCodec._audioRendererFilter = null;
           Log.Info("VideoPlayer9: Cleanup AudioRenderer");
         }

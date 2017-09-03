@@ -97,8 +97,8 @@ MPMadPresenter::~MPMadPresenter()
     Log("MPMadPresenter::Destructor() - m_pMad release 1");
     if (m_pMad)
     {
-      // Let's try to do a m_pMad.Release() instead of m_pMad.FullRelease() (somehow it can take long time otherwise)
-      m_pMad.Release();
+      m_pMad.FullRelease();
+      m_pMad.m_ptr = nullptr;
     }
     Log("MPMadPresenter::Destructor() - m_pMad release 2");
 
@@ -106,7 +106,6 @@ MPMadPresenter::~MPMadPresenter()
     DeInitMadvrWindow();
 
     Log("MPMadPresenter::Destructor() - instance 0x%x", this);
-    Sleep(500);
   }
 }
 
@@ -154,7 +153,7 @@ void MPMadPresenter::RepeatFrame()
 {
   if (m_pShutdown)
   {
-    Log("MPMadPresenter::ClearBackground() shutdown");
+    Log("MPMadPresenter::RepeatFrame() shutdown");
     return;
   }
 
@@ -163,6 +162,26 @@ void MPMadPresenter::RepeatFrame()
   // Render frame to try to fix HD4XXX GPU flickering issue
   Com::SmartQIPtr<IMadVROsdServices> pOR = m_pMad;
   pOR->OsdRedrawFrame();
+}
+
+void MPMadPresenter::InitMadVRWindowPosition()
+{
+  if (m_pShutdown)
+  {
+    Log("MPMadPresenter::InitMadVRWindowPosition() shutdown");
+    return;
+  }
+
+  CAutoLock cAutoLock(this);
+
+  // Init created madVR window instance.
+  SetDsWndVisible(true);
+  if (Com::SmartQIPtr<IVideoWindow> pWindow = m_pMad)
+  {
+    pWindow->put_Owner(reinterpret_cast<OAHWND>(m_hWnd));
+    pWindow->put_Visible(reinterpret_cast<OAHWND>(m_hWnd));
+    pWindow->SetWindowPosition(0, 0, m_dwGUIWidth, m_dwGUIHeight);
+  }
 }
 
 void MPMadPresenter::MadVr3DSizeRight(uint16_t x, uint16_t y, DWORD width, DWORD height)
@@ -340,13 +359,20 @@ void MPMadPresenter::ConfigureMadvr()
 HRESULT MPMadPresenter::Shutdown()
 {
   { // Scope for autolock for the local variable (lock, which when deleted releases the lock)
+    CAutoLock lock(this);
+
     Log("MPMadPresenter::Shutdown() start");
 
     if (m_pCallback)
     {
       m_pCallback->SetSubtitleDevice(reinterpret_cast<LONG>(nullptr));
       Log("MPMadPresenter::Shutdown() reset subtitle device");
-      m_pCallback = nullptr;
+      m_pCallback->RestoreDeviceSurface(reinterpret_cast<DWORD>(m_pSurfaceDevice));
+      Log("MPMadPresenter::Shutdown() RestoreDeviceSurface");
+      m_pCallback->DestroyHWnd(m_hWnd);
+      Log("MPMadPresenter::Shutdown() send DestroyHWnd on C# side");
+      m_pCallback->Release();
+      Log("MPMadPresenter::Shutdown() m_pCallback release");
     }
 
     // Restore windowed overlay settings
@@ -463,32 +489,6 @@ HRESULT MPMadPresenter::Stopping()
   { // Scope for autolock for the local variable (lock, which when deleted releases the lock)
     //CAutoLock lock(this);
 
-    if (m_pMediaControl)
-    {
-      Log("MPMadPresenter::Stopping() m_pMediaControl stop 1");
-      int counter = 0;
-      OAFilterState state = -1;
-      m_pMediaControl->Stop();
-      m_pMediaControl->GetState(100, &state);
-      while (state != State_Stopped)
-      {
-        Log("MPMadPresenter::Stopping() m_pMediaControl: graph still running");
-        Sleep(100);
-        m_pMediaControl->GetState(10, &state);
-        counter++;
-        if (counter >= 30)
-        {
-          if (state != State_Stopped)
-          {
-            Log("MPMadPresenter::Stopping() m_pMediaControl: graph still running");
-          }
-          break;
-        }
-      }
-      m_pMediaControl = nullptr;
-      Log("MPMadPresenter::Stopping() m_pMediaControl stop 2");
-    }
-
     Log("MPMadPresenter::Stopping() start to stop instance - 1");
 
     if (Com::SmartQIPtr<IMadVRSettings> m_pSettings = m_pMad)
@@ -546,6 +546,32 @@ HRESULT MPMadPresenter::Stopping()
     if (m_pORCB)
       m_pORCB.Release();
     Log("MPMadPresenter::Stopping() m_pORCB release 2");
+
+    if (m_pMediaControl)
+    {
+      Log("MPMadPresenter::Stopping() m_pMediaControl stop 1");
+      int counter = 0;
+      OAFilterState state = -1;
+      m_pMediaControl->Stop();
+      m_pMediaControl->GetState(100, &state);
+      while (state != State_Stopped)
+      {
+        Log("MPMadPresenter::Stopping() m_pMediaControl: graph still running");
+        Sleep(100);
+        m_pMediaControl->GetState(10, &state);
+        counter++;
+        if (counter >= 30)
+        {
+          if (state != State_Stopped)
+          {
+            Log("MPMadPresenter::Stopping() m_pMediaControl: graph still running");
+          }
+          break;
+        }
+      }
+      m_pMediaControl = nullptr;
+      Log("MPMadPresenter::Stopping() m_pMediaControl stop 2");
+    }
 
     Log("MPMadPresenter::Stopping() stopped");
     return S_OK;
@@ -1125,14 +1151,6 @@ HRESULT MPMadPresenter::RenderEx3(REFERENCE_TIME rtStart, REFERENCE_TIME rtStop,
       m_pMadVRFrameCount = m_pCallback->ReduceMadvrFrame();
       Log("%s : reduce madVR frame to : %i", __FUNCTION__, m_pMadVRFrameCount);
 
-      // Init created madVR window instance.
-      SetDsWndVisible(true);
-      if (Com::SmartQIPtr<IVideoWindow> pWindow = m_pMad)
-      {
-        pWindow->put_Owner(reinterpret_cast<OAHWND>(m_hWnd));
-        pWindow->put_Visible(reinterpret_cast<OAHWND>(m_hWnd));
-        pWindow->SetWindowPosition(0, 0, m_dwGUIWidth, m_dwGUIHeight);
-      }
     }
     m_deviceState.Store();
     SetupMadDeviceState();

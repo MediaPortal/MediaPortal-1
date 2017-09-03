@@ -821,7 +821,6 @@ namespace MediaPortal.Player
       {
         if (_graphBuilder == null)
         {
-          _state = PlayState.Init;
           return;
         }
         Log.Info("TSReaderPlayer: Cleanup DShow graph {0}", GUIGraphicsContext.InVmr9Render);
@@ -850,7 +849,7 @@ namespace MediaPortal.Player
 
           if (filterCodec != null && filterCodec._audioRendererFilter != null)
           {
-            DirectShowUtil.FinalReleaseComObject(filterCodec._audioRendererFilter);
+            DirectShowUtil.ReleaseComObject(filterCodec._audioRendererFilter);
             filterCodec._audioRendererFilter = null;
             Log.Debug("TSReaderPlayer: Cleanup _audioRendererFilter");
           }
