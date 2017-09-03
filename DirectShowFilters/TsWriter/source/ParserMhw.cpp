@@ -359,7 +359,7 @@ bool CParserMhw::OnTsPacket(CTsHeader& header, unsigned char* tsPacket)
         header.Pid == PID_MHW2_EVENTS_BY_CHANNEL_SATELLITE ||
         header.Pid == PID_MHW2_EVENTS_BY_CHANNEL_TERRESTRIAL ||
         //header.Pid == PID_MHW2_EVENTS_BY_THEME ||
-        header.Pid == PID_MHW2_PROGRAMS_AND_SERIES ||
+        header.Pid == PID_MHW2_PROGRAMS_AND_SERIES// ||
         //header.Pid == PID_MHW2_THEME_DESCRIPTIONS
       )
     )
