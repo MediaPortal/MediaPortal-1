@@ -94,8 +94,6 @@ MPMadPresenter::~MPMadPresenter()
       m_pORCB.Release();
     Log("MPMadPresenter::Destructor() - m_pORCB release 2");
 
-    Sleep(1000);
-
     Log("MPMadPresenter::Destructor() - m_pMad release 1");
     if (m_pMad)
     {
