@@ -771,7 +771,7 @@ namespace TvPlugin
               groups = recordings.GroupBy(r => GetSpokenViewDate(r.StartTime)).Select(g => g.OrderByDescending(h => h.StartTime).First());
               break;
             case DBView.Recordings:
-              groups = recordings.GroupBy(r => r.Title).Select(g => g.OrderByDescending(h => h.StartTime).First());
+              groups = recordings.GroupBy(r => r.Title, StringComparer.InvariantCultureIgnoreCase).Select(g => g.OrderByDescending(h => h.StartTime).First());
               break;
             case DBView.Channel:
               //recording can link to channels that no longer exist. convert these to an unknown channel (string 1507) group
@@ -779,10 +779,10 @@ namespace TvPlugin
               {
                 Channel channel = channels.FirstOrDefault(chan => r.IdChannel == chan.IdChannel);
                 return channel == null ? GUILocalizeStrings.Get(1507) : channel.DisplayName;
-              }).Select(g => g.OrderByDescending(h => h.StartTime).First());
+              }, StringComparer.InvariantCultureIgnoreCase).Select(g => g.OrderByDescending(h => h.StartTime).First());
               break;
             case DBView.Genre:
-              groups = recordings.GroupBy(r => r.Genre).Select(g => g.OrderByDescending(h => h.StartTime).First());
+              groups = recordings.GroupBy(r => r.Genre, StringComparer.InvariantCultureIgnoreCase).Select(g => g.OrderByDescending(h => h.StartTime).First());
               break;
           }
 
@@ -801,7 +801,7 @@ namespace TvPlugin
                 int count = 0;
                 foreach (Recording recording in recordings)
                 {
-                  if (recording.Title != title) continue;
+                  if (!recording.Title.Equals(title, StringComparison.InvariantCultureIgnoreCase)) continue;
                   count++;
                   if (count <= 1) continue;
                   singleRecording = false;
