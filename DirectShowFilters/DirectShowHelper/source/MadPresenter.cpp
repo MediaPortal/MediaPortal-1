@@ -43,9 +43,13 @@ struct VID_FRAME_VERTEX
   float v;
 };
 
-MPMadPresenter::MPMadPresenter(IVMR9Callback* pCallback, DWORD width, DWORD height, OAHWND parent, IDirect3DDevice9* pDevice, IMediaControl* pMediaControl) :
+MPMadPresenter::MPMadPresenter(IVMR9Callback* pCallback, int xposition, int yposition, int width, int height, OAHWND parent, IDirect3DDevice9* pDevice, IMediaControl* pMediaControl) :
   CUnknown(NAME("MPMadPresenter"), NULL),
   m_pCallback(pCallback),
+  m_Xposition(0), // for using no Kodi madVR window way comment out this line
+  m_Yposition(0), // for using no Kodi madVR window way comment out this line
+  //m_Xposition(xposition), // for using no Kodi madVR window way uncomment out this line
+  //m_Yposition(yposition), // for using no Kodi madVR window way uncomment out this line
   m_dwGUIWidth(width),
   m_dwGUIHeight(height),
   m_hParent(parent),
@@ -103,7 +107,7 @@ MPMadPresenter::~MPMadPresenter()
     Log("MPMadPresenter::Destructor() - m_pMad release 2");
 
     // Detroy create madVR window and need to be here to avoid some crash
-    DeInitMadvrWindow();
+    DeInitMadvrWindow(); // for using no Kodi madVR window way comment out this line
 
     Log("MPMadPresenter::Destructor() - instance 0x%x", this);
   }
@@ -164,6 +168,97 @@ void MPMadPresenter::RepeatFrame()
   pOR->OsdRedrawFrame();
 }
 
+void MPMadPresenter::GrabFrame()
+{
+  CAutoLock cAutoLock(this);
+  //if (Com::SmartQIPtr<IMadVRFrameGrabber> pMadVrFrame = m_pMad)
+  //{
+  //  LPVOID dibImageBuffer = nullptr;
+
+  //  // TRY 1
+  //  //HRESULT hr;
+  //  //hr = pMadVrFrame->GrabFrame(ZOOM_100_PERCENT, FLAGS_RENDER_OSD | FLAGS_NO_SUBTITLES | FLAGS_NO_ARTIFACT_REMOVAL | FLAGS_NO_IMAGE_ENHANCEMENTS | FLAGS_NO_UPSCALING_REFINEMENTS | FLAGS_NO_HDR_SDR_CONVERSION,
+  //  //  CHROMA_UPSCALING_USER_SELECTED, IMAGE_DOWNSCALING_USER_SELECTED, IMAGE_UPSCALING_USER_SELECTED, 0, &dibImageBuffer, nullptr);
+  //  //Log("GrabFrame() hr: 0x%08x", hr);
+
+  //  // TRY 2
+  //  //HRESULT hr;
+  //  //hr = pMadVrFrame->GrabFrame(ZOOM_PLAYBACK_SIZE, FLAGS_NO_SUBTITLES | FLAGS_NO_ARTIFACT_REMOVAL | FLAGS_NO_IMAGE_ENHANCEMENTS | FLAGS_NO_UPSCALING_REFINEMENTS | FLAGS_NO_HDR_SDR_CONVERSION,
+  //  //  CHROMA_UPSCALING_USER_SELECTED, IMAGE_DOWNSCALING_USER_SELECTED, IMAGE_UPSCALING_USER_SELECTED, 0, &dibImageBuffer, nullptr);
+  //  //Log("GrabFrame() hr: 0x%08x", hr);
+
+  //  // TRY 3
+  //  //HRESULT hr;
+  //  //hr = pMadVrFrame->GrabFrame(ZOOM_1280x720, FLAGS_NO_SUBTITLES | FLAGS_NO_ARTIFACT_REMOVAL | FLAGS_NO_IMAGE_ENHANCEMENTS | FLAGS_NO_UPSCALING_REFINEMENTS | FLAGS_NO_HDR_SDR_CONVERSION,
+  //  //  CHROMA_UPSCALING_USER_SELECTED, IMAGE_DOWNSCALING_USER_SELECTED, IMAGE_UPSCALING_USER_SELECTED, 0, &dibImageBuffer, nullptr);
+  //  //Log("GrabFrame() hr: 0x%08x", hr);
+
+  //  // TRY 4 OK // Atmolight should be ok with this one
+  //  //HRESULT hr;
+  //  //hr = pMadVrFrame->GrabFrame(ZOOM_ENCODED_SIZE, FLAGS_NO_SUBTITLES | FLAGS_NO_ARTIFACT_REMOVAL | FLAGS_NO_IMAGE_ENHANCEMENTS | FLAGS_NO_UPSCALING_REFINEMENTS | FLAGS_NO_HDR_SDR_CONVERSION,
+  //  //  CHROMA_UPSCALING_USER_SELECTED, IMAGE_DOWNSCALING_USER_SELECTED, IMAGE_UPSCALING_USER_SELECTED, 0, &dibImageBuffer, nullptr);
+  //  //Log("GrabFrame() hr: 0x%08x", hr);
+
+  //  // TRY 5 GUI MADVR 11/09 20H25 (OLD or DEFAULT SETTINGS)
+  //  HRESULT hr;
+  //  hr = pMadVrFrame->GrabFrame(ZOOM_PLAYBACK_SIZE, FLAGS_RENDER_OSD | FLAGS_NO_SUBTITLES | FLAGS_NO_ARTIFACT_REMOVAL | FLAGS_NO_IMAGE_ENHANCEMENTS | FLAGS_NO_UPSCALING_REFINEMENTS | FLAGS_NO_HDR_SDR_CONVERSION,
+  //    CHROMA_UPSCALING_USER_SELECTED, IMAGE_DOWNSCALING_USER_SELECTED, IMAGE_UPSCALING_USER_SELECTED, 0, &dibImageBuffer, nullptr);
+  //  Log("GrabFrame() hr: 0x%08x", hr);
+
+  //  // TRY 6
+  //  //HRESULT hr;
+  //  //hr = pMadVrFrame->GrabFrame(ZOOM_1920x1080, FLAGS_RENDER_OSD | FLAGS_NO_SUBTITLES | FLAGS_NO_ARTIFACT_REMOVAL | FLAGS_NO_IMAGE_ENHANCEMENTS | FLAGS_NO_UPSCALING_REFINEMENTS | FLAGS_NO_HDR_SDR_CONVERSION,
+  //  //  CHROMA_UPSCALING_USER_SELECTED, IMAGE_DOWNSCALING_USER_SELECTED, IMAGE_UPSCALING_USER_SELECTED, 0, &dibImageBuffer, nullptr);
+  //  //Log("GrabFrame() hr: 0x%08x", hr);
+
+  //  // TRY 7 OK // Atmolight should be ok with this one
+  //  //HRESULT hr;
+  //  //hr = pMadVrFrame->GrabFrame(ZOOM_ENCODED_SIZE, FLAGS_NO_SUBTITLES | FLAGS_NO_ARTIFACT_REMOVAL | FLAGS_NO_IMAGE_ENHANCEMENTS | FLAGS_NO_UPSCALING_REFINEMENTS | FLAGS_NO_HDR_SDR_CONVERSION,
+  //  //  CHROMA_UPSCALING_BILINEAR, IMAGE_DOWNSCALING_BILINEAR, IMAGE_UPSCALING_BILINEAR, 0, &dibImageBuffer, nullptr);
+  //  //Log("GrabFrame() hr: 0x%08x", hr);
+
+  //  // Send the DIB to C#
+  //  m_pCallback->GrabMadVrScreenshot(dibImageBuffer);
+  //  return;
+  //}
+  try
+  {
+    if (Com::SmartQIPtr<IBasicVideo> m_pBV = m_pMad)
+    {
+      LONG nBufferSize = 0;
+      HRESULT hr = E_NOTIMPL;
+      hr = m_pBV->GetCurrentImage(&nBufferSize, NULL);
+      if (hr != S_OK)
+      {
+        return;
+      }
+      long* ppData = static_cast<long *>(malloc(nBufferSize));
+      Sleep(100);
+      hr = m_pBV->GetCurrentImage(&nBufferSize, ppData);
+      if (hr != S_OK || !ppData)
+      {
+        LocalFree(ppData);
+        return;
+      }
+      if (ppData)
+      {
+        PBITMAPINFO bi = PBITMAPINFO(ppData);
+        PBITMAPINFOHEADER bih = &bi->bmiHeader;
+        int bpp = bih->biBitCount;
+        if (bpp != 16 && bpp != 24 && bpp != 32)
+        {
+          LocalFree(ppData);
+          return;
+        }
+        m_pCallback->GrabMadVrScreenshot(LPVOID(ppData));
+      }
+    }
+  }
+  catch (...)
+  {
+  }
+}
+
 void MPMadPresenter::InitMadVRWindowPosition()
 {
   if (m_pShutdown)
@@ -184,7 +279,7 @@ void MPMadPresenter::InitMadVRWindowPosition()
   }
 }
 
-void MPMadPresenter::MadVr3DSizeRight(uint16_t x, uint16_t y, DWORD width, DWORD height)
+void MPMadPresenter::MadVr3DSizeRight(int x, int y, int width, int height)
 {
   if (m_pMadD3DDev)
   {
@@ -196,7 +291,7 @@ void MPMadPresenter::MadVr3DSizeRight(uint16_t x, uint16_t y, DWORD width, DWORD
   }
 }
 
-void MPMadPresenter::MadVr3DSizeLeft(uint16_t x, uint16_t y, DWORD width, DWORD height)
+void MPMadPresenter::MadVr3DSizeLeft(int x, int y, int width, int height)
 {
   if (m_pMadD3DDev)
   {
@@ -208,12 +303,13 @@ void MPMadPresenter::MadVr3DSizeLeft(uint16_t x, uint16_t y, DWORD width, DWORD 
   }
 }
 
-void MPMadPresenter::MadVrScreenResize(uint16_t x, uint16_t y, DWORD width, DWORD height, bool displayChange)
+void MPMadPresenter::MadVrScreenResize(int x, int y, int width, int height, bool displayChange)
 {
   if (m_pMadD3DDev)
   {
     Log("%s : done : %d x %d", __FUNCTION__, width, height);
-    SetWindowPos(m_hWnd, 0, 0, 0, width, height, SWP_ASYNCWINDOWPOS);
+    SetWindowPos(m_hWnd, 0, 0, 0, width, height, SWP_ASYNCWINDOWPOS); // for using no Kodi madVR window way comment out this line
+    //SetWindowPos(m_hWnd, 0, x, y, width, height, SWP_ASYNCWINDOWPOS); // for using no Kodi madVR window way uncomment out this line
 
     // Needed to update OSD/GUI when changing directx present parameter on resolution change.
     if (displayChange)
@@ -239,17 +335,16 @@ IBaseFilter* MPMadPresenter::Initialize()
     if (Com::SmartQIPtr<IVideoWindow> pWindow = m_pMad)
     {
       // Create a madVR Window
-      if (InitMadvrWindow(m_hWnd))
+      if (InitMadvrWindow(m_hWnd)) // for using no Kodi madVR window way comment out this line
       {
-        // Code commented out and enable it when testing the non kodi madVR window way
-        //m_hWnd = reinterpret_cast<HWND>(m_hParent);
+        //m_hWnd = reinterpret_cast<HWND>(m_hParent); // for using no Kodi madVR window way uncomment out this line
         Sleep(100);
         pWindow->put_Owner(reinterpret_cast<OAHWND>(m_hWnd));
         pWindow->put_Visible(reinterpret_cast<OAHWND>(m_hWnd));
         //pWindow->put_MessageDrain(reinterpret_cast<OAHWND>(m_hWnd));
         Sleep(100);
         Log("%s : Create DSPlayer window - hWnd: %i", __FUNCTION__, m_hWnd);
-        m_pCallback->DestroyHWnd(m_hWnd);
+        m_pCallback->DestroyHWnd(m_hWnd); // for using no Kodi madVR window way comment out this line
         Log("MPMadPresenter::Initialize() send DestroyHWnd value on C# side");
       }
     }
@@ -359,7 +454,7 @@ void MPMadPresenter::ConfigureMadvr()
 HRESULT MPMadPresenter::Shutdown()
 {
   { // Scope for autolock for the local variable (lock, which when deleted releases the lock)
-    CAutoLock lock(this);
+    //CAutoLock lock(this);
 
     Log("MPMadPresenter::Shutdown() start");
 
@@ -369,7 +464,7 @@ HRESULT MPMadPresenter::Shutdown()
       Log("MPMadPresenter::Shutdown() reset subtitle device");
       m_pCallback->RestoreDeviceSurface(reinterpret_cast<DWORD>(m_pSurfaceDevice));
       Log("MPMadPresenter::Shutdown() RestoreDeviceSurface");
-      m_pCallback->DestroyHWnd(m_hWnd);
+      m_pCallback->DestroyHWnd(m_hWnd); // for using no Kodi madVR window way comment out this line
       Log("MPMadPresenter::Shutdown() send DestroyHWnd on C# side");
       m_pCallback->Release();
       Log("MPMadPresenter::Shutdown() m_pCallback release");
@@ -416,6 +511,8 @@ bool MPMadPresenter::InitMadvrWindow(HWND &hWnd)
 
   int nWidth = m_dwGUIWidth;
   int nHeight = m_dwGUIHeight;
+  int nX = m_Xposition;
+  int nY = m_Yposition;
   m_className = "MediaPortal:DSPlayer";
 
   // Register the windows class
@@ -439,7 +536,7 @@ bool MPMadPresenter::InitMadvrWindow(HWND &hWnd)
   }
   hWnd = CreateWindow(m_className.c_str(), m_className.c_str(),
     WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN,
-    0, 0, nWidth, nHeight,
+    nX, nY, nWidth, nHeight,
     reinterpret_cast<HWND>(m_hParent), NULL, m_hInstance, NULL);
   if (hWnd == nullptr)
   {
@@ -625,7 +722,7 @@ HRESULT MPMadPresenter::ClearBackground(LPCSTR name, REFERENCE_TIME frameStart, 
   WORD videoHeight = (WORD)activeVideoRect->bottom - (WORD)activeVideoRect->top;
   WORD videoWidth = (WORD)activeVideoRect->right - (WORD)activeVideoRect->left;
 
-  CAutoLock cAutoLock(this);
+  //CAutoLock cAutoLock(this);
 
   ReinitOSD();
 
@@ -723,7 +820,7 @@ HRESULT MPMadPresenter::RenderOsd(LPCSTR name, REFERENCE_TIME frameStart, RECT* 
   WORD videoHeight = (WORD)activeVideoRect->bottom - (WORD)activeVideoRect->top;
   WORD videoWidth = (WORD)activeVideoRect->right - (WORD)activeVideoRect->left;
 
-  CAutoLock cAutoLock(this);
+  //CAutoLock cAutoLock(this);
 
   ReinitOSD();
 
@@ -764,6 +861,7 @@ HRESULT MPMadPresenter::RenderOsd(LPCSTR name, REFERENCE_TIME frameStart, RECT* 
   //countFrame++;
   //if (countFrame == firstFrame || countFrame == secondFrame)
   {
+    // For ambilight system but only working for D3D9
     if (SUCCEEDED(hr = m_pMadD3DDev->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &SurfaceMadVr)))
     {
       if (SUCCEEDED(hr = m_pCallback->RenderFrame(videoWidth, videoHeight, videoWidth, videoHeight, reinterpret_cast<LONG>(SurfaceMadVr))))
@@ -1112,7 +1210,7 @@ HRESULT MPMadPresenter::RenderEx3(REFERENCE_TIME rtStart, REFERENCE_TIME rtStop,
     // Lock madVR thread while Shutdown()
     //CAutoLock lock(&m_dsLock);
 
-    CAutoLock cAutoLock(this);
+    //CAutoLock cAutoLock(this);
 
     //Log("%s", __FUNCTION__);
 

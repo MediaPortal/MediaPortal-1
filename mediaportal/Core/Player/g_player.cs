@@ -4000,12 +4000,12 @@ namespace MediaPortal.Player
                 // send C++ displayChange
                 if (!GUIGraphicsContext.ForceMadVRRefresh3D)
                 {
-                  VMR9Util.g_vmr9?.MadVrScreenResize(0, 0, client.Width, client.Height, true);
+                  VMR9Util.g_vmr9?.MadVrScreenResize(GUIGraphicsContext.form.Location.X, GUIGraphicsContext.form.Location.Y, client.Width, client.Height, true);
                 }
                 else
                 {
                   // Changed the false to true, need to figure out why regression is present when it's false
-                  VMR9Util.g_vmr9?.MadVrScreenResize(0, 0, client.Width, client.Height, true);
+                  VMR9Util.g_vmr9?.MadVrScreenResize(GUIGraphicsContext.form.Location.X, GUIGraphicsContext.form.Location.Y, client.Width, client.Height, true);
                   GUIGraphicsContext.ForceMadVRRefresh3D = false;
                 }
                 GUIGraphicsContext.NoneDone = false;
@@ -4021,7 +4021,7 @@ namespace MediaPortal.Player
                      GUIGraphicsContext.InVmr9Render && GUIGraphicsContext.ForceMadVRRefresh3D)
             {
               Size client = GUIGraphicsContext.form.ClientSize;
-              VMR9Util.g_vmr9?.MadVrScreenResize(0, 0, client.Width, client.Height, false);
+              VMR9Util.g_vmr9?.MadVrScreenResize(GUIGraphicsContext.form.Location.X, GUIGraphicsContext.form.Location.Y, client.Width, client.Height, false);
               GUIGraphicsContext.NoneDone = false;
               GUIGraphicsContext.TopAndBottomDone = false;
               GUIGraphicsContext.SideBySideDone = false;

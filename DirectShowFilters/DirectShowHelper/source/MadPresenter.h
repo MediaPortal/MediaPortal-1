@@ -141,7 +141,7 @@ class MPMadPresenter : public CUnknown, public CCritSec
 
   public:
 
-    MPMadPresenter(IVMR9Callback* pCallback, DWORD width, DWORD height, OAHWND parent, IDirect3DDevice9* pDevice, IMediaControl* pMediaControl);
+    MPMadPresenter(IVMR9Callback* pCallback, int xposition, int yposition, int width, int height, OAHWND parent, IDirect3DDevice9* pDevice, IMediaControl* pMediaControl);
     ~MPMadPresenter();
 
     // XBMC
@@ -152,10 +152,11 @@ class MPMadPresenter : public CUnknown, public CCritSec
     void InitializeOSD();
     void SetMadVrPaused(bool paused);
     void RepeatFrame();
+    void GrabFrame();
     void InitMadVRWindowPosition();
-    void MadVr3DSizeRight(uint16_t x, uint16_t y, DWORD width, DWORD height);
-    void MadVr3DSizeLeft(uint16_t x, uint16_t y, DWORD width, DWORD height);
-    void MadVrScreenResize(uint16_t x, uint16_t y, DWORD width, DWORD height, bool displayChange);
+    void MadVr3DSizeRight(int x, int y, int width, int height);
+    void MadVr3DSizeLeft(int x, int y, int width, int height);
+    void MadVrScreenResize(int x, int y, int width, int height, bool displayChange);
     void MadVr3D(bool Enable);
     HRESULT Shutdown();
     HRESULT Stopping();
@@ -227,6 +228,8 @@ class MPMadPresenter : public CUnknown, public CCritSec
 
     DWORD m_dwGUIWidth = 0;
     DWORD m_dwGUIHeight = 0;
+    int m_Xposition = 0;
+    int m_Yposition = 0;
 
     DWORD m_dwWidth = 0;
     DWORD m_dwHeight = 0;

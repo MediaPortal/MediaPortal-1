@@ -27,6 +27,7 @@ using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Windows.Forms;
+using DirectShowLib;
 using MediaPortal.Configuration;
 using MediaPortal.Player;
 using MediaPortal.Profile;
@@ -1082,7 +1083,7 @@ namespace MediaPortal.GUI.Library
           if (GUIGraphicsContext.ForceMadVRRefresh)
           {
             Size client = GUIGraphicsContext.form.ClientSize;
-            VMR9Util.g_vmr9?.MadVrScreenResize(0, 0, client.Width, client.Height, false);
+            VMR9Util.g_vmr9?.MadVrScreenResize(GUIGraphicsContext.form.Location.X, GUIGraphicsContext.form.Location.Y, client.Width, client.Height, false);
             GUIGraphicsContext.NoneDone = false;
             GUIGraphicsContext.TopAndBottomDone = false;
             GUIGraphicsContext.SideBySideDone = false;
@@ -1829,6 +1830,9 @@ namespace MediaPortal.GUI.Library
     public static bool ForceMadVRFirstStart { get; set; }
     public static bool BlurayMenu { get; set; }
     public static bool InitMadVRWindowPosition { get; set; }
+    public static IntPtr madVRDibBuffer { get; set; }
+    public static bool RestoreGuiForMadVrDone { get; set; }
+    //public static IntPtr madVRDIB { get; set; }
 
     /// <summary>
     /// Enable/Disable bypassing of UI Calibration transforms
