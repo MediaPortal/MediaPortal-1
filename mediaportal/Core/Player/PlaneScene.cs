@@ -20,12 +20,15 @@
 
 using System;
 using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading;
 using MediaPortal.ExtensionMethods;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player.Subtitles;
 using MediaPortal.Profile;
+using MediaPortal.Util;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using Geometry = MediaPortal.GUI.Library.Geometry;
@@ -709,6 +712,42 @@ namespace MediaPortal.Player
       {
         surfaceMadVr.ReleaseGraphics();
         surfaceMadVr.Dispose();
+      }
+    }
+
+    public void GrabMadVrScreenshot(IntPtr pTargetmadVrDib)
+    {
+      try
+      {
+        string directory = string.Format("{0}\\MediaPortal Screenshots\\{1:0000}-{2:00}-{3:00}",
+                                              Environment.GetFolderPath(Environment.SpecialFolder.MyPictures),
+                                              DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
+        if (!Directory.Exists(directory))
+        {
+          Log.Info("Planescene: Taking screenshot - Creating directory: {0}", directory);
+          Directory.CreateDirectory(directory);
+        }
+        string fileName = string.Format("{0}\\madVR - {1:00}-{2:00}-{3:00}", directory, DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
+
+        // Save screenshot from DIB
+        IntPtr pdib = pTargetmadVrDib;
+        Win32API.BITMAPINFOHEADER bmih = (Win32API.BITMAPINFOHEADER)Marshal.PtrToStructure(pdib, typeof(Win32API.BITMAPINFOHEADER));
+        IntPtr pixels = IntPtr.Add(pdib, bmih.biSize);
+        Bitmap result = new Bitmap(bmih.biWidth, bmih.biHeight, bmih.biWidth * 4, PixelFormat.Format32bppRgb, pixels);
+        result.RotateFlip(RotateFlipType.RotateNoneFlipY);
+        result.Save(fileName + ".jpg", ImageFormat.Jpeg);
+        result.Dispose();
+      }
+      catch
+      {
+        Win32API.LocalFree(pTargetmadVrDib);
+        pTargetmadVrDib = IntPtr.Zero;
+        Log.Info("Planescene : madVR grabbing image window failed");
+      }
+      finally
+      {
+        Win32API.LocalFree(pTargetmadVrDib);
+        pTargetmadVrDib = IntPtr.Zero;
       }
     }
 

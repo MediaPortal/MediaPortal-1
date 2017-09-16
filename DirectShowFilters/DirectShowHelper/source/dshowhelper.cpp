@@ -146,6 +146,7 @@ CCritSec m_logFileLock;
 std::queue<std::string> m_logQueue;
 BOOL m_bLoggerRunning;
 HANDLE m_hLogger = NULL;
+HANDLE m_hFrameGrabMadVr = NULL;
 CAMEvent m_EndLoggingEvent;
 
 
@@ -268,6 +269,18 @@ string GetLogLine()
   return ret;
 }
 
+UINT CALLBACK FrameGrabberMadVRThread(void* param)
+{
+  m_madPresenter->GrabFrame();
+  return 0;
+}
+
+void StartFrameGrabMadVR()
+{
+  UINT id;
+  m_hFrameGrabMadVr = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, FrameGrabberMadVRThread, 0, 0, &id));
+  SetThreadPriority(m_hFrameGrabMadVr, THREAD_PRIORITY_BELOW_NORMAL);
+}
 
 UINT CALLBACK LogThread(void* param)
 {
@@ -906,7 +919,7 @@ double EVRGetDisplayFPS()
   return displayFPS;
 }
 
-BOOL MadInit(IVMR9Callback* callback, DWORD width, DWORD height, DWORD dwD3DDevice, OAHWND parent, IBaseFilter** madFilter, IMediaControl* pMediaControl)
+BOOL MadInit(IVMR9Callback* callback, int xposition, int yposition, int width, int height, DWORD dwD3DDevice, OAHWND parent, IBaseFilter** madFilter, IMediaControl* pMediaControl)
 {
   m_RenderPrefix = _T("mad");
 
@@ -914,7 +927,7 @@ BOOL MadInit(IVMR9Callback* callback, DWORD width, DWORD height, DWORD dwD3DDevi
 
   Log("MPMadDshow::MadInit");
 
-  m_madPresenter = new MPMadPresenter(callback, width, height, parent, m_pDevice, pMediaControl);
+  m_madPresenter = new MPMadPresenter(callback, xposition, yposition, width, height, parent, m_pDevice, pMediaControl);
 
   Com::SmartPtr<IUnknown> pRenderer;
   m_madPresenter->CreateRenderer(&pRenderer);
@@ -980,22 +993,29 @@ void MadVrRepeatFrameSend()
   m_madPresenter->RepeatFrame();
 }
 
+void MadVrGrabFrameSend()
+{
+  // Use threaded grab
+  StartFrameGrabMadVR();
+  //m_madPresenter->GrabFrame();
+}
+
 void MadVrWindowPosition()
 {
   m_madPresenter->InitMadVRWindowPosition();
 }
 
-void MadVr3DRight(uint16_t x, uint16_t y, DWORD width, DWORD height)
+void MadVr3DRight(int x, int y, int width, int height)
 {
   m_madPresenter->MadVr3DSizeRight(x, y, width, height);
 }
 
-void MadVr3DLeft(uint16_t x, uint16_t y, DWORD width, DWORD height)
+void MadVr3DLeft(int x, int y, int width, int height)
 {
   m_madPresenter->MadVr3DSizeLeft(x, y, width, height);
 }
 
-void MadVrScreenResizeForce(uint16_t x, uint16_t y, DWORD width, DWORD height, BOOL displayChange)
+void MadVrScreenResizeForce(int x, int y, int width, int height, BOOL displayChange)
 {
   m_madPresenter->MadVrScreenResize(x, y, width, height, displayChange);
 }
