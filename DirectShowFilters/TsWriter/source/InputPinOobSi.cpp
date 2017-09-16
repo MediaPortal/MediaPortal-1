@@ -156,7 +156,7 @@ STDMETHODIMP CInputPinOobSi::Receive(IMediaSample* sample)
         m_dumpFileWriter.Write(data, sampleLength);
       }
     }
-    
+
     CSection s;
     s.AppendData(data, min(sizeof(s.Data), sampleLength));
     if (!s.IsComplete())

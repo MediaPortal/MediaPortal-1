@@ -1507,7 +1507,7 @@ unsigned long CParserMhw::DecodeVersion1ThemeSection(const unsigned char* data,
       id = groupIndex * 16;
       groupIndex++;
     }
-    
+
     CRecordMhwTheme* record = new CRecordMhwTheme();
     if (record == NULL)
     {
@@ -3585,7 +3585,7 @@ void CParserMhw::CompleteTable(const CSection& section,
     sectionLength = section.SectionLength - 1;    // + 3 for the table ID and section length, - 4 for the CRC
   }
   newBufferSize += sectionLength;
-  
+
   unsigned char* newBuffer = new unsigned char[newBufferSize];
   if (newBuffer == NULL)
   {

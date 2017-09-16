@@ -145,7 +145,7 @@ void LogDebug(const wchar_t* fmt, ...)
 //-----------------------------------------------------------------------------
 // WRITER/ANALYSER CLASS
 //-----------------------------------------------------------------------------
-CTsWriter::CTsWriter(LPUNKNOWN unk, HRESULT* hr) 
+CTsWriter::CTsWriter(LPUNKNOWN unk, HRESULT* hr)
   : CUnknown(NAME("TS Writer"), unk)
 {
   wchar_t temp[MAX_PATH];
@@ -156,14 +156,14 @@ CTsWriter::CTsWriter(LPUNKNOWN unk, HRESULT* hr)
   LogDebug(L"--------------- v%d.%d.%d.0 ---------------", VERSION_TS_WRITER_MAJOR, VERSION_TS_WRITER_MINOR, VERSION_TS_WRITER_MICRO);
   LogDebug(L"TVE 3.5 rewritten version");
   LogDebug(L"writer: constructor");
-    
+
   m_filter = new CTsWriterFilter(this,
                                   g_logFilePath.c_str(),
                                   GetOwner(),
                                   &m_filterLock,
                                   m_receiveLock,
                                   hr);
-  if (m_filter == NULL || !SUCCEEDED(*hr)) 
+  if (m_filter == NULL || !SUCCEEDED(*hr))
   {
     if (SUCCEEDED(*hr))
     {
@@ -175,7 +175,7 @@ CTsWriter::CTsWriter(LPUNKNOWN unk, HRESULT* hr)
 
   // service information grabbers
   m_grabberSiAtsc = new CGrabberSiAtscScte(PID_ATSC_BASE, this, GetOwner(), hr);
-  if (m_grabberSiAtsc == NULL || !SUCCEEDED(*hr)) 
+  if (m_grabberSiAtsc == NULL || !SUCCEEDED(*hr))
   {
     if (SUCCEEDED(*hr))
     {
@@ -185,7 +185,7 @@ CTsWriter::CTsWriter(LPUNKNOWN unk, HRESULT* hr)
     return;
   }
   m_grabberSiDvb = new CGrabberSiDvb(this, GetOwner(), hr);
-  if (m_grabberSiDvb == NULL || !SUCCEEDED(*hr)) 
+  if (m_grabberSiDvb == NULL || !SUCCEEDED(*hr))
   {
     if (SUCCEEDED(*hr))
     {
@@ -195,7 +195,7 @@ CTsWriter::CTsWriter(LPUNKNOWN unk, HRESULT* hr)
     return;
   }
   m_grabberSiFreesat = new CGrabberSiDvb(this, GetOwner(), hr);
-  if (m_grabberSiFreesat == NULL || !SUCCEEDED(*hr)) 
+  if (m_grabberSiFreesat == NULL || !SUCCEEDED(*hr))
   {
     if (SUCCEEDED(*hr))
     {
@@ -205,7 +205,7 @@ CTsWriter::CTsWriter(LPUNKNOWN unk, HRESULT* hr)
     return;
   }
   m_grabberSiMpeg = new CGrabberSiMpeg(this, &m_encryptionAnalyser, GetOwner(), hr);
-  if (m_grabberSiMpeg == NULL || !SUCCEEDED(*hr)) 
+  if (m_grabberSiMpeg == NULL || !SUCCEEDED(*hr))
   {
     if (SUCCEEDED(*hr))
     {
@@ -215,7 +215,7 @@ CTsWriter::CTsWriter(LPUNKNOWN unk, HRESULT* hr)
     return;
   }
   m_grabberSiScte = new CGrabberSiAtscScte(PID_SCTE_BASE, this, GetOwner(), hr);
-  if (m_grabberSiScte == NULL || !SUCCEEDED(*hr)) 
+  if (m_grabberSiScte == NULL || !SUCCEEDED(*hr))
   {
     if (SUCCEEDED(*hr))
     {
@@ -227,7 +227,7 @@ CTsWriter::CTsWriter(LPUNKNOWN unk, HRESULT* hr)
 
   // electronic programme guide grabbers
   m_grabberEpgAtsc = new CGrabberEpgAtsc(this, m_grabberSiAtsc, GetOwner(), hr);
-  if (m_grabberEpgAtsc == NULL || !SUCCEEDED(*hr)) 
+  if (m_grabberEpgAtsc == NULL || !SUCCEEDED(*hr))
   {
     if (SUCCEEDED(*hr))
     {
@@ -237,7 +237,7 @@ CTsWriter::CTsWriter(LPUNKNOWN unk, HRESULT* hr)
     return;
   }
   m_grabberEpgDvb = new CParserEitDvb(this, this, GetOwner(), hr);
-  if (m_grabberEpgDvb == NULL || !SUCCEEDED(*hr)) 
+  if (m_grabberEpgDvb == NULL || !SUCCEEDED(*hr))
   {
     if (SUCCEEDED(*hr))
     {
@@ -247,7 +247,7 @@ CTsWriter::CTsWriter(LPUNKNOWN unk, HRESULT* hr)
     return;
   }
   m_grabberEpgMhw = new CParserMhw(this, m_grabberSiDvb, GetOwner(), hr);
-  if (m_grabberEpgMhw == NULL || !SUCCEEDED(*hr)) 
+  if (m_grabberEpgMhw == NULL || !SUCCEEDED(*hr))
   {
     if (SUCCEEDED(*hr))
     {
@@ -257,7 +257,7 @@ CTsWriter::CTsWriter(LPUNKNOWN unk, HRESULT* hr)
     return;
   }
   m_grabberEpgOpenTv = new CParserOpenTv(this, GetOwner(), hr);
-  if (m_grabberEpgOpenTv == NULL || !SUCCEEDED(*hr)) 
+  if (m_grabberEpgOpenTv == NULL || !SUCCEEDED(*hr))
   {
     if (SUCCEEDED(*hr))
     {
@@ -267,7 +267,7 @@ CTsWriter::CTsWriter(LPUNKNOWN unk, HRESULT* hr)
     return;
   }
   m_grabberEpgScte = new CParserAet(this, m_grabberSiScte, GetOwner(), hr);
-  if (m_grabberEpgScte == NULL || !SUCCEEDED(*hr)) 
+  if (m_grabberEpgScte == NULL || !SUCCEEDED(*hr))
   {
     if (SUCCEEDED(*hr))
     {
@@ -869,11 +869,11 @@ STDMETHODIMP CTsWriter::NonDelegatingQueryInterface(REFIID iid, void ** ppv)
   {
     return GetInterface((ITsWriter*)this, ppv);
   }
-  if (iid == IID_IBaseFilter || iid == IID_IMediaFilter || iid == IID_IPersist) 
+  if (iid == IID_IBaseFilter || iid == IID_IMediaFilter || iid == IID_IPersist)
   {
     return m_filter->NonDelegatingQueryInterface(iid, ppv);
-  } 
- 
+  }
+
   return CUnknown::NonDelegatingQueryInterface(iid, ppv);
 }
 

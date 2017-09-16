@@ -339,7 +339,7 @@ HRESULT MultiFileWriter::OpenDataFile(bool isErrorLoggingEnabled)
   }
 
   // Build up to the minimum data file count.
-  if (m_dataFileNames.size() < m_dataFileCountMinimum) 
+  if (m_dataFileNames.size() < m_dataFileCountMinimum)
   {
     return CreateDataFile(isErrorLoggingEnabled);
   }

@@ -836,7 +836,7 @@ bool CParserEitAtsc::DecodeContentAdvisoryDescriptor(const unsigned char* data,
           if (ratingDimension == 0)
           {
             // "EntireAudience"
-            // 0 = 
+            // 0 =
             // 1 = None
             // 2 = TV-G
             // 3 = TV-PG
@@ -854,35 +854,35 @@ bool CParserEitAtsc::DecodeContentAdvisoryDescriptor(const unsigned char* data,
           else if (ratingDimension == 1 && ratingValue == 1)
           {
             // "Dialogue"
-            // 0 = 
+            // 0 =
             // 1 = D
             advisories |= 0x8000;
           }
           else if (ratingDimension == 2 && ratingValue == 1)
           {
             // "Language"
-            // 0 = 
+            // 0 =
             // 1 = L
             advisories |= 0x02;
           }
           else if (ratingDimension == 3 && ratingValue == 1)
           {
             // "Sex"
-            // 0 = 
+            // 0 =
             // 1 = S
             advisories |= 0x01;
           }
           else if (ratingDimension == 4 && ratingValue == 1)
           {
             // "Violence"
-            // 0 = 
+            // 0 =
             // 1 = V
             advisories |= 0x10;
           }
           else if (ratingDimension == 5)
           {
             // "Children"
-            // 0 = 
+            // 0 =
             // 1 = TV-Y
             // 2 = TV-Y7
             if (ratingValue == 1 || ratingValue == 2)
@@ -893,14 +893,14 @@ bool CParserEitAtsc::DecodeContentAdvisoryDescriptor(const unsigned char* data,
           else if (ratingDimension == 6 && ratingValue == 1)
           {
             // "FantasyViolence"
-            // 0 = 
+            // 0 =
             // 1 = FV
             advisories |= 0x08;
           }
           else if (ratingDimension == 7)
           {
             // "MPAA"
-            // 0 = 
+            // 0 =
             // 1 = N/A ["MPAARatingNotApplicable"]
             // 2 = G ["SuitableforAllAges"]
             // 3 = PG ["ParentalGuidanceSuggested"]

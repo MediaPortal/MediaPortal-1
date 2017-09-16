@@ -49,7 +49,7 @@ class MultiFileWriter
     HRESULT GetFileName(wchar_t** fileName);
     HRESULT OpenFile(const wchar_t* fileName, bool& resume);
     HRESULT CloseFile();
-  
+
     HRESULT Write(unsigned char* data, unsigned long dataLength, bool isErrorLoggingEnabled);
 
     void GetCurrentFilePosition(unsigned long& currentFileId,

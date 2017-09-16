@@ -87,7 +87,7 @@ class CParserEitAtsc : public CSectionDecoder
           EventId = 0;
           StartDateTime = 0;
           EtmLocation = 0;
-          Duration = 0; 
+          Duration = 0;
           VchipRating = 0xff;         // default: [not available]
           MpaaClassification = 0xff;  // default: [not available]
           Advisories = 0;             // default: [not available]

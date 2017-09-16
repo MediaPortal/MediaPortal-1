@@ -20,7 +20,7 @@
  */
 #pragma once
 #include "TsHeader.h"
-#include "pcr.h" 
+#include "pcr.h"
 
 class CAdaptionField
 {

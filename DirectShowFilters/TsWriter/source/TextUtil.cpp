@@ -324,7 +324,7 @@ bool CTextUtil::DishTextToString(const unsigned char* data,
   //LogDebug(L"Dish text: length = %hhu, table ID = %hhu",
   //          compressedLength, tableId);
   bool result = true;
-  if (tableId <= 0x80) 
+  if (tableId <= 0x80)
   {
     result = SingleRootHuffmanToString(compressedText,
                                         compressedLength,
@@ -502,7 +502,7 @@ bool CTextUtil::IsoIec10646ToString(const unsigned char* data,
 
   // Re-encode 2 byte UTF-16 Unicode characters to UTF-8 to avoid premature NULL termination.
   unsigned short bufferSize = (dataLength * 4) + 1; // each character may require up to 4 bytes, + 1 for NULL termination
-  char* t = new char[bufferSize];   
+  char* t = new char[bufferSize];
   if (t == NULL)
   {
     LogDebug(L"Unicode text: failed to allocate %hu byte(s)", bufferSize);
@@ -711,7 +711,7 @@ bool CTextUtil::OpenTvTextToString(const unsigned char* data,
   }
 
   bool result = true;
-  if (isItalian) 
+  if (isItalian)
   {
     result = SingleRootHuffmanToString(data,
                                         dataLength,
@@ -932,7 +932,7 @@ bool CTextUtil::BbcHuffmanToString(const unsigned char* data,
                                     unsigned char tableId,
                                     char** text)
 {
-  if (tableId == 1) 
+  if (tableId == 1)
   {
     return MultiRootHuffmanToString(data,
                                     dataLength,

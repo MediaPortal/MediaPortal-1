@@ -36,10 +36,10 @@ public:
   double ToClock() const;
   void   Time(int& day, int& hour, int &minutes, int& seconds, int & millsecs);
   char*  ToString();
-  
+
   CPcr& operator+=(const CPcr &rhs);
-  CPcr& operator-=(const CPcr &rhs); 
-  CPcr operator+(const CPcr &rhs); 
+  CPcr& operator-=(const CPcr &rhs);
+  CPcr operator+(const CPcr &rhs);
   CPcr operator-(const CPcr &rhs);
   CPcr& operator=(const CPcr &rhs);
   bool operator==(const CPcr &other) const ;

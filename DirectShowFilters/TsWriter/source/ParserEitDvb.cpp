@@ -3713,8 +3713,8 @@ bool CParserEitDvb::DecodeDishBevSeriesDescriptor(const unsigned char* data,
     unsigned long seriesIdNumber = (data[1] << 18) | (data[2] << 10) | (data[3] << 2) | (data[4] >> 6);
     unsigned short episodeIdNumber = ((data[4] & 0x3f) << 8) | data[5];
     unsigned short originalAirDate = (data[6] << 8) | data[7];  // days since 17 November 1858
-    // int seconds = (originalAirDate - 40587) * 86400;                       
-    // DateTime utcStartTime = new DateTime(1970, 1, 1).AddSeconds(seconds); 
+    // int seconds = (originalAirDate - 40587) * 86400;
+    // DateTime utcStartTime = new DateTime(1970, 1, 1).AddSeconds(seconds);
 
     string prefix;
     if (entityType == 0x7c)
