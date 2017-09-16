@@ -45,7 +45,7 @@ class CDiskRecorder
   public:
     CDiskRecorder(RecorderMode mode);
     ~CDiskRecorder();
-  
+
     HRESULT SetPmt(const unsigned char* pmt,
                     unsigned short pmtSize,
                     bool isDynamicPmtChange);
@@ -104,7 +104,7 @@ class CDiskRecorder
     } PidInfo;
 
     bool CheckDiscontinuityFlag(const CTsHeader& header, const unsigned char* tsPacket);
-    bool IsVideoOrAudioSeen(const CTsHeader& header, const PidInfo* pidInfo);
+    bool IsVideoOrAudioSeen(const CTsHeader& header);
     bool ConfirmAudioStreams(PidInfo* pidInfo);
     void CheckContinuityCounter(const CTsHeader& header,
                                 PidInfo& pidInfo,

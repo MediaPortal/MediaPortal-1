@@ -118,7 +118,7 @@ const unsigned char CDiskRecorder::WRITE_BUFFER_THROTTLE_STEP_PACKET_COUNTS[] =
   172   // 516  *sync with streaming server
 };
 
-CDiskRecorder::CDiskRecorder(RecorderMode mode) 
+CDiskRecorder::CDiskRecorder(RecorderMode mode)
 {
   m_recorderMode = mode;
   m_isRunning = false;
@@ -367,7 +367,7 @@ HRESULT CDiskRecorder::Start()
       bool resume = ReadParameters();
       m_fileTimeShifting->SetConfiguration(m_timeShiftingParameters);
       HRESULT hr = m_fileTimeShifting->OpenFile(m_fileName.c_str(), resume);
-      if (FAILED(hr)) 
+      if (FAILED(hr))
       {
         WriteLog(L"failed to open file, hr = 0x%x, file = %s",
                   hr, m_fileName.c_str());
@@ -589,7 +589,7 @@ void CDiskRecorder::OnTsPacket(const CTsHeader& header, const unsigned char* tsP
     // Requirement #1: unencrypted video or audio must be seen.
     // A file that doesn't contain video or audio is unplayable and pointless.
     // Note any packet that reaches here is not encrypted by definition.
-    if (!IsVideoOrAudioSeen(header, info))
+    if (!IsVideoOrAudioSeen(header))
     {
       return;
     }
@@ -713,19 +713,37 @@ bool CDiskRecorder::CheckDiscontinuityFlag(const CTsHeader& header,
   return true;
 }
 
-bool CDiskRecorder::IsVideoOrAudioSeen(const CTsHeader& header,
-                                        const PidInfo* pidInfo)
+bool CDiskRecorder::IsVideoOrAudioSeen(const CTsHeader& header)
 {
   if (m_videoAudioStartTimeStamp == -1)
   {
-    if (
-      !header.HasPayload ||
-      pidInfo == NULL ||
-      (
-        (pidInfo->FakePid & 0xff0) != PID_VIDEO_FIRST &&
-        (pidInfo->FakePid & 0xff0) != PID_AUDIO_FIRST
-      )
-    )
+    if (!header.HasPayload)
+    {
+      return false;
+    }
+
+    bool isVideoOrAudioPid = false;
+    CPidTable& pidTable = m_pmtParser.GetPidInfo();
+    for (vector<VideoPid*>::const_iterator it = pidTable.VideoPids.begin(); it != pidTable.VideoPids.end(); it++)
+    {
+      if ((*it)->Pid == header.Pid)
+      {
+        isVideoOrAudioPid = true;
+        break;
+      }
+    }
+    if (!isVideoOrAudioPid)
+    {
+      for (vector<AudioPid*>::const_iterator it = pidTable.AudioPids.begin(); it != pidTable.AudioPids.end(); it++)
+      {
+        if ((*it)->Pid == header.Pid)
+        {
+          isVideoOrAudioPid = true;
+          break;
+        }
+      }
+    }
+    if (!isVideoOrAudioPid)
     {
       return false;
     }
@@ -761,7 +779,25 @@ bool CDiskRecorder::ConfirmAudioStreams(PidInfo* pidInfo)
   if (pidInfo != NULL && !pidInfo->IsSeen)
   {
     pidInfo->IsSeen = true;
-    if ((pidInfo->FakePid & 0xff0) == PID_AUDIO_FIRST)
+
+    bool isAudioPid = false;
+    bool isAudioConfirmed = true;
+    CPidTable& pidTable = m_pmtParser.GetPidInfo();
+    for (vector<AudioPid*>::const_iterator it = pidTable.AudioPids.begin(); it != pidTable.AudioPids.end(); it++)
+    {
+      if (pidInfo->OriginalPid == (*it)->Pid)
+      {
+        isAudioPid = true;
+      }
+
+      PidInfo* audioPidInfo = m_pids[(*it)->Pid];
+      if (!audioPidInfo->IsSeen)
+      {
+        isAudioConfirmed = false;
+      }
+    }
+
+    if (isAudioPid)
     {
       // This is the first time we've seen this audio stream.
       if (m_isAudioConfirmed)
@@ -773,16 +809,10 @@ bool CDiskRecorder::ConfirmAudioStreams(PidInfo* pidInfo)
       }
 
       // Have we seen all audio PIDs now?
-      m_isAudioConfirmed = true;
-      CPidTable& pidTable = m_pmtParser.GetPidInfo();
-      for (vector<AudioPid*>::const_iterator it = pidTable.AudioPids.begin(); it != pidTable.AudioPids.end(); it++)
+      m_isAudioConfirmed = isAudioConfirmed;
+      if (isAudioConfirmed)
       {
-        PidInfo* audioPidInfo = m_pids[(*it)->Pid];
-        if (!audioPidInfo->IsSeen)
-        {
-          m_isAudioConfirmed = false;
-          break;
-        }
+        WriteLog(L"all audio streams confirmed");
       }
     }
   }
@@ -1590,11 +1620,22 @@ bool CDiskRecorder::HandlePcr(const CTsHeader& header,
   if (m_substitutePcrSourcePid == PID_NOT_SET)
   {
     // Obviously PCR must be sequential. Video PTS isn't guaranteed to be
-    // sequential, so we can't use it to generate PCR.    
-    if ((fakePid & 0xff0) != PID_AUDIO_FIRST)
+    // sequential, so we can't use it to generate PCR.
+    bool isAudioPid = false;
+    CPidTable& pidTable = m_pmtParser.GetPidInfo();
+    for (vector<AudioPid*>::const_iterator it = pidTable.AudioPids.begin(); it != pidTable.AudioPids.end(); it++)
+    {
+      if ((*it)->Pid == header.Pid)
+      {
+        isAudioPid = true;
+        break;
+      }
+    }
+    if (!isAudioPid)
     {
       return false;
     }
+
     WriteLog(L"selected PTS-from-PCR source PID, original PID = %hu, fake PID = %u",
               header.Pid, fakePid);
     m_substitutePcrSourcePid = header.Pid;
@@ -1659,7 +1700,7 @@ void CDiskRecorder::InjectPcrFromPts(const unsigned char* pesHeader)
 void CDiskRecorder::PatchPcr(const CPcr& pcrNew, unsigned char* tsPacket)
 {
   clock_t timeStamp = clock();
-  
+
   if (m_waitingForPcr)
   {
     m_waitingForPcr = false;
@@ -1908,7 +1949,7 @@ void CDiskRecorder::GetPesHeader(const unsigned char* tsPacket,
     pidInfo.PesHeaderByteCount = 0;
   }
   // Is the current PES packet header split over too many TS packets?
-  else if (pidInfo.TsPacketQueueLength >= MAX_TS_PACKET_QUEUE) 
+  else if (pidInfo.TsPacketQueueLength >= MAX_TS_PACKET_QUEUE)
   {
     // Yes. Flush the TS packet queue to disk without modifying any PTS or DTS
     // which may or may not be present in the PES packet header.
