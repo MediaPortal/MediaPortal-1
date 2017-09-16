@@ -782,7 +782,6 @@ namespace MediaPortal.Player
 
     private int RenderLayers(GUILayers layers, Int16 width, Int16 height, Int16 arWidth, Int16 arHeight)
     {
-      //bool visible = false;
       UiVisible = false;
 
       //lock (GUIGraphicsContext.RenderMadVrLock)
@@ -791,7 +790,6 @@ namespace MediaPortal.Player
         {
           if (_reEntrant)
           {
-            //Log.Error("PlaneScene: re-entrancy in PresentImage");
             return -1;
           }
 
