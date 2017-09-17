@@ -282,6 +282,7 @@ void MPMadPresenter::InitMadVRWindowPosition()
     pWindow->put_Owner(reinterpret_cast<OAHWND>(m_hWnd));
     pWindow->put_Visible(reinterpret_cast<OAHWND>(m_hWnd));
     pWindow->SetWindowPosition(0, 0, m_dwGUIWidth, m_dwGUIHeight);
+    m_pReInitOSD = true;
   }
 }
 
