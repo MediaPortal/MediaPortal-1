@@ -792,7 +792,13 @@ namespace MediaPortal.Player
       //if (GUIGraphicsContext.InVmr9Render) return;
       if (_bMediaTypeChanged)
       {
-        DoGraphRebuild();
+        // Don't do rebuild when it's madVR and if it's different  from LAV codec
+        if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR ||
+            (!string.Equals("LAV Video Decoder", MatchFilters("Video"), StringComparison.InvariantCultureIgnoreCase) ||
+             !string.Equals("LAV Audio Decoder", MatchFilters("Audio"), StringComparison.InvariantCultureIgnoreCase)))
+        {
+          DoGraphRebuild();
+        }
         _ireader.OnGraphRebuild(iChangedMediaTypes);
         _bMediaTypeChanged = false;
       }
@@ -1839,7 +1845,7 @@ namespace MediaPortal.Player
             Log.Error("Error starting graph: {0}", error.Message);
             return;
           }
-          Log.Info("Reconfigure graph done");
+          Log.Info("TSReaderPlayer: Reconfigure graph done");
         }
       }
     }

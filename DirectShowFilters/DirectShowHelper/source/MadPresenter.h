@@ -153,6 +153,7 @@ class MPMadPresenter : public CUnknown, public CCritSec
     void SetMadVrPaused(bool paused);
     void RepeatFrame();
     void GrabFrame();
+    void GrabScreenshot();
     void InitMadVRWindowPosition();
     void MadVr3DSizeRight(int x, int y, int width, int height);
     void MadVr3DSizeLeft(int x, int y, int width, int height);

@@ -271,15 +271,17 @@ string GetLogLine()
 
 UINT CALLBACK FrameGrabberMadVRThread(void* param)
 {
-  m_madPresenter->GrabFrame();
+  m_madPresenter->GrabScreenshot();
   return 0;
 }
 
 void StartFrameGrabMadVR()
 {
-  UINT id;
-  m_hFrameGrabMadVr = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, FrameGrabberMadVRThread, 0, 0, &id));
-  SetThreadPriority(m_hFrameGrabMadVr, THREAD_PRIORITY_BELOW_NORMAL);
+  //UINT id;
+  //m_hFrameGrabMadVr = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, FrameGrabberMadVRThread, nullptr, 0, &id));
+  //SetThreadPriority(m_hFrameGrabMadVr, THREAD_PRIORITY_BELOW_NORMAL);
+  DWORD tid;
+  CloseHandle(CreateThread(nullptr, 0, reinterpret_cast<LPTHREAD_START_ROUTINE>(FrameGrabberMadVRThread), nullptr, 0, &tid));
 }
 
 UINT CALLBACK LogThread(void* param)
@@ -991,6 +993,7 @@ void MadVrPaused(bool paused)
 void MadVrRepeatFrameSend()
 {
   m_madPresenter->RepeatFrame();
+  //m_madPresenter->GrabFrame();
 }
 
 void MadVrGrabFrameSend()

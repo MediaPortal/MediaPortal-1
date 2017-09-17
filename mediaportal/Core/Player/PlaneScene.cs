@@ -717,6 +717,7 @@ namespace MediaPortal.Player
 
     public void GrabMadVrScreenshot(IntPtr pTargetmadVrDib)
     {
+      IntPtr pdib = pTargetmadVrDib;
       try
       {
         string directory = string.Format("{0}\\MediaPortal Screenshots\\{1:0000}-{2:00}-{3:00}",
@@ -730,7 +731,6 @@ namespace MediaPortal.Player
         string fileName = string.Format("{0}\\madVR - {1:00}-{2:00}-{3:00}", directory, DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
 
         // Save screenshot from DIB
-        IntPtr pdib = pTargetmadVrDib;
         Win32API.BITMAPINFOHEADER bmih = (Win32API.BITMAPINFOHEADER)Marshal.PtrToStructure(pdib, typeof(Win32API.BITMAPINFOHEADER));
         IntPtr pixels = IntPtr.Add(pdib, bmih.biSize);
         Bitmap result = new Bitmap(bmih.biWidth, bmih.biHeight, bmih.biWidth * 4, PixelFormat.Format32bppRgb, pixels);
@@ -740,13 +740,13 @@ namespace MediaPortal.Player
       }
       catch
       {
-        Win32API.LocalFree(pTargetmadVrDib);
+        pdib = IntPtr.Zero;
         pTargetmadVrDib = IntPtr.Zero;
         Log.Info("Planescene : madVR grabbing image window failed");
       }
       finally
       {
-        Win32API.LocalFree(pTargetmadVrDib);
+        pdib = IntPtr.Zero;
         pTargetmadVrDib = IntPtr.Zero;
       }
     }
