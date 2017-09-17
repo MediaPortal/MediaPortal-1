@@ -168,59 +168,9 @@ void MPMadPresenter::RepeatFrame()
   pOR->OsdRedrawFrame();
 }
 
-void MPMadPresenter::GrabFrame()
+void MPMadPresenter::GrabScreenshot()
 {
   CAutoLock cAutoLock(this);
-  //if (Com::SmartQIPtr<IMadVRFrameGrabber> pMadVrFrame = m_pMad)
-  //{
-  //  LPVOID dibImageBuffer = nullptr;
-
-  //  // TRY 1
-  //  //HRESULT hr;
-  //  //hr = pMadVrFrame->GrabFrame(ZOOM_100_PERCENT, FLAGS_RENDER_OSD | FLAGS_NO_SUBTITLES | FLAGS_NO_ARTIFACT_REMOVAL | FLAGS_NO_IMAGE_ENHANCEMENTS | FLAGS_NO_UPSCALING_REFINEMENTS | FLAGS_NO_HDR_SDR_CONVERSION,
-  //  //  CHROMA_UPSCALING_USER_SELECTED, IMAGE_DOWNSCALING_USER_SELECTED, IMAGE_UPSCALING_USER_SELECTED, 0, &dibImageBuffer, nullptr);
-  //  //Log("GrabFrame() hr: 0x%08x", hr);
-
-  //  // TRY 2
-  //  //HRESULT hr;
-  //  //hr = pMadVrFrame->GrabFrame(ZOOM_PLAYBACK_SIZE, FLAGS_NO_SUBTITLES | FLAGS_NO_ARTIFACT_REMOVAL | FLAGS_NO_IMAGE_ENHANCEMENTS | FLAGS_NO_UPSCALING_REFINEMENTS | FLAGS_NO_HDR_SDR_CONVERSION,
-  //  //  CHROMA_UPSCALING_USER_SELECTED, IMAGE_DOWNSCALING_USER_SELECTED, IMAGE_UPSCALING_USER_SELECTED, 0, &dibImageBuffer, nullptr);
-  //  //Log("GrabFrame() hr: 0x%08x", hr);
-
-  //  // TRY 3
-  //  //HRESULT hr;
-  //  //hr = pMadVrFrame->GrabFrame(ZOOM_1280x720, FLAGS_NO_SUBTITLES | FLAGS_NO_ARTIFACT_REMOVAL | FLAGS_NO_IMAGE_ENHANCEMENTS | FLAGS_NO_UPSCALING_REFINEMENTS | FLAGS_NO_HDR_SDR_CONVERSION,
-  //  //  CHROMA_UPSCALING_USER_SELECTED, IMAGE_DOWNSCALING_USER_SELECTED, IMAGE_UPSCALING_USER_SELECTED, 0, &dibImageBuffer, nullptr);
-  //  //Log("GrabFrame() hr: 0x%08x", hr);
-
-  //  // TRY 4 OK // Atmolight should be ok with this one
-  //  //HRESULT hr;
-  //  //hr = pMadVrFrame->GrabFrame(ZOOM_ENCODED_SIZE, FLAGS_NO_SUBTITLES | FLAGS_NO_ARTIFACT_REMOVAL | FLAGS_NO_IMAGE_ENHANCEMENTS | FLAGS_NO_UPSCALING_REFINEMENTS | FLAGS_NO_HDR_SDR_CONVERSION,
-  //  //  CHROMA_UPSCALING_USER_SELECTED, IMAGE_DOWNSCALING_USER_SELECTED, IMAGE_UPSCALING_USER_SELECTED, 0, &dibImageBuffer, nullptr);
-  //  //Log("GrabFrame() hr: 0x%08x", hr);
-
-  //  // TRY 5 GUI MADVR 11/09 20H25 (OLD or DEFAULT SETTINGS)
-  //  HRESULT hr;
-  //  hr = pMadVrFrame->GrabFrame(ZOOM_PLAYBACK_SIZE, FLAGS_RENDER_OSD | FLAGS_NO_SUBTITLES | FLAGS_NO_ARTIFACT_REMOVAL | FLAGS_NO_IMAGE_ENHANCEMENTS | FLAGS_NO_UPSCALING_REFINEMENTS | FLAGS_NO_HDR_SDR_CONVERSION,
-  //    CHROMA_UPSCALING_USER_SELECTED, IMAGE_DOWNSCALING_USER_SELECTED, IMAGE_UPSCALING_USER_SELECTED, 0, &dibImageBuffer, nullptr);
-  //  Log("GrabFrame() hr: 0x%08x", hr);
-
-  //  // TRY 6
-  //  //HRESULT hr;
-  //  //hr = pMadVrFrame->GrabFrame(ZOOM_1920x1080, FLAGS_RENDER_OSD | FLAGS_NO_SUBTITLES | FLAGS_NO_ARTIFACT_REMOVAL | FLAGS_NO_IMAGE_ENHANCEMENTS | FLAGS_NO_UPSCALING_REFINEMENTS | FLAGS_NO_HDR_SDR_CONVERSION,
-  //  //  CHROMA_UPSCALING_USER_SELECTED, IMAGE_DOWNSCALING_USER_SELECTED, IMAGE_UPSCALING_USER_SELECTED, 0, &dibImageBuffer, nullptr);
-  //  //Log("GrabFrame() hr: 0x%08x", hr);
-
-  //  // TRY 7 OK // Atmolight should be ok with this one
-  //  //HRESULT hr;
-  //  //hr = pMadVrFrame->GrabFrame(ZOOM_ENCODED_SIZE, FLAGS_NO_SUBTITLES | FLAGS_NO_ARTIFACT_REMOVAL | FLAGS_NO_IMAGE_ENHANCEMENTS | FLAGS_NO_UPSCALING_REFINEMENTS | FLAGS_NO_HDR_SDR_CONVERSION,
-  //  //  CHROMA_UPSCALING_BILINEAR, IMAGE_DOWNSCALING_BILINEAR, IMAGE_UPSCALING_BILINEAR, 0, &dibImageBuffer, nullptr);
-  //  //Log("GrabFrame() hr: 0x%08x", hr);
-
-  //  // Send the DIB to C#
-  //  m_pCallback->GrabMadVrScreenshot(dibImageBuffer);
-  //  return;
-  //}
   try
   {
     if (Com::SmartQIPtr<IBasicVideo> m_pBV = m_pMad)
@@ -233,11 +183,10 @@ void MPMadPresenter::GrabFrame()
         return;
       }
       long* ppData = static_cast<long *>(malloc(nBufferSize));
-      Sleep(100);
       hr = m_pBV->GetCurrentImage(&nBufferSize, ppData);
       if (hr != S_OK || !ppData)
       {
-        LocalFree(ppData);
+        free(ppData);
         return;
       }
       if (ppData)
@@ -247,15 +196,72 @@ void MPMadPresenter::GrabFrame()
         int bpp = bih->biBitCount;
         if (bpp != 16 && bpp != 24 && bpp != 32)
         {
-          LocalFree(ppData);
+          free(ppData);
           return;
         }
         m_pCallback->GrabMadVrScreenshot(LPVOID(ppData));
+        free(ppData);
       }
     }
   }
   catch (...)
   {
+  }
+}
+
+void MPMadPresenter::GrabFrame()
+{
+  //CAutoLock cAutoLock(this);
+  if (Com::SmartQIPtr<IMadVRFrameGrabber> pMadVrFrame = m_pMad)
+  {
+    LPVOID dibImageBuffer = nullptr;
+
+    // TRY 1
+    //HRESULT hr;
+    //hr = pMadVrFrame->GrabFrame(ZOOM_100_PERCENT, FLAGS_RENDER_OSD | FLAGS_NO_SUBTITLES | FLAGS_NO_ARTIFACT_REMOVAL | FLAGS_NO_IMAGE_ENHANCEMENTS | FLAGS_NO_UPSCALING_REFINEMENTS | FLAGS_NO_HDR_SDR_CONVERSION,
+    //  CHROMA_UPSCALING_USER_SELECTED, IMAGE_DOWNSCALING_USER_SELECTED, IMAGE_UPSCALING_USER_SELECTED, 0, &dibImageBuffer, nullptr);
+    //Log("GrabFrame() hr: 0x%08x", hr);
+
+    // TRY 2
+    //HRESULT hr;
+    //hr = pMadVrFrame->GrabFrame(ZOOM_PLAYBACK_SIZE, FLAGS_NO_SUBTITLES | FLAGS_NO_ARTIFACT_REMOVAL | FLAGS_NO_IMAGE_ENHANCEMENTS | FLAGS_NO_UPSCALING_REFINEMENTS | FLAGS_NO_HDR_SDR_CONVERSION,
+    //  CHROMA_UPSCALING_USER_SELECTED, IMAGE_DOWNSCALING_USER_SELECTED, IMAGE_UPSCALING_USER_SELECTED, 0, &dibImageBuffer, nullptr);
+    //Log("GrabFrame() hr: 0x%08x", hr);
+
+    // TRY 3
+    //HRESULT hr;
+    //hr = pMadVrFrame->GrabFrame(ZOOM_1280x720, FLAGS_NO_SUBTITLES | FLAGS_NO_ARTIFACT_REMOVAL | FLAGS_NO_IMAGE_ENHANCEMENTS | FLAGS_NO_UPSCALING_REFINEMENTS | FLAGS_NO_HDR_SDR_CONVERSION,
+    //  CHROMA_UPSCALING_USER_SELECTED, IMAGE_DOWNSCALING_USER_SELECTED, IMAGE_UPSCALING_USER_SELECTED, 0, &dibImageBuffer, nullptr);
+    //Log("GrabFrame() hr: 0x%08x", hr);
+
+    // TRY 4 OK // Atmolight should be ok with this one
+    //HRESULT hr;
+    //hr = pMadVrFrame->GrabFrame(ZOOM_ENCODED_SIZE, FLAGS_NO_SUBTITLES | FLAGS_NO_ARTIFACT_REMOVAL | FLAGS_NO_IMAGE_ENHANCEMENTS | FLAGS_NO_UPSCALING_REFINEMENTS | FLAGS_NO_HDR_SDR_CONVERSION,
+    //  CHROMA_UPSCALING_USER_SELECTED, IMAGE_DOWNSCALING_USER_SELECTED, IMAGE_UPSCALING_USER_SELECTED, 0, &dibImageBuffer, nullptr);
+    //Log("GrabFrame() hr: 0x%08x", hr);
+
+    // TRY 5 GUI MADVR 11/09 20H25 (OLD or DEFAULT SETTINGS)
+    //HRESULT hr;
+    //hr = pMadVrFrame->GrabFrame(ZOOM_PLAYBACK_SIZE, FLAGS_RENDER_OSD | FLAGS_NO_SUBTITLES | FLAGS_NO_ARTIFACT_REMOVAL | FLAGS_NO_IMAGE_ENHANCEMENTS | FLAGS_NO_UPSCALING_REFINEMENTS | FLAGS_NO_HDR_SDR_CONVERSION,
+    //  CHROMA_UPSCALING_USER_SELECTED, IMAGE_DOWNSCALING_USER_SELECTED, IMAGE_UPSCALING_USER_SELECTED, 0, &dibImageBuffer, nullptr);
+    //Log("GrabFrame() hr: 0x%08x", hr);
+
+    // TRY 6
+    //HRESULT hr;
+    //hr = pMadVrFrame->GrabFrame(ZOOM_1920x1080, FLAGS_RENDER_OSD | FLAGS_NO_SUBTITLES | FLAGS_NO_ARTIFACT_REMOVAL | FLAGS_NO_IMAGE_ENHANCEMENTS | FLAGS_NO_UPSCALING_REFINEMENTS | FLAGS_NO_HDR_SDR_CONVERSION,
+    //  CHROMA_UPSCALING_USER_SELECTED, IMAGE_DOWNSCALING_USER_SELECTED, IMAGE_UPSCALING_USER_SELECTED, 0, &dibImageBuffer, nullptr);
+    //Log("GrabFrame() hr: 0x%08x", hr);
+
+    // TRY 7 OK // Atmolight should be ok with this one
+    HRESULT hr;
+    hr = pMadVrFrame->GrabFrame(ZOOM_ENCODED_SIZE, FLAGS_NO_SUBTITLES | FLAGS_NO_ARTIFACT_REMOVAL | FLAGS_NO_IMAGE_ENHANCEMENTS | FLAGS_NO_UPSCALING_REFINEMENTS | FLAGS_NO_HDR_SDR_CONVERSION,
+      CHROMA_UPSCALING_BILINEAR, IMAGE_DOWNSCALING_BILINEAR, IMAGE_UPSCALING_BILINEAR, 0, &dibImageBuffer, nullptr);
+    Log("GrabFrame() hr: 0x%08x", hr);
+
+    // Send the DIB to C#
+    //m_pCallback->RenderFrame(1, 1, 1, 1, reinterpret_cast<LONG>(dibImageBuffer));
+    //m_pCallback->GrabMadVrScreenshot(dibImageBuffer);
+    LocalFree(dibImageBuffer);
   }
 }
 
@@ -307,7 +313,7 @@ void MPMadPresenter::MadVrScreenResize(int x, int y, int width, int height, bool
 {
   if (m_pMadD3DDev)
   {
-    Log("%s : done : %d x %d", __FUNCTION__, width, height);
+    Log("%s : SetWindowPos : %d x %d", __FUNCTION__, width, height);
     SetWindowPos(m_hWnd, 0, 0, 0, width, height, SWP_ASYNCWINDOWPOS); // for using no Kodi madVR window way comment out this line
     //SetWindowPos(m_hWnd, 0, x, y, width, height, SWP_ASYNCWINDOWPOS); // for using no Kodi madVR window way uncomment out this line
 
@@ -317,6 +323,7 @@ void MPMadPresenter::MadVrScreenResize(int x, int y, int width, int height, bool
       m_pReInitOSD = true;
       m_dwGUIWidth = width;
       m_dwGUIHeight = height;
+      Log("%s : done : %d x %d", __FUNCTION__, width, height);
     }
   }
 }
