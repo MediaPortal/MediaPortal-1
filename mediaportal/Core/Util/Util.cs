@@ -5550,6 +5550,29 @@ namespace MediaPortal.Util
       }
     }
 
+    /// <summary>
+    /// Convert the DIB from madVR GrabFrame
+    /// Fill GUIGraphicsContext.madVRFrameBitmap
+    /// </summary>
+    public static void GetMadVrBitmapFromDib(IntPtr pTargetmadVrDib)
+    {
+      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && pTargetmadVrDib != IntPtr.Zero)
+      {
+        // Convert DIB to Bitmap
+        // pTargetmadVrDib is a DIB
+        Win32API.BITMAPINFOHEADER bmih = (Win32API.BITMAPINFOHEADER) Marshal.PtrToStructure(pTargetmadVrDib, typeof (Win32API.BITMAPINFOHEADER));
+        IntPtr pixels = IntPtr.Add(pTargetmadVrDib, bmih.biSize);
+
+        using (Bitmap b = new Bitmap(bmih.biWidth, bmih.biHeight, bmih.biWidth*4, PixelFormat.Format32bppRgb, pixels))
+        {
+          GUIGraphicsContext.madVRFrameBitmap = new Bitmap(b);
+          // IMPORTANT: Closes and disposes the stream
+          // If this is not done we get a memory leak!
+          b.Dispose();
+        }
+      }
+    }
+
     public static string GetThumbnailPathname(string basePath, string file, string formatString)
     {
       file = EncryptLine(file);

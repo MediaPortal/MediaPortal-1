@@ -2201,7 +2201,10 @@ namespace MediaPortal.Player
         if (VMR9Util.g_vmr9 != null && filterConfig != null && selection == "Video" && filterConfig.enableCCSubtitles)
         {
           CoreCCPresent = false;
-          CoreCCParserCheck();
+          if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
+          {
+            CoreCCParserCheck();
+          }
         }
         VideoChange = true;
       }

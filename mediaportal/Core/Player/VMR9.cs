@@ -89,6 +89,12 @@ namespace MediaPortal.Player
     void GrabMadVrScreenshot(IntPtr pTargetmadVrDib);
 
     [PreserveSig]
+    void GrabMadVrFrame(IntPtr pTargetmadVrDib);
+
+    [PreserveSig]
+    void GrabMadVrCurrentFrame(IntPtr pTargetmadVrDib);
+
+    [PreserveSig]
     void ForceOsdUpdate(bool pForce);
 
     [PreserveSig]
@@ -172,6 +178,12 @@ namespace MediaPortal.Player
 
     [DllImport("dshowhelper.dll", CallingConvention = CallingConvention.Cdecl)]
     private static extern unsafe void MadVrGrabFrameSend();
+
+    [DllImport("dshowhelper.dll", CallingConvention = CallingConvention.Cdecl)]
+    private static extern unsafe void MadVrGrabCurrentFrameSend();
+
+    [DllImport("dshowhelper.dll", CallingConvention = CallingConvention.Cdecl)]
+    private static extern unsafe void MadVrGrabScreenshotSend();
 
     [DllImport("dshowhelper.dll", CallingConvention = CallingConvention.Cdecl)]
     private static extern unsafe void MadVrWindowPosition();
@@ -519,7 +531,29 @@ namespace MediaPortal.Player
     {
       if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
       {
-        MadVrGrabFrameSend();
+        MadVrGrabScreenshotSend();
+      }
+    }
+
+    ///// <summary>
+    ///// Send call to grabbing frame for madVR
+    ///// </summary>
+    //public void MadVrGrabFrame()
+    //{
+    //  if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+    //  {
+    //    MadVrGrabFrameSend();
+    //  }
+    //}
+
+    /// <summary>
+    /// Send call to grabbing current frame for madVR
+    /// </summary>
+    public void MadVrGrabCurrentFrame()
+    {
+      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+      {
+        MadVrGrabCurrentFrameSend();
       }
     }
 
@@ -826,6 +860,7 @@ namespace MediaPortal.Player
           GUIGraphicsContext.ForceMadVRFirstStart = true;
           GUIGraphicsContext.InitMadVRWindowPosition = true;
           GUIGraphicsContext.RestoreGuiForMadVrDone = false;
+          GUIGraphicsContext.WorkerThreadStart = false;
           IMediaControl mPMediaControl = (IMediaControl) graphBuilder;
           var xposition = GUIGraphicsContext.form.Location.X;
           var yposition = GUIGraphicsContext.form.Location.Y;
@@ -1163,6 +1198,14 @@ namespace MediaPortal.Player
             GUIGraphicsContext.MadVrOsd = false;
             GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_REGISTER_MADVR_OSD, 0, 0, 0, 0, 0, null);
             GUIWindowManager.SendThreadMessage(msg);
+          }
+        }
+        // Delayed Frame Grabber
+        if (tsPlay.Seconds >= 1)
+        {
+          if (!GUIGraphicsContext.WorkerThreadStart)
+          {
+            //_scene.WorkerThreadStart();
           }
         }
         if (GUIGraphicsContext.ForceMadVRRefresh ||
@@ -1538,6 +1581,14 @@ namespace MediaPortal.Player
           int hr;
           if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
           {
+            if (_scene?.WorkerThread != null)
+            {
+              if (_scene.WorkerThread.IsAlive)
+              {
+                Log.Error("VMR9: Vmr9MediaCtrl madVR Grab thread abort");
+                _scene.WorkerThread.Abort();
+              }
+            }
             hr = mediaCtrl.Stop();
             DsError.ThrowExceptionForHR(hr);
             Log.Debug("VMR9: Vmr9MediaCtrl MadStopping()");

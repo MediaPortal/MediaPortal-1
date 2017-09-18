@@ -25,11 +25,10 @@
 #include "mvrInterfaces.h"
 
 // For more details for memory leak detection see the alloctracing.h header
-#include "..\..\alloctracing.h"
+//#include "..\..\alloctracing.h"
 #include "StdString.h"
-#include "../../mpc-hc_subs/src/dsutil/DSUtil.h"
-#include <afxwin.h>
 #include "threads/SystemClock.h"
+#include "gdiplus.h"
 
 const DWORD D3DFVF_VID_FRAME_VERTEX = D3DFVF_XYZRHW | D3DFVF_TEX1;
 
@@ -42,6 +41,37 @@ struct VID_FRAME_VERTEX
   float u;
   float v;
 };
+
+int GetEncoderClsid(const WCHAR* format, CLSID* pClsid)
+{
+  UINT  num = 0;          // number of image encoders
+  UINT  size = 0;         // size of the image encoder array in bytes
+
+  Gdiplus::ImageCodecInfo* pImageCodecInfo = NULL;
+
+  Gdiplus::GetImageEncodersSize(&num, &size);
+  if (size == 0)
+    return -1;  // Failure
+
+  pImageCodecInfo = static_cast<Gdiplus::ImageCodecInfo*>(malloc(size));
+  if (pImageCodecInfo == NULL)
+    return -1;  // Failure
+
+  GetImageEncoders(num, size, pImageCodecInfo);
+
+  for (UINT j = 0; j < num; ++j)
+  {
+    if (wcscmp(pImageCodecInfo[j].MimeType, format) == 0)
+    {
+      *pClsid = pImageCodecInfo[j].Clsid;
+      free(pImageCodecInfo);
+      return j;  // Success
+    }
+  }
+
+  free(pImageCodecInfo);
+  return -1;  // Failure
+}
 
 MPMadPresenter::MPMadPresenter(IVMR9Callback* pCallback, int xposition, int yposition, int width, int height, OAHWND parent, IDirect3DDevice9* pDevice, IMediaControl* pMediaControl) :
   CUnknown(NAME("MPMadPresenter"), NULL),
@@ -61,6 +91,7 @@ MPMadPresenter::MPMadPresenter(IVMR9Callback* pCallback, int xposition, int ypos
   m_pDevice->GetRenderTarget(0, &m_pSurfaceDevice);
   // Store device surface MP GUI for later
   m_pCallback->RestoreDeviceSurface(reinterpret_cast<LONG>(m_pSurfaceDevice));
+  m_pInitMadVRWindowPositionDone = false;
   Log("MPMadPresenter::Constructor() Store Device Surface");
 }
 
@@ -170,7 +201,11 @@ void MPMadPresenter::RepeatFrame()
 
 void MPMadPresenter::GrabScreenshot()
 {
-  CAutoLock cAutoLock(this);
+  if (!m_pInitMadVRWindowPositionDone || m_pShutdown)
+  {
+    return;
+  }
+
   try
   {
     if (Com::SmartQIPtr<IBasicVideo> m_pBV = m_pMad)
@@ -211,57 +246,70 @@ void MPMadPresenter::GrabScreenshot()
 
 void MPMadPresenter::GrabFrame()
 {
-  //CAutoLock cAutoLock(this);
+  if (!m_pInitMadVRWindowPositionDone || m_pShutdown)
+  {
+    return;
+  }
+
   if (Com::SmartQIPtr<IMadVRFrameGrabber> pMadVrFrame = m_pMad)
   {
     LPVOID dibImageBuffer = nullptr;
-
-    // TRY 1
-    //HRESULT hr;
-    //hr = pMadVrFrame->GrabFrame(ZOOM_100_PERCENT, FLAGS_RENDER_OSD | FLAGS_NO_SUBTITLES | FLAGS_NO_ARTIFACT_REMOVAL | FLAGS_NO_IMAGE_ENHANCEMENTS | FLAGS_NO_UPSCALING_REFINEMENTS | FLAGS_NO_HDR_SDR_CONVERSION,
-    //  CHROMA_UPSCALING_USER_SELECTED, IMAGE_DOWNSCALING_USER_SELECTED, IMAGE_UPSCALING_USER_SELECTED, 0, &dibImageBuffer, nullptr);
-    //Log("GrabFrame() hr: 0x%08x", hr);
-
-    // TRY 2
-    //HRESULT hr;
-    //hr = pMadVrFrame->GrabFrame(ZOOM_PLAYBACK_SIZE, FLAGS_NO_SUBTITLES | FLAGS_NO_ARTIFACT_REMOVAL | FLAGS_NO_IMAGE_ENHANCEMENTS | FLAGS_NO_UPSCALING_REFINEMENTS | FLAGS_NO_HDR_SDR_CONVERSION,
-    //  CHROMA_UPSCALING_USER_SELECTED, IMAGE_DOWNSCALING_USER_SELECTED, IMAGE_UPSCALING_USER_SELECTED, 0, &dibImageBuffer, nullptr);
-    //Log("GrabFrame() hr: 0x%08x", hr);
-
-    // TRY 3
-    //HRESULT hr;
-    //hr = pMadVrFrame->GrabFrame(ZOOM_1280x720, FLAGS_NO_SUBTITLES | FLAGS_NO_ARTIFACT_REMOVAL | FLAGS_NO_IMAGE_ENHANCEMENTS | FLAGS_NO_UPSCALING_REFINEMENTS | FLAGS_NO_HDR_SDR_CONVERSION,
-    //  CHROMA_UPSCALING_USER_SELECTED, IMAGE_DOWNSCALING_USER_SELECTED, IMAGE_UPSCALING_USER_SELECTED, 0, &dibImageBuffer, nullptr);
-    //Log("GrabFrame() hr: 0x%08x", hr);
-
-    // TRY 4 OK // Atmolight should be ok with this one
-    //HRESULT hr;
-    //hr = pMadVrFrame->GrabFrame(ZOOM_ENCODED_SIZE, FLAGS_NO_SUBTITLES | FLAGS_NO_ARTIFACT_REMOVAL | FLAGS_NO_IMAGE_ENHANCEMENTS | FLAGS_NO_UPSCALING_REFINEMENTS | FLAGS_NO_HDR_SDR_CONVERSION,
-    //  CHROMA_UPSCALING_USER_SELECTED, IMAGE_DOWNSCALING_USER_SELECTED, IMAGE_UPSCALING_USER_SELECTED, 0, &dibImageBuffer, nullptr);
-    //Log("GrabFrame() hr: 0x%08x", hr);
-
-    // TRY 5 GUI MADVR 11/09 20H25 (OLD or DEFAULT SETTINGS)
-    //HRESULT hr;
-    //hr = pMadVrFrame->GrabFrame(ZOOM_PLAYBACK_SIZE, FLAGS_RENDER_OSD | FLAGS_NO_SUBTITLES | FLAGS_NO_ARTIFACT_REMOVAL | FLAGS_NO_IMAGE_ENHANCEMENTS | FLAGS_NO_UPSCALING_REFINEMENTS | FLAGS_NO_HDR_SDR_CONVERSION,
-    //  CHROMA_UPSCALING_USER_SELECTED, IMAGE_DOWNSCALING_USER_SELECTED, IMAGE_UPSCALING_USER_SELECTED, 0, &dibImageBuffer, nullptr);
-    //Log("GrabFrame() hr: 0x%08x", hr);
-
-    // TRY 6
-    //HRESULT hr;
-    //hr = pMadVrFrame->GrabFrame(ZOOM_1920x1080, FLAGS_RENDER_OSD | FLAGS_NO_SUBTITLES | FLAGS_NO_ARTIFACT_REMOVAL | FLAGS_NO_IMAGE_ENHANCEMENTS | FLAGS_NO_UPSCALING_REFINEMENTS | FLAGS_NO_HDR_SDR_CONVERSION,
-    //  CHROMA_UPSCALING_USER_SELECTED, IMAGE_DOWNSCALING_USER_SELECTED, IMAGE_UPSCALING_USER_SELECTED, 0, &dibImageBuffer, nullptr);
-    //Log("GrabFrame() hr: 0x%08x", hr);
-
-    // TRY 7 OK // Atmolight should be ok with this one
-    HRESULT hr;
-    hr = pMadVrFrame->GrabFrame(ZOOM_ENCODED_SIZE, FLAGS_NO_SUBTITLES | FLAGS_NO_ARTIFACT_REMOVAL | FLAGS_NO_IMAGE_ENHANCEMENTS | FLAGS_NO_UPSCALING_REFINEMENTS | FLAGS_NO_HDR_SDR_CONVERSION,
+    pMadVrFrame->GrabFrame(ZOOM_ENCODED_SIZE, FLAGS_NO_SUBTITLES | FLAGS_NO_ARTIFACT_REMOVAL | FLAGS_NO_IMAGE_ENHANCEMENTS | FLAGS_NO_UPSCALING_REFINEMENTS | FLAGS_NO_HDR_SDR_CONVERSION,
       CHROMA_UPSCALING_BILINEAR, IMAGE_DOWNSCALING_BILINEAR, IMAGE_UPSCALING_BILINEAR, 0, &dibImageBuffer, nullptr);
-    Log("GrabFrame() hr: 0x%08x", hr);
 
     // Send the DIB to C#
-    //m_pCallback->RenderFrame(1, 1, 1, 1, reinterpret_cast<LONG>(dibImageBuffer));
-    //m_pCallback->GrabMadVrScreenshot(dibImageBuffer);
+    m_pCallback->GrabMadVrFrame(dibImageBuffer);
     LocalFree(dibImageBuffer);
+    return;
+
+    try
+    {
+      Gdiplus::GdiplusStartupInput gdiplusStartupInput;
+      ULONG_PTR gdiplusToken;
+      GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, nullptr);
+
+      Gdiplus::Bitmap* bm = Gdiplus::Bitmap::FromBITMAPINFO(reinterpret_cast<BITMAPINFO*>(dibImageBuffer), dibImageBuffer);
+
+      // Get the encoder clsid
+      CLSID encoderClsid;
+      GetEncoderClsid(L"image/png", &encoderClsid);
+
+      // Send the BMP to C#
+      //m_pCallback->GrabMadVrScreenshot(bm);
+
+      //// Save the image
+      //bm->Save(L"master.png", &encoderClsid, nullptr);
+
+      // All GDI+ objects must be destroyed before GdiplusShutdown is called
+      delete bm;
+      LocalFree(dibImageBuffer);
+      Gdiplus::GdiplusShutdown(gdiplusToken);
+      Log("GrabFrame() hr");
+    }
+    catch (...)
+    {
+    }
+  }
+}
+
+void MPMadPresenter::GrabCurrentFrame()
+{
+  //CAutoLock cAutoLock(this);
+
+  if (!m_pInitMadVRWindowPositionDone || m_pShutdown)
+  {
+    return;
+  }
+  if (Com::SmartQIPtr<IMadVRFrameGrabber> pMadVrFrame = m_pMad)
+  {
+    LPVOID dibImageBuffer = nullptr;
+    pMadVrFrame->GrabFrame(ZOOM_ENCODED_SIZE, FLAGS_NO_SUBTITLES | FLAGS_NO_ARTIFACT_REMOVAL | FLAGS_NO_IMAGE_ENHANCEMENTS | FLAGS_NO_UPSCALING_REFINEMENTS | FLAGS_NO_HDR_SDR_CONVERSION,
+      CHROMA_UPSCALING_BILINEAR, IMAGE_DOWNSCALING_BILINEAR, IMAGE_UPSCALING_BILINEAR, 0, &dibImageBuffer, nullptr);
+
+    // Send the DIB to C#
+    m_pCallback->GrabMadVrCurrentFrame(dibImageBuffer);
+    LocalFree(dibImageBuffer);
+    //Log("GrabFrame() hr");
   }
 }
 
@@ -273,8 +321,6 @@ void MPMadPresenter::InitMadVRWindowPosition()
     return;
   }
 
-  CAutoLock cAutoLock(this);
-
   // Init created madVR window instance.
   SetDsWndVisible(true);
   if (Com::SmartQIPtr<IVideoWindow> pWindow = m_pMad)
@@ -283,6 +329,7 @@ void MPMadPresenter::InitMadVRWindowPosition()
     pWindow->put_Visible(reinterpret_cast<OAHWND>(m_hWnd));
     pWindow->SetWindowPosition(0, 0, m_dwGUIWidth, m_dwGUIHeight);
     m_pReInitOSD = true;
+    m_pInitMadVRWindowPositionDone = true;
   }
 }
 
@@ -413,6 +460,12 @@ STDMETHODIMP MPMadPresenter::CreateRenderer(IUnknown** ppRenderer)
 
   (*ppRenderer = reinterpret_cast<IUnknown*>(static_cast<INonDelegatingUnknown*>(this)))->AddRef();
 
+  return S_OK;
+}
+
+STDMETHODIMP MPMadPresenter::SetGrabEvent(HANDLE pGrabEvent)
+{
+  m_pGrabEvent = pGrabEvent;
   return S_OK;
 }
 
@@ -828,6 +881,10 @@ HRESULT MPMadPresenter::RenderOsd(LPCSTR name, REFERENCE_TIME frameStart, RECT* 
   WORD videoHeight = (WORD)activeVideoRect->bottom - (WORD)activeVideoRect->top;
   WORD videoWidth = (WORD)activeVideoRect->right - (WORD)activeVideoRect->left;
 
+  //Log("%s : log activeVideoRect bottom x top : %d x %d", __FUNCTION__, (WORD)activeVideoRect->bottom, (WORD)activeVideoRect->top);
+  //Log("%s : log activeVideoRect right x left : %d x %d", __FUNCTION__, (WORD)activeVideoRect->right, (WORD)activeVideoRect->left);
+  //Log("%s : log for : %d x %d", __FUNCTION__, m_dwHeight, m_dwWidth);
+
   //CAutoLock cAutoLock(this);
 
   ReinitOSD();
@@ -865,6 +922,10 @@ HRESULT MPMadPresenter::RenderOsd(LPCSTR name, REFERENCE_TIME frameStart, RECT* 
   m_dwHeight = (WORD)fullOutputRect->bottom - (WORD)fullOutputRect->top;
   m_dwWidth = (WORD)fullOutputRect->right - (WORD)fullOutputRect->left;
 
+  //Log("%s : log fullOutputRect bottom x top : %d x %d", __FUNCTION__, (WORD)fullOutputRect->bottom, (WORD)fullOutputRect->top);
+  //Log("%s : log fullOutputRect right x left : %d x %d", __FUNCTION__, (WORD)fullOutputRect->right, (WORD)fullOutputRect->left);
+  //Log("%s : log for : %d x %d", __FUNCTION__, m_dwHeight, m_dwWidth);
+
   // Handle GetBackBuffer to be done only 2 frames
   //countFrame++;
   //if (countFrame == firstFrame || countFrame == secondFrame)
@@ -872,7 +933,7 @@ HRESULT MPMadPresenter::RenderOsd(LPCSTR name, REFERENCE_TIME frameStart, RECT* 
     // For ambilight system but only working for D3D9
     if (SUCCEEDED(hr = m_pMadD3DDev->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &SurfaceMadVr)))
     {
-      if (SUCCEEDED(hr = m_pCallback->RenderFrame(videoWidth, videoHeight, videoWidth, videoHeight, reinterpret_cast<LONG>(SurfaceMadVr))))
+      if (SUCCEEDED(hr = m_pCallback->RenderFrame(m_dwWidth, m_dwHeight, m_dwWidth, m_dwHeight, reinterpret_cast<LONG>(SurfaceMadVr))))
       {
         SurfaceMadVr->Release();
       }
@@ -925,6 +986,11 @@ HRESULT MPMadPresenter::RenderOsd(LPCSTR name, REFERENCE_TIME frameStart, RECT* 
   //// if we don't unlock, OSD will be slow because it will reach the timeout set in SetOSDCallback()
   //m_mpWait.Unlock();
   //m_dsLock.Unlock();
+
+  if (m_pInitMadVRWindowPositionDone)
+  {
+    SetEvent(m_pGrabEvent);
+  }
 
   return uiVisible ? CALLBACK_USER_INTERFACE : CALLBACK_INFO_DISPLAY;
 }

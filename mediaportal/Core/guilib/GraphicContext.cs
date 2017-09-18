@@ -1832,6 +1832,12 @@ namespace MediaPortal.GUI.Library
     public static bool InitMadVRWindowPosition { get; set; }
     public static IntPtr madVRDibBuffer { get; set; }
     public static bool RestoreGuiForMadVrDone { get; set; }
+    internal static Bitmap madVRFrameBitmap { get; set; }
+    internal static Bitmap madVRCurrentFrameBitmap { get; set; }
+
+
+    public static bool WorkerThreadStart { get; set; }
+
     //public static IntPtr madVRDIB { get; set; }
 
     /// <summary>
