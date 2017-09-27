@@ -154,22 +154,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
           }
           else
           {
-            int _vizhandle = -1;
-            try
-            {
-              _vizhandle = Bass.GetCurrentVizStream();
-            }
-            catch (Exception exception)
-            {
-              Log.Debug("MiniDisplay.GetEQ(): Caugth exception obtaining Bass audio stream: {0}", new object[] {exception});
-              return false;
-            }
-            if (_vizhandle <= 0)
-            {
-              Log.Debug("MiniDisplay.GetEQ(): Unable to retreive Bass equalizer data.");
-              return false;
-            }
-            num2 = Bass.GetChannelData(_vizhandle, EQSETTINGS.EqFftData, num3);
+            num2 = Bass.GetChannelData(handle, EQSETTINGS.EqFftData, num3);
           }
         }
         catch (Exception exception)
