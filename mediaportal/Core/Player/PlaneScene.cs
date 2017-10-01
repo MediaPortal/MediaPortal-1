@@ -702,6 +702,7 @@ namespace MediaPortal.Player
     {
       IntPtr ptrMadVr = pSurface;
       Surface surfaceMadVr = new Surface(ptrMadVr);
+      Size client = GUIGraphicsContext.form.ClientSize;
       try
       {
         unsafe
@@ -709,7 +710,7 @@ namespace MediaPortal.Player
           lock (GUIGraphicsContext.RenderModeSwitch)
           {
             if (grabber != null)
-              grabber.OnFrame(width, height, arWidth, arHeight, (uint)surfaceMadVr.UnmanagedComPointer,
+              grabber.OnFrame((short)client.Width, (short)client.Height, (short)client.Width, (short)client.Height, (uint)surfaceMadVr.UnmanagedComPointer,
                 FrameGrabber.FrameSource.Video);
           }
         }
