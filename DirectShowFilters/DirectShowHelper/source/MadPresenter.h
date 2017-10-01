@@ -153,6 +153,7 @@ class MPMadPresenter : public CUnknown, public CCritSec
     void SetMadVrPaused(bool paused);
     void RepeatFrame();
     void GrabFrame();
+    void GrabCurrentFrame();
     void GrabScreenshot();
     void InitMadVRWindowPosition();
     void MadVr3DSizeRight(int x, int y, int width, int height);
@@ -171,6 +172,7 @@ class MPMadPresenter : public CUnknown, public CCritSec
     bool InitMadvrWindow(HWND &hWnd);
     void DeInitMadvrWindow();
     HINSTANCE m_hInstance;
+    bool m_pInitMadVRWindowPositionDone = false;
     #if !defined(NPT_POINTER_TO_LONG)
     #define NPT_POINTER_TO_LONG(_p) ((long)(_p))
     #endif
@@ -188,6 +190,8 @@ class MPMadPresenter : public CUnknown, public CCritSec
     STDMETHOD(RenderEx2)(REFERENCE_TIME frameStart, REFERENCE_TIME frameStop, REFERENCE_TIME avgTimePerFrame, RECT croppedVideoRect, RECT originalVideoRect, RECT viewportRect, const double videoStretchFactor = 1.0);
     // ISubRenderCallback4
     STDMETHOD(RenderEx3)(REFERENCE_TIME frameStart, REFERENCE_TIME frameStop, REFERENCE_TIME avgTimePerFrame, RECT croppedVideoRect, RECT originalVideoRect, RECT viewportRect, const double videoStretchFactor = 1.0, int xOffsetInPixels = 0, DWORD flags = 0);
+    // Frame Grabbing
+    STDMETHODIMP SetGrabEvent(HANDLE pGrabEvent);
 
     virtual void EnableExclusive(bool bEnable);
 
@@ -196,6 +200,7 @@ class MPMadPresenter : public CUnknown, public CCritSec
     bool m_pReInitOSD = false;
     IVMR9Callback* m_pCallback = nullptr;
     CCritSec m_dsLock;
+    HANDLE m_pGrabEvent;
 
   private:
     void RenderToTexture(IDirect3DTexture9* pTexture);

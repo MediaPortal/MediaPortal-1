@@ -120,6 +120,7 @@ namespace MediaPortal.Player
     private readonly object _lockobj = new object();
 
     private bool UiVisible { get; set; }
+    protected internal Thread WorkerThread = null;
 
     #endregion
 
@@ -700,7 +701,7 @@ namespace MediaPortal.Player
         {
           lock (GUIGraphicsContext.RenderModeSwitch)
           {
-            if (grabber !=null)
+            if (grabber != null)
               grabber.OnFrame(width, height, arWidth, arHeight, (uint)surfaceMadVr.UnmanagedComPointer,
                 FrameGrabber.FrameSource.Video);
           }
@@ -715,28 +716,58 @@ namespace MediaPortal.Player
       }
     }
 
+    //internal void WorkerThreadStart()
+    //{
+    //  WorkerThread = new Thread(new ThreadStart(madVRGrab));
+    //  WorkerThread.IsBackground = true;
+    //  GUIGraphicsContext.WorkerThreadStart = true;
+    //  WorkerThread.Name = "Grab Frame thread";
+    //  WorkerThread.Priority = ThreadPriority.AboveNormal;
+    //  WorkerThread.Start();
+    //}
+
+    //private void madVRGrab()
+    //{
+    //  while (true)
+    //  {
+    //    if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
+    //        GUIGraphicsContext.Vmr9Active)
+    //    {
+    //      if (VMR9Util.g_vmr9 != null)
+    //      {
+    //        Thread.Sleep(10);
+    //        VMR9Util.g_vmr9.MadVrGrabFrame();
+    //      }
+    //    }
+    //  }
+    //}
+
     public void GrabMadVrScreenshot(IntPtr pTargetmadVrDib)
     {
       IntPtr pdib = pTargetmadVrDib;
       try
       {
-        string directory = string.Format("{0}\\MediaPortal Screenshots\\{1:0000}-{2:00}-{3:00}",
-                                              Environment.GetFolderPath(Environment.SpecialFolder.MyPictures),
-                                              DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
-        if (!Directory.Exists(directory))
+        if (pTargetmadVrDib != IntPtr.Zero)
         {
-          Log.Info("Planescene: Taking screenshot - Creating directory: {0}", directory);
-          Directory.CreateDirectory(directory);
-        }
-        string fileName = string.Format("{0}\\madVR - {1:00}-{2:00}-{3:00}", directory, DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
+          string directory = string.Format("{0}\\MediaPortal Screenshots\\{1:0000}-{2:00}-{3:00}",
+            Environment.GetFolderPath(Environment.SpecialFolder.MyPictures),
+            DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
+          if (!Directory.Exists(directory))
+          {
+            Log.Info("Planescene: Taking screenshot - Creating directory: {0}", directory);
+            Directory.CreateDirectory(directory);
+          }
+          string fileName = string.Format("{0}\\madVR - {1:00}-{2:00}-{3:00}", directory, DateTime.Now.Hour,
+            DateTime.Now.Minute, DateTime.Now.Second);
 
-        // Save screenshot from DIB
-        Win32API.BITMAPINFOHEADER bmih = (Win32API.BITMAPINFOHEADER)Marshal.PtrToStructure(pdib, typeof(Win32API.BITMAPINFOHEADER));
-        IntPtr pixels = IntPtr.Add(pdib, bmih.biSize);
-        Bitmap result = new Bitmap(bmih.biWidth, bmih.biHeight, bmih.biWidth * 4, PixelFormat.Format32bppRgb, pixels);
-        result.RotateFlip(RotateFlipType.RotateNoneFlipY);
-        result.Save(fileName + ".jpg", ImageFormat.Jpeg);
-        result.Dispose();
+          // Save screenshot from DIB
+          Win32API.BITMAPINFOHEADER bmih = (Win32API.BITMAPINFOHEADER) Marshal.PtrToStructure(pdib, typeof (Win32API.BITMAPINFOHEADER));
+          IntPtr pixels = IntPtr.Add(pdib, bmih.biSize);
+          Bitmap result = new Bitmap(bmih.biWidth, bmih.biHeight, bmih.biWidth*4, PixelFormat.Format32bppRgb, pixels);
+          result.RotateFlip(RotateFlipType.RotateNoneFlipY);
+          result.Save(fileName + ".jpg", ImageFormat.Jpeg);
+          result.SafeDispose();
+        }
       }
       catch
       {
@@ -748,6 +779,53 @@ namespace MediaPortal.Player
       {
         pdib = IntPtr.Zero;
         pTargetmadVrDib = IntPtr.Zero;
+      }
+    }
+
+    public void GrabMadVrFrame(IntPtr pTargetmadVrDib)
+    {
+      lock (GUIGraphicsContext.RenderModeSwitch)
+      {
+        if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+        {
+          if (pTargetmadVrDib != IntPtr.Zero)
+          {
+            if (grabber != null)
+            {
+              grabber.OnFrame(1920, 1080, 0, 0, pTargetmadVrDib, FrameGrabber.FrameSource.Video);
+            }
+          }
+        }
+      }
+    }
+
+    public void GrabMadVrCurrentFrame(IntPtr pTargetmadVrDib)
+    {
+      lock (GUIGraphicsContext.RenderModeSwitch)
+      {
+        if (GUIGraphicsContext.madVRCurrentFrameBitmap != null)
+        {
+          GUIGraphicsContext.madVRCurrentFrameBitmap.Dispose();
+          GUIGraphicsContext.madVRCurrentFrameBitmap = null;
+        }
+        if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+        {
+          // Convert DIB to Bitmap
+          // pTargetmadVrDib is a DIB
+          if (pTargetmadVrDib != IntPtr.Zero)
+          {
+            Win32API.BITMAPINFOHEADER bmih = (Win32API.BITMAPINFOHEADER) Marshal.PtrToStructure(pTargetmadVrDib, typeof (Win32API.BITMAPINFOHEADER));
+            IntPtr pixels = IntPtr.Add(pTargetmadVrDib, bmih.biSize);
+
+            using (Bitmap b = new Bitmap(bmih.biWidth, bmih.biHeight, bmih.biWidth*4, PixelFormat.Format32bppRgb, pixels))
+            {
+              GUIGraphicsContext.madVRCurrentFrameBitmap = new Bitmap(b);
+              // IMPORTANT: Closes and disposes the stream
+              // If this is not done we get a memory leak!
+              b.Dispose();
+            }
+          }
+        }
       }
     }
 
@@ -1026,11 +1104,8 @@ namespace MediaPortal.Player
       // No need to set subtitle engine when using XySubFilter and madVR.
       if (!_subEngineType.Equals("XySubFilter"))
       {
-        ISubEngine engine = SubEngine.GetInstance(true);
-        if (engine != null)
-        {
-          engine.SetDevice(device);
-        }
+        ISubEngine engine = GUIGraphicsContext.SubDeviceMadVr != IntPtr.Zero ? SubEngine.GetInstance() : SubEngine.GetInstance(true);
+        engine?.SetDevice(device);
         Log.Debug("Planescene: Set subtitle device - {0}", device);
       }
     }

@@ -51,6 +51,12 @@ namespace MediaPortal.Player
 
     [PreserveSig]
     int OnBitRateChanged(int bitrate);
+
+    [PreserveSig]
+    void OnVideoReceived();
+
+    [PreserveSig]
+    void OnRenderBlack();
   }
 
   [ComVisible(true), ComImport,
@@ -1707,6 +1713,18 @@ namespace MediaPortal.Player
       return 0;
     }
 
+    public void OnVideoReceived()
+    {
+      Log.Debug("TsReaderPlayer: OnVideoReceived() callback");
+      GUIGraphicsContext.VideoReceived();
+    }
+
+    public void OnRenderBlack()
+    {
+      Log.Debug("TsReaderPlayer: RenderBlackImage() callback");
+      GUIGraphicsContext.RenderBlack();
+    }
+
     public int OnRequestAudioChange()
     {
       if (Thread.CurrentThread.Name == "MPMain")
@@ -2183,7 +2201,10 @@ namespace MediaPortal.Player
         if (VMR9Util.g_vmr9 != null && filterConfig != null && selection == "Video" && filterConfig.enableCCSubtitles)
         {
           CoreCCPresent = false;
-          CoreCCParserCheck();
+          if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
+          {
+            CoreCCParserCheck();
+          }
         }
         VideoChange = true;
       }
