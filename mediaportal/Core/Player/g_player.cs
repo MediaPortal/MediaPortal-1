@@ -3960,6 +3960,10 @@ namespace MediaPortal.Player
                 GUIGraphicsContext.NoneDone = false;
                 GUIGraphicsContext.TopAndBottomDone = false;
                 GUIGraphicsContext.SideBySideDone = false;
+                GUIGraphicsContext.SBSLeftDone = false;
+                GUIGraphicsContext.SBSRightDone = false;
+                GUIGraphicsContext.TABTopDone = false;
+                GUIGraphicsContext.TABBottomDone = false;
                 Log.Debug("g_player VideoWindowChanged() resize OSD/Screen when resolution change for madVR");
 
                 // Refresh madVR
