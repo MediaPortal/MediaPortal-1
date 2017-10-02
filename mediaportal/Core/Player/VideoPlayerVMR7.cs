@@ -721,7 +721,7 @@ namespace MediaPortal.Player
             }
             if (GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.TopAndBottomTo2D)
             {
-              rDest.Height = rDest.Height * 2;
+              rDest.Height = rDest.Height*2;
             }
             basicVideo.SetDestinationPosition(rDest.Left, rDest.Top, rDest.Width, rDest.Height);
           }

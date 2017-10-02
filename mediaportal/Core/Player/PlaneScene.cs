@@ -992,11 +992,9 @@ namespace MediaPortal.Player
                     GUIGraphicsContext.TABTopDone = false;
                     GUIGraphicsContext.TABBottomDone = false;
 
-                    if (GUIGraphicsContext.basicVideoMadVr != null)
-                    {
-                      GUIGraphicsContext.basicVideoMadVr.SetSourcePosition(0, 0, client.Width, client.Height);
-                      GUIGraphicsContext.basicVideoMadVr.SetDestinationPosition(0, 0, client.Width, client.Height);
-                    }
+                    // Force VideoWindow to be refreshed with madVR when switching from video size like 16:9 to 4:3
+                    GUIGraphicsContext.UpdateVideoWindow = true;
+                    GUIGraphicsContext.VideoWindowChanged();
 
                     // Force a madVR refresh to resize MP window
                     g_Player.RefreshMadVrVideo();
@@ -1045,13 +1043,9 @@ namespace MediaPortal.Player
                   GUIGraphicsContext.TABBottomDone = false;
                   GUIGraphicsContext.NoneDone = false;
 
-                  if (GUIGraphicsContext.basicVideoMadVr != null)
-                  {
-                    if (GUIGraphicsContext.basicVideoMadVr != null)
-                    {
-                      GUIGraphicsContext.basicVideoMadVr.SetDestinationPosition(0, 0, client.Width, client.Height);
-                    }
-                  }
+                  // Force VideoWindow to be refreshed with madVR when switching from video size like 16:9 to 4:3
+                  GUIGraphicsContext.UpdateVideoWindow = true;
+                  GUIGraphicsContext.VideoWindowChanged();
 
                   // Force a madVR refresh to resize MP window
                   g_Player.RefreshMadVrVideo();
@@ -1083,13 +1077,9 @@ namespace MediaPortal.Player
                   GUIGraphicsContext.TABTopDone = false;
                   GUIGraphicsContext.TABBottomDone = false;
 
-                  if (GUIGraphicsContext.basicVideoMadVr != null)
-                  {
-                    if (GUIGraphicsContext.basicVideoMadVr != null)
-                    {
-                      GUIGraphicsContext.basicVideoMadVr.SetDestinationPosition(0, 0, client.Width, client.Height);
-                    }
-                  }
+                  // Force VideoWindow to be refreshed with madVR when switching from video size like 16:9 to 4:3
+                  GUIGraphicsContext.UpdateVideoWindow = true;
+                  GUIGraphicsContext.VideoWindowChanged();
 
                   // Force a madVR refresh to resize MP window
                   g_Player.RefreshMadVrVideo();
@@ -1118,13 +1108,9 @@ namespace MediaPortal.Player
                       GUIGraphicsContext.Render3DModeHalfDone = false;
                       GUIGraphicsContext.NoneDone = false;
 
-                      if (GUIGraphicsContext.basicVideoMadVr != null)
-                      {
-                        if (GUIGraphicsContext.basicVideoMadVr != null)
-                        {
-                          GUIGraphicsContext.basicVideoMadVr.SetDestinationPosition(0, 0, client.Width*2, client.Height);
-                        }
-                      }
+                      // Force VideoWindow to be refreshed with madVR when switching from video size like 16:9 to 4:3
+                      GUIGraphicsContext.UpdateVideoWindow = true;
+                      GUIGraphicsContext.VideoWindowChanged();
 
                       // Force a madVR refresh to resize MP window
                       g_Player.RefreshMadVrVideo();
@@ -1147,13 +1133,9 @@ namespace MediaPortal.Player
                       GUIGraphicsContext.Render3DModeHalfDone = false;
                       GUIGraphicsContext.NoneDone = false;
 
-                      if (GUIGraphicsContext.basicVideoMadVr != null)
-                      {
-                        if (GUIGraphicsContext.basicVideoMadVr != null)
-                        {
-                          GUIGraphicsContext.basicVideoMadVr.SetDestinationPosition(0, 0, client.Width*2, client.Height);
-                        }
-                      }
+                      // Force VideoWindow to be refreshed with madVR when switching from video size like 16:9 to 4:3
+                      GUIGraphicsContext.UpdateVideoWindow = true;
+                      GUIGraphicsContext.VideoWindowChanged();
 
                       // Force a madVR refresh to resize MP window
                       g_Player.RefreshMadVrVideo();
@@ -1177,13 +1159,9 @@ namespace MediaPortal.Player
                       GUIGraphicsContext.Render3DModeHalfDone = false;
                       GUIGraphicsContext.NoneDone = false;
 
-                      if (GUIGraphicsContext.basicVideoMadVr != null)
-                      {
-                        if (GUIGraphicsContext.basicVideoMadVr != null)
-                        {
-                          GUIGraphicsContext.basicVideoMadVr.SetDestinationPosition(0, 0, client.Width, client.Height*2);
-                        }
-                      }
+                      // Force VideoWindow to be refreshed with madVR when switching from video size like 16:9 to 4:3
+                      GUIGraphicsContext.UpdateVideoWindow = true;
+                      GUIGraphicsContext.VideoWindowChanged();
 
                       // Force a madVR refresh to resize MP window
                       g_Player.RefreshMadVrVideo();
@@ -1206,13 +1184,9 @@ namespace MediaPortal.Player
                       GUIGraphicsContext.Render3DModeHalfDone = false;
                       GUIGraphicsContext.NoneDone = false;
 
-                      if (GUIGraphicsContext.basicVideoMadVr != null)
-                      {
-                        if (GUIGraphicsContext.basicVideoMadVr != null)
-                        {
-                          GUIGraphicsContext.basicVideoMadVr.SetDestinationPosition(0, 0, client.Width, client.Height*2);
-                        }
-                      }
+                      // Force VideoWindow to be refreshed with madVR when switching from video size like 16:9 to 4:3
+                      GUIGraphicsContext.UpdateVideoWindow = true;
+                      GUIGraphicsContext.VideoWindowChanged();
 
                       // Force a madVR refresh to resize MP window
                       g_Player.RefreshMadVrVideo();
