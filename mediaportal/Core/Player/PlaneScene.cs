@@ -926,7 +926,11 @@ namespace MediaPortal.Player
             //Log.Debug("PlaneScene width {0}, height {1}", width, height);
 
             Size nativeSize = new Size(width, height);
-            _shouldRenderTexture = SetVideoWindow(nativeSize);
+            if (GUIGraphicsContext.Render3DMode != GUIGraphicsContext.eRender3DMode.SideBySideTo2D &&
+                 GUIGraphicsContext.Render3DMode != GUIGraphicsContext.eRender3DMode.TopAndBottomTo2D)
+            {
+              _shouldRenderTexture = SetVideoWindow(nativeSize);
+            }
           }
 
           lock (GUIGraphicsContext.RenderModeSwitch)
@@ -994,10 +998,6 @@ namespace MediaPortal.Player
                       GUIGraphicsContext.basicVideoMadVr.SetDestinationPosition(0, 0, client.Width, client.Height);
                     }
 
-                    //// Reset Original Video
-                    //Size nativeSize = new Size(width, height);
-                    //_shouldRenderTexture = SetVideoWindow(nativeSize);
-
                     // Force a madVR refresh to resize MP window
                     g_Player.RefreshMadVrVideo();
                   }
@@ -1047,18 +1047,9 @@ namespace MediaPortal.Player
 
                   if (GUIGraphicsContext.basicVideoMadVr != null)
                   {
-                    int m_iVideoWidth = 100;
-                    int m_iVideoHeight = 100;
-
                     if (GUIGraphicsContext.basicVideoMadVr != null)
                     {
-                      GUIGraphicsContext.basicVideoMadVr.GetVideoSize(out m_iVideoWidth, out m_iVideoHeight);
-                    }
-                    //VMR9Util.g_vmr9?.MadVrScreenResize(GUIGraphicsContext.form.Location.X, GUIGraphicsContext.form.Location.Y, client.Width * 2, client.Height, true);
-                    if (GUIGraphicsContext.basicVideoMadVr != null)
-                    {
-                      GUIGraphicsContext.basicVideoMadVr.SetSourcePosition(0, 0, m_iVideoWidth, m_iVideoHeight);
-                      GUIGraphicsContext.basicVideoMadVr.SetDestinationPosition(0, 0, m_iVideoWidth, m_iVideoHeight);
+                      GUIGraphicsContext.basicVideoMadVr.SetDestinationPosition(0, 0, client.Width, client.Height);
                     }
                   }
 
@@ -1094,18 +1085,9 @@ namespace MediaPortal.Player
 
                   if (GUIGraphicsContext.basicVideoMadVr != null)
                   {
-                    int m_iVideoWidth = 100;
-                    int m_iVideoHeight = 100;
-
                     if (GUIGraphicsContext.basicVideoMadVr != null)
                     {
-                      GUIGraphicsContext.basicVideoMadVr.GetVideoSize(out m_iVideoWidth, out m_iVideoHeight);
-                    }
-                    //VMR9Util.g_vmr9?.MadVrScreenResize(GUIGraphicsContext.form.Location.X, GUIGraphicsContext.form.Location.Y, client.Width * 2, client.Height, true);
-                    if (GUIGraphicsContext.basicVideoMadVr != null)
-                    {
-                      GUIGraphicsContext.basicVideoMadVr.SetSourcePosition(0, 0, m_iVideoWidth, m_iVideoHeight);
-                      GUIGraphicsContext.basicVideoMadVr.SetDestinationPosition(0, 0, m_iVideoWidth, m_iVideoHeight);
+                      GUIGraphicsContext.basicVideoMadVr.SetDestinationPosition(0, 0, client.Width, client.Height);
                     }
                   }
 
@@ -1123,10 +1105,7 @@ namespace MediaPortal.Player
               {
                 case GUIGraphicsContext.eRender3DModeHalf.SBSLeft:
 
-                  if (!GUIGraphicsContext.IsFullHD3DFormat &&
-                      (GUIGraphicsContext.Render3DMode != GUIGraphicsContext.eRender3DMode.SideBySideFrom2D) &&
-                      (GUIGraphicsContext.Render3DMode != GUIGraphicsContext.eRender3DMode.SideBySide) &&
-                      (GUIGraphicsContext.Render3DMode != GUIGraphicsContext.eRender3DMode.TopAndBottom)) //TODO
+                  if (!GUIGraphicsContext.IsFullHD3DFormat)
                   {
                     if (!GUIGraphicsContext.SBSLeftDone)
                     {
@@ -1141,19 +1120,9 @@ namespace MediaPortal.Player
 
                       if (GUIGraphicsContext.basicVideoMadVr != null)
                       {
-                        int m_iVideoWidth = 100;
-                        int m_iVideoHeight = 100;
-
                         if (GUIGraphicsContext.basicVideoMadVr != null)
                         {
-                          GUIGraphicsContext.basicVideoMadVr.GetVideoSize(out m_iVideoWidth, out m_iVideoHeight);
-                          m_iVideoWidth = m_iVideoWidth*2;
-                        }
-
-                        if (GUIGraphicsContext.basicVideoMadVr != null)
-                        {
-                          GUIGraphicsContext.basicVideoMadVr.SetSourcePosition(0, 0, m_iVideoWidth, m_iVideoHeight);
-                          GUIGraphicsContext.basicVideoMadVr.SetDestinationPosition(0, 0, m_iVideoWidth, m_iVideoHeight);
+                          GUIGraphicsContext.basicVideoMadVr.SetDestinationPosition(0, 0, client.Width*2, client.Height);
                         }
                       }
 
@@ -1180,19 +1149,9 @@ namespace MediaPortal.Player
 
                       if (GUIGraphicsContext.basicVideoMadVr != null)
                       {
-                        int m_iVideoWidth = 100;
-                        int m_iVideoHeight = 100;
-
                         if (GUIGraphicsContext.basicVideoMadVr != null)
                         {
-                          GUIGraphicsContext.basicVideoMadVr.GetVideoSize(out m_iVideoWidth, out m_iVideoHeight);
-                          m_iVideoHeight = m_iVideoHeight*2;
-                        }
-
-                        if (GUIGraphicsContext.basicVideoMadVr != null)
-                        {
-                          GUIGraphicsContext.basicVideoMadVr.SetSourcePosition(0, 0, m_iVideoWidth, m_iVideoHeight);
-                          GUIGraphicsContext.basicVideoMadVr.SetDestinationPosition(0, 0, m_iVideoWidth, m_iVideoHeight);
+                          GUIGraphicsContext.basicVideoMadVr.SetDestinationPosition(0, 0, client.Width*2, client.Height);
                         }
                       }
 
@@ -1220,19 +1179,9 @@ namespace MediaPortal.Player
 
                       if (GUIGraphicsContext.basicVideoMadVr != null)
                       {
-                        int m_iVideoWidth = 100;
-                        int m_iVideoHeight = 100;
-
                         if (GUIGraphicsContext.basicVideoMadVr != null)
                         {
-                          GUIGraphicsContext.basicVideoMadVr.GetVideoSize(out m_iVideoWidth, out m_iVideoHeight);
-                          m_iVideoHeight = m_iVideoHeight*2;
-                        }
-
-                        if (GUIGraphicsContext.basicVideoMadVr != null)
-                        {
-                          GUIGraphicsContext.basicVideoMadVr.SetSourcePosition(0, 0, m_iVideoWidth, m_iVideoHeight);
-                          GUIGraphicsContext.basicVideoMadVr.SetDestinationPosition(0, 0, m_iVideoWidth, m_iVideoHeight);
+                          GUIGraphicsContext.basicVideoMadVr.SetDestinationPosition(0, 0, client.Width, client.Height*2);
                         }
                       }
 
@@ -1259,19 +1208,9 @@ namespace MediaPortal.Player
 
                       if (GUIGraphicsContext.basicVideoMadVr != null)
                       {
-                        int m_iVideoWidth = 100;
-                        int m_iVideoHeight = 100;
-
                         if (GUIGraphicsContext.basicVideoMadVr != null)
                         {
-                          GUIGraphicsContext.basicVideoMadVr.GetVideoSize(out m_iVideoWidth, out m_iVideoHeight);
-                          m_iVideoHeight = m_iVideoHeight*2;
-                        }
-
-                        if (GUIGraphicsContext.basicVideoMadVr != null)
-                        {
-                          GUIGraphicsContext.basicVideoMadVr.SetSourcePosition(0, 0, m_iVideoWidth, m_iVideoHeight);
-                          GUIGraphicsContext.basicVideoMadVr.SetDestinationPosition(0, 0, m_iVideoWidth, m_iVideoHeight);
+                          GUIGraphicsContext.basicVideoMadVr.SetDestinationPosition(0, 0, client.Width, client.Height*2);
                         }
                       }
 
@@ -1288,7 +1227,8 @@ namespace MediaPortal.Player
               {
                 if (!GUIGraphicsContext.Render3DModeHalfDone)
                 {
-                  VMR9Util.g_vmr9?.MadVrScreenResize(GUIGraphicsContext.form.Location.X, GUIGraphicsContext.form.Location.Y, client.Width, client.Height, true);
+                  VMR9Util.g_vmr9?.MadVrScreenResize(GUIGraphicsContext.form.Location.X,
+                    GUIGraphicsContext.form.Location.Y, client.Width, client.Height, true);
                   VMR9Util.g_vmr9?.MadVr3DSizeLeft(0, 0, client.Width, client.Height);
                   VMR9Util.g_vmr9?.MadVr3DSizeRight(0, 0, client.Width, client.Height);
                   VMR9Util.g_vmr9?.MadVr3DOnOff(false);
