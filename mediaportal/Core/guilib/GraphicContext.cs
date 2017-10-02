@@ -174,6 +174,7 @@ namespace MediaPortal.GUI.Library
     // For madVR
     public static Surface MadVrRenderTargetVMR9 = null;
     public static IntPtr HWnd;
+    internal static IBasicVideo2 basicVideoMadVr;
 
     // Stacks for matrix transformations.
     private static readonly Stack<Matrix> ProjectionMatrixStack = new Stack<Matrix>();
@@ -388,6 +389,10 @@ namespace MediaPortal.GUI.Library
 
     public static List<Texture> LastFrames { get; set; }
     public static int LastFramesIndex;
+    public static bool SBSLeftDone;
+    public static bool SBSRightDone;
+    public static bool TABTopDone;
+    public static bool TABBottomDone;
     public static int Convert2Dto3DSkewFactor { get; set; }
 
     public enum eRender3DModeHalf { None, SBSLeft, SBSRight, TABTop, TABBottom };
@@ -1087,6 +1092,10 @@ namespace MediaPortal.GUI.Library
             GUIGraphicsContext.NoneDone = false;
             GUIGraphicsContext.TopAndBottomDone = false;
             GUIGraphicsContext.SideBySideDone = false;
+            GUIGraphicsContext.SBSLeftDone = false;
+            GUIGraphicsContext.SBSRightDone = false;
+            GUIGraphicsContext.TABTopDone = false;
+            GUIGraphicsContext.TABBottomDone = false;
           }
         }
       }
@@ -1837,6 +1846,7 @@ namespace MediaPortal.GUI.Library
 
 
     public static bool WorkerThreadStart { get; set; }
+    public static bool Render3DModeHalfDone { get; set; }
 
     //public static IntPtr madVRDIB { get; set; }
 

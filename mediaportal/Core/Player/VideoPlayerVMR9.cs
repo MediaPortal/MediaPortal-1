@@ -544,7 +544,7 @@ namespace MediaPortal.Player
         //Get filterCodecName
         filterCodec = GetFilterCodec();
 
-        basicVideo = graphBuilder as IBasicVideo2;
+        GUIGraphicsContext.basicVideoMadVr = basicVideo = graphBuilder as IBasicVideo2;
 
         if (filterConfig.bAutoDecoderSettings)
         {
@@ -1569,12 +1569,17 @@ namespace MediaPortal.Player
         {
           DirectShowUtil.ReleaseComObject(basicVideo);
         }
+        if (GUIGraphicsContext.basicVideoMadVr != null)
+        {
+          DirectShowUtil.ReleaseComObject(GUIGraphicsContext.basicVideoMadVr);
+        }
         videoWin = null;
         mediaCtrl = null;
         mediaSeek = null;
         mediaPos = null;
         basicAudio = null;
         basicVideo = null;
+        GUIGraphicsContext.basicVideoMadVr = null;
         Log.Info("VideoPlayer9: Cleanup Sub/PostProcess");
 
         if (VMR9Util.g_vmr9 != null)
