@@ -25,6 +25,7 @@ using DirectShowLib;
 using System.Drawing;
 using MediaPortal.Profile;
 using MediaPortal.Configuration;
+using MediaPortal.GUI.Library;
 
 namespace MediaPortal.Player.Subtitles
 {
@@ -112,6 +113,7 @@ namespace MediaPortal.Player.Subtitles
           else
             engine = new DummyEngine();
         }
+        Log.Debug("SubEngine : init engine : {0}", engine.ToString());
       }
       return engine;
     }

@@ -147,6 +147,12 @@ BOOL IsModified()
 
 void FreeSubtitles()
 {
-  g_d3DDev = NULL;
-	g_subManager.Free();
+  try
+  {
+    g_d3DDev = NULL;
+    g_subManager->SetDevice(nullptr);
+    g_subManager.Free();
+  }
+  catch (...)
+  {}
 }
