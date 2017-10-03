@@ -1217,7 +1217,7 @@ HRESULT MPMadPresenter::SetDevice(IDirect3DDevice9* pD3DDev)
     // Lock madVR thread while Shutdown()
     //CAutoLock lock(&m_dsLock);
 
-    CAutoLock cAutoLock(this);
+    //CAutoLock cAutoLock(this);
 
     Log("MPMadPresenter::SetDevice() device 0x:%x", pD3DDev);
 

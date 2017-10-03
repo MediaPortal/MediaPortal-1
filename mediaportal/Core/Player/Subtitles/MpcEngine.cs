@@ -98,6 +98,20 @@ namespace MediaPortal.Player.Subtitles
 
     public void SetDevice(IntPtr device)
     {
+      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+      {
+        // Need to init there to have the setting for madVR.
+        LoadSettings();
+        MpcSubtitles.SetDefaultStyle(ref this.defStyle, this.overrideASSStyle);
+        if (selectionOff)
+        {
+          MpcSubtitles.SetShowForcedOnly(false);
+        }
+        else
+        {
+          MpcSubtitles.SetShowForcedOnly(!this.autoShow);
+        }
+      }
       MpcSubtitles.SetDevice(device);
     }
 

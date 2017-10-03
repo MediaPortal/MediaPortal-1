@@ -1298,8 +1298,11 @@ namespace MediaPortal.Player
       // No need to set subtitle engine when using XySubFilter and madVR.
       if (!_subEngineType.Equals("XySubFilter"))
       {
-        ISubEngine engine = GUIGraphicsContext.SubDeviceMadVr != IntPtr.Zero ? SubEngine.GetInstance() : SubEngine.GetInstance(true);
-        engine?.SetDevice(device);
+        ISubEngine engine = SubEngine.GetInstance(true);
+        if (engine != null)
+        {
+          engine.SetDevice(device);
+        }
         Log.Debug("Planescene: Set subtitle device - {0}", device);
       }
     }
