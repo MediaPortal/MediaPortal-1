@@ -130,30 +130,60 @@ namespace MediaPortal
           return null;
         }
 
-        lock (grabNotifier)
+        if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
+            GUIGraphicsContext.Vmr9Active)
         {
-          grabSucceeded = false;
-          grabSample = true;
-          if (!Monitor.Wait(grabNotifier, 500))
+          Surface backbuffer = null;
+          Bitmap b = null;
+          try
           {
-            Log.Debug("FrameGrabber: Timed-out waiting for grabbed frame!");
-            return null;
-          }
-
-          if (grabSucceeded)
-          {
-            using (GraphicsStream stream = SurfaceLoader.SaveToStream(ImageFileFormat.Bmp, rgbSurface))
+            backbuffer = GUIGraphicsContext.DX9DeviceMadVr.GetBackBuffer(0, 0, BackBufferType.Mono);
+            using (var stream = SurfaceLoader.SaveToStream(ImageFileFormat.Bmp, backbuffer))
             {
-              Bitmap b = new Bitmap(Image.FromStream(stream));
+              b = new Bitmap(Image.FromStream(stream));
 
               // IMPORTANT: Closes and disposes the stream
               // If this is not done we get a memory leak!
               stream.Close();
+              stream.Dispose();
+              backbuffer.Dispose();
               return b;
             }
           }
-          Log.Debug("FrameGrabber: Frame grab failed");
-          return null;
+          catch (Exception)
+          {
+            backbuffer?.Dispose();
+            b?.Dispose();
+            Log.Debug("FrameGrabber: Timed-out waiting for grabbed frame!");
+          }
+        }
+        else
+        {
+          lock (grabNotifier)
+          {
+            grabSucceeded = false;
+            grabSample = true;
+            if (!Monitor.Wait(grabNotifier, 500))
+            {
+              Log.Debug("FrameGrabber: Timed-out waiting for grabbed frame!");
+              return null;
+            }
+
+            if (grabSucceeded)
+            {
+              using (GraphicsStream stream = SurfaceLoader.SaveToStream(ImageFileFormat.Bmp, rgbSurface))
+              {
+                Bitmap b = new Bitmap(Image.FromStream(stream));
+
+                // IMPORTANT: Closes and disposes the stream
+                // If this is not done we get a memory leak!
+                stream.Close();
+                return b;
+              }
+            }
+            Log.Debug("FrameGrabber: Frame grab failed");
+            return null;
+          }
         }
       }
       catch (Exception e) // Can occur for example if the video device is lost
@@ -161,6 +191,8 @@ namespace MediaPortal
         Log.Debug(e.ToString());
         return null;
       }
+      // Not image grabbed
+      return null;
     }
 
     public bool FrameGrabberD3D9Enable { get; set; }
