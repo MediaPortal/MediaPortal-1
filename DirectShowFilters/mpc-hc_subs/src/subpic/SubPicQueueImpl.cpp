@@ -425,6 +425,9 @@ DWORD CSubPicQueue::ThreadProc()
         CComPtr<ISubPicProvider> pSubPicProvider;
         if (SUCCEEDED(GetSubPicProvider(&pSubPicProvider)) && pSubPicProvider
                 && SUCCEEDED(pSubPicProvider->Lock())) {
+
+            SUBTITLE_TYPE sType = pSubPicProvider->GetType();
+
             for (POSITION pos = pSubPicProvider->GetStartPosition(rtNow, fps);
                     pos && !m_fBreakBuffering && GetQueueCount() < nMaxSubPic;
                     pos = pSubPicProvider->GetNext(pos)) {
@@ -501,6 +504,8 @@ DWORD CSubPicQueue::ThreadProc()
                         if (SUCCEEDED(hr2)) {
                             pDynamic->SetVirtualTextureSize(VirtualSize, VirtualTopLeft);
                         }
+
+                        pDynamic->SetType(sType);
 
                         AppendQueue(pDynamic);
                         bAgain = true;
@@ -602,6 +607,7 @@ STDMETHODIMP_(bool) CSubPicQueueNoThread::LookupSubPic(REFERENCE_TIME rtNow, CCo
         CComPtr<ISubPicProvider> pSubPicProvider;
         GetSubPicProvider(&pSubPicProvider);
         if (pSubPicProvider) {
+            SUBTITLE_TYPE sType = pSubPicProvider->GetType();
             double fps = m_fps;
 
             POSITION pos = pSubPicProvider->GetStartPosition(rtNow, fps);
@@ -642,6 +648,8 @@ STDMETHODIMP_(bool) CSubPicQueueNoThread::LookupSubPic(REFERENCE_TIME rtNow, CCo
                     if (SUCCEEDED(hr2)) {
                         pSubPic->SetVirtualTextureSize(VirtualSize, VirtualTopLeft);
                     }
+
+                    pSubPic->SetType(sType);
                 }
             }
 

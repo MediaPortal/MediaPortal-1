@@ -1315,12 +1315,28 @@ namespace MediaPortal.Player
       if (GUIGraphicsContext.SubDeviceMadVr != IntPtr.Zero && !_subEngineType.Equals("XySubFilter"))
       {
         ISubEngine engine = SubEngine.GetInstance();
+        {
+          if (engine != null)
+          {
+            engine.SetTime(frameStart);
+            engine.Render(_subsRect, _destinationRect, xOffsetInPixels);
+          }
+        }
+      }
+    }
+
+    public void RenderSubtitleEx(long frameStart, Rectangle viewportRect, Rectangle croppedVideoRect, int xOffsetInPixels)
+    {
+      if (GUIGraphicsContext.SubDeviceMadVr != IntPtr.Zero && !_subEngineType.Equals("XySubFilter"))
+      {
+        ISubEngine engine = SubEngine.GetInstance();
         if (GUIGraphicsContext.Render3DMode != GUIGraphicsContext.eRender3DMode.SideBySide &&
             GUIGraphicsContext.Render3DMode != GUIGraphicsContext.eRender3DMode.TopAndBottom)
         {
           // for a 2D movie we render the subtitles here
           if (engine != null)
           {
+            SubEngine.GetInstance().SetCurrent3DSubtitle = 0; // int for NONE
             engine.SetTime(frameStart);
             engine.Render(_subsRect, _destinationRect, xOffsetInPixels);
           }
@@ -1334,30 +1350,23 @@ namespace MediaPortal.Player
 
           if (GUIGraphicsContext.Render3DSubtitle)
           {
-            Rectangle subRect = _subsRect;
-            Rectangle dstRect = _destinationRect;
-
             if (GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.SideBySide)
             {
-              dstRect.Width /= 2;
-              dstRect.Y = 0;
+              SubEngine.GetInstance().SetCurrent3DSubtitle = 1; // int for SBS
             }
             else if (GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.TopAndBottom)
             {
-              dstRect.Height /= 2;
+              SubEngine.GetInstance().SetCurrent3DSubtitle = 2; // int for TAB
             }
-
-            subRect.X += GUIGraphicsContext.Render3DSubtitleDistance;
-            dstRect.X += GUIGraphicsContext.Render3DSubtitleDistance;
-
             engine.SetTime(frameStart);
-            engine.Render(_subsRect, dstRect, xOffsetInPixels);
+            engine.RenderEx(viewportRect, croppedVideoRect, xOffsetInPixels);
           }
           else
           {
             // for a 2D movie we render the subtitles here
             if (engine != null)
             {
+              SubEngine.GetInstance().SetCurrent3DSubtitle = 0; // int for NONE
               engine.SetTime(frameStart);
               engine.Render(_subsRect, _destinationRect, xOffsetInPixels);
             }

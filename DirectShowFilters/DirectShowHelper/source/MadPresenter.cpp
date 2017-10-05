@@ -1327,7 +1327,7 @@ HRESULT MPMadPresenter::RenderEx3(REFERENCE_TIME rtStart, REFERENCE_TIME rtStop,
     m_deviceState.Store();
     SetupMadDeviceState();
 
-    m_pCallback->RenderSubtitle(rtStart, croppedVideoRect.left, croppedVideoRect.top, croppedVideoRect.right, croppedVideoRect.bottom, viewportRect.right, viewportRect.bottom, xOffsetInPixels);
+    m_pCallback->RenderSubtitleEx(rtStart, viewportRect, croppedVideoRect, xOffsetInPixels);
 
     // Commented out but usefull for testing
     //Log("%s : RenderSubtitle : rtStart: %i, croppedVideoRect.left: %d, croppedVideoRect.top: %d, croppedVideoRect.right: %d, croppedVideoRect.bottom: %d", __FUNCTION__, rtStart, croppedVideoRect.left, croppedVideoRect.top, croppedVideoRect.right, croppedVideoRect.bottom);
