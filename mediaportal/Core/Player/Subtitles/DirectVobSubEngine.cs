@@ -238,6 +238,8 @@ namespace MediaPortal.Player.Subtitles
 
     public void Render(Rectangle subsRect, Rectangle frameRect, int xOffsetInPixels) { }
 
+    public void RenderEx(Rectangle subsRect, Rectangle frameRect, int xOffsetInPixels) { }
+
     public int GetCount()
     {
       return extCount + intSubs.Count;
@@ -304,6 +306,12 @@ namespace MediaPortal.Player.Subtitles
           vobSub?.put_SelectedLanguage(extCount);
         }
       }
+    }
+
+    public int SetCurrent3DSubtitle
+    {
+      get { return -1; }
+      set { }
     }
 
     public bool Enable

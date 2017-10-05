@@ -83,6 +83,9 @@ namespace MediaPortal.Player
     void RenderSubtitle(long frameStart, int left, int top, int right, int bottom, int width, int height, int xOffsetInPixels);
 
     [PreserveSig]
+    void RenderSubtitleEx(long frameStart, Rectangle viewportRect, Rectangle croppedVideoRect, int xOffsetInPixels);
+
+    [PreserveSig]
     void RenderFrame(Int16 cx, Int16 cy, Int16 arx, Int16 ary, IntPtr pSurface);
 
     [PreserveSig]
