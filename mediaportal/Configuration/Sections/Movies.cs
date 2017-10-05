@@ -82,7 +82,7 @@ namespace MediaPortal.Configuration.Sections
     private MPTextBox subtitlesFontTextBox;
     private MPLabel mpLabel10;
     private MPTabControl tabControl1;
-    private MPComboBox subEnginesCombo;
+    private static MPComboBox subEnginesCombo;
     private MPLabel mpLabel3;
     private TextBox subPaths;
     private Label label2;
@@ -103,6 +103,8 @@ namespace MediaPortal.Configuration.Sections
     private MPLabel mpLabelOptionLAV;
     private static MPCheckBox streamLAVSelectionCheckBox;
     private MPCheckBox chbKeepFoldersTogether;
+    private static bool SubtitleComboMessageDone = false;
+    internal static bool MadVrInUse = false;
 
     //private int 
 
@@ -160,6 +162,13 @@ namespace MediaPortal.Configuration.Sections
         playedPercentageTB.Value = playedPercentageTrackBar.Value;
 
         comSkipCheckBox.Checked = xmlreader.GetValueAsBool("comskip", "automaticskip", false);
+        MadVrInUse = xmlreader.GetValueAsBool("general", "useMadVideoRenderer", false);
+        string selection = (string)subEnginesCombo.SelectedItem;
+        if ((!MadVrInUse && selection.Equals("XySubFilter") && !SubtitleComboMessageDone))
+        {
+          subEnginesCombo.SelectedItem = "MPC-HC";
+          MessageBox.Show("XySubFilter works only with madVR");
+        }
 
         try
         {
@@ -340,7 +349,7 @@ namespace MediaPortal.Configuration.Sections
       MediaPortal.UserInterface.Controls.MPTabPage mpTabPage2;
       MediaPortal.UserInterface.Controls.MPLabel labelPlayAll;
       this.mpSubEngineCommentLabel = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.subEnginesCombo = new MediaPortal.UserInterface.Controls.MPComboBox();
+      subEnginesCombo = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.advancedButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpGroupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.mpLabelSubSelectMode = new MediaPortal.UserInterface.Controls.MPLabel();
@@ -440,7 +449,7 @@ namespace MediaPortal.Configuration.Sections
             | System.Windows.Forms.AnchorStyles.Right)));
       mpGroupBox3.Controls.Add(this.mpSubEngineCommentLabel);
       mpGroupBox3.Controls.Add(mpLabel2);
-      mpGroupBox3.Controls.Add(this.subEnginesCombo);
+      mpGroupBox3.Controls.Add(subEnginesCombo);
       mpGroupBox3.Controls.Add(this.advancedButton);
       mpGroupBox3.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       mpGroupBox3.Location = new System.Drawing.Point(15, 12);
@@ -468,20 +477,20 @@ namespace MediaPortal.Configuration.Sections
       // 
       // subEnginesCombo
       // 
-      this.subEnginesCombo.BorderColor = System.Drawing.Color.Empty;
-      this.subEnginesCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.subEnginesCombo.FormattingEnabled = true;
-      this.subEnginesCombo.Items.AddRange(new object[] {
+      subEnginesCombo.BorderColor = System.Drawing.Color.Empty;
+      subEnginesCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      subEnginesCombo.FormattingEnabled = true;
+      subEnginesCombo.Items.AddRange(new object[] {
             "MPC-HC",
             "DirectVobSub",
             "FFDShow",
             "XySubFilter",
             "Disabled"});
-      this.subEnginesCombo.Location = new System.Drawing.Point(16, 46);
-      this.subEnginesCombo.Name = "subEnginesCombo";
-      this.subEnginesCombo.Size = new System.Drawing.Size(246, 21);
-      this.subEnginesCombo.TabIndex = 7;
-      this.subEnginesCombo.SelectedIndexChanged += new System.EventHandler(this.subEnginesCombo_SelectedIndexChanged);
+      subEnginesCombo.Location = new System.Drawing.Point(16, 46);
+      subEnginesCombo.Name = "subEnginesCombo";
+      subEnginesCombo.Size = new System.Drawing.Size(246, 21);
+      subEnginesCombo.TabIndex = 7;
+      subEnginesCombo.SelectedIndexChanged += new System.EventHandler(this.subEnginesCombo_SelectedIndexChanged);
       // 
       // advancedButton
       // 
@@ -1256,7 +1265,7 @@ namespace MediaPortal.Configuration.Sections
 
     private void subEnginesCombo_SelectedIndexChanged(object sender, EventArgs e)
     {
-      string selection = (string)subEnginesCombo.SelectedItem;
+      string selection = (string) subEnginesCombo.SelectedItem;
       advancedButton.Enabled = !selection.Equals("Disabled");
       if (selection.Equals("FFDShow"))
       {
@@ -1280,6 +1289,15 @@ namespace MediaPortal.Configuration.Sections
           mpSubEngineCommentLabel.ForeColor = Color.Black;
         }
         mpSubEngineCommentLabel.Visible = true;
+      }
+      if ((!MadVrInUse && selection.Equals("XySubFilter") && !SubtitleComboMessageDone))
+      {
+        SubtitleComboMessageDone = true;
+        // First back to disable item
+        subEnginesCombo.SelectedIndex = 4;
+        // Display the message
+        MessageBox.Show("XySubFilter works only with madVR, please select another one");
+        SubtitleComboMessageDone = false;
       }
       else
         mpSubEngineCommentLabel.Visible = false;
@@ -1423,6 +1441,16 @@ namespace MediaPortal.Configuration.Sections
       {
         audioDefaultCheckBox.Enabled = false;
         streamLAVSelectionCheckBox.Enabled = false;
+      }
+      string selection = (string) subEnginesCombo.SelectedItem;
+      if (selection != null && (!MadVrInUse && selection.Equals("XySubFilter") && !SubtitleComboMessageDone))
+      {
+        SubtitleComboMessageDone = true;
+        // First back to disable item
+        subEnginesCombo.SelectedIndex = 4;
+        // Display the message
+        MessageBox.Show("XySubFilter works only with madVR (please select another subtitle engine)");
+        SubtitleComboMessageDone = false;
       }
     }
 

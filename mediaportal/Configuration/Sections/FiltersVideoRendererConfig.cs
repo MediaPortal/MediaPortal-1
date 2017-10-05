@@ -117,6 +117,8 @@ namespace MediaPortal.Configuration.Sections
         checkBoxDecimateMask.Enabled = false;
         mpVMR9FilterMethod.Enabled = false;
         labelFilteringHint.Enabled = false;
+        Movies.MadVrInUse = false;
+        Movies.UpdateDecoderSettings();
       }
     }
 
@@ -130,6 +132,8 @@ namespace MediaPortal.Configuration.Sections
         checkBoxDecimateMask.Enabled = true;
         mpVMR9FilterMethod.Enabled = true;
         labelFilteringHint.Enabled = true;
+        Movies.MadVrInUse = false;
+        Movies.UpdateDecoderSettings();
       }
     }
 
@@ -143,6 +147,8 @@ namespace MediaPortal.Configuration.Sections
         checkBoxDecimateMask.Enabled = false;
         mpVMR9FilterMethod.Enabled = false;
         labelFilteringHint.Enabled = false;
+        Movies.MadVrInUse = true;
+        Movies.UpdateDecoderSettings();
       }
     }
 
