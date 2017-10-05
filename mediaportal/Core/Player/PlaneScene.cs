@@ -1309,7 +1309,7 @@ namespace MediaPortal.Player
 
     public void RenderSubtitle(long frameStart, int left, int top, int right, int bottom, int width, int height, int xOffsetInPixels)
     {
-      if (GUIGraphicsContext.SubDeviceMadVr != IntPtr.Zero)
+      if (GUIGraphicsContext.SubDeviceMadVr != IntPtr.Zero && !_subEngineType.Equals("XySubFilter"))
       {
         ISubEngine engine = SubEngine.GetInstance();
         if (GUIGraphicsContext.Render3DMode != GUIGraphicsContext.eRender3DMode.SideBySide &&
