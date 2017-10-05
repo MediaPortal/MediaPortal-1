@@ -1253,6 +1253,9 @@ namespace MediaPortal.Player
           if (VMR9Util.g_vmr9 != null)
           {
             VMR9Util.g_vmr9.ProcessMadVrOsd();
+
+            // Enable the GetCurrentImage new madVR
+            if (grabber != null) grabber.FrameGrabberD3D9Enable = false;
           }
         }
         return _visible ? 0 : 1; // S_OK, S_FALSE

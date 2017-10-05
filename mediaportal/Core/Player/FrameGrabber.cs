@@ -22,8 +22,10 @@ using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Threading;
+using DirectShowLib;
 using MediaPortal.ExtensionMethods;
 using MediaPortal.GUI.Library;
+using MediaPortal.Player;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 
@@ -93,16 +95,9 @@ namespace MediaPortal
         {
           lock (grabNotifier)
           {
-            grabSucceeded = false;
-            grabSample = true;
-            if (!Monitor.Wait(grabNotifier, 500))
+            if (VMR9Util.g_vmr9 != null)
             {
-              Log.Debug("FrameGrabber: Timed-out waiting for grabbed frame!");
-              return null;
-            }
-
-            if (grabSucceeded)
-            {
+              VMR9Util.g_vmr9.MadVrGrabCurrentFrame();
               try
               {
                 if (FrameResult != null)
@@ -111,9 +106,9 @@ namespace MediaPortal
                   FrameResult = null;
                 }
 
-                if (GUIGraphicsContext.madVRFrameBitmap != null)
+                if (GUIGraphicsContext.madVRCurrentFrameBitmap != null)
                 {
-                  FrameResult = new Bitmap(GUIGraphicsContext.madVRFrameBitmap);
+                  FrameResult = new Bitmap(GUIGraphicsContext.madVRCurrentFrameBitmap);
                   return FrameResult;
                 }
               }
@@ -124,6 +119,42 @@ namespace MediaPortal
                 // When Bitmap is not yet ready
               }
             }
+
+            //////// Part of code used for D3D9 setting in madVR
+            //////lock (grabNotifier)
+            //////{
+            //////  grabSucceeded = false;
+            //////  grabSample = true;
+            //////  if (!Monitor.Wait(grabNotifier, 500))
+            //////  {
+            //////    Log.Debug("FrameGrabber: Timed-out waiting for grabbed frame!");
+            //////    return null;
+            //////  }
+
+            //////  if (grabSucceeded)
+            //////  {
+            //////    try
+            //////    {
+            //////      if (FrameResult != null)
+            //////      {
+            //////        FrameResult.SafeDispose();
+            //////        FrameResult = null;
+            //////      }
+
+            //////      if (GUIGraphicsContext.madVRFrameBitmap != null)
+            //////      {
+            //////        FrameResult = new Bitmap(GUIGraphicsContext.madVRFrameBitmap);
+            //////        return FrameResult;
+            //////      }
+            //////    }
+            //////    catch
+            //////    {
+            //////      Log.Debug("FrameGrabber: Frame grab catch failed for madVR");
+            //////      return null;
+            //////      // When Bitmap is not yet ready
+            //////    }
+            //////  }
+            //////}
           }
           // Bitmap not ready return null
           Log.Debug("FrameGrabber: Frame grab failed for madVR");
