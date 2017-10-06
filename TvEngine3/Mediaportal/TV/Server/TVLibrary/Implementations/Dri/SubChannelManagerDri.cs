@@ -156,6 +156,21 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
       _subChannelManager.SetExtensions(extensions);
     }
 
+    /// <summary>
+    /// Enable or disable electronic programme guide data grabbing.
+    /// </summary>
+    public override bool IsEpgGrabbingEnabled
+    {
+      get
+      {
+        return _subChannelManager.IsEpgGrabbingEnabled;
+      }
+      set
+      {
+        _subChannelManager.IsEpgGrabbingEnabled = value;
+      }
+    }
+
     #region tuning
 
     /// <summary>

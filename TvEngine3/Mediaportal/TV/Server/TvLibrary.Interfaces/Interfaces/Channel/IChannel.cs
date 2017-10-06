@@ -73,6 +73,16 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Channel
     }
 
     /// <summary>
+    /// Get/set whether available electronic programme guide data should be
+    /// grabbed while the channel is tuned.
+    /// </summary>
+    bool GrabEpg
+    {
+      get;
+      set;
+    }
+
+    /// <summary>
     /// Get/set whether the channel is encrypted.
     /// </summary>
     bool IsEncrypted

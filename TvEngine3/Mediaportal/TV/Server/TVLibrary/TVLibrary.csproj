@@ -123,6 +123,8 @@
     <Compile Include="Implementations\Atsc\Enum\TransmissionSystem.cs" />
     <Compile Include="Implementations\Atsc\Enum\WaveformStandard.cs" />
     <Compile Include="Implementations\Atsc\EpgGrabberAtsc.cs" />
+    <Compile Include="Implementations\Dvb\GrabberSiFreesatWrapper.cs" />
+    <Compile Include="Implementations\EpgGrabberController.cs" />
     <Compile Include="Implementations\DirectShow\Bda\TunerBdaAnalogTv.cs" />
     <Compile Include="Implementations\DirectShow\Bda\TunerBdaAuxiliaryInput.cs" />
     <Compile Include="Implementations\DirectShow\Bda\TunerDetectorBda.cs" />
@@ -184,6 +186,7 @@
     <Compile Include="Implementations\Dvb\SubChannelManagerDvb.cs" />
     <Compile Include="Implementations\Enum\StreamFormat.cs" />
     <Compile Include="Implementations\Enum\TunerState.cs" />
+    <Compile Include="Implementations\EpgGrabberBase.cs" />
     <Compile Include="Implementations\Mpeg2Ts\SubChannelMpeg2Ts.cs" />
     <Compile Include="Implementations\SatIp\TunerDetectorSatIp.cs" />
     <Compile Include="Implementations\SatIp\TunerSatIpCable.cs" />
@@ -228,6 +231,8 @@
     <Compile Include="Implementations\DirectShow\Wdm\B2c2\TunerB2c2Terrestrial.cs" />
     <Compile Include="Implementations\DirectShow\Wdm\B2c2\TunerB2c2Satellite.cs" />
     <Compile Include="Implementations\DirectShow\Wdm\Analog\TunerAnalog.cs" />
+    <Compile Include="Implementations\Scte\GrabberEpgScteWrapper.cs" />
+    <Compile Include="Implementations\Scte\GrabberSiScteWrapper.cs" />
     <Compile Include="Implementations\SubChannelBase.cs" />
     <Compile Include="Implementations\Helper\TunerExtensionLoader.cs" />
     <Compile Include="Implementations\DiseqcController.cs" />
@@ -286,6 +291,7 @@
     <Compile Include="Interfaces\Analyzer\ICallBackGrabber.cs" />
     <Compile Include="Interfaces\Analyzer\IGrabberEpgAtsc.cs" />
     <Compile Include="Interfaces\Analyzer\IGrabberEpgOpenTv.cs" />
+    <Compile Include="Interfaces\IEpgGrabberController.cs" />
     <Compile Include="Interfaces\IQualityControlInternal.cs" />
     <Compile Include="Interfaces\IEpgGrabberInternal.cs" />
     <Compile Include="Interfaces\ISubChannelManager.cs" />

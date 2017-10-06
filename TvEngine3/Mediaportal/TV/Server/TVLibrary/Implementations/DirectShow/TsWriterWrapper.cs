@@ -1138,6 +1138,16 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
       StartCallBackThread(job);
     }
 
+    public void OnReset(ushort pid)
+    {
+      CallBackJob job = new CallBackJob();
+      job.TargetType = typeof(ICallBackGrabber);
+      job.MethodName = "OnReset";
+      job.TargetInstance = _callBackGrabber;
+      job.Parameters = new object[1] { pid };
+      StartCallBackThread(job);
+    }
+
     #endregion
 
     #region IObserver members

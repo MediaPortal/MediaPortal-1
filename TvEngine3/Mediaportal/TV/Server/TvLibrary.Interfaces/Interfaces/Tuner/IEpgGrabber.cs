@@ -18,6 +18,10 @@
 
 #endregion
 
+using System.Collections.Generic;
+using Mediaportal.TV.Server.Common.Types.Enum;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations;
 
 namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner
 {
@@ -27,9 +31,37 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner
   public interface IEpgGrabber
   {
     /// <summary>
-    /// Reload the grabber's configuration.
+    /// Set the grabber's call-back.
     /// </summary>
-    void ReloadConfiguration();
+    /// <param name="callBack">The delegate to notify about grabber events.</param>
+    void SetCallBack(IEpgGrabberCallBack callBack);
+
+    /// <summary>
+    /// Enable or disable grabbing.
+    /// </summary>
+    /// <value><c>true</c> if grabbing is enabled, otherwise <c>false</c></value>
+    bool IsEnabled
+    {
+      get;
+      set;
+    }
+
+    /// <summary>
+    /// Get/set the EPG data protocols supported by the tuner hardware and/or enabled for use.
+    /// </summary>
+    TunerEpgGrabberProtocol SupportedProtocols
+    {
+      get;
+      set;
+    }
+
+    /// <summary>
+    /// Get the EPG data protocols supported by the grabber code/class/type implementation.
+    /// </summary>
+    TunerEpgGrabberProtocol PossibleProtocols
+    {
+      get;
+    }
 
     /// <summary>
     /// Get the grabber's current status.
@@ -41,14 +73,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner
     }
 
     /// <summary>
-    /// Start grabbing electronic programme guide data.
+    /// Get all available EPG data.
     /// </summary>
-    /// <param name="callBack">The delegate to notify when grabbing is complete or canceled.</param>
-    void GrabEpg(IEpgGrabberCallBack callBack);
-
-    /// <summary>
-    /// Abort grabbing electronic programme guide data.
-    /// </summary>
-    void AbortGrabbing();
+    /// <returns>the data, grouped by channel</returns>
+    IDictionary<IChannel, IList<EpgProgram>> GetData();
   }
 }

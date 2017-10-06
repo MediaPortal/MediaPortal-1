@@ -28,6 +28,7 @@ using Mediaportal.TV.Server.TVLibrary.Implementations.Dvb;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Enum;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Mpeg2Ts;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Scte;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper;
@@ -164,11 +165,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
         IGrabberSiFreesat freesatSiGrabber = null;
         if (streamFormat.HasFlag(StreamFormat.Freesat))
         {
-          freesatSiGrabber = _filterTsWriter as IGrabberSiFreesat;
+          freesatSiGrabber = new GrabberSiFreesatWrapper(_filterTsWriter as IGrabberSiFreesat);
         }
         _channelScanner = new ChannelScannerDvb(this, mpegSiGrabber, _filterTsWriter as IGrabberSiDvb, freesatSiGrabber);
 
-        _epgGrabber = new EpgGrabberDvb(_filterTsWriter as IGrabberEpgDvb, _filterTsWriter as IGrabberEpgMhw, _filterTsWriter as IGrabberEpgOpenTv);
+        _epgGrabber = new EpgGrabberDvb(new EpgGrabberController(SubChannelManager), _filterTsWriter as IGrabberEpgDvb, _filterTsWriter as IGrabberEpgMhw, _filterTsWriter as IGrabberEpgOpenTv);
         return;
       }
 
@@ -190,11 +191,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
       }
       if (streamFormat.HasFlag(StreamFormat.Scte))
       {
-        grabberSiScte = _filterTsWriter as IGrabberSiScte;
-        grabberEpgScte = _filterTsWriter as IGrabberEpgScte;
+        grabberSiScte = new GrabberSiScteWrapper(_filterTsWriter as IGrabberSiScte);
+        grabberEpgScte = new GrabberEpgScteWrapper(_filterTsWriter as IGrabberEpgScte);
       }
       _channelScanner = new ChannelScannerAtsc(this, mpegSiGrabber, grabberSiAtsc, grabberSiScte);
-      _epgGrabber = new EpgGrabberAtsc(grabberEpgAtsc, grabberEpgScte);
+      _epgGrabber = new EpgGrabberAtsc(new EpgGrabberController(SubChannelManager), grabberEpgAtsc, grabberEpgScte);
     }
 
     private void ApplyTsWriterConfig()

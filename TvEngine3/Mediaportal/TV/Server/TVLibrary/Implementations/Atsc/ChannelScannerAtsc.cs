@@ -160,6 +160,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
       newChannel.LogicalChannelNumber = number;
       newChannel.Provider = "Cable";
       newChannel.MediaType = MediaType.Television;
+      newChannel.GrabEpg = false;           // EPG not expected to be available
       newChannel.IsEncrypted = true;
       newChannel.Frequency = ChannelScte.FREQUENCY_SWITCHED_DIGITAL_VIDEO;                // only CableCARD tuners will be able to tune this channel
       newChannel.ModulationScheme = ModulationSchemeQam.Automatic;
@@ -247,6 +248,22 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
       if (tableType != TableType.None)
       {
         _seenTables |= tableType;
+        _completeTables &= ~tableType;
+        _event.Set();
+      }
+    }
+
+    /// <summary>
+    /// This function is invoked after the grabber is reset.
+    /// </summary>
+    /// <param name="pid">The PID that is associated with the grabber.</param>
+    public void OnReset(ushort pid)
+    {
+      this.LogDebug("scan ATSC: on reset, PID = {0}", pid);
+      TableType tableType = GetTableType(pid);
+      if (tableType != TableType.None)
+      {
+        _seenTables &= ~tableType;
         _completeTables &= ~tableType;
         _event.Set();
       }
@@ -540,6 +557,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
             newChannel.Name = string.Empty;
             newChannel.LogicalChannelNumber = string.Empty;
             newChannel.MediaType = program.Value.MediaType.Value;
+            newChannel.GrabEpg = false;     // no VCT => no source ID => no EPG
             newChannel.IsEncrypted = program.Value.IsEncrypted;
             newChannel.IsThreeDimensional = program.Value.IsThreeDimensional;
 
@@ -630,11 +648,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
 
     #region private functions
 
-    private static TableType GetTableType(ushort pid, byte tableId)
+    private static TableType GetTableType(ushort pid, byte? tableId = null)
     {
       switch (pid)
       {
         case 0:
+          if (!tableId.HasValue)
+          {
+            return TableType.Pat | TableType.Pmt;
+          }
           switch (tableId)
           {
             case 0:
@@ -646,6 +668,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
         case 1:
           return TableType.Cat;
         case 0x1ffb:
+          if (!tableId.HasValue)
+          {
+            return TableType.AtscNit | TableType.AtscNtt | TableType.AtscSvct | TableType.AtscMgt | TableType.AtscLvctTerrestrial | TableType.AtscLvctCable | TableType.AtscEam;
+          }
           switch (tableId)
           {
             case 0xc2:
@@ -665,6 +691,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
           }
           break;
         case 0x1ffc:
+          if (!tableId.HasValue)
+          {
+            return TableType.ScteNit | TableType.ScteNtt | TableType.ScteSvct | TableType.ScteMgt | TableType.ScteLvctTerrestrial | TableType.ScteLvctCable | TableType.ScteEam;
+          }
           switch (tableId)
           {
             case 0xc2:
@@ -1018,8 +1048,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
               ChannelAnalogTv analogTvChannel = new ChannelAnalogTv();
               analogTvChannel.MediaType = MediaType.Television;
               analogTvChannel.Country = CountryCollection.Instance.GetCountryByIsoCode("US");
-              analogTvChannel.Frequency = (int)frequency;   // assumed to be the analog video carrier frequency (ie. no adjustment required)
-              analogTvChannel.PhysicalChannelNumber = ChannelScte.GetPhysicalChannelNumberForFrequency(analogTvChannel.Frequency + 1750);   // analog video carrier => digital centre
+              analogTvChannel.Frequency = (int)frequency - 1750;  // digital centre frequency => analog video carrier frequency
+              analogTvChannel.PhysicalChannelNumber = ChannelScte.GetPhysicalChannelNumberForFrequency((int)frequency);
               analogTvChannel.TunerSource = AnalogTunerSource.Cable;
 
               newChannel = analogTvChannel;
@@ -1037,7 +1067,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
               }
 
               ChannelScte scteChannel = new ChannelScte();
-              scteChannel.Frequency = (int)frequency;
+              scteChannel.Frequency = (int)frequency;   // digital centre
               switch (modulationFormat)
               {
                 case ModulationFormat.Qam16:
@@ -1051,6 +1081,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
                   break;
                 case ModulationFormat.Qam128:
                   scteChannel.ModulationScheme = ModulationSchemeQam.Qam128;
+                  break;
+                case ModulationFormat.Qam256:
+                  scteChannel.ModulationScheme = ModulationSchemeQam.Qam256;
                   break;
                 case ModulationFormat.Qam512:
                   scteChannel.ModulationScheme = ModulationSchemeQam.Qam512;
@@ -1092,6 +1125,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
               newChannel.Provider = mapName;
             }
             newChannel.LogicalChannelNumber = lcn;
+            newChannel.GrabEpg = false;     // EPG not expected to be available
             newChannel.IsEncrypted = accessControlled;
             newChannel.IsHighDefinition = hdtvChannel;
 
@@ -1405,6 +1439,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
           {
             broadcastStandard = BroadcastStandard.Atsc;
             atscChannel.Provider = "Terrestrial";
+            atscChannel.GrabEpg = true;   // EPG sometimes available
             atscChannel.TransportStreamId = transportStreamId;
             atscChannel.ProgramNumber = programNumber;
             atscChannel.SourceId = sourceId;
@@ -1416,6 +1451,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
           }
           else
           {
+            newChannel.GrabEpg = false;   // EPG not expected to be available
+
             ChannelScte scteChannel = newChannel as ChannelScte;
             if (scteChannel != null)
             {
@@ -1426,7 +1463,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
               )
               {
                 // This channel is broadcast by a different transmitter.
-                scteChannel.Frequency = (int)(carrierFrequency / 1000);
+                scteChannel.Frequency = (int)(carrierFrequency / 1000);   // digital centre
                 if (modulationMode == ModulationMode.ScteMode1)
                 {
                   scteChannel.ModulationScheme = ModulationSchemeQam.Qam64;

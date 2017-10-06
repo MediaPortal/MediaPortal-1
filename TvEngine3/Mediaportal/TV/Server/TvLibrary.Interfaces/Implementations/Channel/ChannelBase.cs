@@ -76,6 +76,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel
     [DataMember]
     protected bool _isThreeDimensional = false;
 
+    [DataMember]
+    protected bool _grabEpg = false;
+
     #endregion
 
     #region IChannel members
@@ -154,6 +157,22 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel
     }
 
     /// <summary>
+    /// Get/set whether available electronic programme guide data should be
+    /// grabbed while the channel is tuned.
+    /// </summary>
+    public bool GrabEpg
+    {
+      get
+      {
+        return _grabEpg;
+      }
+      set
+      {
+        _grabEpg = value;
+      }
+    }
+
+    /// <summary>
     /// Get/set whether the channel is encrypted.
     /// </summary>
     public bool IsEncrypted
@@ -225,6 +244,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel
         !string.Equals(Provider, channel.Provider) ||
         !string.Equals(LogicalChannelNumber, channel.LogicalChannelNumber) ||
         MediaType != channel.MediaType ||
+        GrabEpg != channel.GrabEpg ||
         IsEncrypted != channel.IsEncrypted ||
         IsHighDefinition != channel.IsHighDefinition ||
         IsThreeDimensional != channel.IsThreeDimensional
@@ -243,7 +263,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel
     {
       return Name.GetHashCode() ^ Provider.GetHashCode() ^
               LogicalChannelNumber.GetHashCode() ^ MediaType.GetHashCode() ^
-              IsEncrypted.GetHashCode() ^ IsHighDefinition.GetHashCode() ^
+              GrabEpg.GetHashCode() ^ IsEncrypted.GetHashCode() ^
+              IsHighDefinition.GetHashCode() ^
               IsThreeDimensional.GetHashCode();
     }
 
@@ -253,14 +274,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel
     /// <returns>a <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/></returns>
     public override string ToString()
     {
-      string description = string.Format("name = {0}, provider = {1}, LCN = {2}, media type = {3}, is encrypted = {4}",
+      string description = string.Format("name = {0}, provider = {1}, LCN = {2}, media type = {3}, grab EPG = {4}, is encrypted = {5}",
                             Name, Provider, LogicalChannelNumber, MediaType,
-                            IsEncrypted);
+                            GrabEpg, IsEncrypted);
       if (MediaType == MediaType.Radio)
       {
         return description;
       }
-      return string.Format("{0}, is HD = {5}, is 3D = {6}", IsHighDefinition, IsThreeDimensional);
+      return string.Format("{0}, is HD = {1}, is 3D = {2}", description, IsHighDefinition, IsThreeDimensional);
     }
 
     #endregion

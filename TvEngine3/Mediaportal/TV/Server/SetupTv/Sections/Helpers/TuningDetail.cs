@@ -246,6 +246,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
           }
         }
       }
+
+      channel.GrabEpg = false;  // prevent attempts to grab EPG while scanning
       return channel;
     }
 

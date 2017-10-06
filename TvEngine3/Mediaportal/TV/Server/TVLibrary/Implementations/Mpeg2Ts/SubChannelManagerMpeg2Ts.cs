@@ -250,6 +250,21 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Mpeg2Ts
     {
       ProgramInformation program;
       if (
+        IsEpgGrabbingEnabled &&
+        programNumber != ChannelMpeg2TsBase.PROGRAM_NUMBER_SCANNING
+      )
+      {
+        lock (_lock)
+        {
+          program = _programs[PROGRAM_NUMBER_EPG];
+          if (program.SubChannelIds.Add(subChannelId) && program.SubChannelIds.Count == 1)
+          {
+            UpdateTsPids(PROGRAM_NUMBER_EPG, new HashSet<ushort>(), program.Pids);
+          }
+        }
+      }
+
+      if (
         programNumber == ChannelMpeg2TsBase.PROGRAM_NUMBER_SCANNING ||
         programNumber == ChannelMpeg2TsBase.PROGRAM_NUMBER_NOT_KNOWN_SELECT_FIRST
       )
@@ -974,7 +989,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Mpeg2Ts
             {
               UpdateDecryptList(program, DecryptUpdateAction.Remove);
             }
-            return;
           }
         }
       }
@@ -1061,6 +1075,53 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Mpeg2Ts
         }
       }
       base.SetExtensions(extensions);
+    }
+
+    /// <summary>
+    /// Enable or disable electronic programme guide data grabbing.
+    /// </summary>
+    public override bool IsEpgGrabbingEnabled
+    {
+      set
+      {
+        if (value != IsEpgGrabbingEnabled)
+        {
+          lock (_lock)
+          {
+            ProgramInformation epgProgram = _programs[PROGRAM_NUMBER_EPG];
+            if (!value)
+            {
+              this.LogDebug("MPEG 2: disable EPG grabbing");
+              epgProgram.SubChannelIds.Clear();
+              UpdateTsPids(PROGRAM_NUMBER_EPG, epgProgram.Pids, new HashSet<ushort>());
+            }
+            else
+            {
+              this.LogDebug("MPEG 2: enable EPG grabbing");
+
+              // Assemble a collection of all non-scanning sub-channel IDs.
+              HashSet<int> subChannelIds = new HashSet<int>();
+              foreach (ProgramInformation program in _programs.Values)
+              {
+                if (program.ProgramNumber != PROGRAM_NUMBER_SI)
+                {
+                  foreach (int subChannelId in program.SubChannelIds)
+                  {
+                    subChannelIds.Add(subChannelId);
+                  }
+                }
+              }
+
+              epgProgram.SubChannelIds = subChannelIds;
+              if (subChannelIds.Count > 0)
+              {
+                UpdateTsPids(PROGRAM_NUMBER_EPG, new HashSet<ushort>(), epgProgram.Pids);
+              }
+            }
+          }
+        }
+        base.IsEpgGrabbingEnabled = value;
+      }
     }
 
     /// <summary>

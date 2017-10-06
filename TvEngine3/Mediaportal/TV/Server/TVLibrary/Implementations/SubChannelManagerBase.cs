@@ -52,6 +52,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     private IQualityControlInternal _qualityControlInterface = null;
 
     /// <summary>
+    /// Is electronic programme guide data grabbing enabled?
+    /// </summary>
+    private bool _isEpgGrabbingEnabled = false;
+
+    /// <summary>
     /// Should the current tuning process be aborted immediately?
     /// </summary>
     private volatile bool _cancelTune = false;
@@ -104,6 +109,21 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       get
       {
         return _qualityControlInterface;
+      }
+    }
+
+    /// <summary>
+    /// Enable or disable electronic programme guide data grabbing.
+    /// </summary>
+    public virtual bool IsEpgGrabbingEnabled
+    {
+      get
+      {
+        return _isEpgGrabbingEnabled;
+      }
+      set
+      {
+        _isEpgGrabbingEnabled = value;
       }
     }
 

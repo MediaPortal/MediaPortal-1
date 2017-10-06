@@ -21,6 +21,7 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.Threading;
 using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer;
@@ -30,7 +31,6 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Dvb;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner;
-using Mediaportal.TV.Server.TVDatabase.Entities;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
 {
@@ -38,7 +38,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
   /// An implementation of <see cref="IEpgGrabber"/> for electronic programme
   /// guide data formats used by ATSC and SCTE broadcasters.
   /// </summary>
-  internal class EpgGrabberAtsc : IEpgGrabberInternal
+  internal class EpgGrabberAtsc : EpgGrabberBase, ICallBackGrabber
   {
     #region constants
 
@@ -190,94 +190,73 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
 
     #endregion
 
+    #region variables
+
+    #region ATSC
+
+    /// <summary>
+    /// The ATSC EPG grabber.
+    /// </summary>
     private IGrabberEpgAtsc _grabberAtsc = null;
+
+    /// <summary>
+    /// Indicator: has the grabber seen ATSC EPG data?
+    /// </summary>
+    private bool _isSeenAtsc = false;
+
+    /// <summary>
+    /// Indicator: has the grabber received all ATSC EPG data?
+    /// </summary>
+    private bool _isCompleteAtsc = false;
+
+    #endregion
+
+    #region SCTE
+
+    /// <summary>
+    /// The SCTE EPG grabber.
+    /// </summary>
     private IGrabberEpgScte _grabberScte = null;
 
     /// <summary>
-    /// The current transmitter tuning detail.
+    /// Indicator: has the grabber seen SCTE EPG data?
     /// </summary>
-    private IChannel _currentTuningDetail = null;
+    private bool _isSeenScte = false;
+
+    /// <summary>
+    /// Indicator: has the grabber received all SCTE EPG data?
+    /// </summary>
+    private bool _isCompleteScte = false;
+
+    #endregion
+
+    #endregion
 
     /// <summary>
     /// Initialise a new instance of the <see cref="EpgGrabberAtsc"/> class.
     /// </summary>
+    /// <param name="controller">The controller for a tuner's EPG grabber.</param>
     /// <param name="grabberAtsc">The ATSC EPG grabber, if available/supported.</param>
     /// <param name="grabberScte">The SCTE EPG grabber, if available/supported.</param>
-    public EpgGrabberAtsc(IGrabberEpgAtsc grabberAtsc, IGrabberEpgScte grabberScte)
+    public EpgGrabberAtsc(IEpgGrabberController controller, IGrabberEpgAtsc grabberAtsc, IGrabberEpgScte grabberScte)
+      : base(controller)
     {
       _grabberAtsc = grabberAtsc;
-      _grabberScte = grabberScte;
-    }
-
-    private static string GetAtscGenreDescription(byte genreId)
-    {
-      string description;
-      if (!MAPPING_ATSC_GENRES.TryGetValue(genreId, out description))
+      if (_grabberAtsc != null)
       {
-        description = string.Format("User Defined {0}", genreId);
+        _grabberAtsc.SetCallBack(this);
       }
-      return description;
+
+      _grabberScte = grabberScte;
+      if (_grabberScte != null)
+      {
+        _grabberScte.SetCallBack(this);
+      }
     }
-
-    #region IEpgGrabberInternal member
-
-    /// <summary>
-    /// Reload the grabber's configuration.
-    /// </summary>
-    /// <param name="configuration">The configuration of the associated tuner.</param>
-    public void ReloadConfiguration(Tuner configuration)
-    {
-      // TODO
-    }
-
-    /// <summary>
-    /// The tuner implementation invokes this method when it tunes to a
-    /// different transmitter.
-    /// </summary>
-    /// <param name="tuningDetail">The transmitter tuning detail.</param>
-    public void OnTune(IChannel tuningDetail)
-    {
-      // TODO problem - shouldn't grab unless the tuning detail grab flag is set
-    }
-
-    #endregion
-
-    #region IEpgGrabber members
-
-    public void ReloadConfiguration()
-    {
-      throw new System.NotImplementedException();
-    }
-
-    public bool IsGrabbing
-    {
-      get { throw new System.NotImplementedException(); }
-    }
-
-    public void GrabEpg(IEpgGrabberCallBack callBack)
-    {
-      throw new System.NotImplementedException();
-    }
-
-    public void AbortGrabbing()
-    {
-      throw new System.NotImplementedException();
-    }
-
-    #endregion
-
-    #region IEpgCallBack member
-
-    public int OnEpgReceived()
-    {
-      throw new System.NotImplementedException();
-    }
-
-    #endregion
 
     private IDictionary<IChannel, IList<EpgProgram>> CollectData(IGrabberEpgAtsc grabber)
     {
-      uint eventCount = _grabberAtsc.GetEventCount();
+      uint eventCount = grabber.GetEventCount();
       this.LogDebug("EPG ATSC: initial event count = {0}", eventCount);
       IDictionary<ushort, List<EpgProgram>> channels = new Dictionary<ushort, List<EpgProgram>>(100);
 
@@ -329,8 +308,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
           }
 
           DateTime programStartTime = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-          programStartTime.AddSeconds(startDateTimeEpoch);
-          programStartTime = programStartTime.ToLocalTime();
+          programStartTime = programStartTime.AddSeconds(startDateTimeEpoch);
           EpgProgram program = new EpgProgram(programStartTime, programStartTime.AddSeconds(duration));
 
           bool isPlaceholderOrDummyEvent = false;
@@ -451,13 +429,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
       }
     }
 
-    private static string TidyString(string s)
+    private static string GetAtscGenreDescription(byte genreId)
     {
-      if (s == null)
+      string description;
+      if (!MAPPING_ATSC_GENRES.TryGetValue(genreId, out description))
       {
-        return string.Empty;
+        description = string.Format("User Defined {0}", genreId);
       }
-      return s.Trim();
+      return description;
     }
 
     private static string GetMpaaClassificationDescription(byte classification)
@@ -476,7 +455,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
         case 5:
           return "NC-17";   // nobody 17 and under
         case 6:
-          return "X";      // not rated
+          return "X";       // explicit
         case 7:
           return "NR";      // not rated
       }
@@ -540,5 +519,267 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
       }
       return null;
     }
+
+    #region EpgGrabberBase overrides
+
+    protected override void OnStart(TunerEpgGrabberProtocol? newProtocols = null)
+    {
+      if (_grabberAtsc != null)
+      {
+        if (!newProtocols.HasValue && _protocols.HasFlag(TunerEpgGrabberProtocol.AtscEit))
+        {
+          this.LogDebug("EPG ATSC: starting ATSC grabber");
+          _grabberAtsc.Start();
+        }
+        else if (newProtocols.HasValue && (newProtocols.Value & TunerEpgGrabberProtocol.AtscEit) != (_protocols & TunerEpgGrabberProtocol.AtscEit))
+        {
+          this.LogDebug("EPG ATSC: ATSC protocol configuration changed");
+          if (newProtocols.Value.HasFlag(TunerEpgGrabberProtocol.AtscEit))
+          {
+            _grabberAtsc.Start();
+          }
+          else
+          {
+            _grabberAtsc.Stop();
+          }
+        }
+      }
+
+      if (_grabberScte != null)
+      {
+        if (!newProtocols.HasValue && _protocols.HasFlag(TunerEpgGrabberProtocol.ScteAeit))
+        {
+          this.LogDebug("EPG ATSC: starting SCTE grabber");
+          _grabberScte.Start();
+        }
+        else if (newProtocols.HasValue && (newProtocols.Value & TunerEpgGrabberProtocol.ScteAeit) != (_protocols & TunerEpgGrabberProtocol.ScteAeit))
+        {
+          this.LogDebug("EPG ATSC: SCTE protocol configuration changed");
+          if (newProtocols.Value.HasFlag(TunerEpgGrabberProtocol.ScteAeit))
+          {
+            _grabberScte.Start();
+          }
+          else
+          {
+            _grabberScte.Stop();
+          }
+        }
+      }
+    }
+
+    protected override void OnStop()
+    {
+      if (_grabberAtsc != null && _protocols.HasFlag(TunerEpgGrabberProtocol.AtscEit))
+      {
+        this.LogDebug("EPG ATSC: stopping ATSC grabber");
+        _grabberAtsc.Stop();
+      }
+      if (_grabberScte != null && _protocols.HasFlag(TunerEpgGrabberProtocol.ScteAeit))
+      {
+        this.LogDebug("EPG ATSC: stopping SCTE grabber");
+        _grabberScte.Stop();
+      }
+    }
+
+    #endregion
+
+    #region ICallBackGrabber members
+
+    /// <summary>
+    /// This function is invoked when the first section from a table is received.
+    /// </summary>
+    /// <param name="pid">The PID that the table section was recevied from.</param>
+    /// <param name="tableId">The identifier of the table that was received.</param>
+    public void OnTableSeen(ushort pid, byte tableId)
+    {
+      this.LogDebug("EPG ATSC: on table seen, PID = {0}, table ID = 0x{1:x}", pid, tableId);
+      if (pid == 0xcb)
+      {
+        _isSeenAtsc = true;
+        _isCompleteAtsc = false;
+      }
+      else if (pid == 0xd6)
+      {
+        _isSeenScte = true;
+        _isCompleteScte = false;
+      }
+    }
+
+    /// <summary>
+    /// This function is invoked after the last section from a table is received.
+    /// </summary>
+    /// <param name="pid">The PID that the table section was recevied from.</param>
+    /// <param name="tableId">The identifier of the table that was completed.</param>
+    public void OnTableComplete(ushort pid, byte tableId)
+    {
+      this.LogDebug("EPG ATSC: on table complete, PID = {0}, table ID = 0x{1:x}", pid, tableId);
+      if (pid == 0xcb)
+      {
+        _isCompleteAtsc = true;
+      }
+      else if (pid == 0xd6)
+      {
+        _isCompleteScte = true;
+      }
+
+      if (
+        (_isCompleteAtsc || _isCompleteScte) &&
+        (!_isSeenAtsc || _isCompleteAtsc) &&
+        (!_isSeenScte || _isCompleteScte)
+      )
+      {
+        this.LogDebug("EPG ATSC: EPG complete");
+
+        // Use a thread to notify about data readiness. Expect that data may be
+        // collected in the call-back thread. If we collect from this thread it
+        // can cause stuttering and deadlocks.
+        Thread collector = new Thread(_callBack.OnEpgDataReady);
+        collector.IsBackground = true;
+        collector.Priority = ThreadPriority.Lowest;
+        collector.Name = "EPG collector";
+        collector.Start();
+      }
+    }
+
+    /// <summary>
+    /// This function is invoked after any section from a table changes.
+    /// </summary>
+    /// <param name="pid">The PID that the table section was recevied from.</param>
+    /// <param name="tableId">The identifier of the table that changed.</param>
+    public void OnTableChange(ushort pid, byte tableId)
+    {
+      OnTableSeen(pid, tableId);
+    }
+
+    /// <summary>
+    /// This function is invoked after the grabber is reset.
+    /// </summary>
+    /// <param name="pid">The PID that is associated with the grabber.</param>
+    public void OnReset(ushort pid)
+    {
+      this.LogDebug("EPG ATSC: on reset, PID = {0}", pid);
+      if (pid == 0xcb)
+      {
+        _isSeenAtsc = false;
+        _isCompleteAtsc = false;
+      }
+      else if (pid == 0xd6)
+      {
+        _isSeenScte = false;
+        _isCompleteScte = false;
+      }
+    }
+
+    #endregion
+
+    #region IEpgGrabber members
+
+    /// <summary>
+    /// Get the EPG data protocols supported by the grabber code/class/type implementation.
+    /// </summary>
+    public override TunerEpgGrabberProtocol PossibleProtocols
+    {
+      get
+      {
+        TunerEpgGrabberProtocol protocols = TunerEpgGrabberProtocol.None;
+        if (_grabberAtsc != null)
+        {
+          protocols |= TunerEpgGrabberProtocol.AtscEit;
+        }
+        if (_grabberScte != null)
+        {
+          protocols |= TunerEpgGrabberProtocol.ScteAeit;
+        }
+        return protocols;
+      }
+    }
+
+    /// <summary>
+    /// Get all available EPG data.
+    /// </summary>
+    /// <returns>the data, grouped by channel</returns>
+    public override IDictionary<IChannel, IList<EpgProgram>> GetData()
+    {
+      this.LogInfo("EPG ATSC: get data, ATSC = {0} / {1}, SCTE = {2} / {3}",
+                    _isSeenAtsc, _isCompleteAtsc, _isSeenScte, _isCompleteScte);
+      IDictionary<IChannel, IList<EpgProgram>> data = new Dictionary<IChannel, IList<EpgProgram>>();
+      try
+      {
+        if (_isSeenOpenTv && _grabberOpenTv != null)
+        {
+          IChannelOpenTv tuningDetailOpenTv = _tuningDetail as IChannelOpenTv;
+          if (tuningDetailOpenTv != null)
+          {
+            var openTvData = CollectOpenTvData(tuningDetailOpenTv);
+            foreach (var channel in openTvData)
+            {
+              data.Add(channel.Key, channel.Value);
+            }
+          }
+          else
+          {
+            this.LogWarn("EPG DVB: received OpenTV EPG data from a non-OpenTV source");
+          }
+        }
+
+        if (_isSeenDvb && _grabberDvb != null)
+        {
+          IChannelDvbCompatible tuningDetailDvbCompatible = _tuningDetail as IChannelDvbCompatible;
+          if (tuningDetailDvbCompatible != null)
+          {
+            var eitData = CollectEitData(tuningDetailDvbCompatible);
+            foreach (var channel in eitData)
+            {
+              data.Add(channel.Key, channel.Value);
+            }
+          }
+          else
+          {
+            this.LogWarn("EPG DVB: received DVB EIT EPG data from a non-DVB-compatible source");
+          }
+        }
+
+        if (_isSeenMhw && _grabberMhw != null)
+        {
+          IChannelDvb tuningDetailDvb = _tuningDetail as IChannelDvb;
+          if (tuningDetailDvb != null)
+          {
+            bool warned = false;
+            var mediaHighwayData = CollectMediaHighwayData(tuningDetailDvb);
+            foreach (var channel in mediaHighwayData)
+            {
+              IList<EpgProgram> programs;
+              if (!data.TryGetValue(channel.Key, out programs))
+              {
+                data.Add(channel.Key, channel.Value);
+              }
+              else
+              {
+                if (!warned)
+                {
+                  this.LogWarn("EPG DVB: DVB EIT and MediaHighway data overlaps");
+                  warned = true;
+                }
+                if (programs.Count < channel.Value.Count)
+                {
+                  data[channel.Key] = channel.Value;
+                }
+              }
+            }
+          }
+          else
+          {
+            this.LogWarn("EPG DVB: received MediaHighway EPG data from a non-DVB source");
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        this.LogError(ex, "EPG DVB: failed to collect data");
+      }
+      return data;
+    }
+
+    #endregion
   }
 }

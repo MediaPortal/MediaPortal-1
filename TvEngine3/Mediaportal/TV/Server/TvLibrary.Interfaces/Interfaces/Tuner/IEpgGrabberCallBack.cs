@@ -18,27 +18,28 @@
 
 #endregion
 
-using System.Collections.Generic;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations;
-
 namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner
 {
   /// <summary>
-  /// Call back interface for EPG grabbing progress notification.
+  /// Call-back interface for EPG grabbing events.
   /// </summary>
   public interface IEpgGrabberCallBack
   {
     /// <summary>
-    /// Called when electronic programme guide data grabbing is cancelled.
+    /// Called when grabbing is started because the tuner (re)tunes or
+    /// configuration changes.
     /// </summary>
-    void OnEpgCancelled();
+    void OnGrabbingStarted();
 
     /// <summary>
-    /// Called when electronic programme guide data grabbing is complete.
+    /// Called when grabbing is complete and data is ready for processing.
     /// </summary>
-    /// <param name="tuningDetail">The tuning details of the transmitter from which the EPG was grabbed.</param>
-    /// <param name="epg">The grabbed data.</param>
-    void OnEpgReceived(IChannel tuningDetail, IDictionary<IChannel, IList<EpgProgram>> epg);
+    void OnEpgDataReady();
+
+    /// <summary>
+    /// Called when grabbing is stopped because the tuner is no longer tuned or
+    /// configuration changes.
+    /// </summary>
+    void OnGrabbingStopped();
   }
 }

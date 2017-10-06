@@ -126,7 +126,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
             BroadcastStandard = d.BroadcastStandard,
             FecCodeRate = d.FecCodeRate,
             Frequency = d.Frequency,
-            GrabEpg = !d.GrabEpgFlags.Contains(false),
+            GrabEpg = !d.GrabEpgFlags.Contains(false),  // TODO consider reversing this condition
             IdSatellite = d.IdSatellite,
             LastEpgGrabTime = d.LastEpgGrabTimes.Min(),
             Modulation = d.Modulation,
@@ -320,6 +320,14 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
           return;
         }
 
+        HashSet<int> channelIds = new HashSet<int>();
+        foreach (TuningDetail tuningDetail in tuningDetails)
+        {
+          tuningDetail.GrabEpg = transmitterTuningDetail.GrabEpg;
+          tuningDetail.LastEpgGrabTime = transmitterTuningDetail.LastEpgGrabTime;
+          channelIds.Add(tuningDetail.IdChannel);
+        }
+
         tuningDetailRepository.AttachEntityIfChangeTrackingDisabled(tuningDetailRepository.ObjectContext.TuningDetails, tuningDetails);
         tuningDetailRepository.ApplyChanges(tuningDetailRepository.ObjectContext.TuningDetails, tuningDetails);
         tuningDetailRepository.UnitOfWork.SaveChanges();
@@ -330,8 +338,13 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
           tuningDetail.AcceptChanges();
         }
 
-        // There's no need to trigger events because neither the tuning
-        // parameters nor mappings have changed.
+        if (OnTuningDetailTuningParametersChanged != null)
+        {
+          foreach (int channelId in channelIds)
+          {
+            OnTuningDetailTuningParametersChanged(channelId);
+          }
+        }
       }
     }
 
@@ -580,6 +593,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       channel.Provider = detail.Provider;
       channel.LogicalChannelNumber = detail.LogicalChannelNumber;
       channel.MediaType = (MediaType)detail.MediaType;
+      channel.GrabEpg = detail.GrabEpg;
       channel.IsEncrypted = detail.IsEncrypted;
       channel.IsHighDefinition = detail.IsHighDefinition;
       channel.IsThreeDimensional = detail.IsThreeDimensional;
@@ -606,6 +620,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
 
     public static TunerTuningDetailMapping SaveTunerMapping(TunerTuningDetailMapping mapping)
     {
+      // We assume tuner mappings are added or deleted; never updated.
       if (OnTuningDetailMappingsChanged != null)
       {
         OnTuningDetailMappingsChanged(mapping.IdTuningDetail, mapping.IdTuner, mapping.ChangeTracker.State);
@@ -623,6 +638,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
 
     public static IList<TunerTuningDetailMapping> SaveTunerMappings(IEnumerable<TunerTuningDetailMapping> mappings)
     {
+      // We assume tuner mappings are added or deleted; never updated.
       if (OnTuningDetailMappingsChanged != null)
       {
         foreach (TunerTuningDetailMapping mapping in mappings)

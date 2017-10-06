@@ -25,8 +25,6 @@ using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading;
 using Mediaportal.TV.Server.Common.Types.Enum;
-using Mediaportal.TV.Server.TVDatabase.Entities;
-using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Dvb.Enum;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer;
@@ -42,11 +40,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
   /// An implementation of <see cref="IEpgGrabber"/> for electronic programme
   /// guide data formats used by DVB broadcasters.
   /// </summary>
-  internal class EpgGrabberDvb : IEpgGrabberInternal, ICallBackGrabber
+  internal class EpgGrabberDvb : EpgGrabberBase, ICallBackGrabber
   {
     #region constants
 
-    private const TunerEpgGrabberProtocol PROTOCOLS_SUPPORTED = TunerEpgGrabberProtocol.BellTv | TunerEpgGrabberProtocol.DishNetwork | TunerEpgGrabberProtocol.DvbEit | TunerEpgGrabberProtocol.Freesat | TunerEpgGrabberProtocol.MediaHighway1 | TunerEpgGrabberProtocol.MediaHighway2 | TunerEpgGrabberProtocol.MultiChoice | TunerEpgGrabberProtocol.OpenTv | TunerEpgGrabberProtocol.Premiere | TunerEpgGrabberProtocol.ViasatSweden;
+    private const TunerEpgGrabberProtocol PROTOCOLS_SUPPORTED = TunerEpgGrabberProtocol.BellTv | TunerEpgGrabberProtocol.DishNetwork | TunerEpgGrabberProtocol.DvbEit | TunerEpgGrabberProtocol.Freesat | TunerEpgGrabberProtocol.MediaHighway1 | TunerEpgGrabberProtocol.MediaHighway2 | TunerEpgGrabberProtocol.MultiChoice | TunerEpgGrabberProtocol.OpenTv | TunerEpgGrabberProtocol.OrbitShowtimeNetwork | TunerEpgGrabberProtocol.Premiere | TunerEpgGrabberProtocol.ViasatSweden;
     private const TunerEpgGrabberProtocol PROTOCOLS_DVB = PROTOCOLS_SUPPORTED & ~PROTOCOLS_MEDIA_HIGHWAY & ~TunerEpgGrabberProtocol.OpenTv;
     private const TunerEpgGrabberProtocol PROTOCOLS_MEDIA_HIGHWAY = TunerEpgGrabberProtocol.MediaHighway1 | TunerEpgGrabberProtocol.MediaHighway2;
 
@@ -870,30 +868,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
 
     #region variables
 
-    /// <summary>
-    /// Indicator: is the grabber grabbing electronic programme guide data?
-    /// </summary>
-    private bool _isGrabbing = false;
-
-    /// <summary>
-    /// The set of protocols that the grabber is configured to grab.
-    /// </summary>
-    private TunerEpgGrabberProtocol _grabProtocols = TunerEpgGrabberProtocol.None;
-
-    /// <summary>
-    /// A delegate to notify about grab progress.
-    /// </summary>
-    private IEpgGrabberCallBack _callBack = null;
-
     #region DVB
 
     /// <summary>
-    /// Indicator: should the grabber grab DVB EPG data?
-    /// </summary>
-    private bool _grabDvb = false;
-
-    /// <summary>
-    /// The DVB EPG grabber.
+    /// The tuner's DVB EPG grabber.
     /// </summary>
     private IGrabberEpgDvb _grabberDvb = null;
 
@@ -912,12 +890,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
     #region MediaHighway
 
     /// <summary>
-    /// Indicator: should the grabber grab MediaHighway EPG data?
-    /// </summary>
-    private bool _grabMhw = false;
-
-    /// <summary>
-    /// The MediaHighway EPG grabber.
+    /// The tuner's MediaHighway EPG grabber.
     /// </summary>
     private IGrabberEpgMhw _grabberMhw = null;
 
@@ -936,12 +909,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
     #region OpenTV
 
     /// <summary>
-    /// Indicator: should the grabber grab OpenTV EPG data?
-    /// </summary>
-    private bool _grabOpenTv = false;
-
-    /// <summary>
-    /// The OpenTV EPG grabber.
+    /// The tuner's OpenTV EPG grabber.
     /// </summary>
     private IGrabberEpgOpenTv _grabberOpenTv = null;
 
@@ -962,94 +930,33 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
     /// <summary>
     /// Initialise a new instance of the <see cref="EpgGrabberDvb"/> class.
     /// </summary>
-    /// <param name="grabberDvb">The DVB EPG grabber, if available/supported.</param>
-    /// <param name="grabberMhw">The MediaHighway EPG grabber, if available/supported.</param>
-    /// <param name="grabberOpenTv">The OpenTV EPG grabber, if available/supported.</param>
-    public EpgGrabberDvb(IGrabberEpgDvb grabberDvb, IGrabberEpgMhw grabberMhw, IGrabberEpgOpenTv grabberOpenTv)
+    /// <param name="controller">The controller for a tuner's EPG grabber.</param>
+    /// <param name="grabberDvb">The tuner's DVB EPG grabber, if available/supported.</param>
+    /// <param name="grabberMhw">The tuner's MediaHighway EPG grabber, if available/supported.</param>
+    /// <param name="grabberOpenTv">The tuner's OpenTV EPG grabber, if available/supported.</param>
+    public EpgGrabberDvb(IEpgGrabberController controller, IGrabberEpgDvb grabberDvb, IGrabberEpgMhw grabberMhw, IGrabberEpgOpenTv grabberOpenTv)
+      : base(controller)
     {
       _grabberDvb = grabberDvb;
+      if (_grabberDvb != null)
+      {
+        _grabberDvb.SetCallBack(this);
+      }
+
       _grabberMhw = grabberMhw;
+      if (_grabberMhw != null)
+      {
+        _grabberMhw.SetCallBack(this);
+      }
+
       _grabberOpenTv = grabberOpenTv;
-      ReloadConfiguration();
-    }
-
-    /// <summary>
-    /// Retrieve, translate and collate the raw EPG data into a standard format.
-    /// </summary>
-    private void CollectEpgData()
-    {
-      IDictionary<IChannel, IList<EpgProgram>> epgChannels = null;
-      try
+      if (_grabberOpenTv != null)
       {
-        IChannel currentTuningDetail = null;//TODO fix _tuner.CurrentTuningDetail as ChannelDvbBase;
-        IChannelDvb tuningDetailDvb = currentTuningDetail as IChannelDvb;
-        IChannelDvbCompatible tuningDetailDvbCompatible = currentTuningDetail as IChannelDvbCompatible;
-        IChannelOpenTv tuningDetailOpenTv = currentTuningDetail as IChannelOpenTv;
-        try
-        {
-          this.LogInfo("EPG DVB: collect data, DVB = {0} / {1}, MediaHighway = {2} / {3}, OpenTV = {4} / {5}",
-                        _isSeenDvb, _isCompleteDvb, _isSeenMhw, _isCompleteMhw, _isSeenOpenTv, _isCompleteOpenTv);
-
-          if (currentTuningDetail == null)
-          {
-            this.LogError("EPG DVB: tuner's current tuning detail is not a DVB channel");
-          }
-          else
-          {
-            if (_isSeenMhw && _grabberMhw != null)
-            {
-              if (tuningDetailDvb != null)
-              {
-                epgChannels = CollectMediaHighwayData(tuningDetailDvb);
-              }
-              else
-              {
-                this.LogWarn("EPG DVB: received MediaHighway EPG data from a non-DVB source");
-              }
-            }
-            if (epgChannels == null && _isSeenOpenTv && _grabberOpenTv != null)
-            {
-              if (tuningDetailOpenTv != null)
-              {
-                epgChannels = CollectOpenTvData(tuningDetailOpenTv);
-              }
-              else
-              {
-                this.LogWarn("EPG DVB: received OpenTV EPG data from a non-OpenTV source");
-              }
-            }
-            else if (_isSeenDvb && _grabberDvb != null)
-            {
-              if (tuningDetailDvbCompatible != null)
-              {
-                epgChannels = CollectEitData(tuningDetailDvbCompatible);
-              }
-              else
-              {
-                this.LogWarn("EPG DVB: received DVB EIT EPG data from a non-DVB-compatible source");
-              }
-            }
-          }
-        }
-        catch (Exception ex)
-        {
-          this.LogError(ex, "EPG DVB: failed to collect data");
-        }
-
-        if (_callBack != null)
-        {
-          _callBack.OnEpgReceived(currentTuningDetail, epgChannels);
-        }
-      }
-      catch (Exception ex)
-      {
-        this.LogError(ex, "EPG DVB: failed to handle data");
-      }
-      finally
-      {
-        _isGrabbing = false;
+        _grabberOpenTv.SetCallBack(this);
       }
     }
+
+    #region data collection
 
     private IDictionary<IChannel, IList<EpgProgram>> CollectMediaHighwayData(IChannelDvb currentTuningDetail)
     {
@@ -1057,7 +964,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
       Iso639Code language;
       _grabberMhw.GetEventCount(out eventCount, out language);
       this.LogDebug("EPG DVB: MediaHighway, event count = {0}, text language = {1}", eventCount, language.Code);
-      IDictionary<ulong, List<EpgProgram>> channels = new Dictionary<ulong, List<EpgProgram>>(100);
+      IDictionary<ulong, List<EpgProgram>> tempData = new Dictionary<ulong, List<EpgProgram>>(100);
 
       const ushort BUFFER_SIZE_SERVICE_NAME = 300;
       IntPtr bufferServiceName = Marshal.AllocCoTaskMem(BUFFER_SIZE_SERVICE_NAME);
@@ -1134,8 +1041,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
           }
 
           DateTime programStartTime = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-          programStartTime.AddSeconds(startDateTimeEpoch);
-          programStartTime = programStartTime.ToLocalTime();
+          programStartTime = programStartTime.AddSeconds(startDateTimeEpoch);
           EpgProgram program = new EpgProgram(programStartTime, programStartTime.AddMinutes(duration));
           program.Titles.Add(language.Code, title);
 
@@ -1196,34 +1102,37 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
 
           ulong channelKey = ((ulong)originalNetworkId << 32) | ((ulong)transportStreamId << 16) | serviceId;
           List<EpgProgram> programs;
-          if (!channels.TryGetValue(channelKey, out programs))
+          if (!tempData.TryGetValue(channelKey, out programs))
           {
             programs = new List<EpgProgram>(100);
-            channels.Add(channelKey, programs);
+            tempData.Add(channelKey, programs);
           }
           programs.Add(program);
         }
 
-        IDictionary<IChannel, IList<EpgProgram>> epgChannels = new Dictionary<IChannel, IList<EpgProgram>>(channels.Count);
+        IDictionary<IChannel, IList<EpgProgram>> data = new Dictionary<IChannel, IList<EpgProgram>>(tempData.Count);
         int validEventCount = 0;
-        foreach (var channel in channels)
+        foreach (var channel in tempData)
         {
           IChannelDvbCompatible dvbCompatibleChannel = currentTuningDetail.Clone() as IChannelDvbCompatible;
           dvbCompatibleChannel.OriginalNetworkId = (int)(channel.Key >> 32);
           dvbCompatibleChannel.TransportStreamId = (int)((channel.Key >> 16) & 0xffff);
           dvbCompatibleChannel.ServiceId = (int)channel.Key & 0xffff;
+
+          // Ensure storage by DVB ID rather than OpenTV channel ID.
           IChannelOpenTv openTvChannel = dvbCompatibleChannel as IChannelOpenTv;
           if (openTvChannel != null)
           {
             openTvChannel.OpenTvChannelId = 0;
           }
+
           channel.Value.Sort();
-          epgChannels.Add(dvbCompatibleChannel, channel.Value);
+          data.Add(dvbCompatibleChannel, channel.Value);
           validEventCount += channel.Value.Count;
         }
 
-        this.LogDebug("EPG DVB: MediaHighway, channel count = {0}, event count = {1}", channels.Count, validEventCount);
-        return epgChannels;
+        this.LogDebug("EPG DVB: MediaHighway, channel count = {0}, event count = {1}", data.Count, validEventCount);
+        return data;
       }
       finally
       {
@@ -1260,7 +1169,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
       Iso639Code language;
       _grabberOpenTv.GetEventCount(out eventCount, out language);
       this.LogDebug("EPG DVB: OpenTV, initial event count = {0}, text language = {1}", eventCount, language.Code);
-      IDictionary<ushort, List<EpgProgram>> channels = new Dictionary<ushort, List<EpgProgram>>(100);
+      IDictionary<ushort, List<EpgProgram>> tempData = new Dictionary<ushort, List<EpgProgram>>(100);
 
       const ushort BUFFER_SIZE_TITLE = 300;
       IntPtr bufferTitle = Marshal.AllocCoTaskMem(BUFFER_SIZE_TITLE);
@@ -1316,8 +1225,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
           }
 
           DateTime programStartTime = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-          programStartTime.AddSeconds(startDateTimeEpoch);
-          programStartTime = programStartTime.ToLocalTime();
+          programStartTime = programStartTime.AddSeconds(startDateTimeEpoch);
           EpgProgram program = new EpgProgram(programStartTime, programStartTime.AddMinutes(duration));
           program.Titles.Add(language.Code, title);
           program.Categories.Add(GetOpenTvProgramCategoryDescription(categoryId, subCategoryId));
@@ -1358,27 +1266,27 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
           program.Descriptions.Add(language.Code, description);
 
           List<EpgProgram> programs;
-          if (!channels.TryGetValue(channelId, out programs))
+          if (!tempData.TryGetValue(channelId, out programs))
           {
             programs = new List<EpgProgram>(100);
-            channels.Add(channelId, programs);
+            tempData.Add(channelId, programs);
           }
           programs.Add(program);
         }
 
-        IDictionary<IChannel, IList<EpgProgram>> epgChannels = new Dictionary<IChannel, IList<EpgProgram>>(channels.Count);
+        IDictionary<IChannel, IList<EpgProgram>> data = new Dictionary<IChannel, IList<EpgProgram>>(tempData.Count);
         int validEventCount = 0;
-        foreach (var channel in channels)
+        foreach (var channel in tempData)
         {
           IChannelOpenTv openTvChannel = currentTuningDetail.Clone() as IChannelOpenTv;
           openTvChannel.OpenTvChannelId = channel.Key;
           channel.Value.Sort();
-          epgChannels.Add(openTvChannel, channel.Value);
+          data.Add(openTvChannel, channel.Value);
           validEventCount += channel.Value.Count;
         }
 
-        this.LogDebug("EPG DVB: OpenTV, channel count = {0}, event count = {1}", channels.Count, validEventCount);
-        return epgChannels;
+        this.LogDebug("EPG DVB: OpenTV, channel count = {0}, event count = {1}", tempData.Count, validEventCount);
+        return data;
       }
       finally
       {
@@ -1401,10 +1309,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
     {
       ushort serviceCount = _grabberDvb.GetServiceCount();
       this.LogDebug("EPG DVB: EIT, initial service count = {0}", serviceCount);
-      IDictionary<IChannel, IList<EpgProgram>> channels = new Dictionary<IChannel, IList<EpgProgram>>(serviceCount);
+      IDictionary<IChannel, IList<EpgProgram>> data = new Dictionary<IChannel, IList<EpgProgram>>(serviceCount);
       if (serviceCount == 0)
       {
-        return channels;
+        return data;
       }
 
       const ushort BUFFER_SIZE_SERIES_ID = 300;
@@ -1505,8 +1413,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
             }
 
             DateTime programStartTime = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-            programStartTime.AddSeconds(startDateTimeEpoch);
-            programStartTime = programStartTime.ToLocalTime();
+            programStartTime = programStartTime.AddSeconds(startDateTimeEpoch);
             EpgProgram program = new EpgProgram(programStartTime, programStartTime.AddSeconds(duration));
 
             bool isPlaceholderOrDummyEvent = false;
@@ -1648,7 +1555,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
             {
               bool? tempIsLive;
               bool? tempIsThreeDimensional;
-              program.Categories.Add(GetContentTypeDescription(dvbContentTypeIds[x], originalNetworkId, out tempIsLive, out tempIsThreeDimensional));
+              string contentTypeDescription = GetContentTypeDescription(dvbContentTypeIds[x], originalNetworkId, out tempIsLive, out tempIsThreeDimensional);
+              if (contentTypeDescription != null)
+              {
+                program.Categories.Add(contentTypeDescription);
+              }
               if (tempIsLive.HasValue)
               {
                 program.IsLive = tempIsLive;
@@ -1690,18 +1601,21 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
           dvbCompatibleChannel.OriginalNetworkId = originalNetworkId;
           dvbCompatibleChannel.TransportStreamId = transportStreamId;
           dvbCompatibleChannel.ServiceId = serviceId;
+
+          // Ensure storage by DVB ID rather than OpenTV channel ID.
           IChannelOpenTv openTvChannel = dvbCompatibleChannel as IChannelOpenTv;
           if (openTvChannel != null)
           {
             openTvChannel.OpenTvChannelId = 0;
           }
+
           programs.Sort();
-          channels.Add(dvbCompatibleChannel, programs);
+          data.Add(dvbCompatibleChannel, programs);
           validEventCount += programs.Count;
         }
 
-        this.LogDebug("EPG DVB: EIT, channel count = {0}, event count = {1}", channels.Count, validEventCount);
-        return channels;
+        this.LogDebug("EPG DVB: EIT, channel count = {0}, event count = {1}", data.Count, validEventCount);
+        return data;
       }
       finally
       {
@@ -1726,15 +1640,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
           Marshal.FreeCoTaskMem(bufferExtendedDescription);
         }
       }
-    }
-
-    private static string TidyString(string s)
-    {
-      if (s == null)
-      {
-        return string.Empty;
-      }
-      return s.Trim();
     }
 
     private static void HandleDescriptionItem(string itemName, string itemText, EpgProgram program, ref string description)
@@ -2551,6 +2456,101 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
       return description;
     }
 
+    #endregion
+
+    #region EpgGrabberBase overrides
+
+    protected override void OnStart(TunerEpgGrabberProtocol? newProtocols = null)
+    {
+      if (_grabberDvb != null)
+      {
+        if (!newProtocols.HasValue && (_protocols & PROTOCOLS_DVB) != TunerEpgGrabberProtocol.None)
+        {
+          this.LogDebug("EPG DVB: starting DVB grabber");
+          _grabberDvb.SetProtocols(
+            _protocols.HasFlag(TunerEpgGrabberProtocol.DvbEit),
+            _protocols.HasFlag(TunerEpgGrabberProtocol.BellTv),
+            _protocols.HasFlag(TunerEpgGrabberProtocol.DishNetwork),
+            _protocols.HasFlag(TunerEpgGrabberProtocol.Freesat),
+            _protocols.HasFlag(TunerEpgGrabberProtocol.MultiChoice),
+            _protocols.HasFlag(TunerEpgGrabberProtocol.OrbitShowtimeNetwork),
+            _protocols.HasFlag(TunerEpgGrabberProtocol.Premiere),
+            _protocols.HasFlag(TunerEpgGrabberProtocol.ViasatSweden)
+          );
+        }
+        else if (newProtocols.HasValue && (newProtocols.Value & PROTOCOLS_DVB) != (_protocols & PROTOCOLS_DVB))
+        {
+          this.LogDebug("EPG DVB: DVB protocol configuration changed");
+          _grabberDvb.SetProtocols(
+            newProtocols.Value.HasFlag(TunerEpgGrabberProtocol.DvbEit),
+            newProtocols.Value.HasFlag(TunerEpgGrabberProtocol.BellTv),
+            newProtocols.Value.HasFlag(TunerEpgGrabberProtocol.DishNetwork),
+            newProtocols.Value.HasFlag(TunerEpgGrabberProtocol.Freesat),
+            newProtocols.Value.HasFlag(TunerEpgGrabberProtocol.MultiChoice),
+            newProtocols.Value.HasFlag(TunerEpgGrabberProtocol.OrbitShowtimeNetwork),
+            newProtocols.Value.HasFlag(TunerEpgGrabberProtocol.Premiere),
+            newProtocols.Value.HasFlag(TunerEpgGrabberProtocol.ViasatSweden)
+          );
+        }
+      }
+
+      if (_grabberMhw != null)
+      {
+        if (!newProtocols.HasValue && (_protocols & PROTOCOLS_MEDIA_HIGHWAY) != TunerEpgGrabberProtocol.None)
+        {
+          this.LogDebug("EPG DVB: starting MediaHighway grabber");
+          _grabberMhw.SetProtocols(_protocols.HasFlag(TunerEpgGrabberProtocol.MediaHighway1), _protocols.HasFlag(TunerEpgGrabberProtocol.MediaHighway2));
+        }
+        else if (newProtocols.HasValue && (newProtocols.Value & PROTOCOLS_MEDIA_HIGHWAY) != (_protocols & PROTOCOLS_MEDIA_HIGHWAY))
+        {
+          this.LogDebug("EPG DVB: MediaHighway protocol configuration changed");
+          _grabberMhw.SetProtocols(newProtocols.Value.HasFlag(TunerEpgGrabberProtocol.MediaHighway1), newProtocols.Value.HasFlag(TunerEpgGrabberProtocol.MediaHighway2));
+        }
+      }
+
+      if (_grabberOpenTv != null)
+      {
+        if (!newProtocols.HasValue && _protocols.HasFlag(TunerEpgGrabberProtocol.OpenTv))
+        {
+          this.LogDebug("EPG DVB: starting OpenTV grabber");
+          _grabberOpenTv.Start();
+        }
+        else if (newProtocols.HasValue && (newProtocols.Value & TunerEpgGrabberProtocol.OpenTv) != (_protocols & TunerEpgGrabberProtocol.OpenTv))
+        {
+          this.LogDebug("EPG DVB: OpenTV protocol configuration changed");
+          if (newProtocols.Value.HasFlag(TunerEpgGrabberProtocol.OpenTv))
+          {
+            _grabberOpenTv.Start();
+          }
+          else
+          {
+            _grabberOpenTv.Stop();
+          }
+        }
+      }
+    }
+
+    protected override void OnStop()
+    {
+      if (_grabberDvb != null && (_protocols & PROTOCOLS_DVB) != TunerEpgGrabberProtocol.None)
+      {
+        this.LogDebug("EPG DVB: stopping DVB grabber");
+        _grabberDvb.SetProtocols(false, false, false, false, false, false, false, false);
+      }
+      if (_grabberMhw != null && (_protocols & PROTOCOLS_MEDIA_HIGHWAY) != TunerEpgGrabberProtocol.None)
+      {
+        this.LogDebug("EPG DVB: stopping MediaHighway grabber");
+        _grabberMhw.SetProtocols(false, false);
+      }
+      if (_grabberOpenTv != null && _protocols.HasFlag(TunerEpgGrabberProtocol.OpenTv))
+      {
+        this.LogDebug("EPG DVB: stopping OpenTV grabber");
+        _grabberOpenTv.Stop();
+      }
+    }
+
+    #endregion
+
     #region ICallBackGrabber members
 
     /// <summary>
@@ -2560,6 +2560,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
     /// <param name="tableId">The identifier of the table that was received.</param>
     public void OnTableSeen(ushort pid, byte tableId)
     {
+      this.LogDebug("EPG DVB: on table seen, PID = {0}, table ID = 0x{1:x}", pid, tableId);
       if (pid == 0x12)
       {
         _isSeenDvb = true;
@@ -2584,6 +2585,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
     /// <param name="tableId">The identifier of the table that was completed.</param>
     public void OnTableComplete(ushort pid, byte tableId)
     {
+      this.LogDebug("EPG DVB: on table complete, PID = {0}, table ID = 0x{1:x}", pid, tableId);
       if (pid == 0x12)
       {
         _isCompleteDvb = true;
@@ -2598,15 +2600,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
       }
 
       if (
+        (_isCompleteDvb || _isCompleteMhw || _isCompleteOpenTv) &&
         (!_isSeenDvb || _isCompleteDvb) &&
         (!_isSeenMhw || _isCompleteMhw) &&
         (!_isSeenOpenTv || _isCompleteOpenTv)
       )
       {
         this.LogDebug("EPG DVB: EPG complete");
-        // Use a thread to collect the data. If we collect from this thread it
+
+        // Use a thread to notify about data readiness. Expect that data may be
+        // collected in the call-back thread. If we collect from this thread it
         // can cause stuttering and deadlocks.
-        Thread collector = new Thread(CollectEpgData);
+        Thread collector = new Thread(_callBack.OnEpgDataReady);
         collector.IsBackground = true;
         collector.Priority = ThreadPriority.Lowest;
         collector.Name = "EPG collector";
@@ -2624,27 +2629,28 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
       OnTableSeen(pid, tableId);
     }
 
-    #endregion
-
-    #region IEpgGrabberInternal member
-
     /// <summary>
-    /// Reload the grabber's configuration.
+    /// This function is invoked after the grabber is reset.
     /// </summary>
-    /// <param name="configuration">The configuration of the associated tuner.</param>
-    public void ReloadConfiguration(Tuner configuration)
+    /// <param name="pid">The PID that is associated with the grabber.</param>
+    public void OnReset(ushort pid)
     {
-      // TODO
-    }
-
-    /// <summary>
-    /// The tuner implementation invokes this method when it tunes to a
-    /// different transmitter.
-    /// </summary>
-    /// <param name="tuningDetail">The transmitter tuning detail.</param>
-    public void OnTune(IChannel tuningDetail)
-    {
-      // TODO
+      this.LogDebug("EPG DVB: on reset, PID = {0}", pid);
+      if (pid == 0x12)
+      {
+        _isSeenDvb = false;
+        _isCompleteDvb = false;
+      }
+      else if (pid == 0xd2)
+      {
+        _isSeenMhw = false;
+        _isCompleteMhw = false;
+      }
+      else if (pid == 0x30)
+      {
+        _isSeenOpenTv = false;
+        _isCompleteOpenTv = false;
+      }
     }
 
     #endregion
@@ -2652,221 +2658,113 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
     #region IEpgGrabber members
 
     /// <summary>
-    /// Reload the controller's configuration.
+    /// Get the EPG data protocols supported by the grabber code/class/type implementation.
     /// </summary>
-    public void ReloadConfiguration()
-    {
-      this.LogDebug("EPG DVB: reload configuration");
-
-      TunerEpgGrabberProtocol protocols = TunerEpgGrabberProtocol.None;
-      string countryName = RegionInfo.CurrentRegion.EnglishName;
-      if (countryName != null)
-      {
-        if (countryName.Equals("Algeria"))
-        {
-          protocols = TunerEpgGrabberProtocol.OrbitShowtimeNetwork;
-        }
-        else if (countryName.Equals("Australia"))
-        {
-          protocols = TunerEpgGrabberProtocol.OpenTv;           // Foxtel
-        }
-        else if (countryName.Equals("Bahrain"))
-        {
-          protocols = TunerEpgGrabberProtocol.OrbitShowtimeNetwork;
-        }
-        else if (countryName.Equals("Canada"))
-        {
-          protocols = TunerEpgGrabberProtocol.AtscEit | TunerEpgGrabberProtocol.BellTv | TunerEpgGrabberProtocol.ScteAeit;
-        }
-        else if (countryName.Equals("Egypt"))
-        {
-          protocols = TunerEpgGrabberProtocol.OrbitShowtimeNetwork;
-        }
-        else if (countryName.Equals("France"))
-        {
-          protocols = TunerEpgGrabberProtocol.MediaHighway1;    // Canalsat
-        }
-        else if (countryName.Equals("Germany"))
-        {
-          protocols = TunerEpgGrabberProtocol.Premiere;
-        }
-        else if (countryName.Equals("Iraq"))
-        {
-          protocols = TunerEpgGrabberProtocol.OrbitShowtimeNetwork;
-        }
-        else if (countryName.Equals("Italy"))
-        {
-          protocols = TunerEpgGrabberProtocol.OpenTv;           // Sky
-        }
-        else if (countryName.Equals("Jordan"))
-        {
-          protocols = TunerEpgGrabberProtocol.OrbitShowtimeNetwork;
-        }
-        else if (countryName.Equals("Kuwait"))
-        {
-          protocols = TunerEpgGrabberProtocol.OrbitShowtimeNetwork;
-        }
-        else if (countryName.Equals("Lebanon"))
-        {
-          protocols = TunerEpgGrabberProtocol.OrbitShowtimeNetwork;
-        }
-        else if (countryName.Equals("Libya"))
-        {
-          protocols = TunerEpgGrabberProtocol.OrbitShowtimeNetwork;
-        }
-        else if (countryName.Equals("Morocco"))
-        {
-          protocols = TunerEpgGrabberProtocol.OrbitShowtimeNetwork;
-        }
-        else if (countryName.Equals("Netherlands, The"))
-        {
-          protocols = TunerEpgGrabberProtocol.MediaHighway1;    // Canal Digitaal
-        }
-        else if (countryName.Equals("New Zealand"))
-        {
-          protocols = TunerEpgGrabberProtocol.OpenTv;           // Sky
-        }
-        else if (countryName.Equals("Oman"))
-        {
-          protocols = TunerEpgGrabberProtocol.OrbitShowtimeNetwork;
-        }
-        else if (countryName.Equals("Poland"))
-        {
-          protocols = TunerEpgGrabberProtocol.MediaHighway1;    // Cyfra+
-        }
-        else if (countryName.Equals("Qatar"))
-        {
-          protocols = TunerEpgGrabberProtocol.OrbitShowtimeNetwork;
-        }
-        else if (countryName.Equals("Saudi Arabia"))
-        {
-          protocols = TunerEpgGrabberProtocol.OrbitShowtimeNetwork;
-        }
-        else if (countryName.Equals("Spain"))
-        {
-          protocols = TunerEpgGrabberProtocol.MediaHighway2;    // Canal+/Digital+
-        }
-        else if (countryName.Equals("South Africa"))
-        {
-          protocols = TunerEpgGrabberProtocol.MultiChoice;
-        }
-        else if (countryName.Equals("Sweden"))
-        {
-          protocols = TunerEpgGrabberProtocol.ViasatSweden;
-        }
-        else if (countryName.Equals("Syria"))
-        {
-          protocols = TunerEpgGrabberProtocol.OrbitShowtimeNetwork;
-        }
-        else if (countryName.Equals("Tunisia"))
-        {
-          protocols = TunerEpgGrabberProtocol.OrbitShowtimeNetwork;
-        }
-        else if (countryName.Equals("United Kingdom"))
-        {
-          protocols = TunerEpgGrabberProtocol.Freesat | TunerEpgGrabberProtocol.OpenTv;   // Sky
-        }
-        else if (countryName.Equals("United States"))
-        {
-          protocols = TunerEpgGrabberProtocol.AtscEit | TunerEpgGrabberProtocol.DishNetwork | TunerEpgGrabberProtocol.ScteAeit;
-        }
-        else if (countryName.Equals("Yemen"))
-        {
-          protocols = TunerEpgGrabberProtocol.OrbitShowtimeNetwork;
-        }
-      }
-      protocols |= TunerEpgGrabberProtocol.DvbEit;
-      protocols = (TunerEpgGrabberProtocol)SettingsManagement.GetValue("tunerEpgGrabberProtocols", (int)protocols);
-      protocols &= PROTOCOLS_SUPPORTED;
-      this.LogDebug("  protocols = [{0}]", protocols);
-
-      if (_isGrabbing)
-      {
-        SetProtocols(protocols);
-      }
-    }
-
-    private void SetProtocols(TunerEpgGrabberProtocol protocols)
-    {
-      if (_grabProtocols == protocols)
-      {
-        return;
-      }
-
-      this.LogDebug("EPG DVB: set protocols");
-      if (_grabberDvb != null && (protocols & PROTOCOLS_DVB) != (_grabProtocols & PROTOCOLS_DVB))
-      {
-        _grabberDvb.SetProtocols(protocols.HasFlag(TunerEpgGrabberProtocol.DvbEit), protocols.HasFlag(TunerEpgGrabberProtocol.BellTv), protocols.HasFlag(TunerEpgGrabberProtocol.DishNetwork), protocols.HasFlag(TunerEpgGrabberProtocol.Freesat), protocols.HasFlag(TunerEpgGrabberProtocol.MultiChoice), protocols.HasFlag(TunerEpgGrabberProtocol.OrbitShowtimeNetwork), protocols.HasFlag(TunerEpgGrabberProtocol.Premiere), protocols.HasFlag(TunerEpgGrabberProtocol.ViasatSweden));
-      }
-      if (_grabberMhw != null && (protocols & PROTOCOLS_MEDIA_HIGHWAY) != (_grabProtocols & PROTOCOLS_MEDIA_HIGHWAY))
-      {
-        _grabberMhw.SetProtocols(protocols.HasFlag(TunerEpgGrabberProtocol.MediaHighway1), protocols.HasFlag(TunerEpgGrabberProtocol.MediaHighway2));
-      }
-      if (_grabberOpenTv != null)
-      {
-        if (protocols.HasFlag(TunerEpgGrabberProtocol.OpenTv) && !_grabProtocols.HasFlag(TunerEpgGrabberProtocol.OpenTv))
-        {
-          _grabberOpenTv.Start();
-        }
-        else if (!protocols.HasFlag(TunerEpgGrabberProtocol.OpenTv) && _grabProtocols.HasFlag(TunerEpgGrabberProtocol.OpenTv))
-        {
-          _grabberOpenTv.Stop();
-        }
-      }
-      _grabProtocols = protocols;
-    }
-
-    /// <summary>
-    /// Start grabbing electronic programme guide data.
-    /// </summary>
-    /// <param name="tuningDetail">The current transmitter tuning details.</param>
-    /// <param name="callBack">The delegate to notify when grabbing is complete or canceled.</param>
-    public void GrabEpg(IEpgGrabberCallBack callBack)
-    {
-      this.LogDebug("EPG DVB: grab EPG");
-      _callBack = callBack;
-      TunerEpgGrabberProtocol temp = _grabProtocols;
-      _grabProtocols = TunerEpgGrabberProtocol.None;
-      SetProtocols(temp);
-      if (_grabberDvb != null)
-      {
-        _grabberDvb.SetCallBack(this);
-      }
-      if (_grabberMhw != null)
-      {
-        _grabberMhw.SetCallBack(this);
-      }
-      if (_grabberOpenTv != null)
-      {
-        _grabberOpenTv.SetCallBack(this);
-      }
-      _isGrabbing = true;
-    }
-
-    /// <summary>
-    /// Get the grabber's current status.
-    /// </summary>
-    /// <value><c>true</c> if the grabber is grabbing, otherwise <c>false</c></value>
-    public bool IsGrabbing
+    public override TunerEpgGrabberProtocol PossibleProtocols
     {
       get
       {
-        return _isGrabbing;
+        TunerEpgGrabberProtocol protocols = TunerEpgGrabberProtocol.None;
+        if (_grabberDvb != null)
+        {
+          protocols |= PROTOCOLS_DVB;
+        }
+        if (_grabberMhw != null)
+        {
+          protocols |= PROTOCOLS_MEDIA_HIGHWAY;
+        }
+        if (_grabberOpenTv != null)
+        {
+          protocols |= TunerEpgGrabberProtocol.OpenTv;
+        }
+        return protocols;
       }
     }
 
     /// <summary>
-    /// Abort grabbing electronic programme guide data.
+    /// Get all available EPG data.
     /// </summary>
-    public void AbortGrabbing()
+    /// <returns>the data, grouped by channel</returns>
+    public override IDictionary<IChannel, IList<EpgProgram>> GetData()
     {
-      this.LogDebug("EPG DVB: abort grabbing");
-      //_grabber.AbortGrabbing();
-      if (_callBack != null)
+      this.LogInfo("EPG DVB: get data, DVB = {0} / {1}, MediaHighway = {2} / {3}, OpenTV = {4} / {5}",
+                    _isSeenDvb, _isCompleteDvb, _isSeenMhw, _isCompleteMhw, _isSeenOpenTv, _isCompleteOpenTv);
+      IDictionary<IChannel, IList<EpgProgram>> data = new Dictionary<IChannel, IList<EpgProgram>>();
+      try
       {
-        _callBack.OnEpgCancelled();
+        if (_isSeenOpenTv && _grabberOpenTv != null)
+        {
+          IChannelOpenTv tuningDetailOpenTv = _tuningDetail as IChannelOpenTv;
+          if (tuningDetailOpenTv != null)
+          {
+            var openTvData = CollectOpenTvData(tuningDetailOpenTv);
+            foreach (var channel in openTvData)
+            {
+              data.Add(channel.Key, channel.Value);
+            }
+          }
+          else
+          {
+            this.LogWarn("EPG DVB: received OpenTV EPG data from a non-OpenTV source");
+          }
+        }
+
+        if (_isSeenDvb && _grabberDvb != null)
+        {
+          IChannelDvbCompatible tuningDetailDvbCompatible = _tuningDetail as IChannelDvbCompatible;
+          if (tuningDetailDvbCompatible != null)
+          {
+            var eitData = CollectEitData(tuningDetailDvbCompatible);
+            foreach (var channel in eitData)
+            {
+              data.Add(channel.Key, channel.Value);
+            }
+          }
+          else
+          {
+            this.LogWarn("EPG DVB: received DVB EIT EPG data from a non-DVB-compatible source");
+          }
+        }
+
+        if (_isSeenMhw && _grabberMhw != null)
+        {
+          IChannelDvb tuningDetailDvb = _tuningDetail as IChannelDvb;
+          if (tuningDetailDvb != null)
+          {
+            bool warned = false;
+            var mediaHighwayData = CollectMediaHighwayData(tuningDetailDvb);
+            foreach (var channel in mediaHighwayData)
+            {
+              IList<EpgProgram> programs;
+              if (!data.TryGetValue(channel.Key, out programs))
+              {
+                data.Add(channel.Key, channel.Value);
+              }
+              else
+              {
+                if (!warned)
+                {
+                  this.LogWarn("EPG DVB: DVB EIT and MediaHighway data overlaps");
+                  warned = true;
+                }
+                if (programs.Count < channel.Value.Count)
+                {
+                  data[channel.Key] = channel.Value;
+                }
+              }
+            }
+          }
+          else
+          {
+            this.LogWarn("EPG DVB: received MediaHighway EPG data from a non-DVB source");
+          }
+        }
       }
-      _isGrabbing = false;
+      catch (Exception ex)
+      {
+        this.LogError(ex, "EPG DVB: failed to collect data");
+      }
+      return data;
     }
 
     #endregion

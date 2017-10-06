@@ -51,5 +51,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     /// <param name="tableId">The identifier of the table that changed.</param>
     [PreserveSig]
     void OnTableChange(ushort pid, byte tableId);
+
+    /// <summary>
+    /// This function is invoked after the grabber is reset.
+    /// </summary>
+    /// <param name="pid">The PID that is associated with the grabber.</param>
+    [PreserveSig]
+    void OnReset(ushort pid);
   }
 }

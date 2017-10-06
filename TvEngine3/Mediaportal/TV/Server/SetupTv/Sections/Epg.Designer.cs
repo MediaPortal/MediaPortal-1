@@ -547,6 +547,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.buttonTunerEpgGrabberRefreshNow.Size = new System.Drawing.Size(100, 23);
       this.buttonTunerEpgGrabberRefreshNow.TabIndex = 11;
       this.buttonTunerEpgGrabberRefreshNow.Text = "&Refresh Now";
+      this.buttonTunerEpgGrabberRefreshNow.Click += new System.EventHandler(this.buttonTunerEpgGrabberRefreshNow_Click);
       // 
       // numericUpDownTunerEpgGrabberTimeShiftingRecordingTimeLimit
       // 

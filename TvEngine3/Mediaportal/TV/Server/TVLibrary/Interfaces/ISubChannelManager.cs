@@ -42,7 +42,19 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
     /// <summary>
     /// Get the manager's quality control interface.
     /// </summary>
-    IQualityControlInternal QualityControlInterface { get; }
+    IQualityControlInternal QualityControlInterface
+    {
+      get;
+    }
+
+    /// <summary>
+    /// Enable or disable electronic programme guide data grabbing.
+    /// </summary>
+    bool IsEpgGrabbingEnabled
+    {
+      get;
+      set;
+    }
 
     /// <summary>
     /// Decompose the sub-channel manager.

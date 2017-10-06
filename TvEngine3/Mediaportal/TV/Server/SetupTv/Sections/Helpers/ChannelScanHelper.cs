@@ -943,6 +943,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
 
       DbTuningDetail tuningDetail = new DbTuningDetail();
       tuningDetail.IdChannel = dbChannel.IdChannel;
+      tuningDetail.GrabEpg = channel.GrabEpg;   // assign on creation; user-controlled after that
       UpdateTuningDetail(channel, ref tuningDetail, satelliteIdsByLongitude);
       return tuningDetail;
     }
@@ -1007,6 +1008,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
       tuningDetail.Provider = channel.Provider;
       tuningDetail.LogicalChannelNumber = channel.LogicalChannelNumber;
       tuningDetail.MediaType = (int)channel.MediaType;
+      //tuningDetail.GrabEpg = channel.GrabEpg;     only assign on creation; user-controlled after that
       tuningDetail.IsEncrypted = channel.IsEncrypted;
       tuningDetail.IsHighDefinition = channel.IsHighDefinition;
       tuningDetail.IsThreeDimensional = channel.IsThreeDimensional;

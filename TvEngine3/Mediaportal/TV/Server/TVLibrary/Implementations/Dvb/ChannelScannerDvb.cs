@@ -312,6 +312,22 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
       }
     }
 
+    /// <summary>
+    /// This function is invoked after the grabber is reset.
+    /// </summary>
+    /// <param name="pid">The PID that is associated with the grabber.</param>
+    public void OnReset(ushort pid)
+    {
+      this.LogDebug("scan DVB: on reset, PID = {0}", pid);
+      TableType tableType = GetTableType(pid);
+      if (tableType != TableType.None)
+      {
+        _seenTables &= ~tableType;
+        _completeTables &= ~tableType;
+        _event.Set();
+      }
+    }
+
     #endregion
 
     #region IChannelScannerInternal member
@@ -579,6 +595,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
             newChannel.Name = string.Empty;
             newChannel.LogicalChannelNumber = string.Empty;
             newChannel.MediaType = program.Value.MediaType.Value;
+            newChannel.GrabEpg = false;     // extremely unlikely to have EPG
             newChannel.IsEncrypted = program.Value.IsEncrypted;
             newChannel.IsThreeDimensional = program.Value.IsThreeDimensional;
 
@@ -809,12 +826,16 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
 
     #region private functions
 
-    private static TableType GetTableType(ushort pid, byte tableId)
+    private static TableType GetTableType(ushort pid, byte? tableId = null)
     {
       switch (pid)
       {
         case 0:
-          switch (tableId)
+          if (!tableId.HasValue)
+          {
+            return TableType.Pat | TableType.Pmt;
+          }
+          switch (tableId.Value)
           {
             case 0:
               return TableType.Pat;
@@ -825,7 +846,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
         case 1:
           return TableType.Cat;
         case 0x11:
-          switch (tableId)
+          if (!tableId.HasValue)
+          {
+            return TableType.NitActual | TableType.NitOther | TableType.SdtActual | TableType.SdtOther | TableType.Bat;
+          }
+          switch (tableId.Value)
           {
             case 0x40:
               return TableType.NitActual;
@@ -840,7 +865,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
           }
           break;
         default:
-          switch (tableId)
+          if (!tableId.HasValue)
+          {
+            return TableType.FreesatNit | TableType.FreesatSdt | TableType.FreesatBat;
+          }
+          switch (tableId.Value)
           {
             case 0x41:
               return TableType.FreesatNit;
@@ -1363,6 +1392,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
           newChannel.LogicalChannelNumber = string.Empty;
         }
         newChannel.MediaType = mediaType;
+        newChannel.GrabEpg = eitScheduleFlag;   // don't bother when only present/following data is available
         newChannel.IsEncrypted = freeCaMode;
         if (program != null)
         {
