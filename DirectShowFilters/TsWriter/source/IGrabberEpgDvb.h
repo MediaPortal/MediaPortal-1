@@ -29,11 +29,20 @@ DEFINE_GUID(IID_IGRABBER_EPG_DVB,
 
 DECLARE_INTERFACE_(IGrabberEpgDvb, IGrabber)
 {
+  BEGIN_INTERFACE
+
+
+  // IUnknown
+  STDMETHOD(QueryInterface)(THIS_ REFIID riid, void** ppv)PURE;
+  STDMETHOD_(unsigned long, AddRef)(THIS)PURE;
+  STDMETHOD_(unsigned long, Release)(THIS)PURE;
+
+
   // IGrabber
   STDMETHOD_(void, SetCallBack)(THIS_ ICallBackGrabber* callBack)PURE;
 
 
-  // IGrabberEpgEit
+  // IGrabberEpgDvb
   STDMETHOD_(void, SetProtocols)(THIS_ bool grabDvbEit,
                                   bool grabBellTv,
                                   bool grabDish,
@@ -102,4 +111,7 @@ DECLARE_INTERFACE_(IGrabberEpgDvb, IGrabber)
                                             unsigned short* descriptionBufferSize,
                                             char* text,
                                             unsigned short* textBufferSize)PURE;
+
+
+  END_INTERFACE
 };

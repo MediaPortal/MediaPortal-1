@@ -29,6 +29,15 @@ DEFINE_GUID(IID_IGRABBER_SI_FREESAT,
 
 DECLARE_INTERFACE_(IGrabberSiFreesat, IGrabberSiDvb)
 {
+  BEGIN_INTERFACE
+
+
+  // IUnknown
+  STDMETHOD(QueryInterface)(THIS_ REFIID riid, void** ppv)PURE;
+  STDMETHOD_(unsigned long, AddRef)(THIS)PURE;
+  STDMETHOD_(unsigned long, Release)(THIS)PURE;
+
+
   // IGrabber
   STDMETHOD_(void, SetCallBack)(THIS_ ICallBackGrabber* callBack)PURE;
 
@@ -214,4 +223,7 @@ DECLARE_INTERFACE_(IGrabberSiFreesat, IGrabberSiDvb)
                                     unsigned char* cellIdExtension,
                                     bool* isMultipleInputStream,
                                     unsigned char* plpId)PURE;
+
+
+  END_INTERFACE
 };

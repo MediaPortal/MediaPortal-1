@@ -24,8 +24,21 @@
 
 DECLARE_INTERFACE_(ICallBackGrabber, IUnknown)
 {
+  BEGIN_INTERFACE
+
+
+  // IUnknown
+  STDMETHOD(QueryInterface)(THIS_ REFIID riid, void** ppv)PURE;
+  STDMETHOD_(unsigned long, AddRef)(THIS)PURE;
+  STDMETHOD_(unsigned long, Release)(THIS)PURE;
+
+
+  // ICallBackGrabber
   STDMETHOD_(void, OnTableSeen)(THIS_ unsigned short pid, unsigned char tableId)PURE;
   STDMETHOD_(void, OnTableComplete)(THIS_ unsigned short pid, unsigned char tableId)PURE;
   STDMETHOD_(void, OnTableChange)(THIS_ unsigned short pid, unsigned char tableId)PURE;
   STDMETHOD_(void, OnReset)(THIS_ unsigned short pid)PURE;
+
+
+  END_INTERFACE
 };

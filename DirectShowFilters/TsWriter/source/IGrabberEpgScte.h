@@ -29,6 +29,15 @@ DEFINE_GUID(IID_IGRABBER_EPG_SCTE,
 
 DECLARE_INTERFACE_(IGrabberEpgScte, IGrabberEpgAtsc)
 {
+  BEGIN_INTERFACE
+
+
+  // IUnknown
+  STDMETHOD(QueryInterface)(THIS_ REFIID riid, void** ppv)PURE;
+  STDMETHOD_(unsigned long, AddRef)(THIS)PURE;
+  STDMETHOD_(unsigned long, Release)(THIS)PURE;
+
+
   // IGrabber
   STDMETHOD_(void, SetCallBack)(THIS_ ICallBackGrabber* callBack)PURE;
 
@@ -69,4 +78,7 @@ DECLARE_INTERFACE_(IGrabberEpgScte, IGrabberEpgAtsc)
                                             unsigned short* titleBufferSize,
                                             char* text,
                                             unsigned short* textBufferSize)PURE;
+
+
+  END_INTERFACE
 };

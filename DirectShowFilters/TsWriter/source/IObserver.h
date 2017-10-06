@@ -24,6 +24,16 @@
 
 DECLARE_INTERFACE_(IObserver, IUnknown)
 {
+  BEGIN_INTERFACE
+
+
+  // IUnknown
+  STDMETHOD(QueryInterface)(THIS_ REFIID riid, void** ppv)PURE;
+  STDMETHOD_(unsigned long, AddRef)(THIS)PURE;
+  STDMETHOD_(unsigned long, Release)(THIS)PURE;
+
+
+  // IObserver
   STDMETHOD_(void, OnProgramAssociationTable)(THIS_ unsigned short transportStreamId,
                                               unsigned short networkPid,
                                               unsigned short programCount)PURE;
@@ -42,4 +52,7 @@ DECLARE_INTERFACE_(IObserver, IUnknown)
   STDMETHOD_(void, OnPidsNotRequired)(THIS_ unsigned short* pids,
                                       unsigned char pidCount,
                                       unsigned long usage)PURE;
+
+
+  END_INTERFACE
 };

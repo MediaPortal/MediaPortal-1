@@ -30,5 +30,18 @@ DEFINE_GUID(IID_IGRABBER,
 
 DECLARE_INTERFACE_(IGrabber, IUnknown)
 {
+  BEGIN_INTERFACE
+
+
+  // IUnknown
+  STDMETHOD(QueryInterface)(THIS_ REFIID riid, void** ppv)PURE;
+  STDMETHOD_(unsigned long, AddRef)(THIS)PURE;
+  STDMETHOD_(unsigned long, Release)(THIS)PURE;
+
+
+  // IGrabber
   STDMETHOD_(void, SetCallBack)(THIS_ ICallBackGrabber* callBack)PURE;
+
+
+  END_INTERFACE
 };

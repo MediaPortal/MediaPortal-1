@@ -29,6 +29,15 @@ DEFINE_GUID(IID_IGRABBER_SI_SCTE,
 
 DECLARE_INTERFACE_(IGrabberSiScte, IGrabberSiAtsc)
 {
+  BEGIN_INTERFACE
+
+
+  // IUnknown
+  STDMETHOD(QueryInterface)(THIS_ REFIID riid, void** ppv)PURE;
+  STDMETHOD_(unsigned long, AddRef)(THIS)PURE;
+  STDMETHOD_(unsigned long, Release)(THIS)PURE;
+
+
   // IGrabber
   STDMETHOD_(void, SetCallBack)(THIS_ ICallBackGrabber* callBack)PURE;
 
@@ -151,4 +160,7 @@ DECLARE_INTERFACE_(IGrabberSiScte, IGrabberSiAtsc)
   // IGrabberSiScte
   STDMETHOD_(void, OnOutOfBandSectionReceived)(THIS_ unsigned char* sectionData,
                                                 unsigned short sectionDataBufferSize)PURE;
+
+
+  END_INTERFACE
 };

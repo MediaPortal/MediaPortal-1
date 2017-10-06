@@ -31,6 +31,16 @@ DEFINE_GUID(IID_ITS_WRITER,
 
 DECLARE_INTERFACE_(ITsWriter, IUnknown)
 {
+  BEGIN_INTERFACE
+
+
+  // IUnknown
+  STDMETHOD(QueryInterface)(THIS_ REFIID riid, void** ppv)PURE;
+  STDMETHOD_(unsigned long, AddRef)(THIS)PURE;
+  STDMETHOD_(unsigned long, Release)(THIS)PURE;
+
+
+  // ITsWriter
   STDMETHOD(ConfigureLogging)(THIS_ wchar_t* path)PURE;
   STDMETHOD_(void, DumpInput)(THIS_ bool enableTs, bool enableOobSi)PURE;
   STDMETHOD_(void, CheckSectionCrcs)(THIS_ bool enable)PURE;
@@ -76,4 +86,7 @@ DECLARE_INTERFACE_(ITsWriter, IUnknown)
                                                 unsigned long long* position,
                                                 unsigned long* bufferId)PURE;
   STDMETHOD(TimeShifterStop)(THIS_ long handle)PURE;
+
+
+  END_INTERFACE
 };

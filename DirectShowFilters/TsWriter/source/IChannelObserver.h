@@ -31,5 +31,18 @@ enum PidType
 
 DECLARE_INTERFACE_(IChannelObserver, IUnknown)
 {
+  BEGIN_INTERFACE
+
+
+  // IUnknown
+  STDMETHOD(QueryInterface)(THIS_ REFIID riid, void** ppv)PURE;
+  STDMETHOD_(unsigned long, AddRef)(THIS)PURE;
+  STDMETHOD_(unsigned long, Release)(THIS)PURE;
+
+
+  // IChannelObserver
   STDMETHOD_(void, OnSeen)(THIS_ unsigned short pid, unsigned long pidType)PURE;
+
+
+  END_INTERFACE
 };
