@@ -254,11 +254,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
       }
     }
 
-    private IDictionary<IChannel, IList<EpgProgram>> CollectData(IGrabberEpgAtsc grabber)
+    #region data collection
+
+    private IList<Tuple<IChannel, IList<EpgProgram>>> CollectData(IChannel currentTuningDetail, IGrabberEpgAtsc grabber)
     {
       uint eventCount = grabber.GetEventCount();
       this.LogDebug("EPG ATSC: initial event count = {0}", eventCount);
-      IDictionary<ushort, List<EpgProgram>> channels = new Dictionary<ushort, List<EpgProgram>>(100);
+      IDictionary<ushort, List<EpgProgram>> tempData = new Dictionary<ushort, List<EpgProgram>>(100);
 
       const byte ARRAY_SIZE_AUDIO_LANGUAGES = 20;
       const byte ARRAY_SIZE_CAPTIONS_LANGUAGES = 20;
@@ -377,30 +379,30 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
           }
 
           List<EpgProgram> programs;
-          if (!channels.TryGetValue(sourceId, out programs))
+          if (!tempData.TryGetValue(sourceId, out programs))
           {
             programs = new List<EpgProgram>(100);
-            channels.Add(sourceId, programs);
+            tempData.Add(sourceId, programs);
           }
           programs.Add(program);
         }
 
-        IDictionary<IChannel, IList<EpgProgram>> epgChannels = new Dictionary<IChannel, IList<EpgProgram>>(channels.Count);
+        IList<Tuple<IChannel, IList<EpgProgram>>> data = new List<Tuple<IChannel, IList<EpgProgram>>>(tempData.Count);
         int validEventCount = 0;
-        foreach (var channel in channels)
+        foreach (var channelData in tempData)
         {
-          IChannel atscScteChannel = _currentTuningDetail.Clone() as IChannel;
+          IChannel atscScteChannel = currentTuningDetail.Clone() as IChannel;
           ChannelAtsc atscChannel = atscScteChannel as ChannelAtsc;
           if (atscChannel != null)
           {
-            atscChannel.SourceId = channel.Key;
+            atscChannel.SourceId = channelData.Key;
           }
           else
           {
             ChannelScte scteChannel = atscScteChannel as ChannelScte;
             if (scteChannel != null)
             {
-              scteChannel.SourceId = channel.Key;
+              scteChannel.SourceId = channelData.Key;
             }
             else
             {
@@ -408,13 +410,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
               continue;
             }
           }
-          channel.Value.Sort();
-          epgChannels.Add(atscScteChannel, channel.Value);
-          validEventCount += channel.Value.Count;
+          channelData.Value.Sort();
+          data.Add(new Tuple<IChannel, IList<EpgProgram>>(atscScteChannel, channelData.Value));
+          validEventCount += channelData.Value.Count;
         }
 
-        this.LogDebug("EPG ATSC: channel count = {0}, event count = {1}", channels.Count, validEventCount);
-        return epgChannels;
+        this.LogDebug("EPG ATSC: channel count = {0}, event count = {1}", tempData.Count, validEventCount);
+        return data;
       }
       finally
       {
@@ -519,6 +521,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
       }
       return null;
     }
+
+    #endregion
 
     #region EpgGrabberBase overrides
 
@@ -698,84 +702,26 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
     /// Get all available EPG data.
     /// </summary>
     /// <returns>the data, grouped by channel</returns>
-    public override IDictionary<IChannel, IList<EpgProgram>> GetData()
+    public override IList<Tuple<IChannel, IList<EpgProgram>>> GetData()
     {
       this.LogInfo("EPG ATSC: get data, ATSC = {0} / {1}, SCTE = {2} / {3}",
                     _isSeenAtsc, _isCompleteAtsc, _isSeenScte, _isCompleteScte);
-      IDictionary<IChannel, IList<EpgProgram>> data = new Dictionary<IChannel, IList<EpgProgram>>();
+      List<Tuple<IChannel, IList<EpgProgram>>> data = new List<Tuple<IChannel, IList<EpgProgram>>>();
       try
       {
-        if (_isSeenOpenTv && _grabberOpenTv != null)
+        if (_isSeenAtsc && _grabberAtsc != null)
         {
-          IChannelOpenTv tuningDetailOpenTv = _tuningDetail as IChannelOpenTv;
-          if (tuningDetailOpenTv != null)
-          {
-            var openTvData = CollectOpenTvData(tuningDetailOpenTv);
-            foreach (var channel in openTvData)
-            {
-              data.Add(channel.Key, channel.Value);
-            }
-          }
-          else
-          {
-            this.LogWarn("EPG DVB: received OpenTV EPG data from a non-OpenTV source");
-          }
+          data.AddRange(CollectData(_tuningDetail, _grabberAtsc));
         }
 
-        if (_isSeenDvb && _grabberDvb != null)
+        if (_isSeenScte && _grabberScte != null)
         {
-          IChannelDvbCompatible tuningDetailDvbCompatible = _tuningDetail as IChannelDvbCompatible;
-          if (tuningDetailDvbCompatible != null)
-          {
-            var eitData = CollectEitData(tuningDetailDvbCompatible);
-            foreach (var channel in eitData)
-            {
-              data.Add(channel.Key, channel.Value);
-            }
-          }
-          else
-          {
-            this.LogWarn("EPG DVB: received DVB EIT EPG data from a non-DVB-compatible source");
-          }
-        }
-
-        if (_isSeenMhw && _grabberMhw != null)
-        {
-          IChannelDvb tuningDetailDvb = _tuningDetail as IChannelDvb;
-          if (tuningDetailDvb != null)
-          {
-            bool warned = false;
-            var mediaHighwayData = CollectMediaHighwayData(tuningDetailDvb);
-            foreach (var channel in mediaHighwayData)
-            {
-              IList<EpgProgram> programs;
-              if (!data.TryGetValue(channel.Key, out programs))
-              {
-                data.Add(channel.Key, channel.Value);
-              }
-              else
-              {
-                if (!warned)
-                {
-                  this.LogWarn("EPG DVB: DVB EIT and MediaHighway data overlaps");
-                  warned = true;
-                }
-                if (programs.Count < channel.Value.Count)
-                {
-                  data[channel.Key] = channel.Value;
-                }
-              }
-            }
-          }
-          else
-          {
-            this.LogWarn("EPG DVB: received MediaHighway EPG data from a non-DVB source");
-          }
+          data.AddRange(CollectData(_tuningDetail, _grabberScte));
         }
       }
       catch (Exception ex)
       {
-        this.LogError(ex, "EPG DVB: failed to collect data");
+        this.LogError(ex, "EPG ATSC: failed to collect data");
       }
       return data;
     }

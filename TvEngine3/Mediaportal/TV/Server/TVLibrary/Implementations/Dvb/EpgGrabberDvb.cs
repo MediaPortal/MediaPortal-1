@@ -958,7 +958,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
 
     #region data collection
 
-    private IDictionary<IChannel, IList<EpgProgram>> CollectMediaHighwayData(IChannelDvb currentTuningDetail)
+    private IList<Tuple<IChannel, IList<EpgProgram>>> CollectMediaHighwayData(IChannelDvb currentTuningDetail)
     {
       uint eventCount;
       Iso639Code language;
@@ -1110,14 +1110,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
           programs.Add(program);
         }
 
-        IDictionary<IChannel, IList<EpgProgram>> data = new Dictionary<IChannel, IList<EpgProgram>>(tempData.Count);
+        IList<Tuple<IChannel, IList<EpgProgram>>> data = new List<Tuple<IChannel, IList<EpgProgram>>>(tempData.Count);
         int validEventCount = 0;
-        foreach (var channel in tempData)
+        foreach (var channelData in tempData)
         {
           IChannelDvbCompatible dvbCompatibleChannel = currentTuningDetail.Clone() as IChannelDvbCompatible;
-          dvbCompatibleChannel.OriginalNetworkId = (int)(channel.Key >> 32);
-          dvbCompatibleChannel.TransportStreamId = (int)((channel.Key >> 16) & 0xffff);
-          dvbCompatibleChannel.ServiceId = (int)channel.Key & 0xffff;
+          dvbCompatibleChannel.OriginalNetworkId = (int)(channelData.Key >> 32);
+          dvbCompatibleChannel.TransportStreamId = (int)((channelData.Key >> 16) & 0xffff);
+          dvbCompatibleChannel.ServiceId = (int)channelData.Key & 0xffff;
 
           // Ensure storage by DVB ID rather than OpenTV channel ID.
           IChannelOpenTv openTvChannel = dvbCompatibleChannel as IChannelOpenTv;
@@ -1126,9 +1126,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
             openTvChannel.OpenTvChannelId = 0;
           }
 
-          channel.Value.Sort();
-          data.Add(dvbCompatibleChannel, channel.Value);
-          validEventCount += channel.Value.Count;
+          channelData.Value.Sort();
+          data.Add(new Tuple<IChannel, IList<EpgProgram>>(dvbCompatibleChannel, channelData.Value));
+          validEventCount += channelData.Value.Count;
         }
 
         this.LogDebug("EPG DVB: MediaHighway, channel count = {0}, event count = {1}", data.Count, validEventCount);
@@ -1163,7 +1163,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
       }
     }
 
-    private IDictionary<IChannel, IList<EpgProgram>> CollectOpenTvData(IChannelOpenTv currentTuningDetail)
+    private IList<Tuple<IChannel, IList<EpgProgram>>> CollectOpenTvData(IChannelOpenTv currentTuningDetail)
     {
       uint eventCount;
       Iso639Code language;
@@ -1274,15 +1274,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
           programs.Add(program);
         }
 
-        IDictionary<IChannel, IList<EpgProgram>> data = new Dictionary<IChannel, IList<EpgProgram>>(tempData.Count);
+        IList<Tuple<IChannel, IList<EpgProgram>>> data = new List<Tuple<IChannel, IList<EpgProgram>>>(tempData.Count);
         int validEventCount = 0;
-        foreach (var channel in tempData)
+        foreach (var channelData in tempData)
         {
           IChannelOpenTv openTvChannel = currentTuningDetail.Clone() as IChannelOpenTv;
-          openTvChannel.OpenTvChannelId = channel.Key;
-          channel.Value.Sort();
-          data.Add(openTvChannel, channel.Value);
-          validEventCount += channel.Value.Count;
+          openTvChannel.OpenTvChannelId = channelData.Key;
+          channelData.Value.Sort();
+          data.Add(new Tuple<IChannel, IList<EpgProgram>>(openTvChannel, channelData.Value));
+          validEventCount += channelData.Value.Count;
         }
 
         this.LogDebug("EPG DVB: OpenTV, channel count = {0}, event count = {1}", tempData.Count, validEventCount);
@@ -1305,11 +1305,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
       }
     }
 
-    private IDictionary<IChannel, IList<EpgProgram>> CollectEitData(IChannelDvbCompatible currentTuningDetail)
+    private IList<Tuple<IChannel, IList<EpgProgram>>> CollectEitData(IChannelDvbCompatible currentTuningDetail)
     {
       ushort serviceCount = _grabberDvb.GetServiceCount();
       this.LogDebug("EPG DVB: EIT, initial service count = {0}", serviceCount);
-      IDictionary<IChannel, IList<EpgProgram>> data = new Dictionary<IChannel, IList<EpgProgram>>(serviceCount);
+      IList<Tuple<IChannel, IList<EpgProgram>>> data = new List<Tuple<IChannel, IList<EpgProgram>>>(serviceCount);
       if (serviceCount == 0)
       {
         return data;
@@ -1610,7 +1610,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
           }
 
           programs.Sort();
-          data.Add(dvbCompatibleChannel, programs);
+          data.Add(new Tuple<IChannel, IList<EpgProgram>>(dvbCompatibleChannel, programs));
           validEventCount += programs.Count;
         }
 
@@ -2685,11 +2685,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
     /// Get all available EPG data.
     /// </summary>
     /// <returns>the data, grouped by channel</returns>
-    public override IDictionary<IChannel, IList<EpgProgram>> GetData()
+    public override IList<Tuple<IChannel, IList<EpgProgram>>> GetData()
     {
       this.LogInfo("EPG DVB: get data, DVB = {0} / {1}, MediaHighway = {2} / {3}, OpenTV = {4} / {5}",
                     _isSeenDvb, _isCompleteDvb, _isSeenMhw, _isCompleteMhw, _isSeenOpenTv, _isCompleteOpenTv);
-      IDictionary<IChannel, IList<EpgProgram>> data = new Dictionary<IChannel, IList<EpgProgram>>();
+      List<Tuple<IChannel, IList<EpgProgram>>> data = new List<Tuple<IChannel, IList<EpgProgram>>>();
       try
       {
         if (_isSeenOpenTv && _grabberOpenTv != null)
@@ -2697,11 +2697,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
           IChannelOpenTv tuningDetailOpenTv = _tuningDetail as IChannelOpenTv;
           if (tuningDetailOpenTv != null)
           {
-            var openTvData = CollectOpenTvData(tuningDetailOpenTv);
-            foreach (var channel in openTvData)
-            {
-              data.Add(channel.Key, channel.Value);
-            }
+            data.AddRange(CollectOpenTvData(tuningDetailOpenTv));
           }
           else
           {
@@ -2714,11 +2710,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
           IChannelDvbCompatible tuningDetailDvbCompatible = _tuningDetail as IChannelDvbCompatible;
           if (tuningDetailDvbCompatible != null)
           {
-            var eitData = CollectEitData(tuningDetailDvbCompatible);
-            foreach (var channel in eitData)
-            {
-              data.Add(channel.Key, channel.Value);
-            }
+            data.AddRange(CollectEitData(tuningDetailDvbCompatible));
           }
           else
           {
@@ -2731,28 +2723,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
           IChannelDvb tuningDetailDvb = _tuningDetail as IChannelDvb;
           if (tuningDetailDvb != null)
           {
-            bool warned = false;
-            var mediaHighwayData = CollectMediaHighwayData(tuningDetailDvb);
-            foreach (var channel in mediaHighwayData)
-            {
-              IList<EpgProgram> programs;
-              if (!data.TryGetValue(channel.Key, out programs))
-              {
-                data.Add(channel.Key, channel.Value);
-              }
-              else
-              {
-                if (!warned)
-                {
-                  this.LogWarn("EPG DVB: DVB EIT and MediaHighway data overlaps");
-                  warned = true;
-                }
-                if (programs.Count < channel.Value.Count)
-                {
-                  data[channel.Key] = channel.Value;
-                }
-              }
-            }
+            data.AddRange(CollectMediaHighwayData(tuningDetailDvb));
           }
           else
           {

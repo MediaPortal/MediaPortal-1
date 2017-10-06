@@ -273,7 +273,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// Get all available EPG data.
     /// </summary>
     /// <returns>the data, grouped by channel</returns>
-    public abstract IDictionary<IChannel, IList<EpgProgram>> GetData();
+    public abstract IList<Tuple<IChannel, IList<EpgProgram>>> GetData();
 
     #endregion
 

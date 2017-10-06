@@ -18,6 +18,7 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
@@ -76,6 +77,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner
     /// Get all available EPG data.
     /// </summary>
     /// <returns>the data, grouped by channel</returns>
-    IDictionary<IChannel, IList<EpgProgram>> GetData();
+    IList<Tuple<IChannel, IList<EpgProgram>>> GetData();
   }
 }
