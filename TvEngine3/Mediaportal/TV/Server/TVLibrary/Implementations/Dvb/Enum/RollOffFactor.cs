@@ -38,6 +38,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb.Enum
     /// </summary>
     Twenty = 2
 
-    // (4 reserved)
+    // (3 reserved)
   }
 }
