@@ -513,7 +513,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
       {
         valueDri = EncoderVideoFrameRate.Fr23_976;
       }
-      else if (codecApiFrameRate == ((24 << 32) | 1))
+      else if (codecApiFrameRate == ((24ul << 32) | 1))
       {
         valueDri = EncoderVideoFrameRate.Fr24;
       }
@@ -549,7 +549,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
       }
       else if (valueDri == EncoderVideoFrameRate.Fr24)
       {
-        valueCodecApi = (24 << 32) | 1;
+        valueCodecApi = (24ul << 32) | 1;
       }
       else if (valueDri == EncoderVideoFrameRate.Fr29_97)
       {
