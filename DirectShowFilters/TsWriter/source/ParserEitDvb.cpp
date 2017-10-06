@@ -489,6 +489,10 @@ void CParserEitDvb::Reset(bool enableCrcCheck)
   LogDebug(L"EIT DVB: reset");
   m_enableCrcCheck = enableCrcCheck;
   PrivateReset(true);
+  if (m_callBackGrabber != NULL)
+  {
+    m_callBackGrabber->OnReset(PID_EIT_DVB_CALL_BACK);
+  }
   LogDebug(L"EIT DVB: reset done");
 }
 

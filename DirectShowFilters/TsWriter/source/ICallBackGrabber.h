@@ -27,4 +27,5 @@ DECLARE_INTERFACE_(ICallBackGrabber, IUnknown)
   STDMETHOD_(void, OnTableSeen)(THIS_ unsigned short pid, unsigned char tableId)PURE;
   STDMETHOD_(void, OnTableComplete)(THIS_ unsigned short pid, unsigned char tableId)PURE;
   STDMETHOD_(void, OnTableChange)(THIS_ unsigned short pid, unsigned char tableId)PURE;
+  STDMETHOD_(void, OnReset)(THIS_ unsigned short pid)PURE;
 };

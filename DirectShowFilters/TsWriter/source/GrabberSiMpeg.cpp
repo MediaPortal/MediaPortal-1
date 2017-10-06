@@ -108,6 +108,11 @@ void CGrabberSiMpeg::Reset()
 
   m_catGrabber.Reset();
   m_patParser.Reset();
+
+  if (m_callBackGrabber != NULL)
+  {
+    m_callBackGrabber->OnReset(PID_PAT);
+  }
 }
 
 STDMETHODIMP_(void) CGrabberSiMpeg::SetCallBack(ICallBackGrabber* callBack)

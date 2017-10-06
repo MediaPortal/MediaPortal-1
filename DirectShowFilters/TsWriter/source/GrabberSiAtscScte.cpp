@@ -99,6 +99,11 @@ void CGrabberSiAtscScte::Reset(bool enableCrcCheck)
   m_parserSttAtsc.Reset();
   m_parserSttScte.Reset();
   m_parserSvct.Reset();
+
+  if (m_callBackGrabber != NULL)
+  {
+    m_callBackGrabber->OnReset(m_sectionDecoder.GetPid());
+  }
 }
 
 STDMETHODIMP_(void) CGrabberSiAtscScte::SetCallBack(ICallBackGrabber* callBack)

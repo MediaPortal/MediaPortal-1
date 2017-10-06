@@ -449,6 +449,11 @@ void CParserOpenTv::Reset(bool enableCrcCheck)
   m_isDescriptionPhase = false;
   m_isReady = false;
   m_enableCrcCheck = enableCrcCheck;
+
+  if (m_callBackGrabber != NULL)
+  {
+    m_callBackGrabber->OnReset(PID_OPENTV_CALL_BACK);
+  }
   LogDebug(L"OpenTV: reset done");
 }
 

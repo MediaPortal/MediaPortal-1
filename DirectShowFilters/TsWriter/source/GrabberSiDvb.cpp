@@ -127,6 +127,10 @@ void CGrabberSiDvb::Reset(bool enableCrcCheck)
   m_parserNit.Reset(enableCrcCheck);
   m_parserSdt.Reset(enableCrcCheck);
   m_parserTot.Reset(enableCrcCheck);
+  if (m_callBackGrabber != NULL)
+  {
+    m_callBackGrabber->OnReset(m_parserSdt.GetPid());
+  }
 }
 
 STDMETHODIMP_(void) CGrabberSiDvb::SetCallBack(ICallBackGrabber* callBack)

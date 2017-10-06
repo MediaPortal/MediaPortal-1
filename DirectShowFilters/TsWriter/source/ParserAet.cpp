@@ -106,8 +106,10 @@ STDMETHODIMP CParserAet::NonDelegatingQueryInterface(REFIID iid, void** ppv)
   }
   if (iid == IID_IGRABBER_EPG_SCTE)
   {
+    LogDebug(L"nathan CParserAet SCTE");
     return GetInterface((IGrabberEpgScte*)this, ppv);
   }
+  LogDebug(L"nathan CParserAet unknown");
   return CUnknown::NonDelegatingQueryInterface(iid, ppv);
 }
 
@@ -275,6 +277,10 @@ void CParserAet::Reset(bool enableCrcCheck)
   LogDebug(L"AET: reset");
   m_enableCrcCheck = enableCrcCheck;
   PrivateReset(true);
+  if (m_callBackGrabber != NULL)
+  {
+    m_callBackGrabber->OnReset(PID_AET_CALL_BACK);
+  }
   LogDebug(L"AET: reset done");
 }
 

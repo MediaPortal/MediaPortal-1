@@ -457,6 +457,11 @@ void CGrabberEpgAtsc::Reset(bool enableCrcCheck)
   m_currentEventIndexOffset = 0;
   m_currentEventId = 0;
   m_currentEventSourceId = 0;
+
+  if (m_callBackGrabber != NULL)
+  {
+    m_callBackGrabber->OnReset(PID_EIT_ATSC_CALL_BACK);
+  }
   LogDebug(L"EPG ATSC: reset done");
 }
 

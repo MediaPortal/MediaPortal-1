@@ -331,6 +331,11 @@ void CParserMhw::Reset(bool enableCrcCheck)
   m_isSeen = false;
   m_isReady = false;
   m_completeTime = clock();
+
+  if (m_callBackGrabber != NULL)
+  {
+    m_callBackGrabber->OnReset(PID_MHW_CALL_BACK);
+  }
   LogDebug(L"MHW: reset done");
 }
 
