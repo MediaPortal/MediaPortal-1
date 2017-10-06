@@ -276,6 +276,7 @@
     <ClInclude Include="source\ParserSttScte.h" />
     <ClInclude Include="source\ParserSvct.h" />
     <ClInclude Include="source\ParserTot.h" />
+    <ClInclude Include="source\PidType.h" />
     <ClInclude Include="source\PidUsage.h" />
     <ClInclude Include="source\RecorderMode.h" />
     <ClInclude Include="source\RecordStore.h" />

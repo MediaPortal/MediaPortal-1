@@ -22,13 +22,6 @@
 #include <streams.h>    // IUnknown
 
 
-enum PidType
-{
-  Video = 0,
-  Audio = 1,
-  Other = 2
-};
-
 DECLARE_INTERFACE_(IChannelObserver, IUnknown)
 {
   BEGIN_INTERFACE

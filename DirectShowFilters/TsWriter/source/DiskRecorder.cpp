@@ -30,6 +30,7 @@
 #include "..\..\shared\TimeUtils.h"
 #include "FileReader.h"
 #include "FileUtils.h"
+#include "PidType.h"
 
 
 #define WRITE_BUFFER_THROTTLE_FULLY_OPEN_STEP_RADIO   7
