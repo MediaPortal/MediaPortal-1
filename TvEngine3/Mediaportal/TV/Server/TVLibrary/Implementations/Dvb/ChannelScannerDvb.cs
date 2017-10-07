@@ -1593,7 +1593,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
       }
 
       string countryName = RegionInfo.CurrentRegion.EnglishName;
-      string logFormat = string.Empty;
       Iso639Code language;
       ushort nameBufferSize;
       IntPtr nameBuffer = Marshal.AllocCoTaskMem(NAME_BUFFER_SIZE);
@@ -1611,7 +1610,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
             nameBufferSize = NAME_BUFFER_SIZE;
             if (groupType == ChannelGroupType.DvbNetwork)
             {
-              logFormat = "    network count                  = {0}, networks   = [{1}]";
               if (grabber.GetNetworkNameCount((ushort)groupId) > 0 && grabber.GetNetworkNameByIndex((ushort)groupId, 0, out language, nameBuffer, ref nameBufferSize))
               {
                 nameString = DvbTextConverter.Convert(nameBuffer, nameBufferSize);
@@ -1619,7 +1617,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
             }
             else if (groupType == ChannelGroupType.DvbBouquet)
             {
-              logFormat = "    bouquet count                  = {0}, bouquets   = [{1}]";
               if (grabber.GetBouquetNameCount((ushort)groupId) > 0 && grabber.GetBouquetNameByIndex((ushort)groupId, 0, out language, nameBuffer, ref nameBufferSize))
               {
                 nameString = DvbTextConverter.Convert(nameBuffer, nameBufferSize);
@@ -1627,7 +1624,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
             }
             else if (groupType == ChannelGroupType.DvbTargetRegion)
             {
-              logFormat = "    target region count            = {0}, regions    = [{1}]";
               if (grabber.GetTargetRegionNameCount(groupId) > 0 && grabber.GetTargetRegionNameByIndex(groupId, 0, out language, nameBuffer, ref nameBufferSize))
               {
                 nameString = DvbTextConverter.Convert(nameBuffer, nameBufferSize);
@@ -1635,7 +1631,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
             }
             else if (groupType == ChannelGroupType.FreesatChannelCategory)
             {
-              logFormat = "    Freesat channel category count = {0}, categories = [{1}]";
               if (grabber.GetFreesatChannelCategoryNameCount((ushort)groupId) > 0 && grabber.GetFreesatChannelCategoryNameByIndex((ushort)groupId, 0, out language, nameBuffer, ref nameBufferSize))
               {
                 nameString = DvbTextConverter.Convert(nameBuffer, nameBufferSize);
@@ -1643,8 +1638,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
             }
             else if (groupType == ChannelGroupType.FreesatRegion)
             {
-              logFormat = "    Freesat region count           = {0}, regions    = [{1}]";
-
               // We can use the grabbed names, but they're not as nice or clear
               // as the names we use for configuration.
               int regionId = (ushort)groupId;     // group ID = (bouquet ID << 16) | region ID; Remove the bouquet ID.
@@ -1656,7 +1649,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
             }
             else if (groupType == ChannelGroupType.MediaHighwayChannelCategory)
             {
-              logFormat = "    MHW channel category count     = {0}, categories = [{1}]";
               if (grabber.GetMediaHighwayChannelCategoryName((ushort)groupId, nameBuffer, ref nameBufferSize))
               {
                 nameString = DvbTextConverter.Convert(nameBuffer, nameBufferSize);
@@ -1664,7 +1656,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
             }
             else if (groupType == ChannelGroupType.NorDigChannelList)
             {
-              logFormat = "    NorDig channel list count      = {0}, lists      = [{1}]";
               if (grabber.GetNorDigChannelListNameCount((byte)groupId) > 0 && grabber.GetNorDigChannelListNameByIndex((byte)groupId, 0, out language, nameBuffer, ref nameBufferSize))
               {
                 nameString = DvbTextConverter.Convert(nameBuffer, nameBufferSize);
@@ -1672,7 +1663,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
             }
             else if (groupType == ChannelGroupType.OpenTvRegion)
             {
-              logFormat = "    OpenTV region count            = {0}, regions    = [{1}]";
               ushort bouquetId = (ushort)(groupId >> 16);
               ushort regionId = (ushort)groupId;
               groupIdString = string.Format("{0}/{1}", bouquetId, regionId);
@@ -1696,7 +1686,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
             }
             else if (groupType == ChannelGroupType.VirginMediaChannelCategory)
             {
-              logFormat = "    VM channel category count      = {0}, categories = [{1}]";
               CHANNEL_CATEGORY_NAMES_VIRGIN_MEDIA.TryGetValue(groupId, out nameString);
             }
 
@@ -1732,6 +1721,43 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
       // combining the IDs.
       if (groupType != ChannelGroupType.OpenTvChannelCategory)
       {
+        string logFormat = string.Empty;
+        if (groupType == ChannelGroupType.DvbNetwork)
+        {
+          logFormat = "    network count                  = {0}, networks   = [{1}]";
+        }
+        else if (groupType == ChannelGroupType.DvbBouquet)
+        {
+          logFormat = "    bouquet count                  = {0}, bouquets   = [{1}]";
+        }
+        else if (groupType == ChannelGroupType.DvbTargetRegion)
+        {
+          logFormat = "    target region count            = {0}, regions    = [{1}]";
+        }
+        else if (groupType == ChannelGroupType.FreesatChannelCategory)
+        {
+          logFormat = "    Freesat channel category count = {0}, categories = [{1}]";
+        }
+        else if (groupType == ChannelGroupType.FreesatRegion)
+        {
+          logFormat = "    Freesat region count           = {0}, regions    = [{1}]";
+        }
+        else if (groupType == ChannelGroupType.MediaHighwayChannelCategory)
+        {
+          logFormat = "    MHW channel category count     = {0}, categories = [{1}]";
+        }
+        else if (groupType == ChannelGroupType.NorDigChannelList)
+        {
+          logFormat = "    NorDig channel list count      = {0}, lists      = [{1}]";
+        }
+        else if (groupType == ChannelGroupType.OpenTvRegion)
+        {
+          logFormat = "    OpenTV region count            = {0}, regions    = [{1}]";
+        }
+        else if (groupType == ChannelGroupType.VirginMediaChannelCategory)
+        {
+          logFormat = "    VM channel category count      = {0}, categories = [{1}]";
+        }
         Log.Debug(logFormat, groupCount, string.Join(", ", logNames));
       }
       else
@@ -1784,9 +1810,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
       Dictionary<ulong, string> broadcastStandardGroupNames = new Dictionary<ulong, string>(broadcastStandards.Length);
       foreach (System.Enum broadcastStandard in broadcastStandards)
       {
-        broadcastStandardGroupNames[Convert.ToUInt64(broadcastStandard)] = broadcastStandard.GetDescription();
+        // Careful! MaskDigital can cause problems because the top bit is set.
+        broadcastStandardGroupNames[(ulong)Convert.ToInt64(broadcastStandard)] = broadcastStandard.GetDescription();
       }
-      groupNames.Add(ChannelGroupType.FreeviewSatellite, broadcastStandardGroupNames);
+      groupNames.Add(ChannelGroupType.BroadcastStandard, broadcastStandardGroupNames);
     }
 
     private static void AddFreeviewSatelliteGroupNames(IDictionary<ChannelGroupType, IDictionary<ulong, string>> groupNames)
