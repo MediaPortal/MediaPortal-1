@@ -293,7 +293,8 @@ HRESULT FileWriter::OpenFile(const wchar_t* fileName, bool isLoggingEnabled, boo
     }
     m_fileName = newFileName;
 
-    if (m_useAsyncAccess && !m_asyncAccessThread.Start(50, &FileWriter::AsyncThreadFunction, this))
+    m_asyncAccessThreadPointlessLoopCount = 0;
+    if (m_useAsyncAccess && !m_asyncAccessThread.Start(INFINITE, &FileWriter::AsyncThreadFunction, this))
     {
       LogDebug(L"file writer: failed to start async access thread, falling back to synchronous access");
       m_useAsyncAccess = false;
@@ -327,14 +328,13 @@ HRESULT FileWriter::OpenFile(const wchar_t* fileName, bool isLoggingEnabled, boo
 
 HRESULT FileWriter::CloseFile(bool isPartFile)
 {
-  if (isPartFile || (!isPartFile && !m_isFileOpen))
+  if (!isPartFile && !m_isFileOpen)
   {
     return S_FALSE;
   }
 
-  LogDebug(L"file writer: close file, name = %s, part number = %lu, max queue length = %lu",
-            m_fileName == NULL ? L"" : m_fileName, m_filePart,
-            m_asyncDataQueueLengthMaximum);
+  LogDebug(L"file writer: close file, name = %s, part number = %lu",
+            m_fileName == NULL ? L"" : m_fileName, m_filePart);
 
   if (m_useAsyncAccess && !isPartFile)
   {
@@ -353,6 +353,9 @@ HRESULT FileWriter::CloseFile(bool isPartFile)
       }
     }
     m_asyncDataQueue.clear();
+    LogDebug(L"file writer: async access information, max queue length = %lu, pointless loop count = %lu",
+              m_asyncDataQueueLengthMaximum,
+              m_asyncAccessThreadPointlessLoopCount);
   }
 
   HRESULT hr = S_OK;
@@ -596,6 +599,7 @@ bool __cdecl FileWriter::AsyncThreadFunction(void* arg)
 
 HRESULT FileWriter::EnqueueBuffer(CWriteBuffer* buffer, bool isErrorLoggingEnabled)
 {
+  size_t queueSize = 0;
   {
     CEnterCriticalSection lock(m_asyncDataQueueSection);
     if (m_isAsyncDataQueueFull || m_asyncDataQueue.size() >= ASYNC_DATA_QUEUE_LENGTH_LIMIT)
@@ -611,13 +615,17 @@ HRESULT FileWriter::EnqueueBuffer(CWriteBuffer* buffer, bool isErrorLoggingEnabl
     }
 
     m_asyncDataQueue.push_back(buffer);
+    queueSize = m_asyncDataQueue.size();
     if (m_asyncDataQueue.size() > m_asyncDataQueueLengthMaximum)
     {
       m_asyncDataQueueLengthMaximum = m_asyncDataQueue.size();
     }
   }
 
-  m_asyncAccessThread.Wake();
+  if (queueSize == 1)
+  {
+    m_asyncAccessThread.Wake();
+  }
   return S_OK;
 }
 
@@ -631,6 +639,7 @@ void FileWriter::WriteNextAsyncBuffer()
       if (m_asyncDataQueue.size() == 0)
       {
         m_isAsyncDataQueueFull = false;
+        m_asyncAccessThreadPointlessLoopCount++;
         return;
       }
       buffer = m_asyncDataQueue[0];

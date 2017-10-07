@@ -189,6 +189,7 @@ class FileWriter
     bool m_useAsyncAccess;
     CThread m_asyncAccessThread;
     HRESULT m_asyncAccessResult;
+    unsigned long m_asyncAccessThreadPointlessLoopCount;
 
     unsigned long long m_asyncDataOffset;
     vector<CWriteBuffer*> m_asyncDataQueue;
