@@ -250,12 +250,14 @@ void CParserNtt::OnNewSection(const CSection& section)
           {
             recordSet->MarkExpiredRecords(transmissionMedium);
           }
-          if (m_isReady && m_callBack != NULL)
+          if (m_isReady)
           {
             m_isReady = false;
-            m_callBack->OnTableChange(TABLE_ID_NTT);
+            if (m_callBack != NULL)
+            {
+              m_callBack->OnTableChange(TABLE_ID_NTT);
+            }
           }
-          m_isReady = false;
         }
 
         unsigned long baseKey = sectionKey & 0xffffff00;

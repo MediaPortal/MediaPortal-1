@@ -746,11 +746,14 @@ void CParserOpenTv::OnNewSection(unsigned short pid, unsigned char tableId, cons
         {
           m_recordsDescription.MarkExpiredRecords(expiryKey);
         }
-        if (m_isReady && m_callBackGrabber != NULL)
+        if (m_isReady)
         {
-          m_callBackGrabber->OnTableChange(PID_OPENTV_CALL_BACK, TABLE_ID_OPENTV_CALL_BACK);
+          m_isReady = false;
+          if (m_callBackGrabber != NULL)
+          {
+            m_callBackGrabber->OnTableChange(PID_OPENTV_CALL_BACK, TABLE_ID_OPENTV_CALL_BACK);
+          }
         }
-        m_isReady = false;
       }
       else
       {

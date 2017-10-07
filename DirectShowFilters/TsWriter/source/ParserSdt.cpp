@@ -228,9 +228,10 @@ void CParserSdt::OnNewSection(const CSection& section)
 
         if (section.TableId == TABLE_ID_SDT_ACTUAL)
         {
+          isChange = unseenSections->size() == 0;
           seenSections->clear();
           unseenSections->clear();
-          if (m_callBack != NULL)
+          if (isChange && m_callBack != NULL)
           {
             m_callBack->OnTableChange(TABLE_ID_SDT_ACTUAL);
           }

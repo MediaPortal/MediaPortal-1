@@ -247,12 +247,14 @@ void CParserLvct::OnNewSection(const CSection& section, bool isOutOfBandSection)
                   protocolVersion, section.VersionNumber,
                   section.SectionNumber, section.LastSectionNumber);
         m_records.MarkExpiredRecords((section.TableId << 16) | section.TableIdExtension);
-        if (m_isReady && m_callBack != NULL)
+        if (m_isReady)
         {
           m_isReady = false;
-          m_callBack->OnTableChange(section.TableId);
+          if (m_callBack != NULL)
+          {
+            m_callBack->OnTableChange(section.TableId);
+          }
         }
-        m_isReady = false;
       }
 
       unsigned long long baseKey = sectionKey & 0xffffffffffffff00;

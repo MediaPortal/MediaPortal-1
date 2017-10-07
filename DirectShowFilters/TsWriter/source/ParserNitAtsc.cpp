@@ -207,12 +207,14 @@ void CParserNitAtsc::OnNewSection(const CSection& section)
           {
             recordSet->MarkExpiredRecords(transmissionMedium);
           }
-          if (m_isReady && m_callBack != NULL)
+          if (m_isReady)
           {
             m_isReady = false;
-            m_callBack->OnTableChange(TABLE_ID_NIT_ATSC);
+            if (m_callBack != NULL)
+            {
+              m_callBack->OnTableChange(TABLE_ID_NIT_ATSC);
+            }
           }
-          m_isReady = false;
         }
 
         unsigned long baseKey = sectionKey & 0xffffff00;

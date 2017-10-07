@@ -295,9 +295,10 @@ void CParserNitDvb::OnNewSection(const CSection& section)
 
         if (effectiveTableId == TABLE_ID_NIT_DVB_ACTUAL)
         {
+          isChange = unseenSections->size() == 0;
           seenSections->clear();
           unseenSections->clear();
-          if (m_callBack != NULL)
+          if (isChange && m_callBack != NULL)
           {
             m_callBack->OnTableChange(TABLE_ID_NIT_DVB_ACTUAL);
           }

@@ -198,12 +198,14 @@ void CParserEitAtsc::OnNewSection(const CSection& section)
                   GetPid(), sourceId, protocolVersion, section.VersionNumber,
                   section.SectionNumber, section.LastSectionNumber);
         m_records.MarkExpiredRecords(sourceId);
-        if (m_isReady && m_callBack != NULL)
+        if (m_isReady)
         {
           m_isReady = false;
-          m_callBack->OnTableChange(TABLE_ID_EIT_ATSC);
+          if (m_callBack != NULL)
+          {
+            m_callBack->OnTableChange(TABLE_ID_EIT_ATSC);
+          }
         }
-        m_isReady = false;
       }
 
       unsigned long baseKey = sectionKey & 0xffffff00;

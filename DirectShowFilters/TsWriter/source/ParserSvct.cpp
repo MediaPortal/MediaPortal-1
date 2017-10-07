@@ -190,12 +190,14 @@ void CParserSvct::OnNewSection(const CSection& section)
                     protocolVersion, transmissionMedium, tableSubtype, vctId,
                     tableVersionNumber, sectionNumber, lastSectionNumber);
           recordSet->MarkExpiredRecords((transmissionMedium << 16) | vctId);
-          if (m_isReady && m_callBack != NULL)
+          if (m_isReady)
           {
             m_isReady = false;
-            m_callBack->OnTableChange(TABLE_ID_SVCT);
+            if (m_callBack != NULL)
+            {
+              m_callBack->OnTableChange(TABLE_ID_SVCT);
+            }
           }
-          m_isReady = false;
         }
 
         unsigned long baseKey = sectionKey & 0xffffff00;

@@ -1536,11 +1536,14 @@ void CParserEitDvb::OnNewSection(unsigned short pid, unsigned char tableId, cons
                   section.SectionNumber, section.LastSectionNumber,
                   segmentLastSectionNumber, lastTableId);
         service->Events.MarkExpiredRecords(tableId);
-        if (m_isReady && m_callBackGrabber != NULL)
+        if (m_isReady)
         {
-          m_callBackGrabber->OnTableChange(PID_EIT_DVB_CALL_BACK, TABLE_ID_EIT_DVB_CALL_BACK);
+          m_isReady = false;
+          if (m_callBackGrabber != NULL)
+          {
+            m_callBackGrabber->OnTableChange(PID_EIT_DVB_CALL_BACK, TABLE_ID_EIT_DVB_CALL_BACK);
+          }
         }
-        m_isReady = false;
       }
       else
       {
