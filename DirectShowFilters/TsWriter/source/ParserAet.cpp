@@ -189,23 +189,28 @@ void CParserAet::OnTableSeen(unsigned char tableId)
 
 void CParserAet::OnTableComplete(unsigned char tableId)
 {
-  // Careful! Seeing the STT complete doesn't mean we've seen EPG.
   CEnterCriticalSection lock(m_section);
   if (tableId == TABLE_ID_STT_SCTE && !m_isReadyStt)
   {
-    m_isReadyStt = true;
-
     unsigned long systemTime;
+    unsigned char gpsUtcOffset;
     bool isDaylightSavingStateKnown;
     bool isDaylightSaving;
     unsigned char daylightSavingDayOfMonth;
     unsigned char daylightSavingHour;
-    m_systemTimeInfoProvider->GetSystemTimeDetail(systemTime,
-                                                  m_gpsUtcOffset,
-                                                  isDaylightSavingStateKnown,
-                                                  isDaylightSaving,
-                                                  daylightSavingDayOfMonth,
-                                                  daylightSavingHour);
+    if (!m_systemTimeInfoProvider->GetSystemTimeDetail(systemTime,
+                                                        gpsUtcOffset,
+                                                        isDaylightSavingStateKnown,
+                                                        isDaylightSaving,
+                                                        daylightSavingDayOfMonth,
+                                                        daylightSavingHour))
+    {
+      return;
+    }
+
+    // Careful! Seeing the STT complete doesn't mean we've seen EPG.
+    m_gpsUtcOffset = gpsUtcOffset;
+    m_isReadyStt = true;
     if (m_isReadyAet && m_callBackGrabber != NULL)
     {
       m_callBackGrabber->OnTableComplete(PID_AET_CALL_BACK, TABLE_ID_AET_CALL_BACK);
