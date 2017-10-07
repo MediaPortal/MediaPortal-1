@@ -21,7 +21,11 @@
 #pragma once
 #include <ctime>
 #include <DShow.h>    // (media types), IMediaSample, IPin, REFERENCE_TIME
-#include <streams.h>  // CAutoLock, CBaseFilter, CCritSec, CMediaType, CRenderedInputPin
+#include <streams.h>  // (must be included before Ks.h) CAutoLock, CBaseFilter, CCritSec, CMediaType, CRenderedInputPin
+#include <Ks.h>       // (must be included before KsMedia.h)
+#include <KsMedia.h>  // (must be included before bdamedia.h)
+#include <bdatypes.h> // (must be included before bdamedia.h)
+#include <bdamedia.h> // KSDATAFORMAT_SUBTYPE_BDA_MPEG2_TRANSPORT
 #include <WinError.h> // HRESULT
 #include "..\..\shared\FileWriter.h"
 #include "..\..\shared\PacketSync.h"
@@ -34,9 +38,10 @@ using namespace std;
 
 const AMOVIESETUP_MEDIATYPE INPUT_MEDIA_TYPES_TS[] =
 {
-  { &MEDIATYPE_Stream, &MEDIASUBTYPE_MPEG2_TRANSPORT }
+  { &MEDIATYPE_Stream, &MEDIASUBTYPE_MPEG2_TRANSPORT },
+  { &MEDIATYPE_Stream, &KSDATAFORMAT_SUBTYPE_BDA_MPEG2_TRANSPORT }
 };
-const unsigned char INPUT_MEDIA_TYPE_COUNT_TS = 1;
+const unsigned char INPUT_MEDIA_TYPE_COUNT_TS = 2;
 
 
 class CInputPinTs : public CRenderedInputPin, CPacketSync
