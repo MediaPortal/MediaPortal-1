@@ -684,6 +684,7 @@ HRESULT MPMadPresenter::Stopping()
     if (m_pSRCB)
     {
       // nasty, but we have to let it know about our death somehow
+      static_cast<CSubRenderCallback*>(static_cast<ISubRenderCallback*>(m_pSRCB))->SetShutdownSub(m_pShutdown);
       static_cast<CSubRenderCallback*>(static_cast<ISubRenderCallback*>(m_pSRCB))->SetDXRAPSUB(nullptr);
       Log("MPMadPresenter::Stopping() m_pSRCB");
     }
@@ -691,6 +692,7 @@ HRESULT MPMadPresenter::Stopping()
     if (m_pORCB)
     {
       // nasty, but we have to let it know about our death somehow
+      static_cast<COsdRenderCallback*>(static_cast<IOsdRenderCallback*>(m_pORCB))->SetShutdownOsd(m_pShutdown);
       static_cast<COsdRenderCallback*>(static_cast<IOsdRenderCallback*>(m_pORCB))->SetDXRAP(nullptr);
       Log("MPMadPresenter::Stopping() m_pORCB");
     }
