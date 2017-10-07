@@ -514,7 +514,7 @@ HRESULT CDiskRecorder::SetTimeShiftingParameters(unsigned long fileCountMinimum,
     m_timeShiftingParameters.MaximumFileSize = fileSizeBytes - fileSizeAdjustment;
     if (fileSizeAdjustment != 0)
     {
-      WriteLog(L"file size adjusted, adjustment = % bytes, file size = %llu bytes",
+      WriteLog(L"file size adjusted, adjustment = %lld bytes, file size = %llu bytes",
                 fileSizeAdjustment, m_timeShiftingParameters.MaximumFileSize);
     }
     m_timeShiftingParameters.ReservationChunkSize = m_timeShiftingParameters.MaximumFileSize;
@@ -752,6 +752,7 @@ bool CDiskRecorder::IsVideoOrAudioSeen(const CTsHeader& header)
     if (!m_confirmAudioStreams)
     {
       WriteLog(L"start of video and/or audio detected, wait for PCR");
+      CreateFakePmt();
     }
     else if (m_isAudioConfirmed)
     {
@@ -814,6 +815,7 @@ bool CDiskRecorder::ConfirmAudioStreams(PidInfo* pidInfo)
       if (isAudioConfirmed)
       {
         WriteLog(L"all audio streams confirmed");
+        CreateFakePmt();
       }
     }
   }
@@ -831,6 +833,7 @@ bool CDiskRecorder::ConfirmAudioStreams(PidInfo* pidInfo)
   // the output transport stream. The PMT can be updated as necessary if we see
   // them later.
   WriteLog(L"one or more audio streams defined in the original PMT are not actually present");
+  CreateFakePmt();
   m_isAudioConfirmed = true;
 
   // Reset the video/audio start time-stamp to ensure there's a fair chance for
