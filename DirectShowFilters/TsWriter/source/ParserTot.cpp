@@ -123,32 +123,39 @@ void CParserTot::OnNewSection(const CSection& section)
                 pointer, endOfSection, descriptorsLoopLength);
     }
 
+    // Only notify on first reception and for offset changes. Notifying for
+    // system time changes is overly verbose.
+    bool isChangeNotified = false;
     if (m_callBack != NULL && m_systemTime == 0)
     {
       m_callBack->OnTableSeen(TABLE_ID_TOT);
+      isChangeNotified = true;
     }
 
-    bool isChange = false;
+    bool isOffsetChange = false;
     m_records.MarkExpiredRecords(0);
     vector<CRecordLocalTimeOffset*>::const_iterator it = offsets.begin();
     for ( ; it != offsets.end(); it++)
     {
       CRecordLocalTimeOffset* offset = *it;
-      isChange |= m_records.AddOrUpdateRecord((IRecord**)&offset, m_callBack);
+      isOffsetChange |= m_records.AddOrUpdateRecord((IRecord**)&offset, m_callBack);
     }
-    isChange |= (m_records.RemoveExpiredRecords(m_callBack) > 0);
+    isOffsetChange |= (m_records.RemoveExpiredRecords(m_callBack) > 0);
 
-    if (m_callBack != NULL)
+    if (isOffsetChange && m_callBack != NULL && m_systemTime != 0)
     {
-      if (m_systemTime != 0 && isChange)
-      {
-        m_callBack->OnTableChange(TABLE_ID_TOT);
-      }
-
-      m_callBack->OnTableComplete(TABLE_ID_TOT);
+      // Normally OnTableChange() is called before the change is applied. In
+      // this case that doesn't seem practical.
+      m_callBack->OnTableChange(TABLE_ID_TOT);
+      isChangeNotified = true;
     }
 
     m_systemTime = systemTime;
+
+    if (isChangeNotified && m_callBack != NULL)
+    {
+      m_callBack->OnTableComplete(TABLE_ID_TOT);
+    }
   }
   catch (...)
   {

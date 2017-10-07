@@ -160,9 +160,9 @@ void CParserSttScte::OnNewSection(const CSection& section)
                 daylightSavingHour);
     }
 
+    bool isChangeNotified = false;
     if (m_callBack != NULL)
     {
-      bool isChangeNotified = false;
       if (systemTime != m_systemTime)
       {
         if (m_systemTime == 0)
@@ -170,11 +170,12 @@ void CParserSttScte::OnNewSection(const CSection& section)
           m_callBack->OnTableSeen(TABLE_ID_STT_SCTE);
           isChangeNotified = true;
         }
-        else
+        // Notifying for system time changes is overly verbose.
+        /*else
         {
           m_callBack->OnTableChange(TABLE_ID_STT_SCTE);
           isChangeNotified = true;
-        }
+        }*/
         m_callBack->OnSystemTime(systemTime);
       }
       if (gpsUtcOffset != m_gpsUtcOffset)
@@ -202,10 +203,6 @@ void CParserSttScte::OnNewSection(const CSection& section)
                                       daylightSavingDayOfMonth,
                                       daylightSavingHour);
       }
-      if (isChangeNotified)
-      {
-        m_callBack->OnTableComplete(TABLE_ID_STT_SCTE);
-      }
     }
 
     m_systemTime = systemTime;
@@ -214,6 +211,11 @@ void CParserSttScte::OnNewSection(const CSection& section)
     m_isDaylightSaving = isDaylightSaving;
     m_daylightSavingDayOfMonth = daylightSavingDayOfMonth;
     m_daylightSavingHour = daylightSavingHour;
+
+    if (isChangeNotified && m_callBack != NULL)
+    {
+      m_callBack->OnTableComplete(TABLE_ID_STT_SCTE);
+    }
   }
   catch (...)
   {

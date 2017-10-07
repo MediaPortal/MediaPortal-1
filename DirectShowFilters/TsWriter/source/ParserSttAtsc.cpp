@@ -152,9 +152,9 @@ void CParserSttAtsc::OnNewSection(const CSection& section)
                 daylightSavingDayOfMonth, daylightSavingHour);
     }
 
+    bool isChangeNotified = false;
     if (m_callBack != NULL)
     {
-      bool isChangeNotified = false;
       if (systemTime != m_systemTime)
       {
         if (m_systemTime == 0)
@@ -162,11 +162,12 @@ void CParserSttAtsc::OnNewSection(const CSection& section)
           m_callBack->OnTableSeen(TABLE_ID_STT_ATSC);
           isChangeNotified = true;
         }
-        else
+        // Notifying for system time changes is overly verbose.
+        /*else
         {
           m_callBack->OnTableChange(TABLE_ID_STT_ATSC);
           isChangeNotified = true;
-        }
+        }*/
         m_callBack->OnSystemTime(systemTime);
       }
       if (gpsUtcOffset != m_gpsUtcOffset)
@@ -194,10 +195,6 @@ void CParserSttAtsc::OnNewSection(const CSection& section)
                                       daylightSavingDayOfMonth,
                                       daylightSavingHour);
       }
-      if (isChangeNotified)
-      {
-        m_callBack->OnTableComplete(TABLE_ID_STT_ATSC);
-      }
     }
 
     m_systemTime = systemTime;
@@ -205,6 +202,11 @@ void CParserSttAtsc::OnNewSection(const CSection& section)
     m_isDaylightSaving = isDaylightSaving;
     m_daylightSavingDayOfMonth = daylightSavingDayOfMonth;
     m_daylightSavingHour = daylightSavingHour;
+
+    if (isChangeNotified && m_callBack != NULL)
+    {
+      m_callBack->OnTableComplete(TABLE_ID_STT_ATSC);
+    }
   }
   catch (...)
   {
