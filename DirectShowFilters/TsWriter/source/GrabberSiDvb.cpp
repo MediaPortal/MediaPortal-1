@@ -359,7 +359,7 @@ STDMETHODIMP_(bool) CGrabberSiDvb::GetService(unsigned short index,
   {
     batUnavailableInCountryCount = 0;
   }
-  if (m_parserBat.GetService(*originalNetworkId,
+  if (!m_parserBat.GetService(*originalNetworkId,
                               *transportStreamId,
                               *referenceServiceId == 0 ? *serviceId : *referenceServiceId,
                               *freesatChannelId,              // BAT only
@@ -385,6 +385,14 @@ STDMETHODIMP_(bool) CGrabberSiDvb::GetService(unsigned short index,
                               batAvailableInCountryCount,
                               batUnavailableInCountries,      // SDT, BAT; assume scoped
                               batUnavailableInCountryCount))
+  {
+    *logicalChannelNumberCount = 0;
+    *bouquetIdCount = 0;
+    *freesatRegionIdCount = 0;
+    *openTvRegionIdCount = 0;
+    *freesatChannelCategoryIdCount = 0;
+  }
+  else
   {
     // Most of the time we expect to get the LCN and visible in guide flag
     // together from BAT or NIT. Only a few providers put these details in the
@@ -458,7 +466,7 @@ STDMETHODIMP_(bool) CGrabberSiDvb::GetService(unsigned short index,
   {
     batNitTargetRegionIdCount = originalTargetRegionIdCount;
   }
-  if (m_parserNit.GetService(*originalNetworkId,
+  if (!m_parserNit.GetService(*originalNetworkId,
                               *transportStreamId,
                               *referenceServiceId == 0 ? *serviceId : *referenceServiceId,
                               nitFreesatChannelId,
@@ -484,6 +492,11 @@ STDMETHODIMP_(bool) CGrabberSiDvb::GetService(unsigned short index,
                               tempCount,
                               NULL,
                               tempCount))
+  {
+    *networkIdCount = 0;
+    *norDigChannelListIdCount = 0;
+  }
+  else
   {
     // Use values from the NIT if we didn't get values from the BAT. In most
     // cases these fields are expected to come from the BAT and not be present
@@ -513,6 +526,7 @@ STDMETHODIMP_(bool) CGrabberSiDvb::GetService(unsigned short index,
     if (nitLogicalChannelNumberCount > 0)
     {
       *visibleInGuide = nitVisibleInGuide;
+      *logicalChannelNumberCount += nitLogicalChannelNumberCount;
     }
 
     // Add cell availability. Only add cells that aren't in either of the lists
