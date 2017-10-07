@@ -245,15 +245,15 @@ HRESULT MultiFileWriter::Write(unsigned char* data,
   if (dataLength > fileSpace)
   {
     // Complete the current file.
-    unsigned long dataToWrite = (unsigned long)fileSpace - dataLength;
-    if (dataToWrite > 0)
+    unsigned long completeFileDataLength = (unsigned long)fileSpace;
+    if (completeFileDataLength > 0)
     {
-      hr = m_fileData->Write(data, dataToWrite, isErrorLoggingEnabled);
+      hr = m_fileData->Write(data, completeFileDataLength, isErrorLoggingEnabled);
       if (FAILED(hr))
       {
         return hr;
       }
-      m_dataFileSize += dataToWrite;
+      m_dataFileSize += completeFileDataLength;
     }
 
     // Start a new file.
@@ -264,8 +264,8 @@ HRESULT MultiFileWriter::Write(unsigned char* data,
     }
 
     isDataFileChanged = true;
-    data += dataToWrite;
-    dataLength -= dataToWrite;
+    data += completeFileDataLength;
+    dataLength -= completeFileDataLength;
   }
 
   hr = m_fileData->Write(data, dataLength, isErrorLoggingEnabled);
