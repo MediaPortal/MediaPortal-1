@@ -156,13 +156,21 @@ void CParserSdt::OnNewSection(const CSection& section)
         {
           m_records.RemoveExpiredRecords(m_callBack);
         }
-        LogDebug(L"SDT %d: other ready, sections parsed = %llu, service count = %lu",
-                  GetPid(), (unsigned long long)m_seenSectionsOther.size(),
-                  m_records.GetRecordCount());
+
         m_isOtherReady = true;
-        if (m_callBack != NULL)
+        if (m_seenSectionsOther.size() == 0)
         {
-          m_callBack->OnTableComplete(TABLE_ID_SDT_OTHER);
+          LogDebug(L"SDT %d: other not available", GetPid());
+        }
+        else
+        {
+          LogDebug(L"SDT %d: other ready, sections parsed = %llu, service count = %lu",
+                    GetPid(), (unsigned long long)m_seenSectionsOther.size(),
+                    m_records.GetRecordCount());
+          if (m_callBack != NULL)
+          {
+            m_callBack->OnTableComplete(TABLE_ID_SDT_OTHER);
+          }
         }
       }
       return;
@@ -362,7 +370,7 @@ bool CParserSdt::IsReadyActual() const
 bool CParserSdt::IsReadyOther() const
 {
   CEnterCriticalSection lock(m_section);
-  return m_isOtherReady;
+  return m_isOtherReady && IsSeenOther();
 }
 
 void CParserSdt::GetServiceCount(unsigned short& actualOriginalNetworkId,

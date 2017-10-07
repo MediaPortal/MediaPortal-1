@@ -212,13 +212,20 @@ void CParserNitDvb::OnNewSection(const CSection& section)
           effectiveTableId == TABLE_ID_NIT_DVB_OTHER
         )
         {
-          LogDebug(L"%s: other ready, sections parsed = %llu, service count = %lu, transmitter count = %lu",
-                    m_name, (unsigned long long)m_seenSectionsOther.size(),
-                    m_recordsService.GetRecordCount(),
-                    m_recordsTransmitter.GetRecordCount());
-          if (m_callBack != NULL)
+          if (m_seenSectionsOther.size() == 0)
           {
-            m_callBack->OnTableComplete(TABLE_ID_NIT_DVB_OTHER);
+            LogDebug(L"%s: other not available", m_name);
+          }
+          else
+          {
+            LogDebug(L"%s: other ready, sections parsed = %llu, service count = %lu, transmitter count = %lu",
+                      m_name, (unsigned long long)m_seenSectionsOther.size(),
+                      m_recordsService.GetRecordCount(),
+                      m_recordsTransmitter.GetRecordCount());
+            if (m_callBack != NULL)
+            {
+              m_callBack->OnTableComplete(TABLE_ID_NIT_DVB_OTHER);
+            }
           }
         }
         else
@@ -623,7 +630,7 @@ bool CParserNitDvb::IsReadyActual() const
 bool CParserNitDvb::IsReadyOther() const
 {
   CEnterCriticalSection lock(m_section);
-  return m_isOtherReady;
+  return m_isOtherReady && IsSeenOther();
 }
 
 bool CParserNitDvb::GetService(unsigned short originalNetworkId,
