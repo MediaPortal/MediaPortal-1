@@ -51,6 +51,12 @@ namespace MediaPortal.Player
 
     [PreserveSig]
     int OnBitRateChanged(int bitrate);
+
+    [PreserveSig]
+    void OnVideoReceived();
+
+    [PreserveSig]
+    void OnRenderBlack();
   }
 
   [ComVisible(true), ComImport,
@@ -786,7 +792,13 @@ namespace MediaPortal.Player
       //if (GUIGraphicsContext.InVmr9Render) return;
       if (_bMediaTypeChanged)
       {
-        DoGraphRebuild();
+        // Don't do rebuild when it's madVR and if it's different  from LAV codec
+        if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR ||
+            (!string.Equals("LAV Video Decoder", MatchFilters("Video"), StringComparison.InvariantCultureIgnoreCase) ||
+             !string.Equals("LAV Audio Decoder", MatchFilters("Audio"), StringComparison.InvariantCultureIgnoreCase)))
+        {
+          DoGraphRebuild();
+        }
         _ireader.OnGraphRebuild(iChangedMediaTypes);
         _bMediaTypeChanged = false;
       }
@@ -1701,6 +1713,18 @@ namespace MediaPortal.Player
       return 0;
     }
 
+    public void OnVideoReceived()
+    {
+      Log.Debug("TsReaderPlayer: OnVideoReceived() callback");
+      GUIGraphicsContext.VideoReceived();
+    }
+
+    public void OnRenderBlack()
+    {
+      Log.Debug("TsReaderPlayer: RenderBlackImage() callback");
+      GUIGraphicsContext.RenderBlack();
+    }
+
     public int OnRequestAudioChange()
     {
       if (Thread.CurrentThread.Name == "MPMain")
@@ -1821,7 +1845,7 @@ namespace MediaPortal.Player
             Log.Error("Error starting graph: {0}", error.Message);
             return;
           }
-          Log.Info("Reconfigure graph done");
+          Log.Info("TSReaderPlayer: Reconfigure graph done");
         }
       }
     }
@@ -2177,7 +2201,10 @@ namespace MediaPortal.Player
         if (VMR9Util.g_vmr9 != null && filterConfig != null && selection == "Video" && filterConfig.enableCCSubtitles)
         {
           CoreCCPresent = false;
-          CoreCCParserCheck();
+          if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
+          {
+            CoreCCParserCheck();
+          }
         }
         VideoChange = true;
       }

@@ -25,11 +25,10 @@
 #include "mvrInterfaces.h"
 
 // For more details for memory leak detection see the alloctracing.h header
-#include "..\..\alloctracing.h"
+//#include "..\..\alloctracing.h"
 #include "StdString.h"
-#include "../../mpc-hc_subs/src/dsutil/DSUtil.h"
-#include <afxwin.h>
 #include "threads/SystemClock.h"
+#include "gdiplus.h"
 
 const DWORD D3DFVF_VID_FRAME_VERTEX = D3DFVF_XYZRHW | D3DFVF_TEX1;
 
@@ -43,9 +42,44 @@ struct VID_FRAME_VERTEX
   float v;
 };
 
-MPMadPresenter::MPMadPresenter(IVMR9Callback* pCallback, DWORD width, DWORD height, OAHWND parent, IDirect3DDevice9* pDevice, IMediaControl* pMediaControl) :
+int GetEncoderClsid(const WCHAR* format, CLSID* pClsid)
+{
+  UINT  num = 0;          // number of image encoders
+  UINT  size = 0;         // size of the image encoder array in bytes
+
+  Gdiplus::ImageCodecInfo* pImageCodecInfo = NULL;
+
+  Gdiplus::GetImageEncodersSize(&num, &size);
+  if (size == 0)
+    return -1;  // Failure
+
+  pImageCodecInfo = static_cast<Gdiplus::ImageCodecInfo*>(malloc(size));
+  if (pImageCodecInfo == NULL)
+    return -1;  // Failure
+
+  GetImageEncoders(num, size, pImageCodecInfo);
+
+  for (UINT j = 0; j < num; ++j)
+  {
+    if (wcscmp(pImageCodecInfo[j].MimeType, format) == 0)
+    {
+      *pClsid = pImageCodecInfo[j].Clsid;
+      free(pImageCodecInfo);
+      return j;  // Success
+    }
+  }
+
+  free(pImageCodecInfo);
+  return -1;  // Failure
+}
+
+MPMadPresenter::MPMadPresenter(IVMR9Callback* pCallback, int xposition, int yposition, int width, int height, OAHWND parent, IDirect3DDevice9* pDevice, IMediaControl* pMediaControl) :
   CUnknown(NAME("MPMadPresenter"), NULL),
   m_pCallback(pCallback),
+  m_Xposition(0), // for using no Kodi madVR window way comment out this line
+  m_Yposition(0), // for using no Kodi madVR window way comment out this line
+  //m_Xposition(xposition), // for using no Kodi madVR window way uncomment out this line
+  //m_Yposition(yposition), // for using no Kodi madVR window way uncomment out this line
   m_dwGUIWidth(width),
   m_dwGUIHeight(height),
   m_hParent(parent),
@@ -57,6 +91,7 @@ MPMadPresenter::MPMadPresenter(IVMR9Callback* pCallback, DWORD width, DWORD heig
   m_pDevice->GetRenderTarget(0, &m_pSurfaceDevice);
   // Store device surface MP GUI for later
   m_pCallback->RestoreDeviceSurface(reinterpret_cast<LONG>(m_pSurfaceDevice));
+  m_pInitMadVRWindowPositionDone = false;
   Log("MPMadPresenter::Constructor() Store Device Surface");
 }
 
@@ -103,7 +138,7 @@ MPMadPresenter::~MPMadPresenter()
     Log("MPMadPresenter::Destructor() - m_pMad release 2");
 
     // Detroy create madVR window and need to be here to avoid some crash
-    DeInitMadvrWindow();
+    DeInitMadvrWindow(); // for using no Kodi madVR window way comment out this line
 
     Log("MPMadPresenter::Destructor() - instance 0x%x", this);
   }
@@ -164,6 +199,120 @@ void MPMadPresenter::RepeatFrame()
   pOR->OsdRedrawFrame();
 }
 
+void MPMadPresenter::GrabScreenshot()
+{
+  if (!m_pInitMadVRWindowPositionDone || m_pShutdown)
+  {
+    return;
+  }
+
+  try
+  {
+    if (Com::SmartQIPtr<IBasicVideo> m_pBV = m_pMad)
+    {
+      LONG nBufferSize = 0;
+      HRESULT hr = E_NOTIMPL;
+      hr = m_pBV->GetCurrentImage(&nBufferSize, NULL);
+      if (hr != S_OK)
+      {
+        return;
+      }
+      long* ppData = static_cast<long *>(malloc(nBufferSize));
+      hr = m_pBV->GetCurrentImage(&nBufferSize, ppData);
+      if (hr != S_OK || !ppData)
+      {
+        free(ppData);
+        return;
+      }
+      if (ppData)
+      {
+        PBITMAPINFO bi = PBITMAPINFO(ppData);
+        PBITMAPINFOHEADER bih = &bi->bmiHeader;
+        int bpp = bih->biBitCount;
+        if (bpp != 16 && bpp != 24 && bpp != 32)
+        {
+          free(ppData);
+          return;
+        }
+        m_pCallback->GrabMadVrScreenshot(LPVOID(ppData));
+        free(ppData);
+      }
+    }
+  }
+  catch (...)
+  {
+  }
+}
+
+void MPMadPresenter::GrabFrame()
+{
+  if (!m_pInitMadVRWindowPositionDone || m_pShutdown)
+  {
+    return;
+  }
+
+  if (Com::SmartQIPtr<IMadVRFrameGrabber> pMadVrFrame = m_pMad)
+  {
+    LPVOID dibImageBuffer = nullptr;
+    pMadVrFrame->GrabFrame(ZOOM_ENCODED_SIZE, FLAGS_NO_SUBTITLES | FLAGS_NO_ARTIFACT_REMOVAL | FLAGS_NO_IMAGE_ENHANCEMENTS | FLAGS_NO_UPSCALING_REFINEMENTS | FLAGS_NO_HDR_SDR_CONVERSION,
+      CHROMA_UPSCALING_BILINEAR, IMAGE_DOWNSCALING_BILINEAR, IMAGE_UPSCALING_BILINEAR, 0, &dibImageBuffer, nullptr);
+
+    // Send the DIB to C#
+    m_pCallback->GrabMadVrFrame(dibImageBuffer);
+    LocalFree(dibImageBuffer);
+    return;
+
+    try
+    {
+      Gdiplus::GdiplusStartupInput gdiplusStartupInput;
+      ULONG_PTR gdiplusToken;
+      GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, nullptr);
+
+      Gdiplus::Bitmap* bm = Gdiplus::Bitmap::FromBITMAPINFO(reinterpret_cast<BITMAPINFO*>(dibImageBuffer), dibImageBuffer);
+
+      // Get the encoder clsid
+      CLSID encoderClsid;
+      GetEncoderClsid(L"image/png", &encoderClsid);
+
+      // Send the BMP to C#
+      //m_pCallback->GrabMadVrScreenshot(bm);
+
+      //// Save the image
+      //bm->Save(L"master.png", &encoderClsid, nullptr);
+
+      // All GDI+ objects must be destroyed before GdiplusShutdown is called
+      delete bm;
+      LocalFree(dibImageBuffer);
+      Gdiplus::GdiplusShutdown(gdiplusToken);
+      Log("GrabFrame() hr");
+    }
+    catch (...)
+    {
+    }
+  }
+}
+
+void MPMadPresenter::GrabCurrentFrame()
+{
+  //CAutoLock cAutoLock(this);
+
+  if (!m_pInitMadVRWindowPositionDone || m_pShutdown)
+  {
+    return;
+  }
+  if (Com::SmartQIPtr<IMadVRFrameGrabber> pMadVrFrame = m_pMad)
+  {
+    LPVOID dibImageBuffer = nullptr;
+    pMadVrFrame->GrabFrame(ZOOM_ENCODED_SIZE, FLAGS_NO_SUBTITLES | FLAGS_NO_ARTIFACT_REMOVAL | FLAGS_NO_IMAGE_ENHANCEMENTS | FLAGS_NO_UPSCALING_REFINEMENTS | FLAGS_NO_HDR_SDR_CONVERSION,
+      CHROMA_UPSCALING_BILINEAR, IMAGE_DOWNSCALING_BILINEAR, IMAGE_UPSCALING_BILINEAR, 0, &dibImageBuffer, nullptr);
+
+    // Send the DIB to C#
+    m_pCallback->GrabMadVrCurrentFrame(dibImageBuffer);
+    LocalFree(dibImageBuffer);
+    //Log("GrabFrame() hr");
+  }
+}
+
 void MPMadPresenter::InitMadVRWindowPosition()
 {
   if (m_pShutdown)
@@ -172,8 +321,6 @@ void MPMadPresenter::InitMadVRWindowPosition()
     return;
   }
 
-  CAutoLock cAutoLock(this);
-
   // Init created madVR window instance.
   SetDsWndVisible(true);
   if (Com::SmartQIPtr<IVideoWindow> pWindow = m_pMad)
@@ -181,10 +328,12 @@ void MPMadPresenter::InitMadVRWindowPosition()
     pWindow->put_Owner(reinterpret_cast<OAHWND>(m_hWnd));
     pWindow->put_Visible(reinterpret_cast<OAHWND>(m_hWnd));
     pWindow->SetWindowPosition(0, 0, m_dwGUIWidth, m_dwGUIHeight);
+    m_pReInitOSD = true;
+    m_pInitMadVRWindowPositionDone = true;
   }
 }
 
-void MPMadPresenter::MadVr3DSizeRight(uint16_t x, uint16_t y, DWORD width, DWORD height)
+void MPMadPresenter::MadVr3DSizeRight(int x, int y, int width, int height)
 {
   if (m_pMadD3DDev)
   {
@@ -196,7 +345,7 @@ void MPMadPresenter::MadVr3DSizeRight(uint16_t x, uint16_t y, DWORD width, DWORD
   }
 }
 
-void MPMadPresenter::MadVr3DSizeLeft(uint16_t x, uint16_t y, DWORD width, DWORD height)
+void MPMadPresenter::MadVr3DSizeLeft(int x, int y, int width, int height)
 {
   if (m_pMadD3DDev)
   {
@@ -208,12 +357,13 @@ void MPMadPresenter::MadVr3DSizeLeft(uint16_t x, uint16_t y, DWORD width, DWORD 
   }
 }
 
-void MPMadPresenter::MadVrScreenResize(uint16_t x, uint16_t y, DWORD width, DWORD height, bool displayChange)
+void MPMadPresenter::MadVrScreenResize(int x, int y, int width, int height, bool displayChange)
 {
   if (m_pMadD3DDev)
   {
-    Log("%s : done : %d x %d", __FUNCTION__, width, height);
-    SetWindowPos(m_hWnd, 0, 0, 0, width, height, SWP_ASYNCWINDOWPOS);
+    Log("%s : SetWindowPos : %d x %d", __FUNCTION__, width, height);
+    SetWindowPos(m_hWnd, 0, 0, 0, width, height, SWP_ASYNCWINDOWPOS); // for using no Kodi madVR window way comment out this line
+    //SetWindowPos(m_hWnd, 0, x, y, width, height, SWP_ASYNCWINDOWPOS); // for using no Kodi madVR window way uncomment out this line
 
     // Needed to update OSD/GUI when changing directx present parameter on resolution change.
     if (displayChange)
@@ -221,6 +371,7 @@ void MPMadPresenter::MadVrScreenResize(uint16_t x, uint16_t y, DWORD width, DWOR
       m_pReInitOSD = true;
       m_dwGUIWidth = width;
       m_dwGUIHeight = height;
+      Log("%s : done : %d x %d", __FUNCTION__, width, height);
     }
   }
 }
@@ -239,17 +390,16 @@ IBaseFilter* MPMadPresenter::Initialize()
     if (Com::SmartQIPtr<IVideoWindow> pWindow = m_pMad)
     {
       // Create a madVR Window
-      if (InitMadvrWindow(m_hWnd))
+      if (InitMadvrWindow(m_hWnd)) // for using no Kodi madVR window way comment out this line
       {
-        // Code commented out and enable it when testing the non kodi madVR window way
-        //m_hWnd = reinterpret_cast<HWND>(m_hParent);
+        //m_hWnd = reinterpret_cast<HWND>(m_hParent); // for using no Kodi madVR window way uncomment out this line
         Sleep(100);
         pWindow->put_Owner(reinterpret_cast<OAHWND>(m_hWnd));
         pWindow->put_Visible(reinterpret_cast<OAHWND>(m_hWnd));
         //pWindow->put_MessageDrain(reinterpret_cast<OAHWND>(m_hWnd));
         Sleep(100);
         Log("%s : Create DSPlayer window - hWnd: %i", __FUNCTION__, m_hWnd);
-        m_pCallback->DestroyHWnd(m_hWnd);
+        m_pCallback->DestroyHWnd(m_hWnd); // for using no Kodi madVR window way comment out this line
         Log("MPMadPresenter::Initialize() send DestroyHWnd value on C# side");
       }
     }
@@ -313,6 +463,12 @@ STDMETHODIMP MPMadPresenter::CreateRenderer(IUnknown** ppRenderer)
   return S_OK;
 }
 
+STDMETHODIMP MPMadPresenter::SetGrabEvent(HANDLE pGrabEvent)
+{
+  m_pGrabEvent = pGrabEvent;
+  return S_OK;
+}
+
 void MPMadPresenter::EnableExclusive(bool bEnable)
 {
   if (Com::SmartQIPtr<IMadVRCommand> pMadVrCmd = m_pMad)
@@ -359,7 +515,7 @@ void MPMadPresenter::ConfigureMadvr()
 HRESULT MPMadPresenter::Shutdown()
 {
   { // Scope for autolock for the local variable (lock, which when deleted releases the lock)
-    CAutoLock lock(this);
+    //CAutoLock lock(this);
 
     Log("MPMadPresenter::Shutdown() start");
 
@@ -369,7 +525,7 @@ HRESULT MPMadPresenter::Shutdown()
       Log("MPMadPresenter::Shutdown() reset subtitle device");
       m_pCallback->RestoreDeviceSurface(reinterpret_cast<DWORD>(m_pSurfaceDevice));
       Log("MPMadPresenter::Shutdown() RestoreDeviceSurface");
-      m_pCallback->DestroyHWnd(m_hWnd);
+      m_pCallback->DestroyHWnd(m_hWnd); // for using no Kodi madVR window way comment out this line
       Log("MPMadPresenter::Shutdown() send DestroyHWnd on C# side");
       m_pCallback->Release();
       Log("MPMadPresenter::Shutdown() m_pCallback release");
@@ -416,6 +572,8 @@ bool MPMadPresenter::InitMadvrWindow(HWND &hWnd)
 
   int nWidth = m_dwGUIWidth;
   int nHeight = m_dwGUIHeight;
+  int nX = m_Xposition;
+  int nY = m_Yposition;
   m_className = "MediaPortal:DSPlayer";
 
   // Register the windows class
@@ -439,7 +597,7 @@ bool MPMadPresenter::InitMadvrWindow(HWND &hWnd)
   }
   hWnd = CreateWindow(m_className.c_str(), m_className.c_str(),
     WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN,
-    0, 0, nWidth, nHeight,
+    nX, nY, nWidth, nHeight,
     reinterpret_cast<HWND>(m_hParent), NULL, m_hInstance, NULL);
   if (hWnd == nullptr)
   {
@@ -526,6 +684,7 @@ HRESULT MPMadPresenter::Stopping()
     if (m_pSRCB)
     {
       // nasty, but we have to let it know about our death somehow
+      static_cast<CSubRenderCallback*>(static_cast<ISubRenderCallback*>(m_pSRCB))->SetShutdownSub(m_pShutdown);
       static_cast<CSubRenderCallback*>(static_cast<ISubRenderCallback*>(m_pSRCB))->SetDXRAPSUB(nullptr);
       Log("MPMadPresenter::Stopping() m_pSRCB");
     }
@@ -533,6 +692,7 @@ HRESULT MPMadPresenter::Stopping()
     if (m_pORCB)
     {
       // nasty, but we have to let it know about our death somehow
+      static_cast<COsdRenderCallback*>(static_cast<IOsdRenderCallback*>(m_pORCB))->SetShutdownOsd(m_pShutdown);
       static_cast<COsdRenderCallback*>(static_cast<IOsdRenderCallback*>(m_pORCB))->SetDXRAP(nullptr);
       Log("MPMadPresenter::Stopping() m_pORCB");
     }
@@ -625,7 +785,7 @@ HRESULT MPMadPresenter::ClearBackground(LPCSTR name, REFERENCE_TIME frameStart, 
   WORD videoHeight = (WORD)activeVideoRect->bottom - (WORD)activeVideoRect->top;
   WORD videoWidth = (WORD)activeVideoRect->right - (WORD)activeVideoRect->left;
 
-  CAutoLock cAutoLock(this);
+  //CAutoLock cAutoLock(this);
 
   ReinitOSD();
 
@@ -723,7 +883,11 @@ HRESULT MPMadPresenter::RenderOsd(LPCSTR name, REFERENCE_TIME frameStart, RECT* 
   WORD videoHeight = (WORD)activeVideoRect->bottom - (WORD)activeVideoRect->top;
   WORD videoWidth = (WORD)activeVideoRect->right - (WORD)activeVideoRect->left;
 
-  CAutoLock cAutoLock(this);
+  //Log("%s : log activeVideoRect bottom x top : %d x %d", __FUNCTION__, (WORD)activeVideoRect->bottom, (WORD)activeVideoRect->top);
+  //Log("%s : log activeVideoRect right x left : %d x %d", __FUNCTION__, (WORD)activeVideoRect->right, (WORD)activeVideoRect->left);
+  //Log("%s : log for : %d x %d", __FUNCTION__, m_dwHeight, m_dwWidth);
+
+  //CAutoLock cAutoLock(this);
 
   ReinitOSD();
 
@@ -760,13 +924,18 @@ HRESULT MPMadPresenter::RenderOsd(LPCSTR name, REFERENCE_TIME frameStart, RECT* 
   m_dwHeight = (WORD)fullOutputRect->bottom - (WORD)fullOutputRect->top;
   m_dwWidth = (WORD)fullOutputRect->right - (WORD)fullOutputRect->left;
 
+  //Log("%s : log fullOutputRect bottom x top : %d x %d", __FUNCTION__, (WORD)fullOutputRect->bottom, (WORD)fullOutputRect->top);
+  //Log("%s : log fullOutputRect right x left : %d x %d", __FUNCTION__, (WORD)fullOutputRect->right, (WORD)fullOutputRect->left);
+  //Log("%s : log for : %d x %d", __FUNCTION__, m_dwHeight, m_dwWidth);
+
   // Handle GetBackBuffer to be done only 2 frames
   //countFrame++;
   //if (countFrame == firstFrame || countFrame == secondFrame)
   {
+    // For ambilight system but only working for D3D9
     if (SUCCEEDED(hr = m_pMadD3DDev->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &SurfaceMadVr)))
     {
-      if (SUCCEEDED(hr = m_pCallback->RenderFrame(videoWidth, videoHeight, videoWidth, videoHeight, reinterpret_cast<LONG>(SurfaceMadVr))))
+      if (SUCCEEDED(hr = m_pCallback->RenderFrame(m_dwWidth, m_dwHeight, m_dwWidth, m_dwHeight, reinterpret_cast<LONG>(SurfaceMadVr))))
       {
         SurfaceMadVr->Release();
       }
@@ -819,6 +988,11 @@ HRESULT MPMadPresenter::RenderOsd(LPCSTR name, REFERENCE_TIME frameStart, RECT* 
   //// if we don't unlock, OSD will be slow because it will reach the timeout set in SetOSDCallback()
   //m_mpWait.Unlock();
   //m_dsLock.Unlock();
+
+  if (m_pInitMadVRWindowPositionDone)
+  {
+    SetEvent(m_pGrabEvent);
+  }
 
   return uiVisible ? CALLBACK_USER_INTERFACE : CALLBACK_INFO_DISPLAY;
 }
@@ -1045,7 +1219,7 @@ HRESULT MPMadPresenter::SetDevice(IDirect3DDevice9* pD3DDev)
     // Lock madVR thread while Shutdown()
     //CAutoLock lock(&m_dsLock);
 
-    CAutoLock cAutoLock(this);
+    //CAutoLock cAutoLock(this);
 
     Log("MPMadPresenter::SetDevice() device 0x:%x", pD3DDev);
 
@@ -1112,7 +1286,7 @@ HRESULT MPMadPresenter::RenderEx3(REFERENCE_TIME rtStart, REFERENCE_TIME rtStop,
     // Lock madVR thread while Shutdown()
     //CAutoLock lock(&m_dsLock);
 
-    CAutoLock cAutoLock(this);
+    //CAutoLock cAutoLock(this);
 
     //Log("%s", __FUNCTION__);
 
@@ -1155,7 +1329,7 @@ HRESULT MPMadPresenter::RenderEx3(REFERENCE_TIME rtStart, REFERENCE_TIME rtStop,
     m_deviceState.Store();
     SetupMadDeviceState();
 
-    m_pCallback->RenderSubtitle(rtStart, croppedVideoRect.left, croppedVideoRect.top, croppedVideoRect.right, croppedVideoRect.bottom, viewportRect.right, viewportRect.bottom, xOffsetInPixels);
+    m_pCallback->RenderSubtitleEx(rtStart, viewportRect, croppedVideoRect, xOffsetInPixels);
 
     // Commented out but usefull for testing
     //Log("%s : RenderSubtitle : rtStart: %i, croppedVideoRect.left: %d, croppedVideoRect.top: %d, croppedVideoRect.right: %d, croppedVideoRect.bottom: %d", __FUNCTION__, rtStart, croppedVideoRect.left, croppedVideoRect.top, croppedVideoRect.right, croppedVideoRect.bottom);

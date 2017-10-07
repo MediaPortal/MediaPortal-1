@@ -146,6 +146,7 @@ CCritSec m_logFileLock;
 std::queue<std::string> m_logQueue;
 BOOL m_bLoggerRunning;
 HANDLE m_hLogger = NULL;
+HANDLE m_hFrameGrabMadVr = NULL;
 CAMEvent m_EndLoggingEvent;
 
 
@@ -268,6 +269,32 @@ string GetLogLine()
   return ret;
 }
 
+UINT CALLBACK ScreenshotGrabberMadVRThread(void* param)
+{
+  m_madPresenter->GrabScreenshot();
+  return 0;
+}
+
+void StartScreenshotGrabMadVR()
+{
+  //UINT id;
+  //m_hFrameGrabMadVr = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, FrameGrabberMadVRThread, nullptr, 0, &id));
+  //SetThreadPriority(m_hFrameGrabMadVr, THREAD_PRIORITY_BELOW_NORMAL);
+  DWORD tid;
+  CloseHandle(CreateThread(nullptr, 0, reinterpret_cast<LPTHREAD_START_ROUTINE>(ScreenshotGrabberMadVRThread), nullptr, 0, &tid));
+}
+
+//UINT CALLBACK FrameGrabberMadVRThread(void* param)
+//{
+//  m_madPresenter->GrabFrame();
+//  return 0;
+//}
+//
+//void StartFrameGrabMadVR()
+//{
+//  DWORD tid;
+//  CloseHandle(CreateThread(nullptr, 0, reinterpret_cast<LPTHREAD_START_ROUTINE>(FrameGrabberMadVRThread), nullptr, 0, &tid));
+//}
 
 UINT CALLBACK LogThread(void* param)
 {
@@ -906,7 +933,42 @@ double EVRGetDisplayFPS()
   return displayFPS;
 }
 
-BOOL MadInit(IVMR9Callback* callback, DWORD width, DWORD height, DWORD dwD3DDevice, OAHWND parent, IBaseFilter** madFilter, IMediaControl* pMediaControl)
+// madVR frame grabber thread
+bool GrabbingDone = false;
+HANDLE GrabEvent = nullptr;
+HANDLE GrabThread = nullptr;
+
+DWORD WINAPI FrameGrabThread(LPVOID someParameter)
+{
+  while (!GrabbingDone)
+  {
+    WaitForSingleObject(GrabEvent, INFINITE);
+    ResetEvent(GrabEvent);
+    m_madPresenter->GrabFrame(); // here you grab a frame and send it to Ambilight
+    Sleep(10); // TODO
+  }
+  return 0;
+}
+
+void InitFrameGrabbing()
+{
+  GrabbingDone = false;
+  GrabEvent = CreateEvent(nullptr, true, false, nullptr);
+  DWORD tid;
+  GrabThread = CreateThread(nullptr, 0, FrameGrabThread, nullptr, 0, &tid);
+}
+
+void CloseFrameGrabbing()
+{
+  GrabbingDone = true;
+  SetEvent(GrabEvent);
+  WaitForSingleObject(GrabThread, 2000);
+  CloseHandle(GrabThread);
+  CloseHandle(GrabEvent);
+}
+// madVR frame grabber thread end
+
+BOOL MadInit(IVMR9Callback* callback, int xposition, int yposition, int width, int height, DWORD dwD3DDevice, OAHWND parent, IBaseFilter** madFilter, IMediaControl* pMediaControl)
 {
   m_RenderPrefix = _T("mad");
 
@@ -914,13 +976,17 @@ BOOL MadInit(IVMR9Callback* callback, DWORD width, DWORD height, DWORD dwD3DDevi
 
   Log("MPMadDshow::MadInit");
 
-  m_madPresenter = new MPMadPresenter(callback, width, height, parent, m_pDevice, pMediaControl);
+  m_madPresenter = new MPMadPresenter(callback, xposition, yposition, width, height, parent, m_pDevice, pMediaControl);
 
   Com::SmartPtr<IUnknown> pRenderer;
   m_madPresenter->CreateRenderer(&pRenderer);
   m_pVMR9Filter = m_madPresenter->Initialize();
   m_pVMR9Filter = Com::SmartQIPtr<IBaseFilter>(pRenderer).Detach();
-  
+
+  // Start and init frame grabbing for the new method from madVR but we run into performance issue (so disable it for now)
+  //InitFrameGrabbing();
+  m_madPresenter->SetGrabEvent(GrabEvent);
+
   // madVR supports calling IVideoWindow::put_Owner before the pins are connected
   //if (Com::SmartQIPtr<IVideoWindow> pVW = pCAP)
   //    pVW->put_Owner((OAHWND)CDSPlayer::GetDShWnd());
@@ -963,6 +1029,7 @@ void MadStopping()
     Sleep(100);
     m_madPresenter->Stopping();
     //m_madPresenter->m_dsLock.Unlock();
+    CloseFrameGrabbing();
     Log("MPMadDshow::MadStopping done");
   }
   catch (...)
@@ -980,22 +1047,42 @@ void MadVrRepeatFrameSend()
   m_madPresenter->RepeatFrame();
 }
 
+void MadVrGrabFrameSend()
+{
+  // Use threaded grab
+  //StartFrameGrabMadVR();
+
+  // For Auto3D (need to be in MP main thread)
+  //m_madPresenter->GrabFrame();
+}
+
+void MadVrGrabCurrentFrameSend()
+{
+  m_madPresenter->GrabCurrentFrame();
+}
+
+void MadVrGrabScreenshotSend()
+{
+  // Use threaded grab
+  StartScreenshotGrabMadVR();
+}
+
 void MadVrWindowPosition()
 {
   m_madPresenter->InitMadVRWindowPosition();
 }
 
-void MadVr3DRight(uint16_t x, uint16_t y, DWORD width, DWORD height)
+void MadVr3DRight(int x, int y, int width, int height)
 {
   m_madPresenter->MadVr3DSizeRight(x, y, width, height);
 }
 
-void MadVr3DLeft(uint16_t x, uint16_t y, DWORD width, DWORD height)
+void MadVr3DLeft(int x, int y, int width, int height)
 {
   m_madPresenter->MadVr3DSizeLeft(x, y, width, height);
 }
 
-void MadVrScreenResizeForce(uint16_t x, uint16_t y, DWORD width, DWORD height, BOOL displayChange)
+void MadVrScreenResizeForce(int x, int y, int width, int height, BOOL displayChange)
 {
   m_madPresenter->MadVrScreenResize(x, y, width, height, displayChange);
 }

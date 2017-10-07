@@ -239,6 +239,10 @@ namespace MediaPortal.Player.Subtitles
       MpcSubtitles.Render(r.X, r.Y + posY, r.Width, r.Height);*/
     }
 
+    public void RenderEx(Rectangle subsRect, Rectangle frameRect, int xOffsetInPixels)
+    {
+    }
+
     public int GetCount()
     {
       int cnt = ffdshowAPI.SubtitleStreams.Count;
@@ -298,6 +302,12 @@ namespace MediaPortal.Player.Subtitles
           index++;
         }
       }
+    }
+
+    public int SetCurrent3DSubtitle
+    {
+      get { return -1; }
+      set { }
     }
 
     public bool Enable

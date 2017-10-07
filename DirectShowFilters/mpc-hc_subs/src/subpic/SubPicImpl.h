@@ -34,6 +34,7 @@ protected:
     CRect  m_vidrect;
     CSize  m_VirtualTextureSize;
     CPoint m_VirtualTextureTopLeft;
+    SUBTITLE_TYPE	m_eSubtitleType;
 
     /*
 
@@ -95,12 +96,15 @@ public:
 
     STDMETHODIMP SetVirtualTextureSize(const SIZE pSize, const POINT pTopLeft);
     STDMETHODIMP GetSourceAndDest(SIZE* pSize, RECT* pRcSource, RECT* pRcDest, int xOffsetInPixels = 1);
+    STDMETHODIMP GetSourceAndDest(RECT rcWindow, RECT rcVideo, BOOL bPositionRelative, CPoint ShiftPos, RECT* pRcSource, RECT* pRcDest, int xOffsetInPixels, const BOOL bUseSpecialCase) const;
 
     STDMETHODIMP_(REFERENCE_TIME) GetSegmentStart();
     STDMETHODIMP_(REFERENCE_TIME) GetSegmentStop();
     STDMETHODIMP_(void) SetSegmentStart(REFERENCE_TIME rtStart);
     STDMETHODIMP_(void) SetSegmentStop(REFERENCE_TIME rtStop);
 
+    STDMETHODIMP SetType(SUBTITLE_TYPE subtitleType);
+    STDMETHODIMP GetType(SUBTITLE_TYPE* pSubtitleType);
 };
 
 

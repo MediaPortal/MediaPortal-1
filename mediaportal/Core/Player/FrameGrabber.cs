@@ -22,8 +22,10 @@ using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Threading;
+using DirectShowLib;
 using MediaPortal.ExtensionMethods;
 using MediaPortal.GUI.Library;
+using MediaPortal.Player;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 
@@ -41,6 +43,7 @@ namespace MediaPortal
     private bool grabSucceeded = false; // indicates success/failure of framegrabs
     private bool grabSample = false; // flag to indicate that a frame must be grabbed
     private readonly object grabNotifier = new object(); // Wait/Notify object for waiting for the grab to complete
+    private Bitmap FrameResult;
 
     //FrameSource enum for NewFrameHandler 
     public enum FrameSource
@@ -60,6 +63,12 @@ namespace MediaPortal
 
     public event NewFrameHandler OnNewFrame;
     // MP1-4248 : End* Ambilight Capture
+
+    // MP1-4248 :  Start* Line Code for Ambilight System Capture for madVR (Atmolight)
+    public delegate void NewFrameHandlerMadVr(Int16 width, Int16 height, Int16 arWidth, Int16 arHeight, Bitmap pTargetmadVrBmp, FrameSource FrameSource);
+
+    public event NewFrameHandlerMadVr OnNewFrameMadVr;
+    // MP1-4248 : End* Ambilight Capture for madVR
 
     public static FrameGrabber GetInstance()
     {
@@ -81,30 +90,131 @@ namespace MediaPortal
       {
         //Log.Debug("GetCurrentImage called");
 
-        lock (grabNotifier)
+        if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
+            GUIGraphicsContext.Vmr9Active && !FrameGrabberD3D9Enable)
         {
-          grabSucceeded = false;
-          grabSample = true;
-          if (!Monitor.Wait(grabNotifier, 500))
+          lock (grabNotifier)
           {
-            Log.Debug("FrameGrabber: Timed-out waiting for grabbed frame!");
-            return null;
-          }
-
-          if (grabSucceeded)
-          {
-            using (GraphicsStream stream = SurfaceLoader.SaveToStream(ImageFileFormat.Bmp, rgbSurface))
+            if (VMR9Util.g_vmr9 != null)
             {
-              Bitmap b = new Bitmap(Image.FromStream(stream));
+              VMR9Util.g_vmr9.MadVrGrabCurrentFrame();
+              try
+              {
+                if (FrameResult != null)
+                {
+                  FrameResult.SafeDispose();
+                  FrameResult = null;
+                }
+
+                if (GUIGraphicsContext.madVRCurrentFrameBitmap != null)
+                {
+                  FrameResult = new Bitmap(GUIGraphicsContext.madVRCurrentFrameBitmap);
+                  return FrameResult;
+                }
+              }
+              catch
+              {
+                Log.Debug("FrameGrabber: Frame grab catch failed for madVR");
+                return null;
+                // When Bitmap is not yet ready
+              }
+            }
+
+            //////// Part of code used for D3D9 setting in madVR
+            //////lock (grabNotifier)
+            //////{
+            //////  grabSucceeded = false;
+            //////  grabSample = true;
+            //////  if (!Monitor.Wait(grabNotifier, 500))
+            //////  {
+            //////    Log.Debug("FrameGrabber: Timed-out waiting for grabbed frame!");
+            //////    return null;
+            //////  }
+
+            //////  if (grabSucceeded)
+            //////  {
+            //////    try
+            //////    {
+            //////      if (FrameResult != null)
+            //////      {
+            //////        FrameResult.SafeDispose();
+            //////        FrameResult = null;
+            //////      }
+
+            //////      if (GUIGraphicsContext.madVRFrameBitmap != null)
+            //////      {
+            //////        FrameResult = new Bitmap(GUIGraphicsContext.madVRFrameBitmap);
+            //////        return FrameResult;
+            //////      }
+            //////    }
+            //////    catch
+            //////    {
+            //////      Log.Debug("FrameGrabber: Frame grab catch failed for madVR");
+            //////      return null;
+            //////      // When Bitmap is not yet ready
+            //////    }
+            //////  }
+            //////}
+          }
+          // Bitmap not ready return null
+          Log.Debug("FrameGrabber: Frame grab failed for madVR");
+          return null;
+        }
+
+        if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
+            GUIGraphicsContext.Vmr9Active)
+        {
+          Surface backbuffer = null;
+          Bitmap b = null;
+          try
+          {
+            backbuffer = GUIGraphicsContext.DX9DeviceMadVr.GetBackBuffer(0, 0, BackBufferType.Mono);
+            using (var stream = SurfaceLoader.SaveToStream(ImageFileFormat.Bmp, backbuffer))
+            {
+              b = new Bitmap(Image.FromStream(stream));
 
               // IMPORTANT: Closes and disposes the stream
               // If this is not done we get a memory leak!
               stream.Close();
+              stream.Dispose();
+              backbuffer.Dispose();
               return b;
             }
           }
-          Log.Debug("FrameGrabber: Frame grab failed");
-          return null;
+          catch (Exception)
+          {
+            backbuffer?.Dispose();
+            b?.Dispose();
+            Log.Debug("FrameGrabber: Timed-out waiting for grabbed frame!");
+          }
+        }
+        else
+        {
+          lock (grabNotifier)
+          {
+            grabSucceeded = false;
+            grabSample = true;
+            if (!Monitor.Wait(grabNotifier, 500))
+            {
+              Log.Debug("FrameGrabber: Timed-out waiting for grabbed frame!");
+              return null;
+            }
+
+            if (grabSucceeded)
+            {
+              using (GraphicsStream stream = SurfaceLoader.SaveToStream(ImageFileFormat.Bmp, rgbSurface))
+              {
+                Bitmap b = new Bitmap(Image.FromStream(stream));
+
+                // IMPORTANT: Closes and disposes the stream
+                // If this is not done we get a memory leak!
+                stream.Close();
+                return b;
+              }
+            }
+            Log.Debug("FrameGrabber: Frame grab failed");
+            return null;
+          }
         }
       }
       catch (Exception e) // Can occur for example if the video device is lost
@@ -112,7 +222,11 @@ namespace MediaPortal
         Log.Debug(e.ToString());
         return null;
       }
+      // Not image grabbed
+      return null;
     }
+
+    public bool FrameGrabberD3D9Enable { get; set; }
 
     /// <summary>
     /// Suggests that the FrameGrabber releases resources.
@@ -123,6 +237,18 @@ namespace MediaPortal
       {
         rgbSurface.SafeDispose();
         rgbSurface = null;
+      }
+
+      if (GUIGraphicsContext.madVRFrameBitmap != null)
+      {
+        GUIGraphicsContext.madVRFrameBitmap.SafeDispose();
+        GUIGraphicsContext.madVRFrameBitmap = null;
+      }
+
+      if (FrameResult != null)
+      {
+        FrameResult.SafeDispose();
+        FrameResult = null;
       }
     }
 
@@ -162,9 +288,89 @@ namespace MediaPortal
     /// <param name="height"></param>
     /// <param name="arWidth"></param>
     /// <param name="arHeight"></param>
+    /// <param name="pTargetmadVrDib"></param>
+    public void OnFrame(Int16 width, Int16 height, Int16 arWidth, Int16 arHeight, IntPtr pTargetmadVrDib, FrameSource FrameSource)
+    {
+      FrameGrabberD3D9Enable = false;
+      //Dont pass GUI frames to GetCurrentImage() -> VideoModeSwitcher is using it
+      if (FrameSource == FrameGrabber.FrameSource.GUI) return;
+
+      //Log.Debug("PlaneScene: grabSample is true");
+      try
+      {
+        if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
+            GUIGraphicsContext.Vmr9Active)
+        {
+          lock (grabNotifier)
+          {
+            if (GUIGraphicsContext.madVRFrameBitmap != null)
+            {
+              GUIGraphicsContext.madVRFrameBitmap.SafeDispose();
+              GUIGraphicsContext.madVRFrameBitmap = null;
+            }
+
+            // Fill the GUIGraphicsContext.madVRFrameBitmap
+            Util.Utils.GetMadVrBitmapFromDib(pTargetmadVrDib);
+
+            // MP1-4248 :Start* Line Code for Ambilight System Capture (Atmolight)
+            if (OnNewFrameMadVr != null)
+            {
+              try
+              {
+                //raise event to any subcribers for event NewFrameHandler
+                OnNewFrameMadVr(width, height, arWidth, arHeight, GUIGraphicsContext.madVRFrameBitmap, FrameSource);
+              }
+              catch (Exception)
+              {
+              }
+            }
+            // MP1-4248 :End* Ambilight Capture code
+
+            grabSample = false;
+            grabSucceeded = true;
+            Monitor.Pulse(grabNotifier);
+          }
+        }
+      }
+      // The loss of the D3DX device or similar can cause exceptions, catch any such
+      // exception and report failure to GetCurrentImage
+      catch (Exception e)
+      {
+        if (rgbSurface != null)
+        {
+          rgbSurface.SafeDispose(); // get rid of rgbSurface just to make sure
+          rgbSurface = null;
+        }
+        if (GUIGraphicsContext.madVRFrameBitmap != null)
+        {
+          GUIGraphicsContext.madVRFrameBitmap.SafeDispose();
+          GUIGraphicsContext.madVRFrameBitmap = null;
+        }
+        if (FrameResult != null)
+        {
+          FrameResult.SafeDispose();
+          FrameResult = null;
+        }
+        lock (grabNotifier)
+        {
+          grabSucceeded = false;
+          Monitor.Pulse(grabNotifier);
+        }
+        Log.Error(e.ToString());
+      }
+    }
+
+    /// <summary>
+    /// Callback that gives the framegrabber a chance to grab the frame
+    /// </summary>
+    /// <param name="width"></param>
+    /// <param name="height"></param>
+    /// <param name="arWidth"></param>
+    /// <param name="arHeight"></param>
     /// <param name="pSurface"></param>
     public void OnFrame(Int16 width, Int16 height, Int16 arWidth, Int16 arHeight, uint pSurface, FrameSource FrameSource)
     {
+      FrameGrabberD3D9Enable = true;
       // MP1-4248 :Start* Line Code for Ambilight System Capture (Atmolight)
       if (OnNewFrame != null)
       {
@@ -182,15 +388,15 @@ namespace MediaPortal
       //Dont pass GUI frames to GetCurrentImage() -> VideoModeSwitcher is using it
       if (FrameSource == FrameGrabber.FrameSource.GUI) return;
 
-      // Is GetCurrentImage() requesting a frame grab?
-      if (!grabSample || width == 0 || height == 0)
-      {
-        return;
-      }
-
       //Log.Debug("PlaneScene: grabSample is true");
       try
       {
+        // Is GetCurrentImage() requesting a frame grab?
+        if (!grabSample || width == 0 || height == 0)
+        {
+          return;
+        }
+
         // if we havent already allocated a surface or the surface dimensions dont match
         // allocate a new surface to store the grabbed frame in
         if (rgbSurface == null || rgbSurface.Disposed || rgbSurface.Description.Height != height ||
@@ -241,6 +447,16 @@ namespace MediaPortal
         {
           rgbSurface.SafeDispose(); // get rid of rgbSurface just to make sure
           rgbSurface = null;
+        }
+        if (GUIGraphicsContext.madVRFrameBitmap != null)
+        {
+          GUIGraphicsContext.madVRFrameBitmap.SafeDispose();
+          GUIGraphicsContext.madVRFrameBitmap = null;
+        }
+        if (FrameResult != null)
+        {
+          FrameResult.SafeDispose();
+          FrameResult = null;
         }
         lock (grabNotifier)
         {

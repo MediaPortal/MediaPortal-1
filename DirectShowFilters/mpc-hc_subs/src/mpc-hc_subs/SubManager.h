@@ -24,10 +24,12 @@ public:
 	BSTR GetTrackName(int i);
 	int GetCurrent();
 	void SetCurrent(int current);
+  void SetCurrent3DSubtitle(int current);
 	BOOL GetEnable();
 	void SetEnable(BOOL enable);
 	void SetTime(REFERENCE_TIME nsSampleTime);
 	void Render(int x, int y, int width, int height, int xOffsetInPixels);
+  void RenderEx(RECT viewportRect, RECT croppedVideoRect, int xOffsetInPixels, bool posRelativeToFrame);
 	int GetDelay(); 
 	void SetDelay(int delay);
 	bool IsModified() { return m_subresync.IsModified(); };
@@ -82,6 +84,15 @@ private:
 	CAtlArray<CString> m_intNames; //internal sub names
 	CAtlArray<CString> m_intTrackNames; //internal track names
 	CComQIPtr<ISubStream> m_intSubStream; //current internal sub stream
+  int m_iSubpicStereoMode;
 
 	CSubresync m_subresync;
+
+  enum {
+    SUBPIC_STEREO_NONE = 0,
+    SUBPIC_STEREO_SIDEBYSIDE,
+    SUBPIC_STEREO_TOPANDBOTTOM,
+  };
+
+#define DefaultStereoOffsetInPixels 4
 };

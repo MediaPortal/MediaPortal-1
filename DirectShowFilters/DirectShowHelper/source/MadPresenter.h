@@ -48,6 +48,7 @@ class MPMadPresenter : public CUnknown, public CCritSec
   class COsdRenderCallback : public CUnknown, public IOsdRenderCallback, public CCritSec
   {
     MPMadPresenter* m_pDXRAP;
+    bool m_pShutdownOsd = false;
 
   public: COsdRenderCallback(MPMadPresenter* pDXRAP) : CUnknown(_T("COsdRender"), NULL) , m_pDXRAP(pDXRAP) {}
 
@@ -65,22 +66,39 @@ class MPMadPresenter : public CUnknown, public CCritSec
       m_pDXRAP = pDXRAP;
     }
 
+    void SetShutdownOsd(bool pShutdownOsd)
+    {
+      m_pShutdownOsd = pShutdownOsd;
+    }
+
     // IOsdRenderCallback
 
     STDMETHODIMP ClearBackground(LPCSTR name, REFERENCE_TIME frameStart, RECT *fullOutputRect, RECT *activeVideoRect)
     {
+      if (m_pShutdownOsd)
+      {
+        return S_OK;
+      }
       CAutoLock cAutoLock(this);
       return m_pDXRAP ? m_pDXRAP->ClearBackground(name, frameStart, fullOutputRect, activeVideoRect) : E_UNEXPECTED;
     }
 
     STDMETHODIMP RenderOsd(LPCSTR name, REFERENCE_TIME frameStart, RECT *fullOutputRect, RECT *activeVideoRect)
     {
+      if (m_pShutdownOsd)
+      {
+        return S_OK;
+      }
       CAutoLock cAutoLock(this);
       return m_pDXRAP ? m_pDXRAP->RenderOsd(name, frameStart, fullOutputRect, activeVideoRect) : E_UNEXPECTED;
     }
 
     STDMETHODIMP SetDevice(IDirect3DDevice9* pD3DDev)
     {
+      if (m_pShutdownOsd)
+      {
+        return S_OK;
+      }
       CAutoLock cAutoLock(this);
       return m_pDXRAP ? m_pDXRAP->SetDeviceOsd(pD3DDev) : E_UNEXPECTED;
     }
@@ -89,6 +107,7 @@ class MPMadPresenter : public CUnknown, public CCritSec
   class CSubRenderCallback : public CUnknown, public ISubRenderCallback4, public CCritSec
   {
     MPMadPresenter* m_pDXRAPSUB;
+    bool m_pShutdownSub = false;
 
     public: CSubRenderCallback(MPMadPresenter* pDXRAPSUB) : CUnknown(_T("CSubRender"), NULL) , m_pDXRAPSUB(pDXRAPSUB) {}
 
@@ -106,34 +125,59 @@ class MPMadPresenter : public CUnknown, public CCritSec
       m_pDXRAPSUB = pDXRAPSUB;
     }
 
+    void SetShutdownSub(bool pShutdownSub)
+    {
+      m_pShutdownSub = pShutdownSub;
+    }
+
     // ISubRenderCallback
 
     STDMETHODIMP SetDevice(IDirect3DDevice9* pD3DDev)
     {
+      if (m_pShutdownSub)
+      {
+        return S_OK;
+      }
       CAutoLock cAutoLock(this);
       return m_pDXRAPSUB ? m_pDXRAPSUB->SetDevice(pD3DDev) : E_UNEXPECTED;
     }
 
     STDMETHODIMP Render(REFERENCE_TIME rtStart, int left, int top, int right, int bottom, int width, int height)
     {
+      if (m_pShutdownSub)
+      {
+        return S_OK;
+      }
       CAutoLock cAutoLock(this);
       return m_pDXRAPSUB ? m_pDXRAPSUB->Render(rtStart, left, top, right, bottom, width, height) : E_UNEXPECTED;
     }
 
     STDMETHODIMP RenderEx(REFERENCE_TIME frameStart, REFERENCE_TIME frameStop, REFERENCE_TIME avgTimePerFrame, int left, int top, int right, int bottom, int width, int height)
     {
+      if (m_pShutdownSub)
+      {
+        return S_OK;
+      }
       CAutoLock cAutoLock(this);
       return m_pDXRAPSUB ? m_pDXRAPSUB->Render(frameStart, left, top, right, bottom, width, height) : E_UNEXPECTED;
     }
 
     STDMETHODIMP RenderEx2(REFERENCE_TIME frameStart, REFERENCE_TIME frameStop, REFERENCE_TIME avgTimePerFrame, RECT croppedVideoRect, RECT originalVideoRect, RECT viewportRect, const double videoStretchFactor = 1.0)
     {
+      if (m_pShutdownSub)
+      {
+        return S_OK;
+      }
       CAutoLock cAutoLock(this);
       return m_pDXRAPSUB ? m_pDXRAPSUB->Render(frameStart, croppedVideoRect.left, croppedVideoRect.top, croppedVideoRect.right, croppedVideoRect.bottom, viewportRect.top, viewportRect.right) : E_UNEXPECTED;
     }
 
     STDMETHODIMP RenderEx3(REFERENCE_TIME frameStart, REFERENCE_TIME frameStop, REFERENCE_TIME avgTimePerFrame, RECT croppedVideoRect, RECT originalVideoRect, RECT viewportRect, const double videoStretchFactor = 1.0, int xOffsetInPixels = 0, DWORD flags = 0)
     {
+      if (m_pShutdownSub)
+      {
+        return S_OK;
+      }
       CAutoLock cAutoLock(this);
       return m_pDXRAPSUB ? m_pDXRAPSUB->RenderEx3(std::move(frameStart), std::move(frameStop), std::move(avgTimePerFrame), std::move(croppedVideoRect), std::move(originalVideoRect), std::move(viewportRect), std::move(videoStretchFactor), xOffsetInPixels) : E_UNEXPECTED;
     }
@@ -141,7 +185,7 @@ class MPMadPresenter : public CUnknown, public CCritSec
 
   public:
 
-    MPMadPresenter(IVMR9Callback* pCallback, DWORD width, DWORD height, OAHWND parent, IDirect3DDevice9* pDevice, IMediaControl* pMediaControl);
+    MPMadPresenter(IVMR9Callback* pCallback, int xposition, int yposition, int width, int height, OAHWND parent, IDirect3DDevice9* pDevice, IMediaControl* pMediaControl);
     ~MPMadPresenter();
 
     // XBMC
@@ -152,10 +196,13 @@ class MPMadPresenter : public CUnknown, public CCritSec
     void InitializeOSD();
     void SetMadVrPaused(bool paused);
     void RepeatFrame();
+    void GrabFrame();
+    void GrabCurrentFrame();
+    void GrabScreenshot();
     void InitMadVRWindowPosition();
-    void MadVr3DSizeRight(uint16_t x, uint16_t y, DWORD width, DWORD height);
-    void MadVr3DSizeLeft(uint16_t x, uint16_t y, DWORD width, DWORD height);
-    void MadVrScreenResize(uint16_t x, uint16_t y, DWORD width, DWORD height, bool displayChange);
+    void MadVr3DSizeRight(int x, int y, int width, int height);
+    void MadVr3DSizeLeft(int x, int y, int width, int height);
+    void MadVrScreenResize(int x, int y, int width, int height, bool displayChange);
     void MadVr3D(bool Enable);
     HRESULT Shutdown();
     HRESULT Stopping();
@@ -169,6 +216,7 @@ class MPMadPresenter : public CUnknown, public CCritSec
     bool InitMadvrWindow(HWND &hWnd);
     void DeInitMadvrWindow();
     HINSTANCE m_hInstance;
+    bool m_pInitMadVRWindowPositionDone = false;
     #if !defined(NPT_POINTER_TO_LONG)
     #define NPT_POINTER_TO_LONG(_p) ((long)(_p))
     #endif
@@ -186,6 +234,8 @@ class MPMadPresenter : public CUnknown, public CCritSec
     STDMETHOD(RenderEx2)(REFERENCE_TIME frameStart, REFERENCE_TIME frameStop, REFERENCE_TIME avgTimePerFrame, RECT croppedVideoRect, RECT originalVideoRect, RECT viewportRect, const double videoStretchFactor = 1.0);
     // ISubRenderCallback4
     STDMETHOD(RenderEx3)(REFERENCE_TIME frameStart, REFERENCE_TIME frameStop, REFERENCE_TIME avgTimePerFrame, RECT croppedVideoRect, RECT originalVideoRect, RECT viewportRect, const double videoStretchFactor = 1.0, int xOffsetInPixels = 0, DWORD flags = 0);
+    // Frame Grabbing
+    STDMETHODIMP SetGrabEvent(HANDLE pGrabEvent);
 
     virtual void EnableExclusive(bool bEnable);
 
@@ -194,6 +244,7 @@ class MPMadPresenter : public CUnknown, public CCritSec
     bool m_pReInitOSD = false;
     IVMR9Callback* m_pCallback = nullptr;
     CCritSec m_dsLock;
+    HANDLE m_pGrabEvent;
 
   private:
     void RenderToTexture(IDirect3DTexture9* pTexture);
@@ -227,6 +278,8 @@ class MPMadPresenter : public CUnknown, public CCritSec
 
     DWORD m_dwGUIWidth = 0;
     DWORD m_dwGUIHeight = 0;
+    int m_Xposition = 0;
+    int m_Yposition = 0;
 
     DWORD m_dwWidth = 0;
     DWORD m_dwHeight = 0;

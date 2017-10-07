@@ -715,6 +715,14 @@ namespace MediaPortal.Player
 
           if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
           {
+            if (GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.SideBySideTo2D)
+            {
+              rDest.Width = rDest.Width*2;
+            }
+            if (GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.TopAndBottomTo2D)
+            {
+              rDest.Height = rDest.Height*2;
+            }
             basicVideo.SetDestinationPosition(rDest.Left, rDest.Top, rDest.Width, rDest.Height);
           }
           else

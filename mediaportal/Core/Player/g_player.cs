@@ -1537,7 +1537,7 @@ namespace MediaPortal.Player
 
         // back to previous Windows if we are only in video fullscreen to do a proper release when next item is music only
         if (((GUIWindow.Window) (Enum.Parse(typeof (GUIWindow.Window), GUIWindowManager.ActiveWindow.ToString())) ==
-             GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO) && !MediaInfo.hasVideo && type == MediaType.Music)
+             GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO) && (MediaInfo != null && !MediaInfo.hasVideo) && type == MediaType.Music)
         {
           GUIWindowManager.ShowPreviousWindow();
         }
@@ -3949,17 +3949,21 @@ namespace MediaPortal.Player
                 // send C++ displayChange
                 if (!GUIGraphicsContext.ForceMadVRRefresh3D)
                 {
-                  VMR9Util.g_vmr9?.MadVrScreenResize(0, 0, client.Width, client.Height, true);
+                  VMR9Util.g_vmr9?.MadVrScreenResize(GUIGraphicsContext.form.Location.X, GUIGraphicsContext.form.Location.Y, client.Width, client.Height, true);
                 }
                 else
                 {
                   // Changed the false to true, need to figure out why regression is present when it's false
-                  VMR9Util.g_vmr9?.MadVrScreenResize(0, 0, client.Width, client.Height, true);
+                  VMR9Util.g_vmr9?.MadVrScreenResize(GUIGraphicsContext.form.Location.X, GUIGraphicsContext.form.Location.Y, client.Width, client.Height, true);
                   GUIGraphicsContext.ForceMadVRRefresh3D = false;
                 }
                 GUIGraphicsContext.NoneDone = false;
                 GUIGraphicsContext.TopAndBottomDone = false;
                 GUIGraphicsContext.SideBySideDone = false;
+                GUIGraphicsContext.SBSLeftDone = false;
+                GUIGraphicsContext.SBSRightDone = false;
+                GUIGraphicsContext.TABTopDone = false;
+                GUIGraphicsContext.TABBottomDone = false;
                 Log.Debug("g_player VideoWindowChanged() resize OSD/Screen when resolution change for madVR");
 
                 // Refresh madVR
@@ -3970,7 +3974,7 @@ namespace MediaPortal.Player
                      GUIGraphicsContext.InVmr9Render && GUIGraphicsContext.ForceMadVRRefresh3D)
             {
               Size client = GUIGraphicsContext.form.ClientSize;
-              VMR9Util.g_vmr9?.MadVrScreenResize(0, 0, client.Width, client.Height, false);
+              VMR9Util.g_vmr9?.MadVrScreenResize(GUIGraphicsContext.form.Location.X, GUIGraphicsContext.form.Location.Y, client.Width, client.Height, false);
               GUIGraphicsContext.NoneDone = false;
               GUIGraphicsContext.TopAndBottomDone = false;
               GUIGraphicsContext.SideBySideDone = false;

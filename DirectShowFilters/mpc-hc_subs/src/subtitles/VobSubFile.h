@@ -149,6 +149,8 @@ public:
     STDMETHODIMP_(bool) IsAnimated(POSITION pos);
     STDMETHODIMP Render(SubPicDesc& spd, REFERENCE_TIME rt, double fps, RECT& bbox);
 
+    STDMETHODIMP_(SUBTITLE_TYPE) GetType() { return ST_VOBSUB; };
+
     // IPersist
     STDMETHODIMP GetClassID(CLSID* pClassID);
 
@@ -191,6 +193,8 @@ public:
     STDMETHODIMP_(REFERENCE_TIME) GetStop(POSITION pos, double fps);
     STDMETHODIMP_(bool) IsAnimated(POSITION pos);
     STDMETHODIMP Render(SubPicDesc& spd, REFERENCE_TIME rt, double fps, RECT& bbox);
+
+    STDMETHODIMP_(SUBTITLE_TYPE) GetType() { return ST_VOBSUB; };
 
     // IPersist
     STDMETHODIMP GetClassID(CLSID* pClassID);

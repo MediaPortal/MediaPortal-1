@@ -27,6 +27,7 @@ using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Windows.Forms;
+using DirectShowLib;
 using MediaPortal.Configuration;
 using MediaPortal.Player;
 using MediaPortal.Profile;
@@ -387,6 +388,10 @@ namespace MediaPortal.GUI.Library
 
     public static List<Texture> LastFrames { get; set; }
     public static int LastFramesIndex;
+    public static bool SBSLeftDone;
+    public static bool SBSRightDone;
+    public static bool TABTopDone;
+    public static bool TABBottomDone;
     public static int Convert2Dto3DSkewFactor { get; set; }
 
     public enum eRender3DModeHalf { None, SBSLeft, SBSRight, TABTop, TABBottom };
@@ -1082,10 +1087,14 @@ namespace MediaPortal.GUI.Library
           if (GUIGraphicsContext.ForceMadVRRefresh)
           {
             Size client = GUIGraphicsContext.form.ClientSize;
-            VMR9Util.g_vmr9?.MadVrScreenResize(0, 0, client.Width, client.Height, false);
+            VMR9Util.g_vmr9?.MadVrScreenResize(GUIGraphicsContext.form.Location.X, GUIGraphicsContext.form.Location.Y, client.Width, client.Height, false);
             GUIGraphicsContext.NoneDone = false;
             GUIGraphicsContext.TopAndBottomDone = false;
             GUIGraphicsContext.SideBySideDone = false;
+            GUIGraphicsContext.SBSLeftDone = false;
+            GUIGraphicsContext.SBSRightDone = false;
+            GUIGraphicsContext.TABTopDone = false;
+            GUIGraphicsContext.TABBottomDone = false;
           }
         }
       }
@@ -1827,7 +1836,18 @@ namespace MediaPortal.GUI.Library
     public static bool ForceMadVRRefresh { get; set; }
     public static bool ForceMadVRRefresh3D { get; set; }
     public static bool ForceMadVRFirstStart { get; set; }
+    public static bool BlurayMenu { get; set; }
     public static bool InitMadVRWindowPosition { get; set; }
+    public static IntPtr madVRDibBuffer { get; set; }
+    public static bool RestoreGuiForMadVrDone { get; set; }
+    internal static Bitmap madVRFrameBitmap { get; set; }
+    internal static Bitmap madVRCurrentFrameBitmap { get; set; }
+
+
+    public static bool WorkerThreadStart { get; set; }
+    public static bool Render3DModeHalfDone { get; set; }
+
+    //public static IntPtr madVRDIB { get; set; }
 
     /// <summary>
     /// Enable/Disable bypassing of UI Calibration transforms

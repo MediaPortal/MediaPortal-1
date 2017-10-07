@@ -1,4 +1,4 @@
-#region Copyright (C) 2005-2013 Team MediaPortal
+﻿#region Copyright (C) 2005-2013 Team MediaPortal
 
 // Copyright (C) 2005-2013 Team MediaPortal
 // http://www.team-mediaportal.com
@@ -1652,11 +1652,8 @@ public class MediaPortalApp : D3D, IRender
 
         // handle device changes
         case WM_DEVICECHANGE:
-          if (Windowed || !_ignoreFullscreenResolutionChanges)
-          {
-            OnDeviceChange(ref msg);
-            PluginManager.WndProc(ref msg);
-          }
+          OnDeviceChange(ref msg);
+          PluginManager.WndProc(ref msg);
           break;
 
         case WM_QUERYENDSESSION:
@@ -4383,13 +4380,18 @@ public class MediaPortalApp : D3D, IRender
               SurfaceLoader.Save(fileName + ".png", ImageFileFormat.Png, backbuffer);
               backbuffer.Dispose();
             }
-            else if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && GUIGraphicsContext.InVmr9Render)
+            else if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
+                     GUIGraphicsContext.InVmr9Render)
             {
-              if (GUIGraphicsContext.DX9DeviceMadVr != null)
+              //if (VMR9Util.g_vmr9 != null)
+              //{
+              //  VMR9Util.g_vmr9.GrabScreenshot();
+              //  return;
+              //}
+
+              if (VMR9Util.g_vmr9 != null)
               {
-                Surface backbuffer = GUIGraphicsContext.DX9DeviceMadVr.GetBackBuffer(0, 0, BackBufferType.Mono);
-                SurfaceLoader.Save(fileName + ".png", ImageFileFormat.Png, backbuffer);
-                backbuffer.Dispose();
+                VMR9Util.g_vmr9.MadVrGrabScreenshot();
               }
             }
             else
@@ -4416,7 +4418,7 @@ public class MediaPortalApp : D3D, IRender
 
         case Action.ActionType.ACTION_MADVR_SCREEN_REFRESH:
           // We need to do a refresh of screen when using madVR only if resolution screen has change during playback
-          if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && NeedRecreateSwapChain)
+          if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && (NeedRecreateSwapChain || Windowed))
           {
             RecreateSwapChain(false);
             Log.Debug("Main: recreate swap chain for madVR done");
