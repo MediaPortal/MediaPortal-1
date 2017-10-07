@@ -100,6 +100,14 @@ HRESULT CMuxInputPin::CheckConnect(IPin* receivePin)
 
 HRESULT CMuxInputPin::CheckMediaType(const CMediaType* mediaType)
 {
+  /*const GUID& mt = mediaType->majortype;
+  const GUID& st = mediaType->subtype;
+  LogDebug(L"input: pin %hhu check media type, major type = %08x-%04hx-%04hx-%02hhx%02hhx-%02hhx%02hhx%02hhx%02hhx%02hhx%02hhx, sub type = %08x-%04hx-%04hx-%02hhx%02hhx-%02hhx%02hhx%02hhx%02hhx%02hhx%02hhx",
+            m_pinId, mt.Data1, mt.Data2, mt.Data3, mt.Data4[0], mt.Data4[1],
+            mt.Data4[2], mt.Data4[3], mt.Data4[4], mt.Data4[5], mt.Data4[6],
+            mt.Data4[7], st.Data1, st.Data2, st.Data3, st.Data4[0],
+            st.Data4[1], st.Data4[2], st.Data4[3], st.Data4[4], st.Data4[5],
+            st.Data4[6], st.Data4[7]);*/
   unsigned char mediaTypeCount = INPUT_MEDIA_TYPE_COUNT;
   if (!m_isRdsConnectionAllowed)
   {
