@@ -44,7 +44,7 @@ CThread::~CThread()
 bool CThread::Start(unsigned long frequency, bool (*function)(void*), void* context)
 {
   LogDebug(L"thread: start");
-  m_wakeEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
+  m_wakeEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
   if (m_wakeEvent == NULL)
   {
     LogDebug(L"thread: failed to create wake event, error = %lu",
@@ -52,6 +52,7 @@ bool CThread::Start(unsigned long frequency, bool (*function)(void*), void* cont
     return false;
   }
 
+  m_wakeCount = 0;
   m_stopSignal = false;
   m_frequency = frequency;
   m_function = function;
@@ -84,6 +85,7 @@ bool CThread::Wake()
               GetLastError());
     return false;
   }
+  m_wakeCount++;
   return true;
 }
 
@@ -111,23 +113,38 @@ void CThread::Stop()
 
 void __cdecl CThread::ThreadFunction(void* arg)
 {
-  LogDebug(L"thread: running");
+  unsigned long threadId = GetCurrentThreadId();
+  LogDebug(L"thread: running, ID = %lu", threadId);
   CThread* thread = (CThread*)arg;
-  bool (*function)(void*) = thread->m_function;
-  void* context = thread->m_context;
+  unsigned long loopCount = 0;
+  unsigned long signalledCount = 0;
   while (true)
   {
+    loopCount++;
+
     DWORD result = WaitForSingleObject(thread->m_wakeEvent,
                                         thread->m_frequency);
+    if (result == 0)
+    {
+      signalledCount++;
+    }
+    if (loopCount == 0)
+    {
+      signalledCount = 0;
+      thread->m_wakeCount = 0;
+    }
+
     if (thread->m_stopSignal)
     {
-      LogDebug(L"thread: stopping");
+      LogDebug(L"thread: stopping, ID = %lu, loop count = %lu, wake count = %lu, signalled count = %lu",
+                threadId, loopCount, thread->m_wakeCount, signalledCount);
       return;
     }
 
     if (!(thread->m_function)(thread->m_context))
     {
-      LogDebug(L"thread: finished");
+      LogDebug(L"thread: finished, ID = %lu, loop count = %lu, wake count = %lu, signalled count = %lu",
+                threadId, loopCount, thread->m_wakeCount, signalledCount);
       thread->m_stopSignal = true;
       if (thread->m_wakeEvent != NULL)
       {

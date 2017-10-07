@@ -37,6 +37,7 @@ class CThread
 
     HANDLE m_thread;
     HANDLE m_wakeEvent;
+    unsigned long m_wakeCount;
     bool m_stopSignal;
     unsigned long m_frequency;    // unit = ms
     bool (*m_function)(void* context);
