@@ -22,17 +22,18 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using DirectShowLib;
-using TvLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer;
+using TvDatabase;
 using TvLibrary.Implementations.DVB;
 using TvLibrary.Implementations.Helper;
-using TvDatabase;
+using TvLibrary.Interfaces;
 
 namespace TvLibrary.Implementations
 {
   /// <summary>
   /// Base class for all tv cards
   /// </summary>
-  public abstract class TvCardBase
+  public abstract class TvCardBase : IObserver
   {
     #region events
 
@@ -806,5 +807,124 @@ namespace TvLibrary.Implementations
     public virtual void RegisterEpgEventListener(IEpgEvents eventListener)
     {
     }
+
+    #region IObserver members
+
+    protected byte[] _cat = null;
+    internal Dictionary<ushort, PmtDetail> _pmt = new Dictionary<ushort, PmtDetail>();   // program number -> PMT
+    protected object _pmtLock = new object();
+
+    internal class PmtDetail
+    {
+      public ushort ProgramNumber;
+      public ushort PmtPid;
+      public bool IsRunning;
+      public byte[] Pmt;
+      public ushort PmtBufferSize;
+
+      public PmtDetail()
+      {
+        ProgramNumber = 0;
+        PmtPid = 0;
+        IsRunning = true;
+        Pmt = null;
+        PmtBufferSize = 0;
+      }
+    }
+
+    internal void TriggerPmtAndCatCallBacks(int subChannelId)
+    {
+      BaseSubChannel subChannel;
+      if (_mapSubChannels.TryGetValue(subChannelId, out subChannel))
+      {
+        var dvbSubChannel = subChannel as TvDvbChannel;
+        if (dvbSubChannel != null)
+        {
+          lock (_pmtLock)
+          {
+            foreach (var detail in _pmt.Values)
+            {
+              if (!detail.IsRunning || detail.Pmt != null)
+              {
+                dvbSubChannel.OnPmtReceived(detail);
+              }
+            }
+          }
+
+          if (_cat != null)
+          {
+            dvbSubChannel.OnCaReceived();
+          }
+        }
+      }
+    }
+
+    public void OnProgramAssociationTable(ushort transportStreamId, ushort networkPid, ushort programCount)
+    {
+    }
+
+    public void OnConditionalAccessTable(byte[] cat, ushort catBufferSize)
+    {
+      _cat = cat;
+
+      foreach (var subChannel in _mapSubChannels.Values)
+      {
+        var dvbSubChannel = subChannel as TvDvbChannel;
+        if (dvbSubChannel != null)
+        {
+          dvbSubChannel.OnCatReceived(cat);
+        }
+      }
+    }
+
+    public void OnProgramDetail(ushort programNumber, ushort pmtPid, bool isRunning, byte[] pmt, ushort pmtBufferSize)
+    {
+      if (pmt == null || pmtBufferSize == 0)
+      {
+        return;
+      }
+
+      PmtDetail detail;
+      lock (_pmtLock)
+      {
+        if (!_pmt.TryGetValue(programNumber, out detail))
+        {
+          detail = new PmtDetail();
+          detail.ProgramNumber = programNumber;
+          _pmt.Add(programNumber, detail);
+        }
+
+        detail.PmtPid = pmtPid;
+        detail.IsRunning = isRunning;
+        detail.Pmt = pmt;
+        detail.PmtBufferSize = pmtBufferSize;
+      }
+
+      if (!isRunning || pmt != null)
+      {
+        foreach (var subChannel in _mapSubChannels.Values)
+        {
+          var dvbSubChannel = subChannel as TvDvbChannel;
+          if (dvbSubChannel != null)
+          {
+            dvbSubChannel.OnPmtReceived(detail);
+          }
+        }
+      }
+    }
+
+    public void OnPidEncryptionStateChange(ushort pid, EncryptionState state)
+    {
+    }
+
+    public void OnPidsRequired(ushort[] pids, byte pidCount, PidUsage usage)
+    {
+    }
+
+    public void OnPidsNotRequired(ushort[] pids, byte pidCount, PidUsage usage)
+    {
+    }
+
+    #endregion
   }
 }

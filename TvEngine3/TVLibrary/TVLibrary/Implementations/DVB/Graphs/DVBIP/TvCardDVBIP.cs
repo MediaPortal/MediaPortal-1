@@ -237,10 +237,11 @@ namespace TvLibrary.Implementations.DVB
 
         _mapSubChannels[subChannelId].OnBeforeTune();
 
-        if (_interfaceEpgGrabber != null)
+        /*if (_interfaceEpgGrabber != null)
         {
           _interfaceEpgGrabber.Reset();
-        }
+        }*/
+        StopEpgGrabbing();
 
         Log.Log.WriteFile("dvb:Submit tunerequest calling put_TuneRequest");
         _lastSignalUpdate = DateTime.MinValue;

@@ -28,7 +28,7 @@ namespace TvLibrary.Implementations.DVB
   /// <summary>
   /// Class for DVBIP scanning
   /// </summary>
-  public class DVBIPScanning : DvbBaseScanning
+  internal class DVBIPScanning : DvbBaseScanning
   {
     /// <summary>
     /// Constructor
@@ -59,24 +59,6 @@ namespace TvLibrary.Implementations.DVB
       dvbipChannel.FreeToAir = !info.scrambled;
       Log.Log.Write("Found: {0}", dvbipChannel);
       return dvbipChannel;
-    }
-
-    protected override bool IsValidChannel(ChannelInfo info, short hasAudio, short hasVideo)
-    {
-      //In DVB-IP there are several ways to describe a channel. It is possible that no service type is given. 
-      //Until we can fully implement DVB-IP support we check if video or audio is available to determine the channel type.
-      if (info.serviceType <= 0)
-      {
-        if (hasVideo != 0)
-        {
-          info.serviceType = (int)DvbServiceType.DigitalTelevision;
-        }
-        else if (hasAudio != 0)
-        {
-          info.serviceType = (int)DvbServiceType.DigitalRadio;
-        }
-      } 
-      return base.IsValidChannel(info, hasAudio, hasVideo);
     }
   }
 }

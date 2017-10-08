@@ -246,6 +246,15 @@ namespace TvLibrary.Implementations.DVB
       return '_';
     }
 
+    public static void DumpBinary(byte[] sourceData)
+    {
+      if (sourceData == null)
+      {
+        return;
+      }
+      DumpBinary(sourceData, 0, sourceData.Length);
+    }
+
     /// <summary>
     /// Output binary buffer to log for debugging
     /// </summary>

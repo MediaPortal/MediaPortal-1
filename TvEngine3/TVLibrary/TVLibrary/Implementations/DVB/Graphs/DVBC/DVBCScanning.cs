@@ -30,7 +30,7 @@ namespace TvLibrary.Implementations.DVB
   /// <summary>
   /// Class which implements scanning for tv/radio channels for DVB-C BDA cards
   /// </summary>
-  public class DVBCScanning : DvbBaseScanning
+  internal class DVBCScanning : DvbBaseScanning
   {
     /// <summary>
     /// Initializes a new instance of the <see cref="DVBCScanning"/> class.

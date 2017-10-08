@@ -584,10 +584,11 @@ namespace TvLibrary.Implementations.DVB
       }
       _mapSubChannels[subChannelId].CurrentChannel = channel;
       _mapSubChannels[subChannelId].OnBeforeTune();
-      if (_interfaceEpgGrabber != null)
+      /*if (_interfaceEpgGrabber != null)
       {
         _interfaceEpgGrabber.Reset();
-      }
+      }*/
+      StopEpgGrabbing();
       if (frequency > 13000)
         frequency /= 1000;
       Log.Log.WriteFile("ss2:  Transponder Frequency:{0} MHz", frequency);

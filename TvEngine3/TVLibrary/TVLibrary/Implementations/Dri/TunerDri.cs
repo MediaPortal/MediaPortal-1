@@ -771,10 +771,11 @@ namespace TvLibrary.Implementations.Dri
       try
       {
         subChannel.OnBeforeTune();
-        if (_interfaceEpgGrabber != null)
+        /*if (_interfaceEpgGrabber != null)
         {
           _interfaceEpgGrabber.Reset();
-        }
+        }*/
+        StopEpgGrabbing();
 
         if (performTune)
         {

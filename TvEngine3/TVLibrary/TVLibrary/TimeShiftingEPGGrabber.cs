@@ -148,7 +148,7 @@ namespace TvLibrary
       Log.Log.Epg("TimeshiftingEpgGrabber: Finished updating the database.");
       _epg.Clear();
       _epg = null;
-      _card.IsEpgGrabbing = false;
+      //_card.IsEpgGrabbing = false;
       _updateThreadRunning = false;
     }
 

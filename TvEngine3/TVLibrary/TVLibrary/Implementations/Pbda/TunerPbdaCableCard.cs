@@ -261,10 +261,11 @@ namespace TvLibrary.Implementations.Pbda
       try
       {
         subChannel.OnBeforeTune();        
-        if (_interfaceEpgGrabber != null)
+        /*if (_interfaceEpgGrabber != null)
         {
           _interfaceEpgGrabber.Reset();
-        }
+        }*/
+        StopEpgGrabbing();
         if (performTune)
         {
           Log.Log.Info("PBDA CC: tuning...");
