@@ -203,6 +203,7 @@ void MPMadPresenter::GrabScreenshot()
 {
   if (!m_pInitMadVRWindowPositionDone || m_pShutdown)
   {
+    m_pCallback->GrabMadVrScreenshot(nullptr);
     return;
   }
 
@@ -248,6 +249,7 @@ void MPMadPresenter::GrabFrame()
 {
   if (!m_pInitMadVRWindowPositionDone || m_pShutdown)
   {
+    m_pCallback->GrabMadVrFrame(nullptr);
     return;
   }
 
@@ -298,6 +300,7 @@ void MPMadPresenter::GrabCurrentFrame()
 
   if (!m_pInitMadVRWindowPositionDone || m_pShutdown)
   {
+    m_pCallback->GrabMadVrCurrentFrame(nullptr);
     return;
   }
   if (Com::SmartQIPtr<IMadVRFrameGrabber> pMadVrFrame = m_pMad)

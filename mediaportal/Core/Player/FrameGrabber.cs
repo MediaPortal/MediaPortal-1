@@ -20,6 +20,8 @@
 
 using System;
 using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading;
 using DirectShowLib;
@@ -91,7 +93,7 @@ namespace MediaPortal
         //Log.Debug("GetCurrentImage called");
 
         if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
-            GUIGraphicsContext.Vmr9Active && !FrameGrabberD3D9Enable)
+            GUIGraphicsContext.Vmr9Active)
         {
           lock (grabNotifier)
           {
@@ -108,9 +110,24 @@ namespace MediaPortal
 
                 if (GUIGraphicsContext.madVRCurrentFrameBitmap != null)
                 {
+                  string directory = string.Format("{0}\\MediaPortal Screenshots\\{1:0000}-{2:00}-{3:00}",
+                    Environment.GetFolderPath(Environment.SpecialFolder.MyPictures),
+                    DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
+                  if (!Directory.Exists(directory))
+                  {
+                    Log.Info("Planescene: Taking screenshot - Creating directory: {0}", directory);
+                    Directory.CreateDirectory(directory);
+                  }
+                  string fileName = string.Format("{0}\\madVR - {1:00}-{2:00}-{3:00}-{4:000}", directory, DateTime.Now.Hour,
+                    DateTime.Now.Minute, DateTime.Now.Second, DateTime.Now.Millisecond);
                   FrameResult = new Bitmap(GUIGraphicsContext.madVRCurrentFrameBitmap);
+                  FrameResult.RotateFlip(RotateFlipType.RotateNoneFlipY);
+                  FrameResult.Save(fileName + ".jpg", ImageFormat.Jpeg);
                   return FrameResult;
                 }
+                // Bitmap not ready return null
+                Log.Debug("FrameGrabber: Frame not ready for madVR");
+                return null;
               }
               catch
               {
@@ -161,34 +178,35 @@ namespace MediaPortal
           return null;
         }
 
-        if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
-            GUIGraphicsContext.Vmr9Active)
-        {
-          Surface backbuffer = null;
-          Bitmap b = null;
-          try
-          {
-            backbuffer = GUIGraphicsContext.DX9DeviceMadVr.GetBackBuffer(0, 0, BackBufferType.Mono);
-            using (var stream = SurfaceLoader.SaveToStream(ImageFileFormat.Bmp, backbuffer))
-            {
-              b = new Bitmap(Image.FromStream(stream));
+        //// This code is used only for D3D9 so comment it for now
+        //if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
+        //    GUIGraphicsContext.Vmr9Active && FrameGrabberD3D9Enable)
+        //{
+        //  Surface backbuffer = null;
+        //  Bitmap b = null;
+        //  try
+        //  {
+        //    backbuffer = GUIGraphicsContext.DX9DeviceMadVr.GetBackBuffer(0, 0, BackBufferType.Mono);
+        //    using (var stream = SurfaceLoader.SaveToStream(ImageFileFormat.Bmp, backbuffer))
+        //    {
+        //      b = new Bitmap(Image.FromStream(stream));
 
-              // IMPORTANT: Closes and disposes the stream
-              // If this is not done we get a memory leak!
-              stream.Close();
-              stream.Dispose();
-              backbuffer.Dispose();
-              return b;
-            }
-          }
-          catch (Exception)
-          {
-            backbuffer?.Dispose();
-            b?.Dispose();
-            Log.Debug("FrameGrabber: Timed-out waiting for grabbed frame!");
-          }
-        }
-        else
+        //      // IMPORTANT: Closes and disposes the stream
+        //      // If this is not done we get a memory leak!
+        //      stream.Close();
+        //      stream.Dispose();
+        //      backbuffer.Dispose();
+        //      return b;
+        //    }
+        //  }
+        //  catch (Exception)
+        //  {
+        //    backbuffer?.Dispose();
+        //    b?.Dispose();
+        //    Log.Debug("FrameGrabber: Timed-out waiting for grabbed frame!");
+        //  }
+        //}
+        else if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR) // used for EVR
         {
           lock (grabNotifier)
           {
@@ -215,6 +233,11 @@ namespace MediaPortal
             Log.Debug("FrameGrabber: Frame grab failed");
             return null;
           }
+        }
+        else
+        {
+          Log.Debug("FrameGrabber: Frame grab failed");
+          return null;
         }
       }
       catch (Exception e) // Can occur for example if the video device is lost
