@@ -2191,6 +2191,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
         if (targetOriginalNetworkId == currentOriginalNetworkId && targetTransportStreamId == currentTransportStreamId)
         {
           // We already have the tuning channel for the current transport stream.
+          this.LogInfo("scan DVB: known tuning details, ONID = {0}, TSID = {1}, {2}", targetOriginalNetworkId, targetTransportStreamId, currentTuningChannel);
           continue;
         }
 
@@ -2214,6 +2215,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
           tuningChannel = transportStream.Value[0].GetTuningChannel();
           networkTransportStreams.Add(targetTransportStreamId, tuningChannel);
           seenTuningChannels.Add(tuningChannel);
+          this.LogInfo("scan DVB: assumed tuning details, ONID = {0}, TSID = {1}, {2}", targetOriginalNetworkId, targetTransportStreamId, transportStream.Value[0]);
           continue;
         }
 
@@ -2222,7 +2224,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
         foreach (ScannedTransmitter transmitter in transportStream.Value)
         {
           // For each possible frequency...
-          IList<int> frequencies = new List<int>(transmitter.Frequencies);
+          List<int> frequencies = new List<int>(transmitter.Frequencies);
+          frequencies.Sort();
           foreach (int frequency in frequencies)
           {
             if (_cancelScan)
@@ -2231,9 +2234,24 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
               return transportStreamTuningChannels;
             }
 
-            // Tune and check the actual transport stream details.
+            // Have we tuned this transmitter before? If yes, there's no point tuning it again.
             transmitter.Frequencies[0] = frequency;
             tuningChannel = transmitter.GetTuningChannel();
+            bool isDifferent = true;
+            foreach (IChannel seenTuningChannel in seenTuningChannels)
+            {
+              if (!seenTuningChannel.IsDifferentTransmitter(tuningChannel))
+              {
+                isDifferent = false;
+                break;
+              }
+            }
+            if (!isDifferent)
+            {
+              continue;
+            }
+
+            // Tune and check the actual transport stream details.
             seenTuningChannels.Add(tuningChannel);
             ushort tunedOriginalNetworkId;
             ushort tunedTransportStreamId;
@@ -2245,7 +2263,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
                 networkTransportStreams = new Dictionary<ushort, IChannel>(possibleTuningDetailsByTransportStream.Count);
                 transportStreamTuningChannels.Add(tunedOriginalNetworkId, networkTransportStreams);
               }
-              networkTransportStreams.Add(tunedTransportStreamId, tuningChannel);
+              if (!networkTransportStreams.ContainsKey(tunedTransportStreamId))
+              {
+                this.LogInfo("scan DVB: confirmed tuning details, ONID = {0}, TSID = {1}, {2}", targetOriginalNetworkId, targetTransportStreamId, transmitter);
+                networkTransportStreams.Add(tunedTransportStreamId, tuningChannel);
+              }
 
               if (tunedOriginalNetworkId == targetOriginalNetworkId && tunedTransportStreamId == targetTransportStreamId)
               {
@@ -2282,9 +2304,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
     /// <returns>the transmitter tuning details found in the network information table</returns>
     private IList<ScannedTransmitter> CollectTransmitters(IChannel tuningChannel, IGrabberSiDvb grabber)
     {
-      List<ScannedTransmitter> transmitters = new List<ScannedTransmitter>();
-
       ushort transmitterCount = grabber.GetTransmitterCount();
+      List<ScannedTransmitter> transmitters = new List<ScannedTransmitter>(transmitterCount);
       this.LogInfo("scan DVB: transmitter count = {0}", transmitterCount);
 
       byte tableId;
@@ -2328,9 +2349,19 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
           break;
         }
 
+        ScannedTransmitter transmitter = new ScannedTransmitter();
+        for (byte f = 0; f < frequencyCount; f++)
+        {
+          int frequency = (int)frequencies[f];
+          if (frequency > 0)
+          {
+            transmitter.Frequencies.Add(frequency);
+          }
+        }
+
         this.LogInfo("  {0, -2}: table ID = {1}, NID = {2, -5}, ONID = {3, -5}, TSID = {4, -5}, is home transmitter = {5, -5}, broadcast standard = {6}",
                       i + 1, tableId, networkId, originalNetworkId, transportStreamId, isHomeTransmitter, broadcastStandard);
-        this.LogInfo("    frequency count = {0}, frequencies = [{1} kHz]", frequencyCount, string.Join(" kHz, ", frequencies));
+        this.LogInfo("    frequency count = {0}, frequencies = [{1} kHz]", frequencyCount, string.Join(" kHz, ", transmitter.Frequencies));
         this.LogInfo("    polarisation = {0}, modulation = {1}, symbol rate = {2, -5} ks/s, bandwidth = {3, -5} kHz, inner FEC rate = {4}, roll-off factor = {5}, longitude = {6}",
                       polarisation, modulation, symbolRate, bandwidth, innerFecRate, rollOffFactor, longitude);
         this.LogInfo("    cell ID = {0, -5}, cell ID extension = {1, -3}, is multiple input stream = {2, -5}, PLP ID = {3}",
@@ -2365,20 +2396,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
           }
         }
 
-        ScannedTransmitter transmitter = new ScannedTransmitter();
         transmitter.BroadcastStandard = broadcastStandard;
         transmitter.SymbolRate = (int)symbolRate;
         transmitter.Bandwidth = bandwidth;
         transmitter.OriginalNetworkId = originalNetworkId;
         transmitter.TransportStreamId = transportStreamId;
-        for (byte f = 0; f < frequencyCount; f++)
-        {
-          int frequency = (int)frequencies[f];
-          if (frequency > 0)
-          {
-            transmitter.Frequencies.Add(frequency);
-          }
-        }
+
         if (isMultipleInputStream)
         {
           transmitter.StreamId = plpId;

@@ -700,13 +700,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
 
       { 0x0609, "Country" },
 
-      { 0x0408, "History" },
-      { 0x0409, "Reality/Documentary" },
-      { 0x040a, "Biography/Documentary" },
-      { 0x040b, "Reality/Travel" },
+      { 0x0908, "History" },
+      { 0x0909, "Reality/Documentary" },
+      { 0x090a, "Biography/Documentary" },
+      { 0x090b, "Reality/Travel" },
       // unknown
-      { 0x040d, "Human Science/Culture" },
-      { 0x040e, "Crime/Investigation" },
+      { 0x090d, "Human Science/Culture" },
+      { 0x090e, "Crime/Investigation" },
 
       { 0x0a07, "Property" },
       { 0x0a0b, "Home Restoration/Make-Over" }
