@@ -18,12 +18,14 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils.ExtensionMethods;
 
 namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations
 {
@@ -338,6 +340,53 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations
         }
       }
       return channel;
+    }
+
+    public override string ToString()
+    {
+      string frequencyMhz = "0";
+      if (Frequencies != null && Frequencies.Count > 0)
+      {
+        frequencyMhz = string.Format("{0:#.##}", (float)Frequencies[0] / 1000);
+      }
+      switch ((BroadcastStandard)BroadcastStandard)
+      {
+        case BroadcastStandard.IsdbC:
+          return string.Format("{0} MHz", frequencyMhz);
+        case BroadcastStandard.DvbC:
+          return string.Format("{0} MHz, {1}, {2} ks/s", frequencyMhz, ModulationSchemeQam.GetDescription(), SymbolRate);
+        case BroadcastStandard.DvbC2:
+        case BroadcastStandard.DvbT:
+        case BroadcastStandard.DvbT2:
+        case BroadcastStandard.IsdbT:
+          if (BroadcastStandard.MaskDvb2.HasFlag(BroadcastStandard) && StreamId >= 0)
+          {
+            return string.Format("{0} MHz, BW {1:#.##} MHz, PLP {2}", frequencyMhz, (float)Bandwidth / 1000, StreamId);
+          }
+          return string.Format("{0} MHz, BW {1:#.##} MHz", frequencyMhz, (float)Bandwidth / 1000);
+        case BroadcastStandard.DvbDsng:
+        case BroadcastStandard.DvbS:
+        case BroadcastStandard.DvbS2:
+        case BroadcastStandard.DvbS2Pro:
+        case BroadcastStandard.DvbS2X:
+        case BroadcastStandard.IsdbS:
+        case BroadcastStandard.SatelliteTurboFec:
+        case BroadcastStandard.DigiCipher2:
+        case BroadcastStandard.DirecTvDss:
+          string description = string.Format("{0:#.#}° {1}", Math.Abs(Longitude / 10), Longitude < 0 ? "W" : "E");
+          description += string.Format(" {0} MHz, {1}, {2}, {3} ks/s", frequencyMhz, Polarisation.GetDescription(), ModulationSchemePsk.GetDescription(), SymbolRate);
+          if (BroadcastStandard.MaskDvbS2.HasFlag(BroadcastStandard))
+          {
+            description += ", RO " + RollOffFactor.GetDescription();
+            if (StreamId >= 0)
+            {
+              description += ", IS " + StreamId;
+            }
+          }
+          return description;
+      }
+      this.LogError("scanned transmitter: failed to handle broadcast standard {0} in ToString()", BroadcastStandard);
+      return string.Empty;
     }
   }
 }
