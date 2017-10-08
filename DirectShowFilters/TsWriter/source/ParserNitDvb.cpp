@@ -1306,17 +1306,17 @@ bool CParserNitDvb::GetTransmitter(unsigned short index,
   if (recordTerrestrial != NULL)
   {
     bandwidth = recordTerrestrial->Bandwidth;
+    cellId = recordTerrestrial->CellId;
+    cellIdExtension = recordTerrestrial->CellIdExtension;
     if (recordTerrestrial->IsT2)
     {
-      broadcastStandard = 0x1000;   // This is as-per the TV Server database BroadcastStandard.DvbT2 value.
-      cellId = recordTerrestrial->CellId;
-      cellIdExtension = recordTerrestrial->CellIdExtension;
+      broadcastStandard = 0x2000;   // This is as-per the TV Server database BroadcastStandard.DvbT2 value.
       isMultipleInputStream = recordTerrestrial->MultipleInputStreamFlag;
       plpId = recordTerrestrial->PlpId;
     }
     else
     {
-      broadcastStandard = 0x0800;   // This is as-per the TV Server database BroadcastStandard.DvbT value.
+      broadcastStandard = 0x1000;   // This is as-per the TV Server database BroadcastStandard.DvbT value.
       isMultipleInputStream = false;
     }
 
