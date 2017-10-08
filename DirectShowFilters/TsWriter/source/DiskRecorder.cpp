@@ -240,8 +240,8 @@ HRESULT CDiskRecorder::SetPmt(const unsigned char* pmt,
         WriteLog(L"program change, program number = %hu, version = %hhu, PCR PID = %hu",
                   pidTable.ProgramNumber, pidTable.PmtVersion,
                   pidTable.PcrPid);
-        m_patVersion = (m_patVersion + 1) & 0xf;
-        m_pmtVersion = (m_pmtVersion + 1) & 0xf;
+        m_patVersion = (m_patVersion + 1) & 0x1f;
+        m_pmtVersion = (m_pmtVersion + 1) & 0x1f;
 
         // Keep statistics.
         //m_tsPacketCount = 0;
@@ -252,10 +252,14 @@ HRESULT CDiskRecorder::SetPmt(const unsigned char* pmt,
       {
         WriteLog(L"program selection, program number = %hu, version = %hhu, PCR PID = %hu",
                   pidTable.ProgramNumber, pidTable.PmtVersion, pidTable.PcrPid);
-        m_patContinuityCounter = CONTINUITY_COUNTER_NOT_SET;
+        // TODO TVE 3 always takes this code path. Incrementing PAT and PMT
+        // version seems to be the right thing to do in that context.
+        /*m_patContinuityCounter = CONTINUITY_COUNTER_NOT_SET;
         m_patVersion = 0;
         m_pmtContinuityCounter = CONTINUITY_COUNTER_NOT_SET;
-        m_pmtVersion = 0;
+        m_pmtVersion = 0;*/
+        m_patVersion = (m_patVersion + 1) & 0x1f;
+        m_pmtVersion = (m_pmtVersion + 1) & 0x1f;
         m_pcrCompensation = 0;
 
         m_tsPacketCount = 0;
@@ -384,11 +388,14 @@ HRESULT CDiskRecorder::Start()
       }
       else
       {
-        m_patContinuityCounter = CONTINUITY_COUNTER_NOT_SET;
+        // TODO I think this is not required. These values should have been
+        // set in SetPmt() already. ...or if you are going to do this, must
+        // CreateFakePat() and CreateFakePmt() to apply them.
+        /*m_patContinuityCounter = CONTINUITY_COUNTER_NOT_SET;
         m_patVersion = 0;
         m_pmtContinuityCounter = CONTINUITY_COUNTER_NOT_SET;
         m_pmtVersion = 0;
-        m_pcrCompensation = 0;
+        m_pcrCompensation = 0;*/
       }
     }
     else
