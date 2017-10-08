@@ -115,14 +115,15 @@ namespace MediaPortal
                     DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
                   if (!Directory.Exists(directory))
                   {
-                    Log.Info("Planescene: Taking screenshot - Creating directory: {0}", directory);
+                    Log.Info("GetCurrentImage: Taking screenshot - Creating directory: {0}", directory);
                     Directory.CreateDirectory(directory);
                   }
                   string fileName = string.Format("{0}\\madVR - {1:00}-{2:00}-{3:00}-{4:000}", directory, DateTime.Now.Hour,
                     DateTime.Now.Minute, DateTime.Now.Second, DateTime.Now.Millisecond);
                   FrameResult = new Bitmap(GUIGraphicsContext.madVRCurrentFrameBitmap);
-                  FrameResult.RotateFlip(RotateFlipType.RotateNoneFlipY);
+#if DEBUG
                   FrameResult.Save(fileName + ".jpg", ImageFormat.Jpeg);
+#endif
                   return FrameResult;
                 }
                 // Bitmap not ready return null

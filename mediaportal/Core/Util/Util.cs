@@ -5566,6 +5566,7 @@ namespace MediaPortal.Util
         using (Bitmap b = new Bitmap(bmih.biWidth, bmih.biHeight, bmih.biWidth*4, PixelFormat.Format32bppRgb, pixels))
         {
           GUIGraphicsContext.madVRFrameBitmap = new Bitmap(b);
+          GUIGraphicsContext.madVRFrameBitmap.RotateFlip(RotateFlipType.RotateNoneFlipY);
           // IMPORTANT: Closes and disposes the stream
           // If this is not done we get a memory leak!
           b.Dispose();
