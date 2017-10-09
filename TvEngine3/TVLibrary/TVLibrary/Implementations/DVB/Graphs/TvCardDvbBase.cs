@@ -2327,6 +2327,8 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     public void StartLinkageScanner(BaseChannelLinkageScanner callback)
     {
+      Log.Log.Info("DVB: linkage scanner not supported");
+      return;
       if (!CheckThreadId())
         return;
 
@@ -2339,7 +2341,7 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     public void ResetLinkageScanner()
     {
-      _interfaceChannelLinkageScanner.Reset();
+      //_interfaceChannelLinkageScanner.Reset();
     }
 
     /// <summary>
@@ -2351,9 +2353,9 @@ namespace TvLibrary.Implementations.DVB
       {
         try
         {
-          uint channelCount;
+          uint channelCount = 0;
           List<PortalChannel> portalChannels = new List<PortalChannel>();
-          _interfaceChannelLinkageScanner.GetChannelCount(out channelCount);
+          //_interfaceChannelLinkageScanner.GetChannelCount(out channelCount);
           if (channelCount == 0)
             return portalChannels;
           for (uint i = 0; i < channelCount; i++)
