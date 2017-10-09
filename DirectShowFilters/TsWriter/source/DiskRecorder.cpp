@@ -52,6 +52,7 @@
 #define TRANSPORT_STREAM_ID               0x4
 #define PROGRAM_NUMBER                    0x89
 
+#define TABLE_VERSION_NOT_SET             0xff
 #define CONTINUITY_COUNTER_NOT_SET        0xff
 #define STUFFING_BYTE                     0xff
 
@@ -140,9 +141,9 @@ CDiskRecorder::CDiskRecorder(RecorderMode mode)
   m_nextFakePidVbi = PID_VBI_FIRST;
 
   m_patContinuityCounter = CONTINUITY_COUNTER_NOT_SET;
-  m_patVersion = 0;
+  m_patVersion = TABLE_VERSION_NOT_SET;
   m_pmtContinuityCounter = CONTINUITY_COUNTER_NOT_SET;
-  m_pmtVersion = 0;
+  m_pmtVersion = TABLE_VERSION_NOT_SET;
   m_serviceInfoPacketCounter = 0;
 
   m_originalPcrPid = 0;
@@ -226,7 +227,7 @@ HRESULT CDiskRecorder::SetPmt(const unsigned char* pmt,
                 pidTable.ProgramNumber, pidTable.PmtVersion, pidTable.PcrPid);
       if (m_originalPcrPid != pidTable.PcrPid)
       {
-        // If the PCR PID changed, treat this like a channel change.
+        // If the PCR PID changed, treat this like a program selection.
         preservePcrConfig = false;
         m_videoAudioStartTimeStamp = clock();
       }
@@ -234,38 +235,12 @@ HRESULT CDiskRecorder::SetPmt(const unsigned char* pmt,
     }
     else
     {
+      WriteLog(L"program selection, program number = %hu, version = %hhu, PCR PID = %hu",
+                pidTable.ProgramNumber, pidTable.PmtVersion, pidTable.PcrPid);
+      m_patVersion = (m_patVersion + 1) & 0x1f;
+      m_pmtVersion = (m_pmtVersion + 1) & 0x1f;
+
       preservePcrConfig = false;
-      if (m_isRunning)
-      {
-        WriteLog(L"program change, program number = %hu, version = %hhu, PCR PID = %hu",
-                  pidTable.ProgramNumber, pidTable.PmtVersion,
-                  pidTable.PcrPid);
-        m_patVersion = (m_patVersion + 1) & 0x1f;
-        m_pmtVersion = (m_pmtVersion + 1) & 0x1f;
-
-        // Keep statistics.
-        //m_tsPacketCount = 0;
-        //m_discontinuityCount = 0;
-        //m_droppedByteCount = 0;
-      }
-      else
-      {
-        WriteLog(L"program selection, program number = %hu, version = %hhu, PCR PID = %hu",
-                  pidTable.ProgramNumber, pidTable.PmtVersion, pidTable.PcrPid);
-        // TODO TVE 3 always takes this code path. Incrementing PAT and PMT
-        // version seems to be the right thing to do in that context.
-        /*m_patContinuityCounter = CONTINUITY_COUNTER_NOT_SET;
-        m_patVersion = 0;
-        m_pmtContinuityCounter = CONTINUITY_COUNTER_NOT_SET;
-        m_pmtVersion = 0;*/
-        m_patVersion = (m_patVersion + 1) & 0x1f;
-        m_pmtVersion = (m_pmtVersion + 1) & 0x1f;
-        m_pcrCompensation = 0;
-
-        m_tsPacketCount = 0;
-        m_discontinuityCount = 0;
-        m_droppedByteCount = 0;
-      }
 
       m_videoAudioStartTimeStamp = -1;
       ClearPids();
@@ -386,17 +361,6 @@ HRESULT CDiskRecorder::Start()
         m_fakePat[6] = ((m_patVersion & 0x1f) << 1) | (m_fakePat[6] & 0xc1);
         m_fakePmt[6] = ((m_pmtVersion & 0x1f) << 1) | (m_fakePmt[6] & 0xc1);
       }
-      else
-      {
-        // TODO I think this is not required. These values should have been
-        // set in SetPmt() already. ...or if you are going to do this, must
-        // CreateFakePat() and CreateFakePmt() to apply them.
-        /*m_patContinuityCounter = CONTINUITY_COUNTER_NOT_SET;
-        m_patVersion = 0;
-        m_pmtContinuityCounter = CONTINUITY_COUNTER_NOT_SET;
-        m_pmtVersion = 0;
-        m_pcrCompensation = 0;*/
-      }
     }
     else
     {
@@ -486,6 +450,16 @@ void CDiskRecorder::Stop()
       delete m_fileRecording;
       m_fileRecording = NULL;
     }
+
+    m_patContinuityCounter = CONTINUITY_COUNTER_NOT_SET;
+    m_patVersion = TABLE_VERSION_NOT_SET;
+    m_pmtContinuityCounter = CONTINUITY_COUNTER_NOT_SET;
+    m_pmtVersion = TABLE_VERSION_NOT_SET;
+    m_pcrCompensation = 0;
+
+    m_tsPacketCount = 0;
+    m_discontinuityCount = 0;
+    m_droppedByteCount = 0;
   }
   catch (...)
   {
@@ -764,6 +738,7 @@ bool CDiskRecorder::IsVideoOrAudioSeen(const CTsHeader& header)
     else if (m_isAudioConfirmed)
     {
       WriteLog(L"start of video and/or audio detected, audio streams confirmed, wait for PCR");
+      CreateFakePmt();
     }
     else
     {
