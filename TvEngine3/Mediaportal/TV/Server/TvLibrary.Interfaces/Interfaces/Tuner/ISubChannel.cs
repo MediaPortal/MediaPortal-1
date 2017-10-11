@@ -81,9 +81,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner
     /// <param name="fileCount">The number of buffer files to use during normal time-shifting.</param>
     /// <param name="fileCountMaximum">The maximum number of buffer files to use when time-shifting is paused.</param>
     /// <param name="fileSize">The size of each buffer file.</param>
-    /// <param name="isEncrypted"><c>True</c> if time-shifting failed to start because the video and/or audio streams are encrypted.</param>
-    /// <returns><c>true</c> if time-shifting was started successfully, otherwise <c>false</c></returns>
-    bool StartTimeShifting(string fileName, uint fileCount, uint fileCountMaximum, ulong fileSize, out bool isEncrypted);
+    void StartTimeShifting(string fileName, uint fileCount, uint fileCountMaximum, ulong fileSize);
 
     /// <summary>
     /// Get the current time-shift position.
@@ -103,9 +101,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner
     /// Start recording.
     /// </summary>
     /// <param name="fileName">The name to use for the recording file.</param>
-    /// <param name="isEncrypted"><c>True</c> if recording failed to start because the video and/or audio streams are encrypted.</param>
-    /// <returns><c>true</c> if recording was started successfully, otherwise <c>false</c></returns>
-    bool StartRecording(string fileName, out bool isEncrypted);
+    void StartRecording(string fileName);
 
     /// <summary>
     /// Stop recording.
