@@ -93,15 +93,15 @@
     </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="..\..\..\..\..\..\..\Packages\TBS.CI.API.1.0.1.5\build\TBS.CI.API.targets" Condition="Exists('..\..\..\..\..\..\..\Packages\TBS.CI.API.1.0.1.5\build\TBS.CI.API.targets')" />
+  <Import Project="..\..\..\..\..\..\..\Packages\TBS.CI.API.1.0.2.0\build\TBS.CI.API.targets" Condition="Exists('..\..\..\..\..\..\..\Packages\TBS.CI.API.1.0.2.0\build\TBS.CI.API.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\..\..\..\..\..\..\Packages\TBS.CI.API.1.0.1.5\build\TBS.CI.API.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\..\..\..\..\Packages\TBS.CI.API.1.0.1.5\build\TBS.CI.API.targets'))" />
-    <Error Condition="!Exists('..\..\..\..\..\..\..\Packages\TBS.NXP.RC.API.1.0.0.0\build\TBS.NXP.RC.API.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\..\..\..\..\Packages\TBS.NXP.RC.API.1.0.0.0\build\TBS.NXP.RC.API.targets'))" />
+    <Error Condition="!Exists('..\..\..\..\..\..\..\Packages\TBS.CI.API.1.0.2.0\build\TBS.CI.API.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\..\..\..\..\Packages\TBS.CI.API.1.0.2.0\build\TBS.CI.API.targets'))" />
+    <Error Condition="!Exists('..\..\..\..\..\..\..\Packages\TBS.NXP.RC.API.1.0.0.2\build\TBS.NXP.RC.API.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\..\..\..\..\Packages\TBS.NXP.RC.API.1.0.0.2\build\TBS.NXP.RC.API.targets'))" />
   </Target>
-  <Import Project="..\..\..\..\..\..\..\Packages\TBS.NXP.RC.API.1.0.0.0\build\TBS.NXP.RC.API.targets" Condition="Exists('..\..\..\..\..\..\..\Packages\TBS.NXP.RC.API.1.0.0.0\build\TBS.NXP.RC.API.targets')" />
+  <Import Project="..\..\..\..\..\..\..\Packages\TBS.NXP.RC.API.1.0.0.2\build\TBS.NXP.RC.API.targets" Condition="Exists('..\..\..\..\..\..\..\Packages\TBS.NXP.RC.API.1.0.0.2\build\TBS.NXP.RC.API.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
