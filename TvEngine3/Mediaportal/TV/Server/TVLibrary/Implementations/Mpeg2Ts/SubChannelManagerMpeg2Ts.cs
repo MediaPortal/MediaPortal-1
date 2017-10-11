@@ -829,6 +829,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Mpeg2Ts
       if (!_isTsWriterStopped && subChannel != null)
       {
         OnFreeSubChannel(id);
+
+        // Also set the wait event, because PAT etc. has probably already been
+        // received, and TsWriter won't re-event it.
+        _programWaitEvent.Set();
       }
 
       lock (_lock)
