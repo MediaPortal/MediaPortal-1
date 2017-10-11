@@ -387,22 +387,22 @@ void CSubManager::RenderEx(RECT viewportRect, RECT croppedVideoRect, int xOffset
   windowRect = viewportRect;
   videoRect = croppedVideoRect;
 
-  //int width = viewportRect.right - viewportRect.left;
-  //int height = viewportRect.bottom - viewportRect.top;
-  //int x = viewportRect.right + viewportRect.left;
-  //int y = viewportRect.bottom + viewportRect.top;
+  int width = croppedVideoRect.right - croppedVideoRect.left;
+  int height = croppedVideoRect.bottom - croppedVideoRect.top;
+  int x = croppedVideoRect.right + croppedVideoRect.left;
+  int y = croppedVideoRect.bottom + croppedVideoRect.top;
 
-  //CSize size(width, height);
-  //if (m_lastSize != size && width > 0 && height > 0)
-  //{ //adjust texture size
-  //  ATLTRACE("Size change from %dx%d to %dx%d", m_lastSize.cx, m_lastSize.cy, size.cx, size.cy);
-  //  m_pAllocator->ChangeDevice(m_d3DDev);
-  //  //m_pAllocator->SetMaxTextureSize(g_textureSize);
-  //  m_pAllocator->SetCurSize(size);
-  //  m_pAllocator->SetCurVidRect(CRect(CPoint(0, 0), size));
-  //  m_pSubPicQueue->Invalidate(m_rtNow + 1000000);
-  //  m_lastSize = size;
-  //}
+  CSize size(width, height);
+  if (m_lastSize != size && width > 0 && height > 0)
+  { //adjust texture size
+    ATLTRACE("Size change from %dx%d to %dx%d", m_lastSize.cx, m_lastSize.cy, size.cx, size.cy);
+    m_pAllocator->ChangeDevice(m_d3DDev);
+    //m_pAllocator->SetMaxTextureSize(g_textureSize);
+    m_pAllocator->SetCurSize(size);
+    m_pAllocator->SetCurVidRect(CRect(CPoint(0, 0), size));
+    m_pSubPicQueue->Invalidate(m_rtNow + 1000000);
+    m_lastSize = size;
+  }
 
   CComPtr<ISubPic> pSubPic;
   if (m_pSubPicQueue->LookupSubPic(m_rtNow, pSubPic))

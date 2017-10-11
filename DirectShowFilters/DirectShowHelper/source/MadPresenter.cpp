@@ -828,7 +828,7 @@ HRESULT MPMadPresenter::ClearBackground(LPCSTR name, REFERENCE_TIME frameStart, 
 
   if (SUCCEEDED(hr = m_deviceState.Store()))
   {
-    hr = m_pCallback->RenderGui(videoWidth, videoHeight, videoWidth, videoHeight);
+    hr = m_pCallback->RenderGui(m_dwWidth, m_dwHeight, videoWidth, videoHeight);
     if (m_pCallback->IsUiVisible())
     {
       for (int x = 0; x < m_pMadVRFrameCount; ++x) // need to let in a loop to slow down why ???
@@ -953,7 +953,7 @@ HRESULT MPMadPresenter::RenderOsd(LPCSTR name, REFERENCE_TIME frameStart, RECT* 
 
   if (SUCCEEDED(hr = m_deviceState.Store()))
   {
-    hr = m_pCallback->RenderOverlay(videoWidth, videoHeight, videoWidth, videoHeight);
+    hr = m_pCallback->RenderOverlay(m_dwWidth, m_dwHeight, videoWidth, videoHeight);
     if (m_pCallback->IsUiVisible())
     {
       for (int x = 0; x < m_pMadVRFrameCount; ++x) // need to let in a loop to slow down why ???

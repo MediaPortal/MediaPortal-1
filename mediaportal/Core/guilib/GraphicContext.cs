@@ -1081,7 +1081,7 @@ namespace MediaPortal.GUI.Library
           {
             GUIGraphicsContext.VideoWindowFullscreen = true;
             GUIGraphicsContext.VideoWindow = new Rectangle(0, 0, 5, 5);
-            VMR9Util.g_vmr9.SceneMadVr();
+            VMR9Util.g_vmr9?.SceneMadVr();
           }
 
           if (GUIGraphicsContext.ForceMadVRRefresh)
