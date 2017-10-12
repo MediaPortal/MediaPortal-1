@@ -66,9 +66,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
       NitOther = 0x0800,
       Bat = 0x1000,
 
-      FreesatSdt = 0x01000000,
-      FreesatNit = 0x02000000,
-      FreesatBat = 0x04000000
+      FreesatSdt = 0x00800000,
+      FreesatNit = 0x01000000,
+      FreesatBat = 0x02000000,
+
+      NitNotAvailable = 0x04000000
     }
 
     #region constants
@@ -500,15 +502,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
             // streams).
             (
               _completeTables.HasFlag(TableType.SdtActual) ||
-              _completeTables.HasFlag(TableType.SdtOther)
+              (!_seenTables.HasFlag(TableType.SdtActual) && _completeTables.HasFlag(TableType.SdtOther))
             ) &&
             // For a network scan all seen tables must be complete. Otherwise
-            // SDT other may be incomplete as long as SDT actual is complete.
-            // We assume that this condition will ensure NIT and/or BAT are
-            // complete if available.
+            // SDT and NIT other may be incomplete as long as SDT actual is
+            // complete. We assume that this condition will ensure NIT actual
+            // and/or BAT are complete if available.
             (
-              _seenTables == _completeTables ||
-              (!isFastNetworkScan && _seenTables == (_completeTables | TableType.SdtOther))
+              (isFastNetworkScan && _seenTables == _completeTables) ||
+              (!isFastNetworkScan && _seenTables == (_completeTables | TableType.SdtOther | TableType.NitOther))
             ) &&
             // Freesat tables must all be complete... or not seen at all.
             (
@@ -517,7 +519,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
             )
           )
           {
-            this.LogInfo("scan DVB: scan completed, tables complete = [{0}]", _completeTables);
+            this.LogInfo("scan DVB: scan completed, tables seen = [{0}], tables complete = [{1}]", _seenTables, _completeTables);
             break;
           }
 
@@ -720,7 +722,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
             (!_seenTables.HasFlag(TableType.FreesatNit) || _completeTables.HasFlag(TableType.FreesatNit))
           )
           {
-            this.LogInfo("scan DVB: NIT scan completed, tables complete = [{0}]", _completeTables);
+            this.LogInfo("scan DVB: NIT scan completed, tables seen = [{0}], tables complete = [{1}]", _seenTables, _completeTables);
             break;
           }
 
@@ -862,6 +864,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
               return TableType.SdtOther;
             case 0x4a:
               return TableType.Bat;
+            //case 0xff:
+            //  return TableType.NitNotAvailable;
           }
           break;
         default:

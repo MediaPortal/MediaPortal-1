@@ -432,7 +432,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
             (_completeTables.HasFlag(TableType.Pat | TableType.Pmt) || isOutOfBandChannelScan) &&
             (_seenTables & tableMask) == (_completeTables & tableMask) &&
             // Any one of the L-VCT tables must be complete, or the S-VCT, NIT
-            // and NTT must be complete.
+            // and NTT must all be complete.
             (
               _completeTables.HasFlag(TableType.AtscLvctCable) ||
               _completeTables.HasFlag(TableType.AtscLvctTerrestrial) ||
@@ -443,7 +443,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
             )
           )
           {
-            this.LogInfo("scan ATSC: scan completed, tables complete = [{0}]", _completeTables);
+            this.LogInfo("scan ATSC: scan completed, tables seen = [{0}], tables complete = [{1}]", _seenTables, _completeTables);
             break;
           }
 
