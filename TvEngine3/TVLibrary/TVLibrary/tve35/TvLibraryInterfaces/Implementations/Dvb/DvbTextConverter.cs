@@ -346,7 +346,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Dvb
       StringBuilder result = new StringBuilder();
       foreach (byte b in bytes)
       {
-        if (b == 0x00)
+        if (b == 0)
         {
           break;
         }
@@ -533,7 +533,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Dvb
       StringBuilder result = new StringBuilder();
       foreach (byte b in bytes)
       {
-        if (b == 0x00)
+        if (b == 0)
         {
           break;
         }
