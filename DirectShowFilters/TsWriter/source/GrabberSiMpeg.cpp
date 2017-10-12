@@ -392,6 +392,7 @@ void CGrabberSiMpeg::OnCatReceived(const unsigned char* table, unsigned short ta
   }
   if (m_callBackGrabber != NULL)
   {
+    m_callBackGrabber->OnTableSeen(PID_CAT, TABLE_ID_CAT);
     m_callBackGrabber->OnTableComplete(PID_CAT, TABLE_ID_CAT);
   }
 }
@@ -405,6 +406,7 @@ void CGrabberSiMpeg::OnCatChanged(const unsigned char* table, unsigned short tab
   }
   if (m_callBackGrabber != NULL)
   {
+    m_callBackGrabber->OnTableChange(PID_CAT, TABLE_ID_CAT);
     m_callBackGrabber->OnTableComplete(PID_CAT, TABLE_ID_CAT);
   }
 }
