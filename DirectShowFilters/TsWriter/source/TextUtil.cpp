@@ -425,6 +425,7 @@ bool CTextUtil::DvbTextToString(const unsigned char* data,
 
   unsigned short dataIndex = 1;
   unsigned short textIndex = 0;
+  unsigned char encodingIndicator2 = 0;
   t[textIndex++] = encodingIndicator;
   if (encodingIndicator == 0x10)
   {
@@ -438,15 +439,24 @@ bool CTextUtil::DvbTextToString(const unsigned char* data,
       return false;
     }
 
-    // Skip the zero byte to avoid premature NULL termination, and process
-    // the encoding indicator byte here because the loop below would throw
-    // it away.
+    // Skip the zero byte to avoid premature NULL termination, and process the
+    // encoding indicator byte here because the loop below would throw it away.
     dataIndex++;
-    t[textIndex++] = data[dataIndex++];
+    encodingIndicator2 = data[dataIndex++];
+    t[textIndex++] = encodingIndicator2;
+  }
+
+  // Certain control characters are used to demarcate abbreviation (eg. service
+  // short name). Throw them away.
+  bool isEmphasisOn = encodingIndicator == 0x86;
+  if (isEmphasisOn)
+  {
+    textIndex--;
+    t[textIndex] = NULL;
   }
 
   unsigned char c;
-  bool isEmphasisOn = encodingIndicator == 0x86;  // Used to demarcate abbreviation (eg. service short name) which we don't care about.
+  bool isUnsupportedCharacterSeen = false;
   while (dataIndex < dataLength)
   {
     c = data[dataIndex++];
@@ -472,8 +482,18 @@ bool CTextUtil::DvbTextToString(const unsigned char* data,
     }
     else if (c <= 0x1f || (c >= 0x7f && c <= 0x9f))
     {
-      LogDebug(L"DVB text: unsupported character, c = %hhu, encoding indicator byte = %hhu",
-                c, encodingIndicator);
+      if (encodingIndicator == 0x10)
+      {
+        LogDebug(L"DVB text: unsupported character, c = %hhu, data index = %hu, text index = %hu, encoding indicator byte 1 = %hhu, encoding indicator byte 2 = %hhu",
+                  c, dataIndex, textIndex, encodingIndicator,
+                  encodingIndicator2);
+      }
+      else
+      {
+        LogDebug(L"DVB text: unsupported character, c = %hhu, data index = %hu, text index = %hu, encoding indicator byte = %hhu",
+                  c, dataIndex, textIndex, encodingIndicator);
+      }
+      isUnsupportedCharacterSeen = true;
       c = 0; // ignore - encoded character not standardised
     }
 
@@ -484,7 +504,10 @@ bool CTextUtil::DvbTextToString(const unsigned char* data,
   }
 
   t[textIndex] = NULL;
-  //LogDebug(L"  %S", t == NULL ? "" : t);
+  if (isUnsupportedCharacterSeen)
+  {
+    LogDebug(L"  %S", t);
+  }
   *text = t;
   return true;
 }
@@ -511,7 +534,9 @@ bool CTextUtil::IsoIec10646ToString(const unsigned char* data,
 
   unsigned short dataIndex = 0;
   unsigned long textIndex = 0;
+  unsigned short charIndex = 0;
   unsigned short w;
+  bool isUnsupportedCharacterSeen = false;
   bool isEmphasisOn = false;  // Used to demarcate abbreviation (eg. service short name) which we don't care about.
   unsigned short utf16HighSurrogate = 0;
   t[textIndex++] = 0x15;      // EN 300 468 annex A table A.3: UTF-8 encoding of ISO/IEC 10646 BMP
@@ -541,7 +566,9 @@ bool CTextUtil::IsoIec10646ToString(const unsigned char* data,
     }
     else if (w <= 0x1f || (w >= 0xe080 && w < 0xe09f))
     {
-      LogDebug(L"Unicode text: unsupported character, w = %hu", w);
+      LogDebug(L"Unicode text: unsupported character, w = %hu, data index = %hu, text index = %lu, char index = %hu",
+                w, dataIndex, textIndex, charIndex);
+      isUnsupportedCharacterSeen = true;
       w = 0; // ignore - encoded character not standardised
     }
 
@@ -551,12 +578,14 @@ bool CTextUtil::IsoIec10646ToString(const unsigned char* data,
       if (w < 0x80)
       {
         t[textIndex++] = (char)w;
+        charIndex++;
         utf16HighSurrogate = 0;
       }
       else if (w < 0x800)
       {
         t[textIndex++] = (char)(((w >> 6) & 0x1f) | 0xc0);
         t[textIndex++] = (char)((w & 0x3f) | 0x80);
+        charIndex++;
         utf16HighSurrogate = 0;
       }
       else if (w >= 0xd800 && w <= 0xdbff)  // UTF-16 high surrogate
@@ -567,7 +596,8 @@ bool CTextUtil::IsoIec10646ToString(const unsigned char* data,
       {
         if (utf16HighSurrogate == 0)
         {
-          LogDebug(L"Unicode text: unexpected UTF-16 low surrogate without high surrogate, w = %hu", w);
+          LogDebug(L"Unicode text: unexpected UTF-16 low surrogate without high surrogate, w = %hu, data index = %hu, text index = %lu, char index = %hu",
+                    w, dataIndex, textIndex, charIndex);
         }
         else
         {
@@ -576,6 +606,7 @@ bool CTextUtil::IsoIec10646ToString(const unsigned char* data,
           t[textIndex++] = (char)(((fullCodePoint >> 12) & 0x3f) | 0x80);
           t[textIndex++] = (char)(((fullCodePoint >> 6) & 0x3f) | 0x80);
           t[textIndex++] = (char)((fullCodePoint & 0x3f) | 0x80);
+          charIndex++;
           utf16HighSurrogate = 0;
         }
       }
@@ -584,12 +615,17 @@ bool CTextUtil::IsoIec10646ToString(const unsigned char* data,
         t[textIndex++] = (char)(((w >> 12) & 0xf) | 0xe0);
         t[textIndex++] = (char)(((w >> 6) & 0x3f) | 0x80);
         t[textIndex++] = (char)((w & 0x3f) | 0x80);
+        charIndex++;
         utf16HighSurrogate = 0;
       }
     }
   }
 
   t[textIndex] = NULL;
+  if (isUnsupportedCharacterSeen)
+  {
+    LogDebug(L"  %S", t);
+  }
   MinimiseMemoryUsage(t, textIndex + 1, text);
   return true;
 }
