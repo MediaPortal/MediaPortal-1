@@ -22,6 +22,9 @@
 #include "..\..\shared\EnterCriticalSection.h"
 
 
+#define TABLE_ID_NIT_NOT_AVAILABLE 0xff
+
+
 extern void LogDebug(const wchar_t* fmt, ...);
 
 CGrabberSiDvb::CGrabberSiDvb(ICallBackSiDvb* callBack, LPUNKNOWN unk, HRESULT* hr)
@@ -1025,8 +1028,9 @@ void CGrabberSiDvb::OnTableComplete(unsigned char tableId)
     m_callBackGrabber->OnTableComplete(m_parserSdt.GetPid(), tableId);
     if (tableId == TABLE_ID_SDT_ACTUAL && !m_isNitExpected)
     {
-      m_callBackGrabber->OnTableComplete(m_parserSdt.GetPid(), TABLE_ID_NIT_DVB_ACTUAL);
-      m_callBackGrabber->OnTableComplete(m_parserSdt.GetPid(), TABLE_ID_NIT_DVB_OTHER);
+      // Notify that NIT is not expected to enable minimisation of scan wait
+      // times. Note that this detection is not reliable.
+      m_callBackGrabber->OnTableComplete(m_parserSdt.GetPid(), TABLE_ID_NIT_NOT_AVAILABLE);
     }
   }
   if (m_callBackSiDvb != NULL)
