@@ -187,10 +187,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
       // Constructed/derived groups.
       if (broadcastStandard != BroadcastStandard.Unknown)
       {
-        if (!groupNames[ChannelGroupType.BroadcastStandard].ContainsKey((ulong)broadcastStandard))
-        {
-          groupNames[ChannelGroupType.BroadcastStandard][(ulong)broadcastStandard] = broadcastStandard.GetDescription();
-        }
         scannedChannel.Groups.Add(ChannelGroupType.BroadcastStandard, new List<ulong> { (ulong)broadcastStandard });
       }
       if (!string.IsNullOrEmpty(channel.Provider))
@@ -341,7 +337,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
     public void Scan(IChannel channel, bool isForcedLvctScan, out IList<ScannedChannel> channels, out IDictionary<ChannelGroupType, IDictionary<ulong, string>> groupNames, out ISet<string> ignoredChannelNumbers)
     {
       channels = new List<ScannedChannel>(100);
-      groupNames = new Dictionary<ChannelGroupType, IDictionary<ulong, string>>(50);
+      groupNames = InitialiseGroupNames();
       ignoredChannelNumbers = new HashSet<string>();
 
       if (_grabberMpeg == null && _grabberAtsc == null && _grabberScte == null)
@@ -718,6 +714,26 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
     }
 
     /// <summary>
+    /// Initialise the set of group names for a scan.
+    /// </summary>
+    /// <returns>a dictionary of channel group names</returns>
+    private static IDictionary<ChannelGroupType, IDictionary<ulong, string>> InitialiseGroupNames()
+    {
+      Array broadcastStandards = System.Enum.GetValues(typeof(BroadcastStandard));
+      Dictionary<ulong, string> broadcastStandardGroupNames = new Dictionary<ulong, string>(broadcastStandards.Length);
+      foreach (System.Enum broadcastStandard in broadcastStandards)
+      {
+        // Careful! MaskDigital can cause problems because the top bit is set.
+        broadcastStandardGroupNames[(ulong)Convert.ToInt64(broadcastStandard)] = broadcastStandard.GetDescription();
+      }
+      return new Dictionary<ChannelGroupType, IDictionary<ulong, string>>
+      {
+        { ChannelGroupType.BroadcastStandard, broadcastStandardGroupNames },
+        { ChannelGroupType.ChannelProvider, new Dictionary<ulong, string>(20) }
+      };
+    }
+
+    /// <summary>
     /// Collect the program information from an MPEG 2 transport stream.
     /// </summary>
     /// <param name="transportStreamId">The transport stream's identifier.</param>
@@ -807,7 +823,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
       this.LogInfo("scan ATSC: S-VCT virtual channel count = {0}", channelCount);
 
       channels = new Dictionary<uint, ScannedChannel>(channelCount);
-      groupNames = new Dictionary<ChannelGroupType, IDictionary<ulong, string>>(5);
+      groupNames = InitialiseGroupNames();
       ignoredChannelNumbers = new HashSet<string>();
 
       int j = 1;
