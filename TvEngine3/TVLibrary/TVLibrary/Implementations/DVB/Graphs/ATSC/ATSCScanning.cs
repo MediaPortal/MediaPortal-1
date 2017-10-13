@@ -234,10 +234,6 @@ namespace TvLibrary.Implementations.DVB
       // Constructed/derived groups.
       if (broadcastStandard != BroadcastStandard.Unknown)
       {
-        if (!groupNames[ChannelGroupType.BroadcastStandard].ContainsKey((ulong)broadcastStandard))
-        {
-          groupNames[ChannelGroupType.BroadcastStandard][(ulong)broadcastStandard] = broadcastStandard./*GetDescription()*/ToString();
-        }
         scannedChannel.Groups.Add(ChannelGroupType.BroadcastStandard, new List<ulong> { (ulong)broadcastStandard });
       }
       ATSCChannel atscChannel = channel as ATSCChannel;
@@ -805,6 +801,26 @@ namespace TvLibrary.Implementations.DVB
     }
 
     /// <summary>
+    /// Initialise the set of group names for a scan.
+    /// </summary>
+    /// <returns>a dictionary of channel group names</returns>
+    private static IDictionary<ChannelGroupType, IDictionary<ulong, string>> InitialiseGroupNames()
+    {
+      Array broadcastStandards = System.Enum.GetValues(typeof(BroadcastStandard));
+      Dictionary<ulong, string> broadcastStandardGroupNames = new Dictionary<ulong, string>(broadcastStandards.Length);
+      foreach (System.Enum broadcastStandard in broadcastStandards)
+      {
+        // Careful! MaskDigital can cause problems because the top bit is set.
+        broadcastStandardGroupNames[(ulong)Convert.ToInt64(broadcastStandard)] = broadcastStandard./*GetDescription()*/ToString();
+      }
+      return new Dictionary<ChannelGroupType, IDictionary<ulong, string>>
+      {
+        { ChannelGroupType.BroadcastStandard, broadcastStandardGroupNames },
+        { ChannelGroupType.ChannelProvider, new Dictionary<ulong, string>(20) }
+      };
+    }
+
+    /// <summary>
     /// Collect the program information from an MPEG 2 transport stream.
     /// </summary>
     /// <param name="transportStreamId">The transport stream's identifier.</param>
@@ -894,7 +910,7 @@ namespace TvLibrary.Implementations.DVB
       Log.Log.Info("scan ATSC: S-VCT virtual channel count = {0}", channelCount);
 
       channels = new Dictionary<uint, ScannedChannel>(channelCount);
-      groupNames = new Dictionary<ChannelGroupType, IDictionary<ulong, string>>(5);
+      groupNames = InitialiseGroupNames();
       ignoredChannelNumbers = new HashSet<string>();
 
       int j = 1;
@@ -1408,7 +1424,7 @@ namespace TvLibrary.Implementations.DVB
       Log.Log.Info("scan ATSC: L-VCT channel count = {0}", channelCount);
 
       channels = new Dictionary<uint, ScannedChannel>(channelCount);
-      groupNames = new Dictionary<ChannelGroupType, IDictionary<ulong, string>>(5);
+      groupNames = InitialiseGroupNames();
       if (channelCount == 0)
       {
         return;
