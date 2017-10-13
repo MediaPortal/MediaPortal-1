@@ -533,13 +533,13 @@ namespace TvLibrary.Implementations.DVB
           }
 
           remainingTime = timeLimit - (DateTime.Now - start);
-          if (!_event.WaitOne(remainingTime))
+          if (remainingTime <= TimeSpan.Zero || !_event.WaitOne(remainingTime))
           {
             Log.Log.Error("scan ATSC: scan time limit reached, tables seen = [{0}], tables complete = [{1}]", _seenTables, _completeTables);
             break;
           }
         }
-        while (remainingTime > TimeSpan.Zero);
+        while (true);
 
         // Should we pull channel details from S-VCT or L-VCT?
         ushort transportStreamId = 0;

@@ -547,13 +547,13 @@ namespace TvLibrary.Implementations.DVB
           }
 
           remainingTime = _timeLimitSingleTransmitter - (DateTime.Now - start);
-          if (!_event.WaitOne(remainingTime))
+          if (remainingTime <= TimeSpan.Zero || !_event.WaitOne(remainingTime))
           {
             Log.Log.Error("scan DVB: scan time limit reached, tables seen = [{0}], tables complete = [{1}]", _seenTables, _completeTables);
             break;
           }
         }
-        while (remainingTime > TimeSpan.Zero);
+        while (true);
 
         // Read MPEG 2 TS program information.
         ushort transportStreamId;
@@ -780,13 +780,13 @@ namespace TvLibrary.Implementations.DVB
           }
 
           remainingTime = _timeLimitNetworkInformation - (DateTime.Now - start);
-          if (!_event.WaitOne(remainingTime))
+          if (remainingTime <= TimeSpan.Zero || !_event.WaitOne(remainingTime))
           {
             Log.Log.Error("scan DVB: NIT scan time limit reached, tables seen = [{0}], tables complete = [{1}]", _seenTables, _completeTables);
             break;
           }
         }
-        while (remainingTime > TimeSpan.Zero);
+        while (true);
 
         /*transmitters = CollectTransmitters(channel, _grabberDvb);
         if (_grabberFreesat != null)
@@ -2896,13 +2896,13 @@ namespace TvLibrary.Implementations.DVB
         }
 
         remainingTime = _timeLimitSingleTransmitter - (DateTime.Now - start);
-        if (!_event.WaitOne(remainingTime))
+        if (remainingTime <= TimeSpan.Zero || !_event.WaitOne(remainingTime))
         {
           Log.Log.Error("scan DVB: scan time limit reached, tables seen = [{0}], tables complete = [{1}]", _seenTables, _completeTables);
           break;
         }
       }
-      while (remainingTime > TimeSpan.Zero);
+      while (true);
 
       ushort networkPid;
       ushort programCount;
