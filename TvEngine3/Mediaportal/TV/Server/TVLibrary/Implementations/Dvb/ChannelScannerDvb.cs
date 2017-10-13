@@ -524,13 +524,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
           }
 
           remainingTime = _timeLimitSingleTransmitter - (DateTime.Now - start);
-          if (!_event.WaitOne(remainingTime))
+          if (remainingTime <= TimeSpan.Zero || !_event.WaitOne(remainingTime))
           {
             this.LogWarn("scan DVB: scan time limit reached, tables seen = [{0}], tables complete = [{1}]", _seenTables, _completeTables);
             break;
           }
         }
-        while (remainingTime > TimeSpan.Zero);
+        while (true);
 
         // Read MPEG 2 TS program information.
         ushort transportStreamId;
@@ -727,13 +727,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
           }
 
           remainingTime = _timeLimitNetworkInformation - (DateTime.Now - start);
-          if (!_event.WaitOne(remainingTime))
+          if (remainingTime <= TimeSpan.Zero || !_event.WaitOne(remainingTime))
           {
             this.LogWarn("scan DVB: NIT scan time limit reached, tables seen = [{0}], tables complete = [{1}]", _seenTables, _completeTables);
             break;
           }
         }
-        while (remainingTime > TimeSpan.Zero);
+        while (true);
 
         transmitters = CollectTransmitters(channel, _grabberDvb);
         if (_grabberFreesat != null)
@@ -2669,13 +2669,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
         }
 
         remainingTime = _timeLimitSingleTransmitter - (DateTime.Now - start);
-        if (!_event.WaitOne(remainingTime))
+        if (remainingTime <= TimeSpan.Zero || !_event.WaitOne(remainingTime))
         {
           this.LogWarn("scan DVB: scan time limit reached, tables seen = [{0}], tables complete = [{1}]", _seenTables, _completeTables);
           break;
         }
       }
-      while (remainingTime > TimeSpan.Zero);
+      while (true);
 
       ushort networkPid;
       ushort programCount;

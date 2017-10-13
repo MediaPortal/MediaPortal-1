@@ -856,7 +856,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Mpeg2Ts
       while (true)
       {
         ThrowExceptionIfTuneCancelled();
-        if (!_programWaitEvent.WaitOne(timeLimitReceiveStreamInfo - (DateTime.Now - tuneStartTime)))
+        TimeSpan remainingTime = timeLimitReceiveStreamInfo - (DateTime.Now - tuneStartTime);
+        if (remainingTime <= TimeSpan.Zero || !_programWaitEvent.WaitOne(remainingTime))
         {
           if (_isPatComplete)
           {
