@@ -442,7 +442,9 @@ namespace TvLibrary.Implementations.DVB
         }
 
         // An exception is thrown here if tuning fails for whatever reason.
-        _tuner.Tune(0, channel);
+        //_tuner.Tune(0, channel);
+        _tuner.Scan(0, channel);
+        _tuner.ResetSignalUpdate();
 
         // Enforce minimum scan time.
         DateTime start = DateTime.Now;
@@ -459,6 +461,7 @@ namespace TvLibrary.Implementations.DVB
           }
           remainingTime = _timeMinimum - (DateTime.Now - start);
         }
+        _tuner.ResetSignalUpdate();
 
         if (_seenTables == TableType.None)
         {
