@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2016 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2016 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -19,14 +19,12 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using Microsoft.Win32;
-using TvDatabase;
+
 
 namespace MPTvClient
 {
-  public class ReceptionDetails
+    public class ReceptionDetails
   {
     public int signalLevel;
     public int signalQuality;
@@ -104,44 +102,32 @@ namespace MPTvClient
 
     public static void Load()
     {
-      RegistryKey key = Registry.CurrentUser.OpenSubKey("Software\\Team MediaPortal\\MPTvClient");
-      if (key == null)
-        key = Registry.CurrentUser.CreateSubKey("Software\\Team MediaPortal\\MPTvClient");
-      playerPath = (string)key.GetValue("PlayerPath", "");
-      playerArgs = (string)key.GetValue("PlayerParams", "{0}");
-      serverHostname = (string)key.GetValue("ServerHostname", "");
-      useOverride = ((string)key.GetValue("UseOverride", "0") == "1");
-      overrideURL = (string)key.GetValue("OverrideURL", "");
-      alwaysPerformConnectionChecks = ((int)key.GetValue("AlwaysPerformConnectionChecks", 1) == 1);
-      frmLeft = (int)key.GetValue("Left", 0);
-      frmTop = (int)key.GetValue("Top", 0);
-      frmWidth = (int)key.GetValue("Width", 0);
-      frmHeight = (int)key.GetValue("Height", 0);
-      key.Close();
-    }
+            playerPath = Properties.Settings.Default.playerPath;
+            playerArgs = Properties.Settings.Default.playerArgs;
+            serverHostname = Properties.Settings.Default.serverHostname;
+            useOverride = Properties.Settings.Default.useOverride;
+            overrideURL = Properties.Settings.Default.overrideURL;
+            alwaysPerformConnectionChecks = Properties.Settings.Default.alwaysPerformConnectionChecks;
+            frmLeft = Properties.Settings.Default.frmLeft;
+            frmTop = Properties.Settings.Default.frmTop;
+            frmWidth = Properties.Settings.Default.frmWidth;
+            frmHeight = Properties.Settings.Default.frmHeight;
+        }
 
     public static void Save()
     {
-      RegistryKey key = Registry.CurrentUser.OpenSubKey("Software\\Team MediaPortal\\MPTvClient", true);
-      if (key == null)
-        key = Registry.CurrentUser.CreateSubKey("Software\\Team MediaPortal\\MPTvClient");
-      key.SetValue("PlayerPath", playerPath);
-      key.SetValue("PlayerParams", playerArgs);
-      key.SetValue("ServerHostname", serverHostname);
-      if (useOverride)
-        key.SetValue("UseOverride", "1");
-      else
-        key.SetValue("UseOverride", "0");
-      if (alwaysPerformConnectionChecks)
-        key.SetValue("AlwaysPerformConnectionChecks", 1);
-      else
-        key.SetValue("AlwaysPerformConnectionChecks", 0);
-      key.SetValue("OverrideURL", overrideURL);
-      key.SetValue("Left", frmLeft);
-      key.SetValue("Top", frmTop);
-      key.SetValue("Width", frmWidth);
-      key.SetValue("Height", frmHeight);
-      key.Close();
-    }
+            Properties.Settings.Default.playerPath = playerPath;
+            Properties.Settings.Default.playerArgs = playerArgs;
+            Properties.Settings.Default.serverHostname = serverHostname;
+            Properties.Settings.Default.useOverride = useOverride;
+            Properties.Settings.Default.overrideURL = overrideURL;
+            Properties.Settings.Default.alwaysPerformConnectionChecks = alwaysPerformConnectionChecks;
+            Properties.Settings.Default.frmLeft = frmLeft;
+            Properties.Settings.Default.frmTop = frmTop;
+            Properties.Settings.Default.frmWidth = frmWidth;
+            Properties.Settings.Default.frmHeight = frmHeight;
+
+            Properties.Settings.Default.Save();
+        }
   }
 }
