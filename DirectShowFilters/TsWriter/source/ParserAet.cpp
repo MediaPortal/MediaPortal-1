@@ -115,6 +115,8 @@ STDMETHODIMP CParserAet::NonDelegatingQueryInterface(REFIID iid, void** ppv)
 
 void CParserAet::AddDecoders(const vector<unsigned short>& pids)
 {
+  LogDebug(L"AET: add decoders...");
+  CUtils::DebugVector(pids, L"PIDs", false);
   CEnterCriticalSection lock(m_section);
   vector<unsigned short> newPids;
   vector<unsigned short>::const_iterator pidIt = pids.begin();
@@ -124,6 +126,7 @@ void CParserAet::AddDecoders(const vector<unsigned short>& pids)
     map<unsigned short, CSectionDecoder*>::const_iterator decoderIt = m_decoders.find(pid);
     if (decoderIt != m_decoders.end())
     {
+      LogDebug(L"AET: decoder already exists, PID %hu", pid);
       continue;
     }
 
@@ -140,19 +143,16 @@ void CParserAet::AddDecoders(const vector<unsigned short>& pids)
     m_decoders[pid] = decoder;
     newPids.push_back(pid);
   }
-  if (newPids.size() > 0)
+  if (newPids.size() > 0 && m_isGrabbing && m_callBackPidConsumer != NULL)
   {
-    LogDebug(L"AET: add decoders...");
-    CUtils::DebugVector(newPids, L"PIDs", false);
-    if (m_isGrabbing && m_callBackPidConsumer != NULL)
-    {
-      m_callBackPidConsumer->OnPidsRequired(&newPids[0], newPids.size(), Epg);
-    }
+    m_callBackPidConsumer->OnPidsRequired(&newPids[0], newPids.size(), Epg);
   }
 }
 
 void CParserAet::RemoveDecoders(const vector<unsigned short>& pids)
 {
+  LogDebug(L"AET: remove decoders...");
+  CUtils::DebugVector(pids, L"PIDs", false);
   CEnterCriticalSection lock(m_section);
   vector<unsigned short> oldPids;
   vector<unsigned short>::const_iterator pidIt = pids.begin();
@@ -160,21 +160,25 @@ void CParserAet::RemoveDecoders(const vector<unsigned short>& pids)
   {
     unsigned short pid = *pidIt;
     map<unsigned short, CSectionDecoder*>::iterator decoderIt = m_decoders.find(pid);
-    if (decoderIt != m_decoders.end())
+    if (decoderIt == m_decoders.end())
     {
-      if (decoderIt->second != NULL)
-      {
-        delete decoderIt->second;
-        decoderIt->second = NULL;
-        oldPids.push_back(pid);
-      }
-      m_decoders.erase(decoderIt);
+      LogDebug(L"AET: decoder does not exist, PID = %hu", pid);
+      continue;
     }
+    if (decoderIt->second != NULL)
+    {
+      delete decoderIt->second;
+      decoderIt->second = NULL;
+      oldPids.push_back(pid);
+    }
+    m_decoders.erase(decoderIt);
   }
   if (oldPids.size() > 0)
   {
-    LogDebug(L"AET: remove decoders...");
-    CUtils::DebugVector(oldPids, L"PIDs", false);
+    m_currentRecordAeit = NULL;
+    m_currentRecordAett = NULL;
+    m_currentRecordIndex = 0xffffffff;
+
     if (m_isGrabbing && m_callBackPidConsumer != NULL)
     {
       m_callBackPidConsumer->OnPidsNotRequired(&oldPids[0], oldPids.size(), Epg);

@@ -113,6 +113,8 @@ STDMETHODIMP CGrabberEpgAtsc::NonDelegatingQueryInterface(REFIID iid, void** ppv
 
 void CGrabberEpgAtsc::AddEitDecoders(const vector<unsigned short>& pids)
 {
+  LogDebug(L"EPG ATSC: add EIT decoders...");
+  CUtils::DebugVector(pids, L"PIDs", false);
   CEnterCriticalSection lock(m_section);
   vector<unsigned short> newPids;
   vector<unsigned short>::const_iterator pidIt = pids.begin();
@@ -122,18 +124,20 @@ void CGrabberEpgAtsc::AddEitDecoders(const vector<unsigned short>& pids)
     map<unsigned short, CParserEitAtsc*>::const_iterator parserEitIt = m_parsersEit.find(pid);
     if (parserEitIt != m_parsersEit.end())
     {
+      LogDebug(L"EPG ATSC: EIT decoder already exists, PID %hu", pid);
       continue;
     }
     map<unsigned short, CParserEtt*>::const_iterator parserEttIt = m_parsersEtt.find(pid);
     if (parserEttIt != m_parsersEtt.end())
     {
+      LogDebug(L"EPG ATSC: expecting ETT rather than EIT, PID %hu", pid);
       continue;
     }
 
     CParserEitAtsc* parser = new CParserEitAtsc(pid);
     if (parser == NULL)
     {
-      LogDebug(L"EPG ATSC: failed to allocate EIT decoder for PID %hu", pid);
+      LogDebug(L"EPG ATSC: failed to allocate EIT decoder, PID %hu", pid);
       continue;
     }
     parser->SetCallBack(this);
@@ -143,9 +147,6 @@ void CGrabberEpgAtsc::AddEitDecoders(const vector<unsigned short>& pids)
   }
   if (newPids.size() > 0)
   {
-    LogDebug(L"EPG ATSC: add EIT decoders...");
-    CUtils::DebugVector(newPids, L"PIDs", false);
-
     m_currentEventParser = NULL;
     m_currentEventIndex = 0xffffffff;
     m_currentEventIndexOffset = 0;
@@ -161,6 +162,8 @@ void CGrabberEpgAtsc::AddEitDecoders(const vector<unsigned short>& pids)
 
 void CGrabberEpgAtsc::RemoveEitDecoders(const vector<unsigned short>& pids)
 {
+  LogDebug(L"EPG ATSC: remove EIT decoders...");
+  CUtils::DebugVector(pids, L"PIDs", false);
   CEnterCriticalSection lock(m_section);
   vector<unsigned short> oldPids;
   vector<unsigned short>::const_iterator pidIt = pids.begin();
@@ -168,22 +171,21 @@ void CGrabberEpgAtsc::RemoveEitDecoders(const vector<unsigned short>& pids)
   {
     unsigned short pid = *pidIt;
     map<unsigned short, CParserEitAtsc*>::iterator parserIt = m_parsersEit.find(pid);
-    if (parserIt != m_parsersEit.end())
+    if (parserIt == m_parsersEit.end())
     {
-      if (parserIt->second != NULL)
-      {
-        delete parserIt->second;
-        parserIt->second = NULL;
-        oldPids.push_back(pid);
-      }
-      m_parsersEit.erase(parserIt);
+      LogDebug(L"EPG ATSC: EIT decoder does not exist, PID = %hu", pid);
+      continue;
     }
+    if (parserIt->second != NULL)
+    {
+      delete parserIt->second;
+      parserIt->second = NULL;
+      oldPids.push_back(pid);
+    }
+    m_parsersEit.erase(parserIt);
   }
   if (oldPids.size() > 0)
   {
-    LogDebug(L"EPG ATSC: remove EIT decoders...");
-    CUtils::DebugVector(oldPids, L"PIDs", false);
-
     m_currentEventParser = NULL;
     m_currentEventIndex = 0xffffffff;
     m_currentEventIndexOffset = 0;
@@ -199,6 +201,8 @@ void CGrabberEpgAtsc::RemoveEitDecoders(const vector<unsigned short>& pids)
 
 void CGrabberEpgAtsc::AddEttDecoders(const vector<unsigned short>& pids)
 {
+  LogDebug(L"EPG ATSC: add ETT decoders...");
+  CUtils::DebugVector(pids, L"PIDs", false);
   CEnterCriticalSection lock(m_section);
   vector<unsigned short> newPids;
   vector<unsigned short>::const_iterator pidIt = pids.begin();
@@ -208,18 +212,20 @@ void CGrabberEpgAtsc::AddEttDecoders(const vector<unsigned short>& pids)
     map<unsigned short, CParserEitAtsc*>::const_iterator parserEitIt = m_parsersEit.find(pid);
     if (parserEitIt != m_parsersEit.end())
     {
+      LogDebug(L"EPG ATSC: ETT decoder already exists, PID %hu", pid);
       continue;
     }
     map<unsigned short, CParserEtt*>::const_iterator parserEttIt = m_parsersEtt.find(pid);
     if (parserEttIt != m_parsersEtt.end())
     {
+      LogDebug(L"EPG ATSC: expecting EIT rather than ETT, PID %hu", pid);
       continue;
     }
 
     CParserEtt* parser = new CParserEtt(pid);
     if (parser == NULL)
     {
-      LogDebug(L"EPG ATSC: failed to allocate ETT decoder for PID %hu", pid);
+      LogDebug(L"EPG ATSC: failed to allocate ETT decoder, PID %hu", pid);
       continue;
     }
     parser->SetCallBack(this);
@@ -229,8 +235,6 @@ void CGrabberEpgAtsc::AddEttDecoders(const vector<unsigned short>& pids)
   }
   if (newPids.size() > 0)
   {
-    LogDebug(L"EPG ATSC: add ETT decoders...");
-    CUtils::DebugVector(newPids, L"PIDs", false);
     if (m_isGrabbing && m_callBackPidConsumer != NULL)
     {
       m_callBackPidConsumer->OnPidsRequired(&newPids[0], newPids.size(), Epg);
@@ -240,6 +244,8 @@ void CGrabberEpgAtsc::AddEttDecoders(const vector<unsigned short>& pids)
 
 void CGrabberEpgAtsc::RemoveEttDecoders(const vector<unsigned short>& pids)
 {
+  LogDebug(L"EPG ATSC: remove ETT decoders...");
+  CUtils::DebugVector(pids, L"PIDs", false);
   CEnterCriticalSection lock(m_section);
   vector<unsigned short> oldPids;
   vector<unsigned short>::const_iterator pidIt = pids.begin();
@@ -247,21 +253,21 @@ void CGrabberEpgAtsc::RemoveEttDecoders(const vector<unsigned short>& pids)
   {
     unsigned short pid = *pidIt;
     map<unsigned short, CParserEtt*>::iterator parserIt = m_parsersEtt.find(pid);
-    if (parserIt != m_parsersEtt.end())
+    if (parserIt == m_parsersEtt.end())
     {
-      if (parserIt->second != NULL)
-      {
-        delete parserIt->second;
-        parserIt->second = NULL;
-        oldPids.push_back(pid);
-      }
-      m_parsersEtt.erase(parserIt);
+      LogDebug(L"EPG ATSC: ETT decoder does not exist, PID = %hu", pid);
+      continue;
     }
+    if (parserIt->second != NULL)
+    {
+      delete parserIt->second;
+      parserIt->second = NULL;
+      oldPids.push_back(pid);
+    }
+    m_parsersEtt.erase(parserIt);
   }
   if (oldPids.size() > 0)
   {
-    LogDebug(L"EPG ATSC: remove ETT decoders...");
-    CUtils::DebugVector(oldPids, L"PIDs", false);
     if (m_isGrabbing && m_callBackPidConsumer != NULL)
     {
       m_callBackPidConsumer->OnPidsNotRequired(&oldPids[0], oldPids.size(), Epg);
