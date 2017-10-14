@@ -1417,7 +1417,16 @@ void CParserEitDvb::OnNewSection(unsigned short pid, unsigned char tableId, cons
             continue;
           }
 
-          service->Events.RemoveExpiredRecords(NULL);
+          if (service->Events.RemoveExpiredRecords(NULL) != 0)
+          {
+            m_currentEvent = NULL;
+            m_currentEventIndex = 0;
+            m_currentEventText = NULL;
+            m_currentEventTextIndex = 0;
+            m_referenceEvent = NULL;
+            m_referenceServiceId = 0;
+            m_referenceEventId = 0;
+          }
           seenSectionCount += service->SeenSections.size();
           eventCount += service->Events.GetRecordCount();
           LogDebug(L"  ONID = %hu, TSID = %hu, service ID = %hu, sections parsed = %llu, event count = %lu",

@@ -152,9 +152,11 @@ void CParserSdt::OnNewSection(const CSection& section)
       // combination of ONID + TSID, which makes completion deterministic.
       if (CTimeUtils::ElapsedMillis(m_otherCompleteTime) >= 5000)
       {
-        if (m_unseenSectionsActual.size() == 0)
+        if (m_unseenSectionsActual.size() == 0 && m_records.RemoveExpiredRecords(m_callBack) != 0)
         {
-          m_records.RemoveExpiredRecords(m_callBack);
+          m_currentRecord = NULL;
+          m_currentRecordIndex = 0xffff;
+          m_referenceRecord = NULL;
         }
 
         m_isOtherReady = true;
@@ -323,10 +325,13 @@ void CParserSdt::OnNewSection(const CSection& section)
     {
       if (section.TableId == TABLE_ID_SDT_ACTUAL)
       {
-        if (m_isOtherReady)
+        if (m_isOtherReady && m_records.RemoveExpiredRecords(m_callBack) != 0)
         {
-          m_records.RemoveExpiredRecords(m_callBack);
+          m_currentRecord = NULL;
+          m_currentRecordIndex = 0xffff;
+          m_referenceRecord = NULL;
         }
+
         LogDebug(L"SDT %d: actual ready, sections parsed = %llu, record count = %lu",
                   GetPid(), (unsigned long long)m_seenSectionsActual.size(),
                   m_records.GetRecordCount());

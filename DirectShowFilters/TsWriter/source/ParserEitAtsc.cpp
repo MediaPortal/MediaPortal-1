@@ -135,7 +135,12 @@ void CParserEitAtsc::OnNewSection(const CSection& section)
       // - EIT-X = 60 s
       if (CTimeUtils::ElapsedMillis(m_completeTime) >= 30000)
       {
-        m_records.RemoveExpiredRecords(NULL);
+        if (m_records.RemoveExpiredRecords(NULL) != 0)
+        {
+          m_currentRecord = NULL;
+          m_currentRecordIndex = 0xffffffff;
+        }
+
         LogDebug(L"EIT ATSC %d: ready, sections parsed = %llu, event count = %lu",
                   GetPid(), (unsigned long long)m_seenSections.size(),
                   m_records.GetRecordCount());

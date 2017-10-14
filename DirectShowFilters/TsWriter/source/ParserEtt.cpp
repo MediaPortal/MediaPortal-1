@@ -185,7 +185,11 @@ void CParserEtt::OnNewSection(const CSection& section)
     }
     else if (CTimeUtils::ElapsedMillis(m_completeTime) >= 60000)
     {
-      m_records.RemoveExpiredRecords(NULL);
+      if (m_records.RemoveExpiredRecords(NULL) != 0)
+      {
+        m_currentRecord = NULL;
+      }
+
       LogDebug(L"ETT %d: ready, text count = %lu",
                 GetPid(), m_records.GetRecordCount());
       m_isReady = true;

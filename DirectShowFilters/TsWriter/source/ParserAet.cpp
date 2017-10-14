@@ -641,8 +641,16 @@ void CParserAet::OnNewSection(unsigned short pid, unsigned char tableId, const C
       // to repetition rates. Assume...
       if (CTimeUtils::ElapsedMillis(m_completeTime) >= 120000)
       {
-        m_recordsAeit.RemoveExpiredRecords(NULL);
-        m_recordsAett.RemoveExpiredRecords(NULL);
+        if (
+          m_recordsAeit.RemoveExpiredRecords(NULL) != 0 ||
+          m_recordsAett.RemoveExpiredRecords(NULL) != 0
+        )
+        {
+          m_currentRecordAeit = NULL;
+          m_currentRecordAett = NULL;
+          m_currentRecordIndex = 0xffffffff;
+        }
+
         LogDebug(L"AET: ready, sections parsed = %llu, AEIT record count = %lu, AETT record count = %lu",
                   (unsigned long long)m_seenSections.size(),
                   m_recordsAeit.GetRecordCount(),

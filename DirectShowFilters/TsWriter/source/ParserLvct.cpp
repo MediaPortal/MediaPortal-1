@@ -167,7 +167,12 @@ void CParserLvct::OnNewSection(const CSection& section, bool isOutOfBandSection)
       // are not compliant... as seems to be the case in practice.
       if (CTimeUtils::ElapsedMillis(m_completeTime) >= 2000)
       {
-        m_records.RemoveExpiredRecords(m_callBack);
+        if (m_records.RemoveExpiredRecords(m_callBack) != 0)
+        {
+          m_currentRecord = NULL;
+          m_currentRecordIndex = 0xffff;
+        }
+
         LogDebug(L"LVCT %hu: ready, sections parsed = %llu, channel count = %lu",
                   m_pid, (unsigned long long)m_seenSections.size(),
                   m_records.GetRecordCount());

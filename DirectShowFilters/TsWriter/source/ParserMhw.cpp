@@ -1270,6 +1270,10 @@ unsigned long CParserMhw::DecodeVersion1DescriptionSection(const unsigned char* 
   else if (m_firstDescriptionId == eventId)
   {
     updateCount = m_recordsDescription.RemoveExpiredRecords(NULL, 1);
+    if (updateCount != 0)
+    {
+      m_currentDescription = NULL;
+    }
     m_recordsDescription.MarkExpiredRecords(1);
   }
 
@@ -1385,6 +1389,11 @@ unsigned long CParserMhw::DecodeVersion1EventSection(const unsigned char* data,
     {
       updateCount = m_recordsEventSatellite.RemoveExpiredRecords((ICallBackMhw*)this,
                                                                   m_previousSegmentEventsVersion1);
+      if (updateCount != 0)
+      {
+        m_currentEvent = NULL;
+        m_currentEventIndex = 0xffffffff;
+      }
       m_recordsEventSatellite.MarkExpiredRecords(segment);
     }
     m_previousSegmentEventsVersion1 = segment;
@@ -2338,6 +2347,10 @@ unsigned long CParserMhw::DecodeVersion2DescriptionSection(const unsigned char* 
   if ((long)record->Id < m_previousDescriptionId)
   {
     updateCount = m_recordsDescription.RemoveExpiredRecords(NULL, 2);
+    if (updateCount != 0)
+    {
+      m_currentDescription = NULL;
+    }
     m_recordsDescription.MarkExpiredRecords(2);
   }
   m_previousDescriptionId = record->Id;
@@ -2417,6 +2430,11 @@ unsigned long CParserMhw::DecodeVersion2EventsByChannelSection(const unsigned ch
       m_recordsEventTerrestrial.MarkExpiredRecords(segment);
     }
     m_previousSegmentEventsByChannelTerrestrial = segment;
+  }
+  if (updateCount != 0)
+  {
+    m_currentEvent = NULL;
+    m_currentEventIndex = 0xffffffff;
   }
 
   unsigned short unknown1 = (data[8] << 8) | data[9];
@@ -2628,6 +2646,11 @@ unsigned long CParserMhw::DecodeVersion2EventsByThemeSection(const unsigned char
     {
       updateCount = m_recordsEventSatellite.RemoveExpiredRecords(NULL,
                                                                   m_previousSegmentEventsByTheme);
+      if (updateCount != 0)
+      {
+        m_currentEvent = NULL;
+        m_currentEventIndex = 0xffffffff;
+      }
       m_recordsEventSatellite.MarkExpiredRecords(segment);
     }
     m_previousSegmentEventsByTheme = segment;
