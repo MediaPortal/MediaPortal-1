@@ -484,6 +484,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
         }
 
         // Wait for scanning to complete.
+        TableType standardScanTableMask = TableType.NitActual | TableType.Bat;
         do
         {
           if (_cancelScan)
@@ -504,13 +505,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
               _completeTables.HasFlag(TableType.SdtActual) ||
               (!_seenTables.HasFlag(TableType.SdtActual) && _completeTables.HasFlag(TableType.SdtOther))
             ) &&
-            // For a network scan all seen tables must be complete. Otherwise
-            // SDT and NIT other may be incomplete as long as SDT actual is
-            // complete. We assume that this condition will ensure NIT actual
-            // and/or BAT are complete if available.
+            // For a standard scan NIT actual and BAT must also be complete if
+            // they've been seen. Otherwise, for a network scan all seen tables
+            // must be complete.
             (
-              (isFastNetworkScan && _seenTables == _completeTables) ||
-              (!isFastNetworkScan && _seenTables == (_completeTables | TableType.SdtOther | TableType.NitOther))
+              (!isFastNetworkScan && (_seenTables & standardScanTableMask) == (_completeTables & standardScanTableMask)) ||
+              (isFastNetworkScan && _seenTables == _completeTables)
             ) &&
             // Freesat tables must all be complete... or not seen at all.
             (
