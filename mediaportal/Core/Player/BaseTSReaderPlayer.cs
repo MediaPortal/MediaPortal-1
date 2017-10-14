@@ -792,13 +792,7 @@ namespace MediaPortal.Player
       //if (GUIGraphicsContext.InVmr9Render) return;
       if (_bMediaTypeChanged)
       {
-        // Don't do rebuild when it's madVR and if it's different  from LAV codec
-        if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR ||
-            (!string.Equals("LAV Video Decoder", MatchFilters("Video"), StringComparison.InvariantCultureIgnoreCase) ||
-             !string.Equals("LAV Audio Decoder", MatchFilters("Audio"), StringComparison.InvariantCultureIgnoreCase)))
-        {
-          DoGraphRebuild();
-        }
+        DoGraphRebuild();
         _ireader.OnGraphRebuild(iChangedMediaTypes);
         _bMediaTypeChanged = false;
       }
@@ -1647,8 +1641,25 @@ namespace MediaPortal.Player
 
     public int OnMediaTypeChanged(int mediaType)
     {
-      _bMediaTypeChanged = true;
+      //#define AUDIO_CHANGE 0x1
+      //#define VIDEO_CHANGE 0x2
+
       iChangedMediaTypes = mediaType;
+
+      // Don't do rebuild when it's madVR and if it's mediaType is video
+      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+      {
+        // if both audio and video need to be change, only change audio
+        if (iChangedMediaTypes == 3)
+        {
+          iChangedMediaTypes = mediaType = 1;
+        }
+        _bMediaTypeChanged = mediaType == 1;
+      }
+      else
+      {
+        _bMediaTypeChanged = true;
+      }
       return 0;
     }
 
