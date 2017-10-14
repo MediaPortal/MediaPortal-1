@@ -125,15 +125,22 @@ STDMETHODIMP CTsWriterFilter::Run(REFERENCE_TIME startTime)
   LogDebug(L"filter: run");
   CAutoLock filterLock(m_pLock);
 
-  LogDebug(L"filter: start stream monitor thread...");
-  m_streamingMonitorThreadContext.m_filter = this;
-  m_streamingMonitorThreadContext.m_isReceivingOobSi = m_inputPinOobSi->IsConnected() == TRUE;
-  m_streamingMonitorThreadContext.m_isReceivingTs = m_inputPinTs->IsConnected() == TRUE;
-  if (!m_streamingMonitorThread.Start(STREAM_IDLE_TIMEOUT,
-                                      &CTsWriterFilter::StreamingMonitorThreadFunction,
-                                      (void*)&m_streamingMonitorThreadContext))
+  if (m_streamingMonitorThread.IsRunning())
   {
-    return E_FAIL;
+    LogDebug(L"filter: stream monitor already started...");
+  }
+  else
+  {
+    LogDebug(L"filter: start stream monitor thread...");
+    m_streamingMonitorThreadContext.m_filter = this;
+    m_streamingMonitorThreadContext.m_isReceivingOobSi = m_inputPinOobSi->IsConnected() == TRUE;
+    m_streamingMonitorThreadContext.m_isReceivingTs = m_inputPinTs->IsConnected() == TRUE;
+    if (!m_streamingMonitorThread.Start(STREAM_IDLE_TIMEOUT,
+                                        &CTsWriterFilter::StreamingMonitorThreadFunction,
+                                        (void*)&m_streamingMonitorThreadContext))
+    {
+      return E_FAIL;
+    }
   }
 
   // Configure dumping.
@@ -175,8 +182,15 @@ STDMETHODIMP CTsWriterFilter::Stop()
   LogDebug(L"filter: stop receiving...");
   CAutoLock receiveLock(&m_receiveLock);
 
-  LogDebug(L"filter: stop stream monitor thread...");
-  m_streamingMonitorThread.Stop();
+  if (!m_streamingMonitorThread.IsRunning())
+  {
+    LogDebug(L"filter: stream monitor thread already stopped...");
+  }
+  else
+  {
+    LogDebug(L"filter: stop stream monitor thread...");
+    m_streamingMonitorThread.Stop();
+  }
 
   m_inputPinOobSi->StopDumping();
   m_inputPinTs->StopDumping();

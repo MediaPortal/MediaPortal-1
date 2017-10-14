@@ -20,6 +20,9 @@
  */
 #pragma once
 #include "Windows.h"  // HANDLE
+#include "CriticalSection.h"
+
+using namespace MediaPortal;
 
 
 class CThread
@@ -29,12 +32,14 @@ class CThread
     ~CThread();
 
     bool Start(unsigned long frequency, bool (*function)(void*), void* context);
+    bool IsRunning();
     bool Wake();
     void Stop();
 
   private:
     static void __cdecl ThreadFunction(void* arg);
 
+    CCriticalSection m_section;
     HANDLE m_thread;
     HANDLE m_wakeEvent;
     unsigned long m_wakeCount;

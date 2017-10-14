@@ -22,6 +22,7 @@
 #include <cstddef>    // NULL
 #include <process.h>  // _beginthread()
 #include <Windows.h>  // CloseHandle(), CreateEvent(), GetLastError(), INVALID_HANDLE_VALUE, SetEvent(), WaitForSingleObject()
+#include "..\shared\EnterCriticalSection.h"
 
 
 extern void LogDebug(const wchar_t* fmt, ...);
@@ -44,6 +45,7 @@ CThread::~CThread()
 bool CThread::Start(unsigned long frequency, bool (*function)(void*), void* context)
 {
   LogDebug(L"thread: start");
+  CEnterCriticalSection lock(m_section);
   m_wakeEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
   if (m_wakeEvent == NULL)
   {
@@ -72,8 +74,14 @@ bool CThread::Start(unsigned long frequency, bool (*function)(void*), void* cont
   return true;
 }
 
+bool CThread::IsRunning()
+{
+  return m_thread != INVALID_HANDLE_VALUE;
+}
+
 bool CThread::Wake()
 {
+  CEnterCriticalSection lock(m_section);
   if (m_wakeEvent == NULL)
   {
     LogDebug(L"thread: wake event is NULL");
@@ -91,7 +99,8 @@ bool CThread::Wake()
 
 void CThread::Stop()
 {
-  if (m_stopSignal)
+  CEnterCriticalSection lock(m_section);
+  if (m_stopSignal || m_thread == INVALID_HANDLE_VALUE)
   {
     return;
   }
@@ -143,14 +152,16 @@ void __cdecl CThread::ThreadFunction(void* arg)
 
     if (!(thread->m_function)(thread->m_context))
     {
-      LogDebug(L"thread: finished, ID = %lu, loop count = %lu, wake count = %lu, signalled count = %lu",
+      LogDebug(L"thread: finishing, ID = %lu, loop count = %lu, wake count = %lu, signalled count = %lu",
                 threadId, loopCount, thread->m_wakeCount, signalledCount);
+      CEnterCriticalSection lock(thread->m_section);
       thread->m_stopSignal = true;
       if (thread->m_wakeEvent != NULL)
       {
         CloseHandle(thread->m_wakeEvent);
         thread->m_wakeEvent = NULL;
       }
+      LogDebug(L"thread: finished");
       return;
     }
   }

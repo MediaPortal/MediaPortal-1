@@ -189,21 +189,28 @@ STDMETHODIMP CTsMuxerFilter::Run(REFERENCE_TIME startTime)
   LogDebug(L"filter: run");
   CAutoLock filterLock(m_pLock);
 
-  LogDebug(L"filter: start stream monitor thread...");
-  m_streamingMonitorThreadContext.m_filter = this;
+  if (m_streamingMonitorThread.IsRunning())
   {
-    CAutoLock pinLock(&m_inputPinsLock);
-    for (vector<CMuxInputPin*>::const_iterator it = m_inputPins.begin(); it != m_inputPins.end(); it++)
-    {
-      CMuxInputPin* pin = *it;
-      m_streamingMonitorThreadContext.m_pinStates[pin->GetId()] = pin->IsConnected() == TRUE;
-    }
+    LogDebug(L"filter: stream monitor already started...");
   }
-  if (!m_streamingMonitorThread.Start(STREAM_IDLE_TIMEOUT,
-                                      &CTsMuxerFilter::StreamingMonitorThreadFunction,
-                                      (void*)&m_streamingMonitorThreadContext))
+  else
   {
-    return E_FAIL;
+    LogDebug(L"filter: start stream monitor thread...");
+    m_streamingMonitorThreadContext.m_filter = this;
+    {
+      CAutoLock pinLock(&m_inputPinsLock);
+      for (vector<CMuxInputPin*>::const_iterator it = m_inputPins.begin(); it != m_inputPins.end(); it++)
+      {
+        CMuxInputPin* pin = *it;
+        m_streamingMonitorThreadContext.m_pinStates[pin->GetId()] = pin->IsConnected() == TRUE;
+      }
+    }
+    if (!m_streamingMonitorThread.Start(STREAM_IDLE_TIMEOUT,
+                                        &CTsMuxerFilter::StreamingMonitorThreadFunction,
+                                        (void*)&m_streamingMonitorThreadContext))
+    {
+      return E_FAIL;
+    }
   }
 
   // Configure dumping.
@@ -263,8 +270,15 @@ STDMETHODIMP CTsMuxerFilter::Stop()
   LogDebug(L"filter: stop receiving...");
   CAutoLock receiveLock(&m_receiveLock);
 
-  LogDebug(L"filter: stop stream monitor thread...");
-  m_streamingMonitorThread.Stop();
+  if (!m_streamingMonitorThread.IsRunning())
+  {
+    LogDebug(L"filter: stream monitor thread already stopped...");
+  }
+  else
+  {
+    LogDebug(L"filter: stop stream monitor thread...");
+    m_streamingMonitorThread.Stop();
+  }
 
   CAutoLock pinLock(&m_inputPinsLock);
   vector<CMuxInputPin*>::const_iterator it = m_inputPins.begin();
