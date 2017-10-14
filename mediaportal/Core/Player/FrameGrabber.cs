@@ -110,6 +110,7 @@ namespace MediaPortal
 
                 if (GUIGraphicsContext.madVRCurrentFrameBitmap != null)
                 {
+#if DEBUG
                   string directory = string.Format("{0}\\MediaPortal Screenshots\\{1:0000}-{2:00}-{3:00}",
                     Environment.GetFolderPath(Environment.SpecialFolder.MyPictures),
                     DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
@@ -120,9 +121,11 @@ namespace MediaPortal
                   }
                   string fileName = string.Format("{0}\\madVR - {1:00}-{2:00}-{3:00}-{4:000}", directory, DateTime.Now.Hour,
                     DateTime.Now.Minute, DateTime.Now.Second, DateTime.Now.Millisecond);
+#endif
                   FrameResult = new Bitmap(GUIGraphicsContext.madVRCurrentFrameBitmap);
 #if DEBUG
-                  FrameResult.Save(fileName + ".jpg", ImageFormat.Jpeg);
+                  // Need to be commented out for saving screenshot frame
+                  //FrameResult.Save(fileName + ".jpg", ImageFormat.Jpeg);
 #endif
                   return FrameResult;
                 }
