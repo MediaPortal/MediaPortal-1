@@ -110,7 +110,7 @@ void CParserEtt::OnNewSection(const CSection& section)
     }
 
     m_isReady = false;
-    if (section.VersionNumber == VERSION_NOT_SET)
+    if (m_versionNumber == VERSION_NOT_SET)
     {
       LogDebug(L"ETT %d: received, extension ID = %hu, protocol version = %hhu, version number = %hhu",
                 GetPid(), section.TableIdExtension, protocolVersion,
