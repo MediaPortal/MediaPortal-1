@@ -1490,10 +1490,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
           List<ulong> freeviewBouquetIds = new List<ulong>(bouquetIdCount);
           for (byte b = 0; b < bouquetIdCount; b++)
           {
-            ushort bouquetId = bouquetIds[b];
+            BouquetFreeviewSatellite bouquetId = (BouquetFreeviewSatellite)bouquetIds[b];
             if (System.Enum.IsDefined(typeof(BouquetFreeviewSatellite), bouquetId))
             {
-              freeviewBouquetIds.Add(bouquetId);
+              freeviewBouquetIds.Add((ulong)bouquetId);
             }
           }
           if (freeviewBouquetIds.Count > 0)
