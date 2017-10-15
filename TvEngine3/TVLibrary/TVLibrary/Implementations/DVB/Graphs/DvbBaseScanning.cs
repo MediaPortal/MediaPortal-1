@@ -1274,17 +1274,25 @@ namespace TvLibrary.Implementations.DVB
         Log.Log.Info("    name count = {0, -2}, service names = [{1}], provider names = [{2}], languages = [{3}]", serviceNameCount, string.Join(", ", serviceNames), string.Join(", ", providerNames), string.Join(", ", nameLanguages));
 
         HashSet<ushort> distinctLcns = new HashSet<ushort>();
-        ushort lcn = 0;
+        ushort preferredLcn = 0;
         for (ushort n = 0; n < logicalChannelNumberCount; n++)
         {
           ushort tempLcn = logicalChannelNumbers[n].ChannelNumber;
           if (tempLcn != 0 && tempLcn != 0xffff)
           {
-            lcn = tempLcn;
+            preferredLcn = tempLcn;
             distinctLcns.Add(tempLcn);
           }
         }
         Log.Log.Info("    LCN count = {0, -3}, distinct values = [{1}], Dish sub-channel number = {2}", logicalChannelNumberCount, string.Join(", ", distinctLcns), dishSubChannelNumber);
+        if (distinctLcns.Count > 1)
+        {
+          for (ushort n = 0; n < logicalChannelNumberCount; n++)
+          {
+            LogicalChannelNumber lcn = logicalChannelNumbers[n];
+            Log.Log.Info("      {0, -2}: LCN = {1, -3}, is HD = {2, -5}, table ID = {3, -2}, table ID ext. = {4, -5}, region ID = {5, -5}", n + 1, lcn.ChannelNumber, lcn.IsHighDefinition, lcn.TableId, lcn.TableIdExtension, lcn.RegionId);
+          }
+        }
 
         Log.Log.Info("    EIT schedule = {0, -5}, EIT P/F = {1, -5}, free CA mode = {2, -5}, visible in guide = {3, -5}, running status = {4}, service type = {5}",
                       eitScheduleFlag, eitPresentFollowingFlag, freeCaMode, visibleInGuide, runningStatus, serviceType);
@@ -1491,14 +1499,14 @@ namespace TvLibrary.Implementations.DVB
         string lcnString;
         if (distinctLcns.Count > 1)
         {
-          lcn = SelectPreferredChannelNumber(logicalChannelNumbers, logicalChannelNumberCount);
+          preferredLcn = SelectPreferredChannelNumber(logicalChannelNumbers, logicalChannelNumberCount);
           dishSubChannelNumber = 0;
         }
         if (
           distinctLcns.Count > 0 &&
           (
-            (dishSubChannelNumber != 0 && LcnSyntax.Create(lcn, out lcnString, dishSubChannelNumber)) ||
-            LcnSyntax.Create(lcn, out lcnString)
+            (dishSubChannelNumber != 0 && LcnSyntax.Create(preferredLcn, out lcnString, dishSubChannelNumber)) ||
+            LcnSyntax.Create(preferredLcn, out lcnString)
           )
         )
         {
@@ -1506,11 +1514,11 @@ namespace TvLibrary.Implementations.DVB
           {
             if (dishSubChannelNumber == 0)
             {
-              newDvbChannel.LogicalChannelNumber = lcn;
+              newDvbChannel.LogicalChannelNumber = preferredLcn;
             }
             else
             {
-              newDvbChannel.LogicalChannelNumber = (lcn * 1000) + dishSubChannelNumber;
+              newDvbChannel.LogicalChannelNumber = (preferredLcn * 1000) + dishSubChannelNumber;
             }
           }
           //newChannel.LogicalChannelNumber = lcnString;
