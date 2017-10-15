@@ -73,15 +73,15 @@ bool CParserBat::GetBouquetNameByIndex(unsigned short bouquetId,
                                         unsigned char index,
                                         unsigned long& language,
                                         char* name,
-                                        unsigned short nameBufferCount) const
+                                        unsigned short& nameBufferSize) const
 {
-  return GetNetworkNameByIndex(bouquetId, index, language, name, nameBufferCount);
+  return GetNetworkNameByIndex(bouquetId, index, language, name, nameBufferSize);
 }
 
 bool CParserBat::GetBouquetNameByLanguage(unsigned short bouquetId,
                                           unsigned long language,
                                           char* name,
-                                          unsigned short nameBufferCount) const
+                                          unsigned short& nameBufferSize) const
 {
-  return GetNetworkNameByLanguage(bouquetId, language, name, nameBufferCount);
+  return GetNetworkNameByLanguage(bouquetId, language, name, nameBufferSize);
 }

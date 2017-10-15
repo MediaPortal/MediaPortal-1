@@ -41,9 +41,9 @@ class CParserBat : public CParserNitDvb
                                 unsigned char index,
                                 unsigned long& language,
                                 char* name,
-                                unsigned short nameBufferSize) const;
+                                unsigned short& nameBufferSize) const;
     bool GetBouquetNameByLanguage(unsigned short bouquetId,
                                   unsigned long language,
                                   char* name,
-                                  unsigned short nameBufferSize) const;
+                                  unsigned short& nameBufferSize) const;
 };
