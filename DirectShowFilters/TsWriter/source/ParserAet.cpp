@@ -106,10 +106,8 @@ STDMETHODIMP CParserAet::NonDelegatingQueryInterface(REFIID iid, void** ppv)
   }
   if (iid == IID_IGRABBER_EPG_SCTE)
   {
-    LogDebug(L"nathan CParserAet SCTE");
     return GetInterface((IGrabberEpgScte*)this, ppv);
   }
-  LogDebug(L"nathan CParserAet unknown");
   return CUnknown::NonDelegatingQueryInterface(iid, ppv);
 }
 
