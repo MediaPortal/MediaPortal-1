@@ -1527,7 +1527,7 @@ namespace TvLibrary.Implementations.DVB
             continue;
           }
 
-          Log.Log.Info("  {0, -3}: table ID = {1, -2}, section TSID = {2, -5}, map ID = {3, -5, carrier frequency = {4} Hz, modulation mode = {5}",
+          Log.Log.Info("  {0, -3}: table ID = {1, -2}, section TSID = {2, -5}, map ID = {3, -5}, carrier frequency = {4} Hz, modulation mode = {5}",
                         j++, tableId, sectionTransportStreamId, mapId, carrierFrequency, modulationMode);
 
           string shortName = DvbTextConverter.Convert(shortNameBuffer, shortNameBufferSize);
