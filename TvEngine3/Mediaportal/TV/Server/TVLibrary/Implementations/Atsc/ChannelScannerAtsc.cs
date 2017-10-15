@@ -1303,7 +1303,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
             continue;
           }
 
-          this.LogInfo("  {0, -3}: table ID = {1, -2}, section TSID = {2, -5}, map ID = {3, -5, carrier frequency = {4} Hz, modulation mode = {5}",
+          this.LogInfo("  {0, -3}: table ID = {1, -2}, section TSID = {2, -5}, map ID = {3, -5}, carrier frequency = {4} Hz, modulation mode = {5}",
                         j++, tableId, sectionTransportStreamId, mapId, carrierFrequency, modulationMode);
 
           string shortName = DvbTextConverter.Convert(shortNameBuffer, shortNameBufferSize);
