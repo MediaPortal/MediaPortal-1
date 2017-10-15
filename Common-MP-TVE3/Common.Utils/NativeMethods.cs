@@ -663,6 +663,14 @@ namespace MediaPortal.Common.Utils
     [return: MarshalAs(UnmanagedType.Bool)]
     public static extern bool SetDllDirectory(string PathName);
 
+    /// <summary>
+    /// Enables an application to inform the system that it is in use, thereby preventing the system from entering sleep or turning off the display while the application is running.
+    /// </summary>
+    /// <param name="state">The thread's execution requirements.</param>
+    /// <returns>If the function succeeds, the return value is the previous thread execution state. If the function fails, the return value is NULL.</returns>
+    [DllImport("kernel32.DLL", SetLastError = true)]
+    public static extern EXECUTION_STATE SetThreadExecutionState(EXECUTION_STATE state);
+
     [DllImport("kernel32.dll", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
     public static extern bool WriteFile(SafeFileHandle hFile, byte[] lpBuffer, uint nNumberOfBytesToWrite, out uint lpNumberOfBytesWritten, IntPtr lpOverlapped);
@@ -1488,6 +1496,16 @@ namespace MediaPortal.Common.Utils
     #region WinBase.h
 
     public static readonly IntPtr INVALID_HANDLE_VALUE = new IntPtr(-1);
+
+    [Flags]
+    public enum EXECUTION_STATE : uint
+    {
+      ES_SYSTEM_REQUIRED = 0x00000001,
+      ES_DISPLAY_REQUIRED = 0x00000002,
+      ES_USER_PRESENT   = 0x00000004,
+      ES_AWAYMODE_REQUIRED = 0x00000040,
+      ES_CONTINUOUS = 0x80000000
+    }
 
     [Flags]
     public enum FileFlag : uint
