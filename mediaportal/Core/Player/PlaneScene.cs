@@ -1345,12 +1345,14 @@ namespace MediaPortal.Player
             if (GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.SideBySideTo2D)
             {
               SubEngine.GetInstance().SetCurrent3DSubtitle = 0; // int for NONE (2D)
-              croppedVideoRect.Width /= 2; // We double the size in VideoPlayerVMR7 so need to divide here for subtitle
+              if (!GUIGraphicsContext.StretchSubtitles)
+                croppedVideoRect.Width /= 2; // We double the size in VideoPlayerVMR7 so need to divide here for subtitle
             }
             else if (GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.TopAndBottomTo2D)
             {
               SubEngine.GetInstance().SetCurrent3DSubtitle = 0; // int for NONE (2D)
-              croppedVideoRect.Height /= 2; // We double the size in VideoPlayerVMR7 so need to divide here for subtitle
+              if (!GUIGraphicsContext.StretchSubtitles)
+                croppedVideoRect.Height /= 2; // We double the size in VideoPlayerVMR7 so need to divide here for subtitle
             }
             engine.SetTime(frameStart);
             engine.RenderEx(viewportRect, croppedVideoRect, xOffsetInPixels);
@@ -1388,11 +1390,11 @@ namespace MediaPortal.Player
           {
             if (GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.SideBySide)
             {
-              SubEngine.GetInstance().SetCurrent3DSubtitle = 1; // int for SBS
+              SubEngine.GetInstance().SetCurrent3DSubtitle = !GUIGraphicsContext.StretchSubtitles ? 1 : 0;
             }
             else if (GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.TopAndBottom)
             {
-              SubEngine.GetInstance().SetCurrent3DSubtitle = 2; // int for TAB
+              SubEngine.GetInstance().SetCurrent3DSubtitle = !GUIGraphicsContext.StretchSubtitles ? 2 : 0;
             }
             engine.SetTime(frameStart);
             engine.RenderEx(viewportRect, croppedVideoRect, xOffsetInPixels);
