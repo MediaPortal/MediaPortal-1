@@ -1032,6 +1032,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
       }
 
       bool isSingleProgramTransportStream = tuningChannel is ChannelStream && programs.Count == 1;
+      int? longitude = null;
+      IChannelSatellite satelliteChannel = tuningChannel as IChannelSatellite;
+      if (satelliteChannel != null)
+      {
+        longitude = satelliteChannel.Longitude;
+      }
 
       int j = 1;
       byte tableId;
@@ -1233,7 +1239,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
         IDictionary<ChannelGroupType, ICollection<ulong>> groups = new Dictionary<ChannelGroupType, ICollection<ulong>>(20);
         if (networkIdCount > 0)
         {
-          groups.Add(ChannelGroupType.DvbNetwork, BuildGroup(grabber, groupNames, ChannelGroupType.DvbNetwork, networkIds, networkIdCount));
+          groups.Add(ChannelGroupType.DvbNetwork, BuildGroup(grabber, groupNames, ChannelGroupType.DvbNetwork, networkIds, networkIdCount, longitude));
         }
         if (bouquetIdCount > 0)
         {
@@ -1241,35 +1247,35 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
         }
         if (targetRegionIdCount > 0)
         {
-          groups.Add(ChannelGroupType.DvbTargetRegion, BuildGroup(grabber, groupNames, ChannelGroupType.DvbTargetRegion, targetRegionIds, targetRegionIdCount));
+          groups.Add(ChannelGroupType.DvbTargetRegion, BuildGroup(grabber, groupNames, ChannelGroupType.DvbTargetRegion, targetRegionIds, targetRegionIdCount, longitude));
         }
         if (freesatRegionIdCount > 0)
         {
-          groups.Add(ChannelGroupType.FreesatRegion, BuildGroup(grabber, groupNames, ChannelGroupType.FreesatRegion, freesatRegionIds, freesatRegionIdCount));
+          groups.Add(ChannelGroupType.FreesatRegion, BuildGroup(grabber, groupNames, ChannelGroupType.FreesatRegion, freesatRegionIds, freesatRegionIdCount, longitude));
         }
         if (openTvRegionIdCount > 0)
         {
-          groups.Add(ChannelGroupType.OpenTvRegion, BuildGroup(grabber, groupNames, ChannelGroupType.OpenTvRegion, openTvRegionIds, openTvRegionIdCount));
+          groups.Add(ChannelGroupType.OpenTvRegion, BuildGroup(grabber, groupNames, ChannelGroupType.OpenTvRegion, openTvRegionIds, openTvRegionIdCount, longitude));
         }
         if (freesatChannelCategoryIdCount > 0)
         {
-          groups.Add(ChannelGroupType.FreesatChannelCategory, BuildGroup(grabber, groupNames, ChannelGroupType.FreesatChannelCategory, freesatChannelCategoryIds, freesatChannelCategoryIdCount));
+          groups.Add(ChannelGroupType.FreesatChannelCategory, BuildGroup(grabber, groupNames, ChannelGroupType.FreesatChannelCategory, freesatChannelCategoryIds, freesatChannelCategoryIdCount, longitude));
         }
         if (mediaHighwayChannelCategoryIdCount > 0)
         {
-          groups.Add(ChannelGroupType.MediaHighwayChannelCategory, BuildGroup(grabber, groupNames, ChannelGroupType.MediaHighwayChannelCategory, mediaHighwayChannelCategoryIds, mediaHighwayChannelCategoryIdCount));
+          groups.Add(ChannelGroupType.MediaHighwayChannelCategory, BuildGroup(grabber, groupNames, ChannelGroupType.MediaHighwayChannelCategory, mediaHighwayChannelCategoryIds, mediaHighwayChannelCategoryIdCount, longitude));
         }
         if (norDigChannelListIdCount > 0)
         {
-          groups.Add(ChannelGroupType.NorDigChannelList, BuildGroup(grabber, groupNames, ChannelGroupType.NorDigChannelList, norDigChannelListIds, norDigChannelListIdCount));
+          groups.Add(ChannelGroupType.NorDigChannelList, BuildGroup(grabber, groupNames, ChannelGroupType.NorDigChannelList, norDigChannelListIds, norDigChannelListIdCount, longitude));
         }
         if (openTvChannelCategoryIdCount > 0)
         {
-          groups.Add(ChannelGroupType.OpenTvChannelCategory, BuildGroup(grabber, groupNames, ChannelGroupType.OpenTvChannelCategory, openTvChannelCategoryIds, openTvChannelCategoryIdCount));
+          groups.Add(ChannelGroupType.OpenTvChannelCategory, BuildGroup(grabber, groupNames, ChannelGroupType.OpenTvChannelCategory, openTvChannelCategoryIds, openTvChannelCategoryIdCount, longitude));
         }
         if (virginMediaChannelCategoryId > 0)
         {
-          groups.Add(ChannelGroupType.VirginMediaChannelCategory, BuildGroup(grabber, groupNames, ChannelGroupType.VirginMediaChannelCategory, new byte[1] { virginMediaChannelCategoryId }, 1));
+          groups.Add(ChannelGroupType.VirginMediaChannelCategory, BuildGroup(grabber, groupNames, ChannelGroupType.VirginMediaChannelCategory, new byte[1] { virginMediaChannelCategoryId }, 1, longitude));
         }
 
         if (dishNetworkMarketId > 0)
@@ -1511,7 +1517,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
             scannedChannel.Groups.Add(ChannelGroupType.FreeviewSatellite, freeviewBouquetIds);
           }
         }
-        IChannelSatellite satelliteChannel = newChannel as IChannelSatellite;
+        satelliteChannel = newChannel as IChannelSatellite;
         if (satelliteChannel != null)
         {
           AddSatelliteGroupNames(groupNames);
@@ -1589,7 +1595,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
     /// <param name="groupIds">The channel group identifiers. This array is usually larger than <paramref name="groupCount"/>.</param>
     /// <param name="groupCount">The number of valid <paramref name="groupIds">channel group identifiers</paramref>.</param>
     /// <returns>a list of the valid channel group identifiers from <paramref name="groupIds"/></returns>
-    private static List<ulong> BuildGroup(IGrabberSiDvb grabber, IDictionary<ChannelGroupType, IDictionary<ulong, string>> groupNames, ChannelGroupType groupType, Array groupIds, byte groupCount)
+    private static List<ulong> BuildGroup(IGrabberSiDvb grabber, IDictionary<ChannelGroupType, IDictionary<ulong, string>> groupNames, ChannelGroupType groupType, Array groupIds, byte groupCount, int? satelliteLongitude)
     {
       List<ulong> groupIdList = new List<ulong>(groupCount);
       List<string> logNames = new List<string>(groupCount);
@@ -1679,22 +1685,39 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
               ushort bouquetId = (ushort)(groupId >> 16);
               ushort regionId = (ushort)groupId;
               groupIdString = string.Format("{0}/{1}", bouquetId, regionId);
-              if (string.Equals(countryName, "New Zealand"))
+              if (
+                (satelliteLongitude.HasValue && satelliteLongitude.Value == 1600) ||
+                (!satelliteLongitude.HasValue && string.Equals(countryName, "New Zealand"))
+              )
               {
                 nameString = ((RegionOpenTvSkyNz)regionId).GetDescription();
               }
-              else if (string.Equals(countryName, "Australia"))
+              else if (
+                (satelliteLongitude.HasValue && satelliteLongitude.Value == 1560) ||
+                (!satelliteLongitude.HasValue && string.Equals(countryName, "Australia"))
+              )
               {
-                nameString = RegionOpenTvFoxtel.GetValue(regionId, (BouquetOpenTvFoxtel)bouquetId).Region;
+                RegionOpenTvFoxtel region = RegionOpenTvFoxtel.GetValue(regionId, (BouquetOpenTvFoxtel)bouquetId);
+                if (region != null)
+                {
+                  nameString = region.Region;
+                }
               }
-              else if (string.Equals(countryName, "Italy"))
+              else if (
+                (satelliteLongitude.HasValue && satelliteLongitude.Value == 130) ||
+                (!satelliteLongitude.HasValue && string.Equals(countryName, "Italy"))
+              )
               {
                 // not known
               }
               else
               {
-                // assume Sky UK
-                nameString = ((RegionOpenTvSkyUk)regionId).ToString();
+                // assume Sky UK (28.2E)
+                RegionOpenTvSkyUk region = (RegionOpenTvSkyUk)regionId;
+                if (region != null)
+                {
+                  nameString = region.ToString();
+                }
               }
             }
             else if (groupType == ChannelGroupType.VirginMediaChannelCategory)
@@ -1784,21 +1807,30 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
         groupIdList.Add(categoryId);
         string categoryName;
         bool gotName;
-        if (string.Equals(countryName, "Australia"))
+        if (
+          (satelliteLongitude.HasValue && satelliteLongitude.Value == 1560) ||
+          (!satelliteLongitude.HasValue && string.Equals(countryName, "Australia"))
+        )
         {
           gotName = CHANNEL_CATEGORY_NAMES_OPENTV_FOXTEL.TryGetValue(categoryId, out categoryName);
         }
-        else if (string.Equals(countryName, "Italy"))
+        else if (
+          (satelliteLongitude.HasValue && satelliteLongitude.Value == 130) ||
+          (!satelliteLongitude.HasValue && string.Equals(countryName, "Italy"))
+        )
         {
           gotName = CHANNEL_CATEGORY_NAMES_OPENTV_SKY_IT.TryGetValue(categoryId, out categoryName);
         }
-        else if (string.Equals(countryName, "New Zealand"))
+        else if (
+          (satelliteLongitude.HasValue && satelliteLongitude.Value == 1600) ||
+          (!satelliteLongitude.HasValue && string.Equals(countryName, "New Zealand"))
+        )
         {
           gotName = CHANNEL_CATEGORY_NAMES_OPENTV_SKY_NZ.TryGetValue(categoryId, out categoryName);
         }
         else
         {
-          // assume Sky UK
+          // assume Sky UK (28.2E)
           gotName = CHANNEL_CATEGORY_NAMES_OPENTV_SKY_UK.TryGetValue(categoryId, out categoryName);
         }
         if (!gotName)
