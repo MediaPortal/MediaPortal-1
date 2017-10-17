@@ -605,7 +605,7 @@ STDMETHODIMP_(bool) CGrabberSiDvb::GetService(unsigned short index,
     }
     else
     {
-      logicalChannelNumbers[*logicalChannelNumberCount] = ((unsigned long long)*tableId << 56) | sdtLogicalChannelNumber;
+      logicalChannelNumbers[*logicalChannelNumberCount] = ((unsigned long long)*tableId << 56) | ((unsigned long long)*transportStreamId << 40) | ((unsigned long long)*tableId << 32) | sdtLogicalChannelNumber;
       (*logicalChannelNumberCount)++;
     }
   }

@@ -33,9 +33,6 @@
 
 #define LANG_UND 0x646e75
 
-#define REGION_ID_DEFAULT             0
-#define REGION_ID_DEFAULT_HD          0x10000
-
 #define ORIGINAL_NETWORK_ID_FREESAT   59
 
 
@@ -1882,11 +1879,13 @@ void CParserNitDvb::AddTransmitter(CRecordNitTransmitter* record)
 }
 
 void CParserNitDvb::AddLogicalChannelNumber(unsigned short serviceId,
-                                            unsigned long regionId,
+                                            unsigned char descriptorTag,
+                                            unsigned short regionId,
                                             unsigned short logicalChannelNumber,
                                             const wchar_t* lcnType,
                                             map<unsigned short, map<unsigned long, unsigned short>*>& logicalChannelNumbers) const
 {
+  unsigned long lcnKey = ((unsigned long)descriptorTag << 16) | regionId;
   map<unsigned long, unsigned short>* serviceLcns = NULL;
   map<unsigned short, map<unsigned long, unsigned short>*>::iterator it = logicalChannelNumbers.find(serviceId);
   if (it == logicalChannelNumbers.end())
@@ -1899,15 +1898,15 @@ void CParserNitDvb::AddLogicalChannelNumber(unsigned short serviceId,
       return;
     }
     logicalChannelNumbers[serviceId] = serviceLcns;
-    (*serviceLcns)[regionId] = logicalChannelNumber;
+    (*serviceLcns)[lcnKey] = logicalChannelNumber;
     return;
   }
 
   serviceLcns = it->second;
-  unsigned short currentLcn = (*serviceLcns)[regionId];
+  unsigned short currentLcn = (*serviceLcns)[lcnKey];
   if (currentLcn == 0 || currentLcn == 0xfff || currentLcn == 0xffff)
   {
-    (*serviceLcns)[regionId] = logicalChannelNumber;
+    (*serviceLcns)[lcnKey] = logicalChannelNumber;
   }
   else if (
     logicalChannelNumber != 0 &&
@@ -1918,17 +1917,14 @@ void CParserNitDvb::AddLogicalChannelNumber(unsigned short serviceId,
   {
     if (logicalChannelNumber < currentLcn)
     {
-      (*serviceLcns)[regionId] = logicalChannelNumber;
+      (*serviceLcns)[lcnKey] = logicalChannelNumber;
       unsigned short temp = currentLcn;
       currentLcn = logicalChannelNumber;
       logicalChannelNumber = temp;
     }
-    if (serviceId != 49000 && wcscmp(lcnType, L"OpenTV") != 0)  // avoid spurious logging from unusual Sky UK channel "(sub b +1000)"
-    {
-      LogDebug(L"%s: %s logical channel number conflict, service ID = %hu, region ID = %lu, LCN = %hu, alternative LCN = %hu",
-                m_name, lcnType, serviceId, regionId, currentLcn,
-                logicalChannelNumber);
-    }
+    LogDebug(L"%s: %s logical channel number conflict, service ID = %hu, descriptor tag = 0x%hhx, region ID = %hu, LCN = %hu, alternative LCN = %hu",
+              m_name, lcnType, serviceId, descriptorTag, regionId, currentLcn,
+              logicalChannelNumber);
   }
 }
 
@@ -2303,7 +2299,7 @@ bool CParserNitDvb::DecodeTransportStreamDescriptors(const unsigned char* sectio
           (
             privateDataSpecifier == 0x31 ||                   // Sagem logical channel number descriptor
             privateDataSpecifier == 0x41444250 ||             // StarHub TV (formerly Singapore Cable Vision) - Singapore DVB-C
-            (                                                 // Sogecable bouquets don't include a PDS
+            (                                                 // Sogecable (Movistar+ ?) - Astra 19.2E eg. 10729V - don't include a PDS
               tableId != TABLE_ID_NIT_DVB_ACTUAL &&
               tableId != TABLE_ID_NIT_DVB_OTHER &&
               groupId >= 0x20 &&
@@ -2317,6 +2313,7 @@ bool CParserNitDvb::DecodeTransportStreamDescriptors(const unsigned char* sectio
       {
         result = DecodeAlternativeLogicalChannelNumberDescriptor(&sectionData[pointer],
                                                                   length,
+                                                                  tag,
                                                                   visibleInGuideFlags,
                                                                   logicalChannelNumbers);
       }
@@ -3499,6 +3496,7 @@ bool CParserNitDvb::DecodeS2SatelliteDeliverySystemDescriptor(const unsigned cha
 
 bool CParserNitDvb::DecodeAlternativeLogicalChannelNumberDescriptor(const unsigned char* data,
                                                                     unsigned char dataLength,
+                                                                    unsigned char tag,
                                                                     map<unsigned short, bool>& visibleInGuideFlags,
                                                                     map<unsigned short, map<unsigned long, unsigned short>*>& logicalChannelNumbers) const
 {
@@ -3516,8 +3514,8 @@ bool CParserNitDvb::DecodeAlternativeLogicalChannelNumberDescriptor(const unsign
   // Austar Australia.
   if (dataLength == 0 || dataLength % 4 != 0)
   {
-    LogDebug(L"%s: invalid alternative logical channel number descriptor, length = %hhu",
-              m_name, dataLength);
+    LogDebug(L"%s: invalid alternative logical channel number descriptor, tag = 0x%hhx, length = %hhu",
+              m_name, tag, dataLength);
     return false;
   }
   try
@@ -3533,7 +3531,8 @@ bool CParserNitDvb::DecodeAlternativeLogicalChannelNumberDescriptor(const unsign
 
       visibleInGuideFlags[serviceId] = true;
       AddLogicalChannelNumber(serviceId,
-                              REGION_ID_DEFAULT,
+                              tag,
+                              0,
                               logicalChannelNumber,
                               L"alternative",
                               logicalChannelNumbers);
@@ -3575,8 +3574,8 @@ bool CParserNitDvb::DecodeLogicalChannelNumberDescriptor(const unsigned char* da
   // - Freeview AU = 0x3200 - 0x320f
   if (dataLength == 0 || dataLength % 4 != 0)
   {
-    LogDebug(L"%s: invalid logical channel number descriptor, length = %hhu",
-              m_name, dataLength);
+    LogDebug(L"%s: invalid logical channel number descriptor, private data specifier = %lu, tag = 0x%hhx, length = %hhu",
+              m_name, privateDataSpecifier, tag, dataLength);
     return false;
   }
   try
@@ -3616,14 +3615,9 @@ bool CParserNitDvb::DecodeLogicalChannelNumberDescriptor(const unsigned char* da
         }
       }
 
-      unsigned long regionId = REGION_ID_DEFAULT;
-      if (tag == 0x88)
-      {
-        regionId = REGION_ID_DEFAULT_HD;
-      }
-
       AddLogicalChannelNumber(serviceId,
-                              regionId,
+                              tag,
+                              0,
                               logicalChannelNumber,
                               L"de-facto",
                               logicalChannelNumbers);
@@ -3781,7 +3775,8 @@ bool CParserNitDvb::DecodeNorDigLogicalChannelDescriptorVersion2(const unsigned 
         }
 
         AddLogicalChannelNumber(serviceId,
-                                REGION_ID_DEFAULT,
+                                0x87,
+                                0,
                                 logicalChannelNumber,
                                 L"NorDig",
                                 logicalChannelNumbers);
@@ -3860,6 +3855,7 @@ bool CParserNitDvb::DecodeOpenTvChannelDescriptor(const unsigned char* data,
       channelIds[serviceId] = channelId;
 
       AddLogicalChannelNumber(serviceId,
+                              0xb1,
                               regionId,
                               logicalChannelNumber,
                               L"OpenTV",
@@ -3997,6 +3993,7 @@ bool CParserNitDvb::DecodeFreesatChannelDescriptor(const unsigned char* data,
           {
             unsigned bouquetRegionId = *regionIdIt;
             AddLogicalChannelNumber(serviceId,
+                                    0xd3,
                                     bouquetRegionId,
                                     logicalChannelNumber,
                                     L"Freesat",
@@ -4011,6 +4008,7 @@ bool CParserNitDvb::DecodeFreesatChannelDescriptor(const unsigned char* data,
         else
         {
           AddLogicalChannelNumber(serviceId,
+                                  0xd3,
                                   regionId,
                                   logicalChannelNumber,
                                   L"Freesat",

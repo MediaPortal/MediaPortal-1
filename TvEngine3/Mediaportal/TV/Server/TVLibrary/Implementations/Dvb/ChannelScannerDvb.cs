@@ -1194,7 +1194,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
           for (ushort n = 0; n < logicalChannelNumberCount; n++)
           {
             LogicalChannelNumber lcn = logicalChannelNumbers[n];
-            this.LogInfo("      {0, -2}: LCN = {1, -3}, is HD = {2, -5}, table ID = {3, -2}, table ID ext. = {4, -5}, region ID = {5, -5}", n + 1, lcn.ChannelNumber, lcn.IsHighDefinition, lcn.TableId, lcn.TableIdExtension, lcn.RegionId);
+            this.LogInfo("      {0, -2}: LCN = {1, -3}, table ID = {2, -2}, table ID ext. = {3, -5}, descriptor tag = {4, -2}, region ID = {5, -5}", n + 1, lcn.ChannelNumber, lcn.TableId, lcn.TableIdExtension, lcn.DescriptorTag, lcn.RegionId);
           }
         }
 
@@ -1936,6 +1936,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
         byte lcnPriority = 1;
         if (lcn.TableId == 0x4a)
         {
+          if (
+            lcn.DescriptorTag == 0x82 &&
+            (lcn.TableIdExtension >= 0x20 && lcn.TableIdExtension <= 0x22) &&
+            logicalChannelNumberCount > 1
+          )
+          {
+            // Sogecable/Movistar+ (Astra 19.2E): descriptor 0x82 contains the
+            // LCN of the HD simulcast of the channel. Ignore it.
+            continue;
+          }
+
           if (lcn.TableIdExtension == provider1BouquetId)
           {
             if (lcn.RegionId == provider1RegionId)
@@ -1959,8 +1970,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
             }
           }
         }
-        if (_preferHighDefinitionChannelNumbers && lcn.IsHighDefinition)
+        if (_preferHighDefinitionChannelNumbers && lcn.DescriptorTag == 0x88)
         {
+          // HD simulcast LCN descriptor: regular NorDig LCN descriptors assign
+          // the LCNs for an SD-capable receiver. The HD simulcast LCN
+          // descriptor provides an alternative LCN for an HD-capable receiver.
           lcnPriority++;
         }
 

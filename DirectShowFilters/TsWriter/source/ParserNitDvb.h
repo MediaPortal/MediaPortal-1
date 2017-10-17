@@ -276,10 +276,21 @@ class CParserNitDvb : public CSectionDecoder, public IDefaultAuthorityProvider
                     (unsigned long long)AvailableInCountries.size(),
                     (unsigned long long)UnavailableInCountries.size());
 
-          CUtils::DebugMap(LogicalChannelNumbers,
-                            L"logical channel number(s)",
-                            L"region ID",
-                            L"LCN");
+          if (LogicalChannelNumbers.size() > 0)
+          {
+            LogDebug(L"  logical channel number(s)...");
+            unsigned char tag;
+            unsigned short regionId;
+            map<unsigned long, unsigned short>::const_iterator it = LogicalChannelNumbers.begin();
+            for ( ; it != LogicalChannelNumbers.end(); it++)
+            {
+              tag = (unsigned char)(it->first >> 16);
+              regionId = it->first & 0xffff;
+              LogDebug(L"    tag = 0x%hhx, region ID = %hu, LCN = %hu",
+                        tag, regionId, it->second);
+            }
+          }
+
           CUtils::DebugVector(AvailableInCells, L"available in cell(s)", false);
           CUtils::DebugVector(TargetRegionIds, L"target region ID(s)", false);
           CUtils::DebugVector(FreesatRegionIds, L"Freesat region ID(s)", false);
@@ -1115,7 +1126,8 @@ class CParserNitDvb : public CSectionDecoder, public IDefaultAuthorityProvider
     void AddTransmitter(CRecordNitTransmitter* record);
 
     void AddLogicalChannelNumber(unsigned short serviceId,
-                                  unsigned long regionId,
+                                  unsigned char descriptorTag,
+                                  unsigned short regionId,
                                   unsigned short logicalChannelNumber,
                                   const wchar_t* lcnType,
                                   map<unsigned short, map<unsigned long, unsigned short>*>& logicalChannelNumbers) const;
@@ -1215,6 +1227,7 @@ class CParserNitDvb : public CSectionDecoder, public IDefaultAuthorityProvider
                                                     CRecordNitTransmitterSatellite& record) const;
     bool DecodeAlternativeLogicalChannelNumberDescriptor(const unsigned char* data,
                                                           unsigned char dataLength,
+                                                          unsigned char tag,
                                                           map<unsigned short, bool>& visibleInGuideFlags,
                                                           map<unsigned short, map<unsigned long, unsigned short>*>& logicalChannelNumbers) const;
     bool DecodeLogicalChannelNumberDescriptor(const unsigned char* data,
