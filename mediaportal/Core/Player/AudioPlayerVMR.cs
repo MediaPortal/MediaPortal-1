@@ -211,7 +211,6 @@ namespace MediaPortal.Player
       }
     }
 
-
     public override int Speed
     {
       get

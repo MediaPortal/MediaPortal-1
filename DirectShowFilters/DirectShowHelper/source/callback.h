@@ -25,7 +25,11 @@ DECLARE_INTERFACE_(IVMR9Callback, IUnknown)
   STDMETHOD(SetRenderTarget)(LONG pTarget)PURE;
   STDMETHOD(SetSubtitleDevice)(LONG pDevice)PURE;
   STDMETHOD(RenderSubtitle)(REFERENCE_TIME frameStart, int left, int top, int right, int bottom, int width, int height, int xOffsetInPixels)PURE;
-  STDMETHOD(RenderFrame)(WORD cx, WORD cy, WORD arx, WORD ary, LONG pTargetmadVr)PURE;
+  STDMETHOD(RenderSubtitleEx)(REFERENCE_TIME frameStart, RECT viewportRect, RECT croppedVideoRect, int xOffsetInPixels)PURE;
+  STDMETHOD(RenderFrame)(int cx, int cy, int arx, int ary, LONG pTargetmadVr)PURE;
+  STDMETHOD(GrabMadVrScreenshot)(LPVOID pTargetmadVrDib)PURE;
+  STDMETHOD(GrabMadVrFrame)(LPVOID pTargetmadVrDib)PURE;
+  STDMETHOD(GrabMadVrCurrentFrame)(LPVOID pTargetmadVrDib)PURE;
   STDMETHOD(ForceOsdUpdate)(BOOL pForce)PURE;
   STDMETHOD(IsFullScreen)()PURE;
   STDMETHOD(IsUiVisible)()PURE;

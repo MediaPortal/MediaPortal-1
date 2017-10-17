@@ -86,6 +86,14 @@ void Render(int x, int y, int width, int height, int xOffsetInPixels)
 	}
 }
 
+void RenderEx(RECT viewportRect, RECT croppedVideoRect, int xOffsetInPixels, bool posRelativeToFrame)
+{
+  if (g_subManager)
+  {
+    g_subManager->RenderEx(viewportRect, croppedVideoRect, xOffsetInPixels, posRelativeToFrame);
+  }
+}
+
 int GetCount()
 {
 	return (g_subManager ? g_subManager->GetCount() : 0);
@@ -110,6 +118,12 @@ void SetCurrent(int current)
 {
 	if (g_subManager)
 		g_subManager->SetCurrent(current);
+}
+
+void SetCurrent3DSubtitle(int current)
+{
+  if (g_subManager)
+    g_subManager->SetCurrent3DSubtitle(current);
 }
 
 BOOL GetEnable()
@@ -147,6 +161,12 @@ BOOL IsModified()
 
 void FreeSubtitles()
 {
-  g_d3DDev = NULL;
-	g_subManager.Free();
+  try
+  {
+    g_d3DDev = NULL;
+    g_subManager->SetDevice(nullptr);
+    g_subManager.Free();
+  }
+  catch (...)
+  {}
 }

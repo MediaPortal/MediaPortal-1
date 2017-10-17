@@ -58,13 +58,13 @@ void CSubManager::SetDevice(IDirect3DDevice9* d3DDev)
   if (!d3DDev)
   {
     // Release ressource
-    m_pAllocator = nullptr;
-    m_pSubPicQueue = nullptr;
     if (m_d3DDev)
     {
       m_d3DDev.Release();
-      m_d3DDev = nullptr;
+      //m_d3DDev = nullptr;
     }
+    m_pAllocator = nullptr;
+    m_pSubPicQueue = nullptr;
     return;
   }
 
@@ -274,6 +274,14 @@ void CSubManager::SetCurrent(int current)
   }
 }
 
+void CSubManager::SetCurrent3DSubtitle(int current)
+{
+  if (m_pAllocator && m_pSubPicQueue)
+  {
+    m_iSubpicStereoMode = current;
+  }
+}
+
 void CSubManager::SetEnable(BOOL enabled)
 {
 	m_enabled = enabled != 0;
@@ -297,59 +305,217 @@ void CSubManager::SetTime(REFERENCE_TIME nsSampleTime)
 
 void CSubManager::Render(int x, int y, int width, int height, int xOffsetInPixels)
 {
-	if (!m_enabled)
-		return;
+  if (!m_enabled)
+    return;
 
-	if (!m_isSetTime)
-	{
+  if (!m_isSetTime)
+  {
     if (m_bIsMadVR)
       m_rtNow = g_tSampleStart - m_delay;
     else
       m_rtNow = g_tSegmentStart + g_tSampleStart - m_delay;
 
-		m_pSubPicQueue->SetTime(m_rtNow);
-	}
+    m_pSubPicQueue->SetTime(m_rtNow);
+  }
 
-	CSize size(width, height);
-	if (m_lastSize != size && width > 0 && height > 0)
-	{ //adjust texture size
-		ATLTRACE("Size change from %dx%d to %dx%d", m_lastSize.cx, m_lastSize.cy, size.cx, size.cy);
-		m_pAllocator->ChangeDevice(m_d3DDev);
-		//m_pAllocator->SetMaxTextureSize(g_textureSize);
-		m_pAllocator->SetCurSize(size);
-		m_pAllocator->SetCurVidRect(CRect(CPoint(0,0), size));
-		m_pSubPicQueue->Invalidate(m_rtNow+1000000);
-		m_lastSize = size;
-	}
+  CSize size(width, height);
+  if (m_lastSize != size && width > 0 && height > 0)
+  { //adjust texture size
+    ATLTRACE("Size change from %dx%d to %dx%d", m_lastSize.cx, m_lastSize.cy, size.cx, size.cy);
+    m_pAllocator->ChangeDevice(m_d3DDev);
+    //m_pAllocator->SetMaxTextureSize(g_textureSize);
+    m_pAllocator->SetCurSize(size);
+    m_pAllocator->SetCurVidRect(CRect(CPoint(0, 0), size));
+    m_pSubPicQueue->Invalidate(m_rtNow + 1000000);
+    m_lastSize = size;
+  }
 
-	CComPtr<ISubPic> pSubPic;
-	if(m_pSubPicQueue->LookupSubPic(m_rtNow, pSubPic)) 
-	{
- 		CRect rcSource, rcDest;
-		if (SUCCEEDED (pSubPic->GetSourceAndDest(&size, rcSource, rcDest, xOffsetInPixels))) {
-			//ATLTRACE("m_rtNow %d", (long)(m_rtNow/10000000));
-			//ATLTRACE("src: (%d,%d) - (%d,%d)", rcSource.left, rcSource.top, rcSource.right, rcSource.bottom);
-			//ATLTRACE("dst: (%d,%d) - (%d,%d)\n", rcDest.left, rcDest.top, rcDest.right, rcDest.bottom);
-			rcDest.OffsetRect(x, y);
-			DWORD fvf, alphaTest, colorOp, samplerAddressU, samplerAddressV;
-			m_d3DDev->GetFVF(&fvf);
-			m_d3DDev->GetRenderState(D3DRS_ALPHATESTENABLE, &alphaTest); 
-			m_d3DDev->GetTextureStageState(0, D3DTSS_COLOROP, &colorOp); //change to it causes "white" osd artifact  
-			m_d3DDev->GetSamplerState(0, D3DSAMP_ADDRESSU, &samplerAddressU);
-			m_d3DDev->GetSamplerState(0, D3DSAMP_ADDRESSV, &samplerAddressV);
+  CComPtr<ISubPic> pSubPic;
+  if (m_pSubPicQueue->LookupSubPic(m_rtNow, pSubPic))
+  {
+    CRect rcSource, rcDest;
+    if (SUCCEEDED(pSubPic->GetSourceAndDest(&size, rcSource, rcDest, xOffsetInPixels))) {
+      //ATLTRACE("m_rtNow %d", (long)(m_rtNow/10000000));
+      //ATLTRACE("src: (%d,%d) - (%d,%d)", rcSource.left, rcSource.top, rcSource.right, rcSource.bottom);
+      //ATLTRACE("dst: (%d,%d) - (%d,%d)\n", rcDest.left, rcDest.top, rcDest.right, rcDest.bottom);
+      rcDest.OffsetRect(x, y);
+      DWORD fvf, alphaTest, colorOp, samplerAddressU, samplerAddressV;
+      m_d3DDev->GetFVF(&fvf);
+      m_d3DDev->GetRenderState(D3DRS_ALPHATESTENABLE, &alphaTest);
+      m_d3DDev->GetTextureStageState(0, D3DTSS_COLOROP, &colorOp); //change to it causes "white" osd artifact  
+      m_d3DDev->GetSamplerState(0, D3DSAMP_ADDRESSU, &samplerAddressU);
+      m_d3DDev->GetSamplerState(0, D3DSAMP_ADDRESSV, &samplerAddressV);
 
-			m_d3DDev->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE); 
+      m_d3DDev->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
 
-			pSubPic->AlphaBlt(rcSource, rcDest, NULL/*pTarget*/);
+      pSubPic->AlphaBlt(rcSource, rcDest, NULL/*pTarget*/);
 
-			m_d3DDev->SetFVF(fvf);
-			m_d3DDev->SetRenderState(D3DRS_ALPHATESTENABLE, alphaTest); 
-			m_d3DDev->SetTextureStageState(0, D3DTSS_COLOROP, colorOp);
+      m_d3DDev->SetFVF(fvf);
+      m_d3DDev->SetRenderState(D3DRS_ALPHATESTENABLE, alphaTest);
+      m_d3DDev->SetTextureStageState(0, D3DTSS_COLOROP, colorOp);
 
-	 		m_d3DDev->SetSamplerState(0, D3DSAMP_ADDRESSU, samplerAddressU);
-			m_d3DDev->SetSamplerState(0, D3DSAMP_ADDRESSV, samplerAddressV);
-		}
-	}
+      m_d3DDev->SetSamplerState(0, D3DSAMP_ADDRESSU, samplerAddressU);
+      m_d3DDev->SetSamplerState(0, D3DSAMP_ADDRESSV, samplerAddressV);
+    }
+  }
+}
+
+void AlphaBlt(const CRect& windowRect, const CRect& videoRect, ISubPic* pSubPic, SubPicDesc* pTarget, int xOffsetInPixels/* = 0*/, const BOOL bUseSpecialCase/* = TRUE*/, const BOOL posRelativeToFrame)
+{
+  CRect rcSource, rcDest;
+  if (SUCCEEDED(pSubPic->GetSourceAndDest(windowRect, videoRect, posRelativeToFrame, 0/*rs.SubpicShiftPos*/, rcSource, rcDest, xOffsetInPixels, bUseSpecialCase))) {
+    pSubPic->AlphaBlt(rcSource, rcDest, pTarget);
+  }
+}
+
+void CSubManager::RenderEx(RECT viewportRect, RECT croppedVideoRect, int xOffsetInPixels, bool posRelativeToFrame)
+{
+  if (!m_enabled)
+    return;
+
+  if (!m_isSetTime)
+  {
+    if (m_bIsMadVR)
+      m_rtNow = g_tSampleStart - m_delay;
+    else
+      m_rtNow = g_tSegmentStart + g_tSampleStart - m_delay;
+
+    m_pSubPicQueue->SetTime(m_rtNow);
+  }
+
+  CRect windowRect, videoRect;
+  windowRect = viewportRect;
+  videoRect = croppedVideoRect;
+
+  //int width = viewportRect.right - viewportRect.left;
+  //int height = viewportRect.bottom - viewportRect.top;
+  //int x = viewportRect.right + viewportRect.left;
+  //int y = viewportRect.bottom + viewportRect.top;
+
+  //CSize size(width, height);
+  //if (m_lastSize != size && width > 0 && height > 0)
+  //{ //adjust texture size
+  //  ATLTRACE("Size change from %dx%d to %dx%d", m_lastSize.cx, m_lastSize.cy, size.cx, size.cy);
+  //  m_pAllocator->ChangeDevice(m_d3DDev);
+  //  //m_pAllocator->SetMaxTextureSize(g_textureSize);
+  //  m_pAllocator->SetCurSize(size);
+  //  m_pAllocator->SetCurVidRect(CRect(CPoint(0, 0), size));
+  //  m_pSubPicQueue->Invalidate(m_rtNow + 1000000);
+  //  m_lastSize = size;
+  //}
+
+  CComPtr<ISubPic> pSubPic;
+  if (m_pSubPicQueue->LookupSubPic(m_rtNow, pSubPic))
+  {
+    CRect rcWindow(windowRect);
+    CRect rcVideo(videoRect);
+
+    if (m_iSubpicStereoMode == SUBPIC_STEREO_SIDEBYSIDE)
+    {
+      CRect rcTempWindow(windowRect);
+      rcTempWindow.right -= rcTempWindow.Width() / 2;
+      CRect rcTempVideo(videoRect);
+      rcTempVideo.right -= rcTempVideo.Width() / 2;
+
+      xOffsetInPixels = -DefaultStereoOffsetInPixels;
+      DWORD fvf, alphaTest, colorOp, samplerAddressU, samplerAddressV;
+      m_d3DDev->GetFVF(&fvf);
+      m_d3DDev->GetRenderState(D3DRS_ALPHATESTENABLE, &alphaTest);
+      m_d3DDev->GetTextureStageState(0, D3DTSS_COLOROP, &colorOp); //change to it causes "white" osd artifact  
+      m_d3DDev->GetSamplerState(0, D3DSAMP_ADDRESSU, &samplerAddressU);
+      m_d3DDev->GetSamplerState(0, D3DSAMP_ADDRESSV, &samplerAddressV);
+
+      m_d3DDev->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
+
+      AlphaBlt(rcTempWindow, rcTempVideo, pSubPic, NULL, xOffsetInPixels, FALSE, posRelativeToFrame);
+
+      m_d3DDev->SetFVF(fvf);
+      m_d3DDev->SetRenderState(D3DRS_ALPHATESTENABLE, alphaTest);
+      m_d3DDev->SetTextureStageState(0, D3DTSS_COLOROP, colorOp);
+
+      m_d3DDev->SetSamplerState(0, D3DSAMP_ADDRESSU, samplerAddressU);
+      m_d3DDev->SetSamplerState(0, D3DSAMP_ADDRESSV, samplerAddressV);
+
+      rcWindow.left += rcWindow.Width() / 2;
+      rcVideo.left += rcVideo.Width() / 2;
+    }
+    else if (m_iSubpicStereoMode == SUBPIC_STEREO_TOPANDBOTTOM)
+    {
+      CRect rcTempWindow(windowRect);
+      rcTempWindow.bottom -= rcTempWindow.Height() / 2;
+      CRect rcTempVideo(videoRect);
+      rcTempVideo.bottom -= rcTempVideo.Height() / 2;
+
+      xOffsetInPixels = -DefaultStereoOffsetInPixels;
+
+      DWORD fvf, alphaTest, colorOp, samplerAddressU, samplerAddressV;
+      m_d3DDev->GetFVF(&fvf);
+      m_d3DDev->GetRenderState(D3DRS_ALPHATESTENABLE, &alphaTest);
+      m_d3DDev->GetTextureStageState(0, D3DTSS_COLOROP, &colorOp); //change to it causes "white" osd artifact  
+      m_d3DDev->GetSamplerState(0, D3DSAMP_ADDRESSU, &samplerAddressU);
+      m_d3DDev->GetSamplerState(0, D3DSAMP_ADDRESSV, &samplerAddressV);
+
+      m_d3DDev->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
+
+      AlphaBlt(rcTempWindow, rcTempVideo, pSubPic, NULL, xOffsetInPixels, FALSE, posRelativeToFrame);
+
+      m_d3DDev->SetFVF(fvf);
+      m_d3DDev->SetRenderState(D3DRS_ALPHATESTENABLE, alphaTest);
+      m_d3DDev->SetTextureStageState(0, D3DTSS_COLOROP, colorOp);
+
+      m_d3DDev->SetSamplerState(0, D3DSAMP_ADDRESSU, samplerAddressU);
+      m_d3DDev->SetSamplerState(0, D3DSAMP_ADDRESSV, samplerAddressV);
+
+      rcWindow.top += rcWindow.Height() / 2;
+      rcVideo.top += rcVideo.Height() / 2;
+    }
+    {
+      xOffsetInPixels = DefaultStereoOffsetInPixels;
+
+      DWORD fvf, alphaTest, colorOp, samplerAddressU, samplerAddressV;
+      m_d3DDev->GetFVF(&fvf);
+      m_d3DDev->GetRenderState(D3DRS_ALPHATESTENABLE, &alphaTest);
+      m_d3DDev->GetTextureStageState(0, D3DTSS_COLOROP, &colorOp); //change to it causes "white" osd artifact  
+      m_d3DDev->GetSamplerState(0, D3DSAMP_ADDRESSU, &samplerAddressU);
+      m_d3DDev->GetSamplerState(0, D3DSAMP_ADDRESSV, &samplerAddressV);
+
+      m_d3DDev->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
+
+      AlphaBlt(rcWindow, rcVideo, pSubPic, NULL, xOffsetInPixels, FALSE, posRelativeToFrame);
+
+      m_d3DDev->SetFVF(fvf);
+      m_d3DDev->SetRenderState(D3DRS_ALPHATESTENABLE, alphaTest);
+      m_d3DDev->SetTextureStageState(0, D3DTSS_COLOROP, colorOp);
+
+      m_d3DDev->SetSamplerState(0, D3DSAMP_ADDRESSU, samplerAddressU);
+      m_d3DDev->SetSamplerState(0, D3DSAMP_ADDRESSV, samplerAddressV);
+    }
+    //CRect rcSource, rcDest;
+    //if (SUCCEEDED(pSubPic->GetSourceAndDest(&size, rcSource, rcDest, xOffsetInPixels)))
+    //{
+    //  //ATLTRACE("m_rtNow %d", (long)(m_rtNow/10000000));
+    //  //ATLTRACE("src: (%d,%d) - (%d,%d)", rcSource.left, rcSource.top, rcSource.right, rcSource.bottom);
+    //  //ATLTRACE("dst: (%d,%d) - (%d,%d)\n", rcDest.left, rcDest.top, rcDest.right, rcDest.bottom);
+    //  rcDest.OffsetRect(x, y);
+    //  DWORD fvf, alphaTest, colorOp, samplerAddressU, samplerAddressV;
+    //  m_d3DDev->GetFVF(&fvf);
+    //  m_d3DDev->GetRenderState(D3DRS_ALPHATESTENABLE, &alphaTest);
+    //  m_d3DDev->GetTextureStageState(0, D3DTSS_COLOROP, &colorOp); //change to it causes "white" osd artifact  
+    //  m_d3DDev->GetSamplerState(0, D3DSAMP_ADDRESSU, &samplerAddressU);
+    //  m_d3DDev->GetSamplerState(0, D3DSAMP_ADDRESSV, &samplerAddressV);
+
+    //  m_d3DDev->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE, posRelativeToFrame);
+
+    //  pSubPic->AlphaBlt(rcSource, rcDest, NULL/*pTarget*/);
+
+    //  m_d3DDev->SetFVF(fvf);
+    //  m_d3DDev->SetRenderState(D3DRS_ALPHATESTENABLE, alphaTest);
+    //  m_d3DDev->SetTextureStageState(0, D3DTSS_COLOROP, colorOp);
+
+    //  m_d3DDev->SetSamplerState(0, D3DSAMP_ADDRESSU, samplerAddressU);
+    //  m_d3DDev->SetSamplerState(0, D3DSAMP_ADDRESSV, samplerAddressV);
+    //}
+  }
 }
 
 static bool IsTextPin(IPin* pPin)

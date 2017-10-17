@@ -203,7 +203,7 @@ namespace MediaPortal.Player
       {
         foreach (string filter in this.filterConfig.OtherFilters)
         {
-          if (FilterHelper.GetVideoCodec().Contains(filter.ToString()) && filter.ToString() != "Core CC Parser")
+          if (FilterHelper.GetVideoCodec().Contains(filter.ToString()) && filter.ToString() != "Core CC Parser" && GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
           {
             var comObject = DirectShowUtil.AddFilterToGraph(_graphBuilder, filter);
             if (comObject != null)
@@ -528,7 +528,10 @@ namespace MediaPortal.Player
             CleanupCC();
             ReleaseCC();
             ReleaseCC2();
-            CoreCCParserCheck();
+            if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
+            {
+              CoreCCParserCheck();
+            }
             DirectShowUtil.RenderUnconnectedOutputPins(_graphBuilder, filterCodec.VideoCodec);
             Log.Debug("TSReaderPlayer: Render VideoCodec filter (Tv/Recorded Stream Detected)");
             EnableCC();
@@ -821,7 +824,6 @@ namespace MediaPortal.Player
       {
         if (_graphBuilder == null)
         {
-          _state = PlayState.Init;
           return;
         }
         Log.Info("TSReaderPlayer: Cleanup DShow graph {0}", GUIGraphicsContext.InVmr9Render);
@@ -850,7 +852,7 @@ namespace MediaPortal.Player
 
           if (filterCodec != null && filterCodec._audioRendererFilter != null)
           {
-            DirectShowUtil.FinalReleaseComObject(filterCodec._audioRendererFilter);
+            DirectShowUtil.ReleaseComObject(filterCodec._audioRendererFilter);
             filterCodec._audioRendererFilter = null;
             Log.Debug("TSReaderPlayer: Cleanup _audioRendererFilter");
           }
