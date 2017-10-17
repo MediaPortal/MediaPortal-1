@@ -3429,7 +3429,18 @@ bool CParserNitDvb::DecodeS2SatelliteDeliverySystemDescriptor(const unsigned cha
                                                               unsigned char dataLength,
                                                               CRecordNitTransmitterSatellite& record) const
 {
-  if (dataLength == 0 || dataLength > 5)
+  // Satlink (Hotbird 13E 10853H) transport streams contain zero-length descriptors.
+  if (dataLength == 0)
+  {
+    record.IsS2 = true;
+    record.MultipleInputStreamFlag = false;
+    record.BackwardsCompatibilityIndicator = false;
+    record.ScramblingSequenceIndex = 0;
+    record.InputStreamIdentifier = 0;
+    return true;
+  }
+
+  if (dataLength > 5)
   {
     LogDebug(L"%s: invalid S2 satellite delivery system descriptor, length = %hhu",
               m_name, dataLength);
@@ -3574,7 +3585,7 @@ bool CParserNitDvb::DecodeLogicalChannelNumberDescriptor(const unsigned char* da
   // - Freeview UK = 0x233a
   // - Freeview AU = 0x3200 - 0x320f
   //
-  // Note ITI Neovision transport streams contain zero-length descriptors.
+  // Note: ITI Neovision transport streams contain zero-length descriptors.
   if (/*dataLength == 0 ||*/ dataLength % 4 != 0)
   {
     LogDebug(L"%s: invalid logical channel number descriptor, private data specifier = %lu, tag = 0x%hhx, length = %hhu",
