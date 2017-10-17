@@ -3451,6 +3451,10 @@ bool CParserNitDvb::DecodeS2SatelliteDeliverySystemDescriptor(const unsigned cha
     bool scramblingSequenceSelector = (data[0] & 0x80) != 0;
     if (scramblingSequenceSelector)
     {
+      record.ScramblingSequenceIndex = 0;
+    }
+    else
+    {
       if (dataLength < 4)
       {
         LogDebug(L"%s: invalid S2 satellite delivery system descriptor, length = %hhu, scrambling sequence selector = %d",
@@ -3459,36 +3463,28 @@ bool CParserNitDvb::DecodeS2SatelliteDeliverySystemDescriptor(const unsigned cha
       }
       record.ScramblingSequenceIndex = ((data[1] & 0x3) << 16) | (data[2] << 8) | data[3];
     }
-    else
-    {
-      record.ScramblingSequenceIndex = 0;
-    }
 
     record.MultipleInputStreamFlag = (data[0] & 0x40) != 0;
     record.BackwardsCompatibilityIndicator = (data[0] & 0x20) != 0;
 
-    if (record.MultipleInputStreamFlag)
+    if (!record.MultipleInputStreamFlag)
     {
-      if ((scramblingSequenceSelector && dataLength != 5) || dataLength < 2)
-      {
-        LogDebug(L"%s: invalid S2 satellite delivery system descriptor, length = %hhu, scrambling sequence selector = %d, multiple input stream flag = %d",
-                  m_name, dataLength, scramblingSequenceSelector,
-                  record.MultipleInputStreamFlag);
-        return false;
-      }
-
-      if (scramblingSequenceSelector)
-      {
-        record.InputStreamIdentifier = data[4];
-      }
-      else
-      {
-        record.InputStreamIdentifier = data[1];
-      }
+      record.InputStreamIdentifier = 0;
+    }
+    else if ((scramblingSequenceSelector && dataLength != 5) || dataLength < 2)
+    {
+      LogDebug(L"%s: invalid S2 satellite delivery system descriptor, length = %hhu, scrambling sequence selector = %d, multiple input stream flag = %d",
+                m_name, dataLength, scramblingSequenceSelector,
+                record.MultipleInputStreamFlag);
+      return false;
+    }
+    else if (scramblingSequenceSelector)
+    {
+      record.InputStreamIdentifier = data[4];
     }
     else
     {
-      record.InputStreamIdentifier = 0;
+      record.InputStreamIdentifier = data[1];
     }
 
     //LogDebug(L"%s: S2 satellite delivery system descriptor, multiple input stream flag = %d, backwards compatibility indicator = %d, scrambling sequence index = %lu, input stream identifier = %hhu",
