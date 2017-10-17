@@ -1243,7 +1243,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
         }
         if (bouquetIdCount > 0)
         {
-          groups.Add(ChannelGroupType.DvbBouquet, BuildGroup(grabber, groupNames, ChannelGroupType.DvbBouquet, bouquetIds, bouquetIdCount));
+          groups.Add(ChannelGroupType.DvbBouquet, BuildGroup(grabber, groupNames, ChannelGroupType.DvbBouquet, bouquetIds, bouquetIdCount, longitude));
         }
         if (targetRegionIdCount > 0)
         {
