@@ -1941,7 +1941,7 @@ bool CParserSdt::DecodeOpenTvChannelDescriptionDescriptor(const unsigned char* d
     }
     else
     {
-      LogDebug(L"SDT: description = %S", description);
+      //LogDebug(L"SDT: description = %S", description);
       delete description;
     }
     return true;
