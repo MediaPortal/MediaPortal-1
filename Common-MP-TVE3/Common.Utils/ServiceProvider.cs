@@ -205,8 +205,11 @@ namespace MediaPortal.Common.Utils
       }
     }
 
-    #endregion
+    public T TryGet<T>()
+    {
+      return Get<T>();
+    }
 
-   
+    #endregion
   }
 }
