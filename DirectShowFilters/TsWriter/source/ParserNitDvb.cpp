@@ -3570,9 +3570,12 @@ bool CParserNitDvb::DecodeLogicalChannelNumberDescriptor(const unsigned char* da
   // - NorDig = 0x29
   // - Freeview NZ = 0x37
   // - Canal+ Cyfrowy = 0xa5
+  // - ITI Neovision (Hotbird 13E 10834V) = 0xb0
   // - Freeview UK = 0x233a
   // - Freeview AU = 0x3200 - 0x320f
-  if (dataLength == 0 || dataLength % 4 != 0)
+  //
+  // Note ITI Neovision transport streams contain zero-length descriptors.
+  if (/*dataLength == 0 ||*/ dataLength % 4 != 0)
   {
     LogDebug(L"%s: invalid logical channel number descriptor, private data specifier = %lu, tag = 0x%hhx, length = %hhu",
               m_name, privateDataSpecifier, tag, dataLength);
