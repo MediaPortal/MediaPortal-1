@@ -28,9 +28,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     public ushort ChannelNumber;
     public ushort RegionId;
 
-    [MarshalAs(UnmanagedType.I1)]
-    public bool IsHighDefinition;
-
+    public byte DescriptorTag;
     public ushort TableIdExtension;
     public byte TableId;
   }

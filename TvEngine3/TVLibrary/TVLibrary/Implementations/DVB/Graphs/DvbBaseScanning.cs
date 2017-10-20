@@ -213,6 +213,7 @@ namespace TvLibrary.Implementations.DVB
       public bool IsEncrypted;
       public bool IsEncryptionDetectionAccurate;
       public bool IsThreeDimensional;
+      public bool IsThreeDimensionalDetectionAccurate;
     }
 
     #region variables
@@ -1019,6 +1020,7 @@ namespace TvLibrary.Implementations.DVB
       bool isEncrypted;
       bool isEncryptionDetectionAccurate;
       bool isThreeDimensional;
+      bool isThreeDimensionalDetectionAccurate;
       byte audioLanguageCount = COUNT_AUDIO_LANGUAGES;
       Iso639Code[] audioLanguages = new Iso639Code[audioLanguageCount];
       byte subtitlesLanguageCount = COUNT_SUBTITLES_LANGUAGES;
@@ -1035,16 +1037,17 @@ namespace TvLibrary.Implementations.DVB
         if (!_grabberMpeg.GetProgramByIndex(i, out programNumber, out pmtPid, out isPmtReceived,
                                             out streamCountVideo, out streamCountAudio,
                                             out isEncrypted, out isEncryptionDetectionAccurate,
-                                            out isThreeDimensional,
+                                            out isThreeDimensional, out isThreeDimensionalDetectionAccurate,
                                             audioLanguages, ref audioLanguageCount,
                                             subtitlesLanguages, ref subtitlesLanguageCount))
         {
           Log.Log.Error("scan DVB: failed to get MPEG 2 program, index = {0}", i);
           break;
         }
-        Log.Log.Info("  {0, -2}: program number = {1, -5}, PMT PID = {2, -5}, is PMT received = {3, -5}, video stream count = {4}, audio stream count = {5}, is encrypted = {6, -5} (accurate = {7, -5}), is 3D = {8, -5}",
+        Log.Log.Info("  {0, -2}: program number = {1, -5}, PMT PID = {2, -5}, is PMT received = {3, -5}, video stream count = {4}, audio stream count = {5}, is encrypted = {6, -5} (accurate = {7, -5}), is 3D = {8, -5} (accurate = {9, -5})",
                       i + 1, programNumber, pmtPid, isPmtReceived, streamCountVideo, streamCountAudio,
-                      isEncrypted, isEncryptionDetectionAccurate, isThreeDimensional);
+                      isEncrypted, isEncryptionDetectionAccurate,
+                      isThreeDimensional, isThreeDimensionalDetectionAccurate);
         Log.Log.Debug("    audio language count = {0}, languages = {1}", audioLanguageCount, string.Join(", ", audioLanguages.Take(audioLanguageCount)));
         Log.Log.Debug("    subtitles language count = {0}, languages = {1}", subtitlesLanguageCount, string.Join(", ", subtitlesLanguages.Take(subtitlesLanguageCount)));
 
@@ -1067,6 +1070,7 @@ namespace TvLibrary.Implementations.DVB
           program.IsEncrypted = isEncrypted;
           program.IsEncryptionDetectionAccurate = isEncryptionDetectionAccurate;
           program.IsThreeDimensional = isThreeDimensional;
+          program.IsThreeDimensionalDetectionAccurate = isThreeDimensionalDetectionAccurate;
         }
         programs[((uint)transportStreamId << 16) | programNumber] = program;
       }
@@ -1296,7 +1300,7 @@ namespace TvLibrary.Implementations.DVB
           for (ushort n = 0; n < logicalChannelNumberCount; n++)
           {
             LogicalChannelNumber lcn = logicalChannelNumbers[n];
-            Log.Log.Info("      {0, -2}: LCN = {1, -3}, is HD = {2, -5}, table ID = {3, -2}, table ID ext. = {4, -5}, region ID = {5, -5}", n + 1, lcn.ChannelNumber, lcn.IsHighDefinition, lcn.TableId, lcn.TableIdExtension, lcn.RegionId);
+            Log.Log.Info("      {0, -2}: LCN = {1, -3}, table ID = {2, -2}, table ID ext. = {3, -5}, descriptor tag = {4, -2}, region ID = {5, -5}", n + 1, lcn.ChannelNumber, lcn.TableId, lcn.TableIdExtension, lcn.DescriptorTag, lcn.RegionId);
           }
         }
 
@@ -1562,9 +1566,9 @@ namespace TvLibrary.Implementations.DVB
         }
         //newChannel.IsHighDefinition = isHighDefinition && !isStandardDefinition;
         //newChannel.IsThreeDimensional = isThreeDimensional;
-        if (program != null)
+        if (program != null && program.IsThreeDimensionalDetectionAccurate)
         {
-          //newChannel.IsThreeDimensional |= program.IsThreeDimensional;
+          //newChannel.IsThreeDimensional = program.IsThreeDimensional;
         }
 
         if (newDvbChannel != null)
@@ -2089,6 +2093,17 @@ namespace TvLibrary.Implementations.DVB
         byte lcnPriority = 1;
         if (lcn.TableId == 0x4a)
         {
+          if (
+            lcn.DescriptorTag == 0x82 &&
+            (lcn.TableIdExtension >= 0x20 && lcn.TableIdExtension <= 0x22) &&
+            logicalChannelNumberCount > 1
+          )
+          {
+            // Sogecable/Movistar+ (Astra 19.2E): descriptor 0x82 contains the
+            // LCN of the HD simulcast of the channel. Ignore it.
+            continue;
+          }
+
           if (lcn.TableIdExtension == provider1BouquetId)
           {
             if (lcn.RegionId == provider1RegionId)
@@ -2112,8 +2127,11 @@ namespace TvLibrary.Implementations.DVB
             }
           }
         }
-        if (_preferHighDefinitionChannelNumbers && lcn.IsHighDefinition)
+        if (_preferHighDefinitionChannelNumbers && lcn.DescriptorTag == 0x88)
         {
+          // HD simulcast LCN descriptor: regular NorDig LCN descriptors assign
+          // the LCNs for an SD-capable receiver. The HD simulcast LCN
+          // descriptor provides an alternative LCN for an HD-capable receiver.
           lcnPriority++;
         }
 
