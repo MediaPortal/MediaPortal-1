@@ -78,7 +78,21 @@ CParserOpenTv::~CParserOpenTv()
 
 bool CParserOpenTv::IsItalianText(unsigned short originalNetworkId)
 {
-  return originalNetworkId == 64511;  // Sky Italia
+  // All original network IDs used on Hotbird 13E (which carries Sky Italia).
+  if (
+    originalNetworkId == 113 ||   // 0x0071 (Polsat/Cyfra+)
+    originalNetworkId == 176 ||   // 0x00b0 Groupe CANAL+
+    (originalNetworkId >= 192 && originalNetworkId <= 205) || // 0x00c0 - 0x00cd Canal+
+    originalNetworkId == 272 ||   // 0x0110 Mediaset
+    originalNetworkId == 318 ||   // 0x013e Eutelsat Satellite System 13°E (European Telecommunications Satellite Organization)
+    originalNetworkId == 319 ||   // 0x013f Eutelsat Satellite System 13°E (European Telecommunications Satellite Organization)
+    originalNetworkId == 702 ||   // 0x02be ARABSAT - Arab Satellite Communications Organization
+    originalNetworkId == 64511    // 0xfbff Sky Italia
+  )
+  {
+    return true;
+  }
+  return false;
 }
 
 STDMETHODIMP CParserOpenTv::NonDelegatingQueryInterface(REFIID iid, void** ppv)
@@ -105,12 +119,13 @@ void CParserOpenTv::SetOriginalNetworkId(unsigned short originalNetworkId)
   bool isItalianText = IsItalianText(originalNetworkId);
   bool useAltProgCatHandling = false;
   if (
-    originalNetworkId == 47 ||    // Freeview Satellite NZ (TVNZ)
-    originalNetworkId == 105 ||   // Foxtel AU (Optus B3)
-    originalNetworkId == 168 ||   // Foxtel AU
-    originalNetworkId == 169 ||   // Sky NZ
-    originalNetworkId == 4096 ||  // Foxtel AU (Optus B3)
-    (originalNetworkId >= 4112 && originalNetworkId <= 4127)  // AU broadcasters (ABC, SBS etc.)
+    originalNetworkId == 47 ||    // 0x002f Freeview Satellite NZ (TVNZ)
+    originalNetworkId == 105 ||   // 0x0069 Foxtel AU (Optus B3)
+    originalNetworkId == 168 ||   // 0x00a8 Foxtel AU
+    originalNetworkId == 169 ||   // 0x00a9 Sky NZ
+    originalNetworkId == 4095 ||  // 0x0fff VAST AU (Optus Networks)
+    originalNetworkId == 4096 ||  // 0x1000 Foxtel AU (Optus B3)
+    (originalNetworkId >= 4112 && originalNetworkId <= 4127)  // 0x1010 - 101f AU broadcasters (ABC, SBS etc.)
   )
   {
     useAltProgCatHandling = true;
