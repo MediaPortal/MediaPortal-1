@@ -213,6 +213,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
       public bool IsEncrypted;
       public bool IsEncryptionDetectionAccurate;
       public bool IsThreeDimensional;
+      public bool IsThreeDimensionalDetectionAccurate;
     }
 
     #region variables
@@ -916,6 +917,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
       bool isEncrypted;
       bool isEncryptionDetectionAccurate;
       bool isThreeDimensional;
+      bool isThreeDimensionalDetectionAccurate;
       byte audioLanguageCount = COUNT_AUDIO_LANGUAGES;
       Iso639Code[] audioLanguages = new Iso639Code[audioLanguageCount];
       byte subtitlesLanguageCount = COUNT_SUBTITLES_LANGUAGES;
@@ -932,16 +934,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
         if (!_grabberMpeg.GetProgramByIndex(i, out programNumber, out pmtPid, out isPmtReceived,
                                             out streamCountVideo, out streamCountAudio,
                                             out isEncrypted, out isEncryptionDetectionAccurate,
-                                            out isThreeDimensional,
+                                            out isThreeDimensional, out isThreeDimensionalDetectionAccurate,
                                             audioLanguages, ref audioLanguageCount,
                                             subtitlesLanguages, ref subtitlesLanguageCount))
         {
           this.LogWarn("scan DVB: failed to get MPEG 2 program, index = {0}", i);
           break;
         }
-        this.LogInfo("  {0, -2}: program number = {1, -5}, PMT PID = {2, -5}, is PMT received = {3, -5}, video stream count = {4}, audio stream count = {5}, is encrypted = {6, -5} (accurate = {7, -5}), is 3D = {8, -5}",
+        this.LogInfo("  {0, -2}: program number = {1, -5}, PMT PID = {2, -5}, is PMT received = {3, -5}, video stream count = {4}, audio stream count = {5}, is encrypted = {6, -5} (accurate = {7, -5}), is 3D = {8, -5} (accurate = {9, -5})",
                       i + 1, programNumber, pmtPid, isPmtReceived, streamCountVideo, streamCountAudio,
-                      isEncrypted, isEncryptionDetectionAccurate, isThreeDimensional);
+                      isEncrypted, isEncryptionDetectionAccurate,
+                      isThreeDimensional, isThreeDimensionalDetectionAccurate);
         this.LogDebug("    audio language count = {0}, languages = {1}", audioLanguageCount, string.Join(", ", audioLanguages.Take(audioLanguageCount)));
         this.LogDebug("    subtitles language count = {0}, languages = {1}", subtitlesLanguageCount, string.Join(", ", subtitlesLanguages.Take(subtitlesLanguageCount)));
 
@@ -964,6 +967,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
           program.IsEncrypted = isEncrypted;
           program.IsEncryptionDetectionAccurate = isEncryptionDetectionAccurate;
           program.IsThreeDimensional = isThreeDimensional;
+          program.IsThreeDimensionalDetectionAccurate = isThreeDimensionalDetectionAccurate;
         }
         programs[((uint)transportStreamId << 16) | programNumber] = program;
       }
@@ -1426,9 +1430,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
         }
         newChannel.IsHighDefinition = isHighDefinition && !isStandardDefinition;
         newChannel.IsThreeDimensional = isThreeDimensional;
-        if (program != null)
+        if (program != null && program.IsThreeDimensionalDetectionAccurate)
         {
-          newChannel.IsThreeDimensional |= program.IsThreeDimensional;
+          newChannel.IsThreeDimensional = program.IsThreeDimensional;
         }
 
         IChannelMpeg2Ts mpeg2TsChannel = newChannel as IChannelMpeg2Ts;

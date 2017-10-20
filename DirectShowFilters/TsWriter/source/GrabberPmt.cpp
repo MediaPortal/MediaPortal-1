@@ -191,6 +191,7 @@ bool CGrabberPmt::GetProgramInformation(unsigned short& pid,
                                         bool& isEncrypted,
                                         bool& isEncryptionDetectionAccurate,
                                         bool& isThreeDimensional,
+                                        bool& isThreeDimensionalDetectionAccurate,
                                         unsigned long* audioLanguages,
                                         unsigned char& audioLanguageCount,
                                         unsigned long* subtitlesLanguages,
@@ -200,6 +201,10 @@ bool CGrabberPmt::GetProgramInformation(unsigned short& pid,
   pid = GetPid();
   programNumber = m_programNumber;
   isPmtReceived = m_isReady;
+  isEncrypted = false;                    // Set true if any PID is or *may* be encrypted.
+  isEncryptionDetectionAccurate = false;  // Set true if any PID *is* encrypted or *all* PIDs *are* not encrypted.
+  isThreeDimensional = false;
+  isThreeDimensionalDetectionAccurate = false;
   if (!m_isReady || !m_parser.DecodePmtSection(m_pmtSection))
   {
     if (m_isReady)
@@ -209,9 +214,6 @@ bool CGrabberPmt::GetProgramInformation(unsigned short& pid,
     }
     streamCountVideo = 0;
     streamCountAudio = 0;
-    isEncrypted = false;
-    isEncryptionDetectionAccurate = false;
-    isThreeDimensional = false;
     audioLanguageCount = 0;
     subtitlesLanguageCount = 0;
     return !m_isReady;
@@ -223,11 +225,16 @@ bool CGrabberPmt::GetProgramInformation(unsigned short& pid,
   LogDebug(L"PMT %d %hu: video stream count = %hu, audio stream count = %hu",
             GetPid(), m_programNumber, streamCountVideo, streamCountAudio);
 
-  isEncrypted = false;    // Set true if any PID is encrypted.
-  isEncryptionDetectionAccurate = false;
+  bool isProgramEncrypted = false;              // Set true if the program *may* be encrypted.
+  CheckDescriptorsProgram(pidTable.Descriptors,
+                          pidTable.DescriptorsLength,
+                          isProgramEncrypted,
+                          isThreeDimensional);
+  isThreeDimensionalDetectionAccurate = isThreeDimensional;
+
+  bool isNotEncryptedDetectionAccurate = true;  // Set false if any PID is not or *may* not be unencrypted.
   vector<unsigned long> vectorLanguagesAudio;
   vector<unsigned long> vectorLanguagesSubtitles;
-
   vector<VideoPid*>::const_iterator videoPidIt = pidTable.VideoPids.begin();
   for ( ; videoPidIt != pidTable.VideoPids.end(); videoPidIt++)
   {
@@ -235,28 +242,38 @@ bool CGrabberPmt::GetProgramInformation(unsigned short& pid,
     if (pid != NULL)
     {
       bool pidHasCaDescriptor;
-      bool pidIsThreeDimensional;
+      bool pidIsThreeDimensionalVideo;
+      bool pidIsThreeDimensionalVideoDetectionAccurate;
       vector<unsigned long> pidLanguages;
       CheckDescriptorsPidVideo(pid->Descriptors,
                                 pid->DescriptorsLength,
                                 pidHasCaDescriptor,
-                                pidIsThreeDimensional,
+                                pidIsThreeDimensionalVideo,
+                                pidIsThreeDimensionalVideoDetectionAccurate,
                                 pidLanguages);
-      isThreeDimensional |= pidIsThreeDimensional;
+      if (
+        !isThreeDimensionalDetectionAccurate &&
+        pidIsThreeDimensionalVideoDetectionAccurate
+      )
+      {
+        isThreeDimensional = pidIsThreeDimensionalVideo;
+        isThreeDimensionalDetectionAccurate = pidIsThreeDimensionalVideoDetectionAccurate;
+      }
+      else
+      {
+        isThreeDimensional |= pidIsThreeDimensionalVideo;
+      }
 
       EncryptionState state = EncryptionStateNotSet;
       if (m_encryptionAnalyser != NULL)
       {
         state = m_encryptionAnalyser->GetPidState(pid->Pid);
       }
-      if (state == Encrypted || (pidHasCaDescriptor && state == EncryptionStateNotSet))
-      {
-        isEncrypted = true;
-      }
-      if (state != EncryptionStateNotSet)
-      {
-        isEncryptionDetectionAccurate = true;
-      }
+      UpdateEncryptionDetection(state,
+                                pidHasCaDescriptor,
+                                isEncrypted,
+                                isEncryptionDetectionAccurate,
+                                isNotEncryptedDetectionAccurate);
 
       vector<unsigned long>::const_iterator langIt = pidLanguages.begin();
       for ( ; langIt != pidLanguages.end(); langIt++)
@@ -270,10 +287,11 @@ bool CGrabberPmt::GetProgramInformation(unsigned short& pid,
         }
       }
 
-      LogDebug(L"  video PID %hu, encryption state = %d, has CA descriptor = %d, language count = %llu, is 3D = %d",
+      LogDebug(L"  video PID %hu, encryption state = %d, has CA descriptor = %d, language count = %llu, is 3D = %d [accurate = %d]",
                 pid->Pid, state, pidHasCaDescriptor,
                 (unsigned long long)pidLanguages.size(),
-                pidIsThreeDimensional);
+                pidIsThreeDimensionalVideo,
+                pidIsThreeDimensionalVideoDetectionAccurate);
       CUtils::DebugVector(pidLanguages, L"  language(s)", true);
     }
   }
@@ -292,14 +310,11 @@ bool CGrabberPmt::GetProgramInformation(unsigned short& pid,
       {
         state = m_encryptionAnalyser->GetPidState(pid->Pid);
       }
-      if (state == Encrypted || (pidHasCaDescriptor && state == EncryptionStateNotSet))
-      {
-        isEncrypted = true;
-      }
-      if (state != EncryptionStateNotSet)
-      {
-        isEncryptionDetectionAccurate = true;
-      }
+      UpdateEncryptionDetection(state,
+                                pidHasCaDescriptor,
+                                isEncrypted,
+                                isEncryptionDetectionAccurate,
+                                isNotEncryptedDetectionAccurate);
 
       unsigned char pointer = 0;
       while (true)
@@ -339,14 +354,11 @@ bool CGrabberPmt::GetProgramInformation(unsigned short& pid,
       {
         state = m_encryptionAnalyser->GetPidState(pid->Pid);
       }
-      if (state == Encrypted || (pidHasCaDescriptor && state == EncryptionStateNotSet))
-      {
-        isEncrypted = true;
-      }
-      if (state != EncryptionStateNotSet)
-      {
-        isEncryptionDetectionAccurate = true;
-      }
+      UpdateEncryptionDetection(state,
+                                pidHasCaDescriptor,
+                                isEncrypted,
+                                isEncryptionDetectionAccurate,
+                                isNotEncryptedDetectionAccurate);
 
       unsigned char pointer = 0;
       while (true)
@@ -415,6 +427,21 @@ bool CGrabberPmt::GetProgramInformation(unsigned short& pid,
   {
     LogDebug(L"PMT %d %hu: insufficient subtitles language array size, required size = %hhu, actual size = %hhu",
               GetPid(), m_programNumber, requiredCount, subtitlesLanguageCount);
+  }
+
+  if (!isEncrypted)
+  {
+    if (isNotEncryptedDetectionAccurate)
+    {
+      // Indicate if all PIDs are definitely not encrypted.
+      isEncryptionDetectionAccurate = true;
+    }
+    else if (isProgramEncrypted)
+    {
+      // If the only indication we have of state is at the program level, use
+      // that.
+      isEncrypted = true;
+    }
   }
   return true;
 }
@@ -604,14 +631,71 @@ bool CGrabberPmt::GetTable(unsigned char* table, unsigned short& tableBufferSize
   return true;
 }
 
+void CGrabberPmt::CheckDescriptorsProgram(unsigned char* descriptors,
+                                          unsigned short descriptorsLength,
+                                          bool& hasCaDescriptor,
+                                          bool& isThreeDimensional)
+{
+  hasCaDescriptor = false;
+  isThreeDimensional = false;
+
+  if (descriptors == NULL)
+  {
+    return;
+  }
+
+  unsigned short offset = 0;
+  while (offset + 1 < descriptorsLength)
+  {
+    unsigned char tag = descriptors[offset++];
+    unsigned char length = descriptors[offset++];
+    if (tag == DESCRIPTOR_CONDITIONAL_ACCESS)
+    {
+      hasCaDescriptor = true;
+    }
+    else if (tag == DESCRIPTOR_STEREOSCOPIC_PROGRAM_INFO)   // ISO/IEC 13818 part 1
+    {
+      if (length >= 1 && offset < descriptorsLength)
+      {
+        unsigned char stereoscopicServiceType = descriptors[offset] & 0x7;
+        if (stereoscopicServiceType == 1)
+        {
+          isThreeDimensional = true;  // mixed 2D/3D, service compatible
+        }
+        else if (stereoscopicServiceType == 2)
+        {
+          isThreeDimensional = true;  // frame compatible
+        }
+        else if (stereoscopicServiceType == 3)
+        {
+          isThreeDimensional = true;  // service compatible
+        }
+      }
+    }
+
+    offset += length;
+  }
+}
+
 void CGrabberPmt::CheckDescriptorsPidVideo(unsigned char* descriptors,
                                             unsigned short descriptorsLength,
                                             bool& hasCaDescriptor,
                                             bool& isThreeDimensionalVideo,
+                                            bool& isThreeDimensionalVideoDetectionAccurate,
                                             vector<unsigned long>& captionsLanguages)
 {
   hasCaDescriptor = false;
   isThreeDimensionalVideo = false;
+  isThreeDimensionalVideoDetectionAccurate = false;
+
+  // A note about 3D detection...
+  // Some of the descriptor/flag detection methods below are not definitive.
+  // Not definitive because [for example] the checked flag may be overriden by
+  // another flag deep in bowels of the video stream headers, or because we're
+  // detecting MVC [which isn't equivalent to 3D - could be alternative angle,
+  // 360 degree, or some other non-3D setup]. This is why we have the
+  // isThreeDimensionalVideoDetectionAccurate flag. DVB's 3DTV standard (TS 101
+  // 547) is quite helpful for understanding the signalling.
 
   if (descriptors == NULL)
   {
@@ -625,7 +709,12 @@ void CGrabberPmt::CheckDescriptorsPidVideo(unsigned char* descriptors,
     unsigned char length = descriptors[offset++];
     if (tag == DESCRIPTOR_VIDEO_STREAM)   // ISO/IEC 13818 part 1
     {
-      if (length >= 2 && offset + 1 < descriptorsLength && (descriptors[offset] & 0x04) == 0)
+      if (
+        !isThreeDimensionalVideoDetectionAccurate &&
+        length >= 2 &&
+        offset + 1 < descriptorsLength &&
+        (descriptors[offset] & 0x04) == 0
+      )
       {
         unsigned char profileAndLevelIndication = descriptors[offset + 1];
         if (
@@ -635,7 +724,8 @@ void CGrabberPmt::CheckDescriptorsPidVideo(unsigned char* descriptors,
           profileAndLevelIndication == 0x8a
         )
         {
-          isThreeDimensionalVideo = true;   // MPEG 2 video multi-view profiles
+          // MPEG 2 video multi-view profiles. Could be 3D or generic MVC.
+          isThreeDimensionalVideo = true;
         }
       }
     }
@@ -645,57 +735,69 @@ void CGrabberPmt::CheckDescriptorsPidVideo(unsigned char* descriptors,
     }
     else if (tag == DESCRIPTOR_AVC_VIDEO)   // ISO/IEC 13818 part 1
     {
-      if (length >= 4 && offset + 3 < descriptorsLength)
+      if (
+        !isThreeDimensionalVideoDetectionAccurate &&
+        length >= 4 &&
+        offset + 3 < descriptorsLength
+      )
       {
         // frame_packing_SEI_not_present_flag
+        // 1. Not definitive (true => presense "unspecified" => *maybe* 3D).
+        // 2. Can be cancelled by frame_packing_arrangement_cancel_flag in the SEIs.
         isThreeDimensionalVideo |= ((descriptors[offset + 3] & 0x20) == 0);   // frame compatible
-        // Technically the stream could be non-3D if the frame packing
-        // arrangement (FPA) supplemental enhancement information (SEI) message
-        // frame_packing_arrangement_cancel_flag is set. We have no access to
-        // that information.
       }
     }
     else if (tag == DESCRIPTOR_MVC_EXTENSION)   // ISO/IEC 13818 part 1
     {
-      if (length >= 5 && offset + 4 < descriptorsLength)
+      if (
+        !isThreeDimensionalVideoDetectionAccurate &&
+        length >= 5 &&
+        offset + 4 < descriptorsLength
+      )
       {
         // view_association_not_present
-        isThreeDimensionalVideo |= ((descriptors[offset + 4] & 0x80) == 0);   // service compatible
+        // true = no association (generic MVC)
+        // false = 3D
+        isThreeDimensionalVideo |= (descriptors[offset + 4] & 0x80) == 0;     // service compatible
       }
     }
     else if (tag == DESCRIPTOR_MPEG2_STEREOSCOPIC_VIDEO_FORMAT)   // ISO/IEC 13818 part 1
     {
-      if (length >= 1 && offset < descriptorsLength)
+      if (
+        !isThreeDimensionalVideoDetectionAccurate &&
+        length >= 1 &&
+        offset < descriptorsLength
+      )
       {
         // stereo_video_arrangement_type_present
-        isThreeDimensionalVideo |= ((descriptors[offset] & 0x80) != 0);   // frame compatible
-      }
-    }
-    else if (tag == DESCRIPTOR_STEREOSCOPIC_PROGRAM_INFO)   // ISO/IEC 13818 part 1
-    {
-      if (length >= 1 && offset < descriptorsLength)
-      {
-        unsigned char stereoscopicServiceType = descriptors[offset] & 0x7;
-        if (stereoscopicServiceType == 2 || stereoscopicServiceType == 3)
+        isThreeDimensionalVideo = true;   // unspecified; generic MVC etc.
+        bool stereoVideoArrangementTypePresent = (descriptors[offset] & 0x80) != 0;
+        if (stereoVideoArrangementTypePresent)
         {
-          isThreeDimensionalVideo = true;   // frame or service compatible
+          unsigned char arrangementType = descriptors[offset] & 0x7f;
+          if (arrangementType == 3 || arrangementType == 4)   // 3 = side by side; 4 = top and bottom
+          {
+            isThreeDimensionalVideoDetectionAccurate = true;                  // frame compatible
+          }
         }
       }
     }
     else if (tag == DESCRIPTOR_STEREOSCOPIC_VIDEO_INFO)   // ISO/IEC 13818 part 1
     {
       isThreeDimensionalVideo = true;   // service compatible
+      isThreeDimensionalVideoDetectionAccurate = true;
     }
     else if (tag == DESCRIPTOR_HEVC_VIDEO)    // ISO/IEC 13818 part 1
     {
-      if (length >= 6 && offset + 5 < descriptorsLength)
+      if (
+        !isThreeDimensionalVideoDetectionAccurate &&
+        length >= 6 &&
+        offset + 5 < descriptorsLength
+      )
       {
         // non_packed_constraint_flag
+        // Almost identical to h.264 frame_packing_SEI_not_present_flag.
         isThreeDimensionalVideo |= ((descriptors[offset + 5] & 0x20) == 0);   // frame compatible
-        // Technically the stream could be non-3D if the frame packing
-        // arrangement (FPA) supplemental enhancement information (SEI) message
-        // frame_packing_arrangement_cancel_flag is set. We have no access to
-        // that information.
       }
     }
     else if (tag == DESCRIPTOR_ATSC_CAPTION_SERVICE)  // ATSC A/65 section 6.9.2
@@ -724,9 +826,14 @@ void CGrabberPmt::CheckDescriptorsPidVideo(unsigned char* descriptors,
     }
     else if (tag == DESCRIPTOR_SCTE_3D_MPEG2)   // SCTE 187 part 2 section 8.3
     {
-      if (length >= 1 && offset < descriptorsLength)
+      if (
+        !isThreeDimensionalVideoDetectionAccurate &&
+        length >= 1 &&
+        offset < descriptorsLength
+      )
       {
         // 3d_frame_packing_data_present
+        // Similar to frame_packing_SEI_not_present_flag/non_packed_constraint_flag.
         isThreeDimensionalVideo |= ((descriptors[offset] & 0x80) != 0);   // frame compatible
       }
     }
@@ -798,5 +905,27 @@ void CGrabberPmt::CheckDescriptorsPidTeletext(unsigned char* descriptors,
     }
 
     offset += length;
+  }
+}
+
+void CGrabberPmt::UpdateEncryptionDetection(EncryptionState state,
+                                            bool hasCaDescriptor,
+                                            bool& isEncrypted,
+                                            bool& isEncryptionDetectionAccurate,
+                                            bool& isNotEncryptedDetectionAccurate)
+{
+  if (state == Encrypted)
+  {
+    isEncrypted = true;
+    isEncryptionDetectionAccurate = true;
+    isNotEncryptedDetectionAccurate = false;
+  }
+  else if (state == EncryptionStateNotSet)
+  {
+    isNotEncryptedDetectionAccurate = false;
+    if (hasCaDescriptor)
+    {
+      isEncrypted = true;
+    }
   }
 }

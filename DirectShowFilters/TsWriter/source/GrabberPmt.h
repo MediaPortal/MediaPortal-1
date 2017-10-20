@@ -26,6 +26,7 @@
 #include "..\..\shared\Section.h"
 #include "..\..\shared\SectionDecoder.h"
 #include "..\..\shared\TsHeader.h"
+#include "EncryptionState.h"
 #include "ICallBackPmt.h"
 #include "IEncryptionAnalyser.h"
 
@@ -58,6 +59,7 @@ class CGrabberPmt : public CSectionDecoder
                                 bool& isEncrypted,
                                 bool& isEncryptionDetectionAccurate,
                                 bool& isThreeDimensional,
+                                bool& isThreeDimensionalDetectionAccurate,
                                 unsigned long* audioLanguages,
                                 unsigned char& audioLanguageCount,
                                 unsigned long* subtitlesLanguages,
@@ -76,10 +78,15 @@ class CGrabberPmt : public CSectionDecoder
     bool GetTable(unsigned char* table, unsigned short& tableBufferSize) const;
 
   private:
+    static void CheckDescriptorsProgram(unsigned char* descriptors,
+                                        unsigned short descriptorsLength,
+                                        bool& hasCaDescriptor,
+                                        bool& isThreeDimensional);
     static void CheckDescriptorsPidVideo(unsigned char* descriptors,
                                           unsigned short descriptorsLength,
                                           bool& hasCaDescriptor,
                                           bool& isThreeDimensionalVideo,
+                                          bool& isThreeDimensionalVideoDetectionAccurate,
                                           vector<unsigned long>& captionsLanguages);
     static void CheckDescriptorsPidAudio(unsigned char* descriptors,
                                           unsigned short descriptorsLength,
@@ -87,6 +94,11 @@ class CGrabberPmt : public CSectionDecoder
     static void CheckDescriptorsPidTeletext(unsigned char* descriptors,
                                             unsigned short descriptorsLength,
                                             vector<unsigned long>& subtitlesLanguages);
+    static void UpdateEncryptionDetection(EncryptionState state,
+                                          bool hasCaDescriptor,
+                                          bool& isEncrypted,
+                                          bool& isEncryptionDetectionAccurate,
+                                          bool& isNotEncryptedDetectionAccurate);
 
     CCriticalSection m_section;
     bool m_isReady;

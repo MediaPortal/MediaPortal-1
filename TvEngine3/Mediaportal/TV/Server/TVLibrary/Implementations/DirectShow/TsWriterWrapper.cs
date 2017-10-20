@@ -970,6 +970,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
                                   out bool isEncrypted,
                                   out bool isEncryptionDetectionAccurate,
                                   out bool isThreeDimensional,
+                                  out bool isThreeDimensionalDetectionAccurate,
                                   Iso639Code[] audioLanguages,
                                   ref byte audioLanguageCount,
                                   Iso639Code[] subtitlesLanguages,
@@ -983,7 +984,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
       isEncrypted = false;
       isEncryptionDetectionAccurate = false;
       isThreeDimensional = false;
-      object[] parameters = new object[13]
+      isThreeDimensionalDetectionAccurate = false;
+      object[] parameters = new object[14]
       {
         index,
         programNumber,
@@ -994,6 +996,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
         isEncrypted,
         isEncryptionDetectionAccurate,
         isThreeDimensional,
+        isThreeDimensionalDetectionAccurate,
         audioLanguages,
         audioLanguageCount,
         subtitlesLanguages,
@@ -1008,8 +1011,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
       isEncrypted = (bool)parameters[6];
       isEncryptionDetectionAccurate = (bool)parameters[7];
       isThreeDimensional = (bool)parameters[8];
-      audioLanguageCount = (byte)parameters[10];
-      subtitlesLanguageCount = (byte)parameters[12];
+      isThreeDimensionalDetectionAccurate = (bool)parameters[9];
+      audioLanguageCount = (byte)parameters[11];
+      subtitlesLanguageCount = (byte)parameters[13];
       return result;
     }
 
@@ -1021,6 +1025,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
                                     out bool isEncrypted,
                                     out bool isEncryptionDetectionAccurate,
                                     out bool isThreeDimensional,
+                                    out bool isThreeDimensionalDetectionAccurate,
                                     Iso639Code[] audioLanguages,
                                     ref byte audioLanguageCount,
                                     Iso639Code[] subtitlesLanguages,
@@ -1033,7 +1038,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
       isEncrypted = false;
       isEncryptionDetectionAccurate = false;
       isThreeDimensional = false;
-      object[] parameters = new object[12]
+      isThreeDimensionalDetectionAccurate = false;
+      object[] parameters = new object[13]
       {
         programNumber,
         pmtPid,
@@ -1043,6 +1049,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
         isEncrypted,
         isEncryptionDetectionAccurate,
         isThreeDimensional,
+        isThreeDimensionalDetectionAccurate,
         audioLanguages,
         audioLanguageCount,
         subtitlesLanguages,
@@ -1056,8 +1063,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
       isEncrypted = (bool)parameters[5];
       isEncryptionDetectionAccurate = (bool)parameters[6];
       isThreeDimensional = (bool)parameters[7];
-      audioLanguageCount = (byte)parameters[9];
-      subtitlesLanguageCount = (byte)parameters[11];
+      isThreeDimensionalDetectionAccurate = (bool)parameters[8];
+      audioLanguageCount = (byte)parameters[10];
+      subtitlesLanguageCount = (byte)parameters[12];
       return result;
     }
 

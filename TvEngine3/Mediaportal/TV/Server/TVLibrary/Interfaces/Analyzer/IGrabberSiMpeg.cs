@@ -84,6 +84,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     /// <param name="isEncrypted">An indication of whether any of the streams associated with the program are encrypted.</param>
     /// <param name="isEncryptionDetectionAccurate">An indication of whether the program's <paramref name="isEncrypted">encryption state</paramref> is known to be accurate (based on stream analysis).</param>
     /// <param name="isThreeDimensional">An indication of whether the program's video is three dimensional.</param>
+    /// <param name="isThreeDimensionalDetectionAccurate">An indication of whether the program's <paramref name="isThreeDimensional">three dimensional indicator</paramref> is known to be accurate.</param>
     /// <param name="audioLanguages">The languages in which the program's audio is available. The caller must allocate this array.</param>
     /// <param name="audioLanguageCount">As an input, the size of the <paramref name="audioLanguages">audio languages array</paramref>; as an output, the consumed array size.</param>
     /// <param name="subtitlesLanguages">The languages in which the program's subtitles will be available. The caller must allocate this array.</param>
@@ -100,9 +101,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
                             [MarshalAs(UnmanagedType.I1)] out bool isEncrypted,
                             [MarshalAs(UnmanagedType.I1)] out bool isEncryptionDetectionAccurate,
                             [MarshalAs(UnmanagedType.I1)] out bool isThreeDimensional,
-                            [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 10)] Iso639Code[] audioLanguages,
+                            [MarshalAs(UnmanagedType.I1)] out bool isThreeDimensionalDetectionAccurate,
+                            [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 11)] Iso639Code[] audioLanguages,
                             ref byte audioLanguageCount,
-                            [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 12)] Iso639Code[] subtitlesLanguages,
+                            [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 13)] Iso639Code[] subtitlesLanguages,
                             ref byte subtitlesLanguageCount);
 
     /// <summary>
@@ -116,6 +118,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     /// <param name="isEncrypted">An indication of whether any of the streams associated with the program are encrypted.</param>
     /// <param name="isEncryptionDetectionAccurate">An indication of whether the program's <paramref name="isEncrypted">encryption state</paramref> is known to be accurate (based on stream analysis).</param>
     /// <param name="isThreeDimensional">An indication of whether the program's video is three dimensional.</param>
+    /// <param name="isThreeDimensionalDetectionAccurate">An indication of whether the program's <paramref name="isThreeDimensional">three dimensional indicator</paramref> is known to be accurate.</param>
     /// <param name="audioLanguages">The languages in which the program's audio is available. The caller must allocate this array.</param>
     /// <param name="audioLanguageCount">As an input, the size of the <paramref name="audioLanguages">audio languages array</paramref>; as an output, the consumed array size.</param>
     /// <param name="subtitlesLanguages">The languages in which the program's subtitles will be available. The caller must allocate this array.</param>
@@ -131,9 +134,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
                             [MarshalAs(UnmanagedType.I1)] out bool isEncrypted,
                             [MarshalAs(UnmanagedType.I1)] out bool isEncryptionDetectionAccurate,
                             [MarshalAs(UnmanagedType.I1)] out bool isThreeDimensional,
-                            [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 9)] Iso639Code[] audioLanguages,
+                            [MarshalAs(UnmanagedType.I1)] out bool isThreeDimensionalDetectionAccurate,
+                            [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 10)] Iso639Code[] audioLanguages,
                             ref byte audioLanguageCount,
-                            [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 11)] Iso639Code[] subtitlesLanguages,
+                            [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 12)] Iso639Code[] subtitlesLanguages,
                             ref byte subtitlesLanguageCount);
 
     /// <summary>
