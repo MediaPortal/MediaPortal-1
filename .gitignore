@@ -15,6 +15,7 @@ Packages
 /Build/NuGet.exe
 *.zip
 *.gif
+**/.vs
 Build/Build_Report_Release_Filters.html
 Build/VS_build_DirectShowFilters (2).bat
 Build/_BuildReport_Files/BuildReport.xslt
