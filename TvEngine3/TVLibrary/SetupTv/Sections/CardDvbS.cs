@@ -22,6 +22,7 @@ using System;
 using System.IO;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Threading;
@@ -148,6 +149,8 @@ namespace SetupTv.Sections
     private bool _enableEvents;
     private bool _ignoreCheckBoxCreateGroupsClickEvent;
     private IUser _user;
+    private DVBSChannel tuneChannelFromList;
+    private SatelliteContext tuneSatFromList;
 
     private CI_Menu_Dialog ciMenuDialog; // ci menu dialog object
 
@@ -171,6 +174,10 @@ namespace SetupTv.Sections
         if (scanSingleTransponder.Checked == true)
         {
           return ScanTypes.SingleTransponder;
+        }
+        if (scanSingleTransponderList.Checked == true)
+        {
+          return ScanTypes.SingleTransponderFromList;
         }
         if (scanNIT.Checked == true)
         {
@@ -835,7 +842,10 @@ namespace SetupTv.Sections
         XmlSerializer xmlSerializer = new XmlSerializer(typeof (List<Transponder>));
         _transponders = (List<Transponder>)xmlSerializer.Deserialize(parFileXML);
         parFileXML.Close();
-        _transponders.Sort();
+        var orderedList = _transponders.OrderBy(transponders => transponders.CarrierFrequency)
+                        .ThenBy(transponders => transponders.InnerFecRate)
+                        .ToList();
+        _transponders = orderedList;
       }
       catch (Exception ex)
       {
@@ -1312,27 +1322,54 @@ namespace SetupTv.Sections
         _tvChannelsUpdated = 0;
         _radioChannelsUpdated = 0;
 
-        if (mpLNB1.Checked)
-          Scan(1, (BandType)mpBand1.SelectedIndex, (DisEqcType)mpDisEqc1.SelectedIndex,
-               (SatelliteContext)mpTransponder1.SelectedItem);
-        if (scanState == ScanState.Cancel)
-          return;
+        if (ActiveScanType == ScanTypes.SingleTransponderFromList)
+        {
+          if (mpLNB1.Checked && (mpComboSatSelect.Text == mpLNB1.Text && ActiveScanType == ScanTypes.SingleTransponderFromList))
+            Scan(1, (BandType)mpBand1.SelectedIndex, (DisEqcType)mpDisEqc1.SelectedIndex,
+              (SatelliteContext)mpTransponder1.SelectedItem);
+          if (scanState == ScanState.Cancel)
+            return;
 
-        if (mpLNB2.Checked)
-          Scan(2, (BandType)mpBand2.SelectedIndex, (DisEqcType)mpDisEqc2.SelectedIndex,
-               (SatelliteContext)mpTransponder2.SelectedItem);
-        if (scanState == ScanState.Cancel)
-          return;
+          if (mpLNB2.Checked && (mpComboSatSelect.Text == mpLNB2.Text && ActiveScanType == ScanTypes.SingleTransponderFromList))
+            Scan(2, (BandType)mpBand2.SelectedIndex, (DisEqcType)mpDisEqc2.SelectedIndex,
+              (SatelliteContext)mpTransponder2.SelectedItem);
+          if (scanState == ScanState.Cancel)
+            return;
 
-        if (mpLNB3.Checked)
-          Scan(3, (BandType)mpBand3.SelectedIndex, (DisEqcType)mpDisEqc3.SelectedIndex,
-               (SatelliteContext)mpTransponder3.SelectedItem);
-        if (scanState == ScanState.Cancel)
-          return;
+          if (mpLNB3.Checked && (mpComboSatSelect.Text == mpLNB3.Text && ActiveScanType == ScanTypes.SingleTransponderFromList))
+            Scan(3, (BandType)mpBand3.SelectedIndex, (DisEqcType)mpDisEqc3.SelectedIndex,
+              (SatelliteContext)mpTransponder3.SelectedItem);
+          if (scanState == ScanState.Cancel)
+            return;
 
-        if (mpLNB4.Checked)
-          Scan(4, (BandType)mpBand4.SelectedIndex, (DisEqcType)mpDisEqc4.SelectedIndex,
-               (SatelliteContext)mpTransponder4.SelectedItem);
+          if (mpLNB4.Checked && (mpComboSatSelect.Text == mpLNB4.Text && ActiveScanType == ScanTypes.SingleTransponderFromList))
+            Scan(4, (BandType)mpBand4.SelectedIndex, (DisEqcType)mpDisEqc4.SelectedIndex,
+              (SatelliteContext)mpTransponder4.SelectedItem);
+        }
+        else
+        {
+          if (mpLNB1.Checked)
+            Scan(1, (BandType) mpBand1.SelectedIndex, (DisEqcType) mpDisEqc1.SelectedIndex,
+              (SatelliteContext) mpTransponder1.SelectedItem);
+          if (scanState == ScanState.Cancel)
+            return;
+
+          if (mpLNB2.Checked)
+            Scan(2, (BandType) mpBand2.SelectedIndex, (DisEqcType) mpDisEqc2.SelectedIndex,
+              (SatelliteContext) mpTransponder2.SelectedItem);
+          if (scanState == ScanState.Cancel)
+            return;
+
+          if (mpLNB3.Checked)
+            Scan(3, (BandType) mpBand3.SelectedIndex, (DisEqcType) mpDisEqc3.SelectedIndex,
+              (SatelliteContext) mpTransponder3.SelectedItem);
+          if (scanState == ScanState.Cancel)
+            return;
+
+          if (mpLNB4.Checked)
+            Scan(4, (BandType) mpBand4.SelectedIndex, (DisEqcType) mpDisEqc4.SelectedIndex,
+              (SatelliteContext) mpTransponder4.SelectedItem);
+        }
 
         listViewStatus.Items.Add(
           new ListViewItem(String.Format("Total radio channels new:{0} updated:{1}", _radioChannelsNew,
@@ -1428,6 +1465,11 @@ namespace SetupTv.Sections
           // scan only single TP
         case ScanTypes.SingleTransponder:
           _channels.Add(GetManualTuning());
+          break;
+
+        // scan only single TP from list
+        case ScanTypes.SingleTransponderFromList:
+          _channels.Add(tuneChannelFromList);
           break;
       }
 
@@ -2083,21 +2125,29 @@ namespace SetupTv.Sections
     private void mpLNB1_CheckedChanged(object sender, EventArgs e)
     {
       mpTransponder1.Visible = mpBand1.Visible = mpDisEqc1.Visible = mpLNB1.Checked;
+      mpComboFillFrequency.Items.Clear();
+      SetControlStates();
     }
 
     private void mpLNB2_CheckedChanged(object sender, EventArgs e)
     {
       mpTransponder2.Visible = mpBand2.Visible = mpDisEqc2.Visible = mpLNB2.Checked;
+      mpComboFillFrequency.Items.Clear();
+      SetControlStates();
     }
 
     private void mpLNB3_CheckedChanged(object sender, EventArgs e)
     {
       mpTransponder3.Visible = mpBand3.Visible = mpDisEqc3.Visible = mpLNB3.Checked;
+      mpComboFillFrequency.Items.Clear();
+      SetControlStates();
     }
 
     private void mpLNB4_CheckedChanged(object sender, EventArgs e)
     {
       mpTransponder4.Visible = mpBand4.Visible = mpDisEqc4.Visible = mpLNB4.Checked;
+      mpComboFillFrequency.Items.Clear();
+      SetControlStates();
     }
 
     private void mpBand1_SelectedIndexChanged(object sender, EventArgs e)
@@ -2227,12 +2277,12 @@ namespace SetupTv.Sections
         scanControls[ctlIndex].Enabled = enableScanControls;
       }
 
-      bool enableNonPredef = scanState == ScanState.Initialized && ActiveScanType != ScanTypes.Predefined;
+      bool enableNonPredef = scanState == ScanState.Initialized && (ActiveScanType != ScanTypes.Predefined && ActiveScanType != ScanTypes.SingleTransponderFromList);
       Control[] nonPredefControls = new Control[]
                                       {
                                         textBoxFreq, textBoxSymbolRate,
                                         mpComboBoxPolarisation, mpComboBoxMod,
-                                        mpComboBoxInnerFecRate
+                                        mpComboBoxInnerFecRate, mpComboFillFrequency,mpComboSatSelect
                                       };
       for (int ctlIndex = 0; ctlIndex < nonPredefControls.Length; ctlIndex++)
       {
@@ -2244,10 +2294,108 @@ namespace SetupTv.Sections
       // fields are for from doing something they shouldn't.
       mpComboBoxPilot.Enabled = false;
       mpComboBoxRollOff.Enabled = false;
-      if (checkBoxEnableDVBS2.Enabled && checkBoxEnableDVBS2.Checked && ActiveScanType != ScanTypes.Predefined)
+      if (checkBoxEnableDVBS2.Enabled && checkBoxEnableDVBS2.Checked && (ActiveScanType != ScanTypes.Predefined && ActiveScanType != ScanTypes.SingleTransponderFromList))
       {
         mpComboBoxPilot.Enabled = true;
         mpComboBoxRollOff.Enabled = true;
+      }
+
+      if (ActiveScanType == ScanTypes.SingleTransponderFromList)
+      {
+        mpComboFillFrequency.Visible = true;
+        mpComboFillFrequency.Enabled = true;
+        mpLabelFillFrequency.Visible = true;
+        mpComboSatSelect.Visible = true;
+        mpComboSatSelect.Enabled = true;
+        mpLabelSatSelect.Visible = true;
+
+        // For select TP from list.
+        if (mpComboSatSelect.Text == mpLNB1.Text)
+        {
+          LoadTransponders((SatelliteContext)mpTransponder1.SelectedItem);
+        }
+        else if (mpComboSatSelect.Text == mpLNB2.Text)
+        {
+          LoadTransponders((SatelliteContext)mpTransponder2.SelectedItem);
+        }
+        else if (mpComboSatSelect.Text == mpLNB3.Text)
+        {
+          LoadTransponders((SatelliteContext)mpTransponder3.SelectedItem);
+        }
+        else if (mpComboSatSelect.Text == mpLNB4.Text)
+        {
+          LoadTransponders((SatelliteContext)mpTransponder4.SelectedItem);
+        }
+        else if (tuneSatFromList == null)
+        {
+          LoadTransponders((SatelliteContext) mpTransponder1.SelectedItem);
+        }
+        else
+        {
+          LoadTransponders(tuneSatFromList);
+        }
+
+        if (mpLNB1.Checked && !mpComboSatSelect.Items.Contains(mpLNB1.Text))
+        {
+          mpComboSatSelect.Items.Add(mpLNB1.Text);
+        }
+        else if (!mpLNB1.Checked)
+        {
+          mpComboSatSelect.Items.Remove(mpLNB1.Text);
+        }
+        if (mpLNB2.Checked && !mpComboSatSelect.Items.Contains(mpLNB2.Text))
+        {
+          mpComboSatSelect.Items.Add(mpLNB2.Text);
+        }
+        else if (!mpLNB2.Checked)
+        {
+          mpComboSatSelect.Items.Remove(mpLNB2.Text);
+        }
+        if (mpLNB3.Checked && !mpComboSatSelect.Items.Contains(mpLNB3.Text))
+        {
+          mpComboSatSelect.Items.Add(mpLNB3.Text);
+        }
+        else if (!mpLNB3.Checked)
+        {
+          mpComboSatSelect.Items.Remove(mpLNB3.Text);
+        }
+        if (mpLNB4.Checked && !mpComboSatSelect.Items.Contains(mpLNB4.Text))
+        {
+          mpComboSatSelect.Items.Add(mpLNB4.Text);
+        }
+        else if (!mpLNB4.Checked)
+        {
+          mpComboSatSelect.Items.Remove(mpLNB4.Text);
+        }
+        mpComboSatSelect.Sorted = true;
+        if (mpComboSatSelect.Items.Count > 0 && string.IsNullOrEmpty(mpComboSatSelect.Text))
+        {
+          mpComboSatSelect.SelectedIndex = 0;
+        }
+
+        foreach (Transponder t in _transponders)
+        {
+          if (!mpComboFillFrequency.Items.Contains(t))
+          {
+            mpComboFillFrequency.Items.AddRange(new object[]
+            {
+              t
+            });
+          }
+        }
+        if (mpComboFillFrequency.Items.Count > 0 && string.IsNullOrEmpty(mpComboFillFrequency.Text))
+        {
+          mpComboFillFrequency.SelectedIndex = 0;
+        }
+      }
+      else
+      {
+        mpComboFillFrequency.Visible = false;
+        mpComboFillFrequency.Enabled = false;
+        mpLabelFillFrequency.Visible = false;
+        mpComboSatSelect.Visible = false;
+        mpComboSatSelect.Enabled = false;
+        mpLabelSatSelect.Visible = false;
       }
 
       SwitchToView(gotoView);
@@ -2381,6 +2529,63 @@ namespace SetupTv.Sections
       scanState = ScanState.Initialized;
       SetControlStates();
       Init();
+    }
+
+    private void mpComboBox1_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      foreach (Transponder t in _transponders)
+      {
+        if (t.ToString().ToLowerInvariant() == mpComboFillFrequency.Text.ToLowerInvariant())
+        {
+          tuneChannelFromList = t.toDVBSChannel;
+        }
+      }
+    }
+
+    private void mpComboSatSelect_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      if (mpComboSatSelect.Text == mpLNB1.Text)
+      {
+        tuneSatFromList = (SatelliteContext) mpTransponder1.SelectedItem;
+      }
+      if (mpComboSatSelect.Text == mpLNB2.Text)
+      {
+        tuneSatFromList = (SatelliteContext) mpTransponder2.SelectedItem;
+      }
+      if (mpComboSatSelect.Text == mpLNB3.Text)
+      {
+        tuneSatFromList = (SatelliteContext) mpTransponder3.SelectedItem;
+      }
+      if (mpComboSatSelect.Text == mpLNB4.Text)
+      {
+        tuneSatFromList = (SatelliteContext) mpTransponder4.SelectedItem;
+      }
+      mpComboFillFrequency.Items.Clear();
+      SetControlStates();
+    }
+
+    private void mpTransponder1_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      mpComboFillFrequency.Items.Clear();
+      SetControlStates();
+    }
+
+    private void mpTransponder2_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      mpComboFillFrequency.Items.Clear();
+      SetControlStates();
+    }
+
+    private void mpTransponder3_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      mpComboFillFrequency.Items.Clear();
+      SetControlStates();
+    }
+
+    private void mpTransponder4_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      mpComboFillFrequency.Items.Clear();
+      SetControlStates();
     }
   }
 }

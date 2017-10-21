@@ -32,7 +32,8 @@ namespace SetupTv.Sections
   {
     Predefined = 0,
     SingleTransponder = 1,
-    NIT = 2
+    SingleTransponderFromList = 2,
+    NIT = 3
   }
 
   /// <summary>
