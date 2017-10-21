@@ -20,7 +20,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -420,10 +419,7 @@ namespace TvPlugin
       {
         return;
       }
-      if (pItem.IsFolder)
-      {
-        return;
-      }
+
       Recording rec = (Recording)pItem.TVTag;
 
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
@@ -435,17 +431,24 @@ namespace TvPlugin
 
       dlg.SetHeading(TVUtil.GetDisplayTitle(rec));
 
-      dlg.AddLocalizedString(655); //Play recorded tv
-      dlg.AddLocalizedString(656); //Delete recorded tv
-      if (rec.TimesWatched > 0)
+      if (pItem.IsFolder)
       {
-        dlg.AddLocalizedString(830); //Reset watched status
+        dlg.AddLocalizedString(656); //Delete recorded tv
       }
-      if (!rec.Title.Equals("manual", StringComparison.CurrentCultureIgnoreCase))
+      else
       {
-        dlg.AddLocalizedString(200072); //Upcoming episodes      
+        dlg.AddLocalizedString(655); //Play recorded tv
+        dlg.AddLocalizedString(656); //Delete recorded tv
+        if (rec.TimesWatched > 0)
+        {
+          dlg.AddLocalizedString(830); //Reset watched status
+        }
+        if (!rec.Title.Equals("manual", StringComparison.CurrentCultureIgnoreCase))
+        {
+          dlg.AddLocalizedString(200072); //Upcoming episodes      
+        }
+        dlg.AddLocalizedString(1048); //Settings
       }
-      dlg.AddLocalizedString(1048); //Settings
 
       dlg.DoModal(GetID);
       if (dlg.SelectedLabel == -1)
@@ -666,6 +669,65 @@ namespace TvPlugin
       }
     }
 
+    private List<Recording> ListFolder()
+    {
+      List<Recording> listRecordings = new List<Recording>();
+
+      try
+      {
+        // lookup radio channel ID in radio group map (smallest table that could identify a radio channel) to remove radiochannels from recording list
+        IEnumerable<int> radiogroupIDs = RadioGroupMap.ListAll().Select(radiogroup => radiogroup.IdChannel).ToList();
+
+        //List<Recording> recordings = (from r in Recording.ListAll()where !(from rad in radiogroups select rad.IdChannel).Contains(r.IdChannel)select r).ToList();
+        List<Recording> recordings = Recording.ListAll().Where(rec => radiogroupIDs.All(id => rec.IdChannel != id)).ToList();
+
+        // load the active channels only once to save multiple requests later when retrieving related channel
+        List<Channel> channels = Channel.ListAll().ToList();
+
+        // load the active recordings once to mark them later in GUI lists and groups
+        List<Recording> activerecordings = Recording.ListAllActive().ToList();
+
+        var actualLabel = _currentLabel == GUILocalizeStrings.Get(2014) ? string.Empty : _currentLabel;
+
+        foreach (var rec in recordings)
+        {
+          var addToList = true;
+          switch (_currentDbView)
+          {
+            case DBView.History:
+              addToList = GetSpokenViewDate(rec.StartTime).Equals(actualLabel);
+              break;
+            case DBView.Recordings:
+              addToList = rec.Title.Equals(_currentLabel, StringComparison.InvariantCultureIgnoreCase) ||
+                          TVUtil.GetDisplayTitle(rec).Equals(actualLabel, StringComparison.InvariantCultureIgnoreCase);
+              break;
+            case DBView.Channel:
+              // possible that recording links to a channel that no longer exists
+              // make sure we pick those up if that value is selected
+              Channel channel = channels.FirstOrDefault(chan => rec.IdChannel == chan.IdChannel);
+              addToList = actualLabel.Equals(GUILocalizeStrings.Get(1507)) && channel == null ||
+                          GetChannelRecordingDisplayName(rec, channel).Equals(actualLabel, StringComparison.InvariantCultureIgnoreCase);
+              break;
+            case DBView.Genre:
+              addToList = rec.Genre.Equals(actualLabel, StringComparison.InvariantCultureIgnoreCase);
+              break;
+          }
+
+          if (!addToList) continue;
+
+          // Add new list item for this recording
+
+          listRecordings.Add(rec);
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("TvRecorded: Error fetching recordings from database {0}", ex.Message);
+      }
+
+      return listRecordings;
+    }
+
     private void LoadDirectory()
     {
       var watch = new Stopwatch(); watch.Reset(); watch.Start();
@@ -709,7 +771,7 @@ namespace TvPlugin
               groups = recordings.GroupBy(r => GetSpokenViewDate(r.StartTime)).Select(g => g.OrderByDescending(h => h.StartTime).First());
               break;
             case DBView.Recordings:
-              groups = recordings.GroupBy(r => r.Title).Select(g => g.OrderByDescending(h => h.StartTime).First());
+              groups = recordings.GroupBy(r => r.Title, StringComparer.InvariantCultureIgnoreCase).Select(g => g.OrderByDescending(h => h.StartTime).First());
               break;
             case DBView.Channel:
               //recording can link to channels that no longer exist. convert these to an unknown channel (string 1507) group
@@ -717,10 +779,10 @@ namespace TvPlugin
               {
                 Channel channel = channels.FirstOrDefault(chan => r.IdChannel == chan.IdChannel);
                 return channel == null ? GUILocalizeStrings.Get(1507) : channel.DisplayName;
-              }).Select(g => g.OrderByDescending(h => h.StartTime).First());
+              }, StringComparer.InvariantCultureIgnoreCase).Select(g => g.OrderByDescending(h => h.StartTime).First());
               break;
             case DBView.Genre:
-              groups = recordings.GroupBy(r => r.Genre).Select(g => g.OrderByDescending(h => h.StartTime).First());
+              groups = recordings.GroupBy(r => r.Genre, StringComparer.InvariantCultureIgnoreCase).Select(g => g.OrderByDescending(h => h.StartTime).First());
               break;
           }
 
@@ -739,7 +801,7 @@ namespace TvPlugin
                 int count = 0;
                 foreach (Recording recording in recordings)
                 {
-                  if (recording.Title != title) continue;
+                  if (!recording.Title.Equals(title, StringComparison.InvariantCultureIgnoreCase)) continue;
                   count++;
                   if (count <= 1) continue;
                   singleRecording = false;
@@ -749,10 +811,7 @@ namespace TvPlugin
                 if (singleRecording)
                 {
                   item = BuildItemFromRecording(folder, channels.FirstOrDefault(chan => folder.IdChannel == chan.IdChannel));
-                  TimeSpan ts = folder.EndTime - folder.StartTime;
-                  item.Label2 = String.Format("{0} ({1})",
-                                           Utils.GetNamedDate(folder.StartTime),
-                                           Utils.SecondsToHMString((int)ts.TotalSeconds));
+                  item.Label2 = TVUtil.GetRecordingDateString(folder);
                 }
                 else
                 {
@@ -827,12 +886,8 @@ namespace TvPlugin
             item = BuildItemFromRecording(rec, channels.FirstOrDefault(chan => rec.IdChannel == chan.IdChannel));
             if (activerecordings.Contains(rec)) item.PinImage = Thumbs.TvRecordingIcon;
             item.Label = TVUtil.GetDisplayTitle(rec);
-            var ts = rec.EndTime - rec.StartTime;
 
-            var strTime = String.Format("{0} ({1})",
-                                           Utils.GetNamedDate(rec.StartTime),
-                                           Utils.SecondsToHMString((int)ts.TotalSeconds));
-            item.Label2 = strTime;
+            item.Label2 = TVUtil.GetRecordingDateString(rec);
             facadeLayout.Add(item);
           }
           #endregion
@@ -1031,16 +1086,11 @@ namespace TvPlugin
             continue;
           }
           Recording rec = (Recording)item1.TVTag;
-          TimeSpan ts = rec.EndTime - rec.StartTime;
-
-          string strTime = String.Format("{0} ({1})",
-                                         Utils.GetNamedDate(rec.StartTime),
-                                         Utils.SecondsToHMString((int)ts.TotalSeconds));
 
           // Do not display a duration in top level of History view
           if (_currentDbView != DBView.History || _currentLabel != String.Empty)
           {
-            item1.Label2 = strTime;
+            item1.Label2 = TVUtil.GetRecordingDateString(rec);
           }
           if (currentLayout != Layout.List)
           {
@@ -1211,64 +1261,111 @@ namespace TvPlugin
       }
       if (pItem.IsFolder)
       {
-        return;
-      }
-      Recording rec = (Recording)pItem.TVTag;
-
-      GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_YES_NO);
-      if (null == dlgYesNo)
-      {
-        return;
-      }
-
-      bool isRecPlaying = false;
-      if (g_Player.currentFileName.Length > 0 && g_Player.IsTVRecording && g_Player.Playing)
-      {
-        FileInfo fInfo = new FileInfo(g_Player.currentFileName);
-        isRecPlaying = (rec.FileName.IndexOf(fInfo.Name) > -1);
-      }
-
-      dlgYesNo.SetDefaultToYes(false);
-      bool isRec = IsRecordingActual(rec);
-      TvServer server = new TvServer();
-      bool remove = false;
-      if (isRec)
-      {
-        TvDatabase.Schedule sched = rec.ReferencedSchedule();
-        remove = TVUtil.DeleteRecAndSchedWithPrompt(sched, rec.IdChannel);
-      }
-      else
-      {
-        if (rec.TimesWatched > 0)
+        GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_YES_NO);
+        if (null == dlgYesNo)
         {
-          dlgYesNo.SetHeading(GUILocalizeStrings.Get(653));
+          return;
         }
-        else
-        {
-          dlgYesNo.SetHeading(GUILocalizeStrings.Get(820));
-        }
-        string chName = GetRecordingDisplayName(rec);
 
-        dlgYesNo.SetLine(1, chName);
-        dlgYesNo.SetLine(2, TVUtil.GetDisplayTitle(rec));
+        dlgYesNo.SetHeading(GUILocalizeStrings.Get(2166));
+        dlgYesNo.SetLine(1, pItem.Label);
+        dlgYesNo.SetLine(2, string.Empty);
         dlgYesNo.SetLine(3, string.Empty);
         dlgYesNo.DoModal(GetID);
         if (!dlgYesNo.IsConfirmed)
         {
           return;
         }
-        remove = true;
 
-      }
+        String savedCurrentLabel = _currentLabel;
+        _currentLabel = pItem.Label;
+        List<Recording> recItems = ListFolder();
+        _currentLabel = savedCurrentLabel;
 
-      if (remove)
-      {
-        if (isRecPlaying)
+        foreach (Recording rec in recItems)
         {
-          Log.Info("g_Player.Stopped {0}", g_Player.Stopped);
-          g_Player.Stop();
+          if (g_Player.Playing)
+          {
+            FileInfo fInfo = new FileInfo(g_Player.currentFileName);
+            if (rec.FileName.IndexOf(fInfo.Name) > -1)
+            {
+              g_Player.Stop();
+            }
+          }
+
+          bool isRec = IsRecordingActual(rec);
+
+          if (isRec)
+          {
+            TvDatabase.Schedule sched = rec.ReferencedSchedule();
+            if (!TVUtil.DeleteRecAndSchedWithPrompt(sched, rec.IdChannel))
+            {
+              continue;
+            }
+          }
+
+          DeleteRecordingAndUpdateGUI(rec);
         }
-        DeleteRecordingAndUpdateGUI(rec);
+      }
+      else
+      {
+        Recording rec = (Recording)pItem.TVTag;
+
+        GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_YES_NO);
+        if (null == dlgYesNo)
+        {
+          return;
+        }
+
+        bool isRecPlaying = false;
+        if (g_Player.currentFileName.Length > 0 && (g_Player.IsTVRecording || g_Player.Playing))
+        {
+          FileInfo fInfo = new FileInfo(g_Player.currentFileName);
+          isRecPlaying = (rec.FileName.IndexOf(fInfo.Name) > -1);
+        }
+
+        dlgYesNo.SetDefaultToYes(false);
+        bool isRec = IsRecordingActual(rec);
+
+        bool remove = false;
+        if (isRec)
+        {
+          TvDatabase.Schedule sched = rec.ReferencedSchedule();
+          remove = TVUtil.DeleteRecAndSchedWithPrompt(sched, rec.IdChannel);
+        }
+        else
+        {
+          if (rec.TimesWatched > 0)
+          {
+            dlgYesNo.SetHeading(GUILocalizeStrings.Get(653));
+          }
+          else
+          {
+            dlgYesNo.SetHeading(GUILocalizeStrings.Get(820));
+          }
+          string chName = GetRecordingDisplayName(rec);
+
+          dlgYesNo.SetLine(1, chName);
+          dlgYesNo.SetLine(2, TVUtil.GetDisplayTitle(rec));
+          dlgYesNo.SetLine(3, string.Empty);
+          dlgYesNo.DoModal(GetID);
+          if (!dlgYesNo.IsConfirmed)
+          {
+            return;
+          }
+          remove = true;
+
+        }
+
+        if (remove)
+        {
+          if (isRecPlaying)
+          {
+            Log.Info("g_Player.Stopped {0}", g_Player.Stopped);
+            g_Player.Stop();
+          }
+          DeleteRecordingAndUpdateGUI(rec);
+        }
       }
     }
 
@@ -1507,10 +1604,7 @@ namespace TvPlugin
           GUIPropertyManager.SetProperty("#TV.RecordedTV.thumb", "");
           return;
         }
-        string strTime = string.Format("{0} {1} - {2}",
-                                       Utils.GetShortDayString(rec.StartTime),
-                                       rec.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-                                       rec.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+        string strTime = TVUtil.GetRecordingDateStringFull(rec);
 
         GUIPropertyManager.SetProperty("#TV.RecordedTV.Title", TVUtil.GetDisplayTitle(rec));
         GUIPropertyManager.SetProperty("#TV.RecordedTV.Genre", rec.Genre);

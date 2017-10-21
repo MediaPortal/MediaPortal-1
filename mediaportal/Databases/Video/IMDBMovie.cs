@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2017 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2017 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -172,6 +172,7 @@ namespace MediaPortal.Video.Database
     private float _mFRating;
     private int _mIRating; // User rating for Trakt.tv and other
     private string _mStrMpaRating = string.Empty;
+    private string _mStrMPAAText = string.Empty;
     private int _mIRunTime;
     private int _mIWatched;
     private int _mActorID = -1;
@@ -204,6 +205,7 @@ namespace MediaPortal.Video.Database
     private string _videoFilePath = string.Empty;
     private string _userFanart = string.Empty;
     private string _movieNfoFile = string.Empty;
+    private string _movieAwards = string.Empty;
     
     public IMDBMovie() {}
 
@@ -282,6 +284,12 @@ namespace MediaPortal.Video.Database
     {
       get { return _mStrMpaRating; }
       set { _mStrMpaRating = value; }
+    }
+
+    public string MPAAText
+    {
+      get { return _mStrMPAAText; }
+      set { _mStrMPAAText = value; }
     }
 
     public string Director
@@ -554,6 +562,12 @@ namespace MediaPortal.Video.Database
       set { _movieNfoFile = value; }
     }
 
+    public string MovieAwards
+    {
+      get { return _movieAwards; }
+      set { _movieAwards = value; }
+    }
+
     #endregion
 
     public void Reset()
@@ -592,6 +606,7 @@ namespace MediaPortal.Video.Database
       _mIRating = 0;
       _mStrDatabase = string.Empty;
       _mStrMpaRating = string.Empty;
+      _mStrMPAAText = string.Empty;
       _mIRunTime = 0;
       _mIWatched = 0;
       _dateAdded = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
@@ -613,6 +628,7 @@ namespace MediaPortal.Video.Database
       _videoFilePath = string.Empty;
       _userFanart = string.Empty;
       _movieNfoFile = string.Empty;
+      _movieAwards = string.Empty;
     }
 
     #region Database views skin properties
@@ -659,6 +675,7 @@ namespace MediaPortal.Video.Database
       // MPAA rating
       MPARating = Util.Utils.MakeFileName(MPARating);
       GUIPropertyManager.SetProperty("#mpaarating", MPARating);
+      GUIPropertyManager.SetProperty("#mpaatext", MPAAText);
       GUIPropertyManager.SetProperty("#studios", Studios.Replace(" /", ","));
       GUIPropertyManager.SetProperty("#country", Country);
       GUIPropertyManager.SetProperty("#language", Language);
@@ -669,6 +686,8 @@ namespace MediaPortal.Video.Database
       GUIPropertyManager.SetProperty("#moviepath", Path);
       GUIPropertyManager.SetProperty("#isgroup", (string.IsNullOrEmpty(SingleUserGroup) ? "no" : "yes"));
       GUIPropertyManager.SetProperty("#iscollection", (string.IsNullOrEmpty(SingleMovieCollection) ? "no" : "yes"));
+      GUIPropertyManager.SetProperty("#awards", MovieAwards);
+      GUIPropertyManager.SetProperty("#dateadded", DateAdded);
       DateTime lastUpdate;
       DateTime.TryParseExact(LastUpdate, "yyyy-MM-dd HH:mm:ss", 
                              CultureInfo.CurrentCulture, 
@@ -850,6 +869,7 @@ namespace MediaPortal.Video.Database
       GUIPropertyManager.SetProperty("#Play.Current.Year", Year.ToString());
       GUIPropertyManager.SetProperty("#Play.Current.Runtime", RunTime.ToString());
       GUIPropertyManager.SetProperty("#Play.Current.MPAARating", MPARating);
+      GUIPropertyManager.SetProperty("#Play.Current.MPAAText", MPAAText);
       GUIPropertyManager.SetProperty("#Play.Current.MovieCollection", MovieCollection);
       string strValue = "no";
       if (Watched > 0)
@@ -1081,6 +1101,22 @@ namespace MediaPortal.Video.Database
             {
               info.Duration += VideoDatabase.GetVideoDuration(VideoDatabase.GetFileId(file));
             }
+          }
+
+          // Set Ratings and LastUpdate
+          if (info.ID > 0)
+          {
+            IMDBMovie movie = new IMDBMovie();
+            VideoDatabase.GetMovieInfoById(info.ID, ref movie);
+            item.Rating = movie.Rating;
+            item.UserRating = movie.UserRating;
+
+            DateTime lastUpdate;
+            DateTime.TryParseExact(movie.LastUpdate, "yyyy-MM-dd HH:mm:ss",
+                                   CultureInfo.CurrentCulture,
+                                   DateTimeStyles.None,
+                                   out lastUpdate);
+            item.Updated = lastUpdate;
           }
 
           int percent = 0;
@@ -1342,6 +1378,7 @@ namespace MediaPortal.Video.Database
             XmlNode nodeImdbNumber = nodeMovie.SelectSingleNode("imdb");
             XmlNode nodeIdImdbNumber = nodeMovie.SelectSingleNode("id");
             XmlNode nodeMpaa = nodeMovie.SelectSingleNode("mpaa");
+            XmlNode nodeMpaaText = nodeMovie.SelectSingleNode("mpaatext");
             XmlNode nodeTop250 = nodeMovie.SelectSingleNode("top250");
             XmlNode nodeVotes = nodeMovie.SelectSingleNode("votes");
             XmlNode nodeStudio = nodeMovie.SelectSingleNode("studio");
@@ -1352,6 +1389,7 @@ namespace MediaPortal.Video.Database
             XmlNode nodeCredits = nodeMovie.SelectSingleNode("credits");
             XmlNode nodeTMDBNumber = nodeMovie.SelectSingleNode("tmdb");
             XmlNode nodeLocalDBNumber = nodeMovie.SelectSingleNode("localdb");
+            XmlNode nodeAwards = nodeMovie.SelectSingleNode("awards");
 
             #endregion
 
@@ -1608,6 +1646,16 @@ namespace MediaPortal.Video.Database
               movie.MPARating = "NR";
             }
 
+            // MPAA
+            if (nodeMpaaText != null)
+            {
+              movie.MPAAText = nodeMpaaText.InnerText;
+            }
+            else
+            {
+              movie.MPAAText = string.Empty;
+            }
+
             #endregion
 
             #region Plot/Short plot
@@ -1792,6 +1840,20 @@ namespace MediaPortal.Video.Database
 
             #endregion
 
+            #region Awards
+
+            // Awards
+            if (nodeAwards != null)
+            {
+              movie.MovieAwards = nodeAwards.InnerText;
+            }
+            else
+            {
+              movie.MovieAwards = string.Empty;
+            }
+
+            #endregion
+
             #region poster
 
             // Poster
@@ -1923,6 +1985,7 @@ namespace MediaPortal.Video.Database
         // MPAA
         info.MPARating = Util.Utils.MakeFileName(info.MPARating);
         GUIPropertyManager.SetProperty("#mpaarating", info.MPARating);
+        GUIPropertyManager.SetProperty("#mpaatext", info.MPAAText);
         //
         GUIPropertyManager.SetProperty("#studios", info.Studios.Replace(" /", ","));
         GUIPropertyManager.SetProperty("#country", info.Country);
@@ -1935,6 +1998,8 @@ namespace MediaPortal.Video.Database
         GUIPropertyManager.SetProperty("#moviepath", info.Path); 
         GUIPropertyManager.SetProperty("#isgroup", (string.IsNullOrEmpty(info.SingleUserGroup) ? "no" : "yes"));
         GUIPropertyManager.SetProperty("#iscollection", (string.IsNullOrEmpty(info.SingleMovieCollection) ? "no" : "yes"));
+        GUIPropertyManager.SetProperty("#awards", info.MovieAwards); 
+        GUIPropertyManager.SetProperty("#dateadded", info.DateAdded);
         // Last update date
         DateTime lastUpdate;
         DateTime.TryParseExact(info.LastUpdate, "yyyy-MM-dd HH:mm:ss", CultureInfo.CurrentCulture, DateTimeStyles.None, out lastUpdate);
@@ -2093,9 +2158,11 @@ namespace MediaPortal.Video.Database
       GUIPropertyManager.SetProperty("#title", string.Empty);
       GUIPropertyManager.SetProperty("#year", string.Empty);
       GUIPropertyManager.SetProperty("#mpaarating", string.Empty);
+      GUIPropertyManager.SetProperty("#mpaatext", string.Empty);
       GUIPropertyManager.SetProperty("#studios", string.Empty);
       GUIPropertyManager.SetProperty("#country", string.Empty);
       GUIPropertyManager.SetProperty("#language", string.Empty);
+      GUIPropertyManager.SetProperty("#dateadded", string.Empty);
       GUIPropertyManager.SetProperty("#lastupdate", string.Empty);
       GUIPropertyManager.SetProperty("#movieid", "-1");
       GUIPropertyManager.SetProperty("#hideinfo", "true");
@@ -2120,6 +2187,7 @@ namespace MediaPortal.Video.Database
       GUIPropertyManager.SetProperty("#moviepath", string.Empty);
       GUIPropertyManager.SetProperty("#isgroup", string.Empty);
       GUIPropertyManager.SetProperty("#iscollection", string.Empty);
+      GUIPropertyManager.SetProperty("#awards", string.Empty);
     }
 
     #endregion

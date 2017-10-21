@@ -34,6 +34,7 @@ namespace MediaPortal.Drawing.Layouts
     #region Properties
 
     Size Size { get; }
+    Size Spacing { get; set; }
 
     #endregion Properties
   }

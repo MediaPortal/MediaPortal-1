@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2017 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2017 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -342,7 +342,11 @@ namespace MediaPortal.GUI.Library
 
     public static int LoadFromMemory(Image memoryImage, string name, long lColorKey, int iMaxWidth, int iMaxHeight)
     {
-      Log.Debug("TextureManager: load from memory: {0}", name);
+      bool bDebugLog = !name.StartsWith("[NoLog:");
+      if (bDebugLog)
+      {
+        Log.Debug("TextureManager: load from memory: {0}", name);
+      }
       string cacheName = name;
       string cacheKey = name.ToLowerInvariant();
 
@@ -405,8 +409,11 @@ namespace MediaPortal.GUI.Library
 
         _cacheTextures[cacheKey] = newCache;
 
-        Log.Debug("TextureManager: added: memoryImage  " + " total count: " + _cacheTextures.Count + ", mem left (MB): " +
-                  ((uint)GUIGraphicsContext.DX9Device.AvailableTextureMemory / 1048576));
+        if (bDebugLog)
+        {
+          Log.Debug("TextureManager: added: memoryImage  " + " total count: " + _cacheTextures.Count + ", mem left (MB): " +
+                    ((uint)GUIGraphicsContext.DX9Device.AvailableTextureMemory / 1048576));
+        }
         return newCache.Frames;
       }
       catch (Exception ex)
@@ -419,8 +426,11 @@ namespace MediaPortal.GUI.Library
 
     public static int LoadFromMemoryEx(Image memoryImage, string name, long lColorKey, out Texture texture)
     {
-      Log.Debug("TextureManagerEx: load from memory: {0}", name);
-
+      bool bDebugLog = !name.StartsWith("[NoLog:");
+      if (bDebugLog)
+      {
+        Log.Debug("TextureManagerEx: load from memory: {0}", name);
+      }
       string cacheName = name;
       string cacheKey = cacheName.ToLowerInvariant();
 
@@ -470,8 +480,11 @@ namespace MediaPortal.GUI.Library
 
         _cacheTextures[cacheKey] = newCache;
 
-        Log.Debug("TextureManager: added: memoryImage  " + " total count: " + _cacheTextures.Count + ", mem left (MB): " +
-                  ((uint)GUIGraphicsContext.DX9Device.AvailableTextureMemory / 1048576));
+        if (bDebugLog)
+        {
+          Log.Debug("TextureManager: added: memoryImage  " + " total count: " + _cacheTextures.Count + ", mem left (MB): " +
+                    ((uint)GUIGraphicsContext.DX9Device.AvailableTextureMemory / 1048576));
+        }
         return newCache.Frames;
       }
       catch (Exception ex)
@@ -662,7 +675,7 @@ namespace MediaPortal.GUI.Library
         {
           try
           {
-            //Log.Debug("TextureManager: Dispose:{0} Frames:{1} Total:{2} Mem left:{3}", oldImage.Name, oldImage.Frames, _cache.Count, Convert.ToString(GUIGraphicsContext.DX9Device.AvailableTextureMemory / 1000));                
+            // Log.Debug("TextureManager: Dispose:{0} Frames:{1} Total:{2} Mem left:{3}", oldImage.Name, oldImage.Frames, _cacheTextures.Count, ((uint)GUIGraphicsContext.DX9Device.AvailableTextureMemory / 1048576));
             CachedTexture removedItem;
             _cacheTextures.TryRemove(cacheKey, out removedItem);
             oldImage.SafeDispose();

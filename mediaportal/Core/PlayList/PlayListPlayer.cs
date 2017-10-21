@@ -615,15 +615,14 @@ namespace MediaPortal.Playlists
               break;
             case PlayListType.PLAYLIST_VIDEO:
             case PlayListType.PLAYLIST_VIDEO_TEMP:
+              if (!MediaPortal.Player.g_Player.ForcePlay)
               {
-                if (!MediaPortal.Player.g_Player.ForcePlay)
-                {
-                  playResult = g_Player.Play(item.FileName, MediaPortal.Player.g_Player.MediaType.Video);
-                }
-                else
-                {
-                  playResult = g_Player.Play(item.FileName, MediaPortal.Player.g_Player.MediaType.Video, MediaPortal.Player.g_Player.SetResumeBDTitleState, true);
-                }
+                playResult = g_Player.Play(item.FileName, MediaPortal.Player.g_Player.MediaType.Video);
+              }
+              else
+              {
+                playResult = g_Player.Play(item.FileName, MediaPortal.Player.g_Player.MediaType.Video,
+                  MediaPortal.Player.g_Player.SetResumeBDTitleState, true);
               }
               break;
             default:

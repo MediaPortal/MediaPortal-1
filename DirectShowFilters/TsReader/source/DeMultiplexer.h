@@ -90,7 +90,7 @@ public:
 
   int        GetAudioBufferPts(CRefTime& First, CRefTime& Last) ;
   int        GetAudioBufferCnt();
-  int        GetVideoBufferPts(CRefTime& First, CRefTime& Last) ;
+  int        GetVideoBufferPts(CRefTime& First, CRefTime& Last, CRefTime& Zero) ;
   int        GetVideoBufferCnt();
   int        GetVideoBuffCntFt(double* frameTime);
   void       GetBufferCounts(int* ACnt, int* VCnt);
@@ -222,6 +222,7 @@ private:
   CRefTime  m_LastAudioSample;
   CRefTime  m_FirstVideoSample;
   CRefTime  m_LastVideoSample;
+  CRefTime  m_ZeroVideoSample;
 
   CBuffer* m_pCurrentTeletextBuffer;
   CBuffer* m_pCurrentSubtitleBuffer;

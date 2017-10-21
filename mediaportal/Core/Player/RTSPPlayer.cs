@@ -561,7 +561,6 @@ namespace MediaPortal.Player
           this.dvbSubRenderer = null;
         }
 
-
         if (vobSub != null)
         {
           Log.Info("cleanup vobSub");
@@ -980,6 +979,7 @@ namespace MediaPortal.Player
         GUIWindowManager.SendMessage(msg);
       }
     }
+
 
     public override int Speed
     {

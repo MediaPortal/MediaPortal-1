@@ -25,6 +25,15 @@
 #include <atlcoll.h>
 #include "CoordGeom.h"
 
+enum SUBTITLE_TYPE {
+  ST_TEXT,
+  ST_VOBSUB,
+  ST_DVB,
+  ST_HDMV,
+  ST_XSUB,
+  ST_XYSUBPIC
+};
+
 #pragma pack(push, 1)
 struct SubPicDesc {
     int type;
@@ -77,12 +86,16 @@ public IUnknown {
 
     STDMETHOD(AlphaBlt)(RECT * pSrc, RECT * pDst, SubPicDesc* pTarget = NULL /*[in]*/) PURE;
     STDMETHOD(GetSourceAndDest)(SIZE* pSize /*[in]*/, RECT* pRcSource /*[out]*/, RECT* pRcDest /*[out]*/,int xOffsetInPixels = 1 /*[in]*/) PURE;;
+    STDMETHOD(GetSourceAndDest) (RECT rcWindow /*[in]*/, RECT rcVideo /*[in]*/, BOOL bPositionRelative /*[in]*/, CPoint ShiftPos /*[in]*/, RECT* pRcSource /*[out]*/, RECT* pRcDest /*[out]*/, int xOffsetInPixels /*[in]*/, const BOOL bUseSpecialCase/*[in]*/) const PURE;
     STDMETHOD(SetVirtualTextureSize)(const SIZE pSize, const POINT pTopLeft) PURE;
 
     STDMETHOD_(REFERENCE_TIME, GetSegmentStart)() PURE;
     STDMETHOD_(REFERENCE_TIME, GetSegmentStop)() PURE;
     STDMETHOD_(void, SetSegmentStart)(REFERENCE_TIME rtStart) PURE;
     STDMETHOD_(void, SetSegmentStop)(REFERENCE_TIME rtStop) PURE;
+
+    STDMETHOD(SetType) (SUBTITLE_TYPE subtitleType /*[in]*/) PURE;
+    STDMETHOD(GetType) (SUBTITLE_TYPE* pSubtitleType /*[out]*/) PURE;
 };
 
 //
@@ -124,6 +137,8 @@ public IUnknown {
 
     STDMETHOD(Render)(SubPicDesc & spd, REFERENCE_TIME rt, double fps, RECT & bbox) PURE;
     STDMETHOD(GetTextureSize)(POSITION pos, SIZE & MaxTextureSize, SIZE & VirtualSize, POINT & VirtualTopLeft) PURE;
+
+    STDMETHOD_(SUBTITLE_TYPE, GetType) () PURE;
 };
 
 //

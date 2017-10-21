@@ -49,6 +49,14 @@ namespace MediaPortal.GUI.Library
 
     private static Stopwatch clockWatchMadVr = new Stopwatch();
 
+    #region Value before/after Route
+
+    private static string _selecteditem = string.Empty;
+    private static string _selectedindex = string.Empty;
+    private static string _highlightedbutton = string.Empty;
+
+    #endregion
+
     #region Frame limiting code
 
     private static void WaitForFrameClock()
@@ -533,14 +541,17 @@ namespace MediaPortal.GUI.Library
           if (pWindow.GetFocusControlId() < 0)
           {
             FocusState focusState = FocusState.NOT_FOCUSED;
-            Delegate[] delegates = OnPostRenderAction.GetInvocationList();
-            for (int i = 0; i < delegates.Length; ++i)
+            if (OnPostRenderAction != null)
             {
-              int iActiveWindow = ActiveWindow;
-              focusState = (FocusState)delegates[i].DynamicInvoke(new object[] {action, null, true});
-              if (focusState == FocusState.FOCUSED || iActiveWindow != ActiveWindow)
+              Delegate[] delegates = OnPostRenderAction.GetInvocationList();
+              for (int i = 0; i < delegates.Length; ++i)
               {
-                break;
+                int iActiveWindow = ActiveWindow;
+                focusState = (FocusState)delegates[i].DynamicInvoke(new object[] {action, null, true});
+                if (focusState == FocusState.FOCUSED || iActiveWindow != ActiveWindow)
+                {
+                  break;
+                }
               }
             }
             if (focusState != FocusState.FOCUSED)
@@ -1500,6 +1511,11 @@ namespace MediaPortal.GUI.Library
           GUIMessage msgDlg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, currentRoutedWindow.GetID, 0, 0,
                                  currentRoutedWindow.PreviousWindowId, 0, null);
           currentRoutedWindow.OnMessage(msgDlg);
+
+          GUIPropertyManager.SetProperty("#selecteditem", _selecteditem);
+          GUIPropertyManager.SetProperty("#selectedindex", _selectedindex);
+          GUIPropertyManager.SetProperty("#highlightedbutton", _highlightedbutton);
+        
         }
         //if (_currentWindowName != string.Empty && _routedWindow != null)
         {
@@ -1520,6 +1536,10 @@ namespace MediaPortal.GUI.Library
         Log.Debug("WindowManager: route {0}:{1}->{2}:{3}",
                   GetWindow(ActiveWindow), ActiveWindow, _routedWindow, dialogId);
         _currentWindowName = GUIPropertyManager.GetProperty("#currentmodule");
+
+        _selecteditem = GUIPropertyManager.GetProperty("#selecteditem");
+        _selectedindex = GUIPropertyManager.GetProperty("#selectedindex");
+        _highlightedbutton = GUIPropertyManager.GetProperty("#highlightedbutton");
       }
     }
 

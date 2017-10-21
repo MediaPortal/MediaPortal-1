@@ -112,7 +112,8 @@ CBDReaderFilter::CBDReaderFilter(IUnknown *pUnk, HRESULT *phr):
   m_bHandleSeekEvent(false),
   m_bForceTitleBasedPlayback(false),
   m_bFirstSeek(true),
-  m_pLibPaused(false)
+  m_pLibPaused(false),
+  m_pMadVRPausedInit(true)
 {
   // use the following line if you are having trouble setting breakpoints
   // #pragma comment( lib, "strmbasd" )
@@ -648,6 +649,15 @@ STDMETHODIMP CBDReaderFilter::Pause()
   LogDebug("CBDReaderFilter::Pause() - state = %d", m_State);
 
   CAutoLock cObjectLock(m_pLock);
+
+  // madVR work around when starting on fake menu (why ??)
+  if (m_pMadVRPausedInit)
+  {
+    m_pMadVRPausedInit = false;
+    IssueCommand(REBUILD, m_rtCurrent);
+    SetChapter(0);
+  }
+
   lib.SetState(State_Paused);
 
   if (m_State == State_Running)

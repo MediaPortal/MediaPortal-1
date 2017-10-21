@@ -19,6 +19,7 @@
 #endregion
 
 using System;
+using System.IO;
 
 namespace MediaPortal.Support
 {
@@ -33,14 +34,14 @@ namespace MediaPortal.Support
 
     public void CreateLogs(string destinationFolder)
     {
-      string dstFile = destinationFolder + "\\dxdiag.txt";
-      CreateDxDiagFile(dstFile);
-    }
+      string dstFile = Path.Combine(destinationFolder, "dxdiag.txt");
+      if (File.Exists(dstFile))
+      {
+        File.Delete(dstFile);
+      }
 
-    private void CreateDxDiagFile(string tmpFile)
-    {
-      string executable = Environment.GetEnvironmentVariable("windir") + @"\system32\dxdiag.exe";
-      string arguments = "/whql:off /t " + tmpFile;
+      string executable = Path.Combine(Environment.SystemDirectory, "dxdiag.exe");
+      string arguments = "/whql:off /t " + dstFile;
       runner.Arguments = arguments;
       runner.Executable = executable;
       runner.Run();

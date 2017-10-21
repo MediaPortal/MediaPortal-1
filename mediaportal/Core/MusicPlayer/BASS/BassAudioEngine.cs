@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2017 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2017 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -18,24 +18,25 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Threading;
-using System.Windows.Forms;
-using MediaPortal.ExtensionMethods;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using MediaPortal.Player.DSP;
 using MediaPortal.TagReader;
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Windows.Forms;
+
 using Un4seen.Bass;
 using Un4seen.Bass.AddOn.Cd;
 using Un4seen.Bass.AddOn.Mix;
 using Un4seen.Bass.AddOn.Tags;
 using Un4seen.Bass.AddOn.WaDsp;
-using Un4seen.Bass.Misc;
 using Un4seen.BassAsio;
 using Un4seen.BassWasapi;
+
 using Action = MediaPortal.GUI.Library.Action;
 
 namespace MediaPortal.MusicPlayer.BASS
@@ -142,6 +143,8 @@ namespace MediaPortal.MusicPlayer.BASS
     private bool _isCDDAFile = false;
     private int _speed = 1;
     private DateTime _seekUpdate = DateTime.Now;
+
+    private StreamCopy _streamcopy; // To Clone the Stream for Visualisation
 
     // CUE Support
     private string _currentCueFileName = null;
@@ -818,6 +821,13 @@ namespace MediaPortal.MusicPlayer.BASS
 
         _playBackType = (int)Config.PlayBack;
 
+        // Create a Stream Copy, if Visualisation is enabled
+        if (Config.MusicPlayer == AudioPlayer.Bass )
+        {
+          Log.Debug("BASS: Create Stream copy for Visualisation");
+          _streamcopy = new StreamCopy(this);
+          _streamcopy.StreamCopyFlags = BASSFlag.BASS_SAMPLE_FLOAT | BASSFlag.BASS_STREAM_DECODE;
+        }
         Log.Info("BASS: Initializing BASS environment done.");
 
         _initialized = true;
@@ -1449,6 +1459,13 @@ namespace MediaPortal.MusicPlayer.BASS
           Log.Error("BASS: Could not create Mixer. Aborting playback.");
           return false;
         }
+
+        // Start a StreamCopy for Visualisation purposes
+        if (Config.MusicPlayer == AudioPlayer.Bass )
+        {
+          _streamcopy.ChannelHandle = _mixer.BassStream;
+          _streamcopy.Start();
+        }
       }
       else
       {
@@ -1464,6 +1481,11 @@ namespace MediaPortal.MusicPlayer.BASS
           {
             Log.Error("BASS: Could not create Mixer. Aborting playback.");
             return false;
+          }
+
+          if (Config.MusicPlayer == AudioPlayer.Bass)
+          {
+            _streamcopy.ChannelHandle = _mixer.BassStream;
           }
         }
       }
@@ -2095,6 +2117,19 @@ namespace MediaPortal.MusicPlayer.BASS
     #region  Public Methods
 
     /// <summary>
+    /// Return the BASS Stream to be used for Visualisation purposes.
+    /// We will extract the WAVE and FFT data to be provided to the Visualisation Plugins
+    /// In case of Mixer active, we need to return the Mixer Stream.
+    /// In all other cases the current active stream is used.
+    /// </summary>
+    /// <returns></returns>
+    public int GetCurrentVizStream()
+    {
+      // Return the clone of the stream, because for a decoding channel, we can't get data from the original stream
+      return _streamcopy.ChannelHandle;
+    }
+
+    /// <summary>
     /// Checks, if a new Mixer would be needed, because of changes in Sample Rate or number of channels
     /// </summary>
     /// <param name="stream"></param>
@@ -2220,8 +2255,6 @@ namespace MediaPortal.MusicPlayer.BASS
       // Find out with which stream to deal with
       int level = 0;
 
-      MusicStream stream = GetCurrentStream();
-
       if (Config.MusicPlayer == AudioPlayer.Asio)
       {
         float fpeakL = BassAsio.BASS_ASIO_ChannelGetLevel(false, 0);
@@ -2235,6 +2268,7 @@ namespace MediaPortal.MusicPlayer.BASS
       }
       else
       {
+        MusicStream stream = GetCurrentStream();
         if (stream != null)
         {
           level = BassMix.BASS_Mixer_ChannelGetLevel(stream.BassStream);
@@ -2252,6 +2286,119 @@ namespace MediaPortal.MusicPlayer.BASS
 
       dbLevelL = dbLeft;
       dbLevelR = dbRight;
+    }
+
+    /// <summary>
+    /// Return the spectrum list (lines, in range min..max) to be used by a Spectrum Analyser
+    /// </summary>
+    /// <param name="spectrum">Spectrum value List</param>
+    /// <param name="count">Count of Spectrum values</param>
+    /// <param name="min">Min value of Spectrum data</param>
+    /// <param name="max">Max value of Spectrum data</param></param>
+    /// <returns></returns>
+    public bool GetSpectrum(ref List<int> spectrum, byte lines, int _min, int _max)
+    {
+      if (spectrum == null)
+      {
+        spectrum = Enumerable.Repeat(_min, lines).ToList();
+      }
+      if (Config.MusicPlayer == AudioPlayer.Asio || Config.MusicPlayer == AudioPlayer.DShow)
+      {
+        return false;
+      }
+      if (lines < 0 || lines > 255)
+      {
+        return false;
+      }
+      if (!Playing)
+      {
+        return false;
+      }
+
+      int _result = -1;
+      float[] _fft = new float[1024];
+
+      try
+      {
+        if (Config.MusicPlayer == AudioPlayer.WasApi)
+        {
+          _result = GetDataFFT(_fft, (int)BASSData.BASS_DATA_FFT2048);
+        }
+        else
+        {
+          if (_streamcopy != null)
+          {
+            _result = GetChannelData(_streamcopy.ChannelHandle, _fft, (int)BASSData.BASS_DATA_FFT2048);
+          }
+          else
+          {
+            return false;
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Debug("BASS: GetSpectrum(): {0}", ex.Message);
+        return false;
+      }
+      if (_result < 0)
+      {
+        return false ;
+      }
+
+      int x, y;
+      int b0 = 0;
+      bool _needRecalc = (_min != _max && _min != 0 && _max != 255);
+
+      // Computes the spectrum data, the code is taken from a bass_wasapi sample.
+      for (x = 0; x < lines; x++)
+      {
+        float peak = 0;
+        int b1 = (int)Math.Pow(2, x * 10.0 / (lines - 1));
+        if (b1 > 1023) 
+        {
+          b1 = 1023;
+        }
+        if (b1 <= b0)
+        {
+          b1 = b0 + 1;
+        }
+        for (; b0 < b1; b0++)
+        {
+          if (peak < _fft[1 + b0]) 
+          {
+            peak = _fft[1 + b0];
+          }
+        }
+        y = (int)(Math.Sqrt(peak) * 3 * 255 - 4);
+
+        if (y > 255) 
+        { 
+          y = 255;
+        }
+        if (y < 0)
+        {
+           y = 0;
+        }
+        if (_needRecalc)
+        {
+          y = (int)( ( ( (float)y / 255.0 ) * ( (float)_max - (float)_min) ) + (float)_min );
+        }
+
+        spectrum[x] = y;
+      }
+      return true;
+    }
+
+    /// <summary>
+    /// Return the spectrum array (lines, in range 0..255) to be used by a Spectrum Analyser
+    /// </summary>
+    /// <param name="spectrum">Spectrum value List</param>
+    /// <param name="count">Count of Spectrum values</param>
+    /// <returns></returns>
+    public bool GetSpectrum(ref List<int> spectrum, byte lines)
+    {
+      return GetSpectrum(ref spectrum, lines, 0, 255);
     }
 
     public int GetDataFFT(float[] buffer, int lenght)

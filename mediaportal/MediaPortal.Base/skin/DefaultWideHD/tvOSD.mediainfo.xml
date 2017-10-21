@@ -177,10 +177,10 @@
       <type>image</type>
       <id>0</id>
       <posX>1250</posX>
-      <posY>876</posY>
+      <posY>886</posY>
       <width>110</width>
-      <height>18</height>
-      <texture>osd_progress_background.png</texture>
+      <height>2</height>
+      <texture>horizontal_bar.png</texture>
       <animation effect="fade" start="0" end="100" time="170" reversible="true">visiblechange</animation>
       <visible>control.hasfocus(1237)|control.hasfocus(1238)</visible>
     </control>
@@ -189,14 +189,14 @@
       <type>progress</type>
       <id>0</id>
       <posX>1239</posX>
-      <posY>878</posY>
-      <width>134</width>
+      <posY>868</posY>
+      <width>139</width>
       <height>14</height>
       <label>#TV.TuningDetails.SignalLevel</label>
       <texturebg>-</texturebg>
-      <lefttexture>osd_progress_left.png</lefttexture>
-      <midtexture>osd_progress_mid.png</midtexture>
-      <righttexture>osd_progress_right.png</righttexture>
+      <lefttexture></lefttexture>
+      <midtexture></midtexture>
+      <righttexture>osd_progress_right2.png</righttexture>
       <animation effect="fade" start="0" end="100" time="170" reversible="true">visiblechange</animation>
       <visible>control.hasfocus(1237)|control.hasfocus(1238)</visible>
     </control>
@@ -205,10 +205,10 @@
       <type>image</type>
       <id>0</id>
       <posX>1250</posX>
-      <posY>906</posY>
+      <posY>916</posY>
       <width>110</width>
-      <height>18</height>
-      <texture>osd_progress_background.png</texture>
+      <height>2</height>
+      <texture>horizontal_bar.png</texture>
       <animation effect="fade" start="0" end="100" time="170" reversible="true">visiblechange</animation>
       <visible>control.hasfocus(1237)|control.hasfocus(1238)</visible>
     </control>
@@ -217,14 +217,14 @@
       <type>progress</type>
       <id>0</id>
       <posX>1239</posX>
-      <posY>908</posY>
-      <width>134</width>
+      <posY>898</posY>
+      <width>139</width>
       <height>14</height>
       <label>#TV.TuningDetails.SignalQuality</label>
       <texturebg>-</texturebg>
-      <lefttexture>osd_progress_left.png</lefttexture>
-      <midtexture>osd_progress_mid.png</midtexture>
-      <righttexture>osd_progress_right.png</righttexture>
+      <lefttexture></lefttexture>
+      <midtexture></midtexture>
+      <righttexture>osd_progress_right2.png</righttexture>
       <animation effect="fade" start="0" end="100" time="170" reversible="true">visiblechange</animation>
       <visible>control.hasfocus(1237)|control.hasfocus(1238)</visible>
     </control>

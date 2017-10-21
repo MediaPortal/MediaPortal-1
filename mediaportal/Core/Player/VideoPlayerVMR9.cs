@@ -1475,7 +1475,7 @@ namespace MediaPortal.Player
 
         if (filterCodec != null && filterCodec._audioRendererFilter != null)
         {
-          DirectShowUtil.FinalReleaseComObject(filterCodec._audioRendererFilter);
+          DirectShowUtil.ReleaseComObject(filterCodec._audioRendererFilter);
           filterCodec._audioRendererFilter = null;
           Log.Info("VideoPlayer9: Cleanup AudioRenderer");
         }
@@ -1590,6 +1590,7 @@ namespace MediaPortal.Player
       {
         if (VMR9Util.g_vmr9 != null)
         {
+          VMR9Util.g_vmr9.SafeDispose();
           VMR9Util.g_vmr9.RestoreGuiForMadVr();
         }
         Log.Error("VideoPlayer9: Exception while cleanuping DShow graph - {0} {1}", ex.Message, ex.StackTrace);

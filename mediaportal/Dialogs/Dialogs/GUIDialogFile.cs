@@ -1187,6 +1187,11 @@ namespace MediaPortal.Dialogs
       }
       else if (!item.IsRemote)
       {
+        if (MediaPortal.Player.g_Player.Playing && MediaPortal.Player.g_Player.currentFileName == item.Path)
+        {
+          Log.Debug("FileDelete: File is in use. Stopping gPlayer");
+          MediaPortal.Player.g_Player.Stop();
+        }
         if (Util.Utils.FileDelete(item.Path))
         {
           // delete from database

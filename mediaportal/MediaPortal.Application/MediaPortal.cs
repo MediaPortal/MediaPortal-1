@@ -1,4 +1,4 @@
-#region Copyright (C) 2005-2013 Team MediaPortal
+﻿#region Copyright (C) 2005-2013 Team MediaPortal
 
 // Copyright (C) 2005-2013 Team MediaPortal
 // http://www.team-mediaportal.com
@@ -19,6 +19,8 @@
 #endregion
 
 using DirectShowLib;
+using DShowNET.Helper;
+using FilterCategory = DirectShowLib.FilterCategory;
 
 #region usings
 
@@ -728,6 +730,8 @@ public class MediaPortalApp : D3D, IRender
       FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(Application.ExecutablePath);
 
       Log.Info("Main: MediaPortal v" + versionInfo.FileVersion + " is starting up on " + OSInfo.OSInfo.GetOSDisplayVersion());
+      Log.Info(OSInfo.OSInfo.GetLastInstalledWindowsUpdateTimestampAsString());
+      Log.Info("Windows Media Player: [{0}]", OSInfo.OSInfo.GetWMPVersion());
 
       #if DEBUG
       Log.Info("Debug Build: " + Application.ProductVersion);
@@ -744,41 +748,6 @@ public class MediaPortalApp : D3D, IRender
 
       // Check for unsupported operating systems
       OSPrerequisites.OSPrerequisites.OsCheck(false);
-
-      // Log last install of WindowsUpdate patches
-      string lastSuccessTime = "NEVER !!!";
-      UIntPtr res;
-
-      int options = Convert.ToInt32(Reg.RegistryRights.ReadKey);
-      if (OSInfo.OSInfo.Xp64OrLater())
-      {
-        options = options | Convert.ToInt32(Reg.RegWow64Options.KEY_WOW64_64KEY);
-      }
-      var rKey = new UIntPtr(Convert.ToUInt32(Reg.RegistryRoot.HKLM));
-      int lastError;
-      int retval = Reg.RegOpenKeyEx(rKey, "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\WindowsUpdate\\Auto Update\\Results\\Install", 0, options, out res);
-      if (retval == 0)
-      {
-        uint tKey;
-        uint lKey = 100;
-        var sKey = new StringBuilder((int)lKey);
-        retval = Reg.RegQueryValueEx(res, "LastSuccessTime", 0, out tKey, sKey, ref lKey);
-        if (retval == 0)
-        {
-          lastSuccessTime = sKey.ToString();
-        }
-        else
-        {
-          lastError = Marshal.GetLastWin32Error();
-          Log.Debug("RegQueryValueEx retval=<{0}>, lastError=<{1}>", retval, lastError);
-        }
-      }
-      else
-      {
-        lastError = Marshal.GetLastWin32Error();
-        Log.Debug("RegOpenKeyEx retval=<{0}>, lastError=<{1}>", retval, lastError);
-      }
-      Log.Info("Main: Last install from WindowsUpdate is dated {0}", lastSuccessTime);
 
       Log.Debug("Disabling process window ghosting");
       DisableProcessWindowsGhosting();
@@ -1624,6 +1593,7 @@ public class MediaPortalApp : D3D, IRender
 
           // Force a madVR refresh to resize MP window
           // TODO how to handle it better
+          GUIGraphicsContext.ForceMadVRRefresh = true;
           g_Player.RefreshMadVrVideo();
           break;
 
@@ -1653,11 +1623,6 @@ public class MediaPortalApp : D3D, IRender
 
         // handle display changes
         case WM_DISPLAYCHANGE:
-          if (Windowed || !_ignoreFullscreenResolutionChanges)
-          {
-            OnDisplayChange(ref msg);
-            PluginManager.WndProc(ref msg);
-          }
           Screen screen = Screen.FromControl(this);
           if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && AppActive &&
               (!Equals(screen.Bounds.Size.Width, GUIGraphicsContext.currentScreen.Bounds.Width) ||
@@ -1669,15 +1634,26 @@ public class MediaPortalApp : D3D, IRender
             Log.Debug("Main: WM_DISPLAYCHANGE madVR screen change triggered");
             Log.Debug("Main: WM_DISPLAYCHANGE madVR Width x Height : {0} x {1}", screen.Bounds.Size.Width, screen.Bounds.Size.Height);
           }
+
+          // Handle this message here needed for madVR
+          if (Windowed || !_ignoreFullscreenResolutionChanges)
+          {
+            OnDisplayChange(ref msg);
+            PluginManager.WndProc(ref msg);
+          }
+
+          // Restore bounds from the currentScreen value (to restore original startup MP screen after turned off used HDMI device
+          if (!Windowed && _ignoreFullscreenResolutionChanges)
+          {
+            SetBounds(GUIGraphicsContext.currentScreen.Bounds.X, GUIGraphicsContext.currentScreen.Bounds.Y, GUIGraphicsContext.currentScreen.Bounds.Width, GUIGraphicsContext.currentScreen.Bounds.Height);
+            Log.Debug("Main: WM_DISPLAYCHANGE restore current screen position");
+          }
           break;
 
         // handle device changes
         case WM_DEVICECHANGE:
-          if (Windowed || !_ignoreFullscreenResolutionChanges)
-          {
-            OnDeviceChange(ref msg);
-            PluginManager.WndProc(ref msg);
-          }
+          OnDeviceChange(ref msg);
+          PluginManager.WndProc(ref msg);
           break;
 
         case WM_QUERYENDSESSION:
@@ -2267,6 +2243,7 @@ public class MediaPortalApp : D3D, IRender
                     Thread.Sleep(100);
                   }
                 }
+                FilterHelper.ReloadFilterCollection();
               }
               catch (Exception exception)
               {
@@ -2294,6 +2271,7 @@ public class MediaPortalApp : D3D, IRender
                   BassMusicPlayer.FreeBass();
                   BassMusicPlayer.CreatePlayerAsync();
                 }
+                FilterHelper.ReloadFilterCollection();
               }
               catch (Exception exception)
               {
@@ -2374,7 +2352,7 @@ public class MediaPortalApp : D3D, IRender
           info.Size = (uint)Marshal.SizeOf(info);
           GetMonitorInfo(hMon, ref info);
           var rect = Screen.FromRectangle(info.MonitorRectangle).Bounds;
-          if (Equals(Manager.Adapters[GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal].Information.DeviceName, GetCleanDisplayName(GUIGraphicsContext.currentStartScreen)) && rect.Equals(screen.Bounds))
+          if (GUIGraphicsContext.DX9Device != null && (Equals(Manager.Adapters[GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal].Information.DeviceName, GetCleanDisplayName(GUIGraphicsContext.currentStartScreen)) && rect.Equals(screen.Bounds)))
           {
             GUIGraphicsContext.currentScreen = GUIGraphicsContext.currentStartScreen;
             break;
@@ -2952,7 +2930,10 @@ public class MediaPortalApp : D3D, IRender
       GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.RUNNING;
     }
 
-    RestoreFromTray();
+    if (!_suspended)
+    {
+      RestoreFromTray();
+    }
 
     // Force focus after resume done (really weird sequence) disable for now
     ForceMPFocus();
@@ -4399,13 +4380,18 @@ public class MediaPortalApp : D3D, IRender
               SurfaceLoader.Save(fileName + ".png", ImageFileFormat.Png, backbuffer);
               backbuffer.Dispose();
             }
-            else if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && GUIGraphicsContext.InVmr9Render)
+            else if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
+                     GUIGraphicsContext.InVmr9Render)
             {
-              if (GUIGraphicsContext.DX9DeviceMadVr != null)
+              //if (VMR9Util.g_vmr9 != null)
+              //{
+              //  VMR9Util.g_vmr9.GrabScreenshot();
+              //  return;
+              //}
+
+              if (VMR9Util.g_vmr9 != null)
               {
-                Surface backbuffer = GUIGraphicsContext.DX9DeviceMadVr.GetBackBuffer(0, 0, BackBufferType.Mono);
-                SurfaceLoader.Save(fileName + ".png", ImageFileFormat.Png, backbuffer);
-                backbuffer.Dispose();
+                VMR9Util.g_vmr9.MadVrGrabScreenshot();
               }
             }
             else

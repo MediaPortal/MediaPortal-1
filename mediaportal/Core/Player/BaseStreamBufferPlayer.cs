@@ -884,7 +884,6 @@ namespace MediaPortal.Player
       {
         CloseInterfaces();
       }
-      //CloseInterfaces();
     }
 
     /*

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2017 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2017 Team MediaPortal
 // http://www.team-mediaportal.com
 //
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 // You should have received a copy of the GNU General Public License
 // along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
 
-#endregion Copyright (C) 2005-2011 Team MediaPortal
+#endregion Copyright (C) 2005-2017 Team MediaPortal
 
 using System;
 using System.Collections;
@@ -54,7 +54,7 @@ namespace MediaPortal.InputDevices
     private readonly string[] layerList = {"all", "1", "2"};
     private readonly Array nativeActionList = Enum.GetValues(typeof (Action.ActionType));
     private readonly string[] nativePlayerList = {"TV", "DVD", "MEDIA", "MUSIC"};
-    private readonly string[] nativePowerList = {"EXIT", "REBOOT", "SHUTDOWN", "STANDBY", "HIBERNATE"};
+    private readonly string[] nativePowerList = {"EXIT", "REBOOT", "SHUTDOWN", "STANDBY", "HIBERNATE", "POWEROFF"};
     private readonly string[] nativeProcessList = {"CLOSE", "KILL"};
     private readonly Array nativeWindowsList = Enum.GetValues(typeof (GUIWindow.Window));
     private readonly string[] playerList = {"TV is running", "DVD is playing", "Media is playing", "Music is playing"};
@@ -62,7 +62,7 @@ namespace MediaPortal.InputDevices
     private readonly string[] powerList =
     {
       "Exit MediaPortal", "Reboot Windows", "Shutdown Windows", "Standby Windows",
-      "Hibernate Windows"
+      "Hibernate Windows", "Power Off"
     };
 
     private readonly string[] processList = {"Close Process", "Kill Process"};

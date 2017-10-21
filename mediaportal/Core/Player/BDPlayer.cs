@@ -1526,13 +1526,13 @@ namespace MediaPortal.Player
       if (_state == PlayState.Paused)
       {
         Speed = 1;
-        _mediaCtrl.Run();
+        if (_mediaCtrl != null) _mediaCtrl.Run();
         _state = PlayState.Playing;
       }
       else if (_state == PlayState.Playing)
       {
         _state = PlayState.Paused;
-        _mediaCtrl.Pause();
+        if (_mediaCtrl != null) _mediaCtrl.Pause();
       }
     }
 
@@ -3080,7 +3080,7 @@ namespace MediaPortal.Player
 
         if (_audioRendererFilter != null)
         {
-          DirectShowUtil.FinalReleaseComObject(_audioRendererFilter);
+          DirectShowUtil.ReleaseComObject(_audioRendererFilter);
           _audioRendererFilter = null;
           Log.Info("BDPlayer: Cleanup AudioRenderer");
         }
