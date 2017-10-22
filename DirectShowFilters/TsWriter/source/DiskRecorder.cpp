@@ -604,7 +604,7 @@ void CDiskRecorder::OnTsPacket(const CTsHeader& header, const unsigned char* tsP
     // Down-stream seek functions (skip, fast-forward, rewind) require PCR.
     // PCR/PTS/DTS compensation and PCR smoothing also require an initial
     // time-stamp. ISO/IEC 13818-1 says the maximum time between PCR deliveries
-    // should be 100 ms. If PCR isn't seen within 100 ms of the first
+    // should be 100 ms. If PCR isn't seen within 200 ms of the first
     // video/audio packet, assume PCR must be generated from audio PTS.
     unsigned char localTsPacket[TS_PACKET_LEN];
     memcpy(localTsPacket, tsPacket, TS_PACKET_LEN);
@@ -1499,7 +1499,7 @@ bool CDiskRecorder::HandlePcr(const CTsHeader& header,
 {
   if (m_waitingForPcr && !m_generatePcrFromPts)
   {
-    if (CTimeUtils::ElapsedMillis(m_videoAudioStartTimeStamp) > 100)
+    if (CTimeUtils::ElapsedMillis(m_videoAudioStartTimeStamp) > 200)
     {
       WriteLog(L"PCR wait time limit reached, generate PCR from PTS");
       m_generatePcrFromPts = true;
