@@ -1397,6 +1397,10 @@ namespace MediaPortal.Player
               SubEngine.GetInstance().SetCurrent3DSubtitle = !GUIGraphicsContext.StretchSubtitles ? 2 : 0;
             }
             engine.SetTime(frameStart);
+            if (xOffsetInPixels == 0)
+            {
+              xOffsetInPixels = GUIGraphicsContext.Render3DSubtitleDistance;
+            }
             engine.RenderEx(viewportRect, croppedVideoRect, xOffsetInPixels);
           }
           else
