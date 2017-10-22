@@ -566,13 +566,14 @@ bool CGrabberPmt::GetOpenTvEpgPids(bool& isOpenTvEpgProgram,
       continue;
     }
 
+    bool isOpenTvPid = false;
     unsigned char* descriptors = pid->Descriptors;
     unsigned short offset = 0;
     while (offset + 1 < pid->DescriptorsLength)
     {
       unsigned char tag = descriptors[offset++];
       unsigned char length = descriptors[offset++];
-      if (tag == 0x5f)  // DVB private data specifier descriptor
+      if (!isOpenTvPid && tag == 0x5f)  // DVB private data specifier descriptor
       {
         if (
           length == 4 &&
@@ -582,14 +583,20 @@ bool CGrabberPmt::GetOpenTvEpgPids(bool& isOpenTvEpgProgram,
           descriptors[offset + 3] == 2
         )
         {
+          isOpenTvPid = true;
           isOpenTvEpgProgram = true;
         }
         else
         {
-          isOpenTvEpgProgram = false;
+          isOpenTvPid = false;
         }
       }
-      else if (isOpenTvEpgProgram && tag == 0xb0 && length == 1)
+      else if (
+        isOpenTvEpgProgram &&
+        isOpenTvPid &&
+        tag == 0xb0 &&
+        length == 1
+      )
       {
         unsigned char pidType = descriptors[offset];
         if (pidType < 0x10)
