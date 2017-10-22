@@ -864,6 +864,9 @@ namespace MediaPortal.Player
           GUIGraphicsContext.InitMadVRWindowPosition = true;
           GUIGraphicsContext.RestoreGuiForMadVrDone = false;
           GUIGraphicsContext.WorkerThreadStart = false;
+          GUIGraphicsContext.ForcedRefreshRate3D = false;
+          GUIGraphicsContext.ForcedRR3DBackDefault = false;
+          GUIGraphicsContext.ForcedRefreshRate3DDone = false;
           IMediaControl mPMediaControl = (IMediaControl) graphBuilder;
           var xposition = GUIGraphicsContext.form.Location.X;
           var yposition = GUIGraphicsContext.form.Location.Y;
