@@ -434,7 +434,8 @@ STDMETHODIMP_(bool) CParserMhw::GetEvent(unsigned long index,
                                           unsigned short* descriptionBufferSize,
                                           unsigned char* descriptionLineCount,
                                           unsigned long* seriesId,
-                                          unsigned char* seasonNumber,
+                                          char* seasonName,
+                                          unsigned short* seasonNameBufferSize,
                                           unsigned long* episodeId,
                                           unsigned short* episodeNumber,
                                           char* episodeName,
@@ -444,6 +445,7 @@ STDMETHODIMP_(bool) CParserMhw::GetEvent(unsigned long index,
                                           char* subThemeName,
                                           unsigned short* subThemeNameBufferSize,
                                           unsigned char* classification,
+                                          bool* isRecommended,
                                           unsigned long* payPerViewId)
 {
   CEnterCriticalSection lock(m_section);
@@ -461,10 +463,10 @@ STDMETHODIMP_(bool) CParserMhw::GetEvent(unsigned long index,
   *duration = m_currentEvent->Duration;
   *descriptionLineCount = 0;
   *seriesId = 0xffffffff;
-  *seasonNumber = 0;
   *episodeId = m_currentEvent->ProgramId;
   *episodeNumber = 0;
   *classification = 0xff;
+  *isRecommended = false;
   *payPerViewId = m_currentEvent->PayPerViewId;
 
   unsigned short requiredBufferSize = 0;
@@ -600,7 +602,7 @@ STDMETHODIMP_(bool) CParserMhw::GetEvent(unsigned long index,
   }
 
   CRecordMhwProgram* recordProgram = NULL;
-  unsigned long tempSeriesId = 0;
+  CRecordMhwSeries* recordSeries = NULL;
   if (m_currentEvent->ProgramId != 0xffffffff)
   {
     if (
@@ -629,9 +631,7 @@ STDMETHODIMP_(bool) CParserMhw::GetEvent(unsigned long index,
   }
   else
   {
-    *seriesId = recordProgram->SeriesId;
-    tempSeriesId = recordProgram->SeriesId;
-    *classification = recordProgram->Classification;    // override; preferred over 3-bit-limited description classification
+    *classification = recordProgram->Classification;    // override; previously description classification was bit-limited, though now the two values *should* be identical
     if (!CUtils::CopyStringToBuffer(recordProgram->Title,
                                     episodeName,
                                     *episodeNameBufferSize,
@@ -642,52 +642,68 @@ STDMETHODIMP_(bool) CParserMhw::GetEvent(unsigned long index,
                 m_currentEvent->ProgramId, requiredBufferSize,
                 *episodeNameBufferSize);
     }
-  }
 
-  CRecordMhwSeries* recordSeries = NULL;
-  bool haveSeriesTitle = false;
-  if (tempSeriesId != 0xffffffff)
-  {
-    if (
-      !m_recordsSeries.GetRecordByKey(((unsigned long long)m_currentEvent->Version << 32) | *seriesId, &record) ||
-      record == NULL
-    )
+    unsigned long tempSeriesId;
+    vector<unsigned long>::const_iterator it = recordProgram->SeriesIds.begin();
+    for ( ; it != recordProgram->SeriesIds.end(); it++)
     {
-      LogDebug(L"MHW: invalid series identifiers, index = %lu, version = %hhu, event ID = %lu, series ID = %lu",
-                index, m_currentEvent->Version, m_currentEvent->EventId,
-                tempSeriesId);
-    }
-    else
-    {
-      recordSeries = dynamic_cast<CRecordMhwSeries*>(record);
-      if (recordSeries == NULL)
+      tempSeriesId = *it;
+      if (tempSeriesId == 0xffffffff)
       {
-        LogDebug(L"MHW: invalid series record, index = %lu, version = %hhu, event ID = %lu, program ID = %lu",
+        continue;
+      }
+      if (
+        !m_recordsSeries.GetRecordByKey(((unsigned long long)m_currentEvent->Version << 32) | tempSeriesId, &record) ||
+        record == NULL
+      )
+      {
+        LogDebug(L"MHW: invalid series identifiers, index = %lu, version = %hhu, event ID = %lu, series ID = %lu",
                   index, m_currentEvent->Version, m_currentEvent->EventId,
                   tempSeriesId);
       }
+      else
+      {
+        CRecordMhwSeries* tempRecordSeries = dynamic_cast<CRecordMhwSeries*>(record);
+        if (tempRecordSeries == NULL)
+        {
+          LogDebug(L"MHW: invalid series record, index = %lu, version = %hhu, event ID = %lu, program ID = %lu",
+                    index, m_currentEvent->Version, m_currentEvent->EventId,
+                    tempSeriesId);
+        }
+        else if (tempRecordSeries->IsRecommendation)
+        {
+          *isRecommended = true;
+        }
+        else if (recordSeries == NULL)
+        {
+          *seriesId = tempSeriesId;
+          recordSeries = tempRecordSeries;
+        }
+      }
     }
   }
-  if (recordSeries != NULL)
+
+  bool haveSeriesTitle = false;
+  if (recordSeries == NULL)
+  {
+    CUtils::CopyStringToBuffer(NULL, seasonName, *seasonNameBufferSize, requiredBufferSize);
+  }
+  else
   {
     // Season name is usually a numeric string containing the season number.
-    if (recordSeries->SeasonName != NULL)
+    // However, sometimes it can be "X/Y" where X is the season number and Y is
+    // the total season count.
+    if (
+      haveSeriesTitle &&
+      !CUtils::CopyStringToBuffer(recordSeries->SeasonName,
+                                  seasonName,
+                                  *seasonNameBufferSize,
+                                  requiredBufferSize)
+    )
     {
-      unsigned char i = 0;
-      while (true)
-      {
-        char c = recordSeries->SeasonName[i];
-        if (c == NULL)
-        {
-          break;
-        }
-        if (c >= 0x20)
-        {
-          *seasonNumber = (unsigned char)strtoul(&(recordSeries->SeasonName[i]), NULL, 10);
-          break;
-        }
-        i++;
-      }
+      LogDebug(L"MHW: insufficient season name buffer size, index = %lu, version = %hhu, event ID = %lu, series ID = %lu, required size = %hu, actual size = %hu",
+                index, m_currentEvent->Version, m_currentEvent->EventId,
+                *seriesId, requiredBufferSize, *seasonNameBufferSize);
     }
 
     // Find and populate the episode number.
@@ -696,7 +712,7 @@ STDMETHODIMP_(bool) CParserMhw::GetEvent(unsigned long index,
     {
       LogDebug(L"MHW: missing episode number, index = %lu, version = %hhu, event ID = %lu, series ID = %lu, episode ID = %lu",
                 index, m_currentEvent->Version, m_currentEvent->EventId,
-                tempSeriesId, m_currentEvent->ProgramId);
+                *seriesId, m_currentEvent->ProgramId);
     }
     if (it->second != 0xffff)
     {
@@ -706,14 +722,17 @@ STDMETHODIMP_(bool) CParserMhw::GetEvent(unsigned long index,
     // Prefer series name to event title. This has the effect of excluding
     // suffixes such as "(HD)" and "(T\d+)".
     haveSeriesTitle = recordSeries->SeriesName != NULL;
-    if (!CUtils::CopyStringToBuffer(recordSeries->SeriesName,
-                                    title,
-                                    *titleBufferSize,
-                                    requiredBufferSize))
+    if (
+      haveSeriesTitle &&
+      !CUtils::CopyStringToBuffer(recordSeries->SeriesName,
+                                  title,
+                                  *titleBufferSize,
+                                  requiredBufferSize)
+    )
     {
       LogDebug(L"MHW: insufficient event title buffer size, index = %lu, version = %hhu, event ID = %lu, series ID = %lu, required size = %hu, actual size = %hu",
                 index, m_currentEvent->Version, m_currentEvent->EventId,
-                tempSeriesId, requiredBufferSize, *titleBufferSize);
+                *seriesId, requiredBufferSize, *titleBufferSize);
     }
   }
 
@@ -972,7 +991,7 @@ void CParserMhw::OnNewSection(unsigned short pid, unsigned char tableId, const C
         {
           updateCount = DecodeVersion2ThemeSection(section.Data, dataLength);
         }
-        else if (section.Data[3] == 2 || section.Data[3] == 3)    // ignore the SD lineup
+        else if (section.Data[3] == 2 || section.Data[3] == 3)    // ignore the SD lineup and terrestrial channel names
         {
           updateCount = DecodeVersion2ChannelSection(section.Data, dataLength);
         }
@@ -1018,7 +1037,7 @@ void CParserMhw::OnNewSection(unsigned short pid, unsigned char tableId, const C
         }
       }
     }
-    // Currently not used.
+    // 2017-10-21: no longer broadcast?
     /*else if (
       pid == PID_MHW2_THEME_DESCRIPTIONS &&
       tableId == TABLE_ID_MHW2_THEME_DESCRIPTIONS
@@ -1730,12 +1749,17 @@ unsigned long CParserMhw::DecodeVersion2ChannelSection(const unsigned char* data
   // private indicator - 1 bit, always seems to be 1
   // reserved - 2 bits, always seems to be 3
   // section length - 12 bits
-  // data type - 1 byte, 0 = standard definition channels, 1 = themes, 2 = high definition channels, 3 = terrestrial channels
-  // [unknown] - 1 byte; constant in each sample; seen values 0xa7, 0xc7
+  // data type - 1 byte
+  //   0 = standard definition channels
+  //   1 = themes
+  //   2 = high definition channels
+  //   3 = terrestrial channels
+  //   4 = terrestrial channel names
+  // [unknown] - 1 byte; constant in each sample; seen values 0x37, 0xa7, 0xc7
   // channel count pointer - 12 bits
   // channel category count pointer - 12 bits
   // last unknown segment pointer - 12 bits
-  // [unknown] - 12 bits; constant in each sample; seen values 0x376, 0x886
+  // [unknown] - 12 bits; constant in each sample; seen values 0x336, 0x376, 0x886
   // parts of the day... [x 6 => 96 bytes]
   //   start hour - 1 byte, encoding = binary (eg. 0x16 = 10 PM)
   //   start minute - 1 byte, encoding = binary
@@ -1774,54 +1798,6 @@ unsigned long CParserMhw::DecodeVersion2ChannelSection(const unsigned char* data
   //   name length - 6 bits
   //   name - [name length] bytes
   // [unknown] - [remaining] bytes
-  //   standard definition =
-  //     [oldest]
-  //     F0 00 C8
-  //        10 44 49 47 49 54 41 4C 2B 20 50 52 4F 50 4F 4E 45
-  //     F0 00 CA
-  //     F0 00 CB
-  //     00 0C 37 EA FF 00 00 00 01
-  //     [middle, newest]
-  //     F0 00 C8
-  //   high definition =
-  //     [oldest]
-  //     F0 00 01
-  //        10 44 49 47 49 54 41 4C 2B 20 50 52 4F 50 4F 4E 45
-  //     F0 00 02
-  //     F0 00 03
-  //     00 0C 37 EA FF 00 00 00 01
-  //     [newest]
-  //     F0 00 01
-  //       0E 43 41 4E 41 4C 2B 20 50 52 4F 50 4F 4E 45
-  //     F0 00 02
-  //       04
-  //       F0 00 03 00
-  //         0E 1D ED FF
-  //         04 43 49 4E 45
-  //       F0 00 04 00
-  //         0E 1D EF FF
-  //         06 53 45 52 49 45 53
-  //       F0 00 05 00
-  //         0E 1D F1 FF
-  //         0C 44 4F 43 55 4D 45 4E 54 41 4C 45 53
-  //       F0 00 06 00
-  //         0E 1D F3 FF
-  //         0D 4F 54 52 4F 53 20 47 C9 4E 45 52 4F 53
-  //   terrestrial =
-  //     [oldest]
-  //     F0 00 01
-  //        10 44 49 47 49 54 41 4C 2B 20 50 52 4F 50 4F 4E 45
-  //     F0 00 02
-  //     F0 00 03
-  //     00 0C 37 EA FF 00 00 00 01
-  //     [middle]
-  //     F0 00 01
-  //        10 44 49 47 49 54 41 4C 2B 20 50 52 4F 50 4F 4E 45
-  //     F0 00 02
-  //     [newest]
-  //     F0 00 01
-  //       0E 43 41 4E 41 4C 2B 20 50 52 4F 50 4F 4E 45
-  //     F0 00 02
   if (data == NULL || dataLength < 26)
   {
     LogDebug(L"MHW: invalid version 2 channel section, length = %hu",
@@ -2140,15 +2116,11 @@ unsigned long CParserMhw::DecodeVersion2DescriptionSection(const unsigned char* 
   // current/next indicator - 1 bit
   // section number - 1 byte
   // last section number - 1 byte
-  // [unknown] - 2 bytes
-  //   most significant BCD digit: almost always 0, rarely 1 or 5
-  //   all values used, but low values exponentially more common than high values
-  //   all values used
-  //   least significant BCD digit: always 0xf
+  // [unknown] - 12 bits, related to duration?
+  // [unknown] - 4 bits, always seems to be 0xf
   // theme ID - 5 bits
   // sub-theme ID - 6 bits
-  // classification - 3 bits; 0 = unclassified / +12, 1 = TP / +16, 2 = +13 / TP/INF, 3 = +18, 4 = X, 5 = SC, 6 = +7, 7 = INF
-  // [unknown] - 2 bits, always seems to be 0x3
+  // classification - 5 bits; 0 = SC, 1 = TP, 2 = ???, 3 = +18, 4 = X, 5 = ???, 6 = +7, 7 = INF, 8 = +12, 9 = +13 / +16
   // theme description ID - 2 bytes
   // description length - 1 byte
   // description - [description length] bytes
@@ -2171,8 +2143,15 @@ unsigned long CParserMhw::DecodeVersion2DescriptionSection(const unsigned char* 
   // events...
   //   event ID - 2 bytes
   //   [unknown] - 1 byte, values 0x1, 0x2, 0x3, 0x40, 0x41, 0x42, 0x43, 0x50, 0x51, 0x52, 0x53
+  //     00000001
+  //     00000010
+  //     00010000 high definition?
+  //     01000000 wide screen?
   //   [unknown] - 1 byte, values 0x1, 0x8, 0x10, 0x18, 0x20, 0x28, 0x30, 0x31, 0x38, 0x39
-  // CRC - 4 bytes
+  //     00000001
+  //     00001000 Español audio?
+  //     00010000 orig audio?
+  //     00100000 orig audio?
   //
   // Note: the data input parameter excludes the CRC.
   if (data == NULL || dataLength < 20)
@@ -2186,14 +2165,11 @@ unsigned long CParserMhw::DecodeVersion2DescriptionSection(const unsigned char* 
   unsigned char versionNumber = (data[5] >> 1) & 0x1f;
   unsigned char sectionNumber = data[6];
   unsigned char lastSectionNumber = data[7];
-  unsigned short unknown1 = (data[8] << 8) | data[9];
-  unsigned char unknown1a = data[8];
-  unsigned char unknown1b = data[9] >> 4;
-  unsigned char unknown1c = data[9] & 0xf;    // always f
+  unsigned short unknown1 = (data[8] << 4) | (data[9] >> 4);
+  unsigned char unknown2 = data[9] & 0xf;     // always f
   unsigned char themeId = data[10] >> 3;
   unsigned char subThemeId = ((data[10] & 7) << 3) | (data[11] >> 5);
-  unsigned char classification = (data[11] >> 2) & 7;
-  unsigned char unknown2 = data[11] & 3;
+  unsigned char classification = data[11] & 0x1f;
   unsigned short themeDescriptionId = (data[12] << 8) | data[13];
   unsigned char descriptionLength = data[14];
   char* description = NULL;
@@ -2235,10 +2211,10 @@ unsigned long CParserMhw::DecodeVersion2DescriptionSection(const unsigned char* 
   unsigned char lineCount = data[pointer++];
   unsigned char unknown3 = lineCount >> 4;
   lineCount &= 0xf;
-  //LogDebug(L"MHW: description, version = 2, ID = %hu, unknown 1a = 0x%hhx, unknown 1b = %hhu, unknown 1c = %hhu, theme ID = %hhu, sub-theme ID = %hhu, classification = %hhu, unknown 2 = %hhu, theme description ID = %hu, line count = %hhu, unknown 3 = %hhu, description = %S",
-  //          descriptionId, unknown1a, unknown1b, unknown1c, themeId,
-  //          subThemeId, classification, unknown2, themeDescriptionId,
-  //          lineCount, unknown3, record->Description);
+  //LogDebug(L"MHW: description, version = 2, ID = %hu, unknown 1 = %hu, unknown 2 = %hhu, theme ID = %hhu, sub-theme ID = %hhu, classification = %hhu, theme description ID = %hu, line count = %hhu, unknown 3 = %hhu, description = %S",
+  //          descriptionId, unknown1, unknown2, themeId, subThemeId,
+  //          classification, themeDescriptionId, lineCount, unknown3,
+  //          record->Description);
   for (unsigned char i = 0; i < lineCount; i++)
   {
     if (pointer + 4 > dataLength)
@@ -2375,7 +2351,7 @@ unsigned long CParserMhw::DecodeVersion2EventsByChannelSection(const unsigned ch
   // section ID - 2 bytes
   // channel ID - 1 byte
   // [unknown] - 2 bytes, always seems to be 0xffff
-  // [unknown] - 1 byte; constant in each sample; seen values 0x14, 0x18
+  // [unknown] - 1 byte; constant in each sample; seen values 0x06, 0x14, 0x18
   // event count - 1 byte
   // titles...
   //   event ID - 2 bytes
@@ -2529,15 +2505,15 @@ unsigned long CParserMhw::DecodeVersion2EventsByChannelSection(const unsigned ch
     //          record->Duration, unknown3, unknown4, record->DescriptionId,
     //          record->Title);
 
-    if (record->ShowingId == 0xffffffff)
+    if (!isTerrestrial)
     {
-      // Place-holder - actual event information is not available for the
-      // associated period.
-      delete record;
-    }
-    else if (!isTerrestrial)
-    {
-      if (record->EventId == m_previousEventIdSatellite)
+      if (record->ShowingId == 0xffffffff)
+      {
+        // Place-holder - actual event information is not available for the
+        // associated period.
+        delete record;
+      }
+      else if (record->EventId == m_previousEventIdSatellite)
       {
         // Events that span days are repeated for each day. Ignore the
         // duplicate instances.
@@ -2660,9 +2636,9 @@ unsigned long CParserMhw::DecodeVersion2EventsByThemeSection(const unsigned char
   unsigned long unknown3 = (data[9] << 24) | (data[10] << 16) | (data[11] << 8) | data[12];
   unsigned long subThemeBitMask = (data[13] << 24) | (data[14] << 16) | (data[15] << 8) | data[16];
   unsigned char eventCount = data[17];
-  LogDebug(L"MHW: events by theme section, version = 2, day bit-mask = 0x%hx, section ID = %hu, unknown 1 = %hhu, theme ID = %hhu, unknown 2 = %hhu, unknown 3 = %lu, sub-theme bit-mask = 0x%lx, event count = %hhu",
-            dayBitMask, sectionId, unknown1, themeId, unknown2, unknown3,
-            subThemeBitMask, eventCount);
+  //LogDebug(L"MHW: events by theme section, version = 2, day bit-mask = 0x%hx, section ID = %hu, unknown 1 = %hhu, theme ID = %hhu, unknown 2 = %hhu, unknown 3 = %lu, sub-theme bit-mask = 0x%lx, event count = %hhu",
+  //          dayBitMask, sectionId, unknown1, themeId, unknown2, unknown3,
+  //          subThemeBitMask, eventCount);
 
   unsigned short pointer = 18;
   if (pointer + (22 * eventCount) > dataLength)
@@ -2748,11 +2724,11 @@ unsigned long CParserMhw::DecodeVersion2EventsByThemeSection(const unsigned char
     pointer += 2;
     record->HasDescription = record->DescriptionId != 0xffff;
 
-    LogDebug(L"MHW: event, version = 2, ID = %lu, channel ID = %hhu, program ID = %lu, showing ID = %lu, start date/time = %llu, duration = %hu m, unknown 4 = %hhu, unknown 5 = %hhu, theme ID = %hhu, unknown 6 = %hhu, sub-theme ID = %hhu, description ID = %hu, title = %S",
-              record->EventId, record->ChannelId, record->ProgramId,
-              record->ShowingId, record->StartDateTime, record->Duration,
-              unknown4, unknown5, record->ThemeId, unknown6,
-              record->SubThemeId, record->DescriptionId, record->Title);
+    //LogDebug(L"MHW: event, version = 2, ID = %lu, channel ID = %hhu, program ID = %lu, showing ID = %lu, start date/time = %llu, duration = %hu m, unknown 4 = %hhu, unknown 5 = %hhu, theme ID = %hhu, unknown 6 = %hhu, sub-theme ID = %hhu, description ID = %hu, title = %S",
+    //          record->EventId, record->ChannelId, record->ProgramId,
+    //          record->ShowingId, record->StartDateTime, record->Duration,
+    //          unknown4, unknown5, record->ThemeId, unknown6,
+    //          record->SubThemeId, record->DescriptionId, record->Title);
     if (record->ShowingId == 0xffffffff)
     {
       // Place-holder - actual event information is not available for the
@@ -2795,7 +2771,8 @@ unsigned long CParserMhw::DecodeVersion2ProgramSection(const unsigned char* data
   // tag 1
   // ------
   // theme description ID - 2 bytes
-  // classification - 1 byte; 0 = unclassified, 1 = TP, 2 = +13, 3 = +18, 4 = X, 5 = SC, 6 = +7, 7 = INF, 8 = +12, 9 = +16, 10 = TP/INF
+  // [unknown] - 3 bits; mostly 1, sometimes 0
+  // classification - 5 bits; 0 = SC, 1 = TP, 2 = ???, 3 = +18, 4 = X, 5 = ???, 6 = +7, 7 = INF, 8 = +12, 9 = +13 / +16
   // title length - 1 byte
   // title - [title length] bytes
   // [unknown] - 4 bits, always seems to be 0xf
@@ -2807,8 +2784,9 @@ unsigned long CParserMhw::DecodeVersion2ProgramSection(const unsigned char* data
   // loop...
   //   series ID (AKA MSRID) - 4 bytes
   //
-  // Note: usually there's only one series ID. A second may be present when the
-  // episode/program is suggested/recommended (ie. Canal Propone).
+  // Note: usually there's only one series ID. A second and/or third may be
+  // present when the episode/program is suggested/recommended (eg. Movistar+
+  // Propone).
   //
   // tag 5
   // ------
@@ -2910,7 +2888,8 @@ unsigned long CParserMhw::DecodeVersion2ProgramSection(const unsigned char* data
     {
       record->ThemeDescriptionId = (data[pointer] << 8) | data[pointer + 1];
       pointer += 2;
-      record->Classification = data[pointer++];
+      unsigned char unknown3 = data[pointer] >> 5;
+      record->Classification = data[pointer++] & 0x1f;
 
       unsigned char titleLength = data[pointer++];
       if (titleLength > 0)
@@ -2920,9 +2899,9 @@ unsigned long CParserMhw::DecodeVersion2ProgramSection(const unsigned char* data
           !CTextUtil::MhwTextToString(&data[pointer], titleLength, m_provider, &(record->Title))
         )
         {
-          LogDebug(L"MHW: invalid version 2 program section tag 1, title length = %hhu, pointer = %hu, end of tag = %hu, section length = %hu, section ID = %hu, program ID = %lu, unknown 1 = %hu, unknown 2 = %hhu, loop length = %hu",
+          LogDebug(L"MHW: invalid version 2 program section tag 1, title length = %hhu, pointer = %hu, end of tag = %hu, section length = %hu, section ID = %hu, program ID = %lu, unknown 1 = %hu, unknown 2 = %hhu, loop length = %hu, unknown 3 = %hhu",
                     titleLength, pointer, endOfTag, dataLength, sectionId,
-                    programId, unknown1, unknown2, loopLength);
+                    programId, unknown1, unknown2, loopLength, unknown3);
           delete record;
           return updateCount;
         }
@@ -2935,7 +2914,7 @@ unsigned long CParserMhw::DecodeVersion2ProgramSection(const unsigned char* data
         pointer += titleLength;
       }
 
-      unsigned char unknown3 = data[pointer] >> 4;
+      unsigned char unknown4 = data[pointer] >> 4;
       unsigned short descriptionLength = ((data[pointer] & 0xf) << 8) | data[pointer + 1];
       pointer += 2;
       if (descriptionLength > 0)
@@ -2948,10 +2927,10 @@ unsigned long CParserMhw::DecodeVersion2ProgramSection(const unsigned char* data
                                       &(record->Description))
         )
         {
-          LogDebug(L"MHW: invalid version 2 program section tag 1, description length = %hu, pointer = %hu, end of tag = %hu, section length = %hu, section ID = %hu, program ID = %lu, unknown 1 = %hu, unknown 2 = %hhu, loop length = %hu, title length = %hhu, unknown 3 = %hhu",
+          LogDebug(L"MHW: invalid version 2 program section tag 1, description length = %hu, pointer = %hu, end of tag = %hu, section length = %hu, section ID = %hu, program ID = %lu, unknown 1 = %hu, unknown 2 = %hhu, loop length = %hu, unknown 3 = %hhu, title length = %hhu, unknown 4 = %hhu",
                     descriptionLength, pointer, endOfTag, dataLength,
                     sectionId, programId, unknown1, unknown2, loopLength,
-                    titleLength, unknown3);
+                    unknown3, titleLength, unknown4);
           delete record;
           return updateCount;
         }
@@ -2964,23 +2943,19 @@ unsigned long CParserMhw::DecodeVersion2ProgramSection(const unsigned char* data
         pointer += descriptionLength;
       }
 
-      //LogDebug(L"MHW: program section tag 1, theme description ID = %hu, classification = %hhu, unknown 3 = %hhu, title = %S, description = %S",
-      //          record->ThemeDescriptionId, record->Classification, unknown3,
-      //          record->Title == NULL ? "" : record->Title,
+      //LogDebug(L"MHW: program section tag 1, theme description ID = %hu, unknown 3 = %hhu, classification = %hhu, unknown 4 = %hhu, title = %S, description = %S",
+      //          record->ThemeDescriptionId, unknown3, record->Classification,
+      //          unknown4, record->Title == NULL ? "" : record->Title,
       //          record->Description == NULL ? "" : record->Description);
     }
     else if (tag == 2)
     {
-      // Assumption: real series ID will be first, and other IDs (Canal Propone etc.) will follow.
-      bool isFirst = true;
+      // Usually the real series ID will be first, and other IDs (Movistar+ Propone etc.) will follow.
       while (pointer + 4 <= endOfTag)
       {
         unsigned long seriesId = (data[pointer] << 24) | (data[pointer + 1] << 16) | (data[pointer + 2] << 8) | data[pointer + 3];
-        if (isFirst)
-        {
-          record->SeriesId = seriesId;
-        }
         pointer += 4;
+        record->SeriesIds.push_back(seriesId);
         //LogDebug(L"MHW: program section tag 2, series ID = %lu", seriesId);
       }
     }
@@ -3013,17 +2988,17 @@ unsigned long CParserMhw::DecodeVersion2ProgramSection(const unsigned char* data
           unsigned long startTimeBcd = (data[pointer] << 16) | (data[pointer + 1] << 8) | data[pointer + 2];
           pointer += 3;
           recordShowing->StartDateTime = CTimeUtils::DecodeMjDateBcdTime(startDateMjd, startTimeBcd);
-          unsigned char unknown4 = data[pointer] >> 4;
+          unsigned char unknown5 = data[pointer] >> 4;
           recordShowing->Duration = ((data[pointer] & 0xf) << 8) | data[pointer + 1];
           pointer += 2;
-          unsigned char unknown5 = data[pointer++];
           unsigned char unknown6 = data[pointer++];
+          unsigned char unknown7 = data[pointer++];
 
-          //LogDebug(L"MHW: program section tag 5, showing ID = %lu, ONID = %hu, TSID = %hu, service ID = %hu, start date/time = %llu, unknown 4 = %hhu, duration = %hu m, unknown 5 = %hhu, unknown 6 = %hhu",
+          //LogDebug(L"MHW: program section tag 5, showing ID = %lu, ONID = %hu, TSID = %hu, service ID = %hu, start date/time = %llu, unknown 5 = %hhu, duration = %hu m, unknown 6 = 0x%hhx, unknown 7 = 0x%hhx",
           //          showingId, recordShowing->OriginalNetworkId,
           //          recordShowing->TransportStreamId, recordShowing->ServiceId,
-          //          recordShowing->StartDateTime, unknown4,
-          //          recordShowing->Duration, unknown5, unknown6);
+          //          recordShowing->StartDateTime, unknown5,
+          //          recordShowing->Duration, unknown6, unknown7);
 
           if (m_recordsShowing.AddOrUpdateRecord((IRecord**)&recordShowing, NULL))
           {
@@ -3081,7 +3056,7 @@ unsigned long CParserMhw::DecodeVersion2SeriesSection(const unsigned char* data,
   // flags - 1 byte
   //   0xff
   //   0xfd
-  //   0xfc = suggestion/recommendation (Canal+ Propone)
+  //   0xfc = suggestion/recommendation (Movistar+ Propone)
   // [unknown] - 4 bits, always seems to be 0xf
   // season description length - 12 bits
   // season description - [season description length] bytes
@@ -3221,7 +3196,7 @@ unsigned long CParserMhw::DecodeVersion2SeriesSection(const unsigned char* data,
       }
 
       unsigned char flags = data[pointer++];
-      unsigned char unknown4 = data[pointer] >> 4;
+      unsigned char unknown3 = data[pointer] >> 4;
       unsigned short seasonDescriptionLength = ((data[pointer] & 0xf) << 8) | data[pointer + 1];
       pointer += 2;
       if (seasonDescriptionLength > 0)
@@ -3250,8 +3225,8 @@ unsigned long CParserMhw::DecodeVersion2SeriesSection(const unsigned char* data,
         pointer += seasonDescriptionLength;
       }
 
-      //LogDebug(L"MHW: series section tag 7, unknown 3 = %hhu, unknown 4 = %hhu, series name = %S, season name = %S, season description = %S",
-      //          flags, unknown4,
+      //LogDebug(L"MHW: series section tag 7, flags = 0x%hhx, unknown 3 = %hhu, series name = %S, season name = %S, season description = %S",
+      //          flags, unknown3,
       //          record->SeriesName == NULL ? "" : record->SeriesName,
       //          record->SeasonName == NULL ? "" : record->SeasonName,
       //          record->SeasonDescription == NULL ? "" : record->SeasonDescription);
@@ -3299,7 +3274,12 @@ unsigned long CParserMhw::DecodeVersion2ThemeSection(const unsigned char* data,
   // private indicator - 1 bit, always seems to be 1
   // reserved - 2 bits, always seems to be 3
   // section length - 12 bits
-  // data type - 1 byte, 0 = standard definition channels, 1 = themes, 2 = high definition channels, 3 = terrestrial channels
+  // data type - 1 byte
+  //   0 = standard definition channels
+  //   1 = themes
+  //   2 = high definition channels
+  //   3 = terrestrial channels
+  //   4 = terrestrial channel names
   // theme count - 1 byte
   // theme detail pointers...
   //   pointer 1 - 2 bytes

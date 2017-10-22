@@ -66,7 +66,8 @@ DECLARE_INTERFACE_(IGrabberEpgMhw, IGrabber)
                               unsigned short* descriptionBufferSize,
                               unsigned char* descriptionLineCount,
                               unsigned long* seriesId,
-                              unsigned char* seasonNumber,
+                              char* seasonName,
+                              unsigned short* seasonNameBufferSize,
                               unsigned long* episodeId,
                               unsigned short* episodeNumber,
                               char* episodeName,
@@ -76,6 +77,7 @@ DECLARE_INTERFACE_(IGrabberEpgMhw, IGrabber)
                               char* subThemeName,
                               unsigned short* subThemeNameBufferSize,
                               unsigned char* classification,
+                              bool* isRecommended,
                               unsigned long* payPerViewId)PURE;
   STDMETHOD_(bool, GetDescriptionLine)(THIS_ unsigned long eventIndex,
                                         unsigned char lineIndex,

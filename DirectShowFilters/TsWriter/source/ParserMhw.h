@@ -118,7 +118,8 @@ class CParserMhw
                                   unsigned short* descriptionBufferSize,
                                   unsigned char* descriptionLineCount,
                                   unsigned long* seriesId,
-                                  unsigned char* seasonNumber,
+                                  char* seasonName,
+                                  unsigned short* seasonNameBufferSize,
                                   unsigned long* episodeId,
                                   unsigned short* episodeNumber,
                                   char* episodeName,
@@ -128,6 +129,7 @@ class CParserMhw
                                   char* subThemeName,
                                   unsigned short* subThemeNameBufferSize,
                                   unsigned char* classification,
+                                  bool* isRecommended,
                                   unsigned long* payPerViewId);
     STDMETHODIMP_(bool) GetDescriptionLine(unsigned long eventIndex,
                                             unsigned char lineIndex,
@@ -390,10 +392,7 @@ class CParserMhw
         unsigned char SubThemeId;
         unsigned short ThemeDescriptionId;
 
-        // 0 = unclassified / +12, 1 = TP / +16, 2 = +13 / TP/INF, 3 = +18, 4 = X, 5 = SC, 6 = +7, 7 = INF
-        // Prefer program classification. Description sections only have 3 bits
-        // for storing a 4 bit value. So, values can have one of two meanings.
-        unsigned char Classification;
+        unsigned char Classification;   // 0 = SC, 1 = TP, 2 = ???, 3 = +18, 4 = X, 5 = ???, 6 = +7, 7 = INF, 8 = +12, 9 = +13 / +16
     };
 
     class CRecordMhwEvent : public IRecord
@@ -528,7 +527,6 @@ class CParserMhw
           Classification = 0xff;
           Title = NULL;
           Description = NULL;
-          SeriesId = 0xffffffff;
         }
 
         ~CRecordMhwProgram()
@@ -557,7 +555,7 @@ class CParserMhw
             Classification != recordProgram->Classification ||
             !CUtils::CompareStrings(Title, recordProgram->Title) ||
             !CUtils::CompareStrings(Description, recordProgram->Description) ||
-            SeriesId != recordProgram->SeriesId ||
+            !CUtils::CompareVectors(SeriesIds, recordProgram->SeriesIds) ||
             !CUtils::CompareVectors(ShowingIds, recordProgram->ShowingIds)
           )
           {
@@ -578,11 +576,12 @@ class CParserMhw
 
         void Debug(const wchar_t* situation) const
         {
-          LogDebug(L"MHW: program %s, version = %hhu, program ID = %lu, series ID = %lu, theme description ID = %hu, classification = %hhu, showing ID count = %llu, title = %S, description = %S",
-                    situation, Version, ProgramId, SeriesId,
-                    ThemeDescriptionId, Classification,
+          LogDebug(L"MHW: program %s, version = %hhu, program ID = %lu, theme description ID = %hu, classification = %hhu, series ID count = %llu, showing ID count = %llu, title = %S, description = %S",
+                    situation, Version, ProgramId, ThemeDescriptionId,
+                    Classification, (unsigned long long)SeriesIds.size(),
                     (unsigned long long)ShowingIds.size(), Title, Description);
 
+          CUtils::DebugVector(SeriesIds, L"series ID(s)", false);
           CUtils::DebugVector(ShowingIds, L"showing ID(s)", false);
         }
 
@@ -590,12 +589,12 @@ class CParserMhw
         unsigned long ProgramId;
 
         unsigned short ThemeDescriptionId;
-        unsigned char Classification;   // 0 = unclassified, 1 = TP, 2 = +13, 3 = +18, 4 = X, 5 = SC, 6 = +7, 7 = INF, 8 = +12, 9 = +16, 10 = TP/INF
+        unsigned char Classification;   // 0 = SC, 1 = TP, 2 = ???, 3 = +18, 4 = X, 5 = ???, 6 = +7, 7 = INF, 8 = +12, 9 = +13 / +16
 
         char* Title;
         char* Description;
 
-        unsigned long SeriesId;
+        vector<unsigned long> SeriesIds;
         vector<unsigned long> ShowingIds;
     };
 
@@ -738,7 +737,7 @@ class CParserMhw
         char* SeriesName;         // for example "Los Simpson", "Juego de tronos" etc. (ie. doesn't include "(HD)" or "(T\d+)" suffixes like the event title)
         char* SeasonName;         // almost always just the season number
         char* SeasonDescription;
-        bool IsRecommendation;    // Canal+ Propone
+        bool IsRecommendation;    // Movistar+ Propone
         map<unsigned long, unsigned short> EpisodeNumbers;    // program ID => episode number
     };
 
