@@ -1300,7 +1300,7 @@ namespace TvLibrary.Implementations.DVB
           for (ushort n = 0; n < logicalChannelNumberCount; n++)
           {
             LogicalChannelNumber lcn = logicalChannelNumbers[n];
-            Log.Log.Info("      {0, -2}: LCN = {1, -3}, table ID = {2, -2}, table ID ext. = {3, -5}, descriptor tag = {4, -2}, region ID = {5, -5}", n + 1, lcn.ChannelNumber, lcn.TableId, lcn.TableIdExtension, lcn.DescriptorTag, lcn.RegionId);
+            Log.Log.Debug("      {0, -2}: LCN = {1, -3}, table ID = {2, -2}, table ID ext. = {3, -5}, descriptor tag = {4, -2}, region ID = {5, -5}", n + 1, lcn.ChannelNumber, lcn.TableId, lcn.TableIdExtension, lcn.DescriptorTag, lcn.RegionId);
           }
         }
 
