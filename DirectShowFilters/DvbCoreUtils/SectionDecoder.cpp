@@ -85,31 +85,28 @@ void CSectionDecoder::OnTsPacket(const CTsHeader& header, const unsigned char* t
 {
   try
   {
-    if (header.TransportError) 
-    {
-      // Give up on the current section.
-      m_section.Reset();
-      return; 
-    }
     if (header.Pid != m_pid || !header.HasPayload)
     {
       return;
+    }
+    if (header.TransportError) 
+    {
+      // Give up on the current section.
+      Reset();
+      return; 
     }
 
     // Check the continuity counter is as expected.
     if (m_continuityCounter != CONTINUITY_COUNTER_NOT_SET)
     {
-      unsigned char expectedContinuityCounter = m_continuityCounter;
-      if (header.HasPayload)
-      {
-        expectedContinuityCounter = (m_continuityCounter + 1) & 0x0f;
-      }
+      unsigned char expectedContinuityCounter = (m_continuityCounter + 1) & 0x0f;
       if (header.ContinuityCounter != expectedContinuityCounter)
       {
         LogDebug(L"section %d: discontinuity, value = %hhu, previous = %hhu, expected = %hhu, signal quality, descrambling, or HDD load problem?",
                   m_pid, header.ContinuityCounter, m_continuityCounter,
                   expectedContinuityCounter);
         m_section.Reset();
+        m_continuityCounter = header.ContinuityCounter;
         return; 
       }
     }
@@ -137,13 +134,16 @@ void CSectionDecoder::OnTsPacket(const CTsHeader& header, const unsigned char* t
         return;
       }
 
+      // The TS packet may contain the last part of a previous section. If the
+      // buffer is expecting a new section, skip the pointer field and the
+      // previous section data. Otherwise just skip the pointer field.
       if (m_section.BufferPos == 0)
       {
-        packetPointer += tsPacket[packetPointer] + 1;   // Jump to the position referenced by the pointer field.
+        packetPointer += tsPacket[packetPointer] + 1;
       }
       else
       {
-        packetPointer++;              // Skip over the pointer field.
+        packetPointer++;
       }
     }
     unsigned char loopCount = 0;
@@ -167,11 +167,11 @@ void CSectionDecoder::OnTsPacket(const CTsHeader& header, const unsigned char* t
       packetPointer += m_section.AppendData(&tsPacket[packetPointer], TS_PACKET_LEN - packetPointer);
       if (m_section.IsComplete())
       {
-        // Sanity check: sections with table ID 0 should only ever be carried
-        // on PID 0 (PAT). This check helps managing non-section data that has
-        // been collected erroneously. It only works for unencrypted packetised
-        // elementary streams, which contain packets that start with the byte
-        // sequence: 00 00 01.
+        // Sanity check: sections with table 0 (PAT) should only ever be
+        // carried on PID 0. This check helps managing non-section data that
+        // has been collected erroneously. It only works for unencrypted
+        // packetised elementary streams, which contain packets that start with
+        // the byte sequence: 00 00 01.
         if (m_pid == 0 || m_section.Data[0] != 0)
         {
           if (!m_isCrcCheckEnabled || m_section.IsValid())
