@@ -69,9 +69,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     /// Get the number of OpenTV events received by the grabber.
     /// </summary>
     /// <param name="eventCount">The number of OpenTV events received by the grabber.</param>
+    /// <param name="originalNetworkId">The identifier of the original network from which the event data has been grabbed.</param>
     /// <param name="textLanguage">The language for all event text.</param>
     [PreserveSig]
-    void GetEventCount(out uint eventCount, out Iso639Code textLanguage);
+    void GetEventCount(out uint eventCount, out ushort originalNetworkId, out Iso639Code textLanguage);
 
     /// <summary>
     /// Retrieve an OpenTV event's details from the grabber.
