@@ -1085,7 +1085,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Dvb
           default:
             if (b >= 0xc1 && b <= 0xcf && b != 0xc9 && b != 0xcc)
             {
-              #region multi-byte characters
+              #region two byte characters
               byte b1 = b;
               if (offset >= bytes.Length)
               {
@@ -1100,9 +1100,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Dvb
               switch (b1)
               {
                 case 0xc1:
-                  #region c1
+                  #region c1 grave
                   switch (b)
                   {
+                    /*case 0x20:
+                      c = (char)0x60;
+                      break;*/
                     case 0x41:
                       c = (char)0xc0;
                       break;
@@ -1141,7 +1144,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Dvb
                   #endregion
                   break;
                 case 0xc2:
-                  #region c2
+                  #region c2 acute
                   switch (b)
                   {
                     case 0x20:
@@ -1227,9 +1230,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Dvb
                   #endregion
                   break;
                 case 0xc3:
-                  #region c3
+                  #region c3 circumflex
                   switch (b)
                   {
+                    /*case 0x20:
+                      c = (char)0x5e;
+                      break;*/
                     case 0x41:
                       c = (char)0xc2;
                       break;
@@ -1310,9 +1316,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Dvb
                   #endregion
                   break;
                 case 0xc4:
-                  #region c4
+                  #region c4 tilde
                   switch (b)
                   {
+                    /*case 0x20:
+                      c = (char)0x7e;
+                      break;*/
                     case 0x41:
                       c = (char)0xc3;
                       break;
@@ -1351,7 +1360,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Dvb
                   #endregion
                   break;
                 case 0xc5:
-                  #region c5
+                  #region c5 macron
                   switch (b)
                   {
                     case 0x20:
@@ -1395,7 +1404,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Dvb
                   #endregion
                   break;
                 case 0xc6:
-                  #region c6
+                  #region c6 breve
                   switch (b)
                   {
                     case 0x20:
@@ -1427,7 +1436,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Dvb
                   #endregion
                   break;
                 case 0xc7:
-                  #region c7
+                  #region c7 dot above
                   switch (b)
                   {
                     case 0x20:
@@ -1468,7 +1477,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Dvb
                   #endregion
                   break;
                 case 0xc8:
-                  #region c8
+                  #region c8 umlaut/diæresis
                   switch (b)
                   {
                     case 0x20:
@@ -1518,7 +1527,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Dvb
                   #endregion
                   break;
                 case 0xca:
-                  #region ca
+                  #region ca ring above
                   switch (b)
                   {
                     case 0x20:
@@ -1544,7 +1553,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Dvb
                   #endregion
                   break;
                 case 0xcb:
-                  #region cb
+                  #region cb cedilla
                   switch (b)
                   {
                     case 0x20:
@@ -1606,7 +1615,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Dvb
                   #endregion
                   break;
                 case 0xcd:
-                  #region cd
+                  #region cd double acute
                   switch (b)
                   {
                     case 0x20:
@@ -1632,7 +1641,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Dvb
                   #endregion
                   break;
                 case 0xce:
-                  #region ce
+                  #region ce ogonek
                   switch (b)
                   {
                     case 0x20:
@@ -1670,7 +1679,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Dvb
                   #endregion
                   break;
                 case 0xcf:
-                  #region cf
+                  #region cf caron
                   switch (b)
                   {
                     case 0x20:
