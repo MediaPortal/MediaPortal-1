@@ -312,6 +312,7 @@ namespace MediaPortal.Player
             GUIGraphicsContext.DX9Device.SetRenderTarget(0, GUIGraphicsContext.MadVrRenderTargetVMR9);
           }
         }
+        GUIGraphicsContext.ForcedRefreshRate3D = false;
       }
     }
 
@@ -338,6 +339,9 @@ namespace MediaPortal.Player
         GUIGraphicsContext.SBSRightDone = false;
         GUIGraphicsContext.TABTopDone = false;
         GUIGraphicsContext.TABBottomDone = false;
+        GUIGraphicsContext.ForcedRefreshRate3D = false;
+        GUIGraphicsContext.ForcedRR3DBackDefault = false;
+        GUIGraphicsContext.ForcedRefreshRate3DDone = false;
         GUIGraphicsContext.Render3DMode = GUIGraphicsContext.eRender3DMode.None;
       }
       GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Video);
@@ -1052,6 +1056,9 @@ namespace MediaPortal.Player
 
                   // Force a madVR refresh to resize MP window
                   g_Player.RefreshMadVrVideo();
+
+                  GUIGraphicsContext.ForcedRefreshRate3D = true;
+                  RefreshRateChanger.AdaptRefreshRate(g_Player.CurrentFile, (RefreshRateChanger.MediaType)(int)g_Player.MediaType.Video);
                 }
               }
               else if (GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.TopAndBottom)
@@ -1086,6 +1093,9 @@ namespace MediaPortal.Player
 
                   // Force a madVR refresh to resize MP window
                   g_Player.RefreshMadVrVideo();
+
+                  GUIGraphicsContext.ForcedRefreshRate3D = true;
+                  RefreshRateChanger.AdaptRefreshRate(g_Player.CurrentFile, (RefreshRateChanger.MediaType)(int)g_Player.MediaType.Video);
                 }
               }
             }
@@ -1117,6 +1127,9 @@ namespace MediaPortal.Player
 
                       // Force a madVR refresh to resize MP window
                       g_Player.RefreshMadVrVideo();
+
+                      GUIGraphicsContext.ForcedRefreshRate3D = true;
+                      RefreshRateChanger.AdaptRefreshRate(g_Player.CurrentFile, (RefreshRateChanger.MediaType)(int)g_Player.MediaType.Video);
                     }
                   }
                   break;
@@ -1142,6 +1155,9 @@ namespace MediaPortal.Player
 
                       // Force a madVR refresh to resize MP window
                       g_Player.RefreshMadVrVideo();
+
+                      GUIGraphicsContext.ForcedRefreshRate3D = true;
+                      RefreshRateChanger.AdaptRefreshRate(g_Player.CurrentFile, (RefreshRateChanger.MediaType)(int)g_Player.MediaType.Video);
                     }
                   }
                   break;
@@ -1168,6 +1184,9 @@ namespace MediaPortal.Player
 
                       // Force a madVR refresh to resize MP window
                       g_Player.RefreshMadVrVideo();
+
+                      GUIGraphicsContext.ForcedRefreshRate3D = true;
+                      RefreshRateChanger.AdaptRefreshRate(g_Player.CurrentFile, (RefreshRateChanger.MediaType)(int)g_Player.MediaType.Video);
                     }
                   }
                   break;
@@ -1193,6 +1212,9 @@ namespace MediaPortal.Player
 
                       // Force a madVR refresh to resize MP window
                       g_Player.RefreshMadVrVideo();
+
+                      GUIGraphicsContext.ForcedRefreshRate3D = true;
+                      RefreshRateChanger.AdaptRefreshRate(g_Player.CurrentFile, (RefreshRateChanger.MediaType)(int)g_Player.MediaType.Video);
                     }
                   }
                   break;

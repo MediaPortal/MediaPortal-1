@@ -546,6 +546,13 @@ namespace MediaPortal.Player
         {
           if ((_currentMedia == MediaType.TV || _currentMedia == MediaType.Video || _currentMedia == MediaType.Recording))
           {
+            if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
+                (!GUIGraphicsContext.ForcedRR3DBackDefault && GUIGraphicsContext.ForcedRefreshRate3D))
+            {
+              // reset this ForcedRefreshRate3DDone to false on stop to permit resolution restore from SBS or TAB 3D change
+              GUIGraphicsContext.ForcedRefreshRate3DDone = false;
+              GUIGraphicsContext.ForcedRR3DBackDefault = true;
+            }
             RefreshRateChanger.AdaptRefreshRate();
           }
           // Check if we play image file to search db with the proper filename

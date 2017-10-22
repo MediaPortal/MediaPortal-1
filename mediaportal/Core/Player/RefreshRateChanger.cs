@@ -251,6 +251,29 @@ namespace MediaPortal.Player
               uint Width = devMode.dmPelsWidth;
               uint Height = devMode.dmPelsHeight;
 
+              if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
+                  GUIGraphicsContext.ForcedRefreshRate3D)
+              {
+                // we are here because it's a 3D movie in SBS or TAB and needed to force a 1080p resolution when we are in 4K config
+                // Get current Value
+                if (GUIGraphicsContext.ForcedRR3DBackDefault)
+                {
+                  Width = (uint)GUIGraphicsContext.ForcedRR3DWitdhBackup;
+                  Height = (uint)GUIGraphicsContext.ForcedRR3DHeightBackup;
+                }
+                else
+                {
+                  GUIGraphicsContext.ForcedRR3DWitdhBackup = GUIGraphicsContext.form.Width;
+                  GUIGraphicsContext.ForcedRR3DHeightBackup = GUIGraphicsContext.form.Height;
+                  Width = 1920;
+                  Height = 1080;
+                }
+                // needed to resize screen and GUI after resolution change
+                GUIGraphicsContext.ForceMadVRRefresh3D = true;
+                // needed to avoid multiple refresh rate
+                GUIGraphicsContext.ForcedRefreshRate3DDone = true;
+              }
+
               //Log.Info("CycleRefreshRate: code result {0} enum devMode", result);
               devMode.dmFields = (DEVMODE_Fields.DM_BITSPERPEL | DEVMODE_Fields.DM_PELSWIDTH |
                                   DEVMODE_Fields.DM_PELSHEIGHT | DEVMODE_Fields.DM_DISPLAYFREQUENCY);
@@ -709,7 +732,7 @@ namespace MediaPortal.Player
 
     public static void SetRefreshRateBasedOnFPS(double fps, string strFile, MediaType type)
     {
-      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && !GUIGraphicsContext.ForcedRefreshRate3D)
       {
         using (Settings xmlreader = new MPSettings())
         {
@@ -739,8 +762,12 @@ namespace MediaPortal.Player
       {
         if (!xmlreader.GetValueAsBool("general", "autochangerefreshrate", false))
         {
-          Log.Info("RefreshRateChanger.SetRefreshRateBasedOnFPS: 'auto refreshrate changer' disabled");
-          return;
+          if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR ||
+              !GUIGraphicsContext.ForcedRefreshRate3D)
+          {
+            Log.Info("RefreshRateChanger.SetRefreshRateBasedOnFPS: 'auto refreshrate changer' disabled");
+            return;
+          }
         }
         forceRefreshRate = xmlreader.GetValueAsBool("general", "force_refresh_rate", false);
         deviceReset = xmlreader.GetValueAsBool("general", "devicereset", false);
@@ -751,7 +778,7 @@ namespace MediaPortal.Player
       string newRRDescription;
       FindExtCmdfromSettings(fps, currentRR, deviceReset, out newRR, out newExtCmd, out newRRDescription);
 
-      if (newRR > 0 && (currentRR != newRR || forceRefreshRate))
+      if (newRR > 0 && (currentRR != newRR || forceRefreshRate) || (GUIGraphicsContext.ForcedRefreshRate3D && !GUIGraphicsContext.ForcedRefreshRate3DDone))
       {
         Log.Info("RefreshRateChanger.SetRefreshRateBasedOnFPS: current refreshrate is {0}hz - changing it to {1}hz", currentRR, newRR);
 
@@ -810,8 +837,12 @@ namespace MediaPortal.Player
         enabled = xmlreader.GetValueAsBool("general", "autochangerefreshrate", false);
         if (!enabled)
         {
-          Log.Info("RefreshRateChanger.AdaptRefreshRate: 'auto refreshrate changer' disabled");
-          return;
+          if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR ||
+              !GUIGraphicsContext.ForcedRefreshRate3D)
+          {
+            Log.Info("RefreshRateChanger.AdaptRefreshRate: 'auto refreshrate changer' disabled");
+            return;
+          }
         }
 
         force_refresh_rate = xmlreader.GetValueAsBool("general", "force_refresh_rate", false);
@@ -876,7 +907,8 @@ namespace MediaPortal.Player
       bool force_refresh_rate = false;
       using (Settings xmlreader = new MPSettings())
       {
-        enabled = xmlreader.GetValueAsBool("general", "autochangerefreshrate", false);
+        enabled = xmlreader.GetValueAsBool("general", "autochangerefreshrate", false) || GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
+                  GUIGraphicsContext.ForcedRefreshRate3D;
 
         if (!enabled)
         {
