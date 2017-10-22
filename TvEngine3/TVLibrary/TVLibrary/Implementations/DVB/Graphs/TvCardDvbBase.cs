@@ -3047,6 +3047,7 @@ namespace TvLibrary.Implementations.DVB
     private const TunerEpgGrabberProtocol PROTOCOLS_MEDIA_HIGHWAY = TunerEpgGrabberProtocol.MediaHighway1 | TunerEpgGrabberProtocol.MediaHighway2;
 
     private const string LANG_CODE_ENG = "eng";
+    private static readonly Regex MEDIA_HIGHWAY_SEASON_NAME = new Regex(@"^\s*(\d+)\s*\/\s*(\d+)\s*$");
 
     private static readonly IDictionary<byte, string> MAPPING_CONTENT_TYPES_DVB = new Dictionary<byte, string>(16)
     {
@@ -3969,6 +3970,8 @@ namespace TvLibrary.Implementations.DVB
       IntPtr bufferTitle = Marshal.AllocCoTaskMem(BUFFER_SIZE_TITLE);
       const ushort BUFFER_SIZE_DESCRIPTION = 1000;
       IntPtr bufferDescription = Marshal.AllocCoTaskMem(BUFFER_SIZE_DESCRIPTION);
+      const ushort BUFFER_SIZE_SEASON_NAME = 1000;
+      IntPtr bufferSeasonName = Marshal.AllocCoTaskMem(BUFFER_SIZE_SEASON_NAME);
       const ushort BUFFER_SIZE_EPISODE_NAME = 1000;
       IntPtr bufferEpisodeName = Marshal.AllocCoTaskMem(BUFFER_SIZE_EPISODE_NAME);
       const ushort BUFFER_SIZE_THEME_NAME = 50;
@@ -3989,12 +3992,14 @@ namespace TvLibrary.Implementations.DVB
         uint episodeId;
         ushort episodeNumber;
         byte classification;
+        bool isRecommended;
         uint payPerViewId;
         for (uint i = 0; i < eventCount; i++)
         {
           ushort bufferSizeServiceName = BUFFER_SIZE_SERVICE_NAME;
           ushort bufferSizeTitle = BUFFER_SIZE_TITLE;
           ushort bufferSizeDescription = BUFFER_SIZE_DESCRIPTION;
+          ushort bufferSizeSeasonName = BUFFER_SIZE_SEASON_NAME;
           ushort bufferSizeEpisodeName = BUFFER_SIZE_EPISODE_NAME;
           ushort bufferSizeThemeName = BUFFER_SIZE_THEME_NAME;
           ushort bufferSizeSubThemeName = BUFFER_SIZE_SUB_THEME_NAME;
@@ -4013,7 +4018,8 @@ namespace TvLibrary.Implementations.DVB
                                               ref bufferSizeDescription,
                                               out descriptionLineCount,
                                               out seriesId,
-                                              out seasonNumber,
+                                              bufferSeasonName,
+                                              ref bufferSizeSeasonName,
                                               out episodeId,
                                               out episodeNumber,
                                               bufferEpisodeName,
@@ -4023,6 +4029,7 @@ namespace TvLibrary.Implementations.DVB
                                               bufferSubThemeName,
                                               ref bufferSizeSubThemeName,
                                               out classification,
+                                              out isRecommended,
                                               out payPerViewId);
           if (!result)
           {
@@ -4064,9 +4071,15 @@ namespace TvLibrary.Implementations.DVB
           {
             //program.SeriesId = string.Format("MediaHighway:{0}", seriesId);
           }
-          if (seasonNumber != 0)
+          string seasonName = TidyString(DvbTextConverter.Convert(bufferSeasonName, bufferSizeSeasonName));
+          if (!string.IsNullOrEmpty(seasonName))
           {
-            //program.SeasonNumber = seasonNumber;
+            // Usually <season number>(/<season count>)?.
+            Match m = MEDIA_HIGHWAY_SEASON_NAME.Match(seasonName);
+            if (m.Success)
+            {
+              //program.SeasonNumber = int.Parse(m.Groups[1].Captures[0].Value);
+            }
           }
           if (episodeId != 0xffffffff)
           {
@@ -5349,16 +5362,18 @@ namespace TvLibrary.Implementations.DVB
       // Assume Spanish MHW 2 encoding.
       switch (classification)
       {
+        case 0:
+          return "SC";    // "Sin calificación"
         case 1:
           return "TP";    // "Todos los públicos"
-        case 2:
-          return "+13";
+        //case 2:
+        //  return "";    // ???
         case 3:
           return "+18";
         case 4:
           return "X";
-        case 5:
-          return "SC";    // "Sin calificación"
+        //case 5:
+        //  return "";    // ???
         case 6:
           return "+7";
         case 7:
@@ -5366,9 +5381,7 @@ namespace TvLibrary.Implementations.DVB
         case 8:
           return "+12";
         case 9:
-          return "+16";
-        case 10:
-          return "TP/INF";
+          return "+13/16";
         default:
           return null;
       }

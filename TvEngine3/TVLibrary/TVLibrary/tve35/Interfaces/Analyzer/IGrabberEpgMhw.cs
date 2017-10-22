@@ -91,7 +91,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     /// <param name="descriptionBufferSize">As an input, the size of the <paramref name="description">description buffer</paramref>; as an output, the consumed buffer size.</param>
     /// <param name="descriptionLineCount">The number of additional description lines associated with the event.</param>
     /// <param name="seriesId">The identifier that links this event to other events from the same series. Value is <c>0xffffffff</c> if not available.</param>
-    /// <param name="seasonNumber">The human-readable identifier for the series or season that the event is associated with. Value is <c>0</c> if not available.</param>
+    /// <param name="seasonName">A buffer containing the name of the season that the event is associated with, encoded as DVB-compatible text. The caller must allocate and free this buffer.</param>
+    /// <param name="seasonNameBufferSize">As an input, the size of the <paramref name="seasonName">season name buffer</paramref>; as an output, the consumed buffer size.</param>
     /// <param name="episodeId">The identifier of the episode or program that the event is associated with. Value is <c>0xffffffff</c> if not available.</param>
     /// <param name="episodeNumber">The human-readable identifier for the episode or program that the event is associated with. Value is <c>0</c> if not available.</param>
     /// <param name="episodeName">A buffer containing the name of the episode that the event is associated with, encoded as DVB-compatible text. The caller must allocate and free this buffer.</param>
@@ -101,6 +102,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     /// <param name="subThemeName">A buffer containing the name of the sub-theme that the event is associated with, encoded as DVB-compatible text. The caller must allocate and free this buffer.</param>
     /// <param name="subThemeNameBufferSize">As an input, the size of the <paramref name="subThemeName">sub-theme name buffer</paramref>; as an output, the consumed buffer size.</param>
     /// <param name="classification">The event's classification (parental rating). Value is <c>0xff</c> if not available.</param>
+    /// <param name="isRecommended">An indication of whether the event is recommended by the provider.</param>
     /// <param name="payPerViewId">The event's pay-per-view identifier, if any.</param>
     /// <returns><c>true</c> if the event's details are successfully retrieved, otherwise <c>false</c></returns>
     [PreserveSig]
@@ -120,7 +122,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
                   ref ushort descriptionBufferSize,
                   out byte descriptionLineCount,
                   out uint seriesId,
-                  out byte seasonNumber,
+                  IntPtr seasonName,
+                  ref ushort seasonNameBufferSize,
                   out uint episodeId,
                   out ushort episodeNumber,
                   IntPtr episodeName,
@@ -130,6 +133,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
                   IntPtr subThemeName,
                   ref ushort subThemeNameBufferSize,
                   out byte classification,
+                  out bool isRecommended,
                   out uint payPerViewId);
 
     /// <summary>
