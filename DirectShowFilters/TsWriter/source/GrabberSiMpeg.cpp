@@ -48,7 +48,8 @@ CGrabberSiMpeg::CGrabberSiMpeg(ICallBackSiMpeg* callBack,
   m_encryptionAnalyser = analyser;
 
   m_pmtReadyCount = 0;
-  m_isSeenPmt = false;
+  m_freesatProgramNumber = 0;
+  m_isPmtReceiveOrChangeNotified = false;
 
   m_catGrabber.SetCallBack(this);
   m_patParser.SetCallBack(this);
@@ -105,6 +106,8 @@ void CGrabberSiMpeg::Reset()
   }
   m_pmtGrabbers.clear();
   m_pmtReadyCount = 0;
+  m_freesatProgramNumber = 0;
+  m_isPmtReceiveOrChangeNotified = false;
 
   m_catGrabber.Reset();
   m_patParser.Reset();
@@ -119,7 +122,7 @@ STDMETHODIMP_(void) CGrabberSiMpeg::SetCallBack(ICallBackGrabber* callBack)
 {
   CEnterCriticalSection lock(m_section);
   m_callBackGrabber = callBack;
-  m_isSeenPmt = false;
+  m_isPmtReceiveOrChangeNotified = false;
 }
 
 bool CGrabberSiMpeg::OnTsPacket(const CTsHeader& header, const unsigned char* tsPacket)
@@ -426,6 +429,16 @@ void CGrabberSiMpeg::OnPatProgramReceived(unsigned short programNumber, unsigned
     return;
   }
 
+  // Pick the first program in the PAT for Freesat analysis. The intention is
+  // to try to ensure we select the FreesatHome program - which is linked to
+  // the high-data-rate PIDs - when possible. Technically it'd probably be
+  // better to use the Freesat NIT Freesat home service descriptor to achieve
+  // this... but that's not so easy.
+  if (m_freesatProgramNumber == 0)
+  {
+    m_freesatProgramNumber = programNumber;
+  }
+
   CGrabberPmt* grabber = new CGrabberPmt(m_encryptionAnalyser);
   if (grabber == NULL)
   {
@@ -528,10 +541,9 @@ void CGrabberSiMpeg::OnPmtReceived(unsigned short programNumber,
   CEnterCriticalSection lock(m_section);
   m_pmtReadyCount++;
 
-  // Check for Freesat PIDs in the first PMT that we receive.
-  if (m_pmtReadyCount == 1)
+  if (programNumber == m_freesatProgramNumber)
   {
-    LogDebug(L"SI MPEG: received first PMT, checking for Freesat PIDs");
+    LogDebug(L"SI MPEG: received Freesat program PMT, checking for Freesat PIDs");
     map<unsigned short, CGrabberPmt*>::const_iterator it = m_pmtGrabbers.find(programNumber);
     if (it == m_pmtGrabbers.end() || it->second == NULL)
     {
@@ -582,10 +594,10 @@ void CGrabberSiMpeg::OnPmtReceived(unsigned short programNumber,
   {
     m_callBackSiMpeg->OnPmtReceived(programNumber, pid, table, tableSize);
   }
-  if (m_callBackGrabber != NULL && !m_isSeenPmt)
+  if (m_callBackGrabber != NULL && !m_isPmtReceiveOrChangeNotified)
   {
     m_callBackGrabber->OnTableSeen(PID_PAT, TABLE_ID_PMT);
-    m_isSeenPmt = true;
+    m_isPmtReceiveOrChangeNotified = true;
   }
   if (m_patParser.IsReady() && m_pmtReadyCount == m_pmtGrabbers.size())
   {
@@ -593,6 +605,7 @@ void CGrabberSiMpeg::OnPmtReceived(unsigned short programNumber,
     if (m_callBackGrabber != NULL)
     {
       m_callBackGrabber->OnTableComplete(PID_PAT, TABLE_ID_PMT);
+      m_isPmtReceiveOrChangeNotified = false;
     }
   }
 }
@@ -607,10 +620,10 @@ void CGrabberSiMpeg::OnPmtChanged(unsigned short programNumber,
   {
     m_callBackSiMpeg->OnPmtChanged(programNumber, pid, table, tableSize);
   }
-  if (m_callBackGrabber != NULL && !m_isSeenPmt)
+  if (m_callBackGrabber != NULL && !m_isPmtReceiveOrChangeNotified)
   {
     m_callBackGrabber->OnTableChange(PID_PAT, TABLE_ID_PMT);
-    m_isSeenPmt = true;
+    m_isPmtReceiveOrChangeNotified = true;
   }
   if (m_patParser.IsReady() && m_pmtReadyCount == m_pmtGrabbers.size())
   {
@@ -618,6 +631,7 @@ void CGrabberSiMpeg::OnPmtChanged(unsigned short programNumber,
     if (m_callBackGrabber != NULL)
     {
       m_callBackGrabber->OnTableComplete(PID_PAT, TABLE_ID_PMT);
+      m_isPmtReceiveOrChangeNotified = false;
     }
   }
 }

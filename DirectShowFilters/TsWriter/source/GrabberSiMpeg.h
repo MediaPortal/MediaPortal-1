@@ -147,5 +147,6 @@ class CGrabberSiMpeg
     ICallBackGrabber* m_callBackGrabber;
     ICallBackSiMpeg* m_callBackSiMpeg;
     IEncryptionAnalyser* m_encryptionAnalyser;
-    bool m_isSeenPmt;
+    unsigned short m_freesatProgramNumber;
+    bool m_isPmtReceiveOrChangeNotified;
 };

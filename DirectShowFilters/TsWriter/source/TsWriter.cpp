@@ -288,7 +288,7 @@ CTsWriter::CTsWriter(LPUNKNOWN unk, HRESULT* hr)
 
   m_checkedIsFreesatTransportStream = false;
   m_isFreesatTransportStream = false;
-  m_freesatPmtPid = 0;
+  m_freesatProgramNumber = 0;
 
   m_isRunning = false;
   m_checkSectionCrcs = true;
@@ -537,7 +537,7 @@ STDMETHODIMP_(void) CTsWriter::Stop()
 
   m_checkedIsFreesatTransportStream = false;
   m_isFreesatTransportStream = false;
-  m_freesatPmtPid = 0;
+  m_freesatProgramNumber = 0;
 
   m_encryptionAnalyser.Reset();
 }
@@ -1462,9 +1462,9 @@ void CTsWriter::OnPatProgramReceived(unsigned short programNumber, unsigned shor
       m_grabberEpgOpenTv->SetPmtPid(pmtPid);
     }
   }
-  else if (!m_checkedIsFreesatTransportStream && m_freesatPmtPid == 0)
+  else if (!m_checkedIsFreesatTransportStream && m_freesatProgramNumber == 0)
   {
-    m_freesatPmtPid = pmtPid;
+    m_freesatProgramNumber = programNumber;
     m_grabberEpgDvb->SetFreesatPmtPid(pmtPid);
   }
 }
@@ -1535,12 +1535,11 @@ void CTsWriter::OnPmtReceived(unsigned short programNumber,
     m_observer->OnProgramDetail(programNumber, pid, true, table, tableSize);
   }
 
-  // Since we've received PMT, we now know whether this is a Freesat transport
-  // stream or not. Therefore we no longer need the Freesat PMT PID.
-  if (!m_checkedIsFreesatTransportStream)
+  // We only need one PMT for the Freesat program.
+  if (programNumber == m_freesatProgramNumber)
   {
     m_checkedIsFreesatTransportStream = true;
-    m_freesatPmtPid = 0;
+    m_freesatProgramNumber = 0;
     m_grabberEpgDvb->SetFreesatPmtPid(0);
   }
 

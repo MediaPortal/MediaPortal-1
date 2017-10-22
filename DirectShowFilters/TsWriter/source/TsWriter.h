@@ -273,7 +273,7 @@ class CTsWriter
 
     bool m_checkedIsFreesatTransportStream;
     bool m_isFreesatTransportStream;
-    unsigned short m_freesatPmtPid;
+    unsigned short m_freesatProgramNumber;
 
     bool m_isRunning;
     bool m_checkSectionCrcs;
