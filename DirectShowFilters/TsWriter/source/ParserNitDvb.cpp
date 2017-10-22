@@ -3449,7 +3449,7 @@ bool CParserNitDvb::DecodeS2SatelliteDeliverySystemDescriptor(const unsigned cha
   try
   {
     bool scramblingSequenceSelector = (data[0] & 0x80) != 0;
-    if (scramblingSequenceSelector)
+    if (!scramblingSequenceSelector)
     {
       record.ScramblingSequenceIndex = 0;
     }
