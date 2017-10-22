@@ -570,7 +570,7 @@ bool CTextUtil::MhwTextToString(const unsigned char* data,
 
     // EN 300 468 annex A table A.4: ISO/IEC 8859-15.
     (*text)[0] = 0x10;
-    (*text)[1] = 0xf;     // skip the 0 byte to avoid premature NULL termination, same as DvbTextToString()
+    (*text)[1] = 0x20;    // fill the 0 byte to avoid premature NULL termination, same as DvbTextToString()
     memcpy(&(*text)[2], data, dataLength);
     (*text)[dataLength + 2] = NULL;
   }
