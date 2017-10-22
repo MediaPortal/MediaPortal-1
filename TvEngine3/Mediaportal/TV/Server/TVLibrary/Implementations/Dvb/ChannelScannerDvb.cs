@@ -1198,7 +1198,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
           for (ushort n = 0; n < logicalChannelNumberCount; n++)
           {
             LogicalChannelNumber lcn = logicalChannelNumbers[n];
-            this.LogInfo("      {0, -2}: LCN = {1, -3}, table ID = {2, -2}, table ID ext. = {3, -5}, descriptor tag = {4, -2}, region ID = {5, -5}", n + 1, lcn.ChannelNumber, lcn.TableId, lcn.TableIdExtension, lcn.DescriptorTag, lcn.RegionId);
+            this.LogDebug("      {0, -2}: LCN = {1, -3}, table ID = {2, -2}, table ID ext. = {3, -5}, descriptor tag = {4, -2}, region ID = {5, -5}", n + 1, lcn.ChannelNumber, lcn.TableId, lcn.TableIdExtension, lcn.DescriptorTag, lcn.RegionId);
           }
         }
 

@@ -20,7 +20,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -50,6 +49,42 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
 
     private const string LANG_CODE_ENG = "eng";
     private static readonly Regex MEDIA_HIGHWAY_SEASON_NAME = new Regex(@"^\s*(\d+)\s*\/\s*(\d+)\s*$");
+
+    private static readonly IDictionary<byte, string> MAPPING_PROGRAM_CLASSIFICATIONS_MHW2_ESP = new Dictionary<byte, string>(8)
+    {
+      { 0, "SC" },      // "Sin calificación"
+      { 1, "TP" },      // "Todos los públicos"
+      { 3, "+18" },
+      { 4, "X" },
+      { 6, "+7" },
+      { 7, "INF" },     // "Especialmente recomendada para la infancia"
+      { 8, "+12" },
+      { 9, "+13/16" }
+    };
+
+    // Note: there is some uncertainty about values 5, 6 and 7. Our old code
+    // differs with MythTV, and this code differs from the ATSC RRT.
+    private static readonly IDictionary<byte, string> MAPPING_PROGRAM_CLASSIFICATIONS_MPAA = new Dictionary<byte, string>(6)
+    {
+      { 1, "G" },       // general
+      { 2, "PG" },      // parental guidance
+      { 3, "PG-13" },   // parental guidance under 13
+      { 4, "R" },       // restricted
+      { 5, "NC-17" },   // nobody 17 and under
+      { 6, "NR" }       // not rated
+    };
+
+    private static readonly IDictionary<byte, string> MAPPING_PROGRAM_RATINGS_VCHIP = new Dictionary<byte, string>(6)
+    {
+      { 1, "TV-Y" },    // all children
+      { 2, "TV-Y7" },   // children 7 and older
+      { 3, "TV-G" },    // general audience
+      { 4, "TV-PG" },   // parental guidance
+      { 5, "TV-14" },   // adults 14 and older
+      { 6, "TV-MA" }    // mature audience
+    };
+
+    #region content type
 
     private static readonly IDictionary<byte, string> MAPPING_CONTENT_TYPES_DVB = new Dictionary<byte, string>(16)
     {
@@ -432,7 +467,50 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
       { 0xf3, "Adult" }
     };
 
+    #endregion
+
     #region OpenTV
+
+    #region Australia
+
+    private static readonly HashSet<ushort> OPENTV_ORIGINAL_NETWORK_IDS_AU = new HashSet<ushort>
+    {
+      105,    // 0x0069 Foxtel AU (Optus B3)
+      168,    // 0x00a8 Foxtel AU
+      4095,   // 0x0fff VAST AU (Optus Networks)
+      4096,   // 0x1000 Foxtel AU (Optus B3)
+
+      // 0x1010 - 101f AU broadcasters (ABC, SBS etc.)
+      4112,
+      4113,
+      4114,
+      4115,
+      4116,
+      4117,
+      4118,
+      4119,
+      4120,
+      4121,
+      4122,
+      4123,
+      4124,
+      4125,
+      4126,
+      4127
+    };
+
+    private static readonly IDictionary<byte, string> MAPPING_OPENTV_PROGRAM_RATINGS_AU = new Dictionary<byte, string>(9)
+    {
+      { 0, "NC" },      // not classified (exempt)
+      { 2, "P" },       // suitable for pre-school children
+      { 4, "C" },       // suitable for children
+      { 6, "G" },
+      { 8, "PG" },
+      { 10, "M" },
+      { 12, "MA15+" },  // formerly MA
+      { 14, "AV15+" },  // formerly AV (suitable for adult viewers only - violent content); may no longer be used, or merged with MA15+... or may be R18+ if 15 is X18+
+      { 15, "R18+" }    // formerly R; may be X18+
+    };
 
     private static readonly IDictionary<byte, string> MAPPING_OPENTV_PROGRAM_CATEGORIES_AU = new Dictionary<byte, string>(8)
     {
@@ -519,6 +597,49 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
       { 0x0e05, "Help/Information" },   // ?
 
       { 0x0f02, "Adult" }               // ?
+    };
+
+    #endregion
+
+    #region Italy
+
+    // All original network IDs used on Hotbird 13E (which carries Sky Italia).
+    private static readonly HashSet<ushort> OPENTV_ORIGINAL_NETWORK_IDS_IT = new HashSet<ushort>
+    {
+      113,    // 0x0071 (Polsat/Cyfra+)
+      176,    // 0x00b0 Groupe CANAL+
+
+      // 0x00c0 - 0x00cd Canal+
+      192,
+      193,
+      194,
+      195,
+      196,
+      197,
+      198,
+      199,
+      200,
+      201,
+      202,
+      203,
+      204,
+      205,
+
+      272,    // 0x0110 Mediaset
+      318,    // 0x013e Eutelsat Satellite System 13°E (European Telecommunications Satellite Organization)
+      319,    // 0x013f Eutelsat Satellite System 13°E (European Telecommunications Satellite Organization)
+      702,    // 0x02be ARABSAT - Arab Satellite Communications Organization
+      64511   // 0xfbff Sky Italia
+    };
+
+    private static readonly IDictionary<byte, string> MAPPING_OPENTV_PROGRAM_RATINGS_IT = new Dictionary<byte, string>(6)
+    {
+      { 1, "PT" },      // per tutti ("for all", green icon)
+      { 2, "BA" },      // bambini accompagnati ("accompanied children", yellow icon)
+      { 3, "VM 12" },   // vietato ai minori di 12 anni ("no one under 12 years", orange icon)
+      { 4, "VM 14" },   // vietato ai minori di 14 anni ("no one under 14 years", pink icon)
+      { 5, "VM 16" },   // guess; not actually seen
+      { 6, "VM 18" }    // vietato ai minori di 18 anni ("no one under 18 years", red icon)
     };
 
     private static readonly IDictionary<byte, string> MAPPING_OPENTV_PROGRAM_CATEGORIES_IT = new Dictionary<byte, string>(8)
@@ -665,6 +786,34 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
       { 0x0707, "Film per Adulti" }
     };
 
+    #endregion
+
+    #region New Zealand
+
+    private static readonly HashSet<ushort> OPENTV_ORIGINAL_NETWORK_IDS_NZ = new HashSet<ushort>
+    {
+      47,     // 0x002f Freeview Satellite NZ (TVNZ)
+      169     // 0x00a9 Sky NZ
+    };
+
+    private static readonly IDictionary<byte, string> MAPPING_OPENTV_PROGRAM_RATINGS_NZ = new Dictionary<byte, string>(10)
+    {
+      { 0, "NC" },      // not classified (exempt)
+
+      { 1, "G" },
+      { 2, "G" },
+
+      { 4, "PG" },
+
+      { 6, "M" },
+      { 8, "R16" },
+
+      { 10, "R18" },
+      { 12, "R18" },
+      { 13, "R18" },
+      { 14, "R18" }
+    };
+
     // These are overrides for DVB content types.
     private static readonly IDictionary<byte, string> MAPPING_OPENTV_PROGRAM_CATEGORIES_NZ = new Dictionary<byte, string>(8)
     {
@@ -711,6 +860,26 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
 
       { 0x0a07, "Property" },
       { 0x0a0b, "Home Restoration/Make-Over" }
+    };
+
+    #endregion
+
+    #region UK
+
+    // All original network IDs used on Astra 28.2E (which carries Sky UK).
+    private static readonly HashSet<ushort> OPENTV_ORIGINAL_NETWORK_IDS_UK = new HashSet<ushort>
+    {
+      2,    // 0x0002 Société Européenne des Satellites
+      59    // 0x003b BBC (Freesat)
+    };
+
+    private static readonly IDictionary<byte, string> MAPPING_OPENTV_PROGRAM_RATINGS_UK = new Dictionary<byte, string>(5)
+    {
+      { 1, "U" },       // universal
+      { 2, "PG" },
+      { 3, "12" },
+      { 4, "15" },
+      { 5, "18" }
     };
 
     private static readonly IDictionary<byte, string> MAPPING_OPENTV_PROGRAM_CATEGORIES_UK = new Dictionary<byte, string>(8)
@@ -862,6 +1031,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
       { 0x0715, "Extreme" },
       { 0x0716, "Other" }               // ?
     };
+
+    #endregion
 
     #endregion
 
@@ -1074,7 +1245,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
           string seasonName = TidyString(DvbTextConverter.Convert(bufferSeasonName, bufferSizeSeasonName));
           if (!string.IsNullOrEmpty(seasonName))
           {
-            // Usually <season number>(/<season count>)?.
+            // Spanish MHW 2 (Movistar+): usually <season number>(/<season count>)?.
             Match m = MEDIA_HIGHWAY_SEASON_NAME.Match(seasonName);
             if (m.Success)
             {
@@ -1106,8 +1277,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
             program.Categories.Add(themeName);
           }
 
-          string classificationString = GetMediaHighwayClassificationDescription(classification);
-          if (classificationString != null)
+          // Assume Spanish MHW 2 (Movistar+) encoding.
+          string classificationString;
+          if (MAPPING_PROGRAM_CLASSIFICATIONS_MHW2_ESP.TryGetValue(classification, out classificationString))
           {
             program.Classifications.Add("MediaHighway", classificationString);
           }
@@ -1178,9 +1350,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
     private IList<Tuple<IChannel, IList<EpgProgram>>> CollectOpenTvData(IChannelOpenTv currentTuningDetail)
     {
       uint eventCount;
+      ushort originalNetworkId;
       Iso639Code language;
-      _grabberOpenTv.GetEventCount(out eventCount, out language);
-      this.LogDebug("EPG DVB: OpenTV, initial event count = {0}, text language = {1}", eventCount, language.Code);
+      _grabberOpenTv.GetEventCount(out eventCount, out originalNetworkId, out language);
+      this.LogDebug("EPG DVB: OpenTV, initial event count = {0}, original network ID = {1}, text language = {2}", eventCount, originalNetworkId, language.Code);
       IDictionary<ushort, List<EpgProgram>> tempData = new Dictionary<ushort, List<EpgProgram>>(100);
 
       const ushort BUFFER_SIZE_TITLE = 300;
@@ -1240,14 +1413,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
           programStartTime = programStartTime.AddSeconds(startDateTimeEpoch);
           EpgProgram program = new EpgProgram(programStartTime, programStartTime.AddMinutes(duration));
           program.Titles.Add(language.Code, title);
-          program.Categories.Add(GetOpenTvProgramCategoryDescription(categoryId, subCategoryId));
+          program.Categories.Add(GetOpenTvProgramCategoryDescription(originalNetworkId, categoryId, subCategoryId));
           program.IsHighDefinition = isHighDefinition;
           if (hasSubtitles)
           {
             // assumption: subtitles language matches the country
             program.SubtitlesLanguages.Add(language.Code);
           }
-          string classification = GetOpenTvParentalRatingDescription(parentalRating);
+          string classification = GetOpenTvParentalRatingDescription(originalNetworkId, parentalRating);
           if (classification != null)
           {
             program.Classifications.Add("OpenTV", classification);
@@ -1594,14 +1767,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
               program.StarRating = (starRating + 1) / 2;    // 1 = 1 star, 2 = 1.5 stars etc.; max. value = 7
               program.StarRatingMaximum = 4;
             }
-            string mpaaClassificationDescription = GetMpaaClassificationDescription(mpaaClassification);
-            if (mpaaClassificationDescription != null)
+            string mpaaClassificationDescription;
+            if (MAPPING_PROGRAM_CLASSIFICATIONS_MPAA.TryGetValue(mpaaClassification, out mpaaClassificationDescription))
             {
               program.Classifications.Add("MPAA", mpaaClassificationDescription);
             }
             program.Advisories = GetContentAdvisories(dishBevAdvisories);
-            string vchipRatingDescription = GetVchipRatingDescription(vchipRating);
-            if (vchipRatingDescription != null)
+            string vchipRatingDescription;
+            if (MAPPING_PROGRAM_RATINGS_VCHIP.TryGetValue(vchipRating, out vchipRatingDescription))
             {
               program.Classifications.Add("V-Chip", vchipRatingDescription);
             }
@@ -2094,37 +2267,32 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
       return string.Format("{0}: {1}", level1Text, level2Text);
     }
 
-    private static string GetOpenTvProgramCategoryDescription(byte categoryId, byte subCategoryId)
+    private static string GetOpenTvProgramCategoryDescription(ushort originalNetworkId, byte categoryId, byte subCategoryId)
     {
-      // Out-of-region reception currently not supported. Support would require
-      // logic based on the original network ID instead of the current region
-      // name.
+      bool isSkyNewZealand = false;
       IDictionary<byte, string> categoryNames = null;
       IDictionary<ushort, string> subCategoryNames = null;
-      string countryName = RegionInfo.CurrentRegion.EnglishName;
-      if (countryName != null)
+      if (OPENTV_ORIGINAL_NETWORK_IDS_AU.Contains(originalNetworkId))
       {
-        if (countryName.Equals("Australia"))
-        {
-          categoryNames = MAPPING_OPENTV_PROGRAM_CATEGORIES_AU;
-          subCategoryNames = MAPPING_OPENTV_PROGRAM_SUB_CATEGORIES_AU;
-        }
-        else if (countryName.Equals("Italy"))
-        {
-          categoryNames = MAPPING_OPENTV_PROGRAM_CATEGORIES_IT;
-          subCategoryNames = MAPPING_OPENTV_PROGRAM_SUB_CATEGORIES_IT;
-        }
-        else if (countryName.Equals("New Zealand"))
-        {
-          // Based on DVB content types, with some overrides and extensions.
-          categoryNames = MAPPING_OPENTV_PROGRAM_CATEGORIES_NZ;
-          subCategoryNames = MAPPING_OPENTV_PROGRAM_SUB_CATEGORIES_NZ;
-        }
-        else if (countryName.Equals("United Kindom"))
-        {
-          categoryNames = MAPPING_OPENTV_PROGRAM_CATEGORIES_UK;
-          subCategoryNames = MAPPING_OPENTV_PROGRAM_SUB_CATEGORIES_UK;
-        }
+        categoryNames = MAPPING_OPENTV_PROGRAM_CATEGORIES_AU;
+        subCategoryNames = MAPPING_OPENTV_PROGRAM_SUB_CATEGORIES_AU;
+      }
+      else if (OPENTV_ORIGINAL_NETWORK_IDS_IT.Contains(originalNetworkId))
+      {
+        categoryNames = MAPPING_OPENTV_PROGRAM_CATEGORIES_IT;
+        subCategoryNames = MAPPING_OPENTV_PROGRAM_SUB_CATEGORIES_IT;
+      }
+      else if (OPENTV_ORIGINAL_NETWORK_IDS_NZ.Contains(originalNetworkId))
+      {
+        // Based on DVB content types, with some overrides and extensions.
+        isSkyNewZealand = true;
+        categoryNames = MAPPING_OPENTV_PROGRAM_CATEGORIES_NZ;
+        subCategoryNames = MAPPING_OPENTV_PROGRAM_SUB_CATEGORIES_NZ;
+      }
+      else if (OPENTV_ORIGINAL_NETWORK_IDS_UK.Contains(originalNetworkId))
+      {
+        categoryNames = MAPPING_OPENTV_PROGRAM_CATEGORIES_UK;
+        subCategoryNames = MAPPING_OPENTV_PROGRAM_SUB_CATEGORIES_UK;
       }
 
       string categoryName;
@@ -2133,7 +2301,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
         (
           !categoryNames.TryGetValue(categoryId, out categoryName) &&
           (
-            !countryName.Equals("New Zealand") ||
+            !isSkyNewZealand ||
             !MAPPING_CONTENT_TYPES_DVB.TryGetValue(categoryId, out categoryName)
           )
         )
@@ -2145,7 +2313,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
       string subCategoryName;
       if (!subCategoryNames.TryGetValue((ushort)((categoryId << 8) | subCategoryId), out subCategoryName))
       {
-        if (!countryName.Equals("New Zealand"))
+        if (!isSkyNewZealand)
         {
           return categoryName;
         }
@@ -2163,124 +2331,30 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
       return string.Format("{0}: {1}", categoryName, subCategoryName);
     }
 
-    private static string GetMediaHighwayClassificationDescription(byte classification)
+    private static string GetOpenTvParentalRatingDescription(ushort originalNetworkId, byte rating)
     {
-      // Assume Spanish MHW 2 encoding.
-      switch (classification)
+      IDictionary<byte, string> ratingDescriptions = null;
+      if (OPENTV_ORIGINAL_NETWORK_IDS_AU.Contains(originalNetworkId))
       {
-        case 0:
-          return "SC";    // "Sin calificación"
-        case 1:
-          return "TP";    // "Todos los públicos"
-        //case 2:
-        //  return "";    // ???
-        case 3:
-          return "+18";
-        case 4:
-          return "X";
-        //case 5:
-        //  return "";    // ???
-        case 6:
-          return "+7";
-        case 7:
-          return "INF";   // "Especialmente recomendada para la infancia"
-        case 8:
-          return "+12";
-        case 9:
-          return "+13/16";
-        default:
-          return null;
+        ratingDescriptions = MAPPING_OPENTV_PROGRAM_RATINGS_AU;
       }
-    }
-
-    private static string GetOpenTvParentalRatingDescription(byte rating)
-    {
-      // Out-of-region reception currently not supported. Support would require
-      // logic based on the original network ID instead of the current region
-      // name.
-      string countryName = RegionInfo.CurrentRegion.EnglishName;
-      if (countryName != null)
+      else if (OPENTV_ORIGINAL_NETWORK_IDS_IT.Contains(originalNetworkId))
       {
-        if (countryName.Equals("Australia"))
-        {
-          switch (rating)
-          {
-            case 0:
-              return "NC";      // not classified (exempt)
-            case 2:
-              return "P";       // suitable for pre-school children
-            case 4:
-              return "C";       // suitable for children
-            case 6:
-              return "G";
-            case 8:
-              return "PG";
-            case 10:
-              return "M";
-            case 12:
-              return "MA15+";   // formerly MA
-            case 14:
-              return "AV15+";   // formerly AV (suitable for adult viewers only - violent content); may no longer be used, or merged with MA15+... or may be R18+ if 15 is X18+
-            case 15:
-              return "R18+";    // formerly R; may be X18+
-          }
-        }
-        else if (countryName.Equals("Italy"))
-        {
-          switch (rating)
-          {
-            case 1:
-              return "PT";      // per tutti ("for all", green icon)
-            case 2:
-              return "BA";      // bambini accompagnati ("accompanied children", yellow icon)
-            case 3:
-              return "VM 12";   // vietato ai minori di 12 anni ("no one under 12 years", orange icon)
-            case 4:
-              return "VM 14";   // vietato ai minori di 14 anni ("no one under 14 years", pink icon)
-            case 5:
-              return "VM 16";   // guess; not actually seen
-            case 6:
-              return "VM 18";   // vietato ai minori di 18 anni ("no one under 18 years", red icon)
-          }
-        }
-        else if (countryName.Equals("New Zealand"))
-        {
-          switch (rating)
-          {
-            case 0:
-              return "NC";      // not classified (exempt)
-            case 1:
-            case 2:
-              return "G";
-            case 4:
-              return "PG";
-            case 6:
-              return "M";
-            case 8:
-              return "R16";
-            case 10:
-            case 12:
-            case 13:
-            case 14:
-              return "R18";
-          }
-        }
-        else if (countryName.Equals("United Kindom"))
-        {
-          switch (rating)
-          {
-            case 1:
-              return "U";       // universal
-            case 2:
-              return "PG";
-            case 3:
-              return "12";
-            case 4:
-              return "15";
-            case 5:
-              return "18";
-          }
-        }
+        ratingDescriptions = MAPPING_OPENTV_PROGRAM_RATINGS_IT;
+      }
+      else if (OPENTV_ORIGINAL_NETWORK_IDS_NZ.Contains(originalNetworkId))
+      {
+        ratingDescriptions = MAPPING_OPENTV_PROGRAM_RATINGS_NZ;
+      }
+      else if (OPENTV_ORIGINAL_NETWORK_IDS_UK.Contains(originalNetworkId))
+      {
+        ratingDescriptions = MAPPING_OPENTV_PROGRAM_RATINGS_UK;
+      }
+
+      string ratingDescription;
+      if (ratingDescriptions != null && ratingDescriptions.TryGetValue(rating, out ratingDescription))
+      {
+        return ratingDescription;
       }
       return null;
     }
@@ -2293,28 +2367,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
         return null;
       }
       return string.Format("Min. age {0}", rating + 3);
-    }
-
-    private static string GetMpaaClassificationDescription(byte classification)
-    {
-      // Note: there is some uncertainty about values 5, 6 and 7. Our old
-      // code differs with MythTV, and this code differs from the ATSC RRT.
-      switch (classification)
-      {
-        case 1:
-          return "G";       // general
-        case 2:
-          return "PG";      // parental guidance
-        case 3:
-          return "PG-13";   // parental guidance under 13
-        case 4:
-          return "R";       // restricted
-        case 5:
-          return "NC-17";   // nobody 17 and under
-        case 6:
-          return "NR";      // not rated
-      }
-      return null;
     }
 
     private static ContentAdvisory GetContentAdvisories(ushort advisories)
@@ -2353,26 +2405,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
         advisoryFlags |= ContentAdvisory.SuggestiveDialogue;
       }
       return advisoryFlags;
-    }
-
-    private static string GetVchipRatingDescription(byte rating)
-    {
-      switch (rating)
-      {
-        case 1:
-          return "TV-Y";    // all children
-        case 2:
-          return "TV-Y7";   // children 7 and older
-        case 3:
-          return "TV-G";    // general audience
-        case 4:
-          return "TV-PG";   // parental guidance
-        case 5:
-          return "TV-14";   // adults 14 and older
-        case 6:
-          return "TV-MA";   // mature audience
-      }
-      return null;
     }
 
     private static string ParseDishDescription(string description, EpgProgram program)

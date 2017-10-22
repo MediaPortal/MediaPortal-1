@@ -50,6 +50,7 @@ DECLARE_INTERFACE_(IGrabberEpgOpenTv, IGrabber)
   STDMETHOD_(bool, IsReady)(THIS)PURE;
 
   STDMETHOD_(void, GetEventCount)(THIS_ unsigned long* eventCount,
+                                  unsigned short* originalNetworkId,
                                   unsigned long* textLanguage)PURE;
   STDMETHOD_(bool, GetEvent)(THIS_ unsigned long index,
                               unsigned short* channelId,

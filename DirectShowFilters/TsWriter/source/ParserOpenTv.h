@@ -103,6 +103,7 @@ class CParserOpenTv
     STDMETHODIMP_(bool) IsReady();
 
     STDMETHODIMP_(void) GetEventCount(unsigned long* eventCount,
+                                      unsigned short* originalNetworkId,
                                       unsigned long* textLanguage);
     STDMETHODIMP_(bool) GetEvent(unsigned long index,
                                   unsigned short* channelId,

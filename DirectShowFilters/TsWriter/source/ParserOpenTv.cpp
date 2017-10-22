@@ -506,10 +506,12 @@ STDMETHODIMP_(bool) CParserOpenTv::IsReady()
 }
 
 STDMETHODIMP_(void) CParserOpenTv::GetEventCount(unsigned long* eventCount,
+                                                  unsigned short* originalNetworkId,
                                                   unsigned long* textLanguage)
 {
   CEnterCriticalSection lock(m_section);
   *eventCount = m_recordsEvent.GetRecordCount();
+  *originalNetworkId = m_originalNetworkId;
   if (m_isItalianText)
   {
     *textLanguage = LANG_ITA;

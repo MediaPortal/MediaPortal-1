@@ -42,6 +42,28 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
   {
     #region constants
 
+    // Note: the ATSC/SCTE RRT encoding differs from the Dish/BEV encoding.
+    private static readonly IDictionary<byte, string> MAPPING_PROGRAM_CLASSIFICATIONS_MPAA = new Dictionary<byte, string>(6)
+    {
+      { 1, "G" },       // general
+      { 2, "PG" },      // parental guidance
+      { 3, "PG-13" },   // parental guidance under 13
+      { 4, "R" },       // restricted
+      { 5, "NC-17" },   // nobody 17 and under
+      { 6, "X" },       // explicit
+      { 7, "NR" }       // not rated
+    };
+
+    private static readonly IDictionary<byte, string> MAPPING_PROGRAM_RATINGS_VCHIP = new Dictionary<byte, string>(6)
+    {
+      { 1, "TV-Y" },    // all children
+      { 2, "TV-Y7" },   // children 7 and older
+      { 3, "TV-G" },    // general audience
+      { 4, "TV-PG" },   // parental guidance
+      { 5, "TV-14" },   // adults 14 and older
+      { 6, "TV-MA" }    // mature audience
+    };
+
     private static readonly IDictionary<byte, string> MAPPING_ATSC_GENRES = new Dictionary<byte, string>(256)
     {
       { 0x20, "Education" },
@@ -366,14 +388,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
               program.Categories.Add(genreDescription);
             }
           }
-          string mpaaClassificationDescription = GetMpaaClassificationDescription(mpaaClassification);
-          if (mpaaClassificationDescription != null)
+          string mpaaClassificationDescription;
+          if (MAPPING_PROGRAM_CLASSIFICATIONS_MPAA.TryGetValue(mpaaClassification, out mpaaClassificationDescription))
           {
             program.Classifications.Add("MPAA", mpaaClassificationDescription);
           }
           program.Advisories = GetContentAdvisories(advisories);
-          string vchipRatingDescription = GetVchipRatingDescription(vchipRating);
-          if (vchipRatingDescription != null)
+          string vchipRatingDescription;
+          if (MAPPING_PROGRAM_RATINGS_VCHIP.TryGetValue(vchipRating, out vchipRatingDescription))
           {
             program.Classifications.Add("V-Chip", vchipRatingDescription);
           }
@@ -441,29 +463,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
       return description;
     }
 
-    private static string GetMpaaClassificationDescription(byte classification)
-    {
-      // Note: the ATSC/SCTE RRT encoding differs from the Dish/BEV encoding.
-      switch (classification)
-      {
-        case 1:
-          return "G";       // general
-        case 2:
-          return "PG";      // parental guidance
-        case 3:
-          return "PG-13";   // parental guidance under 13
-        case 4:
-          return "R";       // restricted
-        case 5:
-          return "NC-17";   // nobody 17 and under
-        case 6:
-          return "X";       // explicit
-        case 7:
-          return "NR";      // not rated
-      }
-      return null;
-    }
-
     private static ContentAdvisory GetContentAdvisories(ushort advisories)
     {
       ContentAdvisory advisoryFlags = ContentAdvisory.None;
@@ -500,26 +499,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
         advisoryFlags |= ContentAdvisory.SuggestiveDialogue;
       }
       return advisoryFlags;
-    }
-
-    private static string GetVchipRatingDescription(byte rating)
-    {
-      switch (rating)
-      {
-        case 1:
-          return "TV-Y";    // all children
-        case 2:
-          return "TV-Y7";   // children 7 and older
-        case 3:
-          return "TV-G";    // general audience
-        case 4:
-          return "TV-PG";   // parental guidance
-        case 5:
-          return "TV-14";   // adults 14 and older
-        case 6:
-          return "TV-MA";   // mature audience
-      }
-      return null;
     }
 
     #endregion
