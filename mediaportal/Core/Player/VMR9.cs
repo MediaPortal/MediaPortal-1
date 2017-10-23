@@ -870,6 +870,19 @@ namespace MediaPortal.Player
           IMediaControl mPMediaControl = (IMediaControl) graphBuilder;
           var xposition = GUIGraphicsContext.form.Location.X;
           var yposition = GUIGraphicsContext.form.Location.Y;
+          //Backup current refresh rate value
+          Win32.FindMonitorIndexForScreen();
+          if ((GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal == -1) ||
+          (Manager.Adapters.Count <= GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal) ||
+          (Manager.Adapters.Count > Screen.AllScreens.Length))
+          {
+            Log.Info("VMR9: adapter number out of bounds");
+          }
+          else
+          {
+            GUIGraphicsContext.ForcedRR3DRate = Manager.Adapters[GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal].CurrentDisplayMode.RefreshRate;
+            Log.Info("VMR9: backup current refresh rate value {0}Hz", GUIGraphicsContext.ForcedRR3DRate);
+          }
           // Get Client size
           Size client = GUIGraphicsContext.form.ClientSize;
           MadInit(_scene, xposition, yposition, client.Width, client.Height, (uint)upDevice.ToInt32(),
