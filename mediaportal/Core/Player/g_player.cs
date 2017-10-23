@@ -552,6 +552,7 @@ namespace MediaPortal.Player
               // reset this ForcedRefreshRate3DDone to false on stop to permit resolution restore from SBS or TAB 3D change
               GUIGraphicsContext.ForcedRefreshRate3DDone = false;
               GUIGraphicsContext.ForcedRR3DBackDefault = true;
+              Log.Debug("g_Player: set madVR 3D bool to restore resolution");
             }
             RefreshRateChanger.AdaptRefreshRate();
           }

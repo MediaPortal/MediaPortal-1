@@ -260,13 +260,16 @@ namespace MediaPortal.Player
                 {
                   Width = (uint)GUIGraphicsContext.ForcedRR3DWitdhBackup;
                   Height = (uint)GUIGraphicsContext.ForcedRR3DHeightBackup;
+                  Log.Debug("CycleRefreshRate: restore backup value {0} x {1}", GUIGraphicsContext.ForcedRR3DWitdhBackup, GUIGraphicsContext.ForcedRR3DHeightBackup);
                 }
                 else
                 {
                   GUIGraphicsContext.ForcedRR3DWitdhBackup = GUIGraphicsContext.form.Width;
                   GUIGraphicsContext.ForcedRR3DHeightBackup = GUIGraphicsContext.form.Height;
+                  Log.Debug("CycleRefreshRate: backup current value {0} x {1}", GUIGraphicsContext.ForcedRR3DWitdhBackup, GUIGraphicsContext.ForcedRR3DHeightBackup);
                   Width = 1920;
                   Height = 1080;
+                  Log.Debug("CycleRefreshRate: 3D used forced value {0} x {1}", Width, Height);
                 }
                 // needed to resize screen and GUI after resolution change
                 GUIGraphicsContext.ForceMadVRRefresh3D = true;
@@ -292,13 +295,13 @@ namespace MediaPortal.Player
                                                                                    IntPtr.Zero);              
               if (r != displayResult)
               {
-                Log.Info("CycleRefreshRate: unable to change refresh rate {0}Hz for monitor {1}", refreshRate, monitorIndex);
+                Log.Info("CycleRefreshRate: unable to change refresh rate {0}Hz for monitor {1} for resolution {2} x {3}", refreshRate, monitorIndex, devMode.dmPelsWidth, devMode.dmPelsHeight);
               }
               else
               {
                 // Apply settings
                 r = ChangeDisplaySettingsEx(null, null, IntPtr.Zero, 0, IntPtr.Zero);
-                Log.Info("CycleRefreshRate: result {0} for refresh rate change {1}Hz", r, refreshRate);
+                Log.Info("CycleRefreshRate: result {0} for refresh rate change {1}Hz for resolution {2} x {3}", r, refreshRate, devMode.dmPelsWidth, devMode.dmPelsHeight);
                 FixDwm();
               }
             }
