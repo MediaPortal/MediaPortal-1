@@ -853,9 +853,13 @@ namespace MediaPortal.Player
 
         if (!useDefaultHz)
         {
-          Log.Info(
-            "RefreshRateChanger.AdaptRefreshRate: 'auto refreshrate changer' not going back to default refreshrate");
-          return;
+          if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR ||
+              !GUIGraphicsContext.ForcedRefreshRate3D)
+          {
+            Log.Info(
+              "RefreshRateChanger.AdaptRefreshRate: 'auto refreshrate changer' not going back to default refreshrate");
+            return;
+          }
         }
 
         defaultKeyHZ = xmlreader.GetValueAsString("general", "default_hz", "");
