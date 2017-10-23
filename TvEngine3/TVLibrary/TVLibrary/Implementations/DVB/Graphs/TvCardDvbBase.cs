@@ -3047,7 +3047,7 @@ namespace TvLibrary.Implementations.DVB
     private const TunerEpgGrabberProtocol PROTOCOLS_MEDIA_HIGHWAY = TunerEpgGrabberProtocol.MediaHighway1 | TunerEpgGrabberProtocol.MediaHighway2;
 
     private const string LANG_CODE_ENG = "eng";
-    private static readonly Regex MEDIA_HIGHWAY_SEASON_NAME = new Regex(@"^\s*(\d+)\s*\/\s*(\d+)\s*$");
+    private static readonly Regex MEDIA_HIGHWAY_SEASON_NAME = new Regex(@"^\s*(\d+)(\s*\/\s*(\d+))?\s*$");
 
     private static readonly IDictionary<byte, string> MAPPING_PROGRAM_CLASSIFICATIONS_MHW2_ESP = new Dictionary<byte, string>(8)
     {
@@ -4152,7 +4152,8 @@ namespace TvLibrary.Implementations.DVB
       IntPtr bufferSubThemeName = Marshal.AllocCoTaskMem(BUFFER_SIZE_SUB_THEME_NAME);
       try
       {
-        ulong eventId;
+        uint eventId;
+        byte version;
         ushort originalNetworkId;
         ushort transportStreamId;
         ushort serviceId;
@@ -4164,7 +4165,10 @@ namespace TvLibrary.Implementations.DVB
         uint episodeId;
         ushort episodeNumber;
         byte classification;
+        bool isHighDefinition;
+        bool hasSubtitles;
         bool isRecommended;
+        bool isPayPerView;
         uint payPerViewId;
         for (uint i = 0; i < eventCount; i++)
         {
@@ -4176,6 +4180,7 @@ namespace TvLibrary.Implementations.DVB
           ushort bufferSizeThemeName = BUFFER_SIZE_THEME_NAME;
           ushort bufferSizeSubThemeName = BUFFER_SIZE_SUB_THEME_NAME;
           bool result = _grabberMhw.GetEvent(i,
+                                              out version,
                                               out eventId,
                                               out originalNetworkId,
                                               out transportStreamId,
@@ -4201,7 +4206,10 @@ namespace TvLibrary.Implementations.DVB
                                               bufferSubThemeName,
                                               ref bufferSizeSubThemeName,
                                               out classification,
+                                              out isHighDefinition,
+                                              out hasSubtitles,
                                               out isRecommended,
+                                              out isPayPerView,
                                               out payPerViewId);
           if (!result)
           {
@@ -4226,7 +4234,7 @@ namespace TvLibrary.Implementations.DVB
           for (byte j = 0; j < descriptionLineCount; j++)
           {
             bufferSizeDescription = BUFFER_SIZE_DESCRIPTION;
-            if (!_grabberMhw.GetDescriptionLine(eventId, j, bufferDescription, ref bufferSizeDescription))
+            if (!_grabberMhw.GetDescriptionLine(i, j, bufferDescription, ref bufferSizeDescription))
             {
               Log.Log.Error("EPG DVB: failed to get MediaHighway description line, event index = {0}, event ID = {1}, line count = {2}, line index = {3}",
                             i, eventId, descriptionLineCount, j);
@@ -4289,6 +4297,16 @@ namespace TvLibrary.Implementations.DVB
 
           program.Text.Add(programText);
 
+          /*if (version == 2)
+          {
+            program.IsHighDefinition = isHighDefinition;
+            if (hasSubtitles)
+            {
+              // assumption: subtitles language matches the country
+              program.SubtitlesLanguages.Add(language.Code);
+            }
+          }*/
+
           ulong channelKey = ((ulong)originalNetworkId << 32) | ((ulong)transportStreamId << 16) | serviceId;
           List<EpgProgram> programs;
           if (!tempData.TryGetValue(channelKey, out programs))
@@ -4341,6 +4359,10 @@ namespace TvLibrary.Implementations.DVB
         if (bufferDescription != IntPtr.Zero)
         {
           Marshal.FreeCoTaskMem(bufferDescription);
+        }
+        if (bufferSeasonName != IntPtr.Zero)
+        {
+          Marshal.FreeCoTaskMem(bufferSeasonName);
         }
         if (bufferEpisodeName != IntPtr.Zero)
         {

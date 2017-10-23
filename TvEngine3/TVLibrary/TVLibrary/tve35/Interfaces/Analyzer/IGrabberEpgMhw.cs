@@ -77,6 +77,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     /// Retrieve a MediaHighway event's details from the grabber.
     /// </summary>
     /// <param name="index">The index of the event to retrieve. Should be in the range 0 to GetEventCount() - 1.</param>
+    /// <param name="version">The version of the Media Highway protocol which the event data conforms with.</param>
     /// <param name="eventId">The event's identifier. Should be unique, even across services.</param>
     /// <param name="originalNetworkId">The original network identifier of the service that the event is associated with.</param>
     /// <param name="transportStreamId">The transport stream identifier of the service that the event is associated with.</param>
@@ -102,13 +103,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     /// <param name="subThemeName">A buffer containing the name of the sub-theme that the event is associated with, encoded as DVB-compatible text. The caller must allocate and free this buffer.</param>
     /// <param name="subThemeNameBufferSize">As an input, the size of the <paramref name="subThemeName">sub-theme name buffer</paramref>; as an output, the consumed buffer size.</param>
     /// <param name="classification">The event's classification (parental rating). Value is <c>0xff</c> if not available.</param>
+    /// <param name="isHighDefinition">An indication of whether the event's video will be high definition. Only applicable for Media Highway version 2 events.</param>
+    /// <param name="hasSubtitles">An indication of whether the event will have subtitles available. Only applicable for Media Highway version 2 events.</param>
     /// <param name="isRecommended">An indication of whether the event is recommended by the provider.</param>
-    /// <param name="payPerViewId">The event's pay-per-view identifier, if any.</param>
+    /// <param name="isPayPerView">An indication of whether viewing the event requires payment.</param>
+    /// <param name="payPerViewId">The event's pay-per-view identifier, if any. Only applicable for Media Highway version 1 events.</param>
     /// <returns><c>true</c> if the event's details are successfully retrieved, otherwise <c>false</c></returns>
     [PreserveSig]
     [return: MarshalAs(UnmanagedType.I1)]
     bool GetEvent(uint index,
-                  out ulong eventId,
+                  out byte version,
+                  out uint eventId,
                   out ushort originalNetworkId,
                   out ushort transportStreamId,
                   out ushort serviceId,
@@ -133,22 +138,25 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
                   IntPtr subThemeName,
                   ref ushort subThemeNameBufferSize,
                   out byte classification,
-                  out bool isRecommended,
+                  [MarshalAs(UnmanagedType.I1)] out bool isHighDefinition,
+                  [MarshalAs(UnmanagedType.I1)] out bool hasSubtitles,
+                  [MarshalAs(UnmanagedType.I1)] out bool isRecommended,
+                  [MarshalAs(UnmanagedType.I1)] out bool isPayPerView,
                   out uint payPerViewId);
 
     /// <summary>
     /// Retrieve a description line for a MediaHighway event from the grabber.
     /// </summary>
-    /// <param name="eventId">The identifier of the event that the line is associated with.</param>
-    /// <param name="index">The index of the line to retrieve. Should be in the range 0 to descriptionLineCount - 1 for the event.</param>
+    /// <param name="eventIndex">The index of the event that the line is associated with. Should be in the range 0 to GetEventCount() - 1.</param>
+    /// <param name="lineIndex">The index of the line to retrieve. Should be in the range 0 to descriptionLineCount - 1 for the event.</param>
     /// <param name="line">A buffer containing the description line, encoded as DVB-compatible text. The caller must allocate and free this buffer.</param>
     /// <param name="lineBufferSize">As an input, the size of the <paramref name="line"/> buffer; as an output, the consumed buffer size.</param>
     /// <returns><c>true</c> if the description line is successfully retrieved, otherwise <c>false</c></returns>
     [PreserveSig]
     [return: MarshalAs(UnmanagedType.I1)]
-    bool GetDescriptionLine(ulong eventId,
-                              byte index,
-                              IntPtr line,
-                              ref ushort lineBufferSize);
+    bool GetDescriptionLine(uint eventIndex,
+                            byte lineIndex,
+                            IntPtr line,
+                            ref ushort lineBufferSize);
   }
 }
