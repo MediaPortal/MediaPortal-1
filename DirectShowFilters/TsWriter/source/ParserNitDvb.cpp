@@ -199,7 +199,7 @@ void CParserNitDvb::OnNewSection(const CSection& section)
       {
         if (m_unseenSectionsActual.size() == 0)
         {
-          m_recordsService.RemoveExpiredRecords(m_callBack);
+          m_recordsService.RemoveExpiredRecords(this);
           m_recordsTransmitter.RemoveExpiredRecords(m_callBack);
         }
 
@@ -412,7 +412,7 @@ void CParserNitDvb::OnNewSection(const CSection& section)
         delete[] groupDefaultAuthority;
         groupDefaultAuthority = NULL;
       }
-      CleanUpGroupIds(freesatChannelCategoryIds);
+      CleanUpMapOfVectors(freesatChannelCategoryIds);
       return;
     }
 
@@ -444,7 +444,7 @@ void CParserNitDvb::OnNewSection(const CSection& section)
           delete[] groupDefaultAuthority;
           groupDefaultAuthority = NULL;
         }
-        CleanUpGroupIds(freesatChannelCategoryIds);
+        CleanUpMapOfVectors(freesatChannelCategoryIds);
         return;
       }
 
@@ -495,7 +495,7 @@ void CParserNitDvb::OnNewSection(const CSection& section)
           delete[] groupDefaultAuthority;
           groupDefaultAuthority = NULL;
         }
-        CleanUpGroupIds(freesatChannelCategoryIds);
+        CleanUpMapOfVectors(freesatChannelCategoryIds);
         return;
       }
 
@@ -529,9 +529,9 @@ void CParserNitDvb::OnNewSection(const CSection& section)
                   availableInCountries,
                   unavailableInCountries);
       CleanUpMapOfMaps(logicalChannelNumbers);
-      CleanUpGroupIds(freesatRegionIds);
-      CleanUpGroupIds(openTvRegionIds);
-      CleanUpGroupIds(norDigChannelListIds);
+      CleanUpMapOfVectors(freesatRegionIds);
+      CleanUpMapOfVectors(openTvRegionIds);
+      CleanUpMapOfVectors(norDigChannelListIds);
       if (transportStreamDefaultAuthority != NULL)
       {
         delete[] transportStreamDefaultAuthority;
@@ -562,7 +562,7 @@ void CParserNitDvb::OnNewSection(const CSection& section)
       delete[] groupDefaultAuthority;
       groupDefaultAuthority = NULL;
     }
-    CleanUpGroupIds(freesatChannelCategoryIds);
+    CleanUpMapOfVectors(freesatChannelCategoryIds);
 
     if (pointer != endOfSection)
     {
@@ -581,7 +581,7 @@ void CParserNitDvb::OnNewSection(const CSection& section)
       {
         if (m_isOtherReady)
         {
-          m_recordsService.RemoveExpiredRecords(m_callBack);
+          m_recordsService.RemoveExpiredRecords(this);
           m_recordsTransmitter.RemoveExpiredRecords(m_callBack);
         }
         LogDebug(L"%s: actual ready, sections parsed = %llu, service count = %lu, transmitter count = %lu",
@@ -658,50 +658,26 @@ bool CParserNitDvb::GetService(unsigned short originalNetworkId,
                                 unsigned long* unavailableInCountries,
                                 unsigned char& unavailableInCountryCount) const
 {
-  unsigned short originalServiceId = serviceId;
   CEnterCriticalSection lock(m_section);
-  vector<CRecordNitService*> services;
-  while (true)
+
+  unsigned long long dvbId = ((unsigned long long)originalNetworkId << 32) | ((unsigned long long)transportStreamId << 16) | serviceId;
+  map<unsigned long long, vector<CRecordNitService*>*>::const_iterator servicesByDvbIdIt = m_cacheServiceRecordsByDvbId.find(dvbId);
+  if (servicesByDvbIdIt == m_cacheServiceRecordsByDvbId.end() || servicesByDvbIdIt->second->size() == 0)
   {
-    for (unsigned long i = 0; i < m_recordsService.GetRecordCount(); i++)
+    // Are there any common details for the entire transport stream?
+    dvbId &= 0xffffffffffff0000;
+    servicesByDvbIdIt = m_cacheServiceRecordsByDvbId.find(dvbId);
+    if (servicesByDvbIdIt == m_cacheServiceRecordsByDvbId.end() || servicesByDvbIdIt->second->size() == 0)
     {
-      IRecord* record = NULL;
-      if (!m_recordsService.GetRecordByIndex(i, &record) || record == NULL)
-      {
-        LogDebug(L"%s: invalid service index, index = %lu, record count = %lu",
-                  m_name, i, m_recordsService.GetRecordCount());
-        continue;
-      }
-
-      CRecordNitService* recordService = dynamic_cast<CRecordNitService*>(record);
-      if (
-        recordService != NULL &&
-        recordService->OriginalNetworkId == originalNetworkId &&
-        recordService->TransportStreamId == transportStreamId &&
-        recordService->ServiceId == serviceId
-      )
-      {
-        services.push_back(recordService);
-      }
+      // Not an error.
+      return false;
     }
-
-    if (services.size() == 0)
-    {
-      if (serviceId == 0)
-      {
-        // Not an error.
-        return false;
-      }
-      serviceId = 0;
-      continue;
-    }
-    break;
   }
 
   vector<unsigned long> expandedRegionIds;
-  if (services.size() == 1)
+  if (servicesByDvbIdIt->second->size() == 1)
   {
-    CRecordNitService* record = services[0];
+    CRecordNitService* record = servicesByDvbIdIt->second->at(0);
     freesatChannelId = record->FreesatChannelId;
     openTvChannelId = record->OpenTvChannelId;
 
@@ -839,8 +815,8 @@ bool CParserNitDvb::GetService(unsigned short originalNetworkId,
   map<unsigned char, bool> tempNorDigChannelListIds;
   map<unsigned long, bool> tempAvailableInCountries;
   map<unsigned long, bool> tempUnavailableInCountries;
-  vector<CRecordNitService*>::const_iterator it = services.begin();
-  for ( ; it != services.end(); it++)
+  vector<CRecordNitService*>::const_iterator it = servicesByDvbIdIt->second->begin();
+  for ( ; it != servicesByDvbIdIt->second->end(); it++)
   {
     CRecordNitService* record = *it;
     if (record == NULL)
@@ -1120,41 +1096,25 @@ bool CParserNitDvb::GetDefaultAuthority(unsigned short originalNetworkId,
                                         unsigned short& defaultAuthorityBufferSize) const
 {
   CEnterCriticalSection lock(m_section);
-  char* preferredDefaultAuthority = NULL;
-  for (unsigned long i = 0; i < m_recordsService.GetRecordCount(); i++)
-  {
-    IRecord* record = NULL;
-    if (!m_recordsService.GetRecordByIndex(i, &record) || record == NULL)
-    {
-      LogDebug(L"%s: invalid service index, index = %lu, record count = %lu",
-                m_name, i, m_recordsService.GetRecordCount());
-      continue;
-    }
 
-    CRecordNitService* recordService = dynamic_cast<CRecordNitService*>(record);
-    if (
-      recordService != NULL &&
-      recordService->OriginalNetworkId == originalNetworkId &&
-      recordService->TransportStreamId == transportStreamId &&
-      recordService->DefaultAuthority != NULL
-    )
+  unsigned long long dvbId = ((unsigned long long)originalNetworkId << 32) | ((unsigned long long)transportStreamId << 16) | serviceId;
+  map<unsigned long long, vector<CRecordNitService*>*>::const_iterator servicesByDvbIdIt = m_cacheServiceRecordsByDvbId.find(dvbId);
+  if (servicesByDvbIdIt == m_cacheServiceRecordsByDvbId.end() || servicesByDvbIdIt->second->size() == 0)
+  {
+    // Is the default authority common for the entire transport stream?
+    dvbId &= 0xffffffffffff0000;
+    servicesByDvbIdIt = m_cacheServiceRecordsByDvbId.find(dvbId);
+    if (servicesByDvbIdIt == m_cacheServiceRecordsByDvbId.end() || servicesByDvbIdIt->second->size() == 0)
     {
-      if (recordService->ServiceId == 0)
-      {
-        preferredDefaultAuthority = recordService->DefaultAuthority;
-        continue;
-      }
-      if (recordService->ServiceId == serviceId)
-      {
-        preferredDefaultAuthority = recordService->DefaultAuthority;
-        break;
-      }
+      // Not an error. Just means "default authority not found".
+      return false;
     }
   }
 
+  char* preferredDefaultAuthority = servicesByDvbIdIt->second->at(0)->DefaultAuthority;
   if (preferredDefaultAuthority == NULL)
   {
-    // Not an error. Just means "default authority not found".
+    // Not an error. Just means "default authority not available from here".
     return false;
   }
 
@@ -1338,6 +1298,7 @@ void CParserNitDvb::CleanUp()
   CleanUpNames(m_groupNames);
   m_recordsService.RemoveAllRecords();
   m_recordsTransmitter.RemoveAllRecords();
+  CleanUpMapOfVectors(m_cacheServiceRecordsByDvbId);
 }
 
 template<class T> void CParserNitDvb::CleanUpNames(map<T, map<unsigned long, char*>*>& names)
@@ -1356,19 +1317,19 @@ template<class T> void CParserNitDvb::CleanUpNames(map<T, map<unsigned long, cha
   names.clear();
 }
 
-template<class T> void CParserNitDvb::CleanUpGroupIds(map<unsigned short, vector<T>*>& groupIds)
+template<class T1, class T2> void CParserNitDvb::CleanUpMapOfVectors(map<T1, vector<T2>*>& mapOfVectors)
 {
-  map<unsigned short, vector<T>*>::iterator channelIt = groupIds.begin();
-  for ( ; channelIt != groupIds.end(); channelIt++)
+  map<T1, vector<T2>*>::iterator mapIt = mapOfVectors.begin();
+  for ( ; mapIt != mapOfVectors.end(); mapIt++)
   {
-    vector<T>* groupIdSet = channelIt->second;
-    if (groupIdSet != NULL)
+    vector<T2>* v = mapIt->second;
+    if (v != NULL)
     {
-      delete groupIdSet;
-      channelIt->second = NULL;
+      delete v;
+      mapIt->second = NULL;
     }
   }
-  groupIds.clear();
+  mapOfVectors.clear();
 }
 
 void CParserNitDvb::CleanUpMapOfMaps(map<unsigned short, map<unsigned long, unsigned short>*>& mapOfMaps)
@@ -1777,7 +1738,32 @@ void CParserNitDvb::AddServices(unsigned char tableId,
         continue;
       }
     }
-    m_recordsService.AddOrUpdateRecord((IRecord**)&record, m_callBack);
+    if (!m_recordsService.AddOrUpdateRecord((IRecord**)&record, m_callBack))
+    {
+      continue;
+    }
+
+    // Add new service records to the cache.
+    unsigned long long dvbId = ((unsigned long long)originalNetworkId << 32) | ((unsigned long long)transportStreamId << 16) | serviceIt->first;
+    vector<CRecordNitService*>* servicesByDvbId = NULL;
+    map<unsigned long long, vector<CRecordNitService*>*>::iterator servicesByDvbIdIt = m_cacheServiceRecordsByDvbId.find(dvbId);
+    if (servicesByDvbIdIt != m_cacheServiceRecordsByDvbId.end() && servicesByDvbIdIt->second != NULL)
+    {
+      servicesByDvbId = servicesByDvbIdIt->second;
+    }
+    else
+    {
+      servicesByDvbId = new vector<CRecordNitService*>();
+      if (servicesByDvbId == NULL)
+      {
+        LogDebug(L"%s: failed to allocate a services-by-DVB-ID cache vector, table ID = 0x%hhx, extension ID = %hu, ONID = %hu, TSID = %hu, service ID = %hu",
+                  m_name, tableId, groupId, originalNetworkId,
+                  transportStreamId, serviceIt->first);
+        continue;
+      }
+      m_cacheServiceRecordsByDvbId[dvbId] = servicesByDvbId;
+    }
+    servicesByDvbId->push_back(record);
   }
 }
 
@@ -2146,7 +2132,7 @@ bool CParserNitDvb::DecodeExtensionDescriptors(const unsigned char* sectionData,
       }
       CleanUpNames(targetRegionNames);
       CleanUpNames(freesatRegionNames);
-      CleanUpGroupIds(freesatChannelCategories);
+      CleanUpMapOfVectors(freesatChannelCategories);
       CleanUpNames(freesatChannelCategoryNames);
     }
 
@@ -2382,10 +2368,10 @@ bool CParserNitDvb::DecodeTransportStreamDescriptors(const unsigned char* sectio
     if (!result)
     {
       CleanUpMapOfMaps(logicalChannelNumbers);
-      CleanUpGroupIds(norDigChannelListIds);
+      CleanUpMapOfVectors(norDigChannelListIds);
       CUtils::CleanUpStringSet(norDigChannelListNames);
-      CleanUpGroupIds(openTvRegionIds);
-      CleanUpGroupIds(freesatRegionIds);
+      CleanUpMapOfVectors(openTvRegionIds);
+      CleanUpMapOfVectors(freesatRegionIds);
       if (*defaultAuthority != NULL)
       {
         delete[] *defaultAuthority;
@@ -2805,7 +2791,7 @@ bool CParserNitDvb::DecodeFreesatChannelCategoryMappingDescriptor(const unsigned
       {
         LogDebug(L"%s: invalid Freesat channel category mapping descriptor, descriptor length = %hhu, pointer = %hu, channel loop length = %hhu, flags = 0x%hhx, category ID = %hu",
                   dataLength, pointer, channelLoopLength, flags, categoryId);
-        CleanUpGroupIds(channels);
+        CleanUpMapOfVectors(channels);
         return false;
       }
 
@@ -3718,7 +3704,7 @@ bool CParserNitDvb::DecodeNorDigLogicalChannelDescriptorVersion2(const unsigned 
                     m_name, dataLength, pointer, channelListNameLength,
                     channelListId);
           CUtils::CleanUpStringSet(channelListNames);
-          CleanUpGroupIds(channelListIds);
+          CleanUpMapOfVectors(channelListIds);
           return false;
         }
 
@@ -3761,7 +3747,7 @@ bool CParserNitDvb::DecodeNorDigLogicalChannelDescriptorVersion2(const unsigned 
                   m_name, dataLength, pointer, serviceListLength,
                   channelListId, (char*)&countryCode);
         CUtils::CleanUpStringSet(channelListNames);
-        CleanUpGroupIds(channelListIds);
+        CleanUpMapOfVectors(channelListIds);
         return false;
       }
 
@@ -3940,7 +3926,7 @@ bool CParserNitDvb::DecodeFreesatChannelDescriptor(const unsigned char* data,
         LogDebug(L"%s: invalid Freesat channel descriptor, descriptor length = %hhu, pointer = %hu, LCN loop length = %hhu, service ID = %hu, channel ID = %hu",
                   m_name, dataLength, pointer, lcnLoopLength, serviceId,
                   channelId);
-        CleanUpGroupIds(regionIds);
+        CleanUpMapOfVectors(regionIds);
         return false;
       }
 
@@ -4258,4 +4244,91 @@ unsigned long CParserNitDvb::GetLinkageKey(unsigned short originalNetworkId,
                                             unsigned short transportStreamId)
 {
   return (originalNetworkId << 16) | transportStreamId;
+}
+
+void CParserNitDvb::OnTableComplete(unsigned char tableId)
+{
+}
+
+void CParserNitDvb::OnNitServiceRemoved(unsigned char tableId,
+                                        unsigned short tableIdExtension,
+                                        unsigned short originalNetworkId,
+                                        unsigned short transportStreamId,
+                                        unsigned short serviceId,
+                                        unsigned short freesatChannelId,
+                                        unsigned short openTvChannelId,
+                                        bool visibleInGuide,
+                                        const map<unsigned long, unsigned short>& logicalChannelNumbers,
+                                        const char* defaultAuthority,
+                                        const vector<unsigned long>& availableInCells,
+                                        const vector<unsigned long long>& targetRegionIds,
+                                        const vector<unsigned short>& freesatRegionIds,
+                                        const vector<unsigned short>& openTvRegionIds,
+                                        const vector<unsigned short>& freesatChannelCategoryIds,
+                                        const vector<unsigned char>& norDigChannelListIds,
+                                        const vector<unsigned long>& availableInCountries,
+                                        const vector<unsigned long>& unavailableInCountries)
+{
+  if (m_callBack != NULL)
+  {
+    m_callBack->OnNitServiceRemoved(tableId,
+                                    tableIdExtension,
+                                    originalNetworkId,
+                                    transportStreamId,
+                                    serviceId,
+                                    freesatChannelId,
+                                    openTvChannelId,
+                                    visibleInGuide,
+                                    logicalChannelNumbers,
+                                    defaultAuthority,
+                                    availableInCells,
+                                    targetRegionIds,
+                                    freesatRegionIds,
+                                    openTvRegionIds,
+                                    freesatChannelCategoryIds,
+                                    norDigChannelListIds,
+                                    availableInCountries,
+                                    unavailableInCountries);
+  }
+
+  unsigned long long dvbId = ((unsigned long long)originalNetworkId << 32) | ((unsigned long long)transportStreamId << 16) | serviceId;
+  map<unsigned long long, vector<CRecordNitService*>*>::iterator servicesByDvbIdIt = m_cacheServiceRecordsByDvbId.find(dvbId);
+  if (servicesByDvbIdIt == m_cacheServiceRecordsByDvbId.end())
+  {
+    return;
+  }
+
+  vector<CRecordNitService*>* servicesByDvbId = servicesByDvbIdIt->second;
+  if (servicesByDvbId != NULL)
+  {
+    vector<CRecordNitService*>::iterator serviceIt = servicesByDvbId->begin();
+    while (serviceIt != servicesByDvbId->end())
+    {
+      CRecordNitService* recordService = *serviceIt;
+      if (recordService == NULL)
+      {
+        serviceIt = servicesByDvbId->erase(serviceIt);
+        continue;
+      }
+      if (
+        recordService->TableId == tableId &&
+        recordService->TableIdExtension == tableIdExtension
+      )
+      {
+        serviceIt = servicesByDvbId->erase(serviceIt);
+        break;
+      }
+      serviceIt++;
+    }
+
+    if (servicesByDvbId->size() != 0)
+    {
+      return;
+    }
+
+    delete servicesByDvbId;
+    servicesByDvbIdIt->second = NULL;
+  }
+
+  m_cacheServiceRecordsByDvbId.erase(servicesByDvbIdIt);
 }

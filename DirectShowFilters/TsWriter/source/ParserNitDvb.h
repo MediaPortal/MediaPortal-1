@@ -41,7 +41,8 @@ using namespace std;
 
 extern void LogDebug(const wchar_t* fmt, ...);
 
-class CParserNitDvb : public CSectionDecoder, public IDefaultAuthorityProvider
+class CParserNitDvb
+  : public CSectionDecoder, public IDefaultAuthorityProvider, ICallBackNitDvb
 {
   public:
     CParserNitDvb();
@@ -1065,7 +1066,7 @@ class CParserNitDvb : public CSectionDecoder, public IDefaultAuthorityProvider
     };
 
     template<class T> static void CleanUpNames(map<T, map<unsigned long, char*>*>& names);
-    template<class T> static void CleanUpGroupIds(map<unsigned short, vector<T>*>& groupIds);
+    template<class T1, class T2> static void CleanUpMapOfVectors(map<T1, vector<T2>*>& mapOfVectors);
     static void CleanUpMapOfMaps(map<unsigned short, map<unsigned long, unsigned short>*>& mapOfMaps);
 
     static void ExpandRegionIds(const vector<unsigned short>& regionIds,
@@ -1272,6 +1273,26 @@ class CParserNitDvb : public CSectionDecoder, public IDefaultAuthorityProvider
     static unsigned long GetLinkageKey(unsigned short originalNetworkId,
                                         unsigned short transportStreamId);
 
+    void OnTableComplete(unsigned char tableId);
+    void OnNitServiceRemoved(unsigned char tableId,
+                              unsigned short tableIdExtension,
+                              unsigned short originalNetworkId,
+                              unsigned short transportStreamId,
+                              unsigned short serviceId,
+                              unsigned short freesatChannelId,
+                              unsigned short openTvChannelId,
+                              bool visibleInGuide,
+                              const map<unsigned long, unsigned short>& logicalChannelNumbers,
+                              const char* defaultAuthority,
+                              const vector<unsigned long>& availableInCells,
+                              const vector<unsigned long long>& targetRegionIds,
+                              const vector<unsigned short>& freesatRegionIds,
+                              const vector<unsigned short>& openTvRegionIds,
+                              const vector<unsigned short>& freesatChannelCategoryIds,
+                              const vector<unsigned char>& norDigChannelListIds,
+                              const vector<unsigned long>& availableInCountries,
+                              const vector<unsigned long>& unavailableInCountries);
+
     vector<unsigned long long> m_seenSectionsActual;
     vector<unsigned long long> m_unseenSectionsActual;
     vector<unsigned long long> m_seenSectionsOther;
@@ -1288,4 +1309,5 @@ class CParserNitDvb : public CSectionDecoder, public IDefaultAuthorityProvider
     unsigned short m_nextTableKey;
     CRecordStore m_recordsService;
     CRecordStore m_recordsTransmitter;
+    map<unsigned long long, vector<CRecordNitService*>*> m_cacheServiceRecordsByDvbId;
 };
