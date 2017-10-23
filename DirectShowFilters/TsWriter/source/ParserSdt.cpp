@@ -749,6 +749,11 @@ bool CParserSdt::GetDefaultAuthority(unsigned short originalNetworkId,
               serviceId);
     return false;
   }
+  if (serviceRecord->DefaultAuthority == NULL)
+  {
+    // Not an error. Just means "default authority not available from here".
+    return false;
+  }
 
   unsigned short requiredBufferSize = 0;
   if (!CUtils::CopyStringToBuffer(serviceRecord->DefaultAuthority,
