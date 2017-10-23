@@ -1,6 +1,6 @@
-﻿#region Copyright (C) 2005-2011 Team MediaPortal
+﻿#region Copyright (C) 2005-2017 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2017 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -302,6 +302,14 @@ namespace MediaPortal.GUI.Library
       if (value is DateTime) return (DateTime)value;
       DateTime result;
       return ((value is string) && (DateTime.TryParse((string)value, out result))) ? result : DateTime.MinValue;
+    }
+
+    [XMLSkinFunction("ctimespan")]
+    public static TimeSpan ConvertToTimeSpan(object value)
+    {
+      if (value is TimeSpan) return (TimeSpan)value;
+      TimeSpan result;
+      return ((value is string) && (TimeSpan.TryParse((string)value, out result))) ? result : TimeSpan.Zero;
     }
 
     #endregion
