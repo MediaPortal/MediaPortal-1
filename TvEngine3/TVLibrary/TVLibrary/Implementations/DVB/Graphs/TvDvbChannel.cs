@@ -967,18 +967,18 @@ namespace TvLibrary.Implementations.DVB
       //_tsFilterInterface.PmtSetCallBack(_subChannelIndex, this);
       //_tsFilterInterface.PmtSetPmtPid(_subChannelIndex, pmtPid, serviceId);
 
-      _waitingForServiceId = serviceId;
-      if (_tuner != null)
-      {
-        _tuner.TriggerPmtAndCatCallBacks(_subChannelId);
-      }
-
       if (_mdplugs != null)
       {
         Log.Log.Write("subch:{0} set ca grabber ", _subChannelId);
         _listenCA = true;
         //_tsFilterInterface.CaSetCallBack(_subChannelIndex, this);
         //_tsFilterInterface.CaReset(_subChannelIndex);
+      }
+
+      _waitingForServiceId = serviceId;
+      if (_tuner != null)
+      {
+        _tuner.TriggerPmtAndCatCallBacks(_subChannelId);
       }
 
       OnAfterTuneEvent();
