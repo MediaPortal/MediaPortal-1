@@ -487,6 +487,7 @@ STDMETHODIMP_(void) CParserEitDvb::SetProtocols(bool grabDvbEit,
 void CParserEitDvb::Reset(bool enableCrcCheck)
 {
   LogDebug(L"EIT DVB: reset");
+  CEnterCriticalSection lock(m_section);
   m_enableCrcCheck = enableCrcCheck;
   PrivateReset(true);
   if (m_callBackGrabber != NULL)
@@ -1774,8 +1775,6 @@ void CParserEitDvb::OnNewSection(unsigned short pid, unsigned char tableId, cons
 
 void CParserEitDvb::PrivateReset(bool removeFreesatDecoders)
 {
-  CEnterCriticalSection lock(m_section);
-
   AddOrResetDecoder(PID_EIT_DVB, m_enableCrcCheck);
   AddOrResetDecoder(PID_EIT_VIASAT_SWEDEN, m_enableCrcCheck);
   AddOrResetDecoder(PID_EIT_DISH, m_enableCrcCheck);
