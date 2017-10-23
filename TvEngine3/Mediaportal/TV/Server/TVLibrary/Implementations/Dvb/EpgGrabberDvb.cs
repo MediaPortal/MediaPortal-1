@@ -48,7 +48,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
     private const TunerEpgGrabberProtocol PROTOCOLS_MEDIA_HIGHWAY = TunerEpgGrabberProtocol.MediaHighway1 | TunerEpgGrabberProtocol.MediaHighway2;
 
     private const string LANG_CODE_ENG = "eng";
-    private static readonly Regex MEDIA_HIGHWAY_SEASON_NAME = new Regex(@"^\s*(\d+)\s*\/\s*(\d+)\s*$");
+    private static readonly Regex MEDIA_HIGHWAY_SEASON_NAME = new Regex(@"^\s*(\d+)(\s*\/\s*(\d+))?\s*$");
 
     private static readonly IDictionary<byte, string> MAPPING_PROGRAM_CLASSIFICATIONS_MHW2_ESP = new Dictionary<byte, string>(8)
     {
@@ -1154,7 +1154,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
       IntPtr bufferSubThemeName = Marshal.AllocCoTaskMem(BUFFER_SIZE_SUB_THEME_NAME);
       try
       {
-        ulong eventId;
+        uint eventId;
+        byte version;
         ushort originalNetworkId;
         ushort transportStreamId;
         ushort serviceId;
@@ -1165,7 +1166,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
         uint episodeId;
         ushort episodeNumber;
         byte classification;
+        bool isHighDefinition;
+        bool hasSubtitles;
         bool isRecommended;
+        bool isPayPerView;
         uint payPerViewId;
         for (uint i = 0; i < eventCount; i++)
         {
@@ -1177,6 +1181,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
           ushort bufferSizeThemeName = BUFFER_SIZE_THEME_NAME;
           ushort bufferSizeSubThemeName = BUFFER_SIZE_SUB_THEME_NAME;
           bool result = _grabberMhw.GetEvent(i,
+                                              out version,
                                               out eventId,
                                               out originalNetworkId,
                                               out transportStreamId,
@@ -1202,7 +1207,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
                                               bufferSubThemeName,
                                               ref bufferSizeSubThemeName,
                                               out classification,
+                                              out isHighDefinition,
+                                              out hasSubtitles,
                                               out isRecommended,
+                                              out isPayPerView,
                                               out payPerViewId);
           if (!result)
           {
@@ -1226,7 +1234,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
           for (byte j = 0; j < descriptionLineCount; j++)
           {
             bufferSizeDescription = BUFFER_SIZE_DESCRIPTION;
-            if (!_grabberMhw.GetDescriptionLine(eventId, j, bufferDescription, ref bufferSizeDescription))
+            if (!_grabberMhw.GetDescriptionLine(i, j, bufferDescription, ref bufferSizeDescription))
             {
               this.LogWarn("EPG DVB: failed to get MediaHighway description line, event index = {0}, event ID = {1}, line count = {2}, line index = {3}",
                             i, eventId, descriptionLineCount, j);
@@ -1284,6 +1292,16 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
             program.Classifications.Add("MediaHighway", classificationString);
           }
 
+          if (version == 2)
+          {
+            program.IsHighDefinition = isHighDefinition;
+            if (hasSubtitles)
+            {
+              // assumption: subtitles language matches the country
+              program.SubtitlesLanguages.Add(language.Code);
+            }
+          }
+
           ulong channelKey = ((ulong)originalNetworkId << 32) | ((ulong)transportStreamId << 16) | serviceId;
           List<EpgProgram> programs;
           if (!tempData.TryGetValue(channelKey, out programs))
@@ -1331,6 +1349,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
         if (bufferDescription != IntPtr.Zero)
         {
           Marshal.FreeCoTaskMem(bufferDescription);
+        }
+        if (bufferSeasonName != IntPtr.Zero)
+        {
+          Marshal.FreeCoTaskMem(bufferSeasonName);
         }
         if (bufferEpisodeName != IntPtr.Zero)
         {

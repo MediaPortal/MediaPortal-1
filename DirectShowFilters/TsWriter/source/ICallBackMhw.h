@@ -39,10 +39,13 @@ class ICallBackMhw
                                     unsigned long long startDateTime,
                                     unsigned short duration,
                                     const char* title,
+                                    bool isPayPerView,
                                     unsigned long payPerViewId,
                                     bool isTerrestrial,
                                     unsigned long programId,
                                     unsigned long showingId,
+                                    bool isHighDefinition,
+                                    bool hasSubtitles,
                                     unsigned char themeId,
                                     unsigned char subThemeId) = 0;
 };

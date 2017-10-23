@@ -149,7 +149,8 @@ STDMETHODIMP CParserMhw::NonDelegatingQueryInterface(REFIID iid, void** ppv)
 void CParserMhw::SetTransportStream(unsigned short originalNetworkId,
                                     unsigned short transportStreamId)
 {
-  LogDebug(L"MHW: set transport stream, ONID = %hu, TSID = %hu", originalNetworkId);
+  LogDebug(L"MHW: set transport stream, ONID = %hu, TSID = %hu",
+            originalNetworkId, transportStreamId);
 
   MhwProvider newProvider = DetermineProvider(originalNetworkId, transportStreamId);
 
@@ -249,7 +250,7 @@ STDMETHODIMP_(void) CParserMhw::SetProtocols(bool grabMhw1, bool grabMhw2)
 
   if (pidsAdd.size() > 0 || pidsRemove.size() > 0)
   {
-    Reset(m_enableCrcCheck);
+    PrivateReset(false);
     if (m_callBackPidConsumer != NULL)
     {
       if (pidsRemove.size() > 0)
@@ -268,70 +269,8 @@ void CParserMhw::Reset(bool enableCrcCheck)
 {
   LogDebug(L"MHW: reset");
   CEnterCriticalSection lock(m_section);
-
   m_enableCrcCheck = enableCrcCheck;
-  AddOrResetDecoder(PID_MHW1_EVENTS, enableCrcCheck);
-  AddOrResetDecoder(PID_MHW1_OTHER, enableCrcCheck);
-  AddOrResetDecoder(PID_MHW2_CHANNELS_AND_THEMES, enableCrcCheck);
-  AddOrResetDecoder(PID_MHW2_DESCRIPTIONS, enableCrcCheck);
-  AddOrResetDecoder(PID_MHW2_EVENTS_BY_CHANNEL_SATELLITE, enableCrcCheck);
-  AddOrResetDecoder(PID_MHW2_EVENTS_BY_CHANNEL_TERRESTRIAL, enableCrcCheck);
-  //AddOrResetDecoder(PID_MHW2_EVENTS_BY_THEME, enableCrcCheck);
-  AddOrResetDecoder(PID_MHW2_PROGRAMS_AND_SERIES, enableCrcCheck);
-  //AddOrResetDecoder(PID_MHW2_THEME_DESCRIPTIONS, enableCrcCheck);
-
-  m_recordsChannel.RemoveAllRecords();
-  m_recordsChannelCategory.RemoveAllRecords();
-  m_recordsDescription.RemoveAllRecords();
-  m_recordsEventSatellite.RemoveAllRecords();
-  m_recordsEventTerrestrial.RemoveAllRecords();
-  m_recordsProgram.RemoveAllRecords();
-  m_recordsSeries.RemoveAllRecords();
-  m_recordsShowing.RemoveAllRecords();
-  m_recordsTheme.RemoveAllRecords();
-  m_recordsThemeDescription.RemoveAllRecords();
-
-  m_previousSegmentEventsByChannelSatellite = 0;
-  m_previousSegmentEventsByChannelTerrestrial = 0;
-  m_previousSegmentEventsByTheme = 0;
-  m_previousEventIdSatellite = 0;
-  m_previousEventIdTerrestrial = 0;
-  m_previousDescriptionId = -1;
-  m_previousProgramSectionId = -1;
-  m_previousSeriesSectionId = -1;
-  m_firstDescriptionId = 0xffffffff;
-
-  m_currentHour = -1;
-  m_referenceDateTime = 0;
-  m_referenceDayOfWeek = 0;
-
-  m_channelIdLookup.clear();
-
-  if (m_descriptionTableBuffer != NULL)
-  {
-    delete[] m_descriptionTableBuffer;
-    m_descriptionTableBuffer = NULL;
-  }
-  m_descriptionTableBufferSize = 0;
-  m_descriptionSectionNumber = 0;
-
-  if (m_themeDescriptionTableBuffer != NULL)
-  {
-    delete[] m_themeDescriptionTableBuffer;
-    m_themeDescriptionTableBuffer = NULL;
-  }
-  m_themeDescriptionTableBufferSize = 0;
-  m_themeDescriptionSectionNumber = 0;
-
-  m_currentEvent = NULL;
-  m_currentEventIndex = 0xffffffff;
-  m_currentDescription = NULL;
-
-  m_provider = MhwProviderUnknown;
-  m_isSeen = false;
-  m_isReady = false;
-  m_completeTime = clock();
-
+  PrivateReset(true);
   if (m_callBackGrabber != NULL)
   {
     m_callBackGrabber->OnReset(PID_MHW_CALL_BACK);
@@ -445,7 +384,10 @@ STDMETHODIMP_(bool) CParserMhw::GetEvent(unsigned long index,
                                           char* subThemeName,
                                           unsigned short* subThemeNameBufferSize,
                                           unsigned char* classification,
+                                          bool* isHighDefinition,
+                                          bool* hasSubtitles,
                                           bool* isRecommended,
+                                          bool* isPayPerView,
                                           unsigned long* payPerViewId)
 {
   CEnterCriticalSection lock(m_section);
@@ -466,7 +408,10 @@ STDMETHODIMP_(bool) CParserMhw::GetEvent(unsigned long index,
   *episodeId = m_currentEvent->ProgramId;
   *episodeNumber = 0;
   *classification = 0xff;
+  *isHighDefinition = m_currentEvent->IsHighDefinition;
+  *hasSubtitles = m_currentEvent->HasSubtitles;
   *isRecommended = false;
+  *isPayPerView = m_currentEvent->IsPayPerView;
   *payPerViewId = m_currentEvent->PayPerViewId;
 
   unsigned short requiredBufferSize = 0;
@@ -532,73 +477,99 @@ STDMETHODIMP_(bool) CParserMhw::GetEvent(unsigned long index,
   // Careful with these two! The correct record to use depends on MHW version
   // *and* parsed section.
   unsigned char themeId = m_currentEvent->ThemeId;
-  unsigned char subThemeId = m_currentDescription->SubThemeId;
+  unsigned char subThemeId = 0;
+  bool hasTheme = true;
+  bool hasSubTheme = false;
   if (m_currentEvent->Version == 2)
   {
-    themeId = m_currentDescription->ThemeId;
+    if (
+      m_currentDescription != NULL &&
+      m_currentDescription->ThemeDescriptionId != 0
+    )
+    {
+      themeId = m_currentDescription->ThemeId;
+      subThemeId = m_currentDescription->SubThemeId;
+      hasSubTheme = true;
+    }
+    else
+    {
+      // Version 2 terrestrial events [always?] seem to have theme/sub-theme ID
+      // 12/1 or 13/0 and theme description ID 0. These seem to be indications
+      // that the theme isn't available in the theme section.
+      hasTheme = false;
+      hasSubTheme = false;
+      CUtils::CopyStringToBuffer(NULL, themeName, *themeNameBufferSize, requiredBufferSize);
+      CUtils::CopyStringToBuffer(NULL, subThemeName, *subThemeNameBufferSize, requiredBufferSize);
+    }
   }
 
-  if (
-    m_recordsTheme.GetRecordByKey((m_currentEvent->Version << 16) | (themeId << 8), &record) &&
-    record != NULL
-  )
+  if (hasTheme)
   {
-    CRecordMhwTheme* recordTheme = dynamic_cast<CRecordMhwTheme*>(record);
-    if (recordTheme == NULL)
+    if (
+      m_recordsTheme.GetRecordByKey((m_currentEvent->Version << 16) | (themeId << 8), &record) &&
+      record != NULL
+    )
     {
-      LogDebug(L"MHW: invalid theme record, index = %lu, version = %hhu, event ID = %lu, theme ID = %hhu",
+      CRecordMhwTheme* recordTheme = dynamic_cast<CRecordMhwTheme*>(record);
+      if (recordTheme == NULL)
+      {
+        LogDebug(L"MHW: invalid theme record, index = %lu, version = %hhu, event ID = %lu, theme ID = %hhu",
+                  index, m_currentEvent->Version, m_currentEvent->EventId,
+                  themeId);
+        CUtils::CopyStringToBuffer(NULL, themeName, *themeNameBufferSize, requiredBufferSize);
+      }
+      else if (!CUtils::CopyStringToBuffer(recordTheme->Name,
+                                            themeName,
+                                            *themeNameBufferSize,
+                                            requiredBufferSize))
+      {
+        LogDebug(L"MHW: insufficient theme name buffer size, index = %lu, version = %hhu, event ID = %lu, theme ID = %hhu, required size = %hu, actual size = %hu",
+                  index, m_currentEvent->Version, m_currentEvent->EventId,
+                  themeId, requiredBufferSize, *themeNameBufferSize);
+      }
+    }
+    else
+    {
+      LogDebug(L"MHW: invalid theme identifiers, index = %lu, version = %hhu, event ID = %lu, theme ID = %hhu",
                 index, m_currentEvent->Version, m_currentEvent->EventId,
                 themeId);
       CUtils::CopyStringToBuffer(NULL, themeName, *themeNameBufferSize, requiredBufferSize);
     }
-    else if (!CUtils::CopyStringToBuffer(recordTheme->Name,
-                                          themeName,
-                                          *themeNameBufferSize,
-                                          requiredBufferSize))
-    {
-      LogDebug(L"MHW: insufficient theme name buffer size, index = %lu, version = %hhu, event ID = %lu, theme ID = %hhu, required size = %hu, actual size = %hu",
-                index, m_currentEvent->Version, m_currentEvent->EventId,
-                themeId, requiredBufferSize, *themeNameBufferSize);
-    }
-  }
-  else
-  {
-    LogDebug(L"MHW: invalid theme identifiers, index = %lu, version = %hhu, event ID = %lu, theme ID = %hhu",
-              index, m_currentEvent->Version, m_currentEvent->EventId,
-              themeId);
-    CUtils::CopyStringToBuffer(NULL, themeName, *themeNameBufferSize, requiredBufferSize);
   }
 
-  if (
-    m_recordsTheme.GetRecordByKey((m_currentEvent->Version << 16) | (themeId << 8) | subThemeId, &record) &&
-    record != NULL
-  )
+  if (hasSubTheme)
   {
-    CRecordMhwTheme* recordTheme = dynamic_cast<CRecordMhwTheme*>(record);
-    if (recordTheme == NULL)
+    if (
+      m_recordsTheme.GetRecordByKey((m_currentEvent->Version << 16) | (themeId << 8) | subThemeId, &record) &&
+      record != NULL
+    )
     {
-      LogDebug(L"MHW: invalid sub-theme record, index = %lu, version = %hhu, event ID = %lu, theme ID = %hhu, sub-theme ID = %hhu",
+      CRecordMhwTheme* recordTheme = dynamic_cast<CRecordMhwTheme*>(record);
+      if (recordTheme == NULL)
+      {
+        LogDebug(L"MHW: invalid sub-theme record, index = %lu, version = %hhu, event ID = %lu, theme ID = %hhu, sub-theme ID = %hhu",
+                  index, m_currentEvent->Version, m_currentEvent->EventId,
+                  themeId, subThemeId);
+        CUtils::CopyStringToBuffer(NULL, subThemeName, *subThemeNameBufferSize, requiredBufferSize);
+      }
+      else if (!CUtils::CopyStringToBuffer(recordTheme->Name,
+                                            subThemeName,
+                                            *subThemeNameBufferSize,
+                                            requiredBufferSize))
+      {
+        LogDebug(L"MHW: insufficient sub-theme name buffer size, index = %lu, version = %hhu, event ID = %lu, theme ID = %hhu, sub-theme ID = %hhu, required size = %hu, actual size = %hu",
+                  index, m_currentEvent->Version, m_currentEvent->EventId,
+                  themeId, subThemeId, requiredBufferSize,
+                  *subThemeNameBufferSize);
+      }
+    }
+    else
+    {
+      LogDebug(L"MHW: invalid sub-theme identifiers, index = %lu, version = %hhu, event ID = %lu, theme ID = %hhu, sub-theme ID = %hhu",
                 index, m_currentEvent->Version, m_currentEvent->EventId,
                 themeId, subThemeId);
       CUtils::CopyStringToBuffer(NULL, subThemeName, *subThemeNameBufferSize, requiredBufferSize);
     }
-    else if (!CUtils::CopyStringToBuffer(recordTheme->Name,
-                                          subThemeName,
-                                          *subThemeNameBufferSize,
-                                          requiredBufferSize))
-    {
-      LogDebug(L"MHW: insufficient sub-theme name buffer size, index = %lu, version = %hhu, event ID = %lu, theme ID = %hhu, sub-theme ID = %hhu, required size = %hu, actual size = %hu",
-                index, m_currentEvent->Version, m_currentEvent->EventId,
-                themeId, subThemeId, requiredBufferSize,
-                *subThemeNameBufferSize);
-    }
-  }
-  else
-  {
-    LogDebug(L"MHW: invalid sub-theme identifiers, index = %lu, version = %hhu, event ID = %lu, theme ID = %hhu, sub-theme ID = %hhu",
-              index, m_currentEvent->Version, m_currentEvent->EventId, themeId,
-              subThemeId);
-    CUtils::CopyStringToBuffer(NULL, subThemeName, *subThemeNameBufferSize, requiredBufferSize);
   }
 
   CRecordMhwProgram* recordProgram = NULL;
@@ -1132,6 +1103,74 @@ void CParserMhw::OnNewSection(unsigned short pid, unsigned char tableId, const C
   }
 }
 
+void CParserMhw::PrivateReset(bool unsetProvider)
+{
+  AddOrResetDecoder(PID_MHW1_EVENTS, m_enableCrcCheck);
+  AddOrResetDecoder(PID_MHW1_OTHER, m_enableCrcCheck);
+  AddOrResetDecoder(PID_MHW2_CHANNELS_AND_THEMES, m_enableCrcCheck);
+  AddOrResetDecoder(PID_MHW2_DESCRIPTIONS, m_enableCrcCheck);
+  AddOrResetDecoder(PID_MHW2_EVENTS_BY_CHANNEL_SATELLITE, m_enableCrcCheck);
+  AddOrResetDecoder(PID_MHW2_EVENTS_BY_CHANNEL_TERRESTRIAL, m_enableCrcCheck);
+  //AddOrResetDecoder(PID_MHW2_EVENTS_BY_THEME, m_enableCrcCheck);
+  AddOrResetDecoder(PID_MHW2_PROGRAMS_AND_SERIES, m_enableCrcCheck);
+  //AddOrResetDecoder(PID_MHW2_THEME_DESCRIPTIONS, m_enableCrcCheck);
+
+  m_recordsChannel.RemoveAllRecords();
+  m_recordsChannelCategory.RemoveAllRecords();
+  m_recordsDescription.RemoveAllRecords();
+  m_recordsEventSatellite.RemoveAllRecords();
+  m_recordsEventTerrestrial.RemoveAllRecords();
+  m_recordsProgram.RemoveAllRecords();
+  m_recordsSeries.RemoveAllRecords();
+  m_recordsShowing.RemoveAllRecords();
+  m_recordsTheme.RemoveAllRecords();
+  m_recordsThemeDescription.RemoveAllRecords();
+
+  m_previousSegmentEventsByChannelSatellite = 0;
+  m_previousSegmentEventsByChannelTerrestrial = 0;
+  m_previousSegmentEventsByTheme = 0;
+  m_previousEventIdSatellite = 0;
+  m_previousEventIdTerrestrial = 0;
+  m_previousDescriptionId = -1;
+  m_previousProgramSectionId = -1;
+  m_previousSeriesSectionId = -1;
+  m_firstDescriptionId = 0xffffffff;
+
+  m_currentHour = -1;
+  m_referenceDateTime = 0;
+  m_referenceDayOfWeek = 0;
+
+  m_channelIdLookup.clear();
+
+  if (m_descriptionTableBuffer != NULL)
+  {
+    delete[] m_descriptionTableBuffer;
+    m_descriptionTableBuffer = NULL;
+  }
+  m_descriptionTableBufferSize = 0;
+  m_descriptionSectionNumber = 0;
+
+  if (m_themeDescriptionTableBuffer != NULL)
+  {
+    delete[] m_themeDescriptionTableBuffer;
+    m_themeDescriptionTableBuffer = NULL;
+  }
+  m_themeDescriptionTableBufferSize = 0;
+  m_themeDescriptionSectionNumber = 0;
+
+  m_currentEvent = NULL;
+  m_currentEventIndex = 0xffffffff;
+  m_currentDescription = NULL;
+
+  if (unsetProvider)
+  {
+    m_provider = MhwProviderUnknown;
+  }
+  m_isSeen = false;
+  m_isReady = false;
+  m_completeTime = clock();
+}
+
 void CParserMhw::AddOrResetDecoder(unsigned short pid, bool enableCrcCheck)
 {
   CSectionDecoder* decoder = NULL;
@@ -1492,6 +1531,10 @@ unsigned long CParserMhw::DecodeVersion1EventSection(const unsigned char* data,
   }
 
   record->PayPerViewId = (data[34] << 24) | (data[35] << 16) | (data[36] << 8) | data[37];
+  if (record->PayPerViewId != 0 && record->PayPerViewId != 0xffffffff)
+  {
+    record->IsPayPerView = true;
+  }
   unsigned long unknown3 = (data[42] << 24) | (data[43] << 16) | (data[44] << 8) | data[45];
 
   //LogDebug(L"MHW: event, version = 1, ID = %lu, channel ID = %hhu, theme ID = %hhu, day of week = %hhu, hour = %hhu, minute = %hhu, start date/time = %llu, duration = %hu, has description = %d, title = %S, PPV ID = %lu, unknown 1 = %d, unknown 2 = %hu, unknown 3 = %lu",
@@ -2361,13 +2404,10 @@ unsigned long CParserMhw::DecodeVersion2EventsByChannelSection(const unsigned ch
   //     date - 2 bytes, encoding = MJD
   //     time - 3 bytes, encoding = BCD
   //   duration - 12 bits, unit = minutes
-  //   [unknown] - 3 bits
-  //     0  29053
-  //     2  263716
-  //     3  9800
-  //     4  2329
-  //     5  70
-  //     6  86545
+  //   flags - 3 bits; terrestrial = 0
+  //     100 is high definition
+  //     010 has subtitles
+  //     001 is pay per view
   //   [unknown] - 3 bits, always seems to be 0x7
   //   title length - 6 bits
   //   title - [title length] bytes
@@ -2474,15 +2514,19 @@ unsigned long CParserMhw::DecodeVersion2EventsByChannelSection(const unsigned ch
 
     record->Duration = (data[pointer] << 4) | (data[pointer + 1] >> 4);
     pointer++;
-    unsigned char unknown3 = data[pointer++] & 0xf;
-    unsigned char unknown4 = data[pointer++] >> 6;
+
+    unsigned char flags = data[pointer++] & 0xf;
+    record->IsHighDefinition = (flags & 0x8) != 0;
+    record->HasSubtitles = (flags & 0x4) != 0;
+    record->IsPayPerView = (flags & 0x2) != 0;
+    unsigned char unknown3 = ((flags & 0x1) << 2) | data[pointer++] >> 6;
 
     if (!CTextUtil::MhwTextToString(&data[pointer], titleLength, m_provider, &(record->Title)))
     {
-      LogDebug(L"MHW: invalid version 2 events by channel section, pointer = %hu, title length = %hhu, section length = %hu, is terrestrial = %d, day bit-mask = 0x%hx, section ID = %hu, channel ID = %hhu, unknown 1 = %hu, unknown 2 = %hhu, event count = %hhu, event index = %hhu, event ID = %lu, unknown 3 = %hhu, unknown 4 = %hhu",
+      LogDebug(L"MHW: invalid version 2 events by channel section, pointer = %hu, title length = %hhu, section length = %hu, is terrestrial = %d, day bit-mask = 0x%hx, section ID = %hu, channel ID = %hhu, unknown 1 = %hu, unknown 2 = %hhu, event count = %hhu, event index = %hhu, event ID = %lu, unknown 3 = %hhu",
                 pointer, titleLength, dataLength, isTerrestrial, dayBitMask,
                 sectionId, channelId, unknown1, unknown2, eventCount, i,
-                record->EventId, unknown3, unknown4);
+                record->EventId, unknown3);
       delete record;
       return updateCount;
     }
@@ -2499,10 +2543,11 @@ unsigned long CParserMhw::DecodeVersion2EventsByChannelSection(const unsigned ch
     pointer += 2;
     record->HasDescription = record->DescriptionId != 0xffff;
 
-    //LogDebug(L"MHW: event, version = 2, ID = %lu, channel ID = %hhu, is terrestrial = %d, program ID = %lu, showing ID = %lu, start date/time = %llu, duration = %hu m, unknown 3 = %hhu, unknown 4 = %hhu, description ID = %hu, title = %S",
+    //LogDebug(L"MHW: event, version = 2, ID = %lu, channel ID = %hhu, is terrestrial = %d, program ID = %lu, showing ID = %lu, start date/time = %llu, duration = %hu m, is HD = %d, has subtitles = %d, is PPV = %d, unknown 3 = %hhu, description ID = %hu, title = %S",
     //          record->EventId, record->ChannelId, isTerrestrial,
     //          record->ProgramId, record->ShowingId, record->StartDateTime,
-    //          record->Duration, unknown3, unknown4, record->DescriptionId,
+    //          record->Duration, record->IsHighDefinition, record->HasSubtitles,
+    //          record->IsPayPerView, unknown3, record->DescriptionId,
     //          record->Title);
 
     if (!isTerrestrial)
@@ -2581,12 +2626,10 @@ unsigned long CParserMhw::DecodeVersion2EventsByThemeSection(const unsigned char
   //     date - 2 bytes, encoding = MJD
   //     time - 3 bytes, encoding = BCD
   //   duration - 12 bits, unit = minutes
-  //   [unknown] - 3 bits
-  //     2  297453
-  //     3  12980
-  //     4  1549
-  //     5  100
-  //     6  62343
+  //   flags - 3 bits
+  //     100 is high definition
+  //     010 has subtitles
+  //     001 is pay per view
   //   [unknown] - 3 bits, always seems to be 0x7
   //   title length - 6 bits
   //   title - [title length] bytes
@@ -2695,15 +2738,19 @@ unsigned long CParserMhw::DecodeVersion2EventsByThemeSection(const unsigned char
 
     record->Duration = (data[pointer] << 4) | (data[pointer + 1] >> 4);
     pointer++;
-    unsigned char unknown4 = data[pointer++] & 0xf;
-    unsigned char unknown5 = data[pointer++] >> 6;
+    unsigned char flags = data[pointer++] & 0xf;
+    record->IsHighDefinition = (flags & 0x8) != 0;
+    record->HasSubtitles = (flags & 0x4) != 0;
+    record->IsPayPerView = (flags & 0x2) != 0;
+    unsigned char unknown4 = ((flags & 0x1) << 2) | data[pointer++] >> 6;
 
     if (!CTextUtil::MhwTextToString(&data[pointer], titleLength, m_provider, &(record->Title)))
     {
-      LogDebug(L"MHW: invalid version 2 events by theme section, pointer = %hu, title length = %hhu, section length = %hu, day bit-mask = 0x%hx, section ID = %hu, unknown 1 = %hhu, theme ID = %hhu, unknown 2 = %hhu, unknown 3 = %lu, sub-theme bit mask = 0x%lx, event count = %hhu, event index = %hhu, event ID = %lu, unknown 4 = %hhu, unknown 5 = %hhu",
+      LogDebug(L"MHW: invalid version 2 events by theme section, pointer = %hu, title length = %hhu, section length = %hu, day bit-mask = 0x%hx, section ID = %hu, unknown 1 = %hhu, theme ID = %hhu, unknown 2 = %hhu, unknown 3 = %lu, sub-theme bit mask = 0x%lx, event count = %hhu, event index = %hhu, event ID = %lu, is HD = %d, has subtitles = %d, is PPV = %d, unknown 4 = %hhu",
                 pointer, titleLength, dataLength, dayBitMask, sectionId,
                 unknown1, themeId, unknown2, unknown3, subThemeBitMask,
-                eventCount, i, record->EventId, unknown4, unknown5);
+                eventCount, i, record->EventId, record->IsHighDefinition,
+                record->HasSubtitles, record->IsPayPerView, unknown4);
       delete record;
       return updateCount;
     }
@@ -2717,17 +2764,18 @@ unsigned long CParserMhw::DecodeVersion2EventsByThemeSection(const unsigned char
     pointer += titleLength;
 
     record->SubThemeId = data[pointer++];
-    unsigned char unknown6 = record->SubThemeId >> 6;
+    unsigned char unknown5 = record->SubThemeId >> 6;
     record->SubThemeId &= 0x3f;
 
     record->DescriptionId = (data[pointer] << 8) | data[pointer + 1];
     pointer += 2;
     record->HasDescription = record->DescriptionId != 0xffff;
 
-    //LogDebug(L"MHW: event, version = 2, ID = %lu, channel ID = %hhu, program ID = %lu, showing ID = %lu, start date/time = %llu, duration = %hu m, unknown 4 = %hhu, unknown 5 = %hhu, theme ID = %hhu, unknown 6 = %hhu, sub-theme ID = %hhu, description ID = %hu, title = %S",
+    //LogDebug(L"MHW: event, version = 2, ID = %lu, channel ID = %hhu, program ID = %lu, showing ID = %lu, start date/time = %llu, duration = %hu m, is HD = %d, has subtitles = %d, is PPV = %d, unknown 4 = %hhu, theme ID = %hhu, unknown 5 = %hhu, sub-theme ID = %hhu, description ID = %hu, title = %S",
     //          record->EventId, record->ChannelId, record->ProgramId,
     //          record->ShowingId, record->StartDateTime, record->Duration,
-    //          unknown4, unknown5, record->ThemeId, unknown6,
+    //          record->IsHighDefinition, record->HasSubtitles,
+    //          record->IsPayPerView, unknown4, record->ThemeId, unknown5,
     //          record->SubThemeId, record->DescriptionId, record->Title);
     if (record->ShowingId == 0xffffffff)
     {
@@ -3633,10 +3681,13 @@ void CParserMhw::OnMhwEventRemoved(unsigned char version,
                                     unsigned long long startDateTime,
                                     unsigned short duration,
                                     const char* title,
+                                    bool isPayPerView,
                                     unsigned long payPerViewId,
                                     bool isTerrestrial,
                                     unsigned long programId,
                                     unsigned long showingId,
+                                    bool isHighDefinition,
+                                    bool hasSubtitles,
                                     unsigned char themeId,
                                     unsigned char subThemeId)
 {

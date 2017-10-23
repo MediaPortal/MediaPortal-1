@@ -77,7 +77,10 @@ DECLARE_INTERFACE_(IGrabberEpgMhw, IGrabber)
                               char* subThemeName,
                               unsigned short* subThemeNameBufferSize,
                               unsigned char* classification,
+                              bool* isHighDefinition,
+                              bool* hasSubtitles,
                               bool* isRecommended,
+                              bool* isPayPerView,
                               unsigned long* payPerViewId)PURE;
   STDMETHOD_(bool, GetDescriptionLine)(THIS_ unsigned long eventIndex,
                                         unsigned char lineIndex,

@@ -129,7 +129,10 @@ class CParserMhw
                                   char* subThemeName,
                                   unsigned short* subThemeNameBufferSize,
                                   unsigned char* classification,
+                                  bool* isHighDefinition,
+                                  bool* hasSubtitles,
                                   bool* isRecommended,
+                                  bool* isPayPerView,
                                   unsigned long* payPerViewId);
     STDMETHODIMP_(bool) GetDescriptionLine(unsigned long eventIndex,
                                             unsigned char lineIndex,
@@ -409,10 +412,13 @@ class CParserMhw
           StartDateTime = 0;
           Duration = 0;
           Title = NULL;
+          IsPayPerView = false;
           PayPerViewId = 0;
           IsTerrestrial = false;
           ProgramId = 0xffffffff;
           ShowingId = 0xffffffff;
+          IsHighDefinition = false;
+          HasSubtitles = false;
           ThemeId = 0;
           SubThemeId = 0;
         }
@@ -439,10 +445,13 @@ class CParserMhw
             StartDateTime != recordEvent->StartDateTime ||
             Duration != recordEvent->Duration ||
             !CUtils::CompareStrings(Title, recordEvent->Title) ||
+            IsPayPerView != recordEvent->IsPayPerView ||
             PayPerViewId != recordEvent->PayPerViewId ||
             IsTerrestrial != recordEvent->IsTerrestrial ||
             ProgramId != recordEvent->ProgramId ||
             ShowingId != recordEvent->ShowingId ||
+            IsHighDefinition != recordEvent->IsHighDefinition ||
+            HasSubtitles != recordEvent->HasSubtitles ||
             ThemeId != recordEvent->ThemeId ||
             SubThemeId != recordEvent->SubThemeId
           )
@@ -464,10 +473,11 @@ class CParserMhw
 
         void Debug(const wchar_t* situation) const
         {
-          LogDebug(L"MHW: event %s, version = %hhu, event ID = %lu, description ID = %lu, has description = %d, channel ID = %hhu, is terrestrial = %d, program ID = %lu, showing ID = %lu, start date/time = %llu, duration = %hu m, theme ID = %hhu, sub-theme ID = %hhu, PPV ID = %lu, title = %S",
+          LogDebug(L"MHW: event %s, version = %hhu, event ID = %lu, description ID = %lu, has description = %d, channel ID = %hhu, is terrestrial = %d, program ID = %lu, showing ID = %lu, start date/time = %llu, duration = %hu m, theme ID = %hhu, sub-theme ID = %hhu, is HD = %d, has subtitles = %d, is PPV = %d, PPV ID = %lu, title = %S",
                     situation, Version, EventId, DescriptionId, HasDescription,
                     ChannelId, IsTerrestrial, ProgramId, ShowingId,
-                    StartDateTime, Duration, ThemeId, SubThemeId, PayPerViewId,
+                    StartDateTime, Duration, ThemeId, SubThemeId,
+                    IsHighDefinition, HasSubtitles, IsPayPerView, PayPerViewId,
                     Title == NULL ? "" : Title);
         }
 
@@ -485,10 +495,13 @@ class CParserMhw
                                             StartDateTime,
                                             Duration,
                                             Title,
+                                            IsPayPerView,
                                             PayPerViewId,
                                             IsTerrestrial,
                                             ProgramId,
                                             ShowingId,
+                                            IsHighDefinition,
+                                            HasSubtitles,
                                             ThemeId,
                                             SubThemeId);
           }
@@ -503,6 +516,7 @@ class CParserMhw
         unsigned long long StartDateTime; // epoch/Unix/POSIX time-stamp
         unsigned short Duration;          // unit = minutes
         char* Title;                      // for example "Los Simpson (HD) (T19)"
+        bool IsPayPerView;
 
         // v1 only
         unsigned long PayPerViewId;
@@ -511,6 +525,9 @@ class CParserMhw
         bool IsTerrestrial;
         unsigned long ProgramId;
         unsigned long ShowingId;
+
+        bool IsHighDefinition;
+        bool HasSubtitles;
 
         unsigned char ThemeId;            // v1 and v2 event-by-theme
         unsigned char SubThemeId;         // v2 event-by-theme
@@ -859,6 +876,7 @@ class CParserMhw
 
     void OnNewSection(unsigned short pid, unsigned char tableId, const CSection& section);
 
+    void PrivateReset(bool unsetProvider);
     void AddOrResetDecoder(unsigned short pid, bool enableCrcCheck);
 
     unsigned long DecodeVersion1ChannelSection(const unsigned char* data,
@@ -906,10 +924,13 @@ class CParserMhw
                             unsigned long long startDateTime,
                             unsigned short duration,
                             const char* title,
+                            bool isPayPerView,
                             unsigned long payPerViewId,
                             bool isTerrestrial,
                             unsigned long programId,
                             unsigned long showingId,
+                            bool isHighDefinition,
+                            bool hasSubtitles,
                             unsigned char themeId,
                             unsigned char subThemeId);
 
