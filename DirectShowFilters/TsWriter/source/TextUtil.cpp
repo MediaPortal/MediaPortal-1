@@ -560,7 +560,7 @@ bool CTextUtil::MhwTextToString(const unsigned char* data,
   if (provider == CanalsatFrance || provider == MovistarPlusSpain)
   {
     // Identify as ISO/IEC 8859-15. Could also be ISO/IEC 8859-1 or ISO/IEC 8859-9.
-    unsigned short bufferSize = dataLength + 3;   // + 2 for encoding indicator bytes, + 1 for NULL termination
+    unsigned short bufferSize = dataLength + 4;   // + 3 for encoding indicator bytes, + 1 for NULL termination
     *text = new char[bufferSize];
     if (*text == NULL)
     {
@@ -571,8 +571,9 @@ bool CTextUtil::MhwTextToString(const unsigned char* data,
     // EN 300 468 annex A table A.4: ISO/IEC 8859-15.
     (*text)[0] = 0x10;
     (*text)[1] = 0x20;    // fill the 0 byte to avoid premature NULL termination, same as DvbTextToString()
-    memcpy(&(*text)[2], data, dataLength);
-    (*text)[dataLength + 2] = NULL;
+    (*text)[2] = 0x0f;
+    memcpy(&(*text)[3], data, dataLength);
+    (*text)[dataLength + 3] = NULL;
   }
   else if (provider == CyfraPoland)
   {
