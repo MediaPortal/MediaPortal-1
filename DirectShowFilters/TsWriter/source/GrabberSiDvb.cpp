@@ -127,9 +127,13 @@ void CGrabberSiDvb::Reset(bool enableCrcCheck)
   m_enableCrcCheck = enableCrcCheck;
   m_isNitExpected = true;
   m_parserBat.Reset(enableCrcCheck);
+  m_parserBat.SetPid(PID_BAT);
   m_parserNit.Reset(enableCrcCheck);
+  m_parserNit.SetPid(PID_NIT_DVB);
   m_parserSdt.Reset(enableCrcCheck);
+  m_parserSdt.SetPid(PID_SDT);
   m_parserTot.Reset(enableCrcCheck);
+  m_parserTot.SetPid(PID_TOT);
   if (m_callBackGrabber != NULL)
   {
     m_callBackGrabber->OnReset(m_parserSdt.GetPid());
