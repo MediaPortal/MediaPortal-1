@@ -66,8 +66,9 @@ void CParserNitDvb::SetPid(unsigned short pid)
   wstringstream ss;
   ss << L"NIT DVB " << pid;
   wstring s = ss.str();
-  wcsncpy(m_name, s.c_str(), sizeof(m_name) / sizeof(m_name[0]));
-  m_name[sizeof(m_name) - 1] = NULL;
+  size_t characterCount = sizeof(m_name) / sizeof(m_name[0]);
+  wcsncpy(m_name, s.c_str(), characterCount);
+  m_name[characterCount - 1] = NULL;
   CSectionDecoder::SetPid(pid);
   CSectionDecoder::Reset();
 }
@@ -132,6 +133,7 @@ void CParserNitDvb::OnNewSection(const CSection& section)
     //          extensionDescriptorsLength);
 
     unsigned char effectiveTableId = section.TableId;
+    CEnterCriticalSection lock(m_section);
     if (effectiveTableId == TABLE_ID_NIT_DVB_ACTUAL)
     {
       if (m_useCompatibilityMode)
@@ -171,7 +173,6 @@ void CParserNitDvb::OnNewSection(const CSection& section)
       unseenSections = &m_unseenSectionsOther;
     }
 
-    CEnterCriticalSection lock(m_section);
     unsigned long long sectionKey = ((unsigned long long)effectiveTableId << 32) | ((unsigned long long)section.VersionNumber << 24) | ((unsigned long long)section.TableIdExtension << 8) | section.SectionNumber;
     unsigned long long sectionGroupMask = 0xffffffff00ffff00;
     unsigned long long sectionGroupKey = sectionKey & sectionGroupMask;
