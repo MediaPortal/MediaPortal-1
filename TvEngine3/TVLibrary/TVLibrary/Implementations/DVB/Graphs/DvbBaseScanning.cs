@@ -531,10 +531,15 @@ namespace TvLibrary.Implementations.DVB
             ) &&
             // For a standard scan NIT actual and BAT must also be complete if
             // they've been seen. Otherwise, for a network scan all seen tables
-            // must be complete.
+            // must be complete, and NIT actual and/or other must have been
+            // seen.
             (
               (!isFastNetworkScan && (_seenTables & standardScanTableMask) == (_completeTables & standardScanTableMask)) ||
-              (isFastNetworkScan && _seenTables == _completeTables)
+              (
+                isFastNetworkScan &&
+                _seenTables == _completeTables &&
+                (_seenTables.HasFlag(TableType.NitActual) || _seenTables.HasFlag(TableType.NitOther))
+              )
             ) &&
             // Freesat tables must all be complete... or not seen at all.
             (
@@ -1121,7 +1126,7 @@ namespace TvLibrary.Implementations.DVB
       groupNames[ChannelGroupType.ChannelProvider] = new Dictionary<ulong, string>(serviceCount);
 
       IDictionary<ushort, IDictionary<ushort, IChannel>> tuningChannels;
-      if (isFastNetworkScan)
+      if (isFastNetworkScan || currentTransportStreamOriginalNetworkId == 0)  // ONID is 0 when SDT actual is not received (eg. Dish Network)
       {
         tuningChannels = DetermineTransportStreamTuningDetails(grabber, tuningChannel, currentTransportStreamOriginalNetworkId, currentTransportStreamId);
         if (_cancelScan)
@@ -1265,8 +1270,8 @@ namespace TvLibrary.Implementations.DVB
         if (
           !isFastNetworkScan &&
           (
-            (_seenTables.HasFlag(TableType.SdtActual) && tableId != 0x42) ||
-            (!_seenTables.HasFlag(TableType.SdtActual) && (tableId != 0x46 || transportStreamId != currentTransportStreamId))
+            (currentTransportStreamOriginalNetworkId != 0 && tableId != 0x42) ||
+            (currentTransportStreamOriginalNetworkId == 0 && (tableId != 0x46 || transportStreamId != currentTransportStreamId))
           )
         )
         {
@@ -1463,7 +1468,13 @@ namespace TvLibrary.Implementations.DVB
         }
 
         IDictionary<ushort, IChannel> transportStreamTuningChannels;
-        if (!tuningChannels.TryGetValue(originalNetworkId, out transportStreamTuningChannels) || !transportStreamTuningChannels.TryGetValue(transportStreamId, out tuningChannel))
+        if (
+          currentTransportStreamOriginalNetworkId != 0 &&
+          (
+            !tuningChannels.TryGetValue(originalNetworkId, out transportStreamTuningChannels) ||
+            !transportStreamTuningChannels.TryGetValue(transportStreamId, out tuningChannel)
+          )
+        )
         {
           Log.Log.Error("scan DVB: service tuning detail are not available, ONID = {0}, TSID = {1}, service ID = {2}", originalNetworkId, transportStreamId, serviceId);
           continue;
@@ -2457,7 +2468,10 @@ namespace TvLibrary.Implementations.DVB
       // Build a dictionary of the actual tuning channel for each transport stream.
       HashSet<IChannel> seenTuningChannels = new HashSet<IChannel>() { currentTuningChannel };
       Dictionary<ushort, IDictionary<ushort, IChannel>> transportStreamTuningChannels = new Dictionary<ushort, IDictionary<ushort, IChannel>>(possibleTuningDetailsByTransportStream.Count);
-      transportStreamTuningChannels.Add(currentOriginalNetworkId, new Dictionary<ushort, IChannel>(transmitters.Count) { { currentTransportStreamId, currentTuningChannel } });
+      if (currentOriginalNetworkId != 0)
+      {
+        transportStreamTuningChannels.Add(currentOriginalNetworkId, new Dictionary<ushort, IChannel>(transmitters.Count) { { currentTransportStreamId, currentTuningChannel } });
+      }
       foreach (var transportStream in possibleTuningDetailsByTransportStream)
       {
         ushort targetOriginalNetworkId = (ushort)(transportStream.Key >> 16);
