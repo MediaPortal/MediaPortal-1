@@ -336,6 +336,11 @@ namespace TvLibrary.Implementations.DVB
         if (tsWriter != null)
         {
           tsWriter.Stop();
+          lock (_pmtLock)
+          {
+            _pmt.Clear();
+          }
+          _cat = null;
         }
       }
       ITvSubChannel ch = SubmitTuneRequest(subChannelId, channel, _tuneRequest, performTune);
