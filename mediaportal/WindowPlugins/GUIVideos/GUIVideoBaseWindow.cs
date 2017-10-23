@@ -18,13 +18,8 @@
 
 #endregion
 
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
-using System.Windows.Forms;
 using Common.GUIPlugins;
+
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.GUI.View;
@@ -33,6 +28,14 @@ using MediaPortal.Playlists;
 using MediaPortal.Services;
 using MediaPortal.Util;
 using MediaPortal.Video.Database;
+
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Windows.Forms;
+
 using Action = MediaPortal.GUI.Library.Action;
 using Layout = MediaPortal.GUI.Library.GUIFacadeControl.Layout;
 
@@ -108,7 +111,6 @@ namespace MediaPortal.GUI.Video
           FilterDefinition def = (FilterDefinition)handler.View.Filters[0];
           defaultSort = (int)GetSortMethod(def.DefaultSort);
         }
-
 
         currentSortMethod = (VideoSort.SortMethod)xmlreader.GetValueAsInt(SerializeName, "sortmethod", defaultSort);
         currentSortMethodRoot =
@@ -483,8 +485,16 @@ namespace MediaPortal.GUI.Video
       facadeLayout.Sort(new VideoSort(CurrentSortMethod, CurrentSortAsc));
       UpdateButtonStates();
       SelectCurrentItem();
+
       FolderSetting folderSetting = new FolderSetting();
-      folderSetting.UpdateFolders((int)CurrentSortMethod, CurrentSortAsc, -1);
+      if(GUIWindowManager.ActiveWindow == (int)Window.WINDOW_VIDEOS)
+      {
+        folderSetting.UpdateFolders((int)CurrentSortMethod, CurrentSortAsc, -1);
+      }
+      else
+      {
+        folderSetting.UpdateViews((int)CurrentSortMethod, CurrentSortAsc);
+      }
     }
 
     #endregion
@@ -498,16 +508,35 @@ namespace MediaPortal.GUI.Video
         isShareView = true;
       }
 
-      _currentFolder = GUIVideoFiles.GetCurrentFolder;
-      object o;
       bool _stackedFolder = true;
-      MediaPortal.Database.FolderSettings.GetFolderSetting(_currentFolder, "VideoFiles", typeof(GUIVideoFiles.MapSettings), out o);
-
-      if (o != null)
+      if (isShareView)
       {
-        GUIVideoFiles.MapSettings mapSettings = o as GUIVideoFiles.MapSettings;
+        _currentFolder = GUIVideoFiles.GetCurrentFolder;
+        object o;
+        MediaPortal.Database.FolderSettings.GetFolderSetting(_currentFolder, "VideoFiles", typeof(GUIVideoFiles.MapSettings), out o);
 
-        _stackedFolder = mapSettings.Stack;
+        if (o != null)
+        {
+          GUIVideoFiles.MapSettings mapSettings = o as GUIVideoFiles.MapSettings;
+
+          _stackedFolder = mapSettings.Stack;
+        }
+      }
+      else
+      {
+        _currentFolder = GUIVideoTitle.GetCurrentView;
+        object o;
+        // MediaPortal.Database.FolderSettings.GetFolderSetting(_currentFolder, "VideoViews", typeof(GUIVideoTitle.MapSettings), out o);
+        MediaPortal.Database.FolderSettings.GetViewSetting(_currentFolder, "VideoViews", typeof(GUIVideoTitle.MapSettings), out o);
+        if (o != null)
+        {
+          GUIVideoTitle.MapSettings mapSettings = o as GUIVideoTitle.MapSettings;
+          if (mapSettings != null)
+          {
+            CurrentSortMethod = (VideoSort.SortMethod)mapSettings.SortBy;
+            CurrentSortAsc = mapSettings.SortAscending;
+          }
+        }
       }
 
       for (int i = 0; i < facadeLayout.Count; ++i)
