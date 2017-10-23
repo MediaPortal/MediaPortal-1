@@ -301,6 +301,7 @@ CTsWriter::CTsWriter(LPUNKNOWN unk, HRESULT* hr)
   m_grabberEpgDvb->Reset(true);
   m_grabberEpgDvb->SetProtocols(true, true, true, true, true, true, true, true);
   m_grabberEpgMhw->Reset(true);
+  m_grabberEpgMhw->SetTransportStream(1, 1058);
   m_grabberEpgMhw->SetProtocols(true, true);
   m_grabberEpgOpenTv->Reset(true);
   m_grabberEpgOpenTv->Start();
