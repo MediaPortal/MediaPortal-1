@@ -58,6 +58,10 @@ void CSectionDecoder::SetCallBack(ISectionCallback* callBack)
 void CSectionDecoder::SetPid(int pid)
 {
   m_pid = pid;
+  if (m_pid != -1 && m_pid != pid)
+  {
+    Reset();
+  }
 }
 
 int CSectionDecoder::GetPid() const
