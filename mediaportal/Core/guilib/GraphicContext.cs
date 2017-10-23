@@ -1851,6 +1851,7 @@ namespace MediaPortal.GUI.Library
     internal static bool ForcedRR3DBackDefault { get; set; }
     internal static int ForcedRR3DWitdhBackup { get; set; }
     internal static int ForcedRR3DHeightBackup { get; set; }
+    internal static double ForcedRR3DRate { get; set; }
 
     //public static IntPtr madVRDIB { get; set; }
 

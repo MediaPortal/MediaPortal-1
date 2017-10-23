@@ -260,6 +260,7 @@ namespace MediaPortal.Player
                 {
                   Width = (uint)GUIGraphicsContext.ForcedRR3DWitdhBackup;
                   Height = (uint)GUIGraphicsContext.ForcedRR3DHeightBackup;
+                  refreshRate = (uint)GUIGraphicsContext.ForcedRR3DRate;
                   Log.Debug("CycleRefreshRate: restore backup value {0} x {1}", GUIGraphicsContext.ForcedRR3DWitdhBackup, GUIGraphicsContext.ForcedRR3DHeightBackup);
                 }
                 else
