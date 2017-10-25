@@ -273,6 +273,7 @@ STDMETHODIMP_(bool) CGrabberSiDvb::GetService(unsigned short index,
                                               unsigned char* freesatRegionIdCount,
                                               unsigned long* openTvRegionIds,
                                               unsigned char* openTvRegionIdCount,
+                                              unsigned char* cyfrowyPolsatChannelCategoryId,
                                               unsigned short* freesatChannelCategoryIds,
                                               unsigned char* freesatChannelCategoryIdCount,
                                               unsigned short* mediaHighwayChannelCategoryIds,
@@ -320,6 +321,7 @@ STDMETHODIMP_(bool) CGrabberSiDvb::GetService(unsigned short index,
                               *audioLanguageCount,
                               subtitlesLanguages,
                               *subtitlesLanguageCount,
+                              *cyfrowyPolsatChannelCategoryId,
                               openTvChannelCategoryIds,
                               *openTvChannelCategoryIdCount,
                               *virginMediaChannelCategoryId,
@@ -774,6 +776,35 @@ STDMETHODIMP_(bool) CGrabberSiDvb::GetTargetRegionNameByLanguage(unsigned long l
   return m_parserNit.GetTargetRegionNameByLanguage(regionId, language, name, *nameBufferSize);
 }
 
+STDMETHODIMP_(unsigned char) CGrabberSiDvb::GetCyfrowyPolsatChannelCategoryNameCount(unsigned char categoryId)
+{
+  return m_parserNit.GetCyfrowyPolsatChannelCategoryNameCount(categoryId);
+}
+
+STDMETHODIMP_(bool) CGrabberSiDvb::GetCyfrowyPolsatChannelCategoryNameByIndex(unsigned char categoryId,
+                                                                              unsigned char index,
+                                                                              unsigned long* language,
+                                                                              char* name,
+                                                                              unsigned short* nameBufferSize)
+{
+  return m_parserNit.GetCyfrowyPolsatChannelCategoryNameByIndex(categoryId,
+                                                                index,
+                                                                *language,
+                                                                name,
+                                                                *nameBufferSize);
+}
+
+STDMETHODIMP_(bool) CGrabberSiDvb::GetCyfrowyPolsatChannelCategoryNameByLanguage(unsigned char categoryId,
+                                                                                  unsigned long language,
+                                                                                  char* name,
+                                                                                  unsigned short* nameBufferSize)
+{
+  return m_parserNit.GetCyfrowyPolsatChannelCategoryNameByLanguage(categoryId,
+                                                                    language,
+                                                                    name,
+                                                                    *nameBufferSize);
+}
+
 STDMETHODIMP_(unsigned char) CGrabberSiDvb::GetFreesatRegionNameCount(unsigned short regionId)
 {
   return m_parserBat.GetFreesatRegionNameCount(regionId) + m_parserNit.GetFreesatRegionNameCount(regionId);
@@ -1078,8 +1109,9 @@ void CGrabberSiDvb::OnSdtReceived(unsigned char tableId,
                                   unsigned short streamCountAudio,
                                   const vector<unsigned long>& audioLanguages,
                                   const vector<unsigned long>& subtitlesLanguages,
-                                  const vector<unsigned char>& openTvCategoryIds,
-                                  unsigned char virginMediaCategoryId,
+                                  unsigned char cyfrowyPolsatChannelCategoryId,
+                                  const vector<unsigned char>& openTvChannelCategoryIds,
+                                  unsigned char virginMediaChannelCategoryId,
                                   unsigned short dishMarketId,
                                   const vector<unsigned long>& availableInCountries,
                                   const vector<unsigned long>& unavailableInCountries,
@@ -1130,8 +1162,9 @@ void CGrabberSiDvb::OnSdtChanged(unsigned char tableId,
                                   unsigned short streamCountAudio,
                                   const vector<unsigned long>& audioLanguages,
                                   const vector<unsigned long>& subtitlesLanguages,
-                                  const vector<unsigned char>& openTvCategoryIds,
-                                  unsigned char virginMediaCategoryId,
+                                  unsigned char cyfrowyPolsatChannelCategoryId,
+                                  const vector<unsigned char>& openTvChannelCategoryIds,
+                                  unsigned char virginMediaChannelCategoryId,
                                   unsigned short dishMarketId,
                                   const vector<unsigned long>& availableInCountries,
                                   const vector<unsigned long>& unavailableInCountries,
@@ -1178,8 +1211,9 @@ void CGrabberSiDvb::OnSdtRemoved(unsigned char tableId,
                                   unsigned short streamCountAudio,
                                   const vector<unsigned long>& audioLanguages,
                                   const vector<unsigned long>& subtitlesLanguages,
-                                  const vector<unsigned char>& openTvCategoryIds,
-                                  unsigned char virginMediaCategoryId,
+                                  unsigned char cyfrowyPolsatChannelCategoryId,
+                                  const vector<unsigned char>& openTvChannelCategoryIds,
+                                  unsigned char virginMediaChannelCategoryId,
                                   unsigned short dishMarketId,
                                   const vector<unsigned long>& availableInCountries,
                                   const vector<unsigned long>& unavailableInCountries,

@@ -256,6 +256,7 @@
     <ClInclude Include="source\ISystemTimeInfoProviderDvb.h" />
     <ClInclude Include="source\ITsWriter.h" />
     <ClInclude Include="source\MhwProvider.h" />
+    <ClInclude Include="source\OriginalNetworkIds.h" />
     <ClInclude Include="source\ParserAet.h" />
     <ClInclude Include="source\ParserEitAtsc.h" />
     <ClInclude Include="source\GrabberSiAtscScte.h" />
@@ -278,6 +279,7 @@
     <ClInclude Include="source\ParserTot.h" />
     <ClInclude Include="source\PidType.h" />
     <ClInclude Include="source\PidUsage.h" />
+    <ClInclude Include="source\PrivateDataSpecifiers.h" />
     <ClInclude Include="source\RecorderMode.h" />
     <ClInclude Include="source\RecordStore.h" />
     <ClInclude Include="source\TextUtil.h" />

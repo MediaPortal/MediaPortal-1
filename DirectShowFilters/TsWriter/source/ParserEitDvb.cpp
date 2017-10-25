@@ -25,10 +25,12 @@
 #include <typeinfo>     // bad_cast
 #include "..\..\shared\EnterCriticalSection.h"
 #include "..\..\shared\TimeUtils.h"
+#include "OriginalNetworkIds.h"
 #include "ParserBat.h"
 #include "ParserNitDvb.h"
 #include "ParserSdt.h"
 #include "PidUsage.h"
+#include "PrivateDataSpecifiers.h"
 #include "Utils.h"
 
 
@@ -43,18 +45,6 @@
 #define ITEM_INDEX_PREMIERE_ORDER_SMS_NUMBER    251
 #define ITEM_INDEX_PREMIERE_ORDER_URL           250
 #define ITEM_INDEX_PREMIERE_PARENT_TEXT         249
-
-// There is no private data specifier for Dish descriptors, so we have to
-// determine scope with ONID. These are the ONIDs for EchoStar networks.
-// http://www.dvbservices.com/identifiers/original_network_id&tab=table
-#define ORIGINAL_NETWORK_ID_DISH_START          0x1001
-#define ORIGINAL_NETWORK_ID_DISH_END            0x100b
-
-#define ORIGINAL_NETWORK_ID_OSN_1               0x2c
-#define ORIGINAL_NETWORK_ID_OSN_2               0x6e
-#define ORIGINAL_NETWORK_ID_OSN_3               0x77e   // registered/official: Eutelsat 7W
-#define ORIGINAL_NETWORK_ID_OSN_4               0x800   // registered/official: Nilesat 101
-#define ORIGINAL_NETWORK_ID_OSN_5               0x5000
 
 
 extern void LogDebug(const wchar_t* fmt, ...);
@@ -1310,12 +1300,13 @@ void CParserEitDvb::OnNewSection(unsigned short pid, unsigned char tableId, cons
             tableId < TABLE_ID_EIT_DVB_START ||
             tableId > TABLE_ID_EIT_DVB_END ||
             (
+              // OSN
               pid == PID_EIT_ORBIT_SHOWTIME_NETWORK &&
               originalNetworkId != ORIGINAL_NETWORK_ID_OSN_1 &&
               originalNetworkId != ORIGINAL_NETWORK_ID_OSN_2 &&
-              originalNetworkId != ORIGINAL_NETWORK_ID_OSN_3 &&
-              originalNetworkId != ORIGINAL_NETWORK_ID_OSN_4 &&
-              originalNetworkId != ORIGINAL_NETWORK_ID_OSN_5
+              originalNetworkId != ORIGINAL_NETWORK_ID_EUTELSAT_7W &&
+              originalNetworkId != ORIGINAL_NETWORK_ID_NILESAT_101 &&
+              originalNetworkId != ORIGINAL_NETWORK_ID_IRDETO_MUX_SYS
             ) ||
             // Throw away DVB (Sky) data if Freesat grabbing is enabled and Freesat data is seen/expected.
             (
@@ -2793,7 +2784,7 @@ bool CParserEitDvb::DecodeEventDescriptors(const unsigned char* sectionData,
         }
       }
     }
-    else if (privateDataSpecifier == 0xbe)
+    else if (privateDataSpecifier == PRIVATE_DATA_SPECIFIER_BETATECHNIK)
     {
       if (tag == 0xf0)  // Premiere order information descriptor
       {

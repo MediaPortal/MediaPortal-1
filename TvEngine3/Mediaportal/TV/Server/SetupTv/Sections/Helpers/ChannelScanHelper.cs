@@ -864,7 +864,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
     private Dictionary<ChannelGroupType, string[]> ReadAutomaticChannelGroupConfig()
     {
       Dictionary<ChannelGroupType, string[]> channelGroupConfiguration = new Dictionary<ChannelGroupType, string[]>(30);
-      ChannelGroupType channelGroupTypes = ChannelGroupType.FreesatChannelCategory | ChannelGroupType.MediaHighwayChannelCategory | ChannelGroupType.NorDigChannelList | ChannelGroupType.OpenTvChannelCategory | ChannelGroupType.VirginMediaChannelCategory;
+      ChannelGroupType channelGroupTypes = ChannelGroupType.CyfrowyPolsatChannelCategory | ChannelGroupType.FreesatChannelCategory | ChannelGroupType.MediaHighwayChannelCategory | ChannelGroupType.NorDigChannelList | ChannelGroupType.OpenTvChannelCategory | ChannelGroupType.VirginMediaChannelCategory;
       channelGroupTypes = (ChannelGroupType)ServiceAgents.Instance.SettingServiceAgent.GetValue("scanAutoCreateChannelGroups", (int)channelGroupTypes);
 
       if (channelGroupTypes.HasFlag(ChannelGroupType.ChannelProvider))

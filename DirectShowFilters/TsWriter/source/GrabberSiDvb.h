@@ -123,6 +123,7 @@ class CGrabberSiDvb
                                     unsigned char* freesatRegionIdCount,
                                     unsigned long* openTvRegionIds,
                                     unsigned char* openTvRegionIdCount,
+                                    unsigned char* cyfrowyPolsatChannelCategoryId,
                                     unsigned short* freesatChannelCategoryIds,
                                     unsigned char* freesatChannelCategoryIdCount,
                                     unsigned short* mediaHighwayChannelCategoryIds,
@@ -190,6 +191,17 @@ class CGrabberSiDvb
                                                       unsigned long language,
                                                       char* name,
                                                       unsigned short* nameBufferSize);
+
+    STDMETHODIMP_(unsigned char) GetCyfrowyPolsatChannelCategoryNameCount(unsigned char categoryId);
+    STDMETHODIMP_(bool) GetCyfrowyPolsatChannelCategoryNameByIndex(unsigned char categoryId,
+                                                                    unsigned char index,
+                                                                    unsigned long* language,
+                                                                    char* name,
+                                                                    unsigned short* nameBufferSize);
+    STDMETHODIMP_(bool) GetCyfrowyPolsatChannelCategoryNameByLanguage(unsigned char categoryId,
+                                                                      unsigned long language,
+                                                                      char* name,
+                                                                      unsigned short* nameBufferSize);
 
     STDMETHODIMP_(unsigned char) GetFreesatRegionNameCount(unsigned short regionId);
     STDMETHODIMP_(bool) GetFreesatRegionNameByIndex(unsigned short regionId,
@@ -291,8 +303,9 @@ class CGrabberSiDvb
                         unsigned short streamCountAudio,
                         const vector<unsigned long>& audioLanguages,
                         const vector<unsigned long>& subtitlesLanguages,
-                        const vector<unsigned char>& openTvCategoryIds,
-                        unsigned char virginMediaCategoryId,
+                        unsigned char cyfrowyPolsatChannelCategoryId,
+                        const vector<unsigned char>& openTvChannelCategoryIds,
+                        unsigned char virginMediaChannelCategoryId,
                         unsigned short dishMarketId,
                         const vector<unsigned long>& availableInCountries,
                         const vector<unsigned long>& unavailableInCountries,
@@ -328,8 +341,9 @@ class CGrabberSiDvb
                         unsigned short streamCountAudio,
                         const vector<unsigned long>& audioLanguages,
                         const vector<unsigned long>& subtitlesLanguages,
-                        const vector<unsigned char>& openTvCategoryIds,
-                        unsigned char virginMediaCategoryId,
+                        unsigned char cyfrowyPolsatChannelCategoryId,
+                        const vector<unsigned char>& openTvChannelCategoryIds,
+                        unsigned char virginMediaChannelCategoryId,
                         unsigned short dishMarketId,
                         const vector<unsigned long>& availableInCountries,
                         const vector<unsigned long>& unavailableInCountries,
@@ -365,8 +379,9 @@ class CGrabberSiDvb
                         unsigned short streamCountAudio,
                         const vector<unsigned long>& audioLanguages,
                         const vector<unsigned long>& subtitlesLanguages,
-                        const vector<unsigned char>& openTvCategoryIds,
-                        unsigned char virginMediaCategoryId,
+                        unsigned char cyfrowyPolsatChannelCategoryId,
+                        const vector<unsigned char>& openTvChannelCategoryIds,
+                        unsigned char virginMediaChannelCategoryId,
                         unsigned short dishMarketId,
                         const vector<unsigned long>& availableInCountries,
                         const vector<unsigned long>& unavailableInCountries,

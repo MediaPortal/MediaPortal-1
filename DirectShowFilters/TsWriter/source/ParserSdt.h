@@ -82,9 +82,10 @@ class CParserSdt : public CSectionDecoder, public IDefaultAuthorityProvider
                       unsigned char& audioLanguageCount,
                       unsigned long* subtitlesLanguages,
                       unsigned char& subtitlesLanguageCount,
-                      unsigned char* openTvCategoryIds,
-                      unsigned char& openTvCategoryIdCount,
-                      unsigned char& virginMediaCategoryId,
+                      unsigned char& cyfrowyPolsatChannelCategoryId,
+                      unsigned char* openTvChannelCategoryIds,
+                      unsigned char& openTvChannelCategoryIdCount,
+                      unsigned char& virginMediaChannelCategoryId,
                       unsigned short& dishMarketId,
                       unsigned long* availableInCountries,
                       unsigned char& availableInCountryCount,
@@ -145,7 +146,8 @@ class CParserSdt : public CSectionDecoder, public IDefaultAuthorityProvider
           IsThreeDimensional = false;
           StreamCountVideo = 0;
           StreamCountAudio = 0;
-          VirginMediaCategoryId = 0;
+          CyfrowyPolsatChannelCategoryId = 0xff;
+          VirginMediaChannelCategoryId = 0;
           DishMarketId = 0;
           PreviousOriginalNetworkId = 0;
           PreviousTransportStreamId = 0;
@@ -195,8 +197,9 @@ class CParserSdt : public CSectionDecoder, public IDefaultAuthorityProvider
             StreamCountAudio != recordSdt->StreamCountAudio ||
             !CUtils::CompareVectors(AudioLanguages, recordSdt->AudioLanguages) ||
             !CUtils::CompareVectors(SubtitlesLanguages, recordSdt->SubtitlesLanguages) ||
-            !CUtils::CompareVectors(OpenTvCategoryIds, recordSdt->OpenTvCategoryIds) ||
-            VirginMediaCategoryId != recordSdt->VirginMediaCategoryId ||
+            CyfrowyPolsatChannelCategoryId != recordSdt->CyfrowyPolsatChannelCategoryId ||
+            !CUtils::CompareVectors(OpenTvChannelCategoryIds, recordSdt->OpenTvChannelCategoryIds) ||
+            VirginMediaChannelCategoryId != recordSdt->VirginMediaChannelCategoryId ||
             DishMarketId != recordSdt->DishMarketId ||
             !CUtils::CompareVectors(AvailableInCountries, recordSdt->AvailableInCountries) ||
             !CUtils::CompareVectors(UnavailableInCountries, recordSdt->UnavailableInCountries) ||
@@ -229,7 +232,7 @@ class CParserSdt : public CSectionDecoder, public IDefaultAuthorityProvider
 
         void Debug(const wchar_t* situation) const
         {
-          LogDebug(L"SDT: service %s, table ID = 0x%hhx, ONID = %hu, TSID = %hu, service ID = %hu, EIT schedule flag = %d, EIT present following flag = %d, running status = %hhu, free CA mode = %d, service type = %hhu, provider name count = %llu, service name count = %llu, LCN = %hu, Dish sub-channel number = %hhu, visible in guide = %d, reference service ID = %hu, is HD = %d, is SD = %d, is 3D = %d, video stream count = %hu, audio stream count = %hu, audio language count = %llu, subtitles language count = %llu, OpenTV category ID count = %llu, Virgin Media category ID = %hhu, Dish market ID = %hu, country counts = %llu / %llu, cell counts = %llu / %llu, target region count = %llu, prev. ONID = %hu, prev. TSID = %hu, prev. service ID = %hu, EPG ONID = %hu, EPG TSID = %hu, EPG service ID = %hu, default authority = %S",
+          LogDebug(L"SDT: service %s, table ID = 0x%hhx, ONID = %hu, TSID = %hu, service ID = %hu, EIT schedule flag = %d, EIT present following flag = %d, running status = %hhu, free CA mode = %d, service type = %hhu, provider name count = %llu, service name count = %llu, LCN = %hu, Dish sub-channel number = %hhu, visible in guide = %d, reference service ID = %hu, is HD = %d, is SD = %d, is 3D = %d, video stream count = %hu, audio stream count = %hu, audio language count = %llu, subtitles language count = %llu, Cyfrowy Polsat channel category ID = %hhu, OpenTV channel category ID count = %llu, Virgin Media channel category ID = %hhu, Dish market ID = %hu, country counts = %llu / %llu, cell counts = %llu / %llu, target region count = %llu, prev. ONID = %hu, prev. TSID = %hu, prev. service ID = %hu, EPG ONID = %hu, EPG TSID = %hu, EPG service ID = %hu, default authority = %S",
                     situation, TableId, OriginalNetworkId, TransportStreamId,
                     ServiceId, EitScheduleFlag, EitPresentFollowingFlag,
                     RunningStatus, FreeCaMode, ServiceType,
@@ -240,8 +243,9 @@ class CParserSdt : public CSectionDecoder, public IDefaultAuthorityProvider
                     IsThreeDimensional, StreamCountVideo, StreamCountAudio,
                     (unsigned long long)AudioLanguages.size(),
                     (unsigned long long)SubtitlesLanguages.size(),
-                    (unsigned long long)OpenTvCategoryIds.size(),
-                    VirginMediaCategoryId, DishMarketId,
+                    CyfrowyPolsatChannelCategoryId,
+                    (unsigned long long)OpenTvChannelCategoryIds.size(),
+                    VirginMediaChannelCategoryId, DishMarketId,
                     (unsigned long long)AvailableInCountries.size(),
                     (unsigned long long)UnavailableInCountries.size(),
                     (unsigned long long)AvailableInCells.size(),
@@ -256,7 +260,7 @@ class CParserSdt : public CSectionDecoder, public IDefaultAuthorityProvider
           CUtils::DebugStringMap(ProviderNames, L"provider name(s)", L"language", L"name");
           CUtils::DebugVector(AudioLanguages, L"audio language(s)", true);
           CUtils::DebugVector(SubtitlesLanguages, L"subtitles language(s)", true);
-          CUtils::DebugVector(OpenTvCategoryIds, L"OpenTV category ID(s)", false);
+          CUtils::DebugVector(OpenTvChannelCategoryIds, L"OpenTV channel category ID(s)", false);
           CUtils::DebugVector(AvailableInCountries, L"available in countries", true);
           CUtils::DebugVector(UnavailableInCountries, L"unavailable in countries", true);
           CUtils::DebugVector(AvailableInCells, L"available in cell(s)", false);
@@ -291,8 +295,9 @@ class CParserSdt : public CSectionDecoder, public IDefaultAuthorityProvider
                                         StreamCountAudio,
                                         AudioLanguages,
                                         SubtitlesLanguages,
-                                        OpenTvCategoryIds,
-                                        VirginMediaCategoryId,
+                                        CyfrowyPolsatChannelCategoryId,
+                                        OpenTvChannelCategoryIds,
+                                        VirginMediaChannelCategoryId,
                                         DishMarketId,
                                         AvailableInCountries,
                                         UnavailableInCountries,
@@ -336,8 +341,9 @@ class CParserSdt : public CSectionDecoder, public IDefaultAuthorityProvider
                                         StreamCountAudio,
                                         AudioLanguages,
                                         SubtitlesLanguages,
-                                        OpenTvCategoryIds,
-                                        VirginMediaCategoryId,
+                                        CyfrowyPolsatChannelCategoryId,
+                                        OpenTvChannelCategoryIds,
+                                        VirginMediaChannelCategoryId,
                                         DishMarketId,
                                         AvailableInCountries,
                                         UnavailableInCountries,
@@ -381,8 +387,9 @@ class CParserSdt : public CSectionDecoder, public IDefaultAuthorityProvider
                                         StreamCountAudio,
                                         AudioLanguages,
                                         SubtitlesLanguages,
-                                        OpenTvCategoryIds,
-                                        VirginMediaCategoryId,
+                                        CyfrowyPolsatChannelCategoryId,
+                                        OpenTvChannelCategoryIds,
+                                        VirginMediaChannelCategoryId,
                                         DishMarketId,
                                         AvailableInCountries,
                                         UnavailableInCountries,
@@ -421,8 +428,9 @@ class CParserSdt : public CSectionDecoder, public IDefaultAuthorityProvider
         unsigned short StreamCountAudio;
         vector<unsigned long> AudioLanguages;
         vector<unsigned long> SubtitlesLanguages;
-        vector<unsigned char> OpenTvCategoryIds;
-        unsigned char VirginMediaCategoryId;
+        unsigned char CyfrowyPolsatChannelCategoryId;
+        vector<unsigned char> OpenTvChannelCategoryIds;
+        unsigned char VirginMediaChannelCategoryId;
         unsigned short DishMarketId;
         vector<unsigned long> AvailableInCountries;
         vector<unsigned long> UnavailableInCountries;
@@ -509,7 +517,7 @@ class CParserSdt : public CSectionDecoder, public IDefaultAuthorityProvider
     static bool DecodeOpenTvChannelDescriptionDescriptor(const unsigned char* data,
                                                           unsigned char dataLength,
                                                           bool isItalianText,
-                                                          vector<unsigned char>& categoryIds);
+                                                          vector<unsigned char>& channelCategoryIds);
     static bool DecodeOpenTvNvodTimeShiftedServiceNameDescriptor(const unsigned char* data,
                                                                   unsigned char dataLength,
                                                                   char** serviceName);
@@ -517,8 +525,11 @@ class CParserSdt : public CSectionDecoder, public IDefaultAuthorityProvider
                                                     unsigned char dataLength,
                                                     unsigned short& logicalChannelNumber,
                                                     bool& visibleInGuide,
-                                                    unsigned char& categoryId,
+                                                    unsigned char& channelCategoryId,
                                                     bool& isHighDefinition);
+    static bool DecodeCyfrowyPolsatChannelCategoryDescriptor(const unsigned char* data,
+                                                              unsigned char dataLength,
+                                                              unsigned char& channelCategoryId);
 
     CCriticalSection m_section;
     vector<unsigned long long> m_seenSectionsActual;

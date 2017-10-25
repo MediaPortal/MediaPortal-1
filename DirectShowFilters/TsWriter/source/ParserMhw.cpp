@@ -22,6 +22,7 @@
 #include <time.h>       // gmtime(), time_t, tm
 #include "..\..\shared\EnterCriticalSection.h"
 #include "..\..\shared\TimeUtils.h"
+#include "OriginalNetworkIds.h"
 #include "ParserTot.h"
 #include "PidUsage.h"
 #include "TextUtil.h"
@@ -3591,7 +3592,7 @@ MhwProvider CParserMhw::DetermineProvider(unsigned short originalNetworkId,
       return CanalsatFrance;
     }
   }
-  else if (originalNetworkId == 318)
+  else if (originalNetworkId == ORIGINAL_NETWORK_ID_EUTELSAT_13E_1)
   {
     return CyfraPoland;
   }

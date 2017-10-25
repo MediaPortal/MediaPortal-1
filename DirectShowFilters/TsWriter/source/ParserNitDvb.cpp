@@ -27,13 +27,13 @@
 #include <string>
 #include "..\..\shared\EnterCriticalSection.h"
 #include "..\..\shared\TimeUtils.h"
+#include "OriginalNetworkIds.h"
+#include "PrivateDataSpecifiers.h"
 #include "TextUtil.h"
 #include "Utils.h"
 
 
 #define LANG_UND 0x646e75
-
-#define ORIGINAL_NETWORK_ID_FREESAT   59
 
 
 extern void LogDebug(const wchar_t* fmt, ...);
@@ -354,7 +354,7 @@ void CParserNitDvb::OnNewSection(const CSection& section)
       return;
     }
 
-    map<unsigned long, char*> groupNames;
+    map<unsigned long, char*> groupNames;                                         // language -> name
     vector<unsigned long> availableInCountries;
     vector<unsigned long> unavailableInCountries;
     vector<unsigned long> homeTransmitterKeys;
@@ -362,6 +362,7 @@ void CParserNitDvb::OnNewSection(const CSection& section)
     char* groupDefaultAuthority = NULL;
     vector<unsigned long long> groupTargetRegionIds;
     map<unsigned long long, map<unsigned long, char*>*> targetRegionNames;        // region ID -> [language -> name]
+    map<unsigned char, char*> cyfrowyPolsatChannelCategoryNames;                  // category ID -> name
     map<unsigned short, map<unsigned long, char*>*> freesatRegionNames;           // region ID -> [language -> name]
     map<unsigned short, vector<unsigned short>*> freesatChannelCategoryIds;       // channel ID -> [category ID]
     map<unsigned short, map<unsigned long, char*>*> freesatChannelCategoryNames;  // category ID -> [language -> name]
@@ -376,6 +377,7 @@ void CParserNitDvb::OnNewSection(const CSection& section)
                                     &groupDefaultAuthority,
                                     groupTargetRegionIds,
                                     targetRegionNames,
+                                    cyfrowyPolsatChannelCategoryNames,
                                     freesatRegionNames,
                                     freesatChannelCategoryIds,
                                     freesatChannelCategoryNames))
@@ -397,6 +399,14 @@ void CParserNitDvb::OnNewSection(const CSection& section)
     AddGroupNameSets(TargetRegion, targetRegionNames);
     AddGroupNameSets(FreesatRegion, freesatRegionNames);
     AddGroupNameSets(FreesatChannelCategory, freesatChannelCategoryNames);
+
+    map<unsigned char, char*>::const_iterator nameIt = cyfrowyPolsatChannelCategoryNames.begin();
+    for ( ; nameIt != cyfrowyPolsatChannelCategoryNames.end(); nameIt++)
+    {
+      map<unsigned long, char*> temp;
+      temp[LANG_UND] = nameIt->second;
+      AddGroupNames(CyfrowyPolsatChannelCategory, nameIt->first, temp);
+    }
 
     unsigned short transportStreamLoopLength = ((data[pointer] & 0xf) << 8) + data[pointer + 1];
     pointer += 2;
@@ -500,7 +510,7 @@ void CParserNitDvb::OnNewSection(const CSection& section)
         return;
       }
 
-      map<unsigned char, char*>::const_iterator nameIt = norDigChannelListNames.begin();
+      nameIt = norDigChannelListNames.begin();
       for ( ; nameIt != norDigChannelListNames.end(); nameIt++)
       {
         map<unsigned long, char*> temp;
@@ -1012,6 +1022,37 @@ bool CParserNitDvb::GetTargetRegionNameByLanguage(unsigned long long regionId,
                                                   unsigned short& nameBufferSize) const
 {
   return GetNameByLanguage(TargetRegion, regionId, language, name, nameBufferSize);
+}
+
+unsigned char CParserNitDvb::GetCyfrowyPolsatChannelCategoryNameCount(unsigned char categoryId) const
+{
+  return GetNameCount(CyfrowyPolsatChannelCategory, categoryId);
+}
+
+bool CParserNitDvb::GetCyfrowyPolsatChannelCategoryNameByIndex(unsigned char categoryId,
+                                                                unsigned char index,
+                                                                unsigned long& language,
+                                                                char* name,
+                                                                unsigned short& nameBufferSize) const
+{
+  return GetNameByIndex(CyfrowyPolsatChannelCategory,
+                        categoryId,
+                        index,
+                        language,
+                        name,
+                        nameBufferSize);
+}
+
+bool CParserNitDvb::GetCyfrowyPolsatChannelCategoryNameByLanguage(unsigned char categoryId,
+                                                                  unsigned long language,
+                                                                  char* name,
+                                                                  unsigned short& nameBufferSize) const
+{
+  return GetNameByLanguage(CyfrowyPolsatChannelCategory,
+                            categoryId,
+                            language,
+                            name,
+                            nameBufferSize);
 }
 
 unsigned char CParserNitDvb::GetFreesatRegionNameCount(unsigned short regionId) const
@@ -1926,6 +1967,7 @@ bool CParserNitDvb::DecodeExtensionDescriptors(const unsigned char* sectionData,
                                                 char** defaultAuthority,
                                                 vector<unsigned long long>& targetRegionIds,
                                                 map<unsigned long long, map<unsigned long, char*>*>& targetRegionNames,
+                                                map<unsigned char, char*>& cyfrowyPolsatChannelCategoryNames,
                                                 map<unsigned short, map<unsigned long, char*>*>& freesatRegionNames,
                                                 map<unsigned short, vector<unsigned short>*>& freesatChannelCategories,
                                                 map<unsigned short, map<unsigned long, char*>*>& freesatChannelCategoryNames) const
@@ -2022,7 +2064,7 @@ bool CParserNitDvb::DecodeExtensionDescriptors(const unsigned char* sectionData,
         {
           tagExtension = sectionData[pointer];
         }
-        else if (privateDataSpecifier != 0x2b00)  // unknown Sky Network Television (Igloo NZ)
+        else if (privateDataSpecifier != PRIVATE_DATA_SPECIFIER_SKY_NETWORK_NZ)
         {
           LogDebug(L"%s: invalid section, extension extended descriptor length = %hhu, pointer = %hu, end of extension descriptors = %hu",
                     m_name, length, pointer, endOfExtensionDescriptors);
@@ -2090,7 +2132,7 @@ bool CParserNitDvb::DecodeExtensionDescriptors(const unsigned char* sectionData,
           }
         }
       }
-      else if (privateDataSpecifier == 0x46534154)  // Freesat descriptors
+      else if (privateDataSpecifier == PRIVATE_DATA_SPECIFIER_BBC)
       {
         if (tag == 0xd4) // Freesat region name list descriptor
         {
@@ -2110,6 +2152,12 @@ bool CParserNitDvb::DecodeExtensionDescriptors(const unsigned char* sectionData,
                                                                   length,
                                                                   freesatChannelCategoryNames);
         }
+      }
+      else if (tag == 0xe3 && extensionId == ORIGINAL_NETWORK_ID_POLSAT_CYFRA_NC)
+      {
+        result = DecodeCyfrowyPolsatChannelCategoryNameListDescriptor(&sectionData[pointer],
+                                                                      length,
+                                                                      cyfrowyPolsatChannelCategoryNames);
       }
 
       if (!result)
@@ -2284,9 +2332,10 @@ bool CParserNitDvb::DecodeTransportStreamDescriptors(const unsigned char* sectio
         (
           tag == 0x82 &&
           (
-            privateDataSpecifier == 0x31 ||                   // Sagem logical channel number descriptor
-            privateDataSpecifier == 0x41444250 ||             // StarHub TV (formerly Singapore Cable Vision) - Singapore DVB-C
-            (                                                 // Sogecable (Movistar+ ?) - Astra 19.2E eg. 10729V - don't include a PDS
+            privateDataSpecifier == PRIVATE_DATA_SPECIFIER_TELEDENMARK ||   // Sagem logical channel number descriptor
+            privateDataSpecifier == PRIVATE_DATA_SPECIFIER_POLSAT ||
+            privateDataSpecifier == PRIVATE_DATA_SPECIFIER_STARHUB_SG ||    // StarHub TV (formerly Singapore Cable Vision) - Singapore DVB-C
+            (                                                               // Sogecable (Movistar+) - Astra 19.2E eg. 10729V - don't include a PDS
               tableId != TABLE_ID_NIT_DVB_ACTUAL &&
               tableId != TABLE_ID_NIT_DVB_OTHER &&
               groupId >= 0x20 &&
@@ -2294,8 +2343,8 @@ bool CParserNitDvb::DecodeTransportStreamDescriptors(const unsigned char* sectio
             )
           )
         ) ||
-        (tag == 0x93 && privateDataSpecifier == 0x362275) ||  // Irdeto logical channel number descriptor (Austar Australia)
-        (tag == 0xe2 && privateDataSpecifier == 0x6001)       // News Data Com [NDC] logical channel number descriptor (Sky NZ)
+        (tag == 0x93 && privateDataSpecifier == PRIVATE_DATA_SPECIFIER_IRDETO) ||       // Irdeto logical channel number descriptor (Austar Australia)
+        (tag == 0xe2 && privateDataSpecifier == PRIVATE_DATA_SPECIFIER_NEWS_DATACOM_1)  // News Data Com [NDC] logical channel number descriptor (Sky NZ)
       )
       {
         result = DecodeAlternativeLogicalChannelNumberDescriptor(&sectionData[pointer],
@@ -2309,8 +2358,8 @@ bool CParserNitDvb::DecodeTransportStreamDescriptors(const unsigned char* sectio
         (
           tag == 0x88 &&    // HD simulcast logical channel number descriptor
           (
-            privateDataSpecifier == 0x28 ||   // IEC/CENELEC 62 216 standard
-            privateDataSpecifier == 0x233a    // Freeview UK
+            privateDataSpecifier == PRIVATE_DATA_SPECIFIER_EACEM ||         // IEC/CENELEC 62 216 standard
+            privateDataSpecifier == PRIVATE_DATA_SPECIFIER_IDPNDNT_TV_COM   // Freeview UK
           )
         )
       )
@@ -2322,13 +2371,13 @@ bool CParserNitDvb::DecodeTransportStreamDescriptors(const unsigned char* sectio
                                                       visibleInGuideFlags,
                                                       logicalChannelNumbers);
       }
-      else if (tag == 0x86 && privateDataSpecifier == 0x233a) // service attribute descriptor (Freeview UK)
+      else if (tag == 0x86 && privateDataSpecifier == PRIVATE_DATA_SPECIFIER_IDPNDNT_TV_COM)  // service attribute descriptor (Freeview UK)
       {
         result = DecodeServiceAttributeDescriptor(&sectionData[pointer],
                                                   length,
                                                   visibleInGuideFlags);
       }
-      else if (tag == 0x87 && privateDataSpecifier == 0x29)   // NorDig logical channel descriptor version 2
+      else if (tag == 0x87 && privateDataSpecifier == PRIVATE_DATA_SPECIFIER_NORDIG)    // NorDig logical channel descriptor version 2
       {
         result = DecodeNorDigLogicalChannelDescriptorVersion2(&sectionData[pointer],
                                                               length,
@@ -2337,7 +2386,7 @@ bool CParserNitDvb::DecodeTransportStreamDescriptors(const unsigned char* sectio
                                                               logicalChannelNumbers,
                                                               visibleInGuideFlags);
       }
-      else if (tag == 0xb1 && privateDataSpecifier == 2)      // OpenTV channel descriptor
+      else if (tag == 0xb1 && privateDataSpecifier == PRIVATE_DATA_SPECIFIER_BSKYB_1)   // OpenTV channel descriptor
       {
         result = DecodeOpenTvChannelDescriptor(&sectionData[pointer],
                                                 length,
@@ -2345,7 +2394,7 @@ bool CParserNitDvb::DecodeTransportStreamDescriptors(const unsigned char* sectio
                                                 openTvChannelIds,
                                                 logicalChannelNumbers);
       }
-      else if (tag == 0xd3 && privateDataSpecifier == 0x46534154) // Freesat channel descriptor
+      else if (tag == 0xd3 && privateDataSpecifier == PRIVATE_DATA_SPECIFIER_BBC)       // Freesat channel descriptor
       {
         result = DecodeFreesatChannelDescriptor(&sectionData[pointer],
                                                 length,
@@ -2954,6 +3003,80 @@ bool CParserNitDvb::DecodeFreesatChannelCategoryNameListDescriptor(const unsigne
   return false;
 }
 
+bool CParserNitDvb::DecodeCyfrowyPolsatChannelCategoryNameListDescriptor(const unsigned char* data,
+                                                                          unsigned char dataLength,
+                                                                          map<unsigned char, char*>& names) const
+{
+  // <loop>
+  //   category ID - 1 byte
+  //   category name loop length - 1 byte
+  //   category name length - 1 byte
+  //   category name - [category name length] bytes
+  // </loop>
+  if (dataLength == 0)
+  {
+    LogDebug(L"%s: invalid Cyfrowy Polsat channel category name list descriptor, length = %hhu",
+              m_name, dataLength);
+    return false;
+  }
+  try
+  {
+    //LogDebug(L"%s: Cyfrowy Polsat channel category name list descriptor, descriptor length = %hhu",
+    //          m_name, dataLength);
+    unsigned short pointer = 0;
+    while (pointer + 2 < dataLength)
+    {
+      unsigned char categoryId = data[pointer++];
+      unsigned char nameLength = data[pointer++];
+
+      char* name = NULL;
+      if (
+        pointer + nameLength > dataLength ||
+        !CTextUtil::DvbTextToString(&data[pointer], nameLength, &name)
+      )
+      {
+        LogDebug(L"%s: invalid Cyfrowy Polsat channel category name list descriptor, descriptor length = %hhu, pointer = %hu, name length = %hhu, category ID = %hhu",
+                  m_name, dataLength, pointer, nameLength, categoryId);
+        CUtils::CleanUpStringSet(names);
+        return false;
+      }
+
+      if (name == NULL)
+      {
+        LogDebug(L"%s: failed to allocate Cyfrowy Polsat channel category name, category ID = %hhu",
+                  m_name, categoryId);
+      }
+      else
+      {
+        char* existingName = names[categoryId];
+        if (existingName != NULL)
+        {
+          if (strcmp(existingName, name) != 0)
+          {
+            LogDebug(L"%s: Cyfrowy Polsat channel category name conflict, category ID = %hhu, name = %S, alternative name = %S",
+                      m_name, categoryId, existingName, name);
+          }
+          delete[] name;
+        }
+        else
+        {
+          //LogDebug(L"  category ID = %hhu, name = %S", categoryId, name);
+          names[categoryId] = name;
+        }
+      }
+
+      pointer += nameLength;
+    }
+    return true;
+  }
+  catch (...)
+  {
+    LogDebug(L"%s: unhandled exception in DecodeCyfrowyPolsatChannelCategoryNameListDescriptor()",
+              m_name);
+  }
+  return false;
+}
+
 bool CParserNitDvb::DecodeTargetRegionDescriptor(const unsigned char* data,
                                                   unsigned char dataLength,
                                                   vector<unsigned long long>& targetRegionIds) const
@@ -3506,7 +3629,9 @@ bool CParserNitDvb::DecodeAlternativeLogicalChannelNumberDescriptor(const unsign
   // not meant to be visible.
   // This format is also used by other providers such as Sky New Zealand and
   // Austar Australia.
-  if (dataLength == 0 || dataLength % 4 != 0)
+  //
+  // Note: Cyfrowy Polsat transport streams contain zero-length descriptors.
+  if (/*dataLength == 0 ||*/ dataLength % 4 != 0)
   {
     LogDebug(L"%s: invalid alternative logical channel number descriptor, tag = 0x%hhx, length = %hhu",
               m_name, tag, dataLength);
@@ -3587,7 +3712,7 @@ bool CParserNitDvb::DecodeLogicalChannelNumberDescriptor(const unsigned char* da
       pointer += 4;
 
       // The NorDig LCN descriptor specifies 14 bits for the LCN.
-      if (tag == 0x83 && privateDataSpecifier == 0x29)
+      if (tag == 0x83 && privateDataSpecifier == PRIVATE_DATA_SPECIFIER_NORDIG)
       {
         logicalChannelNumber |= ((reserved & 0xf) << 10);
       }
@@ -3598,7 +3723,7 @@ bool CParserNitDvb::DecodeLogicalChannelNumberDescriptor(const unsigned char* da
 
       // In the UK the standard LCN descriptor doesn't have the visible service
       // flag. The HD simulcast LCN descriptor does.
-      if (tag != 0x83 || privateDataSpecifier != 0x233a)
+      if (tag != 0x83 || privateDataSpecifier != PRIVATE_DATA_SPECIFIER_IDPNDNT_TV_COM)
       {
         // Assuming that the receiver is HD-capable, the visible in guide flag
         // in the HD simulcast LCN descriptor overrides other visibility flags.

@@ -63,7 +63,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
     /// <param name="configuration">The tuner's configuration.</param>
     public override void ReloadConfiguration(Tuner configuration)
     {
-      ChannelGroupType channelGroupTypes = ChannelGroupType.FreesatChannelCategory | ChannelGroupType.MediaHighwayChannelCategory | ChannelGroupType.NorDigChannelList | ChannelGroupType.OpenTvChannelCategory | ChannelGroupType.VirginMediaChannelCategory;
+      ChannelGroupType channelGroupTypes = ChannelGroupType.CyfrowyPolsatChannelCategory | ChannelGroupType.FreesatChannelCategory | ChannelGroupType.MediaHighwayChannelCategory | ChannelGroupType.NorDigChannelList | ChannelGroupType.OpenTvChannelCategory | ChannelGroupType.VirginMediaChannelCategory;
       channelGroupTypes = (ChannelGroupType)SettingsManagement.GetValue("scanAutoCreateChannelGroups", (int)channelGroupTypes);
       _scanMediaHighway2ChannelPid = channelGroupTypes.HasFlag(ChannelGroupType.MediaHighwayChannelCategory);
     }

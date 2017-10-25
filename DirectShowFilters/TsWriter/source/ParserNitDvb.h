@@ -106,6 +106,17 @@ class CParserNitDvb
                                         char* name,
                                         unsigned short& nameBufferSize) const;
 
+    unsigned char GetCyfrowyPolsatChannelCategoryNameCount(unsigned char categoryId) const;
+    bool GetCyfrowyPolsatChannelCategoryNameByIndex(unsigned char categoryId,
+                                                    unsigned char index,
+                                                    unsigned long& language,
+                                                    char* name,
+                                                    unsigned short& nameBufferSize) const;
+    bool GetCyfrowyPolsatChannelCategoryNameByLanguage(unsigned char categoryId,
+                                                        unsigned long language,
+                                                        char* name,
+                                                        unsigned short& nameBufferSize) const;
+
     unsigned char GetFreesatRegionNameCount(unsigned short regionId) const;
     bool GetFreesatRegionNameByIndex(unsigned short regionId,
                                       unsigned char index,
@@ -181,7 +192,8 @@ class CParserNitDvb
       TargetRegion = 2,
       FreesatRegion = 3,
       FreesatChannelCategory = 4,
-      NorDigChannelList = 5
+      NorDigChannelList = 5,
+      CyfrowyPolsatChannelCategory = 6
     };
 
     class CRecordNitService : public IRecord
@@ -1144,6 +1156,7 @@ class CParserNitDvb
                                     char** defaultAuthority,
                                     vector<unsigned long long>& targetRegionIds,
                                     map<unsigned long long, map<unsigned long, char*>*>& targetRegionNames,
+                                    map<unsigned char, char*>& cyfrowyPolsatChannelCategoryNames,
                                     map<unsigned short, map<unsigned long, char*>*>& freesatRegionNames,
                                     map<unsigned short, vector<unsigned short>*>& freesatChannelCategoryIds,
                                     map<unsigned short, map<unsigned long, char*>*>& freesatChannelCategoryNames) const;
@@ -1197,6 +1210,9 @@ class CParserNitDvb
     bool DecodeFreesatChannelCategoryNameListDescriptor(const unsigned char* data,
                                                         unsigned char dataLength,
                                                         map<unsigned short, map<unsigned long, char*>*>& names) const;
+    bool DecodeCyfrowyPolsatChannelCategoryNameListDescriptor(const unsigned char* data,
+                                                              unsigned char dataLength,
+                                                              map<unsigned char, char*>& names) const;
     bool DecodeTargetRegionDescriptor(const unsigned char* data,
                                       unsigned char dataLength,
                                       vector<unsigned long long>& targetRegionIds) const;

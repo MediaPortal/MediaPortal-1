@@ -246,10 +246,11 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       checkBoxSkipEncryptedChannels.Checked = !ServiceAgents.Instance.SettingServiceAgent.GetValue("scanStoreEncryptedChannels", true);
 
       // automatic channel groups
-      ChannelGroupType defaultChannelGroupTypes = ChannelGroupType.FreesatChannelCategory | ChannelGroupType.MediaHighwayChannelCategory | ChannelGroupType.NorDigChannelList | ChannelGroupType.OpenTvChannelCategory | ChannelGroupType.VirginMediaChannelCategory;
+      ChannelGroupType defaultChannelGroupTypes = ChannelGroupType.CyfrowyPolsatChannelCategory | ChannelGroupType.FreesatChannelCategory | ChannelGroupType.MediaHighwayChannelCategory | ChannelGroupType.NorDigChannelList | ChannelGroupType.OpenTvChannelCategory | ChannelGroupType.VirginMediaChannelCategory;
       _originalAutomaticChannelGroupTypes = (ChannelGroupType)ServiceAgents.Instance.SettingServiceAgent.GetValue("scanAutoCreateChannelGroups", (int)defaultChannelGroupTypes);
       checkBoxAutomaticChannelGroupsBroadcastStandards.Checked = _originalAutomaticChannelGroupTypes.HasFlag(ChannelGroupType.BroadcastStandard);
       checkBoxAutomaticChannelGroupsSatellites.Checked = _originalAutomaticChannelGroupTypes.HasFlag(ChannelGroupType.Satellite);
+      checkBoxAutomaticChannelGroupsCyfrowyPolsatChannelCategories.Checked = _originalAutomaticChannelGroupTypes.HasFlag(ChannelGroupType.CyfrowyPolsatChannelCategory);
       checkBoxAutomaticChannelGroupsFreesatChannelCategories.Checked = _originalAutomaticChannelGroupTypes.HasFlag(ChannelGroupType.FreesatChannelCategory);
       checkBoxAutomaticChannelGroupsMediaHighwayChannelCategories.Checked = _originalAutomaticChannelGroupTypes.HasFlag(ChannelGroupType.MediaHighwayChannelCategory);
       checkBoxAutomaticChannelGroupsNorDigChannelLists.Checked = _originalAutomaticChannelGroupTypes.HasFlag(ChannelGroupType.NorDigChannelList);
@@ -441,6 +442,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       if (checkBoxAutomaticChannelGroupsSatellites.Checked)
       {
         channelGroupTypes |= ChannelGroupType.Satellite;
+      }
+      if (checkBoxAutomaticChannelGroupsCyfrowyPolsatChannelCategories.Checked)
+      {
+        channelGroupTypes |= ChannelGroupType.CyfrowyPolsatChannelCategory;
       }
       if (checkBoxAutomaticChannelGroupsFreesatChannelCategories.Checked)
       {

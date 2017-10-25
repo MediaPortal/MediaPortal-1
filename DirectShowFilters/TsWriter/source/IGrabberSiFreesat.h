@@ -102,6 +102,7 @@ DECLARE_INTERFACE_(IGrabberSiFreesat, IGrabberSiDvb)
                                 unsigned char* freesatRegionIdCount,
                                 unsigned long* openTvRegionIds,
                                 unsigned char* openTvRegionIdCount,
+                                unsigned char* cyfrowyPolsatChannelCategoryId,
                                 unsigned short* freesatChannelCategoryIds,
                                 unsigned char* freesatChannelCategoryIdCount,
                                 unsigned short* mediaHighwayChannelCategoryIds,
@@ -164,6 +165,17 @@ DECLARE_INTERFACE_(IGrabberSiFreesat, IGrabberSiDvb)
                                                   unsigned long language,
                                                   char* name,
                                                   unsigned short* nameBufferSize)PURE;
+
+  STDMETHOD_(unsigned char, GetCyfrowyPolsatChannelCategoryNameCount)(THIS_ unsigned char categoryId)PURE;
+  STDMETHOD_(bool, GetCyfrowyPolsatChannelCategoryNameByIndex)(THIS_ unsigned char categoryId,
+                                                                unsigned char index,
+                                                                unsigned long* language,
+                                                                char* name,
+                                                                unsigned short* nameBufferSize)PURE;
+  STDMETHOD_(bool, GetCyfrowyPolsatChannelCategoryNameByLanguage)(THIS_ unsigned char categoryId,
+                                                                  unsigned long language,
+                                                                  char* name,
+                                                                  unsigned short* nameBufferSize)PURE;
 
   STDMETHOD_(unsigned char, GetFreesatRegionNameCount)(THIS_ unsigned short regionId)PURE;
   STDMETHOD_(bool, GetFreesatRegionNameByIndex)(THIS_ unsigned short regionId,

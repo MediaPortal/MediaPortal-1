@@ -435,6 +435,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
                             ref byte freesatRegionIdCount,
                             uint[] openTvRegionIds,
                             ref byte openTvRegionIdCount,
+                            out byte cyfrowyPolsatChannelCategoryId,
                             ushort[] freesatChannelCategoryIds,
                             ref byte freesatChannelCategoryIdCount,
                             ushort[] mediaHighwayChannelCategoryIds,
@@ -472,6 +473,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
       isHighDefinition = false;
       isStandardDefinition = false;
       isThreeDimensional = false;
+      cyfrowyPolsatChannelCategoryId = 0xff;
       virginMediaChannelCategoryId = 0;
       dishMarketId = 0;
       previousOriginalNetworkId = 0;
@@ -480,7 +482,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
       epgOriginalNetworkId = 0;
       epgTransportStreamId = 0;
       epgServiceId = 0;
-      object[] parameters = new object[61]
+      object[] parameters = new object[62]
       {
         index,
         tableId,
@@ -527,6 +529,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
         freesatRegionIdCount,
         openTvRegionIds,
         openTvRegionIdCount,
+        cyfrowyPolsatChannelCategoryId,
         freesatChannelCategoryIds,
         freesatChannelCategoryIdCount,
         mediaHighwayChannelCategoryIds,
@@ -577,18 +580,19 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
       targetRegionIdCount = (byte)parameters[40];
       freesatRegionIdCount = (byte)parameters[42];
       openTvRegionIdCount = (byte)parameters[44];
-      freesatChannelCategoryIdCount = (byte)parameters[46];
-      mediaHighwayChannelCategoryIdCount = (byte)parameters[48];
-      openTvChannelCategoryIdCount = (byte)parameters[50];
-      virginMediaChannelCategoryId = (byte)parameters[51];
-      dishMarketId = (ushort)parameters[52];
-      norDigChannelListIdCount = (byte)parameters[54];
-      previousOriginalNetworkId = (ushort)parameters[55];
-      previousTransportStreamId = (ushort)parameters[56];
-      previousServiceId = (ushort)parameters[57];
-      epgOriginalNetworkId = (ushort)parameters[58];
-      epgTransportStreamId = (ushort)parameters[59];
-      epgServiceId = (ushort)parameters[60];
+      cyfrowyPolsatChannelCategoryId = (byte)parameters[45];
+      freesatChannelCategoryIdCount = (byte)parameters[47];
+      mediaHighwayChannelCategoryIdCount = (byte)parameters[49];
+      openTvChannelCategoryIdCount = (byte)parameters[51];
+      virginMediaChannelCategoryId = (byte)parameters[52];
+      dishMarketId = (ushort)parameters[53];
+      norDigChannelListIdCount = (byte)parameters[55];
+      previousOriginalNetworkId = (ushort)parameters[56];
+      previousTransportStreamId = (ushort)parameters[57];
+      previousServiceId = (ushort)parameters[58];
+      epgOriginalNetworkId = (ushort)parameters[59];
+      epgTransportStreamId = (ushort)parameters[60];
+      epgServiceId = (ushort)parameters[61];
       return result;
     }
 
@@ -729,6 +733,37 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
     {
       object[] parameters = new object[4] { regionId, language, name, nameBufferSize };
       bool result = (bool)_delegateGrabberSiDvb("GetTargetRegionNameByLanguage", ref parameters);
+      nameBufferSize = (ushort)parameters[3];
+      return result;
+    }
+
+    public byte GetCyfrowyPolsatChannelCategoryNameCount(byte categoryId)
+    {
+      object[] parameters = new object[1] { categoryId };
+      return (byte)_delegateGrabberSiDvb("GetCyfrowyPolsatChannelCategoryNameCount", ref parameters);
+    }
+
+    public bool GetCyfrowyPolsatChannelCategoryNameByIndex(byte categoryId,
+                                                            byte index,
+                                                            out Iso639Code language,
+                                                            IntPtr name,
+                                                            ref ushort nameBufferSize)
+    {
+      language = new Iso639Code();
+      object[] parameters = new object[5] { categoryId, index, language, name, nameBufferSize };
+      bool result = (bool)_delegateGrabberSiDvb("GetCyfrowyPolsatChannelCategoryNameByIndex", ref parameters);
+      language = (Iso639Code)parameters[2];
+      nameBufferSize = (ushort)parameters[4];
+      return result;
+    }
+
+    public bool GetCyfrowyPolsatChannelCategoryNameByLanguage(byte categoryId,
+                                                              Iso639Code language,
+                                                              IntPtr name,
+                                                              ref ushort nameBufferSize)
+    {
+      object[] parameters = new object[4] { categoryId, language, name, nameBufferSize };
+      bool result = (bool)_delegateGrabberSiDvb("GetCyfrowyPolsatChannelCategoryNameByLanguage", ref parameters);
       nameBufferSize = (ushort)parameters[3];
       return result;
     }

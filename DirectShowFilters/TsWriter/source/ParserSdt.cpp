@@ -23,18 +23,14 @@
 #include <cstring>      // strcmp(), strncmp(), strncpy()
 #include "..\..\shared\EnterCriticalSection.h"
 #include "..\..\shared\TimeUtils.h"
+#include "OriginalNetworkIds.h"
 #include "ParserOpenTv.h"
+#include "PrivateDataSpecifiers.h"
 #include "TextUtil.h"
 #include "Utils.h"
 
 
 #define LANG_UND 0x646e75
-
-// There is no private data specifier for Dish descriptors, so we have to
-// determine scope with ONID. These are the ONIDs for EchoStar networks.
-// http://www.dvbservices.com/identifiers/original_network_id&tab=table
-#define ORIGINAL_NETWORK_ID_DISH_START  0x1001
-#define ORIGINAL_NETWORK_ID_DISH_END    0x100b
 
 
 extern void LogDebug(const wchar_t* fmt, ...);
@@ -411,9 +407,10 @@ bool CParserSdt::GetService(unsigned short index,
                             unsigned char& audioLanguageCount,
                             unsigned long* subtitlesLanguages,
                             unsigned char& subtitlesLanguageCount,
-                            unsigned char* openTvCategoryIds,
-                            unsigned char& openTvCategoryIdCount,
-                            unsigned char& virginMediaCategoryId,
+                            unsigned char& cyfrowyPolsatChannelCategoryId,
+                            unsigned char* openTvChannelCategoryIds,
+                            unsigned char& openTvChannelCategoryIdCount,
+                            unsigned char& virginMediaChannelCategoryId,
                             unsigned short& dishMarketId,
                             unsigned long* availableInCountries,
                             unsigned char& availableInCountryCount,
@@ -476,7 +473,8 @@ bool CParserSdt::GetService(unsigned short index,
   isThreeDimensional = m_currentRecord->IsThreeDimensional;
   streamCountVideo = m_currentRecord->StreamCountVideo;
   streamCountAudio = m_currentRecord->StreamCountAudio;
-  virginMediaCategoryId = m_currentRecord->VirginMediaCategoryId;
+  cyfrowyPolsatChannelCategoryId = m_currentRecord->CyfrowyPolsatChannelCategoryId;
+  virginMediaChannelCategoryId = m_currentRecord->VirginMediaChannelCategoryId;
   dishMarketId = m_currentRecord->DishMarketId;
   previousOriginalNetworkId = m_currentRecord->PreviousOriginalNetworkId;
   previousTransportStreamId = m_currentRecord->PreviousTransportStreamId;
@@ -506,15 +504,15 @@ bool CParserSdt::GetService(unsigned short index,
               serviceId, referenceServiceId, requiredCount,
               subtitlesLanguageCount);
   }
-  if (!CUtils::CopyVectorToArray(m_currentRecord->OpenTvCategoryIds,
-                                  openTvCategoryIds,
-                                  openTvCategoryIdCount,
-                                  requiredCount) && openTvCategoryIds != NULL)
+  if (!CUtils::CopyVectorToArray(m_currentRecord->OpenTvChannelCategoryIds,
+                                  openTvChannelCategoryIds,
+                                  openTvChannelCategoryIdCount,
+                                  requiredCount) && openTvChannelCategoryIds != NULL)
   {
     LogDebug(L"SDT %d: insufficient OpenTV channel category ID array size, service index = %hu, table ID = 0x%hhx, ONID = %hu, TSID = %hu, service ID = %hu, reference service ID = %hu, required size = %hhu, actual size = %hhu",
               GetPid(), index, tableId, originalNetworkId, transportStreamId,
               serviceId, referenceServiceId, requiredCount,
-              openTvCategoryIdCount);
+              openTvChannelCategoryIdCount);
   }
 
   // Assumption: for time-shifted/NVOD services, the following details are only
@@ -1129,14 +1127,14 @@ bool CParserSdt::DecodeServiceDescriptors(const unsigned char* sectionData,
         }
       }
     }
-    else if (privateDataSpecifier == 2)
+    else if (privateDataSpecifier == PRIVATE_DATA_SPECIFIER_BSKYB_1)
     {
       if (tag == 0xb2)  // OpenTV channel description descriptor
       {
         descriptorParseResult = DecodeOpenTvChannelDescriptionDescriptor(&sectionData[pointer],
                                                                           length,
                                                                           CParserOpenTv::IsItalianText(record.OriginalNetworkId),
-                                                                          record.OpenTvCategoryIds);
+                                                                          record.OpenTvChannelCategoryIds);
       }
       else if (tag == 0xc0) // OpenTV NVOD time-shifted service name descriptor
       {
@@ -1162,25 +1160,41 @@ bool CParserSdt::DecodeServiceDescriptors(const unsigned char* sectionData,
         }
       }
     }
-    else if (tag == 0xca) // Virgin Media channel descriptor
+    // There is no private data specifier. Even the ONID may be generic
+    // (assigned to "Cable and Wireless Communications"). Take care.
+    // http://www.dvbservices.com/identifiers/original_network_id&tab=table
+    else if (
+      tag == 0xca &&    // Virgin Media channel descriptor
+      record.OriginalNetworkId == ORIGINAL_NETWORK_ID_VIRGIN_MEDIA
+    )
     {
-      // There is no private data specifier. Even the ONID may be generic
-      // (assigned to "Cable and Wireless Communications". Take care.
-      // http://www.dvbservices.com/identifiers/original_network_id&tab=table
-      if (record.OriginalNetworkId == 0xf020)
+      bool isHighDefinition = false;
+      descriptorParseResult = DecodeVirginMediaChannelDescriptor(&sectionData[pointer],
+                                                                  length,
+                                                                  record.LogicalChannelNumber,
+                                                                  record.VisibleInGuide,
+                                                                  record.VirginMediaChannelCategoryId,
+                                                                  isHighDefinition);
+      if (descriptorParseResult && isHighDefinition)
       {
-        bool isHighDefinition = false;
-        descriptorParseResult = DecodeVirginMediaChannelDescriptor(&sectionData[pointer],
-                                                                    length,
-                                                                    record.LogicalChannelNumber,
-                                                                    record.VisibleInGuide,
-                                                                    record.VirginMediaCategoryId,
-                                                                    isHighDefinition);
-        if (descriptorParseResult && isHighDefinition)
-        {
-          record.IsHighDefinition = true;
-        }
+        record.IsHighDefinition = true;
       }
+    }
+    // There is no private data specifier for this descriptor, so we have to
+    // determine scope with ONID.
+    else if (
+      tag == 0xe2 &&    // Cyfrowy Polsat channel category descriptor
+      (
+        record.OriginalNetworkId == ORIGINAL_NETWORK_ID_POLSAT_CYFRA_NC ||
+        record.OriginalNetworkId == ORIGINAL_NETWORK_ID_EUTELSAT_13E_1 ||
+        record.OriginalNetworkId == ORIGINAL_NETWORK_ID_EUTELSAT_13E_2 ||
+        record.OriginalNetworkId == ORIGINAL_NETWORK_ID_SKY_ITALIA
+      )
+    )
+    {
+      descriptorParseResult = DecodeCyfrowyPolsatChannelCategoryDescriptor(&sectionData[pointer],
+                                                                            length,
+                                                                            record.CyfrowyPolsatChannelCategoryId);
     }
 
     if (!descriptorParseResult)
@@ -1886,14 +1900,14 @@ bool CParserSdt::DecodeDishSubChannelDescriptor(const unsigned char* data,
 bool CParserSdt::DecodeOpenTvChannelDescriptionDescriptor(const unsigned char* data,
                                                           unsigned char dataLength,
                                                           bool isItalianText,
-                                                          vector<unsigned char>& categoryIds)
+                                                          vector<unsigned char>& channelCategoryIds)
 {
   // unknown - 1 byte; IT = 0x1c or 0, AU/UK = 0x1d or 0, NZ = 0x20 or 0
   // unknown - 1 byte; AU/NZ = always 1, IT/UK = various; related to bundle/package/encryption, or flags???
-  // category ID 0 - 4 bits; country-specific interpretation
-  // category count - 4 bits
-  // for (i = 1; i <= category count; i++) {
-  //   category ID i - 4 bits; country-specific interpretation
+  // channel category ID 0 - 4 bits; country-specific interpretation
+  // channel category count - 4 bits
+  // for (i = 1; i <= channel category count; i++) {
+  //   channel category ID i - 4 bits; country-specific interpretation
   //   unknown - 4 bits; always seems to be 0xf
   // }
   // channel description - [remaining] bytes; Huffman encoded
@@ -1907,15 +1921,15 @@ bool CParserSdt::DecodeOpenTvChannelDescriptionDescriptor(const unsigned char* d
   {
     unsigned char unknown1 = data[0];
     unsigned char unknown2 = data[1];
-    unsigned char categoryCount = (data[2] & 0xf) + 1;
-    //LogDebug(L"SDT: OpenTV channel description descriptor, unknown 1 = %hhu, unknown 2 = 0x%hhx, category count = %hhu",
-    //          unknown1, unknown2, categoryCount);
+    unsigned char channelCategoryCount = (data[2] & 0xf) + 1;
+    //LogDebug(L"SDT: OpenTV channel description descriptor, unknown 1 = %hhu, unknown 2 = 0x%hhx, channel category count = %hhu",
+    //          unknown1, unknown2, channelCategoryCount);
     unsigned char pointer = 2;
-    unsigned char endOfCategoryIds = pointer + categoryCount;
-    if (endOfCategoryIds >= dataLength)
+    unsigned char endOfChannelCategoryIds = pointer + channelCategoryCount;
+    if (endOfChannelCategoryIds >= dataLength)
     {
-      LogDebug(L"SDT: invalid OpenTV channel description descriptor, length = %hhu, unknown 1 = %hhu, unknown 2 = 0x%hhx, category count = %hhu",
-                dataLength, unknown1, unknown2, categoryCount);
+      LogDebug(L"SDT: invalid OpenTV channel description descriptor, length = %hhu, unknown 1 = %hhu, unknown 2 = 0x%hhx, channel category count = %hhu",
+                dataLength, unknown1, unknown2, channelCategoryCount);
       return false;
     }
 
@@ -1925,19 +1939,21 @@ bool CParserSdt::DecodeOpenTvChannelDescriptionDescriptor(const unsigned char* d
     // 2 categories. I'm not sure whether the associations are hierarchial.
     // Keep all of them and let the caller decide how they want to interpret
     // them.
-    while (pointer < endOfCategoryIds)
+    while (pointer < endOfChannelCategoryIds)
     {
-      unsigned char categoryId = data[pointer] >> 4;
+      unsigned char channelCategoryId = data[pointer] >> 4;
       unsigned char unknown3 = data[pointer++] & 0xf;
-      categoryIds.push_back(categoryId);
-      //LogDebug(L"  category ID = %hhu, unknown = %hhu", categoryId, unknown3);
+      channelCategoryIds.push_back(channelCategoryId);
+      //LogDebug(L"  channel category ID = %hhu, unknown = %hhu",
+      //          channelCategoryId, unknown3);
     }
 
     char* description = NULL;
     if (!CTextUtil::OpenTvTextToString(&data[pointer], dataLength - pointer, isItalianText, &description))
     {
-      LogDebug(L"SDT: invalid OpenTV channel description descriptor, length = %hhu, unknown 1 = %hhu, unknown 2 = 0x%hhx, category count = %hhu, is Italian text = %d",
-                dataLength, unknown1, unknown2, categoryCount, isItalianText);
+      LogDebug(L"SDT: invalid OpenTV channel description descriptor, length = %hhu, unknown 1 = %hhu, unknown 2 = 0x%hhx, channel category count = %hhu, is Italian text = %d",
+                dataLength, unknown1, unknown2, channelCategoryCount,
+                isItalianText);
       return false;
     }
     if (description == NULL)
@@ -1996,13 +2012,13 @@ bool CParserSdt::DecodeVirginMediaChannelDescriptor(const unsigned char* data,
                                                     unsigned char dataLength,
                                                     unsigned short& logicalChannelNumber,
                                                     bool& visibleInGuide,
-                                                    unsigned char& categoryId,
+                                                    unsigned char& channelCategoryId,
                                                     bool& isHighDefinition)
 {
   // logical channel number - 2 bytes
   // name length - 1 byte
   // name - [name length] bytes; ASCII, abbreviated???
-  // category ID = 1 byte
+  // channel category ID = 1 byte
   // flags 2 - 1 byte
   // unique - 2 bytes; channel ID???
   // zero - 1 byte
@@ -2042,7 +2058,7 @@ bool CParserSdt::DecodeVirginMediaChannelDescriptor(const unsigned char* data,
     // 13 = shopping
     // 14 = "Virgin iD"
     // 15 = "Top Left 4KTV test", "Bot Left 4KTV test"
-    categoryId = data[pointer++];
+    channelCategoryId = data[pointer++];
 
     // b0 (MSB) = [always zero]
     // b1 = [always zero]
@@ -2061,14 +2077,40 @@ bool CParserSdt::DecodeVirginMediaChannelDescriptor(const unsigned char* data,
     unsigned char zero = data[pointer++];
     unsigned char flags2 = data[pointer++];
 
-    //LogDebug(L"SDT: Virgin Media channel descriptor, LCN = %hu, name length = %hhu, category ID = %hhu, flags 1 = 0x%hhx, channel ID = %hu, zero = %hhu, flags 2 = 0x%hhx",
-    //          logicalChannelNumber, nameLength, categoryId, flags1, channelId,
-    //          zero, flags2);
+    //LogDebug(L"SDT: Virgin Media channel descriptor, LCN = %hu, name length = %hhu, channel category ID = %hhu, flags 1 = 0x%hhx, channel ID = %hu, zero = %hhu, flags 2 = 0x%hhx",
+    //          logicalChannelNumber, nameLength, channelCategoryId, flags1,
+    //          channelId, zero, flags2);
     return true;
   }
   catch (...)
   {
     LogDebug(L"SDT: unhandled exception in DecodeVirginMediaChannelDescriptor()");
+  }
+  return false;
+}
+
+bool CParserSdt::DecodeCyfrowyPolsatChannelCategoryDescriptor(const unsigned char* data,
+                                                              unsigned char dataLength,
+                                                              unsigned char& channelCategoryId)
+{
+  // channel category count - 1 byte; value usually 1 (=> dataLength == 3), but sometimes 2 (=> dataLength == 4)???
+  // channel category ID - 1 byte
+  // [unknown] - 1 byte; always 0xac when present (erotic channels)
+  // [unknown] - 1 byte; always 0xff
+  if (dataLength < 2)
+  {
+    LogDebug(L"SDT: invalid Cyfrowy Polsat channel category descriptor, length = %hhu",
+              dataLength);
+    return false;
+  }
+  try
+  {
+    channelCategoryId = data[1];
+    return true;
+  }
+  catch (...)
+  {
+    LogDebug(L"SDT: unhandled exception in DecodeCyfrowyPolsatChannelCategoryDescriptor()");
   }
   return false;
 }
