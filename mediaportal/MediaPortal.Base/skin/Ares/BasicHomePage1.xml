@@ -56,7 +56,7 @@
 		<textureFocus overlay="">#(iif(eq(#skin.manualimg,'yes'),'btn\focus\focus_#tile1pluginImg.png','btn\focus\focus_#tile1plugin.hyperlink.png'))</textureFocus>
 		<textureNoFocus>#(iif(eq(#skin.manualimg,'yes'),'btn\unfocus\#tile1pluginImg.png','btn\unfocus\#tile1plugin.hyperlink.png'))</textureNoFocus>
 		<textalign>center</textalign>
-		<textYOff>230</textYOff>
+		<textYOff>460</textYOff>
 		<font>font13</font>
         <onleft>00#skin.page1navleft</onleft>
         <onup>#(cint(switch( and( eq(#tile1plugin.hyperlink,'MovPics'), eq(#latestMediaHandler.movingpicture.latest.enabled,'True')),91919991, and(eq(#tile1plugin.hyperlink,'TVSeries'),eq(#latestMediaHandler.tvseries.latest.enabled,'True')),91919994, and(eq(#tile1plugin.hyperlink,'MyMusic'),eq(#latestMediaHandler.music.latest.enabled,'True')),91919997, and(eq(#tile1plugin.hyperlink,'MyVideo'),eq(#latestMediaHandler.myvideo.latest.enabled,'True')),91915991, and(eq(#tile1plugin.hyperlink,'LiveTV'),eq(#latestMediaHandler.tvrecordings.latest.enabled,'True')),91919984, and(eq(#tile1plugin.hyperlink,'Recordedtv'),eq(#latestMediaHandler.tvrecordings.latest.enabled,'True')),91919984, and(eq(#tile1plugin.hyperlink,'Trakt'),eq(#skin.no.latestmedia,'True')),98302, and(eq(#tile1plugin.hyperlink,'Pictures'),eq(#latestMediaHandler.picture.latest.enabled,'True')),91919971, eq(1,1),21)))</onup>
@@ -85,7 +85,7 @@
 		<textureFocus overlay="">#(iif(eq(#skin.manualimg,'yes'),'btn\focus\focus_#tile2pluginImg.png','btn\focus\focus_#tile2plugin.hyperlink.png'))</textureFocus>
 		<textureNoFocus>#(iif(eq(#skin.manualimg,'yes'),'btn\unfocus\#tile2pluginImg.png','btn\unfocus\#tile2plugin.hyperlink.png'))</textureNoFocus>
 		<textalign>center</textalign>
-		<textYOff>230</textYOff>
+		<textYOff>460</textYOff>
 		<font>font13</font>
         <onleft>00500</onleft>
         <onup>#(cint(switch( and( eq(#tile2plugin.hyperlink,'MovPics'), eq(#latestMediaHandler.movingpicture.latest.enabled,'True')),91919991, and(eq(#tile2plugin.hyperlink,'TVSeries'),eq(#latestMediaHandler.tvseries.latest.enabled,'True')),91919994, and(eq(#tile2plugin.hyperlink,'MyMusic'),eq(#latestMediaHandler.music.latest.enabled,'True')),91919997, and(eq(#tile2plugin.hyperlink,'MyVideo'),eq(#latestMediaHandler.myvideo.latest.enabled,'True')),91915991, and(eq(#tile2plugin.hyperlink,'LiveTV'),eq(#latestMediaHandler.tvrecordings.latest.enabled,'True')),91919984, and(eq(#tile2plugin.hyperlink,'Recordedtv'),eq(#latestMediaHandler.tvrecordings.latest.enabled,'True')),91919984, and(eq(#tile2plugin.hyperlink,'Trakt'),eq(#skin.no.latestmedia,'True')),98302, and(eq(#tile2plugin.hyperlink,'Pictures'),eq(#latestMediaHandler.picture.latest.enabled,'True')),91919971, eq(1,1),21)))</onup>
@@ -114,7 +114,7 @@
 		<textureFocus overlay="">#(iif(eq(#skin.manualimg,'yes'),'btn\focus\focus_#tile3pluginImg.png','btn\focus\focus_#tile3plugin.hyperlink.png'))</textureFocus>
 		<textureNoFocus>#(iif(eq(#skin.manualimg,'yes'),'btn\unfocus\#tile3pluginImg.png','btn\unfocus\#tile3plugin.hyperlink.png'))</textureNoFocus>
 		<textalign>center</textalign>
-		<textYOff>230</textYOff>
+		<textYOff>460</textYOff>
 		<font>font13</font>
         <onleft>00501</onleft>
         <onup>#(cint(switch( and( eq(#tile3plugin.hyperlink,'MovPics'), eq(#latestMediaHandler.movingpicture.latest.enabled,'True')),91919991, and(eq(#tile3plugin.hyperlink,'TVSeries'),eq(#latestMediaHandler.tvseries.latest.enabled,'True')),91919994, and(eq(#tile3plugin.hyperlink,'MyMusic'),eq(#latestMediaHandler.music.latest.enabled,'True')),91919997, and(eq(#tile3plugin.hyperlink,'MyVideo'),eq(#latestMediaHandler.myvideo.latest.enabled,'True')),91915991, and(eq(#tile3plugin.hyperlink,'LiveTV'),eq(#latestMediaHandler.tvrecordings.latest.enabled,'True')),91919984, and(eq(#tile3plugin.hyperlink,'Recordedtv'),eq(#latestMediaHandler.tvrecordings.latest.enabled,'True')),91919984, and(eq(#tile3plugin.hyperlink,'Trakt'),eq(#skin.no.latestmedia,'True')),98302, and(eq(#tile3plugin.hyperlink,'Pictures'),eq(#latestMediaHandler.picture.latest.enabled,'True')),91919971, eq(1,1),21)))</onup>
@@ -143,7 +143,7 @@
 		<textureFocus overlay="">#(iif(eq(#skin.manualimg,'yes'),'btn\focus\focus_#tile4pluginImg.png','btn\focus\focus_#tile4plugin.hyperlink.png'))</textureFocus>
 		<textureNoFocus>#(iif(eq(#skin.manualimg,'yes'),'btn\unfocus\#tile4pluginImg.png','btn\unfocus\#tile4plugin.hyperlink.png'))</textureNoFocus>
 		<textalign>center</textalign>
-		<textYOff>230</textYOff>
+		<textYOff>460</textYOff>
 		<font>font13</font>
         <onleft>00502</onleft>
         <onup>#(cint(switch( and( eq(#tile4plugin.hyperlink,'MovPics'), eq(#latestMediaHandler.movingpicture.latest.enabled,'True')),91919991, and(eq(#tile4plugin.hyperlink,'TVSeries'),eq(#latestMediaHandler.tvseries.latest.enabled,'True')),91919994, and(eq(#tile4plugin.hyperlink,'MyMusic'),eq(#latestMediaHandler.music.latest.enabled,'True')),91919997, and(eq(#tile4plugin.hyperlink,'MyVideo'),eq(#latestMediaHandler.myvideo.latest.enabled,'True')),91915991, and(eq(#tile4plugin.hyperlink,'LiveTV'),eq(#latestMediaHandler.tvrecordings.latest.enabled,'True')),91919984, and(eq(#tile4plugin.hyperlink,'Recordedtv'),eq(#latestMediaHandler.tvrecordings.latest.enabled,'True')),91919984, and(eq(#tile4plugin.hyperlink,'Trakt'),eq(#skin.no.latestmedia,'True')),98302, and(eq(#tile4plugin.hyperlink,'Pictures'),eq(#latestMediaHandler.picture.latest.enabled,'True')),91919971, eq(1,1),21)))</onup>
@@ -172,7 +172,7 @@
 		<textureFocus overlay="">#(iif(eq(#skin.manualimg,'yes'),'btn\focus\focus_#tile5pluginImg.png','btn\focus\focus_#tile5plugin.hyperlink.png'))</textureFocus>
 		<textureNoFocus>#(iif(eq(#skin.manualimg,'yes'),'btn\unfocus\#tile5pluginImg.png','btn\unfocus\#tile5plugin.hyperlink.png'))</textureNoFocus>
 		<textalign>center</textalign>
-		<textYOff>230</textYOff>
+		<textYOff>460</textYOff>
 		<font>font13</font>
         <onleft>00503</onleft>
         <onup>#(cint(switch( and( eq(#tile5plugin.hyperlink,'MovPics'), eq(#latestMediaHandler.movingpicture.latest.enabled,'True')),91919991, and(eq(#tile5plugin.hyperlink,'TVSeries'),eq(#latestMediaHandler.tvseries.latest.enabled,'True')),91919994, and(eq(#tile5plugin.hyperlink,'MyMusic'),eq(#latestMediaHandler.music.latest.enabled,'True')),91919997, and(eq(#tile5plugin.hyperlink,'MyVideo'),eq(#latestMediaHandler.myvideo.latest.enabled,'True')),91915991, and(eq(#tile5plugin.hyperlink,'LiveTV'),eq(#latestMediaHandler.tvrecordings.latest.enabled,'True')),91919984, and(eq(#tile5plugin.hyperlink,'Recordedtv'),eq(#latestMediaHandler.tvrecordings.latest.enabled,'True')),91919984, and(eq(#tile5plugin.hyperlink,'Trakt'),eq(#skin.no.latestmedia,'True')),98302, and(eq(#tile5plugin.hyperlink,'Pictures'),eq(#latestMediaHandler.picture.latest.enabled,'True')),91919971, eq(1,1),21)))</onup>
