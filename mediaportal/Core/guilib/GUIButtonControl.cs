@@ -198,6 +198,7 @@ namespace MediaPortal.GUI.Library
     public override void FinalizeConstruction()
     {
       base.FinalizeConstruction();
+
       _imageFocused = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, /*_width, _height,*/ Width, Height,
                                            _focusedTextureName);
       _imageFocused.ParentControl = this;
@@ -244,7 +245,7 @@ namespace MediaPortal.GUI.Library
       // Use a GUIFadeLabel if a valid scrollStartDelay is specified, otherwise use a GUILabelControl (default)
       if (_scrollStartDelay < 0)
       {
-        _labelControl = new GUILabelControl(_parentControlId, 0, _positionX, _positionY, _width - labelDiffX, _height, _fontName,
+        _labelControl = new GUILabelControl(_parentControlId, 0, _positionX, _positionY, _width, _height, _fontName,
                                             _label, _textColor, Alignment.ALIGN_LEFT, VAlignment.ALIGN_TOP, false,
                                             _shadowAngle, _shadowDistance, _shadowColor,
                                             _maxWidth, _maxHeight);
@@ -254,7 +255,7 @@ namespace MediaPortal.GUI.Library
       }
       else
       {
-        _labelControl = new GUIFadeLabel(_parentControlId, 0, _positionX, _positionY, _width - labelDiffX, _height, _fontName,
+        _labelControl = new GUIFadeLabel(_parentControlId, 0, _positionX, _positionY, _width, _height, _fontName,
                                          _textColor, Alignment.ALIGN_LEFT, VAlignment.ALIGN_TOP,
                                          _shadowAngle, _shadowDistance, _shadowColor,
                                          _userWrapString,
@@ -267,7 +268,7 @@ namespace MediaPortal.GUI.Library
       _labelControl.DimColor = DimColor;
       _labelControl.ParentControl = this;
 
-      // Recalc Labels Width, Height
+      // Calc Labels Width, Height, margins for Labels
       ReCalcLabelSize();
     }
 
@@ -286,11 +287,11 @@ namespace MediaPortal.GUI.Library
         _textPadding = GUIGraphicsContext.ScaleHorizontal(_textPadding);
       }
 
-      // Calc margins for Labels
+      // Calc Labels Width, Height, margins for Labels
       ReCalcLabelSize();
     }
 
-    private void ReCalcLabelSize()
+    private void ReCalcLabelMargins()
     {
       // Calc margins for Labels
       labelDiffX = _textOffsetX;
@@ -303,26 +304,47 @@ namespace MediaPortal.GUI.Library
       {
         labelDiffX += _textPadding;
       }
+    }
+
+    private void ReCalcLabelSize()
+    {
+      // Calc margins for Labels
+      ReCalcLabelMargins();
 
       if (_labelControl != null)
       {
-        if (_labelControl is GUILabelControl)
+        if (_maxHeight == 0)
         {
-          ((GUILabelControl)_labelControl).MinWidth = MinWidth - labelDiffX;
-          ((GUILabelControl)_labelControl).MaxWidth = MaxWidth - labelDiffX;
-          ((GUILabelControl)_labelControl).MinHeight = MinHeight - labelDiffY;
-          ((GUILabelControl)_labelControl).MaxHeight = MaxHeight - labelDiffY;
+          if (_labelControl is GUILabelControl)
+          {
+            ((GUILabelControl)_labelControl).Width = _width - labelDiffX;
+            ((GUILabelControl)_labelControl).Height = _height - labelDiffY;
+          }
+          else
+          {
+            ((GUIFadeLabel)_labelControl).Width = _width - labelDiffX;
+            ((GUIFadeLabel)_labelControl).Height = _height - labelDiffY;
+          }
         }
         else
         {
-          ((GUIFadeLabel)_labelControl).MinWidth = MinWidth - labelDiffX;
-          ((GUIFadeLabel)_labelControl).MaxWidth = MaxWidth - labelDiffX;
-          ((GUIFadeLabel)_labelControl).MinHeight = MinHeight - labelDiffY;
-          ((GUIFadeLabel)_labelControl).MaxHeight = MaxHeight - labelDiffY;
+          if (_labelControl is GUILabelControl)
+          {
+            ((GUILabelControl)_labelControl).MinWidth = _width - labelDiffX;
+            ((GUILabelControl)_labelControl).MaxWidth = _maxWidth - labelDiffX;
+            ((GUILabelControl)_labelControl).MinHeight = _height - labelDiffY;
+            ((GUILabelControl)_labelControl).MaxHeight = _maxHeight - labelDiffY;
+          }
+          else
+          {
+            ((GUIFadeLabel)_labelControl).MinWidth = _width - labelDiffX;
+            ((GUIFadeLabel)_labelControl).MaxWidth = _maxWidth - labelDiffX;
+            ((GUIFadeLabel)_labelControl).MinHeight = _height - labelDiffY;
+            ((GUIFadeLabel)_labelControl).MaxHeight = _maxHeight - labelDiffY;
+          }
         }
       }
     }
-
 
     public override bool Focus
     {
@@ -403,18 +425,6 @@ namespace MediaPortal.GUI.Library
         _imageNonFocused.Render(timePassed);
       }
 
-      /*
-      int labelWidth = _width;
-      if (_textOffsetXHasMargin)
-      {
-        labelWidth = _width - 2 * _textOffsetX;
-      }
-
-      if (_textPadding > 0)
-      {
-        labelWidth -= _textPadding;
-      }
-      */
       int labelWidth = -1;
       int labelHeight = -1;
 
@@ -458,34 +468,30 @@ namespace MediaPortal.GUI.Library
       switch (_textAlignment)
       {
         case Alignment.ALIGN_LEFT:
-          x = _textOffsetX + _positionX;
+          x = _positionX + _textOffsetX;
           break;
 
         case Alignment.ALIGN_RIGHT:
-          x = _positionX + /*_width*/ Width - _textOffsetX;
+          x = _positionX + Width - _textOffsetX;
           break;
 
         case Alignment.ALIGN_CENTER:
-          x = _positionX + /*_width*/ Width / 2 - labelWidth / 2;
-          if (labelWidth > /*_width*/ Width)
-          {
-            x += TextOffsetX;
-          }
+          x = _positionX + Width / 2 - labelWidth / 2 /*+ _textOffsetX*/;
           break;
       }
 
       switch (_textVAlignment)
       {
         case VAlignment.ALIGN_TOP:
-          y = _textOffsetY + _positionY;
+          y = _positionY + _textOffsetY;
           break;
 
         case VAlignment.ALIGN_BOTTOM:
-          y = _positionY + /*_height*/ Height - _textOffsetY;
+          y = _positionY + Height - _textOffsetY;
           break;
 
         case VAlignment.ALIGN_MIDDLE:
-          y = _positionY + /*_height*/ Height / 2 - /*_labelControl.Height*/ labelHeight / 2;
+          y = _positionY + Height / 2 - labelHeight / 2 /*+ _textOffsetY*/;
           break;
       }
 
@@ -765,7 +771,6 @@ namespace MediaPortal.GUI.Library
       get { return _textColorNoFocus; }
       set { _textColorNoFocus = value; }
     }
-
 
     /// <summary>
     /// Get/set the name of the font of the text of the GUIButtonControl.
