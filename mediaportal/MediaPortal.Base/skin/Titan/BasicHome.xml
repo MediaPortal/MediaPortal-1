@@ -160,7 +160,7 @@
       <textcolorNoFocus>FFFFFFFF</textcolorNoFocus>
    	  <onup>2</onup>
       <ondown>3</ondown>
-      <textYOff>88</textYOff>
+      <textYOff>176</textYOff>
 			<onright>4</onright>
 			<onleft>6</onleft>
  			<animation effect="fade" time="250" reversible="false">visiblechange</animation>
@@ -186,7 +186,7 @@
       <textcolor>FFFFFF</textcolor>
 			<textalign>center</textalign>   
       <textcolorNoFocus>FFFFFFFF</textcolorNoFocus>
-      <textYOff>88</textYOff>
+      <textYOff>176</textYOff>
 			<onright>5</onright>
 			<onleft>7</onleft>
       <onup>2</onup>
@@ -213,7 +213,7 @@
       <font>TitanLight20</font>
       <textcolor>FFFFFF</textcolor>
       <textcolorNoFocus>FFFFFFFF</textcolorNoFocus>
-      <textYOff>88</textYOff>
+      <textYOff>176</textYOff>
       <onup>4</onup>
       <ondown>5</ondown>
 			<onright>6</onright>
@@ -243,7 +243,7 @@
       <font>TitanLight20</font>
       <textcolor>FFFFFF</textcolor>
       <textcolorNoFocus>FFFFFFFF</textcolorNoFocus>
-      <textYOff>88</textYOff> 
+      <textYOff>176</textYOff> 
 			<onright>7</onright>
 			<onleft>3</onleft>
       <onup>4</onup>
