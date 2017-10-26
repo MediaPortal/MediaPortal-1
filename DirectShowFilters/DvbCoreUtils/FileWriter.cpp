@@ -294,7 +294,7 @@ HRESULT FileWriter::OpenFile(const wchar_t* fileName, bool isLoggingEnabled, boo
     m_fileName = newFileName;
 
     m_asyncAccessThreadPointlessLoopCount = 0;
-    if (m_useAsyncAccess && !m_asyncAccessThread.Start(INFINITE, &FileWriter::AsyncThreadFunction, this))
+    if (m_useAsyncAccess && !m_asyncAccessThread.Start(INFINITE, &FileWriter::AsyncAccessThreadFunction, this))
     {
       LogDebug(L"file writer: failed to start async access thread, falling back to synchronous access");
       m_useAsyncAccess = false;
@@ -584,16 +584,16 @@ HRESULT FileWriter::SetFilePointer(long long distanceToMove,
   return S_OK;
 }
 
-bool __cdecl FileWriter::AsyncThreadFunction(void* arg)
+bool __cdecl FileWriter::AsyncAccessThreadFunction(void* arg)
 {
   FileWriter* writer = (FileWriter*)arg;
   if (writer == NULL)
   {
-    LogDebug(L"file writer: async thread writer not provided");
+    LogDebug(L"file writer: async access thread writer not provided");
     return false;
   }
 
-  writer->WriteNextAsyncBuffer();
+  writer->WriteNextBuffer();
   return true;
 }
 
@@ -607,7 +607,7 @@ HRESULT FileWriter::EnqueueBuffer(CWriteBuffer* buffer, bool isErrorLoggingEnabl
       m_isAsyncDataQueueFull = true;
       if (isErrorLoggingEnabled)
       {
-        LogDebug(L"file writer: failed to set file pointer, async data queue is full, name = %s, part number = %lu",
+        LogDebug(L"file writer: failed to enqueue buffer, async data queue is full, name = %s, part number = %lu",
                   m_fileName, m_filePart);
       }
       delete buffer;
@@ -629,7 +629,7 @@ HRESULT FileWriter::EnqueueBuffer(CWriteBuffer* buffer, bool isErrorLoggingEnabl
   return S_OK;
 }
 
-void FileWriter::WriteNextAsyncBuffer()
+void FileWriter::WriteNextBuffer()
 {
   CWriteBuffer* buffer;
   {

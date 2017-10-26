@@ -177,9 +177,9 @@ class FileWriter
     HRESULT GetFilePointerInternal(unsigned long long& pointer, bool isErrorLoggingEnabled) const;
     HRESULT SetFilePointer(long long distanceToMove, DWORD moveMethod, bool isErrorLoggingEnabled);
 
-    static bool __cdecl AsyncThreadFunction(void* arg);
+    static bool __cdecl AsyncAccessThreadFunction(void* arg);
     HRESULT EnqueueBuffer(CWriteBuffer* buffer, bool isErrorLoggingEnabled);
-    void WriteNextAsyncBuffer();
+    void WriteNextBuffer();
 
     bool m_isFileOpen;
     HANDLE m_fileHandle;
