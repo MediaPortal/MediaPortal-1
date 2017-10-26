@@ -3021,6 +3021,15 @@ bool CParserNitDvb::DecodeCyfrowyPolsatChannelCategoryNameListDescriptor(const u
   }
   try
   {
+    // Encoding indicator bytes are not used (=> ISO/IEC 6937-1), however it's
+    // obvious that the actual encoding is something else. Probably ISO/IEC
+    // 8859-2 or Windows code page 1250. Assume ISO/IEC 8859-2 (because it's
+    // directly DVB-compatible).
+    unsigned char encodingConversionBuffer[255];
+    encodingConversionBuffer[0] = 0x10;
+    encodingConversionBuffer[1] = 0x00;
+    encodingConversionBuffer[2] = 0x02;
+
     //LogDebug(L"%s: Cyfrowy Polsat channel category name list descriptor, descriptor length = %hhu",
     //          m_name, dataLength);
     unsigned short pointer = 0;
@@ -3030,10 +3039,22 @@ bool CParserNitDvb::DecodeCyfrowyPolsatChannelCategoryNameListDescriptor(const u
       unsigned char nameLength = data[pointer++];
 
       char* name = NULL;
-      if (
-        pointer + nameLength > dataLength ||
-        !CTextUtil::DvbTextToString(&data[pointer], nameLength, &name)
-      )
+      bool isInvalid = false;
+      if (pointer + nameLength > dataLength)
+      {
+        isInvalid = true;
+      }
+      else if (data[pointer] < 0x20)
+      {
+        // Trust encoding indicator bytes if they're present. Not expected.
+        isInvalid = !CTextUtil::DvbTextToString(&data[pointer], nameLength, &name);
+      }
+      else
+      {
+        strncpy((char*)&encodingConversionBuffer[3], (char*)&data[pointer], nameLength);
+        isInvalid = !CTextUtil::DvbTextToString(encodingConversionBuffer, nameLength + 3, &name);
+      }
+      if (isInvalid)
       {
         LogDebug(L"%s: invalid Cyfrowy Polsat channel category name list descriptor, descriptor length = %hhu, pointer = %hu, name length = %hhu, category ID = %hhu",
                   m_name, dataLength, pointer, nameLength, categoryId);
