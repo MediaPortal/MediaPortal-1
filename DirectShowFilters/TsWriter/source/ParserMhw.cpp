@@ -1446,6 +1446,8 @@ unsigned long CParserMhw::DecodeVersion1EventSection(const unsigned char* data,
   {
     if (m_previousSegmentEventsVersion1 != 0)
     {
+      // The object passed as call-back delegate must be of the expected type.
+      // Removing the cast will cause a crash, so don't do it!
       updateCount = m_recordsEventSatellite.RemoveExpiredRecords((ICallBackMhw*)this,
                                                                   m_previousSegmentEventsVersion1);
       if (updateCount != 0)

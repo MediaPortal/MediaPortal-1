@@ -200,7 +200,9 @@ void CParserNitDvb::OnNewSection(const CSection& section)
       {
         if (m_unseenSectionsActual.size() == 0)
         {
-          m_recordsService.RemoveExpiredRecords(this);
+          // The object passed as call-back delegate must be of the expected
+          // type. Removing the cast will cause a crash, so don't do it!
+          m_recordsService.RemoveExpiredRecords((ICallBackNitDvb*)this);
           m_recordsTransmitter.RemoveExpiredRecords(m_callBack);
         }
 
@@ -592,7 +594,9 @@ void CParserNitDvb::OnNewSection(const CSection& section)
       {
         if (m_isOtherReady)
         {
-          m_recordsService.RemoveExpiredRecords(this);
+          // The object passed as call-back delegate must be of the expected
+          // type. Removing the cast will cause a crash, so don't do it!
+          m_recordsService.RemoveExpiredRecords((ICallBackNitDvb*)this);
           m_recordsTransmitter.RemoveExpiredRecords(m_callBack);
         }
         LogDebug(L"%s: actual ready, sections parsed = %llu, service count = %lu, transmitter count = %lu",
