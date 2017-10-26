@@ -2103,7 +2103,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
         return;
       }
 
-      if (string.Equals(itemName, "episodeid", StringComparison.InvariantCultureIgnoreCase))
+      if (
+        string.Equals(itemName, "episodeid", StringComparison.InvariantCultureIgnoreCase) ||
+        string.Equals(itemName, "Contentid_ref", StringComparison.InvariantCultureIgnoreCase)
+      )
       {
         // EPG Collector: episodeid (case unknown)
         // StarHub TV (Singapore DVB-C): Contentid_ref; examples "T0019319077", "TA0018483678"
