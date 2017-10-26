@@ -1196,6 +1196,7 @@ namespace TvLibrary.Implementations.DVB
       uint[] freesatRegionIds = new uint[freesatRegionIdCount];
       byte openTvRegionIdCount = COUNT_OPENTV_REGION_IDS;
       uint[] openTvRegionIds = new uint[openTvRegionIdCount];
+      byte cyfrowyPolsatChannelCategoryId;
       byte freesatChannelCategoryIdCount = COUNT_FREESAT_CHANNEL_CATEGORY_IDS;
       ushort[] freesatChannelCategoryIds = new ushort[freesatChannelCategoryIdCount];
       byte mediaHighwayChannelCategoryIdCount = COUNT_MEDIAHIGHWAY_CHANNEL_CATEGORY_IDS;
@@ -1254,6 +1255,7 @@ namespace TvLibrary.Implementations.DVB
                                 targetRegionIds, ref targetRegionIdCount,
                                 freesatRegionIds, ref freesatRegionIdCount,
                                 openTvRegionIds, ref openTvRegionIdCount,
+                                out cyfrowyPolsatChannelCategoryId,
                                 freesatChannelCategoryIds, ref freesatChannelCategoryIdCount,
                                 mediaHighwayChannelCategoryIds, ref mediaHighwayChannelCategoryIdCount,
                                 openTvChannelCategoryIds, ref openTvChannelCategoryIdCount,
@@ -1371,6 +1373,10 @@ namespace TvLibrary.Implementations.DVB
         if (openTvRegionIdCount > 0)
         {
           groups.Add(ChannelGroupType.OpenTvRegion, BuildGroup(grabber, groupNames, ChannelGroupType.OpenTvRegion, openTvRegionIds, openTvRegionIdCount, longitude));
+        }
+        if (cyfrowyPolsatChannelCategoryId != 0xff)
+        {
+          groups.Add(ChannelGroupType.CyfrowyPolsatChannelCategory, BuildGroup(grabber, groupNames, ChannelGroupType.CyfrowyPolsatChannelCategory, new byte[1] { cyfrowyPolsatChannelCategoryId }, 1, longitude));
         }
         if (freesatChannelCategoryIdCount > 0)
         {
@@ -1795,7 +1801,14 @@ namespace TvLibrary.Implementations.DVB
           if (!names.TryGetValue(groupId, out nameString))
           {
             nameBufferSize = NAME_BUFFER_SIZE;
-            if (groupType == ChannelGroupType.DvbNetwork)
+            if (groupType == ChannelGroupType.CyfrowyPolsatChannelCategory)
+            {
+              if (grabber.GetCyfrowyPolsatChannelCategoryNameCount((byte)groupId) > 0 && grabber.GetCyfrowyPolsatChannelCategoryNameByIndex((byte)groupId, 0, out language, nameBuffer, ref nameBufferSize))
+              {
+                nameString = DvbTextConverter.Convert(nameBuffer, nameBufferSize);
+              }
+            }
+            else if (groupType == ChannelGroupType.DvbNetwork)
             {
               if (grabber.GetNetworkNameCount((ushort)groupId) > 0 && grabber.GetNetworkNameByIndex((ushort)groupId, 0, out language, nameBuffer, ref nameBufferSize))
               {
@@ -1926,41 +1939,45 @@ namespace TvLibrary.Implementations.DVB
       if (groupType != ChannelGroupType.OpenTvChannelCategory)
       {
         string logFormat = string.Empty;
-        if (groupType == ChannelGroupType.DvbNetwork)
+        if (groupType == ChannelGroupType.CyfrowyPolsatChannelCategory)
         {
-          logFormat = "    network count                  = {0}, networks   = [{1}]";
+          logFormat = "    Cyfrowy Polsat channel category count = {0}, categories = [{1}]";
+        }
+        else if (groupType == ChannelGroupType.DvbNetwork)
+        {
+          logFormat = "    network count                         = {0}, networks   = [{1}]";
         }
         else if (groupType == ChannelGroupType.DvbBouquet)
         {
-          logFormat = "    bouquet count                  = {0}, bouquets   = [{1}]";
+          logFormat = "    bouquet count                         = {0}, bouquets   = [{1}]";
         }
         else if (groupType == ChannelGroupType.DvbTargetRegion)
         {
-          logFormat = "    target region count            = {0}, regions    = [{1}]";
+          logFormat = "    target region count                   = {0}, regions    = [{1}]";
         }
         else if (groupType == ChannelGroupType.FreesatChannelCategory)
         {
-          logFormat = "    Freesat channel category count = {0}, categories = [{1}]";
+          logFormat = "    Freesat channel category count        = {0}, categories = [{1}]";
         }
         else if (groupType == ChannelGroupType.FreesatRegion)
         {
-          logFormat = "    Freesat region count           = {0}, regions    = [{1}]";
+          logFormat = "    Freesat region count                  = {0}, regions    = [{1}]";
         }
         else if (groupType == ChannelGroupType.MediaHighwayChannelCategory)
         {
-          logFormat = "    MHW channel category count     = {0}, categories = [{1}]";
+          logFormat = "    MHW channel category count            = {0}, categories = [{1}]";
         }
         else if (groupType == ChannelGroupType.NorDigChannelList)
         {
-          logFormat = "    NorDig channel list count      = {0}, lists      = [{1}]";
+          logFormat = "    NorDig channel list count             = {0}, lists      = [{1}]";
         }
         else if (groupType == ChannelGroupType.OpenTvRegion)
         {
-          logFormat = "    OpenTV region count            = {0}, regions    = [{1}]";
+          logFormat = "    OpenTV region count                   = {0}, regions    = [{1}]";
         }
         else if (groupType == ChannelGroupType.VirginMediaChannelCategory)
         {
-          logFormat = "    VM channel category count      = {0}, categories = [{1}]";
+          logFormat = "    VM channel category count             = {0}, categories = [{1}]";
         }
         Log.Log.Debug(logFormat, groupCount, string.Join(", ", logNames));
       }
@@ -2003,11 +2020,11 @@ namespace TvLibrary.Implementations.DVB
         }
         if (!gotName)
         {
-          Log.Log.Debug("    OpenTV channel category count  = {0}, categories = [{1}]", groupCount, string.Join(", ", logNames));
+          Log.Log.Debug("    OpenTV channel category count         = {0}, categories = [{1}]", groupCount, string.Join(", ", logNames));
         }
         else
         {
-          Log.Log.Debug("    OpenTV channel category count  = {0}, categories = [{1}] => {2}", groupCount, string.Join(", ", logNames), categoryName);
+          Log.Log.Debug("    OpenTV channel category count         = {0}, categories = [{1}] => {2}", groupCount, string.Join(", ", logNames), categoryName);
           names[categoryId] = categoryName;
         }
       }

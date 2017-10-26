@@ -4589,6 +4589,7 @@ namespace TvLibrary.Implementations.DVB
       byte targetRegionIdCount = 0;
       byte freesatRegionIdCount = 0;
       byte openTvRegionIdCount = 0;
+      byte cyfrowyPolsatChannelCategoryId;
       byte freesatChannelCategoryIdCount = 0;
       byte mediaHighwayChannelCategoryIdCount = 0;
       byte openTvChannelCategoryIdCount = 0;
@@ -4620,6 +4621,7 @@ namespace TvLibrary.Implementations.DVB
                                 null, ref targetRegionIdCount,
                                 null, ref freesatRegionIdCount,
                                 null, ref openTvRegionIdCount,
+                                out cyfrowyPolsatChannelCategoryId,
                                 null, ref freesatChannelCategoryIdCount,
                                 null, ref mediaHighwayChannelCategoryIdCount,
                                 null, ref openTvChannelCategoryIdCount,

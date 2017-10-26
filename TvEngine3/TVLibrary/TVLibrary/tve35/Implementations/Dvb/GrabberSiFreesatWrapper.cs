@@ -200,13 +200,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
     /// <param name="freesatRegionIdCount">As an input, the size of the <paramref name="freesatRegionIds">Freesat region identifiers array</paramref>; as an output, the consumed array size.</param>
     /// <param name="openTvRegionIds">The identifiers of the OpenTV regions in which the service is intended to be available. The caller must allocate this array.</param>
     /// <param name="openTvRegionIdCount">As an input, the size of the <paramref name="openTvRegionIds">OpenTV region identifiers array</paramref>; as an output, the consumed array size.</param>
+    /// <param name="cyfrowyPolsatChannelCategoryId">The identifier of the Cyfrowy Polsat channel category that the service is associated with, if any. Value is <c>0xff</c> if not associated with any category.</param>
     /// <param name="freesatChannelCategoryIds">The identifiers of the Freesat channel categories which the service is associated with. The caller must allocate this array.</param>
     /// <param name="freesatChannelCategoryIdCount">As an input, the size of the <paramref name="freesatChannelCategoryIds">Freesat channel category identifiers array</paramref>; as an output, the consumed array size.</param>
     /// <param name="mediaHighwayChannelCategoryIds">The identifiers of the MediaHighway channel categories which the service is associated with. The caller must allocate this array.</param>
     /// <param name="mediaHighwayChannelCategoryIdCount">As an input, the size of the <paramref name="mediaHighwayChannelCategoryIds">MediaHighway channel category identifiers array</paramref>; as an output, the consumed array size.</param>
     /// <param name="openTvChannelCategoryIds">The identifiers of the OpenTV channel categories that the service is associated with. The caller must allocate this array.</param>
     /// <param name="openTvChannelCategoryIdCount">As an input, the size of the <paramref name="openTvChannelCategoryIds">OpenTV channel category identifiers array</paramref>; as an output, the consumed array size.</param>
-    /// <param name="virginMediaChannelCategoryId">The identifier of the Virgin Media channel category that the service is associated with, if any.</param>
+    /// <param name="virginMediaChannelCategoryId">The identifier of the Virgin Media channel category that the service is associated with, if any. Value is <c>0</c> if not associated with any category.</param>
     /// <param name="dishMarketId">The identifier of the Dish Network market (region) that the channel is intended for, if any.</param>
     /// <param name="norDigChannelListIds">The identifiers of the NorDig channel lists which the service is associated with. The caller must allocate this array.</param>
     /// <param name="norDigChannelListIdCount">As an input, the size of the <paramref name="norDigChannelListIds">NorDig channel list identifiers array</paramref>; as an output, the consumed array size.</param>
@@ -262,6 +263,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
                             ref byte freesatRegionIdCount,
                             uint[] openTvRegionIds,
                             ref byte openTvRegionIdCount,
+                            out byte cyfrowyPolsatChannelCategoryId,
                             ushort[] freesatChannelCategoryIds,
                             ref byte freesatChannelCategoryIdCount,
                             ushort[] mediaHighwayChannelCategoryIds,
@@ -324,6 +326,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
                                   ref freesatRegionIdCount,
                                   openTvRegionIds,
                                   ref openTvRegionIdCount,
+                                  out cyfrowyPolsatChannelCategoryId,
                                   freesatChannelCategoryIds,
                                   ref freesatChannelCategoryIdCount,
                                   mediaHighwayChannelCategoryIds,
@@ -537,6 +540,50 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
                                               ref ushort nameBufferSize)
     {
       return _grabber.GetTargetRegionNameByLanguage(regionId, language, name, ref nameBufferSize);
+    }
+
+    /// <summary>
+    /// Get the number of names received by the grabber for a given Cyfrowy Polsat channel category.
+    /// </summary>
+    /// <param name="categoryId">The Cyfrowy Polsat channel category's identifier.</param>
+    /// <returns>the number of names received by the grabber for the given Cyfrowy Polsat channel category</returns>
+    public byte GetCyfrowyPolsatChannelCategoryNameCount(byte categoryId)
+    {
+      return _grabber.GetCyfrowyPolsatChannelCategoryNameCount(categoryId);
+    }
+
+    /// <summary>
+    /// Retrieve a Cyfrowy Polsat channel category's name from the grabber.
+    /// </summary>
+    /// <param name="categoryId">The Cyfrowy Polsat channel category's identifier.</param>
+    /// <param name="index">The index of the name to retrieve. Should be in the range 0 to GetCyfrowyPolsatChannelCategoryNameCount() - 1 for the Cyfrowy Polsat channel category.</param>
+    /// <param name="language">The name's language.</param>
+    /// <param name="name">A buffer containing the Cyfrowy Polsat channel category's name, encoded as DVB-compatible text. The caller must allocate and free this buffer.</param>
+    /// <param name="nameBufferSize">As an input, the size of the <paramref name="name">name buffer</paramref>; as an output, the consumed buffer size.</param>
+    /// <returns><c>true</c> if the Cyfrowy Polsat channel category's name is successfully retrieved, otherwise <c>false</c></returns>
+    public bool GetCyfrowyPolsatChannelCategoryNameByIndex(byte categoryId,
+                                                            byte index,
+                                                            out Iso639Code language,
+                                                            IntPtr name,
+                                                            ref ushort nameBufferSize)
+    {
+      return _grabber.GetCyfrowyPolsatChannelCategoryNameByIndex(categoryId, index, out language, name, ref nameBufferSize);
+    }
+
+    /// <summary>
+    /// Retrieve a Cyfrowy Polsat channel category's name from the grabber.
+    /// </summary>
+    /// <param name="categoryId">The Cyfrowy Polsat channel category's identifier.</param>
+    /// <param name="language">The language of the name to retrieve.</param>
+    /// <param name="name">A buffer containing the Cyfrowy Polsat channel category's name, encoded as DVB-compatible text. The caller must allocate and free this buffer.</param>
+    /// <param name="nameBufferSize">As an input, the size of the <paramref name="name">name buffer</paramref>; as an output, the consumed buffer size.</param>
+    /// <returns><c>true</c> if the Cyfrowy Polsat channel category's name is successfully retrieved, otherwise <c>false</c></returns>
+    public bool GetCyfrowyPolsatChannelCategoryNameByLanguage(byte categoryId,
+                                                              Iso639Code language,
+                                                              IntPtr name,
+                                                              ref ushort nameBufferSize)
+    {
+      return _grabber.GetCyfrowyPolsatChannelCategoryNameByLanguage(categoryId, language, name, ref nameBufferSize);
     }
 
     /// <summary>
