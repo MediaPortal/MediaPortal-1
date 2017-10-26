@@ -3631,14 +3631,14 @@ const CTextUtil::CodePageEntry CTextUtil::WIN1250_TO_UTF8[256] =
   1, "\x7F",
 
   3, "\xE2\x82\xAC",   // €
-  1, "\x00",
+  0, "\x00",
   3, "\xE2\x80\x9A",   // ‚
-  1, "\x00",
+  0, "\x00",
   3, "\xE2\x80\x9E",   // „
   3, "\xE2\x80\xA6",   // …
   3, "\xE2\x80\xA0",   // †
   3, "\xE2\x80\xA1",   // ‡
-  1, "\x00",
+  0, "\x00",
   3, "\xE2\x80\xB0",   // ‰
   2, "\xC5\xA0",       // Š
   3, "\xE2\x80\xB9",   // ‹
@@ -3646,7 +3646,7 @@ const CTextUtil::CodePageEntry CTextUtil::WIN1250_TO_UTF8[256] =
   2, "\xC5\xA4",       // Ť
   2, "\xC5\xBD",       // Ž
   2, "\xC5\xB9",       // Ź
-  1, "\x00",
+  0, "\x00",
   3, "\xE2\x80\x98",   // ‘
   3, "\xE2\x80\x99",   // ’
   3, "\xE2\x80\x9C",   // “
