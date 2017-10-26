@@ -27,8 +27,8 @@
 #include <cstddef>    // NULL
 #include <vector>
 #include <WinError.h> // HRESULT
-#include "..\shared\CriticalSection.h"
-#include "..\shared\Thread.h"
+#include "CriticalSection.h"
+#include "Thread.h"
 
 using namespace MediaPortal;
 using namespace std;
