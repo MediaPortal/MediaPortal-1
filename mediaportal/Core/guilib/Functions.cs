@@ -231,7 +231,7 @@ namespace MediaPortal.GUI.Library
       return ((CultureInfo.InvariantCulture.CompareInfo.IndexOf(text, part, CompareOptions.IgnoreCase) >= 0) ? "true" : "false");
     }
 
-    [XMLSkinFunction("string.starts(")]
+    [XMLSkinFunction("string.starts")]
     public static string StartsString(string text, string part)
     {
       if ((text == null) || (part == null))
@@ -263,7 +263,7 @@ namespace MediaPortal.GUI.Library
       return GUIInfoManager.GetBool(condition, 0) ? "true" : "false";
     }
 
-    [XMLSkinFunction("string.valuestarts(")]
+    [XMLSkinFunction("string.valuestarts")]
     public static string StartsStringV(string text, string part)
     {
       if ((text == null) || (part == null))
@@ -272,6 +272,16 @@ namespace MediaPortal.GUI.Library
       }
       int condition = GUIInfoManager.TranslateSingleString("string.valuestarts(" + text + "," + part + ")");
       return GUIInfoManager.GetBool(condition, 0) ? "true" : "false";
+    }
+
+    [XMLSkinFunction("string.length")]
+    public static int LengthString(string text)
+    {
+      if ((text == null))
+      {
+        return 0;
+      }
+      return text.Length;
     }
 
     #endregion
@@ -304,12 +314,30 @@ namespace MediaPortal.GUI.Library
       return ((value is string) && (DateTime.TryParse((string)value, out result))) ? result : DateTime.MinValue;
     }
 
+    [XMLSkinFunction("cdate")]
+    public static DateTime ConvertToDate(object value, string frmt)
+    {
+      if (string.IsNullOrEmpty(frmt)) return DateTime.MinValue;
+      if (value is DateTime) return (DateTime)value;
+      DateTime result;
+      return ((value is string) && (DateTime.TryParseExact((string)value, frmt, CultureInfo.InvariantCulture, DateTimeStyles.None, out result))) ? result : DateTime.MinValue;
+    }
+
     [XMLSkinFunction("ctimespan")]
     public static TimeSpan ConvertToTimeSpan(object value)
     {
       if (value is TimeSpan) return (TimeSpan)value;
       TimeSpan result;
       return ((value is string) && (TimeSpan.TryParse((string)value, out result))) ? result : TimeSpan.Zero;
+    }
+
+    [XMLSkinFunction("ctimespan")]
+    public static TimeSpan ConvertToTimeSpan(object value, string frmt)
+    {
+      if (string.IsNullOrEmpty(frmt)) return TimeSpan.Zero;
+      if (value is TimeSpan) return (TimeSpan)value;
+      TimeSpan result;
+      return ((value is string) && (TimeSpan.TryParseExact((string)value, frmt, CultureInfo.InvariantCulture, out result))) ? result : TimeSpan.Zero;
     }
 
     #endregion
