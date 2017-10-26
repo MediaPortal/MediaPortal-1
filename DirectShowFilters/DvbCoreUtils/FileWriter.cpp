@@ -681,8 +681,9 @@ void FileWriter::WriteNextAsyncBuffer()
     }
   }
   m_asyncAccessResult = hr;
-  delete buffer;
+
   CEnterCriticalSection lock(m_asyncDataQueueSection);
+  delete buffer;
   m_asyncDataQueue.erase(m_asyncDataQueue.begin());
   if (m_asyncDataQueue.size() == 0)
   {
