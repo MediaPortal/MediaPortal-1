@@ -842,14 +842,15 @@ void CDiskRecorder::CheckContinuityCounter(const CTsHeader& header,
         WriteLog(L"PID %hu signaled discontinuity, value = %hhu, previous = %hhu",
                   header.Pid, header.ContinuityCounter,
                   pidInfo.PrevContinuityCounter);
-        return;
       }
-
-      m_discontinuityCount++;
-      WriteLog(L"PID %hu unsignaled discontinuity, value = %hhu, previous = %hhu, expected = %hhu, count = %llu, signal quality, descrambling, or HDD load problem?",
-                header.Pid, header.ContinuityCounter,
-                pidInfo.PrevContinuityCounter, expectedContinuityCounter,
-                m_discontinuityCount);
+      else
+      {
+        m_discontinuityCount++;
+        WriteLog(L"PID %hu unsignaled discontinuity, value = %hhu, previous = %hhu, expected = %hhu, count = %llu, signal quality, descrambling, or HDD load problem?",
+                  header.Pid, header.ContinuityCounter,
+                  pidInfo.PrevContinuityCounter, expectedContinuityCounter,
+                  m_discontinuityCount);
+      }
     }
   }
   pidInfo.PrevContinuityCounter = header.ContinuityCounter;
