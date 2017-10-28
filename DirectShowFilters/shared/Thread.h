@@ -37,10 +37,11 @@ class CThread
     void Stop();
 
   private:
-    static void __cdecl ThreadFunction(void* arg);
+    static unsigned int __stdcall ThreadFunction(void* arg);
 
     CCriticalSection m_section;
-    HANDLE m_thread;
+    HANDLE m_threadHandle;
+    unsigned int m_threadId;
     HANDLE m_wakeEvent;
     unsigned long m_wakeCount;
     bool m_stopSignal;

@@ -20,7 +20,7 @@
  */
 #include "..\shared\Thread.h"
 #include <cstddef>    // NULL
-#include <process.h>  // _beginthread()
+#include <process.h>  // _beginthreadex(), _endthreadex()
 #include <Windows.h>  // CloseHandle(), CreateEvent(), GetLastError(), INVALID_HANDLE_VALUE, SetEvent(), WaitForSingleObject()
 #include "..\shared\EnterCriticalSection.h"
 
@@ -29,7 +29,7 @@ extern void LogDebug(const wchar_t* fmt, ...);
 
 CThread::CThread()
 {
-  m_thread = INVALID_HANDLE_VALUE;
+  m_threadHandle = INVALID_HANDLE_VALUE;
   m_wakeEvent = NULL;
   m_stopSignal = true;
   m_frequency = INFINITE;
@@ -60,23 +60,29 @@ bool CThread::Start(unsigned long frequency, bool (*function)(void*), void* cont
   m_function = function;
   m_context = context;
 
-  m_thread = (HANDLE)_beginthread(&CThread::ThreadFunction, 0, (void*)this);
-  if (m_thread == INVALID_HANDLE_VALUE)
+  m_threadHandle = (HANDLE)_beginthreadex(NULL,
+                                          0,
+                                          &CThread::ThreadFunction,
+                                          (void*)this,
+                                          0,
+                                          &m_threadId);
+  if (m_threadHandle == NULL)
   {
-    LogDebug(L"thread: failed to start thread execution");
+    LogDebug(L"thread: failed to start thread execution, errno = %d", errno);
+    m_threadHandle = INVALID_HANDLE_VALUE;
     m_stopSignal = true;
     CloseHandle(m_wakeEvent);
     m_wakeEvent = NULL;
     return false;
   }
 
-  LogDebug(L"thread: started");
+  LogDebug(L"thread: started, ID = %u", m_threadId);
   return true;
 }
 
 bool CThread::IsRunning()
 {
-  return m_thread != INVALID_HANDLE_VALUE;
+  return m_threadHandle != INVALID_HANDLE_VALUE;
 }
 
 bool CThread::Wake()
@@ -100,7 +106,7 @@ bool CThread::Wake()
 void CThread::Stop()
 {
   CEnterCriticalSection lock(m_section);
-  if (m_stopSignal || m_thread == INVALID_HANDLE_VALUE)
+  if (m_stopSignal || m_threadHandle == INVALID_HANDLE_VALUE)
   {
     return;
   }
@@ -109,7 +115,8 @@ void CThread::Stop()
   m_stopSignal = true;
   if (Wake())
   {
-    WaitForSingleObject(m_thread, INFINITE);
+    WaitForSingleObject(m_threadHandle, INFINITE);
+    CloseHandle(m_threadHandle);
     LogDebug(L"thread: stopped");
   }
   if (m_wakeEvent != NULL)
@@ -117,10 +124,10 @@ void CThread::Stop()
     CloseHandle(m_wakeEvent);
     m_wakeEvent = NULL;
   }
-  m_thread = INVALID_HANDLE_VALUE;
+  m_threadHandle = INVALID_HANDLE_VALUE;
 }
 
-void __cdecl CThread::ThreadFunction(void* arg)
+unsigned int __stdcall CThread::ThreadFunction(void* arg)
 {
   unsigned long threadId = GetCurrentThreadId();
   LogDebug(L"thread: running, ID = %lu", threadId);
@@ -147,7 +154,8 @@ void __cdecl CThread::ThreadFunction(void* arg)
     {
       LogDebug(L"thread: stopping, ID = %lu, loop count = %lu, wake count = %lu, signalled count = %lu",
                 threadId, loopCount, thread->m_wakeCount, signalledCount);
-      return;
+      _endthreadex(0);
+      return 0;
     }
 
     if (!(thread->m_function)(thread->m_context))
@@ -162,7 +170,8 @@ void __cdecl CThread::ThreadFunction(void* arg)
         thread->m_wakeEvent = NULL;
       }
       LogDebug(L"thread: finished");
-      return;
+      _endthreadex(0);
+      return 0;
     }
   }
 }
