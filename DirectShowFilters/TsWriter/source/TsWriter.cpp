@@ -1502,17 +1502,20 @@ void CTsWriter::OnPatProgramRemoved(unsigned short programNumber, unsigned short
     m_observer->OnProgramDetail(programNumber, pmtPid, false, NULL, 0);
   }
 
-  LogDebug(L"writer: OpenTV EPG service removed");
-  m_isOpenTvEpgServiceRunning = false;
-  if (m_openTvEpgPidsEvent.size() > 0)
+  if (programNumber == m_openTvEpgServiceId)
   {
-    m_grabberEpgOpenTv->RemoveEventDecoders(m_openTvEpgPidsEvent);
-    m_openTvEpgPidsEvent.clear();
-  }
-  if (m_openTvEpgPidsDescription.size() > 0)
-  {
-    m_grabberEpgOpenTv->RemoveDescriptionDecoders(m_openTvEpgPidsDescription);
-    m_openTvEpgPidsDescription.clear();
+    LogDebug(L"writer: OpenTV EPG service removed");
+    m_isOpenTvEpgServiceRunning = false;
+    if (m_openTvEpgPidsEvent.size() > 0)
+    {
+      m_grabberEpgOpenTv->RemoveEventDecoders(m_openTvEpgPidsEvent);
+      m_openTvEpgPidsEvent.clear();
+    }
+    if (m_openTvEpgPidsDescription.size() > 0)
+    {
+      m_grabberEpgOpenTv->RemoveDescriptionDecoders(m_openTvEpgPidsDescription);
+      m_openTvEpgPidsDescription.clear();
+    }
   }
 }
 
