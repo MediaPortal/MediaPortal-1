@@ -48,8 +48,9 @@ void CParserBat::SetPid(unsigned short pid)
   wstringstream ss;
   ss << L"BAT " << pid;
   wstring s = ss.str();
-  wcsncpy(m_name, s.c_str(), sizeof(m_name) / sizeof(m_name[0]));
-  m_name[sizeof(m_name) - 1] = NULL;
+  size_t characterCount = sizeof(m_name) / sizeof(m_name[0]);
+  wcsncpy(m_name, s.c_str(), characterCount);
+  m_name[characterCount - 1] = NULL;
   CSectionDecoder::SetPid(pid);
   CSectionDecoder::Reset();
 }
