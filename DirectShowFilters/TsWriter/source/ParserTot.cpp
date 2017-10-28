@@ -26,7 +26,8 @@
 
 extern void LogDebug(const wchar_t* fmt, ...);
 
-CParserTot::CParserTot() : m_records(600000)
+CParserTot::CParserTot(ISectionDispatcher* sectionDispatcher)
+  : CSectionDecoder(sectionDispatcher), m_records(600000)
 {
   m_systemTime = 0;
 

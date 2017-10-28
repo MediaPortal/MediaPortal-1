@@ -173,8 +173,14 @@ CTsWriter::CTsWriter(LPUNKNOWN unk, HRESULT* hr)
     return;
   }
 
+  m_sectionDispatcher = new CSectionDispatcher();
+  if (m_sectionDispatcher == NULL)
+  {
+    LogDebug(L"writer: failed to allocate section dispatcher, performance may be degraded");
+  }
+
   // service information grabbers
-  m_grabberSiAtsc = new CGrabberSiAtscScte(PID_ATSC_BASE, this, GetOwner(), hr);
+  m_grabberSiAtsc = new CGrabberSiAtscScte(PID_ATSC_BASE, m_sectionDispatcher, this, GetOwner(), hr);
   if (m_grabberSiAtsc == NULL || !SUCCEEDED(*hr))
   {
     if (SUCCEEDED(*hr))
@@ -184,7 +190,7 @@ CTsWriter::CTsWriter(LPUNKNOWN unk, HRESULT* hr)
     LogDebug(L"writer: failed to allocate ATSC SI grabber, hr = 0x%x", *hr);
     return;
   }
-  m_grabberSiDvb = new CGrabberSiDvb(this, GetOwner(), hr);
+  m_grabberSiDvb = new CGrabberSiDvb(m_sectionDispatcher, this, GetOwner(), hr);
   if (m_grabberSiDvb == NULL || !SUCCEEDED(*hr))
   {
     if (SUCCEEDED(*hr))
@@ -194,7 +200,7 @@ CTsWriter::CTsWriter(LPUNKNOWN unk, HRESULT* hr)
     LogDebug(L"writer: failed to allocate DVB SI grabber, hr = 0x%x", *hr);
     return;
   }
-  m_grabberSiFreesat = new CGrabberSiDvb(this, GetOwner(), hr);
+  m_grabberSiFreesat = new CGrabberSiDvb(m_sectionDispatcher, this, GetOwner(), hr);
   if (m_grabberSiFreesat == NULL || !SUCCEEDED(*hr))
   {
     if (SUCCEEDED(*hr))
@@ -204,7 +210,7 @@ CTsWriter::CTsWriter(LPUNKNOWN unk, HRESULT* hr)
     LogDebug(L"writer: failed to allocate Freesat SI grabber, hr = 0x%x", *hr);
     return;
   }
-  m_grabberSiMpeg = new CGrabberSiMpeg(this, &m_encryptionAnalyser, GetOwner(), hr);
+  m_grabberSiMpeg = new CGrabberSiMpeg(m_sectionDispatcher, this, &m_encryptionAnalyser, GetOwner(), hr);
   if (m_grabberSiMpeg == NULL || !SUCCEEDED(*hr))
   {
     if (SUCCEEDED(*hr))
@@ -214,7 +220,7 @@ CTsWriter::CTsWriter(LPUNKNOWN unk, HRESULT* hr)
     LogDebug(L"writer: failed to allocate MPEG SI grabber, hr = 0x%x", *hr);
     return;
   }
-  m_grabberSiScte = new CGrabberSiAtscScte(PID_SCTE_BASE, this, GetOwner(), hr);
+  m_grabberSiScte = new CGrabberSiAtscScte(PID_SCTE_BASE, m_sectionDispatcher, this, GetOwner(), hr);
   if (m_grabberSiScte == NULL || !SUCCEEDED(*hr))
   {
     if (SUCCEEDED(*hr))
@@ -226,7 +232,7 @@ CTsWriter::CTsWriter(LPUNKNOWN unk, HRESULT* hr)
   }
 
   // electronic programme guide grabbers
-  m_grabberEpgAtsc = new CGrabberEpgAtsc(this, m_grabberSiAtsc, GetOwner(), hr);
+  m_grabberEpgAtsc = new CGrabberEpgAtsc(this, m_sectionDispatcher, m_grabberSiAtsc, GetOwner(), hr);
   if (m_grabberEpgAtsc == NULL || !SUCCEEDED(*hr))
   {
     if (SUCCEEDED(*hr))
@@ -236,7 +242,7 @@ CTsWriter::CTsWriter(LPUNKNOWN unk, HRESULT* hr)
     LogDebug(L"writer: failed to allocate ATSC EPG grabber, hr = 0x%x", *hr);
     return;
   }
-  m_grabberEpgDvb = new CParserEitDvb(this, this, GetOwner(), hr);
+  m_grabberEpgDvb = new CParserEitDvb(this, m_sectionDispatcher, this, GetOwner(), hr);
   if (m_grabberEpgDvb == NULL || !SUCCEEDED(*hr))
   {
     if (SUCCEEDED(*hr))
@@ -246,7 +252,7 @@ CTsWriter::CTsWriter(LPUNKNOWN unk, HRESULT* hr)
     LogDebug(L"writer: failed to allocate DVB EPG grabber, hr = 0x%x", *hr);
     return;
   }
-  m_grabberEpgMhw = new CParserMhw(this, m_grabberSiDvb, GetOwner(), hr);
+  m_grabberEpgMhw = new CParserMhw(this, m_sectionDispatcher, m_grabberSiDvb, GetOwner(), hr);
   if (m_grabberEpgMhw == NULL || !SUCCEEDED(*hr))
   {
     if (SUCCEEDED(*hr))
@@ -256,7 +262,7 @@ CTsWriter::CTsWriter(LPUNKNOWN unk, HRESULT* hr)
     LogDebug(L"writer: failed to allocate MHW EPG grabber, hr = 0x%x", *hr);
     return;
   }
-  m_grabberEpgOpenTv = new CParserOpenTv(this, GetOwner(), hr);
+  m_grabberEpgOpenTv = new CParserOpenTv(this, m_sectionDispatcher, GetOwner(), hr);
   if (m_grabberEpgOpenTv == NULL || !SUCCEEDED(*hr))
   {
     if (SUCCEEDED(*hr))
@@ -266,7 +272,7 @@ CTsWriter::CTsWriter(LPUNKNOWN unk, HRESULT* hr)
     LogDebug(L"writer: failed to allocate OpenTV EPG grabber, hr = 0x%x", *hr);
     return;
   }
-  m_grabberEpgScte = new CParserAet(this, m_grabberSiScte, GetOwner(), hr);
+  m_grabberEpgScte = new CParserAet(this, m_sectionDispatcher, m_grabberSiScte, GetOwner(), hr);
   if (m_grabberEpgScte == NULL || !SUCCEEDED(*hr))
   {
     if (SUCCEEDED(*hr))
@@ -374,6 +380,12 @@ CTsWriter::~CTsWriter()
   {
     delete m_filter;
     m_filter = NULL;
+  }
+
+  if (m_sectionDispatcher != NULL)
+  {
+    delete m_sectionDispatcher;
+    m_sectionDispatcher = NULL;
   }
   LogDebug(L"writer: completed");
 }

@@ -31,7 +31,8 @@ using namespace std;
 
 extern void LogDebug(const wchar_t* fmt, ...);
 
-CGrabberCat::CGrabberCat()
+CGrabberCat::CGrabberCat(ISectionDispatcher* sectionDispatcher)
+  : CSectionDecoder(sectionDispatcher)
 {
   m_isReady = false;
   m_version = VERSION_NOT_SET;

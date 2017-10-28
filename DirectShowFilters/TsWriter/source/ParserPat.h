@@ -21,6 +21,7 @@
 #pragma once
 #include <vector>
 #include "..\..\shared\CriticalSection.h"
+#include "..\..\shared\ISectionDispatcher.h"
 #include "..\..\shared\Section.h"
 #include "..\..\shared\SectionDecoder.h"
 #include "ICallBackPat.h"
@@ -40,7 +41,7 @@ extern void LogDebug(const wchar_t* fmt, ...);
 class CParserPat : public CSectionDecoder
 {
   public:
-    CParserPat();
+    CParserPat(ISectionDispatcher* sectionDispatcher);
     virtual ~CParserPat();
 
     void Reset();

@@ -29,6 +29,7 @@
 extern void LogDebug(const wchar_t* fmt, ...);
 
 CGrabberEpgAtsc::CGrabberEpgAtsc(ICallBackPidConsumer* callBack,
+                                  ISectionDispatcher* sectionDispatcher,
                                   ISystemTimeInfoProviderAtscScte* systemTimeInfoProvider,
                                   LPUNKNOWN unk,
                                   HRESULT* hr)
@@ -53,6 +54,7 @@ CGrabberEpgAtsc::CGrabberEpgAtsc(ICallBackPidConsumer* callBack,
 
   m_callBackGrabber = NULL;
   m_callBackPidConsumer = callBack;
+  m_sectionDispatcher = sectionDispatcher;
   m_systemTimeInfoProvider = systemTimeInfoProvider;
   m_gpsUtcOffset = 0;
   m_enableCrcCheck = true;
@@ -134,7 +136,7 @@ void CGrabberEpgAtsc::AddEitDecoders(const vector<unsigned short>& pids)
       continue;
     }
 
-    CParserEitAtsc* parser = new CParserEitAtsc(pid);
+    CParserEitAtsc* parser = new CParserEitAtsc(pid, m_sectionDispatcher);
     if (parser == NULL)
     {
       LogDebug(L"EPG ATSC: failed to allocate EIT decoder, PID %hu", pid);
@@ -222,7 +224,7 @@ void CGrabberEpgAtsc::AddEttDecoders(const vector<unsigned short>& pids)
       continue;
     }
 
-    CParserEtt* parser = new CParserEtt(pid);
+    CParserEtt* parser = new CParserEtt(pid, m_sectionDispatcher);
     if (parser == NULL)
     {
       LogDebug(L"EPG ATSC: failed to allocate ETT decoder, PID %hu", pid);

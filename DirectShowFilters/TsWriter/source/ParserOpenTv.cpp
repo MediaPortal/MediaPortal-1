@@ -35,7 +35,10 @@
 
 extern void LogDebug(const wchar_t* fmt, ...);
 
-CParserOpenTv::CParserOpenTv(ICallBackPidConsumer* callBack, LPUNKNOWN unk, HRESULT* hr)
+CParserOpenTv::CParserOpenTv(ICallBackPidConsumer* callBack,
+                              ISectionDispatcher* sectionDispatcher,
+                              LPUNKNOWN unk,
+                              HRESULT* hr)
   : CUnknown(NAME("OpenTV EPG Grabber"), unk), m_recordsEvent(600000),
     m_recordsDescription(600000)
 {
@@ -56,6 +59,7 @@ CParserOpenTv::CParserOpenTv(ICallBackPidConsumer* callBack, LPUNKNOWN unk, HRES
 
   m_callBackGrabber = NULL;
   m_callBackPidConsumer = callBack;
+  m_sectionDispatcher = sectionDispatcher;
   m_pidPmt = 0;
   m_enableCrcCheck = true;
 }
@@ -904,7 +908,7 @@ bool CParserOpenTv::AddOrResetDecoder(unsigned short pid, bool enableCrcCheck)
   map<unsigned short, CSectionDecoder*>::const_iterator it = m_decoders.find(pid);
   if (it == m_decoders.end() || it->second == NULL)
   {
-    decoder = new CSectionDecoder();
+    decoder = new CSectionDecoder(m_sectionDispatcher);
     if (decoder == NULL)
     {
       LogDebug(L"OpenTV: failed to allocate section decoder for PID %hu", pid);

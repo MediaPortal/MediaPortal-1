@@ -41,6 +41,7 @@
 extern void LogDebug(const wchar_t* fmt, ...);
 
 CParserMhw::CParserMhw(ICallBackPidConsumer* callBack,
+                        ISectionDispatcher* sectionDispatcher,
                         ISystemTimeInfoProviderDvb* systemTimeInfoProvider,
                         LPUNKNOWN unk,
                         HRESULT* hr)
@@ -81,6 +82,7 @@ CParserMhw::CParserMhw(ICallBackPidConsumer* callBack,
 
   m_callBackGrabber = NULL;
   m_callBackPidConsumer = callBack;
+  m_sectionDispatcher = sectionDispatcher;
   m_systemTimeInfoProvider = systemTimeInfoProvider;
   m_enableCrcCheck = true;
 
@@ -1178,7 +1180,7 @@ void CParserMhw::AddOrResetDecoder(unsigned short pid, bool enableCrcCheck)
   map<unsigned short, CSectionDecoder*>::const_iterator it = m_decoders.find(pid);
   if (it == m_decoders.end() || it->second == NULL)
   {
-    decoder = new CSectionDecoder();
+    decoder = new CSectionDecoder(m_sectionDispatcher);
     if (decoder == NULL)
     {
       LogDebug(L"MHW: failed to allocate section decoder for PID %hu", pid);

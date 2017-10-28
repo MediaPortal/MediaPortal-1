@@ -29,7 +29,8 @@ using namespace MediaPortal;
 using namespace std;
 
 
-CParserBat::CParserBat()
+CParserBat::CParserBat(ISectionDispatcher* sectionDispatcher)
+  : CParserNitDvb(sectionDispatcher)
 {
   CParserBat::SetPid(PID_BAT);
   m_tableIds.clear();

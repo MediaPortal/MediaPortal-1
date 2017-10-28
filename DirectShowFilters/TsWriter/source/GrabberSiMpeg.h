@@ -24,6 +24,7 @@
 #include <vector>
 #include <WinError.h>   // HRESULT
 #include "..\..\shared\CriticalSection.h"
+#include "..\..\shared\ISectionDispatcher.h"
 #include "..\..\shared\\TsHeader.h"
 #include "GrabberCat.h"
 #include "GrabberPmt.h"
@@ -45,7 +46,8 @@ class CGrabberSiMpeg
     public IGrabberSiMpeg
 {
   public:
-    CGrabberSiMpeg(ICallBackSiMpeg* callBack,
+    CGrabberSiMpeg(ISectionDispatcher* sectionDispatcher,
+                    ICallBackSiMpeg* callBack,
                     IEncryptionAnalyser* analyser,
                     LPUNKNOWN unk,
                     HRESULT* hr);
@@ -140,9 +142,11 @@ class CGrabberSiMpeg
     void OnPmtRemoved(unsigned short programNumber, unsigned short pid);
 
     CCriticalSection m_section;
+    ISectionDispatcher* m_sectionDispatcher;
     CParserPat m_patParser;
     CGrabberCat m_catGrabber;
     map<unsigned short, CGrabberPmt*> m_pmtGrabbers;    // key = program number
+    bool m_isPatComplete;
     unsigned short m_pmtReadyCount;
     ICallBackGrabber* m_callBackGrabber;
     ICallBackSiMpeg* m_callBackSiMpeg;

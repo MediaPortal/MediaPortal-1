@@ -25,6 +25,7 @@
 #include <WinError.h>   // HRESULT
 #include "..\..\shared\CriticalSection.h"
 #include "..\..\shared\ISectionCallback.h"
+#include "..\..\shared\ISectionDispatcher.h"
 #include "..\..\shared\SectionDecoder.h"
 #include "..\..\shared\TsHeader.h"
 #include "ICallBackGrabber.h"
@@ -48,6 +49,7 @@ class CGrabberEpgAtsc
 {
   public:
     CGrabberEpgAtsc(ICallBackPidConsumer* callBack,
+                    ISectionDispatcher* sectionDispatcher,
                     ISystemTimeInfoProviderAtscScte* systemTimeInfoProvider,
                     LPUNKNOWN unk,
                     HRESULT* hr);
@@ -114,6 +116,7 @@ class CGrabberEpgAtsc
     bool m_isReady;
     ICallBackGrabber* m_callBackGrabber;
     ICallBackPidConsumer* m_callBackPidConsumer;
+    ISectionDispatcher* m_sectionDispatcher;
     ISystemTimeInfoProviderAtscScte* m_systemTimeInfoProvider;
     unsigned char m_gpsUtcOffset;
     map<unsigned short, CParserEitAtsc*> m_parsersEit;

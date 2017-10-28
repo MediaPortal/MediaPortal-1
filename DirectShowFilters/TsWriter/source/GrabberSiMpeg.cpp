@@ -24,11 +24,13 @@
 
 extern void LogDebug(const wchar_t* fmt, ...);
 
-CGrabberSiMpeg::CGrabberSiMpeg(ICallBackSiMpeg* callBack,
+CGrabberSiMpeg::CGrabberSiMpeg(ISectionDispatcher* sectionDispatcher,
+                                ICallBackSiMpeg* callBack,
                                 IEncryptionAnalyser* analyser,
                                 LPUNKNOWN unk,
                                 HRESULT* hr)
-  : CUnknown(NAME("MPEG SI Grabber"), unk)
+  : CUnknown(NAME("MPEG SI Grabber"), unk), m_patParser(sectionDispatcher),
+    m_catGrabber(sectionDispatcher)
 {
   if (callBack == NULL)
   {
@@ -43,10 +45,12 @@ CGrabberSiMpeg::CGrabberSiMpeg(ICallBackSiMpeg* callBack,
     return;
   }
 
+  m_sectionDispatcher = sectionDispatcher;
   m_callBackGrabber = NULL;
   m_callBackSiMpeg = callBack;
   m_encryptionAnalyser = analyser;
 
+  m_isPatComplete = false;
   m_pmtReadyCount = 0;
   m_freesatProgramNumber = 0;
   m_isPmtReceiveOrChangeNotified = false;
@@ -105,6 +109,7 @@ void CGrabberSiMpeg::Reset()
     }
   }
   m_pmtGrabbers.clear();
+  m_isPatComplete = false;
   m_pmtReadyCount = 0;
   m_freesatProgramNumber = 0;
   m_isPmtReceiveOrChangeNotified = false;
@@ -367,6 +372,7 @@ void CGrabberSiMpeg::OnTableSeen(unsigned char tableId)
 void CGrabberSiMpeg::OnTableComplete(unsigned char tableId)
 {
   CEnterCriticalSection lock(m_section);
+  m_isPatComplete = true;
   if (m_callBackGrabber != NULL)
   {
     m_callBackGrabber->OnTableComplete(PID_PAT, TABLE_ID_PAT);
@@ -380,6 +386,7 @@ void CGrabberSiMpeg::OnTableComplete(unsigned char tableId)
 void CGrabberSiMpeg::OnTableChange(unsigned char tableId)
 {
   CEnterCriticalSection lock(m_section);
+  m_isPatComplete = false;
   if (m_callBackGrabber != NULL)
   {
     m_callBackGrabber->OnTableChange(PID_PAT, TABLE_ID_PAT);
@@ -439,7 +446,7 @@ void CGrabberSiMpeg::OnPatProgramReceived(unsigned short programNumber, unsigned
     m_freesatProgramNumber = programNumber;
   }
 
-  CGrabberPmt* grabber = new CGrabberPmt(m_encryptionAnalyser);
+  CGrabberPmt* grabber = new CGrabberPmt(m_sectionDispatcher, m_encryptionAnalyser);
   if (grabber == NULL)
   {
     LogDebug(L"SI MPEG: failed to allocate PMT grabber, program number = %hu, PMT PID = %hu",
@@ -599,7 +606,7 @@ void CGrabberSiMpeg::OnPmtReceived(unsigned short programNumber,
     m_callBackGrabber->OnTableSeen(PID_PAT, TABLE_ID_PMT);
     m_isPmtReceiveOrChangeNotified = true;
   }
-  if (m_patParser.IsReady() && m_pmtReadyCount == m_pmtGrabbers.size())
+  if (m_isPatComplete && m_pmtReadyCount == m_pmtGrabbers.size())
   {
     LogDebug(L"SI MPEG: ready, program count = %hu", m_pmtReadyCount);
     if (m_callBackGrabber != NULL)
@@ -625,7 +632,7 @@ void CGrabberSiMpeg::OnPmtChanged(unsigned short programNumber,
     m_callBackGrabber->OnTableChange(PID_PAT, TABLE_ID_PMT);
     m_isPmtReceiveOrChangeNotified = true;
   }
-  if (m_patParser.IsReady() && m_pmtReadyCount == m_pmtGrabbers.size())
+  if (m_isPatComplete && m_pmtReadyCount == m_pmtGrabbers.size())
   {
     LogDebug(L"SI MPEG: ready, program count = %hu", m_pmtReadyCount);
     if (m_callBackGrabber != NULL)

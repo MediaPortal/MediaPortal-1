@@ -50,6 +50,7 @@
 extern void LogDebug(const wchar_t* fmt, ...);
 
 CParserEitDvb::CParserEitDvb(ICallBackPidConsumer* callBack,
+                              ISectionDispatcher* sectionDispatcher,
                               IDefaultAuthorityProvider* authorityProvider,
                               LPUNKNOWN unk,
                               HRESULT* hr)
@@ -84,6 +85,7 @@ CParserEitDvb::CParserEitDvb(ICallBackPidConsumer* callBack,
 
   m_callBackGrabber = NULL;
   m_callBackPidConsumer = callBack;
+  m_sectionDispatcher = sectionDispatcher;
   m_defaultAuthorityProvider = authorityProvider;
   m_enableCrcCheck = true;
 
@@ -1823,7 +1825,7 @@ bool CParserEitDvb::AddOrResetDecoder(unsigned short pid, bool enableCrcCheck)
   map<unsigned short, CSectionDecoder*>::const_iterator it = m_decoders.find(pid);
   if (it == m_decoders.end() || it->second == NULL)
   {
-    decoder = new CSectionDecoder();
+    decoder = new CSectionDecoder(m_sectionDispatcher);
     if (decoder == NULL)
     {
       LogDebug(L"EIT DVB: failed to allocate section decoder for PID %hu", pid);

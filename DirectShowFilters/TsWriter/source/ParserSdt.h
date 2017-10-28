@@ -23,6 +23,7 @@
 #include <map>
 #include <vector>
 #include "..\..\shared\CriticalSection.h"
+#include "..\..\shared\ISectionDispatcher.h"
 #include "..\..\shared\Section.h"
 #include "..\..\shared\SectionDecoder.h"
 #include "ICallBackSdt.h"
@@ -45,7 +46,7 @@ extern void LogDebug(const wchar_t* fmt, ...);
 class CParserSdt : public CSectionDecoder, public IDefaultAuthorityProvider
 {
   public:
-    CParserSdt();
+    CParserSdt(ISectionDispatcher* sectionDispatcher);
     virtual ~CParserSdt();
 
     void Reset(bool enableCrcCheck);

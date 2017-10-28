@@ -28,6 +28,7 @@
 #include <WinError.h>   // HRESULT
 #include "..\..\shared\CriticalSection.h"
 #include "..\..\shared\ISectionCallback.h"
+#include "..\..\shared\ISectionDispatcher.h"
 #include "..\..\shared\SectionDecoder.h"
 #include "..\..\shared\TsHeader.h"
 #include "ICallBackGrabber.h"
@@ -74,6 +75,7 @@ class CParserEitDvb : public CUnknown, public IGrabberEpgDvb, ISectionCallback
 {
   public:
     CParserEitDvb(ICallBackPidConsumer* callBack,
+                  ISectionDispatcher* sectionDispatcher,
                   IDefaultAuthorityProvider* authorityProvider,
                   LPUNKNOWN unk,
                   HRESULT* hr);
@@ -799,6 +801,7 @@ class CParserEitDvb : public CUnknown, public IGrabberEpgDvb, ISectionCallback
     unsigned long m_unseenSectionCount;
     ICallBackGrabber* m_callBackGrabber;
     ICallBackPidConsumer* m_callBackPidConsumer;
+    ISectionDispatcher* m_sectionDispatcher;
     IDefaultAuthorityProvider* m_defaultAuthorityProvider;
     map<unsigned short, CSectionDecoder*> m_decoders;
     map<unsigned long long, CRecordEitService*> m_services;

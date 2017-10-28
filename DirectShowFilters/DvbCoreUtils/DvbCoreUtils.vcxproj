@@ -98,6 +98,7 @@
     <ClCompile Include="PidTable.cpp" />
     <ClCompile Include="Section.cpp" />
     <ClCompile Include="SectionDecoder.cpp" />
+    <ClCompile Include="SectionDispatcher.cpp" />
     <ClCompile Include="Thread.cpp" />
     <ClCompile Include="TsHeader.cpp" />
   </ItemGroup>
@@ -110,11 +111,13 @@
     <ClInclude Include="..\shared\EnterCriticalSection.h" />
     <ClInclude Include="..\shared\FileWriter.h" />
     <ClInclude Include="..\shared\ISectionCallback.h" />
+    <ClInclude Include="..\shared\ISectionDispatcher.h" />
     <ClInclude Include="..\shared\PacketSync.h" />
     <ClInclude Include="..\shared\Pcr.h" />
     <ClInclude Include="..\shared\PidTable.h" />
     <ClInclude Include="..\shared\Section.h" />
     <ClInclude Include="..\shared\SectionDecoder.h" />
+    <ClInclude Include="..\shared\SectionDispatcher.h" />
     <ClInclude Include="..\shared\stdafx.h" />
     <ClInclude Include="..\shared\Thread.h" />
     <ClInclude Include="..\shared\TimeUtils.h" />

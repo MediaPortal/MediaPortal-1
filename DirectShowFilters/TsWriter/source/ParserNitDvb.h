@@ -23,6 +23,7 @@
 #include <map>
 #include <vector>
 #include "..\..\shared\CriticalSection.h"
+#include "..\..\shared\ISectionDispatcher.h"
 #include "..\..\shared\SectionDecoder.h"
 #include "ICallBackNitDvb.h"
 #include "IDefaultAuthorityProvider.h"
@@ -45,7 +46,7 @@ class CParserNitDvb
   : public CSectionDecoder, public IDefaultAuthorityProvider, ICallBackNitDvb
 {
   public:
-    CParserNitDvb();
+    CParserNitDvb(ISectionDispatcher* sectionDispatcher);
     virtual ~CParserNitDvb();
 
     void SetPid(unsigned short pid);

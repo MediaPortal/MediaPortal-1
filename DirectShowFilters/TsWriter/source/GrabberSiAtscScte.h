@@ -25,6 +25,7 @@
 #include <WinError.h>   // HRESULT
 #include "..\..\shared\CriticalSection.h"
 #include "..\..\shared\ISectionCallback.h"
+#include "..\..\shared\ISectionDispatcher.h"
 #include "..\..\shared\Section.h"
 #include "..\..\shared\SectionDecoder.h"
 #include "..\..\shared\TsHeader.h"
@@ -65,6 +66,7 @@ class CGrabberSiAtscScte
 {
   public:
     CGrabberSiAtscScte(unsigned short pid,
+                        ISectionDispatcher* sectionDispatcher,
                         ICallBackSiAtscScte* callBack,
                         LPUNKNOWN unk,
                         HRESULT* hr);

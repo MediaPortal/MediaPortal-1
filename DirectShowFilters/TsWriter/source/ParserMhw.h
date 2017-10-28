@@ -26,6 +26,7 @@
 #include <WinError.h>   // HRESULT
 #include "..\..\shared\CriticalSection.h"
 #include "..\..\shared\ISectionCallback.h"
+#include "..\..\shared\ISectionDispatcher.h"
 #include "..\..\shared\SectionDecoder.h"
 #include "..\..\shared\TsHeader.h"
 #include "ICallBackGrabber.h"
@@ -81,6 +82,7 @@ class CParserMhw
 {
   public:
     CParserMhw(ICallBackPidConsumer* callBack,
+                ISectionDispatcher* sectionDispatcher,
                 ISystemTimeInfoProviderDvb* systemTimeInfoProvider,
                 LPUNKNOWN unk,
                 HRESULT* hr);
@@ -960,6 +962,7 @@ class CParserMhw
     bool m_isReady;
     ICallBackGrabber* m_callBackGrabber;
     ICallBackPidConsumer* m_callBackPidConsumer;
+    ISectionDispatcher* m_sectionDispatcher;
     ISystemTimeInfoProviderDvb* m_systemTimeInfoProvider;
     map<unsigned short, CSectionDecoder*> m_decoders;
     CRecordStore m_recordsChannel;

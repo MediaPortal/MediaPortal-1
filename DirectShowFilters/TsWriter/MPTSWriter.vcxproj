@@ -207,6 +207,8 @@
     <ClInclude Include="..\shared\CriticalSection.h" />
     <ClInclude Include="..\shared\EnterCriticalSection.h" />
     <ClInclude Include="..\shared\FileWriter.h" />
+    <ClInclude Include="..\shared\ISectionDispatcher.h" />
+    <ClInclude Include="..\shared\SectionDispatcher.h" />
     <ClInclude Include="..\shared\Thread.h" />
     <ClInclude Include="..\shared\TimeUtils.h" />
     <ClInclude Include="source\EncryptionState.h" />

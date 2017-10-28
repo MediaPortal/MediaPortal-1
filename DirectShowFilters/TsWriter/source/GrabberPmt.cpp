@@ -32,7 +32,9 @@
 
 extern void LogDebug(const wchar_t* fmt, ...);
 
-CGrabberPmt::CGrabberPmt(IEncryptionAnalyser* analyser)
+CGrabberPmt::CGrabberPmt(ISectionDispatcher* sectionDispatcher,
+                          IEncryptionAnalyser* analyser)
+  : CSectionDecoder(sectionDispatcher)
 {
   m_isReady = false;
   m_version = VERSION_NOT_SET;

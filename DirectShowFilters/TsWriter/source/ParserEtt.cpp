@@ -30,7 +30,8 @@
 
 extern void LogDebug(const wchar_t* fmt, ...);
 
-CParserEtt::CParserEtt(unsigned short pid) : m_records(600000)
+CParserEtt::CParserEtt(unsigned short pid, ISectionDispatcher* sectionDispatcher)
+  : CSectionDecoder(sectionDispatcher), m_records(600000)
 {
   m_versionNumber = VERSION_NOT_SET;
   m_isReady = false;

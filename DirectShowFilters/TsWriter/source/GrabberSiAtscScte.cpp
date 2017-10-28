@@ -27,11 +27,13 @@
 extern void LogDebug(const wchar_t* fmt, ...);
 
 CGrabberSiAtscScte::CGrabberSiAtscScte(unsigned short pid,
+                                        ISectionDispatcher* sectionDispatcher,
                                         ICallBackSiAtscScte* callBack,
                                         LPUNKNOWN unk,
                                         HRESULT* hr)
-  : CUnknown(NAME("ATSC/SCTE SI Grabber"), unk), m_parserEam(pid),
-    m_parserLvct(pid), m_parserMgt(pid)
+  : CUnknown(NAME("ATSC/SCTE SI Grabber"), unk),
+    m_sectionDecoder(sectionDispatcher), m_parserEam(pid), m_parserLvct(pid),
+    m_parserMgt(pid)
 {
   if (callBack == NULL)
   {

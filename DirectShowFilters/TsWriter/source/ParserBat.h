@@ -19,6 +19,7 @@
  *
  */
 #pragma once
+#include "..\..\shared\ISectionDispatcher.h"
 #include "ParserNitDvb.h"
 
 
@@ -29,7 +30,7 @@
 class CParserBat : public CParserNitDvb
 {
   public:
-    CParserBat();
+    CParserBat(ISectionDispatcher* sectionDispatcher);
     virtual ~CParserBat();
 
     void SetPid(unsigned short pid);

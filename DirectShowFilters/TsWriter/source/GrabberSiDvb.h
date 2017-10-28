@@ -24,6 +24,7 @@
 #include <streams.h>    // CUnknown, LPUNKNOWN
 #include <WinError.h>   // HRESULT
 #include "..\..\shared\CriticalSection.h"
+#include "..\..\shared\ISectionDispatcher.h"
 #include "..\..\shared\TsHeader.h"
 #include "ICallBackGrabber.h"
 #include "ICallBackNitDvb.h"
@@ -49,7 +50,10 @@ class CGrabberSiDvb
     public ISystemTimeInfoProviderDvb
 {
   public:
-    CGrabberSiDvb(ICallBackSiDvb* callBack, LPUNKNOWN unk, HRESULT* hr);
+    CGrabberSiDvb(ISectionDispatcher* sectionDispatcher,
+                  ICallBackSiDvb* callBack,
+                  LPUNKNOWN unk,
+                  HRESULT* hr);
     virtual ~CGrabberSiDvb();
 
     DECLARE_IUNKNOWN

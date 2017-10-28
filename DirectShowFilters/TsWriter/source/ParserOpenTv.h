@@ -26,6 +26,7 @@
 #include <WinError.h>   // HRESULT
 #include "..\..\shared\CriticalSection.h"
 #include "..\..\shared\ISectionCallback.h"
+#include "..\..\shared\ISectionDispatcher.h"
 #include "..\..\shared\SectionDecoder.h"
 #include "..\..\shared\TsHeader.h"
 #include "ICallBackGrabber.h"
@@ -77,7 +78,10 @@ class CParserOpenTv
   : public CUnknown, public IGrabberEpgOpenTv, ISectionCallback
 {
   public:
-    CParserOpenTv(ICallBackPidConsumer* callBack, LPUNKNOWN unk, HRESULT* hr);
+    CParserOpenTv(ICallBackPidConsumer* callBack,
+                  ISectionDispatcher* sectionDispatcher,
+                  LPUNKNOWN unk,
+                  HRESULT* hr);
     virtual ~CParserOpenTv();
 
     static bool IsItalianText(unsigned short originalNetworkId);
@@ -332,6 +336,7 @@ class CParserOpenTv
     clock_t m_completeTime;
     ICallBackGrabber* m_callBackGrabber;
     ICallBackPidConsumer* m_callBackPidConsumer;
+    ISectionDispatcher* m_sectionDispatcher;
     unsigned short m_pidPmt;
     vector<unsigned short> m_pidsEvent;
     vector<unsigned short> m_pidsDescription;

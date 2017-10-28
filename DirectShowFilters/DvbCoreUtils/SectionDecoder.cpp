@@ -23,31 +23,38 @@
 #include "..\shared\PacketSync.h"
 #include "..\shared\TsHeader.h"
 
-using namespace std;
-
 
 #define CONTINUITY_COUNTER_NOT_SET 0xff
 
 
 extern void LogDebug(const wchar_t* fmt, ...);
 
-CSectionDecoder::CSectionDecoder(void)
+CSectionDecoder::CSectionDecoder(ISectionDispatcher* dispatcher)
 {
   m_pid = -1;
   m_section.Reset();
   m_continuityCounter = CONTINUITY_COUNTER_NOT_SET;
   m_isCrcCheckEnabled = true;
   m_callback = NULL;
+  m_dispatcher = dispatcher;
 }
 
-CSectionDecoder::~CSectionDecoder(void)
-{ 
+CSectionDecoder::~CSectionDecoder()
+{
+  if (m_dispatcher != NULL)
+  {
+    m_dispatcher->DequeueSections(*this);
+  }
 }
 
 void CSectionDecoder::Reset()
 {
   m_section.Reset();
   m_continuityCounter = CONTINUITY_COUNTER_NOT_SET;
+  if (m_dispatcher != NULL)
+  {
+    m_dispatcher->DequeueSections(*this);
+  }
 }
 
 void CSectionDecoder::SetCallBack(ISectionCallback* callBack)
@@ -96,7 +103,10 @@ void CSectionDecoder::OnTsPacket(const CTsHeader& header, const unsigned char* t
     if (header.TransportError) 
     {
       // Give up on the current section.
-      Reset();
+      LogDebug(L"section %d: transport error flag set, signal quality problem?",
+                m_pid);
+      m_section.Reset();
+      m_continuityCounter = CONTINUITY_COUNTER_NOT_SET;
       return; 
     }
 
@@ -178,19 +188,19 @@ void CSectionDecoder::OnTsPacket(const CTsHeader& header, const unsigned char* t
         // the byte sequence: 00 00 01.
         if (m_pid == 0 || m_section.Data[0] != 0)
         {
-          if (!m_isCrcCheckEnabled || m_section.IsValid())
-          {
-            OnNewSection(m_section);
-            if (m_callback != NULL)
-            {
-              m_callback->OnNewSection(header.Pid, m_section.TableId, m_section);
-            }
-          }
-          else
+          if (m_isCrcCheckEnabled && !m_section.IsValid())
           {
             LogDebug(L"section %d: bad section CRC, table ID = 0x%hhx, table ID extension = %hu, section length = %hu, signal quality, descrambling, or HDD load problem?",
                       m_pid, m_section.TableId, m_section.TableIdExtension,
                       m_section.SectionLength);
+          }
+          else if (m_dispatcher != NULL)
+          {
+            m_dispatcher->EnqueueSection(m_pid, m_section.Data[0], m_section, *this);
+          }
+          else
+          {
+            OnNewSection(m_pid, m_section.Data[0], m_section);
           }
         }
         m_section.Reset();
@@ -222,4 +232,13 @@ void CSectionDecoder::OnNewSection(CSection& section)
   // will be broken without this default implementation. This non-const
   // OnNewSection() is only kept for compatibility with TsReader.
   OnNewSection((const CSection&)section);
+}
+
+void CSectionDecoder::OnNewSection(unsigned short pid, unsigned char tableId, const CSection& section)
+{
+  OnNewSection(const_cast<CSection&>(section));
+  if (m_callback != NULL)
+  {
+    m_callback->OnNewSection(pid, tableId, section);
+  }
 }

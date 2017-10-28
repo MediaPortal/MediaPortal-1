@@ -21,6 +21,7 @@
 #pragma once
 #include <vector>
 #include "..\..\shared\CriticalSection.h"
+#include "..\..\shared\ISectionDispatcher.h"
 #include "..\..\shared\Section.h"
 #include "..\..\shared\SectionDecoder.h"
 #include "ICallBackTot.h"
@@ -41,7 +42,7 @@ extern void LogDebug(const wchar_t* fmt, ...);
 class CParserTot : public CSectionDecoder, public ISystemTimeInfoProviderDvb
 {
   public:
-    CParserTot();
+    CParserTot(ISectionDispatcher* sectionDispatcher);
     virtual ~CParserTot();
 
     void Reset(bool enableCrcCheck);

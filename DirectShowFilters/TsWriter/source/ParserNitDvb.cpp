@@ -38,8 +38,9 @@
 
 extern void LogDebug(const wchar_t* fmt, ...);
 
-CParserNitDvb::CParserNitDvb()
-  : m_recordsService(600000), m_recordsTransmitter(600000)
+CParserNitDvb::CParserNitDvb(ISectionDispatcher* sectionDispatcher)
+  : CSectionDecoder(sectionDispatcher), m_recordsService(600000),
+    m_recordsTransmitter(600000)
 {
   CParserNitDvb::SetPid(PID_NIT_DVB);
   m_tableIds.push_back(TABLE_ID_NIT_DVB_ACTUAL);

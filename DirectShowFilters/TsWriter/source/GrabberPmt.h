@@ -23,6 +23,7 @@
 #include <vector>
 #include "..\..\shared\BasePmtParser.h"
 #include "..\..\shared\CriticalSection.h"
+#include "..\..\shared\ISectionDispatcher.h"
 #include "..\..\shared\Section.h"
 #include "..\..\shared\SectionDecoder.h"
 #include "..\..\shared\TsHeader.h"
@@ -40,7 +41,8 @@ using namespace std;
 class CGrabberPmt : public CSectionDecoder
 {
   public:
-    CGrabberPmt(IEncryptionAnalyser* analyser);
+    CGrabberPmt(ISectionDispatcher* sectionDispatcher,
+                IEncryptionAnalyser* analyser);
     virtual ~CGrabberPmt();
 
     void Reset();

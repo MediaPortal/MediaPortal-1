@@ -32,7 +32,8 @@
 
 extern void LogDebug(const wchar_t* fmt, ...);
 
-CParserEitAtsc::CParserEitAtsc(unsigned short pid) : m_records(600000)
+CParserEitAtsc::CParserEitAtsc(unsigned short pid, ISectionDispatcher* sectionDispatcher)
+  : CSectionDecoder(sectionDispatcher), m_records(600000)
 {
   m_isReady = false;
   m_completeTime = 0;

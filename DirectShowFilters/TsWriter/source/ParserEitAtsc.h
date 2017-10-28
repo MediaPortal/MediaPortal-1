@@ -22,6 +22,7 @@
 #include <ctime>
 #include <vector>
 #include "..\..\shared\CriticalSection.h"
+#include "..\..\shared\ISectionDispatcher.h"
 #include "..\..\shared\Section.h"
 #include "..\..\shared\SectionDecoder.h"
 #include "ICallBackTableParser.h"
@@ -41,7 +42,7 @@ extern void LogDebug(const wchar_t* fmt, ...);
 class CParserEitAtsc : public CSectionDecoder
 {
   public:
-    CParserEitAtsc(unsigned short pid);
+    CParserEitAtsc(unsigned short pid, ISectionDispatcher* sectionDispatcher);
     virtual ~CParserEitAtsc();
 
     void Reset(bool enableCrcCheck);

@@ -37,6 +37,7 @@
 extern void LogDebug(const wchar_t* fmt, ...);
 
 CParserAet::CParserAet(ICallBackPidConsumer* callBack,
+                        ISectionDispatcher* sectionDispatcher,
                         ISystemTimeInfoProviderAtscScte* systemTimeInfoProvider,
                         LPUNKNOWN unk,
                         HRESULT* hr)
@@ -62,6 +63,7 @@ CParserAet::CParserAet(ICallBackPidConsumer* callBack,
 
   m_callBackGrabber = NULL;
   m_callBackPidConsumer = callBack;
+  m_sectionDispatcher = sectionDispatcher;
   m_systemTimeInfoProvider = systemTimeInfoProvider;
   m_isReadyStt = false;
   m_gpsUtcOffset = 0;
@@ -128,7 +130,7 @@ void CParserAet::AddDecoders(const vector<unsigned short>& pids)
       continue;
     }
 
-    CSectionDecoder* decoder = new CSectionDecoder();
+    CSectionDecoder* decoder = new CSectionDecoder(m_sectionDispatcher);
     if (decoder == NULL)
     {
       LogDebug(L"AET: failed to allocate section decoder for PID %hu", pid);

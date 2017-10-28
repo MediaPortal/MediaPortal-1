@@ -27,8 +27,13 @@
 
 extern void LogDebug(const wchar_t* fmt, ...);
 
-CGrabberSiDvb::CGrabberSiDvb(ICallBackSiDvb* callBack, LPUNKNOWN unk, HRESULT* hr)
-  : CUnknown(NAME("DVB SI Grabber"), unk)
+CGrabberSiDvb::CGrabberSiDvb(ISectionDispatcher* sectionDispatcher,
+                              ICallBackSiDvb* callBack,
+                              LPUNKNOWN unk,
+                              HRESULT* hr)
+  : CUnknown(NAME("DVB SI Grabber"), unk), m_parserBat(sectionDispatcher),
+    m_parserNit(sectionDispatcher), m_parserSdt(sectionDispatcher),
+    m_parserTot(sectionDispatcher)
 {
   if (callBack == NULL)
   {

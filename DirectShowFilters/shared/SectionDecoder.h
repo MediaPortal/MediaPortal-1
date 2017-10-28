@@ -20,17 +20,19 @@
  */
 #pragma once
 #include "ISectionCallback.h"
+#include "ISectionDispatcher.h"
 #include "Section.h"
+#include "SectionDispatcher.h"
 #include "TsHeader.h"
 
 
 #define MAX_SECTIONS 256
 
 
-class CSectionDecoder
+class CSectionDecoder : ISectionCallback
 {
   public:
-    CSectionDecoder();
+    CSectionDecoder(ISectionDispatcher* dispatcher = NULL);
     virtual ~CSectionDecoder();
 
     void Reset();
@@ -47,10 +49,13 @@ class CSectionDecoder
     virtual void OnNewSection(CSection& section);
 
   private:
+    void OnNewSection(unsigned short pid, unsigned char tableId, const CSection& section);
+
     int m_pid;
     CSection m_section;
     CTsHeader m_header;
     unsigned char m_continuityCounter;
     bool m_isCrcCheckEnabled;
     ISectionCallback* m_callback;
+    ISectionDispatcher* m_dispatcher;
 };

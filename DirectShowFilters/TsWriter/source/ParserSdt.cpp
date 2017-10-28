@@ -35,7 +35,8 @@
 
 extern void LogDebug(const wchar_t* fmt, ...);
 
-CParserSdt::CParserSdt() : m_records(600000)
+CParserSdt::CParserSdt(ISectionDispatcher* sectionDispatcher)
+  : CSectionDecoder(sectionDispatcher), m_records(600000)
 {
   m_isOtherReady = false;
   m_otherCompleteTime = 0;

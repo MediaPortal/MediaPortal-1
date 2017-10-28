@@ -20,6 +20,7 @@
  */
 #pragma once
 #include "..\..\shared\CriticalSection.h"
+#include "..\..\shared\ISectionDispatcher.h"
 #include "..\..\shared\Section.h"
 #include "..\..\shared\SectionDecoder.h"
 #include "ICallBackCat.h"
@@ -34,7 +35,7 @@ using namespace MediaPortal;
 class CGrabberCat : public CSectionDecoder
 {
   public:
-    CGrabberCat();
+    CGrabberCat(ISectionDispatcher* sectionDispatcher);
     ~CGrabberCat();
 
     void Reset();

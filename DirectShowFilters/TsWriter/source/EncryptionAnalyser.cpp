@@ -19,6 +19,7 @@
  *
  */
 #include "EncryptionAnalyser.h"
+#include <cstddef>    // NULL
 #include "..\..\shared\EnterCriticalSection.h"
 #include "..\..\shared\PacketSync.h"
 

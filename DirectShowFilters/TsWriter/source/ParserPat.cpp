@@ -28,7 +28,8 @@
 
 extern void LogDebug(const wchar_t* fmt, ...);
 
-CParserPat::CParserPat() : m_records(600000)
+CParserPat::CParserPat(ISectionDispatcher* sectionDispatcher)
+  : CSectionDecoder(sectionDispatcher), m_records(600000)
 {
   m_isReady = false;
   m_version = VERSION_NOT_SET;

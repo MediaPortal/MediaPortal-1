@@ -24,6 +24,7 @@
 #include <vector>
 #include <WinError.h>   // HRESULT
 #include "..\..\shared\DebugSettings.h"
+#include "..\..\shared\ISectionDispatcher.h"
 #include "..\..\shared\Section.h"
 #include "EncryptionAnalyser.h"
 #include "GrabberEpgAtsc.h"
@@ -277,6 +278,7 @@ class CTsWriter
 
     bool m_isRunning;
     bool m_checkSectionCrcs;
+    CSectionDispatcher* m_sectionDispatcher;
     CEncryptionAnalyser m_encryptionAnalyser;
     IObserver* m_observer;
 };
