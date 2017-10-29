@@ -22,6 +22,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
 using System.Xml;
@@ -106,7 +107,7 @@ namespace SetupTv
         Log.Write(ex);
       }
 
-      TvBusinessLayer layer = new TvBusinessLayer();
+      layer = new TvBusinessLayer();
 
       this.Width = Convert.ToInt16(layer.GetSetting("FormWidth", "717").Value);
       this.Height = Convert.ToInt16(layer.GetSetting("FormHeight", "546").Value);
@@ -114,7 +115,6 @@ namespace SetupTv
       Project project = new Project();
       AddSection(project);
 
-      layer = new TvBusinessLayer();
       servers = new Servers();
       AddSection(servers);
       IList<Server> dbsServers = Server.ListAll();
@@ -605,6 +605,8 @@ namespace SetupTv
 
         LoadSectionSettings(treeNode);
       }
+      // Set location of SetupTV Form
+      Location = new Point(Convert.ToInt16(layer.GetSetting("FormLocationX", "0").Value), Convert.ToInt16(layer.GetSetting("FormLocationY", "0").Value));
     }
 
     public SectionTreeNode GetChildNode(SectionSettings parentSection, SectionSettings section)
@@ -779,6 +781,14 @@ namespace SetupTv
 
       s = layer.GetSetting("FormHeight");
       s.Value = this.Height.ToString();
+      s.Persist();
+
+      s = layer.GetSetting("FormLocationX");
+      s.Value = this.Location.X.ToString();
+      s.Persist();
+
+      s = layer.GetSetting("FormLocationY");
+      s.Value = this.Location.Y.ToString();
       s.Persist();
     }
 
