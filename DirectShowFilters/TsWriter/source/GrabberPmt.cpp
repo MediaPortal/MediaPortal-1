@@ -174,7 +174,6 @@ void CGrabberPmt::OnNewSection(const CSection& section)
 
 bool CGrabberPmt::IsReady()
 {
-  CEnterCriticalSection lock(m_section);
   return m_isReady;
 }
 

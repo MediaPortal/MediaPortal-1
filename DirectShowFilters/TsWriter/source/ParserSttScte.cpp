@@ -86,7 +86,6 @@ void CParserSttScte::OnNewSection(const CSection& section)
       return;
     }
 
-    CEnterCriticalSection lock(m_section);
     unsigned long systemTime = (section.Data[4] << 24) | (section.Data[5] << 16) | (section.Data[6] << 8) | section.Data[7];
     unsigned char gpsUtcOffset = section.Data[8];
     //LogDebug(L"STT SCTE: section length = %hu, protocol version = %hhu, system time = %lu, GPS UTC offset = %hhu",
@@ -139,6 +138,7 @@ void CParserSttScte::OnNewSection(const CSection& section)
                 pointer, endOfSection, protocolVersion);
     }
 
+    CEnterCriticalSection lock(m_section);
     if (m_systemTime == 0)
     {
       LogDebug(L"STT SCTE: received, system time = %lu, GPS UTC offset = %hhu, is DS state known = %d, is DS = %d, DS day of month = %hhu, DS hour = %hhu",

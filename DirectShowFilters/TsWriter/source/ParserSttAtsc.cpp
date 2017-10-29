@@ -94,7 +94,6 @@ void CParserSttAtsc::OnNewSection(const CSection& section)
       return;
     }
 
-    CEnterCriticalSection lock(m_section);
     unsigned long systemTime = (section.Data[9] << 24) | (section.Data[10] << 16) | (section.Data[11] << 8) | section.Data[12];
     unsigned char gpsUtcOffset = section.Data[13];
     bool isDaylightSaving = (section.Data[14] & 0x80) != 0;
@@ -134,6 +133,7 @@ void CParserSttAtsc::OnNewSection(const CSection& section)
                 protocolVersion);
     }
 
+    CEnterCriticalSection lock(m_section);
     if (m_systemTime == 0)
     {
       LogDebug(L"STT ATSC: received, system time = %lu, GPS UTC offset = %hhu, is DS = %d, DS day of month = %hhu, DS hour = %hhu",

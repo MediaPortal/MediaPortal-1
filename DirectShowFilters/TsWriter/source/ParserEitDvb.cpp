@@ -513,19 +513,16 @@ bool CParserEitDvb::OnTsPacket(const CTsHeader& header, const unsigned char* tsP
 
 STDMETHODIMP_(bool) CParserEitDvb::IsSeen()
 {
-  CEnterCriticalSection lock(m_section);
   return m_isSeen;
 }
 
 STDMETHODIMP_(bool) CParserEitDvb::IsReady()
 {
-  CEnterCriticalSection lock(m_section);
   return m_isReady;
 }
 
 STDMETHODIMP_(unsigned short) CParserEitDvb::GetServiceCount()
 {
-  CEnterCriticalSection lock(m_section);
   return (unsigned short)m_services.size();
 }
 

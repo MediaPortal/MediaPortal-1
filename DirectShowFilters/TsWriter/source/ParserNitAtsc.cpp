@@ -304,7 +304,6 @@ void CParserNitAtsc::OnNewSection(const CSection& section)
 
 bool CParserNitAtsc::IsSeen() const
 {
-  CEnterCriticalSection lock(m_section);
   return
     m_seenSections.size() > 0 ||
     m_recordsCarrierDefinition.GetRecordCount() > 0 ||
@@ -315,7 +314,6 @@ bool CParserNitAtsc::IsSeen() const
 
 bool CParserNitAtsc::IsReady() const
 {
-  CEnterCriticalSection lock(m_section);
   return m_isReady;
 }
 

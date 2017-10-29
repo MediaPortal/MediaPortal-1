@@ -50,7 +50,6 @@ CGrabberSiMpeg::CGrabberSiMpeg(ISectionDispatcher* sectionDispatcher,
   m_callBackSiMpeg = callBack;
   m_encryptionAnalyser = analyser;
 
-  m_isPatComplete = false;
   m_pmtReadyCount = 0;
   m_freesatProgramNumber = 0;
   m_isPmtReceiveOrChangeNotified = false;
@@ -61,9 +60,11 @@ CGrabberSiMpeg::CGrabberSiMpeg(ISectionDispatcher* sectionDispatcher,
 
 CGrabberSiMpeg::~CGrabberSiMpeg()
 {
+  m_catGrabber.SetCallBack(NULL);
+  m_patParser.SetCallBack(NULL);
+
   CEnterCriticalSection lock(m_section);
   m_callBackGrabber = NULL;
-  m_callBackSiMpeg = NULL;
   m_encryptionAnalyser = NULL;
 
   map<unsigned short, CGrabberPmt*>::iterator it = m_pmtGrabbers.begin();
@@ -109,7 +110,6 @@ void CGrabberSiMpeg::Reset()
     }
   }
   m_pmtGrabbers.clear();
-  m_isPatComplete = false;
   m_pmtReadyCount = 0;
   m_freesatProgramNumber = 0;
   m_isPmtReceiveOrChangeNotified = false;
@@ -372,7 +372,6 @@ void CGrabberSiMpeg::OnTableSeen(unsigned char tableId)
 void CGrabberSiMpeg::OnTableComplete(unsigned char tableId)
 {
   CEnterCriticalSection lock(m_section);
-  m_isPatComplete = true;
   if (m_callBackGrabber != NULL)
   {
     m_callBackGrabber->OnTableComplete(PID_PAT, TABLE_ID_PAT);
@@ -386,7 +385,6 @@ void CGrabberSiMpeg::OnTableComplete(unsigned char tableId)
 void CGrabberSiMpeg::OnTableChange(unsigned char tableId)
 {
   CEnterCriticalSection lock(m_section);
-  m_isPatComplete = false;
   if (m_callBackGrabber != NULL)
   {
     m_callBackGrabber->OnTableChange(PID_PAT, TABLE_ID_PAT);
@@ -606,7 +604,7 @@ void CGrabberSiMpeg::OnPmtReceived(unsigned short programNumber,
     m_callBackGrabber->OnTableSeen(PID_PAT, TABLE_ID_PMT);
     m_isPmtReceiveOrChangeNotified = true;
   }
-  if (m_isPatComplete && m_pmtReadyCount == m_pmtGrabbers.size())
+  if (m_patParser.IsReady() && m_pmtReadyCount == m_pmtGrabbers.size())
   {
     LogDebug(L"SI MPEG: ready, program count = %hu", m_pmtReadyCount);
     if (m_callBackGrabber != NULL)
@@ -632,7 +630,7 @@ void CGrabberSiMpeg::OnPmtChanged(unsigned short programNumber,
     m_callBackGrabber->OnTableChange(PID_PAT, TABLE_ID_PMT);
     m_isPmtReceiveOrChangeNotified = true;
   }
-  if (m_isPatComplete && m_pmtReadyCount == m_pmtGrabbers.size())
+  if (m_patParser.IsReady() && m_pmtReadyCount == m_pmtGrabbers.size())
   {
     LogDebug(L"SI MPEG: ready, program count = %hu", m_pmtReadyCount);
     if (m_callBackGrabber != NULL)

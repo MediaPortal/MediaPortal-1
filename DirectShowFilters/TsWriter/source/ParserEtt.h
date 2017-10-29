@@ -136,6 +136,7 @@ class CParserEtt : public CSectionDecoder
     bool SelectTextRecordByIds(unsigned short sourceId, unsigned short eventId);
 
     CCriticalSection m_section;
+    vector<unsigned long> m_seenSections;
     unsigned char m_versionNumber;
     bool m_isReady;
     clock_t m_completeTime;

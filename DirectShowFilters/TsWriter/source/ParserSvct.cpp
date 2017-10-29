@@ -294,7 +294,6 @@ void CParserSvct::OnNewSection(const CSection& section)
 
 bool CParserSvct::IsSeen() const
 {
-  CEnterCriticalSection lock(m_section);
   return
     m_seenSections.size() > 0 ||
     m_recordsDefinedChannel.GetRecordCount() > 0 ||
@@ -304,13 +303,11 @@ bool CParserSvct::IsSeen() const
 
 bool CParserSvct::IsReady() const
 {
-  CEnterCriticalSection lock(m_section);
   return m_isReady;
 }
 
 unsigned short CParserSvct::GetDefinedChannelCount() const
 {
-  CEnterCriticalSection lock(m_section);
   return (unsigned short)m_recordsDefinedChannel.GetRecordCount();
 }
 
@@ -342,7 +339,6 @@ bool CParserSvct::GetDefinedChannel(unsigned short index,
 
 unsigned short CParserSvct::GetVirtualChannelCount() const
 {
-  CEnterCriticalSection lock(m_section);
   return (unsigned short)m_recordsVirtualChannel.GetRecordCount();
 }
 
@@ -442,7 +438,6 @@ bool CParserSvct::GetVirtualChannel(unsigned short index,
 
 unsigned short CParserSvct::GetInverseChannelCount() const
 {
-  CEnterCriticalSection lock(m_section);
   return (unsigned short)m_recordsInverseChannel.GetRecordCount();
 }
 

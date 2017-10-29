@@ -146,7 +146,6 @@ class CGrabberSiMpeg
     CParserPat m_patParser;
     CGrabberCat m_catGrabber;
     map<unsigned short, CGrabberPmt*> m_pmtGrabbers;    // key = program number
-    bool m_isPatComplete;
     unsigned short m_pmtReadyCount;
     ICallBackGrabber* m_callBackGrabber;
     ICallBackSiMpeg* m_callBackSiMpeg;

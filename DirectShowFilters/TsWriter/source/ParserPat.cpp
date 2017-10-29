@@ -225,7 +225,6 @@ void CParserPat::OnNewSection(CSection& section)
 
 bool CParserPat::IsReady() const
 {
-  CEnterCriticalSection lock(m_section);
   return m_isReady;
 }
 
@@ -233,7 +232,6 @@ void CParserPat::GetTransportStreamDetail(unsigned short& transportStreamId,
                                           unsigned short& networkPid,
                                           unsigned short& programCount) const
 {
-  CEnterCriticalSection lock(m_section);
   transportStreamId = m_transportStreamId;
   networkPid = m_networkPid;
   programCount = (unsigned short)m_records.GetRecordCount();

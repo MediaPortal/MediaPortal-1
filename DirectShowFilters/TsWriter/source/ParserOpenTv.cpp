@@ -507,13 +507,11 @@ bool CParserOpenTv::OnTsPacket(const CTsHeader& header, const unsigned char* tsP
 
 STDMETHODIMP_(bool) CParserOpenTv::IsSeen()
 {
-  CEnterCriticalSection lock(m_section);
   return m_seenSections.size() != 0;
 }
 
 STDMETHODIMP_(bool) CParserOpenTv::IsReady()
 {
-  CEnterCriticalSection lock(m_section);
   return m_isReady;
 }
 
@@ -521,7 +519,6 @@ STDMETHODIMP_(void) CParserOpenTv::GetEventCount(unsigned long* eventCount,
                                                   unsigned short* originalNetworkId,
                                                   unsigned long* textLanguage)
 {
-  CEnterCriticalSection lock(m_section);
   *eventCount = m_recordsEvent.GetRecordCount();
   *originalNetworkId = m_originalNetworkId;
   if (m_isItalianText)

@@ -193,32 +193,39 @@ void CParserAet::OnTableSeen(unsigned char tableId)
 
 void CParserAet::OnTableComplete(unsigned char tableId)
 {
-  CEnterCriticalSection lock(m_section);
-  if (tableId == TABLE_ID_STT_SCTE && !m_isReadyStt)
+  if (tableId != TABLE_ID_STT_SCTE || m_isReadyStt)
   {
-    unsigned long systemTime;
-    unsigned char gpsUtcOffset;
-    bool isDaylightSavingStateKnown;
-    bool isDaylightSaving;
-    unsigned char daylightSavingDayOfMonth;
-    unsigned char daylightSavingHour;
-    if (!m_systemTimeInfoProvider->GetSystemTimeDetail(systemTime,
-                                                        gpsUtcOffset,
-                                                        isDaylightSavingStateKnown,
-                                                        isDaylightSaving,
-                                                        daylightSavingDayOfMonth,
-                                                        daylightSavingHour))
-    {
-      return;
-    }
+    return;
+  }
 
-    // Careful! Seeing the STT complete doesn't mean we've seen EPG.
-    m_gpsUtcOffset = gpsUtcOffset;
-    m_isReadyStt = true;
-    if (m_isReadyAet && m_callBackGrabber != NULL)
-    {
-      m_callBackGrabber->OnTableComplete(PID_AET_CALL_BACK, TABLE_ID_AET_CALL_BACK);
-    }
+  // System time information availability is a prerequisite.
+  unsigned long systemTime;
+  unsigned char gpsUtcOffset;
+  bool isDaylightSavingStateKnown;
+  bool isDaylightSaving;
+  unsigned char daylightSavingDayOfMonth;
+  unsigned char daylightSavingHour;
+  if (!m_systemTimeInfoProvider->GetSystemTimeDetail(systemTime,
+                                                      gpsUtcOffset,
+                                                      isDaylightSavingStateKnown,
+                                                      isDaylightSaving,
+                                                      daylightSavingDayOfMonth,
+                                                      daylightSavingHour))
+  {
+    return;
+  }
+
+  // Careful! Seeing the STT complete doesn't mean we've seen EPG.
+  CEnterCriticalSection lock(m_section);
+  if (m_isReadyStt)
+  {
+    return;
+  }
+  m_gpsUtcOffset = gpsUtcOffset;
+  m_isReadyStt = true;
+  if (m_isReadyAet && m_callBackGrabber != NULL)
+  {
+    m_callBackGrabber->OnTableComplete(PID_AET_CALL_BACK, TABLE_ID_AET_CALL_BACK);
   }
 }
 
@@ -316,19 +323,16 @@ bool CParserAet::OnTsPacket(const CTsHeader& header, const unsigned char* tsPack
 
 STDMETHODIMP_(bool) CParserAet::IsSeen()
 {
-  CEnterCriticalSection lock(m_section);
   return m_seenSections.size() != 0;
 }
 
 STDMETHODIMP_(bool) CParserAet::IsReady()
 {
-  CEnterCriticalSection lock(m_section);
   return m_isReadyAet && m_isReadyStt;
 }
 
 STDMETHODIMP_(unsigned long) CParserAet::GetEventCount()
 {
-  CEnterCriticalSection lock(m_section);
   return m_recordsAeit.GetRecordCount();
 }
 

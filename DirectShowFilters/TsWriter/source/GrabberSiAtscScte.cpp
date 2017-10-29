@@ -60,6 +60,16 @@ CGrabberSiAtscScte::CGrabberSiAtscScte(unsigned short pid,
 
 CGrabberSiAtscScte::~CGrabberSiAtscScte()
 {
+  m_sectionDecoder.SetCallBack(NULL);
+  m_parserEam.SetCallBack(NULL);
+  m_parserLvct.SetCallBack(NULL);
+  m_parserMgt.SetCallBack(NULL);
+  m_parserNit.SetCallBack(NULL);
+  m_parserNtt.SetCallBack(NULL);
+  m_parserSttAtsc.SetCallBack(NULL);
+  m_parserSttScte.SetCallBack(NULL);
+  m_parserSvct.SetCallBack(NULL);
+
   CEnterCriticalSection lock(m_section);
   m_callBackGrabber = NULL;
   m_callBackSiAtscScte = NULL;
@@ -89,7 +99,6 @@ STDMETHODIMP CGrabberSiAtscScte::NonDelegatingQueryInterface(REFIID iid, void** 
 
 void CGrabberSiAtscScte::Reset(bool enableCrcCheck)
 {
-  CEnterCriticalSection lock(m_section);
   m_enableCrcCheck = enableCrcCheck;
   m_sectionDecoder.EnableCrcCheck(m_enableCrcCheck);
   m_sectionDecoder.Reset();
@@ -102,6 +111,7 @@ void CGrabberSiAtscScte::Reset(bool enableCrcCheck)
   m_parserSttScte.Reset();
   m_parserSvct.Reset();
 
+  CEnterCriticalSection lock(m_section);
   if (m_callBackGrabber != NULL)
   {
     m_callBackGrabber->OnReset(m_sectionDecoder.GetPid());
@@ -136,7 +146,6 @@ void CGrabberSiAtscScte::OnNewSection(unsigned short pid,
                                       const CSection& section,
                                       bool isOutOfBandSection)
 {
-  CEnterCriticalSection lock(m_section);
   switch (tableId)
   {
     case TABLE_ID_EAM:

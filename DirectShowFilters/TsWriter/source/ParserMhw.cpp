@@ -58,6 +58,12 @@ CParserMhw::CParserMhw(ICallBackPidConsumer* callBack,
     *hr = E_INVALIDARG;
     return;
   }
+  if (systemTimeInfoProvider == NULL)
+  {
+    LogDebug(L"MHW: system time information provider not supplied");
+    *hr = E_INVALIDARG;
+    return;
+  }
 
   m_previousSegmentEventsByChannelSatellite = 0;
   m_previousSegmentEventsByChannelTerrestrial = 0;
@@ -327,13 +333,11 @@ bool CParserMhw::OnTsPacket(const CTsHeader& header, const unsigned char* tsPack
 
 STDMETHODIMP_(bool) CParserMhw::IsSeen()
 {
-  CEnterCriticalSection lock(m_section);
   return m_isSeen;
 }
 
 STDMETHODIMP_(bool) CParserMhw::IsReady()
 {
-  CEnterCriticalSection lock(m_section);
   return m_isReady;
 }
 
@@ -1697,7 +1701,7 @@ bool CParserMhw::GetVersion1DateTimeReference(unsigned long long& referenceDateT
                                                                       localTimeOffsetNext)
     )
     {
-      LogDebug(L"MHW: failed to get Cyfra+ Poland time offset");
+      LogDebug(L"MHW: failed to get Cyfra+/nc+ Poland time offset");
     }
   }
   if (

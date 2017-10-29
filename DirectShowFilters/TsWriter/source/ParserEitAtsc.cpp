@@ -94,18 +94,17 @@ void CParserEitAtsc::OnNewSection(const CSection& section)
       return;
     }
 
-    CEnterCriticalSection lock(m_section);
     const unsigned char* data = section.Data;
     unsigned short sourceId = section.TableIdExtension;
     unsigned char numEventsInSection = data[9];
-    //LogDebug(L"EIT ATSC %d: source Id = %hu, protocol version = %hhu, version number = %hhu, section length = %hu, section number = %hhu, last section number = %hhu, num. events in section = %hhu",
+    //LogDebug(L"EIT ATSC %d: source ID = %hu, protocol version = %hhu, version number = %hhu, section length = %hu, section number = %hhu, last section number = %hhu, num. events in section = %hhu",
     //          GetPid(), sourceId, protocolVersion, section.VersionNumber,
     //          section.SectionLength, section.SectionNumber,
     //          section.LastSectionNumber, numEventsInSection);
 
     if (MINIMUM_SECTION_LENGTH + (numEventsInSection * MINIMUM_RECORD_BYTE_COUNT) > section.SectionLength)
     {
-      LogDebug(L"EIT ATSC %d: invalid section, num. events in section = %hhu, section length = %hu, table ID = 0x%hhx, source Id = %hu, protocol version = %hhu, version number = %hhu, section number = %hhu",
+      LogDebug(L"EIT ATSC %d: invalid section, num. events in section = %hhu, section length = %hu, table ID = 0x%hhx, source ID = %hu, protocol version = %hhu, version number = %hhu, section number = %hhu",
                 GetPid(), numEventsInSection, section.SectionLength,
                 section.TableId, sourceId, protocolVersion,
                 section.VersionNumber, section.SectionNumber);
@@ -116,13 +115,14 @@ void CParserEitAtsc::OnNewSection(const CSection& section)
     unsigned long sectionKey = (section.VersionNumber << 24) | (sourceId << 8) | section.SectionNumber;
     unsigned long sectionGroupMask = 0x00ffff00;
     unsigned long sectionGroupKey = sectionKey & sectionGroupMask;
+    CEnterCriticalSection lock(m_section);
     vector<unsigned long>::const_iterator sectionIt = find(m_seenSections.begin(),
                                                             m_seenSections.end(),
                                                             sectionKey);
     if (sectionIt != m_seenSections.end())
     {
       // Yes. We might be ready!
-      //LogDebug(L"EIT ATSC %d: previously seen section, source Id = %hu, protocol version = %hhu, section number = %hhu",
+      //LogDebug(L"EIT ATSC %d: previously seen section, source ID = %hu, protocol version = %hhu, section number = %hhu",
       //          GetPid(), sourceId, protocolVersion, section.SectionNumber);
       if (m_isReady || m_unseenSections.size() != 0)
       {
@@ -190,7 +190,7 @@ void CParserEitAtsc::OnNewSection(const CSection& section)
 
       if (!isChange)
       {
-        LogDebug(L"EIT ATSC %d: received, source Id = %hu, protocol version = %hhu, version number = %hhu, section number = %hhu, last section number = %hhu",
+        LogDebug(L"EIT ATSC %d: received, source ID = %hu, protocol version = %hhu, version number = %hhu, section number = %hhu, last section number = %hhu",
                   GetPid(), sourceId, protocolVersion, section.VersionNumber,
                   section.SectionNumber, section.LastSectionNumber);
         if (m_callBack != NULL && m_seenSections.size() == 0)
@@ -200,7 +200,7 @@ void CParserEitAtsc::OnNewSection(const CSection& section)
       }
       else
       {
-        LogDebug(L"EIT ATSC %d: changed, source Id = %hu, protocol version = %hhu, version number = %hhu, section number = %hhu, last section number = %hhu",
+        LogDebug(L"EIT ATSC %d: changed, source ID = %hu, protocol version = %hhu, version number = %hhu, section number = %hhu, last section number = %hhu",
                   GetPid(), sourceId, protocolVersion, section.VersionNumber,
                   section.SectionNumber, section.LastSectionNumber);
         m_records.MarkExpiredRecords(sourceId);
@@ -223,7 +223,7 @@ void CParserEitAtsc::OnNewSection(const CSection& section)
     }
     else
     {
-      //LogDebug(L"EIT ATSC %d: new section, source Id = %hu, protocol version = %hhu, version number = %hhu, section number = %hhu",
+      //LogDebug(L"EIT ATSC %d: new section, source ID = %hu, protocol version = %hhu, version number = %hhu, section number = %hhu",
       //            GetPid(), sourceId, protocolVersion,
       //            section.VersionNumber, section.SectionNumber);
     }
@@ -235,7 +235,7 @@ void CParserEitAtsc::OnNewSection(const CSection& section)
       CRecordEit* record = new CRecordEit();
       if (record == NULL)
       {
-        LogDebug(L"EIT ATSC %d: failed to allocate record, source Id = %hu, protocol version = %hhu, version number = %hhu, section number = %hhu, num. events in section = %hhu, index = %hhu",
+        LogDebug(L"EIT ATSC %d: failed to allocate record, source ID = %hu, protocol version = %hhu, version number = %hhu, section number = %hhu, num. events in section = %hhu, index = %hhu",
                   GetPid(), sourceId, protocolVersion, section.VersionNumber,
                   section.SectionNumber, numEventsInSection, i);
         return;
@@ -244,7 +244,7 @@ void CParserEitAtsc::OnNewSection(const CSection& section)
       record->SourceId = sourceId;
       if (!DecodeEventRecord(data, pointer, endOfSection, *record))
       {
-        LogDebug(L"EIT ATSC %d: invalid section, source Id = %hu, protocol version = %hhu, version number = %hhu, section number = %hhu, num. events in section = %hhu, index = %hhu, event ID = %hu",
+        LogDebug(L"EIT ATSC %d: invalid section, source ID = %hu, protocol version = %hhu, version number = %hhu, section number = %hhu, num. events in section = %hhu, index = %hhu, event ID = %hu",
                   GetPid(), sourceId, protocolVersion, section.VersionNumber,
                   section.SectionNumber, numEventsInSection, i,
                   record->EventId);
@@ -257,7 +257,7 @@ void CParserEitAtsc::OnNewSection(const CSection& section)
 
     if (pointer != endOfSection)
     {
-      LogDebug(L"EIT ATSC %d: section parsing error, pointer = %hu, end of section = %hu, source Id = %hu, protocol version = %hhu, version number = %hhu, section number = %hhu, num. events in section = %hhu",
+      LogDebug(L"EIT ATSC %d: section parsing error, pointer = %hu, end of section = %hu, source ID = %hu, protocol version = %hhu, version number = %hhu, section number = %hhu, num. events in section = %hhu",
                 GetPid(), pointer, endOfSection, sourceId, protocolVersion,
                 section.VersionNumber, section.SectionNumber,
                 numEventsInSection);
@@ -281,19 +281,16 @@ void CParserEitAtsc::OnNewSection(const CSection& section)
 
 bool CParserEitAtsc::IsSeen() const
 {
-  CEnterCriticalSection lock(m_section);
   return m_seenSections.size() != 0;
 }
 
 bool CParserEitAtsc::IsReady() const
 {
-  CEnterCriticalSection lock(m_section);
   return m_isReady;
 }
 
 unsigned long CParserEitAtsc::GetEventCount() const
 {
-  CEnterCriticalSection lock(m_section);
   return m_records.GetRecordCount();
 }
 
@@ -518,7 +515,7 @@ bool CParserEitAtsc::DecodeEventRecord(const unsigned char* sectionData,
 
       if (record.Titles.size() == 0)
       {
-        LogDebug(L"EIT ATSC: failed to allocate an event's title, title length = %hhu, pointer = %hu, source Id = %hu, event ID = %hu",
+        LogDebug(L"EIT ATSC: failed to allocate an event's title, title length = %hhu, pointer = %hu, source ID = %hu, event ID = %hu",
                   titleLength, pointer, record.SourceId, record.EventId);
       }
 

@@ -55,6 +55,11 @@ CGrabberSiDvb::CGrabberSiDvb(ISectionDispatcher* sectionDispatcher,
 
 CGrabberSiDvb::~CGrabberSiDvb()
 {
+  m_parserBat.SetCallBack(NULL);
+  m_parserNit.SetCallBack(NULL);
+  m_parserSdt.SetCallBack(NULL);
+  m_parserTot.SetCallBack(NULL);
+
   CEnterCriticalSection lock(m_section);
   m_callBackGrabber = NULL;
   m_callBackSiDvb = NULL;
@@ -139,6 +144,8 @@ void CGrabberSiDvb::Reset(bool enableCrcCheck)
   m_parserSdt.SetPid(PID_SDT);
   m_parserTot.Reset(enableCrcCheck);
   m_parserTot.SetPid(PID_TOT);
+
+  CEnterCriticalSection lock(m_section);
   if (m_callBackGrabber != NULL)
   {
     m_callBackGrabber->OnReset(m_parserSdt.GetPid());

@@ -127,7 +127,6 @@ void CGrabberCat::OnNewSection(const CSection& section)
 
 bool CGrabberCat::IsReady() const
 {
-  CEnterCriticalSection lock(m_section);
   return m_isReady;
 }
 

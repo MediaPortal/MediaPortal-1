@@ -371,19 +371,16 @@ void CParserLvct::OnNewSection(const CSection& section, bool isOutOfBandSection)
 
 bool CParserLvct::IsSeen() const
 {
-  CEnterCriticalSection lock(m_section);
   return m_seenSections.size() != 0;
 }
 
 bool CParserLvct::IsReady() const
 {
-  CEnterCriticalSection lock(m_section);
   return m_isReady;
 }
 
 unsigned short CParserLvct::GetChannelCount() const
 {
-  CEnterCriticalSection lock(m_section);
   return (unsigned short)m_records.GetRecordCount();
 }
 

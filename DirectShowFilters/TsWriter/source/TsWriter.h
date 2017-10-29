@@ -23,6 +23,7 @@
 #include <streams.h>    // AMovieDllRegisterServer2(), CCritSec, CFactoryTemplate, CUnknown (IUnknown, LPUNKNOWN)
 #include <vector>
 #include <WinError.h>   // HRESULT
+#include "..\..\shared\CriticalSection.h"
 #include "..\..\shared\DebugSettings.h"
 #include "..\..\shared\ISectionDispatcher.h"
 #include "..\..\shared\Section.h"
@@ -49,6 +50,7 @@
 #include "TsChannel.h"
 #include "TsWriterFilter.h"
 
+using namespace MediaPortal;
 using namespace std;
 
 
@@ -280,5 +282,7 @@ class CTsWriter
     bool m_checkSectionCrcs;
     CSectionDispatcher* m_sectionDispatcher;
     CEncryptionAnalyser m_encryptionAnalyser;
+
+    CCriticalSection m_observerLock;
     IObserver* m_observer;
 };

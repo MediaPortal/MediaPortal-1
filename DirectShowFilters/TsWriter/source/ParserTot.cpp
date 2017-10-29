@@ -76,7 +76,6 @@ void CParserTot::OnNewSection(const CSection& section)
       return;
     }
 
-    CEnterCriticalSection lock(m_section);
     unsigned short systemDateMjd = (section.Data[3] << 8) | section.Data[4];
     unsigned long systemTimeBcd = (section.Data[5] << 16) | (section.Data[6] << 8) | section.Data[7];
     unsigned long long systemTime = CTimeUtils::DecodeMjDateBcdTime(systemDateMjd, systemTimeBcd);
@@ -126,6 +125,7 @@ void CParserTot::OnNewSection(const CSection& section)
 
     // Only notify on first reception and for offset changes. Notifying for
     // system time changes is overly verbose.
+    CEnterCriticalSection lock(m_section);
     bool isChangeNotified = false;
     if (m_callBack != NULL && m_systemTime == 0)
     {
@@ -170,7 +170,7 @@ bool CParserTot::GetSystemTimeDetail(unsigned long long& systemTime,
   CEnterCriticalSection lock(m_section);
   systemTime = m_systemTime;
   localTimeOffsetCount = (unsigned char)m_records.GetRecordCount();
-  return m_systemTime != 0;
+  return systemTime != 0;
 }
 
 bool CParserTot::GetLocalTimeOffsetByIndex(unsigned char index,

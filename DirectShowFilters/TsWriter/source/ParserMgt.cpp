@@ -227,19 +227,16 @@ void CParserMgt::OnNewSection(const CSection& section)
 
 bool CParserMgt::IsSeen() const
 {
-  CEnterCriticalSection lock(m_section);
   return m_seenSections.size() != 0;
 }
 
 bool CParserMgt::IsReady() const
 {
-  CEnterCriticalSection lock(m_section);
   return m_seenSections.size() != 0 && m_unseenSections.size() == 0;
 }
 
 unsigned short CParserMgt::GetTableCount() const
 {
-  CEnterCriticalSection lock(m_section);
   return (unsigned short)m_records.GetRecordCount();
 }
 

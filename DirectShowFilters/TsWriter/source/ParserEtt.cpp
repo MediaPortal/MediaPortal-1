@@ -54,6 +54,7 @@ void CParserEtt::Reset(bool enableCrcCheck)
   m_records.RemoveAllRecords();
   EnableCrcCheck(enableCrcCheck);
   CSectionDecoder::Reset();
+  m_seenSections.clear();
   m_versionNumber = VERSION_NOT_SET;
   m_isReady = false;
   m_currentRecord = NULL;
@@ -95,27 +96,57 @@ void CParserEtt::OnNewSection(const CSection& section)
     if (section.SectionNumber != 0 || section.LastSectionNumber != 0)
     {
       // According to ATSC A/65 ETT should only have one section.
-      LogDebug(L"ETT %d: unsupported multi-section table, protocol version = %hhu, version number = %hhu, section number = %hhu, last section number = %hhu",
-                GetPid(), protocolVersion, section.VersionNumber,
-                section.SectionNumber, section.LastSectionNumber);
+      LogDebug(L"ETT %d: unsupported multi-section table, extension ID = %hu, protocol version = %hhu, version number = %hhu, section number = %hhu, last section number = %hhu",
+                GetPid(), section.TableIdExtension, protocolVersion,
+                section.VersionNumber, section.SectionNumber,
+                section.LastSectionNumber);
       return;
     }
 
+    // Have we seen this section before?
+    unsigned long sectionKey = (section.VersionNumber << 16) | section.TableIdExtension;
     CEnterCriticalSection lock(m_section);
-    if (section.VersionNumber == m_versionNumber && m_isReady)
+    vector<unsigned long>::const_iterator sectionIt = find(m_seenSections.begin(),
+                                                            m_seenSections.end(),
+                                                            sectionKey);
+    if (sectionIt != m_seenSections.end())
     {
-      //LogDebug(L"ETT %d: previously seen section, extension ID = %hu, protocol version = %hhu, version number = %hhu",
+      // Yes. We might be ready!
+      //LogDebug(L"ETT %d: previously seen section, extension ID = %hu, protocol version = %hhu, section number = %hhu",
       //          GetPid(), section.TableIdExtension, protocolVersion,
-      //          section.VersionNumber);
+      //          section.SectionNumber);
+      if (m_isReady)
+      {
+        return;
+      }
+
+      // ATSC A/69 section 5.1 table 5.1 recommended repetition interval for
+      // ETT is 60 seconds.
+      if (CTimeUtils::ElapsedMillis(m_completeTime) >= 30000)
+      {
+        if (m_records.RemoveExpiredRecords(NULL) != 0)
+        {
+          m_currentRecord = NULL;
+        }
+
+        LogDebug(L"ETT %d: ready, sections parsed = %llu, event count = %lu",
+                  GetPid(), (unsigned long long)m_seenSections.size(),
+                  m_records.GetRecordCount());
+        m_isReady = true;
+        if (m_callBack != NULL)
+        {
+          m_callBack->OnTableComplete(TABLE_ID_ETT);
+        }
+      }
       return;
     }
 
+    // Is this a change/update, or just a new section?
     m_isReady = false;
     if (m_versionNumber == VERSION_NOT_SET)
     {
-      LogDebug(L"ETT %d: received, extension ID = %hu, protocol version = %hhu, version number = %hhu",
-                GetPid(), section.TableIdExtension, protocolVersion,
-                section.VersionNumber);
+      LogDebug(L"ETT %d: received, protocol version = %hhu, version number = %hhu",
+                GetPid(), protocolVersion, section.VersionNumber);
       if (m_callBack != NULL)
       {
         m_callBack->OnTableSeen(TABLE_ID_ETT);
@@ -123,11 +154,10 @@ void CParserEtt::OnNewSection(const CSection& section)
     }
     else if (section.VersionNumber != m_versionNumber)
     {
-      LogDebug(L"ETT %d: changed, extension ID = %hu, protocol version = %hhu, version number = %hhu",
-                GetPid(), section.TableIdExtension, protocolVersion,
-                section.VersionNumber);
+      LogDebug(L"ETT %d: changed, protocol version = %hhu, version number = %hhu",
+                GetPid(), protocolVersion, section.VersionNumber);
       m_records.MarkExpiredRecords(0);
-      m_completeTime = clock();
+      m_seenSections.clear();
       if (m_callBack != NULL)
       {
         m_callBack->OnTableChange(TABLE_ID_ETT);
@@ -178,26 +208,10 @@ void CParserEtt::OnNewSection(const CSection& section)
       }
     }
 
-    // ATSC A/69 section 5.1 table 5.1 recommended repetition interval for ETT
-    // is 60 seconds.
+    m_seenSections.push_back(sectionKey);
     if (m_records.AddOrUpdateRecord((IRecord**)&record, NULL))
     {
       m_completeTime = clock();
-    }
-    else if (CTimeUtils::ElapsedMillis(m_completeTime) >= 60000)
-    {
-      if (m_records.RemoveExpiredRecords(NULL) != 0)
-      {
-        m_currentRecord = NULL;
-      }
-
-      LogDebug(L"ETT %d: ready, text count = %lu",
-                GetPid(), m_records.GetRecordCount());
-      m_isReady = true;
-      if (m_callBack != NULL)
-      {
-        m_callBack->OnTableComplete(TABLE_ID_ETT);
-      }
     }
   }
   catch (...)
@@ -208,13 +222,11 @@ void CParserEtt::OnNewSection(const CSection& section)
 
 bool CParserEtt::IsSeen() const
 {
-  CEnterCriticalSection lock(m_section);
   return m_versionNumber != VERSION_NOT_SET;
 }
 
 bool CParserEtt::IsReady() const
 {
-  CEnterCriticalSection lock(m_section);
   return m_isReady;
 }
 
@@ -243,6 +255,7 @@ bool CParserEtt::GetSourceTextByLanguage(unsigned short sourceId,
 unsigned char CParserEtt::GetEventTextCount(unsigned short sourceId,
                                             unsigned short eventId)
 {
+  CEnterCriticalSection lock(m_section);
   if (!SelectTextRecordByIds(sourceId, eventId))
   {
     return 0;

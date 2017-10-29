@@ -109,7 +109,6 @@ void CParserSdt::OnNewSection(const CSection& section)
     //          section.SectionLength, section.SectionNumber,
     //          section.LastSectionNumber);
 
-    CEnterCriticalSection lock(m_section);
     vector<unsigned long long>* seenSections;
     vector<unsigned long long>* unseenSections;
     if (section.TableId == TABLE_ID_SDT_ACTUAL)
@@ -128,6 +127,7 @@ void CParserSdt::OnNewSection(const CSection& section)
     unsigned long long sectionKey = ((unsigned long long)section.TableId << 48) | ((unsigned long long)section.VersionNumber << 40) | ((unsigned long long)originalNetworkId << 24) | ((unsigned long long)transportStreamId << 8) | section.SectionNumber;
     unsigned long long sectionGroupMask = 0xffff00ffffffff00;
     unsigned long long sectionGroupKey = sectionKey & sectionGroupMask;
+    CEnterCriticalSection lock(m_section);
     vector<unsigned long long>::const_iterator sectionIt = find(seenSections->begin(),
                                                                 seenSections->end(),
                                                                 sectionKey);
@@ -354,32 +354,27 @@ void CParserSdt::OnNewSection(const CSection& section)
 
 bool CParserSdt::IsSeenActual() const
 {
-  CEnterCriticalSection lock(m_section);
   return m_seenSectionsActual.size() != 0;
 }
 
 bool CParserSdt::IsSeenOther() const
 {
-  CEnterCriticalSection lock(m_section);
   return m_seenSectionsOther.size() != 0;
 }
 
 bool CParserSdt::IsReadyActual() const
 {
-  CEnterCriticalSection lock(m_section);
   return m_seenSectionsActual.size() != 0 && m_unseenSectionsActual.size() == 0;
 }
 
 bool CParserSdt::IsReadyOther() const
 {
-  CEnterCriticalSection lock(m_section);
   return m_isOtherReady && IsSeenOther();
 }
 
 void CParserSdt::GetServiceCount(unsigned short& actualOriginalNetworkId,
                                   unsigned short& serviceCount) const
 {
-  CEnterCriticalSection lock(m_section);
   actualOriginalNetworkId = m_actualOriginalNetworkId;
   serviceCount = (unsigned short)m_records.GetRecordCount();
 }
@@ -723,10 +718,10 @@ bool CParserSdt::GetDefaultAuthority(unsigned short originalNetworkId,
                                       char* defaultAuthority,
                                       unsigned short& defaultAuthorityBufferSize) const
 {
-  CEnterCriticalSection lock(m_section);
   unsigned char tableId = TABLE_ID_SDT_ACTUAL;
   unsigned long long key = ((unsigned long long)tableId << 48) | ((unsigned long long)originalNetworkId << 32) | (transportStreamId << 16) | serviceId;
   IRecord* record = NULL;
+  CEnterCriticalSection lock(m_section);
   if (!m_records.GetRecordByKey(key, &record) || record == NULL)
   {
     // Not an error. It is entirely possible that we don't have the details for

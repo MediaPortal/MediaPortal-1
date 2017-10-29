@@ -295,55 +295,58 @@ void CGrabberEpgAtsc::OnTableSeen(unsigned char tableId)
 
 void CGrabberEpgAtsc::OnTableComplete(unsigned char tableId)
 {
-  CEnterCriticalSection lock(m_section);
-  if (!m_isReady)
+  if (m_isReady)
   {
-    if (m_parsersEit.size() == 0 && m_parsersEtt.size() == 0)
+    // Weird and unexpected!
+    return;
+  }
+
+  // System time information availability is a prerequisite.
+  unsigned long systemTime;
+  unsigned char gpsUtcOffset;
+  bool isDaylightSavingStateKnown;
+  bool isDaylightSaving;
+  unsigned char daylightSavingDayOfMonth;
+  unsigned char daylightSavingHour;
+  if (!m_systemTimeInfoProvider->GetSystemTimeDetail(systemTime,
+                                                      gpsUtcOffset,
+                                                      isDaylightSavingStateKnown,
+                                                      isDaylightSaving,
+                                                      daylightSavingDayOfMonth,
+                                                      daylightSavingHour))
+  {
+    return;
+  }
+
+  CEnterCriticalSection lock(m_section);
+  if (m_isReady || (m_parsersEit.size() == 0 && m_parsersEtt.size() == 0))
+  {
+    return;
+  }
+
+  map<unsigned short, CParserEitAtsc*>::const_iterator parserEitIt = m_parsersEit.begin();
+  for ( ; parserEitIt != m_parsersEit.end(); parserEitIt++)
+  {
+    if (parserEitIt->second != NULL && !parserEitIt->second->IsReady())
     {
       return;
     }
+  }
 
-    map<unsigned short, CParserEitAtsc*>::const_iterator parserEitIt = m_parsersEit.begin();
-    for ( ; parserEitIt != m_parsersEit.end(); parserEitIt++)
-    {
-      if (parserEitIt->second != NULL && !parserEitIt->second->IsReady())
-      {
-        return;
-      }
-    }
-
-    map<unsigned short, CParserEtt*>::const_iterator parserEttIt = m_parsersEtt.begin();
-    for ( ; parserEttIt != m_parsersEtt.end(); parserEttIt++)
-    {
-      if (parserEttIt->second != NULL && !parserEttIt->second->IsReady())
-      {
-        return;
-      }
-    }
-
-    // System time information must be available too.
-    unsigned long systemTime;
-    unsigned char gpsUtcOffset;
-    bool isDaylightSavingStateKnown;
-    bool isDaylightSaving;
-    unsigned char daylightSavingDayOfMonth;
-    unsigned char daylightSavingHour;
-    if (!m_systemTimeInfoProvider->GetSystemTimeDetail(systemTime,
-                                                        gpsUtcOffset,
-                                                        isDaylightSavingStateKnown,
-                                                        isDaylightSaving,
-                                                        daylightSavingDayOfMonth,
-                                                        daylightSavingHour))
+  map<unsigned short, CParserEtt*>::const_iterator parserEttIt = m_parsersEtt.begin();
+  for ( ; parserEttIt != m_parsersEtt.end(); parserEttIt++)
+  {
+    if (parserEttIt->second != NULL && !parserEttIt->second->IsReady())
     {
       return;
     }
+  }
 
-    m_gpsUtcOffset = gpsUtcOffset;
-    m_isReady = true;
-    if (m_callBackGrabber != NULL)
-    {
-      m_callBackGrabber->OnTableComplete(PID_EIT_ATSC_CALL_BACK, TABLE_ID_EIT_ATSC_CALL_BACK);
-    }
+  m_gpsUtcOffset = gpsUtcOffset;
+  m_isReady = true;
+  if (m_callBackGrabber != NULL)
+  {
+    m_callBackGrabber->OnTableComplete(PID_EIT_ATSC_CALL_BACK, TABLE_ID_EIT_ATSC_CALL_BACK);
   }
 }
 

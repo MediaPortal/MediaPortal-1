@@ -26,6 +26,7 @@
 #include <stdio.h>    // _wfopen(), fclose()
 #include <string>
 #include <Windows.h>  // MAX_PATH
+#include "..\..\shared\EnterCriticalSection.h"
 #include "EncryptionState.h"
 #include "ParserMgt.h"
 #include "ParserPat.h"
@@ -506,7 +507,7 @@ STDMETHODIMP_(void) CTsWriter::CheckSectionCrcs(bool enable)
 STDMETHODIMP_(void) CTsWriter::SetObserver(IObserver* observer)
 {
   LogDebug(L"writer: set observer, observer = %d", observer != NULL);
-  CAutoLock lock(&m_receiveLock);
+  CEnterCriticalSection lock(m_observerLock);
   m_observer = observer;
 }
 
@@ -946,11 +947,11 @@ void CTsWriter::OnTableComplete(unsigned char tableId)
 {
   if (tableId == TABLE_ID_STT_ATSC)
   {
-    m_grabberEpgAtsc->OnTableSeen(tableId);
+    m_grabberEpgAtsc->OnTableComplete(tableId);
   }
   else if (tableId == TABLE_ID_STT_SCTE)
   {
-    m_grabberEpgScte->OnTableSeen(tableId);
+    m_grabberEpgScte->OnTableComplete(tableId);
   }
   else if (tableId == TABLE_ID_PAT)
   {
@@ -960,17 +961,21 @@ void CTsWriter::OnTableComplete(unsigned char tableId)
     m_grabberSiMpeg->GetTransportStreamDetail(&transportStreamId,
                                               &networkPid,
                                               &programCount);
+    CEnterCriticalSection lock(m_observerLock);
     if (m_observer != NULL)
     {
       m_observer->OnProgramAssociationTable(transportStreamId,
                                             networkPid,
                                             programCount);
     }
+    lock.Leave();
     if (m_grabberSiDvb->IsReadySdtActual())
     {
       unsigned short originalNetworkId;
       unsigned short serviceCount;
       m_grabberSiDvb->GetServiceCount(&originalNetworkId, &serviceCount);
+      m_grabberEpgMhw->SetTransportStream(originalNetworkId,
+                                          transportStreamId);
     }
   }
   else if (tableId == TABLE_ID_SDT_ACTUAL)
@@ -1189,11 +1194,11 @@ void CTsWriter::OnTableChange(unsigned char tableId)
 {
   if (tableId == TABLE_ID_STT_ATSC)
   {
-    m_grabberEpgAtsc->OnTableSeen(tableId);
+    m_grabberEpgAtsc->OnTableChange(tableId);
   }
   else if (tableId == TABLE_ID_STT_SCTE)
   {
-    m_grabberEpgScte->OnTableSeen(tableId);
+    m_grabberEpgScte->OnTableChange(tableId);
   }
 }
 
@@ -1201,7 +1206,14 @@ void CTsWriter::OnEncryptionStateChange(unsigned short pid,
                                         EncryptionState statePrevious,
                                         EncryptionState stateNew)
 {
-  if (m_observer != NULL && (statePrevious != EncryptionStateNotSet || stateNew == Encrypted))
+  // Only notify Not-Set -> Encrypted and Clear/Encrypted -> Encrypted/Clear changes.
+  if (statePrevious == EncryptionStateNotSet && stateNew == Clear)
+  {
+    return;
+  }
+
+  CEnterCriticalSection lock(m_observerLock);
+  if (m_observer != NULL)
   {
     m_observer->OnPidEncryptionStateChange(pid, (unsigned long)stateNew);
   }
@@ -1209,6 +1221,7 @@ void CTsWriter::OnEncryptionStateChange(unsigned short pid,
 
 void CTsWriter::OnPidsRequired(unsigned short* pids, unsigned char pidCount, PidUsage usage)
 {
+  CEnterCriticalSection lock(m_observerLock);
   if (m_observer != NULL)
   {
     m_observer->OnPidsRequired(pids, pidCount, (unsigned long)usage);
@@ -1217,6 +1230,7 @@ void CTsWriter::OnPidsRequired(unsigned short* pids, unsigned char pidCount, Pid
 
 void CTsWriter::OnPidsNotRequired(unsigned short* pids, unsigned char pidCount, PidUsage usage)
 {
+  CEnterCriticalSection lock(m_observerLock);
   if (m_observer != NULL)
   {
     m_observer->OnPidsNotRequired(pids, pidCount, (unsigned long)usage);
@@ -1234,6 +1248,7 @@ void CTsWriter::OnFreesatPids(unsigned short pidEitSchedule,
   m_isFreesatTransportStream = true;
 
   m_grabberSiFreesat->SetPids(pidBat, pidNit, pidSdt, pidTot);
+  CEnterCriticalSection lock(m_observerLock);
   if (m_observer != NULL)
   {
     unsigned short pids[3];
@@ -1256,6 +1271,7 @@ void CTsWriter::OnFreesatPids(unsigned short pidEitSchedule,
       m_observer->OnPidsRequired(pids, pidCount, (unsigned long)Si);
     }
   }
+  lock.Leave();
 
   m_grabberEpgDvb->SetFreesatPids(pidBat, pidEitPresentFollowing, pidEitSchedule, pidNit, pidSdt);
 }
@@ -1267,11 +1283,12 @@ void CTsWriter::OnSdtRunningStatus(unsigned short serviceId, unsigned char runni
   bool isRunning = true;
   if (runningStatus == 1 || runningStatus == 5)
   {
+    isRunning = false;
+    CEnterCriticalSection lock(m_observerLock);
     if (m_observer != NULL)
     {
       m_observer->OnProgramDetail(serviceId, 0, false, NULL, 0);
     }
-    isRunning = false;
   }
 
   if (m_openTvEpgServiceId != serviceId || m_isOpenTvEpgServiceRunning == isRunning)
@@ -1362,6 +1379,7 @@ void CTsWriter::OnOpenTvEpgService(unsigned short serviceId, unsigned short orig
 
 void CTsWriter::OnCatReceived(const unsigned char* table, unsigned short tableSize)
 {
+  CEnterCriticalSection lock(m_observerLock);
   if (m_observer != NULL)
   {
     m_observer->OnConditionalAccessTable(table, tableSize);
@@ -1370,6 +1388,7 @@ void CTsWriter::OnCatReceived(const unsigned char* table, unsigned short tableSi
 
 void CTsWriter::OnCatChanged(const unsigned char* table, unsigned short tableSize)
 {
+  CEnterCriticalSection lock(m_observerLock);
   if (m_observer != NULL)
   {
     m_observer->OnConditionalAccessTable(table, tableSize);
@@ -1462,10 +1481,12 @@ void CTsWriter::OnMgtRemoved(unsigned short tableType,
 
 void CTsWriter::OnPatProgramReceived(unsigned short programNumber, unsigned short pmtPid)
 {
+  CEnterCriticalSection lock(m_observerLock);
   if (m_observer != NULL)
   {
     m_observer->OnProgramDetail(programNumber, pmtPid, true, NULL, 0);
   }
+  lock.Leave();
 
   if (m_openTvEpgServiceId == programNumber)
   {
@@ -1484,10 +1505,12 @@ void CTsWriter::OnPatProgramReceived(unsigned short programNumber, unsigned shor
 
 void CTsWriter::OnPatProgramChanged(unsigned short programNumber, unsigned short pmtPid)
 {
+  CEnterCriticalSection lock(m_observerLock);
   if (m_observer != NULL)
   {
     m_observer->OnProgramDetail(programNumber, pmtPid, true, NULL, 0);
   }
+  lock.Leave();
 
   if (m_openTvEpgServiceId == programNumber)
   {
@@ -1497,10 +1520,12 @@ void CTsWriter::OnPatProgramChanged(unsigned short programNumber, unsigned short
 
 void CTsWriter::OnPatProgramRemoved(unsigned short programNumber, unsigned short pmtPid)
 {
+  CEnterCriticalSection lock(m_observerLock);
   if (m_observer != NULL)
   {
     m_observer->OnProgramDetail(programNumber, pmtPid, false, NULL, 0);
   }
+  lock.Leave();
 
   if (programNumber == m_openTvEpgServiceId)
   {
@@ -1529,6 +1554,7 @@ void CTsWriter::OnPatNetworkPidChanged(unsigned short oldNetworkPid, unsigned sh
 {
   m_grabberSiDvb->SetPids(0, newNetworkPid, 0, 0);
 
+  CEnterCriticalSection lock(m_observerLock);
   if (m_observer == NULL)
   {
     return;
@@ -1546,10 +1572,12 @@ void CTsWriter::OnPmtReceived(unsigned short programNumber,
                               const unsigned char* table,
                               unsigned short tableSize)
 {
+  CEnterCriticalSection lock(m_observerLock);
   if (m_observer != NULL)
   {
     m_observer->OnProgramDetail(programNumber, pid, true, table, tableSize);
   }
+  lock.Leave();
 
   // We only need one PMT for the Freesat program.
   if (programNumber == m_freesatProgramNumber)
@@ -1608,10 +1636,12 @@ void CTsWriter::OnPmtChanged(unsigned short programNumber,
                               const unsigned char* table,
                               unsigned short tableSize)
 {
+  CEnterCriticalSection lock(m_observerLock);
   if (m_observer != NULL)
   {
     m_observer->OnProgramDetail(programNumber, pid, true, table, tableSize);
   }
+  lock.Leave();
 
   if (programNumber == m_openTvEpgServiceId)
   {
@@ -1623,10 +1653,12 @@ void CTsWriter::OnPmtChanged(unsigned short programNumber,
 
 void CTsWriter::OnPmtRemoved(unsigned short programNumber, unsigned short pid)
 {
+  CEnterCriticalSection lock(m_observerLock);
   if (m_observer != NULL)
   {
     m_observer->OnProgramDetail(programNumber, pid, false, NULL, 0);
   }
+  lock.Leave();
 
   if (programNumber != m_openTvEpgServiceId)
   {

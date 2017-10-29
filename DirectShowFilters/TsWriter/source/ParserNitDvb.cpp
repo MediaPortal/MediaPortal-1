@@ -625,25 +625,21 @@ void CParserNitDvb::OnNewSection(const CSection& section)
 
 bool CParserNitDvb::IsSeenActual() const
 {
-  CEnterCriticalSection lock(m_section);
   return m_seenSectionsActual.size() != 0;
 }
 
 bool CParserNitDvb::IsSeenOther() const
 {
-  CEnterCriticalSection lock(m_section);
   return m_seenSectionsOther.size() != 0;
 }
 
 bool CParserNitDvb::IsReadyActual() const
 {
-  CEnterCriticalSection lock(m_section);
   return m_seenSectionsActual.size() != 0 && m_unseenSectionsActual.size() == 0;
 }
 
 bool CParserNitDvb::IsReadyOther() const
 {
-  CEnterCriticalSection lock(m_section);
   return m_isOtherReady && IsSeenOther();
 }
 
@@ -1180,7 +1176,6 @@ bool CParserNitDvb::GetDefaultAuthority(unsigned short originalNetworkId,
 
 unsigned short CParserNitDvb::GetTransmitterCount() const
 {
-  CEnterCriticalSection lock(m_section);
   return (unsigned short)m_recordsTransmitter.GetRecordCount();
 }
 

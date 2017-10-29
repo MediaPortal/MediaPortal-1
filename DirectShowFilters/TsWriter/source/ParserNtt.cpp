@@ -360,7 +360,6 @@ void CParserNtt::OnNewSection(const CSection& section)
 
 bool CParserNtt::IsSeen() const
 {
-  CEnterCriticalSection lock(m_section);
   return
     m_seenSections.size() > 0 ||
     m_recordsTransponderName.GetRecordCount() > 0 ||
@@ -374,7 +373,6 @@ bool CParserNtt::IsSeen() const
 
 bool CParserNtt::IsReady() const
 {
-  CEnterCriticalSection lock(m_section);
   return m_isReady;
 }
 
