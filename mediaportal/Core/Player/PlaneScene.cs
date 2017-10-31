@@ -116,6 +116,7 @@ namespace MediaPortal.Player
 
     private int _reduceMadvrFrame = 0;
     private bool _useReduceMadvrFrame = false;
+    private bool _useRestoreMadvr1080P = false;
     private string _subEngineType = "";
     private bool _posRelativeToFrame = false;
     private readonly object _lockobj = new object();
@@ -355,6 +356,7 @@ namespace MediaPortal.Player
           _useReduceMadvrFrame = xmlreader.GetValueAsBool("general", "useReduceMadvrFrame", false);
           _subEngineType = xmlreader.GetValueAsString("subtitles", "engine", "DirectVobSub");
           _posRelativeToFrame = xmlreader.GetValueAsBool("subtitles", "subPosRelative", false);
+          _useRestoreMadvr1080P = xmlreader.GetValueAsBool("general", "useRestoreMadvr1080p", false);
         }
         catch (Exception)
         {
@@ -1057,8 +1059,11 @@ namespace MediaPortal.Player
                   // Force a madVR refresh to resize MP window
                   g_Player.RefreshMadVrVideo();
 
-                  Log.Debug("Planescene: 3D force refresh rate for 1920 x 1080 SBS");
-                  GUIGraphicsContext.ForcedRefreshRate3D = true;
+                  if (_useRestoreMadvr1080P)
+                  {
+                    Log.Debug("Planescene: 3D force refresh rate for 1920 x 1080 SBS");
+                    GUIGraphicsContext.ForcedRefreshRate3D = true;
+                  }
                   RefreshRateChanger.AdaptRefreshRate(g_Player.CurrentFile, (RefreshRateChanger.MediaType)(int)g_Player.MediaType.Video);
                 }
               }
@@ -1095,8 +1100,11 @@ namespace MediaPortal.Player
                   // Force a madVR refresh to resize MP window
                   g_Player.RefreshMadVrVideo();
 
-                  Log.Debug("Planescene: 3D force refresh rate for 1920 x 1080 TopAndBottom");
-                  GUIGraphicsContext.ForcedRefreshRate3D = true;
+                  if (_useRestoreMadvr1080P)
+                  {
+                    Log.Debug("Planescene: 3D force refresh rate for 1920 x 1080 TopAndBottom");
+                    GUIGraphicsContext.ForcedRefreshRate3D = true;
+                  }
                   RefreshRateChanger.AdaptRefreshRate(g_Player.CurrentFile, (RefreshRateChanger.MediaType)(int)g_Player.MediaType.Video);
                 }
               }
@@ -1130,8 +1138,11 @@ namespace MediaPortal.Player
                       // Force a madVR refresh to resize MP window
                       g_Player.RefreshMadVrVideo();
 
-                      Log.Debug("Planescene: 3D force refresh rate for 1920 x 1080 SBSLeft");
-                      GUIGraphicsContext.ForcedRefreshRate3D = true;
+                      if (_useRestoreMadvr1080P)
+                      {
+                        Log.Debug("Planescene: 3D force refresh rate for 1920 x 1080 SBSLeft");
+                        GUIGraphicsContext.ForcedRefreshRate3D = true;
+                      }
                       RefreshRateChanger.AdaptRefreshRate(g_Player.CurrentFile, (RefreshRateChanger.MediaType)(int)g_Player.MediaType.Video);
                     }
                   }
@@ -1159,8 +1170,11 @@ namespace MediaPortal.Player
                       // Force a madVR refresh to resize MP window
                       g_Player.RefreshMadVrVideo();
 
-                      Log.Debug("Planescene: 3D force refresh rate for 1920 x 1080 SBSRight");
-                      GUIGraphicsContext.ForcedRefreshRate3D = true;
+                      if (_useRestoreMadvr1080P)
+                      {
+                        Log.Debug("Planescene: 3D force refresh rate for 1920 x 1080 SBSRight");
+                        GUIGraphicsContext.ForcedRefreshRate3D = true;
+                      }
                       RefreshRateChanger.AdaptRefreshRate(g_Player.CurrentFile, (RefreshRateChanger.MediaType)(int)g_Player.MediaType.Video);
                     }
                   }
@@ -1189,8 +1203,11 @@ namespace MediaPortal.Player
                       // Force a madVR refresh to resize MP window
                       g_Player.RefreshMadVrVideo();
 
-                      Log.Debug("Planescene: 3D force refresh rate for 1920 x 1080 TABTop");
-                      GUIGraphicsContext.ForcedRefreshRate3D = true;
+                      if (_useRestoreMadvr1080P)
+                      {
+                        Log.Debug("Planescene: 3D force refresh rate for 1920 x 1080 TABTop");
+                        GUIGraphicsContext.ForcedRefreshRate3D = true;
+                      }
                       RefreshRateChanger.AdaptRefreshRate(g_Player.CurrentFile, (RefreshRateChanger.MediaType)(int)g_Player.MediaType.Video);
                     }
                   }
@@ -1218,8 +1235,11 @@ namespace MediaPortal.Player
                       // Force a madVR refresh to resize MP window
                       g_Player.RefreshMadVrVideo();
 
-                      Log.Debug("Planescene: 3D force refresh rate for 1920 x 1080 TABBottom");
-                      GUIGraphicsContext.ForcedRefreshRate3D = true;
+                      if (_useRestoreMadvr1080P)
+                      {
+                        Log.Debug("Planescene: 3D force refresh rate for 1920 x 1080 TABBottom");
+                        GUIGraphicsContext.ForcedRefreshRate3D = true;
+                      }
                       RefreshRateChanger.AdaptRefreshRate(g_Player.CurrentFile, (RefreshRateChanger.MediaType)(int)g_Player.MediaType.Video);
                     }
                   }

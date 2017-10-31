@@ -75,6 +75,7 @@ namespace MediaPortal.Configuration.Sections
           numericUpDownFrame.Value = xmlreader.GetValueAsInt("general", "reduceMadvrFrame", 0);
           reduceMadvrFrame.Checked = xmlreader.GetValueAsBool("general", "useReduceMadvrFrame", false);
           DRCheckBox.Checked = xmlreader.GetValueAsBool("general", "useInternalDRC", false);
+          mpCheck1080p.Checked = xmlreader.GetValueAsBool("general", "useRestoreMadvr1080p", false);
         }
         _init = true;
       }
@@ -104,6 +105,7 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValue("general", "reduceMadvrFrame", numericUpDownFrame.Value);
         xmlwriter.SetValueAsBool("general", "useReduceMadvrFrame", reduceMadvrFrame.Checked);
         xmlwriter.SetValueAsBool("general", "useInternalDRC", DRCheckBox.Checked);
+        xmlwriter.SetValueAsBool("general", "useRestoreMadvr1080p", mpCheck1080p.Checked);
       }
     }
 
