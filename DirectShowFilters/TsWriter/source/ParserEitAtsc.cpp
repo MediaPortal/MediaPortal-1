@@ -32,20 +32,23 @@
 
 extern void LogDebug(const wchar_t* fmt, ...);
 
-CParserEitAtsc::CParserEitAtsc(unsigned short pid, ISectionDispatcher* sectionDispatcher)
+CParserEitAtsc::CParserEitAtsc(unsigned short pid,
+                                ISectionDispatcher* sectionDispatcher,
+                                ICallBackTableParser* callBack)
   : CSectionDecoder(sectionDispatcher), m_records(600000)
 {
+  m_isSectionDecodingEnabled = true;
   m_isReady = false;
   m_completeTime = 0;
   SetPid(pid);
-  SetCallBack(NULL);
+  m_callBack = callBack;
   m_currentRecord = NULL;
   m_currentRecordIndex = 0xffffffff;
 }
 
 CParserEitAtsc::~CParserEitAtsc()
 {
-  SetCallBack(NULL);
+  m_callBack = NULL;
 }
 
 void CParserEitAtsc::Reset(bool enableCrcCheck)
@@ -59,12 +62,6 @@ void CParserEitAtsc::Reset(bool enableCrcCheck)
   m_currentRecord = NULL;
   m_currentRecordIndex = 0xffffffff;
   LogDebug(L"EIT ATSC %d: reset done", GetPid());
-}
-
-void CParserEitAtsc::SetCallBack(ICallBackTableParser* callBack)
-{
-  CEnterCriticalSection lock(m_section);
-  m_callBack = callBack;
 }
 
 void CParserEitAtsc::OnNewSection(const CSection& section)
@@ -111,11 +108,16 @@ void CParserEitAtsc::OnNewSection(const CSection& section)
       return;
     }
 
+    CEnterCriticalSection lock(m_section);
+    if (!m_isSectionDecodingEnabled)
+    {
+      return;
+    }
+
     // Have we seen this section before?
     unsigned long sectionKey = (section.VersionNumber << 24) | (sourceId << 8) | section.SectionNumber;
     unsigned long sectionGroupMask = 0x00ffff00;
     unsigned long sectionGroupKey = sectionKey & sectionGroupMask;
-    CEnterCriticalSection lock(m_section);
     vector<unsigned long>::const_iterator sectionIt = find(m_seenSections.begin(),
                                                             m_seenSections.end(),
                                                             sectionKey);
@@ -146,6 +148,9 @@ void CParserEitAtsc::OnNewSection(const CSection& section)
                   GetPid(), (unsigned long long)m_seenSections.size(),
                   m_records.GetRecordCount());
         m_isReady = true;
+
+        // ***MUST*** release lock before call-back to avoid deadlock.
+        lock.Leave();
         if (m_callBack != NULL)
         {
           m_callBack->OnTableComplete(TABLE_ID_EIT_ATSC);
@@ -193,9 +198,17 @@ void CParserEitAtsc::OnNewSection(const CSection& section)
         LogDebug(L"EIT ATSC %d: received, source ID = %hu, protocol version = %hhu, version number = %hhu, section number = %hhu, last section number = %hhu",
                   GetPid(), sourceId, protocolVersion, section.VersionNumber,
                   section.SectionNumber, section.LastSectionNumber);
-        if (m_callBack != NULL && m_seenSections.size() == 0)
+        if (m_seenSections.size() == 0)
         {
-          m_callBack->OnTableSeen(TABLE_ID_EIT_ATSC);
+          // ***MUST*** release lock before call-back to avoid deadlock.
+          m_isSectionDecodingEnabled = false;
+          lock.Leave();
+          if (m_callBack != NULL)
+          {
+            m_callBack->OnTableSeen(TABLE_ID_EIT_ATSC);
+          }
+          lock.Enter();
+          m_isSectionDecodingEnabled = true;
         }
       }
       else
@@ -207,10 +220,16 @@ void CParserEitAtsc::OnNewSection(const CSection& section)
         if (m_isReady)
         {
           m_isReady = false;
+
+          // ***MUST*** release lock before call-back to avoid deadlock.
+          m_isSectionDecodingEnabled = false;
+          lock.Leave();
           if (m_callBack != NULL)
           {
             m_callBack->OnTableChange(TABLE_ID_EIT_ATSC);
           }
+          lock.Enter();
+          m_isSectionDecodingEnabled = true;
         }
       }
 
@@ -443,6 +462,18 @@ bool CParserEitAtsc::GetEventIdentifiers(unsigned long index,
 
   sourceId = m_currentRecord->SourceId;
   eventId = m_currentRecord->EventId;
+  return true;
+}
+
+bool CParserEitAtsc::GetEtmLocation(unsigned long index, unsigned char& etmLocation)
+{
+  CEnterCriticalSection lock(m_section);
+  if (!SelectEventRecordByIndex(index))
+  {
+    return false;
+  }
+
+  etmLocation = m_currentRecord->EtmLocation;
   return true;
 }
 

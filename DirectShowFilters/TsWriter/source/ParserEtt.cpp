@@ -25,26 +25,25 @@
 #include "Utils.h"
 
 
-#define VERSION_NOT_SET 0xff
-
-
 extern void LogDebug(const wchar_t* fmt, ...);
 
-CParserEtt::CParserEtt(unsigned short pid, ISectionDispatcher* sectionDispatcher)
+CParserEtt::CParserEtt(unsigned short pid,
+                        ISectionDispatcher* sectionDispatcher,
+                        ICallBackTableParser* callBack)
   : CSectionDecoder(sectionDispatcher), m_records(600000)
 {
-  m_versionNumber = VERSION_NOT_SET;
+  m_isSectionDecodingEnabled = true;
   m_isReady = false;
   m_completeTime = 0;
 
   SetPid(pid);
-  SetCallBack(NULL);
+  m_callBack = callBack;
   m_currentRecord = NULL;
 }
 
 CParserEtt::~CParserEtt()
 {
-  SetCallBack(NULL);
+  m_callBack = NULL;
 }
 
 void CParserEtt::Reset(bool enableCrcCheck)
@@ -55,16 +54,9 @@ void CParserEtt::Reset(bool enableCrcCheck)
   EnableCrcCheck(enableCrcCheck);
   CSectionDecoder::Reset();
   m_seenSections.clear();
-  m_versionNumber = VERSION_NOT_SET;
   m_isReady = false;
   m_currentRecord = NULL;
   LogDebug(L"ETT %d: reset done", GetPid());
-}
-
-void CParserEtt::SetCallBack(ICallBackTableParser* callBack)
-{
-  CEnterCriticalSection lock(m_section);
-  m_callBack = callBack;
 }
 
 void CParserEtt::OnNewSection(const CSection& section)
@@ -103,9 +95,14 @@ void CParserEtt::OnNewSection(const CSection& section)
       return;
     }
 
+    CEnterCriticalSection lock(m_section);
+    if (!m_isSectionDecodingEnabled)
+    {
+      return;
+    }
+
     // Have we seen this section before?
     unsigned long sectionKey = (section.VersionNumber << 16) | section.TableIdExtension;
-    CEnterCriticalSection lock(m_section);
     vector<unsigned long>::const_iterator sectionIt = find(m_seenSections.begin(),
                                                             m_seenSections.end(),
                                                             sectionKey);
@@ -133,6 +130,9 @@ void CParserEtt::OnNewSection(const CSection& section)
                   GetPid(), (unsigned long long)m_seenSections.size(),
                   m_records.GetRecordCount());
         m_isReady = true;
+
+        // ***MUST*** release lock before call-back to avoid deadlock.
+        lock.Leave();
         if (m_callBack != NULL)
         {
           m_callBack->OnTableComplete(TABLE_ID_ETT);
@@ -142,28 +142,38 @@ void CParserEtt::OnNewSection(const CSection& section)
     }
 
     // Is this a change/update, or just a new section?
-    m_isReady = false;
-    if (m_versionNumber == VERSION_NOT_SET)
+    if (m_seenSections.size() == 0)
     {
       LogDebug(L"ETT %d: received, protocol version = %hhu, version number = %hhu",
                 GetPid(), protocolVersion, section.VersionNumber);
+
+      // ***MUST*** release lock before call-back to avoid deadlock.
+      m_isSectionDecodingEnabled = false;
+      lock.Leave();
       if (m_callBack != NULL)
       {
         m_callBack->OnTableSeen(TABLE_ID_ETT);
       }
+      lock.Enter();
+      m_isSectionDecodingEnabled = true;
     }
-    else if (section.VersionNumber != m_versionNumber)
+    else if (m_isReady)
     {
       LogDebug(L"ETT %d: changed, protocol version = %hhu, version number = %hhu",
                 GetPid(), protocolVersion, section.VersionNumber);
       m_records.MarkExpiredRecords(0);
       m_seenSections.clear();
+
+      // ***MUST*** release lock before call-back to avoid deadlock.
+      m_isSectionDecodingEnabled = false;
+      lock.Leave();
       if (m_callBack != NULL)
       {
         m_callBack->OnTableChange(TABLE_ID_ETT);
       }
+      lock.Enter();
+      m_isSectionDecodingEnabled = true;
     }
-    m_versionNumber = section.VersionNumber;
 
     CRecordEtt* record = new CRecordEtt();
     if (record == NULL)
@@ -222,7 +232,7 @@ void CParserEtt::OnNewSection(const CSection& section)
 
 bool CParserEtt::IsSeen() const
 {
-  return m_versionNumber != VERSION_NOT_SET;
+  return m_seenSections.size() != 0;
 }
 
 bool CParserEtt::IsReady() const
@@ -256,7 +266,7 @@ unsigned char CParserEtt::GetEventTextCount(unsigned short sourceId,
                                             unsigned short eventId)
 {
   CEnterCriticalSection lock(m_section);
-  if (!SelectTextRecordByIds(sourceId, eventId))
+  if (!SelectTextRecordByIds(sourceId, eventId, false))
   {
     return 0;
   }
@@ -271,7 +281,7 @@ bool CParserEtt::GetEventTextByIndex(unsigned short sourceId,
                                       unsigned short& textBufferSize)
 {
   CEnterCriticalSection lock(m_section);
-  if (!SelectTextRecordByIds(sourceId, eventId))
+  if (!SelectTextRecordByIds(sourceId, eventId, true))
   {
     return false;
   }
@@ -313,7 +323,7 @@ bool CParserEtt::GetEventTextByLanguage(unsigned short sourceId,
                                         unsigned short& textBufferSize)
 {
   CEnterCriticalSection lock(m_section);
-  if (!SelectTextRecordByIds(sourceId, eventId))
+  if (!SelectTextRecordByIds(sourceId, eventId, true))
   {
     return false;
   }
@@ -337,7 +347,9 @@ bool CParserEtt::GetEventTextByLanguage(unsigned short sourceId,
   return true;
 }
 
-bool CParserEtt::SelectTextRecordByIds(unsigned short sourceId, unsigned short eventId)
+bool CParserEtt::SelectTextRecordByIds(unsigned short sourceId,
+                                        unsigned short eventId,
+                                        bool isExpectedAvailable)
 {
   if (
     m_currentRecord != NULL &&
@@ -351,8 +363,11 @@ bool CParserEtt::SelectTextRecordByIds(unsigned short sourceId, unsigned short e
   IRecord* record = NULL;
   if (!m_records.GetRecordByKey((sourceId << 16) | eventId, &record) || record == NULL)
   {
-    LogDebug(L"ETT %d: invalid identifiers, source ID = %hu, event ID = %hu",
-              GetPid(), sourceId, eventId);
+    if (isExpectedAvailable)
+    {
+      LogDebug(L"ETT %d: invalid identifiers, source ID = %hu, event ID = %hu",
+                GetPid(), sourceId, eventId);
+    }
     return false;
   }
 

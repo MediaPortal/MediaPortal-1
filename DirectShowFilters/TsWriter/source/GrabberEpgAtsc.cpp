@@ -136,13 +136,12 @@ void CGrabberEpgAtsc::AddEitDecoders(const vector<unsigned short>& pids)
       continue;
     }
 
-    CParserEitAtsc* parser = new CParserEitAtsc(pid, m_sectionDispatcher);
+    CParserEitAtsc* parser = new CParserEitAtsc(pid, m_sectionDispatcher, this);
     if (parser == NULL)
     {
       LogDebug(L"EPG ATSC: failed to allocate EIT decoder, PID %hu", pid);
       continue;
     }
-    parser->SetCallBack(this);
     parser->Reset(m_enableCrcCheck);
     m_parsersEit[pid] = parser;
     newPids.push_back(pid);
@@ -224,13 +223,12 @@ void CGrabberEpgAtsc::AddEttDecoders(const vector<unsigned short>& pids)
       continue;
     }
 
-    CParserEtt* parser = new CParserEtt(pid, m_sectionDispatcher);
+    CParserEtt* parser = new CParserEtt(pid, m_sectionDispatcher, this);
     if (parser == NULL)
     {
       LogDebug(L"EPG ATSC: failed to allocate ETT decoder, PID %hu", pid);
       continue;
     }
-    parser->SetCallBack(this);
     parser->Reset(m_enableCrcCheck);
     m_parsersEtt[pid] = parser;
     newPids.push_back(pid);
@@ -295,6 +293,7 @@ void CGrabberEpgAtsc::OnTableSeen(unsigned char tableId)
 
 void CGrabberEpgAtsc::OnTableComplete(unsigned char tableId)
 {
+  // Careful with the locking order here! 
   if (m_isReady)
   {
     // Weird and unexpected!
@@ -610,6 +609,13 @@ STDMETHODIMP_(bool) CGrabberEpgAtsc::GetEventTextByIndex(unsigned long eventInde
     return false;
   }
 
+  unsigned char etmLocation;
+  if (!m_currentEventParser->GetEtmLocation(eventIndex - m_currentEventIndexOffset,
+                                            etmLocation))
+  {
+    etmLocation = 0;
+  }
+
   map<unsigned short, CParserEtt*>::const_iterator parserEttIt = m_parsersEtt.begin();
   for ( ; parserEttIt != m_parsersEtt.end(); parserEttIt++)
   {
@@ -627,8 +633,11 @@ STDMETHODIMP_(bool) CGrabberEpgAtsc::GetEventTextByIndex(unsigned long eventInde
     }
   }
 
-  LogDebug(L"EPG ATSC: missing event text, source ID = %hu, event ID = %hu, language = %S",
-            m_currentEventSourceId, m_currentEventId, (char*)language);
+  if (etmLocation != 0)
+  {
+    LogDebug(L"EPG ATSC: missing event text, source ID = %hu, event ID = %hu, language = %S",
+              m_currentEventSourceId, m_currentEventId, (char*)language);
+  }
   unsigned short requiredBufferSize;
   CUtils::CopyStringToBuffer(NULL, text, *textBufferSize, requiredBufferSize);
   return true;
@@ -655,6 +664,13 @@ STDMETHODIMP_(bool) CGrabberEpgAtsc::GetEventTextByLanguage(unsigned long eventI
     return false;
   }
 
+  unsigned char etmLocation;
+  if (!m_currentEventParser->GetEtmLocation(eventIndex - m_currentEventIndexOffset,
+                                            etmLocation))
+  {
+    etmLocation = 0;
+  }
+
   map<unsigned short, CParserEtt*>::const_iterator parserEttIt = m_parsersEtt.begin();
   for ( ; parserEttIt != m_parsersEtt.end(); parserEttIt++)
   {
@@ -672,8 +688,11 @@ STDMETHODIMP_(bool) CGrabberEpgAtsc::GetEventTextByLanguage(unsigned long eventI
     }
   }
 
-  LogDebug(L"EPG ATSC: missing event text, source ID = %hu, event ID = %hu, language = %S",
-            m_currentEventSourceId, m_currentEventId, (char*)&language);
+  if (etmLocation != 0)
+  {
+    LogDebug(L"EPG ATSC: missing event text, source ID = %hu, event ID = %hu, language = %S",
+              m_currentEventSourceId, m_currentEventId, (char*)&language);
+  }
   unsigned short requiredBufferSize;
   CUtils::CopyStringToBuffer(NULL, text, *textBufferSize, requiredBufferSize);
   return true;

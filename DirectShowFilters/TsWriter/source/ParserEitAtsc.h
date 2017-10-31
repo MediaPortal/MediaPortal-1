@@ -42,11 +42,12 @@ extern void LogDebug(const wchar_t* fmt, ...);
 class CParserEitAtsc : public CSectionDecoder
 {
   public:
-    CParserEitAtsc(unsigned short pid, ISectionDispatcher* sectionDispatcher);
+    CParserEitAtsc(unsigned short pid,
+                    ISectionDispatcher* sectionDispatcher,
+                    ICallBackTableParser* callBack);
     virtual ~CParserEitAtsc();
 
     void Reset(bool enableCrcCheck);
-    void SetCallBack(ICallBackTableParser* callBack);
     void OnNewSection(const CSection& section);
     bool IsSeen() const;
     bool IsReady() const;
@@ -77,6 +78,7 @@ class CParserEitAtsc : public CSectionDecoder
                                   char* title,
                                   unsigned short& titleBufferSize);
     bool GetEventIdentifiers(unsigned long index, unsigned short& sourceId, unsigned short& id);
+    bool GetEtmLocation(unsigned long index, unsigned char& etmLocation);
 
   private:
     class CRecordEit : public IRecord
@@ -191,6 +193,7 @@ class CParserEitAtsc : public CSectionDecoder
     CCriticalSection m_section;
     vector<unsigned long> m_seenSections;
     vector<unsigned long> m_unseenSections;
+    bool m_isSectionDecodingEnabled;
     bool m_isReady;
     clock_t m_completeTime;
     ICallBackTableParser* m_callBack;

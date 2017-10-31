@@ -42,11 +42,12 @@ extern void LogDebug(const wchar_t* fmt, ...);
 class CParserEtt : public CSectionDecoder
 {
   public:
-    CParserEtt(unsigned short pid, ISectionDispatcher* sectionDispatcher);
+    CParserEtt(unsigned short pid,
+                ISectionDispatcher* sectionDispatcher,
+                ICallBackTableParser* callBack);
     virtual ~CParserEtt();
 
     void Reset(bool enableCrcCheck);
-    void SetCallBack(ICallBackTableParser* callBack);
     void OnNewSection(const CSection& section);
     bool IsSeen() const;
     bool IsReady() const;
@@ -133,11 +134,13 @@ class CParserEtt : public CSectionDecoder
         map<unsigned long, char*> Texts;
     };
 
-    bool SelectTextRecordByIds(unsigned short sourceId, unsigned short eventId);
+    bool SelectTextRecordByIds(unsigned short sourceId,
+                                unsigned short eventId,
+                                bool isExpectedAvailable);
 
     CCriticalSection m_section;
     vector<unsigned long> m_seenSections;
-    unsigned char m_versionNumber;
+    bool m_isSectionDecodingEnabled;
     bool m_isReady;
     clock_t m_completeTime;
     ICallBackTableParser* m_callBack;
