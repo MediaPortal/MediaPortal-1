@@ -1639,7 +1639,7 @@ public class MediaPortalApp : D3D, IRender
           }
 
           // Restore bounds from the currentScreen value (to restore original startup MP screen after turned off used HDMI device
-          if (!Windowed && _ignoreFullscreenResolutionChanges)
+          if (!Windowed && _ignoreFullscreenResolutionChanges && !RefreshRateChanger.RefreshRateChangePending)
           {
             SetBounds(GUIGraphicsContext.currentScreen.Bounds.X, GUIGraphicsContext.currentScreen.Bounds.Y, GUIGraphicsContext.currentScreen.Bounds.Width, GUIGraphicsContext.currentScreen.Bounds.Height);
             Log.Debug("Main: WM_DISPLAYCHANGE restore current screen position");
