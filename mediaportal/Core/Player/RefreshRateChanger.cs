@@ -304,7 +304,6 @@ namespace MediaPortal.Player
                 // Apply settings
                 r = ChangeDisplaySettingsEx(null, null, IntPtr.Zero, 0, IntPtr.Zero);
                 Log.Info("CycleRefreshRate: result {0} for refresh rate change {1}Hz for resolution {2} x {3}", r, refreshRate, devMode.dmPelsWidth, devMode.dmPelsHeight);
-                RefreshRateChanger.RefreshRateChangePending = false;
                 FixDwm();
               }
             }
@@ -315,6 +314,8 @@ namespace MediaPortal.Player
       {
         Log.Info("CycleRefreshRate: unable to change refresh rate {0}Hz for monitor {1}", refreshRate, monitorIndex);
       }
+      // Refresh rate done
+      RefreshRateChanger.RefreshRateChangePending = false;
     }
 
     public static void CycleRefreshRate(uint monitorIndex, double refreshRate)
