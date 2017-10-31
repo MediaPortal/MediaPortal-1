@@ -1626,7 +1626,8 @@ public class MediaPortalApp : D3D, IRender
           Screen screen = Screen.FromControl(this);
           if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && AppActive &&
               (!Equals(screen.Bounds.Size.Width, GUIGraphicsContext.currentScreen.Bounds.Width) ||
-               !Equals(screen.Bounds.Size.Height, GUIGraphicsContext.currentScreen.Bounds.Height)))
+               !Equals(screen.Bounds.Size.Height, GUIGraphicsContext.currentScreen.Bounds.Height)) ||
+              GUIGraphicsContext.ForcedRefreshRate3D)
           {
             NeedRecreateSwapChain = true;
             GUIGraphicsContext.ForceMadVRRefresh = true;

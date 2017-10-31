@@ -1846,7 +1846,7 @@ namespace MediaPortal.GUI.Library
 
     public static bool WorkerThreadStart { get; set; }
     public static bool Render3DModeHalfDone { get; set; }
-    internal static bool ForcedRefreshRate3D { get; set; }
+    public static bool ForcedRefreshRate3D { get; set; }
     internal static bool ForcedRefreshRate3DDone { get; set; }
     internal static bool ForcedRR3DBackDefault { get; set; }
     internal static int ForcedRR3DWitdhBackup { get; set; }
