@@ -216,6 +216,7 @@ namespace MediaPortal.Player
 
     public static void Win32_SetRefreshRate(uint monitorIndex, uint refreshRate)
     {
+      RefreshRateChanger.RefreshRateChangePending = true;
       DISPLAY_DEVICE displayDevice = new DISPLAY_DEVICE();
       displayDevice.cb = (ushort)Marshal.SizeOf(displayDevice);
       DEVMODE_Display devMode = new DEVMODE_Display();
@@ -303,6 +304,7 @@ namespace MediaPortal.Player
                 // Apply settings
                 r = ChangeDisplaySettingsEx(null, null, IntPtr.Zero, 0, IntPtr.Zero);
                 Log.Info("CycleRefreshRate: result {0} for refresh rate change {1}Hz for resolution {2} x {3}", r, refreshRate, devMode.dmPelsWidth, devMode.dmPelsHeight);
+                RefreshRateChanger.RefreshRateChangePending = false;
                 FixDwm();
               }
             }

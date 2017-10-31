@@ -1110,7 +1110,7 @@ namespace MediaPortal.Player
               {
                 case GUIGraphicsContext.eRender3DModeHalf.SBSLeft:
 
-                  if (!GUIGraphicsContext.IsFullHD3DFormat)
+                  //if (!GUIGraphicsContext.IsFullHD3DFormat)
                   {
                     if (!GUIGraphicsContext.SBSLeftDone)
                     {
@@ -1139,7 +1139,7 @@ namespace MediaPortal.Player
 
                 case GUIGraphicsContext.eRender3DModeHalf.SBSRight:
 
-                  if (GUIGraphicsContext.IsFullHD3DFormat)
+                  //if (GUIGraphicsContext.IsFullHD3DFormat)
                   {
                     if (!GUIGraphicsContext.SBSRightDone)
                     {
@@ -1168,7 +1168,7 @@ namespace MediaPortal.Player
 
                 case GUIGraphicsContext.eRender3DModeHalf.TABTop:
 
-                  if (!GUIGraphicsContext.IsFullHD3DFormat)
+                  //if (!GUIGraphicsContext.IsFullHD3DFormat)
                   {
                     if (!GUIGraphicsContext.TABTopDone)
                     {
@@ -1198,7 +1198,7 @@ namespace MediaPortal.Player
 
                 case GUIGraphicsContext.eRender3DModeHalf.TABBottom:
 
-                  if (GUIGraphicsContext.IsFullHD3DFormat)
+                  //if (GUIGraphicsContext.IsFullHD3DFormat)
                   {
                     if (!GUIGraphicsContext.TABBottomDone)
                     {
