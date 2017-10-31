@@ -552,7 +552,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
         ushort originalNetworkId;
         IDictionary<uint, ScannedChannel> dvbChannels;
         IDictionary<ChannelGroupType, IDictionary<ulong, string>> dvbGroupNames;
-        CollectServices(_grabberDvb, channel, transportStreamId, programs, isFastNetworkScan, out originalNetworkId, out dvbChannels, out dvbGroupNames);
+        CollectServices(_grabberDvb, channel, transportStreamId, programs, _seenTables.HasFlag(TableType.SdtActual), isFastNetworkScan, out originalNetworkId, out dvbChannels, out dvbGroupNames);
         if (_cancelScan)
         {
           return;
@@ -570,7 +570,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
         else
         {
           ushort freesatOnid;
-          CollectServices(_grabberFreesat, channel, transportStreamId, programs, isFastNetworkScan, out freesatOnid, out freesatChannels, out freesatGroupNames);
+          CollectServices(_grabberFreesat, channel, transportStreamId, programs, false, isFastNetworkScan, out freesatOnid, out freesatChannels, out freesatGroupNames);
           if (_cancelScan)
           {
             return;
@@ -1002,11 +1002,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
     /// <param name="tuningChannel">The tuning details used to tune the current transport stream.</param>
     /// <param name="currentTransportStreamId">The current transport stream's identifier.</param>
     /// <param name="programs">A dictionary of programs, keyed on the transport stream identifier and program number.</param>
-    /// <param name="isFastNetworkScan"><c>True</c> if performing a fast scan using network information.</param>
+    /// <param name="isSdtActualReceived"><c>True</c> if the actual service description table has been received.</param>
+    /// <param name="collectSdtOtherServices"><c>True</c> if services from other transport streams should be collected.</param>
     /// <param name="currentTransportStreamOriginalNetworkId">The identifier of the original network which the current transport stream is associated with.</param>
     /// <param name="channels">A dictionary of channels, keyed on the transport stream identifier and program number.</param>
     /// <param name="groupNames">A dictionary of channel group names.</param>
-    private void CollectServices(IGrabberSiDvb grabber, IChannel tuningChannel, ushort currentTransportStreamId, IDictionary<uint, ProgramInfo> programs, bool isFastNetworkScan, out ushort currentTransportStreamOriginalNetworkId, out IDictionary<uint, ScannedChannel> channels, out IDictionary<ChannelGroupType, IDictionary<ulong, string>> groupNames)
+    private void CollectServices(IGrabberSiDvb grabber, IChannel tuningChannel, ushort currentTransportStreamId, IDictionary<uint, ProgramInfo> programs, bool isSdtActualReceived, bool collectSdtOtherServices, out ushort currentTransportStreamOriginalNetworkId, out IDictionary<uint, ScannedChannel> channels, out IDictionary<ChannelGroupType, IDictionary<ulong, string>> groupNames)
     {
       ushort serviceCount;
       grabber.GetServiceCount(out currentTransportStreamOriginalNetworkId, out serviceCount);
@@ -1023,7 +1024,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
       groupNames[ChannelGroupType.ChannelProvider] = new Dictionary<ulong, string>(serviceCount);
 
       IDictionary<ushort, IDictionary<ushort, IChannel>> tuningChannels;
-      if (isFastNetworkScan || currentTransportStreamOriginalNetworkId == 0)  // ONID is 0 when SDT actual is not received (eg. Dish Network)
+      if (collectSdtOtherServices || !isSdtActualReceived)
       {
         tuningChannels = DetermineTransportStreamTuningDetails(grabber, tuningChannel, currentTransportStreamOriginalNetworkId, currentTransportStreamId);
         if (_cancelScan)
@@ -1167,14 +1168,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
         }
 
         if (
-          !isFastNetworkScan &&
+          !collectSdtOtherServices &&
           (
-            (currentTransportStreamOriginalNetworkId != 0 && tableId != 0x42) ||
-            (currentTransportStreamOriginalNetworkId == 0 && (tableId != 0x46 || transportStreamId != currentTransportStreamId))
+            (isSdtActualReceived && tableId != 0x42) ||
+            (!isSdtActualReceived && (tableId != 0x46 || transportStreamId != currentTransportStreamId))
           )
         )
         {
-          // Service not from the current/actual transport stream => ignore.
+          // Services from other transport streams not wanted and this service
+          // is not from the current/actual transport stream => ignore.
           continue;
         }
 
