@@ -95,6 +95,10 @@ bool CTextUtil::AtscScteMultipleStringStructureToStrings(const unsigned char* da
     // Collect segments.
     //LogDebug(L"  language = %S, number segments = %hhu",
     //          (char*)&iso639LanguageCode, numberSegments);
+    if (numberSegments == 0)
+    {
+      continue;
+    }
     bool result = true;
     vector<char*> segments;
     for (unsigned char j = 0; j < numberSegments && pointer + ((numberSegments - j) * 3) - 1 < dataLength; j++)
@@ -153,7 +157,7 @@ bool CTextUtil::AtscScteMultipleStringStructureToStrings(const unsigned char* da
       return false;
     }
 
-    //LogDebug(L"    %S", fullString == 0 ? "" : fullString);
+    //LogDebug(L"    %S", fullString == NULL ? "" : fullString);
     if (fullString != NULL)
     {
       char* existingString = strings[iso639LanguageCode];
