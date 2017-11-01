@@ -755,7 +755,7 @@ namespace MediaPortal.Player
       }
     }
 
-    public static bool InExclusiveMode(MadVR madvr)
+    public static bool InExclusiveMode(object madvr)
     {
       var exclusiveInfo = madvr as IMadVRExclusiveModeInfo;
 

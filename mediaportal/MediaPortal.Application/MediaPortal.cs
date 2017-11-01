@@ -4416,15 +4416,6 @@ public class MediaPortalApp : D3D, IRender
             return;
           }
           break;
-
-        case Action.ActionType.ACTION_MADVR_SCREEN_REFRESH:
-          // We need to do a refresh of screen when using madVR only if resolution screen has change during playback
-          if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && (NeedRecreateSwapChain || Windowed))
-          {
-            RecreateSwapChain(false);
-            Log.Debug("Main: recreate swap chain for madVR done");
-          }
-          break;
       }
 
       if (g_Player.Playing)
@@ -5281,6 +5272,15 @@ public class MediaPortalApp : D3D, IRender
               Log.Debug("Main: madVR for 3D done");
               ForceMPFocus();
             }
+          }
+          break;
+
+        case GUIMessage.MessageType.GUI_MSG_MADVR_SCREEN_REFRESH:
+          // We need to do a refresh of screen when using madVR only if resolution screen has change during playback
+          if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && (NeedRecreateSwapChain || Windowed))
+          {
+            RecreateSwapChain(false);
+            Log.Debug("Main: recreate swap chain for madVR done");
           }
           break;
       }
