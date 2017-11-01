@@ -230,6 +230,7 @@ namespace MediaPortal.Player
 
     private PlaneScene _scene = null;
     private bool _useVmr9 = false;
+    private bool _inMadVrExclusiveMode = false;
     private bool _inMenu = false;
     private IRender _renderFrame;
     internal IBaseFilter _vmr9Filter = null;
@@ -296,6 +297,20 @@ namespace MediaPortal.Player
     public bool UseVmr9
     {
       get { return _useVmr9; }
+    }
+
+    public bool InMadVrExclusiveMode
+    {
+      get
+      {
+        if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+        {
+          _inMadVrExclusiveMode = MadvrInterface.InExclusiveMode(_vmr9Filter);
+          Log.Debug("VMR9 : madVR InExclusiveMode {0}", _inMadVrExclusiveMode);
+          return _inMadVrExclusiveMode;
+        }
+        return _inMadVrExclusiveMode;
+      }
     }
 
     public int FrameCounter
@@ -1663,8 +1678,8 @@ namespace MediaPortal.Player
           }
 
           // Send action message to refresh screen
-          Action actionScreenRefresh = new Action(Action.ActionType.ACTION_MADVR_SCREEN_REFRESH, 0, 0);
-          GUIGraphicsContext.OnAction(actionScreenRefresh);
+          var msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_MADVR_SCREEN_REFRESH, 0, 0, 0, 0, 0, null);
+          GUIWindowManager.SendThreadMessage(msg);
 
           if ((GUIGraphicsContext.form.WindowState != FormWindowState.Minimized))
           {
