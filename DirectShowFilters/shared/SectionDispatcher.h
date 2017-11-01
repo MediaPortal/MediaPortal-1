@@ -181,6 +181,7 @@ class CSectionDispatcher : public ISectionDispatcher
 
         void ProcessNextSection()
         {
+          size_t queueSize;
           const CQueuedSection* section;
           {
             CEnterCriticalSection lock(m_queueSection);
@@ -192,20 +193,19 @@ class CSectionDispatcher : public ISectionDispatcher
                 return;
               }
               section = m_queue[0];
+              m_queue.erase(m_queue.begin());
               if (section != NULL)
               {
+                queueSize = m_queue.size();
                 break;
               }
-              m_queue.erase(m_queue.begin());
             }
           }
 
           section->Delegate().OnNewSection(section->Pid(), section->TableId(), *(section->Section()));
-
-          CEnterCriticalSection lock(m_queueSection);
           delete section;
-          m_queue.erase(m_queue.begin());
-          if (m_queue.size() == 0)
+
+          if (queueSize == 0)
           {
             m_isQueueFull = false;
           }
