@@ -58,6 +58,8 @@ void CParserEitAtsc::Reset(bool enableCrcCheck)
   m_records.RemoveAllRecords();
   EnableCrcCheck(enableCrcCheck);
   CSectionDecoder::Reset();
+  m_seenSections.clear();
+  m_unseenSections.clear();
   m_isReady = false;
   m_currentRecord = NULL;
   m_currentRecordIndex = 0xffffffff;
