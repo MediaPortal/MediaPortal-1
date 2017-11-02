@@ -128,7 +128,7 @@ class CParserEtt : public CSectionDecoder
           CUtils::DebugStringMap(Texts, L"text(s)", L"language", L"text");
         }
 
-        unsigned short Id;
+        unsigned short Id;    // Note: sometimes this value is not unique, so don't use it as a key.
         unsigned short SourceId;
         unsigned short EventId;
         map<unsigned long, char*> Texts;
@@ -139,7 +139,7 @@ class CParserEtt : public CSectionDecoder
                                 bool isExpectedAvailable);
 
     CCriticalSection m_section;
-    vector<unsigned long> m_seenSections;
+    vector<unsigned long long> m_seenSections;
     bool m_isSectionDecodingEnabled;
     bool m_isReady;
     clock_t m_completeTime;

@@ -95,6 +95,10 @@ void CParserEtt::OnNewSection(const CSection& section)
       return;
     }
 
+    const unsigned char* data = section.Data;
+    unsigned short sourceId = (data[9] << 8) | data[10];
+    unsigned short eventId = (data[11] << 6) | (data[12] >> 2);
+
     CEnterCriticalSection lock(m_section);
     if (!m_isSectionDecodingEnabled)
     {
@@ -102,16 +106,19 @@ void CParserEtt::OnNewSection(const CSection& section)
     }
 
     // Have we seen this section before?
-    unsigned long sectionKey = (section.VersionNumber << 16) | section.TableIdExtension;
-    vector<unsigned long>::const_iterator sectionIt = find(m_seenSections.begin(),
-                                                            m_seenSections.end(),
-                                                            sectionKey);
+    // Note: sometimes the table ID extension value is not unique, so don't use
+    // it as a key.
+    //unsigned long sectionKey = (section.VersionNumber << 16) | section.TableIdExtension;
+    unsigned long long sectionKey = ((unsigned long long)section.VersionNumber << 32) | (sourceId << 16) | eventId;
+    vector<unsigned long long>::const_iterator sectionIt = find(m_seenSections.begin(),
+                                                                m_seenSections.end(),
+                                                                sectionKey);
     if (sectionIt != m_seenSections.end())
     {
       // Yes. We might be ready!
-      //LogDebug(L"ETT %d: previously seen section, extension ID = %hu, protocol version = %hhu, section number = %hhu",
+      //LogDebug(L"ETT %d: previously seen section, extension ID = %hu, protocol version = %hhu, section number = %hhu, source ID = %hu, event ID = %hu",
       //          GetPid(), section.TableIdExtension, protocolVersion,
-      //          section.SectionNumber);
+      //          section.SectionNumber, sourceId, eventId);
       if (m_isReady)
       {
         return;
@@ -162,6 +169,7 @@ void CParserEtt::OnNewSection(const CSection& section)
       LogDebug(L"ETT %d: changed, protocol version = %hhu, version number = %hhu",
                 GetPid(), protocolVersion, section.VersionNumber);
       m_records.MarkExpiredRecords(0);
+      m_isReady = false;
       m_seenSections.clear();
 
       // ***MUST*** release lock before call-back to avoid deadlock.
@@ -178,41 +186,41 @@ void CParserEtt::OnNewSection(const CSection& section)
     CRecordEtt* record = new CRecordEtt();
     if (record == NULL)
     {
-      LogDebug(L"ETT %d: failed to allocate record, extension ID = %hu, protocol version = %hhu, version number = %hhu",
+      LogDebug(L"ETT %d: failed to allocate record, extension ID = %hu, protocol version = %hhu, version number = %hhu, source ID = %hu, event ID = %hu",
                 GetPid(), section.TableIdExtension, protocolVersion,
-                section.VersionNumber);
+                section.VersionNumber, sourceId, eventId);
       return;
     }
 
-    const unsigned char* data = section.Data;
-    record->Id = section.TableIdExtension;
-    record->SourceId = (data[9] << 8) | data[10];
-    record->EventId = (data[11] << 6) | (data[12] >> 2);
+    record->Id = section.TableIdExtension;      // Note: sometimes this value is not unique, so don't use it as a key.
+    record->SourceId = sourceId;
+    record->EventId = eventId;
 
     //LogDebug(L"ETT %d: extension ID = %hu, protocol version = %hhu, version number = %hhu, section length = %hu, source ID = %hu, event ID = %hu",
-    //          GetPid(), section.TableIdExtension, protocolVersion,
-    //          section.VersionNumber, section.SectionLength, record->SourceId,
-    //          record->EventId);
+    //          GetPid(), record->Id, protocolVersion, section.VersionNumber,
+    //          section.SectionLength, sourceId, eventId);
 
-    if (section.SectionLength - 14 > 0)
+    unsigned short multipleStringStructureByteCount = section.SectionLength - 14;
+    if (multipleStringStructureByteCount > 0)
     {
       if (!CTextUtil::AtscScteMultipleStringStructureToStrings(&data[13],
                                                                 section.SectionLength - 14,
                                                                 record->Texts))
       {
         LogDebug(L"ETT %d: invalid section, section length = %hu, extension ID = %hu, protocol version = %hhu, version number = %hhu, source ID = %hu, event ID = %hu",
-                  GetPid(), section.SectionLength, section.TableIdExtension,
-                  protocolVersion, section.VersionNumber, record->SourceId,
-                  record->EventId);
+                  GetPid(), section.SectionLength, record->Id, protocolVersion,
+                  section.VersionNumber, sourceId, eventId);
         delete record;
         return;
       }
-      if (record->Texts.size() == 0)
+      if (
+        multipleStringStructureByteCount != 5 &&    // don't warn for 1-string-0-segment structures - there's nothing to allocate
+        record->Texts.size() == 0
+      )
       {
         LogDebug(L"ETT %d: failed to allocate event texts, section length = %hu, extension ID = %hu, protocol version = %hhu, version number = %hhu, source ID = %hu, event ID = %hu",
-                  GetPid(), section.SectionLength, section.TableIdExtension,
-                  protocolVersion, section.VersionNumber, record->SourceId,
-                  record->EventId);
+                  GetPid(), section.SectionLength, record->Id, protocolVersion,
+                  section.VersionNumber, sourceId, eventId);
         delete record;
         return;
       }
