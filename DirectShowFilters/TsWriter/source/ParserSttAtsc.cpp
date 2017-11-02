@@ -65,7 +65,11 @@ void CParserSttAtsc::OnNewSection(const CSection& section)
     if (
       section.TableId != TABLE_ID_STT_ATSC ||
       !section.SectionSyntaxIndicator ||
-      !section.PrivateIndicator ||
+
+      // In practice sometimes not set (eg. RonD physical channel 39). We can
+      // overlook this non-compliance.
+      //!section.PrivateIndicator ||
+
       !section.CurrentNextIndicator
     )
     {
