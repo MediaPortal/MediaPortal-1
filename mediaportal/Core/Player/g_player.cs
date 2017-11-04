@@ -2638,27 +2638,28 @@ namespace MediaPortal.Player
 
     public static void Process()
     {
-      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
-          GUIGraphicsContext.Vmr9Active && VMR9Util.g_vmr9 != null)
-      {
-        // Added back from planescene madVR rendering thread
-        VMR9Util.g_vmr9.StartMadVrPaused();
+      // Disabled for now - seems the workaround is not needed anymore but keep code
+      //if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
+      //    GUIGraphicsContext.Vmr9Active && VMR9Util.g_vmr9 != null)
+      //{
+      //  // Added back from planescene madVR rendering thread
+      //  VMR9Util.g_vmr9.StartMadVrPaused();
 
-        // HACK : If madVR is running but stuck in not rendering anymore, we need to force a refresh
-        TimeSpan tsPlay = DateTime.Now - VMR9Util.g_vmr9.PlaneSceneMadvrTimer;
-        if (tsPlay.Seconds >= 5 && VMR9Util.g_vmr9.PlaneSceneMadvrTimer.Second > 0)
-        {
-          // Need to force a pause state and restore (working when it happen in video fullscreen or working if low latency mode is disable, why ??)
-          VMR9Util.g_vmr9.DisableLowLatencyMode = true;
-          VMR9Util.g_vmr9.Visible = false;
+      //  // HACK : If madVR is running but stuck in not rendering anymore, we need to force a refresh
+      //  TimeSpan tsPlay = DateTime.Now - VMR9Util.g_vmr9.PlaneSceneMadvrTimer;
+      //  if (tsPlay.Seconds >= 5 && VMR9Util.g_vmr9.PlaneSceneMadvrTimer.Second > 0)
+      //  {
+      //    // Need to force a pause state and restore (working when it happen in video fullscreen or working if low latency mode is disable, why ??)
+      //    VMR9Util.g_vmr9.DisableLowLatencyMode = true;
+      //    VMR9Util.g_vmr9.Visible = false;
 
-          // Refresh madVR
-          RefreshMadVrVideo();
+      //    // Refresh madVR
+      //    RefreshMadVrVideo();
 
-          Log.Debug("g_Player.Process() - restore madVR rendering GUI");
-          VMR9Util.g_vmr9.PlaneSceneMadvrTimer = DateTime.Now;
-        }
-      }
+      //    Log.Debug("g_Player.Process() - restore madVR rendering GUI");
+      //    VMR9Util.g_vmr9.PlaneSceneMadvrTimer = DateTime.Now;
+      //  }
+      //}
 
       if (GUIGraphicsContext.Vmr9Active && VMR9Util.g_vmr9 != null && !GUIGraphicsContext.InVmr9Render)
       {
@@ -2734,31 +2735,35 @@ namespace MediaPortal.Player
 
     public static void RefreshMadVrVideo()
     {
-      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
-          (GUIGraphicsContext.Vmr9Active || GUIGraphicsContext.ForceMadVRFirstStart))
-      {
-        // TODO find a better way to restore madVR rendering (right now i send an 'X' to force refresh a current window)
-        if (GUIGraphicsContext.ForceMadVRFirstStart)
-        {
-          GUIGraphicsContext.ForceMadVRFirstStart = false;
-        }
-        var key = new Key(120, 0);
-        var action = new Action(key, Action.ActionType.ACTION_KEY_PRESSED, 0, 0);
-        if (ActionTranslator.GetAction(GUIWindowManager.ActiveWindowEx, key, ref action))
-        {
-          GUIGraphicsContext.OnAction(action);
-          action = new Action(key, Action.ActionType.ACTION_KEY_PRESSED, 0, 0);
-          GUIGraphicsContext.OnAction(action);
-        }
-        key = new Key(120, 0);
-        action = new Action(key, Action.ActionType.ACTION_KEY_PRESSED, 0, 0);
-        if (ActionTranslator.GetAction(GUIWindowManager.ActiveWindowEx, key, ref action))
-        {
-          GUIGraphicsContext.OnAction(action);
-          action = new Action(key, Action.ActionType.ACTION_KEY_PRESSED, 0, 0);
-          GUIGraphicsContext.OnAction(action);
-        }
-      }
+      // Enable a new VideoWindow update
+      GUIGraphicsContext.UpdateVideoWindow = true;
+
+      // Disabled for now - seems the workaround is not needed anymore but keep code
+      //if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
+      //    (GUIGraphicsContext.Vmr9Active || GUIGraphicsContext.ForceMadVRFirstStart))
+      //{
+      //  // TODO find a better way to restore madVR rendering (right now i send an 'X' to force refresh a current window)
+      //  if (GUIGraphicsContext.ForceMadVRFirstStart)
+      //  {
+      //    GUIGraphicsContext.ForceMadVRFirstStart = false;
+      //  }
+      //  var key = new Key(120, 0);
+      //  var action = new Action(key, Action.ActionType.ACTION_KEY_PRESSED, 0, 0);
+      //  if (ActionTranslator.GetAction(GUIWindowManager.ActiveWindowEx, key, ref action))
+      //  {
+      //    GUIGraphicsContext.OnAction(action);
+      //    action = new Action(key, Action.ActionType.ACTION_KEY_PRESSED, 0, 0);
+      //    GUIGraphicsContext.OnAction(action);
+      //  }
+      //  key = new Key(120, 0);
+      //  action = new Action(key, Action.ActionType.ACTION_KEY_PRESSED, 0, 0);
+      //  if (ActionTranslator.GetAction(GUIWindowManager.ActiveWindowEx, key, ref action))
+      //  {
+      //    GUIGraphicsContext.OnAction(action);
+      //    action = new Action(key, Action.ActionType.ACTION_KEY_PRESSED, 0, 0);
+      //    GUIGraphicsContext.OnAction(action);
+      //  }
+      //}
     }
 
     public static VideoStreamFormat GetVideoFormat()
@@ -3923,8 +3928,8 @@ namespace MediaPortal.Player
           {
             // Resize OSD/Screen when resolution change
             if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
-                (GUIGraphicsContext.InVmr9Render && (GUIGraphicsContext.ForceMadVRRefresh) ||
-                GUIGraphicsContext.ForceMadVRFirstStart))
+                (GUIGraphicsContext.InVmr9Render && (GUIGraphicsContext.ForceMadVRRefresh ||
+                GUIGraphicsContext.ForceMadVRFirstStart)))
             {
               if (GUIGraphicsContext.ForceMadVRRefresh)
               {
@@ -3992,6 +3997,8 @@ namespace MediaPortal.Player
               // Refresh madVR
               RefreshMadVrVideo();
             }
+            // message handled
+            GUIGraphicsContext.ProcessMadVrOsdDisplay = false;
           }
           break;
       }

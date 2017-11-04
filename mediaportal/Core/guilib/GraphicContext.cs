@@ -225,6 +225,7 @@ namespace MediaPortal.GUI.Library
       SideBySideDone = false;
       TopAndBottomDone = false;
       NoneDone = false;
+      RenderMadVr3Dchanged = false;
       Convert2Dto3DSkewFactor = 0;
       LastFrames = new List<Texture>();
       LastFramesIndex = 0;
@@ -1084,18 +1085,20 @@ namespace MediaPortal.GUI.Library
             VMR9Util.g_vmr9?.SceneMadVr();
           }
 
-          if (GUIGraphicsContext.ForceMadVRRefresh)
-          {
-            Size client = GUIGraphicsContext.form.ClientSize;
-            VMR9Util.g_vmr9?.MadVrScreenResize(GUIGraphicsContext.form.Location.X, GUIGraphicsContext.form.Location.Y, client.Width, client.Height, false);
-            GUIGraphicsContext.NoneDone = false;
-            GUIGraphicsContext.TopAndBottomDone = false;
-            GUIGraphicsContext.SideBySideDone = false;
-            GUIGraphicsContext.SBSLeftDone = false;
-            GUIGraphicsContext.SBSRightDone = false;
-            GUIGraphicsContext.TABTopDone = false;
-            GUIGraphicsContext.TABBottomDone = false;
-          }
+          // Disabled for now - seems the workaround is not needed anymore but keep code
+          //if (GUIGraphicsContext.ForceMadVRRefresh)
+          //{
+          //  GUIGraphicsContext.ForceMadVRRefresh = false;
+          //  Size client = GUIGraphicsContext.form.ClientSize;
+          //  VMR9Util.g_vmr9?.MadVrScreenResize(GUIGraphicsContext.form.Location.X, GUIGraphicsContext.form.Location.Y, client.Width, client.Height, false);
+          //  GUIGraphicsContext.NoneDone = false;
+          //  GUIGraphicsContext.TopAndBottomDone = false;
+          //  GUIGraphicsContext.SideBySideDone = false;
+          //  GUIGraphicsContext.SBSLeftDone = false;
+          //  GUIGraphicsContext.SBSRightDone = false;
+          //  GUIGraphicsContext.TABTopDone = false;
+          //  GUIGraphicsContext.TABBottomDone = false;
+          //}
         }
       }
     }
@@ -1825,21 +1828,22 @@ namespace MediaPortal.GUI.Library
 
     public static bool IsWindowVisible { get; set; }
     public static bool UpdateVideoWindow { get; set; }
-    public static bool MadVrOsd { get; set; }
-    public static bool MadVrStop { get; set; }
-    public static bool VideoWindowChangedDone { get; set; }
-    public static bool SetVideoWindowDone { get; set; }
+    internal static bool MadVrOsd { get; set; }
+    internal static bool MadVrStop { get; set; }
+    internal static bool VideoWindowChangedDone { get; set; }
+    internal static bool SetVideoWindowDone { get; set; }
     public static bool VideoControl { get; set; }
-    public static bool SideBySideDone { get; set; }
-    public static bool TopAndBottomDone { get; set; }
-    public static bool NoneDone { get; set; }
+    internal static bool SideBySideDone { get; set; }
+    internal static bool TopAndBottomDone { get; set; }
+    internal static bool NoneDone { get; set; }
     public static bool ForceMadVRRefresh { get; set; }
     public static bool ForceMadVRRefresh3D { get; set; }
-    public static bool ForceMadVRFirstStart { get; set; }
+    internal static bool ForceMadVRFirstStart { get; set; }
+    internal static bool ProcessMadVrOsdDisplay { get; set; }
     public static bool BlurayMenu { get; set; }
-    public static bool InitMadVRWindowPosition { get; set; }
+    internal static bool InitMadVRWindowPosition { get; set; }
     public static IntPtr madVRDibBuffer { get; set; }
-    public static bool RestoreGuiForMadVrDone { get; set; }
+    internal static bool RestoreGuiForMadVrDone { get; set; }
     internal static Bitmap madVRFrameBitmap { get; set; }
     internal static Bitmap madVRCurrentFrameBitmap { get; set; }
 
@@ -1852,6 +1856,7 @@ namespace MediaPortal.GUI.Library
     internal static int ForcedRR3DWitdhBackup { get; set; }
     internal static int ForcedRR3DHeightBackup { get; set; }
     internal static double ForcedRR3DRate { get; set; }
+    internal static bool RenderMadVr3Dchanged { get; set; }
 
     //public static IntPtr madVRDIB { get; set; }
 

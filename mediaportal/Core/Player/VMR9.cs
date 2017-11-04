@@ -234,7 +234,6 @@ namespace MediaPortal.Player
     private bool _inMenu = false;
     private IRender _renderFrame;
     internal IBaseFilter _vmr9Filter = null;
-    internal IntPtr m_hWnd;
     private int _videoHeight, _videoWidth;
     private int _videoAspectRatioX, _videoAspectRatioY;
     private IQualProp _qualityInterface = null;
@@ -700,6 +699,7 @@ namespace MediaPortal.Player
       if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
       {
         MadVrScreenResizeForce(x, y, width, height, displayChange);
+        Log.Debug("VMR9: MadVrScreenResizeForce : X: {0}, Y: {1},Width: {2},Height: {3}", x, y, width, height);
       }
     }
 
@@ -882,6 +882,8 @@ namespace MediaPortal.Player
           GUIGraphicsContext.ForcedRefreshRate3D = false;
           GUIGraphicsContext.ForcedRR3DBackDefault = false;
           GUIGraphicsContext.ForcedRefreshRate3DDone = false;
+          GUIGraphicsContext.RenderMadVr3Dchanged = false;
+          GUIGraphicsContext.ProcessMadVrOsdDisplay = false;
           IMediaControl mPMediaControl = (IMediaControl) graphBuilder;
           var xposition = GUIGraphicsContext.form.Location.X;
           var yposition = GUIGraphicsContext.form.Location.Y;
@@ -1234,6 +1236,7 @@ namespace MediaPortal.Player
             GUIWindowManager.SendThreadMessage(msg);
           }
         }
+
         // Delayed Frame Grabber
         if (tsPlay.Seconds >= 1)
         {
@@ -1242,19 +1245,15 @@ namespace MediaPortal.Player
             //_scene.WorkerThreadStart();
           }
         }
-        if (GUIGraphicsContext.ForceMadVRRefresh ||
-            GUIGraphicsContext.ForceMadVRFirstStart)
+
+        if ((GUIGraphicsContext.ForceMadVRRefresh || GUIGraphicsContext.ForceMadVRFirstStart) && !GUIGraphicsContext.ProcessMadVrOsdDisplay)
         {
+          GUIGraphicsContext.ProcessMadVrOsdDisplay = true;
           GUIMessage message = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ONDISPLAYMADVRCHANGED, 0, 0, 0, 0, 0, null);
           GUIWindowManager.SendThreadMessage(message);
-          if (GUIGraphicsContext.ForceMadVRFirstStart)
-          {
-            GUIGraphicsContext.ForceMadVRFirstStart = false;
-            Size client = GUIGraphicsContext.form.ClientSize;
-            VMR9Util.g_vmr9?.MadVrScreenResize(GUIGraphicsContext.form.Location.X, GUIGraphicsContext.form.Location.Y, client.Width, client.Height, true);
-          }
           Log.Debug("VMR9: send resize OSD/Screen message for madVR");
         }
+
         if (GUIGraphicsContext.InitMadVRWindowPosition)
         {
           GUIGraphicsContext.InitMadVRWindowPosition = false;
@@ -1572,8 +1571,15 @@ namespace MediaPortal.Player
           IVideoWindow videoWin = (IVideoWindow)_graphBuilder;
           if (videoWin != null)
           {
-            videoWin.put_WindowStyle((WindowStyle) ((int) WindowStyle.Child + (int) WindowStyle.ClipChildren + (int) WindowStyle.ClipSiblings));
+            videoWin.put_WindowStyle((WindowStyle)((int)WindowStyle.Child + (int)WindowStyle.ClipChildren + (int)WindowStyle.ClipSiblings));
             videoWin.put_MessageDrain(GUIGraphicsContext.form.Handle);
+
+            // This line is improtant for madVR exclusive 3D mode
+            if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+            {
+              videoWin.put_WindowState(WindowState.ShowMaximized);
+            }
+
             Log.Debug("VMR9: StartMediaCtrl start put_WindowStyle");
           }
         }
