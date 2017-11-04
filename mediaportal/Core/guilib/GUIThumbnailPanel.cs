@@ -1768,11 +1768,19 @@ namespace MediaPortal.GUI.Library
           _offset += (_rowCount * _columnCount);
           iItem -= (_rowCount * _columnCount);
           iPage++;
+          if (_rowCount < 0 || _columnCount < 0)
+          {
+            break;
+          }
         }
         while ((iItem <= _columnCount * _scrollStartOffset) && (_offset > 0))
         {
           _offset -= (_columnCount);
           iItem += (_columnCount);
+          if (_rowCount < 0 || _columnCount < 0)
+          {
+            break;
+          }
         }
         while (iItem >= _columnCount && _columnCount != 0)
         {
@@ -1785,6 +1793,10 @@ namespace MediaPortal.GUI.Library
           {
             _cursorY++;
             iItem -= _columnCount;
+          }
+          if (_rowCount < 0 || _columnCount < 0)
+          {
+            break;
           }
         }
         _controlUpDown.Value = iPage;

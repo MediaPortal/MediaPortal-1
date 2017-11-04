@@ -74,25 +74,36 @@ int GetEncoderClsid(const WCHAR* format, CLSID* pClsid)
 }
 
 MPMadPresenter::MPMadPresenter(IVMR9Callback* pCallback, int xposition, int yposition, int width, int height, OAHWND parent, IDirect3DDevice9* pDevice, IMediaControl* pMediaControl) :
-  CUnknown(NAME("MPMadPresenter"), NULL),
+  CUnknown(NAME("MPMadPresenter"), nullptr),
   m_pCallback(pCallback),
-  m_Xposition(0), // for using no Kodi madVR window way comment out this line
-  m_Yposition(0), // for using no Kodi madVR window way comment out this line
-  //m_Xposition(xposition), // for using no Kodi madVR window way uncomment out this line
-  //m_Yposition(yposition), // for using no Kodi madVR window way uncomment out this line
   m_dwGUIWidth(width),
   m_dwGUIHeight(height),
   m_hParent(parent),
-  m_pDevice((IDirect3DDevice9Ex*)pDevice),
+  m_pDevice(static_cast<IDirect3DDevice9Ex*>(pDevice)),
   m_pMediaControl(pMediaControl)
 {
+  //Set to true to use the Kodi windows creation or false if not
+  m_pKodiWindowUse = false;
   Log("MPMadPresenter::Constructor() - instance 0x%x", this);
+  m_pKodiWindowUse ? m_Xposition = 0 : m_Xposition = xposition;
+  m_pKodiWindowUse ? m_Yposition = 0 : m_Yposition = yposition;
   m_pShutdown = false;
   m_pDevice->GetRenderTarget(0, &m_pSurfaceDevice);
   // Store device surface MP GUI for later
   m_pCallback->RestoreDeviceSurface(reinterpret_cast<LONG>(m_pSurfaceDevice));
   m_pInitMadVRWindowPositionDone = false;
   Log("MPMadPresenter::Constructor() Store Device Surface");
+}
+
+bool isFullscreen(HWND window)
+{
+  RECT a, b;
+  GetWindowRect(window, &a);
+  GetWindowRect(GetDesktopWindow(), &b);
+  return (a.left == b.left  &&
+    a.top == b.top   &&
+    a.right == b.right &&
+    a.bottom == b.bottom);
 }
 
 MPMadPresenter::~MPMadPresenter()
@@ -138,7 +149,13 @@ MPMadPresenter::~MPMadPresenter()
     Log("MPMadPresenter::Destructor() - m_pMad release 2");
 
     // Detroy create madVR window and need to be here to avoid some crash
-    DeInitMadvrWindow(); // for using no Kodi madVR window way comment out this line
+    if (m_pKodiWindowUse)
+    {
+      DeInitMadvrWindow(); // for using no Kodi madVR window way comment out this line
+    }
+
+    //DestroyWindow(reinterpret_cast<HWND>(pWnd));
+    //DestroyWindow(reinterpret_cast<HWND>(m_pVideoWnd));
 
     Log("MPMadPresenter::Destructor() - instance 0x%x", this);
   }
@@ -331,6 +348,7 @@ void MPMadPresenter::InitMadVRWindowPosition()
     pWindow->put_Owner(reinterpret_cast<OAHWND>(m_hWnd));
     pWindow->put_Visible(reinterpret_cast<OAHWND>(m_hWnd));
     pWindow->SetWindowPosition(0, 0, m_dwGUIWidth, m_dwGUIHeight);
+    pWindow->put_WindowState(SW_SHOWMAXIMIZED);
     m_pReInitOSD = true;
     m_pInitMadVRWindowPositionDone = true;
   }
@@ -365,8 +383,16 @@ void MPMadPresenter::MadVrScreenResize(int x, int y, int width, int height, bool
   if (m_pMadD3DDev)
   {
     Log("%s : SetWindowPos : %d x %d", __FUNCTION__, width, height);
-    SetWindowPos(m_hWnd, 0, 0, 0, width, height, SWP_ASYNCWINDOWPOS); // for using no Kodi madVR window way comment out this line
-    //SetWindowPos(m_hWnd, 0, x, y, width, height, SWP_ASYNCWINDOWPOS); // for using no Kodi madVR window way uncomment out this line
+    if (m_pKodiWindowUse)
+    {
+      // for using no Kodi madVR window way comment out this line
+      SetWindowPos(m_hWnd, nullptr, 0, 0, width, height, SWP_ASYNCWINDOWPOS);
+    }
+    else
+    {
+      // for using no Kodi madVR window way uncomment out this line
+      SetWindowPos(m_hWnd, nullptr, x, y, width, height, SWP_ASYNCWINDOWPOS);
+    }
 
     // Needed to update OSD/GUI when changing directx present parameter on resolution change.
     if (displayChange)
@@ -390,19 +416,29 @@ IBaseFilter* MPMadPresenter::Initialize()
 
   if (Com::SmartQIPtr<IBaseFilter> baseFilter = m_pMad)
   {
+    //WIP testing, don't init Windows poisiton already done before.
     if (Com::SmartQIPtr<IVideoWindow> pWindow = m_pMad)
     {
       // Create a madVR Window
       if (InitMadvrWindow(m_hWnd)) // for using no Kodi madVR window way comment out this line
       {
-        //m_hWnd = reinterpret_cast<HWND>(m_hParent); // for using no Kodi madVR window way uncomment out this line
+        if (!m_pKodiWindowUse)
+        {
+          // for using no Kodi madVR window way uncomment out this line
+          m_hWnd = reinterpret_cast<HWND>(m_hParent);
+        }
         Sleep(100);
         pWindow->put_Owner(reinterpret_cast<OAHWND>(m_hWnd));
         pWindow->put_Visible(reinterpret_cast<OAHWND>(m_hWnd));
-        //pWindow->put_MessageDrain(reinterpret_cast<OAHWND>(m_hWnd));
+        pWindow->put_MessageDrain(reinterpret_cast<OAHWND>(m_hWnd));
+        pWindow->SetWindowPosition(0, 0, m_dwGUIWidth, m_dwGUIHeight);
         Sleep(100);
         Log("%s : Create DSPlayer window - hWnd: %i", __FUNCTION__, m_hWnd);
-        m_pCallback->DestroyHWnd(m_hWnd); // for using no Kodi madVR window way comment out this line
+        if (m_pKodiWindowUse)
+        {
+          // for using no Kodi madVR window way comment out this line
+          m_pCallback->DestroyHWnd(m_hWnd);
+        }
         Log("MPMadPresenter::Initialize() send DestroyHWnd value on C# side");
       }
     }
@@ -439,6 +475,30 @@ STDMETHODIMP MPMadPresenter::CreateRenderer(IUnknown** ppRenderer)
   {
     m_pMad = nullptr;
     return E_FAIL;
+  }
+
+  if (Com::SmartQIPtr<IVideoWindow> pWindow = m_pMad)
+  {
+    if (!pWindow)
+    {
+      m_pMad = nullptr;
+      return E_FAIL;
+    }
+
+    if (m_pKodiWindowUse)
+    {
+      // for using no Kodi madVR window way comment out this line
+      Initialize();
+    }
+    else
+    {
+      // for using no Kodi madVR window way uncomment out this block
+      pWindow->put_Owner(m_hParent);
+      pWindow->put_WindowStyle(WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN);
+      pWindow->put_MessageDrain(m_hParent);
+      pWindow->SetWindowPosition(0, 0, m_dwGUIWidth, m_dwGUIHeight);
+      m_pInitMadVRWindowPositionDone = true;
+    }
   }
 
   // IOsdRenderCallback
@@ -486,11 +546,11 @@ void MPMadPresenter::ConfigureMadvr()
   if (Com::SmartQIPtr<IMadVRDirect3D9Manager> manager = m_pMad)
     manager->ConfigureDisplayModeChanger(false, true);
 
-  //// TODO implement IMadVRSubclassReplacement
-  //if (Com::SmartQIPtr<IMadVRSubclassReplacement> pSubclassReplacement = m_pMad)
-  //{
-  //  pSubclassReplacement->DisableSubclassing();
-  //}
+  // TODO implement IMadVRSubclassReplacement
+  if (Com::SmartQIPtr<IMadVRSubclassReplacement> pSubclassReplacement = m_pMad)
+  {
+    pSubclassReplacement->DisableSubclassing();
+  }
 
   //if (Com::SmartQIPtr<IVideoWindow> pWindow = m_pMad)
   //{
@@ -505,13 +565,9 @@ void MPMadPresenter::ConfigureMadvr()
 
     if (m_ExclusiveMode)
     {
-      m_pSettings->SettingsSetBoolean(L"exclusiveDelay", true);
+      //m_pSettings->SettingsSetBoolean(L"exclusiveDelay", true);
       m_pSettings->SettingsSetBoolean(L"enableExclusive", true);
     }
-    //else if (Com::SmartQIPtr<IMadVRCommand> pMadVrCmd = m_pMad)
-    //{
-    //  MPMadPresenter::EnableExclusive(false);
-    //}
   }
 }
 
@@ -528,11 +584,23 @@ HRESULT MPMadPresenter::Shutdown()
       Log("MPMadPresenter::Shutdown() reset subtitle device");
       m_pCallback->RestoreDeviceSurface(reinterpret_cast<DWORD>(m_pSurfaceDevice));
       Log("MPMadPresenter::Shutdown() RestoreDeviceSurface");
-      m_pCallback->DestroyHWnd(m_hWnd); // for using no Kodi madVR window way comment out this line
+      if (m_pKodiWindowUse)
+      {
+        // for using no Kodi madVR window way comment out this line
+        m_pCallback->DestroyHWnd(m_hWnd);
+      }
       Log("MPMadPresenter::Shutdown() send DestroyHWnd on C# side");
       m_pCallback->Release();
       Log("MPMadPresenter::Shutdown() m_pCallback release");
     }
+
+    //// Disable exclusive mode
+    //// WIP testing, don't disable exclusive mode instead let madVR doing it.
+    //if (m_ExclusiveMode)
+    //{
+    //  MPMadPresenter::EnableExclusive(false);
+    //  Log("MPMadPresenter::Shutdown() disable exclusive mode");
+    //}
 
     // Restore windowed overlay settings
     if (Com::SmartQIPtr<IMadVRSettings> m_pSettings = m_pMad)
@@ -666,11 +734,21 @@ HRESULT MPMadPresenter::Stopping()
       }
     }
 
-    // Disable exclusive mode
-    if (m_ExclusiveMode)
+    //// Disable exclusive mode
+    //// WIP testing, don't disable exclusive mode instead let madVR doing it.
+    //if (m_ExclusiveMode)
+    //{
+    //  MPMadPresenter::EnableExclusive(false);
+    //  Log("MPMadPresenter::Stopping() disable exclusive mode");
+    //}
+
+    // Needed to close madVR window at least for exclusive mode
+    if (Com::SmartQIPtr<IVideoWindow> pWindow = m_pMad)
     {
-      MPMadPresenter::EnableExclusive(false);
-      Log("MPMadPresenter::Stopping() disable exclusive mode");
+      pWindow->put_WindowStyle(WS_DISABLED);
+      pWindow->put_WindowState(SW_SHOWMAXIMIZED);
+      pWindow->put_WindowState(SW_HIDE);
+      pWindow->SetWindowForeground(TRUE);
     }
 
     if (m_pMad)

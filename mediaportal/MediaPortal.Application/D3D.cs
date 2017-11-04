@@ -1107,7 +1107,7 @@ namespace MediaPortal
       var dialogMenu = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
 
       // only minimize if visible and lost focus in windowed mode or if in fullscreen mode or if exiting to tray
-      if (IsVisible && ((Windowed && _lostFocus) || (!Windowed && MinimizeOnFocusLoss)) || ExitToTray)
+      if (IsVisible && ((Windowed && (_lostFocus && MinimizeOnFocusLoss) || (!Windowed && MinimizeOnFocusLoss)) || ExitToTray))
       {
         if (dialogMenu != null && (GUIWindowManager.RoutedWindow == (int)GUIWindow.Window.WINDOW_DIALOG_MENU || GUIWindowManager.RoutedWindow == (int)GUIWindow.Window.WINDOW_DIALOG_OK))
         {

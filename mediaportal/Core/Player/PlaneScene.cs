@@ -980,7 +980,7 @@ namespace MediaPortal.Player
                 {
                   GUIGraphicsContext.Render3DModeHalf = GUIGraphicsContext.eRender3DModeHalf.None;
 
-                  if (!GUIGraphicsContext.NoneDone)
+                  if (!GUIGraphicsContext.NoneDone && GUIGraphicsContext.RenderMadVr3Dchanged)
                   {
                     // Get Client size
                     Size client = GUIGraphicsContext.form.ClientSize;
@@ -1000,6 +1000,7 @@ namespace MediaPortal.Player
                     GUIGraphicsContext.SBSRightDone = false;
                     GUIGraphicsContext.TABTopDone = false;
                     GUIGraphicsContext.TABBottomDone = false;
+                    GUIGraphicsContext.RenderMadVr3Dchanged = false;
 
                     // Force VideoWindow to be refreshed with madVR when switching from video size like 16:9 to 4:3
                     GUIGraphicsContext.UpdateVideoWindow = true;
@@ -1051,6 +1052,7 @@ namespace MediaPortal.Player
                   GUIGraphicsContext.TABTopDone = false;
                   GUIGraphicsContext.TABBottomDone = false;
                   GUIGraphicsContext.NoneDone = false;
+                  GUIGraphicsContext.RenderMadVr3Dchanged = true;
 
                   // Force VideoWindow to be refreshed with madVR when switching from video size like 16:9 to 4:3
                   GUIGraphicsContext.UpdateVideoWindow = true;
@@ -1092,6 +1094,7 @@ namespace MediaPortal.Player
                   GUIGraphicsContext.SBSRightDone = false;
                   GUIGraphicsContext.TABTopDone = false;
                   GUIGraphicsContext.TABBottomDone = false;
+                  GUIGraphicsContext.RenderMadVr3Dchanged = true;
 
                   // Force VideoWindow to be refreshed with madVR when switching from video size like 16:9 to 4:3
                   GUIGraphicsContext.UpdateVideoWindow = true;
@@ -1130,6 +1133,7 @@ namespace MediaPortal.Player
                       GUIGraphicsContext.TABBottomDone = false;
                       GUIGraphicsContext.Render3DModeHalfDone = false;
                       GUIGraphicsContext.NoneDone = false;
+                      GUIGraphicsContext.RenderMadVr3Dchanged = true;
 
                       // Force VideoWindow to be refreshed with madVR when switching from video size like 16:9 to 4:3
                       GUIGraphicsContext.UpdateVideoWindow = true;
@@ -1162,6 +1166,7 @@ namespace MediaPortal.Player
                       GUIGraphicsContext.TABBottomDone = false;
                       GUIGraphicsContext.Render3DModeHalfDone = false;
                       GUIGraphicsContext.NoneDone = false;
+                      GUIGraphicsContext.RenderMadVr3Dchanged = true;
 
                       // Force VideoWindow to be refreshed with madVR when switching from video size like 16:9 to 4:3
                       GUIGraphicsContext.UpdateVideoWindow = true;
@@ -1195,6 +1200,7 @@ namespace MediaPortal.Player
                       GUIGraphicsContext.Render3DModeHalfDone = false;
                       GUIGraphicsContext.Render3DModeHalfDone = false;
                       GUIGraphicsContext.NoneDone = false;
+                      GUIGraphicsContext.RenderMadVr3Dchanged = true;
 
                       // Force VideoWindow to be refreshed with madVR when switching from video size like 16:9 to 4:3
                       GUIGraphicsContext.UpdateVideoWindow = true;
@@ -1227,6 +1233,7 @@ namespace MediaPortal.Player
                       GUIGraphicsContext.TABBottomDone = false;
                       GUIGraphicsContext.Render3DModeHalfDone = false;
                       GUIGraphicsContext.NoneDone = false;
+                      GUIGraphicsContext.RenderMadVr3Dchanged = true;
 
                       // Force VideoWindow to be refreshed with madVR when switching from video size like 16:9 to 4:3
                       GUIGraphicsContext.UpdateVideoWindow = true;
