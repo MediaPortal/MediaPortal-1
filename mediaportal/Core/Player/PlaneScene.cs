@@ -1333,7 +1333,7 @@ namespace MediaPortal.Player
     {
       if (GUIGraphicsContext.DX9Device != null)
       {
-        GUIGraphicsContext.HWnd = (IntPtr) phWnd;
+        GUIGraphicsContext.MadVrHWnd = (IntPtr) phWnd;
       }
     }
 
