@@ -173,7 +173,11 @@ namespace MediaPortal.GUI.Library
 
     // For madVR
     public static Surface MadVrRenderTargetVMR9 = null;
-    public static IntPtr HWnd;
+
+    /// <summary>
+    /// madVR HWnd video instance
+    /// </summary>
+    public static IntPtr MadVrHWnd;
 
     // Stacks for matrix transformations.
     private static readonly Stack<Matrix> ProjectionMatrixStack = new Stack<Matrix>();

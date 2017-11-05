@@ -583,6 +583,26 @@ namespace MediaPortal.Player
       {
         Log.Debug("VMR9 : madVR reposition window");
         MadVrWindowPosition();
+        if (!UseMadVideoRenderer3D)
+        {
+          IVideoWindow videoWin = _vmr9Filter as IVideoWindow;
+          if (videoWin != null)
+          {
+            // Get Client size
+            Size client = GUIGraphicsContext.form.ClientSize;
+            videoWin.put_Owner(GUIGraphicsContext.MadVrHWnd != IntPtr.Zero
+              ? GUIGraphicsContext.MadVrHWnd
+              : GUIGraphicsContext.ActiveForm);
+            videoWin.put_WindowStyle(
+              (WindowStyle) ((int) WindowStyle.Child + (int) WindowStyle.ClipChildren + (int) WindowStyle.ClipSiblings));
+            videoWin.put_MessageDrain(GUIGraphicsContext.MadVrHWnd != IntPtr.Zero
+              ? GUIGraphicsContext.MadVrHWnd
+              : GUIGraphicsContext.form.Handle);
+            videoWin.put_WindowState(WindowState.ShowMaximized);
+            videoWin.SetWindowForeground(OABool.True);
+            videoWin.SetWindowPosition(0, 0, client.Width, client.Height);
+          }
+        }
       }
     }
 
@@ -622,7 +642,7 @@ namespace MediaPortal.Player
             string fileName = string.Format("{0}\\madVR - {1:00}-{2:00}-{3:00}", directory, DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
 
             // First take the buffersize
-            var basicVideo = _graphBuilder as IBasicVideo;
+            var basicVideo = _vmr9Filter as IBasicVideo;
             int buffersize = 0;
             basicVideo?.GetCurrentImage(ref buffersize, IntPtr.Zero);
 
@@ -732,11 +752,13 @@ namespace MediaPortal.Player
           try
           {
             // Sending message to force unfocus/focus for 3D.
-            IVideoWindow videoWin = (IVideoWindow)_graphBuilder;
+            IVideoWindow videoWin = _vmr9Filter as IVideoWindow;
             if (videoWin != null)
             {
-              videoWin.put_WindowStyle((WindowStyle)((int)WindowStyle.Child + (int)WindowStyle.ClipChildren + (int)WindowStyle.ClipSiblings));
-              videoWin.put_MessageDrain(GUIGraphicsContext.ActiveForm);
+              videoWin.put_WindowStyle((WindowStyle) ((int) WindowStyle.Child + (int) WindowStyle.ClipChildren + (int) WindowStyle.ClipSiblings));
+              videoWin.put_MessageDrain(GUIGraphicsContext.MadVrHWnd != IntPtr.Zero
+                ? GUIGraphicsContext.MadVrHWnd
+                : GUIGraphicsContext.form.Handle);
             }
             UseMadVideoRenderer3D = false;
           }
@@ -890,20 +912,21 @@ namespace MediaPortal.Player
           //Backup current refresh rate value
           Win32.FindMonitorIndexForScreen();
           if ((GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal == -1) ||
-          (Manager.Adapters.Count <= GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal) ||
-          (Manager.Adapters.Count > Screen.AllScreens.Length))
+              (Manager.Adapters.Count <= GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal) ||
+              (Manager.Adapters.Count > Screen.AllScreens.Length))
           {
             Log.Info("VMR9: adapter number out of bounds");
           }
           else
           {
-            GUIGraphicsContext.ForcedRR3DRate = Manager.Adapters[GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal].CurrentDisplayMode.RefreshRate;
+            GUIGraphicsContext.ForcedRR3DRate =
+              Manager.Adapters[GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal].CurrentDisplayMode.RefreshRate;
             Log.Info("VMR9: backup current refresh rate value {0}Hz", GUIGraphicsContext.ForcedRR3DRate);
           }
           // Get Client size
           Size client = GUIGraphicsContext.form.ClientSize;
-          MadInit(_scene, xposition, yposition, client.Width, client.Height, (uint)upDevice.ToInt32(),
-            (uint)GUIGraphicsContext.ActiveForm.ToInt32(), ref _vmr9Filter, mPMediaControl);
+          MadInit(_scene, xposition, yposition, client.Width, client.Height, (uint) upDevice.ToInt32(),
+            (uint) GUIGraphicsContext.ActiveForm.ToInt32(), ref _vmr9Filter, mPMediaControl);
           hr = new HResult(graphBuilder.AddFilter(_vmr9Filter, "madVR"));
           Log.Info("VMR9: added madVR Renderer to graph");
         }
@@ -1566,20 +1589,14 @@ namespace MediaPortal.Player
     {
       lock (this)
       {
-        if (!UseMadVideoRenderer3D || g_Player.IsTV || g_Player.IsTimeShifting || GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
+        if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
         {
-          IVideoWindow videoWin = (IVideoWindow)_graphBuilder;
+          IVideoWindow videoWin = _graphBuilder as IVideoWindow;
           if (videoWin != null)
           {
+            videoWin.put_Owner(GUIGraphicsContext.form.Handle);
             videoWin.put_WindowStyle((WindowStyle)((int)WindowStyle.Child + (int)WindowStyle.ClipChildren + (int)WindowStyle.ClipSiblings));
             videoWin.put_MessageDrain(GUIGraphicsContext.form.Handle);
-
-            // This line is improtant for madVR exclusive 3D mode
-            if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
-            {
-              videoWin.put_WindowState(WindowState.ShowMaximized);
-            }
-
             Log.Debug("VMR9: StartMediaCtrl start put_WindowStyle");
           }
         }
@@ -1911,11 +1928,11 @@ namespace MediaPortal.Player
           MadDeinit();
           Log.Debug("VMR9: Dispose 2.1");
           GC.Collect();
-          MadvrInterface.restoreDisplayModeNow(_vmr9Filter);
-          DestroyWindow(GUIGraphicsContext.HWnd); // for using no Kodi madVR window way comment out this line
-          RestoreGuiForMadVr();
-          Log.Debug("VMR9: Dispose 2.2");
           DirectShowUtil.FinalReleaseComObject(_vmr9Filter);
+          Log.Debug("VMR9: Dispose 2.2");
+          MadvrInterface.restoreDisplayModeNow(_vmr9Filter);
+          DestroyWindow(GUIGraphicsContext.MadVrHWnd); // for using no Kodi madVR window way comment out this line
+          RestoreGuiForMadVr();
           Log.Debug("VMR9: Dispose 2.3");
           _vmr9Filter = null;
           Log.Debug("VMR9: Dispose 3");
