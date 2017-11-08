@@ -1387,6 +1387,16 @@ namespace MediaPortal.Player
     {
       if (GUIGraphicsContext.SubDeviceMadVr != IntPtr.Zero && !_subEngineType.Equals("XySubFilter"))
       {
+        // Check if value are correct (can happen when using zooming option
+        if (_subsRect.X < -100000)
+        {
+          _subsRect = viewportRect;
+        }
+        if (_destinationRect.X < -100000)
+        {
+          _destinationRect = croppedVideoRect;
+        }
+
         ISubEngine engine = SubEngine.GetInstance();
         if (GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.SideBySideTo2D ||
             GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.TopAndBottomTo2D)
