@@ -30,6 +30,7 @@ using TvLibrary.Implementations.Analog.QualityControl;
 using TvLibrary.Interfaces;
 using TvLibrary.Implementations.DVB;
 using TvLibrary.Implementations.Helper;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer;
 
 namespace TvLibrary.Implementations.Analog
 {
@@ -306,6 +307,18 @@ namespace TvLibrary.Implementations.Analog
       }
       subChannel.CurrentChannel = channel;
       subChannel.OnBeforeTune();
+
+      ITsWriter tsWriter = _filterTsWriter as ITsWriter;
+      if (tsWriter != null)
+      {
+        tsWriter.Stop();
+        lock (_pmtLock)
+        {
+          _pmt.Clear();
+        }
+        _cat = null;
+      }
+
       PerformTuning(channel);
       subChannel.OnAfterTune();
       try
@@ -810,6 +823,13 @@ namespace TvLibrary.Implementations.Analog
           throw new TvException("unable to connect encoder to ts analyzer filter");
         }
         Log.Log.WriteFile("HDPVR: AddTsWriterFilterToGraph connected to encoder successfully");
+
+        ITsWriter tsWriter = (ITsWriter)_filterTsWriter;
+        if (tsWriter != null)
+        {
+          tsWriter.CheckSectionCrcs(true);
+          tsWriter.SetObserver(this);
+        }
       }
     }
 

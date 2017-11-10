@@ -226,8 +226,8 @@ namespace TvLibrary.Implementations.Analog
         }
 
         // Check the program number.
-        _pmtData = new byte[_pmtLength];
-        Marshal.Copy(pmtMem, _pmtData, 0, _pmtLength);
+        //_pmtData = new byte[_pmtLength];
+        //Marshal.Copy(pmtMem, _pmtData, 0, _pmtLength);
         int version = ((_pmtData[5] >> 1) & 0x1F);
         int pmtProgramNumber = (_pmtData[3] << 8) + _pmtData[4];
         Log.Log.Info("HDPVR: PMT sid=0x{0:X} pid=0x{1:X} version=0x{2:X}", pmtProgramNumber, _pmtPid, version);
