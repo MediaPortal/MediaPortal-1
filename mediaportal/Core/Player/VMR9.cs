@@ -253,6 +253,7 @@ namespace MediaPortal.Player
     protected bool UseMadVideoRenderer3D;
     protected internal DateTime playbackTimer;
     protected internal DateTime PlaneSceneMadvrTimer = new DateTime(0);
+    protected IVideoWindow videoWinMadVr;
 
     #endregion
 
@@ -910,23 +911,22 @@ namespace MediaPortal.Player
           Size client = GUIGraphicsContext.form.ClientSize;
           MadInit(_scene, xposition, yposition, client.Width, client.Height, (uint) upDevice.ToInt32(),
             (uint) GUIGraphicsContext.ActiveForm.ToInt32(), ref _vmr9Filter, mPMediaControl);
-          //if (!UseMadVideoRenderer3D) // TODO
-          //{
-          //  IVideoWindow videoWin = graphBuilder as IVideoWindow;
-          //  if (videoWin != null)
-          //  {
-          //    var ownerHandle = GUIGraphicsContext.MadVrHWnd != IntPtr.Zero
-          //      ? GUIGraphicsContext.MadVrHWnd
-          //      : GUIGraphicsContext.form.Handle;
-
-          //    videoWin.put_Owner(ownerHandle);
-          //    videoWin.put_WindowStyle((WindowStyle)((int) WindowStyle.Child + (int) WindowStyle.ClipChildren + (int) WindowStyle.ClipSiblings));
-          //    videoWin.put_MessageDrain(ownerHandle);
-          //    //videoWin.put_WindowStyleEx(WindowStyleEx.ToolWindow);
-          //    //videoWin.SetWindowForeground(OABool.True);
-          //  }
-          //}
           hr = new HResult(graphBuilder.AddFilter(_vmr9Filter, "madVR"));
+          if (!UseMadVideoRenderer3D) // TODO
+          {
+            videoWinMadVr = graphBuilder as IVideoWindow;
+            //videoWinMadVr = _vmr9Filter as IVideoWindow; // Using this permit to change resolution and madVR didn't reinit D3D device but broke 3D MVC
+            if (videoWinMadVr != null)
+            {
+              var ownerHandle = GUIGraphicsContext.MadVrHWnd != IntPtr.Zero
+                ? GUIGraphicsContext.MadVrHWnd
+                : GUIGraphicsContext.form.Handle;
+
+              videoWinMadVr.put_Owner(ownerHandle);
+              videoWinMadVr.put_WindowStyle((WindowStyle)((int)WindowStyle.Child + (int)WindowStyle.ClipChildren + (int)WindowStyle.ClipSiblings));
+              videoWinMadVr.put_MessageDrain(ownerHandle);
+            }
+          }
           Log.Info("VMR9: added madVR Renderer to graph");
         }
         else
@@ -1703,20 +1703,20 @@ namespace MediaPortal.Player
           var msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_MADVR_SCREEN_REFRESH, 0, 0, 0, 0, 0, null);
           GUIWindowManager.SendThreadMessage(msg);
 
-          if ((GUIGraphicsContext.form.WindowState != FormWindowState.Minimized))
-          {
-            // Make MediaPortal window normal ( if minimized )
-            Win32API.ShowWindow(GUIGraphicsContext.ActiveForm, Win32API.ShowWindowFlags.ShowNormal);
+          //if ((GUIGraphicsContext.form.WindowState != FormWindowState.Minimized))
+          //{
+          //  // Make MediaPortal window normal ( if minimized )
+          //  Win32API.ShowWindow(GUIGraphicsContext.ActiveForm, Win32API.ShowWindowFlags.ShowNormal);
 
-            // Make Mediaportal window focused
-            if (Win32API.SetForegroundWindow(GUIGraphicsContext.ActiveForm, true))
-            {
-              Log.Info("VMR9: Successfully switched focus.");
-            }
+          //  // Make Mediaportal window focused
+          //  if (Win32API.SetForegroundWindow(GUIGraphicsContext.ActiveForm, true))
+          //  {
+          //    Log.Info("VMR9: Successfully switched focus.");
+          //  }
 
-            // Bring MP to front
-            GUIGraphicsContext.form.BringToFront();
-          }
+          //  // Bring MP to front
+          //  GUIGraphicsContext.form.BringToFront();
+          //}
           Log.Debug("VMR9: RestoreGuiForMadVr");
         }
       }

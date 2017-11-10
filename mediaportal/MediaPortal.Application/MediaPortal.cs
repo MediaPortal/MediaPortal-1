@@ -1624,9 +1624,7 @@ public class MediaPortalApp : D3D, IRender
         // handle display changes
         case WM_DISPLAYCHANGE:
           Screen screen = Screen.FromControl(this);
-          if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && AppActive &&
-              (!Equals(screen.Bounds.Size.Width, GUIGraphicsContext.currentScreen.Bounds.Width) ||
-               !Equals(screen.Bounds.Size.Height, GUIGraphicsContext.currentScreen.Bounds.Height)) ||
+          if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && AppActive ||
               GUIGraphicsContext.ForcedRefreshRate3D)
           {
             NeedRecreateSwapChain = true;
@@ -1650,7 +1648,7 @@ public class MediaPortalApp : D3D, IRender
             {
               if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
               {
-                break;
+                //break;
               }
             }
             SetBounds(GUIGraphicsContext.currentScreen.Bounds.X, GUIGraphicsContext.currentScreen.Bounds.Y, GUIGraphicsContext.currentScreen.Bounds.Width, GUIGraphicsContext.currentScreen.Bounds.Height);
@@ -2519,6 +2517,14 @@ public class MediaPortalApp : D3D, IRender
     // needed to avoid cursor show when MP windows change (for ex when refesh rate is working)
     _moveMouseCursorPositionRefresh = D3D._lastCursorPosition;
     _restoreLoadedScreen = false;
+
+    //// Needed to test if it's really working in all case
+    //if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && GUIGraphicsContext.InVmr9Render)
+    //{
+    //  // Force VideoWindow to be refreshed with madVR when switching from video size like 16:9 to 4:3
+    //  GUIGraphicsContext.UpdateVideoWindow = true;
+    //  GUIGraphicsContext.VideoWindowChanged();
+    //}
 
     // enable event handlers
     if (GUIGraphicsContext.DX9Device != null)

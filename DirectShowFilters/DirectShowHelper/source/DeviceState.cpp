@@ -100,6 +100,14 @@ void DeviceState::Shutdown()
     }
   }
   catch (...) {}
+  try
+  {
+    if (m_pD3DDev)
+    {
+      m_pD3DDev = nullptr;
+    }
+  }
+  catch (...) {}
 }
 
 HRESULT DeviceState::Store()
