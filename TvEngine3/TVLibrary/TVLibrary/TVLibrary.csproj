@@ -236,6 +236,7 @@
     <Compile Include="tve35\CommonTypes\Enum\ChannelMediaType.cs" />
     <Compile Include="tve35\CommonTypes\Enum\ContentAdvisory.cs" />
     <Compile Include="tve35\CommonTypes\Enum\FecCodeRate.cs" />
+    <Compile Include="tve35\CommonTypes\Enum\LogicalChannelNumberSource.cs" />
     <Compile Include="tve35\CommonTypes\Enum\ModulationSchemePsk.cs" />
     <Compile Include="tve35\CommonTypes\Enum\ModulationSchemeQam.cs" />
     <Compile Include="tve35\CommonTypes\Enum\PilotTonesState.cs" />
@@ -275,6 +276,7 @@
     <Compile Include="tve35\Implementations\Dvb\Enum\RunningStatus.cs" />
     <Compile Include="tve35\Implementations\Dvb\Enum\ServiceType.cs" />
     <Compile Include="tve35\Implementations\Dvb\GrabberSiFreesatWrapper.cs" />
+    <Compile Include="tve35\Implementations\Dvb\OriginalNetwork.cs" />
     <Compile Include="tve35\Implementations\Scte\GrabberEpgScteWrapper.cs" />
     <Compile Include="tve35\Implementations\Scte\GrabberSiScteWrapper.cs" />
     <Compile Include="tve35\Interfaces\Analyzer\EncryptionState.cs" />
