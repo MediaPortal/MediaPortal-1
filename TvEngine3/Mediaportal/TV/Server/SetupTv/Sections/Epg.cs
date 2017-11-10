@@ -165,7 +165,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           }
           else if (countryName.Equals("Poland"))
           {
-            _defaultEpgGrabberProtocols = TunerEpgGrabberProtocol.MediaHighway1;    // Cyfra+
+            _defaultEpgGrabberProtocols = TunerEpgGrabberProtocol.MediaHighway1;    // Cyfra+/nc+
           }
           else if (countryName.Equals("Qatar"))
           {
@@ -177,7 +177,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           }
           else if (countryName.Equals("Spain"))
           {
-            _defaultEpgGrabberProtocols = TunerEpgGrabberProtocol.MediaHighway2;    // Canal+/Digital+
+            _defaultEpgGrabberProtocols = TunerEpgGrabberProtocol.MediaHighway2;    // Digital+/Canal+/Movistar+
           }
           else if (countryName.Equals("South Africa"))
           {
