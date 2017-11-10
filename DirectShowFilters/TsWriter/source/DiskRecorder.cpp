@@ -124,6 +124,7 @@ CDiskRecorder::CDiskRecorder(RecorderMode mode)
 {
   m_recorderMode = mode;
   m_isRunning = false;
+  m_isPaused = false;
   m_isDropping = false;
   m_observer = NULL;
   m_videoAudioStartTimeStamp = -1;
@@ -150,7 +151,7 @@ CDiskRecorder::CDiskRecorder(RecorderMode mode)
   m_substitutePcrSourcePid = PID_NOT_SET;
   m_fakePcrPid = PID_PCR;
   m_fakePcrOriginalPid = PID_NOT_SET;
-  m_waitingForPcr = true;
+  m_isWaitingForPcr = true;
   m_generatePcrFromPts = false;
   m_prevPcrReceiveTimeStamp = 0;
   m_averagePcrIncrement = 0;
@@ -262,7 +263,7 @@ HRESULT CDiskRecorder::SetPmt(const unsigned char* pmt,
       m_fakePcrPid = PID_PCR;
       m_fakePcrOriginalPid = PID_NOT_SET;
       m_generatePcrFromPts = pidTable.PcrPid == 0x1fff;
-      m_waitingForPcr = true;
+      m_isWaitingForPcr = true;
     }
 
     UpdatePids(pidTable);
@@ -384,6 +385,7 @@ HRESULT CDiskRecorder::Start()
 
     m_writeBufferPosition = 0;
     m_isRunning = true;
+    m_isPaused = false;
     m_isDropping = false;
     return S_OK;
   }
@@ -397,7 +399,7 @@ HRESULT CDiskRecorder::Start()
 void CDiskRecorder::Pause(bool isPause)
 {
   CEnterCriticalSection lock(m_section);
-  m_isRunning = !isPause;
+  m_isPaused = isPause;
 }
 
 void CDiskRecorder::GetStreamQualityCounters(unsigned long long& countTsPackets,
@@ -423,6 +425,7 @@ void CDiskRecorder::Stop()
   try
   {
     m_isRunning = false;
+    m_isPaused = false;
 
     if (m_fileTimeShifting != NULL)
     {
@@ -451,11 +454,14 @@ void CDiskRecorder::Stop()
       m_fileRecording = NULL;
     }
 
-    m_patContinuityCounter = CONTINUITY_COUNTER_NOT_SET;
-    m_patVersion = TABLE_VERSION_NOT_SET;
-    m_pmtContinuityCounter = CONTINUITY_COUNTER_NOT_SET;
-    m_pmtVersion = TABLE_VERSION_NOT_SET;
+    m_videoAudioStartTimeStamp = -1;
+    m_isAudioConfirmed = false;
+    m_isWaitingForPcr = true;
+    m_generatePcrFromPts = false;
     m_pcrCompensation = 0;
+
+    m_patContinuityCounter = CONTINUITY_COUNTER_NOT_SET;
+    m_pmtContinuityCounter = CONTINUITY_COUNTER_NOT_SET;
 
     m_tsPacketCount = 0;
     m_discontinuityCount = 0;
@@ -541,7 +547,7 @@ void CDiskRecorder::OnTsPacket(const CTsHeader& header, const unsigned char* tsP
 {
   try
   {
-    if (!m_isRunning || tsPacket == NULL || header.Pid == 0x1fff)
+    if (!m_isRunning || m_isPaused || tsPacket == NULL || header.Pid == 0x1fff)
     {
       return;
     }
@@ -629,7 +635,7 @@ void CDiskRecorder::OnTsPacket(const CTsHeader& header, const unsigned char* tsP
 
     if (!header.PayloadUnitStart && infoRef.TsPacketQueueLength == 0)
     {
-      if (!m_waitingForPcr)
+      if (!m_isWaitingForPcr)
       {
         WritePacket(localTsPacket);
       }
@@ -653,7 +659,7 @@ void CDiskRecorder::OnTsPacket(const CTsHeader& header, const unsigned char* tsP
       PatchPtsDts(infoRef);
       UpdatePesHeader(infoRef);
     }
-    else if (m_waitingForPcr)
+    else if (m_isWaitingForPcr)
     {
       infoRef.TsPacketQueueLength = 0;
       return;
@@ -1498,7 +1504,7 @@ bool CDiskRecorder::HandlePcr(const CTsHeader& header,
                               unsigned short fakePid,
                               unsigned char* tsPacket)
 {
-  if (m_waitingForPcr && !m_generatePcrFromPts)
+  if (m_isWaitingForPcr && !m_generatePcrFromPts)
   {
     if (CTimeUtils::ElapsedMillis(m_videoAudioStartTimeStamp) > 200)
     {
@@ -1539,7 +1545,7 @@ bool CDiskRecorder::HandlePcr(const CTsHeader& header,
     if (fakePid != PID_NOT_SET)
     {
       // PCR delivery via a sub-stream which also contains wanted payload.
-      return !m_waitingForPcr;
+      return !m_isWaitingForPcr;
     }
 
     // PCR delivery via a sub-stream which may contain unwanted payload.
@@ -1601,7 +1607,7 @@ bool CDiskRecorder::HandlePcr(const CTsHeader& header,
   }
   if (!m_generatePcrFromPts)
   {
-    return !m_waitingForPcr;
+    return !m_isWaitingForPcr;
   }
 
   if (m_substitutePcrSourcePid == PID_NOT_SET)
@@ -1641,7 +1647,7 @@ bool CDiskRecorder::HandlePcr(const CTsHeader& header,
 
     m_serviceInfoPacketCounter = SERVICE_INFO_INJECT_RATE;
   }
-  return !m_waitingForPcr || header.Pid == m_substitutePcrSourcePid;
+  return !m_isWaitingForPcr || header.Pid == m_substitutePcrSourcePid;
 }
 
 void CDiskRecorder::InjectPcrFromPts(const unsigned char* pesHeader)
@@ -1688,9 +1694,9 @@ void CDiskRecorder::PatchPcr(const CPcr& pcrNew, unsigned char* tsPacket)
 {
   clock_t timeStamp = clock();
 
-  if (m_waitingForPcr)
+  if (m_isWaitingForPcr)
   {
-    m_waitingForPcr = false;
+    m_isWaitingForPcr = false;
     m_serviceInfoPacketCounter = SERVICE_INFO_INJECT_RATE;
     m_pcrGapConfirmationCount = 0;
     if (m_pcrCompensation == 0)

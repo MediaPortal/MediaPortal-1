@@ -148,6 +148,7 @@ class CDiskRecorder
     CCriticalSection m_section;
     RecorderMode m_recorderMode;
     bool m_isRunning;
+    bool m_isPaused;
     bool m_isDropping;
     map<unsigned short, PidInfo*> m_pids;
     IChannelObserver* m_observer;
@@ -186,7 +187,7 @@ class CDiskRecorder
     unsigned short m_substitutePcrSourcePid;  // The audio PID in the input transport stream from which PCR is generated when PCR is generated from PTS.
     unsigned short m_fakePcrPid;              // The PID in the output transport stream that contains PCR.
     unsigned short m_fakePcrOriginalPid;      // The PID in the input transport stream associated with the fake PCR PID. This is usually but not always the same as m_originalPcrPid.
-    bool m_waitingForPcr;
+    bool m_isWaitingForPcr;
     bool m_generatePcrFromPts;                // Used in the [rare] case that the input transport stream does not contain PCR.
     CPcr m_prevPcr;
     clock_t m_prevPcrReceiveTimeStamp;
