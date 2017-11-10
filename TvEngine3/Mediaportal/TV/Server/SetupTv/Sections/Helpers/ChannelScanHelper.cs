@@ -781,8 +781,16 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
         foreach (ulong groupId in groupIds)
         {
           if (
-            (groupType.Key == ChannelGroupType.DishNetworkMarket && groupId == 0xffa) ||  // Dish non-regional
-            (groupType.Key == ChannelGroupType.OpenTvRegion && groupId == 0xffff)         // OpenTV all regions
+            (groupType.Key == ChannelGroupType.DishNetworkMarket && groupId == 0xffa) ||    // Dish non-regional
+            // OpenTV all regions
+            (
+              groupId == 0xffff &&
+              (
+                groupType.Key == ChannelGroupType.OpenTvRegionFoxtel ||
+                groupType.Key == ChannelGroupType.OpenTvRegionSkyNz ||
+                groupType.Key == ChannelGroupType.OpenTvRegionSkyUk
+              )
+            )
           )
           {
             foreach (string configuredGroupIdString in groupType.Value)
@@ -813,7 +821,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
             groupType.Key == ChannelGroupType.DishNetworkMarket ||
             groupType.Key == ChannelGroupType.FreesatRegion ||
             groupType.Key == ChannelGroupType.FreeviewSatellite ||
-            groupType.Key == ChannelGroupType.OpenTvRegion
+            groupType.Key == ChannelGroupType.OpenTvRegionFoxtel ||
+            groupType.Key == ChannelGroupType.OpenTvRegionSkyNz ||
+            groupType.Key == ChannelGroupType.OpenTvRegionSkyUk
           )
           {
             if (groupType.Value.Length > 0 && Array.IndexOf(groupType.Value, groupId.ToString()) < 0)
@@ -883,14 +893,29 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
       {
         channelGroupConfiguration[ChannelGroupType.DvbTargetRegion] = ServiceAgents.Instance.SettingServiceAgent.GetValue("scanAutoCreateChannelGroupsDvbTargetRegions", string.Empty).Split('|');
       }
-      if (channelGroupTypes.HasFlag(ChannelGroupType.OpenTvRegion))
+      if (channelGroupTypes.HasFlag(ChannelGroupType.DishNetworkMarket))
       {
-        string[] configParts = ServiceAgents.Instance.SettingServiceAgent.GetValue("scanProviderOpenTv", string.Empty).Split(',');
+        string[] configParts = ServiceAgents.Instance.SettingServiceAgent.GetValue("scanProviderDishNetwork", string.Empty).Split(',');
+        if (configParts.Length >= 2)
+        {
+          channelGroupConfiguration[ChannelGroupType.DishNetworkMarket] = new string[1] { configParts[0] };
+        }
+      }
+      Dictionary<ChannelGroupType, string> groupTypes = new Dictionary<ChannelGroupType, string>
+      {
+        { ChannelGroupType.FreesatRegion, "scanProviderFreesat" },
+        { ChannelGroupType.OpenTvRegionFoxtel, "scanProviderOpenTvFoxtel" },
+        { ChannelGroupType.OpenTvRegionSkyNz, "scanProviderOpenTvSkyNz" },
+        { ChannelGroupType.OpenTvRegionSkyUk, "scanProviderOpenTvSkyUk" }
+      };
+      foreach (var groupType in groupTypes)
+      {
+        string[] configParts = ServiceAgents.Instance.SettingServiceAgent.GetValue(groupType.Value, string.Empty).Split(',');
         int bouquetId;
         int regionId;
         if (configParts.Length >= 2 && int.TryParse(configParts[0], out bouquetId) && int.TryParse(configParts[1], out regionId))
         {
-          channelGroupConfiguration[ChannelGroupType.OpenTvRegion] = new string[1] { ((bouquetId << 16) | regionId).ToString() };
+          channelGroupConfiguration[groupType.Key] = new string[1] { ((bouquetId << 16) | regionId).ToString() };
         }
       }
       if (channelGroupTypes.HasFlag(ChannelGroupType.FreeviewSatellite))
@@ -900,24 +925,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
         if (int.TryParse(config, out bouquetId))
         {
           channelGroupConfiguration[ChannelGroupType.FreeviewSatellite] = new string[1] { config };
-        }
-      }
-      if (channelGroupTypes.HasFlag(ChannelGroupType.FreesatRegion))
-      {
-        string[] configParts = ServiceAgents.Instance.SettingServiceAgent.GetValue("scanProviderFreesat", string.Empty).Split(',');
-        int bouquetId;
-        int regionId;
-        if (configParts.Length >= 2 && int.TryParse(configParts[0], out bouquetId) && int.TryParse(configParts[1], out regionId))
-        {
-          channelGroupConfiguration[ChannelGroupType.FreesatRegion] = new string[1] { ((bouquetId << 16) | regionId).ToString() };
-        }
-      }
-      if (channelGroupTypes.HasFlag(ChannelGroupType.DishNetworkMarket))
-      {
-        string[] configParts = ServiceAgents.Instance.SettingServiceAgent.GetValue("scanProviderDishNetwork", string.Empty).Split(',');
-        if (configParts.Length >= 2)
-        {
-          channelGroupConfiguration[ChannelGroupType.DishNetworkMarket] = new string[1] { configParts[0] };
         }
       }
 

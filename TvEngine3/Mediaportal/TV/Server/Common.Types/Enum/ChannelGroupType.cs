@@ -42,9 +42,12 @@ namespace Mediaportal.TV.Server.Common.Types.Enum
     VirginMediaChannelCategory = 0x0800,    // UK cable
 
     // automatic, provider-specific
-    OpenTvRegion = 0x10000,                 // Foxtel, Sky NZ, Sky UK
-    FreesatRegion = 0x20000,                // Astra 28.2E (UK)
-    DishNetworkMarket = 0x40000,            // US satellite
-    FreeviewSatellite = 0x80000             // Optus D1 160E (NZ)
+    DishNetworkMarket = 0x001000,           // US satellite
+    FreesatRegion = 0x002000,               // Astra 28.2E (UK)
+    FreeviewSatellite = 0x004000,           // Optus D1 160E (NZ)
+    OpenTvRegionFoxtel = 0x008000,          // Foxtel
+    OpenTvRegionSkyNz = 0x010000,           // Sky NZ
+    OpenTvRegionSkyUk = 0x020000,           // Sky UK
+    OpenTvRegionOther = 0x040000            // other OpenTV providers for which the region ID mapping is not known
   }
 }

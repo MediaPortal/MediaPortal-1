@@ -123,6 +123,7 @@
     <Compile Include="Implementations\Atsc\Enum\TransmissionSystem.cs" />
     <Compile Include="Implementations\Atsc\Enum\WaveformStandard.cs" />
     <Compile Include="Implementations\Atsc\EpgGrabberAtsc.cs" />
+    <Compile Include="Implementations\Dvb\OriginalNetwork.cs" />
     <Compile Include="Implementations\Dvb\GrabberSiFreesatWrapper.cs" />
     <Compile Include="Implementations\EpgGrabberController.cs" />
     <Compile Include="Implementations\DirectShow\Bda\TunerBdaAnalogTv.cs" />

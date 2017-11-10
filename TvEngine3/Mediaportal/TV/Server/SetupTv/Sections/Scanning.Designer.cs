@@ -35,10 +35,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.labelTimingLimitNetworkInformation = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.groupBoxOther = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
       this.checkBoxSkipEncryptedChannels = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
-      this.checkBoxPreferHighDefinitionChannelNumbers = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
       this.buttonUpdateTuningDetails = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
       this.checkBoxChannelMovementDetection = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
-      this.checkBoxProvidersPreferProvider2ChannelDetails = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
       this.numericUpDownTimingMinimum = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPNumericUpDown();
       this.labelTimingMinimum = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.labelTimingMinimumUnit = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
@@ -52,14 +50,18 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.numericUpDownTimingLimitCableCard = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPNumericUpDown();
       this.tabControl = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTabControl();
       this.tabPageGeneral = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTabPage();
-      this.groupBoxProviders = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
-      this.checkBoxProvidersProvider2IsHighDefinition = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
-      this.checkBoxProvidersProvider1IsHighDefinition = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
-      this.labelProvidersProvider1Region = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.labelProvidersProvider2Region = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.comboBoxProvidersProvider2Region = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
-      this.comboBoxProvidersProvider1Region = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
+      this.tabPageProviderSpecific = new System.Windows.Forms.TabPage();
+      this.buttonLogicalChannelNumberSourcePriorityDown = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
+      this.buttonLogicalChannelNumberSourcePriorityUp = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
+      this.listViewLogicalChannelNumberSources = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPListView();
+      this.columnHeaderLogicalChannelNumberSource = ((Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader)(new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader()));
+      this.checkBoxPreferHighDefinitionChannelNumbers = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
       this.tabPageAutomaticChannelGroups = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTabPage();
+      this.checkBoxAutomaticChannelGroupsSkyUkRegion = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
+      this.checkBoxAutomaticChannelGroupsSkyNzRegion = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
+      this.checkBoxAutomaticChannelGroupsFreeviewSatelliteRegion = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
+      this.checkBoxAutomaticChannelGroupsFoxtelRegion = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
+      this.checkBoxAutomaticChannelGroupsCyfrowyPolsatChannelCategories = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
       this.checkBoxAutomaticChannelGroupsOpenTvChannelCategories = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
       this.checkBoxAutomaticChannelGroupsMediaHighwayChannelCategories = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
       this.textBoxAutomaticChannelGroupsChannelProviders = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTextBox();
@@ -69,8 +71,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.checkBoxAutomaticChannelGroupsNorDigChannelLists = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
       this.checkBoxAutomaticChannelGroupsVirginMediaChannelCategories = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
       this.checkBoxAutomaticChannelGroupsFreesatChannelCategories = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
-      this.checkBoxAutomaticChannelGroupsProvider1Region = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
-      this.checkBoxAutomaticChannelGroupsProvider2Region = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
+      this.checkBoxAutomaticChannelGroupsFreesatRegion = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
+      this.checkBoxAutomaticChannelGroupsDishNetworkMarket = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
       this.checkBoxAutomaticChannelGroupsDvbTargetRegions = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
       this.checkBoxAutomaticChannelGroupsDvbBouquets = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
       this.checkBoxAutomaticChannelGroupsDvbNetworks = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
@@ -78,7 +80,25 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.checkBoxAutomaticChannelGroupsChannelProviders = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
       this.checkBoxAutomaticChannelGroupsBroadcastStandards = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
       this.checkBoxAutomaticChannelGroupsSatellites = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
-      this.checkBoxAutomaticChannelGroupsCyfrowyPolsatChannelCategories = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
+      this.groupBoxProviderSpecificRegionSubscription = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
+      this.comboBoxProviderSpecificRegionSkyUk = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
+      this.checkBoxProviderSpecificPreferFreesatChannelDetails = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
+      this.checkBoxProviderSpecificIsHighDefinitionSkyUk = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
+      this.checkBoxProviderSpecificIsHighDefinitionSkyNz = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
+      this.labelProviderSpecificRegionSkyUk = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.labelProviderSpecificRegionSkyNz = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.labelProviderSpecificRegionFoxtel = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.labelProviderSpecificRegionFreeviewSatellite = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.comboBoxProviderSpecificRegionSkyNz = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
+      this.comboBoxProviderSpecificRegionFreeviewSatellite = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
+      this.comboBoxProviderSpecificRegionFreesat = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
+      this.checkBoxProviderSpecificIsHighDefinitionFoxtel = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
+      this.checkBoxProviderSpecificIsHighDefinitionFreesat = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
+      this.labelProviderSpecificDishNetworkMarket = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.labelProviderSpecificRegionFreesat = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.comboBoxProviderSpecificRegionFoxtel = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
+      this.comboBoxProviderSpecificDishNetworkMarket = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
+      this.groupBoxLogicalChannelNumbers = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTimingLimitNetworkInformation)).BeginInit();
       this.groupBoxOther.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTimingMinimum)).BeginInit();
@@ -87,8 +107,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTimingLimitCableCard)).BeginInit();
       this.tabControl.SuspendLayout();
       this.tabPageGeneral.SuspendLayout();
-      this.groupBoxProviders.SuspendLayout();
+      this.tabPageProviderSpecific.SuspendLayout();
       this.tabPageAutomaticChannelGroups.SuspendLayout();
+      this.groupBoxProviderSpecificRegionSubscription.SuspendLayout();
+      this.groupBoxLogicalChannelNumbers.SuspendLayout();
       this.SuspendLayout();
       // 
       // numericUpDownTimingLimitNetworkInformation
@@ -140,40 +162,30 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // groupBoxOther
       // 
       this.groupBoxOther.Controls.Add(this.checkBoxSkipEncryptedChannels);
-      this.groupBoxOther.Controls.Add(this.checkBoxPreferHighDefinitionChannelNumbers);
       this.groupBoxOther.Controls.Add(this.buttonUpdateTuningDetails);
       this.groupBoxOther.Controls.Add(this.checkBoxChannelMovementDetection);
-      this.groupBoxOther.Location = new System.Drawing.Point(6, 265);
+      this.groupBoxOther.Location = new System.Drawing.Point(239, 6);
       this.groupBoxOther.Name = "groupBoxOther";
-      this.groupBoxOther.Size = new System.Drawing.Size(227, 120);
-      this.groupBoxOther.TabIndex = 2;
+      this.groupBoxOther.Size = new System.Drawing.Size(227, 98);
+      this.groupBoxOther.TabIndex = 1;
       this.groupBoxOther.TabStop = false;
       this.groupBoxOther.Text = "Other";
       // 
       // checkBoxSkipEncryptedChannels
       // 
       this.checkBoxSkipEncryptedChannels.AutoSize = true;
-      this.checkBoxSkipEncryptedChannels.Location = new System.Drawing.Point(9, 65);
+      this.checkBoxSkipEncryptedChannels.Location = new System.Drawing.Point(9, 42);
       this.checkBoxSkipEncryptedChannels.Name = "checkBoxSkipEncryptedChannels";
       this.checkBoxSkipEncryptedChannels.Size = new System.Drawing.Size(174, 17);
-      this.checkBoxSkipEncryptedChannels.TabIndex = 2;
+      this.checkBoxSkipEncryptedChannels.TabIndex = 1;
       this.checkBoxSkipEncryptedChannels.Text = "Don\'t store encrypted channels.";
-      // 
-      // checkBoxPreferHighDefinitionChannelNumbers
-      // 
-      this.checkBoxPreferHighDefinitionChannelNumbers.AutoSize = true;
-      this.checkBoxPreferHighDefinitionChannelNumbers.Location = new System.Drawing.Point(9, 42);
-      this.checkBoxPreferHighDefinitionChannelNumbers.Name = "checkBoxPreferHighDefinitionChannelNumbers";
-      this.checkBoxPreferHighDefinitionChannelNumbers.Size = new System.Drawing.Size(207, 17);
-      this.checkBoxPreferHighDefinitionChannelNumbers.TabIndex = 1;
-      this.checkBoxPreferHighDefinitionChannelNumbers.Text = "Prefer high definition channel numbers.";
       // 
       // buttonUpdateTuningDetails
       // 
-      this.buttonUpdateTuningDetails.Location = new System.Drawing.Point(9, 88);
+      this.buttonUpdateTuningDetails.Location = new System.Drawing.Point(9, 65);
       this.buttonUpdateTuningDetails.Name = "buttonUpdateTuningDetails";
       this.buttonUpdateTuningDetails.Size = new System.Drawing.Size(130, 23);
-      this.buttonUpdateTuningDetails.TabIndex = 3;
+      this.buttonUpdateTuningDetails.TabIndex = 2;
       this.buttonUpdateTuningDetails.Text = "&Update Tuning Details";
       this.buttonUpdateTuningDetails.Click += new System.EventHandler(this.buttonUpdateTuningDetails_Click);
       // 
@@ -185,15 +197,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.checkBoxChannelMovementDetection.Size = new System.Drawing.Size(200, 17);
       this.checkBoxChannelMovementDetection.TabIndex = 0;
       this.checkBoxChannelMovementDetection.Text = "Enable channel movement detection.";
-      // 
-      // checkBoxProvidersPreferProvider2ChannelDetails
-      // 
-      this.checkBoxProvidersPreferProvider2ChannelDetails.AutoSize = true;
-      this.checkBoxProvidersPreferProvider2ChannelDetails.Location = new System.Drawing.Point(9, 73);
-      this.checkBoxProvidersPreferProvider2ChannelDetails.Name = "checkBoxProvidersPreferProvider2ChannelDetails";
-      this.checkBoxProvidersPreferProvider2ChannelDetails.Size = new System.Drawing.Size(179, 17);
-      this.checkBoxProvidersPreferProvider2ChannelDetails.TabIndex = 6;
-      this.checkBoxProvidersPreferProvider2ChannelDetails.Text = "Prefer provider 2 channel details.";
       // 
       // numericUpDownTimingMinimum
       // 
@@ -297,10 +300,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.groupBoxTiming.Controls.Add(this.labelTimingLimitNetworkInformation);
       this.groupBoxTiming.Controls.Add(this.labelTimingLimitNetworkInformationUnit);
       this.groupBoxTiming.Controls.Add(this.numericUpDownTimingLimitNetworkInformation);
-      this.groupBoxTiming.Location = new System.Drawing.Point(6, 112);
+      this.groupBoxTiming.Location = new System.Drawing.Point(6, 6);
       this.groupBoxTiming.Name = "groupBoxTiming";
       this.groupBoxTiming.Size = new System.Drawing.Size(227, 147);
-      this.groupBoxTiming.TabIndex = 1;
+      this.groupBoxTiming.TabIndex = 0;
       this.groupBoxTiming.TabStop = false;
       this.groupBoxTiming.Text = "Timing";
       // 
@@ -362,6 +365,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // tabControl
       // 
       this.tabControl.Controls.Add(this.tabPageGeneral);
+      this.tabControl.Controls.Add(this.tabPageProviderSpecific);
       this.tabControl.Controls.Add(this.tabPageAutomaticChannelGroups);
       this.tabControl.Location = new System.Drawing.Point(0, 0);
       this.tabControl.Name = "tabControl";
@@ -371,7 +375,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       // tabPageGeneral
       // 
-      this.tabPageGeneral.Controls.Add(this.groupBoxProviders);
       this.tabPageGeneral.Controls.Add(this.groupBoxTiming);
       this.tabPageGeneral.Controls.Add(this.groupBoxOther);
       this.tabPageGeneral.Location = new System.Drawing.Point(4, 22);
@@ -381,77 +384,76 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.tabPageGeneral.TabIndex = 0;
       this.tabPageGeneral.Text = "General";
       // 
-      // groupBoxProviders
+      // tabPageProviderSpecific
       // 
-      this.groupBoxProviders.Controls.Add(this.checkBoxProvidersPreferProvider2ChannelDetails);
-      this.groupBoxProviders.Controls.Add(this.checkBoxProvidersProvider2IsHighDefinition);
-      this.groupBoxProviders.Controls.Add(this.checkBoxProvidersProvider1IsHighDefinition);
-      this.groupBoxProviders.Controls.Add(this.labelProvidersProvider1Region);
-      this.groupBoxProviders.Controls.Add(this.labelProvidersProvider2Region);
-      this.groupBoxProviders.Controls.Add(this.comboBoxProvidersProvider2Region);
-      this.groupBoxProviders.Controls.Add(this.comboBoxProvidersProvider1Region);
-      this.groupBoxProviders.Location = new System.Drawing.Point(6, 6);
-      this.groupBoxProviders.Name = "groupBoxProviders";
-      this.groupBoxProviders.Size = new System.Drawing.Size(460, 100);
-      this.groupBoxProviders.TabIndex = 0;
-      this.groupBoxProviders.TabStop = false;
-      this.groupBoxProviders.Text = "Providers";
+      this.tabPageProviderSpecific.Controls.Add(this.groupBoxLogicalChannelNumbers);
+      this.tabPageProviderSpecific.Controls.Add(this.groupBoxProviderSpecificRegionSubscription);
+      this.tabPageProviderSpecific.Location = new System.Drawing.Point(4, 22);
+      this.tabPageProviderSpecific.Name = "tabPageProviderSpecific";
+      this.tabPageProviderSpecific.Padding = new System.Windows.Forms.Padding(3);
+      this.tabPageProviderSpecific.Size = new System.Drawing.Size(472, 394);
+      this.tabPageProviderSpecific.TabIndex = 2;
+      this.tabPageProviderSpecific.Text = "Provider-Specific";
+      this.tabPageProviderSpecific.UseVisualStyleBackColor = true;
       // 
-      // checkBoxProvidersProvider2IsHighDefinition
+      // buttonLogicalChannelNumberSourcePriorityDown
       // 
-      this.checkBoxProvidersProvider2IsHighDefinition.AutoSize = true;
-      this.checkBoxProvidersProvider2IsHighDefinition.Location = new System.Drawing.Point(414, 47);
-      this.checkBoxProvidersProvider2IsHighDefinition.Name = "checkBoxProvidersProvider2IsHighDefinition";
-      this.checkBoxProvidersProvider2IsHighDefinition.Size = new System.Drawing.Size(40, 17);
-      this.checkBoxProvidersProvider2IsHighDefinition.TabIndex = 5;
-      this.checkBoxProvidersProvider2IsHighDefinition.Text = "HD";
+      this.buttonLogicalChannelNumberSourcePriorityDown.Anchor = System.Windows.Forms.AnchorStyles.Right;
+      this.buttonLogicalChannelNumberSourcePriorityDown.Image = global::Mediaportal.TV.Server.SetupTV.Properties.Resources.icon_down;
+      this.buttonLogicalChannelNumberSourcePriorityDown.Location = new System.Drawing.Point(414, 93);
+      this.buttonLogicalChannelNumberSourcePriorityDown.Name = "buttonLogicalChannelNumberSourcePriorityDown";
+      this.buttonLogicalChannelNumberSourcePriorityDown.Size = new System.Drawing.Size(25, 23);
+      this.buttonLogicalChannelNumberSourcePriorityDown.TabIndex = 2;
+      this.buttonLogicalChannelNumberSourcePriorityDown.Click += new System.EventHandler(this.buttonLogicalChannelNumberSourcePriorityDown_Click);
       // 
-      // checkBoxProvidersProvider1IsHighDefinition
+      // buttonLogicalChannelNumberSourcePriorityUp
       // 
-      this.checkBoxProvidersProvider1IsHighDefinition.AutoSize = true;
-      this.checkBoxProvidersProvider1IsHighDefinition.Location = new System.Drawing.Point(414, 22);
-      this.checkBoxProvidersProvider1IsHighDefinition.Name = "checkBoxProvidersProvider1IsHighDefinition";
-      this.checkBoxProvidersProvider1IsHighDefinition.Size = new System.Drawing.Size(40, 17);
-      this.checkBoxProvidersProvider1IsHighDefinition.TabIndex = 2;
-      this.checkBoxProvidersProvider1IsHighDefinition.Text = "HD";
+      this.buttonLogicalChannelNumberSourcePriorityUp.Anchor = System.Windows.Forms.AnchorStyles.Right;
+      this.buttonLogicalChannelNumberSourcePriorityUp.Image = global::Mediaportal.TV.Server.SetupTV.Properties.Resources.icon_up;
+      this.buttonLogicalChannelNumberSourcePriorityUp.Location = new System.Drawing.Point(414, 62);
+      this.buttonLogicalChannelNumberSourcePriorityUp.Name = "buttonLogicalChannelNumberSourcePriorityUp";
+      this.buttonLogicalChannelNumberSourcePriorityUp.Size = new System.Drawing.Size(25, 23);
+      this.buttonLogicalChannelNumberSourcePriorityUp.TabIndex = 1;
+      this.buttonLogicalChannelNumberSourcePriorityUp.Click += new System.EventHandler(this.buttonLogicalChannelNumberSourcePriorityUp_Click);
       // 
-      // labelProvidersProvider1Region
+      // listViewLogicalChannelNumberSources
       // 
-      this.labelProvidersProvider1Region.AutoSize = true;
-      this.labelProvidersProvider1Region.Location = new System.Drawing.Point(6, 22);
-      this.labelProvidersProvider1Region.Name = "labelProvidersProvider1Region";
-      this.labelProvidersProvider1Region.Size = new System.Drawing.Size(90, 13);
-      this.labelProvidersProvider1Region.TabIndex = 0;
-      this.labelProvidersProvider1Region.Text = "Provider 1 region:";
+      this.listViewLogicalChannelNumberSources.AllowDrop = true;
+      this.listViewLogicalChannelNumberSources.AllowRowReorder = true;
+      this.listViewLogicalChannelNumberSources.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+      this.listViewLogicalChannelNumberSources.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeaderLogicalChannelNumberSource});
+      this.listViewLogicalChannelNumberSources.FullRowSelect = true;
+      this.listViewLogicalChannelNumberSources.Location = new System.Drawing.Point(9, 19);
+      this.listViewLogicalChannelNumberSources.Name = "listViewLogicalChannelNumberSources";
+      this.listViewLogicalChannelNumberSources.Size = new System.Drawing.Size(399, 121);
+      this.listViewLogicalChannelNumberSources.TabIndex = 0;
+      this.listViewLogicalChannelNumberSources.UseCompatibleStateImageBehavior = false;
+      this.listViewLogicalChannelNumberSources.View = System.Windows.Forms.View.Details;
       // 
-      // labelProvidersProvider2Region
+      // columnHeaderLogicalChannelNumberSource
       // 
-      this.labelProvidersProvider2Region.AutoSize = true;
-      this.labelProvidersProvider2Region.Location = new System.Drawing.Point(6, 49);
-      this.labelProvidersProvider2Region.Name = "labelProvidersProvider2Region";
-      this.labelProvidersProvider2Region.Size = new System.Drawing.Size(90, 13);
-      this.labelProvidersProvider2Region.TabIndex = 3;
-      this.labelProvidersProvider2Region.Text = "Provider 2 region:";
+      this.columnHeaderLogicalChannelNumberSource.Text = "Sources";
+      this.columnHeaderLogicalChannelNumberSource.Width = 370;
       // 
-      // comboBoxProvidersProvider2Region
+      // checkBoxPreferHighDefinitionChannelNumbers
       // 
-      this.comboBoxProvidersProvider2Region.DropDownWidth = 285;
-      this.comboBoxProvidersProvider2Region.FormattingEnabled = true;
-      this.comboBoxProvidersProvider2Region.Location = new System.Drawing.Point(102, 46);
-      this.comboBoxProvidersProvider2Region.Name = "comboBoxProvidersProvider2Region";
-      this.comboBoxProvidersProvider2Region.Size = new System.Drawing.Size(306, 21);
-      this.comboBoxProvidersProvider2Region.TabIndex = 4;
-      // 
-      // comboBoxProvidersProvider1Region
-      // 
-      this.comboBoxProvidersProvider1Region.FormattingEnabled = true;
-      this.comboBoxProvidersProvider1Region.Location = new System.Drawing.Point(102, 19);
-      this.comboBoxProvidersProvider1Region.Name = "comboBoxProvidersProvider1Region";
-      this.comboBoxProvidersProvider1Region.Size = new System.Drawing.Size(306, 21);
-      this.comboBoxProvidersProvider1Region.TabIndex = 1;
+      this.checkBoxPreferHighDefinitionChannelNumbers.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.checkBoxPreferHighDefinitionChannelNumbers.AutoSize = true;
+      this.checkBoxPreferHighDefinitionChannelNumbers.Location = new System.Drawing.Point(9, 146);
+      this.checkBoxPreferHighDefinitionChannelNumbers.Name = "checkBoxPreferHighDefinitionChannelNumbers";
+      this.checkBoxPreferHighDefinitionChannelNumbers.Size = new System.Drawing.Size(207, 17);
+      this.checkBoxPreferHighDefinitionChannelNumbers.TabIndex = 3;
+      this.checkBoxPreferHighDefinitionChannelNumbers.Text = "Prefer high definition channel numbers.";
       // 
       // tabPageAutomaticChannelGroups
       // 
+      this.tabPageAutomaticChannelGroups.Controls.Add(this.checkBoxAutomaticChannelGroupsSkyUkRegion);
+      this.tabPageAutomaticChannelGroups.Controls.Add(this.checkBoxAutomaticChannelGroupsSkyNzRegion);
+      this.tabPageAutomaticChannelGroups.Controls.Add(this.checkBoxAutomaticChannelGroupsFreeviewSatelliteRegion);
+      this.tabPageAutomaticChannelGroups.Controls.Add(this.checkBoxAutomaticChannelGroupsFoxtelRegion);
       this.tabPageAutomaticChannelGroups.Controls.Add(this.checkBoxAutomaticChannelGroupsCyfrowyPolsatChannelCategories);
       this.tabPageAutomaticChannelGroups.Controls.Add(this.checkBoxAutomaticChannelGroupsOpenTvChannelCategories);
       this.tabPageAutomaticChannelGroups.Controls.Add(this.checkBoxAutomaticChannelGroupsMediaHighwayChannelCategories);
@@ -462,8 +464,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.tabPageAutomaticChannelGroups.Controls.Add(this.checkBoxAutomaticChannelGroupsNorDigChannelLists);
       this.tabPageAutomaticChannelGroups.Controls.Add(this.checkBoxAutomaticChannelGroupsVirginMediaChannelCategories);
       this.tabPageAutomaticChannelGroups.Controls.Add(this.checkBoxAutomaticChannelGroupsFreesatChannelCategories);
-      this.tabPageAutomaticChannelGroups.Controls.Add(this.checkBoxAutomaticChannelGroupsProvider1Region);
-      this.tabPageAutomaticChannelGroups.Controls.Add(this.checkBoxAutomaticChannelGroupsProvider2Region);
+      this.tabPageAutomaticChannelGroups.Controls.Add(this.checkBoxAutomaticChannelGroupsFreesatRegion);
+      this.tabPageAutomaticChannelGroups.Controls.Add(this.checkBoxAutomaticChannelGroupsDishNetworkMarket);
       this.tabPageAutomaticChannelGroups.Controls.Add(this.checkBoxAutomaticChannelGroupsDvbTargetRegions);
       this.tabPageAutomaticChannelGroups.Controls.Add(this.checkBoxAutomaticChannelGroupsDvbBouquets);
       this.tabPageAutomaticChannelGroups.Controls.Add(this.checkBoxAutomaticChannelGroupsDvbNetworks);
@@ -478,13 +480,58 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.tabPageAutomaticChannelGroups.TabIndex = 1;
       this.tabPageAutomaticChannelGroups.Text = "Automatic Channel Groups";
       // 
+      // checkBoxAutomaticChannelGroupsSkyUkRegion
+      // 
+      this.checkBoxAutomaticChannelGroupsSkyUkRegion.AutoSize = true;
+      this.checkBoxAutomaticChannelGroupsSkyUkRegion.Location = new System.Drawing.Point(246, 283);
+      this.checkBoxAutomaticChannelGroupsSkyUkRegion.Name = "checkBoxAutomaticChannelGroupsSkyUkRegion";
+      this.checkBoxAutomaticChannelGroupsSkyUkRegion.Size = new System.Drawing.Size(153, 17);
+      this.checkBoxAutomaticChannelGroupsSkyUkRegion.TabIndex = 22;
+      this.checkBoxAutomaticChannelGroupsSkyUkRegion.Text = "the selected Sky UK region";
+      // 
+      // checkBoxAutomaticChannelGroupsSkyNzRegion
+      // 
+      this.checkBoxAutomaticChannelGroupsSkyNzRegion.AutoSize = true;
+      this.checkBoxAutomaticChannelGroupsSkyNzRegion.Location = new System.Drawing.Point(246, 260);
+      this.checkBoxAutomaticChannelGroupsSkyNzRegion.Name = "checkBoxAutomaticChannelGroupsSkyNzRegion";
+      this.checkBoxAutomaticChannelGroupsSkyNzRegion.Size = new System.Drawing.Size(153, 17);
+      this.checkBoxAutomaticChannelGroupsSkyNzRegion.TabIndex = 21;
+      this.checkBoxAutomaticChannelGroupsSkyNzRegion.Text = "the selected Sky NZ region";
+      // 
+      // checkBoxAutomaticChannelGroupsFreeviewSatelliteRegion
+      // 
+      this.checkBoxAutomaticChannelGroupsFreeviewSatelliteRegion.AutoSize = true;
+      this.checkBoxAutomaticChannelGroupsFreeviewSatelliteRegion.Location = new System.Drawing.Point(246, 237);
+      this.checkBoxAutomaticChannelGroupsFreeviewSatelliteRegion.Name = "checkBoxAutomaticChannelGroupsFreeviewSatelliteRegion";
+      this.checkBoxAutomaticChannelGroupsFreeviewSatelliteRegion.Size = new System.Drawing.Size(200, 17);
+      this.checkBoxAutomaticChannelGroupsFreeviewSatelliteRegion.TabIndex = 20;
+      this.checkBoxAutomaticChannelGroupsFreeviewSatelliteRegion.Text = "the selected Freeview Satellite region";
+      // 
+      // checkBoxAutomaticChannelGroupsFoxtelRegion
+      // 
+      this.checkBoxAutomaticChannelGroupsFoxtelRegion.AutoSize = true;
+      this.checkBoxAutomaticChannelGroupsFoxtelRegion.Location = new System.Drawing.Point(9, 260);
+      this.checkBoxAutomaticChannelGroupsFoxtelRegion.Name = "checkBoxAutomaticChannelGroupsFoxtelRegion";
+      this.checkBoxAutomaticChannelGroupsFoxtelRegion.Size = new System.Drawing.Size(145, 17);
+      this.checkBoxAutomaticChannelGroupsFoxtelRegion.TabIndex = 18;
+      this.checkBoxAutomaticChannelGroupsFoxtelRegion.Text = "the selected Foxtel region";
+      // 
+      // checkBoxAutomaticChannelGroupsCyfrowyPolsatChannelCategories
+      // 
+      this.checkBoxAutomaticChannelGroupsCyfrowyPolsatChannelCategories.AutoSize = true;
+      this.checkBoxAutomaticChannelGroupsCyfrowyPolsatChannelCategories.Location = new System.Drawing.Point(9, 172);
+      this.checkBoxAutomaticChannelGroupsCyfrowyPolsatChannelCategories.Name = "checkBoxAutomaticChannelGroupsCyfrowyPolsatChannelCategories";
+      this.checkBoxAutomaticChannelGroupsCyfrowyPolsatChannelCategories.Size = new System.Drawing.Size(205, 17);
+      this.checkBoxAutomaticChannelGroupsCyfrowyPolsatChannelCategories.TabIndex = 11;
+      this.checkBoxAutomaticChannelGroupsCyfrowyPolsatChannelCategories.Text = "each Cyfrowy Polsat channel category";
+      // 
       // checkBoxAutomaticChannelGroupsOpenTvChannelCategories
       // 
       this.checkBoxAutomaticChannelGroupsOpenTvChannelCategories.AutoSize = true;
       this.checkBoxAutomaticChannelGroupsOpenTvChannelCategories.Location = new System.Drawing.Point(246, 172);
       this.checkBoxAutomaticChannelGroupsOpenTvChannelCategories.Name = "checkBoxAutomaticChannelGroupsOpenTvChannelCategories";
       this.checkBoxAutomaticChannelGroupsOpenTvChannelCategories.Size = new System.Drawing.Size(176, 17);
-      this.checkBoxAutomaticChannelGroupsOpenTvChannelCategories.TabIndex = 16;
+      this.checkBoxAutomaticChannelGroupsOpenTvChannelCategories.TabIndex = 15;
       this.checkBoxAutomaticChannelGroupsOpenTvChannelCategories.Text = "each OpenTV channel category";
       // 
       // checkBoxAutomaticChannelGroupsMediaHighwayChannelCategories
@@ -493,7 +540,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.checkBoxAutomaticChannelGroupsMediaHighwayChannelCategories.Location = new System.Drawing.Point(246, 126);
       this.checkBoxAutomaticChannelGroupsMediaHighwayChannelCategories.Name = "checkBoxAutomaticChannelGroupsMediaHighwayChannelCategories";
       this.checkBoxAutomaticChannelGroupsMediaHighwayChannelCategories.Size = new System.Drawing.Size(206, 17);
-      this.checkBoxAutomaticChannelGroupsMediaHighwayChannelCategories.TabIndex = 14;
+      this.checkBoxAutomaticChannelGroupsMediaHighwayChannelCategories.TabIndex = 13;
       this.checkBoxAutomaticChannelGroupsMediaHighwayChannelCategories.Text = "each MediaHighway channel category";
       // 
       // textBoxAutomaticChannelGroupsChannelProviders
@@ -538,7 +585,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.checkBoxAutomaticChannelGroupsNorDigChannelLists.Location = new System.Drawing.Point(246, 149);
       this.checkBoxAutomaticChannelGroupsNorDigChannelLists.Name = "checkBoxAutomaticChannelGroupsNorDigChannelLists";
       this.checkBoxAutomaticChannelGroupsNorDigChannelLists.Size = new System.Drawing.Size(140, 17);
-      this.checkBoxAutomaticChannelGroupsNorDigChannelLists.TabIndex = 15;
+      this.checkBoxAutomaticChannelGroupsNorDigChannelLists.TabIndex = 14;
       this.checkBoxAutomaticChannelGroupsNorDigChannelLists.Text = "each NorDig channel list";
       // 
       // checkBoxAutomaticChannelGroupsVirginMediaChannelCategories
@@ -547,7 +594,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.checkBoxAutomaticChannelGroupsVirginMediaChannelCategories.Location = new System.Drawing.Point(246, 195);
       this.checkBoxAutomaticChannelGroupsVirginMediaChannelCategories.Name = "checkBoxAutomaticChannelGroupsVirginMediaChannelCategories";
       this.checkBoxAutomaticChannelGroupsVirginMediaChannelCategories.Size = new System.Drawing.Size(194, 17);
-      this.checkBoxAutomaticChannelGroupsVirginMediaChannelCategories.TabIndex = 17;
+      this.checkBoxAutomaticChannelGroupsVirginMediaChannelCategories.TabIndex = 16;
       this.checkBoxAutomaticChannelGroupsVirginMediaChannelCategories.Text = "each Virgin Media channel category";
       // 
       // checkBoxAutomaticChannelGroupsFreesatChannelCategories
@@ -559,23 +606,23 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.checkBoxAutomaticChannelGroupsFreesatChannelCategories.TabIndex = 12;
       this.checkBoxAutomaticChannelGroupsFreesatChannelCategories.Text = "each Freesat channel category";
       // 
-      // checkBoxAutomaticChannelGroupsProvider1Region
+      // checkBoxAutomaticChannelGroupsFreesatRegion
       // 
-      this.checkBoxAutomaticChannelGroupsProvider1Region.AutoSize = true;
-      this.checkBoxAutomaticChannelGroupsProvider1Region.Location = new System.Drawing.Point(9, 218);
-      this.checkBoxAutomaticChannelGroupsProvider1Region.Name = "checkBoxAutomaticChannelGroupsProvider1Region";
-      this.checkBoxAutomaticChannelGroupsProvider1Region.Size = new System.Drawing.Size(164, 17);
-      this.checkBoxAutomaticChannelGroupsProvider1Region.TabIndex = 13;
-      this.checkBoxAutomaticChannelGroupsProvider1Region.Text = "the selected provider 1 region";
+      this.checkBoxAutomaticChannelGroupsFreesatRegion.AutoSize = true;
+      this.checkBoxAutomaticChannelGroupsFreesatRegion.Location = new System.Drawing.Point(9, 283);
+      this.checkBoxAutomaticChannelGroupsFreesatRegion.Name = "checkBoxAutomaticChannelGroupsFreesatRegion";
+      this.checkBoxAutomaticChannelGroupsFreesatRegion.Size = new System.Drawing.Size(152, 17);
+      this.checkBoxAutomaticChannelGroupsFreesatRegion.TabIndex = 19;
+      this.checkBoxAutomaticChannelGroupsFreesatRegion.Text = "the selected Freesat region";
       // 
-      // checkBoxAutomaticChannelGroupsProvider2Region
+      // checkBoxAutomaticChannelGroupsDishNetworkMarket
       // 
-      this.checkBoxAutomaticChannelGroupsProvider2Region.AutoSize = true;
-      this.checkBoxAutomaticChannelGroupsProvider2Region.Location = new System.Drawing.Point(246, 218);
-      this.checkBoxAutomaticChannelGroupsProvider2Region.Name = "checkBoxAutomaticChannelGroupsProvider2Region";
-      this.checkBoxAutomaticChannelGroupsProvider2Region.Size = new System.Drawing.Size(164, 17);
-      this.checkBoxAutomaticChannelGroupsProvider2Region.TabIndex = 18;
-      this.checkBoxAutomaticChannelGroupsProvider2Region.Text = "the selected provider 2 region";
+      this.checkBoxAutomaticChannelGroupsDishNetworkMarket.AutoSize = true;
+      this.checkBoxAutomaticChannelGroupsDishNetworkMarket.Location = new System.Drawing.Point(9, 237);
+      this.checkBoxAutomaticChannelGroupsDishNetworkMarket.Name = "checkBoxAutomaticChannelGroupsDishNetworkMarket";
+      this.checkBoxAutomaticChannelGroupsDishNetworkMarket.Size = new System.Drawing.Size(184, 17);
+      this.checkBoxAutomaticChannelGroupsDishNetworkMarket.TabIndex = 17;
+      this.checkBoxAutomaticChannelGroupsDishNetworkMarket.Text = "the selected Dish Network market";
       // 
       // checkBoxAutomaticChannelGroupsDvbTargetRegions
       // 
@@ -644,14 +691,217 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.checkBoxAutomaticChannelGroupsSatellites.TabIndex = 10;
       this.checkBoxAutomaticChannelGroupsSatellites.Text = "each satellite";
       // 
-      // checkBoxAutomaticChannelGroupsCyfrowyPolsatChannelCategories
+      // groupBoxProviderSpecificRegionSubscription
       // 
-      this.checkBoxAutomaticChannelGroupsCyfrowyPolsatChannelCategories.AutoSize = true;
-      this.checkBoxAutomaticChannelGroupsCyfrowyPolsatChannelCategories.Location = new System.Drawing.Point(9, 172);
-      this.checkBoxAutomaticChannelGroupsCyfrowyPolsatChannelCategories.Name = "checkBoxAutomaticChannelGroupsCyfrowyPolsatChannelCategories";
-      this.checkBoxAutomaticChannelGroupsCyfrowyPolsatChannelCategories.Size = new System.Drawing.Size(205, 17);
-      this.checkBoxAutomaticChannelGroupsCyfrowyPolsatChannelCategories.TabIndex = 11;
-      this.checkBoxAutomaticChannelGroupsCyfrowyPolsatChannelCategories.Text = "each Cyfrowy Polsat channel category";
+      this.groupBoxProviderSpecificRegionSubscription.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxProviderSpecificRegionSubscription.Controls.Add(this.comboBoxProviderSpecificRegionSkyUk);
+      this.groupBoxProviderSpecificRegionSubscription.Controls.Add(this.checkBoxProviderSpecificPreferFreesatChannelDetails);
+      this.groupBoxProviderSpecificRegionSubscription.Controls.Add(this.checkBoxProviderSpecificIsHighDefinitionSkyUk);
+      this.groupBoxProviderSpecificRegionSubscription.Controls.Add(this.checkBoxProviderSpecificIsHighDefinitionSkyNz);
+      this.groupBoxProviderSpecificRegionSubscription.Controls.Add(this.labelProviderSpecificRegionSkyUk);
+      this.groupBoxProviderSpecificRegionSubscription.Controls.Add(this.labelProviderSpecificRegionSkyNz);
+      this.groupBoxProviderSpecificRegionSubscription.Controls.Add(this.labelProviderSpecificRegionFoxtel);
+      this.groupBoxProviderSpecificRegionSubscription.Controls.Add(this.labelProviderSpecificRegionFreeviewSatellite);
+      this.groupBoxProviderSpecificRegionSubscription.Controls.Add(this.comboBoxProviderSpecificRegionSkyNz);
+      this.groupBoxProviderSpecificRegionSubscription.Controls.Add(this.comboBoxProviderSpecificRegionFreeviewSatellite);
+      this.groupBoxProviderSpecificRegionSubscription.Controls.Add(this.comboBoxProviderSpecificRegionFreesat);
+      this.groupBoxProviderSpecificRegionSubscription.Controls.Add(this.checkBoxProviderSpecificIsHighDefinitionFoxtel);
+      this.groupBoxProviderSpecificRegionSubscription.Controls.Add(this.checkBoxProviderSpecificIsHighDefinitionFreesat);
+      this.groupBoxProviderSpecificRegionSubscription.Controls.Add(this.labelProviderSpecificDishNetworkMarket);
+      this.groupBoxProviderSpecificRegionSubscription.Controls.Add(this.labelProviderSpecificRegionFreesat);
+      this.groupBoxProviderSpecificRegionSubscription.Controls.Add(this.comboBoxProviderSpecificRegionFoxtel);
+      this.groupBoxProviderSpecificRegionSubscription.Controls.Add(this.comboBoxProviderSpecificDishNetworkMarket);
+      this.groupBoxProviderSpecificRegionSubscription.Location = new System.Drawing.Point(6, 6);
+      this.groupBoxProviderSpecificRegionSubscription.Name = "groupBoxProviderSpecificRegionSubscription";
+      this.groupBoxProviderSpecificRegionSubscription.Size = new System.Drawing.Size(460, 207);
+      this.groupBoxProviderSpecificRegionSubscription.TabIndex = 0;
+      this.groupBoxProviderSpecificRegionSubscription.TabStop = false;
+      this.groupBoxProviderSpecificRegionSubscription.Text = "Region / Subscription";
+      // 
+      // comboBoxProviderSpecificRegionSkyUk
+      // 
+      this.comboBoxProviderSpecificRegionSkyUk.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+      this.comboBoxProviderSpecificRegionSkyUk.DropDownWidth = 285;
+      this.comboBoxProviderSpecificRegionSkyUk.FormattingEnabled = true;
+      this.comboBoxProviderSpecificRegionSkyUk.Location = new System.Drawing.Point(145, 154);
+      this.comboBoxProviderSpecificRegionSkyUk.Name = "comboBoxProviderSpecificRegionSkyUk";
+      this.comboBoxProviderSpecificRegionSkyUk.Size = new System.Drawing.Size(263, 21);
+      this.comboBoxProviderSpecificRegionSkyUk.TabIndex = 14;
+      // 
+      // checkBoxProviderSpecificPreferFreesatChannelDetails
+      // 
+      this.checkBoxProviderSpecificPreferFreesatChannelDetails.AutoSize = true;
+      this.checkBoxProviderSpecificPreferFreesatChannelDetails.Location = new System.Drawing.Point(9, 181);
+      this.checkBoxProviderSpecificPreferFreesatChannelDetails.Name = "checkBoxProviderSpecificPreferFreesatChannelDetails";
+      this.checkBoxProviderSpecificPreferFreesatChannelDetails.Size = new System.Drawing.Size(310, 17);
+      this.checkBoxProviderSpecificPreferFreesatChannelDetails.TabIndex = 16;
+      this.checkBoxProviderSpecificPreferFreesatChannelDetails.Text = "Prefer Freesat channel details over Sky channel details. [UK]";
+      // 
+      // checkBoxProviderSpecificIsHighDefinitionSkyUk
+      // 
+      this.checkBoxProviderSpecificIsHighDefinitionSkyUk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.checkBoxProviderSpecificIsHighDefinitionSkyUk.AutoSize = true;
+      this.checkBoxProviderSpecificIsHighDefinitionSkyUk.Location = new System.Drawing.Point(414, 155);
+      this.checkBoxProviderSpecificIsHighDefinitionSkyUk.Name = "checkBoxProviderSpecificIsHighDefinitionSkyUk";
+      this.checkBoxProviderSpecificIsHighDefinitionSkyUk.Size = new System.Drawing.Size(40, 17);
+      this.checkBoxProviderSpecificIsHighDefinitionSkyUk.TabIndex = 15;
+      this.checkBoxProviderSpecificIsHighDefinitionSkyUk.Text = "HD";
+      // 
+      // checkBoxProviderSpecificIsHighDefinitionSkyNz
+      // 
+      this.checkBoxProviderSpecificIsHighDefinitionSkyNz.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.checkBoxProviderSpecificIsHighDefinitionSkyNz.AutoSize = true;
+      this.checkBoxProviderSpecificIsHighDefinitionSkyNz.Location = new System.Drawing.Point(414, 128);
+      this.checkBoxProviderSpecificIsHighDefinitionSkyNz.Name = "checkBoxProviderSpecificIsHighDefinitionSkyNz";
+      this.checkBoxProviderSpecificIsHighDefinitionSkyNz.Size = new System.Drawing.Size(40, 17);
+      this.checkBoxProviderSpecificIsHighDefinitionSkyNz.TabIndex = 12;
+      this.checkBoxProviderSpecificIsHighDefinitionSkyNz.Text = "HD";
+      // 
+      // labelProviderSpecificRegionSkyUk
+      // 
+      this.labelProviderSpecificRegionSkyUk.AutoSize = true;
+      this.labelProviderSpecificRegionSkyUk.Location = new System.Drawing.Point(6, 157);
+      this.labelProviderSpecificRegionSkyUk.Name = "labelProviderSpecificRegionSkyUk";
+      this.labelProviderSpecificRegionSkyUk.Size = new System.Drawing.Size(78, 13);
+      this.labelProviderSpecificRegionSkyUk.TabIndex = 13;
+      this.labelProviderSpecificRegionSkyUk.Text = "Sky UK region:";
+      // 
+      // labelProviderSpecificRegionSkyNz
+      // 
+      this.labelProviderSpecificRegionSkyNz.AutoSize = true;
+      this.labelProviderSpecificRegionSkyNz.Location = new System.Drawing.Point(6, 130);
+      this.labelProviderSpecificRegionSkyNz.Name = "labelProviderSpecificRegionSkyNz";
+      this.labelProviderSpecificRegionSkyNz.Size = new System.Drawing.Size(78, 13);
+      this.labelProviderSpecificRegionSkyNz.TabIndex = 10;
+      this.labelProviderSpecificRegionSkyNz.Text = "Sky NZ region:";
+      // 
+      // labelProviderSpecificRegionFoxtel
+      // 
+      this.labelProviderSpecificRegionFoxtel.AutoSize = true;
+      this.labelProviderSpecificRegionFoxtel.Location = new System.Drawing.Point(6, 49);
+      this.labelProviderSpecificRegionFoxtel.Name = "labelProviderSpecificRegionFoxtel";
+      this.labelProviderSpecificRegionFoxtel.Size = new System.Drawing.Size(94, 13);
+      this.labelProviderSpecificRegionFoxtel.TabIndex = 2;
+      this.labelProviderSpecificRegionFoxtel.Text = "Foxtel region [AU]:";
+      // 
+      // labelProviderSpecificRegionFreeviewSatellite
+      // 
+      this.labelProviderSpecificRegionFreeviewSatellite.AutoSize = true;
+      this.labelProviderSpecificRegionFreeviewSatellite.Location = new System.Drawing.Point(6, 103);
+      this.labelProviderSpecificRegionFreeviewSatellite.Name = "labelProviderSpecificRegionFreeviewSatellite";
+      this.labelProviderSpecificRegionFreeviewSatellite.Size = new System.Drawing.Size(129, 13);
+      this.labelProviderSpecificRegionFreeviewSatellite.TabIndex = 8;
+      this.labelProviderSpecificRegionFreeviewSatellite.Text = "Freeview sat. region [NZ]:";
+      // 
+      // comboBoxProviderSpecificRegionSkyNz
+      // 
+      this.comboBoxProviderSpecificRegionSkyNz.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+      this.comboBoxProviderSpecificRegionSkyNz.DropDownWidth = 285;
+      this.comboBoxProviderSpecificRegionSkyNz.FormattingEnabled = true;
+      this.comboBoxProviderSpecificRegionSkyNz.Location = new System.Drawing.Point(145, 127);
+      this.comboBoxProviderSpecificRegionSkyNz.Name = "comboBoxProviderSpecificRegionSkyNz";
+      this.comboBoxProviderSpecificRegionSkyNz.Size = new System.Drawing.Size(263, 21);
+      this.comboBoxProviderSpecificRegionSkyNz.TabIndex = 11;
+      // 
+      // comboBoxProviderSpecificRegionFreeviewSatellite
+      // 
+      this.comboBoxProviderSpecificRegionFreeviewSatellite.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+      this.comboBoxProviderSpecificRegionFreeviewSatellite.DropDownWidth = 285;
+      this.comboBoxProviderSpecificRegionFreeviewSatellite.FormattingEnabled = true;
+      this.comboBoxProviderSpecificRegionFreeviewSatellite.Location = new System.Drawing.Point(145, 100);
+      this.comboBoxProviderSpecificRegionFreeviewSatellite.Name = "comboBoxProviderSpecificRegionFreeviewSatellite";
+      this.comboBoxProviderSpecificRegionFreeviewSatellite.Size = new System.Drawing.Size(263, 21);
+      this.comboBoxProviderSpecificRegionFreeviewSatellite.TabIndex = 9;
+      // 
+      // comboBoxProviderSpecificRegionFreesat
+      // 
+      this.comboBoxProviderSpecificRegionFreesat.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+      this.comboBoxProviderSpecificRegionFreesat.DropDownWidth = 285;
+      this.comboBoxProviderSpecificRegionFreesat.FormattingEnabled = true;
+      this.comboBoxProviderSpecificRegionFreesat.Location = new System.Drawing.Point(145, 73);
+      this.comboBoxProviderSpecificRegionFreesat.Name = "comboBoxProviderSpecificRegionFreesat";
+      this.comboBoxProviderSpecificRegionFreesat.Size = new System.Drawing.Size(263, 21);
+      this.comboBoxProviderSpecificRegionFreesat.TabIndex = 6;
+      // 
+      // checkBoxProviderSpecificIsHighDefinitionFoxtel
+      // 
+      this.checkBoxProviderSpecificIsHighDefinitionFoxtel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.checkBoxProviderSpecificIsHighDefinitionFoxtel.AutoSize = true;
+      this.checkBoxProviderSpecificIsHighDefinitionFoxtel.Location = new System.Drawing.Point(414, 47);
+      this.checkBoxProviderSpecificIsHighDefinitionFoxtel.Name = "checkBoxProviderSpecificIsHighDefinitionFoxtel";
+      this.checkBoxProviderSpecificIsHighDefinitionFoxtel.Size = new System.Drawing.Size(40, 17);
+      this.checkBoxProviderSpecificIsHighDefinitionFoxtel.TabIndex = 4;
+      this.checkBoxProviderSpecificIsHighDefinitionFoxtel.Text = "HD";
+      // 
+      // checkBoxProviderSpecificIsHighDefinitionFreesat
+      // 
+      this.checkBoxProviderSpecificIsHighDefinitionFreesat.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.checkBoxProviderSpecificIsHighDefinitionFreesat.AutoSize = true;
+      this.checkBoxProviderSpecificIsHighDefinitionFreesat.Location = new System.Drawing.Point(414, 74);
+      this.checkBoxProviderSpecificIsHighDefinitionFreesat.Name = "checkBoxProviderSpecificIsHighDefinitionFreesat";
+      this.checkBoxProviderSpecificIsHighDefinitionFreesat.Size = new System.Drawing.Size(40, 17);
+      this.checkBoxProviderSpecificIsHighDefinitionFreesat.TabIndex = 7;
+      this.checkBoxProviderSpecificIsHighDefinitionFreesat.Text = "HD";
+      // 
+      // labelProviderSpecificDishNetworkMarket
+      // 
+      this.labelProviderSpecificDishNetworkMarket.AutoSize = true;
+      this.labelProviderSpecificDishNetworkMarket.Location = new System.Drawing.Point(6, 22);
+      this.labelProviderSpecificDishNetworkMarket.Name = "labelProviderSpecificDishNetworkMarket";
+      this.labelProviderSpecificDishNetworkMarket.Size = new System.Drawing.Size(133, 13);
+      this.labelProviderSpecificDishNetworkMarket.TabIndex = 0;
+      this.labelProviderSpecificDishNetworkMarket.Text = "Dish Network market [US]:";
+      // 
+      // labelProviderSpecificRegionFreesat
+      // 
+      this.labelProviderSpecificRegionFreesat.AutoSize = true;
+      this.labelProviderSpecificRegionFreesat.Location = new System.Drawing.Point(6, 76);
+      this.labelProviderSpecificRegionFreesat.Name = "labelProviderSpecificRegionFreesat";
+      this.labelProviderSpecificRegionFreesat.Size = new System.Drawing.Size(101, 13);
+      this.labelProviderSpecificRegionFreesat.TabIndex = 5;
+      this.labelProviderSpecificRegionFreesat.Text = "Freesat region [UK]:";
+      // 
+      // comboBoxProviderSpecificRegionFoxtel
+      // 
+      this.comboBoxProviderSpecificRegionFoxtel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+      this.comboBoxProviderSpecificRegionFoxtel.DropDownWidth = 285;
+      this.comboBoxProviderSpecificRegionFoxtel.FormattingEnabled = true;
+      this.comboBoxProviderSpecificRegionFoxtel.Location = new System.Drawing.Point(145, 46);
+      this.comboBoxProviderSpecificRegionFoxtel.Name = "comboBoxProviderSpecificRegionFoxtel";
+      this.comboBoxProviderSpecificRegionFoxtel.Size = new System.Drawing.Size(263, 21);
+      this.comboBoxProviderSpecificRegionFoxtel.TabIndex = 3;
+      // 
+      // comboBoxProviderSpecificDishNetworkMarket
+      // 
+      this.comboBoxProviderSpecificDishNetworkMarket.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+      this.comboBoxProviderSpecificDishNetworkMarket.FormattingEnabled = true;
+      this.comboBoxProviderSpecificDishNetworkMarket.Location = new System.Drawing.Point(145, 19);
+      this.comboBoxProviderSpecificDishNetworkMarket.Name = "comboBoxProviderSpecificDishNetworkMarket";
+      this.comboBoxProviderSpecificDishNetworkMarket.Size = new System.Drawing.Size(263, 21);
+      this.comboBoxProviderSpecificDishNetworkMarket.TabIndex = 1;
+      // 
+      // groupBoxLogicalChannelNumbers
+      // 
+      this.groupBoxLogicalChannelNumbers.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxLogicalChannelNumbers.Controls.Add(this.listViewLogicalChannelNumberSources);
+      this.groupBoxLogicalChannelNumbers.Controls.Add(this.checkBoxPreferHighDefinitionChannelNumbers);
+      this.groupBoxLogicalChannelNumbers.Controls.Add(this.buttonLogicalChannelNumberSourcePriorityDown);
+      this.groupBoxLogicalChannelNumbers.Controls.Add(this.buttonLogicalChannelNumberSourcePriorityUp);
+      this.groupBoxLogicalChannelNumbers.Location = new System.Drawing.Point(6, 219);
+      this.groupBoxLogicalChannelNumbers.Name = "groupBoxLogicalChannelNumbers";
+      this.groupBoxLogicalChannelNumbers.Size = new System.Drawing.Size(460, 169);
+      this.groupBoxLogicalChannelNumbers.TabIndex = 1;
+      this.groupBoxLogicalChannelNumbers.TabStop = false;
+      this.groupBoxLogicalChannelNumbers.Text = "Logical Channel Numbers";
       // 
       // Scanning
       // 
@@ -671,10 +921,13 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTimingLimitCableCard)).EndInit();
       this.tabControl.ResumeLayout(false);
       this.tabPageGeneral.ResumeLayout(false);
-      this.groupBoxProviders.ResumeLayout(false);
-      this.groupBoxProviders.PerformLayout();
+      this.tabPageProviderSpecific.ResumeLayout(false);
       this.tabPageAutomaticChannelGroups.ResumeLayout(false);
       this.tabPageAutomaticChannelGroups.PerformLayout();
+      this.groupBoxProviderSpecificRegionSubscription.ResumeLayout(false);
+      this.groupBoxProviderSpecificRegionSubscription.PerformLayout();
+      this.groupBoxLogicalChannelNumbers.ResumeLayout(false);
+      this.groupBoxLogicalChannelNumbers.PerformLayout();
       this.ResumeLayout(false);
 
     }
@@ -700,17 +953,14 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private MPTabControl tabControl;
     private MPTabPage tabPageGeneral;
     private MPTabPage tabPageAutomaticChannelGroups;
-    private MPGroupBox groupBoxProviders;
-    private MPLabel labelProvidersProvider1Region;
-    private MPLabel labelProvidersProvider2Region;
     private MPTextBox textBoxAutomaticChannelGroupsDvbNetworks;
     private MPTextBox textBoxAutomaticChannelGroupsDvbBouquets;
     private MPTextBox textBoxAutomaticChannelGroupsDvbTargetRegions;
     private MPCheckBox checkBoxAutomaticChannelGroupsNorDigChannelLists;
     private MPCheckBox checkBoxAutomaticChannelGroupsVirginMediaChannelCategories;
     private MPCheckBox checkBoxAutomaticChannelGroupsFreesatChannelCategories;
-    private MPCheckBox checkBoxAutomaticChannelGroupsProvider1Region;
-    private MPCheckBox checkBoxAutomaticChannelGroupsProvider2Region;
+    private MPCheckBox checkBoxAutomaticChannelGroupsFreesatRegion;
+    private MPCheckBox checkBoxAutomaticChannelGroupsDishNetworkMarket;
     private MPCheckBox checkBoxAutomaticChannelGroupsDvbTargetRegions;
     private MPCheckBox checkBoxAutomaticChannelGroupsDvbBouquets;
     private MPCheckBox checkBoxAutomaticChannelGroupsDvbNetworks;
@@ -718,17 +968,40 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private MPCheckBox checkBoxAutomaticChannelGroupsChannelProviders;
     private MPCheckBox checkBoxAutomaticChannelGroupsBroadcastStandards;
     private MPCheckBox checkBoxAutomaticChannelGroupsSatellites;
-    private MPComboBox comboBoxProvidersProvider1Region;
-    private MPComboBox comboBoxProvidersProvider2Region;
-    private MPCheckBox checkBoxProvidersPreferProvider2ChannelDetails;
-    private MPCheckBox checkBoxProvidersProvider2IsHighDefinition;
-    private MPCheckBox checkBoxProvidersProvider1IsHighDefinition;
-    private MPCheckBox checkBoxPreferHighDefinitionChannelNumbers;
     private MPLabel labelTimingMaximum;
     private MPTextBox textBoxAutomaticChannelGroupsChannelProviders;
     private MPCheckBox checkBoxSkipEncryptedChannels;
     private MPCheckBox checkBoxAutomaticChannelGroupsMediaHighwayChannelCategories;
     private MPCheckBox checkBoxAutomaticChannelGroupsOpenTvChannelCategories;
     private MPCheckBox checkBoxAutomaticChannelGroupsCyfrowyPolsatChannelCategories;
+    private MPCheckBox checkBoxAutomaticChannelGroupsSkyUkRegion;
+    private MPCheckBox checkBoxAutomaticChannelGroupsSkyNzRegion;
+    private MPCheckBox checkBoxAutomaticChannelGroupsFreeviewSatelliteRegion;
+    private MPCheckBox checkBoxAutomaticChannelGroupsFoxtelRegion;
+    private System.Windows.Forms.TabPage tabPageProviderSpecific;
+    private MPCheckBox checkBoxPreferHighDefinitionChannelNumbers;
+    private MPListView listViewLogicalChannelNumberSources;
+    private MPColumnHeader columnHeaderLogicalChannelNumberSource;
+    private MPButton buttonLogicalChannelNumberSourcePriorityDown;
+    private MPButton buttonLogicalChannelNumberSourcePriorityUp;
+    private MPGroupBox groupBoxLogicalChannelNumbers;
+    private MPGroupBox groupBoxProviderSpecificRegionSubscription;
+    private MPComboBox comboBoxProviderSpecificRegionSkyUk;
+    private MPCheckBox checkBoxProviderSpecificPreferFreesatChannelDetails;
+    private MPCheckBox checkBoxProviderSpecificIsHighDefinitionSkyUk;
+    private MPCheckBox checkBoxProviderSpecificIsHighDefinitionSkyNz;
+    private MPLabel labelProviderSpecificRegionSkyUk;
+    private MPLabel labelProviderSpecificRegionSkyNz;
+    private MPLabel labelProviderSpecificRegionFoxtel;
+    private MPLabel labelProviderSpecificRegionFreeviewSatellite;
+    private MPComboBox comboBoxProviderSpecificRegionSkyNz;
+    private MPComboBox comboBoxProviderSpecificRegionFreeviewSatellite;
+    private MPComboBox comboBoxProviderSpecificRegionFreesat;
+    private MPCheckBox checkBoxProviderSpecificIsHighDefinitionFoxtel;
+    private MPCheckBox checkBoxProviderSpecificIsHighDefinitionFreesat;
+    private MPLabel labelProviderSpecificDishNetworkMarket;
+    private MPLabel labelProviderSpecificRegionFreesat;
+    private MPComboBox comboBoxProviderSpecificRegionFoxtel;
+    private MPComboBox comboBoxProviderSpecificDishNetworkMarket;
   }
 }
