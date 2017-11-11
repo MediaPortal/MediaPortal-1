@@ -478,6 +478,7 @@ bool CGrabberPmt::GetFreesatPids(bool& isFreesatProgram,
       continue;
     }
 
+    bool isFreesatPid = false;
     unsigned char* descriptors = pid->Descriptors;
     unsigned short offset = 0;
     while (offset + 1 < pid->DescriptorsLength)
@@ -494,14 +495,15 @@ bool CGrabberPmt::GetFreesatPids(bool& isFreesatProgram,
           descriptors[offset + 3] == 0x54
         )
         {
+          isFreesatPid = true;
           isFreesatProgram = true;
         }
         else
         {
-          isFreesatProgram = false;
+          isFreesatPid = false;
         }
       }
-      else if (isFreesatProgram && tag == 0xd1)
+      else if (isFreesatPid && tag == 0xd1)
       {
         for (unsigned char i = 0; i < length; i++)
         {
