@@ -22,29 +22,33 @@ using System.ComponentModel;
 
 namespace Mediaportal.TV.Server.Common.Types.Enum
 {
-  // Define in order of preference, from least to most preferred. It's assumed
+  // Define in order of preference, from most to least preferred. It's assumed
   // that free-to-view providers are preferred over pay providers.
   public enum LogicalChannelNumberSource
   {
-    [Description("SFR RED Canal+ [FR]")]
-    SfrRedCanalPlus,      // FR - Astra 19.2e
-    [Description("SFR RED Canalsat [FR]")]
-    SfrRedCanalsat,       // FR - Astra 19.2e
-    [Description("SFR RED Basic [FR]")]
-    SfrRedBasic,          // FR - Astra 19.2e
+    [Description("Freesat [UK]")]
+    Freesat,              // UK - Astra 28.2e
+    [Description("TNT SAT [FR]")]
+    TntSat,               // FR - Astra 19.2e
+    [Description("Canalsat TNT [FR]")]
+    CanalsatTnt,          // FR - Astra 19.2e
+    [Description("Freeview Satellite [NZ]")]
+    FreeviewSatellite,    // NZ - Optus D1 160e
 
     [Description("Sky [UK]")]
     SkyUk,                // UK - Astra 28.2e
-    [Description("Sky [NZ]")]
-    SkyNz,                // UK - Astra 28.2e
+    [Description("Canalsat France [FR]")]
+    CanalsatFrance,       // FR - Astra 19.2e
     [Description("Canalsat Suisse [CH]")]
     CanalsatSuisse,       // CH - Astra 19.2e
+    [Description("Sky [NZ]")]
+    SkyNz,                // UK - Astra 28.2e
 
-    [Description("TNT SAT [FR]")]
-    TntSat,               // FR - Astra 19.2e
-    [Description("Freeview Satellite [NZ]")]
-    FreeviewSatellite,    // NZ - Optus D1 160e
-    [Description("Freesat [UK]")]
-    Freesat               // UK - Astra 28.2e
+    [Description("SFR RED Basic [FR]")]
+    SfrRedBasic,          // FR - Astra 19.2e
+    [Description("SFR RED Canalsat [FR]")]
+    SfrRedCanalsat,       // FR - Astra 19.2e
+    [Description("SFR RED Canal+ [FR]")]
+    SfrRedCanalPlus       // FR - Astra 19.2e
   }
 }

@@ -2330,6 +2330,28 @@ bool CParserNitDvb::DecodeTransportStreamDescriptors(const unsigned char* sectio
       }
       else if (
         (
+          tag == 0x80 &&    // Canalsat TNT logical channel number descriptor
+          privateDataSpecifier == PRIVATE_DATA_SPECIFIER_GROUPE_CANAL
+        ) ||
+        tag == 0x83 ||      // NorDig logical channel number descriptor - used too widely and loosely to apply PDS/PDI filtering
+        (
+          tag == 0x88 &&    // HD simulcast logical channel number descriptor
+          (
+            privateDataSpecifier == PRIVATE_DATA_SPECIFIER_EACEM ||         // IEC/CENELEC 62 216 standard
+            privateDataSpecifier == PRIVATE_DATA_SPECIFIER_IDPNDNT_TV_COM   // Freeview UK
+          )
+        )
+      )
+      {
+        result = DecodeLogicalChannelNumberDescriptor(&sectionData[pointer],
+                                                      length,
+                                                      tag,
+                                                      privateDataSpecifier,
+                                                      visibleInGuideFlags,
+                                                      logicalChannelNumbers);
+      }
+      else if (
+        (
           tag == 0x82 &&
           (
             privateDataSpecifier == PRIVATE_DATA_SPECIFIER_TELEDENMARK ||   // Sagem logical channel number descriptor
@@ -2352,24 +2374,6 @@ bool CParserNitDvb::DecodeTransportStreamDescriptors(const unsigned char* sectio
                                                                   tag,
                                                                   visibleInGuideFlags,
                                                                   logicalChannelNumbers);
-      }
-      else if (
-        tag == 0x83 ||      // NorDig logical channel number descriptor - used too widely and loosely to apply PDS/PDI filtering
-        (
-          tag == 0x88 &&    // HD simulcast logical channel number descriptor
-          (
-            privateDataSpecifier == PRIVATE_DATA_SPECIFIER_EACEM ||         // IEC/CENELEC 62 216 standard
-            privateDataSpecifier == PRIVATE_DATA_SPECIFIER_IDPNDNT_TV_COM   // Freeview UK
-          )
-        )
-      )
-      {
-        result = DecodeLogicalChannelNumberDescriptor(&sectionData[pointer],
-                                                      length,
-                                                      tag,
-                                                      privateDataSpecifier,
-                                                      visibleInGuideFlags,
-                                                      logicalChannelNumbers);
       }
       else if (tag == 0x86 && privateDataSpecifier == PRIVATE_DATA_SPECIFIER_IDPNDNT_TV_COM)  // service attribute descriptor (Freeview UK)
       {
@@ -3706,11 +3710,12 @@ bool CParserNitDvb::DecodeLogicalChannelNumberDescriptor(const unsigned char* da
   // logical channel number with more bits.
   //
   // Private data specifiers (http://www.dvbservices.com/identifiers/private_data_spec_id?page=1):
-  // - Italy, Portugal DTT (EACEM - IEC/CENELEC 62 216 standard) = 0x28
+  // - Canalsat Suisse, Italy DTT, Portugal DTT, SFR REDSAT (EACEM - IEC/CENELEC 62 216 standard) = 0x28
   // - NorDig = 0x29
   // - Freeview NZ = 0x37
   // - Canal+ Cyfrowy = 0xa5
   // - ITI Neovision (Hotbird 13E 10834V) = 0xb0
+  // - NDS France (Astra 19.2E 12402V) = 0xc0
   // - Freeview UK = 0x233a
   // - Freeview AU = 0x3200 - 0x320f
   //

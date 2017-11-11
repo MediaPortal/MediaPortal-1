@@ -945,29 +945,35 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
         return null;
       }
 
-      if (source == LogicalChannelNumberSource.CanalsatSuisse)
+      lcn.TableId = 0x4a;
+      if (source == LogicalChannelNumberSource.CanalsatFrance)
       {
-        lcn.TableId = 0x4a;
+        lcn.TableIdExtension = 49165;
+        lcn.DescriptorTag = 0x83;
+      }
+      else if (source == LogicalChannelNumberSource.CanalsatSuisse)
+      {
         lcn.TableIdExtension = 49180;
+      }
+      else if (source == LogicalChannelNumberSource.CanalsatTnt)
+      {
+        lcn.TableIdExtension = 49165;
+        lcn.DescriptorTag = 0x80;
       }
       else if (source == LogicalChannelNumberSource.SfrRedBasic)
       {
-        lcn.TableId = 0x4a;
         lcn.TableIdExtension = 49172;
       }
       else if (source == LogicalChannelNumberSource.SfrRedCanalPlus)
       {
-        lcn.TableId = 0x4a;
         lcn.TableIdExtension = 49173;
       }
       else if (source == LogicalChannelNumberSource.SfrRedCanalsat)
       {
-        lcn.TableId = 0x4a;
         lcn.TableIdExtension = 49174;
       }
       else if (source == LogicalChannelNumberSource.TntSat)
       {
-        lcn.TableId = 0x4a;
         lcn.TableIdExtension = 49167;
       }
       else
