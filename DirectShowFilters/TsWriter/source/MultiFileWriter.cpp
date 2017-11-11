@@ -126,6 +126,7 @@ HRESULT MultiFileWriter::OpenFile(const wchar_t* fileName, bool& resume)
     LogDebug(L"multi file writer: failed to open register file, hr = 0x%x, name = %s",
               hr, fileName == NULL ? L"" : fileName);
     delete m_fileRegister;
+    m_fileRegister = NULL;
     return hr;
   }
 
@@ -168,12 +169,12 @@ HRESULT MultiFileWriter::OpenFile(const wchar_t* fileName, bool& resume)
   m_fileData->SetReservationConfiguration(reservationChunkSize);
 
   // Take a copy of the file name.
-  unsigned long fileNameLength = wcslen(fileName);
+  unsigned long fileNameLength = wcslen(fileName) + 1;
   if (m_registerFileName != NULL)
   {
     delete[] m_registerFileName;
   }
-  m_registerFileName = new wchar_t[fileNameLength + 1];
+  m_registerFileName = new wchar_t[fileNameLength];
   if (m_registerFileName == NULL)
   {
     LogDebug(L"multi file writer: failed to allocate %lu bytes for the register file name, name = %s",
@@ -181,7 +182,7 @@ HRESULT MultiFileWriter::OpenFile(const wchar_t* fileName, bool& resume)
     CloseFile();
     return E_OUTOFMEMORY;
   }
-  wcsncpy(m_registerFileName, fileName, fileNameLength + 1);
+  wcsncpy(m_registerFileName, fileName, fileNameLength);
 
   return S_OK;
 }
