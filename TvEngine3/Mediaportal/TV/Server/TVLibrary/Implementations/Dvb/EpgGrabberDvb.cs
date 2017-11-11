@@ -1700,7 +1700,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
                 }
                 else
                 {
-                  HandleDescriptionItem(itemDescription, itemText, program, ref description);
+                  HandleDescriptionItem(itemDescription, itemText, language.Code, program, ref description);
                 }
               }
 
@@ -1849,7 +1849,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
       }
     }
 
-    private static void HandleDescriptionItem(string itemName, string itemText, EpgProgram program, ref string description)
+    private static void HandleDescriptionItem(string itemName, string itemText, string language, EpgProgram program, ref string description)
     {
       // Fake items added by TsWriter.
       if (string.Equals(itemName, "Dish episode info"))
@@ -1947,12 +1947,21 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
 
       if (
         itemName.StartsWith("director", StringComparison.InvariantCultureIgnoreCase) ||
-        string.Equals(itemName, "dir", StringComparison.InvariantCultureIgnoreCase)
+        string.Equals(itemName, "dir", StringComparison.InvariantCultureIgnoreCase) ||
+        string.Equals(itemName, "Metteur en scène", StringComparison.InvariantCultureIgnoreCase) ||
+        string.Equals(itemName, "Réalisateur", StringComparison.InvariantCultureIgnoreCase)
       )
       {
         // EPG Collector: director/directors/dir (case unknown); CSV
         // StarHub TV (Singapore DVB-C): Directors; CSV with spaces
         // Welho (Finland DVB-C): Directors; CSV without spaces
+
+        // Astra 19.2E 12402V: Réalisateur; *SV???
+        // - Metteur en scène => stager/choreographer
+        // *SV???
+        // NOTE: text encoding is not DVB-compatible. Item name and text
+        // encoding should be DVB-default, but values are not compliant.
+        // staged and choreographed
         foreach (string director in itemText.Split(','))
         {
           string directorTemp = director.Trim();
@@ -1961,6 +1970,24 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
             program.Directors.Add(directorTemp);
           }
         }
+        return;
+      }
+
+      if (string.Equals(itemName, "Invité", StringComparison.InvariantCultureIgnoreCase))
+      {
+        // Astra 19.2E 12402V: Invité; *SV???
+        // NOTE: text encoding is not DVB-compatible. Item name and text
+        // encoding should be DVB-default, but values are not compliant.
+        program.Guests.Add(itemText);
+        return;
+      }
+
+      if (string.Equals(itemName, "Présentateur", StringComparison.InvariantCultureIgnoreCase))
+      {
+        // Astra 19.2E 12402V: Présentateur; *SV???
+        // NOTE: text encoding is not DVB-compatible. Item name and text
+        // encoding should be DVB-default, but values are not compliant.
+        program.Presenters.Add(itemText);
         return;
       }
 
@@ -1978,14 +2005,39 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
         return;
       }
 
+      // Astra 19.2E 12402V:
+      // - Chef d'orchestre => conductor
+      // - Interprète => interpreter
+      // - Metteur en scène => stager/choreographer
+      // *SV???
+      // NOTE: text encoding is not DVB-compatible. Item name and text encoding
+      // should be DVB-default, but values are not compliant.
+      if (string.Equals(itemName, "Chef d'orchestre", StringComparison.InvariantCultureIgnoreCase))
+      {
+        program.OtherPeople["Conductor"] = itemText;
+      }
+      if (string.Equals(itemName, "Interprète", StringComparison.InvariantCultureIgnoreCase))
+      {
+        program.OtherPeople["Interpreter"] = itemText;
+      }
+      if (string.Equals(itemName, "Metteur en scène", StringComparison.InvariantCultureIgnoreCase))
+      {
+        program.OtherPeople["Choreographer"] = itemText;
+      }
+
       if (
         string.Equals(itemName, "production year", StringComparison.InvariantCultureIgnoreCase) ||
         string.Equals(itemName, "year", StringComparison.InvariantCultureIgnoreCase) ||
+        string.Equals(itemName, "Année", StringComparison.InvariantCultureIgnoreCase) ||
         string.Equals(itemName, "año", StringComparison.InvariantCultureIgnoreCase)
       )
       {
         // EPG Collector: year/production year/año (case unknown)
         // Welho (Finland DVB-C): Production Year; 4 digit numeric string
+
+        // Astra 19.2E 12402V: Année; 4 digit numeric string
+        // NOTE: text encoding is not DVB-compatible. Item name encoding should
+        // be DVB-default, but values are not compliant.
         ushort year;
         if (ushort.TryParse(itemText, out year))
         {
@@ -2005,18 +2057,39 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
       {
         // EPG Collector: country/nac (case unknown)
         // Welho (Finland DVB-C): Country; 3 letter ISO code
-        program.ProductionCountry = itemText;
+        program.ProductionCountries.Add(itemText);
+        return;
+      }
+      if (string.Equals(itemName, "Nationalité", StringComparison.InvariantCultureIgnoreCase))
+      {
+        // Astra 19.2E 12402V: Nationalité; full country names separated by " - "; examples
+        // - "France"
+        // - "Etats-Unis"
+        // - "France - Luxembourg - Corée du Sud"
+        // - "France - Canada - Etats-Unis"
+        // NOTE: text encoding is not DVB-compatible. Item name and text
+        // encoding should be DVB-default, but values are not compliant.
+        foreach (string country in itemText.Split(new string[1] { " - " }, StringSplitOptions.None))
+        {
+          program.ProductionCountries.Add(country);
+        }
         return;
       }
 
       if (
         string.Equals(itemName, "episode", StringComparison.InvariantCultureIgnoreCase) ||
-        string.Equals(itemName, "episodetitle", StringComparison.InvariantCultureIgnoreCase)
+        string.Equals(itemName, "EpisodeTitle", StringComparison.InvariantCultureIgnoreCase)
       )
       {
         // EPG Collector: episode (case unknown)
         // StarHub TV (Singapore DVB-C): EpisodeTitle
         program.EpisodeNames.Add(LANG_CODE_ENG, itemText);
+        return;
+      }
+      if (string.Equals(itemName, "TDE"))
+      {
+        // Astra 19.2E 12402V: TDE
+        program.EpisodeNames.Add(language, itemText);
         return;
       }
 
@@ -2038,7 +2111,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
         Log.Warn("EPG DVB: failed to interpret season/episode number description item, item text = {0}", itemText);
         return;
       }
-      if (string.Equals(itemName, "episodeno", StringComparison.InvariantCultureIgnoreCase))
+      if (
+        string.Equals(itemName, "EpisodeNo", StringComparison.InvariantCultureIgnoreCase) ||
+        string.Equals(itemName, "Numero de l'épisode", StringComparison.InvariantCultureIgnoreCase)
+      )
       {
         // StarHub TV (Singapore DVB-C): EpisodeNo; CSV or ampersand-SV "[Ep ]\d+\s*([a-zA-Z]\s*)?(\+\s*\d+\s*([a-zA-Z]\s*)?)*(\/\s*\d+\s*)?"; examples
         // - Ep 13
@@ -2048,6 +2124,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
         // - 42
         // - Ep 326+327/365
         // - Ep 17+18
+
+        // Astra 19.2E 12402V: Numero de l'épisode; numeric string
+        // NOTE: text encoding is not DVB-compatible. Item name encoding should
+        // be DVB-default, but values are not compliant.
         string[] episodeNumbers = itemText.Split(new char[] { ',', '&' });
         foreach (string episodeNumberString in episodeNumbers)
         {
@@ -2111,6 +2191,21 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
         // EPG Collector: episodeid (case unknown)
         // StarHub TV (Singapore DVB-C): Contentid_ref; examples "T0019319077", "TA0018483678"
         program.EpisodeId = itemText;
+        return;
+      }
+
+      if (string.Equals(itemName, "Direct") && string.Equals(itemText, "Direct"))
+      {
+        // Astra 19.2E 12402V: Direct
+        program.IsLive = true;
+        return;
+      }
+      if (string.Equals(itemName, "Différé") && string.Equals(itemText, "Différé"))
+      {
+        // Astra 19.2E 12402V: Différé
+        // NOTE: text encoding is not DVB-compatible. Item name and text
+        // encoding should be DVB-default, but values are not compliant.
+        program.IsLive = false;
         return;
       }
 

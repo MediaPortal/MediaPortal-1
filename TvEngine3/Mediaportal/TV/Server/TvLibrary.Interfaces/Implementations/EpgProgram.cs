@@ -49,12 +49,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations
     public IList<string> SubtitlesLanguages { get; set; }
     public bool? IsLive { get; set; }
     public ushort? ProductionYear { get; set; }
-    public string ProductionCountry { get; set; }
+    public IList<string> ProductionCountries { get; set; }
     public decimal? StarRating { get; set; }
     public decimal? StarRatingMaximum { get; set; }
     public IList<string> Actors { get; set; }
     public IList<string> Directors { get; set; }
+    public IList<string> Guests { get; set; }
+    public IList<string> Presenters { get; set; }
     public IList<string> Writers { get; set; }
+    public IDictionary<string, string> OtherPeople { get; set; }
 
     /// <summary>
     /// Initialise a new instance of the <see cref="EpgProgram"/> class.
@@ -83,12 +86,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations
       SubtitlesLanguages = new List<string>();
       IsLive = null;
       ProductionYear = null;
-      ProductionCountry = null;
+      ProductionCountries = new List<string>();
       StarRating = null;
       StarRatingMaximum = null;
       Actors = new List<string>();
       Directors = new List<string>();
+      Guests = new List<string>();
+      Presenters = new List<string>();
       Writers = new List<string>();
+      OtherPeople = new Dictionary<string, string>();
     }
 
     #region IComparable member
