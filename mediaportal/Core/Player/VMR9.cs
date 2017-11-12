@@ -1936,7 +1936,7 @@ namespace MediaPortal.Player
             Log.Debug("VMR9: Dispose madVR full releasing in a thread");
           }).Start();
           Log.Debug("VMR9: Dispose 2.2");
-          //MadvrInterface.restoreDisplayModeNow(_vmr9Filter); // already released // TODO
+          MadvrInterface.restoreDisplayModeNow(_vmr9Filter);
           DestroyWindow(GUIGraphicsContext.MadVrHWnd); // for using no Kodi madVR window way comment out this line
           RestoreGuiForMadVr();
           Log.Debug("VMR9: Dispose 2.3");

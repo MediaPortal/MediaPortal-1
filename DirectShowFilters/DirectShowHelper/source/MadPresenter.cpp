@@ -110,7 +110,7 @@ MPMadPresenter::~MPMadPresenter()
 {
   {
     // TODO need to be commented to avoid deadlock.
-    //CAutoLock cAutoLock(this);
+    CAutoLock cAutoLock(this);
 
     if (m_pSRCB)
     {
@@ -143,8 +143,10 @@ MPMadPresenter::~MPMadPresenter()
     Log("MPMadPresenter::Destructor() - m_pMad release 1");
     if (m_pMad)
     {
+      RedrawWindow(m_hWnd, nullptr, nullptr, 0);
       m_pMad.FullRelease();
       m_pMad.m_ptr = nullptr;
+      UpdateWindow(m_hWnd);
     }
     Log("MPMadPresenter::Destructor() - m_pMad release 2");
 
@@ -591,6 +593,33 @@ HRESULT MPMadPresenter::Shutdown()
       {
         m_pSettings->SettingsSetBoolean(L"enableOverlay", true);
       }
+    }
+
+    // IOsdRenderCallback
+    Com::SmartQIPtr<IMadVROsdServices> pOR = m_pMad;
+    if (!pOR)
+    {
+      m_pMad = nullptr;
+      return E_FAIL;
+    }
+
+    if (FAILED(pOR->OsdSetRenderCallback("MP-GUI", nullptr)))
+    {
+      m_pMad = nullptr;
+      return E_FAIL;
+    }
+
+    Com::SmartQIPtr<ISubRender> pSR = m_pMad;
+    if (!pSR)
+    {
+      m_pMad = nullptr;
+      return E_FAIL;
+    }
+
+    if (FAILED(pSR->SetCallback(nullptr)))
+    {
+      m_pMad = nullptr;
+      return E_FAIL;
     }
 
     Log("MPMadPresenter::Shutdown() stop");
