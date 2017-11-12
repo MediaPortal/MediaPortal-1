@@ -397,6 +397,8 @@ namespace MediaPortal.GUI.Library
     public static bool SBSRightDone;
     public static bool TABTopDone;
     public static bool TABBottomDone;
+    public static int _backupCurrentScreenSizeWidth;
+    public static int _backupCurrentScreenSizeHeight;
     public static int Convert2Dto3DSkewFactor { get; set; }
 
     public enum eRender3DModeHalf { None, SBSLeft, SBSRight, TABTop, TABBottom };
