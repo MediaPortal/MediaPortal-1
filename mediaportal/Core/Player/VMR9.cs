@@ -909,6 +909,8 @@ namespace MediaPortal.Player
           }
           // Get Client size
           Size client = GUIGraphicsContext.form.ClientSize;
+          GUIGraphicsContext._backupCurrentScreenSizeWidth = client.Width;
+          GUIGraphicsContext._backupCurrentScreenSizeHeight = client.Height;
           MadInit(_scene, xposition, yposition, client.Width, client.Height, (uint) upDevice.ToInt32(),
             (uint) GUIGraphicsContext.ActiveForm.ToInt32(), ref _vmr9Filter, mPMediaControl);
           hr = new HResult(graphBuilder.AddFilter(_vmr9Filter, "madVR"));
