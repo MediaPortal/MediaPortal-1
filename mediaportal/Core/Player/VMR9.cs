@@ -1927,7 +1927,12 @@ namespace MediaPortal.Player
           MadDeinit();
           Log.Debug("VMR9: Dispose 2.1");
           GC.Collect();
-          DirectShowUtil.FinalReleaseComObject(_vmr9Filter);
+          new Thread(() =>
+          {
+            Thread.CurrentThread.IsBackground = true;
+            DirectShowUtil.FinalReleaseComObject(_vmr9Filter);
+            Log.Debug("VMR9: Dispose madVR full releasing in a thread");
+          }).Start();
           Log.Debug("VMR9: Dispose 2.2");
           //MadvrInterface.restoreDisplayModeNow(_vmr9Filter); // already released // TODO
           DestroyWindow(GUIGraphicsContext.MadVrHWnd); // for using no Kodi madVR window way comment out this line
