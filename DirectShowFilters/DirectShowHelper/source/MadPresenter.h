@@ -240,6 +240,7 @@ class MPMadPresenter : public CUnknown, public CCritSec
     void GrabFrame();
     void GrabCurrentFrame();
     void GrabScreenshot();
+    void GraphReset();
     void InitMadVRWindowPosition();
     void MadVr3DSizeRight(int x, int y, int width, int height);
     void MadVr3DSizeLeft(int x, int y, int width, int height);
@@ -289,6 +290,7 @@ class MPMadPresenter : public CUnknown, public CCritSec
     IVMR9Callback* m_pCallback = nullptr;
     CCritSec m_dsLock;
     HANDLE m_pGrabEvent;
+    HANDLE m_pGraphEvent;
 
   private:
     void RenderToTexture(IDirect3DTexture9* pTexture);
