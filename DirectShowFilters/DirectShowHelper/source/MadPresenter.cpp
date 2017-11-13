@@ -895,7 +895,7 @@ HRESULT MPMadPresenter::ClearBackground(LPCSTR name, REFERENCE_TIME frameStart, 
 
   //CAutoLock cAutoLock(this);
 
-  ReinitOSD();
+  ReinitOSD(true);
 
   //// Ugly hack to avoid flickering (most occurs on Intel GPU)
   //bool isFullScreen = m_pCallback->IsFullScreen();
@@ -997,7 +997,7 @@ HRESULT MPMadPresenter::RenderOsd(LPCSTR name, REFERENCE_TIME frameStart, RECT* 
 
   //CAutoLock cAutoLock(this);
 
-  ReinitOSD();
+  ReinitOSD(false);
 
   //// Ugly hack to avoid flickering (most occurs on Intel GPU)
   //bool isFullScreen = m_pCallback->IsFullScreen();
@@ -1241,7 +1241,7 @@ HRESULT MPMadPresenter::SetupOSDVertex3D(IDirect3DVertexBuffer9* pVertextBuf)
   return hr;
 }
 
-void MPMadPresenter::ReinitOSD()
+void MPMadPresenter::ReinitOSD(bool type)
 {
   { // Scope for autolock for the local variable (lock, which when deleted releases the lock)
     CAutoLock cAutoLock(this);
@@ -1249,6 +1249,14 @@ void MPMadPresenter::ReinitOSD()
     // Needed to update OSD/GUI when changing directx present parameter on resolution change.
     if (m_pReInitOSD)
     {
+      if (type)
+      {
+        Log("%s : ReinitOSD from : ClearBackground", __FUNCTION__);
+      }
+      else
+      {
+        Log("%s : ReinitOSD from : RenderOsd", __FUNCTION__);
+      }
       m_pReInitOSD = false;
       if (m_pMPTextureGui) m_pMPTextureGui.Release();
       if (m_pMPTextureOsd) m_pMPTextureOsd.Release();

@@ -3931,17 +3931,23 @@ namespace MediaPortal.Player
 
             // Resize OSD/Screen when resolution change
             if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
-                (GUIGraphicsContext.InVmr9Render && (GUIGraphicsContext.ForceMadVRRefresh ||
+                (/*GUIGraphicsContext.InVmr9Render && */(GUIGraphicsContext.ForceMadVRRefresh ||
                 GUIGraphicsContext.ForceMadVRFirstStart)))
             {
               if (GUIGraphicsContext.ForceMadVRRefresh)
               {
                 GUIGraphicsContext.ForceMadVRRefresh = false;
+                Log.Debug("g_player VideoWindowChanged() ForceMadVRRefresh madVR");
               }
               if (GUIGraphicsContext.ForceMadVRFirstStart)
               {
                 GUIGraphicsContext.ForceMadVRFirstStart = false;
+                Log.Debug("g_player VideoWindowChanged() ForceMadVRFirstStart madVR");
               }
+              
+              // Testing
+              VMR9Util.g_vmr9?.MadVrScreenResize(GUIGraphicsContext.form.Location.X, GUIGraphicsContext.form.Location.Y, client.Width, client.Height, true);
+              Log.Debug("g_player VideoWindowChanged() MadVrScreenResize madVR");
 
               if (GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferWidth != client.Width ||
                   GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferHeight != client.Height)
@@ -3965,11 +3971,13 @@ namespace MediaPortal.Player
                 if (!GUIGraphicsContext.ForceMadVRRefresh3D)
                 {
                   VMR9Util.g_vmr9?.MadVrScreenResize(GUIGraphicsContext.form.Location.X, GUIGraphicsContext.form.Location.Y, client.Width, client.Height, true);
+                  Log.Debug("g_player VideoWindowChanged() MadVrScreenResize ForceMadVRRefresh3D (false) madVR");
                 }
                 else
                 {
                   // Changed the false to true, need to figure out why regression is present when it's false
                   VMR9Util.g_vmr9?.MadVrScreenResize(GUIGraphicsContext.form.Location.X, GUIGraphicsContext.form.Location.Y, client.Width, client.Height, true);
+                  Log.Debug("g_player VideoWindowChanged() MadVrScreenResize ForceMadVRRefresh3D (true) madVR");
                   GUIGraphicsContext.ForceMadVRRefresh3D = false;
                 }
                 GUIGraphicsContext.NoneDone = false;
