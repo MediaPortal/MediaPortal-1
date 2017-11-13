@@ -298,7 +298,7 @@ class MPMadPresenter : public CUnknown, public CCritSec
 
     HRESULT SetupOSDVertex(IDirect3DVertexBuffer9* pVertextBuf);
     HRESULT SetupOSDVertex3D(IDirect3DVertexBuffer9* pVertextBuf);
-    void ReinitOSD();
+    void ReinitOSD(bool type);
     void ReinitD3DDevice();
     HRESULT SetupMadDeviceState();
 
