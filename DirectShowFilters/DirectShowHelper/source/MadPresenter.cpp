@@ -144,8 +144,7 @@ MPMadPresenter::~MPMadPresenter()
     if (m_pMad)
     {
       RedrawWindow(m_hWnd, nullptr, nullptr, 0);
-      m_pMad.FullRelease();
-      m_pMad.m_ptr = nullptr;
+      m_pMad.Release();
       UpdateWindow(m_hWnd);
     }
     Log("MPMadPresenter::Destructor() - m_pMad release 2");
@@ -179,6 +178,7 @@ void MPMadPresenter::InitializeOSD()
     m_pMad = nullptr;
   }
 
+  pOR.Release(); // WIP release
   Log("%s", __FUNCTION__);
 }
 
@@ -216,6 +216,7 @@ void MPMadPresenter::RepeatFrame()
   // Render frame to try to fix HD4XXX GPU flickering issue
   Com::SmartQIPtr<IMadVROsdServices> pOR = m_pMad;
   pOR->OsdRedrawFrame();
+  pOR.Release(); // WIP release
 }
 
 void MPMadPresenter::GrabScreenshot()
@@ -257,6 +258,7 @@ void MPMadPresenter::GrabScreenshot()
         m_pCallback->GrabMadVrScreenshot(LPVOID(ppData));
         free(ppData);
       }
+      m_pBV.Release(); // WIP release
     }
   }
   catch (...)
@@ -281,6 +283,7 @@ void MPMadPresenter::GrabFrame()
     // Send the DIB to C#
     m_pCallback->GrabMadVrFrame(dibImageBuffer);
     LocalFree(dibImageBuffer);
+    pMadVrFrame.Release(); // WIP release
     return;
 
     try
@@ -316,22 +319,29 @@ void MPMadPresenter::GrabFrame()
 void MPMadPresenter::GrabCurrentFrame()
 {
   //CAutoLock cAutoLock(this);
-
-  if (!m_pInitMadVRWindowPositionDone || m_pShutdown)
+  try
   {
-    m_pCallback->GrabMadVrCurrentFrame(nullptr);
-    return;
+    if (!m_pInitMadVRWindowPositionDone || m_pShutdown)
+    {
+      m_pCallback->GrabMadVrCurrentFrame(nullptr);
+      return;
+    }
+    if (Com::SmartQIPtr<IMadVRFrameGrabber> pMadVrFrame = m_pMad)
+    {
+      LPVOID dibImageBuffer = nullptr;
+      pMadVrFrame->GrabFrame(ZOOM_50_PERCENT, FLAGS_NO_SUBTITLES | FLAGS_NO_ARTIFACT_REMOVAL | FLAGS_NO_IMAGE_ENHANCEMENTS | FLAGS_NO_UPSCALING_REFINEMENTS | FLAGS_NO_HDR_SDR_CONVERSION,
+        CHROMA_UPSCALING_NGU_AA, IMAGE_DOWNSCALING_SSIM1D100, IMAGE_UPSCALING_NGU_SHARP_GRAIN, 0, &dibImageBuffer, nullptr);
+
+      // Send the DIB to C#
+      m_pCallback->GrabMadVrCurrentFrame(dibImageBuffer);
+      LocalFree(dibImageBuffer);
+      dibImageBuffer = nullptr;
+      pMadVrFrame.Release(); // WIP release
+      //Log("GrabFrame() hr");
+    }
   }
-  if (Com::SmartQIPtr<IMadVRFrameGrabber> pMadVrFrame = m_pMad)
+  catch (...)
   {
-    LPVOID dibImageBuffer = nullptr;
-    pMadVrFrame->GrabFrame(ZOOM_ENCODED_SIZE, FLAGS_NO_SUBTITLES | FLAGS_NO_ARTIFACT_REMOVAL | FLAGS_NO_IMAGE_ENHANCEMENTS | FLAGS_NO_UPSCALING_REFINEMENTS | FLAGS_NO_HDR_SDR_CONVERSION,
-      CHROMA_UPSCALING_NGU_AA, IMAGE_DOWNSCALING_SSIM1D100, IMAGE_UPSCALING_NGU_SHARP_GRAIN, 0, &dibImageBuffer, nullptr);
-
-    // Send the DIB to C#
-    m_pCallback->GrabMadVrCurrentFrame(dibImageBuffer);
-    LocalFree(dibImageBuffer);
-    //Log("GrabFrame() hr");
   }
 }
 
@@ -390,7 +400,7 @@ void MPMadPresenter::MadVrScreenResize(int x, int y, int width, int height, bool
     else
     {
       // for using no Kodi madVR window way uncomment out this line
-      SetWindowPos(m_hWnd, nullptr, x, y, width, height, SWP_ASYNCWINDOWPOS);
+      SetWindowPos(reinterpret_cast<HWND>(m_hParent), m_hWnd, x, y, width, height, SWP_ASYNCWINDOWPOS);
     }
   }
 
@@ -425,10 +435,10 @@ IBaseFilter* MPMadPresenter::Initialize()
       if (!m_pKodiWindowUse) // no Kodi window
       {
         m_hWnd = reinterpret_cast<HWND>(m_hParent);
-        pWindow->put_Owner(reinterpret_cast<OAHWND>(m_hWnd));
-        pWindow->put_WindowStyle(WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN);
+        VERIFY(SUCCEEDED(pWindow->put_Owner(reinterpret_cast<OAHWND>(m_hWnd))));
+        VERIFY(SUCCEEDED(pWindow->put_WindowStyle(WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN)));
         //pWindow->put_Visible(reinterpret_cast<OAHWND>(m_hWnd));
-        pWindow->put_MessageDrain(reinterpret_cast<OAHWND>(m_hWnd));
+        VERIFY(SUCCEEDED(pWindow->put_MessageDrain(reinterpret_cast<OAHWND>(m_hWnd))));
         //pWindow->SetWindowPosition(0, 0, m_dwGUIWidth, m_dwGUIHeight);
       }
       else if (InitMadvrWindow(m_hWnd) && m_pKodiWindowUse) // Kodi window
@@ -446,6 +456,7 @@ IBaseFilter* MPMadPresenter::Initialize()
       {
         return nullptr;
       }
+      pWindow.Release(); // WIP release
     }
     return baseFilter;
   }
@@ -507,6 +518,7 @@ STDMETHODIMP MPMadPresenter::CreateRenderer(IUnknown** ppRenderer)
     m_pMad = nullptr;
     return E_FAIL;
   }
+  pOR.Release(); // WIP release
 
   // Configure initial Madvr Settings
   ConfigureMadvr();
@@ -527,16 +539,25 @@ STDMETHODIMP MPMadPresenter::SetGrabEvent(HANDLE pGrabEvent)
 void MPMadPresenter::EnableExclusive(bool bEnable)
 {
   if (Com::SmartQIPtr<IMadVRCommand> pMadVrCmd = m_pMad)
+  {
     pMadVrCmd->SendCommandBool("disableExclusiveMode", !bEnable);
+    pMadVrCmd.Release(); // WIP release
+  }
 };
 
 void MPMadPresenter::ConfigureMadvr()
 {
   if (Com::SmartQIPtr<IMadVRCommand> pMadVrCmd = m_pMad)
+  {
     pMadVrCmd->SendCommandBool("disableSeekbar", true);
+    pMadVrCmd.Release(); // WIP release
+  }
 
   if (Com::SmartQIPtr<IMadVRDirect3D9Manager> manager = m_pMad)
+  {
     manager->ConfigureDisplayModeChanger(false, true);
+    manager.Release(); // WIP release
+  }
 
   //// TODO implement IMadVRSubclassReplacement
   //if (Com::SmartQIPtr<IMadVRSubclassReplacement> pSubclassReplacement = m_pMad)
@@ -560,6 +581,7 @@ void MPMadPresenter::ConfigureMadvr()
       //m_pSettings->SettingsSetBoolean(L"exclusiveDelay", true);
       m_pSettings->SettingsSetBoolean(L"enableExclusive", true);
     }
+    m_pSettings.Release(); // WIP release
   }
 }
 
@@ -592,6 +614,7 @@ HRESULT MPMadPresenter::Shutdown()
       if (m_enableOverlay)
       {
         m_pSettings->SettingsSetBoolean(L"enableOverlay", true);
+        m_pSettings.Release(); // WIP release
       }
     }
 
@@ -608,6 +631,7 @@ HRESULT MPMadPresenter::Shutdown()
       m_pMad = nullptr;
       return E_FAIL;
     }
+    pOR.Release(); // WIP release
 
     Com::SmartQIPtr<ISubRender> pSR = m_pMad;
     if (!pSR)
@@ -621,6 +645,7 @@ HRESULT MPMadPresenter::Shutdown()
       m_pMad = nullptr;
       return E_FAIL;
     }
+    pSR.Release(); // WIP release
 
     Log("MPMadPresenter::Shutdown() stop");
     return S_OK;
@@ -762,6 +787,7 @@ HRESULT MPMadPresenter::Stopping()
         m_pSettings->SettingsSetBoolean(L"enableOverlay", false);
         Log("MPMadPresenter::Stopping() disable windowed overlay mode");
       }
+      m_pSettings.Release(); // WIP release
     }
 
     //// Disable exclusive mode

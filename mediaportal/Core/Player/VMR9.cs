@@ -612,15 +612,16 @@ namespace MediaPortal.Player
           if (_graphBuilder != null)
           {
             string directory = string.Format("{0}\\MediaPortal Screenshots\\{1:0000}-{2:00}-{3:00}",
-                                              Environment.GetFolderPath(Environment.SpecialFolder.MyPictures),
-                                              DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
+              Environment.GetFolderPath(Environment.SpecialFolder.MyPictures),
+              DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
             if (!Directory.Exists(directory))
             {
               Log.Info("Main: Taking screenshot - Creating directory: {0}", directory);
               Directory.CreateDirectory(directory);
             }
 
-            string fileName = string.Format("{0}\\madVR - {1:00}-{2:00}-{3:00}", directory, DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
+            string fileName = string.Format("{0}\\madVR - {1:00}-{2:00}-{3:00}", directory, DateTime.Now.Hour,
+              DateTime.Now.Minute, DateTime.Now.Second);
 
             // First take the buffersize
             var basicVideo = _vmr9Filter as IBasicVideo;
@@ -636,9 +637,10 @@ namespace MediaPortal.Player
 
             // Save screenshot from DIB
             IntPtr pdib = pTargetmadVrDib;
-            Win32API.BITMAPINFOHEADER bmih = (Win32API.BITMAPINFOHEADER)Marshal.PtrToStructure(pdib, typeof(Win32API.BITMAPINFOHEADER));
+            Win32API.BITMAPINFOHEADER bmih =
+              (Win32API.BITMAPINFOHEADER) Marshal.PtrToStructure(pdib, typeof (Win32API.BITMAPINFOHEADER));
             IntPtr pixels = IntPtr.Add(pdib, bmih.biSize);
-            Bitmap tmpBmp = new Bitmap(bmih.biWidth, bmih.biHeight, bmih.biWidth * 4, PixelFormat.Format32bppRgb, pixels);
+            Bitmap tmpBmp = new Bitmap(bmih.biWidth, bmih.biHeight, bmih.biWidth*4, PixelFormat.Format32bppRgb, pixels);
             Bitmap result = new Bitmap(tmpBmp);
             result.RotateFlip(RotateFlipType.RotateNoneFlipY);
             result.Save(fileName + ".jpg", ImageFormat.Jpeg);
@@ -655,6 +657,69 @@ namespace MediaPortal.Player
         {
           Win32API.LocalFree(pTargetmadVrDib);
           pTargetmadVrDib = IntPtr.Zero;
+        }
+      }
+    }
+
+    /// <summary>
+    /// Grabe Frame madVR
+    /// Needed to be used on MP main thread
+    /// </summary>
+    public void GrabCurrentFrame()
+    {
+      lock (this)
+      {
+        IntPtr pTargetmadVrDib = IntPtr.Zero;
+        try
+        {
+          // Send the DIB to C#
+          if (GUIGraphicsContext.madVRCurrentFrameBitmap != null)
+          {
+            GUIGraphicsContext.madVRCurrentFrameBitmap.Dispose();
+            GUIGraphicsContext.madVRCurrentFrameBitmap = null;
+          }
+
+          if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+          {
+            if (pTargetmadVrDib != IntPtr.Zero)
+            {
+              Win32API.LocalFree(pTargetmadVrDib);
+              pTargetmadVrDib = IntPtr.Zero;
+            }
+
+            IMadVRFrameGrabber pMadVrFrame = _vmr9Filter as IMadVRFrameGrabber;
+            pMadVrFrame?.GrabFrame(MadvrInterface.ZOOM_ENCODED_SIZE,
+              MadvrInterface.FLAGS_NO_SUBTITLES | MadvrInterface.FLAGS_NO_ARTIFACT_REMOVAL |
+              MadvrInterface.FLAGS_NO_IMAGE_ENHANCEMENTS | MadvrInterface.FLAGS_NO_UPSCALING_REFINEMENTS |
+              MadvrInterface.FLAGS_NO_HDR_SDR_CONVERSION,
+              MadvrInterface.CHROMA_UPSCALING_NGU_AA, MadvrInterface.IMAGE_DOWNSCALING_SSIM1D100,
+              MadvrInterface.IMAGE_UPSCALING_NGU_SHARP_GRAIN, 0, out pTargetmadVrDib,
+              IntPtr.Zero);
+
+            // Convert DIB to Bitmap
+            // pTargetmadVrDib is a DIB
+            if (pTargetmadVrDib != IntPtr.Zero)
+            {
+              Win32API.BITMAPINFOHEADER bmih =
+                (Win32API.BITMAPINFOHEADER) Marshal.PtrToStructure(pTargetmadVrDib, typeof (Win32API.BITMAPINFOHEADER));
+              IntPtr pixels = IntPtr.Add(pTargetmadVrDib, bmih.biSize);
+
+              using (
+                Bitmap b = new Bitmap(bmih.biWidth, bmih.biHeight, bmih.biWidth*4, PixelFormat.Format32bppRgb, pixels))
+              {
+                GUIGraphicsContext.madVRCurrentFrameBitmap = new Bitmap(b);
+                GUIGraphicsContext.madVRCurrentFrameBitmap.RotateFlip(RotateFlipType.RotateNoneFlipY);
+                // IMPORTANT: Closes and disposes the stream
+                // If this is not done we get a memory leak!
+                b.Dispose();
+              }
+            }
+          }
+        }
+        catch (Exception ex)
+        {
+          Marshal.FreeHGlobal(pTargetmadVrDib);
+          Log.Info("VMR9 : madVR grabbing current frame failed");
         }
       }
     }
@@ -1667,6 +1732,19 @@ namespace MediaPortal.Player
                 GUIGraphicsContext.InVmr9Render = false;
                 // Disable exclusive mode here to avoid madVR window staying on top
                 //if (_vmr9Filter != null) MadvrInterface.EnableExclusiveMode(false, _vmr9Filter);
+                try
+                {
+                  if (GUIGraphicsContext.Fullscreen)
+                  {
+                    // Workaround for madVR to avoid the blackscreen on stop
+                    videoWinMadVr?.put_WindowState(WindowState.Minimize);
+                    videoWinMadVr?.put_WindowState(WindowState.Restore);
+                    videoWinMadVr?.put_WindowState(WindowState.Show);
+                  }
+                }
+                catch (Exception)
+                {
+                }
                 break;
               default:
                 Log.Error("VMR9: {0} in renderer", g_Player.Player.ToString());
@@ -1929,14 +2007,10 @@ namespace MediaPortal.Player
           MadDeinit();
           Log.Debug("VMR9: Dispose 2.1");
           GC.Collect();
-          new Thread(() =>
-          {
-            Thread.CurrentThread.IsBackground = true;
-            DirectShowUtil.FinalReleaseComObject(_vmr9Filter);
-            Log.Debug("VMR9: Dispose madVR full releasing in a thread");
-          }).Start();
-          Log.Debug("VMR9: Dispose 2.2");
           MadvrInterface.restoreDisplayModeNow(_vmr9Filter);
+          //Thread.Sleep(1000); // TODO is this needed ?
+          DirectShowUtil.FinalReleaseComObject(_vmr9Filter);
+          Log.Debug("VMR9: Dispose 2.2");
           DestroyWindow(GUIGraphicsContext.MadVrHWnd); // for using no Kodi madVR window way comment out this line
           RestoreGuiForMadVr();
           Log.Debug("VMR9: Dispose 2.3");

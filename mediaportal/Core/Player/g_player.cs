@@ -3996,9 +3996,6 @@ namespace MediaPortal.Player
                 Log.Debug("g_player VideoWindowChanged() ForceMadVRFirstStart madVR");
               }
               
-              // Testing
-              VMR9Util.g_vmr9?.MadVrScreenResize(GUIGraphicsContext.form.Location.X, GUIGraphicsContext.form.Location.Y, client.Width, client.Height, true);
-              Log.Debug("g_player VideoWindowChanged() MadVrScreenResize madVR");
 
               if (GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferWidth != client.Width ||
                   GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferHeight != client.Height)
@@ -4021,14 +4018,14 @@ namespace MediaPortal.Player
                 // send C++ displayChange
                 if (!GUIGraphicsContext.ForceMadVRRefresh3D)
                 {
-                  VMR9Util.g_vmr9?.MadVrScreenResize(GUIGraphicsContext.form.Location.X, GUIGraphicsContext.form.Location.Y, client.Width, client.Height, true);
                   Log.Debug("g_player VideoWindowChanged() MadVrScreenResize ForceMadVRRefresh3D (false) madVR");
+                  VMR9Util.g_vmr9?.MadVrScreenResize(GUIGraphicsContext.form.Location.X, GUIGraphicsContext.form.Location.Y, client.Width, client.Height, true);
                 }
                 else
                 {
                   // Changed the false to true, need to figure out why regression is present when it's false
-                  VMR9Util.g_vmr9?.MadVrScreenResize(GUIGraphicsContext.form.Location.X, GUIGraphicsContext.form.Location.Y, client.Width, client.Height, true);
                   Log.Debug("g_player VideoWindowChanged() MadVrScreenResize ForceMadVRRefresh3D (true) madVR");
+                  VMR9Util.g_vmr9?.MadVrScreenResize(GUIGraphicsContext.form.Location.X, GUIGraphicsContext.form.Location.Y, client.Width, client.Height, true);
                   GUIGraphicsContext.ForceMadVRRefresh3D = false;
                 }
                 GUIGraphicsContext.NoneDone = false;
