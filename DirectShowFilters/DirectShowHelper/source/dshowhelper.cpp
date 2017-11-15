@@ -1062,7 +1062,13 @@ void MadVrGrabFrameSend()
 
 void MadVrGrabCurrentFrameSend()
 {
-  m_madPresenter->GrabCurrentFrame();
+  try
+  {
+    m_madPresenter->GrabCurrentFrame();
+  }
+  catch (...)
+  {
+  }
 }
 
 void MadVrGrabScreenshotSend()
