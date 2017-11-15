@@ -1210,9 +1210,6 @@ namespace TvLibrary.Implementations.DVB
         return;
       }
 
-      AddBroadcastStandardGroupNames(groupNames);
-      groupNames[ChannelGroupType.ChannelProvider] = new Dictionary<ulong, string>(serviceCount);
-
       IDictionary<ushort, IDictionary<ushort, IChannel>> tuningChannels;
       if (!isSdtActualReceived)
       {
