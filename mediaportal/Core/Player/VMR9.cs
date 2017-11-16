@@ -1732,19 +1732,6 @@ namespace MediaPortal.Player
                 GUIGraphicsContext.InVmr9Render = false;
                 // Disable exclusive mode here to avoid madVR window staying on top
                 //if (_vmr9Filter != null) MadvrInterface.EnableExclusiveMode(false, _vmr9Filter);
-                try
-                {
-                  if (GUIGraphicsContext.Fullscreen)
-                  {
-                    // Workaround for madVR to avoid the blackscreen on stop
-                    videoWinMadVr?.put_WindowState(WindowState.Minimize);
-                    videoWinMadVr?.put_WindowState(WindowState.Restore);
-                    videoWinMadVr?.put_WindowState(WindowState.Show);
-                  }
-                }
-                catch (Exception)
-                {
-                }
                 break;
               default:
                 Log.Error("VMR9: {0} in renderer", g_Player.Player.ToString());
@@ -2008,7 +1995,6 @@ namespace MediaPortal.Player
           Log.Debug("VMR9: Dispose 2.1");
           GC.Collect();
           MadvrInterface.restoreDisplayModeNow(_vmr9Filter);
-          //Thread.Sleep(1000); // TODO is this needed ?
           DirectShowUtil.FinalReleaseComObject(_vmr9Filter);
           Log.Debug("VMR9: Dispose 2.2");
           DestroyWindow(GUIGraphicsContext.MadVrHWnd); // for using no Kodi madVR window way comment out this line

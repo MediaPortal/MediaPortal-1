@@ -83,7 +83,7 @@ MPMadPresenter::MPMadPresenter(IVMR9Callback* pCallback, int xposition, int ypos
   m_pMediaControl(pMediaControl)
 {
   //Set to true to use the Kodi windows creation or false if not
-  m_pKodiWindowUse = false;
+  m_pKodiWindowUse = true;
   Log("MPMadPresenter::Constructor() - instance 0x%x", this);
   m_pKodiWindowUse ? m_Xposition = 0 : m_Xposition = xposition;
   m_pKodiWindowUse ? m_Yposition = 0 : m_Yposition = yposition;
@@ -395,7 +395,7 @@ void MPMadPresenter::MadVrScreenResize(int x, int y, int width, int height, bool
     if (m_pKodiWindowUse)
     {
       // for using no Kodi madVR window way comment out this line
-      SetWindowPos(m_hWnd, nullptr, 0, 0, width, height, SWP_ASYNCWINDOWPOS);
+      SetWindowPos(m_hWnd, m_hWnd, 0, 0, width, height, SWP_ASYNCWINDOWPOS);
     }
     else
     {
@@ -444,10 +444,10 @@ IBaseFilter* MPMadPresenter::Initialize()
       else if (InitMadvrWindow(m_hWnd) && m_pKodiWindowUse) // Kodi window
       {
         m_pCallback->DestroyHWnd(m_hWnd);
-        pWindow->put_Owner(reinterpret_cast<OAHWND>(m_hWnd));
-        pWindow->put_WindowStyle(WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN);
+        VERIFY(SUCCEEDED(pWindow->put_Owner(reinterpret_cast<OAHWND>(m_hWnd))));
+        VERIFY(SUCCEEDED(pWindow->put_WindowStyle(WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN)));
         //pWindow->put_Visible(reinterpret_cast<OAHWND>(m_hWnd));
-        pWindow->put_MessageDrain(reinterpret_cast<OAHWND>(m_hWnd));
+        VERIFY(SUCCEEDED(pWindow->put_MessageDrain(reinterpret_cast<OAHWND>(m_hWnd))));
         //pWindow->SetWindowPosition(0, 0, m_dwGUIWidth, m_dwGUIHeight);
         Log("%s : Create DSPlayer window - hWnd: %i", __FUNCTION__, m_hWnd);
         Log("MPMadPresenter::Initialize() send DestroyHWnd value on C# side");
