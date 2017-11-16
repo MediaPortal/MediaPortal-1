@@ -1660,7 +1660,6 @@ namespace MediaPortal.Player
           IVideoWindow videoWin = _graphBuilder as IVideoWindow;
           if (videoWin != null)
           {
-            videoWin.put_Owner(GUIGraphicsContext.form.Handle);
             videoWin.put_WindowStyle((WindowStyle)((int)WindowStyle.Child + (int)WindowStyle.ClipChildren + (int)WindowStyle.ClipSiblings));
             videoWin.put_MessageDrain(GUIGraphicsContext.form.Handle);
             Log.Debug("VMR9: StartMediaCtrl start put_WindowStyle");
