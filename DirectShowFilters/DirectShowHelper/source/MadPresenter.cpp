@@ -30,6 +30,8 @@
 #include "threads/SystemClock.h"
 #include "gdiplus.h"
 
+static HWND g_hWnd;
+
 const DWORD D3DFVF_VID_FRAME_VERTEX = D3DFVF_XYZRHW | D3DFVF_TEX1;
 
 struct VID_FRAME_VERTEX
@@ -92,6 +94,7 @@ MPMadPresenter::MPMadPresenter(IVMR9Callback* pCallback, int xposition, int ypos
   // Store device surface MP GUI for later
   m_pCallback->RestoreDeviceSurface(reinterpret_cast<LONG>(m_pSurfaceDevice));
   m_pInitMadVRWindowPositionDone = false;
+  g_hWnd = (HWND)m_hParent;
   Log("MPMadPresenter::Constructor() Store Device Surface");
 }
 
@@ -395,7 +398,7 @@ void MPMadPresenter::MadVrScreenResize(int x, int y, int width, int height, bool
     if (m_pKodiWindowUse)
     {
       // for using no Kodi madVR window way comment out this line
-      SetWindowPos(m_hWnd, m_hWnd, 0, 0, width, height, SWP_ASYNCWINDOWPOS);
+      SetWindowPos(m_hWnd, nullptr, 0, 0, width, height, SWP_ASYNCWINDOWPOS);
     }
     else
     {
@@ -723,7 +726,6 @@ bool MPMadPresenter::InitMadvrWindow(HWND &hWnd)
 
 LRESULT CALLBACK MPMadPresenter::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-  HWND g_hWnd = nullptr;
   switch (uMsg)
   {
   case WM_MOUSEMOVE:
