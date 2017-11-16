@@ -348,7 +348,10 @@ namespace TvService
         bool firstRun = true;
         while (!_evtSchedulerCtrl.WaitOne(1))
         {
-          bool resetTimer = _evtSchedulerWaitCtrl.WaitOne(SCHEDULE_THREADING_TIMER_INTERVAL);
+          // keep scheduler thread timer in sync with system clock for more precise start times
+          DateTime now = DateTime.Now;
+          int SCHEDULE_THREAD_VARIABLE_TIMER = SCHEDULE_THREADING_TIMER_INTERVAL - ((now.Second * 1000) % SCHEDULE_THREADING_TIMER_INTERVAL) - now.Millisecond;
+          bool resetTimer = _evtSchedulerWaitCtrl.WaitOne(SCHEDULE_THREAD_VARIABLE_TIMER);
 
           try
           {
