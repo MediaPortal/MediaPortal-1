@@ -3927,7 +3927,21 @@ namespace MediaPortal.Player
           lock (GUIGraphicsContext.RenderLock)
           {
             // Get Size
+            int widthResize;
+            int heightResize;
+            Screen screen = Screen.FromControl(GUIGraphicsContext.form);
             Size client = GUIGraphicsContext.form.ClientSize;
+
+            if (GUIGraphicsContext.Windowed) // Windowed
+            {
+              widthResize = client.Width;
+              heightResize = client.Height;
+            }
+            else // Fullscreen
+            {
+              widthResize = screen.Bounds.Size.Width;
+              heightResize = screen.Bounds.Size.Height;
+            }
 
             // Resize OSD/Screen when resolution change
             if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
@@ -3946,11 +3960,11 @@ namespace MediaPortal.Player
               }
               
 
-              if (GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferWidth != client.Width ||
-                  GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferHeight != client.Height)
+              if (GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferWidth != widthResize ||
+                  GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferHeight != heightResize)
               {
-                GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferWidth = client.Width;
-                GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferHeight = client.Height;
+                GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferWidth = widthResize;
+                GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferHeight = heightResize;
                 // load resources
                 GUIGraphicsContext.Load();
 
@@ -3968,13 +3982,13 @@ namespace MediaPortal.Player
                 if (!GUIGraphicsContext.ForceMadVRRefresh3D)
                 {
                   Log.Debug("g_player VideoWindowChanged() MadVrScreenResize ForceMadVRRefresh3D (false) madVR");
-                  VMR9Util.g_vmr9?.MadVrScreenResize(GUIGraphicsContext.form.Location.X, GUIGraphicsContext.form.Location.Y, client.Width, client.Height, true);
+                  VMR9Util.g_vmr9?.MadVrScreenResize(GUIGraphicsContext.form.Location.X, GUIGraphicsContext.form.Location.Y, widthResize, heightResize, true);
                 }
                 else
                 {
                   // Changed the false to true, need to figure out why regression is present when it's false
                   Log.Debug("g_player VideoWindowChanged() MadVrScreenResize ForceMadVRRefresh3D (true) madVR");
-                  VMR9Util.g_vmr9?.MadVrScreenResize(GUIGraphicsContext.form.Location.X, GUIGraphicsContext.form.Location.Y, client.Width, client.Height, true);
+                  VMR9Util.g_vmr9?.MadVrScreenResize(GUIGraphicsContext.form.Location.X, GUIGraphicsContext.form.Location.Y, widthResize, heightResize, true);
                   GUIGraphicsContext.ForceMadVRRefresh3D = false;
                 }
                 GUIGraphicsContext.NoneDone = false;
@@ -3993,8 +4007,7 @@ namespace MediaPortal.Player
             else if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
                      GUIGraphicsContext.InVmr9Render && GUIGraphicsContext.ForceMadVRRefresh3D)
             {
-              client = GUIGraphicsContext.form.ClientSize;
-              VMR9Util.g_vmr9?.MadVrScreenResize(GUIGraphicsContext.form.Location.X, GUIGraphicsContext.form.Location.Y, client.Width, client.Height, false);
+              VMR9Util.g_vmr9?.MadVrScreenResize(GUIGraphicsContext.form.Location.X, GUIGraphicsContext.form.Location.Y, widthResize, heightResize, false);
               GUIGraphicsContext.NoneDone = false;
               GUIGraphicsContext.TopAndBottomDone = false;
               GUIGraphicsContext.SideBySideDone = false;
@@ -4007,11 +4020,11 @@ namespace MediaPortal.Player
 
             if (GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferWidth == 0)
             {
-              GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferWidth = client.Width;
+              GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferWidth = widthResize;
             }
             if (GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferHeight == 0)
             {
-              GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferHeight = client.Height;
+              GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferHeight = heightResize;
             }
 
             // message handled
