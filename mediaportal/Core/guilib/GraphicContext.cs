@@ -472,7 +472,11 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public static bool Fullscreen
     {
-      get { return ((Width == currentScreen.Bounds.Width) && (Height == currentScreen.Bounds.Height)); }
+      get
+      {
+        Screen screen = Screen.FromControl(GUIGraphicsContext.form);
+        return ((Width == screen.Bounds.Width) && (Height == screen.Bounds.Height));
+      }
     }
 
     /// <summary>
@@ -1863,6 +1867,11 @@ namespace MediaPortal.GUI.Library
     internal static int ForcedRR3DHeightBackup { get; set; }
     internal static double ForcedRR3DRate { get; set; }
     internal static bool RenderMadVr3Dchanged { get; set; }
+
+    /// <summary>
+    /// To know if we are in fullscreen or windowed
+    /// </summary>
+    public static bool Windowed { get; set; }
 
     //public static IntPtr madVRDIB { get; set; }
 

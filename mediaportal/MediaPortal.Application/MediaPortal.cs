@@ -1278,7 +1278,7 @@ public class MediaPortalApp : D3D, IRender
     {
       _ignoreFullscreenResolutionChanges = xmlreader.GetValueAsBool("general", "ignorefullscreenresolutionchanges", false);
       var startFullscreen = !WindowedOverride && (FullscreenOverride || xmlreader.GetValueAsBool("general", "startfullscreen", false));
-      Windowed = !startFullscreen;
+      GUIGraphicsContext.Windowed = Windowed = !startFullscreen;
     }
 
     DoStartupJobs();
@@ -1651,7 +1651,8 @@ public class MediaPortalApp : D3D, IRender
             {
               if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
               {
-                //break;
+                // Need to break here to have the correct new bounds for madVR when resolution change and when playing
+                break;
               }
             }
             SetBounds(GUIGraphicsContext.currentScreen.Bounds.X, GUIGraphicsContext.currentScreen.Bounds.Y, GUIGraphicsContext.currentScreen.Bounds.Width, GUIGraphicsContext.currentScreen.Bounds.Height);
