@@ -94,6 +94,5 @@ HRESULT MyGetService(IUnknown* punkObject, REFGUID guidService, REFIID riid, LPV
 
 void Log(const char *fmt, ...);
 void LogRotate();
-BOOL m_pmadVrStopping = false;
 
 HRESULT __fastcall UnicodeToAnsi(LPCOLESTR pszW, LPSTR* ppszA);

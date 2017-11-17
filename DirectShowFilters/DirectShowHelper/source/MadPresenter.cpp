@@ -85,7 +85,7 @@ MPMadPresenter::MPMadPresenter(IVMR9Callback* pCallback, int xposition, int ypos
   m_pMediaControl(pMediaControl)
 {
   //Set to true to use the Kodi windows creation or false if not
-  m_pKodiWindowUse = true;
+  m_pKodiWindowUse = false;
   Log("MPMadPresenter::Constructor() - instance 0x%x", this);
   m_pKodiWindowUse ? m_Xposition = 0 : m_Xposition = xposition;
   m_pKodiWindowUse ? m_Yposition = 0 : m_Yposition = yposition;
@@ -109,6 +109,7 @@ bool isFullscreen(HWND window)
     a.bottom == b.bottom);
 }
 
+/* Destructor */
 MPMadPresenter::~MPMadPresenter()
 {
   {
@@ -146,18 +147,14 @@ MPMadPresenter::~MPMadPresenter()
     Log("MPMadPresenter::Destructor() - m_pMad release 1");
     if (m_pMad)
     {
-      if (!m_pKodiWindowUse)
-        RedrawWindow(m_hWnd, nullptr, nullptr, 0);
-      m_pMad.Release();
-      if (!m_pKodiWindowUse)
-        UpdateWindow(m_hWnd);
+      m_pMad.FullRelease();
     }
     Log("MPMadPresenter::Destructor() - m_pMad release 2");
 
     // Detroy create madVR window and need to be here to avoid some crash
     if (m_pKodiWindowUse)
     {
-      DeInitMadvrWindow(); // for using no Kodi madVR window way comment out this line
+      DeInitMadvrWindow();
     }
 
     //DestroyWindow(reinterpret_cast<HWND>(pWnd));
@@ -533,6 +530,24 @@ STDMETHODIMP MPMadPresenter::SetGrabEvent(HANDLE pGrabEvent)
   return S_OK;
 }
 
+STDMETHODIMP MPMadPresenter::SetStopEvent()
+{
+  if (m_pSRCB)
+  {
+    // nasty, but we have to let it know about our death somehow
+    static_cast<CSubRenderCallback*>(static_cast<ISubRenderCallback*>(m_pSRCB))->SetShutdownSub(true);
+    Log("MPMadPresenter::SetStopEvent() m_pSRCB");
+  }
+
+  if (m_pORCB)
+  {
+    // nasty, but we have to let it know about our death somehow
+    static_cast<COsdRenderCallback*>(static_cast<IOsdRenderCallback*>(m_pORCB))->SetShutdownOsd(true);
+    Log("MPMadPresenter::SetStopEvent() m_pORCB");
+  }
+  return S_OK;
+}
+
 void MPMadPresenter::EnableExclusive(bool bEnable)
 {
   if (Com::SmartQIPtr<IMadVRCommand> pMadVrCmd = m_pMad)
@@ -812,15 +827,6 @@ HRESULT MPMadPresenter::Stopping()
     //  Log("MPMadPresenter::Stopping() disable exclusive mode");
     //}
 
-    // Needed to close madVR window at least for exclusive mode
-    if (Com::SmartQIPtr<IVideoWindow> pWindow = m_pMad)
-    {
-      pWindow->put_WindowStyle(WS_DISABLED);
-      //pWindow->put_WindowState(SW_SHOWMAXIMIZED);
-      pWindow->put_WindowState(SW_HIDE);
-      //pWindow->SetWindowForeground(TRUE);
-    }
-
     if (m_pMad)
     {
       // Let's madVR restore original display mode (when adjust refresh it's handled by madVR)
@@ -935,8 +941,8 @@ HRESULT MPMadPresenter::ClearBackground(LPCSTR name, REFERENCE_TIME frameStart, 
   // Lock madVR thread while Shutdown()
   //CAutoLock lock(&m_dsLock);
 
-  WORD videoHeight = (WORD)activeVideoRect->bottom - (WORD)activeVideoRect->top;
-  WORD videoWidth = (WORD)activeVideoRect->right - (WORD)activeVideoRect->left;
+  DWORD videoHeight = activeVideoRect->bottom - activeVideoRect->top;
+  DWORD videoWidth = activeVideoRect->right - activeVideoRect->left;
 
   //CAutoLock cAutoLock(this);
 
@@ -971,8 +977,8 @@ HRESULT MPMadPresenter::ClearBackground(LPCSTR name, REFERENCE_TIME frameStart, 
   if (!m_pMPTextureGui || !m_pMadGuiVertexBuffer || !m_pRenderTextureGui || !m_pCallback)
     return CALLBACK_INFO_DISPLAY;
 
-  m_dwHeight = (WORD)fullOutputRect->bottom - (WORD)fullOutputRect->top; // added back
-  m_dwWidth = (WORD)fullOutputRect->right - (WORD)fullOutputRect->left;
+  m_dwHeight = fullOutputRect->bottom - fullOutputRect->top; // added back
+  m_dwWidth = fullOutputRect->right - fullOutputRect->left;
 
   RenderToTexture(m_pMPTextureGui);
 
@@ -1033,8 +1039,8 @@ HRESULT MPMadPresenter::RenderOsd(LPCSTR name, REFERENCE_TIME frameStart, RECT* 
   // Lock madVR thread while Shutdown()
   //CAutoLock lock(&m_dsLock);
 
-  WORD videoHeight = (WORD)activeVideoRect->bottom - (WORD)activeVideoRect->top;
-  WORD videoWidth = (WORD)activeVideoRect->right - (WORD)activeVideoRect->left;
+  DWORD videoHeight = activeVideoRect->bottom - activeVideoRect->top;
+  DWORD videoWidth = activeVideoRect->right - activeVideoRect->left;
 
   //Log("%s : log activeVideoRect bottom x top : %d x %d", __FUNCTION__, (WORD)activeVideoRect->bottom, (WORD)activeVideoRect->top);
   //Log("%s : log activeVideoRect right x left : %d x %d", __FUNCTION__, (WORD)activeVideoRect->right, (WORD)activeVideoRect->left);
@@ -1195,7 +1201,7 @@ HRESULT MPMadPresenter::SetupOSDVertex(IDirect3DVertexBuffer9* pVertextBuf)
   {
     RECT rDest;
     rDest.bottom = m_dwHeight;
-    rDest.left =  m_dwLeft;
+    rDest.left = m_dwLeft;
     rDest.right = m_dwWidth;
     rDest.top = m_dwTop;
 

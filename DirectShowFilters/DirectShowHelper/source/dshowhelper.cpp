@@ -997,8 +997,6 @@ BOOL MadInit(IVMR9Callback* callback, int xposition, int yposition, int width, i
   if (!madFilter)
     return FALSE;
 
-  m_pmadVrStopping = false;
-
   return TRUE;
 }
 
@@ -1028,7 +1026,7 @@ void MadStopping()
     Log("MPMadDshow::MadStopping start");
     //CAutoLock lock(&m_madPresenter->m_dsLock);
     //m_madPresenter->m_dsLock.Lock();
-    m_pmadVrStopping = true;
+    m_madPresenter->SetStopEvent();
     m_madPresenter->m_pShutdown = true;
     Sleep(100);
     m_madPresenter->Stopping();

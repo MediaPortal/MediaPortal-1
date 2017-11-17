@@ -994,6 +994,9 @@ namespace MediaPortal.Player
               videoWinMadVr.put_MessageDrain(ownerHandle);
             }
           }
+          // Start command thread that will analyse the release of madVR to avoid endless/stuck last frame on screen
+          // It will permit to solve the issue where need something on top of MP window to unstuck it
+          CreateCommandThread();
           Log.Info("VMR9: added madVR Renderer to graph");
         }
         else
@@ -1769,20 +1772,20 @@ namespace MediaPortal.Player
           var msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_MADVR_SCREEN_REFRESH, 0, 0, 0, 0, 0, null);
           GUIWindowManager.SendThreadMessage(msg);
 
-          //if ((GUIGraphicsContext.form.WindowState != FormWindowState.Minimized))
-          //{
-          //  // Make MediaPortal window normal ( if minimized )
-          //  Win32API.ShowWindow(GUIGraphicsContext.ActiveForm, Win32API.ShowWindowFlags.ShowNormal);
+          if ((GUIGraphicsContext.form.WindowState != FormWindowState.Minimized))
+          {
+            // Make MediaPortal window normal ( if minimized )
+            Win32API.ShowWindow(GUIGraphicsContext.ActiveForm, Win32API.ShowWindowFlags.ShowNormal);
 
-          //  // Make Mediaportal window focused
-          //  if (Win32API.SetForegroundWindow(GUIGraphicsContext.ActiveForm, true))
-          //  {
-          //    Log.Info("VMR9: Successfully switched focus.");
-          //  }
+            // Make Mediaportal window focused
+            if (Win32API.SetForegroundWindow(GUIGraphicsContext.ActiveForm, true))
+            {
+              Log.Info("VMR9: Successfully switched focus.");
+            }
 
-          //  // Bring MP to front
-          //  GUIGraphicsContext.form.BringToFront();
-          //}
+            // Bring MP to front
+            GUIGraphicsContext.form.BringToFront();
+          }
           Log.Debug("VMR9: RestoreGuiForMadVr");
         }
       }
@@ -1941,6 +1944,40 @@ namespace MediaPortal.Player
 
     #region IDisposeable
 
+    private Thread _commandThread = null;
+    private readonly ManualResetEventSlim _commandNotify = new ManualResetEventSlim();
+
+    private void CreateCommandThread()
+    {
+      ThreadStart ts = new ThreadStart(CommandThread);
+      _commandThread = new Thread(ts) {Name = "VMR9 madVR Stop thread"};
+      _commandThread.Start();
+    }
+
+    private void CommandThread()
+    {
+      try
+      {
+        bool exitThread = false;
+
+        while (!exitThread)
+        {
+          _commandNotify?.Wait();
+          _commandNotify?.Reset();
+
+          while (_commandNotify?.WaitHandle != null)
+          {
+            GUIWindowManager.Process();
+            exitThread = true;
+          }
+        }
+      }
+      catch (Exception)
+      {
+        Log.Info("VMR9: madVr CommandThread aborded");
+      }
+    }
+
     /// <summary>
     /// removes the vmr9 filter from the graph and free up all unmanaged resources
     /// </summary>
@@ -1987,16 +2024,24 @@ namespace MediaPortal.Player
         }
         else if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
         {
+          if (videoWinMadVr != null)
+          {
+            DirectShowUtil.ReleaseComObject(videoWinMadVr);
+            videoWinMadVr = null;
+          }
           Log.Debug("VMR9: Dispose MadDeinit - thread : {0}", Thread.CurrentThread.Name);
           GC.Collect();
           Log.Debug("VMR9: Dispose 2");
           MadDeinit();
           Log.Debug("VMR9: Dispose 2.1");
           GC.Collect();
-          MadvrInterface.restoreDisplayModeNow(_vmr9Filter);
-          DirectShowUtil.FinalReleaseComObject(_vmr9Filter);
-          Log.Debug("VMR9: Dispose 2.2");
           DestroyWindow(GUIGraphicsContext.MadVrHWnd); // for using no Kodi madVR window way comment out this line
+          Log.Debug("VMR9: Dispose 2.2");
+          MadvrInterface.restoreDisplayModeNow(_vmr9Filter);
+          // _commandNotify is to avoid windows stay freeze randomly
+          _commandNotify?.Set();
+          DirectShowUtil.FinalReleaseComObject(_vmr9Filter);
+          _commandNotify?.Dispose();
           RestoreGuiForMadVr();
           Log.Debug("VMR9: Dispose 2.3");
           _vmr9Filter = null;
