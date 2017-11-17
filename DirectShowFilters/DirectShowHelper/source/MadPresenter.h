@@ -254,12 +254,12 @@ class MPMadPresenter : public CUnknown, public CCritSec
     void SetDsWndVisible(bool);
     //virtual OAHWND HWnDMadVR() { return reinterpret_cast<OAHWND>(m_hWnd); }
     static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-    HWND m_hWnd;
-    CWnd* m_pVideoWnd;
-    CWnd* pWnd;
+    HWND m_hWnd = nullptr;
+    CWnd* m_pVideoWnd = nullptr;
+    CWnd* pWnd = nullptr;
     bool InitMadvrWindow(HWND &hWnd);
     void DeInitMadvrWindow();
-    HINSTANCE m_hInstance;
+    HINSTANCE m_hInstance = nullptr;
     bool m_pInitMadVRWindowPositionDone = false;
     #if !defined(NPT_POINTER_TO_LONG)
     #define NPT_POINTER_TO_LONG(_p) ((long)(_p))
@@ -289,8 +289,8 @@ class MPMadPresenter : public CUnknown, public CCritSec
     bool m_pReInitOSD = false;
     IVMR9Callback* m_pCallback = nullptr;
     CCritSec m_dsLock;
-    HANDLE m_pGrabEvent;
-    HANDLE m_pGraphEvent;
+    HANDLE m_pGrabEvent = nullptr;
+    HANDLE m_pGraphEvent = nullptr;
 
   private:
     void RenderToTexture(IDirect3DTexture9* pTexture);
@@ -309,7 +309,7 @@ class MPMadPresenter : public CUnknown, public CCritSec
 
     IMediaControl* m_pMediaControl = nullptr;
 
-    Com::SmartPtr<IUnknown> m_pMad;
+    Com::SmartPtr<IUnknown> m_pMad = nullptr;
 
     CComQIPtr<IDirect3DTexture9> m_pRenderTextureGui = nullptr;
     CComQIPtr<IDirect3DTexture9> m_pRenderTextureOsd = nullptr;

@@ -94,7 +94,7 @@ MPMadPresenter::MPMadPresenter(IVMR9Callback* pCallback, int xposition, int ypos
   // Store device surface MP GUI for later
   m_pCallback->RestoreDeviceSurface(reinterpret_cast<LONG>(m_pSurfaceDevice));
   m_pInitMadVRWindowPositionDone = false;
-  g_hWnd = (HWND)m_hParent;
+  m_pKodiWindowUse ? g_hWnd = reinterpret_cast<HWND>(m_hParent) : g_hWnd = nullptr;
   Log("MPMadPresenter::Constructor() Store Device Surface");
 }
 
@@ -146,9 +146,11 @@ MPMadPresenter::~MPMadPresenter()
     Log("MPMadPresenter::Destructor() - m_pMad release 1");
     if (m_pMad)
     {
-      RedrawWindow(m_hWnd, nullptr, nullptr, 0);
+      if (!m_pKodiWindowUse)
+        RedrawWindow(m_hWnd, nullptr, nullptr, 0);
       m_pMad.Release();
-      UpdateWindow(m_hWnd);
+      if (!m_pKodiWindowUse)
+        UpdateWindow(m_hWnd);
     }
     Log("MPMadPresenter::Destructor() - m_pMad release 2");
 
@@ -356,14 +358,14 @@ void MPMadPresenter::InitMadVRWindowPosition()
     return;
   }
 
-  // Init created madVR window instance.
-  m_pReInitOSD = true;
-  m_pInitMadVRWindowPositionDone = true;
-
   if (m_pKodiWindowUse)
   {
     SetDsWndVisible(true);
   }
+
+  // Init created madVR window instance.
+  m_pReInitOSD = true;
+  m_pInitMadVRWindowPositionDone = true;
 }
 
 void MPMadPresenter::MadVr3DSizeRight(int x, int y, int width, int height)
@@ -440,18 +442,14 @@ IBaseFilter* MPMadPresenter::Initialize()
         m_hWnd = reinterpret_cast<HWND>(m_hParent);
         VERIFY(SUCCEEDED(pWindow->put_Owner(reinterpret_cast<OAHWND>(m_hWnd))));
         VERIFY(SUCCEEDED(pWindow->put_WindowStyle(WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN)));
-        //pWindow->put_Visible(reinterpret_cast<OAHWND>(m_hWnd));
         VERIFY(SUCCEEDED(pWindow->put_MessageDrain(reinterpret_cast<OAHWND>(m_hWnd))));
-        //pWindow->SetWindowPosition(0, 0, m_dwGUIWidth, m_dwGUIHeight);
       }
       else if (InitMadvrWindow(m_hWnd) && m_pKodiWindowUse) // Kodi window
       {
         m_pCallback->DestroyHWnd(m_hWnd);
         VERIFY(SUCCEEDED(pWindow->put_Owner(reinterpret_cast<OAHWND>(m_hWnd))));
         VERIFY(SUCCEEDED(pWindow->put_WindowStyle(WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN)));
-        //pWindow->put_Visible(reinterpret_cast<OAHWND>(m_hWnd));
         VERIFY(SUCCEEDED(pWindow->put_MessageDrain(reinterpret_cast<OAHWND>(m_hWnd))));
-        //pWindow->SetWindowPosition(0, 0, m_dwGUIWidth, m_dwGUIHeight);
         Log("%s : Create DSPlayer window - hWnd: %i", __FUNCTION__, m_hWnd);
         Log("MPMadPresenter::Initialize() send DestroyHWnd value on C# side");
       }
@@ -608,6 +606,7 @@ HRESULT MPMadPresenter::Shutdown()
       }
       Log("MPMadPresenter::Shutdown() send DestroyHWnd on C# side");
       m_pCallback->Release();
+      m_pCallback = nullptr;
       Log("MPMadPresenter::Shutdown() m_pCallback release");
     }
 
@@ -649,6 +648,23 @@ HRESULT MPMadPresenter::Shutdown()
       return E_FAIL;
     }
     pSR.Release(); // WIP release
+
+    if (m_pDevice != nullptr)
+    {
+      m_pDevice->Release();
+      m_pDevice = nullptr;
+    }
+
+    if (m_pSurfaceDevice != nullptr)
+    {
+      m_pSurfaceDevice->Release();
+      m_pSurfaceDevice = nullptr;
+    }
+
+    if (m_hParent)
+    {
+      m_hParent = NULL;
+    }
 
     Log("MPMadPresenter::Shutdown() stop");
     return S_OK;
@@ -820,6 +836,11 @@ HRESULT MPMadPresenter::Stopping()
       }
     }
 
+    if (m_pKodiWindowUse)
+    {
+      SetDsWndVisible(false);
+    }
+
     Log("MPMadPresenter::Stopping() m_pSRCB release 1");
     if (m_pSRCB)
       m_pSRCB.Release();
@@ -856,7 +877,7 @@ HRESULT MPMadPresenter::Stopping()
       Log("MPMadPresenter::Stopping() m_pMediaControl stop 2");
     }
 
-    if (m_pMadD3DDev)
+    if (m_pMadD3DDev != nullptr)
     {
       m_pMadD3DDev->Release();
       m_pMadD3DDev = nullptr;
@@ -1359,7 +1380,7 @@ HRESULT MPMadPresenter::SetDeviceOsd(IDirect3DDevice9* pD3DDev)
 
     if (!pD3DDev)
     {
-      if (m_pMadD3DDev)
+      if (m_pMadD3DDev != nullptr)
       {
         m_pMadD3DDev = nullptr;
         Log("MPMadPresenter::SetDeviceOsd() release m_pMadD3DDev");
