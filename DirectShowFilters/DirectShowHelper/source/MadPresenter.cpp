@@ -394,19 +394,15 @@ void MPMadPresenter::MadVr3DSizeLeft(int x, int y, int width, int height)
 
 void MPMadPresenter::MadVrScreenResize(int x, int y, int width, int height, bool displayChange)
 {
-  if (m_pMadD3DDev)
+  // Set window video position when screen change.
+  Log("%s : SetWindowPos : %d x %d", __FUNCTION__, width, height);
+  if (m_pKodiWindowUse)
   {
-    Log("%s : SetWindowPos : %d x %d", __FUNCTION__, width, height);
-    if (m_pKodiWindowUse)
-    {
-      // for using no Kodi madVR window way comment out this line
-      SetWindowPos(m_hWnd, nullptr, 0, 0, width, height, SWP_ASYNCWINDOWPOS);
-    }
-    else
-    {
-      // for using no Kodi madVR window way uncomment out this line
-      SetWindowPos(reinterpret_cast<HWND>(m_hParent), m_hWnd, x, y, width, height, SWP_ASYNCWINDOWPOS);
-    }
+    SetWindowPos(m_hWnd, nullptr, 0, 0, width, height, SWP_ASYNCWINDOWPOS);
+  }
+  else
+  {
+    SetWindowPos(reinterpret_cast<HWND>(m_hParent), m_hWnd, x, y, width, height, SWP_ASYNCWINDOWPOS);
   }
 
   // Needed to update OSD/GUI when changing directx present parameter on resolution change.
