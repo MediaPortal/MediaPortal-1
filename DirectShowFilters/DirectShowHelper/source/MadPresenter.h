@@ -98,7 +98,7 @@ class MPMadPresenter : public CUnknown, public CCritSec
     {
       { // Scope for autolock for the local variable (lock, which when deleted releases the lock)
         Log("MPMadPresenterH::SetDeviceOsd() device 0x:%x", pD3DDev);
-        if (m_pShutdownOsd || m_pmadVrStopping)
+        if (m_pShutdownOsd)
         {
           if (!pD3DDev)
           {
@@ -162,21 +162,21 @@ class MPMadPresenter : public CUnknown, public CCritSec
     {
       { // Scope for autolock for the local variable (lock, which when deleted releases the lock)
         Log("MPMadPresenterH::SetDeviceSub() device 0x:%x", pD3DDev);
-          if (m_pShutdownSub || m_pmadVrStopping)
+        if (m_pShutdownSub)
+        {
+          if (!pD3DDev)
           {
-            if (!pD3DDev)
+            if (m_pDXRAPSUB)
             {
-              if (m_pDXRAPSUB)
-              {
-                m_pDXRAPSUB->ReinitD3DDevice();
-                m_pDXRAPSUB->SetDeviceSub(pD3DDev);
-                // to see for deadlock needed to solve deadlock on stop
-                m_pDXRAPSUB = nullptr;
-                Log("MPMadPresenterH::SetDeviceSub() destroy");
-              }
-              return S_OK;
+              m_pDXRAPSUB->ReinitD3DDevice();
+              m_pDXRAPSUB->SetDeviceSub(pD3DDev);
+              // to see for deadlock needed to solve deadlock on stop
+              m_pDXRAPSUB = nullptr;
+              Log("MPMadPresenterH::SetDeviceSub() destroy");
             }
+            return S_OK;
           }
+        }
 
         CAutoLock cAutoLock(this); // TODO fix possible deadlock on stop need to understand the situation
         return m_pDXRAPSUB ? m_pDXRAPSUB->SetDeviceSub(pD3DDev) : E_UNEXPECTED;
@@ -281,6 +281,7 @@ class MPMadPresenter : public CUnknown, public CCritSec
     STDMETHOD(RenderEx3)(REFERENCE_TIME frameStart, REFERENCE_TIME frameStop, REFERENCE_TIME avgTimePerFrame, RECT croppedVideoRect, RECT originalVideoRect, RECT viewportRect, const double videoStretchFactor = 1.0, int xOffsetInPixels = 0, DWORD flags = 0);
     // Frame Grabbing
     STDMETHODIMP SetGrabEvent(HANDLE pGrabEvent);
+    STDMETHODIMP SetStopEvent();
 
     virtual void EnableExclusive(bool bEnable);
 
