@@ -1278,7 +1278,7 @@ public class MediaPortalApp : D3D, IRender
     {
       _ignoreFullscreenResolutionChanges = xmlreader.GetValueAsBool("general", "ignorefullscreenresolutionchanges", false);
       var startFullscreen = !WindowedOverride && (FullscreenOverride || xmlreader.GetValueAsBool("general", "startfullscreen", false));
-      GUIGraphicsContext.Windowed = Windowed = !startFullscreen;
+      Windowed = !startFullscreen;
     }
 
     DoStartupJobs();

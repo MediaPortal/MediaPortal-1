@@ -516,9 +516,9 @@ namespace MediaPortal
       }
 
       // reset device if necessary
-      GUIGraphicsContext.Windowed = Windowed = !Windowed;
+      Windowed = !Windowed;
       RecreateSwapChain(false);
-      GUIGraphicsContext.Windowed = Windowed = !Windowed;
+      Windowed = !Windowed;
 
       // adjust form sizes and properties
       if (Windowed)
@@ -545,7 +545,7 @@ namespace MediaPortal
         MaximizeBox = false;
         MinimizeBox = false;
         Menu = null;
-        GUIGraphicsContext.Windowed = Windowed = false;
+        Windowed = false;
         Location = new Point(GUIGraphicsContext.currentScreen.Bounds.X, GUIGraphicsContext.currentScreen.Bounds.Y);
         ClientSize = GUIGraphicsContext.currentScreen.Bounds.Size;
       }
@@ -563,7 +563,7 @@ namespace MediaPortal
         MaximizeBox = true;
         MinimizeBox = true;
         Menu = _menuStripMain;
-        GUIGraphicsContext.Windowed = Windowed = true;
+        Windowed = true;
 
         if (_oldClientRectangle.IsEmpty)
         {
@@ -1408,7 +1408,7 @@ namespace MediaPortal
 
       GUIGraphicsContext.DirectXPresentParameters = _presentParams;
       Log.Info("D3D: Back Buffer Size set to: {0}x{1}", _presentParams.BackBufferWidth, _presentParams.BackBufferHeight);
-      GUIGraphicsContext.Windowed = Windowed = windowed;
+      Windowed = windowed;
 
       // enable event handlers
       if (GUIGraphicsContext.DX9Device != null)
