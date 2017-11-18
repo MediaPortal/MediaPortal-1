@@ -1636,6 +1636,7 @@ public class MediaPortalApp : D3D, IRender
 
             GUIGraphicsContext._backupCurrentScreenSizeWidth = screen.Bounds.Size.Width;
             GUIGraphicsContext._backupCurrentScreenSizeHeight = screen.Bounds.Size.Height;
+            Log.Debug("Main: WM_DISPLAYCHANGE madVR _backupCurrentScreenSizeWidth x _backupCurrentScreenSizeHeight : {0} x {1}", screen.Bounds.Size.Width, screen.Bounds.Size.Height);
 
             Log.Debug("Main: WM_DISPLAYCHANGE madVR screen change triggered");
             Log.Debug("Main: WM_DISPLAYCHANGE madVR Width x Height : {0} x {1}", screen.Bounds.Size.Width, screen.Bounds.Size.Height);
