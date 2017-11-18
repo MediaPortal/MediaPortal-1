@@ -4071,11 +4071,13 @@ namespace MediaPortal.Player
 
             if (GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferWidth == 0)
             {
-              GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferWidth = widthResize;
+              GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferWidth = client.Width;
+              Log.Debug("g_player VideoWindowChanged() BackBufferWidth == 0 for madVR");
             }
             if (GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferHeight == 0)
             {
-              GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferHeight = heightResize;
+              GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferHeight = client.Height;
+              Log.Debug("g_player VideoWindowChanged() BackBufferHeight == 0 for madVR");
             }
 
             // message handled

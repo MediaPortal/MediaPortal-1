@@ -990,10 +990,17 @@ namespace MediaPortal.Player
                 : GUIGraphicsContext.form.Handle;
 
               videoWinMadVr.put_Owner(ownerHandle);
-              videoWinMadVr.put_WindowStyle((WindowStyle)((int)WindowStyle.Child + (int)WindowStyle.ClipChildren + (int)WindowStyle.ClipSiblings));
+              videoWinMadVr.put_WindowStyle((WindowStyle)((int) WindowStyle.Child + (int) WindowStyle.ClipChildren + (int) WindowStyle.ClipSiblings));
               videoWinMadVr.put_MessageDrain(ownerHandle);
             }
           }
+
+          // Backup size on start
+          GUIGraphicsContext._backupCurrentScreenSizeWidth = client.Width;
+          GUIGraphicsContext._backupCurrentScreenSizeHeight = client.Height;
+          Log.Debug("VMR9: madVR _backupCurrentScreenSizeWidth x _backupCurrentScreenSizeHeight : {0} x {1}",
+            GUIGraphicsContext._backupCurrentScreenSizeWidth, GUIGraphicsContext._backupCurrentScreenSizeHeight);
+
           // Start command thread that will analyse the release of madVR to avoid endless/stuck last frame on screen
           // It will permit to solve the issue where need something on top of MP window to unstuck it
           CreateCommandThread();
