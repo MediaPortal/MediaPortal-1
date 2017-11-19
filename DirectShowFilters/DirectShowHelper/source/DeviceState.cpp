@@ -33,11 +33,10 @@ DeviceState::~DeviceState()
   catch (...) {}
   try
   {
-    /*if (m_pTexture)
+    if (m_pTexture)
     {
-      m_pTexture->Release();
       m_pTexture = nullptr;
-    }*/
+    }
   }
   catch (...) {}
   try
@@ -86,7 +85,6 @@ void DeviceState::Shutdown()
   {
     if (m_pTexture)
     {
-      m_pTexture->Release();
       m_pTexture = nullptr;
     }
   }
@@ -188,7 +186,6 @@ HRESULT DeviceState::Restore()
     {
       if (m_pTexture)
       {
-        m_pTexture->Release();
         m_pTexture = nullptr;
       }
     }
@@ -211,7 +208,10 @@ HRESULT DeviceState::Restore()
   hr = m_pD3DDev->SetTexture(0, m_pTexture);
 
   if (m_pTexture)
+  {
     m_pTexture->Release();
+    m_pTexture = nullptr;
+  }
 
   if (FAILED(hr))
     return hr;

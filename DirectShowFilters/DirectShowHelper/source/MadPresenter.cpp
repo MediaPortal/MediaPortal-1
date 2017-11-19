@@ -31,6 +31,8 @@
 #include "gdiplus.h"
 
 static HWND g_hWnd;
+static IGraphBuilder* mediaControlGraph;
+bool StopEvent = false;
 
 const DWORD D3DFVF_VID_FRAME_VERTEX = D3DFVF_XYZRHW | D3DFVF_TEX1;
 
@@ -75,7 +77,7 @@ int GetEncoderClsid(const WCHAR* format, CLSID* pClsid)
   return -1;  // Failure
 }
 
-MPMadPresenter::MPMadPresenter(IVMR9Callback* pCallback, int xposition, int yposition, int width, int height, OAHWND parent, IDirect3DDevice9* pDevice, IMediaControl* pMediaControl) :
+MPMadPresenter::MPMadPresenter(IVMR9Callback* pCallback, int xposition, int yposition, int width, int height, OAHWND parent, IDirect3DDevice9* pDevice, IGraphBuilder* pMediaControl) :
   CUnknown(NAME("MPMadPresenter"), nullptr),
   m_pCallback(pCallback),
   m_dwGUIWidth(width),
@@ -95,6 +97,8 @@ MPMadPresenter::MPMadPresenter(IVMR9Callback* pCallback, int xposition, int ypos
   m_pCallback->RestoreDeviceSurface(reinterpret_cast<LONG>(m_pSurfaceDevice));
   m_pInitMadVRWindowPositionDone = false;
   m_pKodiWindowUse ? g_hWnd = reinterpret_cast<HWND>(m_hParent) : g_hWnd = nullptr;
+  mediaControlGraph = m_pMediaControl;
+  StopEvent = false;
   Log("MPMadPresenter::Constructor() Store Device Surface");
 }
 
@@ -116,34 +120,6 @@ MPMadPresenter::~MPMadPresenter()
     // TODO need to be commented to avoid deadlock.
     CAutoLock cAutoLock(this);
 
-    if (m_pSRCB)
-    {
-      // nasty, but we have to let it know about our death somehow
-      static_cast<CSubRenderCallback*>(static_cast<ISubRenderCallback*>(m_pSRCB))->SetDXRAPSUB(nullptr);
-      Log("MPMadPresenter::Destructor() - m_pSRCB");
-    }
-
-    if (m_pORCB)
-    {
-      // nasty, but we have to let it know about our death somehow
-      static_cast<COsdRenderCallback*>(static_cast<IOsdRenderCallback*>(m_pORCB))->SetDXRAP(nullptr);
-      Log("MPMadPresenter::Destructor() - m_pORCB");
-    }
-
-    //// Unregister madVR Exclusive Callback
-    //if (Com::SmartQIPtr<IMadVRExclusiveModeCallback> pEXL = m_pDXR)
-    //  pEXL->Unregister(m_exclusiveCallback, this);
-
-    Log("MPMadPresenter::Destructor() - m_pSRCB release 1");
-    if (m_pSRCB)
-      m_pSRCB.Release();
-    Log("MPMadPresenter::Destructor() - m_pSRCB release 2");
-
-    Log("MPMadPresenter::Destructor() - m_pORCB release 1");
-    if (m_pORCB)
-      m_pORCB.Release();
-    Log("MPMadPresenter::Destructor() - m_pORCB release 2");
-
     Log("MPMadPresenter::Destructor() - m_pMad release 1");
     if (m_pMad)
     {
@@ -155,6 +131,12 @@ MPMadPresenter::~MPMadPresenter()
     if (m_pKodiWindowUse)
     {
       DeInitMadvrWindow();
+    }
+
+    Log("MPMadPresenter::Destructor() - m_pMad release 1");
+    if (m_pMad)
+    {
+      m_pMad.FullRelease();
     }
 
     //DestroyWindow(reinterpret_cast<HWND>(pWnd));
@@ -189,7 +171,7 @@ void MPMadPresenter::SetMadVrPaused(bool paused)
   // TODO why it deadlock ?
   //CAutoLock cAutoLock(this);
 
-  if (m_pMediaControl)
+  /*if (m_pMediaControl)
   {
     if (paused)
     {
@@ -202,7 +184,7 @@ void MPMadPresenter::SetMadVrPaused(bool paused)
         Log("MPMadPresenter:::SetMadVrPaused() pause");
       }
     }
-  }
+  }*/
 }
 
 void MPMadPresenter::RepeatFrame()
@@ -653,12 +635,12 @@ HRESULT MPMadPresenter::Shutdown()
       return E_FAIL;
     }
 
-    if (FAILED(pSR->SetCallback(nullptr)))
-    {
-      m_pMad = nullptr;
-      return E_FAIL;
-    }
-    pSR.Release(); // WIP release
+    //if (FAILED(pSR->SetCallback(nullptr)))
+    //{
+    //  m_pMad = nullptr;
+    //  return E_FAIL;
+    //}
+    //pSR.Release(); // WIP release
 
     if (m_pDevice != nullptr)
     {
@@ -781,16 +763,43 @@ void MPMadPresenter::SetDsWndVisible(bool bVisible)
   Log("%s : Set DSPlayer window - Visible: %i", __FUNCTION__, cmd);
 }
 
+UINT CALLBACK MediaControlThreadProc()
+{
+  IMediaControl *mediaControl = NULL;
+  if ((mediaControlGraph) && (SUCCEEDED(mediaControlGraph->QueryInterface(__uuidof(IMediaControl), reinterpret_cast<LPVOID*>(&mediaControl)))) && (mediaControl))
+  if (mediaControl)
+  {
+    mediaControl->Stop();
+    OAFilterState state;
+    for (int i1 = 0; i1 < 200; i1++)
+    {
+      mediaControl->GetState(INFINITE, &state);
+      if (state == State_Stopped)
+        break;
+      Sleep(10);
+    }
+    mediaControl->Release();
+    StopEvent = true;
+  }
+  return 0;
+}
+
+void MediaControlStopThread()
+{
+  DWORD tid;
+  CloseHandle(CreateThread(nullptr, 0, reinterpret_cast<LPTHREAD_START_ROUTINE>(MediaControlThreadProc), nullptr, 0, &tid));
+}
+
 HRESULT MPMadPresenter::Stopping()
 {
   { // Scope for autolock for the local variable (lock, which when deleted releases the lock)
     //CAutoLock lock(this);
+    StopEvent = false;
 
     if (m_pSRCB)
     {
       // nasty, but we have to let it know about our death somehow
       static_cast<CSubRenderCallback*>(static_cast<ISubRenderCallback*>(m_pSRCB))->SetShutdownSub(m_pShutdown);
-      static_cast<CSubRenderCallback*>(static_cast<ISubRenderCallback*>(m_pSRCB))->SetDXRAPSUB(nullptr);
       Log("MPMadPresenter::Stopping() m_pSRCB");
     }
 
@@ -798,11 +807,19 @@ HRESULT MPMadPresenter::Stopping()
     {
       // nasty, but we have to let it know about our death somehow
       static_cast<COsdRenderCallback*>(static_cast<IOsdRenderCallback*>(m_pORCB))->SetShutdownOsd(m_pShutdown);
-      static_cast<COsdRenderCallback*>(static_cast<IOsdRenderCallback*>(m_pORCB))->SetDXRAP(nullptr);
       Log("MPMadPresenter::Stopping() m_pORCB");
     }
 
     Log("MPMadPresenter::Stopping() start to stop instance - 1");
+
+    // Start mediacontrol stop in a thread
+    MediaControlStopThread();
+
+    while(!StopEvent)
+    {
+      Sleep(10);
+      // Wait that the stop event is finished
+    }
 
     if (Com::SmartQIPtr<IMadVRSettings> m_pSettings = m_pMad)
     {
@@ -853,31 +870,31 @@ HRESULT MPMadPresenter::Stopping()
       m_pORCB.Release();
     Log("MPMadPresenter::Stopping() m_pORCB release 2");
 
-    if (m_pMediaControl)
-    {
-      Log("MPMadPresenter::Stopping() m_pMediaControl stop 1");
-      int counter = 0;
-      OAFilterState state = -1;
-      m_pMediaControl->Stop();
-      m_pMediaControl->GetState(100, &state);
-      while (state != State_Stopped)
-      {
-        Log("MPMadPresenter::Stopping() m_pMediaControl: graph still running");
-        Sleep(100);
-        m_pMediaControl->GetState(10, &state);
-        counter++;
-        if (counter >= 30)
-        {
-          if (state != State_Stopped)
-          {
-            Log("MPMadPresenter::Stopping() m_pMediaControl: graph still running");
-          }
-          break;
-        }
-      }
-      m_pMediaControl = nullptr;
-      Log("MPMadPresenter::Stopping() m_pMediaControl stop 2");
-    }
+    //if (m_pMediaControl)
+    //{
+    //  Log("MPMadPresenter::Stopping() m_pMediaControl stop 1");
+    //  int counter = 0;
+    //  OAFilterState state = -1;
+    //  m_pMediaControl->Stop();
+    //  m_pMediaControl->GetState(100, &state);
+    //  while (state != State_Stopped)
+    //  {
+    //    Log("MPMadPresenter::Stopping() m_pMediaControl: graph still running");
+    //    Sleep(100);
+    //    m_pMediaControl->GetState(10, &state);
+    //    counter++;
+    //    if (counter >= 30)
+    //    {
+    //      if (state != State_Stopped)
+    //      {
+    //        Log("MPMadPresenter::Stopping() m_pMediaControl: graph still running");
+    //      }
+    //      break;
+    //    }
+    //  }
+    //  m_pMediaControl = nullptr;
+    //  Log("MPMadPresenter::Stopping() m_pMediaControl stop 2");
+    //}
 
     if (m_pMadD3DDev != nullptr)
     {
@@ -1309,12 +1326,12 @@ void MPMadPresenter::ReinitOSD(bool type)
         Log("%s : ReinitOSD from : RenderOsd", __FUNCTION__);
       }
       m_pReInitOSD = false;
-      if (m_pMPTextureGui) m_pMPTextureGui.Release();
-      if (m_pMPTextureOsd) m_pMPTextureOsd.Release();
-      if (m_pMadGuiVertexBuffer) m_pMadGuiVertexBuffer.Release();
-      if (m_pMadOsdVertexBuffer) m_pMadOsdVertexBuffer.Release();
-      if (m_pRenderTextureGui) m_pRenderTextureGui.Release();
-      if (m_pRenderTextureOsd) m_pRenderTextureOsd.Release();
+      m_pMPTextureGui = nullptr;
+      m_pMPTextureOsd = nullptr;
+      m_pMadGuiVertexBuffer = nullptr;
+      m_pMadOsdVertexBuffer = nullptr;
+      m_pRenderTextureGui = nullptr;
+      m_pRenderTextureOsd = nullptr;
       m_hSharedGuiHandle = nullptr;
       m_hSharedOsdHandle = nullptr;
       m_pDevice->CreateTexture(m_dwGUIWidth, m_dwGUIHeight, 0, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &m_pMPTextureGui.p, &m_hSharedGuiHandle);
@@ -1334,14 +1351,16 @@ void MPMadPresenter::ReinitOSD(bool type)
 void MPMadPresenter::ReinitD3DDevice()
 {
   // Needed to release D3D device for resetting a new device from madVR
-  if (m_pMPTextureGui) m_pMPTextureGui.Release();
-  if (m_pMPTextureOsd) m_pMPTextureOsd.Release();
-  if (m_pMadGuiVertexBuffer) m_pMadGuiVertexBuffer.Release();
-  if (m_pMadOsdVertexBuffer) m_pMadOsdVertexBuffer.Release();
-  if (m_pRenderTextureGui) m_pRenderTextureGui.Release();
-  if (m_pRenderTextureOsd) m_pRenderTextureOsd.Release();
+  m_pMPTextureGui = nullptr;
+  m_pMPTextureOsd = nullptr;
+  m_pMadGuiVertexBuffer = nullptr;
+  m_pMadOsdVertexBuffer = nullptr;
+  m_pRenderTextureGui = nullptr;
+  m_pRenderTextureOsd = nullptr;
   m_hSharedGuiHandle = nullptr;
   m_hSharedOsdHandle = nullptr;
+  CloseHandle(m_hSharedGuiHandle);
+  CloseHandle(m_hSharedOsdHandle);
   Log("%s : ReinitOSDDevice for : %d x %d", __FUNCTION__, m_dwGUIWidth, m_dwGUIHeight);
 }
 
