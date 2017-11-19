@@ -968,7 +968,7 @@ void CloseFrameGrabbing()
 }
 // madVR frame grabber thread end
 
-BOOL MadInit(IVMR9Callback* callback, int xposition, int yposition, int width, int height, DWORD dwD3DDevice, OAHWND parent, IBaseFilter** madFilter, IMediaControl* pMediaControl)
+BOOL MadInit(IVMR9Callback* callback, int xposition, int yposition, int width, int height, DWORD dwD3DDevice, OAHWND parent, IBaseFilter** madFilter, IGraphBuilder* pMediaControl)
 {
   m_RenderPrefix = _T("mad");
 

@@ -226,7 +226,7 @@ class MPMadPresenter : public CUnknown, public CCritSec
 
   public:
 
-    MPMadPresenter(IVMR9Callback* pCallback, int xposition, int yposition, int width, int height, OAHWND parent, IDirect3DDevice9* pDevice, IMediaControl* pMediaControl);
+    MPMadPresenter(IVMR9Callback* pCallback, int xposition, int yposition, int width, int height, OAHWND parent, IDirect3DDevice9* pDevice, IGraphBuilder* pMediaControl);
     ~MPMadPresenter();
 
     // XBMC
@@ -308,7 +308,7 @@ class MPMadPresenter : public CUnknown, public CCritSec
     IDirect3DDevice9Ex* m_pDevice = nullptr;
     IDirect3DDevice9Ex* m_pMadD3DDev = nullptr;
 
-    IMediaControl* m_pMediaControl = nullptr;
+    IGraphBuilder* m_pMediaControl = nullptr;
 
     Com::SmartPtr<IUnknown> m_pMad = nullptr;
 

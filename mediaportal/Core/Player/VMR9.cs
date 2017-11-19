@@ -165,7 +165,7 @@ namespace MediaPortal.Player
     [DllImport("dshowhelper.dll", CallingConvention = CallingConvention.Cdecl)]
     private static extern unsafe bool MadInit(IVMR9PresentCallback callback, int xposition, int yposition,
                                               int width, int height, uint dwD3DDevice, uint parent,
-                                              ref IBaseFilter madFilter, IMediaControl mPMediaControl);
+                                              ref IBaseFilter madFilter, IGraphBuilder mPMediaControl);
 
     [DllImport("dshowhelper.dll", CallingConvention = CallingConvention.Cdecl)]
     private static extern unsafe void MadDeinit();
@@ -254,6 +254,7 @@ namespace MediaPortal.Player
     protected internal DateTime playbackTimer;
     protected internal DateTime PlaneSceneMadvrTimer = new DateTime(0);
     protected IVideoWindow videoWinMadVr;
+    private readonly object _syncRoot = new Object();
 
     #endregion
 
@@ -977,7 +978,7 @@ namespace MediaPortal.Player
           GUIGraphicsContext._backupCurrentScreenSizeWidth = client.Width;
           GUIGraphicsContext._backupCurrentScreenSizeHeight = client.Height;
           MadInit(_scene, xposition, yposition, client.Width, client.Height, (uint) upDevice.ToInt32(),
-            (uint) GUIGraphicsContext.ActiveForm.ToInt32(), ref _vmr9Filter, mPMediaControl);
+            (uint) GUIGraphicsContext.ActiveForm.ToInt32(), ref _vmr9Filter, graphBuilder);
           hr = new HResult(graphBuilder.AddFilter(_vmr9Filter, "madVR"));
           if (!UseMadVideoRenderer3D) // TODO
           {
@@ -1721,8 +1722,9 @@ namespace MediaPortal.Player
                 _scene.WorkerThread.Abort();
               }
             }
-            hr = mediaCtrl.Stop();
-            DsError.ThrowExceptionForHR(hr);
+            // WIP stop in a thread
+            //hr = mediaCtrl.Stop();
+            //DsError.ThrowExceptionForHR(hr);
             Log.Debug("VMR9: Vmr9MediaCtrl MadStopping()");
             MadStopping();
           }
@@ -1952,36 +1954,40 @@ namespace MediaPortal.Player
     #region IDisposeable
 
     private Thread _commandThread = null;
-    private readonly ManualResetEventSlim _commandNotify = new ManualResetEventSlim();
+    private ManualResetEventSlim _commandNotify = new ManualResetEventSlim();
 
     private void CreateCommandThread()
     {
       ThreadStart ts = new ThreadStart(CommandThread);
       _commandThread = new Thread(ts) {Name = "VMR9 madVR Stop thread"};
+      _commandNotify = new ManualResetEventSlim();
       _commandThread.Start();
     }
 
     private void CommandThread()
     {
-      try
+      lock (_syncRoot)
       {
-        bool exitThread = false;
-
-        while (!exitThread)
+        try
         {
-          _commandNotify?.Wait();
-          _commandNotify?.Reset();
+          bool exitThread = false;
 
-          while (_commandNotify?.WaitHandle != null)
+          while (!exitThread)
           {
-            GUIWindowManager.Process();
-            exitThread = true;
+            _commandNotify?.Wait();
+            _commandNotify?.Reset();
+
+            while (_commandNotify?.WaitHandle != null)
+            {
+              GUIWindowManager.Process();
+              exitThread = true;
+            }
           }
         }
-      }
-      catch (Exception)
-      {
-        Log.Info("VMR9: madVr CommandThread aborded");
+        catch (Exception)
+        {
+          Log.Info("VMR9: madVr CommandThread aborded");
+        }
       }
     }
 
