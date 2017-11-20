@@ -80,7 +80,7 @@ class MPMadPresenter : public CUnknown, public CCritSec
       {
         return S_OK;
       }
-      //CAutoLock cAutoLock(this);
+      CAutoLock cAutoLock(this);
       return m_pDXRAP ? m_pDXRAP->ClearBackground(name, frameStart, fullOutputRect, activeVideoRect) : E_UNEXPECTED;
     }
 
@@ -90,13 +90,14 @@ class MPMadPresenter : public CUnknown, public CCritSec
       {
         return S_OK;
       }
-      //CAutoLock cAutoLock(this);
+      CAutoLock cAutoLock(this);
       return m_pDXRAP ? m_pDXRAP->RenderOsd(name, frameStart, fullOutputRect, activeVideoRect) : E_UNEXPECTED;
     }
 
     STDMETHODIMP SetDevice(IDirect3DDevice9* pD3DDev)
     {
       { // Scope for autolock for the local variable (lock, which when deleted releases the lock)
+        CAutoLock cAutoLock(this); // TODO fix possible deadlock on stop need to understand the situation
         Log("MPMadPresenterH::SetDeviceOsd() device 0x:%x", pD3DDev);
         if (m_pShutdownOsd)
         {
@@ -104,16 +105,15 @@ class MPMadPresenter : public CUnknown, public CCritSec
           {
             if (m_pDXRAP)
             {
+              //m_pDXRAP->ReinitD3DDevice(); // Can crash on D3D11 on stop
               m_pDXRAP->SetDeviceOsd(pD3DDev);
               // to see for deadlock needed to solve deadlock on stop
               m_pDXRAP = nullptr;
               Log("MPMadPresenterH::SetDeviceOsd() destroy");
             }
-            return S_OK;
           }
+          return S_OK;
         }
-
-        CAutoLock cAutoLock(this); // TODO fix possible deadlock on stop need to understand the situation
 
         if (!pD3DDev)
         {
@@ -160,6 +160,7 @@ class MPMadPresenter : public CUnknown, public CCritSec
     STDMETHODIMP SetDevice(IDirect3DDevice9* pD3DDev)
     {
       { // Scope for autolock for the local variable (lock, which when deleted releases the lock)
+        CAutoLock cAutoLock(this); // TODO fix possible deadlock on stop need to understand the situation
         Log("MPMadPresenterH::SetDeviceSub() device 0x:%x", pD3DDev);
         if (m_pShutdownSub)
         {
@@ -167,16 +168,15 @@ class MPMadPresenter : public CUnknown, public CCritSec
           {
             if (m_pDXRAPSUB)
             {
+              //m_pDXRAPSUB->ReinitD3DDevice(); // Can crash on D3D11 on stop
               m_pDXRAPSUB->SetDeviceSub(pD3DDev);
               // to see for deadlock needed to solve deadlock on stop
               m_pDXRAPSUB = nullptr;
               Log("MPMadPresenterH::SetDeviceSub() destroy");
             }
-            return S_OK;
           }
+          return S_OK;
         }
-
-        CAutoLock cAutoLock(this); // TODO fix possible deadlock on stop need to understand the situation
         return m_pDXRAPSUB ? m_pDXRAPSUB->SetDeviceSub(pD3DDev) : E_UNEXPECTED;
       }
     }
@@ -187,7 +187,7 @@ class MPMadPresenter : public CUnknown, public CCritSec
       {
         return S_OK;
       }
-      //CAutoLock cAutoLock(this);
+      CAutoLock cAutoLock(this);
       return m_pDXRAPSUB ? m_pDXRAPSUB->Render(rtStart, left, top, right, bottom, width, height) : E_UNEXPECTED;
     }
 
@@ -197,7 +197,7 @@ class MPMadPresenter : public CUnknown, public CCritSec
       {
         return S_OK;
       }
-      //CAutoLock cAutoLock(this);
+      CAutoLock cAutoLock(this);
       return m_pDXRAPSUB ? m_pDXRAPSUB->Render(frameStart, left, top, right, bottom, width, height) : E_UNEXPECTED;
     }
 
@@ -207,7 +207,7 @@ class MPMadPresenter : public CUnknown, public CCritSec
       {
         return S_OK;
       }
-      //CAutoLock cAutoLock(this);
+      CAutoLock cAutoLock(this);
       return m_pDXRAPSUB ? m_pDXRAPSUB->Render(frameStart, croppedVideoRect.left, croppedVideoRect.top, croppedVideoRect.right, croppedVideoRect.bottom, viewportRect.top, viewportRect.right) : E_UNEXPECTED;
     }
 
@@ -217,7 +217,7 @@ class MPMadPresenter : public CUnknown, public CCritSec
       {
         return S_OK;
       }
-      //CAutoLock cAutoLock(this);
+      CAutoLock cAutoLock(this);
       return m_pDXRAPSUB ? m_pDXRAPSUB->RenderEx3(std::move(frameStart), std::move(frameStop), std::move(avgTimePerFrame), std::move(croppedVideoRect), std::move(originalVideoRect), std::move(viewportRect), std::move(videoStretchFactor), xOffsetInPixels) : E_UNEXPECTED;
     }
   };
@@ -306,7 +306,7 @@ class MPMadPresenter : public CUnknown, public CCritSec
     IDirect3DDevice9Ex* m_pDevice = nullptr;
     IDirect3DDevice9Ex* m_pMadD3DDev = nullptr;
 
-    IGraphBuilder* m_pMediaControl = nullptr;
+    IGraphBuilder* m_pGraphbuilder = nullptr;
 
     Com::SmartPtr<IUnknown> m_pMad = nullptr;
 
