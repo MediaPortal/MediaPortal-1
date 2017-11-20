@@ -123,7 +123,7 @@ MPMadPresenter::~MPMadPresenter()
     Log("MPMadPresenter::Destructor() - m_pMad release 1");
     if (m_pMad)
     {
-      m_pMad.FullRelease();
+      m_pMad.Release();
     }
     Log("MPMadPresenter::Destructor() - m_pMad release 2");
 
@@ -131,12 +131,6 @@ MPMadPresenter::~MPMadPresenter()
     if (m_pKodiWindowUse)
     {
       DeInitMadvrWindow();
-    }
-
-    Log("MPMadPresenter::Destructor() - m_pMad release 1");
-    if (m_pMad)
-    {
-      m_pMad.FullRelease();
     }
 
     //DestroyWindow(reinterpret_cast<HWND>(pWnd));
@@ -635,12 +629,12 @@ HRESULT MPMadPresenter::Shutdown()
       return E_FAIL;
     }
 
-    //if (FAILED(pSR->SetCallback(nullptr)))
-    //{
-    //  m_pMad = nullptr;
-    //  return E_FAIL;
-    //}
-    //pSR.Release(); // WIP release
+    if (FAILED(pSR->SetCallback(nullptr)))
+    {
+      m_pMad = nullptr;
+      return E_FAIL;
+    }
+    pSR.Release(); // WIP release
 
     if (m_pDevice != nullptr)
     {
@@ -765,20 +759,37 @@ void MPMadPresenter::SetDsWndVisible(bool bVisible)
 
 UINT CALLBACK MediaControlThreadProc()
 {
-  IMediaControl *mediaControl = NULL;
-  if ((mediaControlGraph) && (SUCCEEDED(mediaControlGraph->QueryInterface(__uuidof(IMediaControl), reinterpret_cast<LPVOID*>(&mediaControl)))) && (mediaControl))
-  if (mediaControl)
+  IMediaControl *m_pControl = nullptr;
+  IMediaSeeking *m_pMediaSeek = nullptr;
+  //Assuming that you have valid media control interface and media seeking interface    using QueryInterface
+
+  if ((mediaControlGraph) && (SUCCEEDED(mediaControlGraph->QueryInterface(__uuidof(IMediaControl), reinterpret_cast<LPVOID*>(&m_pControl)))) && (m_pControl))
+  if (m_pControl)
   {
-    mediaControl->Stop();
+    long long m_pStart = 0;
+    m_pControl->Pause();
+    m_pControl->GetState(1000, nullptr);
+
+    if ((mediaControlGraph) && (SUCCEEDED(mediaControlGraph->QueryInterface(__uuidof(IMediaSeeking), reinterpret_cast<LPVOID*>(&m_pMediaSeek)))) && (m_pMediaSeek))
+    {
+      m_pMediaSeek->SetPositions(&m_pStart, AM_SEEKING_AbsolutePositioning, nullptr, AM_SEEKING_NoPositioning);
+      m_pMediaSeek->Release();
+    }
+    m_pControl->Run();
+    m_pControl->GetState(1000, nullptr);
+
+    m_pControl->Stop();
+    m_pControl->GetState(1000, nullptr);
+
     OAFilterState state;
     for (int i1 = 0; i1 < 200; i1++)
     {
-      mediaControl->GetState(INFINITE, &state);
+      m_pControl->GetState(INFINITE, &state);
       if (state == State_Stopped)
         break;
       Sleep(10);
     }
-    mediaControl->Release();
+    m_pControl->Release();
     StopEvent = true;
   }
   return 0;
@@ -800,6 +811,7 @@ HRESULT MPMadPresenter::Stopping()
     {
       // nasty, but we have to let it know about our death somehow
       static_cast<CSubRenderCallback*>(static_cast<ISubRenderCallback*>(m_pSRCB))->SetShutdownSub(m_pShutdown);
+      static_cast<CSubRenderCallback*>(static_cast<ISubRenderCallback*>(m_pSRCB))->SetDXRAPSUB(nullptr);
       Log("MPMadPresenter::Stopping() m_pSRCB");
     }
 
@@ -807,7 +819,29 @@ HRESULT MPMadPresenter::Stopping()
     {
       // nasty, but we have to let it know about our death somehow
       static_cast<COsdRenderCallback*>(static_cast<IOsdRenderCallback*>(m_pORCB))->SetShutdownOsd(m_pShutdown);
+      static_cast<COsdRenderCallback*>(static_cast<IOsdRenderCallback*>(m_pORCB))->SetDXRAP(nullptr);
       Log("MPMadPresenter::Stopping() m_pORCB");
+    }
+
+    if (Com::SmartQIPtr<IVideoWindow> pWindow = m_pMad)
+    {
+      // set visible and autoshow to false, otherwise video might flicker on desktop when changing owner to NULL
+      pWindow->put_Visible(OAFALSE);
+      pWindow->put_AutoShow(OAFALSE);
+      // Set owner to NULL
+      pWindow->put_Owner(NULL);
+      pWindow.Release();
+    }
+
+    IVideoWindow* m_pWindow = nullptr;
+    if ((mediaControlGraph) && (SUCCEEDED(mediaControlGraph->QueryInterface(__uuidof(IVideoWindow), reinterpret_cast<LPVOID*>(&m_pWindow)))) && (m_pWindow))
+    {
+      // set visible and autoshow to false, otherwise video might flicker on desktop when changing owner to NULL
+      m_pWindow->put_Visible(OAFALSE);
+      m_pWindow->put_AutoShow(OAFALSE);
+      // Set owner to NULL
+      m_pWindow->put_Owner(NULL);
+      m_pWindow->Release();
     }
 
     Log("MPMadPresenter::Stopping() start to stop instance - 1");
@@ -895,6 +929,9 @@ HRESULT MPMadPresenter::Stopping()
     //  m_pMediaControl = nullptr;
     //  Log("MPMadPresenter::Stopping() m_pMediaControl stop 2");
     //}
+
+    // Release
+    m_deviceState.Shutdown();
 
     if (m_pMadD3DDev != nullptr)
     {
@@ -1351,16 +1388,23 @@ void MPMadPresenter::ReinitOSD(bool type)
 void MPMadPresenter::ReinitD3DDevice()
 {
   // Needed to release D3D device for resetting a new device from madVR
-  m_pMPTextureGui = nullptr;
-  m_pMPTextureOsd = nullptr;
-  m_pMadGuiVertexBuffer = nullptr;
-  m_pMadOsdVertexBuffer = nullptr;
-  m_pRenderTextureGui = nullptr;
-  m_pRenderTextureOsd = nullptr;
-  m_hSharedGuiHandle = nullptr;
-  m_hSharedOsdHandle = nullptr;
-  CloseHandle(m_hSharedGuiHandle);
-  CloseHandle(m_hSharedOsdHandle);
+  try
+  {
+    m_pMPTextureGui = nullptr;
+    m_pMPTextureOsd = nullptr;
+    m_pMadGuiVertexBuffer = nullptr;
+    m_pMadOsdVertexBuffer = nullptr;
+    m_pRenderTextureGui = nullptr;
+    m_pRenderTextureOsd = nullptr;
+    m_hSharedGuiHandle = nullptr;
+    m_hSharedOsdHandle = nullptr;
+    CloseHandle(m_hSharedGuiHandle);
+    CloseHandle(m_hSharedOsdHandle);
+  }
+  catch (...)
+  {
+    Log("%s : ReinitOSDDevice catch exception");
+  }
   Log("%s : ReinitOSDDevice for : %d x %d", __FUNCTION__, m_dwGUIWidth, m_dwGUIHeight);
 }
 
