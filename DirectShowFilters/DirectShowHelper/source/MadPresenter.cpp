@@ -766,7 +766,7 @@ void MPMadPresenter::SetDsWndVisible(bool bVisible)
 
 UINT CALLBACK MediaControlThreadProc()
 {
-  IMediaControl *m_pControl = nullptr;
+  CComPtr<IMediaControl> m_pControl = nullptr;
   if ((mediaControlGraph) && (SUCCEEDED(mediaControlGraph->QueryInterface(__uuidof(IMediaControl), reinterpret_cast<LPVOID*>(&m_pControl)))) && (m_pControl))
   if (m_pControl)
   {
@@ -784,9 +784,9 @@ UINT CALLBACK MediaControlThreadProc()
         break;
       Sleep(10);
     }
-    m_pControl->Release();
-    StopEvent = true;
+    m_pControl = nullptr;
   }
+  StopEvent = true;
   return 0;
 }
 
@@ -801,9 +801,6 @@ HRESULT MPMadPresenter::Stopping()
   { // Scope for autolock for the local variable (lock, which when deleted releases the lock)
     CAutoLock lock(this);
     StopEvent = false;
-
-    // Release texture and vertex
-    ReinitD3DDevice();
 
     // IOsdRenderCallback
     Com::SmartQIPtr<IMadVROsdServices> pOR = m_pMad;
@@ -852,13 +849,37 @@ HRESULT MPMadPresenter::Stopping()
 
     Log("MPMadPresenter::Stopping() start to stop instance - 1");
 
-    // Start mediacontrol stop in a thread
-    MediaControlStopThread();
+    //// Start mediacontrol stop in a thread
+    //MediaControlStopThread();
 
-    while (!StopEvent)
+    //while (!StopEvent)
+    //{
+    //  Sleep(10);
+    //  // Wait that the stop event is finished
+    //}
+
+    // Stop in current thread
+    CComPtr<IMediaControl> m_pControl = nullptr;
+    if ((mediaControlGraph) && (SUCCEEDED(mediaControlGraph->QueryInterface(__uuidof(IMediaControl), reinterpret_cast<LPVOID*>(&m_pControl)))) && (m_pControl))
     {
-      Sleep(10);
-      // Wait that the stop event is finished
+      if (m_pControl)
+      {
+        m_pControl->Pause();
+        m_pControl->GetState(1000, nullptr);
+
+        m_pControl->Stop();
+        m_pControl->GetState(1000, nullptr);
+
+        OAFilterState state;
+        for (int i1 = 0; i1 < 200; i1++)
+        {
+          m_pControl->GetState(INFINITE, &state);
+          if (state == State_Stopped)
+            break;
+          Sleep(10);
+        }
+        m_pControl = nullptr;
+      }
     }
 
     if (Com::SmartQIPtr<IMadVRSettings> m_pSettings = m_pMad)
@@ -910,7 +931,7 @@ HRESULT MPMadPresenter::Stopping()
       m_pORCB.Release();
     Log("MPMadPresenter::Stopping() m_pORCB release 2");
 
-    //IMediaControl *m_pControl = nullptr;
+    //CComPtr<IMediaControl> m_pControl = nullptr;
     //if ((mediaControlGraph) && (SUCCEEDED(mediaControlGraph->QueryInterface(__uuidof(IMediaControl), reinterpret_cast<LPVOID*>(&m_pControl)))) && (m_pControl))
     //{
     //  if (m_pControl)
