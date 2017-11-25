@@ -120,27 +120,17 @@ MPMadPresenter::~MPMadPresenter()
     // TODO need to be commented to avoid deadlock.
     CAutoLock cAutoLock(this);
 
-    Log("MPMadPresenter::Destructor() - m_pMad release 1");
-    if (mediaControlGraph)
-    {
-      if (Com::SmartQIPtr<IBaseFilter> baseFilter = m_pMad)
-      {
-        mediaControlGraph->RemoveFilter(baseFilter);
-        baseFilter.Release();
-      }
-      mediaControlGraph = nullptr;
-    }
-
+    Log("MPMadPresenter::Destructor() - m_pGraphbuilder release");
     if (m_pGraphbuilder)
     {
       m_pGraphbuilder = nullptr;
     }
 
+    Log("MPMadPresenter::Destructor() - m_pMad release");
     if (m_pMad)
     {
       m_pMad = nullptr;
     }
-    Log("MPMadPresenter::Destructor() - m_pMad release 2");
 
     // Detroy create madVR window and need to be here to avoid some crash
     if (m_pKodiWindowUse)

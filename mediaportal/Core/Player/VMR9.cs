@@ -1780,21 +1780,6 @@ namespace MediaPortal.Player
           // Send action message to refresh screen
           var msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_MADVR_SCREEN_REFRESH, 0, 0, 0, 0, 0, null);
           GUIWindowManager.SendThreadMessage(msg);
-
-          if ((GUIGraphicsContext.form.WindowState != FormWindowState.Minimized))
-          {
-            // Make MediaPortal window normal ( if minimized )
-            Win32API.ShowWindow(GUIGraphicsContext.ActiveForm, Win32API.ShowWindowFlags.ShowNormal);
-
-            // Make Mediaportal window focused
-            if (Win32API.SetForegroundWindow(GUIGraphicsContext.ActiveForm, true))
-            {
-              Log.Info("VMR9: Successfully switched focus.");
-            }
-
-            // Bring MP to front
-            GUIGraphicsContext.form.BringToFront();
-          }
           Log.Debug("VMR9: RestoreGuiForMadVr");
         }
       }
