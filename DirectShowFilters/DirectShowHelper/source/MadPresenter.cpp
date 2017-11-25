@@ -1408,12 +1408,36 @@ void MPMadPresenter::ReinitD3DDevice()
   // Needed to release D3D device for resetting a new device from madVR
   try
   {
-    m_pMPTextureGui = nullptr;
-    m_pMPTextureOsd = nullptr;
-    m_pMadGuiVertexBuffer = nullptr;
-    m_pMadOsdVertexBuffer = nullptr;
-    m_pRenderTextureGui = nullptr;
-    m_pRenderTextureOsd = nullptr;
+    if (m_pMPTextureGui)
+    {
+      m_pMPTextureGui.Release();
+      m_pMPTextureGui = nullptr;
+    }
+    if (m_pMPTextureOsd)
+    {
+      m_pMPTextureOsd.Release();
+      m_pMPTextureOsd = nullptr;
+    }
+    if (m_pMadGuiVertexBuffer)
+    {
+      m_pMadGuiVertexBuffer.Release();
+      m_pMadGuiVertexBuffer = nullptr;
+    }
+    if (m_pMadOsdVertexBuffer)
+    {
+      m_pMadOsdVertexBuffer.Release();
+      m_pMadOsdVertexBuffer = nullptr;
+    }
+    if (m_pRenderTextureGui)
+    {
+      m_pRenderTextureGui.Release();
+      m_pRenderTextureGui = nullptr;
+    }
+    if (m_pRenderTextureOsd)
+    {
+      m_pRenderTextureOsd.Release();
+      m_pRenderTextureOsd = nullptr;
+    }
     m_hSharedGuiHandle = nullptr;
     m_hSharedOsdHandle = nullptr;
     CloseHandle(m_hSharedGuiHandle);
