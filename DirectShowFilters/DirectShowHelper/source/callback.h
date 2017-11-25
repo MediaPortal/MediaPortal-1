@@ -33,7 +33,7 @@ DECLARE_INTERFACE_(IVMR9Callback, IUnknown)
   STDMETHOD(ForceOsdUpdate)(BOOL pForce)PURE;
   STDMETHOD(IsFullScreen)()PURE;
   STDMETHOD(IsUiVisible)()PURE;
-  STDMETHOD(RestoreDeviceSurface)(LONG pSurfaceDevice)PURE;
+  STDMETHOD(RestoreDeviceSurface)(LPVOID pSurfaceDevice)PURE;
   STDMETHOD(ReduceMadvrFrame)()PURE;
   STDMETHOD(DestroyHWnd)(HWND phWnd)PURE;
 };

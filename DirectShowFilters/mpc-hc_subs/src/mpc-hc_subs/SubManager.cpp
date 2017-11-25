@@ -63,8 +63,8 @@ void CSubManager::SetDevice(IDirect3DDevice9* d3DDev)
       m_d3DDev.Release();
       //m_d3DDev = nullptr;
     }
-    m_pAllocator = nullptr;
     m_pSubPicQueue = nullptr;
+    m_pAllocator = nullptr;
     return;
   }
 
