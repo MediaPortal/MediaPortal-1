@@ -1777,6 +1777,15 @@ namespace MediaPortal.Player
               GUIGraphicsContext.form.Location.Y);
           }
 
+          GUITextureManager.Clear();
+          GUITextureManager.Init();
+          GUIFontManager.LoadFonts(GUIGraphicsContext.Skin + @"\fonts.xml");
+          GUIFontManager.InitializeDeviceObjects();
+          GUIExpressionManager.ClearExpressionCache();
+          GUIControlFactory.ClearReferences();
+          GUIControlFactory.LoadReferences(GUIGraphicsContext.Skin + @"\references.xml");
+          GUIWindowManager.OnResize();
+
           // Send action message to refresh screen
           var msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_MADVR_SCREEN_REFRESH, 0, 0, 0, 0, 0, null);
           GUIWindowManager.SendThreadMessage(msg);
