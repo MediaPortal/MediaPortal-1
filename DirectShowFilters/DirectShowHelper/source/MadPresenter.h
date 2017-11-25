@@ -303,10 +303,10 @@ class MPMadPresenter : public CUnknown, public CCritSec
 
     OAHWND m_hParent = reinterpret_cast<OAHWND>(nullptr);
 
-    IDirect3DDevice9Ex* m_pDevice = nullptr;
-    IDirect3DDevice9Ex* m_pMadD3DDev = nullptr;
+    CComPtr<IDirect3DDevice9Ex> m_pDevice = nullptr;
+    CComPtr<IDirect3DDevice9Ex> m_pMadD3DDev = nullptr;
 
-    IGraphBuilder* m_pGraphbuilder = nullptr;
+    CComPtr<IGraphBuilder> m_pGraphbuilder = nullptr;
 
     Com::SmartPtr<IUnknown> m_pMad = nullptr;
 
@@ -358,7 +358,7 @@ class MPMadPresenter : public CUnknown, public CCritSec
 
     bool uiVisible = false;
 
-    IDirect3DSurface9* m_pSurfaceDevice = nullptr;
+    CComPtr<IDirect3DSurface9> m_pSurfaceDevice = nullptr;
 
     double m_pRefreshrate = 0;
     bool m_pPaused = false;

@@ -1363,6 +1363,10 @@ namespace MediaPortal.Player
         if (engine != null)
         {
           engine.SetDevice(device);
+          if (device == IntPtr.Zero)
+          {
+            SubEngine.GetInstance().FreeSubtitles();
+          }
         }
         Log.Debug("Planescene: Set subtitle device - {0}", device);
       }

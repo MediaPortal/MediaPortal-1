@@ -31,7 +31,7 @@
 #include "gdiplus.h"
 
 static HWND g_hWnd;
-static IGraphBuilder* mediaControlGraph;
+static CComPtr<IGraphBuilder> mediaControlGraph;
 bool StopEvent = false;
 
 const DWORD D3DFVF_VID_FRAME_VERTEX = D3DFVF_XYZRHW | D3DFVF_TEX1;
@@ -94,7 +94,7 @@ MPMadPresenter::MPMadPresenter(IVMR9Callback* pCallback, int xposition, int ypos
   m_pShutdown = false;
   m_pDevice->GetRenderTarget(0, &m_pSurfaceDevice);
   // Store device surface MP GUI for later
-  m_pCallback->RestoreDeviceSurface(reinterpret_cast<LONG>(m_pSurfaceDevice));
+  m_pCallback->RestoreDeviceSurface(m_pSurfaceDevice);
   m_pInitMadVRWindowPositionDone = false;
   m_pKodiWindowUse ? g_hWnd = reinterpret_cast<HWND>(m_hParent) : g_hWnd = nullptr;
   mediaControlGraph = m_pGraphbuilder;
@@ -121,9 +121,23 @@ MPMadPresenter::~MPMadPresenter()
     CAutoLock cAutoLock(this);
 
     Log("MPMadPresenter::Destructor() - m_pMad release 1");
+    if (mediaControlGraph)
+    {
+      if (Com::SmartQIPtr<IBaseFilter> baseFilter = m_pMad)
+      {
+        mediaControlGraph->RemoveFilter(baseFilter);
+        baseFilter.Release();
+      }
+      mediaControlGraph = nullptr;
+    }
+
+    if (m_pGraphbuilder)
+    {
+      m_pGraphbuilder = nullptr;
+    }
+
     if (m_pMad)
     {
-      m_pMad.FullRelease();
       m_pMad = nullptr;
     }
     Log("MPMadPresenter::Destructor() - m_pMad release 2");
@@ -132,10 +146,6 @@ MPMadPresenter::~MPMadPresenter()
     if (m_pKodiWindowUse)
     {
       DeInitMadvrWindow();
-    }
-    else if (mediaControlGraph)
-    {
-      mediaControlGraph->Release();
     }
 
     DestroyWindow(reinterpret_cast<HWND>(pWnd));
@@ -612,7 +622,7 @@ HRESULT MPMadPresenter::Shutdown()
     {
       m_pCallback->SetSubtitleDevice(reinterpret_cast<LONG>(nullptr));
       Log("MPMadPresenter::Shutdown() reset subtitle device");
-      m_pCallback->RestoreDeviceSurface(reinterpret_cast<DWORD>(m_pSurfaceDevice));
+      m_pCallback->RestoreDeviceSurface(m_pSurfaceDevice);
       Log("MPMadPresenter::Shutdown() RestoreDeviceSurface");
       if (m_pKodiWindowUse)
       {
@@ -637,13 +647,11 @@ HRESULT MPMadPresenter::Shutdown()
 
     if (m_pDevice != nullptr)
     {
-      m_pDevice->Release();
       m_pDevice = nullptr;
     }
 
     if (m_pSurfaceDevice != nullptr)
     {
-      m_pSurfaceDevice->Release();
       m_pSurfaceDevice = nullptr;
     }
 
@@ -794,6 +802,9 @@ HRESULT MPMadPresenter::Stopping()
     CAutoLock lock(this);
     StopEvent = false;
 
+    // Release texture and vertex
+    ReinitD3DDevice();
+
     // IOsdRenderCallback
     Com::SmartQIPtr<IMadVROsdServices> pOR = m_pMad;
     if (!pOR)
@@ -932,7 +943,6 @@ HRESULT MPMadPresenter::Stopping()
 
     if (m_pMadD3DDev != nullptr)
     {
-      m_pMadD3DDev->Release();
       m_pMadD3DDev = nullptr;
       Log("MPMadPresenter::Stopping() release m_pMadD3DDev");
     }
