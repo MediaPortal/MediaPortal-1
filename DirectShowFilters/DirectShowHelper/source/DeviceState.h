@@ -34,10 +34,10 @@ class DeviceState : public CCritSec
     void Shutdown();
 
   private:
-    IDirect3DVertexShader9* m_pVS = nullptr;
-    IDirect3DVertexBuffer9* m_pStreamData = nullptr;
-    IDirect3DBaseTexture9* m_pTexture = nullptr;
-    IDirect3DSurface9* m_pSurface = nullptr;
+    CComPtr<IDirect3DVertexShader9> m_pVS = nullptr;
+    CComPtr<IDirect3DVertexBuffer9> m_pStreamData = nullptr;
+    CComPtr<IDirect3DBaseTexture9> m_pTexture = nullptr;
+    CComPtr<IDirect3DSurface9> m_pSurface = nullptr;
 
     DWORD m_dwFVF = 0;
     UINT  m_OffsetInBytes = 0;
@@ -51,8 +51,8 @@ class DeviceState : public CCritSec
     DWORD m_D3DRS_SRCBLEND = 0;
     DWORD m_D3DRS_DESTBLEND = 0;
 
-    IDirect3DPixelShader9* m_pPix = nullptr;
+    CComPtr<IDirect3DPixelShader9> m_pPix = nullptr;
 
-    IDirect3DDevice9* m_pD3DDev = nullptr;
+    CComPtr<IDirect3DDevice9> m_pD3DDev = nullptr;
 };
 

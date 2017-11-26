@@ -87,7 +87,7 @@ MPMadPresenter::MPMadPresenter(IVMR9Callback* pCallback, int xposition, int ypos
   m_pGraphbuilder(pGraphbuilder)
 {
   //Set to true to use the Kodi windows creation or false if not
-  m_pKodiWindowUse = false;
+  m_pKodiWindowUse = true;
   Log("MPMadPresenter::Constructor() - instance 0x%x", this);
   m_pKodiWindowUse ? m_Xposition = 0 : m_Xposition = xposition;
   m_pKodiWindowUse ? m_Yposition = 0 : m_Yposition = yposition;
@@ -969,6 +969,11 @@ HRESULT MPMadPresenter::Stopping()
       m_pCallback->SetSubtitleDevice(reinterpret_cast<LONG>(nullptr));
       Log("MPMadPresenter::SetDeviceOsd() reset C# subtitle device");
     }
+
+    // Release devicestate
+    m_deviceState.Lock();
+    m_deviceState.Shutdown();
+    m_deviceState.Unlock();
 
     Log("MPMadPresenter::Stopping() stopped");
     return S_OK;
