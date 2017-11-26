@@ -490,43 +490,32 @@ STDMETHODIMP MPMadPresenter::SetGrabEvent(HANDLE pGrabEvent)
     pOR.Release(); // WIP release
   }
 
-  if (Com::SmartQIPtr<IVideoWindow> pWindow = m_pMad)
+  // Create a madVR Window
+  m_pKodiWindowUse ? InitMadvrWindow(m_hWnd) : m_hWnd = reinterpret_cast<HWND>(m_hParent);
+  m_pVideoWnd = CWnd::FromHandle(m_hWnd);
+  IVideoWindow *m_pControl = nullptr;
+  if (mediaControlGraph && (SUCCEEDED(mediaControlGraph->QueryInterface(__uuidof(IVideoWindow), reinterpret_cast<LPVOID*>(&m_pControl)))) && (m_pControl))
   {
-    // Create a madVR Window
-    if (!m_pKodiWindowUse) // no Kodi window
+    if (m_pControl)
     {
-      m_hWnd = reinterpret_cast<HWND>(m_hParent);
-      m_pVideoWnd = CWnd::FromHandle(m_hWnd);
-      IVideoWindow *m_pControl = nullptr;
-      if ((mediaControlGraph) && (SUCCEEDED(mediaControlGraph->QueryInterface(__uuidof(IVideoWindow), reinterpret_cast<LPVOID*>(&m_pControl)))) && (m_pControl))
-      {
-        if (m_pControl)
-        {
-          VERIFY(SUCCEEDED(m_pControl->put_Owner(reinterpret_cast<OAHWND>(m_hWnd))));
-          VERIFY(SUCCEEDED(m_pControl->put_WindowStyle(WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN)));
-          VERIFY(SUCCEEDED(m_pControl->put_MessageDrain(reinterpret_cast<OAHWND>(m_hWnd))));
-          //VERIFY(SUCCEEDED(pWindow->put_Owner(reinterpret_cast<OAHWND>(m_hWnd))));
-          //VERIFY(SUCCEEDED(pWindow->put_WindowStyle(WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN)));
-          //VERIFY(SUCCEEDED(pWindow->put_MessageDrain(reinterpret_cast<OAHWND>(m_hWnd))));
-        }
-      }
+      VERIFY(SUCCEEDED(m_pControl->put_Owner(reinterpret_cast<OAHWND>(m_hWnd))));
+      VERIFY(SUCCEEDED(m_pControl->put_WindowStyle(WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN)));
+      VERIFY(SUCCEEDED(m_pControl->put_MessageDrain(reinterpret_cast<OAHWND>(m_hWnd))));
+    }
+  }
 
-      for (pWnd = m_pVideoWnd->GetWindow(GW_CHILD); pWnd; pWnd = pWnd->GetNextWindow()) {
-        // 1. lets WM_SETCURSOR through (not needed as of now)
-        // 2. allows CMouse::CursorOnWindow() to work with m_pVideoWnd
-        pWnd->EnableWindow(FALSE);
-      }
-    }
-    else if (InitMadvrWindow(m_hWnd) && m_pKodiWindowUse) // Kodi window
-    {
-      m_pCallback->DestroyHWnd(m_hWnd);
-      VERIFY(SUCCEEDED(pWindow->put_Owner(reinterpret_cast<OAHWND>(m_hWnd))));
-      VERIFY(SUCCEEDED(pWindow->put_WindowStyle(WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN)));
-      VERIFY(SUCCEEDED(pWindow->put_MessageDrain(reinterpret_cast<OAHWND>(m_hWnd))));
-      Log("%s : Create DSPlayer window - hWnd: %i", __FUNCTION__, m_hWnd);
-      Log("MPMadPresenter::Initialize() send DestroyHWnd value on C# side");
-    }
-    pWindow.Release(); // WIP release
+  // release m_pControl
+  m_pControl->Release();
+
+  for (pWnd = m_pVideoWnd->GetWindow(GW_CHILD); pWnd; pWnd = pWnd->GetNextWindow()) {
+    // 1. lets WM_SETCURSOR through (not needed as of now)
+    // 2. allows CMouse::CursorOnWindow() to work with m_pVideoWnd
+    pWnd->EnableWindow(FALSE);
+  }
+
+  if (m_pKodiWindowUse)
+  {
+    Log("%s : Create DSPlayer window - hWnd: %i", __FUNCTION__, m_hWnd);
   }
 
   // Configure initial Madvr Settings
