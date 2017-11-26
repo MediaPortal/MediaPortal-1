@@ -3128,6 +3128,12 @@ namespace MediaPortal.Player
           Log.Info("BDPlayer: Cleanup VMR9");
         }
 
+        if (VMR9Util.g_vmr9?._vmr9Filter != null)
+        {
+          // Releasing madVR
+          VMR9Util.g_vmr9?.Vmr9MadVrRelease();
+        }
+
         #endregion
 
         _videoWin = _graphBuilder as IVideoWindow;

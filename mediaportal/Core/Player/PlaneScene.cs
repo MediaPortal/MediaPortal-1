@@ -1334,6 +1334,7 @@ namespace MediaPortal.Player
       if (GUIGraphicsContext.DX9Device != null)
       {
         GUIGraphicsContext.MadVrHWnd = (IntPtr) phWnd;
+        Log.Debug("Received madVR phWnd : {0} from C++ side", phWnd);
       }
     }
 

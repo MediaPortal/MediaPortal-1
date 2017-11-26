@@ -348,8 +348,8 @@ class MPMadPresenter : public CUnknown, public CCritSec
     int m_pRefCount = 0;
     int m_pMadVRFrameCount = 0;
 
-    Com::SmartPtr<IOsdRenderCallback> m_pORCB;
-    Com::SmartPtr<ISubRenderCallback> m_pSRCB;
+    IOsdRenderCallback* m_pORCB = nullptr;
+    ISubRenderCallback* m_pSRCB = nullptr;
 
     int m_ExclusiveMode = 0;
     int m_enableOverlay = 0;

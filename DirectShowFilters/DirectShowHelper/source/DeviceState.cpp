@@ -26,7 +26,7 @@ DeviceState::~DeviceState()
   {
     if (m_pVS)
     {
-      m_pVS.Release();
+      m_pVS->Release();
       m_pVS = nullptr;
     }
   }
@@ -43,7 +43,7 @@ DeviceState::~DeviceState()
   {
     if (m_pSurface)
     {
-      m_pSurface.Release();
+      m_pSurface->Release();
       m_pSurface = nullptr;
     }
   }
@@ -67,7 +67,7 @@ void DeviceState::Shutdown()
   {
     if (m_pVS)
     {
-      m_pVS.Release();
+      m_pVS->Release();
       m_pVS = nullptr;
     }
   }
@@ -76,7 +76,6 @@ void DeviceState::Shutdown()
   {
     if (m_pStreamData)
     {
-      m_pStreamData.Release();
       m_pStreamData = nullptr;
     }
   }
@@ -93,7 +92,7 @@ void DeviceState::Shutdown()
   {
     if (m_pSurface)
     {
-      m_pSurface.Release();
+      m_pSurface->Release();
       m_pSurface = nullptr;
     }
   }
@@ -176,7 +175,7 @@ HRESULT DeviceState::Restore()
     {
       if (m_pVS)
       {
-        m_pVS.Release();
+        m_pVS->Release();
         m_pVS = nullptr;
       }
     }
@@ -185,7 +184,7 @@ HRESULT DeviceState::Restore()
     {
       if (m_pStreamData)
       {
-        m_pStreamData.Release();
+        m_pStreamData->Release();
         m_pStreamData = nullptr;
       }
     }
@@ -202,7 +201,7 @@ HRESULT DeviceState::Restore()
     {
       if (m_pSurface)
       {
-        m_pSurface.Release();
+        m_pSurface->Release();
         m_pSurface = nullptr;
       }
     }
@@ -217,7 +216,7 @@ HRESULT DeviceState::Restore()
 
   if (m_pTexture)
   {
-    m_pTexture.Release();
+    m_pTexture->Release();
     m_pTexture = nullptr;
   }
 
@@ -227,7 +226,7 @@ HRESULT DeviceState::Restore()
   hr = m_pD3DDev->SetVertexShader(m_pVS);
 
   if (m_pVS)
-    m_pVS.Release();
+    m_pVS->Release();
 
   if (FAILED(hr))
     return hr;
@@ -235,7 +234,7 @@ HRESULT DeviceState::Restore()
   hr = m_pD3DDev->SetPixelShader(m_pPix);
 
   if (m_pPix)
-    m_pPix.Release();
+    m_pPix->Release();
 
   if (FAILED(hr))
     return hr;
@@ -246,10 +245,10 @@ HRESULT DeviceState::Restore()
   hr = m_pD3DDev->SetStreamSource(0, m_pStreamData, m_OffsetInBytes, m_Stride);
 
   if (m_pStreamData)
-    m_pStreamData.Release();
+    m_pStreamData->Release();
 
   if (m_pSurface)
-    m_pSurface.Release();
+    m_pSurface->Release();
 
   if (FAILED(hr))
     return hr;

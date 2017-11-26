@@ -87,7 +87,7 @@ MPMadPresenter::MPMadPresenter(IVMR9Callback* pCallback, int xposition, int ypos
   m_pGraphbuilder(pGraphbuilder)
 {
   //Set to true to use the Kodi windows creation or false if not
-  m_pKodiWindowUse = true;
+  m_pKodiWindowUse = false;
   Log("MPMadPresenter::Constructor() - instance 0x%x", this);
   m_pKodiWindowUse ? m_Xposition = 0 : m_Xposition = xposition;
   m_pKodiWindowUse ? m_Yposition = 0 : m_Yposition = yposition;
@@ -96,7 +96,6 @@ MPMadPresenter::MPMadPresenter(IVMR9Callback* pCallback, int xposition, int ypos
   // Store device surface MP GUI for later
   m_pCallback->RestoreDeviceSurface(m_pSurfaceDevice);
   m_pInitMadVRWindowPositionDone = false;
-  m_pKodiWindowUse ? g_hWnd = reinterpret_cast<HWND>(m_hParent) : g_hWnd = nullptr;
   mediaControlGraph = m_pGraphbuilder;
   StopEvent = false;
   Log("MPMadPresenter::Constructor() Store Device Surface");
@@ -130,12 +129,6 @@ MPMadPresenter::~MPMadPresenter()
     if (mediaControlGraph)
     {
       mediaControlGraph = nullptr;
-    }
-
-    Log("MPMadPresenter::Destructor() - m_pMad release");
-    if (m_pMad)
-    {
-      m_pMad = nullptr;
     }
 
     // Detroy create madVR window and need to be here to avoid some crash
@@ -468,6 +461,7 @@ STDMETHODIMP MPMadPresenter::SetGrabEvent(HANDLE pGrabEvent)
       m_pMad = nullptr;
       return E_FAIL;
     }
+    m_pSRCB->AddRef();
     pSR.Release(); // WIP release
   }
 
@@ -487,10 +481,12 @@ STDMETHODIMP MPMadPresenter::SetGrabEvent(HANDLE pGrabEvent)
       m_pMad = nullptr;
       return E_FAIL;
     }
+    m_pORCB->AddRef();
     pOR.Release(); // WIP release
   }
 
   // Create a madVR Window
+  m_pKodiWindowUse ? g_hWnd = reinterpret_cast<HWND>(m_hParent) : g_hWnd = nullptr;
   m_pKodiWindowUse ? InitMadvrWindow(m_hWnd) : m_hWnd = reinterpret_cast<HWND>(m_hParent);
   m_pVideoWnd = CWnd::FromHandle(m_hWnd);
   IVideoWindow *m_pControl = nullptr;
@@ -515,8 +511,52 @@ STDMETHODIMP MPMadPresenter::SetGrabEvent(HANDLE pGrabEvent)
 
   if (m_pKodiWindowUse)
   {
-    Log("%s : Create DSPlayer window - hWnd: %i", __FUNCTION__, m_hWnd);
+    m_pCallback->DestroyHWnd(m_hWnd);
+    Log("%s : Create and sended DSPlayer window - hWnd: %i", __FUNCTION__, m_hWnd);
   }
+
+  ////if (Com::SmartQIPtr<IVideoWindow> pWindow = m_pMad)
+  ////{
+  ////  // Create a madVR Window
+  ////  if (!m_pKodiWindowUse) // no Kodi window
+  ////  {
+  ////    m_hWnd = reinterpret_cast<HWND>(m_hParent);
+  ////    m_pVideoWnd = CWnd::FromHandle(m_hWnd);
+  ////    IVideoWindow *m_pControl = nullptr;
+  ////    if ((mediaControlGraph) && (SUCCEEDED(mediaControlGraph->QueryInterface(__uuidof(IVideoWindow), reinterpret_cast<LPVOID*>(&m_pControl)))) && (m_pControl))
+  ////    {
+  ////      if (m_pControl)
+  ////      {
+  ////        VERIFY(SUCCEEDED(m_pControl->put_Owner(reinterpret_cast<OAHWND>(m_hWnd))));
+  ////        VERIFY(SUCCEEDED(m_pControl->put_WindowStyle(WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN)));
+  ////        VERIFY(SUCCEEDED(m_pControl->put_MessageDrain(reinterpret_cast<OAHWND>(m_hWnd))));
+  ////        //VERIFY(SUCCEEDED(pWindow->put_Owner(reinterpret_cast<OAHWND>(m_hWnd))));
+  ////        //VERIFY(SUCCEEDED(pWindow->put_WindowStyle(WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN)));
+  ////        //VERIFY(SUCCEEDED(pWindow->put_MessageDrain(reinterpret_cast<OAHWND>(m_hWnd))));
+  ////      }
+  ////    }
+
+  ////    // release m_pControl
+  ////    m_pControl->Release();
+
+  ////    for (pWnd = m_pVideoWnd->GetWindow(GW_CHILD); pWnd; pWnd = pWnd->GetNextWindow()) {
+  ////      // 1. lets WM_SETCURSOR through (not needed as of now)
+  ////      // 2. allows CMouse::CursorOnWindow() to work with m_pVideoWnd
+  ////      pWnd->EnableWindow(FALSE);
+  ////    }
+  ////  }
+  ////  else if (InitMadvrWindow(m_hWnd) && m_pKodiWindowUse) // Kodi window
+  ////  {
+  ////    m_pCallback->DestroyHWnd(m_hWnd);
+  ////    m_pKodiWindowUse ? g_hWnd = reinterpret_cast<HWND>(m_hParent) : g_hWnd = nullptr;
+  ////    VERIFY(SUCCEEDED(pWindow->put_Owner(reinterpret_cast<OAHWND>(m_hWnd))));
+  ////    VERIFY(SUCCEEDED(pWindow->put_WindowStyle(WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN)));
+  ////    VERIFY(SUCCEEDED(pWindow->put_MessageDrain(reinterpret_cast<OAHWND>(m_hWnd))));
+  ////    Log("%s : Create DSPlayer window - hWnd: %i", __FUNCTION__, m_hWnd);
+  ////    Log("MPMadPresenter::Initialize() send DestroyHWnd value on C# side");
+  ////  }
+  ////  pWindow.Release(); // WIP release
+  ////}
 
   // Configure initial Madvr Settings
   ConfigureMadvr();
@@ -593,7 +633,7 @@ void MPMadPresenter::ConfigureMadvr()
     m_pSettings.Release(); // WIP release
   }
 
-  SetWindowPos(m_hWnd, m_hWnd, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+  //SetWindowPos(m_hWnd, m_hWnd, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
 }
 
 HRESULT MPMadPresenter::Shutdown()
@@ -730,7 +770,10 @@ LRESULT CALLBACK MPMadPresenter::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LP
   case WM_LBUTTONUP:
   case WM_MBUTTONUP:
   case WM_RBUTTONUP:
+  case WM_LBUTTONDBLCLK :
+  case WM_RBUTTONDBLCLK :
   case WM_MOUSEWHEEL:
+  case WM_KEYFIRST :
     ::PostMessage(g_hWnd, uMsg, wParam, lParam);
     return(0);
   case WM_SIZE:
@@ -787,49 +830,53 @@ HRESULT MPMadPresenter::Stopping()
     CAutoLock lock(this);
     StopEvent = false;
 
-    // IOsdRenderCallback
-    Com::SmartQIPtr<IMadVROsdServices> pOR = m_pMad;
-    if (!pOR)
-    {
-      m_pMad = nullptr;
-      return E_FAIL;
-    }
-
-    if (pOR && FAILED(pOR->OsdSetRenderCallback("MP-GUI", nullptr)))
-    {
-      m_pMad = nullptr;
-      return E_FAIL;
-    }
-    pOR.Release(); // WIP release
-
-    Com::SmartQIPtr<ISubRender> pSR = m_pMad;
-    if (!pSR)
-    {
-      m_pMad = nullptr;
-      return E_FAIL;
-    }
-
-    if (pSR && (FAILED(pSR->SetCallback(nullptr))))
-    {
-      m_pMad = nullptr;
-      return E_FAIL;
-    }
-    pSR.Release(); // WIP release
-
-    if (m_pSRCB)
-    {
-      // nasty, but we have to let it know about our death somehow
-      static_cast<CSubRenderCallback*>(static_cast<ISubRenderCallback*>(m_pSRCB))->SetShutdownSub(true);
-      static_cast<CSubRenderCallback*>(static_cast<ISubRenderCallback*>(m_pSRCB))->SetDXRAPSUB(nullptr);
-      Log("MPMadPresenter::Stopping() m_pSRCB");
-    }
-
     if (m_pORCB)
     {
+      // IOsdRenderCallback
+      Com::SmartQIPtr<IMadVROsdServices> pOR = m_pMad;
+      if (!pOR)
+      {
+        m_pMad = nullptr;
+        return E_FAIL;
+      }
+
+      if (pOR && FAILED(pOR->OsdSetRenderCallback("MP-GUI", nullptr)))
+      {
+        m_pMad = nullptr;
+        return E_FAIL;
+      }
+      pOR.Release(); // WIP release
+
       // nasty, but we have to let it know about our death somehow
       static_cast<COsdRenderCallback*>(static_cast<IOsdRenderCallback*>(m_pORCB))->SetShutdownOsd(true);
       static_cast<COsdRenderCallback*>(static_cast<IOsdRenderCallback*>(m_pORCB))->SetDXRAP(nullptr);
+      m_pORCB->Release();
+      m_pORCB = nullptr;
       Log("MPMadPresenter::Stopping() m_pORCB");
+    }
+
+    if (m_pSRCB)
+    {
+      Com::SmartQIPtr<ISubRender> pSR = m_pMad;
+      if (!pSR)
+      {
+        m_pMad = nullptr;
+        return E_FAIL;
+      }
+
+      if (pSR && (FAILED(pSR->SetCallback(nullptr))))
+      {
+        m_pMad = nullptr;
+        return E_FAIL;
+      }
+      pSR.Release(); // WIP release
+
+      // nasty, but we have to let it know about our death somehow
+      static_cast<CSubRenderCallback*>(static_cast<ISubRenderCallback*>(m_pSRCB))->SetShutdownSub(true);
+      static_cast<CSubRenderCallback*>(static_cast<ISubRenderCallback*>(m_pSRCB))->SetDXRAPSUB(nullptr);
+      m_pSRCB->Release();
+      m_pSRCB = nullptr;
+      Log("MPMadPresenter::Stopping() m_pSRCB");
     }
 
     Log("MPMadPresenter::Stopping() start to stop instance - 1");
@@ -908,12 +955,12 @@ HRESULT MPMadPresenter::Stopping()
 
     Log("MPMadPresenter::Stopping() m_pSRCB release 1");
     if (m_pSRCB)
-      m_pSRCB.Release();
+      m_pSRCB->Release();
     Log("MPMadPresenter::Stopping() m_pSRCB release 2");
 
     Log("MPMadPresenter::Stopping() m_pORCB release 1");
     if (m_pORCB)
-      m_pORCB.Release();
+      m_pORCB->Release();
     Log("MPMadPresenter::Stopping() m_pORCB release 2");
 
     //CComPtr<IMediaControl> m_pControl = nullptr;
@@ -951,6 +998,11 @@ HRESULT MPMadPresenter::Stopping()
     {
       m_pMadD3DDev = nullptr;
       Log("MPMadPresenter::Stopping() release m_pMadD3DDev");
+
+      // Release devicestate
+      m_deviceState.Lock();
+      m_deviceState.Shutdown();
+      m_deviceState.Unlock();
     }
 
     if (m_pCallback)
@@ -958,11 +1010,6 @@ HRESULT MPMadPresenter::Stopping()
       m_pCallback->SetSubtitleDevice(reinterpret_cast<LONG>(nullptr));
       Log("MPMadPresenter::SetDeviceOsd() reset C# subtitle device");
     }
-
-    // Release devicestate
-    m_deviceState.Lock();
-    m_deviceState.Shutdown();
-    m_deviceState.Unlock();
 
     Log("MPMadPresenter::Stopping() stopped");
     return S_OK;
