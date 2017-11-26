@@ -1777,15 +1777,6 @@ namespace MediaPortal.Player
               GUIGraphicsContext.form.Location.Y);
           }
 
-          GUITextureManager.Clear();
-          GUITextureManager.Init();
-          GUIFontManager.LoadFonts(GUIGraphicsContext.Skin + @"\fonts.xml");
-          GUIFontManager.InitializeDeviceObjects();
-          GUIExpressionManager.ClearExpressionCache();
-          GUIControlFactory.ClearReferences();
-          GUIControlFactory.LoadReferences(GUIGraphicsContext.Skin + @"\references.xml");
-          GUIWindowManager.OnResize();
-
           // Send action message to refresh screen
           var msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_MADVR_SCREEN_REFRESH, 0, 0, 0, 0, 0, null);
           GUIWindowManager.SendThreadMessage(msg);
@@ -1960,28 +1951,33 @@ namespace MediaPortal.Player
 
     private void CommandThread()
     {
-      lock (_syncRoot)
+      try
       {
-        try
+        bool exitThread = false;
+        bool textureRelease = false;
+
+        while (!exitThread)
         {
-          bool exitThread = false;
+          _commandNotify?.Wait();
+          _commandNotify?.Reset();
 
-          while (!exitThread)
+          while (_commandNotify?.WaitHandle != null)
           {
-            _commandNotify?.Wait();
-            _commandNotify?.Reset();
-
-            while (_commandNotify?.WaitHandle != null)
+            // Reset texture to free memory
+            if (!textureRelease)
             {
-              GUIWindowManager.Process();
-              exitThread = true;
+              textureRelease = true;
+              GUITextureManager.Clear();
+              GUITextureManager.Init();
             }
+            GUIWindowManager.Process();
+            exitThread = true;
           }
         }
-        catch (Exception)
-        {
-          Log.Info("VMR9: madVr CommandThread aborded");
-        }
+      }
+      catch (Exception)
+      {
+        Log.Info("VMR9: madVr CommandThread aborded");
       }
     }
 
@@ -2106,6 +2102,8 @@ namespace MediaPortal.Player
             GUIGraphicsContext.MadVrRenderTargetVMR9 = null;
             Log.Debug("VMR9: Dispose 6");
           }
+          // Restore GUIWindowManager after releasing the texture in command thread
+          GUIWindowManager.OnResize();
         }
 
         // Commented out seems not needed anymore
