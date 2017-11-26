@@ -3005,12 +3005,7 @@ public class MediaPortalApp : D3D, IRender
     {
       try
       {
-        int process = 10;
-        while (process > 0)
-        {
-          FullRender();
-          process--;
-        }
+        FullRender();
       }
       catch (Exception ex)
       {

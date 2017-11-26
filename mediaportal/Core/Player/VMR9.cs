@@ -888,7 +888,10 @@ namespace MediaPortal.Player
         if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
         {
           // Process frames to clear D3D dialog window
-          GUIWindowManager.MadVrProcess();
+          for (int i = 0; i < 10; i++)
+          {
+            GUIWindowManager.MadVrProcess();
+          }
           //_scene.MadVrRenderTarget = GUIGraphicsContext.DX9Device.GetRenderTarget(0);
           //MadVrRenderTargetVMR9 = GUIGraphicsContext.DX9Device.GetRenderTarget(0);
         }
@@ -1970,7 +1973,7 @@ namespace MediaPortal.Player
               GUITextureManager.Clear();
               GUITextureManager.Init();
             }
-            GUIWindowManager.Process();
+            GUIWindowManager.MadVrProcess();
             exitThread = true;
           }
         }
