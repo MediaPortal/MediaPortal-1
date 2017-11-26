@@ -126,6 +126,12 @@ MPMadPresenter::~MPMadPresenter()
       m_pGraphbuilder = nullptr;
     }
 
+    Log("MPMadPresenter::Destructor() - mediaControlGraph release");
+    if (mediaControlGraph)
+    {
+      mediaControlGraph = nullptr;
+    }
+
     Log("MPMadPresenter::Destructor() - m_pMad release");
     if (m_pMad)
     {
