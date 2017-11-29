@@ -131,6 +131,11 @@ MPMadPresenter::~MPMadPresenter()
       mediaControlGraph = nullptr;
     }
 
+    if (m_pMad)
+    {
+      m_pMad = nullptr;
+    }
+
     // Detroy create madVR window and need to be here to avoid some crash
     if (m_pKodiWindowUse)
     {
@@ -640,12 +645,12 @@ void MPMadPresenter::ConfigureMadvr()
       manager.Release(); // WIP release
     }
 
-    // TODO implement IMadVRSubclassReplacement
-    if (Com::SmartQIPtr<IMadVRSubclassReplacement> pSubclassReplacement = m_pMad)
-    {
-      pSubclassReplacement->DisableSubclassing();
-      pSubclassReplacement.Release(); // WIP release
-    }
+    //// TODO implement IMadVRSubclassReplacement (if enable, it 's breaking mouse event on FSE for MVC)
+    //if (Com::SmartQIPtr<IMadVRSubclassReplacement> pSubclassReplacement = m_pMad)
+    //{
+    //  pSubclassReplacement->DisableSubclassing();
+    //  pSubclassReplacement.Release(); // WIP release
+    //}
 
     if (Com::SmartQIPtr<IVideoWindow> pWindow = m_pMad)
     {
