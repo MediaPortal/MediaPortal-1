@@ -2478,7 +2478,7 @@ namespace MediaPortal.Player
         {
           lTimerInterval = 1000;
         }
-        rewind = _currentPosDS + Convert.ToInt32((long)lTimerInterval * Speed * 10000);
+        rewind = _currentPosDS + (long)lTimerInterval * Speed * 10000;
         int hr;
         pStop = 0;
         // if we end up before the first moment of time then just
@@ -3126,6 +3126,12 @@ namespace MediaPortal.Player
           //MadvrInterface.EnableExclusiveMode(false, VMR9Util.g_vmr9._vmr9Filter);
           //DirectShowUtil.DisconnectAllPins(_graphBuilder, VMR9Util.g_vmr9._vmr9Filter);
           Log.Info("BDPlayer: Cleanup VMR9");
+        }
+
+        if (VMR9Util.g_vmr9?._vmr9Filter != null)
+        {
+          // Releasing madVR
+          VMR9Util.g_vmr9?.Vmr9MadVrRelease();
         }
 
         #endregion

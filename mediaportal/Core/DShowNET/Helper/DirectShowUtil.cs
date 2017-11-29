@@ -2334,5 +2334,12 @@ namespace DShowNET.Helper
         Log.Error("Exception while releasing COM object (NULL) - stacktrace: {0}", st);
       }
     }
+
+    public static void CleanUpInterface(object o)
+    {
+      if (o != null)
+        while (Marshal.ReleaseComObject(o) > 0) ;
+      o = null;
+    }
   }
 }

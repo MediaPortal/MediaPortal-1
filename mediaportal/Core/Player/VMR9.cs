@@ -255,6 +255,7 @@ namespace MediaPortal.Player
     protected internal DateTime PlaneSceneMadvrTimer = new DateTime(0);
     protected IVideoWindow videoWinMadVr;
     private readonly object _syncRoot = new Object();
+    private bool _exitThread = false;
 
     #endregion
 
@@ -994,7 +995,7 @@ namespace MediaPortal.Player
           //      : GUIGraphicsContext.form.Handle;
 
           //    videoWinMadVr.put_Owner(ownerHandle);
-          //    videoWinMadVr.put_WindowStyle((WindowStyle)((int) WindowStyle.Child + (int) WindowStyle.ClipChildren + (int) WindowStyle.ClipSiblings));
+          //    videoWinMadVr.put_WindowStyle((WindowStyle)((int)WindowStyle.Child + (int)WindowStyle.ClipChildren + (int)WindowStyle.ClipSiblings));
           //    videoWinMadVr.put_MessageDrain(ownerHandle);
           //  }
           //}
@@ -1730,6 +1731,7 @@ namespace MediaPortal.Player
             //DsError.ThrowExceptionForHR(hr);
             Log.Debug("VMR9: Vmr9MediaCtrl MadStopping()");
             MadStopping();
+            MadDeinit();
           }
           else
           {
@@ -1757,6 +1759,29 @@ namespace MediaPortal.Player
       catch (Exception ex)
       {
         Log.Error("VMR9: Error while stopping graph or exclusive madVR mode : {0}", ex);
+      }
+    }
+
+    public void Vmr9MadVrRelease()
+    {
+      try
+      {
+        if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+        {
+          Log.Debug("VMR9: Vmr9MadVrRelease 1");
+          if (g_vmr9?._vmr9Filter != null)
+          {
+            _graphBuilder.RemoveFilter(g_vmr9?._vmr9Filter as DirectShowLib.IBaseFilter);
+            _commandNotify?.Set();
+            DirectShowUtil.CleanUpInterface(g_vmr9?._vmr9Filter);
+            Thread.Sleep(1000);
+          }
+        }
+        Log.Debug("VMR9: Vmr9MadVrRelease 1");
+      }
+      catch (Exception ex)
+      {
+        Log.Error("VMR9: Error while Vmr9MadVrRelease : {0}", ex);
       }
     }
 
@@ -1956,10 +1981,10 @@ namespace MediaPortal.Player
     {
       try
       {
-        bool exitThread = false;
+        _exitThread = false;
         bool textureRelease = false;
 
-        while (!exitThread)
+        while (!_exitThread)
         {
           _commandNotify?.Wait();
           _commandNotify?.Reset();
@@ -1970,11 +1995,19 @@ namespace MediaPortal.Player
             if (!textureRelease)
             {
               textureRelease = true;
-              GUITextureManager.Clear();
-              GUITextureManager.Init();
+              //GUITextureManager.Clear();
+              //GUITextureManager.Init();
+              if (GUIGraphicsContext.Fullscreen)
+              {
+                //GUIGraphicsContext.form.WindowState = FormWindowState.Minimized;
+                Win32API.ShowWindow(GUIGraphicsContext.MadVrHWnd, Win32API.ShowWindowFlags.Minimize);
+                Win32API.ShowWindow(GUIGraphicsContext.MadVrHWnd, Win32API.ShowWindowFlags.ShowNormal);
+                Win32API.ShowWindow(GUIGraphicsContext.ActiveForm, Win32API.ShowWindowFlags.Minimize);
+                Win32API.ShowWindow(GUIGraphicsContext.ActiveForm, Win32API.ShowWindowFlags.ShowNormal);
+              }
             }
             GUIWindowManager.MadVrProcess();
-            exitThread = true;
+            _exitThread = true;
           }
         }
       }
@@ -2035,23 +2068,10 @@ namespace MediaPortal.Player
             DirectShowUtil.ReleaseComObject(videoWinMadVr);
             videoWinMadVr = null;
           }
-          Log.Debug("VMR9: Dispose MadDeinit - thread : {0}", Thread.CurrentThread.Name);
-          GC.Collect();
-          Log.Debug("VMR9: Dispose 2");
-          MadDeinit();
-          Log.Debug("VMR9: Dispose 2.1");
-          GC.Collect();
-          DestroyWindow(GUIGraphicsContext.MadVrHWnd); // for using no Kodi madVR window way comment out this line
-          Log.Debug("VMR9: Dispose 2.2");
-          MadvrInterface.restoreDisplayModeNow(_vmr9Filter);
-          // _commandNotify is to avoid windows stay freeze randomly
-          _commandNotify?.Set();
-          DirectShowUtil.FinalReleaseComObject(_vmr9Filter);
-          _commandNotify?.Dispose();
-          RestoreGuiForMadVr();
-          Log.Debug("VMR9: Dispose 2.3");
           _vmr9Filter = null;
-          Log.Debug("VMR9: Dispose 3");
+          Log.Debug("VMR9: Dispose MadDeinit - thread : {0}", Thread.CurrentThread.Name);
+          DestroyWindow(GUIGraphicsContext.MadVrHWnd); // for using no Kodi madVR window way comment out this line
+          _commandNotify?.Dispose();
         }
         else
         {
@@ -2106,7 +2126,21 @@ namespace MediaPortal.Player
             Log.Debug("VMR9: Dispose 6");
           }
           // Restore GUIWindowManager after releasing the texture in command thread
+          // Suspending GUIGraphicsContext.State
+          if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
+          {
+            GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.SUSPENDING;
+          }
+
+          GUITextureManager.Clear();
+          GUITextureManager.Init();
           GUIWindowManager.OnResize();
+
+          // Restore GUIGraphicsContext.State
+          if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.SUSPENDING)
+          {
+            GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.RUNNING;
+          }
         }
 
         // Commented out seems not needed anymore

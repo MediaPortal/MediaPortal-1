@@ -434,6 +434,12 @@ namespace MediaPortal.Player
           _line21Decoder = null;
         }
 
+        if (VMR9Util.g_vmr9?._vmr9Filter != null)
+        {
+          // Releasing madVR
+          VMR9Util.g_vmr9?.Vmr9MadVrRelease();
+        }
+
         if (_graphBuilder != null)
         {
           DirectShowUtil.RemoveFilters(_graphBuilder);
