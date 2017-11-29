@@ -254,8 +254,8 @@ namespace MediaPortal.Player
     protected internal DateTime playbackTimer;
     protected internal DateTime PlaneSceneMadvrTimer = new DateTime(0);
     protected IVideoWindow videoWinMadVr;
-    private readonly object _syncRoot = new Object();
-    private bool _exitThread = false;
+    internal readonly object _syncRoot = new Object();
+    internal bool _exitThread = false;
 
     #endregion
 
@@ -1764,27 +1764,30 @@ namespace MediaPortal.Player
 
     public void Vmr9MadVrRelease()
     {
-      try
+      lock (_syncRoot)
       {
-        if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+        try
         {
-          Log.Debug("VMR9: Vmr9MadVrRelease 1");
-          if (g_vmr9?._vmr9Filter != null)
+          if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
           {
-            _graphBuilder.RemoveFilter(g_vmr9?._vmr9Filter as DirectShowLib.IBaseFilter);
-            _commandNotify?.Set();
-            DirectShowUtil.CleanUpInterface(g_vmr9?._vmr9Filter);
-            for (int i = 0; i < 20; ++i)
+            Log.Debug("VMR9: Vmr9MadVrRelease 1");
+            if (g_vmr9?._vmr9Filter != null)
             {
-              GUIWindowManager.MadVrProcess();
+              _graphBuilder.RemoveFilter(g_vmr9?._vmr9Filter as DirectShowLib.IBaseFilter);
+              _commandNotify?.Set();
+              DirectShowUtil.CleanUpInterface(g_vmr9?._vmr9Filter);
+              for (int i = 0; i < 20; ++i)
+              {
+                GUIWindowManager.MadVrProcess();
+              }
             }
           }
+          Log.Debug("VMR9: Vmr9MadVrRelease 1");
         }
-        Log.Debug("VMR9: Vmr9MadVrRelease 1");
-      }
-      catch (Exception ex)
-      {
-        Log.Error("VMR9: Error while Vmr9MadVrRelease : {0}", ex);
+        catch (Exception ex)
+        {
+          Log.Error("VMR9: Error while Vmr9MadVrRelease : {0}", ex);
+        }
       }
     }
 
