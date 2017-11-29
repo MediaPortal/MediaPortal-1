@@ -889,7 +889,7 @@ namespace MediaPortal.Player
         if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
         {
           // Process frames to clear D3D dialog window
-          for (int i = 0; i < 10; i++)
+          for (int i = 0; i < 20; i++)
           {
             GUIWindowManager.MadVrProcess();
           }
@@ -984,21 +984,21 @@ namespace MediaPortal.Player
           hr = new HResult(MadInit(_scene, xposition, yposition, client.Width, client.Height, (uint) upDevice.ToInt32(),
             (uint) GUIGraphicsContext.ActiveForm.ToInt32(), ref _vmr9Filter, graphBuilder));
           //hr = new HResult(graphBuilder.AddFilter(_vmr9Filter, "madVR"));
-          if (!UseMadVideoRenderer3D) // TODO
-          {
-            videoWinMadVr = graphBuilder as IVideoWindow;
-            //videoWinMadVr = _vmr9Filter as IVideoWindow; // Using this permit to change resolution and madVR didn't reinit D3D device but broke 3D MVC
-            if (videoWinMadVr != null)
-            {
-              var ownerHandle = GUIGraphicsContext.MadVrHWnd != IntPtr.Zero
-                ? GUIGraphicsContext.MadVrHWnd
-                : GUIGraphicsContext.form.Handle;
+          //if (!UseMadVideoRenderer3D) // TODO
+          //{
+          //  videoWinMadVr = graphBuilder as IVideoWindow;
+          //  //videoWinMadVr = _vmr9Filter as IVideoWindow; // Using this permit to change resolution and madVR didn't reinit D3D device but broke 3D MVC
+          //  if (videoWinMadVr != null)
+          //  {
+          //    var ownerHandle = GUIGraphicsContext.MadVrHWnd != IntPtr.Zero
+          //      ? GUIGraphicsContext.MadVrHWnd
+          //      : GUIGraphicsContext.form.Handle;
 
-              videoWinMadVr.put_Owner(ownerHandle);
-              videoWinMadVr.put_WindowStyle((WindowStyle)((int)WindowStyle.Child + (int)WindowStyle.ClipChildren + (int)WindowStyle.ClipSiblings));
-              videoWinMadVr.put_MessageDrain(ownerHandle);
-            }
-          }
+          //    videoWinMadVr.put_Owner(ownerHandle);
+          //    videoWinMadVr.put_WindowStyle((WindowStyle)((int)WindowStyle.Child + (int)WindowStyle.ClipChildren + (int)WindowStyle.ClipSiblings));
+          //    videoWinMadVr.put_MessageDrain(ownerHandle);
+          //  }
+          //}
 
           // Backup size on start
           GUIGraphicsContext._backupCurrentScreenSizeWidth = client.Width;
@@ -1774,7 +1774,10 @@ namespace MediaPortal.Player
             _graphBuilder.RemoveFilter(g_vmr9?._vmr9Filter as DirectShowLib.IBaseFilter);
             _commandNotify?.Set();
             DirectShowUtil.CleanUpInterface(g_vmr9?._vmr9Filter);
-            Thread.Sleep(1000);
+            for (int i = 0; i < 20; ++i)
+            {
+              GUIWindowManager.MadVrProcess();
+            }
           }
         }
         Log.Debug("VMR9: Vmr9MadVrRelease 1");
@@ -1995,16 +1998,13 @@ namespace MediaPortal.Player
             if (!textureRelease)
             {
               textureRelease = true;
-              //GUITextureManager.Clear();
-              //GUITextureManager.Init();
-              if (GUIGraphicsContext.Fullscreen)
-              {
-                //GUIGraphicsContext.form.WindowState = FormWindowState.Minimized;
-                Win32API.ShowWindow(GUIGraphicsContext.MadVrHWnd, Win32API.ShowWindowFlags.Minimize);
-                Win32API.ShowWindow(GUIGraphicsContext.MadVrHWnd, Win32API.ShowWindowFlags.ShowNormal);
-                Win32API.ShowWindow(GUIGraphicsContext.ActiveForm, Win32API.ShowWindowFlags.Minimize);
-                Win32API.ShowWindow(GUIGraphicsContext.ActiveForm, Win32API.ShowWindowFlags.ShowNormal);
-              }
+              //if (GUIGraphicsContext.Fullscreen)
+              //{
+              //  Win32API.ShowWindow(GUIGraphicsContext.MadVrHWnd, Win32API.ShowWindowFlags.Minimize);
+              //  Win32API.ShowWindow(GUIGraphicsContext.MadVrHWnd, Win32API.ShowWindowFlags.ShowNormal);
+              //  Win32API.ShowWindow(GUIGraphicsContext.ActiveForm, Win32API.ShowWindowFlags.Minimize);
+              //  Win32API.ShowWindow(GUIGraphicsContext.ActiveForm, Win32API.ShowWindowFlags.ShowNormal);
+              //}
             }
             GUIWindowManager.MadVrProcess();
             _exitThread = true;
