@@ -210,42 +210,48 @@ void MPMadPresenter::GrabScreenshot()
 {
   if (!m_pInitMadVRWindowPositionDone || m_pShutdown)
   {
-    m_pCallback->GrabMadVrScreenshot(nullptr);
+    if (m_pCallback)
+    {
+      m_pCallback->GrabMadVrScreenshot(nullptr);
+    }
     return;
   }
 
   try
   {
-    if (Com::SmartQIPtr<IBasicVideo> m_pBV = m_pMad)
+    if (m_pMad && m_pCallback)
     {
-      LONG nBufferSize = 0;
-      HRESULT hr = E_NOTIMPL;
-      hr = m_pBV->GetCurrentImage(&nBufferSize, NULL);
-      if (hr != S_OK)
+      if (Com::SmartQIPtr<IBasicVideo> m_pBV = m_pMad)
       {
-        return;
-      }
-      long* ppData = static_cast<long *>(malloc(nBufferSize));
-      hr = m_pBV->GetCurrentImage(&nBufferSize, ppData);
-      if (hr != S_OK || !ppData)
-      {
-        free(ppData);
-        return;
-      }
-      if (ppData)
-      {
-        PBITMAPINFO bi = PBITMAPINFO(ppData);
-        PBITMAPINFOHEADER bih = &bi->bmiHeader;
-        int bpp = bih->biBitCount;
-        if (bpp != 16 && bpp != 24 && bpp != 32)
+        LONG nBufferSize = 0;
+        HRESULT hr = E_NOTIMPL;
+        hr = m_pBV->GetCurrentImage(&nBufferSize, NULL);
+        if (hr != S_OK)
+        {
+          return;
+        }
+        long* ppData = static_cast<long *>(malloc(nBufferSize));
+        hr = m_pBV->GetCurrentImage(&nBufferSize, ppData);
+        if (hr != S_OK || !ppData)
         {
           free(ppData);
           return;
         }
-        m_pCallback->GrabMadVrScreenshot(LPVOID(ppData));
-        free(ppData);
+        if (ppData)
+        {
+          PBITMAPINFO bi = PBITMAPINFO(ppData);
+          PBITMAPINFOHEADER bih = &bi->bmiHeader;
+          int bpp = bih->biBitCount;
+          if (bpp != 16 && bpp != 24 && bpp != 32)
+          {
+            free(ppData);
+            return;
+          }
+          m_pCallback->GrabMadVrScreenshot(LPVOID(ppData));
+          free(ppData);
+        }
+        m_pBV.Release(); // WIP release
       }
-      m_pBV.Release(); // WIP release
     }
   }
   catch (...)
@@ -255,80 +261,97 @@ void MPMadPresenter::GrabScreenshot()
 
 void MPMadPresenter::GrabFrame()
 {
-  if (!m_pInitMadVRWindowPositionDone || m_pShutdown)
   {
-    m_pCallback->GrabMadVrFrame(nullptr);
-    return;
-  }
-
-  if (Com::SmartQIPtr<IMadVRFrameGrabber> pMadVrFrame = m_pMad)
-  {
-    LPVOID dibImageBuffer = nullptr;
-    pMadVrFrame->GrabFrame(ZOOM_ENCODED_SIZE, FLAGS_NO_SUBTITLES | FLAGS_NO_ARTIFACT_REMOVAL | FLAGS_NO_IMAGE_ENHANCEMENTS | FLAGS_NO_UPSCALING_REFINEMENTS | FLAGS_NO_HDR_SDR_CONVERSION,
-      CHROMA_UPSCALING_BILINEAR, IMAGE_DOWNSCALING_BILINEAR, IMAGE_UPSCALING_BILINEAR, 0, &dibImageBuffer, nullptr);
-
-    // Send the DIB to C#
-    m_pCallback->GrabMadVrFrame(dibImageBuffer);
-    LocalFree(dibImageBuffer);
-    pMadVrFrame.Release(); // WIP release
-    return;
-
-    try
+    //CAutoLock cAutoLock(this);
+    if (!m_pInitMadVRWindowPositionDone || m_pShutdown)
     {
-      Gdiplus::GdiplusStartupInput gdiplusStartupInput;
-      ULONG_PTR gdiplusToken;
-      GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, nullptr);
-
-      Gdiplus::Bitmap* bm = Gdiplus::Bitmap::FromBITMAPINFO(reinterpret_cast<BITMAPINFO*>(dibImageBuffer), dibImageBuffer);
-
-      // Get the encoder clsid
-      CLSID encoderClsid;
-      GetEncoderClsid(L"image/png", &encoderClsid);
-
-      // Send the BMP to C#
-      //m_pCallback->GrabMadVrScreenshot(bm);
-
-      //// Save the image
-      //bm->Save(L"master.png", &encoderClsid, nullptr);
-
-      // All GDI+ objects must be destroyed before GdiplusShutdown is called
-      delete bm;
-      LocalFree(dibImageBuffer);
-      Gdiplus::GdiplusShutdown(gdiplusToken);
-      Log("GrabFrame() hr");
+      if (m_pCallback)
+      {
+        m_pCallback->GrabMadVrFrame(nullptr);
+      }
+      return;
     }
-    catch (...)
+
+    if (m_pCallback && m_pMad)
     {
+      if (Com::SmartQIPtr<IMadVRFrameGrabber> pMadVrFrame = m_pMad)
+      {
+        LPVOID dibImageBuffer = nullptr;
+        pMadVrFrame->GrabFrame(ZOOM_ENCODED_SIZE, FLAGS_NO_SUBTITLES | FLAGS_NO_ARTIFACT_REMOVAL | FLAGS_NO_IMAGE_ENHANCEMENTS | FLAGS_NO_UPSCALING_REFINEMENTS | FLAGS_NO_HDR_SDR_CONVERSION,
+          CHROMA_UPSCALING_BILINEAR, IMAGE_DOWNSCALING_BILINEAR, IMAGE_UPSCALING_BILINEAR, 0, &dibImageBuffer, nullptr);
+
+        // Send the DIB to C#
+        m_pCallback->GrabMadVrFrame(dibImageBuffer);
+        LocalFree(dibImageBuffer);
+        pMadVrFrame.Release(); // WIP release
+        return;
+
+        try
+        {
+          Gdiplus::GdiplusStartupInput gdiplusStartupInput;
+          ULONG_PTR gdiplusToken;
+          GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, nullptr);
+
+          Gdiplus::Bitmap* bm = Gdiplus::Bitmap::FromBITMAPINFO(reinterpret_cast<BITMAPINFO*>(dibImageBuffer), dibImageBuffer);
+
+          // Get the encoder clsid
+          CLSID encoderClsid;
+          GetEncoderClsid(L"image/png", &encoderClsid);
+
+          // Send the BMP to C#
+          //m_pCallback->GrabMadVrScreenshot(bm);
+
+          //// Save the image
+          //bm->Save(L"master.png", &encoderClsid, nullptr);
+
+          // All GDI+ objects must be destroyed before GdiplusShutdown is called
+          delete bm;
+          LocalFree(dibImageBuffer);
+          Gdiplus::GdiplusShutdown(gdiplusToken);
+          Log("GrabFrame() hr");
+        }
+        catch (...)
+        {
+        }
+      }
     }
   }
 }
 
 void MPMadPresenter::GrabCurrentFrame()
 {
-  //CAutoLock cAutoLock(this);
-  try
   {
-    if (!m_pInitMadVRWindowPositionDone || m_pShutdown)
+    //CAutoLock cAutoLock(this);
+    try
     {
-      m_pCallback->GrabMadVrCurrentFrame(nullptr);
-      return;
-    }
-    if (Com::SmartQIPtr<IMadVRFrameGrabber> pMadVrFrame = m_pMad)
-    {
-      LPVOID dibImageBuffer = nullptr;
-      pMadVrFrame->GrabFrame(ZOOM_50_PERCENT, FLAGS_NO_SUBTITLES | FLAGS_NO_ARTIFACT_REMOVAL | FLAGS_NO_IMAGE_ENHANCEMENTS | FLAGS_NO_UPSCALING_REFINEMENTS | FLAGS_NO_HDR_SDR_CONVERSION,
-        CHROMA_UPSCALING_NGU_AA, IMAGE_DOWNSCALING_SSIM1D100, IMAGE_UPSCALING_NGU_SHARP_GRAIN, 0, &dibImageBuffer, nullptr);
+      if (!m_pInitMadVRWindowPositionDone || m_pShutdown)
+      {
+        if (m_pCallback)
+        {
+          m_pCallback->GrabMadVrCurrentFrame(nullptr);
+        }
+        return;
+      }
+      if (m_pCallback && m_pMad)
+      {
+        if (Com::SmartQIPtr<IMadVRFrameGrabber> pMadVrFrame = m_pMad)
+        {
+          LPVOID dibImageBuffer = nullptr;
+          pMadVrFrame->GrabFrame(ZOOM_50_PERCENT, FLAGS_NO_SUBTITLES | FLAGS_NO_ARTIFACT_REMOVAL | FLAGS_NO_IMAGE_ENHANCEMENTS | FLAGS_NO_UPSCALING_REFINEMENTS | FLAGS_NO_HDR_SDR_CONVERSION,
+            CHROMA_UPSCALING_NGU_AA, IMAGE_DOWNSCALING_SSIM1D100, IMAGE_UPSCALING_NGU_SHARP_GRAIN, 0, &dibImageBuffer, nullptr);
 
-      // Send the DIB to C#
-      m_pCallback->GrabMadVrCurrentFrame(dibImageBuffer);
-      LocalFree(dibImageBuffer);
-      dibImageBuffer = nullptr;
-      pMadVrFrame.Release(); // WIP release
-      //Log("GrabFrame() hr");
+          // Send the DIB to C#
+          m_pCallback->GrabMadVrCurrentFrame(dibImageBuffer);
+          LocalFree(dibImageBuffer);
+          dibImageBuffer = nullptr;
+          pMadVrFrame.Release(); // WIP release
+          //Log("GrabFrame() hr");
+        }
+      }
     }
-  }
-  catch (...)
-  {
+    catch (...)
+    {
+    }
   }
 }
 
@@ -408,14 +431,17 @@ void MPMadPresenter::MadVr3D(bool Enable)
 
 IBaseFilter* MPMadPresenter::Initialize()
 {
-  if (Com::SmartQIPtr<IBaseFilter> baseFilter = m_pMad)
+  if (m_pMad)
   {
-    HRESULT hr = mediaControlGraph->AddFilter(baseFilter, _T("madVR"));
-    if (FAILED(hr))
+    if (Com::SmartQIPtr<IBaseFilter> baseFilter = m_pMad)
     {
-      return nullptr;
+      HRESULT hr = mediaControlGraph->AddFilter(baseFilter, _T("madVR"));
+      if (FAILED(hr))
+      {
+        return nullptr;
+      }
+      return baseFilter;
     }
-    return baseFilter;
   }
   return nullptr;
 }
@@ -511,8 +537,11 @@ STDMETHODIMP MPMadPresenter::SetGrabEvent(HANDLE pGrabEvent)
 
   if (m_pKodiWindowUse)
   {
-    m_pCallback->DestroyHWnd(m_hWnd);
-    Log("%s : Create and sended DSPlayer window - hWnd: %i", __FUNCTION__, m_hWnd);
+    if (m_pCallback)
+    {
+      m_pCallback->DestroyHWnd(m_hWnd);
+      Log("%s : Create and sended DSPlayer window - hWnd: %i", __FUNCTION__, m_hWnd);
+    }
   }
 
   ////if (Com::SmartQIPtr<IVideoWindow> pWindow = m_pMad)
@@ -585,55 +614,61 @@ STDMETHODIMP MPMadPresenter::SetStopEvent()
 
 void MPMadPresenter::EnableExclusive(bool bEnable)
 {
-  if (Com::SmartQIPtr<IMadVRCommand> pMadVrCmd = m_pMad)
+  if (m_pMad)
   {
-    pMadVrCmd->SendCommandBool("disableExclusiveMode", !bEnable);
-    pMadVrCmd.Release(); // WIP release
+    if (Com::SmartQIPtr<IMadVRCommand> pMadVrCmd = m_pMad)
+    {
+      pMadVrCmd->SendCommandBool("disableExclusiveMode", !bEnable);
+      pMadVrCmd.Release(); // WIP release
+    }
   }
 };
 
 void MPMadPresenter::ConfigureMadvr()
 {
-  if (Com::SmartQIPtr<IMadVRCommand> pMadVrCmd = m_pMad)
+  if (m_pMad)
   {
-    pMadVrCmd->SendCommandBool("disableSeekbar", true);
-    pMadVrCmd.Release(); // WIP release
-  }
-
-  if (Com::SmartQIPtr<IMadVRDirect3D9Manager> manager = m_pMad)
-  {
-    manager->ConfigureDisplayModeChanger(false, true);
-    manager.Release(); // WIP release
-  }
-
-  // TODO implement IMadVRSubclassReplacement
-  if (Com::SmartQIPtr<IMadVRSubclassReplacement> pSubclassReplacement = m_pMad)
-  {
-    pSubclassReplacement->DisableSubclassing();
-    pSubclassReplacement.Release(); // WIP release
-  }
-
-  if (Com::SmartQIPtr<IVideoWindow> pWindow = m_pMad)
-  {
-    pWindow->SetWindowPosition(m_Xposition, m_Yposition, m_dwGUIWidth, m_dwGUIHeight);
-    //pWindow->put_Owner(m_hParent);
-    pWindow.Release(); // WIP release
-  }
-
-  if (Com::SmartQIPtr<IMadVRSettings> m_pSettings = m_pMad)
-  {
-    // Read exclusive settings
-    m_pSettings->SettingsGetBoolean(L"enableExclusive", &m_ExclusiveMode);
-
-    if (m_ExclusiveMode)
+    if (Com::SmartQIPtr<IMadVRCommand> pMadVrCmd = m_pMad)
     {
-      //m_pSettings->SettingsSetBoolean(L"exclusiveDelay", true);
-      m_pSettings->SettingsSetBoolean(L"enableExclusive", true);
+      pMadVrCmd->SendCommandBool("disableSeekbar", true);
+      pMadVrCmd.Release(); // WIP release
     }
-    m_pSettings.Release(); // WIP release
-  }
 
-  //SetWindowPos(m_hWnd, m_hWnd, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+    if (Com::SmartQIPtr<IMadVRDirect3D9Manager> manager = m_pMad)
+    {
+      manager->ConfigureDisplayModeChanger(false, true);
+      manager.Release(); // WIP release
+    }
+
+    // TODO implement IMadVRSubclassReplacement
+    if (Com::SmartQIPtr<IMadVRSubclassReplacement> pSubclassReplacement = m_pMad)
+    {
+      pSubclassReplacement->DisableSubclassing();
+      pSubclassReplacement.Release(); // WIP release
+    }
+
+    if (Com::SmartQIPtr<IVideoWindow> pWindow = m_pMad)
+    {
+      pWindow->SetWindowPosition(m_Xposition, m_Yposition, m_dwGUIWidth, m_dwGUIHeight);
+      //pWindow->put_Owner(m_hParent);
+      pWindow.Release(); // WIP release
+    }
+
+    if (Com::SmartQIPtr<IMadVRSettings> m_pSettings = m_pMad)
+    {
+      // Read exclusive settings
+      m_pSettings->SettingsGetBoolean(L"enableExclusive", &m_ExclusiveMode);
+
+      if (m_ExclusiveMode)
+      {
+        //m_pSettings->SettingsSetBoolean(L"exclusiveDelay", true);
+        m_pSettings->SettingsSetBoolean(L"enableExclusive", true);
+      }
+      m_pSettings.Release(); // WIP release
+    }
+
+    //SetWindowPos(m_hWnd, m_hWnd, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+  }
 }
 
 HRESULT MPMadPresenter::Shutdown()
@@ -661,12 +696,15 @@ HRESULT MPMadPresenter::Shutdown()
     }
 
     // Restore windowed overlay settings
-    if (Com::SmartQIPtr<IMadVRSettings> m_pSettings = m_pMad)
+    if (m_pMad)
     {
-      if (m_enableOverlay)
+      if (Com::SmartQIPtr<IMadVRSettings> m_pSettings = m_pMad)
       {
-        m_pSettings->SettingsSetBoolean(L"enableOverlay", true);
-        m_pSettings.Release(); // WIP release
+        if (m_enableOverlay)
+        {
+          m_pSettings->SettingsSetBoolean(L"enableOverlay", true);
+          m_pSettings.Release(); // WIP release
+        }
       }
     }
 
@@ -829,6 +867,11 @@ HRESULT MPMadPresenter::Stopping()
   { // Scope for autolock for the local variable (lock, which when deleted releases the lock)
     CAutoLock lock(this);
     StopEvent = false;
+
+    if (!m_pMad)
+    {
+      return E_FAIL;
+    }
 
     if (m_pORCB)
     {
@@ -1546,7 +1589,7 @@ HRESULT MPMadPresenter::SetDeviceOsd(IDirect3DDevice9* pD3DDev)
     // if commented -> deadlock
     ChangeDevice(pD3DDev);
 
-    if (m_pMadD3DDev)
+    if (m_pMadD3DDev && m_pCallback)
     {
       m_deviceState.SetDevice(m_pMadD3DDev);
       if (SUCCEEDED(hr = m_pDevice->CreateTexture(m_dwGUIWidth, m_dwGUIHeight, 0, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &m_pMPTextureGui.p, &m_hSharedGuiHandle)))
