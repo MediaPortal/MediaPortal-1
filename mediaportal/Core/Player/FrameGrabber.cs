@@ -100,22 +100,24 @@ namespace MediaPortal
           {
             lock (grabNotifier)
             {
-              if (VMR9Util.g_vmr9 != null)
+              lock (VMR9Util.g_vmr9._syncRoot)
               {
-                try
+                if (VMR9Util.g_vmr9 != null && !VMR9Util.g_vmr9._exitThread)
                 {
-                  if (FrameResult != null)
+                  try
                   {
-                    FrameResult.SafeDispose();
-                    FrameResult = null;
-                  }
+                    if (FrameResult != null)
+                    {
+                      FrameResult.SafeDispose();
+                      FrameResult = null;
+                    }
 
-                  // Grab frame
-                  //VMR9Util.g_vmr9.GrabCurrentFrame(); // Using C# WIP
-                  VMR9Util.g_vmr9.MadVrGrabCurrentFrame();
+                    // Grab frame
+                    //VMR9Util.g_vmr9.GrabCurrentFrame(); // Using C# WIP
+                    VMR9Util.g_vmr9.MadVrGrabCurrentFrame();
 
-                  if (GUIGraphicsContext.madVRCurrentFrameBitmap != null)
-                  {
+                    if (GUIGraphicsContext.madVRCurrentFrameBitmap != null)
+                    {
 #if DEBUG
                     string directory = string.Format("{0}\\MediaPortal Screenshots\\{1:0000}-{2:00}-{3:00}",
                       Environment.GetFolderPath(Environment.SpecialFolder.MyPictures),
@@ -129,22 +131,23 @@ namespace MediaPortal
                       DateTime.Now.Hour,
                       DateTime.Now.Minute, DateTime.Now.Second, DateTime.Now.Millisecond);
 #endif
-                    FrameResult = new Bitmap(GUIGraphicsContext.madVRCurrentFrameBitmap);
+                      FrameResult = new Bitmap(GUIGraphicsContext.madVRCurrentFrameBitmap);
 #if DEBUG
-                    // Need to be commented out for saving screenshot frame
-                    //FrameResult.Save(fileName + ".jpg", ImageFormat.Jpeg);
+  // Need to be commented out for saving screenshot frame
+  //FrameResult.Save(fileName + ".jpg", ImageFormat.Jpeg);
 #endif
-                    return FrameResult;
+                      return FrameResult;
+                    }
+                    // Bitmap not ready return null
+                    Log.Debug("FrameGrabber: Frame not ready for madVR");
+                    return null;
                   }
-                  // Bitmap not ready return null
-                  Log.Debug("FrameGrabber: Frame not ready for madVR");
-                  return null;
-                }
-                catch
-                {
-                  Log.Debug("FrameGrabber: Frame grab catch failed for madVR");
-                  return null;
-                  // When Bitmap is not yet ready
+                  catch
+                  {
+                    Log.Debug("FrameGrabber: Frame grab catch failed for madVR");
+                    return null;
+                    // When Bitmap is not yet ready
+                  }
                 }
               }
 
