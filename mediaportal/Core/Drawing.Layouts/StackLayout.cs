@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2017 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2017 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -22,6 +22,8 @@ using System;
 using System.Windows;
 using System.Windows.Controls;
 using MediaPortal.GUI.Library;
+using Alignment = MediaPortal.GUI.Library.GUIControl.Alignment;
+using VAlignment = MediaPortal.GUI.Library.GUIControl.VAlignment;
 
 namespace MediaPortal.Drawing.Layouts
 {
@@ -82,6 +84,29 @@ namespace MediaPortal.Drawing.Layouts
           break;
       }
 
+      if (element is GUILabelControl)
+      {
+        if (((GUILabelControl)element).TextAlignment == Alignment.ALIGN_RIGHT)
+        {
+          rect.X = rect.X + ((GUILabelControl)element).Width;
+        }
+        if (((GUILabelControl)element).TextAlignment == Alignment.ALIGN_CENTER)
+        {
+          rect.X = rect.X + ((GUILabelControl)element).Width / 2;
+        }
+      }
+      if (element is GUIFadeLabel)
+      {
+        if (((GUIFadeLabel)element).TextAlignment == Alignment.ALIGN_RIGHT)
+        {
+          rect.X = rect.X + ((GUIFadeLabel)element).Width;
+        }
+        if (((GUIFadeLabel)element).TextAlignment == Alignment.ALIGN_CENTER)
+        {
+          rect.X = rect.X + ((GUIFadeLabel)element).Width / 2;
+        }
+      }
+
       element.Arrange(rect);
     }
 
@@ -90,10 +115,36 @@ namespace MediaPortal.Drawing.Layouts
       Thickness t = element.Margin;
       Point l = element.Location;
 
-      double x = element.Location.X + t.Left;
-      double y = element.Location.Y + t.Top;
+      double x = l.X + t.Left;
+      double y = l.Y + t.Top;
       double w = _orientation != Orientation.Horizontal ? Math.Max(0, element.Width - t.Width) : 0;
       double h = _orientation == Orientation.Horizontal ? Math.Max(0, element.Height - t.Height) : 0;
+
+      if (_orientation == Orientation.Horizontal && (element.GroupAlignment == Alignment.ALIGN_RIGHT || element.GroupAlignment == Alignment.ALIGN_CENTER))
+      {
+        double fullWidth = 0;
+        foreach (var child in element.Children)
+        {
+          if (child.Visibility == Visibility.Collapsed)
+          {
+            continue;
+          }
+
+          if (child is GUIFadeLabel)
+          {
+            fullWidth += ((GUIFadeLabel)child).Width + _spacing.Width;
+          }
+          else if (child is GUILabelControl)
+          {
+            fullWidth += ((GUILabelControl)child).Width + _spacing.Width;
+          }
+          else
+          {
+            fullWidth += child.Width + _spacing.Width;
+          }
+        }
+        x = Math.Max(0, x + (element.Width - fullWidth));
+      }
 
       foreach (var child in element.Children)
       {
@@ -133,6 +184,18 @@ namespace MediaPortal.Drawing.Layouts
 
         w = _orientation != Orientation.Horizontal ? Math.Max(w, child.Width) : w + child.Width + _spacing.Width;
         h = _orientation == Orientation.Horizontal ? Math.Max(h, child.Height) : h + child.Height + _spacing.Height;
+      }
+
+      if (availableSize.Width > 0 && _orientation == Orientation.Horizontal)
+      {
+        if (element.GroupAlignment == Alignment.ALIGN_RIGHT)
+        {
+          w = Math.Max(w, availableSize.Width);
+        }
+        if (element.GroupAlignment == Alignment.ALIGN_CENTER)
+        {
+          w = Math.Max(w, (availableSize.Width + w) / 2);
+        }
       }
 
       Thickness t = element.Margin;
