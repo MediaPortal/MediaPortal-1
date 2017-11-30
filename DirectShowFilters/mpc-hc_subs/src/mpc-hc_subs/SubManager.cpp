@@ -61,20 +61,45 @@ void CSubManager::SetDevice(IDirect3DDevice9* d3DDev)
     if (m_d3DDev)
     {
       m_d3DDev.Release();
-      //m_d3DDev = nullptr;
     }
-    m_pSubPicQueue = nullptr;
-    m_pAllocator = nullptr;
+
+    if (m_pAllocator)
+    {
+      m_pAllocator.Release();
+      m_pAllocator.Detach();
+      m_pAllocator = nullptr;
+    }
+
+    if (m_pSubPicQueue)
+    {
+      m_pSubPicQueue.Release();
+      m_pSubPicQueue.Detach();
+      m_pSubPicQueue = nullptr;
+    }
     return;
   }
 
+  // Release ressource
+  if (m_d3DDev)
+  {
+    m_d3DDev.Release();
+  }
+  
   m_d3DDev = d3DDev;
 
   if (m_pAllocator)
+  {
+    m_pAllocator.Release();
     m_pAllocator.Detach();
+    m_pAllocator = nullptr;
+  }
 
   if (m_pSubPicQueue)
+  {
+    m_pSubPicQueue.Release();
     m_pSubPicQueue.Detach();
+    m_pSubPicQueue = nullptr;
+  }
 
   m_pAllocator = new CDX9SubPicAllocator(d3DDev, g_textureSize, g_pow2tex, false);
   HRESULT hr = S_OK;
