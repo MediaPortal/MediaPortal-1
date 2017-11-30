@@ -1547,9 +1547,19 @@ namespace MediaPortal.Player
         SubEngine.GetInstance().FreeSubtitles();
         PostProcessingEngine.GetInstance().FreePostProcess();
 
-        if (VMR9Util.g_vmr9?._vmr9Filter != null)
+        if (VMR9Util.g_vmr9?._vmr9Filter != null && GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
         {
           // Releasing madVR
+          if (mediaEvt != null)
+          {
+            mediaEvt.SetNotifyWindow(IntPtr.Zero, WM_GRAPHNOTIFY, IntPtr.Zero);
+            mediaEvt = null;
+          }
+          mediaCtrl = null;
+          mediaSeek = null;
+          videoWin = null;
+          basicAudio = null;
+          basicVideo = null;
           VMR9Util.g_vmr9?.Vmr9MadVrRelease();
         }
 
@@ -1620,8 +1630,8 @@ namespace MediaPortal.Player
       {
         if (VMR9Util.g_vmr9 != null)
         {
-          VMR9Util.g_vmr9.SafeDispose();
           VMR9Util.g_vmr9.RestoreGuiForMadVr();
+          VMR9Util.g_vmr9.SafeDispose();
         }
         Log.Error("VideoPlayer9: Exception while cleanuping DShow graph - {0} {1}", ex.Message, ex.StackTrace);
       }

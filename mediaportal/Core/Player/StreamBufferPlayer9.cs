@@ -297,9 +297,14 @@ namespace MediaPortal.Player
 
         m_StreamBufferConfig = null;
 
-        if (VMR9Util.g_vmr9?._vmr9Filter != null)
+        if (VMR9Util.g_vmr9?._vmr9Filter != null && GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
         {
           // Releasing madVR
+          _mediaCtrl = null;
+          _mediaSeeking = null;
+          _videoWin = null;
+          _basicAudio = null;
+          _basicVideo = null;
           VMR9Util.g_vmr9?.Vmr9MadVrRelease();
         }
 
@@ -327,6 +332,11 @@ namespace MediaPortal.Player
       }
       catch (Exception ex)
       {
+        if (VMR9Util.g_vmr9 != null)
+        {
+          VMR9Util.g_vmr9.RestoreGuiForMadVr();
+          VMR9Util.g_vmr9.SafeDispose();
+        }
         Log.Error("StreamBufferPlayer9: Exception while cleaning DShow graph - {0} {1}", ex.Message, ex.StackTrace);
       }
 
