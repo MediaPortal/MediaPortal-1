@@ -117,7 +117,37 @@ namespace MediaPortal.GUI.Library
         return(GetLocalizedViewLevel(def.Where));
       }
     }
-    
+
+    public virtual string LocalizedCurrentViewPath
+    {
+      get
+      {
+        string viewPath = string.Empty;
+
+        if (currentView == null)
+        {
+          return viewPath;
+        }
+
+        viewPath = LocalizedCurrentView;
+
+        for (int i = 0; i < currentLevel; ++i)
+        {
+          FilterDefinition def = (FilterDefinition)currentView.Filters[i];
+
+          if (def.SqlOperator == "group")
+          {
+            viewPath = viewPath + ":" + GUILocalizeStrings.Get(1222);
+          }
+          else
+          {
+            viewPath = viewPath + ":" + GetLocalizedViewLevel(def.Where);
+          }
+        }
+        return viewPath;
+      }
+    }
+
     protected virtual string GetLocalizedViewLevel(String lvlName)
     {
       return lvlName;
