@@ -117,7 +117,7 @@ MPMadPresenter::~MPMadPresenter()
 {
   {
     // TODO need to be commented to avoid deadlock.
-    CAutoLock cAutoLock(this);
+    //CAutoLock cAutoLock(this);
 
     Log("MPMadPresenter::Destructor() - m_pGraphbuilder release");
     if (m_pGraphbuilder)
@@ -203,7 +203,7 @@ void MPMadPresenter::RepeatFrame()
     return;
   }
 
-  CAutoLock cAutoLock(this);
+  //CAutoLock cAutoLock(this);
 
   // Render frame to try to fix HD4XXX GPU flickering issue
   Com::SmartQIPtr<IMadVROsdServices> pOR = m_pMad;
@@ -870,7 +870,7 @@ void MediaControlStopThread()
 HRESULT MPMadPresenter::Stopping()
 {
   { // Scope for autolock for the local variable (lock, which when deleted releases the lock)
-    CAutoLock lock(this);
+    //CAutoLock lock(this);
     StopEvent = false;
 
     if (!m_pMad)
@@ -1462,7 +1462,7 @@ HRESULT MPMadPresenter::SetupOSDVertex3D(IDirect3DVertexBuffer9* pVertextBuf)
 void MPMadPresenter::ReinitOSD(bool type)
 {
   { // Scope for autolock for the local variable (lock, which when deleted releases the lock)
-    CAutoLock cAutoLock(this);
+    //CAutoLock cAutoLock(this);
 
     // Needed to update OSD/GUI when changing directx present parameter on resolution change.
     if (m_pReInitOSD)
@@ -1623,7 +1623,7 @@ STDMETHODIMP MPMadPresenter::ChangeDevice(IUnknown* pDev)
   CComQIPtr<IDirect3DDevice9Ex> pD3DDev = pDev;
   CheckPointer(pD3DDev, E_NOINTERFACE);
 
-  CAutoLock cAutoLock(this);
+  //CAutoLock cAutoLock(this);
   HRESULT hr = S_FALSE;
   if (m_pMadD3DDev != pD3DDev)
   {
