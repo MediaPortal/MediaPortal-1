@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2017 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2017 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -63,9 +63,17 @@ namespace MediaPortal.GUI.Video
     // Test actorlist
     [SkinControl(24)] protected GUIListControl listActors = null;
     [SkinControl(25)] protected GUIImage imgActorArt = null;
+
     // Rename movie title
     [SkinControl(26)] protected GUIButtonControl btnRename = null;
-    
+
+    // Awards
+    [SkinControl(50)] protected GUICheckButton btnAwards = null;
+    [SkinControl(51)] protected GUITextScrollUpControl tbAwardsArea = null;
+
+    // MPAA Text
+    [SkinControl(52)] protected GUICheckButton btnMPAAText = null;
+    [SkinControl(53)] protected GUITextScrollUpControl tbMPAATextArea = null;
     #endregion
 
     public delegate void CoversLookupCompleted(string[] coverThumbURLs);
@@ -77,6 +85,8 @@ namespace MediaPortal.GUI.Video
       Plot,
       Cast,
       Review,
+      Awards,
+      MPAAText,
     }
     
     #region Variables
@@ -465,6 +475,22 @@ namespace MediaPortal.GUI.Video
         VideoDatabase.SetWatched(_currentMovie);
       }
       //
+      // Awards button
+      //
+      if (control == btnAwards)
+      {
+        _viewmode = ViewMode.Awards;
+        Update();
+      }
+      //
+      // MPAA Text button
+      //
+      if (control == btnMPAAText)
+      {
+        _viewmode = ViewMode.MPAAText;
+        Update();
+      }
+      //
       // ---
       //
       if (control == spinDisc)
@@ -687,11 +713,19 @@ namespace MediaPortal.GUI.Video
 
           if (tbCastTextArea != null) tbCastTextArea.IsVisible = false;
 
+          if (tbAwardsArea != null) tbAwardsArea.IsVisible = false;
+
+          if (tbMPAATextArea != null) tbMPAATextArea.IsVisible = false;
+
           if (imgCoverArt != null) imgCoverArt.IsVisible = true;
 
           if (btnPlot != null) btnPlot.Selected = false;
 
           if (btnReview != null) btnReview.Selected = false;
+
+          if (btnAwards != null) btnAwards.Selected = false;
+
+          if (btnMPAAText != null) btnMPAAText.Selected = false;
 
           if (btnCast != null)
           {
@@ -733,6 +767,10 @@ namespace MediaPortal.GUI.Video
 
           if (tbCastTextArea != null) tbCastTextArea.IsVisible = false;
 
+          if (tbAwardsArea != null) tbAwardsArea.IsVisible = false;
+
+          if (tbMPAATextArea != null) tbMPAATextArea.IsVisible = false;
+
           if (imgCoverArt != null) imgCoverArt.IsVisible = true;
 
           if (btnPlot != null) btnPlot.Selected = true;
@@ -741,14 +779,9 @@ namespace MediaPortal.GUI.Video
 
           if (btnCast != null) btnCast.Selected = false;
 
-          if (listActors != null)
-          {
-            listActors.IsVisible = false;
-            _currentSelectedItem = listActors.SelectedListItemIndex;
-            GUIPropertyManager.SetProperty("#itemcount", string.Empty);
-          }
+          if (btnAwards != null) btnAwards.Selected = false;
 
-          if (imgActorArt != null) imgActorArt.IsVisible = false;
+          if (btnMPAAText != null) btnMPAAText.Selected = false;
         }
         // Review
         if (_viewmode == ViewMode.Review)
@@ -759,6 +792,10 @@ namespace MediaPortal.GUI.Video
 
           if (tbCastTextArea != null) tbCastTextArea.IsVisible = false;
 
+          if (tbAwardsArea != null) tbAwardsArea.IsVisible = false;
+
+          if (tbMPAATextArea != null) tbMPAATextArea.IsVisible = false;
+
           if (imgCoverArt != null) imgCoverArt.IsVisible = true;
 
           if (btnPlot != null) btnPlot.Selected = false;
@@ -767,6 +804,63 @@ namespace MediaPortal.GUI.Video
 
           if (btnCast != null) btnCast.Selected = false;
 
+          if (btnAwards != null) btnAwards.Selected = false;
+
+          if (btnMPAAText != null) btnMPAAText.Selected = false;
+        }
+        // Awards
+        if (_viewmode == ViewMode.Awards)
+        {
+          if (tbPlotArea != null) tbPlotArea.IsVisible = false;
+
+          if (tbReviwArea != null) tbReviwArea.IsVisible = false;
+
+          if (tbCastTextArea != null) tbCastTextArea.IsVisible = false;
+
+          if (tbAwardsArea != null) tbAwardsArea.IsVisible = true;
+
+          if (tbMPAATextArea != null) tbMPAATextArea.IsVisible = false;
+
+          if (imgCoverArt != null) imgCoverArt.IsVisible = true;
+
+          if (btnPlot != null) btnPlot.Selected = false;
+
+          if (btnReview != null) btnReview.Selected = false;
+
+          if (btnCast != null) btnCast.Selected = false;
+
+          if (btnAwards != null) btnAwards.Selected = true;
+
+          if (btnMPAAText != null) btnMPAAText.Selected = false;
+        }
+        // MPAAText
+        if (_viewmode == ViewMode.MPAAText)
+        {
+          if (tbPlotArea != null) tbPlotArea.IsVisible = false;
+
+          if (tbReviwArea != null) tbReviwArea.IsVisible = false;
+
+          if (tbCastTextArea != null) tbCastTextArea.IsVisible = false;
+
+          if (tbAwardsArea != null) tbAwardsArea.IsVisible = false;
+
+          if (tbMPAATextArea != null) tbMPAATextArea.IsVisible = true;
+
+          if (imgCoverArt != null) imgCoverArt.IsVisible = true;
+
+          if (btnPlot != null) btnPlot.Selected = false;
+
+          if (btnReview != null) btnReview.Selected = false;
+
+          if (btnCast != null) btnCast.Selected = false;
+
+          if (btnAwards != null) btnAwards.Selected = false;
+
+          if (btnMPAAText != null) btnMPAAText.Selected = true;
+        }
+        // Not Cast
+        if (_viewmode != ViewMode.Cast)
+        {
           if (listActors != null)
           {
             listActors.IsVisible = false;
@@ -775,9 +869,8 @@ namespace MediaPortal.GUI.Video
           }
 
           if (imgActorArt != null) imgActorArt.IsVisible = false;
-
         }
-        
+
         btnWatched.Selected = (_currentMovie.Watched != 0);
         
         if (imgCoverArt != null)
