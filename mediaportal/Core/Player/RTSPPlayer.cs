@@ -501,9 +501,14 @@ namespace MediaPortal.Player
           hr = mediaEvt.SetNotifyWindow(IntPtr.Zero, WM_GRAPHNOTIFY, IntPtr.Zero);
         }
 
-        if (VMR9Util.g_vmr9?._vmr9Filter != null)
+        if (VMR9Util.g_vmr9?._vmr9Filter != null && GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
         {
           // Releasing madVR
+          _mediaCtrl = null;
+          _mediaSeeking = null;
+          videoWin = null;
+          basicAudio = null;
+          basicVideo = null;
           VMR9Util.g_vmr9?.Vmr9MadVrRelease();
         }
 
@@ -576,6 +581,11 @@ namespace MediaPortal.Player
       }
       catch (Exception ex)
       {
+        if (VMR9Util.g_vmr9 != null)
+        {
+          VMR9Util.g_vmr9.RestoreGuiForMadVr();
+          VMR9Util.g_vmr9.SafeDispose();
+        }
         Log.Error("RTSPPlayer: Exception while cleanuping DShow graph - {0} {1}", ex.Message, ex.StackTrace);
       }
 
