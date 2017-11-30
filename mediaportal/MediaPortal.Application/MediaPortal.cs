@@ -2240,7 +2240,7 @@ public class MediaPortalApp : D3D, IRender
               try
               {
                 GUIGraphicsContext.DeviceAudioConnected--;
-                if (_stopOnLostAudioRenderer && GUIGraphicsContext.CurrentAudioRenderer.Trim().ToLowerInvariant() == deviceName.Trim().ToLowerInvariant())
+                if (_stopOnLostAudioRenderer || GUIGraphicsContext.CurrentAudioRenderer.Trim().ToLowerInvariant() == deviceName.Trim().ToLowerInvariant())
                 {
                   Log.Debug("Main: Stop playback");
                   g_Player.Stop();
