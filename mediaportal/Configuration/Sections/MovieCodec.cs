@@ -54,9 +54,10 @@ namespace MediaPortal.Configuration.Sections
     {
       // This call is required by the Windows Form Designer.
       InitializeComponent();
+      OnSectionActivated();
     }
 
-    public override void OnSectionActivated()
+    public override sealed void OnSectionActivated()
     {
       base.OnSectionActivated();
       if (_init == false)
