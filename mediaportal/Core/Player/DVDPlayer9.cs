@@ -434,6 +434,12 @@ namespace MediaPortal.Player
           _line21Decoder = null;
         }
 
+        if (VMR9Util.g_vmr9?._vmr9Filter != null && GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+        {
+          // Releasing madVR
+          VMR9Util.g_vmr9?.Vmr9MadVrRelease();
+        }
+
         if (_graphBuilder != null)
         {
           DirectShowUtil.RemoveFilters(_graphBuilder);
@@ -461,6 +467,7 @@ namespace MediaPortal.Player
         if (VMR9Util.g_vmr9 != null)
         {
           VMR9Util.g_vmr9.RestoreGuiForMadVr();
+          VMR9Util.g_vmr9.SafeDispose();
         }
         Log.Error("DVDPlayer9: Exception while cleanuping DShow graph - {0} {1}", ex.Message, ex.StackTrace);
       }

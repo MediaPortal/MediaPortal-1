@@ -968,7 +968,7 @@ void CloseFrameGrabbing()
 }
 // madVR frame grabber thread end
 
-BOOL MadInit(IVMR9Callback* callback, int xposition, int yposition, int width, int height, DWORD dwD3DDevice, OAHWND parent, IBaseFilter** madFilter, IMediaControl* pMediaControl)
+int MadInit(IVMR9Callback* callback, int xposition, int yposition, int width, int height, DWORD dwD3DDevice, OAHWND parent, IBaseFilter** madFilter, IGraphBuilder* pMediaControl)
 {
   m_RenderPrefix = _T("mad");
 
@@ -980,8 +980,8 @@ BOOL MadInit(IVMR9Callback* callback, int xposition, int yposition, int width, i
 
   Com::SmartPtr<IUnknown> pRenderer;
   m_madPresenter->CreateRenderer(&pRenderer);
-  m_pVMR9Filter = m_madPresenter->Initialize();
   m_pVMR9Filter = Com::SmartQIPtr<IBaseFilter>(pRenderer).Detach();
+  m_pVMR9Filter = m_madPresenter->Initialize();
 
   // Start and init frame grabbing for the new method from madVR but we run into performance issue (so disable it for now)
   //InitFrameGrabbing();
@@ -994,9 +994,9 @@ BOOL MadInit(IVMR9Callback* callback, int xposition, int yposition, int width, i
   *madFilter = m_pVMR9Filter;
 
   if (!madFilter)
-    return FALSE;
+    return S_FALSE;
 
-  return TRUE;
+  return S_OK;
 }
 
 void MadDeinit()
@@ -1008,7 +1008,7 @@ void MadDeinit()
     //m_madPresenter->m_dsLock.Lock();
     m_madPresenter->m_pShutdown = true;
     Sleep(100);
-    m_madPresenter->Shutdown();
+    m_madPresenter->Shutdown(); // When setting IVideoWin on madVR object instead of graphbuilder (instance is destroyed in cleanup)
     m_pVMR9Filter = nullptr;
     //m_madPresenter->m_dsLock.Unlock();
     Log("MPMadDshow::MadDeinit shutdown done");
@@ -1025,6 +1025,7 @@ void MadStopping()
     Log("MPMadDshow::MadStopping start");
     //CAutoLock lock(&m_madPresenter->m_dsLock);
     //m_madPresenter->m_dsLock.Lock();
+    m_madPresenter->SetStopEvent();
     m_madPresenter->m_pShutdown = true;
     Sleep(100);
     m_madPresenter->Stopping();
@@ -1058,7 +1059,13 @@ void MadVrGrabFrameSend()
 
 void MadVrGrabCurrentFrameSend()
 {
-  m_madPresenter->GrabCurrentFrame();
+  try
+  {
+    m_madPresenter->GrabCurrentFrame();
+  }
+  catch (...)
+  {
+  }
 }
 
 void MadVrGrabScreenshotSend()

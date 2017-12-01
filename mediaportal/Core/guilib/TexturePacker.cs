@@ -322,6 +322,7 @@ namespace MediaPortal.GUI.Library
 
     public void PackSkinGraphics(string skinName)
     {
+      // for debugging we can comment out this line to avoid rebuild of skin cache on MP start
       Cleanup();
       if (LoadPackedSkin())
       {
