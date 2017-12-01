@@ -1,4 +1,4 @@
-﻿#region Copyright (C) 2005-2013 Team MediaPortal
+#region Copyright (C) 2005-2013 Team MediaPortal
 
 // Copyright (C) 2005-2013 Team MediaPortal
 // http://www.team-mediaportal.com
@@ -18,9 +18,11 @@
 
 #endregion
 
+using System.Linq;
 using DirectShowLib;
 using DShowNET.Helper;
 using FilterCategory = DirectShowLib.FilterCategory;
+using NAudio.CoreAudioApi;
 
 #region usings
 
@@ -60,6 +62,7 @@ using Microsoft.DirectX.Direct3D;
 using Microsoft.Win32;
 using Action = MediaPortal.GUI.Library.Action;
 using Timer = System.Timers.Timer;
+using System.Collections.Generic;
 
 #endregion
 
@@ -216,6 +219,9 @@ public class MediaPortalApp : D3D, IRender
 
   // Framegrabber instance
   private FrameGrabber grabber = FrameGrabber.GetInstance();
+
+  // Core Audio controller
+  MMDeviceEnumerator _mMdeviceEnumerator = new MMDeviceEnumerator();
 
   [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
   // ReSharper disable InconsistentNaming
@@ -2234,7 +2240,7 @@ public class MediaPortalApp : D3D, IRender
               try
               {
                 GUIGraphicsContext.DeviceAudioConnected--;
-                if (_stopOnLostAudioRenderer && GUIGraphicsContext.CurrentAudioRenderer.Trim().ToLowerInvariant() == deviceName.Trim().ToLowerInvariant())
+                if (_stopOnLostAudioRenderer || GUIGraphicsContext.CurrentAudioRenderer.Trim().ToLowerInvariant() == deviceName.Trim().ToLowerInvariant())
                 {
                   Log.Debug("Main: Stop playback");
                   g_Player.Stop();
@@ -3088,39 +3094,25 @@ public class MediaPortalApp : D3D, IRender
     Log.Debug("Main: Auto play start listening");
     AutoPlay.StartListening();
 
+    // Count connected audio devices
     GUIGraphicsContext.DeviceAudioConnected = 0;
-    DsDevice[] devices = DsDevice.GetDevicesOfCat(FilterCategory.AMKSAudio);    // KSCATEGORY_AUDIO
-    if (devices != null)
+    try
     {
-      GUIGraphicsContext.DeviceAudioConnected += devices.Length;
-      foreach (DsDevice d in devices)
-      {
-        d.Dispose();
-      }
+      if (_mMdeviceEnumerator == null)
+        _mMdeviceEnumerator = new MMDeviceEnumerator();
+      GUIGraphicsContext.DeviceAudioConnected =
+        _mMdeviceEnumerator.EnumerateAudioEndPoints(DataFlow.Render, DeviceState.Active).Count();
     }
-    devices = DsDevice.GetDevicesOfCat(FilterCategory.AMKSRender);    // KSCATEGORY_RENDER
-    if (devices != null)
+    catch (Exception ex)
     {
-      GUIGraphicsContext.DeviceAudioConnected += devices.Length;
-      foreach (DsDevice d in devices)
-      {
-        d.Dispose();
-      }
-    }
-    devices = DsDevice.GetDevicesOfCat(RDP_REMOTE_AUDIO);
-    if (devices != null)
-    {
-      GUIGraphicsContext.DeviceAudioConnected += devices.Length;
-      foreach (DsDevice d in devices)
-      {
-        d.Dispose();
-      }
+      Log.Error($"Main: audio renderer count failed {ex}");
     }
 
     Log.Debug("Main: audio renderer count at startup = {0}", GUIGraphicsContext.DeviceAudioConnected);
 
+    // Count connected video devices
     GUIGraphicsContext.DeviceVideoConnected = 0;
-    devices = DsDevice.GetDevicesOfCat(FilterCategory.AMKSVideo);    // KSCATEGORY_VIDEO
+    DsDevice[] devices = DsDevice.GetDevicesOfCat(FilterCategory.AMKSVideo);    // KSCATEGORY_VIDEO
     if (devices != null)
     {
       GUIGraphicsContext.DeviceVideoConnected += devices.Length;
@@ -3145,11 +3137,11 @@ public class MediaPortalApp : D3D, IRender
 
     Log.Info("Main: Initializing volume handler");
     #pragma warning disable 168
-    if (VolumeHandler.Instance!=null)
+    if (VolumeHandler.Instance==null)
     {
-      Log.Error("Volume handler already created. Could break volume notifications.");
+      VolumeHandler.CreateInstance();
     }
-    VolumeHandler.CreateInstance();
+
     GUIGraphicsContext.VolumeHandler = VolumeHandler.Instance;
     #pragma warning restore 168
 
