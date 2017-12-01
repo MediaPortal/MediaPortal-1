@@ -636,7 +636,13 @@ Section "MediaPortal core files (required)" SecCore
     File /oname=bluray.dll "${git_DirectShowFilters}\bin_Win32\libbluray\libbluray.dll"
   !endif
   File /oname=libbluray.jar "${git_Libbluray}\src\.libs\libbluray-.jar"
-  CopyFiles /SILENT "$MPdir.Base\libbluray.jar" "$MPdir.Base\libbluray-j2se-0.6.2.jar"
+  CopyFiles /SILENT "$MPdir.Base\libbluray.jar" "$MPdir.Base\libbluray-j2se-1.0.1.jar"
+  ; libbluray - submodul freetype library
+  !if ${BUILD_TYPE} == "Debug"       # it's an debug build
+    File /oname=freetype281d.dll "${git_Libbluray}\3rd_party\freetype2\objs\vc2010\Win32\freetype281d.dll"
+  !else
+    File /oname=freetype281.dll "${git_Libbluray}\3rd_party\freetype2\objs\vc2010\Win32\freetype281.dll"
+  !endif
   ; TvLibrary for Genre
   File "${git_TVServer}\TvLibrary.Interfaces\bin\${BUILD_TYPE}\TvLibrary.Interfaces.dll"
   File "${git_MP}\LastFMLibrary\bin\${BUILD_TYPE}\LastFMLibrary.dll"
