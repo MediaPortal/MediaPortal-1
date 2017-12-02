@@ -1011,36 +1011,36 @@ HRESULT MPMadPresenter::Stopping()
       m_pORCB->Release();
     Log("MPMadPresenter::Stopping() m_pORCB release 2");
 
-    //CComPtr<IMediaControl> m_pControl = nullptr;
-    //if ((mediaControlGraph) && (SUCCEEDED(mediaControlGraph->QueryInterface(__uuidof(IMediaControl), reinterpret_cast<LPVOID*>(&m_pControl)))) && (m_pControl))
-    //{
-    //  if (m_pControl)
-    //  {
-    //    Log("MPMadPresenter::Stopping() m_pMediaControl stop 1");
-    //    int counter = 0;
-    //    OAFilterState state = -1;
-    //    m_pControl->Stop();
-    //    m_pControl->GetState(100, &state);
-    //    while (state != State_Stopped)
-    //    {
-    //      Log("MPMadPresenter::Stopping() m_pMediaControl: graph still running");
-    //      Sleep(100);
-    //      m_pControl->GetState(10, &state);
-    //      counter++;
-    //      if (counter >= 30)
-    //      {
-    //        if (state != State_Stopped)
-    //        {
-    //          Log("MPMadPresenter::Stopping() m_pMediaControl: graph still running");
-    //        }
-    //        break;
-    //      }
-    //    }
-    //    m_pControl->Release();
-    //    m_pControl = nullptr;
-    //    Log("MPMadPresenter::Stopping() m_pMediaControl stop 2");
-    //  }
-    //}
+    // Redo check if filter are stopped
+    if ((mediaControlGraph) && (SUCCEEDED(mediaControlGraph->QueryInterface(__uuidof(IMediaControl), reinterpret_cast<LPVOID*>(&m_pControl)))) && (m_pControl))
+    {
+      if (m_pControl)
+      {
+        Log("MPMadPresenter::Stopping() m_pMediaControl stop 1");
+        int counter = 0;
+        OAFilterState state = -1;
+        m_pControl->Stop();
+        m_pControl->GetState(100, &state);
+        while (state != State_Stopped)
+        {
+          Log("MPMadPresenter::Stopping() m_pMediaControl: graph still running");
+          Sleep(100);
+          m_pControl->GetState(10, &state);
+          counter++;
+          if (counter >= 30)
+          {
+            if (state != State_Stopped)
+            {
+              Log("MPMadPresenter::Stopping() m_pMediaControl: graph still running");
+            }
+            break;
+          }
+        }
+        m_pControl.Release();
+        m_pControl = nullptr;
+        Log("MPMadPresenter::Stopping() m_pMediaControl stop 2");
+      }
+    }
 
     if (m_pMadD3DDev != nullptr)
     {
