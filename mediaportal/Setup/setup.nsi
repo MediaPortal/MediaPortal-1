@@ -634,7 +634,7 @@ Section "MediaPortal core files (required)" SecCore
   SetOutPath "$MPdir.Base\"
   File "${git_ROOT}\Packages\SharpLibDisplay.0.2.6\lib\net40\SharpLibDisplay.dll"
   ; Naudio
-  File "${git_ROOT}\Packages\NAudio.1.8.0\lib\net35\NAudio.dll"
+  File "${git_ROOT}\Packages\NAudio.1.8.3\lib\net35\NAudio.dll"
   ; Doc
   SetOutPath "$MPdir.Base\Docs"
   File "${git_MP}\Docs\BASS License.txt"
