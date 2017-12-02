@@ -19,10 +19,10 @@
 #endregion
 
 using System.Linq;
+using CSCore.CoreAudioAPI;
 using DirectShowLib;
 using DShowNET.Helper;
 using FilterCategory = DirectShowLib.FilterCategory;
-using NAudio.CoreAudioApi;
 
 #region usings
 
@@ -3101,7 +3101,7 @@ public class MediaPortalApp : D3D, IRender
       if (_mMdeviceEnumerator == null)
         _mMdeviceEnumerator = new MMDeviceEnumerator();
       GUIGraphicsContext.DeviceAudioConnected =
-        _mMdeviceEnumerator.EnumerateAudioEndPoints(DataFlow.Render, DeviceState.Active).Count();
+        _mMdeviceEnumerator.EnumAudioEndpoints(DataFlow.Render, DeviceState.Active).Count();
     }
     catch (Exception ex)
     {

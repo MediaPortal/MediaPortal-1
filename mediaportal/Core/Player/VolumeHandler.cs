@@ -22,11 +22,11 @@ using System;
 using System.Globalization;
 using System.Linq;
 using System.Runtime.InteropServices;
+using CSCore.CoreAudioAPI;
 using MediaPortal.ExtensionMethods;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 using Microsoft.Win32;
-using NAudio.CoreAudioApi;
 using Action = MediaPortal.GUI.Library.Action;
 
 namespace MediaPortal.Player
