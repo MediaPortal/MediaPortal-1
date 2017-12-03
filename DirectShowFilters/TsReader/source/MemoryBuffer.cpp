@@ -34,7 +34,6 @@ bool CMemoryBuffer::IsRunning()
 
 void CMemoryBuffer::Clear()
 {    
-  if (!m_bRunning) return;
   LogDebug("memorybuffer: Clear() buffers:%d, bytes:%d",m_Array.size(), m_BytesInBuffer);
 	CAutoLock BufferLock(&m_BufferLock);
   if (m_Array.size()>0)
