@@ -652,12 +652,12 @@ void MPMadPresenter::ConfigureMadvr()
     //  pSubclassReplacement.Release(); // WIP release
     //}
 
-    if (Com::SmartQIPtr<IVideoWindow> pWindow = m_pMad)
-    {
-      pWindow->SetWindowPosition(m_Xposition, m_Yposition, m_dwGUIWidth, m_dwGUIHeight);
-      //pWindow->put_Owner(m_hParent);
-      pWindow.Release(); // WIP release
-    }
+    //if (Com::SmartQIPtr<IVideoWindow> pWindow = m_pMad) // Fix DXVA for FSE
+    //{
+    //  pWindow->SetWindowPosition(m_Xposition, m_Yposition, m_dwGUIWidth, m_dwGUIHeight);
+    //  //pWindow->put_Owner(m_hParent);
+    //  pWindow.Release(); // WIP release
+    //}
 
     if (Com::SmartQIPtr<IMadVRSettings> m_pSettings = m_pMad)
     {

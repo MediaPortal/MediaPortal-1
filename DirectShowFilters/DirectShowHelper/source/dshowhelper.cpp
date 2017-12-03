@@ -1003,15 +1003,18 @@ void MadDeinit()
 {
   try
   {
-    Log("MPMadDshow::MadDeinit shutdown start");
-    //CAutoLock lock(&m_madPresenter->m_dsLock);
-    //m_madPresenter->m_dsLock.Lock();
-    m_madPresenter->m_pShutdown = true;
-    Sleep(100);
-    m_madPresenter->Shutdown(); // When setting IVideoWin on madVR object instead of graphbuilder (instance is destroyed in cleanup)
-    m_pVMR9Filter = nullptr;
-    //m_madPresenter->m_dsLock.Unlock();
-    Log("MPMadDshow::MadDeinit shutdown done");
+    if (m_madPresenter)
+    {
+      Log("MPMadDshow::MadDeinit shutdown start");
+      //CAutoLock lock(&m_madPresenter->m_dsLock);
+      //m_madPresenter->m_dsLock.Lock();
+      m_madPresenter->m_pShutdown = true;
+      Sleep(100);
+      m_madPresenter->Shutdown(); // When setting IVideoWin on madVR object instead of graphbuilder (instance is destroyed in cleanup)
+      m_pVMR9Filter = nullptr;
+      //m_madPresenter->m_dsLock.Unlock();
+      Log("MPMadDshow::MadDeinit shutdown done");
+    }
   }
   catch(...)
   {
@@ -1022,16 +1025,19 @@ void MadStopping()
 {
   try
   {
-    Log("MPMadDshow::MadStopping start");
-    //CAutoLock lock(&m_madPresenter->m_dsLock);
-    //m_madPresenter->m_dsLock.Lock();
-    m_madPresenter->SetStopEvent();
-    m_madPresenter->m_pShutdown = true;
-    Sleep(100);
-    m_madPresenter->Stopping();
-    //m_madPresenter->m_dsLock.Unlock();
-    CloseFrameGrabbing();
-    Log("MPMadDshow::MadStopping done");
+    if (m_madPresenter)
+    {
+      Log("MPMadDshow::MadStopping start");
+      //CAutoLock lock(&m_madPresenter->m_dsLock);
+      //m_madPresenter->m_dsLock.Lock();
+      m_madPresenter->SetStopEvent();
+      m_madPresenter->m_pShutdown = true;
+      Sleep(100);
+      m_madPresenter->Stopping();
+      //m_madPresenter->m_dsLock.Unlock();
+      CloseFrameGrabbing();
+      Log("MPMadDshow::MadStopping done");
+    }
   }
   catch (...)
   {
@@ -1040,12 +1046,14 @@ void MadStopping()
 
 void MadVrPaused(bool paused)
 {
-  m_madPresenter->SetMadVrPaused(paused);
+  if (m_madPresenter)
+    m_madPresenter->SetMadVrPaused(paused);
 }
 
 void MadVrRepeatFrameSend()
 {
-  m_madPresenter->RepeatFrame();
+  if (m_madPresenter)
+    m_madPresenter->RepeatFrame();
 }
 
 void MadVrGrabFrameSend()
@@ -1061,7 +1069,8 @@ void MadVrGrabCurrentFrameSend()
 {
   try
   {
-    m_madPresenter->GrabCurrentFrame();
+    if (m_madPresenter)
+      m_madPresenter->GrabCurrentFrame();
   }
   catch (...)
   {
@@ -1070,33 +1079,40 @@ void MadVrGrabCurrentFrameSend()
 
 void MadVrGrabScreenshotSend()
 {
-  // Use threaded grab
-  StartScreenshotGrabMadVR();
+  //// Use threaded grab
+  //StartScreenshotGrabMadVR();
+  if (m_madPresenter)
+    m_madPresenter->GrabScreenshot();
 }
 
 void MadVrWindowPosition()
 {
-  m_madPresenter->InitMadVRWindowPosition();
+  if (m_madPresenter)
+    m_madPresenter->InitMadVRWindowPosition();
 }
 
 void MadVr3DRight(int x, int y, int width, int height)
 {
-  m_madPresenter->MadVr3DSizeRight(x, y, width, height);
+  if (m_madPresenter)
+    m_madPresenter->MadVr3DSizeRight(x, y, width, height);
 }
 
 void MadVr3DLeft(int x, int y, int width, int height)
 {
-  m_madPresenter->MadVr3DSizeLeft(x, y, width, height);
+  if (m_madPresenter)
+    m_madPresenter->MadVr3DSizeLeft(x, y, width, height);
 }
 
 void MadVrScreenResizeForce(int x, int y, int width, int height, BOOL displayChange)
 {
-  m_madPresenter->MadVrScreenResize(x, y, width, height, displayChange);
+  if (m_madPresenter)
+    m_madPresenter->MadVrScreenResize(x, y, width, height, displayChange);
 }
 
 void MadVr3DEnable(bool Enable)
 {
-  m_madPresenter->MadVr3D(Enable);
+  if (m_madPresenter)
+    m_madPresenter->MadVr3D(Enable);
 }
 
 void Vmr9SetDeinterlaceMode(int mode)

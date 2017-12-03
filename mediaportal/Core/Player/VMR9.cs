@@ -984,21 +984,21 @@ namespace MediaPortal.Player
           hr = new HResult(MadInit(_scene, xposition, yposition, client.Width, client.Height, (uint) upDevice.ToInt32(),
             (uint) GUIGraphicsContext.ActiveForm.ToInt32(), ref _vmr9Filter, graphBuilder));
           //hr = new HResult(graphBuilder.AddFilter(_vmr9Filter, "madVR"));
-          //if (!UseMadVideoRenderer3D) // TODO
-          //{
-          //  videoWinMadVr = graphBuilder as IVideoWindow;
-          //  //videoWinMadVr = _vmr9Filter as IVideoWindow; // Using this permit to change resolution and madVR didn't reinit D3D device but broke 3D MVC
-          //  if (videoWinMadVr != null)
-          //  {
-          //    var ownerHandle = GUIGraphicsContext.MadVrHWnd != IntPtr.Zero
-          //      ? GUIGraphicsContext.MadVrHWnd
-          //      : GUIGraphicsContext.form.Handle;
+          if (!UseMadVideoRenderer3D) // TODO
+          {
+            //videoWinMadVr = graphBuilder as IVideoWindow;
+            videoWinMadVr = _vmr9Filter as IVideoWindow; // Using this permit to change resolution and madVR didn't reinit D3D device but broke 3D MVC
+            if (videoWinMadVr != null)
+            {
+              var ownerHandle = GUIGraphicsContext.MadVrHWnd != IntPtr.Zero
+                ? GUIGraphicsContext.MadVrHWnd
+                : GUIGraphicsContext.form.Handle;
 
-          //    videoWinMadVr.put_Owner(ownerHandle);
-          //    videoWinMadVr.put_WindowStyle((WindowStyle)((int)WindowStyle.Child + (int)WindowStyle.ClipChildren + (int)WindowStyle.ClipSiblings));
-          //    videoWinMadVr.put_MessageDrain(ownerHandle);
-          //  }
-          //}
+              videoWinMadVr.put_Owner(ownerHandle);
+              videoWinMadVr.put_WindowStyle((WindowStyle)((int)WindowStyle.Child + (int)WindowStyle.ClipChildren + (int)WindowStyle.ClipSiblings));
+              videoWinMadVr.put_MessageDrain(ownerHandle);
+            }
+          }
 
           // Backup size on start
           GUIGraphicsContext._backupCurrentScreenSizeWidth = client.Width;
