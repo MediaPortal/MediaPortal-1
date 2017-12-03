@@ -1726,9 +1726,8 @@ namespace MediaPortal.Player
                 _scene.WorkerThread.Abort();
               }
             }
-            // WIP stop in a thread
-            //hr = mediaCtrl.Stop();
-            //DsError.ThrowExceptionForHR(hr);
+            hr = mediaCtrl.Stop();
+            DsError.ThrowExceptionForHR(hr);
             Log.Debug("VMR9: Vmr9MediaCtrl MadStopping()");
             MadStopping();
             MadDeinit();
@@ -1781,8 +1780,8 @@ namespace MediaPortal.Player
                 GUIWindowManager.MadVrProcess();
               }
             }
+            Log.Debug("VMR9: Vmr9MadVrRelease 2");
           }
-          Log.Debug("VMR9: Vmr9MadVrRelease 1");
         }
         catch (Exception ex)
         {
