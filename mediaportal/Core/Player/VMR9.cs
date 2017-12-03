@@ -1680,6 +1680,13 @@ namespace MediaPortal.Player
             Log.Debug("VMR9: StartMediaCtrl start put_WindowStyle");
           }
         }
+        else if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+        {
+          var xposition = GUIGraphicsContext.form.Location.X;
+          var yposition = GUIGraphicsContext.form.Location.Y;
+          Size client = GUIGraphicsContext.form.ClientSize;
+          videoWinMadVr.SetWindowPosition(xposition, yposition, client.Width, client.Height);
+        }
 
         var hr = mediaCtrl.Run();
         Log.Debug("VMR9: StartMediaCtrl start hr: {0}", hr);
