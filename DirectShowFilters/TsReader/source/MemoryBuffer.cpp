@@ -31,19 +31,23 @@ bool CMemoryBuffer::IsRunning()
 {
   return m_bRunning;
 }
+
 void CMemoryBuffer::Clear()
 {    
   if (!m_bRunning) return;
-  LogDebug("memorybuffer: Clear() %d",m_Array.size());
+  LogDebug("memorybuffer: Clear() buffers:%d, bytes:%d",m_Array.size(), m_BytesInBuffer);
 	CAutoLock BufferLock(&m_BufferLock);
-	ivecBuffers it = m_Array.begin();
-	for ( ; it != m_Array.end() ; it++ )
-	{
-    BUFFERITEM *item = *it;
-    delete[] item->data;
-		delete item;
-	}
-	m_Array.clear();
+  if (m_Array.size()>0)
+  {
+    ivecBuffers it = m_Array.begin();
+    for ( ; it != m_Array.end() ; it++ )
+    {
+      BUFFERITEM *item = *it;
+      delete[] item->data;
+      delete item;
+    }
+    m_Array.clear();
+  }
   m_BytesInBuffer=0;
 	LogDebug("memorybuffer: Clear() done");
 }
