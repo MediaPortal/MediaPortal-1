@@ -1079,10 +1079,10 @@ void MadVrGrabCurrentFrameSend()
 
 void MadVrGrabScreenshotSend()
 {
-  //// Use threaded grab
-  //StartScreenshotGrabMadVR();
-  if (m_madPresenter)
-    m_madPresenter->GrabScreenshot();
+  // Use threaded grab
+  StartScreenshotGrabMadVR();
+  //if (m_madPresenter)
+  //  m_madPresenter->GrabScreenshot();
 }
 
 void MadVrWindowPosition()
