@@ -1571,7 +1571,7 @@ namespace MediaPortal.Configuration.Sections
       this.tbMPAARatingText.Location = new System.Drawing.Point(70, 12);
       this.tbMPAARatingText.Multiline = true;
       this.tbMPAARatingText.Name = "tbMPAARatingText";
-      this.tbMPAARatingText.Size = new System.Drawing.Size(375, 22);
+      this.tbMPAARatingText.Size = new System.Drawing.Size(375, 132);
       this.tbMPAARatingText.TabIndex = 40;
       // 
       // mpLabel34
