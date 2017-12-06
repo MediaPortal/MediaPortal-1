@@ -1,6 +1,6 @@
-﻿#region Copyright (C) 2005-2011 Team MediaPortal
+﻿#region Copyright (C) 2005-2017 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2017 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -41,6 +41,21 @@ namespace MediaPortal.GUI.Library
         }
         param = value;
       }
+    }
+
+    #endregion
+
+    #region  String functions
+
+    [XMLSkinFunction("system.idletime")]
+    public static bool IdleTime(string text)
+    {
+      if ((text == null))
+      {
+        return false;
+      }
+      int condition = GUIInfoManager.TranslateString("system.idletime(" + text + ")");
+      return GUIInfoManager.GetBool(condition, 0);
     }
 
     #endregion
