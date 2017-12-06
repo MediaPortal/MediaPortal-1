@@ -45,7 +45,7 @@ namespace MediaPortal.GUI.Library
 
     #endregion
 
-    #region  String functions
+    #region  System functions
 
     [XMLSkinFunction("system.idletime")]
     public static bool IdleTime(string text)
