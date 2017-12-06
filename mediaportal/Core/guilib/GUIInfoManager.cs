@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2017 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2017 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -347,7 +347,7 @@ namespace MediaPortal.GUI.Library
     //public const int WINDOW_ACTIVE_END = WINDOW_PYTHON_END;
 
     public const int SYSTEM_IDLE_TIME_START = 20000;
-    public const int SYSTEM_IDLE_TIME_FINISH = 21000; // 1000 seconds
+    public const int SYSTEM_IDLE_TIME_FINISH = 21000; // 1000 minutes
 
     public const int PLUGIN_IS_ENABLED = 25000;
 
@@ -784,14 +784,17 @@ namespace MediaPortal.GUI.Library
         }
         else if (strTest.Substring(0, 16) == "system.idletime(")
         {
-          int time = Int32.Parse((strTest.Substring(16, strTest.Length - 17)));
-          if (time > SYSTEM_IDLE_TIME_FINISH - SYSTEM_IDLE_TIME_START)
+          int time = 0;
+          if (Int32.TryParse((strTest.Substring(16, strTest.Length - 17)), out time))
           {
-            time = SYSTEM_IDLE_TIME_FINISH - SYSTEM_IDLE_TIME_START;
-          }
-          if (time > 0)
-          {
-            ret = SYSTEM_IDLE_TIME_START + time;
+            if (time > SYSTEM_IDLE_TIME_FINISH - SYSTEM_IDLE_TIME_START)
+            {
+              time = SYSTEM_IDLE_TIME_FINISH - SYSTEM_IDLE_TIME_START;
+            }
+            if (time > 0)
+            {
+              ret = SYSTEM_IDLE_TIME_START + time;
+            }
           }
         }
         else if (strTest.Substring(0, 16) == "system.hddsmart(")
@@ -2138,10 +2141,13 @@ namespace MediaPortal.GUI.Library
       }
       else if (condition > SYSTEM_IDLE_TIME_START && condition <= SYSTEM_IDLE_TIME_FINISH)
       {
-        bReturn = false; //bReturn = (g_Player.GlobalIdleTime() >= condition - SYSTEM_IDLE_TIME_START);
+        TimeSpan ts = DateTime.Now - GUIGraphicsContext.LastActivity;
+        bReturn = (ts.TotalMinutes >= condition - SYSTEM_IDLE_TIME_START);
       }
-        //else if (condition >= WINDOW_ACTIVE_START && condition <= WINDOW_ACTIVE_END)// check for Window.IsActive(window)
-        //  bReturn = (GUIWindowManager.ActiveWindow == condition);
+      // else if (condition >= WINDOW_ACTIVE_START && condition <= WINDOW_ACTIVE_END)// check for Window.IsActive(window)
+      // {
+      //   bReturn = (GUIWindowManager.ActiveWindow == condition);
+      // }
       else if (condition == WINDOW_IS_MEDIA)
       {
         //GUIWindow pWindow = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
