@@ -1047,7 +1047,17 @@ void MadStopping()
 void MadVrPaused(bool paused)
 {
   if (m_madPresenter)
-    m_madPresenter->SetMadVrPaused(paused);
+  {
+    if (paused)
+    {
+      m_madPresenter->SetMadVrPaused(paused);
+    }
+    else
+    {
+      m_madPresenter->m_pPausedCount = 0;
+      m_madPresenter->m_pPaused = false;
+    }
+  }
 }
 
 void MadVrRepeatFrameSend()
