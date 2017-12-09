@@ -1364,6 +1364,8 @@ namespace MediaPortal.Player
           GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_MADVRREPOSITION, 0, 0, 0, 0, 0, null);
           GUIWindowManager.SendThreadMessage(msg);
         }
+
+        VMR9Util.g_vmr9.StartMadVrPaused();
       }
     }
 
