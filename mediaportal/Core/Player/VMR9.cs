@@ -1781,8 +1781,8 @@ namespace MediaPortal.Player
             Log.Debug("VMR9: Vmr9MadVrRelease 1");
             if (g_vmr9?._vmr9Filter != null)
             {
-              _graphBuilder?.RemoveFilter(g_vmr9?._vmr9Filter as DirectShowLib.IBaseFilter);
               _commandNotify?.Set();
+              _graphBuilder?.RemoveFilter(g_vmr9?._vmr9Filter as DirectShowLib.IBaseFilter);
               DirectShowUtil.CleanUpInterface(g_vmr9?._vmr9Filter);
               for (int i = 0; i < 20; ++i)
               {
