@@ -19,6 +19,7 @@
 #endregion
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Globalization;
@@ -65,6 +66,7 @@ namespace MediaPortal.Player
     //Subtitles
     private int _numsubtitles = 0;
     private bool _hasSubtitles = false;
+    private List<string> _subtitleFormatsDetected = new List<string>();
     private static HashSet<string> _subTitleExtensions = new HashSet<string>();
 
     private bool _mediaInfoNotloaded = false;
@@ -354,6 +356,14 @@ namespace MediaPortal.Player
           _hasSubtitles = _numsubtitles > 0;
         }
 
+        var sct = _mI.Count_Get(StreamKind.Text);
+
+        for (var i = 0; i < sct; ++i)
+        {
+          var format = _mI.Get(StreamKind.Text, i, "Format").ToLowerInvariant();
+          _subtitleFormatsDetected.Add(format.ToLowerInvariant());
+        }
+
         Log.Debug("MediaInfoWrapper.MediaInfoWrapper: DLL Version      : {0}", _mI.Option("Info_Version"));
         Log.Info("MediaInfoWrapper.MediaInfoWrapper: Inspecting media : {0}", strFile);
         Log.Debug("MediaInfoWrapper.MediaInfoWrapper: Parse speed      : {0}", _ParseSpeed);
@@ -618,6 +628,11 @@ namespace MediaPortal.Player
     public bool HasSubtitles
     {
       get { return _hasSubtitles; }
+    }
+
+    public List<string> SubtitleFormatsDetected
+    {
+      get { return _subtitleFormatsDetected; }
     }
 
     public bool MediaInfoNotloaded
