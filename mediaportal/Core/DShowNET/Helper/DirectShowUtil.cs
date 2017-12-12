@@ -123,7 +123,7 @@ namespace DShowNET.Helper
         IEnumFilters enumFilters;
         HResult hr = new HResult(graphBuilder.EnumFilters(out enumFilters));
 
-        Log.Info("Attach volume handler device to audio renderer: " + strFilterName);
+        Log.Info("DirectShowUtil: Attach volume handler device to audio renderer: " + strFilterName);
         VolumeHandler.Instance._mixer.ChangeAudioDevice(strFilterName, false);
         GUIGraphicsContext.CurrentAudioRenderer = strFilterName;
 
@@ -2339,6 +2339,13 @@ namespace DShowNET.Helper
         StackTrace st = new StackTrace(true);
         Log.Error("Exception while releasing COM object (NULL) - stacktrace: {0}", st);
       }
+    }
+
+    public static void CleanUpInterface(object o)
+    {
+      if (o != null)
+        while (Marshal.ReleaseComObject(o) > 0) ;
+      o = null;
     }
   }
 }

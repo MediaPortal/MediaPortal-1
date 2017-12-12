@@ -608,8 +608,17 @@ namespace MediaPortal.Player
         return false;
       }
 
-      _basicVideo = _graphBuilder as IBasicVideo2;
-      _videoWin = _graphBuilder as IVideoWindow;
+      if (VMR9Util.g_vmr9?._vmr9Filter != null &&
+          GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+      {
+        _basicVideo = VMR9Util.g_vmr9?._vmr9Filter as IBasicVideo2;
+        _videoWin = VMR9Util.g_vmr9?._vmr9Filter as IVideoWindow;
+      }
+      else
+      {
+        _basicVideo = _graphBuilder as IBasicVideo2;
+        _videoWin = _graphBuilder as IVideoWindow;
+      }
 
       int hr = _mediaEvt.SetNotifyWindow(GUIGraphicsContext.ActiveForm, WM_GRAPHNOTIFY, IntPtr.Zero);
       if (hr < 0)
@@ -792,15 +801,15 @@ namespace MediaPortal.Player
       //if (GUIGraphicsContext.InVmr9Render) return;
       if (_bMediaTypeChanged)
       {
-        // Don't do rebuild when it's madVR and if it's different  from LAV codec
-        if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR ||
-            (!string.Equals("LAV Video Decoder", MatchFilters("Video"), StringComparison.InvariantCultureIgnoreCase) ||
-             !string.Equals("LAV Audio Decoder", MatchFilters("Audio"), StringComparison.InvariantCultureIgnoreCase)))
-        {
-          DoGraphRebuild();
-        }
+        DoGraphRebuild();
         _ireader.OnGraphRebuild(iChangedMediaTypes);
         _bMediaTypeChanged = false;
+      }
+      if (_bMediaTypeVideoChanged)
+      {
+        // Alert TsReader
+        _ireader.OnGraphRebuild(iChangedMediaTypes);
+        _bMediaTypeVideoChanged = false;
       }
       if (_bRequestAudioChange)
       {
@@ -1643,12 +1652,35 @@ namespace MediaPortal.Player
     private void UpdateDuration() { }
 
     private bool _bMediaTypeChanged;
+    private bool _bMediaTypeVideoChanged;
     private bool _bRequestAudioChange;
 
     public int OnMediaTypeChanged(int mediaType)
     {
-      _bMediaTypeChanged = true;
+      //#define AUDIO_CHANGE 0x1
+      //#define VIDEO_CHANGE 0x2
+
       iChangedMediaTypes = mediaType;
+
+      // Don't do rebuild when it's madVR and if it's mediaType is video
+      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+      {
+        if (iChangedMediaTypes == 2 || iChangedMediaTypes == 3)
+        {
+          // Video has changed so needed to alert TsReader
+          _bMediaTypeVideoChanged = true;
+        }
+        // if both audio and video need to be change, only change audio
+        if (iChangedMediaTypes == 3)
+        {
+          iChangedMediaTypes = mediaType = 1;
+        }
+        _bMediaTypeChanged = mediaType == 1;
+      }
+      else
+      {
+        _bMediaTypeChanged = true;
+      }
       return 0;
     }
 

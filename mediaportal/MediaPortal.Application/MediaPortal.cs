@@ -1632,10 +1632,17 @@ public class MediaPortalApp : D3D, IRender
           Screen screen = Screen.FromControl(this);
           if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && AppActive &&
               (!Equals(screen.Bounds.Size.Width, GUIGraphicsContext.currentScreen.Bounds.Width) ||
-               !Equals(screen.Bounds.Size.Height, GUIGraphicsContext.currentScreen.Bounds.Height)))
+               !Equals(screen.Bounds.Size.Height, GUIGraphicsContext.currentScreen.Bounds.Height)) ||
+               (!Equals(GUIGraphicsContext._backupCurrentScreenSizeWidth, GUIGraphicsContext.currentScreen.Bounds.Width) ||
+               !Equals(GUIGraphicsContext._backupCurrentScreenSizeHeight, GUIGraphicsContext.currentScreen.Bounds.Height)) ||
+              GUIGraphicsContext.ForcedRefreshRate3D)
           {
             NeedRecreateSwapChain = true;
             GUIGraphicsContext.ForceMadVRRefresh = true;
+
+            GUIGraphicsContext._backupCurrentScreenSizeWidth = screen.Bounds.Size.Width;
+            GUIGraphicsContext._backupCurrentScreenSizeHeight = screen.Bounds.Size.Height;
+            Log.Debug("Main: WM_DISPLAYCHANGE madVR _backupCurrentScreenSizeWidth x _backupCurrentScreenSizeHeight : {0} x {1}", screen.Bounds.Size.Width, screen.Bounds.Size.Height);
 
             Log.Debug("Main: WM_DISPLAYCHANGE madVR screen change triggered");
             Log.Debug("Main: WM_DISPLAYCHANGE madVR Width x Height : {0} x {1}", screen.Bounds.Size.Width, screen.Bounds.Size.Height);
@@ -1649,8 +1656,16 @@ public class MediaPortalApp : D3D, IRender
           }
 
           // Restore bounds from the currentScreen value (to restore original startup MP screen after turned off used HDMI device
-          if (!Windowed && _ignoreFullscreenResolutionChanges)
+          if (!Windowed && _ignoreFullscreenResolutionChanges && !RefreshRateChanger.RefreshRateChangePending)
           {
+            if (GUIGraphicsContext.InVmr9Render)
+            {
+              if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+              {
+                // Need to break here to have the correct new bounds for madVR when resolution change and when playing
+                break;
+              }
+            }
             SetBounds(GUIGraphicsContext.currentScreen.Bounds.X, GUIGraphicsContext.currentScreen.Bounds.Y, GUIGraphicsContext.currentScreen.Bounds.Width, GUIGraphicsContext.currentScreen.Bounds.Height);
             Log.Debug("Main: WM_DISPLAYCHANGE restore current screen position");
           }
@@ -2518,6 +2533,14 @@ public class MediaPortalApp : D3D, IRender
     _moveMouseCursorPositionRefresh = D3D._lastCursorPosition;
     _restoreLoadedScreen = false;
 
+    //// Needed to test if it's really working in all case
+    //if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && GUIGraphicsContext.InVmr9Render)
+    //{
+    //  // Force VideoWindow to be refreshed with madVR when switching from video size like 16:9 to 4:3
+    //  GUIGraphicsContext.UpdateVideoWindow = true;
+    //  GUIGraphicsContext.VideoWindowChanged();
+    //}
+
     // enable event handlers
     if (GUIGraphicsContext.DX9Device != null)
     {
@@ -2983,12 +3006,7 @@ public class MediaPortalApp : D3D, IRender
     {
       try
       {
-        int process = 10;
-        while (process > 0)
-        {
-          FullRender();
-          process--;
-        }
+        FullRender();
       }
       catch (Exception ex)
       {
@@ -4377,13 +4395,14 @@ public class MediaPortalApp : D3D, IRender
             {
               //if (VMR9Util.g_vmr9 != null)
               //{
-              //  VMR9Util.g_vmr9.GrabScreenshot();
+              //  VMR9Util.g_vmr9.GrabScreenshot(); // From C#
               //  return;
               //}
 
+              // this will be started in a thread
               if (VMR9Util.g_vmr9 != null)
               {
-                VMR9Util.g_vmr9.MadVrGrabScreenshot();
+                VMR9Util.g_vmr9.MadVrGrabScreenshot(); // From C++
               }
             }
             else
@@ -4405,15 +4424,6 @@ public class MediaPortalApp : D3D, IRender
           if (!GUIGraphicsContext.IsFullScreenVideo && g_Player.ShowFullScreenWindow())
           {
             return;
-          }
-          break;
-
-        case Action.ActionType.ACTION_MADVR_SCREEN_REFRESH:
-          // We need to do a refresh of screen when using madVR only if resolution screen has change during playback
-          if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && (NeedRecreateSwapChain || Windowed))
-          {
-            RecreateSwapChain(false);
-            Log.Debug("Main: recreate swap chain for madVR done");
           }
           break;
       }
@@ -5272,6 +5282,15 @@ public class MediaPortalApp : D3D, IRender
               Log.Debug("Main: madVR for 3D done");
               ForceMPFocus();
             }
+          }
+          break;
+
+        case GUIMessage.MessageType.GUI_MSG_MADVR_SCREEN_REFRESH:
+          // We need to do a refresh of screen when using madVR only if resolution screen has change during playback
+          if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && (NeedRecreateSwapChain || Windowed))
+          {
+            RecreateSwapChain(false);
+            Log.Debug("Main: recreate swap chain for madVR done");
           }
           break;
       }
