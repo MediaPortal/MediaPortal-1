@@ -360,16 +360,24 @@ HRESULT CLine21OutputPin::DecideBufferSize(IMemAllocator* pAllocator, ALLOCATOR_
 {
 	pProp->cbAlign = 2;
 	
-	if( pProp->cBuffers < 20 )   //TODO???
-    	pProp->cBuffers = 20;
+//	if( pProp->cBuffers < 20 )   //TODO???
+//    	pProp->cBuffers = 20;
+//
+//	pProp->cbBuffer = 256;
+	
+	long cBuffersReq = pProp->cBuffers;
+	long cbBufferReq = pProp->cbBuffer;
 
-	pProp->cbBuffer = 256;
+  pProp->cBuffers = max(256, pProp->cBuffers);
+  pProp->cbBuffer = max(256, pProp->cbBuffer);
 
-    // Set allocator properties.
-    ALLOCATOR_PROPERTIES Actual;
-    HRESULT hr = pAllocator->SetProperties(pProp, &Actual);
-    if (FAILED(hr)) 
-        return hr;
+  // Set allocator properties.
+  ALLOCATOR_PROPERTIES Actual;
+  HRESULT hr = pAllocator->SetProperties(pProp, &Actual);
+  if (FAILED(hr)) 
+      return hr;
+
+	LogDebug("CLine21OutputPin: DecideBufferSize() - (Req) cBuffers = %d, cbBuffer = %d, (Actual) cBuffers = %d, cbBuffer = %d",  cBuffersReq, cbBufferReq, Actual.cBuffers,  Actual.cbBuffer);
 
 	// Even when it succeeds, check the actual result.
     if (pProp->cbBuffer > Actual.cbBuffer) 
@@ -479,7 +487,7 @@ CCcFilter::CCcFilter(TCHAR *tszName, LPUNKNOWN punk, HRESULT *phr)
   LogDebug("=================== New filter instance =========================================");
   LogDebug("  Logging format: [Date Time] [InstanceID-instanceCount] [ThreadID] Message....  ");
   LogDebug("==================================================================================");
-  LogDebug("------------- v1.0.0.0 ------------- instanceCount:%d", m_instanceCount);
+  LogDebug("------------- v1.0.0.1 ------------- instanceCount:%d", m_instanceCount);
 
 }
 #pragma warning( pop )
@@ -611,7 +619,11 @@ HRESULT CCcFilter::InitializeOutputSample( CBaseOutputPin* pPin, IMediaSample *p
 	ASSERT( m_pOutput == &m_outpinPassThrough );
 	m_pOutput = static_cast<CTransformOutputPin*>( pPin );
 	
+	//LOG_DETAIL("CCcFilter: InitializeOutputSample() - pPin = %d, pSample = %d, ppOutSample = %d", pPin, pSample, ppOutSample);
+
 	HRESULT hr = CTransformFilter::InitializeOutputSample( pSample, ppOutSample );
+
+	//LOG_DETAIL("CCcFilter: InitializeOutputSample() - hr = %d, %x", hr);
 
 	m_pOutput = &m_outpinPassThrough;
 
@@ -629,6 +641,7 @@ HRESULT CCcFilter::Receive( IMediaSample* pSourceSample )
   AM_SAMPLE2_PROPERTIES * const pProps = m_pInput->SampleProps();
   if( pProps->dwStreamId != AM_STREAM_MEDIA ) 
 	{
+	  LOG_DETAIL("CCcFilter: Receive() - Not AM_STREAM_MEDIA sample");
 		if( m_pPassThroughQueue )
 		{
 			pSourceSample->AddRef();
@@ -661,6 +674,7 @@ HRESULT CCcFilter::Receive( IMediaSample* pSourceSample )
       sourceTimeStart -= m_tStart;
       sourceTimeStart += (500*10000); //add 500ms
     }        
+	  LOG_DETAIL("CCcFilter: Receive() - No sample timestamp");
 	}
   //LogDebug("CCcFilter: SampleGetTime: %f", (float)sourceTimeStart/10000000.0);
 
@@ -691,9 +705,9 @@ HRESULT CCcFilter::Receive( IMediaSample* pSourceSample )
 		int cWORDs = m_rgCCData.GetCount();
 		if( cWORDs > 0 )
 		{
+	    LOG_DETAIL("CCcFilter: Receive() - Line21, cWORDs = %d", cWORDs);
 			for( const WORD* pData = m_rgCCData.GetData(); pData < m_rgCCData.GetData() + cWORDs; ++pData )
-			{
-        
+			{        
 				auto_pif<IMediaSample> pifOutSample;
 				RETURN_FAILED( InitializeOutputSample( &m_outpinLine21, pSourceSample, pifOutSample.AcceptHere()));
 
@@ -716,8 +730,9 @@ HRESULT CCcFilter::Receive( IMediaSample* pSourceSample )
 
 			  pifOutSample->SetTime(NULL,NULL); //Remove timestamps
 								
-				pifOutSample->AddRef();
+				pifOutSample->AddRef();				
 				HRESULT hr = m_pLine21Queue->Receive( pifOutSample );
+								
 				m_bSampleSkipped = FALSE;	// last thing no longer dropped
 
 				RETURN_FAILED( hr );
@@ -726,14 +741,14 @@ HRESULT CCcFilter::Receive( IMediaSample* pSourceSample )
 			m_rgCCData.SetCount(0);
     } 
 		else 
-		{
-            m_bSampleSkipped = TRUE;
-            
-			if (!m_bQualityChanged) 
-			{
-                NotifyEvent(EC_QUALITY_CHANGE,0,0);
-                m_bQualityChanged = TRUE;
-            }
+		{				
+      m_bSampleSkipped = TRUE;
+          
+      if (!m_bQualityChanged) 
+      {
+        NotifyEvent(EC_QUALITY_CHANGE,0,0);
+        m_bQualityChanged = TRUE;
+      }
 		}
 	}
 
@@ -804,12 +819,19 @@ HRESULT CCcFilter::EndOfStream()
 HRESULT CCcFilter::BeginFlush()
 {
 	LOG_DETAIL("CCcFilter: BeginFlush()");
+  
+  {
+    CAutoLock lock_it(m_pLock);
+  	m_rgCCData.SetCount(0);
+	  m_proc.Reset();
+  }
 
 	if( m_pPassThroughQueue )
 		m_pPassThroughQueue->BeginFlush();
 
 	if( m_pLine21Queue )
 		m_pLine21Queue->BeginFlush();
+
 
 	return S_OK;
 }
@@ -832,14 +854,17 @@ HRESULT CCcFilter::NewSegment( REFERENCE_TIME tStart, REFERENCE_TIME tStop, doub
 {
 	LOG_DETAIL("CCcFilter: NewSegment()");
 
+  {
+    CAutoLock lock_it(m_pLock);
+  	m_rgCCData.SetCount(0);
+	  m_proc.Reset();
+  }
+  
 	if( m_pPassThroughQueue )
 		m_pPassThroughQueue->NewSegment( tStart, tStop, dRate );
 
 	if( m_pLine21Queue )
 		m_pLine21Queue->NewSegment( tStart, tStop, dRate );
-
-	m_proc.Reset();
-
 
 	return S_OK;
 }
