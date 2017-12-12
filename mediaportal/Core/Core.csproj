@@ -215,6 +215,10 @@
       <HintPath>..\..\Packages\BassRegistration.2.4.12.5\lib\net40\BassRegistration.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="CSCore, Version=1.2.1.2, Culture=neutral, PublicKeyToken=5a08f2b6f4415dea, processorArchitecture=MSIL">
+      <HintPath>..\..\Packages\CSCore.1.2.1.2\lib\net35-client\CSCore.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="CSScriptLibrary">
       <HintPath>..\MediaPortal.Base\CSScriptLibrary.dll</HintPath>
     </Reference>
