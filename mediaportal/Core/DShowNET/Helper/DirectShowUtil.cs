@@ -123,7 +123,7 @@ namespace DShowNET.Helper
         IEnumFilters enumFilters;
         HResult hr = new HResult(graphBuilder.EnumFilters(out enumFilters));
 
-        Log.Info("Attach volume handler device to audio renderer: " + strFilterName);
+        Log.Info("DirectShowUtil: Attach volume handler device to audio renderer: " + strFilterName);
         VolumeHandler.Instance._mixer.ChangeAudioDevice(strFilterName, false);
         GUIGraphicsContext.CurrentAudioRenderer = strFilterName;
 
