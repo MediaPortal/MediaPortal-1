@@ -238,6 +238,7 @@ namespace MediaPortal.GUI.Library
     protected internal static bool _loadSkinDone = false;
     private static bool isSkinXMLLoading = false;
     private static int FocusID { get; set; }
+    private static int FocusIDPrevious { get; set; }
 
     //-1=default from topbar.xml 
     // 0=flase from skin.xml
@@ -1507,6 +1508,12 @@ namespace MediaPortal.GUI.Library
     /// <returns>id of control or -1 if no control has the focus</returns>
     public virtual int GetFocusControlIdRender()
     {
+      if (FocusIDPrevious != FocusID)
+      {
+        FocusID = GetFocusControlId();
+        FocusIDPrevious = FocusID;
+        return FocusID;
+      }
       return FocusID;
     }
 
