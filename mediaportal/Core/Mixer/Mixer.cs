@@ -165,7 +165,7 @@ namespace MediaPortal.Mixer
         if (device == null)
           return;
 
-        int currentVolumePercentage = (int) Math.Ceiling(VolumeDevice.MasterVolumeLevelScalar * 100);
+        int currentVolumePercentage = _lastVolume = (int) Math.Ceiling(VolumeDevice.MasterVolumeLevelScalar * 100f);
         _volume = ConvertVolumeToSteps(currentVolumePercentage);
       }
       catch (Exception ex)
@@ -195,6 +195,30 @@ namespace MediaPortal.Mixer
         // Update volume
         int volumeStep = _volumeTable[(int) index];
         return volumeStep;
+      }
+      catch (Exception ex)
+      {
+        Log.Error($"Mixer: error occured in ConvertVolumeToSteps: {ex}");
+        return 0;
+      }
+    }
+
+    public int ConvertVolumeToStepsEvent(int volumePercentage)
+    {
+      try
+      {
+        if (_volumeTable == null)
+          return 0;
+
+        if (volumePercentage > _lastVolume)
+        {
+          VolumeHandler.Instance.Volume = VolumeHandler.Instance.Next;
+        }
+        else if (volumePercentage < _lastVolume)
+        {
+          VolumeHandler.Instance.Volume = VolumeHandler.Instance.Previous;
+        }
+        return VolumeHandler.Instance.Volume;
       }
       catch (Exception ex)
       {
@@ -324,8 +348,24 @@ namespace MediaPortal.Mixer
     /// <param name="data"></param>
     public void OnVolumeNotification(object sender, AudioEndpointVolumeCallbackEventArgs aEvent)
     {
-      //UpdateMasterVolumeThreadSafe();
-      VolumeHandler.Instance.mixer_UpdateVolume();
+      lock (_volumeTable)
+      {
+        if (_isInternalVolumeChange)
+          return;
+
+        if (aEvent != null)
+        {
+          //Update volume slider
+          var volumePercentage = (int)Math.Ceiling(iAudioEndpointVolume.MasterVolumeLevelScalar * 100f);
+          _volume = ConvertVolumeToStepsEvent(volumePercentage);
+          _isMuted = aEvent.IsMuted;
+
+          // Store current volume value
+          _lastVolume = (int) Math.Ceiling(iAudioEndpointVolume.MasterVolumeLevelScalar*100f);
+        }
+
+        VolumeHandler.Instance.mixer_UpdateVolume();
+      }
     }
 
     private void AudioEndpointDevice_OnVolumeNotification(object sender, DefaultDeviceChangedEventArgs e)
@@ -353,27 +393,27 @@ namespace MediaPortal.Mixer
       return devices;
     }
 
-    // Not used anymore or not needed with CScore
-    private void AudioEndpointVolume_OnVolumeNotification(CSCore.CoreAudioAPI.AudioVolumeNotificationData data)
-    {
-      if (data.MasterVolume == null || _isInternalVolumeChange)
-        return;
+    //// Not used anymore or not needed with CScore
+    //private void AudioEndpointVolume_OnVolumeNotification(CSCore.CoreAudioAPI.AudioVolumeNotificationData data)
+    //{
+    //  if (data.MasterVolume == null || _isInternalVolumeChange)
+    //    return;
 
-      int volumePercentage = (int)(data.MasterVolume * 100f);
-      _volume = ConvertVolumeToSteps(volumePercentage);
+    //  int volumePercentage = (int)(data.MasterVolume * 100f);
+    //  _volume = ConvertVolumeToSteps(volumePercentage);
 
-      switch (volumePercentage)
-      {
-        case 0:
-          _isMuted = true;
-          break;
-        default:
-          _isMuted = false;
-          break;
-      }
+    //  switch (volumePercentage)
+    //  {
+    //    case 0:
+    //      _isMuted = true;
+    //      break;
+    //    default:
+    //      _isMuted = false;
+    //      break;
+    //  }
 
-      VolumeHandler.Instance.mixer_UpdateVolume();
-    }
+    //  VolumeHandler.Instance.mixer_UpdateVolume();
+    //}
 
     #endregion Methods
 
@@ -458,6 +498,7 @@ namespace MediaPortal.Mixer
     private IntPtr _handle;
     private bool _isMuted;
     private int _volume;
+    private int _lastVolume;
     #endregion Fields
   }
 }

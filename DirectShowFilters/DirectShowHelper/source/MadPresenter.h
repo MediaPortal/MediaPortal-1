@@ -286,6 +286,8 @@ class MPMadPresenter : public CUnknown, public CCritSec
     bool m_pShutdown = false;
     bool m_pInitOSD = false;
     bool m_pReInitOSD = false;
+    bool m_pPaused = false;
+    int m_pPausedCount = 0;
     IVMR9Callback* m_pCallback = nullptr;
     CCritSec m_dsLock;
     HANDLE m_pGrabEvent = nullptr;
@@ -361,7 +363,6 @@ class MPMadPresenter : public CUnknown, public CCritSec
     CComPtr<IDirect3DSurface9> m_pSurfaceDevice = nullptr;
 
     double m_pRefreshrate = 0;
-    bool m_pPaused = false;
     bool m_pKodiWindowUse = false;
 };
 

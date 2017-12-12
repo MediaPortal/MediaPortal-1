@@ -1386,6 +1386,15 @@ namespace MediaPortal.Player
 
     public void RenderSubtitleEx(long frameStart, Rectangle viewportRect, Rectangle croppedVideoRect, int xOffsetInPixels)
     {
+      //// We are rendering from madVR // Debugging purpose if OSD disable on C++
+      //if (GUIGraphicsContext.InitMadVRWindowPosition)
+      //{
+      //  GUIGraphicsContext.InitMadVRWindowPosition = false;
+      //  GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_MADVRREPOSITION, 0, 0, 0, 0, 0, null);
+      //  GUIWindowManager.SendThreadMessage(msg);
+      //}
+      GUIGraphicsContext.InVmr9Render = true;
+
       if (GUIGraphicsContext.SubDeviceMadVr != IntPtr.Zero && !_subEngineType.Equals("XySubFilter"))
       {
         // Check if value are correct (can happen when using zooming option
