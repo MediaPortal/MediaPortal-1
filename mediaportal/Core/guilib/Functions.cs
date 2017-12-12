@@ -48,13 +48,24 @@ namespace MediaPortal.GUI.Library
     #region  System functions
 
     [XMLSkinFunction("system.idletime")]
+    public static bool IdleTime(int value)
+    {
+      if (value < 0)
+      {
+        return false;
+      }
+      int condition = GUIInfoManager.TranslateSingleString("system.idletime(" + value.ToString() + ")");
+      return GUIInfoManager.GetBool(condition, 0);
+    }
+
+    [XMLSkinFunction("system.idletime")]
     public static bool IdleTime(string text)
     {
       if ((text == null))
       {
         return false;
       }
-      int condition = GUIInfoManager.TranslateString("system.idletime(" + text + ")");
+      int condition = GUIInfoManager.TranslateSingleString("system.idletime(" + text + ")");
       return GUIInfoManager.GetBool(condition, 0);
     }
 
