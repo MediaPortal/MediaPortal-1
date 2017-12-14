@@ -186,6 +186,10 @@
       <Project>{B282C55B-A37B-4CEC-A4FC-00791069BF00}</Project>
       <Name>GUIHome</Name>
     </ProjectReference>
+    <Reference Include="CSCore, Version=1.2.1.2, Culture=neutral, PublicKeyToken=5a08f2b6f4415dea, processorArchitecture=MSIL">
+      <HintPath>..\..\Packages\CSCore.1.2.1.2\lib\net35-client\CSCore.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.DirectX, Version=1.0.2902.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
       <SpecificVersion>True</SpecificVersion>
     </Reference>
@@ -271,6 +275,7 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="MediaPortal.exe.manifest" />
+    <None Include="packages.config" />
     <None Include="PostBuild.bat" />
     <Compile Include="..\..\Common-MP-TVE3\SolutionInfo.cs">
       <Link>SolutionInfo.cs</Link>

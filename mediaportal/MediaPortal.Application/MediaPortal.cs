@@ -1,4 +1,4 @@
-﻿#region Copyright (C) 2005-2013 Team MediaPortal
+#region Copyright (C) 2005-2013 Team MediaPortal
 
 // Copyright (C) 2005-2013 Team MediaPortal
 // http://www.team-mediaportal.com
@@ -18,6 +18,8 @@
 
 #endregion
 
+using System.Linq;
+using CSCore.CoreAudioAPI;
 using DirectShowLib;
 using DShowNET.Helper;
 using FilterCategory = DirectShowLib.FilterCategory;
@@ -60,6 +62,7 @@ using Microsoft.DirectX.Direct3D;
 using Microsoft.Win32;
 using Action = MediaPortal.GUI.Library.Action;
 using Timer = System.Timers.Timer;
+using System.Collections.Generic;
 
 #endregion
 
@@ -216,6 +219,9 @@ public class MediaPortalApp : D3D, IRender
 
   // Framegrabber instance
   private FrameGrabber grabber = FrameGrabber.GetInstance();
+
+  // Core Audio controller
+  MMDeviceEnumerator _mMdeviceEnumerator = new MMDeviceEnumerator();
 
   [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
   // ReSharper disable InconsistentNaming
@@ -1626,10 +1632,17 @@ public class MediaPortalApp : D3D, IRender
           Screen screen = Screen.FromControl(this);
           if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && AppActive &&
               (!Equals(screen.Bounds.Size.Width, GUIGraphicsContext.currentScreen.Bounds.Width) ||
-               !Equals(screen.Bounds.Size.Height, GUIGraphicsContext.currentScreen.Bounds.Height)))
+               !Equals(screen.Bounds.Size.Height, GUIGraphicsContext.currentScreen.Bounds.Height)) ||
+               (!Equals(GUIGraphicsContext._backupCurrentScreenSizeWidth, GUIGraphicsContext.currentScreen.Bounds.Width) ||
+               !Equals(GUIGraphicsContext._backupCurrentScreenSizeHeight, GUIGraphicsContext.currentScreen.Bounds.Height)) ||
+              GUIGraphicsContext.ForcedRefreshRate3D)
           {
             NeedRecreateSwapChain = true;
             GUIGraphicsContext.ForceMadVRRefresh = true;
+
+            GUIGraphicsContext._backupCurrentScreenSizeWidth = screen.Bounds.Size.Width;
+            GUIGraphicsContext._backupCurrentScreenSizeHeight = screen.Bounds.Size.Height;
+            Log.Debug("Main: WM_DISPLAYCHANGE madVR _backupCurrentScreenSizeWidth x _backupCurrentScreenSizeHeight : {0} x {1}", screen.Bounds.Size.Width, screen.Bounds.Size.Height);
 
             Log.Debug("Main: WM_DISPLAYCHANGE madVR screen change triggered");
             Log.Debug("Main: WM_DISPLAYCHANGE madVR Width x Height : {0} x {1}", screen.Bounds.Size.Width, screen.Bounds.Size.Height);
@@ -1643,8 +1656,16 @@ public class MediaPortalApp : D3D, IRender
           }
 
           // Restore bounds from the currentScreen value (to restore original startup MP screen after turned off used HDMI device
-          if (!Windowed && _ignoreFullscreenResolutionChanges)
+          if (!Windowed && _ignoreFullscreenResolutionChanges && !RefreshRateChanger.RefreshRateChangePending)
           {
+            if (GUIGraphicsContext.InVmr9Render)
+            {
+              if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+              {
+                // Need to break here to have the correct new bounds for madVR when resolution change and when playing
+                break;
+              }
+            }
             SetBounds(GUIGraphicsContext.currentScreen.Bounds.X, GUIGraphicsContext.currentScreen.Bounds.Y, GUIGraphicsContext.currentScreen.Bounds.Width, GUIGraphicsContext.currentScreen.Bounds.Height);
             Log.Debug("Main: WM_DISPLAYCHANGE restore current screen position");
           }
@@ -2234,7 +2255,7 @@ public class MediaPortalApp : D3D, IRender
               try
               {
                 GUIGraphicsContext.DeviceAudioConnected--;
-                if (_stopOnLostAudioRenderer && GUIGraphicsContext.CurrentAudioRenderer.Trim().ToLowerInvariant() == deviceName.Trim().ToLowerInvariant())
+                if (_stopOnLostAudioRenderer || GUIGraphicsContext.CurrentAudioRenderer.Trim().ToLowerInvariant() == deviceName.Trim().ToLowerInvariant())
                 {
                   Log.Debug("Main: Stop playback");
                   g_Player.Stop();
@@ -2511,6 +2532,14 @@ public class MediaPortalApp : D3D, IRender
     // needed to avoid cursor show when MP windows change (for ex when refesh rate is working)
     _moveMouseCursorPositionRefresh = D3D._lastCursorPosition;
     _restoreLoadedScreen = false;
+
+    //// Needed to test if it's really working in all case
+    //if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && GUIGraphicsContext.InVmr9Render)
+    //{
+    //  // Force VideoWindow to be refreshed with madVR when switching from video size like 16:9 to 4:3
+    //  GUIGraphicsContext.UpdateVideoWindow = true;
+    //  GUIGraphicsContext.VideoWindowChanged();
+    //}
 
     // enable event handlers
     if (GUIGraphicsContext.DX9Device != null)
@@ -2977,12 +3006,7 @@ public class MediaPortalApp : D3D, IRender
     {
       try
       {
-        int process = 10;
-        while (process > 0)
-        {
-          FullRender();
-          process--;
-        }
+        FullRender();
       }
       catch (Exception ex)
       {
@@ -3088,39 +3112,25 @@ public class MediaPortalApp : D3D, IRender
     Log.Debug("Main: Auto play start listening");
     AutoPlay.StartListening();
 
+    // Count connected audio devices
     GUIGraphicsContext.DeviceAudioConnected = 0;
-    DsDevice[] devices = DsDevice.GetDevicesOfCat(FilterCategory.AMKSAudio);    // KSCATEGORY_AUDIO
-    if (devices != null)
+    try
     {
-      GUIGraphicsContext.DeviceAudioConnected += devices.Length;
-      foreach (DsDevice d in devices)
-      {
-        d.Dispose();
-      }
+      if (_mMdeviceEnumerator == null)
+        _mMdeviceEnumerator = new MMDeviceEnumerator();
+      GUIGraphicsContext.DeviceAudioConnected =
+        _mMdeviceEnumerator.EnumAudioEndpoints(DataFlow.Render, DeviceState.Active).Count();
     }
-    devices = DsDevice.GetDevicesOfCat(FilterCategory.AMKSRender);    // KSCATEGORY_RENDER
-    if (devices != null)
+    catch (Exception ex)
     {
-      GUIGraphicsContext.DeviceAudioConnected += devices.Length;
-      foreach (DsDevice d in devices)
-      {
-        d.Dispose();
-      }
-    }
-    devices = DsDevice.GetDevicesOfCat(RDP_REMOTE_AUDIO);
-    if (devices != null)
-    {
-      GUIGraphicsContext.DeviceAudioConnected += devices.Length;
-      foreach (DsDevice d in devices)
-      {
-        d.Dispose();
-      }
+      Log.Error($"Main: audio renderer count failed {ex}");
     }
 
     Log.Debug("Main: audio renderer count at startup = {0}", GUIGraphicsContext.DeviceAudioConnected);
 
+    // Count connected video devices
     GUIGraphicsContext.DeviceVideoConnected = 0;
-    devices = DsDevice.GetDevicesOfCat(FilterCategory.AMKSVideo);    // KSCATEGORY_VIDEO
+    DsDevice[] devices = DsDevice.GetDevicesOfCat(FilterCategory.AMKSVideo);    // KSCATEGORY_VIDEO
     if (devices != null)
     {
       GUIGraphicsContext.DeviceVideoConnected += devices.Length;
@@ -3145,11 +3155,11 @@ public class MediaPortalApp : D3D, IRender
 
     Log.Info("Main: Initializing volume handler");
     #pragma warning disable 168
-    if (VolumeHandler.Instance!=null)
+    if (VolumeHandler.Instance==null)
     {
-      Log.Error("Volume handler already created. Could break volume notifications.");
+      VolumeHandler.CreateInstance();
     }
-    VolumeHandler.CreateInstance();
+
     GUIGraphicsContext.VolumeHandler = VolumeHandler.Instance;
     #pragma warning restore 168
 
@@ -4385,13 +4395,14 @@ public class MediaPortalApp : D3D, IRender
             {
               //if (VMR9Util.g_vmr9 != null)
               //{
-              //  VMR9Util.g_vmr9.GrabScreenshot();
+              //  VMR9Util.g_vmr9.GrabScreenshot(); // From C#
               //  return;
               //}
 
+              // this will be started in a thread
               if (VMR9Util.g_vmr9 != null)
               {
-                VMR9Util.g_vmr9.MadVrGrabScreenshot();
+                VMR9Util.g_vmr9.MadVrGrabScreenshot(); // From C++
               }
             }
             else
@@ -4413,15 +4424,6 @@ public class MediaPortalApp : D3D, IRender
           if (!GUIGraphicsContext.IsFullScreenVideo && g_Player.ShowFullScreenWindow())
           {
             return;
-          }
-          break;
-
-        case Action.ActionType.ACTION_MADVR_SCREEN_REFRESH:
-          // We need to do a refresh of screen when using madVR only if resolution screen has change during playback
-          if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && (NeedRecreateSwapChain || Windowed))
-          {
-            RecreateSwapChain(false);
-            Log.Debug("Main: recreate swap chain for madVR done");
           }
           break;
       }
@@ -5280,6 +5282,15 @@ public class MediaPortalApp : D3D, IRender
               Log.Debug("Main: madVR for 3D done");
               ForceMPFocus();
             }
+          }
+          break;
+
+        case GUIMessage.MessageType.GUI_MSG_MADVR_SCREEN_REFRESH:
+          // We need to do a refresh of screen when using madVR only if resolution screen has change during playback
+          if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && (NeedRecreateSwapChain || Windowed))
+          {
+            RecreateSwapChain(false);
+            Log.Debug("Main: recreate swap chain for madVR done");
           }
           break;
       }

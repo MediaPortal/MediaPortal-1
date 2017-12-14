@@ -624,6 +624,10 @@ Section "MediaPortal core files (required)" SecCore
   ; SharpLibDisplay
   SetOutPath "$MPdir.Base\"
   File "${git_ROOT}\Packages\SharpLibDisplay.0.2.6\lib\net40\SharpLibDisplay.dll"
+  ; Naudio
+  File "${git_ROOT}\Packages\NAudio.1.8.3\lib\net35\NAudio.dll" 
+  ; CSCore
+  File "${git_ROOT}\Packages\CSCore.1.2.1.2\lib\net35-client\CSCore.dll"
   ; Doc
   SetOutPath "$MPdir.Base\Docs"
   File "${git_MP}\Docs\BASS License.txt"

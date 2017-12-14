@@ -33,6 +33,8 @@ namespace MediaPortal.Configuration.Sections
       this.mpVMR9FilterMethod = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.checkboxMpNonsquare = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpGroupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.mpCheck1080p = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.DRCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.numericUpDownFrame = new System.Windows.Forms.NumericUpDown();
       this.reduceMadvrFrame = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.UseMadVideoRenderer3D = new MediaPortal.UserInterface.Controls.MPCheckBox();
@@ -47,7 +49,6 @@ namespace MediaPortal.Configuration.Sections
       this.labelFilteringHint = new MediaPortal.UserInterface.Controls.MPLabel();
       this.checkBoxVMRWebStreams = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.label1 = new System.Windows.Forms.Label();
-      this.DRCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpGroupBox1.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownFrame)).BeginInit();
       this.SuspendLayout();
@@ -58,7 +59,7 @@ namespace MediaPortal.Configuration.Sections
       this.checkboxDXEclusive.Checked = true;
       this.checkboxDXEclusive.CheckState = System.Windows.Forms.CheckState.Checked;
       this.checkboxDXEclusive.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkboxDXEclusive.Location = new System.Drawing.Point(43, 84);
+      this.checkboxDXEclusive.Location = new System.Drawing.Point(43, 76);
       this.checkboxDXEclusive.Name = "checkboxDXEclusive";
       this.checkboxDXEclusive.Size = new System.Drawing.Size(385, 17);
       this.checkboxDXEclusive.TabIndex = 5;
@@ -78,7 +79,7 @@ namespace MediaPortal.Configuration.Sections
             "Anisotropic Filtering",
             "Pyrimidal Quad Filtering",
             "Gaussian Quad Filtering"});
-      this.mpVMR9FilterMethod.Location = new System.Drawing.Point(43, 152);
+      this.mpVMR9FilterMethod.Location = new System.Drawing.Point(43, 144);
       this.mpVMR9FilterMethod.Name = "mpVMR9FilterMethod";
       this.mpVMR9FilterMethod.Size = new System.Drawing.Size(138, 21);
       this.mpVMR9FilterMethod.TabIndex = 2;
@@ -90,7 +91,7 @@ namespace MediaPortal.Configuration.Sections
       this.checkboxMpNonsquare.Checked = true;
       this.checkboxMpNonsquare.CheckState = System.Windows.Forms.CheckState.Checked;
       this.checkboxMpNonsquare.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkboxMpNonsquare.Location = new System.Drawing.Point(43, 107);
+      this.checkboxMpNonsquare.Location = new System.Drawing.Point(43, 99);
       this.checkboxMpNonsquare.Name = "checkboxMpNonsquare";
       this.checkboxMpNonsquare.Size = new System.Drawing.Size(303, 17);
       this.checkboxMpNonsquare.TabIndex = 0;
@@ -102,6 +103,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.mpGroupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGroupBox1.Controls.Add(this.mpCheck1080p);
       this.mpGroupBox1.Controls.Add(this.DRCheckBox);
       this.mpGroupBox1.Controls.Add(this.numericUpDownFrame);
       this.mpGroupBox1.Controls.Add(this.reduceMadvrFrame);
@@ -128,9 +130,35 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox1.TabStop = false;
       this.mpGroupBox1.Text = "Video renderer - advanced settings";
       // 
+      // mpCheck1080p
+      // 
+      this.mpCheck1080p.AutoSize = true;
+      this.mpCheck1080p.Checked = true;
+      this.mpCheck1080p.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.mpCheck1080p.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.mpCheck1080p.Location = new System.Drawing.Point(64, 390);
+      this.mpCheck1080p.Name = "mpCheck1080p";
+      this.mpCheck1080p.Size = new System.Drawing.Size(234, 17);
+      this.mpCheck1080p.TabIndex = 21;
+      this.mpCheck1080p.Text = "Force 1080p refresh rate for 3D (SBS / TAB)";
+      this.mpCheck1080p.UseVisualStyleBackColor = true;
+      // 
+      // DRCheckBox
+      // 
+      this.DRCheckBox.AutoSize = true;
+      this.DRCheckBox.Checked = true;
+      this.DRCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.DRCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.DRCheckBox.Location = new System.Drawing.Point(64, 372);
+      this.DRCheckBox.Name = "DRCheckBox";
+      this.DRCheckBox.Size = new System.Drawing.Size(136, 17);
+      this.DRCheckBox.TabIndex = 20;
+      this.DRCheckBox.Text = "Use internal refresh rate";
+      this.DRCheckBox.UseVisualStyleBackColor = true;
+      // 
       // numericUpDownFrame
       // 
-      this.numericUpDownFrame.Location = new System.Drawing.Point(190, 362);
+      this.numericUpDownFrame.Location = new System.Drawing.Point(190, 354);
       this.numericUpDownFrame.Maximum = new decimal(new int[] {
             3,
             0,
@@ -147,7 +175,7 @@ namespace MediaPortal.Configuration.Sections
       this.reduceMadvrFrame.Checked = true;
       this.reduceMadvrFrame.CheckState = System.Windows.Forms.CheckState.Checked;
       this.reduceMadvrFrame.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.reduceMadvrFrame.Location = new System.Drawing.Point(64, 362);
+      this.reduceMadvrFrame.Location = new System.Drawing.Point(64, 354);
       this.reduceMadvrFrame.Name = "reduceMadvrFrame";
       this.reduceMadvrFrame.Size = new System.Drawing.Size(129, 17);
       this.reduceMadvrFrame.TabIndex = 18;
@@ -160,7 +188,7 @@ namespace MediaPortal.Configuration.Sections
       this.UseMadVideoRenderer3D.Checked = true;
       this.UseMadVideoRenderer3D.CheckState = System.Windows.Forms.CheckState.Checked;
       this.UseMadVideoRenderer3D.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.UseMadVideoRenderer3D.Location = new System.Drawing.Point(64, 344);
+      this.UseMadVideoRenderer3D.Location = new System.Drawing.Point(64, 336);
       this.UseMadVideoRenderer3D.Name = "UseMadVideoRenderer3D";
       this.UseMadVideoRenderer3D.Size = new System.Drawing.Size(182, 17);
       this.UseMadVideoRenderer3D.TabIndex = 17;
@@ -173,7 +201,7 @@ namespace MediaPortal.Configuration.Sections
       this.DisableLowLatencyMode.Checked = true;
       this.DisableLowLatencyMode.CheckState = System.Windows.Forms.CheckState.Checked;
       this.DisableLowLatencyMode.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.DisableLowLatencyMode.Location = new System.Drawing.Point(64, 326);
+      this.DisableLowLatencyMode.Location = new System.Drawing.Point(64, 318);
       this.DisableLowLatencyMode.Name = "DisableLowLatencyMode";
       this.DisableLowLatencyMode.Size = new System.Drawing.Size(310, 17);
       this.DisableLowLatencyMode.TabIndex = 16;
@@ -187,7 +215,7 @@ namespace MediaPortal.Configuration.Sections
       this.UseEVRMadVRForTV.Checked = true;
       this.UseEVRMadVRForTV.CheckState = System.Windows.Forms.CheckState.Checked;
       this.UseEVRMadVRForTV.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.UseEVRMadVRForTV.Location = new System.Drawing.Point(64, 308);
+      this.UseEVRMadVRForTV.Location = new System.Drawing.Point(64, 300);
       this.UseEVRMadVRForTV.Name = "UseEVRMadVRForTV";
       this.UseEVRMadVRForTV.Size = new System.Drawing.Size(120, 17);
       this.UseEVRMadVRForTV.TabIndex = 15;
@@ -198,7 +226,7 @@ namespace MediaPortal.Configuration.Sections
       // mpMadLabel
       // 
       this.mpMadLabel.AutoSize = true;
-      this.mpMadLabel.Location = new System.Drawing.Point(61, 402);
+      this.mpMadLabel.Location = new System.Drawing.Point(61, 408);
       this.mpMadLabel.Name = "mpMadLabel";
       this.mpMadLabel.Size = new System.Drawing.Size(269, 13);
       this.mpMadLabel.TabIndex = 14;
@@ -207,7 +235,7 @@ namespace MediaPortal.Configuration.Sections
       // radioButtonMadVR
       // 
       this.radioButtonMadVR.AutoSize = true;
-      this.radioButtonMadVR.Location = new System.Drawing.Point(30, 285);
+      this.radioButtonMadVR.Location = new System.Drawing.Point(30, 277);
       this.radioButtonMadVR.Name = "radioButtonMadVR";
       this.radioButtonMadVR.Size = new System.Drawing.Size(187, 17);
       this.radioButtonMadVR.TabIndex = 13;
@@ -219,7 +247,7 @@ namespace MediaPortal.Configuration.Sections
       // radioButtonEVR
       // 
       this.radioButtonEVR.AutoSize = true;
-      this.radioButtonEVR.Location = new System.Drawing.Point(30, 188);
+      this.radioButtonEVR.Location = new System.Drawing.Point(30, 180);
       this.radioButtonEVR.Name = "radioButtonEVR";
       this.radioButtonEVR.Size = new System.Drawing.Size(182, 17);
       this.radioButtonEVR.TabIndex = 12;
@@ -232,7 +260,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.radioButtonVMR9.AutoSize = true;
       this.radioButtonVMR9.Checked = true;
-      this.radioButtonVMR9.Location = new System.Drawing.Point(30, 32);
+      this.radioButtonVMR9.Location = new System.Drawing.Point(30, 24);
       this.radioButtonVMR9.Name = "radioButtonVMR9";
       this.radioButtonVMR9.Size = new System.Drawing.Size(180, 17);
       this.radioButtonVMR9.TabIndex = 11;
@@ -244,7 +272,7 @@ namespace MediaPortal.Configuration.Sections
       // labelEVRHint
       // 
       this.labelEVRHint.AutoSize = true;
-      this.labelEVRHint.Location = new System.Drawing.Point(61, 217);
+      this.labelEVRHint.Location = new System.Drawing.Point(61, 209);
       this.labelEVRHint.Name = "labelEVRHint";
       this.labelEVRHint.Size = new System.Drawing.Size(283, 52);
       this.labelEVRHint.TabIndex = 9;
@@ -256,7 +284,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.checkBoxDecimateMask.AutoSize = true;
       this.checkBoxDecimateMask.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxDecimateMask.Location = new System.Drawing.Point(43, 129);
+      this.checkBoxDecimateMask.Location = new System.Drawing.Point(43, 121);
       this.checkBoxDecimateMask.Name = "checkBoxDecimateMask";
       this.checkBoxDecimateMask.Size = new System.Drawing.Size(397, 17);
       this.checkBoxDecimateMask.TabIndex = 8;
@@ -267,7 +295,7 @@ namespace MediaPortal.Configuration.Sections
       // labelFilteringHint
       // 
       this.labelFilteringHint.AutoSize = true;
-      this.labelFilteringHint.Location = new System.Drawing.Point(187, 155);
+      this.labelFilteringHint.Location = new System.Drawing.Point(187, 147);
       this.labelFilteringHint.Name = "labelFilteringHint";
       this.labelFilteringHint.Size = new System.Drawing.Size(224, 13);
       this.labelFilteringHint.TabIndex = 7;
@@ -279,7 +307,7 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxVMRWebStreams.Checked = true;
       this.checkBoxVMRWebStreams.CheckState = System.Windows.Forms.CheckState.Checked;
       this.checkBoxVMRWebStreams.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxVMRWebStreams.Location = new System.Drawing.Point(43, 61);
+      this.checkBoxVMRWebStreams.Location = new System.Drawing.Point(43, 53);
       this.checkBoxVMRWebStreams.Name = "checkBoxVMRWebStreams";
       this.checkBoxVMRWebStreams.Size = new System.Drawing.Size(284, 17);
       this.checkBoxVMRWebStreams.TabIndex = 6;
@@ -289,23 +317,10 @@ namespace MediaPortal.Configuration.Sections
       // label1
       // 
       this.label1.AutoSize = true;
-      this.label1.Location = new System.Drawing.Point(27, 67);
+      this.label1.Location = new System.Drawing.Point(27, 59);
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(0, 13);
       this.label1.TabIndex = 1;
-      // 
-      // DRCheckBox
-      // 
-      this.DRCheckBox.AutoSize = true;
-      this.DRCheckBox.Checked = true;
-      this.DRCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-      this.DRCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.DRCheckBox.Location = new System.Drawing.Point(64, 380);
-      this.DRCheckBox.Name = "DRCheckBox";
-      this.DRCheckBox.Size = new System.Drawing.Size(136, 17);
-      this.DRCheckBox.TabIndex = 20;
-      this.DRCheckBox.Text = "Use internal refresh rate";
-      this.DRCheckBox.UseVisualStyleBackColor = true;
       // 
       // FiltersVideoRenderer
       // 
@@ -344,5 +359,6 @@ namespace MediaPortal.Configuration.Sections
     private UserInterface.Controls.MPCheckBox reduceMadvrFrame;
     private System.Windows.Forms.NumericUpDown numericUpDownFrame;
     private UserInterface.Controls.MPCheckBox DRCheckBox;
+    private UserInterface.Controls.MPCheckBox mpCheck1080p;
   }
 }

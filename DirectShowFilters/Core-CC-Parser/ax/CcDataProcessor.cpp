@@ -46,6 +46,11 @@
 
 #include "CcDataProcessor.h"
 
+// uncomment the //LogDebug to enable extra logging
+#define LOG_DETAIL //LogDebug
+
+extern void LogDebug(const char *fmt, ...) ;
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //	CCcDataProcessor
 
@@ -244,6 +249,8 @@ bool CCcDataProcessor::OnCc( int nType, int iField, CCWORD ccField )
 
 	if( m_pifDataSink )
 		m_pifDataSink->OnCc( nType, iField, ccField );
+
+	LOG_DETAIL("CCcDataProcessor: OnCc() - return");
 
 	return true;
 }

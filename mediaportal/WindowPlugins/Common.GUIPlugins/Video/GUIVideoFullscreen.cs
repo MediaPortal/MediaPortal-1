@@ -216,6 +216,10 @@ namespace MediaPortal.GUI.Video
           {
             _allowedArModes.Add(Geometry.Type.Zoom14to9);
           }
+          if (xmlreader.GetValueAsBool(key2, "allowarcinemascope235", true))
+          {
+            _allowedArModes.Add(Geometry.Type.CinemaScope235);
+          }
         }
       }
 
@@ -1844,6 +1848,10 @@ namespace MediaPortal.GUI.Video
       if (_allowedArModes.Contains(Geometry.Type.Zoom14to9))
       {
         dlg.AddLocalizedString(1190); //14:9
+      }
+      if (_allowedArModes.Contains(Geometry.Type.CinemaScope235))
+      {
+        dlg.AddLocalizedString(1339); //CinemaScope 2:35
       }
 
       // set the focus to currently used mode
