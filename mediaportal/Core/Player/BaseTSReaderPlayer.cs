@@ -608,8 +608,17 @@ namespace MediaPortal.Player
         return false;
       }
 
-      _basicVideo = _graphBuilder as IBasicVideo2;
-      _videoWin = _graphBuilder as IVideoWindow;
+      if (VMR9Util.g_vmr9?._vmr9Filter != null &&
+          GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+      {
+        _basicVideo = VMR9Util.g_vmr9?._vmr9Filter as IBasicVideo2;
+        _videoWin = VMR9Util.g_vmr9?._vmr9Filter as IVideoWindow;
+      }
+      else
+      {
+        _basicVideo = _graphBuilder as IBasicVideo2;
+        _videoWin = _graphBuilder as IVideoWindow;
+      }
 
       int hr = _mediaEvt.SetNotifyWindow(GUIGraphicsContext.ActiveForm, WM_GRAPHNOTIFY, IntPtr.Zero);
       if (hr < 0)

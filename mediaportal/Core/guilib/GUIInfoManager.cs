@@ -347,7 +347,7 @@ namespace MediaPortal.GUI.Library
     //public const int WINDOW_ACTIVE_END = WINDOW_PYTHON_END;
 
     public const int SYSTEM_IDLE_TIME_START = 20000;
-    public const int SYSTEM_IDLE_TIME_FINISH = 21000; // 1000 minutes
+    public const int SYSTEM_IDLE_TIME_FINISH = 21000; // 1000 seconds
 
     public const int PLUGIN_IS_ENABLED = 25000;
 
@@ -786,16 +786,29 @@ namespace MediaPortal.GUI.Library
         else if (sLength > 16 && strTest.Substring(0, 16) == "system.idletime(")
         {
           int time = 0;
+          bool res = false;
           string strValue = strTest.Substring(16, sLength - 17);
-          if (!string.IsNullOrEmpty(strValue) && Int32.TryParse(strValue, out time))
+          if (!string.IsNullOrEmpty(strValue))
           {
-            if (time > SYSTEM_IDLE_TIME_FINISH - SYSTEM_IDLE_TIME_START)
+            if (strValue.IndexOf('#') > -1)
             {
-              time = SYSTEM_IDLE_TIME_FINISH - SYSTEM_IDLE_TIME_START;
+              res = Int32.TryParse(GUIPropertyManager.Parse(strValue), out time);
             }
-            if (time > 0)
+            else
             {
-              ret = SYSTEM_IDLE_TIME_START + time;
+              res = Int32.TryParse(strValue, out time);
+            }
+
+            if (res)
+            {
+              if (time > SYSTEM_IDLE_TIME_FINISH - SYSTEM_IDLE_TIME_START)
+              {
+                time = SYSTEM_IDLE_TIME_FINISH - SYSTEM_IDLE_TIME_START;
+              }
+              if (time > 0)
+              {
+                ret = SYSTEM_IDLE_TIME_START + time;
+              }
             }
           }
         }
@@ -2144,7 +2157,7 @@ namespace MediaPortal.GUI.Library
       else if (condition > SYSTEM_IDLE_TIME_START && condition <= SYSTEM_IDLE_TIME_FINISH)
       {
         TimeSpan ts = DateTime.Now - GUIGraphicsContext.LastActivity;
-        bReturn = (ts.TotalMinutes >= condition - SYSTEM_IDLE_TIME_START);
+        bReturn = (ts.TotalSeconds >= condition - SYSTEM_IDLE_TIME_START);
       }
       // else if (condition >= WINDOW_ACTIVE_START && condition <= WINDOW_ACTIVE_END)// check for Window.IsActive(window)
       // {

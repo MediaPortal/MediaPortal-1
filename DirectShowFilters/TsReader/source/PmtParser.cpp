@@ -108,7 +108,7 @@ void CPmtParser::OnNewSection(CSection& section)
       elementary_PID = ((section.Data[pointer+1]&0x1F)<<8)+section.Data[pointer+2];
       ES_info_length = ((section.Data[pointer+3] & 0xF)<<8)+section.Data[pointer+4];
       //LogDebug("pmt: pid:%x type:%x",elementary_PID, stream_type);
-      if ( stream_type==SERVICE_TYPE_VIDEO_MPEG1 
+      if(stream_type==SERVICE_TYPE_VIDEO_MPEG1 
         || stream_type==SERVICE_TYPE_VIDEO_MPEG2
         || stream_type==SERVICE_TYPE_VIDEO_MPEG4
         || stream_type==SERVICE_TYPE_VIDEO_H264
@@ -117,7 +117,7 @@ void CPmtParser::OnNewSection(CSection& section)
       {
         VideoPid pid;
         pid.Pid=elementary_PID;
-        pid.VideoServiceType = stream_type;
+        pid.VideoServiceType=stream_type;
         if (!dvb_video_found) //Workaround for mis-detection of DC II streams...
         {
           m_pidInfo.videoPids.clear();
@@ -161,11 +161,14 @@ void CPmtParser::OnNewSection(CSection& section)
 
         if(indicator==DESCRIPTOR_VIDEO_STREAM)
         {								
-          VideoPid pid = m_pidInfo.videoPids.back(); //Get the current video PID data
-          pid.DescriptorData = section.Data[pointer+2];
+          if (m_pidInfo.videoPids.size() > 0)	
+          {
+            VideoPid pid = m_pidInfo.videoPids.back(); //Get the current video PID data
+            pid.DescriptorData = section.Data[pointer+2];
           
-          m_pidInfo.videoPids.pop_back();
-          m_pidInfo.videoPids.push_back(pid);
+            m_pidInfo.videoPids.pop_back();
+            m_pidInfo.videoPids.push_back(pid);
+          }
         }
 
         if(indicator==DESCRIPTOR_AVC_VIDEO || indicator==DESCRIPTOR_HEVC_VIDEO)
@@ -184,7 +187,7 @@ void CPmtParser::OnNewSection(CSection& section)
         }
   						
         if(indicator==DESCRIPTOR_DVB_AC3 || indicator==DESCRIPTOR_DVB_E_AC3 || indicator==DESCRIPTOR_DVB_DTS)
-        {							
+        {								
           bool newPid = true;
           if (m_pidInfo.audioPids.size() > 0)	
           {
@@ -211,7 +214,7 @@ void CPmtParser::OnNewSection(CSection& section)
                 pid.AudioServiceType=SERVICE_TYPE_AUDIO_DTS;
                 break;
             }
-            
+          
             for(unsigned int i(0); i<tempPids.size(); i++)
             {
               if(tempPids[i].Pid==elementary_PID)
@@ -226,7 +229,7 @@ void CPmtParser::OnNewSection(CSection& section)
                 break;
               }
             }
-    
+
             m_pidInfo.audioPids.push_back(pid);
           }
         }

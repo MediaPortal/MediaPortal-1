@@ -171,27 +171,37 @@ void MPMadPresenter::InitializeOSD()
 
 void MPMadPresenter::SetMadVrPaused(bool paused)
 {
-  // TODO why it deadlock ?
-  //CAutoLock cAutoLock(this);
-
-  IMediaControl *m_pControl = nullptr;
-  if ((mediaControlGraph) && (SUCCEEDED(mediaControlGraph->QueryInterface(__uuidof(IMediaControl), reinterpret_cast<LPVOID*>(&m_pControl)))) && (m_pControl))
+  if (!m_pPaused)
   {
-    if (m_pControl)
+    IMediaControl *m_pControl = nullptr;
+    if ((mediaControlGraph) && (SUCCEEDED(mediaControlGraph->QueryInterface(__uuidof(IMediaControl), reinterpret_cast<LPVOID*>(&m_pControl)))) && (m_pControl))
     {
-      if (paused)
+      if (m_pControl)
       {
-        int counter = 0;
-        OAFilterState state = -1;
-        m_pControl->GetState(100, &state);
-        if (state != State_Paused)
+        if (paused)
         {
-          m_pControl->Pause();
-          Log("MPMadPresenter:::SetMadVrPaused() pause");
+          OAFilterState state;
+          for (int i1 = 0; i1 < 200; i1++)
+          {
+            m_pControl->GetState(INFINITE, &state);
+            if (state != State_Paused)
+            {
+              m_pControl->Pause();
+              m_pPaused = true;
+              Log("MPMadPresenter:::SetMadVrPaused() pause");
+              Sleep(10);
+            }
+            else if (state == State_Paused && m_pPausedCount > 20)
+            {
+              m_pPaused = true;
+            }
+          }
         }
+        m_pControl->Release();
+        m_pControl = nullptr;
       }
-      m_pControl->Release();
     }
+    m_pPausedCount++;
   }
 }
 
@@ -652,12 +662,12 @@ void MPMadPresenter::ConfigureMadvr()
     //  pSubclassReplacement.Release(); // WIP release
     //}
 
-    if (Com::SmartQIPtr<IVideoWindow> pWindow = m_pMad)
-    {
-      pWindow->SetWindowPosition(m_Xposition, m_Yposition, m_dwGUIWidth, m_dwGUIHeight);
-      //pWindow->put_Owner(m_hParent);
-      pWindow.Release(); // WIP release
-    }
+    //if (Com::SmartQIPtr<IVideoWindow> pWindow = m_pMad) // Fix DXVA for FSE
+    //{
+    //  pWindow->SetWindowPosition(m_Xposition, m_Yposition, m_dwGUIWidth, m_dwGUIHeight);
+    //  //pWindow->put_Owner(m_hParent);
+    //  pWindow.Release(); // WIP release
+    //}
 
     if (Com::SmartQIPtr<IMadVRSettings> m_pSettings = m_pMad)
     {

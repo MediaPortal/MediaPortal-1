@@ -4393,16 +4393,17 @@ public class MediaPortalApp : D3D, IRender
             else if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
                      GUIGraphicsContext.InVmr9Render)
             {
-              if (VMR9Util.g_vmr9 != null)
-              {
-                VMR9Util.g_vmr9.GrabScreenshot(); // From C#
-                return;
-              }
-
               //if (VMR9Util.g_vmr9 != null)
               //{
-              //  VMR9Util.g_vmr9.MadVrGrabScreenshot(); // From C++
+              //  VMR9Util.g_vmr9.GrabScreenshot(); // From C#
+              //  return;
               //}
+
+              // this will be started in a thread
+              if (VMR9Util.g_vmr9 != null)
+              {
+                VMR9Util.g_vmr9.MadVrGrabScreenshot(); // From C++
+              }
             }
             else
             {

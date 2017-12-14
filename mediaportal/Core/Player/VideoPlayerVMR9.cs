@@ -545,9 +545,6 @@ namespace MediaPortal.Player
         //Get filterCodecName
         filterCodec = GetFilterCodec();
 
-        basicVideo = graphBuilder as IBasicVideo2;
-        //basicVideo = VMR9Util.g_vmr9?._vmr9Filter as IBasicVideo2;
-
         if (filterConfig.bAutoDecoderSettings)
         {
           AutoRenderingCheck = true;
@@ -915,8 +912,17 @@ namespace MediaPortal.Player
         mediaSeek = (IMediaSeeking) graphBuilder;
         mediaPos = (IMediaPosition) graphBuilder;
         basicAudio = (IBasicAudio) graphBuilder;
-        //videoWin = (IVideoWindow)VMR9Util.g_vmr9?._vmr9Filter;
-        videoWin = (IVideoWindow) graphBuilder;
+        if (VMR9Util.g_vmr9?._vmr9Filter != null &&
+            GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+        {
+          basicVideo = VMR9Util.g_vmr9?._vmr9Filter as IBasicVideo2;
+          videoWin = VMR9Util.g_vmr9?._vmr9Filter as IVideoWindow;
+        }
+        else
+        {
+          basicVideo = graphBuilder as IBasicVideo2;
+          videoWin = graphBuilder as IVideoWindow;
+        }
         if (VMR9Util.g_vmr9 != null)
         {
           m_iVideoWidth = VMR9Util.g_vmr9.VideoWidth;
@@ -1394,7 +1400,18 @@ namespace MediaPortal.Player
         mediaSeek = (IMediaSeeking)graphBuilder;
         mediaPos = (IMediaPosition)graphBuilder;
         basicAudio = (IBasicAudio)graphBuilder;
-        videoWin = (IVideoWindow)graphBuilder;
+        if (VMR9Util.g_vmr9?._vmr9Filter != null &&
+            GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+        {
+          basicVideo = VMR9Util.g_vmr9?._vmr9Filter as IBasicVideo2;
+          videoWin = VMR9Util.g_vmr9?._vmr9Filter as IVideoWindow;
+        }
+        else
+        {
+          basicVideo = graphBuilder as IBasicVideo2;
+          videoWin = (IVideoWindow)graphBuilder;
+        }
+
         m_iVideoWidth = VMR9Util.g_vmr9.VideoWidth;
         m_iVideoHeight = VMR9Util.g_vmr9.VideoHeight;
 
