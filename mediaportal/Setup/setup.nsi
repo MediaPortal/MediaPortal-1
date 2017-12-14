@@ -966,6 +966,11 @@ Section -Post
   ; BASS 2.3  to   2.4   Update - requested by hwahrmann (2009-01-26)
   ${LOG_TEXT} "INFO" "Removing obsolete BASS 2.3 files"
   Delete "$MPdir.Base\MusicPlayer\plugins\audio decoders\bass_wv.dll"
+    
+  ; Libbluray remove previous release files
+  ${LOG_TEXT} "INFO" "Removing obsolete libbluray files"
+  Delete "$MPdir.Base\libbluray-j2se-0.6.2.jar"
+  Delete "$MPdir.Base\libbluray-j2se-1.0.1.jar"
 
   ; MP1-4315 Blow windowplugins dll to separate plugin dlls
   ${LOG_TEXT} "INFO" "Removing obsolete WindowPlugins.dll"
