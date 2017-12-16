@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2017 Team MediaPortal
 /*
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2017 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -579,7 +579,7 @@ Section "MediaPortal core files (required)" SecCore
   File "${git_ROOT}\Packages\MediaInfo.0.7.95\MediaInfo.dll"
   ; NuGet binaries Sqlite
   SetOutPath "$MPdir.Base\"
-  File "${git_ROOT}\Packages\Sqlite.3.10.0\Sqlite.dll"
+  File "${git_ROOT}\Packages\Sqlite.3.21.0\Sqlite.dll"
   ; Bass Core
   SetOutPath "$MPdir.Base\"
   File "${git_ROOT}\Packages\BASS.2.4.12.1\bass.dll"
