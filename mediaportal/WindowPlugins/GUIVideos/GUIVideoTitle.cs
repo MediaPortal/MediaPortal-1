@@ -18,13 +18,6 @@
 
 #endregion
 
-using System;
-using System.Collections;
-using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Text.RegularExpressions;
-using System.Threading;
 using MediaPortal.Database;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
@@ -32,6 +25,15 @@ using MediaPortal.GUI.View;
 using MediaPortal.Profile;
 using MediaPortal.Util;
 using MediaPortal.Video.Database;
+
+using System;
+using System.Collections;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Threading;
+using System.Xml.Serialization;
+
 using Action = MediaPortal.GUI.Library.Action;
 using Layout = MediaPortal.GUI.Library.GUIFacadeControl.Layout;
 
@@ -42,10 +44,40 @@ namespace MediaPortal.GUI.Video
   /// </summary>
   public class GUIVideoTitle : GUIVideoBaseWindow, IMDB.IProgress
   {
+
+    #region Map Settings
+    [Serializable]
+    public class MapSettings
+    {
+      protected int _SortBy;
+      protected bool _SortAscending;
+
+      public MapSettings()
+      {
+        _SortBy = 0; // Name
+        _SortAscending = true;
+      }
+
+      [XmlElement("SortBy")]
+      public int SortBy
+      {
+        get { return _SortBy; }
+        set { _SortBy = value; }
+      }
+
+      [XmlElement("SortAscending")]
+      public bool SortAscending
+      {
+        get { return _SortAscending; }
+        set { _SortAscending = value; }
+      }
+    }
+    #endregion
+
     #region Base variabeles
 
     private DirectoryHistory m_history = new DirectoryHistory();
-    private string currentFolder = string.Empty;
+    private static string currentFolder = string.Empty;
     private int currentSelectedItem = -1;
     private VirtualDirectory m_directory = new VirtualDirectory();
     private Layout[,] layouts;
@@ -74,7 +106,10 @@ namespace MediaPortal.GUI.Video
     private static string _currentBaseView = string.Empty; // lvl 0 view name (origin view which can be drilled down liek genres, index, years..))
     // Last View lvl postion on back from VideoInfo screen
     private int _currentLevel = 0;
-    
+
+    private static string currentView = string.Empty;
+    private MapSettings _mapSettings = new MapSettings();
+
     #endregion
 
     public GUIVideoTitle()
@@ -95,6 +130,7 @@ namespace MediaPortal.GUI.Video
       }
 
       currentFolder = string.Empty;
+      CurrentView = GetViewPath();
       handler.CurrentView = "369";
       return Load(GUIGraphicsContext.GetThemedSkinFile(@"\myvideoTitle.xml"));
     }
@@ -150,13 +186,31 @@ namespace MediaPortal.GUI.Video
               }
             }
           }
-
+         
+          LoadViewSettings();
+          if (_mapSettings != null)
+          {
+            return _mapSettings.SortAscending;
+          }
           return sortasc[handler.Views.IndexOf(handler.View), handler.CurrentLevel];
         }
-
         return true;
       }
-      set { sortasc[handler.Views.IndexOf(handler.View), handler.CurrentLevel] = value; }
+      set 
+      {
+        // LoadViewSettings();
+        if (_mapSettings == null && sortby != null)
+        {
+          _mapSettings = new MapSettings();
+          _mapSettings.SortBy = (int)sortby[handler.Views.IndexOf(handler.View), handler.CurrentLevel];
+        }
+        if (_mapSettings != null)
+        {
+          _mapSettings.SortAscending = value;
+          SaveViewSettings();
+        }
+        CheckViewSettings();
+      }
     }
 
     protected override VideoSort.SortMethod CurrentSortMethod
@@ -191,11 +245,42 @@ namespace MediaPortal.GUI.Video
             }
           }
 
+          LoadViewSettings();
+          if (_mapSettings != null)
+          {
+            return (VideoSort.SortMethod) _mapSettings.SortBy;
+          }
           return sortby[handler.Views.IndexOf(handler.View), handler.CurrentLevel];
         }
         return VideoSort.SortMethod.Name;
       }
-      set { sortby[handler.Views.IndexOf(handler.View), handler.CurrentLevel] = value; }
+      set
+      {
+        // LoadViewSettings();
+        if (_mapSettings == null && sortasc != null)
+        {
+          _mapSettings = new MapSettings();
+          _mapSettings.SortAscending = sortasc[handler.Views.IndexOf(handler.View), handler.CurrentLevel];
+        }
+        if (_mapSettings != null)
+        {
+          _mapSettings.SortBy = (int)value;
+          SaveViewSettings();
+        }
+        CheckViewSettings();
+      }
+    }
+
+    private string CurrentView
+    {
+      get {return currentView;}
+      set
+      {
+        if (currentView != value)
+        {
+          currentView = value;
+        }
+      }
     }
 
     public override void OnAction(Action action)
@@ -285,6 +370,7 @@ namespace MediaPortal.GUI.Video
         InitViewSelections();
       }
 
+      CurrentView = GetViewPath();
       LoadDirectory(currentFolder);
       GetProtectedShares(ref _protectedShares);
 
@@ -817,6 +903,9 @@ namespace MediaPortal.GUI.Video
     protected override void LoadDirectory(string strNewDirectory)
     {
       GUIWaitCursor.Show();
+
+      CurrentView = GetViewPath();
+      // Log.Debug("*** LoadDirectory: {0} -> {1}|{2}", currentView, CurrentSortMethod, CurrentSortAsc);
       currentFolder = strNewDirectory;
       GUIControl.ClearControl(GetID, facadeLayout.GetID);
       ArrayList itemlist = new ArrayList();
@@ -1175,35 +1264,64 @@ namespace MediaPortal.GUI.Video
             item.Label2 = Util.Utils.SecondsToHMString(movie.RunTime * 60);
           }
         }
+        else if (CurrentSortMethod == VideoSort.SortMethod.Date)
+        {
+          string strDate = string.Empty;
+
+          if (movie != null && !item.IsFolder)
+          {
+            if (movie.DateAdded != "0001-01-01 00:00:00")
+            {
+              strDate = movie.DateAdded; 
+            }
+            else
+            {
+              strDate = movie.LastUpdate;
+            }
+          }
+          item.Label2 = strDate;
+        }
       }
       else
       {
-        string strSize1 = string.Empty, strDate = string.Empty;
+        if (CurrentSortMethod == VideoSort.SortMethod.Created || CurrentSortMethod == VideoSort.SortMethod.Date || CurrentSortMethod == VideoSort.SortMethod.Modified)
+        {
+          string strDate = string.Empty;
 
-        if (item.FileInfo != null && !item.IsFolder)
-        {
-          strSize1 = Util.Utils.GetSize(item.FileInfo.Length);
-        }
+          if (item.FileInfo != null && !item.IsFolder)
+          {
+            if (CurrentSortMethod == VideoSort.SortMethod.Modified)
+              strDate = item.FileInfo.ModificationTime.ToShortDateString() + " " +
+                        item.FileInfo.ModificationTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
+            else
+              strDate = item.FileInfo.CreationTime.ToShortDateString() + " " +
+                        item.FileInfo.CreationTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
+          }
 
-        if (item.FileInfo != null && !item.IsFolder)
-        {
-          if (CurrentSortMethod == VideoSort.SortMethod.Modified)
-            strDate = item.FileInfo.ModificationTime.ToShortDateString() + " " +
-                      item.FileInfo.ModificationTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
-          else
-            strDate = item.FileInfo.CreationTime.ToShortDateString() + " " +
-                      item.FileInfo.CreationTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
-        }
-        if (CurrentSortMethod == VideoSort.SortMethod.Name)
-        {
-          item.Label2 = strSize1;
-        }
-        else if (CurrentSortMethod == VideoSort.SortMethod.Created || CurrentSortMethod == VideoSort.SortMethod.Date || CurrentSortMethod == VideoSort.SortMethod.Modified)
-        {
+          if (CurrentSortMethod == VideoSort.SortMethod.Date && string.IsNullOrWhiteSpace(strDate))
+          {
+            if (!item.IsFolder && movie != null)
+            {
+              if (movie.DateAdded != "0001-01-01 00:00:00")
+              {
+                strDate = movie.DateAdded; 
+              }
+              else
+              {
+                strDate = movie.LastUpdate;
+              }
+            }
+          }
           item.Label2 = strDate;
         }
         else
         {
+          string strSize1 = string.Empty;
+
+          if (item.FileInfo != null && !item.IsFolder)
+          {
+            strSize1 = Util.Utils.GetSize(item.FileInfo.Length);
+          }
           item.Label2 = strSize1;
         }
       }
@@ -2395,7 +2513,7 @@ namespace MediaPortal.GUI.Video
       }
       else
       {
-        currentSelectedItem --;
+        currentSelectedItem--;
 
         if (currentSelectedItem >= 0)
         {
@@ -2922,7 +3040,131 @@ namespace MediaPortal.GUI.Video
         facadeLayout.Clear();
       }
     }
-    
+
+    private string GetViewPath()
+    {
+      if (handler == null)
+      {
+        return string.Empty;
+      }
+
+      if (handler.CurrentLevel <= 0)
+      {
+        return handler.LocalizedCurrentViewPath;
+      }
+
+      FilterDefinition defCurrent = (FilterDefinition)handler.View.Filters[handler.CurrentLevel - 1];
+      string selectedValue = defCurrent.SelectedValue;
+      string _strView = defCurrent.Where.ToLowerInvariant();
+      Int32 iSelectedValue = -1;
+
+      if (Int32.TryParse(selectedValue, out iSelectedValue))
+      {
+        if (_strView == "actor" || _strView == "director")
+        {
+          selectedValue = VideoDatabase.GetActorNameById(iSelectedValue);
+        }
+
+        if (_strView == "genre")
+        {
+          selectedValue = VideoDatabase.GetGenreById(iSelectedValue);
+        }
+
+        if (_strView == "user groups" || _strView == "user groups only")
+        {
+          selectedValue = VideoDatabase.GetUserGroupById(iSelectedValue);
+        }
+
+        if (_strView == "movie collections" || _strView == "movie collections only")
+        {
+          selectedValue = VideoDatabase.GetCollectionById(iSelectedValue);
+        }
+      }
+      // Log.Debug("*** GetViewPath: {0}:{1}", handler.LocalizedCurrentViewPath, selectedValue);
+      return handler.LocalizedCurrentViewPath + ":" + selectedValue;
+    }
+
+    #region Folder settings
+
+    private void LoadViewSettings()
+    {
+      _mapSettings = null;
+      if (string.IsNullOrEmpty(currentView))
+      {
+        return;
+      }
+
+      object o;
+      FolderSettings.GetViewSetting(currentView, "VideoViews", typeof(MapSettings), out o);
+      if (o != null)
+      {
+        _mapSettings = o as MapSettings;
+
+        if (_mapSettings != null)
+        {
+          if (sortby != null && sortasc != null)
+          {
+            if (_mapSettings.SortBy == (int)sortby[handler.Views.IndexOf(handler.View), handler.CurrentLevel] &&
+                _mapSettings.SortAscending == sortasc[handler.Views.IndexOf(handler.View), handler.CurrentLevel])
+            {
+              _mapSettings = null;
+            }
+          }
+        }
+      }
+    }
+
+    private void SaveViewSettings()
+    {
+      if (string.IsNullOrEmpty(currentView))
+      {
+        return;
+      }
+      if (_mapSettings == null)
+      {
+        return;
+      }
+
+      if (_mapSettings.SortBy != (int)sortby[handler.Views.IndexOf(handler.View), handler.CurrentLevel] ||
+          _mapSettings.SortAscending != sortasc[handler.Views.IndexOf(handler.View), handler.CurrentLevel])
+      {
+        FolderSettings.AddFolderSetting(currentView, "VideoViews", typeof(MapSettings), _mapSettings);
+      }
+    }
+
+    private void DeleteViewSettings()
+    {
+      if (string.IsNullOrEmpty(currentView))
+      {
+        return;
+      }
+
+      FolderSettings.DeleteFolderSetting(currentView, "VideoViews", true);
+      _mapSettings = null;
+    }
+
+    private void CheckViewSettings()
+    {
+      if (string.IsNullOrEmpty(currentView))
+      {
+        return;
+      }
+
+      if (_mapSettings == null)
+      {
+        DeleteViewSettings();
+        return;
+      }
+
+      if (_mapSettings.SortBy == (int)sortby[handler.Views.IndexOf(handler.View), handler.CurrentLevel] &&
+          _mapSettings.SortAscending == sortasc[handler.Views.IndexOf(handler.View), handler.CurrentLevel])
+      {
+        DeleteViewSettings();
+      }
+    }
+
+    #endregion
+
     #region Get/Set
 
     public static bool IsMovieSearch
@@ -2965,8 +3207,18 @@ namespace MediaPortal.GUI.Video
       get { return _currentBaseView; }
     }
 
+    public static string GetCurrentFolder
+    {
+      get { return currentFolder; }
+    }
+
+    public static string GetCurrentView
+    {
+      get { return currentView; }
+    }
+
     #endregion
-    
+
     #region IMDB.IProgress
 
     public bool OnDisableCancel(IMDBFetcher fetcher)

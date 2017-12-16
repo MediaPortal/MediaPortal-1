@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2017 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2017 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -18,13 +18,8 @@
 
 #endregion
 
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
-using System.Windows.Forms;
 using Common.GUIPlugins;
+
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.GUI.View;
@@ -33,6 +28,14 @@ using MediaPortal.Playlists;
 using MediaPortal.Services;
 using MediaPortal.Util;
 using MediaPortal.Video.Database;
+
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Windows.Forms;
+
 using Action = MediaPortal.GUI.Library.Action;
 using Layout = MediaPortal.GUI.Library.GUIFacadeControl.Layout;
 
@@ -108,7 +111,6 @@ namespace MediaPortal.GUI.Video
           FilterDefinition def = (FilterDefinition)handler.View.Filters[0];
           defaultSort = (int)GetSortMethod(def.DefaultSort);
         }
-
 
         currentSortMethod = (VideoSort.SortMethod)xmlreader.GetValueAsInt(SerializeName, "sortmethod", defaultSort);
         currentSortMethodRoot =
@@ -483,8 +485,16 @@ namespace MediaPortal.GUI.Video
       facadeLayout.Sort(new VideoSort(CurrentSortMethod, CurrentSortAsc));
       UpdateButtonStates();
       SelectCurrentItem();
+
       FolderSetting folderSetting = new FolderSetting();
-      folderSetting.UpdateFolders((int)CurrentSortMethod, CurrentSortAsc, -1);
+      if(GUIWindowManager.ActiveWindow == (int)Window.WINDOW_VIDEOS)
+      {
+        folderSetting.UpdateFolders((int)CurrentSortMethod, CurrentSortAsc, -1);
+      }
+      else
+      {
+        folderSetting.UpdateViews((int)CurrentSortMethod, CurrentSortAsc);
+      }
     }
 
     #endregion
@@ -498,16 +508,35 @@ namespace MediaPortal.GUI.Video
         isShareView = true;
       }
 
-      _currentFolder = GUIVideoFiles.GetCurrentFolder;
-      object o;
       bool _stackedFolder = true;
-      MediaPortal.Database.FolderSettings.GetFolderSetting(_currentFolder, "VideoFiles", typeof(GUIVideoFiles.MapSettings), out o);
-
-      if (o != null)
+      if (isShareView)
       {
-        GUIVideoFiles.MapSettings mapSettings = o as GUIVideoFiles.MapSettings;
+        _currentFolder = GUIVideoFiles.GetCurrentFolder;
+        object o;
+        MediaPortal.Database.FolderSettings.GetFolderSetting(_currentFolder, "VideoFiles", typeof(GUIVideoFiles.MapSettings), out o);
 
-        _stackedFolder = mapSettings.Stack;
+        if (o != null)
+        {
+          GUIVideoFiles.MapSettings mapSettings = o as GUIVideoFiles.MapSettings;
+
+          _stackedFolder = mapSettings.Stack;
+        }
+      }
+      else
+      {
+        _currentFolder = GUIVideoTitle.GetCurrentView;
+        object o;
+        // MediaPortal.Database.FolderSettings.GetFolderSetting(_currentFolder, "VideoViews", typeof(GUIVideoTitle.MapSettings), out o);
+        MediaPortal.Database.FolderSettings.GetViewSetting(_currentFolder, "VideoViews", typeof(GUIVideoTitle.MapSettings), out o);
+        if (o != null)
+        {
+          GUIVideoTitle.MapSettings mapSettings = o as GUIVideoTitle.MapSettings;
+          if (mapSettings != null)
+          {
+            CurrentSortMethod = (VideoSort.SortMethod)mapSettings.SortBy;
+            CurrentSortAsc = mapSettings.SortAscending;
+          }
+        }
       }
 
       for (int i = 0; i < facadeLayout.Count; ++i)
@@ -515,8 +544,8 @@ namespace MediaPortal.GUI.Video
         GUIListItem item = facadeLayout[i];
         IMDBMovie movie = item.AlbumInfoTag as IMDBMovie;
 
-        if (movie != null && movie.ID > 0  && !isShareView && 
-            (!item.IsFolder || CurrentSortMethod == VideoSort.SortMethod.NameAll ))
+        if (movie != null && movie.ID > 0 && !isShareView &&
+            (!item.IsFolder || CurrentSortMethod == VideoSort.SortMethod.NameAll))
         {
           if (CurrentSortMethod == VideoSort.SortMethod.Name || CurrentSortMethod == VideoSort.SortMethod.NameAll
              || CurrentSortMethod == VideoSort.SortMethod.Name_With_Duration)
@@ -574,15 +603,33 @@ namespace MediaPortal.GUI.Video
               item.Label2 = Util.Utils.SecondsToHMString(movie.RunTime * 60);
             }
           }
+          else if (!isShareView && CurrentSortMethod == VideoSort.SortMethod.Date)
+          {
+            string strDate = string.Empty;
+
+            if (!item.IsFolder && movie != null)
+            {
+              if (movie.DateAdded != "0001-01-01 00:00:00")
+              {
+                strDate = movie.DateAdded; 
+              }
+              else
+              {
+                strDate = movie.LastUpdate;
+              }
+            }
+            item.Label2 = strDate;
+          }
         }
         else
         {
           string strSize1 = string.Empty, strDate = string.Empty;
-          
+
           if (item.FileInfo != null && !item.IsFolder)
           {
             strSize1 = Util.Utils.GetSize(item.FileInfo.Length);
           }
+
           if (item.FileInfo != null && !item.IsFolder)
           {
             if (CurrentSortMethod == VideoSort.SortMethod.Modified)
@@ -592,6 +639,7 @@ namespace MediaPortal.GUI.Video
               strDate = item.FileInfo.CreationTime.ToShortDateString() + " " +
                         item.FileInfo.CreationTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
           }
+
           if (CurrentSortMethod == VideoSort.SortMethod.Name || CurrentSortMethod == VideoSort.SortMethod.NameAll)
           {
             if (item.IsFolder)
@@ -603,6 +651,7 @@ namespace MediaPortal.GUI.Video
               item.Label2 = strSize1;
             }
           }
+
           if (CurrentSortMethod == VideoSort.SortMethod.Name_With_Duration && !item.IsFolder && item.Label != "..")
           {
             if (_stackedFolder)
@@ -627,6 +676,20 @@ namespace MediaPortal.GUI.Video
           }
           else if (CurrentSortMethod == VideoSort.SortMethod.Created || CurrentSortMethod == VideoSort.SortMethod.Date || CurrentSortMethod == VideoSort.SortMethod.Modified)
           {
+            if (!isShareView && CurrentSortMethod == VideoSort.SortMethod.Date && string.IsNullOrWhiteSpace(strDate))
+            {
+              if (!item.IsFolder && movie != null)
+              {
+                if (movie.DateAdded != "0001-01-01 00:00:00")
+                {
+                  strDate = movie.DateAdded; 
+                }
+                else
+                {
+                  strDate = movie.LastUpdate;
+                }
+              }
+            }
             item.Label2 = strDate;
           }
           else
