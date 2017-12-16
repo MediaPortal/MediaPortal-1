@@ -613,12 +613,16 @@ void CDeMultiplexer::FlushVideo(bool isMidStream)
   //LogDebug("demux:flush video");
   CAutoLock flock (&m_sectionFlushVideo);
   CAutoLock lock (&m_sectionVideo);
-  ivecBuffers it = m_vecVideoBuffers.begin();
-  while (it != m_vecVideoBuffers.end())
+  
+  if (m_vecVideoBuffers.size()>0)
   {
-    CBuffer* videoBuffer = *it;
-    delete videoBuffer;
-    it = m_vecVideoBuffers.erase(it);
+    ivecBuffers it = m_vecVideoBuffers.begin();
+    for ( ; it != m_vecVideoBuffers.end() ; it++ )
+    {
+      CBuffer* videoBuffer = *it;
+      delete videoBuffer;
+    }
+    m_vecVideoBuffers.clear();
   }
     
   m_p.Free();
@@ -670,22 +674,30 @@ void CDeMultiplexer::FlushAudio()
   CAutoLock flock (&m_sectionFlushAudio);
   CAutoLock lock (&m_sectionAudio);
   delete m_pCurrentAudioBuffer;
-  ivecBuffers it = m_vecAudioBuffers.begin();
-  while (it != m_vecAudioBuffers.end())
+  
+  if (m_vecAudioBuffers.size()>0)
   {
-    CBuffer* AudioBuffer = *it;
-    delete AudioBuffer;
-    it = m_vecAudioBuffers.erase(it);
+    ivecBuffers it = m_vecAudioBuffers.begin();
+    for ( ; it != m_vecAudioBuffers.end() ; it++ )
+    {
+      CBuffer* AudioBuffer = *it;
+      delete AudioBuffer;
+    }
+    m_vecAudioBuffers.clear();
   }
+  
   // Clear PES temporary queue.
-  it = m_t_vecAudioBuffers.begin();
-  while (it != m_t_vecAudioBuffers.end())
+  if (m_t_vecAudioBuffers.size()>0)
   {
-    CBuffer* AudioBuffer=*it;
-    delete AudioBuffer;
-    it=m_t_vecAudioBuffers.erase(it);
+    ivecBuffers it = m_t_vecAudioBuffers.begin();
+    for ( ; it != m_t_vecAudioBuffers.end() ; it++ )
+    {
+      CBuffer* AudioBuffer=*it;
+      delete AudioBuffer;
+    }
+    m_t_vecAudioBuffers.clear();
   }
-
+  
   m_AudioPrevCC = -1;
   m_FirstAudioSample = 0x7FFFFFFF00000000LL;
   m_LastAudioSample = 0;
@@ -723,13 +735,18 @@ void CDeMultiplexer::FlushCurrentAudio()
 
   // Clear PES temporary queue.
   delete m_pCurrentAudioBuffer;
-  ivecBuffers it = m_t_vecAudioBuffers.begin();
-  while (it != m_t_vecAudioBuffers.end())
+  
+  if (m_t_vecAudioBuffers.size()>0)
   {
-    CBuffer* AudioBuffer=*it;
-    delete AudioBuffer;
-    it=m_t_vecAudioBuffers.erase(it);
+    ivecBuffers it = m_t_vecAudioBuffers.begin();
+    for ( ; it != m_t_vecAudioBuffers.end() ; it++ )
+    {
+      CBuffer* AudioBuffer=*it;
+      delete AudioBuffer;
+    }
+    m_t_vecAudioBuffers.clear();
   }
+
   m_pCurrentAudioBuffer = new CBuffer();
 
   m_AudioValidPES = false;
@@ -748,13 +765,18 @@ void CDeMultiplexer::FlushSubtitle()
   CAutoLock flock (&m_sectionFlushSubtitle);
   CAutoLock lock (&m_sectionSubtitle);
   delete m_pCurrentSubtitleBuffer;
-  ivecBuffers it = m_vecSubtitleBuffers.begin();
-  while (it != m_vecSubtitleBuffers.end())
+  
+  if (m_vecSubtitleBuffers.size()>0)
   {
-    CBuffer* subtitleBuffer = *it;
-    delete subtitleBuffer;
-    it = m_vecSubtitleBuffers.erase(it);
+    ivecBuffers it = m_vecSubtitleBuffers.begin();
+    for ( ; it != m_vecSubtitleBuffers.end() ; it++ )
+    {
+      CBuffer* subtitleBuffer = *it;
+      delete subtitleBuffer;
+    }
+    m_vecSubtitleBuffers.clear();
   }
+
   m_pCurrentSubtitleBuffer = new CBuffer();
 }
 
@@ -825,7 +847,7 @@ CBuffer* CDeMultiplexer::GetSubtitle()
   CAutoLock lock (&m_sectionSubtitle);
   
   //are there subtitle packets in the buffer?
-  if (m_vecSubtitleBuffers.size()!=0 )
+  if (m_vecSubtitleBuffers.size()>0 )
   {
     //yup, then return the next one
     ivecBuffers it =m_vecSubtitleBuffers.begin();
@@ -2164,7 +2186,8 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket, int bufferOffs
             if (m_vecAudioBuffers.size()>MAX_AUD_BUF_SIZE)
             {
               ivecBuffers it = m_vecAudioBuffers.begin();
-              delete *it;
+              CBuffer* AudioBuffer=*it;
+              delete AudioBuffer;
               m_vecAudioBuffers.erase(it);
               
               //Something is going wrong...
@@ -2185,14 +2208,18 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket, int bufferOffs
           }
         }
         else
-        {
-          while (m_t_vecAudioBuffers.size())
+        {          
+          // Clear PES temporary queue.
+          if (m_t_vecAudioBuffers.size()>0)
           {
-            ivecBuffers it;
-            it = m_t_vecAudioBuffers.begin();
-            delete *it;
-            m_t_vecAudioBuffers.erase(it);
-          }
+            ivecBuffers it = m_t_vecAudioBuffers.begin();
+            for ( ; it != m_t_vecAudioBuffers.end() ; it++ )
+            {
+              CBuffer* AudioBuffer=*it;
+              delete AudioBuffer;
+            }
+            m_t_vecAudioBuffers.clear();
+          }          
           m_bSetAudioDiscontinuity = true; //Next good packet will be discontinuous
         }
       }
