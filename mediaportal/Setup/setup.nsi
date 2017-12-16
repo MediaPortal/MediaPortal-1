@@ -640,7 +640,13 @@ Section "MediaPortal core files (required)" SecCore
     File /oname=bluray.dll "${git_DirectShowFilters}\bin_Win32\libbluray\libbluray.dll"
   !endif
   File /oname=libbluray.jar "${git_Libbluray}\src\.libs\libbluray-.jar"
-  CopyFiles /SILENT "$MPdir.Base\libbluray.jar" "$MPdir.Base\libbluray-j2se-0.6.2.jar"
+  CopyFiles /SILENT "$MPdir.Base\libbluray.jar" "$MPdir.Base\libbluray-j2se-1.0.2.jar"
+  ; libbluray - submodul freetype library
+  !if ${BUILD_TYPE} == "Debug"       # it's an debug build
+    File /oname=freetype.dll "${git_Libbluray}\3rd_party\freetype2\objs\Win32\Debug\freetype.dll"
+  !else
+    File /oname=freetype.dll "${git_Libbluray}\3rd_party\freetype2\objs\Win32\Release\freetype.dll"
+  !endif
   ; TvLibrary for Genre
   File "${git_TVServer}\TvLibrary.Interfaces\bin\${BUILD_TYPE}\TvLibrary.Interfaces.dll"
   File "${git_MP}\LastFMLibrary\bin\${BUILD_TYPE}\LastFMLibrary.dll"
@@ -964,6 +970,11 @@ Section -Post
   ; BASS 2.3  to   2.4   Update - requested by hwahrmann (2009-01-26)
   ${LOG_TEXT} "INFO" "Removing obsolete BASS 2.3 files"
   Delete "$MPdir.Base\MusicPlayer\plugins\audio decoders\bass_wv.dll"
+    
+  ; Libbluray remove previous release files
+  ${LOG_TEXT} "INFO" "Removing obsolete libbluray files"
+  Delete "$MPdir.Base\libbluray-j2se-0.6.2.jar"
+  Delete "$MPdir.Base\libbluray-j2se-1.0.1.jar"
 
   ; MP1-4315 Blow windowplugins dll to separate plugin dlls
   ${LOG_TEXT} "INFO" "Removing obsolete WindowPlugins.dll"

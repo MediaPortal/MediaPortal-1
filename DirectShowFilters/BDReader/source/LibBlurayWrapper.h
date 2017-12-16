@@ -136,7 +136,6 @@ public:
   bool SetScr(INT64 pts, INT64 offset);
   bool SetRate(UINT32 rate);
   bool ProvideUserInput(INT64 pPts, UINT32 pKey);
-  bool OpenMenu(INT64 pPts);
   void ForceTitleBasedPlayback(bool pForce);
   bool ForceTitleBasedPlayback();
   void SetD3DDevice(IDirect3DDevice9* device);
