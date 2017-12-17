@@ -35,6 +35,7 @@ using MediaPortal.Player.Subtitles;
 using MediaPortal.Profile;
 using System.Collections.Generic;
 using System.Collections;
+using Action = MediaPortal.GUI.Library.Action;
 
 namespace MediaPortal.Player
 {
@@ -494,62 +495,74 @@ namespace MediaPortal.Player
       BD_EVENT_PLAYLIST = 6,  /* current playlist (xxxxx.mpls) */
       BD_EVENT_PLAYITEM = 7,  /* current play item, 0...N-1  */
       BD_EVENT_CHAPTER = 8,  /* current chapter, 1...N */
-      BD_EVENT_PLAYMARK = 30, /* playmark reached */
-      BD_EVENT_END_OF_TITLE = 9,
+      BD_EVENT_PLAYMARK = 9, /* playmark reached */
+      BD_EVENT_END_OF_TITLE = 10,
 
       /*
       * stream selection
       */
 
-      BD_EVENT_AUDIO_STREAM = 10,  /* 1..32,  0xff  = none */
-      BD_EVENT_IG_STREAM = 11,  /* 1..32                */
-      BD_EVENT_PG_TEXTST_STREAM = 12,  /* 1..255, 0xfff = none */
-      BD_EVENT_PIP_PG_TEXTST_STREAM = 13,  /* 1..255, 0xfff = none */
-      BD_EVENT_SECONDARY_AUDIO_STREAM = 14,  /* 1..32,  0xff  = none */
-      BD_EVENT_SECONDARY_VIDEO_STREAM = 15,  /* 1..32,  0xff  = none */
+      BD_EVENT_AUDIO_STREAM = 11,  /* 1..32,  0xff  = none */
+      BD_EVENT_IG_STREAM = 12,  /* 1..32                */
+      BD_EVENT_PG_TEXTST_STREAM = 13,  /* 1..255, 0xfff = none */
+      BD_EVENT_PIP_PG_TEXTST_STREAM = 14,  /* 1..255, 0xfff = none */
+      BD_EVENT_SECONDARY_AUDIO_STREAM = 15,  /* 1..32,  0xff  = none */
+      BD_EVENT_SECONDARY_VIDEO_STREAM = 16,  /* 1..32,  0xff  = none */
 
-      BD_EVENT_PG_TEXTST = 16,  /* 0 - disable, 1 - enable */
-      BD_EVENT_PIP_PG_TEXTST = 17,  /* 0 - disable, 1 - enable */
-      BD_EVENT_SECONDARY_AUDIO = 18,  /* 0 - disable, 1 - enable */
-      BD_EVENT_SECONDARY_VIDEO = 19,  /* 0 - disable, 1 - enable */
-      BD_EVENT_SECONDARY_VIDEO_SIZE = 20,  /* 0 - PIP, 0xf - fullscreen */
+      BD_EVENT_PG_TEXTST = 17,  /* 0 - disable, 1 - enable */
+      BD_EVENT_PIP_PG_TEXTST = 18,  /* 0 - disable, 1 - enable */
+      BD_EVENT_SECONDARY_AUDIO = 19,  /* 0 - disable, 1 - enable */
+      BD_EVENT_SECONDARY_VIDEO = 20,  /* 0 - disable, 1 - enable */
+      BD_EVENT_SECONDARY_VIDEO_SIZE = 21,  /* 0 - PIP, 0xf - fullscreen */
 
       /*
       * playback control
       */
+	  
+      /* HDMV VM or JVM stopped playlist playback. Flush all buffers. */
+      BD_EVENT_PLAYLIST_STOP = 22,
 
       /* discontinuity in the stream (non-seamless connection). Reset demuxer PES buffers. */
-      BD_EVENT_DISCONTINUITY = 28,  /* new timestamp (45 kHz) */
+      BD_EVENT_DISCONTINUITY = 23,  /* new timestamp (45 kHz) */
 
       /* HDMV VM or JVM seeked the stream. Next read() will return data from new position. Flush all buffers. */
-      BD_EVENT_SEEK = 21,
+      BD_EVENT_SEEK = 24,  /* new media time (45 kHz) */
 
       /* still playback (pause) */
-      BD_EVENT_STILL = 22,  /* 0 - off, 1 - on */
+      BD_EVENT_STILL = 25,  /* 0 - off, 1 - on */
 
       /* Still playback for n seconds (reached end of still mode play item).
 	      * Playback continues by calling bd_read_skip_still(). */
-      BD_EVENT_STILL_TIME = 23,  /* 0 = infinite ; 1...300 = seconds */
+      BD_EVENT_STILL_TIME = 26,  /* 0 = infinite ; 1...300 = seconds */
 
       /* Play sound effect */
-      BD_EVENT_SOUND_EFFECT = 24,  /* effect ID */
+      BD_EVENT_SOUND_EFFECT = 27,  /* effect ID */
 
       /*
       * status
       */
 
-      /* Nothing to do. Playlist is not playing, but title applet is running. */
-      BD_EVENT_IDLE = 29,
+      /*Nothing to do. Playlist is not playing, but title applet is running.
+      * Application should not call bd_read*() immediately again to avoid busy loop. */
+      BD_EVENT_IDLE = 28,
 
       /* Pop-Up menu available */
-      BD_EVENT_POPUP = 25,  /* 0 - no, 1 - yes */
+      BD_EVENT_POPUP = 29,  /* 0 - no, 1 - yes */
 
       /* Interactive menu visible */
-      BD_EVENT_MENU = 26,  /* 0 - no, 1 - yes */
+      BD_EVENT_MENU = 30,  /* 0 - no, 1 - yes */
 
       /* 3D */
-      BD_EVENT_STEREOSCOPIC_STATUS = 27,  /* 0 - 2D, 1 - 3D */
-    }
+      BD_EVENT_STEREOSCOPIC_STATUS = 31,  /* 0 - 2D, 1 - 3D */
+
+      /* BD-J key interest table changed */
+      BD_EVENT_KEY_INTEREST_TABLE = 32,  /* bitmask, BLURAY_KIT_* */
+
+      /* UO mask changed */
+      BD_EVENT_UO_MASK_CHANGED = 33,  /* bitmask, BLURAY_UO_* */
+
+      /*BD_EVENT_LAST = 33, */
+	  }
 
     protected enum BluRayStreamFormats : byte
     {
@@ -567,6 +580,7 @@ namespace MediaPortal.Player
       BLURAY_STREAM_TYPE_AUDIO_DTSHD_MASTER = 0x86,
       BLURAY_STREAM_TYPE_VIDEO_VC1 = 0xea,
       BLURAY_STREAM_TYPE_VIDEO_H264 = 0x1b,
+      BLURAY_STREAM_TYPE_VIDEO_HEVC = 0x24,
       BLURAY_STREAM_TYPE_SUB_PG = 0x90,
       BLURAY_STREAM_TYPE_SUB_IG = 0x91,
       BLURAY_STREAM_TYPE_SUB_TEXT = 0x92,
@@ -600,7 +614,49 @@ namespace MediaPortal.Player
       BLURAY_VIDEO_FORMAT_1080I = 4,  // SMPTE 274M
       BLURAY_VIDEO_FORMAT_720P = 5,  // SMPTE 296M
       BLURAY_VIDEO_FORMAT_1080P = 6,  // SMPTE 274M
-      BLURAY_VIDEO_FORMAT_576P = 7   // ITU-R BT.1358
+      BLURAY_VIDEO_FORMAT_576P = 7,   // ITU-R BT.1358
+      BLURAY_VIDEO_FORMAT_2160P = 8  //
+    }
+
+    protected enum VideoAspect : byte
+    {
+      BLURAY_ASPECT_RATIO_4_3 = 2,
+      BLURAY_ASPECT_RATIO_16_9 = 3
+    }
+
+    protected enum AudioRate : byte
+    {
+      BLURAY_AUDIO_RATE_48 = 1,
+      BLURAY_AUDIO_RATE_96 = 4,
+      BLURAY_AUDIO_RATE_192 = 5,
+      BLURAY_AUDIO_RATE_192_COMBO = 12, // 48 or 96 ac3/dts
+                                        // 192 mpl/dts-hd
+      BLURAY_AUDIO_RATE_96_COMBO = 14  // 48 ac3/dts
+                                       // 96 mpl/dts-hd
+    }
+
+    protected enum CharCode : byte
+    {
+      BLURAY_TEXT_CHAR_CODE_UTF8 = 0x01,
+      BLURAY_TEXT_CHAR_CODE_UTF16BE = 0x02,
+      BLURAY_TEXT_CHAR_CODE_SHIFT_JIS = 0x03,
+      BLURAY_TEXT_CHAR_CODE_EUC_KR = 0x04,
+      BLURAY_TEXT_CHAR_CODE_GB18030_20001 = 0x05,
+      BLURAY_TEXT_CHAR_CODE_CN_GB = 0x06,
+      BLURAY_TEXT_CHAR_CODE_BIG5 = 0x07
+    }
+
+    protected enum StillMode : byte
+    {
+      BLURAY_STILL_NONE = 0x00,
+      BLURAY_STILL_TIME = 0x01,
+      BLURAY_STILL_INFINITE = 0x02,
+    }
+
+    protected enum MarkType : byte
+    {
+      BLURAY_MARK_ENTRY = 0x01, /* entry mark for chapter search */
+      BLURAY_MARK_LINK = 0x02, /* link point */ 
     }
 
     [Flags]
@@ -1866,8 +1922,21 @@ namespace MediaPortal.Player
         eventBuffer.Set(bdevent);
         //Log.Debug("BDPlayer OnBDEvent: {0}, param: {1}", eventType, bdevent.Param);
       }
+      if (bdevent.Event == 0 || eventType != BDEvents.BD_EVENT_END_OF_TITLE) return 0;
+      if (BdStopHandled) return 0;
+      if (bdevent.Param == 0)
+      {
+        if (!_forceTitle) return 0;
+        BdStopHandled = true;
+        eventBuffer.Clear();
+        var action = new Action(Action.ActionType.ACTION_STOP, 0, 0);
+        GUIGraphicsContext.OnAction(action);
+        Log.Debug("BDPlayer: End of file {0}", bdevent.Param);
+      }
       return 0;
     }
+
+    public bool BdStopHandled { get; set; }
 
     public int OnClockChange(long duration, long position)
     {

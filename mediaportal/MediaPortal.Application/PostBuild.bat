@@ -128,6 +128,15 @@ xcopy %1\..\DirectShowFilters\BDReader\libbluray\bluray.dll . /Y /D
 xcopy %1\..\libbluray\src\.libs\libbluray-.jar . /Y /D
 ren libbluray-.jar libbluray.jar
 
+REM freetype.dll - odd source folder is 
+if /I "%2" EQU "RELEASE" (
+xcopy %1\..\libbluray\3rd_party\freetype2\objs\Win32\Release\freetype.dll . /Y /D
+)
+
+if /I "%2" EQU "DEBUG" (
+xcopy %1\..\libbluray\3rd_party\freetype2\objs\Win32\Debug\freetype.dll . /Y /D
+)
+
 REM mpWatchDog
 xcopy %1\WatchDog\bin\%2\WatchDog.exe . /Y /D
 xcopy %1\WatchDog\bin\%2\DaggerLib.dll . /Y /D
