@@ -1526,13 +1526,13 @@ namespace MediaPortal.Player
       if (_state == PlayState.Paused)
       {
         Speed = 1;
-        _mediaCtrl.Run();
+        if (_mediaCtrl != null) _mediaCtrl.Run();
         _state = PlayState.Playing;
       }
       else if (_state == PlayState.Playing)
       {
         _state = PlayState.Paused;
-        _mediaCtrl.Pause();
+        if (_mediaCtrl != null) _mediaCtrl.Pause();
       }
     }
 
@@ -2478,7 +2478,7 @@ namespace MediaPortal.Player
         {
           lTimerInterval = 1000;
         }
-        rewind = _currentPosDS + Convert.ToInt32((long)lTimerInterval * Speed * 10000);
+        rewind = _currentPosDS + (long)lTimerInterval * Speed * 10000;
         int hr;
         pStop = 0;
         // if we end up before the first moment of time then just
@@ -3080,7 +3080,7 @@ namespace MediaPortal.Player
 
         if (_audioRendererFilter != null)
         {
-          DirectShowUtil.FinalReleaseComObject(_audioRendererFilter);
+          DirectShowUtil.ReleaseComObject(_audioRendererFilter);
           _audioRendererFilter = null;
           Log.Info("BDPlayer: Cleanup AudioRenderer");
         }
@@ -3130,7 +3130,6 @@ namespace MediaPortal.Player
 
         #endregion
 
-        _videoWin = _graphBuilder as IVideoWindow;
         if (_videoWin != null && GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
         {
           _videoWin.put_Owner(IntPtr.Zero);
@@ -3141,6 +3140,17 @@ namespace MediaPortal.Player
         {
           _mediaEvt.SetNotifyWindow(IntPtr.Zero, WM_GRAPHNOTIFY, IntPtr.Zero);
           _mediaEvt = null;
+        }
+
+        if (VMR9Util.g_vmr9?._vmr9Filter != null && GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+        {
+          // Releasing madVR
+          _mediaCtrl = null;
+          _mediaSeeking = null;
+          _videoWin = null;
+          _basicAudio = null;
+          _basicVideo = null;
+          VMR9Util.g_vmr9?.Vmr9MadVrRelease();
         }
 
         if (_graphBuilder != null)
@@ -3183,6 +3193,7 @@ namespace MediaPortal.Player
         if (VMR9Util.g_vmr9 != null)
         {
           VMR9Util.g_vmr9.RestoreGuiForMadVr();
+          VMR9Util.g_vmr9.SafeDispose();
         }
         Log.Error("BDPlayer: Exception while cleaning DShow graph - {0} {1}", ex.Message, ex.StackTrace);
       }

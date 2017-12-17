@@ -98,6 +98,20 @@ namespace MediaPortal.Player.Subtitles
 
     public void SetDevice(IntPtr device)
     {
+      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+      {
+        // Need to init there to have the setting for madVR.
+        LoadSettings();
+        MpcSubtitles.SetDefaultStyle(ref this.defStyle, this.overrideASSStyle);
+        if (selectionOff)
+        {
+          MpcSubtitles.SetShowForcedOnly(false);
+        }
+        else
+        {
+          MpcSubtitles.SetShowForcedOnly(!this.autoShow);
+        }
+      }
       MpcSubtitles.SetDevice(device);
     }
 
@@ -200,6 +214,11 @@ namespace MediaPortal.Player.Subtitles
       MpcSubtitles.Render(r.X, r.Y + posY, r.Width, r.Height, xOffsetInPixels);
     }
 
+    public void RenderEx(Rectangle subsRect, Rectangle frameRect, int xOffsetInPixels)
+    {
+     MpcSubtitles.RenderEx(subsRect, frameRect, xOffsetInPixels, posRelativeToFrame);
+    }
+
     public int GetCount()
     {
       return MpcSubtitles.GetCount();
@@ -219,6 +238,12 @@ namespace MediaPortal.Player.Subtitles
     {
       get { return MpcSubtitles.GetCurrent(); }
       set { MpcSubtitles.SetCurrent(value); }
+    }
+
+    public int SetCurrent3DSubtitle
+    {
+      get { return MpcSubtitles.GetCurrent(); }
+      set { MpcSubtitles.SetCurrent3DSubtitle(value); }
     }
 
     public bool Enable
@@ -311,6 +336,9 @@ namespace MediaPortal.Player.Subtitles
       public static extern void SetCurrent(int current);
 
       [DllImport("mpcSubs.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+      public static extern void SetCurrent3DSubtitle(int current);
+
+      [DllImport("mpcSubs.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
       public static extern bool GetEnable();
 
       [DllImport("mpcSubs.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
@@ -318,6 +346,9 @@ namespace MediaPortal.Player.Subtitles
 
       [DllImport("mpcSubs.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
       public static extern void Render(int x, int y, int width, int height, int xOffsetInPixels);
+
+      [DllImport("mpcSubs.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+      public static extern void RenderEx(Rectangle viewportRect, Rectangle croppedVideoRect, int xOffsetInPixels, bool posRelativeToFrame);
 
       [DllImport("mpcSubs.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
       public static extern int GetDelay();

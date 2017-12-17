@@ -242,6 +242,27 @@ namespace MediaPortal.Util
       [In, MarshalAs(UnmanagedType.LPWStr)] string lpLCData, int cchData
       );
 
+    [DllImport("kernel32.dll", SetLastError = true)]
+    public static extern int GlobalSize(IntPtr hMem);
+
+    [DllImport("kernel32.dll", SetLastError = true)]
+    public static extern IntPtr GlobalLock(IntPtr handle);
+
+    [DllImport("Kernel32", CharSet = CharSet.Auto)]
+    public static extern int GlobalUnlock(IntPtr hMem);
+
+    [DllImport("Kernel32", CharSet = CharSet.Auto)]
+    public static extern IntPtr GlobalFree(IntPtr hMem);
+
+    [DllImport("kernel32.dll", SetLastError = true)]
+    public static extern IntPtr LocalFree(IntPtr hMem);
+
+    [DllImport("kernel32.dll", SetLastError = true)]
+    public static extern IntPtr GlobalAlloc(uint uFlags, UIntPtr dwBytes);
+
+    [DllImport("kernel32.dll")]
+    public static extern IntPtr LocalAlloc(uint uFlags, UIntPtr uBytes);
+
     #endregion
 
     #region Structures
@@ -375,6 +396,43 @@ namespace MediaPortal.Util
         //mouse and HID parts omitted
     }
 
+    // GDI imports : read MSDN!
+
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
+    public class BITMAPFILEHEADER
+    {
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
+      public Char[] Type;
+      public Int32 Size;
+      public Int16 reserved1;
+      public Int16 reserved2;
+      public Int32 OffBits;
+    }
+
+    [StructLayout(LayoutKind.Sequential, Pack = 2)]
+    public class BITMAPINFOHEADER
+    {
+      public int biSize;
+      public int biWidth;
+      public int biHeight;
+      public short biPlanes;
+      public short biBitCount;
+      public int biCompression;
+      public int biSizeImage;
+      public int biXPelsPerMeter;
+      public int biYPelsPerMeter;
+      public int biClrUsed;
+      public int biClrImportant;
+    }
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    public class RGBQUAD
+    {
+      public byte rgbBlue;
+      public byte rgbGreen;
+      public byte rgbRed;
+      public byte rgbReserved;
+    }
     #endregion
 
     #region Enums

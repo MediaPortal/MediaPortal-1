@@ -32,6 +32,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.ComTypes;
 using System.Text;
+using System.Threading;
 using DirectShowLib.Dvd;
 #if !USING_NET11
 
@@ -1060,6 +1061,32 @@ namespace DirectShowLib
 
       return 0;
     }
+
+    public static int FinalReleaseComObject(object obj)
+    {
+      if (obj != null)
+      {
+        if (Marshal.IsComObject(obj))
+          while (true)
+          {
+            if (Marshal.ReleaseComObject(obj) > 0)
+            {
+              Thread.Sleep(100);
+            }
+            else
+            {
+              Marshal.FinalReleaseComObject(obj);
+              obj = null;
+              break;
+            }
+          }
+      }
+
+      StackTrace st = new StackTrace(true);
+      //Log.Error("Exception while releasing COM object (NULL) - stacktrace: {0}", st);
+
+      return 0;
+    }
   }
 
 
@@ -1113,7 +1140,7 @@ namespace DirectShowLib
         IntPtr iuPtr = Marshal.GetIUnknownForObject(graph);
         int iuInt = (int) iuPtr;
         Marshal.Release(iuPtr);
-        string item = string.Format("FilterGraph {0} pid {1}", iuInt.ToString("x8"), id.ToString("x8"));
+        string item = string.Format("FilterGraph {0} pid {1} - {2}", iuInt.ToString("x8"), id.ToString("x8"), "(MediaPortal)");
         hr = CreateItemMoniker("!", item, out mk);
         DsError.ThrowExceptionForHR(hr);
 
@@ -1165,9 +1192,13 @@ namespace DirectShowLib
           rot.Revoke(m_cookie);
           m_cookie = 0;
         }
+        catch (Exception ex)
+        {
+          // ignored
+        }
         finally
         {
-          DsUtils.ReleaseComObject(rot);
+          DsUtils.FinalReleaseComObject(rot);
           rot = null;
         }
       }

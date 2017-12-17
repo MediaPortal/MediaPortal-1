@@ -20,12 +20,15 @@
 
 using System;
 using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading;
 using MediaPortal.ExtensionMethods;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player.Subtitles;
 using MediaPortal.Profile;
+using MediaPortal.Util;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using Geometry = MediaPortal.GUI.Library.Geometry;
@@ -113,10 +116,13 @@ namespace MediaPortal.Player
 
     private int _reduceMadvrFrame = 0;
     private bool _useReduceMadvrFrame = false;
+    private bool _useRestoreMadvr1080P = false;
     private string _subEngineType = "";
+    private bool _posRelativeToFrame = false;
     private readonly object _lockobj = new object();
 
     private bool UiVisible { get; set; }
+    protected internal Thread WorkerThread = null;
 
     #endregion
 
@@ -302,8 +308,12 @@ namespace MediaPortal.Player
         GUIGraphicsContext.InVmr9Render = false;
         if (VMR9Util.g_vmr9 != null)
         {
-          VMR9Util.g_vmr9.RestoreGuiForMadVr();
+          if (GUIGraphicsContext.MadVrRenderTargetVMR9 != null && !GUIGraphicsContext.MadVrRenderTargetVMR9.Disposed)
+          {
+            GUIGraphicsContext.DX9Device.SetRenderTarget(0, GUIGraphicsContext.MadVrRenderTargetVMR9);
+          }
         }
+        GUIGraphicsContext.ForcedRefreshRate3D = false;
       }
     }
 
@@ -319,11 +329,21 @@ namespace MediaPortal.Player
       if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
       {
         _renderTarget = GUIGraphicsContext.DX9Device.GetRenderTarget(0);
-
+      }
+      else if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+      {
         // Reset 3D
         GUIGraphicsContext.NoneDone = false;
         GUIGraphicsContext.TopAndBottomDone = false;
         GUIGraphicsContext.SideBySideDone = false;
+        GUIGraphicsContext.SBSLeftDone = false;
+        GUIGraphicsContext.SBSRightDone = false;
+        GUIGraphicsContext.TABTopDone = false;
+        GUIGraphicsContext.TABBottomDone = false;
+        GUIGraphicsContext.ForcedRefreshRate3D = false;
+        GUIGraphicsContext.ForcedRR3DBackDefault = false;
+        GUIGraphicsContext.ForcedRefreshRate3DDone = false;
+        GUIGraphicsContext.Render3DMode = GUIGraphicsContext.eRender3DMode.None;
       }
       GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Video);
       GUIWindowManager.Receivers += new SendMessageHandler(this.OnMessage);
@@ -335,6 +355,8 @@ namespace MediaPortal.Player
           _reduceMadvrFrame = xmlreader.GetValueAsInt("general", "reduceMadvrFrame", 0);
           _useReduceMadvrFrame = xmlreader.GetValueAsBool("general", "useReduceMadvrFrame", false);
           _subEngineType = xmlreader.GetValueAsString("subtitles", "engine", "DirectVobSub");
+          _posRelativeToFrame = xmlreader.GetValueAsBool("subtitles", "subPosRelative", false);
+          _useRestoreMadvr1080P = xmlreader.GetValueAsBool("general", "useRestoreMadvr1080p", false);
         }
         catch (Exception)
         {
@@ -361,6 +383,10 @@ namespace MediaPortal.Player
         case GUIMessage.MessageType.GUI_MSG_REGISTER_MADVR_OSD:
           if (VMR9Util.g_vmr9 != null)
             VMR9Util.g_vmr9.WindowsMessageMp();
+          break;
+        case GUIMessage.MessageType.GUI_MSG_MADVRREPOSITION:
+          if (VMR9Util.g_vmr9 != null)
+            VMR9Util.g_vmr9.IniMadVrWindowPosition();
           break;
       }
     }
@@ -475,6 +501,17 @@ namespace MediaPortal.Player
             return _shouldRenderTexture;
           }
 
+          // Todo why add this hack for XySubFilter subtitle engine
+          if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
+              _subEngineType.Equals("XySubFilter") && IsFullScreen() && g_Player.Player is VideoPlayerVMR9)
+          {
+            Size client = GUIGraphicsContext.form.ClientSize;
+            if (client.Width == videoSize.Width || _prevVideoWidth == videoSize.Width)
+            {
+              return false;
+            }
+          }
+
           //settings (position,size,aspect ratio) changed.
           //Store these settings and start calucating the new video window
           _rectPrevious = new Rectangle((int) x, (int) y, (int) nw, (int) nh);
@@ -568,10 +605,11 @@ namespace MediaPortal.Player
             _destinationRect.X, _destinationRect.Y, _destinationRect.X + _destinationRect.Width,
             _destinationRect.Y + _destinationRect.Height);
 
-          if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
-          {
-            Util.Utils.SwitchFocus();
-          }
+          // Comment that part because it steal focus of other window
+          //if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
+          //{
+          //  Util.Utils.SwitchFocus();
+          //}
 
           return true;
         }
@@ -668,18 +706,19 @@ namespace MediaPortal.Player
       return 0;
     }
 
-    public void RenderFrame(Int16 width, Int16 height, Int16 arWidth, Int16 arHeight, uint pSurface)
+    public void RenderFrame(Int16 width, Int16 height, Int16 arWidth, Int16 arHeight, IntPtr pSurface)
     {
-      IntPtr ptrMadVr = (IntPtr)pSurface;
+      IntPtr ptrMadVr = pSurface;
       Surface surfaceMadVr = new Surface(ptrMadVr);
+      Size client = GUIGraphicsContext.form.ClientSize;
       try
       {
         unsafe
         {
           lock (GUIGraphicsContext.RenderModeSwitch)
           {
-            if (grabber !=null)
-              grabber.OnFrame(width, height, arWidth, arHeight, (uint)surfaceMadVr.UnmanagedComPointer,
+            if (grabber != null)
+              grabber.OnFrame((short)client.Width, (short)client.Height, (short)client.Width, (short)client.Height, (uint)surfaceMadVr.UnmanagedComPointer,
                 FrameGrabber.FrameSource.Video);
           }
         }
@@ -690,6 +729,120 @@ namespace MediaPortal.Player
       {
         surfaceMadVr.ReleaseGraphics();
         surfaceMadVr.Dispose();
+      }
+    }
+
+    //internal void WorkerThreadStart()
+    //{
+    //  WorkerThread = new Thread(new ThreadStart(madVRGrab));
+    //  WorkerThread.IsBackground = true;
+    //  GUIGraphicsContext.WorkerThreadStart = true;
+    //  WorkerThread.Name = "Grab Frame thread";
+    //  WorkerThread.Priority = ThreadPriority.AboveNormal;
+    //  WorkerThread.Start();
+    //}
+
+    //private void madVRGrab()
+    //{
+    //  while (true)
+    //  {
+    //    if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
+    //        GUIGraphicsContext.Vmr9Active)
+    //    {
+    //      if (VMR9Util.g_vmr9 != null)
+    //      {
+    //        Thread.Sleep(10);
+    //        VMR9Util.g_vmr9.MadVrGrabFrame();
+    //      }
+    //    }
+    //  }
+    //}
+
+    public void GrabMadVrScreenshot(IntPtr pTargetmadVrDib)
+    {
+      IntPtr pdib = pTargetmadVrDib;
+      try
+      {
+        if (pTargetmadVrDib != IntPtr.Zero)
+        {
+          string directory = string.Format("{0}\\MediaPortal Screenshots\\{1:0000}-{2:00}-{3:00}",
+            Environment.GetFolderPath(Environment.SpecialFolder.MyPictures),
+            DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
+          if (!Directory.Exists(directory))
+          {
+            Log.Info("Planescene: Taking screenshot - Creating directory: {0}", directory);
+            Directory.CreateDirectory(directory);
+          }
+          string fileName = string.Format("{0}\\madVR - {1:00}-{2:00}-{3:00}", directory, DateTime.Now.Hour,
+            DateTime.Now.Minute, DateTime.Now.Second);
+
+          // Save screenshot from DIB
+          Win32API.BITMAPINFOHEADER bmih = (Win32API.BITMAPINFOHEADER) Marshal.PtrToStructure(pdib, typeof (Win32API.BITMAPINFOHEADER));
+          IntPtr pixels = IntPtr.Add(pdib, bmih.biSize);
+          Bitmap result = new Bitmap(bmih.biWidth, bmih.biHeight, bmih.biWidth*4, PixelFormat.Format32bppRgb, pixels);
+          result.RotateFlip(RotateFlipType.RotateNoneFlipY);
+          result.Save(fileName + ".jpg", ImageFormat.Jpeg);
+          result.SafeDispose();
+        }
+      }
+      catch
+      {
+        pdib = IntPtr.Zero;
+        pTargetmadVrDib = IntPtr.Zero;
+        Log.Info("Planescene : madVR grabbing image window failed");
+      }
+      finally
+      {
+        pdib = IntPtr.Zero;
+        pTargetmadVrDib = IntPtr.Zero;
+      }
+    }
+
+    public void GrabMadVrFrame(IntPtr pTargetmadVrDib)
+    {
+      lock (GUIGraphicsContext.RenderModeSwitch)
+      {
+        if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+        {
+          if (pTargetmadVrDib != IntPtr.Zero)
+          {
+            if (grabber != null)
+            {
+              grabber.OnFrame(1920, 1080, 0, 0, pTargetmadVrDib, FrameGrabber.FrameSource.Video);
+            }
+          }
+        }
+      }
+    }
+
+    public void GrabMadVrCurrentFrame(IntPtr pTargetmadVrDib)
+    {
+      lock (GUIGraphicsContext.RenderModeSwitch)
+      {
+        if (GUIGraphicsContext.madVRCurrentFrameBitmap != null)
+        {
+          GUIGraphicsContext.madVRCurrentFrameBitmap.Dispose();
+          GUIGraphicsContext.madVRCurrentFrameBitmap = null;
+        }
+        if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+        {
+          // Convert DIB to Bitmap
+          // pTargetmadVrDib is a DIB
+          if (pTargetmadVrDib != IntPtr.Zero)
+          {
+            Win32API.BITMAPINFOHEADER bmih = (Win32API.BITMAPINFOHEADER) Marshal.PtrToStructure(pTargetmadVrDib, typeof (Win32API.BITMAPINFOHEADER));
+            IntPtr pixels = IntPtr.Add(pTargetmadVrDib, bmih.biSize);
+
+            using (Bitmap b = new Bitmap(bmih.biWidth, bmih.biHeight, bmih.biWidth*4, PixelFormat.Format32bppRgb, pixels))
+            {
+              GUIGraphicsContext.madVRCurrentFrameBitmap = new Bitmap(b);
+              GUIGraphicsContext.madVRCurrentFrameBitmap.RotateFlip(RotateFlipType.RotateNoneFlipY);
+              // IMPORTANT: Closes and disposes the stream
+              // If this is not done we get a memory leak!
+              b.Dispose();
+            }
+          }
+        }
       }
     }
 
@@ -782,7 +935,11 @@ namespace MediaPortal.Player
             //Log.Debug("PlaneScene width {0}, height {1}", width, height);
 
             Size nativeSize = new Size(width, height);
-            _shouldRenderTexture = SetVideoWindow(nativeSize);
+            if (GUIGraphicsContext.Render3DMode != GUIGraphicsContext.eRender3DMode.SideBySideTo2D &&
+                 GUIGraphicsContext.Render3DMode != GUIGraphicsContext.eRender3DMode.TopAndBottomTo2D)
+            {
+              _shouldRenderTexture = SetVideoWindow(nativeSize);
+            }
           }
 
           lock (GUIGraphicsContext.RenderModeSwitch)
@@ -797,7 +954,7 @@ namespace MediaPortal.Player
                 GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.SideBySideFrom2D)
             {
               if (GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.SideBySideFrom2D)
-              // convert 2D to 3D
+                // convert 2D to 3D
               {
                 // left half
                 // right half
@@ -813,25 +970,61 @@ namespace MediaPortal.Player
                 if (GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.TopAndBottomTo2D)
                   GUIGraphicsContext.Render3DModeHalf = GUIGraphicsContext.eRender3DModeHalf.TABTop;
 
-                if (!GUIGraphicsContext.NoneDone)
+                if (GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.SideBySide)
+                  GUIGraphicsContext.Render3DModeHalf = GUIGraphicsContext.eRender3DModeHalf.None;
+
+                if (GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.TopAndBottom)
+                  GUIGraphicsContext.Render3DModeHalf = GUIGraphicsContext.eRender3DModeHalf.None;
+
+                if (GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.None)
                 {
-                  // Get Client size
-                  Size client = GUIGraphicsContext.form.ClientSize;
+                  GUIGraphicsContext.Render3DModeHalf = GUIGraphicsContext.eRender3DModeHalf.None;
 
-                  VMR9Util.g_vmr9?.MadVr3DSizeLeft(0, 0, client.Width, client.Height);
-                  VMR9Util.g_vmr9?.MadVr3DSizeRight(0, 0, client.Width, client.Height);
+                  if (!GUIGraphicsContext.NoneDone && GUIGraphicsContext.RenderMadVr3Dchanged)
+                  {
+                    // Get Client size
+                    Size client = GUIGraphicsContext.form.ClientSize;
 
-                  VMR9Util.g_vmr9?.MadVr3DOnOff(false);
+                    VMR9Util.g_vmr9?.MadVrScreenResize(GUIGraphicsContext.form.Location.X,
+                      GUIGraphicsContext.form.Location.Y, client.Width, client.Height, true);
 
-                  GUIGraphicsContext.NoneDone = true;
-                  GUIGraphicsContext.TopAndBottomDone = false;
-                  GUIGraphicsContext.SideBySideDone = false;
+                    VMR9Util.g_vmr9?.MadVr3DSizeLeft(0, 0, client.Width, client.Height);
+                    VMR9Util.g_vmr9?.MadVr3DSizeRight(0, 0, client.Width, client.Height);
+
+                    VMR9Util.g_vmr9?.MadVr3DOnOff(false);
+
+                    GUIGraphicsContext.NoneDone = true;
+                    GUIGraphicsContext.TopAndBottomDone = false;
+                    GUIGraphicsContext.SideBySideDone = false;
+                    GUIGraphicsContext.SBSLeftDone = false;
+                    GUIGraphicsContext.SBSRightDone = false;
+                    GUIGraphicsContext.TABTopDone = false;
+                    GUIGraphicsContext.TABBottomDone = false;
+                    GUIGraphicsContext.RenderMadVr3Dchanged = false;
+
+                    // Force VideoWindow to be refreshed with madVR when switching from video size like 16:9 to 4:3
+                    GUIGraphicsContext.UpdateVideoWindow = true;
+                    GUIGraphicsContext.VideoWindowChanged();
+
+                    // Force a madVR refresh to resize MP window
+                    g_Player.RefreshMadVrVideo();
+                  }
                 }
               }
             }
-            else if (GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.SideBySide ||
-                     GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.TopAndBottom)
+            else if ((GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.SideBySide ||
+                      GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.TopAndBottom))
             {
+
+              if (GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.SideBySide)
+                GUIGraphicsContext.Render3DModeHalf = GUIGraphicsContext.eRender3DModeHalf.None;
+
+              if (GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.TopAndBottom)
+                GUIGraphicsContext.Render3DModeHalf = GUIGraphicsContext.eRender3DModeHalf.None;
+
+              if (GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.None)
+                GUIGraphicsContext.Render3DModeHalf = GUIGraphicsContext.eRender3DModeHalf.None;
+
               // 3D output either SBS or TAB
               if (GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.SideBySide)
               {
@@ -854,9 +1047,29 @@ namespace MediaPortal.Player
                   GUIGraphicsContext.NoneDone = false;
                   GUIGraphicsContext.TopAndBottomDone = false;
                   GUIGraphicsContext.SideBySideDone = true;
+                  GUIGraphicsContext.SBSLeftDone = false;
+                  GUIGraphicsContext.SBSRightDone = false;
+                  GUIGraphicsContext.TABTopDone = false;
+                  GUIGraphicsContext.TABBottomDone = false;
+                  GUIGraphicsContext.NoneDone = false;
+                  GUIGraphicsContext.RenderMadVr3Dchanged = true;
+
+                  // Force VideoWindow to be refreshed with madVR when switching from video size like 16:9 to 4:3
+                  GUIGraphicsContext.UpdateVideoWindow = true;
+                  GUIGraphicsContext.VideoWindowChanged();
+
+                  // Force a madVR refresh to resize MP window
+                  g_Player.RefreshMadVrVideo();
+
+                  if (_useRestoreMadvr1080P)
+                  {
+                    Log.Debug("Planescene: 3D force refresh rate for 1920 x 1080 SBS");
+                    GUIGraphicsContext.ForcedRefreshRate3D = true;
+                  }
+                  RefreshRateChanger.AdaptRefreshRate(g_Player.CurrentFile, (RefreshRateChanger.MediaType)(int)g_Player.MediaType.Video);
                 }
               }
-              else
+              else if (GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.TopAndBottom)
               {
                 // upper half (or lower if switched)
                 // lower half (or upper if switched)
@@ -877,6 +1090,181 @@ namespace MediaPortal.Player
                   GUIGraphicsContext.NoneDone = false;
                   GUIGraphicsContext.TopAndBottomDone = true;
                   GUIGraphicsContext.SideBySideDone = false;
+                  GUIGraphicsContext.SBSLeftDone = false;
+                  GUIGraphicsContext.SBSRightDone = false;
+                  GUIGraphicsContext.TABTopDone = false;
+                  GUIGraphicsContext.TABBottomDone = false;
+                  GUIGraphicsContext.RenderMadVr3Dchanged = true;
+
+                  // Force VideoWindow to be refreshed with madVR when switching from video size like 16:9 to 4:3
+                  GUIGraphicsContext.UpdateVideoWindow = true;
+                  GUIGraphicsContext.VideoWindowChanged();
+
+                  // Force a madVR refresh to resize MP window
+                  g_Player.RefreshMadVrVideo();
+
+                  if (_useRestoreMadvr1080P)
+                  {
+                    Log.Debug("Planescene: 3D force refresh rate for 1920 x 1080 TopAndBottom");
+                    GUIGraphicsContext.ForcedRefreshRate3D = true;
+                  }
+                  RefreshRateChanger.AdaptRefreshRate(g_Player.CurrentFile, (RefreshRateChanger.MediaType)(int)g_Player.MediaType.Video);
+                }
+              }
+            }
+            if (GUIGraphicsContext.Render3DMode != GUIGraphicsContext.eRender3DMode.None)
+            {
+              // Get Client size
+              Size client = GUIGraphicsContext.form.ClientSize;
+
+              switch (GUIGraphicsContext.Render3DModeHalf)
+              {
+                case GUIGraphicsContext.eRender3DModeHalf.SBSLeft:
+
+                  //if (!GUIGraphicsContext.IsFullHD3DFormat)
+                  {
+                    if (!GUIGraphicsContext.SBSLeftDone)
+                    {
+                      GUIGraphicsContext.TopAndBottomDone = false;
+                      GUIGraphicsContext.SideBySideDone = false;
+                      GUIGraphicsContext.SBSLeftDone = true;
+                      GUIGraphicsContext.SBSRightDone = false;
+                      GUIGraphicsContext.TABTopDone = false;
+                      GUIGraphicsContext.TABBottomDone = false;
+                      GUIGraphicsContext.Render3DModeHalfDone = false;
+                      GUIGraphicsContext.NoneDone = false;
+                      GUIGraphicsContext.RenderMadVr3Dchanged = true;
+
+                      // Force VideoWindow to be refreshed with madVR when switching from video size like 16:9 to 4:3
+                      GUIGraphicsContext.UpdateVideoWindow = true;
+                      GUIGraphicsContext.VideoWindowChanged();
+
+                      // Force a madVR refresh to resize MP window
+                      g_Player.RefreshMadVrVideo();
+
+                      if (_useRestoreMadvr1080P)
+                      {
+                        Log.Debug("Planescene: 3D force refresh rate for 1920 x 1080 SBSLeft");
+                        GUIGraphicsContext.ForcedRefreshRate3D = true;
+                      }
+                      RefreshRateChanger.AdaptRefreshRate(g_Player.CurrentFile, (RefreshRateChanger.MediaType)(int)g_Player.MediaType.Video);
+                    }
+                  }
+                  break;
+
+                case GUIGraphicsContext.eRender3DModeHalf.SBSRight:
+
+                  //if (GUIGraphicsContext.IsFullHD3DFormat)
+                  {
+                    if (!GUIGraphicsContext.SBSRightDone)
+                    {
+                      GUIGraphicsContext.TopAndBottomDone = false;
+                      GUIGraphicsContext.SideBySideDone = false;
+                      GUIGraphicsContext.SBSLeftDone = false;
+                      GUIGraphicsContext.SBSRightDone = true;
+                      GUIGraphicsContext.TABTopDone = false;
+                      GUIGraphicsContext.TABBottomDone = false;
+                      GUIGraphicsContext.Render3DModeHalfDone = false;
+                      GUIGraphicsContext.NoneDone = false;
+                      GUIGraphicsContext.RenderMadVr3Dchanged = true;
+
+                      // Force VideoWindow to be refreshed with madVR when switching from video size like 16:9 to 4:3
+                      GUIGraphicsContext.UpdateVideoWindow = true;
+                      GUIGraphicsContext.VideoWindowChanged();
+
+                      // Force a madVR refresh to resize MP window
+                      g_Player.RefreshMadVrVideo();
+
+                      if (_useRestoreMadvr1080P)
+                      {
+                        Log.Debug("Planescene: 3D force refresh rate for 1920 x 1080 SBSRight");
+                        GUIGraphicsContext.ForcedRefreshRate3D = true;
+                      }
+                      RefreshRateChanger.AdaptRefreshRate(g_Player.CurrentFile, (RefreshRateChanger.MediaType)(int)g_Player.MediaType.Video);
+                    }
+                  }
+                  break;
+
+                case GUIGraphicsContext.eRender3DModeHalf.TABTop:
+
+                  //if (!GUIGraphicsContext.IsFullHD3DFormat)
+                  {
+                    if (!GUIGraphicsContext.TABTopDone)
+                    {
+                      GUIGraphicsContext.TopAndBottomDone = false;
+                      GUIGraphicsContext.SideBySideDone = false;
+                      GUIGraphicsContext.SBSLeftDone = false;
+                      GUIGraphicsContext.SBSRightDone = false;
+                      GUIGraphicsContext.TABTopDone = true;
+                      GUIGraphicsContext.TABBottomDone = false;
+                      GUIGraphicsContext.Render3DModeHalfDone = false;
+                      GUIGraphicsContext.Render3DModeHalfDone = false;
+                      GUIGraphicsContext.NoneDone = false;
+                      GUIGraphicsContext.RenderMadVr3Dchanged = true;
+
+                      // Force VideoWindow to be refreshed with madVR when switching from video size like 16:9 to 4:3
+                      GUIGraphicsContext.UpdateVideoWindow = true;
+                      GUIGraphicsContext.VideoWindowChanged();
+
+                      // Force a madVR refresh to resize MP window
+                      g_Player.RefreshMadVrVideo();
+
+                      if (_useRestoreMadvr1080P)
+                      {
+                        Log.Debug("Planescene: 3D force refresh rate for 1920 x 1080 TABTop");
+                        GUIGraphicsContext.ForcedRefreshRate3D = true;
+                      }
+                      RefreshRateChanger.AdaptRefreshRate(g_Player.CurrentFile, (RefreshRateChanger.MediaType)(int)g_Player.MediaType.Video);
+                    }
+                  }
+                  break;
+
+                case GUIGraphicsContext.eRender3DModeHalf.TABBottom:
+
+                  //if (GUIGraphicsContext.IsFullHD3DFormat)
+                  {
+                    if (!GUIGraphicsContext.TABBottomDone)
+                    {
+                      GUIGraphicsContext.TopAndBottomDone = false;
+                      GUIGraphicsContext.SideBySideDone = false;
+                      GUIGraphicsContext.SBSLeftDone = false;
+                      GUIGraphicsContext.SBSRightDone = false;
+                      GUIGraphicsContext.TABTopDone = false;
+                      GUIGraphicsContext.TABBottomDone = false;
+                      GUIGraphicsContext.Render3DModeHalfDone = false;
+                      GUIGraphicsContext.NoneDone = false;
+                      GUIGraphicsContext.RenderMadVr3Dchanged = true;
+
+                      // Force VideoWindow to be refreshed with madVR when switching from video size like 16:9 to 4:3
+                      GUIGraphicsContext.UpdateVideoWindow = true;
+                      GUIGraphicsContext.VideoWindowChanged();
+
+                      // Force a madVR refresh to resize MP window
+                      g_Player.RefreshMadVrVideo();
+
+                      if (_useRestoreMadvr1080P)
+                      {
+                        Log.Debug("Planescene: 3D force refresh rate for 1920 x 1080 TABBottom");
+                        GUIGraphicsContext.ForcedRefreshRate3D = true;
+                      }
+                      RefreshRateChanger.AdaptRefreshRate(g_Player.CurrentFile, (RefreshRateChanger.MediaType)(int)g_Player.MediaType.Video);
+                    }
+                  }
+                  break;
+              }
+              if ((GUIGraphicsContext.Render3DModeHalf == GUIGraphicsContext.eRender3DModeHalf.SBSLeft ||
+                   GUIGraphicsContext.Render3DModeHalf == GUIGraphicsContext.eRender3DModeHalf.TABTop) ||
+                  (GUIGraphicsContext.Render3DModeHalf == GUIGraphicsContext.eRender3DModeHalf.SBSRight ||
+                   GUIGraphicsContext.Render3DModeHalf == GUIGraphicsContext.eRender3DModeHalf.TABBottom))
+              {
+                if (!GUIGraphicsContext.Render3DModeHalfDone)
+                {
+                  VMR9Util.g_vmr9?.MadVrScreenResize(GUIGraphicsContext.form.Location.X,
+                    GUIGraphicsContext.form.Location.Y, client.Width, client.Height, true);
+                  VMR9Util.g_vmr9?.MadVr3DSizeLeft(0, 0, client.Width, client.Height);
+                  VMR9Util.g_vmr9?.MadVr3DSizeRight(0, 0, client.Width, client.Height);
+                  VMR9Util.g_vmr9?.MadVr3DOnOff(false);
+                  GUIGraphicsContext.Render3DModeHalfDone = true;
                 }
               }
             }
@@ -923,26 +1311,38 @@ namespace MediaPortal.Player
           if (VMR9Util.g_vmr9 != null)
           {
             VMR9Util.g_vmr9.ProcessMadVrOsd();
+
+            // Enable the GetCurrentImage new madVR
+            if (grabber != null) grabber.FrameGrabberD3D9Enable = false;
           }
         }
         return _visible ? 0 : 1; // S_OK, S_FALSE
       }
     }
 
-    public void RestoreDeviceSurface(uint pSurfaceDevice)
+    public void RestoreDeviceSurface(IntPtr pSurfaceDevice)
     {
       if (GUIGraphicsContext.DX9Device != null)
       {
-        Surface surface = new Surface((IntPtr)pSurfaceDevice);
-        VMR9Util.g_vmr9.MadVrRenderTargetVMR9 = surface;
+        Surface surface = new Surface(pSurfaceDevice);
+        GUIGraphicsContext.MadVrRenderTargetVMR9 = surface;
       }
     }
 
-    public void SetRenderTarget(uint target)
+    public void DestroyHWnd(uint phWnd)
+    {
+      if (GUIGraphicsContext.DX9Device != null)
+      {
+        GUIGraphicsContext.MadVrHWnd = (IntPtr) phWnd;
+        Log.Debug("Received madVR phWnd : {0} from C++ side", phWnd);
+      }
+    }
+
+    public void SetRenderTarget(IntPtr target)
     {
       lock (_lockobj)
       {
-        Surface surface = new Surface((IntPtr) target);
+        Surface surface = new Surface(target);
         if (GUIGraphicsContext.DX9Device != null)
         {
           GUIGraphicsContext.DX9Device.SetRenderTarget(0, surface);
@@ -956,6 +1356,7 @@ namespace MediaPortal.Player
     {
       // Set madVR D3D Device
       GUIGraphicsContext.DX9DeviceMadVr = device != IntPtr.Zero ? new Device(device) : null;
+      GUIGraphicsContext.SubDeviceMadVr = device;
       // No need to set subtitle engine when using XySubFilter and madVR.
       if (!_subEngineType.Equals("XySubFilter"))
       {
@@ -970,11 +1371,134 @@ namespace MediaPortal.Player
 
     public void RenderSubtitle(long frameStart, int left, int top, int right, int bottom, int width, int height, int xOffsetInPixels)
     {
-      ISubEngine engine = SubEngine.GetInstance();
-      if (engine != null)
+      if (GUIGraphicsContext.SubDeviceMadVr != IntPtr.Zero && !_subEngineType.Equals("XySubFilter"))
       {
-        engine.SetTime(frameStart);
-        engine.Render(_subsRect, _destinationRect, xOffsetInPixels);
+        ISubEngine engine = SubEngine.GetInstance();
+        {
+          if (engine != null)
+          {
+            engine.SetTime(frameStart);
+            engine.Render(_subsRect, _destinationRect, xOffsetInPixels);
+          }
+        }
+      }
+    }
+
+    public void RenderSubtitleEx(long frameStart, Rectangle viewportRect, Rectangle croppedVideoRect, int xOffsetInPixels)
+    {
+      //// We are rendering from madVR // Debugging purpose if OSD disable on C++
+      //if (GUIGraphicsContext.InitMadVRWindowPosition)
+      //{
+      //  GUIGraphicsContext.InitMadVRWindowPosition = false;
+      //  GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_MADVRREPOSITION, 0, 0, 0, 0, 0, null);
+      //  GUIWindowManager.SendThreadMessage(msg);
+      //}
+      GUIGraphicsContext.InVmr9Render = true;
+
+      if (GUIGraphicsContext.SubDeviceMadVr != IntPtr.Zero && !_subEngineType.Equals("XySubFilter"))
+      {
+        // Check if value are correct (can happen when using zooming option
+        if (_subsRect.X < -100000)
+        {
+          _subsRect = viewportRect;
+        }
+        if (_destinationRect.X < -100000)
+        {
+          _destinationRect = croppedVideoRect;
+        }
+
+        ISubEngine engine = SubEngine.GetInstance();
+        if (GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.SideBySideTo2D ||
+            GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.TopAndBottomTo2D)
+        {
+          // for a 3D movie to 2D we render the frame subtitle here
+          // need to tell subtitle engine that we need to display as 2D but we need to match
+          // the video when relative position for MPC-HC engine
+
+          if (_posRelativeToFrame && _subEngineType.Equals("MPC-HC"))
+          {
+            if (GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.SideBySideTo2D)
+            {
+              SubEngine.GetInstance().SetCurrent3DSubtitle = 0; // int for NONE (2D)
+              if (!GUIGraphicsContext.StretchSubtitles)
+                croppedVideoRect.Width /= 2; // We double the size in VideoPlayerVMR7 so need to divide here for subtitle
+            }
+            else if (GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.TopAndBottomTo2D)
+            {
+              SubEngine.GetInstance().SetCurrent3DSubtitle = 0; // int for NONE (2D)
+              if (!GUIGraphicsContext.StretchSubtitles)
+                croppedVideoRect.Height /= 2; // We double the size in VideoPlayerVMR7 so need to divide here for subtitle
+            }
+            engine.SetTime(frameStart);
+            engine.RenderEx(viewportRect, croppedVideoRect, xOffsetInPixels);
+          }
+          else
+          {
+            // for a 2D movie we render the subtitles here
+            if (engine != null)
+            {
+              SubEngine.GetInstance().SetCurrent3DSubtitle = 0; // int for NONE (2D)
+              engine.SetTime(frameStart);
+              engine.Render(_subsRect, _destinationRect, xOffsetInPixels);
+            }
+          }
+        }
+        else if (GUIGraphicsContext.Render3DMode != GUIGraphicsContext.eRender3DMode.SideBySide &&
+                 GUIGraphicsContext.Render3DMode != GUIGraphicsContext.eRender3DMode.TopAndBottom &&
+                 GUIGraphicsContext.Render3DMode != GUIGraphicsContext.eRender3DMode.SideBySideTo2D &&
+                 GUIGraphicsContext.Render3DMode != GUIGraphicsContext.eRender3DMode.TopAndBottomTo2D)
+        {
+          // for a 2D movie we render the subtitles here
+          if (engine != null)
+          {
+            SubEngine.GetInstance().SetCurrent3DSubtitle = 0; // int for NONE (2D)
+            engine.SetTime(frameStart);
+            engine.Render(_subsRect, _destinationRect, xOffsetInPixels);
+          }
+        }
+        else if (GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.SideBySide ||
+                 GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.TopAndBottom)
+        {
+          // for a 3D movie we render the left/top frame subtitle here
+
+          if (GUIGraphicsContext.Render3DSubtitle)
+          {
+            if (GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.SideBySide)
+            {
+              SubEngine.GetInstance().SetCurrent3DSubtitle = !GUIGraphicsContext.StretchSubtitles ? 1 : 0;
+            }
+            else if (GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.TopAndBottom)
+            {
+              SubEngine.GetInstance().SetCurrent3DSubtitle = !GUIGraphicsContext.StretchSubtitles ? 2 : 0;
+            }
+            engine.SetTime(frameStart);
+            if (xOffsetInPixels == 0)
+            {
+              xOffsetInPixels = GUIGraphicsContext.Render3DSubtitleDistance;
+            }
+            engine.RenderEx(viewportRect, croppedVideoRect, xOffsetInPixels);
+          }
+          else
+          {
+            // for a 2D movie we render the subtitles here
+            if (engine != null)
+            {
+              SubEngine.GetInstance().SetCurrent3DSubtitle = 0; // int for NONE (2D)
+              engine.SetTime(frameStart);
+              engine.Render(_subsRect, _destinationRect, xOffsetInPixels);
+            }
+          }
+        }
+        else
+        {
+          // for a 2D movie we render the subtitles here
+          if (engine != null)
+          {
+            SubEngine.GetInstance().SetCurrent3DSubtitle = 0; // int for NONE
+            engine.SetTime(frameStart);
+            engine.Render(_subsRect, _destinationRect, xOffsetInPixels);
+          }
+        }
       }
     }
 

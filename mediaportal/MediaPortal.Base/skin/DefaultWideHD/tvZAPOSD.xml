@@ -72,7 +72,7 @@
       <posY>935</posY>
       <width>1183</width>
       <height>29</height>
-      <texture>osd_progress_background.png</texture>
+      <texture>horizontal_bar2.png</texture>
     </control>
     <control>
       <description>progress bar</description>
@@ -84,9 +84,9 @@
       <offset>0</offset>
       <height>23</height>
       <innerheight>24</innerheight>
-      <lefttexture>osd_progress_left.png</lefttexture>
-      <midtexture>osd_progress_mid.png</midtexture>
-      <righttexture>osd_progress_right.png</righttexture>
+      <lefttexture>osd_progress_mid_tv2.png</lefttexture>
+      <midtexture>osd_progress_mid_tv2.png</midtexture>
+      <righttexture>osd_progress_right2.png</righttexture>
       <label>#TV.View.Percentage</label>
       <visible>yes</visible>
     </control>

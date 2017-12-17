@@ -21,8 +21,7 @@
 
 #pragma warning(disable:4996)
 #pragma warning(disable:4995)
-#include <afx.h>
-#include <afxwin.h>
+#include "StdAfx.h"
 
 #include <winsock2.h>
 #include <ws2tcpip.h>
@@ -77,6 +76,7 @@ CAudioPin::CAudioPin(LPUNKNOWN pUnk, CTsReaderFilter *pFilter, HRESULT *phr,CCri
   m_bAddPMT = false;
   m_bDisableSlowPlayDiscontinuity=false;
   m_nMaxAFT = -1;
+  m_bThreadRunning = false;
 }
 
 CAudioPin::~CAudioPin()
@@ -233,6 +233,7 @@ HRESULT CAudioPin::CompleteConnect(IPin *pReceivePin)
   m_bInFillBuffer = false;
   m_bPinNoAddPMT = false;
   m_bAddPMT = true;
+  m_bDisableSlowPlayDiscontinuity=false;
   //LogDebug("audPin:CompleteConnect()");
   HRESULT hr = CBaseOutputPin::CompleteConnect(pReceivePin);
   if (!SUCCEEDED(hr)) return E_FAIL;
@@ -310,10 +311,12 @@ HRESULT CAudioPin::DoBufferProcessingLoop(void)
   if (!m_bConnected) 
   {
     return S_OK;
+    m_bThreadRunning = false;
   }
     
   Command com;
   OnThreadStartPlay();
+  m_bThreadRunning = true;
   SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_NORMAL);
 
   do 
@@ -353,6 +356,7 @@ HRESULT CAudioPin::DoBufferProcessingLoop(void)
         if(hr != S_OK)
         {
           DbgLog((LOG_TRACE, 2, TEXT("Deliver() returned %08x; stopping"), hr));
+          m_bThreadRunning = false;
           return S_OK;
         }
       } 
@@ -361,6 +365,7 @@ HRESULT CAudioPin::DoBufferProcessingLoop(void)
         // derived class wants us to stop pushing data
         pSample->Release();
         DeliverEndOfStream();
+        m_bThreadRunning = false;
         return S_OK;
       } 
       else 
@@ -370,6 +375,7 @@ HRESULT CAudioPin::DoBufferProcessingLoop(void)
         DbgLog((LOG_ERROR, 1, TEXT("Error %08lX from FillBuffer!!!"), hr));
         DeliverEndOfStream();
         m_pFilter->NotifyEvent(EC_ERRORABORT, hr, 0);
+        m_bThreadRunning = false;
         return hr;
       }
      // all paths release the sample
@@ -385,7 +391,8 @@ HRESULT CAudioPin::DoBufferProcessingLoop(void)
       DbgLog((LOG_ERROR, 1, TEXT("Unexpected command!!!")));
 	  }
   } while (com != CMD_STOP);
-  
+
+  m_bThreadRunning = false;  
   return S_FALSE;
 }
 
@@ -430,16 +437,20 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
       //if the filter is currently seeking to a new position
       //or this pin is currently seeking to a new position then
       //we dont try to read any packets, but simply return...
-      if (m_pTsReaderFilter->IsSeeking() || m_pTsReaderFilter->IsStopping() || demux.m_bFlushRunning)
+      if (m_pTsReaderFilter->IsSeeking() || m_pTsReaderFilter->IsStopping() || demux.m_bFlushRunning || !m_pTsReaderFilter->m_bStreamCompensated)
       {
         m_FillBuffSleepTime = 5;
         CreateEmptySample(pSample);
         m_bInFillBuffer = false;
-        if (demux.m_bFlushRunning)
+        if (demux.m_bFlushRunning || !m_pTsReaderFilter->m_bStreamCompensated)
         {
           //Force discon on next good sample
           m_sampleCount = 0;
           m_bDiscontinuity=true;
+        }
+        if (!m_pTsReaderFilter->m_bStreamCompensated && (m_nNextAFT != 0))
+        {
+          ClearAverageFtime();
         }
         return NOERROR;
       }
@@ -452,24 +463,9 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
       // Get next audio buffer from demultiplexer
       buffer=demux.GetAudio(earlyStall, m_rtStart);
 
-
-      //Wait until we have audio (and video, if pin connected) 
-      if (!m_pTsReaderFilter->m_bStreamCompensated || (buffer==NULL))
+      if (buffer==NULL)
       {
         m_FillBuffSleepTime = 5;
-        buffer=NULL; //Continue looping
-        if (!m_pTsReaderFilter->m_bStreamCompensated && (m_nNextAFT != 0))
-        {
-          ClearAverageFtime();
-        }
-        
-        if (!m_pTsReaderFilter->m_bStreamCompensated)
-        {
-          m_sampleCount = 0;
-          CreateEmptySample(pSample);
-          m_bInFillBuffer = false;
-          return NOERROR;
-        }
       }
       else
       {
@@ -602,9 +598,9 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
             {
               int cntA, cntV;
               CRefTime firstAudio, lastAudio;
-              CRefTime firstVideo, lastVideo;
+              CRefTime firstVideo, lastVideo, zeroVideo;
               cntA = demux.GetAudioBufferPts(firstAudio, lastAudio); 
-              cntV = demux.GetVideoBufferPts(firstVideo, lastVideo);
+              cntV = demux.GetVideoBufferPts(firstVideo, lastVideo, zeroVideo);
               
               LogDebug("Aud/Ref : %03.3f, Compensated = %03.3f ( %0.3f A/V buffers=%02d/%02d), Clk : %f, SampCnt %d, Sleep %d ms, stallPt %03.3f", (float)RefTime.Millisecs()/1000.0f, (float)cRefTime.Millisecs()/1000.0f, fTime,cntA,cntV, clock, m_sampleCount, m_FillBuffSleepTime, (float)stallPoint);
             }
@@ -733,6 +729,12 @@ double CAudioPin::GetAudioPresToRefDiff()
   {
     return  0.0;
   }
+}
+
+bool CAudioPin::IsThreadRunning(CRefTime *pRtStartTime)
+{
+  *pRtStartTime = m_rtStart;
+  return m_bThreadRunning;
 }
 
 bool CAudioPin::IsInFillBuffer()

@@ -146,7 +146,7 @@ xcopy %1\MPE\MpeMaker\bin\%2\MpeMaker.* . /Y /D
 REM Nuget 
 xcopy %1\Databases\bin\%2\HtmlAgilityPack.* . /Y /D
 xcopy %1\..\Packages\MediaInfo.0.7.95\MediaInfo.dll . /Y /D
-xcopy %1\..\Packages\Sqlite.3.10.0\sqlite.dll . /Y /D
+xcopy %1\..\Packages\Sqlite.3.21.0\sqlite.dll . /Y /D
 
 REM ffmpeg 
 xcopy %1\..\Packages\ffmpeg.2.7.1\ffmpeg.exe MovieThumbnailer\ /Y /D
@@ -200,6 +200,12 @@ xcopy %1\..\Packages\System.Management.Automation.6.1.7601.17515\lib\net40\Syste
 
 REM SharpLibDisplay
 xcopy %1\..\Packages\SharpLibDisplay.0.2.6\lib\net40\SharpLibDisplay.dll . /Y /D
+
+REM Naudio
+xcopy %1\..\Packages\NAudio.1.8.3\lib\net35\NAudio.dll . /Y /D
+
+REM CSCore
+xcopy %1\..\Packages\CSCore.1.2.1.2\lib\net35-client\CSCore.dll . /Y /D
 
 REM Enable >2GB for 32 bit process
 call %Build%\MSBUILD_MP_LargeAddressAware.bat %2

@@ -194,6 +194,7 @@ namespace MediaPortal.Player
     protected int m_iVolume = 100;
     protected int m_volumeBeforeSeeking = 0;
     protected IGraphBuilder graphBuilder;
+    protected FilterGraphNoThread m_filterGraph = null;
     protected long m_speedRate = 10000;
     protected double m_dCurrentPos;
     protected double m_dDuration;
@@ -715,6 +716,14 @@ namespace MediaPortal.Player
 
           if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
           {
+            if (GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.SideBySideTo2D)
+            {
+              rDest.Width = rDest.Width*2;
+            }
+            if (GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.TopAndBottomTo2D)
+            {
+              rDest.Height = rDest.Height*2;
+            }
             basicVideo.SetDestinationPosition(rDest.Left, rDest.Top, rDest.Width, rDest.Height);
           }
           else
@@ -1033,6 +1042,7 @@ namespace MediaPortal.Player
         {
           return 1;
         }
+
         switch (m_speedRate)
         {
           case -10000:

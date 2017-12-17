@@ -46,6 +46,14 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setting
       {
         strEval = GUIPropertyManager.Parse(strEval) ?? string.Empty;
       }
+      if (!string.IsNullOrEmpty(strEval) && (strEval.IndexOf('#') > -1))
+      {
+        strEval = GUIPropertyManager.Parse(strEval) ?? string.Empty;
+      }
+      if (!string.IsNullOrEmpty(strEval) && (strEval.IndexOf('#') > -1))
+      {
+        strEval = GUIPropertyManager.Parse(strEval) ?? string.Empty;
+      }
       return strEval;
     }
   }

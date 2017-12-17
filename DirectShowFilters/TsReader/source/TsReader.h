@@ -58,8 +58,8 @@
 
 //Vid/Aud/Sub buffer sizes and limits
 #define MAX_AUD_BUF_SIZE 960
-#define MAX_VID_BUF_SIZE 640
-#define MAX_SUB_BUF_SIZE 640
+#define MAX_VID_BUF_SIZE 800
+#define MAX_SUB_BUF_SIZE 800
 #define AUD_BUF_SIZE_LOG_LIM (MAX_AUD_BUF_SIZE-100)
 #define VID_BUF_SIZE_LOG_LIM (MAX_VID_BUF_SIZE-60)
 #define AUD_BUF_SIZE_PREFETCH_LIM (MAX_AUD_BUF_SIZE - 50)
@@ -70,8 +70,11 @@
 
 //File read prefetch 'looping retry' timeout limit (in ms)
 #define MAX_PREFETCH_LOOP_TIME 500
+
+//File read prefetch min/max limits (in ms)
 #define PF_LOOP_DELAY_MIN 10
 #define PF_LOOP_DELAY_MAX 50
+#define PF_LOOP_DEL_VID_MAX 20
 
 //Timeout for RTSP 'no data available' end-of-file detection (in ms)
 #define RTSP_EOF_TIMEOUT 2000
@@ -320,8 +323,7 @@ public:
   CTsDuration     m_duration;
   
   DWORD           m_regLAV_AutoAVSync; //LAV Audio Decoder 'AutoAVSync' registry value
-    
-
+  
 protected:
   void ThreadProc();
 

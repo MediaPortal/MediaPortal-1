@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<profile>
+  <section name="Enabled">
+    <entry name="Spectrum">yes</entry>
+    <entry name="SpectrumPeak">yes</entry>
+    <entry name="SpectrumVUMeter">no</entry>
+  </section>
+  <section name="SpectrumAnalyzer">
+    <entry name="SpectrumImage">Spectrum\Spectrum.png</entry>
+    <entry name="SpectrumPeakImage">Spectrum\SpectrumPeak.png</entry>
+    <entry name="SpectrumSpacing">5</entry>
+    <entry name="SpectrumCount">16</entry>
+    <entry name="SpectrumMax">22</entry>
+    <entry name="SpectrumShow">Single</entry>
+  </section>
+</profile>

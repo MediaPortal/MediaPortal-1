@@ -37,6 +37,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.ServiceProcess;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
 using MediaPortal.ExtensionMethods;
@@ -2444,7 +2445,7 @@ namespace MediaPortal.Util
             {
               // %root% argument handling (TMT can only play BD/DVD/VCD images using root directory)
               // other video files will go to the player with full path
-              if (strParams.IndexOf("%root%") >= 0)
+              if (strParams.IndexOf("%root%", System.StringComparison.Ordinal) >= 0)
               {
                 DirectoryInfo dirInfo = new DirectoryInfo(strFile);
 
@@ -2726,6 +2727,7 @@ namespace MediaPortal.Util
         }
         return;
       }
+      Log.Debug("Util DownLoadImage URL : {0}, file : {1}",strURL, file);
       DownLoadImage(strURL, file);
       if (File.Exists(file))
       {
@@ -2761,6 +2763,7 @@ namespace MediaPortal.Util
 
       string file = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.InternetCache), url);
       FileDelete(file);
+      Log.Debug("Util DownLoadImage URL : {0}, file : {1}", strURL, file);
       DownLoadImage(strURL, file);
       
       if (File.Exists(file))
@@ -4007,6 +4010,21 @@ namespace MediaPortal.Util
       UpdateLookUpCacheItem(fileLookUpItem, file);
     }
 
+    private static bool VerifyFileExists(string filename, int timeout)
+    {
+      if (!string.IsNullOrEmpty(filename))
+      {
+        var task = new Task<bool>(() =>
+                                    {
+                                      var fi = new FileInfo(filename);
+                                      return fi.Exists;
+                                    });
+        task.Start();
+        return task.Wait(timeout) && task.Result;
+      }
+      return false;
+    }
+
     private static bool DoFileExistsInCache(string filename)
     {
       bool found = false;
@@ -4030,7 +4048,6 @@ namespace MediaPortal.Util
       }
       return found;
     }
-
 
     public static string GetCoverArtByThumbExtension(string strFolder, string strFileName)
     {
@@ -5085,6 +5102,9 @@ namespace MediaPortal.Util
         case MediaPortal.GUI.Library.Geometry.Type.Zoom14to9:
           return GUILocalizeStrings.Get(1190);
 
+        case MediaPortal.GUI.Library.Geometry.Type.CinemaScope235:
+          return GUILocalizeStrings.Get(1339);
+
         default:
           return GUILocalizeStrings.Get(943);
       }
@@ -5114,6 +5134,9 @@ namespace MediaPortal.Util
 
         case MediaPortal.GUI.Library.Geometry.Type.Zoom14to9:
           return "Zoom 14:9";
+
+        case MediaPortal.GUI.Library.Geometry.Type.CinemaScope235:
+          return "CinemaScope 2:35";
 
         default:
           return "Normal";
@@ -5145,6 +5168,9 @@ namespace MediaPortal.Util
         case "Zoom 14:9":
           return MediaPortal.GUI.Library.Geometry.Type.Zoom14to9;
 
+        case "CinemaScope 2:35":
+          return MediaPortal.GUI.Library.Geometry.Type.CinemaScope235;
+
         default:
           return MediaPortal.GUI.Library.Geometry.Type.Normal;
       }
@@ -5174,6 +5200,9 @@ namespace MediaPortal.Util
 
         case 1190:
           return MediaPortal.GUI.Library.Geometry.Type.Zoom14to9;
+
+        case 1339:
+          return MediaPortal.GUI.Library.Geometry.Type.CinemaScope235;
 
         default:
           return MediaPortal.GUI.Library.Geometry.Type.Normal;
@@ -5530,6 +5559,30 @@ namespace MediaPortal.Util
       if (Win32API.SetForegroundWindow(GUIGraphicsContext.ActiveForm, true))
       {
         Log.Info("Util: Successfully switched focus.");
+      }
+    }
+
+    /// <summary>
+    /// Convert the DIB from madVR GrabFrame
+    /// Fill GUIGraphicsContext.madVRFrameBitmap
+    /// </summary>
+    public static void GetMadVrBitmapFromDib(IntPtr pTargetmadVrDib)
+    {
+      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && pTargetmadVrDib != IntPtr.Zero)
+      {
+        // Convert DIB to Bitmap
+        // pTargetmadVrDib is a DIB
+        Win32API.BITMAPINFOHEADER bmih = (Win32API.BITMAPINFOHEADER) Marshal.PtrToStructure(pTargetmadVrDib, typeof (Win32API.BITMAPINFOHEADER));
+        IntPtr pixels = IntPtr.Add(pTargetmadVrDib, bmih.biSize);
+
+        using (Bitmap b = new Bitmap(bmih.biWidth, bmih.biHeight, bmih.biWidth*4, PixelFormat.Format32bppRgb, pixels))
+        {
+          GUIGraphicsContext.madVRFrameBitmap = new Bitmap(b);
+          GUIGraphicsContext.madVRFrameBitmap.RotateFlip(RotateFlipType.RotateNoneFlipY);
+          // IMPORTANT: Closes and disposes the stream
+          // If this is not done we get a memory leak!
+          b.Dispose();
+        }
       }
     }
 

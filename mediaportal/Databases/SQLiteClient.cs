@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2017 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2017 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -287,6 +287,12 @@ namespace SQLite.NET
     {
       if (dbHandle != IntPtr.Zero)
       {
+        try
+        {
+          this.Execute("PRAGMA optimize;");
+        }
+        catch { }
+
         //System.Diagnostics.Debugger.Launch();
         //Log.Info("SQLiteClient: Closing database: {0} st {1}", databaseName, Environment.StackTrace);
         Log.Info("SQLiteClient: Closing database: {0}", databaseName);

@@ -884,7 +884,6 @@ namespace MediaPortal.Player
       {
         CloseInterfaces();
       }
-      //CloseInterfaces();
     }
 
     /*
@@ -1433,6 +1432,12 @@ namespace MediaPortal.Player
         }
         m_StreamBufferConfig = null;
 
+        if (VMR9Util.g_vmr9?._vmr9Filter != null && GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+        {
+          // Releasing madVR
+          VMR9Util.g_vmr9?.Vmr9MadVrRelease();
+        }
+
         if (_graphBuilder != null)
         {
           DirectShowUtil.RemoveFilters(_graphBuilder);
@@ -1450,6 +1455,11 @@ namespace MediaPortal.Player
       }
       catch (Exception ex)
       {
+        if (VMR9Util.g_vmr9 != null)
+        {
+          VMR9Util.g_vmr9.RestoreGuiForMadVr();
+          VMR9Util.g_vmr9.SafeDispose();
+        }
         Log.Error("StreamBufferPlayer:exception while cleanuping DShow graph {0} {1}", ex.Message, ex.StackTrace);
       }
       //Log.Info("StreamBufferPlayer:cleanup done");

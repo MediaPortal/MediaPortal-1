@@ -35,7 +35,6 @@ DeviceState::~DeviceState()
   {
     if (m_pTexture)
     {
-      m_pTexture->Release();
       m_pTexture = nullptr;
     }
   }
@@ -77,7 +76,6 @@ void DeviceState::Shutdown()
   {
     if (m_pStreamData)
     {
-      m_pStreamData->Release();
       m_pStreamData = nullptr;
     }
   }
@@ -86,7 +84,6 @@ void DeviceState::Shutdown()
   {
     if (m_pTexture)
     {
-      m_pTexture->Release();
       m_pTexture = nullptr;
     }
   }
@@ -97,6 +94,22 @@ void DeviceState::Shutdown()
     {
       m_pSurface->Release();
       m_pSurface = nullptr;
+    }
+  }
+  catch (...) {}
+  try
+  {
+    if (m_pD3DDev)
+    {
+      m_pD3DDev = nullptr;
+    }
+  }
+  catch (...) {}
+  try
+  {
+    if (m_pPix)
+    {
+      m_pPix = nullptr;
     }
   }
   catch (...) {}
@@ -180,7 +193,6 @@ HRESULT DeviceState::Restore()
     {
       if (m_pTexture)
       {
-        m_pTexture->Release();
         m_pTexture = nullptr;
       }
     }
@@ -203,7 +215,10 @@ HRESULT DeviceState::Restore()
   hr = m_pD3DDev->SetTexture(0, m_pTexture);
 
   if (m_pTexture)
+  {
     m_pTexture->Release();
+    m_pTexture = nullptr;
+  }
 
   if (FAILED(hr))
     return hr;

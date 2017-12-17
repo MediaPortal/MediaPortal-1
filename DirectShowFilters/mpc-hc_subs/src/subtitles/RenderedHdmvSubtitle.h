@@ -46,6 +46,8 @@ public:
     STDMETHODIMP GetTextureSize(POSITION pos, SIZE& MaxTextureSize, SIZE& VirtualSize, POINT& VirtualTopLeft);
     STDMETHODIMP GetRelativeTo(POSITION pos, RelativeTo& relativeTo);
 
+    STDMETHODIMP_(SUBTITLE_TYPE) GetType() { return m_nType; };
+
     // IPersist
     STDMETHODIMP GetClassID(CLSID* pClassID);
 
@@ -67,4 +69,6 @@ private:
 
     CBaseSub*       m_pSub;
     CCritSec        m_csCritSec;
+
+    SUBTITLE_TYPE   m_nType;
 };

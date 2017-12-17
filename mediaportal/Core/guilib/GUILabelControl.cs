@@ -416,7 +416,7 @@ namespace MediaPortal.GUI.Library
         }
       }
     }
-
+ 
     public override int Height
     {
       get 

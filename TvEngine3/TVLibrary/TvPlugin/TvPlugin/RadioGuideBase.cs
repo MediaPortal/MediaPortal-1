@@ -3321,8 +3321,6 @@ namespace TvPlugin
             Update(true); //remove RED marker
             break;
 
-          case 637: // edit recording
-
           case 2162: // Remove channel
             OnRemoveChannel();
 
@@ -3338,6 +3336,7 @@ namespace TvPlugin
 
             break;
 
+          case 637: // edit recording
           case 264: // record
             if (_currentProgram.IdProgram == 0)
             {
