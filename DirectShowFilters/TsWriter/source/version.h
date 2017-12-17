@@ -18,11 +18,11 @@
 // Version numbers (used for resource and log display)
 #define TSWRITER_MAJOR_VERSION 3
 #define TSWRITER_MID_VERSION 1
-#define TSWRITER_VERSION 32
-#define TSWRITER_POINT_VERSION 10
-#define TSWRITER_VERSION_STR "3.1.32.10\0"
+#define TSWRITER_VERSION 33
+#define TSWRITER_POINT_VERSION 21
+#define TSWRITER_VERSION_STR "3.1.33.21\0"
 
-#define MP_VERSION 1,15,000,0
-#define MP_VERSION_STR "1.15.000.0\0"
+#define MP_VERSION 1,15,100,0
+#define MP_VERSION_STR "1.15.100.0\0"
 
 
