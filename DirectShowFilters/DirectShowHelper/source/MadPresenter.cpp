@@ -905,12 +905,15 @@ HRESULT MPMadPresenter::Stopping()
       }
       pOR.Release(); // WIP release
 
-      // nasty, but we have to let it know about our death somehow
-      static_cast<COsdRenderCallback*>(static_cast<IOsdRenderCallback*>(m_pORCB))->SetShutdownOsd(true);
-      static_cast<COsdRenderCallback*>(static_cast<IOsdRenderCallback*>(m_pORCB))->SetDXRAP(nullptr);
-      m_pORCB->Release();
-      m_pORCB = nullptr;
-      Log("MPMadPresenter::Stopping() m_pORCB");
+      if (m_pORCB)
+      {
+        // nasty, but we have to let it know about our death somehow
+        static_cast<COsdRenderCallback*>(static_cast<IOsdRenderCallback*>(m_pORCB))->SetShutdownOsd(true);
+        static_cast<COsdRenderCallback*>(static_cast<IOsdRenderCallback*>(m_pORCB))->SetDXRAP(nullptr);
+        m_pORCB->Release();
+        m_pORCB = nullptr;
+        Log("MPMadPresenter::Stopping() m_pORCB");
+      }
     }
 
     if (m_pSRCB)
@@ -929,12 +932,15 @@ HRESULT MPMadPresenter::Stopping()
       }
       pSR.Release(); // WIP release
 
-      // nasty, but we have to let it know about our death somehow
-      static_cast<CSubRenderCallback*>(static_cast<ISubRenderCallback*>(m_pSRCB))->SetShutdownSub(true);
-      static_cast<CSubRenderCallback*>(static_cast<ISubRenderCallback*>(m_pSRCB))->SetDXRAPSUB(nullptr);
-      m_pSRCB->Release();
-      m_pSRCB = nullptr;
-      Log("MPMadPresenter::Stopping() m_pSRCB");
+      if (m_pSRCB)
+      {
+        // nasty, but we have to let it know about our death somehow
+        static_cast<CSubRenderCallback*>(static_cast<ISubRenderCallback*>(m_pSRCB))->SetShutdownSub(true);
+        static_cast<CSubRenderCallback*>(static_cast<ISubRenderCallback*>(m_pSRCB))->SetDXRAPSUB(nullptr);
+        m_pSRCB->Release();
+        m_pSRCB = nullptr;
+        Log("MPMadPresenter::Stopping() m_pSRCB");
+      }
     }
 
     Log("MPMadPresenter::Stopping() start to stop instance - 1");
