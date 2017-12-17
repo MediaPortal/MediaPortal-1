@@ -392,7 +392,14 @@ namespace MediaPortal.GUI.Library
         }
         else
         {
-          return base.Width;
+          if (base.Width == 0)
+          {
+            return TextWidth;
+          }
+          else
+          {
+            return base.Width;
+          }
         }
       }
       set
@@ -432,7 +439,14 @@ namespace MediaPortal.GUI.Library
         }
         else
         {
-          return base.Height;
+          if (base.Height == 0)
+          {
+            return TextHeight;
+          }
+          else
+          {
+            return base.Height;
+          }
         }
       }
       set
@@ -452,7 +466,17 @@ namespace MediaPortal.GUI.Library
 
     public int MinWidth
     {
-      get { return base.Width; }
+      get 
+      { 
+        if (base.Width == 0)
+        {
+          return TextWidth;
+        }
+        else
+        {
+          return base.Width;
+        }
+      }
       set
       {
         if (base.Width != value)
@@ -470,7 +494,17 @@ namespace MediaPortal.GUI.Library
 
     public int MinHeight
     {
-      get { return base.Height; }
+      get 
+      { 
+        if (base.Height == 0)
+        {
+          return TextHeight;
+        }
+        else
+        {
+          return base.Height;
+        }
+      }
       set
       {
         if (base.Height != value)
