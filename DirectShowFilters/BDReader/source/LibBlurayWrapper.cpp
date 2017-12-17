@@ -840,26 +840,11 @@ bool CLibBlurayWrapper::SetRate(UINT32 rate)
 bool CLibBlurayWrapper::ProvideUserInput(INT64 pPts, UINT32 pKey)
 {
   CAutoLock cLibLock(&m_csLibLock);
-  
-  if (m_pBd)
-  {
-    // libbluray doesn't open the main menu with BD_VK_ROOT_MENU key 
-    if (pKey == BD_VK_ROOT_MENU)
-      return OpenMenu(pPts);
-    else
-      return _bd_user_input(m_pBd, pPts, pKey) >= 0 ? true : false;
-  }
-  return false;
-}
 
-bool CLibBlurayWrapper::OpenMenu(INT64 pPts)
-{
-  CAutoLock cLibLock(&m_csLibLock); 
-  
   if (m_pBd)
-    return _bd_menu_call(m_pBd, pPts) == 1 ? true : false;
-  else
-    return false;
+    return _bd_user_input(m_pBd, pPts, pKey) >= 0 ? true : false;
+
+  return false;
 }
 
 void CLibBlurayWrapper::StillMode(unsigned pSeconds)
