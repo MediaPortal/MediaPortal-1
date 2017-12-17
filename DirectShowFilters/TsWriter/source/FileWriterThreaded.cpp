@@ -353,12 +353,15 @@ HRESULT FileWriterThreaded::WriteWithRetry(PBYTE pbData, ULONG lDataLength, int 
 void FileWriterThreaded::ClearBuffers()
 {
   CAutoLock qlock(&m_qLock);
-  ivecDiskBuff it = m_writeQueue.begin();
-  while (it != m_writeQueue.end())
+  if (m_writeQueue.size()>0)
   {
-    CDiskBuff* diskBuffer = *it;
-    delete diskBuffer;
-    it = m_writeQueue.erase(it);
+    ivecDiskBuff it = m_writeQueue.begin();
+    for ( ; it != m_writeQueue.end() ; it++ )
+    {
+      CDiskBuff* diskBuffer = *it;
+      delete diskBuffer;
+    }
+    m_writeQueue.clear();
   }
   m_bBufferFull = FALSE;
 }
