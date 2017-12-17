@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2017 Team MediaPortal
 /*
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2017 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -588,7 +588,7 @@ Section "MediaPortal core files (required)" SecCore
   File "${git_ROOT}\Packages\MediaInfo.0.7.95\MediaInfo.dll"
   ; NuGet binaries Sqlite
   SetOutPath "$MPdir.Base\"
-  File "${git_ROOT}\Packages\Sqlite.3.10.0\Sqlite.dll"
+  File "${git_ROOT}\Packages\Sqlite.3.21.0\Sqlite.dll"
   ; Bass Core
   SetOutPath "$MPdir.Base\"
   File "${git_ROOT}\Packages\BASS.2.4.12.1\bass.dll"
@@ -649,12 +649,12 @@ Section "MediaPortal core files (required)" SecCore
     File /oname=bluray.dll "${git_DirectShowFilters}\bin_Win32\libbluray\libbluray.dll"
   !endif
   File /oname=libbluray.jar "${git_Libbluray}\src\.libs\libbluray-.jar"
-  CopyFiles /SILENT "$MPdir.Base\libbluray.jar" "$MPdir.Base\libbluray-j2se-1.0.1.jar"
+  CopyFiles /SILENT "$MPdir.Base\libbluray.jar" "$MPdir.Base\libbluray-j2se-1.0.2.jar"
   ; libbluray - submodul freetype library
   !if ${BUILD_TYPE} == "Debug"       # it's an debug build
-    File /oname=freetype281d.dll "${git_Libbluray}\3rd_party\freetype2\objs\vc2010\Win32\freetype281d.dll"
+    File /oname=freetype.dll "${git_Libbluray}\3rd_party\freetype2\objs\Win32\Debug\freetype.dll"
   !else
-    File /oname=freetype281.dll "${git_Libbluray}\3rd_party\freetype2\objs\vc2010\Win32\freetype281.dll"
+    File /oname=freetype.dll "${git_Libbluray}\3rd_party\freetype2\objs\Win32\Release\freetype.dll"
   !endif
   ; TvLibrary for Genre
   File "${git_TVServer}\TvLibrary.Interfaces\bin\${BUILD_TYPE}\TvLibrary.Interfaces.dll"
@@ -1009,6 +1009,11 @@ Section -Post
   ; BASS 2.3  to   2.4   Update - requested by hwahrmann (2009-01-26)
   ${LOG_TEXT} "INFO" "Removing obsolete BASS 2.3 files"
   Delete "$MPdir.Base\MusicPlayer\plugins\audio decoders\bass_wv.dll"
+
+  ; Libbluray remove previous release files
+  ${LOG_TEXT} "INFO" "Removing obsolete libbluray files"
+  Delete "$MPdir.Base\libbluray-j2se-0.6.2.jar"
+  Delete "$MPdir.Base\libbluray-j2se-1.0.1.jar"
 
   ; MP1-4315 Blow windowplugins dll to separate plugin dlls
   ${LOG_TEXT} "INFO" "Removing obsolete WindowPlugins.dll"

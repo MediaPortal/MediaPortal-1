@@ -55,6 +55,12 @@ namespace MediaPortal.Database
       _database.DeleteFolderSetting(path, Key);
     }
 
+    public static void DeleteFolderSetting(string path, string Key, bool withPath)
+    {
+      //bool res = WaitForPath(path);
+      _database.DeleteFolderSetting(path, Key, withPath);
+    }
+
     public static void AddFolderSetting(string path, string Key, Type type, object Value)
     {
       //bool res = WaitForPath(path);
@@ -65,6 +71,11 @@ namespace MediaPortal.Database
     {
       //bool res = WaitForPath(path);
       _database.GetFolderSetting(path, Key, type, out Value);
+    }
+
+    public static void GetViewSetting(string path, string Key, Type type, out object Value)
+    {
+      _database.GetViewSetting(path, Key, type, out Value);
     }
 
     public static string DatabaseName

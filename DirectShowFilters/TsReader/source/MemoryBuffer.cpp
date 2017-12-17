@@ -16,15 +16,15 @@ extern void LogDebug(const char *fmt, ...) ;
 CMemoryBuffer::CMemoryBuffer(void)
 {
   LogDebug("CMemoryBuffer::ctor");
-  m_bRunning=true;
   m_BytesInBuffer=0;
+  m_bRunning=true;
 }
 
 CMemoryBuffer::~CMemoryBuffer()
 {
   LogDebug("CMemoryBuffer::dtor");
-  Clear();
   m_bRunning=false;
+  Clear();
 }
 
 bool CMemoryBuffer::IsRunning()
@@ -34,7 +34,6 @@ bool CMemoryBuffer::IsRunning()
 
 void CMemoryBuffer::Clear()
 {    
-  if (!m_bRunning) return;
   LogDebug("memorybuffer: Clear() buffers:%d, bytes:%d",m_Array.size(), m_BytesInBuffer);
 	CAutoLock BufferLock(&m_BufferLock);
   if (m_Array.size()>0)
@@ -49,7 +48,6 @@ void CMemoryBuffer::Clear()
     m_Array.clear();
   }
   m_BytesInBuffer=0;
-	LogDebug("memorybuffer: Clear() done");
 }
 
 long CMemoryBuffer::Size()
@@ -57,6 +55,7 @@ long CMemoryBuffer::Size()
 	CAutoLock BufferLock(&m_BufferLock);
   return (m_bRunning ? m_BytesInBuffer : -1);
 }
+
 void CMemoryBuffer::Run(bool onOff)
 {
 	LogDebug("memorybuffer: run:%d %d", onOff, m_bRunning);
@@ -84,7 +83,7 @@ DWORD CMemoryBuffer::ReadFromBuffer(BYTE *pbData, long lDataLength)
 	{
 	  { //Context for CAutoLock
   	  CAutoLock BufferLock(&m_BufferLock);
-  		if(m_BytesInBuffer <= 0 || m_Array.size() <= 0)
+  		if(m_BytesInBuffer <= 0 || m_Array.size() <= 0 || !m_bRunning)
       {
         return (DWORD)bytesRead;
       }
@@ -132,13 +131,19 @@ HRESULT CMemoryBuffer::PutBuffer(BYTE *pbData, long lDataLength)
 
   { //Context for CAutoLock BufferLock
 	  CAutoLock BufferLock(&m_BufferLock);
+    if (!m_bRunning) 
+    {
+      delete[] item->data;
+      delete item;
+      return S_FALSE;
+    }      
     if (m_BytesInBuffer > MAX_MEMORY_BUFFER_SIZE)
     {
   	  //Log("add..%d/%d",lDataLength,m_BytesInBuffer);
   		LogDebug("memorybuffer:put full buffer (%d)",m_BytesInBuffer);
 
   	  //Overflow - discard a reasonable chunk of the current buffer
-      while (m_BytesInBuffer > OVERFLOW_BUFFER_SIZE)
+      while (m_BytesInBuffer > OVERFLOW_BUFFER_SIZE && m_Array.size()>0)
       {
         sleep=true;
     	  BUFFERITEM *itemc = m_Array.back();		
