@@ -441,7 +441,7 @@ namespace MediaPortal.GUI.Library
         {
           if (base.Height == 0)
           {
-            return textHeight;
+            return TextHeight;
           }
           else
           {
@@ -498,7 +498,7 @@ namespace MediaPortal.GUI.Library
       { 
         if (base.Height == 0)
         {
-          return textHeight;
+          return TextHeight;
         }
         else
         {
