@@ -954,6 +954,12 @@ namespace MediaPortal.Player
             _dvbSubRenderer = null;
           }
 
+          if (_mediaEvt != null)
+          {
+            _mediaEvt.SetNotifyWindow(IntPtr.Zero, WM_GRAPHNOTIFY, IntPtr.Zero);
+            _mediaEvt = null;
+          }
+
           if (VMR9Util.g_vmr9?._vmr9Filter != null && GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
           {
             // Releasing madVR
@@ -969,12 +975,6 @@ namespace MediaPortal.Player
           {
             _videoWin.put_Owner(IntPtr.Zero);
             _videoWin.put_Visible(OABool.False);
-          }
-
-          if (_mediaEvt != null)
-          {
-            _mediaEvt.SetNotifyWindow(IntPtr.Zero, WM_GRAPHNOTIFY, IntPtr.Zero);
-            _mediaEvt = null;
           }
 
           if (_graphBuilder != null)
