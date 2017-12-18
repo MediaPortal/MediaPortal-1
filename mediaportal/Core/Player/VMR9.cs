@@ -2148,12 +2148,12 @@ namespace MediaPortal.Player
             stateRunning = true;
           }
 
-          var previousActiveWindow = GUIWindowManager.GetPreviousActiveWindow();
+          var currentActiveWindow = GUIWindowManager.ActiveWindow;
 
           GUITextureManager.Clear();
           GUITextureManager.Init();
           GUIWindowManager.OnResize();
-          GUIWindowManager.ActivateWindow(previousActiveWindow);
+          GUIWindowManager.ActivateWindow(currentActiveWindow);
 
           // Restore GUIGraphicsContext.State
           if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.SUSPENDING && stateRunning)
