@@ -1784,6 +1784,8 @@ namespace MediaPortal.Player
               _commandNotify?.Set();
               _graphBuilder?.RemoveFilter(g_vmr9?._vmr9Filter as DirectShowLib.IBaseFilter);
               DirectShowUtil.CleanUpInterface(g_vmr9?._vmr9Filter);
+              DirectShowUtil.ReleaseComObject(_graphBuilder);
+              _graphBuilder = null;
               for (int i = 0; i < 20; ++i)
               {
                 GUIWindowManager.MadVrProcess();
