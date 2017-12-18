@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2013 Team MediaPortal
+#region Copyright (C) 2005-2017 Team MediaPortal
 
-// Copyright (C) 2005-2013 Team MediaPortal
+// Copyright (C) 2005-2017 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -36,6 +36,9 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("shadowAngle")] protected int _shadowAngle = 0;
     [XMLSkinElement("shadowDistance")] protected int _shadowDistance = 0;
     [XMLSkinElement("shadowColor")] protected long _shadowColor = 0xFF000000;
+    [XMLSkinElement("maxWidth")] protected int _maxWidth = 0;
+    [XMLSkinElement("maxHeight")] protected int _maxHeight = 0;
+    [XMLSkinElement("trimText")] protected bool _trimText = false; // For autosized label always True
 
     private string _cachedTextLabel = "";
     private bool _containsProperty = false;
@@ -71,6 +74,34 @@ namespace MediaPortal.GUI.Library
                            string strFont, string strLabel, long dwTextColor, Alignment dwTextAlign,
                            VAlignment dwTextVAlign, bool bHasPath,
                            int dwShadowAngle, int dwShadowDistance, long dwShadowColor)
+      : this(dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight, 
+             strFont, strLabel, dwTextColor, dwTextAlign, dwTextVAlign, bHasPath, 
+             dwShadowAngle, dwShadowDistance, dwShadowColor, 0, 0) { }
+
+    /// <summary>
+    /// The constructor of the GUILabelControl class.
+    /// </summary>
+    /// <param name="dwParentID">The parent of this control.</param>
+    /// <param name="dwControlId">The ID of this control.</param>
+    /// <param name="dwPosX">The X position of this control.</param>
+    /// <param name="dwPosY">The Y position of this control.</param>
+    /// <param name="dwWidth">The width of this control.</param>
+    /// <param name="dwHeight">The height of this control.</param>
+    /// <param name="strFont">The indication of the font of this control.</param>
+    /// <param name="strLabel">The text of this control.</param>
+    /// <param name="dwTextColor">The color of this control.</param>
+    /// <param name="dwTextAlign">The alignment of this control.</param>
+    /// <param name="dwTextVAlign">The vertical alignment of this control.</param>
+    /// <param name="bHasPath">Indicates if the label is containing a path.</param>
+    /// <param name="dwShadowAngle">The angle of the shadow; zero degress along x-axis.</param>
+    /// <param name="dwShadowDistance">The distance of the shadow.</param>
+    /// <param name="dwShadowColor">The color of the shadow.</param>
+    /// <param name="dwMaxWidth">Max Width for autosized Label. From Width to MaxWidth.</param>
+    /// <param name="dwMaxHeight">Max Height for autosized Label. From Height to MaxHeight.</param>
+    public GUILabelControl(int dwParentID, int dwControlId, int dwPosX, int dwPosY, int dwWidth, int dwHeight,
+                           string strFont, string strLabel, long dwTextColor, Alignment dwTextAlign,
+                           VAlignment dwTextVAlign, bool bHasPath,
+                           int dwShadowAngle, int dwShadowDistance, long dwShadowColor, int dwMaxWidth, int dwMaxHeight)
       : base(dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight)
     {
       _labelText = strLabel;
@@ -81,6 +112,8 @@ namespace MediaPortal.GUI.Library
       _shadowAngle = dwShadowAngle;
       _shadowDistance = dwShadowDistance;
       _shadowColor = dwShadowColor;
+      _maxWidth = dwMaxWidth;
+      _maxHeight = dwMaxHeight;
 
       FinalizeConstruction();
     }
@@ -106,6 +139,11 @@ namespace MediaPortal.GUI.Library
         _font = GUIFontManager.GetFont(_fontName);
       }
 
+      if (_maxWidth > 0)
+      {
+        _trimText = true;
+      }
+
       GUILocalizeStrings.LocalizeLabel(ref _labelText);
 
       if (_labelText == null)
@@ -117,6 +155,16 @@ namespace MediaPortal.GUI.Library
         _containsProperty = true;
       }
       CachedLabel();
+    }
+
+    /// <summary>
+    /// This method gets called when the control is created and all properties has been set
+    /// It allows the control to scale itself to the current screen resolution
+    /// </summary>
+    public override void ScaleToScreenResolution()
+    {
+      base.ScaleToScreenResolution();
+      GUIGraphicsContext.ScalePosToScreenResolution(ref _maxWidth, ref _maxHeight);
     }
 
     /// <summary>
@@ -173,48 +221,48 @@ namespace MediaPortal.GUI.Library
 
         if (_textAlignment == Alignment.ALIGN_CENTER)
         {
-          int xoff = (_width - _textwidth) / 2;
-          if (xoff < 0 && _width > 0)
+          int xoff = (Width - _textwidth) / 2;
+          if (xoff < 0 && Width > 0)
           {
             xoff = 0;
           }
-          int yoff = (_height - _textheight) / 2;
+          int yoff = (Height - _textheight) / 2;
 
-          DrawText((float)_positionX + xoff, (float)_positionY + yoff, _cachedTextLabel, _width);
+          DrawText((float)_positionX + xoff, (float)_positionY + yoff, _cachedTextLabel, Width);
         }
         else
         {
           if (_textAlignment == Alignment.ALIGN_RIGHT)
           {
-            if (_width == 0 || _textwidth < _width)
+            if (Width == 0 || _textwidth < Width)
             {
               DrawText((float)_positionX - _textwidth, vpos, _cachedTextLabel, -1);
             }
             else
             {
-              if (_width < 6)
+              if (Width < 6)
               {
                 base.Render(timePassed);
                 return;
               }
 
-              DrawText((float)_positionX - _textwidth, vpos, _cachedTextLabel, _width - 5);
+              DrawText((float)_positionX - _textwidth, vpos, _cachedTextLabel, Width - 5);
             }
             base.Render(timePassed);
             return;
           }
 
-          if (_width == 0 || _textwidth < _width)
+          if (Width == 0 || _textwidth < Width)
           {
-            DrawText(_positionX, vpos, _cachedTextLabel, _width);
+            DrawText(_positionX, vpos, _cachedTextLabel, Width);
           }
           else
           {
-            if (_width < 6)
+            if (Width < 6)
             {
               return;
             }
-            DrawText(_positionX, vpos, _cachedTextLabel, _width - 5);
+            DrawText(_positionX, vpos, _cachedTextLabel, Width - 5);
           }
         }
       }
@@ -224,6 +272,11 @@ namespace MediaPortal.GUI.Library
     // Wraps the calls to the GUIFont.  This provides opportunity to shadow the text if requested.
     public void DrawTextWidth(float xpos, float ypos, string label, float fMaxWidth)
     {
+      string _label = label;
+      if (_trimText)
+      {
+        _label = GetShortenedText(_label, _maxWidth > 0 ? _maxWidth : _width);
+      }
       long c = (uint)_textColor;
       if (Dimmed)
       {
@@ -240,17 +293,28 @@ namespace MediaPortal.GUI.Library
         }
         sc = GUIGraphicsContext.MergeAlpha((uint)sc);
 
-        _font.DrawShadowTextWidth(xpos, ypos, c, label, Alignment.ALIGN_LEFT, _shadowAngle, _shadowDistance, sc, fMaxWidth);
+        if (_font != null)
+        {
+          _font.DrawShadowTextWidth(xpos, ypos, c, _label, Alignment.ALIGN_LEFT, _shadowAngle, _shadowDistance, sc, fMaxWidth);
+        }
       }
       else
       {
-        _font.DrawTextWidth(xpos, ypos, c, label, fMaxWidth, Alignment.ALIGN_LEFT);
+        if (_font != null)
+        {
+          _font.DrawTextWidth(xpos, ypos, c, _label, fMaxWidth, Alignment.ALIGN_LEFT);
+        }
       }
     }
 
     // Wraps the calls to the GUIFont.  This provides opportunity to shadow the text if requested.
     public void DrawText(float xpos, float ypos, string label, int width)
     {
+      string _label = label;
+      if (_trimText)
+      {
+        _label = GetShortenedText(_label, _maxWidth > 0 ? _maxWidth : _width);
+      }
       long c = _textColor;
       if (Dimmed)
       {
@@ -267,7 +331,9 @@ namespace MediaPortal.GUI.Library
         }
         sc = GUIGraphicsContext.MergeAlpha((uint)sc);
         if (_font != null)
-          _font.DrawShadowText(xpos, ypos, c, label, Alignment.ALIGN_LEFT, width, _shadowAngle, _shadowDistance, sc);
+        {
+          _font.DrawShadowText(xpos, ypos, c, _label, Alignment.ALIGN_LEFT, width, _shadowAngle, _shadowDistance, sc);
+        }
       }
       else
       {
@@ -278,7 +344,10 @@ namespace MediaPortal.GUI.Library
         clipRect.Height = GUIGraphicsContext.Height - clipRect.Y;
 
         GUIGraphicsContext.BeginClip(clipRect);
-        if (_font != null) _font.DrawTextEx(xpos, ypos, c, label, ref _context, width);
+        if (_font != null) 
+        {
+          _font.DrawTextEx(xpos, ypos, c, _label, ref _context, width);
+        }
         GUIGraphicsContext.EndClip();
       }
     }
@@ -314,26 +383,172 @@ namespace MediaPortal.GUI.Library
 
     public override int Width
     {
-      get { return base.Width; }
+      get 
+      { 
+        if (_maxWidth > 0)
+        {
+          int textWidth = TextWidth;
+          if (textWidth < base.Width)
+          {
+            return base.Width;
+          }
+          else if (textWidth > _maxWidth)
+          {
+            return _maxWidth;
+          }
+          else
+          {
+            return textWidth + 1; // + 1 - Margin for not fade last char in label text
+          }
+        }
+        else
+        {
+          return base.Width;
+        }
+      }
       set
       {
         if (base.Width != value)
         {
           base.Width = value;
           _reCalculate = true;
+
+          if (_maxWidth > 0 && _maxWidth < value)
+          {
+            _maxWidth = value;
+          }
         }
       }
     }
 
     public override int Height
     {
-      get { return base.Height; }
+      get 
+      {  
+        if (_maxHeight > 0)
+        {
+          int textHeight = TextHeight;
+          if (textHeight < base.Height)
+          {
+            return base.Height;
+          }
+          else if (textHeight > _maxHeight)
+          {
+            return _maxHeight;
+          }
+          else
+          {
+            return textHeight;
+          }
+        }
+        else
+        {
+          return base.Height;
+        }
+      }
       set
       {
         if (base.Height != value)
         {
           base.Height = value;
           _reCalculate = true;
+
+          if (_maxHeight > 0 && _maxHeight < value)
+          {
+            _maxHeight = value;
+          }
+        }
+      }
+    }
+
+    public int MinWidth
+    {
+      get 
+      { 
+        if (base.Width == 0)
+        {
+          return TextWidth + 1; // + 1 - Margin for not fade last char in label text
+        }
+        else
+        {
+          return base.Width;
+        }
+      }
+      set
+      {
+        if (base.Width != value)
+        {
+          base.Width = value;
+          _reCalculate = true;
+
+          if (_maxWidth > 0 && _maxWidth < value)
+          {
+            _maxWidth = value;
+          }
+        }
+      }
+    }
+
+    public int MinHeight
+    {
+      get 
+      { 
+        if (base.Height == 0)
+        {
+          return TextHeight;
+        }
+        else
+        {
+          return base.Height;
+        }
+      }
+      set
+      {
+        if (base.Height != value)
+        {
+          base.Height = value;
+          _reCalculate = true;
+
+          if (_maxHeight > 0 && _maxHeight < value)
+          {
+            _maxHeight = value;
+          }
+        }
+      }
+    }
+
+    public int MaxWidth
+    {
+      get { return _maxWidth; }
+      set
+      {
+        if (_maxWidth != value)
+        {
+          _maxWidth = value;
+          _reCalculate = true;
+
+          if (_maxWidth > 0 && _maxWidth < base.Width)
+          {
+            base.Width = _maxWidth;
+          }
+        }
+      }
+    }
+
+    public int MaxHeight
+    {
+      get { return _maxHeight; }
+      set
+      {
+        if (_maxHeight != value)
+        {
+          _maxHeight = value;
+          _reCalculate = true;
+
+          if (_maxHeight > 0 && _maxHeight < base.Height)
+          {
+            base.Height = _maxHeight;
+          }
         }
       }
     }
@@ -460,10 +675,15 @@ namespace MediaPortal.GUI.Library
       }
     }
 
+    public bool TrimText
+    {
+      get { return _trimText; }
+      set { _trimText = value; }
+    }
+
     private void CachedLabel()
     {
       string v;
-
 
       if (_containsProperty)
       {
@@ -640,6 +860,35 @@ namespace MediaPortal.GUI.Library
     {
       base.Animate(timePassed, animator);
       _reCalculate = true;
+    }
+
+    private string GetShortenedText(string strLabel, int iMaxWidth)
+    {
+      if (string.IsNullOrEmpty(strLabel))
+      {
+        return string.Empty;
+      }
+      if (_font == null)
+      {
+        return strLabel;
+      }
+      if (strLabel.Length > 0)
+      {
+        bool bTooLong;
+        float fw = 0;
+        float fh = 0;
+        do
+        {
+          bTooLong = false;
+          _font.GetTextExtent(strLabel, ref fw, ref fh);
+          if (fw > iMaxWidth)
+          {
+            strLabel = strLabel.Substring(0, strLabel.Length - 1);
+            bTooLong = true;
+          }
+        } while (bTooLong && strLabel.Length > 1);
+      }
+      return strLabel;
     }
   }
 }

@@ -69,7 +69,7 @@
 		<textureFocus overlay="t_overlayB.png" mask="large_m.png">#(iif(eq(#skin.manualimg,'yes'),'btn\focus\focus_#tile6pluginImg.png','btn\focus\focus_#tile6plugin.hyperlink_Large.png'))</textureFocus>
 		<textureNoFocus mask="large_m.png">#(iif(eq(#skin.manualimg,'yes'),'btn\unfocus\#tile6pluginImg.png','btn\unfocus\#tile6plugin.hyperlink_Large.png'))</textureNoFocus>
 		<textalign>center</textalign>
-		<textYOff>265</textYOff>
+		<textYOff>530</textYOff>
 		<font>font13</font>
 		<onESC>#(skin.setfocus(35,cint(#skin.Anav6)))</onESC>
         <onleft>00#skin.page2navleft</onleft>
@@ -99,7 +99,7 @@
 		<textureFocus overlay="t_overlayA.png">#(switch( eq(#tile7plugin.hyperlink,'LATEST_TVSERIES1'),'#latestMediaHandler.tvseries.latest1.fanart', eq(#tile7plugin.hyperlink,'LATEST_TVSERIES2'),'#latestMediaHandler.tvseries.latest2.fanart', eq(#tile7plugin.hyperlink,'LATEST_MOVPICS1'),'#latestMediaHandler.movingpicture.latest1.fanart', eq(#tile7plugin.hyperlink,'LATEST_MOVPICS2'),'#latestMediaHandler.movingpicture.latest2.fanart', eq(#tile7plugin.hyperlink,'LATEST_MYVIDS1'),'#latestMediaHandler.myvideo.latest1.fanart', eq(#tile7plugin.hyperlink,'LATEST_MYVIDS2'),'#latestMediaHandler.myvideo.latest2.fanart', eq(#skin.manualimg,'yes'),'btn\focus\focus_#tile7pluginImg.png', eq(1,1),'btn\focus\focus_#tile7plugin.hyperlink.png'))</textureFocus>
 		<textureNoFocus>#(switch( eq(#tile7plugin.hyperlink,'LATEST_TVSERIES1'),'#latestMediaHandler.tvseries.latest1.fanart', eq(#tile7plugin.hyperlink,'LATEST_TVSERIES2'),'#latestMediaHandler.tvseries.latest2.fanart', eq(#tile7plugin.hyperlink,'LATEST_MOVPICS1'),'#latestMediaHandler.movingpicture.latest1.fanart', eq(#tile7plugin.hyperlink,'LATEST_MOVPICS2'),'#latestMediaHandler.movingpicture.latest2.fanart', eq(#tile7plugin.hyperlink,'LATEST_MYVIDS1'),'#latestMediaHandler.myvideo.latest1.fanart', eq(#tile7plugin.hyperlink,'LATEST_MYVIDS2'),'#latestMediaHandler.myvideo.latest2.fanart', eq(#skin.manualimg,'yes'),'btn\focus\focus_#tile7pluginImg.png', eq(1,1),'btn\focus\focus_#tile7plugin.hyperlink.png'))</textureNoFocus>
 		<textalign>center</textalign>
-		<textYOff>110</textYOff>
+		<textYOff>220</textYOff>
 		<font>font13</font>
 		<onESC>#(skin.setfocus(35,cint(#skin.Anav7)))</onESC>
         <onleft>00505</onleft>
@@ -129,7 +129,7 @@
 		<textureFocus overlay="t_overlayA.png">#(switch( eq(#tile8plugin.hyperlink,'LATEST_TVSERIES1'),'#latestMediaHandler.tvseries.latest1.fanart', eq(#tile8plugin.hyperlink,'LATEST_TVSERIES2'),'#latestMediaHandler.tvseries.latest2.fanart', eq(#tile8plugin.hyperlink,'LATEST_MOVPICS1'),'#latestMediaHandler.movingpicture.latest1.fanart', eq(#tile8plugin.hyperlink,'LATEST_MOVPICS2'),'#latestMediaHandler.movingpicture.latest2.fanart', eq(#tile8plugin.hyperlink,'LATEST_MYVIDS1'),'#latestMediaHandler.myvideo.latest1.fanart', eq(#tile8plugin.hyperlink,'LATEST_MYVIDS2'),'#latestMediaHandler.myvideo.latest2.fanart', eq(#skin.manualimg,'yes'),'btn\focus\focus_#tile8pluginImg.png', eq(1,1),'btn\focus\focus_#tile8plugin.hyperlink.png'))</textureFocus>
 		<textureNoFocus>#(switch( eq(#tile8plugin.hyperlink,'LATEST_TVSERIES1'),'#latestMediaHandler.tvseries.latest1.fanart', eq(#tile8plugin.hyperlink,'LATEST_TVSERIES2'),'#latestMediaHandler.tvseries.latest2.fanart', eq(#tile8plugin.hyperlink,'LATEST_MOVPICS1'),'#latestMediaHandler.movingpicture.latest1.fanart', eq(#tile8plugin.hyperlink,'LATEST_MOVPICS2'),'#latestMediaHandler.movingpicture.latest2.fanart', eq(#tile8plugin.hyperlink,'LATEST_MYVIDS1'),'#latestMediaHandler.myvideo.latest1.fanart', eq(#tile8plugin.hyperlink,'LATEST_MYVIDS2'),'#latestMediaHandler.myvideo.latest2.fanart', eq(#skin.manualimg,'yes'),'btn\focus\focus_#tile8pluginImg.png', eq(1,1),'btn\focus\focus_#tile8plugin.hyperlink.png'))</textureNoFocus>
 		<textalign>center</textalign>
-		<textYOff>110</textYOff>
+		<textYOff>220</textYOff>
 		<font>font13</font>
 		<onESC>#(skin.setfocus(35,cint(#skin.Anav8)))</onESC>
         <onleft>00505</onleft>
@@ -159,7 +159,7 @@
 		<textureFocus overlay="t_overlayA.png" mask="top_m.png">#(switch( eq(#tile9plugin.hyperlink,'LATEST_TVSERIES1'),'#latestMediaHandler.tvseries.latest1.fanart', eq(#tile9plugin.hyperlink,'LATEST_TVSERIES2'),'#latestMediaHandler.tvseries.latest2.fanart', eq(#tile9plugin.hyperlink,'LATEST_MOVPICS1'),'#latestMediaHandler.movingpicture.latest1.fanart', eq(#tile9plugin.hyperlink,'LATEST_MOVPICS2'),'#latestMediaHandler.movingpicture.latest2.fanart', eq(#tile9plugin.hyperlink,'LATEST_MYVIDS1'),'#latestMediaHandler.myvideo.latest1.fanart', eq(#tile9plugin.hyperlink,'LATEST_MYVIDS2'),'#latestMediaHandler.myvideo.latest2.fanart', eq(#skin.manualimg,'yes'),'btn\focus\focus_#tile9pluginImg.png', eq(1,1),'btn\focus\focus_#tile9plugin.hyperlink.png'))</textureFocus>
 		<textureNoFocus mask="top_m.png">#(switch( eq(#tile9plugin.hyperlink,'LATEST_TVSERIES1'),'#latestMediaHandler.tvseries.latest1.fanart', eq(#tile9plugin.hyperlink,'LATEST_TVSERIES2'),'#latestMediaHandler.tvseries.latest2.fanart', eq(#tile9plugin.hyperlink,'LATEST_MOVPICS1'),'#latestMediaHandler.movingpicture.latest1.fanart', eq(#tile9plugin.hyperlink,'LATEST_MOVPICS2'),'#latestMediaHandler.movingpicture.latest2.fanart', eq(#tile9plugin.hyperlink,'LATEST_MYVIDS1'),'#latestMediaHandler.myvideo.latest1.fanart', eq(#tile9plugin.hyperlink,'LATEST_MYVIDS2'),'#latestMediaHandler.myvideo.latest2.fanart', eq(#skin.manualimg,'yes'),'btn\focus\focus_#tile9pluginImg.png', eq(1,1),'btn\focus\focus_#tile9plugin.hyperlink.png'))</textureNoFocus>
 		<textalign>center</textalign>
-		<textYOff>110</textYOff>
+		<textYOff>220</textYOff>
 		<font>font13</font>
 		<onESC>#(skin.setfocus(35,cint(#skin.Anav9)))</onESC>
         <onleft>00506</onleft>
@@ -189,7 +189,7 @@
 		<textureFocus overlay="t_overlayA.png" mask="btm_m.png">#(switch( eq(#tile10plugin.hyperlink,'LATEST_TVSERIES1'),'#latestMediaHandler.tvseries.latest1.fanart', eq(#tile10plugin.hyperlink,'LATEST_TVSERIES2'),'#latestMediaHandler.tvseries.latest2.fanart', eq(#tile10plugin.hyperlink,'LATEST_MOVPICS1'),'#latestMediaHandler.movingpicture.latest1.fanart', eq(#tile10plugin.hyperlink,'LATEST_MOVPICS2'),'#latestMediaHandler.movingpicture.latest2.fanart', eq(#tile10plugin.hyperlink,'LATEST_MYVIDS1'),'#latestMediaHandler.myvideo.latest1.fanart', eq(#tile10plugin.hyperlink,'LATEST_MYVIDS2'),'#latestMediaHandler.myvideo.latest2.fanart', eq(#skin.manualimg,'yes'),'btn\focus\focus_#tile10pluginImg.png', eq(1,1),'btn\focus\focus_#tile10plugin.hyperlink.png'))</textureFocus>
 		<textureNoFocus mask="btm_m.png">#(switch( eq(#tile10plugin.hyperlink,'LATEST_TVSERIES1'),'#latestMediaHandler.tvseries.latest1.fanart', eq(#tile10plugin.hyperlink,'LATEST_TVSERIES2'),'#latestMediaHandler.tvseries.latest2.fanart', eq(#tile10plugin.hyperlink,'LATEST_MOVPICS1'),'#latestMediaHandler.movingpicture.latest1.fanart', eq(#tile10plugin.hyperlink,'LATEST_MOVPICS2'),'#latestMediaHandler.movingpicture.latest2.fanart', eq(#tile10plugin.hyperlink,'LATEST_MYVIDS1'),'#latestMediaHandler.myvideo.latest1.fanart', eq(#tile10plugin.hyperlink,'LATEST_MYVIDS2'),'#latestMediaHandler.myvideo.latest2.fanart', eq(#skin.manualimg,'yes'),'btn\focus\focus_#tile10pluginImg.png', eq(1,1),'btn\focus\focus_#tile10plugin.hyperlink.png'))</textureNoFocus>
 		<textalign>center</textalign>
-		<textYOff>110</textYOff>
+		<textYOff>220</textYOff>
 		<font>font13</font>
 		<onESC>#(skin.setfocus(35,cint(#skin.Anav10)))</onESC>
         <onleft>00507</onleft>
