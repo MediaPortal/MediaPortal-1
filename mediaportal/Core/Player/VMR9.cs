@@ -2137,21 +2137,22 @@ namespace MediaPortal.Player
             Log.Debug("VMR9: Dispose 6");
           }
           // Restore GUIWindowManager after releasing the texture in command thread
-          // Suspending GUIGraphicsContext.State
-          if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
-          {
-            GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.SUSPENDING;
-          }
+          //// Suspending GUIGraphicsContext.State
+          //if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
+          //{
+          //  GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.SUSPENDING;
+          //}
 
           GUITextureManager.Clear();
           GUITextureManager.Init();
           GUIWindowManager.OnResize();
 
-          // Restore GUIGraphicsContext.State
-          if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.SUSPENDING)
-          {
-            GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.RUNNING;
-          }
+          //// Commented because lead to loop on suspend
+          //// Restore GUIGraphicsContext.State
+          //if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.SUSPENDING)
+          //{
+          //  GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.RUNNING;
+          //}
         }
 
         // Commented out seems not needed anymore
