@@ -403,14 +403,7 @@ namespace MediaPortal.GUI.Library
         }
         else
         {
-          if (base.Width == 0 && _maxWidth > 0)
-          {
-            return TextWidth + 1; // + 1 - Margin for not fade last char in label text
-          }
-          else
-          {
-            return base.Width;
-          }
+          return base.Width;
         }
       }
       set
@@ -450,14 +443,7 @@ namespace MediaPortal.GUI.Library
         }
         else
         {
-          if (base.Height == 0 && _maxHeight > 0)
-          {
-            return TextHeight;
-          }
-          else
-          {
-            return base.Height;
-          }
+          return base.Height;
         }
       }
       set
