@@ -2138,23 +2138,28 @@ namespace MediaPortal.Player
             GUIGraphicsContext.MadVrRenderTargetVMR9 = null;
             Log.Debug("VMR9: Dispose 6");
           }
+
           // Restore GUIWindowManager after releasing the texture in command thread
-          //// Suspending GUIGraphicsContext.State
-          //if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
-          //{
-          //  GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.SUSPENDING;
-          //}
+          // Suspending GUIGraphicsContext.State
+          var stateRunning = false;
+          if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
+          {
+            GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.SUSPENDING;
+            stateRunning = true;
+          }
+
+          var previousActiveWindow = GUIWindowManager.GetPreviousActiveWindow();
 
           GUITextureManager.Clear();
           GUITextureManager.Init();
           GUIWindowManager.OnResize();
+          GUIWindowManager.ActivateWindow(previousActiveWindow);
 
-          //// Commented because lead to loop on suspend
-          //// Restore GUIGraphicsContext.State
-          //if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.SUSPENDING)
-          //{
-          //  GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.RUNNING;
-          //}
+          // Restore GUIGraphicsContext.State
+          if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.SUSPENDING && stateRunning)
+          {
+            GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.RUNNING;
+          }
         }
 
         // Commented out seems not needed anymore
