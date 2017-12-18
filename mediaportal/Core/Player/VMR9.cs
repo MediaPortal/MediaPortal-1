@@ -1778,9 +1778,9 @@ namespace MediaPortal.Player
         {
           if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
           {
-            Log.Debug("VMR9: Vmr9MadVrRelease 1");
-            if (g_vmr9?._vmr9Filter != null)
+            if (g_vmr9?._vmr9Filter != null && _graphBuilder != null)
             {
+              Log.Debug("VMR9: Vmr9MadVrRelease 1");
               _commandNotify?.Set();
               _graphBuilder?.RemoveFilter(g_vmr9?._vmr9Filter as DirectShowLib.IBaseFilter);
               DirectShowUtil.CleanUpInterface(g_vmr9?._vmr9Filter);
@@ -1790,8 +1790,8 @@ namespace MediaPortal.Player
               {
                 GUIWindowManager.MadVrProcess();
               }
+              Log.Debug("VMR9: Vmr9MadVrRelease 2");
             }
-            Log.Debug("VMR9: Vmr9MadVrRelease 2");
           }
         }
         catch (Exception ex)
