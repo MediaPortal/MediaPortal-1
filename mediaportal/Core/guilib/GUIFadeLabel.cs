@@ -58,7 +58,7 @@ namespace MediaPortal.GUI.Library
 
     private bool _allowScrolling = true;
     private bool _isScrolling;
-    private bool _containsProperty;
+    private bool _containsProperty = false;
 
     private string _previousText = "";
     private string _labelTail = " ";
@@ -289,6 +289,15 @@ namespace MediaPortal.GUI.Library
       _labelControl.TextVAlignment = _textVAlignment;
       _labelControl.TextColor = _textColor;
       _labelControl.CacheFont = _labelControl.TextWidth < (_maxWidth > 0 ? _maxWidth : _width);
+      if (_maxWidth > 0)
+      {
+        _labelControl.MinWidth = MinWidth;
+        _labelControl.MaxWidth = MaxWidth;
+      }
+      else
+      {
+        _labelControl.Width = _width;
+      }
       if (GUIGraphicsContext.graphics != null)
       {
         _labelControl.Render(timePassed);
@@ -530,6 +539,7 @@ namespace MediaPortal.GUI.Library
         _labelControl.Label = scrollText + " "; // Fade end of text in GUILabel...
         if (_maxWidth > 0)
         {
+          _labelControl.MinWidth = MinWidth;
           _labelControl.MaxWidth = (int)(maxRenderWidth + _scrollPosititionX - _scrollOffset);
         }
         else
@@ -584,6 +594,7 @@ namespace MediaPortal.GUI.Library
 
         if (_maxWidth > 0)
         {
+          _labelControl.MinWidth = MinWidth;
           _labelControl.MaxWidth = (int)maxRenderWidth;
         }
         else
