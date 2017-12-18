@@ -293,11 +293,17 @@ namespace MediaPortal.GUI.Library
         }
         sc = GUIGraphicsContext.MergeAlpha((uint)sc);
 
-        _font.DrawShadowTextWidth(xpos, ypos, c, _label, Alignment.ALIGN_LEFT, _shadowAngle, _shadowDistance, sc, fMaxWidth);
+        if (_font != null)
+        {
+          _font.DrawShadowTextWidth(xpos, ypos, c, _label, Alignment.ALIGN_LEFT, _shadowAngle, _shadowDistance, sc, fMaxWidth);
+        }
       }
       else
       {
-        _font.DrawTextWidth(xpos, ypos, c, _label, fMaxWidth, Alignment.ALIGN_LEFT);
+        if (_font != null)
+        {
+          _font.DrawTextWidth(xpos, ypos, c, _label, fMaxWidth, Alignment.ALIGN_LEFT);
+        }
       }
     }
 
@@ -325,7 +331,9 @@ namespace MediaPortal.GUI.Library
         }
         sc = GUIGraphicsContext.MergeAlpha((uint)sc);
         if (_font != null)
+        {
           _font.DrawShadowText(xpos, ypos, c, _label, Alignment.ALIGN_LEFT, width, _shadowAngle, _shadowDistance, sc);
+        }
       }
       else
       {
@@ -336,7 +344,10 @@ namespace MediaPortal.GUI.Library
         clipRect.Height = GUIGraphicsContext.Height - clipRect.Y;
 
         GUIGraphicsContext.BeginClip(clipRect);
-        if (_font != null) _font.DrawTextEx(xpos, ypos, c, _label, ref _context, width);
+        if (_font != null) 
+        {
+          _font.DrawTextEx(xpos, ypos, c, _label, ref _context, width);
+        }
         GUIGraphicsContext.EndClip();
       }
     }
@@ -394,7 +405,7 @@ namespace MediaPortal.GUI.Library
         {
           if (base.Width == 0)
           {
-            return TextWidth;
+            return TextWidth + 1; // + 1 - Margin for not fade last char in label text
           }
           else
           {
@@ -470,7 +481,7 @@ namespace MediaPortal.GUI.Library
       { 
         if (base.Width == 0)
         {
-          return TextWidth;
+          return TextWidth + 1; // + 1 - Margin for not fade last char in label text
         }
         else
         {
@@ -687,7 +698,6 @@ namespace MediaPortal.GUI.Library
     private void CachedLabel()
     {
       string v;
-
 
       if (_containsProperty)
       {
