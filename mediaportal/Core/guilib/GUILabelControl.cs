@@ -314,27 +314,7 @@ namespace MediaPortal.GUI.Library
 
     public override int Width
     {
-      get
-      {
-        if (base.Width == 0)
-        {
-          if (_font == null)
-          {
-            return 0;
-          }
-          CachedLabel();
-          float width = _textwidth;
-          float height = _textheight;
-          _font.GetTextExtent(_cachedTextLabel, ref width, ref height);
-          _textwidth = (int)width;
-          _textheight = (int)height;
-          return _textwidth;
-        }
-        else
-        {
-          return base.Width;
-        }
-      }
+      get { return base.Width; }
       set
       {
         if (base.Width != value)
@@ -344,30 +324,10 @@ namespace MediaPortal.GUI.Library
         }
       }
     }
- 
+
     public override int Height
     {
-      get
-      {
-        if (base.Height == 0)
-        {
-          if (_font == null)
-          {
-            return 0;
-          }
-          CachedLabel();
-          float width = _textwidth;
-          float height = _textheight;
-          _font.GetTextExtent(_cachedTextLabel, ref width, ref height);
-          _textwidth = (int)width;
-          _textheight = (int)height;
-          return _textheight;
-        }
-        else
-        {
-          return base.Height;
-        }
-      }
+      get { return base.Height; }
       set
       {
         if (base.Height != value)
