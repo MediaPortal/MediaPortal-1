@@ -811,9 +811,9 @@ namespace MediaPortal.Player
         Log.Info("RefreshRateChanger.SetRefreshRateBasedOnFPS: current refreshrate is {0}hz - changing it to {1}hz", currentRR, newRR);
 
         // Add a delay for HDR
-        if (!g_Player.Playing)
+        if (!g_Player.Playing && GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
         {
-          Log.Debug("RefreshRateChanger.SetRefreshRateBasedOnFPS delayed start");
+          Log.Debug("RefreshRateChanger.SetRefreshRateBasedOnFPS delayed start when using madVR");
           Thread.Sleep(10000);
         }
 
