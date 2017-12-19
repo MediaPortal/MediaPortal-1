@@ -456,6 +456,10 @@ namespace MediaPortal.Player
     private static DateTime _refreshrateChangeExecutionTime = DateTime.MinValue;
 
     private static List<RefreshRateSetting> _refreshRateSettings = null;
+    private static double _workerFps;
+    private static string _workerStrFile;
+    private static MediaType _workerType;
+    private static Thread _workerThread { get; set; }
 
     #endregion
 
@@ -739,6 +743,20 @@ namespace MediaPortal.Player
 
     public static void SetRefreshRateBasedOnFPS(double fps, string strFile, MediaType type)
     {
+      _workerFps = fps;
+      _workerStrFile = strFile;
+      _workerType = type;
+      _workerThread = new Thread(new ThreadStart(SetRefreshRateBasedOnFpsThread))
+      {
+        IsBackground = true,
+        Name = "SetRefreshRateBasedOnFPS thread",
+        Priority = ThreadPriority.AboveNormal
+      };
+      _workerThread.Start();
+    }
+
+    public static void SetRefreshRateBasedOnFpsThread()
+    {
       if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && !GUIGraphicsContext.ForcedRefreshRate3D)
       {
         using (Settings xmlreader = new MPSettings())
@@ -750,6 +768,9 @@ namespace MediaPortal.Player
         }
       }
 
+      double fps = _workerFps;
+      string strFile = _workerStrFile;
+      MediaType type = _workerType;
       double currentRR = 0;
       if ((GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal == -1) ||
           (Manager.Adapters.Count <= GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal) ||
@@ -789,7 +810,14 @@ namespace MediaPortal.Player
       {
         Log.Info("RefreshRateChanger.SetRefreshRateBasedOnFPS: current refreshrate is {0}hz - changing it to {1}hz", currentRR, newRR);
 
-        if (newExtCmd.Length == 0)
+        // Add a delay for HDR
+        if (!g_Player.Playing)
+        {
+          Log.Debug("RefreshRateChanger.SetRefreshRateBasedOnFPS delayed start");
+          Thread.Sleep(10000);
+        }
+
+        if (newExtCmd?.Length == 0)
         {
           Log.Info("RefreshRateChanger.SetRefreshRateBasedOnFPS: using internal win32 method for changing refreshrate. current is {0}hz, desired is {1}", currentRR, newRR);
           Log.Info("RefreshRateChanger AdapterOrdinal value is {0}", (uint)GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal);
@@ -821,6 +849,13 @@ namespace MediaPortal.Player
       }
       Log.Info("RefreshRateChanger.SwitchFocus");
       Util.Utils.SwitchFocus();
+
+      // stop the workerthread
+      if (_workerThread != null && _workerThread.IsAlive)
+      {
+        _workerThread.Abort();
+        _workerThread = null;
+      }
     }
 
     // defaults the refreshrate
