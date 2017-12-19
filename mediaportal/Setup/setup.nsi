@@ -637,6 +637,8 @@ Section "MediaPortal core files (required)" SecCore
   File "${git_ROOT}\Packages\NAudio.1.8.3\lib\net35\NAudio.dll" 
   ; CSCore
   File "${git_ROOT}\Packages\CSCore.1.2.1.2\lib\net35-client\CSCore.dll"
+  ; NReco.VideoInfo
+  File "${git_ROOT}\Packages\NReco.VideoInfo.1.0.0\lib\NReco.VideoInfo.dll"
   ; Doc
   SetOutPath "$MPdir.Base\Docs"
   File "${git_MP}\Docs\BASS License.txt"

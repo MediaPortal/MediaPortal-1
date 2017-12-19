@@ -958,6 +958,20 @@ namespace MediaPortal.Player
                     sf.GetMethod().Name);
           return;
         }
+        // Check if FPS of video are detected for under 10Hz
+        if (fps < 10)
+        {
+          var ffProbe = new NReco.VideoInfo.FFProbe();
+          var videoInfo = ffProbe.GetMediaInfo(strFile);
+          foreach (var stream in videoInfo.Streams)
+          {
+            if (stream.CodecType == "video")
+            {
+              fps = stream.FrameRate;
+              fps = Math.Round(fps, 3);
+            }
+          }
+        }
       }
       else if (isTV || isRTSP)
       {
