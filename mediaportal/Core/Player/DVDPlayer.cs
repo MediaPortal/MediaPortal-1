@@ -1209,8 +1209,19 @@ namespace MediaPortal.Player
             timeCode.bMinutes = (byte)(minutes & 0xff);
             timeCode.bSeconds = (byte)(seconds & 0xff);
             timeCode.bFrames = 0;
-            DvdPlaybackLocation2 loc;
-            _currTitle = _dvdInfo.GetCurrentLocation(out loc);
+            // Use _dvdInfo in sync with MP main thread to avoid exception
+            if (GUIWindow._mainThreadContext != null)
+            {
+              GUIWindow._mainThreadContext.Send(delegate
+              {
+                DvdPlaybackLocation2 loc;
+                _dvdInfo.GetCurrentDomain(out _currDomain);
+                if (_currDomain == DvdDomain.Title)
+                {
+                  _currTitle = _dvdInfo.GetCurrentLocation(out loc);
+                }
+              }, null);
+            }
 
             try
             {
