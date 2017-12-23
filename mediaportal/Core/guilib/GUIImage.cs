@@ -1533,10 +1533,10 @@ namespace MediaPortal.GUI.Library
         //get the current frame
         if (_packedTexture != null)
         {
-          uint color = (uint) _diffuseColor;
+          uint color = (uint)_diffuseColor;
           if (Dimmed)
           {
-            color = (uint) (_diffuseColor & DimColor);
+            color = (uint)(_diffuseColor & DimColor);
           }
           color = GUIGraphicsContext.MergeAlpha(color);
           float[,] matrix = GUIGraphicsContext.GetFinalMatrix();
@@ -1567,8 +1567,8 @@ namespace MediaPortal.GUI.Library
             ++x;
 
             // Compute the number of textures to draw in the control and draw the texture.
-            float umax = _nw/x;
-            float vmax = _nh/x;
+            float umax = _nw / x;
+            float vmax = _nh / x;
             texture.Draw(_fx, _fy, _nw, _nh, 0, 0, umax, vmax, color);
           }
           else
@@ -1579,9 +1579,9 @@ namespace MediaPortal.GUI.Library
               if (_packedMaskTextureNo < 0)
               {
                 GUITextureManager.GetPackedTexture(_maskFileName, out _masktexUoff, out _masktexVoff,
-                  out _masktexUmax, out _masktexVmax, out _maskTexWidth,
-                  out _maskTexHeight, out _maskTexture,
-                  out _packedMaskTextureNo);
+                                                    out _masktexUmax, out _masktexVmax, out _maskTexWidth,
+                                                    out _maskTexHeight, out _maskTexture,
+                                                    out _packedMaskTextureNo);
               }
               if (_packedMaskTextureNo >= 0)
               {
@@ -1596,8 +1596,8 @@ namespace MediaPortal.GUI.Library
                 vmaxm = _masktexVmax + _masktexVoff;
 
                 DXNative.FontEngineDrawMaskedTexture(_packedTextureNo, _fx, _fy, _nw, _nh, uoff, voff, umax, vmax,
-                  color, matrix,
-                  _packedMaskTextureNo, uoffm, voffm, umaxm, vmaxm);
+                                                      color, matrix,
+                                                      _packedMaskTextureNo, uoffm, voffm, umaxm, vmaxm);
               }
             }
             else
@@ -1693,8 +1693,6 @@ namespace MediaPortal.GUI.Library
                 DXNative.FontEngineDrawTexture2(_packedTextureNo, fx, fy, nw, nh, uoff1, voff1, umax1, vmax1, color, m,
                                                 _packedBlendableTextureNo, _blendabletexUoffCalc, _blendabletexVoffCalc, _blendabletexUmaxCalc, _blendabletexVmaxCalc,
                                                 _blendMode);
-                // TODO need to find why it trigger flichering TV Guide
-                //DXNative.FontEngineDrawTexture2(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, m, 1, 0, 0, 0, 0, FontEngineBlendMode.BLEND_NONE);
               }
 
               // Draw flipped image border.

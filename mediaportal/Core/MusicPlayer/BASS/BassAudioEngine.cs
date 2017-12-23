@@ -811,7 +811,7 @@ namespace MediaPortal.MusicPlayer.BASS
           Bass.BASS_SetConfig(BASSConfig.BASS_CONFIG_NET_BUFFER, netBufferSize);
 
           // PreBuffer() takes care of this.
-          Bass.BASS_SetConfig(BASSConfig.BASS_CONFIG_NET_PREBUF, 5000);
+          Bass.BASS_SetConfig(BASSConfig.BASS_CONFIG_NET_PREBUF, 0);
         }
 
         GUIGraphicsContext.form.Disposed += OnAppFormDisposed; // We need to cleanup, when the appliacation ends

@@ -1585,6 +1585,7 @@ namespace MediaPortal.Util
           if (!pathOnline && !share.ShareWakeOnLan && !Util.Utils.IsDVD(item.Path))
           {
             share.ShareOffline = true;
+
             Log.Debug("GetRootExt(): ShareOffline : '{0}' doesn't exists or offline, enable WOL feature for permanent loading", share.Path);
             Log.Debug("GetRootExt(): ShareOffline : '{0}' can be refreshed from context menu in share view mode", share.Path);
           }

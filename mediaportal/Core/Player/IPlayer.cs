@@ -324,7 +324,7 @@ namespace MediaPortal.Player
     /// <summary>
     /// Method to stop playing
     /// </summary>
-    public virtual void Stop() { }
+    public virtual void Stop() {}
 
     /// <summary>
     /// Method to stop playing
