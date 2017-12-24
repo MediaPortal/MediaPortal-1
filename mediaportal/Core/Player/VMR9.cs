@@ -1684,10 +1684,13 @@ namespace MediaPortal.Player
         }
         else if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
         {
-          var xposition = GUIGraphicsContext.form.Location.X;
-          var yposition = GUIGraphicsContext.form.Location.Y;
-          Size client = GUIGraphicsContext.form.ClientSize;
-          videoWinMadVr.SetWindowPosition(xposition, yposition, client.Width, client.Height);
+          if (!(g_Player.Player is DVDPlayer9) && !(g_Player.Player is DVDPlayer))
+          {
+            var xposition = GUIGraphicsContext.form.Location.X;
+            var yposition = GUIGraphicsContext.form.Location.Y;
+            Size client = GUIGraphicsContext.form.ClientSize;
+            videoWinMadVr.SetWindowPosition(xposition, yposition, client.Width, client.Height);
+          }
         }
 
         var hr = mediaCtrl.Run();
