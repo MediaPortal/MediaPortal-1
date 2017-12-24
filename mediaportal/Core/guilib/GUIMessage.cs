@@ -166,6 +166,7 @@ namespace MediaPortal.GUI.Library
       GUI_MSG_ONDISPLAYMADVRCHANGED = 202,
       GUI_MSG_MADVRREPOSITION = 203,
       GUI_MSG_MADVR_SCREEN_REFRESH = 204, // Set madVR screen refresh
+      GUI_MSG_SET_RESUME_STATE = 205,
       PS_ONSTANDBY = 9999
     } ;
 
