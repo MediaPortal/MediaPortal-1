@@ -1772,7 +1772,9 @@ namespace MediaPortal
             g_Player.PlayDVD(fileName);
             if (g_Player.Playing)
             {
-              g_Player.Player.SetResumeState(null);
+              // send resume thread async
+              var msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SET_RESUME_STATE, 0, 0, 0, 0, 0, null);
+              GUIWindowManager.SendThreadMessage(msg);
             }
           }
         }

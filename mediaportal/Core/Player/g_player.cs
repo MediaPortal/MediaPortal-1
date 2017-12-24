@@ -4082,6 +4082,9 @@ namespace MediaPortal.Player
             GUIGraphicsContext.ProcessMadVrOsdDisplay = false;
           }
           break;
+        case GUIMessage.MessageType.GUI_MSG_SET_RESUME_STATE:
+          g_Player.Player.SetResumeState((byte[])message.Object);
+          break;
       }
     }
 

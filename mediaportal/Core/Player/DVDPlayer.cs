@@ -295,6 +295,24 @@ namespace MediaPortal.Player
           _showClosedCaptions = xmlreader.GetValueAsBool("dvdplayer", "showclosedcaptions", false);
         }
 
+        DvdDiscSide side;
+        int titles, numOfVolumes, volume;
+        hr = _dvdInfo.GetDVDVolumeInfo(out numOfVolumes, out volume, out side, out titles);
+        if (hr < 0)
+        {
+          Log.Error("DVDPlayer:Unable to get dvdvolumeinfo 0x{0:X}", hr);
+          CloseInterfaces();
+          return false; // can't read disc
+        }
+        else
+        {
+          if (titles <= 0)
+          {
+            Log.Error("DVDPlayer:DVD does not contain any titles? {0}", titles);
+            //return false;
+          }
+        }
+
         SetDefaultLanguages();
 
         hr = _mediaEvt.SetNotifyWindow(GUIGraphicsContext.ActiveForm, WM_DVD_EVENT, IntPtr.Zero);
@@ -324,34 +342,6 @@ namespace MediaPortal.Player
         //    }
         //  }
         //}
-        if (VMR9Util.g_vmr9 != null) hr = VMR9Util.g_vmr9.StartMediaCtrl(_mediaCtrl);
-        if (hr < 0 || hr > 1)
-        {
-          HResult hrdebug = new HResult(hr);
-          Log.Info(hrdebug.ToDXString());
-          Log.Error("DVDPlayer:Unable to start playing() 0x:{0:X}", hr);
-          CloseInterfaces();
-          return false;
-        }
-        //DsUtils.DumpFilters(_graphBuilder);
-
-        DvdDiscSide side;
-        int titles, numOfVolumes, volume;
-        hr = _dvdInfo.GetDVDVolumeInfo(out numOfVolumes, out volume, out side, out titles);
-        if (hr < 0)
-        {
-          Log.Error("DVDPlayer:Unable to get dvdvolumeinfo 0x{0:X}", hr);
-          CloseInterfaces();
-          return false; // can't read disc
-        }
-        else
-        {
-          if (titles <= 0)
-          {
-            Log.Error("DVDPlayer:DVD does not contain any titles? {0}", titles);
-            //return false;
-          }
-        }
 
         if (_videoWin != null)
         {
@@ -385,6 +375,18 @@ namespace MediaPortal.Player
             }
           }
         }
+
+        if (VMR9Util.g_vmr9 != null) hr = VMR9Util.g_vmr9.StartMediaCtrl(_mediaCtrl);
+        if (hr < 0 || hr > 1)
+        {
+          HResult hrdebug = new HResult(hr);
+          Log.Info(hrdebug.ToDXString());
+          Log.Error("DVDPlayer:Unable to start playing() 0x:{0:X}", hr);
+          CloseInterfaces();
+          return false;
+        }
+        //DsUtils.DumpFilters(_graphBuilder);
+
         return true;
       }
       catch (Exception ex)
