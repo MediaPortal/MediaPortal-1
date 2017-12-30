@@ -111,7 +111,12 @@ namespace Databases.Folders.SqlServer
       return -1;
     }
 
-    public void DeleteFolderSetting(string path, string Key)
+    public void DeleteFolderSetting(string strPath, string Key)
+    {
+      DeleteFolderSetting(strPath, Key, false);
+    }
+
+    public void DeleteFolderSetting(string path, string Key, bool withPath)
     {
       if (path == null)
       {
@@ -144,6 +149,11 @@ namespace Databases.Folders.SqlServer
         string strSQL = String.Format("delete from tblFolderSetting where idPath={0} and tagName ='{1}'", PathId,
                                       keyFiltered);
         SqlServerUtility.ExecuteNonQuery(_connection, strSQL);
+        if (withPath)
+        {
+          strSQL = String.Format("delete from tblPath where idPath={0}", PathId);
+          SqlServerUtility.ExecuteNonQuery(_connection, strSQL);
+        }
       }
       catch (Exception ex)
       {
@@ -318,6 +328,85 @@ namespace Databases.Folders.SqlServer
                 valueObject = serializer.Deserialize(r);
               }
               catch (Exception) {}
+            }
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error(ex);
+      }
+    }
+
+    public void GetViewSetting(string strPath, string Key, Type type, out object Value)
+    {
+      Value = null;
+      if (strPath == null)
+      {
+        return;
+      }
+      if (strPath == string.Empty)
+      {
+        return;
+      }
+      if (Key == null)
+      {
+        return;
+      }
+      if (Key == string.Empty)
+      {
+        return;
+      }
+
+      try
+      {
+        string strPathFiltered = Utils.RemoveTrailingSlash(strPath);
+        string KeyFiltered = Key;
+        DatabaseUtility.RemoveInvalidChars(ref strPathFiltered);
+        DatabaseUtility.RemoveInvalidChars(ref KeyFiltered);
+
+        int PathId = AddPath(strPathFiltered);
+        if (PathId < 0)
+        {
+          return;
+        }
+
+        string strValue = string.Empty;
+        string sql = String.Format("select * from tblFolderSetting where idPath={0} and tagName like '{1}'", PathId,
+                                   KeyFiltered);
+        using (SqlCommand cmd = _connection.CreateCommand())
+        {
+          cmd.CommandType = CommandType.Text;
+          cmd.CommandText = sql;
+          using (SqlDataReader reader = cmd.ExecuteReader())
+          {
+            if (!reader.Read())
+            {
+              reader.Close();
+              return;
+            }
+            strValue = reader["tagValue"].ToString();
+            reader.Close();
+          }
+        }
+        Log.Debug("GetViewSetting: {0} found.", strPathFiltered);
+        //deserialize...
+
+        using (MemoryStream strm = new MemoryStream())
+        {
+          using (StreamWriter writer = new StreamWriter(strm))
+          {
+            writer.Write(strValue);
+            writer.Flush();
+            strm.Seek(0, SeekOrigin.Begin);
+            using (TextReader r = new StreamReader(strm))
+            {
+              try
+              {
+                XmlSerializer serializer = new XmlSerializer(type);
+                Value = serializer.Deserialize(r);
+              }
+              catch (Exception) { }
             }
           }
         }
