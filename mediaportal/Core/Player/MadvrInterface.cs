@@ -9,11 +9,61 @@ using MediaPortal.GUI.Library;
 
 namespace MediaPortal.Player
 {
-  // when using the (1) bitmaps method, you can register a mouse callback
-  // this callback will be called whenever a mouse event occurs
-  // mouse pos (0, 0) is the left top corner of the OSD bitmap element
-  // return "true" if your callback has handled the mouse message and
-  // if you want the mouse message to be "eaten" (instead of passed on)
+  // ---------------------------------------------------------------------------
+  // IMadVRFrameGrabber
+  // ---------------------------------------------------------------------------
+
+  // the "IMadVRFrameGrabber" interface can be used to get an 8bit RGB grab
+  // of the currently shown video frame
+
+  // the resulting DIB Image is allocated by madVR using LocalAlloc
+  // it's the caller's duty to free the buffer when it's no longer needed
+
+  //[uuid("B0F34BA5-5EFD-4762-A07F-FF9046B4566C")]
+  //interface IMadVRFrameGrabber : public IUnknown
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+   Guid("B0F34BA5-5EFD-4762-A07F-FF9046B4566C"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  public interface IMadVRFrameGrabber
+  {
+    [PreserveSig] // this API provides the (1) bitmap based method
+    int GrabFrame(
+      [In, MarshalAs(UnmanagedType.U4)] int zoom, // which resolution to create the frame grab in?
+      [In] int flags, // various flags/options
+      [In] int chromaUpscaling, // which chroma upscaling algorithm to use?
+      [In] int lumaDownscaling, // which luma downscaling algorithm to use?
+      [In] int lumaUpscaling, // which luma upscaling algorithm to use?
+      [In] int reserved1, // reserved for future flags/options, set to 0
+      [Out] out IntPtr dibImage, // output: DIB Image = BITMAPINFOHEADER + pixels
+      IntPtr reserved2 // reserved for future use, set to NULL
+      );
+  }
+
+  // ---------------------------------------------------------------------------
+  // IMadVRRefreshRateInfo (obsolete)
+  // ---------------------------------------------------------------------------
+
+  // CAUTION: This interface is obsolete. Use IMadVRInfo instead:
+  // IMadVRInfo::InfoGetDouble("RefreshRate")
+
+  // this interface allows you to ask madVR about the detected refresh rate
+
+  //[uuid("3F6580E8-8DE9-48D0-8E4E-1F26FE02413E")]
+  //interface IMadVRRefreshRateInfo : public IUnknown
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+   Guid("3F6580E8-8DE9-48D0-8E4E-1F26FE02413E"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  public interface IMadVRRefreshRateInfo
+  {
+    [PreserveSig]
+    double GetRefreshRate([Out] out double refreshRate);
+  }
+
+// when using the (1) bitmaps method, you can register a mouse callback
+// this callback will be called whenever a mouse event occurs
+// mouse pos (0, 0) is the left top corner of the OSD bitmap element
+// return "true" if your callback has handled the mouse message and
+// if you want the mouse message to be "eaten" (instead of passed on)
   public delegate void OSDMOUSECALLBACK(
     string name, System.IntPtr context, uint message, System.IntPtr wParam, int posX, int posY);
 
@@ -461,6 +511,58 @@ namespace MediaPortal.Player
     public static IntPtr reserved;
     public static IOsdRenderCallback osdRenderCallback;
 
+    // values for IMadVRFrameGrabber::GrabFrame's "zoom" parameter
+    public static int ZOOM_PLAYBACK_SIZE = 0; // the exact size/zoom used in current playback
+
+    public static int ZOOM_ENCODED_SIZE = 1;
+    // the video in its encoded size (e.g. DVD 720x480), *without* aspect ratio correction
+
+    public static int ZOOM_25_PERCENT = 25; // the video zoomed down to 25% of its original size, with AR correction
+    public static int ZOOM_50_PERCENT = 50; // the video zoomed down to 50%
+    public static int ZOOM_100_PERCENT = 100; // the video in its original size
+    public static int ZOOM_200_PERCENT = 200; // the video zoomed up to 200%
+    public static int ZOOM_300_PERCENT = 300; // the video zoomed up to 300%
+    public static int ZOOM_400_PERCENT = 400; // the video zoomed up to 400%
+    public static int ZOOM_800_PERCENT = 800; // the video zoomed up to 800%
+    public static int ZOOM_1280x720 = 720; // the video centered with "touch from inside" in a 1280x720 rect
+    public static int ZOOM_1920x1080 = 1080; // the video centered with "touch from inside" in a 1920x1080 rect
+    public static int ZOOM_3840x2160 = 2160; // the video centered with "touch from inside" in a 3840x2160 rect
+
+    // flags for IMadVRFrameGrabber::GrabFrame's "flags" parameter
+    public static int FLAGS_RENDER_OSD = 1; // *do* include the OSD in the frame grab
+    public static int FLAGS_APPLY_CALIBRATION = 2; // *do* perform calibration stuff (3dlut, color & gamma changes etc)
+    public static int FLAGS_NO_SUBTITLES = 4; // don't include subtitles in the frame grab
+    public static int FLAGS_NO_ARTIFACT_REMOVAL = 8; // don't apply the user selected artifact removal algorithms
+    public static int FLAGS_NO_IMAGE_ENHANCEMENTS = 0x10; // don't apply the user selected image enhancement algorithms
+
+    public static int FLAGS_NO_UPSCALING_REFINEMENTS = 0x20;
+    // don't apply the user selected image upscaling refinement algorithms
+
+    public static int FLAGS_NO_HDR_SDR_CONVERSION = 0x40; // don't perform HDR -> SDR conversion
+
+    // flags for IMadVRFrameGrabber::GrabFrame's "chromaUpscaling" parameter
+    public static int CHROMA_UPSCALING_USER_SELECTED = 0; // use the user selected chroma upscaling algorithm
+    public static int CHROMA_UPSCALING_BILINEAR = 1; // use fast "bilinear" chroma upscaling
+    public static int CHROMA_UPSCALING_NGU_AA = 2; // use slow but high quality NGU Anti-Alias chroma upscaling
+
+    // flags for IMadVRFrameGrabber::GrabFrame's "imageDownscaling" parameter
+    public static int IMAGE_DOWNSCALING_USER_SELECTED = 0; // use the user selected image downscaling algorithm
+    public static int IMAGE_DOWNSCALING_BILINEAR = 1; // use fast "bilinear" image downscaling
+    public static int IMAGE_DOWNSCALING_SSIM1D100 = 2; // use slow but high quality SSIM-1D "100" image downscaling
+
+    // flags for IMadVRFrameGrabber::GrabFrame's "imageUpscaling" parameter
+    public static int IMAGE_UPSCALING_USER_SELECTED = 0; // use the user selected image upscaling algorithm
+    public static int IMAGE_UPSCALING_BILINEAR = 1; // use fast "bilinear" image upscaling
+    public static int IMAGE_UPSCALING_NGU_AA = 2; // use NGU Anti-Alias image upscaling
+    public static int IMAGE_UPSCALING_NGU_STANDARD = 3; // use NGU Standard image upscaling
+    public static int IMAGE_UPSCALING_NGU_SHARP = 4; // use NGU Sharp image upscaling
+    public static int IMAGE_UPSCALING_NGU_AA_GRAIN = 5; // use NGU Anti-Alias image upscaling, with a bit of added grain
+
+    public static int IMAGE_UPSCALING_NGU_STANDARD_GRAIN = 6;
+    // use NGU Standard image upscaling, with a bit of added grain
+
+    public static int IMAGE_UPSCALING_NGU_SHARP_GRAIN = 7; // use NGU Sharp image upscaling, with a bit of added grain
+
     public static void ShowMadVrMessage(string Message, uint DisplayTime, MadVR madvr)
     {
       var osd = (IMadVRTextOsd) madvr;
@@ -714,26 +816,20 @@ namespace MediaPortal.Player
     public static void EnableExclusiveMode(bool enable, object madvr)
     {
       var eModeCommand = madvr as IMadVRCommand;
-      if (eModeCommand != null)
-      {
-        eModeCommand.SendCommandBool("disableExclusiveMode", !enable);
-      }
+      eModeCommand?.SendCommandBool("disableExclusiveMode", !enable);
     }
 
     public static void restoreDisplayModeNow(object madvr)
     {
       var eModeCommand = madvr as IMadVRCommand;
-      if (eModeCommand != null)
-      {
-        eModeCommand.SendCommand("restoreDisplayModeNow");
-      }
+      eModeCommand?.SendCommand("restoreDisplayModeNow");
     }
 
     public static void OsdSetRenderCallback(object madvr)
     {
       try
       {
-        IMadVROsdServices osdServices = (IMadVROsdServices)madvr;
+        IMadVROsdServices osdServices = (IMadVROsdServices) madvr;
         osdServices.OsdSetRenderCallback("MP-GUI", null, reserved);
         osdServices.SafeDispose();
       }
@@ -746,7 +842,7 @@ namespace MediaPortal.Player
     {
       try
       {
-        IMadVROsdServices osdServices = (IMadVROsdServices)madvr;
+        IMadVROsdServices osdServices = (IMadVROsdServices) madvr;
         osdServices.OsdSetRenderCallback("MP-GUI", osdRenderCallback, reserved);
       }
       catch (Exception e)
@@ -755,7 +851,7 @@ namespace MediaPortal.Player
       }
     }
 
-    public static bool InExclusiveMode(MadVR madvr)
+    public static bool InExclusiveMode(object madvr)
     {
       var exclusiveInfo = madvr as IMadVRExclusiveModeInfo;
 

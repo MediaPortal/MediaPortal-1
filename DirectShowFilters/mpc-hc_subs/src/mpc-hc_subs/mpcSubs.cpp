@@ -164,8 +164,11 @@ void FreeSubtitles()
   try
   {
     g_d3DDev = NULL;
-    g_subManager->SetDevice(nullptr);
-    g_subManager.Free();
+    if (g_subManager)
+    {
+      g_subManager->SetDevice(nullptr);
+      g_subManager.Free();
+    }
   }
   catch (...)
   {}

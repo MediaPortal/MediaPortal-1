@@ -1068,7 +1068,7 @@ namespace MediaPortal
       var dialogMenu = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
 
       // only minimize if visible and lost focus in windowed mode or if in fullscreen mode or if exiting to tray
-      if (IsVisible && ((Windowed && _lostFocus) || (!Windowed && MinimizeOnFocusLoss)) || ExitToTray)
+      if (IsVisible && ((Windowed && (_lostFocus && MinimizeOnFocusLoss) || (!Windowed && MinimizeOnFocusLoss)) || ExitToTray))
       {
         if (dialogMenu != null && (GUIWindowManager.RoutedWindow == (int)GUIWindow.Window.WINDOW_DIALOG_MENU || GUIWindowManager.RoutedWindow == (int)GUIWindow.Window.WINDOW_DIALOG_OK))
         {
@@ -1317,7 +1317,9 @@ namespace MediaPortal
       }
 
       Log.Debug("D3D: BuildPresentParams()");
-      var size = new Size(GUIGraphicsContext.currentScreen.Bounds.Width, GUIGraphicsContext.currentScreen.Bounds.Height);
+
+      Screen screen = Screen.FromControl(this);
+      var size = new Size(screen.Bounds.Width, screen.Bounds.Height);
 
       if (windowed)
       {
@@ -1350,6 +1352,10 @@ namespace MediaPortal
       _presentParams.BackBufferHeight = size.Height;
       _presentParams.BackBufferFormat = Format.Unknown;
  
+      Log.Info("D3D: BuildPresentParams ClientSize from: {0}x{1}", GUIGraphicsContext.form.ClientSize.Width, GUIGraphicsContext.form.ClientSize.Height);
+      Log.Info("D3D: BuildPresentParams screen from: {0}x{1}", screen.Bounds.Width, screen.Bounds.Height);
+      Log.Info("D3D: BuildPresentParams size from: {0}x{1}", size.Width, size.Height);
+
       if (OSInfo.OSInfo.Win7OrLater())
       {
         if (!_doNotWaitForVSync)

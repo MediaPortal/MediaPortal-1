@@ -24,6 +24,7 @@
 #include "threads/Condition.h"
 #include "threads/CriticalSection.h"
 #include "StdString.h"
+#include "dshowhelper.h"
 
 using namespace std;
 
@@ -95,12 +96,36 @@ class MPMadPresenter : public CUnknown, public CCritSec
 
     STDMETHODIMP SetDevice(IDirect3DDevice9* pD3DDev)
     {
-      if (m_pShutdownOsd)
-      {
-        return S_OK;
+      { // Scope for autolock for the local variable (lock, which when deleted releases the lock)
+        CAutoLock cAutoLock(this); // TODO fix possible deadlock on stop need to understand the situation
+        Log("MPMadPresenterH::SetDeviceOsd() device 0x:%x", pD3DDev);
+        if (m_pShutdownOsd)
+        {
+          if (!pD3DDev)
+          {
+            if (m_pDXRAP)
+            {
+              m_pDXRAP->ReinitD3DDevice(); // Can crash on D3D11 on stop
+              m_pDXRAP->SetDeviceOsd(pD3DDev);
+              // to see for deadlock needed to solve deadlock on stop
+              m_pDXRAP = nullptr;
+              Log("MPMadPresenterH::SetDeviceOsd() destroy");
+            }
+          }
+          return S_OK;
+        }
+
+        if (!pD3DDev)
+        {
+          if (m_pDXRAP)
+          {
+            m_pDXRAP->ReinitD3DDevice();
+            m_pDXRAP->SetDeviceOsd(pD3DDev);
+            return S_OK;
+          }
+        }
+        return m_pDXRAP ? m_pDXRAP->SetDeviceOsd(pD3DDev) : E_UNEXPECTED;
       }
-      CAutoLock cAutoLock(this);
-      return m_pDXRAP ? m_pDXRAP->SetDeviceOsd(pD3DDev) : E_UNEXPECTED;
     }
   };
 
@@ -134,12 +159,26 @@ class MPMadPresenter : public CUnknown, public CCritSec
 
     STDMETHODIMP SetDevice(IDirect3DDevice9* pD3DDev)
     {
-      if (m_pShutdownSub)
-      {
-        return S_OK;
+      { // Scope for autolock for the local variable (lock, which when deleted releases the lock)
+        CAutoLock cAutoLock(this); // TODO fix possible deadlock on stop need to understand the situation
+        Log("MPMadPresenterH::SetDeviceSub() device 0x:%x", pD3DDev);
+        if (m_pShutdownSub)
+        {
+          if (!pD3DDev)
+          {
+            if (m_pDXRAPSUB)
+            {
+              m_pDXRAPSUB->ReinitD3DDevice(); // Can crash on D3D11 on stop
+              m_pDXRAPSUB->SetDeviceSub(pD3DDev);
+              // to see for deadlock needed to solve deadlock on stop
+              m_pDXRAPSUB = nullptr;
+              Log("MPMadPresenterH::SetDeviceSub() destroy");
+            }
+          }
+          return S_OK;
+        }
+        return m_pDXRAPSUB ? m_pDXRAPSUB->SetDeviceSub(pD3DDev) : E_UNEXPECTED;
       }
-      CAutoLock cAutoLock(this);
-      return m_pDXRAPSUB ? m_pDXRAPSUB->SetDevice(pD3DDev) : E_UNEXPECTED;
     }
 
     STDMETHODIMP Render(REFERENCE_TIME rtStart, int left, int top, int right, int bottom, int width, int height)
@@ -185,7 +224,7 @@ class MPMadPresenter : public CUnknown, public CCritSec
 
   public:
 
-    MPMadPresenter(IVMR9Callback* pCallback, int xposition, int yposition, int width, int height, OAHWND parent, IDirect3DDevice9* pDevice, IMediaControl* pMediaControl);
+    MPMadPresenter(IVMR9Callback* pCallback, int xposition, int yposition, int width, int height, OAHWND parent, IDirect3DDevice9* pDevice, IGraphBuilder* pMediaControl);
     ~MPMadPresenter();
 
     // XBMC
@@ -199,6 +238,7 @@ class MPMadPresenter : public CUnknown, public CCritSec
     void GrabFrame();
     void GrabCurrentFrame();
     void GrabScreenshot();
+    void GraphReset();
     void InitMadVRWindowPosition();
     void MadVr3DSizeRight(int x, int y, int width, int height);
     void MadVr3DSizeLeft(int x, int y, int width, int height);
@@ -212,10 +252,12 @@ class MPMadPresenter : public CUnknown, public CCritSec
     void SetDsWndVisible(bool);
     //virtual OAHWND HWnDMadVR() { return reinterpret_cast<OAHWND>(m_hWnd); }
     static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-    HWND m_hWnd;
+    HWND m_hWnd = nullptr;
+    CWnd* m_pVideoWnd = nullptr;
+    CWnd* pWnd = nullptr;
     bool InitMadvrWindow(HWND &hWnd);
     void DeInitMadvrWindow();
-    HINSTANCE m_hInstance;
+    HINSTANCE m_hInstance = nullptr;
     bool m_pInitMadVRWindowPositionDone = false;
     #if !defined(NPT_POINTER_TO_LONG)
     #define NPT_POINTER_TO_LONG(_p) ((long)(_p))
@@ -224,7 +266,8 @@ class MPMadPresenter : public CUnknown, public CCritSec
     STDMETHODIMP NonDelegatingQueryInterface(REFIID riid, void** ppv);
     STDMETHODIMP ClearBackground(LPCSTR name, REFERENCE_TIME frameStart, RECT *fullOutputRect, RECT *activeVideoRect);
     STDMETHODIMP RenderOsd(LPCSTR name, REFERENCE_TIME frameStart, RECT *fullOutputRect, RECT *activeVideoRect);
-    STDMETHODIMP SetDevice(IDirect3DDevice9* pD3DDev);
+    STDMETHODIMP SetDeviceSub(IDirect3DDevice9* pD3DDev);
+    STDMETHODIMP ChangeDevice(IUnknown* pDev);
     STDMETHODIMP SetDeviceOsd(IDirect3DDevice9* pD3DDev);
     // ISubRenderCallback
     STDMETHOD(Render)(REFERENCE_TIME frameStart, int left, int top, int right, int bottom, int width, int height);
@@ -236,15 +279,19 @@ class MPMadPresenter : public CUnknown, public CCritSec
     STDMETHOD(RenderEx3)(REFERENCE_TIME frameStart, REFERENCE_TIME frameStop, REFERENCE_TIME avgTimePerFrame, RECT croppedVideoRect, RECT originalVideoRect, RECT viewportRect, const double videoStretchFactor = 1.0, int xOffsetInPixels = 0, DWORD flags = 0);
     // Frame Grabbing
     STDMETHODIMP SetGrabEvent(HANDLE pGrabEvent);
+    STDMETHODIMP SetStopEvent();
 
     virtual void EnableExclusive(bool bEnable);
 
     bool m_pShutdown = false;
     bool m_pInitOSD = false;
     bool m_pReInitOSD = false;
+    bool m_pPaused = false;
+    int m_pPausedCount = 0;
     IVMR9Callback* m_pCallback = nullptr;
     CCritSec m_dsLock;
-    HANDLE m_pGrabEvent;
+    HANDLE m_pGrabEvent = nullptr;
+    HANDLE m_pGraphEvent = nullptr;
 
   private:
     void RenderToTexture(IDirect3DTexture9* pTexture);
@@ -252,17 +299,18 @@ class MPMadPresenter : public CUnknown, public CCritSec
 
     HRESULT SetupOSDVertex(IDirect3DVertexBuffer9* pVertextBuf);
     HRESULT SetupOSDVertex3D(IDirect3DVertexBuffer9* pVertextBuf);
-    void ReinitOSD();
+    void ReinitOSD(bool type);
+    void ReinitD3DDevice();
     HRESULT SetupMadDeviceState();
 
     OAHWND m_hParent = reinterpret_cast<OAHWND>(nullptr);
 
-    IDirect3DDevice9Ex* m_pDevice = nullptr;
-    IDirect3DDevice9Ex* m_pMadD3DDev = nullptr;
+    CComPtr<IDirect3DDevice9Ex> m_pDevice = nullptr;
+    CComPtr<IDirect3DDevice9Ex> m_pMadD3DDev = nullptr;
 
-    IMediaControl* m_pMediaControl = nullptr;
+    CComPtr<IGraphBuilder> m_pGraphbuilder = nullptr;
 
-    Com::SmartPtr<IUnknown> m_pMad;
+    Com::SmartPtr<IUnknown> m_pMad = nullptr;
 
     CComQIPtr<IDirect3DTexture9> m_pRenderTextureGui = nullptr;
     CComQIPtr<IDirect3DTexture9> m_pRenderTextureOsd = nullptr;
@@ -302,10 +350,9 @@ class MPMadPresenter : public CUnknown, public CCritSec
     int m_pRefCount = 0;
     int m_pMadVRFrameCount = 0;
 
-    Com::SmartPtr<IOsdRenderCallback> m_pORCB;
-    Com::SmartPtr<ISubRenderCallback> m_pSRCB;
+    IOsdRenderCallback* m_pORCB = nullptr;
+    ISubRenderCallback* m_pSRCB = nullptr;
 
-    bool m_pInitOSDRender = false;
     int m_ExclusiveMode = 0;
     int m_enableOverlay = 0;
 
@@ -313,9 +360,9 @@ class MPMadPresenter : public CUnknown, public CCritSec
 
     bool uiVisible = false;
 
-    IDirect3DSurface9* m_pSurfaceDevice = nullptr;
+    CComPtr<IDirect3DSurface9> m_pSurfaceDevice = nullptr;
 
     double m_pRefreshrate = 0;
-    bool m_pPaused = false;
+    bool m_pKodiWindowUse = false;
 };
 

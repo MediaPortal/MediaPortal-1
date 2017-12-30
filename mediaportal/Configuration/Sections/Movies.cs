@@ -167,7 +167,7 @@ namespace MediaPortal.Configuration.Sections
         if ((!MadVrInUse && selection.Equals("XySubFilter") && !SubtitleComboMessageDone))
         {
           subEnginesCombo.SelectedItem = "MPC-HC";
-          MessageBox.Show("XySubFilter works only with madVR");
+          MessageBox.Show("XySubFilter is supported only under madVR, please select a different subtitle engine");
         }
 
         try
@@ -1294,9 +1294,9 @@ namespace MediaPortal.Configuration.Sections
       {
         SubtitleComboMessageDone = true;
         // First back to disable item
-        subEnginesCombo.SelectedIndex = 4;
+        subEnginesCombo.SelectedIndex = 0;
         // Display the message
-        MessageBox.Show("XySubFilter works only with madVR, please select another one");
+        MessageBox.Show("XySubFilter is supported only under madVR, please select a different subtitle engine");
         SubtitleComboMessageDone = false;
       }
       else
@@ -1447,9 +1447,9 @@ namespace MediaPortal.Configuration.Sections
       {
         SubtitleComboMessageDone = true;
         // First back to disable item
-        subEnginesCombo.SelectedIndex = 4;
+        subEnginesCombo.SelectedIndex = 0;
         // Display the message
-        MessageBox.Show("XySubFilter works only with madVR (please select another subtitle engine)");
+        MessageBox.Show("XySubFilter is supported only under madVR, please select a different subtitle engine");
         SubtitleComboMessageDone = false;
       }
     }

@@ -116,7 +116,9 @@ namespace MediaPortal.Player
 
     private int _reduceMadvrFrame = 0;
     private bool _useReduceMadvrFrame = false;
+    private bool _useRestoreMadvr1080P = false;
     private string _subEngineType = "";
+    private bool _posRelativeToFrame = false;
     private readonly object _lockobj = new object();
 
     private bool UiVisible { get; set; }
@@ -311,6 +313,7 @@ namespace MediaPortal.Player
             GUIGraphicsContext.DX9Device.SetRenderTarget(0, GUIGraphicsContext.MadVrRenderTargetVMR9);
           }
         }
+        GUIGraphicsContext.ForcedRefreshRate3D = false;
       }
     }
 
@@ -337,6 +340,9 @@ namespace MediaPortal.Player
         GUIGraphicsContext.SBSRightDone = false;
         GUIGraphicsContext.TABTopDone = false;
         GUIGraphicsContext.TABBottomDone = false;
+        GUIGraphicsContext.ForcedRefreshRate3D = false;
+        GUIGraphicsContext.ForcedRR3DBackDefault = false;
+        GUIGraphicsContext.ForcedRefreshRate3DDone = false;
         GUIGraphicsContext.Render3DMode = GUIGraphicsContext.eRender3DMode.None;
       }
       GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Video);
@@ -349,6 +355,8 @@ namespace MediaPortal.Player
           _reduceMadvrFrame = xmlreader.GetValueAsInt("general", "reduceMadvrFrame", 0);
           _useReduceMadvrFrame = xmlreader.GetValueAsBool("general", "useReduceMadvrFrame", false);
           _subEngineType = xmlreader.GetValueAsString("subtitles", "engine", "DirectVobSub");
+          _posRelativeToFrame = xmlreader.GetValueAsBool("subtitles", "subPosRelative", false);
+          _useRestoreMadvr1080P = xmlreader.GetValueAsBool("general", "useRestoreMadvr1080p", false);
         }
         catch (Exception)
         {
@@ -828,6 +836,7 @@ namespace MediaPortal.Player
             using (Bitmap b = new Bitmap(bmih.biWidth, bmih.biHeight, bmih.biWidth*4, PixelFormat.Format32bppRgb, pixels))
             {
               GUIGraphicsContext.madVRCurrentFrameBitmap = new Bitmap(b);
+              GUIGraphicsContext.madVRCurrentFrameBitmap.RotateFlip(RotateFlipType.RotateNoneFlipY);
               // IMPORTANT: Closes and disposes the stream
               // If this is not done we get a memory leak!
               b.Dispose();
@@ -971,7 +980,7 @@ namespace MediaPortal.Player
                 {
                   GUIGraphicsContext.Render3DModeHalf = GUIGraphicsContext.eRender3DModeHalf.None;
 
-                  if (!GUIGraphicsContext.NoneDone)
+                  if (!GUIGraphicsContext.NoneDone && GUIGraphicsContext.RenderMadVr3Dchanged)
                   {
                     // Get Client size
                     Size client = GUIGraphicsContext.form.ClientSize;
@@ -991,6 +1000,7 @@ namespace MediaPortal.Player
                     GUIGraphicsContext.SBSRightDone = false;
                     GUIGraphicsContext.TABTopDone = false;
                     GUIGraphicsContext.TABBottomDone = false;
+                    GUIGraphicsContext.RenderMadVr3Dchanged = false;
 
                     // Force VideoWindow to be refreshed with madVR when switching from video size like 16:9 to 4:3
                     GUIGraphicsContext.UpdateVideoWindow = true;
@@ -1042,6 +1052,7 @@ namespace MediaPortal.Player
                   GUIGraphicsContext.TABTopDone = false;
                   GUIGraphicsContext.TABBottomDone = false;
                   GUIGraphicsContext.NoneDone = false;
+                  GUIGraphicsContext.RenderMadVr3Dchanged = true;
 
                   // Force VideoWindow to be refreshed with madVR when switching from video size like 16:9 to 4:3
                   GUIGraphicsContext.UpdateVideoWindow = true;
@@ -1049,6 +1060,13 @@ namespace MediaPortal.Player
 
                   // Force a madVR refresh to resize MP window
                   g_Player.RefreshMadVrVideo();
+
+                  if (_useRestoreMadvr1080P)
+                  {
+                    Log.Debug("Planescene: 3D force refresh rate for 1920 x 1080 SBS");
+                    GUIGraphicsContext.ForcedRefreshRate3D = true;
+                  }
+                  RefreshRateChanger.AdaptRefreshRate(g_Player.CurrentFile, (RefreshRateChanger.MediaType)(int)g_Player.MediaType.Video);
                 }
               }
               else if (GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.TopAndBottom)
@@ -1076,6 +1094,7 @@ namespace MediaPortal.Player
                   GUIGraphicsContext.SBSRightDone = false;
                   GUIGraphicsContext.TABTopDone = false;
                   GUIGraphicsContext.TABBottomDone = false;
+                  GUIGraphicsContext.RenderMadVr3Dchanged = true;
 
                   // Force VideoWindow to be refreshed with madVR when switching from video size like 16:9 to 4:3
                   GUIGraphicsContext.UpdateVideoWindow = true;
@@ -1083,6 +1102,13 @@ namespace MediaPortal.Player
 
                   // Force a madVR refresh to resize MP window
                   g_Player.RefreshMadVrVideo();
+
+                  if (_useRestoreMadvr1080P)
+                  {
+                    Log.Debug("Planescene: 3D force refresh rate for 1920 x 1080 TopAndBottom");
+                    GUIGraphicsContext.ForcedRefreshRate3D = true;
+                  }
+                  RefreshRateChanger.AdaptRefreshRate(g_Player.CurrentFile, (RefreshRateChanger.MediaType)(int)g_Player.MediaType.Video);
                 }
               }
             }
@@ -1095,7 +1121,7 @@ namespace MediaPortal.Player
               {
                 case GUIGraphicsContext.eRender3DModeHalf.SBSLeft:
 
-                  if (!GUIGraphicsContext.IsFullHD3DFormat)
+                  //if (!GUIGraphicsContext.IsFullHD3DFormat)
                   {
                     if (!GUIGraphicsContext.SBSLeftDone)
                     {
@@ -1107,6 +1133,7 @@ namespace MediaPortal.Player
                       GUIGraphicsContext.TABBottomDone = false;
                       GUIGraphicsContext.Render3DModeHalfDone = false;
                       GUIGraphicsContext.NoneDone = false;
+                      GUIGraphicsContext.RenderMadVr3Dchanged = true;
 
                       // Force VideoWindow to be refreshed with madVR when switching from video size like 16:9 to 4:3
                       GUIGraphicsContext.UpdateVideoWindow = true;
@@ -1114,13 +1141,20 @@ namespace MediaPortal.Player
 
                       // Force a madVR refresh to resize MP window
                       g_Player.RefreshMadVrVideo();
+
+                      if (_useRestoreMadvr1080P)
+                      {
+                        Log.Debug("Planescene: 3D force refresh rate for 1920 x 1080 SBSLeft");
+                        GUIGraphicsContext.ForcedRefreshRate3D = true;
+                      }
+                      RefreshRateChanger.AdaptRefreshRate(g_Player.CurrentFile, (RefreshRateChanger.MediaType)(int)g_Player.MediaType.Video);
                     }
                   }
                   break;
 
                 case GUIGraphicsContext.eRender3DModeHalf.SBSRight:
 
-                  if (GUIGraphicsContext.IsFullHD3DFormat)
+                  //if (GUIGraphicsContext.IsFullHD3DFormat)
                   {
                     if (!GUIGraphicsContext.SBSRightDone)
                     {
@@ -1132,6 +1166,7 @@ namespace MediaPortal.Player
                       GUIGraphicsContext.TABBottomDone = false;
                       GUIGraphicsContext.Render3DModeHalfDone = false;
                       GUIGraphicsContext.NoneDone = false;
+                      GUIGraphicsContext.RenderMadVr3Dchanged = true;
 
                       // Force VideoWindow to be refreshed with madVR when switching from video size like 16:9 to 4:3
                       GUIGraphicsContext.UpdateVideoWindow = true;
@@ -1139,13 +1174,20 @@ namespace MediaPortal.Player
 
                       // Force a madVR refresh to resize MP window
                       g_Player.RefreshMadVrVideo();
+
+                      if (_useRestoreMadvr1080P)
+                      {
+                        Log.Debug("Planescene: 3D force refresh rate for 1920 x 1080 SBSRight");
+                        GUIGraphicsContext.ForcedRefreshRate3D = true;
+                      }
+                      RefreshRateChanger.AdaptRefreshRate(g_Player.CurrentFile, (RefreshRateChanger.MediaType)(int)g_Player.MediaType.Video);
                     }
                   }
                   break;
 
                 case GUIGraphicsContext.eRender3DModeHalf.TABTop:
 
-                  if (!GUIGraphicsContext.IsFullHD3DFormat)
+                  //if (!GUIGraphicsContext.IsFullHD3DFormat)
                   {
                     if (!GUIGraphicsContext.TABTopDone)
                     {
@@ -1158,6 +1200,7 @@ namespace MediaPortal.Player
                       GUIGraphicsContext.Render3DModeHalfDone = false;
                       GUIGraphicsContext.Render3DModeHalfDone = false;
                       GUIGraphicsContext.NoneDone = false;
+                      GUIGraphicsContext.RenderMadVr3Dchanged = true;
 
                       // Force VideoWindow to be refreshed with madVR when switching from video size like 16:9 to 4:3
                       GUIGraphicsContext.UpdateVideoWindow = true;
@@ -1165,13 +1208,20 @@ namespace MediaPortal.Player
 
                       // Force a madVR refresh to resize MP window
                       g_Player.RefreshMadVrVideo();
+
+                      if (_useRestoreMadvr1080P)
+                      {
+                        Log.Debug("Planescene: 3D force refresh rate for 1920 x 1080 TABTop");
+                        GUIGraphicsContext.ForcedRefreshRate3D = true;
+                      }
+                      RefreshRateChanger.AdaptRefreshRate(g_Player.CurrentFile, (RefreshRateChanger.MediaType)(int)g_Player.MediaType.Video);
                     }
                   }
                   break;
 
                 case GUIGraphicsContext.eRender3DModeHalf.TABBottom:
 
-                  if (GUIGraphicsContext.IsFullHD3DFormat)
+                  //if (GUIGraphicsContext.IsFullHD3DFormat)
                   {
                     if (!GUIGraphicsContext.TABBottomDone)
                     {
@@ -1183,6 +1233,7 @@ namespace MediaPortal.Player
                       GUIGraphicsContext.TABBottomDone = false;
                       GUIGraphicsContext.Render3DModeHalfDone = false;
                       GUIGraphicsContext.NoneDone = false;
+                      GUIGraphicsContext.RenderMadVr3Dchanged = true;
 
                       // Force VideoWindow to be refreshed with madVR when switching from video size like 16:9 to 4:3
                       GUIGraphicsContext.UpdateVideoWindow = true;
@@ -1190,6 +1241,13 @@ namespace MediaPortal.Player
 
                       // Force a madVR refresh to resize MP window
                       g_Player.RefreshMadVrVideo();
+
+                      if (_useRestoreMadvr1080P)
+                      {
+                        Log.Debug("Planescene: 3D force refresh rate for 1920 x 1080 TABBottom");
+                        GUIGraphicsContext.ForcedRefreshRate3D = true;
+                      }
+                      RefreshRateChanger.AdaptRefreshRate(g_Player.CurrentFile, (RefreshRateChanger.MediaType)(int)g_Player.MediaType.Video);
                     }
                   }
                   break;
@@ -1275,7 +1333,8 @@ namespace MediaPortal.Player
     {
       if (GUIGraphicsContext.DX9Device != null)
       {
-        GUIGraphicsContext.HWnd = (IntPtr) phWnd;
+        GUIGraphicsContext.MadVrHWnd = (IntPtr) phWnd;
+        Log.Debug("Received madVR phWnd : {0} from C++ side", phWnd);
       }
     }
 
@@ -1327,36 +1386,48 @@ namespace MediaPortal.Player
 
     public void RenderSubtitleEx(long frameStart, Rectangle viewportRect, Rectangle croppedVideoRect, int xOffsetInPixels)
     {
+      //// We are rendering from madVR // Debugging purpose if OSD disable on C++
+      //if (GUIGraphicsContext.InitMadVRWindowPosition)
+      //{
+      //  GUIGraphicsContext.InitMadVRWindowPosition = false;
+      //  GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_MADVRREPOSITION, 0, 0, 0, 0, 0, null);
+      //  GUIWindowManager.SendThreadMessage(msg);
+      //}
+      GUIGraphicsContext.InVmr9Render = true;
+
       if (GUIGraphicsContext.SubDeviceMadVr != IntPtr.Zero && !_subEngineType.Equals("XySubFilter"))
       {
-        ISubEngine engine = SubEngine.GetInstance();
-        if (GUIGraphicsContext.Render3DMode != GUIGraphicsContext.eRender3DMode.SideBySide &&
-            GUIGraphicsContext.Render3DMode != GUIGraphicsContext.eRender3DMode.TopAndBottom)
+        // Check if value are correct (can happen when using zooming option
+        if (_subsRect.X < -100000)
         {
-          // for a 2D movie we render the subtitles here
-          if (engine != null)
-          {
-            SubEngine.GetInstance().SetCurrent3DSubtitle = 0; // int for NONE
-            engine.SetTime(frameStart);
-            engine.Render(_subsRect, _destinationRect, xOffsetInPixels);
-          }
+          _subsRect = viewportRect;
         }
-        else if (GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.SideBySide ||
-                 GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.TopAndBottom)
+        if (_destinationRect.X < -100000)
         {
-          // for a 3D movie we render the left/top frame subtitle here
-          // if Render3DSubtitle is turned off, rendering takes place in InternalPresentImage()
-          // this helps to avoid doubling of subtitles that are generated by external tools
+          _destinationRect = croppedVideoRect;
+        }
 
-          if (GUIGraphicsContext.Render3DSubtitle)
+        ISubEngine engine = SubEngine.GetInstance();
+        if (GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.SideBySideTo2D ||
+            GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.TopAndBottomTo2D)
+        {
+          // for a 3D movie to 2D we render the frame subtitle here
+          // need to tell subtitle engine that we need to display as 2D but we need to match
+          // the video when relative position for MPC-HC engine
+
+          if (_posRelativeToFrame && _subEngineType.Equals("MPC-HC"))
           {
-            if (GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.SideBySide)
+            if (GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.SideBySideTo2D)
             {
-              SubEngine.GetInstance().SetCurrent3DSubtitle = 1; // int for SBS
+              SubEngine.GetInstance().SetCurrent3DSubtitle = 0; // int for NONE (2D)
+              if (!GUIGraphicsContext.StretchSubtitles)
+                croppedVideoRect.Width /= 2; // We double the size in VideoPlayerVMR7 so need to divide here for subtitle
             }
-            else if (GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.TopAndBottom)
+            else if (GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.TopAndBottomTo2D)
             {
-              SubEngine.GetInstance().SetCurrent3DSubtitle = 2; // int for TAB
+              SubEngine.GetInstance().SetCurrent3DSubtitle = 0; // int for NONE (2D)
+              if (!GUIGraphicsContext.StretchSubtitles)
+                croppedVideoRect.Height /= 2; // We double the size in VideoPlayerVMR7 so need to divide here for subtitle
             }
             engine.SetTime(frameStart);
             engine.RenderEx(viewportRect, croppedVideoRect, xOffsetInPixels);
@@ -1366,10 +1437,66 @@ namespace MediaPortal.Player
             // for a 2D movie we render the subtitles here
             if (engine != null)
             {
-              SubEngine.GetInstance().SetCurrent3DSubtitle = 0; // int for NONE
+              SubEngine.GetInstance().SetCurrent3DSubtitle = 0; // int for NONE (2D)
               engine.SetTime(frameStart);
               engine.Render(_subsRect, _destinationRect, xOffsetInPixels);
             }
+          }
+        }
+        else if (GUIGraphicsContext.Render3DMode != GUIGraphicsContext.eRender3DMode.SideBySide &&
+                 GUIGraphicsContext.Render3DMode != GUIGraphicsContext.eRender3DMode.TopAndBottom &&
+                 GUIGraphicsContext.Render3DMode != GUIGraphicsContext.eRender3DMode.SideBySideTo2D &&
+                 GUIGraphicsContext.Render3DMode != GUIGraphicsContext.eRender3DMode.TopAndBottomTo2D)
+        {
+          // for a 2D movie we render the subtitles here
+          if (engine != null)
+          {
+            SubEngine.GetInstance().SetCurrent3DSubtitle = 0; // int for NONE (2D)
+            engine.SetTime(frameStart);
+            engine.Render(_subsRect, _destinationRect, xOffsetInPixels);
+          }
+        }
+        else if (GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.SideBySide ||
+                 GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.TopAndBottom)
+        {
+          // for a 3D movie we render the left/top frame subtitle here
+
+          if (GUIGraphicsContext.Render3DSubtitle)
+          {
+            if (GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.SideBySide)
+            {
+              SubEngine.GetInstance().SetCurrent3DSubtitle = !GUIGraphicsContext.StretchSubtitles ? 1 : 0;
+            }
+            else if (GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.TopAndBottom)
+            {
+              SubEngine.GetInstance().SetCurrent3DSubtitle = !GUIGraphicsContext.StretchSubtitles ? 2 : 0;
+            }
+            engine.SetTime(frameStart);
+            if (xOffsetInPixels == 0)
+            {
+              xOffsetInPixels = GUIGraphicsContext.Render3DSubtitleDistance;
+            }
+            engine.RenderEx(viewportRect, croppedVideoRect, xOffsetInPixels);
+          }
+          else
+          {
+            // for a 2D movie we render the subtitles here
+            if (engine != null)
+            {
+              SubEngine.GetInstance().SetCurrent3DSubtitle = 0; // int for NONE (2D)
+              engine.SetTime(frameStart);
+              engine.Render(_subsRect, _destinationRect, xOffsetInPixels);
+            }
+          }
+        }
+        else
+        {
+          // for a 2D movie we render the subtitles here
+          if (engine != null)
+          {
+            SubEngine.GetInstance().SetCurrent3DSubtitle = 0; // int for NONE
+            engine.SetTime(frameStart);
+            engine.Render(_subsRect, _destinationRect, xOffsetInPixels);
           }
         }
       }
