@@ -1317,11 +1317,13 @@ namespace MediaPortal
       }
 
       Log.Debug("D3D: BuildPresentParams()");
-      var size = windowed ? GUIGraphicsContext.form.ClientSize : CalcMaxClientArea();
+      var size = new Size(GUIGraphicsContext.currentScreen.Bounds.Width, GUIGraphicsContext.currentScreen.Bounds.Height);
 
       if (windowed)
       {
-        // Sanity check and replace with sensible size values if necessary
+        size = GUIGraphicsContext.form.ClientSize;
+        var sizeMaxClient = CalcMaxClientArea();
+        
         int backupSizeWidth = 0;
         int backupSizeHeight = 0;
   
@@ -1335,19 +1337,17 @@ namespace MediaPortal
           size.Width = backupSizeWidth;
           size.Height = backupSizeHeight;
         }
-        if (size.Width < 256 || size.Height < 256)
+        // Sanity check and replace with sensible size values if necessary
+        if (size.Width < 256 || size.Height < 256 || size.Width > sizeMaxClient.Width || size.Height > sizeMaxClient.Height)
         {
-          var sizeTemp = CalcMaxClientArea();
-          size.Width = sizeTemp.Width;
-          size.Height = sizeTemp.Height;
-          Log.Debug("D3D: BuildPresentParams(), size values corrected to {0} x {1}",  size.Width, size.Height);
+          Log.Debug("D3D: BuildPresentParams(), invalid size {0} x {1} changed to {2} x {3}",  size.Width, size.Height, sizeMaxClient.Width, sizeMaxClient.Height);
+          size.Width = sizeMaxClient.Width;
+          size.Height = sizeMaxClient.Height;
         }
-        // GUIGraphicsContext.form.ClientSize = new Size(size.Width, size.Height);
       }
-      
-      
-      _presentParams.BackBufferWidth  = windowed ? size.Width  : GUIGraphicsContext.currentScreen.Bounds.Width;
-      _presentParams.BackBufferHeight = windowed ? size.Height : GUIGraphicsContext.currentScreen.Bounds.Height;
+            
+      _presentParams.BackBufferWidth  = size.Width;
+      _presentParams.BackBufferHeight = size.Height;
       _presentParams.BackBufferFormat = Format.Unknown;
  
       if (OSInfo.OSInfo.Win7OrLater())
@@ -1605,22 +1605,6 @@ namespace MediaPortal
     /// </summary>
     private void CreateDirectX9ExDevice()
     {
-      // This part need to be checked for restoring correct BackBuffer
-      int backupSizeWidth = 0;
-      int backupSizeHeight = 0;
-
-      using (Settings xmlreader = new MPSettings())
-      {
-        backupSizeWidth = xmlreader.GetValueAsInt("gui", "backupsizewidth", 0);
-        backupSizeHeight = xmlreader.GetValueAsInt("gui", "backupsizeheight", 0);
-      }
-
-      if ((backupSizeWidth != 0) && (backupSizeHeight != 0) && Windowed)
-      {
-        _presentParams.BackBufferWidth = backupSizeWidth;
-        _presentParams.BackBufferHeight = backupSizeHeight;
-      }
-
       var param = new D3DPRESENT_PARAMETERS
                     {
                       BackBufferWidth            = (uint)_presentParams.BackBufferWidth,
@@ -2715,15 +2699,15 @@ namespace MediaPortal
       using (var xmlWriter = new MPSettings())
       {
         var backupSize = ClientSize;
+        var sizeMaxClient = CalcMaxClientArea();
+        Log.Debug("D3D: Dispose() ClientSize: {0}x{1}, MaxClientSize: {2}x{3}", backupSize.Width, backupSize.Height, sizeMaxClient.Width, sizeMaxClient.Height);
         
-        if (backupSize.Width < 256 || backupSize.Height < 256)
+        if (backupSize.Width < 256 || backupSize.Height < 256 || backupSize.Width > sizeMaxClient.Width || backupSize.Height > sizeMaxClient.Height)
         {
-          Log.Debug("D3D: Dispose() 'backupsize' value error, using default values");
-          var size = CalcMaxClientArea();          
           xmlWriter.SetValue("gui", "lastlocationx", 0);
           xmlWriter.SetValue("gui", "lastlocationy", 0);
-          xmlWriter.SetValue("gui", "backupsizewidth", size.Width);
-          xmlWriter.SetValue("gui", "backupsizeheight", size.Height);
+          xmlWriter.SetValue("gui", "backupsizewidth", sizeMaxClient.Width);
+          xmlWriter.SetValue("gui", "backupsizeheight", sizeMaxClient.Height);
         }
         else
         {
