@@ -1048,15 +1048,18 @@ void MadVrPaused(bool paused)
 {
   if (m_madPresenter)
   {
-    if (paused)
+    if (!paused)
     {
-      m_madPresenter->SetMadVrPaused(paused);
+      // Reset counter
+      m_madPresenter->m_pPausedCount = 0;
+      m_madPresenter->m_pPausedDone = false;
     }
     else
     {
-      m_madPresenter->m_pPausedCount = 0;
-      m_madPresenter->m_pPaused = false;
+      m_madPresenter->m_pRunDone = false;
     }
+
+    m_madPresenter->SetMadVrPaused(paused);
   }
 }
 
