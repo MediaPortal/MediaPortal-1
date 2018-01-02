@@ -33,7 +33,7 @@
     <textcolor>FFFFFF</textcolor>
 		<textalign>center</textalign>   
     <textcolorNoFocus>FFFFFFFF</textcolorNoFocus>
-    <textYOff>88</textYOff>
+    <textYOff>176</textYOff>
 		<onright>600</onright>
 		<onleft>5</onleft>  
 		<ondown>12</ondown>
@@ -81,7 +81,7 @@
     <textcolor>FFFFFF</textcolor>
 		<textalign>center</textalign>   
     <textcolorNoFocus>FFFFFFFF</textcolorNoFocus>
-    <textYOff>88</textYOff>
+    <textYOff>176</textYOff>
 		<onright>700</onright>
 		<onleft>7</onleft>
 		<ondown>12</ondown>
