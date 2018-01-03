@@ -148,6 +148,7 @@ namespace MediaPortal
     protected int                  MouseTimeOutFullscreen;   // Mouse activity timeout while in Fullscreen in seconds
     protected KeyPressEventArgs    PreviousKeyEvent;
     protected bool                 IsToggleMiniTV;           // madVR check to know if we need to do a resize when Toggle
+    protected bool                 _forceMpAlive;            // workaround to force form to refresh
 
     #endregion
 
@@ -587,6 +588,19 @@ namespace MediaPortal
       Log.Info("D3D: Screen size: {0}x{1}", GUIGraphicsContext.currentScreen.Bounds.Width,
         GUIGraphicsContext.currentScreen.Bounds.Height);
 
+      // Needed this double check on first start
+      if (GUIGraphicsContext.DX9Device != null)
+      {
+        // Get Size
+        Size client = GUIGraphicsContext.form.ClientSize;
+        if (GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferWidth != client.Width ||
+            GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferHeight != client.Height)
+        {
+          // reset device if necessary
+          RecreateSwapChain(false);
+        }
+      }
+
       // if we do ToggleFullscreen when using madVR (needed to resize OSD)
       if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
       {
@@ -867,6 +881,12 @@ namespace MediaPortal
         TopMost = false; // important
         Focus();
         _firstTimeActivated = false;
+        if (_forceMpAlive)
+        {
+          _forceMpAlive = false;
+          Log.Debug("D3D FullRender: ForceMPAlive");
+          ForceMpAlive();
+        }
       }
     }
 
@@ -913,7 +933,7 @@ namespace MediaPortal
       {
         try
         {
-          if (GUIGraphicsContext.DX9Device != null)
+          if (GUIGraphicsContext.DX9Device != null && !GUIGraphicsContext.DX9Device.Disposed)
           {
             // Check device
             GUIGraphicsContext.DX9Device.Present();
@@ -975,12 +995,15 @@ namespace MediaPortal
     /// </summary>
     protected void GetStats()
     {
-      FrameStatsLine1 = String.Format("last {0} fps ({1}x{2}), {3}",
-                                      GUIGraphicsContext.CurrentFPS.ToString("f2"),
-                                      GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferWidth,
-                                      GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferHeight,
-                                      GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferFormat
-                                      );
+      if (GUIGraphicsContext.DX9Device != null)
+      {
+        FrameStatsLine1 = String.Format("last {0} fps ({1}x{2}), {3}",
+          GUIGraphicsContext.CurrentFPS.ToString("f2"),
+          GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferWidth,
+          GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferHeight,
+          GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferFormat
+          );
+      }
 
       FrameStatsLine2 = String.Format("");
 
@@ -1175,6 +1198,43 @@ namespace MediaPortal
       }
     }
 
+    /// <summary>
+    /// Focus Mediaportal is visible.
+    /// </summary>
+    protected void ForceMpAlive()
+    {
+      Log.Debug("D3D: ForceMPAlive start.");
+      if (GUIGraphicsContext.form != null && GUIGraphicsContext.ActiveForm != IntPtr.Zero)
+      {
+        // Make MediaPortal window normal ( if minimized )
+        if (GUIGraphicsContext.form.WindowState == FormWindowState.Minimized)
+        {
+          Win32API.ShowWindow(GUIGraphicsContext.ActiveForm, Win32API.ShowWindowFlags.ShowNormal);
+          Win32API.ShowWindow(GUIGraphicsContext.ActiveForm, Win32API.ShowWindowFlags.Minimize);
+          this.WindowState = FormWindowState.Normal;
+          this.WindowState = FormWindowState.Minimized;
+          Log.Debug("D3D: ForceMPAlive Minimize.");
+        }
+        else
+        {
+          Win32API.ShowWindow(GUIGraphicsContext.ActiveForm, Win32API.ShowWindowFlags.Minimize);
+          Win32API.ShowWindow(GUIGraphicsContext.ActiveForm, Win32API.ShowWindowFlags.ShowNormal);
+          this.WindowState = FormWindowState.Minimized;
+          this.WindowState = FormWindowState.Normal;
+          Log.Debug("D3D: ForceMPAlive ShowNormal.");
+        }
+
+        // Make Mediaportal window focused
+        if (Win32API.SetForegroundWindow(GUIGraphicsContext.ActiveForm, true))
+        {
+          Log.Debug("D3D: ForceMPAlive Successfully switched focus.");
+        }
+
+        // Bring MP to front
+        GUIGraphicsContext.form.BringToFront();
+        Log.Debug("D3D: ForceMPAlive done.");
+      }
+    }
 
     /// <summary>
     /// Message Loop - Handles ANSI and Unicode Messages and dispatch them
@@ -1520,8 +1580,11 @@ namespace MediaPortal
         if (_showCursorWhenFullscreen && !Windowed)
         {
           var ourCursor = Cursor;
-          GUIGraphicsContext.DX9Device.SetCursor(ourCursor, true);
-          GUIGraphicsContext.DX9Device.ShowCursor(true);
+          if (GUIGraphicsContext.DX9Device != null)
+          {
+            GUIGraphicsContext.DX9Device.SetCursor(ourCursor, true);
+            GUIGraphicsContext.DX9Device.ShowCursor(true);
+          }
         }
 
         // Setup the event handlers for our device

@@ -74,6 +74,7 @@ namespace MediaPortal.GUI.Library
     private static TransformMatrix _finalTransform = new TransformMatrix();
     private static TransformMatrix _finalTransformCalibrated = new TransformMatrix();
     private static int _bypassUICalibration;
+    public static object PlayStarting = new object();
 
     // enum containing current state of MediaPortal
     public enum State
@@ -165,6 +166,7 @@ namespace MediaPortal.GUI.Library
     private static Screen _currentStartScreen;
     private static int _currentMonitorIdx = -1;
     private static string _currentAudioRenderer = "";
+    private static string _currentAudioRendererDevice = "";
 
     private static readonly bool IsDX9EXused = OSInfo.OSInfo.VistaOrLater();
     private static bool _allowRememberLastFocusedItem = true;
@@ -1711,6 +1713,21 @@ namespace MediaPortal.GUI.Library
     }
 
     /// <summary>
+    /// Get/set current audio renderer name
+    /// </summary>
+    public static string CurrentAudioRendererDevice
+    {
+      set
+      {
+        _currentAudioRendererDevice = value;
+      }
+      get
+      {
+        return _currentAudioRendererDevice;
+      }
+    }
+
+    /// <summary>
     /// Returns true if the active window belongs to the my tv plugin
     /// </summary>
     /// <returns>
@@ -1863,6 +1880,7 @@ namespace MediaPortal.GUI.Library
     internal static int ForcedRR3DHeightBackup { get; set; }
     internal static double ForcedRR3DRate { get; set; }
     internal static bool RenderMadVr3Dchanged { get; set; }
+    public static bool CurrentAudioRendererDone { get; set; }
 
     //public static IntPtr madVRDIB { get; set; }
 

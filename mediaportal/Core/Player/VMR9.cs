@@ -981,6 +981,8 @@ namespace MediaPortal.Player
           Size client = GUIGraphicsContext.form.ClientSize;
           GUIGraphicsContext._backupCurrentScreenSizeWidth = client.Width;
           GUIGraphicsContext._backupCurrentScreenSizeHeight = client.Height;
+          GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferWidth = client.Width;
+          GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferHeight = client.Height;
           hr = new HResult(MadInit(_scene, xposition, yposition, client.Width, client.Height, (uint) upDevice.ToInt32(),
             (uint) GUIGraphicsContext.ActiveForm.ToInt32(), ref _vmr9Filter, graphBuilder));
           //hr = new HResult(graphBuilder.AddFilter(_vmr9Filter, "madVR"));
@@ -2141,27 +2143,29 @@ namespace MediaPortal.Player
             Log.Debug("VMR9: Dispose 6");
           }
 
-          // Restore GUIWindowManager after releasing the texture in command thread
-          // Suspending GUIGraphicsContext.State
-          var stateRunning = false;
-          if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
-          {
-            GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.SUSPENDING;
-            stateRunning = true;
-          }
+          //// Commit madVR 421 (disabling this part for now, seems to lead to D3D exception from GC
+          //// Restore GUIWindowManager after releasing the texture in command thread
+          //// Suspending GUIGraphicsContext.State
+          //var stateRunning = false;
+          //if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
+          //{
+          //  GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.SUSPENDING;
+          //  stateRunning = true;
+          //}
 
-          var currentActiveWindow = GUIWindowManager.ActiveWindow;
+          //// This part is to release texture on stop to free GPU memory when using madVR
+          //var currentActiveWindow = GUIWindowManager.ActiveWindow;
 
-          GUITextureManager.Clear();
-          GUITextureManager.Init();
-          GUIWindowManager.OnResize();
-          GUIWindowManager.ActivateWindow(currentActiveWindow);
+          //GUITextureManager.Clear();
+          //GUITextureManager.Init();
+          //GUIWindowManager.OnResize();
+          //GUIWindowManager.ActivateWindow(currentActiveWindow);
 
-          // Restore GUIGraphicsContext.State
-          if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.SUSPENDING && stateRunning)
-          {
-            GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.RUNNING;
-          }
+          //// Restore GUIGraphicsContext.State
+          //if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.SUSPENDING && stateRunning)
+          //{
+          //  GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.RUNNING;
+          //}
         }
 
         // Commented out seems not needed anymore

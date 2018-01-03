@@ -1888,6 +1888,66 @@ namespace MediaPortal.Player
       }
     }
 
+    public override void AudioRendererRebuild()
+    {
+      try
+      {
+        if (_graphBuilder != null)
+        {
+          // First stop the graph
+          AudioRendererMediaControlStop();
+
+          //Add Audio Renderer
+          if (filterCodec._audioRendererFilter != null)
+          {
+            DirectShowUtil.FinalReleaseComObject(filterCodec._audioRendererFilter);
+            filterCodec._audioRendererFilter = null;
+          }
+          if (filterConfig.AudioRenderer.Length > 0 && filterCodec._audioRendererFilter == null)
+          {
+            filterCodec._audioRendererFilter = DirectShowUtil.AddAudioRendererToGraph(_graphBuilder,
+              filterConfig.AudioRenderer, false);
+          }
+
+          // Add preferred audio filters
+          UpdateFilters("Audio");
+          Log.Debug("TSReaderPlayer: AudioRendererRebuild");
+
+          if (_fileSource != null)
+          {
+            if (_mediaCtrl != null)
+            {
+              _mediaCtrl.Stop();
+              DirectShowUtil.RenderGraphBuilderOutputPins(_graphBuilder, _fileSource);
+              DirectShowUtil.RemoveUnusedFiltersFromGraph(_graphBuilder);
+              _mediaCtrl.Run();
+            }
+            GUIGraphicsContext.CurrentAudioRendererDone = true;
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("TSReaderPlayer: AudioRendererRebuild: { 0}", ex);
+      }
+    }
+
+    public override void AudioRendererMediaControlStop()
+    {
+      try
+      {
+        if (_mediaCtrl != null)
+        {
+          _mediaCtrl.Stop();
+          Log.Debug("TSReaderPlayer: AudioRendererMediaControlStop");
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("TSReaderPlayer: AudioRendererMediaControlStop: {0}", ex.Message);
+      }
+    }
+
     public override void OnZapping(int info)
     {
       // Reset the audio stream selection. After successful channel change, TsReader

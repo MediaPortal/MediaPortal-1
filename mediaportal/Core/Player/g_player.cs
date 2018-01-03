@@ -1821,7 +1821,11 @@ namespace MediaPortal.Player
             if (!playingRemoteUrl) LoadChapters(strFile);
           }
           _player = CachePreviousPlayer(_player);
-          bool bResult = _player.Play(strFile);
+          bool bResult;
+          lock (GUIGraphicsContext.PlayStarting)
+          {
+            bResult = _player.Play(strFile);
+          }
           if (!bResult)
           {
             Log.Info("g_Player: ended");
@@ -4006,7 +4010,6 @@ namespace MediaPortal.Player
                 GUIGraphicsContext.ForceMadVRFirstStart = false;
                 Log.Debug("g_player VideoWindowChanged() ForceMadVRFirstStart madVR");
               }
-              
 
               if (GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferWidth != client.Width ||
                   GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferHeight != client.Height)
@@ -4084,6 +4087,12 @@ namespace MediaPortal.Player
           break;
         case GUIMessage.MessageType.GUI_MSG_SET_RESUME_STATE:
           g_Player.Player.SetResumeState((byte[])message.Object);
+          break;
+        case GUIMessage.MessageType.GUI_MSG_REBUILD_AUDIO:
+          _player?.AudioRendererRebuild();
+          break;
+        case GUIMessage.MessageType.GUI_MSG_STOP_MEDIACONTROL_AUDIO:
+          _player?.AudioRendererMediaControlStop();
           break;
       }
     }
