@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2017 Team MediaPortal
+#region Copyright (C) 2005-2018 Team MediaPortal
 
-// Copyright (C) 2005-2017 Team MediaPortal
+// Copyright (C) 2005-2018 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -473,6 +473,8 @@ namespace MediaPortal.GUI.Video
           VideoDatabase.SetMovieWatchedStatus(_currentMovie.ID, true, iPercent);
         }
         VideoDatabase.SetWatched(_currentMovie);
+        // Update groups with rules
+        VideoDatabase.UpdateUserGroupWithRule(_currentMovie.ID);
       }
       //
       // Awards button

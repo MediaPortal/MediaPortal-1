@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2017 Team MediaPortal
+#region Copyright (C) 2005-2018 Team MediaPortal
 
-// Copyright (C) 2005-2017 Team MediaPortal
+// Copyright (C) 2005-2018 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -756,12 +756,16 @@ namespace MediaPortal.GUI.Video
         case 830: // Reset watched status
           movie.Watched = 0;
           VideoDatabase.SetWatched(movie);
+          // Update groups with rules
+          VideoDatabase.UpdateUserGroupWithRule(movie.ID);
           item.IsPlayed = false;
           break;
 
         case 1260: // Set watched status
           movie.Watched = 1;
           VideoDatabase.SetWatched(movie);
+          // Update groups with rules
+          VideoDatabase.UpdateUserGroupWithRule(movie.ID);
           item.IsPlayed = true;
           break;
       }
