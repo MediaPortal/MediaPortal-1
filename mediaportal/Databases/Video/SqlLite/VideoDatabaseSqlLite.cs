@@ -2497,7 +2497,7 @@ namespace MediaPortal.Video.Database
             ArrayList values = new ArrayList();
             bool error = false;
             string errorMessage = string.Empty;
-            values = ExecuteRuleSql(rule, "movieinfo.idMovie", out error, out errorMessage);
+            values = VideoDatabase.ExecuteRuleSql(rule, "movieinfo.idMovie", out error, out errorMessage);
 
             if (error)
             {
