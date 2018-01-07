@@ -881,12 +881,8 @@ namespace MediaPortal
         TopMost = false; // important
         Focus();
         _firstTimeActivated = false;
-        if (_forceMpAlive)
-        {
-          _forceMpAlive = false;
-          Log.Debug("D3D FullRender: ForceMPAlive");
-          ForceMpAlive();
-        }
+        Log.Debug("D3D FullRender: ForceMPAlive");
+        ForceMpAlive();
       }
     }
 
@@ -1204,6 +1200,12 @@ namespace MediaPortal
     protected void ForceMpAlive()
     {
       Log.Debug("D3D: ForceMPAlive start.");
+      if (!_forceMpAlive)
+      {
+        Log.Debug("D3D: ForceMPAlive already done.");
+        return;
+      }
+
       if (GUIGraphicsContext.form != null && GUIGraphicsContext.ActiveForm != IntPtr.Zero)
       {
         // Make MediaPortal window normal ( if minimized )
