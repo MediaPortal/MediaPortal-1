@@ -295,6 +295,24 @@ namespace MediaPortal.Player
           _showClosedCaptions = xmlreader.GetValueAsBool("dvdplayer", "showclosedcaptions", false);
         }
 
+        DvdDiscSide side;
+        int titles, numOfVolumes, volume;
+        hr = _dvdInfo.GetDVDVolumeInfo(out numOfVolumes, out volume, out side, out titles);
+        if (hr < 0)
+        {
+          Log.Error("DVDPlayer:Unable to get dvdvolumeinfo 0x{0:X}", hr);
+          CloseInterfaces();
+          return false; // can't read disc
+        }
+        else
+        {
+          if (titles <= 0)
+          {
+            Log.Error("DVDPlayer:DVD does not contain any titles? {0}", titles);
+            //return false;
+          }
+        }
+
         SetDefaultLanguages();
 
         hr = _mediaEvt.SetNotifyWindow(GUIGraphicsContext.ActiveForm, WM_DVD_EVENT, IntPtr.Zero);
@@ -324,34 +342,6 @@ namespace MediaPortal.Player
         //    }
         //  }
         //}
-        if (VMR9Util.g_vmr9 != null) hr = VMR9Util.g_vmr9.StartMediaCtrl(_mediaCtrl);
-        if (hr < 0 || hr > 1)
-        {
-          HResult hrdebug = new HResult(hr);
-          Log.Info(hrdebug.ToDXString());
-          Log.Error("DVDPlayer:Unable to start playing() 0x:{0:X}", hr);
-          CloseInterfaces();
-          return false;
-        }
-        //DsUtils.DumpFilters(_graphBuilder);
-
-        DvdDiscSide side;
-        int titles, numOfVolumes, volume;
-        hr = _dvdInfo.GetDVDVolumeInfo(out numOfVolumes, out volume, out side, out titles);
-        if (hr < 0)
-        {
-          Log.Error("DVDPlayer:Unable to get dvdvolumeinfo 0x{0:X}", hr);
-          CloseInterfaces();
-          return false; // can't read disc
-        }
-        else
-        {
-          if (titles <= 0)
-          {
-            Log.Error("DVDPlayer:DVD does not contain any titles? {0}", titles);
-            //return false;
-          }
-        }
 
         if (_videoWin != null)
         {
@@ -385,6 +375,18 @@ namespace MediaPortal.Player
             }
           }
         }
+
+        if (VMR9Util.g_vmr9 != null) hr = VMR9Util.g_vmr9.StartMediaCtrl(_mediaCtrl);
+        if (hr < 0 || hr > 1)
+        {
+          HResult hrdebug = new HResult(hr);
+          Log.Info(hrdebug.ToDXString());
+          Log.Error("DVDPlayer:Unable to start playing() 0x:{0:X}", hr);
+          CloseInterfaces();
+          return false;
+        }
+        //DsUtils.DumpFilters(_graphBuilder);
+
         return true;
       }
       catch (Exception ex)
@@ -693,6 +695,50 @@ namespace MediaPortal.Player
           DirectShowUtil.ReleaseComObject(comobj);
         }
         comobj = null;
+      }
+    }
+
+    public override void AudioRendererRebuild()
+    {
+      try
+      {
+        if (_graphBuilder != null)
+        {
+          // First stop the graph
+          AudioRendererMediaControlStop();
+
+          Log.Debug("DVDPlayer: AudioRendererRebuild");
+          if (_dvdbasefilter != null)
+          {
+            _mediaCtrl.Stop();
+            //Add Audio Renderer
+            AddPreferedCodecs(_graphBuilder);
+            DirectShowUtil.RenderOutputPins(_graphBuilder, _dvdbasefilter);
+            DirectShowUtil.RemoveUnusedFiltersFromGraph(_graphBuilder);
+            _mediaCtrl.Run();
+            GUIGraphicsContext.CurrentAudioRendererDone = true;
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("DVDPlayer: AudioRendererRebuild: { 0}", ex);
+      }
+    }
+
+    public override void AudioRendererMediaControlStop()
+    {
+      try
+      {
+        if (_mediaCtrl != null)
+        {
+          _mediaCtrl.Stop();
+          Log.Debug("DVDPlayer: AudioRendererMediaControlStop");
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("DVDPlayer: AudioRendererMediaControlStop: {0}", ex.Message);
       }
     }
 
@@ -1188,59 +1234,69 @@ namespace MediaPortal.Player
 
     public override void SeekAbsolute(double newTime)
     {
-      if (_state != PlayState.Init)
+      if (GUIWindow._mainThreadContext != null)
       {
-        if (_mediaCtrl != null && _mediaPos != null)
+        GUIWindow._mainThreadContext.Send(delegate
         {
-          if (newTime < 0.0d)
+          if (_state != PlayState.Init)
           {
-            newTime = 0.0d;
-          }
-          if (newTime < Duration)
-          {
-            int hours = (int)(newTime / 3600d);
-            newTime -= (hours * 3600);
-            int minutes = (int)(newTime / 60d);
-            newTime -= (minutes * 60);
-            int seconds = (int)newTime;
-            Log.Info("DVDPlayer:Seek to {0}:{1}:{2}", hours, minutes, seconds);
-            DvdHMSFTimeCode timeCode = new DvdHMSFTimeCode();
-            timeCode.bHours = (byte)(hours & 0xff);
-            timeCode.bMinutes = (byte)(minutes & 0xff);
-            timeCode.bSeconds = (byte)(seconds & 0xff);
-            timeCode.bFrames = 0;
-            DvdPlaybackLocation2 loc;
-            _currTitle = _dvdInfo.GetCurrentLocation(out loc);
-
-            try
+            if (_mediaCtrl != null && _mediaPos != null)
             {
-              int hr = _dvdCtrl.PlayAtTime(timeCode, DvdCmdFlags.Block | DvdCmdFlags.Flush, out _cmdOption);
-              if (hr != 0)
+              if (newTime < 0.0d)
               {
-                if (((uint)hr) == VFW_E_DVD_OPERATION_INHIBITED)
+                newTime = 0.0d;
+              }
+              if (newTime < Duration)
+              {
+                int hours = (int) (newTime/3600d);
+                newTime -= (hours*3600);
+                int minutes = (int) (newTime/60d);
+                newTime -= (minutes*60);
+                int seconds = (int) newTime;
+                Log.Info("DVDPlayer:Seek to {0}:{1}:{2}", hours, minutes, seconds);
+                DvdHMSFTimeCode timeCode = new DvdHMSFTimeCode();
+                timeCode.bHours = (byte) (hours & 0xff);
+                timeCode.bMinutes = (byte) (minutes & 0xff);
+                timeCode.bSeconds = (byte) (seconds & 0xff);
+                timeCode.bFrames = 0;
+                // Use _dvdInfo in sync with MP main thread to avoid exception
+
+                DvdPlaybackLocation2 loc;
+                _currTitle = _dvdInfo.GetCurrentLocation(out loc);
+
+                try
                 {
-                  Log.Info("DVDPlayer:PlayAtTimeInTitle( {0}:{1:00}:{2:00}) not allowed at this point", hours, minutes,
-                           seconds);
+                  int hr = _dvdCtrl.PlayAtTime(timeCode, DvdCmdFlags.Block | DvdCmdFlags.Flush, out _cmdOption);
+                  if (hr != 0)
+                  {
+                    if (((uint) hr) == VFW_E_DVD_OPERATION_INHIBITED)
+                    {
+                      Log.Info("DVDPlayer:PlayAtTimeInTitle( {0}:{1:00}:{2:00}) not allowed at this point", hours,
+                        minutes,
+                        seconds);
+                    }
+                    else if (((uint) hr) == VFW_E_DVD_INVALIDDOMAIN)
+                    {
+                      Log.Info("DVDPlayer:PlayAtTimeInTitle( {0}:{1:00}:{2:00}) invalid domain", hours, minutes, seconds);
+                    }
+                    else
+                    {
+                      Log.Error("DVDPlayer:PlayAtTimeInTitle( {0}:{1:00}:{2:00}) failed:0x{3:X}", hours, minutes,
+                        seconds,
+                        hr);
+                    }
+                  }
+                  //SetDefaultLanguages();
+                  Log.Info("DVDPlayer:Seek to {0}:{1}:{2} done", hours, minutes, seconds);
                 }
-                else if (((uint)hr) == VFW_E_DVD_INVALIDDOMAIN)
+                catch (Exception)
                 {
-                  Log.Info("DVDPlayer:PlayAtTimeInTitle( {0}:{1:00}:{2:00}) invalid domain", hours, minutes, seconds);
-                }
-                else
-                {
-                  Log.Error("DVDPlayer:PlayAtTimeInTitle( {0}:{1:00}:{2:00}) failed:0x{3:X}", hours, minutes, seconds,
-                            hr);
+                  //sometimes we get a DivideByZeroException  in _dvdCtrl.PlayAtTime()
                 }
               }
-              //SetDefaultLanguages();
-              Log.Info("DVDPlayer:Seek to {0}:{1}:{2} done", hours, minutes, seconds);
-            }
-            catch (Exception)
-            {
-              //sometimes we get a DivideByZeroException  in _dvdCtrl.PlayAtTime()
             }
           }
-        }
+        }, null);
       }
     }
 

@@ -753,5 +753,13 @@ namespace MediaPortal.Player
     public abstract void Dispose();
 
     #endregion
+
+    public virtual void AudioRendererRebuild()
+    {
+    }
+
+    public virtual void AudioRendererMediaControlStop()
+    {
+    }
   }
 }

@@ -1771,7 +1771,11 @@ namespace MediaPortal.Player
             if (!playingRemoteUrl) LoadChapters(strFile);
           }
           _player = CachePreviousPlayer(_player);
-          bool bResult = _player.Play(strFile);
+          bool bResult;
+          lock (GUIGraphicsContext.PlayStarting)
+          {
+            bResult = _player.Play(strFile);
+          }
           if (!bResult)
           {
             Log.Info("g_Player: ended");
@@ -2315,28 +2319,32 @@ namespace MediaPortal.Player
 
     public static void StepNow()
     {
-      if (_currentStep != 0 && _player != null)
+      // Start seek in a thread to avoid deadlock
+      new Thread(() =>
       {
-        if (_currentStep < 0 || (_player.CurrentPosition + 4 < _player.Duration) || !IsTV)
+        if (_currentStep != 0 && _player != null)
         {
-          double dTime = (int)_currentStep + _player.CurrentPosition;
-          Log.Debug("g_Player.StepNow() - Preparing to seek to {0}:{1}", _player.CurrentPosition, _player.Duration);
-          if (!IsTV && (dTime > _player.Duration)) dTime = _player.Duration - 5;
-          if (IsTV && (dTime + 3 > _player.Duration)) dTime = _player.Duration - 3; // Margin for live Tv
-          if (dTime < 0) dTime = 0d;
+          if (_currentStep < 0 || (_player.CurrentPosition + 4 < _player.Duration) || !IsTV)
+          {
+            double dTime = (int) _currentStep + _player.CurrentPosition;
+            Log.Debug("g_Player.StepNow() - Preparing to seek to {0}:{1}", _player.CurrentPosition, _player.Duration);
+            if (!IsTV && (dTime > _player.Duration)) dTime = _player.Duration - 5;
+            if (IsTV && (dTime + 3 > _player.Duration)) dTime = _player.Duration - 3; // Margin for live Tv
+            if (dTime < 0) dTime = 0d;
 
-          Log.Debug("g_Player.StepNow() - Preparing to seek to {0}:{1}:{2} isTv {3}", (int)(dTime / 3600d),
-                    (int)((dTime % 3600d) / 60d), (int)(dTime % 60d), IsTV);
-          _player.SeekAbsolute(dTime);
-          Speed = Speed;
-          GUIMessage msgUpdate = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYER_POSITION_CHANGED, 0, 0, 0, 0, 0,
-                                                null);
-          GUIGraphicsContext.SendMessage(msgUpdate);
+            Log.Debug("g_Player.StepNow() - Preparing to seek to {0}:{1}:{2} isTv {3}", (int) (dTime/3600d),
+              (int) ((dTime%3600d)/60d), (int) (dTime%60d), IsTV);
+            _player.SeekAbsolute(dTime);
+            Speed = Speed;
+            GUIMessage msgUpdate = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYER_POSITION_CHANGED, 0, 0, 0, 0, 0,
+              null);
+            GUIGraphicsContext.SendMessage(msgUpdate);
+          }
         }
-      }
-      _currentStep = 0;
-      _currentStepIndex = -1;
-      _seekTimer = DateTime.MinValue;
+        _currentStep = 0;
+        _currentStepIndex = -1;
+        _seekTimer = DateTime.MinValue;
+      }).Start();
     }
 
     /// <summary>
@@ -3951,7 +3959,6 @@ namespace MediaPortal.Player
                 GUIGraphicsContext.ForceMadVRFirstStart = false;
                 Log.Debug("g_player VideoWindowChanged() ForceMadVRFirstStart madVR");
               }
-              
 
               if (GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferWidth != client.Width ||
                   GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferHeight != client.Height)
@@ -4026,6 +4033,15 @@ namespace MediaPortal.Player
             // message handled
             GUIGraphicsContext.ProcessMadVrOsdDisplay = false;
           }
+          break;
+        case GUIMessage.MessageType.GUI_MSG_SET_RESUME_STATE:
+          g_Player.Player.SetResumeState((byte[])message.Object);
+          break;
+        case GUIMessage.MessageType.GUI_MSG_REBUILD_AUDIO:
+          _player?.AudioRendererRebuild();
+          break;
+        case GUIMessage.MessageType.GUI_MSG_STOP_MEDIACONTROL_AUDIO:
+          _player?.AudioRendererMediaControlStop();
           break;
       }
     }
