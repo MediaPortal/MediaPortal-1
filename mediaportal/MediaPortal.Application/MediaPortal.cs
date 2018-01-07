@@ -2313,8 +2313,8 @@ public class MediaPortalApp : D3D, IRender
               try
               {
                 // Force MP to refresh screen
-                ForceMpAlive();
                 _forceMpAlive = true;
+                ForceMpAlive();
               }
               catch (Exception exception)
               {
@@ -3008,8 +3008,8 @@ public class MediaPortalApp : D3D, IRender
     }
 
     // Force MP to refresh screen
-    ForceMpAlive();
     _forceMpAlive = true;
+    ForceMpAlive();
 
     // Force focus after resume done (really weird sequence) disable for now
     ForceMPFocus();
