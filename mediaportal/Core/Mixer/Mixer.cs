@@ -45,6 +45,8 @@ namespace MediaPortal.Mixer
     private CSCore.CoreAudioAPI.AudioEndpointVolumeCallback iAudioEndpointVolumeMixerCallback;
     EventHandler<DefaultDeviceChangedEventArgs> iDefaultDeviceChangedHandler;
     EventHandler<AudioEndpointVolumeCallbackEventArgs> iVolumeChangedHandler;
+    System.Timers.Timer _dispatchingTimer;
+    const string AppName = "MediaPortal";
 
     #endregion
 
@@ -103,6 +105,7 @@ namespace MediaPortal.Mixer
         _mMdeviceEnumerator.Dispose();
         _mMdeviceEnumerator = null;
       }
+      Stop();
       Close();
     }
 
@@ -126,6 +129,104 @@ namespace MediaPortal.Mixer
       iAudioEndpointVolumeMixerCallback = new CSCore.CoreAudioAPI.AudioEndpointVolumeCallback();
       iAudioEndpointVolumeMixerCallback.NotifyRecived += iVolumeChangedHandler = aVolumeChangedHandler;
       iAudioEndpointVolume.RegisterControlChangeNotify(iAudioEndpointVolumeMixerCallback);
+
+      // For audio session
+      Stop();
+      DispatchingTimerStart();
+    }
+
+    public void DispatchingTimerStart()
+    {
+      _dispatchingTimer = new System.Timers.Timer(1000);
+      _dispatchingTimer.Elapsed += DispatchingTimer_Elapsed;
+      _dispatchingTimer.AutoReset = false;
+      _dispatchingTimer.Start();
+    }
+
+    private void DispatchingTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+    {
+      CheckAudioLevels();
+      _dispatchingTimer?.Start(); // trigger next timer
+    }
+
+    public void Stop()
+    {
+      _dispatchingTimer?.Stop();
+      _dispatchingTimer?.Dispose();
+    }
+
+    public void CheckAudioLevels()
+    {
+      try
+      {
+        using (var sessionManager = GetDefaultAudioSessionManager2(DataFlow.Render))
+        {
+          if (sessionManager != null)
+          {
+            using (var sessionEnumerator = sessionManager.GetSessionEnumerator())
+            {
+              if (sessionEnumerator != null)
+              {
+                foreach (var session in sessionEnumerator)
+                {
+                  if (session != null)
+                  {
+                    using (var audioSessionControl2 = session.QueryInterface<AudioSessionControl2>())
+                    {
+                      if (audioSessionControl2 != null)
+                      {
+                        var process = audioSessionControl2.Process;
+                        string name = audioSessionControl2.DisplayName;
+                        if (process != null)
+                        {
+                          if (name != null && name == "")
+                          {
+                            name = process.MainWindowTitle;
+                          }
+                          if (name != null && name == "")
+                          {
+                            name = process.ProcessName;
+                          }
+                        }
+
+                        if (name != null && !name.Contains(AppName))
+                        {
+                          continue;
+                        }
+                      }
+
+                      using (var simpleVolume = session.QueryInterface<SimpleAudioVolume>())
+                      {
+                        if (simpleVolume != null)
+                        {
+                          simpleVolume.MasterVolume = 1;
+                          simpleVolume.IsMuted = _isMuted;
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("Exception in Audio Session {0}", ex);
+      }
+    }
+
+    private static AudioSessionManager2 GetDefaultAudioSessionManager2(DataFlow dataFlow)
+    {
+      using (var enumerator = new MMDeviceEnumerator())
+      {
+        using (var device = enumerator.GetDefaultAudioEndpoint(dataFlow, Role.Multimedia))
+        {
+          var sessionManager = AudioSessionManager2.FromMMDevice(device);
+          return sessionManager;
+        }
+      }
     }
 
     public void Open()
@@ -162,7 +263,7 @@ namespace MediaPortal.Mixer
             }
           }
         }
-        catch (Exception)
+        catch (Exception ex)
         {
           _isMuted = false;
           _volume = VolumeMaximum;
@@ -376,7 +477,7 @@ namespace MediaPortal.Mixer
           _mMdeviceEnumerator.Dispose();
           _mMdeviceEnumerator = null;
         }
-
+        Stop();
         CreateDevice(OnDefaultMultiMediaDeviceChanged, OnVolumeNotification);
         //ResetAudioManagerThreadSafe();
       }
