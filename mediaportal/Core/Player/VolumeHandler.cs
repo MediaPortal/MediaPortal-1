@@ -53,62 +53,70 @@ namespace MediaPortal.Player
     {
       if(_MMdeviceEnumerator == null)
         _MMdeviceEnumerator = new MMDeviceEnumerator();
-      
-      var mMdevice = _MMdeviceEnumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
-      if (mMdevice != null)
+
+      var mMdeviceList = _MMdeviceEnumerator.EnumAudioEndpoints(DataFlow.Render, DeviceState.Active);
+
+      if (mMdeviceList.Count > 0)
       {
-        bool hideWindowsOSD;
 
-        using (Settings reader = new MPSettings())
+        var mMdevice = _MMdeviceEnumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
+        if (mMdevice != null)
         {
-          int levelStyle = reader.GetValueAsInt("volume", "startupstyle", 0);
+          bool hideWindowsOSD;
 
-          if (levelStyle == 0)
+          using (Settings reader = new MPSettings())
           {
-            _startupVolume = Math.Max(0, Math.Min(65535, reader.GetValueAsInt("volume", "lastknown", 52428)));
+            int levelStyle = reader.GetValueAsInt("volume", "startupstyle", 0);
+
+            if (levelStyle == 0)
+            {
+              _startupVolume = Math.Max(0, Math.Min(65535, reader.GetValueAsInt("volume", "lastknown", 52428)));
+            }
+
+            if (levelStyle == 1)
+            {
+            }
+
+            if (levelStyle == 2)
+            {
+              _startupVolume = Math.Max(0, Math.Min(65535, reader.GetValueAsInt("volume", "startuplevel", 52428)));
+            }
+
+            isDigital = reader.GetValueAsBool("volume", "digital", false);
+
+            _showVolumeOSD = reader.GetValueAsBool("volume", "defaultVolumeOSD", true);
+
+            hideWindowsOSD = reader.GetValueAsBool("volume", "hideWindowsOSD", false);
           }
 
-          if (levelStyle == 1)
-          {
-          }
-
-          if (levelStyle == 2)
-          {
-            _startupVolume = Math.Max(0, Math.Min(65535, reader.GetValueAsInt("volume", "startuplevel", 52428)));
-          }
-
-          isDigital = reader.GetValueAsBool("volume", "digital", false);
-
-          _showVolumeOSD = reader.GetValueAsBool("volume", "defaultVolumeOSD", true);
-
-          hideWindowsOSD = reader.GetValueAsBool("volume", "hideWindowsOSD", false);
-        }
-
-        try
-        {
-          _volumeTable = volumeTable;
-          _mixer = new Mixer.Mixer();
-          _mixer.Open(0, isDigital, volumeTable);
-        }
-        catch (Exception ex)
-        {
-          Log.Error("VolumeHandler: Mixer exception during init {0}", ex);
-        }
-
-        if (OSInfo.OSInfo.Win8OrLater() && hideWindowsOSD)
-        {
           try
           {
-            bool tempShowVolumeOSD = _showVolumeOSD;
-
-            _showVolumeOSD = true;
-
-            VolumeOSD = new HideVolumeOSD.HideVolumeOSDLib(IsMuted);
-            VolumeOSD.HideOSD();
-
-            _showVolumeOSD = tempShowVolumeOSD;
+            _volumeTable = volumeTable;
+            _mixer = new Mixer.Mixer();
+            _mixer.Open(0, isDigital, volumeTable);
           }
-          catch { }
+          catch (Exception ex)
+          {
+            Log.Error("VolumeHandler: Mixer exception during init {0}", ex);
+          }
+
+          if (OSInfo.OSInfo.Win8OrLater() && hideWindowsOSD)
+          {
+            try
+            {
+              bool tempShowVolumeOSD = _showVolumeOSD;
+
+              _showVolumeOSD = true;
+
+              VolumeOSD = new HideVolumeOSD.HideVolumeOSDLib(IsMuted);
+              VolumeOSD.HideOSD();
+
+              _showVolumeOSD = tempShowVolumeOSD;
+            }
+            catch
+            {
+            }
+          }
         }
       }
       else
@@ -138,43 +146,48 @@ namespace MediaPortal.Player
       if (_MMdeviceEnumerator == null)
         _MMdeviceEnumerator = new MMDeviceEnumerator();
 
-      var mMdevice = _MMdeviceEnumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
-      if (mMdevice != null)
-      {
-        using (Settings reader = new MPSettings())
-        {
-          int volumeStyle = reader.GetValueAsInt("volume", "handler", 1);
+      var mMdeviceList = _MMdeviceEnumerator.EnumAudioEndpoints(DataFlow.Render, DeviceState.Active);
 
-          switch (volumeStyle)
+      if (mMdeviceList.Count > 0)
+      {
+        var mMdevice = _MMdeviceEnumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
+        if (mMdevice != null)
+        {
+          using (Settings reader = new MPSettings())
           {
-            // classic volume table
-            case 0:
-              return new VolumeHandler(new[] { 0, 6553, 13106, 19659, 26212, 32765, 39318, 45871, 52424, 58977, 65535 });
-            // windows default from registry
-            case 1:
-              return new VolumeHandler();
-            // logarithmic
-            case 2:
-              return new VolumeHandler(new[]
-                                       {
-                                         0, 1039, 1234, 1467, 1744, 2072, 2463, 2927, 3479, 4135, 4914, 5841, 6942, 8250,
-                                         9806
-                                         , 11654, 13851, 16462, 19565, 23253, 27636, 32845, 39037, 46395, 55141, 65535
-                                       });
-            // custom user setting
-            case 3:
-              return new VolumeHandlerCustom();
-            // defaults to vista safe "0, 4095, 8191, 12287, 16383, 20479, 24575, 28671, 32767, 36863, 40959, 45055, 49151, 53247, 57343, 61439, 65535"
-            // Vista recommended values
-            case 4:
-              return new VolumeHandler(new[]
-                                       {
-                                         0, 4095, 8191, 12287, 16383, 20479, 24575, 28671, 32767, 36863, 40959, 45055,
-                                         49151,
-                                         53247, 57343, 61439, 65535
-                                       });
-            default:
-              return new VolumeHandlerCustom();
+            int volumeStyle = reader.GetValueAsInt("volume", "handler", 1);
+
+            switch (volumeStyle)
+            {
+              // classic volume table
+              case 0:
+                return new VolumeHandler(new[] {0, 6553, 13106, 19659, 26212, 32765, 39318, 45871, 52424, 58977, 65535});
+              // windows default from registry
+              case 1:
+                return new VolumeHandler();
+              // logarithmic
+              case 2:
+                return new VolumeHandler(new[]
+                {
+                  0, 1039, 1234, 1467, 1744, 2072, 2463, 2927, 3479, 4135, 4914, 5841, 6942, 8250,
+                  9806
+                  , 11654, 13851, 16462, 19565, 23253, 27636, 32845, 39037, 46395, 55141, 65535
+                });
+              // custom user setting
+              case 3:
+                return new VolumeHandlerCustom();
+              // defaults to vista safe "0, 4095, 8191, 12287, 16383, 20479, 24575, 28671, 32767, 36863, 40959, 45055, 49151, 53247, 57343, 61439, 65535"
+              // Vista recommended values
+              case 4:
+                return new VolumeHandler(new[]
+                {
+                  0, 4095, 8191, 12287, 16383, 20479, 24575, 28671, 32767, 36863, 40959, 45055,
+                  49151,
+                  53247, 57343, 61439, 65535
+                });
+              default:
+                return new VolumeHandlerCustom();
+            }
           }
         }
       }

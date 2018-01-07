@@ -344,6 +344,7 @@ namespace MediaPortal.Player
         GUIGraphicsContext.ForcedRR3DBackDefault = false;
         GUIGraphicsContext.ForcedRefreshRate3DDone = false;
         GUIGraphicsContext.Render3DMode = GUIGraphicsContext.eRender3DMode.None;
+        GUIGraphicsContext.CurrentAudioRendererDone = false;
       }
       GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Video);
       GUIWindowManager.Receivers += new SendMessageHandler(this.OnMessage);
@@ -1519,30 +1520,33 @@ namespace MediaPortal.Player
           GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.SideBySideFrom2D &&
           renderModeHalf == GUIGraphicsContext.eRender3DModeHalf.SBSLeft)
       {
-        GUIGraphicsContext.DX9Device.SetRenderTarget(0, surface);
-
-        GUIGraphicsContext.DX9Device.Clear(ClearFlags.Target, Color.Black, 1.0f, 0);
-
-        GUIGraphicsContext.DX9Device.BeginScene();
-        GUIGraphicsContext.SetScalingResolution(0, 0, false);
-
-        GUIGraphicsContext.Render3DModeHalf = renderModeHalf;
-
-        try
+        if (GUIGraphicsContext.DX9Device != null && !GUIGraphicsContext.DX9Device.Disposed)
         {
-          if (!GUIGraphicsContext.BlankScreen)
+          GUIGraphicsContext.DX9Device.SetRenderTarget(0, surface);
+
+          GUIGraphicsContext.DX9Device.Clear(ClearFlags.Target, Color.Black, 1.0f, 0);
+
+          GUIGraphicsContext.DX9Device.BeginScene();
+          GUIGraphicsContext.SetScalingResolution(0, 0, false);
+
+          GUIGraphicsContext.Render3DModeHalf = renderModeHalf;
+
+          try
           {
-            // Render GUI + Video surface
-            GUIGraphicsContext.RenderGUI.RenderFrame(timePassed, GUILayers.all);
-            GUIFontManager.Present();
+            if (!GUIGraphicsContext.BlankScreen)
+            {
+              // Render GUI + Video surface
+              GUIGraphicsContext.RenderGUI.RenderFrame(timePassed, GUILayers.all);
+              GUIFontManager.Present();
+            }
           }
-        }
-        finally
-        {
-          GUIGraphicsContext.DX9Device.EndScene();
-        }
+          finally
+          {
+            GUIGraphicsContext.DX9Device.EndScene();
+          }
 
-        GUIGraphicsContext.DX9Device.SetRenderTarget(0, backbuffer);
+          GUIGraphicsContext.DX9Device.SetRenderTarget(0, backbuffer);
+        }
       }
 
       if (GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.SideBySideFrom2D)
@@ -1551,37 +1555,40 @@ namespace MediaPortal.Player
 
         if (renderModeHalf == GUIGraphicsContext.eRender3DModeHalf.SBSLeft)
         {
-          GUIGraphicsContext.DX9Device.StretchRectangle(surface,
-            new Rectangle(0, 0, backbuffer.Description.Width, backbuffer.Description.Height),
-            backbuffer,
-            targetRect,
-            TextureFilter.Point);
-
-          // if texture for last frame does not exist, then create it
-
-          if (GUIGraphicsContext.LastFrames.Count == 0)
+          if (GUIGraphicsContext.DX9Device != null && !GUIGraphicsContext.DX9Device.Disposed)
           {
-            for (int i = 0; i < 2; i++)
+            GUIGraphicsContext.DX9Device.StretchRectangle(surface,
+              new Rectangle(0, 0, backbuffer.Description.Width, backbuffer.Description.Height),
+              backbuffer,
+              targetRect,
+              TextureFilter.Point);
+
+            // if texture for last frame does not exist, then create it
+
+            if (GUIGraphicsContext.LastFrames.Count == 0)
             {
-              Texture texture = new Texture(GUIGraphicsContext.DX9Device,
-                backbuffer.Description.Width,
-                backbuffer.Description.Height, 0, Usage.RenderTarget,
-                backbuffer.Description.Format, Pool.Default);
+              for (int i = 0; i < 2; i++)
+              {
+                Texture texture = new Texture(GUIGraphicsContext.DX9Device,
+                  backbuffer.Description.Width,
+                  backbuffer.Description.Height, 0, Usage.RenderTarget,
+                  backbuffer.Description.Format, Pool.Default);
 
-              GUIGraphicsContext.LastFrames.Add(texture);
+                GUIGraphicsContext.LastFrames.Add(texture);
+              }
             }
+
+            // store current image, it will be used as right image for next frame
+
+            Surface surfaceLastFrame = GUIGraphicsContext.LastFrames[GUIGraphicsContext.LastFramesIndex].GetSurfaceLevel(0);
+
+            GUIGraphicsContext.DX9Device.StretchRectangle(surface,
+              new Rectangle(0, 0, backbuffer.Description.Width, backbuffer.Description.Height),
+              surfaceLastFrame,
+              new Rectangle(0, 0, backbuffer.Description.Width, backbuffer.Description.Height),
+              TextureFilter.Point);
+            surfaceLastFrame.Dispose();
           }
-
-          // store current image, it will be used as right image for next frame
-
-          Surface surfaceLastFrame = GUIGraphicsContext.LastFrames[GUIGraphicsContext.LastFramesIndex].GetSurfaceLevel(0);
-
-          GUIGraphicsContext.DX9Device.StretchRectangle(surface,
-            new Rectangle(0, 0, backbuffer.Description.Width, backbuffer.Description.Height),
-            surfaceLastFrame,
-            new Rectangle(0, 0, backbuffer.Description.Width, backbuffer.Description.Height),
-            TextureFilter.Point);
-          surfaceLastFrame.Dispose();
         }
         else
           // render right image of the last frame for 2D to 3D conversion, the difference between 2 frames generates a 3D effect only for moving objects...

@@ -698,6 +698,50 @@ namespace MediaPortal.Player
       }
     }
 
+    public override void AudioRendererRebuild()
+    {
+      try
+      {
+        if (_graphBuilder != null)
+        {
+          // First stop the graph
+          AudioRendererMediaControlStop();
+
+          Log.Debug("DVDPlayer: AudioRendererRebuild");
+          if (_dvdbasefilter != null)
+          {
+            _mediaCtrl.Stop();
+            //Add Audio Renderer
+            AddPreferedCodecs(_graphBuilder);
+            DirectShowUtil.RenderOutputPins(_graphBuilder, _dvdbasefilter);
+            DirectShowUtil.RemoveUnusedFiltersFromGraph(_graphBuilder);
+            _mediaCtrl.Run();
+            GUIGraphicsContext.CurrentAudioRendererDone = true;
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("DVDPlayer: AudioRendererRebuild: { 0}", ex);
+      }
+    }
+
+    public override void AudioRendererMediaControlStop()
+    {
+      try
+      {
+        if (_mediaCtrl != null)
+        {
+          _mediaCtrl.Stop();
+          Log.Debug("DVDPlayer: AudioRendererMediaControlStop");
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("DVDPlayer: AudioRendererMediaControlStop: {0}", ex.Message);
+      }
+    }
+
     /// <summary> DVD event message handler</summary>
     private void OnDvdEvent()
     {

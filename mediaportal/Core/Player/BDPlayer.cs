@@ -2478,6 +2478,70 @@ namespace MediaPortal.Player
       }
     }
 
+    public override void AudioRendererRebuild()
+    {
+      try
+      {
+        if (_graphBuilder != null)
+        {
+          // First stop the graph
+          AudioRendererMediaControlStop();
+
+          //Add Audio Renderer
+          if (_audioRendererFilter != null)
+          {
+            DirectShowUtil.FinalReleaseComObject(_audioRendererFilter);
+            _audioRendererFilter = null;
+          }
+          if (filterConfig.AudioRenderer.Length > 0)
+          {
+            _audioRendererFilter = DirectShowUtil.AddAudioRendererToGraph(_graphBuilder, filterConfig.AudioRenderer,
+              true);
+          }
+
+          // Add preferred audio filters
+          UpdateFilters("Audio");
+          Log.Debug("BDPlayer: AudioRendererRebuild");
+
+          if (_interfaceBDReader != null)
+          {
+            if (_mediaCtrl != null)
+            {
+              _mediaCtrl.Stop();
+              DirectShowUtil.RenderGraphBuilderOutputPins(_graphBuilder, _interfaceBDReader);
+              DirectShowUtil.RemoveUnusedFiltersFromGraph(_graphBuilder);
+
+              //Sync Audio Renderer
+              SyncAudioRenderer();
+
+              _mediaCtrl.Run();
+            }
+            GUIGraphicsContext.CurrentAudioRendererDone = true;
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("BDPlayer: AudioRendererRebuild: { 0}", ex);
+      }
+    }
+
+    public override void AudioRendererMediaControlStop()
+    {
+      try
+      {
+        if (_mediaCtrl != null)
+        {
+          _mediaCtrl.Stop();
+          Log.Debug("BDPlayer: AudioRendererMediaControlStop");
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("BDPlayer: AudioRendererMediaControlStop: {0}", ex.Message);
+      }
+    }
+
     protected void OnGraphNotify()
     {
       int param1, param2;
@@ -2859,11 +2923,6 @@ namespace MediaPortal.Player
 
         filterConfig = GetFilterConfiguration();
 
-        if (filterConfig.AudioRenderer.Length > 0)
-        {
-          _audioRendererFilter = DirectShowUtil.AddAudioRendererToGraph(_graphBuilder, filterConfig.AudioRenderer, true);
-        }
-
         BDReader reader = new BDReader();
         _interfaceBDReader = reader as IBaseFilter;
         _ireader = reader as IBDReader;
@@ -3011,6 +3070,11 @@ namespace MediaPortal.Player
 
         // Add preferred audio filters
         UpdateFilters("Audio");
+
+        if (filterConfig.AudioRenderer.Length > 0)
+        {
+          _audioRendererFilter = DirectShowUtil.AddAudioRendererToGraph(_graphBuilder, filterConfig.AudioRenderer, true);
+        }
 
         #endregion
 
