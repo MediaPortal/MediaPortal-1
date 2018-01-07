@@ -1383,12 +1383,41 @@ namespace MediaPortal
       }
 
       Log.Debug("D3D: BuildPresentParams()");
-      Screen screen = Screen.FromControl(this);
-      var size = windowed ? GUIGraphicsContext.form.ClientSize : CalcMaxClientArea();
-      _presentParams.BackBufferWidth  = windowed ? size.Width  : screen.Bounds.Width;
-      _presentParams.BackBufferHeight = windowed ? size.Height : screen.Bounds.Height;
-      _presentParams.BackBufferFormat = Format.Unknown;
 
+      Screen screen = Screen.FromControl(this);
+      var size = new Size(screen.Bounds.Width, screen.Bounds.Height);
+
+      if (windowed)
+      {
+        size = GUIGraphicsContext.form.ClientSize;
+        var sizeMaxClient = CalcMaxClientArea();
+        
+        int backupSizeWidth = 0;
+        int backupSizeHeight = 0;
+  
+        using (Settings xmlreader = new MPSettings())
+        {
+          backupSizeWidth = xmlreader.GetValueAsInt("gui", "backupsizewidth", 0);
+          backupSizeHeight = xmlreader.GetValueAsInt("gui", "backupsizeheight", 0);
+        }        
+        if (backupSizeWidth != 0 && backupSizeHeight != 0)
+        {
+          size.Width = backupSizeWidth;
+          size.Height = backupSizeHeight;
+        }
+        // Sanity check and replace with sensible size values if necessary
+        if (size.Width < 256 || size.Height < 256 || size.Width > sizeMaxClient.Width || size.Height > sizeMaxClient.Height)
+        {
+          Log.Debug("D3D: BuildPresentParams(), invalid size {0} x {1} changed to {2} x {3}",  size.Width, size.Height, sizeMaxClient.Width, sizeMaxClient.Height);
+          size.Width = sizeMaxClient.Width;
+          size.Height = sizeMaxClient.Height;
+        }
+      }
+            
+      _presentParams.BackBufferWidth  = size.Width;
+      _presentParams.BackBufferHeight = size.Height;
+      _presentParams.BackBufferFormat = Format.Unknown;
+ 
       Log.Info("D3D: BuildPresentParams ClientSize from: {0}x{1}", GUIGraphicsContext.form.ClientSize.Width, GUIGraphicsContext.form.ClientSize.Height);
       Log.Info("D3D: BuildPresentParams screen from: {0}x{1}", screen.Bounds.Width, screen.Bounds.Height);
       Log.Info("D3D: BuildPresentParams size from: {0}x{1}", size.Width, size.Height);
@@ -1429,7 +1458,15 @@ namespace MediaPortal
       _presentParams.ForceNoMultiThreadedFlag  = false;
 
       GUIGraphicsContext.DirectXPresentParameters = _presentParams;
-      Log.Info("D3D: Back Buffer Size set to: {0}x{1}", _presentParams.BackBufferWidth, _presentParams.BackBufferHeight);
+      Log.Info("D3D: Back Buffer, size: {0}x{1}, windowed:{2}, count:{3}", _presentParams.BackBufferWidth, _presentParams.BackBufferHeight, windowed, _presentParams.BackBufferCount);
+      Log.Debug("D3D: BuildPresentParams(), windowed:{0}, BW:{1}, BH:{2}, SW:{3}, SH:{4}, BBC:{5}", 
+                windowed, 
+                GUIGraphicsContext.currentScreen.Bounds.Width, 
+                GUIGraphicsContext.currentScreen.Bounds.Height,
+                size.Width,
+                size.Height,
+                _presentParams.BackBufferCount
+                );
       Windowed = windowed;
 
       // enable event handlers
@@ -1643,22 +1680,6 @@ namespace MediaPortal
     /// </summary>
     private void CreateDirectX9ExDevice()
     {
-      // This part need to be checked for restoring correct BackBuffer
-      int backupSizeWidth = 0;
-      int backupSizeHeight = 0;
-
-      using (Settings xmlreader = new MPSettings())
-      {
-        backupSizeWidth = xmlreader.GetValueAsInt("gui", "backupsizewidth", 0);
-        backupSizeHeight = xmlreader.GetValueAsInt("gui", "backupsizeheight", 0);
-      }
-
-      if ((backupSizeWidth != 0) && (backupSizeHeight != 0) && Windowed)
-      {
-        _presentParams.BackBufferWidth = backupSizeWidth;
-        _presentParams.BackBufferHeight = backupSizeHeight;
-      }
-
       var param = new D3DPRESENT_PARAMETERS
                     {
                       BackBufferWidth            = (uint)_presentParams.BackBufferWidth,
@@ -1677,6 +1698,17 @@ namespace MediaPortal
                       PresentationInterval       = (uint)_presentParams.PresentationInterval,
                     };
 
+      Log.Debug("D3D: CreateDirectX9ExDevice() - Info, Adapter: {0}, DevType: {1}, BBW: {2}, BBH: {3}, BBC: {4}, Hz: {5}, PI: {6}, Wind: {7}, Flags: ({8})", 
+                 AdapterInfo.AdapterOrdinal,
+                 _deviceType,
+                 param.BackBufferWidth, 
+                 param.BackBufferHeight, 
+                 param.BackBufferCount, 
+                 param.FullScreen_RefreshRateInHz,
+                 param.PresentationInterval,
+                 param.Windowed,
+                 (_createFlags | CreateFlags.MultiThreaded | CreateFlags.FpuPreserve)
+                 );
 
       IDirect3D9Ex direct3D9Ex;
       Direct3D.Direct3DCreate9Ex(32, out direct3D9Ex);
@@ -1690,6 +1722,8 @@ namespace MediaPortal
                                           IntPtr.Zero,
                                           out dev);
 
+      Log.Debug("D3D: CreateDirectX9ExDevice(), hr: {0}", hr);
+
       if (hr == 0)
       {
         GUIGraphicsContext.DX9Device = new Device(dev);
@@ -1697,10 +1731,22 @@ namespace MediaPortal
       }
       else
       {
-        Log.Error("D3D: Could not create device");
+        Log.Error("D3D: CreateDirectX9ExDevice(), could not create device, hr: {0}", hr);
         // ReSharper disable LocalizableElement
         MessageBox.Show("Direct3D device could not be created.", "MediaPortal", MessageBoxButtons.OK, MessageBoxIcon.Error);
         // ReSharper restore LocalizableElement
+        
+        // Reset backup values to sensible values in case this has caused the error
+        using (var xmlWriter = new MPSettings())
+        {
+          Log.Debug("D3D: Reset 'backupsize' values after error");
+          var size = CalcMaxClientArea();          
+          xmlWriter.SetValue("gui", "lastlocationx", 0);
+          xmlWriter.SetValue("gui", "lastlocationy", 0);
+          xmlWriter.SetValue("gui", "backupsizewidth", size.Width);
+          xmlWriter.SetValue("gui", "backupsizeheight", size.Height);
+        }
+        
         try
         {
           Close();
@@ -2730,10 +2776,23 @@ namespace MediaPortal
       using (var xmlWriter = new MPSettings())
       {
         var backupSize = ClientSize;
-        xmlWriter.SetValue("gui", "lastlocationx", Location.X);
-        xmlWriter.SetValue("gui", "lastlocationy", Location.Y);
-        xmlWriter.SetValue("gui", "backupsizewidth", backupSize.Width);
-        xmlWriter.SetValue("gui", "backupsizeheight", backupSize.Height);
+        var sizeMaxClient = CalcMaxClientArea();
+        Log.Debug("D3D: Dispose() ClientSize: {0}x{1}, MaxClientSize: {2}x{3}", backupSize.Width, backupSize.Height, sizeMaxClient.Width, sizeMaxClient.Height);
+        
+        if (backupSize.Width < 256 || backupSize.Height < 256 || backupSize.Width > sizeMaxClient.Width || backupSize.Height > sizeMaxClient.Height)
+        {
+          xmlWriter.SetValue("gui", "lastlocationx", 0);
+          xmlWriter.SetValue("gui", "lastlocationy", 0);
+          xmlWriter.SetValue("gui", "backupsizewidth", sizeMaxClient.Width);
+          xmlWriter.SetValue("gui", "backupsizeheight", sizeMaxClient.Height);
+        }
+        else
+        {
+          xmlWriter.SetValue("gui", "lastlocationx", Location.X);
+          xmlWriter.SetValue("gui", "lastlocationy", Location.Y);
+          xmlWriter.SetValue("gui", "backupsizewidth", backupSize.Width);
+          xmlWriter.SetValue("gui", "backupsizeheight", backupSize.Height);
+        }
       }
 
       CleanupEnvironment();
