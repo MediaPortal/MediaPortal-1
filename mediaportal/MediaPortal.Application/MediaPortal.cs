@@ -188,6 +188,7 @@ public class MediaPortalApp : D3D, IRender
   private const int WM_DISPLAYCHANGE         = 0x007E; // http://msdn.microsoft.com/en-us/library/windows/desktop/dd145210(v=vs.85).aspx
   private const int WM_POWERBROADCAST        = 0x0218; //http://msdn.microsoft.com/en-us/library/windows/desktop/aa373247(v=vs.85).aspx
   private const int WM_WINDOWPOSCHANGED      = 0x0047; //http://msdn.microsoft.com/en-us/library/windows/desktop/aa373247(v=vs.85).aspx
+  private const int WM_WINDOWPOSCHANGING     = 0x0046; //http://msdn.microsoft.com/en-us/library/windows/desktop/aa373247(v=vs.85).aspx
   private const int SPI_GETSCREENSAVEACTIVE  = 0x0010; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms724947(v=vs.85).aspx
   private const int SPI_SETSCREENSAVEACTIVE  = 0x0011; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms724947(v=vs.85).aspx
   private const int SPIF_SENDCHANGE          = 0x0002; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms724947(v=vs.85).aspx
@@ -1538,6 +1539,7 @@ public class MediaPortalApp : D3D, IRender
       switch (msg.Msg)
       {
         case WM_WINDOWPOSCHANGED:
+        //case WM_WINDOWPOSCHANGING:
           try
           {
             // Workaround for Win10 FCU and blackscreen
@@ -2139,7 +2141,6 @@ public class MediaPortalApp : D3D, IRender
           RestoreFromTray();
         }
         Log.Debug("Main: Activation request _forceMpAlive to false");
-        _forceMpAlive = false;
         break;
     }
     msg.Result = (IntPtr)0;
@@ -2273,11 +2274,8 @@ public class MediaPortalApp : D3D, IRender
                 }
 
                 // Force MP to refresh screen
-                if (!_forceMpAlive)
-                {
-                  _forceMpAlive = true;
-                  ForceMpAlive();
-                }
+                _forceMpAlive = true;
+                ForceMpAlive();
               }
               catch (Exception exception)
               {
