@@ -2509,6 +2509,10 @@ namespace MediaPortal.Video.Database
             {
               AddUserGroupToMovie(ID, VideoDatabase.AddUserGroup(group));
             }
+            else
+            {
+              RemoveUserGroupFromMovie(ID, VideoDatabase.AddUserGroup(group));
+            }
           }
           catch (Exception ex)
           {
