@@ -127,6 +127,10 @@ namespace DShowNET.Helper
         if (VolumeHandler.Instance._mixer != null)
         {
           VolumeHandler.Instance._mixer.ChangeAudioDevice(strFilterName, false);
+          if (!VolumeHandler.Instance._mixer.DetectedDevice())
+          {
+            return null;
+          }
         }
         GUIGraphicsContext.CurrentAudioRenderer = strFilterName;
 
@@ -136,9 +140,7 @@ namespace DShowNET.Helper
         foreach (Filter filter in Filters.AudioRenderers)
         {
           Log.Debug("DirectShowUtil: List AddAudioRenderer filter: {0} to graph for {1}", filter.Name, strFilterName);
-          if (String.Compare(filter.Name, strFilterName, StringComparison.OrdinalIgnoreCase) == 0 ||
-              String.Compare(filter.Name, GUIGraphicsContext.CurrentAudioRendererDevice,
-                StringComparison.OrdinalIgnoreCase) == 0)
+          if (String.Compare(filter.Name, strFilterName, StringComparison.OrdinalIgnoreCase) == 0)
           {
             Log.Info("DirectShowUtil: Found audio renderer");
             newFilter = (IBaseFilter) Marshal.BindToMoniker(filter.MonikerString);
