@@ -1199,13 +1199,12 @@ namespace MediaPortal
     /// </summary>
     protected void ForceMpAlive()
     {
-      Log.Debug("D3D: ForceMPAlive start.");
       if (!_forceMpAlive)
       {
         Log.Debug("D3D: ForceMPAlive already done.");
         return;
       }
-
+      Log.Debug("D3D: ForceMPAlive start.");
       if (GUIGraphicsContext.form != null && GUIGraphicsContext.ActiveForm != IntPtr.Zero)
       {
         // Make MediaPortal window normal ( if minimized )
@@ -1234,6 +1233,7 @@ namespace MediaPortal
 
         // Bring MP to front
         GUIGraphicsContext.form.BringToFront();
+        _forceMpAlive = false;
         Log.Debug("D3D: ForceMPAlive done.");
       }
     }
@@ -2463,6 +2463,10 @@ namespace MediaPortal
           MinimizeToTray();
           _firstTimeWindowDisplayed = false;
         }
+
+        // Workaround FCU
+        ForceMpAlive();
+
         // Set Cursor.Position to avoid mouse cursor show up itself (for ex on video)
         Log.Debug("D3D: Force mouse cursor to false");
         ShowMouseCursor(false);
