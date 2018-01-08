@@ -127,10 +127,6 @@ namespace DShowNET.Helper
         if (VolumeHandler.Instance._mixer != null)
         {
           VolumeHandler.Instance._mixer.ChangeAudioDevice(strFilterName, false);
-          if (!VolumeHandler.Instance._mixer.DetectedDevice())
-          {
-            return null;
-          }
         }
         GUIGraphicsContext.CurrentAudioRenderer = strFilterName;
 
