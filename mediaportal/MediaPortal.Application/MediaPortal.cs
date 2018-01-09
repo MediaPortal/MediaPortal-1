@@ -1542,9 +1542,12 @@ public class MediaPortalApp : D3D, IRender
         //case WM_WINDOWPOSCHANGING:
           try
           {
-            // Workaround for Win10 FCU and blackscreen
-            GUIGraphicsContext.DX9Device?.Present();
-            Log.Debug("Main: WM_WINDOWPOSCHANGED - DX9Device.Present()");
+            if (_useFcuBlackScreenFix)
+            {
+              // Workaround for Win10 FCU and blackscreen
+              GUIGraphicsContext.DX9Device?.Present();
+              Log.Debug("Main: WM_WINDOWPOSCHANGED - DX9Device.Present()");
+            }
           }
           catch (Exception ex)
           {

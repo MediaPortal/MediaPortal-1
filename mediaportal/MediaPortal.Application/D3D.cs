@@ -163,6 +163,7 @@ namespace MediaPortal
     private readonly bool              _doNotWaitForVSync;        // debug setting
     private readonly bool              _showCursorWhenFullscreen; // should the mouse cursor be shown in full screen?
     private readonly bool              _reduceFrameRate;          // reduce frame rate when not in focus?
+    protected readonly bool            _useFcuBlackScreenFix;     // workaround for FCU edition to fix blackscreen on resolution change
     private bool                       _miniTvMode;               // 
     private bool                       _isClosing;                //
     private bool                       _isLoaded;                 //
@@ -258,6 +259,7 @@ namespace MediaPortal
         _alwaysOnTop             = xmlreader.GetValueAsBool("general", "alwaysontop", false);
         _reduceFrameRate         = xmlreader.GetValueAsBool("gui", "reduceframerate", false);
         _doNotWaitForVSync       = xmlreader.GetValueAsBool("debug", "donotwaitforvsync", false);
+        _useFcuBlackScreenFix    = xmlreader.GetValueAsBool("general", "usefcublackscreenfix", false);
       }
 
       _useExclusiveDirectXMode = !UseEnhancedVideoRenderer && _useExclusiveDirectXMode;
@@ -881,8 +883,11 @@ namespace MediaPortal
         TopMost = false; // important
         Focus();
         _firstTimeActivated = false;
-        Log.Debug("D3D FullRender: ForceMPAlive");
-        ForceMpAlive();
+        if (_useFcuBlackScreenFix)
+        {
+          Log.Debug("D3D FullRender: ForceMPAlive");
+          ForceMpAlive();
+        }
       }
     }
 
@@ -1201,40 +1206,42 @@ namespace MediaPortal
     {
       if (!_forceMpAlive)
       {
-        Log.Debug("D3D: ForceMPAlive already done.");
         return;
       }
-      Log.Debug("D3D: ForceMPAlive start.");
-      if (GUIGraphicsContext.form != null && GUIGraphicsContext.ActiveForm != IntPtr.Zero)
+      if (_useFcuBlackScreenFix)
       {
-        // Make MediaPortal window normal ( if minimized )
-        if (GUIGraphicsContext.form.WindowState == FormWindowState.Minimized)
+        Log.Debug("D3D: ForceMPAlive start.");
+        if (GUIGraphicsContext.form != null && GUIGraphicsContext.ActiveForm != IntPtr.Zero)
         {
-          Win32API.ShowWindow(GUIGraphicsContext.ActiveForm, Win32API.ShowWindowFlags.ShowNormal);
-          Win32API.ShowWindow(GUIGraphicsContext.ActiveForm, Win32API.ShowWindowFlags.Minimize);
-          this.WindowState = FormWindowState.Normal;
-          this.WindowState = FormWindowState.Minimized;
-          Log.Debug("D3D: ForceMPAlive Minimize.");
-        }
-        else
-        {
-          Win32API.ShowWindow(GUIGraphicsContext.ActiveForm, Win32API.ShowWindowFlags.Minimize);
-          Win32API.ShowWindow(GUIGraphicsContext.ActiveForm, Win32API.ShowWindowFlags.ShowNormal);
-          this.WindowState = FormWindowState.Minimized;
-          this.WindowState = FormWindowState.Normal;
-          Log.Debug("D3D: ForceMPAlive ShowNormal.");
-        }
+          // Make MediaPortal window normal ( if minimized )
+          if (GUIGraphicsContext.form.WindowState == FormWindowState.Minimized)
+          {
+            Win32API.ShowWindow(GUIGraphicsContext.ActiveForm, Win32API.ShowWindowFlags.ShowNormal);
+            Win32API.ShowWindow(GUIGraphicsContext.ActiveForm, Win32API.ShowWindowFlags.Minimize);
+            this.WindowState = FormWindowState.Normal;
+            this.WindowState = FormWindowState.Minimized;
+            Log.Debug("D3D: ForceMPAlive Minimize.");
+          }
+          else
+          {
+            Win32API.ShowWindow(GUIGraphicsContext.ActiveForm, Win32API.ShowWindowFlags.Minimize);
+            Win32API.ShowWindow(GUIGraphicsContext.ActiveForm, Win32API.ShowWindowFlags.ShowNormal);
+            this.WindowState = FormWindowState.Minimized;
+            this.WindowState = FormWindowState.Normal;
+            Log.Debug("D3D: ForceMPAlive ShowNormal.");
+          }
 
-        // Make Mediaportal window focused
-        if (Win32API.SetForegroundWindow(GUIGraphicsContext.ActiveForm, true))
-        {
-          Log.Debug("D3D: ForceMPAlive Successfully switched focus.");
-        }
+          // Make Mediaportal window focused
+          if (Win32API.SetForegroundWindow(GUIGraphicsContext.ActiveForm, true))
+          {
+            Log.Debug("D3D: ForceMPAlive Successfully switched focus.");
+          }
 
-        // Bring MP to front
-        GUIGraphicsContext.form.BringToFront();
-        _forceMpAlive = false;
-        Log.Debug("D3D: ForceMPAlive done.");
+          // Bring MP to front
+          GUIGraphicsContext.form.BringToFront();
+          _forceMpAlive = false;
+          Log.Debug("D3D: ForceMPAlive done.");
+        }
       }
     }
 
