@@ -883,11 +883,6 @@ namespace MediaPortal
         TopMost = false; // important
         Focus();
         _firstTimeActivated = false;
-        if (_useFcuBlackScreenFix)
-        {
-          Log.Debug("D3D FullRender: ForceMPAlive");
-          ForceMpAlive();
-        }
       }
     }
 
