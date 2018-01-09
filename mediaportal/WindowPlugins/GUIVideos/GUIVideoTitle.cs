@@ -328,6 +328,7 @@ namespace MediaPortal.GUI.Video
       }
       if (action.wID == Action.ActionType.ACTION_DELETE_ITEM && _fileMenuEnabled)
       {
+        GUIListItem item = facadeLayout.SelectedListItem;
         DoDeleteItem(item, true);
       }
       if (action.wID == Action.ActionType.ACTION_PLAY || action.wID == Action.ActionType.ACTION_MUSIC_PLAY)
@@ -1792,7 +1793,7 @@ namespace MediaPortal.GUI.Video
           return;
         }
         
-        switch (dlg.dlg.SelectedId)
+        switch (dlg.SelectedId)
         {
           case 432:
             deleteFile = false;
@@ -1841,6 +1842,15 @@ namespace MediaPortal.GUI.Video
 
     private void DoDeleteItem(GUIListItem item, bool deleteFile)
     {
+      if (item == null)
+      {
+        return;
+      }
+      if (item.IsFolder)
+      {
+        return;
+      }
+
       IMDBMovie movie = item.AlbumInfoTag as IMDBMovie;
 
       if (movie == null)
@@ -1849,11 +1859,6 @@ namespace MediaPortal.GUI.Video
       }
 
       if (movie.ID < 0)
-      {
-        return;
-      }
-
-      if (item.IsFolder)
       {
         return;
       }
@@ -1904,7 +1909,7 @@ namespace MediaPortal.GUI.Video
       dlgFile.SetSourceItem(item);
       dlgFile.SetSourceDir(currentFolder);
       dlgFile.SetDestinationDir(string.Empty);
-      dlgFile.SetDirectoryStructure(string.Empty);
+      dlgFile.SetDirectoryStructure(null);
 
       if (preselectDelete)
       {
