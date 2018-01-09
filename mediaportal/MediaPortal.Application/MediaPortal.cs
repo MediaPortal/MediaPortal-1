@@ -1542,7 +1542,7 @@ public class MediaPortalApp : D3D, IRender
         //case WM_WINDOWPOSCHANGING:
           try
           {
-            if (_useFcuBlackScreenFix)
+            if (_useFcuBlackScreenFix && AppActive)
             {
               // Workaround for Win10 FCU and blackscreen
               GUIGraphicsContext.DX9Device?.Present();
@@ -3073,7 +3073,8 @@ public class MediaPortalApp : D3D, IRender
     {
       try
       {
-        CreateStateBlock();
+        // Trying to disable this part seems not needed anymore.
+        //CreateStateBlock();
         uiVisible = GUILayerManager.Render(timePassed, layers);
         RenderStats();
       }
