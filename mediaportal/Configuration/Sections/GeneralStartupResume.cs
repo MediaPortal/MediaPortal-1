@@ -137,7 +137,9 @@ namespace MediaPortal.Configuration.Sections
                                             // 12 No AutoStart on RemoteDesktop
                                             new[] {"general", "noautostartonrdp", "false"},
                                             // 13 Always use Primary screen
-                                            new[] {"general", "useprimaryscreen", "false"}
+                                            new[] {"general", "useprimaryscreen", "false"},
+                                            // 14 Use workaround FCU blackscreen fix
+                                            new[] {"general", "usefcublackscreenfix", "false"}
                                           };
 
     /// <summary> 
@@ -410,6 +412,7 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValueAsBool("general", "delay resume", mpCheckBoxMpResume.Checked);
         xmlwriter.SetValueAsBool("general", "wait for tvserver", cbWaitForTvService.Checked);
         xmlwriter.SetValueAsBool("general", "useprimaryscreen", _usePrimaryScreen);
+        //xmlwriter.SetValueAsBool("general", "usefcublackscreenfix", _useFcuBlackScreenFix);
       }
 
       try
