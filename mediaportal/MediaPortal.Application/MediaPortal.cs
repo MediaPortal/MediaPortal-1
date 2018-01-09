@@ -2143,7 +2143,6 @@ public class MediaPortalApp : D3D, IRender
           Log.Info("Main: Activation request received");
           RestoreFromTray();
         }
-        Log.Debug("Main: Activation request _forceMpAlive to false");
         break;
     }
     msg.Result = (IntPtr)0;
