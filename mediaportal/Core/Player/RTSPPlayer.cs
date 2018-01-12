@@ -501,17 +501,6 @@ namespace MediaPortal.Player
           hr = mediaEvt.SetNotifyWindow(IntPtr.Zero, WM_GRAPHNOTIFY, IntPtr.Zero);
         }
 
-        if (VMR9Util.g_vmr9?._vmr9Filter != null && GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
-        {
-          // Releasing madVR
-          _mediaCtrl = null;
-          _mediaSeeking = null;
-          videoWin = null;
-          basicAudio = null;
-          basicVideo = null;
-          VMR9Util.g_vmr9?.Vmr9MadVrRelease();
-        }
-
         videoWin = graphBuilder as IVideoWindow;
         if (videoWin != null && GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
         {

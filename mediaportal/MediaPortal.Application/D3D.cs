@@ -172,6 +172,7 @@ namespace MediaPortal
     private bool                       _wasPlayingVideo;          //
     private bool                       _alwaysOnTop;              // tracks the always on top state
     private bool                       _firstTimeWindowDisplayed; // set to true when MP becomes Active the 1st time
+    private bool                       _firstTimeLoadingParams;   // set to true when MP becomes Active the 1st time
     private bool                       _firstTimeActivated;       // needed to focus on first start
     private int                        _lastActiveWindow;         //
     private long                       _lastTime;                 //
@@ -219,7 +220,8 @@ namespace MediaPortal
     /// </summary>
     protected D3D()
     {
-      _firstTimeWindowDisplayed  = true;
+      _firstTimeLoadingParams   = true;
+      _firstTimeWindowDisplayed = true;
       _firstTimeActivated       = true;
       MinimizeOnStartup         = false;
       MinimizeOnGuiExit         = false;
@@ -647,7 +649,7 @@ namespace MediaPortal
           GUIGraphicsContext.Vmr9Active)
       {
         GUIGraphicsContext.ForceMadVRRefresh3D = true;
-        return;
+        //return;
       }
 
       // disable event handlers
@@ -686,8 +688,8 @@ namespace MediaPortal
         GUIFontManager.Dispose();
         GUITextureManager.Dispose();
         // Don't need to resize when using madVR
-        if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR ||
-            !GUIGraphicsContext.Vmr9Active)
+        //if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR ||
+        //    !GUIGraphicsContext.Vmr9Active)
         {
           if (GUIGraphicsContext.DX9Device != null)
           {
@@ -783,6 +785,13 @@ namespace MediaPortal
         // continue rendering
         AppActive = true;
         NeedRecreateSwapChain = false;
+
+        if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+        {
+          Log.Debug("g_player VideoWindowChanged() MadVrScreenResize ForceMadVRRefresh3D (false) madVR");
+          VMR9Util.g_vmr9?.MadVrScreenResize(GUIGraphicsContext.form.Location.X, GUIGraphicsContext.form.Location.Y,
+            _presentParams.BackBufferWidth, _presentParams.BackBufferHeight, true);
+        }
 
         // Restore GUIGraphicsContext.State
         if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.SUSPENDING)
@@ -1441,12 +1450,16 @@ namespace MediaPortal
         {
           backupSizeWidth = xmlreader.GetValueAsInt("gui", "backupsizewidth", 0);
           backupSizeHeight = xmlreader.GetValueAsInt("gui", "backupsizeheight", 0);
-        }        
-        if (backupSizeWidth != 0 && backupSizeHeight != 0)
+        }
+
+        // TODO this part need to be checked because it break at runtime when BuildPresentParams is rebuilded
+        if ((backupSizeWidth != 0 && backupSizeHeight != 0) && _firstTimeLoadingParams)
         {
           size.Width = backupSizeWidth;
           size.Height = backupSizeHeight;
+          _firstTimeLoadingParams = false;
         }
+
         // Sanity check and replace with sensible size values if necessary
         if (size.Width < 256 || size.Height < 256 || size.Width > sizeMaxClient.Width || size.Height > sizeMaxClient.Height)
         {
@@ -1455,7 +1468,7 @@ namespace MediaPortal
           size.Height = sizeMaxClient.Height;
         }
       }
-            
+
       _presentParams.BackBufferWidth  = size.Width;
       _presentParams.BackBufferHeight = size.Height;
       _presentParams.BackBufferFormat = Format.Unknown;
@@ -1782,7 +1795,7 @@ namespace MediaPortal
         using (var xmlWriter = new MPSettings())
         {
           Log.Debug("D3D: Reset 'backupsize' values after error");
-          var size = CalcMaxClientArea();          
+          var size = CalcMaxClientArea();
           xmlWriter.SetValue("gui", "lastlocationx", 0);
           xmlWriter.SetValue("gui", "lastlocationy", 0);
           xmlWriter.SetValue("gui", "backupsizewidth", size.Width);

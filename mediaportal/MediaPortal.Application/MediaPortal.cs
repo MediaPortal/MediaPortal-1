@@ -3072,8 +3072,7 @@ public class MediaPortalApp : D3D, IRender
     {
       try
       {
-        // Trying to disable this part seems not needed anymore.
-        //CreateStateBlock();
+        CreateStateBlock();
         uiVisible = GUILayerManager.Render(timePassed, layers);
         RenderStats();
       }
@@ -5351,7 +5350,7 @@ public class MediaPortalApp : D3D, IRender
 
         case GUIMessage.MessageType.GUI_MSG_MADVR_SCREEN_REFRESH:
           // We need to do a refresh of screen when using madVR only if resolution screen has change during playback
-          if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && NeedRecreateSwapChain)
+          if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && NeedRecreateSwapChain || message.Param1 == 1)
           {
             RecreateSwapChain(false);
             Log.Debug("Main: recreate swap chain for madVR done");
