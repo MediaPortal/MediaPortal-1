@@ -140,6 +140,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
     private HashSet<ushort> _pidFilterPidsToAdd = new HashSet<ushort>();
 
     // signal status
+    private volatile bool _isRtcpSignalStatusUpdateReceived = false;
     private volatile bool _isSignalLocked = false;
     private int _signalStrength = 0;
     private int _signalQuality = 0;
@@ -522,6 +523,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
     {
       try
       {
+        bool logReceiveFailure = true;
+        _isRtcpSignalStatusUpdateReceived = false;
+
         bool receivedGoodBye = false;
         UdpClient udpClient = new UdpClient(new IPEndPoint(_localIpAddress, _rtcpClientPort));
         try
@@ -538,12 +542,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
             catch (Exception ex)
             {
               this.LogWarn(ex, "SAT>IP base: failed to receive RTCP packets");
+              logReceiveFailure = false;
             }
             if (packets == null)
             {
               continue;
             }
 
+            logReceiveFailure = true;
             int offset = 0;
             while (offset + 8 <= packets.Length)
             {
@@ -599,6 +605,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
                 Match m = REGEX_DESCRIBE_RESPONSE_SIGNAL_INFO.Match(description);
                 if (m.Success)
                 {
+                  _isRtcpSignalStatusUpdateReceived = true;
                   _isSignalLocked = m.Groups[2].Captures[0].Value.Equals("1");
                   _signalStrength = int.Parse(m.Groups[1].Captures[0].Value) * 100 / 255;   // strength: 0..255 => 0..100
                   _signalQuality = int.Parse(m.Groups[3].Captures[0].Value) * 100 / 15;     // quality: 0..15 => 0..100
@@ -625,6 +632,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
         this.LogError(ex, "SAT>IP base: RTCP listener thread exception");
         return;
       }
+
+      _isRtcpSignalStatusUpdateReceived = false;
       this.LogDebug("SAT>IP base: RTCP listener thread stopping");
     }
 
@@ -774,10 +783,51 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
     /// <param name="onlyGetLock"><c>True</c> to only get lock status.</param>
     public override void GetSignalStatus(out bool isLocked, out bool isPresent, out int strength, out int quality, bool onlyGetLock)
     {
-      isLocked = _isSignalLocked;
-      isPresent = _isSignalLocked;
-      strength = _signalStrength;
-      quality = _signalQuality;
+      // Some tuners don't deliver RTCP updates.
+      if (_isRtcpSignalStatusUpdateReceived)
+      {
+        isLocked = _isSignalLocked;
+        isPresent = _isSignalLocked;
+        strength = _signalStrength;
+        quality = _signalQuality;
+        return;
+      }
+
+      isLocked = false;
+      isPresent = false;
+      strength = 0;
+      quality = 0;
+
+      try
+      {
+        RtspRequest request = new RtspRequest(RtspMethod.Describe, string.Format("rtsp://{0}/stream={1}", _serverIpAddress, _satIpStreamId));
+        request.Headers.Add("Accept", "application/sdp");
+        request.Headers.Add("Session", _rtspSessionId);
+        RtspResponse response = null;
+        if (_rtspClient.SendRequest(request, out response) != RtspStatusCode.Ok)
+        {
+          this.LogError("SAT>IP base: failed to get signal status, non-OK RTSP DESCRIBE status code {0} {1}", response.StatusCode, response.ReasonPhrase);
+          return;
+        }
+
+        // Find the first stream information. We assume that all signal statistics apply equally as
+        // we're only meant to be using one front end.
+        Match m = REGEX_DESCRIBE_RESPONSE_SIGNAL_INFO.Match(response.Body);
+        if (m.Success)
+        {
+          isLocked = m.Groups[2].Captures[0].Value.Equals("1");
+          isPresent = isLocked;
+          strength = int.Parse(m.Groups[1].Captures[0].Value) * 100 / 255;    // strength: 0..255 => 0..100
+          quality = int.Parse(m.Groups[3].Captures[0].Value) * 100 / 15;      // quality: 0..15 => 0..100
+          return;
+        }
+
+        this.LogError("SAT>IP base: failed to find signal status information in RTSP DESCRIBE response");
+      }
+      catch (Exception ex)
+      {
+        this.LogError(ex, "SAT>IP base: exception updating signal status");
+      }
     }
 
     #endregion
