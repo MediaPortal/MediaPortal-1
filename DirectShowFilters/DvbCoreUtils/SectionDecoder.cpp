@@ -103,7 +103,7 @@ void CSectionDecoder::OnTsPacket(const CTsHeader& header, const unsigned char* t
     if (header.TransportError) 
     {
       // Give up on the current section.
-      LogDebug(L"section %d: transport error flag set, signal quality problem?",
+      LogDebug(L"section decoder %d: transport error flag set, signal quality problem?",
                 m_pid);
       m_section.Reset();
       m_continuityCounter = CONTINUITY_COUNTER_NOT_SET;
@@ -116,7 +116,7 @@ void CSectionDecoder::OnTsPacket(const CTsHeader& header, const unsigned char* t
       unsigned char expectedContinuityCounter = (m_continuityCounter + 1) & 0x0f;
       if (header.ContinuityCounter != expectedContinuityCounter)
       {
-        LogDebug(L"section %d: discontinuity, value = %hhu, previous = %hhu, expected = %hhu, signal quality, descrambling, or HDD load problem?",
+        LogDebug(L"section decoder %d: discontinuity, value = %hhu, previous = %hhu, expected = %hhu, signal quality, descrambling, or HDD load problem?",
                   m_pid, header.ContinuityCounter, m_continuityCounter,
                   expectedContinuityCounter);
         m_section.Reset();
@@ -142,7 +142,7 @@ void CSectionDecoder::OnTsPacket(const CTsHeader& header, const unsigned char* t
     {
       if (packetPointer >= TS_PACKET_LEN)
       {
-        LogDebug(L"section %d: invalid payload start, position = %hhu",
+        LogDebug(L"section decoder %d: invalid payload start, position = %hhu",
                   m_pid, packetPointer);
         m_section.Reset();
         return;
@@ -151,7 +151,7 @@ void CSectionDecoder::OnTsPacket(const CTsHeader& header, const unsigned char* t
       // The TS packet may contain the last part of a previous section. If the
       // buffer is expecting a new section, skip the pointer field and the
       // previous section data. Otherwise just skip the pointer field.
-      if (m_section.BufferPos == 0)
+      if (m_section.IsEmpty())
       {
         packetPointer += tsPacket[packetPointer] + 1;
       }
@@ -164,7 +164,7 @@ void CSectionDecoder::OnTsPacket(const CTsHeader& header, const unsigned char* t
     while (packetPointer < TS_PACKET_LEN)
     {
       loopCount++;
-      if (m_section.BufferPos == 0)
+      if (m_section.IsEmpty())
       {
         if (!header.PayloadUnitStart)
         {
@@ -186,31 +186,30 @@ void CSectionDecoder::OnTsPacket(const CTsHeader& header, const unsigned char* t
         // has been collected erroneously. It only works for unencrypted
         // packetised elementary streams, which contain packets that start with
         // the byte sequence: 00 00 01.
-        if (m_pid == 0 || m_section.Data[0] != 0)
+        if (m_pid == 0 || m_section.TableId != 0)
         {
-          if (m_isCrcCheckEnabled && !m_section.IsValid())
+          // Is the section valid?
+          if (!m_isCrcCheckEnabled || m_section.IsValid(m_pid))
           {
-            LogDebug(L"section %d: bad section CRC, table ID = 0x%hhx, table ID extension = %hu, section length = %hu, signal quality, descrambling, or HDD load problem?",
-                      m_pid, m_section.TableId, m_section.TableIdExtension,
-                      m_section.SectionLength);
-          }
-          else if (m_dispatcher != NULL)
-          {
-            m_dispatcher->EnqueueSection(m_pid, m_section.Data[0], m_section, *this);
-          }
-          else
-          {
-            OnNewSection(m_pid, m_section.Data[0], m_section);
+            if (m_dispatcher != NULL)
+            {
+              m_dispatcher->EnqueueSection(m_pid, m_section.TableId, m_section, *this);
+            }
+            else
+            {
+              OnNewSection(m_pid, m_section.TableId, m_section);
+            }
           }
         }
         m_section.Reset();
+        continue;
       }
 
       if (loopCount > 100)
       {
-        LogDebug(L"section %d: entered infinite loop, packet pointer = %hhu, buffer position = %hu, section length = %hu, discarding packet/section",
-                  m_pid, packetPointer, m_section.BufferPos,
-                  m_section.SectionLength);
+        LogDebug(L"section decoder %d: entered infinite loop, packet pointer = %hhu, discarding packet/section",
+                  m_pid, packetPointer);
+        m_section.Debug();
         m_section.Reset();
         return;
       }

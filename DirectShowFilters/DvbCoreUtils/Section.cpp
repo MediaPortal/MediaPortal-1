@@ -23,8 +23,10 @@
 #include "..\shared\Section.h"
 
 
-#define SECTION_LENGTH_NOT_SET 0
+#define PRE_SECTION_BYTE_COUNT 3    // + 1 for table ID, + 2 for section length bytes
 
+
+extern void LogDebug(const wchar_t* fmt, ...);
 
 CSection::CSection(void)
 {
@@ -40,7 +42,7 @@ void CSection::Reset()
   TableId = 0;
   SectionSyntaxIndicator = true;
   PrivateIndicator = true;
-  SectionLength = SECTION_LENGTH_NOT_SET;
+  SectionLength = 0;
   TableIdExtension = 0;
   VersionNumber = 0;
   CurrentNextIndicator = true;
@@ -56,9 +58,9 @@ void CSection::Reset()
 
 unsigned short CSection::AppendData(const unsigned char* data, unsigned long dataLength)
 {
-  if (SectionLength == SECTION_LENGTH_NOT_SET)
+  if (BufferPos < PRE_SECTION_BYTE_COUNT)   // is SectionLength set?
   {
-    if (BufferPos + dataLength < 3)
+    if (BufferPos + dataLength < PRE_SECTION_BYTE_COUNT)
     {
       memcpy(&Data[BufferPos], data, dataLength);
       BufferPos += (unsigned short)dataLength;
@@ -80,7 +82,7 @@ unsigned short CSection::AppendData(const unsigned char* data, unsigned long dat
     section_length = SectionLength;
   }
 
-  unsigned short copyByteCount = SectionLength + 3 - BufferPos;     // + 1 for table ID, + 2 for section length bytes
+  unsigned short copyByteCount = PRE_SECTION_BYTE_COUNT + SectionLength - BufferPos;
   if (dataLength < copyByteCount)
   {
     copyByteCount = (unsigned short)dataLength;
@@ -93,7 +95,7 @@ unsigned short CSection::AppendData(const unsigned char* data, unsigned long dat
     TableId = Data[0];
     SectionSyntaxIndicator = (Data[1] & 0x80) != 0;
     PrivateIndicator = (Data[1] & 0x40) != 0;
-    if (SectionSyntaxIndicator)
+    if (SectionSyntaxIndicator && BufferPos > 7)
     {
       TableIdExtension = (Data[3] << 8) | Data[4];
       VersionNumber = (Data[5] >> 1) & 0x1f;
@@ -109,37 +111,85 @@ unsigned short CSection::AppendData(const unsigned char* data, unsigned long dat
   return copyByteCount;
 }
 
-bool CSection::IsComplete() const
+bool CSection::IsEmpty() const
 {
-  return SectionLength != SECTION_LENGTH_NOT_SET && BufferPos >= section_length + 3;
+  return BufferPos == 0;
 }
 
-bool CSection::IsValid() const
+bool CSection::IsComplete() const
 {
-  unsigned long crc = 0;
-  // With a few exceptions, only sections with the syntax indicator set have a
-  // CRC.
-  if (
-    SectionSyntaxIndicator ||
-    TableId == 0x73 ||   // DVB TOT
-    TableId == 0xc5 ||   // SCTE STT
-    TableId == 0xcd      // ATSC STT
+  return BufferPos >= PRE_SECTION_BYTE_COUNT + SectionLength;
+}
+
+bool CSection::IsValid(unsigned short pid) const
+{
+  if (!IsComplete())
+  {
+    return false;
+  }
+
+  unsigned short expectedMinimumSectionLength = 0;
+  if (SectionSyntaxIndicator)
+  {
+    // These sections include a CRC which can be checked.
+    expectedMinimumSectionLength = 9;   // + 5 for table ID extension etc., + 4 for CRC
+  }
+  else if (
+      TableId == 0x73 ||    // DVB TOT
+      TableId == 0xc5 ||    // SCTE STT
+      TableId == 0xcd       // ATSC STT
   )
   {
-    // Is the CRC actually populated? Some providers fill the CRC with
-    // zeroes or ones instead of setting it correctly.
-    const unsigned char* crcPointer = &(Data[SectionLength - 1]);
-    if (
-      (*crcPointer != 0 && *crcPointer != 0xff) ||
-      *crcPointer != *(crcPointer + 1) ||
-      *crcPointer != *(crcPointer + 2) ||
-      *crcPointer != *(crcPointer + 3)
-    )
-    {
-      crc = CalculatCrc32(Data, SectionLength + 3);   // + 1 for the table ID, + 2 for the section length
-    }
+    // These sections also include a CRC, even though the section syntax
+    // indicator is not set.
+    expectedMinimumSectionLength = 4;   // + 4 for CRC
   }
-  return crc == 0;
+  else
+  {
+    // No CRC. At this scope we have to assume the section is valid.
+    return true;
+  }
+
+  if (SectionLength < expectedMinimumSectionLength)
+  {
+    LogDebug(L"section: invalid section detected by length, PID = %hu", pid);
+    Debug();
+    return false;
+  }
+
+  // Check the CRC.
+  unsigned long crc = CalculatCrc32(Data, PRE_SECTION_BYTE_COUNT + SectionLength);
+  if (crc == 0)
+  {
+    return true;
+  }
+
+  // It looks like the section might not be valid. However, some providers
+  // fill the CRC with zeroes or ones instead of populating it correctly.
+  const unsigned char* crcPointer = &(Data[SectionLength - 1]);
+  if (
+    (*crcPointer == 0 || *crcPointer == 0xff) &&
+    *crcPointer == *(crcPointer + 1) &&
+    *crcPointer == *(crcPointer + 2) &&
+    *crcPointer == *(crcPointer + 3)
+  )
+  {
+    return true;
+  }
+
+  LogDebug(L"section: invalid section detected by CRC, PID = %hu, CRC check result = %lu, CRC byte 1 = %hhu, CRC byte 2 = %hhu, CRC byte 3 = %hhu, CRC byte 4 = %hhu",
+            pid, crc, *crcPointer, *(crcPointer + 1), *(crcPointer + 2),
+            *(crcPointer + 3));
+  Debug();
+  return false;
+}
+
+void CSection::Debug() const
+{
+  LogDebug(L"  section data, table ID = 0x%hhx, section syntax indicator = %d, private indicator = %d, section length = %hu, table ID extension = %hu, version number = %hhu, current next indicator = %d, section number = %hhu, last section number = %hhu, buffer position = %hu",
+            TableId, SectionSyntaxIndicator, PrivateIndicator, SectionLength,
+            TableIdExtension, VersionNumber, CurrentNextIndicator,
+            SectionNumber, LastSectionNumber, BufferPos);
 }
 
 CSection& CSection::operator = (const CSection& section)

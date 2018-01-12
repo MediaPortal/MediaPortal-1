@@ -32,8 +32,10 @@ class CSection
 
     void Reset();
     unsigned short AppendData(const unsigned char* data, unsigned long dataLength);
+    bool IsEmpty() const;
     bool IsComplete() const;
-    bool IsValid() const;
+    bool IsValid(unsigned short pid) const;
+    void Debug() const;
 
     CSection& operator = (const CSection& section);
     void Copy(const CSection &section);
@@ -48,7 +50,6 @@ class CSection
     unsigned char SectionNumber;
     unsigned char LastSectionNumber;
 
-    unsigned short BufferPos;
     unsigned char Data[MAX_SECTION_LENGTH];
 
     // TODO Kept only for compatibility with TsReader PAT and PMT parsers. Remove if/when possible.
@@ -56,4 +57,7 @@ class CSection
     int section_length;
     int table_id_extension;
     int version_number;
+
+  private:
+    unsigned short BufferPos;
 };
