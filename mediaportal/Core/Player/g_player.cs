@@ -1771,11 +1771,7 @@ namespace MediaPortal.Player
             if (!playingRemoteUrl) LoadChapters(strFile);
           }
           _player = CachePreviousPlayer(_player);
-          bool bResult;
-          lock (GUIGraphicsContext.PlayStarting)
-          {
-            bResult = _player.Play(strFile);
-          }
+          bool bResult = _player.Play(strFile);
           if (!bResult)
           {
             Log.Info("g_Player: ended");

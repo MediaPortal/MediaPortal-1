@@ -954,27 +954,16 @@ namespace MediaPortal.Player
             _dvbSubRenderer = null;
           }
 
+          if (_videoWin != null)
+          {
+            _videoWin.put_Owner(IntPtr.Zero);
+            _videoWin.put_Visible(OABool.False);
+          }
+
           if (_mediaEvt != null)
           {
             _mediaEvt.SetNotifyWindow(IntPtr.Zero, WM_GRAPHNOTIFY, IntPtr.Zero);
             _mediaEvt = null;
-          }
-
-          if (VMR9Util.g_vmr9?._vmr9Filter != null && GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
-          {
-            // Releasing madVR
-            _mediaCtrl = null;
-            _mediaSeeking = null;
-            _videoWin = null;
-            _basicAudio = null;
-            _basicVideo = null;
-            VMR9Util.g_vmr9?.Vmr9MadVrRelease();
-          }
-
-          if (_videoWin != null && GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
-          {
-            _videoWin.put_Owner(IntPtr.Zero);
-            _videoWin.put_Visible(OABool.False);
           }
 
           if (_graphBuilder != null)

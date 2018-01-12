@@ -3275,17 +3275,6 @@ namespace MediaPortal.Player
           _mediaEvt = null;
         }
 
-        if (VMR9Util.g_vmr9?._vmr9Filter != null && GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
-        {
-          // Releasing madVR
-          _mediaCtrl = null;
-          _mediaSeeking = null;
-          _videoWin = null;
-          _basicAudio = null;
-          _basicVideo = null;
-          VMR9Util.g_vmr9?.Vmr9MadVrRelease();
-        }
-
         if (_graphBuilder != null)
         {
           DirectShowUtil.RemoveFilters(_graphBuilder);
