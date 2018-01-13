@@ -701,55 +701,61 @@ HRESULT MPMadPresenter::Shutdown()
   { // Scope for autolock for the local variable (lock, which when deleted releases the lock)
     //CAutoLock lock(this);
 
-    Log("MPMadPresenter::Shutdown() start");
-
-    if (m_pCallback)
+    try
     {
-      m_pCallback->SetSubtitleDevice(reinterpret_cast<LONG>(nullptr));
-      Log("MPMadPresenter::Shutdown() reset subtitle device");
-      m_pCallback->RestoreDeviceSurface(m_pSurfaceDevice);
-      Log("MPMadPresenter::Shutdown() RestoreDeviceSurface");
-      if (m_pKodiWindowUse)
-      {
-        // for using no Kodi madVR window way comment out this line
-        m_pCallback->DestroyHWnd(m_hWnd);
-      }
-      Log("MPMadPresenter::Shutdown() send DestroyHWnd on C# side");
-      m_pCallback->Release();
-      m_pCallback = nullptr;
-      Log("MPMadPresenter::Shutdown() m_pCallback release");
-    }
+      Log("MPMadPresenter::Shutdown() start");
 
-    // Restore windowed overlay settings
-    if (m_pMad)
-    {
-      if (Com::SmartQIPtr<IMadVRSettings> m_pSettings = m_pMad)
+      if (m_pCallback)
       {
-        if (m_enableOverlay)
+        m_pCallback->SetSubtitleDevice(reinterpret_cast<LONG>(nullptr));
+        Log("MPMadPresenter::Shutdown() reset subtitle device");
+        m_pCallback->RestoreDeviceSurface(m_pSurfaceDevice);
+        Log("MPMadPresenter::Shutdown() RestoreDeviceSurface");
+        if (m_pKodiWindowUse)
         {
-          m_pSettings->SettingsSetBoolean(L"enableOverlay", true);
-          m_pSettings.Release(); // WIP release
+          // for using no Kodi madVR window way comment out this line
+          m_pCallback->DestroyHWnd(m_hWnd);
+        }
+        Log("MPMadPresenter::Shutdown() send DestroyHWnd on C# side");
+        m_pCallback->Release();
+        m_pCallback = nullptr;
+        Log("MPMadPresenter::Shutdown() m_pCallback release");
+      }
+
+      // Restore windowed overlay settings
+      if (m_pMad)
+      {
+        if (Com::SmartQIPtr<IMadVRSettings> m_pSettings = m_pMad)
+        {
+          if (m_enableOverlay)
+          {
+            m_pSettings->SettingsSetBoolean(L"enableOverlay", true);
+            m_pSettings.Release(); // WIP release
+          }
         }
       }
-    }
 
-    if (m_pDevice != nullptr)
+      if (m_pDevice != nullptr)
+      {
+        m_pDevice = nullptr;
+      }
+
+      if (m_pSurfaceDevice != nullptr)
+      {
+        m_pSurfaceDevice = nullptr;
+      }
+
+      if (m_hParent)
+      {
+        m_hParent = NULL;
+      }
+
+      Log("MPMadPresenter::Shutdown() stop");
+      return S_OK;
+    }
+    catch (...)
     {
-      m_pDevice = nullptr;
     }
-
-    if (m_pSurfaceDevice != nullptr)
-    {
-      m_pSurfaceDevice = nullptr;
-    }
-
-    if (m_hParent)
-    {
-      m_hParent = NULL;
-    }
-
-    Log("MPMadPresenter::Shutdown() stop");
-    return S_OK;
   } // Scope for autolock
 }
 
