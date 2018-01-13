@@ -29,10 +29,12 @@
 #include "StdString.h"
 #include "threads/SystemClock.h"
 #include "gdiplus.h"
+#include <mutex>
 
 static HWND g_hWnd;
 static CComPtr<IGraphBuilder> mediaControlGraph;
 bool StopEvent = false;
+std::mutex mtx;
 
 const DWORD D3DFVF_VID_FRAME_VERTEX = D3DFVF_XYZRHW | D3DFVF_TEX1;
 
@@ -171,6 +173,7 @@ void MPMadPresenter::InitializeOSD()
 
 void MPMadPresenter::SetMadVrPaused(bool paused)
 {
+  mtx.lock();
   if (!m_pPausedDone && !m_pRunDone)
   {
     IMediaControl *m_pControl = nullptr;
@@ -209,6 +212,7 @@ void MPMadPresenter::SetMadVrPaused(bool paused)
     }
     m_pPausedCount++;
   }
+  mtx.unlock();
 }
 
 void MPMadPresenter::RepeatFrame()
