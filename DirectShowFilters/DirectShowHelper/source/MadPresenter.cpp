@@ -755,6 +755,7 @@ HRESULT MPMadPresenter::Shutdown()
     }
     catch (...)
     {
+      Log("MPMadPresenter::Shutdown() handled");
     }
   } // Scope for autolock
 }
