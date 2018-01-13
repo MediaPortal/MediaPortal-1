@@ -1010,7 +1010,7 @@ namespace MediaPortal.Player
 
           // Start command thread that will analyse the release of madVR to avoid endless/stuck last frame on screen
           // It will permit to solve the issue where need something on top of MP window to unstuck it
-          //////CreateCommandThread();
+          CreateCommandThread();
           Log.Info("VMR9: added madVR Renderer to graph");
         }
         else
@@ -1045,6 +1045,7 @@ namespace MediaPortal.Player
             MadDeinit();
             GC.Collect();
             DirectShowUtil.FinalReleaseComObject(_vmr9Filter);
+            _commandNotify?.Dispose();
             Thread.Sleep(200);
           }
           else
@@ -1057,6 +1058,7 @@ namespace MediaPortal.Player
           _scene = null;
 
           DirectShowUtil.FinalReleaseComObject(_vmr9Filter);
+          _commandNotify?.Dispose();
           _vmr9Filter = null;
           Error.SetError("Unable to play movie", "Unable to initialize Renderer");
           Log.Error("VMR9: Failed to add Renderer to filter graph");
@@ -2025,8 +2027,30 @@ namespace MediaPortal.Player
               //  Win32API.ShowWindow(GUIGraphicsContext.ActiveForm, Win32API.ShowWindowFlags.Minimize);
               //  Win32API.ShowWindow(GUIGraphicsContext.ActiveForm, Win32API.ShowWindowFlags.ShowNormal);
               //}
+              lock (_syncRoot)
+              {
+                try
+                {
+                  if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+                  {
+                    if (g_vmr9?._vmr9Filter != null && _graphBuilder != null)
+                    {
+                      Log.Debug("VMR9: Vmr9MadVrRelease 1");
+                      for (int i = 0; i < 20; ++i)
+                      {
+                        GUIGraphicsContext.DX9Device?.Present();
+                        GUIWindowManager.MadVrProcess();
+                      }
+                      Log.Debug("VMR9: Vmr9MadVrRelease 2");
+                    }
+                  }
+                }
+                catch (Exception ex)
+                {
+                  Log.Error("VMR9: Error while Vmr9MadVrRelease : {0}", ex);
+                }
+              }
             }
-            GUIWindowManager.MadVrProcess();
             _exitThread = true;
           }
         }
@@ -2088,19 +2112,28 @@ namespace MediaPortal.Player
             DirectShowUtil.ReleaseComObject(videoWinMadVr);
             videoWinMadVr = null;
           }
-          //_vmr9Filter = null;
           Log.Debug("VMR9: Dispose MadDeinit - thread : {0}", Thread.CurrentThread.Name);
           GC.Collect();
           Log.Debug("VMR9: Dispose 2");
+          _commandNotify?.Set();
           MadDeinit();
           Log.Debug("VMR9: Dispose 2.1");
           GC.Collect();
           MadvrInterface.restoreDisplayModeNow(_vmr9Filter);
           DestroyWindow(GUIGraphicsContext.MadVrHWnd); // for using no Kodi madVR window way comment out this line
-          //_commandNotify?.Dispose();
+          _commandNotify?.Dispose();
           RestoreGuiForMadVr();
           Log.Debug("VMR9: Dispose 2.2");
-          DirectShowUtil.FinalReleaseComObject(_vmr9Filter);
+          try
+          {
+            //DirectShowUtil.FinalReleaseComObject(_vmr9Filter);
+            _graphBuilder?.RemoveFilter(g_vmr9?._vmr9Filter as DirectShowLib.IBaseFilter);
+            DirectShowUtil.CleanUpInterface(g_vmr9?._vmr9Filter);
+          }
+          catch (Exception)
+          {
+            // _vmr9Filter already released on player side by basicvideo
+          }
           Log.Debug("VMR9: Dispose 2.3");
           _vmr9Filter = null;
           Log.Debug("VMR9: Dispose 3");
@@ -2124,7 +2157,7 @@ namespace MediaPortal.Player
         }
         _graphBuilder = null;
 
-        g_vmr9.Enable(false);
+        g_vmr9?.Enable(false);
         _scene = null;
         g_vmr9 = null;
         _isVmr9Initialized = false;
@@ -2133,6 +2166,7 @@ namespace MediaPortal.Player
       }
       catch (Exception)
       {
+        _commandNotify?.Dispose();
         _vmr9Filter = null;
         _scene = null;
         g_vmr9 = null;
