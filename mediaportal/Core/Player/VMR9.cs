@@ -505,6 +505,11 @@ namespace MediaPortal.Player
       }
     }
 
+    public IBaseFilter Vmr9Filter
+    {
+      get { return _vmr9Filter; }
+    }
+
     //public bool IsVMR9Connected
 
     #endregion
@@ -2126,9 +2131,12 @@ namespace MediaPortal.Player
           Log.Debug("VMR9: Dispose 2.2");
           try
           {
-            //DirectShowUtil.FinalReleaseComObject(_vmr9Filter);
-            _graphBuilder?.RemoveFilter(g_vmr9?._vmr9Filter as DirectShowLib.IBaseFilter);
-            DirectShowUtil.CleanUpInterface(g_vmr9?._vmr9Filter);
+            if (_vmr9Filter != null)
+            {
+              DirectShowUtil.FinalReleaseComObject(_vmr9Filter);
+              _graphBuilder?.RemoveFilter(g_vmr9?._vmr9Filter as DirectShowLib.IBaseFilter);
+              DirectShowUtil.CleanUpInterface(g_vmr9?._vmr9Filter);
+            }
           }
           catch (Exception)
           {
