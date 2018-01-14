@@ -168,7 +168,7 @@ namespace MediaPortal.Player
                                               ref IBaseFilter madFilter, IGraphBuilder mPGraphbuilder);
 
     [DllImport("dshowhelper.dll", CallingConvention = CallingConvention.Cdecl)]
-    private static extern unsafe void MadDeinit();
+    private static extern unsafe void MadDeinit(bool releasedFilter);
 
     [DllImport("dshowhelper.dll", CallingConvention = CallingConvention.Cdecl)]
     private static extern unsafe void MadStopping();
@@ -832,7 +832,23 @@ namespace MediaPortal.Player
       if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
       {
         Log.Debug("VMR9: ShutdownMadVr() 1");
-        MadDeinit();
+        bool releasedFilter = false;
+        try
+        {
+          if (_vmr9Filter != null)
+          {
+            IPin outpout;
+            _vmr9Filter.FindPin("video", out outpout);
+            DirectShowUtil.ReleaseComObject(outpout);
+          }
+        }
+        catch (Exception)
+        {
+          // filter already released
+          releasedFilter = true;
+          _vmr9Filter = null;
+        }
+        MadDeinit(releasedFilter);
         GUIGraphicsContext.MadVrStop = false;
         VMR9Util.finished.Set();
         Log.Debug("VMR9: ShutdownMadVr() 2");
@@ -1047,7 +1063,23 @@ namespace MediaPortal.Player
           {
             Log.Error("VMR9: MadDeinit - thread : {0}", Thread.CurrentThread.Name);
             GC.Collect();
-            MadDeinit();
+            bool releasedFilter = false;
+            try
+            {
+              if (_vmr9Filter != null)
+              {
+                IPin outpout;
+                _vmr9Filter.FindPin("video", out outpout);
+                DirectShowUtil.ReleaseComObject(outpout);
+              }
+            }
+            catch (Exception)
+            {
+              // filter already released
+              releasedFilter = true;
+              _vmr9Filter = null;
+            }
+            MadDeinit(releasedFilter);
             GC.Collect();
             DirectShowUtil.FinalReleaseComObject(_vmr9Filter);
             _commandNotify?.Dispose();
@@ -2051,8 +2083,8 @@ namespace MediaPortal.Player
                         Log.Debug("VMR9: D3D exception handled for Vmr9MadVrRelease", ex);
                       }
                       GUIWindowManager.MadVrProcess();
-                      Log.Debug("VMR9: Vmr9MadVrRelease 2");
                     }
+                    Log.Debug("VMR9: Vmr9MadVrRelease 2");
                   }
                 }
               }
@@ -2122,10 +2154,26 @@ namespace MediaPortal.Player
           GC.Collect();
           Log.Debug("VMR9: Dispose 2");
           _commandNotify?.Set();
-          MadDeinit();
+          bool releasedFilter = false;
+          try
+          {
+            if (_vmr9Filter != null)
+            {
+              IPin outpout;
+              _vmr9Filter.FindPin("video", out outpout);
+              DirectShowUtil.ReleaseComObject(outpout);
+            }
+          }
+          catch (Exception)
+          {
+            // filter already released
+            releasedFilter = true;
+            _vmr9Filter = null;
+          }
+          MadDeinit(releasedFilter);
           Log.Debug("VMR9: Dispose 2.1");
           GC.Collect();
-          MadvrInterface.restoreDisplayModeNow(_vmr9Filter);
+          if (_vmr9Filter != null) MadvrInterface.restoreDisplayModeNow(_vmr9Filter);
           DestroyWindow(GUIGraphicsContext.MadVrHWnd); // for using no Kodi madVR window way comment out this line
           _commandNotify?.Dispose();
           RestoreGuiForMadVr();
@@ -2134,8 +2182,6 @@ namespace MediaPortal.Player
           {
             if (_vmr9Filter != null)
             {
-              DirectShowUtil.FinalReleaseComObject(_vmr9Filter);
-              _graphBuilder?.RemoveFilter(g_vmr9?._vmr9Filter as DirectShowLib.IBaseFilter);
               DirectShowUtil.CleanUpInterface(g_vmr9?._vmr9Filter);
             }
           }
