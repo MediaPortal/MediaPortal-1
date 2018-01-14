@@ -1856,9 +1856,9 @@ namespace MediaPortal.GUI.Library
     internal static bool VideoWindowChangedDone { get; set; }
     internal static bool SetVideoWindowDone { get; set; }
     public static bool VideoControl { get; set; }
-    internal static bool SideBySideDone { get; set; }
-    internal static bool TopAndBottomDone { get; set; }
-    internal static bool NoneDone { get; set; }
+    public static bool SideBySideDone { get; set; }
+    public static bool TopAndBottomDone { get; set; }
+    public static bool NoneDone { get; set; }
     public static bool ForceMadVRRefresh { get; set; }
     public static bool ForceMadVRRefresh3D { get; set; }
     internal static bool ForceMadVRFirstStart { get; set; }
@@ -1874,8 +1874,8 @@ namespace MediaPortal.GUI.Library
     public static bool WorkerThreadStart { get; set; }
     public static bool Render3DModeHalfDone { get; set; }
     public static bool ForcedRefreshRate3D { get; set; }
-    internal static bool ForcedRefreshRate3DDone { get; set; }
-    internal static bool ForcedRR3DBackDefault { get; set; }
+    public static bool ForcedRefreshRate3DDone { get; set; }
+    public static bool ForcedRR3DBackDefault { get; set; }
     internal static int ForcedRR3DWitdhBackup { get; set; }
     internal static int ForcedRR3DHeightBackup { get; set; }
     internal static double ForcedRR3DRate { get; set; }
