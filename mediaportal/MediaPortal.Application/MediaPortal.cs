@@ -196,6 +196,7 @@ public class MediaPortalApp : D3D, IRender
   private const int D3DERR_DEVICEREMOVED     = -2005530512; // http://msdn.microsoft.com/en-us/library/windows/desktop/bb172554(v=vs.85).aspx
   private const int D3DERR_INVALIDCALL       = -2005530516; // http://msdn.microsoft.com/en-us/library/windows/desktop/bb172554(v=vs.85).aspx
   private const int D3DERR_NOTAVAILABLE      = -2005530518; // http://msdn.microsoft.com/en-us/library/windows/desktop/bb172554(v=vs.85).aspx
+  private const int E_FAIL                   = -2147467259; // http://msdn.microsoft.com/en-us/library/windows/desktop/bb172554(v=vs.85).aspx
 
   private const int DEVICE_NOTIFY_WINDOW_HANDLE         = 0;
   private const int DEVICE_NOTIFY_ALL_INTERFACE_CLASSES = 4;
@@ -3862,7 +3863,11 @@ public class MediaPortalApp : D3D, IRender
           case D3DERR_NOTAVAILABLE:
             Log.Info("Main: GPU_NOT_AVAILABLE - {0}", dex.ToString());
             Utils.RestartMePo();
-            break; 
+            break;
+
+          case E_FAIL:
+            Log.Info("Main: GPU_E_FAIL");
+            return;
 
           default:
             Log.Error(dex);
