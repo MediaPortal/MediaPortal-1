@@ -653,12 +653,6 @@ namespace MediaPortal
         //return;
       }
 
-      // disable event handlers
-      if (GUIGraphicsContext.DX9Device != null)
-      {
-        GUIGraphicsContext.DX9Device.DeviceLost -= OnDeviceLost;
-      }
-
       if (AppActive || NeedRecreateSwapChain)
       {
         Log.Debug("Main: RecreateSwapChain()");
@@ -802,12 +796,6 @@ namespace MediaPortal
         {
           GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.RUNNING;
         }
-      }
-
-      // enable event handlers
-      if (GUIGraphicsContext.DX9Device != null)
-      {
-        GUIGraphicsContext.DX9Device.DeviceLost += OnDeviceLost;
       }
     }
 
@@ -1510,12 +1498,6 @@ namespace MediaPortal
                 _presentParams.BackBufferCount
                 );
       Windowed = windowed;
-
-      // enable event handlers
-      if (GUIGraphicsContext.DX9Device != null)
-      {
-        GUIGraphicsContext.DX9Device.DeviceLost += OnDeviceLost;
-      }
     }
 
     /// <summary>

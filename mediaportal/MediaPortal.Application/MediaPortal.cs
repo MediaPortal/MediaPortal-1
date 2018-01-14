@@ -1870,6 +1870,19 @@ public class MediaPortalApp : D3D, IRender
           _delayedResume = false;
           _suspended = true;
 
+          // Suspending GUIGraphicsContext when going to S3
+          if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
+          {
+            Log.Debug("Main: Set GUIGraphicsContext.State.SUSPENDING");
+            GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.SUSPENDING;
+          }
+
+          // disable event handlers
+          if (GUIGraphicsContext.DX9Device != null)
+          {
+            GUIGraphicsContext.DX9Device.DeviceLost -= OnDeviceLost;
+          }
+
           // Workaround HDMI hot-plug problems by forcing the form size to match the actual screen size.
           Screen screen = Screen.FromControl(this);
           if (Equals(screen.Bounds.Size, WINDOWS_NATIVE_RESOLUTION) && !Equals(screen.Bounds.Size, _backupBounds.Size))
@@ -1890,19 +1903,6 @@ public class MediaPortalApp : D3D, IRender
             }
             RecreateSwapChain(true);
             _restoreLoadedScreen = false;
-          }
-
-          // Suspending GUIGraphicsContext when going to S3
-          if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
-          {
-            Log.Debug("Main: Set GUIGraphicsContext.State.SUSPENDING");
-            GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.SUSPENDING;
-          }
-
-          // disable event handlers
-          if (GUIGraphicsContext.DX9Device != null)
-          {
-            GUIGraphicsContext.DX9Device.DeviceLost -= OnDeviceLost;
           }
 
           // Suspend operation
@@ -5352,8 +5352,20 @@ public class MediaPortalApp : D3D, IRender
           // We need to do a refresh of screen when using madVR only if resolution screen has change during playback
           if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && NeedRecreateSwapChain || message.Param1 == 1)
           {
+            // disable event handlers
+            if (GUIGraphicsContext.DX9Device != null)
+            {
+              GUIGraphicsContext.DX9Device.DeviceLost -= OnDeviceLost;
+            }
+
             RecreateSwapChain(false);
             Log.Debug("Main: recreate swap chain for madVR done");
+
+            // enable event handlers
+            if (GUIGraphicsContext.DX9Device != null)
+            {
+              GUIGraphicsContext.DX9Device.DeviceLost += OnDeviceLost;
+            }
           }
           break;
 
