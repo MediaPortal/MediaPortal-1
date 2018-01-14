@@ -3709,6 +3709,26 @@ public class MediaPortalApp : D3D, IRender
         return;
       }
 
+      try
+      {
+        if (GUIGraphicsContext.DX9Device != null) GUIGraphicsContext.DX9Device.TestCooperativeLevel();
+      }
+      catch (DeviceLostException)
+      {
+        Log.Debug("Main: D3DERR_DEVICELOST - device is lost but cannot be reset at this time");
+        return;
+      }
+      catch (DeviceNotResetException)
+      {
+        Log.Debug("Main: D3DERR_DEVICENOTRESET - device is lost but can be reset at this time");
+        return;
+      }
+      catch
+      {
+        Log.Debug("Main: render not ready at this time");
+        return;
+      }
+
       // render frame
       try
       {
