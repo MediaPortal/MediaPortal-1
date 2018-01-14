@@ -2034,25 +2034,26 @@ namespace MediaPortal.Player
               //}
               lock (_syncRoot)
               {
-                try
+                if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
                 {
-                  if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+                  if (g_vmr9?._vmr9Filter != null && _graphBuilder != null)
                   {
-                    if (g_vmr9?._vmr9Filter != null && _graphBuilder != null)
+                    Log.Debug("VMR9: Vmr9MadVrRelease 1");
+                    for (int i = 0; i < 20; ++i)
                     {
-                      Log.Debug("VMR9: Vmr9MadVrRelease 1");
-                      for (int i = 0; i < 20; ++i)
+                      try
                       {
+                        // try to catch D3D present exception when devive is not ready
                         GUIGraphicsContext.DX9Device?.Present();
-                        GUIWindowManager.MadVrProcess();
                       }
+                      catch (Exception ex)
+                      {
+                        Log.Debug("VMR9: D3D exception handled for Vmr9MadVrRelease", ex);
+                      }
+                      GUIWindowManager.MadVrProcess();
                       Log.Debug("VMR9: Vmr9MadVrRelease 2");
                     }
                   }
-                }
-                catch (Exception ex)
-                {
-                  Log.Error("VMR9: Error while Vmr9MadVrRelease : {0}", ex);
                 }
               }
             }

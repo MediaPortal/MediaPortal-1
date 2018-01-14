@@ -597,11 +597,12 @@ namespace MediaPortal
       {
         // Get Size
         Size client = GUIGraphicsContext.form.ClientSize;
-        if (GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferWidth != client.Width ||
-            GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferHeight != client.Height)
+        if ((GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferWidth != client.Width ||
+            GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferHeight != client.Height) && _firstTimeLoadingParams)
         {
           // reset device if necessary
           RecreateSwapChain(false);
+          _firstTimeLoadingParams = false;
         }
       }
 
@@ -791,6 +792,18 @@ namespace MediaPortal
           Log.Debug("g_player VideoWindowChanged() MadVrScreenResize ForceMadVRRefresh3D (false) madVR");
           VMR9Util.g_vmr9?.MadVrScreenResize(GUIGraphicsContext.form.Location.X, GUIGraphicsContext.form.Location.Y,
             _presentParams.BackBufferWidth, _presentParams.BackBufferHeight, true);
+        }
+
+        if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+        {
+          // Reset 3D
+          GUIGraphicsContext.NoneDone = false;
+          GUIGraphicsContext.TopAndBottomDone = false;
+          GUIGraphicsContext.SideBySideDone = false;
+          GUIGraphicsContext.SBSLeftDone = false;
+          GUIGraphicsContext.SBSRightDone = false;
+          GUIGraphicsContext.TABTopDone = false;
+          GUIGraphicsContext.TABBottomDone = false;
         }
 
         // Restore GUIGraphicsContext.State
@@ -1287,15 +1300,28 @@ namespace MediaPortal
     {
       Size clientArea;
       var border = new Size(Width - ClientSize.Width, Height - ClientSize.Height);
-      if (GUIGraphicsContext.SkinSize.Width + border.Width <= GUIGraphicsContext.currentScreen.WorkingArea.Width &&
-          GUIGraphicsContext.SkinSize.Height + border.Height <= GUIGraphicsContext.currentScreen.WorkingArea.Height)
+      // Adding code to detect the Area in windowed mode because with screen has taskbar, it make the result not correct.
+      int height;
+      int width;
+      if (Windowed)
+      {
+        height = GUIGraphicsContext.currentScreen.WorkingArea.Height;
+        width = GUIGraphicsContext.currentScreen.WorkingArea.Width;
+      }
+      else
+      {
+        height = GUIGraphicsContext.currentScreen.Bounds.Height;
+        width = GUIGraphicsContext.currentScreen.Bounds.Width;
+      }
+      if (GUIGraphicsContext.SkinSize.Width + border.Width <= width &&
+          GUIGraphicsContext.SkinSize.Height + border.Height <= height)
       {
         clientArea = new Size(GUIGraphicsContext.SkinSize.Width + border.Width, GUIGraphicsContext.SkinSize.Height + border.Height);
       }
       else
       {
-        double ratio = Math.Min((double)(GUIGraphicsContext.currentScreen.WorkingArea.Width - border.Width) / GUIGraphicsContext.SkinSize.Width,
-                                (double)(GUIGraphicsContext.currentScreen.WorkingArea.Height - border.Height) / GUIGraphicsContext.SkinSize.Height);
+        double ratio = Math.Min((double)(width - border.Width) / GUIGraphicsContext.SkinSize.Width,
+                                (double)(height - border.Height) / GUIGraphicsContext.SkinSize.Height);
         clientArea = new Size((int)(GUIGraphicsContext.SkinSize.Width * ratio), (int)(GUIGraphicsContext.SkinSize.Height * ratio));
       }
       return clientArea;
@@ -1457,7 +1483,6 @@ namespace MediaPortal
         {
           size.Width = backupSizeWidth;
           size.Height = backupSizeHeight;
-          _firstTimeLoadingParams = false;
         }
 
         // Sanity check and replace with sensible size values if necessary
