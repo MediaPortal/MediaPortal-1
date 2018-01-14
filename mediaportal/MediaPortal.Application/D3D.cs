@@ -783,7 +783,7 @@ namespace MediaPortal
 
         if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
         {
-          Log.Debug("g_player VideoWindowChanged() MadVrScreenResize ForceMadVRRefresh3D (false) madVR");
+          Log.Debug("D3D: MadVrScreenResize madVR");
           VMR9Util.g_vmr9?.MadVrScreenResize(GUIGraphicsContext.form.Location.X, GUIGraphicsContext.form.Location.Y,
             _presentParams.BackBufferWidth, _presentParams.BackBufferHeight, true);
         }
