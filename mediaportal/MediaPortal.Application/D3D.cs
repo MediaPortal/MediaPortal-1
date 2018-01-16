@@ -1218,23 +1218,62 @@ namespace MediaPortal
         Log.Debug("D3D: ForceMPAlive start.");
         if (GUIGraphicsContext.form != null && GUIGraphicsContext.ActiveForm != IntPtr.Zero)
         {
-          // Make MediaPortal window normal ( if minimized )
-          if (GUIGraphicsContext.form.WindowState == FormWindowState.Minimized)
+          try
           {
-            Win32API.ShowWindow(GUIGraphicsContext.ActiveForm, Win32API.ShowWindowFlags.ShowNormal);
-            Win32API.ShowWindow(GUIGraphicsContext.ActiveForm, Win32API.ShowWindowFlags.Minimize);
-            this.WindowState = FormWindowState.Normal;
-            this.WindowState = FormWindowState.Minimized;
-            Log.Debug("D3D: ForceMPAlive Minimize.");
+            //// WIP code to use show OSD instead of reduce MP Form but seems not always working.
+            //var volumeOsd = new HideVolumeOSD.HideVolumeOSDLib(false);
+            //volumeOsd.HideOSD();
+            //volumeOsd.ShowOSD();
+            //volumeOsd.HideOSD();
+            //if (VolumeHandler.Instance.hideWindowsOSD)
+            //{
+            //  volumeOsd?.HideOSD();
+            //}
+            //Log.Debug("D3D: ForceMPAlive volumeOsd.");
+
+            // Make MediaPortal window normal ( if minimized )
+            if (GUIGraphicsContext.form.WindowState == FormWindowState.Minimized)
+            {
+              Win32API.ShowWindow(GUIGraphicsContext.ActiveForm, Win32API.ShowWindowFlags.ShowNormal);
+              Win32API.ShowWindow(GUIGraphicsContext.ActiveForm, Win32API.ShowWindowFlags.Minimize);
+              this.WindowState = FormWindowState.Normal;
+              this.WindowState = FormWindowState.Minimized;
+              Log.Debug("D3D: ForceMPAlive Minimize.");
+            }
+            else
+            {
+              Win32API.ShowWindow(GUIGraphicsContext.ActiveForm, Win32API.ShowWindowFlags.Minimize);
+              Win32API.ShowWindow(GUIGraphicsContext.ActiveForm, Win32API.ShowWindowFlags.ShowNormal);
+              this.WindowState = FormWindowState.Minimized;
+              this.WindowState = FormWindowState.Normal;
+              Log.Debug("D3D: ForceMPAlive ShowNormal.");
+            }
           }
-          else
+          catch (Exception)
           {
-            Win32API.ShowWindow(GUIGraphicsContext.ActiveForm, Win32API.ShowWindowFlags.Minimize);
-            Win32API.ShowWindow(GUIGraphicsContext.ActiveForm, Win32API.ShowWindowFlags.ShowNormal);
-            this.WindowState = FormWindowState.Minimized;
-            this.WindowState = FormWindowState.Normal;
-            Log.Debug("D3D: ForceMPAlive ShowNormal.");
+            // Make MediaPortal window normal ( if minimized )
+            if (GUIGraphicsContext.form.WindowState == FormWindowState.Minimized)
+            {
+              Win32API.ShowWindow(GUIGraphicsContext.ActiveForm, Win32API.ShowWindowFlags.ShowNormal);
+              Win32API.ShowWindow(GUIGraphicsContext.ActiveForm, Win32API.ShowWindowFlags.Minimize);
+              this.WindowState = FormWindowState.Normal;
+              this.WindowState = FormWindowState.Minimized;
+              Log.Debug("D3D: ForceMPAlive Minimize.");
+            }
+            else
+            {
+              Win32API.ShowWindow(GUIGraphicsContext.ActiveForm, Win32API.ShowWindowFlags.Minimize);
+              Win32API.ShowWindow(GUIGraphicsContext.ActiveForm, Win32API.ShowWindowFlags.ShowNormal);
+              this.WindowState = FormWindowState.Minimized;
+              this.WindowState = FormWindowState.Normal;
+              Log.Debug("D3D: ForceMPAlive ShowNormal.");
+            }
           }
+
+          //// WIP Code
+          //IntPtr hWndTray = Win32API.FindWindow("Shell_TrayWnd", null);
+          //Win32API.ShowWindow(hWndTray, 0);
+          //Win32API.ShowWindow(hWndTray, Win32API.ShowWindowFlags.ShowNormal);
 
           // Make Mediaportal window focused
           if (Win32API.SetForegroundWindow(GUIGraphicsContext.ActiveForm, true))
@@ -2484,6 +2523,13 @@ namespace MediaPortal
           ExitToTray = true;
           MinimizeToTray();
           _firstTimeWindowDisplayed = false;
+        }
+
+        if (_useFcuBlackScreenFix && AppActive)
+        {
+          // Workaround for Win10 FCU and blackscreen
+          GUIGraphicsContext.DX9Device?.Present();
+          Log.Debug("D3D: DX9Device.Present()");
         }
 
         // Workaround FCU

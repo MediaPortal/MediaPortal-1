@@ -62,8 +62,6 @@ namespace MediaPortal.Player
         var mMdevice = _MMdeviceEnumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
         if (mMdevice != null)
         {
-          bool hideWindowsOSD;
-
           using (Settings reader = new MPSettings())
           {
             int levelStyle = reader.GetValueAsInt("volume", "startupstyle", 0);
@@ -124,6 +122,8 @@ namespace MediaPortal.Player
         _volumeTable = volumeTable;
       }
     }
+
+    public bool hideWindowsOSD { get; set; }
 
     #endregion Constructors
 
