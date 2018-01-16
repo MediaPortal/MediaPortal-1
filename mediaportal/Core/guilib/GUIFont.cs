@@ -816,6 +816,12 @@ namespace MediaPortal.GUI.Library
     {
       lock (GUIFontManager.Renderlock)
       {
+        // Check GUIGraphicsContext.State
+        if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.SUSPENDING)
+        {
+          return;
+        }
+
         if (context == null)
         {
           if (string.IsNullOrEmpty(text))
@@ -862,6 +868,12 @@ namespace MediaPortal.GUI.Library
     {
       lock (GUIFontManager.Renderlock)
       {
+        // Check GUIGraphicsContext.State
+        if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.SUSPENDING)
+        {
+          return;
+        }
+
         if (text == null)
         {
           return;
