@@ -645,7 +645,7 @@ namespace MediaPortal
     /// </summary>
     internal void RecreateSwapChain(bool useBackup)
     {
-      lock (GUIFontManager.Renderlock)
+      //lock (GUIFontManager.Renderlock) // Disable for now seems to deadlock
       {
         // Don't need to resize when using madVR
         if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
