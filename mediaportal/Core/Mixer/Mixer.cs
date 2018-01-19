@@ -20,6 +20,7 @@
 
 using System;
 using System.Linq;
+using System.Threading;
 using CSCore.CoreAudioAPI;
 using DShowNET.Helper;
 using MediaPortal.ExtensionMethods;
@@ -47,6 +48,7 @@ namespace MediaPortal.Mixer
     EventHandler<AudioEndpointVolumeCallbackEventArgs> iVolumeChangedHandler;
     System.Timers.Timer _dispatchingTimer;
     const string AppName = "MediaPortal";
+    private static readonly object CheckAudioLevelsObject = new object();
 
     #endregion
 
@@ -134,7 +136,7 @@ namespace MediaPortal.Mixer
 
         // For audio session
         Stop();
-        DispatchingTimerStart();
+        //DispatchingTimerStart(); // Disable because the check will be done in IsMuted code
       }
       catch (Exception)
       {
@@ -164,50 +166,53 @@ namespace MediaPortal.Mixer
 
     public void CheckAudioLevels()
     {
-      try
+      lock (CheckAudioLevelsObject)
       {
-        using (var sessionManager = GetDefaultAudioSessionManager2(DataFlow.Render))
+        try
         {
-          if (sessionManager != null)
+          using (var sessionManager = GetDefaultAudioSessionManager2(DataFlow.Render))
           {
-            using (var sessionEnumerator = sessionManager.GetSessionEnumerator())
+            if (sessionManager != null)
             {
-              if (sessionEnumerator != null)
+              using (var sessionEnumerator = sessionManager.GetSessionEnumerator())
               {
-                foreach (var session in sessionEnumerator)
+                if (sessionEnumerator != null)
                 {
-                  if (session != null)
+                  foreach (var session in sessionEnumerator)
                   {
-                    using (var audioSessionControl2 = session.QueryInterface<AudioSessionControl2>())
+                    if (session != null)
                     {
-                      if (audioSessionControl2 != null)
+                      using (var audioSessionControl2 = session.QueryInterface<AudioSessionControl2>())
                       {
-                        var process = audioSessionControl2.Process;
-                        string name = audioSessionControl2.DisplayName;
-                        if (process != null)
+                        if (audioSessionControl2 != null)
                         {
-                          if (name != null && name == "")
+                          var process = audioSessionControl2.Process;
+                          string name = audioSessionControl2.DisplayName;
+                          if (process != null)
                           {
-                            name = process.MainWindowTitle;
+                            if (name != null && name == "")
+                            {
+                              name = process.MainWindowTitle;
+                            }
+                            if (name != null && name == "")
+                            {
+                              name = process.ProcessName;
+                            }
                           }
-                          if (name != null && name == "")
+
+                          if (name != null && !name.Contains(AppName))
                           {
-                            name = process.ProcessName;
+                            continue;
                           }
                         }
 
-                        if (name != null && !name.Contains(AppName))
+                        using (var simpleVolume = session.QueryInterface<SimpleAudioVolume>())
                         {
-                          continue;
-                        }
-                      }
-
-                      using (var simpleVolume = session.QueryInterface<SimpleAudioVolume>())
-                      {
-                        if (simpleVolume != null)
-                        {
-                          simpleVolume.MasterVolume = 1;
-                          simpleVolume.IsMuted = _isMuted;
+                          if (simpleVolume != null)
+                          {
+                            simpleVolume.MasterVolume = 1;
+                            simpleVolume.IsMuted = false;
+                          }
                         }
                       }
                     }
@@ -217,10 +222,10 @@ namespace MediaPortal.Mixer
             }
           }
         }
-      }
-      catch (Exception ex)
-      {
-        Log.Error("Exception in Audio Session {0}", ex);
+        catch (Exception ex)
+        {
+          Log.Error("Mixer: Exception in Audio Session {0}", ex);
+        }
       }
     }
 
@@ -617,6 +622,14 @@ namespace MediaPortal.Mixer
           if (VolumeDevice != null) VolumeDevice.IsMuted = value;
           VolumeHandler.Instance.mixer_UpdateVolume();
           _isInternalVolumeChange = false;
+
+          // For audio session
+          new Thread(() =>
+          {
+            Thread.CurrentThread.IsBackground = true;
+            CheckAudioLevels();
+            Log.Debug("Mixer: CheckAudioLevels");
+          }).Start();
         }
         catch (Exception)
         {
