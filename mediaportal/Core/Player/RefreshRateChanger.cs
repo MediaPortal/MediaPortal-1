@@ -395,6 +395,21 @@ namespace MediaPortal.Player
         }
       }
     }
+
+    public static void FixFCU()
+    {
+      try
+      {
+        Log.Debug("CycleRefresh: FixFCU");
+        ThreadStart starter = KillFormThread;
+        var killFormThread = new Thread(starter) {IsBackground = true};
+        killFormThread.Start();
+      }
+      catch (Exception ex)
+      {
+        Log.Error("CycleRefresh: FixFCU exception {0}", ex);
+      }
+    }
   }
 
   internal class RefreshRateSetting

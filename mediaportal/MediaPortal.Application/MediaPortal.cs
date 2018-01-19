@@ -1545,9 +1545,10 @@ public class MediaPortalApp : D3D, IRender
           {
             if (_useFcuBlackScreenFix && AppActive)
             {
+              //MediaPortal.Player.Win32.FixFCU();
               // Workaround for Win10 FCU and blackscreen
-              GUIGraphicsContext.DX9Device?.Present();
-              Log.Debug("Main: WM_WINDOWPOSCHANGED - DX9Device.Present()");
+              //GUIGraphicsContext.DX9Device?.Present();
+              //Log.Debug("Main: WM_WINDOWPOSCHANGED - DX9Device.Present()");
             }
           }
           catch (Exception ex)
