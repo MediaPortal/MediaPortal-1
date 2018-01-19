@@ -760,6 +760,7 @@ namespace MediaPortal
                 }
                 catch (Exception ex)
                 {
+                  Log.Error("D3D: RecreateSwapChain exception : {0}", ex);
                   Util.Utils.RestartMePo();
                 }
               }
@@ -1225,6 +1226,24 @@ namespace MediaPortal
         {
           try
           {
+            // FCU suicide form blackscreen fix
+            MediaPortal.Player.Win32.FixFCU();
+
+            //using (Form form = new Form())
+            //{
+            //  form.Text = "About Us";
+
+            //  form.Location = new Point(GUIGraphicsContext.form.Location.X,
+            //    GUIGraphicsContext.form.Location.Y)
+            //  {
+            //    X = GUIGraphicsContext.form.Location.X,
+            //    Y = GUIGraphicsContext.form.Location.Y
+            //  };
+
+            //  form.Show();
+            //  form.Close();
+            //}
+
             //// WIP code to use show OSD instead of reduce MP Form but seems not always working.
             //var volumeOsd = new HideVolumeOSD.HideVolumeOSDLib(false);
             //volumeOsd.HideOSD();
@@ -1236,23 +1255,23 @@ namespace MediaPortal
             //}
             //Log.Debug("D3D: ForceMPAlive volumeOsd.");
 
-            // Make MediaPortal window normal ( if minimized )
-            if (GUIGraphicsContext.form.WindowState == FormWindowState.Minimized)
-            {
-              Win32API.ShowWindow(GUIGraphicsContext.ActiveForm, Win32API.ShowWindowFlags.ShowNormal);
-              Win32API.ShowWindow(GUIGraphicsContext.ActiveForm, Win32API.ShowWindowFlags.Minimize);
-              this.WindowState = FormWindowState.Normal;
-              this.WindowState = FormWindowState.Minimized;
-              Log.Debug("D3D: ForceMPAlive Minimize.");
-            }
-            else
-            {
-              Win32API.ShowWindow(GUIGraphicsContext.ActiveForm, Win32API.ShowWindowFlags.Minimize);
-              Win32API.ShowWindow(GUIGraphicsContext.ActiveForm, Win32API.ShowWindowFlags.ShowNormal);
-              this.WindowState = FormWindowState.Minimized;
-              this.WindowState = FormWindowState.Normal;
-              Log.Debug("D3D: ForceMPAlive ShowNormal.");
-            }
+            //// Make MediaPortal window normal ( if minimized )
+            //if (GUIGraphicsContext.form.WindowState == FormWindowState.Minimized)
+            //{
+            //  Win32API.ShowWindow(GUIGraphicsContext.ActiveForm, Win32API.ShowWindowFlags.ShowNormal);
+            //  Win32API.ShowWindow(GUIGraphicsContext.ActiveForm, Win32API.ShowWindowFlags.Minimize);
+            //  this.WindowState = FormWindowState.Normal;
+            //  this.WindowState = FormWindowState.Minimized;
+            //  Log.Debug("D3D: ForceMPAlive Minimize.");
+            //}
+            //else
+            //{
+            //  Win32API.ShowWindow(GUIGraphicsContext.ActiveForm, Win32API.ShowWindowFlags.Minimize);
+            //  Win32API.ShowWindow(GUIGraphicsContext.ActiveForm, Win32API.ShowWindowFlags.ShowNormal);
+            //  this.WindowState = FormWindowState.Minimized;
+            //  this.WindowState = FormWindowState.Normal;
+            //  Log.Debug("D3D: ForceMPAlive ShowNormal.");
+            //}
           }
           catch (Exception)
           {
