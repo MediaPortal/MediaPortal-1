@@ -351,7 +351,7 @@ void CParserNitDvb::OnNewSection(const CSection& section)
     if (endOfExtensionDescriptors > endOfSection - 2)         // - 2 for the transport stream loop length bytes
     {
       LogDebug(L"%s: invalid section, extension descriptors length = %hu, pointer = %hu, end of section = %hu, table ID = 0x%hhx, extension ID = %hu, version number = %hhu, section number = %hhu",
-                m_name, extensionDescriptorsLength, endOfSection,
+                m_name, extensionDescriptorsLength, pointer, endOfSection,
                 effectiveTableId, section.TableIdExtension,
                 section.VersionNumber, section.SectionNumber);
       return;
@@ -361,7 +361,7 @@ void CParserNitDvb::OnNewSection(const CSection& section)
     vector<unsigned long> availableInCountries;
     vector<unsigned long> unavailableInCountries;
     vector<unsigned long> homeTransmitterKeys;
-    unsigned long groupPrivateDataSpecifier;
+    unsigned long groupPrivateDataSpecifier = 0;
     char* groupDefaultAuthority = NULL;
     vector<unsigned long long> groupTargetRegionIds;
     map<unsigned long long, map<unsigned long, char*>*> targetRegionNames;        // region ID -> [language -> name]
@@ -385,9 +385,9 @@ void CParserNitDvb::OnNewSection(const CSection& section)
                                     freesatChannelCategoryIds,
                                     freesatChannelCategoryNames))
     {
-      LogDebug(L"%s: invalid section, table ID = 0x%hhx, extension ID = %hu, end of section = %hu",
+      LogDebug(L"%s: invalid section, table ID = 0x%hhx, extension ID = %hu, version number = %hhu, section number = %hhu, end of section = %hu",
                 m_name, effectiveTableId, section.TableIdExtension,
-                endOfSection);
+                section.VersionNumber, section.SectionNumber, endOfSection);
       return;
     }
 
@@ -2180,6 +2180,7 @@ bool CParserNitDvb::DecodeExtensionDescriptors(const unsigned char* sectionData,
         *defaultAuthority = NULL;
       }
       CleanUpNames(targetRegionNames);
+      CUtils::CleanUpStringSet(cyfrowyPolsatChannelCategoryNames);
       CleanUpNames(freesatRegionNames);
       CleanUpMapOfVectors(freesatChannelCategories);
       CleanUpNames(freesatChannelCategoryNames);
