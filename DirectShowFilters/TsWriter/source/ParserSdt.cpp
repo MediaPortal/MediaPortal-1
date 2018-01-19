@@ -1442,8 +1442,8 @@ bool CParserSdt::DecodeComponentDescriptor(const unsigned char* data,
 
 bool CParserSdt::DecodeMultilingualServiceNameDescriptor(const unsigned char* data,
                                                           unsigned char dataLength,
-                                                          map<unsigned long, char*> serviceNames,
-                                                          map<unsigned long, char*> providerNames)
+                                                          map<unsigned long, char*>& serviceNames,
+                                                          map<unsigned long, char*>& providerNames)
 {
   if (dataLength == 0)
   {
@@ -1476,7 +1476,7 @@ bool CParserSdt::DecodeMultilingualServiceNameDescriptor(const unsigned char* da
         }
         if (providerName == NULL)
         {
-          LogDebug(L"SDT: failed to allocate the %S provider name",
+          LogDebug(L"SDT: failed to allocate an %S provider name",
                     (char*)&iso639LanguageCode);
         }
         else
@@ -1524,7 +1524,7 @@ bool CParserSdt::DecodeMultilingualServiceNameDescriptor(const unsigned char* da
         }
         if (serviceName == NULL)
         {
-          LogDebug(L"SDT: failed to allocate the %S service name",
+          LogDebug(L"SDT: failed to allocate an %S service name",
                     (char*)&iso639LanguageCode);
         }
         else

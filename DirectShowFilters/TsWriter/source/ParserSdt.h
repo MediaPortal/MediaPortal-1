@@ -481,8 +481,8 @@ class CParserSdt : public CSectionDecoder, public IDefaultAuthorityProvider
                                           unsigned long& language);
     static bool DecodeMultilingualServiceNameDescriptor(const unsigned char* data,
                                                         unsigned char dataLength,
-                                                        map<unsigned long, char*> serviceNames,
-                                                        map<unsigned long, char*> providerNames);
+                                                        map<unsigned long, char*>& serviceNames,
+                                                        map<unsigned long, char*>& providerNames);
     static bool DecodePrivateDataSpecifierDescriptor(const unsigned char* data,
                                                       unsigned char dataLength,
                                                       unsigned long& privateDataSpecifier);
