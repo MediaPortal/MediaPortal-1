@@ -1539,22 +1539,6 @@ public class MediaPortalApp : D3D, IRender
       //Log.Debug("Main: WndProc (Event: {0})", msg.ToString());
       switch (msg.Msg)
       {
-        case WM_WINDOWPOSCHANGED:
-        //case WM_WINDOWPOSCHANGING:
-          try
-          {
-            if (_useFcuBlackScreenFix && AppActive)
-            {
-              // Workaround for Win10 FCU and blackscreen
-              GUIGraphicsContext.DX9Device?.Present();
-              Log.Debug("Main: WM_WINDOWPOSCHANGED");
-            }
-          }
-          catch (Exception ex)
-          {
-            _forceMpAlive = true;
-          }
-          break;
         case (int)ShellNotifications.WmShnotify:
           NotifyInfos info = new NotifyInfos((ShellNotifications.SHCNE)(int)msg.LParam);
 
@@ -2037,6 +2021,10 @@ public class MediaPortalApp : D3D, IRender
                       Bounds.Width, Bounds.Height, GUIGraphicsContext.currentScreen.Bounds.Width, GUIGraphicsContext.currentScreen.Bounds.Height, _backupBounds.Width, _backupBounds.Height);
             Bounds = _backupBounds;
           }
+
+          // FCU blackscreen fix
+          _forceMpAlive = true;
+          ForceMpAlive();
           break;
 
         // A change in the power status of the computer is detected
@@ -2188,7 +2176,6 @@ public class MediaPortalApp : D3D, IRender
       {
         // Workaround for Win10 FCU and blackscreen
         _forceMpAlive = true;
-        ForceMpAlive();
         Log.Debug("Main: WM_DEVICECHANGE - DBT_DEVICEARRIVAL FCU");
       }
     }
@@ -2951,6 +2938,16 @@ public class MediaPortalApp : D3D, IRender
     Log.Debug("Main: OnSuspend - dispose DB connection");
     DisposeDBs();
 
+    // Reset DialogMenu to avoid freeze when going to suspend
+    var dialogMenu = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+    if (dialogMenu != null &&
+        (GUIWindowManager.RoutedWindow == (int)GUIWindow.Window.WINDOW_DIALOG_MENU ||
+         GUIWindowManager.RoutedWindow == (int)GUIWindow.Window.WINDOW_DIALOG_OK))
+    {
+      dialogMenu.Dispose();
+      GUIWindowManager.UnRoute(); // only unroute if we still the routed window
+    }
+
     Log.Info("Main: OnSuspend - Done");
   }
 
@@ -3042,10 +3039,6 @@ public class MediaPortalApp : D3D, IRender
     {
       RestoreFromTray();
     }
-
-    // Force MP to refresh screen
-    _forceMpAlive = true;
-    ForceMpAlive();
 
     // Force focus after resume done (really weird sequence) disable for now
     ForceMPFocus();
