@@ -1227,7 +1227,9 @@ namespace MediaPortal
           try
           {
             // FCU suicide form blackscreen fix
+            GUIGraphicsContext.DX9Device?.Present();
             MediaPortal.Player.Win32.FixFCU();
+            Log.Debug("D3D: ForceMPAlive FixFCU");
 
             //using (Form form = new Form())
             //{
@@ -2553,11 +2555,11 @@ namespace MediaPortal
         {
           // Workaround for Win10 FCU and blackscreen
           GUIGraphicsContext.DX9Device?.Present();
-          Log.Debug("D3D: DX9Device.Present()");
+          Log.Debug("D3D: OnPaint() DX9Device.Present()");
+          
+          // Workaround FCU
+          ForceMpAlive();
         }
-
-        // Workaround FCU
-        ForceMpAlive();
 
         // Set Cursor.Position to avoid mouse cursor show up itself (for ex on video)
         Log.Debug("D3D: Force mouse cursor to false");
