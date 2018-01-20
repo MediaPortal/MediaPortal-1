@@ -1215,7 +1215,7 @@ namespace MediaPortal
     /// </summary>
     protected void ForceMpAlive()
     {
-      if (!_forceMpAlive)
+      if (!_forceMpAlive || Windowed)
       {
         return;
       }
@@ -1227,53 +1227,8 @@ namespace MediaPortal
           try
           {
             // FCU suicide form blackscreen fix
-            GUIGraphicsContext.DX9Device?.Present();
-            MediaPortal.Player.Win32.FixFCU();
-            Log.Debug("D3D: ForceMPAlive FixFCU");
-
-            //using (Form form = new Form())
-            //{
-            //  form.Text = "About Us";
-
-            //  form.Location = new Point(GUIGraphicsContext.form.Location.X,
-            //    GUIGraphicsContext.form.Location.Y)
-            //  {
-            //    X = GUIGraphicsContext.form.Location.X,
-            //    Y = GUIGraphicsContext.form.Location.Y
-            //  };
-
-            //  form.Show();
-            //  form.Close();
-            //}
-
-            //// WIP code to use show OSD instead of reduce MP Form but seems not always working.
-            //var volumeOsd = new HideVolumeOSD.HideVolumeOSDLib(false);
-            //volumeOsd.HideOSD();
-            //volumeOsd.ShowOSD();
-            //volumeOsd.HideOSD();
-            //if (VolumeHandler.Instance.hideWindowsOSD)
-            //{
-            //  volumeOsd?.HideOSD();
-            //}
-            //Log.Debug("D3D: ForceMPAlive volumeOsd.");
-
-            //// Make MediaPortal window normal ( if minimized )
-            //if (GUIGraphicsContext.form.WindowState == FormWindowState.Minimized)
-            //{
-            //  Win32API.ShowWindow(GUIGraphicsContext.ActiveForm, Win32API.ShowWindowFlags.ShowNormal);
-            //  Win32API.ShowWindow(GUIGraphicsContext.ActiveForm, Win32API.ShowWindowFlags.Minimize);
-            //  this.WindowState = FormWindowState.Normal;
-            //  this.WindowState = FormWindowState.Minimized;
-            //  Log.Debug("D3D: ForceMPAlive Minimize.");
-            //}
-            //else
-            //{
-            //  Win32API.ShowWindow(GUIGraphicsContext.ActiveForm, Win32API.ShowWindowFlags.Minimize);
-            //  Win32API.ShowWindow(GUIGraphicsContext.ActiveForm, Win32API.ShowWindowFlags.ShowNormal);
-            //  this.WindowState = FormWindowState.Minimized;
-            //  this.WindowState = FormWindowState.Normal;
-            //  Log.Debug("D3D: ForceMPAlive ShowNormal.");
-            //}
+            _forceMpAlive = false;
+            FixFCU();
           }
           catch (Exception)
           {
@@ -1295,23 +1250,81 @@ namespace MediaPortal
               Log.Debug("D3D: ForceMPAlive ShowNormal.");
             }
           }
-
-          //// WIP Code
-          //IntPtr hWndTray = Win32API.FindWindow("Shell_TrayWnd", null);
-          //Win32API.ShowWindow(hWndTray, 0);
-          //Win32API.ShowWindow(hWndTray, Win32API.ShowWindowFlags.ShowNormal);
-
-          // Make Mediaportal window focused
-          if (Win32API.SetForegroundWindow(GUIGraphicsContext.ActiveForm, true))
-          {
-            Log.Debug("D3D: ForceMPAlive Successfully switched focus.");
-          }
-
-          // Bring MP to front
-          GUIGraphicsContext.form.BringToFront();
-          _forceMpAlive = false;
-          Log.Debug("D3D: ForceMPAlive done.");
         }
+      }
+    }
+
+    // Fix for FCU blackscreen
+    protected class SuicideForm : Form
+    {
+      protected internal SuicideForm()
+      {
+        Thread.Sleep(500);
+        Activated += SuicideFormActivated;
+        Opacity = 0;
+      }
+
+      protected override void Dispose(bool disposing)
+      {
+        Activated -= SuicideFormActivated;
+        base.Dispose(disposing);
+      }
+
+      private void SuicideFormActivated(Object sender, EventArgs e)
+      {
+        Thread.Sleep(1000);
+        Close();
+      }
+    }
+
+    protected static void KillFormThread()
+    {
+      try
+      {
+        var suicideForm = new SuicideForm
+        {
+          Opacity = 5,
+          Size = new Size(10, 10),
+          FormBorderStyle = FormBorderStyle.None,
+          WindowState = FormWindowState.Normal,
+          ShowInTaskbar = false
+        };
+        suicideForm.Location = new Point(GUIGraphicsContext.form.Location.X,
+          GUIGraphicsContext.form.Location.Y)
+        {
+          X = GUIGraphicsContext.form.Location.X,
+          Y = GUIGraphicsContext.form.Location.Y
+        };
+        suicideForm.Show();
+        suicideForm.Focus();
+        // Make Mediaportal window focused
+        if (Win32API.SetForegroundWindow(GUIGraphicsContext.ActiveForm, true))
+        {
+          Log.Debug("D3D: KillFormThread MP Successfully switched focus.");
+        }
+
+        // Bring MP to front
+        GUIGraphicsContext.form.BringToFront();
+        Log.Debug("D3D: KillFormThread done.");
+      }
+      catch (Exception ex)
+      {
+        Log.Error("D3D: KillFormThread exception {0}", ex);
+      }
+    }
+
+    protected static void FixFCU()
+    {
+      try
+      {
+        Log.Debug("D3D: FixFCU");
+        ThreadStart starter = KillFormThread;
+        var killFormThread = new Thread(starter) { IsBackground = true };
+        killFormThread.Start();
+      }
+      catch (Exception ex)
+      {
+        Log.Error("D3D: FixFCU exception {0}", ex);
       }
     }
 
@@ -2554,10 +2567,6 @@ namespace MediaPortal
         if (_useFcuBlackScreenFix && AppActive)
         {
           // Workaround for Win10 FCU and blackscreen
-          GUIGraphicsContext.DX9Device?.Present();
-          Log.Debug("D3D: OnPaint() DX9Device.Present()");
-          
-          // Workaround FCU
           ForceMpAlive();
         }
 
