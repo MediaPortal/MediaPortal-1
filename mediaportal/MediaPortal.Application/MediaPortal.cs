@@ -1545,10 +1545,9 @@ public class MediaPortalApp : D3D, IRender
           {
             if (_useFcuBlackScreenFix && AppActive)
             {
-              //MediaPortal.Player.Win32.FixFCU();
               // Workaround for Win10 FCU and blackscreen
-              //GUIGraphicsContext.DX9Device?.Present();
-              //Log.Debug("Main: WM_WINDOWPOSCHANGED - DX9Device.Present()");
+              GUIGraphicsContext.DX9Device?.Present();
+              Log.Debug("Main: WM_WINDOWPOSCHANGED");
             }
           }
           catch (Exception ex)
@@ -2183,13 +2182,24 @@ public class MediaPortalApp : D3D, IRender
     Log.Debug("Main: WM_DEVICECHANGE (Event: {0})", Enum.GetName(typeof(DBT_EVENT), msg.WParam.ToInt32()));
     RemovableDriveHelper.HandleDeviceChangedMessage(msg);
 
+    if (msg.WParam.ToInt32() == DBT_DEVICEARRIVAL)
+    {
+      if (_useFcuBlackScreenFix && AppActive)
+      {
+        // Workaround for Win10 FCU and blackscreen
+        _forceMpAlive = true;
+        ForceMpAlive();
+        Log.Debug("Main: WM_DEVICECHANGE - DBT_DEVICEARRIVAL FCU");
+      }
+    }
+
     // process additional data if available
     if (msg.LParam.ToInt32() != 0)
     {
       var hdr = (DEV_BROADCAST_HDR)Marshal.PtrToStructure(msg.LParam, typeof(DEV_BROADCAST_HDR));
       if (hdr.dbcc_devicetype != DBT_DEVTYP_DEVICEINTERFACE)
       {
-        Log.Debug("Main: Device type is {0}", Enum.GetName(typeof(DBT_DEV_TYPE), hdr.dbcc_devicetype));        
+        Log.Debug("Main: Device type is {0}", Enum.GetName(typeof(DBT_DEV_TYPE), hdr.dbcc_devicetype));
       }
       else
       {
