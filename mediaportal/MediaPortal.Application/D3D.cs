@@ -724,7 +724,7 @@ namespace MediaPortal
                 }
                 catch (Exception ex)
                 {
-                  Util.Utils.RestartMePo();
+                  Log.Error("D3D: RecreateSwapChain exception (useBackup) : {0}", ex);
                 }
               }
               else
@@ -761,7 +761,6 @@ namespace MediaPortal
                 catch (Exception ex)
                 {
                   Log.Error("D3D: RecreateSwapChain exception : {0}", ex);
-                  Util.Utils.RestartMePo();
                 }
               }
             }
@@ -2836,6 +2835,10 @@ namespace MediaPortal
       {
         _firstTimeActivated = true;
       }
+
+      // Workaround for Win10 FCU and blackscreen
+      _forceMpAlive = true;
+
       base.OnGotFocus(e);
     }
 
@@ -2854,6 +2857,10 @@ namespace MediaPortal
         _lastCursorPosition = Cursor.Position;
       }
       _lostFocus = true;
+
+      // Workaround for Win10 FCU and blackscreen
+      _forceMpAlive = true;
+
       base.OnLostFocus(e);
     }
 
