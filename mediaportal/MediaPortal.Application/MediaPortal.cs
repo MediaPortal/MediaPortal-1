@@ -1539,6 +1539,21 @@ public class MediaPortalApp : D3D, IRender
       //Log.Debug("Main: WndProc (Event: {0})", msg.ToString());
       switch (msg.Msg)
       {
+        case WM_WINDOWPOSCHANGED:
+          try
+          {
+            if (_useFcuBlackScreenFix && AppActive)
+            {
+              // Workaround for Win10 FCU and blackscreen
+              _forceMpAlive = true;
+              Log.Debug("Main: WM_WINDOWPOSCHANGED");
+            }
+          }
+          catch (Exception ex)
+          {
+            _forceMpAlive = true;
+          }
+          break;
         case (int)ShellNotifications.WmShnotify:
           NotifyInfos info = new NotifyInfos((ShellNotifications.SHCNE)(int)msg.LParam);
 
@@ -1704,6 +1719,10 @@ public class MediaPortalApp : D3D, IRender
           {
             GUIGraphicsContext.DX9Device.DeviceLost += OnDeviceLost;
           }
+
+          // FCU Workaround
+          _forceMpAlive = true;
+          ForceMpAlive();
           break;
 
         // handle device changes
@@ -2170,15 +2189,15 @@ public class MediaPortalApp : D3D, IRender
     Log.Debug("Main: WM_DEVICECHANGE (Event: {0})", Enum.GetName(typeof(DBT_EVENT), msg.WParam.ToInt32()));
     RemovableDriveHelper.HandleDeviceChangedMessage(msg);
 
-    if (msg.WParam.ToInt32() == DBT_DEVICEARRIVAL)
-    {
-      if (_useFcuBlackScreenFix && AppActive)
-      {
-        // Workaround for Win10 FCU and blackscreen
-        _forceMpAlive = true;
-        Log.Debug("Main: WM_DEVICECHANGE - DBT_DEVICEARRIVAL FCU");
-      }
-    }
+    //if (msg.WParam.ToInt32() == DBT_DEVICEARRIVAL)
+    //{
+    //  if (_useFcuBlackScreenFix && AppActive)
+    //  {
+    //    // Workaround for Win10 FCU and blackscreen
+    //    _forceMpAlive = true;
+    //    Log.Debug("Main: WM_DEVICECHANGE - DBT_DEVICEARRIVAL FCU");
+    //  }
+    //}
 
     // process additional data if available
     if (msg.LParam.ToInt32() != 0)
