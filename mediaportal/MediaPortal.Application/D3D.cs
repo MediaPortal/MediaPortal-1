@@ -1296,14 +1296,14 @@ namespace MediaPortal
         };
         suicideForm.Show();
         suicideForm.Focus();
-        // Make Mediaportal window focused
-        if (Win32API.SetForegroundWindow(GUIGraphicsContext.ActiveForm, true))
-        {
-          Log.Debug("D3D: KillFormThread MP Successfully switched focus.");
-        }
+        //// Make Mediaportal window focused
+        //if (Win32API.SetForegroundWindow(GUIGraphicsContext.ActiveForm, true))
+        //{
+        //  Log.Debug("D3D: KillFormThread MP Successfully switched focus.");
+        //}
 
-        // Bring MP to front
-        GUIGraphicsContext.form.BringToFront();
+        //// Bring MP to front
+        //GUIGraphicsContext.form.BringToFront();
         Log.Debug("D3D: KillFormThread done.");
       }
       catch (Exception ex)
