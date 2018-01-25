@@ -1663,12 +1663,12 @@ public class MediaPortalApp : D3D, IRender
           }
 
           Screen screen = Screen.FromControl(this);
-          if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && AppActive &&
+          if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && (AppActive &&
               (!Equals(screen.Bounds.Size.Width, GUIGraphicsContext.currentScreen.Bounds.Width) ||
                !Equals(screen.Bounds.Size.Height, GUIGraphicsContext.currentScreen.Bounds.Height)) ||
                (!Equals(GUIGraphicsContext._backupCurrentScreenSizeWidth, GUIGraphicsContext.currentScreen.Bounds.Width) ||
                !Equals(GUIGraphicsContext._backupCurrentScreenSizeHeight, GUIGraphicsContext.currentScreen.Bounds.Height)) ||
-              GUIGraphicsContext.ForcedRefreshRate3D)
+              GUIGraphicsContext.ForcedRefreshRate3D))
           {
             if (
               !Equals(screen.Bounds.Size.Width, GUIGraphicsContext.currentScreen.Bounds.Width) ||
