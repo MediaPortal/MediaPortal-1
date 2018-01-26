@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2018 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2018 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -2063,7 +2063,7 @@ namespace MediaPortal.GUI.Library
         key.button.FontName = _namedKeyFont;
         key.button.TextAlignment = GUIControl.Alignment.ALIGN_CENTER;
         key.button.TextVAlignment = GUIControl.VAlignment.ALIGN_MIDDLE;
-        key.button.TextColorNoFocus = textColor;
+        key.button.TextColorNoFocus = textColor.ToString();
         key.button.TextColor = textColor;
       }
       else
@@ -2077,7 +2077,7 @@ namespace MediaPortal.GUI.Library
         key.button.TextAlignment = GUIControl.Alignment.ALIGN_CENTER;
         key.button.TextVAlignment = GUIControl.VAlignment.ALIGN_MIDDLE;
         key.button.TextColor = textColor;
-        key.button.TextColorNoFocus = textColor;
+        key.button.TextColorNoFocus = textColor.ToString();
       }
       key.button.Render(timePassed);
     }

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2013 Team MediaPortal
+#region Copyright (C) 2005-2018 Team MediaPortal
 
-// Copyright (C) 2005-2013 Team MediaPortal
+// Copyright (C) 2005-2018 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -34,7 +34,7 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("font")] protected string _fontName;
     [XMLSkinElement("label")] protected string _label = "";
     [XMLSkinElement("textcolor")] protected long _textColor = 0xFFFFFFFF;
-    [XMLSkinElement("textcolorNoFocus")] protected long _textColorNoFocus = 0xFFFFFFFF;
+    [XMLSkinElement("textcolorNoFocus")] protected string _textColorNoFocus = "0xFFFFFFFF";
     [XMLSkinElement("disabledcolor")] protected long _disabledColor = 0xFF606060;
     [XMLSkinElement("hyperlink")] protected int _hyperLinkWindowId = -1;
     [XMLSkinElement("action")] protected int _actionId = -1;
@@ -315,20 +315,21 @@ namespace MediaPortal.GUI.Library
       }
       _labelControl.Width = labelWidth;
 
+      long longColorNoFocus = GUIPropertyManager.ParseColor(_textColorNoFocus, 0xFFFFFFFF);
       // render the text on the button
       if (_labelControl is GUILabelControl)
       {
         ((GUILabelControl)_labelControl).TextAlignment = _textAlignment;
         ((GUILabelControl)_labelControl).TextVAlignment = _textVAlignment;
         ((GUILabelControl)_labelControl).Label = labelText;
-        ((GUILabelControl)_labelControl).TextColor = Disabled ? _disabledColor : Focus ? _textColor : _textColorNoFocus;
+        ((GUILabelControl)_labelControl).TextColor = Disabled ? _disabledColor : Focus ? _textColor : longColorNoFocus;
       }
       else
       {
         ((GUIFadeLabel)_labelControl).TextAlignment = _textAlignment;
         ((GUIFadeLabel)_labelControl).TextVAlignment = _textVAlignment;
         ((GUIFadeLabel)_labelControl).Label = labelText;
-        ((GUIFadeLabel)_labelControl).TextColor = Disabled ? _disabledColor : Focus ? _textColor : _textColorNoFocus;
+        ((GUIFadeLabel)_labelControl).TextColor = Disabled ? _disabledColor : Focus ? _textColor : longColorNoFocus;
       }
 
       int x = 0;

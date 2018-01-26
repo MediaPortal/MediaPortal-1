@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2018 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2018 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -26,7 +26,6 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Media.Animation;
 using MediaPortal.Profile;
-using Microsoft.DirectX.Direct3D;
 using MediaPortal.ExtensionMethods;
 
 // used for Keys definition
@@ -41,7 +40,7 @@ namespace MediaPortal.GUI.Library
 
     [XMLSkinElement("spaceBetweenButtons")] protected int _spaceBetweenButtons = 8;
     [XMLSkinElement("textcolor")] protected long _textColor = 0xFFFFFFFF;
-    [XMLSkinElement("textColorNoFocus")] protected long _textColorNoFocus = 0xFFFFFFFF;
+    [XMLSkinElement("textColorNoFocus")] protected string _textColorNoFocus = "0xFFFFFFFF";
     [XMLSkinElement("textAlign")] private Alignment _textAlignment = Alignment.ALIGN_LEFT;
     [XMLSkinElement("buttonWidth")] protected int _buttonWidth = 60;
     [XMLSkinElement("buttonHeight")] protected int _buttonHeight = 30;

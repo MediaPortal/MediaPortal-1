@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2013 Team MediaPortal
+#region Copyright (C) 2005-2018 Team MediaPortal
 
-// Copyright (C) 2005-2013 Team MediaPortal
+// Copyright (C) 2005-2018 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -29,7 +29,7 @@ namespace MediaPortal.GUI.Library
   public class GUISelectButtonControl : GUIControl
   {
     [XMLSkinElement("textcolor")] protected long _textColor = 0xFFFFFFFF;
-    [XMLSkinElement("textcolorNoFocus")] protected long _textColorNoFocus = 0xFFFFFFFF;
+    [XMLSkinElement("textcolorNoFocus")] protected string _textColorNoFocus = "0xFFFFFFFF";
     [XMLSkinElement("onclick")] protected string _onclick = "";
     [XMLSkinElement("disabledcolor")] protected long _disabledColor = 0xFF606060;
     [XMLSkinElement("label")] protected string _label = "";
@@ -244,7 +244,7 @@ namespace MediaPortal.GUI.Library
         // render background, left and right arrow
         _imageBackground.Render(timePassed);
 
-        long dwTextColor = Focus ? _textColor : _textColorNoFocus;
+        long dwTextColor = Focus ? _textColor : GUIPropertyManager.ParseColor(_textColorNoFocus, 0xFFFFFFFF);
 
         // User has moved left...
         if (_leftSelected)
@@ -369,7 +369,7 @@ namespace MediaPortal.GUI.Library
           }
           else
           {
-            _labelControl.TextColor = Focus ? _textColor : _textColorNoFocus;
+            _labelControl.TextColor = Focus ? _textColor : GUIPropertyManager.ParseColor(_textColorNoFocus, 0xFFFFFFFF);
           }
           _labelControl.TextAlignment = _textAlignment;
           _labelControl.Label = _label;

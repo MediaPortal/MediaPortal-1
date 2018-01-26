@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2013 Team MediaPortal
+#region Copyright (C) 2005-2018 Team MediaPortal
 
-// Copyright (C) 2005-2013 Team MediaPortal
+// Copyright (C) 2005-2018 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -748,7 +748,7 @@ namespace MediaPortal.GUI.Library
         if (!gotFocus)
         {
           long value;
-          if (long.TryParse(_textColorNoFocus2, NumberStyles.AllowHexSpecifier, CultureInfo.InvariantCulture, out value))
+          if (GUIPropertyManager.ParseColor(_textColorNoFocus2, out value))
           {
             color = value;
           }
@@ -822,7 +822,7 @@ namespace MediaPortal.GUI.Library
         if (!gotFocus)
         {
           long value;
-          if (long.TryParse(_textColorNoFocus, NumberStyles.AllowHexSpecifier, CultureInfo.InvariantCulture, out value))
+          if (GUIPropertyManager.ParseColor(_textColorNoFocus, out value))
           {
             color = value;
           }
@@ -892,7 +892,7 @@ namespace MediaPortal.GUI.Library
         if (!gotFocus)
         {
           long value;
-          if (long.TryParse(_textColorNoFocus2, NumberStyles.AllowHexSpecifier, CultureInfo.InvariantCulture, out value))
+          if (GUIPropertyManager.ParseColor(_textColorNoFocus2, out value))
           {
             color = value;
           }
@@ -990,7 +990,7 @@ namespace MediaPortal.GUI.Library
         if (!gotFocus)
         {
           long value;
-          if (long.TryParse(_textColorNoFocus3, NumberStyles.AllowHexSpecifier, CultureInfo.InvariantCulture, out value))
+          if (GUIPropertyManager.ParseColor(_textColorNoFocus3, out value))
           {
             color = value;
           }

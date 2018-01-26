@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2017 Team MediaPortal
+#region Copyright (C) 2005-2018 Team MediaPortal
 
-// Copyright (C) 2005-2017 Team MediaPortal
+// Copyright (C) 2005-2018 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -19,8 +19,8 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
 
@@ -666,6 +666,56 @@ namespace MediaPortal.GUI.Library
           }
         }
       }
+    }
+
+    /// <summary>
+    /// Parses a text/property request to long Color.
+    /// </summary>
+    /// <param name="tag">name of the property</param>
+    /// <param name="def">default color if failed parse of the property</param>
+    /// <returns>The color value of the property.</returns>
+    public static long ParseColor(string tag, long def)
+    {
+      if (string.IsNullOrEmpty(tag))
+      {
+        return def;
+      }
+      if (tag.IndexOf('#') > -1)
+      {
+        tag = Parse(tag) ?? def.ToString();
+      }
+      long result;
+      if (long.TryParse(tag, NumberStyles.AllowHexSpecifier, CultureInfo.InvariantCulture, out result))
+      {
+        return result;
+      }
+      return def;
+    }
+
+    /// <summary>
+    /// Parses a text/property request to long Color.
+    /// </summary>
+    /// <param name="tag">name of the property</param>
+    /// <param name="result">Color value of the property</param>
+    /// <returns>Parse result of the property.</returns>
+    public static bool ParseColor(string tag, out long result)
+    {
+      result = 0xFFFFFFFF;
+      if (string.IsNullOrEmpty(tag))
+      {
+        return false;
+      }
+      if (tag.IndexOf('#') > -1)
+      {
+        tag = Parse(tag) ?? "N/A";
+      }
+      long value;
+      if (long.TryParse(tag, NumberStyles.AllowHexSpecifier, CultureInfo.InvariantCulture, out value))
+      {
+        result = value;
+        return true;
+      }
+      return false;
     }
   }
 }

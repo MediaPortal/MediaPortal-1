@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2013 Team MediaPortal
+#region Copyright (C) 2005-2018 Team MediaPortal
 
-// Copyright (C) 2005-2013 Team MediaPortal
+// Copyright (C) 2005-2018 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -19,8 +19,6 @@
 #endregion
 
 using System.Collections;
-using System.Diagnostics;
-using System.IO;
 using MediaPortal.ExtensionMethods;
 
 namespace MediaPortal.GUI.Library
@@ -55,7 +53,7 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("valueSuffixText")] protected string _suffixText = "";
     [XMLSkin("valueSuffixText", "join")] protected string _suffixTextJoin = "";
     [XMLSkinElement("textcolor")] protected long _textColor = 0xFFFFFFFF;
-    [XMLSkinElement("textcolorNoFocus")] protected long _textColorNoFocus = 0xFFFFFFFF;
+    [XMLSkinElement("textcolorNoFocus")] protected string _textColorNoFocus = "0xFFFFFFFF";
     [XMLSkinElement("disabledcolor")] protected long _disabledColor = 0xFF606060;
     [XMLSkinElement("textXOff")] protected int _textOffsetX = 0;
     [XMLSkin("textXOff", "hasMargin")] protected bool _textOffsetXHasMargin = true;
@@ -664,7 +662,7 @@ namespace MediaPortal.GUI.Library
           break;
       }
 
-      _spinControl.TextColor = Disabled ? _disabledColor : Focus ? _textColor : _textColorNoFocus;
+      _spinControl.TextColor = Disabled ? _disabledColor : Focus ? _textColor : GUIPropertyManager.ParseColor(_textColorNoFocus, 0xFFFFFFFF);
       _spinControl.SetPosition(x, y);
       _spinControl.Render(timePassed);
     }
@@ -705,19 +703,20 @@ namespace MediaPortal.GUI.Library
       }
 
       // Render the button label text on the button
+      long longColorNoFocus = GUIPropertyManager.ParseColor(_textColorNoFocus, 0xFFFFFFFF);
       if (_labelControl is GUILabelControl)
       {
         ((GUILabelControl)_labelControl).TextAlignment = _textAlignment;
         ((GUILabelControl)_labelControl).TextVAlignment = _textVAlignment;
         ((GUILabelControl)_labelControl).Label = labelText;
-        ((GUILabelControl)_labelControl).TextColor = Disabled ? _disabledColor : Focus ? _textColor : _textColorNoFocus;
+        ((GUILabelControl)_labelControl).TextColor = Disabled ? _disabledColor : Focus ? _textColor : longColorNoFocus;
       }
       else
       {
         ((GUIFadeLabel)_labelControl).TextAlignment = _textAlignment;
         ((GUIFadeLabel)_labelControl).TextVAlignment = _textVAlignment;
         ((GUIFadeLabel)_labelControl).Label = labelText;
-        ((GUIFadeLabel)_labelControl).TextColor = Disabled ? _disabledColor : Focus ? _textColor : _textColorNoFocus;
+        ((GUIFadeLabel)_labelControl).TextColor = Disabled ? _disabledColor : Focus ? _textColor : longColorNoFocus;
       }
 
       int x = 0;
@@ -764,14 +763,14 @@ namespace MediaPortal.GUI.Library
           ((GUILabelControl)_valueLabelControl).TextAlignment = Alignment.ALIGN_RIGHT;
           ((GUILabelControl)_valueLabelControl).TextVAlignment = _textVAlignment;
           ((GUILabelControl)_valueLabelControl).Label = valueText;
-          ((GUILabelControl)_valueLabelControl).TextColor = Disabled ? _disabledColor : Focus ? _textColor : _textColorNoFocus;
+          ((GUILabelControl)_valueLabelControl).TextColor = Disabled ? _disabledColor : Focus ? _textColor : longColorNoFocus;
         }
         else
         {
           ((GUIFadeLabel)_valueLabelControl).TextAlignment = Alignment.ALIGN_RIGHT;
           ((GUIFadeLabel)_valueLabelControl).TextVAlignment = _textVAlignment;
           ((GUIFadeLabel)_valueLabelControl).Label = valueText;
-          ((GUIFadeLabel)_valueLabelControl).TextColor = Disabled ? _disabledColor : Focus ? _textColor : _textColorNoFocus;
+          ((GUIFadeLabel)_valueLabelControl).TextColor = Disabled ? _disabledColor : Focus ? _textColor : longColorNoFocus;
         }
 
         // X position forced to the right.
