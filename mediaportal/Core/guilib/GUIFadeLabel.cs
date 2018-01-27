@@ -143,21 +143,11 @@ namespace MediaPortal.GUI.Library
                         string strFont, long dwTextColor, Alignment dwTextAlign, VAlignment dwTextVAlign,
                         int dwShadowAngle, int dwShadowDistance, long dwShadowColor,
                         string strUserWrapString, int dwMaxWidth, int dwMaxHeight)
-      : base(dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight)
-    {
-      _fontName = strFont;
-      _textColor = dwTextColor.ToString();
-      _textAlignment = dwTextAlign;
-      _textVAlignment = dwTextVAlign;
-      _shadowAngle = dwShadowAngle;
-      _shadowDistance = dwShadowDistance;
-      _shadowColor = dwShadowColor;
-      _userWrapString = strUserWrapString;
-      _maxWidth = dwMaxWidth;
-      _maxHeight = dwMaxHeight;
-
-      FinalizeConstruction();
-    }
+      : this(dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight,
+                        strFont, dwTextColor.ToString(), dwTextAlign, dwTextVAlign,
+                        dwShadowAngle, dwShadowDistance, dwShadowColor,
+                        strUserWrapString, dwMaxWidth, dwMaxHeight)
+    {  }
 
     /// <summary>
     /// The constructor of the GUIFadeLabel class.
