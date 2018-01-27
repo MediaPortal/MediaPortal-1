@@ -1426,7 +1426,7 @@ namespace TvPlugin
         channelLabel = new GUILabelControl(GetID, (int)Controls.SINGLE_CHANNEL_LABEL,
                                            channelImage.XPosition + 44,
                                            channelImage.YPosition + 10,
-                                           300, 40, "font16", channel.DisplayName, 4294967295, GUIControl.Alignment.Left,
+                                           300, 40, "font16", channel.DisplayName, "4294967295", GUIControl.Alignment.Left,
                                            GUIControl.VAlignment.Top,
                                            true, 0, 0, 0xFF000000);
         channelLabel.AllocResources();
@@ -1677,7 +1677,7 @@ namespace TvPlugin
         img.TextOffsetX1 = 5;
         img.TextOffsetY1 = 5;
         img.FontName1 = "font13";
-        img.TextColor1 = 0xffffffff;
+        img.TextColor1 = "0xffffffff";
 
         img.Label1 = TVUtil.GetDisplayTitle(program);
 
@@ -1711,11 +1711,11 @@ namespace TvPlugin
         img.TextOffsetX2 = 5;
         img.TextOffsetY2 = img.Height / 2;
         img.FontName2 = "font13";
-        img.TextColor2 = 0xffffffff;
+        img.TextColor2 = "0xffffffff";
         img.Label2 = "";
         if (program.IsRunningAt(dt))
         {
-          img.TextColor2 = 0xff101010;
+          img.TextColor2 = "0xff101010";
           labelTemplate = _genreDarkTemplate;
         }
         else
@@ -2418,7 +2418,7 @@ namespace TvPlugin
           img.TextOffsetX1 = 5;
           img.TextOffsetY1 = 5;
           img.FontName1 = "font13";
-          img.TextColor1 = 0xffffffff;
+          img.TextColor1 = "0xffffffff";
           img.Label1 = strTitle;
           GUILabelControl labelTemplate;
           if (program.IsRunningAt(dt))
@@ -2454,7 +2454,7 @@ namespace TvPlugin
           img.TextOffsetX2 = 5;
           img.TextOffsetY2 = img.Height / 2;
           img.FontName2 = "font13";
-          img.TextColor2 = 0xffffffff;
+          img.TextColor2 = "0xffffffff";
 
           if (program.IsRunningAt(dt))
           {

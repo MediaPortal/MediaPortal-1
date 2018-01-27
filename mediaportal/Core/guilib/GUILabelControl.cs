@@ -129,21 +129,11 @@ namespace MediaPortal.GUI.Library
                            string strFont, string strLabel, long dwTextColor, Alignment dwTextAlign,
                            VAlignment dwTextVAlign, bool bHasPath,
                            int dwShadowAngle, int dwShadowDistance, long dwShadowColor, int dwMaxWidth, int dwMaxHeight)
-      : base(dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight)
-    {
-      _labelText = strLabel;
-      _fontName = strFont;
-      _textColor = dwTextColor.ToString();
-      _textAlignment = dwTextAlign;
-      _textVAlignment = dwTextVAlign;
-      _shadowAngle = dwShadowAngle;
-      _shadowDistance = dwShadowDistance;
-      _shadowColor = dwShadowColor;
-      _maxWidth = dwMaxWidth;
-      _maxHeight = dwMaxHeight;
-
-      FinalizeConstruction();
-    }
+      : this (dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight,
+                           strFont, strLabel, dwTextColor.ToString(), dwTextAlign,
+                           dwTextVAlign, bHasPath,
+                           dwShadowAngle, dwShadowDistance, dwShadowColor, dwMaxWidth, dwMaxHeight)
+    {  }
 
     /// <summary>
     /// The constructor of the GUILabelControl class.
