@@ -1372,23 +1372,29 @@ namespace MediaPortal
       {
         height = GUIGraphicsContext.currentScreen.WorkingArea.Height;
         width = GUIGraphicsContext.currentScreen.WorkingArea.Width;
+        Log.Debug("CalcMaxClientArea windowed : width {0} / height {1}", width, height);
       }
       else
       {
         height = GUIGraphicsContext.currentScreen.Bounds.Height;
         width = GUIGraphicsContext.currentScreen.Bounds.Width;
+        Log.Debug("CalcMaxClientArea return fullscreen : width {0} / height {1}", width, height);
+        return new Size(width, height);
       }
       if (GUIGraphicsContext.SkinSize.Width + border.Width <= width &&
           GUIGraphicsContext.SkinSize.Height + border.Height <= height)
       {
         clientArea = new Size(GUIGraphicsContext.SkinSize.Width + border.Width, GUIGraphicsContext.SkinSize.Height + border.Height);
+        Log.Debug("CalcMaxClientArea clientArea 1 : clientArea {0}", clientArea);
       }
       else
       {
         double ratio = Math.Min((double)(width - border.Width) / GUIGraphicsContext.SkinSize.Width,
                                 (double)(height - border.Height) / GUIGraphicsContext.SkinSize.Height);
         clientArea = new Size((int)(GUIGraphicsContext.SkinSize.Width * ratio), (int)(GUIGraphicsContext.SkinSize.Height * ratio));
+        Log.Debug("CalcMaxClientArea clientArea 2 : clientArea {0}", clientArea);
       }
+      Log.Debug("CalcMaxClientArea clientArea return : clientArea {0}", clientArea);
       return clientArea;
     }
 
@@ -1528,12 +1534,11 @@ namespace MediaPortal
 
       Screen screen = Screen.FromControl(this);
       var size = new Size(screen.Bounds.Width, screen.Bounds.Height);
+      var sizeMaxClient = CalcMaxClientArea();
 
       if (windowed)
       {
         size = GUIGraphicsContext.form.ClientSize;
-        var sizeMaxClient = CalcMaxClientArea();
-        
         int backupSizeWidth = 0;
         int backupSizeHeight = 0;
   
@@ -1559,8 +1564,8 @@ namespace MediaPortal
         }
       }
 
-      _presentParams.BackBufferWidth  = size.Width;
-      _presentParams.BackBufferHeight = size.Height;
+      _presentParams.BackBufferWidth  = sizeMaxClient.Width;
+      _presentParams.BackBufferHeight = sizeMaxClient.Height;
       _presentParams.BackBufferFormat = Format.Unknown;
  
       Log.Info("D3D: BuildPresentParams ClientSize from: {0}x{1}", GUIGraphicsContext.form.ClientSize.Width, GUIGraphicsContext.form.ClientSize.Height);
