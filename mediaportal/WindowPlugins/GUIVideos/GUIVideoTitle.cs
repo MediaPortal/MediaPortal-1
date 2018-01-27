@@ -330,6 +330,7 @@ namespace MediaPortal.GUI.Video
       {
         GUIListItem item = facadeLayout.SelectedListItem;
         DoDeleteItem(item, true);
+        LoadDirectory(currentFolder);
       }
       if (action.wID == Action.ActionType.ACTION_PLAY || action.wID == Action.ActionType.ACTION_MUSIC_PLAY)
       {
