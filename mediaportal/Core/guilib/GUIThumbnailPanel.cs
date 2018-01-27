@@ -680,7 +680,7 @@ namespace MediaPortal.GUI.Library
 
       float fTextPosY = (float)dwPosY + (float)_textureHeight;
 
-      long dwColor = GUIPropertyManager.ParseColor(_textColor, 0xFFFFFFFF);
+      long dwColor = GUIPropertyManager.ParseColor(_textColor);
       if (pItem.Selected)
       {
         dwColor = _selectedColor;
@@ -2953,7 +2953,7 @@ namespace MediaPortal.GUI.Library
 
     public long SpinTextColor
     {
-      get { return GUIPropertyManager.ParseColor(_controlUpDown.TextColor, 0xFFFFFFFF); }
+      get { return GUIPropertyManager.ParseColor(_controlUpDown.TextColor); }
     }
 
     public int SpinX

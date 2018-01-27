@@ -451,11 +451,11 @@ namespace MediaPortal.GUI.Sudoku
     {
       if (_Settings.Show)
       {
-        CellControl.M_dwCellIncorrectTextColor = m_dwCellIncorrectTextColor;
+        CellControl.M_dwCellIncorrectTextColor = m_dwCellIncorrectTextColor.ToString();
       }
       else
       {
-        CellControl.M_dwCellIncorrectTextColor = m_dwTextColor;
+        CellControl.M_dwCellIncorrectTextColor = m_dwTextColor.ToString();
       }
     }
 

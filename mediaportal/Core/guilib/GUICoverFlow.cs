@@ -82,7 +82,7 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("font2")] protected string _fontName2 = "";
     [XMLSkinElement("label1")] protected string _labelText1 = "#title";
     [XMLSkinElement("label2")] protected string _labelText2 = "";
-    [XMLSkinElement("textcolor")] protected string _textColor = 0xFFFFFFFF;
+    [XMLSkinElement("textcolor")] protected string _textColor = "0xFFFFFFFF";
     [XMLSkinElement("remoteColor")] protected long _remoteColor = 0xFFFF0000;
     [XMLSkinElement("playedColor")] protected long _playedColor = 0xFFA0D0FF;
     [XMLSkinElement("downloadColor")] protected long _downloadColor = 0xFF00FF00;
@@ -1534,7 +1534,7 @@ namespace MediaPortal.GUI.Library
       }
 
       // Set the text color based on the state of the item.
-      long dwColor = _textColor;
+      long dwColor = GUIPropertyManager.ParseColor(_textColor);
       if (pItem.Selected)
       {
         dwColor = _selectedColor;
@@ -1570,7 +1570,7 @@ namespace MediaPortal.GUI.Library
         dwColor = _bdDvdDirectoryColor;
       }
 
-      _label1.TextColor = dwColor;
+      _label1.TextColor = dwColor.ToString();
       _label1.UpdateVisibility();
       _label1.Render(timePassed);
     }
@@ -1593,7 +1593,7 @@ namespace MediaPortal.GUI.Library
       }
 
       // Set the text color based on the state of the item.
-      long dwColor = _textColor;
+      long dwColor = GUIPropertyManager.ParseColor(_textColor);
       if (pItem.Selected)
       {
         dwColor = _selectedColor;
@@ -1621,7 +1621,7 @@ namespace MediaPortal.GUI.Library
       }
 
       _label2.Label = _labelText2;
-      _label2.TextColor = dwColor;
+      _label2.TextColor = dwColor.ToString();
       _label2.UpdateVisibility();
       _label2.Render(timePassed);
     }

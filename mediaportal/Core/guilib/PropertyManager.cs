@@ -672,6 +672,16 @@ namespace MediaPortal.GUI.Library
     /// Parses a text/property request to long Color.
     /// </summary>
     /// <param name="tag">name of the property</param>
+    /// <returns>The color value of the property.</returns>
+    public static long ParseColor(string tag)
+    {
+      return ParseColor(tag, 0xFFFFFFFF);
+    }
+
+    /// <summary>
+    /// Parses a text/property request to long Color.
+    /// </summary>
+    /// <param name="tag">name of the property</param>
     /// <param name="def">default color if failed parse of the property</param>
     /// <returns>The color value of the property.</returns>
     public static long ParseColor(string tag, long def)

@@ -392,7 +392,7 @@ namespace MediaPortal.GUI.Library
 
         if (Disabled)
         {
-          long textColor = GUIPropertyManager.ParseColor(_labelControl.TextColor, 0xFFFFFFFF);
+          long textColor = GUIPropertyManager.ParseColor(_labelControl.TextColor);
           textColor &= 0x80ffffff;
           _labelControl.TextColor = textColor.ToString();
         }

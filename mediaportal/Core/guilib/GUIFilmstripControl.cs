@@ -719,7 +719,7 @@ namespace MediaPortal.GUI.Library
       float fTextPosY = (float)dwPosY + (float)_textureHeight;
 
       TransformMatrix tm = null;
-      long dwColor = GUIPropertyManager.ParseColor(_textColor, 0xFFFFFFFF);
+      long dwColor = GUIPropertyManager.ParseColor(_textColor);
       if (pItem.Selected)
       {
         dwColor = _selectedColor;
@@ -2875,7 +2875,7 @@ namespace MediaPortal.GUI.Library
         {
           return 0;
         }
-        return GUIPropertyManager.ParseColor(_upDownControl.TextColor, 0xFFFFFFFF);
+        return GUIPropertyManager.ParseColor(_upDownControl.TextColor);
       }
     }
 

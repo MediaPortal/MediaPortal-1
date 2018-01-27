@@ -550,7 +550,7 @@ namespace MediaPortal.GUI.Library
         float fHeight = 0;
         string strText = "";
 
-        long textColor = GUIPropertyManager.ParseColor(_textColor, 0xFFFFFFFF);
+        long textColor = GUIPropertyManager.ParseColor(_textColor);
         // render top text
         if (_labelTop.Length > 0)
         {

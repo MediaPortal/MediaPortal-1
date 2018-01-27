@@ -790,7 +790,7 @@ namespace MediaPortal.GUI.Library
       if (_text2Visible && item.Label2.Length > 0 && _textOffsetY == _textOffsetY2)
       {
         // set initial text color
-        color = GUIPropertyManager.ParseColor(_textColor2, 0xFFFFFFFF);
+        color = GUIPropertyManager.ParseColor(_textColor2);
 
         // override text color if label is not selected
         if (!gotFocus)
@@ -805,7 +805,7 @@ namespace MediaPortal.GUI.Library
         // override text color if skin sets it as selected
         if (item.Selected)
         {
-          color = GUIPropertyManager.ParseColor(_selectedColor2, 0xFFFFFFFF);
+          color = GUIPropertyManager.ParseColor(_selectedColor2);
         }
 
         // override text color if item is currently played
@@ -864,7 +864,7 @@ namespace MediaPortal.GUI.Library
       if (_text1Visible)
       {
         // set initial text color
-        color = GUIPropertyManager.ParseColor(_textColor, 0xFFFFFFFF);
+        color = GUIPropertyManager.ParseColor(_textColor);
 
         // override text color if label is not selected
         if (!gotFocus)
@@ -879,7 +879,7 @@ namespace MediaPortal.GUI.Library
         // override text color if skin sets it as selected
         if (item.Selected)
         {
-          color = GUIPropertyManager.ParseColor(_selectedColor, 0xFFFFFFFF);
+          color = GUIPropertyManager.ParseColor(_selectedColor);
         }
 
         // override text color if item is currently played
@@ -934,7 +934,7 @@ namespace MediaPortal.GUI.Library
       if (item.Label2.Length > 0)
       {
         // set initial text color
-        color = GUIPropertyManager.ParseColor(_textColor2, 0xFFFFFFFF);
+        color = GUIPropertyManager.ParseColor(_textColor2);
 
         // override text color if label is not selected
         if (!gotFocus)
@@ -949,7 +949,7 @@ namespace MediaPortal.GUI.Library
         // override text color if skin sets it as selected
         if (item.Selected)
         {
-          color = GUIPropertyManager.ParseColor(_selectedColor2, 0xFFFFFFFF);
+          color = GUIPropertyManager.ParseColor(_selectedColor2);
         }
 
         // override text color if item is currently played
@@ -1032,7 +1032,7 @@ namespace MediaPortal.GUI.Library
       if (item.Label3.Length > 0 || !string.IsNullOrEmpty(_text3Content))
       {
         // set initial text color
-        color = GUIPropertyManager.ParseColor(_textColor3, 0xFFFFFFFF);
+        color = GUIPropertyManager.ParseColor(_textColor3);
 
         // override text color if label is not selected
         if (!gotFocus)
@@ -1047,7 +1047,7 @@ namespace MediaPortal.GUI.Library
         // override text color if skin sets it as selected
         if (item.Selected)
         {
-          color = GUIPropertyManager.ParseColor(_selectedColor3, 0xFFFFFFFF);
+          color = GUIPropertyManager.ParseColor(_selectedColor3);
         }
 
         // override text color if item is currently played
@@ -1410,7 +1410,7 @@ namespace MediaPortal.GUI.Library
       float fPosX = label._positionX;
       float fPosY = label._positionY;
       float fMaxWidth = label.Width;
-      long dwTextColor = GUIPropertyManager.ParseColor(label.TextColor, 0xFFFFFFFF);
+      long dwTextColor = GUIPropertyManager.ParseColor(label.TextColor);
       string strTextToRender = label.Label;
       GUIFont font = GUIFontManager.GetFont(label.FontName);
 
@@ -3290,7 +3290,7 @@ namespace MediaPortal.GUI.Library
     // TODO
     public long SpinTextColor
     {
-      get { return GUIPropertyManager.ParseColor(_upDownControl.TextColor, 0xFFFFFFFF); }
+      get { return GUIPropertyManager.ParseColor(_upDownControl.TextColor); }
     }
 
     // TODO

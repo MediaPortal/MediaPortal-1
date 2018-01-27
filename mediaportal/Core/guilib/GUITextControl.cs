@@ -196,7 +196,7 @@ namespace MediaPortal.GUI.Library
             wszText2 = String.Format("{0}", strLabel2);
             _font.GetTextExtent(wszText2, ref fTextWidth, ref fTextHeight);
             dMaxWidth -= (int)(fTextWidth);
-            uint color = (uint)GUIPropertyManager.ParseColor(_textColor, 0xFFFFFFFF);
+            uint color = (uint)GUIPropertyManager.ParseColor(_textColor);
             color = GUIGraphicsContext.MergeAlpha(color);
             if (Shadow)
             {
@@ -221,7 +221,7 @@ namespace MediaPortal.GUI.Library
               break;
           }
           {
-            uint color = (uint)GUIPropertyManager.ParseColor(_textColor, 0xFFFFFFFF);
+            uint color = (uint)GUIPropertyManager.ParseColor(_textColor);
             color = GUIGraphicsContext.MergeAlpha(color);
             if (Shadow)
             {
@@ -656,7 +656,7 @@ namespace MediaPortal.GUI.Library
 
     public long SpinTextColor
     {
-      get { return GUIPropertyManager.ParseColor(_upDownControl.TextColor, 0xFFFFFFFF); }
+      get { return GUIPropertyManager.ParseColor(_upDownControl.TextColor); }
     }
 
     public int SpinX

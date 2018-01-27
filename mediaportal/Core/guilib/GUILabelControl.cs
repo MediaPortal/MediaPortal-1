@@ -344,7 +344,7 @@ namespace MediaPortal.GUI.Library
       {
         _label = GetShortenedText(_label, _maxWidth > 0 ? _maxWidth : _width);
       }
-      long c = (uint)GUIPropertyManager.ParseColor(_textColor, 0xFFFFFFFF);
+      long c = (uint)GUIPropertyManager.ParseColor(_textColor);
       if (Dimmed)
       {
         c &= (DimColor);
@@ -382,7 +382,7 @@ namespace MediaPortal.GUI.Library
       {
         _label = GetShortenedText(_label, _maxWidth > 0 ? _maxWidth : _width);
       }
-      long c = GUIPropertyManager.ParseColor(_textColor, 0xFFFFFFFF);
+      long c = GUIPropertyManager.ParseColor(_textColor);
       if (Dimmed)
       {
         c &= DimColor;

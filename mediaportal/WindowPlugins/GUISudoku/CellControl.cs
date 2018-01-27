@@ -28,9 +28,9 @@ namespace MediaPortal.GUI.Sudoku
   public class CellControl : GUIButtonControl
   {
     [XMLSkinElement("textcolor")] //protected long m_dwNonEditableTextColor=0x770000FF;
-      protected static long m_dwCellIncorrectTextColor = 0xFFFFFFFF;
+      protected static string m_dwCellIncorrectTextColor = "0xFFFFFFFF";
 
-    protected static long m_dwTextColor = 0xFFFFFFFF;
+    protected static string m_dwTextColor = "0xFFFFFFFF";
     protected long m_dwDisabledColor = 0xFF000000;
     protected int m_iTextOffsetY = 2;
 
@@ -61,13 +61,13 @@ namespace MediaPortal.GUI.Sudoku
       }
     }
 
-    public static long M_dwCellIncorrectTextColor
+    public static string M_dwCellIncorrectTextColor
     {
       get { return m_dwCellIncorrectTextColor; }
       set { m_dwCellIncorrectTextColor = value; }
     }
 
-    public static long M_dwTextColor
+    public static string M_dwTextColor
     {
       get { return m_dwTextColor; }
     }
@@ -117,7 +117,7 @@ namespace MediaPortal.GUI.Sudoku
       }
 
       m_label = new GUILabelControl(GetID, GetID * 1000, _positionX, _positionY, this.Width, this.Height, this.FontName,
-                                    string.Empty, 0xFFFFFFFF, Alignment.ALIGN_CENTER, VAlignment.ALIGN_MIDDLE, false,
+                                    string.Empty, "0xFFFFFFFF", Alignment.ALIGN_CENTER, VAlignment.ALIGN_MIDDLE, false,
                                     _shadowAngle, _shadowDistance, _shadowColor);
       _colorOverlay = new GUIImage(GetID, GetID * 10, _positionX, _positionY, this.Width, this.Height,
                                    "icon_numberplace_colouroverlay.png", 0xFFFFFFFF);
@@ -171,7 +171,7 @@ namespace MediaPortal.GUI.Sudoku
         }
         else
         {
-          m_label.TextColor = m_dwDisabledColor;
+          m_label.TextColor = m_dwDisabledColor.ToString();
         }
       }
 

@@ -453,7 +453,6 @@ namespace MediaPortal.GUI.Library
       }
       // _labelControl.Width = labelWidth;
 
-      // long longColorNoFocus = GUIPropertyManager.ParseColor(_textColorNoFocus, 0xFFFFFFFF);
       if (_labelControl is GUILabelControl)
       {
         ((GUILabelControl)_labelControl).TextAlignment = _textAlignment;

@@ -315,7 +315,6 @@ namespace MediaPortal.GUI.Library
       }
       _labelControl.Width = labelWidth;
 
-      //long longColorNoFocus = GUIPropertyManager.ParseColor(_textColorNoFocus, 0xFFFFFFFF);
       // render the text on the button
       if (_labelControl is GUILabelControl)
       {

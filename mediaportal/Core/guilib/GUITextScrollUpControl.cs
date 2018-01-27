@@ -221,7 +221,7 @@ namespace MediaPortal.GUI.Library
           Rectangle clipRect = new Rectangle(_positionX, _positionY, _width, _height);
           GUIGraphicsContext.BeginClip(clipRect);
         }
-        long color = GUIPropertyManager.ParseColor(_textColor, 0xFFFFFFFF);
+        long color = GUIPropertyManager.ParseColor(_textColor);
         if (Dimmed)
         {
           color &= DimColor;

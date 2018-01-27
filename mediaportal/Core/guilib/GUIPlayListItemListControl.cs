@@ -665,10 +665,10 @@ namespace MediaPortal.GUI.Library
       {
         if (_textOffsetY == _textOffsetY2)
         {
-          dwColor = GUIPropertyManager.ParseColor(_textColor2, 0xFFFFFFFF);
+          dwColor = GUIPropertyManager.ParseColor(_textColor2);
           if (pItem.Selected)
           {
-            dwColor = GUIPropertyManager.ParseColor(_selectedColor2, 0xFFFFFFFF);
+            dwColor = GUIPropertyManager.ParseColor(_selectedColor2);
           }
           if (pItem.IsRemote)
           {
@@ -717,10 +717,10 @@ namespace MediaPortal.GUI.Library
 
       if (_text1Visible)
       {
-        dwColor = GUIPropertyManager.ParseColor(_textColor, 0xFFFFFFFF);
+        dwColor = GUIPropertyManager.ParseColor(_textColor);
         if (pItem.Selected)
         {
-          dwColor = GUIPropertyManager.ParseColor(_selectedColor, 0xFFFFFFFF);
+          dwColor = GUIPropertyManager.ParseColor(_selectedColor);
         }
 
         if (pItem.IsRemote)
@@ -760,10 +760,10 @@ namespace MediaPortal.GUI.Library
 
       if (pItem.Label2.Length > 0)
       {
-        dwColor = GUIPropertyManager.ParseColor(_textColor2, 0xFFFFFFFF);
+        dwColor = GUIPropertyManager.ParseColor(_textColor2);
         if (pItem.Selected)
         {
-          dwColor = GUIPropertyManager.ParseColor(_selectedColor2, 0xFFFFFFFF);
+          dwColor = GUIPropertyManager.ParseColor(_selectedColor2);
         }
 
         if (pItem.IsRemote)
@@ -826,10 +826,10 @@ namespace MediaPortal.GUI.Library
 
       if (pItem.Label3.Length > 0)
       {
-        dwColor = GUIPropertyManager.ParseColor(_textColor3, 0xFFFFFFFF);
+        dwColor = GUIPropertyManager.ParseColor(_textColor3);
         if (pItem.Selected)
         {
-          dwColor = GUIPropertyManager.ParseColor(_selectedColor3, 0xFFFFFFFF);
+          dwColor = GUIPropertyManager.ParseColor(_selectedColor3);
         }
 
         if (pItem.IsRemote)

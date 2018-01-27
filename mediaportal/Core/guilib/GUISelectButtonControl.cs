@@ -244,7 +244,7 @@ namespace MediaPortal.GUI.Library
         // render background, left and right arrow
         _imageBackground.Render(timePassed);
 
-        long dwTextColor = GUIPropertyManager.ParseColor(Focus ? _textColor : _textColorNoFocus, 0xFFFFFFFF);
+        long dwTextColor = GUIPropertyManager.ParseColor(Focus ? _textColor : _textColorNoFocus);
 
         // User has moved left...
         if (_leftSelected)

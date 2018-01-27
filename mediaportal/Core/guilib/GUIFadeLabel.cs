@@ -396,7 +396,7 @@ namespace MediaPortal.GUI.Library
       // Make the label fade in
       if (_fadeIn && _allowScrolling)
       {
-        long _tc = GUIPropertyManager.ParseColor(_textColor, 0xFFFFFFFF);
+        long _tc = GUIPropertyManager.ParseColor(_textColor);
         long dwAlpha = ((((uint)_tc) >> 24) * _currentFrame) / 12;
         dwAlpha <<= 24;
         dwAlpha |= (_tc & 0x00ffffff);
@@ -521,7 +521,7 @@ namespace MediaPortal.GUI.Library
       }
 
       // set text color and apply dimming if requested
-      long color = GUIPropertyManager.ParseColor(_textColor, 0xFFFFFFFF);
+      long color = GUIPropertyManager.ParseColor(_textColor);
       if (Dimmed)
       {
         color &= DimColor;
