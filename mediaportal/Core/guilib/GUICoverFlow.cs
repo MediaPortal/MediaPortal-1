@@ -1,6 +1,6 @@
-﻿#region Copyright (C) 2005-2017 Team MediaPortal
+﻿#region Copyright (C) 2005-2018 Team MediaPortal
 
-// Copyright (C) 2005-2017 Team MediaPortal
+// Copyright (C) 2005-2018 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -82,7 +82,7 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("font2")] protected string _fontName2 = "";
     [XMLSkinElement("label1")] protected string _labelText1 = "#title";
     [XMLSkinElement("label2")] protected string _labelText2 = "";
-    [XMLSkinElement("textColor")] protected long _textColor = 0xFFFFFFFF;
+    [XMLSkinElement("textcolor")] protected string _textColor = 0xFFFFFFFF;
     [XMLSkinElement("remoteColor")] protected long _remoteColor = 0xFFFF0000;
     [XMLSkinElement("playedColor")] protected long _playedColor = 0xFFA0D0FF;
     [XMLSkinElement("downloadColor")] protected long _downloadColor = 0xFF00FF00;

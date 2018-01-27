@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2017 Team MediaPortal
+#region Copyright (C) 2005-2018 Team MediaPortal
 
-// Copyright (C) 2005-2017 Team MediaPortal
+// Copyright (C) 2005-2018 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -72,7 +72,7 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("textureWidthBig")] protected int _bigTextureWidth = 128;
 
     [XMLSkinElement("font")] protected string _fontName = "";
-    [XMLSkinElement("textcolor")] protected long _textColor = 0xFFFFFFFF;
+    [XMLSkinElement("textcolor")] protected string _textColor = "0xFFFFFFFF";
     [XMLSkinElement("selectedColor")] protected long _selectedColor = 0xFFFFFFFF;
 
     [XMLSkinElement("shadowAngle")] protected int _shadowAngle = 0;
@@ -287,6 +287,29 @@ namespace MediaPortal.GUI.Library
                              string strUpFocus, string strDownFocus,
                              long dwSpinColor, int dwSpinX, int dwSpinY,
                              string strFont, long dwTextColor, long dwSelectedColor,
+                             string strScrollbarBackground, string strScrollbarTop, string strScrollbarBottom,
+                             int dwShadowAngle, int dwShadowDistance, long dwShadowColor)
+      : this(dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight,
+                             strImageIcon,
+                             strImageIconFocus,
+                             dwitemWidth, dwitemHeight,
+                             dwSpinWidth, dwSpinHeight,
+                             strUp, strDown,
+                             strUpFocus, strDownFocus,
+                             dwSpinColor, dwSpinX, dwSpinY,
+                             strFont, dwTextColor.ToString(), dwSelectedColor,
+                             strScrollbarBackground, strScrollbarTop, strScrollbarBottom,
+                             dwShadowAngle, dwShadowDistance, dwShadowColor) { }
+
+    public GUIThumbnailPanel(int dwParentID, int dwControlId, int dwPosX, int dwPosY, int dwWidth, int dwHeight,
+                             string strImageIcon,
+                             string strImageIconFocus,
+                             int dwitemWidth, int dwitemHeight,
+                             int dwSpinWidth, int dwSpinHeight,
+                             string strUp, string strDown,
+                             string strUpFocus, string strDownFocus,
+                             long dwSpinColor, int dwSpinX, int dwSpinY,
+                             string strFont, string dwTextColor, long dwSelectedColor,
                              string strScrollbarBackground, string strScrollbarTop, string strScrollbarBottom,
                              int dwShadowAngle, int dwShadowDistance, long dwShadowColor)
       : base(dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight)
@@ -657,7 +680,7 @@ namespace MediaPortal.GUI.Library
 
       float fTextPosY = (float)dwPosY + (float)_textureHeight;
 
-      long dwColor = _textColor;
+      long dwColor = GUIPropertyManager.ParseColor(_textColor, 0xFFFFFFFF);
       if (pItem.Selected)
       {
         dwColor = _selectedColor;
@@ -711,7 +734,7 @@ namespace MediaPortal.GUI.Library
           _listLabels[iButton].YPosition = (int)Math.Truncate(fTextPosY + _textYOff + _zoomYPixels);
           _listLabels[iButton].Width = _textureWidth;
           _listLabels[iButton].Height = _textureHeight;
-          _listLabels[iButton].TextColor = dwColor;
+          _listLabels[iButton].TextColor = dwColor.ToString();
           _listLabels[iButton].Label = pItem.Label;
           _listLabels[iButton].AllowScrolling = true;
           _listLabels[iButton].Render(timePassed);
@@ -752,7 +775,7 @@ namespace MediaPortal.GUI.Library
           _listLabels[iButton].YPosition = (int)Math.Truncate(fTextPosY + _textYOff);
           _listLabels[iButton].Width = _textureWidth;
           _listLabels[iButton].Height = _textureHeight;
-          _listLabels[iButton].TextColor = dwColor;
+          _listLabels[iButton].TextColor = dwColor.ToString();
           _listLabels[iButton].Label = pItem.Label;
           _listLabels[iButton].AllowScrolling = false;
           _listLabels[iButton].Render(timePassed);
@@ -2883,7 +2906,7 @@ namespace MediaPortal.GUI.Library
       iHeight = _heightThumbNailLow;
     }
 
-    public long TextColor
+    public string TextColor
     {
       get { return _textColor; }
     }
@@ -2930,7 +2953,7 @@ namespace MediaPortal.GUI.Library
 
     public long SpinTextColor
     {
-      get { return _controlUpDown.TextColor; }
+      get { return GUIPropertyManager.ParseColor(_controlUpDown.TextColor, 0xFFFFFFFF); }
     }
 
     public int SpinX

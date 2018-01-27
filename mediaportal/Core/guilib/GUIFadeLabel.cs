@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2017 Team MediaPortal
+#region Copyright (C) 2005-2018 Team MediaPortal
 
-// Copyright (C) 2005-2017 Team MediaPortal
+// Copyright (C) 2005-2018 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -32,7 +32,7 @@ namespace MediaPortal.GUI.Library
   public class GUIFadeLabel : GUIControl
   {
     [XMLSkinElement("scrollStartDelaySec")] protected int _scrollStartDelay = 1;
-    [XMLSkinElement("textcolor")] protected long _textColor = 0xFFFFFFFF;
+    [XMLSkinElement("textcolor")] protected string _textColor = "0xFFFFFFFF";
     [XMLSkinElement("align")] private Alignment _textAlignment = Alignment.ALIGN_LEFT;
     [XMLSkinElement("valign")] private VAlignment _textVAlignment = VAlignment.ALIGN_TOP;
     [XMLSkinElement("font")] protected string _fontName = "";
@@ -90,8 +90,34 @@ namespace MediaPortal.GUI.Library
                         int dwShadowAngle, int dwShadowDistance, long dwShadowColor,
                         string strUserWrapString)
       : this(dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight, 
-             strFont, dwTextColor, dwTextAlign, dwTextVAlign, 
+             strFont, dwTextColor.ToString(), dwTextAlign, dwTextVAlign, 
              dwShadowAngle, dwShadowDistance, dwShadowColor, 
+             strUserWrapString, 0, 0) { }
+
+    /// <summary>
+    /// The constructor of the GUIFadeLabel class.
+    /// </summary>
+    /// <param name="dwParentID">The parent of this control.</param>
+    /// <param name="dwControlId">The ID of this control.</param>
+    /// <param name="dwPosX">The X position of this control.</param>
+    /// <param name="dwPosY">The Y position of this control.</param>
+    /// <param name="dwWidth">The width of this control.</param>
+    /// <param name="dwHeight">The height of this control.</param>
+    /// <param name="strFont">The indication of the font of this control.</param>
+    /// <param name="dwTextColor">The color of this control.</param>
+    /// <param name="dwTextAlign">The alignment of this control.</param>
+    /// <param name="dwTextVAlign">The vertical alignment of this control.</param>
+    /// <param name="dwShadowAngle">The angle of the shadow; zero degrees along x-axis.</param>
+    /// <param name="dwShadowDistance">The distance of the shadow.</param>
+    /// <param name="dwShadowColor">The color of the shadow.</param>
+    /// <param name="strUserWrapString">The string used to connect a wrapped fade label.</param>
+    public GUIFadeLabel(int dwParentID, int dwControlId, int dwPosX, int dwPosY, int dwWidth, int dwHeight,
+                        string strFont, string dwTextColor, Alignment dwTextAlign, VAlignment dwTextVAlign,
+                        int dwShadowAngle, int dwShadowDistance, long dwShadowColor,
+                        string strUserWrapString)
+      : this(dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight,
+             strFont, dwTextColor, dwTextAlign, dwTextVAlign,
+             dwShadowAngle, dwShadowDistance, dwShadowColor,
              strUserWrapString, 0, 0) { }
 
     /// <summary>
@@ -115,6 +141,45 @@ namespace MediaPortal.GUI.Library
     /// <param name="dwMaxHeight">Max Height for autosized Label. From Height to MaxHeight.</param>
     public GUIFadeLabel(int dwParentID, int dwControlId, int dwPosX, int dwPosY, int dwWidth, int dwHeight,
                         string strFont, long dwTextColor, Alignment dwTextAlign, VAlignment dwTextVAlign,
+                        int dwShadowAngle, int dwShadowDistance, long dwShadowColor,
+                        string strUserWrapString, int dwMaxWidth, int dwMaxHeight)
+      : base(dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight)
+    {
+      _fontName = strFont;
+      _textColor = dwTextColor.ToString();
+      _textAlignment = dwTextAlign;
+      _textVAlignment = dwTextVAlign;
+      _shadowAngle = dwShadowAngle;
+      _shadowDistance = dwShadowDistance;
+      _shadowColor = dwShadowColor;
+      _userWrapString = strUserWrapString;
+      _maxWidth = dwMaxWidth;
+      _maxHeight = dwMaxHeight;
+
+      FinalizeConstruction();
+    }
+
+    /// <summary>
+    /// The constructor of the GUIFadeLabel class.
+    /// </summary>
+    /// <param name="dwParentID">The parent of this control.</param>
+    /// <param name="dwControlId">The ID of this control.</param>
+    /// <param name="dwPosX">The X position of this control.</param>
+    /// <param name="dwPosY">The Y position of this control.</param>
+    /// <param name="dwWidth">The width of this control.</param>
+    /// <param name="dwHeight">The height of this control.</param>
+    /// <param name="strFont">The indication of the font of this control.</param>
+    /// <param name="dwTextColor">The color of this control.</param>
+    /// <param name="dwTextAlign">The alignment of this control.</param>
+    /// <param name="dwTextVAlign">The vertical alignment of this control.</param>
+    /// <param name="dwShadowAngle">The angle of the shadow; zero degrees along x-axis.</param>
+    /// <param name="dwShadowDistance">The distance of the shadow.</param>
+    /// <param name="dwShadowColor">The color of the shadow.</param>
+    /// <param name="strUserWrapString">The string used to connect a wrapped fade label.</param>
+    /// <param name="dwMaxWidth">Max Width for autosized Label. From Width to MaxWidth.</param>
+    /// <param name="dwMaxHeight">Max Height for autosized Label. From Height to MaxHeight.</param>
+    public GUIFadeLabel(int dwParentID, int dwControlId, int dwPosX, int dwPosY, int dwWidth, int dwHeight,
+                        string strFont, string dwTextColor, Alignment dwTextAlign, VAlignment dwTextVAlign,
                         int dwShadowAngle, int dwShadowDistance, long dwShadowColor,
                         string strUserWrapString, int dwMaxWidth, int dwMaxHeight)
       : base(dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight)
@@ -331,10 +396,11 @@ namespace MediaPortal.GUI.Library
       // Make the label fade in
       if (_fadeIn && _allowScrolling)
       {
-        long dwAlpha = ((((uint)_textColor) >> 24) * _currentFrame) / 12;
+        long _tc = GUIPropertyManager.ParseColor(_textColor, 0xFFFFFFFF);
+        long dwAlpha = ((((uint)_tc) >> 24) * _currentFrame) / 12;
         dwAlpha <<= 24;
-        dwAlpha |= (_textColor & 0x00ffffff);
-        _labelControl.TextColor = dwAlpha;
+        dwAlpha |= (_tc & 0x00ffffff);
+        _labelControl.TextColor = dwAlpha.ToString();
         
         dwAlpha = ((((uint)_shadowColor) >> 24) * _currentFrame) / 12;
         dwAlpha <<= 24;
@@ -455,7 +521,7 @@ namespace MediaPortal.GUI.Library
       }
 
       // set text color and apply dimming if requested
-      long color = _textColor;
+      long color = GUIPropertyManager.ParseColor(_textColor, 0xFFFFFFFF);
       if (Dimmed)
       {
         color &= DimColor;
@@ -546,7 +612,7 @@ namespace MediaPortal.GUI.Library
         {
           _labelControl.Width = (int)(maxRenderWidth + _scrollPosititionX - _scrollOffset);
         }
-        _labelControl.TextColor = color;
+        _labelControl.TextColor = color.ToString();
 
         double xpos;
         double xoff;
@@ -632,7 +698,7 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// Get/set the color of the text.
     /// </summary>
-    public long TextColor
+    public string TextColor
     {
       get { return _textColor; }
       set { _textColor = value; }

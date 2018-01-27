@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2017 Team MediaPortal
+#region Copyright (C) 2005-2018Team MediaPortal
 
-// Copyright (C) 2005-2017 Team MediaPortal
+// Copyright (C) 2005-2018 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -88,7 +88,7 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("thumbWidth")] protected int _thumbNailWidth = 64;
     [XMLSkinElement("thumbHeight")] protected int _thumbNailHeight = 64;
     [XMLSkinElement("font")] protected string _fontName = "";
-    [XMLSkinElement("textcolor")] protected long _textColor = 0xFFFFFFFF;
+    [XMLSkinElement("textcolor")] protected string _textColor = "0xFFFFFFFF";
     [XMLSkinElement("selectedColor")] protected long _selectedColor = 0xFFFFFFFF;
 
     [XMLSkinElement("scrollbarBackground")] protected string _scrollbarBackgroundName = "";
@@ -719,7 +719,7 @@ namespace MediaPortal.GUI.Library
       float fTextPosY = (float)dwPosY + (float)_textureHeight;
 
       TransformMatrix tm = null;
-      long dwColor = _textColor;
+      long dwColor = GUIPropertyManager.ParseColor(_textColor, 0xFFFFFFFF);
       if (pItem.Selected)
       {
         dwColor = _selectedColor;
@@ -962,7 +962,7 @@ namespace MediaPortal.GUI.Library
         _listLabels[itemNumber].YPosition = (int)Math.Truncate(fTextPosY + _textYOff);
         _listLabels[itemNumber].Width = _textureWidth;
         _listLabels[itemNumber].Height = _textureHeight;
-        _listLabels[itemNumber].TextColor = dwColor;
+        _listLabels[itemNumber].TextColor = dwColor.ToString();
         _listLabels[itemNumber].Label = pItem.Label;
         _listLabels[itemNumber].Visible = true;
         _listLabels[itemNumber].AllowScrolling = _allowScrolling;
@@ -2780,7 +2780,7 @@ namespace MediaPortal.GUI.Library
       iHeight = _lowThumbNailPositionHeight;
     }
 
-    public long TextColor
+    public string TextColor
     {
       get { return _textColor; }
     }
@@ -2875,7 +2875,7 @@ namespace MediaPortal.GUI.Library
         {
           return 0;
         }
-        return _upDownControl.TextColor;
+        return GUIPropertyManager.ParseColor(_upDownControl.TextColor, 0xFFFFFFFF);
       }
     }
 

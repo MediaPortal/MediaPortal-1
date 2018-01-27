@@ -89,7 +89,7 @@ namespace MediaPortal.GUI.Library
       {
         _countLabel = new GUILabelControl(0);
         _countLabel.FontName = "waitcursor";
-        _countLabel.TextColor = 0x66ffffff;
+        _countLabel.TextColor = "0x66ffffff";
         _countLabel.TextAlignment = Alignment.ALIGN_CENTER;
         _countLabel.TextVAlignment = VAlignment.ALIGN_MIDDLE;
         _countLabel.Width = 96;

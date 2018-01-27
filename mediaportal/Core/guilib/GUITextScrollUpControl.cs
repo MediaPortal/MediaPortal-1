@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2018 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2018 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -38,7 +38,7 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("scrollYOffset")] protected int _yOffset = 2;
     [XMLSkinElement("spaceBetweenItems")] protected int _spaceBetweenItems = 2;
     [XMLSkinElement("font")] protected string _fontName = "";
-    [XMLSkinElement("textcolor")] protected long _textColor = 0xFFFFFFFF;
+    [XMLSkinElement("textcolor")] protected string _textColor = "0xFFFFFFFF";
     [XMLSkinElement("label")] protected string _property = "";
     [XMLSkinElement("seperator")] protected string _seperator = "";
     [XMLSkinElement("textalign")] protected Alignment _textAlignment = Alignment.ALIGN_LEFT;
@@ -74,6 +74,11 @@ namespace MediaPortal.GUI.Library
 
     public GUITextScrollUpControl(int dwParentID, int dwControlId, int dwPosX, int dwPosY, int dwWidth, int dwHeight,
                                   string strFont, long dwTextColor)
+      : this (dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight,
+                                  strFont, dwTextColor.ToString()) { }
+
+    public GUITextScrollUpControl(int dwParentID, int dwControlId, int dwPosX, int dwPosY, int dwWidth, int dwHeight,
+                                  string strFont, string dwTextColor)
       : base(dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight)
     {
       _fontName = strFont;
@@ -216,7 +221,7 @@ namespace MediaPortal.GUI.Library
           Rectangle clipRect = new Rectangle(_positionX, _positionY, _width, _height);
           GUIGraphicsContext.BeginClip(clipRect);
         }
-        long color = _textColor;
+        long color = GUIPropertyManager.ParseColor(_textColor, 0xFFFFFFFF);
         if (Dimmed)
         {
           color &= DimColor;
@@ -315,17 +320,18 @@ namespace MediaPortal.GUI.Library
               }
 
               uint aColor = GUIGraphicsContext.MergeAlpha((uint)color);
+              uint textColor = GUIGraphicsContext.MergeAlpha((uint)GUIPropertyManager.ParseColor(_textColor, 0xFFFFFFFF));
               if (Shadow)
               {
                 uint sColor = GUIGraphicsContext.MergeAlpha((uint)_shadowColor);
                 _font.DrawShadowTextWidth(x, (float)dwPosY + ioffy,
-                                          (uint)GUIGraphicsContext.MergeAlpha((uint)_textColor), wszText2.Trim(),
+                                          textColor, wszText2.Trim(),
                                           _textAlignment,
                                           _shadowAngle, _shadowDistance, sColor, (float)dMaxWidth);
               }
               else
               {
-                _font.DrawTextWidth(x, (float)dwPosY + ioffy, (uint)GUIGraphicsContext.MergeAlpha((uint)_textColor),
+                _font.DrawTextWidth(x, (float)dwPosY + ioffy, textColor,
                                     wszText2.Trim(), fTextWidth, _textAlignment);
               }
             }
@@ -343,16 +349,17 @@ namespace MediaPortal.GUI.Library
             }
             {
               uint aColor = GUIGraphicsContext.MergeAlpha((uint)color);
+              uint textColor = GUIGraphicsContext.MergeAlpha((uint)GUIPropertyManager.ParseColor(_textColor, 0xFFFFFFFF));
               if (Shadow)
               {
                 uint sColor = GUIGraphicsContext.MergeAlpha((uint)_shadowColor);
-                _font.DrawShadowTextWidth(x, (float)dwPosY + ioffy, (uint)GUIGraphicsContext.MergeAlpha((uint)_textColor),
+                _font.DrawShadowTextWidth(x, (float)dwPosY + ioffy, textColor,
                                           wszText1.Trim(), _textAlignment,
                                           _shadowAngle, _shadowDistance, sColor, (float)dMaxWidth);
               }
               else
               {
-                _font.DrawTextWidth(x, (float)dwPosY + ioffy, (uint)GUIGraphicsContext.MergeAlpha((uint)_textColor),
+                _font.DrawTextWidth(x, (float)dwPosY + ioffy, textColor,
                                     wszText1.Trim(), (float)dMaxWidth, _textAlignment);
               }
 
@@ -508,7 +515,7 @@ namespace MediaPortal.GUI.Library
     }
 
 
-    public long TextColor
+    public string TextColor
     {
       get { return _textColor; }
     }

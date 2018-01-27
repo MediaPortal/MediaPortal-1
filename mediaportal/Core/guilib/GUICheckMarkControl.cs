@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2018 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2018 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -34,7 +34,7 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("MarkWidth")] protected int _checkMarkWidth;
     [XMLSkinElement("MarkHeight")] protected int _checkMarkHeight;
     [XMLSkinElement("font")] protected string _fontName;
-    [XMLSkinElement("textcolor")] protected long _textColor = 0xFFFFFFFF;
+    [XMLSkinElement("textcolor")] protected string _textColor = "0xFFFFFFFF";
     [XMLSkinElement("label")] protected string _label = "";
     [XMLSkinElement("disabledcolor")] protected long _disabledColor = 0xFF606060;
     [XMLSkinElement("align")] protected Alignment _alignment = Alignment.ALIGN_RIGHT;
@@ -204,17 +204,18 @@ namespace MediaPortal.GUI.Library
           // Draw focused text and shadow
           if (Focus)
           {
+            uint textColor = GUIGraphicsContext.MergeAlpha((uint)GUIPropertyManager.ParseColor(_textColor, 0xFFFFFFFF));
             if (_shadow)
             {
-              _font.DrawShadowText((float)dwTextPosX, (float)_positionY, GUIGraphicsContext.MergeAlpha((uint)_textColor), _label, Alignment.ALIGN_LEFT, -1, 5,
+              _font.DrawShadowText((float)dwTextPosX, (float)_positionY, textColor, _label, Alignment.ALIGN_LEFT, -1, 5,
                                    5, GUIGraphicsContext.MergeAlpha(0xff000000));
             }
             else
             {
-              _font.DrawText((float)dwTextPosX, (float)_positionY, GUIGraphicsContext.MergeAlpha((uint)_textColor), _label, Alignment.ALIGN_LEFT, -1);
+              _font.DrawText((float)dwTextPosX, (float)_positionY, textColor, _label, Alignment.ALIGN_LEFT, -1);
             }
           }
-            // Draw non-focused text and shadow
+          // Draw non-focused text and shadow
           else
           {
             if (_shadow)
@@ -358,6 +359,11 @@ namespace MediaPortal.GUI.Library
     /// <param name="dwColor">The font color.</param>
     public void SetLabel(string strFontName, string strLabel, long dwColor)
     {
+      SetLabel(strFontName, strLabel, dwColor.ToString());
+    }
+
+    public void SetLabel(string strFontName, string strLabel, string dwColor)
+    {
       if (strFontName == null || strLabel == null)
       {
         return;
@@ -371,7 +377,7 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// Set the color of the text on the control. 
     /// </summary>
-    public long TextColor
+    public string TextColor
     {
       get { return _textColor; }
       set { _textColor = value; }

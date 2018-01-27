@@ -2053,6 +2053,7 @@ namespace MediaPortal.GUI.Library
       float positionX = (x + z) / 2.0f;
       float positionY = (y + w) / 2.0f;
 
+
       if (key.name.Length > 1 && Char.IsUpper(key.name[1]))
       {
         _fontNamedKey.GetTextExtent(name, ref textWidth, ref textHeight);
@@ -2064,7 +2065,7 @@ namespace MediaPortal.GUI.Library
         key.button.TextAlignment = GUIControl.Alignment.ALIGN_CENTER;
         key.button.TextVAlignment = GUIControl.VAlignment.ALIGN_MIDDLE;
         key.button.TextColorNoFocus = textColor.ToString();
-        key.button.TextColor = textColor;
+        key.button.TextColor = textColor.ToString();
       }
       else
       {
@@ -2076,7 +2077,7 @@ namespace MediaPortal.GUI.Library
         key.button.FontName = _charKeyFont;
         key.button.TextAlignment = GUIControl.Alignment.ALIGN_CENTER;
         key.button.TextVAlignment = GUIControl.VAlignment.ALIGN_MIDDLE;
-        key.button.TextColor = textColor;
+        key.button.TextColor = textColor.ToString();
         key.button.TextColorNoFocus = textColor.ToString();
       }
       key.button.Render(timePassed);
@@ -2116,7 +2117,7 @@ namespace MediaPortal.GUI.Library
 
       label.SetPosition(x + xoff, y);
       label.Label = _labelText;
-      label.TextColor = _labelColor;
+      label.TextColor = _labelColor.ToString();
       label.Render(timePassed);
     }
 
@@ -2163,7 +2164,7 @@ namespace MediaPortal.GUI.Library
 
       inputText.SetPosition(x + xoff, y);
       inputText.Label = textLine;
-      inputText.TextColor = _inputTextColor;
+      inputText.TextColor = _inputTextColor.ToString();
       inputText.Render(timePassed);
 
       if (!IsLabelInitialText()) // Don't render the caret if displaying the label as initial text.
@@ -2197,7 +2198,7 @@ namespace MediaPortal.GUI.Library
 
           inputTextCaret.SetPosition(x + xoff, y);
           inputTextCaret.Label = "|";
-          inputTextCaret.TextColor = _inputTextColor;
+          inputTextCaret.TextColor = _inputTextColor.ToString();
           inputTextCaret.Render(timePassed);
         }
       }

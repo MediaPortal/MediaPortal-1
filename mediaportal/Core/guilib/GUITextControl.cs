@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2018 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2018 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -59,7 +59,7 @@ namespace MediaPortal.GUI.Library
     protected int _startFrame = 0;
     [XMLSkinElement("font")] protected string _fontName = "";
     [XMLSkinElement("lineSpacing")] protected float _lineSpacing = 1.0f;
-    [XMLSkinElement("textcolor")] protected long _textColor = 0xFFFFFFFF;
+    [XMLSkinElement("textcolor")] protected string _textColor = "0xFFFFFFFF";
     [XMLSkinElement("textureUp")] protected string _upTextureName;
     [XMLSkinElement("textureDown")] protected string _downTextureName;
     [XMLSkinElement("textureUpFocus")] protected string _upTextureNameFocus;
@@ -88,6 +88,21 @@ namespace MediaPortal.GUI.Library
                           string strUpFocus, string strDownFocus,
                           long dwSpinColor, int dwSpinX, int dwSpinY,
                           long dwTextColor)
+      : this(dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight,
+                          strFontName,
+                          dwSpinWidth, dwSpinHeight,
+                          strUp, strDown,
+                          strUpFocus, strDownFocus,
+                          dwSpinColor, dwSpinX, dwSpinY,
+                          dwTextColor.ToString()) { }
+
+    public GUITextControl(int dwParentID, int dwControlId, int dwPosX, int dwPosY, int dwWidth, int dwHeight,
+                          string strFontName,
+                          int dwSpinWidth, int dwSpinHeight,
+                          string strUp, string strDown,
+                          string strUpFocus, string strDownFocus,
+                          long dwSpinColor, int dwSpinX, int dwSpinY,
+                          string dwTextColor)
       : base(dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight)
     {
       _fontName = strFontName;
@@ -181,7 +196,7 @@ namespace MediaPortal.GUI.Library
             wszText2 = String.Format("{0}", strLabel2);
             _font.GetTextExtent(wszText2, ref fTextWidth, ref fTextHeight);
             dMaxWidth -= (int)(fTextWidth);
-            uint color = (uint)_textColor;
+            uint color = (uint)GUIPropertyManager.ParseColor(_textColor, 0xFFFFFFFF);
             color = GUIGraphicsContext.MergeAlpha(color);
             if (Shadow)
             {
@@ -206,7 +221,7 @@ namespace MediaPortal.GUI.Library
               break;
           }
           {
-            uint color = (uint)_textColor;
+            uint color = (uint)GUIPropertyManager.ParseColor(_textColor, 0xFFFFFFFF);
             color = GUIGraphicsContext.MergeAlpha(color);
             if (Shadow)
             {
@@ -592,7 +607,7 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-    public long TextColor
+    public string TextColor
     {
       get { return _textColor; }
     }
@@ -641,7 +656,7 @@ namespace MediaPortal.GUI.Library
 
     public long SpinTextColor
     {
-      get { return _upDownControl.TextColor; }
+      get { return GUIPropertyManager.ParseColor(_upDownControl.TextColor, 0xFFFFFFFF); }
     }
 
     public int SpinX

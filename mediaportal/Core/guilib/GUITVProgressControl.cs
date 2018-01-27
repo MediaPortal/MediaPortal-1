@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2018 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2018 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -56,7 +56,7 @@ namespace MediaPortal.GUI.Library
     private List<int> _markerWidths = new List<int>();
 
     [XMLSkinElement("label")] private string _propertyLabel = "";
-    [XMLSkinElement("textcolor")] protected long _textColor = 0xFFFFFFFF;
+    [XMLSkinElement("textcolor")] protected string _textColor = "0xFFFFFFFF";
     [XMLSkinElement("font")] protected string _fontName = "";
 
     private GUIFont _font = null;
@@ -550,6 +550,7 @@ namespace MediaPortal.GUI.Library
         float fHeight = 0;
         string strText = "";
 
+        long textColor = GUIPropertyManager.ParseColor(_textColor, 0xFFFFFFFF);
         // render top text
         if (_labelTop.Length > 0)
         {
@@ -561,7 +562,7 @@ namespace MediaPortal.GUI.Library
           fHeight = ((float)_imageTop.Height) / 2.0f;
           fWidth -= fW;
           fHeight -= fH;
-          _font.DrawText((float)_imageTop.XPosition + fWidth, (float)2 + _imageTop.YPosition + fHeight, _textColor,
+          _font.DrawText((float)_imageTop.XPosition + fWidth, (float)2 + _imageTop.YPosition + fHeight, textColor,
                          strText, Alignment.ALIGN_LEFT, -1);
         }
 
@@ -577,7 +578,7 @@ namespace MediaPortal.GUI.Library
           fHeight = ((float)iHeightLeft) / 2.0f;
           fWidth -= fW;
           fHeight -= fH;
-          _font.DrawText((float)_positionX + fWidth, (float)_positionY + fHeight, _textColor, strText,
+          _font.DrawText((float)_positionX + fWidth, (float)_positionY + fHeight, textColor, strText,
                          Alignment.ALIGN_LEFT, -1);
         }
 
@@ -592,7 +593,7 @@ namespace MediaPortal.GUI.Library
           fHeight = ((float)iHeightRight) / 2.0f;
           fWidth -= fW;
           fHeight -= fH;
-          _font.DrawText((float)_imageRight.XPosition + fWidth, (float)_imageRight.YPosition + fHeight, _textColor,
+          _font.DrawText((float)_imageRight.XPosition + fWidth, (float)_imageRight.YPosition + fHeight, textColor,
                          strText, Alignment.ALIGN_LEFT, -1);
         }
       }
@@ -873,7 +874,7 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// Get/set the color of the text
     /// </summary>
-    public long TextColor
+    public string TextColor
     {
       get { return _textColor; }
       set { _textColor = value; }

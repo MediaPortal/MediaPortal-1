@@ -136,12 +136,12 @@ namespace MediaPortal.GUI.Library
         if (_labelControl is GUILabelControl)
         {
           ((GUILabelControl)_labelControl).Label = _label;
-          ((GUILabelControl)_labelControl).TextColor = _disabledColor;
+          ((GUILabelControl)_labelControl).TextColor = _disabledColor.ToString();
         }
         else
         {
           ((GUIFadeLabel)_labelControl).Label = _label;
-          ((GUIFadeLabel)_labelControl).TextColor = _disabledColor;
+          ((GUIFadeLabel)_labelControl).TextColor = _disabledColor.ToString();
         }
         _labelControl.SetPosition(_textOffsetX + _positionX, _textOffsetY + _positionY);
         _labelControl.Render(timePassed);
@@ -151,7 +151,7 @@ namespace MediaPortal.GUI.Library
         if (_labelControl is GUILabelControl)
         {
           ((GUILabelControl)_labelControl).Label = _label;
-          ((GUILabelControl)_labelControl).TextColor = _disabledColor;
+          ((GUILabelControl)_labelControl).TextColor = _disabledColor.ToString();
         }
         else
         {

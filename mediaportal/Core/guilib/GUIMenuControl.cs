@@ -39,7 +39,7 @@ namespace MediaPortal.GUI.Library
     #region Properties (Skin)    
 
     [XMLSkinElement("spaceBetweenButtons")] protected int _spaceBetweenButtons = 8;
-    [XMLSkinElement("textcolor")] protected long _textColor = 0xFFFFFFFF;
+    [XMLSkinElement("textcolor")] protected string _textColor = "0xFFFFFFFF";
     [XMLSkinElement("textColorNoFocus")] protected string _textColorNoFocus = "0xFFFFFFFF";
     [XMLSkinElement("textAlign")] private Alignment _textAlignment = Alignment.ALIGN_LEFT;
     [XMLSkinElement("buttonWidth")] protected int _buttonWidth = 60;

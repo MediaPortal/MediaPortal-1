@@ -28,7 +28,7 @@ namespace MediaPortal.GUI.Library
   /// </summary>
   public class GUISelectButtonControl : GUIControl
   {
-    [XMLSkinElement("textcolor")] protected long _textColor = 0xFFFFFFFF;
+    [XMLSkinElement("textcolor")] protected string _textColor = "0xFFFFFFFF";
     [XMLSkinElement("textcolorNoFocus")] protected string _textColorNoFocus = "0xFFFFFFFF";
     [XMLSkinElement("onclick")] protected string _onclick = "";
     [XMLSkinElement("disabledcolor")] protected long _disabledColor = 0xFF606060;
@@ -244,7 +244,7 @@ namespace MediaPortal.GUI.Library
         // render background, left and right arrow
         _imageBackground.Render(timePassed);
 
-        long dwTextColor = Focus ? _textColor : GUIPropertyManager.ParseColor(_textColorNoFocus, 0xFFFFFFFF);
+        long dwTextColor = GUIPropertyManager.ParseColor(Focus ? _textColor : _textColorNoFocus, 0xFFFFFFFF);
 
         // User has moved left...
         if (_leftSelected)
@@ -314,7 +314,7 @@ namespace MediaPortal.GUI.Library
             _labelControl.SetPosition(_positionX + _imageLeft.Width + _textOffsetX, _textOffsetY + _positionY);
           }
 
-          _labelControl.TextColor = dwTextColor;
+          _labelControl.TextColor = dwTextColor.ToString();
           _labelControl.TextAlignment = _textAlignment;
           _labelControl.Label = (string)_subItemList[SelectedItem];
           _labelControl.Width = _width - (_imageRight.Width + _imageLeft.Width + _textOffsetX);
@@ -365,11 +365,11 @@ namespace MediaPortal.GUI.Library
 
           if (Disabled || _subItemList.Count == 0)
           {
-            _labelControl.TextColor = _disabledColor;
+            _labelControl.TextColor = _disabledColor.ToString();
           }
           else
           {
-            _labelControl.TextColor = Focus ? _textColor : GUIPropertyManager.ParseColor(_textColorNoFocus, 0xFFFFFFFF);
+            _labelControl.TextColor = Focus ? _textColor : _textColorNoFocus;
           }
           _labelControl.TextAlignment = _textAlignment;
           _labelControl.Label = _label;
@@ -766,7 +766,7 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// Set the color of the text on the GUIButtonControl. 
     /// </summary>
-    public long TextColor
+    public string TextColor
     {
       get { return _textColor; }
       set { _textColor = value; }
@@ -795,6 +795,17 @@ namespace MediaPortal.GUI.Library
     /// <param name="strLabel">The text.</param>
     /// <param name="dwColor">The font color.</param>
     public void SetLabel(string strFontName, string strLabel, long dwColor)
+    {
+      SetLabel(strFontName, strLabel, dwColor.ToString());
+    }
+
+    /// <summary>
+    /// Set the text of the control. 
+    /// </summary>
+    /// <param name="strFontName">The font name.</param>
+    /// <param name="strLabel">The text.</param>
+    /// <param name="dwColor">The font color.</param>
+    public void SetLabel(string strFontName, string strLabel, string dwColor)
     {
       if (strLabel == null)
       {

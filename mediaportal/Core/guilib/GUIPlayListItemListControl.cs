@@ -665,10 +665,10 @@ namespace MediaPortal.GUI.Library
       {
         if (_textOffsetY == _textOffsetY2)
         {
-          dwColor = _textColor2;
+          dwColor = GUIPropertyManager.ParseColor(_textColor2, 0xFFFFFFFF);
           if (pItem.Selected)
           {
-            dwColor = _selectedColor2;
+            dwColor = GUIPropertyManager.ParseColor(_selectedColor2, 0xFFFFFFFF);
           }
           if (pItem.IsRemote)
           {
@@ -704,7 +704,7 @@ namespace MediaPortal.GUI.Library
               if (label2 != null)
               {
                 label2.SetPosition(xpos, ypos + GUIGraphicsContext.ScaleVertical(2) + _textOffsetY2);
-                label2.TextColor = gotFocus ? dwColor : Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int)dwColor)).ToArgb();
+                label2.TextColor = (gotFocus ? dwColor : Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int)dwColor)).ToArgb()).ToString();
                 label2.Label = pItem.Label2;
                 label2.TextAlignment = Alignment.ALIGN_RIGHT;
                 label2.FontName = _fontName2Name;
@@ -717,10 +717,10 @@ namespace MediaPortal.GUI.Library
 
       if (_text1Visible)
       {
-        dwColor = _textColor;
+        dwColor = GUIPropertyManager.ParseColor(_textColor, 0xFFFFFFFF);
         if (pItem.Selected)
         {
-          dwColor = _selectedColor;
+          dwColor = GUIPropertyManager.ParseColor(_selectedColor, 0xFFFFFFFF);
         }
 
         if (pItem.IsRemote)
@@ -760,10 +760,10 @@ namespace MediaPortal.GUI.Library
 
       if (pItem.Label2.Length > 0)
       {
-        dwColor = _textColor2;
+        dwColor = GUIPropertyManager.ParseColor(_textColor2, 0xFFFFFFFF);
         if (pItem.Selected)
         {
-          dwColor = _selectedColor2;
+          dwColor = GUIPropertyManager.ParseColor(_selectedColor2, 0xFFFFFFFF);
         }
 
         if (pItem.IsRemote)
@@ -797,9 +797,9 @@ namespace MediaPortal.GUI.Library
             if (label2 != null)
             {
               label2.SetPosition(dwPosX, dwPosY + GUIGraphicsContext.ScaleVertical(2) + _textOffsetY2);
-              label2.TextColor = gotFocus
+              label2.TextColor = (gotFocus
                                    ? dwColor
-                                   : Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int) dwColor)).ToArgb();
+                                   : Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int) dwColor)).ToArgb()).ToString();
               label2.Label = pItem.Label2;
               label2.TextAlignment = Alignment.ALIGN_RIGHT;
               label2.FontName = _fontName2Name;
@@ -826,10 +826,10 @@ namespace MediaPortal.GUI.Library
 
       if (pItem.Label3.Length > 0)
       {
-        dwColor = _textColor3;
+        dwColor = GUIPropertyManager.ParseColor(_textColor3, 0xFFFFFFFF);
         if (pItem.Selected)
         {
-          dwColor = _selectedColor3;
+          dwColor = GUIPropertyManager.ParseColor(_selectedColor3, 0xFFFFFFFF);
         }
 
         if (pItem.IsRemote)
@@ -878,7 +878,7 @@ namespace MediaPortal.GUI.Library
               {
                 label3.SetPosition(dwPosX, ypos);
 
-                label3.TextColor = gotFocus ? dwColor : Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int)dwColor)).ToArgb();
+                label3.TextColor = (gotFocus ? dwColor : Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int)dwColor)).ToArgb()).ToString();
                 label3.Label = pItem.Label3;
                 label3.TextAlignment = Alignment.ALIGN_LEFT;
                 label3.FontName = _fontName2Name;

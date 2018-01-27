@@ -33,7 +33,7 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("textureNoFocus")] protected string _nonFocusedTextureName = "";
     [XMLSkinElement("font")] protected string _fontName;
     [XMLSkinElement("label")] protected string _label = "";
-    [XMLSkinElement("textcolor")] protected long _textColor = 0xFFFFFFFF;
+    [XMLSkinElement("textcolor")] protected string _textColor = "0xFFFFFFFF";
     [XMLSkinElement("textcolorNoFocus")] protected string _textColorNoFocus = "0xFFFFFFFF";
     [XMLSkinElement("disabledcolor")] protected long _disabledColor = 0xFF606060;
     [XMLSkinElement("hyperlink")] protected int _hyperLinkWindowId = -1;
@@ -315,21 +315,21 @@ namespace MediaPortal.GUI.Library
       }
       _labelControl.Width = labelWidth;
 
-      long longColorNoFocus = GUIPropertyManager.ParseColor(_textColorNoFocus, 0xFFFFFFFF);
+      //long longColorNoFocus = GUIPropertyManager.ParseColor(_textColorNoFocus, 0xFFFFFFFF);
       // render the text on the button
       if (_labelControl is GUILabelControl)
       {
         ((GUILabelControl)_labelControl).TextAlignment = _textAlignment;
         ((GUILabelControl)_labelControl).TextVAlignment = _textVAlignment;
         ((GUILabelControl)_labelControl).Label = labelText;
-        ((GUILabelControl)_labelControl).TextColor = Disabled ? _disabledColor : Focus ? _textColor : longColorNoFocus;
+        ((GUILabelControl)_labelControl).TextColor = Disabled ? _disabledColor.ToString() : Focus ? _textColor : _textColorNoFocus;
       }
       else
       {
         ((GUIFadeLabel)_labelControl).TextAlignment = _textAlignment;
         ((GUIFadeLabel)_labelControl).TextVAlignment = _textVAlignment;
         ((GUIFadeLabel)_labelControl).Label = labelText;
-        ((GUIFadeLabel)_labelControl).TextColor = Disabled ? _disabledColor : Focus ? _textColor : longColorNoFocus;
+        ((GUIFadeLabel)_labelControl).TextColor = Disabled ? _disabledColor.ToString() : Focus ? _textColor : _textColorNoFocus;
       }
 
       int x = 0;
@@ -620,7 +620,7 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// Set the color of the text on the GUICheckButton. 
     /// </summary>
-    public long TextColor
+    public string TextColor
     {
       get { return _textColor; }
       set { _textColor = value; }
@@ -657,6 +657,17 @@ namespace MediaPortal.GUI.Library
     /// <param name="strLabel">The text.</param>
     /// <param name="dwColor">The font color.</param>
     public void SetLabel(string strFontName, string strLabel, long dwColor)
+    {
+      SetLabel(strFontName, strLabel, dwColor.ToString());
+    }
+
+    /// <summary>
+    /// Set the text of the GUICheckButton. 
+    /// </summary>
+    /// <param name="strFontName">The font name.</param>
+    /// <param name="strLabel">The text.</param>
+    /// <param name="dwColor">The font color.</param>
+    public void SetLabel(string strFontName, string strLabel, string dwColor)
     {
       if (strFontName == null)
       {

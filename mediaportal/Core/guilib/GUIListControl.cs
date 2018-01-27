@@ -120,12 +120,12 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("font")] protected string _fontName = "";
     [XMLSkinElement("font2")] protected string _fontName2Name = "";
     [XMLSkinElement("font3")] protected string _fontName3Name = "";
-    [XMLSkinElement("textcolor")] protected long _textColor = 0xFFFFFFFF;
-    [XMLSkinElement("textcolor2")] protected long _textColor2 = 0xFFFFFFFF;
-    [XMLSkinElement("textcolor3")] protected long _textColor3 = 0xFFFFFFFF;
-    [XMLSkinElement("selectedColor")] protected long _selectedColor = 0xFFFFFFFF;
-    [XMLSkinElement("selectedColor2")] protected long _selectedColor2 = 0xFFFFFFFF;
-    [XMLSkinElement("selectedColor3")] protected long _selectedColor3 = 0xFFFFFFFF;
+    [XMLSkinElement("textcolor")] protected string _textColor = "0xFFFFFFFF";
+    [XMLSkinElement("textcolor2")] protected string _textColor2 = "0xFFFFFFFF";
+    [XMLSkinElement("textcolor3")] protected string _textColor3 = "0xFFFFFFFF";
+    [XMLSkinElement("selectedColor")] protected string _selectedColor = "0xFFFFFFFF";
+    [XMLSkinElement("selectedColor2")] protected string _selectedColor2 = "0xFFFFFFFF";
+    [XMLSkinElement("selectedColor3")] protected string _selectedColor3 = "0xFFFFFFFF";
     [XMLSkinElement("textcolorNoFocus")] protected string _textColorNoFocus = "N/A";
     [XMLSkinElement("textcolorNoFocus2")] protected string _textColorNoFocus2 = "N/A";
     [XMLSkinElement("textcolorNoFocus3")] protected string _textColorNoFocus3 = "N/A";
@@ -283,6 +283,54 @@ namespace MediaPortal.GUI.Library
                           string strUpFocus, string strDownFocus,
                           long dwSpinColor, int dwSpinX, int dwSpinY,
                           string strFont, long dwTextColor, long dwSelectedColor,
+                          string strButton, string strButtonFocus,
+                          string strScrollbarBackground, string strScrollbarTop, string strScrollbarBottom,
+                          int dwShadowAngle, int dwShadowDistance, long dwShadowColor) 
+      : this (dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight,
+                          dwSpinWidth, dwSpinHeight,
+                          strUp, strDown,
+                          strUpFocus, strDownFocus,
+                          dwSpinColor, dwSpinX, dwSpinY,
+                          strFont, dwTextColor.ToString(), dwSelectedColor.ToString(),
+                          strButton, strButtonFocus,
+                          strScrollbarBackground, strScrollbarTop, strScrollbarBottom,
+                          dwShadowAngle, dwShadowDistance, dwShadowColor) { }
+
+    /// <summary>
+    /// The constructor of the GUIListControl.
+    /// </summary>
+    /// <param name="dwParentID">The parent of this control.</param>
+    /// <param name="dwControlId">The ID of this control.</param>
+    /// <param name="dwPosX">The X position of this control.</param>
+    /// <param name="dwPosY">The Y position of this control.</param>
+    /// <param name="dwWidth">The width of this control.</param>
+    /// <param name="dwHeight">The height of this control.</param>
+    /// <param name="dwSpinWidth">TODO </param>
+    /// <param name="dwSpinHeight">TODO</param>
+    /// <param name="strUp">The name of the scroll up unfocused texture.</param>
+    /// <param name="strDown">The name of the scroll down unfocused texture.</param>
+    /// <param name="strUpFocus">The name of the scroll up focused texture.</param>
+    /// <param name="strDownFocus">The name of the scroll down unfocused texture.</param>
+    /// <param name="dwSpinColor">TODO </param>
+    /// <param name="dwSpinX">TODO </param>
+    /// <param name="dwSpinY">TODO </param>
+    /// <param name="strFont">The font used in the spin control.</param>
+    /// <param name="dwTextColor">The color of the text.</param>
+    /// <param name="dwSelectedColor">The color of the text when it is selected.</param>
+    /// <param name="strButton">The name of the unfocused button texture.</param>
+    /// <param name="strButtonFocus">The name of the focused button texture.</param>
+    /// <param name="strScrollbarBackground">The name of the background of the scrollbar texture.</param>
+    /// <param name="strScrollbarTop">The name of the top of the scrollbar texture.</param>
+    /// <param name="strScrollbarBottom">The name of the bottom of the scrollbar texture.</param>
+    /// <param name="dwShadowAngle">The angle of the shadow; zero degress along x-axis.</param>
+    /// <param name="dwShadowDistance">The distance of the shadow.</param>
+    /// <param name="dwShadowColor">The color of the shadow.</param>
+    public GUIListControl(int dwParentID, int dwControlId, int dwPosX, int dwPosY, int dwWidth, int dwHeight,
+                          int dwSpinWidth, int dwSpinHeight,
+                          string strUp, string strDown,
+                          string strUpFocus, string strDownFocus,
+                          long dwSpinColor, int dwSpinX, int dwSpinY,
+                          string strFont, string dwTextColor, string dwSelectedColor,
                           string strButton, string strButtonFocus,
                           string strScrollbarBackground, string strScrollbarTop, string strScrollbarBottom,
                           int dwShadowAngle, int dwShadowDistance, long dwShadowColor)
@@ -742,7 +790,7 @@ namespace MediaPortal.GUI.Library
       if (_text2Visible && item.Label2.Length > 0 && _textOffsetY == _textOffsetY2)
       {
         // set initial text color
-        color = _textColor2;
+        color = GUIPropertyManager.ParseColor(_textColor2, 0xFFFFFFFF);
 
         // override text color if label is not selected
         if (!gotFocus)
@@ -757,7 +805,7 @@ namespace MediaPortal.GUI.Library
         // override text color if skin sets it as selected
         if (item.Selected)
         {
-          color = _selectedColor2;
+          color = GUIPropertyManager.ParseColor(_selectedColor2, 0xFFFFFFFF);
         }
 
         // override text color if item is currently played
@@ -798,9 +846,9 @@ namespace MediaPortal.GUI.Library
             label2.SetPosition(x, positionY + GUIGraphicsContext.ScaleVertical(2) + _textOffsetY2);
 
             // apply unfocusedAlpha if item is not selected and control is in focus, else use color in its current state for rendering
-            label2.TextColor = !gotFocus && Focus
+            label2.TextColor = (!gotFocus && Focus
               ? Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int) color)).ToArgb()
-              : color;
+              : color).ToString();
 
             // set text, alignment and font for rendering
             label2.Label = item.Label2;
@@ -816,7 +864,7 @@ namespace MediaPortal.GUI.Library
       if (_text1Visible)
       {
         // set initial text color
-        color = _textColor;
+        color = GUIPropertyManager.ParseColor(_textColor, 0xFFFFFFFF);
 
         // override text color if label is not selected
         if (!gotFocus)
@@ -831,7 +879,7 @@ namespace MediaPortal.GUI.Library
         // override text color if skin sets it as selected
         if (item.Selected)
         {
-          color = _selectedColor;
+          color = GUIPropertyManager.ParseColor(_selectedColor, 0xFFFFFFFF);
         }
 
         // override text color if item is currently played
@@ -886,7 +934,7 @@ namespace MediaPortal.GUI.Library
       if (item.Label2.Length > 0)
       {
         // set initial text color
-        color = _textColor2;
+        color = GUIPropertyManager.ParseColor(_textColor2, 0xFFFFFFFF);
 
         // override text color if label is not selected
         if (!gotFocus)
@@ -901,7 +949,7 @@ namespace MediaPortal.GUI.Library
         // override text color if skin sets it as selected
         if (item.Selected)
         {
-          color = _selectedColor2;
+          color = GUIPropertyManager.ParseColor(_selectedColor2, 0xFFFFFFFF);
         }
 
         // override text color if item is currently played
@@ -953,7 +1001,7 @@ namespace MediaPortal.GUI.Library
             label2.SetPosition(positionX - GUIGraphicsContext.ScaleHorizontal(6), positionY + GUIGraphicsContext.ScaleVertical(2) + _textOffsetY2);
 
             // set label text color
-            label2.TextColor = color;
+            label2.TextColor = color.ToString();
 
             // set text, alignment and font for rendering
             label2.Label = item.Label2;
@@ -984,7 +1032,7 @@ namespace MediaPortal.GUI.Library
       if (item.Label3.Length > 0 || !string.IsNullOrEmpty(_text3Content))
       {
         // set initial text color
-        color = _textColor3;
+        color = GUIPropertyManager.ParseColor(_textColor3, 0xFFFFFFFF);
 
         // override text color if label is not selected
         if (!gotFocus)
@@ -999,7 +1047,7 @@ namespace MediaPortal.GUI.Library
         // override text color if skin sets it as selected
         if (item.Selected)
         {
-          color = _selectedColor3;
+          color = GUIPropertyManager.ParseColor(_selectedColor3, 0xFFFFFFFF);
         }
 
         // override text color if item is currently played
@@ -1049,7 +1097,7 @@ namespace MediaPortal.GUI.Library
             label3.SetPosition(positionX, ypos);
 
             // set label text color
-            label3.TextColor = color;
+            label3.TextColor = color.ToString();
 
             // set label text for rendering
             label3.Label = item.Label3;
@@ -1342,7 +1390,7 @@ namespace MediaPortal.GUI.Library
         label.SetPosition((int)fPosX, (int)fPosY);
       }
 
-      label.TextColor = dwTextColor;
+      label.TextColor = dwTextColor.ToString();
       label.Label = strTextToRender;
       label.Width = (int)fMaxWidth;
       label.TextAlignment = textWidth < fMaxWidth ? _textAlignment : Alignment.ALIGN_LEFT;
@@ -1362,7 +1410,7 @@ namespace MediaPortal.GUI.Library
       float fPosX = label._positionX;
       float fPosY = label._positionY;
       float fMaxWidth = label.Width;
-      long dwTextColor = label.TextColor;
+      long dwTextColor = GUIPropertyManager.ParseColor(label.TextColor, 0xFFFFFFFF);
       string strTextToRender = label.Label;
       GUIFont font = GUIFontManager.GetFont(label.FontName);
 
@@ -2976,6 +3024,17 @@ namespace MediaPortal.GUI.Library
     /// <param name="dwSelectedColor"></param>
     public void SetColors2(long dwTextColor, long dwSelectedColor)
     {
+      _textColor2 = dwTextColor.ToString();
+      _selectedColor2 = dwSelectedColor.ToString();
+    }
+
+    /// <summary>
+    /// Set the colors of the second label.
+    /// </summary>
+    /// <param name="dwTextColor"></param>
+    /// <param name="dwSelectedColor"></param>
+    public void SetColors2(string dwTextColor, string dwSelectedColor)
+    {
       _textColor2 = dwTextColor;
       _selectedColor2 = dwSelectedColor;
     }
@@ -2986,6 +3045,17 @@ namespace MediaPortal.GUI.Library
     /// <param name="dwTextColor"></param>
     /// <param name="dwSelectedColor"></param>
     public void SetColors3(long dwTextColor, long dwSelectedColor)
+    {
+      _textColor3 = dwTextColor.ToString();
+      _selectedColor3 = dwSelectedColor.ToString();
+    }
+
+    /// <summary>
+    /// Set the colors of the second label.
+    /// </summary>
+    /// <param name="dwTextColor"></param>
+    /// <param name="dwSelectedColor"></param>
+    public void SetColors3(string dwTextColor, string dwSelectedColor)
     {
       _textColor3 = dwTextColor;
       _selectedColor3 = dwSelectedColor;
@@ -3112,7 +3182,7 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// Get the color of the first label.
     /// </summary>
-    public long TextColor
+    public string TextColor
     {
       get { return _textColor; }
     }
@@ -3120,7 +3190,7 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// Get the color of the second label.
     /// </summary>
-    public long TextColor2
+    public string TextColor2
     {
       get { return _textColor2; }
     }
@@ -3128,7 +3198,7 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// Get the color of the third label.
     /// </summary>
-    public long TextColor3
+    public string TextColor3
     {
       get { return _textColor3; }
     }
@@ -3136,7 +3206,7 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// Get the color of the text of the first label of a selected item.
     /// </summary>
-    public long SelectedColor
+    public string SelectedColor
     {
       get { return _selectedColor; }
     }
@@ -3144,7 +3214,7 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// Get the color of the text of the second label of a selected item.
     /// </summary>
-    public long SelectedColor2
+    public string SelectedColor2
     {
       get { return _selectedColor2; }
     }
@@ -3152,7 +3222,7 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// Get the color of the text of the second label of a third item.
     /// </summary>
-    public long SelectedColor3
+    public string SelectedColor3
     {
       get { return _selectedColor3; }
     }
@@ -3220,7 +3290,7 @@ namespace MediaPortal.GUI.Library
     // TODO
     public long SpinTextColor
     {
-      get { return _upDownControl.TextColor; }
+      get { return GUIPropertyManager.ParseColor(_upDownControl.TextColor, 0xFFFFFFFF); }
     }
 
     // TODO

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2018 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2018 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -52,7 +52,7 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("showrange")] protected bool _showRange = true;
     [XMLSkinElement("digits")] protected int _digits = -1;
     [XMLSkinElement("reverse")] protected bool _reverse = false;
-    [XMLSkinElement("textcolor")] protected long _textColor = 0xFFFFFFFF;
+    [XMLSkinElement("textcolor")] protected string _textColor = "0xFFFFFFFF";
     [XMLSkinElement("font")] protected string _fontName = "";
     [XMLSkinElement("textureUp")] protected string _upTextureName;
     [XMLSkinElement("textureDown")] protected string _downTextureName;
@@ -102,6 +102,13 @@ namespace MediaPortal.GUI.Library
     public GUISpinControl(int dwParentID, int dwControlId, int dwPosX, int dwPosY, int dwWidth, int dwHeight,
                           string strUp, string strDown, string strUpFocus, string strDownFocus, string strFont,
                           long dwTextColor, SpinType iType, Alignment dwAlign)
+      : this(dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight,
+                          strUp, strDown, strUpFocus, strDownFocus, strFont,
+                          dwTextColor.ToString(), iType, dwAlign) { }
+
+    public GUISpinControl(int dwParentID, int dwControlId, int dwPosX, int dwPosY, int dwWidth, int dwHeight,
+                          string strUp, string strDown, string strUpFocus, string strDownFocus, string strFont,
+                          string dwTextColor, SpinType iType, Alignment dwAlign)
       : base(dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight)
     {
       _textColor = dwTextColor;
@@ -385,7 +392,9 @@ namespace MediaPortal.GUI.Library
 
         if (Disabled)
         {
-          _labelControl.TextColor &= 0x80ffffff;
+          long textColor = GUIPropertyManager.ParseColor(_labelControl.TextColor, 0xFFFFFFFF);
+          textColor &= 0x80ffffff;
+          _labelControl.TextColor = textColor.ToString();
         }
         if (_alignment != Alignment.ALIGN_CENTER)
         {
@@ -1079,7 +1088,7 @@ namespace MediaPortal.GUI.Library
       get { return _imageSpinDownFocus.FileName; }
     }
 
-    public long TextColor
+    public string TextColor
     {
       get { return _textColor; }
       set { _textColor = value; }

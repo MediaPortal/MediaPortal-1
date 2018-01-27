@@ -33,7 +33,7 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("textureNoFocus")] protected string _nonFocusedTextureName = "";
     [XMLSkinElement("font")] protected string _fontName;
     [XMLSkinElement("label")] protected string _label = "";
-    [XMLSkinElement("textcolor")] protected long _textColor = 0xFFFFFFFF;
+    [XMLSkinElement("textcolor")] protected string _textColor = "0xFFFFFFFF";
     [XMLSkinElement("textcolorNoFocus")] protected string _textColorNoFocus = "0xFFFFFFFF";
     [XMLSkinElement("disabledcolor")] protected long _disabledColor = 0xFF606060;
     [XMLSkinElement("hyperlink")] protected string _hyperLinkWindow = ""; //Changed to string to allow for properties
@@ -145,21 +145,12 @@ namespace MediaPortal.GUI.Library
     public GUIButtonControl(int dwParentID, int dwControlId, int dwPosX, int dwPosY, int dwWidth, int dwHeight,
                             long ltextColor, long ltextcolorNoFocus, string strTextureFocus, string strTextureNoFocus,
                             int dwShadowAngle, int dwShadowDistance, long dwShadowColor)
-      : base(dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight)
-    {
-      _focusedTextureName = strTextureFocus;
-      _nonFocusedTextureName = strTextureNoFocus;
-      _textColor = ltextColor;
-      _textColorNoFocus = ltextcolorNoFocus.ToString();
-      _shadowAngle = dwShadowAngle;
-      _shadowDistance = dwShadowDistance;
-      _shadowColor = dwShadowColor;
-
-      FinalizeConstruction();
-    }
+      : this(dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight,
+                            ltextColor.ToString(), ltextcolorNoFocus.ToString(), strTextureFocus, strTextureNoFocus,
+                            dwShadowAngle, dwShadowDistance, dwShadowColor) {  }
 
     public GUIButtonControl(int dwParentID, int dwControlId, int dwPosX, int dwPosY, int dwWidth, int dwHeight,
-                            long ltextColor, string ltextcolorNoFocus, string strTextureFocus, string strTextureNoFocus,
+                            string ltextColor, string ltextcolorNoFocus, string strTextureFocus, string strTextureNoFocus,
                             int dwShadowAngle, int dwShadowDistance, long dwShadowColor)
       : base(dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight)
     {
@@ -462,20 +453,20 @@ namespace MediaPortal.GUI.Library
       }
       // _labelControl.Width = labelWidth;
 
-      long longColorNoFocus = GUIPropertyManager.ParseColor(_textColorNoFocus, 0xFFFFFFFF);
+      // long longColorNoFocus = GUIPropertyManager.ParseColor(_textColorNoFocus, 0xFFFFFFFF);
       if (_labelControl is GUILabelControl)
       {
         ((GUILabelControl)_labelControl).TextAlignment = _textAlignment;
         ((GUILabelControl)_labelControl).TextVAlignment = _textVAlignment;
         ((GUILabelControl)_labelControl).Label = _label;
-        ((GUILabelControl)_labelControl).TextColor = Disabled ? _disabledColor : Focus ? _textColor : longColorNoFocus;
+        ((GUILabelControl)_labelControl).TextColor = Disabled ? _disabledColor.ToString() : Focus ? _textColor : _textColorNoFocus;
       }
       else
       {
         ((GUIFadeLabel)_labelControl).TextAlignment = _textAlignment;
         ((GUIFadeLabel)_labelControl).TextVAlignment = _textVAlignment;
         ((GUIFadeLabel)_labelControl).Label = _label;
-        ((GUIFadeLabel)_labelControl).TextColor = Disabled ? _disabledColor : Focus ? _textColor : longColorNoFocus;
+        ((GUIFadeLabel)_labelControl).TextColor = Disabled ? _disabledColor.ToString() : Focus ? _textColor : _textColorNoFocus;
       }
 
       // render the text on the button
@@ -774,7 +765,7 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// Set the color of the text on the GUIButtonControl. 
     /// </summary>
-    public long TextColor
+    public string TextColor
     {
       get { return _textColor; }
       set { _textColor = value; }
@@ -821,6 +812,17 @@ namespace MediaPortal.GUI.Library
     /// <param name="dwColor">The font color.</param>
     public void SetLabel(string strFontName, string strLabel, long dwColor)
     {
+      SetLabel(strFontName, strLabel, dwColor.ToString());
+    }
+
+    /// <summary>
+    /// Set the text of the GUIButtonControl. 
+    /// </summary>
+    /// <param name="strFontName">The font name.</param>
+    /// <param name="strLabel">The text.</param>
+    /// <param name="dwColor">The font color.</param>
+    public void SetLabel(string strFontName, string strLabel, string dwColor)
+    {
       if (strFontName == null)
       {
         return;
@@ -830,7 +832,7 @@ namespace MediaPortal.GUI.Library
         return;
       }
       Label = strLabel;
-      _textColor = dwColor;
+      _textColor = dwColor.ToString();
       _fontName = strFontName;
 
       if (_labelControl is GUILabelControl)

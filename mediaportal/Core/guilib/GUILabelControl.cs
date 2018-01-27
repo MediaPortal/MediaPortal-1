@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2017 Team MediaPortal
+#region Copyright (C) 2005-2018 Team MediaPortal
 
-// Copyright (C) 2005-2017 Team MediaPortal
+// Copyright (C) 2005-2018 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -30,7 +30,7 @@ namespace MediaPortal.GUI.Library
   {
     [XMLSkinElement("font")] protected string _fontName = "";
     [XMLSkinElement("label")] protected string _labelText = "";
-    [XMLSkinElement("textcolor")] protected long _textColor = 0xFFFFFFFF;
+    [XMLSkinElement("textcolor")] protected string _textColor = "0xFFFFFFFF";
     [XMLSkinElement("align")] private Alignment _textAlignment = Alignment.ALIGN_LEFT;
     [XMLSkinElement("valign")] private VAlignment _textVAlignment = VAlignment.ALIGN_TOP;
     [XMLSkinElement("shadowAngle")] protected int _shadowAngle = 0;
@@ -71,7 +71,7 @@ namespace MediaPortal.GUI.Library
     /// <param name="dwShadowDistance">The distance of the shadow.</param>
     /// <param name="dwShadowColor">The color of the shadow.</param>
     public GUILabelControl(int dwParentID, int dwControlId, int dwPosX, int dwPosY, int dwWidth, int dwHeight,
-                           string strFont, string strLabel, long dwTextColor, Alignment dwTextAlign,
+                           string strFont, string strLabel, int dwTextColor, Alignment dwTextAlign,
                            VAlignment dwTextVAlign, bool bHasPath,
                            int dwShadowAngle, int dwShadowDistance, long dwShadowColor)
       : this(dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight, 
@@ -96,10 +96,77 @@ namespace MediaPortal.GUI.Library
     /// <param name="dwShadowAngle">The angle of the shadow; zero degress along x-axis.</param>
     /// <param name="dwShadowDistance">The distance of the shadow.</param>
     /// <param name="dwShadowColor">The color of the shadow.</param>
+    public GUILabelControl(int dwParentID, int dwControlId, int dwPosX, int dwPosY, int dwWidth, int dwHeight,
+                           string strFont, string strLabel, string dwTextColor, Alignment dwTextAlign,
+                           VAlignment dwTextVAlign, bool bHasPath,
+                           int dwShadowAngle, int dwShadowDistance, long dwShadowColor)
+      : this(dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight,
+             strFont, strLabel, dwTextColor, dwTextAlign, dwTextVAlign, bHasPath,
+             dwShadowAngle, dwShadowDistance, dwShadowColor, 0, 0)
+    { }
+
+    /// <summary>
+    /// The constructor of the GUILabelControl class.
+    /// </summary>
+    /// <param name="dwParentID">The parent of this control.</param>
+    /// <param name="dwControlId">The ID of this control.</param>
+    /// <param name="dwPosX">The X position of this control.</param>
+    /// <param name="dwPosY">The Y position of this control.</param>
+    /// <param name="dwWidth">The width of this control.</param>
+    /// <param name="dwHeight">The height of this control.</param>
+    /// <param name="strFont">The indication of the font of this control.</param>
+    /// <param name="strLabel">The text of this control.</param>
+    /// <param name="dwTextColor">The color of this control.</param>
+    /// <param name="dwTextAlign">The alignment of this control.</param>
+    /// <param name="dwTextVAlign">The vertical alignment of this control.</param>
+    /// <param name="bHasPath">Indicates if the label is containing a path.</param>
+    /// <param name="dwShadowAngle">The angle of the shadow; zero degress along x-axis.</param>
+    /// <param name="dwShadowDistance">The distance of the shadow.</param>
+    /// <param name="dwShadowColor">The color of the shadow.</param>
     /// <param name="dwMaxWidth">Max Width for autosized Label. From Width to MaxWidth.</param>
     /// <param name="dwMaxHeight">Max Height for autosized Label. From Height to MaxHeight.</param>
     public GUILabelControl(int dwParentID, int dwControlId, int dwPosX, int dwPosY, int dwWidth, int dwHeight,
                            string strFont, string strLabel, long dwTextColor, Alignment dwTextAlign,
+                           VAlignment dwTextVAlign, bool bHasPath,
+                           int dwShadowAngle, int dwShadowDistance, long dwShadowColor, int dwMaxWidth, int dwMaxHeight)
+      : base(dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight)
+    {
+      _labelText = strLabel;
+      _fontName = strFont;
+      _textColor = dwTextColor.ToString();
+      _textAlignment = dwTextAlign;
+      _textVAlignment = dwTextVAlign;
+      _shadowAngle = dwShadowAngle;
+      _shadowDistance = dwShadowDistance;
+      _shadowColor = dwShadowColor;
+      _maxWidth = dwMaxWidth;
+      _maxHeight = dwMaxHeight;
+
+      FinalizeConstruction();
+    }
+
+    /// <summary>
+    /// The constructor of the GUILabelControl class.
+    /// </summary>
+    /// <param name="dwParentID">The parent of this control.</param>
+    /// <param name="dwControlId">The ID of this control.</param>
+    /// <param name="dwPosX">The X position of this control.</param>
+    /// <param name="dwPosY">The Y position of this control.</param>
+    /// <param name="dwWidth">The width of this control.</param>
+    /// <param name="dwHeight">The height of this control.</param>
+    /// <param name="strFont">The indication of the font of this control.</param>
+    /// <param name="strLabel">The text of this control.</param>
+    /// <param name="dwTextColor">The color of this control.</param>
+    /// <param name="dwTextAlign">The alignment of this control.</param>
+    /// <param name="dwTextVAlign">The vertical alignment of this control.</param>
+    /// <param name="bHasPath">Indicates if the label is containing a path.</param>
+    /// <param name="dwShadowAngle">The angle of the shadow; zero degress along x-axis.</param>
+    /// <param name="dwShadowDistance">The distance of the shadow.</param>
+    /// <param name="dwShadowColor">The color of the shadow.</param>
+    /// <param name="dwMaxWidth">Max Width for autosized Label. From Width to MaxWidth.</param>
+    /// <param name="dwMaxHeight">Max Height for autosized Label. From Height to MaxHeight.</param>
+    public GUILabelControl(int dwParentID, int dwControlId, int dwPosX, int dwPosY, int dwWidth, int dwHeight,
+                           string strFont, string strLabel, string dwTextColor, Alignment dwTextAlign,
                            VAlignment dwTextVAlign, bool bHasPath,
                            int dwShadowAngle, int dwShadowDistance, long dwShadowColor, int dwMaxWidth, int dwMaxHeight)
       : base(dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight)
@@ -277,7 +344,7 @@ namespace MediaPortal.GUI.Library
       {
         _label = GetShortenedText(_label, _maxWidth > 0 ? _maxWidth : _width);
       }
-      long c = (uint)_textColor;
+      long c = (uint)GUIPropertyManager.ParseColor(_textColor, 0xFFFFFFFF);
       if (Dimmed)
       {
         c &= (DimColor);
@@ -315,7 +382,7 @@ namespace MediaPortal.GUI.Library
       {
         _label = GetShortenedText(_label, _maxWidth > 0 ? _maxWidth : _width);
       }
-      long c = _textColor;
+      long c = GUIPropertyManager.ParseColor(_textColor, 0xFFFFFFFF);
       if (Dimmed)
       {
         c &= DimColor;
@@ -567,7 +634,7 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// Get/set the color of the text
     /// </summary>
-    public long TextColor
+    public string TextColor
     {
       get { return _textColor; }
       set

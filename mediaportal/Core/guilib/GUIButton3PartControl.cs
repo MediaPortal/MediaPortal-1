@@ -57,8 +57,8 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("label2")] protected string _tagLabel2 = "";
     [XMLSkinElement("font1")] protected string _fontName1 = string.Empty;
     [XMLSkinElement("font2")] protected string _fontName2 = string.Empty;
-    [XMLSkinElement("textcolor1")] protected long _textColor1 = 0xFFFFFFFF;
-    [XMLSkinElement("textcolor2")] protected long _textColor2 = 0xFFFFFFFF;
+    [XMLSkinElement("textcolor1")] protected string _textColor1 = "0xFFFFFFFF";
+    [XMLSkinElement("textcolor2")] protected string _textColor2 = "0xFFFFFFFF";
     [XMLSkinElement("disabledColor")] protected long _disabledColor = 0xFF606060;
     protected int _hyperLinkWindowId = -1;
     protected int _actionId = -1;
@@ -504,7 +504,7 @@ namespace MediaPortal.GUI.Library
         }
         int xoff = _textOffsetX1 + widthLeft;
 
-        _labelControl1.TextColor = Disabled ? _disabledColor : _textColor1;
+        _labelControl1.TextColor = Disabled ? _disabledColor.ToString() : _textColor1;
         _labelControl1.SetPosition(xoff + _positionX, _textOffsetY1 + _positionY);
         _labelControl1.TextAlignment = Alignment.ALIGN_LEFT;
         _labelControl1.FontName = _fontName1;
@@ -548,7 +548,7 @@ namespace MediaPortal.GUI.Library
         int widthLeft = (int)(_imageFocusedLeft.TextureWidth * ((float)_height / _imageFocusedLeft.TextureHeight));
         int xoff = _textOffsetX2 + widthLeft;
 
-        _labelControl2.TextColor = Disabled ? _disabledColor : _textColor2;
+        _labelControl2.TextColor = Disabled ? _disabledColor.ToString() : _textColor2;
         _labelControl2.SetPosition(xoff + _positionX, _textOffsetY2 + _positionY);
         _labelControl2.TextAlignment = Alignment.ALIGN_LEFT;
         _labelControl2.FontName = _fontName1;
@@ -979,13 +979,13 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// Set the color of the text on the GUIButton3PartControl. 
     /// </summary>
-    public long TextColor1
+    public string TextColor1
     {
       get { return _textColor1; }
       set { _textColor1 = value; }
     }
 
-    public long TextColor2
+    public string TextColor2
     {
       get { return _textColor2; }
       set { _textColor2 = value; }
@@ -1028,6 +1028,11 @@ namespace MediaPortal.GUI.Library
     /// <param name="color">The font color.</param>
     public void SetLabel1(string fontName, string label, long color)
     {
+      SetLabel1(fontName, label, color.ToString());
+    }
+
+    public void SetLabel1(string fontName, string label, string color)
+    {
       if (fontName == null)
       {
         return;
@@ -1047,6 +1052,11 @@ namespace MediaPortal.GUI.Library
     }
 
     public void SetLabel2(string fontName, string label, long color)
+    {
+      SetLabel2(fontName, label, color.ToString());
+    }
+
+    public void SetLabel2(string fontName, string label, string color)
     {
       if (fontName == null)
       {

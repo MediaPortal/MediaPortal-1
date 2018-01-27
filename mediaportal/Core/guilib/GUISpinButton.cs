@@ -32,7 +32,7 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("onclick")] protected string _onclick = "";
     [XMLSkinElement("font")] protected string _fontName;
     [XMLSkinElement("label")] protected string _label = "";
-    [XMLSkinElement("textcolor")] protected long _textColor = 0xFFFFFFFF;
+    [XMLSkinElement("textcolor")] protected string _textColor = "0xFFFFFFFF";
     [XMLSkinElement("textcolorNoFocus")] protected string _textColorNoFocus = "0xFFFFFFFF";
     [XMLSkinElement("disabledcolor")] protected long _disabledColor = 0xFF606060;
     [XMLSkinElement("textXOff")] protected int _textOffsetX = 0;
@@ -337,20 +337,19 @@ namespace MediaPortal.GUI.Library
       _labelControl.Width = labelWidth;
 
       // render the text on the button
-      long longColorNoFocus = GUIPropertyManager.ParseColor(_textColorNoFocus, 0xFFFFFFFF);
       if (_labelControl is GUILabelControl)
       {
         ((GUILabelControl)_labelControl).TextAlignment = _textAlignment;
         ((GUILabelControl)_labelControl).TextVAlignment = _textVAlignment;
         ((GUILabelControl)_labelControl).Label = _label;
-        ((GUILabelControl)_labelControl).TextColor = Disabled ? _disabledColor : Focus ? _textColor : longColorNoFocus;
+        ((GUILabelControl)_labelControl).TextColor = Disabled ? _disabledColor.ToString() : Focus ? _textColor : _textColorNoFocus;
       }
       else
       {
         ((GUIFadeLabel)_labelControl).TextAlignment = _textAlignment;
         ((GUIFadeLabel)_labelControl).TextVAlignment = _textVAlignment;
         ((GUIFadeLabel)_labelControl).Label = _label;
-        ((GUIFadeLabel)_labelControl).TextColor = Disabled ? _disabledColor : Focus ? _textColor : longColorNoFocus;
+        ((GUIFadeLabel)_labelControl).TextColor = Disabled ? _disabledColor.ToString() : Focus ? _textColor : _textColorNoFocus;
       }
 
       int x = 0;
@@ -602,7 +601,7 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// Set the color of the text on the GUISpinButton. 
     /// </summary>
-    public long TextColor
+    public string TextColor
     {
       get { return _textColor; }
       set { _textColor = value; }
@@ -639,6 +638,17 @@ namespace MediaPortal.GUI.Library
     /// <param name="strLabel">The text.</param>
     /// <param name="dwColor">The font color.</param>
     public void SetLabel(string strFontName, string strLabel, long dwColor)
+    {
+      SetLabel(strFontName, strLabel, dwColor.ToString());
+    }
+
+    /// <summary>
+    /// Set the text of the GUISpinButton. 
+    /// </summary>
+    /// <param name="strFontName">The font name.</param>
+    /// <param name="strLabel">The text.</param>
+    /// <param name="dwColor">The font color.</param>
+    public void SetLabel(string strFontName, string strLabel, string dwColor)
     {
       if (strFontName == null)
       {
