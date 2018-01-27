@@ -187,6 +187,8 @@ namespace MediaPortal.GUI.Library
 
     private Image _memoryImage = null;
 
+    private static readonly object RenderImageLock = new object();
+
     public GUIImage(int dwParentID)
       : base(dwParentID) {}
 
@@ -677,146 +679,154 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public override void AllocResources()
     {
-      //used for debugging leaks, comment in when needed-.
-      /*_debugAllocResourcesCalled = true;
+      lock (RenderImageLock)
+      {
+        //used for debugging leaks, comment in when needed-.
+        /*_debugAllocResourcesCalled = true;
       _debugCachedTextureFileName = _textureFileNameTag;
       _debugCaller = ""; //  System.Environment.StackTrace.ToString();
       */
-      try
-      {
-        if (GUIGraphicsContext.DX9Device == null )
+        try
         {
-          return;
-        }
-
-        if (GUIGraphicsContext.DX9Device.Disposed)
-        {
-          return;
-        }
-
-        if (string.IsNullOrEmpty(_textureFileNameTag))
-        {
-          return;
-        }
-
-        if (_registeredForEvent == false && (_containsProperty || _posXHasProperty || _posYHasProperty))
-        {
-          // GUIPropertyManager.OnPropertyChanged -= GUIPropertyManager_OnPropertyChanged;
-          // GUIPropertyManager.OnPropertyChanged += GUIPropertyManager_OnPropertyChanged;
-          GUIPropertyManager.OnPropertyChanged -= new GUIPropertyManager.OnPropertyChangedHandler(GUIPropertyManager_OnPropertyChanged);
-          GUIPropertyManager.OnPropertyChanged += new GUIPropertyManager.OnPropertyChangedHandler(GUIPropertyManager_OnPropertyChanged);
-          _registeredForEvent = true;
-        }
-        _propertyChanged = false;
-
-        // reset animation
-        BeginAnimation();
-        _listTextures = null;
-
-        if (_blendableFileName != "" &&
-            GUITextureManager.GetPackedTexture(_blendableFileName, out _blendabletexUoff, out _blendabletexVoff,
-                                               out _blendabletexUmax, out _blendabletexVmax, out _blendableTexWidth, out _blendableTexHeight,
-                                               out _blendableTexture, out _packedBlendableTextureNo))
-        {
-          _reCalculate = true;
-        }
-
-        // get the filename of the texture
-        string fileName = _textureFileNameTag;
-        if (_containsProperty)
-        {
-          fileName = _cachedTextureFileName = GUIPropertyManager.Parse(fileName);
-        }
-
-        if (GUITextureManager.GetPackedTexture(fileName, out _texUoff, out _texVoff, out _texUmax, out _texVmax,
-                                               out _textureWidth, out _textureHeight,
-                                               out _packedTexture, out _packedTextureNo))
-        {
-          _reCalculate = true;
-          _packedTexture.Disposing -= OnPackedTexturesDisposedEvent;
-          _packedTexture.Disposing += OnPackedTexturesDisposedEvent;
-          return;
-        }
-
-        // load the texture
-        int frameCount;
-        if (fileName.StartsWith("["))
-        {
-          if (_memoryImageWidth != 0 && _memoryImageHeight != 0)
+          if (GUIGraphicsContext.DX9Device == null)
           {
-            var bitmap = new Bitmap(_memoryImageWidth, _memoryImageHeight, PixelFormat.Format32bppArgb);
-            Image memoryImage = bitmap;
-            frameCount = GUITextureManager.LoadFromMemoryEx(memoryImage, fileName, m_dwColorKey, out _memoryImageTexture);
+            return;
           }
-          else
-          {
-            frameCount = GUITextureManager.LoadFromMemoryEx(_memoryImage, fileName, m_dwColorKey, out _memoryImageTexture);
-          }
-        }
-        else
-        {
-          frameCount = GUITextureManager.Load(fileName, m_dwColorKey, m_iRenderWidth, _textureHeight, _shouldCache);
-        }
 
-        if (frameCount == 0)
-        {
-          return; // unable to load texture
-        }
-        
-        // get each frame of the texture
-        int iStartCopy = 0;
-        TextureFrame[] saveList = null;
-        if (_listTextures == null)
-        {
-          _listTextures = new TextureFrame[frameCount];
-        }
-        else
-        {
-          int newLength = _listTextures.Length + frameCount;
-          iStartCopy = _listTextures.Length;
-          var newList = new TextureFrame[newLength];
-          saveList = new TextureFrame[_listTextures.Length];
-          _listTextures.CopyTo(saveList, 0);
-          _listTextures.CopyTo(newList, 0);
-          _listTextures = new TextureFrame[newLength];
-          newList.CopyTo(_listTextures, 0);
-        }
-
-        for (int i = 0; i < frameCount; i++)
-        {
-          _listTextures[i + iStartCopy] = GUITextureManager.GetTexture(fileName, i, out _textureWidth, out _textureHeight);
-          if (_listTextures[i + iStartCopy] != null)
+          if (GUIGraphicsContext.DX9Device.Disposed)
           {
-            _listTextures[i + iStartCopy].Disposed += OnListTexturesDisposedEvent;
+            return;
           }
-          else
+
+          if (string.IsNullOrEmpty(_textureFileNameTag))
           {
-            Log.Debug("GUIImage.AllocResources -> Filename={0} i={1} FrameCount={2}", fileName, i, frameCount);
-            if (saveList != null)
+            return;
+          }
+
+          if (_registeredForEvent == false && (_containsProperty || _posXHasProperty || _posYHasProperty))
+          {
+            // GUIPropertyManager.OnPropertyChanged -= GUIPropertyManager_OnPropertyChanged;
+            // GUIPropertyManager.OnPropertyChanged += GUIPropertyManager_OnPropertyChanged;
+            GUIPropertyManager.OnPropertyChanged -=
+              new GUIPropertyManager.OnPropertyChangedHandler(GUIPropertyManager_OnPropertyChanged);
+            GUIPropertyManager.OnPropertyChanged +=
+              new GUIPropertyManager.OnPropertyChangedHandler(GUIPropertyManager_OnPropertyChanged);
+            _registeredForEvent = true;
+          }
+          _propertyChanged = false;
+
+          // reset animation
+          BeginAnimation();
+          _listTextures = null;
+
+          if (_blendableFileName != "" &&
+              GUITextureManager.GetPackedTexture(_blendableFileName, out _blendabletexUoff, out _blendabletexVoff,
+                out _blendabletexUmax, out _blendabletexVmax, out _blendableTexWidth, out _blendableTexHeight,
+                out _blendableTexture, out _packedBlendableTextureNo))
+          {
+            _reCalculate = true;
+          }
+
+          // get the filename of the texture
+          string fileName = _textureFileNameTag;
+          if (_containsProperty)
+          {
+            fileName = _cachedTextureFileName = GUIPropertyManager.Parse(fileName);
+          }
+
+          if (GUITextureManager.GetPackedTexture(fileName, out _texUoff, out _texVoff, out _texUmax, out _texVmax,
+            out _textureWidth, out _textureHeight,
+            out _packedTexture, out _packedTextureNo))
+          {
+            _reCalculate = true;
+            _packedTexture.Disposing -= OnPackedTexturesDisposedEvent;
+            _packedTexture.Disposing += OnPackedTexturesDisposedEvent;
+            return;
+          }
+
+          // load the texture
+          int frameCount;
+          if (fileName.StartsWith("["))
+          {
+            if (_memoryImageWidth != 0 && _memoryImageHeight != 0)
             {
-              _listTextures = new TextureFrame[saveList.Length];
-              saveList.CopyTo(_listTextures, 0);
+              var bitmap = new Bitmap(_memoryImageWidth, _memoryImageHeight, PixelFormat.Format32bppArgb);
+              Image memoryImage = bitmap;
+              frameCount = GUITextureManager.LoadFromMemoryEx(memoryImage, fileName, m_dwColorKey,
+                out _memoryImageTexture);
             }
             else
             {
-              UnsubscribeAndReleaseListTextures();
+              frameCount = GUITextureManager.LoadFromMemoryEx(_memoryImage, fileName, m_dwColorKey,
+                out _memoryImageTexture);
             }
-            _currentFrameNumber = 0;
-            break;
           }
+          else
+          {
+            frameCount = GUITextureManager.Load(fileName, m_dwColorKey, m_iRenderWidth, _textureHeight, _shouldCache);
+          }
+
+          if (frameCount == 0)
+          {
+            return; // unable to load texture
+          }
+
+          // get each frame of the texture
+          int iStartCopy = 0;
+          TextureFrame[] saveList = null;
+          if (_listTextures == null)
+          {
+            _listTextures = new TextureFrame[frameCount];
+          }
+          else
+          {
+            int newLength = _listTextures.Length + frameCount;
+            iStartCopy = _listTextures.Length;
+            var newList = new TextureFrame[newLength];
+            saveList = new TextureFrame[_listTextures.Length];
+            _listTextures.CopyTo(saveList, 0);
+            _listTextures.CopyTo(newList, 0);
+            _listTextures = new TextureFrame[newLength];
+            newList.CopyTo(_listTextures, 0);
+          }
+
+          for (int i = 0; i < frameCount; i++)
+          {
+            _listTextures[i + iStartCopy] = GUITextureManager.GetTexture(fileName, i, out _textureWidth,
+              out _textureHeight);
+            if (_listTextures[i + iStartCopy] != null)
+            {
+              _listTextures[i + iStartCopy].Disposed += OnListTexturesDisposedEvent;
+            }
+            else
+            {
+              Log.Debug("GUIImage.AllocResources -> Filename={0} i={1} FrameCount={2}", fileName, i, frameCount);
+              if (saveList != null)
+              {
+                _listTextures = new TextureFrame[saveList.Length];
+                saveList.CopyTo(_listTextures, 0);
+              }
+              else
+              {
+                UnsubscribeAndReleaseListTextures();
+              }
+              _currentFrameNumber = 0;
+              break;
+            }
+          }
+
+          // Set state to render the image
+          _reCalculate = true;
+          base.AllocResources();
         }
-        
-        // Set state to render the image
-        _reCalculate = true;
-        base.AllocResources();
-      }
-      catch (Exception e)
-      {
-        Log.Error(e);
-      }
-      finally
-      {
-        _allocated = true;
+        catch (Exception e)
+        {
+          Log.Error(e);
+        }
+        finally
+        {
+          _allocated = true;
+        }
       }
     }
 
