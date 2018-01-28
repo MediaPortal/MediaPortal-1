@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2016 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2016 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -21,25 +21,18 @@
 #region Usings
 
 using System;
-using System.IO;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
-using System.Text;
-using System.Reflection;
-using System.Data;
 using System.Data.SqlClient;
 using System.Windows.Forms;
 using System.Xml;
-using System.Net;
 using MySql.Data.MySqlClient;
 
 #endregion
 
 namespace MPTvClient
 {
-  public partial class SetupDatabaseForm : Form
+    public partial class SetupDatabaseForm : Form
   {
     private enum ProviderType
     {
