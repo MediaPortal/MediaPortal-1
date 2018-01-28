@@ -1929,6 +1929,7 @@ public class MediaPortalApp : D3D, IRender
             {
               _presentParamsBackup = _presentParams;
             }
+            Log.Info("Main: PBT_APMSUSPEND RecreateSwapChain");
             RecreateSwapChain(true);
             _restoreLoadedScreen = false;
           }
