@@ -889,9 +889,13 @@ namespace MediaPortal.GUI.Library
         //deactivate previous window
         if (previousWindow != null)
         {
-          msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, previousWindow.GetID, 0, 0, newWindowId, (skipAnimation ? 1 : 0),
-                               null);
-          previousWindow.OnMessage(msg);
+          if (newWindowId != previousWindow.GetID)
+          {
+            msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, previousWindow.GetID, 0, 0, newWindowId,
+              (skipAnimation ? 1 : 0),
+              null);
+            previousWindow.OnMessage(msg);
+          }
           if (OnDeActivateWindow != null)
           {
             OnDeActivateWindow(previousWindow.GetID);
