@@ -536,8 +536,7 @@ namespace MediaPortal.Player
       GetInterface = true;
       try
       {
-        m_filterGraph = new FilterGraphNoThread();
-        graphBuilder = (m_filterGraph as DirectShowLib.IGraphBuilder);
+        graphBuilder = (IGraphBuilder)new FilterGraphNoThread();
         _rotEntry = new DsROTEntry((IFilterGraph) graphBuilder);
         // add preferred video & audio codecs
         int hr;
@@ -1759,21 +1758,21 @@ namespace MediaPortal.Player
         SubEngine.GetInstance().FreeSubtitles();
         PostProcessingEngine.GetInstance().FreePostProcess();
 
-        if (VMR9Util.g_vmr9?._vmr9Filter != null && GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
-        {
-          // Releasing madVR
-          if (mediaEvt != null)
-          {
-            mediaEvt.SetNotifyWindow(IntPtr.Zero, WM_GRAPHNOTIFY, IntPtr.Zero);
-            mediaEvt = null;
-          }
-          mediaCtrl = null;
-          mediaSeek = null;
-          videoWin = null;
-          basicAudio = null;
-          basicVideo = null;
-          VMR9Util.g_vmr9?.Vmr9MadVrRelease();
-        }
+        //if (VMR9Util.g_vmr9?._vmr9Filter != null && GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+        //{
+        //  // Releasing madVR
+        //  if (mediaEvt != null)
+        //  {
+        //    mediaEvt.SetNotifyWindow(IntPtr.Zero, WM_GRAPHNOTIFY, IntPtr.Zero);
+        //    mediaEvt = null;
+        //  }
+        //  mediaCtrl = null;
+        //  mediaSeek = null;
+        //  videoWin = null;
+        //  basicAudio = null;
+        //  basicVideo = null;
+        //  VMR9Util.g_vmr9?.Vmr9MadVrRelease();
+        //}
 
         #endregion
 
@@ -1804,13 +1803,13 @@ namespace MediaPortal.Player
           Log.Info("VideoPlayer9: Cleanup Graphbuilder");
         }
 
-        DirectShowUtil.CleanUpInterface(m_filterGraph);
-        m_filterGraph = null;
-        graphBuilder = null;
+        //DirectShowUtil.CleanUpInterface(m_filterGraph);
+        //m_filterGraph = null;
+        //graphBuilder = null;
 
-        if (_rotEntry != null)
-          _rotEntry.Dispose();
-        _rotEntry = null;
+        //if (_rotEntry != null)
+        //  _rotEntry.Dispose();
+        //_rotEntry = null;
 
         if (videoWin != null)
         {

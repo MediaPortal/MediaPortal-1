@@ -168,7 +168,7 @@ namespace MediaPortal.Player
                                               ref IBaseFilter madFilter, IGraphBuilder mPGraphbuilder);
 
     [DllImport("dshowhelper.dll", CallingConvention = CallingConvention.Cdecl)]
-    private static extern unsafe void MadDeinit();
+    private static extern unsafe void MadDeinit(bool releasedFilter);
 
     [DllImport("dshowhelper.dll", CallingConvention = CallingConvention.Cdecl)]
     private static extern unsafe void MadStopping();
@@ -505,6 +505,11 @@ namespace MediaPortal.Player
       }
     }
 
+    public IBaseFilter Vmr9Filter
+    {
+      get { return _vmr9Filter; }
+    }
+
     //public bool IsVMR9Connected
 
     #endregion
@@ -827,7 +832,23 @@ namespace MediaPortal.Player
       if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
       {
         Log.Debug("VMR9: ShutdownMadVr() 1");
-        MadDeinit();
+        bool releasedFilter = false;
+        try
+        {
+          if (_vmr9Filter != null)
+          {
+            IPin outpout;
+            _vmr9Filter.FindPin("video", out outpout);
+            DirectShowUtil.ReleaseComObject(outpout);
+          }
+        }
+        catch (Exception)
+        {
+          // filter already released
+          releasedFilter = true;
+          _vmr9Filter = null;
+        }
+        MadDeinit(releasedFilter);
         GUIGraphicsContext.MadVrStop = false;
         VMR9Util.finished.Set();
         Log.Debug("VMR9: ShutdownMadVr() 2");
@@ -981,8 +1002,8 @@ namespace MediaPortal.Player
           Size client = GUIGraphicsContext.form.ClientSize;
           GUIGraphicsContext._backupCurrentScreenSizeWidth = client.Width;
           GUIGraphicsContext._backupCurrentScreenSizeHeight = client.Height;
-          GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferWidth = client.Width;
-          GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferHeight = client.Height;
+          //GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferWidth = client.Width;
+          //GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferHeight = client.Height;
           hr = new HResult(MadInit(_scene, xposition, yposition, client.Width, client.Height, (uint) upDevice.ToInt32(),
             (uint) GUIGraphicsContext.ActiveForm.ToInt32(), ref _vmr9Filter, graphBuilder));
           //hr = new HResult(graphBuilder.AddFilter(_vmr9Filter, "madVR"));
@@ -1042,9 +1063,26 @@ namespace MediaPortal.Player
           {
             Log.Error("VMR9: MadDeinit - thread : {0}", Thread.CurrentThread.Name);
             GC.Collect();
-            MadDeinit();
+            bool releasedFilter = false;
+            try
+            {
+              if (_vmr9Filter != null)
+              {
+                IPin outpout;
+                _vmr9Filter.FindPin("video", out outpout);
+                DirectShowUtil.ReleaseComObject(outpout);
+              }
+            }
+            catch (Exception)
+            {
+              // filter already released
+              releasedFilter = true;
+              _vmr9Filter = null;
+            }
+            MadDeinit(releasedFilter);
             GC.Collect();
             DirectShowUtil.FinalReleaseComObject(_vmr9Filter);
+            _commandNotify?.Dispose();
             Thread.Sleep(200);
           }
           else
@@ -1057,6 +1095,7 @@ namespace MediaPortal.Player
           _scene = null;
 
           DirectShowUtil.FinalReleaseComObject(_vmr9Filter);
+          _commandNotify?.Dispose();
           _vmr9Filter = null;
           Error.SetError("Unable to play movie", "Unable to initialize Renderer");
           Log.Error("VMR9: Failed to add Renderer to filter graph");
@@ -1367,7 +1406,7 @@ namespace MediaPortal.Player
           GUIWindowManager.SendThreadMessage(msg);
         }
 
-        VMR9Util.g_vmr9.StartMadVrPaused();
+        VMR9Util.g_vmr9.StartMadVrPaused(); //TODO
       }
     }
 
@@ -1744,7 +1783,7 @@ namespace MediaPortal.Player
             DsError.ThrowExceptionForHR(hr);
             Log.Debug("VMR9: Vmr9MediaCtrl MadStopping()");
             MadStopping();
-            MadDeinit();
+            //MadDeinit();
           }
           else
           {
@@ -1775,41 +1814,42 @@ namespace MediaPortal.Player
       }
     }
 
-    public void Vmr9MadVrRelease()
-    {
-      lock (_syncRoot)
-      {
-        try
-        {
-          if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
-          {
-            if (g_vmr9?._vmr9Filter != null && _graphBuilder != null)
-            {
-              Log.Debug("VMR9: Vmr9MadVrRelease 1");
-              _commandNotify?.Set();
-              _graphBuilder?.RemoveFilter(g_vmr9?._vmr9Filter as DirectShowLib.IBaseFilter);
-              DirectShowUtil.CleanUpInterface(g_vmr9?._vmr9Filter);
-              _graphBuilder = null;
-              for (int i = 0; i < 20; ++i)
-              {
-                GUIWindowManager.MadVrProcess();
-              }
-              Log.Debug("VMR9: Vmr9MadVrRelease 2");
-            }
-          }
-        }
-        catch (Exception ex)
-        {
-          Log.Error("VMR9: Error while Vmr9MadVrRelease : {0}", ex);
-        }
-      }
-    }
+    //public void Vmr9MadVrRelease()
+    //{
+    //  lock (_syncRoot)
+    //  {
+    //    try
+    //    {
+    //      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+    //      {
+    //        if (g_vmr9?._vmr9Filter != null && _graphBuilder != null)
+    //        {
+    //          Log.Debug("VMR9: Vmr9MadVrRelease 1");
+    //          _commandNotify?.Set();
+    //          _graphBuilder?.RemoveFilter(g_vmr9?._vmr9Filter as DirectShowLib.IBaseFilter);
+    //          DirectShowUtil.CleanUpInterface(g_vmr9?._vmr9Filter);
+    //          _graphBuilder = null;
+    //          for (int i = 0; i < 20; ++i)
+    //          {
+    //            GUIWindowManager.MadVrProcess();
+    //          }
+    //          Log.Debug("VMR9: Vmr9MadVrRelease 2");
+    //        }
+    //      }
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //      Log.Error("VMR9: Error while Vmr9MadVrRelease : {0}", ex);
+    //    }
+    //  }
+    //}
 
     public void RestoreGuiForMadVr()
     {
-      if (GUIGraphicsContext.MadVrRenderTargetVMR9 != null && !GUIGraphicsContext.MadVrRenderTargetVMR9.Disposed)
+      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+      //if (GUIGraphicsContext.MadVrRenderTargetVMR9 != null && !GUIGraphicsContext.MadVrRenderTargetVMR9.Disposed)
       {
-        GUIGraphicsContext.DX9Device.SetRenderTarget(0, GUIGraphicsContext.MadVrRenderTargetVMR9);
+        //GUIGraphicsContext.DX9Device.SetRenderTarget(0, GUIGraphicsContext.MadVrRenderTargetVMR9);
         GUIGraphicsContext.currentScreen = Screen.FromControl(GUIGraphicsContext.form);
         if (!GUIGraphicsContext.RestoreGuiForMadVrDone)
         {
@@ -1826,7 +1866,10 @@ namespace MediaPortal.Player
           }
 
           // Send action message to refresh screen
-          var msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_MADVR_SCREEN_REFRESH, 0, 0, 0, 0, 0, null);
+          var msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_MADVR_SCREEN_REFRESH, 0, 0, 0, 0, 0, null)
+          {
+            Param1 = 1
+          };
           GUIWindowManager.SendThreadMessage(msg);
           Log.Debug("VMR9: RestoreGuiForMadVr");
         }
@@ -2022,8 +2065,31 @@ namespace MediaPortal.Player
               //  Win32API.ShowWindow(GUIGraphicsContext.ActiveForm, Win32API.ShowWindowFlags.Minimize);
               //  Win32API.ShowWindow(GUIGraphicsContext.ActiveForm, Win32API.ShowWindowFlags.ShowNormal);
               //}
+              lock (_syncRoot)
+              {
+                if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+                {
+                  if (g_vmr9?._vmr9Filter != null && _graphBuilder != null)
+                  {
+                    Log.Debug("VMR9: Vmr9MadVrRelease 1");
+                    for (int i = 0; i < 20; ++i)
+                    {
+                      try
+                      {
+                        // try to catch D3D present exception when devive is not ready
+                        GUIGraphicsContext.DX9Device?.Present();
+                      }
+                      catch (Exception ex)
+                      {
+                        Log.Debug("VMR9: D3D exception handled for Vmr9MadVrRelease", ex);
+                      }
+                      GUIWindowManager.MadVrProcess();
+                    }
+                    Log.Debug("VMR9: Vmr9MadVrRelease 2");
+                  }
+                }
+              }
             }
-            GUIWindowManager.MadVrProcess();
             _exitThread = true;
           }
         }
@@ -2085,10 +2151,48 @@ namespace MediaPortal.Player
             DirectShowUtil.ReleaseComObject(videoWinMadVr);
             videoWinMadVr = null;
           }
-          _vmr9Filter = null;
           Log.Debug("VMR9: Dispose MadDeinit - thread : {0}", Thread.CurrentThread.Name);
+          GC.Collect();
+          Log.Debug("VMR9: Dispose 2");
+          _commandNotify?.Set();
+          bool releasedFilter = false;
+          try
+          {
+            if (_vmr9Filter != null)
+            {
+              IPin outpout;
+              _vmr9Filter.FindPin("video", out outpout);
+              DirectShowUtil.ReleaseComObject(outpout);
+            }
+          }
+          catch (Exception)
+          {
+            // filter already released
+            releasedFilter = true;
+            _vmr9Filter = null;
+          }
+          MadDeinit(releasedFilter);
+          Log.Debug("VMR9: Dispose 2.1");
+          GC.Collect();
+          if (_vmr9Filter != null) MadvrInterface.restoreDisplayModeNow(_vmr9Filter);
           DestroyWindow(GUIGraphicsContext.MadVrHWnd); // for using no Kodi madVR window way comment out this line
           _commandNotify?.Dispose();
+          RestoreGuiForMadVr();
+          Log.Debug("VMR9: Dispose 2.2");
+          try
+          {
+            if (_vmr9Filter != null)
+            {
+              DirectShowUtil.CleanUpInterface(g_vmr9?._vmr9Filter);
+            }
+          }
+          catch (Exception)
+          {
+            // _vmr9Filter already released on player side by basicvideo
+          }
+          Log.Debug("VMR9: Dispose 2.3");
+          _vmr9Filter = null;
+          Log.Debug("VMR9: Dispose 3");
         }
         else
         {
@@ -2109,7 +2213,7 @@ namespace MediaPortal.Player
         }
         _graphBuilder = null;
 
-        g_vmr9.Enable(false);
+        g_vmr9?.Enable(false);
         _scene = null;
         g_vmr9 = null;
         _isVmr9Initialized = false;
@@ -2118,6 +2222,7 @@ namespace MediaPortal.Player
       }
       catch (Exception)
       {
+        _commandNotify?.Dispose();
         _vmr9Filter = null;
         _scene = null;
         g_vmr9 = null;
@@ -2133,45 +2238,45 @@ namespace MediaPortal.Player
           _vmr9Filter = null;
         }
 
-        if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
-        {
-          if (GUIGraphicsContext.MadVrRenderTargetVMR9 != null && !GUIGraphicsContext.MadVrRenderTargetVMR9.Disposed)
-          {
-            Log.Debug("VMR9: Dispose 5");
-            GUIGraphicsContext.MadVrRenderTargetVMR9.Dispose();
-            GUIGraphicsContext.MadVrRenderTargetVMR9 = null;
-            Log.Debug("VMR9: Dispose 6");
-          }
+        //if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+        //{
+        //  if (GUIGraphicsContext.MadVrRenderTargetVMR9 != null && !GUIGraphicsContext.MadVrRenderTargetVMR9.Disposed)
+        //  {
+        //    Log.Debug("VMR9: Dispose 5");
+        //    GUIGraphicsContext.MadVrRenderTargetVMR9.Dispose();
+        //    GUIGraphicsContext.MadVrRenderTargetVMR9 = null;
+        //    Log.Debug("VMR9: Dispose 6");
+        //  }
+        //}
 
-          //// Commit madVR 421 (disabling this part for now, seems to lead to D3D exception from GC
-          //// Restore GUIWindowManager after releasing the texture in command thread
-          //// Suspending GUIGraphicsContext.State
-          //var stateRunning = false;
-          //if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
-          //{
-          //  GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.SUSPENDING;
-          //  stateRunning = true;
-          //}
+        //// Commit madVR 421 (disabling this part for now, seems to lead to D3D exception from GC
+        //// Restore GUIWindowManager after releasing the texture in command thread
+        //// Suspending GUIGraphicsContext.State
+        //var stateRunning = false;
+        //if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
+        //{
+        //  GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.SUSPENDING;
+        //  stateRunning = true;
+        //}
 
-          //// This part is to release texture on stop to free GPU memory when using madVR
-          //var currentActiveWindow = GUIWindowManager.ActiveWindow;
+        //// This part is to release texture on stop to free GPU memory when using madVR
+        //var currentActiveWindow = GUIWindowManager.ActiveWindow;
 
-          //GUITextureManager.Clear();
-          //GUITextureManager.Init();
-          //GUIWindowManager.OnResize();
-          //GUIWindowManager.ActivateWindow(currentActiveWindow);
+        //GUITextureManager.Clear();
+        //GUITextureManager.Init();
+        //GUIWindowManager.OnResize();
+        //GUIWindowManager.ActivateWindow(currentActiveWindow);
 
-          //// Restore GUIGraphicsContext.State
-          //if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.SUSPENDING && stateRunning)
-          //{
-          //  GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.RUNNING;
-          //}
-        }
-
-        // Commented out seems not needed anymore
-        //GUIWindowManager.MadVrProcess();
-        Log.Debug("VMR9: Dispose done");
+        //// Restore GUIGraphicsContext.State
+        //if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.SUSPENDING && stateRunning)
+        //{
+        //  GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.RUNNING;
+        //}
       }
+
+      // Commented out seems not needed anymore
+      //GUIWindowManager.MadVrProcess();
+      Log.Debug("VMR9: Dispose done");
     }
 
     #endregion

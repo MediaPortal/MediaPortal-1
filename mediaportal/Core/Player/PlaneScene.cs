@@ -308,10 +308,10 @@ namespace MediaPortal.Player
         GUIGraphicsContext.InVmr9Render = false;
         if (VMR9Util.g_vmr9 != null)
         {
-          if (GUIGraphicsContext.MadVrRenderTargetVMR9 != null && !GUIGraphicsContext.MadVrRenderTargetVMR9.Disposed)
-          {
-            GUIGraphicsContext.DX9Device.SetRenderTarget(0, GUIGraphicsContext.MadVrRenderTargetVMR9);
-          }
+          //if (GUIGraphicsContext.MadVrRenderTargetVMR9 != null && !GUIGraphicsContext.MadVrRenderTargetVMR9.Disposed)
+          //{
+          //  GUIGraphicsContext.DX9Device.SetRenderTarget(0, GUIGraphicsContext.MadVrRenderTargetVMR9);
+          //}
         }
         GUIGraphicsContext.ForcedRefreshRate3D = false;
       }
@@ -1323,11 +1323,11 @@ namespace MediaPortal.Player
 
     public void RestoreDeviceSurface(IntPtr pSurfaceDevice)
     {
-      if (GUIGraphicsContext.DX9Device != null)
-      {
-        Surface surface = new Surface(pSurfaceDevice);
-        GUIGraphicsContext.MadVrRenderTargetVMR9 = surface;
-      }
+      //if (GUIGraphicsContext.DX9Device != null)
+      //{
+      //  Surface surface = new Surface(pSurfaceDevice);
+      //  GUIGraphicsContext.MadVrRenderTargetVMR9 = surface;
+      //}
     }
 
     public void DestroyHWnd(uint phWnd)
