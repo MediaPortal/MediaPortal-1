@@ -1546,8 +1546,9 @@ namespace MediaPortal
           size.Height = sizeMaxClient.Height;
         }
       }
-      else
+      else if (g_Player.Playing && GUIGraphicsContext.InVmr9Render)
       {
+        // Needed this to avoid D3D issue for example on AMD user and only while playing a video
         size.Width = screen.WorkingArea.Width;
         size.Height = screen.WorkingArea.Height;
       }
