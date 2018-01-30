@@ -187,7 +187,7 @@ namespace MediaPortal.GUI.Library
 
     private Image _memoryImage = null;
 
-    private static readonly object RenderImageLock = new object();
+    //private static readonly object RenderImageLock = new object();
 
     public GUIImage(int dwParentID)
       : base(dwParentID) {}
@@ -679,7 +679,7 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public override void AllocResources()
     {
-      lock (RenderImageLock)
+      //lock (RenderImageLock)
       {
         //used for debugging leaks, comment in when needed-.
         /*_debugAllocResourcesCalled = true;

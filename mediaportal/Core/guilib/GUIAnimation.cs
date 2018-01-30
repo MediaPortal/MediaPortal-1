@@ -80,7 +80,7 @@ namespace MediaPortal.GUI.Library
     private bool _borderHasCorners = false;
     private bool _borderCornerTextureRotate = true;
     private bool _tileFill = false;
-    private static readonly object RenderImageLock = new object(); 
+    //private static readonly object RenderImageLock = new object(); 
 
     #endregion Fields
 
@@ -248,7 +248,7 @@ namespace MediaPortal.GUI.Library
 
     public override void AllocResources()
     {
-      lock (RenderImageLock)
+      //lock (RenderImageLock)
       {
         Dispose();
         using (Settings xmlreader = new MPSettings())
