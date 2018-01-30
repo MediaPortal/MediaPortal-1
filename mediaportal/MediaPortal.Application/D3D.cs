@@ -2926,20 +2926,24 @@ namespace MediaPortal
         var backupSize = ClientSize;
         var sizeMaxClient = CalcMaxClientArea();
         Log.Debug("D3D: Dispose() ClientSize: {0}x{1}, MaxClientSize: {2}x{3}", backupSize.Width, backupSize.Height, sizeMaxClient.Width, sizeMaxClient.Height);
-        
-        if (backupSize.Width < 256 || backupSize.Height < 256 || backupSize.Width > sizeMaxClient.Width || backupSize.Height > sizeMaxClient.Height)
+
+        if (Windowed)
         {
-          xmlWriter.SetValue("gui", "lastlocationx", 0);
-          xmlWriter.SetValue("gui", "lastlocationy", 0);
-          xmlWriter.SetValue("gui", "backupsizewidth", sizeMaxClient.Width);
-          xmlWriter.SetValue("gui", "backupsizeheight", sizeMaxClient.Height);
-        }
-        else
-        {
-          xmlWriter.SetValue("gui", "lastlocationx", Location.X);
-          xmlWriter.SetValue("gui", "lastlocationy", Location.Y);
-          xmlWriter.SetValue("gui", "backupsizewidth", backupSize.Width);
-          xmlWriter.SetValue("gui", "backupsizeheight", backupSize.Height);
+          if (backupSize.Width < 256 || backupSize.Height < 256 || backupSize.Width > sizeMaxClient.Width ||
+              backupSize.Height > sizeMaxClient.Height)
+          {
+            xmlWriter.SetValue("gui", "lastlocationx", 0);
+            xmlWriter.SetValue("gui", "lastlocationy", 0);
+            xmlWriter.SetValue("gui", "backupsizewidth", sizeMaxClient.Width);
+            xmlWriter.SetValue("gui", "backupsizeheight", sizeMaxClient.Height);
+          }
+          else
+          {
+            xmlWriter.SetValue("gui", "lastlocationx", Location.X);
+            xmlWriter.SetValue("gui", "lastlocationy", Location.Y);
+            xmlWriter.SetValue("gui", "backupsizewidth", backupSize.Width);
+            xmlWriter.SetValue("gui", "backupsizeheight", backupSize.Height);
+          }
         }
       }
 

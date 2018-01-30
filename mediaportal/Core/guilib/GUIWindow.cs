@@ -258,7 +258,7 @@ namespace MediaPortal.GUI.Library
 
     private VisualEffect _showAnimation = new VisualEffect(); // for dialogs
     private VisualEffect _closeAnimation = new VisualEffect();
-    public static SynchronizationContext _mainThreadContext = SynchronizationContext.Current;
+    public readonly static SynchronizationContext _mainThreadContext = SynchronizationContext.Current;
 
     #endregion
 
@@ -497,30 +497,19 @@ namespace MediaPortal.GUI.Library
     {
       if (Thread.CurrentThread.Name != "MPMain" && Thread.CurrentThread.Name != "Config Main")
       {
-        if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
-            GUIGraphicsContext.InVmr9Render && GUIGraphicsContext.Vmr9Active)
+        _loadSkinDone = true;
+
+        GUIWindowManager.SendThreadCallbackSkin((p1, p2, result) =>
         {
-          return LoadSkinBool();
-        }
-        if (!GUIWindow._loadSkinDone)
-        {
-          GUIWindow._loadSkinDone = true;
-          if (!isSkinXMLLoading)
-          {
-            int result = GUIWindowManager.SendThreadCallbackSkin(LoadSkinThreaded, 0, 0, null);
-          }
-        }
-        return _loadSkinResult;
+          _loadSkinResult = LoadSkinBool();
+          Log.Debug("LoadSkin() callback done with return value  : {0}", _loadSkinResult);
+          return 0;
+        }, 0, 0, null);
+
+        Log.Debug("LoadSkin() callback thread done with return value : {0}", _loadSkinResult);
+        return true;
       }
       return LoadSkinBool();
-    }
-
-    public int LoadSkinThreaded(int p1, int p2, object s)
-    {
-      _loadSkinResult = LoadSkinBool();
-      Log.Debug("LoadSkinThreaded() done with return value : {0}", _loadSkinResult);
-      GUIWindow._loadSkinDone = false;
-      return p1;
     }
 
     /// <summary>
@@ -549,7 +538,10 @@ namespace MediaPortal.GUI.Library
       }
 
       if (isSkinXMLLoading)
+      {
         Log.Error("LoadSkin: Running already so skipping");
+        return false;
+      }
 
       isSkinXMLLoading = true;
       _lastSkin = GUIGraphicsContext.Skin;
@@ -1272,6 +1264,12 @@ namespace MediaPortal.GUI.Library
 
         LoadSkin();
 
+        // needed when this call is done from a thread
+        if (_windowAllocated)
+        {
+          return;
+        }
+
         HashSet<int> faultyControl = new HashSet<int>();
         // tell every control we're gonna alloc the resources next
         for (int i = 0; i < Children.Count; i++)
@@ -1551,12 +1549,45 @@ namespace MediaPortal.GUI.Library
       AllocResources();
     }
 
+    internal static bool WasWinTVplugin()
+    {
+      var act = GUIWindowManager.ActiveWindow;
+      var result = (
+        act == (int) Window.WINDOW_TV_CROP_SETTINGS ||
+        act == (int) Window.WINDOW_SETTINGS_SORT_CHANNELS ||
+        act == (int) Window.WINDOW_SETTINGS_TV_EPG ||
+        act == (int) Window.WINDOW_TVFULLSCREEN ||
+        act == (int) Window.WINDOW_TVGUIDE ||
+        act == (int) Window.WINDOW_MINI_GUIDE ||
+        act == (int) Window.WINDOW_TV_SEARCH ||
+        act == (int) Window.WINDOW_TV_SEARCHTYPE ||
+        act == (int) Window.WINDOW_TV_SCHEDULER_PRIORITIES ||
+        act == (int) Window.WINDOW_TV_PROGRAM_INFO ||
+        act == (int) Window.WINDOW_RECORDEDTV ||
+        act == (int) Window.WINDOW_TV_RECORDED_INFO ||
+        act == (int) Window.WINDOW_SETTINGS_RECORDINGS ||
+        act == (int) Window.WINDOW_SCHEDULER ||
+        act == (int) Window.WINDOW_SEARCHTV ||
+        act == (int) Window.WINDOW_TV_TUNING_DETAILS ||
+        act == (int) Window.WINDOW_TV
+        );
+
+      return result;
+    }
+
     /// <summary>
     /// Render() method. This method draws the window by asking every control
     /// of the window to render itself
     /// </summary>
     public virtual void Render(float timePassed)
     {
+      // Hack for madVR to avoid freeze
+      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
+          GUIGraphicsContext.InVmr9Render && GUIGraphicsContext.Vmr9Active)
+      {
+        _shouldRestore = false;
+      }
+
       if (_shouldRestore)
       {
         DoRestoreSkin();

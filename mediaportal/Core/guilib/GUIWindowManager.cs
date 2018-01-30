@@ -204,6 +204,8 @@ namespace MediaPortal.GUI.Library
       if (message.Message == GUIMessage.MessageType.GUI_MSG_CALLBACK)
       {
         CallbackMsg(message);
+        GUIWindow._loadSkinDone = false;
+        Log.Debug("GUIWindowManager - callback message done");
         return;
       }
 
@@ -318,6 +320,10 @@ namespace MediaPortal.GUI.Library
     /// <returns>Return value of callback( param1, param2, data )</returns>
     public static int SendThreadCallbackAndWait(Callback callback, int param1, int param2, object data)
     {
+      if (Thread.CurrentThread.Name == null)
+      {
+        Thread.CurrentThread.Name = "SendThreadCallbackAndWait";
+      }
       CallbackEnv env = new CallbackEnv();
       env.callback = callback;
       env.param1 = param1;
@@ -359,6 +365,10 @@ namespace MediaPortal.GUI.Library
 
     public static int SendThreadCallbackSkin(Callback callback, int param1, int param2, object data)
     {
+      if (Thread.CurrentThread.Name == null)
+      {
+        Thread.CurrentThread.Name = "SendThreadCallbackSkin";
+      }
       CallbackEnv env = new CallbackEnv();
       env.callback = callback;
       env.param1 = param1;
@@ -375,7 +385,7 @@ namespace MediaPortal.GUI.Library
       }
 
       Log.Debug("SendThreadCallbackAndWait - Waitone");
-      env.finished.WaitOne(200);
+      env.finished.WaitOne(500);
 
       return env.result;
     }
@@ -889,7 +899,7 @@ namespace MediaPortal.GUI.Library
         //deactivate previous window
         if (previousWindow != null)
         {
-          if (newWindowId != previousWindow.GetID)
+          if ((newWindowId != previousWindow.GetID) || GUIWindow.WasWinTVplugin())
           {
             msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, previousWindow.GetID, 0, 0, newWindowId,
               (skipAnimation ? 1 : 0),

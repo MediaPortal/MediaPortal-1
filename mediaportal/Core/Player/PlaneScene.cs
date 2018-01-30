@@ -913,6 +913,21 @@ namespace MediaPortal.Player
             return -1; // (0) -> S_OK, (1) -> S_FALSE; //dont present video during window transitions
           }
 
+          if (layers == GUILayers.over)
+          {
+            if (Thread.CurrentThread.Name == null)
+            {
+              Thread.CurrentThread.Name = "madVR - RenderOverlay";
+            }
+          }
+          else
+          {
+            if (Thread.CurrentThread.Name == null)
+            {
+              Thread.CurrentThread.Name = "madVR - RenderGui";
+            }
+          }
+
           // Disable for now and added back to g_player
           //if (VMR9Util.g_vmr9 != null)
           //{

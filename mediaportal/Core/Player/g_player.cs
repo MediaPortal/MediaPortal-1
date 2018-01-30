@@ -4012,6 +4012,9 @@ namespace MediaPortal.Player
               {
                 GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferWidth = client.Width;
                 GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferHeight = client.Height;
+
+                int activeWin = GUIWindowManager.ActiveWindow;
+
                 // load resources
                 GUIGraphicsContext.Load();
 
@@ -4023,7 +4026,8 @@ namespace MediaPortal.Player
 
                 // Don't resize to avoid wrong dialog opened
                 GUIWindowManager.OnResize();
-                //GUIWindowManager.OnDeviceRestored();
+                GUIWindowManager.ActivateWindow(activeWin);
+                GUIWindowManager.OnDeviceRestored();
 
                 // send C++ displayChange
                 if (!GUIGraphicsContext.ForceMadVRRefresh3D)
