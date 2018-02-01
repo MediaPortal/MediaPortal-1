@@ -1406,7 +1406,7 @@ namespace MediaPortal.Player
           GUIWindowManager.SendThreadMessage(msg);
         }
 
-        VMR9Util.g_vmr9.StartMadVrPaused(); //TODO
+        //VMR9Util.g_vmr9.StartMadVrPaused(); //TODO
       }
     }
 
