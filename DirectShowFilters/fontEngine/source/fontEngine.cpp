@@ -1986,14 +1986,16 @@ void UpdateVertex(TransformMatrix& matrix, FONT_DATA_T* pFont, CUSTOMVERTEX* pVe
 //*******************************************************************************************************************
 void FontEnginePresent3D(int fontNumber)
 {
-  if (fontNumber< 0 || fontNumber>=MAX_FONTS) return;
-  if (fontData[fontNumber].dwNumTriangles==0) return;
-
   FONT_DATA_T* font = &(fontData[fontNumber]);
   try
   {
+    if (fontNumber< 0 || fontNumber>=MAX_FONTS) return;
+    if (fontData[fontNumber].dwNumTriangles==0) return;
+
+    
+
     if (font->dwNumTriangles !=0)
-	  {
+    {
       // Set the texture blending operations for default rendering.
       m_pStateManager->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
       m_pStateManager->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
@@ -2017,7 +2019,7 @@ void FontEnginePresent3D(int fontNumber)
       m_pStateManager->SetFVF(D3DFVF_CUSTOMVERTEX);
       m_pStateManager->SetTexture(0, font->pTexture);
 
-      WORD* pIndices = NULL;
+      WORD* pIndices = nullptr;
       font->pIndexBuffer->Lock(0, 0, (VOID**)&pIndices, D3DLOCK_READONLY);
 
       m_pDevice->DrawIndexedPrimitiveUP(D3DPT_TRIANGLELIST,               // PrimitiveType
@@ -2035,7 +2037,7 @@ void FontEnginePresent3D(int fontNumber)
     }
   }
   catch(...)
-  {	
+  {
     char log[128];
     sprintf(log,"ERROR Fontengine:FontEnginePresent3D(%i) exception \n", fontNumber);
     Log(log);

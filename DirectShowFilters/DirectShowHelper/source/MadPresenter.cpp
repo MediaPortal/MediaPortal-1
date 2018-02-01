@@ -118,25 +118,25 @@ bool isFullscreen(HWND window)
 MPMadPresenter::~MPMadPresenter()
 {
   {
-    // TODO need to be commented to avoid deadlock.
-    //CAutoLock cAutoLock(this);
+    //// TODO need to be commented to avoid deadlock.
+    ////CAutoLock cAutoLock(this);
 
-    Log("MPMadPresenter::Destructor() - m_pGraphbuilder release");
-    if (m_pGraphbuilder)
-    {
-      m_pGraphbuilder = nullptr;
-    }
+    //Log("MPMadPresenter::Destructor() - m_pGraphbuilder release");
+    //if (m_pGraphbuilder)
+    //{
+    //  m_pGraphbuilder = nullptr;
+    //}
 
-    Log("MPMadPresenter::Destructor() - mediaControlGraph release");
-    if (mediaControlGraph)
-    {
-      mediaControlGraph = nullptr;
-    }
+    //Log("MPMadPresenter::Destructor() - mediaControlGraph release");
+    //if (mediaControlGraph)
+    //{
+    //  mediaControlGraph = nullptr;
+    //}
 
-    if (m_pMad)
-    {
-      m_pMad = nullptr;
-    }
+    //if (m_pMad)
+    //{
+    //  m_pMad = nullptr;
+    //}
 
     // Detroy create madVR window and need to be here to avoid some crash
     if (m_pKodiWindowUse)
