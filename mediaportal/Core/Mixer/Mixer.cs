@@ -536,7 +536,7 @@ namespace MediaPortal.Mixer
     /// <param name="data"></param>
     public void OnVolumeNotification(object sender, AudioEndpointVolumeCallbackEventArgs aEvent)
     {
-      lock (_volumeTable)
+      lock (CheckAudioLevelsObject)
       {
         if (_isInternalVolumeChange)
           return;
@@ -546,8 +546,10 @@ namespace MediaPortal.Mixer
           //Update volume slider
           if (iAudioEndpointVolume != null)
           {
-            var volumePercentage = (int) Math.Ceiling(iAudioEndpointVolume.MasterVolumeLevelScalar*100f);
-            _volume = ConvertVolumeToStepsEvent(volumePercentage);
+            // Needed to use default step issue 2 of 2 instead of 6 of 6
+            _volume = (int)Math.Round(aEvent.MasterVolume * VolumeMaximum);
+            //var volumePercentage = (int) Math.Ceiling(iAudioEndpointVolume.MasterVolumeLevelScalar*100f);
+            //_volume = ConvertVolumeToStepsEvent(volumePercentage);
             _isMuted = aEvent.IsMuted;
 
             // Store current volume value
