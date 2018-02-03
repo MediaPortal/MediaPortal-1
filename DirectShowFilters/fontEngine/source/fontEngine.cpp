@@ -340,65 +340,71 @@ void FontEngineRemoveTexture(int textureNo)
 //*******************************************************************************************************************
 int FontEngineAddTexture(int hashCode, bool useAlphaBlend, void* texture)
 {
-  int selected=-1;
-
-  for (int i=0; i < MAX_TEXTURES;++i)
+  try
   {
-    if (textureData[i].hashCode==hashCode)
+    int selected = -1;
+
+    for (int i = 0; i < MAX_TEXTURES; ++i)
     {
-      selected=i;
-      break;
+      if (textureData[i].hashCode == hashCode)
+      {
+        selected = i;
+        break;
+      }
+      if (textureData[i].hashCode == -1)
+      {
+        selected = i;
+      }
     }
-    if (textureData[i].hashCode==-1)
+
+    if (selected == -1)
     {
-      selected=i;
+      Log("ERROR FontEngine:Ran out of textures!\n");
+      return -1;
     }
-  }
 
-  if (selected==-1)
-  {
-    Log("ERROR FontEngine:Ran out of textures!\n");
-    return -1;
-  }
+    textureData[selected].useAlphaBlend = useAlphaBlend;
+    textureData[selected].hashCode = hashCode;
+    textureData[selected].pTexture = (LPDIRECT3DTEXTURE9)texture;
+    textureData[selected].pTexture->AddRef();
 
-  textureData[selected].useAlphaBlend=useAlphaBlend;
-  textureData[selected].hashCode=hashCode;
-  textureData[selected].pTexture=(LPDIRECT3DTEXTURE9)texture;
-  textureData[selected].pTexture->AddRef();
-
-  if (textureData[selected].vertices==NULL)
-  {
-    textureData[selected].vertices = new CUSTOMVERTEX[MaxNumTextureVertices];
-    for (int i=0; i < MaxNumTextureVertices;++i)
+    if (textureData[selected].vertices == NULL)
     {
-      textureData[selected].vertices[i].z=0;
+      textureData[selected].vertices = new CUSTOMVERTEX[MaxNumTextureVertices];
+      for (int i = 0; i < MaxNumTextureVertices; ++i)
+      {
+        textureData[selected].vertices[i].z = 0;
+      }
     }
-  }
-  textureData[selected].pTexture->GetLevelDesc(0,&textureData[selected].desc);
+    textureData[selected].pTexture->GetLevelDesc(0, &textureData[selected].desc);
 
-  m_pDevice->CreateIndexBuffer(MaxNumTextureVertices *sizeof(WORD),
-                               m_d3dUsage, D3DFMT_INDEX16, m_ipoolFormat,
-                               &textureData[selected].pIndexBuffer, NULL);
-  WORD* pIndices;
-  int triangle=0;
-  textureData[selected].pIndexBuffer->Lock(0,0,(VOID**)&pIndices, 0);
-  for (int i=0; i < MaxNumTextureVertices;i+=6)
-  {
-    if (i+5 < MaxNumTextureVertices)
+    m_pDevice->CreateIndexBuffer(MaxNumTextureVertices * sizeof(WORD),
+      m_d3dUsage, D3DFMT_INDEX16, m_ipoolFormat,
+      &textureData[selected].pIndexBuffer, NULL);
+    WORD* pIndices;
+    int triangle = 0;
+    textureData[selected].pIndexBuffer->Lock(0, 0, (VOID**)&pIndices, 0);
+    for (int i = 0; i < MaxNumTextureVertices; i += 6)
     {
-      pIndices[i+0]=triangle*4+1;
-      pIndices[i+1]=triangle*4+0;
-      pIndices[i+2]=triangle*4+3;
-      pIndices[i+3]=triangle*4+2;
-      pIndices[i+4]=triangle*4+1;
-      pIndices[i+5]=triangle*4+3;
+      if (i + 5 < MaxNumTextureVertices)
+      {
+        pIndices[i + 0] = triangle * 4 + 1;
+        pIndices[i + 1] = triangle * 4 + 0;
+        pIndices[i + 2] = triangle * 4 + 3;
+        pIndices[i + 3] = triangle * 4 + 2;
+        pIndices[i + 4] = triangle * 4 + 1;
+        pIndices[i + 5] = triangle * 4 + 3;
+      }
+      triangle++;
     }
-    triangle++;
-  }
-  textureData[selected].pIndexBuffer->Unlock();
-  textureData[selected].pIndexBuffer->AddRef();
+    textureData[selected].pIndexBuffer->Unlock();
+    textureData[selected].pIndexBuffer->AddRef();
 
-  return selected;
+    return selected;
+  }
+  catch (...)
+  { }
+  return 0;
 }
 
 //*******************************************************************************************************************
