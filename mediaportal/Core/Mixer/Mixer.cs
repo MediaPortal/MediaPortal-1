@@ -347,29 +347,32 @@ namespace MediaPortal.Mixer
 
     public int ConvertVolumeToStepsEvent(int volumePercentage)
     {
-      try
+      lock (this)
       {
-        if (_volumeTable == null)
-          return 0;
-
-        if (VolumeHandler.Instance != null)
+        try
         {
-          if (volumePercentage > _lastVolume)
+          if (_volumeTable == null)
+            return 0;
+
+          if (VolumeHandler.Instance != null)
           {
-            VolumeHandler.Instance.Volume = VolumeHandler.Instance.Next;
+            if (volumePercentage > _lastVolume)
+            {
+              VolumeHandler.Instance.Volume = VolumeHandler.Instance.Next;
+            }
+            else if (volumePercentage < _lastVolume)
+            {
+              VolumeHandler.Instance.Volume = VolumeHandler.Instance.Previous;
+            }
+            return VolumeHandler.Instance.Volume;
           }
-          else if (volumePercentage < _lastVolume)
-          {
-            VolumeHandler.Instance.Volume = VolumeHandler.Instance.Previous;
-          }
-          return VolumeHandler.Instance.Volume;
+          return 0;
         }
-        return 0;
-      }
-      catch (Exception ex)
-      {
-        Log.Error($"Mixer: error occured in ConvertVolumeToSteps: {ex}");
-        return 0;
+        catch (Exception ex)
+        {
+          Log.Error($"Mixer: error occured in ConvertVolumeToSteps: {ex}");
+          return 0;
+        }
       }
     }
 
@@ -536,7 +539,7 @@ namespace MediaPortal.Mixer
     /// <param name="data"></param>
     public void OnVolumeNotification(object sender, AudioEndpointVolumeCallbackEventArgs aEvent)
     {
-      lock (CheckAudioLevelsObject)
+      lock (_volumeTable)
       {
         if (_isInternalVolumeChange)
           return;
@@ -546,10 +549,18 @@ namespace MediaPortal.Mixer
           //Update volume slider
           if (iAudioEndpointVolume != null)
           {
-            // Needed to use default step issue 2 of 2 instead of 6 of 6
-            _volume = (int)Math.Round(aEvent.MasterVolume * VolumeMaximum);
-            //var volumePercentage = (int) Math.Ceiling(iAudioEndpointVolume.MasterVolumeLevelScalar*100f);
-            //_volume = ConvertVolumeToStepsEvent(volumePercentage);
+            // Force a couple of settings for Windows 10
+            if (OSInfo.OSInfo.Win10OrLater() && VolumeHandler.Instance.VolumeStyle() == 5)
+            {
+              var volumePercentage = (int)Math.Ceiling(iAudioEndpointVolume.MasterVolumeLevelScalar * 100f);
+              _volume = ConvertVolumeToStepsEvent(volumePercentage);
+            }
+            else
+            {
+              // Needed to use default step issue 2 of 2 instead of 6 of 6
+              _volume = (int)Math.Round(aEvent.MasterVolume * VolumeMaximum);
+            }
+
             _isMuted = aEvent.IsMuted;
 
             // Store current volume value
@@ -628,9 +639,11 @@ namespace MediaPortal.Mixer
           // For audio session
           new Thread(() =>
           {
+            _isInternalVolumeChange = true;
             Thread.CurrentThread.IsBackground = true;
             CheckAudioLevels();
             Log.Debug("Mixer: CheckAudioLevels");
+            _isInternalVolumeChange = false;
           }).Start();
         }
         catch (Exception)

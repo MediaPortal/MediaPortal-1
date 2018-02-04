@@ -42,6 +42,7 @@ namespace MediaPortal.Player
 
     static HideVolumeOSD.HideVolumeOSDLib VolumeOSD;
     static MMDeviceEnumerator _MMdeviceEnumerator = new MMDeviceEnumerator();
+    static int _volumeStyle = 0;
 
     #endregion
 
@@ -155,9 +156,9 @@ namespace MediaPortal.Player
         {
           using (Settings reader = new MPSettings())
           {
-            int volumeStyle = reader.GetValueAsInt("volume", "handler", 1);
+            _volumeStyle = reader.GetValueAsInt("volume", "handler", 1);
 
-            switch (volumeStyle)
+            switch (_volumeStyle)
             {
               // classic volume table
               case 0:
@@ -185,6 +186,14 @@ namespace MediaPortal.Player
                   49151,
                   53247, 57343, 61439, 65535
                 });
+              // Windows 10
+              case 5:
+                return new VolumeHandler(new[]
+                {
+                  0,1310,2620,3930,5240,6550,7860,9170,10480,11790,13100,14410,15720,17030,18340,19650,20960,22270,23580,24890,26200,27510,28820,30130,31440,
+                  32750,34060,35370,36680,37990,39300,40610,41920,43230,44540,45850,47160,48470,49780,51090,52400,53710,55020,56330,57640,58950,60260,61570,
+                  62880,64190,65535
+                });
               default:
                 return new VolumeHandlerCustom();
             }
@@ -192,6 +201,11 @@ namespace MediaPortal.Player
         }
       }
       return new VolumeHandlerCustom();
+    }
+
+    public virtual int VolumeStyle()
+    {
+      return _volumeStyle;
     }
 
     public static void Dispose()
