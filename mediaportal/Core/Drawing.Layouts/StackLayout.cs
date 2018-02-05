@@ -106,7 +106,7 @@ namespace MediaPortal.Drawing.Layouts
         /* Wrong drawing in Stack Layout with centered labels
         if (((GUIFadeLabel)element).TextAlignment == Alignment.ALIGN_CENTER)
         {
-          rect.X = rect.X + ((GUIFadeLabel)element).Width / 2; Wrong drawing in Sack layout with centered labels 
+          rect.X = rect.X + ((GUIFadeLabel)element).Width / 2;
         }
         */
       }
