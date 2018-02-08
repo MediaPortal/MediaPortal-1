@@ -3961,6 +3961,17 @@ namespace MediaPortal.Util
       }
     }
 
+    public static void DisposeFileExistsCacheThread()
+    {
+      if (_fileExistsCacheThread != null)
+      {
+        _fileExistsCacheThreadEvt?.Dispose();
+        _fileExistsCacheThread?.SafeDispose();
+        _fileExistsCacheThreadEvt = null;
+        _fileExistsCacheThread = null;
+      }
+    }
+
     private static void InsertFilesIntoCacheAsynch(object oPath)
     {
       string path = oPath as string;

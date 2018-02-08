@@ -3486,7 +3486,9 @@ public class MediaPortalApp : D3D, IRender
     GUILocalizeStrings.Dispose();
     TexturePacker.Cleanup();
     VolumeHandler.Dispose();
-    
+
+    Utils.DisposeFileExistsCacheThread();
+
     GUIFontManager.SetDeviceNull();
 
     if (_isWinScreenSaverInUse)
