@@ -868,11 +868,13 @@ namespace MediaPortal.Player
 
     public int RenderGui(Int16 width, Int16 height, Int16 arWidth, Int16 arHeight)
     {
+      //Log.Debug("Planescene: RenderGui: arWidth {0} - arHeight {1}", arWidth, arHeight);
       return RenderLayers(GUILayers.under, width, height, arWidth, arHeight);
     }
 
     public int RenderOverlay(Int16 width, Int16 height, Int16 arWidth, Int16 arHeight)
     {
+      //Log.Debug("Planescene: RenderOverlay: arWidth {0} - arHeight {1}", arWidth, arHeight);
       return RenderLayers(GUILayers.over, width, height, arWidth, arHeight);
     }
 
