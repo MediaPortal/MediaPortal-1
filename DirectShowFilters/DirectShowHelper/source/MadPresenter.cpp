@@ -118,25 +118,25 @@ bool isFullscreen(HWND window)
 MPMadPresenter::~MPMadPresenter()
 {
   {
-    // TODO need to be commented to avoid deadlock.
-    //CAutoLock cAutoLock(this);
+    //// TODO need to be commented to avoid deadlock.
+    ////CAutoLock cAutoLock(this);
 
-    Log("MPMadPresenter::Destructor() - m_pGraphbuilder release");
-    if (m_pGraphbuilder)
-    {
-      m_pGraphbuilder = nullptr;
-    }
+    //Log("MPMadPresenter::Destructor() - m_pGraphbuilder release");
+    //if (m_pGraphbuilder)
+    //{
+    //  m_pGraphbuilder = nullptr;
+    //}
 
-    Log("MPMadPresenter::Destructor() - mediaControlGraph release");
-    if (mediaControlGraph)
-    {
-      mediaControlGraph = nullptr;
-    }
+    //Log("MPMadPresenter::Destructor() - mediaControlGraph release");
+    //if (mediaControlGraph)
+    //{
+    //  mediaControlGraph = nullptr;
+    //}
 
-    if (m_pMad)
-    {
-      m_pMad = nullptr;
-    }
+    //if (m_pMad)
+    //{
+    //  m_pMad = nullptr;
+    //}
 
     // Detroy create madVR window and need to be here to avoid some crash
     if (m_pKodiWindowUse)
@@ -1141,8 +1141,20 @@ HRESULT MPMadPresenter::ClearBackground(LPCSTR name, REFERENCE_TIME frameStart, 
   // Lock madVR thread while Shutdown()
   //CAutoLock lock(&m_dsLock);
 
-  DWORD videoHeight = activeVideoRect->bottom - activeVideoRect->top;
-  DWORD videoWidth = activeVideoRect->right - activeVideoRect->left;
+  //DWORD videoHeight = activeVideoRect->bottom - activeVideoRect->top;
+  //DWORD videoWidth = activeVideoRect->right - activeVideoRect->left;
+
+  CSize szVideoFrame;
+  if (Com::SmartQIPtr<IMadVRInfo> m_pMVRI = m_pMad)
+  {
+    if (m_pMVRI) {
+      // Use IMadVRInfo to get size. See http://bugs.madshi.net/view.php?id=180
+      m_pMVRI->GetSize("originalVideoSize", &szVideoFrame);
+    }
+  }
+
+  DWORD videoHeight = szVideoFrame.cy;
+  DWORD videoWidth = szVideoFrame.cx;
 
   //CAutoLock cAutoLock(this);
 
@@ -1239,8 +1251,20 @@ HRESULT MPMadPresenter::RenderOsd(LPCSTR name, REFERENCE_TIME frameStart, RECT* 
   // Lock madVR thread while Shutdown()
   //CAutoLock lock(&m_dsLock);
 
-  DWORD videoHeight = activeVideoRect->bottom - activeVideoRect->top;
-  DWORD videoWidth = activeVideoRect->right - activeVideoRect->left;
+  //DWORD videoHeight = activeVideoRect->bottom - activeVideoRect->top;
+  //DWORD videoWidth = activeVideoRect->right - activeVideoRect->left;
+
+  CSize szVideoFrame;
+  if (Com::SmartQIPtr<IMadVRInfo> m_pMVRI = m_pMad)
+  {
+    if (m_pMVRI) {
+      // Use IMadVRInfo to get size. See http://bugs.madshi.net/view.php?id=180
+      m_pMVRI->GetSize("originalVideoSize", &szVideoFrame);
+    }
+  }
+
+  DWORD videoHeight = szVideoFrame.cy;
+  DWORD videoWidth = szVideoFrame.cx;
 
   //Log("%s : log activeVideoRect bottom x top : %d x %d", __FUNCTION__, (WORD)activeVideoRect->bottom, (WORD)activeVideoRect->top);
   //Log("%s : log activeVideoRect right x left : %d x %d", __FUNCTION__, (WORD)activeVideoRect->right, (WORD)activeVideoRect->left);

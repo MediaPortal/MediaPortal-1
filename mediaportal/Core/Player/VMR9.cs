@@ -909,6 +909,12 @@ namespace MediaPortal.Player
 
         if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
         {
+          // Send action message to refresh screen
+          var msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_MADVR_SCREEN_REFRESH, 0, 0, 0, 0, 0, null)
+          {
+            Param1 = 1
+          };
+          GUIWindowManager.SendThreadMessage(msg);
           // Process frames to clear D3D dialog window
           for (int i = 0; i < 20; i++)
           {
@@ -1406,7 +1412,7 @@ namespace MediaPortal.Player
           GUIWindowManager.SendThreadMessage(msg);
         }
 
-        VMR9Util.g_vmr9.StartMadVrPaused(); //TODO
+        //VMR9Util.g_vmr9.StartMadVrPaused(); //TODO
       }
     }
 

@@ -690,7 +690,10 @@ namespace MediaPortal
           {
             if (GUIGraphicsContext.DX9Device != null)
             {
-              GUIGraphicsContext.DX9Device.EvictManagedResources();
+              lock (GUIGraphicsContext.RenderLock)
+              {
+                GUIGraphicsContext.DX9Device.EvictManagedResources();
+              }
 
               if (useBackup)
               {
@@ -698,7 +701,10 @@ namespace MediaPortal
                 {
                   Log.Debug("Main: RecreateSwapChain() by restoring startup DirectX values");
                   GUIGraphicsContext.DirectXPresentParameters = _presentParamsBackup;
-                  GUIGraphicsContext.DX9Device.Reset(_presentParamsBackup);
+                  lock (GUIGraphicsContext.RenderLock)
+                  {
+                    GUIGraphicsContext.DX9Device.Reset(_presentParamsBackup);
+                  }
                 }
                 catch (InvalidCallException)
                 {
@@ -734,7 +740,10 @@ namespace MediaPortal
                 BuildPresentParams(Windowed);
                 try
                 {
-                  GUIGraphicsContext.DX9Device.Reset(_presentParams);
+                  lock (GUIGraphicsContext.RenderLock)
+                  {
+                    GUIGraphicsContext.DX9Device.Reset(_presentParams);
+                  }
                 }
                 catch (InvalidCallException)
                 {
@@ -1365,36 +1374,17 @@ namespace MediaPortal
     {
       Size clientArea;
       var border = new Size(Width - ClientSize.Width, Height - ClientSize.Height);
-      // Adding code to detect the Area in windowed mode because with screen has taskbar, it make the result not correct.
-      int height;
-      int width;
-      if (Windowed)
-      {
-        height = GUIGraphicsContext.currentScreen.WorkingArea.Height;
-        width = GUIGraphicsContext.currentScreen.WorkingArea.Width;
-        Log.Debug("CalcMaxClientArea windowed : width {0} / height {1}", width, height);
-      }
-      else
-      {
-        height = GUIGraphicsContext.currentScreen.Bounds.Height;
-        width = GUIGraphicsContext.currentScreen.Bounds.Width;
-        Log.Debug("CalcMaxClientArea return fullscreen : width {0} / height {1}", width, height);
-        return new Size(width, height);
-      }
-      if (GUIGraphicsContext.SkinSize.Width + border.Width <= width &&
-          GUIGraphicsContext.SkinSize.Height + border.Height <= height)
+      if (GUIGraphicsContext.SkinSize.Width + border.Width <= GUIGraphicsContext.currentScreen.WorkingArea.Width &&
+          GUIGraphicsContext.SkinSize.Height + border.Height <= GUIGraphicsContext.currentScreen.WorkingArea.Height)
       {
         clientArea = new Size(GUIGraphicsContext.SkinSize.Width + border.Width, GUIGraphicsContext.SkinSize.Height + border.Height);
-        Log.Debug("CalcMaxClientArea clientArea 1 : clientArea {0}", clientArea);
       }
       else
       {
-        double ratio = Math.Min((double)(width - border.Width) / GUIGraphicsContext.SkinSize.Width,
-                                (double)(height - border.Height) / GUIGraphicsContext.SkinSize.Height);
+        double ratio = Math.Min((double)(GUIGraphicsContext.currentScreen.WorkingArea.Width - border.Width) / GUIGraphicsContext.SkinSize.Width,
+                                (double)(GUIGraphicsContext.currentScreen.WorkingArea.Height - border.Height) / GUIGraphicsContext.SkinSize.Height);
         clientArea = new Size((int)(GUIGraphicsContext.SkinSize.Width * ratio), (int)(GUIGraphicsContext.SkinSize.Height * ratio));
-        Log.Debug("CalcMaxClientArea clientArea 2 : clientArea {0}", clientArea);
       }
-      Log.Debug("CalcMaxClientArea clientArea return : clientArea {0}", clientArea);
       return clientArea;
     }
 
@@ -1535,13 +1525,15 @@ namespace MediaPortal
       Screen screen = Screen.FromControl(this);
       var size = new Size(screen.Bounds.Width, screen.Bounds.Height);
       var sizeMaxClient = CalcMaxClientArea();
+      Log.Info("D3D: BuildPresentParams CalcMaxClientArea from: {0}x{1}", sizeMaxClient.Width, sizeMaxClient.Height);
+      Log.Info("D3D: BuildPresentParams screen WorkingArea from: {0}x{1}", screen.WorkingArea.Width, screen.WorkingArea.Height);
 
       if (windowed)
       {
         size = GUIGraphicsContext.form.ClientSize;
         int backupSizeWidth = 0;
         int backupSizeHeight = 0;
-  
+
         using (Settings xmlreader = new MPSettings())
         {
           backupSizeWidth = xmlreader.GetValueAsInt("gui", "backupsizewidth", 0);
@@ -1558,14 +1550,20 @@ namespace MediaPortal
         // Sanity check and replace with sensible size values if necessary
         if (size.Width < 256 || size.Height < 256 || size.Width > sizeMaxClient.Width || size.Height > sizeMaxClient.Height)
         {
-          Log.Debug("D3D: BuildPresentParams(), invalid size {0} x {1} changed to {2} x {3}",  size.Width, size.Height, sizeMaxClient.Width, sizeMaxClient.Height);
+          Log.Debug("D3D: BuildPresentParams(), invalid size {0} x {1} changed to {2} x {3}", size.Width, size.Height, sizeMaxClient.Width, sizeMaxClient.Height);
           size.Width = sizeMaxClient.Width;
           size.Height = sizeMaxClient.Height;
         }
       }
+      else if (g_Player.Playing && GUIGraphicsContext.InVmr9Render || GUIGraphicsContext.ForceMadVRFirstStart)
+      {
+        // Needed this to avoid D3D issue for example on AMD user and only while playing a video
+        size.Width = screen.WorkingArea.Width;
+        size.Height = screen.WorkingArea.Height;
+      }
 
-      _presentParams.BackBufferWidth  = sizeMaxClient.Width;
-      _presentParams.BackBufferHeight = sizeMaxClient.Height;
+      _presentParams.BackBufferWidth = size.Width;
+      _presentParams.BackBufferHeight = size.Height;
       _presentParams.BackBufferFormat = Format.Unknown;
  
       Log.Info("D3D: BuildPresentParams ClientSize from: {0}x{1}", GUIGraphicsContext.form.ClientSize.Width, GUIGraphicsContext.form.ClientSize.Height);
@@ -2937,20 +2935,24 @@ namespace MediaPortal
         var backupSize = ClientSize;
         var sizeMaxClient = CalcMaxClientArea();
         Log.Debug("D3D: Dispose() ClientSize: {0}x{1}, MaxClientSize: {2}x{3}", backupSize.Width, backupSize.Height, sizeMaxClient.Width, sizeMaxClient.Height);
-        
-        if (backupSize.Width < 256 || backupSize.Height < 256 || backupSize.Width > sizeMaxClient.Width || backupSize.Height > sizeMaxClient.Height)
+
+        if (Windowed)
         {
-          xmlWriter.SetValue("gui", "lastlocationx", 0);
-          xmlWriter.SetValue("gui", "lastlocationy", 0);
-          xmlWriter.SetValue("gui", "backupsizewidth", sizeMaxClient.Width);
-          xmlWriter.SetValue("gui", "backupsizeheight", sizeMaxClient.Height);
-        }
-        else
-        {
-          xmlWriter.SetValue("gui", "lastlocationx", Location.X);
-          xmlWriter.SetValue("gui", "lastlocationy", Location.Y);
-          xmlWriter.SetValue("gui", "backupsizewidth", backupSize.Width);
-          xmlWriter.SetValue("gui", "backupsizeheight", backupSize.Height);
+          if (backupSize.Width < 256 || backupSize.Height < 256 || backupSize.Width > sizeMaxClient.Width ||
+              backupSize.Height > sizeMaxClient.Height)
+          {
+            xmlWriter.SetValue("gui", "lastlocationx", 0);
+            xmlWriter.SetValue("gui", "lastlocationy", 0);
+            xmlWriter.SetValue("gui", "backupsizewidth", sizeMaxClient.Width);
+            xmlWriter.SetValue("gui", "backupsizeheight", sizeMaxClient.Height);
+          }
+          else
+          {
+            xmlWriter.SetValue("gui", "lastlocationx", Location.X);
+            xmlWriter.SetValue("gui", "lastlocationy", Location.Y);
+            xmlWriter.SetValue("gui", "backupsizewidth", backupSize.Width);
+            xmlWriter.SetValue("gui", "backupsizeheight", backupSize.Height);
+          }
         }
       }
 

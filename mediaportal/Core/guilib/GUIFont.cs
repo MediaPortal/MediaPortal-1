@@ -463,9 +463,18 @@ namespace MediaPortal.GUI.Library
 
     public void Present()
     {
-      if (ID >= 0)
+      lock (GUIFontManager.Renderlock)
       {
-        DXNative.FontEnginePresent3D(ID);
+        // Check GUIGraphicsContext.State
+        if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.SUSPENDING)
+        {
+          return;
+        }
+
+        if (ID >= 0)
+        {
+          DXNative.FontEnginePresent3D(ID);
+        }
       }
     }
 

@@ -1861,7 +1861,7 @@ namespace MediaPortal.GUI.Library
     public static bool NoneDone { get; set; }
     public static bool ForceMadVRRefresh { get; set; }
     public static bool ForceMadVRRefresh3D { get; set; }
-    internal static bool ForceMadVRFirstStart { get; set; }
+    public static bool ForceMadVRFirstStart { get; set; }
     internal static bool ProcessMadVrOsdDisplay { get; set; }
     public static bool BlurayMenu { get; set; }
     internal static bool InitMadVRWindowPosition { get; set; }

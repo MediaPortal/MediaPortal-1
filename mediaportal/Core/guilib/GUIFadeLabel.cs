@@ -477,7 +477,7 @@ namespace MediaPortal.GUI.Library
       {
         _font.GetTextExtent(originalText, ref textWidth, ref textHeight);
         originalText += (!string.IsNullOrEmpty(_labelTail) ? _labelTail : " ");
-      } while (textWidth >= 0 && textWidth < maxRenderWidth);
+      } while (textWidth > 0 && textWidth < maxRenderWidth);
 
       if (_timeElapsed > _scrollStartDelay)
       {

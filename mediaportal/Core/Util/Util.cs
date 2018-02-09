@@ -3598,7 +3598,14 @@ namespace MediaPortal.Util
           _fileExistsCacheThreadEvt.Reset();
         }
 
-        _fileExistsCacheThreadEvt.WaitOne();
+        if (App.IsShuttingDown)
+        {
+          _fileExistsCacheThreadEvt?.Dispose();
+        }
+        else
+        {
+          _fileExistsCacheThreadEvt?.WaitOne();
+        }
       }
     }
 
@@ -3646,6 +3653,11 @@ namespace MediaPortal.Util
               }
             }*/
           }
+        }
+        if (App.IsShuttingDown)
+        {
+          _fileExistsCacheThreadEvt?.Dispose();
+          break;
         }
         Thread.Sleep(FileLookUpCacheThreadScanningIntervalMSecs);
       }
@@ -3958,6 +3970,17 @@ namespace MediaPortal.Util
         _fileExistsCacheThread.IsBackground = true;
         _fileExistsCacheThread.Priority = ThreadPriority.Lowest;
         _fileExistsCacheThread.Start();
+      }
+    }
+
+    public static void DisposeFileExistsCacheThread()
+    {
+      if (_fileExistsCacheThread != null)
+      {
+        _fileExistsCacheThreadEvt?.Dispose();
+        _fileExistsCacheThread?.SafeDispose();
+        _fileExistsCacheThreadEvt = null;
+        _fileExistsCacheThread = null;
       }
     }
 
