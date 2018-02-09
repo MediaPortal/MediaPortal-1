@@ -690,7 +690,10 @@ namespace MediaPortal
           {
             if (GUIGraphicsContext.DX9Device != null)
             {
-              GUIGraphicsContext.DX9Device.EvictManagedResources();
+              lock (GUIGraphicsContext.RenderLock)
+              {
+                GUIGraphicsContext.DX9Device.EvictManagedResources();
+              }
 
               if (useBackup)
               {
@@ -698,7 +701,10 @@ namespace MediaPortal
                 {
                   Log.Debug("Main: RecreateSwapChain() by restoring startup DirectX values");
                   GUIGraphicsContext.DirectXPresentParameters = _presentParamsBackup;
-                  GUIGraphicsContext.DX9Device.Reset(_presentParamsBackup);
+                  lock (GUIGraphicsContext.RenderLock)
+                  {
+                    GUIGraphicsContext.DX9Device.Reset(_presentParamsBackup);
+                  }
                 }
                 catch (InvalidCallException)
                 {
@@ -734,7 +740,10 @@ namespace MediaPortal
                 BuildPresentParams(Windowed);
                 try
                 {
-                  GUIGraphicsContext.DX9Device.Reset(_presentParams);
+                  lock (GUIGraphicsContext.RenderLock)
+                  {
+                    GUIGraphicsContext.DX9Device.Reset(_presentParams);
+                  }
                 }
                 catch (InvalidCallException)
                 {
@@ -1546,7 +1555,7 @@ namespace MediaPortal
           size.Height = sizeMaxClient.Height;
         }
       }
-      else if (g_Player.Playing && GUIGraphicsContext.InVmr9Render)
+      else if (g_Player.Playing && GUIGraphicsContext.InVmr9Render || GUIGraphicsContext.ForceMadVRFirstStart)
       {
         // Needed this to avoid D3D issue for example on AMD user and only while playing a video
         size.Width = screen.WorkingArea.Width;
