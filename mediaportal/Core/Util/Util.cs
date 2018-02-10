@@ -3595,17 +3595,16 @@ namespace MediaPortal.Util
         if (isQueueEmpty)
         {
           Log.Debug("FileExistsCacheThread: no more items to cache, suspending thread.: {0}", items);
-          _fileExistsCacheThreadEvt.Reset();
+          _fileExistsCacheThreadEvt?.Reset();
         }
 
         if (App.IsShuttingDown)
         {
           _fileExistsCacheThreadEvt?.Dispose();
+          _fileExistsCacheThreadEvt = null;
+          break;
         }
-        else
-        {
-          _fileExistsCacheThreadEvt?.WaitOne();
-        }
+        _fileExistsCacheThreadEvt?.WaitOne();
       }
     }
 
