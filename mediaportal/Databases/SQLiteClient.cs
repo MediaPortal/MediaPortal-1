@@ -287,11 +287,11 @@ namespace SQLite.NET
     {
       if (dbHandle != IntPtr.Zero)
       {
-        try
-        {
-          this.Execute("PRAGMA optimize;");
-        }
-        catch { }
+        //try
+        //{
+        //  this.Execute("PRAGMA optimize;");
+        //}
+        //catch { }
 
         //System.Diagnostics.Debugger.Launch();
         //Log.Info("SQLiteClient: Closing database: {0} st {1}", databaseName, Environment.StackTrace);
