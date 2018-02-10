@@ -481,6 +481,7 @@ namespace MediaPortal.GUI.Video
 
     protected virtual void OnSort()
     {
+      UpdateLoadDirectory();
       SetLabels();
       facadeLayout.Sort(new VideoSort(CurrentSortMethod, CurrentSortAsc));
       UpdateButtonStates();
@@ -829,6 +830,8 @@ namespace MediaPortal.GUI.Video
     }
 
     protected override void LoadDirectory(string path) {}
+
+    protected override void UpdateLoadDirectory() {}
 
     protected void LoadPlayList(string strPlayList)
     {
