@@ -287,11 +287,13 @@ namespace SQLite.NET
     {
       if (dbHandle != IntPtr.Zero)
       {
+        /* Remove from MP1-4902 due MP crash on some computer
         try
         {
           this.Execute("PRAGMA optimize;");
         }
         catch { }
+        */
 
         //System.Diagnostics.Debugger.Launch();
         //Log.Info("SQLiteClient: Closing database: {0} st {1}", databaseName, Environment.StackTrace);
