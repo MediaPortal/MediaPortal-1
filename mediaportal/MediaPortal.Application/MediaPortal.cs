@@ -1687,11 +1687,8 @@ public class MediaPortalApp : D3D, IRender
           }
 
           // Handle this message here needed for madVR
-          if (Windowed || !_ignoreFullscreenResolutionChanges)
-          {
-            OnDisplayChange(ref msg);
-            PluginManager.WndProc(ref msg);
-          }
+          OnDeviceChange(ref msg);
+          PluginManager.WndProc(ref msg);
 
           // Restore bounds from the currentScreen value (to restore original startup MP screen after turned off used HDMI device
           if (!Windowed && _ignoreFullscreenResolutionChanges && !RefreshRateChanger.RefreshRateChangePending)
