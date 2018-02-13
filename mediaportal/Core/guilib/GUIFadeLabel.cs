@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2017 Team MediaPortal
+#region Copyright (C) 2005-2018 Team MediaPortal
 
-// Copyright (C) 2005-2017 Team MediaPortal
+// Copyright (C) 2005-2018 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -18,9 +18,10 @@
 
 #endregion
 
+using MediaPortal.Drawing;
+using MediaPortal.ExtensionMethods;
 using System.Collections;
 using System.Drawing;
-using MediaPortal.ExtensionMethods;
 
 // ReSharper disable CheckNamespace
 namespace MediaPortal.GUI.Library
@@ -187,6 +188,19 @@ namespace MediaPortal.GUI.Library
     {
       base.ScaleToScreenResolution();
       GUIGraphicsContext.ScalePosToScreenResolution(ref _maxWidth, ref _maxHeight);
+    }
+
+    public override void Arrange(Rect finalRect)
+    {
+      Location = finalRect.Location;
+      if (_maxWidth == 0)
+      {
+        Width = (int)finalRect.Width;
+      }
+      if (_maxHeight == 0)
+      {
+        Height = (int)finalRect.Height;
+      }
     }
 
     /// <summary>
@@ -364,7 +378,7 @@ namespace MediaPortal.GUI.Library
         }
 
         // render the text
-        bool bDone = RenderText(timePassed, _positionX, _positionY, Width /*_width*/, strLabel);
+        bool bDone = RenderText(timePassed, _positionX, _positionY, Width, strLabel);
         if (bDone)
         {
           _currentLabelIndex++;
@@ -500,7 +514,6 @@ namespace MediaPortal.GUI.Library
 
         float fWidth = 0;
         float fHeight = 0;
-        // string tempText = _scrollPosition >= originalText.Length ? " " : originalText.Substring(_scrollPosition, 1);
         string tempText = _scrollPosition >= originalText.Length ? (!string.IsNullOrEmpty(_labelTail) ? _labelTail : " ") : originalText.Substring(_scrollPosition, 1);
         _font.GetTextExtent(tempText, ref fWidth, ref fHeight);
 
@@ -528,7 +541,6 @@ namespace MediaPortal.GUI.Library
           }
           else
           {
-           // scrollText += WrapAround() ? originalText[wrapPosition++] : ' ';
             scrollText += WrapAround() ? originalText[wrapPosition++] : (!string.IsNullOrEmpty(_labelTail) && _labelTail.Length == 1 ? _labelTail[0] : ' ');
           }
         }
@@ -563,8 +575,8 @@ namespace MediaPortal.GUI.Library
           case Alignment.ALIGN_CENTER:
             _labelControl.TextVAlignment = VAlignment.ALIGN_TOP;
             xpos = positionX - _scrollPosititionX + _scrollOffset;
-            xoff = System.Math.Max(0 ,(maxRenderWidth /*_width*/ - textWidth) / 2);
-            double yoff = (Height /*_height*/ - textHeight) / 2;
+            xoff = System.Math.Max(0 ,(maxRenderWidth - textWidth) / 2);
+            double yoff = (Height - textHeight) / 2;
             _labelControl.SetPosition((int)(xpos + xoff), (int)(positionY + yoff));
             break;
 
@@ -586,11 +598,10 @@ namespace MediaPortal.GUI.Library
       }
       else
       {
-        _labelControl.SetPosition(_positionX, _positionY);
         _labelControl.TextAlignment = _textAlignment;
         _labelControl.TextVAlignment = _textVAlignment;
         _labelControl.TrimText = true;
-        _labelControl.Label = originalText; // text;
+        _labelControl.Label = originalText;
 
         if (_maxWidth > 0)
         {
