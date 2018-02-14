@@ -1236,7 +1236,27 @@ namespace MediaPortal
           {
             // FCU suicide form blackscreen fix
             _forceMpAlive = false;
-            FixFCU();
+
+            // Don't use FixFCU because it didn't always works for all users
+            //FixFCU();
+
+            // Instead use this code, it will make a little window appear on top of MP
+            using (Form form = new Form())
+            {
+              form.Text = "FCU Workaround";
+              form.Opacity = 5;
+              form.Size = new Size(10, 10);
+              form.FormBorderStyle = FormBorderStyle.FixedSingle;
+              form.Show();
+              form.Location = new Point(GUIGraphicsContext.form.Location.X,
+                GUIGraphicsContext.form.Location.Y)
+              {
+                X = GUIGraphicsContext.form.Location.X,
+                Y = GUIGraphicsContext.form.Location.Y
+              };
+              form.Show();
+              form.Close();
+            }
           }
           catch (Exception)
           {
