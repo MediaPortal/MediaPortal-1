@@ -1295,7 +1295,7 @@ namespace TvPlugin
 
       using (Settings xmlreader = new MPSettings())
       {
-        m_navigator.LoadSettings(xmlreader);
+        m_navigator?.LoadSettings(xmlreader);
         _useasynctuning = xmlreader.GetValueAsBool("mytv", "useasynctuning", false);
         _autoTurnOnTv = xmlreader.GetValueAsBool("mytv", "autoturnontv", false);
         _showlastactivemodule = xmlreader.GetValueAsBool("general", "showlastactivemodule", false);
