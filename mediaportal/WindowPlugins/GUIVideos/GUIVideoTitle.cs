@@ -1028,7 +1028,7 @@ namespace MediaPortal.GUI.Video
         }
         catch (Exception){}
         
-        item.OnItemSelected += OnItemSelected;
+        //item.OnItemSelected += OnItemSelected; // This lead to too many SQL call and seems not needed
         SetLabel(item);
         ((VideoViewHandler)handler).SetLabel(item.AlbumInfoTag as IMDBMovie, ref item);
         // Movie/group content list skin property will read from musictag

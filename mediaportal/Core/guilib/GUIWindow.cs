@@ -1948,6 +1948,9 @@ namespace MediaPortal.GUI.Library
 
               _skipAnimation = false;
 
+              msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT_DONE, 0, 0, 0, 0, 0, null);
+              GUIWindowManager.SendThreadMessage(msg);
+
               return true;
               // TODO BUG ! Check if this return needs to be in the case and if there needs to be a break statement after each case.
 
@@ -1966,6 +1969,9 @@ namespace MediaPortal.GUI.Library
 #endif
                 _shouldRestore = true;
                 _skipAnimation = false;
+
+                msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT_DONE, 0, 0, 0, 0, 0, null);
+                GUIWindowManager.SendThreadMessage(msg);
 
                 return true;
               }
