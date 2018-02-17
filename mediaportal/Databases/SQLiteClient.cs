@@ -329,7 +329,7 @@ namespace SQLite.NET
     public SQLiteResultSet Execute(string query)
     {
       SQLiteResultSet set1 = new SQLiteResultSet();
-      lock (typeof (SQLiteClient))
+      //lock (typeof (SQLiteClient))
       {
         //Log.Info("dbs:{0} sql:{1}", databaseName,query);
         if (query == null)
