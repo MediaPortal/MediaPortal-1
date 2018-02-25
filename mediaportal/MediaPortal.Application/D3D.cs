@@ -1257,6 +1257,11 @@ namespace MediaPortal
               form.Show();
               form.Close();
             }
+            // Make Mediaportal window focused
+            if (Win32API.SetForegroundWindow(GUIGraphicsContext.ActiveForm, true))
+            {
+              Log.Debug("D3D: ForceMpAlive MP Successfully switched focus.");
+            }
           }
           catch (Exception)
           {
