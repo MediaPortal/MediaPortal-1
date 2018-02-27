@@ -1645,8 +1645,11 @@ namespace MediaPortal.Player
       {
         if (AudioOnly)
         {
-          var hr = mediaCtrl.Stop();
-          DsError.ThrowExceptionForHR(hr);
+          if (mediaCtrl != null)
+          {
+            var hr = mediaCtrl.Stop();
+            DsError.ThrowExceptionForHR(hr);
+          }
         }
         else if (VMR9Util.g_vmr9 != null)
         {

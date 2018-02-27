@@ -90,10 +90,12 @@ namespace MediaPortal.Drawing.Layouts
         {
           rect.X = rect.X + ((GUILabelControl)element).Width;
         }
+        /* Wrong drawing in Stack Layout with centered labels
         if (((GUILabelControl)element).TextAlignment == Alignment.ALIGN_CENTER)
         {
-          rect.X = rect.X + ((GUILabelControl)element).Width / 2;
+          rect.X = rect.X + ((GUILabelControl)element).Width / 2; 
         }
+        */
       }
       if (element is GUIFadeLabel)
       {
@@ -101,10 +103,12 @@ namespace MediaPortal.Drawing.Layouts
         {
           rect.X = rect.X + ((GUIFadeLabel)element).Width;
         }
+        /* Wrong drawing in Stack Layout with centered labels
         if (((GUIFadeLabel)element).TextAlignment == Alignment.ALIGN_CENTER)
         {
           rect.X = rect.X + ((GUIFadeLabel)element).Width / 2;
         }
+        */
       }
 
       element.Arrange(rect);

@@ -287,11 +287,13 @@ namespace SQLite.NET
     {
       if (dbHandle != IntPtr.Zero)
       {
+        /* Remove from MP1-4902 due MP crash on some computer
         try
         {
           this.Execute("PRAGMA optimize;");
         }
         catch { }
+        */
 
         //System.Diagnostics.Debugger.Launch();
         //Log.Info("SQLiteClient: Closing database: {0} st {1}", databaseName, Environment.StackTrace);
@@ -327,7 +329,7 @@ namespace SQLite.NET
     public SQLiteResultSet Execute(string query)
     {
       SQLiteResultSet set1 = new SQLiteResultSet();
-      lock (typeof (SQLiteClient))
+      //lock (typeof (SQLiteClient)) // Trigger slow entering plugin (i.e myvideos in title mode)
       {
         //Log.Info("dbs:{0} sql:{1}", databaseName,query);
         if (query == null)

@@ -109,6 +109,7 @@ namespace MediaPortal.GUI.Video
 
     private static string currentView = string.Empty;
     private MapSettings _mapSettings = new MapSettings();
+    private VideoSort.SortMethod _sortMethodMapSettings;
 
     #endregion
 
@@ -186,13 +187,7 @@ namespace MediaPortal.GUI.Video
               }
             }
           }
-         
-          LoadViewSettings();
-          if (_mapSettings != null)
-          {
-            return _mapSettings.SortAscending;
-          }
-          return sortasc[handler.Views.IndexOf(handler.View), handler.CurrentLevel];
+          return _mapSettings?.SortAscending ?? sortasc[handler.Views.IndexOf(handler.View), handler.CurrentLevel];
         }
         return true;
       }
@@ -244,13 +239,7 @@ namespace MediaPortal.GUI.Video
               }
             }
           }
-
-          LoadViewSettings();
-          if (_mapSettings != null)
-          {
-            return (VideoSort.SortMethod) _mapSettings.SortBy;
-          }
-          return sortby[handler.Views.IndexOf(handler.View), handler.CurrentLevel];
+          return _mapSettings != null ? _sortMethodMapSettings : sortby[handler.Views.IndexOf(handler.View), handler.CurrentLevel];
         }
         return VideoSort.SortMethod.Name;
       }
@@ -899,7 +888,16 @@ namespace MediaPortal.GUI.Video
         }
       }
     }
-    
+
+    protected override void UpdateLoadDirectory()
+    {
+      LoadViewSettings();
+      if (_mapSettings != null)
+      {
+        _sortMethodMapSettings = (VideoSort.SortMethod)_mapSettings.SortBy;
+      }
+    }
+
     protected override void LoadDirectory(string strNewDirectory)
     {
       GUIWaitCursor.Show();
@@ -944,6 +942,11 @@ namespace MediaPortal.GUI.Video
       VirtualDirectory vDir = new VirtualDirectory();
       // Get protected share paths for videos
       vDir.LoadSettings("movies");
+      LoadViewSettings();
+      if (_mapSettings != null)
+      {
+        _sortMethodMapSettings = (VideoSort.SortMethod)_mapSettings.SortBy;
+      }
 
       foreach (IMDBMovie movie in movies)
       {
