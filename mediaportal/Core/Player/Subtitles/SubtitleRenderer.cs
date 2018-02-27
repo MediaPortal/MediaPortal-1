@@ -374,7 +374,7 @@ namespace MediaPortal.Player.Subtitles
     /// <returns></returns>
     public int OnSubtitle(ref NATIVE_SUBTITLE sub)
     {
-      if (!_useBitmap || !_renderSubtitles || GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
+      if (!_useBitmap || !_renderSubtitles || GUIGraphicsContext.CurrentState != GUIGraphicsContext.State.RUNNING)
       {
         return 0;
         // TODO: Might be good to let this cache and then check in Render method because bitmap subs arrive a while before display
