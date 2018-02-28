@@ -5410,7 +5410,7 @@ public class MediaPortalApp : D3D, IRender
 
         case GUIMessage.MessageType.GUI_MSG_MADVR_SCREEN_REFRESH:
           // We need to do a refresh of screen when using madVR only if resolution screen has change during playback
-          if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && NeedRecreateSwapChain || message.Param1 == 1)
+          if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && NeedRecreateSwapChain || message.Param1 == 1 || message.Param1 == 2)
           {
             // disable event handlers
             if (GUIGraphicsContext.DX9Device != null)
@@ -5420,6 +5420,12 @@ public class MediaPortalApp : D3D, IRender
 
             RecreateSwapChain(false);
             Log.Debug("Main: recreate swap chain for madVR done");
+
+            // Set here Vmr9Active to false to inform plugins that all stop is fully done.
+            if (message.Param1 == 2) // When stop is triggered
+            {
+              GUIGraphicsContext.Vmr9Active = false;
+            }
 
             // enable event handlers
             if (GUIGraphicsContext.DX9Device != null)
