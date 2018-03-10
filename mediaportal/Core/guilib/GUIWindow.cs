@@ -1563,7 +1563,6 @@ namespace MediaPortal.GUI.Library
         act == (int) Window.WINDOW_TV_SEARCHTYPE ||
         act == (int) Window.WINDOW_TV_SCHEDULER_PRIORITIES ||
         act == (int) Window.WINDOW_TV_PROGRAM_INFO ||
-        act == (int) Window.WINDOW_RECORDEDTV ||
         act == (int) Window.WINDOW_TV_RECORDED_INFO ||
         act == (int) Window.WINDOW_SETTINGS_RECORDINGS ||
         act == (int) Window.WINDOW_SCHEDULER ||
