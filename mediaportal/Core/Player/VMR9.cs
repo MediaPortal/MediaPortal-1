@@ -285,7 +285,7 @@ namespace MediaPortal.Player
         _useVmr9 = false;
         Log.Debug("VMR9: ctor() _renderFrame == null");
       }
-      if (g_vmr9 != null || GUIGraphicsContext.Vmr9Active)
+      if (g_vmr9 != null || (GUIGraphicsContext.Vmr9Active && GUIGraphicsContext.Vmr9ActivePlaylist))
       {
         _useVmr9 = false;
         Log.Info("VMR9: ctor() VMR9 already active");
@@ -1192,7 +1192,7 @@ namespace MediaPortal.Player
           }
         }
         _threadId = Thread.CurrentThread.ManagedThreadId;
-        GUIGraphicsContext.Vmr9Active = true;
+        GUIGraphicsContext.Vmr9Active = GUIGraphicsContext.Vmr9ActivePlaylist = true;
         g_vmr9 = this;
         Log.Debug("VMR9: Renderer successfully added");
       }
@@ -2135,6 +2135,7 @@ namespace MediaPortal.Player
           _scene.Stop();
           _instanceCounter--;
           _scene.Deinit();
+          GUIGraphicsContext.Vmr9ActivePlaylist = false;
           GUIGraphicsContext.Vmr9FPS = 0f;
           GUIGraphicsContext.InVmr9Render = false;
           currentVmr9State = Vmr9PlayState.Playing;

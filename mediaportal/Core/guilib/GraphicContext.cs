@@ -149,6 +149,7 @@ namespace MediaPortal.GUI.Library
     private static int _scrollSpeedHorizontal = 3;
     private static int _charsInCharacterSet = 255;
     private static volatile bool _vmr9Active;
+    private static volatile bool _vmr9ActivePlaylist;
     private static int _maxFPS = 60;
     private static long _desiredFrameTime = 100;
     private static float _currentFPS;
@@ -1534,6 +1535,22 @@ namespace MediaPortal.GUI.Library
     /// 
     /// </summary>
     public static float Vmr9FPS { get; set; }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public static bool Vmr9ActivePlaylist
+    {
+      get { return _vmr9ActivePlaylist; }
+      set
+      {
+        if (value != _vmr9ActivePlaylist)
+        {
+          _vmr9ActivePlaylist = value;
+          Log.Debug(_vmr9ActivePlaylist ? "VMR9: Now active for playlist" : "VMR9: Inactive for playlist");
+        }
+      }
+    }
 
     /// <summary>
     /// 
