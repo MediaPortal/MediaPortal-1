@@ -3611,7 +3611,7 @@ namespace MediaPortal.Util
             _fileExistsCacheThreadEvt = null;
             break;
           }
-          _fileExistsCacheThreadEvt?.WaitOne();
+          _fileExistsCacheThreadEvt?.WaitOne(5000);
         }
       }
       catch (Exception)
