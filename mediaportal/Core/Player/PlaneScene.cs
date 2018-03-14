@@ -419,7 +419,7 @@ namespace MediaPortal.Player
     /// </returns>
     public bool SetVideoWindow(Size videoSize)
     {
-      lock (GUIGraphicsContext.RenderLock)
+      //lock (GUIGraphicsContext.RenderLock) // Seems not needed anymore and can lead to deadlock
       {
         try
         {

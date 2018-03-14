@@ -1686,6 +1686,8 @@ public class MediaPortalApp : D3D, IRender
             Log.Debug("Main: WM_DISPLAYCHANGE madVR Width x Height : {0} x {1}", screen.Bounds.Size.Width, screen.Bounds.Size.Height);
           }
 
+          bool needMadVrBreak = false;
+
           // Restore bounds from the currentScreen value (to restore original startup MP screen after turned off used HDMI device
           if (!Windowed && _ignoreFullscreenResolutionChanges && !RefreshRateChanger.RefreshRateChangePending)
           {
@@ -1694,11 +1696,15 @@ public class MediaPortalApp : D3D, IRender
               if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
               {
                 // Need to break here to have the correct new bounds for madVR when resolution change and when playing
-                break;
+                needMadVrBreak = true;
               }
             }
-            SetBounds(GUIGraphicsContext.currentScreen.Bounds.X, GUIGraphicsContext.currentScreen.Bounds.Y, GUIGraphicsContext.currentScreen.Bounds.Width, GUIGraphicsContext.currentScreen.Bounds.Height);
-            Log.Debug("Main: WM_DISPLAYCHANGE restore current screen position");
+            if (!needMadVrBreak)
+            {
+              SetBounds(GUIGraphicsContext.currentScreen.Bounds.X, GUIGraphicsContext.currentScreen.Bounds.Y,
+                GUIGraphicsContext.currentScreen.Bounds.Width, GUIGraphicsContext.currentScreen.Bounds.Height);
+              Log.Debug("Main: WM_DISPLAYCHANGE restore current screen position");
+            }
           }
 
           // Restore GUIGraphicsContext.State
@@ -5410,7 +5416,7 @@ public class MediaPortalApp : D3D, IRender
 
         case GUIMessage.MessageType.GUI_MSG_MADVR_SCREEN_REFRESH:
           // We need to do a refresh of screen when using madVR only if resolution screen has change during playback
-          if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && NeedRecreateSwapChain || message.Param1 == 1)
+          if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && NeedRecreateSwapChain || message.Param1 == 1 || message.Param1 == 2)
           {
             // disable event handlers
             if (GUIGraphicsContext.DX9Device != null)
@@ -5420,6 +5426,12 @@ public class MediaPortalApp : D3D, IRender
 
             RecreateSwapChain(false);
             Log.Debug("Main: recreate swap chain for madVR done");
+
+            // Set here Vmr9Active to false to inform plugins that all stop is fully done.
+            if (message.Param1 == 2 && !g_Player.Playing) // When stop is triggered
+            {
+              GUIGraphicsContext.Vmr9Active = false;
+            }
 
             // enable event handlers
             if (GUIGraphicsContext.DX9Device != null)

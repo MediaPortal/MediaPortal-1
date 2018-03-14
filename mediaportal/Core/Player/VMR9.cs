@@ -285,7 +285,7 @@ namespace MediaPortal.Player
         _useVmr9 = false;
         Log.Debug("VMR9: ctor() _renderFrame == null");
       }
-      if (g_vmr9 != null || GUIGraphicsContext.Vmr9Active)
+      if (g_vmr9 != null || (GUIGraphicsContext.Vmr9Active && GUIGraphicsContext.Vmr9ActivePlaylist))
       {
         _useVmr9 = false;
         Log.Info("VMR9: ctor() VMR9 already active");
@@ -912,7 +912,7 @@ namespace MediaPortal.Player
           // Send action message to refresh screen
           var msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_MADVR_SCREEN_REFRESH, 0, 0, 0, 0, 0, null)
           {
-            Param1 = 1
+            Param1 = 1 // Adding VMR9
           };
           GUIWindowManager.SendThreadMessage(msg);
           // Process frames to clear D3D dialog window
@@ -1192,7 +1192,7 @@ namespace MediaPortal.Player
           }
         }
         _threadId = Thread.CurrentThread.ManagedThreadId;
-        GUIGraphicsContext.Vmr9Active = true;
+        GUIGraphicsContext.Vmr9Active = GUIGraphicsContext.Vmr9ActivePlaylist = true;
         g_vmr9 = this;
         Log.Debug("VMR9: Renderer successfully added");
       }
@@ -1874,7 +1874,7 @@ namespace MediaPortal.Player
           // Send action message to refresh screen
           var msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_MADVR_SCREEN_REFRESH, 0, 0, 0, 0, 0, null)
           {
-            Param1 = 1
+            Param1 = 2 // Stopping VMR9
           };
           GUIWindowManager.SendThreadMessage(msg);
           Log.Debug("VMR9: RestoreGuiForMadVr");
@@ -2135,7 +2135,7 @@ namespace MediaPortal.Player
           _scene.Stop();
           _instanceCounter--;
           _scene.Deinit();
-          GUIGraphicsContext.Vmr9Active = false;
+          GUIGraphicsContext.Vmr9ActivePlaylist = false;
           GUIGraphicsContext.Vmr9FPS = 0f;
           GUIGraphicsContext.InVmr9Render = false;
           currentVmr9State = Vmr9PlayState.Playing;
@@ -2233,6 +2233,7 @@ namespace MediaPortal.Player
         _scene = null;
         g_vmr9 = null;
         _isVmr9Initialized = false;
+        GUIGraphicsContext.Vmr9Active = false;
         GUIGraphicsContext.DX9DeviceMadVr = null;
       }
       finally
@@ -2282,6 +2283,11 @@ namespace MediaPortal.Player
 
       // Commented out seems not needed anymore
       //GUIWindowManager.MadVrProcess();
+      if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
+      {
+        GUIGraphicsContext.Vmr9Active = false;
+      }
+
       Log.Debug("VMR9: Dispose done");
     }
 
