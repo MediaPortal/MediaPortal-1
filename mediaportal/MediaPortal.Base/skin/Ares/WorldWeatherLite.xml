@@ -412,7 +412,7 @@
       <posX>1829</posX>
       <posY>315</posY>
       <align>right</align>
-      <label>#WorldWeather.ForecastDay0Low   |   #WorldWeather.ForecastDay0High</label>
+      <label>#WorldWeather.ForecastDay1Low   |   #WorldWeather.ForecastDay1High</label>
       <font>font12</font>
       <textcolor>eaeaea</textcolor>
     </control>	
@@ -424,7 +424,7 @@
       <posY>295</posY>
       <width>110</width>
       <height>110</height>
-      <texture>#WorldWeather.ForecastDay0IconImage</texture>
+      <texture>#WorldWeather.ForecastDay1IconImage</texture>
       <keepaspectratio>yes</keepaspectratio>
     </control>
 
@@ -436,7 +436,7 @@
       <posY>355</posY>
       <width>778</width>
       <align>left</align>
-      <label>#WorldWeather.ForecastDay0Condition</label>
+      <label>#WorldWeather.ForecastDay1Condition</label>
       <font>font11</font>
       <textcolor>eaeaea</textcolor>
     </control>
@@ -462,7 +462,7 @@
       <posY>390</posY>
       <width>110</width>
       <height>110</height>
-      <texture>#WorldWeather.ForecastDay1IconImage</texture>
+      <texture>#WorldWeather.ForecastDay2IconImage</texture>
       <keepaspectratio>yes</keepaspectratio>
     </control>
     <control>
@@ -472,7 +472,7 @@
       <posX>1829</posX>
       <posY>416</posY>
       <align>right</align>
-      <label>#WorldWeather.ForecastDay1Low   |   #WorldWeather.ForecastDay1High</label>
+      <label>#WorldWeather.ForecastDay2Low   |   #WorldWeather.ForecastDay2High</label>
       <font>font12</font>
       <textcolor>eaeaea</textcolor>
     </control>
@@ -484,7 +484,7 @@
       <posY>455</posY>
       <width>778</width>
       <align>left</align>
-      <label>#WorldWeather.ForecastDay1Condition</label>
+      <label>#WorldWeather.ForecastDay2Condition</label>
       <font>font11</font>
       <textcolor>eaeaea</textcolor>
     </control>
@@ -510,7 +510,7 @@
       <posY>485</posY>
       <width>110</width>
       <height>110</height>
-      <texture>#WorldWeather.ForecastDay2IconImage</texture>
+      <texture>#WorldWeather.ForecastDay3IconImage</texture>
       <keepaspectratio>yes</keepaspectratio>
     </control>
     <control>
@@ -520,7 +520,7 @@
       <posX>1829</posX>
       <posY>508</posY>
       <align>right</align>
-      <label>#WorldWeather.ForecastDay2Low   |   #WorldWeather.ForecastDay2High</label>
+      <label>#WorldWeather.ForecastDay3Low   |   #WorldWeather.ForecastDay3High</label>
       <font>font12</font>
       <textcolor>eaeaea</textcolor>
     </control>
@@ -532,7 +532,7 @@
       <posY>548</posY>
       <width>778</width>
       <align>left</align>
-      <label>#WorldWeather.ForecastDay2Condition</label>
+      <label>#WorldWeather.ForecastDay3Condition</label>
       <font>font11</font>
       <textcolor>eaeaea</textcolor>
     </control>
@@ -558,7 +558,7 @@
       <posY>577</posY>
       <width>110</width>
       <height>110</height>
-      <texture>#WorldWeather.ForecastDay3IconImage</texture>
+      <texture>#WorldWeather.ForecastDay4IconImage</texture>
       <keepaspectratio>yes</keepaspectratio>
     </control>
     <control>
@@ -568,7 +568,7 @@
       <posX>1829</posX>
       <posY>600</posY>
       <align>right</align>
-      <label>#WorldWeather.ForecastDay3Low   |   #WorldWeather.ForecastDay3High</label>
+      <label>#WorldWeather.ForecastDay4Low   |   #WorldWeather.ForecastDay4High</label>
       <font>font12</font>
       <textcolor>eaeaea</textcolor>
     </control>
@@ -580,13 +580,13 @@
       <posY>640</posY>
       <width>778</width>
       <align>left</align>
-      <label>#WorldWeather.ForecastDay3Condition</label>
+      <label>#WorldWeather.ForecastDay4Condition</label>
       <font>font11</font>
       <textcolor>eaeaea</textcolor>
     </control>
 
     <!-- **** Day 4 Weather **** -->
-    <control>
+<!--  <control>
       <description>DAY 4 LABEL</description>
       <type>label</type>
       <id>0</id>
@@ -606,7 +606,7 @@
       <posY>675</posY>
       <width>110</width>
       <height>110</height>
-      <texture>#WorldWeather.ForecastDay4IconImage</texture>
+      <texture>#WorldWeather.ForecastDay5IconImage</texture>
       <keepaspectratio>yes</keepaspectratio>
     </control>
     <control>
@@ -616,7 +616,7 @@
       <posX>1829</posX>
       <posY>700</posY>
       <align>right</align>
-      <label>#WorldWeather.ForecastDay4Low   |   #WorldWeather.ForecastDay4High</label>
+      <label>#WorldWeather.ForecastDay5Low   |   #WorldWeather.ForecastDay5High</label>
       <font>font12</font>
       <textcolor>eaeaea</textcolor>
     </control>
@@ -628,10 +628,10 @@
       <posY>740</posY>
       <width>778</width>
       <align>left</align>
-      <label>#WorldWeather.ForecastDay4Condition</label>
+      <label>#WorldWeather.ForecastDay5Condition</label>
       <font>font11</font>
       <textcolor>eaeaea</textcolor>
     </control>	
-
+-->
   </controls>
 </window>

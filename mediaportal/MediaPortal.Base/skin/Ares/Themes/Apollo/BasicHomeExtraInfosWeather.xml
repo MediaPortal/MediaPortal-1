@@ -33,6 +33,15 @@
           <width>410</width>
           <font>font11</font>
           <textcolor>gainsboro</textcolor>
+          <label>#WorldWeather.ForecastDay0Day</label>
+        </control>
+        <control>
+          <description>Location</description>
+          <type>label</type>
+          <id>0</id>
+          <font>font11</font>
+          <width>410</width>
+          <textcolor>gainsboro</textcolor>
           <label>#WorldWeather.ForecastDay1Day</label>
         </control>
         <control>
@@ -52,15 +61,6 @@
           <width>410</width>
           <textcolor>gainsboro</textcolor>
           <label>#WorldWeather.ForecastDay3Day</label>
-        </control>
-        <control>
-          <description>Location</description>
-          <type>label</type>
-          <id>0</id>
-          <font>font11</font>
-          <width>410</width>
-          <textcolor>gainsboro</textcolor>
-          <label>#WorldWeather.ForecastDay4Day</label>
         </control>
       </control>
       <control>
