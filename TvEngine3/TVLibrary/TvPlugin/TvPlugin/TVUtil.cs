@@ -469,9 +469,6 @@ namespace TvPlugin
         g_Player.currentTitle = GetDisplayTitle(rec);
         g_Player.currentDescription = rec.Description;
 
-        rec.TimesWatched++;
-        rec.Persist();
-
         return true;
       }
       return false;

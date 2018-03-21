@@ -77,6 +77,7 @@ namespace TvPlugin
     private bool _resetSMSsearch = false;
     private bool _oldStateSMSsearch;
     private DateTime _resetSMSsearchDelay;
+    private int _watchedPercentage = 95;
 
     #endregion
 
@@ -107,6 +108,7 @@ namespace TvPlugin
         m_bSortAscending = xmlreader.GetValueAsBool(SerializeName, "sortasc", true);
         
         string strTmp = xmlreader.GetValueAsString("radiorecorded", "sort", "channel");
+        _watchedPercentage = xmlreader.GetValueAsInt("movies", "playedpercentagewatched", 95);
 
         if (strTmp == "channel")
         {
@@ -1790,6 +1792,13 @@ namespace TvPlugin
         return;
       }
 
+      int playTimePercentage = 0;
+
+      if (g_Player.Player.Duration >= 1)
+      {
+        playTimePercentage = (int)Math.Ceiling((stoptime / g_Player.Player.Duration) * 100);
+      }
+
       TvBusinessLayer layer = new TvBusinessLayer();
       Recording rec = layer.GetRecordingByFileName(filename);
       if (rec != null)
@@ -1798,8 +1807,14 @@ namespace TvPlugin
         {
           stoptime = 0;
         }
-        ; //temporary workaround before end of stream get's properly implemented
+
         rec.Refresh();
+
+        if (playTimePercentage >= _watchedPercentage)
+        {
+          rec.TimesWatched++;
+        }
+        ; //temporary workaround before end of stream get's properly implemented
         rec.StopTime = stoptime;
         rec.Persist();
       }
