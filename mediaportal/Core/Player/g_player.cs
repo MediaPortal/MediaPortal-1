@@ -119,6 +119,9 @@ namespace MediaPortal.Player
     /// <param name="default Blu-ray Title">BdDefaultTitle</param>
     public const int BdDefaultTitle = 1000;
 
+    private static bool _seekStartStepNow = false;
+    private static bool _seekStart = false;
+
     #endregion
 
     #region events
@@ -2369,8 +2372,9 @@ namespace MediaPortal.Player
       // Start seek in a thread to avoid deadlock
       new Thread(() =>
       {
-        if (_currentStep != 0 && _player != null)
+        if (_currentStep != 0 && _player != null && !_seekStartStepNow)
         {
+          _seekStartStepNow = true;
           if (_currentStep < 0 || (_player.CurrentPosition + 4 < _player.Duration) || !IsTV)
           {
             double dTime = (int) _currentStep + _player.CurrentPosition;
@@ -2389,6 +2393,7 @@ namespace MediaPortal.Player
             GUIMessage msgUpdate = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYER_POSITION_CHANGED, 0, 0, 0, 0, 0,
               null);
             GUIGraphicsContext.SendMessage(msgUpdate);
+            _seekStartStepNow = false;
           }
         }
       }).Start();
@@ -2581,16 +2586,22 @@ namespace MediaPortal.Player
       // Start seek in a thread to avoid deadlock
       new Thread(() =>
       {
-        Thread.CurrentThread.IsBackground = true;
-        Log.Debug("g_Player.SeekAbsolute() - Preparing to seek to {0}:{1}:{2}", (int) (dTime/3600d),
-                  (int) ((dTime%3600d)/60d), (int) (dTime%60d));
-      _currentStep = 0;
-      _currentStepIndex = -1;
-      _seekTimer = DateTime.MinValue;
-        _player.SeekAbsolute(dTime);
-        GUIMessage msgUpdate = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYER_POSITION_CHANGED, 0, 0, 0, 0, 0, null);
-        GUIGraphicsContext.SendMessage(msgUpdate);
-        Log.Debug("g_Player.SeekAbsolute() in a thread");
+        if (!_seekStart)
+        {
+          _seekStart = true;
+          Thread.CurrentThread.IsBackground = true;
+          Log.Debug("g_Player.SeekAbsolute() - Preparing to seek to {0}:{1}:{2}", (int) (dTime/3600d),
+            (int) ((dTime%3600d)/60d), (int) (dTime%60d));
+          _currentStep = 0;
+          _currentStepIndex = -1;
+          _seekTimer = DateTime.MinValue;
+          _player.SeekAbsolute(dTime);
+          GUIMessage msgUpdate = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYER_POSITION_CHANGED, 0, 0, 0, 0, 0,
+            null);
+          GUIGraphicsContext.SendMessage(msgUpdate);
+          _seekStart = false;
+          Log.Debug("g_Player.SeekAbsolute() in a thread");
+        }
       }).Start();
     }
 
