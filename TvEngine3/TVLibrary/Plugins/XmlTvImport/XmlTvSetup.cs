@@ -224,6 +224,19 @@ namespace SetupTv.Sections
         if (kazer_UserName.Text == "")
           btnGetNow.BackColor = Color.Red;
       }
+
+      if (!Bouton_Kazer.Checked && !Bouton_ZguideTV.Checked)
+      {
+        Bouton_Aucun.Checked = true;
+        txtRemoteURL.Text = new TvBusinessLayer().GetSetting("xmlTvRemoteURL", "http://www.mysite.com/TVguide.xml").Value;
+        txtRemoteURL.Enabled = true;
+        groupBox_Kazer.Visible = false;
+        groupBox_ZguideTV.Visible = false;
+        pictureBox_WebEPGfr.Visible = true;
+        btnGetNow.Enabled = true;
+        btnGetNow.BackColor = Color.Transparent;
+      }
+
       if (!Bouton_ZguideTV.Checked)
       {
         return;
@@ -320,7 +333,7 @@ namespace SetupTv.Sections
 
     private void Bouton_ZguideTV_TNT_CheckedChanged(object sender, EventArgs e)
     {
-      if (!Bouton_ZguideTV_TNT.Checked)
+      if (!Bouton_ZguideTV_TNT.Checked || !Bouton_Aucun.Checked)
         return;
       txtRemoteURL.Text = "http://xmltv.dtdns.net/download/tnt.zip";
       btnGetNow.Enabled = true;
@@ -329,7 +342,7 @@ namespace SetupTv.Sections
 
     private void Bouton_ZguideTV_complet_CheckedChanged(object sender, EventArgs e)
     {
-      if (!Bouton_ZguideTV_complet.Checked)
+      if (!Bouton_ZguideTV_complet.Checked || !Bouton_Aucun.Checked)
         return;
       txtRemoteURL.Text = "http://xmltv.dtdns.net/download/complet.zip";
       btnGetNow.Enabled = true;
