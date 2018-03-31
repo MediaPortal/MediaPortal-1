@@ -564,15 +564,15 @@ namespace MediaPortal.GUI.Library
     public bool Get(string fileName, out float uoffs, out float voffs, out float umax, out float vmax, out int iWidth,
                     out int iHeight, out Texture tex, out int textureNo)
     {
-      uoffs = 0;
-      voffs = 0;
-      umax = 0;
-      vmax = 0;
-      iWidth = 0;
-      iHeight = 0;
-      tex = null;
-      textureNo = 0;
-      return false;
+      //uoffs = 0;
+      //voffs = 0;
+      //umax = 0;
+      //vmax = 0;
+      //iWidth = 0;
+      //iHeight = 0;
+      //tex = null;
+      //textureNo = 0;
+      //return false;
 
       uoffs = voffs = umax = vmax = 0.0f;
       iWidth = iHeight = 0;
