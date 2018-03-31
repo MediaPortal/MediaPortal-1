@@ -572,7 +572,7 @@ namespace MediaPortal.GUI.Library
       iHeight = 0;
       tex = null;
       textureNo = 0;
-      return true;
+      return false;
 
       uoffs = voffs = umax = vmax = 0.0f;
       iWidth = iHeight = 0;
