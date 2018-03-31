@@ -739,8 +739,11 @@ namespace MediaPortal.GUI.Library
             out _packedTexture, out _packedTextureNo))
           {
             _reCalculate = true;
-            _packedTexture.Disposing -= OnPackedTexturesDisposedEvent;
-            _packedTexture.Disposing += OnPackedTexturesDisposedEvent;
+            if (_packedTexture != null)
+            {
+              _packedTexture.Disposing -= OnPackedTexturesDisposedEvent;
+              _packedTexture.Disposing += OnPackedTexturesDisposedEvent;
+            }
             return;
           }
 
