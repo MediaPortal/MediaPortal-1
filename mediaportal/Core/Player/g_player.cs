@@ -1628,7 +1628,7 @@ namespace MediaPortal.Player
             {
               _BDInternalMenu = xmlreader.GetValueAsBool("bdplayer", "useInternalBDPlayer", true);
               UseEVRMadVRForTV = xmlreader.GetValueAsBool("general", "useEVRMadVRForTV", false);
-              _NoBDMenu = xmlreader.GetValueAsBool("bdplayer", "DisableSelectMenuBDPlayer", false);
+              _NoBDMenu = xmlreader.GetValueAsBool("bdplayer", "DisableSelectMenuBDPlayer", true);
             }
 
             if (extension == ".bdmv" && !GUIGraphicsContext.BlurayMenu && !_NoBDMenu)

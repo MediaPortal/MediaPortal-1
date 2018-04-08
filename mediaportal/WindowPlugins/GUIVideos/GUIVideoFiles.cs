@@ -2079,7 +2079,7 @@ namespace MediaPortal.GUI.Video
 
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.MPSettings())
       {
-        _NoBDMenu = xmlreader.GetValueAsBool("bdplayer", "DisableSelectMenuBDPlayer", false);
+        _NoBDMenu = xmlreader.GetValueAsBool("bdplayer", "DisableSelectMenuBDPlayer", true);
       }
 
       using (Profile.Settings xmlreader = new MPSettings())
