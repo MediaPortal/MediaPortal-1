@@ -3180,7 +3180,7 @@ namespace MediaPortal.Player
     /// <summary> do cleanup and release DirectShow. </summary>
     protected void CloseInterfaces()
     {
-      if (_graphBuilder == null)
+      if (_graphBuilder == null || (VMR9Util.g_vmr9 != null && VMR9Util.g_vmr9.isCurrentStopping))
       {
         return;
       }
