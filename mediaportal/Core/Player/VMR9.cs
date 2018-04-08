@@ -242,6 +242,7 @@ namespace MediaPortal.Player
     private IVMRMixerBitmap9 _vmr9MixerBitmapInterface = null;
     private IGraphBuilder _graphBuilder = null;
     private bool _isVmr9Initialized = false;
+    private bool _isCurrentStopping = false;
     private int _threadId;
     private Vmr9PlayState currentVmr9State = Vmr9PlayState.Playing;
     private string pixelAdaptive = "";
@@ -512,9 +513,26 @@ namespace MediaPortal.Player
 
     //public bool IsVMR9Connected
 
+    public bool isCurrentStopping
+    {
+      get { return _isCurrentStopping; }
+    }
+
     #endregion
 
     #region public members
+
+    /// <summary>
+    /// Restore original refresh rate for madVR
+    /// </summary>
+    public void RestoreDisplayModeNow()
+    {
+      Log.Debug("VMR9: Restore DisplayMode Now for madVR");
+      if (VMR9Util.g_vmr9 != null)
+      {
+        if (_vmr9Filter != null) MadvrInterface.restoreDisplayModeNow(_vmr9Filter);
+      }
+    }
 
     /// <summary>
     /// Register madVR WindowsMessageMP
@@ -1774,9 +1792,12 @@ namespace MediaPortal.Player
         if (mediaCtrl != null)
         {
           Log.Debug("VMR9: mediaCtrl.Stop() 1");
+          _isCurrentStopping = true;
           int hr;
           if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
           {
+            RestoreDisplayModeNow();
+
             if (_scene?.WorkerThread != null)
             {
               if (_scene.WorkerThread.IsAlive)
@@ -2180,7 +2201,7 @@ namespace MediaPortal.Player
           MadDeinit(releasedFilter);
           Log.Debug("VMR9: Dispose 2.1");
           GC.Collect();
-          if (_vmr9Filter != null) MadvrInterface.restoreDisplayModeNow(_vmr9Filter);
+          //if (_vmr9Filter != null) MadvrInterface.restoreDisplayModeNow(_vmr9Filter);
           DestroyWindow(GUIGraphicsContext.MadVrHWnd); // for using no Kodi madVR window way comment out this line
           _commandNotify?.Dispose();
           RestoreGuiForMadVr();
@@ -2223,6 +2244,7 @@ namespace MediaPortal.Player
         _scene = null;
         g_vmr9 = null;
         _isVmr9Initialized = false;
+        _isCurrentStopping = false;
         GUIGraphicsContext.DX9DeviceMadVr = null;
         Log.Debug("VMR9: Dispose 4");
       }
@@ -2233,6 +2255,7 @@ namespace MediaPortal.Player
         _scene = null;
         g_vmr9 = null;
         _isVmr9Initialized = false;
+        _isCurrentStopping = false;
         GUIGraphicsContext.Vmr9Active = false;
         GUIGraphicsContext.DX9DeviceMadVr = null;
       }

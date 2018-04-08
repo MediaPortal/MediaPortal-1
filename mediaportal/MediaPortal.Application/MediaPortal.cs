@@ -1650,6 +1650,12 @@ public class MediaPortalApp : D3D, IRender
 
         // handle display changes
         case WM_DISPLAYCHANGE:
+          // Don't change display change on suspend
+          if (_suspended)
+          {
+            return;
+          }
+
           // disable event handlers
           if (GUIGraphicsContext.DX9Device != null)
           {
@@ -2921,12 +2927,28 @@ public class MediaPortalApp : D3D, IRender
     if (GUIGraphicsContext.IsPlaying)
     {
       Currentmodulefullscreen();
-      g_Player.Stop();
-      while (GUIGraphicsContext.IsPlaying)
+      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
       {
-        // This could lead into OS putting system into sleep before MP completes OnSuspend().
-        // OS gives only 2 seconds time to application to react power events (>= Vista)
-        Thread.Sleep(100);
+        if (VMR9Util.g_vmr9 != null)
+        {
+          if (VMR9Util.g_vmr9.Vmr9Filter != null)
+          {
+            MadvrInterface.restoreDisplayModeNow(VMR9Util.g_vmr9.Vmr9Filter);
+          }
+        }
+        Currentmodulefullscreen();
+        var action = new Action(Action.ActionType.ACTION_STOP, 0, 0);
+        GUIGraphicsContext.OnAction(action);
+      }
+      else
+      {
+        g_Player.Stop();
+        while (GUIGraphicsContext.IsPlaying)
+        {
+          // This could lead into OS putting system into sleep before MP completes OnSuspend().
+          // OS gives only 2 seconds time to application to react power events (>= Vista)
+          Thread.Sleep(100);
+        }
       }
     }
     SaveLastActiveModule();

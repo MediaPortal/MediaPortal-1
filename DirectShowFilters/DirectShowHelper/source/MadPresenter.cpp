@@ -897,7 +897,7 @@ void MediaControlStopThread()
 HRESULT MPMadPresenter::Stopping()
 {
   { // Scope for autolock for the local variable (lock, which when deleted releases the lock)
-    //CAutoLock lock(this);
+    CAutoLock lock(this);
     StopEvent = false;
 
     if (!m_pMad)
@@ -1018,16 +1018,16 @@ HRESULT MPMadPresenter::Stopping()
     //  Log("MPMadPresenter::Stopping() disable exclusive mode");
     //}
 
-    if (m_pMad)
-    {
-      // Let's madVR restore original display mode (when adjust refresh it's handled by madVR)
-      if (Com::SmartQIPtr<IMadVRCommand> pMadVrCmd = m_pMad)
-      {
-        pMadVrCmd->SendCommand("restoreDisplayModeNow");
-        pMadVrCmd.Release();
-        Log("MPMadPresenter::Stopping() restoreDisplayModeNow");
-      }
-    }
+    //if (m_pMad)
+    //{
+    //  // Let's madVR restore original display mode (when adjust refresh it's handled by madVR)
+    //  if (Com::SmartQIPtr<IMadVRCommand> pMadVrCmd = m_pMad)
+    //  {
+    //    pMadVrCmd->SendCommand("restoreDisplayModeNow");
+    //    pMadVrCmd.Release();
+    //    Log("MPMadPresenter::Stopping() restoreDisplayModeNow");
+    //  }
+    //}
 
     if (m_pKodiWindowUse)
     {
