@@ -3284,7 +3284,7 @@ public class MediaPortalApp : D3D, IRender
       {
         Log.Warn("Main: Could not register for power settings notification GUID_SESSION_DISPLAY_STATUS");
         // initialize volume handler and set volume handler properties
-        GUIGraphicsContext.VolumeHandler.UpdateVolumeProperties();
+        GUIGraphicsContext.VolumeHandler?.UpdateVolumeProperties();
       }
 
       _userPresenceHandle = RegisterPowerSettingNotification(Handle, ref GUID_SESSION_USER_PRESENCE, DEVICE_NOTIFY_WINDOW_HANDLE);

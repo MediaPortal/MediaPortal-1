@@ -1580,12 +1580,13 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public virtual void Render(float timePassed)
     {
-      // Hack for madVR to avoid freeze
-      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
-          GUIGraphicsContext.InVmr9Render && GUIGraphicsContext.Vmr9Active)
-      {
-        _shouldRestore = false;
-      }
+      // Disable this hack it break some skin reload (GUIVolumeOverlay)
+      //// Hack for madVR to avoid freeze
+      //if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
+      //    GUIGraphicsContext.InVmr9Render && GUIGraphicsContext.Vmr9Active)
+      //{
+      //  _shouldRestore = false;
+      //}
 
       if (_shouldRestore)
       {
