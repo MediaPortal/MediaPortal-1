@@ -495,20 +495,20 @@ namespace MediaPortal.GUI.Library
 
     public bool LoadSkin()
     {
-      if (Thread.CurrentThread.Name != "MPMain" && Thread.CurrentThread.Name != "Config Main")
-      {
-        _loadSkinDone = true;
+      //if (Thread.CurrentThread.Name != "MPMain" && Thread.CurrentThread.Name != "Config Main")
+      //{
+      //  _loadSkinDone = true;
 
-        GUIWindowManager.SendThreadCallbackSkin((p1, p2, result) =>
-        {
-          _loadSkinResult = LoadSkinBool();
-          Log.Debug("LoadSkin() callback done with return value  : {0}", _loadSkinResult);
-          return 0;
-        }, 0, 0, null);
+      //  GUIWindowManager.SendThreadCallbackSkin((p1, p2, result) =>
+      //  {
+      //    _loadSkinResult = LoadSkinBool();
+      //    Log.Debug("LoadSkin() callback done with return value  : {0}", _loadSkinResult);
+      //    return 0;
+      //  }, 0, 0, null);
 
-        Log.Debug("LoadSkin() callback thread done with return value : {0}", _loadSkinResult);
-        return true;
-      }
+      //  Log.Debug("LoadSkin() callback thread done with return value : {0}", _loadSkinResult);
+      //  return true;
+      //}
       return LoadSkinBool();
     }
 
@@ -540,7 +540,7 @@ namespace MediaPortal.GUI.Library
       if (isSkinXMLLoading)
       {
         Log.Error("LoadSkin: Running already so skipping");
-        return false;
+        //return false; // need to be disable to be able to load skin when not in main thread
       }
 
       isSkinXMLLoading = true;
@@ -1469,35 +1469,39 @@ namespace MediaPortal.GUI.Library
     /// <returns>id of control or -1 if no control has the focus</returns>
     public virtual int GetFocusControlId()
     {
-      foreach (GUIControl child in Children.ToList())
+      lock (Children)
       {
-        GUIGroup grp = child as GUIGroup;
-        if (grp != null)
+        foreach (GUIControl child in Children.ToList())
         {
-          int iFocusedControlId = grp.GetFocusControlId();
-          if (iFocusedControlId >= 0)
+          GUIGroup grp = child as GUIGroup;
+          if (grp != null)
           {
-            _previousFocusedControlId = iFocusedControlId;
-            // Store new ID for the rendering optimisation
-            FocusID = iFocusedControlId;
-            return iFocusedControlId;
-          }
-        }
-        else
-        {
-          if (child != null)
-          {
-            var guicontrol = child;
-            if (guicontrol.Focus)
+            int iFocusedControlId = grp.GetFocusControlId();
+            if (iFocusedControlId >= 0)
             {
+              _previousFocusedControlId = iFocusedControlId;
               // Store new ID for the rendering optimisation
-              FocusID = guicontrol.GetID;
-              return guicontrol.GetID;
+              FocusID = iFocusedControlId;
+              return iFocusedControlId;
+            }
+          }
+          else
+          {
+            if (child != null)
+            {
+              var guicontrol = child;
+              if (guicontrol.Focus)
+              {
+                // Store new ID for the rendering optimisation
+                FocusID = guicontrol.GetID;
+                return guicontrol.GetID;
+              }
             }
           }
         }
+
+        return -1;
       }
-      return -1;
     }
 
     /// <summary>
@@ -1633,8 +1637,8 @@ namespace MediaPortal.GUI.Library
         {
           foreach (GUIControl control in Children.ToList())
           {
-            control.UpdateVisibility();
-            control.DoRender(timePassed, currentTime);
+            control?.UpdateVisibility();
+            control?.DoRender(timePassed, currentTime);
           }
         }
 

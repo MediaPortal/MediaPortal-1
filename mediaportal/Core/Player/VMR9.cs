@@ -2187,9 +2187,9 @@ namespace MediaPortal.Player
           {
             if (_vmr9Filter != null)
             {
-              IPin outpout;
-              _vmr9Filter.FindPin("video", out outpout);
-              DirectShowUtil.ReleaseComObject(outpout);
+              IPin output;
+              _vmr9Filter.FindPin("video", out output);
+              DirectShowUtil.ReleaseComObject(output);
             }
           }
           catch (Exception)
