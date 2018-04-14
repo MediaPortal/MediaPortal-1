@@ -5450,7 +5450,7 @@ public class MediaPortalApp : D3D, IRender
             Log.Debug("Main: recreate swap chain for madVR done");
 
             // Set here Vmr9Active to false to inform plugins that all stop is fully done.
-            if (message.Param1 == 2 && !g_Player.Playing) // When stop is triggered
+            if (message.Param1 == 2 && (!g_Player.Playing || (!g_Player.IsVideo && !g_Player.IsDVD && !g_Player.IsTVRecording && !g_Player.IsTV))) // When stop is triggered)
             {
               GUIGraphicsContext.Vmr9Active = false;
             }

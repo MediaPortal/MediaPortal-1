@@ -1264,7 +1264,10 @@ namespace MediaPortal.GUI.Library
     /// <returns>window found or null if not found</returns>
     public static GUIWindow GetWindow(int dwID)
     {
-      return GetWindow(dwID, true);
+      lock (thisLock)
+      {
+        return GetWindow(dwID, true);
+      }
     }
 
     private static GUIWindow GetWindow(int dwID, bool tryRestoreSkin)
