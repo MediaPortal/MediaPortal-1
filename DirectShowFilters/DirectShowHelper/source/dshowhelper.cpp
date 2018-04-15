@@ -1062,7 +1062,7 @@ void MadVrPaused(bool paused)
       m_madPresenter->m_pRunDone = false;
     }
 
-    m_madPresenter->SetMadVrPaused(paused);
+    m_madPresenter->m_pPaused = paused;
   }
 }
 

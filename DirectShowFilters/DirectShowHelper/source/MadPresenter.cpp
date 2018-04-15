@@ -173,9 +173,10 @@ void MPMadPresenter::InitializeOSD()
 
 void MPMadPresenter::SetMadVrPaused(bool paused)
 {
-  mtx.lock();
+  //mtx.lock();
   if (!m_pPausedDone && !m_pRunDone)
   {
+    m_pPausedCount++;
     IMediaControl *m_pControl = nullptr;
     if ((mediaControlGraph) && (SUCCEEDED(mediaControlGraph->QueryInterface(__uuidof(IMediaControl), reinterpret_cast<LPVOID*>(&m_pControl)))) && (m_pControl))
     {
@@ -184,17 +185,17 @@ void MPMadPresenter::SetMadVrPaused(bool paused)
         if (paused)
         {
           OAFilterState state;
-          for (int i1 = 0; i1 < 200; i1++)
+          for (int i1 = 0; i1 < 10; i1++)
           {
-            m_pControl->GetState(1000, &state);
+            m_pControl->GetState(200, &state);
             if (state != State_Paused)
             {
               m_pControl->Pause();
               m_pPausedDone = true;
               Log("MPMadPresenter:::SetMadVrPaused() pause");
-              Sleep(10);
+              Sleep(100);
             }
-            else if (state == State_Paused && m_pPausedCount > 1000)
+            else if (state == State_Paused && m_pPausedCount > 50)
             {
               m_pPausedDone = true;
             }
@@ -210,9 +211,8 @@ void MPMadPresenter::SetMadVrPaused(bool paused)
         m_pControl = nullptr;
       }
     }
-    m_pPausedCount++;
   }
-  mtx.unlock();
+  //mtx.unlock();
 }
 
 void MPMadPresenter::RepeatFrame()
@@ -1235,6 +1235,8 @@ HRESULT MPMadPresenter::ClearBackground(LPCSTR name, REFERENCE_TIME frameStart, 
   //m_mpWait.Unlock();
   //m_dsLock.Unlock();
 
+  SetMadVrPaused(m_pPaused);
+
   return uiVisible ? CALLBACK_USER_INTERFACE : CALLBACK_INFO_DISPLAY;
 }
 
@@ -1376,6 +1378,8 @@ HRESULT MPMadPresenter::RenderOsd(LPCSTR name, REFERENCE_TIME frameStart, RECT* 
   {
     SetEvent(m_pGrabEvent);
   }
+
+  SetMadVrPaused(m_pPaused);
 
   return uiVisible ? CALLBACK_USER_INTERFACE : CALLBACK_INFO_DISPLAY;
 }
