@@ -927,12 +927,19 @@ namespace MediaPortal.Player
 
         if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
         {
-          // Send action message to refresh screen
-          var msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_MADVR_SCREEN_REFRESH, 0, 0, 0, 0, 0, null)
-          {
-            Param1 = 1 // Adding VMR9
-          };
-          GUIWindowManager.SendThreadMessage(msg);
+          // Change the way to init window on start to try to fix GUI issue and volume GUI
+          int activeWin = GUIWindowManager.ActiveWindow;
+          GUIWindowManager.UnRoute();
+          GUIWindowManager.Dispose();
+
+          // Disable that part that can break GUI
+          //// Send action message to refresh screen
+          //var msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_MADVR_SCREEN_REFRESH, 0, 0, 0, 0, 0, null)
+          //{
+          //  Param1 = 1 // Adding VMR9
+          //};
+          //GUIWindowManager.SendThreadMessage(msg);
+
           // Process frames to clear D3D dialog window
           for (int i = 0; i < 20; i++)
           {
@@ -940,7 +947,11 @@ namespace MediaPortal.Player
           }
           //_scene.MadVrRenderTarget = GUIGraphicsContext.DX9Device.GetRenderTarget(0);
           //MadVrRenderTargetVMR9 = GUIGraphicsContext.DX9Device.GetRenderTarget(0);
+
+          GUIWindowManager.ActivateWindow(activeWin);
+          GUIWindowManager.OnDeviceRestored();
         }
+
         _scene.Init();
 
         if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.EVR)

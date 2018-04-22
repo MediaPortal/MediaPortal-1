@@ -1104,7 +1104,7 @@ namespace MediaPortal.GUI.Library
     {
       // reset our info manager caches
       GUIInfoManager.ResetCache();
-      foreach (GUIControl control in Children)
+      foreach (GUIControl control in Children.ToList())
       {
         if (control.GetVisibleCondition() != 0)
         {

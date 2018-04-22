@@ -53,7 +53,7 @@ BOOL APIENTRY DllMain( HANDLE hModule,
 #define MAX_TEXTURE_COORDS		8000
 #define MaxNumfontVertices		40000
 #define MAX_FONTS				      20
-#define MaxNumTextureVertices	3000
+#define MaxNumTextureVertices	5000
 #define MAX_TEXT_LINES        200
 
 // A structure for our custom vertex type
@@ -189,44 +189,51 @@ void Cleanup()
 //*******************************************************************************************************************
 void FontEngineInitialize(int screenWidth, int screenHeight, int poolFormat)
 {
-  m_iScreenWidth=screenWidth;
-  m_iScreenHeight=screenHeight;
+  try
+  {
+    m_iScreenWidth = screenWidth;
+    m_iScreenHeight = screenHeight;
 
-  textureCount=0;
-  static bool initialized=false;
-  if (!initialized)
-  {
-    for (int i=0; i < MAX_FONTS;++i)
+    textureCount = 0;
+    static bool initialized = false;
+    if (!initialized)
     {
-      fontData[i].pIndexBuffer=NULL;
-      fontData[i].pTexture = NULL;
-      fontData[i].vertices = NULL;
+      for (int i = 0; i < MAX_FONTS; ++i)
+      {
+        fontData[i].pIndexBuffer = NULL;
+        fontData[i].pTexture = NULL;
+        fontData[i].vertices = NULL;
+      }
+      for (int i = 0; i < MAX_TEXTURES; ++i)
+      {
+        textureData[i].hashCode = -1;
+        textureData[i].dwNumTriangles = 0;
+        textureData[i].iv = 0;
+        textureData[i].pIndexBuffer = NULL;
+        textureData[i].pTexture = NULL;
+        textureData[i].vertices = NULL;
+        textureData[i].useAlphaBlend = true;
+        textureZ[i] = -1;
+        texturePlace[i] = new TEXTURE_PLACE();
+        texturePlace[i]->numRect = 0;
+      }
+      initialized = true;
+      textureCount = 0;
     }
-    for (int i=0; i < MAX_TEXTURES;++i)
+    if (poolFormat == 0)
     {
-      textureData[i].hashCode=-1;
-      textureData[i].dwNumTriangles=0;
-      textureData[i].iv=0;
-      textureData[i].pIndexBuffer=NULL;
-      textureData[i].pTexture=NULL;
-      textureData[i].vertices = NULL;
-      textureData[i].useAlphaBlend=true;
-      textureZ[i]=-1;
-      texturePlace[i]=new TEXTURE_PLACE();
-      texturePlace[i]->numRect = 0;
+      m_ipoolFormat = D3DPOOL_SYSTEMMEM;
+      m_d3dUsage = D3DUSAGE_DYNAMIC;
     }
-    initialized=true;
-    textureCount=0;
-	}
-  if (poolFormat==0)
-  {
-    m_ipoolFormat = D3DPOOL_SYSTEMMEM;
-    m_d3dUsage = D3DUSAGE_DYNAMIC;
+    else
+    {
+      m_ipoolFormat = D3DPOOL_MANAGED;
+      m_d3dUsage = D3DUSAGE_WRITEONLY;
+    }
   }
-  else
+  catch (...)
   {
-    m_ipoolFormat = D3DPOOL_MANAGED;
-    m_d3dUsage = D3DUSAGE_WRITEONLY;
+    // Catch exception
   }
 }
 //*******************************************************************************************************************
