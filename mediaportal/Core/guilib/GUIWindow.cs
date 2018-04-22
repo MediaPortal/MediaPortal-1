@@ -1371,7 +1371,7 @@ namespace MediaPortal.GUI.Library
       _windowLoaded = false;
       _listPositions = new List<CPosition>();
 
-      foreach (GUIControl child in Children)
+      foreach (GUIControl child in Children.ToList())
       {
         GUIControl control = child;
         control.StorePosition();

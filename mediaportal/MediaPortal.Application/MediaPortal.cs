@@ -5467,10 +5467,13 @@ public class MediaPortalApp : D3D, IRender
                 }
               }
 
-              // Process frames to clear D3D dialog window
-              for (int i = 0; i < 20; i++)
+              if (message.Param1 == 2)
               {
-                GUIWindowManager.MadVrProcess();
+                // Process frames to clear D3D dialog window
+                for (int i = 0; i < 20; i++)
+                {
+                  GUIWindowManager.MadVrProcess();
+                }
               }
 
               Log.Debug("Main: recreate swap chain for madVR done");

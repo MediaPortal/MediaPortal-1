@@ -23,6 +23,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using MediaPortal.ExtensionMethods;
 //using System.Reflection;
@@ -1618,7 +1619,7 @@ namespace MediaPortal.GUI.Library
     {
       lock (thisLock)
       {
-        foreach (var window in _listWindows)
+        foreach (var window in _listWindows.ToList())
         {
           GUIWindow cw = window.Value;
           toDo(cw);
