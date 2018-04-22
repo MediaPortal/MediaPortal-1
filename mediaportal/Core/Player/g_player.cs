@@ -3999,6 +3999,12 @@ namespace MediaPortal.Player
         case GUIMessage.MessageType.GUI_MSG_ONDISPLAYMADVRCHANGED:
           lock (GUIGraphicsContext.RenderLock)
           {
+            // Suspending GUIGraphicsContext.State
+            if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
+            {
+              GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.SUSPENDING;
+            }
+
             // Get Size
             Size client = GUIGraphicsContext.form.ClientSize;
 
@@ -4094,6 +4100,12 @@ namespace MediaPortal.Player
 
             // message handled
             GUIGraphicsContext.ProcessMadVrOsdDisplay = false;
+
+            // Restore GUIGraphicsContext.State
+            if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.SUSPENDING)
+            {
+              GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.RUNNING;
+            }
           }
           break;
         case GUIMessage.MessageType.GUI_MSG_SET_RESUME_STATE:

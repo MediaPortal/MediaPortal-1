@@ -381,22 +381,25 @@ namespace MediaPortal.GUI.Library
       lock (GUIGraphicsContext.RenderLock)
       {
         // Update current focused thumbnail
-        GUIListItem item = _listItems[buttonNr + _offset];
+        if (_listItems.Count > buttonNr + _offset)
         {
-          if (gotFocus)
+          GUIListItem item = _listItems[buttonNr + _offset];
           {
-            if (item.HasThumbnail)
+            if (gotFocus)
             {
-              string selectedThumbProperty = GUIPropertyManager.GetProperty("#selectedthumb");
-              if (selectedThumbProperty != item.ThumbnailImage)
+              if (item.HasThumbnail)
               {
-                GUIPropertyManager.SetProperty("#selectedthumb", string.Empty);
-                GUIPropertyManager.SetProperty("#selectedthumb", item.ThumbnailImage);
-                GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_FOCUS_CHANGED, WindowId, GetID, ParentID, 0, 0, null)
+                string selectedThumbProperty = GUIPropertyManager.GetProperty("#selectedthumb");
+                if (selectedThumbProperty != item.ThumbnailImage)
                 {
-                  SendToTargetWindow = true
-                };
-                GUIGraphicsContext.SendMessage(msg);
+                  GUIPropertyManager.SetProperty("#selectedthumb", string.Empty);
+                  GUIPropertyManager.SetProperty("#selectedthumb", item.ThumbnailImage);
+                  GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_FOCUS_CHANGED, WindowId, GetID, ParentID, 0, 0, null)
+                  {
+                    SendToTargetWindow = true
+                  };
+                  GUIGraphicsContext.SendMessage(msg);
+                }
               }
             }
           }
@@ -1257,7 +1260,14 @@ namespace MediaPortal.GUI.Library
 
           RenderPinIcon(timePassed, i, pinX, dwPosY, gotFocus);
 
-          item_OnThumbnailRefresh(i, gotFocus);
+          try
+          {
+            item_OnThumbnailRefresh(i, gotFocus);
+          }
+          catch (Exception)
+          {
+            continue;
+          }
 
           dwPosY += _itemHeight + _spaceBetweenItems;
         }
