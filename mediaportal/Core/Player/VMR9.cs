@@ -946,17 +946,18 @@ namespace MediaPortal.Player
             GUIGraphicsContext.MadVrRenderTargetVmr9 = null;
           }
 
+          GUIWindowManager.PreInit();
+          GUIWindowManager.OnResize();
+          // Commented out this line seems to trigger wrong start playback
+          //GUIWindowManager.ActivateWindow(activeWin);
+          GUIWindowManager.OnDeviceRestored();
+
           // Send action message to refresh screen
           var msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_MADVR_SCREEN_REFRESH, 0, 0, 0, 0, 0, GUIGraphicsContext.DX9Device.GetRenderTarget(0))
           {
             Param1 = 1 // Adding VMR9
           };
           GUIWindowManager.SendThreadMessage(msg);
-
-          GUIWindowManager.PreInit();
-          GUIWindowManager.OnResize();
-          GUIWindowManager.ActivateWindow(activeWin);
-          GUIWindowManager.OnDeviceRestored();
         }
 
         _scene.Init();
