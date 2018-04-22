@@ -130,7 +130,6 @@ namespace MediaPortal.Player
 
     public PlaneScene(VMR9Util util)
     {
-      MadVrRenderTarget = null;
       //	Log.Info("PlaneScene: ctor()");
 
       _textureAddress = 0;
@@ -197,8 +196,6 @@ namespace MediaPortal.Player
       get { return _visible; }
       set { _visible = value; }
     }
-
-    public Surface MadVrRenderTarget { get; set; }
 
     public bool Enabled
     {

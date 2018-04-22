@@ -224,7 +224,7 @@ namespace MediaPortal.GUI.Library
         _countLabel.Render(GUIGraphicsContext.TimePassed);
       }
 
-      _animation.Render(GUIGraphicsContext.TimePassed);
+      _animation?.Render(GUIGraphicsContext.TimePassed);
     }
 
     #endregion Methods

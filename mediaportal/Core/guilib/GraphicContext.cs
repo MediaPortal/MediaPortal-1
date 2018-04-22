@@ -175,7 +175,7 @@ namespace MediaPortal.GUI.Library
     private static bool _tabWithBlackBars = false;
 
     // For madVR
-    public static Surface MadVrRenderTargetVMR9 = null;
+    public static Surface MadVrRenderTargetVmr9 = null;
 
     /// <summary>
     /// madVR HWnd video instance

@@ -5446,8 +5446,39 @@ public class MediaPortalApp : D3D, IRender
               GUIGraphicsContext.DX9Device.DeviceLost -= OnDeviceLost;
             }
 
-            RecreateSwapChain(false);
-            Log.Debug("Main: recreate swap chain for madVR done");
+            try
+            {
+              // "message.Param1 == 2" is when stopping playback
+              if (GUIGraphicsContext.MadVrRenderTargetVmr9 != null && !GUIGraphicsContext.MadVrRenderTargetVmr9.Disposed && message.Param1 == 2)
+              {
+                GUIGraphicsContext.DX9Device?.SetRenderTarget(0, GUIGraphicsContext.MadVrRenderTargetVmr9);
+                GUIGraphicsContext.MadVrRenderTargetVmr9.Dispose();
+                GUIGraphicsContext.MadVrRenderTargetVmr9 = null;
+              }
+
+              // "message.Param1 == 1" is when starting playback
+              if (message.Param1 == 1)
+              {
+                var surface = (Surface)message.Object;
+                if (surface != null &&
+                    !surface.Disposed)
+                {
+                  GUIGraphicsContext.MadVrRenderTargetVmr9 = surface;
+                }
+              }
+
+              // Process frames to clear D3D dialog window
+              for (int i = 0; i < 20; i++)
+              {
+                GUIWindowManager.MadVrProcess();
+              }
+
+              Log.Debug("Main: recreate swap chain for madVR done");
+            }
+            catch (Exception)
+            {
+              // ignored
+            }
 
             // Set here Vmr9Active to false to inform plugins that all stop is fully done.
             if (message.Param1 == 2 && (!g_Player.Playing || (!g_Player.IsVideo && !g_Player.IsDVD && !g_Player.IsTVRecording && !g_Player.IsTV))) // When stop is triggered)
