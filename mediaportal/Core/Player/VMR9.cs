@@ -1895,6 +1895,9 @@ namespace MediaPortal.Player
       if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
       //if (GUIGraphicsContext.MadVrRenderTargetVMR9 != null && !GUIGraphicsContext.MadVrRenderTargetVMR9.Disposed)
       {
+        // We are stopping here (need to alert to avoid block in loop)
+        GUIWindow._loadSkinDone = true;
+
         //GUIGraphicsContext.DX9Device.SetRenderTarget(0, GUIGraphicsContext.MadVrRenderTargetVMR9);
         GUIGraphicsContext.currentScreen = Screen.FromControl(GUIGraphicsContext.form);
         if (!GUIGraphicsContext.RestoreGuiForMadVrDone)

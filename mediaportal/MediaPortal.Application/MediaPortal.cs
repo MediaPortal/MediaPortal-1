@@ -5451,6 +5451,12 @@ public class MediaPortalApp : D3D, IRender
               // "message.Param1 == 2" is when stopping playback
               if (GUIGraphicsContext.MadVrRenderTargetVmr9 != null && !GUIGraphicsContext.MadVrRenderTargetVmr9.Disposed && message.Param1 == 2)
               {
+                // Need a reinit here to be able to reload current GUi (for ex to not break TVGuide)
+                GUIWindowManager.PreInit();
+                GUIWindowManager.OnResize();
+                GUIWindowManager.ActivateWindow(GUIWindowManager.ActiveWindow);
+                GUIWindowManager.OnDeviceRestored();
+
                 GUIGraphicsContext.DX9Device?.SetRenderTarget(0, GUIGraphicsContext.MadVrRenderTargetVmr9);
                 GUIGraphicsContext.MadVrRenderTargetVmr9.Dispose();
                 GUIGraphicsContext.MadVrRenderTargetVmr9 = null;
