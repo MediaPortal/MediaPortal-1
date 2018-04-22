@@ -1193,6 +1193,7 @@ namespace MediaPortal.GUI.Library
               GUIWindowManager.Process();
               if (GUIWindow._loadSkinDone)
               {
+                GUIWindow._loadSkinDone = false;
                 break;
               }
             }
