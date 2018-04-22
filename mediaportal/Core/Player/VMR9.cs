@@ -932,22 +932,29 @@ namespace MediaPortal.Player
           GUIWindowManager.UnRoute();
           GUIWindowManager.Dispose();
 
-          // Disable that part that can break GUI
-          //// Send action message to refresh screen
-          //var msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_MADVR_SCREEN_REFRESH, 0, 0, 0, 0, 0, null)
-          //{
-          //  Param1 = 1 // Adding VMR9
-          //};
-          //GUIWindowManager.SendThreadMessage(msg);
-
           // Process frames to clear D3D dialog window
           for (int i = 0; i < 20; i++)
           {
             GUIWindowManager.MadVrProcess();
           }
-          //_scene.MadVrRenderTarget = GUIGraphicsContext.DX9Device.GetRenderTarget(0);
-          //MadVrRenderTargetVMR9 = GUIGraphicsContext.DX9Device.GetRenderTarget(0);
 
+          // Keep current RenderTarget to trying to restore D3D GUI from madVR but release it if already init previously
+          if (GUIGraphicsContext.MadVrRenderTargetVmr9 != null && !GUIGraphicsContext.MadVrRenderTargetVmr9.Disposed)
+          {
+            GUIGraphicsContext.DX9Device?.SetRenderTarget(0, GUIGraphicsContext.MadVrRenderTargetVmr9);
+            GUIGraphicsContext.MadVrRenderTargetVmr9.Dispose();
+            GUIGraphicsContext.MadVrRenderTargetVmr9 = null;
+          }
+
+          // Send action message to refresh screen
+          var msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_MADVR_SCREEN_REFRESH, 0, 0, 0, 0, 0, GUIGraphicsContext.DX9Device.GetRenderTarget(0))
+          {
+            Param1 = 1 // Adding VMR9
+          };
+          GUIWindowManager.SendThreadMessage(msg);
+
+          GUIWindowManager.PreInit();
+          GUIWindowManager.OnResize();
           GUIWindowManager.ActivateWindow(activeWin);
           GUIWindowManager.OnDeviceRestored();
         }
