@@ -1898,6 +1898,8 @@ namespace MediaPortal.GUI.Library
     internal static double ForcedRR3DRate { get; set; }
     internal static bool RenderMadVr3Dchanged { get; set; }
     public static bool CurrentAudioRendererDone { get; set; }
+    // set to true if recreate swap chain is needed
+    public static bool NeedRecreateSwapChain { get; set; }
 
     //public static IntPtr madVRDIB { get; set; }
 

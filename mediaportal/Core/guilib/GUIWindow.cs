@@ -1268,7 +1268,7 @@ namespace MediaPortal.GUI.Library
         // needed when this call is done from a thread
         if (_windowAllocated)
         {
-          return;
+          //return;
         }
 
         HashSet<int> faultyControl = new HashSet<int>();
@@ -1586,12 +1586,15 @@ namespace MediaPortal.GUI.Library
     public virtual void Render(float timePassed)
     {
       // Disable this hack it break some skin reload (GUIVolumeOverlay)
-      //// Hack for madVR to avoid freeze
-      //if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
-      //    GUIGraphicsContext.InVmr9Render && GUIGraphicsContext.Vmr9Active)
-      //{
-      //  _shouldRestore = false;
-      //}
+      // Hack for madVR to avoid freeze
+      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
+          GUIGraphicsContext.InVmr9Render && GUIGraphicsContext.Vmr9Active)
+      {
+        if (!GUIGraphicsContext.NeedRecreateSwapChain || GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.SUSPENDING)
+        {
+          _shouldRestore = false;
+        }
+      }
 
       if (_shouldRestore)
       {

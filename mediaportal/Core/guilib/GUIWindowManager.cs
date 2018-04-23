@@ -1265,7 +1265,7 @@ namespace MediaPortal.GUI.Library
     /// <returns>window found or null if not found</returns>
     public static GUIWindow GetWindow(int dwID)
     {
-      lock (thisLock)
+      //lock (thisLock)
       {
         return GetWindow(dwID, true);
       }

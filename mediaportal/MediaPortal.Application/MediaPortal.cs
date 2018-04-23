@@ -1680,7 +1680,7 @@ public class MediaPortalApp : D3D, IRender
               !Equals(screen.Bounds.Size.Width, GUIGraphicsContext.currentScreen.Bounds.Width) ||
               !Equals(screen.Bounds.Size.Height, GUIGraphicsContext.currentScreen.Bounds.Height))
             {
-              NeedRecreateSwapChain = true;
+              GUIGraphicsContext.NeedRecreateSwapChain = true;
             }
             GUIGraphicsContext.ForceMadVRRefresh = true;
 
@@ -2442,7 +2442,7 @@ public class MediaPortalApp : D3D, IRender
         Log.Debug("Main: Screen MP OnDisplayChange set current detected screen bounds : {0} to previous bounds values : {1}", GUIGraphicsContext.currentScreen.Bounds, Bounds);
         Bounds = screen.Bounds;
         Log.Debug("Main: Screen MP OnDisplayChange recreate swap chain");
-        NeedRecreateSwapChain = true;
+        GUIGraphicsContext.NeedRecreateSwapChain = true;
         RecreateSwapChain(false);
         _changeScreenDisplayChange = true;
       }
@@ -2557,7 +2557,7 @@ public class MediaPortalApp : D3D, IRender
         Log.Debug("Main: Screen MP OnGetMinMaxInfo set current screen bounds {0} to Bounds {1}", GUIGraphicsContext.currentScreen.Bounds, Bounds);
         Bounds = screen.Bounds;
         Log.Debug("Main: Screen MP OnGetMinMaxInfo recreate swap chain");
-        NeedRecreateSwapChain = true;
+        GUIGraphicsContext.NeedRecreateSwapChain = true;
         RecreateSwapChain(false);
         _changeScreen = true;
 
@@ -3784,20 +3784,19 @@ public class MediaPortalApp : D3D, IRender
             // Alert the frame grabber that it has a chance to grab a GUI frame
             // if it likes (method returns immediately otherwise
             grabber.OnFrameGUI();
-
-            // clear the surface
-            GUIGraphicsContext.DX9Device.Clear(ClearFlags.Target, Color.Black, 1.0f, 0);
-            GUIGraphicsContext.DX9Device.BeginScene();
-            CreateStateBlock();
-            GUIGraphicsContext.SetScalingResolution(0, 0, false);
-            // ask the layer manager to render all layers
-            GUILayerManager.Render(timePassed, GUILayers.all);
-            RenderStats();
-            GUIFontManager.Present();
-            GUIGraphicsContext.DX9Device.EndScene();
-            //d3ErrInvalidCallCounter = 0;
             try
             {
+              // clear the surface
+              GUIGraphicsContext.DX9Device.Clear(ClearFlags.Target, Color.Black, 1.0f, 0);
+              GUIGraphicsContext.DX9Device.BeginScene();
+              CreateStateBlock();
+              GUIGraphicsContext.SetScalingResolution(0, 0, false);
+              // ask the layer manager to render all layers
+              GUILayerManager.Render(timePassed, GUILayers.all);
+              RenderStats();
+              GUIFontManager.Present();
+              GUIGraphicsContext.DX9Device.EndScene();
+              //d3ErrInvalidCallCounter = 0;
               // Show the frame on the primary surface.
               GUIGraphicsContext.DX9Device.Present(); //SLOW
             }
@@ -5438,7 +5437,8 @@ public class MediaPortalApp : D3D, IRender
 
         case GUIMessage.MessageType.GUI_MSG_MADVR_SCREEN_REFRESH:
           // We need to do a refresh of screen when using madVR only if resolution screen has change during playback
-          if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && NeedRecreateSwapChain || message.Param1 == 1 || message.Param1 == 2)
+          if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && GUIGraphicsContext.NeedRecreateSwapChain ||
+              message.Param1 == 1 || message.Param1 == 2)
           {
             // disable event handlers
             if (GUIGraphicsContext.DX9Device != null)
@@ -5449,7 +5449,8 @@ public class MediaPortalApp : D3D, IRender
             try
             {
               // "message.Param1 == 2" is when stopping playback
-              if (GUIGraphicsContext.MadVrRenderTargetVmr9 != null && !GUIGraphicsContext.MadVrRenderTargetVmr9.Disposed && message.Param1 == 2)
+              if (GUIGraphicsContext.MadVrRenderTargetVmr9 != null &&
+                  !GUIGraphicsContext.MadVrRenderTargetVmr9.Disposed && message.Param1 == 2)
               {
                 // Need a reinit here to be able to reload current GUi (for ex to not break TVGuide)
                 GUIWindowManager.PreInit();
@@ -5465,7 +5466,7 @@ public class MediaPortalApp : D3D, IRender
               // "message.Param1 == 1" is when starting playback
               if (message.Param1 == 1)
               {
-                var surface = (Surface)message.Object;
+                var surface = (Surface) message.Object;
                 if (surface != null &&
                     !surface.Disposed)
                 {
@@ -5493,6 +5494,11 @@ public class MediaPortalApp : D3D, IRender
             if (message.Param1 == 2 && (!g_Player.Playing || (!g_Player.IsVideo && !g_Player.IsDVD && !g_Player.IsTVRecording && !g_Player.IsTV))) // When stop is triggered)
             {
               GUIGraphicsContext.Vmr9Active = false;
+            }
+
+            if (GUIGraphicsContext.NeedRecreateSwapChain && message.Param1 == 2)
+            {
+              RecreateSwapChain(false);
             }
 
             // enable event handlers
