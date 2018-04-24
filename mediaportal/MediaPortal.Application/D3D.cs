@@ -625,9 +625,9 @@ namespace MediaPortal
         GUIGraphicsContext.ForceMadVRRefresh = true;
       }
 
-      // Force a madVR refresh to resize MP window
-      // TODO how to handle it better
-      g_Player.RefreshMadVrVideo();
+      //// Force a madVR refresh to resize MP window
+      //// TODO how to handle it better
+      //g_Player.RefreshMadVrVideo();
 
       // madVR resize OSD/Video window
       if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
@@ -2226,6 +2226,18 @@ namespace MediaPortal
     /// </summary>
     private void ToggleMiniTV()
     {
+      // disable event handlers
+      if (GUIGraphicsContext.DX9Device != null)
+      {
+        GUIGraphicsContext.DX9Device.DeviceLost -= OnDeviceLost;
+      }
+
+      // Restore GUIGraphicsContext.State
+      if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
+      {
+        GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.SUSPENDING;
+      }
+
       if (Windowed)
       {
         _miniTvMode             = !_miniTvMode;
@@ -2254,10 +2266,11 @@ namespace MediaPortal
         ClientSize = size;
         TopMost = _alwaysOnTop;
 
-        // Force a madVR refresh to resize MP window
-        // TODO how to handle it better
-        g_Player.RefreshMadVrVideo();
+        //// Force a madVR refresh to resize MP window
+        //// TODO how to handle it better
+        //g_Player.RefreshMadVrVideo();
         GUIGraphicsContext.ForceMadVRRefresh3D = true;
+        GUIGraphicsContext.ForceMadVRRefresh = true;
 
         if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
             GUIGraphicsContext.InVmr9Render && !IsToggleMiniTV)
@@ -2268,6 +2281,18 @@ namespace MediaPortal
         }
         // for madVR resize
         IsToggleMiniTV = false;
+      }
+
+      // Restore GUIGraphicsContext.State
+      if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.SUSPENDING)
+      {
+        GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.RUNNING;
+      }
+
+      // disable event handlers
+      if (GUIGraphicsContext.DX9Device != null)
+      {
+        GUIGraphicsContext.DX9Device.DeviceLost += OnDeviceLost;
       }
     }
 

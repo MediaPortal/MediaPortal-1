@@ -228,7 +228,7 @@ namespace MediaPortal.Player
 
     #region vars
 
-    private PlaneScene _scene = null;
+    internal PlaneScene _scene = null;
     private bool _useVmr9 = false;
     private bool _inMadVrExclusiveMode = false;
     private bool _inMenu = false;

@@ -2758,7 +2758,11 @@ namespace MediaPortal.Player
     public static void RefreshMadVrVideo()
     {
       // Enable a new VideoWindow update
-      GUIGraphicsContext.UpdateVideoWindow = true;
+      lock (GUIGraphicsContext.RenderLock)
+      {
+        GUIGraphicsContext.UpdateVideoWindow = true;
+        VMR9Util.g_vmr9?._scene.RenderGuiRefresh(25, 25, 25, 25, true);
+      }
 
       // Disabled for now - seems the workaround is not needed anymore but keep code
       //if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
