@@ -863,6 +863,13 @@ namespace MediaPortal.Player
       return GUIGraphicsContext.IsFullScreenVideo;
     }
 
+    // To force an update of video window to be able to trigger a sync client size.
+    public int RenderGuiRefresh(Int16 width, Int16 height, Int16 arWidth, Int16 arHeight, bool forceRefresh)
+    {
+      //Log.Debug("Planescene: RenderGuiRefreshrGui: arWidth {0} - arHeight {1}", arWidth, arHeight);
+      return RenderLayers(GUILayers.under, width, height, arWidth, arHeight, forceRefresh);
+    }
+
     public int RenderGui(Int16 width, Int16 height, Int16 arWidth, Int16 arHeight)
     {
       //Log.Debug("Planescene: RenderGui: arWidth {0} - arHeight {1}", arWidth, arHeight);
@@ -875,7 +882,7 @@ namespace MediaPortal.Player
       return RenderLayers(GUILayers.over, width, height, arWidth, arHeight);
     }
 
-    private int RenderLayers(GUILayers layers, Int16 width, Int16 height, Int16 arWidth, Int16 arHeight)
+    private int RenderLayers(GUILayers layers, Int16 width, Int16 height, Int16 arWidth, Int16 arHeight, bool forceRefresh = false)
     {
       UiVisible = false;
 
@@ -883,7 +890,7 @@ namespace MediaPortal.Player
       {
         try
         {
-          if (_reEntrant)
+          if (_reEntrant && !forceRefresh)
           {
             return -1;
           }

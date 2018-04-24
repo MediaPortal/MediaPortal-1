@@ -1592,7 +1592,7 @@ namespace MediaPortal.GUI.Library
       {
         if (!GUIGraphicsContext.NeedRecreateSwapChain || GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.SUSPENDING)
         {
-          _shouldRestore = false;
+          //_shouldRestore = false;
         }
       }
 
