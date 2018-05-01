@@ -927,10 +927,8 @@ namespace MediaPortal.Player
 
         if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
         {
-          // Change the way to init window on start to try to fix GUI issue and volume GUI
-          int activeWin = GUIWindowManager.ActiveWindow;
-          GUIWindowManager.UnRoute();
-          GUIWindowManager.Dispose();
+          // Render Blank screen to avoid old GUI Window displayed on stop.
+          GUIGraphicsContext.BlankScreen = true;
 
           // Process frames to clear D3D dialog window
           for (int i = 0; i < 20; i++)
@@ -946,12 +944,6 @@ namespace MediaPortal.Player
             GUIGraphicsContext.MadVrRenderTargetVmr9 = null;
           }
 
-          GUIWindowManager.PreInit();
-          GUIWindowManager.OnResize();
-          // Commented out this line seems to trigger wrong start playback
-          //GUIWindowManager.ActivateWindow(activeWin);
-          GUIWindowManager.OnDeviceRestored();
-
           // Send action message to refresh screen
           var msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_MADVR_SCREEN_REFRESH, 0, 0, 0, 0, 0, GUIGraphicsContext.DX9Device.GetRenderTarget(0))
           {
@@ -965,16 +957,16 @@ namespace MediaPortal.Player
         if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.EVR)
         {
           // Fix RDP Screen out of bound (force to use AdapterOrdinal to 0 if adapter number are out of bounds)
-          int AdapterOrdinal = GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal;
-          if (AdapterOrdinal >= Screen.AllScreens.Length)
+          int adapterOrdinal = GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal;
+          if (adapterOrdinal >= Screen.AllScreens.Length)
           {
-            AdapterOrdinal = Screen.AllScreens.Length - 1;
+            adapterOrdinal = Screen.AllScreens.Length - 1;
             Log.Info("VMR9: adapter number out of bounds");
           }
           if (GUIGraphicsContext.currentMonitorIdx != -1)
           {
             if ((OSInfo.OSInfo.Win7OrLater() &&
-                 Screen.AllScreens[AdapterOrdinal].Primary) || OSInfo.OSInfo.Win8OrLater())
+                 Screen.AllScreens[adapterOrdinal].Primary) || OSInfo.OSInfo.Win8OrLater())
             {
               EvrInit(_scene, (uint) upDevice.ToInt32(), ref _vmr9Filter, (uint) hMonitor.ToInt32(),
                 GUIGraphicsContext.currentMonitorIdx, false, false);
@@ -984,23 +976,23 @@ namespace MediaPortal.Player
               EvrInit(_scene, (uint) upDevice.ToInt32(), ref _vmr9Filter, (uint) hMonitor.ToInt32(),
                 GUIGraphicsContext.currentMonitorIdx, true, true);
               Log.Debug("VMR9: force disable vsync and bias correction for Win7 or lower - current primary is : {0}",
-                Screen.AllScreens[AdapterOrdinal].Primary);
+                Screen.AllScreens[adapterOrdinal].Primary);
             }
           }
           else
           {
             if ((OSInfo.OSInfo.Win7OrLater() &&
-                 Screen.AllScreens[AdapterOrdinal].Primary) || OSInfo.OSInfo.Win8OrLater())
+                 Screen.AllScreens[adapterOrdinal].Primary) || OSInfo.OSInfo.Win8OrLater())
             {
               EvrInit(_scene, (uint) upDevice.ToInt32(), ref _vmr9Filter, (uint) hMonitor.ToInt32(),
-                AdapterOrdinal, false, false);
+                adapterOrdinal, false, false);
             }
             else
             {
               EvrInit(_scene, (uint) upDevice.ToInt32(), ref _vmr9Filter, (uint) hMonitor.ToInt32(),
-                AdapterOrdinal, true, true);
+                adapterOrdinal, true, true);
               Log.Debug("VMR9: force disable vsync and bias correction for Win7 or lower - current primary is : {0}",
-                Screen.AllScreens[AdapterOrdinal].Primary);
+                Screen.AllScreens[adapterOrdinal].Primary);
             }
           }
           hr = new HResult(graphBuilder.AddFilter(_vmr9Filter, "Enhanced Video Renderer"));

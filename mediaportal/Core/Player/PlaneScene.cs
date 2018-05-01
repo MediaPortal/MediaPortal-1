@@ -1644,7 +1644,7 @@ namespace MediaPortal.Player
 
                 int horzDelta = (int) (xSkewPerLine*y);
 
-                GUIGraphicsContext.DX9Device.StretchRectangle(surfaceLastFrame,
+                GUIGraphicsContext.DX9Device?.StretchRectangle(surfaceLastFrame,
                   new Rectangle(horzDelta, y, backbuffer.Description.Width - horzOffset*2 + horzDelta, 1),
                   backbuffer,
                   new Rectangle(targetRect.X, y, targetRect.Width, 1),
@@ -1658,7 +1658,7 @@ namespace MediaPortal.Player
       }
       else // render normal 3D movie
       {
-        GUIGraphicsContext.DX9Device.StretchRectangle(surface,
+        GUIGraphicsContext.DX9Device?.StretchRectangle(surface,
           new Rectangle(0, 0, backbuffer.Description.Width, backbuffer.Description.Height),
           backbuffer,
           targetRect,
