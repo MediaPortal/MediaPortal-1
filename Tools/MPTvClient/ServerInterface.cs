@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2016 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2016 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -21,19 +21,16 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Text;
 using System.Globalization;
 using TvControl;
-using TvLibrary.Interfaces;
-using TvDatabase;
-using Gentle.Common;
 using Gentle.Framework;
 using System.Windows.Forms;
 using System.Xml;
+using TvDatabase;
 
 namespace MPTvClient
 {
-  public class ServerInterface
+    public class ServerInterface
   {
     private IList<ChannelGroup> groups;
     private IList<RadioChannelGroup> radioGroups;

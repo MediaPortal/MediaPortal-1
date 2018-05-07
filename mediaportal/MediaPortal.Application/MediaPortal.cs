@@ -1,4 +1,4 @@
-﻿#region Copyright (C) 2005-2013 Team MediaPortal
+#region Copyright (C) 2005-2013 Team MediaPortal
 
 // Copyright (C) 2005-2013 Team MediaPortal
 // http://www.team-mediaportal.com
@@ -18,6 +18,8 @@
 
 #endregion
 
+using System.Linq;
+using CSCore.CoreAudioAPI;
 using DirectShowLib;
 using DShowNET.Helper;
 using FilterCategory = DirectShowLib.FilterCategory;
@@ -60,6 +62,7 @@ using Microsoft.DirectX.Direct3D;
 using Microsoft.Win32;
 using Action = MediaPortal.GUI.Library.Action;
 using Timer = System.Timers.Timer;
+using System.Collections.Generic;
 
 #endregion
 
@@ -143,6 +146,7 @@ public class MediaPortalApp : D3D, IRender
   private int                   _backupSizeHeight;
   private bool                  _usePrimaryScreen;
   private string                _screenDisplayName;
+  private bool                  _threadedStartup;
   /// <summary>
   /// Whether HID keyboard handler should be used instead of legacy keyboard handler.
   /// </summary>
@@ -183,23 +187,29 @@ public class MediaPortalApp : D3D, IRender
   private const int WM_EXITSIZEMOVE          = 0x0232; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms632623(v=vs.85).aspx
   private const int WM_DISPLAYCHANGE         = 0x007E; // http://msdn.microsoft.com/en-us/library/windows/desktop/dd145210(v=vs.85).aspx
   private const int WM_POWERBROADCAST        = 0x0218; //http://msdn.microsoft.com/en-us/library/windows/desktop/aa373247(v=vs.85).aspx
+  private const int WM_WINDOWPOSCHANGED      = 0x0047; //http://msdn.microsoft.com/en-us/library/windows/desktop/aa373247(v=vs.85).aspx
+  private const int WM_WINDOWPOSCHANGING     = 0x0046; //http://msdn.microsoft.com/en-us/library/windows/desktop/aa373247(v=vs.85).aspx
   private const int SPI_GETSCREENSAVEACTIVE  = 0x0010; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms724947(v=vs.85).aspx
   private const int SPI_SETSCREENSAVEACTIVE  = 0x0011; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms724947(v=vs.85).aspx
   private const int SPIF_SENDCHANGE          = 0x0002; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms724947(v=vs.85).aspx
   private const int D3DERR_DEVICEHUNG        = -2005530508; // http://msdn.microsoft.com/en-us/library/windows/desktop/bb172554(v=vs.85).aspx
   private const int D3DERR_DEVICEREMOVED     = -2005530512; // http://msdn.microsoft.com/en-us/library/windows/desktop/bb172554(v=vs.85).aspx
   private const int D3DERR_INVALIDCALL       = -2005530516; // http://msdn.microsoft.com/en-us/library/windows/desktop/bb172554(v=vs.85).aspx
+  private const int D3DERR_NOTAVAILABLE      = -2005530518; // http://msdn.microsoft.com/en-us/library/windows/desktop/bb172554(v=vs.85).aspx
+  private const int E_FAIL                   = -2147467259; // http://msdn.microsoft.com/en-us/library/windows/desktop/bb172554(v=vs.85).aspx
 
   private const int DEVICE_NOTIFY_WINDOW_HANDLE         = 0;
   private const int DEVICE_NOTIFY_ALL_INTERFACE_CLASSES = 4;
   private const int DBT_DEVTYP_DEVICEINTERFACE          = 5;
 
   private static readonly Guid KSCATEGORY_RENDER  = new Guid("{65E8773E-8F56-11D0-A3B9-00A0C9223196}");
+  private static readonly Guid KSCATEGORY_INTEL_AUDIO  = new Guid("{86841137-ed8e-4d97-9975-f2ed56b4430e}");
   private static readonly Guid RDP_REMOTE_AUDIO = new Guid("{E6327CAD-DCEC-4949-AE8A-991E976A79D2}");
   private static readonly Guid KSCATEGORY_AUDIO = new Guid("{6994ad04-93ef-11d0-a3cc-00a0c9223196}");
   private static readonly Guid KSCATEGORY_VIDEO = new Guid("{e6dfdc31-31d0-46ac-86af-da1eb05fc599}");
   private static readonly Guid KSCATEGORY_SCREEN = new Guid("{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}");
-  
+  private static readonly Guid KSCATEGORY_DISPLAY_ADAPTER = new Guid("{5b45201d-f2f2-4f3b-85bb-30ff1f953599}");
+
   // http://msdn.microsoft.com/en-us/library/windows/desktop/hh448380(v=vs.85).aspx
   private static Guid GUID_MONITOR_POWER_ON             = new Guid("02731015-4510-4526-99e6-e5a17ebd1aea"); 
   private static Guid GUID_SESSION_DISPLAY_STATUS       = new Guid("2b84c20e-ad23-4ddf-93db-05ffbd7efca5");
@@ -216,6 +226,9 @@ public class MediaPortalApp : D3D, IRender
 
   // Framegrabber instance
   private FrameGrabber grabber = FrameGrabber.GetInstance();
+
+  // Core Audio controller
+  MMDeviceEnumerator _mMdeviceEnumerator = new MMDeviceEnumerator();
 
   [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
   // ReSharper disable InconsistentNaming
@@ -486,11 +499,11 @@ public class MediaPortalApp : D3D, IRender
   [STAThread]
   public static void Main(string[] args)
   {
-    Log.Info("Starting deployer application");
+    //Log.Info("Starting deployer application");
 
-    Application.ThreadException += new System.Threading.ThreadExceptionEventHandler(Application_ThreadException);
-    AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
-    Application.ApplicationExit += new EventHandler(Application_ApplicationExit);
+    //Application.ThreadException += new System.Threading.ThreadExceptionEventHandler(Application_ThreadException);
+    //AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
+    //Application.ApplicationExit += new EventHandler(Application_ApplicationExit);
 
     using (Settings xmlreader = new MPSettings())
     {
@@ -979,12 +992,6 @@ public class MediaPortalApp : D3D, IRender
               Application.Run(app);
               app.Focus();
             }
-            catch (ThreadStateException ex)
-            {
-              Log.Error(ex);
-              Log.Error("MediaPortal stopped due to thread exception {0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
-              _mpCrashed = true;
-            }
             catch (Exception ex)
             {
               Log.Error(ex);
@@ -1071,20 +1078,20 @@ public class MediaPortalApp : D3D, IRender
     Environment.Exit(0);
   }
 
-  static void Application_ApplicationExit(object sender, EventArgs e)
-  {
-    Log.Info("Application Closed");
-  }
+  //static void Application_ApplicationExit(object sender, EventArgs e)
+  //{
+  //  Log.Info("Application Closed");
+  //}
 
-  static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
-  {
-    //Log.Error(string.Format("*** UNHANDLED APPDOMAIN EXCEPTION ({0}) *****", e.IsTerminating ? "Terminating" : "Non-Terminating"), e.ExceptionObject as Exception);
-  }
+  //static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+  //{
+  //  //Log.Error(string.Format("*** UNHANDLED APPDOMAIN EXCEPTION ({0}) *****", e.IsTerminating ? "Terminating" : "Non-Terminating"), e.ExceptionObject as Exception);
+  //}
 
-  static void Application_ThreadException(object sender, System.Threading.ThreadExceptionEventArgs e)
-  {
-    //Log.Error("*** UNHANDLED THREAD EXCEPTION *****", e.Exception);
-  }
+  //static void Application_ThreadException(object sender, System.Threading.ThreadExceptionEventArgs e)
+  //{
+  //  //Log.Error("*** UNHANDLED THREAD EXCEPTION *****", e.Exception);
+  //}
 
   /// <summary>
   /// Disables the Splash Screen
@@ -1473,7 +1480,10 @@ public class MediaPortalApp : D3D, IRender
           _region[0].Width = 4;
           _region[0].Height = GUIGraphicsContext.Height;
 
-          GUIGraphicsContext.DX9Device.Clear(ClearFlags.Target, Color.FromArgb(255, 255, 255, 255), 1.0f, 0, _region);
+          if (GUIGraphicsContext.DX9Device != null)
+          {
+            GUIGraphicsContext.DX9Device.Clear(ClearFlags.Target, Color.FromArgb(255, 255, 255, 255), 1.0f, 0, _region);
+          }
 
           float fStep = (GUIGraphicsContext.Width - 100);
           fStep /= (2f * 16f);
@@ -1525,8 +1535,25 @@ public class MediaPortalApp : D3D, IRender
   {
     try
     {
+      //Log line for debugging purpose
+      //Log.Debug("Main: WndProc (Event: {0})", msg.ToString());
       switch (msg.Msg)
       {
+        case WM_WINDOWPOSCHANGED:
+          try
+          {
+            if (_useFcuBlackScreenFix && AppActive)
+            {
+              // Workaround for Win10 FCU and blackscreen
+              _forceMpAlive = true;
+              Log.Debug("Main: WM_WINDOWPOSCHANGED");
+            }
+          }
+          catch (Exception ex)
+          {
+            _forceMpAlive = true;
+          }
+          break;
         case (int)ShellNotifications.WmShnotify:
           NotifyInfos info = new NotifyInfos((ShellNotifications.SHCNE)(int)msg.LParam);
 
@@ -1623,31 +1650,80 @@ public class MediaPortalApp : D3D, IRender
 
         // handle display changes
         case WM_DISPLAYCHANGE:
-          Screen screen = Screen.FromControl(this);
-          if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && AppActive &&
-              (!Equals(screen.Bounds.Size.Width, GUIGraphicsContext.currentScreen.Bounds.Width) ||
-               !Equals(screen.Bounds.Size.Height, GUIGraphicsContext.currentScreen.Bounds.Height)))
+          // disable event handlers
+          if (GUIGraphicsContext.DX9Device != null)
           {
-            NeedRecreateSwapChain = true;
+            GUIGraphicsContext.DX9Device.DeviceLost -= OnDeviceLost;
+          }
+
+          // Suspending GUIGraphicsContext.State
+          if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
+          {
+            GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.SUSPENDING;
+          }
+
+          Screen screen = Screen.FromControl(this);
+          if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && (AppActive &&
+              (!Equals(screen.Bounds.Size.Width, GUIGraphicsContext.currentScreen.Bounds.Width) ||
+               !Equals(screen.Bounds.Size.Height, GUIGraphicsContext.currentScreen.Bounds.Height)) ||
+               (!Equals(GUIGraphicsContext._backupCurrentScreenSizeWidth, GUIGraphicsContext.currentScreen.Bounds.Width) ||
+               !Equals(GUIGraphicsContext._backupCurrentScreenSizeHeight, GUIGraphicsContext.currentScreen.Bounds.Height)) ||
+              GUIGraphicsContext.ForcedRefreshRate3D))
+          {
+            if (
+              !Equals(screen.Bounds.Size.Width, GUIGraphicsContext.currentScreen.Bounds.Width) ||
+              !Equals(screen.Bounds.Size.Height, GUIGraphicsContext.currentScreen.Bounds.Height))
+            {
+              NeedRecreateSwapChain = true;
+            }
             GUIGraphicsContext.ForceMadVRRefresh = true;
+
+            GUIGraphicsContext._backupCurrentScreenSizeWidth = screen.Bounds.Size.Width;
+            GUIGraphicsContext._backupCurrentScreenSizeHeight = screen.Bounds.Size.Height;
+            Log.Debug("Main: WM_DISPLAYCHANGE madVR _backupCurrentScreenSizeWidth x _backupCurrentScreenSizeHeight : {0} x {1}", screen.Bounds.Size.Width, screen.Bounds.Size.Height);
 
             Log.Debug("Main: WM_DISPLAYCHANGE madVR screen change triggered");
             Log.Debug("Main: WM_DISPLAYCHANGE madVR Width x Height : {0} x {1}", screen.Bounds.Size.Width, screen.Bounds.Size.Height);
           }
 
-          // Handle this message here needed for madVR
-          if (Windowed || !_ignoreFullscreenResolutionChanges)
-          {
-            OnDisplayChange(ref msg);
-            PluginManager.WndProc(ref msg);
-          }
+          bool needMadVrBreak = false;
 
           // Restore bounds from the currentScreen value (to restore original startup MP screen after turned off used HDMI device
-          if (!Windowed && _ignoreFullscreenResolutionChanges)
+          if (!Windowed && _ignoreFullscreenResolutionChanges && !RefreshRateChanger.RefreshRateChangePending)
           {
-            SetBounds(GUIGraphicsContext.currentScreen.Bounds.X, GUIGraphicsContext.currentScreen.Bounds.Y, GUIGraphicsContext.currentScreen.Bounds.Width, GUIGraphicsContext.currentScreen.Bounds.Height);
-            Log.Debug("Main: WM_DISPLAYCHANGE restore current screen position");
+            if (GUIGraphicsContext.InVmr9Render)
+            {
+              if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+              {
+                // Need to break here to have the correct new bounds for madVR when resolution change and when playing
+                needMadVrBreak = true;
+              }
+            }
+            if (!needMadVrBreak)
+            {
+              SetBounds(GUIGraphicsContext.currentScreen.Bounds.X, GUIGraphicsContext.currentScreen.Bounds.Y,
+                GUIGraphicsContext.currentScreen.Bounds.Width, GUIGraphicsContext.currentScreen.Bounds.Height);
+              Log.Debug("Main: WM_DISPLAYCHANGE restore current screen position");
+            }
           }
+
+          // Restore GUIGraphicsContext.State
+          if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.SUSPENDING)
+          {
+            GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.RUNNING;
+          }
+
+          // enable event handlers
+          if (GUIGraphicsContext.DX9Device != null)
+          {
+            GUIGraphicsContext.DX9Device.DeviceLost += OnDeviceLost;
+          }
+
+          // FCU Workaround
+          _forceMpAlive = true;
+          ForceMpAlive();
+
+          PluginManager.WndProc(ref msg);
           break;
 
         // handle device changes
@@ -1823,6 +1899,19 @@ public class MediaPortalApp : D3D, IRender
           _delayedResume = false;
           _suspended = true;
 
+          // Suspending GUIGraphicsContext when going to S3
+          if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
+          {
+            Log.Debug("Main: Set GUIGraphicsContext.State.SUSPENDING");
+            GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.SUSPENDING;
+          }
+
+          // disable event handlers
+          if (GUIGraphicsContext.DX9Device != null)
+          {
+            GUIGraphicsContext.DX9Device.DeviceLost -= OnDeviceLost;
+          }
+
           // Workaround HDMI hot-plug problems by forcing the form size to match the actual screen size.
           Screen screen = Screen.FromControl(this);
           if (Equals(screen.Bounds.Size, WINDOWS_NATIVE_RESOLUTION) && !Equals(screen.Bounds.Size, _backupBounds.Size))
@@ -1841,21 +1930,9 @@ public class MediaPortalApp : D3D, IRender
             {
               _presentParamsBackup = _presentParams;
             }
+            Log.Info("Main: PBT_APMSUSPEND RecreateSwapChain");
             RecreateSwapChain(true);
             _restoreLoadedScreen = false;
-          }
-
-          // Suspending GUIGraphicsContext when going to S3
-          if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
-          {
-            Log.Debug("Main: Set GUIGraphicsContext.State.SUSPENDING");
-            GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.SUSPENDING;
-          }
-
-          // disable event handlers
-          if (GUIGraphicsContext.DX9Device != null)
-          {
-            GUIGraphicsContext.DX9Device.DeviceLost -= OnDeviceLost;
           }
 
           // Suspend operation
@@ -1965,6 +2042,10 @@ public class MediaPortalApp : D3D, IRender
                       Bounds.Width, Bounds.Height, GUIGraphicsContext.currentScreen.Bounds.Width, GUIGraphicsContext.currentScreen.Bounds.Height, _backupBounds.Width, _backupBounds.Height);
             Bounds = _backupBounds;
           }
+
+          // FCU blackscreen fix
+          _forceMpAlive = true;
+          ForceMpAlive();
           break;
 
         // A change in the power status of the computer is detected
@@ -2116,7 +2197,7 @@ public class MediaPortalApp : D3D, IRender
       var hdr = (DEV_BROADCAST_HDR)Marshal.PtrToStructure(msg.LParam, typeof(DEV_BROADCAST_HDR));
       if (hdr.dbcc_devicetype != DBT_DEVTYP_DEVICEINTERFACE)
       {
-        Log.Debug("Main: Device type is {0}", Enum.GetName(typeof(DBT_DEV_TYPE), hdr.dbcc_devicetype));        
+        Log.Debug("Main: Device type is {0}", Enum.GetName(typeof(DBT_DEV_TYPE), hdr.dbcc_devicetype));
       }
       else
       {
@@ -2154,7 +2235,11 @@ public class MediaPortalApp : D3D, IRender
         Log.Debug("Main: Device type is {0} - Name: {1}", Enum.GetName(typeof(DBT_DEV_TYPE), hdr.dbcc_devicetype), deviceName);
 
         // special chanding for audio renderer
-        if (deviceInterface.dbcc_classguid == KSCATEGORY_VIDEO || deviceInterface.dbcc_classguid == KSCATEGORY_SCREEN)
+        if (
+          (deviceInterface.dbcc_classguid == KSCATEGORY_VIDEO || deviceInterface.dbcc_classguid == KSCATEGORY_SCREEN ||
+           deviceInterface.dbcc_classguid == KSCATEGORY_DISPLAY_ADAPTER) &&
+          (Windowed || !_ignoreFullscreenResolutionChanges)
+          )
         {
           switch (msg.WParam.ToInt32())
           {
@@ -2162,11 +2247,16 @@ public class MediaPortalApp : D3D, IRender
               Log.Info("Main: Video Device or Screen {0} removed", deviceName);
               try
               {
+                // Force MP to refresh screen
+                _forceMpAlive = true;
+                ForceMpAlive();
+
                 GUIGraphicsContext.DeviceVideoConnected--;
               }
               catch (Exception exception)
               {
-                Log.Warn("Main: Exception on removal Video Device or Screen {0} exception: {1} ", deviceName, exception.Message);
+                Log.Warn("Main: Exception on removal Video Device or Screen {0} exception: {1} ", deviceName,
+                  exception.Message);
               }
               break;
 
@@ -2193,10 +2283,10 @@ public class MediaPortalApp : D3D, IRender
                       GetMonitorInfo(hMon, ref info);
                       var rect = Screen.FromRectangle(info.MonitorRectangle).Bounds;
                       if (
-                        Equals(
+                        GUIGraphicsContext.DX9Device != null && (Equals(
                           Manager.Adapters[GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal].Information
                             .DeviceName,
-                          GetCleanDisplayName(GUIGraphicsContext.currentStartScreen)) && rect.Equals(screen.Bounds))
+                          GetCleanDisplayName(GUIGraphicsContext.currentStartScreen)) && rect.Equals(screen.Bounds)))
                       {
                         GUIGraphicsContext.currentScreen = GUIGraphicsContext.currentStartScreen;
                         Log.Debug("Main: Video Device or Screen restore screen : {0}", GUIGraphicsContext.currentScreen);
@@ -2208,13 +2298,57 @@ public class MediaPortalApp : D3D, IRender
                   }
                   if (!Windowed)
                   {
-                    SetBounds(GUIGraphicsContext.currentStartScreen.Bounds.X, GUIGraphicsContext.currentStartScreen.Bounds.Y,
-                      GUIGraphicsContext.currentStartScreen.Bounds.Width, GUIGraphicsContext.currentStartScreen.Bounds.Height);
+                    SetBounds(GUIGraphicsContext.currentStartScreen.Bounds.X,
+                      GUIGraphicsContext.currentStartScreen.Bounds.Y,
+                      GUIGraphicsContext.currentStartScreen.Bounds.Width,
+                      GUIGraphicsContext.currentStartScreen.Bounds.Height);
                     Log.Debug(
                       "Main: Video Device or Screen restore screen bounds of display changed to {0}x{1}",
-                      GUIGraphicsContext.currentStartScreen.Bounds.Width, GUIGraphicsContext.currentStartScreen.Bounds.Height);
+                      GUIGraphicsContext.currentStartScreen.Bounds.Width,
+                      GUIGraphicsContext.currentStartScreen.Bounds.Height);
                   }
                 }
+
+                // Force MP to refresh screen
+                _forceMpAlive = true;
+                ForceMpAlive();
+              }
+              catch (Exception exception)
+              {
+                Log.Warn("Main: Exception on arrival Video Device {0} exception: {1} ", deviceName, exception.Message);
+              }
+              break;
+          }
+        }
+        else if ((deviceInterface.dbcc_classguid == KSCATEGORY_VIDEO || deviceInterface.dbcc_classguid == KSCATEGORY_SCREEN ||
+                  deviceInterface.dbcc_classguid == KSCATEGORY_DISPLAY_ADAPTER) && !Windowed)
+        {
+          switch (msg.WParam.ToInt32())
+          {
+            case DBT_DEVICEREMOVECOMPLETE:
+              Log.Info("Main: Video Device or Screen {0} removed", deviceName);
+              try
+              {
+                // Force MP to refresh screen
+                _forceMpAlive = true;
+                ForceMpAlive();
+
+                GUIGraphicsContext.DeviceVideoConnected--;
+              }
+              catch (Exception exception)
+              {
+                Log.Warn("Main: Exception on removal Video Device or Screen {0} exception: {1} ", deviceName,
+                  exception.Message);
+              }
+              break;
+
+            case DBT_DEVICEARRIVAL:
+              Log.Info("Main: Video Device or Screen {0} connected", deviceName);
+              try
+              {
+                // Force MP to refresh screen
+                _forceMpAlive = true;
+                ForceMpAlive();
               }
               catch (Exception exception)
               {
@@ -2225,58 +2359,22 @@ public class MediaPortalApp : D3D, IRender
         }
 
         // special chanding for audio renderer
-        if (deviceInterface.dbcc_classguid == KSCATEGORY_RENDER || deviceInterface.dbcc_classguid == RDP_REMOTE_AUDIO || deviceInterface.dbcc_classguid == KSCATEGORY_AUDIO)
+        if (deviceInterface.dbcc_classguid == KSCATEGORY_RENDER || deviceInterface.dbcc_classguid == RDP_REMOTE_AUDIO ||
+            deviceInterface.dbcc_classguid == KSCATEGORY_AUDIO ||
+            deviceInterface.dbcc_classguid == KSCATEGORY_INTEL_AUDIO)
         {
           switch (msg.WParam.ToInt32())
           {
             case DBT_DEVICEREMOVECOMPLETE:
-              Log.Info("Main: Audio Renderer {0} removed", deviceName);
-              try
-              {
-                GUIGraphicsContext.DeviceAudioConnected--;
-                if (_stopOnLostAudioRenderer && GUIGraphicsContext.CurrentAudioRenderer.Trim().ToLowerInvariant() == deviceName.Trim().ToLowerInvariant())
-                {
-                  Log.Debug("Main: Stop playback");
-                  g_Player.Stop();
-                  while (GUIGraphicsContext.IsPlaying)
-                  {
-                    Thread.Sleep(100);
-                  }
-                }
-                FilterHelper.ReloadFilterCollection();
-              }
-              catch (Exception exception)
-              {
-                Log.Warn("Main: Exception on removal Audio Renderer {0} exception: {1} ",deviceName, exception.Message);
-              }
+              var msgRemoval = new GUIMessage(GUIMessage.MessageType.GUI_MSG_DBT_DEVICEREMOVECOMPLETE, 0, 0, 0, 0, 0, null);
+              msgRemoval.Label = deviceName;
+              GUIWindowManager.SendThreadMessage(msgRemoval);
               break;
 
             case DBT_DEVICEARRIVAL:
-              Log.Info("Main: Audio Renderer {0} connected", deviceName);
-              try
-              {
-                GUIGraphicsContext.DeviceAudioConnected++;
-                if (_stopOnLostAudioRenderer && GUIGraphicsContext.CurrentAudioRenderer.Trim().ToLowerInvariant() == deviceName.Trim().ToLowerInvariant())
-                {
-                  Log.Debug("Main: Stop playback");
-                  g_Player.Stop();
-                  while (GUIGraphicsContext.IsPlaying)
-                  {
-                    Thread.Sleep(100);
-                  }
-                }
-                // Asynchronously pre-initialize the music engine if we're using the BassMusicPlayer
-                if (BassMusicPlayer.IsDefaultMusicPlayer)
-                {
-                  BassMusicPlayer.FreeBass();
-                  BassMusicPlayer.CreatePlayerAsync();
-                }
-                FilterHelper.ReloadFilterCollection();
-              }
-              catch (Exception exception)
-              {
-                Log.Warn("Main: Exception on arrival Audio Renderer {0} exception: {1} ", deviceName, exception.Message);
-              }
+              var msgArrival = new GUIMessage(GUIMessage.MessageType.GUI_MSG_DBT_DEVICEARRIVAL, 0, 0, 0, 0, 0, null);
+              msgArrival.Label = deviceName;
+              GUIWindowManager.SendThreadMessage(msgArrival);
               break;
           }
         }
@@ -2511,6 +2609,14 @@ public class MediaPortalApp : D3D, IRender
     // needed to avoid cursor show when MP windows change (for ex when refesh rate is working)
     _moveMouseCursorPositionRefresh = D3D._lastCursorPosition;
     _restoreLoadedScreen = false;
+
+    //// Needed to test if it's really working in all case
+    //if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && GUIGraphicsContext.InVmr9Render)
+    //{
+    //  // Force VideoWindow to be refreshed with madVR when switching from video size like 16:9 to 4:3
+    //  GUIGraphicsContext.UpdateVideoWindow = true;
+    //  GUIGraphicsContext.VideoWindowChanged();
+    //}
 
     // enable event handlers
     if (GUIGraphicsContext.DX9Device != null)
@@ -2843,6 +2949,16 @@ public class MediaPortalApp : D3D, IRender
     Log.Debug("Main: OnSuspend - dispose DB connection");
     DisposeDBs();
 
+    // Reset DialogMenu to avoid freeze when going to suspend
+    var dialogMenu = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+    if (dialogMenu != null &&
+        (GUIWindowManager.RoutedWindow == (int)GUIWindow.Window.WINDOW_DIALOG_MENU ||
+         GUIWindowManager.RoutedWindow == (int)GUIWindow.Window.WINDOW_DIALOG_OK))
+    {
+      dialogMenu.Dispose();
+      GUIWindowManager.UnRoute(); // only unroute if we still the routed window
+    }
+
     Log.Info("Main: OnSuspend - Done");
   }
 
@@ -2977,12 +3093,7 @@ public class MediaPortalApp : D3D, IRender
     {
       try
       {
-        int process = 10;
-        while (process > 0)
-        {
-          FullRender();
-          process--;
-        }
+        FullRender();
       }
       catch (Exception ex)
       {
@@ -3088,39 +3199,25 @@ public class MediaPortalApp : D3D, IRender
     Log.Debug("Main: Auto play start listening");
     AutoPlay.StartListening();
 
+    // Count connected audio devices
     GUIGraphicsContext.DeviceAudioConnected = 0;
-    DsDevice[] devices = DsDevice.GetDevicesOfCat(FilterCategory.AMKSAudio);    // KSCATEGORY_AUDIO
-    if (devices != null)
+    try
     {
-      GUIGraphicsContext.DeviceAudioConnected += devices.Length;
-      foreach (DsDevice d in devices)
-      {
-        d.Dispose();
-      }
+      if (_mMdeviceEnumerator == null)
+        _mMdeviceEnumerator = new MMDeviceEnumerator();
+      GUIGraphicsContext.DeviceAudioConnected =
+        _mMdeviceEnumerator.EnumAudioEndpoints(DataFlow.Render, DeviceState.Active).Count();
     }
-    devices = DsDevice.GetDevicesOfCat(FilterCategory.AMKSRender);    // KSCATEGORY_RENDER
-    if (devices != null)
+    catch (Exception ex)
     {
-      GUIGraphicsContext.DeviceAudioConnected += devices.Length;
-      foreach (DsDevice d in devices)
-      {
-        d.Dispose();
-      }
-    }
-    devices = DsDevice.GetDevicesOfCat(RDP_REMOTE_AUDIO);
-    if (devices != null)
-    {
-      GUIGraphicsContext.DeviceAudioConnected += devices.Length;
-      foreach (DsDevice d in devices)
-      {
-        d.Dispose();
-      }
+      Log.Error($"Main: audio renderer count failed {ex}");
     }
 
     Log.Debug("Main: audio renderer count at startup = {0}", GUIGraphicsContext.DeviceAudioConnected);
 
+    // Count connected video devices
     GUIGraphicsContext.DeviceVideoConnected = 0;
-    devices = DsDevice.GetDevicesOfCat(FilterCategory.AMKSVideo);    // KSCATEGORY_VIDEO
+    DsDevice[] devices = DsDevice.GetDevicesOfCat(FilterCategory.AMKSVideo);    // KSCATEGORY_VIDEO
     if (devices != null)
     {
       GUIGraphicsContext.DeviceVideoConnected += devices.Length;
@@ -3145,11 +3242,11 @@ public class MediaPortalApp : D3D, IRender
 
     Log.Info("Main: Initializing volume handler");
     #pragma warning disable 168
-    if (VolumeHandler.Instance!=null)
+    if (VolumeHandler.Instance==null)
     {
-      Log.Error("Volume handler already created. Could break volume notifications.");
+      VolumeHandler.CreateInstance();
     }
-    VolumeHandler.CreateInstance();
+
     GUIGraphicsContext.VolumeHandler = VolumeHandler.Instance;
     #pragma warning restore 168
 
@@ -3380,7 +3477,9 @@ public class MediaPortalApp : D3D, IRender
     GUILocalizeStrings.Dispose();
     TexturePacker.Cleanup();
     VolumeHandler.Dispose();
-    
+
+    Utils.DisposeFileExistsCacheThread();
+
     GUIFontManager.SetDeviceNull();
 
     if (_isWinScreenSaverInUse)
@@ -3609,7 +3708,7 @@ public class MediaPortalApp : D3D, IRender
   protected override void Render(float timePassed)
   {
     if (!_suspended && AppActive && !_isRendering && GUIGraphicsContext.CurrentState != GUIGraphicsContext.State.LOST &&
-        GUIGraphicsContext.DX9Device != null)
+        GUIGraphicsContext.DX9Device != null && !GUIGraphicsContext.DX9Device.Disposed)
     {
       if (GUIGraphicsContext.InVmr9Render)
       {
@@ -3625,6 +3724,26 @@ public class MediaPortalApp : D3D, IRender
       if (GUIGraphicsContext.Vmr9Active)
       {
         Log.Error("Main: MediaPortal.Render() called while VMR9 active");
+        return;
+      }
+
+      try
+      {
+        if (GUIGraphicsContext.DX9Device != null) GUIGraphicsContext.DX9Device.TestCooperativeLevel();
+      }
+      catch (DeviceLostException)
+      {
+        Log.Debug("Main: D3DERR_DEVICELOST - device is lost but cannot be reset at this time");
+        return;
+      }
+      catch (DeviceNotResetException)
+      {
+        Log.Debug("Main: D3DERR_DEVICENOTRESET - device is lost but can be reset at this time");
+        return;
+      }
+      catch
+      {
+        Log.Debug("Main: render not ready at this time");
         return;
       }
 
@@ -3718,10 +3837,10 @@ public class MediaPortalApp : D3D, IRender
             }
 
             GUIGraphicsContext.DX9Device.Present();
-            backbuffer.Dispose();
+            backbuffer?.Dispose();
 
-            auto3DSurface.Dispose();
-            auto3DTexture.Dispose();
+            auto3DSurface?.Dispose();
+            auto3DTexture?.Dispose();
           }
         }
       }
@@ -3744,14 +3863,28 @@ public class MediaPortalApp : D3D, IRender
             break;
 
           case D3DERR_DEVICEHUNG:
-          case D3DERR_DEVICEREMOVED:
             Log.Info("Main: GPU_HUNG - {0}", dex.ToString());
+            Utils.RestartMePo();
+            break;
+
+          case D3DERR_DEVICEREMOVED:
+            Log.Info("Main: GPU_REMOVED - {0}", dex.ToString());
             if (!RefreshRateChanger.RefreshRateChangePending)
             {
               g_Player.Stop();
             }
+            Utils.RestartMePo();
             GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.LOST;
             break;
+
+          case D3DERR_NOTAVAILABLE:
+            Log.Info("Main: GPU_NOT_AVAILABLE - {0}", dex.ToString());
+            Utils.RestartMePo();
+            break;
+
+          case E_FAIL:
+            Log.Info("Main: GPU_E_FAIL");
+            return;
 
           default:
             Log.Error(dex);
@@ -4376,29 +4509,36 @@ public class MediaPortalApp : D3D, IRender
             Log.Info("Main: Taking screenshot - Target: {0}.png", fileName);
             if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
             {
-              Surface backbuffer = GUIGraphicsContext.DX9Device.GetBackBuffer(0, 0, BackBufferType.Mono);
-              SurfaceLoader.Save(fileName + ".png", ImageFileFormat.Png, backbuffer);
-              backbuffer.Dispose();
+              if (GUIGraphicsContext.DX9Device != null)
+              {
+                Surface backbuffer = GUIGraphicsContext.DX9Device.GetBackBuffer(0, 0, BackBufferType.Mono);
+                SurfaceLoader.Save(fileName + ".png", ImageFileFormat.Png, backbuffer);
+                backbuffer.Dispose();
+              }
             }
             else if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
                      GUIGraphicsContext.InVmr9Render)
             {
               //if (VMR9Util.g_vmr9 != null)
               //{
-              //  VMR9Util.g_vmr9.GrabScreenshot();
+              //  VMR9Util.g_vmr9.GrabScreenshot(); // From C#
               //  return;
               //}
 
+              // this will be started in a thread
               if (VMR9Util.g_vmr9 != null)
               {
-                VMR9Util.g_vmr9.MadVrGrabScreenshot();
+                VMR9Util.g_vmr9.MadVrGrabScreenshot(); // From C++
               }
             }
             else
             {
-              Surface backbuffer = GUIGraphicsContext.DX9Device.GetBackBuffer(0, 0, BackBufferType.Mono);
-              SurfaceLoader.Save(fileName + ".png", ImageFileFormat.Png, backbuffer);
-              backbuffer.Dispose();
+              if (GUIGraphicsContext.DX9Device != null)
+              {
+                Surface backbuffer = GUIGraphicsContext.DX9Device.GetBackBuffer(0, 0, BackBufferType.Mono);
+                SurfaceLoader.Save(fileName + ".png", ImageFileFormat.Png, backbuffer);
+                backbuffer.Dispose();
+              }
             }
             Log.Info("Main: Taking screenshot done");
           }
@@ -4413,15 +4553,6 @@ public class MediaPortalApp : D3D, IRender
           if (!GUIGraphicsContext.IsFullScreenVideo && g_Player.ShowFullScreenWindow())
           {
             return;
-          }
-          break;
-
-        case Action.ActionType.ACTION_MADVR_SCREEN_REFRESH:
-          // We need to do a refresh of screen when using madVR only if resolution screen has change during playback
-          if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && (NeedRecreateSwapChain || Windowed))
-          {
-            RecreateSwapChain(false);
-            Log.Debug("Main: recreate swap chain for madVR done");
           }
           break;
       }
@@ -5279,6 +5410,126 @@ public class MediaPortalApp : D3D, IRender
               FormBorderStyle = FormBorderStyle.None;
               Log.Debug("Main: madVR for 3D done");
               ForceMPFocus();
+            }
+          }
+          break;
+
+        case GUIMessage.MessageType.GUI_MSG_MADVR_SCREEN_REFRESH:
+          // We need to do a refresh of screen when using madVR only if resolution screen has change during playback
+          if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && NeedRecreateSwapChain || message.Param1 == 1 || message.Param1 == 2)
+          {
+            // disable event handlers
+            if (GUIGraphicsContext.DX9Device != null)
+            {
+              GUIGraphicsContext.DX9Device.DeviceLost -= OnDeviceLost;
+            }
+
+            RecreateSwapChain(false);
+            Log.Debug("Main: recreate swap chain for madVR done");
+
+            // Set here Vmr9Active to false to inform plugins that all stop is fully done.
+            if (message.Param1 == 2 && !g_Player.Playing) // When stop is triggered
+            {
+              GUIGraphicsContext.Vmr9Active = false;
+            }
+
+            // enable event handlers
+            if (GUIGraphicsContext.DX9Device != null)
+            {
+              GUIGraphicsContext.DX9Device.DeviceLost += OnDeviceLost;
+            }
+          }
+          break;
+
+        case GUIMessage.MessageType.GUI_MSG_DBT_DEVICEREMOVECOMPLETE:
+          lock (GUIGraphicsContext.PlayStarting)
+          {
+            Log.Info("Main: Audio Renderer {0} removed", message.Label);
+            try
+            {
+              GUIGraphicsContext.DeviceAudioConnected--;
+              if (_stopOnLostAudioRenderer &&
+                  GUIGraphicsContext.CurrentAudioRendererDevice.Trim().ToLowerInvariant() ==
+                  message.Label.Trim().ToLowerInvariant())
+              {
+                Log.Debug("Main: Stop playback");
+                g_Player.Stop();
+                while (GUIGraphicsContext.IsPlaying)
+                {
+                  Thread.Sleep(100);
+                }
+              }
+              else
+              {
+                FilterHelper.ReloadFilterCollection();
+                if (g_Player.Playing &&
+                    GUIGraphicsContext.CurrentAudioRendererDevice.Trim().ToLowerInvariant() ==
+                    message.Label.Trim().ToLowerInvariant() && !GUIGraphicsContext.CurrentAudioRendererDone)
+                {
+                  var msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_STOP_MEDIACONTROL_AUDIO, 0, 0, 0, 0, 0,
+                    null);
+                  GUIWindowManager.SendThreadMessage(msg);
+                  Log.Debug("Main: send message to stop mediacontrol for audio playback");
+                }
+                GUIGraphicsContext.CurrentAudioRendererDone = false;
+              }
+
+              // Force MP to refresh screen
+              _forceMpAlive = true;
+            }
+            catch (Exception exception)
+            {
+              Log.Warn("Main: Exception on removal Audio Renderer {0} exception: {1} ", message.Label,
+                exception.Message);
+            }
+          }
+          break;
+
+        case GUIMessage.MessageType.GUI_MSG_DBT_DEVICEARRIVAL:
+          lock (GUIGraphicsContext.PlayStarting)
+          {
+            Log.Info("Main: Audio Renderer {0} connected", message.Label);
+            try
+            {
+              GUIGraphicsContext.DeviceAudioConnected++;
+              if (_stopOnLostAudioRenderer &&
+                  GUIGraphicsContext.CurrentAudioRendererDevice.Trim().ToLowerInvariant() ==
+                  message.Label.Trim().ToLowerInvariant())
+              {
+                Log.Debug("Main: Stop playback");
+                g_Player.Stop();
+                while (GUIGraphicsContext.IsPlaying)
+                {
+                  Thread.Sleep(100);
+                }
+
+                // Asynchronously pre-initialize the music engine if we're using the BassMusicPlayer
+                if (BassMusicPlayer.IsDefaultMusicPlayer)
+                {
+                  BassMusicPlayer.FreeBass();
+                  BassMusicPlayer.CreatePlayerAsync();
+                }
+              }
+              else
+              {
+                FilterHelper.ReloadFilterCollection();
+                if (g_Player.Playing &&
+                    GUIGraphicsContext.CurrentAudioRendererDevice.Trim().ToLowerInvariant() ==
+                    message.Label.Trim().ToLowerInvariant() && !GUIGraphicsContext.CurrentAudioRendererDone)
+                {
+                  var msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_REBUILD_AUDIO, 0, 0, 0, 0, 0, null);
+                  GUIWindowManager.SendThreadMessage(msg);
+                  Log.Debug("Main: send message to add audio playback");
+                }
+              }
+
+              // Force MP to refresh screen
+              _forceMpAlive = true;
+            }
+            catch (Exception exception)
+            {
+              Log.Warn("Main: Exception on arrival Audio Renderer {0} exception: {1} ", message.Label,
+                exception.Message);
             }
           }
           break;

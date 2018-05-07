@@ -38,7 +38,8 @@ namespace MediaPortal.GUI.Library
       Zoom14to9, // 4:3 on 16:9 screens
       Stretch, // letterbox
       LetterBox43, // letterbox 4:3
-      NonLinearStretch // stretch and crop
+      NonLinearStretch, // stretch and crop
+      CinemaScope235 // 235 format
     }
 
     private int _imageWidth = 100; // width of the video window or image
@@ -414,6 +415,34 @@ namespace MediaPortal.GUI.Library
           }
           break;
 
+          case Type.CinemaScope235:
+          {
+            Size szVideo = new Size(MulDiv(ImageHeight, 235, 100), ImageHeight);
+            double dVideoAR = (double) szVideo.Width/(double) szVideo.Height;
+
+            int dWRWidth = ScreenWidth;
+            int dWRHeight = ScreenHeight;
+
+            double dVRWidth = dWRHeight*dVideoAR;
+            double dVRHeight;
+
+            dVRWidth = dWRWidth;
+            dVRHeight = dVRWidth/dVideoAR;
+
+            // Position video frame
+            // left and top parts are allowed to be negative
+            int videoRectLeft = (int) Math.Round(0.5f*(dWRWidth*3.0 - dVRWidth) - dWRWidth);
+            int videoRectTop = (int) Math.Round(0.5f*(dWRHeight*3.0 - dVRHeight) - dWRHeight);
+            // right and bottom parts are always at picture center or beyond, so never negative
+            int videoRectRight = (int) Math.Round(videoRectLeft + dVRWidth);
+            int videoRectBottom = (int) Math.Round(dVRHeight);
+
+            rSource = new Rectangle(0, 0, ImageWidth, ImageHeight);
+            rDest = new Rectangle(0, videoRectTop, videoRectRight, videoRectBottom);
+            AdjustSourceForCropping(ref rSource, cropSettings);
+          }
+          break;
+
         default:
           {
             rSource = new Rectangle(0, 0, ImageWidth, ImageHeight);
@@ -421,6 +450,11 @@ namespace MediaPortal.GUI.Library
           }
           break;
       }
+    }
+
+    public static int MulDiv(int number, int numerator, int denominator)
+    {
+      return (int) (((long) number*numerator)/denominator);
     }
 
     /// <summary>

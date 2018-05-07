@@ -570,6 +570,11 @@ namespace MediaPortal.Player
       }
       catch (Exception ex)
       {
+        if (VMR9Util.g_vmr9 != null)
+        {
+          VMR9Util.g_vmr9.RestoreGuiForMadVr();
+          VMR9Util.g_vmr9.SafeDispose();
+        }
         Log.Error("RTSPPlayer: Exception while cleanuping DShow graph - {0} {1}", ex.Message, ex.StackTrace);
       }
 
@@ -979,7 +984,6 @@ namespace MediaPortal.Player
         GUIWindowManager.SendMessage(msg);
       }
     }
-
 
     public override int Speed
     {

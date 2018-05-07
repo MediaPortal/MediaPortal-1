@@ -33,20 +33,15 @@ namespace MediaPortal.Database
 
     public static void CompactDatabase(SQLiteClient m_db)
     {
-      m_db.Execute("PRAGMA count_changes=0");
       m_db.Execute("vacuum");
-      m_db.Execute("PRAGMA count_changes=1");
     }
 
     public static void SetPragmas(SQLiteClient m_db)
     {
       m_db.Execute("PRAGMA encoding = \"UTF-8\"");
-      m_db.Execute("PRAGMA cache_size=4096");
-      m_db.Execute("PRAGMA page_size=8192");
+      m_db.Execute("PRAGMA cache_size=-5000"); // abs(-5000*1024) Bytes of memory
+      m_db.Execute("PRAGMA page_size=4096"); // Windows fastest value 4096
       m_db.Execute("PRAGMA synchronous='OFF'");
-      m_db.Execute("PRAGMA count_changes=1");
-      m_db.Execute("PRAGMA full_column_names=0");
-      m_db.Execute("PRAGMA short_column_names=0");
       m_db.Execute("PRAGMA auto_vacuum=0");
     }
 

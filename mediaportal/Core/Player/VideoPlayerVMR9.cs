@@ -544,8 +544,6 @@ namespace MediaPortal.Player
         //Get filterCodecName
         filterCodec = GetFilterCodec();
 
-        basicVideo = graphBuilder as IBasicVideo2;
-
         if (filterConfig.bAutoDecoderSettings)
         {
           AutoRenderingCheck = true;
@@ -595,40 +593,55 @@ namespace MediaPortal.Player
           AudioOnly = true;
         }
 
-        if (filterConfig.strsplitterfilter == LAV_SPLITTER_FILTER_SOURCE && filterConfig.bForceSourceSplitter)
+        if (graphBuilder != null)
         {
-          LoadLAVSplitter(LAV_SPLITTER_FILTER_SOURCE);
-          hr = graphBuilder.AddFilter(_interfaceSourceFilter, LAV_SPLITTER_FILTER_SOURCE);
-          DsError.ThrowExceptionForHR(hr);
-
-          Log.Debug("VideoPlayer9: Add LAVSplitter Source to graph");
-
-          IFileSourceFilter interfaceFile = (IFileSourceFilter)_interfaceSourceFilter;
-          hr = interfaceFile.Load(m_strCurrentFile, null);
-
-          if (hr != 0)
+          if (filterConfig.strsplitterfilter == LAV_SPLITTER_FILTER_SOURCE && filterConfig.bForceSourceSplitter)
           {
-            Error.SetError("Unable to play movie", "Unable build graph for VMR9");
-            Cleanup();
-            return false;
-          }
-        }
-        else
-        {
-          _interfaceSourceFilter = filterConfig.bForceSourceSplitter
-                                     ? DirectShowUtil.AddFilterToGraph(graphBuilder, filterConfig.strsplitterfilter)
-                                     : null;
-          if (_interfaceSourceFilter == null && !filterConfig.bForceSourceSplitter)
-          {
-            graphBuilder.AddSourceFilter(m_strCurrentFile, null, out _interfaceSourceFilter);
+            LoadLAVSplitter(LAV_SPLITTER_FILTER_SOURCE);
+
+            hr = graphBuilder.AddFilter(_interfaceSourceFilter, LAV_SPLITTER_FILTER_SOURCE);
+            DsError.ThrowExceptionForHR(hr);
+
+            Log.Debug("VideoPlayer9: Add LAVSplitter Source to graph");
+
+            IFileSourceFilter interfaceFile = (IFileSourceFilter) _interfaceSourceFilter;
+            hr = interfaceFile.Load(m_strCurrentFile, null);
+
+            if (hr != 0)
+            {
+              Error.SetError("Unable to play movie", "Unable build graph for VMR9");
+              Cleanup();
+              return false;
+            }
           }
           else
           {
-            try
+            _interfaceSourceFilter = filterConfig.bForceSourceSplitter
+              ? DirectShowUtil.AddFilterToGraph(graphBuilder, filterConfig.strsplitterfilter)
+              : null;
+            if (_interfaceSourceFilter == null && !filterConfig.bForceSourceSplitter)
             {
-              int result = ((IFileSourceFilter) _interfaceSourceFilter).Load(m_strCurrentFile, null);
-              if (result != 0)
+              graphBuilder.AddSourceFilter(m_strCurrentFile, null, out _interfaceSourceFilter);
+            }
+            else
+            {
+              try
               {
+                int result = ((IFileSourceFilter) _interfaceSourceFilter).Load(m_strCurrentFile, null);
+                if (result != 0)
+                {
+                  DirectShowUtil.RemoveFilter(graphBuilder, _interfaceSourceFilter);
+                  DirectShowUtil.FinalReleaseComObject(_interfaceSourceFilter);
+                  _interfaceSourceFilter = null;
+                  graphBuilder.AddSourceFilter(m_strCurrentFile, null, out _interfaceSourceFilter);
+                }
+              }
+
+              catch (Exception ex)
+              {
+                Log.Error(
+                  "VideoPlayer9: Exception loading Source Filter setup in setting in DShow graph , try to load by merit",
+                  ex);
                 DirectShowUtil.RemoveFilter(graphBuilder, _interfaceSourceFilter);
                 DirectShowUtil.FinalReleaseComObject(_interfaceSourceFilter);
                 _interfaceSourceFilter = null;
@@ -636,80 +649,75 @@ namespace MediaPortal.Player
               }
             }
 
-            catch (Exception ex)
+            //Detection of File Source (Async.) as source filter, return true if found
+            IBaseFilter fileSyncbaseFilter = null;
+            DirectShowUtil.FindFilterByClassID(graphBuilder, ClassId.FilesyncSource, out fileSyncbaseFilter);
+            if (fileSyncbaseFilter == null)
+              graphBuilder.FindFilterByName("File Source (Async.)", out fileSyncbaseFilter);
+            if (fileSyncbaseFilter != null && filterConfig.bForceSourceSplitter)
             {
-              Log.Error(
-                "VideoPlayer9: Exception loading Source Filter setup in setting in DShow graph , try to load by merit",
-                ex);
-              DirectShowUtil.RemoveFilter(graphBuilder, _interfaceSourceFilter);
-              DirectShowUtil.FinalReleaseComObject(_interfaceSourceFilter);
-              _interfaceSourceFilter = null;
-              graphBuilder.AddSourceFilter(m_strCurrentFile, null, out _interfaceSourceFilter);
-            }
-          }
-
-          //Detection of File Source (Async.) as source filter, return true if found
-          IBaseFilter fileSyncbaseFilter = null;
-          DirectShowUtil.FindFilterByClassID(graphBuilder, ClassId.FilesyncSource, out fileSyncbaseFilter);
-          if (fileSyncbaseFilter == null)
-            graphBuilder.FindFilterByName("File Source (Async.)", out fileSyncbaseFilter);
-          if (fileSyncbaseFilter != null && filterConfig.bForceSourceSplitter)
-          {
-            FileSync = true;
-            DirectShowUtil.FinalReleaseComObject(fileSyncbaseFilter);
-            fileSyncbaseFilter = null;
-            if (filterConfig.strsplitterfilefilter == LAV_SPLITTER_FILTER)
-            {
-              LoadLAVSplitter(LAV_SPLITTER_FILTER);
-              hr = graphBuilder.AddFilter(Splitter, LAV_SPLITTER_FILTER);
-              DsError.ThrowExceptionForHR(hr);
-
-              Log.Debug("VideoPlayer9: Add LAVSplitter to graph");
-
-              if (hr != 0)
+              FileSync = true;
+              DirectShowUtil.FinalReleaseComObject(fileSyncbaseFilter);
+              fileSyncbaseFilter = null;
+              if (filterConfig.strsplitterfilefilter == LAV_SPLITTER_FILTER)
               {
-                Error.SetError("Unable to play movie", "Unable build graph for VMR9");
-                Cleanup();
-                return false;
+                LoadLAVSplitter(LAV_SPLITTER_FILTER);
+                hr = graphBuilder.AddFilter(Splitter, LAV_SPLITTER_FILTER);
+                DsError.ThrowExceptionForHR(hr);
+
+                Log.Debug("VideoPlayer9: Add LAVSplitter to graph");
+
+                if (hr != 0)
+                {
+                  Error.SetError("Unable to play movie", "Unable build graph for VMR9");
+                  Cleanup();
+                  return false;
+                }
+              }
+              else
+              {
+                Splitter = DirectShowUtil.AddFilterToGraph(graphBuilder, filterConfig.strsplitterfilefilter);
               }
             }
-            else
-            {
-              Splitter = DirectShowUtil.AddFilterToGraph(graphBuilder, filterConfig.strsplitterfilefilter);
-            }
           }
-        }
 
-        // Another check to verify is the source filter has a video PIN.
-        if (!VMR9AlreadyAdded)
-        {
-          IPin pinFrom = DirectShowUtil.FindPin(_interfaceSourceFilter, PinDirection.Output, "video");
-          if (pinFrom != null)
+          // Another check to verify is the source filter has a video PIN.
+          if (!VMR9AlreadyAdded)
           {
-            AudioOnly = false;
-            DirectShowUtil.ReleaseComObject(pinFrom);
-            pinFrom = null;
-
-            // Add video renderer etc.
-            Vmr9 = VMR9Util.g_vmr9 = new VMR9Util();
-            bool AddVMR9 = VMR9Util.g_vmr9.AddVMR9(graphBuilder);
-            if (!AddVMR9)
+            IPin pinFrom = DirectShowUtil.FindPin(_interfaceSourceFilter, PinDirection.Output, "video");
+            if (pinFrom != null)
             {
-              Log.Error("VideoPlayer9:Failed to add VMR9 to graph");
-              return false;
+              AudioOnly = false;
+              DirectShowUtil.ReleaseComObject(pinFrom);
+              pinFrom = null;
+
+              // Add video renderer etc.
+              Vmr9 = VMR9Util.g_vmr9 = new VMR9Util();
+              bool AddVMR9 = VMR9Util.g_vmr9.AddVMR9(graphBuilder);
+              if (!AddVMR9)
+              {
+                Log.Error("VideoPlayer9:Failed to add VMR9 to graph");
+                return false;
+              }
+              VMR9Util.g_vmr9.Enable(false);
             }
-            VMR9Util.g_vmr9.Enable(false);
+          }
+
+          // Add preferred video filters
+          UpdateFilters("Video");
+
+          //Add Audio Renderer
+          if (filterConfig.AudioRenderer.Length > 0 && filterCodec._audioRendererFilter == null)
+          {
+            filterCodec._audioRendererFilter = DirectShowUtil.AddAudioRendererToGraph(graphBuilder,
+              filterConfig.AudioRenderer, false);
           }
         }
-
-        // Add preferred video filters
-        UpdateFilters("Video");
-
-        //Add Audio Renderer
-        if (filterConfig.AudioRenderer.Length > 0 && filterCodec._audioRendererFilter == null)
+        else
         {
-          filterCodec._audioRendererFilter = DirectShowUtil.AddAudioRendererToGraph(graphBuilder,
-                                                                                    filterConfig.AudioRenderer, false);
+          Error.SetError("Unable to play movie", "Unable build graph for VMR9");
+          Cleanup();
+          return false;
         }
 
         #region load external audio streams
@@ -913,7 +921,17 @@ namespace MediaPortal.Player
         mediaSeek = (IMediaSeeking) graphBuilder;
         mediaPos = (IMediaPosition) graphBuilder;
         basicAudio = (IBasicAudio) graphBuilder;
-        videoWin = (IVideoWindow) graphBuilder;
+        if (VMR9Util.g_vmr9?._vmr9Filter != null &&
+            GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+        {
+          basicVideo = VMR9Util.g_vmr9?._vmr9Filter as IBasicVideo2;
+          videoWin = VMR9Util.g_vmr9?._vmr9Filter as IVideoWindow;
+        }
+        else
+        {
+          basicVideo = graphBuilder as IBasicVideo2;
+          videoWin = graphBuilder as IVideoWindow;
+        }
         if (VMR9Util.g_vmr9 != null)
         {
           m_iVideoWidth = VMR9Util.g_vmr9.VideoWidth;
@@ -1077,6 +1095,191 @@ namespace MediaPortal.Player
           }
           Log.Info("VideoPlayer9: Reconfigure graph done");
         }*/
+      }
+    }
+
+    public override void AudioRendererRebuild()
+    {
+      try
+      {
+        if (graphBuilder != null)
+        {
+          // First stop the graph
+          AudioRendererMediaControlStop();
+
+          int hr;
+          //Add Audio Renderer
+          if (filterCodec._audioRendererFilter != null)
+          {
+            DirectShowUtil.FinalReleaseComObject(filterCodec._audioRendererFilter);
+            filterCodec._audioRendererFilter = null;
+          }
+          if (filterConfig.AudioRenderer.Length > 0 && filterCodec._audioRendererFilter == null)
+          {
+            filterCodec._audioRendererFilter = DirectShowUtil.AddAudioRendererToGraph(graphBuilder,
+              filterConfig.AudioRenderer, false);
+          }
+
+          #region load external audio streams
+
+          // check if current "File" is a file... it could also be a URL
+          // Directory.Getfiles, ... will other give us an exception
+          if (File.Exists(m_strCurrentFile) && !AudioOnly)
+          {
+            //load audio file (ac3, dts, mka, mp3) only with if the name matches partially with video file.
+            string[] audioFiles = Directory.GetFiles(Path.GetDirectoryName(m_strCurrentFile),
+              Path.GetFileNameWithoutExtension(m_strCurrentFile) + "*.*");
+            bool audioSwitcherLoaded = false;
+            foreach (string file in audioFiles)
+            {
+              switch (Path.GetExtension(file))
+              {
+                case ".mp3":
+                case ".dts":
+                case ".mka":
+                case ".ac3":
+                  if (!audioSwitcherLoaded)
+                  {
+                    IBaseFilter switcher = DirectShowUtil.GetFilterByName(graphBuilder,
+                      MEDIAPORTAL_AUDIOSWITCHER_FILTER);
+                    if (switcher != null)
+                    {
+                      DirectShowUtil.FinalReleaseComObject(switcher);
+                      switcher = null;
+                    }
+                    else
+                    {
+                      _audioSwitcher = DirectShowUtil.AddFilterToGraph(graphBuilder, MEDIAPORTAL_AUDIOSWITCHER_FILTER);
+                    }
+                    audioSwitcherLoaded = true;
+                  }
+                  _AudioSourceFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, FILE_SYNC_FILTER);
+                  int result = ((IFileSourceFilter) _AudioSourceFilter).Load(file, null);
+
+                  //Force using LAVFilter
+                  _AudioExtSplitterFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, LAV_SPLITTER_FILTER);
+
+                  if (result != 0 || _AudioExtSplitterFilter == null)
+                  {
+                    if (_AudioSourceFilter != null)
+                    {
+                      DirectShowUtil.RemoveFilter(graphBuilder, _AudioSourceFilter);
+                      DirectShowUtil.FinalReleaseComObject(_AudioSourceFilter);
+                      _AudioSourceFilter = null;
+                    }
+                    if (_AudioExtSplitterFilter != null)
+                    {
+                      DirectShowUtil.RemoveFilter(graphBuilder, _AudioExtSplitterFilter);
+                      DirectShowUtil.FinalReleaseComObject(_AudioExtSplitterFilter);
+                      _AudioExtSplitterFilter = null;
+                    }
+                    //Trying Add Audio decoder in graph
+                    AddFilterToGraphAndRelease(filterConfig.Audio);
+                    graphBuilder.RenderFile(file, string.Empty);
+                    Log.Debug("VideoPlayerVMR9 : External audio file loaded \"{0}\"", file);
+                    AudioExternal = true;
+                    break;
+                  }
+
+                  //Add Audio decoder in graph
+                  _AudioExtFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, filterConfig.Audio);
+
+                  //Connect Filesource with the splitter
+                  IPin pinOutAudioExt1 = DsFindPin.ByDirection((IBaseFilter) _AudioSourceFilter, PinDirection.Output,
+                    0);
+                  IPin pinInAudioExt2 = DsFindPin.ByDirection((IBaseFilter) _AudioExtSplitterFilter,
+                    PinDirection.Input, 0);
+                  hr = graphBuilder.Connect(pinOutAudioExt1, pinInAudioExt2);
+
+                  //Connect Splitter with the Audio Decoder
+                  IPin pinOutAudioExt3 = DsFindPin.ByDirection((IBaseFilter) _AudioExtSplitterFilter,
+                    PinDirection.Output,
+                    0);
+                  IPin pinInAudioExt4 = DsFindPin.ByDirection((IBaseFilter) _AudioExtFilter, PinDirection.Input, 0);
+                  hr = graphBuilder.Connect(pinOutAudioExt3, pinInAudioExt4);
+
+                  //Render outpin from Audio Decoder
+                  DirectShowUtil.RenderUnconnectedOutputPins(graphBuilder, _AudioExtFilter);
+
+                  //Cleanup External Audio (Release)
+                  if (_AudioSourceFilter != null)
+                  {
+                    DirectShowUtil.FinalReleaseComObject(_AudioSourceFilter);
+                    _AudioSourceFilter = null;
+                  }
+                  if (_AudioExtSplitterFilter != null)
+                  {
+                    DirectShowUtil.FinalReleaseComObject(_AudioExtSplitterFilter);
+                    _AudioExtSplitterFilter = null;
+                  }
+                  if (_AudioExtFilter != null)
+                  {
+                    DirectShowUtil.FinalReleaseComObject(_AudioExtFilter);
+                    _AudioExtFilter = null;
+                  }
+                  if (pinOutAudioExt1 != null)
+                  {
+                    DirectShowUtil.FinalReleaseComObject(pinOutAudioExt1);
+                    pinOutAudioExt1 = null;
+                  }
+                  if (pinInAudioExt2 != null)
+                  {
+                    DirectShowUtil.FinalReleaseComObject(pinInAudioExt2);
+                    pinInAudioExt2 = null;
+                  }
+                  if (pinOutAudioExt3 != null)
+                  {
+                    DirectShowUtil.FinalReleaseComObject(pinOutAudioExt3);
+                    pinOutAudioExt3 = null;
+                  }
+                  if (pinInAudioExt4 != null)
+                  {
+                    DirectShowUtil.FinalReleaseComObject(pinInAudioExt4);
+                    pinInAudioExt4 = null;
+                  }
+
+                  Log.Debug("VideoPlayerVMR9 : External audio file loaded \"{0}\"", file);
+                  AudioExternal = true;
+                  break;
+              }
+            }
+          }
+
+          #endregion
+
+          // Add preferred audio filters
+          UpdateFilters("Audio");
+          Log.Debug("VMR9: AudioRendererRebuild");
+
+          if (_interfaceSourceFilter != null)
+          {
+            mediaCtrl.Stop();
+            DirectShowUtil.RenderGraphBuilderOutputPins(graphBuilder, _interfaceSourceFilter);
+            DirectShowUtil.RemoveUnusedFiltersFromGraph(graphBuilder);
+            mediaCtrl.Run();
+            GUIGraphicsContext.CurrentAudioRendererDone = true;
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("VMR9: AudioRendererRebuild: { 0}", ex);
+      }
+    }
+
+    public override void AudioRendererMediaControlStop()
+    {
+      try
+      {
+        if (mediaCtrl != null)
+        {
+          mediaCtrl.Stop();
+          Log.Debug("VMR9: AudioRendererMediaControlStop");
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("VideoPlayer9: AudioRendererMediaControlStop: {0}", ex.Message);
       }
     }
 
@@ -1391,7 +1594,18 @@ namespace MediaPortal.Player
         mediaSeek = (IMediaSeeking)graphBuilder;
         mediaPos = (IMediaPosition)graphBuilder;
         basicAudio = (IBasicAudio)graphBuilder;
-        videoWin = (IVideoWindow)graphBuilder;
+        if (VMR9Util.g_vmr9?._vmr9Filter != null &&
+            GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+        {
+          basicVideo = VMR9Util.g_vmr9?._vmr9Filter as IBasicVideo2;
+          videoWin = VMR9Util.g_vmr9?._vmr9Filter as IVideoWindow;
+        }
+        else
+        {
+          basicVideo = graphBuilder as IBasicVideo2;
+          videoWin = (IVideoWindow)graphBuilder;
+        }
+
         m_iVideoWidth = VMR9Util.g_vmr9.VideoWidth;
         m_iVideoHeight = VMR9Util.g_vmr9.VideoHeight;
 
@@ -1431,8 +1645,11 @@ namespace MediaPortal.Player
       {
         if (AudioOnly)
         {
-          var hr = mediaCtrl.Stop();
-          DsError.ThrowExceptionForHR(hr);
+          if (mediaCtrl != null)
+          {
+            var hr = mediaCtrl.Stop();
+            DsError.ThrowExceptionForHR(hr);
+          }
         }
         else if (VMR9Util.g_vmr9 != null)
         {
@@ -1454,35 +1671,40 @@ namespace MediaPortal.Player
 
         if (Splitter != null)
         {
-          DirectShowUtil.FinalReleaseComObject(Splitter);
+          graphBuilder.RemoveFilter(Splitter as DirectShowLib.IBaseFilter);
+          DirectShowUtil.CleanUpInterface(Splitter);
           Splitter = null;
           Log.Info("VideoPlayer9: Cleanup Splitter");
         }
 
         if (filterCodec != null && filterCodec.VideoCodec != null)
         {
-          DirectShowUtil.FinalReleaseComObject(filterCodec.VideoCodec);
+          graphBuilder.RemoveFilter(filterCodec.VideoCodec as DirectShowLib.IBaseFilter);
+          DirectShowUtil.CleanUpInterface(filterCodec.VideoCodec);
           filterCodec.VideoCodec = null;
           Log.Info("VideoPlayer9: Cleanup VideoCodec");
         }
 
         if (filterCodec != null && filterCodec.AudioCodec != null)
         {
-          DirectShowUtil.FinalReleaseComObject(filterCodec.AudioCodec);
+          graphBuilder.RemoveFilter(filterCodec.AudioCodec as DirectShowLib.IBaseFilter);
+          DirectShowUtil.CleanUpInterface(filterCodec.AudioCodec);
           filterCodec.AudioCodec = null;
           Log.Info("VideoPlayer9: Cleanup AudioCodec");
         }
 
         if (filterCodec != null && filterCodec._audioRendererFilter != null)
         {
-          DirectShowUtil.ReleaseComObject(filterCodec._audioRendererFilter);
+          graphBuilder.RemoveFilter(filterCodec._audioRendererFilter);
+          DirectShowUtil.CleanUpInterface(filterCodec._audioRendererFilter);
           filterCodec._audioRendererFilter = null;
           Log.Info("VideoPlayer9: Cleanup AudioRenderer");
         }
 
         if (_interfaceSourceFilter != null)
         {
-          DirectShowUtil.FinalReleaseComObject(_interfaceSourceFilter);
+          graphBuilder.RemoveFilter(_interfaceSourceFilter as DirectShowLib.IBaseFilter);
+          DirectShowUtil.CleanUpInterface(_interfaceSourceFilter);
           _interfaceSourceFilter = null;
           Log.Info("VideoPlayer9: Cleanup InterfaceSourceFilter");
         }
@@ -1492,24 +1714,29 @@ namespace MediaPortal.Player
         {
           if (ppFilter.Value != null)
           {
-            DirectShowUtil.FinalReleaseComObject(ppFilter.Value);
+            graphBuilder.RemoveFilter(ppFilter.Value as DirectShowLib.IBaseFilter);
+            DirectShowUtil.CleanUpInterface(ppFilter.Value);
           }
         }
         PostProcessFilterVideo.Clear();
+
         foreach (var ppFilter in PostProcessFilterAudio)
         {
           if (ppFilter.Value != null)
           {
-            DirectShowUtil.FinalReleaseComObject(ppFilter.Value);
+            graphBuilder.RemoveFilter(ppFilter.Value as DirectShowLib.IBaseFilter);
+            DirectShowUtil.CleanUpInterface(ppFilter.Value);
           }
         }
         PostProcessFilterAudio.Clear();
         Log.Info("VideoPlayer9: Cleanup PostProcess");
+
         foreach (var ppFilter in PostProcessFilterMPAudio)
         {
           if (ppFilter.Value != null)
           {
-            DirectShowUtil.FinalReleaseComObject(ppFilter.Value);
+            graphBuilder.RemoveFilter(ppFilter.Value as DirectShowLib.IBaseFilter);
+            DirectShowUtil.CleanUpInterface(ppFilter.Value);
           }
         }
         PostProcessFilterMPAudio.Clear();
@@ -1517,13 +1744,16 @@ namespace MediaPortal.Player
 
         if (_FFDShowAudio != null)
         {
-          DirectShowUtil.FinalReleaseComObject(_FFDShowAudio);
+          graphBuilder.RemoveFilter(_FFDShowAudio as DirectShowLib.IBaseFilter);
+          DirectShowUtil.CleanUpInterface(_FFDShowAudio);
           _FFDShowAudio = null;
           Log.Info("VideoPlayer9: Cleanup _FFDShowAudio");
         }
+
         if (_audioSwitcher != null)
         {
-          DirectShowUtil.FinalReleaseComObject(_audioSwitcher);
+          graphBuilder.RemoveFilter(_audioSwitcher as DirectShowLib.IBaseFilter);
+          DirectShowUtil.CleanUpInterface(_audioSwitcher);
           _audioSwitcher = null;
           Log.Info("VideoPlayer9: Cleanup MediaPortal AudioSwitcher (for external audio files)");
         }
@@ -1531,9 +1761,25 @@ namespace MediaPortal.Player
         SubEngine.GetInstance().FreeSubtitles();
         PostProcessingEngine.GetInstance().FreePostProcess();
 
+        //if (VMR9Util.g_vmr9?._vmr9Filter != null && GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+        //{
+        //  // Releasing madVR
+        //  if (mediaEvt != null)
+        //  {
+        //    mediaEvt.SetNotifyWindow(IntPtr.Zero, WM_GRAPHNOTIFY, IntPtr.Zero);
+        //    mediaEvt = null;
+        //  }
+        //  mediaCtrl = null;
+        //  mediaSeek = null;
+        //  videoWin = null;
+        //  basicAudio = null;
+        //  basicVideo = null;
+        //  VMR9Util.g_vmr9?.Vmr9MadVrRelease();
+        //}
+
         #endregion
 
-        if (videoWin != null)
+        if (videoWin != null && GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
         {
           videoWin.put_Owner(IntPtr.Zero);
           videoWin.put_Visible(OABool.False);
@@ -1559,6 +1805,14 @@ namespace MediaPortal.Player
           graphBuilder = null;
           Log.Info("VideoPlayer9: Cleanup Graphbuilder");
         }
+
+        //DirectShowUtil.CleanUpInterface(m_filterGraph);
+        //m_filterGraph = null;
+        //graphBuilder = null;
+
+        //if (_rotEntry != null)
+        //  _rotEntry.Dispose();
+        //_rotEntry = null;
 
         if (videoWin != null)
         {
@@ -1590,8 +1844,8 @@ namespace MediaPortal.Player
       {
         if (VMR9Util.g_vmr9 != null)
         {
-          VMR9Util.g_vmr9.SafeDispose();
           VMR9Util.g_vmr9.RestoreGuiForMadVr();
+          VMR9Util.g_vmr9.SafeDispose();
         }
         Log.Error("VideoPlayer9: Exception while cleanuping DShow graph - {0} {1}", ex.Message, ex.StackTrace);
       }

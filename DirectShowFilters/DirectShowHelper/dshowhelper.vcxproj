@@ -78,6 +78,7 @@
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <PrecompiledHeaderFile>Stdafx.h</PrecompiledHeaderFile>
+      <ExceptionHandling>Async</ExceptionHandling>
     </ClCompile>
     <Link>
       <AdditionalDependencies>gdiplus.lib;strmbasd.lib;winmm.lib;comsupp.lib;dxguid.lib;d3d9.lib;d3dx9.lib;mfuuid.lib;dxva2.lib;evr.lib;mf.lib;strmiids.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -95,6 +96,7 @@
       <ImportLibrary>bin\Debug/dshowhelper.lib</ImportLibrary>
       <TargetMachine>MachineX86</TargetMachine>
       <ImageHasSafeExceptionHandlers>true</ImageHasSafeExceptionHandlers>
+      <AdditionalOptions>/SAFESEH:NO %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <PostBuildEvent>
       <Command>xcopy $(TargetDir)dshowhelper.dll $(SolutionDir)..\mediaportal\MediaPortal.Application\bin\$(ConfigurationName)\ /Y /T
@@ -119,6 +121,7 @@ xcopy $(TargetDir)dshowhelper.pdb $(SolutionDir)..\mediaportal\MediaPortal.Appli
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <PrecompiledHeaderFile>Stdafx.h</PrecompiledHeaderFile>
+      <ExceptionHandling>Async</ExceptionHandling>
     </ClCompile>
     <Link>
       <AdditionalDependencies>gdiplus.lib;strmbase.lib;winmm.lib;comsupp.lib;dxguid.lib;d3d9.lib;d3dx9.lib;mfuuid.lib;dxva2.lib;evr.lib;mf.lib;strmiids.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -139,6 +142,8 @@ xcopy $(TargetDir)dshowhelper.pdb $(SolutionDir)..\mediaportal\MediaPortal.Appli
       <ImportLibrary>bin\Release/dshowhelper.lib</ImportLibrary>
       <TargetMachine>MachineX86</TargetMachine>
       <ImageHasSafeExceptionHandlers>true</ImageHasSafeExceptionHandlers>
+      <AdditionalOptions>/FORCE:MULTIPLE %(AdditionalOptions)</AdditionalOptions>
+      <ExceptionHandling>Async</ExceptionHandling>
     </Link>
     <PostBuildEvent>
       <Command>xcopy $(TargetDir)dshowhelper.dll $(SolutionDir)..\mediaportal\MediaPortal.Application\bin\$(ConfigurationName)\ /Y /T

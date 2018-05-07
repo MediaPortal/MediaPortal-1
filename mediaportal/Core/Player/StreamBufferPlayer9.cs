@@ -321,6 +321,11 @@ namespace MediaPortal.Player
       }
       catch (Exception ex)
       {
+        if (VMR9Util.g_vmr9 != null)
+        {
+          VMR9Util.g_vmr9.RestoreGuiForMadVr();
+          VMR9Util.g_vmr9.SafeDispose();
+        }
         Log.Error("StreamBufferPlayer9: Exception while cleaning DShow graph - {0} {1}", ex.Message, ex.StackTrace);
       }
 

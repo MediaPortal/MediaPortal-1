@@ -172,32 +172,31 @@
 			<visible>!string.equals(#OnlineVideos.state,groups) + !string.equals(#OnlineVideos.state,sites) + !string.equals(#OnlineVideos.state,videos)+!string.equals(#selecteditem,..)+![string.equals(#OnlineVideos.selectedSiteUtil,ITMovieTrailers)|string.equals(#OnlineVideos.selectedSiteUtil,IMDb)]</visible>
 		</control>	  
 	  
-	  
-		
+
     <control>
-      <id>400</id>
+      <id>0</id>
       <type>image</type>
-        <posX>1500</posX>
-        <posY>330</posY>
-        <width>300</width>
-        <height>305</height>
+      <posX>1500</posX>
+      <posY>330</posY>
+      <width>300</width>
+      <height>305</height>
       <align>center</align>
       <valign>middle</valign>
       <keepaspectratio>yes</keepaspectratio>
-      <texture mask="">#selectedthumb</texture>
-      <visible>!control.isvisible(15070)+!control.isvisible(51)+![string.equals(#OnlineVideos.selectedSiteUtil,ITMovieTrailers)|string.equals(#OnlineVideos.selectedSiteUtil,IMDb)]</visible>
+      <texture>#selectedthumb</texture>
+      <visible>string.equals(#OnlineVideos.state,categories)|string.equals(#OnlineVideos.state,videos)|string.equals(#OnlineVideos.state,sites)|string.equals(#OnlineVideos.state,groups)+![string.equals(#OnlineVideos.selectedSiteUtil,ITMovieTrailers)|string.equals(#OnlineVideos.selectedSiteUtil,IMDb)]</visible>
     </control>
 	  
     <control>
       <description>Little Poster</description>
       <type>image</type>
       <id>1</id>
-        <posX>56</posX>
-        <posY>828</posY>
-		<height>190</height>
-		<width>190</width>
-        <texture mask="MAmask.png">blue.png</texture>
-        <visible>!control.isvisible(51)+![string.equals(#OnlineVideos.selectedSiteUtil,ITMovieTrailers)|string.equals(#OnlineVideos.selectedSiteUtil,IMDb)]</visible>
+      <posX>56</posX>
+      <posY>828</posY>
+      <height>190</height>
+	  <width>190</width>
+      <texture mask="MAmask.png">blue.png</texture>
+      <visible>!control.isvisible(51)+![string.equals(#OnlineVideos.selectedSiteUtil,ITMovieTrailers)|string.equals(#OnlineVideos.selectedSiteUtil,IMDb)]</visible>
     </control>	    
 	 
 	  <control>
@@ -216,7 +215,6 @@
         <visible>!control.isvisible(64570)+!control.isvisible(51)+![string.equals(#OnlineVideos.selectedSiteUtil,ITMovieTrailers)|string.equals(#OnlineVideos.selectedSiteUtil,IMDb)]</visible>
       </control>
 	  
-
 	  <control>
         <description>Little Poster</description>
         <type>image</type>

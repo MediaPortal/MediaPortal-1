@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+﻿#region Copyright (C) 2005-2017 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2017 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -43,7 +43,7 @@ namespace Databases.Folders
       try
       {
         // Open database
-        Log.Info("open folderdatabase");
+        Log.Info("Open FolderDatabase");
         m_db = new SQLiteClient(Config.GetFile(Config.Dir.Database, "FolderDatabase3.db3"));
 
         _dbHealth = DatabaseUtility.IntegrityCheck(m_db);
@@ -52,6 +52,19 @@ namespace Databases.Folders
         DatabaseUtility.AddTable(m_db, "tblPath", "CREATE TABLE tblPath ( idPath integer primary key, strPath text)");
         DatabaseUtility.AddTable(m_db, "tblSetting",
                                  "CREATE TABLE tblSetting ( idSetting integer primary key, idPath integer , tagName text, tagValue text)");
+        // Indexes for tblPath
+        DatabaseUtility.AddIndex(m_db, "idx_tblPath_strPath", "CREATE INDEX idx_tblPath_strPath ON tblPath (strPath ASC)");
+        DatabaseUtility.AddIndex(m_db, "idx_tblPath_idPath_strPath", "CREATE INDEX idx_tblPath_idPath_strPath ON tblPath (idPath ASC, strPath ASC)");
+
+        // Indexes for tblSetting
+        DatabaseUtility.AddIndex(m_db, "idx_tblSetting_idPath", "CREATE INDEX idx_tblSetting_idPath ON tblSetting (idPath ASC)");
+        DatabaseUtility.AddIndex(m_db, "idx_tblSetting_tagName", "CREATE INDEX idx_tblSetting_tagName ON tblSetting (tagName ASC)");
+        DatabaseUtility.AddIndex(m_db, "idx_tblSetting_idPath_tagName", "CREATE INDEX idx_tblSetting_idPath_tagName ON tblSetting (idPath ASC, tagName ASC)");
+
+        // Cleanup DB
+        Log.Debug("Cleanup FolderDatabase");
+        string strSQL = String.Format("delete from tblPath where idPath not in (select idPath from tblSetting)");
+        m_db.Execute(strSQL);
       }
       catch (Exception ex)
       {
@@ -73,12 +86,13 @@ namespace Databases.Folders
     {
       if (null == results)
       {
-        return "";
+        return string.Empty;
       }
       if (results.Rows.Count < iRecord)
       {
-        return "";
+        return string.Empty;
       }
+
       SQLiteResultSet.Row arr = results.Rows[iRecord];
       int iCol = 0;
       foreach (string columnName in results.ColumnNames)
@@ -91,7 +105,7 @@ namespace Databases.Folders
         }
         iCol++;
       }
-      return "";
+      return string.Empty;
     }
 
     private void RemoveInvalidChars(ref string strTxt)
@@ -100,7 +114,8 @@ namespace Databases.Folders
       {
         return;
       }
-      string strReturn = "";
+
+      string strReturn = string.Empty;
       for (int i = 0; i < (int)strTxt.Length; ++i)
       {
         char k = strTxt[i];
@@ -110,7 +125,7 @@ namespace Databases.Folders
         }
         strReturn += k;
       }
-      if (strReturn == "")
+      if (strReturn == string.Empty)
       {
         strReturn = Strings.Unknown;
       }
@@ -119,14 +134,11 @@ namespace Databases.Folders
 
     private int AddPath(string FilteredPath)
     {
-      if (FilteredPath == null)
+      if (string.IsNullOrEmpty(FilteredPath))
       {
         return -1;
       }
-      if (FilteredPath == string.Empty)
-      {
-        return -1;
-      }
+
       if (null == m_db)
       {
         return -1;
@@ -157,17 +169,17 @@ namespace Databases.Folders
 
     public void GetPath(string strPath, ref ArrayList strPathList, string strKey)
     {
+      if (string.IsNullOrEmpty(strKey))
+      {
+        return;
+      }
+
+      if (m_db == null)
+      {
+        return;
+      }
       try
       {
-        if (m_db == null)
-        {
-          return;
-        }
-        if (strKey == string.Empty)
-        {
-          return;
-        }
-
         string sql = string.Format(
           "SELECT strPath from tblPath where strPath like '{0}%' and idPath in (SELECT idPath from tblSetting where tblSetting.idPath = tblPath.idPath and tblSetting.tagName = '{1}')"
           , strPath, strKey);
@@ -185,28 +197,26 @@ namespace Databases.Folders
       }
       catch (Exception ex)
       {
-        Log.Error("Lolderdatabase.GetPath() exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("FolderDatabase.GetPath() exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
       }
     }
 
     public void DeleteFolderSetting(string strPath, string Key)
     {
-      if (strPath == null)
+      DeleteFolderSetting(strPath, Key, false);
+    }
+
+    public void DeleteFolderSetting(string strPath, string Key, bool withPath)
+    {
+      if (string.IsNullOrEmpty(strPath))
       {
         return;
       }
-      if (strPath == string.Empty)
+      if (string.IsNullOrEmpty(Key))
       {
         return;
       }
-      if (Key == null)
-      {
-        return;
-      }
-      if (Key == string.Empty)
-      {
-        return;
-      }
+
       if (null == m_db)
       {
         return;
@@ -225,6 +235,11 @@ namespace Databases.Folders
         }
         string strSQL = String.Format("delete from tblSetting where idPath={0} and tagName ='{1}'", PathId, KeyFiltered);
         m_db.Execute(strSQL);
+        if (withPath)
+        {
+          strSQL = String.Format("delete from tblPath where idPath={0}", PathId);
+          m_db.Execute(strSQL);
+        }
       }
       catch (Exception ex)
       {
@@ -234,19 +249,11 @@ namespace Databases.Folders
 
     public void AddFolderSetting(string strPath, string Key, Type type, object Value)
     {
-      if (strPath == null)
+      if (string.IsNullOrEmpty(strPath))
       {
         return;
       }
-      if (strPath == string.Empty)
-      {
-        return;
-      }
-      if (Key == null)
-      {
-        return;
-      }
-      if (Key == string.Empty)
+      if (string.IsNullOrEmpty(Key))
       {
         return;
       }
@@ -269,7 +276,6 @@ namespace Databases.Folders
         }
 
         DeleteFolderSetting(strPath, Key);
-
 
         XmlSerializer serializer = new XmlSerializer(type);
         //serialize...
@@ -305,19 +311,11 @@ namespace Databases.Folders
     public void GetFolderSetting(string strPath, string Key, Type type, out object Value)
     {
       Value = null;
-      if (strPath == null)
+      if (string.IsNullOrEmpty(strPath))
       {
         return;
       }
-      if (strPath == string.Empty)
-      {
-        return;
-      }
-      if (Key == null)
-      {
-        return;
-      }
-      if (Key == string.Empty)
+      if (string.IsNullOrEmpty(Key))
       {
         return;
       }
@@ -366,6 +364,73 @@ namespace Databases.Folders
         }
         string strValue = Get(results, 0, "tagValue");
         Log.Debug("GetFolderSetting: {0} found.", strPathFiltered);
+        //deserialize...
+
+        using (MemoryStream strm = new MemoryStream())
+        {
+          using (StreamWriter writer = new StreamWriter(strm))
+          {
+            writer.Write(strValue);
+            writer.Flush();
+            strm.Seek(0, SeekOrigin.Begin);
+            using (TextReader r = new StreamReader(strm))
+            {
+              try
+              {
+                XmlSerializer serializer = new XmlSerializer(type);
+                Value = serializer.Deserialize(r);
+              }
+              catch (Exception) {}
+            }
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error(ex);
+      }
+    }
+
+    public void GetViewSetting(string strPath, string Key, Type type, out object Value)
+    {
+      Value = null;
+      if (string.IsNullOrEmpty(strPath))
+      {
+        return;
+      }
+      if (string.IsNullOrEmpty(Key))
+      {
+        return;
+      }
+
+      if (null == m_db)
+      {
+        return;
+      }
+      try
+      {
+        string strPathFiltered = Utils.RemoveTrailingSlash(strPath);
+        string KeyFiltered = Key;
+        RemoveInvalidChars(ref strPathFiltered);
+        RemoveInvalidChars(ref KeyFiltered);
+
+        int PathId = AddPath(strPathFiltered);
+        if (PathId < 0)
+        {
+          return;
+        }
+
+        SQLiteResultSet results;
+        string strSQL = String.Format("select * from tblSetting where idPath={0} and tagName like '{1}'", PathId,
+                                      KeyFiltered);
+        results = m_db.Execute(strSQL);
+        if (results.Rows.Count == 0)
+        {
+          strSQL = String.Format("delete from tblPath where idPath={0}", PathId);
+          m_db.Execute(strSQL);
+          return;
+        }
+        string strValue = Get(results, 0, "tagValue");
         //deserialize...
 
         using (MemoryStream strm = new MemoryStream())

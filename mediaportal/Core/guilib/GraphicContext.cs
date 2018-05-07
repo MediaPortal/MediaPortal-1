@@ -74,6 +74,7 @@ namespace MediaPortal.GUI.Library
     private static TransformMatrix _finalTransform = new TransformMatrix();
     private static TransformMatrix _finalTransformCalibrated = new TransformMatrix();
     private static int _bypassUICalibration;
+    public static object PlayStarting = new object();
 
     // enum containing current state of MediaPortal
     public enum State
@@ -148,6 +149,7 @@ namespace MediaPortal.GUI.Library
     private static int _scrollSpeedHorizontal = 3;
     private static int _charsInCharacterSet = 255;
     private static volatile bool _vmr9Active;
+    private static volatile bool _vmr9ActivePlaylist;
     private static int _maxFPS = 60;
     private static long _desiredFrameTime = 100;
     private static float _currentFPS;
@@ -165,6 +167,7 @@ namespace MediaPortal.GUI.Library
     private static Screen _currentStartScreen;
     private static int _currentMonitorIdx = -1;
     private static string _currentAudioRenderer = "";
+    private static string _currentAudioRendererDevice = "";
 
     private static readonly bool IsDX9EXused = OSInfo.OSInfo.VistaOrLater();
     private static bool _allowRememberLastFocusedItem = true;
@@ -173,7 +176,11 @@ namespace MediaPortal.GUI.Library
 
     // For madVR
     public static Surface MadVrRenderTargetVMR9 = null;
-    public static IntPtr HWnd;
+
+    /// <summary>
+    /// madVR HWnd video instance
+    /// </summary>
+    public static IntPtr MadVrHWnd;
 
     // Stacks for matrix transformations.
     private static readonly Stack<Matrix> ProjectionMatrixStack = new Stack<Matrix>();
@@ -225,6 +232,7 @@ namespace MediaPortal.GUI.Library
       SideBySideDone = false;
       TopAndBottomDone = false;
       NoneDone = false;
+      RenderMadVr3Dchanged = false;
       Convert2Dto3DSkewFactor = 0;
       LastFrames = new List<Texture>();
       LastFramesIndex = 0;
@@ -392,6 +400,8 @@ namespace MediaPortal.GUI.Library
     public static bool SBSRightDone;
     public static bool TABTopDone;
     public static bool TABBottomDone;
+    public static int _backupCurrentScreenSizeWidth;
+    public static int _backupCurrentScreenSizeHeight;
     public static int Convert2Dto3DSkewFactor { get; set; }
 
     public enum eRender3DModeHalf { None, SBSLeft, SBSRight, TABTop, TABBottom };
@@ -1081,21 +1091,23 @@ namespace MediaPortal.GUI.Library
           {
             GUIGraphicsContext.VideoWindowFullscreen = true;
             GUIGraphicsContext.VideoWindow = new Rectangle(0, 0, 5, 5);
-            VMR9Util.g_vmr9.SceneMadVr();
+            VMR9Util.g_vmr9?.SceneMadVr();
           }
 
-          if (GUIGraphicsContext.ForceMadVRRefresh)
-          {
-            Size client = GUIGraphicsContext.form.ClientSize;
-            VMR9Util.g_vmr9?.MadVrScreenResize(GUIGraphicsContext.form.Location.X, GUIGraphicsContext.form.Location.Y, client.Width, client.Height, false);
-            GUIGraphicsContext.NoneDone = false;
-            GUIGraphicsContext.TopAndBottomDone = false;
-            GUIGraphicsContext.SideBySideDone = false;
-            GUIGraphicsContext.SBSLeftDone = false;
-            GUIGraphicsContext.SBSRightDone = false;
-            GUIGraphicsContext.TABTopDone = false;
-            GUIGraphicsContext.TABBottomDone = false;
-          }
+          // Disabled for now - seems the workaround is not needed anymore but keep code
+          //if (GUIGraphicsContext.ForceMadVRRefresh)
+          //{
+          //  GUIGraphicsContext.ForceMadVRRefresh = false;
+          //  Size client = GUIGraphicsContext.form.ClientSize;
+          //  VMR9Util.g_vmr9?.MadVrScreenResize(GUIGraphicsContext.form.Location.X, GUIGraphicsContext.form.Location.Y, client.Width, client.Height, false);
+          //  GUIGraphicsContext.NoneDone = false;
+          //  GUIGraphicsContext.TopAndBottomDone = false;
+          //  GUIGraphicsContext.SideBySideDone = false;
+          //  GUIGraphicsContext.SBSLeftDone = false;
+          //  GUIGraphicsContext.SBSRightDone = false;
+          //  GUIGraphicsContext.TABTopDone = false;
+          //  GUIGraphicsContext.TABBottomDone = false;
+          //}
         }
       }
     }
@@ -1527,6 +1539,22 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// 
     /// </summary>
+    public static bool Vmr9ActivePlaylist
+    {
+      get { return _vmr9ActivePlaylist; }
+      set
+      {
+        if (value != _vmr9ActivePlaylist)
+        {
+          _vmr9ActivePlaylist = value;
+          Log.Debug(_vmr9ActivePlaylist ? "VMR9: Now active for playlist" : "VMR9: Inactive for playlist");
+        }
+      }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
     public static bool Vmr9Active
     {
       get { return _vmr9Active; }
@@ -1702,6 +1730,21 @@ namespace MediaPortal.GUI.Library
     }
 
     /// <summary>
+    /// Get/set current audio renderer name
+    /// </summary>
+    public static string CurrentAudioRendererDevice
+    {
+      set
+      {
+        _currentAudioRendererDevice = value;
+      }
+      get
+      {
+        return _currentAudioRendererDevice;
+      }
+    }
+
+    /// <summary>
     /// Returns true if the active window belongs to the my tv plugin
     /// </summary>
     /// <returns>
@@ -1825,10 +1868,10 @@ namespace MediaPortal.GUI.Library
 
     public static bool IsWindowVisible { get; set; }
     public static bool UpdateVideoWindow { get; set; }
-    public static bool MadVrOsd { get; set; }
-    public static bool MadVrStop { get; set; }
-    public static bool VideoWindowChangedDone { get; set; }
-    public static bool SetVideoWindowDone { get; set; }
+    internal static bool MadVrOsd { get; set; }
+    internal static bool MadVrStop { get; set; }
+    internal static bool VideoWindowChangedDone { get; set; }
+    internal static bool SetVideoWindowDone { get; set; }
     public static bool VideoControl { get; set; }
     public static bool SideBySideDone { get; set; }
     public static bool TopAndBottomDone { get; set; }
@@ -1836,16 +1879,25 @@ namespace MediaPortal.GUI.Library
     public static bool ForceMadVRRefresh { get; set; }
     public static bool ForceMadVRRefresh3D { get; set; }
     public static bool ForceMadVRFirstStart { get; set; }
+    internal static bool ProcessMadVrOsdDisplay { get; set; }
     public static bool BlurayMenu { get; set; }
-    public static bool InitMadVRWindowPosition { get; set; }
+    internal static bool InitMadVRWindowPosition { get; set; }
     public static IntPtr madVRDibBuffer { get; set; }
-    public static bool RestoreGuiForMadVrDone { get; set; }
+    internal static bool RestoreGuiForMadVrDone { get; set; }
     internal static Bitmap madVRFrameBitmap { get; set; }
     internal static Bitmap madVRCurrentFrameBitmap { get; set; }
 
 
     public static bool WorkerThreadStart { get; set; }
     public static bool Render3DModeHalfDone { get; set; }
+    public static bool ForcedRefreshRate3D { get; set; }
+    public static bool ForcedRefreshRate3DDone { get; set; }
+    public static bool ForcedRR3DBackDefault { get; set; }
+    internal static int ForcedRR3DWitdhBackup { get; set; }
+    internal static int ForcedRR3DHeightBackup { get; set; }
+    internal static double ForcedRR3DRate { get; set; }
+    internal static bool RenderMadVr3Dchanged { get; set; }
+    public static bool CurrentAudioRendererDone { get; set; }
 
     //public static IntPtr madVRDIB { get; set; }
 

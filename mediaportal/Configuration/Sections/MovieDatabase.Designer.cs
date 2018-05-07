@@ -24,13 +24,13 @@ namespace MediaPortal.Configuration.Sections
     private void InitializeComponent()
     {
       this.components = new System.ComponentModel.Container();
-      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
-      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
-      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle9 = new System.Windows.Forms.DataGridViewCellStyle();
+      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle13 = new System.Windows.Forms.DataGridViewCellStyle();
+      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle14 = new System.Windows.Forms.DataGridViewCellStyle();
+      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle15 = new System.Windows.Forms.DataGridViewCellStyle();
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MovieDatabase));
-      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle10 = new System.Windows.Forms.DataGridViewCellStyle();
-      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle11 = new System.Windows.Forms.DataGridViewCellStyle();
-      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle12 = new System.Windows.Forms.DataGridViewCellStyle();
+      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle16 = new System.Windows.Forms.DataGridViewCellStyle();
+      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle17 = new System.Windows.Forms.DataGridViewCellStyle();
+      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle18 = new System.Windows.Forms.DataGridViewCellStyle();
       this.toolTipMPvdb = new System.Windows.Forms.ToolTip(this.components);
       this.useFanartCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this._fuzzyMatchingCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
@@ -1566,12 +1566,14 @@ namespace MediaPortal.Configuration.Sections
       // 
       // tbMPAARatingText
       // 
-      this.tbMPAARatingText.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.tbMPAARatingText.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.tbMPAARatingText.BorderColor = System.Drawing.Color.Empty;
       this.tbMPAARatingText.Location = new System.Drawing.Point(70, 12);
       this.tbMPAARatingText.Multiline = true;
       this.tbMPAARatingText.Name = "tbMPAARatingText";
-      this.tbMPAARatingText.Size = new System.Drawing.Size(375, 22);
+      this.tbMPAARatingText.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+      this.tbMPAARatingText.Size = new System.Drawing.Size(375, 132);
       this.tbMPAARatingText.TabIndex = 40;
       // 
       // mpLabel34
@@ -2004,14 +2006,14 @@ namespace MediaPortal.Configuration.Sections
       this.dgActorMovies.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
       this.dgActorMovies.BackgroundColor = System.Drawing.SystemColors.Window;
       this.dgActorMovies.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-      dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-      dataGridViewCellStyle7.BackColor = System.Drawing.SystemColors.Control;
-      dataGridViewCellStyle7.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-      dataGridViewCellStyle7.ForeColor = System.Drawing.SystemColors.WindowText;
-      dataGridViewCellStyle7.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-      dataGridViewCellStyle7.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-      dataGridViewCellStyle7.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-      this.dgActorMovies.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle7;
+      dataGridViewCellStyle13.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+      dataGridViewCellStyle13.BackColor = System.Drawing.SystemColors.Control;
+      dataGridViewCellStyle13.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+      dataGridViewCellStyle13.ForeColor = System.Drawing.SystemColors.WindowText;
+      dataGridViewCellStyle13.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+      dataGridViewCellStyle13.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+      dataGridViewCellStyle13.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+      this.dgActorMovies.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle13;
       this.dgActorMovies.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
       this.dgActorMovies.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.Year,
@@ -2031,8 +2033,8 @@ namespace MediaPortal.Configuration.Sections
       // Year
       // 
       this.Year.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
-      dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-      this.Year.DefaultCellStyle = dataGridViewCellStyle8;
+      dataGridViewCellStyle14.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+      this.Year.DefaultCellStyle = dataGridViewCellStyle14;
       this.Year.HeaderText = "Year";
       this.Year.MinimumWidth = 60;
       this.Year.Name = "Year";
@@ -2041,8 +2043,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // Title
       // 
-      dataGridViewCellStyle9.SelectionForeColor = System.Drawing.Color.White;
-      this.Title.DefaultCellStyle = dataGridViewCellStyle9;
+      dataGridViewCellStyle15.SelectionForeColor = System.Drawing.Color.White;
+      this.Title.DefaultCellStyle = dataGridViewCellStyle15;
       this.Title.HeaderText = "Title";
       this.Title.MinimumWidth = 220;
       this.Title.Name = "Title";
@@ -3771,14 +3773,14 @@ namespace MediaPortal.Configuration.Sections
       this.dgShares.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
       this.dgShares.BackgroundColor = System.Drawing.SystemColors.Window;
       this.dgShares.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-      dataGridViewCellStyle10.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-      dataGridViewCellStyle10.BackColor = System.Drawing.SystemColors.Control;
-      dataGridViewCellStyle10.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-      dataGridViewCellStyle10.ForeColor = System.Drawing.SystemColors.WindowText;
-      dataGridViewCellStyle10.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-      dataGridViewCellStyle10.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-      dataGridViewCellStyle10.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-      this.dgShares.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle10;
+      dataGridViewCellStyle16.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+      dataGridViewCellStyle16.BackColor = System.Drawing.SystemColors.Control;
+      dataGridViewCellStyle16.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+      dataGridViewCellStyle16.ForeColor = System.Drawing.SystemColors.WindowText;
+      dataGridViewCellStyle16.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+      dataGridViewCellStyle16.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+      dataGridViewCellStyle16.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+      this.dgShares.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle16;
       this.dgShares.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
       this.dgShares.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.shareName,
@@ -3797,8 +3799,8 @@ namespace MediaPortal.Configuration.Sections
       // shareName
       // 
       this.shareName.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-      dataGridViewCellStyle11.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-      this.shareName.DefaultCellStyle = dataGridViewCellStyle11;
+      dataGridViewCellStyle17.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+      this.shareName.DefaultCellStyle = dataGridViewCellStyle17;
       this.shareName.HeaderText = "Name";
       this.shareName.Name = "shareName";
       this.shareName.ReadOnly = true;
@@ -3807,8 +3809,8 @@ namespace MediaPortal.Configuration.Sections
       // sharePath
       // 
       this.sharePath.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-      dataGridViewCellStyle12.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-      this.sharePath.DefaultCellStyle = dataGridViewCellStyle12;
+      dataGridViewCellStyle18.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+      this.sharePath.DefaultCellStyle = dataGridViewCellStyle18;
       this.sharePath.HeaderText = "Folder";
       this.sharePath.MinimumWidth = 50;
       this.sharePath.Name = "sharePath";

@@ -135,6 +135,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ProcessPlugins", "ProcessPl
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiniDisplayPlugin", "ProcessPlugins\MiniDisplay\MiniDisplayPlugin.csproj", "{C430B2F0-CD3A-4BD5-B6C2-1DE2BDC68C86}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{D46025CE-A2F6-401E-9E5A-95FF3D970F9B}"
+	ProjectSection(SolutionItems) = preProject
+		..\.editorconfig = ..\.editorconfig
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -521,5 +526,8 @@ Global
 		{03FEC69F-6D10-46FB-A0CA-4D266E4A21E2} = {40801059-099F-44C5-9802-3A926EF0FE87}
 		{06741964-B339-4FCF-B6E5-E0D32A434DA2} = {D214B2BD-4CA7-45CD-9EC5-CF7CC244C03A}
 		{C430B2F0-CD3A-4BD5-B6C2-1DE2BDC68C86} = {06741964-B339-4FCF-B6E5-E0D32A434DA2}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E93BA3D6-C1CC-458C-8F51-4E4B1D8856CB}
 	EndGlobalSection
 EndGlobal

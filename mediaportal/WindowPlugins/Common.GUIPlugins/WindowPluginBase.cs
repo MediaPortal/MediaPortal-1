@@ -346,6 +346,8 @@ namespace Common.GUIPlugins
 
     protected virtual void LoadDirectory(string path) {}
 
+    protected virtual void UpdateLoadDirectory() {}
+
     protected virtual GUIFacadeControl.Layout CurrentLayout
     {
       get { return currentLayout; }

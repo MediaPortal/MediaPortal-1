@@ -1041,6 +1041,7 @@ namespace MediaPortal.Player
         {
           return 1;
         }
+
         switch (m_speedRate)
         {
           case -10000:

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2018 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2018 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -22,15 +22,12 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
-using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Xml;
-using MediaPortal.Drawing;
 using MediaPortal.Drawing.Layouts;
 using Point = System.Drawing.Point;
 using Size = MediaPortal.Drawing.Size;
-using MediaPortal.ExtensionMethods;
 using HorizontalAlignment = MediaPortal.Drawing.HorizontalAlignment;
 using Rect = MediaPortal.Drawing.Rect;
 using Thickness = MediaPortal.Drawing.Thickness;
@@ -70,7 +67,7 @@ namespace MediaPortal.GUI.Library
     public virtual int Width { get; set; }
     public virtual int Height { get; set; }
 
-    public void Arrange(Rect finalRect)
+    public virtual void Arrange(Rect finalRect)
     {
       Location = finalRect.Location;
       Width = (int)finalRect.Width;

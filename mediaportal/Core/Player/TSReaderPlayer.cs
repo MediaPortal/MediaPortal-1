@@ -852,14 +852,16 @@ namespace MediaPortal.Player
 
           if (filterCodec != null && filterCodec._audioRendererFilter != null)
           {
-            DirectShowUtil.ReleaseComObject(filterCodec._audioRendererFilter);
+            _graphBuilder.RemoveFilter(filterCodec._audioRendererFilter);
+            DirectShowUtil.CleanUpInterface(filterCodec._audioRendererFilter);
             filterCodec._audioRendererFilter = null;
             Log.Debug("TSReaderPlayer: Cleanup _audioRendererFilter");
           }
 
           if (_fileSource != null)
           {
-            DirectShowUtil.FinalReleaseComObject(_fileSource);
+            _graphBuilder.RemoveFilter(_fileSource as DirectShowLib.IBaseFilter);
+            DirectShowUtil.CleanUpInterface(_fileSource);
             _fileSource = null;
             Log.Debug("TSReaderPlayer: Cleanup _fileSource");
           }
@@ -952,7 +954,7 @@ namespace MediaPortal.Player
             _dvbSubRenderer = null;
           }
 
-          if (_videoWin != null)
+          if (_videoWin != null && GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
           {
             _videoWin.put_Owner(IntPtr.Zero);
             _videoWin.put_Visible(OABool.False);

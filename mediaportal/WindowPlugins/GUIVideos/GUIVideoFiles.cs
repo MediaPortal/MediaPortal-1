@@ -2180,7 +2180,9 @@ namespace MediaPortal.GUI.Video
       {
         if (g_Player.IsDVD && !_BDDetect)
         {
-          g_Player.Player.SetResumeState(resumeData);
+          // send resume thread async
+          var msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SET_RESUME_STATE, 0, 0, 0, 0, 0, resumeData);
+          GUIWindowManager.SendThreadMessage(msg);
         }
         else
         {
