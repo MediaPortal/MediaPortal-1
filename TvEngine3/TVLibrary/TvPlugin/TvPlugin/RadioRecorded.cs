@@ -1865,6 +1865,7 @@ namespace TvPlugin
         {
           rec.Refresh();
           rec.StopTime = 0;
+          rec.TimesWatched++;
           rec.Persist();
         }
       }
