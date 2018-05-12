@@ -119,9 +119,6 @@ namespace MediaPortal.Player
     /// <param name="default Blu-ray Title">BdDefaultTitle</param>
     public const int BdDefaultTitle = 1000;
 
-    private static bool _seekStartStepNow = false;
-    private static bool _seekStart = false;
-
     #endregion
 
     #region events
@@ -846,16 +843,16 @@ namespace MediaPortal.Player
           case "LATMAAC":
             AudioCodec = "AAC";
             break;
-            
+
           case "DTS":
             AudioCodec = "DTS";
             break;
-            
+
           case "DTSHD":
           case "DTS-HD":
             AudioCodec = "DTSHD";
             break;
-            
+
           case "PCM":
           case "LPCM":
             AudioCodec = "PCM";
@@ -2320,7 +2317,7 @@ namespace MediaPortal.Player
         return _chaptersname;
       }
     }
-    
+
     public static double[] JumpPoints
     {
       get
@@ -2369,34 +2366,28 @@ namespace MediaPortal.Player
 
     public static void StepNow()
     {
-      // Start seek in a thread to avoid deadlock
-      new Thread(() =>
+      if (_currentStep != 0 && _player != null)
       {
-        if (_currentStep != 0 && _player != null && !_seekStartStepNow)
+        if (_currentStep < 0 || (_player.CurrentPosition + 4 < _player.Duration) || !IsTV)
         {
-          _seekStartStepNow = true;
-          if (_currentStep < 0 || (_player.CurrentPosition + 4 < _player.Duration) || !IsTV)
-          {
-            double dTime = (int) _currentStep + _player.CurrentPosition;
-            _currentStep = 0;
-            _currentStepIndex = -1;
-            _seekTimer = DateTime.MinValue;
-            Log.Debug("g_Player.StepNow() - Preparing to seek to {0}:{1}", _player.CurrentPosition, _player.Duration);
-            if (!IsTV && (dTime > _player.Duration)) dTime = _player.Duration - 5;
-            if (IsTV && (dTime + 3 > _player.Duration)) dTime = _player.Duration - 3; // Margin for live Tv
-            if (dTime < 0) dTime = 0d;
+          double dTime = (int)_currentStep + _player.CurrentPosition;
+          Log.Debug("g_Player.StepNow() - Preparing to seek to {0}:{1}", _player.CurrentPosition, _player.Duration);
+          if (!IsTV && (dTime > _player.Duration)) dTime = _player.Duration - 5;
+          if (IsTV && (dTime + 3 > _player.Duration)) dTime = _player.Duration - 3; // Margin for live Tv
+          if (dTime < 0) dTime = 0d;
 
-            Log.Debug("g_Player.StepNow() - Preparing to seek to {0}:{1}:{2} isTv {3}", (int) (dTime/3600d),
-              (int) ((dTime%3600d)/60d), (int) (dTime%60d), IsTV);
-            _player.SeekAbsolute(dTime);
-            Speed = Speed;
-            GUIMessage msgUpdate = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYER_POSITION_CHANGED, 0, 0, 0, 0, 0,
-              null);
-            GUIGraphicsContext.SendMessage(msgUpdate);
-            _seekStartStepNow = false;
-          }
+          Log.Debug("g_Player.StepNow() - Preparing to seek to {0}:{1}:{2} isTv {3}", (int)(dTime / 3600d),
+                    (int)((dTime % 3600d) / 60d), (int)(dTime % 60d), IsTV);
+          _player.SeekAbsolute(dTime);
+          Speed = Speed;
+          GUIMessage msgUpdate = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYER_POSITION_CHANGED, 0, 0, 0, 0, 0,
+                                                null);
+          GUIGraphicsContext.SendMessage(msgUpdate);
         }
-      }).Start();
+      }
+      _currentStep = 0;
+      _currentStepIndex = -1;
+      _seekTimer = DateTime.MinValue;
     }
 
     /// <summary>
@@ -2582,27 +2573,14 @@ namespace MediaPortal.Player
       {
         return;
       }
-
-      // Start seek in a thread to avoid deadlock
-      new Thread(() =>
-      {
-        if (!_seekStart)
-        {
-          _seekStart = true;
-          Thread.CurrentThread.IsBackground = true;
-          Log.Debug("g_Player.SeekAbsolute() - Preparing to seek to {0}:{1}:{2}", (int) (dTime/3600d),
-            (int) ((dTime%3600d)/60d), (int) (dTime%60d));
-          _currentStep = 0;
-          _currentStepIndex = -1;
-          _seekTimer = DateTime.MinValue;
-          _player.SeekAbsolute(dTime);
-          GUIMessage msgUpdate = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYER_POSITION_CHANGED, 0, 0, 0, 0, 0,
-            null);
-          GUIGraphicsContext.SendMessage(msgUpdate);
-          _seekStart = false;
-          Log.Debug("g_Player.SeekAbsolute() in a thread");
-        }
-      }).Start();
+      Log.Debug("g_Player.SeekAbsolute() - Preparing to seek to {0}:{1}:{2}", (int)(dTime / 3600d),
+                (int)((dTime % 3600d) / 60d), (int)(dTime % 60d));
+      _player.SeekAbsolute(dTime);
+      GUIMessage msgUpdate = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYER_POSITION_CHANGED, 0, 0, 0, 0, 0, null);
+      GUIGraphicsContext.SendMessage(msgUpdate);
+      _currentStep = 0;
+      _currentStepIndex = -1;
+      _seekTimer = DateTime.MinValue;
     }
 
     public static void SeekAsolutePercentage(int iPercentage)
@@ -2816,31 +2794,33 @@ namespace MediaPortal.Player
       }
 
       // Disabled for now - seems the workaround is not needed anymore but keep code
-      //if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
-      //    (GUIGraphicsContext.Vmr9Active || GUIGraphicsContext.ForceMadVRFirstStart))
-      //{
-      //  // TODO find a better way to restore madVR rendering (right now i send an 'X' to force refresh a current window)
-      //  if (GUIGraphicsContext.ForceMadVRFirstStart)
-      //  {
-      //    GUIGraphicsContext.ForceMadVRFirstStart = false;
-      //  }
-      //  var key = new Key(120, 0);
-      //  var action = new Action(key, Action.ActionType.ACTION_KEY_PRESSED, 0, 0);
-      //  if (ActionTranslator.GetAction(GUIWindowManager.ActiveWindowEx, key, ref action))
-      //  {
-      //    GUIGraphicsContext.OnAction(action);
-      //    action = new Action(key, Action.ActionType.ACTION_KEY_PRESSED, 0, 0);
-      //    GUIGraphicsContext.OnAction(action);
-      //  }
-      //  key = new Key(120, 0);
-      //  action = new Action(key, Action.ActionType.ACTION_KEY_PRESSED, 0, 0);
-      //  if (ActionTranslator.GetAction(GUIWindowManager.ActiveWindowEx, key, ref action))
-      //  {
-      //    GUIGraphicsContext.OnAction(action);
-      //    action = new Action(key, Action.ActionType.ACTION_KEY_PRESSED, 0, 0);
-      //    GUIGraphicsContext.OnAction(action);
-      //  }
-      //}
+      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
+          (GUIGraphicsContext.Vmr9Active || GUIGraphicsContext.ForceMadVRFirstStart))
+      {
+        // TODO find a better way to restore madVR rendering (right now i send an 'X' to force refresh a current window)
+        if (GUIGraphicsContext.ForceMadVRFirstStart)
+        {
+          GUIGraphicsContext.ForceMadVRFirstStart = false;
+        }
+
+        var key = new Key(120, 0);
+        var action = new Action(key, Action.ActionType.ACTION_KEY_PRESSED, 0, 0);
+        if (ActionTranslator.GetAction(GUIWindowManager.ActiveWindowEx, key, ref action))
+        {
+          GUIGraphicsContext.OnAction(action);
+          action = new Action(key, Action.ActionType.ACTION_KEY_PRESSED, 0, 0);
+          GUIGraphicsContext.OnAction(action);
+        }
+
+        key = new Key(120, 0);
+        action = new Action(key, Action.ActionType.ACTION_KEY_PRESSED, 0, 0);
+        if (ActionTranslator.GetAction(GUIWindowManager.ActiveWindowEx, key, ref action))
+        {
+          GUIGraphicsContext.OnAction(action);
+          action = new Action(key, Action.ActionType.ACTION_KEY_PRESSED, 0, 0);
+          GUIGraphicsContext.OnAction(action);
+        }
+      }
     }
 
     public static VideoStreamFormat GetVideoFormat()
