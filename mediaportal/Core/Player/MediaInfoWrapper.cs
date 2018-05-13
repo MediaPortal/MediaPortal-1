@@ -23,6 +23,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Globalization;
+using System.Threading;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 using MediaPortal.Util;
@@ -88,323 +89,331 @@ namespace MediaPortal.Player
 
     public MediaInfoWrapper(string strFile)
     {
-      if (!MediaInfoExist())
+      new Thread(() =>
       {
-        _mediaInfoNotloaded = true;
-        return;
-      }
+        Thread.CurrentThread.IsBackground = true;
+        Thread.CurrentThread.Name = "MediaInfoWrapper";
 
-      using (Settings xmlreader = new MPSettings())
-      {
-        _DVDenabled = xmlreader.GetValueAsBool("dvdplayer", "mediainfoused", false);
-        _BDenabled = xmlreader.GetValueAsBool("bdplayer", "mediainfoused", false);
-        _ParseSpeed = xmlreader.GetValueAsString("debug", "MediaInfoParsespeed", "0.3");
-        // fix delay introduced after 0.7.26: http://sourceforge.net/tracker/?func=detail&aid=3013548&group_id=86862&atid=581181
-      }
-      bool isTV = Util.Utils.IsLiveTv(strFile);
-      bool isRadio = Util.Utils.IsLiveRadio(strFile);
-      bool isRTSP = Util.Utils.IsRTSP(strFile); //rtsp for live TV and recordings.
-      bool isDVD = Util.Utils.IsDVD(strFile);
-      bool isVideo = Util.Utils.IsVideo(strFile);
-      bool isAVStream = Util.Utils.IsAVStream(strFile); //other AV streams
-
-      //currently disabled for all tv/radio/streaming video
-      if (isTV || isRadio || isRTSP || isAVStream)
-      {
-        Log.Debug("MediaInfoWrapper: isTv:{0}, isRadio:{1}, isRTSP:{2}, isAVStream:{3}", isTV, isRadio, isRTSP,
-                  isAVStream);
-        Log.Debug("MediaInfoWrapper: disabled for this content");
-        _mediaInfoNotloaded = true;
-        return;
-      }
-
-      if (strFile.ToLowerInvariant().EndsWith(".wtv"))
-      {
-        Log.Debug("MediaInfoWrapper: WTV file is not handled");
-        _mediaInfoNotloaded = true;
-        return;
-      }
-
-      // Check if video file is from image file
-      string vDrive = DaemonTools.GetVirtualDrive();
-      string bDrive = Path.GetPathRoot(strFile);
-
-      if (vDrive == Util.Utils.RemoveTrailingSlash(bDrive))
-        isDVD = false;
-
-      //currently mediainfo is only used for local video related material (if enabled)
-      if ((!isVideo && !isDVD) || (isDVD && !_DVDenabled) || (isDVD && _BDenabled))
-      {
-        Log.Debug("MediaInfoWrapper: isVideo:{0}, isDVD:{1}[enabled:{2}]", isVideo, isDVD, _DVDenabled);
-        Log.Debug("MediaInfoWrapper: disabled for this content");
-        _mediaInfoNotloaded = true;
-        return;
-      }
-
-      try
-      {
-        _mI = new MediaInfo();
-        _mI.Option("ParseSpeed", _ParseSpeed);
-
-        if (Util.VirtualDirectory.IsImageFile(System.IO.Path.GetExtension(strFile)))
-        {
-          strFile = Util.DaemonTools.GetVirtualDrive() + @"\VIDEO_TS\VIDEO_TS.IFO";
-
-          if (!File.Exists(strFile))
-          {
-            strFile = Util.DaemonTools.GetVirtualDrive() + @"\BDMV\index.bdmv";
-
-            if (!File.Exists(strFile))
-            {
-              _mediaInfoNotloaded = true;
-              return;
-            }
-          }
-        }
-        
-        if (strFile.ToLowerInvariant().EndsWith(".ifo"))
-        {
-          string path = Path.GetDirectoryName(strFile);
-          string mainTitle = GetLargestFileInDirectory(path, "VTS_*1.VOB");
-          string titleSearch = Path.GetFileName(mainTitle);
-          titleSearch = titleSearch.Substring(0, titleSearch.LastIndexOf('_')) + "*.VOB";
-          string[] vobs = Directory.GetFiles(path, titleSearch, SearchOption.TopDirectoryOnly);
-
-          foreach (string vob in vobs)
-          {
-            int vobDuration = 0;
-            _mI.Open(vob);
-            int.TryParse(_mI.Get(StreamKind.General, 0, "Duration"), out vobDuration);
-            _mI.Close();
-            _videoDuration += vobDuration;
-          }
-          // get all other info from main title's 1st vob
-          strFile = mainTitle;
-        }
-        else if (strFile.ToLowerInvariant().EndsWith(".bdmv"))
-        {
-          string path = Path.GetDirectoryName(strFile) + @"\STREAM";
-          strFile = GetLargestFileInDirectory(path, "*.m2ts");
-        }
-
-        if (strFile != null)
-        {
-          Log.Debug("MediaInfoWrapper.MediaInfoWrapper: Opening file : {0}", strFile);
-          _mI.Open(strFile);
-        }
-        else
+        if (!MediaInfoExist())
         {
           _mediaInfoNotloaded = true;
           return;
         }
 
-        NumberFormatInfo providerNumber = new NumberFormatInfo();
-        providerNumber.NumberDecimalSeparator = ".";
-
-        //Video
-        double.TryParse(_mI.Get(StreamKind.Video, 0, "FrameRate"), NumberStyles.AllowDecimalPoint, providerNumber,
-                        out _framerate);
-        int.TryParse(_mI.Get(StreamKind.Video, 0, "Width"), out _width);
-        int.TryParse(_mI.Get(StreamKind.Video, 0, "Height"), out _height);
-        _aspectRatio = _mI.Get(StreamKind.Video, 0, "DisplayAspectRatio");
-
-        if ((_aspectRatio == "4:3") || (_aspectRatio == "1.333"))
+        using (Settings xmlreader = new MPSettings())
         {
-          _aspectRatio = "fullscreen";
-        }
-        else
-        {
-          _aspectRatio = "widescreen";
+          _DVDenabled = xmlreader.GetValueAsBool("dvdplayer", "mediainfoused", false);
+          _BDenabled = xmlreader.GetValueAsBool("bdplayer", "mediainfoused", false);
+          _ParseSpeed = xmlreader.GetValueAsString("debug", "MediaInfoParsespeed", "0.3");
+          // fix delay introduced after 0.7.26: http://sourceforge.net/tracker/?func=detail&aid=3013548&group_id=86862&atid=581181
         }
 
-        _videoCodec = GetFullCodecName(StreamKind.Video);
-        _scanType = _mI.Get(StreamKind.Video, 0, "ScanType").ToLowerInvariant();
-        _isInterlaced = _scanType.Contains("interlaced");
+        bool isTV = Util.Utils.IsLiveTv(strFile);
+        bool isRadio = Util.Utils.IsLiveRadio(strFile);
+        bool isRTSP = Util.Utils.IsRTSP(strFile); //rtsp for live TV and recordings.
+        bool isDVD = Util.Utils.IsDVD(strFile);
+        bool isVideo = Util.Utils.IsVideo(strFile);
+        bool isAVStream = Util.Utils.IsAVStream(strFile); //other AV streams
 
-        if (_width >= 1280 || _height >= 720)
+        //currently disabled for all tv/radio/streaming video
+        if (isTV || isRadio || isRTSP || isAVStream)
         {
-          _videoResolution = "HD";
-        }
-        else
-        {
-          _videoResolution = "SD";
+          Log.Debug("MediaInfoWrapper: isTv:{0}, isRadio:{1}, isRTSP:{2}, isAVStream:{3}", isTV, isRadio, isRTSP,
+            isAVStream);
+          Log.Debug("MediaInfoWrapper: disabled for this content");
+          _mediaInfoNotloaded = true;
+          return;
         }
 
-        if (_videoResolution == "HD")
+        if (strFile.ToLowerInvariant().EndsWith(".wtv"))
         {
-          if ((_width >= 7680 || _height >= 4320) && !_isInterlaced)
+          Log.Debug("MediaInfoWrapper: WTV file is not handled");
+          _mediaInfoNotloaded = true;
+          return;
+        }
+
+        // Check if video file is from image file
+        string vDrive = DaemonTools.GetVirtualDrive();
+        string bDrive = Path.GetPathRoot(strFile);
+
+        if (vDrive == Util.Utils.RemoveTrailingSlash(bDrive))
+          isDVD = false;
+
+        //currently mediainfo is only used for local video related material (if enabled)
+        if ((!isVideo && !isDVD) || (isDVD && !_DVDenabled) || (isDVD && _BDenabled))
+        {
+          Log.Debug("MediaInfoWrapper: isVideo:{0}, isDVD:{1}[enabled:{2}]", isVideo, isDVD, _DVDenabled);
+          Log.Debug("MediaInfoWrapper: disabled for this content");
+          _mediaInfoNotloaded = true;
+          return;
+        }
+
+        try
+        {
+          _mI = new MediaInfo();
+          _mI.Option("ParseSpeed", _ParseSpeed);
+
+          if (Util.VirtualDirectory.IsImageFile(System.IO.Path.GetExtension(strFile)))
           {
-            if (File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\Media\Logos\4320P.png")) ||
-              File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\Media\Logos\resolution\4320P.png")))
+            strFile = Util.DaemonTools.GetVirtualDrive() + @"\VIDEO_TS\VIDEO_TS.IFO";
+
+            if (!File.Exists(strFile))
             {
-              _videoResolution = "4320P";
+              strFile = Util.DaemonTools.GetVirtualDrive() + @"\BDMV\index.bdmv";
+
+              if (!File.Exists(strFile))
+              {
+                _mediaInfoNotloaded = true;
+                return;
+              }
             }
           }
-          else if ((_width >= 3840 || _height >= 2160) && !_isInterlaced)
+
+          if (strFile.ToLowerInvariant().EndsWith(".ifo"))
           {
-            if (File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\Media\Logos\2160P.png")) ||
-             File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\Media\Logos\resolution\2160P.png")))
+            string path = Path.GetDirectoryName(strFile);
+            string mainTitle = GetLargestFileInDirectory(path, "VTS_*1.VOB");
+            string titleSearch = Path.GetFileName(mainTitle);
+            titleSearch = titleSearch.Substring(0, titleSearch.LastIndexOf('_')) + "*.VOB";
+            string[] vobs = Directory.GetFiles(path, titleSearch, SearchOption.TopDirectoryOnly);
+
+            foreach (string vob in vobs)
             {
-              _videoResolution = "2160P";
+              int vobDuration = 0;
+              _mI.Open(vob);
+              int.TryParse(_mI.Get(StreamKind.General, 0, "Duration"), out vobDuration);
+              _mI.Close();
+              _videoDuration += vobDuration;
+            }
+
+            // get all other info from main title's 1st vob
+            strFile = mainTitle;
+          }
+          else if (strFile.ToLowerInvariant().EndsWith(".bdmv"))
+          {
+            string path = Path.GetDirectoryName(strFile) + @"\STREAM";
+            strFile = GetLargestFileInDirectory(path, "*.m2ts");
+          }
+
+          if (strFile != null)
+          {
+            Log.Debug("MediaInfoWrapper.MediaInfoWrapper: Opening file : {0}", strFile);
+            _mI.Open(strFile);
+          }
+          else
+          {
+            _mediaInfoNotloaded = true;
+            return;
+          }
+
+          NumberFormatInfo providerNumber = new NumberFormatInfo();
+          providerNumber.NumberDecimalSeparator = ".";
+
+          //Video
+          double.TryParse(_mI.Get(StreamKind.Video, 0, "FrameRate"), NumberStyles.AllowDecimalPoint, providerNumber,
+            out _framerate);
+          int.TryParse(_mI.Get(StreamKind.Video, 0, "Width"), out _width);
+          int.TryParse(_mI.Get(StreamKind.Video, 0, "Height"), out _height);
+          _aspectRatio = _mI.Get(StreamKind.Video, 0, "DisplayAspectRatio");
+
+          if ((_aspectRatio == "4:3") || (_aspectRatio == "1.333"))
+          {
+            _aspectRatio = "fullscreen";
+          }
+          else
+          {
+            _aspectRatio = "widescreen";
+          }
+
+          _videoCodec = GetFullCodecName(StreamKind.Video);
+          _scanType = _mI.Get(StreamKind.Video, 0, "ScanType").ToLowerInvariant();
+          _isInterlaced = _scanType.Contains("interlaced");
+
+          if (_width >= 1280 || _height >= 720)
+          {
+            _videoResolution = "HD";
+          }
+          else
+          {
+            _videoResolution = "SD";
+          }
+
+          if (_videoResolution == "HD")
+          {
+            if ((_width >= 7680 || _height >= 4320) && !_isInterlaced)
+            {
+              if (File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\Media\Logos\4320P.png")) ||
+                  File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\Media\Logos\resolution\4320P.png")))
+              {
+                _videoResolution = "4320P";
+              }
+            }
+            else if ((_width >= 3840 || _height >= 2160) && !_isInterlaced)
+            {
+              if (File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\Media\Logos\2160P.png")) ||
+                  File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\Media\Logos\resolution\2160P.png")))
+              {
+                _videoResolution = "2160P";
+              }
+            }
+            else if ((_width >= 1920 || _height >= 1080) && _isInterlaced)
+            {
+              _videoResolution = "1080I";
+            }
+            else if ((_width >= 1920 || _height >= 1080) && !_isInterlaced)
+            {
+              _videoResolution = "1080P";
+            }
+            else if ((_width >= 1280 || _height >= 720) && !_isInterlaced)
+            {
+              _videoResolution = "720P";
             }
           }
-          else if ((_width >= 1920 || _height >= 1080) && _isInterlaced)
+          else
           {
-            _videoResolution = "1080I";
-          }
-          else if ((_width >= 1920 || _height >= 1080) && !_isInterlaced)
-          {
-            _videoResolution = "1080P";
-          }
-          else if ((_width >= 1280 || _height >= 720) && !_isInterlaced)
-          {
-            _videoResolution = "720P";
-          }
-        }
-        else 
-        {
-          if (_height >= 576)
-          {
-            if (File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\Media\Logos\576.png")) ||
-              File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\Media\Logos\resolution\576.png")))
+            if (_height >= 576)
             {
-              _videoResolution = "576";
+              if (File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\Media\Logos\576.png")) ||
+                  File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\Media\Logos\resolution\576.png")))
+              {
+                _videoResolution = "576";
+              }
+            }
+            else if (_height >= 480)
+            {
+              if (File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\Media\Logos\480.png")) ||
+                  File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\Media\Logos\resolution\480.png")))
+              {
+                _videoResolution = "480";
+              }
+            }
+            else if (_height >= 360)
+            {
+              if (File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\Media\Logos\360.png")) ||
+                  File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\Media\Logos\resolution\360.png")))
+              {
+                _videoResolution = "360";
+              }
+            }
+            else if (_height >= 240)
+            {
+              if (File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\Media\Logos\240.png")) ||
+                  File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\Media\Logos\resolution\240.png")))
+              {
+                _videoResolution = "240";
+              }
             }
           }
-          else if (_height >= 480)
+
+          if (_videoDuration == 0)
           {
-            if (File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\Media\Logos\480.png")) ||
-              File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\Media\Logos\resolution\480.png")))
+            int.TryParse(_mI.Get(StreamKind.Video, 0, "Duration"), out _videoDuration);
+          }
+
+          //Audio
+          int iAudioStreams = _mI.Count_Get(StreamKind.Audio);
+          for (int i = 0; i < iAudioStreams; i++)
+          {
+            int intValue;
+
+            string sChannels = _mI.Get(StreamKind.Audio, i, "Channel(s)").Split(new char[] {'/'})[0].Trim();
+
+            if (int.TryParse(sChannels, out intValue) && intValue > _audioChannels)
             {
-              _videoResolution = "480";
+              int.TryParse(_mI.Get(StreamKind.Audio, i, "SamplingRate"), out _audioRate);
+              _audioChannels = intValue;
+              _audioCodec = GetFullCodecName(StreamKind.Audio, i);
             }
           }
-          else if (_height >= 360)
+
+          switch (_audioChannels)
           {
-            if (File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\Media\Logos\360.png")) ||
-              File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\Media\Logos\resolution\360.png")))
-            {
-              _videoResolution = "360";
-            }
+            case 8:
+              _audioChannelsFriendly = "7.1";
+              break;
+            case 7:
+              _audioChannelsFriendly = "6.1";
+              break;
+            case 6:
+              _audioChannelsFriendly = "5.1";
+              break;
+            case 2:
+              _audioChannelsFriendly = "stereo";
+              break;
+            case 1:
+              _audioChannelsFriendly = "mono";
+              break;
+            default:
+              _audioChannelsFriendly = _audioChannels.ToString();
+              break;
           }
-          else if (_height >= 240)
+
+          //Detection
+          _hasAudio = _mI.Count_Get(StreamKind.Audio) > 0;
+          _hasVideo = _mI.Count_Get(StreamKind.Video) > 0;
+
+          //Subtitles
+          _numsubtitles = _mI.Count_Get(StreamKind.Text);
+
+          if (checkHasExternalSubtitles(strFile))
           {
-            if (File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\Media\Logos\240.png")) ||
-              File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\Media\Logos\resolution\240.png")))
-            {
-              _videoResolution = "240";
-            }
+            _hasSubtitles = true;
           }
-        }
-
-        if (_videoDuration == 0)
-        {
-          int.TryParse(_mI.Get(StreamKind.Video, 0, "Duration"), out _videoDuration);
-        }
-
-        //Audio
-        int iAudioStreams = _mI.Count_Get(StreamKind.Audio);
-        for (int i = 0; i < iAudioStreams; i++)
-        {
-          int intValue;
-
-          string sChannels = _mI.Get(StreamKind.Audio, i, "Channel(s)").Split(new char[] {'/'})[0].Trim();
-
-          if (int.TryParse(sChannels, out intValue) && intValue > _audioChannels)
+          else
           {
-            int.TryParse(_mI.Get(StreamKind.Audio, i, "SamplingRate"), out _audioRate);
-            _audioChannels = intValue;
-            _audioCodec = GetFullCodecName(StreamKind.Audio, i);
+            _hasSubtitles = _numsubtitles > 0;
+          }
+
+          var sct = _mI.Count_Get(StreamKind.Text);
+
+          for (var i = 0; i < sct; ++i)
+          {
+            var format = _mI.Get(StreamKind.Text, i, "Format").ToLowerInvariant();
+            _subtitleFormatsDetected.Add(format.ToLowerInvariant());
+          }
+
+          Log.Debug("MediaInfoWrapper.MediaInfoWrapper: DLL Version      : {0}", _mI.Option("Info_Version"));
+          Log.Info("MediaInfoWrapper.MediaInfoWrapper: Inspecting media : {0}", strFile);
+          Log.Debug("MediaInfoWrapper.MediaInfoWrapper: Parse speed      : {0}", _ParseSpeed);
+          //Video
+          Log.Debug("MediaInfoWrapper.MediaInfoWrapper: FrameRate        : {0}", _framerate);
+          Log.Debug("MediaInfoWrapper.MediaInfoWrapper: Width            : {0}", _width);
+          Log.Debug("MediaInfoWrapper.MediaInfoWrapper: Height           : {0}", _height);
+          Log.Debug("MediaInfoWrapper.MediaInfoWrapper: AspectRatio      : {0}", _aspectRatio);
+          Log.Debug("MediaInfoWrapper.MediaInfoWrapper: VideoCodec       : {0} [ \"{1}.png\" ]", _videoCodec,
+            Util.Utils.MakeFileName(_videoCodec).ToLowerInvariant());
+          Log.Debug("MediaInfoWrapper.MediaInfoWrapper: Scan type        : {0}", _scanType);
+          Log.Debug("MediaInfoWrapper.MediaInfoWrapper: IsInterlaced     : {0}", _isInterlaced);
+          Log.Debug("MediaInfoWrapper.MediaInfoWrapper: VideoResolution  : {0}", _videoResolution);
+          Log.Debug("MediaInfoWrapper.MediaInfoWrapper: VideoDuration    : {0}", _videoDuration);
+          //Audio
+          Log.Debug("MediaInfoWrapper.MediaInfoWrapper: AudioRate        : {0}", _audioRate);
+          Log.Debug("MediaInfoWrapper.MediaInfoWrapper: AudioChannels    : {0} [ \"{1}.png\" ]", _audioChannels,
+            _audioChannelsFriendly);
+          Log.Debug("MediaInfoWrapper.MediaInfoWrapper: AudioCodec       : {0} [ \"{1}.png\" ]", _audioCodec,
+            Util.Utils.MakeFileName(_audioCodec).ToLowerInvariant());
+          //Detection
+          Log.Debug("MediaInfoWrapper.MediaInfoWrapper: HasAudio         : {0}", _hasAudio);
+          Log.Debug("MediaInfoWrapper.MediaInfoWrapper: HasVideo         : {0}", _hasVideo);
+          //Subtitles
+          Log.Debug("MediaInfoWrapper.MediaInfoWrapper: HasSubtitles     : {0}", _hasSubtitles);
+          Log.Debug("MediaInfoWrapper.MediaInfoWrapper: NumSubtitles     : {0}", _numsubtitles);
+        }
+        catch (Exception)
+        {
+          Log.Error(
+            "MediaInfoWrapper.MediaInfoWrapper: Error occurred while scanning media: '{0}'",
+            strFile);
+        }
+        finally
+        {
+          if (_mI != null)
+          {
+            _mI.Close();
+            Log.Debug("MediaInfoWrapper.MediaInfoWrapper: Closing file : {0}", strFile);
           }
         }
-
-        switch (_audioChannels)
-        {
-          case 8:
-            _audioChannelsFriendly = "7.1";
-            break;
-          case 7:
-            _audioChannelsFriendly = "6.1";
-            break;
-          case 6:
-            _audioChannelsFriendly = "5.1";
-            break;
-          case 2:
-            _audioChannelsFriendly = "stereo";
-            break;
-          case 1:
-            _audioChannelsFriendly = "mono";
-            break;
-          default:
-            _audioChannelsFriendly = _audioChannels.ToString();
-            break;
-        }
-
-        //Detection
-        _hasAudio = _mI.Count_Get(StreamKind.Audio) > 0;
-        _hasVideo = _mI.Count_Get(StreamKind.Video) > 0;
-
-        //Subtitles
-        _numsubtitles = _mI.Count_Get(StreamKind.Text);
-
-        if (checkHasExternalSubtitles(strFile))
-        {
-          _hasSubtitles = true;
-        }
-        else
-        {
-          _hasSubtitles = _numsubtitles > 0;
-        }
-
-        var sct = _mI.Count_Get(StreamKind.Text);
-
-        for (var i = 0; i < sct; ++i)
-        {
-          var format = _mI.Get(StreamKind.Text, i, "Format").ToLowerInvariant();
-          _subtitleFormatsDetected.Add(format.ToLowerInvariant());
-        }
-
-        Log.Debug("MediaInfoWrapper.MediaInfoWrapper: DLL Version      : {0}", _mI.Option("Info_Version"));
-        Log.Info("MediaInfoWrapper.MediaInfoWrapper: Inspecting media : {0}", strFile);
-        Log.Debug("MediaInfoWrapper.MediaInfoWrapper: Parse speed      : {0}", _ParseSpeed);
-        //Video
-        Log.Debug("MediaInfoWrapper.MediaInfoWrapper: FrameRate        : {0}", _framerate);
-        Log.Debug("MediaInfoWrapper.MediaInfoWrapper: Width            : {0}", _width);
-        Log.Debug("MediaInfoWrapper.MediaInfoWrapper: Height           : {0}", _height);
-        Log.Debug("MediaInfoWrapper.MediaInfoWrapper: AspectRatio      : {0}", _aspectRatio);
-        Log.Debug("MediaInfoWrapper.MediaInfoWrapper: VideoCodec       : {0} [ \"{1}.png\" ]", _videoCodec,
-                 Util.Utils.MakeFileName(_videoCodec).ToLowerInvariant());
-        Log.Debug("MediaInfoWrapper.MediaInfoWrapper: Scan type        : {0}", _scanType);
-        Log.Debug("MediaInfoWrapper.MediaInfoWrapper: IsInterlaced     : {0}", _isInterlaced);
-        Log.Debug("MediaInfoWrapper.MediaInfoWrapper: VideoResolution  : {0}", _videoResolution);
-        Log.Debug("MediaInfoWrapper.MediaInfoWrapper: VideoDuration    : {0}", _videoDuration);
-        //Audio
-        Log.Debug("MediaInfoWrapper.MediaInfoWrapper: AudioRate        : {0}", _audioRate);
-        Log.Debug("MediaInfoWrapper.MediaInfoWrapper: AudioChannels    : {0} [ \"{1}.png\" ]", _audioChannels,
-                 _audioChannelsFriendly);
-        Log.Debug("MediaInfoWrapper.MediaInfoWrapper: AudioCodec       : {0} [ \"{1}.png\" ]", _audioCodec,
-                 Util.Utils.MakeFileName(_audioCodec).ToLowerInvariant());
-        //Detection
-        Log.Debug("MediaInfoWrapper.MediaInfoWrapper: HasAudio         : {0}", _hasAudio);
-        Log.Debug("MediaInfoWrapper.MediaInfoWrapper: HasVideo         : {0}", _hasVideo);
-        //Subtitles
-        Log.Debug("MediaInfoWrapper.MediaInfoWrapper: HasSubtitles     : {0}", _hasSubtitles);
-        Log.Debug("MediaInfoWrapper.MediaInfoWrapper: NumSubtitles     : {0}", _numsubtitles);
-      }
-      catch (Exception)
-      {
-        Log.Error(
-          "MediaInfoWrapper.MediaInfoWrapper: Error occurred while scanning media: '{0}'",
-          strFile);
-      }
-      finally
-      {
-        if (_mI != null)
-        {
-          _mI.Close();
-          Log.Debug("MediaInfoWrapper.MediaInfoWrapper: Closing file : {0}", strFile);
-        }
-      }
+      }).Start();
     }
 
     #endregion
