@@ -745,13 +745,26 @@ namespace MediaPortal.GUI.Video
         case 830: // Reset watched status
           movie.Watched = 0;
           VideoDatabase.SetWatched(movie);
+          VideoDatabase.SetMovieWatchedStatus(movie.ID, false, 0);
+          VideoDatabase.SetMovieStopTime(movie.ID, 0);
+          VideoDatabase.SetMovieWatchedCount(movie.ID, 0);
           item.IsPlayed = false;
+          LoadDirectory(_currentFolder);
           break;
 
         case 1260: // Set watched status
           movie.Watched = 1;
           VideoDatabase.SetWatched(movie);
+          VideoDatabase.SetMovieWatchedStatus(movie.ID, true, 100);
+          int iPercent = 100;
+          int iTimesWatched = 0;
+          VideoDatabase.GetmovieWatchedStatus(movie.ID, out iPercent, out iTimesWatched);
+          if (iTimesWatched <= 0)
+          {
+            VideoDatabase.MovieWatchedCountIncrease(movie.ID);
+          }
           item.IsPlayed = true;
+          LoadDirectory(_currentFolder);
           break;
       }
     }
