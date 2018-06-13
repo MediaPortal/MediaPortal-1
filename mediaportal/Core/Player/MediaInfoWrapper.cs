@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2018 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2018 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -229,7 +229,11 @@ namespace MediaPortal.Player
           _scanType = _mI.Get(StreamKind.Video, 0, "ScanType").ToLowerInvariant();
           _isInterlaced = _scanType.Contains("interlaced");
 
-          if (_width >= 1280 || _height >= 720)
+          if (_width >= 3840 || _height >= 2160)
+          {
+            _videoResolution = "UHD";
+          }
+          else if (_width >= 1280 || _height >= 720)
           {
             _videoResolution = "HD";
           }
@@ -238,23 +242,22 @@ namespace MediaPortal.Player
             _videoResolution = "SD";
           }
 
-          if (_videoResolution == "HD")
+          if (_videoResolution == "UHD")
           {
             if ((_width >= 7680 || _height >= 4320) && !_isInterlaced)
             {
-              if (File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\Media\Logos\4320P.png")) ||
-                  File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\Media\Logos\resolution\4320P.png")))
-              {
-                _videoResolution = "4320P";
-              }
+              _videoResolution = "4320P";
             }
             else if ((_width >= 3840 || _height >= 2160) && !_isInterlaced)
             {
-              if (File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\Media\Logos\2160P.png")) ||
-                  File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\Media\Logos\resolution\2160P.png")))
-              {
-                _videoResolution = "2160P";
-              }
+              _videoResolution = "2160P";
+            }
+          }
+          else if (_videoResolution == "HD")
+          {
+            if ((_width >= 2560 || _height >= 1440) && !_isInterlaced)
+            {
+              _videoResolution = "1440P";
             }
             else if ((_width >= 1920 || _height >= 1080) && _isInterlaced)
             {
@@ -263,6 +266,10 @@ namespace MediaPortal.Player
             else if ((_width >= 1920 || _height >= 1080) && !_isInterlaced)
             {
               _videoResolution = "1080P";
+            }
+            else if ((_width >= 1280 || _height >= 720) && _isInterlaced)
+            {
+              _videoResolution = "720I";
             }
             else if ((_width >= 1280 || _height >= 720) && !_isInterlaced)
             {
@@ -273,35 +280,19 @@ namespace MediaPortal.Player
           {
             if (_height >= 576)
             {
-              if (File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\Media\Logos\576.png")) ||
-                  File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\Media\Logos\resolution\576.png")))
-              {
-                _videoResolution = "576";
-              }
+              _videoResolution = "576";
             }
             else if (_height >= 480)
             {
-              if (File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\Media\Logos\480.png")) ||
-                  File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\Media\Logos\resolution\480.png")))
-              {
-                _videoResolution = "480";
-              }
+              _videoResolution = "480";
             }
             else if (_height >= 360)
             {
-              if (File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\Media\Logos\360.png")) ||
-                  File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\Media\Logos\resolution\360.png")))
-              {
-                _videoResolution = "360";
-              }
+              _videoResolution = "360";
             }
             else if (_height >= 240)
             {
-              if (File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\Media\Logos\240.png")) ||
-                  File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\Media\Logos\resolution\240.png")))
-              {
-                _videoResolution = "240";
-              }
+              _videoResolution = "240";
             }
           }
 

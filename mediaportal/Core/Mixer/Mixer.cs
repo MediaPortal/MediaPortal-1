@@ -154,7 +154,10 @@ namespace MediaPortal.Mixer
 
     private void DispatchingTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
     {
-      CheckAudioLevels();
+      if (OSInfo.OSInfo.Win7OrLater())
+      {
+        CheckAudioLevels();
+      }
       _dispatchingTimer?.Start(); // trigger next timer
     }
 
@@ -636,15 +639,18 @@ namespace MediaPortal.Mixer
           VolumeHandler.Instance.mixer_UpdateVolume();
           _isInternalVolumeChange = false;
 
-          // For audio session
-          new Thread(() =>
+          if (OSInfo.OSInfo.Win7OrLater())
           {
-            _isInternalVolumeChange = true;
-            Thread.CurrentThread.IsBackground = true;
-            CheckAudioLevels();
-            Log.Debug("Mixer: CheckAudioLevels");
-            _isInternalVolumeChange = false;
-          }).Start();
+            // For audio session
+            new Thread(() =>
+            {
+              _isInternalVolumeChange = true;
+              Thread.CurrentThread.IsBackground = true;
+              CheckAudioLevels();
+              Log.Debug("Mixer: CheckAudioLevels");
+              _isInternalVolumeChange = false;
+            }).Start();
+          }
         }
         catch (Exception)
         {
