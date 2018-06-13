@@ -101,6 +101,8 @@ namespace TvPlugin
     private bool _useHdProgramIcon = false;
     private string _hdtvProgramText = String.Empty;
     private bool _guideContinuousScroll = false;
+    private string _fileMenuPinCode = String.Empty;
+    private bool _fileMenuEnabled = false;
 
     // current minimum/maximum indexes
     //private int MaxXIndex; // means rows here (channels)
@@ -155,6 +157,8 @@ namespace TvPlugin
         _hdtvProgramText = xmlreader.GetValueAsString("mytv", "hdtvProgramText", "(HDTV)");
         _guideContinuousScroll = xmlreader.GetValueAsBool("mytv", "continuousScrollGuide", false);
         _loopDelay = xmlreader.GetValueAsInt("gui", "listLoopDelay", 0);
+        _fileMenuEnabled = xmlreader.GetValueAsBool("filemenu", "enabled", true);
+        _fileMenuPinCode = Utils.DecryptPassword(xmlreader.GetValueAsString("filemenu", "pincode", string.Empty));
 
         // Load the genre map.
         if (_mpGenres == null)
@@ -3572,8 +3576,39 @@ namespace TvPlugin
       }
     }
 
+    private bool UnlockChannelEditor()
+    {
+      if (!_fileMenuEnabled || _fileMenuEnabled && _fileMenuPinCode == String.Empty)
+      {
+        return true;
+      }
+      VirtualKeyboard keyboard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)Window.WINDOW_VIRTUAL_KEYBOARD);
+
+      if (null == keyboard)
+      {
+        return false;
+      }
+
+      keyboard.IsSearchKeyboard = true;
+      keyboard.Reset();
+      keyboard.Password = true;
+      keyboard.Text = string.Empty;
+      keyboard.DoModal(GUIWindowManager.ActiveWindow); // show it...
+
+      if (keyboard.IsConfirmed && keyboard.Text == _fileMenuPinCode)
+      {
+        return true;
+      }
+      return false;
+    }
+
     private void OnRemoveChannel()
     {
+      if (!UnlockChannelEditor())
+      {
+        return;
+      }
+
       GUIDialogYesNo GUIDialogYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
 
       if (GUIDialogYesNo == null)
@@ -3628,6 +3663,11 @@ namespace TvPlugin
 
     private void OnAddChannelToGroup()
     {
+      if (!UnlockChannelEditor())
+      {
+        return;
+      }
+
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
       if (dlg == null)
       {
