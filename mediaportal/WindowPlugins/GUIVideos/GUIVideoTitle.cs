@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2017 Team MediaPortal
+#region Copyright (C) 2005-2018 Team MediaPortal
 
-// Copyright (C) 2005-2017 Team MediaPortal
+// Copyright (C) 2005-2018 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -96,6 +96,7 @@ namespace MediaPortal.GUI.Video
     private int _scanningFileTotal = 1;
     private Thread _setThumbs;
     private ArrayList _threadGUIItems = new ArrayList();
+    private bool _fileMenuEnabled;
     // Search movie/actor
     private static bool _searchMovie = false;
     private static bool _searchActor = false;
@@ -128,6 +129,7 @@ namespace MediaPortal.GUI.Video
       using (Profile.Settings xmlreader = new MPSettings())
       {
         _movieInfoBeforePlay = xmlreader.GetValueAsBool("moviedatabase", "movieinfobeforeplay", false);
+        _fileMenuEnabled = xmlreader.GetValueAsBool("filemenu", "enabled", true);
       }
 
       currentFolder = string.Empty;
@@ -312,6 +314,12 @@ namespace MediaPortal.GUI.Video
           }
         }
         return;
+      }
+      if (action.wID == Action.ActionType.ACTION_DELETE_ITEM && _fileMenuEnabled)
+      {
+        GUIListItem item = facadeLayout.SelectedListItem;
+        DoDeleteItem(item, true);
+        LoadDirectory(currentFolder);
       }
       if (action.wID == Action.ActionType.ACTION_PLAY || action.wID == Action.ActionType.ACTION_MUSIC_PLAY)
       {
@@ -1778,24 +1786,62 @@ namespace MediaPortal.GUI.Video
         return;
       }
 
-      GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_YES_NO);
-      if (null == dlgYesNo)
+      bool deleteFile = false;
+      if (_fileMenuEnabled)
       {
-        return;
+        GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
+
+        if (dlg == null)
+        {
+          return;
+        }
+
+        // Context menu on movie title
+        dlg.Reset();
+        dlg.SetHeading(498); // menu
+
+        dlg.AddLocalizedString(432); // Delete movie from database
+        dlg.AddLocalizedString(992); // Delete original file
+          
+        dlg.DoModal(GetID);
+
+        if (dlg.SelectedLabel == -1)
+        {
+          return;
+        }
+        
+        switch (dlg.SelectedId)
+        {
+          case 432:
+            deleteFile = false;
+            break;
+          case 992:
+            deleteFile = true;
+            break;
+        }
+      }
+      
+      if (!deleteFile)
+      {
+        GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_YES_NO);
+        if (null == dlgYesNo)
+        {
+          return;
+        }
+
+        dlgYesNo.SetHeading(GUILocalizeStrings.Get(925));
+        dlgYesNo.SetLine(1, movie.Title);
+        dlgYesNo.SetLine(2, string.Empty);
+        dlgYesNo.SetLine(3, string.Empty);
+        dlgYesNo.DoModal(GetID);
+
+        if (!dlgYesNo.IsConfirmed)
+        {
+          return;
+        }
       }
 
-      dlgYesNo.SetHeading(GUILocalizeStrings.Get(925));
-      dlgYesNo.SetLine(1, movie.Title);
-      dlgYesNo.SetLine(2, string.Empty);
-      dlgYesNo.SetLine(3, string.Empty);
-      dlgYesNo.DoModal(GetID);
-
-      if (!dlgYesNo.IsConfirmed)
-      {
-        return;
-      }
-
-      DoDeleteItem(item);
+      DoDeleteItem(item, deleteFile);
       currentSelectedItem = facadeLayout.SelectedListItemIndex;
 
       if (currentSelectedItem > 0)
@@ -1811,8 +1857,17 @@ namespace MediaPortal.GUI.Video
       }
     }
 
-    private void DoDeleteItem(GUIListItem item)
+    private void DoDeleteItem(GUIListItem item, bool deleteFile)
     {
+      if (item == null)
+      {
+        return;
+      }
+      if (item.IsFolder)
+      {
+        return;
+      }
+
       IMDBMovie movie = item.AlbumInfoTag as IMDBMovie;
 
       if (movie == null)
@@ -1825,17 +1880,65 @@ namespace MediaPortal.GUI.Video
         return;
       }
 
-      if (item.IsFolder)
+      if (!item.IsRemote)
+      {
+        if (deleteFile)
+        {
+          // Delete file and info from DB
+          OnShowFileMenu(true);
+        }
+        else
+        {
+          // Delete only info from DB
+          VideoDatabase.DeleteMovieInfoById(movie.ID);
+        }
+      }
+    }
+
+    private void OnShowFileMenu(bool preselectDelete)
+    {
+      GUIListItem item = facadeLayout.SelectedListItem;
+
+      if (item == null)
       {
         return;
       }
 
-      if (!item.IsRemote)
+      if (item.IsFolder || item.Label == "..")
       {
-        VideoDatabase.DeleteMovieInfoById(movie.ID);
+        return;
       }
+
+      if (item.IsRemote)
+      {
+        return;
+      }
+
+      // init
+      GUIDialogFile dlgFile = (GUIDialogFile)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_FILE);
+
+      if (dlgFile == null)
+      {
+        return;
+      }
+
+      // File operation settings
+      dlgFile.SetSourceItem(item);
+      dlgFile.SetSourceDir(currentFolder);
+      dlgFile.SetDestinationDir(string.Empty);
+      dlgFile.SetDirectoryStructure(null);
+
+      if (preselectDelete)
+      {
+        dlgFile.PreselectDelete();
+      }
+
+      dlgFile.DoModal(GetID);
+
+      dlgFile.DeInit();
+      dlgFile = null;
     }
-    
+
     private void OnVideoArtistInfo(IMDBActor actor)
     {
       GUIVideoArtistInfo infoDlg =
