@@ -123,7 +123,7 @@ namespace MediaPortal
     protected bool                 ShuttingDown;             // set to true if MP is shutting down
     protected bool                 AutoHideMouse;            // Should the mouse cursor be hidden automatically?
     protected bool                 AppActive;                // set to true while MP is active
-    protected bool                 NeedRecreateSwapChain;    // set to true if recreate swap chain is needed
+    //protected bool                 NeedRecreateSwapChain;    // set to true if recreate swap chain is needed
     protected bool                 MouseCursor;              // holds the current mouse cursor state
     protected bool                 Windowed;                 // are we in windowed mode?
     protected bool                 AutoHideTaskbar;          // Should the Task Bar be hidden?
@@ -510,6 +510,12 @@ namespace MediaPortal
         GUIGraphicsContext.DX9Device.DeviceLost -= OnDeviceLost;
       }
 
+      // Suspending GUIGraphicsContext.State
+      if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
+      {
+        GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.SUSPENDING;
+      }
+
       // Reset DialogMenu to avoid freeze when going to fullscreen/windowed
       var dialogMenu = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
       if (dialogMenu != null &&
@@ -619,9 +625,9 @@ namespace MediaPortal
         GUIGraphicsContext.ForceMadVRRefresh = true;
       }
 
-      // Force a madVR refresh to resize MP window
-      // TODO how to handle it better
-      g_Player.RefreshMadVrVideo();
+      //// Force a madVR refresh to resize MP window
+      //// TODO how to handle it better
+      //g_Player.RefreshMadVrVideo();
 
       // madVR resize OSD/Video window
       if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
@@ -629,7 +635,13 @@ namespace MediaPortal
       {
         GUIMessage message = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ONDISPLAYMADVRCHANGED, 0, 0, 0, 0, 0, null);
         GUIWindowManager.SendMessage(message);
-        NeedRecreateSwapChain = true;
+        GUIGraphicsContext.NeedRecreateSwapChain = true;
+      }
+
+      // Restore GUIGraphicsContext.State
+      if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.SUSPENDING)
+      {
+        GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.RUNNING;
       }
 
       // enable event handlers
@@ -652,10 +664,10 @@ namespace MediaPortal
             GUIGraphicsContext.Vmr9Active)
         {
           GUIGraphicsContext.ForceMadVRRefresh3D = true;
-          //return;
+          return;
         }
 
-        if (AppActive || NeedRecreateSwapChain)
+        if (AppActive || GUIGraphicsContext.NeedRecreateSwapChain)
         {
           Log.Debug("Main: RecreateSwapChain()");
 
@@ -685,8 +697,8 @@ namespace MediaPortal
           GUIFontManager.Dispose();
           GUITextureManager.Dispose();
           // Don't need to resize when using madVR
-          //if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR ||
-          //    !GUIGraphicsContext.Vmr9Active)
+          if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR ||
+              !GUIGraphicsContext.Vmr9Active)
           {
             if (GUIGraphicsContext.DX9Device != null)
             {
@@ -792,7 +804,7 @@ namespace MediaPortal
 
           // continue rendering
           AppActive = true;
-          NeedRecreateSwapChain = false;
+          GUIGraphicsContext.NeedRecreateSwapChain = false;
 
           if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
           {
@@ -2214,6 +2226,18 @@ namespace MediaPortal
     /// </summary>
     private void ToggleMiniTV()
     {
+      // disable event handlers
+      if (GUIGraphicsContext.DX9Device != null)
+      {
+        GUIGraphicsContext.DX9Device.DeviceLost -= OnDeviceLost;
+      }
+
+      // Restore GUIGraphicsContext.State
+      if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
+      {
+        GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.SUSPENDING;
+      }
+
       if (Windowed)
       {
         _miniTvMode             = !_miniTvMode;
@@ -2242,20 +2266,33 @@ namespace MediaPortal
         ClientSize = size;
         TopMost = _alwaysOnTop;
 
-        // Force a madVR refresh to resize MP window
-        // TODO how to handle it better
-        g_Player.RefreshMadVrVideo();
+        //// Force a madVR refresh to resize MP window
+        //// TODO how to handle it better
+        //g_Player.RefreshMadVrVideo();
         GUIGraphicsContext.ForceMadVRRefresh3D = true;
+        GUIGraphicsContext.ForceMadVRRefresh = true;
 
         if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
             GUIGraphicsContext.InVmr9Render && !IsToggleMiniTV)
         {
           GUIMessage message = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ONDISPLAYMADVRCHANGED, 0, 0, 0, 0, 0, null);
           GUIWindowManager.SendMessage(message);
-          NeedRecreateSwapChain = true;
+          GUIGraphicsContext.NeedRecreateSwapChain = true;
         }
         // for madVR resize
         IsToggleMiniTV = false;
+      }
+
+      // Restore GUIGraphicsContext.State
+      if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.SUSPENDING)
+      {
+        GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.RUNNING;
+      }
+
+      // disable event handlers
+      if (GUIGraphicsContext.DX9Device != null)
+      {
+        GUIGraphicsContext.DX9Device.DeviceLost += OnDeviceLost;
       }
     }
 

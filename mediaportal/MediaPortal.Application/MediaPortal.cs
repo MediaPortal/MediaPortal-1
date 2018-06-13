@@ -1650,6 +1650,12 @@ public class MediaPortalApp : D3D, IRender
 
         // handle display changes
         case WM_DISPLAYCHANGE:
+          // Don't change display change on suspend
+          if (_suspended)
+          {
+            return;
+          }
+
           // disable event handlers
           if (GUIGraphicsContext.DX9Device != null)
           {
@@ -1674,7 +1680,7 @@ public class MediaPortalApp : D3D, IRender
               !Equals(screen.Bounds.Size.Width, GUIGraphicsContext.currentScreen.Bounds.Width) ||
               !Equals(screen.Bounds.Size.Height, GUIGraphicsContext.currentScreen.Bounds.Height))
             {
-              NeedRecreateSwapChain = true;
+              GUIGraphicsContext.NeedRecreateSwapChain = true;
             }
             GUIGraphicsContext.ForceMadVRRefresh = true;
 
@@ -2436,7 +2442,7 @@ public class MediaPortalApp : D3D, IRender
         Log.Debug("Main: Screen MP OnDisplayChange set current detected screen bounds : {0} to previous bounds values : {1}", GUIGraphicsContext.currentScreen.Bounds, Bounds);
         Bounds = screen.Bounds;
         Log.Debug("Main: Screen MP OnDisplayChange recreate swap chain");
-        NeedRecreateSwapChain = true;
+        GUIGraphicsContext.NeedRecreateSwapChain = true;
         RecreateSwapChain(false);
         _changeScreenDisplayChange = true;
       }
@@ -2551,7 +2557,7 @@ public class MediaPortalApp : D3D, IRender
         Log.Debug("Main: Screen MP OnGetMinMaxInfo set current screen bounds {0} to Bounds {1}", GUIGraphicsContext.currentScreen.Bounds, Bounds);
         Bounds = screen.Bounds;
         Log.Debug("Main: Screen MP OnGetMinMaxInfo recreate swap chain");
-        NeedRecreateSwapChain = true;
+        GUIGraphicsContext.NeedRecreateSwapChain = true;
         RecreateSwapChain(false);
         _changeScreen = true;
 
@@ -2921,12 +2927,28 @@ public class MediaPortalApp : D3D, IRender
     if (GUIGraphicsContext.IsPlaying)
     {
       Currentmodulefullscreen();
-      g_Player.Stop();
-      while (GUIGraphicsContext.IsPlaying)
+      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
       {
-        // This could lead into OS putting system into sleep before MP completes OnSuspend().
-        // OS gives only 2 seconds time to application to react power events (>= Vista)
-        Thread.Sleep(100);
+        if (VMR9Util.g_vmr9 != null)
+        {
+          if (VMR9Util.g_vmr9.Vmr9Filter != null)
+          {
+            MadvrInterface.restoreDisplayModeNow(VMR9Util.g_vmr9.Vmr9Filter);
+          }
+        }
+        Currentmodulefullscreen();
+        var action = new Action(Action.ActionType.ACTION_STOP, 0, 0);
+        GUIGraphicsContext.OnAction(action);
+      }
+      else
+      {
+        g_Player.Stop();
+        while (GUIGraphicsContext.IsPlaying)
+        {
+          // This could lead into OS putting system into sleep before MP completes OnSuspend().
+          // OS gives only 2 seconds time to application to react power events (>= Vista)
+          Thread.Sleep(100);
+        }
       }
     }
     SaveLastActiveModule();
@@ -3262,7 +3284,7 @@ public class MediaPortalApp : D3D, IRender
       {
         Log.Warn("Main: Could not register for power settings notification GUID_SESSION_DISPLAY_STATUS");
         // initialize volume handler and set volume handler properties
-        GUIGraphicsContext.VolumeHandler.UpdateVolumeProperties();
+        GUIGraphicsContext.VolumeHandler?.UpdateVolumeProperties();
       }
 
       _userPresenceHandle = RegisterPowerSettingNotification(Handle, ref GUID_SESSION_USER_PRESENCE, DEVICE_NOTIFY_WINDOW_HANDLE);
@@ -3762,20 +3784,19 @@ public class MediaPortalApp : D3D, IRender
             // Alert the frame grabber that it has a chance to grab a GUI frame
             // if it likes (method returns immediately otherwise
             grabber.OnFrameGUI();
-
-            // clear the surface
-            GUIGraphicsContext.DX9Device.Clear(ClearFlags.Target, Color.Black, 1.0f, 0);
-            GUIGraphicsContext.DX9Device.BeginScene();
-            CreateStateBlock();
-            GUIGraphicsContext.SetScalingResolution(0, 0, false);
-            // ask the layer manager to render all layers
-            GUILayerManager.Render(timePassed, GUILayers.all);
-            RenderStats();
-            GUIFontManager.Present();
-            GUIGraphicsContext.DX9Device.EndScene();
-            //d3ErrInvalidCallCounter = 0;
             try
             {
+              // clear the surface
+              GUIGraphicsContext.DX9Device.Clear(ClearFlags.Target, Color.Black, 1.0f, 0);
+              GUIGraphicsContext.DX9Device.BeginScene();
+              CreateStateBlock();
+              GUIGraphicsContext.SetScalingResolution(0, 0, false);
+              // ask the layer manager to render all layers
+              GUILayerManager.Render(timePassed, GUILayers.all);
+              RenderStats();
+              GUIFontManager.Present();
+              GUIGraphicsContext.DX9Device.EndScene();
+              //d3ErrInvalidCallCounter = 0;
               // Show the frame on the primary surface.
               GUIGraphicsContext.DX9Device.Present(); //SLOW
             }
@@ -5416,7 +5437,8 @@ public class MediaPortalApp : D3D, IRender
 
         case GUIMessage.MessageType.GUI_MSG_MADVR_SCREEN_REFRESH:
           // We need to do a refresh of screen when using madVR only if resolution screen has change during playback
-          if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && NeedRecreateSwapChain || message.Param1 == 1 || message.Param1 == 2)
+          if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && GUIGraphicsContext.NeedRecreateSwapChain ||
+              message.Param1 == 1 || message.Param1 == 2)
           {
             // disable event handlers
             if (GUIGraphicsContext.DX9Device != null)
@@ -5424,13 +5446,54 @@ public class MediaPortalApp : D3D, IRender
               GUIGraphicsContext.DX9Device.DeviceLost -= OnDeviceLost;
             }
 
-            RecreateSwapChain(false);
-            Log.Debug("Main: recreate swap chain for madVR done");
+            try
+            {
+              // "message.Param1 == 2" is when stopping playback
+              if (GUIGraphicsContext.MadVrRenderTargetVmr9 != null &&
+                  !GUIGraphicsContext.MadVrRenderTargetVmr9.Disposed && message.Param1 == 2)
+              {
+                GUIGraphicsContext.DX9Device?.SetRenderTarget(0, GUIGraphicsContext.MadVrRenderTargetVmr9);
+                GUIGraphicsContext.MadVrRenderTargetVmr9.Dispose();
+                GUIGraphicsContext.MadVrRenderTargetVmr9 = null;
+              }
+
+              // "message.Param1 == 1" is when starting playback
+              if (message.Param1 == 1)
+              {
+                var surface = (Surface) message.Object;
+                if (surface != null &&
+                    !surface.Disposed)
+                {
+                  GUIGraphicsContext.MadVrRenderTargetVmr9 = surface;
+                }
+                g_Player.RefreshMadVrVideo();
+              }
+
+              if (message.Param1 == 2)
+              {
+                // Process frames to clear D3D dialog window
+                for (int i = 0; i < 20; i++)
+                {
+                  GUIWindowManager.MadVrProcess();
+                }
+              }
+
+              Log.Debug("Main: recreate swap chain for madVR done");
+            }
+            catch (Exception)
+            {
+              // ignored
+            }
 
             // Set here Vmr9Active to false to inform plugins that all stop is fully done.
-            if (message.Param1 == 2 && !g_Player.Playing) // When stop is triggered
+            if (message.Param1 == 2 && (!g_Player.Playing || (!g_Player.IsVideo && !g_Player.IsDVD && !g_Player.IsTVRecording && !g_Player.IsTV))) // When stop is triggered)
             {
               GUIGraphicsContext.Vmr9Active = false;
+            }
+
+            if (GUIGraphicsContext.NeedRecreateSwapChain && message.Param1 == 2)
+            {
+              RecreateSwapChain(false);
             }
 
             // enable event handlers

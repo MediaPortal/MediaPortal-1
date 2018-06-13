@@ -149,40 +149,48 @@ namespace MediaPortal.GUI.Library
 
     private static string GetFileName(string fileName)
     {
-      if (fileName.Length == 0)
+      try
       {
+        if (fileName.Length == 0)
+        {
+          return "";
+        }
+        if (fileName == "-")
+        {
+          return "";
+        }
+        string lowerFileName = fileName.ToLowerInvariant().Trim();
+        if (lowerFileName.IndexOf(@"http:", StringComparison.Ordinal) >= 0)
+        {
+          DownloadedImage image;
+          if (!_cacheDownload.TryGetValue(lowerFileName, out image))
+          {
+            image = new DownloadedImage(fileName);
+            _cacheDownload[lowerFileName] = image;
+          }
+
+          if (image.ShouldDownLoad)
+          {
+            image.Download();
+          }
+
+          return image.FileName;
+        }
+
+        if (!MediaPortal.Util.Utils.FileExistsInCache(fileName))
+        {
+          if (!Path.IsPathRooted(fileName))
+          {
+            return GUIGraphicsContext.GetThemedSkinFile(@"\media\" + fileName);
+          }
+        }
+        return fileName;
+      }
+      catch (Exception)
+      {
+        // ignored
         return "";
       }
-      if (fileName == "-")
-      {
-        return "";
-      }
-      string lowerFileName = fileName.ToLowerInvariant().Trim();
-      if (lowerFileName.IndexOf(@"http:") >= 0)
-      {
-        DownloadedImage image;
-        if (!_cacheDownload.TryGetValue(lowerFileName, out image))
-        {
-          image = new DownloadedImage(fileName);
-          _cacheDownload[lowerFileName] = image;
-        }
-
-        if (image.ShouldDownLoad)
-        {
-          image.Download();
-        }
-
-        return image.FileName;
-      }
-
-      if (!MediaPortal.Util.Utils.FileExistsInCache(fileName))
-      {
-        if (!Path.IsPathRooted(fileName))
-        {
-          return GUIGraphicsContext.GetThemedSkinFile(@"\media\" + fileName);
-        }
-      }
-      return fileName;
     }
 
     public static int Load(string fileNameOrg, long lColorKey, int iMaxWidth, int iMaxHeight)

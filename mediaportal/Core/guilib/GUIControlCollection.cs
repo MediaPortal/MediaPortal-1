@@ -88,7 +88,23 @@ namespace MediaPortal.GUI.Library
 
     public void CopyTo(GUIControl[] array, int arrayIndex)
     {
-      list.CopyTo(array, arrayIndex);
+      lock (array)
+      {
+        lock (list)
+        {
+          try
+          {
+            if (array.Length >= list.Count)
+            {
+              list.ToArray().CopyTo(array, arrayIndex);
+            }
+          }
+          catch (Exception e)
+          {
+            // catch exception
+          }
+        }
+      }
     }
 
     public int Count

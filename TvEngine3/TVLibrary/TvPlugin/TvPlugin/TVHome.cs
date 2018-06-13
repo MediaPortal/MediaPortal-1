@@ -883,7 +883,15 @@ namespace TvPlugin
         return;
       }
 
-      g_Player.Stop();
+      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+      {
+        var action = new Action(Action.ActionType.ACTION_STOP, 0, 0);
+        GUIGraphicsContext.OnAction(action);
+      }
+      else
+      {
+        g_Player.Stop();
+      }
     }
 
     private delegate void ShowDlgAsynchDelegate();

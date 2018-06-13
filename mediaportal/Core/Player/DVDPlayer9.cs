@@ -330,7 +330,7 @@ namespace MediaPortal.Player
 
     private void Cleanup()
     {
-      if (_graphBuilder == null)
+      if (_graphBuilder == null || (VMR9Util.g_vmr9 != null && VMR9Util.g_vmr9.isCurrentStopping))
       {
         return;
       }
