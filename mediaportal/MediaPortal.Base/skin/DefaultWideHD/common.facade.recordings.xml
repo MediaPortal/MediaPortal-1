@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <controls>
@@ -18,9 +18,11 @@
           <height>450</height>
           <playedColor>ffffffff</playedColor>
           <playedColor2>ffffffff</playedColor2>
-          <textcolor>ff99f9ff</textcolor>
-          <textcolor2>ff99f9ff</textcolor2>
-          <textcolorNoFocus>ff99f9ff</textcolorNoFocus>
+          <textcolor>ffffffff</textcolor>
+          <textcolor2>ffffffff</textcolor2>
+          <textcolorNoFocus>ffffffff</textcolorNoFocus>
+          <textureFocus>#(iif(eq(#watchedcount,'0'),'button_focus_notwatched.png','button_focus.png'))</textureFocus>
+        <textXOff3>2215</textXOff3>
         </control>
         <control>
           <description>album view listcontrol</description>
