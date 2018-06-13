@@ -26,6 +26,18 @@
       <width>1920</width>
       <height>1080</height>
       <texture>general_overlay.png</texture>
+    </control><control>
+      <description>General Overlay</description>
+      <id>0</id>
+      <type>image</type>
+      <posX>0</posX>
+      <posY>45</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>general_overlay.png</texture>
+      <colordiffuse>99ffffff</colordiffuse>
+      <animation effect="fade" time="300">visible</animation>
+      <animation effect="fade" time="300">hidden</animation>
     </control>
     <control>
       <description>Number of Files Label</description>

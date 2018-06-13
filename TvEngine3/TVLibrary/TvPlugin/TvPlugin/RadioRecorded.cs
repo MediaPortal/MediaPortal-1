@@ -1434,6 +1434,9 @@ namespace TvPlugin
           {
             MediaPortal.Util.Utils.SetDefaultIcons(pItem);
             GUIPropertyManager.SetProperty("#selectedthumb", pItem.IconImageBig);
+            GUIPropertyManager.SetProperty("#iswatched", "no");
+            GUIPropertyManager.SetProperty("#watchedpercent", String.Empty);
+            GUIPropertyManager.SetProperty("#watchedcount", String.Empty);
           }
           return;
         }
@@ -1449,6 +1452,30 @@ namespace TvPlugin
           {
             GUIPropertyManager.SetProperty("#selectedthumb", pItem.ThumbnailImage);
           }
+        }
+
+        TimeSpan duration1 = (rec.EndTime - rec.StartTime);
+
+        if (duration1.TotalSeconds > 0)
+        {
+          int percentWatched = (int)Math.Ceiling((rec.StopTime / duration1.TotalSeconds) * 100);
+
+          GUIPropertyManager.SetProperty("#watchedpercent", percentWatched.ToString());
+        }
+        else
+        {
+          GUIPropertyManager.SetProperty("#watchedpercent", "0");
+        }
+
+        GUIPropertyManager.SetProperty("#watchedcount", rec.TimesWatched.ToString());
+
+        if (rec.TimesWatched > 0)
+        {
+          GUIPropertyManager.SetProperty("#iswatched", "yes");
+        }
+        else
+        {
+          GUIPropertyManager.SetProperty("#iswatched", "no");
         }
       }
       catch (Exception ex)
@@ -1808,6 +1835,10 @@ namespace TvPlugin
         Log.Info("RadioRecorded:{0} no recording found with filename {1}", caller, filename);
       }
 
+      _iSelectedItem = GetSelectedItemNo();
+      LoadDirectory();
+      GUIControl.SelectItemControl(GetID, facadeLayout.GetID, _iSelectedItem);
+
       /*
             if (GUIGraphicsContext.IsTvWindow(GUIWindowManager.ActiveWindow))
             {
@@ -1853,6 +1884,8 @@ namespace TvPlugin
           rec.Persist();
         }
       }
+
+      UpdateProperties();
 
       //@int movieid = VideoDatabase.GetMovieId(filename);
       //@if (movieid < 0) return;
