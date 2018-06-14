@@ -1,6 +1,6 @@
-﻿#region Copyright (C) 2005-2017 Team MediaPortal
+﻿#region Copyright (C) 2005-2018 Team MediaPortal
 
-// Copyright (C) 2005-2017 Team MediaPortal
+// Copyright (C) 2005-2018 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -349,6 +349,16 @@ namespace MediaPortal.Video.Database
     public static bool GetUserGroupWatchedStatus(int group, out int percent)
     {
       return _database.GetUserGroupWatchedStatus(group, out percent);
+    }
+
+    public static void UpdateUserGroupWithRule(int ID)
+    {
+      _database.UpdateUserGroupWithRule(ID);
+    }
+
+    public static void UpdateUserGroupWithRule(int ID, string suffix)
+    {
+      _database.UpdateUserGroupWithRule(ID, suffix);
     }
 
     #endregion

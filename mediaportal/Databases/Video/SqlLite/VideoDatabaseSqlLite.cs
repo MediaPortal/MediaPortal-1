@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2017 Team MediaPortal
+#region Copyright (C) 2005-2018 Team MediaPortal
 
-// Copyright (C) 2005-2017 Team MediaPortal
+// Copyright (C) 2005-2018 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -2459,6 +2459,67 @@ namespace MediaPortal.Video.Database
         Open();
       }
       return false;
+    }
+
+    public void UpdateUserGroupWithRule(int ID)
+    {
+      UpdateUserGroupWithRule(ID, string.Empty);
+    }
+
+    public void UpdateUserGroupWithRule(int ID, string suffix)
+    {
+      if (ID < 0)
+      {
+        return;
+      }
+
+      if (suffix == null)
+      { 
+        suffix = string.Empty;
+      }
+      if (!string.IsNullOrEmpty(suffix))
+      { 
+        suffix = " " + suffix;
+      }
+
+      // Add groups with rules
+      ArrayList groups = new ArrayList();
+      VideoDatabase.GetUserGroups(groups);
+
+      foreach (string group in groups)
+      {
+        string rule = GetUserGroupRule(group);
+
+        if (!string.IsNullOrEmpty(rule))
+        {
+          try
+          {
+            ArrayList values = new ArrayList();
+            bool error = false;
+            string errorMessage = string.Empty;
+            values = VideoDatabase.ExecuteRuleSql(rule, "movieinfo.idMovie", out error, out errorMessage);
+
+            if (error)
+            {
+              Log.Error("VideoDatabase{2}: error executing rule {0} syntax, {1}", rule, errorMessage, suffix);
+              continue;
+            }
+
+            if (values.Count > 0 && values.Contains(ID.ToString()))
+            {
+              AddUserGroupToMovie(ID, VideoDatabase.AddUserGroup(group));
+            }
+            else
+            {
+              RemoveUserGroupFromMovie(ID, VideoDatabase.AddUserGroup(group));
+            }
+          }
+          catch (Exception ex)
+          {
+            Log.Error("VideoDatabase{2}: error importing usergroup rule {0} - {1}", rule, ex.Message, suffix);
+          }
+        }
+      }
     }
 
     #endregion
@@ -7347,43 +7408,9 @@ namespace MediaPortal.Video.Database
             VideoDatabase.SetMovieInfoById(id, ref movie, true);
 
             // Add groups with rules
-            ArrayList groups = new ArrayList();
-            VideoDatabase.GetUserGroups(groups);
-
-            foreach (string group in groups)
-            {
-              string rule = VideoDatabase.GetUserGroupRule(group);
-
-              if (!string.IsNullOrEmpty(rule))
-              {
-                try
-                {
-                  ArrayList values = new ArrayList();
-                  bool error = false;
-                  string errorMessage = string.Empty;
-                  values = VideoDatabase.ExecuteRuleSql(rule, "movieinfo.idMovie", out error, out errorMessage);
-
-                  if (error)
-                  {
-                    Log.Error("VideoDatabase nfo import: error executing rule {0} syntax, {1}", rule, errorMessage);
-                    continue;
-                  }
-
-                  if (values.Count > 0 && values.Contains(movie.ID.ToString()))
-                  {
-                    VideoDatabase.AddUserGroupToMovie(movie.ID, VideoDatabase.AddUserGroup(group));
-                  }
-                }
-                catch (Exception ex)
-                {
-                  Log.Error("VideoDatabase nfo import: error importing usergroup rule {0} - {1}", rule, ex.Message);
-                }
-              }
-            }
+            VideoDatabase.UpdateUserGroupWithRule(movie.ID, "nfo import");
 
             #endregion
-
-            
           }
         }
       }

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2018 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2018 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -4209,7 +4209,10 @@ namespace MediaPortal.GUI.Video
         {
           VideoDatabase.DeleteMovieStopTime(idFile);
         }
+        // Update groups with rules
+        VideoDatabase.UpdateUserGroupWithRule(idMovie);
       }
+
       if (_markWatchedFiles)
       {
         // Update db view watched status for played movie
@@ -4348,6 +4351,8 @@ namespace MediaPortal.GUI.Video
           bool wStatus = VideoDatabase.GetmovieWatchedStatus(idMovie, out percent, out timesWatched);
           VideoDatabase.SetMovieWatchedStatus(idMovie, wStatus, playTimePercentage);
         }
+        // Update groups with rules
+        VideoDatabase.UpdateUserGroupWithRule(idMovie);
       }
     }
 
@@ -4795,6 +4800,8 @@ namespace MediaPortal.GUI.Video
         }
 
         VideoDatabase.SetWatched(movieDetails);
+        // Update groups with rules
+        VideoDatabase.UpdateUserGroupWithRule(movieDetails.ID);
       }
 
       int iTimesWatched = 0;
