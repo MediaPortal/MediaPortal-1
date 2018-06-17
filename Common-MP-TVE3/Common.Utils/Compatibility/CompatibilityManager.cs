@@ -1,6 +1,6 @@
-﻿#region Copyright (C) 2005-2010 Team MediaPortal
+﻿#region Copyright (C) 2005-2018 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2018 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -393,7 +393,9 @@ namespace MediaPortal.Common.Utils
       { new Version("1.14.100.0"), "1.15.0 Pre Release" },
       { new Version("1.15.100.0"), "1.16.0 Pre Release" },
       { new Version("1.16.100.0"), "1.17.0 Pre Release" },
-      { new Version("1.17.100.0"), "1.18.0 Pre Release" }
+      { new Version("1.17.100.0"), "1.18.0 Pre Release" },
+      { new Version("1.18.100.0"), "1.19.0 Pre Release" },
+      { new Version("1.19.100.0"), "1.20.0 Pre Release" }
     };
 
     public static string MediaPortalReleaseForApiVersion(Version apiVersion)

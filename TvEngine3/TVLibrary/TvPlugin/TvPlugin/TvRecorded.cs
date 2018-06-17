@@ -80,6 +80,7 @@ namespace TvPlugin
     private bool _resetSMSsearch = false;
     private bool _oldStateSMSsearch;
     private DateTime _resetSMSsearchDelay;
+    private int _watchedPercentage = 95;
 
     [SkinControl(6)]
     protected GUIButtonControl btnCleanup = null;
@@ -110,6 +111,7 @@ namespace TvPlugin
         m_bSortAscending = xmlreader.GetValueAsBool(SerializeName, "sortasc", true);
         
         string strTmp = xmlreader.GetValueAsString("tvrecorded", "sort", "channel");
+        _watchedPercentage = xmlreader.GetValueAsInt("movies", "playedpercentagewatched", 95);
 
         if (strTmp == "channel")
         {
@@ -1682,6 +1684,9 @@ namespace TvPlugin
           {
             Utils.SetDefaultIcons(pItem);
             GUIPropertyManager.SetProperty("#selectedthumb", pItem.IconImageBig);
+            GUIPropertyManager.SetProperty("#iswatched", "no");
+            GUIPropertyManager.SetProperty("#watchedpercent", String.Empty);
+            GUIPropertyManager.SetProperty("#watchedcount", String.Empty);
           }
           return;
         }
@@ -1698,7 +1703,30 @@ namespace TvPlugin
             GUIPropertyManager.SetProperty("#selectedthumb", pItem.ThumbnailImage);
           }
         }
-        
+
+        TimeSpan duration1 = (rec.EndTime - rec.StartTime);
+
+        if (duration1.TotalSeconds > 0)
+        {
+          int percentWatched = (int)Math.Ceiling((rec.StopTime / duration1.TotalSeconds) * 100);
+
+          GUIPropertyManager.SetProperty("#watchedpercent", percentWatched.ToString());
+        }
+        else
+        {
+          GUIPropertyManager.SetProperty("#watchedpercent", "0");
+        }
+
+        GUIPropertyManager.SetProperty("#watchedcount", rec.TimesWatched.ToString());
+
+        if (rec.TimesWatched > 0)
+        {
+          GUIPropertyManager.SetProperty("#iswatched", "yes");
+        }
+        else
+        {
+          GUIPropertyManager.SetProperty("#iswatched", "no");
+        }
       }
       catch (Exception ex)
       {
@@ -1957,6 +1985,13 @@ namespace TvPlugin
         return;
       }
 
+      int playTimePercentage = 0;
+
+      if (g_Player.Player.Duration >= 1)
+      {
+        playTimePercentage = (int)Math.Ceiling((stoptime / g_Player.Player.Duration) * 100);
+      }
+
       TvBusinessLayer layer = new TvBusinessLayer();
       Recording rec = layer.GetRecordingByFileName(filename);
       if (rec != null)
@@ -1965,8 +2000,15 @@ namespace TvPlugin
         {
           stoptime = 0;
         }
-        ; //temporary workaround before end of stream get's properly implemented
+
         rec.Refresh();
+
+        if (playTimePercentage >= _watchedPercentage)
+        {
+          rec.TimesWatched++;
+        }
+        ; //temporary workaround before end of stream get's properly implemented
+
         rec.StopTime = stoptime;
         rec.Persist();
       }
@@ -2017,6 +2059,7 @@ namespace TvPlugin
         {
           rec.Refresh();
           rec.StopTime = 0;
+          rec.TimesWatched++;
           rec.Persist();
         }
       }

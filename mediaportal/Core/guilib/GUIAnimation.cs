@@ -80,7 +80,6 @@ namespace MediaPortal.GUI.Library
     private bool _borderHasCorners = false;
     private bool _borderCornerTextureRotate = true;
     private bool _tileFill = false;
-    //private static readonly object RenderImageLock = new object(); 
 
     #endregion Fields
 
