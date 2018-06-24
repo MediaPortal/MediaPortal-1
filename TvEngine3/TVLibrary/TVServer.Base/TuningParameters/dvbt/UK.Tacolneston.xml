@@ -1,47 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ArrayOfDVBTTuning xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <!-- PSB1 -->
   <DVBTTuning>
-    <Frequency>746000</Frequency>
+    <Frequency>626000</Frequency>
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
+  <!-- PSB2 -->
   <DVBTTuning>
-    <Frequency>778000</Frequency>
+    <Frequency>650000</Frequency>
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
+  <!-- PSB3 -->
   <DVBTTuning>
-    <Frequency>706000</Frequency>
+    <Frequency>674000</Frequency>
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
+  <!-- COM4 -->
   <DVBTTuning>
     <Frequency>642000</Frequency>
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
+  <!-- COM5 -->
   <DVBTTuning>
     <Frequency>666000</Frequency>
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
+  <!-- COM6 -->
   <DVBTTuning>
     <Frequency>618000</Frequency>
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
+  <!-- COM7 -->
+  <DVBTTuning>
+    <Frequency>746000</Frequency>
+    <BandWidth>8</BandWidth>
+    <Offset>167</Offset>
+  </DVBTTuning>
+  <!-- COM8 -->
+  <DVBTTuning>
+    <Frequency>754000</Frequency>
+    <BandWidth>8</BandWidth>
+    <Offset>167</Offset>
+  </DVBTTuning>
+  <!-- LOC1 [pre-700 180717] -->
   <DVBTTuning>
     <Frequency>762000</Frequency>
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
+  <!-- LOC1 [post-700 180717] -->
   <DVBTTuning>
-    <Frequency>554000</Frequency>
-    <BandWidth>8</BandWidth>
-    <Offset>167</Offset>
-  </DVBTTuning>
-  <DVBTTuning>
-    <Frequency>602000</Frequency>
+    <Frequency>562000</Frequency>
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
