@@ -1540,6 +1540,7 @@ namespace MediaPortal.Player
           if (currentMediaInfoFilePlaying != strFile)
           {
             _mediaInfo = new MediaInfoWrapper(strFile);
+            _mediaInfo.finished.WaitOne(5000);
             currentMediaInfoFilePlaying = strFile;
           }
         }
@@ -3807,6 +3808,7 @@ namespace MediaPortal.Player
         if (_mediaInfo == null && !playingRemoteUrl)
         {
           _mediaInfo = new MediaInfoWrapper(FileName);
+          _mediaInfo.finished.WaitOne(5000);
         }
 
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CODEC_MISSING, 0, 0, 0, 0, 0, null);
