@@ -1112,6 +1112,7 @@ namespace MediaPortal.Video.Database
         {
           g_Player.currentMediaInfoFilePlaying = strFilenameAndPath;
           mInfo = g_Player._mediaInfo = new MediaInfoWrapper(strFilenameAndPath);
+          mInfo.finished.WaitOne(5000);
         }
 
         if (isImage && DaemonTools.IsMounted(strFilenameAndPath))

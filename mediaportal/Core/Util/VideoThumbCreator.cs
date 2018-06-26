@@ -150,6 +150,7 @@ namespace MediaPortal.Util
       bool Success = false;
 
       MediaInfo = new MediaPortal.Player.MediaInfoWrapper(aVideoPath);
+      MediaInfo.finished.WaitOne(5000);
 
       if (MediaInfo != null)
       {
