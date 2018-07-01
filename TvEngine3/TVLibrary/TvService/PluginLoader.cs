@@ -58,7 +58,7 @@ namespace TvService
       }
       catch (Exception)
       {
-        Log.WriteFile("PluginManager: Error while loading dll's");
+        Log.Warn("PluginManager: Error while loading dll's");
       }
     }
 
@@ -95,7 +95,7 @@ namespace TvService
                   {
                     if (!CompatibilityManager.IsPluginCompatible(t, true))
                     {
-                      Log.WriteFile(
+                      Log.Warn(
                         "PluginManager: {0} is incompatible with the current tvserver version and won't be loaded!",
                         t.FullName);
                       continue;                      
@@ -103,23 +103,23 @@ namespace TvService
                     Object newObj = Activator.CreateInstance(t);
                     plugin = (ITvServerPlugin)newObj;
                     _plugins.Add(plugin);
-                    Log.WriteFile("PluginManager: Loaded {0} version:{1} author:{2}", plugin.Name, plugin.Version,
+                    Log.Info("PluginManager: Loaded {0} version:{1} author:{2}", plugin.Name, plugin.Version,
                                   plugin.Author);
                   }
                 }
                 catch (TargetInvocationException ex)
                 {
-                  Log.WriteFile(
+                  Log.Warn(
                     "PluginManager: {0} is incompatible with the current tvserver version and won't be loaded! Ex: {1}",
                     t.FullName, ex);
                   continue;
                 }
                 catch (Exception ex)
                 {
-                  Log.WriteFile("Exception while loading ITvServerPlugin instances: {0}", t.FullName);
-                  Log.WriteFile(ex.ToString());
-                  Log.WriteFile(ex.Message);
-                  Log.WriteFile(ex.StackTrace);
+                  Log.Warn("Exception while loading ITvServerPlugin instances: {0}", t.FullName);
+                  Log.Warn(ex.ToString());
+                  Log.Warn(ex.Message);
+                  Log.Warn(ex.StackTrace);
                 }
               }
             }
@@ -129,10 +129,10 @@ namespace TvService
       }
       catch (Exception ex)
       {
-        Log.WriteFile(
+        Log.Warn(
           "PluginManager: Plugin file {0} is broken or incompatible with the current tvserver version and won't be loaded!",
           strFile.Substring(strFile.LastIndexOf(@"\") + 1));
-        Log.WriteFile("PluginManager: Exception: {0}", ex);
+        Log.Warn("PluginManager: Exception: {0}", ex);
       }
     }
 
