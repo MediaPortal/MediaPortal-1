@@ -1875,9 +1875,13 @@ namespace TvPlugin
         Log.Info("RadioRecorded:{0} no recording found with filename {1}", caller, filename);
       }
 
-      _iSelectedItem = GetSelectedItemNo();
-      LoadDirectory();
-      GUIControl.SelectItemControl(GetID, facadeLayout.GetID, _iSelectedItem);
+      try
+      {
+        _iSelectedItem = GetSelectedItemNo();
+        LoadDirectory();
+        GUIControl.SelectItemControl(GetID, facadeLayout.GetID, _iSelectedItem);
+      }
+      catch (Exception) { }
 
       /*
             if (GUIGraphicsContext.IsTvWindow(GUIWindowManager.ActiveWindow))
@@ -1926,7 +1930,7 @@ namespace TvPlugin
         }
       }
 
-      UpdateProperties();
+        UpdateProperties();
 
       //@int movieid = VideoDatabase.GetMovieId(filename);
       //@if (movieid < 0) return;
