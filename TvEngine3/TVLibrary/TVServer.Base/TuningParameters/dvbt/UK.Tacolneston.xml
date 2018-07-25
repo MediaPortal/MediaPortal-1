@@ -48,13 +48,7 @@
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
-  <!-- LOC1 [pre-700 180717] -->
-  <DVBTTuning>
-    <Frequency>762000</Frequency>
-    <BandWidth>8</BandWidth>
-    <Offset>167</Offset>
-  </DVBTTuning>
-  <!-- LOC1 [post-700 180717] -->
+  <!-- LOC1 -->
   <DVBTTuning>
     <Frequency>562000</Frequency>
     <BandWidth>8</BandWidth>
