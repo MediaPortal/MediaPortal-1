@@ -30,43 +30,49 @@
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
-  <!-- COM6 -->
+  <!-- COM6 [pre-700 03/10/2018] -->
   <DVBTTuning>
     <Frequency>538000</Frequency>
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
-  <!-- COM7 [pre-700 180815] -->
-  <DVBTTuning>
-    <Frequency>562000</Frequency>
-    <BandWidth>8</BandWidth>
-    <Offset>167</Offset>
-  </DVBTTuning>
-  <!-- COM7 [post-700 180815] -->
-  <DVBTTuning>
-    <Frequency>746000</Frequency>
-    <BandWidth>8</BandWidth>
-    <Offset>167</Offset>
-  </DVBTTuning>
-  <!-- COM8 [pre-700 180815] -->
-  <DVBTTuning>
-    <Frequency>586000</Frequency>
-    <BandWidth>8</BandWidth>
-    <Offset>167</Offset>
-  </DVBTTuning>
-  <!-- COM8 [post-700 180815] -->
-  <DVBTTuning>
-    <Frequency>754000</Frequency>
-    <BandWidth>8</BandWidth>
-    <Offset>167</Offset>
-  </DVBTTuning>
-  <!-- LOC1 [pre-700 180815] -->
+  <!-- COM6 [post-700 03/10/2018] -->
   <DVBTTuning>
     <Frequency>546000</Frequency>
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
-  <!-- LOC1 [post-700 180815] -->
+  <!-- COM7 [pre-700 15/08/2018] -->
+  <DVBTTuning>
+    <Frequency>562000</Frequency>
+    <BandWidth>8</BandWidth>
+    <Offset>167</Offset>
+  </DVBTTuning>
+  <!-- COM7 [post-700 15/08/2018] -->
+  <DVBTTuning>
+    <Frequency>746000</Frequency>
+    <BandWidth>8</BandWidth>
+    <Offset>167</Offset>
+  </DVBTTuning>
+  <!-- COM8 [pre-700 15/08/2018] -->
+  <DVBTTuning>
+    <Frequency>586000</Frequency>
+    <BandWidth>8</BandWidth>
+    <Offset>167</Offset>
+  </DVBTTuning>
+  <!-- COM8 [post-700 15/08/2018] -->
+  <DVBTTuning>
+    <Frequency>754000</Frequency>
+    <BandWidth>8</BandWidth>
+    <Offset>167</Offset>
+  </DVBTTuning>
+  <!-- LOC1 [pre-700 15/08/2018] -->
+  <DVBTTuning>
+    <Frequency>546000</Frequency>
+    <BandWidth>8</BandWidth>
+    <Offset>167</Offset>
+  </DVBTTuning>
+  <!-- LOC1 [post-700 15/08/2018] -->
   <DVBTTuning>
     <Frequency>634000</Frequency>
     <BandWidth>8</BandWidth>

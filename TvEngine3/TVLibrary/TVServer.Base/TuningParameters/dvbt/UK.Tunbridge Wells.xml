@@ -1,23 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ArrayOfDVBTTuning xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <!-- PSB1 [pre-700 180719] -->
-  <DVBTTuning>
-    <Frequency>722000</Frequency>
-    <BandWidth>8</BandWidth>
-    <Offset>167</Offset>
-  </DVBTTuning>
-  <!-- PSB1 [post-700 180719] -->
+  <!-- PSB1 -->
     <Frequency>634000</Frequency>
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
-  <!-- PSB2 [pre-700 180719] -->
-  <DVBTTuning>
-    <Frequency>698000</Frequency>
-    <BandWidth>8</BandWidth>
-    <Offset>167</Offset>
-  </DVBTTuning>
-  <!-- PSB2 [post-700 180719] -->
+  <!-- PSB2 -->
   <DVBTTuning>
     <Frequency>658000</Frequency>
     <BandWidth>8</BandWidth>
@@ -29,49 +17,25 @@
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
-  <!-- COM4 [pre-700 180719] -->
-  <DVBTTuning>
-    <Frequency>642000</Frequency>
-    <BandWidth>8</BandWidth>
-    <Offset>167</Offset>
-  </DVBTTuning>
-  <!-- COM4 [post-700 180719] -->
+  <!-- COM4 -->
   <DVBTTuning>
     <Frequency>538000</Frequency>
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
-  <!-- COM5 [pre-700 180719] -->
-  <DVBTTuning>
-    <Frequency>658000</Frequency>
-    <BandWidth>8</BandWidth>
-    <Offset>167</Offset>
-  </DVBTTuning>
-  <!-- COM5 [post-700 180719] -->
+  <!-- COM5 -->
   <DVBTTuning>
     <Frequency>554000</Frequency>
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
-  <!-- COM6 [pre-700 180719] -->
-  <DVBTTuning>
-    <Frequency>634000</Frequency>
-    <BandWidth>8</BandWidth>
-    <Offset>167</Offset>
-  </DVBTTuning>
-  <!-- COM6 [post-700 180719] -->
+  <!-- COM6 -->
   <DVBTTuning>
     <Frequency>602000</Frequency>
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
-  <!-- LOC1 [pre-700 180719] -->
-  <DVBTTuning>
-    <Frequency>690000</Frequency>
-    <BandWidth>8</BandWidth>
-    <Offset>167</Offset>
-  </DVBTTuning>
-  <!-- LOC1 [post-700 180719] -->
+  <!-- LOC1 -->
   <DVBTTuning>
     <Frequency>618000</Frequency>
     <BandWidth>8</BandWidth>
