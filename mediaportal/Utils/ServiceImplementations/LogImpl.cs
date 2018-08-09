@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2018 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2018 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -64,7 +64,7 @@ namespace MediaPortal.ServiceImplementations
       using (Settings xmlreader = new MPSettings())
       {
         _minLevel =
-          (Level)Enum.Parse(typeof (Level), xmlreader.GetValueAsString("general", "loglevel", "3"));
+          (Level)Enum.Parse(typeof (Level), xmlreader.GetValueAsString("general", "loglevel", "2"));
       }
       bConfiguration = false;
     }
