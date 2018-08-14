@@ -1646,7 +1646,7 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket, int bufferOffs
                 byte hChannels = ((*(ps+2) & 0x01)<<2) | ((*(ps+3) & 0xC0)>>6);                      
                 byte hRDBs     = *(ps+6) & 0x03; //Raw data blocks per frame
 
-                if (hFreq>2 && hFreq<9 && hChannels<7 && hChannels>0 && hRDBs==0) //Sanity checks...
+                if (hFreq>2 && hFreq<11 && hChannels<7 && hChannels>0 && hRDBs==0) //Sanity checks...
                 {
                   if (m_audHeaderCount<16)  // Learning/training state
                   {
@@ -1756,7 +1756,8 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket, int bufferOffs
                   byte hObjectType = ((*(ps+5) & 0xF8)>>3);
                   byte hFreq = ((*(ps+5) & 0x07) <<1) | ((*(ps+6) & 0x80)>>7);
                   byte hChannels = ((*(ps+6) & 0x78)>>3);                      
-                  if (hFreq>2 && hFreq<9 && hChannels<7 && hChannels>0 && (hObjectType==2 || hObjectType==5)) //Sanity checks...
+                  //LogDebug("demux: LATM AAC preamble found, hObjectType: %d, hFreq: %d, hChannels: %d", hObjectType, hFreq, hChannels);
+                  if (hFreq>2 && hFreq<11 && hChannels<7 && hChannels>0 && (hObjectType==2 || hObjectType==5 || hObjectType==29)) //Sanity checks...
                   {
                     //Found a possible good header....
                     if (m_audHeaderCount<8)  // Learning/training state
