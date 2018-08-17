@@ -215,6 +215,10 @@ namespace MediaPortal.Player
 
     protected object lockObj = new object();
 
+    protected static DateTime ratioTimer;
+
+    protected static bool RatioDetectChange = false;
+
     #endregion
 
     #region ctor/dtor
@@ -872,6 +876,22 @@ namespace MediaPortal.Player
                 Log.Debug("TsReader: show video window");
               }
             }
+          }
+        }
+
+        TimeSpan tsRatio = DateTime.Now - ratioTimer;
+        // Force VideoPosition change after a detected aspect ratio change by delay it by 2 seconds for madVR filter.
+        if (tsRatio.Seconds >= 2)
+        {
+          if (RatioDetectChange && !GUIGraphicsContext.MadVrOsd)
+          {
+            RatioDetectChange = false;
+            Log.Debug("TSReaderPlayer: Force VideoWindow after aspect ratio detected change");
+            // Force VideoWindow to be refreshed with madVR when switching from video size like 16:9 to 4:3
+            GUIGraphicsContext.UpdateVideoWindow = true;
+            GUIGraphicsContext.VideoWindowChanged();
+            // Force a madVR refresh to resize MP window
+            g_Player.RefreshMadVrVideo();
           }
         }
       }
@@ -1705,6 +1725,11 @@ namespace MediaPortal.Player
           _videoFormat.arY = message.Param5;
           _videoFormat.bitrate = message.Param6;
           _videoFormat.isInterlaced = (message.Param7 == 1);
+          if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+          {
+            ratioTimer = DateTime.Now;
+            RatioDetectChange = true;
+          }
           Log.Info("TsReaderPlayer: OnVideoFormatChanged - {0}", _videoFormat.ToString());
           break;
       }
@@ -1736,6 +1761,11 @@ namespace MediaPortal.Player
         _videoFormat.arY = aspectRatioY;
         _videoFormat.bitrate = bitrate;
         _videoFormat.isInterlaced = (isInterlaced == 1);
+        if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+        {
+          ratioTimer = DateTime.Now;
+          RatioDetectChange = true;
+        }
         Log.Info("TsReaderPlayer: OnVideoFormatChanged - {0} MP main thread", _videoFormat.ToString());
       }
       return 0;
