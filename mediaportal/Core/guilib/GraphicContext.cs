@@ -1900,6 +1900,9 @@ namespace MediaPortal.GUI.Library
     public static bool CurrentAudioRendererDone { get; set; }
     // set to true if recreate swap chain is needed
     public static bool NeedRecreateSwapChain { get; set; }
+    // Needed to avoid align TOP/LEFT on start
+    public static int RDestTop = 480;
+    public static int RDestLeft = 150;
 
     //public static IntPtr madVRDIB { get; set; }
 

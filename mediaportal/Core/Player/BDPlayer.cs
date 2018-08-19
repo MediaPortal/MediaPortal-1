@@ -928,6 +928,8 @@ namespace MediaPortal.Player
 
           if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
           {
+            // First we need to init rDest.Left and rDest to a fixed value.
+            _basicVideo.SetDestinationPosition(GUIGraphicsContext.RDestLeft, GUIGraphicsContext.RDestTop, destination.Width, destination.Height);
             _basicVideo.SetDestinationPosition(destination.Left, destination.Top, destination.Width, destination.Height);
           }
           else
