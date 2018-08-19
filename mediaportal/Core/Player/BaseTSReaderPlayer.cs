@@ -871,7 +871,7 @@ namespace MediaPortal.Player
             {
               if (_basicVideo != null)
               {
-                _basicVideo.SetDestinationPosition(0, 0, GUIGraphicsContext.VideoWindowWidth,
+                _basicVideo.SetDestinationPosition(GUIGraphicsContext.VideoWindowWidth, GUIGraphicsContext.VideoWindowHeight, GUIGraphicsContext.VideoWindowWidth,
                   GUIGraphicsContext.VideoWindowHeight);
                 Log.Debug("TsReader: show video window");
               }
@@ -879,21 +879,22 @@ namespace MediaPortal.Player
           }
         }
 
-        TimeSpan tsRatio = DateTime.Now - ratioTimer;
-        // Force VideoPosition change after a detected aspect ratio change by delay it by 2 seconds for madVR filter.
-        if (tsRatio.Seconds >= 2)
-        {
-          if (RatioDetectChange && !GUIGraphicsContext.MadVrOsd)
-          {
-            RatioDetectChange = false;
-            Log.Debug("TSReaderPlayer: Force VideoWindow after aspect ratio detected change");
-            // Force VideoWindow to be refreshed with madVR when switching from video size like 16:9 to 4:3
-            GUIGraphicsContext.UpdateVideoWindow = true;
-            GUIGraphicsContext.VideoWindowChanged();
-            // Force a madVR refresh to resize MP window
-            g_Player.RefreshMadVrVideo();
-          }
-        }
+        // Keep this code if needed but adding a better hack to fix this "align left top" on playback start
+        //TimeSpan tsRatio = DateTime.Now - ratioTimer;
+        //// Force VideoPosition change after a detected aspect ratio change by delay it by 2 seconds for madVR filter.
+        //if (tsRatio.Seconds >= 5)
+        //{
+        //  if (RatioDetectChange && !GUIGraphicsContext.MadVrOsd)
+        //  {
+        //    RatioDetectChange = false;
+        //    Log.Debug("TSReaderPlayer: Force VideoWindow after aspect ratio detected change");
+        //    // Force VideoWindow to be refreshed with madVR when switching from video size like 16:9 to 4:3
+        //    GUIGraphicsContext.UpdateVideoWindow = true;
+        //    GUIGraphicsContext.VideoWindowChanged();
+        //    // Force a madVR refresh to resize MP window
+        //    g_Player.RefreshMadVrVideo();
+        //  }
+        //}
       }
       else
       {
@@ -1598,6 +1599,8 @@ namespace MediaPortal.Player
 
           if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
           {
+            // First we need to init rDest.Left and rDest to a fixed value.
+            _basicVideo.SetDestinationPosition(GUIGraphicsContext.RDestLeft, GUIGraphicsContext.RDestTop, rDest.Width, rDest.Height);
             _basicVideo.SetDestinationPosition(rDest.Left, rDest.Top, rDest.Width, rDest.Height);
           }
           else
