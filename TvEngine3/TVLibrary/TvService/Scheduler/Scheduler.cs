@@ -1209,7 +1209,7 @@ namespace TvService
             _recordingsInProgressList.Add(recDetail);
             RecordingStartedNotification(recDetail);
             SetupQualityControl(recDetail);
-            WriteMatroskaFile(recDetail);
+            //WriteMatroskaFile(recDetail); moved to StopRecord()
           }
           catch (Exception ex)
           {
@@ -1498,7 +1498,7 @@ namespace TvService
         info.episodeNum = recDetail.Program.EpisodeNum;
         info.episodePart = recDetail.Program.EpisodePart;
         info.startTime = recDetail.RecordingStartDateTime;
-        info.endTime = recDetail.EndTime;
+        info.endTime = DateTime.Now;
 
         MatroskaTagHandler.WriteTag(System.IO.Path.ChangeExtension(fileName, ".xml"), info);
       }
@@ -1530,6 +1530,9 @@ namespace TvService
         {
           ResetRecordingState(recording);
           ResetRecordingStateOnProgram(recording);
+
+          WriteMatroskaFile(recording);
+
           _recordingsInProgressList.Remove(recording); //only remove recording from the list, if we are succesfull
 
           if ((ScheduleRecordingType)recording.Schedule.ScheduleType == ScheduleRecordingType.Once)
