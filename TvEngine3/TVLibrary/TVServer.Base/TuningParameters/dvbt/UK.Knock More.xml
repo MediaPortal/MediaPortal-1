@@ -1,32 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ArrayOfDVBTTuning xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <DVBTTuning><!-- PSB1; BBC TV and Radio channels (SD) -->
-    <Frequency>514000</Frequency>
+  <!-- PSB1 -->
+  <DVBTTuning>
+    <Frequency>554000</Frequency>
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
-  <DVBTTuning><!-- PSB2; STV/+1 (SD) ITV2, Channel 4/+1 (SD), More4, E4, Channel 5 -->
-    <Frequency>490000</Frequency>
+  <!-- PSB2 -->
+  <DVBTTuning>
+    <Frequency>602000</Frequency>
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
-  <DVBTTuning><!-- PSB3; DVBT2/Freeview HD multiplex -->
+  <!-- PSB3 -->
+  <DVBTTuning>
     <Frequency>538000</Frequency>
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
-  <DVBTTuning><!-- COM4 -->
-    <Frequency>730000</Frequency>
+  <!-- COM4 -->
+  <DVBTTuning>
+    <Frequency>570000</Frequency>
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
-  <DVBTTuning><!-- COM5 -->
-    <Frequency>762000</Frequency>
+  <!-- COM5 -->
+  <DVBTTuning>
+    <Frequency>594000</Frequency>
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
-  <DVBTTuning><!-- COM6 -->
-    <Frequency>786000</Frequency>
+  <!-- COM6 -->
+  <DVBTTuning>
+    <Frequency>690000</Frequency>
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>

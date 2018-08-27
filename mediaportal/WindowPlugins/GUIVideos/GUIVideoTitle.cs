@@ -756,6 +756,8 @@ namespace MediaPortal.GUI.Video
           VideoDatabase.SetMovieWatchedStatus(movie.ID, false, 0);
           VideoDatabase.SetMovieStopTime(movie.ID, 0);
           VideoDatabase.SetMovieWatchedCount(movie.ID, 0);
+          // Update groups with rules
+          VideoDatabase.UpdateUserGroupWithRule(movie.ID);
           item.IsPlayed = false;
           LoadDirectory(_currentFolder);
           break;
@@ -771,6 +773,8 @@ namespace MediaPortal.GUI.Video
           {
             VideoDatabase.MovieWatchedCountIncrease(movie.ID);
           }
+          // Update groups with rules
+          VideoDatabase.UpdateUserGroupWithRule(movie.ID);
           item.IsPlayed = true;
           LoadDirectory(_currentFolder);
           break;

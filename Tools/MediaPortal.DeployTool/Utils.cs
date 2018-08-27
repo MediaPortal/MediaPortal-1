@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2018 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2018 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -687,7 +687,7 @@ namespace MediaPortal.DeployTool
           break;
         case "max":
           major = 1;
-          minor = 18;
+          minor = 19;
           revision = 100;
           break;
       }
@@ -708,8 +708,8 @@ namespace MediaPortal.DeployTool
     public static Version GetCurrentPackageVersion()
     {
       int major = 1;
-      int minor = 19;
-      int revision = 000;
+      int minor = 20;
+      int revision = 0;
 
       Version ver = new Version(major, minor, revision);
       return ver;
@@ -782,7 +782,7 @@ namespace MediaPortal.DeployTool
 
     public static string GetDisplayVersion()
     {
-      return "1.19.0";
+      return "1.20.0";
     }
 
     /// <summary>

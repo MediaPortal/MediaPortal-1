@@ -72,6 +72,8 @@ namespace MediaPortal.Player
 
     private bool _mediaInfoNotloaded = false;
 
+    public readonly AutoResetEvent finished = new AutoResetEvent(false);
+
     #endregion
 
     #region ctor's
@@ -402,6 +404,7 @@ namespace MediaPortal.Player
           {
             _mI.Close();
             Log.Debug("MediaInfoWrapper.MediaInfoWrapper: Closing file : {0}", strFile);
+            finished.Set();
           }
         }
       }).Start();
