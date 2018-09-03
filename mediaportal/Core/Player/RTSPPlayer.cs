@@ -482,7 +482,7 @@ namespace MediaPortal.Player
 
     private void Cleanup()
     {
-      if (graphBuilder == null)
+      if (graphBuilder == null || (VMR9Util.g_vmr9 != null && VMR9Util.g_vmr9.isCurrentStopping))
       {
         return;
       }
@@ -499,17 +499,6 @@ namespace MediaPortal.Player
         if (mediaEvt != null)
         {
           hr = mediaEvt.SetNotifyWindow(IntPtr.Zero, WM_GRAPHNOTIFY, IntPtr.Zero);
-        }
-
-        if (VMR9Util.g_vmr9?._vmr9Filter != null && GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
-        {
-          // Releasing madVR
-          _mediaCtrl = null;
-          _mediaSeeking = null;
-          videoWin = null;
-          basicAudio = null;
-          basicVideo = null;
-          VMR9Util.g_vmr9?.Vmr9MadVrRelease();
         }
 
         videoWin = graphBuilder as IVideoWindow;

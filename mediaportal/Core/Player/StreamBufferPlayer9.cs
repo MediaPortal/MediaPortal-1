@@ -257,7 +257,7 @@ namespace MediaPortal.Player
 
     private void Cleanup()
     {
-      if (_graphBuilder == null)
+      if (_graphBuilder == null || (VMR9Util.g_vmr9 != null && VMR9Util.g_vmr9.isCurrentStopping))
       {
         Log.Info("StreamBufferPlayer9:grapbuilder=null");
         return;
@@ -296,17 +296,6 @@ namespace MediaPortal.Player
         }
 
         m_StreamBufferConfig = null;
-
-        if (VMR9Util.g_vmr9?._vmr9Filter != null && GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
-        {
-          // Releasing madVR
-          _mediaCtrl = null;
-          _mediaSeeking = null;
-          _videoWin = null;
-          _basicAudio = null;
-          _basicVideo = null;
-          VMR9Util.g_vmr9?.Vmr9MadVrRelease();
-        }
 
         if (_graphBuilder != null)
         {

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2016 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2016 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -19,12 +19,11 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.Windows.Forms;
 
 namespace MPTvClient
 {
-  internal static class Program1
+    internal static class Program1
   {
     /// <summary>
     /// The main entry point for the application.

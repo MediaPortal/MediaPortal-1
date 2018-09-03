@@ -620,54 +620,57 @@ namespace MediaPortal.Player
         _videoWin = _graphBuilder as IVideoWindow;
       }
 
-      int hr = _mediaEvt.SetNotifyWindow(GUIGraphicsContext.ActiveForm, WM_GRAPHNOTIFY, IntPtr.Zero);
-      if (hr < 0)
+      if (_mediaEvt != null)
       {
-        Log.Error("TSReaderPlayer:SetNotifyWindow() failed");
-        _currentFile = "";
-        CloseInterfaces();
-        ExclusiveMode(false);
-        return false;
-      }
-
-      if (_basicVideo != null)
-      {
-        hr = _basicVideo.GetVideoSize(out _videoWidth, out _videoHeight);
+        int hr = _mediaEvt.SetNotifyWindow(GUIGraphicsContext.ActiveForm, WM_GRAPHNOTIFY, IntPtr.Zero);
         if (hr < 0)
         {
-          Log.Info("TSReaderPlayer:GetVideoSize() failed");
+          Log.Error("TSReaderPlayer:SetNotifyWindow() failed");
+          _currentFile = "";
+          CloseInterfaces();
+          ExclusiveMode(false);
+          return false;
         }
-        Log.Info("TSReaderPlayer:VideoSize:{0}x{1}", _videoWidth, _videoHeight);
-      }
-      GUIGraphicsContext.VideoSize = new Size(_videoWidth, _videoHeight);
-      if (_mediaCtrl == null)
-      {
-        Log.Error("TSReaderPlayer:_mediaCtrl==null");
-        _currentFile = "";
-        CloseInterfaces();
-        ExclusiveMode(false);
-        return false;
-      }
-      //if (_videoWin != null)
-      //{
-      //  _videoWin.put_WindowStyle((WindowStyle)((int)WindowStyle.Child + (int)WindowStyle.ClipSiblings + (int)WindowStyle.ClipChildren));
-      //  _videoWin.put_MessageDrain(GUIGraphicsContext.form.Handle);
-      //}
-      if (_isRadio)
-      {
-        hr = _mediaCtrl.Run();
-      }
-      else if (VMR9Util.g_vmr9 != null)
-      {
-        hr = VMR9Util.g_vmr9.StartMediaCtrl(_mediaCtrl);
-      }
-      if (hr < 0)
-      {
-        Log.Error("TSReaderPlayer: Unable to start playing");
-        _currentFile = "";
-        CloseInterfaces();
-        ExclusiveMode(false);
-        return false;
+
+        if (_basicVideo != null)
+        {
+          hr = _basicVideo.GetVideoSize(out _videoWidth, out _videoHeight);
+          if (hr < 0)
+          {
+            Log.Info("TSReaderPlayer:GetVideoSize() failed");
+          }
+          Log.Info("TSReaderPlayer:VideoSize:{0}x{1}", _videoWidth, _videoHeight);
+        }
+        GUIGraphicsContext.VideoSize = new Size(_videoWidth, _videoHeight);
+        if (_mediaCtrl == null)
+        {
+          Log.Error("TSReaderPlayer:_mediaCtrl==null");
+          _currentFile = "";
+          CloseInterfaces();
+          ExclusiveMode(false);
+          return false;
+        }
+        //if (_videoWin != null)
+        //{
+        //  _videoWin.put_WindowStyle((WindowStyle)((int)WindowStyle.Child + (int)WindowStyle.ClipSiblings + (int)WindowStyle.ClipChildren));
+        //  _videoWin.put_MessageDrain(GUIGraphicsContext.form.Handle);
+        //}
+        if (_isRadio)
+        {
+          hr = _mediaCtrl.Run();
+        }
+        else if (VMR9Util.g_vmr9 != null)
+        {
+          hr = VMR9Util.g_vmr9.StartMediaCtrl(_mediaCtrl);
+        }
+        if (hr < 0)
+        {
+          Log.Error("TSReaderPlayer: Unable to start playing");
+          _currentFile = "";
+          CloseInterfaces();
+          ExclusiveMode(false);
+          return false;
+        }
       }
       //      _interfaceTSReader = _fileSource;
       _startingUp = _isLive;
@@ -1124,7 +1127,7 @@ namespace MediaPortal.Player
 
     public override void ContinueGraph()
     {
-      if (_mediaCtrl == null)
+      if (_mediaCtrl == null || _mediaEvt == null)
       {
         return;
       }
@@ -1140,7 +1143,7 @@ namespace MediaPortal.Player
 
     public override void PauseGraph()
     {
-      if (_mediaCtrl == null)
+      if (_mediaCtrl == null || _mediaEvt == null)
       {
         return;
       }
@@ -1150,8 +1153,8 @@ namespace MediaPortal.Player
         VMR9Util.g_vmr9.Enable(false);
       }
 
-      _mediaEvt.SetNotifyWindow(IntPtr.Zero, WM_GRAPHNOTIFY, IntPtr.Zero);
-      _mediaCtrl.Pause();
+      _mediaEvt?.SetNotifyWindow(IntPtr.Zero, WM_GRAPHNOTIFY, IntPtr.Zero);
+      _mediaCtrl?.Pause();
     }
 
     public override void WndProc(ref Message m)
@@ -1282,14 +1285,14 @@ namespace MediaPortal.Player
       {
         //Log.Info("BaseTSStreamBufferPlayer:resume");
         Speed = 1;
-        _mediaCtrl.Run();
+        _mediaCtrl?.Run();
         _state = PlayState.Playing;
       }
       else if (_state == PlayState.Playing)
       {
         //Log.Info("BaseTSStreamBufferPlayer:pause");
         _state = PlayState.Paused;
-        _mediaCtrl.Pause();
+        _mediaCtrl?.Pause();
       }
     }
 
@@ -1774,14 +1777,17 @@ namespace MediaPortal.Player
 
     public void DoGraphRebuildStop()
     {
-      var hr = 0;
       try
       {
-        Log.Debug("DoGraphRebuild: mediaCtrl.Stop() 1");
-        hr = _mediaCtrl.StopWhenReady();
-        hr = _mediaCtrl.Stop();
-        Log.Debug("DoGraphRebuild: mediaCtrl.Stop() 2");
-        DsError.ThrowExceptionForHR(hr);
+        if (_mediaCtrl != null)
+        {
+          var hr = 0;
+          Log.Debug("DoGraphRebuild: mediaCtrl.Stop() 1");
+          hr = _mediaCtrl.StopWhenReady();
+          hr = _mediaCtrl.Stop();
+          Log.Debug("DoGraphRebuild: mediaCtrl.Stop() 2");
+          DsError.ThrowExceptionForHR(hr);
+        }
       }
       catch (Exception ex)
       {
@@ -1879,6 +1885,66 @@ namespace MediaPortal.Player
           }
           Log.Info("TSReaderPlayer: Reconfigure graph done");
         }
+      }
+    }
+
+    public override void AudioRendererRebuild()
+    {
+      try
+      {
+        if (_graphBuilder != null)
+        {
+          // First stop the graph
+          AudioRendererMediaControlStop();
+
+          //Add Audio Renderer
+          if (filterCodec._audioRendererFilter != null)
+          {
+            DirectShowUtil.FinalReleaseComObject(filterCodec._audioRendererFilter);
+            filterCodec._audioRendererFilter = null;
+          }
+          if (filterConfig.AudioRenderer.Length > 0 && filterCodec._audioRendererFilter == null)
+          {
+            filterCodec._audioRendererFilter = DirectShowUtil.AddAudioRendererToGraph(_graphBuilder,
+              filterConfig.AudioRenderer, false);
+          }
+
+          // Add preferred audio filters
+          UpdateFilters("Audio");
+          Log.Debug("TSReaderPlayer: AudioRendererRebuild");
+
+          if (_fileSource != null)
+          {
+            if (_mediaCtrl != null)
+            {
+              _mediaCtrl.Stop();
+              DirectShowUtil.RenderGraphBuilderOutputPins(_graphBuilder, _fileSource);
+              DirectShowUtil.RemoveUnusedFiltersFromGraph(_graphBuilder);
+              _mediaCtrl.Run();
+            }
+            GUIGraphicsContext.CurrentAudioRendererDone = true;
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("TSReaderPlayer: AudioRendererRebuild: { 0}", ex);
+      }
+    }
+
+    public override void AudioRendererMediaControlStop()
+    {
+      try
+      {
+        if (_mediaCtrl != null)
+        {
+          _mediaCtrl.Stop();
+          Log.Debug("TSReaderPlayer: AudioRendererMediaControlStop");
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("TSReaderPlayer: AudioRendererMediaControlStop: {0}", ex.Message);
       }
     }
 

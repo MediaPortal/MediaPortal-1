@@ -821,8 +821,17 @@ namespace MediaPortal.Player
 
     public static void restoreDisplayModeNow(object madvr)
     {
-      var eModeCommand = madvr as IMadVRCommand;
-      eModeCommand?.SendCommand("restoreDisplayModeNow");
+      try
+      {
+        if (madvr != null)
+        {
+          var eModeCommand = madvr as IMadVRCommand;
+          eModeCommand?.SendCommand("restoreDisplayModeNow");
+        }
+      }
+      catch (Exception)
+      {
+      }
     }
 
     public static void OsdSetRenderCallback(object madvr)

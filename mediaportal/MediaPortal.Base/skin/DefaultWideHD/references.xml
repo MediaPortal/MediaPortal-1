@@ -140,7 +140,7 @@
     <width>390</width>
     <height>60</height>
     <textXOff>15</textXOff>
-    <textYOff>9</textYOff>
+    <textYOff>3</textYOff>
     <textalign>left</textalign>
     <textvalign>middle</textvalign>
     <textureFocus>button_focus.png</textureFocus>

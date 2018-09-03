@@ -47,7 +47,31 @@
       <font>font12</font>
       <textcolor>eaeaea</textcolor>
     </control>
+<!--
+    <control>
+      <type>image</type>
+      <id>0</id>
+      <posX>230</posX>
+      <posY>240</posY>
+      <width>220</width>
+	  <height>210</height>
+      <texture>white.png</texture>
+      <visible>!window.isvisible(602)</visible>
+    </control>	
 	
+    <control>
+      <type>image</type>
+      <id>0</id>
+      <posX>240</posX>
+      <posY>245</posY>
+      <width>200</width>
+	  <height>200</height>
+      <keepaspectratio>true</keepaspectratio>
+	  <valign>middle</valign>
+      <texture>\btn\unfocus\#selecteditem.png</texture>
+      <visible>!window.isvisible(602)</visible>
+    </control>	
+-->
 	
     <control>
       <description>GFX-Heading "menu" text label</description>

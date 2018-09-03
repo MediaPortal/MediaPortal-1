@@ -74,6 +74,7 @@ namespace MediaPortal.GUI.Library
     private static TransformMatrix _finalTransform = new TransformMatrix();
     private static TransformMatrix _finalTransformCalibrated = new TransformMatrix();
     private static int _bypassUICalibration;
+    public static object PlayStarting = new object();
 
     // enum containing current state of MediaPortal
     public enum State
@@ -148,6 +149,7 @@ namespace MediaPortal.GUI.Library
     private static int _scrollSpeedHorizontal = 3;
     private static int _charsInCharacterSet = 255;
     private static volatile bool _vmr9Active;
+    private static volatile bool _vmr9ActivePlaylist;
     private static int _maxFPS = 60;
     private static long _desiredFrameTime = 100;
     private static float _currentFPS;
@@ -165,6 +167,7 @@ namespace MediaPortal.GUI.Library
     private static Screen _currentStartScreen;
     private static int _currentMonitorIdx = -1;
     private static string _currentAudioRenderer = "";
+    private static string _currentAudioRendererDevice = "";
 
     private static readonly bool IsDX9EXused = OSInfo.OSInfo.VistaOrLater();
     private static bool _allowRememberLastFocusedItem = true;
@@ -172,7 +175,7 @@ namespace MediaPortal.GUI.Library
     private static bool _tabWithBlackBars = false;
 
     // For madVR
-    public static Surface MadVrRenderTargetVMR9 = null;
+    public static Surface MadVrRenderTargetVmr9 = null;
 
     /// <summary>
     /// madVR HWnd video instance
@@ -1536,6 +1539,22 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// 
     /// </summary>
+    public static bool Vmr9ActivePlaylist
+    {
+      get { return _vmr9ActivePlaylist; }
+      set
+      {
+        if (value != _vmr9ActivePlaylist)
+        {
+          _vmr9ActivePlaylist = value;
+          Log.Debug(_vmr9ActivePlaylist ? "VMR9: Now active for playlist" : "VMR9: Inactive for playlist");
+        }
+      }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
     public static bool Vmr9Active
     {
       get { return _vmr9Active; }
@@ -1711,6 +1730,21 @@ namespace MediaPortal.GUI.Library
     }
 
     /// <summary>
+    /// Get/set current audio renderer name
+    /// </summary>
+    public static string CurrentAudioRendererDevice
+    {
+      set
+      {
+        _currentAudioRendererDevice = value;
+      }
+      get
+      {
+        return _currentAudioRendererDevice;
+      }
+    }
+
+    /// <summary>
     /// Returns true if the active window belongs to the my tv plugin
     /// </summary>
     /// <returns>
@@ -1839,12 +1873,12 @@ namespace MediaPortal.GUI.Library
     internal static bool VideoWindowChangedDone { get; set; }
     internal static bool SetVideoWindowDone { get; set; }
     public static bool VideoControl { get; set; }
-    internal static bool SideBySideDone { get; set; }
-    internal static bool TopAndBottomDone { get; set; }
-    internal static bool NoneDone { get; set; }
+    public static bool SideBySideDone { get; set; }
+    public static bool TopAndBottomDone { get; set; }
+    public static bool NoneDone { get; set; }
     public static bool ForceMadVRRefresh { get; set; }
     public static bool ForceMadVRRefresh3D { get; set; }
-    internal static bool ForceMadVRFirstStart { get; set; }
+    public static bool ForceMadVRFirstStart { get; set; }
     internal static bool ProcessMadVrOsdDisplay { get; set; }
     public static bool BlurayMenu { get; set; }
     internal static bool InitMadVRWindowPosition { get; set; }
@@ -1857,12 +1891,15 @@ namespace MediaPortal.GUI.Library
     public static bool WorkerThreadStart { get; set; }
     public static bool Render3DModeHalfDone { get; set; }
     public static bool ForcedRefreshRate3D { get; set; }
-    internal static bool ForcedRefreshRate3DDone { get; set; }
-    internal static bool ForcedRR3DBackDefault { get; set; }
+    public static bool ForcedRefreshRate3DDone { get; set; }
+    public static bool ForcedRR3DBackDefault { get; set; }
     internal static int ForcedRR3DWitdhBackup { get; set; }
     internal static int ForcedRR3DHeightBackup { get; set; }
     internal static double ForcedRR3DRate { get; set; }
     internal static bool RenderMadVr3Dchanged { get; set; }
+    public static bool CurrentAudioRendererDone { get; set; }
+    // set to true if recreate swap chain is needed
+    public static bool NeedRecreateSwapChain { get; set; }
 
     //public static IntPtr madVRDIB { get; set; }
 

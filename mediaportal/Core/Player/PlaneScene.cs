@@ -130,7 +130,6 @@ namespace MediaPortal.Player
 
     public PlaneScene(VMR9Util util)
     {
-      MadVrRenderTarget = null;
       //	Log.Info("PlaneScene: ctor()");
 
       _textureAddress = 0;
@@ -197,8 +196,6 @@ namespace MediaPortal.Player
       get { return _visible; }
       set { _visible = value; }
     }
-
-    public Surface MadVrRenderTarget { get; set; }
 
     public bool Enabled
     {
@@ -308,10 +305,10 @@ namespace MediaPortal.Player
         GUIGraphicsContext.InVmr9Render = false;
         if (VMR9Util.g_vmr9 != null)
         {
-          if (GUIGraphicsContext.MadVrRenderTargetVMR9 != null && !GUIGraphicsContext.MadVrRenderTargetVMR9.Disposed)
-          {
-            GUIGraphicsContext.DX9Device.SetRenderTarget(0, GUIGraphicsContext.MadVrRenderTargetVMR9);
-          }
+          //if (GUIGraphicsContext.MadVrRenderTargetVMR9 != null && !GUIGraphicsContext.MadVrRenderTargetVMR9.Disposed)
+          //{
+          //  GUIGraphicsContext.DX9Device.SetRenderTarget(0, GUIGraphicsContext.MadVrRenderTargetVMR9);
+          //}
         }
         GUIGraphicsContext.ForcedRefreshRate3D = false;
       }
@@ -344,6 +341,7 @@ namespace MediaPortal.Player
         GUIGraphicsContext.ForcedRR3DBackDefault = false;
         GUIGraphicsContext.ForcedRefreshRate3DDone = false;
         GUIGraphicsContext.Render3DMode = GUIGraphicsContext.eRender3DMode.None;
+        GUIGraphicsContext.CurrentAudioRendererDone = false;
       }
       GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Video);
       GUIWindowManager.Receivers += new SendMessageHandler(this.OnMessage);
@@ -418,7 +416,7 @@ namespace MediaPortal.Player
     /// </returns>
     public bool SetVideoWindow(Size videoSize)
     {
-      lock (GUIGraphicsContext.RenderLock)
+      //lock (GUIGraphicsContext.RenderLock) // Seems not needed anymore and can lead to deadlock
       {
         try
         {
@@ -865,17 +863,26 @@ namespace MediaPortal.Player
       return GUIGraphicsContext.IsFullScreenVideo;
     }
 
+    // To force an update of video window to be able to trigger a sync client size.
+    public int RenderGuiRefresh(Int16 width, Int16 height, Int16 arWidth, Int16 arHeight, bool forceRefresh)
+    {
+      //Log.Debug("Planescene: RenderGuiRefreshrGui: arWidth {0} - arHeight {1}", arWidth, arHeight);
+      return RenderLayers(GUILayers.under, width, height, arWidth, arHeight, forceRefresh);
+    }
+
     public int RenderGui(Int16 width, Int16 height, Int16 arWidth, Int16 arHeight)
     {
+      //Log.Debug("Planescene: RenderGui: arWidth {0} - arHeight {1}", arWidth, arHeight);
       return RenderLayers(GUILayers.under, width, height, arWidth, arHeight);
     }
 
     public int RenderOverlay(Int16 width, Int16 height, Int16 arWidth, Int16 arHeight)
     {
+      //Log.Debug("Planescene: RenderOverlay: arWidth {0} - arHeight {1}", arWidth, arHeight);
       return RenderLayers(GUILayers.over, width, height, arWidth, arHeight);
     }
 
-    private int RenderLayers(GUILayers layers, Int16 width, Int16 height, Int16 arWidth, Int16 arHeight)
+    private int RenderLayers(GUILayers layers, Int16 width, Int16 height, Int16 arWidth, Int16 arHeight, bool forceRefresh = false)
     {
       UiVisible = false;
 
@@ -883,7 +890,7 @@ namespace MediaPortal.Player
       {
         try
         {
-          if (_reEntrant)
+          if (_reEntrant && !forceRefresh)
           {
             return -1;
           }
@@ -910,6 +917,21 @@ namespace MediaPortal.Player
           {
             //Log.Error("4");
             return -1; // (0) -> S_OK, (1) -> S_FALSE; //dont present video during window transitions
+          }
+
+          if (layers == GUILayers.over)
+          {
+            if (Thread.CurrentThread.Name == null)
+            {
+              Thread.CurrentThread.Name = "madVR - RenderOverlay";
+            }
+          }
+          else
+          {
+            if (Thread.CurrentThread.Name == null)
+            {
+              Thread.CurrentThread.Name = "madVR - RenderGui";
+            }
           }
 
           // Disable for now and added back to g_player
@@ -1322,11 +1344,11 @@ namespace MediaPortal.Player
 
     public void RestoreDeviceSurface(IntPtr pSurfaceDevice)
     {
-      if (GUIGraphicsContext.DX9Device != null)
-      {
-        Surface surface = new Surface(pSurfaceDevice);
-        GUIGraphicsContext.MadVrRenderTargetVMR9 = surface;
-      }
+      //if (GUIGraphicsContext.DX9Device != null)
+      //{
+      //  Surface surface = new Surface(pSurfaceDevice);
+      //  GUIGraphicsContext.MadVrRenderTargetVMR9 = surface;
+      //}
     }
 
     public void DestroyHWnd(uint phWnd)
@@ -1519,30 +1541,33 @@ namespace MediaPortal.Player
           GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.SideBySideFrom2D &&
           renderModeHalf == GUIGraphicsContext.eRender3DModeHalf.SBSLeft)
       {
-        GUIGraphicsContext.DX9Device.SetRenderTarget(0, surface);
-
-        GUIGraphicsContext.DX9Device.Clear(ClearFlags.Target, Color.Black, 1.0f, 0);
-
-        GUIGraphicsContext.DX9Device.BeginScene();
-        GUIGraphicsContext.SetScalingResolution(0, 0, false);
-
-        GUIGraphicsContext.Render3DModeHalf = renderModeHalf;
-
-        try
+        if (GUIGraphicsContext.DX9Device != null && !GUIGraphicsContext.DX9Device.Disposed)
         {
-          if (!GUIGraphicsContext.BlankScreen)
+          GUIGraphicsContext.DX9Device.SetRenderTarget(0, surface);
+
+          GUIGraphicsContext.DX9Device.Clear(ClearFlags.Target, Color.Black, 1.0f, 0);
+
+          GUIGraphicsContext.DX9Device.BeginScene();
+          GUIGraphicsContext.SetScalingResolution(0, 0, false);
+
+          GUIGraphicsContext.Render3DModeHalf = renderModeHalf;
+
+          try
           {
-            // Render GUI + Video surface
-            GUIGraphicsContext.RenderGUI.RenderFrame(timePassed, GUILayers.all);
-            GUIFontManager.Present();
+            if (!GUIGraphicsContext.BlankScreen)
+            {
+              // Render GUI + Video surface
+              GUIGraphicsContext.RenderGUI.RenderFrame(timePassed, GUILayers.all);
+              GUIFontManager.Present();
+            }
           }
-        }
-        finally
-        {
-          GUIGraphicsContext.DX9Device.EndScene();
-        }
+          finally
+          {
+            GUIGraphicsContext.DX9Device.EndScene();
+          }
 
-        GUIGraphicsContext.DX9Device.SetRenderTarget(0, backbuffer);
+          GUIGraphicsContext.DX9Device.SetRenderTarget(0, backbuffer);
+        }
       }
 
       if (GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.SideBySideFrom2D)
@@ -1551,37 +1576,40 @@ namespace MediaPortal.Player
 
         if (renderModeHalf == GUIGraphicsContext.eRender3DModeHalf.SBSLeft)
         {
-          GUIGraphicsContext.DX9Device.StretchRectangle(surface,
-            new Rectangle(0, 0, backbuffer.Description.Width, backbuffer.Description.Height),
-            backbuffer,
-            targetRect,
-            TextureFilter.Point);
-
-          // if texture for last frame does not exist, then create it
-
-          if (GUIGraphicsContext.LastFrames.Count == 0)
+          if (GUIGraphicsContext.DX9Device != null && !GUIGraphicsContext.DX9Device.Disposed)
           {
-            for (int i = 0; i < 2; i++)
+            GUIGraphicsContext.DX9Device.StretchRectangle(surface,
+              new Rectangle(0, 0, backbuffer.Description.Width, backbuffer.Description.Height),
+              backbuffer,
+              targetRect,
+              TextureFilter.Point);
+
+            // if texture for last frame does not exist, then create it
+
+            if (GUIGraphicsContext.LastFrames.Count == 0)
             {
-              Texture texture = new Texture(GUIGraphicsContext.DX9Device,
-                backbuffer.Description.Width,
-                backbuffer.Description.Height, 0, Usage.RenderTarget,
-                backbuffer.Description.Format, Pool.Default);
+              for (int i = 0; i < 2; i++)
+              {
+                Texture texture = new Texture(GUIGraphicsContext.DX9Device,
+                  backbuffer.Description.Width,
+                  backbuffer.Description.Height, 0, Usage.RenderTarget,
+                  backbuffer.Description.Format, Pool.Default);
 
-              GUIGraphicsContext.LastFrames.Add(texture);
+                GUIGraphicsContext.LastFrames.Add(texture);
+              }
             }
+
+            // store current image, it will be used as right image for next frame
+
+            Surface surfaceLastFrame = GUIGraphicsContext.LastFrames[GUIGraphicsContext.LastFramesIndex].GetSurfaceLevel(0);
+
+            GUIGraphicsContext.DX9Device.StretchRectangle(surface,
+              new Rectangle(0, 0, backbuffer.Description.Width, backbuffer.Description.Height),
+              surfaceLastFrame,
+              new Rectangle(0, 0, backbuffer.Description.Width, backbuffer.Description.Height),
+              TextureFilter.Point);
+            surfaceLastFrame.Dispose();
           }
-
-          // store current image, it will be used as right image for next frame
-
-          Surface surfaceLastFrame = GUIGraphicsContext.LastFrames[GUIGraphicsContext.LastFramesIndex].GetSurfaceLevel(0);
-
-          GUIGraphicsContext.DX9Device.StretchRectangle(surface,
-            new Rectangle(0, 0, backbuffer.Description.Width, backbuffer.Description.Height),
-            surfaceLastFrame,
-            new Rectangle(0, 0, backbuffer.Description.Width, backbuffer.Description.Height),
-            TextureFilter.Point);
-          surfaceLastFrame.Dispose();
         }
         else
           // render right image of the last frame for 2D to 3D conversion, the difference between 2 frames generates a 3D effect only for moving objects...
@@ -1616,7 +1644,7 @@ namespace MediaPortal.Player
 
                 int horzDelta = (int) (xSkewPerLine*y);
 
-                GUIGraphicsContext.DX9Device.StretchRectangle(surfaceLastFrame,
+                GUIGraphicsContext.DX9Device?.StretchRectangle(surfaceLastFrame,
                   new Rectangle(horzDelta, y, backbuffer.Description.Width - horzOffset*2 + horzDelta, 1),
                   backbuffer,
                   new Rectangle(targetRect.X, y, targetRect.Width, 1),
@@ -1630,7 +1658,7 @@ namespace MediaPortal.Player
       }
       else // render normal 3D movie
       {
-        GUIGraphicsContext.DX9Device.StretchRectangle(surface,
+        GUIGraphicsContext.DX9Device?.StretchRectangle(surface,
           new Rectangle(0, 0, backbuffer.Description.Width, backbuffer.Description.Height),
           backbuffer,
           targetRect,

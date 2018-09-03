@@ -29,10 +29,12 @@
 #include "StdString.h"
 #include "threads/SystemClock.h"
 #include "gdiplus.h"
+#include <mutex>
 
 static HWND g_hWnd;
 static CComPtr<IGraphBuilder> mediaControlGraph;
 bool StopEvent = false;
+std::mutex mtx;
 
 const DWORD D3DFVF_VID_FRAME_VERTEX = D3DFVF_XYZRHW | D3DFVF_TEX1;
 
@@ -116,25 +118,25 @@ bool isFullscreen(HWND window)
 MPMadPresenter::~MPMadPresenter()
 {
   {
-    // TODO need to be commented to avoid deadlock.
-    //CAutoLock cAutoLock(this);
+    //// TODO need to be commented to avoid deadlock.
+    ////CAutoLock cAutoLock(this);
 
-    Log("MPMadPresenter::Destructor() - m_pGraphbuilder release");
-    if (m_pGraphbuilder)
-    {
-      m_pGraphbuilder = nullptr;
-    }
+    //Log("MPMadPresenter::Destructor() - m_pGraphbuilder release");
+    //if (m_pGraphbuilder)
+    //{
+    //  m_pGraphbuilder = nullptr;
+    //}
 
-    Log("MPMadPresenter::Destructor() - mediaControlGraph release");
-    if (mediaControlGraph)
-    {
-      mediaControlGraph = nullptr;
-    }
+    //Log("MPMadPresenter::Destructor() - mediaControlGraph release");
+    //if (mediaControlGraph)
+    //{
+    //  mediaControlGraph = nullptr;
+    //}
 
-    if (m_pMad)
-    {
-      m_pMad = nullptr;
-    }
+    //if (m_pMad)
+    //{
+    //  m_pMad = nullptr;
+    //}
 
     // Detroy create madVR window and need to be here to avoid some crash
     if (m_pKodiWindowUse)
@@ -171,8 +173,10 @@ void MPMadPresenter::InitializeOSD()
 
 void MPMadPresenter::SetMadVrPaused(bool paused)
 {
-  if (!m_pPaused)
+  //mtx.lock();
+  if (!m_pPausedDone && !m_pRunDone)
   {
+    m_pPausedCount++;
     IMediaControl *m_pControl = nullptr;
     if ((mediaControlGraph) && (SUCCEEDED(mediaControlGraph->QueryInterface(__uuidof(IMediaControl), reinterpret_cast<LPVOID*>(&m_pControl)))) && (m_pControl))
     {
@@ -181,28 +185,34 @@ void MPMadPresenter::SetMadVrPaused(bool paused)
         if (paused)
         {
           OAFilterState state;
-          for (int i1 = 0; i1 < 200; i1++)
+          for (int i1 = 0; i1 < 10; i1++)
           {
-            m_pControl->GetState(INFINITE, &state);
+            m_pControl->GetState(200, &state);
             if (state != State_Paused)
             {
               m_pControl->Pause();
-              m_pPaused = true;
+              m_pPausedDone = true;
               Log("MPMadPresenter:::SetMadVrPaused() pause");
-              Sleep(10);
+              Sleep(100);
             }
-            else if (state == State_Paused && m_pPausedCount > 20)
+            else if (state == State_Paused && m_pPausedCount > 50)
             {
-              m_pPaused = true;
+              m_pPausedDone = true;
             }
           }
+        }
+        if (!paused)
+        {
+          m_pControl->Run();
+          m_pRunDone = true;
+          Log("MPMadPresenter:::SetMadVrPaused() run");
         }
         m_pControl->Release();
         m_pControl = nullptr;
       }
     }
-    m_pPausedCount++;
   }
+  //mtx.unlock();
 }
 
 void MPMadPresenter::RepeatFrame()
@@ -691,55 +701,62 @@ HRESULT MPMadPresenter::Shutdown()
   { // Scope for autolock for the local variable (lock, which when deleted releases the lock)
     //CAutoLock lock(this);
 
-    Log("MPMadPresenter::Shutdown() start");
-
-    if (m_pCallback)
+    try
     {
-      m_pCallback->SetSubtitleDevice(reinterpret_cast<LONG>(nullptr));
-      Log("MPMadPresenter::Shutdown() reset subtitle device");
-      m_pCallback->RestoreDeviceSurface(m_pSurfaceDevice);
-      Log("MPMadPresenter::Shutdown() RestoreDeviceSurface");
-      if (m_pKodiWindowUse)
-      {
-        // for using no Kodi madVR window way comment out this line
-        m_pCallback->DestroyHWnd(m_hWnd);
-      }
-      Log("MPMadPresenter::Shutdown() send DestroyHWnd on C# side");
-      m_pCallback->Release();
-      m_pCallback = nullptr;
-      Log("MPMadPresenter::Shutdown() m_pCallback release");
-    }
+      Log("MPMadPresenter::Shutdown() start");
 
-    // Restore windowed overlay settings
-    if (m_pMad)
-    {
-      if (Com::SmartQIPtr<IMadVRSettings> m_pSettings = m_pMad)
+      if (m_pCallback)
       {
-        if (m_enableOverlay)
+        m_pCallback->SetSubtitleDevice(reinterpret_cast<LONG>(nullptr));
+        Log("MPMadPresenter::Shutdown() reset subtitle device");
+        m_pCallback->RestoreDeviceSurface(m_pSurfaceDevice);
+        Log("MPMadPresenter::Shutdown() RestoreDeviceSurface");
+        if (m_pKodiWindowUse)
         {
-          m_pSettings->SettingsSetBoolean(L"enableOverlay", true);
-          m_pSettings.Release(); // WIP release
+          // for using no Kodi madVR window way comment out this line
+          m_pCallback->DestroyHWnd(m_hWnd);
+        }
+        Log("MPMadPresenter::Shutdown() send DestroyHWnd on C# side");
+        m_pCallback->Release();
+        m_pCallback = nullptr;
+        Log("MPMadPresenter::Shutdown() m_pCallback release");
+      }
+
+      // Restore windowed overlay settings
+      if (m_pMad)
+      {
+        if (Com::SmartQIPtr<IMadVRSettings> m_pSettings = m_pMad)
+        {
+          if (m_enableOverlay)
+          {
+            m_pSettings->SettingsSetBoolean(L"enableOverlay", true);
+            m_pSettings.Release(); // WIP release
+          }
         }
       }
-    }
 
-    if (m_pDevice != nullptr)
+      if (m_pDevice != nullptr)
+      {
+        m_pDevice = nullptr;
+      }
+
+      if (m_pSurfaceDevice != nullptr)
+      {
+        m_pSurfaceDevice = nullptr;
+      }
+
+      if (m_hParent)
+      {
+        m_hParent = NULL;
+      }
+
+      Log("MPMadPresenter::Shutdown() stop");
+      return S_OK;
+    }
+    catch (...)
     {
-      m_pDevice = nullptr;
+      Log("MPMadPresenter::Shutdown() handled");
     }
-
-    if (m_pSurfaceDevice != nullptr)
-    {
-      m_pSurfaceDevice = nullptr;
-    }
-
-    if (m_hParent)
-    {
-      m_hParent = NULL;
-    }
-
-    Log("MPMadPresenter::Shutdown() stop");
-    return S_OK;
   } // Scope for autolock
 }
 
@@ -880,7 +897,7 @@ void MediaControlStopThread()
 HRESULT MPMadPresenter::Stopping()
 {
   { // Scope for autolock for the local variable (lock, which when deleted releases the lock)
-    //CAutoLock lock(this);
+    CAutoLock lock(this);
     StopEvent = false;
 
     if (!m_pMad)
@@ -905,12 +922,15 @@ HRESULT MPMadPresenter::Stopping()
       }
       pOR.Release(); // WIP release
 
-      // nasty, but we have to let it know about our death somehow
-      static_cast<COsdRenderCallback*>(static_cast<IOsdRenderCallback*>(m_pORCB))->SetShutdownOsd(true);
-      static_cast<COsdRenderCallback*>(static_cast<IOsdRenderCallback*>(m_pORCB))->SetDXRAP(nullptr);
-      m_pORCB->Release();
-      m_pORCB = nullptr;
-      Log("MPMadPresenter::Stopping() m_pORCB");
+      if (m_pORCB)
+      {
+        // nasty, but we have to let it know about our death somehow
+        static_cast<COsdRenderCallback*>(static_cast<IOsdRenderCallback*>(m_pORCB))->SetShutdownOsd(true);
+        static_cast<COsdRenderCallback*>(static_cast<IOsdRenderCallback*>(m_pORCB))->SetDXRAP(nullptr);
+        m_pORCB->Release();
+        m_pORCB = nullptr;
+        Log("MPMadPresenter::Stopping() m_pORCB");
+      }
     }
 
     if (m_pSRCB)
@@ -929,12 +949,15 @@ HRESULT MPMadPresenter::Stopping()
       }
       pSR.Release(); // WIP release
 
-      // nasty, but we have to let it know about our death somehow
-      static_cast<CSubRenderCallback*>(static_cast<ISubRenderCallback*>(m_pSRCB))->SetShutdownSub(true);
-      static_cast<CSubRenderCallback*>(static_cast<ISubRenderCallback*>(m_pSRCB))->SetDXRAPSUB(nullptr);
-      m_pSRCB->Release();
-      m_pSRCB = nullptr;
-      Log("MPMadPresenter::Stopping() m_pSRCB");
+      if (m_pSRCB)
+      {
+        // nasty, but we have to let it know about our death somehow
+        static_cast<CSubRenderCallback*>(static_cast<ISubRenderCallback*>(m_pSRCB))->SetShutdownSub(true);
+        static_cast<CSubRenderCallback*>(static_cast<ISubRenderCallback*>(m_pSRCB))->SetDXRAPSUB(nullptr);
+        m_pSRCB->Release();
+        m_pSRCB = nullptr;
+        Log("MPMadPresenter::Stopping() m_pSRCB");
+      }
     }
 
     Log("MPMadPresenter::Stopping() start to stop instance - 1");
@@ -995,16 +1018,16 @@ HRESULT MPMadPresenter::Stopping()
     //  Log("MPMadPresenter::Stopping() disable exclusive mode");
     //}
 
-    if (m_pMad)
-    {
-      // Let's madVR restore original display mode (when adjust refresh it's handled by madVR)
-      if (Com::SmartQIPtr<IMadVRCommand> pMadVrCmd = m_pMad)
-      {
-        pMadVrCmd->SendCommand("restoreDisplayModeNow");
-        pMadVrCmd.Release();
-        Log("MPMadPresenter::Stopping() restoreDisplayModeNow");
-      }
-    }
+    //if (m_pMad)
+    //{
+    //  // Let's madVR restore original display mode (when adjust refresh it's handled by madVR)
+    //  if (Com::SmartQIPtr<IMadVRCommand> pMadVrCmd = m_pMad)
+    //  {
+    //    pMadVrCmd->SendCommand("restoreDisplayModeNow");
+    //    pMadVrCmd.Release();
+    //    Log("MPMadPresenter::Stopping() restoreDisplayModeNow");
+    //  }
+    //}
 
     if (m_pKodiWindowUse)
     {
@@ -1118,8 +1141,20 @@ HRESULT MPMadPresenter::ClearBackground(LPCSTR name, REFERENCE_TIME frameStart, 
   // Lock madVR thread while Shutdown()
   //CAutoLock lock(&m_dsLock);
 
-  DWORD videoHeight = activeVideoRect->bottom - activeVideoRect->top;
-  DWORD videoWidth = activeVideoRect->right - activeVideoRect->left;
+  //DWORD videoHeight = activeVideoRect->bottom - activeVideoRect->top;
+  //DWORD videoWidth = activeVideoRect->right - activeVideoRect->left;
+
+  CSize szVideoFrame;
+  if (Com::SmartQIPtr<IMadVRInfo> m_pMVRI = m_pMad)
+  {
+    if (m_pMVRI) {
+      // Use IMadVRInfo to get size. See http://bugs.madshi.net/view.php?id=180
+      m_pMVRI->GetSize("originalVideoSize", &szVideoFrame);
+    }
+  }
+
+  DWORD videoHeight = szVideoFrame.cy;
+  DWORD videoWidth = szVideoFrame.cx;
 
   //CAutoLock cAutoLock(this);
 
@@ -1200,6 +1235,8 @@ HRESULT MPMadPresenter::ClearBackground(LPCSTR name, REFERENCE_TIME frameStart, 
   //m_mpWait.Unlock();
   //m_dsLock.Unlock();
 
+  SetMadVrPaused(m_pPaused);
+
   return uiVisible ? CALLBACK_USER_INTERFACE : CALLBACK_INFO_DISPLAY;
 }
 
@@ -1216,8 +1253,20 @@ HRESULT MPMadPresenter::RenderOsd(LPCSTR name, REFERENCE_TIME frameStart, RECT* 
   // Lock madVR thread while Shutdown()
   //CAutoLock lock(&m_dsLock);
 
-  DWORD videoHeight = activeVideoRect->bottom - activeVideoRect->top;
-  DWORD videoWidth = activeVideoRect->right - activeVideoRect->left;
+  //DWORD videoHeight = activeVideoRect->bottom - activeVideoRect->top;
+  //DWORD videoWidth = activeVideoRect->right - activeVideoRect->left;
+
+  CSize szVideoFrame;
+  if (Com::SmartQIPtr<IMadVRInfo> m_pMVRI = m_pMad)
+  {
+    if (m_pMVRI) {
+      // Use IMadVRInfo to get size. See http://bugs.madshi.net/view.php?id=180
+      m_pMVRI->GetSize("originalVideoSize", &szVideoFrame);
+    }
+  }
+
+  DWORD videoHeight = szVideoFrame.cy;
+  DWORD videoWidth = szVideoFrame.cx;
 
   //Log("%s : log activeVideoRect bottom x top : %d x %d", __FUNCTION__, (WORD)activeVideoRect->bottom, (WORD)activeVideoRect->top);
   //Log("%s : log activeVideoRect right x left : %d x %d", __FUNCTION__, (WORD)activeVideoRect->right, (WORD)activeVideoRect->left);
@@ -1329,6 +1378,8 @@ HRESULT MPMadPresenter::RenderOsd(LPCSTR name, REFERENCE_TIME frameStart, RECT* 
   {
     SetEvent(m_pGrabEvent);
   }
+
+  SetMadVrPaused(m_pPaused);
 
   return uiVisible ? CALLBACK_USER_INTERFACE : CALLBACK_INFO_DISPLAY;
 }

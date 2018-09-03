@@ -822,7 +822,7 @@ namespace MediaPortal.Player
     {
       lock (lockObj)
       {
-        if (_graphBuilder == null)
+        if (_graphBuilder == null || (VMR9Util.g_vmr9 != null && VMR9Util.g_vmr9.isCurrentStopping))
         {
           return;
         }
@@ -952,17 +952,6 @@ namespace MediaPortal.Player
           {
             _dvbSubRenderer.SetPlayer(null);
             _dvbSubRenderer = null;
-          }
-
-          if (VMR9Util.g_vmr9?._vmr9Filter != null && GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
-          {
-            // Releasing madVR
-            _mediaCtrl = null;
-            _mediaSeeking = null;
-            _videoWin = null;
-            _basicAudio = null;
-            _basicVideo = null;
-            VMR9Util.g_vmr9?.Vmr9MadVrRelease();
           }
 
           if (_videoWin != null && GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)

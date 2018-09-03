@@ -95,8 +95,8 @@ namespace DShowNET.Helper
 
         if (newFilter == null)
         {
-          Log.Error("DirectShowUtil: AddAudioRendererToGraph failed filter: {0} not found", strFilterName);
-          Log.Error("DirectShowUtil: AddAudioRendererToGraph wait 5 secs before trying to adding back audio renderer device");
+          Log.Info("DirectShowUtil: AddAudioRendererToGraph failed filter: ({0}) not found", strFilterName);
+          Log.Info("DirectShowUtil: AddAudioRendererToGraph wait 5 secs before trying to adding back audio renderer device");
           Thread.Sleep(5000);
           FilterHelper.ReloadFilterCollection();
           return AddAudioRenderer(graphBuilder, strFilterName, setAsReferenceClock);
@@ -105,7 +105,7 @@ namespace DShowNET.Helper
       }
       catch (Exception ex)
       {
-        Log.Error("DirectShowUtil: AddAudioRendererToGraph failed filter: {0} not found Exception : {1}", strFilterName, ex.Message);
+        Log.Error("DirectShowUtil: AddAudioRendererToGraph failed filter: ({0}) not found Exception : {1}", strFilterName, ex.Message);
         Log.Error("DirectShowUtil: AddAudioRendererToGraph Wait 5 secs before trying to adding back audio renderer device Exception : {0}", ex.Message);
         Thread.Sleep(5000);
         FilterHelper.ReloadFilterCollection();
@@ -124,7 +124,14 @@ namespace DShowNET.Helper
         HResult hr = new HResult(graphBuilder.EnumFilters(out enumFilters));
 
         Log.Info("DirectShowUtil: Attach volume handler device to audio renderer: " + strFilterName);
-        VolumeHandler.Instance._mixer.ChangeAudioDevice(strFilterName, false);
+        if (VolumeHandler.Instance._mixer != null)
+        {
+          VolumeHandler.Instance._mixer.ChangeAudioDevice(strFilterName, false);
+          if (!VolumeHandler.Instance._mixer.DetectedDevice())
+          {
+            return null;
+          }
+        }
         GUIGraphicsContext.CurrentAudioRenderer = strFilterName;
 
         Log.Info("DirectShowUtils: First try to insert new audio renderer {0} ", strFilterName);
@@ -936,6 +943,10 @@ namespace DShowNET.Helper
                 {
                   try
                   {
+                    if (GUIGraphicsContext.VolumeHandler == null)
+                    {
+                      GUIGraphicsContext.VolumeHandler = VolumeHandler.Instance;
+                    }
                     // vh.Volume = 19660500 that means Audio endpoint device are not available.
                     if (GUIGraphicsContext.VolumeHandler != null && GUIGraphicsContext.VolumeHandler.Volume == 19660500) // Check if new audio device is connected
                     {
@@ -1758,7 +1769,7 @@ namespace DShowNET.Helper
       RemoveFilters(graphBuilder, String.Empty);
 
       Log.Info("Playback stopped and reverting volume OSD back to default device.");
-      VolumeHandler.Instance._mixer.ChangeAudioDevice(string.Empty, true);
+      if (VolumeHandler.Instance._mixer != null) VolumeHandler.Instance._mixer.ChangeAudioDevice(string.Empty, true);
       GUIGraphicsContext.CurrentAudioRenderer = "";
     }
 

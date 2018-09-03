@@ -295,6 +295,24 @@ namespace MediaPortal.Player
           _showClosedCaptions = xmlreader.GetValueAsBool("dvdplayer", "showclosedcaptions", false);
         }
 
+        DvdDiscSide side;
+        int titles, numOfVolumes, volume;
+        hr = _dvdInfo.GetDVDVolumeInfo(out numOfVolumes, out volume, out side, out titles);
+        if (hr < 0)
+        {
+          Log.Error("DVDPlayer:Unable to get dvdvolumeinfo 0x{0:X}", hr);
+          CloseInterfaces();
+          return false; // can't read disc
+        }
+        else
+        {
+          if (titles <= 0)
+          {
+            Log.Error("DVDPlayer:DVD does not contain any titles? {0}", titles);
+            //return false;
+          }
+        }
+
         SetDefaultLanguages();
 
         hr = _mediaEvt.SetNotifyWindow(GUIGraphicsContext.ActiveForm, WM_DVD_EVENT, IntPtr.Zero);
@@ -324,34 +342,6 @@ namespace MediaPortal.Player
         //    }
         //  }
         //}
-        if (VMR9Util.g_vmr9 != null) hr = VMR9Util.g_vmr9.StartMediaCtrl(_mediaCtrl);
-        if (hr < 0 || hr > 1)
-        {
-          HResult hrdebug = new HResult(hr);
-          Log.Info(hrdebug.ToDXString());
-          Log.Error("DVDPlayer:Unable to start playing() 0x:{0:X}", hr);
-          CloseInterfaces();
-          return false;
-        }
-        //DsUtils.DumpFilters(_graphBuilder);
-
-        DvdDiscSide side;
-        int titles, numOfVolumes, volume;
-        hr = _dvdInfo.GetDVDVolumeInfo(out numOfVolumes, out volume, out side, out titles);
-        if (hr < 0)
-        {
-          Log.Error("DVDPlayer:Unable to get dvdvolumeinfo 0x{0:X}", hr);
-          CloseInterfaces();
-          return false; // can't read disc
-        }
-        else
-        {
-          if (titles <= 0)
-          {
-            Log.Error("DVDPlayer:DVD does not contain any titles? {0}", titles);
-            //return false;
-          }
-        }
 
         if (_videoWin != null)
         {
@@ -385,6 +375,18 @@ namespace MediaPortal.Player
             }
           }
         }
+
+        if (VMR9Util.g_vmr9 != null) hr = VMR9Util.g_vmr9.StartMediaCtrl(_mediaCtrl);
+        if (hr < 0 || hr > 1)
+        {
+          HResult hrdebug = new HResult(hr);
+          Log.Info(hrdebug.ToDXString());
+          Log.Error("DVDPlayer:Unable to start playing() 0x:{0:X}", hr);
+          CloseInterfaces();
+          return false;
+        }
+        //DsUtils.DumpFilters(_graphBuilder);
+
         return true;
       }
       catch (Exception ex)
@@ -443,11 +445,6 @@ namespace MediaPortal.Player
           _line21Decoder = null;
         }
 
-        if (VMR9Util.g_vmr9?._vmr9Filter != null && GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
-        {
-          // Releasing madVR
-          VMR9Util.g_vmr9?.Vmr9MadVrRelease();
-        }
 
         if (_graphBuilder != null)
         {
@@ -693,6 +690,50 @@ namespace MediaPortal.Player
           DirectShowUtil.ReleaseComObject(comobj);
         }
         comobj = null;
+      }
+    }
+
+    public override void AudioRendererRebuild()
+    {
+      try
+      {
+        if (_graphBuilder != null)
+        {
+          // First stop the graph
+          AudioRendererMediaControlStop();
+
+          Log.Debug("DVDPlayer: AudioRendererRebuild");
+          if (_dvdbasefilter != null)
+          {
+            _mediaCtrl.Stop();
+            //Add Audio Renderer
+            AddPreferedCodecs(_graphBuilder);
+            DirectShowUtil.RenderOutputPins(_graphBuilder, _dvdbasefilter);
+            DirectShowUtil.RemoveUnusedFiltersFromGraph(_graphBuilder);
+            _mediaCtrl.Run();
+            GUIGraphicsContext.CurrentAudioRendererDone = true;
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("DVDPlayer: AudioRendererRebuild: { 0}", ex);
+      }
+    }
+
+    public override void AudioRendererMediaControlStop()
+    {
+      try
+      {
+        if (_mediaCtrl != null)
+        {
+          _mediaCtrl.Stop();
+          Log.Debug("DVDPlayer: AudioRendererMediaControlStop");
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("DVDPlayer: AudioRendererMediaControlStop: {0}", ex.Message);
       }
     }
 

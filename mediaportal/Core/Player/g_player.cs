@@ -843,16 +843,16 @@ namespace MediaPortal.Player
           case "LATMAAC":
             AudioCodec = "AAC";
             break;
-            
+
           case "DTS":
             AudioCodec = "DTS";
             break;
-            
+
           case "DTSHD":
           case "DTS-HD":
             AudioCodec = "DTSHD";
             break;
-            
+
           case "PCM":
           case "LPCM":
             AudioCodec = "PCM";
@@ -1539,6 +1539,7 @@ namespace MediaPortal.Player
           if (currentMediaInfoFilePlaying != strFile)
           {
             _mediaInfo = new MediaInfoWrapper(strFile);
+            _mediaInfo.finished.WaitOne(5000);
             currentMediaInfoFilePlaying = strFile;
           }
         }
@@ -2266,7 +2267,7 @@ namespace MediaPortal.Player
         return _chaptersname;
       }
     }
-    
+
     public static double[] JumpPoints
     {
       get
@@ -2305,16 +2306,35 @@ namespace MediaPortal.Player
       {
         return;
       }
+
+      // Suspending GUIGraphicsContext.State
+      if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
+      {
+        GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.SUSPENDING;
+      }
+
       _player.SeekRelative(dTime);
       _currentStep = 0;
       _currentStepIndex = -1;
       _seekTimer = DateTime.MinValue;
       GUIMessage msgUpdate = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYER_POSITION_CHANGED, 0, 0, 0, 0, 0, null);
       GUIGraphicsContext.SendMessage(msgUpdate);
+
+      // Restore GUIGraphicsContext.State
+      if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.SUSPENDING)
+      {
+        GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.RUNNING;
+      }
     }
 
     public static void StepNow()
     {
+      // Suspending GUIGraphicsContext.State
+      if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
+      {
+        GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.SUSPENDING;
+      }
+
       if (_currentStep != 0 && _player != null)
       {
         if (_currentStep < 0 || (_player.CurrentPosition + 4 < _player.Duration) || !IsTV)
@@ -2337,6 +2357,12 @@ namespace MediaPortal.Player
       _currentStep = 0;
       _currentStepIndex = -1;
       _seekTimer = DateTime.MinValue;
+
+      // Restore GUIGraphicsContext.State
+      if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.SUSPENDING)
+      {
+        GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.RUNNING;
+      }
     }
 
     /// <summary>
@@ -2508,12 +2534,25 @@ namespace MediaPortal.Player
       {
         return;
       }
+
+      // Suspending GUIGraphicsContext.State
+      if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
+      {
+        GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.SUSPENDING;
+      }
+
       _player.SeekRelativePercentage(iPercentage);
       GUIMessage msgUpdate = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYER_POSITION_CHANGED, 0, 0, 0, 0, 0, null);
       GUIGraphicsContext.SendMessage(msgUpdate);
       _currentStep = 0;
       _currentStepIndex = -1;
       _seekTimer = DateTime.MinValue;
+
+      // Restore GUIGraphicsContext.State
+      if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.SUSPENDING)
+      {
+        GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.RUNNING;
+      }
     }
 
     public static void SeekAbsolute(double dTime)
@@ -2522,21 +2561,26 @@ namespace MediaPortal.Player
       {
         return;
       }
-
-      // Start seek in a thread to avoid deadlock
-      new Thread(() =>
+      // Suspending GUIGraphicsContext.State
+      if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
       {
-        Thread.CurrentThread.IsBackground = true;
-        Log.Debug("g_Player.SeekAbsolute() - Preparing to seek to {0}:{1}:{2}", (int) (dTime/3600d),
-                  (int) ((dTime%3600d)/60d), (int) (dTime%60d));
-        _player.SeekAbsolute(dTime);
-        GUIMessage msgUpdate = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYER_POSITION_CHANGED, 0, 0, 0, 0, 0, null);
-        GUIGraphicsContext.SendMessage(msgUpdate);
-        _currentStep = 0;
-        _currentStepIndex = -1;
-        _seekTimer = DateTime.MinValue;
-        Log.Debug("g_Player.SeekAbsolute() in a thread");
-      }).Start();
+        GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.SUSPENDING;
+      }
+
+      Log.Debug("g_Player.SeekAbsolute() - Preparing to seek to {0}:{1}:{2}", (int)(dTime / 3600d),
+                (int)((dTime % 3600d) / 60d), (int)(dTime % 60d));
+      _player.SeekAbsolute(dTime);
+      GUIMessage msgUpdate = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYER_POSITION_CHANGED, 0, 0, 0, 0, 0, null);
+      GUIGraphicsContext.SendMessage(msgUpdate);
+      _currentStep = 0;
+      _currentStepIndex = -1;
+      _seekTimer = DateTime.MinValue;
+
+      // Restore GUIGraphicsContext.State
+      if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.SUSPENDING)
+      {
+        GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.RUNNING;
+      }
     }
 
     public static void SeekAsolutePercentage(int iPercentage)
@@ -2545,12 +2589,25 @@ namespace MediaPortal.Player
       {
         return;
       }
+
+      // Suspending GUIGraphicsContext.State
+      if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
+      {
+        GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.SUSPENDING;
+      }
+
       _player.SeekAsolutePercentage(iPercentage);
       GUIMessage msgUpdate = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYER_POSITION_CHANGED, 0, 0, 0, 0, 0, null);
       GUIGraphicsContext.SendMessage(msgUpdate);
       _currentStep = 0;
       _currentStepIndex = -1;
       _seekTimer = DateTime.MinValue;
+
+      // Restore GUIGraphicsContext.State
+      if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.SUSPENDING)
+      {
+        GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.RUNNING;
+      }
     }
 
     public static bool HasVideo
@@ -2743,34 +2800,40 @@ namespace MediaPortal.Player
     public static void RefreshMadVrVideo()
     {
       // Enable a new VideoWindow update
-      GUIGraphicsContext.UpdateVideoWindow = true;
+      lock (GUIGraphicsContext.RenderLock)
+      {
+        GUIGraphicsContext.UpdateVideoWindow = true;
+        VMR9Util.g_vmr9?._scene.RenderGuiRefresh(25, 25, 25, 25, true);
+      }
 
       // Disabled for now - seems the workaround is not needed anymore but keep code
-      //if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
-      //    (GUIGraphicsContext.Vmr9Active || GUIGraphicsContext.ForceMadVRFirstStart))
-      //{
-      //  // TODO find a better way to restore madVR rendering (right now i send an 'X' to force refresh a current window)
-      //  if (GUIGraphicsContext.ForceMadVRFirstStart)
-      //  {
-      //    GUIGraphicsContext.ForceMadVRFirstStart = false;
-      //  }
-      //  var key = new Key(120, 0);
-      //  var action = new Action(key, Action.ActionType.ACTION_KEY_PRESSED, 0, 0);
-      //  if (ActionTranslator.GetAction(GUIWindowManager.ActiveWindowEx, key, ref action))
-      //  {
-      //    GUIGraphicsContext.OnAction(action);
-      //    action = new Action(key, Action.ActionType.ACTION_KEY_PRESSED, 0, 0);
-      //    GUIGraphicsContext.OnAction(action);
-      //  }
-      //  key = new Key(120, 0);
-      //  action = new Action(key, Action.ActionType.ACTION_KEY_PRESSED, 0, 0);
-      //  if (ActionTranslator.GetAction(GUIWindowManager.ActiveWindowEx, key, ref action))
-      //  {
-      //    GUIGraphicsContext.OnAction(action);
-      //    action = new Action(key, Action.ActionType.ACTION_KEY_PRESSED, 0, 0);
-      //    GUIGraphicsContext.OnAction(action);
-      //  }
-      //}
+      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
+          (GUIGraphicsContext.Vmr9Active || GUIGraphicsContext.ForceMadVRFirstStart))
+      {
+        // TODO find a better way to restore madVR rendering (right now i send an 'X' to force refresh a current window)
+        if (GUIGraphicsContext.ForceMadVRFirstStart)
+        {
+          GUIGraphicsContext.ForceMadVRFirstStart = false;
+        }
+
+        var key = new Key(120, 0);
+        var action = new Action(key, Action.ActionType.ACTION_KEY_PRESSED, 0, 0);
+        if (ActionTranslator.GetAction(GUIWindowManager.ActiveWindowEx, key, ref action))
+        {
+          GUIGraphicsContext.OnAction(action);
+          action = new Action(key, Action.ActionType.ACTION_KEY_PRESSED, 0, 0);
+          GUIGraphicsContext.OnAction(action);
+        }
+
+        key = new Key(120, 0);
+        action = new Action(key, Action.ActionType.ACTION_KEY_PRESSED, 0, 0);
+        if (ActionTranslator.GetAction(GUIWindowManager.ActiveWindowEx, key, ref action))
+        {
+          GUIGraphicsContext.OnAction(action);
+          action = new Action(key, Action.ActionType.ACTION_KEY_PRESSED, 0, 0);
+          GUIGraphicsContext.OnAction(action);
+        }
+      }
     }
 
     public static VideoStreamFormat GetVideoFormat()
@@ -3694,6 +3757,7 @@ namespace MediaPortal.Player
         if (_mediaInfo == null && !playingRemoteUrl)
         {
           _mediaInfo = new MediaInfoWrapper(FileName);
+          _mediaInfo.finished.WaitOne(5000);
         }
 
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CODEC_MISSING, 0, 0, 0, 0, 0, null);
@@ -3933,6 +3997,12 @@ namespace MediaPortal.Player
         case GUIMessage.MessageType.GUI_MSG_ONDISPLAYMADVRCHANGED:
           lock (GUIGraphicsContext.RenderLock)
           {
+            // Suspending GUIGraphicsContext.State
+            if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
+            {
+              GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.SUSPENDING;
+            }
+
             // Get Size
             Size client = GUIGraphicsContext.form.ClientSize;
 
@@ -3951,13 +4021,15 @@ namespace MediaPortal.Player
                 GUIGraphicsContext.ForceMadVRFirstStart = false;
                 Log.Debug("g_player VideoWindowChanged() ForceMadVRFirstStart madVR");
               }
-              
 
               if (GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferWidth != client.Width ||
                   GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferHeight != client.Height)
               {
                 GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferWidth = client.Width;
                 GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferHeight = client.Height;
+
+                int activeWin = GUIWindowManager.ActiveWindow;
+
                 // load resources
                 GUIGraphicsContext.Load();
 
@@ -3969,7 +4041,8 @@ namespace MediaPortal.Player
 
                 // Don't resize to avoid wrong dialog opened
                 GUIWindowManager.OnResize();
-                //GUIWindowManager.OnDeviceRestored();
+                GUIWindowManager.ActivateWindow(activeWin);
+                GUIWindowManager.OnDeviceRestored();
 
                 // send C++ displayChange
                 if (!GUIGraphicsContext.ForceMadVRRefresh3D)
@@ -4025,7 +4098,22 @@ namespace MediaPortal.Player
 
             // message handled
             GUIGraphicsContext.ProcessMadVrOsdDisplay = false;
+
+            // Restore GUIGraphicsContext.State
+            if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.SUSPENDING)
+            {
+              GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.RUNNING;
+            }
           }
+          break;
+        case GUIMessage.MessageType.GUI_MSG_SET_RESUME_STATE:
+          g_Player.Player.SetResumeState((byte[])message.Object);
+          break;
+        case GUIMessage.MessageType.GUI_MSG_REBUILD_AUDIO:
+          _player?.AudioRendererRebuild();
+          break;
+        case GUIMessage.MessageType.GUI_MSG_STOP_MEDIACONTROL_AUDIO:
+          _player?.AudioRendererMediaControlStop();
           break;
       }
     }

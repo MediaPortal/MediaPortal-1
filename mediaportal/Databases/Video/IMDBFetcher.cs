@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2018 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2018 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -533,37 +533,8 @@ namespace MediaPortal.Video.Database
             }
 
             // Add groups with rules
-            ArrayList groups = new ArrayList();
-            VideoDatabase.GetUserGroups(groups);
+            VideoDatabase.UpdateUserGroupWithRule(_movieDetails.ID, "IMDB fetcher");
 
-            foreach (string group in groups)
-            {
-              string rule = VideoDatabase.GetUserGroupRule(group);
-
-              if (!string.IsNullOrEmpty(rule))
-              {
-                try
-                {
-                  ArrayList values = new ArrayList();
-                  bool error = false;
-                  string errorMessage = string.Empty;
-                  values = VideoDatabase.ExecuteRuleSql(rule, "movieinfo.idMovie", out error, out errorMessage);
-
-                  if (error)
-                  {
-                    continue;
-                  }
-
-                  if (values.Count > 0 && values.Contains(_movieDetails.ID.ToString()))
-                  {
-                    VideoDatabase.AddUserGroupToMovie(_movieDetails.ID, VideoDatabase.AddUserGroup(group));
-                  }
-                }
-                catch (Exception)
-                {
-                }
-              }
-            }
             OnProgress(line1, _url.Title, string.Empty, 100); // **Progress bar end details
           }
 
