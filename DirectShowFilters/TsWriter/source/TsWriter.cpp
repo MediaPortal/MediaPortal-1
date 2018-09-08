@@ -278,7 +278,7 @@ void LogDebug(const wchar_t *fmt, ...)
   swprintf_s(msg, 5000,L"[%04.4d-%02.2d-%02.2d %02.2d:%02.2d:%02.2d,%03.3d] [%x] [%x] - %s\n",
     systemTime.wYear, systemTime.wMonth, systemTime.wDay,
     systemTime.wHour, systemTime.wMinute, systemTime.wSecond, systemTime.wMilliseconds,
-    instanceID,
+    (unsigned int)instanceID,
     GetCurrentThreadId(),
     buffer);
   CAutoLock l(&m_qLock);
@@ -602,6 +602,7 @@ CMpTs::CMpTs(LPUNKNOWN pUnk, HRESULT *pHr)
   LogDebug("-- Threaded timeshift file writing                               --");
   LogDebug("-- Random access mode for timeshift files                        --");
   LogDebug("-- Variable size (no chunk reserve) for timeshift files          --");
+  LogDebug("-- Threaded recording file writing                               --");
   LogDebug("-------------------------------------------------------------------");  
 		
   b_dumpRawPackets = false;

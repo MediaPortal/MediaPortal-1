@@ -753,6 +753,9 @@ void CEpgDecoder::DecodeShortEventDescriptor(byte* buf, EPGEvent& epgEvent,int N
 			if(buf[6]==0x1f && CanDecodeNetworkOrPID(NetworkID, PID))
 			{
 				eventText=FreesatHuffmanToString(&buf[6],event_len);
+				// LogDebug("  eventTextFHTS:%s",eventText.c_str());
+				eventText=UTF8toISO8859_1(eventText);
+				// LogDebug("  eventTextUTISO:%s",eventText.c_str());
 			}
 			else
 			{
@@ -798,6 +801,9 @@ void CEpgDecoder::DecodeShortEventDescriptor(byte* buf, EPGEvent& epgEvent,int N
 			if(buf[off+1]==0x1f && CanDecodeNetworkOrPID(NetworkID, PID))
 			{
 				eventDescription=FreesatHuffmanToString(&buf[off+1],text_len);
+				// LogDebug("  eventDescriptionFHTS:%s",eventDescription.c_str());
+				eventDescription=UTF8toISO8859_1(eventDescription);
+				// LogDebug("  eventDescriptionUTISO:%s",eventDescription.c_str());
 			}
 			else
 			{
@@ -1329,3 +1335,80 @@ void CEpgDecoder::AbortGrabbing()
 	m_bEpgDone=true;
 }
 
+//This function is derived from the example code here - 
+//https://stackoverflow.com/questions/23689733/convert-string-from-utf-8-to-iso-8859-1
+string CEpgDecoder::UTF8toISO8859_1(const string& in)
+{
+  string out;
+  if (in.c_str() == NULL)
+      return out;
+  
+  unsigned int codepoint;
+  const char* ch = in.c_str();
+  while (*ch != '\0')
+  {
+    if (*ch <= 0x7f)
+      codepoint = *ch;
+    else if (*ch <= 0xbf)
+      codepoint = (codepoint << 6) | (*ch & 0x3f);
+    else if (*ch <= 0xdf)
+      codepoint = *ch & 0x1f;
+    else if (*ch <= 0xef)
+      codepoint = *ch & 0x0f;
+    else
+      codepoint = *ch & 0x07;
+    ++ch;
+    if (((*ch & 0xc0) != 0x80) && (codepoint <= 0x10ffff))
+    {
+      if (codepoint <= 255)
+      {
+        out.append(1, static_cast<char>(codepoint));
+      }
+      else
+      {
+        // out-of-bounds characters
+        out.append(1, ' '); //Insert space
+      }
+    }
+  }
+  out.append(1, '\0'); //Add null to end of string
+  return out;
+}
+
+//string CEpgDecoder::UTF8toISO8859_1(const char * in)
+//{
+//  string out;
+//  if (in == NULL)
+//      return out;
+//  
+//  unsigned int codepoint;
+//  while (*in != 0)
+//  {
+//    unsigned char ch = static_cast<unsigned char>(*in);
+//    if (ch <= 0x7f)
+//      codepoint = ch;
+//    else if (ch <= 0xbf)
+//      codepoint = (codepoint << 6) | (ch & 0x3f);
+//    else if (ch <= 0xdf)
+//      codepoint = ch & 0x1f;
+//    else if (ch <= 0xef)
+//      codepoint = ch & 0x0f;
+//    else
+//      codepoint = ch & 0x07;
+//    ++in;
+//    if (((*in & 0xc0) != 0x80) && (codepoint <= 0x10ffff))
+//    {
+//      if (codepoint <= 255)
+//      {
+//        out.append(1, static_cast<char>(codepoint));
+//      }
+//      else
+//      {
+//        // out-of-bounds characters
+//        out.append(1, ' '); //Insert space
+//      }
+//    }
+//  }
+//  out.append(1, '\0'); //Add null to end of string
+//  return out;
+//}
