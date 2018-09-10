@@ -94,7 +94,6 @@ CDvbUtil::~CDvbUtil(void)
 void CDvbUtil::getString468A(BYTE *buf, int bufLen, char *text, int textLen)
 {
   BYTE c;
-  WORD w;
 
 	int bufIndex = 0, textIndex = 0;
 
@@ -108,29 +107,45 @@ void CDvbUtil::getString468A(BYTE *buf, int bufLen, char *text, int textLen)
   c = buf[bufIndex++];
   if (c != 0x11)
   {
-    bufIndex--; // need to start from 1st byte
-    // check for character coding info byte
-    if (c == 0x10)
-    {
-      // three byte encoding
-      if (textLen >= 3)
+    // Deal with first byte - check for character coding info
+    if (c == 0x10) // three byte encoding
+    {      
+      if ((textLen >= 3) && (buf[2] >= 0x1) && (buf[2] <= 0xF))
       {
         text[textIndex++] = 0x10;
+        text[textIndex++] = buf[2]; //Replicate input '3rd byte' into 2nd and 3rd output bytes
         text[textIndex++] = buf[2];
         text[textIndex] = 0;
         bufIndex += 2;
       }
       else
+      {
+        text[textIndex] = 0;
         return;
+      }
     }
+    else //Single-byte encoding
+    {
+      if ((c < 0x80) || (c > 0x9F)) //Only allow used/supported values
+      {
+        text[textIndex++] = c; //Copy first byte (may be coding selector byte, or first character if default coding table used)
+      }
+      else if (c == 0x8A) //CR/LF
+      {
+        text[textIndex++] = '\r';
+      }
+      text[textIndex] = 0;
+    }
+    
+    //Process remaining bytes
     while ((bufIndex < bufLen) && (textIndex < textLen))
     {
       c = buf[bufIndex++];
-      if (c == 0x8A)
+      if (c == 0x8A) //CR/LF
       {
         c = '\r';
       }
-      else if (((c > 0x05) && (c <= 0x1F)) || ((c >= 0x80) && (c < 0x9F))) //0x1-0x5 = choose character set, must keep this byte!
+      else if ((c <= 0x1F) || ((c >= 0x80) && (c <= 0x9F))) //Ignore unsupported characters
         c = 0; // ignore
 
       if (c != 0)
@@ -141,15 +156,16 @@ void CDvbUtil::getString468A(BYTE *buf, int bufLen, char *text, int textLen)
   {
     // process 2 byte unicode characters by reencoding it 
     // to UTF-8 to avoid zero bytes inside string
+    WORD w;
     text[textIndex++] = 0x15;
     text[textIndex] = 0;
     while (bufIndex + 1 < bufLen)
     {
       w = (buf[bufIndex++] << 8);
       w |= buf[bufIndex++];
-      if (w == 0xE08A)
+      if (w == 0xE08A) //CR/LF
         w = '\r';
-      else if (((w > 0x05) && (w <= 0x1F)) || ((w >= 0xE080) && (w < 0xE09F)))
+      else if ((w <= 0x1F) || ((w >= 0xE080) && (w <= 0xE09F))) //Ignore unsupported characters
         w = 0;
       if (w != 0)
       {

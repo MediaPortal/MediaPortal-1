@@ -754,7 +754,7 @@ void CEpgDecoder::DecodeShortEventDescriptor(byte* buf, EPGEvent& epgEvent,int N
 			{
 				eventText=FreesatHuffmanToString(&buf[6],event_len);
 				// LogDebug("  eventTextFHTS:%s",eventText.c_str());
-				eventText=UTF8toISO8859_1(eventText);
+				// eventText=UTF8toISO8859_1(eventText);
 				// LogDebug("  eventTextUTISO:%s",eventText.c_str());
 			}
 			else
@@ -763,6 +763,7 @@ void CEpgDecoder::DecodeShortEventDescriptor(byte* buf, EPGEvent& epgEvent,int N
 				getString468A(&buf[6],event_len,buffer.GetBuffer(), event_len*4);
 				eventText=buffer.GetBuffer();
 			}
+			LogDebug("  eventText, in:%x, out:%x, outStr:%s",buf[6], eventText[0], eventText.c_str());
 			//		LogDebug("  event:%s",eventText.c_str());
 		}
 		else if (event_len<0)
@@ -802,7 +803,7 @@ void CEpgDecoder::DecodeShortEventDescriptor(byte* buf, EPGEvent& epgEvent,int N
 			{
 				eventDescription=FreesatHuffmanToString(&buf[off+1],text_len);
 				// LogDebug("  eventDescriptionFHTS:%s",eventDescription.c_str());
-				eventDescription=UTF8toISO8859_1(eventDescription);
+				// eventDescription=UTF8toISO8859_1(eventDescription);
 				// LogDebug("  eventDescriptionUTISO:%s",eventDescription.c_str());
 			}
 			else
@@ -811,6 +812,7 @@ void CEpgDecoder::DecodeShortEventDescriptor(byte* buf, EPGEvent& epgEvent,int N
 			  getString468A(&buf[off+1],text_len,buffer.GetBuffer(), text_len*4);
 				eventDescription=buffer.GetBuffer();
 			}
+			LogDebug("  eventDescription, in:%x, out:%x, outStr:%s",buf[off+1], eventDescription[0], eventDescription.c_str());
 
 			//		LogDebug("  text:%s",eventDescription.c_str() );
 		}
@@ -1051,6 +1053,7 @@ string CEpgDecoder::FreesatHuffmanToString(BYTE *src, int size)
 
   if (src[1] == 1 || src[1] == 2) 
   {
+    uncompressed.append(1,0x15); //Add UTF-8 encoding selector byte to start of output string
     if (src[1] == 1) 
     {
       data = raw_huffman_data1;
