@@ -753,9 +753,7 @@ void CEpgDecoder::DecodeShortEventDescriptor(byte* buf, EPGEvent& epgEvent,int N
 			if(buf[6]==0x1f && CanDecodeNetworkOrPID(NetworkID, PID))
 			{
 				eventText=FreesatHuffmanToString(&buf[6],event_len);
-				// LogDebug("  eventTextFHTS:%s",eventText.c_str());
 				// eventText=UTF8toISO8859_1(eventText);
-				// LogDebug("  eventTextUTISO:%s",eventText.c_str());
 			}
 			else
 			{
@@ -763,8 +761,8 @@ void CEpgDecoder::DecodeShortEventDescriptor(byte* buf, EPGEvent& epgEvent,int N
 				getString468A(&buf[6],event_len,buffer.GetBuffer(), event_len*4);
 				eventText=buffer.GetBuffer();
 			}
-			LogDebug("  eventText, in:%x, out:%x, outStr:%s",buf[6], eventText[0], eventText.c_str());
-			//		LogDebug("  event:%s",eventText.c_str());
+			// LogDebug("  eventText, in:%x, out:%x, outStr:%s",buf[6], eventText[0], eventText.c_str());
+			// LogDebug("  event:%s",eventText.c_str());
 		}
 		else if (event_len<0)
 		{
@@ -802,9 +800,7 @@ void CEpgDecoder::DecodeShortEventDescriptor(byte* buf, EPGEvent& epgEvent,int N
 			if(buf[off+1]==0x1f && CanDecodeNetworkOrPID(NetworkID, PID))
 			{
 				eventDescription=FreesatHuffmanToString(&buf[off+1],text_len);
-				// LogDebug("  eventDescriptionFHTS:%s",eventDescription.c_str());
 				// eventDescription=UTF8toISO8859_1(eventDescription);
-				// LogDebug("  eventDescriptionUTISO:%s",eventDescription.c_str());
 			}
 			else
 			{
@@ -812,9 +808,8 @@ void CEpgDecoder::DecodeShortEventDescriptor(byte* buf, EPGEvent& epgEvent,int N
 			  getString468A(&buf[off+1],text_len,buffer.GetBuffer(), text_len*4);
 				eventDescription=buffer.GetBuffer();
 			}
-			LogDebug("  eventDescription, in:%x, out:%x, outStr:%s",buf[off+1], eventDescription[0], eventDescription.c_str());
-
-			//		LogDebug("  text:%s",eventDescription.c_str() );
+			// LogDebug("  eventDescription, in:%x, out:%x, outStr:%s",buf[off+1], eventDescription[0], eventDescription.c_str());
+			// LogDebug("  text:%s",eventDescription.c_str() );
 		}
 		else if (text_len<0)
 		{

@@ -105,54 +105,7 @@ void CDvbUtil::getString468A(BYTE *buf, int bufLen, char *text, int textLen)
   // reserve place for terminating 0
   textLen--;
   c = buf[bufIndex++];
-  if (c != 0x11)
-  {
-    // Deal with first byte - check for character coding info
-    if (c == 0x10) // three byte encoding
-    {      
-      if ((textLen >= 3) && (buf[2] >= 0x1) && (buf[2] <= 0xF))
-      {
-        text[textIndex++] = 0x10;
-        text[textIndex++] = buf[2]; //Replicate input '3rd byte' into 2nd and 3rd output bytes
-        text[textIndex++] = buf[2];
-        text[textIndex] = 0;
-        bufIndex += 2;
-      }
-      else
-      {
-        text[textIndex] = 0;
-        return;
-      }
-    }
-    else //Single-byte encoding
-    {
-      if ((c < 0x80) || (c > 0x9F)) //Only allow used/supported values
-      {
-        text[textIndex++] = c; //Copy first byte (may be coding selector byte, or first character if default coding table used)
-      }
-      else if (c == 0x8A) //CR/LF
-      {
-        text[textIndex++] = '\r';
-      }
-      text[textIndex] = 0;
-    }
-    
-    //Process remaining bytes
-    while ((bufIndex < bufLen) && (textIndex < textLen))
-    {
-      c = buf[bufIndex++];
-      if (c == 0x8A) //CR/LF
-      {
-        c = '\r';
-      }
-      else if ((c <= 0x1F) || ((c >= 0x80) && (c <= 0x9F))) //Ignore unsupported characters
-        c = 0; // ignore
-
-      if (c != 0)
-        text[textIndex++] = c;
-    }
-  }
-  else
+  if (c == 0x11) //ISO/IEC 10646 encoding
   {
     // process 2 byte unicode characters by reencoding it 
     // to UTF-8 to avoid zero bytes inside string
@@ -165,7 +118,7 @@ void CDvbUtil::getString468A(BYTE *buf, int bufLen, char *text, int textLen)
       w |= buf[bufIndex++];
       if (w == 0xE08A) //CR/LF
         w = '\r';
-      else if ((w <= 0x1F) || ((w >= 0xE080) && (w <= 0xE09F))) //Ignore unsupported characters
+      else if ((w <= 0x1F) || ((w >= 0xE07F) && (w <= 0xE09F))) //Ignore unsupported characters
         w = 0;
       if (w != 0)
       {
@@ -191,6 +144,69 @@ void CDvbUtil::getString468A(BYTE *buf, int bufLen, char *text, int textLen)
           text[textIndex++] = (char)((w & 0x3F) | 0x80);
         }
       }
+    }
+  }
+  else if (c == 0x15) //UTF-8 encoding
+  {
+    // Copy first byte
+    text[textIndex++] = c;
+    text[textIndex] = 0;
+    
+    //Process remaining bytes
+    while ((bufIndex < bufLen) && (textIndex < textLen))
+    {
+      c = buf[bufIndex++];
+      if (c != 0)
+        text[textIndex++] = c;
+    }
+  }
+  else //All other encodings
+  {
+    // Deal with first byte - check for character coding info
+    if (c == 0x10) // three byte encoding
+    {      
+      if ((textLen >= 3) && (buf[2] >= 0x1) && (buf[2] <= 0xF))
+      {
+        text[textIndex++] = c;
+        text[textIndex++] = 0x20; //Make 2nd output byte non-zero
+        text[textIndex++] = buf[2];
+        text[textIndex] = 0;
+        bufIndex += 2;
+      }
+      else
+      {
+        text[textIndex] = 0;
+        return;
+      }
+    }
+    else //Single-byte encoding
+    {
+      if ((c < 0x7F) || (c > 0x9F)) //Only allow used/supported values
+      {
+        text[textIndex++] = c; //Copy first byte (may be coding selector byte, or first character if default coding table used)
+      }
+      else if (c == 0x8A) //CR/LF
+      {
+        text[textIndex++] = '\r';
+      }
+      text[textIndex] = 0;
+    }
+    
+    //Process remaining bytes
+    while ((bufIndex < bufLen) && (textIndex < textLen))
+    {
+      c = buf[bufIndex++];
+      if (c == 0x8A) //CR/LF
+      {
+        c = '\r';
+      }
+      else if ((c <= 0x1F) || ((c >= 0x7F) && (c <= 0x9F))) //Ignore unsupported characters
+      {
+        c = 0; // ignore
+      }
+
+      if (c != 0)
+        text[textIndex++] = c;
     }
   }
   text[textIndex] = 0;
