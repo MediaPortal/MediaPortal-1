@@ -761,7 +761,7 @@ void CEpgDecoder::DecodeShortEventDescriptor(byte* buf, EPGEvent& epgEvent,int N
 				getString468A(&buf[6],event_len,buffer.GetBuffer(), event_len*4);
 				eventText=buffer.GetBuffer();
 			}
-			// LogDebug("  eventText, in:%x, out:%x, outStr:%s",buf[6], eventText[0], eventText.c_str());
+		  // LogDebug("  eventText, in:%x, out:%x, outStr:%s",buf[6], eventText[0], eventText.c_str());
 			// LogDebug("  event:%s",eventText.c_str());
 		}
 		else if (event_len<0)
@@ -1373,40 +1373,3 @@ string CEpgDecoder::UTF8toISO8859_1(const string& in)
   return out;
 }
 
-//string CEpgDecoder::UTF8toISO8859_1(const char * in)
-//{
-//  string out;
-//  if (in == NULL)
-//      return out;
-//  
-//  unsigned int codepoint;
-//  while (*in != 0)
-//  {
-//    unsigned char ch = static_cast<unsigned char>(*in);
-//    if (ch <= 0x7f)
-//      codepoint = ch;
-//    else if (ch <= 0xbf)
-//      codepoint = (codepoint << 6) | (ch & 0x3f);
-//    else if (ch <= 0xdf)
-//      codepoint = ch & 0x1f;
-//    else if (ch <= 0xef)
-//      codepoint = ch & 0x0f;
-//    else
-//      codepoint = ch & 0x07;
-//    ++in;
-//    if (((*in & 0xc0) != 0x80) && (codepoint <= 0x10ffff))
-//    {
-//      if (codepoint <= 255)
-//      {
-//        out.append(1, static_cast<char>(codepoint));
-//      }
-//      else
-//      {
-//        // out-of-bounds characters
-//        out.append(1, ' '); //Insert space
-//      }
-//    }
-//  }
-//  out.append(1, '\0'); //Add null to end of string
-//  return out;
-//}
