@@ -603,6 +603,7 @@ CMpTs::CMpTs(LPUNKNOWN pUnk, HRESULT *pHr)
   LogDebug("-- Random access mode for timeshift files                        --");
   LogDebug("-- Variable size (no chunk reserve) for timeshift files          --");
   LogDebug("-- Threaded recording file writing                               --");
+  LogDebug("-- EPG text handling changes                                     --");
   LogDebug("-------------------------------------------------------------------");  
 		
   b_dumpRawPackets = false;
