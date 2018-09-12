@@ -913,8 +913,6 @@ namespace TvService
 
           // Log TvService start and versions
           FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(Application.ExecutablePath);
-          Log.WriteFile("TVService v" + versionInfo.FileVersion + " is starting up on " +
-            OSInfo.OSInfo.GetOSDisplayVersion());
 
           try
           {
