@@ -754,6 +754,7 @@ void CEpgDecoder::DecodeShortEventDescriptor(byte* buf, EPGEvent& epgEvent,int N
 			{
 				eventText=FreesatHuffmanToString(&buf[6],event_len);
 				// eventText=UTF8toISO8859_1(eventText);
+		    LogDebug("  eventText, outStr:%s, hexStr:0x%s",eventText.c_str(), hexStr(eventText));				
 			}
 			else
 			{
@@ -801,6 +802,7 @@ void CEpgDecoder::DecodeShortEventDescriptor(byte* buf, EPGEvent& epgEvent,int N
 			{
 				eventDescription=FreesatHuffmanToString(&buf[off+1],text_len);
 				// eventDescription=UTF8toISO8859_1(eventDescription);
+		    LogDebug("  eventDescription, outStr:%s, hexStr:0x%s",eventDescription.c_str(), hexStr(eventDescription));				
 			}
 			else
 			{
@@ -1370,6 +1372,25 @@ string CEpgDecoder::UTF8toISO8859_1(const string& in)
     }
   }
   out.append(1, '\0'); //Add null to end of string
+  return out;
+}
+
+constexpr char hexmap[] = {'0', '1', '2', '3', '4', '5', '6', '7',
+                           '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
+
+string CEpgDecoder::hexStr(const string& in)
+{
+  string out;
+  if (in.c_str() == NULL)
+      return out;
+  const char* ch = in.c_str();
+  int len = in.length();  
+  for (int i = 0; i < len; ++i)
+  {    
+    out.append(1, hexmap[(*ch & 0xF0) >> 4]);
+    out.append(1, hexmap[*ch++ & 0x0F]);
+  }
+  out.append(1, '\0'); //Add null to end of string  
   return out;
 }
 
