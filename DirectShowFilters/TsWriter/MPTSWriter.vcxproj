@@ -181,6 +181,7 @@
     <ClCompile Include="source\PmtGrabber.cpp" />
     <ClCompile Include="source\SvctParser.cpp" />
     <ClCompile Include="source\TeletextGrabber.cpp" />
+    <ClCompile Include="source\TextUtil.cpp" />
     <ClCompile Include="source\TsChannel.cpp" />
     <ClCompile Include="source\TsWriter.cpp" />
     <ClCompile Include="source\VideoAnalyzer.cpp" />
@@ -219,6 +220,7 @@
     <ClInclude Include="source\BaseScteParser.h" />
     <ClInclude Include="source\SvctParser.h" />
     <ClInclude Include="source\TeletextGrabber.h" />
+    <ClInclude Include="source\TextUtil.h" />
     <ClInclude Include="source\TsChannel.h" />
     <ClInclude Include="source\TsWriter.h" />
     <ClInclude Include="source\version.h" />

@@ -26,6 +26,7 @@
 #include <string>
 using namespace std;
 #include "..\..\shared\dvbutil.h"
+#include "TextUtil.h"
 #include "criticalsection.h"
 using namespace Mediaportal;
 
@@ -78,7 +79,7 @@ typedef struct stEPGChannel
 	typedef map<int,bool>::iterator imapSectionsReceived;
 }EPGChannel;
 
-class CEpgDecoder : public CDvbUtil
+class CEpgDecoder : public CTextUtil
 
 {
 
@@ -98,9 +99,6 @@ public:
 	void	AbortGrabbing();
 	HRESULT	DecodeEPG(byte* pbData,int len,int PID);
 	HRESULT	DecodePremierePrivateEPG(byte* pbData,int len);
-	string FreesatHuffmanToString(BYTE *src, int size);
-	string UTF8toISO8859_1(const string& in);
-  string hexStr(const string& in);
 private:
 	bool GetChannelByindex(ULONG channel, EPGChannel& epgChannel);
 	void DecodeCombinedStarRating_MPAARatingDescriptor(byte* data,EPGEvent &epgEvent);

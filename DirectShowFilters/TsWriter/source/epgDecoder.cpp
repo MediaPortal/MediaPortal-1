@@ -24,12 +24,11 @@
 #include <bdatypes.h>
 #include <time.h>
 #include "epgdecoder.h"
-//#include "crc.h"
 #include "autostring.h"
 #include "entercriticalsection.h"
 #include "DN_EIT_Helper.h"
 #include "..\..\shared\dvbutil.h"
-#include "FreesatHuffmanTables.h"
+#include "TextUtil.h"
 
 extern void LogDebug(const char *fmt, ...) ;
 
@@ -615,7 +614,7 @@ void CEpgDecoder::DecodeExtendedEvent(byte* data, EPGEvent& epgEvent)
 			{
 
 				CAutoString buffer2 (item_length*4);
-				getString468A(&data[pointer+1], item_length, buffer2.GetBuffer(), item_length*4);
+				DvbTextToString(&data[pointer+1], item_length, buffer2.GetBuffer(), item_length*4);
 				item = buffer2.GetBuffer();
 			}
 
@@ -636,7 +635,7 @@ void CEpgDecoder::DecodeExtendedEvent(byte* data, EPGEvent& epgEvent)
 		if (text_length>0)
 		{
 			CAutoString buffer (text_length*4);
-			getString468A(&data[pointer], text_length, buffer.GetBuffer(), text_length*4);
+			DvbTextToString(&data[pointer], text_length, buffer.GetBuffer(), text_length*4);
 			text = buffer.GetBuffer();
 		}
 
@@ -754,12 +753,13 @@ void CEpgDecoder::DecodeShortEventDescriptor(byte* buf, EPGEvent& epgEvent,int N
 			{
 				eventText=FreesatHuffmanToString(&buf[6],event_len);
 				// eventText=UTF8toISO8859_1(eventText);
-		    LogDebug("  eventText, outStr:%s, hexStr:0x%s",eventText.c_str(), hexStr(eventText));				
+				// string inStr( reinterpret_cast<char const*>(&buf[6]), event_len );
+		    LogDebug("  eventText, outStr:%s, outHex:0x%s",eventText.c_str(), hexStr(eventText));
 			}
 			else
 			{
 				CAutoString buffer(event_len*4);
-				getString468A(&buf[6],event_len,buffer.GetBuffer(), event_len*4);
+				DvbTextToString(&buf[6],event_len,buffer.GetBuffer(), event_len*4);
 				eventText=buffer.GetBuffer();
 			}
 		  // LogDebug("  eventText, in:%x, out:%x, outStr:%s",buf[6], eventText[0], eventText.c_str());
@@ -802,12 +802,13 @@ void CEpgDecoder::DecodeShortEventDescriptor(byte* buf, EPGEvent& epgEvent,int N
 			{
 				eventDescription=FreesatHuffmanToString(&buf[off+1],text_len);
 				// eventDescription=UTF8toISO8859_1(eventDescription);
-		    LogDebug("  eventDescription, outStr:%s, hexStr:0x%s",eventDescription.c_str(), hexStr(eventDescription));				
+				// string inStr( reinterpret_cast<char const*>(&buf[off+1]), text_len );
+		    LogDebug("  eventDescription, outStr:%s, outHex:0x%s",eventDescription.c_str(), hexStr(eventDescription));				
 			}
 			else
 			{
 				CAutoString buffer (text_len*4);
-			  getString468A(&buf[off+1],text_len,buffer.GetBuffer(), text_len*4);
+			  DvbTextToString(&buf[off+1],text_len,buffer.GetBuffer(), text_len*4);
 				eventDescription=buffer.GetBuffer();
 			}
 			// LogDebug("  eventDescription, in:%x, out:%x, outStr:%s",buf[off+1], eventDescription[0], eventDescription.c_str());
@@ -1033,92 +1034,6 @@ void CEpgDecoder::DecodeContentDescription(byte* buf,EPGEvent& epgEvent)
 	}	
 }
 
-string CEpgDecoder::FreesatHuffmanToString(BYTE *src, int size)
-{
-  string uncompressed;
-  int j,k;
-  unsigned char *data;
-  int uncompressed_size = 0x102;
-  int u;
-  int bit;
-  short offset;
-  unsigned short *base;
-  unsigned char *next_node;
-  unsigned char node;
-  unsigned char prevc;
-  unsigned char nextc;
-
-  if (src[1] == 1 || src[1] == 2) 
-  {
-    uncompressed.append(1,0x15); //Add UTF-8 encoding selector byte to start of output string
-    if (src[1] == 1) 
-    {
-      data = raw_huffman_data1;
-    }
-    else 
-    {
-      data = raw_huffman_data2;
-    }
-    src += 2;
-    j = 0;
-    u = 0;
-    prevc = START;
-    do
-    {
-      offset = bitrev16(((unsigned short *)data)[prevc]);
-      base = (unsigned short *)&data[offset];
-      node = 0;
-      do
-      {
-        bit = (src[j>>3] >> (7-(j&7))) & 1;
-        j++;
-        next_node = (unsigned char *)&base[node];
-        node = next_node[bit];
-      }
-      while ((next_node[bit] & 0x80) == 0);
-      nextc = next_node[bit] ^ 0x80;
-      if (nextc == 0x1b)
-      {
-        do
-        {
-          nextc = 0;
-          for (k=0; k<8; k++)
-          {
-            bit = (src[j>>3] >> (7-(j&7))) & 1;
-            nextc = (nextc <<1) | bit;
-            j++;
-          }
-          if (u >= uncompressed_size)
-          {
-            return 0;
-          }
-          uncompressed.append(1,nextc);
-        }
-        while (nextc & 0x80);
-      }
-      else
-      {
-        if (u >= uncompressed_size)
-        {
-          LogDebug("need realloc, uncompressed_size=%d", uncompressed_size);
-          return uncompressed;
-        }
-        uncompressed.append(1,nextc);
-      }
-      prevc = nextc;
-    }
-    while(nextc != STOP);
-    prevc = nextc;
-    uncompressed.append(1,'\0');
-    return uncompressed;
-  }
-  else
-  {
-    LogDebug("bad huffman table, %d, only support for 1, 2", src[0]);
-    return uncompressed;
-  }
-  return uncompressed;
-}
 
 void CEpgDecoder::ResetEPG()
 {
@@ -1333,64 +1248,5 @@ void CEpgDecoder::AbortGrabbing()
 	CEnterCriticalSection lock (m_critSection);
 	m_bParseEPG=false;
 	m_bEpgDone=true;
-}
-
-//This function is derived from the example code here - 
-//https://stackoverflow.com/questions/23689733/convert-string-from-utf-8-to-iso-8859-1
-string CEpgDecoder::UTF8toISO8859_1(const string& in)
-{
-  string out;
-  if (in.c_str() == NULL)
-      return out;
-  
-  unsigned int codepoint;
-  const char* ch = in.c_str();
-  while (*ch != '\0')
-  {
-    if (*ch <= 0x7f)
-      codepoint = *ch;
-    else if (*ch <= 0xbf)
-      codepoint = (codepoint << 6) | (*ch & 0x3f);
-    else if (*ch <= 0xdf)
-      codepoint = *ch & 0x1f;
-    else if (*ch <= 0xef)
-      codepoint = *ch & 0x0f;
-    else
-      codepoint = *ch & 0x07;
-    ++ch;
-    if (((*ch & 0xc0) != 0x80) && (codepoint <= 0x10ffff))
-    {
-      if (codepoint <= 255)
-      {
-        out.append(1, static_cast<char>(codepoint));
-      }
-      else
-      {
-        // out-of-bounds characters
-        out.append(1, ' '); //Insert space
-      }
-    }
-  }
-  out.append(1, '\0'); //Add null to end of string
-  return out;
-}
-
-constexpr char hexmap[] = {'0', '1', '2', '3', '4', '5', '6', '7',
-                           '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
-
-string CEpgDecoder::hexStr(const string& in)
-{
-  string out;
-  if (in.c_str() == NULL)
-      return out;
-  const char* ch = in.c_str();
-  int len = in.length();  
-  for (int i = 0; i < len; ++i)
-  {    
-    out.append(1, hexmap[(*ch & 0xF0) >> 4]);
-    out.append(1, hexmap[*ch++ & 0x0F]);
-  }
-  out.append(1, '\0'); //Add null to end of string  
-  return out;
 }
 
