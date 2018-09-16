@@ -1500,6 +1500,8 @@ namespace TvService
         info.episodePart = recDetail.Program.EpisodePart;
         info.startTime = recDetail.RecordingStartDateTime;
         info.endTime = DateTime.Now;
+        info.ProgramStartTime = recDetail.Program.StartTime;
+        info.ProgramEndTime = recDetail.Program.EndTime;
 
         MatroskaTagHandler.WriteTag(System.IO.Path.ChangeExtension(fileName, ".xml"), info);
       }

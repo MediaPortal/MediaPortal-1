@@ -39,6 +39,8 @@ namespace TvDatabase
     public string episodePart = "";
     public DateTime startTime = SqlDateTime.MinValue.Value;
     public DateTime endTime = SqlDateTime.MinValue.Value;
+    public DateTime? ProgramStartTime;
+    public DateTime? ProgramEndTime;
   }
 
   /// <summary>
@@ -92,7 +94,7 @@ namespace TvDatabase
       Dictionary<string, MatroskaTagInfo> foundTagInfo = new Dictionary<string, MatroskaTagInfo>();
       try
       {
-        string[] importDirs = new string[] {};
+        string[] importDirs = new string[] { };
         // get all subdirectories
         try
         {
@@ -206,6 +208,20 @@ namespace TvDatabase
                 info.endTime = SqlDateTime.MinValue.Value;
               }
               break;
+            case "PROGRAMSTARTTIME":
+              try
+              {
+                info.ProgramStartTime = DateTime.ParseExact(simpleTag.ChildNodes[1].InnerText, "yyyy-MM-dd HH:mm", null);
+              }
+              catch { }
+              break;
+            case "PROGRAMENDTIME":
+              try
+              {
+                info.ProgramEndTime = DateTime.ParseExact(simpleTag.ChildNodes[1].InnerText, "yyyy-MM-dd HH:mm", null);
+              }
+              catch { }
+              break;
           }
         }
       }
@@ -237,6 +253,10 @@ namespace TvDatabase
       tagNode.AppendChild(AddSimpleTag("EPISODEPART", taginfo.episodePart, doc));
       tagNode.AppendChild(AddSimpleTag("STARTTIME", taginfo.startTime.ToString("yyyy-MM-dd HH:mm"), doc));
       tagNode.AppendChild(AddSimpleTag("ENDTIME", taginfo.endTime.ToString("yyyy-MM-dd HH:mm"), doc));
+      if (taginfo.ProgramStartTime.HasValue)
+        tagNode.AppendChild(AddSimpleTag("PROGRAMSTARTTIME", taginfo.ProgramStartTime.Value.ToString("yyyy-MM-dd HH:mm"), doc));
+      if (taginfo.ProgramEndTime.HasValue)
+        tagNode.AppendChild(AddSimpleTag("PROGRAMENDTIME", taginfo.ProgramEndTime.Value.ToString("yyyy-MM-dd HH:mm"), doc));
       tagsNode.AppendChild(tagNode);
       doc.AppendChild(tagsNode);
       doc.InsertBefore(xmldecl, tagsNode);
