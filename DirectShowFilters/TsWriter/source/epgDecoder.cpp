@@ -745,10 +745,10 @@ void CEpgDecoder::DecodeShortEventDescriptor(byte* buf, EPGEvent& epgEvent,int N
 				return;
 			}
 
+			// Check if huffman encoded.
 			// 0x1f is tag for freesat/freeview huffman encoding
 			// buf[7] - huffman table id. Including this reduces the chance of non encoded
 			// text being sent through
-
 			if(buf[6]==0x1f && CanDecodeNetworkOrPID(NetworkID, PID))
 			{
 				CAutoString buffer(event_len*4);
@@ -763,7 +763,6 @@ void CEpgDecoder::DecodeShortEventDescriptor(byte* buf, EPGEvent& epgEvent,int N
 				eventText=buffer.GetBuffer(out_len);
 			}
 		  // LogDebug("  eventText, in:%x, out:%x, outStr:%s",buf[6], eventText[0], eventText.c_str());
-			// LogDebug("  event:%s",eventText.c_str());
 		}
 		else if (event_len<0)
 		{
@@ -812,7 +811,6 @@ void CEpgDecoder::DecodeShortEventDescriptor(byte* buf, EPGEvent& epgEvent,int N
 				eventDescription=buffer.GetBuffer(out_len);
 			}
 			// LogDebug("  eventDescription, in:%x, out:%x, outStr:%s",buf[off+1], eventDescription[0], eventDescription.c_str());
-			// LogDebug("  text:%s",eventDescription.c_str() );
 		}
 		else if (text_len<0)
 		{
