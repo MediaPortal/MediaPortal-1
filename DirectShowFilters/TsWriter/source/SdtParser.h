@@ -23,6 +23,7 @@
 #include "..\..\shared\PidTable.h"
 #include "..\..\shared\ChannelInfo.h"
 #include "..\..\shared\tsheader.h"
+#include "TextUtil.h"
 #include <vector>
 using namespace std;
 
@@ -34,7 +35,7 @@ public:
 
 #define PID_SDT 0x11
 
-class CSdtParser: public  CSectionDecoder
+class CSdtParser: public  CSectionDecoder, public CTextUtil
 {
 private:
 public:

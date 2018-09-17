@@ -1,5 +1,5 @@
 /**
-*  MultiFileWriter.h
+*  FileWriterThreaded.h
 *  Copyright (C) 2006-2007      nate
 *
 *  This file is part of TSFileSource, a directshow push source filter that
@@ -23,10 +23,8 @@
 *    http://forums.dvbowners.com/
 */
 
-#ifndef MULTIFILEWRITER
-#define MULTIFILEWRITER
-
-#include "FileWriter.h"
+#ifndef FILEWRITERTHREADED
+#define FILEWRITERTHREADED
 #include "CDiskBuff.h"
 #include <vector>
 
@@ -40,70 +38,44 @@
 //System timer resolution in ms
 #define SYS_TIMER_RES 5
 
-typedef struct 
-{
-	long 	minFiles;
-	long 	maxFiles;
-	__int64	maxSize;
-	__int64	chunkSize;
-} MultiFileWriterParam;
-
-
-class MultiFileWriter
+class FileWriterThreaded
 {
 public:
-	MultiFileWriter(MultiFileWriterParam *pWriterParams);
-	virtual ~MultiFileWriter();
+
+	FileWriterThreaded();
+	virtual ~FileWriterThreaded();
 
 	HRESULT Open(LPCWSTR pszFileName);
 	HRESULT Close();
+  
 	HRESULT AddToBuffer(byte* pbData, int len, int newBuffSize);
 	HRESULT DiscardBuffer();
 
-	void GetPosition(__int64 * position, long * bufferId);
 
 protected:
-  	  
-	HRESULT OpenFile();
-	HRESULT WriteToDisk(PBYTE pbData, ULONG lDataLength);
-	HRESULT GetAvailableDiskSpace(__int64* llAvailableDiskSpace);
+	HANDLE m_hFile;
+	LPWSTR m_pFileName;
+	
+	int    m_iPart;
 
-	HRESULT PushBuffer();
-	HRESULT NewBuffer(int size);
-	void ClearBuffers();
-
-	HRESULT PrepareTSFile();
-	HRESULT CreateNewTSFile();
-	HRESULT ReuseTSFile();
-
-	HRESULT WriteTSBufferFile();
-	HRESULT CleanupFiles();
-	BOOL IsFileLocked(LPWSTR pFilename);
-
-	HANDLE m_hTSBufferFile;
-	LPWSTR m_pTSBufferFileName;
+	BOOL m_bWriteFailed;
 	CDiskBuff* m_pDiskBuffer;
-
-	CCritSec m_Lock;
-	CCritSec m_posnLock;
-
-	FileWriter *m_pCurrentTSFile;
-	std::vector<LPWSTR> m_tsFileNames;
-	long m_filesAdded;
-	long m_filesRemoved;
-	long m_currentFilenameId;
-	long m_currentFileId;
-
-	long m_minTSFiles;
-	long m_maxTSFiles;
-	__int64 m_maxTSFileSize;
-	__int64 m_chunkReserve;
 	
 	UINT m_maxBuffersUsed;
 	BOOL m_bDiskFull;
 	BOOL m_bBufferFull;
+	
+	HRESULT PushBuffer();
+	HRESULT NewBuffer(int size);
+	void ClearBuffers();
+	HRESULT OpenFile();
+  HRESULT WriteWithRetry(PBYTE pbData, ULONG lDataLength, int retries);
+	DWORD SetFilePointer(__int64 llDistanceToMove, DWORD dwMoveMethod);
+	__int64 GetFilePointer();
 
+	CCritSec m_Lock;
 	CCritSec m_qLock;	
+	
   std::vector<CDiskBuff*> m_writeQueue;
   typedef std::vector<CDiskBuff*>::iterator ivecDiskBuff;
 

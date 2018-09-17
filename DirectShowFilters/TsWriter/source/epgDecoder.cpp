@@ -24,12 +24,11 @@
 #include <bdatypes.h>
 #include <time.h>
 #include "epgdecoder.h"
-//#include "crc.h"
 #include "autostring.h"
 #include "entercriticalsection.h"
 #include "DN_EIT_Helper.h"
 #include "..\..\shared\dvbutil.h"
-#include "FreesatHuffmanTables.h"
+#include "TextUtil.h"
 
 extern void LogDebug(const char *fmt, ...) ;
 
@@ -615,8 +614,8 @@ void CEpgDecoder::DecodeExtendedEvent(byte* data, EPGEvent& epgEvent)
 			{
 
 				CAutoString buffer2 (item_length*4);
-				getString468A(&data[pointer+1], item_length, buffer2.GetBuffer(), item_length*4);
-				item = buffer2.GetBuffer();
+				int out_len = DvbTextToString(&data[pointer+1], item_length, buffer2.GetBuffer(), item_length*4);
+				item = buffer2.GetBuffer(out_len);
 			}
 
 			pointer += (1 + item_length);
@@ -636,7 +635,7 @@ void CEpgDecoder::DecodeExtendedEvent(byte* data, EPGEvent& epgEvent)
 		if (text_length>0)
 		{
 			CAutoString buffer (text_length*4);
-			getString468A(&data[pointer], text_length, buffer.GetBuffer(), text_length*4);
+			DvbTextToString(&data[pointer], text_length, buffer.GetBuffer(), text_length*4);
 			text = buffer.GetBuffer();
 		}
 
@@ -746,21 +745,24 @@ void CEpgDecoder::DecodeShortEventDescriptor(byte* buf, EPGEvent& epgEvent,int N
 				return;
 			}
 
+			// Check if huffman encoded.
 			// 0x1f is tag for freesat/freeview huffman encoding
 			// buf[7] - huffman table id. Including this reduces the chance of non encoded
 			// text being sent through
-
 			if(buf[6]==0x1f && CanDecodeNetworkOrPID(NetworkID, PID))
 			{
-				eventText=FreesatHuffmanToString(&buf[6],event_len);
+				CAutoString buffer(event_len*4);
+				int out_len = BbcHuffmanToString(&buf[6],event_len,buffer.GetBuffer(), event_len*4);
+				eventText=buffer.GetBuffer(out_len);
+		    //LogDebug("  eventText, inLen:%d, outLen:%d, outStr:%s, outHex:0x%s",event_len, out_len, eventText.c_str(), hexStr(eventText));
 			}
 			else
 			{
 				CAutoString buffer(event_len*4);
-				getString468A(&buf[6],event_len,buffer.GetBuffer(), event_len*4);
-				eventText=buffer.GetBuffer();
+				int out_len = DvbTextToString(&buf[6],event_len,buffer.GetBuffer(), event_len*4);
+				eventText=buffer.GetBuffer(out_len);
 			}
-			//		LogDebug("  event:%s",eventText.c_str());
+		  // LogDebug("  eventText, in:%x, out:%x, outStr:%s",buf[6], eventText[0], eventText.c_str());
 		}
 		else if (event_len<0)
 		{
@@ -797,16 +799,18 @@ void CEpgDecoder::DecodeShortEventDescriptor(byte* buf, EPGEvent& epgEvent,int N
 			// text being sent through
 			if(buf[off+1]==0x1f && CanDecodeNetworkOrPID(NetworkID, PID))
 			{
-				eventDescription=FreesatHuffmanToString(&buf[off+1],text_len);
+				CAutoString buffer (text_len*4);
+				int out_len = BbcHuffmanToString(&buf[off+1], text_len, buffer.GetBuffer(), text_len*4);
+				eventDescription=buffer.GetBuffer(out_len);
+		    //LogDebug("  eventDescription, inLen:%d, outLen:%d, outStr:%s, outHex:0x%s",text_len, out_len, eventDescription.c_str(), hexStr(eventDescription));				
 			}
 			else
 			{
 				CAutoString buffer (text_len*4);
-			  getString468A(&buf[off+1],text_len,buffer.GetBuffer(), text_len*4);
-				eventDescription=buffer.GetBuffer();
+			  int out_len = DvbTextToString(&buf[off+1],text_len,buffer.GetBuffer(), text_len*4);
+				eventDescription=buffer.GetBuffer(out_len);
 			}
-
-			//		LogDebug("  text:%s",eventDescription.c_str() );
+			// LogDebug("  eventDescription, in:%x, out:%x, outStr:%s",buf[off+1], eventDescription[0], eventDescription.c_str());
 		}
 		else if (text_len<0)
 		{
@@ -1028,91 +1032,6 @@ void CEpgDecoder::DecodeContentDescription(byte* buf,EPGEvent& epgEvent)
 	}	
 }
 
-string CEpgDecoder::FreesatHuffmanToString(BYTE *src, int size)
-{
-  string uncompressed;
-  int j,k;
-  unsigned char *data;
-  int uncompressed_size = 0x102;
-  int u;
-  int bit;
-  short offset;
-  unsigned short *base;
-  unsigned char *next_node;
-  unsigned char node;
-  unsigned char prevc;
-  unsigned char nextc;
-
-  if (src[1] == 1 || src[1] == 2) 
-  {
-    if (src[1] == 1) 
-    {
-      data = raw_huffman_data1;
-    }
-    else 
-    {
-      data = raw_huffman_data2;
-    }
-    src += 2;
-    j = 0;
-    u = 0;
-    prevc = START;
-    do
-    {
-      offset = bitrev16(((unsigned short *)data)[prevc]);
-      base = (unsigned short *)&data[offset];
-      node = 0;
-      do
-      {
-        bit = (src[j>>3] >> (7-(j&7))) & 1;
-        j++;
-        next_node = (unsigned char *)&base[node];
-        node = next_node[bit];
-      }
-      while ((next_node[bit] & 0x80) == 0);
-      nextc = next_node[bit] ^ 0x80;
-      if (nextc == 0x1b)
-      {
-        do
-        {
-          nextc = 0;
-          for (k=0; k<8; k++)
-          {
-            bit = (src[j>>3] >> (7-(j&7))) & 1;
-            nextc = (nextc <<1) | bit;
-            j++;
-          }
-          if (u >= uncompressed_size)
-          {
-            return 0;
-          }
-          uncompressed.append(1,nextc);
-        }
-        while (nextc & 0x80);
-      }
-      else
-      {
-        if (u >= uncompressed_size)
-        {
-          LogDebug("need realloc, uncompressed_size=%d", uncompressed_size);
-          return uncompressed;
-        }
-        uncompressed.append(1,nextc);
-      }
-      prevc = nextc;
-    }
-    while(nextc != STOP);
-    prevc = nextc;
-    uncompressed.append(1,'\0');
-    return uncompressed;
-  }
-  else
-  {
-    LogDebug("bad huffman table, %d, only support for 1, 2", src[0]);
-    return uncompressed;
-  }
-  return uncompressed;
-}
 
 void CEpgDecoder::ResetEPG()
 {
