@@ -112,6 +112,44 @@
 		<label>#Radio.Recorded.Description</label>
 		<visible>facadeview.list</visible>
 	</control>
+	<control>
+		<description>BG for watched count/watched percent</description>
+		<type>image</type>
+		<id>1</id>
+		<posX>785</posX>
+		<posY>450</posY>
+		<width>114</width>
+		<height>114</height>
+		<texture>watched_count_bg.png</texture>
+		<visible>facadeview.list+!string.equals(#watchedcount,)+control.hasthumb(500)</visible>
+	</control>
+	<control>
+		<description>Video Watched Count Label</description>
+		<type>label</type>
+		<id>1</id>
+		<posX>782</posX>
+		<posY>448</posY>
+		<width>114</width>
+		<height>114</height>
+		<label>#watchedcount</label>
+		<font>Label</font>
+		<align>center</align>
+		<font>fontB16</font>
+		<textcolor>FFF</textcolor>
+		<visible>facadeview.list+!string.equals(#watchedcount,)+control.hasthumb(500)</visible>
+	</control>
+	<control>
+		<description>Watched Logo</description>
+		<type>image</type>
+		<id>0</id>
+		<posX>785</posX>
+		<posY>450</posY>
+		<width>114</width>
+		<height>114</height>
+		<texture>watched_percentage_#(string.format('{0:000}',mul(math.round(div(cint(#watchedpercent),5)),5))).png</texture>
+		<keepaspectratio>yes</keepaspectratio>
+		<visible>facadeview.list+!string.equals(#watchedcount,)+control.hasthumb(500)</visible>
+	</control>
   <!--            :: THUMBVIEW ::            -->
 	<control>
 		<description>Current program channel</description>
@@ -157,7 +195,8 @@
 		<visible>facadeview.filmstrip</visible>
 		<animation effect="fade" time="250">WindowOpen</animation>
 		<animation effect="fade" time="250">WindowClose</animation>
-	</control>
+	</control>	
+
 	<import>myradiorecorded.hiddenmenu.xml</import>
 	<import>common.facade.recordings.xml</import>
   <import>common.overlay.xml</import>

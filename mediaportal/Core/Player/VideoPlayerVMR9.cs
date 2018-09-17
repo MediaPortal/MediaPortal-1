@@ -1636,7 +1636,7 @@ namespace MediaPortal.Player
 
     protected void Cleanup()
     {
-      if (graphBuilder == null)
+      if (graphBuilder == null || (VMR9Util.g_vmr9 != null && VMR9Util.g_vmr9.isCurrentStopping))
       {
         return;
       }

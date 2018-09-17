@@ -44,7 +44,7 @@
 				<PinIconYOff>5</PinIconYOff>
 				<itemWidth>40</itemWidth>
 				<itemHeight>30</itemHeight>
-				<textureFocus>listcontrol_item_selected_tv.png</textureFocus>
+				<textureFocus>#(iif(eq(#watchedcount,'0'),'listcontrol_item_selected_tv_notwatched.png','listcontrol_item_selected_tv.png'))</textureFocus>
 				<textureNoFocus>-</textureNoFocus>
 				<IconXOff>20</IconXOff>
 				<IconYOff>13</IconYOff>				

@@ -1,47 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ArrayOfDVBTTuning xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <!-- PSB1 -->
   <DVBTTuning>
-    <Frequency>490000</Frequency><!-- C23 Now -->
+    <Frequency>490000</Frequency>
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
+  <!-- PSB2 -->
   <DVBTTuning>
-    <Frequency>514000</Frequency><!-- C26 Now -->
+    <Frequency>514000</Frequency>
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
+  <!-- PSB3 -->
   <DVBTTuning>
-    <Frequency>546000</Frequency><!-- C30 Now -->
+    <Frequency>546000</Frequency>
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
+  <!-- COM4 -->
   <DVBTTuning>
-    <Frequency>506000</Frequency><!-- C25 Now -->
+    <Frequency>506000</Frequency>
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
+  <!-- COM5 -->
   <DVBTTuning>
-    <Frequency>482000</Frequency><!-- C22 Now -->
+    <Frequency>482000</Frequency>
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
+  <!-- COM6 -->
   <DVBTTuning>
-    <Frequency>530000</Frequency><!-- C28 Now -->
+    <Frequency>530000</Frequency>
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
+  <!-- COM7 -->
   <DVBTTuning>
-    <Frequency>538000</Frequency><!-- C29 From 2014 -->
+    <Frequency>746000</Frequency>
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
+  <!-- COM8 -->
   <DVBTTuning>
-    <Frequency>570000</Frequency><!-- C33 from 2014 -->
+    <Frequency>754000</Frequency>
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
+  <!-- LOC1 -->
   <DVBTTuning>
-    <Frequency>586000</Frequency><!-- C35 from 2014 -->
+    <Frequency>586000</Frequency>
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>

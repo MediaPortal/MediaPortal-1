@@ -16,11 +16,10 @@
 
 #include "stdafx.h"
 
-#include <vector>
-#include <shlobj.h>
+#include <ShlObj.h>
 
 #include "fontEngine.h"
-#include "transformmatrix.h"
+#include "TransformMatrix.h"
 #include "EffectStateManager.h"
 
 using namespace std;
@@ -189,44 +188,52 @@ void Cleanup()
 //*******************************************************************************************************************
 void FontEngineInitialize(int screenWidth, int screenHeight, int poolFormat)
 {
-  m_iScreenWidth=screenWidth;
-  m_iScreenHeight=screenHeight;
+  try
+  {
+    m_iScreenWidth = screenWidth;
+    m_iScreenHeight = screenHeight;
 
-  textureCount=0;
-  static bool initialized=false;
-  if (!initialized)
-  {
-    for (int i=0; i < MAX_FONTS;++i)
+    textureCount = 0;
+    static bool initialized = false;
+    if (!initialized)
     {
-      fontData[i].pIndexBuffer=NULL;
-      fontData[i].pTexture = NULL;
-      fontData[i].vertices = NULL;
+      for (int i = 0; i < MAX_FONTS; ++i)
+      {
+        fontData[i].pIndexBuffer = NULL;
+        fontData[i].pTexture = NULL;
+        fontData[i].vertices = NULL;
+      }
+      for (int i = 0; i < MAX_TEXTURES; ++i)
+      {
+        textureData[i].hashCode = -1;
+        textureData[i].dwNumTriangles = 0;
+        textureData[i].iv = 0;
+        textureData[i].pIndexBuffer = NULL;
+        textureData[i].pTexture = NULL;
+        textureData[i].vertices = NULL;
+        textureData[i].useAlphaBlend = true;
+        textureZ[i] = -1;
+        texturePlace[i] = new TEXTURE_PLACE();
+        texturePlace[i]->numRect = 0;
+      }
+      initialized = true;
+      textureCount = 0;
     }
-    for (int i=0; i < MAX_TEXTURES;++i)
+    if (poolFormat == 0)
     {
-      textureData[i].hashCode=-1;
-      textureData[i].dwNumTriangles=0;
-      textureData[i].iv=0;
-      textureData[i].pIndexBuffer=NULL;
-      textureData[i].pTexture=NULL;
-      textureData[i].vertices = NULL;
-      textureData[i].useAlphaBlend=true;
-      textureZ[i]=-1;
-      texturePlace[i]=new TEXTURE_PLACE();
-      texturePlace[i]->numRect = 0;
+      m_ipoolFormat = D3DPOOL_SYSTEMMEM;
+      m_d3dUsage = D3DUSAGE_DYNAMIC;
     }
-    initialized=true;
-    textureCount=0;
-	}
-  if (poolFormat==0)
-  {
-    m_ipoolFormat = D3DPOOL_SYSTEMMEM;
-    m_d3dUsage = D3DUSAGE_DYNAMIC;
+    else
+    {
+      m_ipoolFormat = D3DPOOL_MANAGED;
+      m_d3dUsage = D3DUSAGE_WRITEONLY;
+    }
   }
-  else
+  catch (...)
   {
-    m_ipoolFormat = D3DPOOL_MANAGED;
-    m_d3dUsage = D3DUSAGE_WRITEONLY;
+    Log("ERROR Fontengine:FontEngineInitialize\n");
+    // Catch exception
   }
 }
 //*******************************************************************************************************************
@@ -403,7 +410,9 @@ int FontEngineAddTexture(int hashCode, bool useAlphaBlend, void* texture)
     return selected;
   }
   catch (...)
-  { }
+  {
+    Log("ERROR Fontengine:FontEngineAddTexture\n");
+  }
   return 0;
 }
 
@@ -474,225 +483,233 @@ int FontEngineAddSurface(int hashCode, bool useAlphaBlend,void* surface)
 //*******************************************************************************************************************
 void FontEngineDrawTexture(int textureNo,float x, float y, float nw, float nh, float uoff, float voff, float umax, float vmax, unsigned int color, float m[3][4])
 {
-  if (textureNo < 0 || textureNo>=MAX_TEXTURES) 
-	  return;
-
-  // Avoid drawing textures outside the viewport.
-  D3DVIEWPORT9 viewport;
-  m_pDevice->GetViewport(&viewport);
-
-  if ((x+nw <= viewport.X) || 
-    (y+nh <=viewport.Y) || 
-    (x >= viewport.X+viewport.Width) || 
-    (y >= viewport.Y+viewport.Height)) 
+  try
   {
-    return;
-  }
+    if (textureNo < 0 || textureNo >= MAX_TEXTURES)
+      return;
 
-  // If clipping is enabled, avoid drawing textures completely outside the clip rectangle.
-  if (clipEnabled)
-  {
-    RECT clipRect;
-    m_pDevice->GetScissorRect(&clipRect);
+    // Avoid drawing textures outside the viewport.
+    D3DVIEWPORT9 viewport;
+    m_pDevice->GetViewport(&viewport);
 
-    if ((x+nw <= clipRect.left) || 
-      (y+nh <=clipRect.top) || 
-      (x >= clipRect.right) || 
-      (y >= clipRect.bottom)) 
+    if ((x + nw <= viewport.X) ||
+      (y + nh <= viewport.Y) ||
+      (x >= viewport.X + viewport.Width) ||
+      (y >= viewport.Y + viewport.Height))
     {
       return;
     }
-  }
 
-  TEXTURE_DATA_T* texture;
-  TransformMatrix matrix(m);
-  //1-2-1
-  bool needRedraw=false;
-  bool textureAlreadyDrawn=false;
-  for (int i=0; i < textureCount; ++i)
-  {
-    if (textureZ[i] == textureNo)
+    // If clipping is enabled, avoid drawing textures completely outside the clip rectangle.
+    if (clipEnabled)
     {
-      textureAlreadyDrawn=true;
-    }
-    if (textureAlreadyDrawn && textureZ[i] != textureNo)
-    {
-      //check if textures intersect
-      int count=textureZ[i];
-      D3DRECT rectThis;
-      rectThis.x1=x; rectThis.y1=y;rectThis.x2=x+nw;rectThis.y2=y+nh;
-      for (int r=0; r < texturePlace[count]->numRect;r++)
+      RECT clipRect;
+      m_pDevice->GetScissorRect(&clipRect);
+
+      if ((x + nw <= clipRect.left) ||
+        (y + nh <= clipRect.top) ||
+        (x >= clipRect.right) ||
+        (y >= clipRect.bottom))
       {
-        D3DRECT rect2=texturePlace[count]->rect[r];
-        if (((rect2.x1 < (rectThis.x2)) && (rectThis.x1 < (rect2.x2))) && (rect2.y1 < (rectThis.y2)))
+        return;
+      }
+    }
+
+    TEXTURE_DATA_T* texture;
+    TransformMatrix matrix(m);
+    //1-2-1
+    bool needRedraw = false;
+    bool textureAlreadyDrawn = false;
+    for (int i = 0; i < textureCount; ++i)
+    {
+      if (textureZ[i] == textureNo)
+      {
+        textureAlreadyDrawn = true;
+      }
+      if (textureAlreadyDrawn && textureZ[i] != textureNo)
+      {
+        //check if textures intersect
+        int count = textureZ[i];
+        D3DRECT rectThis;
+        rectThis.x1 = x; rectThis.y1 = y; rectThis.x2 = x + nw; rectThis.y2 = y + nh;
+        for (int r = 0; r < texturePlace[count]->numRect; r++)
         {
-          if (rectThis.y1 < (rect2.y2))
+          D3DRECT rect2 = texturePlace[count]->rect[r];
+          if (((rect2.x1 < (rectThis.x2)) && (rectThis.x1 < (rect2.x2))) && (rect2.y1 < (rectThis.y2)))
           {
-            needRedraw=true;
+            if (rectThis.y1 < (rect2.y2))
+            {
+              needRedraw = true;
+            }
           }
         }
       }
     }
-  }
 
-  if (needRedraw)
-  {
-    FontEnginePresentTextures();
-  }
-
-  texture=&textureData[textureNo];
-  if (texture->iv==0)
-  {
-    textureZ[textureCount]=textureNo;
-    textureCount++;
-  }
-  texturePlace[textureNo]->rect[texture->dwNumTriangles/2].x1=x;
-  texturePlace[textureNo]->rect[texture->dwNumTriangles/2].y1=y;
-  texturePlace[textureNo]->rect[texture->dwNumTriangles/2].x2=x+nw;
-  texturePlace[textureNo]->rect[texture->dwNumTriangles/2].y2=y+nh;
-  texturePlace[textureNo]->numRect = texturePlace[textureNo]->numRect+1;
-  int iv=texture->iv;
-  if (iv+6 >=MaxNumTextureVertices)
-  {
-    Log("ERROR Fontengine:Ran out of texture vertices\n");
-    return;
-  }
-
-  float xpos=x;
-  float xpos2=x+nw;
-  float ypos=y;
-  float ypos2=y+nh;
-
-  float tx1=uoff;
-  float tx2=uoff+umax;
-  float ty1=voff;
-  float ty2=voff+vmax;
-
-  if (clipEnabled)
-  {
-    RECT clipRect;
-    m_pDevice->GetScissorRect(&clipRect);
-
-    // This clipping is done algorthimically for the texture being drawn.
-    // This texture is maintained in the list of textures managed by the FontEngine.
-    // Since the FontEngine does not store clip rectangles with the textures we cannot use the hardware to perform
-    // the clipping.
-    if (clipRect.top > 0 || clipRect.left > 0)
+    if (needRedraw)
     {
-      float w = xpos2 - xpos;
-      float h = ypos2 - ypos;
-      
-      // Clipping on left side.
-      if (xpos <	clipRect.left)
-      {
-        float off = clipRect.left - xpos;
-        xpos = (float)clipRect.left;
-        tx1 += ((off / w) * umax);
+      FontEnginePresentTextures(); // TODO 1
+    }
 
-        if (tx1 >= 1.0f)
+    texture = &textureData[textureNo];
+    if (texture->iv == 0)
+    {
+      textureZ[textureCount] = textureNo;
+      textureCount++;
+    }
+    texturePlace[textureNo]->rect[texture->dwNumTriangles / 2].x1 = x;
+    texturePlace[textureNo]->rect[texture->dwNumTriangles / 2].y1 = y;
+    texturePlace[textureNo]->rect[texture->dwNumTriangles / 2].x2 = x + nw;
+    texturePlace[textureNo]->rect[texture->dwNumTriangles / 2].y2 = y + nh;
+    texturePlace[textureNo]->numRect = texturePlace[textureNo]->numRect + 1;
+    int iv = texture->iv;
+    if (iv + 6 >= MaxNumTextureVertices)
+    {
+      Log("ERROR Fontengine:Ran out of texture vertices\n");
+      //FontEngineRemoveTexture(textureNo);
+      return;
+    }
+
+    float xpos = x;
+    float xpos2 = x + nw;
+    float ypos = y;
+    float ypos2 = y + nh;
+
+    float tx1 = uoff;
+    float tx2 = uoff + umax;
+    float ty1 = voff;
+    float ty2 = voff + vmax;
+
+    if (clipEnabled)
+    {
+      RECT clipRect;
+      m_pDevice->GetScissorRect(&clipRect);
+
+      // This clipping is done algorthimically for the texture being drawn.
+      // This texture is maintained in the list of textures managed by the FontEngine.
+      // Since the FontEngine does not store clip rectangles with the textures we cannot use the hardware to perform
+      // the clipping.
+      if (clipRect.top > 0 || clipRect.left > 0)
+      {
+        float w = xpos2 - xpos;
+        float h = ypos2 - ypos;
+
+        // Clipping on left side.
+        if (xpos < clipRect.left)
         {
-          tx1 = 1.0f;
+          float off = clipRect.left - xpos;
+          xpos = (float)clipRect.left;
+          tx1 += ((off / w) * umax);
+
+          if (tx1 >= 1.0f)
+          {
+            tx1 = 1.0f;
+          }
         }
-      }
 
-      // Clipping on right side.
-      if (xpos2 >	clipRect.right)
-      {
-        float off = (clipRect.right) - xpos2;
-        xpos2 = clipRect.right;
-        tx2 += ((off / w) * umax); 
-
-        if (tx2 >= 1.0f)
+        // Clipping on right side.
+        if (xpos2 > clipRect.right)
         {
-          tx2 = 1.0f;
+          float off = (clipRect.right) - xpos2;
+          xpos2 = clipRect.right;
+          tx2 += ((off / w) * umax);
+
+          if (tx2 >= 1.0f)
+          {
+            tx2 = 1.0f;
+          }
         }
-      }
 
-      // Clipping top.
-      if (ypos <	clipRect.top)
-      {
-        float off = clipRect.top - ypos;
-        ypos = (float)clipRect.top;
-        ty1 += ((off / h) * vmax);
-      }
-
-      // Clipping bottom.
-      if (ypos2 >	clipRect.bottom)
-      {
-        float off = clipRect.bottom - ypos2;
-        ypos2 = (float)clipRect.bottom;
-        ty2 += ((off / h) * vmax);
-
-        if (ty2 >= 1.0f)
+        // Clipping top.
+        if (ypos < clipRect.top)
         {
-          ty2=1.0f;
+          float off = clipRect.top - ypos;
+          ypos = (float)clipRect.top;
+          ty1 += ((off / h) * vmax);
+        }
+
+        // Clipping bottom.
+        if (ypos2 > clipRect.bottom)
+        {
+          float off = clipRect.bottom - ypos2;
+          ypos2 = (float)clipRect.bottom;
+          ty2 += ((off / h) * vmax);
+
+          if (ty2 >= 1.0f)
+          {
+            ty2 = 1.0f;
+          }
         }
       }
     }
+
+    xpos -= 0.5f;
+    ypos -= 0.5f;
+    xpos2 -= 0.5f;
+    ypos2 -= 0.5f;
+
+    //upper left
+    float x1 = matrix.ScaleFinalXCoord(xpos, ypos);
+    float y1 = matrix.ScaleFinalYCoord(xpos, ypos);
+    float z1 = matrix.ScaleFinalZCoord(xpos, ypos);
+
+    //bottom left
+    float x2 = matrix.ScaleFinalXCoord(xpos, ypos2);
+    float y2 = matrix.ScaleFinalYCoord(xpos, ypos2);
+    float z2 = matrix.ScaleFinalZCoord(xpos, ypos2);
+
+    //bottom right
+    float x3 = matrix.ScaleFinalXCoord(xpos2, ypos2);
+    float y3 = matrix.ScaleFinalYCoord(xpos2, ypos2);
+    float z3 = matrix.ScaleFinalZCoord(xpos2, ypos2);
+
+    //upper right
+    float x4 = matrix.ScaleFinalXCoord(xpos2, ypos);
+    float y4 = matrix.ScaleFinalYCoord(xpos2, ypos);
+    float z4 = matrix.ScaleFinalZCoord(xpos2, ypos);
+
+    //upper left
+    texture->vertices[iv].x = x1;
+    texture->vertices[iv].y = y1;
+    texture->vertices[iv].z = z1;
+    texture->vertices[iv].color = color;
+    texture->vertices[iv].tu = tx1;
+    texture->vertices[iv].tv = ty1;
+    iv++;
+
+    //bottom left
+    texture->vertices[iv].x = x2;
+    texture->vertices[iv].y = y2;
+    texture->vertices[iv].z = z2;
+    texture->vertices[iv].color = color;
+    texture->vertices[iv].tu = tx1;
+    texture->vertices[iv].tv = ty2;
+    iv++;
+
+    //bottom right
+    texture->vertices[iv].x = x3;
+    texture->vertices[iv].y = y3;
+    texture->vertices[iv].z = z3;
+    texture->vertices[iv].color = color;
+    texture->vertices[iv].tu = tx2;
+    texture->vertices[iv].tv = ty2; iv++;
+
+    //upper right
+    texture->vertices[iv].x = x4;
+    texture->vertices[iv].y = y4;
+    texture->vertices[iv].z = z4;
+    texture->vertices[iv].color = color;
+    texture->vertices[iv].tu = tx2;
+    texture->vertices[iv].tv = ty1;
+    iv++;
+
+    texture->iv = texture->iv + 4;
+    texture->dwNumTriangles = texture->dwNumTriangles + 2;
   }
-
-  xpos-=0.5f;
-  ypos-=0.5f;
-  xpos2-=0.5f;
-  ypos2-=0.5f;
-
-  //upper left
-  float x1=matrix.ScaleFinalXCoord(xpos,ypos);
-  float y1=matrix.ScaleFinalYCoord(xpos,ypos);
-  float z1 = matrix.ScaleFinalZCoord(xpos,ypos);
-
-  //bottom left
-  float x2=matrix.ScaleFinalXCoord(xpos,ypos2);
-  float y2=matrix.ScaleFinalYCoord(xpos,ypos2);
-  float z2=matrix.ScaleFinalZCoord(xpos,ypos2);
-
-  //bottom right
-  float x3=matrix.ScaleFinalXCoord(xpos2,ypos2);
-  float y3=matrix.ScaleFinalYCoord(xpos2,ypos2);
-  float z3=matrix.ScaleFinalZCoord(xpos2,ypos2);
-
-  //upper right
-  float x4=matrix.ScaleFinalXCoord(xpos2,ypos);
-  float y4=matrix.ScaleFinalYCoord(xpos2,ypos);
-  float z4=matrix.ScaleFinalZCoord(xpos2,ypos);
-
-  //upper left
-  texture->vertices[iv].x=x1 ;  
-  texture->vertices[iv].y=y1 ; 
-  texture->vertices[iv].z=z1;
-  texture->vertices[iv].color=color;
-  texture->vertices[iv].tu=tx1; 
-  texture->vertices[iv].tv=ty1; 
-  iv++;
-
-  //bottom left
-  texture->vertices[iv].x=x2;  
-  texture->vertices[iv].y=y2;
-  texture->vertices[iv].z=z2; 
-  texture->vertices[iv].color=color;
-  texture->vertices[iv].tu=tx1; 
-  texture->vertices[iv].tv=ty2;
-  iv++;
-
-  //bottom right
-  texture->vertices[iv].x=x3;  
-  texture->vertices[iv].y=y3; 
-  texture->vertices[iv].z=z3;
-  texture->vertices[iv].color=color;
-  texture->vertices[iv].tu=tx2; 
-  texture->vertices[iv].tv=ty2;iv++;
-
-  //upper right
-  texture->vertices[iv].x=x4;  
-  texture->vertices[iv].y=y4;
-  texture->vertices[iv].z=z4; 
-  texture->vertices[iv].color=color;
-  texture->vertices[iv].tu=tx2; 
-  texture->vertices[iv].tv=ty1;
-  iv++;
-
-  texture->iv=texture->iv+4;
-  texture->dwNumTriangles=texture->dwNumTriangles+2;
+  catch (...)
+  {
+    Log("ERROR Fontengine:Ran out of texture vertices FontEngineDrawTexture\n");
+  }
 }
 
 
@@ -736,7 +753,7 @@ void FontEngineDrawTexture2(int textureNo1,float x, float y, float nw, float nh,
   }
 
   TransformMatrix matrix(m);
-  FontEnginePresentTextures();
+  FontEnginePresentTextures(); // TODO 0
 
   TEXTURE_DATA_T* texture1;
   TEXTURE_DATA_T* texture2;
@@ -967,6 +984,19 @@ void FontEngineDrawTexture2(int textureNo1,float x, float y, float nw, float nh,
   m_pDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, verts, sizeof(CUSTOMVERTEX2));
   
   m_pStateManager->SetTexture(0, NULL);
+
+  //IDirect3DVertexBuffer9 *g_list_vb = nullptr;
+  //const DWORD TRI_FVF = D3DFVF_XYZRHW | D3DFVF_DIFFUSE;
+  //void *vb_vertices;
+  //HRESULT hr;
+
+  //hr = m_pDevice->CreateVertexBuffer(sizeof(CUSTOMVERTEX2) * 4, D3DUSAGE_WRITEONLY, TRI_FVF, D3DPOOL_DEFAULT, &g_list_vb, nullptr);
+  //hr = g_list_vb->Lock(0, 0, &vb_vertices, 0);
+  //memcpy(vb_vertices, verts, sizeof(CUSTOMVERTEX2));
+  //g_list_vb->Unlock();
+  //m_pDevice->SetStreamSource(0, g_list_vb, 0, sizeof(verts[0]));
+  //m_pDevice->DrawPrimitive(D3DPT_TRIANGLEFAN, 0, 12);
+
   if (blendMode > BLEND_NONE)
   {
     m_pStateManager->SetTexture(1, nullptr);
@@ -1724,255 +1754,266 @@ void UpdateVertex(TransformMatrix& matrix, FONT_DATA_T* pFont, CUSTOMVERTEX* pVe
 }
 
   //*******************************************************************************************************************
-  void FontEngineDrawText3D(int fontNumber, void* textVoid, int xposStart, int yposStart, DWORD intColor, int maxWidth, float m[3][4])
-  {
-  if (fontNumber< 0 || fontNumber>=MAX_FONTS) return;
-  if (m_pDevice==NULL) return;
-  if (textVoid==NULL) return;
-
-  TransformMatrix matrix(m);
-
-  WCHAR* text = (WCHAR*)textVoid;
-
+void FontEngineDrawText3D(int fontNumber, void* textVoid, int xposStart, int yposStart, DWORD intColor, int maxWidth, float m[3][4])
+{
   FONT_DATA_T* font = &(fontData[fontNumber]);
-  float xpos = (float)xposStart;
-  float ypos = (float)yposStart;
-  xpos -= fontData[fontNumber].fSpacingPerChar;
-  xpos-=0.5f;
-  float fStartX = xpos;
-  ypos -=0.5f;
-  float fStartY = ypos;
-
-  float yoff    = (font->textureCoord[0][3]-font->textureCoord[0][1])*font->fTextureHeight;
-  float fScaleX = font->fTextureWidth  / font->fTextureScale;
-  float fScaleY = font->fTextureHeight / font->fTextureScale;
-  float fSpacing= 2 * font->fSpacingPerChar;
-
-  unsigned int off=(int)(fontData[fontNumber].fSpacingPerChar+1);
-
-  if (maxWidth <=0) 
+  try
   {
-    maxWidth=2000;
-  }
+    if (fontNumber < 0 || fontNumber >= MAX_FONTS) return;
+    if (m_pDevice == NULL) return;
+    if (textVoid == NULL) return;
 
-  float totalWidth = 0;
-  float lineWidths[MAX_TEXT_LINES];
-  int lineNr=0;
-  int len = (int)wcslen(text);
-  for (int i=0; i < len;++i)
-  {
-    WCHAR c=text[i];
-    if (c == '\n')
+    TransformMatrix matrix(m);
+
+    WCHAR* text = (WCHAR*)textVoid;
+
+    float xpos = (float)xposStart;
+    float ypos = (float)yposStart;
+    xpos -= fontData[fontNumber].fSpacingPerChar;
+    xpos -= 0.5f;
+    float fStartX = xpos;
+    ypos -= 0.5f;
+    float fStartY = ypos;
+
+    float yoff = (font->textureCoord[0][3] - font->textureCoord[0][1])*font->fTextureHeight;
+    float fScaleX = font->fTextureWidth / font->fTextureScale;
+    float fScaleY = font->fTextureHeight / font->fTextureScale;
+    float fSpacing = 2 * font->fSpacingPerChar;
+
+    unsigned int off = (int)(fontData[fontNumber].fSpacingPerChar + 1);
+
+    if (maxWidth <= 0)
     {
-      // don't overflow the array
-      if (lineNr >= MAX_TEXT_LINES-1)
-        continue;
-
-      lineWidths[lineNr]=totalWidth;
-      totalWidth=0;
-      xpos = fStartX;
-      ypos += yoff;
-      lineNr++;
-      continue;
+      maxWidth = 2000;
     }
-    else if (c < font->iFirstChar || c >= font->iEndChar)
+
+    float totalWidth = 0;
+    float lineWidths[MAX_TEXT_LINES];
+    int lineNr = 0;
+    int len = (int)wcslen(text);
+    for (int i = 0; i < len; ++i)
     {
-      if (c == 0x2019 || c == 0x2018) // ‘ or // ’
+      WCHAR c = text[i];
+      if (c == '\n')
       {
-        c = 0x0027;  // single quotes
-      }
-      else if (c == 0x2013 || c == 0x2014) // – or // —
-      {
-        c = 0x002D; // '-'
-      }
-      else if (c == 0x201C || c == 0x201D || c == 0x201F || c == 0x201E) // “ or // ” or // ‟
-      {
-        c = 0x0022; // '"'
-      }
-      else if (c == 0x2026) // …
-      {
-        c = 0x002E;
-      }
-      else if (c == 0x2022) // 
-      {
-        c = 0x002A;
-      }
-      else
-      {
+        // don't overflow the array
+        if (lineNr >= MAX_TEXT_LINES - 1)
+          continue;
+
+        lineWidths[lineNr] = totalWidth;
+        totalWidth = 0;
+        xpos = fStartX;
+        ypos += yoff;
+        lineNr++;
         continue;
       }
-    }
-    else if (totalWidth >= maxWidth)		// Reached max width?
-      continue;							// Skip until row break or end of text
-
-    int index=c-font->iFirstChar;
-	  float tx1 = font->textureCoord[index][0];
-	  float tx2 = font->textureCoord[index][2];
-
-	  float w = (tx2-tx1) * fScaleX;
-	  totalWidth += (w - fSpacing);
-	  xpos += (w - fSpacing);
-	  lineWidths[lineNr]=totalWidth;
-  }
-
-  totalWidth=0;
-  xpos = fStartX;
-  ypos = fStartY;
-  lineNr=0;
-
-  for (int i=0; i < len;++i)
-  {
-    WCHAR c=text[i];
-    if (c == '\n')
-    {
-      totalWidth=0;
-      xpos = fStartX;
-      ypos += yoff;
-      lineNr++;
-      continue;
-    }
-    else if (c < font->iFirstChar || c >= font->iEndChar)
-    {
-      if (c == 0x2019 || c == 0x2018) // ‘ or // ’
+      else if (c < font->iFirstChar || c >= font->iEndChar)
       {
-        c = 0x0027;  // single quotes
-      }
-      else if (c == 0x2013 || c == 0x2014) // – or // —
-      {
-        c = 0x002D; // '-'
-      }
-      else if (c == 0x201C || c == 0x201D || c == 0x201F || c == 0x201E) // “ or // ” or // ‟
-      {
-        c = 0x0022; // '"'
-      }
-      else if (c == 0x2026) // …
-      {
-        c = 0x002E;
-      }
-      else if (c == 0x2022) // 
-      {
-        c = 0x002A;
-      }
-      else
-      {
-        continue;
-      }
-    }
-    else if (totalWidth >= maxWidth)		// Reached max width?
-      continue;							// Skip until row break or end of text
-
-    int index=c-font->iFirstChar;
-    float tx1 = font->textureCoord[index][0];
-    float ty1 = font->textureCoord[index][1];
-    float tx2 = font->textureCoord[index][2];
-    float ty2 = font->textureCoord[index][3];
-
-    float w = (tx2-tx1) * fScaleX;
-    float h = (ty2-ty1) * fScaleY;
-
-    // Will hold clipped coordinates
-    float xpos1 = xpos;
-    float ypos1 = ypos;
-    float xpos2 = xpos + w;
-    float ypos2 = ypos + h;
-
-    // Check if inside viewport.
-    // Avoid drawing text that is not inside the viewport.
-    D3DVIEWPORT9 viewport;
-    m_pDevice->GetViewport(&viewport);
-
-    if(xpos1 < (viewport.X + viewport.Width) && xpos2 >= viewport.X &&
-      ypos1 < (viewport.Y + viewport.Height) && ypos2 >= viewport.Y)
-    {
-      if (clipEnabled)
-      {
-        // Get the clip rectangle.
-        RECT clipRect;
-        m_pDevice->GetScissorRect(&clipRect);
-        float minX = clipRect.left;
-        float minY = clipRect.top;
-        float maxX = clipRect.right;
-        float maxY = clipRect.bottom;
-
-        // A clip rectangle is defined.  Deteremine if the character is inside the clip rectangle.
-        // If the character is inside the clip rectangle then clip it as necessary at the clip rectangle boundary.
-        // If the character is not inside the clip rectangle then move on to the next character (continue).
-        if (xpos1 < maxX && xpos2 >= minX &&
-          ypos1 < maxY && ypos2 >= minY)
+        if (c == 0x2019 || c == 0x2018) // ‘ or // ’
         {
-          // Clipping is performed manually here, not in the render pipeline (we don't set SCISSORTESTENABLE).
-          if(xpos1 < minX)
-          {
-            tx1 += (minX - xpos1) / fScaleX;
-            xpos1 += minX - xpos1;
-          }
-          if(xpos2 > maxX)
-          {
-            tx2 -= (xpos2 - maxX) / fScaleX;
-            xpos2 -= xpos2 - maxX;
-          }
-          if(ypos1 < minY)
-          {
-            ty1 += (minY - ypos1) / fScaleY;
-            ypos1 += minY - ypos1;
-          }
-          if(ypos2 > maxY)
-          {
-            ty2 -= (ypos2 - maxY) / fScaleY;
-            ypos2 -= ypos2 - maxY;
-          }
+          c = 0x0027;  // single quotes
+        }
+        else if (c == 0x2013 || c == 0x2014) // – or // —
+        {
+          c = 0x002D; // '-'
+        }
+        else if (c == 0x201C || c == 0x201D || c == 0x201F || c == 0x201E) // “ or // ” or // ‟
+        {
+          c = 0x0022; // '"'
+        }
+        else if (c == 0x2026) // …
+        {
+          c = 0x002E;
+        }
+        else if (c == 0x2022) // 
+        {
+          c = 0x002A;
         }
         else
         {
           continue;
         }
       }
+      else if (totalWidth >= maxWidth)		// Reached max width?
+        continue;							// Skip until row break or end of text
 
-      int alpha1=intColor;
-      int alpha2=intColor;
-      if ((lineNr >= MAX_TEXT_LINES || lineWidths[lineNr] >= maxWidth) && totalWidth+50 >= maxWidth && maxWidth > 0 && maxWidth < 2000)
-      {
-        int maxAlpha=intColor>>24;
-        float diff=(float)(maxWidth-totalWidth);
-        diff/=50.0f;
-        if (diff>1) diff = 1;
-        alpha1=(int)(maxAlpha * diff);
+      int index = c - font->iFirstChar;
+      float tx1 = font->textureCoord[index][0];
+      float tx2 = font->textureCoord[index][2];
 
-        diff=(float)(maxWidth-totalWidth);
-        diff+=(w - fSpacing);
-        diff/=50.0f;
-        if (diff>1) diff = 1;
-        alpha2=(int)(maxAlpha * diff);
-
-        if (alpha1<0) alpha1=0;
-        if (alpha1>0xff) alpha1=maxAlpha;
-        if (alpha2<0) alpha2=0;
-        if (alpha2>0xff) alpha2=maxAlpha;
-
-        alpha1 <<=24;
-        alpha2 <<=24;
-        alpha1|= (intColor & 0xffffff);
-        alpha2|= (intColor & 0xffffff);
-      }
-      int vertices=font->iv;
-      UpdateVertex(matrix,font, &font->vertices[font->iv++], xpos1, ypos1, tx1, ty1, alpha2);
-      UpdateVertex(matrix,font, &font->vertices[font->iv++], xpos1, ypos2, tx1, ty2, alpha2);
-      UpdateVertex(matrix,font, &font->vertices[font->iv++], xpos2, ypos2, tx2, ty2, alpha1);
-      UpdateVertex(matrix,font, &font->vertices[font->iv++], xpos2, ypos1, tx2, ty1, alpha1);
-      //UpdateVertex(font, &font->vertices[font->iv++], xpos1, ypos2, tx1, ty2, alpha2);
-      //UpdateVertex(font, &font->vertices[font->iv++], xpos2, ypos1, tx2, ty1, alpha1);
-
-      font->dwNumTriangles += 2;
-      if (font->iv > (MaxNumfontVertices-12))
-      {
-        FontEnginePresentTextures();
-        FontEnginePresent3D(fontNumber);
-        font->dwNumTriangles = 0;
-        font->iv = 0;
-      }
+      float w = (tx2 - tx1) * fScaleX;
+      totalWidth += (w - fSpacing);
+      xpos += (w - fSpacing);
+      lineWidths[lineNr] = totalWidth;
     }
-    totalWidth += (w - fSpacing);
-    xpos += (w - fSpacing);
+
+    totalWidth = 0;
+    xpos = fStartX;
+    ypos = fStartY;
+    lineNr = 0;
+
+    for (int i = 0; i < len; ++i)
+    {
+      WCHAR c = text[i];
+      if (c == '\n')
+      {
+        totalWidth = 0;
+        xpos = fStartX;
+        ypos += yoff;
+        lineNr++;
+        continue;
+      }
+      else if (c < font->iFirstChar || c >= font->iEndChar)
+      {
+        if (c == 0x2019 || c == 0x2018) // ‘ or // ’
+        {
+          c = 0x0027;  // single quotes
+        }
+        else if (c == 0x2013 || c == 0x2014) // – or // —
+        {
+          c = 0x002D; // '-'
+        }
+        else if (c == 0x201C || c == 0x201D || c == 0x201F || c == 0x201E) // “ or // ” or // ‟
+        {
+          c = 0x0022; // '"'
+        }
+        else if (c == 0x2026) // …
+        {
+          c = 0x002E;
+        }
+        else if (c == 0x2022) // 
+        {
+          c = 0x002A;
+        }
+        else
+        {
+          continue;
+        }
+      }
+      else if (totalWidth >= maxWidth)		// Reached max width?
+        continue;							// Skip until row break or end of text
+
+      int index = c - font->iFirstChar;
+      float tx1 = font->textureCoord[index][0];
+      float ty1 = font->textureCoord[index][1];
+      float tx2 = font->textureCoord[index][2];
+      float ty2 = font->textureCoord[index][3];
+
+      float w = (tx2 - tx1) * fScaleX;
+      float h = (ty2 - ty1) * fScaleY;
+
+      // Will hold clipped coordinates
+      float xpos1 = xpos;
+      float ypos1 = ypos;
+      float xpos2 = xpos + w;
+      float ypos2 = ypos + h;
+
+      // Check if inside viewport.
+      // Avoid drawing text that is not inside the viewport.
+      D3DVIEWPORT9 viewport;
+      m_pDevice->GetViewport(&viewport);
+
+      if (xpos1 < (viewport.X + viewport.Width) && xpos2 >= viewport.X &&
+        ypos1 < (viewport.Y + viewport.Height) && ypos2 >= viewport.Y)
+      {
+        if (clipEnabled)
+        {
+          // Get the clip rectangle.
+          RECT clipRect;
+          m_pDevice->GetScissorRect(&clipRect);
+          float minX = clipRect.left;
+          float minY = clipRect.top;
+          float maxX = clipRect.right;
+          float maxY = clipRect.bottom;
+
+          // A clip rectangle is defined.  Deteremine if the character is inside the clip rectangle.
+          // If the character is inside the clip rectangle then clip it as necessary at the clip rectangle boundary.
+          // If the character is not inside the clip rectangle then move on to the next character (continue).
+          if (xpos1 < maxX && xpos2 >= minX &&
+            ypos1 < maxY && ypos2 >= minY)
+          {
+            // Clipping is performed manually here, not in the render pipeline (we don't set SCISSORTESTENABLE).
+            if (xpos1 < minX)
+            {
+              tx1 += (minX - xpos1) / fScaleX;
+              xpos1 += minX - xpos1;
+            }
+            if (xpos2 > maxX)
+            {
+              tx2 -= (xpos2 - maxX) / fScaleX;
+              xpos2 -= xpos2 - maxX;
+            }
+            if (ypos1 < minY)
+            {
+              ty1 += (minY - ypos1) / fScaleY;
+              ypos1 += minY - ypos1;
+            }
+            if (ypos2 > maxY)
+            {
+              ty2 -= (ypos2 - maxY) / fScaleY;
+              ypos2 -= ypos2 - maxY;
+            }
+          }
+          else
+          {
+            continue;
+          }
+        }
+
+        int alpha1 = intColor;
+        int alpha2 = intColor;
+        if ((lineNr >= MAX_TEXT_LINES || lineWidths[lineNr] >= maxWidth) && totalWidth + 50 >= maxWidth && maxWidth > 0 && maxWidth < 2000)
+        {
+          int maxAlpha = intColor >> 24;
+          float diff = (float)(maxWidth - totalWidth);
+          diff /= 50.0f;
+          if (diff > 1) diff = 1;
+          alpha1 = (int)(maxAlpha * diff);
+
+          diff = (float)(maxWidth - totalWidth);
+          diff += (w - fSpacing);
+          diff /= 50.0f;
+          if (diff > 1) diff = 1;
+          alpha2 = (int)(maxAlpha * diff);
+
+          if (alpha1 < 0) alpha1 = 0;
+          if (alpha1 > 0xff) alpha1 = maxAlpha;
+          if (alpha2 < 0) alpha2 = 0;
+          if (alpha2 > 0xff) alpha2 = maxAlpha;
+
+          alpha1 <<= 24;
+          alpha2 <<= 24;
+          alpha1 |= (intColor & 0xffffff);
+          alpha2 |= (intColor & 0xffffff);
+        }
+        int vertices = font->iv;
+        UpdateVertex(matrix, font, &font->vertices[font->iv++], xpos1, ypos1, tx1, ty1, alpha2);
+        UpdateVertex(matrix, font, &font->vertices[font->iv++], xpos1, ypos2, tx1, ty2, alpha2);
+        UpdateVertex(matrix, font, &font->vertices[font->iv++], xpos2, ypos2, tx2, ty2, alpha1);
+        UpdateVertex(matrix, font, &font->vertices[font->iv++], xpos2, ypos1, tx2, ty1, alpha1);
+        //UpdateVertex(font, &font->vertices[font->iv++], xpos1, ypos2, tx1, ty2, alpha2);
+        //UpdateVertex(font, &font->vertices[font->iv++], xpos2, ypos1, tx2, ty1, alpha1);
+
+        font->dwNumTriangles += 2;
+        if (font->iv > (MaxNumfontVertices - 12))
+        {
+          FontEnginePresentTextures();
+          FontEnginePresent3D(fontNumber);
+          font->dwNumTriangles = 0;
+          font->iv = 0;
+        }
+      }
+      totalWidth += (w - fSpacing);
+      xpos += (w - fSpacing);
+    }
+  }
+  catch (...)
+  {
+    char log[128];
+    sprintf(log, "ERROR Fontengine:FontEngineDrawText3D(%i) exception \n", fontNumber);
+    Log(log);
+    font->dwNumTriangles = 0;
+    font->iv = 0;
   }
 }
 
@@ -1984,8 +2025,6 @@ void FontEnginePresent3D(int fontNumber)
   {
     if (fontNumber< 0 || fontNumber>=MAX_FONTS) return;
     if (fontData[fontNumber].dwNumTriangles==0) return;
-
-    
 
     if (font->dwNumTriangles !=0)
     {

@@ -1,6 +1,6 @@
-#region Copyright (C) 2017 Team MediaPortal
+#region Copyright (C) 2017-2018 Team MediaPortal
 
-// Copyright (C) 2017 Team MediaPortal
+// Copyright (C) 2017-2018 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -18,7 +18,6 @@
 
 #endregion
 
-using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using System;
 using System.Collections.Generic;
@@ -158,7 +157,12 @@ namespace MediaPortal.GUI.Library
         string inMemoryFileID = string.Empty;
         foreach (GUIOverlayImage logo in listOverlayImages)
         {
-          inMemoryFileID += Path.GetFileNameWithoutExtension(logo.FileName);
+          string thumbName = Path.GetFileNameWithoutExtension(logo.FileName);
+          if (thumbName.ToUpperInvariant() == "FOLDER")
+          {
+            thumbName = MediaPortal.Util.Utils.MakeFileName(logo.FileName);
+          }
+          inMemoryFileID += thumbName;
         }
         inMemoryFileID = inMemoryFileID.Replace(";", "-").Replace("{", "").Replace("}", "").Replace(" ", ""); //  + ".png"
         inMemoryFileID = "[" + Prefix + ":" + inMemoryFileID + "]";

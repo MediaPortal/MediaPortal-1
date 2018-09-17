@@ -495,20 +495,20 @@ namespace MediaPortal.GUI.Library
 
     public bool LoadSkin()
     {
-      if (Thread.CurrentThread.Name != "MPMain" && Thread.CurrentThread.Name != "Config Main")
-      {
-        _loadSkinDone = true;
+      //if (Thread.CurrentThread.Name != "MPMain" && Thread.CurrentThread.Name != "Config Main")
+      //{
+      //  _loadSkinDone = true;
 
-        GUIWindowManager.SendThreadCallbackSkin((p1, p2, result) =>
-        {
-          _loadSkinResult = LoadSkinBool();
-          Log.Debug("LoadSkin() callback done with return value  : {0}", _loadSkinResult);
-          return 0;
-        }, 0, 0, null);
+      //  GUIWindowManager.SendThreadCallbackSkin((p1, p2, result) =>
+      //  {
+      //    _loadSkinResult = LoadSkinBool();
+      //    Log.Debug("LoadSkin() callback done with return value  : {0}", _loadSkinResult);
+      //    return 0;
+      //  }, 0, 0, null);
 
-        Log.Debug("LoadSkin() callback thread done with return value : {0}", _loadSkinResult);
-        return true;
-      }
+      //  Log.Debug("LoadSkin() callback thread done with return value : {0}", _loadSkinResult);
+      //  return true;
+      //}
       return LoadSkinBool();
     }
 
@@ -540,7 +540,7 @@ namespace MediaPortal.GUI.Library
       if (isSkinXMLLoading)
       {
         Log.Error("LoadSkin: Running already so skipping");
-        return false;
+        //return false; // need to be disable to be able to load skin when not in main thread
       }
 
       isSkinXMLLoading = true;
@@ -1104,7 +1104,7 @@ namespace MediaPortal.GUI.Library
     {
       // reset our info manager caches
       GUIInfoManager.ResetCache();
-      foreach (GUIControl control in Children)
+      foreach (GUIControl control in Children.ToList())
       {
         if (control.GetVisibleCondition() != 0)
         {
@@ -1193,6 +1193,7 @@ namespace MediaPortal.GUI.Library
               GUIWindowManager.Process();
               if (GUIWindow._loadSkinDone)
               {
+                GUIWindow._loadSkinDone = false;
                 break;
               }
             }
@@ -1267,7 +1268,7 @@ namespace MediaPortal.GUI.Library
         // needed when this call is done from a thread
         if (_windowAllocated)
         {
-          return;
+          //return;
         }
 
         HashSet<int> faultyControl = new HashSet<int>();
@@ -1371,7 +1372,7 @@ namespace MediaPortal.GUI.Library
       _windowLoaded = false;
       _listPositions = new List<CPosition>();
 
-      foreach (GUIControl child in Children)
+      foreach (GUIControl child in Children.ToList())
       {
         GUIControl control = child;
         control.StorePosition();
@@ -1469,35 +1470,39 @@ namespace MediaPortal.GUI.Library
     /// <returns>id of control or -1 if no control has the focus</returns>
     public virtual int GetFocusControlId()
     {
-      foreach (GUIControl child in Children.ToList())
+      lock (Children)
       {
-        GUIGroup grp = child as GUIGroup;
-        if (grp != null)
+        foreach (GUIControl child in Children.ToList())
         {
-          int iFocusedControlId = grp.GetFocusControlId();
-          if (iFocusedControlId >= 0)
+          GUIGroup grp = child as GUIGroup;
+          if (grp != null)
           {
-            _previousFocusedControlId = iFocusedControlId;
-            // Store new ID for the rendering optimisation
-            FocusID = iFocusedControlId;
-            return iFocusedControlId;
-          }
-        }
-        else
-        {
-          if (child != null)
-          {
-            var guicontrol = child;
-            if (guicontrol.Focus)
+            int iFocusedControlId = grp.GetFocusControlId();
+            if (iFocusedControlId >= 0)
             {
+              _previousFocusedControlId = iFocusedControlId;
               // Store new ID for the rendering optimisation
-              FocusID = guicontrol.GetID;
-              return guicontrol.GetID;
+              FocusID = iFocusedControlId;
+              return iFocusedControlId;
+            }
+          }
+          else
+          {
+            if (child != null)
+            {
+              var guicontrol = child;
+              if (guicontrol.Focus)
+              {
+                // Store new ID for the rendering optimisation
+                FocusID = guicontrol.GetID;
+                return guicontrol.GetID;
+              }
             }
           }
         }
+
+        return -1;
       }
-      return -1;
     }
 
     /// <summary>
@@ -1580,11 +1585,15 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public virtual void Render(float timePassed)
     {
+      // Disable this hack it break some skin reload (GUIVolumeOverlay)
       // Hack for madVR to avoid freeze
       if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
           GUIGraphicsContext.InVmr9Render && GUIGraphicsContext.Vmr9Active)
       {
-        _shouldRestore = false;
+        if (!GUIGraphicsContext.NeedRecreateSwapChain || GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.SUSPENDING)
+        {
+          //_shouldRestore = false;
+        }
       }
 
       if (_shouldRestore)
@@ -1632,8 +1641,8 @@ namespace MediaPortal.GUI.Library
         {
           foreach (GUIControl control in Children.ToList())
           {
-            control.UpdateVisibility();
-            control.DoRender(timePassed, currentTime);
+            control?.UpdateVisibility();
+            control?.DoRender(timePassed, currentTime);
           }
         }
 

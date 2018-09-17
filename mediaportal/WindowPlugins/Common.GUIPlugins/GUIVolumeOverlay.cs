@@ -122,7 +122,18 @@ namespace Common.GUIPlugins
 
     public void RenderLayer(float timePassed)
     {
-      PostRender(timePassed, 3);
+      // Make deadlock on stop usefull for debugging madVR freeze
+      //if (GUIWindow._mainThreadContext != null && GUIGraphicsContext.form.InvokeRequired)
+      //{
+      //  GUIWindow._mainThreadContext.Send(delegate
+      //  {
+      //    PostRender(timePassed, 3);
+      //  }, null);
+      //}
+      //else
+      {
+        PostRender(timePassed, 3);
+      }
     }
 
     #endregion
