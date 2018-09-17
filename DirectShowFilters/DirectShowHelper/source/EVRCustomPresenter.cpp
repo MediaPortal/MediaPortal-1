@@ -2374,6 +2374,8 @@ void MPEVRCustomPresenter::StartThread(PHANDLE handle, SchedulerParams* pParams,
 
 void MPEVRCustomPresenter::EndThread(HANDLE hThread, SchedulerParams* params)
 {
+  //Make sure the thread runs soon so it can finish processing
+  SetThreadPriority(hThread, THREAD_PRIORITY_NORMAL);
   Log("Ending thread 0x%x, 0x%x", hThread, params);
   params->csLock.Lock();
   Log("Got lock.");
