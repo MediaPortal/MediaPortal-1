@@ -31,7 +31,7 @@ using TvLibrary.Channels;
 using TvLibrary.Implementations.Helper;
 using TvLibrary.Epg;
 using TvLibrary.ChannelLinkage;
-using MediaPortal.TV.Epg;
+//using MediaPortal.TV.Epg;
 using TvDatabase;
 
 namespace TvLibrary.Implementations.DVB
