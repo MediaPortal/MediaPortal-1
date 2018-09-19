@@ -39,5 +39,7 @@ public:
 private:
   static const BYTE bbc_huffman_data1[];
   static const BYTE bbc_huffman_data2[];
-  bool m_bPassThruISO6937;
+  static bool m_bPassThruISO6937;
+  static bool m_bHaveReadRegKeys;
 };
+

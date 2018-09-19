@@ -23,28 +23,38 @@
 
 extern void LogDebug(const char *fmt, ...) ;
 
+bool CTextUtil::m_bHaveReadRegKeys = false;
+bool CTextUtil::m_bPassThruISO6937 = false;
+
 CTextUtil::CTextUtil(void)
 {
-  //Read (and create if needed) debug registry settings
-  //Note that HKEY_CURRENT_USER is mapped to 'HKEY_USERS\.DEFAULT' for the LocalSystem Account (which TVServer normally runs under)
-  HKEY key;
-  m_bPassThruISO6937 = false;
-  if (ERROR_SUCCESS==RegCreateKeyEx(HKEY_CURRENT_USER, _T("Software\\Team MediaPortal\\TsWriter"), 0, NULL, 
-                                    REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &key, NULL))
+  if (!m_bHaveReadRegKeys)
   {
-    DWORD keyValue = 0;
-    LPCTSTR passThruISO6937 = _T("PassThruISO6937");
-    ReadRegistryKeyDword(key, passThruISO6937, keyValue);
-    if (keyValue)
+    //Read (and create if needed) debug registry settings
+    //Note that HKEY_CURRENT_USER is mapped to 'HKEY_USERS\.DEFAULT' for the LocalSystem Account (which TVServer normally runs under)
+    HKEY key;
+    if (ERROR_SUCCESS==RegCreateKeyEx(HKEY_CURRENT_USER, _T("Software\\Team MediaPortal\\TsWriter"), 0, NULL, 
+                                      REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &key, NULL))
     {
-      LogDebug("--- CTextUtil::PassThruISO6937 = yes");
-      m_bPassThruISO6937 = true;
+      DWORD keyValue = 0;
+      LPCTSTR passThruISO6937 = _T("PassThruISO6937");
+      ReadRegistryKeyDword(key, passThruISO6937, keyValue);
+      if (keyValue)
+      {
+        m_bPassThruISO6937 = true;
+      }
+      else
+      {
+        m_bPassThruISO6937 = false;
+      }
+      RegCloseKey(key);
+      LogDebug("CTextUtil::ctor, FromReg: PassThruISO6937 = %d", m_bPassThruISO6937);
     }
-    else
-    {
-      LogDebug("--- CTextUtil::PassThruISO6937 = no");
-    }
-    RegCloseKey(key);
+    m_bHaveReadRegKeys = true;
+  }
+  else
+  {
+    LogDebug("CTextUtil::ctor, PassThruISO6937 = %d", m_bPassThruISO6937);
   }
 }
 
