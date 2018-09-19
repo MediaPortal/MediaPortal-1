@@ -25,6 +25,27 @@ extern void LogDebug(const char *fmt, ...) ;
 
 CTextUtil::CTextUtil(void)
 {
+  //Read (and create if needed) debug registry settings
+  //Note that HKEY_CURRENT_USER is mapped to 'HKEY_USERS\.DEFAULT' for the LocalSystem Account (which TVServer normally runs under)
+  HKEY key;
+  m_bPassThruISO6937 = false;
+  if (ERROR_SUCCESS==RegCreateKeyEx(HKEY_CURRENT_USER, _T("Software\\Team MediaPortal\\TsWriter"), 0, NULL, 
+                                    REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &key, NULL))
+  {
+    DWORD keyValue = 0;
+    LPCTSTR passThruISO6937 = _T("PassThruISO6937");
+    ReadRegistryKeyDword(key, passThruISO6937, keyValue);
+    if (keyValue)
+    {
+      LogDebug("--- CTextUtil::PassThruISO6937 = yes");
+      m_bPassThruISO6937 = true;
+    }
+    else
+    {
+      LogDebug("--- CTextUtil::PassThruISO6937 = no");
+    }
+    RegCloseKey(key);
+  }
 }
 
 CTextUtil::~CTextUtil(void)
@@ -41,12 +62,12 @@ int CTextUtil::DvbTextToString(BYTE *buf, int bufLen, char *text, int textLen)
   if (bufLen < 1) return 0;
   if (text == NULL) return 0;
   if (textLen < 2) return 0;
-
-  // reserve place for terminating 0
-  // Note input string NULLs are discarded
-  textLen--;
+  
+  // Note: input string NULLs are discarded in processing below
+  
+  textLen--; // reserve place for terminating 0
   c = buf[bufIndex++];
-  if (c >= 0x20) //No encoding byte at start, default to DVB version of ISO-6937 encoding and convert to UTF-8
+  if (c >= 0x20 && !m_bPassThruISO6937) //No encoding byte at start, default to DVB version of ISO-6937 encoding and convert to UTF-8
   {
     text[textIndex++] = 0x15; //Add UTF-8 encoding indicator to start of output string
     text[textIndex] = 0;
@@ -497,35 +518,43 @@ int CTextUtil::DvbTextToString(BYTE *buf, int bufLen, char *text, int textLen)
         text[textIndex++] = c;        
     }
   }
-  else //All other encodings
+  else //All other encodings (including default)
   {
     // Deal with first byte - check for character coding info
-    if (c == 0x10) // three byte encoding
-    {      
-      if ((textLen >= 3) && (buf[2] >= 0x1) && (buf[2] <= 0xF))
-      {
-        text[textIndex++] = c;
-        text[textIndex++] = 0x20; //Make 2nd output byte non-zero
-        text[textIndex++] = buf[2];
-        bufIndex += 2;
+    if (c < 0x20)
+    {
+      //It isn't using the default character encoding table, so process the encoding byte(s)
+      if (c == 0x10) // three byte encoding
+      {      
+        if ((textLen >= 3) && (buf[2] >= 0x1) && (buf[2] <= 0xF))
+        {
+          text[textIndex++] = c;
+          text[textIndex++] = 0x20; //Make 2nd output byte non-zero
+          text[textIndex++] = buf[2];
+          bufIndex += 2;
+        }
+        else
+        {
+          text[textIndex] = 0;
+          return  textIndex+1;
+        }
       }
-      else
+      else //Single-byte encoding
       {
-        text[textIndex] = 0;
-        return  textIndex+1;
+        if ((c >= 0x1) && (c <= 0x1F)) //Only allow supported Character Coding Table values
+        {
+          text[textIndex++] = c; //Copy coding selector byte
+        }
+        else
+        {
+          text[textIndex] = 0;
+          return  textIndex+1;
+        }
       }
     }
-    else //Single-byte encoding
+    else //uses default character encoding table
     {
-      if ((c >= 0x1) && (c <= 0x1F)) //Only allow supported Character Coding Table values
-      {
-        text[textIndex++] = c; //Copy coding selector byte
-      }
-      else
-      {
-        text[textIndex] = 0;
-        return  textIndex+1;
-      }
+      bufIndex--; //Start at beginning of buffer
     }
     
     text[textIndex] = 0;

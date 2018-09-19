@@ -21,23 +21,20 @@
 #pragma once
 
 #include <windows.h>
-#include <string>
-#include "RegistryUtil.h"
+#include <AtlBase.h>
+#include <AtlConv.h>
 
-using namespace std;
+#define MAX_REG_LENGTH 256
 
-class CTextUtil : public CRegistryUtil
+class CRegistryUtil
 {
 public:
-	CTextUtil(void);
-  int DvbTextToString(BYTE *buf, int bufLen, char *text, int textLen);
-  int BbcHuffmanToString(BYTE *buf, int bufLen, char *text, int textLen);
-	string UTF8toISO8859_1(const string& in);
-  string hexStr(const string& in);
+	CRegistryUtil(void);
+  void    ReadRegistryKeyDword(HKEY hKey, LPCTSTR& lpSubKey, DWORD& data);
+  void    WriteRegistryKeyDword(HKEY hKey, LPCTSTR& lpSubKey, DWORD& data);
+  void    ReadRegistryKeyString(HKEY hKey, LPCTSTR& lpSubKey, LPCTSTR& data);
+  void    WriteRegistryKeyString(HKEY hKey, LPCTSTR& lpSubKey, LPCTSTR& data);
+  LONG    ReadOnlyRegistryKeyDword(HKEY hKey, LPCTSTR& lpSubKey, DWORD& data);
 public:
-	virtual ~CTextUtil(void);
-private:
-  static const BYTE bbc_huffman_data1[];
-  static const BYTE bbc_huffman_data2[];
-  bool m_bPassThruISO6937;
+	virtual ~CRegistryUtil(void);
 };

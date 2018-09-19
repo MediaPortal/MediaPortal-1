@@ -633,8 +633,7 @@ CMpTs::CMpTs(LPUNKNOWN pUnk, HRESULT *pHr)
   m_pChannelLinkageScanner = new CChannelLinkageScanner(GetOwner(), pHr);
   m_pRawPacketWriter = new FileWriter();
   m_pPin->AssignRawPacketWriter(m_pRawPacketWriter);
-  //m_pOobSiPin->AssignRawSectionWriter(m_pRawPacketWriter);
-
+  //m_pOobSiPin->AssignRawSectionWriter(m_pRawPacketWriter);  
 }
 
 // Destructor
