@@ -66,7 +66,14 @@ namespace MediaPortal.Configuration
 
       FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(Application.ExecutablePath);
 
-      Log.Info("Configuration v" + versionInfo.FileVersion + " is starting up on " + OSInfo.OSInfo.GetOSDisplayVersion());
+      try
+      {
+        Log.Info("Main: Configuration v" + versionInfo.FileVersion + " is starting up on " + OSInfo.OSInfo.GetOSDisplayVersion());
+      }
+      catch
+      {
+        Log.Info("Main: Configuration v" + versionInfo.FileVersion + " is starting up on Windows 10 Pro for Workstations (???)");
+      }
       Log.Info(OSInfo.OSInfo.GetLastInstalledWindowsUpdateTimestampAsString());
       Log.Info("Windows Media Player: [{0}]", OSInfo.OSInfo.GetWMPVersion());
 #if DEBUG
