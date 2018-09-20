@@ -23,8 +23,10 @@
 
 extern void LogDebug(const char *fmt, ...) ;
 
+//Initialise the 'static' shared variables
 bool CTextUtil::m_bHaveReadRegKeys = false;
 bool CTextUtil::m_bPassThruISO6937 = false;
+bool CTextUtil::m_bNoGeneralInGenre = false;
 
 CTextUtil::CTextUtil(void)
 {
@@ -47,14 +49,26 @@ CTextUtil::CTextUtil(void)
       {
         m_bPassThruISO6937 = false;
       }
+      LogDebug("CTextUtil::ctor, FromReg: PassThruISO6937 = %d", m_bPassThruISO6937);      
+      keyValue = 0;
+      LPCTSTR noGeneralInGenre = _T("NoGeneralInGenre");
+      ReadRegistryKeyDword(key, noGeneralInGenre, keyValue);
+      if (keyValue)
+      {
+        m_bNoGeneralInGenre = true;
+      }
+      else
+      {
+        m_bNoGeneralInGenre = false;
+      }     
+      LogDebug("CTextUtil::ctor, FromReg: NoGeneralInGenre = %d", m_bNoGeneralInGenre);      
       RegCloseKey(key);
-      LogDebug("CTextUtil::ctor, FromReg: PassThruISO6937 = %d", m_bPassThruISO6937);
     }
     m_bHaveReadRegKeys = true;
   }
   else
   {
-    LogDebug("CTextUtil::ctor, PassThruISO6937 = %d", m_bPassThruISO6937);
+    LogDebug("CTextUtil::ctor, PassThruISO6937 = %d, NoGeneralInGenre = %d", m_bPassThruISO6937, m_bNoGeneralInGenre);
   }
 }
 

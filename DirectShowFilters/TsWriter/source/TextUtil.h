@@ -34,6 +34,7 @@ public:
   int BbcHuffmanToString(BYTE *buf, int bufLen, char *text, int textLen);
 	string UTF8toISO8859_1(const string& in);
   string hexStr(const string& in);
+  static bool m_bNoGeneralInGenre;
 public:
 	virtual ~CTextUtil(void);
 private:
