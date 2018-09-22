@@ -1,5 +1,5 @@
 /* 
- *	Copyright (C) 2006-2008 Team MediaPortal
+ *	Copyright (C) 2006-2018 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -35,6 +35,11 @@ public:
   void    ReadRegistryKeyString(HKEY hKey, LPCTSTR& lpSubKey, LPCTSTR& data);
   void    WriteRegistryKeyString(HKEY hKey, LPCTSTR& lpSubKey, LPCTSTR& data);
   LONG    ReadOnlyRegistryKeyDword(HKEY hKey, LPCTSTR& lpSubKey, DWORD& data);
+  //Shared settings variables
+  static bool m_bNoGeneralInGenre;
+  static bool m_bPassThruISO6937;
 public:
 	virtual ~CRegistryUtil(void);
+private:
+  static bool m_bHaveReadRegKeys;
 };

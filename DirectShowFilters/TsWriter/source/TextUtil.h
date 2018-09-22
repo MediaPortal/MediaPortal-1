@@ -26,7 +26,7 @@
 
 using namespace std;
 
-class CTextUtil : public CRegistryUtil
+class CTextUtil : virtual public CRegistryUtil
 {
 public:
 	CTextUtil(void);
@@ -34,13 +34,10 @@ public:
   int BbcHuffmanToString(BYTE *buf, int bufLen, char *text, int textLen);
 	string UTF8toISO8859_1(const string& in);
   string hexStr(const string& in);
-  static bool m_bNoGeneralInGenre;
 public:
 	virtual ~CTextUtil(void);
 private:
   static const BYTE bbc_huffman_data1[];
   static const BYTE bbc_huffman_data2[];
-  static bool m_bPassThruISO6937;
-  static bool m_bHaveReadRegKeys;
 };
 

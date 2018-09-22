@@ -1,5 +1,5 @@
 /* 
- *	Copyright (C) 2006-2008 Team MediaPortal
+ *	Copyright (C) 2006-2018 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -23,8 +23,53 @@
 
 extern void LogDebug(const char *fmt, ...) ;
 
+//Initialise the 'static' shared variables
+bool CRegistryUtil::m_bHaveReadRegKeys = false;
+bool CRegistryUtil::m_bPassThruISO6937 = false;
+bool CRegistryUtil::m_bNoGeneralInGenre = false;
+
 CRegistryUtil::CRegistryUtil(void)
 {
+  if (!m_bHaveReadRegKeys)
+  {
+    //Read (and create if needed) debug registry settings
+    //Note that HKEY_CURRENT_USER is mapped to 'HKEY_USERS\.DEFAULT' for the LocalSystem Account (which TVServer normally runs under)
+    HKEY key;
+    if (ERROR_SUCCESS==RegCreateKeyEx(HKEY_CURRENT_USER, _T("Software\\Team MediaPortal\\TsWriter"), 0, NULL, 
+                                      REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &key, NULL))
+    {
+      DWORD keyValue = 0;
+      LPCTSTR passThruISO6937 = _T("PassThruISO6937");
+      ReadRegistryKeyDword(key, passThruISO6937, keyValue);
+      if (keyValue)
+      {
+        m_bPassThruISO6937 = true;
+      }
+      else
+      {
+        m_bPassThruISO6937 = false;
+      }
+      LogDebug("CRegistryUtil::ctor, FromReg: PassThruISO6937 = %d", m_bPassThruISO6937);      
+      keyValue = 0;
+      LPCTSTR noGeneralInGenre = _T("NoGeneralInGenre");
+      ReadRegistryKeyDword(key, noGeneralInGenre, keyValue);
+      if (keyValue)
+      {
+        m_bNoGeneralInGenre = true;
+      }
+      else
+      {
+        m_bNoGeneralInGenre = false;
+      }     
+      LogDebug("CRegistryUtil::ctor, FromReg: NoGeneralInGenre = %d", m_bNoGeneralInGenre);      
+      RegCloseKey(key);
+    }
+    m_bHaveReadRegKeys = true;
+  }
+  else
+  {
+    LogDebug("CRegistryUtil::ctor, PassThruISO6937 = %d, NoGeneralInGenre = %d", m_bPassThruISO6937, m_bNoGeneralInGenre);
+  }
 }
 
 CRegistryUtil::~CRegistryUtil(void)

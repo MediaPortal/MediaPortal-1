@@ -1,5 +1,5 @@
 /* 
- *	Copyright (C) 2006-2008 Team MediaPortal
+ *	Copyright (C) 2006-2018 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -171,8 +171,9 @@ class CMpOobSiFilterPin : public CRenderedInputPin
 
 
 //  CMpTs object which has filter and pin members
+//  CRegistryUtil is in the inhertance list to initialise it when filter is loaded
 
-class CMpTs : public CUnknown, public ITSFilter
+class CMpTs : public CUnknown, public ITSFilter, public CRegistryUtil
 {
 
     friend class CMpTsFilter;

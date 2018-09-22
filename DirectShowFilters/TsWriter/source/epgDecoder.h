@@ -1,5 +1,5 @@
 /* 
- *	Copyright (C) 2006-2008 Team MediaPortal
+ *	Copyright (C) 2006-2018 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -79,7 +79,7 @@ typedef struct stEPGChannel
 	typedef map<int,bool>::iterator imapSectionsReceived;
 }EPGChannel;
 
-class CEpgDecoder : public CTextUtil
+class CEpgDecoder : public CTextUtil, virtual public CRegistryUtil
 
 {
 

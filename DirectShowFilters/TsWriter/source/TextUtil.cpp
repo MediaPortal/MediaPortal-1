@@ -23,53 +23,8 @@
 
 extern void LogDebug(const char *fmt, ...) ;
 
-//Initialise the 'static' shared variables
-bool CTextUtil::m_bHaveReadRegKeys = false;
-bool CTextUtil::m_bPassThruISO6937 = false;
-bool CTextUtil::m_bNoGeneralInGenre = false;
-
 CTextUtil::CTextUtil(void)
 {
-  if (!m_bHaveReadRegKeys)
-  {
-    //Read (and create if needed) debug registry settings
-    //Note that HKEY_CURRENT_USER is mapped to 'HKEY_USERS\.DEFAULT' for the LocalSystem Account (which TVServer normally runs under)
-    HKEY key;
-    if (ERROR_SUCCESS==RegCreateKeyEx(HKEY_CURRENT_USER, _T("Software\\Team MediaPortal\\TsWriter"), 0, NULL, 
-                                      REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &key, NULL))
-    {
-      DWORD keyValue = 0;
-      LPCTSTR passThruISO6937 = _T("PassThruISO6937");
-      ReadRegistryKeyDword(key, passThruISO6937, keyValue);
-      if (keyValue)
-      {
-        m_bPassThruISO6937 = true;
-      }
-      else
-      {
-        m_bPassThruISO6937 = false;
-      }
-      LogDebug("CTextUtil::ctor, FromReg: PassThruISO6937 = %d", m_bPassThruISO6937);      
-      keyValue = 0;
-      LPCTSTR noGeneralInGenre = _T("NoGeneralInGenre");
-      ReadRegistryKeyDword(key, noGeneralInGenre, keyValue);
-      if (keyValue)
-      {
-        m_bNoGeneralInGenre = true;
-      }
-      else
-      {
-        m_bNoGeneralInGenre = false;
-      }     
-      LogDebug("CTextUtil::ctor, FromReg: NoGeneralInGenre = %d", m_bNoGeneralInGenre);      
-      RegCloseKey(key);
-    }
-    m_bHaveReadRegKeys = true;
-  }
-  else
-  {
-    LogDebug("CTextUtil::ctor, PassThruISO6937 = %d, NoGeneralInGenre = %d", m_bPassThruISO6937, m_bNoGeneralInGenre);
-  }
 }
 
 CTextUtil::~CTextUtil(void)
@@ -91,7 +46,7 @@ int CTextUtil::DvbTextToString(BYTE *buf, int bufLen, char *text, int textLen)
   
   textLen--; // reserve place for terminating 0
   c = buf[bufIndex++];
-  if (c >= 0x20 && !m_bPassThruISO6937) //No encoding byte at start, default to DVB version of ISO-6937 encoding and convert to UTF-8
+  if (c >= 0x20 && !CRegistryUtil::m_bPassThruISO6937) //No encoding byte at start, default to DVB version of ISO-6937 encoding and convert to UTF-8
   {
     text[textIndex++] = 0x15; //Add UTF-8 encoding indicator to start of output string
     text[textIndex] = 0;
