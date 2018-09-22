@@ -171,9 +171,8 @@ class CMpOobSiFilterPin : public CRenderedInputPin
 
 
 //  CMpTs object which has filter and pin members
-//  CRegistryUtil is in the inhertance list to initialise it when filter is loaded
 
-class CMpTs : public CUnknown, public ITSFilter, public CRegistryUtil
+class CMpTs : public CUnknown, public ITSFilter
 {
 
     friend class CMpTsFilter;
@@ -253,4 +252,5 @@ private:
 		CCritSec m_channelLock;         // Lock for protecting access to m_vecChannels.
     typedef vector<CTsChannel*>::iterator ivecChannels;
 		int m_id;
+	  CRegistryUtil* m_pRegistryUtil; 	
 };

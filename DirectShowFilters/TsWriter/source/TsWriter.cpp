@@ -627,7 +627,8 @@ CMpTs::CMpTs(LPUNKNOWN pUnk, HRESULT *pHr)
      *pHr = E_OUTOFMEMORY;
      return;
   }
-    
+      
+  m_pRegistryUtil = new CRegistryUtil(); // Read registry option settings
 	m_pChannelScanner= new CChannelScan(GetOwner(), pHr, m_pFilter);
   m_pEpgScanner = new CEpgScanner(GetOwner(), pHr);
   m_pChannelLinkageScanner = new CChannelLinkageScanner(GetOwner(), pHr);

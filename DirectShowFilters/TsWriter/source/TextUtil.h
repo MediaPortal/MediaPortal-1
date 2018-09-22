@@ -26,7 +26,7 @@
 
 using namespace std;
 
-class CTextUtil : virtual public CRegistryUtil
+class CTextUtil
 {
 public:
 	CTextUtil(void);

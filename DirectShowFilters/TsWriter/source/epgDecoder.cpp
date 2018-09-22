@@ -33,8 +33,14 @@
 extern void LogDebug(const char *fmt, ...) ;
 
 #define S_FINISHED (S_OK+1)
+
+//PIDs and ONIDs for Huffman decoding control
 #define PID_FREESAT_EPG 0xBBA
 #define PID_FREESAT2_EPG 0xBBB
+#define ONID_UK_DTT 0x233A
+#define ONID_UK_BBC 0x3B
+#define ONID_NZ_DTT 0x222A
+#define ONID_NZ_TVNZ 0x2F
 
 CEpgDecoder::CEpgDecoder()
 {
@@ -43,6 +49,7 @@ CEpgDecoder::CEpgDecoder()
   m_bEpgDone=false;
   m_bSorted=FALSE;
   m_epgTimeout=time(NULL);
+  LogDebug("CEpgDecoder::ctor, NoGeneralInGenre = %d", CRegistryUtil::m_bNoGeneralInGenre);
 }
 CEpgDecoder::~CEpgDecoder()
 {
@@ -635,8 +642,8 @@ void CEpgDecoder::DecodeExtendedEvent(byte* data, EPGEvent& epgEvent)
 		if (text_length>0)
 		{
 			CAutoString buffer (text_length*4);
-			DvbTextToString(&data[pointer], text_length, buffer.GetBuffer(), text_length*4);
-			text = buffer.GetBuffer();
+			int out_len = DvbTextToString(&data[pointer], text_length, buffer.GetBuffer(), text_length*4);
+			text = buffer.GetBuffer(out_len);
 		}
 
 		//find language...
@@ -1099,7 +1106,9 @@ bool CEpgDecoder::IsEPGGrabbing()
 
 bool CEpgDecoder::CanDecodeNetworkOrPID(int NetworkID, int PID)
 {
-	if(NetworkID == 9018 || NetworkID == 59 || PID==PID_FREESAT_EPG || PID==PID_FREESAT2_EPG)
+	if(NetworkID == ONID_UK_DTT || NetworkID == ONID_UK_BBC || 
+	   NetworkID == ONID_NZ_DTT || NetworkID == ONID_NZ_TVNZ ||
+	   PID==PID_FREESAT_EPG || PID==PID_FREESAT2_EPG)
 	{
 		return true;
 	}
