@@ -918,6 +918,13 @@ namespace MediaPortal.Player
           if (UseEVRMadVRForTV && g_Player.IsTimeShifting)
           {
             GUIGraphicsContext.VideoRenderer = GUIGraphicsContext.VideoRendererType.EVR;
+            // Keep current RenderTarget to trying to restore D3D GUI from madVR but release it if already init previously
+            if (GUIGraphicsContext.MadVrRenderTargetVmr9 != null && !GUIGraphicsContext.MadVrRenderTargetVmr9.Disposed)
+            {
+              GUIGraphicsContext.DX9Device?.SetRenderTarget(0, GUIGraphicsContext.MadVrRenderTargetVmr9);
+              GUIGraphicsContext.MadVrRenderTargetVmr9.Dispose();
+              GUIGraphicsContext.MadVrRenderTargetVmr9 = null;
+            }
           }
           else
           {
