@@ -34,13 +34,19 @@ extern void LogDebug(const char *fmt, ...) ;
 
 #define S_FINISHED (S_OK+1)
 
-//PIDs and ONIDs for Huffman decoding control
+//PIDs and ONIDs for TV services (possibly) 
+//using UK-compatible Huffman text encoding.
 #define PID_FREESAT_EPG 0xBBA
 #define PID_FREESAT2_EPG 0xBBB
-#define ONID_UK_DTT 0x233A
+
 #define ONID_UK_BBC 0x3B
-#define ONID_NZ_DTT 0x222A
+#define ONID_UK_DTT 0x233A
+
+#define ONID_NZ_SKY_SAT 0xA9
 #define ONID_NZ_TVNZ 0x2F
+#define ONID_NZ_DTT 0x222A
+#define ONID_NZ_SKY_DTT 0x2B00
+
 
 CEpgDecoder::CEpgDecoder()
 {
@@ -754,9 +760,7 @@ void CEpgDecoder::DecodeShortEventDescriptor(byte* buf, EPGEvent& epgEvent,int N
 
 			// Check if huffman encoded.
 			// 0x1f is tag for freesat/freeview huffman encoding
-			// buf[7] - huffman table id. Including this reduces the chance of non encoded
-			// text being sent through
-			if(buf[6]==0x1f && CanDecodeNetworkOrPID(NetworkID, PID))
+			if(buf[6]==0x1f && IsHuffmanNetworkOrPID(NetworkID, PID))
 			{
 				CAutoString buffer(event_len*4);
 				int out_len = BbcHuffmanToString(&buf[6],event_len,buffer.GetBuffer(), event_len*4);
@@ -802,9 +806,7 @@ void CEpgDecoder::DecodeShortEventDescriptor(byte* buf, EPGEvent& epgEvent,int N
 			}
 			// Check if huffman encoded.
 			// 0x1f is tag for freesat/freeview huffman encoding
-			// off+2 - huffman table id. Including this reduces the chance of non encoded
-			// text being sent through
-			if(buf[off+1]==0x1f && CanDecodeNetworkOrPID(NetworkID, PID))
+			if(buf[off+1]==0x1f && IsHuffmanNetworkOrPID(NetworkID, PID))
 			{
 				CAutoString buffer (text_len*4);
 				int out_len = BbcHuffmanToString(&buf[off+1], text_len, buffer.GetBuffer(), text_len*4);
@@ -1104,16 +1106,28 @@ bool CEpgDecoder::IsEPGGrabbing()
 	return m_bParseEPG;
 }
 
-bool CEpgDecoder::CanDecodeNetworkOrPID(int NetworkID, int PID)
+bool CEpgDecoder::IsHuffmanNetworkOrPID(int NetworkID, int PID)
 {
-	if(NetworkID == ONID_UK_DTT || NetworkID == ONID_UK_BBC || 
-	   NetworkID == ONID_NZ_DTT || NetworkID == ONID_NZ_TVNZ ||
-	   PID==PID_FREESAT_EPG || PID==PID_FREESAT2_EPG)
+	bool result = false;
+	switch(PID)
 	{
-		return true;
+	  case PID_FREESAT_EPG  : result = true; break;
+	  case PID_FREESAT2_EPG : result = true; break;
+	  default:
+    	switch(NetworkID)
+    	{
+    	  case ONID_UK_DTT     : result = true; break;
+    	  case ONID_UK_BBC     : result = true; break;
+    	  case ONID_NZ_DTT     : result = true; break;
+    	  case ONID_NZ_TVNZ    : result = true; break;
+    	  case ONID_NZ_SKY_SAT : result = true; break;
+    	  case ONID_NZ_SKY_DTT : result = true; break;
+    	}
+    	break;
 	}
-	return false;
+	return result;
 }
+
 bool CEpgDecoder::IsEPGReady()
 {
 	return m_bEpgDone;

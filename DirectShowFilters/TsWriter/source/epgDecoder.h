@@ -90,12 +90,12 @@ public:
 	void	GrabEPG();
 	bool	IsEPGReady();
 	bool	IsEPGGrabbing();
-	bool    CanDecodeNetworkOrPID(int NetworkID, int PID);
+	bool  IsHuffmanNetworkOrPID(int NetworkID, int PID);
 	ULONG	GetEPGChannelCount( );
 	ULONG	GetEPGEventCount( ULONG channel);
 	void	GetEPGChannel( ULONG channel,  WORD* networkId,  WORD* transportid, WORD* service_id  );
 	void	GetEPGEvent( ULONG channel,  ULONG event,ULONG* language, ULONG* dateMJD, ULONG* timeUTC, ULONG* duration, char** strgenre  ,int* starRating, char** classification, unsigned int* eventid   );
-	void    GetEPGLanguage(ULONG channel, ULONG eventid,ULONG languageIndex,ULONG* language, char** eventText, char** eventDescription,unsigned int* parentalRating  );
+	void  GetEPGLanguage(ULONG channel, ULONG eventid,ULONG languageIndex,ULONG* language, char** eventText, char** eventDescription,unsigned int* parentalRating  );
 	void	AbortGrabbing();
 	HRESULT	DecodeEPG(byte* pbData,int len,int PID);
 	HRESULT	DecodePremierePrivateEPG(byte* pbData,int len);
