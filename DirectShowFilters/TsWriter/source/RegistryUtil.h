@@ -30,6 +30,7 @@ class CRegistryUtil
 {
 public:
 	CRegistryUtil(void);
+  void    ReadSettingsFromReg();
   void    ReadRegistryKeyDword(HKEY hKey, LPCTSTR& lpSubKey, DWORD& data);
   void    WriteRegistryKeyDword(HKEY hKey, LPCTSTR& lpSubKey, DWORD& data);
   void    ReadRegistryKeyString(HKEY hKey, LPCTSTR& lpSubKey, LPCTSTR& data);
@@ -40,6 +41,4 @@ public:
   static bool m_bPassThruISO6937;
 public:
 	virtual ~CRegistryUtil(void);
-private:
-  static bool m_bHaveReadRegKeys;
 };
