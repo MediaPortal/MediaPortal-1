@@ -627,7 +627,7 @@ void CEpgDecoder::DecodeExtendedEvent(byte* data, EPGEvent& epgEvent)
 			{
 
 				CAutoString buffer2 (item_length*4);
-				int out_len = DvbTextToString(&data[pointer+1], item_length, buffer2.GetBuffer(), item_length*4);
+				int out_len = DvbTextToString(&data[pointer+1], item_length, buffer2.GetBuffer(), item_length*4, false);
 				item = buffer2.GetBuffer(out_len);
 			}
 
@@ -648,7 +648,7 @@ void CEpgDecoder::DecodeExtendedEvent(byte* data, EPGEvent& epgEvent)
 		if (text_length>0)
 		{
 			CAutoString buffer (text_length*4);
-			int out_len = DvbTextToString(&data[pointer], text_length, buffer.GetBuffer(), text_length*4);
+			int out_len = DvbTextToString(&data[pointer], text_length, buffer.GetBuffer(), text_length*4, false);
 			text = buffer.GetBuffer(out_len);
 		}
 
@@ -757,23 +757,10 @@ void CEpgDecoder::DecodeShortEventDescriptor(byte* buf, EPGEvent& epgEvent,int N
 				LogDebug("*** DecodeShortEventDescriptor: check1: %d %d",event_len,descriptor_len);
 				return;
 			}
-
-			// Check if huffman encoded.
-			// 0x1f is tag for freesat/freeview huffman encoding
-			if(buf[6]==0x1f && IsHuffmanNetworkOrPID(NetworkID, PID))
-			{
-				CAutoString buffer(event_len*4);
-				int out_len = BbcHuffmanToString(&buf[6],event_len,buffer.GetBuffer(), event_len*4);
-				eventText=buffer.GetBuffer(out_len);
-		    //LogDebug("  eventText, inLen:%d, outLen:%d, outStr:%s, outHex:0x%s",event_len, out_len, eventText.c_str(), hexStr(eventText));
-			}
-			else
-			{
-				CAutoString buffer(event_len*4);
-				int out_len = DvbTextToString(&buf[6],event_len,buffer.GetBuffer(), event_len*4);
-				eventText=buffer.GetBuffer(out_len);
-			}
-		  // LogDebug("  eventText, in:%x, out:%x, outStr:%s",buf[6], eventText[0], eventText.c_str());
+			CAutoString buffer(event_len*4);
+			int out_len = DvbTextToString(&buf[6],event_len,buffer.GetBuffer(), event_len*4, IsHuffmanNetworkOrPID(NetworkID, PID));
+			eventText=buffer.GetBuffer(out_len);
+		  //LogDebug("  eventText, inLen:%d, outLen:%d, outStr:%s, outHex:0x%s",event_len, out_len, eventText.c_str(), hexStr(eventText));
 		}
 		else if (event_len<0)
 		{
@@ -804,22 +791,10 @@ void CEpgDecoder::DecodeShortEventDescriptor(byte* buf, EPGEvent& epgEvent,int N
 				LogDebug("*** DecodeShortEventDescriptor: check2: %d %d",event_len,descriptor_len);
 				return;
 			}
-			// Check if huffman encoded.
-			// 0x1f is tag for freesat/freeview huffman encoding
-			if(buf[off+1]==0x1f && IsHuffmanNetworkOrPID(NetworkID, PID))
-			{
-				CAutoString buffer (text_len*4);
-				int out_len = BbcHuffmanToString(&buf[off+1], text_len, buffer.GetBuffer(), text_len*4);
-				eventDescription=buffer.GetBuffer(out_len);
-		    //LogDebug("  eventDescription, inLen:%d, outLen:%d, outStr:%s, outHex:0x%s",text_len, out_len, eventDescription.c_str(), hexStr(eventDescription));				
-			}
-			else
-			{
-				CAutoString buffer (text_len*4);
-			  int out_len = DvbTextToString(&buf[off+1],text_len,buffer.GetBuffer(), text_len*4);
-				eventDescription=buffer.GetBuffer(out_len);
-			}
-			// LogDebug("  eventDescription, in:%x, out:%x, outStr:%s",buf[off+1], eventDescription[0], eventDescription.c_str());
+			CAutoString buffer (text_len*4);
+		  int out_len = DvbTextToString(&buf[off+1],text_len,buffer.GetBuffer(), text_len*4, IsHuffmanNetworkOrPID(NetworkID, PID));
+			eventDescription=buffer.GetBuffer(out_len);
+		  //LogDebug("  eventDescription, inLen:%d, outLen:%d, outStr:%s, outHex:0x%s",text_len, out_len, eventDescription.c_str(), hexStr(eventDescription));				
 		}
 		else if (text_len<0)
 		{

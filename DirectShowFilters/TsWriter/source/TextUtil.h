@@ -30,13 +30,17 @@ class CTextUtil
 {
 public:
 	CTextUtil(void);
-  int DvbTextToString(BYTE *buf, int bufLen, char *text, int textLen);
-  int BbcHuffmanToString(BYTE *buf, int bufLen, char *text, int textLen);
-	string UTF8toISO8859_1(const string& in);
+  int DvbTextToString(BYTE *buf, int bufLen, char *text, int textLen, bool isBbcHuffman);
   string hexStr(const string& in);
+	// string UTF8toISO8859_1(const string& in);
 public:
 	virtual ~CTextUtil(void);
 private:
+  int OneThreeCopy(BYTE *buf, int bufLen, char *text, int textLen);
+  int UTF8toUTF8(BYTE *buf, int bufLen, char *text, int textLen);
+  int ISO10646toUTF8(BYTE *buf, int bufLen, char *text, int textLen);
+  int ISO6937toUTF8(BYTE *buf, int bufLen, char *text, int textLen);
+  int BbcHuffmanToString(BYTE *buf, int bufLen, char *text, int textLen);
   static const BYTE bbc_huffman_data1[];
   static const BYTE bbc_huffman_data2[];
 };
