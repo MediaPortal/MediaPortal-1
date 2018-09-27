@@ -217,7 +217,7 @@ REM CSCore
 xcopy %1\..\Packages\CSCore.1.2.1.2\lib\net35-client\CSCore.dll . /Y /D
 
 REM NReco.VideoInfo
-xcopy %1\..\Packages\NReco.VideoInfo.1.0.0\lib\NReco.VideoInfo.dll . /Y /D
+REM xcopy %1\..\Packages\NReco.VideoInfo.1.0.0\lib\NReco.VideoInfo.dll . /Y /D
 
 REM Enable >2GB for 32 bit process
 call %Build%\MSBUILD_MP_LargeAddressAware.bat %2

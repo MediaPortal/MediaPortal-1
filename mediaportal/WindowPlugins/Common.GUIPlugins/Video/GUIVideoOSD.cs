@@ -582,19 +582,23 @@ namespace MediaPortal.GUI.Video
                 if (hasPostProc)
                 {
                   IPostProcessingEngine engine = PostProcessingEngine.GetInstance();
-                  SetCheckmarkValue(engine.EnablePostProcess, (int)Controls.OSD_VIDEO_POSTPROC_DEBLOCK_ONOFF);
-                  SetCheckmarkValue(engine.EnableResize, (int)Controls.OSD_VIDEO_POSTPROC_RESIZE_ONOFF);
-                  SetCheckmarkValue(engine.EnableCrop, (int)Controls.OSD_VIDEO_POSTPROC_CROP_ONOFF);
-                  SetCheckmarkValue(engine.EnableDeinterlace, (int)Controls.OSD_VIDEO_POSTPROC_DEINTERLACE_ONOFF);
-                  UpdatePostProcessing();
-                  ShowControl(GetID, (int)Controls.OSD_VIDEO_POSTPROC_DEBLOCK_ONOFF);
-                  ShowControl(GetID, (int)Controls.OSD_VIDEO_POSTPROC_RESIZE_ONOFF);
-                  ShowControl(GetID, (int)Controls.OSD_VIDEO_POSTPROC_CROP_ONOFF);
-                  ShowControl(GetID, (int)Controls.OSD_VIDEO_POSTPROC_DEINTERLACE_ONOFF);
-                  ShowControl(GetID, (int)Controls.OSD_VIDEO_POSTPROC_CROP_VERTICAL);
-                  ShowControl(GetID, (int)Controls.OSD_VIDEO_POSTPROC_CROP_HORIZONTAL);
-                  ShowControl(GetID, (int)Controls.OSD_VIDEO_POSTPROC_CROP_VERTICAL_LABEL);
-                  ShowControl(GetID, (int)Controls.OSD_VIDEO_POSTPROC_CROP_HORIZONTAL_LABEL);
+                  if (g_Player.HasPostprocessing &&
+                      !engine.ToString().ToLowerInvariant().Equals("mediaportal.player.lav.lavengine"))
+                  {
+                    SetCheckmarkValue(engine.EnablePostProcess, (int) Controls.OSD_VIDEO_POSTPROC_DEBLOCK_ONOFF);
+                    SetCheckmarkValue(engine.EnableResize, (int) Controls.OSD_VIDEO_POSTPROC_RESIZE_ONOFF);
+                    SetCheckmarkValue(engine.EnableCrop, (int) Controls.OSD_VIDEO_POSTPROC_CROP_ONOFF);
+                    SetCheckmarkValue(engine.EnableDeinterlace, (int) Controls.OSD_VIDEO_POSTPROC_DEINTERLACE_ONOFF);
+                    UpdatePostProcessing();
+                    ShowControl(GetID, (int) Controls.OSD_VIDEO_POSTPROC_DEBLOCK_ONOFF);
+                    ShowControl(GetID, (int) Controls.OSD_VIDEO_POSTPROC_RESIZE_ONOFF);
+                    ShowControl(GetID, (int) Controls.OSD_VIDEO_POSTPROC_CROP_ONOFF);
+                    ShowControl(GetID, (int) Controls.OSD_VIDEO_POSTPROC_DEINTERLACE_ONOFF);
+                    ShowControl(GetID, (int) Controls.OSD_VIDEO_POSTPROC_CROP_VERTICAL);
+                    ShowControl(GetID, (int) Controls.OSD_VIDEO_POSTPROC_CROP_HORIZONTAL);
+                    ShowControl(GetID, (int) Controls.OSD_VIDEO_POSTPROC_CROP_VERTICAL_LABEL);
+                    ShowControl(GetID, (int) Controls.OSD_VIDEO_POSTPROC_CROP_HORIZONTAL_LABEL);
+                  }
                 }
 
                 //SetCheckmarkValue(g_stSettings.m_bNonInterleaved, Controls.OSD_NONINTERLEAVED);
