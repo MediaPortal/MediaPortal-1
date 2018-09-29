@@ -402,6 +402,8 @@ namespace MediaPortal.GUI.Library
     public static bool TABBottomDone;
     public static int _backupCurrentScreenSizeWidth;
     public static int _backupCurrentScreenSizeHeight;
+    public static bool _guiMsgDbtAudioDeviceRemoveComplete;
+    public static bool _guiMsgDbtAudioDeviceArrival;
     public static int Convert2Dto3DSkewFactor { get; set; }
 
     public enum eRender3DModeHalf { None, SBSLeft, SBSRight, TABTop, TABBottom };
@@ -1743,6 +1745,16 @@ namespace MediaPortal.GUI.Library
         return _currentAudioRendererDevice;
       }
     }
+
+    /// <summary>
+    /// Get/set current audio device name arrival
+    /// </summary>
+    public static string CurrentAudioDeviceNameArrival { set; get; } = "";
+
+    /// <summary>
+    /// Get/set current audio device name removal
+    /// </summary>
+    public static string CurrentAudioDeviceNameRemoval { set; get; } = "";
 
     /// <summary>
     /// Returns true if the active window belongs to the my tv plugin

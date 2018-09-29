@@ -380,6 +380,7 @@
     <Compile Include="guilib\TextureFrame.cs" />
     <Compile Include="guilib\ViewHandler.cs" />
     <Compile Include="guilib\XMLSkinFunctionAttribute.cs" />
+    <Compile Include="Mixer\Mixer10.cs" />
     <Compile Include="MusicPlayer\BASS\MixerStream.cs" />
     <Compile Include="Player\BDOSDRenderer.cs" />
     <Compile Include="Player\BDPlayer.cs" />
