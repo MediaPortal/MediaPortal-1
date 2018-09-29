@@ -99,6 +99,7 @@ namespace MediaPortal.Player
         if (!MediaInfoExist())
         {
           _mediaInfoNotloaded = true;
+          finished.Set();
           return;
         }
 
@@ -124,6 +125,7 @@ namespace MediaPortal.Player
             isAVStream);
           Log.Debug("MediaInfoWrapper: disabled for this content");
           _mediaInfoNotloaded = true;
+          finished.Set();
           return;
         }
 
@@ -131,6 +133,7 @@ namespace MediaPortal.Player
         {
           Log.Debug("MediaInfoWrapper: WTV file is not handled");
           _mediaInfoNotloaded = true;
+          finished.Set();
           return;
         }
 
@@ -147,6 +150,7 @@ namespace MediaPortal.Player
           Log.Debug("MediaInfoWrapper: isVideo:{0}, isDVD:{1}[enabled:{2}]", isVideo, isDVD, _DVDenabled);
           Log.Debug("MediaInfoWrapper: disabled for this content");
           _mediaInfoNotloaded = true;
+          finished.Set();
           return;
         }
 
@@ -166,6 +170,7 @@ namespace MediaPortal.Player
               if (!File.Exists(strFile))
               {
                 _mediaInfoNotloaded = true;
+                finished.Set();
                 return;
               }
             }
@@ -205,6 +210,7 @@ namespace MediaPortal.Player
           else
           {
             _mediaInfoNotloaded = true;
+            finished.Set();
             return;
           }
 
