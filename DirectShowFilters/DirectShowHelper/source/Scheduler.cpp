@@ -172,6 +172,7 @@ UINT CALLBACK TimerThread(void* param)
     m_pAvRevertMmThreadCharacteristics(hAvrt);
   }
   Log("Timer done.");
+	_endthreadex(0);
   return 0;
 }
 
@@ -302,6 +303,7 @@ UINT CALLBACK WorkerThread(void* param)
     m_pAvRevertMmThreadCharacteristics(hAvrt);
   }
   Log("Worker done.");
+	_endthreadex(0);
   return 0;
 }
 
@@ -488,6 +490,7 @@ UINT CALLBACK SchedulerThread(void* param)
     }
   }
   Log("Scheduler done.");
+	_endthreadex(0);
   return 0;
 }
 

@@ -22,11 +22,11 @@
 
 DWORD crc32 (char *data, int len);
 
-class CDvbUtil
-{
-public:
-	CDvbUtil(void);
-  void getString468A(BYTE *buf, int bufLen, char *text, int textLen);
-public:
-	virtual ~CDvbUtil(void);
-};
+//class CDvbUtil
+//{
+//public:
+//	CDvbUtil(void);
+//  void getString468A(BYTE *buf, int bufLen, char *text, int textLen);
+//public:
+//	virtual ~CDvbUtil(void);
+//};

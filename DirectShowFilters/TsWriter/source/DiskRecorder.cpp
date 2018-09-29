@@ -34,9 +34,10 @@
 #include "..\..\shared\section.h"
 
 #define TS_PACKET_SIZE	188
-#define THROTTLE_MAXIMUM_RADIO_PACKETS			10		//	Throttle to 10 for radio
-#define THROTTLE_MAXIMUM_TV_PACKETS				172		//	Throttle to 172 fo tv for reduced disk IOs
 
+#define THROTTLE_MAXIMUM_RADIO  ((NUMBER_THROTTLE_BUFFER_SIZES/2) - 1)		//	Throttle to 11 for radio
+#define THROTTLE_MAXIMUM_TV	(NUMBER_THROTTLE_BUFFER_SIZES - 1)		//	Throttle to 19 for tv for reduced disk IOs
+#define REC_THTL_MULT 8 // Multiplier to increase buffer sizes for recordings c.f. timeshift
 
 #define IGNORE_AFTER_TUNE 25                        // how many TS packets to ignore after tuning
 
@@ -58,7 +59,6 @@
 #define ADAPTION_FIELD_EXTENSION_FLAG_BIT   0x1     // bitmask for the DAPTION_FIELD_EXTENSION flag
 
 //#define ERROR_FILE_TOO_LARGE 223  - already defined in winerror.h
-#define RECORD_BUFFER_SIZE 256000
 
 int DR_FAKE_NETWORK_ID   = 0x456;                // network id we use in our PAT
 int DR_FAKE_TRANSPORT_ID = 0x4;                  // transport id we use in our PAT
@@ -82,7 +82,6 @@ extern void LogDebug(const wchar_t *fmt, ...) ;
 CDiskRecorder::CDiskRecorder(RecordingMode mode) 
 {
 	m_recordingMode=mode;
-	m_hFile=INVALID_HANDLE_VALUE;
 	m_bPaused=FALSE;
 	m_params.chunkSize=268435424;
 	m_params.maxFiles=20;
@@ -96,6 +95,7 @@ CDiskRecorder::CDiskRecorder(RecordingMode mode)
 
 	m_bRunning=false;
 	m_pTimeShiftFile=NULL;
+	m_pRecordingFile=NULL;
 
   m_iTsContinuityCounter=0;
 
@@ -103,20 +103,9 @@ CDiskRecorder::CDiskRecorder(RecordingMode mode)
 	m_bDetermineNewStartPcr=false;
 	m_iPatVersion=0;
 	m_iPmtVersion=0;
-	m_iWriteBufferSize = 0;
 	m_eChannelType = TV;
 
-	if (m_recordingMode == TimeShift)
-		//	Set the buffer to the maximum it can throttle to
-		m_iWriteBufferSize = THROTTLE_MAXIMUM_TV_PACKETS * TS_PACKET_SIZE;
-	else
-		m_iWriteBufferSize = RECORD_BUFFER_SIZE;
 
-	m_pWriteBuffer = new byte[m_iWriteBufferSize];
-
-	m_iWriteBufferPos=0;
-	m_iWriteBufferThrottle = 0;
-	m_bThrottleAtMax = FALSE;
 	m_TsPacketCount=0;
 	m_bClearTsQueue=false;
 	m_pPmtParser=new CPmtParser();
@@ -133,7 +122,7 @@ CDiskRecorder::CDiskRecorder(RecordingMode mode)
 	m_iThrottleBufferSizes[6] = 5;		//	30
 	m_iThrottleBufferSizes[7] = 10;		//	40
 	m_iThrottleBufferSizes[8] = 10;		//	50
-	m_iThrottleBufferSizes[9] = 10;		//	60
+	m_iThrottleBufferSizes[9] = 10;		//	60 (Max for radio)
 	m_iThrottleBufferSizes[10] = 10;	//	70
 	m_iThrottleBufferSizes[11] = 10;	//	80
 	m_iThrottleBufferSizes[12] = 20;	//	100
@@ -143,9 +132,11 @@ CDiskRecorder::CDiskRecorder(RecordingMode mode)
 	m_iThrottleBufferSizes[16] = 40;	//	212
 	m_iThrottleBufferSizes[17] = 50;	//	262
 	m_iThrottleBufferSizes[18] = 82;	//	344	*sync with streamingserver
-	m_iThrottleBufferSizes[19] = 172;	//	516	*sync with streamingserver
+	m_iThrottleBufferSizes[19] = 174;	//	518	*sync with streamingserver (max for TV)
 
-
+  ResetThrottle(false); //initialise m_iWriteBufferSize etc.
+  
+	//LogDebug("CDiskRecorder::Ctor - end");
 }
 //*******************************************************************
 //* dtor
@@ -153,14 +144,22 @@ CDiskRecorder::CDiskRecorder(RecordingMode mode)
 CDiskRecorder::~CDiskRecorder(void)
 {
 	CEnterCriticalSection enter(m_section);
-  if (m_hFile!=INVALID_HANDLE_VALUE)
-  {
-	  CloseHandle(m_hFile);
-	  m_hFile = INVALID_HANDLE_VALUE; // Invalidate the file
-  }
-	delete [] m_pWriteBuffer;
+
+	if (m_pTimeShiftFile!=NULL)
+	{
+		delete m_pTimeShiftFile;
+		m_pTimeShiftFile=NULL;
+	}
+	if (m_pRecordingFile!=NULL)
+	{
+		delete m_pRecordingFile;
+		m_pRecordingFile=NULL;
+	}
+
 	m_pPmtParser->Reset();
 	delete m_pPmtParser;
+	
+	//LogDebug("CDiskRecorder::Dtor - end");
 }
 
 void CDiskRecorder::SetChannelType(int channelType)
@@ -173,17 +172,18 @@ void CDiskRecorder::SetChannelType(int channelType)
 	{
 		//	If tv (0)
 		if(channelType == 0)
-			m_eChannelType = TV;
-
-		//	Else assume radio
-		else
+			m_eChannelType = TV;		
+		else  //Else assume radio
 			m_eChannelType = Radio;
+			
+	  m_bThrottleAtMax = FALSE; //Allow throttle adjustment
 	}
 	catch(...)
 	{
 		WriteLog("SetChannelType exception");
 	}
 }
+
 void CDiskRecorder::SetFileNameW(wchar_t* pwszFileName)
 {
 	CEnterCriticalSection enter(m_section);
@@ -213,23 +213,14 @@ bool CDiskRecorder::Start()
 	CEnterCriticalSection enter(m_section);
 	try
 	{
-		//	Check buffer is initialized
-		if(m_pWriteBuffer == NULL)
-		{
-			WriteLog("Error, tried to start recording with uninitialized buffer");
-			return false;
-		}
-
 		if (wcslen(m_wszFileName)==0) return false;
-		::DeleteFileW((LPCWSTR) m_wszFileName);
-		m_iPart=2;
+		  
 		if (m_recordingMode==RecordingMode::TimeShift)
 		{
 			m_pTimeShiftFile = new MultiFileWriter(&m_params);
-			if (FAILED(m_pTimeShiftFile->OpenFile(m_wszFileName))) 
+			if (FAILED(m_pTimeShiftFile->Open(m_wszFileName))) 
 			{
-				WriteLog(L"failed to open filename:%s %d",m_wszFileName,GetLastError());
-				m_pTimeShiftFile->CloseFile();
+				WriteLog(L"failed to open timeshift file:%s %d",m_wszFileName,GetLastError());
 				delete m_pTimeShiftFile;
 				m_pTimeShiftFile=NULL;
 				return false;
@@ -237,23 +228,14 @@ bool CDiskRecorder::Start()
 		}
 		else
 		{
-			if (m_hFile!=INVALID_HANDLE_VALUE)
+			m_pRecordingFile = new FileWriterThreaded();
+			if (FAILED(m_pRecordingFile->Open(m_wszFileName))) 
 			{
-				CloseHandle(m_hFile);
-				m_hFile=INVALID_HANDLE_VALUE;
-			}
-			m_hFile = CreateFileW(	m_wszFileName,	// The filename
-									(DWORD) GENERIC_WRITE,		  // File access
-									(DWORD) FILE_SHARE_READ,	  // Share access
-									NULL,								        // Security
-									(DWORD) OPEN_ALWAYS,				// Open flags
-									(DWORD) FILE_ATTRIBUTE_NORMAL,  // More flags
-									NULL);								      // Template
-			if (m_hFile == INVALID_HANDLE_VALUE)
-			{
-				LogDebug(L"Recorder:unable to create file:'%s' %d",m_wszFileName, GetLastError());
+				WriteLog(L"failed to open recording file:%s %d",m_wszFileName,GetLastError());
+				delete m_pRecordingFile;
+				m_pRecordingFile=NULL;
 				return false;
-			}
+			}		  
 		}
 		m_iPmtContinuityCounter=-1;
 		m_iPatContinuityCounter=-1;
@@ -262,7 +244,6 @@ bool CDiskRecorder::Start()
 		m_bStartPcrFound=false;
 		m_mapLastPtsDts.clear();
 		m_iPacketCounter=0;
-		m_iWriteBufferPos=0;
 		WriteLog(L"Start '%s'",m_wszFileName);
 		m_bRunning=true;
 		m_bPaused=FALSE;
@@ -284,21 +265,17 @@ void CDiskRecorder::Stop()
 		m_pPmtParser->Reset();
 		if (m_pTimeShiftFile!=NULL)
 		{
-			m_pTimeShiftFile->CloseFile();
+		  m_pTimeShiftFile->Close();
 			delete m_pTimeShiftFile;
 			m_pTimeShiftFile=NULL;
 		}
-		if (m_hFile!=INVALID_HANDLE_VALUE)
+		if (m_pRecordingFile!=NULL)
 		{
-			if (m_iWriteBufferPos>0)
-			{
-				DWORD written = 0;
-				WriteFile(m_hFile, (PVOID)m_pWriteBuffer, (DWORD)m_iWriteBufferPos, &written, NULL);
-				m_iWriteBufferPos=0;
-			}
-			CloseHandle(m_hFile);
-			m_hFile=INVALID_HANDLE_VALUE;
+		  m_pRecordingFile->Close();
+			delete m_pRecordingFile;
+			m_pRecordingFile=NULL;
 		}
+		
 		m_iPmtPid=-1;
 		Reset();
 	}
@@ -362,10 +339,8 @@ void CDiskRecorder::Reset()
     m_iTsContinuityCounter=0;
 
 		//	Reset the write buffer throttle
-		LogDebug("CDiskRecorder::Reset() - Reset write buffer throttle");
-		m_iWriteBufferThrottle = 0;
-		m_bThrottleAtMax = FALSE;
-
+		ResetThrottle(false);
+	  //LogDebug("CDiskRecorder::Reset() - end");
 	}
 	catch(...)
 	{
@@ -433,21 +408,6 @@ void CDiskRecorder::GetBufferSize(long *size)
 	*size = 0;
 }
 
-void CDiskRecorder::GetNumbFilesAdded(WORD *numbAdd)
-{
-	*numbAdd = (WORD)m_pTimeShiftFile->getNumbFilesAdded();
-}
-
-void CDiskRecorder::GetNumbFilesRemoved(WORD *numbRem)
-{
-	*numbRem = (WORD)m_pTimeShiftFile->getNumbFilesRemoved();
-}
-
-void CDiskRecorder::GetCurrentFileId(WORD *fileID)
-{
-	*fileID = (WORD)m_pTimeShiftFile->getCurrentFileId();
-}
-
 void CDiskRecorder::GetMinTSFiles(WORD *minFiles)
 {
 	*minFiles = (WORD) m_params.minFiles;
@@ -488,15 +448,9 @@ void CDiskRecorder::SetChunkReserve(__int64 chunkSize)
 	m_params.chunkSize=chunkSize;
 }
 
-void CDiskRecorder::GetFileBufferSize(__int64 *lpllsize)
-{
-	m_pTimeShiftFile->GetFileSize(lpllsize);
-}
-
 void CDiskRecorder::GetTimeShiftPosition(__int64 * position,long * bufferId)
 {
-	m_pTimeShiftFile->GetPosition(position);
-	*bufferId=m_pTimeShiftFile->getCurrentFileId();
+	m_pTimeShiftFile->GetPosition(position, bufferId);	
 }
 
 void CDiskRecorder::GetDiscontinuityCounter(int* counter)
@@ -535,188 +489,134 @@ void CDiskRecorder::Write(byte* buffer,int len)
 void CDiskRecorder::WriteToRecording(byte* buffer, int len)
 {
 	CEnterCriticalSection enter(m_section);
-	try{
 	if (!m_bRunning) return;
-  if (buffer==NULL) return;
   if (m_bPaused || m_bClearTsQueue) 
   {
-     try
-     {
-        WriteLog("clear TS packet queue"); 
-        m_bClearTsQueue = false;
-        ZeroMemory(m_pWriteBuffer, m_iWriteBufferSize);
-        m_iWriteBufferPos = 0;
-		
-		//	Reset the write buffer throttle
-		LogDebug("CDiskRecorder::WriteToRecording() - Reset write buffer throttle");
-		m_iWriteBufferThrottle = 0;
-		m_bThrottleAtMax = FALSE;
-      }
-      catch(...)
-      {
-        WriteLog("Write exception - 1");
-      }
-      return;
-  }
-  if (len <=0) return;
-  if (len + m_iWriteBufferPos >= RECORD_BUFFER_SIZE)
-  {
-	  try
-	  {
-      if (m_iWriteBufferPos > 0)
-      {
-		    if (m_hFile != INVALID_HANDLE_VALUE)
-		    {
-	        DWORD written = 0;
-	        if (FALSE == WriteFile(m_hFile, (PVOID)m_pWriteBuffer, (DWORD)m_iWriteBufferPos, &written, NULL))
-          {
-            //On fat16/fat32 we can only create files of max. 2gb/4gb
-            if (ERROR_FILE_TOO_LARGE == GetLastError())
-            {
-                LogDebug(L"Recorder:Maximum filesize reached for file:'%s' %d", m_wszFileName);
-                //close the file...
-		          CloseHandle(m_hFile);
-              m_hFile=INVALID_HANDLE_VALUE;
-
-              //create a new file
-                wchar_t ext[MAX_PATH];
-                wchar_t fileName[MAX_PATH];
-                wchar_t part[100];
-                int len=wcslen(m_wszFileName)-1;
-                int pos=len-1;
-                while (pos>0)
-                {
-                  if (m_wszFileName[pos]==L'.') break;
-                  pos--;
-                }
-                wcscpy(ext, &m_wszFileName[pos]);
-                wcsncpy(fileName, m_wszFileName, pos);
-                fileName[pos]=0;
-                swprintf_s(part,L"_p%d",m_iPart);
-                wchar_t newFileName[MAX_PATH];
-                swprintf_s(newFileName,L"%s%s%s",fileName,part,ext);
-                LogDebug(L"Recorder:Create new  file:'%s' %d",newFileName);
-                m_hFile = CreateFileW(newFileName,              // The filename
-                            (DWORD) GENERIC_WRITE,              // File access
-                            (DWORD) FILE_SHARE_READ,            // Share access
-                            NULL,                               // Security
-                            (DWORD) OPEN_ALWAYS,                // Open flags
-                            (DWORD) FILE_ATTRIBUTE_NORMAL,      // More flags
-                            NULL);                              // Template
-                if (m_hFile == INVALID_HANDLE_VALUE)
-                {
-                  LogDebug(L"Recorder:unable to create file:'%s' %d",newFileName, GetLastError());
-                  m_iWriteBufferPos=0;
-                  return ;
-                }
-                m_iPart++;
-                WriteFile(m_hFile, (PVOID)m_pWriteBuffer, (DWORD)m_iWriteBufferPos, &written, NULL);
-              }//of if (ERROR_FILE_TOO_LARGE == GetLastError())
-              else
-              {
-                LogDebug(L"Recorder:unable to write file:'%s' %d %d %x",m_wszFileName, GetLastError(),m_iWriteBufferPos,m_hFile);
-              }
-            }//of if (FALSE == WriteFile(m_hFile, (PVOID)m_pWriteBuffer, (DWORD)m_iWriteBufferPos, &written, NULL))
-          }//if (m_hFile!=INVALID_HANDLE_VALUE)
-        }//if (m_iWriteBufferPos>0)
-        m_iWriteBufferPos=0;
-      }
-      catch(...)
-      {
-        LogDebug("Recorder:Write exception");
-      }
-    }// of if (len + m_iWriteBufferPos >= RECORD_BUFFER_SIZE)
-
-    if ( (m_iWriteBufferPos+len) < RECORD_BUFFER_SIZE && len > 0)
+    try
     {
-      memcpy(&m_pWriteBuffer[m_iWriteBufferPos],buffer,len);
-      m_iWriteBufferPos+=len;
+      WriteLog("clear TS packet queue"); 
+      m_bClearTsQueue = false;
+      m_pRecordingFile->DiscardBuffer();
+      ResetThrottle(true);
     }
-  } catch (...) { WriteLog("Exception in writetorecording");}
+    catch(...)
+    {
+      WriteLog("Write exception - 1");
+    }
+    if (m_bPaused) return;	 // If m_bPaused == false, this packet should be stored.
+  }
+  
+  if (buffer==NULL) return;
+  if (len != 188) return; //sanity check 
+	try
+	{
+	  //This will create a new buffer if needed
+    if (m_pRecordingFile->AddToBuffer(buffer, len, m_iWriteBufferSize) == S_FALSE)
+    {	
+      //We have just rolled over into another buffer, so check if throttle needs adjustment
+      AdjustThrottle();
+    }
+  } 
+  catch (...) 
+  { 
+    WriteLog("Exception in WriteToRecording");
+  }
 }
 
 void CDiskRecorder::WriteToTimeshiftFile(byte* buffer, int len)
 {
+  CEnterCriticalSection enter(m_section);
+
   if (!m_bRunning) return;
-  if (buffer == NULL) return;
-  if (len != 188) return; //sanity check
-  if (m_pWriteBuffer == NULL) return; //sanity check
   if (m_bPaused || m_bClearTsQueue) 
   {
      try
      {
         WriteLog("clear TS packet queue"); 
         m_bClearTsQueue = false;
-        ZeroMemory(m_pWriteBuffer, m_iWriteBufferSize);
-        m_iWriteBufferPos = 0;
-		
-		//	Reset the write buffer throttle
-		LogDebug("CDiskRecorder::WriteToTimeshiftFile() - Reset write buffer throttle");
-		m_iWriteBufferThrottle = 0;
-		m_bThrottleAtMax = FALSE;
-      }
-      catch(...)
-      {
+        m_pTimeShiftFile->DiscardBuffer();
+    		ResetThrottle(true);
+     }
+     catch(...)
+     {
         WriteLog("Write exception - 1");
-      }
-      if (m_bPaused) return;							// If m_bPaused == false, this packet should be stored.
-    }
-    CEnterCriticalSection enter(m_section);
-
-    try  
-    {      
-      // Copy first TS packet from the queue to the I/O buffer
-      if (m_iWriteBufferPos >= 0 && m_iWriteBufferPos+188 <= m_iWriteBufferSize)
-      {
-         memcpy(&m_pWriteBuffer[m_iWriteBufferPos], buffer,188);
-         m_iWriteBufferPos+=188;
-      }
-      else
-      {
-         WriteLog("Write m_iWriteBufferPos overflow!");
-         m_iWriteBufferPos=0;
-      }
-    }
-    catch(...)
-    {
-      WriteLog("Write exception - 3");
-      return;
-    }
-
-	if(m_iWriteBufferThrottle < 0)
-		m_iWriteBufferThrottle = 0;
-
-	if(m_iWriteBufferThrottle >= NUMBER_THROTTLE_BUFFER_SIZES)
-		m_iWriteBufferThrottle = NUMBER_THROTTLE_BUFFER_SIZES - 1;
-
-	int currentThrottlePackets = m_iThrottleBufferSizes[m_iWriteBufferThrottle];
-	int currentThrottleBufferSize = currentThrottlePackets * TS_PACKET_SIZE;
-
-    if (m_iWriteBufferPos >= currentThrottleBufferSize)
+     }
+     if (m_bPaused) return;	 // If m_bPaused == false, this packet should be stored.
+  }
+    
+  if (buffer == NULL) return;
+  if (len != 188) return; //sanity check
+  
+  try  
+  {   
+     //This will create a new buffer if needed   
+    if (m_pTimeShiftFile->AddToBuffer(buffer, len, m_iWriteBufferSize) == S_FALSE)
     {	
-		int throttleToNumberPackets = THROTTLE_MAXIMUM_TV_PACKETS;
-
-		//	If radio, we want to throttle to a smaller buffer size
-		if(m_eChannelType == Radio)
-			throttleToNumberPackets = THROTTLE_MAXIMUM_RADIO_PACKETS;
-
-		//	Throttle up if we are not at maximum		
-		if(currentThrottlePackets < throttleToNumberPackets)
-		{	
-			if(m_iWriteBufferThrottle < (NUMBER_THROTTLE_BUFFER_SIZES - 1))
-				LogDebug("CDiskRecorder::Flush() - Throttle to %d bytes", m_iWriteBufferPos);
-
-			m_iWriteBufferThrottle++;
-		}
-		else if(currentThrottlePackets == throttleToNumberPackets && m_bThrottleAtMax == FALSE)
-		{
-			m_bThrottleAtMax = TRUE;
-			LogDebug("CDiskRecorder::Flush() - Throttle to %d bytes (max)", m_iWriteBufferPos);
-		}
-
-		Flush();
+      //We have just rolled over into another buffer, so check if throttle needs adjustment
+      AdjustThrottle();
     }
   }
+  catch(...)
+  {
+    WriteLog("Write exception - 3");
+    return;
+  }
+}
+
+void CDiskRecorder::ResetThrottle(bool logging)
+{
+  m_bThrottleAtMax = FALSE;
+	m_iWriteBufferThrottle = 0;
+
+  if (m_recordingMode == TimeShift)
+  {
+    m_iWriteBufferSize = m_iThrottleBufferSizes[m_iWriteBufferThrottle] * TS_PACKET_SIZE;
+	}
+	else
+	{
+    m_iWriteBufferSize = m_iThrottleBufferSizes[m_iWriteBufferThrottle] * TS_PACKET_SIZE * REC_THTL_MULT;
+	}
+  
+  if (logging)
+  {
+    LogDebug("CDiskRecorder::ResetThrottle() - Throttle to %d bytes", m_iWriteBufferSize);
+  }
+}
+
+void CDiskRecorder::AdjustThrottle()
+{
+  if (m_bThrottleAtMax) return;
+       
+  int throttleToNumber = THROTTLE_MAXIMUM_TV;  
+  //	If radio, we want to throttle to a smaller buffer size
+  if(m_eChannelType == Radio)
+  	throttleToNumber = THROTTLE_MAXIMUM_RADIO;
+
+  //Check throttle limits  	
+  m_iWriteBufferThrottle = min(max(m_iWriteBufferThrottle, 0), throttleToNumber); 
+  
+  //	Throttle up if we are not at maximum		
+  if(m_iWriteBufferThrottle < throttleToNumber)
+  {	  
+  	m_iWriteBufferThrottle++;
+  }
+  
+  if(m_iWriteBufferThrottle >= throttleToNumber)
+  {
+  	m_bThrottleAtMax = TRUE;
+  }
+  
+  if (m_recordingMode == TimeShift)
+  {
+    m_iWriteBufferSize = m_iThrottleBufferSizes[m_iWriteBufferThrottle] * TS_PACKET_SIZE;
+	}
+	else
+	{
+    m_iWriteBufferSize = m_iThrottleBufferSizes[m_iWriteBufferThrottle] * TS_PACKET_SIZE * REC_THTL_MULT;
+	}
+  
+  LogDebug("CDiskRecorder::AdjustThrottle() - Throttle to %d bytes", m_iWriteBufferSize);
+}
 
 void CDiskRecorder::WriteLog(const char* fmt,...)
 {
@@ -879,26 +779,6 @@ void CDiskRecorder::AddStream(PidInfo2 pidInfo)
 	}
 	else
 		WriteLog("stream rejected - pid: 0x%x stream type: 0x%x logical type: 0x%x descriptor length: %d",pidInfo.elementaryPid,pidInfo.streamType,pidInfo.logicalStreamType,pidInfo.rawDescriptorSize);
-}
-
-void CDiskRecorder::Flush()
-{
-	try
-	{
-		if (m_iWriteBufferPos>0)
-		{
-			if (m_pTimeShiftFile!=NULL)
-			{
-				m_pTimeShiftFile->Write(m_pWriteBuffer,m_iWriteBufferPos);
-				m_iWriteBufferPos=0;
-			}
-		}
-		
-	}
-	catch(...)
-	{
-		WriteLog("Flush exception");
-	}
 }
 
 
