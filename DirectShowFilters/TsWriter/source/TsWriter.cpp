@@ -223,6 +223,7 @@ UINT CALLBACK LogThread(void* param)
       Sleep(1);
     }
   }
+	_endthreadex(0);
   return 0;
 }
 
@@ -240,10 +241,13 @@ void StopLogger()
   CAutoLock logLock(&m_logLock);
   if (m_hLogger)
   {
+    //Make sure the thread runs soon so it can finish processing
+    SetThreadPriority(m_hLogger, THREAD_PRIORITY_NORMAL);
     m_bLoggerRunning = FALSE;
     m_EndLoggingEvent.Set();
     WaitForSingleObject(m_hLogger, INFINITE);	
     m_EndLoggingEvent.Reset();
+    CloseHandle(m_hLogger);
     m_hLogger = NULL;
     logFileParsed = -1;
     logFileDate = -1;
@@ -274,7 +278,7 @@ void LogDebug(const wchar_t *fmt, ...)
   swprintf_s(msg, 5000,L"[%04.4d-%02.2d-%02.2d %02.2d:%02.2d:%02.2d,%03.3d] [%x] [%x] - %s\n",
     systemTime.wYear, systemTime.wMonth, systemTime.wDay,
     systemTime.wHour, systemTime.wMinute, systemTime.wSecond, systemTime.wMilliseconds,
-    instanceID,
+    (unsigned int)instanceID,
     GetCurrentThreadId(),
     buffer);
   CAutoLock l(&m_qLock);
@@ -598,6 +602,8 @@ CMpTs::CMpTs(LPUNKNOWN pUnk, HRESULT *pHr)
   LogDebug("-- Threaded timeshift file writing                               --");
   LogDebug("-- Random access mode for timeshift files                        --");
   LogDebug("-- Variable size (no chunk reserve) for timeshift files          --");
+  LogDebug("-- Threaded recording file writing                               --");
+  LogDebug("-- EPG text handling changes                                     --");
   LogDebug("-------------------------------------------------------------------");  
 		
   b_dumpRawPackets = false;

@@ -24,6 +24,8 @@ public:
 	CAutoString(int len);
 	virtual ~CAutoString();
 	char* GetBuffer() ;
+  char* GetBuffer(int newLength);
 private:
 	char* m_pBuffer;
+	int   m_Len;
 };
