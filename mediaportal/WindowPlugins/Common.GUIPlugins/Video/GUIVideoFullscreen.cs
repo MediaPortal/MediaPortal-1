@@ -1301,8 +1301,9 @@ namespace MediaPortal.GUI.Video
         dlg.AddLocalizedString(462);
       }
 
-      // If the decoder supports postprocessing features (FFDShow)
-      if (g_Player.HasPostprocessing)
+      // If the decoder supports postprocessing features (FFDShow) but not when using LavEngine
+      IPostProcessingEngine engine = PostProcessingEngine.GetInstance();
+      if (g_Player.HasPostprocessing && !engine.ToString().ToLowerInvariant().Equals("mediaportal.player.lav.lavengine"))
       {
         dlg.AddLocalizedString(200073);
       }

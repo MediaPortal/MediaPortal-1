@@ -28,6 +28,7 @@ namespace MediaPortal.Configuration.Sections
   public partial class FiltersVideoRenderer : SectionSettings
   {
     private bool _init = false;
+    private readonly Movies _movies = new Movies();
 
     public FiltersVideoRenderer()
       : this("Video Renderer Settings") {}
@@ -119,8 +120,8 @@ namespace MediaPortal.Configuration.Sections
         checkBoxDecimateMask.Enabled = false;
         mpVMR9FilterMethod.Enabled = false;
         labelFilteringHint.Enabled = false;
-        Movies.MadVrInUse = false;
-        Movies.UpdateDecoderSettings();
+        _movies.MadVrInUse = false;
+        _movies.UpdateDecoderSettings();
       }
     }
 
@@ -134,8 +135,8 @@ namespace MediaPortal.Configuration.Sections
         checkBoxDecimateMask.Enabled = true;
         mpVMR9FilterMethod.Enabled = true;
         labelFilteringHint.Enabled = true;
-        Movies.MadVrInUse = false;
-        Movies.UpdateDecoderSettings();
+        _movies.MadVrInUse = false;
+        _movies.UpdateDecoderSettings();
       }
     }
 
@@ -149,8 +150,8 @@ namespace MediaPortal.Configuration.Sections
         checkBoxDecimateMask.Enabled = false;
         mpVMR9FilterMethod.Enabled = false;
         labelFilteringHint.Enabled = false;
-        Movies.MadVrInUse = true;
-        Movies.UpdateDecoderSettings();
+        _movies.MadVrInUse = true;
+        _movies.UpdateDecoderSettings();
       }
     }
 

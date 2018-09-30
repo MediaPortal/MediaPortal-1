@@ -25,6 +25,7 @@ using DirectShowLib;
 using System.Drawing;
 using MediaPortal.Profile;
 using MediaPortal.Configuration;
+using MediaPortal.Player.LAV;
 using MediaPortal.Player.Subtitles;
 
 namespace MediaPortal.Player.PostProcessing
@@ -63,12 +64,11 @@ namespace MediaPortal.Player.PostProcessing
               { */
         using (Settings xmlreader = new MPSettings())
         {
-          /*string engineType = xmlreader.GetValueAsString("postprocessing", "engine", "FFDShow");
-                  if (engineType.Equals("FFDShow"))
-                      engine = new FFDShowEngine();
-                  else
-                      engine = new DummyEngine();*/
-          engine = new FFDShowEngine();
+          string engineType = xmlreader.GetValueAsString("subtitles", "engine", "FFDShow");
+          if (engineType.Equals("FFDShow"))
+            engine = new FFDShowEngine();
+          else
+            engine = new LavEngine();
         }
       }
       return engine;
