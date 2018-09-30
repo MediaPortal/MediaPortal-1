@@ -1899,6 +1899,7 @@ public class MediaPortalApp : D3D, IRender
   /// <param name="msg"></param>
   private bool OnPowerBroadcast(ref Message msg)
   {
+    bool result = true;
     try
     {
       Log.Info("Main: WM_POWERBROADCAST ({0})", Enum.GetName(typeof(PBT_EVENT), msg.WParam.ToInt32()));
@@ -1911,6 +1912,10 @@ public class MediaPortalApp : D3D, IRender
           _resumedSuspended = false;
           _delayedResume = false;
           _suspended = true;
+
+          SetThreadExecutionState(EXECUTION_STATE.ES_CONTINUOUS | EXECUTION_STATE.ES_SYSTEM_REQUIRED);
+          msg.Result = (IntPtr)1;
+          result = false;
 
           // Suspending GUIGraphicsContext when going to S3
           if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
@@ -2140,7 +2145,7 @@ public class MediaPortalApp : D3D, IRender
     {
       Log.Error("Main: Exception catch on OnPowerBroadcast : {0}", ex);
     }
-    return true;
+    return result;
   }
 
   private bool CheckDelayedResume()
@@ -2937,8 +2942,9 @@ public class MediaPortalApp : D3D, IRender
   {
     // stop playback
     Log.Debug("Main: OnSuspend - stopping playback");
-    if (GUIGraphicsContext.IsPlaying)
+    if (g_Player.Playing || GUIGraphicsContext.IsPlaying)
     {
+      SetThreadExecutionState(EXECUTION_STATE.ES_CONTINUOUS | EXECUTION_STATE.ES_SYSTEM_REQUIRED);
       Currentmodulefullscreen();
       if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
       {
@@ -2950,18 +2956,17 @@ public class MediaPortalApp : D3D, IRender
           }
         }
         Currentmodulefullscreen();
-        var action = new Action(Action.ActionType.ACTION_STOP, 0, 0);
-        GUIGraphicsContext.OnAction(action);
+        // Disable this to avoid crash on resume - V468 added it to try to avoid deadlock on stop.
+        //var action = new Action(Action.ActionType.ACTION_STOP, 0, 0);
+        //GUIGraphicsContext.OnAction(action);
       }
-      else
+      g_Player.Stop();
+      while (GUIGraphicsContext.IsPlaying || g_Player.Player != null)
       {
-        g_Player.Stop();
-        while (GUIGraphicsContext.IsPlaying)
-        {
-          // This could lead into OS putting system into sleep before MP completes OnSuspend().
-          // OS gives only 2 seconds time to application to react power events (>= Vista)
-          Thread.Sleep(100);
-        }
+        // This could lead into OS putting system into sleep before MP completes OnSuspend().
+        // OS gives only 2 seconds time to application to react power events (>= Vista)
+        Thread.Sleep(100);
+        Log.Debug("Main: player not null");
       }
     }
     SaveLastActiveModule();

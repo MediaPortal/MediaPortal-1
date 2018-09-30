@@ -1814,7 +1814,8 @@ namespace MediaPortal.Player
           int hr;
           if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
           {
-            RestoreDisplayModeNow();
+            // Disable Restore Display mode, it is done on C++ side
+            //RestoreDisplayModeNow();
 
             if (_scene?.WorkerThread != null)
             {
