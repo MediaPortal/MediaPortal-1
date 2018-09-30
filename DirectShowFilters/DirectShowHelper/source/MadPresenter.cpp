@@ -649,6 +649,34 @@ void MPMadPresenter::EnableExclusive(bool bEnable)
   }
 };
 
+void MPMadPresenter::EnableOriginalDisplayMode(bool bEnable)
+{
+  if (m_pMad)
+  {
+    if (Com::SmartQIPtr<IMadVRSettings> m_pSettings = m_pMad)
+    {
+      // Read DisplayModeChanger settings
+      BOOL m_enableDisplayModeChanger;
+      BOOL m_enableDisplayModeRestore;
+      m_pSettings->SettingsGetBoolean(L"enableDisplayModeChanger", &m_enableDisplayModeChanger);
+      m_pSettings->SettingsGetBoolean(L"restoreDisplayMode", &m_enableDisplayModeRestore);
+
+      if (m_enableDisplayModeChanger)
+      {
+        m_pSettings->SettingsSetBoolean(L"enableDisplayModeChanger", true);
+        m_pSettings->SettingsSetBoolean(L"changeDisplayModeOnPlay", false);
+      }
+
+      if (m_enableDisplayModeRestore)
+      {
+        m_pSettings->SettingsSetBoolean(L"restoreDisplayMode", true);
+        m_pSettings->SettingsSetBoolean(L"restoreDisplayModeOnClose", false);
+      }
+      m_pSettings.Release(); // WIP release
+    }
+  }
+};
+
 void MPMadPresenter::ConfigureMadvr()
 {
   if (m_pMad)
@@ -1672,6 +1700,9 @@ HRESULT MPMadPresenter::SetDeviceOsd(IDirect3DDevice9* pD3DDev)
         }
       // Authorize OSD placement
       m_pReInitOSD = true;
+
+      // Enable DisplayModeChanger is set by using DRR when player goes /leaves fullscreen
+      EnableOriginalDisplayMode(true);
       return hr;
     }
     Log("MPMadPresenter::SetDeviceOsd() init madVR Window");
