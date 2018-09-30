@@ -119,8 +119,8 @@ namespace TvService
       {
         return;
       }
-      Log.Epg("EPG: grabber initialized for {0} transponders..", TransponderList.Instance.Count);
-      _isRunning = true;
+      Log.Epg("EPG: EpgGrabber initialized for {0} transponders..", TransponderList.Instance.Count);
+      // _isRunning = true;
       IList<Card> cards = Card.ListAll();
 
       if (_epgCards != null)
@@ -158,6 +158,7 @@ namespace TvService
       }
       _epgCards.Sort(new EpgCardPriorityComparer());
       _epgTimer.Interval = 1000;
+      _isRunning = true;
       _epgTimer.Enabled = true;
     }
 
@@ -170,13 +171,14 @@ namespace TvService
       {
         return;
       }
-      Log.Epg("EPG: grabber stopped..");
+      Log.Epg("EPG: EpgGrabber stopping..");
       _epgTimer.Enabled = false;
       _isRunning = false;
       foreach (EpgCard epgCard in _epgCards)
       {
         epgCard.Stop();
       }
+      Log.Epg("EPG: EpgGrabber stopped");
     }
 
     #endregion
@@ -218,6 +220,12 @@ namespace TvService
       try
       {
         _reEntrant = true;
+        
+        if (!_isRunning || _disposed || !_epgTimer.Enabled) 
+        {
+          Log.Epg("EpgGrabber:_epgTimer_Elapsed: _isRunning={0}, _disposed={1}, _epgTimer.Enabled={2}", _isRunning, _disposed, _epgTimer.Enabled);
+          return;
+        }
 
         try
         {

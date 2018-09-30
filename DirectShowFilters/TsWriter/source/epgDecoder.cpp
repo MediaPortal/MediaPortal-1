@@ -55,7 +55,7 @@ CEpgDecoder::CEpgDecoder()
   m_bEpgDone=false;
   m_bSorted=FALSE;
   m_epgTimeout=time(NULL);
-  LogDebug("CEpgDecoder::ctor, NoGeneralInGenre = %d", CRegistryUtil::m_bNoGeneralInGenre);
+  //LogDebug("CEpgDecoder::ctor, NoGeneralInGenre = %d", CRegistryUtil::m_bNoGeneralInGenre);
 }
 CEpgDecoder::~CEpgDecoder()
 {

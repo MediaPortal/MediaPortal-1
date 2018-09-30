@@ -25,7 +25,7 @@ extern void LogDebug(const char *fmt, ...) ;
 
 CTextUtil::CTextUtil(void)
 {
-  LogDebug("CTextUtil::ctor, PassThruISO6937 = %d", CRegistryUtil::m_bPassThruISO6937);
+  //LogDebug("CTextUtil::ctor, PassThruISO6937 = %d", CRegistryUtil::m_bPassThruISO6937);
 }
 
 CTextUtil::~CTextUtil(void)

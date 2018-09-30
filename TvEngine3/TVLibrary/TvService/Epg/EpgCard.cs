@@ -293,6 +293,13 @@ namespace TvService
       try
       {
         _reEntrant = true;
+
+        if (!_isRunning || _disposed || !_epgTimer.Enabled) 
+        {
+          Log.Epg("EpgCard:_epgTimer_Elapsed: _isRunning={0}, _disposed={1}, _epgTimer.Enabled={2}", _isRunning, _disposed, _epgTimer.Enabled);
+          return;
+        }
+
         //if epg grabber is idle, then grab epg for the next channel
         if (_state == EpgState.Idle)
         {
