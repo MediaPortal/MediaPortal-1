@@ -590,13 +590,11 @@ namespace TvService
         if (_isMaster)
         {
           _epgGrabber = new EpgGrabber(this);
-          _epgGrabber.Start();
+          //Initial EPG timer interval is 30s to allow other things to initialise
+          StartEPGgrabber(30000);
           _scheduler = new Scheduler(this);
           _scheduler.Start();
         }
-
-        _thumbProcessor = new ThumbProcessor();
-        _thumbProcessor.Start();
 
         SetupHeartbeatThread();
         ExecutePendingDeletions();
@@ -605,7 +603,10 @@ namespace TvService
         Log.Info("Controller: recalculating program states");
         TvDatabase.Program.ResetAllStates();
         Schedule.SynchProgramStatesForAll();
-      }
+        
+        _thumbProcessor = new ThumbProcessor();
+        _thumbProcessor.Start();        
+       }
       catch (Exception ex)
       {
         Log.Write("TvControllerException: {0}\r\n{1}", ex.ToString(), ex.StackTrace);
@@ -2922,6 +2923,15 @@ namespace TvService
       {
         Log.Write("Controller: epg start");
         _epgGrabber.Start();
+      }
+    }
+
+    private void StartEPGgrabber(double timerInterval)
+    {
+      if (_epgGrabber != null && AllCardsIdle)
+      {
+        Log.Write("Controller: epg start, timerInterval {0}s", timerInterval/1000);
+        _epgGrabber.Start(timerInterval);
       }
     }
 

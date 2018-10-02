@@ -98,6 +98,14 @@ namespace TvService
     /// </summary>
     public void Start()
     {
+      Start(1000);
+    }
+
+    /// <summary>
+    /// Starts the epg grabber with a specified timer interval
+    /// </summary>
+    public void Start(double timerInterval)
+    {
       TvBusinessLayer layer = new TvBusinessLayer();
       if (layer.GetSetting("idleEPGGrabberEnabled", "yes").Value != "yes")
       {
@@ -119,8 +127,8 @@ namespace TvService
       {
         return;
       }
-      Log.Epg("EPG: EpgGrabber initialized for {0} transponders..", TransponderList.Instance.Count);
-      // _isRunning = true;
+      Log.Epg("EPG: EpgGrabber initialized for {0} transponders, timerInterval {1}s", TransponderList.Instance.Count, timerInterval/1000);
+      _isRunning = true;
       IList<Card> cards = Card.ListAll();
 
       if (_epgCards != null)
@@ -157,8 +165,7 @@ namespace TvService
         _epgCards.Add(epgCard);
       }
       _epgCards.Sort(new EpgCardPriorityComparer());
-      _epgTimer.Interval = 1000;
-      _isRunning = true;
+      _epgTimer.Interval = timerInterval;
       _epgTimer.Enabled = true;
     }
 
@@ -215,8 +222,12 @@ namespace TvService
       //security check, dont allow re-entrancy here
       if (_reEntrant)
         return;
-      if (_epgTimer.Interval == 1000)
+      if (_epgTimer.Interval != 30000)
+      {
+        double oldTimInt = _epgTimer.Interval;
         _epgTimer.Interval = 30000;
+        Log.Debug("EpgGrabber:_epgTimer_Elapsed: timerInterval changed from {0}s to {1}s", oldTimInt/1000, _epgTimer.Interval/1000);
+      }
       try
       {
         _reEntrant = true;
