@@ -27,7 +27,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 
 #if defined(__WIN32__) || defined(_WIN32) || defined(_QNX4)
 #define _strncasecmp _strnicmp
-#define snprintf _snprintf
+//#define snprintf _snprintf
 #else
 #define _strncasecmp strncasecmp
 #endif

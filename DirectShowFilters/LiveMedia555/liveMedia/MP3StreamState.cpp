@@ -22,7 +22,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 #include "GroupsockHelper.hh"
 
 #if defined(__WIN32__) || defined(_WIN32)
-#define snprintf _snprintf
+//#define snprintf _snprintf
 #endif
 
 #define MILLION 1000000
