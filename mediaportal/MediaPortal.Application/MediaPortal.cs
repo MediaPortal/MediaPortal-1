@@ -2948,13 +2948,14 @@ public class MediaPortalApp : D3D, IRender
       Currentmodulefullscreen();
       if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
       {
-        if (VMR9Util.g_vmr9 != null)
-        {
-          if (VMR9Util.g_vmr9.Vmr9Filter != null)
-          {
-            MadvrInterface.restoreDisplayModeNow(VMR9Util.g_vmr9.Vmr9Filter);
-          }
-        }
+        // Disabled, it is done on C++ side
+        //if (VMR9Util.g_vmr9 != null)
+        //{
+        //  if (VMR9Util.g_vmr9.Vmr9Filter != null)
+        //  {
+        //    MadvrInterface.restoreDisplayModeNow(VMR9Util.g_vmr9.Vmr9Filter);
+        //  }
+        //}
         Currentmodulefullscreen();
         // Disable this to avoid crash on resume - V468 added it to try to avoid deadlock on stop.
         //var action = new Action(Action.ActionType.ACTION_STOP, 0, 0);
