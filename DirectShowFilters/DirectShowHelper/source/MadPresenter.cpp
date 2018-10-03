@@ -933,6 +933,9 @@ HRESULT MPMadPresenter::Stopping()
       return E_FAIL;
     }
 
+    // Enable DisplayModeChanger is set by using DRR when player goes /leaves fullscreen (if we use profiles)
+    EnableOriginalDisplayMode(true);
+
     if (m_pORCB)
     {
       // IOsdRenderCallback
@@ -1564,6 +1567,10 @@ void MPMadPresenter::ReinitOSD(bool type)
       {
         Log("%s : ReinitOSD from : RenderOsd", __FUNCTION__);
       }
+
+      // Enable DisplayModeChanger is set by using DRR when player goes /leaves fullscreen (if we use profiles)
+      EnableOriginalDisplayMode(true);
+
       m_pReInitOSD = false;
       m_pMPTextureGui = nullptr;
       m_pMPTextureOsd = nullptr;
