@@ -1,4 +1,0 @@
-
-DON'T modify files in this folder (including subfolders), modify files in the Config-folder ONLY!
-
-For more information visit: http://wiki.team-mediaportal.com/1_MEDIAPORTAL_1/20_Reference/Folders_and_Files
