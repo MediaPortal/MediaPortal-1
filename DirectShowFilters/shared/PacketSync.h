@@ -1,4 +1,4 @@
-/*
+/* 
  *  Copyright (C) 2006-2008 Team MediaPortal
  *  http://www.team-mediaportal.com
  *
@@ -6,15 +6,15 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2, or (at your option)
  *  any later version.
- *
+ *   
  *  This Program is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  *  GNU General Public License for more details.
- *
+ *   
  *  You should have received a copy of the GNU General Public License
  *  along with GNU Make; see the file COPYING.  If not, write to
- *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+ *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
@@ -22,23 +22,26 @@
 
 #define TS_PACKET_SYNC 0x47
 #define TS_PACKET_LEN  188
+#define M2TS_PACKET_LEN 192
 
 class CPacketSync
 {
 public:
-  CPacketSync();
+  CPacketSync(void);
 
 public:
-  virtual ~CPacketSync();
+  virtual ~CPacketSync(void);
   void OnRawData(unsigned char* pData, int nDataLen);
-  void OnRawData2(unsigned char* pData, int nDataLen);
+  bool OnRawData2(unsigned char* pData, int nDataLen);
+  int  OnRawDataCheck(unsigned char* pData, int nDataLen);
   virtual void OnTsPacket(const unsigned char* tsPacket);
-  // TODO add const modifier on tsPacket; however that would require TsReader code changes
   virtual void OnTsPacket(unsigned char* tsPacket, int bufferOffset, int bufferLength);
-  void Reset();
+  void Reset(void);
 
 private:
   unsigned char  m_tempBuffer[400];
   int   m_tempBufferPos;
   bool  m_bInSync;
+  bool  m_bFirstSynced;
+  int   m_packet_len;
 };

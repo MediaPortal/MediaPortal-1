@@ -24,8 +24,7 @@
 *    http://forums.dvbowners.com/
 */
 
-#include <afx.h>
-#include <afxwin.h>
+#include "StdAfx.h"
 
 #include <winsock2.h>
 #include <ws2tcpip.h>
