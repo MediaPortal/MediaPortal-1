@@ -1613,7 +1613,7 @@ HRESULT CTsMuxer::ReadProgramMapTable(const unsigned char* data,
     info.IsCompatible = false;
     return S_FALSE;
   }
-  if (!section.IsValid())
+  if (!section.IsValid(info.PmtPid))
   {
     LogDebug(L"muxer: pin %hhu PMT section is invalid", info.PinId);
     return S_OK;

@@ -746,7 +746,7 @@ STDMETHODIMP_(void) CGrabberSiAtscScte::OnOutOfBandSectionReceived(unsigned char
               pid, sectionDataBufferSize, s.SectionLength);
     return;
   }
-  else if (m_enableCrcCheck && !s.IsValid())
+  else if (m_enableCrcCheck && !s.IsValid(pid))
   {
     LogDebug(L"SI ATSC/SCTE %hu: received invalid section", pid);
     return;

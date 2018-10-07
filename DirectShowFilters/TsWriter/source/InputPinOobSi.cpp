@@ -172,7 +172,7 @@ STDMETHODIMP CInputPinOobSi::Receive(IMediaSample* sample)
       LogDebug(L"OOB SI input: received incomplete section sample, sample length = %ld, section length = %hu",
                 sampleLength, s.SectionLength);
     }
-    else if (m_enableCrcCheck && !s.IsValid())
+    else if (m_enableCrcCheck && !s.IsValid(0x1ffc))
     {
       LogDebug(L"OOB SI input: received invalid section");
     }
