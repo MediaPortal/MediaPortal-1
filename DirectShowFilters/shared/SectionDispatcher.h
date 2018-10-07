@@ -48,7 +48,8 @@ class CSectionDispatcher : public ISectionDispatcher
     void EnqueueSection(unsigned short pid,
                         unsigned char tableId,
                         const CSection& section,
-                        ISectionCallback& sectionDelegate);
+                        ISectionCallback& sectionDelegate,
+                        bool requireSequentialDispatch);
 
   private:
     class CQueuedSection

@@ -29,7 +29,8 @@
 
 extern void LogDebug(const wchar_t* fmt, ...);
 
-CSectionDecoder::CSectionDecoder(ISectionDispatcher* dispatcher)
+CSectionDecoder::CSectionDecoder(ISectionDispatcher* dispatcher,
+                                  bool requireSequentialDispatch)
 {
   m_pid = -1;
   m_section.Reset();
@@ -37,6 +38,7 @@ CSectionDecoder::CSectionDecoder(ISectionDispatcher* dispatcher)
   m_isCrcCheckEnabled = true;
   m_callback = NULL;
   m_dispatcher = dispatcher;
+  m_requireSequentialDispatch = requireSequentialDispatch;
 }
 
 CSectionDecoder::~CSectionDecoder()
@@ -193,7 +195,11 @@ void CSectionDecoder::OnTsPacket(const CTsHeader& header, const unsigned char* t
           {
             if (m_dispatcher != NULL)
             {
-              m_dispatcher->EnqueueSection(m_pid, m_section.TableId, m_section, *this);
+              m_dispatcher->EnqueueSection(m_pid,
+                                            m_section.TableId,
+                                            m_section,
+                                            *this,
+                                            m_requireSequentialDispatch);
             }
             else
             {

@@ -46,7 +46,8 @@ void CSectionDispatcher::DequeueSections(ISectionCallback& sectionDelegate)
 void CSectionDispatcher::EnqueueSection(unsigned short pid,
                                         unsigned char tableId,
                                         const CSection& section,
-                                        ISectionCallback& sectionDelegate)
+                                        ISectionCallback& sectionDelegate,
+                                        bool requireSequentialDispatch)
 {
   CSection* s = new CSection(section);
   if (s == NULL)
@@ -66,6 +67,11 @@ void CSectionDispatcher::EnqueueSection(unsigned short pid,
   }
 
   CEnterCriticalSection lock(m_section);
+  if (requireSequentialDispatch)
+  {
+    m_processors[0].EnqueueSection(qs);
+    return;
+  }
   m_processors[m_nextProcessor++].EnqueueSection(qs);
   m_nextProcessor = m_nextProcessor % PROCESSOR_COUNT;
 }

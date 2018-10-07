@@ -879,7 +879,9 @@ class CParserMhw
     void OnNewSection(unsigned short pid, unsigned char tableId, const CSection& section);
 
     void PrivateReset(bool unsetProvider);
-    void AddOrResetDecoder(unsigned short pid, bool enableCrcCheck);
+    void AddOrResetDecoder(unsigned short pid,
+                            bool enableCrcCheck,
+                            bool requireSequentialDispatch);
 
     unsigned long DecodeVersion1ChannelSection(const unsigned char* data,
                                                 unsigned short dataLength);
@@ -947,7 +949,7 @@ class CParserMhw
     long m_previousDescriptionId;             // version 2
     long m_previousProgramSectionId;
     long m_previousSeriesSectionId;
-    unsigned long m_firstDescriptionId;       // version 1
+    unsigned long m_firstDescriptionEventId;  // version 1
 
     // Version 1 date/time conversion.
     char m_currentHour;

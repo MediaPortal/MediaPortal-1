@@ -32,7 +32,8 @@
 class CSectionDecoder : ISectionCallback
 {
   public:
-    CSectionDecoder(ISectionDispatcher* dispatcher = NULL);
+    CSectionDecoder(ISectionDispatcher* dispatcher = NULL,
+                    bool m_requireSequentialDispatch = false);
     virtual ~CSectionDecoder();
 
     void Reset();
@@ -58,4 +59,5 @@ class CSectionDecoder : ISectionCallback
     bool m_isCrcCheckEnabled;
     ISectionCallback* m_callback;
     ISectionDispatcher* m_dispatcher;
+    bool m_requireSequentialDispatch;
 };

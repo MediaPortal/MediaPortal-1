@@ -30,5 +30,6 @@ class ISectionDispatcher
     virtual void EnqueueSection(unsigned short pid,
                                 unsigned char tableId,
                                 const CSection& section,
-                                ISectionCallback& sectionDelegate) = 0;
+                                ISectionCallback& sectionDelegate,
+                                bool requireSequentialDispatch) = 0;
 };

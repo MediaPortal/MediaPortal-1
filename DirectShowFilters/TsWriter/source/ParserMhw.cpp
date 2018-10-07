@@ -73,7 +73,7 @@ CParserMhw::CParserMhw(ICallBackPidConsumer* callBack,
   m_previousDescriptionId = -1;
   m_previousProgramSectionId = -1;
   m_previousSeriesSectionId = -1;
-  m_firstDescriptionId = 0xffffffff;
+  m_firstDescriptionEventId = 0xffffffff;
 
   m_currentHour = -1;
   m_referenceDateTime = 0;
@@ -1112,15 +1112,16 @@ void CParserMhw::OnNewSection(unsigned short pid, unsigned char tableId, const C
 
 void CParserMhw::PrivateReset(bool unsetProvider)
 {
-  AddOrResetDecoder(PID_MHW1_EVENTS, m_enableCrcCheck);
-  AddOrResetDecoder(PID_MHW1_OTHER, m_enableCrcCheck);
-  AddOrResetDecoder(PID_MHW2_CHANNELS_AND_THEMES, m_enableCrcCheck);
-  AddOrResetDecoder(PID_MHW2_DESCRIPTIONS, m_enableCrcCheck);
-  AddOrResetDecoder(PID_MHW2_EVENTS_BY_CHANNEL_SATELLITE, m_enableCrcCheck);
-  AddOrResetDecoder(PID_MHW2_EVENTS_BY_CHANNEL_TERRESTRIAL, m_enableCrcCheck);
-  //AddOrResetDecoder(PID_MHW2_EVENTS_BY_THEME, m_enableCrcCheck);
-  AddOrResetDecoder(PID_MHW2_PROGRAMS_AND_SERIES, m_enableCrcCheck);
-  //AddOrResetDecoder(PID_MHW2_THEME_DESCRIPTIONS, m_enableCrcCheck);
+  bool requireSequentialDispatch = true;
+  AddOrResetDecoder(PID_MHW1_EVENTS, m_enableCrcCheck, requireSequentialDispatch);
+  AddOrResetDecoder(PID_MHW1_OTHER, m_enableCrcCheck, requireSequentialDispatch);
+  AddOrResetDecoder(PID_MHW2_CHANNELS_AND_THEMES, m_enableCrcCheck, false);
+  AddOrResetDecoder(PID_MHW2_DESCRIPTIONS, m_enableCrcCheck, requireSequentialDispatch);
+  AddOrResetDecoder(PID_MHW2_EVENTS_BY_CHANNEL_SATELLITE, m_enableCrcCheck, requireSequentialDispatch);
+  AddOrResetDecoder(PID_MHW2_EVENTS_BY_CHANNEL_TERRESTRIAL, m_enableCrcCheck, requireSequentialDispatch);
+  //AddOrResetDecoder(PID_MHW2_EVENTS_BY_THEME, m_enableCrcCheck, requireSequentialDispatch);
+  AddOrResetDecoder(PID_MHW2_PROGRAMS_AND_SERIES, m_enableCrcCheck, requireSequentialDispatch);
+  //AddOrResetDecoder(PID_MHW2_THEME_DESCRIPTIONS, m_enableCrcCheck, requireSequentialDispatch);
 
   m_recordsChannel.RemoveAllRecords();
   m_recordsChannelCategory.RemoveAllRecords();
@@ -1141,7 +1142,7 @@ void CParserMhw::PrivateReset(bool unsetProvider)
   m_previousDescriptionId = -1;
   m_previousProgramSectionId = -1;
   m_previousSeriesSectionId = -1;
-  m_firstDescriptionId = 0xffffffff;
+  m_firstDescriptionEventId = 0xffffffff;
 
   m_currentHour = -1;
   m_referenceDateTime = 0;
@@ -1178,13 +1179,15 @@ void CParserMhw::PrivateReset(bool unsetProvider)
   m_completeTime = clock();
 }
 
-void CParserMhw::AddOrResetDecoder(unsigned short pid, bool enableCrcCheck)
+void CParserMhw::AddOrResetDecoder(unsigned short pid,
+                                    bool enableCrcCheck,
+                                    bool requireSequentialDispatch)
 {
   CSectionDecoder* decoder = NULL;
   map<unsigned short, CSectionDecoder*>::const_iterator it = m_decoders.find(pid);
   if (it == m_decoders.end() || it->second == NULL)
   {
-    decoder = new CSectionDecoder(m_sectionDispatcher);
+    decoder = new CSectionDecoder(m_sectionDispatcher, requireSequentialDispatch);
     if (decoder == NULL)
     {
       LogDebug(L"MHW: failed to allocate section decoder for PID %hu", pid);
@@ -1327,12 +1330,13 @@ unsigned long CParserMhw::DecodeVersion1DescriptionSection(const unsigned char* 
     return 0;
   }
 
+  // Assumption: records are cycled sequentially.
   unsigned long updateCount = 0;
-  if (m_firstDescriptionId == 0xffffffff)
+  if (m_firstDescriptionEventId == 0xffffffff)
   {
-    m_firstDescriptionId = eventId;
+    m_firstDescriptionEventId = eventId;
   }
-  else if (m_firstDescriptionId == eventId)
+  else if (m_firstDescriptionEventId == eventId)
   {
     updateCount = m_recordsDescription.RemoveExpiredRecords(NULL, 1);
     if (updateCount != 0)
@@ -3617,7 +3621,7 @@ void CParserMhw::CompleteTable(const CSection& section,
   // parsed independently. Section break(s) may appear absolutely anywhere. The
   // only way to cope is to cache and combine the sections as they're received.
   // Then, when the last section is received, process them together as if they
-  // were one section.
+  // were one section. Sections must be received sequentially for this to work.
   if (section.LastSectionNumber == 0)
   {
     // Don't bother using the buffer if there's only one section in the table.
@@ -3700,8 +3704,8 @@ void CParserMhw::OnMhwEventRemoved(unsigned char version,
                                     unsigned char themeId,
                                     unsigned char subThemeId)
 {
-  if (version == 1 && eventId == m_firstDescriptionId)
+  if (version == 1 && eventId == m_firstDescriptionEventId)
   {
-    m_firstDescriptionId = 0xffffffff;
+    m_firstDescriptionEventId = 0xffffffff;
   }
 }
