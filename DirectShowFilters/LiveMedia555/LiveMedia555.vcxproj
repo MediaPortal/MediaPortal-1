@@ -111,6 +111,8 @@
     <None Include="liveMedia\include\OggFileSink.hh" />
     <None Include="liveMedia\include\ourMD5.hh" />
     <None Include="liveMedia\include\ProxyServerMediaSession.hh" />
+    <None Include="liveMedia\include\RawVideoRTPSink.hh" />
+    <None Include="liveMedia\include\RawVideoRTPSource.hh" />
     <None Include="liveMedia\include\RTSPRegisterSender.hh" />
     <None Include="liveMedia\include\RTSPServerSupportingHTTPStreaming.hh" />
     <None Include="liveMedia\include\StreamReplicator.hh" />
@@ -302,6 +304,8 @@
     <ClCompile Include="liveMedia\OggFileSink.cpp" />
     <ClCompile Include="liveMedia\ourMD5.cpp" />
     <ClCompile Include="liveMedia\ProxyServerMediaSession.cpp" />
+    <ClCompile Include="liveMedia\RawVideoRTPSink.cpp" />
+    <ClCompile Include="liveMedia\RawVideoRTPSource.cpp" />
     <ClCompile Include="liveMedia\RTSPRegisterSender.cpp" />
     <ClCompile Include="liveMedia\RTSPServerSupportingHTTPStreaming.cpp" />
     <ClCompile Include="liveMedia\StreamReplicator.cpp" />

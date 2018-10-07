@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2017 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2018 Live Networks, Inc.  All rights reserved.
 // A filter that breaks up a H.264 or H.265 Video Elementary Stream into NAL units.
 // Implementation
 
@@ -551,7 +551,7 @@ void H264or5VideoStreamParser
 	      DEBUG_PRINT(nextScale);
 	      if (nextScale != 0) {
 		DEBUG_TAB;
-		unsigned delta_scale = bv.get_expGolomb();
+		int delta_scale = bv.get_expGolombSigned();
 		DEBUG_PRINT(delta_scale);
 		nextScale = (lastScale + delta_scale + 256) % 256;
 	      }
@@ -573,12 +573,12 @@ void H264or5VideoStreamParser
     } else if (pic_order_cnt_type == 1) {
       DEBUG_TAB;
       bv.skipBits(1); // delta_pic_order_always_zero_flag
-      (void)bv.get_expGolomb(); // offset_for_non_ref_pic
-      (void)bv.get_expGolomb(); // offset_for_top_to_bottom_field
+      (void)bv.get_expGolombSigned(); // offset_for_non_ref_pic
+      (void)bv.get_expGolombSigned(); // offset_for_top_to_bottom_field
       unsigned num_ref_frames_in_pic_order_cnt_cycle = bv.get_expGolomb();
       DEBUG_PRINT(num_ref_frames_in_pic_order_cnt_cycle);
       for (unsigned i = 0; i < num_ref_frames_in_pic_order_cnt_cycle; ++i) {
-	(void)bv.get_expGolomb(); // offset_for_ref_frame[i]
+	(void)bv.get_expGolombSigned(); // offset_for_ref_frame[i]
       }
     }
     unsigned max_num_ref_frames = bv.get_expGolomb();
