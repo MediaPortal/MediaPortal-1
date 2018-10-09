@@ -1899,7 +1899,6 @@ public class MediaPortalApp : D3D, IRender
   /// <param name="msg"></param>
   private bool OnPowerBroadcast(ref Message msg)
   {
-    bool result = true;
     try
     {
       Log.Info("Main: WM_POWERBROADCAST ({0})", Enum.GetName(typeof(PBT_EVENT), msg.WParam.ToInt32()));
@@ -1912,10 +1911,6 @@ public class MediaPortalApp : D3D, IRender
           _resumedSuspended = false;
           _delayedResume = false;
           _suspended = true;
-
-          SetThreadExecutionState(EXECUTION_STATE.ES_CONTINUOUS | EXECUTION_STATE.ES_SYSTEM_REQUIRED);
-          msg.Result = (IntPtr)1;
-          result = false;
 
           // Suspending GUIGraphicsContext when going to S3
           if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
@@ -2145,7 +2140,7 @@ public class MediaPortalApp : D3D, IRender
     {
       Log.Error("Main: Exception catch on OnPowerBroadcast : {0}", ex);
     }
-    return result;
+    return true;
   }
 
   private bool CheckDelayedResume()
