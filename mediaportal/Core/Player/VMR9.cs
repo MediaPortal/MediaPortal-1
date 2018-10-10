@@ -1769,6 +1769,26 @@ namespace MediaPortal.Player
           }
         }
 
+        // Resetting audio delay on start when using LAV Engine
+        try
+        {
+          IBaseFilter baseFilterLavAudio = null;
+          if (_graphBuilder != null)
+          {
+            DirectShowUtil.FindFilterByClassID(_graphBuilder, ClassId.LAVAudio, out baseFilterLavAudio);
+            if (baseFilterLavAudio != null)
+            {
+              ILAVAudioSettings asett = baseFilterLavAudio as ILAVAudioSettings;
+              asett?.SetAudioDelay(true, 0);
+              DirectShowUtil.ReleaseComObject(baseFilterLavAudio);
+            }
+          }
+        }
+        catch (Exception)
+        {
+          Log.Debug("VMR9: Settings LAVAudio delay to 0 failed");
+        }
+
         var hr = mediaCtrl.Run();
         Log.Debug("VMR9: StartMediaCtrl start hr: {0}", hr);
         DsError.ThrowExceptionForHR(hr);
