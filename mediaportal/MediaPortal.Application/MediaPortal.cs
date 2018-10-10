@@ -2937,31 +2937,32 @@ public class MediaPortalApp : D3D, IRender
   {
     // stop playback
     Log.Debug("Main: OnSuspend - stopping playback");
-    if (GUIGraphicsContext.IsPlaying)
+    if (g_Player.Playing || GUIGraphicsContext.IsPlaying)
     {
+      SetThreadExecutionState(EXECUTION_STATE.ES_CONTINUOUS | EXECUTION_STATE.ES_SYSTEM_REQUIRED);
       Currentmodulefullscreen();
       if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
       {
-        if (VMR9Util.g_vmr9 != null)
-        {
-          if (VMR9Util.g_vmr9.Vmr9Filter != null)
-          {
-            MadvrInterface.restoreDisplayModeNow(VMR9Util.g_vmr9.Vmr9Filter);
-          }
-        }
+        // Disabled, it is done on C++ side
+        //if (VMR9Util.g_vmr9 != null)
+        //{
+        //  if (VMR9Util.g_vmr9.Vmr9Filter != null)
+        //  {
+        //    MadvrInterface.restoreDisplayModeNow(VMR9Util.g_vmr9.Vmr9Filter);
+        //  }
+        //}
         Currentmodulefullscreen();
-        var action = new Action(Action.ActionType.ACTION_STOP, 0, 0);
-        GUIGraphicsContext.OnAction(action);
+        // Disable this to avoid crash on resume - V468 added it to try to avoid deadlock on stop.
+        //var action = new Action(Action.ActionType.ACTION_STOP, 0, 0);
+        //GUIGraphicsContext.OnAction(action);
       }
-      else
+      g_Player.Stop();
+      while (GUIGraphicsContext.IsPlaying || g_Player.Player != null)
       {
-        g_Player.Stop();
-        while (GUIGraphicsContext.IsPlaying)
-        {
-          // This could lead into OS putting system into sleep before MP completes OnSuspend().
-          // OS gives only 2 seconds time to application to react power events (>= Vista)
-          Thread.Sleep(100);
-        }
+        // This could lead into OS putting system into sleep before MP completes OnSuspend().
+        // OS gives only 2 seconds time to application to react power events (>= Vista)
+        Thread.Sleep(100);
+        Log.Debug("Main: player not null");
       }
     }
     SaveLastActiveModule();

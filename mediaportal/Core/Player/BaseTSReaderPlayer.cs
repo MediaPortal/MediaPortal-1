@@ -215,6 +215,10 @@ namespace MediaPortal.Player
 
     protected object lockObj = new object();
 
+    protected static DateTime ratioTimer;
+
+    protected static bool RatioDetectChange = false;
+
     #endregion
 
     #region ctor/dtor
@@ -867,13 +871,30 @@ namespace MediaPortal.Player
             {
               if (_basicVideo != null)
               {
-                _basicVideo.SetDestinationPosition(0, 0, GUIGraphicsContext.VideoWindowWidth,
+                _basicVideo.SetDestinationPosition(GUIGraphicsContext.VideoWindowWidth, GUIGraphicsContext.VideoWindowHeight, GUIGraphicsContext.VideoWindowWidth,
                   GUIGraphicsContext.VideoWindowHeight);
                 Log.Debug("TsReader: show video window");
               }
             }
           }
         }
+
+        // Keep this code if needed but adding a better hack to fix this "align left top" on playback start
+        //TimeSpan tsRatio = DateTime.Now - ratioTimer;
+        //// Force VideoPosition change after a detected aspect ratio change by delay it by 2 seconds for madVR filter.
+        //if (tsRatio.Seconds >= 5)
+        //{
+        //  if (RatioDetectChange && !GUIGraphicsContext.MadVrOsd)
+        //  {
+        //    RatioDetectChange = false;
+        //    Log.Debug("TSReaderPlayer: Force VideoWindow after aspect ratio detected change");
+        //    // Force VideoWindow to be refreshed with madVR when switching from video size like 16:9 to 4:3
+        //    GUIGraphicsContext.UpdateVideoWindow = true;
+        //    GUIGraphicsContext.VideoWindowChanged();
+        //    // Force a madVR refresh to resize MP window
+        //    g_Player.RefreshMadVrVideo();
+        //  }
+        //}
       }
       else
       {
@@ -1578,6 +1599,8 @@ namespace MediaPortal.Player
 
           if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
           {
+            // First we need to init rDest.Left and rDest to a fixed value.
+            _basicVideo.SetDestinationPosition(GUIGraphicsContext.RDestLeft, GUIGraphicsContext.RDestTop, rDest.Width, rDest.Height);
             _basicVideo.SetDestinationPosition(rDest.Left, rDest.Top, rDest.Width, rDest.Height);
           }
           else
@@ -1705,6 +1728,11 @@ namespace MediaPortal.Player
           _videoFormat.arY = message.Param5;
           _videoFormat.bitrate = message.Param6;
           _videoFormat.isInterlaced = (message.Param7 == 1);
+          if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+          {
+            ratioTimer = DateTime.Now;
+            RatioDetectChange = true;
+          }
           Log.Info("TsReaderPlayer: OnVideoFormatChanged - {0}", _videoFormat.ToString());
           break;
       }
@@ -1736,6 +1764,11 @@ namespace MediaPortal.Player
         _videoFormat.arY = aspectRatioY;
         _videoFormat.bitrate = bitrate;
         _videoFormat.isInterlaced = (isInterlaced == 1);
+        if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+        {
+          ratioTimer = DateTime.Now;
+          RatioDetectChange = true;
+        }
         Log.Info("TsReaderPlayer: OnVideoFormatChanged - {0} MP main thread", _videoFormat.ToString());
       }
       return 0;

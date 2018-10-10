@@ -723,6 +723,8 @@ namespace MediaPortal.Player
             {
               rDest.Height = rDest.Height*2;
             }
+            // First we need to init rDest.Left and rDest to a fixed value.
+            basicVideo.SetDestinationPosition(GUIGraphicsContext.RDestLeft, GUIGraphicsContext.RDestTop, rDest.Width, rDest.Height);
             basicVideo.SetDestinationPosition(rDest.Left, rDest.Top, rDest.Width, rDest.Height);
           }
           else

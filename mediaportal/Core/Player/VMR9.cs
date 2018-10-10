@@ -252,6 +252,7 @@ namespace MediaPortal.Player
     protected bool UseMadVideoRenderer;      // is madVR used?
     protected bool UseEVRMadVRForTV;
     protected bool UseMadVideoRenderer3D;
+    protected bool UseEnhancedVideoRenderer;
     protected internal DateTime playbackTimer;
     protected internal DateTime PlaneSceneMadvrTimer = new DateTime(0);
     protected IVideoWindow videoWinMadVr;
@@ -887,6 +888,7 @@ namespace MediaPortal.Player
           UseMadVideoRenderer = xmlreader.GetValueAsBool("general", "useMadVideoRenderer", false);
           UseEVRMadVRForTV = xmlreader.GetValueAsBool("general", "useEVRMadVRForTV", false);
           UseMadVideoRenderer3D = xmlreader.GetValueAsBool("general", "useMadVideoRenderer3D", false);
+          UseEnhancedVideoRenderer = xmlreader.GetValueAsBool("general", "useEVRenderer", false);
         }
         Log.Debug("VMR9: addvmr9 - thread : {0}", Thread.CurrentThread.Name);
         if (!_useVmr9)
@@ -918,6 +920,13 @@ namespace MediaPortal.Player
           if (UseEVRMadVRForTV && g_Player.IsTimeShifting)
           {
             GUIGraphicsContext.VideoRenderer = GUIGraphicsContext.VideoRendererType.EVR;
+            // Keep current RenderTarget to trying to restore D3D GUI from madVR but release it if already init previously
+            if (GUIGraphicsContext.MadVrRenderTargetVmr9 != null && !GUIGraphicsContext.MadVrRenderTargetVmr9.Disposed)
+            {
+              GUIGraphicsContext.DX9Device?.SetRenderTarget(0, GUIGraphicsContext.MadVrRenderTargetVmr9);
+              GUIGraphicsContext.MadVrRenderTargetVmr9.Dispose();
+              GUIGraphicsContext.MadVrRenderTargetVmr9 = null;
+            }
           }
           else
           {
@@ -1827,7 +1836,8 @@ namespace MediaPortal.Player
           int hr;
           if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
           {
-            RestoreDisplayModeNow();
+            // Disable Restore Display mode, it is done on C++ side
+            //RestoreDisplayModeNow();
 
             if (_scene?.WorkerThread != null)
             {
@@ -2343,6 +2353,20 @@ namespace MediaPortal.Player
       if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
       {
         GUIGraphicsContext.Vmr9Active = false;
+      }
+
+      // Reset video rendere status
+      if (UseEnhancedVideoRenderer)
+      {
+        GUIGraphicsContext.VideoRenderer = GUIGraphicsContext.VideoRendererType.EVR;
+      }
+      else if (UseMadVideoRenderer)
+      {
+        GUIGraphicsContext.VideoRenderer = GUIGraphicsContext.VideoRendererType.madVR;
+      }
+      else
+      {
+        GUIGraphicsContext.VideoRenderer = GUIGraphicsContext.VideoRendererType.VMR9;
       }
 
       Log.Debug("VMR9: Dispose done");
