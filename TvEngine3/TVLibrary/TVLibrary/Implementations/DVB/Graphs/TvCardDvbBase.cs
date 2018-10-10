@@ -31,7 +31,7 @@ using TvLibrary.Channels;
 using TvLibrary.Implementations.Helper;
 using TvLibrary.Epg;
 using TvLibrary.ChannelLinkage;
-using MediaPortal.TV.Epg;
+//using MediaPortal.TV.Epg;
 using TvDatabase;
 
 namespace TvLibrary.Implementations.DVB
@@ -2703,23 +2703,23 @@ namespace TvLibrary.Implementations.DVB
                     int parentalRating;
                     _interfaceEpgGrabber.GetEPGLanguage(x, i, (uint)z, out languageId, out ptrTitle, out ptrDesc,
                                                         out parentalRating);
-                    //title = DvbTextConverter.Convert(ptrTitle,"");
-                    //description = DvbTextConverter.Convert(ptrDesc,"");
                     string language = String.Empty;
                     language += (char)((languageId >> 16) & 0xff);
                     language += (char)((languageId >> 8) & 0xff);
                     language += (char)((languageId) & 0xff);
-                    //allows czech epg
-                    if (language.ToUpperInvariant() == "CZE" || language.ToUpperInvariant() == "CES")
-                    {
-                      title = Iso6937ToUnicode.Convert(ptrTitle);
-                      description = Iso6937ToUnicode.Convert(ptrDesc);
-                    }
-                    else
-                    {
-                      title = DvbTextConverter.Convert(ptrTitle, "");
-                      description = DvbTextConverter.Convert(ptrDesc, "");
-                    }
+                    // //allows czech epg
+                    // if (language.ToUpperInvariant() == "CZE" || language.ToUpperInvariant() == "CES")
+                    // {
+                    //   title = Iso6937ToUnicode.Convert(ptrTitle);
+                    //   description = Iso6937ToUnicode.Convert(ptrDesc);
+                    // }
+                    // else
+                    // {
+                    //   title = DvbTextConverter.Convert(ptrTitle, "");
+                    //   description = DvbTextConverter.Convert(ptrDesc, "");
+                    // }
+                    title = DvbTextConverter.Convert(ptrTitle,"");
+                    description = DvbTextConverter.Convert(ptrDesc,"");
                     if (title == null)
                       title = "";
                     if (description == null)

@@ -1,5 +1,5 @@
 /* 
- *	Copyright (C) 2006-2008 Team MediaPortal
+ *	Copyright (C) 2006-2018 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -21,27 +21,24 @@
 #pragma once
 
 #include <windows.h>
-#include <string>
-#include "RegistryUtil.h"
+#include <AtlBase.h>
+#include <AtlConv.h>
 
-using namespace std;
+#define MAX_REG_LENGTH 256
 
-class CTextUtil
+class CRegistryUtil
 {
 public:
-	CTextUtil(void);
-  int DvbTextToString(BYTE *buf, int bufLen, char *text, int textLen, bool isBbcHuffman);
-  string hexStr(const string& in);
-	// string UTF8toISO8859_1(const string& in);
+	CRegistryUtil(void);
+  void    ReadSettingsFromReg();
+  void    ReadRegistryKeyDword(HKEY hKey, LPCTSTR& lpSubKey, DWORD& data);
+  void    WriteRegistryKeyDword(HKEY hKey, LPCTSTR& lpSubKey, DWORD& data);
+  void    ReadRegistryKeyString(HKEY hKey, LPCTSTR& lpSubKey, LPCTSTR& data);
+  void    WriteRegistryKeyString(HKEY hKey, LPCTSTR& lpSubKey, LPCTSTR& data);
+  LONG    ReadOnlyRegistryKeyDword(HKEY hKey, LPCTSTR& lpSubKey, DWORD& data);
+  //Shared settings variables
+  static bool m_bNoGeneralInGenre;
+  static bool m_bPassThruISO6937;
 public:
-	virtual ~CTextUtil(void);
-private:
-  int OneThreeCopy(BYTE *buf, int bufLen, char *text, int textLen);
-  int UTF8toUTF8(BYTE *buf, int bufLen, char *text, int textLen);
-  int ISO10646toUTF8(BYTE *buf, int bufLen, char *text, int textLen);
-  int ISO6937toUTF8(BYTE *buf, int bufLen, char *text, int textLen);
-  int BbcHuffmanToString(BYTE *buf, int bufLen, char *text, int textLen);
-  static const BYTE bbc_huffman_data1[];
-  static const BYTE bbc_huffman_data2[];
+	virtual ~CRegistryUtil(void);
 };
-

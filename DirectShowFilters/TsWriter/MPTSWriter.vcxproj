@@ -179,6 +179,7 @@
     <ClCompile Include="source\LvctParser.cpp" />
     <ClCompile Include="source\NttParser.cpp" />
     <ClCompile Include="source\PmtGrabber.cpp" />
+    <ClCompile Include="source\RegistryUtil.cpp" />
     <ClCompile Include="source\SvctParser.cpp" />
     <ClCompile Include="source\TeletextGrabber.cpp" />
     <ClCompile Include="source\TextUtil.cpp" />
@@ -218,6 +219,8 @@
     <ClInclude Include="source\NttParser.h" />
     <ClInclude Include="source\PmtGrabber.h" />
     <ClInclude Include="source\BaseScteParser.h" />
+    <ClInclude Include="source\RegistryUtil.h" />
+    <ClInclude Include="source\stdafx.h" />
     <ClInclude Include="source\SvctParser.h" />
     <ClInclude Include="source\TeletextGrabber.h" />
     <ClInclude Include="source\TextUtil.h" />
