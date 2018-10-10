@@ -82,7 +82,7 @@ namespace MediaPortal.Configuration.Sections
     private MPTextBox subtitlesFontTextBox;
     private MPLabel mpLabel10;
     private MPTabControl tabControl1;
-    private static MPComboBox subEnginesCombo;
+    private MPComboBox subEnginesCombo;
     private MPLabel mpLabel3;
     private TextBox subPaths;
     private Label label2;
@@ -99,12 +99,12 @@ namespace MediaPortal.Configuration.Sections
     private TrackBar playedPercentageTrackBar;
     private MPLabel percentPlayedLabel;
     private NumericUpDown playedPercentageTB;
-    private static MPCheckBox audioDefaultCheckBox;
+    private MPCheckBox audioDefaultCheckBox;
     private MPLabel mpLabelOptionLAV;
-    private static MPCheckBox streamLAVSelectionCheckBox;
+    private MPCheckBox streamLAVSelectionCheckBox;
     private MPCheckBox chbKeepFoldersTogether;
     private static bool SubtitleComboMessageDone = false;
-    internal static bool MadVrInUse = false;
+    internal bool MadVrInUse = false;
 
     //private int 
 
@@ -349,7 +349,7 @@ namespace MediaPortal.Configuration.Sections
       MediaPortal.UserInterface.Controls.MPTabPage mpTabPage2;
       MediaPortal.UserInterface.Controls.MPLabel labelPlayAll;
       this.mpSubEngineCommentLabel = new MediaPortal.UserInterface.Controls.MPLabel();
-      subEnginesCombo = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.subEnginesCombo = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.advancedButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpGroupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.mpLabelSubSelectMode = new MediaPortal.UserInterface.Controls.MPLabel();
@@ -399,9 +399,9 @@ namespace MediaPortal.Configuration.Sections
       this.tabControl1 = new MediaPortal.UserInterface.Controls.MPTabControl();
       this.mpTabPage1 = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.mpGroupBox4 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      streamLAVSelectionCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.streamLAVSelectionCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpLabelOptionLAV = new MediaPortal.UserInterface.Controls.MPLabel();
-      audioDefaultCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.audioDefaultCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpLabel7 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.defaultAudioLanguageComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.mpLabel8 = new MediaPortal.UserInterface.Controls.MPLabel();
@@ -449,7 +449,7 @@ namespace MediaPortal.Configuration.Sections
             | System.Windows.Forms.AnchorStyles.Right)));
       mpGroupBox3.Controls.Add(this.mpSubEngineCommentLabel);
       mpGroupBox3.Controls.Add(mpLabel2);
-      mpGroupBox3.Controls.Add(subEnginesCombo);
+      mpGroupBox3.Controls.Add(this.subEnginesCombo);
       mpGroupBox3.Controls.Add(this.advancedButton);
       mpGroupBox3.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       mpGroupBox3.Location = new System.Drawing.Point(15, 12);
@@ -477,20 +477,20 @@ namespace MediaPortal.Configuration.Sections
       // 
       // subEnginesCombo
       // 
-      subEnginesCombo.BorderColor = System.Drawing.Color.Empty;
-      subEnginesCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      subEnginesCombo.FormattingEnabled = true;
-      subEnginesCombo.Items.AddRange(new object[] {
+      this.subEnginesCombo.BorderColor = System.Drawing.Color.Empty;
+      this.subEnginesCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.subEnginesCombo.FormattingEnabled = true;
+      this.subEnginesCombo.Items.AddRange(new object[] {
             "MPC-HC",
             "DirectVobSub",
             "FFDShow",
             "XySubFilter",
             "Disabled"});
-      subEnginesCombo.Location = new System.Drawing.Point(16, 46);
-      subEnginesCombo.Name = "subEnginesCombo";
-      subEnginesCombo.Size = new System.Drawing.Size(246, 21);
-      subEnginesCombo.TabIndex = 7;
-      subEnginesCombo.SelectedIndexChanged += new System.EventHandler(this.subEnginesCombo_SelectedIndexChanged);
+      this.subEnginesCombo.Location = new System.Drawing.Point(16, 46);
+      this.subEnginesCombo.Name = "subEnginesCombo";
+      this.subEnginesCombo.Size = new System.Drawing.Size(246, 21);
+      this.subEnginesCombo.TabIndex = 7;
+      this.subEnginesCombo.SelectedIndexChanged += new System.EventHandler(this.subEnginesCombo_SelectedIndexChanged);
       // 
       // advancedButton
       // 
@@ -847,6 +847,11 @@ namespace MediaPortal.Configuration.Sections
             0,
             0});
       this.delayVideoTextBox.Location = new System.Drawing.Point(148, 18);
+      this.delayVideoTextBox.Maximum = new decimal(new int[] {
+            500,
+            0,
+            0,
+            0});
       this.delayVideoTextBox.Minimum = new decimal(new int[] {
             10,
             0,
@@ -1069,9 +1074,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.mpGroupBox4.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpGroupBox4.Controls.Add(streamLAVSelectionCheckBox);
+      this.mpGroupBox4.Controls.Add(this.streamLAVSelectionCheckBox);
       this.mpGroupBox4.Controls.Add(this.mpLabelOptionLAV);
-      this.mpGroupBox4.Controls.Add(audioDefaultCheckBox);
+      this.mpGroupBox4.Controls.Add(this.audioDefaultCheckBox);
       this.mpGroupBox4.Controls.Add(this.mpLabel7);
       this.mpGroupBox4.Controls.Add(this.defaultAudioLanguageComboBox);
       this.mpGroupBox4.Controls.Add(this.mpLabel8);
@@ -1086,15 +1091,15 @@ namespace MediaPortal.Configuration.Sections
       // 
       // streamLAVSelectionCheckBox
       // 
-      streamLAVSelectionCheckBox.AutoSize = true;
-      streamLAVSelectionCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      streamLAVSelectionCheckBox.Location = new System.Drawing.Point(16, 134);
-      streamLAVSelectionCheckBox.Name = "streamLAVSelectionCheckBox";
-      streamLAVSelectionCheckBox.Size = new System.Drawing.Size(360, 17);
-      streamLAVSelectionCheckBox.TabIndex = 18;
-      streamLAVSelectionCheckBox.Text = "Override the whole audio/subtitle use stream selection from LAV Splitter";
-      streamLAVSelectionCheckBox.UseVisualStyleBackColor = true;
-      streamLAVSelectionCheckBox.CheckedChanged += new System.EventHandler(this.streamLAVSelectionCheckBox_CheckedChanged);
+      this.streamLAVSelectionCheckBox.AutoSize = true;
+      this.streamLAVSelectionCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.streamLAVSelectionCheckBox.Location = new System.Drawing.Point(16, 134);
+      this.streamLAVSelectionCheckBox.Name = "streamLAVSelectionCheckBox";
+      this.streamLAVSelectionCheckBox.Size = new System.Drawing.Size(360, 17);
+      this.streamLAVSelectionCheckBox.TabIndex = 18;
+      this.streamLAVSelectionCheckBox.Text = "Override the whole audio/subtitle use stream selection from LAV Splitter";
+      this.streamLAVSelectionCheckBox.UseVisualStyleBackColor = true;
+      this.streamLAVSelectionCheckBox.CheckedChanged += new System.EventHandler(this.streamLAVSelectionCheckBox_CheckedChanged);
       // 
       // mpLabelOptionLAV
       // 
@@ -1106,15 +1111,15 @@ namespace MediaPortal.Configuration.Sections
       // 
       // audioDefaultCheckBox
       // 
-      audioDefaultCheckBox.AutoSize = true;
-      audioDefaultCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      audioDefaultCheckBox.Location = new System.Drawing.Point(16, 111);
-      audioDefaultCheckBox.Name = "audioDefaultCheckBox";
-      audioDefaultCheckBox.Size = new System.Drawing.Size(235, 17);
-      audioDefaultCheckBox.TabIndex = 16;
-      audioDefaultCheckBox.Text = "Override audio selection and use default one";
-      audioDefaultCheckBox.UseVisualStyleBackColor = true;
-      audioDefaultCheckBox.CheckedChanged += new System.EventHandler(this.audioDefault_CheckedChanged);
+      this.audioDefaultCheckBox.AutoSize = true;
+      this.audioDefaultCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.audioDefaultCheckBox.Location = new System.Drawing.Point(16, 111);
+      this.audioDefaultCheckBox.Name = "audioDefaultCheckBox";
+      this.audioDefaultCheckBox.Size = new System.Drawing.Size(235, 17);
+      this.audioDefaultCheckBox.TabIndex = 16;
+      this.audioDefaultCheckBox.Text = "Override audio selection and use default one";
+      this.audioDefaultCheckBox.UseVisualStyleBackColor = true;
+      this.audioDefaultCheckBox.CheckedChanged += new System.EventHandler(this.audioDefault_CheckedChanged);
       // 
       // mpLabel7
       // 
@@ -1429,7 +1434,7 @@ namespace MediaPortal.Configuration.Sections
     /// <summary>
     /// sets useability of select config depending on whether auot decoder stting option is enabled.
     /// </summary>
-    public static void UpdateDecoderSettings()
+    public void UpdateDecoderSettings()
     {
       // Enable checkbox if LAV splitter are in use.
       if (MovieCodec._forceSourceSplitter && (MovieCodec._splitterFilter == "LAV Splitter Source" || MovieCodec._splitterFileFilter == "LAV Splitter"))

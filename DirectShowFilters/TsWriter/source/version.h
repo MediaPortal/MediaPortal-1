@@ -1,4 +1,4 @@
-// Copyright (C) 2005-2013 Team MediaPortal
+// Copyright (C) 2005-2018 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -19,8 +19,8 @@
 #define TSWRITER_MAJOR_VERSION 3
 #define TSWRITER_MID_VERSION 1
 #define TSWRITER_VERSION 33
-#define TSWRITER_POINT_VERSION 24
-#define TSWRITER_VERSION_STR "3.1.33.24\0"
+#define TSWRITER_POINT_VERSION 29
+#define TSWRITER_VERSION_STR "3.1.33.29\0"
 
-#define MP_VERSION 1,20,000,0
-#define MP_VERSION_STR "1.20.000.0\0"
+#define MP_VERSION 1,20,100,0
+#define MP_VERSION_STR "1.20.100.0\0"

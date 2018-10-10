@@ -91,16 +91,21 @@ namespace DShowNET.Helper
     {
       try
       {
+        Log.Debug("DirectShowUtil: AddAudioRendererToGraph : ({0}) init", strFilterName);
         IBaseFilter newFilter = AddAudioRenderer(graphBuilder, strFilterName, setAsReferenceClock);
+        Log.Debug("DirectShowUtil: AddAudioRendererToGraph : ({0}) loaded", strFilterName);
 
         if (newFilter == null)
         {
           Log.Info("DirectShowUtil: AddAudioRendererToGraph failed filter: ({0}) not found", strFilterName);
           Log.Info("DirectShowUtil: AddAudioRendererToGraph wait 5 secs before trying to adding back audio renderer device");
           Thread.Sleep(5000);
+          Log.Debug("DirectShowUtil: AddAudioRendererToGraph : ({0}) ReloadFilterCollection init", strFilterName);
           FilterHelper.ReloadFilterCollection();
+          Log.Debug("DirectShowUtil: AddAudioRendererToGraph : ({0}) ReloadFilterCollection done", strFilterName);
           return AddAudioRenderer(graphBuilder, strFilterName, setAsReferenceClock);
         }
+        Log.Debug("DirectShowUtil: AddAudioRendererToGraph : ({0}) done", strFilterName);
         return newFilter;
       }
       catch (Exception ex)
@@ -123,18 +128,18 @@ namespace DShowNET.Helper
         IEnumFilters enumFilters;
         HResult hr = new HResult(graphBuilder.EnumFilters(out enumFilters));
 
-        Log.Info("DirectShowUtil: Attach volume handler device to audio renderer: " + strFilterName);
-        if (VolumeHandler.Instance._mixer != null)
+        Log.Info("DirectShowUtil: AddAudioRenderer - Attach volume handler device to audio renderer: " + strFilterName);
+        if (OSInfo.OSInfo.Win10OrLater() && VolumeHandler.Instance != null)
         {
-          VolumeHandler.Instance._mixer.ChangeAudioDevice(strFilterName, false);
-          if (!VolumeHandler.Instance._mixer.DetectedDevice())
+          VolumeHandler.Instance.ChangeAudioDevice(strFilterName, false);
+          if (!VolumeHandler.Instance.DetectedDevice())
           {
             return null;
           }
         }
         GUIGraphicsContext.CurrentAudioRenderer = strFilterName;
 
-        Log.Info("DirectShowUtils: First try to insert new audio renderer {0} ", strFilterName);
+        Log.Info("DirectShowUtil: First try to insert new audio renderer {0} ", strFilterName);
 
         // next add the new one...
         foreach (Filter filter in Filters.AudioRenderers)
@@ -1767,9 +1772,11 @@ namespace DShowNET.Helper
     public static void RemoveFilters(IGraphBuilder graphBuilder)
     {
       RemoveFilters(graphBuilder, String.Empty);
-
-      Log.Info("Playback stopped and reverting volume OSD back to default device.");
-      if (VolumeHandler.Instance._mixer != null) VolumeHandler.Instance._mixer.ChangeAudioDevice(string.Empty, true);
+      if (OSInfo.OSInfo.Win10OrLater())
+      {
+        Log.Info("Playback stopped and reverting volume OSD back to default device.");
+        if (VolumeHandler.Instance != null) VolumeHandler.Instance.ChangeAudioDevice(string.Empty, true);
+      }
       GUIGraphicsContext.CurrentAudioRenderer = "";
     }
 

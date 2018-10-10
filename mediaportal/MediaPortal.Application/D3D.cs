@@ -514,6 +514,7 @@ namespace MediaPortal
       if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
       {
         GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.SUSPENDING;
+        Log.Debug("D3D: ToggleFullscreen() - set GUIGraphicsContext.State.SUSPENDING");
       }
 
       // Reset DialogMenu to avoid freeze when going to fullscreen/windowed
@@ -642,6 +643,7 @@ namespace MediaPortal
       if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.SUSPENDING)
       {
         GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.RUNNING;
+        Log.Debug("D3D: ToggleFullscreen() - set GUIGraphicsContext.State.RUNNING");
       }
 
       // enable event handlers
@@ -669,12 +671,13 @@ namespace MediaPortal
 
         if (AppActive || GUIGraphicsContext.NeedRecreateSwapChain)
         {
-          Log.Debug("Main: RecreateSwapChain()");
+          Log.Debug("D3D: RecreateSwapChain()");
 
           // Suspending GUIGraphicsContext.State
           if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
           {
             GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.SUSPENDING;
+            Log.Debug("D3D: RecreateSwapChain() - set GUIGraphicsContext.State.SUSPENDING");
           }
 
           // stop plaback if we are using a a D3D9 device and the device is not lost, meaning we are toggling between fullscreen and windowed mode
@@ -711,7 +714,7 @@ namespace MediaPortal
               {
                 try
                 {
-                  Log.Debug("Main: RecreateSwapChain() by restoring startup DirectX values");
+                  Log.Debug("D3D: RecreateSwapChain() by restoring startup DirectX values");
                   GUIGraphicsContext.DirectXPresentParameters = _presentParamsBackup;
                   lock (GUIGraphicsContext.RenderLock)
                   {
@@ -748,7 +751,7 @@ namespace MediaPortal
               else
               {
                 // build new D3D presentation parameters and reset device
-                Log.Debug("Main: RecreateSwapChain() by rebuild PresentParams");
+                Log.Debug("D3D: RecreateSwapChain() by rebuild PresentParams");
                 BuildPresentParams(Windowed);
                 try
                 {
@@ -829,6 +832,7 @@ namespace MediaPortal
           if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.SUSPENDING)
           {
             GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.RUNNING;
+            Log.Debug("D3D: RecreateSwapChain() - set GUIGraphicsContext.State.RUNNING");
           }
         }
       }
@@ -1142,6 +1146,7 @@ namespace MediaPortal
         if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.SUSPENDING)
         {
           GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.RUNNING;
+          Log.Debug("D3D: RestoreFromTray() - set GUIGraphicsContext.State.RUNNING");
         }
       }
     }
@@ -1224,6 +1229,7 @@ namespace MediaPortal
         if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
         {
           GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.SUSPENDING;
+          Log.Debug("D3D: MinimizeToTray() - set GUIGraphicsContext.State.SUSPENDING");
         }
 
         ExitToTray = false;
@@ -2236,6 +2242,7 @@ namespace MediaPortal
       if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
       {
         GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.SUSPENDING;
+        Log.Debug("D3D: ToggleMiniTV() - set GUIGraphicsContext.State.SUSPENDING");
       }
 
       if (Windowed)
@@ -2287,6 +2294,7 @@ namespace MediaPortal
       if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.SUSPENDING)
       {
         GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.RUNNING;
+        Log.Debug("D3D: ToggleMiniTV() - set GUIGraphicsContext.State.RUNNING");
       }
 
       // disable event handlers

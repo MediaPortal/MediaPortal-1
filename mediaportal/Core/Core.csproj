@@ -376,6 +376,7 @@
     <Compile Include="guilib\TextureFrame.cs" />
     <Compile Include="guilib\ViewHandler.cs" />
     <Compile Include="guilib\XMLSkinFunctionAttribute.cs" />
+    <Compile Include="Mixer\Mixer10.cs" />
     <Compile Include="MusicPlayer\BASS\MixerStream.cs" />
     <Compile Include="Player\BDOSDRenderer.cs" />
     <Compile Include="Player\BDPlayer.cs" />
@@ -395,6 +396,8 @@
     <Compile Include="Player\FFDShow\Interfaces\IffdshowBase.cs" />
     <Compile Include="Player\FFDShow\Interfaces\IffdshowDec.cs" />
     <Compile Include="Player\FFDShow\Interfaces\IffdshowDecVideo.cs" />
+    <Compile Include="Player\LavInterfaces.cs" />
+    <Compile Include="Player\LAV\LAVEngine.cs" />
     <Compile Include="Player\MadvrInterface.cs" />
     <Compile Include="Player\MediaInfoWrapper.cs" />
     <Compile Include="Player\PostProcessing\PostProcessingEngine.cs" />
