@@ -1709,7 +1709,7 @@ namespace TvService
         Card card = Card.Retrieve(user.CardId);
         if (card != null && card.GrabEPG)
         {
-          StopEPGgrabber();
+          StopEPGgrabber(1);
         }
 
         bool isTimeShifting;

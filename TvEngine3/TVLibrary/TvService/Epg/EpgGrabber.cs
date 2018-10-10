@@ -233,7 +233,6 @@ namespace TvService
       if (_epgTimer.Interval != 30000)
       {
         double oldTimInt = _epgTimer.Interval;
-      {
         _epgTimer.Interval = 30000;
         Log.Debug("EpgGrabber:_epgTimer_Elapsed: timerInterval changed from {0}s to {1}s", oldTimInt/1000, _epgTimer.Interval/1000);
       }
