@@ -2469,6 +2469,18 @@ namespace MediaPortal.Player
         {
           hr = _mediaCtrl.Run();
           DsError.ThrowExceptionForHR(hr);
+
+          // When using LAV Audio
+          //Release and init Post Process Filter
+          if (PostProcessingEngine.engine != null)
+          {
+            PostProcessingEngine.GetInstance().FreePostProcess();
+          }
+          IPostProcessingEngine postengine = PostProcessingEngine.GetInstance(true);
+          if (!postengine.LoadPostProcessing(_graphBuilder))
+          {
+            PostProcessingEngine.engine = new PostProcessingEngine.DummyEngine();
+          }
         }
         catch (Exception error)
         {
