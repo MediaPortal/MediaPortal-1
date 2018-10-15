@@ -32,19 +32,6 @@ namespace MediaPortal.Player.LAV
     private bool hasPostProcessing = false;
     protected int audiodelayInterval;
 
-    #region ISubEngine Members
-
-    public bool LoadSubtitles(IGraphBuilder graphBuilder, string filename)
-    {
-      DirectShowUtil.FindFilterByClassID(graphBuilder, ClassId.LAVAudio, out _baseFilterLavAudio);
-      if (_baseFilterLavAudio == null)
-        return false;
-
-      return true;
-    }
-
-   #endregion
-
     #region IPostProcessing Members
 
     public bool EnableDeinterlace { get; set; }
@@ -82,20 +69,49 @@ namespace MediaPortal.Player.LAV
     {
       get
       {
-        int delay = 0;
-        bool enable;
-        ILAVAudioSettings asett = _baseFilterLavAudio as ILAVAudioSettings;
-        if (asett == null) return delay;
-        var hr = asett.GetAudioDelay(out enable, out delay);
-        DsError.ThrowExceptionForHR(hr);
-        return delay;
+        try
+        {
+          int delay = 0;
+          bool enable;
+          if (_baseFilterLavAudio != null)
+          {
+            ILAVAudioSettings asett = _baseFilterLavAudio as ILAVAudioSettings;
+            if (asett == null) return delay;
+            var hr = asett.GetAudioDelay(out enable, out delay);
+            DsError.ThrowExceptionForHR(hr);
+          }
+          return delay;
+        }
+        catch (Exception)
+        {
+          if (_baseFilterLavAudio != null)
+          {
+            DirectShowUtil.ReleaseComObject(_baseFilterLavAudio);
+            _baseFilterLavAudio = null;
+          }
+        }
+        return 0;
       }
       set
       {
-        ILAVAudioSettings asett = _baseFilterLavAudio as ILAVAudioSettings;
-        if (asett == null) return;
-        var hr = asett.SetAudioDelay(true, value);
-        DsError.ThrowExceptionForHR(hr);
+        try
+        {
+          if (_baseFilterLavAudio != null)
+          {
+            ILAVAudioSettings asett = _baseFilterLavAudio as ILAVAudioSettings;
+            if (asett == null) return;
+            var hr = asett.SetAudioDelay(true, value);
+            DsError.ThrowExceptionForHR(hr);
+          }
+        }
+        catch (Exception e)
+        {
+          if (_baseFilterLavAudio != null)
+          {
+            DirectShowUtil.ReleaseComObject(_baseFilterLavAudio);
+            _baseFilterLavAudio = null;
+          }
+        }
       }
     }
 
@@ -109,15 +125,29 @@ namespace MediaPortal.Player.LAV
 
     public void AudioDelayMinus()
     {
-      ILAVAudioSettings asett = _baseFilterLavAudio as ILAVAudioSettings;
-      if (asett != null)
+      try
       {
-        bool enable;
-        int delay;
-        var hr = asett.GetAudioDelay(out enable, out delay);
-        DsError.ThrowExceptionForHR(hr);
-        hr = asett.SetAudioDelay(true, delay - AudioDelayInterval);
-        DsError.ThrowExceptionForHR(hr);
+        if (_baseFilterLavAudio != null)
+        {
+          ILAVAudioSettings asett = _baseFilterLavAudio as ILAVAudioSettings;
+          if (asett != null)
+          {
+            bool enable;
+            int delay;
+            var hr = asett.GetAudioDelay(out enable, out delay);
+            DsError.ThrowExceptionForHR(hr);
+            hr = asett.SetAudioDelay(true, delay - AudioDelayInterval);
+            DsError.ThrowExceptionForHR(hr);
+          }
+        }
+      }
+      catch (Exception)
+      {
+        if (_baseFilterLavAudio != null)
+        {
+          DirectShowUtil.ReleaseComObject(_baseFilterLavAudio);
+          _baseFilterLavAudio = null;
+        }
       }
     }
 
@@ -133,15 +163,29 @@ namespace MediaPortal.Player.LAV
 
     public void AudioDelayPlus()
     {
-      ILAVAudioSettings asett = _baseFilterLavAudio as ILAVAudioSettings;
-      if (asett != null)
+      try
       {
-        bool enable;
-        int delay;
-        var hr = asett.GetAudioDelay(out enable, out delay);
-        DsError.ThrowExceptionForHR(hr);
-        hr = asett.SetAudioDelay(true, delay + AudioDelayInterval);
-        DsError.ThrowExceptionForHR(hr);
+        if (_baseFilterLavAudio != null)
+        {
+          ILAVAudioSettings asett = _baseFilterLavAudio as ILAVAudioSettings;
+          if (asett != null)
+          {
+            bool enable;
+            int delay;
+            var hr = asett.GetAudioDelay(out enable, out delay);
+            DsError.ThrowExceptionForHR(hr);
+            hr = asett.SetAudioDelay(true, delay + AudioDelayInterval);
+            DsError.ThrowExceptionForHR(hr);
+          }
+        }
+      }
+      catch (Exception)
+      {
+        if (_baseFilterLavAudio != null)
+        {
+          DirectShowUtil.ReleaseComObject(_baseFilterLavAudio);
+          _baseFilterLavAudio = null;
+        }
       }
     }
 

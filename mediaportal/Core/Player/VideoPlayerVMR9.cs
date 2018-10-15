@@ -1020,6 +1020,8 @@ namespace MediaPortal.Player
             UpdateFilters("Video");
             break;*/
         }
+
+        IPostProcessingEngine postengine;
         if (iChangedMediaTypes != 1 && VideoChange)
         {
           //Release and init Post Process Filter
@@ -1027,8 +1029,8 @@ namespace MediaPortal.Player
           {
             PostProcessingEngine.GetInstance().FreePostProcess();
           }
-          IPostProcessingEngine postengine = PostProcessingEngine.GetInstance(true);
-          if (!postengine.LoadPostProcessing(graphBuilder))
+          postengine = PostProcessingEngine.GetInstance(true);
+          if (postengine != null && !postengine.LoadPostProcessing(graphBuilder))
           {
             PostProcessingEngine.engine = new PostProcessingEngine.DummyEngine();
           }
@@ -1095,6 +1097,18 @@ namespace MediaPortal.Player
           }
           Log.Info("VideoPlayer9: Reconfigure graph done");
         }*/
+
+        // When using LAV Audio
+        //Release and init Post Process Filter
+        if (PostProcessingEngine.engine != null)
+        {
+          PostProcessingEngine.GetInstance().FreePostProcess();
+        }
+        postengine = PostProcessingEngine.GetInstance(true);
+        if (postengine != null && !postengine.LoadPostProcessing(graphBuilder))
+        {
+          PostProcessingEngine.engine = new PostProcessingEngine.DummyEngine();
+        }
       }
     }
 
@@ -1258,6 +1272,18 @@ namespace MediaPortal.Player
             DirectShowUtil.RemoveUnusedFiltersFromGraph(graphBuilder);
             mediaCtrl.Run();
             GUIGraphicsContext.CurrentAudioRendererDone = true;
+          }
+
+          // When using LAV Audio
+          //Release and init Post Process Filter
+          if (PostProcessingEngine.engine != null)
+          {
+            PostProcessingEngine.GetInstance().FreePostProcess();
+          }
+          IPostProcessingEngine postengine = PostProcessingEngine.GetInstance(true);
+          if (!postengine.LoadPostProcessing(graphBuilder))
+          {
+            PostProcessingEngine.engine = new PostProcessingEngine.DummyEngine();
           }
         }
       }
