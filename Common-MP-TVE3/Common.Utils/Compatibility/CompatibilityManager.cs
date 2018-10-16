@@ -395,7 +395,8 @@ namespace MediaPortal.Common.Utils
       { new Version("1.16.100.0"), "1.17.0 Pre Release" },
       { new Version("1.17.100.0"), "1.18.0 Pre Release" },
       { new Version("1.18.100.0"), "1.19.0 Pre Release" },
-      { new Version("1.19.100.0"), "1.20.0 Pre Release" }
+      { new Version("1.19.100.0"), "1.20.0 Pre Release" },
+      { new Version("1.20.100.0"), "1.21.0 Pre Release" }
     };
 
     public static string MediaPortalReleaseForApiVersion(Version apiVersion)
