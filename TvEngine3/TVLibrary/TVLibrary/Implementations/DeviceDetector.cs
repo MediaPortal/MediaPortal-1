@@ -415,7 +415,12 @@ namespace TvLibrary.Implementations
         string name = connectedDevice.Name;
         string devicePath = connectedDevice.DevicePath;
         if (!string.IsNullOrEmpty(name) && !string.IsNullOrEmpty(devicePath) &&
-          (name.Equals("Hauppauge HD PVR Crossbar") || name.Contains("Hauppauge Colossus Crossbar"))
+          (
+            name.Equals(TvCardHDPVR.CROSSBAR_NAME_HDPVR) ||
+            name.Contains(TvCardHDPVR.CROSSBAR_NAME_COLOSSUS) ||
+            name.Equals(TvCardHDPVR.CROSSBAR_NAME_HDPVR2_COLOSSUS2) ||
+            name.Equals(TvCardHDPVR.CROSSBAR_NAME_HDPVR60)
+          )
         )
         {
           knownDevices.Add(devicePath);
