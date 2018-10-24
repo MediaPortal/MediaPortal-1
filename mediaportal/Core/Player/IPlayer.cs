@@ -1,4 +1,4 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2018 Team MediaPortal
 
 // Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
@@ -742,6 +742,11 @@ namespace MediaPortal.Player
     #region Posprocessing features
 
     public virtual bool HasPostprocessing
+    {
+      get { return false; }
+    }
+
+    public virtual bool HasAudioEngine
     {
       get { return false; }
     }

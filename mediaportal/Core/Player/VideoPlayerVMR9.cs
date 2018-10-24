@@ -1,4 +1,4 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2018 Team MediaPortal
 
 // Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
@@ -30,6 +30,7 @@ using DShowNET.Helper;
 using MediaPortal.Configuration;
 using MediaPortal.ExtensionMethods;
 using MediaPortal.GUI.Library;
+using MediaPortal.Player.LAV;
 using MediaPortal.Profile;
 using MediaPortal.Player.Subtitles;
 using MediaPortal.Player.PostProcessing;
@@ -1021,7 +1022,6 @@ namespace MediaPortal.Player
             break;*/
         }
 
-        IPostProcessingEngine postengine;
         if (iChangedMediaTypes != 1 && VideoChange)
         {
           //Release and init Post Process Filter
@@ -1029,7 +1029,7 @@ namespace MediaPortal.Player
           {
             PostProcessingEngine.GetInstance().FreePostProcess();
           }
-          postengine = PostProcessingEngine.GetInstance(true);
+          IPostProcessingEngine postengine = PostProcessingEngine.GetInstance(true);
           if (postengine != null && !postengine.LoadPostProcessing(graphBuilder))
           {
             PostProcessingEngine.engine = new PostProcessingEngine.DummyEngine();
@@ -1097,18 +1097,6 @@ namespace MediaPortal.Player
           }
           Log.Info("VideoPlayer9: Reconfigure graph done");
         }*/
-
-        // When using LAV Audio
-        //Release and init Post Process Filter
-        if (PostProcessingEngine.engine != null)
-        {
-          PostProcessingEngine.GetInstance().FreePostProcess();
-        }
-        postengine = PostProcessingEngine.GetInstance(true);
-        if (postengine != null && !postengine.LoadPostProcessing(graphBuilder))
-        {
-          PostProcessingEngine.engine = new PostProcessingEngine.DummyEngine();
-        }
       }
     }
 
@@ -1276,14 +1264,14 @@ namespace MediaPortal.Player
 
           // When using LAV Audio
           //Release and init Post Process Filter
-          if (PostProcessingEngine.engine != null)
+          if (AudioPostEngine.engine != null)
           {
-            PostProcessingEngine.GetInstance().FreePostProcess();
+            AudioPostEngine.GetInstance().FreePostProcess();
           }
-          IPostProcessingEngine postengine = PostProcessingEngine.GetInstance(true);
-          if (!postengine.LoadPostProcessing(graphBuilder))
+          IAudioPostEngine audioEngine = AudioPostEngine.GetInstance(true);
+          if (audioEngine != null && !audioEngine.LoadPostProcessing(graphBuilder))
           {
-            PostProcessingEngine.engine = new PostProcessingEngine.DummyEngine();
+            AudioPostEngine.engine = new AudioPostEngine.DummyEngine();
           }
         }
       }
@@ -1451,6 +1439,13 @@ namespace MediaPortal.Player
         //Add Post Process Audio Codec
         PostProcessAddAudio();
 
+        // When using LAV Audio
+        //Release and init Post Process Filter
+        if (AudioPostEngine.engine != null)
+        {
+          AudioPostEngine.GetInstance().FreePostProcess();
+        }
+
         //Add Audio Codec
         if (filterCodec.AudioCodec != null)
         {
@@ -1458,6 +1453,13 @@ namespace MediaPortal.Player
           filterCodec.AudioCodec = null;
         }
         filterCodec.AudioCodec = DirectShowUtil.AddFilterToGraph(this.graphBuilder, MatchFilters(selection));
+
+        // Init Audio delay for LAV Audio
+        IAudioPostEngine audioEngine = AudioPostEngine.GetInstance(true);
+        if (audioEngine != null && !audioEngine.LoadPostProcessing(graphBuilder))
+        {
+          AudioPostEngine.engine = new AudioPostEngine.DummyEngine();
+        }
       }
     }
 
@@ -1786,6 +1788,8 @@ namespace MediaPortal.Player
 
         SubEngine.GetInstance().FreeSubtitles();
         PostProcessingEngine.GetInstance().FreePostProcess();
+        AudioPostEngine.GetInstance().FreePostProcess();
+        Log.Debug("VideoPlayer9: Cleanup FreeAudioEngine");
 
         //if (VMR9Util.g_vmr9?._vmr9Filter != null && GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
         //{

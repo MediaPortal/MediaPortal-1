@@ -1,4 +1,4 @@
-﻿#region Copyright (C) 2005-2011 Team MediaPortal
+﻿#region Copyright (C) 2005-2018 Team MediaPortal
 
 // Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
@@ -32,6 +32,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 using MediaPortal.Player.Subtitles;
 using System.Collections.Generic;
+using MediaPortal.Player.LAV;
 using MediaPortal.Player.PostProcessing;
 
 namespace MediaPortal.Player
@@ -350,6 +351,13 @@ namespace MediaPortal.Player
         if (!postengine.LoadPostProcessing(graphBuilder))
         {
           PostProcessingEngine.engine = new PostProcessingEngine.DummyEngine();
+        }
+
+        // When using LAV Audio
+        IAudioPostEngine audioEngine = AudioPostEngine.GetInstance(true);
+        if (audioEngine != null && !audioEngine.LoadPostProcessing(graphBuilder))
+        {
+          AudioPostEngine.engine = new AudioPostEngine.DummyEngine();
         }
 
         #endregion
@@ -2223,6 +2231,14 @@ namespace MediaPortal.Player
     public override bool HasPostprocessing
     {
       get { return PostProcessingEngine.GetInstance().HasPostProcessing; }
+    }
+
+    /// <summary>
+    /// Property to Get Audio LAV delay engine
+    /// </summary>
+    public override bool HasAudioEngine
+    {
+      get { return AudioPostEngine.GetInstance().HasAudioEngine; }
     }
 
     private string LCIDCheck(int LCID)

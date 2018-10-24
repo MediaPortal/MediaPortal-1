@@ -1,4 +1,4 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2018 Team MediaPortal
 
 // Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
@@ -22,6 +22,7 @@ using System;
 using System.Collections;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
+using MediaPortal.Player.LAV;
 using MediaPortal.Player.PostProcessing;
 using MediaPortal.Player.Subtitles;
 using MediaPortal.Playlists;
@@ -582,23 +583,19 @@ namespace MediaPortal.GUI.Video
                 if (hasPostProc)
                 {
                   IPostProcessingEngine engine = PostProcessingEngine.GetInstance();
-                  if (g_Player.HasPostprocessing &&
-                      !engine.ToString().ToLowerInvariant().Equals("mediaportal.player.lav.lavengine"))
-                  {
-                    SetCheckmarkValue(engine.EnablePostProcess, (int) Controls.OSD_VIDEO_POSTPROC_DEBLOCK_ONOFF);
-                    SetCheckmarkValue(engine.EnableResize, (int) Controls.OSD_VIDEO_POSTPROC_RESIZE_ONOFF);
-                    SetCheckmarkValue(engine.EnableCrop, (int) Controls.OSD_VIDEO_POSTPROC_CROP_ONOFF);
-                    SetCheckmarkValue(engine.EnableDeinterlace, (int) Controls.OSD_VIDEO_POSTPROC_DEINTERLACE_ONOFF);
-                    UpdatePostProcessing();
-                    ShowControl(GetID, (int) Controls.OSD_VIDEO_POSTPROC_DEBLOCK_ONOFF);
-                    ShowControl(GetID, (int) Controls.OSD_VIDEO_POSTPROC_RESIZE_ONOFF);
-                    ShowControl(GetID, (int) Controls.OSD_VIDEO_POSTPROC_CROP_ONOFF);
-                    ShowControl(GetID, (int) Controls.OSD_VIDEO_POSTPROC_DEINTERLACE_ONOFF);
-                    ShowControl(GetID, (int) Controls.OSD_VIDEO_POSTPROC_CROP_VERTICAL);
-                    ShowControl(GetID, (int) Controls.OSD_VIDEO_POSTPROC_CROP_HORIZONTAL);
-                    ShowControl(GetID, (int) Controls.OSD_VIDEO_POSTPROC_CROP_VERTICAL_LABEL);
-                    ShowControl(GetID, (int) Controls.OSD_VIDEO_POSTPROC_CROP_HORIZONTAL_LABEL);
-                  }
+                  SetCheckmarkValue(engine.EnablePostProcess, (int)Controls.OSD_VIDEO_POSTPROC_DEBLOCK_ONOFF);
+                  SetCheckmarkValue(engine.EnableResize, (int)Controls.OSD_VIDEO_POSTPROC_RESIZE_ONOFF);
+                  SetCheckmarkValue(engine.EnableCrop, (int)Controls.OSD_VIDEO_POSTPROC_CROP_ONOFF);
+                  SetCheckmarkValue(engine.EnableDeinterlace, (int)Controls.OSD_VIDEO_POSTPROC_DEINTERLACE_ONOFF);
+                  UpdatePostProcessing();
+                  ShowControl(GetID, (int)Controls.OSD_VIDEO_POSTPROC_DEBLOCK_ONOFF);
+                  ShowControl(GetID, (int)Controls.OSD_VIDEO_POSTPROC_RESIZE_ONOFF);
+                  ShowControl(GetID, (int)Controls.OSD_VIDEO_POSTPROC_CROP_ONOFF);
+                  ShowControl(GetID, (int)Controls.OSD_VIDEO_POSTPROC_DEINTERLACE_ONOFF);
+                  ShowControl(GetID, (int)Controls.OSD_VIDEO_POSTPROC_CROP_VERTICAL);
+                  ShowControl(GetID, (int)Controls.OSD_VIDEO_POSTPROC_CROP_HORIZONTAL);
+                  ShowControl(GetID, (int)Controls.OSD_VIDEO_POSTPROC_CROP_VERTICAL_LABEL);
+                  ShowControl(GetID, (int)Controls.OSD_VIDEO_POSTPROC_CROP_HORIZONTAL_LABEL);
                 }
 
                 //SetCheckmarkValue(g_stSettings.m_bNonInterleaved, Controls.OSD_NONINTERLEAVED);
@@ -644,7 +641,7 @@ namespace MediaPortal.GUI.Video
                 pControl.SetRange(-20, 20);
                 SetSliderValue(-20, 20, m_audioDelay, (int)Controls.OSD_AVDELAY);
 
-                bool hasPostProc = g_Player.HasPostprocessing;
+                bool hasPostProc = (g_Player.HasPostprocessing || g_Player.HasAudioEngine);
                 if (hasPostProc)
                 {
                   GUIPropertyManager.SetProperty("#VideoOSD.AudioVideoDelayPossible", "true");
@@ -1137,18 +1134,31 @@ namespace MediaPortal.GUI.Video
 
         case (int)Controls.OSD_AVDELAY:
           {
-            GUISliderControl pControl = (GUISliderControl)GetControl(iControlID);
-            IPostProcessingEngine engine = PostProcessingEngine.GetInstance();
+            IPostProcessingEngine postEngine = PostProcessingEngine.GetInstance();
+            IAudioPostEngine audioEngine = AudioPostEngine.GetInstance();
 
+            GUISliderControl pControl = (GUISliderControl)GetControl(iControlID);
             if (null != pControl && g_Player.HasPostprocessing)
             {
               if (pControl.FloatValue < m_audioDelay)
-              { 
-                  PostProcessingEngine.GetInstance().AudioDelayMinus();
+              {
+                PostProcessingEngine.GetInstance().AudioDelayMinus();
               }
               else if (pControl.FloatValue > m_audioDelay)
-              { 
-                  PostProcessingEngine.GetInstance().AudioDelayPlus();
+              {
+                PostProcessingEngine.GetInstance().AudioDelayPlus();
+              }
+              m_audioDelay = (int)pControl.FloatValue;
+            }
+            else if (null != pControl && g_Player.HasAudioEngine)
+            {
+              if (pControl.FloatValue < m_audioDelay)
+              {
+                AudioPostEngine.GetInstance().AudioDelayMinus();
+              }
+              else if (pControl.FloatValue > m_audioDelay)
+              {
+                AudioPostEngine.GetInstance().AudioDelayPlus();
               }
               m_audioDelay = (int)pControl.FloatValue;
             }
