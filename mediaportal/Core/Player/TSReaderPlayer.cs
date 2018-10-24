@@ -1,4 +1,4 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2018 Team MediaPortal
 
 // Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
@@ -33,6 +33,7 @@ using MediaPortal.Profile;
 using MediaPortal.Player.PostProcessing;
 using System.Collections;
 using System.Collections.Generic;
+using MediaPortal.Player.LAV;
 
 namespace MediaPortal.Player
 {
@@ -391,6 +392,13 @@ namespace MediaPortal.Player
         {
           PostProcessingEngine.engine = new PostProcessingEngine.DummyEngine();
           Log.Debug("TSReaderPlayer: PostProcessingEngine to DummyEngine");
+        }
+
+        // When using LAV Audio
+        IAudioPostEngine audioEngine = AudioPostEngine.GetInstance(true);
+        if (audioEngine != null && !audioEngine.LoadPostProcessing(_graphBuilder))
+        {
+          AudioPostEngine.engine = new AudioPostEngine.DummyEngine();
         }
 
         #endregion
@@ -868,6 +876,9 @@ namespace MediaPortal.Player
 
           PostProcessingEngine.GetInstance().FreePostProcess();
           Log.Debug("TSReaderPlayer: Cleanup FreePostProcess");
+
+          AudioPostEngine.GetInstance().FreePostProcess();
+          Log.Debug("TSReaderPlayer: Cleanup FreeAudioEngine");
 
           //FinalReleaseComObject from PostProcessFilter list objects.
           foreach (var ppFilter in PostProcessFilterVideo)
@@ -1363,6 +1374,14 @@ namespace MediaPortal.Player
     public override bool HasPostprocessing
     {
       get { return PostProcessingEngine.GetInstance().HasPostProcessing; }
+    }
+
+    /// <summary>
+    /// Property to Get Audio LAV delay engine
+    /// </summary>
+    public override bool HasAudioEngine
+    {
+      get { return AudioPostEngine.GetInstance().HasAudioEngine; }
     }
 
     /// <summary>

@@ -1,4 +1,4 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2018 Team MediaPortal
 
 // Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
@@ -34,6 +34,7 @@ using MediaPortal.Profile;
 using MediaPortal.Player.PostProcessing;
 using System.Collections;
 using System.Collections.Generic;
+using MediaPortal.Player.LAV;
 
 namespace MediaPortal.Player
 {
@@ -1911,17 +1912,6 @@ namespace MediaPortal.Player
             var hr = _mediaCtrl.Run();
             DsError.ThrowExceptionForHR(hr);
 
-            // When using LAV Audio
-            //Release and init Post Process Filter
-            if (PostProcessingEngine.engine != null)
-            {
-              PostProcessingEngine.GetInstance().FreePostProcess();
-            }
-            IPostProcessingEngine postengine = PostProcessingEngine.GetInstance(true);
-            if (!postengine.LoadPostProcessing(_graphBuilder))
-            {
-              PostProcessingEngine.engine = new PostProcessingEngine.DummyEngine();
-            }
           }
           catch (Exception error)
           {
@@ -1972,14 +1962,14 @@ namespace MediaPortal.Player
 
           // When using LAV Audio
           //Release and init Post Process Filter
-          if (PostProcessingEngine.engine != null)
+          if (AudioPostEngine.engine != null)
           {
-            PostProcessingEngine.GetInstance().FreePostProcess();
+            AudioPostEngine.GetInstance().FreePostProcess();
           }
-          IPostProcessingEngine postengine = PostProcessingEngine.GetInstance(true);
-          if (!postengine.LoadPostProcessing(_graphBuilder))
+          IAudioPostEngine audioEngine = AudioPostEngine.GetInstance(true);
+          if (audioEngine != null && !audioEngine.LoadPostProcessing(_graphBuilder))
           {
-            PostProcessingEngine.engine = new PostProcessingEngine.DummyEngine();
+            AudioPostEngine.engine = new AudioPostEngine.DummyEngine();
           }
         }
       }
@@ -2373,6 +2363,13 @@ namespace MediaPortal.Player
         //Add Post Process Audio Codec
         PostProcessAddAudio();
 
+        // When using LAV Audio
+        //Release and init Post Process Filter
+        if (AudioPostEngine.engine != null)
+        {
+          AudioPostEngine.GetInstance().FreePostProcess();
+        }
+
         //Add Audio Codec
         if (filterCodec.AudioCodec != null)
         {
@@ -2381,16 +2378,11 @@ namespace MediaPortal.Player
         }
         filterCodec.AudioCodec = DirectShowUtil.AddFilterToGraph(this._graphBuilder, MatchFilters(selection));
 
-        // When using LAV Audio
-        //Release and init Post Process Filter
-        if (PostProcessingEngine.engine != null)
+        // Init Audio delay for LAV Audio
+        IAudioPostEngine audioEngine = AudioPostEngine.GetInstance(true);
+        if (audioEngine != null && !audioEngine.LoadPostProcessing(_graphBuilder))
         {
-          PostProcessingEngine.GetInstance().FreePostProcess();
-        }
-        IPostProcessingEngine postengine = PostProcessingEngine.GetInstance(true);
-        if (!postengine.LoadPostProcessing(_graphBuilder))
-        {
-          PostProcessingEngine.engine = new PostProcessingEngine.DummyEngine();
+          AudioPostEngine.engine = new AudioPostEngine.DummyEngine();
         }
       }
     }

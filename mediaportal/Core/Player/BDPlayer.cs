@@ -1,4 +1,4 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2018 Team MediaPortal
 
 // Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
@@ -35,6 +35,7 @@ using MediaPortal.Player.Subtitles;
 using MediaPortal.Profile;
 using System.Collections.Generic;
 using System.Collections;
+using MediaPortal.Player.LAV;
 using Action = MediaPortal.GUI.Library.Action;
 
 namespace MediaPortal.Player
@@ -1872,6 +1873,14 @@ namespace MediaPortal.Player
       get { return PostProcessingEngine.GetInstance().HasPostProcessing; }
     }
 
+    /// <summary>
+    /// Property to Get Audio LAV delay engine
+    /// </summary>
+    public override bool HasAudioEngine
+    {
+      get { return AudioPostEngine.GetInstance().HasAudioEngine; }
+    }
+
     #endregion
 
     #region public members
@@ -2472,14 +2481,14 @@ namespace MediaPortal.Player
 
           // When using LAV Audio
           //Release and init Post Process Filter
-          if (PostProcessingEngine.engine != null)
+          if (AudioPostEngine.engine != null)
           {
-            PostProcessingEngine.GetInstance().FreePostProcess();
+            AudioPostEngine.GetInstance().FreePostProcess();
           }
-          IPostProcessingEngine postengine = PostProcessingEngine.GetInstance(true);
-          if (!postengine.LoadPostProcessing(_graphBuilder))
+          IAudioPostEngine audioEngine = AudioPostEngine.GetInstance(true);
+          if (audioEngine != null && !audioEngine.LoadPostProcessing(_graphBuilder))
           {
-            PostProcessingEngine.engine = new PostProcessingEngine.DummyEngine();
+            AudioPostEngine.engine = new AudioPostEngine.DummyEngine();
           }
         }
         catch (Exception error)
@@ -3098,6 +3107,13 @@ namespace MediaPortal.Player
         if (!postengine.LoadPostProcessing(_graphBuilder))
         {
           PostProcessingEngine.engine = new PostProcessingEngine.DummyEngine();
+        }
+
+        // When using LAV Audio
+        IAudioPostEngine audioEngine = AudioPostEngine.GetInstance(true);
+        if (audioEngine != null && !audioEngine.LoadPostProcessing(_graphBuilder))
+        {
+          AudioPostEngine.engine = new AudioPostEngine.DummyEngine();
         }
 
         #endregion
