@@ -342,9 +342,22 @@ namespace MediaPortal.GUI.Video
             m_delayInterval = MediaPortal.Player.Subtitles.SubEngine.GetInstance().DelayInterval;
             if (m_delayInterval > 0)
               m_subtitleDelay = MediaPortal.Player.Subtitles.SubEngine.GetInstance().Delay / m_delayInterval;
-            m_delayIntervalAudio = PostProcessingEngine.GetInstance().AudioDelayInterval;
-            if (m_delayIntervalAudio > 0)
-              m_audioDelay = PostProcessingEngine.GetInstance().AudioDelay / m_delayIntervalAudio;
+            if (g_Player.HasPostprocessing)
+            {
+              m_delayIntervalAudio = PostProcessingEngine.GetInstance().AudioDelayInterval;
+              if (m_delayIntervalAudio > 0)
+              {
+                m_audioDelay = PostProcessingEngine.GetInstance().AudioDelay/m_delayIntervalAudio;
+              }
+            }
+            else if (g_Player.HasAudioEngine)
+            {
+              m_delayIntervalAudio = AudioPostEngine.GetInstance().AudioDelayInterval;
+              if (m_delayIntervalAudio > 0)
+              {
+                m_audioDelay = AudioPostEngine.GetInstance().AudioDelay/m_delayIntervalAudio;
+              }
+            }
 
             g_Player.UpdateMediaInfoProperties();
             GUIPropertyManager.SetProperty("#TV.View.HasTeletext", "False");
