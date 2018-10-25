@@ -761,8 +761,8 @@ namespace MediaPortal.Player
     protected bool firstinit = false;
     protected bool VideoChange = false;
     protected bool CheckAudioRendererFilter = false;
-    Dictionary<string, object> PostProcessFilterVideo = new Dictionary<string, object>();
-    Dictionary<string, object> PostProcessFilterAudio = new Dictionary<string, object>();
+    Dictionary<string, IBaseFilter> PostProcessFilterVideo = new Dictionary<string, IBaseFilter>();
+    Dictionary<string, IBaseFilter> PostProcessFilterAudio = new Dictionary<string, IBaseFilter>();
     protected string audioRendererFilter = "";
 
     protected Guid GuidFilter;
@@ -2474,6 +2474,10 @@ namespace MediaPortal.Player
         }
         DirectShowUtil.RemoveUnusedFiltersFromGraph(_graphBuilder);
 
+        // Clean-post process filter that has been removed from graph
+        PostProcessRemoveVideo();
+        PostProcessRemoveAudio();
+
         try
         {
           hr = _mediaCtrl.Run();
@@ -2533,6 +2537,10 @@ namespace MediaPortal.Player
               _mediaCtrl.Stop();
               DirectShowUtil.RenderGraphBuilderOutputPins(_graphBuilder, _interfaceBDReader);
               DirectShowUtil.RemoveUnusedFiltersFromGraph(_graphBuilder);
+
+              // Clean-post process filter that has been removed from graph
+              PostProcessRemoveVideo();
+              PostProcessRemoveAudio();
 
               //Sync Audio Renderer
               SyncAudioRenderer();
@@ -2782,6 +2790,52 @@ namespace MediaPortal.Player
           if (comObject != null)
           {
             PostProcessFilterAudio.Add(filter, comObject);
+          }
+        }
+      }
+    }
+
+    protected void PostProcessRemoveVideo()
+    {
+      if (filterConfig != null)
+      {
+        foreach (string filter in this.filterConfig.OtherFilters)
+        {
+          if (FilterHelper.GetVideoCodec().Contains(filter) && filter != "Core CC Parser")
+          {
+            var comObject = DirectShowUtil.GetFilterByName(_graphBuilder, filter);
+            if (comObject == null)
+            {
+              PostProcessFilterVideo.Remove(filter);
+              Log.Debug("BDPlayer: PostProcessRemoveVideo() - {0}", filter);
+            }
+            else
+            {
+              DirectShowUtil.ReleaseComObject(comObject);
+            }
+          }
+        }
+      }
+    }
+
+    protected void PostProcessRemoveAudio()
+    {
+      if (filterConfig != null)
+      {
+        foreach (string filter in this.filterConfig.OtherFilters)
+        {
+          if (FilterHelper.GetAudioCodec().Contains(filter))
+          {
+            var comObject = DirectShowUtil.GetFilterByName(_graphBuilder, filter);
+            if (comObject == null)
+            {
+              PostProcessFilterAudio.Remove(filter);
+              Log.Debug("BDPlayer: PostProcessRemoveAudio() - {0}", filter);
+            }
+            else
+            {
+              DirectShowUtil.ReleaseComObject(comObject);
+            }
           }
         }
       }
@@ -3129,6 +3183,10 @@ namespace MediaPortal.Player
         
         DirectShowUtil.RemoveUnusedFiltersFromGraph(_graphBuilder);
 
+        // Clean-post process filter that has been removed from graph
+        PostProcessRemoveVideo();
+        PostProcessRemoveAudio();
+
         #endregion
 
         _mediaCtrl = (IMediaControl)_graphBuilder;
@@ -3255,7 +3313,7 @@ namespace MediaPortal.Player
           {
             if (ppFilter.Value != null)
             {
-              DirectShowUtil.RemoveFilter(_graphBuilder, ppFilter.Value as IBaseFilter);
+              DirectShowUtil.RemoveFilter(_graphBuilder, ppFilter.Value);
               DirectShowUtil.FinalReleaseComObject(ppFilter.Value);
             }
           }
@@ -3270,7 +3328,7 @@ namespace MediaPortal.Player
           {
             if (ppFilter.Value != null)
             {
-              DirectShowUtil.RemoveFilter(_graphBuilder, ppFilter.Value as IBaseFilter);
+              DirectShowUtil.RemoveFilter(_graphBuilder, ppFilter.Value);
               DirectShowUtil.FinalReleaseComObject(ppFilter.Value);
             }
           }

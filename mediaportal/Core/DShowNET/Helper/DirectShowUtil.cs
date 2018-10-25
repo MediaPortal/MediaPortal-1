@@ -1729,7 +1729,7 @@ namespace DShowNET.Helper
               foundfilter[0].QueryFilterInfo(out filter_infos);
               ReleaseComObject(filter_infos.pGraph);
               Log.Debug("GetFilterByName: {0}, {1}", name, filter_infos.achName);
-              if (filter_infos.achName.LastIndexOf(name) != -1)
+              if (filter_infos.achName.LastIndexOf(name, StringComparison.Ordinal) != -1 && filter_infos.achName.ToLowerInvariant() == name.ToLowerInvariant())
               {
                 ReleaseComObject(ienumFilt);
                 ienumFilt = null;
