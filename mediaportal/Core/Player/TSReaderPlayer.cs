@@ -236,6 +236,52 @@ namespace MediaPortal.Player
       }
     }
 
+    protected override void PostProcessRemoveVideo()
+    {
+      if (filterConfig != null)
+      {
+        foreach (string filter in this.filterConfig.OtherFilters)
+        {
+          if (FilterHelper.GetVideoCodec().Contains(filter) && filter.ToString() != "Core CC Parser")
+          {
+            var comObject = DirectShowUtil.GetFilterByName(_graphBuilder, filter);
+            if (comObject == null)
+            {
+              PostProcessFilterVideo.Remove(filter);
+              Log.Debug("TSReaderPlayer: PostProcessRemoveVideo() - {0}", filter);
+            }
+            else
+            {
+              DirectShowUtil.ReleaseComObject(comObject);
+            }
+          }
+        }
+      }
+    }
+
+    protected override void PostProcessRemoveAudio()
+    {
+      if (filterConfig != null)
+      {
+        foreach (string filter in this.filterConfig.OtherFilters)
+        {
+          if (FilterHelper.GetAudioCodec().Contains(filter))
+          {
+            var comObject = DirectShowUtil.GetFilterByName(_graphBuilder, filter);
+            if (comObject == null)
+            {
+              PostProcessFilterAudio.Remove(filter);
+              Log.Debug("TSReaderPlayer: PostProcessRemoveAudio() - {0}", filter);
+            }
+            else
+            {
+              DirectShowUtil.ReleaseComObject(comObject);
+            }
+          }
+        }
+      }
+    }
+
     protected override void AudioRendererAdd()
     {
       if (filterConfig != null && this.filterConfig.AudioRenderer.Length > 0) //audio renderer must be in graph before audio switcher
@@ -454,6 +500,10 @@ namespace MediaPortal.Player
           }
         }
         DirectShowUtil.RemoveUnusedFiltersFromGraph(_graphBuilder);
+
+        // Clean-post process filter that has been removed from graph
+        PostProcessRemoveVideo();
+        PostProcessRemoveAudio();
 
         #endregion
 
@@ -890,7 +940,7 @@ namespace MediaPortal.Player
               try
               {
                 Log.Debug("TSReaderPlayer: Removing PostProcessFilter - Video");
-                DirectShowUtil.RemoveFilter(_graphBuilder, ppFilter.Value as IBaseFilter);
+                DirectShowUtil.RemoveFilter(_graphBuilder, ppFilter.Value);
                 DirectShowUtil.FinalReleaseComObject(ppFilter.Value);
               }
               catch (Exception ex)
@@ -907,7 +957,7 @@ namespace MediaPortal.Player
               try
               {
                 Log.Debug("TSReaderPlayer: Removing PostProcessFilter - Audio");
-                DirectShowUtil.RemoveFilter(_graphBuilder, ppFilter.Value as IBaseFilter);
+                DirectShowUtil.RemoveFilter(_graphBuilder, ppFilter.Value);
                 DirectShowUtil.FinalReleaseComObject(ppFilter.Value);
               }
               catch (Exception ex)

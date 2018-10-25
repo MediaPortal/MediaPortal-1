@@ -206,8 +206,8 @@ namespace MediaPortal.Player
     protected bool CoreCCFilter = false;
     protected bool VideoChange = false;
 
-    protected Dictionary<string, object> PostProcessFilterVideo = new Dictionary<string, object>();
-    protected Dictionary<string, object> PostProcessFilterAudio = new Dictionary<string, object>();
+    protected Dictionary<string, IBaseFilter> PostProcessFilterVideo = new Dictionary<string, IBaseFilter>();
+    protected Dictionary<string, IBaseFilter> PostProcessFilterAudio = new Dictionary<string, IBaseFilter>();
     //protected ArrayList availableVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.Null);
     //protected ArrayList availableAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.Null);
 
@@ -1907,6 +1907,10 @@ namespace MediaPortal.Player
           }
           DirectShowUtil.RemoveUnusedFiltersFromGraph(_graphBuilder);
 
+          // Clean-post process filter that has been removed from graph
+          PostProcessRemoveVideo();
+          PostProcessRemoveAudio();
+
           try
           {
             var hr = _mediaCtrl.Run();
@@ -1955,6 +1959,9 @@ namespace MediaPortal.Player
               _mediaCtrl.Stop();
               DirectShowUtil.RenderGraphBuilderOutputPins(_graphBuilder, _fileSource);
               DirectShowUtil.RemoveUnusedFiltersFromGraph(_graphBuilder);
+              // Clean-post process filter that has been removed from graph
+              PostProcessRemoveVideo();
+              PostProcessRemoveAudio();
               _mediaCtrl.Run();
             }
             GUIGraphicsContext.CurrentAudioRendererDone = true;
@@ -2156,6 +2163,10 @@ namespace MediaPortal.Player
     protected virtual void PostProcessAddVideo() { }
 
     protected virtual void PostProcessAddAudio() { }
+
+    protected virtual void PostProcessRemoveVideo() { }
+
+    protected virtual void PostProcessRemoveAudio() { }
 
     protected virtual void MPAudioSwitcherAdd() { }
 
