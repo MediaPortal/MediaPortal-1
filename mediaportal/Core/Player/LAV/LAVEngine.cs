@@ -21,6 +21,7 @@
 using System;
 using DirectShowLib;
 using DShowNET.Helper;
+using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 
 namespace MediaPortal.Player.LAV
@@ -147,12 +148,13 @@ namespace MediaPortal.Player.LAV
       {
         try
         {
+          Log.Debug("LAVEngine: FreePostProcess()");
           DirectShowUtil.ReleaseComObject(_baseFilterLavAudio);
           _baseFilterLavAudio = null;
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-          _baseFilterLavAudio = null;
+          Log.Error("LAVEngine: FreePostProcess() exception - {0} {1}", ex.Message, ex.StackTrace);
         }
       }
     }

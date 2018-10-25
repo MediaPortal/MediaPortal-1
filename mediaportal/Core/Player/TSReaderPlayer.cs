@@ -210,6 +210,7 @@ namespace MediaPortal.Player
             if (comObject != null)
             {
               PostProcessFilterVideo.Add(filter, comObject);
+              Log.Debug("TSReaderPlayer: PostProcessAddVideo() - {0}", filter.ToString());
             }
           }
         }
@@ -228,6 +229,7 @@ namespace MediaPortal.Player
             if (comObject != null)
             {
               PostProcessFilterAudio.Add(filter, comObject);
+              Log.Debug("TSReaderPlayer: PostProcessAddAudio() - {0}", filter.ToString());
             }
           }
         }
@@ -885,8 +887,16 @@ namespace MediaPortal.Player
           {
             if (ppFilter.Value != null)
             {
-              DirectShowUtil.RemoveFilter(_graphBuilder, ppFilter.Value as IBaseFilter);
-              DirectShowUtil.FinalReleaseComObject(ppFilter.Value);
+              try
+              {
+                Log.Debug("TSReaderPlayer: Removing PostProcessFilter - Video");
+                DirectShowUtil.RemoveFilter(_graphBuilder, ppFilter.Value as IBaseFilter);
+                DirectShowUtil.FinalReleaseComObject(ppFilter.Value);
+              }
+              catch (Exception ex)
+              {
+                Log.Error("TSReaderPlayer: Exception while cleaning PostProcessFilterVideo - {0} {1}", ex.Message, ex.StackTrace);
+              }
             }
           }
           PostProcessFilterVideo.Clear();
@@ -894,8 +904,16 @@ namespace MediaPortal.Player
           {
             if (ppFilter.Value != null)
             {
-              DirectShowUtil.RemoveFilter(_graphBuilder, ppFilter.Value as IBaseFilter);
-              DirectShowUtil.FinalReleaseComObject(ppFilter.Value);
+              try
+              {
+                Log.Debug("TSReaderPlayer: Removing PostProcessFilter - Audio");
+                DirectShowUtil.RemoveFilter(_graphBuilder, ppFilter.Value as IBaseFilter);
+                DirectShowUtil.FinalReleaseComObject(ppFilter.Value);
+              }
+              catch (Exception ex)
+              {
+                Log.Error("TSReaderPlayer: Exception while cleaning PostProcessFilterAudio - {0} {1}", ex.Message, ex.StackTrace);
+              }
             }
           }
           PostProcessFilterAudio.Clear();
