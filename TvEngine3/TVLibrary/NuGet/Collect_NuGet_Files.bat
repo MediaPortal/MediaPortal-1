@@ -121,5 +121,5 @@ del References\ProgramData\ProgramData.zip
 powershell.exe -nologo -noprofile -command "& { Add-Type -A 'System.IO.Compression.FileSystem'; [IO.Compression.ZipFile]::CreateFromDirectory('_tmpzip', 'References\ProgramData\ProgramData.zip'); }"
 rmdir /S /Q _tmpzip
 
-nuget pack MediaPortal.TvEngine.Core3.nuspec -OutputDirectory ..
+..\nuget pack MediaPortal.TvEngine.Core3.nuspec -OutputDirectory ..
 cd ..
