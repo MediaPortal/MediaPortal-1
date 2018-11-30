@@ -136,6 +136,7 @@
     <Compile Include="Implementations\DVB\ConditionalAccess\ConditionalAccessContext.cs" />
     <Compile Include="Implementations\DVB\ConditionalAccess\DigitalDevices\DigitalDevices.cs" />
     <Compile Include="Implementations\DVB\ConditionalAccess\ProfRed\ProfRed.cs" />
+    <Compile Include="Implementations\DVB\ConditionalAccess\Turbosight\TurboSight.cs" />
     <Compile Include="Implementations\DVB\DisEqC\ConexantBDA.cs" />
     <Compile Include="Implementations\DVB\DisEqC\TeVii.cs" />
     <Compile Include="Implementations\Dri\Service\FdcService.cs" />
