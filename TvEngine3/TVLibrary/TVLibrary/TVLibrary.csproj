@@ -235,6 +235,10 @@
       <Project>{CE009BFA-5EF6-4153-B2A1-2FA79698A9AE}</Project>
       <Name>DirectShowLib</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Plugins\WebEPG\WebEPG\WebEPG.csproj">
+      <Project>{F7CB2A9F-004E-4667-BEAF-782F1C28E2D3}</Project>
+      <Name>WebEPG</Name>
+    </ProjectReference>
     <ProjectReference Include="..\TVDatabase\TvBusinessLayer\TvBusinessLayer.csproj">
       <Project>{58C35C9D-F18D-40F2-8024-24E50D01E9C5}</Project>
       <Name>TvBusinessLayer</Name>
