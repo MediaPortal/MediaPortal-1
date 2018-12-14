@@ -75,7 +75,7 @@ namespace TvLibrary.Implementations.DVB
 
     private readonly ICiMenuActions _ciMenu;
 
-    private int _postDiSEqWait = 100;
+    private int _postDiSEqWait = 10;
     private string _configFilesDir;
     private string _configFile;
 
@@ -373,7 +373,11 @@ namespace TvLibrary.Implementations.DVB
   
         Xml xmlreader = new Xml(_configFile);
         {
-          _postDiSEqWait = xmlreader.GetValueAsInt("General", "WaitAfterDiSEqC", 100);
+          _postDiSEqWait = xmlreader.GetValueAsInt("General", "WaitAfterDiSEqC", 10);
+          if (_postDiSEqWait < 1) 
+          {
+            _postDiSEqWait = 1;
+          }
         }
       }
       catch (Exception ex)
