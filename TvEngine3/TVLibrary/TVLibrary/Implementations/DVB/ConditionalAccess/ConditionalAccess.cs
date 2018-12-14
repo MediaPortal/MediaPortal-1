@@ -29,6 +29,10 @@ using TvDatabase;
 using TvLibrary.Hardware;
 using TvLibrary.Implementations.Dri;
 using TvLibrary.Implementations.Dri.Service;
+using System.Collections;
+using System.Globalization;
+using System.IO;
+using MediaPortal.WebEPG.Profile;
 
 namespace TvLibrary.Implementations.DVB
 {
@@ -71,6 +75,9 @@ namespace TvLibrary.Implementations.DVB
 
     private readonly ICiMenuActions _ciMenu;
 
+    private int _postDiSEqWait = 100;
+    private string _configFilesDir;
+    private string _configFile;
 
     /// <summary>
     /// Accessor for CI Menu handler
@@ -104,6 +111,7 @@ namespace TvLibrary.Implementations.DVB
     public ConditionalAccess(IBaseFilter tunerFilter, IBaseFilter analyzerFilter, IBaseFilter winTvUsbCiFilter,
                              TvCardBase card)
     {
+      
       try
       {
         //System.Diagnostics.Debugger.Launch();        
@@ -350,6 +358,22 @@ namespace TvLibrary.Implementations.DVB
             return;
           }
           Release.DisposeToNull(ref _isgenericatsc);
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Log.Write(ex);
+      }
+      
+      try
+      {
+        _configFilesDir = PathManager.GetDataPath;
+        _configFile = _configFilesDir + "\\dish.xml";
+        Log.Log.Info("ConditionalAccess: dish Config: Loading Existing dish.xml");
+  
+        Xml xmlreader = new Xml(_configFile);
+        {
+          _postDiSEqWait = xmlreader.GetValueAsInt("General", "WaitAfterDiSEqC", 100);
         }
       }
       catch (Exception ex)
@@ -754,68 +778,71 @@ namespace TvLibrary.Implementations.DVB
     public bool SendDiseqcCommand(ScanParameters parameters, DVBSChannel channel)
     {
       bool succeeded = true;
+      int waitTime = 100;
       try
       {
         if (_turbosight != null)
         {
-            _turbosight.SendDiseqcCommand(parameters, channel);
-            System.Threading.Thread.Sleep(100);
+          _turbosight.SendDiseqcCommand(parameters, channel);
+          System.Threading.Thread.Sleep(waitTime);
         }
         if (_knc != null)
         {
           _knc.SendDiseqCommand(parameters, channel);
-          System.Threading.Thread.Sleep(100);
+          System.Threading.Thread.Sleep(waitTime);
         }
         if (_digitalEveryWhere != null)
         {
           _digitalEveryWhere.SendDiseqcCommand(parameters, channel);
-          System.Threading.Thread.Sleep(100);
+          System.Threading.Thread.Sleep(waitTime);
         }
         if (_technoTrend != null)
         {
           _technoTrend.SendDiseqCommand(parameters, channel);
-          System.Threading.Thread.Sleep(100);
+          System.Threading.Thread.Sleep(waitTime);
         }
         if (_twinhan != null)
         {
           _twinhan.SendDiseqCommand(parameters, channel);
-          System.Threading.Thread.Sleep(100);
+          System.Threading.Thread.Sleep(waitTime);
         }
         if (_hauppauge != null)
         {
           succeeded = _hauppauge.SendDiseqCommand(parameters, channel);
-          System.Threading.Thread.Sleep(100);
+          System.Threading.Thread.Sleep(waitTime);
         }
         if (_genericbdas != null)
         {
           _genericbdas.SendDiseqCommand(parameters, channel);
-          System.Threading.Thread.Sleep(100);
+          System.Threading.Thread.Sleep(waitTime);
         }
         if (_conexant != null)
         {
           _conexant.SendDiseqCommand(parameters, channel);
-          System.Threading.Thread.Sleep(100);
+          System.Threading.Thread.Sleep(waitTime);
         }
         if (_profred != null)
         {
           _profred.SendDiseqCommand(parameters, channel);
-          System.Threading.Thread.Sleep(100);
+          System.Threading.Thread.Sleep(waitTime);
         }
         if (_genpix != null)
         {
           _genpix.SendDiseqCommand(parameters, channel);
-          System.Threading.Thread.Sleep(100);
+          System.Threading.Thread.Sleep(waitTime);
         }
         if (_TeVii != null)
         {
           _TeVii.SendDiseqCommand(parameters, channel);
-          System.Threading.Thread.Sleep(100);
+          System.Threading.Thread.Sleep(waitTime);
         }
       }
       catch (Exception ex)
       {
         Log.Log.Write(ex);
-      }
+      }      
+      Log.Log.Info("SendDiseqcCommand: Wait after command {0} ms", _postDiSEqWait);
+      System.Threading.Thread.Sleep(_postDiSEqWait);      
       return succeeded;
     }
 

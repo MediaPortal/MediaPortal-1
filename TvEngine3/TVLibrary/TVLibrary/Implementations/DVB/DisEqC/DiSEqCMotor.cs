@@ -237,7 +237,7 @@ namespace TvLibrary.Implementations.DVB
       //  return;
       //}
 
-      Log.Log.Info("dish Config: Loading Existing dish.xml");
+      Log.Log.Info("DiSEqCMotor: dish Config: Loading Existing dish.xml");
       _controller = controller;
     }
 
