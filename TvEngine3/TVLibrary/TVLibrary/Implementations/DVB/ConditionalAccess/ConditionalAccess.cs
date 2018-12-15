@@ -110,8 +110,38 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="card">Determines the type of TV card</param>    
     public ConditionalAccess(IBaseFilter tunerFilter, IBaseFilter analyzerFilter, IBaseFilter winTvUsbCiFilter,
                              TvCardBase card)
-    {
-      
+    {      
+      try
+      {
+        _configFilesDir = PathManager.GetDataPath;
+        _configFile = _configFilesDir + "\\dish.xml";
+        if (File.Exists(_configFile))
+        {
+          Log.Log.Info("ConditionalAccess: dish.xml - file loading");  
+        }
+        else
+        {
+          Log.Log.Info("ConditionalAccess: dish.xml - file not found");  
+        }
+        Xml xmlreader = new Xml(_configFile);
+        {
+          _postDiSEqWait = xmlreader.GetValueAsInt("General", "WaitAfterDiSEqC", 10);
+          if (_postDiSEqWait < 1) 
+          {
+            _postDiSEqWait = 1;
+          }
+          if (_postDiSEqWait > 30000) 
+          {
+            _postDiSEqWait = 30000;
+          }
+        }
+        Log.Log.Info("ConditionalAccess: WaitAfterDiSEqC setting {0} ms", _postDiSEqWait);
+      }
+      catch (Exception ex)
+      {
+        Log.Log.Write(ex);
+      }
+
       try
       {
         //System.Diagnostics.Debugger.Launch();        
@@ -363,27 +393,7 @@ namespace TvLibrary.Implementations.DVB
       catch (Exception ex)
       {
         Log.Log.Write(ex);
-      }
-      
-      try
-      {
-        _configFilesDir = PathManager.GetDataPath;
-        _configFile = _configFilesDir + "\\dish.xml";
-        Log.Log.Info("ConditionalAccess: dish Config: Loading Existing dish.xml");
-  
-        Xml xmlreader = new Xml(_configFile);
-        {
-          _postDiSEqWait = xmlreader.GetValueAsInt("General", "WaitAfterDiSEqC", 10);
-          if (_postDiSEqWait < 1) 
-          {
-            _postDiSEqWait = 1;
-          }
-        }
-      }
-      catch (Exception ex)
-      {
-        Log.Log.Write(ex);
-      }
+      }      
     }
 
     /// <summary>
