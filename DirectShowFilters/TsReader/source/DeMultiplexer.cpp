@@ -2870,6 +2870,9 @@ void CDeMultiplexer::FillVideoHEVC(CTsHeader& header, byte* tsPacket)
 void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
 {
   int headerlen = header.PayLoadStart;
+  int s = size_t(1);
+  int s2 = size_t(1l);
+  int s3 = size_t(1ll);
 
   if(!m_p)
   {
