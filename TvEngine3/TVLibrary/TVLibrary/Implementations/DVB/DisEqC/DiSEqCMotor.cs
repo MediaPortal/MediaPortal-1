@@ -230,14 +230,15 @@ namespace TvLibrary.Implementations.DVB
     {
       _configFilesDir = PathManager.GetDataPath;
       _configFile = _configFilesDir + "\\dish.xml";
-
-      // Comment out to let running motor even if the files doesn't exist.
-      //if (!File.Exists(_configFile))
-      //{
-      //  return;
-      //}
-
-      Log.Log.Info("DiSEqCMotor: dish Config: Loading Existing dish.xml");
+      if (File.Exists(_configFile))
+      {
+        Log.Log.Info("DiSEqCMotor: dish Config: loading {0}", _configFile);  
+      }
+      else
+      {
+        Log.Log.Info("DiSEqCMotor: dish Config: file not found, {0}" _configFile);  
+      }
+      
       _controller = controller;
     }
 

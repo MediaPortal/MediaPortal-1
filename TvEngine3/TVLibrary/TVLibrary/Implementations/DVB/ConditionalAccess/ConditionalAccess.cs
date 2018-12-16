@@ -117,11 +117,11 @@ namespace TvLibrary.Implementations.DVB
         _configFile = _configFilesDir + "\\dish.xml";
         if (File.Exists(_configFile))
         {
-          Log.Log.Info("ConditionalAccess: dish.xml - file loading");  
+          Log.Log.Info("ConditionalAccess: dish Config: loading {0}", _configFile);  
         }
         else
         {
-          Log.Log.Info("ConditionalAccess: dish.xml - file not found");  
+          Log.Log.Info("ConditionalAccess: dish Config: file not found, {0}" _configFile);  
         }
         Xml xmlreader = new Xml(_configFile);
         {
