@@ -308,7 +308,7 @@ void CDeMultiplexer::GetAudioStreamInfo(int stream,char* szName)
 }
 int CDeMultiplexer::GetAudioStreamCount()
 {
-  return m_audioStreams.size();
+  return (int)m_audioStreams.size();
 }
 
 bool CDeMultiplexer::GetAudioStreamType(int stream,CMediaType& pmt, int iPosition)
@@ -481,7 +481,7 @@ bool CDeMultiplexer::GetSubtitleStreamLanguage(__int32 stream,char* szLanguage)
 }
 bool CDeMultiplexer::GetSubtitleStreamCount(__int32 &count)
 {
-  count = m_subtitleStreams.size();
+  count = (__int32)m_subtitleStreams.size();
   return S_OK;
 }
 
@@ -2362,7 +2362,7 @@ void CDeMultiplexer::FillVideoHEVC(CTsHeader& header, byte* tsPacket)
 
   if (m_WaitHeaderPES >= 0)
   {
-    int AvailablePESlength = m_p->GetCount()-m_WaitHeaderPES ;
+    ptrdiff_t AvailablePESlength = m_p->GetCount()-m_WaitHeaderPES ;
     BYTE* start = m_p->GetData() + m_WaitHeaderPES;
     
     if (AvailablePESlength < 9)
@@ -2539,7 +2539,7 @@ void CDeMultiplexer::FillVideoHEVC(CTsHeader& header, byte* tsPacket)
       p2->rtStart = Packet::INVALID_TIME;
       bool isNewTimestamp = false;
 
-      int size = next - start;
+      ptrdiff_t size = next - start;
       
       //Copy complete NALU into p2 buffer
           
@@ -2635,7 +2635,7 @@ void CDeMultiplexer::FillVideoHEVC(CTsHeader& header, byte* tsPacket)
             if ((nalIDp4 == HEVC_NAL_VPS) || (nalIDp4 == HEVC_NAL_SPS) || (nalIDp4 == HEVC_NAL_PPS)) //Process VPS, SPS & PPS data
             {
               //LogDebug("HEVC: VPS/SPS/PPS NAL, type = %d", nalIDp4);
-              Gop = m_mpegPesParser->OnTsPacket(p4->GetData(), p4->GetCount(), VIDEO_STREAM_TYPE_HEVC, m_mpegParserReset);
+              Gop = m_mpegPesParser->OnTsPacket(p4->GetData(), (int)p4->GetCount(), VIDEO_STREAM_TYPE_HEVC, m_mpegParserReset);
               m_mpegParserReset = false;
             }
             
@@ -2727,8 +2727,8 @@ void CDeMultiplexer::FillVideoHEVC(CTsHeader& header, byte* tsPacket)
           	}
 
             CRefTime Ref;
-            CBuffer *pCurrentVideoBuffer = new CBuffer(p->GetCount());
-            pCurrentVideoBuffer->Add(p->GetData(), p->GetCount());
+            CBuffer *pCurrentVideoBuffer = new CBuffer((unsigned long)p->GetCount());
+            pCurrentVideoBuffer->Add(p->GetData(), (int)p->GetCount());
             pCurrentVideoBuffer->SetPts(timestamp);   
             pCurrentVideoBuffer->SetPcr(m_duration.FirstStartPcr(),m_duration.MaxPcr());
             pCurrentVideoBuffer->MediaTime(Ref);
@@ -2870,9 +2870,6 @@ void CDeMultiplexer::FillVideoHEVC(CTsHeader& header, byte* tsPacket)
 void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
 {
   int headerlen = header.PayLoadStart;
-  int s = size_t(1);
-  int s2 = size_t(1l);
-  int s3 = size_t(1ll);
 
   if(!m_p)
   {
@@ -2934,7 +2931,7 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
 
   if (m_WaitHeaderPES >= 0)
   {
-    int AvailablePESlength = m_p->GetCount()-m_WaitHeaderPES ;
+    ptrdiff_t AvailablePESlength = m_p->GetCount()-m_WaitHeaderPES ;
     BYTE* start = m_p->GetData() + m_WaitHeaderPES;
     
     if (AvailablePESlength < 9)
@@ -3111,7 +3108,7 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
       p2->rtStart = Packet::INVALID_TIME;
       bool isNewTimestamp = false;
 
-      int size = next - start;
+      ptrdiff_t size = next - start;
       
       //Copy complete NALU into p2 buffer
           
@@ -3131,7 +3128,7 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
         return;
       }
               
-      DWORD dwNalLength = _byteswap_ulong(size);  //dwNalLength is big-endian format
+      DWORD dwNalLength = _byteswap_ulong((unsigned long)size);  //dwNalLength is big-endian format
 
       //LogDebug("DeMux: NALU size %d", size);
 
@@ -3207,7 +3204,7 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
             
             if (((nalIDp4 == H264_NAL_SPS) || (nalIDp4 == H264_NAL_PPS)) && (nalRefIdcp4 != 0)) //Process SPS & PPS data
             {
-              Gop = m_mpegPesParser->OnTsPacket(p4->GetData(), p4->GetCount(), VIDEO_STREAM_TYPE_H264, m_mpegParserReset);
+              Gop = m_mpegPesParser->OnTsPacket(p4->GetData(), (int)p4->GetCount(), VIDEO_STREAM_TYPE_H264, m_mpegParserReset);
               m_mpegParserReset = false;
               
               if (Gop && !m_bFirstGopParsed)
@@ -3308,8 +3305,8 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
           	}
 
             CRefTime Ref;
-            CBuffer *pCurrentVideoBuffer = new CBuffer(p->GetCount());
-            pCurrentVideoBuffer->Add(p->GetData(), p->GetCount());
+            CBuffer *pCurrentVideoBuffer = new CBuffer((unsigned long)p->GetCount());
+            pCurrentVideoBuffer->Add(p->GetData(), (int)p->GetCount());
             pCurrentVideoBuffer->SetPts(timestamp);   
             pCurrentVideoBuffer->SetPcr(m_duration.FirstStartPcr(),m_duration.MaxPcr());
             pCurrentVideoBuffer->MediaTime(Ref);
@@ -3485,7 +3482,7 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader& header, byte* tsPacket)
   {
     m_WaitHeaderPES = m_p->GetCount();
     m_mVideoValidPES = m_VideoValidPES;
-//    LogDebug("DeMultiplexer::FillVideo PayLoad Unit Start");
+    //LogDebug("DeMultiplexer::FillVideo PayLoad Unit Start");
   }
 
   CAutoPtr<Packet> p(new Packet());
@@ -3518,7 +3515,7 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader& header, byte* tsPacket)
 
   if (m_WaitHeaderPES >= 0)
   {
-    int AvailablePESlength = m_p->GetCount()-m_WaitHeaderPES;
+    ptrdiff_t AvailablePESlength = m_p->GetCount()-m_WaitHeaderPES;
     BYTE* start = m_p->GetData() + m_WaitHeaderPES;
 
     if (AvailablePESlength < 9)
@@ -3676,7 +3673,7 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader& header, byte* tsPacket)
       else
       {
         m_bInBlock=false ;
-        int size = next - start;
+        ptrdiff_t size = next - start;
 
         CAutoPtr<Packet> p2(new Packet());		
         p2->SetCount(size);
@@ -3695,24 +3692,24 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader& header, byte* tsPacket)
             //m_filter.GetVideoPin()->GetRate(&rate);
 
           m_pl.AddTail(p2);
-//          LogDebug("DeMultiplexer::FillVideo Frame length : %d %x %x", size, *(DWORD*)start, *(DWORD*)next);
+          //LogDebug("DeMultiplexer::FillVideo Frame length : %d %x %x", size, *(DWORD*)start, *(DWORD*)next);
 
           if (m_mVideoValidPES)
           {
             CAutoPtr<Packet> p(new Packet());
             p = m_pl.RemoveHead();
-//            LogDebug("Output Type: %x %d", *(DWORD*)p->GetData(),p->GetCount());
+            //LogDebug("Output Type(p): %x %d", *(DWORD*)p->GetData(),p->GetCount());
 
             while(m_pl.GetCount())
             {
               CAutoPtr<Packet> p2 = m_pl.RemoveHead();
-//              LogDebug("Output Type: %x %d", *(DWORD*)p2->GetData(),p2->GetCount());
+              //LogDebug("Output Type(p2): %x %d", *(DWORD*)p2->GetData(),p2->GetCount());
               p->Append(*p2);
             }
 
             // LogDebug("frame len %d decoded PTS %f (framerate %f), %c(%d)", p->GetCount(), m_CurrentVideoPts.IsValid ? (float)m_CurrentVideoPts.ToClock() : 0.0f,(float)m_curFramePeriod,frame_type,frame_count);
 
-            bool Gop = m_mpegPesParser->OnTsPacket(p->GetData(), p->GetCount(), VIDEO_STREAM_TYPE_MPEG2, m_mpegParserReset);
+            bool Gop = m_mpegPesParser->OnTsPacket(p->GetData(), (int)p->GetCount(), VIDEO_STREAM_TYPE_MPEG2, m_mpegParserReset);
             if (Gop)
             {
               m_mpegParserReset = true; //Reset next time around (so that it always searches for a full 'Gop' header)
@@ -3772,8 +3769,8 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader& header, byte* tsPacket)
               }
 
               CRefTime Ref;
-              CBuffer *pCurrentVideoBuffer = new CBuffer(p->GetCount());
-              pCurrentVideoBuffer->Add(p->GetData(), p->GetCount());
+              CBuffer *pCurrentVideoBuffer = new CBuffer((unsigned long)p->GetCount());
+              pCurrentVideoBuffer->Add(p->GetData(), (int)p->GetCount());
               pCurrentVideoBuffer->SetPts(m_CurrentVideoPts);   
               pCurrentVideoBuffer->SetPcr(m_duration.FirstStartPcr(),m_duration.MaxPcr());
               pCurrentVideoBuffer->MediaTime(Ref);
@@ -3973,12 +3970,12 @@ void CDeMultiplexer::FillTeletext(CTsHeader& header, byte* tsPacket)
 
 int CDeMultiplexer::GetAudioBufferCnt()
 {
-  return m_vecAudioBuffers.size();
+  return (int)m_vecAudioBuffers.size();
 }
 
 int CDeMultiplexer::GetVideoBufferCnt()
 {
-  return m_vecVideoBuffers.size();
+  return (int)m_vecVideoBuffers.size();
 }
 
 int CDeMultiplexer::GetVideoBuffCntFt(double* frameTime)
@@ -3992,7 +3989,7 @@ int CDeMultiplexer::GetVideoBuffCntFt(double* frameTime)
   {
     *frameTime = 10.0;
   }
-  return m_vecVideoBuffers.size();
+  return (int)m_vecVideoBuffers.size();
 }
 
 //Decide if we need to prefetch more data
@@ -4044,8 +4041,8 @@ int CDeMultiplexer::GetRTSPBufferSize()
 
 void CDeMultiplexer::GetBufferCounts(int* ACnt, int* VCnt)
 {
-  *ACnt = m_vecAudioBuffers.size();
-  *VCnt = m_vecVideoBuffers.size();
+  *ACnt = (int)m_vecAudioBuffers.size();
+  *VCnt = (int)m_vecVideoBuffers.size();
 }
 
 int CDeMultiplexer::GetVideoBufferPts(CRefTime& First, CRefTime& Last, CRefTime& Zero)
@@ -4053,14 +4050,14 @@ int CDeMultiplexer::GetVideoBufferPts(CRefTime& First, CRefTime& Last, CRefTime&
   First = m_FirstVideoSample;
   Last = m_LastVideoSample;
   Zero = m_ZeroVideoSample;
-  return m_vecVideoBuffers.size();
+  return (int)m_vecVideoBuffers.size();
 }
 
 int CDeMultiplexer::GetAudioBufferPts(CRefTime& First, CRefTime& Last)
 {
   First = m_FirstAudioSample;
   Last = m_LastAudioSample;
-  return m_vecAudioBuffers.size();
+  return (int)m_vecAudioBuffers.size();
 }
 
 /// This method gets called-back from the pat parser when a new PAT/PMT/SDT has been received
@@ -4292,7 +4289,7 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
   if( pSubUpdateCallback != NULL)
   {
     int bitmap_index = -1;
-    (*pSubUpdateCallback)(m_subtitleStreams.size(),(m_subtitleStreams.size() > 0 ? &m_subtitleStreams[0] : NULL),&bitmap_index);
+    (*pSubUpdateCallback)((int)m_subtitleStreams.size(),((int)m_subtitleStreams.size() > 0 ? &m_subtitleStreams[0] : NULL),&bitmap_index);
     if(bitmap_index >= 0)
     {
       LogDebug("OnNewChannel: Calling SetSubtitleStream:  %i", bitmap_index);

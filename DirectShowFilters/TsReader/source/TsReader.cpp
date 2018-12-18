@@ -1271,7 +1271,7 @@ STDMETHODIMP CTsReaderFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pm
   char url[MAX_PATH];
   WideCharToMultiByte(CP_ACP, 0 ,m_fileName, -1, url, MAX_PATH, 0, 0);
   //check file type
-  int length=strlen(url);
+  size_t length=strlen(url);
   if ((length > 5) && (_strcmpi(&url[length-4], ".tsp") == 0))
   {
     // .tsp file
@@ -1281,7 +1281,7 @@ STDMETHODIMP CTsReaderFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pm
     FILE* fd = fopen(url, "rb");
     if (fd == NULL) return E_FAIL;
     fread(url, 1, 100, fd);
-    int bytesRead = fread(url, 1, sizeof(url), fd);
+    size_t bytesRead = fread(url, 1, sizeof(url), fd);
     if (bytesRead >= 0) url[bytesRead] = 0;
     fclose(fd);
 
