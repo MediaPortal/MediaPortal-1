@@ -121,7 +121,7 @@ namespace TvLibrary.Implementations.DVB
         }
         else
         {
-          Log.Log.Info("ConditionalAccess: dish Config: file not found, {0}" _configFile);  
+          Log.Log.Info("ConditionalAccess: dish Config: file not found, {0}", _configFile);  
         }
         Xml xmlreader = new Xml(_configFile);
         {

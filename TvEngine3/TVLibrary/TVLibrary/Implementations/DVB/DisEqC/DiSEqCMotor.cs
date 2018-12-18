@@ -215,6 +215,7 @@ namespace TvLibrary.Implementations.DVB
     private int _currentPosition = -1;
     private int _currentStepsAzimuth;
     private int _currentStepsElevation;
+    private int _satCount = 1;
     private int _currentMovingDish = 100;
     private int _firstTuneWait = 200;
     private string _configFilesDir;
@@ -228,15 +229,29 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="controller">The controller.</param>
     public DiSEqCMotor(IDiSEqCController controller)
     {
-      _configFilesDir = PathManager.GetDataPath;
-      _configFile = _configFilesDir + "\\dish.xml";
-      if (File.Exists(_configFile))
+      try
       {
-        Log.Log.Info("DiSEqCMotor: dish Config: loading {0}", _configFile);  
+        _configFilesDir = PathManager.GetDataPath;
+        _configFile = _configFilesDir + "\\dish.xml";
+        if (File.Exists(_configFile))
+        {
+          Log.Log.Info("DiSEqCMotor: dish Config: loading {0}", _configFile);  
+        }
+        else
+        {
+          Log.Log.Info("DiSEqCMotor: dish Config: file not found, {0}", _configFile);  
+        }
+        Xml xmlreader = new Xml(_configFile);
+        {
+          _satCount = xmlreader.GetValueAsInt("SatCount", "Count", 0) + 1;
+          _currentMovingDish = xmlreader.GetValueAsInt("General", "CurrentMovingDish", 100);
+          _firstTuneWait = xmlreader.GetValueAsInt("General", "FirstTuneWait", 200);
+        }
+        Log.Log.Info("DiSEqCMotor: dish Config: SatCount {0}, CurrentMovingDish {1}, FirstTuneWait {2}", _satCount-1, _currentMovingDish, _firstTuneWait);  
       }
-      else
+      catch (Exception ex)
       {
-        Log.Log.Info("DiSEqCMotor: dish Config: file not found, {0}" _configFile);  
+        Log.Log.Write(ex);
       }
       
       _controller = controller;
@@ -477,12 +492,8 @@ namespace TvLibrary.Implementations.DVB
 
       Xml xmlreader = new Xml(_configFile);
       {
-        int satCount = xmlreader.GetValueAsInt("SatCount", "Count", 0) + 1;
-        _currentMovingDish = xmlreader.GetValueAsInt("General", "CurrentMovingDish", 100);
-        _firstTuneWait = xmlreader.GetValueAsInt("General", "FirstTuneWait", 200);
-
         // Check wanted position SAT value
-        for (var i = 1; i < satCount; i++)
+        for (var i = 1; i < _satCount; i++)
         {
           var positionDiSeqC = xmlreader.GetValueAsInt(i.ToString(), "PositionDiSEqC", 0);
           if (positionDiSeqC != position) continue;
@@ -494,7 +505,7 @@ namespace TvLibrary.Implementations.DVB
         }
 
         // Check current position SAT value
-        for (var i = 1; i < satCount; i++)
+        for (var i = 1; i < _satCount; i++)
         {
           var wantedPositionDiSeqC = xmlreader.GetValueAsInt(i.ToString(), "PositionDiSEqC", 0);
           if (wantedPositionDiSeqC != _currentPosition) continue;
