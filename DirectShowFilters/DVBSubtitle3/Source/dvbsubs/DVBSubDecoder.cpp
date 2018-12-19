@@ -883,13 +883,13 @@ CSubtitle* CDVBSubDecoder::GetSubtitle( unsigned int place )
 
 int CDVBSubDecoder::GetSubtitleCount()
 {
-  return m_RenderedSubtitles.size();
+  return (int)m_RenderedSubtitles.size();
 }
 
 
 CSubtitle* CDVBSubDecoder::GetLatestSubtitle()
 {
-  int size = m_RenderedSubtitles.size();
+  size_t size = m_RenderedSubtitles.size();
 
   if( size > 0 )
   {
@@ -903,7 +903,7 @@ CSubtitle* CDVBSubDecoder::GetLatestSubtitle()
 
 void CDVBSubDecoder::ReleaseOldestSubtitle()
 {
-  if( m_RenderedSubtitles.size() > 0 )
+  if(!m_RenderedSubtitles.empty())
   {
     delete m_RenderedSubtitles[0];
     m_RenderedSubtitles.erase( m_RenderedSubtitles.begin() );		
