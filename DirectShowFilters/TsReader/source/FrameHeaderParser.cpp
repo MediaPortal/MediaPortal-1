@@ -574,7 +574,7 @@ bool CFrameHeaderParser::Read(mpahdr& h, int len, bool fAllowV25, CMediaType* pm
 		: sizeof(MPEG1WAVEFORMAT);
 	WAVEFORMATEX* wfe = (WAVEFORMATEX*)DNew BYTE[len];
 	memset(wfe, 0, len);
-	wfe->cbSize = len - sizeof(WAVEFORMATEX);
+	wfe->cbSize = len - (int)sizeof(WAVEFORMATEX);
 
 	if(h.layer == 3)
 	{

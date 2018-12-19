@@ -73,7 +73,7 @@ CAMEvent m_EndLoggingEvent;
 
 LONG LogWriteRegistryKeyString(HKEY hKey, LPCTSTR& lpSubKey, LPCTSTR& data)
 {  
-  LONG result = RegSetValueEx(hKey, lpSubKey, 0, REG_SZ, (LPBYTE)data, _tcslen(data) * sizeof(TCHAR));
+  LONG result = RegSetValueEx(hKey, lpSubKey, 0, REG_SZ, (LPBYTE)data, (DWORD)(_tcslen(data) * sizeof(TCHAR)));
   
   return result;
 }
@@ -2749,7 +2749,7 @@ void CTsReaderFilter::WriteRegistryKeyString(HKEY hKey, LPCTSTR& lpSubKey, LPCTS
 {  
   USES_CONVERSION;
 
-  LONG result = RegSetValueEx(hKey, lpSubKey, 0, REG_SZ, (LPBYTE)data, _tcslen(data) * sizeof(TCHAR));
+  LONG result = RegSetValueEx(hKey, lpSubKey, 0, REG_SZ, (LPBYTE)data, (DWORD)(_tcslen(data) * sizeof(TCHAR)));
   if (result == ERROR_SUCCESS) 
     LogDebug("Success writing to Registry: %s", T2A(lpSubKey));
   else 

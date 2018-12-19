@@ -84,7 +84,7 @@ void  CPatParser::Reset()
  
 int CPatParser::Count()
 {
-  int count= m_pmtParsers.size();
+  int count= (int)m_pmtParsers.size();
   if (count==0) return 0;
   for (int i=0; i < (int)m_pmtParsers.size();++i)
   {

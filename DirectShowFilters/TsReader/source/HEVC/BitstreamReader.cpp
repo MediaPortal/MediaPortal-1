@@ -116,7 +116,7 @@ void BitstreamReader::skipBits(std::size_t num)
       m_posBase++;
   }
 
-  uint32_t scipBytes = num / 8;
+  uint32_t scipBytes = (uint32_t)(num / 8);
 
 
   while(scipBytes)
