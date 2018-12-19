@@ -40,7 +40,7 @@ namespace TvEngine
 
     public string Version
     {
-      get { return "0.2"; }
+      get { return "0.4.1"; }
     }
 
     public string Author

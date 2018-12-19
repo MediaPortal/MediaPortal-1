@@ -134,8 +134,9 @@ namespace AVMTuner
       Dictionary<string, HashSet<int>> transponderUrls = new Dictionary<string, HashSet<int>>();
       // Key is the Frequencey.pmtPID, which is the 6th pid in the source url
       _tuningUrls = new Dictionary<string, string>();
-      foreach (var rtspLine in playListLines.Where(l => l.StartsWith("rtsp://", StringComparison.InvariantCultureIgnoreCase)))
+      foreach (var line in playListLines.Where(l => l.StartsWith("rtsp://", StringComparison.InvariantCultureIgnoreCase)))
       {
+        var rtspLine = line.Replace("avm=1&", "avm=0&");
         var parts = rtspLine.Split(new[] { "&pids=" }, StringSplitOptions.RemoveEmptyEntries);
         if (parts.Length == 2)
         {
