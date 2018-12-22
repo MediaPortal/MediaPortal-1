@@ -100,7 +100,6 @@
     </ResourceCompile>
     <Bscmake>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <OutputFile>.\..\lib\Release/system.bsc</OutputFile>
     </Bscmake>
     <Lib>
       <TargetMachine>MachineX86</TargetMachine>
@@ -119,6 +118,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <DisableSpecificWarnings>4244;4267;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -126,7 +126,6 @@
     </ResourceCompile>
     <Bscmake>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <OutputFile>.\..\lib\Release/system.bsc</OutputFile>
     </Bscmake>
     <Lib>
       <TargetMachine>MachineX64</TargetMachine>
@@ -150,7 +149,6 @@
     </ResourceCompile>
     <Bscmake>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <OutputFile>.\..\lib\Debug/system.bsc</OutputFile>
     </Bscmake>
     <Lib>
       <TargetMachine>MachineX86</TargetMachine>
@@ -174,7 +172,6 @@
     </ResourceCompile>
     <Bscmake>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <OutputFile>.\..\lib\Debug/system.bsc</OutputFile>
     </Bscmake>
     <Lib>
       <TargetMachine>MachineX64</TargetMachine>

@@ -58,7 +58,8 @@ namespace {
 		return (xfeature_enabled_mask & 0x06) == 0x06;
 	}
 #else
-	extern "C" bool VDIsAVXSupportedByOS();
+// TODO: where to get this from for X64?
+//	extern "C" bool VDIsAVXSupportedByOS();
 #endif
 }
 
@@ -125,11 +126,13 @@ long CPUCheckForExtensions() {
 			if (cpuInfo[2] & 0x00080000)
 				flags |= CPUF_SUPPORTS_SSE41;
 
+#ifdef _M_IX86
 			// check OSXSAVE and AVX bits
 			if ((cpuInfo[2] & ((1 << 27) | (1 << 28))) == ((1 << 27) | (1 << 28))) {
 				if (VDIsAVXSupportedByOS())
 					flags |= CPUF_SUPPORTS_AVX;
 			}
+#endif
 		}
 	}
 
