@@ -21,7 +21,8 @@
 
 #pragma once
 
-#define ULONG_PTR DWORD
+// Morpheus_xx: Breaks 64 bit compile
+//#define ULONG_PTR DWORD
 #include <windows.h>
 #include <xprtdefs.h>
 #include <streams.h>
