@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Language name="German" characters="255">
 	<Section name="unmapped">
 		<String id="0" prefix="Meine ">Anwendungen</String>
@@ -539,7 +539,7 @@
 		<String id="599">Sturm</String>
 		<String id="600">TV-Programm</String>
 		<String id="601">Jetzt aufnehmen</String>
-		<String id="602">Kanal</String>
+		<String id="602">Sender</String>
 		<String id="603">Aufnahme-Timer</String>
 		<String id="604">Aufnahmen</String>
 		<String id="605" prefix="Mein ">TV</String>
@@ -549,15 +549,15 @@
 		<String id="609">TV-Programm importiert</String>
 		<String id="610">nicht aufnehmen</String>
 		<String id="611">Einmal aufnehmen</String>
-		<String id="612">Immer auf diesem Kanal</String>
-		<String id="613">Immer auf allen Kanälen</String>
+		<String id="612">Immer auf diesem Sender</String>
+		<String id="613">Immer auf allen Sendern</String>
 		<String id="614">Wöchentlich zu dieser Zeit</String>
 		<String id="615">Täglich zu dieser Zeit</String>
 		<String id="616">Aufnahmemodus ändern</String>
 		<String id="617">Neu...</String>
 		<String id="618">Löschen</String>
 		<String id="619">Datum/Zeit ändern</String>
-		<String id="620">Kanal</String>
+		<String id="620">Sender</String>
 		<String id="621">Datum</String>
 		<String id="622">Name</String>
 		<String id="623">Typ</String>
@@ -588,7 +588,7 @@
 		<String id="648">Täglich</String>
 		<String id="649">Immer</String>
 		<String id="650">Immer auf {0}</String>
-		<String id="651">Immer auf allen Kanälen</String>
+		<String id="651">Immer auf allen Sendern</String>
 		<String id="652">Aufnahmen</String>
 		<String id="653">Diese Aufnahme löschen?</String>
 		<String id="654">Auswerfen</String>
@@ -780,7 +780,7 @@
 		<String id="888">Serien verwalten</String>
 		<String id="889">Alle Folgen</String>
 		<String id="890">CD-Wiedergabe</String>
-		<String id="891">Wähle TV-Kanal</String>
+		<String id="891">Wähle TV-Sender</String>
 		<String id="892">Überschneidungen</String>
 		<String id="893">Portabel</String>
 		<String id="894">Aufnahmen komprimieren</String>
@@ -890,7 +890,7 @@
 		<String id="1002">"Elecard MPEG2 video decoder"</String>
 		<String id="1003">für die Umwandlung zu XviD</String>
 		<String id="1004">Vorbereitung zur Aufnahme</String>
-		<String id="1005">Auf Kanal</String>
+		<String id="1005">Auf Sender</String>
 		<String id="1006">Aufnahme zulassen</String>
 		<String id="1007">Aufnahme abbrechen und weiter schauen</String>
 		<String id="1008">Warte</String>
@@ -920,7 +920,7 @@
 		<String id="1032">Standby</String>
 		<String id="1033">Es werden gerade Sendungen aufgenommen</String>
 		<String id="1034">Kein Empfang!</String>
-		<String id="1035">Dieser Kanal ist verschlüsselt!</String>
+		<String id="1035">Dieser Sender ist verschlüsselt!</String>
 		<String id="1036">Kein Video gefunden</String>
 		<String id="1037" prefix="Meine ">Fernsehprogramm-Info</String>
 		<String id="1038">Erweiterte Aufnahme</String>
@@ -1111,21 +1111,21 @@
 		<String id="1449">Aufnahme beenden</String>
 		<String id="1450">Aufnahme wirklich beenden?</String>
 		<String id="1451">Abspielen nicht möglich</String>
-		<String id="1498">Programme/Kanal nicht gefunden</String>
+		<String id="1498">Programme/Sender nicht gefunden</String>
 		<String id="1499">Kein Signal</String>
 		<String id="1500">Timeshift konnte nicht gestartet werden</String>
 		<String id="1501">Die Karte ist deaktiviert</String>
 		<String id="1502">Keine freie Karte verfügbar</String>
-		<String id="1503">Der Kanal ist verschlüsselt</String>
+		<String id="1503">Der Sender ist verschlüsselt</String>
 		<String id="1504">Kein Video/Audio gefunden</String>
 		<String id="1505">Graph konnte nicht gestartet werden</String>
 		<String id="1506">Ein unbekannter Fehler ist aufgetreten</String>
-		<String id="1507">Unbekannter Kanal</String>
-		<String id="1508">Kanal wurde keiner Karte zugewiesen</String>
-		<String id="1509">Keine Tuning-Details für diesen Kanal</String>
+		<String id="1507">Unbekannter Sender</String>
+		<String id="1508">Sender wurde keiner Karte zugewiesen</String>
+		<String id="1509">Keine Tuning-Details für diesen Sender</String>
 		<String id="1510">Verbindung zum TV-Service verloren</String>
 		<String id="1511">Keine Streams aktiv</String>
-		<String id="1512">Vorherigen Kanal zeigen?</String>
+		<String id="1512">Vorherigen Sender zeigen?</String>
 		<String id="1513">TV wurde für eine Timer-Aufnahme gestoppt</String>
 		<String id="1514">TV wurde von einem Administrator gestoppt</String>
 		<String id="1515">TV wurde vom TV-Server gestoppt</String>
@@ -1329,9 +1329,9 @@
 		<String id="2145">Aktuelle Wiedergabeliste verwenden</String>
 		<String id="2146">Nicht genug Platz auf der CD</String>
 		<String id="2147">Nicht genug Platz auf der DVD</String>
-                <String id="2162">Kanal löschen</String>
-                <String id="2163">Kanal zu einer Gruppe hinzufügen</String>
-                <String id="2164">Kanal aus Gruppe entfernen</String>
+                <String id="2162">Sender löschen</String>
+                <String id="2163">Sender zu einer Gruppe hinzufügen</String>
+                <String id="2164">Sender aus Gruppe entfernen</String>
 		<String id="2200" prefix="Mein ">Explorer</String>
 		<String id="2201">Quelle wählen</String>
 		<String id="2202">Ziel wählen</String>
@@ -1645,7 +1645,7 @@
 		<String id="10101">Spielzeit</String>
 		<String id="10102">Rekordzeit</String>
 		<String id="10103" prefix="Mein ">Minesweeper</String>
-		<String id="10104">Kanal-Vorschau</String>
+		<String id="10104">Sender-Vorschau</String>
 		<String id="10105">Aktuell</String>
 		<String id="11000">Bildbereich zuschneiden</String>
 		<String id="11001">Oben: </String>
@@ -1904,19 +1904,19 @@
 		<String id="100615" prefix="Mein ">Assistent/Willkommen</String>
 		<String id="100616" prefix="Mein ">Assistent/Karten gefunden</String>
 		<String id="100617" prefix="Mein ">Assistent/Land</String>
-		<String id="100618" prefix="Mein ">Assistent/Kanalsuche</String>
+		<String id="100618" prefix="Mein ">Assistent/Sendersuche</String>
 		<String id="100619" prefix="Mein ">Assistent/DVBC/Land</String>
-		<String id="100620" prefix="Mein ">Assistent/DVBC/Kanalsuche</String>
+		<String id="100620" prefix="Mein ">Assistent/DVBC/Sendersuche</String>
 		<String id="100621" prefix="Mein ">Assistent/DVBS/LNB</String>
 		<String id="100622" prefix="Mein ">Assistent/DVBS/LNB-Details</String>
 		<String id="100623" prefix="Mein ">Assistent/DVBS/Transponder</String>
-		<String id="100624" prefix="Mein ">Assistent/DVBS/Kanalsuche</String>
-		<String id="100625" prefix="Mein ">Assistent/ATSC/Kanalsuche</String>
+		<String id="100624" prefix="Mein ">Assistent/DVBS/Sendersuche</String>
+		<String id="100625" prefix="Mein ">Assistent/ATSC/Sendersuche</String>
 		<String id="100626" prefix="Mein ">Assistent/Analog/Land</String>
 		<String id="100627" prefix="Mein ">Assistent/Analog/Stadt</String>
 		<String id="100628" prefix="Mein ">Assistent/Analog/Importiert</String>
 		<String id="100629" prefix="Mein ">Assistent/Analog/Manuell</String>
-		<String id="100630" prefix="Mein ">Assistent/Analog/Kanalsuche</String>
+		<String id="100630" prefix="Mein ">Assistent/Analog/Sendersuche</String>
 		<String id="100631" prefix="Mein ">Assistent/Analog/Umbenennen</String>
 		<String id="100632" prefix="Mein ">Assistent/Analog/Radio</String>
 		<String id="100633" prefix="Mein ">Assistent/Analog/Radio umbenennen</String>
@@ -1931,7 +1931,7 @@
 		<String id="100704" prefix="Meine ">Einstellungen - DVD</String>
 		<String id="100705" prefix="Meine ">Skin</String>
 		<String id="100706" prefix="Meine ">Einstellungen EPG</String>
-		<String id="100707" prefix="Meine ">EPG-Kanal-Zuordnung</String>
+		<String id="100707" prefix="Meine ">EPG-Sender-Zuordnung</String>
 		<String id="100708" prefix="Meine ">GUI - Skip-Stufen</String>
 		<String id="100709" prefix="Meine ">Einstellungen TV-Server</String>
 		<String id="100746">TV Suchtyp</String>
@@ -2001,7 +2001,7 @@
 		<String id="103003" prefix="Mein ">TV/OSD</String>
 		<String id="103006" prefix="Mein ">TV/MSN OSD</String>
 		<String id="103007" prefix="Mein ">TV/Zap OSD</String>
-		<String id="103009" prefix="Meine ">TV/Kanal-Liste</String>
+		<String id="103009" prefix="Meine ">TV/Sender-Liste</String>
 		<String id="103011" prefix="Meine ">Einstellungen TV/Bereich</String>
 		<String id="103012">TV-Empfangs-Daten</String>
 		<String id="104711" prefix="Meine ">Wikipedia</String>
@@ -2022,8 +2022,8 @@
 		<String id="109006">Minidisplay Konfiguration : Fernbedienung</String>
 		<String id="200000">Bitte einen EPG-Grabber auswählen. Hinweis: Ist ihr Land nicht aufgeführt,</String>
 		<String id="200001">dann müssen sie den Programmführer manuell einrichten!</String>
-		<String id="200002">Sie können jetzt EPG-Kanäle ihren TV-Kanälen zuordnen</String>
-		<String id="200003">Wählen sie einen Kanal und drücken sie "Enter" um die Zuordnung zu ändern</String>
+		<String id="200002">Sie können jetzt EPG-Kanäle ihren TV-Sendern zuordnen</String>
+		<String id="200003">Wählen sie einen Sender und drücken sie "Enter" um die Zuordnung zu ändern</String>
 		<String id="200004">Manuell eingerichtete TVGuide.xml</String>
 		<String id="200005">Bitte geben sie die Fernbedienung an, die sie nutzen: </String>
 		<String id="200006">Drücken sie "Weiter" um die Einrichtung fortzusetzen: </String>
@@ -2336,7 +2336,7 @@
 		<String id="300229">In Tray minimieren bei Fokuswechsel</String>
 		<String id="300230">Wiedergabe stoppen bei Entfernen eines Audio-Renderers</String>
 		<String id="300231">Wiederholfrequenz senken wenn MP keinen Fokus hat</String>
-		<String id="990000">Wöchentlich an Tag X auf diesem Kanal</String>
+		<String id="990000">Wöchentlich an Tag X auf diesem Sender</String>
 		<String id="990001">{0} immer auf {1}</String>
 	</Section>
 </Language>
