@@ -209,6 +209,8 @@ private:
   STDMETHODIMP SetTeletextTSPacketCallBack ( int (CALLBACK *pPacketCallback)(byte*, int));
   STDMETHODIMP SetTeletextEventCallback (int (CALLBACK *EventCallback)(int,DWORD64) ); 
   STDMETHODIMP SetTeletextServiceInfoCallback (int (CALLBACK *pServiceInfoCallback)(int,byte,byte,byte,byte) ); 
+  STDMETHODIMP GetTeletextStreamType(__int32 stream, int &type);
+  STDMETHODIMP GetTeletextStreamCount(__int32 &count);
 
 public:
   // ITSReader

@@ -2387,6 +2387,16 @@ STDMETHODIMP CTsReaderFilter::SetTeletextEventCallback( int (CALLBACK *pEventCal
   return S_OK;
 }
 
+STDMETHODIMP CTsReaderFilter::GetTeletextStreamType(__int32 stream, int &type)
+{
+  return m_demultiplexer.GetTeletextStreamType(stream, type);
+}
+
+STDMETHODIMP CTsReaderFilter::GetTeletextStreamCount(__int32 &count)
+{
+  return m_demultiplexer.GetTeletextStreamCount(count);
+}
+
 // ISubtitleStream methods
 STDMETHODIMP CTsReaderFilter::SetSubtitleStream(__int32 stream)
 {

@@ -124,6 +124,8 @@ public:
   void SetTeletextEventCallback(int (CALLBACK *pTeletextResetCallback)(int,DWORD64));
   void SetTeletextPacketCallback(int (CALLBACK *pTeletextPacketCallback)(byte*, int));
   void SetTeletextServiceInfoCallback(int (CALLBACK *pTeletextServiceInfoCallback)(int, byte,byte,byte,byte));
+  bool GetTeletextStreamType(__int32 stream, __int32& count);
+  bool GetTeletextStreamCount(__int32 &count);
 
   void CallTeletextEventCallback(int eventCode,unsigned long int eventValue);
 

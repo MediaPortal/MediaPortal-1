@@ -1393,9 +1393,9 @@ void CDeMultiplexer::OnTsPacket(byte* tsPacket, int bufferOffset, int bufferLeng
 
   if( m_pids.TeletextPid > 0 && m_pids.TeletextPid != m_currentTeletextPid )
   {
-    IDVBSubtitle* pDVBSubtitleFilter(m_filter.GetSubtitleFilter());
+    //IDVBSubtitle* pDVBSubtitleFilter(m_filter.GetSubtitleFilter());
     if( pTeletextServiceInfoCallback )
-      {
+    {
       std::vector<TeletextServiceInfo>::iterator vit = m_pids.TeletextInfo.begin();
       while(vit != m_pids.TeletextInfo.end())
       {
@@ -4537,6 +4537,34 @@ void CDeMultiplexer::CallTeletextEventCallback(int eventCode,unsigned long int e
   {
     (*pTeletextEventCallback)(eventCode,eventValue);
   }
+}
+
+bool CDeMultiplexer::GetTeletextStreamCount(__int32 &count)
+{  
+  
+  if(m_pids.TeletextPid > 0 && m_pids.TeletextInfo.size() > 0)
+  {
+    count = m_pids.TeletextInfo.size();
+  }
+  else
+  {
+    count = 0;
+  }      
+  return S_OK;
+}
+
+bool CDeMultiplexer::GetTeletextStreamType(__int32 stream, __int32 &type)
+{
+  if (m_pids.TeletextPid < 1 || stream < 0 || (size_t)stream >= m_pids.TeletextInfo.size())
+  {
+    // invalid stream number
+    return S_FALSE;
+  }
+  
+  TeletextServiceInfo& info = m_pids.TeletextInfo[stream];
+  type = info.type;
+  
+  return S_OK;
 }
 
 void CDeMultiplexer::DelegatedFlush(bool forceNow, bool waitForFlush)
