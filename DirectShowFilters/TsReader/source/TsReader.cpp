@@ -2397,6 +2397,11 @@ STDMETHODIMP CTsReaderFilter::GetTeletextStreamCount(__int32 &count)
   return m_demultiplexer.GetTeletextStreamCount(count);
 }
 
+STDMETHODIMP CTsReaderFilter::GetTeletextStreamLanguage(__int32 stream,char* szLanguage)
+{
+  return m_demultiplexer.GetTeletextStreamLanguage(stream, szLanguage);
+}
+
 // ISubtitleStream methods
 STDMETHODIMP CTsReaderFilter::SetSubtitleStream(__int32 stream)
 {

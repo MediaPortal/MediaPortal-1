@@ -4553,17 +4553,32 @@ bool CDeMultiplexer::GetTeletextStreamCount(__int32 &count)
   return S_OK;
 }
 
-bool CDeMultiplexer::GetTeletextStreamType(__int32 stream, __int32 &type)
+bool CDeMultiplexer::GetTeletextStreamType(__int32 stream, int &type)
 {
   if (m_pids.TeletextPid < 1 || stream < 0 || (size_t)stream >= m_pids.TeletextInfo.size())
   {
     // invalid stream number
+    type = -1;
     return S_FALSE;
   }
   
-  TeletextServiceInfo& info = m_pids.TeletextInfo[stream];
-  type = info.type;
-  
+  type = m_pids.TeletextInfo[stream].type;
+    
+  return S_OK;
+}
+
+bool CDeMultiplexer::GetTeletextStreamLanguage(__int32 stream, char* szLanguage)
+{
+  if (m_pids.TeletextPid < 1 || stream < 0 || (size_t)stream >= m_pids.TeletextInfo.size())
+  {
+    szLanguage[0] = szLanguage[1] = szLanguage[2] = 0;
+    return S_FALSE;
+  }
+  szLanguage[0] = m_pids.TeletextInfo[stream].lang[0];
+  szLanguage[1] = m_pids.TeletextInfo[stream].lang[1];
+  szLanguage[2] = m_pids.TeletextInfo[stream].lang[2];
+  szLanguage[3] = 0;
+
   return S_OK;
 }
 

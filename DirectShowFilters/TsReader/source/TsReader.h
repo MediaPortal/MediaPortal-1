@@ -211,6 +211,7 @@ private:
   STDMETHODIMP SetTeletextServiceInfoCallback (int (CALLBACK *pServiceInfoCallback)(int,byte,byte,byte,byte) ); 
   STDMETHODIMP GetTeletextStreamType(__int32 stream, int &type);
   STDMETHODIMP GetTeletextStreamCount(__int32 &count);
+  STDMETHODIMP GetTeletextStreamLanguage(__int32 stream, char* szLanguage);
 
 public:
   // ITSReader
