@@ -104,6 +104,10 @@ namespace MediaPortal.Configuration.Sections
     private MPCheckBox streamLAVSelectionCheckBox;
     private MPCheckBox chbKeepFoldersTogether;
     private static bool SubtitleComboMessageDone = false;
+    private MPCheckBox NoAudioResetCheckBox;
+    private NumericUpDown IntialDelayUpDown;
+    private MPLabel mpLabelInitialDelay;
+    private MPLabel mpLabel11;
     internal bool MadVrInUse = false;
 
     //private int 
@@ -193,6 +197,9 @@ namespace MediaPortal.Configuration.Sections
         saveNeverRadioButton.Checked = xmlreader.GetValueAsBool("subtitles", "saveNever", true);
         saveAskRadioButton.Checked = xmlreader.GetValueAsBool("subtitles", "saveAsk", false);
         saveAlwaysRadioButton.Checked = !saveNeverRadioButton.Checked && !saveAskRadioButton.Checked;
+
+        NoAudioResetCheckBox.Checked = xmlreader.GetValueAsBool("audiodelay", "noaudioresetzero", false);
+        IntialDelayUpDown.Value = xmlreader.GetValueAsInt("audiodelay", "initialaudiodelay", 0);
 
         //
         // Get font settings
@@ -331,6 +338,8 @@ namespace MediaPortal.Configuration.Sections
         }
         xmlwriter.SetValueAsBool("movieplayer", "audiodefaultlanguage", audioDefaultCheckBox.Checked);
         xmlwriter.SetValueAsBool("movieplayer", "streamlavselection", streamLAVSelectionCheckBox.Checked);
+        xmlwriter.SetValueAsBool("audiodelay", "noaudioresetzero", NoAudioResetCheckBox.Checked);
+        xmlwriter.SetValue("audiodelay", "initialaudiodelay", IntialDelayUpDown.Value);
       }
     }
 
@@ -380,6 +389,10 @@ namespace MediaPortal.Configuration.Sections
       this.fontDialog = new System.Windows.Forms.FontDialog();
       this.tabPage1 = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.mpGroupBoxVideoAudioDelay = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.mpLabel11 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.NoAudioResetCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.IntialDelayUpDown = new System.Windows.Forms.NumericUpDown();
+      this.mpLabelInitialDelay = new MediaPortal.UserInterface.Controls.MPLabel();
       this.delayVideoTextBox = new System.Windows.Forms.NumericUpDown();
       this.mpLabelAVDelayTime = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpLabelAVDelay = new MediaPortal.UserInterface.Controls.MPLabel();
@@ -422,6 +435,7 @@ namespace MediaPortal.Configuration.Sections
       ((System.ComponentModel.ISupportInitialize)(this.shadowDepthUpDown)).BeginInit();
       this.tabPage1.SuspendLayout();
       this.mpGroupBoxVideoAudioDelay.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.IntialDelayUpDown)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.delayVideoTextBox)).BeginInit();
       this.mpGroupBoxComSkip.SuspendLayout();
       this.groupBox1.SuspendLayout();
@@ -438,7 +452,7 @@ namespace MediaPortal.Configuration.Sections
       tabPage3.Controls.Add(this.mpGroupBox1);
       tabPage3.Location = new System.Drawing.Point(4, 22);
       tabPage3.Name = "tabPage3";
-      tabPage3.Size = new System.Drawing.Size(464, 382);
+      tabPage3.Size = new System.Drawing.Size(464, 438);
       tabPage3.TabIndex = 7;
       tabPage3.Text = "Subtitle";
       tabPage3.UseVisualStyleBackColor = true;
@@ -668,7 +682,7 @@ namespace MediaPortal.Configuration.Sections
       mpTabPage2.Controls.Add(this.mpGroupBox2);
       mpTabPage2.Location = new System.Drawing.Point(4, 22);
       mpTabPage2.Name = "mpTabPage2";
-      mpTabPage2.Size = new System.Drawing.Size(464, 382);
+      mpTabPage2.Size = new System.Drawing.Size(464, 438);
       mpTabPage2.TabIndex = 10;
       mpTabPage2.Text = "Subtitle (cont)";
       mpTabPage2.UseVisualStyleBackColor = true;
@@ -819,7 +833,7 @@ namespace MediaPortal.Configuration.Sections
       this.tabPage1.Controls.Add(this.groupBox1);
       this.tabPage1.Location = new System.Drawing.Point(4, 22);
       this.tabPage1.Name = "tabPage1";
-      this.tabPage1.Size = new System.Drawing.Size(464, 382);
+      this.tabPage1.Size = new System.Drawing.Size(464, 438);
       this.tabPage1.TabIndex = 0;
       this.tabPage1.Text = "General";
       this.tabPage1.UseVisualStyleBackColor = true;
@@ -828,37 +842,80 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.mpGroupBoxVideoAudioDelay.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGroupBoxVideoAudioDelay.Controls.Add(this.mpLabel11);
+      this.mpGroupBoxVideoAudioDelay.Controls.Add(this.NoAudioResetCheckBox);
+      this.mpGroupBoxVideoAudioDelay.Controls.Add(this.IntialDelayUpDown);
+      this.mpGroupBoxVideoAudioDelay.Controls.Add(this.mpLabelInitialDelay);
       this.mpGroupBoxVideoAudioDelay.Controls.Add(this.delayVideoTextBox);
       this.mpGroupBoxVideoAudioDelay.Controls.Add(this.mpLabelAVDelayTime);
       this.mpGroupBoxVideoAudioDelay.Controls.Add(this.mpLabelAVDelay);
       this.mpGroupBoxVideoAudioDelay.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.mpGroupBoxVideoAudioDelay.Location = new System.Drawing.Point(16, 316);
       this.mpGroupBoxVideoAudioDelay.Name = "mpGroupBoxVideoAudioDelay";
-      this.mpGroupBoxVideoAudioDelay.Size = new System.Drawing.Size(432, 49);
+      this.mpGroupBoxVideoAudioDelay.Size = new System.Drawing.Size(432, 67);
       this.mpGroupBoxVideoAudioDelay.TabIndex = 12;
       this.mpGroupBoxVideoAudioDelay.TabStop = false;
       this.mpGroupBoxVideoAudioDelay.Text = "Video/Audio Delay";
       // 
-      // delayVideoTextBox
+      // mpLabel11
       // 
-      this.delayVideoTextBox.Increment = new decimal(new int[] {
-            10,
+      this.mpLabel11.Location = new System.Drawing.Point(195, 43);
+      this.mpLabel11.Name = "mpLabel11";
+      this.mpLabel11.Size = new System.Drawing.Size(25, 16);
+      this.mpLabel11.TabIndex = 19;
+      this.mpLabel11.Text = "ms";
+      // 
+      // NoAudioResetCheckBox
+      // 
+      this.NoAudioResetCheckBox.AutoSize = true;
+      this.NoAudioResetCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.NoAudioResetCheckBox.Location = new System.Drawing.Point(220, 20);
+      this.NoAudioResetCheckBox.Name = "NoAudioResetCheckBox";
+      this.NoAudioResetCheckBox.Size = new System.Drawing.Size(208, 17);
+      this.NoAudioResetCheckBox.TabIndex = 9;
+      this.NoAudioResetCheckBox.Text = "Don\'t set a delay to 0 on playback start";
+      this.NoAudioResetCheckBox.UseVisualStyleBackColor = true;
+      // 
+      // IntialDelayUpDown
+      // 
+      this.IntialDelayUpDown.Location = new System.Drawing.Point(116, 41);
+      this.IntialDelayUpDown.Maximum = new decimal(new int[] {
+            50000,
             0,
             0,
             0});
-      this.delayVideoTextBox.Location = new System.Drawing.Point(148, 18);
+      this.IntialDelayUpDown.Name = "IntialDelayUpDown";
+      this.IntialDelayUpDown.Size = new System.Drawing.Size(80, 20);
+      this.IntialDelayUpDown.TabIndex = 18;
+      // 
+      // mpLabelInitialDelay
+      // 
+      this.mpLabelInitialDelay.Location = new System.Drawing.Point(16, 43);
+      this.mpLabelInitialDelay.Name = "mpLabelInitialDelay";
+      this.mpLabelInitialDelay.Size = new System.Drawing.Size(107, 16);
+      this.mpLabelInitialDelay.TabIndex = 17;
+      this.mpLabelInitialDelay.Text = "Intial delay :";
+      // 
+      // delayVideoTextBox
+      // 
+      this.delayVideoTextBox.Increment = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+      this.delayVideoTextBox.Location = new System.Drawing.Point(116, 18);
       this.delayVideoTextBox.Maximum = new decimal(new int[] {
             500,
             0,
             0,
             0});
       this.delayVideoTextBox.Minimum = new decimal(new int[] {
-            10,
+            5,
             0,
             0,
             0});
       this.delayVideoTextBox.Name = "delayVideoTextBox";
-      this.delayVideoTextBox.Size = new System.Drawing.Size(52, 20);
+      this.delayVideoTextBox.Size = new System.Drawing.Size(80, 20);
       this.delayVideoTextBox.TabIndex = 16;
       this.delayVideoTextBox.Value = new decimal(new int[] {
             100,
@@ -868,7 +925,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpLabelAVDelayTime
       // 
-      this.mpLabelAVDelayTime.Location = new System.Drawing.Point(200, 22);
+      this.mpLabelAVDelayTime.Location = new System.Drawing.Point(195, 22);
       this.mpLabelAVDelayTime.Name = "mpLabelAVDelayTime";
       this.mpLabelAVDelayTime.Size = new System.Drawing.Size(25, 16);
       this.mpLabelAVDelayTime.TabIndex = 15;
@@ -880,7 +937,7 @@ namespace MediaPortal.Configuration.Sections
       this.mpLabelAVDelay.Name = "mpLabelAVDelay";
       this.mpLabelAVDelay.Size = new System.Drawing.Size(107, 16);
       this.mpLabelAVDelay.TabIndex = 13;
-      this.mpLabelAVDelay.Text = "Delay interval:";
+      this.mpLabelAVDelay.Text = "Delay interval step:";
       // 
       // mpGroupBoxComSkip
       // 
@@ -898,13 +955,14 @@ namespace MediaPortal.Configuration.Sections
       // comSkipCheckBox
       // 
       this.comSkipCheckBox.AutoSize = true;
+      this.comSkipCheckBox.BackColor = System.Drawing.Color.Transparent;
       this.comSkipCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.comSkipCheckBox.Location = new System.Drawing.Point(19, 20);
       this.comSkipCheckBox.Name = "comSkipCheckBox";
       this.comSkipCheckBox.Size = new System.Drawing.Size(354, 17);
       this.comSkipCheckBox.TabIndex = 8;
       this.comSkipCheckBox.Text = "Automatically skip commercials for videos with ComSkip data available";
-      this.comSkipCheckBox.UseVisualStyleBackColor = true;
+      this.comSkipCheckBox.UseVisualStyleBackColor = false;
       // 
       // groupBox1
       // 
@@ -1057,7 +1115,7 @@ namespace MediaPortal.Configuration.Sections
       this.tabControl1.Location = new System.Drawing.Point(0, 0);
       this.tabControl1.Name = "tabControl1";
       this.tabControl1.SelectedIndex = 0;
-      this.tabControl1.Size = new System.Drawing.Size(472, 408);
+      this.tabControl1.Size = new System.Drawing.Size(472, 464);
       this.tabControl1.TabIndex = 0;
       // 
       // mpTabPage1
@@ -1065,7 +1123,7 @@ namespace MediaPortal.Configuration.Sections
       this.mpTabPage1.Controls.Add(this.mpGroupBox4);
       this.mpTabPage1.Location = new System.Drawing.Point(4, 22);
       this.mpTabPage1.Name = "mpTabPage1";
-      this.mpTabPage1.Size = new System.Drawing.Size(464, 382);
+      this.mpTabPage1.Size = new System.Drawing.Size(464, 438);
       this.mpTabPage1.TabIndex = 9;
       this.mpTabPage1.Text = "Language";
       this.mpTabPage1.UseVisualStyleBackColor = true;
@@ -1179,6 +1237,8 @@ namespace MediaPortal.Configuration.Sections
       ((System.ComponentModel.ISupportInitialize)(this.shadowDepthUpDown)).EndInit();
       this.tabPage1.ResumeLayout(false);
       this.mpGroupBoxVideoAudioDelay.ResumeLayout(false);
+      this.mpGroupBoxVideoAudioDelay.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.IntialDelayUpDown)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.delayVideoTextBox)).EndInit();
       this.mpGroupBoxComSkip.ResumeLayout(false);
       this.mpGroupBoxComSkip.PerformLayout();
