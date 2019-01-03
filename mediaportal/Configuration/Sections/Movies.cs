@@ -666,7 +666,7 @@ namespace MediaPortal.Configuration.Sections
       this.mpLabel4.Name = "mpLabel4";
       this.mpLabel4.Size = new System.Drawing.Size(107, 16);
       this.mpLabel4.TabIndex = 6;
-      this.mpLabel4.Text = "Delay interval:";
+      this.mpLabel4.Text = "Delay interval step:";
       // 
       // mpTabPage2
       // 
@@ -851,9 +851,9 @@ namespace MediaPortal.Configuration.Sections
       this.NoAudioResetCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.NoAudioResetCheckBox.Location = new System.Drawing.Point(20, 44);
       this.NoAudioResetCheckBox.Name = "NoAudioResetCheckBox";
-      this.NoAudioResetCheckBox.Size = new System.Drawing.Size(208, 17);
+      this.NoAudioResetCheckBox.Size = new System.Drawing.Size(276, 17);
       this.NoAudioResetCheckBox.TabIndex = 9;
-      this.NoAudioResetCheckBox.Text = "Don\'t set a delay to 0 on playback start";
+      this.NoAudioResetCheckBox.Text = "Remember video/audio delay value for next playback";
       this.NoAudioResetCheckBox.UseVisualStyleBackColor = true;
       // 
       // delayVideoTextBox
