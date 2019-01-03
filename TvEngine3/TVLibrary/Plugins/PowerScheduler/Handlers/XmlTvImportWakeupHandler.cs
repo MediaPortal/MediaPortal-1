@@ -88,12 +88,12 @@ namespace TvEngine.PowerScheduler.Handlers
 
       if ((now < remoteScheduleTime) && (remoteScheduleTime > DateTime.MinValue))
       {
-        remoteScheduleTime.AddDays(1);
+        remoteScheduleTime = remoteScheduleTime.AddDays(1);
       }
 
       Log.Debug(this._handlerName + ".GetNextWakeupTime {0}", remoteScheduleTime);
 
-      remoteScheduleTime.AddMinutes(-1); // resume 60sec before      
+      remoteScheduleTime = remoteScheduleTime.AddMinutes(-1); // resume 60sec before      
 
       return remoteScheduleTime;
     }
