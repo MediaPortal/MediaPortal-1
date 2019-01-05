@@ -29,10 +29,6 @@ using TvDatabase;
 using TvLibrary.Hardware;
 using TvLibrary.Implementations.Dri;
 using TvLibrary.Implementations.Dri.Service;
-using System.Collections;
-using System.Globalization;
-using System.IO;
-using MediaPortal.WebEPG.Profile;
 
 namespace TvLibrary.Implementations.DVB
 {
@@ -75,10 +71,6 @@ namespace TvLibrary.Implementations.DVB
 
     private readonly ICiMenuActions _ciMenu;
 
-    private int _postDiSEqWait = 10;
-    private string _configFilesDir;
-    private string _configFile;
-
     /// <summary>
     /// Accessor for CI Menu handler
     /// </summary>
@@ -111,37 +103,6 @@ namespace TvLibrary.Implementations.DVB
     public ConditionalAccess(IBaseFilter tunerFilter, IBaseFilter analyzerFilter, IBaseFilter winTvUsbCiFilter,
                              TvCardBase card)
     {      
-      try
-      {
-        _configFilesDir = PathManager.GetDataPath;
-        _configFile = _configFilesDir + "\\dish.xml";
-        if (File.Exists(_configFile))
-        {
-          Log.Log.Info("ConditionalAccess: dish Config: loading {0}", _configFile);  
-        }
-        else
-        {
-          Log.Log.Info("ConditionalAccess: dish Config: file not found, {0}", _configFile);  
-        }
-        Xml xmlreader = new Xml(_configFile);
-        {
-          _postDiSEqWait = xmlreader.GetValueAsInt("General", "WaitAfterDiSEqC", 10);
-          if (_postDiSEqWait < 1) 
-          {
-            _postDiSEqWait = 1;
-          }
-          if (_postDiSEqWait > 30000) 
-          {
-            _postDiSEqWait = 30000;
-          }
-        }
-        Log.Log.Info("ConditionalAccess: WaitAfterDiSEqC setting {0} ms", _postDiSEqWait);
-      }
-      catch (Exception ex)
-      {
-        Log.Log.Write(ex);
-      }
-
       try
       {
         //System.Diagnostics.Debugger.Launch();        
@@ -855,8 +816,6 @@ namespace TvLibrary.Implementations.DVB
       {
         Log.Log.Write(ex);
       }      
-      Log.Log.Info("SendDiseqcCommand: Wait after command {0} ms", _postDiSEqWait);
-      System.Threading.Thread.Sleep(_postDiSEqWait);      
       return succeeded;
     }
 
