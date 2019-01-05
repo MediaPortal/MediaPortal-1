@@ -19,7 +19,6 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.Globalization;
 using System.IO;
 using MediaPortal.WebEPG.Profile;
@@ -239,7 +238,7 @@ namespace TvLibrary.Implementations.DVB
         }
         else
         {
-          Log.Log.Info("DiSEqCMotor: dish Config: file not found, {0}", _configFile);  
+          Log.Log.Debug("DiSEqCMotor: dish Config: file not found, {0}", _configFile);  
         }
         Xml xmlreader = new Xml(_configFile);
         {
@@ -543,6 +542,10 @@ namespace TvLibrary.Implementations.DVB
       if (waitTime < 100)
       {
         waitTime = 100;
+      }
+      if (waitTime > 60000) 
+      {
+        waitTime = 60000;
       }
 
       System.Threading.Thread.Sleep(waitTime);
