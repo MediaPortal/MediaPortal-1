@@ -19,6 +19,10 @@
 #endregion
 
 using System;
+using System.Collections;
+using System.Globalization;
+using System.IO;
+using MediaPortal.WebEPG.Profile;
 using TvLibrary.Interfaces;
 
 namespace TvLibrary.Implementations.DVB
@@ -211,6 +215,11 @@ namespace TvLibrary.Implementations.DVB
     private int _currentPosition = -1;
     private int _currentStepsAzimuth;
     private int _currentStepsElevation;
+    private int _satCount = 1;
+    private int _currentMovingDish = 100;
+    private int _firstTuneWait = 200;
+    private string _configFilesDir;
+    private string _configFile;
 
     #endregion
 
@@ -220,6 +229,31 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="controller">The controller.</param>
     public DiSEqCMotor(IDiSEqCController controller)
     {
+      try
+      {
+        _configFilesDir = PathManager.GetDataPath;
+        _configFile = _configFilesDir + "\\dish.xml";
+        if (File.Exists(_configFile))
+        {
+          Log.Log.Info("DiSEqCMotor: dish Config: loading {0}", _configFile);  
+        }
+        else
+        {
+          Log.Log.Info("DiSEqCMotor: dish Config: file not found, {0}", _configFile);  
+        }
+        Xml xmlreader = new Xml(_configFile);
+        {
+          _satCount = xmlreader.GetValueAsInt("SatCount", "Count", 0) + 1;
+          _currentMovingDish = xmlreader.GetValueAsInt("General", "CurrentMovingDish", 100);
+          _firstTuneWait = xmlreader.GetValueAsInt("General", "FirstTuneWait", 200);
+        }
+        Log.Log.Info("DiSEqCMotor: dish Config: SatCount {0}, CurrentMovingDish {1}, FirstTuneWait {2}", _satCount-1, _currentMovingDish, _firstTuneWait);  
+      }
+      catch (Exception ex)
+      {
+        Log.Log.Write(ex);
+      }
+      
       _controller = controller;
     }
 
@@ -406,7 +440,7 @@ namespace TvLibrary.Implementations.DVB
     }
 
     /// <summary>
-    /// Goto's the sattelite reference position.
+    /// Goto's the satellite reference position.
     /// </summary>
     public void GotoReferencePosition()
     {
@@ -436,16 +470,85 @@ namespace TvLibrary.Implementations.DVB
       if (_currentStepsAzimuth == 0 && _currentStepsElevation == 0 && position == _currentPosition)
         return;
       Log.Log.Write("DiSEqC: goto position {0}", position);
+      Log.Log.Write("DiSEqC: current position {0}", _currentPosition);
+
+      // On first tune, we need to reset diseqc and move the motor
+      if (_currentPosition == -1)
+      {
+        Reset();
+        DriveMotor(DiSEqCDirection.East, 1);
+      }
+
       byte[] cmd = new byte[4];
       cmd[0] = (byte)DiSEqCFraming.FirstTransmission;
       cmd[1] = (byte)DiSEqCMovement.Azimutal;
       cmd[2] = (byte)DiSEqCCommands.GotoPosition;
       cmd[3] = position;
       _controller.SendDiSEqCCommand(cmd);
-      System.Threading.Thread.Sleep(100);
+
+      string positionSat = 0.ToString();
+      string positionDirection = 0.ToString().ToLowerInvariant();
+      int waitTime = 100;
+
+      Xml xmlreader = new Xml(_configFile);
+      {
+        // Check wanted position SAT value
+        for (var i = 1; i < _satCount; i++)
+        {
+          var positionDiSeqC = xmlreader.GetValueAsInt(i.ToString(), "PositionDiSEqC", 0);
+          if (positionDiSeqC != position) continue;
+          TvLibrary.Log.Log.Write("DiSEqC: goto position {0} - wanted i {1}", position, i.ToString());
+          positionSat = xmlreader.GetValueAsString(i.ToString(), "PositionSat", 0.ToString());
+          positionDirection = xmlreader.GetValueAsString(i.ToString(), "PositionDirection", 0.ToString()).ToLowerInvariant();
+          TvLibrary.Log.Log.Write("DiSEqC: goto position {0} - wanted sat degrees {1} - Direction {2}", position, positionSat, positionDirection);
+          break;
+        }
+
+        // Check current position SAT value
+        for (var i = 1; i < _satCount; i++)
+        {
+          var wantedPositionDiSeqC = xmlreader.GetValueAsInt(i.ToString(), "PositionDiSEqC", 0);
+          if (wantedPositionDiSeqC != _currentPosition) continue;
+          TvLibrary.Log.Log.Write("DiSEqC: goto position {0} - current i {1}", position, i.ToString());
+          string wantedPositionSat = xmlreader.GetValueAsString(i.ToString(), "PositionSat", 0.ToString());
+          string wantedPositionDirection = xmlreader.GetValueAsString(i.ToString(), "PositionDirection", 0.ToString()).ToLowerInvariant();
+
+          if (wantedPositionDirection == positionDirection)
+          {
+            TvLibrary.Log.Log.Write("DiSEqC: goto position {0} - current sat degrees {1} - Direction {2}", position, wantedPositionSat, wantedPositionDirection);
+            var deltaPositionSat = Math.Abs(float.Parse(wantedPositionSat, CultureInfo.InvariantCulture.NumberFormat) - float.Parse(positionSat, CultureInfo.InvariantCulture.NumberFormat));
+            TvLibrary.Log.Log.Write("DiSEqC: goto position {0} - delta between wanted and current sat degrees {1}", position, deltaPositionSat);
+            waitTime = (int)((_currentMovingDish * (deltaPositionSat)) / 2);
+            TvLibrary.Log.Log.Write("DiSEqC: goto position {0} - use delay : {1}", position, waitTime * 2);
+          }
+          else
+          {
+            TvLibrary.Log.Log.Write("DiSEqC: goto position {0} - current sat degrees {1} - Direction {2}", position, wantedPositionSat, wantedPositionDirection);
+            var deltaPositionSat = Math.Abs(float.Parse(wantedPositionSat, CultureInfo.InvariantCulture.NumberFormat) + float.Parse(positionSat, CultureInfo.InvariantCulture.NumberFormat));
+            TvLibrary.Log.Log.Write("DiSEqC: goto position {0} - delta between wanted and current sat degrees {1}", position, deltaPositionSat);
+            waitTime = (int)((_currentMovingDish * (deltaPositionSat)) / 2);
+            TvLibrary.Log.Log.Write("DiSEqC: goto position {0} - use delay : {1}", position, waitTime * 2);
+          }
+          break;
+        }
+      }
+
+      // first tune need to use defined time to be able to tune first channel
+      if (_currentPosition == -1)
+      {
+        Log.Log.Write("DiSEqC: current position {0} - use first tune wait", _currentPosition);
+        waitTime = _firstTuneWait / 2;
+      }
+      
+      if (waitTime < 100)
+      {
+        waitTime = 100;
+      }
+
+      System.Threading.Thread.Sleep(waitTime);
       cmd[0] = (byte)DiSEqCFraming.RepeatedTransmission;
       _controller.SendDiSEqCCommand(cmd);
-      System.Threading.Thread.Sleep(100);
+      System.Threading.Thread.Sleep(waitTime);
       _currentPosition = position;
       _currentStepsAzimuth = 0;
       _currentStepsElevation = 0;

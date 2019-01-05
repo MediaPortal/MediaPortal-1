@@ -29,6 +29,10 @@ using TvDatabase;
 using TvLibrary.Hardware;
 using TvLibrary.Implementations.Dri;
 using TvLibrary.Implementations.Dri.Service;
+using System.Collections;
+using System.Globalization;
+using System.IO;
+using MediaPortal.WebEPG.Profile;
 
 namespace TvLibrary.Implementations.DVB
 {
@@ -65,11 +69,15 @@ namespace TvLibrary.Implementations.DVB
     private readonly TeVii _TeVii;
     private readonly DigitalDevices _DigitalDevices;
     private readonly TunerDri _tunerDri;
+    private readonly Turbosight _turbosight;
 
     private readonly IHardwareProvider _HWProvider;
 
     private readonly ICiMenuActions _ciMenu;
 
+    private int _postDiSEqWait = 10;
+    private string _configFilesDir;
+    private string _configFile;
 
     /// <summary>
     /// Accessor for CI Menu handler
@@ -102,7 +110,38 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="card">Determines the type of TV card</param>    
     public ConditionalAccess(IBaseFilter tunerFilter, IBaseFilter analyzerFilter, IBaseFilter winTvUsbCiFilter,
                              TvCardBase card)
-    {
+    {      
+      try
+      {
+        _configFilesDir = PathManager.GetDataPath;
+        _configFile = _configFilesDir + "\\dish.xml";
+        if (File.Exists(_configFile))
+        {
+          Log.Log.Info("ConditionalAccess: dish Config: loading {0}", _configFile);  
+        }
+        else
+        {
+          Log.Log.Info("ConditionalAccess: dish Config: file not found, {0}", _configFile);  
+        }
+        Xml xmlreader = new Xml(_configFile);
+        {
+          _postDiSEqWait = xmlreader.GetValueAsInt("General", "WaitAfterDiSEqC", 10);
+          if (_postDiSEqWait < 1) 
+          {
+            _postDiSEqWait = 1;
+          }
+          if (_postDiSEqWait > 30000) 
+          {
+            _postDiSEqWait = 30000;
+          }
+        }
+        Log.Log.Info("ConditionalAccess: WaitAfterDiSEqC setting {0} ms", _postDiSEqWait);
+      }
+      catch (Exception ex)
+      {
+        Log.Log.Write(ex);
+      }
+
       try
       {
         //System.Diagnostics.Debugger.Launch();        
@@ -133,6 +172,19 @@ namespace TvLibrary.Implementations.DVB
 
         if (isDVBC || isDVBS || isDVBT)
         {
+          Log.Log.WriteFile("Check for TBS");
+
+          // Lookup device index of current card. only counting KNC cards by device path
+          uint deviceIndex = (uint)Turbosight.GetDeviceIndex(card);
+          _turbosight = new Turbosight(tunerFilter, deviceIndex);
+          if (_turbosight.IsTurbosight)
+          {
+              this._diSEqCMotor = new DiSEqCMotor(_turbosight);
+              _ciMenu = _turbosight;
+              return;
+          }
+          Release.DisposeToNull(ref _turbosight);
+            
           Log.Log.WriteFile("Check for KNC");
           // Lookup device index of current card. only counting KNC cards by device path
           int DeviceIndex = KNCDeviceLookup.GetDeviceIndex(card);
@@ -341,7 +393,7 @@ namespace TvLibrary.Implementations.DVB
       catch (Exception ex)
       {
         Log.Log.Write(ex);
-      }
+      }      
     }
 
     /// <summary>
@@ -426,6 +478,10 @@ namespace TvLibrary.Implementations.DVB
           return _tunerDri.CardStatus == DriCasCardStatus.Inserted;
         }
 
+        if (_turbosight != null)
+        {
+            return _turbosight.IsCamReady();
+        }
         if (_knc != null)
         {
           //Log.Log.WriteFile("KNC IsCamReady(): IsCamPresent:{0}, IsCamReady:{1}", _knc.IsCamPresent(), _knc.IsCamReady());
@@ -478,6 +534,11 @@ namespace TvLibrary.Implementations.DVB
       {
         if (!_useCam)
           return;
+        if (_turbosight != null)
+        {
+            bool flag;
+            _turbosight.ResetCi(out flag);
+        }
         if (_digitalEveryWhere != null)
         {
           _digitalEveryWhere.ResetCAM();
@@ -669,6 +730,11 @@ namespace TvLibrary.Implementations.DVB
         context.AudioPid = audioPid;
         context.ServiceId = channel.ServiceId;
 
+        if (_turbosight != null)
+        {
+            return _turbosight.SendPmt(ListManagementType.Only, CommandIdType.Descrambling, context.PMT, context.PMTLength);
+        }
+
         if (_winTvCiModule != null)
         {
           int hr = _winTvCiModule.SendPMT(PMT, pmtLength);
@@ -726,63 +792,71 @@ namespace TvLibrary.Implementations.DVB
     public bool SendDiseqcCommand(ScanParameters parameters, DVBSChannel channel)
     {
       bool succeeded = true;
+      int waitTime = 100;
       try
       {
+        if (_turbosight != null)
+        {
+          _turbosight.SendDiseqcCommand(parameters, channel);
+          System.Threading.Thread.Sleep(waitTime);
+        }
         if (_knc != null)
         {
           _knc.SendDiseqCommand(parameters, channel);
-          System.Threading.Thread.Sleep(100);
+          System.Threading.Thread.Sleep(waitTime);
         }
         if (_digitalEveryWhere != null)
         {
           _digitalEveryWhere.SendDiseqcCommand(parameters, channel);
-          System.Threading.Thread.Sleep(100);
+          System.Threading.Thread.Sleep(waitTime);
         }
         if (_technoTrend != null)
         {
           _technoTrend.SendDiseqCommand(parameters, channel);
-          System.Threading.Thread.Sleep(100);
+          System.Threading.Thread.Sleep(waitTime);
         }
         if (_twinhan != null)
         {
           _twinhan.SendDiseqCommand(parameters, channel);
-          System.Threading.Thread.Sleep(100);
+          System.Threading.Thread.Sleep(waitTime);
         }
         if (_hauppauge != null)
         {
           succeeded = _hauppauge.SendDiseqCommand(parameters, channel);
-          System.Threading.Thread.Sleep(100);
+          System.Threading.Thread.Sleep(waitTime);
         }
         if (_genericbdas != null)
         {
           _genericbdas.SendDiseqCommand(parameters, channel);
-          System.Threading.Thread.Sleep(100);
+          System.Threading.Thread.Sleep(waitTime);
         }
         if (_conexant != null)
         {
           _conexant.SendDiseqCommand(parameters, channel);
-          System.Threading.Thread.Sleep(100);
+          System.Threading.Thread.Sleep(waitTime);
         }
         if (_profred != null)
         {
           _profred.SendDiseqCommand(parameters, channel);
-          System.Threading.Thread.Sleep(100);
+          System.Threading.Thread.Sleep(waitTime);
         }
         if (_genpix != null)
         {
           _genpix.SendDiseqCommand(parameters, channel);
-          System.Threading.Thread.Sleep(100);
+          System.Threading.Thread.Sleep(waitTime);
         }
         if (_TeVii != null)
         {
           _TeVii.SendDiseqCommand(parameters, channel);
-          System.Threading.Thread.Sleep(100);
+          System.Threading.Thread.Sleep(waitTime);
         }
       }
       catch (Exception ex)
       {
         Log.Log.Write(ex);
-      }
+      }      
+      Log.Log.Info("SendDiseqcCommand: Wait after command {0} ms", _postDiSEqWait);
+      System.Threading.Thread.Sleep(_postDiSEqWait);      
       return succeeded;
     }
 
