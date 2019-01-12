@@ -1091,6 +1091,11 @@
 		<String id="1318">Untertitel speichern</String>
 		<String id="1319">Geänderte Untertiteldatei speichern?</String>
 		<String id="1320">{0} als {1} &#10;</String>
+		<String id="1321">Automatische Auswahl des Decoders</String>
+    <String id="1322">Source-Filter erzwingen</String>
+    <String id="1323">Video-Codecs für .TS-Dateien</String>
+    <String id="1324">Audio-Auswahl überschreiben und Standard verwenden</String>
+    <String id="1325">Audio/Untertitel-Stream aus LAV-Splitter übernehmen</String>
 		<String id="1331">Filmsammlung und Filme</String>
     <String id="1332">Nur Filmsammlung</String>
     <String id="1333">Diesen Film zu Filmsammlung hinzufügen</String>
