@@ -37,7 +37,7 @@ namespace TvService
 {
   public class AdvancedCardAllocation : CardAllocationBase, ICardAllocation
   {
-    #region private members   
+    #region private members
 
     public AdvancedCardAllocation(TvBusinessLayer businessLayer, TVController controller) : base(businessLayer, controller)
     {
@@ -81,7 +81,7 @@ namespace TvService
       }
 
       return nrOfOtherUsers;
-    }           
+    }
 
     #endregion
     #region ICardAllocation Members
@@ -221,7 +221,7 @@ namespace TvService
         {
           Log.Info("Controller:   got {0} tuning details for {1}", tuningDetails.Count, dbChannel.DisplayName);
         }
-        int number = 0;        
+        int number = 0;
         ICollection<ITvCardHandler> cardHandlers = cards.Values;
 
         foreach (IChannel tuningDetail in tuningDetails)
@@ -264,8 +264,7 @@ namespace TvService
             }            
             int nrOfOtherUsers = NumberOfOtherUsersOnCurrentCard(cardHandler, user);
             long? channelTimeshiftingOnOtherMux;
-            var cardInfo = new CardDetail(cardId, cardHandler.DataBaseCard, tuningDetail, isSameTransponder,
-                                                 nrOfOtherUsers);
+            var cardInfo = new CardDetail(cardId, cardHandler.DataBaseCard, tuningDetail, isSameTransponder, nrOfOtherUsers);
             cardsAvailable.Add(cardInfo);
           }
         }

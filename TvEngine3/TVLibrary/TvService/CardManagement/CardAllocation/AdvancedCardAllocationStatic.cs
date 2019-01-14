@@ -38,6 +38,11 @@ namespace TvService
       return true;
     }
 
+    public override bool CheckTransponder(IUser user, ITvCardHandler tvcard, IChannel tuningDetail, bool kickTimeshift)
+    {
+      return true;
+    }
+
     protected override bool IsSameTransponder(ITvCardHandler tvcard, IChannel tuningDetail)
     {
       return false;
