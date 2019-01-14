@@ -664,7 +664,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="pmtLength">length of the pmt array</param>
     /// <param name="audioPid">pid of the current audio stream</param>
     /// <returns></returns>
-    public bool SendPMT(int subChannel, DVBBaseChannel channel, byte[] PMT, int pmtLength, int audioPid)
+    public bool SendPMT(int subChannel, DVBBaseChannel channel, byte[] PMT, int pmtLength, int audioPid, bool isPmtChange)
     {
       try
       {
@@ -717,6 +717,10 @@ namespace TvLibrary.Implementations.DVB
         }
         if (_DigitalDevices != null)
         {
+          if (isPmtChange)
+          {
+            _DigitalDevices.SendServiceIdToCam(0);
+          }
           return _DigitalDevices.SendServiceIdToCam(channel.ServiceId);
         }
         if (_digitalEveryWhere != null)
