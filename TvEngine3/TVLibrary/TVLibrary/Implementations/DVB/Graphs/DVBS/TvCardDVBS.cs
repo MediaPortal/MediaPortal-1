@@ -27,6 +27,9 @@ using TvLibrary.Implementations.Helper;
 using TvDatabase;
 using TvLibrary.Epg;
 
+using System.IO;
+using MediaPortal.WebEPG.Profile;
+
 namespace TvLibrary.Implementations.DVB
 {
   /// <summary>
@@ -40,6 +43,10 @@ namespace TvLibrary.Implementations.DVB
     private int _diseqCretries = 0;
     private DVBSChannel _dvbsChannel;
 
+    private int _postDiSEqWait = 10;
+    private string _configFilesDir;
+    private string _configFile;
+
     #endregion
 
     #region ctor
@@ -52,6 +59,37 @@ namespace TvLibrary.Implementations.DVB
       : base(device)
     {
       _cardType = CardType.DvbS;
+      
+      try
+      {
+        _configFilesDir = PathManager.GetDataPath;
+        _configFile = _configFilesDir + "\\dish.xml";
+        if (File.Exists(_configFile))
+        {
+          Log.Log.WriteFile("TvCardDVBS: dish Config: loading {0}", _configFile);  
+        }
+        else
+        {
+          Log.Log.Debug("TvCardDVBS: dish Config: file not found, {0}", _configFile);  
+        }
+        Xml xmlreader = new Xml(_configFile);
+        {
+          _postDiSEqWait = xmlreader.GetValueAsInt("General", "WaitAfterDiSEqC", 10);
+          if (_postDiSEqWait < 10) 
+          {
+            _postDiSEqWait = 10;
+          }
+          if (_postDiSEqWait > 30000) 
+          {
+            _postDiSEqWait = 30000;
+          }
+        }
+        Log.Log.WriteFile("TvCardDVBS: WaitAfterDiSEqC setting {0} ms", _postDiSEqWait);
+      }
+      catch (Exception ex)
+      {
+        Log.Log.Write(ex);
+      }
     }
 
     #endregion
@@ -335,6 +373,10 @@ namespace TvLibrary.Implementations.DVB
           {
             _conditionalAccess.DiSEqCMotor.GotoPosition((byte)dvbsChannel.SatelliteIndex);
           }
+          
+          //Wait for a while if required
+          Log.Log.Debug("BeforeTune: Wait after DiSEqC commands {0} ms", _postDiSEqWait);
+          System.Threading.Thread.Sleep(_postDiSEqWait);      
         }
         return true;
       }
@@ -396,6 +438,10 @@ namespace TvLibrary.Implementations.DVB
           {
             _conditionalAccess.DiSEqCMotor.GotoPosition((byte)dvbsChannel.SatelliteIndex);
           }
+          
+          //Wait for a while if required
+          Log.Log.Debug("BeforeTune: Wait after DiSEqC commands {0} ms", _postDiSEqWait);
+          System.Threading.Thread.Sleep(_postDiSEqWait);      
         }
       }
 
