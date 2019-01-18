@@ -33,12 +33,12 @@ namespace TvService
 
     #region overrides
 
-    public override bool CheckTransponder(IUser user, ITvCardHandler tvcard, IChannel tuningDetail)
-    {
-      return true;
-    }
+//    public override bool CheckTransponder(IUser user, ITvCardHandler tvcard, IChannel tuningDetail)
+//    {
+//      return true;
+//    }
 
-    public override bool CheckTransponder(IUser user, ITvCardHandler tvcard, IChannel tuningDetail, bool kickTimeshift)
+    public override bool CheckTransponder(IUser user, ITvCardHandler tvcard, IChannel tuningDetail, int checkLevel)
     {
       return true;
     }

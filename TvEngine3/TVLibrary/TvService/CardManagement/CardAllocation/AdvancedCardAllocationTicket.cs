@@ -62,38 +62,85 @@ namespace TvService
       }
     }
 
+//    public IList<CardDetail> UpdateFreeCardsForChannelBasedOnTicket(ICollection<CardDetail> cardsAvailable, IUser user, out TvResult result)
+//    {
+//      var cardetails = new List<CardDetail>();
+//
+//      // first check if card can be added
+//      foreach (CardDetail cardDetail in cardsAvailable)
+//      {
+//        ICardTuneReservationTicket ticket = GetCardTuneReservationTicket(cardDetail.Card.IdCard);
+//
+//        if (ticket != null)
+//        {
+//          cardDetail.SameTransponder = ticket.IsSameTransponder;
+//          cardDetail.NumberOfOtherUsers = ticket.NumberOfOtherUsersOnCurrentCard;
+//          LogNumberOfOtherUsersFound(cardDetail);
+//          IDictionary<int, ITvCardHandler> cards = _controller.CardCollection;
+//          IChannel tuningDetail = cardDetail.TuningDetail;
+//          bool checkTransponder = CheckTransponder(user, cards[cardDetail.Card.IdCard], tuningDetail, false);
+//          if (checkTransponder)
+//          {
+//            cardetails.Add(cardDetail);
+//          }
+//        }
+//      }
+//
+//      // if not card available, we need to try to kick timeshifting card
+//      if (cardetails.Count == 0)
+//      {
+//        Log.Debug("Controller:    start a second check to find an available card");
+//        foreach (CardDetail cardDetail in cardsAvailable)
+//        {
+//          ICardTuneReservationTicket ticket = GetCardTuneReservationTicket(cardDetail.Card.IdCard);
+//
+//          if (ticket != null)
+//          {
+//            cardDetail.SameTransponder = ticket.IsSameTransponder;
+//            cardDetail.NumberOfOtherUsers = ticket.NumberOfOtherUsersOnCurrentCard;
+//            LogNumberOfOtherUsersFound(cardDetail);
+//            IDictionary<int, ITvCardHandler> cards = _controller.CardCollection;
+//            IChannel tuningDetail = cardDetail.TuningDetail;
+//            bool checkTransponder = CheckTransponder(user, cards[cardDetail.Card.IdCard], tuningDetail, true);
+//            if (checkTransponder)
+//            {
+//              cardetails.Add(cardDetail);
+//            }
+//          }
+//        }
+//      }
+//
+//      cardetails.SortStable();
+//
+//      if (cardetails.Count > 0)
+//      {
+//        result = TvResult.Succeeded;
+//      }
+//      else
+//      {
+//        result = cardsAvailable.Count == 0 ? TvResult.ChannelNotMappedToAnyCard : TvResult.AllCardsBusy;
+//      }
+//
+//      return cardetails;
+//    }
+
     public IList<CardDetail> UpdateFreeCardsForChannelBasedOnTicket(ICollection<CardDetail> cardsAvailable, IUser user, out TvResult result)
     {
-      var cardetails = new List<CardDetail>();
-
-      // first check if card can be added
-      foreach (CardDetail cardDetail in cardsAvailable)
+      if (LogEnabled)
       {
-        ICardTuneReservationTicket ticket = GetCardTuneReservationTicket(cardDetail.Card.IdCard);
-
-        if (ticket != null)
-        {
-          cardDetail.SameTransponder = ticket.IsSameTransponder;
-          cardDetail.NumberOfOtherUsers = ticket.NumberOfOtherUsersOnCurrentCard;
-          LogNumberOfOtherUsersFound(cardDetail);
-          IDictionary<int, ITvCardHandler> cards = _controller.CardCollection;
-          IChannel tuningDetail = cardDetail.TuningDetail;
-          bool checkTransponder = CheckTransponder(user, cards[cardDetail.Card.IdCard], tuningDetail, false);
-          if (checkTransponder)
-          {
-            cardetails.Add(cardDetail);
-          }
-        }
+        Log.Info("Controller: UpdateFreeCardsForChannelBasedOnTicket, user: {0}", user.Name);
       }
-
-      // if not card available, we need to try kick timeshifting card
-      if (cardetails.Count == 0)
+      
+      var cardetails = new List<CardDetail>();
+      
+      // first check if card can be added
+      // Try up to 3 times with increasing 'aggressiveness' about kicking off users 
+      for (int i = 0; i <= 2; i++)
       {
-        Log.Debug("start a second check to find an available card");
         foreach (CardDetail cardDetail in cardsAvailable)
         {
           ICardTuneReservationTicket ticket = GetCardTuneReservationTicket(cardDetail.Card.IdCard);
-
+  
           if (ticket != null)
           {
             cardDetail.SameTransponder = ticket.IsSameTransponder;
@@ -101,12 +148,18 @@ namespace TvService
             LogNumberOfOtherUsersFound(cardDetail);
             IDictionary<int, ITvCardHandler> cards = _controller.CardCollection;
             IChannel tuningDetail = cardDetail.TuningDetail;
-            bool checkTransponder = CheckTransponder(user, cards[cardDetail.Card.IdCard], tuningDetail, true);
+            bool checkTransponder = CheckTransponder(user, cards[cardDetail.Card.IdCard], tuningDetail, i);
             if (checkTransponder)
             {
               cardetails.Add(cardDetail);
             }
           }
+        }
+        
+        if (cardetails.Count > 0)
+        {
+          //Found an available tuner
+          break;
         }
       }
 
@@ -119,6 +172,10 @@ namespace TvService
       else
       {
         result = cardsAvailable.Count == 0 ? TvResult.ChannelNotMappedToAnyCard : TvResult.AllCardsBusy;
+      }
+      if (LogEnabled)
+      {
+        Log.Info("Controller: UpdateFreeCardsForChannelBasedOnTicket found {0} free card(s)", cardetails.Count);
       }
 
       return cardetails;

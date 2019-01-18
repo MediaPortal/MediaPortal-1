@@ -132,133 +132,144 @@ namespace TvService
       return isValid;
     }
 
-    public virtual bool CheckTransponder(IUser user, ITvCardHandler tvcard, IChannel tuningDetail)
-    {
-      int decryptLimit = tvcard.DataBaseCard.DecryptLimit;
-      int cardId = tvcard.DataBaseCard.IdCard;
+//    public virtual bool CheckTransponder(IUser user, ITvCardHandler tvcard, IChannel tuningDetail)
+//    {
+//      int decryptLimit = tvcard.DataBaseCard.DecryptLimit;
+//      int cardId = tvcard.DataBaseCard.IdCard;
+//
+//      bool checkTransponder = true;
+//      bool isOwnerOfCard = IsOwnerOfCard(tvcard, user);
+//
+//      //TODO: Being card owner you can do whatever you want, but in case of decryptlimit that could mean kicking users. This is not handled in the code.
+//      // WIP code to handle it by using the second check on CheckTransponder
+//      if (isOwnerOfCard)
+//      {
+//        if (LogEnabled)
+//        {
+//          Log.Info("Controller:    card:{0} type:{1} is available", cardId, tvcard.Type);
+//        }
+//      }
+//      else
+//      {
+//        bool isSameTransponder = IsSameTransponder(tvcard, tuningDetail);
+//        if (isSameTransponder)
+//        {
+//          //card is in use, but it is tuned to the same transponder.
+//          //meaning.. we can use it.          
+//          //if the channel is encrypted check cam decrypt limit.
+//          if (!tuningDetail.FreeToAir)
+//          {
+//            //but we must check if cam can decode the extra channel as well
+//            //first check if cam is already decrypting this channel          
+//            bool canDecrypt = false;
+//            bool isCamAlreadyDecodingChannel = IsCamAlreadyDecodingChannel(tvcard, tuningDetail);
+//
+//            if (!isCamAlreadyDecodingChannel)
+//            {
+//              //check if cam is capable of descrambling an extra channel                            
+//              bool isCamAbleToDecrypChannel = IsCamAbleToDecryptChannel(user, tvcard, tuningDetail, decryptLimit);
+//              if (isCamAbleToDecrypChannel)
+//              {
+//                canDecrypt = true;
+//              }
+//            }
+//            else
+//            {
+//              canDecrypt = true;
+//            }
+//
+//            if (canDecrypt)
+//            {
+//              if (decryptLimit > 0)
+//              {
+//                if (LogEnabled)
+//                {
+//                  Log.Info(
+//                    "Controller:    card:{0} type:{1} is available, tuned to same transponder decrypting {2}/{3} channels",
+//                    cardId, tvcard.Type, NumberOfChannelsDecrypting(tvcard), decryptLimit);
+//                }
+//              }
+//              else
+//              {
+//                if (LogEnabled)
+//                {
+//                  Log.Info(
+//                    "Controller:    card:{0} type:{1} is available, tuned to same transponder",
+//                    cardId, tvcard.Type);
+//                }
+//              }
+//            }
+//            else
+//            {
+//              //it is not, skip this card
+//              if (LogEnabled)
+//              {
+//                Log.Info(
+//                  "Controller:    card:{0} type:{1} is not available, tuned to same transponder decrypting {2}/{3} channels (cam limit reached)",
+//                  cardId, tvcard.Type, NumberOfChannelsDecrypting(tvcard), decryptLimit);
+//              }
+//              checkTransponder = false;
+//            }
+//          }
+//        }
+//        else
+//        {
+//          if (LogEnabled)
+//          {
+//            Log.Info("Controller:    card:{0} type:{1} is not available, tuned to different transponder",
+//                     cardId, tvcard.Type);
+//          }
+//          checkTransponder = false;
+//        }
+//      }
+//      return checkTransponder;
+//    }
 
+    public virtual bool CheckTransponder(IUser user, ITvCardHandler tvcard, IChannel tuningDetail, int checkLevel)
+    {
+      int cardId = tvcard.DataBaseCard.IdCard;
       bool checkTransponder = true;
       bool isOwnerOfCard = IsOwnerOfCard(tvcard, user);
-
-      //TODO: Being card owner you can do whatever you want, but in case of decryptlimit that could mean kicking users. This is not handled in the code.
-      // WIP code to handle it by using the second check on CheckTransponder
-      if (isOwnerOfCard)
-      {
-        if (LogEnabled)
-        {
-          Log.Info("Controller:    card:{0} type:{1} is available", cardId, tvcard.Type);
-        }
-      }
-      else
-      {
-        bool isSameTransponder = IsSameTransponder(tvcard, tuningDetail);
-        if (isSameTransponder)
-        {
-          //card is in use, but it is tuned to the same transponder.
-          //meaning.. we can use it.          
-          //if the channel is encrypted check cam decrypt limit.
-          if (!tuningDetail.FreeToAir)
-          {
-            //but we must check if cam can decode the extra channel as well
-            //first check if cam is already decrypting this channel          
-            bool canDecrypt = false;
-            bool isCamAlreadyDecodingChannel = IsCamAlreadyDecodingChannel(tvcard, tuningDetail);
-
-            if (!isCamAlreadyDecodingChannel)
-            {
-              //check if cam is capable of descrambling an extra channel                            
-              bool isCamAbleToDecrypChannel = IsCamAbleToDecryptChannel(user, tvcard, tuningDetail, decryptLimit);
-              if (isCamAbleToDecrypChannel)
-              {
-                canDecrypt = true;
-              }
-            }
-            else
-            {
-              canDecrypt = true;
-            }
-
-            if (canDecrypt)
-            {
-              if (decryptLimit > 0)
-              {
-                if (LogEnabled)
-                {
-                  Log.Info(
-                    "Controller:    card:{0} type:{1} is available, tuned to same transponder decrypting {2}/{3} channels",
-                    cardId, tvcard.Type, NumberOfChannelsDecrypting(tvcard), decryptLimit);
-                }
-              }
-              else
-              {
-                if (LogEnabled)
-                {
-                  Log.Info(
-                    "Controller:    card:{0} type:{1} is available, tuned to same transponder",
-                    cardId, tvcard.Type);
-                }
-              }
-            }
-            else
-            {
-              //it is not, skip this card
-              if (LogEnabled)
-              {
-                Log.Info(
-                  "Controller:    card:{0} type:{1} is not available, tuned to same transponder decrypting {2}/{3} channels (cam limit reached)",
-                  cardId, tvcard.Type, NumberOfChannelsDecrypting(tvcard), decryptLimit);
-              }
-              checkTransponder = false;
-            }
-          }
-        }
-        else
-        {
-          if (LogEnabled)
-          {
-            Log.Info("Controller:    card:{0} type:{1} is not available, tuned to different transponder",
-                     cardId, tvcard.Type);
-          }
-          checkTransponder = false;
-        }
-      }
-      return checkTransponder;
-    }
-
-    public virtual bool CheckTransponder(IUser user, ITvCardHandler tvcard, IChannel tuningDetail, bool kickTimeshift)
-    {
-      int decryptLimit = tvcard.DataBaseCard.DecryptLimit;
-      int cardId = tvcard.DataBaseCard.IdCard;
-      bool checkTransponder = true;
-      bool isOwnerOfCard = IsOwnerOfCard(tvcard, user);
-      bool isSameTransponder = IsSameTransponder(tvcard, tuningDetail);
-      bool checkCanDecrypt = false;
-
+      
       //WIP code to be able to handle card owner you can do whatever you want, but in case of decryptlimit that could mean kicking users.
-      if (isOwnerOfCard && !kickTimeshift)
-      {
-        if (isSameTransponder)
+
+      if (checkLevel == 1)
+      {      
+        //Check if current user of tuner is null or epg grabber (which can be kicked off)
+        string userName = user.Name;      
+        user.Name = "epg";
+        isOwnerOfCard = IsOwnerOfCard(tvcard, user);
+        user.Name = userName;
+      }
+      
+      if (checkLevel > 0)
+      {      
+        if (isOwnerOfCard)
         {
-          checkCanDecrypt = true;
-        }
-        else
-        {
+          //The owner can do whatever they want, including kicking off current user,
+          //so return transponder as 'available'
           if (LogEnabled)
           {
-            Log.Info("Controller:    card:{0} type:{1} is available", cardId, tvcard.Type);
+            Log.Info("Controller:     checkLevel:{0}, card:{1} type:{2} is available, requesting user:{3}",
+                     checkLevel, cardId, tvcard.Type, user.Name);
           }
           return true;
         }
-      }
-      else if (isOwnerOfCard)
-      {
-        if (LogEnabled)
+        else if (checkLevel < 3)
         {
-          Log.Info("Controller:    card:{0} type:{1} is available", cardId, tvcard.Type);
+          if (LogEnabled)
+          {
+            Log.Debug("Controller:    checkLevel:{0}, card:{1} type:{2} is not available, could not kick current owner, requesting user:{3}",
+                     checkLevel, cardId, tvcard.Type, user.Name);
+          }
+          return false;
         }
-        return true;
       }
-      if (checkCanDecrypt || isSameTransponder)
+
+      //We are on checkLevel 0 or 3, so check if we can create a sub-channel on same transponder
+      bool isSameTransponder = IsSameTransponder(tvcard, tuningDetail); //Check if already tuned to transponder and it supports sub-channels
+      int decryptLimit = tvcard.DataBaseCard.DecryptLimit;
+      if (isSameTransponder)
       {
         //card is in use, but it is tuned to the same transponder.
         //meaning.. we can use it.
@@ -291,8 +302,8 @@ namespace TvService
               if (LogEnabled)
               {
                 Log.Info(
-                  "Controller:    card:{0} type:{1} is available, tuned to same transponder decrypting {2}/{3} channels",
-                  cardId, tvcard.Type, NumberOfChannelsDecrypting(tvcard), decryptLimit);
+                  "Controller:    checkLevel:{0}, card:{1} type:{2} is available, tuned to same transponder decrypting {3}/{4} channels, requesting user:{5}",
+                  checkLevel, cardId, tvcard.Type, NumberOfChannelsDecrypting(tvcard), decryptLimit, user.Name);
               }
             }
             else
@@ -300,8 +311,8 @@ namespace TvService
               if (LogEnabled)
               {
                 Log.Info(
-                  "Controller:    card:{0} type:{1} is available, tuned to same transponder",
-                  cardId, tvcard.Type);
+                  "Controller:    checkLevel:{0}, card:{1} type:{2} is available, tuned to same transponder, can decrypt, requesting user:{3}",
+                  checkLevel, cardId, tvcard.Type, user.Name);
               }
             }
           }
@@ -310,11 +321,20 @@ namespace TvService
             //it is not, skip this card
             if (LogEnabled)
             {
-              Log.Info(
-                "Controller:    card:{0} type:{1} is not available, tuned to same transponder decrypting {2}/{3} channels (cam limit reached)",
-                cardId, tvcard.Type, NumberOfChannelsDecrypting(tvcard), decryptLimit);
+              Log.Debug(
+                "Controller:    checkLevel:{0}, card:{1} type:{2} is not available, tuned to same transponder decrypting {3}/{4} channels (cam limit reached), requesting user:{5}",
+                checkLevel, cardId, tvcard.Type, NumberOfChannelsDecrypting(tvcard), decryptLimit, user.Name);
             }
             checkTransponder = false;
+          }
+        }
+        else
+        {
+          if (LogEnabled)
+          {
+            Log.Info(
+              "Controller:    checkLevel:{0}, card:{1} type:{2} is available, tuned to same transponder, requesting user:{3}",
+              checkLevel, cardId, tvcard.Type, user.Name);
           }
         }
       }
@@ -322,8 +342,8 @@ namespace TvService
       {
         if (LogEnabled)
         {
-          Log.Info("Controller:    card:{0} type:{1} is not available, tuned to different transponder or schedule is running",
-                   cardId, tvcard.Type);
+          Log.Debug("Controller:    checkLevel:{0}, card:{1} type:{2} tuned to different transponder or sub-channels not supported, requesting user:{3}",
+                   checkLevel, cardId, tvcard.Type, user.Name);
         }
         checkTransponder = false;
       }
