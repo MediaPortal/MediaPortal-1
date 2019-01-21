@@ -1373,16 +1373,17 @@ namespace TvService
 
       if (canKickAllUsersOnTransponder)
       {
-        for (int i = 0; i < ticket.TimeshiftingUsers.Count; i++)
+        // for (int i = 0; i < ticket.TimeshiftingUsers.Count; i++)
+        if (ticket.TimeshiftingUsers.Count > 0)
         {
-          IUser timeshiftingUser = ticket.TimeshiftingUsers[i];
+          IUser timeshiftingUser = ticket.TimeshiftingUsers[0];
           Log.Write(
             "Scheduler : card is tuned to the same transponder but not free. record on card:{0} priority:{1}, kicking user:{2}",
             cardDetail.Id, cardDetail.Card.Priority, timeshiftingUser.Name);
           _tvController.StopTimeShifting(ref timeshiftingUser, TvStoppedReason.RecordingStarted);
 
           cardInfo = cardDetail;
-          break;
+          //break;
         }
       }
     }

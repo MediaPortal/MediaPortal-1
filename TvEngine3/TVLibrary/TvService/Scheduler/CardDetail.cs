@@ -56,7 +56,7 @@ namespace TvService
     private readonly int _priority;
     private bool _sameTransponder;
     private int _numberOfOtherUsers;
-    private long? _channelTimeshiftingOnOtherMux;
+    //private long? _channelTimeshiftingOnOtherMux;
     private readonly long _frequency = -1;
 
     /// <summary>
@@ -150,41 +150,92 @@ namespace TvService
 
     #region IComparable<CardInfo> Members
 
-    // higher priority means that this one should be more to the front of the list
+    /// <summary>
+    /// Compare two CardDetails.
+    /// </summary>
+    /// <remarks>
+    /// The preferred CardDetail is the one that should be tried earliest when tuning.
+    /// If this function is used to sort a list, the most preferred CardDetail
+    /// will be the first in the list.
+    /// A return value of -1 => move towards the front of the list
+    /// A return value of +1 => move towards the back of the list
+    /// A return value of  0 => don't change the order
+    /// </remarks>
     public int CompareTo(CardDetail other)
     {
-      if (SameTransponder == other.SameTransponder)
+      //Transponder status different, so favour 'same transponder' card
+      if (SameTransponder != other.SameTransponder)
       {
-        if (!SameTransponder && (NumberOfOtherUsers != other.NumberOfOtherUsers))
-        {
-          if (NumberOfOtherUsers > other.NumberOfOtherUsers)
-          {
-            return 1;
-          }
-          if (NumberOfOtherUsers < other.NumberOfOtherUsers)
-          {
-            return -1;
-          }
-          return 0;
-        }
-
-        if (Priority > other.Priority)
+        if (SameTransponder)
         {
           return -1;
         }
-        if (Priority < other.Priority)
-        {
-          return 1;
-        }
-        return 0;
+        return 1;
       }
-
-      if (SameTransponder)
+      //...else compare 'other user' counts...
+      //If 'SameTransponder', favour cards with more users to minimise tuner usage,
+      //else favour cards with fewer users to minimise users that may have to be 'kicked off'.
+      //This also means cards with zero users (free cards) move towards the front of the list.
+      //Note: 'epg' users are not included in 'NumberOfOtherUsers' since they can always be 'kicked off'.
+      if (NumberOfOtherUsers > other.NumberOfOtherUsers)
+      {
+        return (SameTransponder ? -1 : 1);
+      }
+      if (NumberOfOtherUsers < other.NumberOfOtherUsers)
+      {
+        return (SameTransponder ? 1 : -1);
+      }      
+      //...else compare the card priorities (favour the higher priority card)...
+      if (Priority > other.Priority)
       {
         return -1;
       }
-      return 1;
+      if (Priority < other.Priority)
+      {
+        return 1;
+      }      
+      return 0;
     }
+
+
+//    public int CompareTo(CardDetail other)
+//    {
+//      if (SameTransponder == other.SameTransponder)
+//      {
+//        //Transponder status the same
+//        if (!SameTransponder && (NumberOfOtherUsers != other.NumberOfOtherUsers))
+//        {
+//          //Not on same transponder, so favour cards with fewer users
+//          //to minimise number of users that might have to be kicked off
+//          if (NumberOfOtherUsers > other.NumberOfOtherUsers)
+//          {
+//            return 1;
+//          }
+//          if (NumberOfOtherUsers < other.NumberOfOtherUsers)
+//          {
+//            return -1;
+//          }
+//          return 0;
+//        }
+//        //...else favour higher priority card
+//        if (Priority > other.Priority)
+//        {
+//          return -1;
+//        }
+//        if (Priority < other.Priority)
+//        {
+//          return 1;
+//        }
+//        return 0;
+//      }
+//
+//      //Transponder status different, so favour 'same transponder' card
+//      if (SameTransponder)
+//      {
+//        return -1;
+//      }
+//      return 1;
+//    }
 
     #endregion
   }

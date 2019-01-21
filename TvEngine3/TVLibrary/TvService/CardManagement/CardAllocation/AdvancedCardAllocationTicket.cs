@@ -134,35 +134,35 @@ namespace TvService
       var cardetails = new List<CardDetail>();
       
       // first check if card can be added
-      // Try up to 3 times with increasing 'aggressiveness' about kicking off users 
-      for (int i = 0; i <= 2; i++)
+      foreach (CardDetail cardDetail in cardsAvailable)
       {
-        foreach (CardDetail cardDetail in cardsAvailable)
+        ICardTuneReservationTicket ticket = GetCardTuneReservationTicket(cardDetail.Card.IdCard);
+
+        if (ticket != null)
         {
-          ICardTuneReservationTicket ticket = GetCardTuneReservationTicket(cardDetail.Card.IdCard);
-  
-          if (ticket != null)
+          cardDetail.SameTransponder = ticket.IsSameTransponder;
+          cardDetail.NumberOfOtherUsers = ticket.NumberOfOtherUsersOnCurrentCard;
+          LogNumberOfOtherUsersFound(cardDetail);
+          IDictionary<int, ITvCardHandler> cards = _controller.CardCollection;
+          IChannel tuningDetail = cardDetail.TuningDetail;
+          
+          for (int i = 0; i <= 2; i++)
           {
-            cardDetail.SameTransponder = ticket.IsSameTransponder;
-            cardDetail.NumberOfOtherUsers = ticket.NumberOfOtherUsersOnCurrentCard;
-            LogNumberOfOtherUsersFound(cardDetail);
-            IDictionary<int, ITvCardHandler> cards = _controller.CardCollection;
-            IChannel tuningDetail = cardDetail.TuningDetail;
+            // Try up to 3 times with increasing user priority level 
             bool checkTransponder = CheckTransponder(user, cards[cardDetail.Card.IdCard], tuningDetail, i);
-            if (checkTransponder)
+            if (i == 0)
             {
-              cardetails.Add(cardDetail);
+              cardDetail.SameTransponder = checkTransponder;
             }
-          }
-        }
-        
-        if (cardetails.Count > 0)
-        {
-          //Found an available tuner
-          break;
+            if (checkTransponder)                                                                     
+            {                                                                                         
+              cardetails.Add(cardDetail);
+              break;                                                         
+            }     
+          }                                                                                              
         }
       }
-
+      //Sort the list so that the 'most preferred' Card Details are at the front (see 'CardDetail.cs' for sort order)
       cardetails.SortStable();
 
       if (cardetails.Count > 0)

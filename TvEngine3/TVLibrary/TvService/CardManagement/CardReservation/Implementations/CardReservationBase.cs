@@ -231,13 +231,6 @@ namespace TvService
           tvcard.Tuner.CardTuneState = CardTuneState.TunePending;            
           bool isTunedToTransponder = IsTunedToTransponder(tvcard, tuningDetail);
 
-          /*if (isTunedToTransponder)
-          {
-           // no point here, as we dont check the bool return value ???
-            CheckTransponder(tvcard, tuningDetail, user);
-          }*/
-          long? channelTimeshiftingOnOtherMux;
-
           int ownerSubchannel = -1;
           int numberOfUsersOnSameCurrentChannel = 0;
           int numberOfOtherUsersOnSameChannel = 0;

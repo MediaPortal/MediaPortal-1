@@ -112,57 +112,45 @@ namespace TvService
         //Log.Info("GetFreeCardsForChannel st {0}", Environment.StackTrace);
         //construct list of all cards we can use to tune to the new channel
         Log.Debug("Controller: GetFreeCardsForChannel {0}", dbChannel.DisplayName);
-        var cardsAvailable = new List<CardDetail>();
+        var cardsFree = new List<CardDetail>();
 
         IDictionary<int, TvResult> cardsUnAvailable;
         List<CardDetail> cardDetails = GetAvailableCardsForChannel(cards, dbChannel, ref user, out cardsUnAvailable);
         
-//        foreach (CardDetail cardDetail in cardDetails)
-//        {
-//          ITvCardHandler tvCardHandler = cards[cardDetail.Card.IdCard];
-//          bool checkTransponder = CheckTransponder(user, tvCardHandler, cardDetail.TuningDetail);
-//          if (checkTransponder)
-//          {
-//            cardsAvailable.Add(cardDetail);
-//          }
-//        }
-
-        // Try up to 3 times with increasing 'aggressiveness' about kicking off users 
-        for (int i = 0; i <= 2; i++)
-        {
-          foreach (CardDetail cardDetail in cardDetails)                                              
-          {                                                                                           
-            ITvCardHandler tvCardHandler = cards[cardDetail.Card.IdCard];                             
+        foreach (CardDetail cardDetail in cardDetails)                                              
+        {                                                                                           
+          ITvCardHandler tvCardHandler = cards[cardDetail.Card.IdCard];                                       
+          for (int i = 0; i <= 2; i++)
+          {
+            // Try up to 3 times with increasing user priority level  
             bool checkTransponder = CheckTransponder(user, tvCardHandler, cardDetail.TuningDetail, i);   
+            if (i == 0)
+            {
+              cardDetail.SameTransponder = checkTransponder;
+            }
             if (checkTransponder)                                                                     
             {                                                                                         
-              cardsAvailable.Add(cardDetail);                                                         
-            }                                                                                         
-          }                                                                                           
-          
-          if (cardsAvailable.Count > 0)
-          {
-            //Found an available tuner
-            break;
-          }
-        }
+              cardsFree.Add(cardDetail);
+              break;                                                         
+            }     
+          }                                                                                    
+        }                                                                                                     
 
-        //sort cards
-        cardsAvailable.SortStable();
+        //Sort the list so that the 'most preferred' Card Details are at the front (see 'CardDetail.cs' for sort order)
+        cardsFree.SortStable();
 
-        if (cardsAvailable.Count > 0)
+        if (cardsFree.Count > 0)
         {
           result = TvResult.Succeeded;
         }
         else
         {
-          // TvResult resultNoCards = GetResultNoCards(cardsUnAvailable);
-          // result = cardDetails.Count == 0 ? resultNoCards : TvResult.AllCardsBusy;
-          result = cardDetails.Count == 0 ? TvResult.ChannelNotMappedToAnyCard : TvResult.AllCardsBusy;
+          TvResult resultNoCards = GetResultNoCards(cardsUnAvailable);
+          result = cardDetails.Count == 0 ? resultNoCards : TvResult.AllCardsBusy;
         }
-        Log.Debug("Controller: GetFreeCardsForChannel found {0} free card(s)", cardsAvailable.Count);
+        Log.Debug("Controller: GetFreeCardsForChannel found {0} free card(s)", cardsFree.Count);
 
-        return cardsAvailable;
+        return cardsFree;
       }
       catch (Exception ex)
       {
@@ -213,7 +201,8 @@ namespace TvService
       cardsUnAvailable = new Dictionary<int, TvResult>();
       try
       {
-        //Log.Info("GetFreeCardsForChannel st {0}", Environment.StackTrace);
+        Log.Debug("Controller: GetAvailableCardsForChannel {0}", dbChannel.DisplayName);
+        //Log.Info("GetAvailableCardsForChannel st {0}", Environment.StackTrace);
         //construct list of all cards we can use to tune to the new channel
         var cardsAvailable = new List<CardDetail>();        
         if (LogEnabled)
@@ -273,13 +262,14 @@ namespace TvService
             }
 
             //ok card could be used to tune to this channel
+            //Check if card is currently tuned to same transponder
             bool isSameTransponder = IsSameTransponder(cardHandler, tuningDetail);
             if (LogEnabled)
             {
               Log.Info("Controller:    card:{0} type:{1} can tune to channel", cardId, cardHandler.Type);
             }            
             int nrOfOtherUsers = NumberOfOtherUsersOnCurrentCard(cardHandler, user);
-            long? channelTimeshiftingOnOtherMux;
+            //long? channelTimeshiftingOnOtherMux;
             var cardInfo = new CardDetail(cardId, cardHandler.DataBaseCard, tuningDetail, isSameTransponder, nrOfOtherUsers);
             cardsAvailable.Add(cardInfo);
           }
