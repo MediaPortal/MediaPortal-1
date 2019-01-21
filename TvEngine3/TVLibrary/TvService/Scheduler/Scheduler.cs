@@ -1330,19 +1330,15 @@ namespace TvService
     private void KickAllUsersOnTransponder(CardDetail cardDetail, ICardTuneReservationTicket ticket) 
     {
       Log.Write(
-        "Scheduler : card is not tuned to the same transponder and not recording, kicking all users. record on card:{0} priority:{1}",
+        "Scheduler : card is not tuned to the same transponder and not recording, kicking all timeshifting users on card:{0} priority:{1}",
         cardDetail.Id, cardDetail.Card.Priority);
       for (int i = 0; i < ticket.TimeshiftingUsers.Count; i++ )
       {
         IUser timeshiftingUser = ticket.TimeshiftingUsers[i];
         Log.Write(
-          "Scheduler : kicking user:{0}",
+          "Scheduler : kicking timeshifting user:{0}",
           timeshiftingUser.Name);
         _tvController.StopTimeShifting(ref timeshiftingUser, TvStoppedReason.RecordingStarted);
-
-        Log.Write(
-          "Scheduler : card is tuned to the same transponder but not free. record on card:{0} priority:{1}, kicking user:{2}",
-          cardDetail.Id, cardDetail.Card.Priority, timeshiftingUser.Name);
       }
     }
 
@@ -1373,17 +1369,29 @@ namespace TvService
 
       if (canKickAllUsersOnTransponder)
       {
-        // for (int i = 0; i < ticket.TimeshiftingUsers.Count; i++)
+        //First try to find a CAM user to kick off
+        for (int i = 0; i < ticket.TimeshiftingUsers.Count; i++)
+        {
+          IUser timeshiftingUser = ticket.TimeshiftingUsers[i];
+          if (!timeshiftingUser.IsFreeToAir)
+          {
+            Log.Write(
+              "Scheduler : card is tuned to the same transponder but not free to record on card:{0} priority:{1}, kicking timeshifting CAM user:{2}",
+              cardDetail.Id, cardDetail.Card.Priority, timeshiftingUser.Name);
+            _tvController.StopTimeShifting(ref timeshiftingUser, TvStoppedReason.RecordingStarted);
+            cardInfo = cardDetail;
+            return;
+          }
+        }
+        //...else just kick off the a timeshift user
         if (ticket.TimeshiftingUsers.Count > 0)
         {
           IUser timeshiftingUser = ticket.TimeshiftingUsers[0];
           Log.Write(
-            "Scheduler : card is tuned to the same transponder but not free. record on card:{0} priority:{1}, kicking user:{2}",
+            "Scheduler : card is tuned to the same transponder but not free to record on card:{0} priority:{1}, kicking timeshifting free-to-air user:{2}",
             cardDetail.Id, cardDetail.Card.Priority, timeshiftingUser.Name);
           _tvController.StopTimeShifting(ref timeshiftingUser, TvStoppedReason.RecordingStarted);
-
           cardInfo = cardDetail;
-          //break;
         }
       }
     }

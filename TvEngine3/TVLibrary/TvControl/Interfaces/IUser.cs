@@ -78,6 +78,12 @@ namespace TvControl
     bool IsAdmin { get; set; }
 
     /// <summary>
+    /// Gets or sets a value indicating whether this instance is free-to-air.
+    /// </summary>
+    /// <value><c>true</c> if this instance is free-to-air; otherwise, <c>false</c>.</value>
+    bool IsFreeToAir { get; set; }
+
+    /// <summary>
     /// Gets or sets the history.
     /// </summary>
     /// <value>The history.</value>

@@ -153,6 +153,7 @@ namespace TvService
       {
         if (isTuningPending && ticketFound)
         {
+          user.IsFreeToAir = ticket.IsFreeToAir;
           Log.Debug("CardReservationBase: tvcard={0}, user={1}, dbChannel={2}, ticket={3}, tunestate={4}, stopstate={5}", tvcard.DataBaseCard.IdCard, user.Name, dbChannel.IdChannel, ticket.Id, tvcard.Tuner.CardTuneState, tvcard.Tuner.CardStopState);
           tvResult = tvcard.Tuner.CardTune(ref user, channel, dbChannel);
 
