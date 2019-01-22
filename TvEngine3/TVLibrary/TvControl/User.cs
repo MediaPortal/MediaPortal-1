@@ -244,6 +244,7 @@ namespace TvControl
       user._isAdmin = _isAdmin;
       user._cardId = _cardId;
       user._subChannel = _subChannel;
+      user._isFreeToAir = _isFreeToAir;
       user._idChannel = _idChannel;
       user._timeshiftStoppedReason = _timeshiftStoppedReason;
       user._priority = _priority;

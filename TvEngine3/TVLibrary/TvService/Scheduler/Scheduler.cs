@@ -1369,21 +1369,24 @@ namespace TvService
 
       if (canKickAllUsersOnTransponder)
       {
-        //First try to find a CAM user to kick off
-        for (int i = 0; i < ticket.TimeshiftingUsers.Count; i++)
+        if (!ticket.TuningDetail.FreeToAir)
         {
-          IUser timeshiftingUser = ticket.TimeshiftingUsers[i];
-          if (!timeshiftingUser.IsFreeToAir)
+          //Channel we are trying to tune is encrypted - find the oldest timeshifting CAM user to kick off
+          for (int i = 0; i < ticket.TimeshiftingUsers.Count; i++)
           {
-            Log.Write(
-              "Scheduler : card is tuned to the same transponder but not free to record on card:{0} priority:{1}, kicking timeshifting CAM user:{2}",
-              cardDetail.Id, cardDetail.Card.Priority, timeshiftingUser.Name);
-            _tvController.StopTimeShifting(ref timeshiftingUser, TvStoppedReason.RecordingStarted);
-            cardInfo = cardDetail;
-            return;
+            IUser timeshiftingUser = ticket.TimeshiftingUsers[i];
+            if (!timeshiftingUser.IsFreeToAir)
+            {
+              Log.Write(
+                "Scheduler : card is tuned to the same transponder but not free to record on card:{0} priority:{1}, kicking timeshifting CAM user:{2}",
+                cardDetail.Id, cardDetail.Card.Priority, timeshiftingUser.Name);
+              _tvController.StopTimeShifting(ref timeshiftingUser, TvStoppedReason.RecordingStarted);
+              cardInfo = cardDetail;
+              return;
+            }
           }
         }
-        //...else just kick off the a timeshift user
+        //...else just kick off the oldest timeshifting user
         if (ticket.TimeshiftingUsers.Count > 0)
         {
           IUser timeshiftingUser = ticket.TimeshiftingUsers[0];
