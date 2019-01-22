@@ -441,12 +441,6 @@ namespace TvService
       return isCamAlreadyDecodingChannel;
     }
 
-    /*private void CheckTransponder(ITvCardHandler tvcard, IChannel tuningDetail, TvBusinessLayer layer, IUser user)
-    {
-      var cardAlloc = new AdvancedCardAllocation(layer, _tvController);
-      cardAlloc.CheckTransponder(user, tvcard, tuningDetail);
-    }*/
-
     #endregion
 
     #region abstract members

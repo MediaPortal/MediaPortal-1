@@ -269,7 +269,6 @@ namespace TvService
               Log.Info("Controller:    card:{0} type:{1} can tune to channel", cardId, cardHandler.Type);
             }            
             int nrOfOtherUsers = NumberOfOtherUsersOnCurrentCard(cardHandler, user);
-            //long? channelTimeshiftingOnOtherMux;
             var cardInfo = new CardDetail(cardId, cardHandler.DataBaseCard, tuningDetail, isSameTransponder, nrOfOtherUsers);
             cardsAvailable.Add(cardInfo);
           }

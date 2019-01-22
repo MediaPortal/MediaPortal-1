@@ -186,7 +186,7 @@ namespace TvControl
     }
 
     /// <summary>
-    /// Gets or sets a value indicating whether this instance is free-to-air.
+    /// Gets or sets a value indicating whether this instance is admin.
     /// </summary>
     /// <value><c>true</c> if this instance is admin; otherwise, <c>false</c>.</value>
     public bool IsAdmin
@@ -195,6 +195,10 @@ namespace TvControl
       set { _isAdmin = value; }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether this instance is free-to-air.
+    /// </summary>
+    /// <value><c>true</c> if this instance is free-to-air; otherwise, <c>false</c>.</value>
     public bool IsFreeToAir
     {
       get { return _isFreeToAir; }

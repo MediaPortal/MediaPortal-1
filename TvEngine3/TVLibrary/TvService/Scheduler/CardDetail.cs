@@ -56,7 +56,6 @@ namespace TvService
     private readonly int _priority;
     private bool _sameTransponder;
     private int _numberOfOtherUsers;
-    //private long? _channelTimeshiftingOnOtherMux;
     private readonly long _frequency = -1;
 
     /// <summary>
@@ -196,46 +195,6 @@ namespace TvService
       }      
       return 0;
     }
-
-
-//    public int CompareTo(CardDetail other)
-//    {
-//      if (SameTransponder == other.SameTransponder)
-//      {
-//        //Transponder status the same
-//        if (!SameTransponder && (NumberOfOtherUsers != other.NumberOfOtherUsers))
-//        {
-//          //Not on same transponder, so favour cards with fewer users
-//          //to minimise number of users that might have to be kicked off
-//          if (NumberOfOtherUsers > other.NumberOfOtherUsers)
-//          {
-//            return 1;
-//          }
-//          if (NumberOfOtherUsers < other.NumberOfOtherUsers)
-//          {
-//            return -1;
-//          }
-//          return 0;
-//        }
-//        //...else favour higher priority card
-//        if (Priority > other.Priority)
-//        {
-//          return -1;
-//        }
-//        if (Priority < other.Priority)
-//        {
-//          return 1;
-//        }
-//        return 0;
-//      }
-//
-//      //Transponder status different, so favour 'same transponder' card
-//      if (SameTransponder)
-//      {
-//        return -1;
-//      }
-//      return 1;
-//    }
 
     #endregion
   }
