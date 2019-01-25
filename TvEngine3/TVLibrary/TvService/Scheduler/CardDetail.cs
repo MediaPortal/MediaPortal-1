@@ -55,6 +55,7 @@ namespace TvService
     private readonly IChannel _detail;
     private readonly int _priority;
     private bool _sameTransponder;
+    private bool _sameTranspCAMavail;
     private int _numberOfOtherUsers;
     private readonly long _frequency = -1;
 
@@ -70,6 +71,7 @@ namespace TvService
     public CardDetail(int id, Card card, IChannel detail, bool sameTransponder, int numberOfOtherUsers)
     {
       _sameTransponder = sameTransponder;
+      _sameTranspCAMavail = sameTransponder;
       _cardId = id;
       _card = card;
       _detail = detail;
@@ -132,6 +134,16 @@ namespace TvService
       get { return _sameTransponder; }
       set { _sameTransponder = value; }
     }
+    
+    
+    /// <summary>
+    /// returns if it is the same transponder with CAM slot available
+    /// </summary>
+    public bool SameTranspCAMavail
+    {
+      get { return _sameTranspCAMavail; }
+      set { _sameTranspCAMavail = value; }
+    }
 
     /// <summary>
     /// gets the number of other users
@@ -163,9 +175,9 @@ namespace TvService
     public int CompareTo(CardDetail other)
     {
       //Transponder status different, so favour 'same transponder' card
-      if (SameTransponder != other.SameTransponder)
+      if (SameTranspCAMavail != other.SameTranspCAMavail)
       {
-        if (SameTransponder)
+        if (SameTranspCAMavail)
         {
           return -1;
         }
@@ -178,11 +190,25 @@ namespace TvService
       //Note: 'epg' users are not included in 'NumberOfOtherUsers' since they can always be 'kicked off'.
       if (NumberOfOtherUsers > other.NumberOfOtherUsers)
       {
-        return (SameTransponder ? -1 : 1);
+        return (SameTranspCAMavail ? -1 : 1);
       }
       if (NumberOfOtherUsers < other.NumberOfOtherUsers)
       {
-        return (SameTransponder ? 1 : -1);
+        return (SameTranspCAMavail ? 1 : -1);
+      }     
+      //...else we have the same number of 'other users' so 
+      //look for 'CAM limited' same-transponder cards and 
+      //favour cards with more users to minimise tuner usage       
+      if (SameTransponder && !SameTranspCAMavail)
+      {
+        if (NumberOfOtherUsers > other.NumberOfOtherUsers)
+        {
+          return -1;
+        }
+        if (NumberOfOtherUsers < other.NumberOfOtherUsers)
+        {
+          return 1;
+        }     
       }      
       //...else compare the card priorities (favour the higher priority card)...
       if (Priority > other.Priority)

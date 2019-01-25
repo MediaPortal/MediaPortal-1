@@ -139,14 +139,13 @@ namespace TvService
       bool isOwnerOfCard = IsOwnerOfCard(tvcard, user);
       
       //WIP code to be able to handle card owner you can do whatever you want, but in case of decryptlimit that could mean kicking users.
-
+      
       if (checkLevel == 1)
       {      
-        //Check if current user of tuner is null or epg grabber (which can be kicked off)
-        string userName = user.Name;      
-        user.Name = "epg";
-        isOwnerOfCard = IsOwnerOfCard(tvcard, user);
-        user.Name = userName;
+        //Check if the only users of the card are the requesting user, epg grabber or none
+        //If so, the requesting user can become the 'owner' of the card without kicking other users
+        int otherUsersOnCard = NumberOfOtherUsersOnCard(tvcard, user);
+        isOwnerOfCard = (otherUsersOnCard > 0) ? false : true;
       }
       
       if (checkLevel > 0)
@@ -292,6 +291,18 @@ namespace TvService
     {
       return tvcard.Tuner.IsTunedToTransponder(tuningDetail) &&
              tvcard.SupportsSubChannels;
+    }
+
+    protected virtual int NumberOfOtherUsersOnCard(ITvCardHandler card, IUser user)
+    {
+      //determine how many other users are using this card
+      int nrOfOtherUsers = 0;
+      IUser[] users = card.Users.GetUsers();
+      if (users != null)
+      {
+        nrOfOtherUsers = users.Count(t => t.Name != user.Name && !t.Name.Equals("epg"));
+      }
+      return nrOfOtherUsers;
     }
 
     #endregion    

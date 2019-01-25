@@ -1025,8 +1025,8 @@ namespace TvService
       bool recSucceded = false;
       while (!recSucceded && tickets.Count > 0)
       {
-        List<CardDetail> freeCards = cards.Where(t => t.NumberOfOtherUsers == 0 || (t.NumberOfOtherUsers > 0 && t.SameTransponder)).ToList();
-        List<CardDetail> availCards = cards.Where(t => t.NumberOfOtherUsers > 0 && !t.SameTransponder).ToList();
+        List<CardDetail> freeCards = cards.Where(t => t.NumberOfOtherUsers == 0 || (t.NumberOfOtherUsers > 0 && t.SameTranspCAMavail)).ToList();
+        List<CardDetail> availCards = cards.Where(t => t.NumberOfOtherUsers > 0 && !t.SameTranspCAMavail).ToList();
 
         Log.Write("scheduler: try max {0} of {1} free cards for recording", maxCards, cards.Count);
         if (freeCards.Count > 0)

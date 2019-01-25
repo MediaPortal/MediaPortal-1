@@ -90,7 +90,7 @@ namespace TvService
             bool checkTransponder = CheckTransponder(user, cards[cardDetail.Card.IdCard], tuningDetail, i);
             if (i == 0)
             {
-              cardDetail.SameTransponder = checkTransponder;
+              cardDetail.SameTranspCAMavail = checkTransponder;
             }
             if (checkTransponder)                                                                     
             {                                                                                         
