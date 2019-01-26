@@ -73,9 +73,8 @@
       <Name>LibDriverCoreClient</Name>
       <HintPath>..\MediaPortal.Base\LibDriverCoreClient.dll</HintPath>
     </Reference>
-    <Reference Include="SharpLibDisplay, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\Packages\SharpLibDisplay.0.2.6\lib\net40\SharpLibDisplay.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="SharpLibDisplay, Version=0.2.8.23010, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\Packages\SharpLibDisplay.0.3.4\lib\net40\SharpLibDisplay.dll</HintPath>
     </Reference>
     <Reference Include="System">
       <Name>System</Name>

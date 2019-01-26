@@ -253,6 +253,7 @@ namespace MediaPortal.Player
     protected bool UseEVRMadVRForTV;
     protected bool UseMadVideoRenderer3D;
     protected bool UseEnhancedVideoRenderer;
+    protected bool NoAudioResetCheckBox;
     protected internal DateTime playbackTimer;
     protected internal DateTime PlaneSceneMadvrTimer = new DateTime(0);
     protected IVideoWindow videoWinMadVr;
@@ -889,6 +890,7 @@ namespace MediaPortal.Player
           UseEVRMadVRForTV = xmlreader.GetValueAsBool("general", "useEVRMadVRForTV", false);
           UseMadVideoRenderer3D = xmlreader.GetValueAsBool("general", "useMadVideoRenderer3D", false);
           UseEnhancedVideoRenderer = xmlreader.GetValueAsBool("general", "useEVRenderer", false);
+          NoAudioResetCheckBox = xmlreader.GetValueAsBool("audiodelay", "noaudioresetzero", false);
         }
         Log.Debug("VMR9: addvmr9 - thread : {0}", Thread.CurrentThread.Name);
         if (!_useVmr9)
@@ -1787,9 +1789,12 @@ namespace MediaPortal.Player
             DirectShowUtil.FindFilterByClassID(_graphBuilder, ClassId.LAVAudio, out baseFilterLavAudio);
             if (baseFilterLavAudio != null)
             {
-              ILAVAudioSettings asett = baseFilterLavAudio as ILAVAudioSettings;
-              asett?.SetAudioDelay(true, 0);
-              DirectShowUtil.ReleaseComObject(baseFilterLavAudio);
+              if (!NoAudioResetCheckBox)
+              {
+                ILAVAudioSettings asett = baseFilterLavAudio as ILAVAudioSettings;
+                asett?.SetAudioDelay(true, 0);
+                DirectShowUtil.ReleaseComObject(baseFilterLavAudio);
+              }
             }
           }
         }

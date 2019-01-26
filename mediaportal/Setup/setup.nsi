@@ -632,7 +632,7 @@ Section "MediaPortal core files (required)" SecCore
   File "${git_ROOT}\Packages\SharpLibWin32.0.0.9\lib\net20\SharpLibWin32.dll"
   ; SharpLibDisplay
   SetOutPath "$MPdir.Base\"
-  File "${git_ROOT}\Packages\SharpLibDisplay.0.2.6\lib\net40\SharpLibDisplay.dll"
+  File "${git_ROOT}\Packages\SharpLibDisplay.0.3.4\lib\net40\SharpLibDisplay.dll"
   ; Naudio
   File "${git_ROOT}\Packages\NAudio.1.8.3\lib\net35\NAudio.dll" 
   ; CSCore
