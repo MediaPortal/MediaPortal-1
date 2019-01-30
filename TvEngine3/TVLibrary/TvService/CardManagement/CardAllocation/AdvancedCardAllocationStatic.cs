@@ -35,7 +35,7 @@ namespace TvService
 
     public override bool CheckTransponder(IUser user, ITvCardHandler tvcard, IChannel tuningDetail, int checkLevel)
     {
-      return true;
+      return (checkLevel != 0);
     }
 
     protected override bool IsSameTransponder(ITvCardHandler tvcard, IChannel tuningDetail)

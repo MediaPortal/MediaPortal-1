@@ -69,7 +69,7 @@ namespace TvService
         Log.Info("Controller: UpdateFreeCardsForChannelBasedOnTicket, user: {0}", user.Name);
       }
       
-      var cardetails = new List<CardDetail>();
+      var cardsFree = new List<CardDetail>();
       
       // first check if card can be added
       foreach (CardDetail cardDetail in cardsAvailable)
@@ -94,16 +94,16 @@ namespace TvService
             }
             if (checkTransponder)                                                                     
             {                                                                                         
-              cardetails.Add(cardDetail);
+              cardsFree.Add(cardDetail);
               break;                                                         
             }     
           }                                                                                              
         }
       }
       //Sort the list so that the 'most preferred' Card Details are at the front (see 'CardDetail.cs' for sort order)
-      cardetails.SortStable();
+      cardsFree.SortStable();
 
-      if (cardetails.Count > 0)
+      if (cardsFree.Count > 0)
       {
         result = TvResult.Succeeded;
       }
@@ -113,10 +113,14 @@ namespace TvService
       }
       if (LogEnabled)
       {
-        Log.Info("Controller: UpdateFreeCardsForChannelBasedOnTicket found {0} free card(s)", cardetails.Count);
+        Log.Info("Controller: UpdateFreeCardsForChannelBasedOnTicket found {0} free card(s)", cardsFree.Count);
+        for (int i = 0; i < cardsFree.Count; i++)
+        {                                                                                           
+          Log.Debug("Controller: UpdateFreeCardsForChannelBasedOnTicket, free card:{0}, id:{1}, STCA:{2}, ST:{3}, PRI:{4}", i, cardsFree[i].Id, cardsFree[i].SameTranspCAMavail, cardsFree[i].SameTransponder, cardsFree[i].Priority);
+        }                                                                                                     
       }
 
-      return cardetails;
+      return cardsFree;
     }
 
     private ICardTuneReservationTicket GetCardTuneReservationTicket(int cardId)

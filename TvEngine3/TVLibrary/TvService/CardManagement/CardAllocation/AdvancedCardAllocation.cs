@@ -130,6 +130,7 @@ namespace TvService
             }
             if (checkTransponder)                                                                     
             {                                                                                         
+              Log.Debug("GetFreeCardsForChannel, add card, id:{0}, level:{1}, checkTransponder:{2}",cardDetail.Id, i, checkTransponder);
               cardsFree.Add(cardDetail);
               break;                                                         
             }     
@@ -149,6 +150,10 @@ namespace TvService
           result = cardDetails.Count == 0 ? resultNoCards : TvResult.AllCardsBusy;
         }
         Log.Debug("Controller: GetFreeCardsForChannel found {0} free card(s)", cardsFree.Count);
+        for (int i = 0; i < cardsFree.Count; i++)
+        {                                                                                           
+          Log.Debug("Controller: GetFreeCardsForChannel, free card:{0}, id:{1}, STCA:{2}, ST:{3}, PRI:{4}", i, cardsFree[i].Id, cardsFree[i].SameTranspCAMavail, cardsFree[i].SameTransponder, cardsFree[i].Priority);
+        }                                                                                                     
 
         return cardsFree;
       }

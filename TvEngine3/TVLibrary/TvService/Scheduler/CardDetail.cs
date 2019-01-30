@@ -128,21 +128,26 @@ namespace TvService
 
     /// <summary>
     /// returns if it is the same transponder
+    /// sets both _sameTransponder and _sameTranspCAMavail
     /// </summary>
     public bool SameTransponder
     {
       get { return _sameTransponder; }
-      set { _sameTransponder = value; }
+      set { 
+            _sameTransponder = value;
+            _sameTranspCAMavail = value;
+          }
     }
     
     
     /// <summary>
     /// returns if it is the same transponder with CAM slot available
+    /// This cannot be set 'true' if _sameTransponder is 'false'
     /// </summary>
     public bool SameTranspCAMavail
     {
       get { return _sameTranspCAMavail; }
-      set { _sameTranspCAMavail = value; }
+      set { _sameTranspCAMavail = _sameTransponder && value; }
     }
 
     /// <summary>

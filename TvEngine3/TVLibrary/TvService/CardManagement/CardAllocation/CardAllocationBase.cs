@@ -175,6 +175,7 @@ namespace TvService
       //We are on checkLevel 0 or 3, so check if we can create a sub-channel on same transponder
       bool isSameTransponder = IsSameTransponder(tvcard, tuningDetail); //Check if already tuned to transponder and it supports sub-channels
       int decryptLimit = tvcard.DataBaseCard.DecryptLimit;
+      Log.Debug("CheckTransponder: isSameTransponder:{0}, decryptLimit:{1}, checkLevel:{2}",isSameTransponder, decryptLimit, checkLevel);
       if (isSameTransponder)
       {
         //card is in use, but it is tuned to the same transponder.
