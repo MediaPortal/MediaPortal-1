@@ -111,12 +111,14 @@ namespace TvService
       {
         //Log.Info("GetFreeCardsForChannel st {0}", Environment.StackTrace);
         //construct list of all cards we can use to tune to the new channel
-        Log.Debug("Controller: GetFreeCardsForChannel {0}", dbChannel.DisplayName);
+        Log.Debug("AdvancedCardAllocation.GetFreeCardsForChannel {0}", dbChannel.DisplayName);
         var cardsFree = new List<CardDetail>();
 
         IDictionary<int, TvResult> cardsUnAvailable;
         List<CardDetail> cardDetails = GetAvailableCardsForChannel(cards, dbChannel, ref user, out cardsUnAvailable);
         
+        bool currLogEn = LogEnabled;
+        LogEnabled = false;
         foreach (CardDetail cardDetail in cardDetails)                                              
         {                                                                                           
           ITvCardHandler tvCardHandler = cards[cardDetail.Card.IdCard];                                       
@@ -130,12 +132,14 @@ namespace TvService
             }
             if (checkTransponder)                                                                     
             {                                                                                         
-              Log.Debug("GetFreeCardsForChannel, add card, id:{0}, level:{1}, checkTransponder:{2}",cardDetail.Id, i, checkTransponder);
+              //Log.Debug("GetFreeCardsForChannel, add card, id:{0}, level:{1}, checkTransponder:{2}",cardDetail.Id, i, checkTransponder);
+              cardDetail.TransponderCheckLevel = i;
               cardsFree.Add(cardDetail);
               break;                                                         
             }     
           }                                                                                    
         }                                                                                                     
+        LogEnabled = currLogEn;
 
         //Sort the list so that the 'most preferred' Card Details are at the front (see 'CardDetail.cs' for sort order)
         cardsFree.SortStable();
@@ -149,10 +153,12 @@ namespace TvService
           TvResult resultNoCards = GetResultNoCards(cardsUnAvailable);
           result = cardDetails.Count == 0 ? resultNoCards : TvResult.AllCardsBusy;
         }
-        Log.Debug("Controller: GetFreeCardsForChannel found {0} free card(s)", cardsFree.Count);
+        Log.Info("AdvancedCardAllocation: GetFreeCardsForChannel found {0} free card(s), channel: {1}, user:{2}", cardsFree.Count, dbChannel.DisplayName, user.Name);
         for (int i = 0; i < cardsFree.Count; i++)
         {                                                                                           
-          Log.Debug("Controller: GetFreeCardsForChannel, free card:{0}, id:{1}, STCA:{2}, ST:{3}, PRI:{4}", i, cardsFree[i].Id, cardsFree[i].SameTranspCAMavail, cardsFree[i].SameTransponder, cardsFree[i].Priority);
+          Log.Debug("AdvancedCardAllocation.GetFreeCardsForChannel, free card:{0}, id:{1}, STCA:{2}, ST:{3}, PRI:{4}, CL:{5}, NOU:{6}",
+                            i, cardsFree[i].Id, cardsFree[i].SameTranspCAMavail, cardsFree[i].SameTransponder, cardsFree[i].Priority,
+                            cardsFree[i].TransponderCheckLevel, cardsFree[i].NumberOfOtherUsers);
         }                                                                                                     
 
         return cardsFree;
@@ -166,7 +172,7 @@ namespace TvService
       finally
       {
         stopwatch.Stop();
-        Log.Info("AdvancedCardAllocation.GetFreeCardsForChannel took {0} msec", stopwatch.ElapsedMilliseconds);
+        Log.Debug("AdvancedCardAllocation.GetFreeCardsForChannel took {0} msec", stopwatch.ElapsedMilliseconds);
       }
     }
 

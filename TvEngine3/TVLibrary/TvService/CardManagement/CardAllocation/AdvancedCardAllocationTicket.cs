@@ -57,7 +57,7 @@ namespace TvService
         if (tvController != null)
         {
           ITvCardHandler card = tvController.CardCollection[cardDetail.Card.IdCard];
-          Log.Info("Controller:    card:{0} type:{1} users: {2}", cardDetail.Card.IdCard, card.Type, cardDetail.NumberOfOtherUsers);
+          Log.Info("AdvancedCardAllocationTicket.LogNumberOfOtherUsersFound: card:{0} type:{1} users: {2}", cardDetail.Card.IdCard, card.Type, cardDetail.NumberOfOtherUsers);
         }
       }
     }
@@ -66,12 +66,14 @@ namespace TvService
     {
       if (LogEnabled)
       {
-        Log.Info("Controller: UpdateFreeCardsForChannelBasedOnTicket, user: {0}", user.Name);
+        Log.Debug("AdvancedCardAllocationTicket.UpdateFreeCardsForChannelBasedOnTicket: user: {0}", user.Name);
       }
       
       var cardsFree = new List<CardDetail>();
       
       // first check if card can be added
+      bool currLogEn = LogEnabled;
+      LogEnabled = false;
       foreach (CardDetail cardDetail in cardsAvailable)
       {
         ICardTuneReservationTicket ticket = GetCardTuneReservationTicket(cardDetail.Card.IdCard);
@@ -94,12 +96,15 @@ namespace TvService
             }
             if (checkTransponder)                                                                     
             {                                                                                         
+              cardDetail.TransponderCheckLevel = i;
               cardsFree.Add(cardDetail);
               break;                                                         
             }     
           }                                                                                              
         }
       }
+      LogEnabled = currLogEn;
+
       //Sort the list so that the 'most preferred' Card Details are at the front (see 'CardDetail.cs' for sort order)
       cardsFree.SortStable();
 
@@ -113,10 +118,12 @@ namespace TvService
       }
       if (LogEnabled)
       {
-        Log.Info("Controller: UpdateFreeCardsForChannelBasedOnTicket found {0} free card(s)", cardsFree.Count);
+        Log.Info("AdvancedCardAllocationTicket.UpdateFreeCardsForChannelBasedOnTicket found {0} free card(s), user:{1}", cardsFree.Count, user.Name);
         for (int i = 0; i < cardsFree.Count; i++)
         {                                                                                           
-          Log.Debug("Controller: UpdateFreeCardsForChannelBasedOnTicket, free card:{0}, id:{1}, STCA:{2}, ST:{3}, PRI:{4}", i, cardsFree[i].Id, cardsFree[i].SameTranspCAMavail, cardsFree[i].SameTransponder, cardsFree[i].Priority);
+          Log.Debug("AdvancedCardAllocationTicket.UpdateFreeCardsForChannelBasedOnTicket, free card:{0}, id:{1}, STCA:{2}, ST:{3}, PRI:{4}, CL:{5}, NOU:{6}",
+                          i, cardsFree[i].Id, cardsFree[i].SameTranspCAMavail, cardsFree[i].SameTransponder, cardsFree[i].Priority, 
+                          cardsFree[i].TransponderCheckLevel, cardsFree[i].NumberOfOtherUsers);
         }                                                                                                     
       }
 

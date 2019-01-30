@@ -57,6 +57,7 @@ namespace TvService
     private bool _sameTransponder;
     private bool _sameTranspCAMavail;
     private int _numberOfOtherUsers;
+    private int _transponderCheckLevel = -1;    
     private readonly long _frequency = -1;
 
     /// <summary>
@@ -77,6 +78,7 @@ namespace TvService
       _detail = detail;
       _priority = _card.Priority;
       _numberOfOtherUsers = numberOfOtherUsers;
+      _transponderCheckLevel = -1;
 
       var dvbTuningDetail = detail as DVBBaseChannel;
       if (dvbTuningDetail != null)
@@ -158,6 +160,15 @@ namespace TvService
       get { return _numberOfOtherUsers; }
       set { _numberOfOtherUsers = value; }
     }
+    
+    /// <summary>
+    /// gets/sets the transponder 'check level'
+    /// </summary>
+    public int TransponderCheckLevel
+    {
+      get { return _transponderCheckLevel; }
+      set { _transponderCheckLevel = value; }
+    }    
 
     public long Frequency
     {

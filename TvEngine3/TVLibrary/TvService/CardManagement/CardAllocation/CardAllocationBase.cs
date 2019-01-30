@@ -156,7 +156,7 @@ namespace TvService
           //so return transponder as 'available'
           if (LogEnabled)
           {
-            Log.Info("Controller:     checkLevel:{0}, card:{1} type:{2} is available, requesting user:{3}",
+            Log.Debug("CheckTransponder:  checkLevel:{0}, card:{1} type:{2} is available, requesting user:{3}",
                      checkLevel, cardId, tvcard.Type, user.Name);
           }
           return true;
@@ -165,7 +165,7 @@ namespace TvService
         {
           if (LogEnabled)
           {
-            Log.Debug("Controller:    checkLevel:{0}, card:{1} type:{2} is not available, could not kick current owner, requesting user:{3}",
+            Log.Debug("CheckTransponder:  checkLevel:{0}, card:{1} type:{2} is not available, could not kick current owner, requesting user:{3}",
                      checkLevel, cardId, tvcard.Type, user.Name);
           }
           return false;
@@ -175,7 +175,6 @@ namespace TvService
       //We are on checkLevel 0 or 3, so check if we can create a sub-channel on same transponder
       bool isSameTransponder = IsSameTransponder(tvcard, tuningDetail); //Check if already tuned to transponder and it supports sub-channels
       int decryptLimit = tvcard.DataBaseCard.DecryptLimit;
-      Log.Debug("CheckTransponder: isSameTransponder:{0}, decryptLimit:{1}, checkLevel:{2}",isSameTransponder, decryptLimit, checkLevel);
       if (isSameTransponder)
       {
         //card is in use, but it is tuned to the same transponder.
@@ -208,8 +207,8 @@ namespace TvService
             {
               if (LogEnabled)
               {
-                Log.Info(
-                  "Controller:    checkLevel:{0}, card:{1} type:{2} is available, tuned to same transponder decrypting {3}/{4} channels, requesting user:{5}",
+                Log.Debug(
+                  "CheckTransponder:  checkLevel:{0}, card:{1} type:{2} is available, tuned to same transponder decrypting {3}/{4} channels, requesting user:{5}",
                   checkLevel, cardId, tvcard.Type, NumberOfChannelsDecrypting(tvcard), decryptLimit, user.Name);
               }
             }
@@ -217,8 +216,8 @@ namespace TvService
             {
               if (LogEnabled)
               {
-                Log.Info(
-                  "Controller:    checkLevel:{0}, card:{1} type:{2} is available, tuned to same transponder, can decrypt, requesting user:{3}",
+                Log.Debug(
+                  "CheckTransponder:  checkLevel:{0}, card:{1} type:{2} is available, tuned to same transponder, can decrypt, requesting user:{3}",
                   checkLevel, cardId, tvcard.Type, user.Name);
               }
             }
@@ -229,7 +228,7 @@ namespace TvService
             if (LogEnabled)
             {
               Log.Debug(
-                "Controller:    checkLevel:{0}, card:{1} type:{2} is not available, tuned to same transponder decrypting {3}/{4} channels (cam limit reached), requesting user:{5}",
+                "CheckTransponder:  checkLevel:{0}, card:{1} type:{2} is not available, tuned to same transponder decrypting {3}/{4} channels (cam limit reached), requesting user:{5}",
                 checkLevel, cardId, tvcard.Type, NumberOfChannelsDecrypting(tvcard), decryptLimit, user.Name);
             }
             checkTransponder = false;
@@ -239,8 +238,8 @@ namespace TvService
         {
           if (LogEnabled)
           {
-            Log.Info(
-              "Controller:    checkLevel:{0}, card:{1} type:{2} is available, tuned to same transponder, requesting user:{3}",
+            Log.Debug(
+              "CheckTransponder:  checkLevel:{0}, card:{1} type:{2} is available, tuned to same transponder, requesting user:{3}",
               checkLevel, cardId, tvcard.Type, user.Name);
           }
         }
@@ -249,7 +248,7 @@ namespace TvService
       {
         if (LogEnabled)
         {
-          Log.Debug("Controller:    checkLevel:{0}, card:{1} type:{2} tuned to different transponder or sub-channels not supported, requesting user:{3}",
+          Log.Debug("CheckTransponder:  checkLevel:{0}, card:{1} type:{2} tuned to different transponder or sub-channels not supported, requesting user:{3}",
                    checkLevel, cardId, tvcard.Type, user.Name);
         }
         checkTransponder = false;
