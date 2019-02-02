@@ -66,7 +66,7 @@ namespace TvService
     {
       if (LogEnabled)
       {
-        Log.Debug("AdvancedCardAllocationTicket.UpdateFreeCardsForChannelBasedOnTicket: user: {0}", user.Name);
+        Log.Debug("UpdateFreeCardsForChannelBasedOnTicket: user: {0}", user.Name);
       }
       
       var cardsFree = new List<CardDetail>();
@@ -118,10 +118,10 @@ namespace TvService
       }
       if (LogEnabled)
       {
-        Log.Info("AdvancedCardAllocationTicket.UpdateFreeCardsForChannelBasedOnTicket found {0} free card(s), user:{1}", cardsFree.Count, user.Name);
+        Log.Info("UpdateFreeCardsForChannelBasedOnTicket found {0} free card(s), user:{1}", cardsFree.Count, user.Name);
         for (int i = 0; i < cardsFree.Count; i++)
         {                                                                                           
-          Log.Debug("AdvancedCardAllocationTicket.UpdateFreeCardsForChannelBasedOnTicket, free card:{0}, id:{1}, STCA:{2}, ST:{3}, PRI:{4}, CL:{5}, NOU:{6}",
+          Log.Debug("UpdateFreeCardsForChannelBasedOnTicket, free card:{0}, id:{1}, STCA:{2}, ST:{3}, PRI:{4}, CL:{5}, NOU:{6}",
                           i, cardsFree[i].Id, cardsFree[i].SameTranspCAMavail, cardsFree[i].SameTransponder, cardsFree[i].Priority, 
                           cardsFree[i].TransponderCheckLevel, cardsFree[i].NumberOfOtherUsers);
         }                                                                                                     

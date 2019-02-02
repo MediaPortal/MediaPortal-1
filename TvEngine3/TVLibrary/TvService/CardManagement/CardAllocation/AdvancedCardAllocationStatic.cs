@@ -48,6 +48,11 @@ namespace TvService
       return 0;
     }   
 
+    protected override bool IsStatic()
+    {
+      return true;
+    }
+
     #endregion
   }
 }

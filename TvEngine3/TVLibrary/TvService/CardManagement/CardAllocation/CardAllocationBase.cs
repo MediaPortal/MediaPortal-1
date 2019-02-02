@@ -305,6 +305,11 @@ namespace TvService
       return nrOfOtherUsers;
     }
 
+    protected virtual bool IsStatic()
+    {
+      return false;
+    }
+
     #endregion    
   }
 }

@@ -154,7 +154,7 @@ namespace TvService
         if (isTuningPending && ticketFound)
         {
           user.IsFreeToAir = ticket.TuningDetail.FreeToAir;
-          Log.Debug("CardReservationBase: tvcard={0}, user={1}, dbChannel={2}, ticket={3}, tunestate={4}, stopstate={5}, ticketFTA={6}", tvcard.DataBaseCard.IdCard, user.Name, dbChannel.IdChannel, ticket.Id, tvcard.Tuner.CardTuneState, tvcard.Tuner.CardStopState, ticket.TuningDetail.FreeToAir);
+          Log.Debug("CardReservationBase.CardTune: tvcard={0}, user={1}, dbChannel={2}, ticket={3}, tunestate={4}, stopstate={5}, ticketFTA={6}", tvcard.DataBaseCard.IdCard, user.Name, dbChannel.IdChannel, ticket.Id, tvcard.Tuner.CardTuneState, tvcard.Tuner.CardStopState, ticket.TuningDetail.FreeToAir);
           tvResult = tvcard.Tuner.CardTune(ref user, channel, dbChannel);
 
           if (tvResult == TvResult.Succeeded)
@@ -374,17 +374,17 @@ namespace TvService
 
       if (cardTuneReservationTicket != null)
       {
-        Log.Debug("CardReservationBase.RequestCardTuneReservation: placed reservation with id={0}, tuningdetails={1}", cardTuneReservationTicket.Id, cardTuneReservationTicket.TuningDetail);
+        Log.Debug("RequestCardTuneReservation: placed reservation with id={0}, tuningdetails={1}", cardTuneReservationTicket.Id, cardTuneReservationTicket.TuningDetail);
       }
       else
       {
         if (ticketId > 0)
         {
-          Log.Debug("CardReservationBase.RequestCardTuneReservation: failed reservation tuningdetails={0}, res id blocking={1}, state={2}", tuningDetail, ticketId, cardTuneState);
+          Log.Debug("RequestCardTuneReservation: failed reservation tuningdetails={0}, res id blocking={1}, state={2}", tuningDetail, ticketId, cardTuneState);
         }
         else
         {
-          Log.Debug("CardReservationBase.RequestCardTuneReservation: failed reservation tuningdetails={0}, res id blocking={1}, state={2}", tuningDetail, "n/a", cardTuneState);          
+          Log.Debug("RequestCardTuneReservation: failed reservation tuningdetails={0}, res id blocking={1}, state={2}", tuningDetail, "n/a", cardTuneState);          
         }
       }              
       return cardTuneReservationTicket;
