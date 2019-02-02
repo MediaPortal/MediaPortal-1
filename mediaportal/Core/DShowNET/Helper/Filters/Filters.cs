@@ -73,6 +73,7 @@ namespace DShowNET.Helper
         Thread.CurrentThread.IsBackground = true;
         Thread.CurrentThread.Name = "FilterCollectionReload";
 
+        Thread.Sleep(500);
         Log.Debug($"Filter: FilterCollectionReload init");
         VideoInputDevices = new FilterCollection(FilterCategory.VideoInputDevice, true);
         AudioInputDevices = new FilterCollection(FilterCategory.AudioInputDevice, true);

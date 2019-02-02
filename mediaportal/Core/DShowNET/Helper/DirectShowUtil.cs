@@ -42,6 +42,7 @@ namespace DShowNET.Helper
   public class DirectShowUtil
   {
     private const int magicConstant = -759872593;
+    private static object audioLock = new object();
 
     static DirectShowUtil() {}
 
@@ -198,19 +199,32 @@ namespace DShowNET.Helper
 
         //check first if audio renderer exists!
         bool bRendererExists = false;
-        foreach (Filter filter in Filters.AudioRenderers)
+        lock (audioLock)
         {
-          Log.Debug("DirectShowUtil: List 'check if already exist' AddAudioRendererToGraph filter: {0} to graph for {1}", filter.Name, strFilterName);
-          if (String.Compare(filter.Name, strFilterName, StringComparison.OrdinalIgnoreCase) == 0)
+          foreach (Filter filter in Filters.AudioRenderers)
           {
-            bRendererExists = true;
-            Log.Info("DirectShowUtil: found audio renderer - {0}", filter.Name);
+            try
+            {
+              Log.Debug(
+                "DirectShowUtil: List 'check if already exist' AddAudioRendererToGraph filter: {0} to graph for {1}",
+                filter.Name, strFilterName);
+              if (String.Compare(filter.Name, strFilterName, StringComparison.OrdinalIgnoreCase) == 0)
+              {
+                bRendererExists = true;
+                Log.Info("DirectShowUtil: found audio renderer - {0}", filter.Name);
+              }
+            }
+            catch (Exception e)
+            {
+
+            }
           }
-        }
-        if (!bRendererExists)
-        {
-          Log.Error("DirectShowUtil: FAILED: audio renderer:{0} doesnt exists", strFilterName);
-          return null;
+
+          if (!bRendererExists)
+          {
+            Log.Error("DirectShowUtil: FAILED: audio renderer:{0} doesnt exists", strFilterName);
+            return null;
+          }
         }
 
         // first remove all audio renderers

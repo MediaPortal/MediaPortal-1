@@ -5595,20 +5595,19 @@ public class MediaPortalApp : D3D, IRender
                   Thread.Sleep(100);
                 }
               }
-              else
-              {
-                FilterHelper.ReloadFilterCollection();
-                if (g_Player.Playing &&
-                    GUIGraphicsContext.CurrentAudioRendererDevice.Trim().ToLowerInvariant() ==
-                    message.Label.Trim().ToLowerInvariant() && !GUIGraphicsContext.CurrentAudioRendererDone)
-                {
-                  var msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_STOP_MEDIACONTROL_AUDIO, 0, 0, 0, 0, 0,
-                    null);
-                  GUIWindowManager.SendThreadMessage(msg);
-                  Log.Debug("Main: send message to stop mediacontrol for audio playback");
-                }
-                GUIGraphicsContext.CurrentAudioRendererDone = false;
-              }
+              //else
+              //{
+              //  if (g_Player.Playing &&
+              //      GUIGraphicsContext.CurrentAudioRendererDevice.Trim().ToLowerInvariant() ==
+              //      message.Label.Trim().ToLowerInvariant() && !GUIGraphicsContext.CurrentAudioRendererDone)
+              //  {
+              //    var msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_REBUILD_AUDIO, 0, 0, 0, 0, 0,
+              //      null);
+              //    GUIWindowManager.SendThreadMessage(msg);
+              //    Log.Debug("Main: send message to stop mediacontrol for audio playback");
+              //  }
+              //  GUIGraphicsContext.CurrentAudioRendererDone = false;
+              //}
 
               // Force MP to refresh screen
               _forceMpAlive = true;
@@ -5648,7 +5647,6 @@ public class MediaPortalApp : D3D, IRender
               }
               else
               {
-                FilterHelper.ReloadFilterCollection();
                 if (g_Player.Playing &&
                     GUIGraphicsContext.CurrentAudioRendererDevice.Trim().ToLowerInvariant() ==
                     message.Label.Trim().ToLowerInvariant() && !GUIGraphicsContext.CurrentAudioRendererDone)

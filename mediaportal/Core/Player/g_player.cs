@@ -27,6 +27,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
+using DShowNET.Helper;
 using MediaPortal.Configuration;
 using MediaPortal.ExtensionMethods;
 using MediaPortal.GUI.Library;
@@ -4125,9 +4126,11 @@ namespace MediaPortal.Player
           g_Player.Player.SetResumeState((byte[])message.Object);
           break;
         case GUIMessage.MessageType.GUI_MSG_REBUILD_AUDIO:
+          FilterHelper.ReloadFilterCollection();
           _player?.AudioRendererRebuild();
           break;
         case GUIMessage.MessageType.GUI_MSG_STOP_MEDIACONTROL_AUDIO:
+          FilterHelper.ReloadFilterCollection();
           _player?.AudioRendererMediaControlStop();
           break;
       }
