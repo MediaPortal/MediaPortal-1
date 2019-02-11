@@ -2354,7 +2354,8 @@ namespace MediaPortal.GUI.Library
             break;
           case PLAYER_RECORDING:
             //bReturn = g_Player.m_pPlayer.IsRecording();
-            bReturn = false;
+            //bReturn = false;
+            bReturn = g_Player.IsTVRecording;
             break;
           case PLAYER_DISPLAY_AFTER_SEEK:
             // bReturn = GetDisplayAfterSeek();
