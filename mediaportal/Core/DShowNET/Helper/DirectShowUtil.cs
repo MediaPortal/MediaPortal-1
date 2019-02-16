@@ -1,4 +1,4 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2018 Team MediaPortal
 
 // Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
@@ -1729,7 +1729,7 @@ namespace DShowNET.Helper
               foundfilter[0].QueryFilterInfo(out filter_infos);
               ReleaseComObject(filter_infos.pGraph);
               Log.Debug("GetFilterByName: {0}, {1}", name, filter_infos.achName);
-              if (filter_infos.achName.LastIndexOf(name) != -1)
+              if (filter_infos.achName.LastIndexOf(name, StringComparison.Ordinal) != -1 && filter_infos.achName.ToLowerInvariant() == name.ToLowerInvariant())
               {
                 ReleaseComObject(ienumFilt);
                 ienumFilt = null;
@@ -1758,15 +1758,28 @@ namespace DShowNET.Helper
 
     public static int RemoveFilter(IGraphBuilder graphBuilder, IBaseFilter filter)
     {
+      if (graphBuilder == null || filter == null)
+      {
+        Log.Error("DirectShowUtil:RemoveFilter() - Null pointer error!!");
+        return -2147467261; // E_POINTER	- null pointer error
+      }
+      
       try
       {
-        return graphBuilder.RemoveFilter(filter);
+        if (Marshal.IsComObject(filter))
+        {
+          return graphBuilder.RemoveFilter(filter);
+        }
+        else
+        {
+          Log.Error("DirectShowUtil:RemoveFilter() - Marshal.IsComObject() invalid!!");
+        }
       }
       catch (Exception)
       {
-        Log.Debug("Failed to remove filter");
+        Log.Error("DirectShowUtil:RemoveFilter() - Exception!!");
       }
-      return 0;
+      return -2147467259; //E_FAIL - Unspecified error.
     }
 
     public static void RemoveFilters(IGraphBuilder graphBuilder)
@@ -2319,14 +2332,16 @@ namespace DShowNET.Helper
         if (obj != null)
         {
           if (Marshal.IsComObject(obj))
+          {
             Marshal.ReleaseComObject(obj);
+          }
+          obj = null;
         }
-        obj = null;
       }
       catch (Exception)
       {
         StackTrace st = new StackTrace(true);
-        Log.Error("Exception while releasing COM object (NULL) - stacktrace: {0}", st);
+        Log.Error("Exception DirectShowUtil:ReleaseComObject() while releasing COM object (NULL) - stacktrace: {0}", st);
       }
     }
 
@@ -2337,6 +2352,7 @@ namespace DShowNET.Helper
         if (obj != null)
         {
           if (Marshal.IsComObject(obj))
+          {
             while (true)
             {
               if (Marshal.ReleaseComObject(obj) > 0)
@@ -2346,24 +2362,38 @@ namespace DShowNET.Helper
               else
               {
                 Marshal.FinalReleaseComObject(obj);
-                obj = null;
                 break;
               }
             }
+          }
+          obj = null;
         }
       }
       catch (Exception)
       {
         StackTrace st = new StackTrace(true);
-        Log.Error("Exception while releasing COM object (NULL) - stacktrace: {0}", st);
+        Log.Error("Exception DirectShowUtil:FinalReleaseComObject() while releasing COM object (NULL) - stacktrace: {0}", st);
       }
     }
 
-    public static void CleanUpInterface(object o)
+    public static void CleanUpInterface(object obj)
     {
-      if (o != null)
-        while (Marshal.ReleaseComObject(o) > 0) ;
-      o = null;
+      try
+      {
+        if (obj != null)
+        {
+          if (Marshal.IsComObject(obj))
+          {
+            Marshal.FinalReleaseComObject(obj);
+          }
+          obj = null;
+        }
+      }
+      catch (Exception)
+      {
+        StackTrace st = new StackTrace(true);
+        Log.Error("Exception DirectShowUtil:CleanUpInterface() while releasing COM object (NULL) - stacktrace: {0}", st);
+      }
     }
   }
 }

@@ -1,4 +1,4 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2018 Team MediaPortal
 
 // Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
@@ -30,6 +30,7 @@ using DShowNET.Helper;
 using MediaPortal.Configuration;
 using MediaPortal.ExtensionMethods;
 using MediaPortal.GUI.Library;
+using MediaPortal.Player.LAV;
 using MediaPortal.Profile;
 using MediaPortal.Player.Subtitles;
 using MediaPortal.Player.PostProcessing;
@@ -64,9 +65,9 @@ namespace MediaPortal.Player
     protected VMR9Util Vmr9 = null;
     private Guid LATMAAC = new Guid("000000ff-0000-0010-8000-00aa00389b71");
     private Guid FileSourceSync = new Guid("1AC0BEBD-4D2B-45AD-BCEB-F2C41C5E3788");
-    private Dictionary<string, object> PostProcessFilterVideo = new Dictionary<string, object>();
-    private Dictionary<string, object> PostProcessFilterAudio = new Dictionary<string, object>();
-    private Dictionary<string, object> PostProcessFilterMPAudio = new Dictionary<string, object>();
+    private Dictionary<string, IBaseFilter> PostProcessFilterVideo = new Dictionary<string, IBaseFilter>();
+    private Dictionary<string, IBaseFilter> PostProcessFilterAudio = new Dictionary<string, IBaseFilter>();
+    private Dictionary<string, IBaseFilter> PostProcessFilterMPAudio = new Dictionary<string, IBaseFilter>();
     public FilterConfig filterConfig;
     public FilterCodec filterCodec;
 
@@ -902,6 +903,9 @@ namespace MediaPortal.Player
         disableCC();
 
         DirectShowUtil.RemoveUnusedFiltersFromGraph(graphBuilder);
+        // Clean-post process filter that has been removed from graph
+        PostProcessRemoveVideo();
+        PostProcessRemoveAudio();
 
         //remove orphelin audio renderer
         RemoveAudioR();
@@ -1021,7 +1025,6 @@ namespace MediaPortal.Player
             break;*/
         }
 
-        IPostProcessingEngine postengine;
         if (iChangedMediaTypes != 1 && VideoChange)
         {
           //Release and init Post Process Filter
@@ -1029,7 +1032,7 @@ namespace MediaPortal.Player
           {
             PostProcessingEngine.GetInstance().FreePostProcess();
           }
-          postengine = PostProcessingEngine.GetInstance(true);
+          IPostProcessingEngine postengine = PostProcessingEngine.GetInstance(true);
           if (postengine != null && !postengine.LoadPostProcessing(graphBuilder))
           {
             PostProcessingEngine.engine = new PostProcessingEngine.DummyEngine();
@@ -1076,6 +1079,10 @@ namespace MediaPortal.Player
 
         DirectShowUtil.RemoveUnusedFiltersFromGraph(graphBuilder);
 
+        // Clean-post process filter that has been removed from graph
+        PostProcessRemoveVideo();
+        PostProcessRemoveAudio();
+
         //remove orphelin audio renderer
         if (iChangedMediaTypes != 2)
         {
@@ -1097,18 +1104,6 @@ namespace MediaPortal.Player
           }
           Log.Info("VideoPlayer9: Reconfigure graph done");
         }*/
-
-        // When using LAV Audio
-        //Release and init Post Process Filter
-        if (PostProcessingEngine.engine != null)
-        {
-          PostProcessingEngine.GetInstance().FreePostProcess();
-        }
-        postengine = PostProcessingEngine.GetInstance(true);
-        if (postengine != null && !postengine.LoadPostProcessing(graphBuilder))
-        {
-          PostProcessingEngine.engine = new PostProcessingEngine.DummyEngine();
-        }
       }
     }
 
@@ -1270,20 +1265,23 @@ namespace MediaPortal.Player
             mediaCtrl.Stop();
             DirectShowUtil.RenderGraphBuilderOutputPins(graphBuilder, _interfaceSourceFilter);
             DirectShowUtil.RemoveUnusedFiltersFromGraph(graphBuilder);
+            // Clean-post process filter that has been removed from graph
+            PostProcessRemoveVideo();
+            PostProcessRemoveAudio();
             mediaCtrl.Run();
             GUIGraphicsContext.CurrentAudioRendererDone = true;
           }
 
           // When using LAV Audio
           //Release and init Post Process Filter
-          if (PostProcessingEngine.engine != null)
+          if (AudioPostEngine.engine != null)
           {
-            PostProcessingEngine.GetInstance().FreePostProcess();
+            AudioPostEngine.GetInstance().FreePostProcess();
           }
-          IPostProcessingEngine postengine = PostProcessingEngine.GetInstance(true);
-          if (!postengine.LoadPostProcessing(graphBuilder))
+          IAudioPostEngine audioEngine = AudioPostEngine.GetInstance(true);
+          if (audioEngine != null && !audioEngine.LoadPostProcessing(graphBuilder))
           {
-            PostProcessingEngine.engine = new PostProcessingEngine.DummyEngine();
+            AudioPostEngine.engine = new AudioPostEngine.DummyEngine();
           }
         }
       }
@@ -1349,6 +1347,52 @@ namespace MediaPortal.Player
           if (comObject != null)
           {
             PostProcessFilterMPAudio.Add(filter, comObject);
+          }
+        }
+      }
+    }
+
+    protected void PostProcessRemoveVideo()
+    {
+      if (filterConfig != null)
+      {
+        foreach (string filter in this.filterConfig.OtherFilters)
+        {
+          if (FilterHelper.GetVideoCodec().Contains(filter) && filter != "Core CC Parser")
+          {
+            var comObject = DirectShowUtil.GetFilterByName(graphBuilder, filter);
+            if (comObject == null)
+            {
+              PostProcessFilterVideo.Remove(filter);
+              Log.Debug("VideoPlayer9: PostProcessRemoveVideo() - {0}", filter);
+            }
+            else
+            {
+              DirectShowUtil.ReleaseComObject(comObject);
+            }
+          }
+        }
+      }
+    }
+
+    protected void PostProcessRemoveAudio()
+    {
+      if (filterConfig != null)
+      {
+        foreach (string filter in this.filterConfig.OtherFilters)
+        {
+          if (FilterHelper.GetAudioCodec().Contains(filter))
+          {
+            var comObject = DirectShowUtil.GetFilterByName(graphBuilder, filter);
+            if (comObject == null)
+            {
+              PostProcessFilterAudio.Remove(filter);
+              Log.Debug("VideoPlayer9: PostProcessRemoveAudio() - {0}", filter);
+            }
+            else
+            {
+              DirectShowUtil.ReleaseComObject(comObject);
+            }
           }
         }
       }
@@ -1451,6 +1495,13 @@ namespace MediaPortal.Player
         //Add Post Process Audio Codec
         PostProcessAddAudio();
 
+        // When using LAV Audio
+        //Release and init Post Process Filter
+        if (AudioPostEngine.engine != null)
+        {
+          AudioPostEngine.GetInstance().FreePostProcess();
+        }
+
         //Add Audio Codec
         if (filterCodec.AudioCodec != null)
         {
@@ -1458,6 +1509,13 @@ namespace MediaPortal.Player
           filterCodec.AudioCodec = null;
         }
         filterCodec.AudioCodec = DirectShowUtil.AddFilterToGraph(this.graphBuilder, MatchFilters(selection));
+
+        // Init Audio delay for LAV Audio
+        IAudioPostEngine audioEngine = AudioPostEngine.GetInstance(true);
+        if (audioEngine != null && !audioEngine.LoadPostProcessing(graphBuilder))
+        {
+          AudioPostEngine.engine = new AudioPostEngine.DummyEngine();
+        }
       }
     }
 
@@ -1729,7 +1787,7 @@ namespace MediaPortal.Player
 
         if (_interfaceSourceFilter != null)
         {
-          graphBuilder.RemoveFilter(_interfaceSourceFilter as DirectShowLib.IBaseFilter);
+          graphBuilder.RemoveFilter(_interfaceSourceFilter);
           DirectShowUtil.CleanUpInterface(_interfaceSourceFilter);
           _interfaceSourceFilter = null;
           Log.Info("VideoPlayer9: Cleanup InterfaceSourceFilter");
@@ -1740,7 +1798,7 @@ namespace MediaPortal.Player
         {
           if (ppFilter.Value != null)
           {
-            graphBuilder.RemoveFilter(ppFilter.Value as DirectShowLib.IBaseFilter);
+            graphBuilder.RemoveFilter(ppFilter.Value);
             DirectShowUtil.CleanUpInterface(ppFilter.Value);
           }
         }
@@ -1750,7 +1808,7 @@ namespace MediaPortal.Player
         {
           if (ppFilter.Value != null)
           {
-            graphBuilder.RemoveFilter(ppFilter.Value as DirectShowLib.IBaseFilter);
+            graphBuilder.RemoveFilter(ppFilter.Value);
             DirectShowUtil.CleanUpInterface(ppFilter.Value);
           }
         }
@@ -1761,7 +1819,7 @@ namespace MediaPortal.Player
         {
           if (ppFilter.Value != null)
           {
-            graphBuilder.RemoveFilter(ppFilter.Value as DirectShowLib.IBaseFilter);
+            graphBuilder.RemoveFilter(ppFilter.Value);
             DirectShowUtil.CleanUpInterface(ppFilter.Value);
           }
         }
@@ -1770,7 +1828,7 @@ namespace MediaPortal.Player
 
         if (_FFDShowAudio != null)
         {
-          graphBuilder.RemoveFilter(_FFDShowAudio as DirectShowLib.IBaseFilter);
+          graphBuilder.RemoveFilter(_FFDShowAudio);
           DirectShowUtil.CleanUpInterface(_FFDShowAudio);
           _FFDShowAudio = null;
           Log.Info("VideoPlayer9: Cleanup _FFDShowAudio");
@@ -1778,7 +1836,7 @@ namespace MediaPortal.Player
 
         if (_audioSwitcher != null)
         {
-          graphBuilder.RemoveFilter(_audioSwitcher as DirectShowLib.IBaseFilter);
+          graphBuilder.RemoveFilter(_audioSwitcher);
           DirectShowUtil.CleanUpInterface(_audioSwitcher);
           _audioSwitcher = null;
           Log.Info("VideoPlayer9: Cleanup MediaPortal AudioSwitcher (for external audio files)");
@@ -1786,6 +1844,8 @@ namespace MediaPortal.Player
 
         SubEngine.GetInstance().FreeSubtitles();
         PostProcessingEngine.GetInstance().FreePostProcess();
+        AudioPostEngine.GetInstance().FreePostProcess();
+        Log.Debug("VideoPlayer9: Cleanup FreeAudioEngine");
 
         //if (VMR9Util.g_vmr9?._vmr9Filter != null && GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
         //{

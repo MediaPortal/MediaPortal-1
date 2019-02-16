@@ -1,4 +1,4 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2018 Team MediaPortal
 
 // Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
@@ -3032,6 +3032,21 @@ namespace MediaPortal.Player
           return false;
         }
         return _player.HasPostprocessing;
+      }
+    }
+
+    /// <summary>
+    /// Property which returns true if the player is able to perform post audio delay features
+    /// </summary>
+    public static bool HasAudioEngine
+    {
+      get
+      {
+        if (_player == null)
+        {
+          return false;
+        }
+        return _player.HasAudioEngine;
       }
     }
 

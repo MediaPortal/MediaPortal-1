@@ -1,4 +1,4 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2018 Team MediaPortal
 
 // Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
@@ -21,21 +21,18 @@
 using System;
 using DirectShowLib;
 using DShowNET.Helper;
-using MediaPortal.Player.PostProcessing;
+using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 
 namespace MediaPortal.Player.LAV
 {
-  public class LavEngine : IPostProcessingEngine
+  public class LavEngine : IAudioPostEngine
   {
     private IBaseFilter _baseFilterLavAudio;
-    private bool hasPostProcessing = false;
+    private bool hasAudioEngine = false;
     protected int audiodelayInterval;
 
-    #region IPostProcessing Members
-
-    public bool EnableDeinterlace { get; set; }
-    public bool EnableCrop { get; set; }
+    #region IAudioPostEngine Members
 
     public bool LoadPostProcessing(IGraphBuilder graphBuilder)
     {
@@ -47,23 +44,17 @@ namespace MediaPortal.Player.LAV
       DirectShowUtil.FindFilterByClassID(graphBuilder, ClassId.LAVAudio, out _baseFilterLavAudio);
       if (_baseFilterLavAudio != null)
       {
-        hasPostProcessing = true;
+        hasAudioEngine = true;
         return true;
       }
 
       return false;
     }
 
-    public int CropVertical { get; set; }
-    public int CropHorizontal { get; set; }
-
-    public bool HasPostProcessing
+    public bool HasAudioEngine
     {
-      get { return hasPostProcessing; }
+      get { return hasAudioEngine; }
     }
-
-    public bool EnableResize { get; set; }
-    public bool EnablePostProcess { get; set; }
 
     public int AudioDelayLav
     {
@@ -155,8 +146,16 @@ namespace MediaPortal.Player.LAV
     {
       if (_baseFilterLavAudio != null)
       {
-        DirectShowUtil.CleanUpInterface(_baseFilterLavAudio);
-        _baseFilterLavAudio = null;
+        try
+        {
+          Log.Debug("LAVEngine: FreePostProcess()");
+          DirectShowUtil.ReleaseComObject(_baseFilterLavAudio);
+          _baseFilterLavAudio = null;
+        }
+        catch (Exception ex)
+        {
+          Log.Error("LAVEngine: FreePostProcess() exception - {0} {1}", ex.Message, ex.StackTrace);
+        }
       }
     }
 
