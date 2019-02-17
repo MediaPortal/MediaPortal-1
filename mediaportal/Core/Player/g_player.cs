@@ -4128,10 +4128,30 @@ namespace MediaPortal.Player
         case GUIMessage.MessageType.GUI_MSG_REBUILD_AUDIO:
           FilterHelper.ReloadFilterCollection();
           _player?.AudioRendererRebuild();
+          Log.Debug("g_player: GUI_MSG_REBUILD_AUDIO play sound workaround");
+          try
+          {
+            var action = new Action(Action.ActionType.ACTION_PLAY_INTEL_AUDIO_SOUND, 0f, 0f) { SoundFileName = "click.wav" };
+            GUIGraphicsContext.OnAction(action);
+          }
+          catch (Exception)
+          {
+            Log.Error("g_player: GUI_MSG_REBUILD_AUDIO play sound workaround failed");
+          }
           break;
         case GUIMessage.MessageType.GUI_MSG_STOP_MEDIACONTROL_AUDIO:
           FilterHelper.ReloadFilterCollection();
           _player?.AudioRendererMediaControlStop();
+          Log.Debug("g_player: GUI_MSG_STOP_MEDIACONTROL_AUDIO play sound workaround");
+          try
+          {
+            var action = new Action(Action.ActionType.ACTION_PLAY_INTEL_AUDIO_SOUND, 0f, 0f) { SoundFileName = "click.wav" };
+            GUIGraphicsContext.OnAction(action);
+          }
+          catch (Exception)
+          {
+            Log.Error("g_player: GUI_MSG_STOP_MEDIACONTROL_AUDIO play sound workaround failed");
+          }
           break;
       }
     }
