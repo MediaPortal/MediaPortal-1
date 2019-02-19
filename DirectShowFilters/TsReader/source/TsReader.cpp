@@ -2366,7 +2366,7 @@ STDMETHODIMP CTsReaderFilter::GetAudioStream(__int32 &stream)
 }
 
 // ITeletextSource methods
-STDMETHODIMP CTsReaderFilter::SetTeletextTSPacketCallBack ( int (CALLBACK *pPacketCallback)(byte*, int))
+STDMETHODIMP CTsReaderFilter::SetTeletextTSPacketCallback ( int (CALLBACK *pPacketCallback)(byte*, int))
 {
   LogDebug("Setting Teletext TS packet callback");
   m_demultiplexer.SetTeletextPacketCallback(pPacketCallback);
@@ -2387,7 +2387,7 @@ STDMETHODIMP CTsReaderFilter::SetTeletextEventCallback( int (CALLBACK *pEventCal
   return S_OK;
 }
 
-STDMETHODIMP CTsReaderFilter::GetTeletextStreamType(__int32 stream, int &type)
+STDMETHODIMP CTsReaderFilter::GetTeletextStreamType(__int32 stream, __int32 &type)
 {
   return m_demultiplexer.GetTeletextStreamType(stream, type);
 }
@@ -2413,7 +2413,7 @@ STDMETHODIMP CTsReaderFilter::GetSubtitleStreamLanguage(__int32 stream,char* szL
   return m_demultiplexer.GetSubtitleStreamLanguage( stream, szLanguage );
 }
 
-STDMETHODIMP CTsReaderFilter::GetSubtitleStreamType(__int32 stream, int &type)
+STDMETHODIMP CTsReaderFilter::GetSubtitleStreamType(__int32 stream, __int32 &type)
 {
   return m_demultiplexer.GetSubtitleStreamType(stream, type);
 }

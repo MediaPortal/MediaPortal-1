@@ -43,10 +43,10 @@ DEFINE_GUID(IID_ITeletextSource,
 
 DECLARE_INTERFACE_( ITeletextSource, IUnknown )
 {
-  STDMETHOD(SetTeletextTSPacketCallBack) ( int (CALLBACK *pTeletextCallback)(byte*, int) ) PURE;
+  STDMETHOD(SetTeletextTSPacketCallback) ( int (CALLBACK *pTeletextCallback)(byte*, int) ) PURE;
   STDMETHOD(SetTeletextEventCallback( int (CALLBACK *pResetCallback)(int eventcode, DWORD64 eval))) PURE; 
   STDMETHOD(SetTeletextServiceInfoCallback( int (CALLBACK *pServiceInfoCallback)(int page, byte type, byte lb1, byte lb2, byte lb3))) PURE; 
-  STDMETHOD(GetTeletextStreamType)( __int32 stream, int &type ) PURE;
+  STDMETHOD(GetTeletextStreamType)( __int32 stream, __int32 &type ) PURE;
   STDMETHOD(GetTeletextStreamCount)( __int32 &count ) PURE;
   STDMETHOD(GetTeletextStreamLanguage)( __int32 stream, char* szLanguage ) PURE;
 };

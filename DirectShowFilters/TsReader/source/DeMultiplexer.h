@@ -106,7 +106,7 @@ public:
 
   // TsReader::ISubtitleStream uses these
   bool       SetSubtitleStream(__int32 stream);
-  bool       GetSubtitleStreamType(__int32 stream, __int32& count);
+  bool       GetSubtitleStreamType(__int32 stream, __int32& type);
   bool       GetSubtitleStreamCount(__int32 &count);
   bool       GetCurrentSubtitleStream(__int32 &stream);
   bool       GetSubtitleStreamLanguage(__int32 stream, char* szLanguage);
@@ -125,7 +125,7 @@ public:
   void SetTeletextPacketCallback(int (CALLBACK *pTeletextPacketCallback)(byte*, int));
   void SetTeletextServiceInfoCallback(int (CALLBACK *pTeletextServiceInfoCallback)(int, byte,byte,byte,byte));
   bool GetTeletextStreamCount(__int32 &count);
-  bool GetTeletextStreamType(__int32 stream, int &type);
+  bool GetTeletextStreamType(__int32 stream, __int32 &type);
   bool GetTeletextStreamLanguage(__int32 stream, char* szLanguage);
 
   void CallTeletextEventCallback(int eventCode,unsigned long int eventValue);

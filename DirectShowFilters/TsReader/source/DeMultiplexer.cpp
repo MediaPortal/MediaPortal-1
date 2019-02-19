@@ -1401,7 +1401,7 @@ void CDeMultiplexer::OnTsPacket(byte* tsPacket, int bufferOffset, int bufferLeng
       {
         TeletextServiceInfo& info = *vit;
         LogDebug("Calling Teletext Service info callback");
-        (*pTeletextServiceInfoCallback)(info.page, (byte)info.type, (byte)info.lang[0],(byte)info.lang[1],(byte)info.lang[2]);
+        (*pTeletextServiceInfoCallback)((int)info.page, (byte)info.type, (byte)info.lang[0],(byte)info.lang[1],(byte)info.lang[2]);
         vit++;
       }
       m_currentTeletextPid = m_pids.TeletextPid;
@@ -4553,7 +4553,7 @@ bool CDeMultiplexer::GetTeletextStreamCount(__int32 &count)
   return S_OK;
 }
 
-bool CDeMultiplexer::GetTeletextStreamType(__int32 stream, int &type)
+bool CDeMultiplexer::GetTeletextStreamType(__int32 stream, __int32 &type)
 {
   if (m_pids.TeletextPid < 1 || stream < 0 || (size_t)stream >= m_pids.TeletextInfo.size())
   {
