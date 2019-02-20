@@ -199,16 +199,19 @@ private:
 
   //ISubtitleStream
   STDMETHODIMP SetSubtitleStream(__int32 stream);
-  STDMETHODIMP GetSubtitleStreamType(__int32 stream, int &type);
+  STDMETHODIMP GetSubtitleStreamType(__int32 stream, __int32 &type);
   STDMETHODIMP GetSubtitleStreamCount(__int32 &count);
   STDMETHODIMP GetCurrentSubtitleStream(__int32 &stream);
   STDMETHODIMP GetSubtitleStreamLanguage(__int32 stream,char* szLanguage);
   STDMETHODIMP SetSubtitleResetCallback( int (CALLBACK *pSubUpdateCallback)(int count, void* opts, int* select)); 
 
   //ITeletextSource
-  STDMETHODIMP SetTeletextTSPacketCallBack ( int (CALLBACK *pPacketCallback)(byte*, int));
+  STDMETHODIMP SetTeletextTSPacketCallback ( int (CALLBACK *pPacketCallback)(byte*, int));
   STDMETHODIMP SetTeletextEventCallback (int (CALLBACK *EventCallback)(int,DWORD64) ); 
   STDMETHODIMP SetTeletextServiceInfoCallback (int (CALLBACK *pServiceInfoCallback)(int,byte,byte,byte,byte) ); 
+  STDMETHODIMP GetTeletextStreamType(__int32 stream, __int32 &type);
+  STDMETHODIMP GetTeletextStreamCount(__int32 &count);
+  STDMETHODIMP GetTeletextStreamLanguage(__int32 stream, char* szLanguage);
 
 public:
   // ITSReader

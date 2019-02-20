@@ -73,7 +73,7 @@ CAMEvent m_EndLoggingEvent;
 
 LONG LogWriteRegistryKeyString(HKEY hKey, LPCTSTR& lpSubKey, LPCTSTR& data)
 {  
-  LONG result = RegSetValueEx(hKey, lpSubKey, 0, REG_SZ, (LPBYTE)data, _tcslen(data) * sizeof(TCHAR));
+  LONG result = RegSetValueEx(hKey, lpSubKey, 0, REG_SZ, (LPBYTE)data, (DWORD)(_tcslen(data) * sizeof(TCHAR)));
   
   return result;
 }
@@ -1271,7 +1271,7 @@ STDMETHODIMP CTsReaderFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pm
   char url[MAX_PATH];
   WideCharToMultiByte(CP_ACP, 0 ,m_fileName, -1, url, MAX_PATH, 0, 0);
   //check file type
-  int length=strlen(url);
+  size_t length=strlen(url);
   if ((length > 5) && (_strcmpi(&url[length-4], ".tsp") == 0))
   {
     // .tsp file
@@ -1281,7 +1281,7 @@ STDMETHODIMP CTsReaderFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pm
     FILE* fd = fopen(url, "rb");
     if (fd == NULL) return E_FAIL;
     fread(url, 1, 100, fd);
-    int bytesRead = fread(url, 1, sizeof(url), fd);
+    size_t bytesRead = fread(url, 1, sizeof(url), fd);
     if (bytesRead >= 0) url[bytesRead] = 0;
     fclose(fd);
 
@@ -2366,7 +2366,7 @@ STDMETHODIMP CTsReaderFilter::GetAudioStream(__int32 &stream)
 }
 
 // ITeletextSource methods
-STDMETHODIMP CTsReaderFilter::SetTeletextTSPacketCallBack ( int (CALLBACK *pPacketCallback)(byte*, int))
+STDMETHODIMP CTsReaderFilter::SetTeletextTSPacketCallback ( int (CALLBACK *pPacketCallback)(byte*, int))
 {
   LogDebug("Setting Teletext TS packet callback");
   m_demultiplexer.SetTeletextPacketCallback(pPacketCallback);
@@ -2387,6 +2387,21 @@ STDMETHODIMP CTsReaderFilter::SetTeletextEventCallback( int (CALLBACK *pEventCal
   return S_OK;
 }
 
+STDMETHODIMP CTsReaderFilter::GetTeletextStreamType(__int32 stream, __int32 &type)
+{
+  return m_demultiplexer.GetTeletextStreamType(stream, type);
+}
+
+STDMETHODIMP CTsReaderFilter::GetTeletextStreamCount(__int32 &count)
+{
+  return m_demultiplexer.GetTeletextStreamCount(count);
+}
+
+STDMETHODIMP CTsReaderFilter::GetTeletextStreamLanguage(__int32 stream,char* szLanguage)
+{
+  return m_demultiplexer.GetTeletextStreamLanguage(stream, szLanguage);
+}
+
 // ISubtitleStream methods
 STDMETHODIMP CTsReaderFilter::SetSubtitleStream(__int32 stream)
 {
@@ -2398,7 +2413,7 @@ STDMETHODIMP CTsReaderFilter::GetSubtitleStreamLanguage(__int32 stream,char* szL
   return m_demultiplexer.GetSubtitleStreamLanguage( stream, szLanguage );
 }
 
-STDMETHODIMP CTsReaderFilter::GetSubtitleStreamType(__int32 stream, int &type)
+STDMETHODIMP CTsReaderFilter::GetSubtitleStreamType(__int32 stream, __int32 &type)
 {
   return m_demultiplexer.GetSubtitleStreamType(stream, type);
 }
@@ -2749,7 +2764,7 @@ void CTsReaderFilter::WriteRegistryKeyString(HKEY hKey, LPCTSTR& lpSubKey, LPCTS
 {  
   USES_CONVERSION;
 
-  LONG result = RegSetValueEx(hKey, lpSubKey, 0, REG_SZ, (LPBYTE)data, _tcslen(data) * sizeof(TCHAR));
+  LONG result = RegSetValueEx(hKey, lpSubKey, 0, REG_SZ, (LPBYTE)data, (DWORD)(_tcslen(data) * sizeof(TCHAR)));
   if (result == ERROR_SUCCESS) 
     LogDebug("Success writing to Registry: %s", T2A(lpSubKey));
   else 
