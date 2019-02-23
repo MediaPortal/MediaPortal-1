@@ -42,6 +42,7 @@
 //Buffer control and start-of-play timing control constants
 #define FS_TIM_LIM (2000*10000)   /* 2 seconds in hns units                                              */
 #define FS_ADDON_LIM (1000*10000) /* 1 second in hns units (must not be zero)                            */
+#define SEEK_EOF_OFFSET 4000      /* ms units                                                            */
 #define INITIAL_BUFF_DELAY 0      /* ms units                                                            */
 #define AUDIO_DELAY (0*10000)     /* hns units - audio timestamp offset (delays audio relative to video) */
 #define SLOW_PLAY_PPM 0           /* hns units - slow play in PPM                                        */
@@ -303,6 +304,7 @@ public:
   bool            m_bForceFFDShowSyncFix;
   bool            m_bUseFPSfromDTSPTS;
   LONG            m_regInitialBuffDelay;
+  LONG            m_regSeekEofOffset;
   bool            m_bEnableBufferLogging;
   bool            m_bSubPinConnectAlways;
   REFERENCE_TIME  m_regAudioDelay;
