@@ -2397,7 +2397,7 @@ public class MediaPortalApp : D3D, IRender
                 Log.Debug("Main: DBT_DEVICEARRIVAL AUDIO play sound workaround");
                 try
                 {
-                  var action = new Action(Action.ActionType.ACTION_PLAY_INTEL_AUDIO_SOUND, 0f, 0f) { SoundFileName = "click.wav" };
+                  var action = new Action(Action.ActionType.ACTION_PLAY_INTEL_AUDIO_SOUND, 0f, 0f) { SoundFileName = "silent.wav"};
                   GUIGraphicsContext.OnAction(action);
                 }
                 catch (Exception e)
@@ -4665,7 +4665,7 @@ public class MediaPortalApp : D3D, IRender
         case Action.ActionType.ACTION_PLAY_INTEL_AUDIO_SOUND:
           if (action.SoundFileName.Length > 0)
           {
-            Utils.PlaySound(action.SoundFileName, false, true);
+            Utils.PlaySound(action.SoundFileName, false, true, true);
             Log.Debug("Main: ACTION_PLAY_INTEL_AUDIO_SOUND");
           }
           break;
@@ -5688,7 +5688,7 @@ public class MediaPortalApp : D3D, IRender
             Log.Error("Main: AUDIODEVICEARRIVAL play sound workaround");
             try
             {
-              var action = new Action(Action.ActionType.ACTION_PLAY_INTEL_AUDIO_SOUND, 0f, 0f) {SoundFileName = "click.wav" };
+              var action = new Action(Action.ActionType.ACTION_PLAY_INTEL_AUDIO_SOUND, 0f, 0f) {SoundFileName = "silent.wav" };
               GUIGraphicsContext.OnAction(action);
             }
             catch (Exception e)
