@@ -4230,7 +4230,7 @@ namespace MediaPortal.Player
           Log.Debug("g_player: GUI_MSG_REBUILD_AUDIO play sound workaround");
           try
           {
-            var action = new Action(Action.ActionType.ACTION_PLAY_INTEL_AUDIO_SOUND, 0f, 0f) { SoundFileName = "click.wav" };
+            var action = new Action(Action.ActionType.ACTION_PLAY_INTEL_AUDIO_SOUND, 0f, 0f) { SoundFileName = "silent.wav" };
             GUIGraphicsContext.OnAction(action);
           }
           catch (Exception)
@@ -4244,7 +4244,7 @@ namespace MediaPortal.Player
           Log.Debug("g_player: GUI_MSG_STOP_MEDIACONTROL_AUDIO play sound workaround");
           try
           {
-            var action = new Action(Action.ActionType.ACTION_PLAY_INTEL_AUDIO_SOUND, 0f, 0f) { SoundFileName = "click.wav" };
+            var action = new Action(Action.ActionType.ACTION_PLAY_INTEL_AUDIO_SOUND, 0f, 0f) { SoundFileName = "silent.wav" };
             GUIGraphicsContext.OnAction(action);
           }
           catch (Exception)
