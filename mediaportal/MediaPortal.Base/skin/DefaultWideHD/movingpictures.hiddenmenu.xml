@@ -53,84 +53,85 @@
           <layout>StackLayout(0, Vertical, true)</layout>
           <visible>!Control.HasFocus(50)</visible>
           <control>
-        <description>Cycle View</description>
-        <type>button</type>
-        <id>2</id>
-        <label>#MovingPictures.Translation.CycleView.Label</label>
-        <onright>50</onright>
-        <onup>17</onup>
-        <ondown>3</ondown>
-      </control>
-      <control>
-        <description>Change View</description>
-        <type>button</type>
-        <id>3</id>
-        <label>#MovingPictures.Translation.ChangeView.Label ...</label>
-        <onright>50</onright>
-        <onup>2</onup>
-        <ondown>4</ondown>
-      </control>
-      <control>
-        <description>Filter By</description>
-        <type>button</type>
-        <id>4</id>
-        <label>#MovingPictures.Translation.FilterBy.Label ...</label>
-        <onright>50</onright>
-        <onup>3</onup>
-        <ondown>14</ondown>
-      </control>
-      <control>
-        <description>Sort By</description>
-        <type>button</type>
-        <id>14</id>
-        <label>#MovingPictures.Translation.SortBy.Label: #MovingPictures.Sort.Field</label>
-        <onright>50</onright>
-        <onup>4</onup>
-        <ondown>11900</ondown>
-      </control>
-      <control>
-        <description>Trailers</description>
-        <type>button</type>
-        <id>11900</id>
-        <onup>14</onup>
-        <ondown>15</ondown>
-        <onright>50</onright>
-        <onleft>11900</onleft>
-        <label>#Trailers.Translation.Trailers.Label...</label>
-        <visible>plugin.isenabled(Trailers)</visible>
-      </control>
-      <control>
-        <description>Parental Controls</description>
-        <type>button</type>
-        <id>15</id>
-        <label>#MovingPictures.Translation.ToggleParentalLock.Label</label>
-        <onright>50</onright>
-        <onup>11900</onup>
-        <ondown>2999</ondown>
-        <scrollStartDelaySec>1</scrollStartDelaySec>
-        <wrapString>~</wrapString>
-      </control>
-      <control>
-        <description>Importer</description>
-        <type>button</type>
-        <id>2999</id>
-        <label>#MovingPictures.Importer.Menu.Label ...</label>
-        <hyperlink>96743</hyperlink>
-        <onup>15</onup>
-        <ondown>66610</ondown>
-        <onleft>50</onleft>
-        <onright>50</onright>
-      </control>
-      <control>
-        <description>Video Settings</description>
-        <type>button</type>
-        <id>66610</id>
-        <hyperlink>703</hyperlink>
-        <label>6022</label>
-        <onup>2999</onup>
-        <onright>50</onright>
-        <ondown>2</ondown>
-      </control>
+            <description>Filter</description>
+            <type>button</type>
+            <id>4</id>
+            <label>#MovingPictures.Translation.FilterBy.Label ...</label>
+            <onright>50</onright>
+            <onup>999</onup>
+            <ondown>19</ondown>
+          </control>
+          <control>
+            <description>Search</description>
+            <type>button</type>
+            <id>19</id>
+            <label>#MovingPictures.Translation.SearchBy.Label ...</label>
+            <onright>50</onright>
+            <onup>4</onup>
+            <ondown>20</ondown>
+          </control>
+          <control>
+            <description>Scan</description>
+            <type>button</type>
+            <id>20</id>
+            <label>#MovingPictures.Translation.ScanForNewMovies.Label</label>
+            <onright>50</onright>
+            <onup>19</onup>
+            <ondown>3</ondown>
+            <visible>!string.equals(#MovingPictures.ScanForNewMovies.Visible, false)</visible>
+          </control>
+          <control>
+            <description>Change View</description>
+            <type>button</type>
+            <id>3</id>
+            <label>#MovingPictures.Translation.ChangeView.Label ...</label>
+            <onright>50</onright>
+            <onup>20</onup>
+            <ondown>14</ondown>
+          </control>
+          <control>
+            <description>Sort By</description>
+            <type>sortbutton</type>
+            <id>14</id>
+            <label>#MovingPictures.Translation.SortBy.Label: #MovingPictures.Sort.Field</label>
+            <onright>50</onright>
+            <onup>3</onup>
+            <ondown>15</ondown>
+          </control>
+          <control>
+            <description>Parental Controls</description>
+            <type>button</type>
+            <id>15</id>
+            <label>#MovingPictures.Translation.ToggleParentalLock.Label</label>
+            <onright>50</onright>
+            <ondown>10</ondown>
+            <onup>14</onup>
+            <ondown>66610</ondown>
+            <scrollStartDelaySec>1</scrollStartDelaySec>
+            <scrollWrapString>|</scrollWrapString>
+          </control>
+          <control>
+            <description>Video Settings</description>
+            <type>button</type>
+            <id>66610</id>
+            <hyperlink>703</hyperlink>
+            <label>Video Settings</label>
+            <onup>15</onup>
+            <onright>50</onright>
+            <ondown>999</ondown>
+          </control>
+          <control>
+            <description>Importer</description>
+            <type>button</type>
+            <id>999</id>
+            <label>#MovingPictures.Translation.Importer.Label</label>
+            <hyperlink>96743</hyperlink>
+            <onup>66610</onup>
+            <ondown>4</ondown>
+            <onright>50</onright>
+            <scrollStartDelaySec>1</scrollStartDelaySec>
+            <scrollWrapString>|</scrollWrapString>
+          </control>
         </control>
       </control>
     </control>

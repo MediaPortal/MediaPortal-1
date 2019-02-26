@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>100</id>
@@ -12,9 +12,8 @@
       <id>10</id>
       <posX>1012</posX>
       <posY>622</posY>
-      <!--textXOff>79</textXOff>
-      <textYOff>12</textYOff-->
-      <textalign>center</textalign>
+      <textXOff>79</textXOff>
+      <textYOff>12</textYOff>
       <width>279</width>
       <height>70</height>
       <textureFocus>button_focus.png</textureFocus>
@@ -31,9 +30,8 @@
       <id>11</id>
       <posX>612</posX>
       <posY>622</posY>
-      <!--textXOff>84</textXOff>
-      <textYOff>12</textYOff-->
-      <textalign>center</textalign>
+      <textXOff>84</textXOff>
+      <textYOff>12</textYOff>
       <width>279</width>
       <height>70</height>
       <textureFocus>button_focus.png</textureFocus>
