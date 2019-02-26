@@ -2323,6 +2323,7 @@ namespace MediaPortal.Player
       // Restore GUIGraphicsContext.State
       if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.SUSPENDING)
       {
+        Log.Debug("g_Player: SeekRelative GUIGraphicsContext.State.RUNNING");
         GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.RUNNING;
       }
     }
@@ -2332,6 +2333,7 @@ namespace MediaPortal.Player
       // Suspending GUIGraphicsContext.State
       if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
       {
+        Log.Debug("g_Player: StepNow GUIGraphicsContext.State.SUSPENDING");
         GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.SUSPENDING;
       }
 
@@ -2538,6 +2540,7 @@ namespace MediaPortal.Player
       // Suspending GUIGraphicsContext.State
       if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
       {
+        Log.Debug("g_Player: SeekRelativePercentage GUIGraphicsContext.State.SUSPENDING");
         GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.SUSPENDING;
       }
 
@@ -2564,6 +2567,7 @@ namespace MediaPortal.Player
       // Suspending GUIGraphicsContext.State
       if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
       {
+        Log.Debug("g_Player: SeekAbsolute GUIGraphicsContext.State.SUSPENDING");
         GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.SUSPENDING;
       }
 
@@ -2593,6 +2597,7 @@ namespace MediaPortal.Player
       // Suspending GUIGraphicsContext.State
       if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
       {
+        Log.Debug("g_Player: SeekAsolutePercentage GUIGraphicsContext.State.SUSPENDING");
         GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.SUSPENDING;
       }
 
@@ -2799,17 +2804,17 @@ namespace MediaPortal.Player
 
     public static void RefreshMadVrVideo()
     {
-      // Enable a new VideoWindow update
-      lock (GUIGraphicsContext.RenderLock)
-      {
-        GUIGraphicsContext.UpdateVideoWindow = true;
-        VMR9Util.g_vmr9?._scene.RenderGuiRefresh(25, 25, 25, 25, true);
-      }
-
       // Disabled for now - seems the workaround is not needed anymore but keep code
       if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
           (GUIGraphicsContext.Vmr9Active || GUIGraphicsContext.ForceMadVRFirstStart))
       {
+        // Enable a new VideoWindow update
+        lock (GUIGraphicsContext.RenderLock)
+        {
+          GUIGraphicsContext.UpdateVideoWindow = true;
+          VMR9Util.g_vmr9?._scene.RenderGuiRefresh(25, 25, 25, 25, true);
+        }
+
         // TODO find a better way to restore madVR rendering (right now i send an 'X' to force refresh a current window)
         if (GUIGraphicsContext.ForceMadVRFirstStart)
         {
@@ -4015,6 +4020,7 @@ namespace MediaPortal.Player
             // Suspending GUIGraphicsContext.State
             if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
             {
+              Log.Debug("g_Player: GUI_MSG_ONDISPLAYMADVRCHANGED GUIGraphicsContext.State.SUSPENDING");
               GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.SUSPENDING;
             }
 
