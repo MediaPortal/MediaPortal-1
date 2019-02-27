@@ -32,9 +32,14 @@
       this.linkLAV = new System.Windows.Forms.LinkLabel();
       this.lblLAV = new System.Windows.Forms.Label();
       this.chkLAV = new System.Windows.Forms.CheckBox();
+      this.gtpStudios = new System.Windows.Forms.GroupBox();
+      this.chkStudios = new System.Windows.Forms.CheckBox();
+      this.linkStudios = new System.Windows.Forms.LinkLabel();
+      this.lblStudios = new System.Windows.Forms.Label();
       this.linkExtensions = new System.Windows.Forms.LinkLabel();
       this.lblRecommended = new System.Windows.Forms.Label();
       this.grpLAV.SuspendLayout();
+      this.gtpStudios.SuspendLayout();
       this.SuspendLayout();
       // 
       // grpLAV
@@ -83,6 +88,55 @@
       this.chkLAV.Text = "LAV Filters";
       this.chkLAV.UseVisualStyleBackColor = true;
       // 
+      // chkStudios
+      // 
+      this.chkStudios.AutoSize = true;
+      this.chkStudios.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.chkStudios.ForeColor = System.Drawing.Color.White;
+      this.chkStudios.Location = new System.Drawing.Point(15, 19);
+      this.chkStudios.Name = "chkStudios";
+      this.chkStudios.Size = new System.Drawing.Size(98, 17);
+      this.chkStudios.TabIndex = 9;
+      this.chkStudios.Text = "Studios";
+      this.chkStudios.UseVisualStyleBackColor = true;
+      // 
+      // gtpStudios
+      // 
+      this.gtpStudios.Controls.Add(this.linkStudios);
+      this.gtpStudios.Controls.Add(this.lblStudios);
+      this.gtpStudios.Controls.Add(this.chkStudios);
+      this.gtpStudios.Location = new System.Drawing.Point(53, 149);
+      this.gtpStudios.Name = "gtpStudios";
+      this.gtpStudios.Size = new System.Drawing.Size(513, 70);
+      this.gtpStudios.TabIndex = 11;
+      this.gtpStudios.TabStop = false;
+      // Enable or Disable Studios Extensions related by displaying or not the groupbox.
+      this.gtpStudios.Visible = true;
+      this.chkStudios.Checked = this.gtpStudios.Visible;
+      // 
+      // linkStudios
+      // 
+      this.linkStudios.AutoSize = true;
+      this.linkStudios.LinkColor = System.Drawing.Color.White;
+      this.linkStudios.Location = new System.Drawing.Point(437, 50);
+      this.linkStudios.Name = "linkStudios";
+      this.linkStudios.Size = new System.Drawing.Size(52, 13);
+      this.linkStudios.TabIndex = 11;
+      this.linkStudios.TabStop = true;
+      this.linkStudios.Text = "More Info";
+      this.linkStudios.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkStudios_LinkClicked);
+      // 
+      // lblStudios
+      // 
+      this.lblStudios.AutoSize = true;
+      this.lblStudios.ForeColor = System.Drawing.Color.White;
+      this.lblStudios.Location = new System.Drawing.Point(36, 39);
+      this.lblStudios.Name = "lblStudios";
+      this.lblStudios.Size = new System.Drawing.Size(305, 13);
+      this.lblStudios.TabIndex = 10;
+      this.lblStudios.Text = "Install extension that adds support for Studios icons in plugins";
+      // 
+      // 
       // linkExtensions
       // 
       this.linkExtensions.AutoSize = true;
@@ -130,6 +184,10 @@
     private System.Windows.Forms.CheckBox chkLAV;
     private System.Windows.Forms.Label lblLAV;
     private System.Windows.Forms.LinkLabel linkLAV;
+    private System.Windows.Forms.GroupBox gtpStudios;
+    private System.Windows.Forms.CheckBox chkStudios;	
+    private System.Windows.Forms.Label lblStudios;
+    private System.Windows.Forms.LinkLabel linkStudios;
     private System.Windows.Forms.LinkLabel linkExtensions;
     private System.Windows.Forms.Label lblRecommended;
 

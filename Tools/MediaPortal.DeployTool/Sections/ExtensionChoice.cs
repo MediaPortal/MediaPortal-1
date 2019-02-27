@@ -1,6 +1,6 @@
-﻿#region Copyright (C) 2005-2011 Team MediaPortal
+﻿#region Copyright (C) 2005-2019 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2019 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -42,8 +42,10 @@ namespace MediaPortal.DeployTool.Sections
     public override void UpdateUI()
     {
       lblLAV.Text = Localizer.GetBestTranslation("ExtensionChoice_LAV");
+      lblStudios.Text = Localizer.GetBestTranslation("ExtensionChoice_Studios");
       linkExtensions.Text = Localizer.GetBestTranslation("ExtensionChoice_OtherExtensions");
       linkLAV.Text = Localizer.GetBestTranslation("ExtensionChoice_MoreInfo");
+      linkStudios.Text = Localizer.GetBestTranslation("ExtensionChoice_MoreInfo");
       lblRecommended.Text = Localizer.GetBestTranslation("ExtensionChoice_Title");
     }
 
@@ -54,6 +56,13 @@ namespace MediaPortal.DeployTool.Sections
       if (result.state == CheckState.INSTALLED)
       {
         this.chkLAV.Checked = false;
+      }
+
+      package = new StudiosExtensionInstall();	
+      result = package.CheckStatus();	
+      if (result.state == CheckState.INSTALLED)	
+      {	
+        this.chkStudios.Checked = false;	
       }
     }
 
@@ -70,6 +79,7 @@ namespace MediaPortal.DeployTool.Sections
     public override void SetProperties()
     {
       InstallationProperties.Instance.Set("ConfigureMediaPortalLAV", chkLAV.Checked ? "1" : "0");
+      InstallationProperties.Instance.Set("ConfigureMediaPortalStudios", chkStudios.Checked ? "1" : "0");
     }
 
     #endregion
@@ -98,6 +108,11 @@ namespace MediaPortal.DeployTool.Sections
     private void linkTitan_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
       OpenURL("http://wiki.team-mediaportal.com/1_MEDIAPORTAL_1/17_Extensions/4_Skins/Titan_Extended");
+    }
+
+    private void linkStudios_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+    {
+      OpenURL("https://www.team-mediaportal.com/wiki/display/MediaPortal1");
     }
 
     #endregion
