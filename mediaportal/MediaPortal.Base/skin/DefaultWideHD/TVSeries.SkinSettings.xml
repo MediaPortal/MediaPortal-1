@@ -142,7 +142,7 @@
 <Enabled>1<Format>SMALLSPACE<FormatAs> ]]>
 	</formatting>
 	<logos import="true">
-  <![CDATA[skin\DefaultWideHD\Media\Logos\Studios\<Series.Network>.png;-;;-;=;-;;-;AND;-;;-;=;-;;-;AND;-;;-;=;-;;-;
+  <![CDATA[thumbs\Skin FanArt\Media\Logos\Studios\<Series.Network>.png;-;;-;=;-;;-;AND;-;;-;=;-;;-;AND;-;;-;=;-;;-;
   skin\DefaultWideHD\Media\Logos\<Series.ContentRating>.png;-;;-;=;-;;-;AND;-;;-;=;-;;-;AND;-;;-;=;-;;-;
   skin\DefaultWideHD\Media\Logos\resolution\480.png;-;<Episode.videoWidth>;-;<;-;960;-;AND;-;;-;=;-;;-;<Restrict:Episode>
 skin\DefaultWideHD\Media\Logos\resolution\540.png;-;<Episode.videoWidth>;-;=;-;960;-;AND;-;<Episode.videoHeight>;-;<=;-;600;-;AND;-;;-;=;-;;-;<Restrict:Episode>
