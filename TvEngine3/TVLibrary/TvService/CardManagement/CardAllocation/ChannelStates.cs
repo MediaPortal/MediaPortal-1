@@ -265,7 +265,7 @@ namespace TvService
         //ignore admin users, like scheduler
         if (!user.IsAdmin)
         {
-          bool checkTransponder = CheckTransponder(user, tvcard, tuningDetail);
+          bool checkTransponder = CheckTransponder(user, tvcard, tuningDetail, 3);
           if (checkTransponder)
           {
             UpdateChannelStateUser(user, ChannelState.tunable, ch.IdChannel);

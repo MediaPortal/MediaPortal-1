@@ -37,6 +37,7 @@ namespace TvControl
     private int _cardId;
     private int _failedCardId;
     private int _subChannel;
+    private bool _isFreeToAir;            
     private int _idChannel;
     private TvStoppedReason _timeshiftStoppedReason;
     private DateTime _lastHeartBeat;
@@ -58,6 +59,7 @@ namespace TvControl
       _failedCardId = -1;
       _idChannel = -1;
       _subChannel = -1;
+      _isFreeToAir = true;
       _TimeshiftPosition = 0;
       _lastHeartBeat = DateTime.MinValue;
       _timeshiftStoppedReason = TvStoppedReason.UnknownReason;
@@ -76,6 +78,7 @@ namespace TvControl
       _isAdmin = isAdmin;
       _cardId = -1;
       _subChannel = -1;
+      _isFreeToAir = true;
       _timeshiftStoppedReason = TvStoppedReason.UnknownReason;
     }
 
@@ -92,6 +95,7 @@ namespace TvControl
       _isAdmin = isAdmin;
       _cardId = cardId;
       _subChannel = -1;
+      _isFreeToAir = true;
       _timeshiftStoppedReason = TvStoppedReason.UnknownReason;
     }
 
@@ -108,6 +112,7 @@ namespace TvControl
       _isAdmin = isAdmin;
       _cardId = cardId;
       _subChannel = -1;
+      _isFreeToAir = true;
       _timeshiftStoppedReason = TvStoppedReason.UnknownReason;
       _priority = priority;
     }
@@ -202,6 +207,16 @@ namespace TvControl
     }
 
     /// <summary>
+    /// Gets or sets a value indicating whether this instance is free-to-air.
+    /// </summary>
+    /// <value><c>true</c> if this instance is free-to-air; otherwise, <c>false</c>.</value>
+    public bool IsFreeToAir
+    {
+      get { return _isFreeToAir; }
+      set { _isFreeToAir = value; }
+    }
+
+    /// <summary>
     /// Gets or sets the history.
     /// </summary>
     /// <value>The history.</value>
@@ -244,6 +259,7 @@ namespace TvControl
       user._isAdmin = _isAdmin;
       user._cardId = _cardId;
       user._subChannel = _subChannel;
+      user._isFreeToAir = _isFreeToAir;
       user._idChannel = _idChannel;
       user._timeshiftStoppedReason = _timeshiftStoppedReason;
       user._priority = _priority;

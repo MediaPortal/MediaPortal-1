@@ -393,8 +393,8 @@ namespace TvService
 
         if (freeCardsDict.Count > 2)
         {
-          Log.Debug(
-            "CancelCardReservationsExceedingMaxConcurrentTickets: removing exceeding nr of tickets, only 2 allowed at a time but found {0}",
+          Log.Info(
+            "CancelCardReservationsExceedingMaxConcurrentTickets: cancel excess tickets, only 2 allowed at a time but found {0}",
             tickets.Count);
           while (freeCardsDict.Count > 2)
           {

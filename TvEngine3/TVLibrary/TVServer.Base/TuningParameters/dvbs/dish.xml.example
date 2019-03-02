@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<profile>
+  <section name="General">
+    <entry name="CurrentMovingDish">526</entry>
+    <entry name="FirstTuneWait">10000</entry>
+    <entry name="WaitAfterDiSEqC">10</entry>
+  </section>
+  <section name="SatCount">
+    <entry name="Count">5</entry>
+  </section>
+  <section name="1">
+    <entry name="PositionDiSEqC">1</entry>
+    <entry name="PositionSat">19.2</entry>
+    <entry name="PositionDirection">E</entry>
+  </section>
+  <section name="2">
+    <entry name="PositionDiSEqC">2</entry>
+    <entry name="PositionSat">13</entry>
+    <entry name="PositionDirection">E</entry>
+  </section>
+  <section name="3">
+    <entry name="PositionDiSEqC">3</entry>
+    <entry name="PositionSat">9</entry>
+    <entry name="PositionDirection">E</entry>
+  </section>
+  <section name="4">
+    <entry name="PositionDiSEqC">4</entry>
+    <entry name="PositionSat">4.9</entry>
+    <entry name="PositionDirection">E</entry>
+  </section>
+  <section name="5">
+    <entry name="PositionDiSEqC">5</entry>
+    <entry name="PositionSat">11</entry>
+    <entry name="PositionDirection">W</entry>
+  </section>
+</profile>

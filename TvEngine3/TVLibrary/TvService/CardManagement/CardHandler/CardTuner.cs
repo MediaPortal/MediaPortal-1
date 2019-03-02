@@ -315,7 +315,7 @@ namespace TvService
       {
         if (_cardHandler.DataBaseCard.Enabled == false)
           return TvResult.CardIsDisabled;
-        Log.Info("card: Tune on card {0} to subchannel {1}", _cardHandler.DataBaseCard.IdCard, channel.Name);             
+        Log.Info("CardTuner.Tune: Tune on card {0} to subchannel {1}", _cardHandler.DataBaseCard.IdCard, channel.Name);             
         if (_cardHandler.IsLocal == false)
         {
           try
@@ -457,7 +457,7 @@ namespace TvService
       //{
       //  return true;
       //}
-      Log.Debug("card: user: {0}:{1}:{2} tune {3}", user.Name, user.CardId, user.SubChannel, channel.ToString());
+      Log.Debug("CardTuner.BeforeTune: user: {0}:{1}:{2} tune {3}", user.Name, user.CardId, user.SubChannel, channel.ToString());
       _cardHandler.Card.CamType = (CamType)_cardHandler.DataBaseCard.CamType;
       _cardHandler.SetParameters();
 
@@ -471,7 +471,7 @@ namespace TvService
           {
             if (context.HasUserHighestPriority(user) || context.IsOwner(user) && context.HasUserEqualOrHigherPriority(user))
             {
-              Log.Debug("card: to different transponder");
+              Log.Debug("CardTuner.BeforeTune: change to different transponder");
 
               //remove all subchannels, except for this user...
               IUser[] users = context.Users;
@@ -479,20 +479,20 @@ namespace TvService
               {
                 if (users[i].Name != user.Name)
                 {
-                  Log.Debug("  stop subchannel: {0} user: {1}", i, users[i].Name);
+                  Log.Debug("CardTuner.BeforeTune: stop subchannel: {0} user: {1}", i, users[i].Name);
 
                   //fix for b2b mantis; http://mantis.team-mediaportal.com/view.php?id=1112
                   if (users[i].IsAdmin)
                     // if we are stopping an on-going recording/schedule (=admin), we have to make sure that we remove the schedule also.
                   {
-                    Log.Debug("user is scheduler: {0}", users[i].Name);
+                    Log.Debug("CardTuner.BeforeTune: user is scheduler: {0}", users[i].Name);
                     int recScheduleId = RemoteControl.Instance.GetRecordingSchedule(users[i].CardId,
                                                                                     users[i].IdChannel);
 
                     if (recScheduleId > 0)
                     {
                       Schedule schedule = Schedule.Retrieve(recScheduleId);
-                      Log.Info("removing schedule with id: {0}", schedule.IdSchedule);
+                      Log.Info("CardTuner.BeforeTune: removing schedule with id: {0}", schedule.IdSchedule);
                       RemoteControl.Instance.StopRecordingSchedule(schedule.IdSchedule);
                       schedule.Delete();
                     }
@@ -509,7 +509,7 @@ namespace TvService
           }
           else
           {
-            Log.Debug("card: user: {0} is not the card owner. Cannot switch transponder", user.Name);
+            Log.Debug("CardTuner.BeforeTune: user: {0} is not the card owner. Cannot switch transponder", user.Name);
             result = TvResult.NotTheOwner;
             return false;
           }
@@ -592,7 +592,7 @@ namespace TvService
         }
 
         TvResult result;
-        Log.WriteFile("card: CardTune {0} {1} {2}:{3}:{4}", _cardHandler.DataBaseCard.IdCard, channel.Name, user.Name,
+        Log.WriteFile("CardTuner.CardTune: {0} {1} {2}:{3}:{4}", _cardHandler.DataBaseCard.IdCard, channel.Name, user.Name,
                       user.CardId, user.SubChannel);
         if (_cardHandler.IsScrambled(ref user))
         {
