@@ -37,7 +37,7 @@ const DWORD64 SUBTITLESTREAM_EVENTVALUE_NONE = 0;
 DECLARE_INTERFACE_( ISubtitleStream, IUnknown )
 {
   STDMETHOD(SetSubtitleStream)( __int32 stream ) PURE;
-  STDMETHOD(GetSubtitleStreamType)( __int32 stream, int &type ) PURE;
+  STDMETHOD(GetSubtitleStreamType)( __int32 stream, __int32 &type ) PURE;
   STDMETHOD(GetSubtitleStreamCount)( __int32 &count ) PURE;
   STDMETHOD(GetCurrentSubtitleStream)( __int32 &stream ) PURE;
   STDMETHOD(GetSubtitleStreamLanguage)( __int32 stream,char* szLanguage ) PURE;

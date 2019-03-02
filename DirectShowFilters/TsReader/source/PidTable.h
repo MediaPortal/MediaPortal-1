@@ -141,6 +141,7 @@ public:
 
   void LogPIDs();
   LPCTSTR StreamFormatAsString(int streamType);
+  LPCTSTR TeletextTypeAsString(int streamType);
 
   bool HasTeletextPageInfo(int page); // do we have a TeletextServiceInfo entry for that page
 

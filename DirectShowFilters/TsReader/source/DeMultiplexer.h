@@ -56,7 +56,7 @@ public:
 //	AM_MEDIA_TYPE* pmt;
 	Packet() {/*pmt = NULL;*/ /*bDiscontinuity = FALSE;*/ /*bNewRtStart = FALSE;*/}
 	virtual ~Packet() {/*if(pmt) DeleteMediaType(pmt);*/}
-	virtual int GetDataSize() {return GetCount();}
+	virtual size_t GetDataSize() {return GetCount();}
 	void SetData(const void* ptr, DWORD len) {SetCount(len); memcpy(GetData(), ptr, len);}
 };
 
@@ -106,7 +106,7 @@ public:
 
   // TsReader::ISubtitleStream uses these
   bool       SetSubtitleStream(__int32 stream);
-  bool       GetSubtitleStreamType(__int32 stream, __int32& count);
+  bool       GetSubtitleStreamType(__int32 stream, __int32& type);
   bool       GetSubtitleStreamCount(__int32 &count);
   bool       GetCurrentSubtitleStream(__int32 &stream);
   bool       GetSubtitleStreamLanguage(__int32 stream, char* szLanguage);
@@ -124,6 +124,9 @@ public:
   void SetTeletextEventCallback(int (CALLBACK *pTeletextResetCallback)(int,DWORD64));
   void SetTeletextPacketCallback(int (CALLBACK *pTeletextPacketCallback)(byte*, int));
   void SetTeletextServiceInfoCallback(int (CALLBACK *pTeletextServiceInfoCallback)(int, byte,byte,byte,byte));
+  bool GetTeletextStreamCount(__int32 &count);
+  bool GetTeletextStreamType(__int32 stream, __int32 &type);
+  bool GetTeletextStreamLanguage(__int32 stream, char* szLanguage);
 
   void CallTeletextEventCallback(int eventCode,unsigned long int eventValue);
 
@@ -160,7 +163,7 @@ public:
 
   float m_sampleTime;
   float m_sampleTimePrev;
-  unsigned long m_byteRead;
+  size_t m_byteRead;
   float m_bitRate;
 
   bool m_bAudioSampleLate;
@@ -217,7 +220,7 @@ private:
   bool m_AudioValidPES;
   bool m_VideoValidPES;
   bool m_mVideoValidPES;
-  int  m_WaitHeaderPES;
+  ptrdiff_t  m_WaitHeaderPES;
   CRefTime  m_FirstAudioSample;
   CRefTime  m_LastAudioSample;
   CRefTime  m_FirstVideoSample;
@@ -282,7 +285,7 @@ private:
   CAutoPtr<Packet> m_p;
   CAutoPtrList<Packet> m_pl;
   bool m_fHasAccessUnitDelimiters;
-  DWORD m_lastStart;
+  ptrdiff_t m_lastStart;
   CPcr m_VideoPts;
   CPcr m_CurrentVideoPts;
   bool m_bInBlock;

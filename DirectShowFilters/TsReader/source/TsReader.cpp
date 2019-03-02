@@ -73,7 +73,7 @@ CAMEvent m_EndLoggingEvent;
 
 LONG LogWriteRegistryKeyString(HKEY hKey, LPCTSTR& lpSubKey, LPCTSTR& data)
 {  
-  LONG result = RegSetValueEx(hKey, lpSubKey, 0, REG_SZ, (LPBYTE)data, _tcslen(data) * sizeof(TCHAR));
+  LONG result = RegSetValueEx(hKey, lpSubKey, 0, REG_SZ, (LPBYTE)data, (DWORD)(_tcslen(data) * sizeof(TCHAR)));
   
   return result;
 }
@@ -439,6 +439,7 @@ CTsReaderFilter::CTsReaderFilter(IUnknown *pUnk, HRESULT *phr):
   m_bForceFFDShowSyncFix = false;
   m_bUseFPSfromDTSPTS = true;
   m_regInitialBuffDelay = INITIAL_BUFF_DELAY;
+  m_regSeekEofOffset = SEEK_EOF_OFFSET;
   m_bEnableBufferLogging = false;
   m_bSubPinConnectAlways = false;
   m_regAudioDelay = AUDIO_DELAY; 
@@ -508,6 +509,20 @@ CTsReaderFilter::CTsReaderFilter(IUnknown *pUnk, HRESULT *phr):
     {
       m_regInitialBuffDelay = INITIAL_BUFF_DELAY;
       LogDebug("--- Buffering delay = %d ms (default value, allowed range is %d - %d)", m_regInitialBuffDelay, 0, 10000);
+    }
+
+    keyValue = (DWORD)m_regSeekEofOffset;
+    LPCTSTR seekEofOffset_RRK = _T("SeekEndOfFileOffsetInMilliSeconds");
+    ReadRegistryKeyDword(key, seekEofOffset_RRK, keyValue);
+    if ((keyValue >= 2000) && (keyValue <= 30000))
+    {
+      m_regSeekEofOffset = (LONG)keyValue;
+      LogDebug("--- Seek EndOfFile Offset = %d ms", m_regSeekEofOffset);
+    }
+    else
+    {
+      m_regSeekEofOffset = SEEK_EOF_OFFSET;
+      LogDebug("--- Seek EndOfFile Offset = %d ms (default value, allowed range is %d - %d)", m_regSeekEofOffset, 2000, 30000);
     }
     
     keyValue = 0;
@@ -1292,7 +1307,7 @@ STDMETHODIMP CTsReaderFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pm
   char url[MAX_PATH];
   WideCharToMultiByte(CP_ACP, 0 ,m_fileName, -1, url, MAX_PATH, 0, 0);
   //check file type
-  int length=strlen(url);
+  size_t length=strlen(url);
   if ((length > 5) && (_strcmpi(&url[length-4], ".tsp") == 0))
   {
     // .tsp file
@@ -1302,7 +1317,7 @@ STDMETHODIMP CTsReaderFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pm
     FILE* fd = fopen(url, "rb");
     if (fd == NULL) return E_FAIL;
     fread(url, 1, 100, fd);
-    int bytesRead = fread(url, 1, sizeof(url), fd);
+    size_t bytesRead = fread(url, 1, sizeof(url), fd);
     if (bytesRead >= 0) url[bytesRead] = 0;
     fclose(fd);
 
@@ -1720,10 +1735,11 @@ HRESULT CTsReaderFilter::SeekPreStart(CRefTime& rtAbsSeek)
   //do the seek...
   if (doSeek && !m_demultiplexer.IsMediaChanging()&& !m_demultiplexer.IsAudioChanging()) 
   {
+    LONG minMsFromEOF = MIN_AUD_BUFF_TIME + m_regInitialBuffDelay + m_regSeekEofOffset;    
+      
     if (!m_bTimeShifting) //It's a recording
     {
       //Check how close we are to end-of-file
-      LONG minMsFromEOF = MIN_AUD_BUFF_TIME + m_regInitialBuffDelay + 3000;      
       if ((rtSeek.Millisecs() + minMsFromEOF) > m_duration.Duration().Millisecs())
       {
         //Too close to end-of-file, seek to an earlier position
@@ -1745,7 +1761,7 @@ HRESULT CTsReaderFilter::SeekPreStart(CRefTime& rtAbsSeek)
       bool eof = Seek(rtSeek);
       if (eof)
       {
-        REFERENCE_TIME rollBackTime = m_bTimeShifting ? 5000000 : 30000000;  // 0.5s/3s      
+        REFERENCE_TIME rollBackTime = m_bTimeShifting ? 5000000 : (minMsFromEOF * 10000);  // 500ms/minMsFromEOF      
         //reached end-of-file, try to seek to an earlier position
         if ((rtSeek.m_time - rollBackTime) > 0)
         {
@@ -2387,7 +2403,7 @@ STDMETHODIMP CTsReaderFilter::GetAudioStream(__int32 &stream)
 }
 
 // ITeletextSource methods
-STDMETHODIMP CTsReaderFilter::SetTeletextTSPacketCallBack ( int (CALLBACK *pPacketCallback)(byte*, int))
+STDMETHODIMP CTsReaderFilter::SetTeletextTSPacketCallback ( int (CALLBACK *pPacketCallback)(byte*, int))
 {
   LogDebug("Setting Teletext TS packet callback");
   m_demultiplexer.SetTeletextPacketCallback(pPacketCallback);
@@ -2408,6 +2424,21 @@ STDMETHODIMP CTsReaderFilter::SetTeletextEventCallback( int (CALLBACK *pEventCal
   return S_OK;
 }
 
+STDMETHODIMP CTsReaderFilter::GetTeletextStreamType(__int32 stream, __int32 &type)
+{
+  return m_demultiplexer.GetTeletextStreamType(stream, type);
+}
+
+STDMETHODIMP CTsReaderFilter::GetTeletextStreamCount(__int32 &count)
+{
+  return m_demultiplexer.GetTeletextStreamCount(count);
+}
+
+STDMETHODIMP CTsReaderFilter::GetTeletextStreamLanguage(__int32 stream,char* szLanguage)
+{
+  return m_demultiplexer.GetTeletextStreamLanguage(stream, szLanguage);
+}
+
 // ISubtitleStream methods
 STDMETHODIMP CTsReaderFilter::SetSubtitleStream(__int32 stream)
 {
@@ -2419,7 +2450,7 @@ STDMETHODIMP CTsReaderFilter::GetSubtitleStreamLanguage(__int32 stream,char* szL
   return m_demultiplexer.GetSubtitleStreamLanguage( stream, szLanguage );
 }
 
-STDMETHODIMP CTsReaderFilter::GetSubtitleStreamType(__int32 stream, int &type)
+STDMETHODIMP CTsReaderFilter::GetSubtitleStreamType(__int32 stream, __int32 &type)
 {
   return m_demultiplexer.GetSubtitleStreamType(stream, type);
 }
@@ -2770,7 +2801,7 @@ void CTsReaderFilter::WriteRegistryKeyString(HKEY hKey, LPCTSTR& lpSubKey, LPCTS
 {  
   USES_CONVERSION;
 
-  LONG result = RegSetValueEx(hKey, lpSubKey, 0, REG_SZ, (LPBYTE)data, _tcslen(data) * sizeof(TCHAR));
+  LONG result = RegSetValueEx(hKey, lpSubKey, 0, REG_SZ, (LPBYTE)data, (DWORD)(_tcslen(data) * sizeof(TCHAR)));
   if (result == ERROR_SUCCESS) 
     LogDebug("Success writing to Registry: %s", T2A(lpSubKey));
   else 
