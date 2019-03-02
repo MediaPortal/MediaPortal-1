@@ -21,6 +21,7 @@
 using System;
 using System.Collections;
 using System.Runtime.InteropServices.ComTypes;
+using System.Threading;
 using DirectShowLib;
 using MediaPortal.GUI.Library;
 
@@ -147,7 +148,6 @@ namespace DShowNET.Helper
 
     public static void ReloadFilterCollection()
     {
-      return;
       Log.Debug($"FilterHelper: ReloadFilterCollection init");
       try
       {

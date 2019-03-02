@@ -748,6 +748,7 @@ namespace MediaPortal.Player
       // this is triggered only if movie has ended
       // ifso, stop the movie which will trigger MovieStopped
       m_strCurrentFile = "";
+      Log.Debug("VideoPlayer: MovieEnded");
       if (!bManualStop)
       {
         CloseInterfaces();
@@ -1336,11 +1337,36 @@ namespace MediaPortal.Player
         hr = mediaEvt.FreeEventParams(code, p1, p2);
         if (code == EventCode.Complete || code == EventCode.ErrorAbort)
         {
-          MovieEnded(false);
-          /* EABIN: needed for threaded render-thread. please do not delete.
-            Action keyAction = new Action(Action.ActionType.ACTION_STOP, 0, 0);
-            GUIGraphicsContext.OnAction(keyAction);*/
-          return;
+          if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+          {
+            try
+            {
+              Log.Debug("VideoPlayer: EventCode.Complete: {0}", Enum.GetName(typeof(EventCode), code));
+              Log.Debug("VideoPlayer: VMR9Util.g_vmr9.playbackTimer {0}", VMR9Util.g_vmr9.playbackTimer);
+              if (VMR9Util.g_vmr9.playbackTimer.Second != 0)
+              {
+                MovieEnded(false);
+                /* EABIN: needed for threaded render-thread. please do not delete.
+                  Action keyAction = new Action(Action.ActionType.ACTION_STOP, 0, 0);
+                  GUIGraphicsContext.OnAction(keyAction);*/
+                return;
+              }
+            }
+            catch (Exception ex)
+            {
+              Log.Error("VideoPlayer: OnGraphNotify exception: {0}", ex);
+            }
+          }
+
+          if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
+          {
+            Log.Debug("EventCode.Complete: {0}", Enum.GetName(typeof(EventCode), code));
+            MovieEnded(false);
+            /* EABIN: needed for threaded render-thread. please do not delete.
+              Action keyAction = new Action(Action.ActionType.ACTION_STOP, 0, 0);
+              GUIGraphicsContext.OnAction(keyAction);*/
+            return;
+          }
         }
       } while (hr == 0);
     }
