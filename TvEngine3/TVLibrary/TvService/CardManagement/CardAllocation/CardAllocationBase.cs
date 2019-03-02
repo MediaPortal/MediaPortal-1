@@ -278,7 +278,7 @@ namespace TvService
             {
               canDecrypt = true;
             }
-          } 
+          }
           else
           {
             canDecrypt = true;
