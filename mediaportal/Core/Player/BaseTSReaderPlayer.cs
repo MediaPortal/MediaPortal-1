@@ -2031,17 +2031,48 @@ namespace MediaPortal.Player
             hr = _mediaEvt.FreeEventParams(code, p1, p2);
             if (code == EventCode.Complete || code == EventCode.ErrorAbort)
             {
-              Log.Info("TSReaderPlayer: event:{0} param1:{1} param2:{2} param1:0x{3:X} param2:0x{4:X}", code.ToString(),
-                       p1, p2, p1, p2);
-              MovieEnded();
-
-              // Playback was aborted! No sound driver is available!
-              if (code == EventCode.ErrorAbort && p1 == DSERR_NODRIVER)
+              if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
               {
-                CloseInterfaces();
-                ExclusiveMode(false);
-                _state = PlayState.Ended;
-                Log.Error("TSReaderPlayer: No sound driver is available!");
+                try
+                {
+                  Log.Debug("VideoPlayer: EventCode.Complete: {0}", Enum.GetName(typeof(EventCode), code));
+                  Log.Debug("VideoPlayer: VMR9Util.g_vmr9.playbackTimer {0}", VMR9Util.g_vmr9.playbackTimer);
+                  if (VMR9Util.g_vmr9.playbackTimer.Second != 0)
+                  {
+                    Log.Info("TSReaderPlayer: event:{0} param1:{1} param2:{2} param1:0x{3:X} param2:0x{4:X}", code.ToString(),
+                      p1, p2, p1, p2);
+                    MovieEnded();
+
+                    // Playback was aborted! No sound driver is available!
+                    if (code == EventCode.ErrorAbort && p1 == DSERR_NODRIVER)
+                    {
+                      CloseInterfaces();
+                      ExclusiveMode(false);
+                      _state = PlayState.Ended;
+                      Log.Error("TSReaderPlayer: No sound driver is available!");
+                    }
+                  }
+                }
+                catch (Exception ex)
+                {
+                  Log.Error("TSReaderPlayer: OnGraphNotify exception: {0}", ex);
+                }
+              }
+
+              if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
+              {
+                Log.Info("TSReaderPlayer: event:{0} param1:{1} param2:{2} param1:0x{3:X} param2:0x{4:X}", code.ToString(),
+                  p1, p2, p1, p2);
+                MovieEnded();
+
+                // Playback was aborted! No sound driver is available!
+                if (code == EventCode.ErrorAbort && p1 == DSERR_NODRIVER)
+                {
+                  CloseInterfaces();
+                  ExclusiveMode(false);
+                  _state = PlayState.Ended;
+                  Log.Error("TSReaderPlayer: No sound driver is available!");
+                }
               }
             }
             //else

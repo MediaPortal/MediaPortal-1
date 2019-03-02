@@ -2593,11 +2593,30 @@ namespace MediaPortal.Player
             break;
           case EventCode.ErrorAbort:
             Log.Debug("BDPlayer - GraphNotify: Error: {0}", param1);
-            MovieEnded();
+            if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+            {
+              try
+              {
+                Log.Debug("BDPlayer: VMR9Util.g_vmr9.playbackTimer {0}", VMR9Util.g_vmr9.playbackTimer);
+                if (VMR9Util.g_vmr9.playbackTimer.Second != 0)
+                {
+                  MovieEnded();
+                }
+              }
+              catch (Exception ex)
+              {
+                Log.Error("BDPlayer: OnGraphNotify exception: {0}", ex);
+              }
+            }
+
+            if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
+            {
+              MovieEnded();
+            }
             break;
           default:
             break;
-        }        
+        }
       }
     }
 

@@ -30,6 +30,7 @@ using DShowNET.Helper;
 using MediaPortal.Configuration;
 using MediaPortal.ExtensionMethods;
 using MediaPortal.GUI.Library;
+using MediaPortal.Player.LAV;
 using MediaPortal.Profile;
 using MediaPortal.Util;
 using Microsoft.DirectX.Direct3D;
@@ -1791,9 +1792,13 @@ namespace MediaPortal.Player
             {
               if (!NoAudioResetCheckBox)
               {
-                ILAVAudioSettings asett = baseFilterLavAudio as ILAVAudioSettings;
-                asett?.SetAudioDelay(true, 0);
-                DirectShowUtil.ReleaseComObject(baseFilterLavAudio);
+                int mAudioDelay = AudioPostEngine.GetInstance().AudioDelay;
+                if (mAudioDelay == 0)
+                {
+                  ILAVAudioSettings asett = baseFilterLavAudio as ILAVAudioSettings;
+                  asett?.SetAudioDelay(true, 0);
+                  DirectShowUtil.ReleaseComObject(baseFilterLavAudio);
+                }
               }
             }
           }
@@ -1834,49 +1839,55 @@ namespace MediaPortal.Player
     {
       try
       {
-        if (mediaCtrl != null)
+        lock (mediaCtrl)
         {
-          Log.Debug("VMR9: mediaCtrl.Stop() 1");
-          _isCurrentStopping = true;
-          int hr;
-          if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+          // Suspending GUIGraphicsContext.State
+          if (mediaCtrl != null)
           {
-            // Disable Restore Display mode, it is done on C++ side
-            //RestoreDisplayModeNow();
-
-            if (_scene?.WorkerThread != null)
+            Log.Debug("VMR9: mediaCtrl.Stop() 1");
+            _isCurrentStopping = true;
+            int hr;
+            if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
             {
-              if (_scene.WorkerThread.IsAlive)
+              // Disable Restore Display mode, it is done on C++ side
+              //RestoreDisplayModeNow();
+
+              if (_scene?.WorkerThread != null)
               {
-                Log.Error("VMR9: Vmr9MediaCtrl madVR Grab thread abort");
-                _scene.WorkerThread.Abort();
+                if (_scene.WorkerThread.IsAlive)
+                {
+                  Log.Error("VMR9: Vmr9MediaCtrl madVR Grab thread abort");
+                  _scene.WorkerThread.Abort();
+                }
               }
-            }
-            hr = mediaCtrl.Stop();
-            DsError.ThrowExceptionForHR(hr);
-            Log.Debug("VMR9: Vmr9MediaCtrl MadStopping()");
-            MadStopping();
-            //MadDeinit();
-          }
-          else
-          {
-            hr = mediaCtrl.Stop();
-            DsError.ThrowExceptionForHR(hr);
-          }
-          Log.Debug("VMR9: mediaCtrl.Stop() 2");
 
-          if (GUIGraphicsContext.InVmr9Render)
-          {
-            switch (GUIGraphicsContext.VideoRenderer)
+              hr = mediaCtrl.Stop();
+              DsError.ThrowExceptionForHR(hr);
+              Log.Debug("VMR9: Vmr9MediaCtrl MadStopping()");
+              MadStopping();
+              //MadDeinit();
+            }
+            else
             {
-              case GUIGraphicsContext.VideoRendererType.madVR:
-                GUIGraphicsContext.InVmr9Render = false;
-                // Disable exclusive mode here to avoid madVR window staying on top
-                //if (_vmr9Filter != null) MadvrInterface.EnableExclusiveMode(false, _vmr9Filter);
-                break;
-              default:
-                Log.Error("VMR9: {0} in renderer", g_Player.Player.ToString());
-                break;
+              hr = mediaCtrl.Stop();
+              DsError.ThrowExceptionForHR(hr);
+            }
+
+            Log.Debug("VMR9: mediaCtrl.Stop() 2");
+
+            if (GUIGraphicsContext.InVmr9Render)
+            {
+              switch (GUIGraphicsContext.VideoRenderer)
+              {
+                case GUIGraphicsContext.VideoRendererType.madVR:
+                  GUIGraphicsContext.InVmr9Render = false;
+                  // Disable exclusive mode here to avoid madVR window staying on top
+                  //if (_vmr9Filter != null) MadvrInterface.EnableExclusiveMode(false, _vmr9Filter);
+                  break;
+                default:
+                  Log.Error("VMR9: {0} in renderer", g_Player.Player.ToString());
+                  break;
+              }
             }
           }
         }
