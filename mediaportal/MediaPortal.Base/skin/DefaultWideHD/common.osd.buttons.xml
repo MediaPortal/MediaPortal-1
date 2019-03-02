@@ -23,7 +23,7 @@
       <type>group</type>
       <posX>730</posX>
       <posY>957</posY>
-      <layout>StackLayout(5, Horizontal)</layout>
+      <layout>StackLayout(5, Horizontal, true)</layout>
       <control>
         <description>Show program info</description>
         <type>button</type>
@@ -118,10 +118,29 @@
         <label>-</label>
         <font>-</font>
         <onleft>220</onleft>
-        <onright>222</onright>
+        <onright>223</onright>
         <onup>221</onup>
         <ondown>221</ondown>
         <animation effect="zoom" start="100,100" end="115,115" time="0">focus</animation>
+      </control>
+      <control>
+        <description>Recordings Menu</description>
+        <type>button</type>
+        <id>223</id>
+        <posX>1332</posX>
+        <posY>1049</posY>
+        <width>55</width>
+        <height>55</height>
+        <textureFocus>tb_record_red.png</textureFocus>
+        <textureNoFocus>tb_recordNF_red.png</textureNoFocus>
+        <label>-</label>
+        <font>-</font>
+        <onleft>221</onleft>
+        <onright>222</onright>
+        <onup>223</onup>
+        <ondown>223</ondown>
+        <animation effect="zoom" start="100,100" end="115,115" time="0">focus</animation>
+        <visible>plugin.isenabled(Latest Media Handler)+string.equals(#TV.Record.Active,true)</visible>
       </control>
       <control>
         <description>Clickfinder ProgramGuide Details</description>
@@ -135,7 +154,7 @@
         <textureNoFocus>tb_cfNF.png</textureNoFocus>
         <label>-</label>
         <font>-</font>
-        <onleft>221</onleft>
+        <onleft>223</onleft>
         <onright>31</onright>
         <onup>222</onup>
         <ondown>222</ondown>
@@ -229,10 +248,22 @@
       <visible>Control.HasFocus(234)</visible>
     </control>
     <control>
-      <description>label ClickFinder</description>
+      <description>label Active Recordings</description>
       <type>label</type>
       <id>1</id>
       <posX>1120</posX>
+      <posY>1030</posY>
+      <label>#(L(200052))</label>
+      <font>font10</font>
+      <align>center</align>
+      <textcolor>ivory</textcolor>
+      <visible>Control.HasFocus(223)</visible>
+    </control>
+    <control>
+      <description>label ClickFinder</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>1180</posX>
       <posY>1030</posY>
       <label>Clickfinder</label>
       <font>font10</font>

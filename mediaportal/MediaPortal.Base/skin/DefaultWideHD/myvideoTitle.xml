@@ -533,7 +533,7 @@
         <id>0</id>
         <width>85</width>
         <height>55</height>
-        <texture>#fanarthandler.movie.studios.selected</texture>
+        <texture>#fanarthandler.movie.studios.selected.single</texture>
         <keepaspectratio>yes</keepaspectratio>
         <visible>facadeview.list</visible>        
     </control>
