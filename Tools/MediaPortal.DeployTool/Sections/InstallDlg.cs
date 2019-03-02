@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2019 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2019 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -187,6 +187,7 @@ namespace MediaPortal.DeployTool.Sections
           AddPackageToListView(new TvServerChecker());
           AddPackageToListView(new TvPluginChecker());
           AddPackageToListView(new LAVFilterMPEInstall());
+          AddPackageToListView(new StudiosExtensionInstall());
           break;
 
         case "tvserver_master":
@@ -201,11 +202,13 @@ namespace MediaPortal.DeployTool.Sections
           AddPackageToListView(new MediaPortalChecker());
           AddPackageToListView(new TvPluginChecker());
           AddPackageToListView(new LAVFilterMPEInstall());
+          AddPackageToListView(new StudiosExtensionInstall());
           break;
 
         case "mp_only":
           AddPackageToListView(new MediaPortalChecker());
           AddPackageToListView(new LAVFilterMPEInstall());
+          AddPackageToListView(new StudiosExtensionInstall());
           break;
 
         case "download_only":
@@ -215,6 +218,7 @@ namespace MediaPortal.DeployTool.Sections
           AddPackageToListView(new TvServerChecker());
           AddPackageToListView(new TvPluginChecker());
           AddPackageToListView(new LAVFilterMPEInstall());
+          AddPackageToListView(new StudiosExtensionInstall());
           break;
       }
       if ((InstallationProperties.Instance["ConfigureMediaPortalFirewall"] == "1" ||
