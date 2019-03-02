@@ -935,7 +935,7 @@ namespace TvLibrary.Implementations.DVB
         return false;
       _pmtVersion = -1;
       _pmtPid = pmtPid;
-      _pmtRequested = true; // requested      
+      _pmtRequested = true; // requested
       if (_conditionalAccess != null)
         _conditionalAccess.OnRunGraph(serviceId);
 
