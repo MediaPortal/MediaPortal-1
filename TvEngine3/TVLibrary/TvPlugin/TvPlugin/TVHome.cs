@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2019 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2019 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -139,8 +139,9 @@ namespace TvPlugin
     private static bool _ServerNotConnectedHandled = false;
     private static bool _recoverTV = false;
     private static bool _isAnyCardRecording = false;
-    private static TvServer _server;
-    internal static bool firstNotLoaded = true;
+    private static bool _isAnyCardRecordingRedDot = false;
+    protected static TvServer _server;
+    public static bool firstNotLoaded = true;
     internal static bool _allowProtectedItem;
     internal static bool _showAllRecording;
 
@@ -1596,6 +1597,12 @@ namespace TvPlugin
           {
             _isAnyCardRecording = TvServer.IsAnyCardRecording();
           }
+
+        if (_isAnyCardRecording != _isAnyCardRecordingRedDot)
+        {
+          _isAnyCardRecordingRedDot = _isAnyCardRecording;
+          GUIPropertyManager.SetProperty("#TV.Record.Active", _isAnyCardRecordingRedDot ? "true" : "false");
+        }
 
           // HeartBeat loop (5 seconds)
           if (countToHBLoop >= 5)
