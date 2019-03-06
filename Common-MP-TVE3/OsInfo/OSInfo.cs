@@ -801,37 +801,37 @@ namespace OSInfo
     }
 
     /// <summary>
-    /// Return DateTime of last installed Windows Update (excluding Security Essentials definition updates)
+    /// Return DateTime of last installed Windows Update
+    /// (excluding Security Essentials/Windows Defender definition updates)
     /// </summary>
     /// <returns>DateTime (in UTC), or DateTime.MinValue if not found</returns>
     public static DateTime GetLastInstalledWindowsUpdateTimestamp()
     {
       var session = new UpdateSession();
       var updateSearcher = session.CreateUpdateSearcher();
-      if (updateSearcher.ClientApplicationID != null)
+      updateSearcher.Online = false;
+      int count = updateSearcher.GetTotalHistoryCount();
+      var history = updateSearcher.QueryHistory(0, count);
+      for (int i = 0; i < count; ++i)
       {
-        updateSearcher.Online = false;
-        int count = updateSearcher.GetTotalHistoryCount();
-        var history = updateSearcher.QueryHistory(0, count);
-        for (int i = 0; i < count; ++i)
-        {
-          if ((history[i].ResultCode == OperationResultCode.orcSucceeded) &&
-              (!history[i].Title.Contains("Security Essentials")))
-            return history[i].Date;
-        }
+        if ((history[i].ResultCode == OperationResultCode.orcSucceeded) &&
+            (!history[i].Title.Contains("Security Essentials")) &&
+            (!history[i].Title.Contains("Windows Defender")))
+          return history[i].Date;
       }
       return DateTime.MinValue;
     }
 
     /// <summary>
-    /// Return string with last installed Windows Update timestamp (excluding Security Essentials definition updates)
+    /// Return string with last installed Windows Update timestamp
+    /// (excluding Security Essentials/Windows Defender definition updates)
     /// </summary>
-    /// <returns>timestamp (in UTC) as string, or "NEVER !!!" if not found</returns>
+    /// <returns>timestamp (in UTC) as string, or "unknown" if not found</returns>
     public static string GetLastInstalledWindowsUpdateTimestampAsString()
     {
       DateTime dt = GetLastInstalledWindowsUpdateTimestamp();
-      return "Last install from WindowsUpdate is dated " + ((dt == DateTime.MinValue)
-        ? "NEVER !!!"
+      return "Last install date from WindowsUpdate is " + ((dt == DateTime.MinValue)
+        ? "unknown"
         : TimeZone.CurrentTimeZone.ToLocalTime(dt).ToString("yyyy-MM-dd HH:mm:ss"));
     }
 
