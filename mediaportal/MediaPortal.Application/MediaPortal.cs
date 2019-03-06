@@ -5559,7 +5559,11 @@ public class MediaPortalApp : D3D, IRender
                 {
                   GUIGraphicsContext.MadVrRenderTargetVmr9 = surface;
                 }
-                g_Player.RefreshMadVrVideo();
+
+                if (!g_Player.IsPicture && !g_Player.IsPicturePlaylist)
+                {
+                  g_Player.RefreshMadVrVideo();
+                }
               }
 
               if (message.Param1 == 2)
