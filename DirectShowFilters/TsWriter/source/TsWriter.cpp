@@ -1,5 +1,5 @@
 /* 
- *	Copyright (C) 2006-2015 Team MediaPortal
+ *	Copyright (C) 2006-2018 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -599,11 +599,9 @@ CMpTs::CMpTs(LPUNKNOWN pUnk, HRESULT *pHr)
   LogDebug("  Logging format: [Date Time] [InstanceID] [ThreadID] Message....  ");
   LogDebug("===================================================================");
   LogDebug("---------------------- v%d.%d.%d.%d -------------------------------", TSWRITER_MAJOR_VERSION,TSWRITER_MID_VERSION,TSWRITER_VERSION,TSWRITER_POINT_VERSION);
-  LogDebug("-- Threaded timeshift file writing                               --");
-  LogDebug("-- Random access mode for timeshift files                        --");
-  LogDebug("-- Variable size (no chunk reserve) for timeshift files          --");
   LogDebug("-- Threaded recording file writing                               --");
   LogDebug("-- EPG text handling changes                                     --");
+  LogDebug("-- Registry option settings added                                --");
   LogDebug("-------------------------------------------------------------------");  
 		
   b_dumpRawPackets = false;
@@ -627,14 +625,14 @@ CMpTs::CMpTs(LPUNKNOWN pUnk, HRESULT *pHr)
      *pHr = E_OUTOFMEMORY;
      return;
   }
-    
+      
+  m_pRegistryUtil = new CRegistryUtil();
+  m_pRegistryUtil->ReadSettingsFromReg(); // Read registry option settings
 	m_pChannelScanner= new CChannelScan(GetOwner(), pHr, m_pFilter);
   m_pEpgScanner = new CEpgScanner(GetOwner(), pHr);
   m_pChannelLinkageScanner = new CChannelLinkageScanner(GetOwner(), pHr);
   m_pRawPacketWriter = new FileWriter();
   m_pPin->AssignRawPacketWriter(m_pRawPacketWriter);
-  //m_pOobSiPin->AssignRawSectionWriter(m_pRawPacketWriter);
-
 }
 
 // Destructor
@@ -649,6 +647,7 @@ CMpTs::~CMpTs()
   delete m_pEpgScanner;
   delete m_pChannelLinkageScanner;
   delete m_pRawPacketWriter;
+  delete m_pRegistryUtil;
   DeleteAllChannels();
   StopLogger();
 }

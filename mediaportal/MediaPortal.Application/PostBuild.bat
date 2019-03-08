@@ -208,7 +208,7 @@ REM System.Management.Automation
 xcopy %1\..\Packages\System.Management.Automation.6.1.7601.17515\lib\net40\System.Management.Automation.dll . /Y /D
 
 REM SharpLibDisplay
-xcopy %1\..\Packages\SharpLibDisplay.0.2.6\lib\net40\SharpLibDisplay.dll . /Y /D
+xcopy %1\..\Packages\SharpLibDisplay.0.3.4\lib\net40\SharpLibDisplay.dll . /Y /D
 
 REM Naudio
 xcopy %1\..\Packages\NAudio.1.8.3\lib\net35\NAudio.dll . /Y /D

@@ -1671,6 +1671,7 @@ public class MediaPortalApp : D3D, IRender
           if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
           {
             GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.SUSPENDING;
+            Log.Debug("Main: WM_DISPLAYCHANGE - set GUIGraphicsContext.State.SUSPENDING");
           }
 
           Screen screen = Screen.FromControl(this);
@@ -1722,6 +1723,7 @@ public class MediaPortalApp : D3D, IRender
           if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.SUSPENDING)
           {
             GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.RUNNING;
+            Log.Debug("Main: WM_DISPLAYCHANGE - set GUIGraphicsContext.State.RUNNING");
           }
 
           // enable event handlers
@@ -1913,8 +1915,8 @@ public class MediaPortalApp : D3D, IRender
           // Suspending GUIGraphicsContext when going to S3
           if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
           {
-            Log.Debug("Main: Set GUIGraphicsContext.State.SUSPENDING");
             GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.SUSPENDING;
+            Log.Debug("Main: PBT_APMSUSPEND - set GUIGraphicsContext.State.SUSPENDING");
           }
 
           // disable event handlers
@@ -2377,15 +2379,32 @@ public class MediaPortalApp : D3D, IRender
           switch (msg.WParam.ToInt32())
           {
             case DBT_DEVICEREMOVECOMPLETE:
-              var msgRemoval = new GUIMessage(GUIMessage.MessageType.GUI_MSG_DBT_DEVICEREMOVECOMPLETE, 0, 0, 0, 0, 0, null);
-              msgRemoval.Label = deviceName;
-              GUIWindowManager.SendThreadMessage(msgRemoval);
+              if (GUIGraphicsContext.CurrentAudioDeviceNameRemoval != deviceName)
+              {
+                GUIGraphicsContext._guiMsgDbtAudioDeviceRemoveComplete = true;
+                GUIGraphicsContext.CurrentAudioDeviceNameRemoval = deviceName;
+                Log.Debug("Main: DBT_DEVICEREMOVECOMPLETE AUDIO " + deviceName);
+              }
               break;
 
             case DBT_DEVICEARRIVAL:
-              var msgArrival = new GUIMessage(GUIMessage.MessageType.GUI_MSG_DBT_DEVICEARRIVAL, 0, 0, 0, 0, 0, null);
-              msgArrival.Label = deviceName;
-              GUIWindowManager.SendThreadMessage(msgArrival);
+              if (GUIGraphicsContext.CurrentAudioDeviceNameArrival != deviceName)
+              {
+                GUIGraphicsContext._guiMsgDbtAudioDeviceArrival = true;
+                GUIGraphicsContext.CurrentAudioDeviceNameArrival = deviceName;
+                Log.Debug("Main: DBT_DEVICEARRIVAL AUDIO " + deviceName);
+
+                Log.Debug("Main: DBT_DEVICEARRIVAL AUDIO play sound workaround");
+                try
+                {
+                  var action = new Action(Action.ActionType.ACTION_PLAY_INTEL_AUDIO_SOUND, 0f, 0f) { SoundFileName = "silent.wav"};
+                  GUIGraphicsContext.OnAction(action);
+                }
+                catch (Exception e)
+                {
+                  Log.Error("Main: DBT_DEVICEARRIVAL AUDIO play sound workaround failed");
+                }
+              }
               break;
           }
         }
@@ -2929,31 +2948,32 @@ public class MediaPortalApp : D3D, IRender
   {
     // stop playback
     Log.Debug("Main: OnSuspend - stopping playback");
-    if (GUIGraphicsContext.IsPlaying)
+    if (g_Player.Playing || GUIGraphicsContext.IsPlaying)
     {
+      SetThreadExecutionState(EXECUTION_STATE.ES_CONTINUOUS | EXECUTION_STATE.ES_SYSTEM_REQUIRED);
       Currentmodulefullscreen();
       if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
       {
-        if (VMR9Util.g_vmr9 != null)
-        {
-          if (VMR9Util.g_vmr9.Vmr9Filter != null)
-          {
-            MadvrInterface.restoreDisplayModeNow(VMR9Util.g_vmr9.Vmr9Filter);
-          }
-        }
+        // Disabled, it is done on C++ side
+        //if (VMR9Util.g_vmr9 != null)
+        //{
+        //  if (VMR9Util.g_vmr9.Vmr9Filter != null)
+        //  {
+        //    MadvrInterface.restoreDisplayModeNow(VMR9Util.g_vmr9.Vmr9Filter);
+        //  }
+        //}
         Currentmodulefullscreen();
-        var action = new Action(Action.ActionType.ACTION_STOP, 0, 0);
-        GUIGraphicsContext.OnAction(action);
+        // Disable this to avoid crash on resume - V468 added it to try to avoid deadlock on stop.
+        //var action = new Action(Action.ActionType.ACTION_STOP, 0, 0);
+        //GUIGraphicsContext.OnAction(action);
       }
-      else
+      g_Player.Stop();
+      while (GUIGraphicsContext.IsPlaying || g_Player.Player != null)
       {
-        g_Player.Stop();
-        while (GUIGraphicsContext.IsPlaying)
-        {
-          // This could lead into OS putting system into sleep before MP completes OnSuspend().
-          // OS gives only 2 seconds time to application to react power events (>= Vista)
-          Thread.Sleep(100);
-        }
+        // This could lead into OS putting system into sleep before MP completes OnSuspend().
+        // OS gives only 2 seconds time to application to react power events (>= Vista)
+        Thread.Sleep(100);
+        Log.Debug("Main: player not null");
       }
     }
     SaveLastActiveModule();
@@ -3071,6 +3091,7 @@ public class MediaPortalApp : D3D, IRender
     if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.SUSPENDING)
     {
       GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.RUNNING;
+      Log.Debug("Main: OnResumeSuspend() - set GUIGraphicsContext.State.RUNNING");
     }
 
     if (!_suspended)
@@ -3142,11 +3163,30 @@ public class MediaPortalApp : D3D, IRender
         CreateStateBlock();
         uiVisible = GUILayerManager.Render(timePassed, layers);
         RenderStats();
+
+        // Restore Audio device if detected removed
+        if (GUIGraphicsContext._guiMsgDbtAudioDeviceRemoveComplete)
+        {
+          GUIGraphicsContext._guiMsgDbtAudioDeviceRemoveComplete = false;
+          var msgRemoval = new GUIMessage(GUIMessage.MessageType.GUI_MSG_DBT_AUDIODEVICEREMOVECOMPLETE, 0, 0, 0, 0, 0, null);
+          msgRemoval.Label = GUIGraphicsContext.CurrentAudioDeviceNameRemoval;
+          GUIWindowManager.SendThreadMessage(msgRemoval);
+          Log.Debug("Main: RenderFrame - DBT_DEVICEREMOVECOMPLETE");
+        }
+
+        if (GUIGraphicsContext._guiMsgDbtAudioDeviceArrival)
+        {
+          GUIGraphicsContext._guiMsgDbtAudioDeviceArrival = false;
+          var msgArrival = new GUIMessage(GUIMessage.MessageType.GUI_MSG_DBT_AUDIODEVICEARRIVAL, 0, 0, 0, 0, 0, null);
+          msgArrival.Label = GUIGraphicsContext.CurrentAudioDeviceNameArrival;
+          GUIWindowManager.SendThreadMessage(msgArrival);
+          Log.Debug("Main: RenderFrame - DBT_DEVICEARRIVAL");
+        }
       }
       catch (Exception ex)
       {
         Log.Error(ex);
-        Log.Error("RenderFrame exception {0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
+        Log.Error("Main: RenderFrame exception {0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
       }
     }
   }
@@ -3228,23 +3268,62 @@ public class MediaPortalApp : D3D, IRender
 
     // Count connected audio devices
     GUIGraphicsContext.DeviceAudioConnected = 0;
-    try
+
+    DsDevice[] devices;
+    if (OSInfo.OSInfo.Win10OrLater())
     {
-      if (_mMdeviceEnumerator == null)
-        _mMdeviceEnumerator = new MMDeviceEnumerator();
-      GUIGraphicsContext.DeviceAudioConnected =
-        _mMdeviceEnumerator.EnumAudioEndpoints(DataFlow.Render, DeviceState.Active).Count();
+      try
+      {
+        if (_mMdeviceEnumerator == null)
+          _mMdeviceEnumerator = new MMDeviceEnumerator();
+        GUIGraphicsContext.DeviceAudioConnected =
+          _mMdeviceEnumerator.EnumAudioEndpoints(DataFlow.Render, DeviceState.Active).Count();
+      }
+      catch (Exception ex)
+      {
+        Log.Error($"Main: audio renderer count failed {ex}");
+      }
     }
-    catch (Exception ex)
+    else
     {
-      Log.Error($"Main: audio renderer count failed {ex}");
+      devices = DsDevice.GetDevicesOfCat(FilterCategory.AMKSAudio);
+      if (devices != null)
+      {
+        GUIGraphicsContext.DeviceAudioConnected += devices.Length;
+        foreach (DsDevice d in devices)
+        {
+          d.Dispose();
+        }
+      }
+
+      devices = DsDevice.GetDevicesOfCat(FilterCategory.AMKSRender); // KSCATEGORY_RENDER
+      if (devices != null)
+      {
+        GUIGraphicsContext.DeviceAudioConnected += devices.Length;
+        foreach (DsDevice d in devices)
+        {
+          d.Dispose();
+        }
+      }
+
+      devices = DsDevice.GetDevicesOfCat(RDP_REMOTE_AUDIO);
+      if (devices != null)
+      {
+        GUIGraphicsContext.DeviceAudioConnected += devices.Length;
+        foreach (DsDevice d in devices)
+        {
+          d.Dispose();
+        }
+      }
     }
 
     Log.Debug("Main: audio renderer count at startup = {0}", GUIGraphicsContext.DeviceAudioConnected);
 
     // Count connected video devices
     GUIGraphicsContext.DeviceVideoConnected = 0;
-    DsDevice[] devices = DsDevice.GetDevicesOfCat(FilterCategory.AMKSVideo);    // KSCATEGORY_VIDEO
+
+    devices = DsDevice.GetDevicesOfCat(FilterCategory.AMKSVideo);
+
     if (devices != null)
     {
       GUIGraphicsContext.DeviceVideoConnected += devices.Length;
@@ -4581,6 +4660,15 @@ public class MediaPortalApp : D3D, IRender
             return;
           }
           break;
+
+        // play sound 
+        case Action.ActionType.ACTION_PLAY_INTEL_AUDIO_SOUND:
+          if (action.SoundFileName.Length > 0)
+          {
+            Utils.PlaySound(action.SoundFileName, false, true, true);
+            Log.Debug("Main: ACTION_PLAY_INTEL_AUDIO_SOUND");
+          }
+          break;
       }
 
       if (g_Player.Playing)
@@ -5509,13 +5597,13 @@ public class MediaPortalApp : D3D, IRender
           }
           break;
 
-        case GUIMessage.MessageType.GUI_MSG_DBT_DEVICEREMOVECOMPLETE:
+        case GUIMessage.MessageType.GUI_MSG_DBT_AUDIODEVICEREMOVECOMPLETE:
           lock (GUIGraphicsContext.PlayStarting)
           {
             Log.Info("Main: Audio Renderer {0} removed", message.Label);
             try
             {
-              GUIGraphicsContext.DeviceAudioConnected--;
+              //GUIGraphicsContext.DeviceAudioConnected--;
               if (_stopOnLostAudioRenderer &&
                   GUIGraphicsContext.CurrentAudioRendererDevice.Trim().ToLowerInvariant() ==
                   message.Label.Trim().ToLowerInvariant())
@@ -5527,20 +5615,19 @@ public class MediaPortalApp : D3D, IRender
                   Thread.Sleep(100);
                 }
               }
-              else
-              {
-                FilterHelper.ReloadFilterCollection();
-                if (g_Player.Playing &&
-                    GUIGraphicsContext.CurrentAudioRendererDevice.Trim().ToLowerInvariant() ==
-                    message.Label.Trim().ToLowerInvariant() && !GUIGraphicsContext.CurrentAudioRendererDone)
-                {
-                  var msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_STOP_MEDIACONTROL_AUDIO, 0, 0, 0, 0, 0,
-                    null);
-                  GUIWindowManager.SendThreadMessage(msg);
-                  Log.Debug("Main: send message to stop mediacontrol for audio playback");
-                }
-                GUIGraphicsContext.CurrentAudioRendererDone = false;
-              }
+              //else
+              //{
+              //  if (g_Player.Playing &&
+              //      GUIGraphicsContext.CurrentAudioRendererDevice.Trim().ToLowerInvariant() ==
+              //      message.Label.Trim().ToLowerInvariant() && !GUIGraphicsContext.CurrentAudioRendererDone)
+              //  {
+              //    var msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_REBUILD_AUDIO, 0, 0, 0, 0, 0,
+              //      null);
+              //    GUIWindowManager.SendThreadMessage(msg);
+              //    Log.Debug("Main: send message to stop mediacontrol for audio playback");
+              //  }
+              //  GUIGraphicsContext.CurrentAudioRendererDone = false;
+              //}
 
               // Force MP to refresh screen
               _forceMpAlive = true;
@@ -5553,16 +5640,16 @@ public class MediaPortalApp : D3D, IRender
           }
           break;
 
-        case GUIMessage.MessageType.GUI_MSG_DBT_DEVICEARRIVAL:
+        case GUIMessage.MessageType.GUI_MSG_DBT_AUDIODEVICEARRIVAL:
           lock (GUIGraphicsContext.PlayStarting)
           {
             Log.Info("Main: Audio Renderer {0} connected", message.Label);
             try
             {
-              GUIGraphicsContext.DeviceAudioConnected++;
-              if (_stopOnLostAudioRenderer &&
-                  GUIGraphicsContext.CurrentAudioRendererDevice.Trim().ToLowerInvariant() ==
-                  message.Label.Trim().ToLowerInvariant())
+              //GUIGraphicsContext.DeviceAudioConnected++;
+              if (GUIGraphicsContext.CurrentAudioRendererDevice != null && (_stopOnLostAudioRenderer &&
+                                                                            GUIGraphicsContext.CurrentAudioRendererDevice.Trim().ToLowerInvariant() ==
+                                                                            message.Label.Trim().ToLowerInvariant()))
               {
                 Log.Debug("Main: Stop playback");
                 g_Player.Stop();
@@ -5580,14 +5667,13 @@ public class MediaPortalApp : D3D, IRender
               }
               else
               {
-                FilterHelper.ReloadFilterCollection();
                 if (g_Player.Playing &&
                     GUIGraphicsContext.CurrentAudioRendererDevice.Trim().ToLowerInvariant() ==
                     message.Label.Trim().ToLowerInvariant() && !GUIGraphicsContext.CurrentAudioRendererDone)
                 {
                   var msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_REBUILD_AUDIO, 0, 0, 0, 0, 0, null);
                   GUIWindowManager.SendThreadMessage(msg);
-                  Log.Debug("Main: send message to add audio playback");
+                  Log.Debug("Main: AUDIODEVICEARRIVAL CurrentAudioRendererDevice NULL - send message to add audio playback");
                 }
               }
 
@@ -5598,6 +5684,16 @@ public class MediaPortalApp : D3D, IRender
             {
               Log.Warn("Main: Exception on arrival Audio Renderer {0} exception: {1} ", message.Label,
                 exception.Message);
+            }
+            Log.Error("Main: AUDIODEVICEARRIVAL play sound workaround");
+            try
+            {
+              var action = new Action(Action.ActionType.ACTION_PLAY_INTEL_AUDIO_SOUND, 0f, 0f) {SoundFileName = "silent.wav" };
+              GUIGraphicsContext.OnAction(action);
+            }
+            catch (Exception e)
+            {
+              Log.Error("Main: AUDIODEVICEARRIVAL play sound workaround failed");
             }
           }
           break;

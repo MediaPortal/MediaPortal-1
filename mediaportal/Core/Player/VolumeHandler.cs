@@ -52,16 +52,82 @@ namespace MediaPortal.Player
 
     public VolumeHandler(int[] volumeTable)
     {
-      if(_MMdeviceEnumerator == null)
-        _MMdeviceEnumerator = new MMDeviceEnumerator();
-
-      var mMdeviceList = _MMdeviceEnumerator.EnumAudioEndpoints(DataFlow.Render, DeviceState.Active);
-
-      if (mMdeviceList.Count > 0)
+      if (OSInfo.OSInfo.Win10OrLater())
       {
+        if (_MMdeviceEnumerator == null)
+          _MMdeviceEnumerator = new MMDeviceEnumerator();
 
-        var mMdevice = _MMdeviceEnumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
-        if (mMdevice != null)
+        var mMdeviceList = _MMdeviceEnumerator.EnumAudioEndpoints(DataFlow.Render, DeviceState.Active);
+
+        if (mMdeviceList.Count > 0)
+        {
+
+          var mMdevice = _MMdeviceEnumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
+          if (mMdevice != null)
+          {
+            using (Settings reader = new MPSettings())
+            {
+              int levelStyle = reader.GetValueAsInt("volume", "startupstyle", 0);
+
+              if (levelStyle == 0)
+              {
+                _startupVolume = Math.Max(0, Math.Min(65535, reader.GetValueAsInt("volume", "lastknown", 52428)));
+              }
+
+              if (levelStyle == 1)
+              {
+              }
+
+              if (levelStyle == 2)
+              {
+                _startupVolume = Math.Max(0, Math.Min(65535, reader.GetValueAsInt("volume", "startuplevel", 52428)));
+              }
+
+              IsDigital = reader.GetValueAsBool("volume", "digital", false);
+
+              _showVolumeOSD = reader.GetValueAsBool("volume", "defaultVolumeOSD", true);
+
+              hideWindowsOSD = reader.GetValueAsBool("volume", "hideWindowsOSD", false);
+            }
+
+            try
+            {
+              _volumeTable = volumeTable;
+              _mixer10 = new Mixer.Mixer10();
+              _mixer10.Open(0, IsDigital, volumeTable);
+            }
+            catch (Exception ex)
+            {
+              Log.Error("VolumeHandler: Mixer exception during init {0}", ex);
+            }
+
+            if (OSInfo.OSInfo.Win8OrLater() && hideWindowsOSD)
+            {
+              try
+              {
+                bool tempShowVolumeOSD = _showVolumeOSD;
+
+                _showVolumeOSD = true;
+
+                VolumeOSD = new HideVolumeOSD.HideVolumeOSDLib(IsMuted);
+                VolumeOSD.HideOSD();
+
+                _showVolumeOSD = tempShowVolumeOSD;
+              }
+              catch
+              {
+              }
+            }
+          }
+        }
+        else
+        {
+          _volumeTable = volumeTable;
+        }
+      }
+      else
+      {
+        if (GUIGraphicsContext.DeviceAudioConnected > 0)
         {
           using (Settings reader = new MPSettings())
           {
@@ -81,7 +147,7 @@ namespace MediaPortal.Player
               _startupVolume = Math.Max(0, Math.Min(65535, reader.GetValueAsInt("volume", "startuplevel", 52428)));
             }
 
-            isDigital = reader.GetValueAsBool("volume", "digital", false);
+            IsDigital = reader.GetValueAsBool("volume", "digital", false);
 
             _showVolumeOSD = reader.GetValueAsBool("volume", "defaultVolumeOSD", true);
 
@@ -90,13 +156,14 @@ namespace MediaPortal.Player
 
           try
           {
-            _volumeTable = volumeTable;
             _mixer = new Mixer.Mixer();
-            _mixer.Open(0, isDigital, volumeTable);
+            _mixer.Open(0, IsDigital);
+            _volumeTable = volumeTable;
+            _mixer.ControlChanged += mixer_ControlChanged;
           }
           catch (Exception ex)
           {
-            Log.Error("VolumeHandler: Mixer exception during init {0}", ex);
+            Log.Error("VolumeHandler: Mixer exception when init {0}", ex);
           }
 
           if (OSInfo.OSInfo.Win8OrLater() && hideWindowsOSD)
@@ -117,10 +184,10 @@ namespace MediaPortal.Player
             }
           }
         }
-      }
-      else
-      {
-        _volumeTable = volumeTable;
+        else
+        {
+          _volumeTable = volumeTable;
+        }
       }
     }
 
@@ -135,7 +202,17 @@ namespace MediaPortal.Player
     /// </summary>
     public static void CreateInstance()
     {
-      _instance = Create();
+      if (OSInfo.OSInfo.Win10OrLater())
+      {
+        _instance = Create();
+      }
+      else
+      {
+        if (_instance == null)
+        {
+          _instance = Create();
+        }
+      }
     }
 
     /// <summary>
@@ -144,25 +221,81 @@ namespace MediaPortal.Player
     /// <returns>A newly created volume handler.</returns>
     private static VolumeHandler Create()
     {
-      if (_MMdeviceEnumerator == null)
-        _MMdeviceEnumerator = new MMDeviceEnumerator();
-
-      var mMdeviceList = _MMdeviceEnumerator.EnumAudioEndpoints(DataFlow.Render, DeviceState.Active);
-
-      if (mMdeviceList.Count > 0)
+      if (OSInfo.OSInfo.Win10OrLater())
       {
-        var mMdevice = _MMdeviceEnumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
-        if (mMdevice != null)
+        if (_MMdeviceEnumerator == null)
+          _MMdeviceEnumerator = new MMDeviceEnumerator();
+
+        var mMdeviceList = _MMdeviceEnumerator.EnumAudioEndpoints(DataFlow.Render, DeviceState.Active);
+
+        if (mMdeviceList.Count > 0)
+        {
+          var mMdevice = _MMdeviceEnumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
+          if (mMdevice != null)
+          {
+            using (Settings reader = new MPSettings())
+            {
+              _volumeStyle = reader.GetValueAsInt("volume", "handler", 1);
+
+              switch (_volumeStyle)
+              {
+                // classic volume table
+                case 0:
+                  return new VolumeHandler(new[]
+                    {0, 6553, 13106, 19659, 26212, 32765, 39318, 45871, 52424, 58977, 65535});
+                // windows default from registry
+                case 1:
+                  return new VolumeHandler();
+                // logarithmic
+                case 2:
+                  return new VolumeHandler(new[]
+                  {
+                    0, 1039, 1234, 1467, 1744, 2072, 2463, 2927, 3479, 4135, 4914, 5841, 6942, 8250,
+                    9806, 11654, 13851, 16462, 19565, 23253, 27636, 32845, 39037, 46395, 55141, 65535
+                  });
+                // custom user setting
+                case 3:
+                  return new VolumeHandlerCustom();
+                // defaults to vista safe "0, 4095, 8191, 12287, 16383, 20479, 24575, 28671, 32767, 36863, 40959, 45055, 49151, 53247, 57343, 61439, 65535"
+                // Vista recommended values
+                case 4:
+                  return new VolumeHandler(new[]
+                  {
+                    0, 4095, 8191, 12287, 16383, 20479, 24575, 28671, 32767, 36863, 40959, 45055,
+                    49151,
+                    53247, 57343, 61439, 65535
+                  });
+                // Windows 10
+                case 5:
+                  return new VolumeHandler(new[]
+                  {
+                    0, 1310, 2620, 3930, 5240, 6550, 7860, 9170, 10480, 11790, 13100, 14410, 15720, 17030, 18340, 19650,
+                    20960, 22270, 23580, 24890, 26200, 27510, 28820, 30130, 31440,
+                    32750, 34060, 35370, 36680, 37990, 39300, 40610, 41920, 43230, 44540, 45850, 47160, 48470, 49780,
+                    51090, 52400, 53710, 55020, 56330, 57640, 58950, 60260, 61570,
+                    62880, 64190, 65535
+                  });
+                default:
+                  return new VolumeHandlerCustom();
+              }
+            }
+          }
+        }
+      }
+      else
+      {
+        if (GUIGraphicsContext.DeviceAudioConnected > 0)
         {
           using (Settings reader = new MPSettings())
           {
-            _volumeStyle = reader.GetValueAsInt("volume", "handler", 1);
+            int volumeStyle = reader.GetValueAsInt("volume", "handler", 1);
 
-            switch (_volumeStyle)
+            switch (volumeStyle)
             {
               // classic volume table
               case 0:
-                return new VolumeHandler(new[] {0, 6553, 13106, 19659, 26212, 32765, 39318, 45871, 52424, 58977, 65535});
+                return new VolumeHandler(new[]
+                  {0, 6553, 13106, 19659, 26212, 32765, 39318, 45871, 52424, 58977, 65535});
               // windows default from registry
               case 1:
                 return new VolumeHandler();
@@ -171,8 +304,7 @@ namespace MediaPortal.Player
                 return new VolumeHandler(new[]
                 {
                   0, 1039, 1234, 1467, 1744, 2072, 2463, 2927, 3479, 4135, 4914, 5841, 6942, 8250,
-                  9806
-                  , 11654, 13851, 16462, 19565, 23253, 27636, 32845, 39037, 46395, 55141, 65535
+                  9806, 11654, 13851, 16462, 19565, 23253, 27636, 32845, 39037, 46395, 55141, 65535
                 });
               // custom user setting
               case 3:
@@ -190,9 +322,11 @@ namespace MediaPortal.Player
               case 5:
                 return new VolumeHandler(new[]
                 {
-                  0,1310,2620,3930,5240,6550,7860,9170,10480,11790,13100,14410,15720,17030,18340,19650,20960,22270,23580,24890,26200,27510,28820,30130,31440,
-                  32750,34060,35370,36680,37990,39300,40610,41920,43230,44540,45850,47160,48470,49780,51090,52400,53710,55020,56330,57640,58950,60260,61570,
-                  62880,64190,65535
+                  0, 1310, 2620, 3930, 5240, 6550, 7860, 9170, 10480, 11790, 13100, 14410, 15720, 17030, 18340, 19650,
+                  20960, 22270, 23580, 24890, 26200, 27510, 28820, 30130, 31440,
+                  32750, 34060, 35370, 36680, 37990, 39300, 40610, 41920, 43230, 44540, 45850, 47160, 48470, 49780,
+                  51090, 52400, 53710, 55020, 56330, 57640, 58950, 60260, 61570,
+                  62880, 64190, 65535
                 });
               default:
                 return new VolumeHandlerCustom();
@@ -214,12 +348,28 @@ namespace MediaPortal.Player
       {
         return;
       }
-      if (_instance._mixer != null)
+
+      if (OSInfo.OSInfo.Win10OrLater())
+      {
+        if (_instance._mixer10 != null)
+        {
+          using (Settings writer = new MPSettings())
+          {
+            writer.SetValue("volume", "lastknown", _instance._mixer10.Volume);
+          }
+
+          _instance._mixer10.SafeDispose();
+          _instance._mixer10 = null;
+        }
+      }
+      else if (_instance._mixer != null)
       {
         using (Settings writer = new MPSettings())
         {
           writer.SetValue("volume", "lastknown", _instance._mixer.Volume);
         }
+
+        _instance._mixer.ControlChanged -= mixer_ControlChanged;
 
         _instance._mixer.SafeDispose();
         _instance._mixer = null;
@@ -230,7 +380,14 @@ namespace MediaPortal.Player
 
     public virtual void UnMute()
     {
-      _mixer.IsMuted = false;
+      if (OSInfo.OSInfo.Win10OrLater())
+      {
+        _mixer10.IsMuted = false;
+      }
+      else
+      {
+        _mixer.IsMuted = false;
+      }
     }
 
     private static int[] LoadFromRegistry()
@@ -274,21 +431,80 @@ namespace MediaPortal.Player
 
     protected virtual void SetVolume(int volume)
     {
-      if (_mixer != null)
+      if (OSInfo.OSInfo.Win10OrLater())
       {
-        if (_mixer.IsMuted)
+        if (_mixer10 != null)
         {
-          _mixer.IsMuted = false;
+          if (_mixer10.IsMuted)
+          {
+            _mixer10.IsMuted = false;
+          }
+          _mixer10.Volume = volume;
         }
-        _mixer.Volume = volume;
       }
+      else
+      {
+        if (_mixer != null)
+        {
+          // Check if mixer is still attached to the audio device we started with
+          if (_mixer._audioDefaultDevice != null &&
+              _mixer._audioDefaultDevice.DeviceId != _mixer._audioDefaultDevice.DeviceIdCurrent)
+          {
+            _mixer = new Mixer.Mixer();
+            _mixer.Open(0, IsDigital, true);
+            _mixer.ControlChanged += mixer_ControlChanged;
+
+            if (_mixer == null)
+              return;
+          }
+
+          if (_mixer.IsMuted)
+          {
+            _mixer.IsMuted = false;
+          }
+
+          _mixer.Volume = volume;
+        }
+      }
+    }
+
+    protected internal virtual void ChangeAudioDevice(string deviceName, bool setToDefault)
+    {
+      if (OSInfo.OSInfo.Win10OrLater())
+      {
+        _mixer10?.ChangeAudioDevice(deviceName, setToDefault);
+      }
+    }
+
+    protected internal virtual bool DetectedDevice()
+    {
+      bool validate = false;
+      if (OSInfo.OSInfo.Win10OrLater())
+      {
+        var device = _mixer10?.DetectedDevice();
+        if (device != null)
+        {
+          validate = true;
+        }
+      }
+      return validate;
     }
 
     protected virtual void SetVolume(bool isMuted)
     {
-      if (_mixer != null)
+      if (OSInfo.OSInfo.Win10OrLater())
       {
-        _mixer.IsMuted = isMuted;
+        if (_mixer10 != null)
+        {
+          _mixer10.IsMuted = isMuted;
+        }
+      }
+      else
+      {
+        if (_mixer != null)
+        {
+          _mixer.IsMuted = isMuted;
+        }
       }
     }
 
@@ -311,6 +527,14 @@ namespace MediaPortal.Player
       {
         Log.Error($"VolumeHandler: error occured in HandleGUIOnControlChange: {ex}");
       }
+    }
+
+    private static void mixer_ControlChanged(object sender, Mixer.MixerEventArgs e)
+    {
+      Instance.HandleGUIOnControlChange();
+      GUIGraphicsContext.VolumeOverlay = true;
+      GUIGraphicsContext.VolumeOverlayTimeOut = DateTime.Now;
+      Instance.UpdateVolumeProperties();
     }
 
     public void mixer_UpdateVolume()
@@ -338,10 +562,21 @@ namespace MediaPortal.Player
     {
       get
       {
-        if (_mixer != null)
+        if (OSInfo.OSInfo.Win10OrLater())
         {
-          return _mixer.Volume;
+          if (_mixer10 != null)
+          {
+            return _mixer10.Volume;
+          }
         }
+        else
+        {
+          if (_mixer != null)
+          {
+            return _mixer.Volume;
+          }
+        }
+
         return 0;
       }
       set { SetVolume(value); }
@@ -351,10 +586,21 @@ namespace MediaPortal.Player
     {
       get
       {
-        if (_mixer != null)
+        if (OSInfo.OSInfo.Win10OrLater())
         {
-          return _mixer.IsMuted;
+          if (_mixer10 != null)
+          {
+            return _mixer10.IsMuted;
+          }
         }
+        else
+        {
+          if (_mixer != null)
+          {
+            return _mixer.IsMuted;
+          }
+        }
+
         return false;
       }
       set { SetVolume(value); }
@@ -447,8 +693,12 @@ namespace MediaPortal.Player
     {
       get
       {
-        if (_instance == null)
-          CreateInstance();
+        if (OSInfo.OSInfo.Win10OrLater())
+        {
+          if (_instance == null)
+            CreateInstance();
+          return _instance;
+        }
 
         return _instance;
       }
@@ -459,10 +709,11 @@ namespace MediaPortal.Player
 
     #region Fields
 
-    public Mixer.Mixer _mixer;
-    public bool isDigital;
+    private Mixer.Mixer _mixer;
+    private Mixer.Mixer10 _mixer10;
 
     private static VolumeHandler _instance;
+    public static bool IsDigital;
 
     private static readonly int[] SystemTable = new[]
                                                    {

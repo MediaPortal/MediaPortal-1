@@ -282,6 +282,7 @@ class MPMadPresenter : public CUnknown, public CCritSec
     STDMETHODIMP SetStopEvent();
 
     virtual void EnableExclusive(bool bEnable);
+    virtual void EnableOriginalDisplayMode(bool bEnable);
 
     bool m_pShutdown = false;
     bool m_pInitOSD = false;

@@ -24,9 +24,16 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers.SharpLibDisplay
     TextField iTextFieldTop;
     TextField iTextFieldBottom;
     TextField iTextFieldSingleLine;
+    AudioVisualizerField iAudioVisualizerField;
     RecordingField iRecordingField;
     DataField[] iFields;
     bool iNeedUpdate;
+
+    //EQ Management
+    bool iWasIdle = false;
+    bool iShowingEq = false;
+    DateTime iLastEqToggle;
+
 
     public Display()
     {
@@ -34,39 +41,93 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers.SharpLibDisplay
       iNeedUpdate = true;
     }
 
-    //
-    void CreateFields()
+
+
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    private bool NeedEqToggle()
+    {
+      if (iShowingEq != DoShowEq())
+      {
+        iShowingEq = !iShowingEq;
+        iLastEqToggle = DateTime.Now;
+        return true;
+      }
+
+      return false;
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    private bool DoShowEq()
+    {
+      if (!MiniDisplayHelper.MPStatus.UserIsIdle)
+      {
+        return false;
+      }
+
+      if (!iShowingEq && (DateTime.Now - iLastEqToggle).TotalSeconds > 5)
+      {
+        // Show EQ after 5 seconds        
+        return true;
+      }
+      else if (iShowingEq && (DateTime.Now - iLastEqToggle).TotalSeconds > 25)
+      {
+        // Turn off EQ every 25 seconds
+        return false;
+      }
+
+      return iShowingEq;
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    private void CreateFields()
     {
       iRecordingField = new RecordingField();
+      iAudioVisualizerField = new AudioVisualizerField();
 
-      if (SupportsGraphics)
+      if (iShowingEq)
       {
-        //Create fields for testing our graphics support.
-        //Currently not used in production environment
-        iBitmapField = new BitmapField(null,0,0,1,2);
-        iBitmapField.RowSpan = 2;
-        iTextFieldTop = new TextField("",ContentAlignment.MiddleCenter,1,0);
-        iTextFieldBottom = new TextField("", ContentAlignment.MiddleCenter, 1, 1);
-        iTextFieldSingleLine = new TextField("", ContentAlignment.MiddleCenter, 0, 0);
-
-        iFields = new DataField[] { iRecordingField, iBitmapField, iTextFieldTop, iTextFieldBottom };
+        iFields = new DataField[] { iAudioVisualizerField };
       }
       else
       {
-        //Just make sure both fields are instantiated
-        iTextFieldTop = new TextField("", ContentAlignment.MiddleCenter, 0, 0);
-        iTextFieldBottom = new TextField("", ContentAlignment.MiddleCenter, 0, 1);
-        iTextFieldSingleLine = new TextField("", ContentAlignment.MiddleCenter, 0, 0);
-
-        if (SharpLibDisplay.Settings.Instance.SingleLine)
+        if (SupportsGraphics)
         {
-          //Single line mode
-          iFields = new DataField[] { iRecordingField, iTextFieldSingleLine };
+          //Create fields for testing our graphics support.
+          //Currently not used in production environment
+          iBitmapField = new BitmapField(null, 0, 0, 1, 2);
+          iBitmapField.RowSpan = 2;
+          iTextFieldTop = new TextField("", ContentAlignment.MiddleCenter, 1, 0);
+          iTextFieldBottom = new TextField("", ContentAlignment.MiddleCenter, 1, 1);
+          iTextFieldSingleLine = new TextField("", ContentAlignment.MiddleCenter, 0, 0);
+
+          iFields = new DataField[] { iRecordingField, iBitmapField, iTextFieldTop, iTextFieldBottom };
         }
         else
         {
-          //Two lines mode use both fields
-          iFields = new DataField[] { iRecordingField, iTextFieldTop, iTextFieldBottom };
+          //Just make sure both fields are instantiated
+          iTextFieldTop = new TextField("", ContentAlignment.MiddleCenter, 0, 0);
+          iTextFieldBottom = new TextField("", ContentAlignment.MiddleCenter, 0, 1);
+          iTextFieldSingleLine = new TextField("", ContentAlignment.MiddleCenter, 0, 0);
+
+          if (SharpLibDisplay.Settings.Instance.SingleLine)
+          {
+            //Single line mode
+            iFields = new DataField[] { iRecordingField, iTextFieldSingleLine };
+          }
+          else
+          {
+            //Two lines mode use both fields
+            iFields = new DataField[] { iRecordingField, iTextFieldTop, iTextFieldBottom };
+          }
         }
       }
 
@@ -135,6 +196,18 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers.SharpLibDisplay
       //Check our display connection and whether we need an update.
       if (CheckDisplay() && iNeedUpdate)
       {
+        if (iWasIdle != MiniDisplayHelper.MPStatus.UserIsIdle)
+        {
+          iWasIdle = MiniDisplayHelper.MPStatus.UserIsIdle;
+          iLastEqToggle = DateTime.Now;
+        }
+
+        if (NeedEqToggle())
+        {
+          SetLayout();
+        }
+
+
         //Display connection should be good
         iClient.SetFields(iFields);
         iNeedUpdate = false;
@@ -190,23 +263,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers.SharpLibDisplay
         iClient.SetPriority(Priorities.MediaCenter);
 
         Initialized = true;
-        if (SupportsGraphics)
-        {
-          SetLayoutWithBitmap();
-        }
-        else
-        {
-          if (SharpLibDisplay.Settings.Instance.SingleLine)
-          {
-            SetLayoutWithSingleLine();
-          }
-          else
-          { 
-            SetLayoutWithTwoLines();
-          }
-        }
-        //
-        CreateFields();
+        SetLayout();
       }
       catch (System.Exception ex)
       {
@@ -416,7 +473,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers.SharpLibDisplay
     /// </summary>
     private void SetLayoutWithSingleLine()
     {
-      //Define a 1 column by 2 rows layout
+      //Define our layout
       TableLayout layout = new TableLayout(1, 1);
       //First column only takes 25%
       layout.Columns[0].Width = 100F;
@@ -424,7 +481,34 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers.SharpLibDisplay
       iClient.SetLayout(layout);
     }
 
+    /// <summary>
+    /// Set layout according to settings and states.
+    /// </summary>
+    private void SetLayout()
+    {
+      if (iShowingEq)
+      {
+        // Used single line for full screen EQ
+        SetLayoutWithSingleLine();
+      }
+      else if (SupportsGraphics)
+      {
+        SetLayoutWithBitmap();
+      }
+      else
+      {
+        if (SharpLibDisplay.Settings.Instance.SingleLine)
+        {
+          SetLayoutWithSingleLine();
+        }
+        else
+        {
+          SetLayoutWithTwoLines();
+        }
+      }
 
+      CreateFields();
+    }
 
   }
 }

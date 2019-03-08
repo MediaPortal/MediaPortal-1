@@ -136,6 +136,7 @@
     <Compile Include="Implementations\DVB\ConditionalAccess\ConditionalAccessContext.cs" />
     <Compile Include="Implementations\DVB\ConditionalAccess\DigitalDevices\DigitalDevices.cs" />
     <Compile Include="Implementations\DVB\ConditionalAccess\ProfRed\ProfRed.cs" />
+    <Compile Include="Implementations\DVB\ConditionalAccess\Turbosight\TurboSight.cs" />
     <Compile Include="Implementations\DVB\DisEqC\ConexantBDA.cs" />
     <Compile Include="Implementations\DVB\DisEqC\TeVii.cs" />
     <Compile Include="Implementations\Dri\Service\FdcService.cs" />
@@ -181,7 +182,6 @@
     <Compile Include="Implementations\DVB\Graphs\DVBT\DVBTScanning.cs" />
     <Compile Include="Implementations\DVB\Graphs\DVBT\TvCardDVBT.cs" />
     <Compile Include="Implementations\DVB\Graphs\TvCardDvbBase.cs" />
-    <Compile Include="Implementations\DVB\Graphs\Iso6937ToUnicode.cs" />
     <Compile Include="Implementations\DVB\Structures\PidInfo.cs" />
     <Compile Include="Implementations\DVB\Structures\TSHelperTools.cs" />
     <Compile Include="Implementations\Helper\EncodersInUse.cs" />
@@ -240,6 +240,10 @@
     <ProjectReference Include="..\..\..\Common-MP-TVE3\DirectShowLib\DirectShowLib.csproj">
       <Project>{CE009BFA-5EF6-4153-B2A1-2FA79698A9AE}</Project>
       <Name>DirectShowLib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Plugins\WebEPG\WebEPG\WebEPG.csproj">
+      <Project>{F7CB2A9F-004E-4667-BEAF-782F1C28E2D3}</Project>
+      <Name>WebEPG</Name>
     </ProjectReference>
     <ProjectReference Include="..\TVDatabase\TvBusinessLayer\TvBusinessLayer.csproj">
       <Project>{58C35C9D-F18D-40F2-8024-24E50D01E9C5}</Project>

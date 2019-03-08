@@ -83,6 +83,7 @@
     <Compile Include="CardType.cs" />
     <Compile Include="ChannelLinkage\LinkedChannel.cs" />
     <Compile Include="ChannelLinkage\PortalChannel.cs" />
+    <Compile Include="DvbConditionalAccess.cs" />
     <Compile Include="DvbTextConverter.cs" />
     <Compile Include="Epg\MpGenre.cs" />
     <Compile Include="HardwareProviders\IHardwareProvider.cs" />
@@ -106,6 +107,7 @@
     <Compile Include="Interfaces\ITvSubChannel.cs" />
     <Compile Include="Interfaces\IVideoStream.cs" />
     <Compile Include="Interfaces\TvPluginCallback.cs" />
+    <Compile Include="ISOTextDecoder.cs" />
     <Compile Include="Logging\FileLogger.cs" />
     <Compile Include="Logging\ILogger.cs" />
     <Compile Include="Logging\Log.cs" />

@@ -28,7 +28,7 @@ namespace TvService
   public class CardReservationRec : CardReservationBase
   {    
     private CardDetail _cardInfo;
-    private RecordingDetail _recDetail;    
+    private RecordingDetail _recDetail;
 
     public CardReservationRec(TVController tvController) : base(tvController) { }
 

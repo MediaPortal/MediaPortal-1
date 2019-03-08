@@ -98,6 +98,14 @@ namespace TvService
     /// </summary>
     public void Start()
     {
+      Start(1000);
+    }
+
+    /// <summary>
+    /// Starts the epg grabber with a specified timer interval
+    /// </summary>
+    public void Start(double timerInterval)
+    {
       TvBusinessLayer layer = new TvBusinessLayer();
       if (layer.GetSetting("idleEPGGrabberEnabled", "yes").Value != "yes")
       {
@@ -119,7 +127,7 @@ namespace TvService
       {
         return;
       }
-      Log.Epg("EPG: grabber initialized for {0} transponders..", TransponderList.Instance.Count);
+      Log.Epg("EPG: EpgGrabber initialized for {0} transponders, timerInterval {1}s", TransponderList.Instance.Count, timerInterval/1000);
       _isRunning = true;
       IList<Card> cards = Card.ListAll();
 
@@ -157,7 +165,7 @@ namespace TvService
         _epgCards.Add(epgCard);
       }
       _epgCards.Sort(new EpgCardPriorityComparer());
-      _epgTimer.Interval = 1000;
+      _epgTimer.Interval = timerInterval;
       _epgTimer.Enabled = true;
     }
 
@@ -170,13 +178,14 @@ namespace TvService
       {
         return;
       }
-      Log.Epg("EPG: grabber stopped..");
+      Log.Epg("EPG: EpgGrabber stopping..");
       _epgTimer.Enabled = false;
       _isRunning = false;
       foreach (EpgCard epgCard in _epgCards)
       {
         epgCard.Stop();
       }
+      Log.Epg("EPG: EpgGrabber stopped");
     }
 
     #endregion
@@ -213,11 +222,21 @@ namespace TvService
       //security check, dont allow re-entrancy here
       if (_reEntrant)
         return;
-      if (_epgTimer.Interval == 1000)
+      if (_epgTimer.Interval != 30000)
+      {
+        double oldTimInt = _epgTimer.Interval;
         _epgTimer.Interval = 30000;
+        Log.Debug("EpgGrabber:_epgTimer_Elapsed: timerInterval changed from {0}s to {1}s", oldTimInt/1000, _epgTimer.Interval/1000);
+      }
       try
       {
         _reEntrant = true;
+        
+        if (!_isRunning || _disposed || !_epgTimer.Enabled) 
+        {
+          Log.Epg("EpgGrabber:_epgTimer_Elapsed: _isRunning={0}, _disposed={1}, _epgTimer.Enabled={2}", _isRunning, _disposed, _epgTimer.Enabled);
+          return;
+        }
 
         try
         {

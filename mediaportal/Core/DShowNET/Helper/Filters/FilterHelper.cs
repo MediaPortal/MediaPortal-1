@@ -21,7 +21,9 @@
 using System;
 using System.Collections;
 using System.Runtime.InteropServices.ComTypes;
+using System.Threading;
 using DirectShowLib;
+using MediaPortal.GUI.Library;
 
 #pragma warning disable 618
 
@@ -146,7 +148,18 @@ namespace DShowNET.Helper
 
     public static void ReloadFilterCollection()
     {
-      Filters.FilterCollectionReload();
+      Log.Debug($"FilterHelper: ReloadFilterCollection init");
+      try
+      {
+        Filters.FilterCollectionReload();
+        Filters.finished.WaitOne(5000);
+      }
+      catch (Exception e)
+      {
+        Log.Debug($"FilterHelper: {0}", e);
+      }
+
+      Log.Debug($"FilterHelper: ReloadFilterCollection done");
     }
 
     public static ArrayList GetDVDNavigators()

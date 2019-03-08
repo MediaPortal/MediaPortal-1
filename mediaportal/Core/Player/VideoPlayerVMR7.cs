@@ -1,4 +1,4 @@
-﻿#region Copyright (C) 2005-2011 Team MediaPortal
+﻿#region Copyright (C) 2005-2018 Team MediaPortal
 
 // Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
@@ -32,6 +32,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 using MediaPortal.Player.Subtitles;
 using System.Collections.Generic;
+using MediaPortal.Player.LAV;
 using MediaPortal.Player.PostProcessing;
 
 namespace MediaPortal.Player
@@ -350,6 +351,13 @@ namespace MediaPortal.Player
         if (!postengine.LoadPostProcessing(graphBuilder))
         {
           PostProcessingEngine.engine = new PostProcessingEngine.DummyEngine();
+        }
+
+        // When using LAV Audio
+        IAudioPostEngine audioEngine = AudioPostEngine.GetInstance(true);
+        if (audioEngine != null && !audioEngine.LoadPostProcessing(graphBuilder))
+        {
+          AudioPostEngine.engine = new AudioPostEngine.DummyEngine();
         }
 
         #endregion
@@ -723,6 +731,8 @@ namespace MediaPortal.Player
             {
               rDest.Height = rDest.Height*2;
             }
+            // First we need to init rDest.Left and rDest to a fixed value.
+            basicVideo.SetDestinationPosition(GUIGraphicsContext.RDestLeft, GUIGraphicsContext.RDestTop, rDest.Width, rDest.Height);
             basicVideo.SetDestinationPosition(rDest.Left, rDest.Top, rDest.Width, rDest.Height);
           }
           else
@@ -738,6 +748,7 @@ namespace MediaPortal.Player
       // this is triggered only if movie has ended
       // ifso, stop the movie which will trigger MovieStopped
       m_strCurrentFile = "";
+      Log.Debug("VideoPlayer: MovieEnded");
       if (!bManualStop)
       {
         CloseInterfaces();
@@ -1326,11 +1337,36 @@ namespace MediaPortal.Player
         hr = mediaEvt.FreeEventParams(code, p1, p2);
         if (code == EventCode.Complete || code == EventCode.ErrorAbort)
         {
-          MovieEnded(false);
-          /* EABIN: needed for threaded render-thread. please do not delete.
-            Action keyAction = new Action(Action.ActionType.ACTION_STOP, 0, 0);
-            GUIGraphicsContext.OnAction(keyAction);*/
-          return;
+          if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+          {
+            try
+            {
+              Log.Debug("VideoPlayer: EventCode.Complete: {0}", Enum.GetName(typeof(EventCode), code));
+              Log.Debug("VideoPlayer: VMR9Util.g_vmr9.playbackTimer {0}", VMR9Util.g_vmr9.playbackTimer);
+              if (VMR9Util.g_vmr9.playbackTimer.Second != 0)
+              {
+                MovieEnded(false);
+                /* EABIN: needed for threaded render-thread. please do not delete.
+                  Action keyAction = new Action(Action.ActionType.ACTION_STOP, 0, 0);
+                  GUIGraphicsContext.OnAction(keyAction);*/
+                return;
+              }
+            }
+            catch (Exception ex)
+            {
+              Log.Error("VideoPlayer: OnGraphNotify exception: {0}", ex);
+            }
+          }
+
+          if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
+          {
+            Log.Debug("EventCode.Complete: {0}", Enum.GetName(typeof(EventCode), code));
+            MovieEnded(false);
+            /* EABIN: needed for threaded render-thread. please do not delete.
+              Action keyAction = new Action(Action.ActionType.ACTION_STOP, 0, 0);
+              GUIGraphicsContext.OnAction(keyAction);*/
+            return;
+          }
         }
       } while (hr == 0);
     }
@@ -2221,6 +2257,14 @@ namespace MediaPortal.Player
     public override bool HasPostprocessing
     {
       get { return PostProcessingEngine.GetInstance().HasPostProcessing; }
+    }
+
+    /// <summary>
+    /// Property to Get Audio LAV delay engine
+    /// </summary>
+    public override bool HasAudioEngine
+    {
+      get { return AudioPostEngine.GetInstance().HasAudioEngine; }
     }
 
     private string LCIDCheck(int LCID)

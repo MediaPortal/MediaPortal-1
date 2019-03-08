@@ -1,6 +1,6 @@
-﻿#region Copyright (C) 2005-2017 Team MediaPortal
+﻿#region Copyright (C) 2005-2019 Team MediaPortal
 
-// Copyright (C) 2005-2017 Team MediaPortal
+// Copyright (C) 2005-2019 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -235,6 +235,15 @@ namespace MediaPortal.GUI.Library
     public static string GetDirectoryPath(string text)
     {
       return ((text != null) ? MediaPortal.Util.Utils.MakeDirectoryPath(text) : string.Empty);
+    }
+
+    [XMLSkinFunction("string.replace")]
+    public static string ReplaceString(string text, string oldtext, string newtext)
+    {
+      if (string.IsNullOrEmpty(text)) return string.Empty;
+      if (string.IsNullOrEmpty(oldtext)) return text;
+      
+      return text.Replace(oldtext, newtext);
     }
 
     [XMLSkinFunction("string.equals")]
