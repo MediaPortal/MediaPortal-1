@@ -36,9 +36,6 @@
     <Reference Include="Gentle.Framework">
       <HintPath>..\..\TVDatabase\references\Gentle.Framework.dll</HintPath>
     </Reference>
-    <Reference Include="SetupControls">
-      <HintPath>..\..\SetupControls\obj\Debug\SetupControls.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -80,6 +77,10 @@
       <Project>{F6EDA1F3-3DCD-43F4-8A90-E32DA70C8227}</Project>
       <Name>Common.Utils</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\SetupControls\SetupControls.csproj">
+      <Project>{a2792d3c-04c1-4a92-9383-a33d59c54d8d}</Project>
+      <Name>SetupControls</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\SetupTv\SetupTv.csproj">
       <Project>{FF9AAD68-BBE0-41F7-9183-F2B8474B9224}</Project>
       <Name>SetupTv</Name>
@@ -110,7 +111,8 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy  $(TargetPath) "C:\Program Files (x86)\Team MediaPortal\MP2-Server\Plugins\SlimTv.Service3\Plugins" /y</PostBuildEvent>
+    <PostBuildEvent>xcopy  $(TargetPath) "C:\Program Files (x86)\Team MediaPortal\MP2-Server\Plugins\SlimTv.Service3\Plugins" /y
+exit 0</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

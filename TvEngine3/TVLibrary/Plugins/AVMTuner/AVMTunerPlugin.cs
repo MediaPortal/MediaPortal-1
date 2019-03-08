@@ -18,13 +18,6 @@
 
 #endregion
 
-using System;
-using System.Diagnostics;
-using System.IO;
-using System.Runtime.InteropServices;
-using System.Threading;
-using System.Timers;
-using Microsoft.Win32;
 using TvControl;
 
 namespace TvEngine
