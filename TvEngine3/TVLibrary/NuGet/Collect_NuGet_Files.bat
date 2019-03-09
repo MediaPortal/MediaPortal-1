@@ -69,6 +69,8 @@ xcopy "..\..\TvService\bin\%TARGET%\Plugins\PowerScheduler.Interfaces.dll" "Refe
 xcopy "..\..\TvService\bin\%TARGET%\Plugins\ServerBlaster.dll" "References\Plugins\" /R /Y
 xcopy "..\..\TvService\bin\%TARGET%\Plugins\TvMovie.dll" "References\Plugins\" /R /Y
 xcopy "..\..\TvService\bin\%TARGET%\Plugins\WebEPG.dll" "References\Plugins\" /R /Y
+rem WebEPG is currently referenced from a core library, so copy it additionally to main folder.
+xcopy "..\..\TvService\bin\%TARGET%\Plugins\WebEPG.dll" "References\" /R /Y
 xcopy "..\..\TvService\bin\%TARGET%\Plugins\WebEPGImport.dll" "References\Plugins\" /R /Y
 xcopy "..\..\TvService\bin\%TARGET%\Plugins\XmlTvImport.dll" "References\Plugins\" /R /Y
 
