@@ -111,7 +111,7 @@ namespace MediaPortal.Mixer
         {
           try
           {
-            Log.Debug("Mixer: Open(), Endpoint Volume API");
+            Log.Debug("Mixer: Open(), Endpoint Volume API for Master");
             _audioDefaultDevice = new AEDev(resetDevice);
             if (_audioDefaultDevice != null)
             {
@@ -124,9 +124,26 @@ namespace MediaPortal.Mixer
           }
           catch (Exception ex)
           {
-            Log.Error($"Mixer: Open(), Exception in Endpoint Volume API: {ex}");
+            Log.Error($"Mixer: Open(), Exception in Endpoint Volume API for Master: {ex}");
             _isMuted = false;
             _volume = 100;
+          }
+        }
+        else if (OSInfo.OSInfo.VistaOrLater() && _componentType == MixerComponentType.SourceWave)
+        {
+          try
+          {
+            Log.Debug("Mixer: Open(), Endpoint Volume API for Wave");
+            _audioDefaultDevice = new AEDev(resetDevice);
+            if (_audioDefaultDevice != null)
+            {
+              _audioDefaultDevice.OnVolumeNotification +=
+                new AudioEndpointVolumeNotificationDelegate(AudioEndpointVolume_OnVolumeNotification);
+            }
+          }
+          catch (Exception ex)
+          {
+            Log.Error($"Mixer: Open(), Exception in Endpoint Volume API for Wave: {ex}");
           }
         }
 
