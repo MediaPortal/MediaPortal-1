@@ -158,6 +158,7 @@ namespace MediaPortal.Player
           {
             _mixer = new Mixer.Mixer();
             _mixer.Open(0, IsDigital);
+            //_mixer.Open(0, IsDigital, true);
             _volumeTable = volumeTable;
             _mixer.ControlChanged += mixer_ControlChanged;
           }
