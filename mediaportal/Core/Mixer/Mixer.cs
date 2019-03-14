@@ -92,6 +92,7 @@ namespace MediaPortal.Mixer
 
     public void Open(int mixerIndex, bool isDigital, bool resetDevice = false)
     {
+      _isInternalVolumeChange = true;
       lock (this)
       {
         Log.Debug("Mixer: Open(), mixerIndex = {0}, isDigital = {1}, resetDevice = {2}", mixerIndex, isDigital, resetDevice);
@@ -178,6 +179,7 @@ namespace MediaPortal.Mixer
                                          MixerFlags.CallbackWindow) !=
             MixerError.None)
           {
+            _isInternalVolumeChange = false;
             throw new InvalidOperationException();
           }
 
@@ -190,6 +192,7 @@ namespace MediaPortal.Mixer
           _volume = (int)GetValue(_componentType, MixerControlType.Volume);
         }
       }
+      _isInternalVolumeChange = false;
     }
 
     private MixerNativeMethods.MixerControlDetails GetControl(MixerComponentType componentType,
@@ -310,6 +313,9 @@ namespace MediaPortal.Mixer
 
     void AudioEndpointVolume_OnVolumeNotification(AudioVolumeNotificationData data)
     {
+      if (data?.MasterVolume == null || _isInternalVolumeChange)
+        return;
+        
       //Log.Debug("Mixer: AudioEndpointVolume_OnVolumeNotification");
       bool wasMuted = _isMuted;
       int lastVolume = _volume;
@@ -320,6 +326,11 @@ namespace MediaPortal.Mixer
       }
       _volume = (int)Math.Round(_audioDefaultDevice.MasterVolume * VolumeMaximum);
 
+      if (wasMuted != _isMuted || lastVolume != _volume)
+      {
+        Log.Debug("Mixer: AudioEndpointVolume change, new muted = {0}, new volume = {1}, old muted = {2}, old volume = {3}", _isMuted, _volume, wasMuted, lastVolume);
+      }
+
       if (ControlChanged != null && (wasMuted != _isMuted || lastVolume != _volume))
       {
         ControlChanged(null, null);
@@ -328,6 +339,7 @@ namespace MediaPortal.Mixer
           SetValue(_mixerControlDetailsMute, _isMuted);
         }
       }
+      
       if (VolumeHandler.Instance != null) VolumeHandler.Instance.mixer_UpdateVolume();
     }
     #endregion Methods
@@ -346,13 +358,17 @@ namespace MediaPortal.Mixer
       }
       set
       {
-        lock (this)
+        // lock (this)
         {
+          _isInternalVolumeChange = true;
           try
           {
+            if (value != _isMuted)
+            {
+              Log.Debug("Mixer: Set new IsMuted = {0}, old IsMuted = {1}", value, _isMuted);
+            }
             if (OSInfo.OSInfo.VistaOrLater() && (_componentType == MixerComponentType.DestinationSpeakers))
             {
-              Log.Debug("Mixer: Set new IsMuted = {0}, old IsMuted = {1}, Master", value, IsMuted);
               if (_audioDefaultDevice != null)
               {
                 _audioDefaultDevice.Muted = value;
@@ -360,7 +376,6 @@ namespace MediaPortal.Mixer
             }
             else
             {
-              Log.Debug("Mixer: Set new IsMuted = {0}, old IsMuted = {1}, Wave", value, IsMuted);
               //SetValue(_mixerControlDetailsMute, _isMuted = value);
               SetValue(_mixerControlDetailsMute, value);
               if (_waveVolume && OSInfo.OSInfo.Win8OrLater())
@@ -377,6 +392,7 @@ namespace MediaPortal.Mixer
           {
             Log.Error($"Mixer: error occured in IsMuted: {ex}");
           }
+          _isInternalVolumeChange = false;
         }
       }
     }
@@ -394,13 +410,17 @@ namespace MediaPortal.Mixer
       }
       set
       {
-        lock (this)
+        //lock (this)
         {
+          _isInternalVolumeChange = true;
           try
           {
+            if (value != _volume)
+            {
+              Log.Debug("Mixer: Set new Volume = {0}, old Volume = {1}", value, _volume);
+            }
             if (OSInfo.OSInfo.VistaOrLater() && (_componentType == MixerComponentType.DestinationSpeakers))
             {
-              Log.Debug("Mixer: Set new Volume = {0}, old Volume = {1}, Master", value, _volume);
               if (_audioDefaultDevice != null)
               {
                 _audioDefaultDevice.MasterVolume = (float)((float)(value) / (float)(this.VolumeMaximum));
@@ -408,7 +428,6 @@ namespace MediaPortal.Mixer
             }
             else
             {
-              Log.Debug("Mixer: Set new Volume = {0}, old Volume = {1}, Wave", value, _volume);
               //SetValue(_mixerControlDetailsVolume, _volume = Math.Max(this.VolumeMinimum, Math.Min(this.VolumeMaximum, value)));
               SetValue(_mixerControlDetailsVolume, Math.Max(this.VolumeMinimum, Math.Min(this.VolumeMaximum, value)));
               if (_waveVolume && OSInfo.OSInfo.Win8OrLater())
@@ -425,6 +444,7 @@ namespace MediaPortal.Mixer
           {
             Log.Error($"Mixer: error occured in Volume: {ex}");
           }
+          _isInternalVolumeChange = false;
         }
       }
     }
@@ -453,6 +473,7 @@ namespace MediaPortal.Mixer
     private MixerNativeMethods.MixerControlDetails _mixerControlDetailsMute;
     public AEDev _audioDefaultDevice;
     private bool _waveVolume;
+    private bool _isInternalVolumeChange;
 
     #endregion Fields
   }
