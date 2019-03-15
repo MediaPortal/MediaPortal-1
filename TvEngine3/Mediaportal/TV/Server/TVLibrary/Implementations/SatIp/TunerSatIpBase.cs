@@ -210,7 +210,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
       RtspRequest request;
       RtspResponse response = null;
       string rtspUri = null;
-      string rtpUrl = null;
 
       if (_isPidFilterDisabled)
       {
@@ -357,14 +356,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
       }
 
       // Construct the RTP URL.
-      if (string.IsNullOrEmpty(rtpServerPort) || rtpServerPort.Equals("0"))
-      {
-        rtpUrl = string.Format("rtp://{0}@{1}:{2}", _serverIpAddress, _localIpAddress, rtpClientPort);
-      }
-      else
-      {
-        rtpUrl = string.Format("rtp://{0}:{1}@{2}:{3}", _serverIpAddress, rtpServerPort, _localIpAddress, rtpClientPort);
-      }
+      string rtpUrl = RtpHelper.ConstructUrl(_localIpAddress, rtpClientPort, _serverIpAddress, rtpServerPort);
+
       this.LogDebug("SAT>IP base: RTSP SETUP response okay");
       this.LogDebug("  session ID = {0}", _rtspSessionId);
       this.LogDebug("  time-out   = {0} s", _rtspSessionTimeout.TotalSeconds);

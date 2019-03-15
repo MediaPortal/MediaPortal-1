@@ -189,6 +189,7 @@
     <Compile Include="Implementations\Enum\TunerState.cs" />
     <Compile Include="Implementations\EpgGrabberBase.cs" />
     <Compile Include="Implementations\Mpeg2Ts\SubChannelMpeg2Ts.cs" />
+    <Compile Include="Implementations\Rtsp\RtpHelper.cs" />
     <Compile Include="Implementations\SatIp\TunerDetectorSatIp.cs" />
     <Compile Include="Implementations\SatIp\TunerSatIpCable.cs" />
     <Compile Include="Implementations\SatIp\TunerSatIpBase.cs" />

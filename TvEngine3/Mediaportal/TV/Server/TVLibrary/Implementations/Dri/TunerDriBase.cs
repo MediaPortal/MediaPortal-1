@@ -541,14 +541,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
         throw new TvException("Failed to start streaming, not able to find RTP transport details in RTSP SETUP response transport header \"{0}\".", transportHeader);
       }
 
-      if (string.IsNullOrEmpty(rtpServerPort) || rtpServerPort.Equals("0"))
-      {
-        _streamChannel.Url = string.Format("rtp://{0}@{1}:{2}", _serverIpAddress, _localIpAddress, rtpClientPort);
-      }
-      else
-      {
-        _streamChannel.Url = string.Format("rtp://{0}:{1}@{2}:{3}", _serverIpAddress, rtpServerPort, _localIpAddress, rtpClientPort);
-      }
+      _streamChannel.Url = RtpHelper.ConstructUrl(_localIpAddress, rtpClientPort, _serverIpAddress, rtpServerPort);
       this.LogDebug("DRI base: RTSP SETUP response okay, session ID = {0}, RTP URL = {1}", _rtspSessionId, _streamChannel.Url);
 
       this.LogDebug("DRI base: send RTSP PLAY");
