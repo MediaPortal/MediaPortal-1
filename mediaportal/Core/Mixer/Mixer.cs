@@ -31,7 +31,6 @@ namespace MediaPortal.Mixer
   {
     private readonly object syncObject = new object();
     private object padlock;
-    private bool acquiredLock = false;
 
     public Key() {}
     
@@ -43,16 +42,16 @@ namespace MediaPortal.Mixer
     public void Dispose()
     {
       // when this falls out of scope (after a using {...} ), release the lock
-      acquiredLock = false;
+      //Log.Debug("Mixer: MixerLock Dispose()");
       Monitor.Exit(padlock);
+      padlock = null;
     }
     
     protected Key MixerLock(int LockTime)
     {
       if (Monitor.TryEnter(this.syncObject, LockTime))
       {
-        acquiredLock = true;
-        Log.Debug("Mixer: MixerLock acquired {0} ms", LockTime);
+        //Log.Debug("Mixer: MixerLock acquired {0} ms", LockTime);
         return new Key(this.syncObject);
       }
       else
@@ -63,9 +62,10 @@ namespace MediaPortal.Mixer
       }
     }
     
-    protected bool IsLocked()
+    protected bool IsMixerLocked()
     {
-      return acquiredLock;
+      //Log.Debug("Mixer: MixerLock IsMixerLocked(), padlock:{0}", (padlock != null));
+      return (padlock != null);
     }        
   }
 
@@ -147,7 +147,6 @@ namespace MediaPortal.Mixer
     {
       try
       {
-        //_isInternalVolumeChange = true;
         lock (this)
         {
           using (MixerLock(lockInfinite))
@@ -236,7 +235,6 @@ namespace MediaPortal.Mixer
                                              MixerFlags.CallbackWindow) !=
                 MixerError.None)
               {
-                //_isInternalVolumeChange = false;
                 throw new InvalidOperationException();
               }
     
@@ -252,7 +250,6 @@ namespace MediaPortal.Mixer
             }
           }
         }
-        //_isInternalVolumeChange = false;
       }
       catch (Exception ex)
       {
@@ -382,12 +379,14 @@ namespace MediaPortal.Mixer
     {
       try
       {
-        if ((data?.MasterVolume == null) || IsLocked()) //_isInternalVolumeChange)
+        if ((data?.MasterVolume == null) || IsMixerLocked())
+        {
+          Log.Debug("Mixer: AudioEndpointVolume_OnVolumeNotification early return,, IsMixerLocked():{0}, data null:{1}", IsMixerLocked(), (data?.MasterVolume == null));
           return;
+        }
           
         using (MixerLock(lockTimeout))
         { 
-          //Log.Debug("Mixer: AudioEndpointVolume_OnVolumeNotification");
           bool wasMuted = _isMuted;
           int lastVolume = _volume;
           bool waveChange = false;
