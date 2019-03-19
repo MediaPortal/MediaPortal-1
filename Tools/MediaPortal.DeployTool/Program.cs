@@ -20,6 +20,7 @@
 
 using System;
 using System.Windows.Forms;
+using System.Net;
 
 namespace MediaPortal.DeployTool
 {
@@ -31,6 +32,8 @@ namespace MediaPortal.DeployTool
     [STAThread]
     private static void Main()
     {
+      // .NET 4.0: Use TLS v1.2. Many download sources no longer support the older and now insecure TLS v1.0/1.1 and SSL v3.
+      ServicePointManager.SecurityProtocol = (SecurityProtocolType)0xc00;
       if (Utils.CheckStartupPath())
       {
         Application.EnableVisualStyles();
