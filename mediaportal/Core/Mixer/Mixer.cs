@@ -29,6 +29,9 @@ namespace MediaPortal.Mixer
 {
   public class Key : IDisposable
   {
+    // This class is based on ideas and code from: 
+    // https://www.codeproject.com/Tips/758494/Smarter-than-lock-Cleaner-than-TryEnter
+    
     private readonly object syncObject = new object();
     private object padlock;
 
