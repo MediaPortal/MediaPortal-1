@@ -63,6 +63,7 @@ using Microsoft.Win32;
 using Action = MediaPortal.GUI.Library.Action;
 using Timer = System.Timers.Timer;
 using System.Collections.Generic;
+using System.Net;
 
 #endregion
 
@@ -504,6 +505,9 @@ public class MediaPortalApp : D3D, IRender
     //Application.ThreadException += new System.Threading.ThreadExceptionEventHandler(Application_ThreadException);
     //AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
     //Application.ApplicationExit += new EventHandler(Application_ApplicationExit);
+
+    // .NET 4.0: Use TLS v1.2. Many download sources no longer support the older and now insecure TLS v1.0/1.1 and SSL v3.
+    ServicePointManager.SecurityProtocol = (SecurityProtocolType)0xc00;
 
     using (Settings xmlreader = new MPSettings())
     {
