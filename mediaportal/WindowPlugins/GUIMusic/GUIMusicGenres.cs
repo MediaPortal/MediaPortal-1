@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2019 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2019 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -603,6 +603,16 @@ namespace MediaPortal.GUI.Music
                   }
                 }
               }
+            }
+            break;
+
+          case "year":
+            strThumb = Util.Utils.GetCoverArt(Thumbs.MusicYear, item.Label);
+            if (Util.Utils.FileExistsInCache(strThumb))
+            {
+              item.IconImage = strThumb;
+              item.IconImageBig = strThumb;
+              item.ThumbnailImage = strThumb;
             }
             break;
 
