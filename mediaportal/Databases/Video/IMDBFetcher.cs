@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2018 Team MediaPortal
+#region Copyright (C) 2005-2019 Team MediaPortal
 
-// Copyright (C) 2005-2018 Team MediaPortal
+// Copyright (C) 2005-2019 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -682,7 +682,12 @@ namespace MediaPortal.Video.Database
           // Fetch Actor Details
           if (!string.IsNullOrEmpty(actorImdbId))
           {
-            IMDBFetcher.FetchMovieActor(null, _movieDetails, actorImdbId, actorId);
+            _imdb = new IMDB();
+            _imdb.SetIMDBActor("http://www.imdb.com/name/" + actorImdbId, actorImdbId);
+            _actor = actor;
+            _actorId = actorId;
+            _actorIndex = 0;
+            FetchActorDetails();
           }
         }
       }
