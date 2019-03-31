@@ -601,8 +601,8 @@ class CParserEitDvb : public CUnknown, public IGrabberEpgDvb, ISectionCallback
 
           if (DvbParentalRatings.size() > 0)
           {
-            wstringstream temp(ios_base::out | ios_base::ate);
-            temp.str(L"  DVB parental rating(s) = ");
+            wstringstream temp;
+            temp << L"  DVB parental rating(s) = ";
             bool isFirst = true;
             map<unsigned long, unsigned char>::const_iterator prIt = DvbParentalRatings.begin();
             for ( ; prIt != DvbParentalRatings.end(); prIt++)

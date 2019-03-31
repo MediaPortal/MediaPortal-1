@@ -21,6 +21,7 @@
 #pragma once
 #include <ctime>
 #include <map>
+#include <sstream>
 #include <vector>
 #include "..\..\shared\CriticalSection.h"
 #include "..\..\shared\ISectionDispatcher.h"
@@ -76,9 +77,9 @@ class CParserNitDvb
                     unsigned char& freesatRegionIdCount,
                     unsigned long* openTvRegionIds,
                     unsigned char& openTvRegionIdCount,
-                    unsigned short* freesatChannelCategoryIds,
+                    unsigned long* freesatChannelCategoryIds,
                     unsigned char& freesatChannelCategoryIdCount,
-                    unsigned char* norDigChannelListIds,
+                    unsigned long long* norDigChannelListIds,
                     unsigned char& norDigChannelListIdCount,
                     unsigned long* availableInCountries,
                     unsigned char& availableInCountryCount,
@@ -118,35 +119,13 @@ class CParserNitDvb
                                                         char* name,
                                                         unsigned short& nameBufferSize) const;
 
-    unsigned char GetFreesatRegionNameCount(unsigned short regionId) const;
-    bool GetFreesatRegionNameByIndex(unsigned short regionId,
-                                      unsigned char index,
-                                      unsigned long& language,
-                                      char* name,
-                                      unsigned short& nameBufferSize) const;
-    bool GetFreesatRegionNameByLanguage(unsigned short regionId,
-                                        unsigned long language,
-                                        char* name,
-                                        unsigned short& nameBufferSize) const;
-
-    unsigned char GetFreesatChannelCategoryNameCount(unsigned short categoryId) const;
-    bool GetFreesatChannelCategoryNameByIndex(unsigned short categoryId,
-                                              unsigned char index,
-                                              unsigned long& language,
-                                              char* name,
-                                              unsigned short& nameBufferSize) const;
-    bool GetFreesatChannelCategoryNameByLanguage(unsigned short categoryId,
-                                                  unsigned long language,
-                                                  char* name,
-                                                  unsigned short& nameBufferSize) const;
-
-    unsigned char GetNorDigChannelListNameCount(unsigned char channelListId) const;
-    bool GetNorDigChannelListNameByIndex(unsigned char channelListId,
+    unsigned char GetNorDigChannelListNameCount(unsigned long long channelListId) const;
+    bool GetNorDigChannelListNameByIndex(unsigned long long channelListId,
                                           unsigned char index,
                                           unsigned long& language,
                                           char* name,
                                           unsigned short& nameBufferSize) const;
-    bool GetNorDigChannelListNameByLanguage(unsigned char channelListId,
+    bool GetNorDigChannelListNameByLanguage(unsigned long long channelListId,
                                             unsigned long language,
                                             char* name,
                                             unsigned short& nameBufferSize) const;
@@ -180,6 +159,37 @@ class CParserNitDvb
                         unsigned char& plpId) const;
 
   protected:
+    enum NameType
+    {
+      Network = 1,                      // NIT
+      Bouquet = 2,                      // BAT
+      TargetRegion = 3,                 // BAT/NIT
+      FreesatRegion = 4,                // BAT
+      FreesatChannelCategory = 5,       // BAT
+      NorDigChannelList = 6,            // NIT
+      CyfrowyPolsatChannelCategory = 7  // NIT
+    };
+
+    unsigned char GetNameCount(NameType nameType,
+                                unsigned char tableId,
+                                unsigned short tableIdExtension,
+                                unsigned long long nameId) const;
+    bool GetNameByIndex(NameType nameType,
+                        unsigned char tableId,
+                        unsigned short tableIdExtension,
+                        unsigned long long nameId,
+                        unsigned char index,
+                        unsigned long& language,
+                        char* name,
+                        unsigned short& nameBufferSize) const;
+    bool GetNameByLanguage(NameType nameType,
+                            unsigned char tableId,
+                            unsigned short tableIdExtension,
+                            unsigned long long nameId,
+                            unsigned long language,
+                            char* name,
+                            unsigned short& nameBufferSize) const;
+
     void CleanUp();
 
     CCriticalSection m_section;
@@ -187,14 +197,245 @@ class CParserNitDvb
     vector<unsigned char> m_tableIds;
 
   private:
-    enum NameType
+    class CRecordNitGroup : public IRecord
     {
-      NetworkOrBouquet = 1,
-      TargetRegion = 2,
-      FreesatRegion = 3,
-      FreesatChannelCategory = 4,
-      NorDigChannelList = 5,
-      CyfrowyPolsatChannelCategory = 6
+      public:
+        CRecordNitGroup(const wchar_t* tableName)
+        {
+          TableName = tableName;
+          TableId = 0;
+          TableIdExtension = 0;
+          DefaultAuthority = NULL;
+          PrivateDataSpecifier = 0;
+          IsNew = false;
+          HasMultiSectionDescriptors = false;
+          NextMultiSectionDescriptorSection = 0;
+        }
+
+        ~CRecordNitGroup()
+        {
+          // Do not dispose the table name!
+          CUtils::CleanUpStringSet(Names);
+          if (DefaultAuthority != NULL)
+          {
+            delete[] DefaultAuthority;
+            DefaultAuthority = NULL;
+          }
+          CUtils::CleanUpMapOfStringSets(TargetRegionNames);
+          CUtils::CleanUpStringSet(CyfrowyPolsatChannelCategoryNames);
+          CUtils::CleanUpMapOfStringSets(FreesatRegionNames);
+          CUtils::CleanUpMapOfStringSets(FreesatChannelCategoryNames);
+
+          map<unsigned short, vector<unsigned short>*>::iterator it = FreesatChannelCategoryIds.begin();
+          for ( ; it != FreesatChannelCategoryIds.end(); it++)
+          {
+            vector<unsigned short>* categoryIds = it->second;
+            if (categoryIds != NULL)
+            {
+              delete categoryIds;
+              it->second = NULL;
+            }
+          }
+          FreesatChannelCategoryIds.clear();
+        }
+
+        bool Equals(const IRecord* record) const
+        {
+          const CRecordNitGroup* recordGroup = dynamic_cast<const CRecordNitGroup*>(record);
+          if (
+            recordGroup == NULL ||
+            TableId != recordGroup->TableId ||
+            TableIdExtension != recordGroup->TableIdExtension ||
+            !CUtils::CompareStringSets(Names, recordGroup->Names) ||
+            !CUtils::CompareVectors(AvailableInCountries, recordGroup->AvailableInCountries) ||
+            !CUtils::CompareVectors(UnavailableInCountries, recordGroup->UnavailableInCountries) ||
+            !CUtils::CompareVectors(HomeTransmitterKeys, recordGroup->HomeTransmitterKeys) ||
+            !CUtils::CompareStrings(DefaultAuthority, recordGroup->DefaultAuthority) ||
+            !CUtils::CompareVectors(TargetRegionIds, recordGroup->TargetRegionIds) ||
+            !CUtils::CompareMapsOfStringSets(TargetRegionNames, recordGroup->TargetRegionNames) ||
+            !CUtils::CompareStringSets(CyfrowyPolsatChannelCategoryNames, recordGroup->CyfrowyPolsatChannelCategoryNames) ||
+            !CUtils::CompareMapsOfStringSets(FreesatRegionNames, recordGroup->FreesatRegionNames) ||
+            !CUtils::CompareMapsOfStringSets(FreesatChannelCategoryNames, recordGroup->FreesatChannelCategoryNames)
+            //PrivateDataSpecifier != recordGroup->PrivateDataSpecifier
+          )
+          {
+            return false;
+          }
+
+          if (FreesatChannelCategoryIds.size() != recordGroup->FreesatChannelCategoryIds.size())
+          {
+            return false;
+          }
+          map<unsigned short, vector<unsigned short>*>::const_iterator it1 = FreesatChannelCategoryIds.begin();
+          for ( ; it1 != FreesatChannelCategoryIds.end(); it1++)
+          {
+            map<unsigned short, vector<unsigned short>*>::const_iterator it2 = recordGroup->FreesatChannelCategoryIds.find(it1->first);
+            if (
+              it2 == recordGroup->FreesatChannelCategoryIds.end() ||
+              (it1->second == NULL && it2->second != NULL) ||
+              (it1->second != NULL && it2->second == NULL) ||
+              (it1->second != NULL && !CUtils::CompareVectors(*(it1->second), *(it2->second)))
+            )
+            {
+              return false;
+            }
+          }
+          return true;
+        }
+
+        unsigned long long GetKey() const
+        {
+          return (TableId << 16) | TableIdExtension;
+        }
+
+        unsigned long long GetExpiryKey() const
+        {
+          return 0;
+        }
+
+        void Debug(const wchar_t* situation) const
+        {
+          LogDebug(L"%s: group %s, table ID = 0x%hhx, extension ID = %hu, name count = %llu, country counts = %llu / %llu, home transmitter key count = %llu, default authority = %S, target region ID count = %llu, target region name count = %llu, Cyfrowy Polsat channel category name count = %llu, Freesat region name count = %llu, Freesat channel category ID count = %llu, Freesat channel category name count = %llu",
+                    TableName, situation, TableId, TableIdExtension,
+                    (unsigned long long)Names.size(),
+                    (unsigned long long)AvailableInCountries.size(),
+                    (unsigned long long)UnavailableInCountries.size(),
+                    (unsigned long long)HomeTransmitterKeys.size(),
+                    DefaultAuthority == NULL ? "" : DefaultAuthority,
+                    (unsigned long long)TargetRegionIds.size(),
+                    (unsigned long long)TargetRegionNames.size(),
+                    (unsigned long long)CyfrowyPolsatChannelCategoryNames.size(),
+                    (unsigned long long)FreesatRegionNames.size(),
+                    (unsigned long long)FreesatChannelCategoryIds.size(),
+                    (unsigned long long)FreesatChannelCategoryNames.size());
+
+          CUtils::DebugStringMap(Names, L"name(s)", L"language", L"name");
+          CUtils::DebugVector(AvailableInCountries, L"available in countries", true);
+          CUtils::DebugVector(UnavailableInCountries, L"unavailable in countries", true);
+          CUtils::DebugVector(HomeTransmitterKeys, L"home transmitter keys", false);
+          CUtils::DebugVector(TargetRegionIds, L"target region ID(s)", false);
+          CUtils::DebugMapOfStringSets(TargetRegionNames,
+                                        L"target region name(s)",
+                                        L"region ID",
+                                        L"language",
+                                        L"name");
+          CUtils::DebugMap(CyfrowyPolsatChannelCategoryNames,
+                            L"Cyfrowy Polsat channel category name(s)",
+                            L"category ID",
+                            L"name");
+          CUtils::DebugMapOfStringSets(FreesatRegionNames,
+                                        L"Freesat region name(s)",
+                                        L"region ID",
+                                        L"language",
+                                        L"name");
+
+          if (FreesatChannelCategoryIds.size() != 0)
+          {
+            LogDebug(L"  Freesat channel category IDs...");
+
+            map<unsigned short, vector<unsigned short>*>::const_iterator it = FreesatChannelCategoryIds.begin();
+            for ( ; it != FreesatChannelCategoryIds.end(); it++)
+            {
+              wstringstream ss;
+              ss << it->first;
+              wstring s(ss.str());
+              
+              CUtils::DebugVector(*(it->second), s.c_str(), false, L"    ");
+            }
+          }
+
+          CUtils::DebugMapOfStringSets(FreesatChannelCategoryNames,
+                                        L"Freesat channel category name(s)",
+                                        L"category ID",
+                                        L"language",
+                                        L"name");
+        }
+
+        void OnReceived(void* callBack) const
+        {
+          ICallBackNitDvb* callBackNit = static_cast<ICallBackNitDvb*>(callBack);
+          if (callBackNit != NULL)
+          {
+            callBackNit->OnNitGroupReceived(TableId,
+                                            TableIdExtension,
+                                            Names,
+                                            AvailableInCountries,
+                                            UnavailableInCountries,
+                                            HomeTransmitterKeys,
+                                            DefaultAuthority,
+                                            TargetRegionIds,
+                                            TargetRegionNames,
+                                            CyfrowyPolsatChannelCategoryNames,
+                                            FreesatRegionNames,
+                                            FreesatChannelCategoryIds,
+                                            FreesatChannelCategoryNames);
+          }
+        }
+
+        void OnChanged(void* callBack) const
+        {
+          ICallBackNitDvb* callBackNit = static_cast<ICallBackNitDvb*>(callBack);
+          if (callBackNit != NULL)
+          {
+            callBackNit->OnNitGroupChanged(TableId,
+                                            TableIdExtension,
+                                            Names,
+                                            AvailableInCountries,
+                                            UnavailableInCountries,
+                                            HomeTransmitterKeys,
+                                            DefaultAuthority,
+                                            TargetRegionIds,
+                                            TargetRegionNames,
+                                            CyfrowyPolsatChannelCategoryNames,
+                                            FreesatRegionNames,
+                                            FreesatChannelCategoryIds,
+                                            FreesatChannelCategoryNames);
+          }
+        }
+
+        void OnRemoved(void* callBack) const
+        {
+          ICallBackNitDvb* callBackNit = static_cast<ICallBackNitDvb*>(callBack);
+          if (callBackNit != NULL)
+          {
+            callBackNit->OnNitGroupRemoved(TableId,
+                                            TableIdExtension,
+                                            Names,
+                                            AvailableInCountries,
+                                            UnavailableInCountries,
+                                            HomeTransmitterKeys,
+                                            DefaultAuthority,
+                                            TargetRegionIds,
+                                            TargetRegionNames,
+                                            CyfrowyPolsatChannelCategoryNames,
+                                            FreesatRegionNames,
+                                            FreesatChannelCategoryIds,
+                                            FreesatChannelCategoryNames);
+          }
+        }
+
+        const wchar_t* TableName;
+        unsigned char TableId;
+        unsigned short TableIdExtension;                // network or bouquet ID
+
+        map<unsigned long, char*> Names;                // language -> name
+        vector<unsigned long> AvailableInCountries;
+        vector<unsigned long> UnavailableInCountries;
+        vector<unsigned long> HomeTransmitterKeys;      // ONID | TSID
+        char* DefaultAuthority;
+        vector<unsigned long long> TargetRegionIds;
+        map<unsigned long long, map<unsigned long, char*>*> TargetRegionNames;        // region ID -> [language -> name]
+        map<unsigned char, char*> CyfrowyPolsatChannelCategoryNames;                  // category ID -> name
+        map<unsigned short, map<unsigned long, char*>*> FreesatRegionNames;           // region ID -> [language -> name]
+        map<unsigned short, vector<unsigned short>*> FreesatChannelCategoryIds;       // channel ID -> [category ID]
+        map<unsigned short, map<unsigned long, char*>*> FreesatChannelCategoryNames;  // category ID -> [language -> name]
+
+        // These properties are only used for section processing. Don't
+        // consider them to be part of the group's data.
+        unsigned long PrivateDataSpecifier;
+        bool IsNew;
+        bool HasMultiSectionDescriptors;
+        unsigned char NextMultiSectionDescriptorSection;
     };
 
     class CRecordNitService : public IRecord
@@ -244,10 +485,7 @@ class CParserNitDvb
             !CUtils::CompareVectors(TargetRegionIds, recordService->TargetRegionIds) ||
             !CUtils::CompareVectors(FreesatRegionIds, recordService->FreesatRegionIds) ||
             !CUtils::CompareVectors(OpenTvRegionIds, recordService->OpenTvRegionIds) ||
-            !CUtils::CompareVectors(FreesatChannelCategoryIds, recordService->FreesatChannelCategoryIds) ||
-            !CUtils::CompareVectors(NorDigChannelListIds, recordService->NorDigChannelListIds) ||
-            !CUtils::CompareVectors(AvailableInCountries, recordService->AvailableInCountries) ||
-            !CUtils::CompareVectors(UnavailableInCountries, recordService->UnavailableInCountries)
+            !CUtils::CompareVectors(NorDigChannelListIds, recordService->NorDigChannelListIds)
           )
           {
             return false;
@@ -275,7 +513,7 @@ class CParserNitDvb
 
         void Debug(const wchar_t* situation) const
         {
-          LogDebug(L"%s: service %s, table ID = 0x%hhx, extension ID = %hu, ONID = %hu, TSID = %hu, service ID = %hu, Freesat CID = %hu, OpenTV CID = %hu, visible in guide = %d, LCN count = %llu, default authority = %S, available in cells count = %llu, target region count = %llu, Freesat region count = %llu, OpenTV region count = %llu, Freesat channel category count = %llu, NorDig channel list count = %llu, country counts = %llu / %llu",
+          LogDebug(L"%s: service %s, table ID = 0x%hhx, extension ID = %hu, ONID = %hu, TSID = %hu, service ID = %hu, Freesat CID = %hu, OpenTV CID = %hu, visible in guide = %d, LCN count = %llu, default authority = %S, available in cells count = %llu, target region count = %llu, Freesat region count = %llu, OpenTV region count = %llu, NorDig channel list count = %llu",
                     TableName, situation, TableId, TableIdExtension,
                     OriginalNetworkId, TransportStreamId, ServiceId,
                     FreesatChannelId, OpenTvChannelId, VisibleInGuide,
@@ -285,10 +523,7 @@ class CParserNitDvb
                     (unsigned long long)TargetRegionIds.size(),
                     (unsigned long long)FreesatRegionIds.size(),
                     (unsigned long long)OpenTvRegionIds.size(),
-                    (unsigned long long)FreesatChannelCategoryIds.size(),
-                    (unsigned long long)NorDigChannelListIds.size(),
-                    (unsigned long long)AvailableInCountries.size(),
-                    (unsigned long long)UnavailableInCountries.size());
+                    (unsigned long long)NorDigChannelListIds.size());
 
           if (LogicalChannelNumbers.size() > 0)
           {
@@ -309,10 +544,7 @@ class CParserNitDvb
           CUtils::DebugVector(TargetRegionIds, L"target region ID(s)", false);
           CUtils::DebugVector(FreesatRegionIds, L"Freesat region ID(s)", false);
           CUtils::DebugVector(OpenTvRegionIds, L"OpenTV region ID(s)", false);
-          CUtils::DebugVector(FreesatChannelCategoryIds, L"Freesat channel category ID(s)", false);
           CUtils::DebugVector(NorDigChannelListIds, L"NorDig channel list ID(s)", false);
-          CUtils::DebugVector(AvailableInCountries, L"available in countries", true);
-          CUtils::DebugVector(UnavailableInCountries, L"unavailable in countries", true);
         }
 
         void OnReceived(void* callBack) const
@@ -334,10 +566,7 @@ class CParserNitDvb
                                               TargetRegionIds,
                                               FreesatRegionIds,
                                               OpenTvRegionIds,
-                                              FreesatChannelCategoryIds,
-                                              NorDigChannelListIds,
-                                              AvailableInCountries,
-                                              UnavailableInCountries);
+                                              NorDigChannelListIds);
           }
         }
 
@@ -360,10 +589,7 @@ class CParserNitDvb
                                               TargetRegionIds,
                                               FreesatRegionIds,
                                               OpenTvRegionIds,
-                                              FreesatChannelCategoryIds,
-                                              NorDigChannelListIds,
-                                              AvailableInCountries,
-                                              UnavailableInCountries);
+                                              NorDigChannelListIds);
           }
         }
 
@@ -386,10 +612,7 @@ class CParserNitDvb
                                               TargetRegionIds,
                                               FreesatRegionIds,
                                               OpenTvRegionIds,
-                                              FreesatChannelCategoryIds,
-                                              NorDigChannelListIds,
-                                              AvailableInCountries,
-                                              UnavailableInCountries);
+                                              NorDigChannelListIds);
           }
         }
 
@@ -410,10 +633,7 @@ class CParserNitDvb
         vector<unsigned long long> TargetRegionIds;
         vector<unsigned short> FreesatRegionIds;
         vector<unsigned short> OpenTvRegionIds;
-        vector<unsigned short> FreesatChannelCategoryIds;
         vector<unsigned char> NorDigChannelListIds;
-        vector<unsigned long> AvailableInCountries;
-        vector<unsigned long> UnavailableInCountries;
     };
 
     class CRecordNitTransmitter : public IRecord
@@ -1078,38 +1298,21 @@ class CParserNitDvb
         unsigned char CellIdExtension;
     };
 
-    template<class T> static void CleanUpNames(map<T, map<unsigned long, char*>*>& names);
     template<class T1, class T2> static void CleanUpMapOfVectors(map<T1, vector<T2>*>& mapOfVectors);
     static void CleanUpMapOfMaps(map<unsigned short, map<unsigned long, unsigned short>*>& mapOfMaps);
 
-    static void ExpandRegionIds(const vector<unsigned short>& regionIds,
-                                unsigned short tableIdExtension,
-                                vector<unsigned long>& expandedRegionIds);
+    template<class T> static void ExpandIds(const vector<T>& ids,
+                                            unsigned short tableIdExtension,
+                                            vector<unsigned long>& expandedIds);
     template<class T> static void AggregateSet(const vector<T>& values, map<T, bool>& set);
     template<class T1, class T2> static bool GetSetValues(const map<T1, bool>& set,
                                                           T1* keys,
                                                           T2& keyCount);
 
-    void AddGroupNames(unsigned char nameTypeId,
-                        unsigned long long groupId,
-                        map<unsigned long, char*>& names);
-    template<class T> void AddGroupNameSets(unsigned char nameTypeId,
-                                            map<T, map<unsigned long, char*>*>& names);
-    unsigned char GetNameCount(NameType nameType, unsigned long long nameId) const;
-    bool GetNameByIndex(NameType nameType,
-                        unsigned long long nameId,
-                        unsigned char index,
-                        unsigned long& language,
-                        char* name,
-                        unsigned short& nameBufferSize) const;
-    bool GetNameByLanguage(NameType nameType,
-                            unsigned long long nameId,
-                            unsigned long language,
-                            char* name,
-                            unsigned short& nameBufferSize) const;
+    CRecordNitGroup* GetGroupRecord(unsigned char tableId, unsigned short tableIdExtension) const;
 
     void AddServices(unsigned char tableId,
-                      unsigned short groupId,
+                      unsigned short tableIdExtension,
                       unsigned char sectionNumber,
                       unsigned short originalNetworkId,
                       unsigned short transportStreamId,
@@ -1119,17 +1322,14 @@ class CParserNitDvb
                       char* defaultAuthority,
                       map<unsigned short, unsigned short>& freesatChannelIds,
                       map<unsigned short, vector<unsigned short>*>& freesatRegionIds,
-                      map<unsigned short, vector<unsigned short>*>& freesatChannelCategoryIds,
                       map<unsigned short, unsigned short>& openTvChannelIds,
                       map<unsigned short, vector<unsigned short>*>& openTvRegionIds,
                       map<unsigned short, vector<unsigned char>*>& norDigChannelListIds,
                       map<unsigned long, unsigned long>& cellFrequencies,
-                      vector<unsigned long long>& targetRegionIds,
-                      vector<unsigned long>& availableInCountries,
-                      vector<unsigned long>& unavailableInCountries);
+                      vector<unsigned long long>& targetRegionIds);
 
     void AddTransmitters(unsigned char tableId,
-                          unsigned short groupId,
+                          unsigned short networkId,
                           unsigned short originalNetworkId,
                           unsigned short transportStreamId,
                           CRecordNitTransmitterCable& recordCable,
@@ -1149,18 +1349,7 @@ class CParserNitDvb
     bool DecodeExtensionDescriptors(const unsigned char* sectionData,
                                     unsigned short& pointer,
                                     unsigned short endOfExtensionDescriptors,
-                                    map<unsigned long, char*>& names,
-                                    vector<unsigned long>& availableInCountries,
-                                    vector<unsigned long>& unavailableInCountries,
-                                    vector<unsigned long>& homeTransmitterKeys,
-                                    unsigned long& privateDataSpecifier,
-                                    char** defaultAuthority,
-                                    vector<unsigned long long>& targetRegionIds,
-                                    map<unsigned long long, map<unsigned long, char*>*>& targetRegionNames,
-                                    map<unsigned char, char*>& cyfrowyPolsatChannelCategoryNames,
-                                    map<unsigned short, map<unsigned long, char*>*>& freesatRegionNames,
-                                    map<unsigned short, vector<unsigned short>*>& freesatChannelCategoryIds,
-                                    map<unsigned short, map<unsigned long, char*>*>& freesatChannelCategoryNames) const;
+                                    CRecordNitGroup& recordGroup) const;
     bool DecodeTransportStreamDescriptors(const unsigned char* sectionData,
                                           unsigned short& pointer,
                                           unsigned short endOfTransportDescriptors,
@@ -1305,10 +1494,7 @@ class CParserNitDvb
                               const vector<unsigned long long>& targetRegionIds,
                               const vector<unsigned short>& freesatRegionIds,
                               const vector<unsigned short>& openTvRegionIds,
-                              const vector<unsigned short>& freesatChannelCategoryIds,
-                              const vector<unsigned char>& norDigChannelListIds,
-                              const vector<unsigned long>& availableInCountries,
-                              const vector<unsigned long>& unavailableInCountries);
+                              const vector<unsigned char>& norDigChannelListIds);
 
     vector<unsigned long long> m_seenSectionsActual;
     vector<unsigned long long> m_unseenSectionsActual;
@@ -1321,9 +1507,15 @@ class CParserNitDvb
     bool m_useCompatibilityMode;
     unsigned short m_networkId;
 
-    map<unsigned long long, map<unsigned long, char*>*> m_groupNames;   // name type ID [8 bits] | name ID [56 bits] -> [language -> name]
-    map<unsigned long, unsigned short> m_tableKeys;                     // table ID [8 bits] | table ID extension [16 bits] -> table key
+    // Table keys are used to avoid > 64 bit keys for m_recordsService.
+    map<unsigned long, unsigned short> m_tableKeys;           // table ID [8 bits] | table ID extension [16 bits] -> table key
     unsigned short m_nextTableKey;
+
+    // NorDig channel lists are defined at the transport stream level
+    // rather than the group (network/bouquet) or service level.
+    map<unsigned long long, char*> m_norDigChannelListNames;  // table ID [8 bits] | table ID extension [16 bits] | transport stream ID [16 bits] | original network ID [16 bits] | NorDig channel list ID [8 bits] -> name
+
+    CRecordStore m_recordsGroup;
     CRecordStore m_recordsService;
     CRecordStore m_recordsTransmitter;
     map<unsigned long long, vector<CRecordNitService*>*> m_cacheServiceRecordsByDvbId;

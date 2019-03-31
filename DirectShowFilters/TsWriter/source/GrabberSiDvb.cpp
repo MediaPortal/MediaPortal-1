@@ -286,7 +286,7 @@ STDMETHODIMP_(bool) CGrabberSiDvb::GetService(unsigned short index,
                                               unsigned long* openTvRegionIds,
                                               unsigned char* openTvRegionIdCount,
                                               unsigned char* cyfrowyPolsatChannelCategoryId,
-                                              unsigned short* freesatChannelCategoryIds,
+                                              unsigned long* freesatChannelCategoryIds,
                                               unsigned char* freesatChannelCategoryIdCount,
                                               unsigned short* mediaHighwayChannelCategoryIds,
                                               unsigned char* mediaHighwayChannelCategoryIdCount,
@@ -294,7 +294,7 @@ STDMETHODIMP_(bool) CGrabberSiDvb::GetService(unsigned short index,
                                               unsigned char* openTvChannelCategoryIdCount,
                                               unsigned char* virginMediaChannelCategoryId,
                                               unsigned short* dishMarketId,
-                                              unsigned char* norDigChannelListIds,
+                                              unsigned long long* norDigChannelListIds,
                                               unsigned char* norDigChannelListIdCount,
                                               unsigned short* previousOriginalNetworkId,
                                               unsigned short* previousTransportStreamId,
@@ -308,6 +308,9 @@ STDMETHODIMP_(bool) CGrabberSiDvb::GetService(unsigned short index,
   unsigned char originalUnavailableInCountryCount = *unavailableInCountryCount;
   unsigned char originalAvailableInCellCount = *availableInCellCount;
   unsigned char originalTargetRegionIdCount = *targetRegionIdCount;
+  unsigned char originalNorDigChannelListIdCount = *norDigChannelListIdCount;
+
+  // Retrieve base information from the SDT.
   unsigned short sdtLogicalChannelNumber;
   if (!m_parserSdt.GetService(index,
                               *tableId,
@@ -358,10 +361,14 @@ STDMETHODIMP_(bool) CGrabberSiDvb::GetService(unsigned short index,
     return false;
   }
 
+  //---------------------------------------------------------------------------
   // Supplement the information from the SDT with information from the BAT and
   // NIT.
   bool batVisibleInGuide = true;
   unsigned char tempCount = 0;
+
+  // These arrays enable us to grab BAT information for scoped data sets. We
+  // may keep the data... or throw it away.
   unsigned char batNitTargetRegionIdCount = originalTargetRegionIdCount;
   unsigned long long* batNitTargetRegionIds = new unsigned long long[originalTargetRegionIdCount];
   if (batNitTargetRegionIds == NULL)
@@ -400,8 +407,8 @@ STDMETHODIMP_(bool) CGrabberSiDvb::GetService(unsigned short index,
                               *openTvRegionIdCount,
                               freesatChannelCategoryIds,      // BAT only
                               *freesatChannelCategoryIdCount,
-                              NULL,                           // NIT only [NorDig channel list IDs]
-                              tempCount,
+                              norDigChannelListIds,           // NIT; support BAT too; combine
+                              *norDigChannelListIdCount,
                               batAvailableInCountries,        // SDT, BAT; assume scoped
                               batAvailableInCountryCount,
                               batUnavailableInCountries,      // SDT, BAT; assume scoped
@@ -412,6 +419,7 @@ STDMETHODIMP_(bool) CGrabberSiDvb::GetService(unsigned short index,
     *freesatRegionIdCount = 0;
     *openTvRegionIdCount = 0;
     *freesatChannelCategoryIdCount = 0;
+    *norDigChannelListIdCount = 0;
   }
   else
   {
@@ -425,7 +433,7 @@ STDMETHODIMP_(bool) CGrabberSiDvb::GetService(unsigned short index,
 
     // Target region descriptors are "scoped" (refer to EN 300 468 section
     // 6.5). Details in the SDT take precedence over details in the BAT, and
-    // details in the NIT are the most generic.
+    // details in the NIT are the most generic. Here we take the SDT details.
     if (*targetRegionIdCount == 0 && batNitTargetRegionIdCount != 0)
     {
       *targetRegionIdCount = originalTargetRegionIdCount;
@@ -457,6 +465,7 @@ STDMETHODIMP_(bool) CGrabberSiDvb::GetService(unsigned short index,
     }
   }
 
+  // Clean up after BAT retrieval.
   if (batAvailableInCountries != NULL)
   {
     delete[] batAvailableInCountries;
@@ -468,21 +477,36 @@ STDMETHODIMP_(bool) CGrabberSiDvb::GetService(unsigned short index,
     batUnavailableInCountries = NULL;
   }
 
+  //---------------------------------------------------------------------------
+  // Prepare for NIT retrieval.
   unsigned short nitFreesatChannelId;
   unsigned short nitOpenTvChannelId;
+  bool nitVisibleInGuide;
+
+  // Extend/combine the LCN and NorDig channel list ID data sets.
   unsigned long long* nitLogicalChannelNumbers = logicalChannelNumbers;
   if (logicalChannelNumbers != NULL && *logicalChannelNumberCount < originalLogicalChannelNumberCount)
   {
     nitLogicalChannelNumbers = &logicalChannelNumbers[*logicalChannelNumberCount];
   }
   unsigned short nitLogicalChannelNumberCount = originalLogicalChannelNumberCount - *logicalChannelNumberCount;
-  bool nitVisibleInGuide;
+  unsigned long long* nitNorDigChannelListIds = norDigChannelListIds;
+  if (norDigChannelListIds != NULL && *norDigChannelListIdCount < originalNorDigChannelListIdCount)
+  {
+    nitNorDigChannelListIds = &norDigChannelListIds[*norDigChannelListIdCount];
+  }
+  unsigned char nitNorDigChannelListIdCount = originalNorDigChannelListIdCount - *norDigChannelListIdCount;
+
+  // We'll also extend the available in cell data set, but keep it distinct.
   unsigned char nitAvailableInCellCount = originalAvailableInCellCount;
   unsigned long* nitAvailableInCells = new unsigned long[originalAvailableInCellCount];
   if (nitAvailableInCells == NULL)
   {
     nitAvailableInCellCount = 0;
   }
+
+  // Reset the BAT/NIT target region ID data set. We've already copied out any
+  // BAT data we intend to keep above.
   if (batNitTargetRegionIds != NULL)
   {
     batNitTargetRegionIdCount = originalTargetRegionIdCount;
@@ -507,21 +531,20 @@ STDMETHODIMP_(bool) CGrabberSiDvb::GetService(unsigned short index,
                               tempCount,
                               NULL,
                               tempCount,
-                              norDigChannelListIds,
-                              *norDigChannelListIdCount,
+                              nitNorDigChannelListIds,
+                              nitNorDigChannelListIdCount,
                               NULL,
                               tempCount,
                               NULL,
                               tempCount))
   {
     *networkIdCount = 0;
-    *norDigChannelListIdCount = 0;
   }
   else
   {
-    // Use values from the NIT if we didn't get values from the BAT. In most
-    // cases these fields are expected to come from the BAT and not be present
-    // in the NIT.
+    // Use data from the NIT if we didn't get data from the BAT. In most cases
+    // this data is expected to come from the BAT and not be present in the
+    // NIT.
     if (*freesatChannelId == 0)
     {
       *freesatChannelId = nitFreesatChannelId;
@@ -602,6 +625,7 @@ STDMETHODIMP_(bool) CGrabberSiDvb::GetService(unsigned short index,
     }
   }
 
+  // Clean up after NIT/BAT retrieval.
   if (batNitTargetRegionIds != NULL)
   {
     delete[] batNitTargetRegionIds;
@@ -611,6 +635,7 @@ STDMETHODIMP_(bool) CGrabberSiDvb::GetService(unsigned short index,
     delete[] nitAvailableInCells;
   }
 
+  //---------------------------------------------------------------------------
   // Add any LCN from the SDT if the array has room for it.
   if (sdtLogicalChannelNumber != 0 && logicalChannelNumbers != NULL)
   {
@@ -754,7 +779,13 @@ STDMETHODIMP_(bool) CGrabberSiDvb::GetBouquetNameByLanguage(unsigned short bouqu
 
 STDMETHODIMP_(unsigned char) CGrabberSiDvb::GetTargetRegionNameCount(unsigned long long regionId)
 {
-  return m_parserBat.GetTargetRegionNameCount(regionId) + m_parserNit.GetTargetRegionNameCount(regionId);
+  unsigned char count = m_parserBat.GetTargetRegionNameCount(regionId) + m_parserNit.GetTargetRegionNameCount(regionId);
+  if (count == 0)
+  {
+    LogDebug(L"SI DVB: invalid target region name identifier, region ID = %llu",
+              regionId);
+  }
+  return count;
 }
 
 STDMETHODIMP_(bool) CGrabberSiDvb::GetTargetRegionNameByIndex(unsigned long long regionId,
@@ -772,8 +803,11 @@ STDMETHODIMP_(bool) CGrabberSiDvb::GetTargetRegionNameByIndex(unsigned long long
                                                   name,
                                                   *nameBufferSize);
   }
-  index -= batNameCount;
-  return m_parserNit.GetTargetRegionNameByIndex(regionId, index, *language, name, *nameBufferSize);
+  return m_parserNit.GetTargetRegionNameByIndex(regionId,
+                                                index - batNameCount,
+                                                *language,
+                                                name,
+                                                *nameBufferSize);
 }
 
 STDMETHODIMP_(bool) CGrabberSiDvb::GetTargetRegionNameByLanguage(unsigned long long regionId,
@@ -785,7 +819,13 @@ STDMETHODIMP_(bool) CGrabberSiDvb::GetTargetRegionNameByLanguage(unsigned long l
   {
     return true;
   }
-  return m_parserNit.GetTargetRegionNameByLanguage(regionId, language, name, *nameBufferSize);
+  if (!m_parserNit.GetTargetRegionNameByLanguage(regionId, language, name, *nameBufferSize))
+  {
+    LogDebug(L"SI DVB: invalid target region name identifier or language, region ID = %llu, language = %S",
+              regionId, (char*)&language);
+    return false;
+  }
+  return true;
 }
 
 STDMETHODIMP_(unsigned char) CGrabberSiDvb::GetCyfrowyPolsatChannelCategoryNameCount(unsigned char categoryId)
@@ -817,87 +857,56 @@ STDMETHODIMP_(bool) CGrabberSiDvb::GetCyfrowyPolsatChannelCategoryNameByLanguage
                                                                     *nameBufferSize);
 }
 
-STDMETHODIMP_(unsigned char) CGrabberSiDvb::GetFreesatRegionNameCount(unsigned short regionId)
+STDMETHODIMP_(unsigned char) CGrabberSiDvb::GetFreesatRegionNameCount(unsigned long regionId)
 {
-  return m_parserBat.GetFreesatRegionNameCount(regionId) + m_parserNit.GetFreesatRegionNameCount(regionId);
+  return m_parserBat.GetFreesatRegionNameCount(regionId);
 }
 
-STDMETHODIMP_(bool) CGrabberSiDvb::GetFreesatRegionNameByIndex(unsigned short regionId,
+STDMETHODIMP_(bool) CGrabberSiDvb::GetFreesatRegionNameByIndex(unsigned long regionId,
                                                                 unsigned char index,
                                                                 unsigned long* language,
                                                                 char* name,
                                                                 unsigned short* nameBufferSize)
 {
-  unsigned char batNameCount = m_parserBat.GetFreesatRegionNameCount(regionId);
-  if (index < batNameCount)
-  {
-    return m_parserBat.GetFreesatRegionNameByIndex(regionId,
-                                                    index,
-                                                    *language,
-                                                    name,
-                                                    *nameBufferSize);
-  }
-  index -= batNameCount;
-  return m_parserNit.GetFreesatRegionNameByIndex(regionId,
+  return m_parserBat.GetFreesatRegionNameByIndex(regionId,
                                                   index,
                                                   *language,
                                                   name,
                                                   *nameBufferSize);
 }
 
-STDMETHODIMP_(bool) CGrabberSiDvb::GetFreesatRegionNameByLanguage(unsigned short regionId,
+STDMETHODIMP_(bool) CGrabberSiDvb::GetFreesatRegionNameByLanguage(unsigned long regionId,
                                                                   unsigned long language,
                                                                   char* name,
                                                                   unsigned short* nameBufferSize)
 {
-  if (m_parserBat.GetFreesatRegionNameByLanguage(regionId, language, name, *nameBufferSize))
-  {
-    return true;
-  }
-  return m_parserNit.GetFreesatRegionNameByLanguage(regionId, language, name, *nameBufferSize);
+  return m_parserBat.GetFreesatRegionNameByLanguage(regionId, language, name, *nameBufferSize);
 }
 
-STDMETHODIMP_(unsigned char) CGrabberSiDvb::GetFreesatChannelCategoryNameCount(unsigned short categoryId)
+STDMETHODIMP_(unsigned char) CGrabberSiDvb::GetFreesatChannelCategoryNameCount(unsigned long categoryId)
 {
-  return m_parserBat.GetFreesatChannelCategoryNameCount(categoryId) + m_parserNit.GetFreesatChannelCategoryNameCount(categoryId);
+  return m_parserBat.GetFreesatChannelCategoryNameCount(categoryId);
 }
 
-STDMETHODIMP_(bool) CGrabberSiDvb::GetFreesatChannelCategoryNameByIndex(unsigned short categoryId,
+STDMETHODIMP_(bool) CGrabberSiDvb::GetFreesatChannelCategoryNameByIndex(unsigned long categoryId,
                                                                         unsigned char index,
                                                                         unsigned long* language,
                                                                         char* name,
                                                                         unsigned short* nameBufferSize)
 {
-  unsigned char batNameCount = m_parserBat.GetFreesatChannelCategoryNameCount(categoryId);
-  if (index < batNameCount)
-  {
-    return m_parserBat.GetFreesatChannelCategoryNameByIndex(categoryId,
-                                                            index,
-                                                            *language,
-                                                            name,
-                                                            *nameBufferSize);
-  }
-  index -= batNameCount;
-  return m_parserNit.GetFreesatChannelCategoryNameByIndex(categoryId,
+  return m_parserBat.GetFreesatChannelCategoryNameByIndex(categoryId,
                                                           index,
                                                           *language,
                                                           name,
                                                           *nameBufferSize);
 }
 
-STDMETHODIMP_(bool) CGrabberSiDvb::GetFreesatChannelCategoryNameByLanguage(unsigned short categoryId,
+STDMETHODIMP_(bool) CGrabberSiDvb::GetFreesatChannelCategoryNameByLanguage(unsigned long categoryId,
                                                                             unsigned long language,
                                                                             char* name,
                                                                             unsigned short* nameBufferSize)
 {
-  if (m_parserBat.GetFreesatChannelCategoryNameByLanguage(categoryId,
-                                                          language,
-                                                          name,
-                                                          *nameBufferSize))
-  {
-    return true;
-  }
-  return m_parserNit.GetFreesatChannelCategoryNameByLanguage(categoryId,
+  return m_parserBat.GetFreesatChannelCategoryNameByLanguage(categoryId,
                                                               language,
                                                               name,
                                                               *nameBufferSize);
@@ -916,37 +925,34 @@ STDMETHODIMP_(bool) CGrabberSiDvb::GetMediaHighwayChannelCategoryName(unsigned s
                                                           nameBufferSize);
 }
 
-STDMETHODIMP_(unsigned char) CGrabberSiDvb::GetNorDigChannelListNameCount(unsigned char channelListId)
+STDMETHODIMP_(unsigned char) CGrabberSiDvb::GetNorDigChannelListNameCount(unsigned long long channelListId)
 {
   return m_parserBat.GetNorDigChannelListNameCount(channelListId) + m_parserNit.GetNorDigChannelListNameCount(channelListId);
 }
 
-STDMETHODIMP_(bool) CGrabberSiDvb::GetNorDigChannelListNameByIndex(unsigned char channelListId,
+STDMETHODIMP_(bool) CGrabberSiDvb::GetNorDigChannelListNameByIndex(unsigned long long channelListId,
                                                                     unsigned char index,
                                                                     unsigned long* language,
                                                                     char* name,
                                                                     unsigned short* nameBufferSize)
 {
-  // Prefer NIT in this case because the NorDig specification says logical
-  // channel descriptors are carried in the NIT.
-  unsigned char nitNameCount = m_parserBat.GetNorDigChannelListNameCount(channelListId);
-  if (index < nitNameCount)
+  unsigned char batNameCount = m_parserBat.GetNorDigChannelListNameCount(channelListId);
+  if (index < batNameCount)
   {
-    return m_parserNit.GetNorDigChannelListNameByIndex(channelListId,
+    return m_parserBat.GetNorDigChannelListNameByIndex(channelListId,
                                                         index,
                                                         *language,
                                                         name,
                                                         *nameBufferSize);
   }
-  index -= nitNameCount;
-  return m_parserBat.GetNorDigChannelListNameByIndex(channelListId,
-                                                      index,
+  return m_parserNit.GetNorDigChannelListNameByIndex(channelListId,
+                                                      index - batNameCount,
                                                       *language,
                                                       name,
                                                       *nameBufferSize);
 }
 
-STDMETHODIMP_(bool) CGrabberSiDvb::GetNorDigChannelListNameByLanguage(unsigned char channelListId,
+STDMETHODIMP_(bool) CGrabberSiDvb::GetNorDigChannelListNameByLanguage(unsigned long long channelListId,
                                                                       unsigned long language,
                                                                       char* name,
                                                                       unsigned short* nameBufferSize)

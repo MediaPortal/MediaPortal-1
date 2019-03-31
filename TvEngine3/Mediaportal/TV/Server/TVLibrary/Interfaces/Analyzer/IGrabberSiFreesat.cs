@@ -243,7 +243,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
                         [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 44)] uint[] openTvRegionIds,
                         ref byte openTvRegionIdCount,
                         out byte cyfrowyPolsatChannelCategoryId,
-                        [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 47)] ushort[] freesatChannelCategoryIds,
+                        [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 47)] uint[] freesatChannelCategoryIds,
                         ref byte freesatChannelCategoryIdCount,
                         [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 49)] ushort[] mediaHighwayChannelCategoryIds,
                         ref byte mediaHighwayChannelCategoryIdCount,
@@ -251,7 +251,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
                         ref byte openTvChannelCategoryIdCount,
                         out byte virginMediaChannelCategoryId,
                         out ushort dishMarketId,
-                        [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 55)] byte[] norDigChannelListIds,
+                        [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 55)] ulong[] norDigChannelListIds,
                         ref byte norDigChannelListIdCount,
                         out ushort previousOriginalNetworkId,
                         out ushort previousTransportStreamId,
@@ -466,7 +466,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     /// <param name="regionId">The Freesat region's identifier.</param>
     /// <returns>the number of names received by the grabber for the given Freesat region</returns>
     [PreserveSig]
-    new byte GetFreesatRegionNameCount(ushort regionId);
+    new byte GetFreesatRegionNameCount(uint regionId);
 
     /// <summary>
     /// Retrieve a Freesat region's name from the grabber.
@@ -479,7 +479,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     /// <returns><c>true</c> if the Freesat region's name is successfully retrieved, otherwise <c>false</c></returns>
     [PreserveSig]
     [return: MarshalAs(UnmanagedType.I1)]
-    new bool GetFreesatRegionNameByIndex(ushort regionId,
+    new bool GetFreesatRegionNameByIndex(uint regionId,
                                           byte index,
                                           out Iso639Code language,
                                           IntPtr name,
@@ -495,7 +495,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     /// <returns><c>true</c> if the Freesat region's name is successfully retrieved, otherwise <c>false</c></returns>
     [PreserveSig]
     [return: MarshalAs(UnmanagedType.I1)]
-    new bool GetFreesatRegionNameByLanguage(ushort regionId,
+    new bool GetFreesatRegionNameByLanguage(uint regionId,
                                             Iso639Code language,
                                             IntPtr name,
                                             ref ushort nameBufferSize);
@@ -506,7 +506,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     /// <param name="categoryId">The Freesat channel category's identifier.</param>
     /// <returns>the number of names received by the grabber for the given Freesat channel category</returns>
     [PreserveSig]
-    new byte GetFreesatChannelCategoryNameCount(ushort categoryId);
+    new byte GetFreesatChannelCategoryNameCount(uint categoryId);
 
     /// <summary>
     /// Retrieve a Freesat channel category's name from the grabber.
@@ -519,7 +519,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     /// <returns><c>true</c> if the Freesat channel category's name is successfully retrieved, otherwise <c>false</c></returns>
     [PreserveSig]
     [return: MarshalAs(UnmanagedType.I1)]
-    new bool GetFreesatChannelCategoryNameByIndex(ushort categoryId,
+    new bool GetFreesatChannelCategoryNameByIndex(uint categoryId,
                                                   byte index,
                                                   out Iso639Code language,
                                                   IntPtr name,
@@ -535,7 +535,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     /// <returns><c>true</c> if the Freesat channel category's name is successfully retrieved, otherwise <c>false</c></returns>
     [PreserveSig]
     [return: MarshalAs(UnmanagedType.I1)]
-    new bool GetFreesatChannelCategoryNameByLanguage(ushort categoryId,
+    new bool GetFreesatChannelCategoryNameByLanguage(uint categoryId,
                                                       Iso639Code language,
                                                       IntPtr name,
                                                       ref ushort nameBufferSize);
@@ -559,7 +559,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     /// <param name="channelListId">The NorDig channel list's identifier.</param>
     /// <returns>the number of names received by the grabber for the given NorDig channel list</returns>
     [PreserveSig]
-    new byte GetNorDigChannelListNameCount(byte channelListId);
+    new byte GetNorDigChannelListNameCount(ulong channelListId);
 
     /// <summary>
     /// Retrieve a NorDig channel list's name from the grabber.
@@ -572,7 +572,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     /// <returns><c>true</c> if the NorDig channel list's name is successfully retrieved, otherwise <c>false</c></returns>
     [PreserveSig]
     [return: MarshalAs(UnmanagedType.I1)]
-    new bool GetNorDigChannelListNameByIndex(byte channelListId,
+    new bool GetNorDigChannelListNameByIndex(ulong channelListId,
                                               byte index,
                                               out Iso639Code language,
                                               IntPtr name,
@@ -588,7 +588,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     /// <returns><c>true</c> if the NorDig channel list's name is successfully retrieved, otherwise <c>false</c></returns>
     [PreserveSig]
     [return: MarshalAs(UnmanagedType.I1)]
-    new bool GetNorDigChannelListNameByLanguage(byte channelListId,
+    new bool GetNorDigChannelListNameByLanguage(ulong channelListId,
                                                 Iso639Code language,
                                                 IntPtr name,
                                                 ref ushort nameBufferSize);

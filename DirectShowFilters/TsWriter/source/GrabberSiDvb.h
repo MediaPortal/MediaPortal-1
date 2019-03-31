@@ -128,7 +128,7 @@ class CGrabberSiDvb
                                     unsigned long* openTvRegionIds,
                                     unsigned char* openTvRegionIdCount,
                                     unsigned char* cyfrowyPolsatChannelCategoryId,
-                                    unsigned short* freesatChannelCategoryIds,
+                                    unsigned long* freesatChannelCategoryIds,
                                     unsigned char* freesatChannelCategoryIdCount,
                                     unsigned short* mediaHighwayChannelCategoryIds,
                                     unsigned char* mediaHighwayChannelCategoryIdCount,
@@ -136,7 +136,7 @@ class CGrabberSiDvb
                                     unsigned char* openTvChannelCategoryIdCount,
                                     unsigned char* virginMediaChannelCategoryId,
                                     unsigned short* dishMarketId,
-                                    unsigned char* norDigChannelListIds,
+                                    unsigned long long* norDigChannelListIds,
                                     unsigned char* norDigChannelListIdCount,
                                     unsigned short* previousOriginalNetworkId,
                                     unsigned short* previousTransportStreamId,
@@ -207,24 +207,24 @@ class CGrabberSiDvb
                                                                       char* name,
                                                                       unsigned short* nameBufferSize);
 
-    STDMETHODIMP_(unsigned char) GetFreesatRegionNameCount(unsigned short regionId);
-    STDMETHODIMP_(bool) GetFreesatRegionNameByIndex(unsigned short regionId,
+    STDMETHODIMP_(unsigned char) GetFreesatRegionNameCount(unsigned long regionId);
+    STDMETHODIMP_(bool) GetFreesatRegionNameByIndex(unsigned long regionId,
                                                     unsigned char index,
                                                     unsigned long* language,
                                                     char* name,
                                                     unsigned short* nameBufferSize);
-    STDMETHODIMP_(bool) GetFreesatRegionNameByLanguage(unsigned short regionId,
+    STDMETHODIMP_(bool) GetFreesatRegionNameByLanguage(unsigned long regionId,
                                                         unsigned long language,
                                                         char* name,
                                                         unsigned short* nameBufferSize);
 
-    STDMETHODIMP_(unsigned char) GetFreesatChannelCategoryNameCount(unsigned short categoryId);
-    STDMETHODIMP_(bool) GetFreesatChannelCategoryNameByIndex(unsigned short categoryId,
+    STDMETHODIMP_(unsigned char) GetFreesatChannelCategoryNameCount(unsigned long categoryId);
+    STDMETHODIMP_(bool) GetFreesatChannelCategoryNameByIndex(unsigned long categoryId,
                                                               unsigned char index,
                                                               unsigned long* language,
                                                               char* name,
                                                               unsigned short* nameBufferSize);
-    STDMETHODIMP_(bool) GetFreesatChannelCategoryNameByLanguage(unsigned short categoryId,
+    STDMETHODIMP_(bool) GetFreesatChannelCategoryNameByLanguage(unsigned long categoryId,
                                                                 unsigned long language,
                                                                 char* name,
                                                                 unsigned short* nameBufferSize);
@@ -233,13 +233,13 @@ class CGrabberSiDvb
                                                             char* name,
                                                             unsigned short* nameBufferSize);
 
-    STDMETHODIMP_(unsigned char) GetNorDigChannelListNameCount(unsigned char channelListId);
-    STDMETHODIMP_(bool) GetNorDigChannelListNameByIndex(unsigned char channelListId,
+    STDMETHODIMP_(unsigned char) GetNorDigChannelListNameCount(unsigned long long channelListId);
+    STDMETHODIMP_(bool) GetNorDigChannelListNameByIndex(unsigned long long channelListId,
                                                         unsigned char index,
                                                         unsigned long* language,
                                                         char* name,
                                                         unsigned short* nameBufferSize);
-    STDMETHODIMP_(bool) GetNorDigChannelListNameByLanguage(unsigned char channelListId,
+    STDMETHODIMP_(bool) GetNorDigChannelListNameByLanguage(unsigned long long channelListId,
                                                             unsigned long language,
                                                             char* name,
                                                             unsigned short* nameBufferSize);
@@ -405,6 +405,7 @@ class CGrabberSiDvb
     CParserNitDvb m_parserNit;
     CParserSdt m_parserSdt;
     CParserTot m_parserTot;
+
     ICallBackGrabber* m_callBackGrabber;
     ICallBackSiDvb* m_callBackSiDvb;
     IMhwChannelInfoProvider* m_mhwChannelInfoProvider;

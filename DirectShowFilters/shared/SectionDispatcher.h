@@ -33,7 +33,7 @@ using namespace MediaPortal;
 
 
 #define PROCESSOR_COUNT 4
-#define SECTION_QUEUE_LENGTH_LIMIT 100
+#define SECTION_QUEUE_LENGTH_LIMIT 200
 
 
 extern void LogDebug(const wchar_t* fmt, ...);
@@ -147,8 +147,11 @@ class CSectionDispatcher : public ISectionDispatcher
             CEnterCriticalSection lock(m_queueSection);
             if (m_isQueueFull || m_queue.size() >= SECTION_QUEUE_LENGTH_LIMIT)
             {
-              m_isQueueFull = true;
-              LogDebug(L"section processor: failed to enqueue section, section queue is full");
+              if (!m_isQueueFull)
+              {
+                LogDebug(L"section processor: failed to enqueue section, section queue is full");
+                m_isQueueFull = true;
+              }
               delete section;
               return;
             }
@@ -190,7 +193,11 @@ class CSectionDispatcher : public ISectionDispatcher
             {
               if (m_queue.size() == 0)
               {
-                m_isQueueFull = false;
+                if (m_isQueueFull)
+                {
+                  LogDebug(L"section processor: cleared section queue backlog, begin accepting new sections");
+                  m_isQueueFull = false;
+                }
                 return;
               }
               section = m_queue[0];
@@ -206,13 +213,14 @@ class CSectionDispatcher : public ISectionDispatcher
           section->Delegate().OnNewSection(section->Pid(), section->TableId(), *(section->Section()));
           delete section;
 
-          if (queueSize == 0)
-          {
-            m_isQueueFull = false;
-          }
-          else
+          if (queueSize != 0)
           {
             m_thread.Wake();
+          }
+          else if (m_isQueueFull)
+          {
+            LogDebug(L"section processor: cleared section queue backlog, begin accepting new sections");
+            m_isQueueFull = false;
           }
         }
 

@@ -31,6 +31,46 @@ class ICallBackNitDvb : public ICallBackTableParser
   public:
     virtual ~ICallBackNitDvb() {}
 
+    virtual void OnNitGroupReceived(unsigned char tableId,
+                                    unsigned short tableIdExtension,
+                                    const map<unsigned long, char*>& names,
+                                    const vector<unsigned long>& availableInCountries,
+                                    const vector<unsigned long>& unavailableInCountries,
+                                    const vector<unsigned long>& homeTransmitterKeys,
+                                    const char* defaultAuthority,
+                                    const vector<unsigned long long>& targetRegionIds,
+                                    const map<unsigned long long, map<unsigned long, char*>*>& targetRegionNames,
+                                    const map<unsigned char, char*>& cyfrowyPolsatChannelCategoryNames,
+                                    const map<unsigned short, map<unsigned long, char*>*>& freesatRegionNames,
+                                    const map<unsigned short, vector<unsigned short>*>& freesatChannelCategoryIds,
+                                    const map<unsigned short, map<unsigned long, char*>*>& freesatChannelCategoryNames) { }
+    virtual void OnNitGroupChanged(unsigned char tableId,
+                                    unsigned short tableIdExtension,
+                                    const map<unsigned long, char*>& names,
+                                    const vector<unsigned long>& availableInCountries,
+                                    const vector<unsigned long>& unavailableInCountries,
+                                    const vector<unsigned long>& homeTransmitterKeys,
+                                    const char* defaultAuthority,
+                                    const vector<unsigned long long>& targetRegionIds,
+                                    const map<unsigned long long, map<unsigned long, char*>*>& targetRegionNames,
+                                    const map<unsigned char, char*>& cyfrowyPolsatChannelCategoryNames,
+                                    const map<unsigned short, map<unsigned long, char*>*>& freesatRegionNames,
+                                    const map<unsigned short, vector<unsigned short>*>& freesatChannelCategoryIds,
+                                    const map<unsigned short, map<unsigned long, char*>*>& freesatChannelCategoryNames) { }
+    virtual void OnNitGroupRemoved(unsigned char tableId,
+                                    unsigned short tableIdExtension,
+                                    const map<unsigned long, char*>& names,
+                                    const vector<unsigned long>& availableInCountries,
+                                    const vector<unsigned long>& unavailableInCountries,
+                                    const vector<unsigned long>& homeTransmitterKeys,
+                                    const char* defaultAuthority,
+                                    const vector<unsigned long long>& targetRegionIds,
+                                    const map<unsigned long long, map<unsigned long, char*>*>& targetRegionNames,
+                                    const map<unsigned char, char*>& cyfrowyPolsatChannelCategoryNames,
+                                    const map<unsigned short, map<unsigned long, char*>*>& freesatRegionNames,
+                                    const map<unsigned short, vector<unsigned short>*>& freesatChannelCategoryIds,
+                                    const map<unsigned short, map<unsigned long, char*>*>& freesatChannelCategoryNames) { }
+
     virtual void OnNitServiceReceived(unsigned char tableId,
                                       unsigned short tableIdExtension,
                                       unsigned short originalNetworkId,
@@ -45,10 +85,7 @@ class ICallBackNitDvb : public ICallBackTableParser
                                       const vector<unsigned long long>& targetRegionIds,
                                       const vector<unsigned short>& freesatRegionIds,
                                       const vector<unsigned short>& openTvRegionIds,
-                                      const vector<unsigned short>& freesatChannelCategoryIds,
-                                      const vector<unsigned char>& norDigChannelListIds,
-                                      const vector<unsigned long>& availableInCountries,
-                                      const vector<unsigned long>& unavailableInCountries) {}
+                                      const vector<unsigned char>& norDigChannelListIds) {}
     virtual void OnNitServiceChanged(unsigned char tableId,
                                       unsigned short tableIdExtension,
                                       unsigned short originalNetworkId,
@@ -63,10 +100,7 @@ class ICallBackNitDvb : public ICallBackTableParser
                                       const vector<unsigned long long>& targetRegionIds,
                                       const vector<unsigned short>& freesatRegionIds,
                                       const vector<unsigned short>& openTvRegionIds,
-                                      const vector<unsigned short>& freesatChannelCategoryIds,
-                                      const vector<unsigned char>& norDigChannelListIds,
-                                      const vector<unsigned long>& availableInCountries,
-                                      const vector<unsigned long>& unavailableInCountries) {}
+                                      const vector<unsigned char>& norDigChannelListIds) {}
     virtual void OnNitServiceRemoved(unsigned char tableId,
                                       unsigned short tableIdExtension,
                                       unsigned short originalNetworkId,
@@ -81,10 +115,7 @@ class ICallBackNitDvb : public ICallBackTableParser
                                       const vector<unsigned long long>& targetRegionIds,
                                       const vector<unsigned short>& freesatRegionIds,
                                       const vector<unsigned short>& openTvRegionIds,
-                                      const vector<unsigned short>& freesatChannelCategoryIds,
-                                      const vector<unsigned char>& norDigChannelListIds,
-                                      const vector<unsigned long>& availableInCountries,
-                                      const vector<unsigned long>& unavailableInCountries) {}
+                                      const vector<unsigned char>& norDigChannelListIds) {}
 
     virtual void OnNitTransmitterCableReceived(unsigned char tableId,
                                                 unsigned short networkId,

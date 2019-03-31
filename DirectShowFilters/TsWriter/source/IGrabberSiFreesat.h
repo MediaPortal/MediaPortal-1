@@ -103,7 +103,7 @@ DECLARE_INTERFACE_(IGrabberSiFreesat, IGrabberSiDvb)
                                 unsigned long* openTvRegionIds,
                                 unsigned char* openTvRegionIdCount,
                                 unsigned char* cyfrowyPolsatChannelCategoryId,
-                                unsigned short* freesatChannelCategoryIds,
+                                unsigned long* freesatChannelCategoryIds,
                                 unsigned char* freesatChannelCategoryIdCount,
                                 unsigned short* mediaHighwayChannelCategoryIds,
                                 unsigned char* mediaHighwayChannelCategoryIdCount,
@@ -111,7 +111,7 @@ DECLARE_INTERFACE_(IGrabberSiFreesat, IGrabberSiDvb)
                                 unsigned char* openTvChannelCategoryIdCount,
                                 unsigned char* virginMediaChannelCategoryId,
                                 unsigned short* dishMarketId,
-                                unsigned char* norDigChannelListIds,
+                                unsigned long long* norDigChannelListIds,
                                 unsigned char* norDigChannelListIdCount,
                                 unsigned short* previousOriginalNetworkId,
                                 unsigned short* previousTransportStreamId,
@@ -177,24 +177,24 @@ DECLARE_INTERFACE_(IGrabberSiFreesat, IGrabberSiDvb)
                                                                   char* name,
                                                                   unsigned short* nameBufferSize)PURE;
 
-  STDMETHOD_(unsigned char, GetFreesatRegionNameCount)(THIS_ unsigned short regionId)PURE;
-  STDMETHOD_(bool, GetFreesatRegionNameByIndex)(THIS_ unsigned short regionId,
+  STDMETHOD_(unsigned char, GetFreesatRegionNameCount)(THIS_ unsigned long regionId)PURE;
+  STDMETHOD_(bool, GetFreesatRegionNameByIndex)(THIS_ unsigned long regionId,
                                                 unsigned char index,
                                                 unsigned long* language,
                                                 char* name,
                                                 unsigned short* nameBufferSize)PURE;
-  STDMETHOD_(bool, GetFreesatRegionNameByLanguage)(THIS_ unsigned short regionId,
+  STDMETHOD_(bool, GetFreesatRegionNameByLanguage)(THIS_ unsigned long regionId,
                                                     unsigned long language,
                                                     char* name,
                                                     unsigned short* nameBufferSize)PURE;
 
-  STDMETHOD_(unsigned char, GetFreesatChannelCategoryNameCount)(THIS_ unsigned short categoryId)PURE;
-  STDMETHOD_(bool, GetFreesatChannelCategoryNameByIndex)(THIS_ unsigned short categoryId,
+  STDMETHOD_(unsigned char, GetFreesatChannelCategoryNameCount)(THIS_ unsigned long categoryId)PURE;
+  STDMETHOD_(bool, GetFreesatChannelCategoryNameByIndex)(THIS_ unsigned long categoryId,
                                                           unsigned char index,
                                                           unsigned long* language,
                                                           char* name,
                                                           unsigned short* nameBufferSize)PURE;
-  STDMETHOD_(bool, GetFreesatChannelCategoryNameByLanguage)(THIS_ unsigned short categoryId,
+  STDMETHOD_(bool, GetFreesatChannelCategoryNameByLanguage)(THIS_ unsigned long categoryId,
                                                             unsigned long language,
                                                             char* name,
                                                             unsigned short* nameBufferSize)PURE;
@@ -203,13 +203,13 @@ DECLARE_INTERFACE_(IGrabberSiFreesat, IGrabberSiDvb)
                                                         char* name,
                                                         unsigned short* nameBufferSize)PURE;
 
-  STDMETHOD_(unsigned char, GetNorDigChannelListNameCount)(THIS_ unsigned char channelListId)PURE;
-  STDMETHOD_(bool, GetNorDigChannelListNameByIndex)(THIS_ unsigned char channelListId,
+  STDMETHOD_(unsigned char, GetNorDigChannelListNameCount)(THIS_ unsigned long long channelListId)PURE;
+  STDMETHOD_(bool, GetNorDigChannelListNameByIndex)(THIS_ unsigned long long channelListId,
                                                     unsigned char index,
                                                     unsigned long* language,
                                                     char* name,
                                                     unsigned short* nameBufferSize)PURE;
-  STDMETHOD_(bool, GetNorDigChannelListNameByLanguage)(THIS_ unsigned char channelListId,
+  STDMETHOD_(bool, GetNorDigChannelListNameByLanguage)(THIS_ unsigned long long channelListId,
                                                         unsigned long language,
                                                         char* name,
                                                         unsigned short* nameBufferSize)PURE;

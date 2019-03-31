@@ -68,7 +68,7 @@ bool CParserBat::IsReady() const
 
 unsigned char CParserBat::GetBouquetNameCount(unsigned short bouquetId) const
 {
-  return GetNetworkNameCount(bouquetId);
+  return GetNameCount(Bouquet, TABLE_ID_BAT, bouquetId, bouquetId);
 }
 
 bool CParserBat::GetBouquetNameByIndex(unsigned short bouquetId,
@@ -77,7 +77,14 @@ bool CParserBat::GetBouquetNameByIndex(unsigned short bouquetId,
                                         char* name,
                                         unsigned short& nameBufferSize) const
 {
-  return GetNetworkNameByIndex(bouquetId, index, language, name, nameBufferSize);
+  return GetNameByIndex(Bouquet,
+                        TABLE_ID_BAT,
+                        bouquetId,
+                        bouquetId,
+                        index,
+                        language,
+                        name,
+                        nameBufferSize);
 }
 
 bool CParserBat::GetBouquetNameByLanguage(unsigned short bouquetId,
@@ -85,5 +92,81 @@ bool CParserBat::GetBouquetNameByLanguage(unsigned short bouquetId,
                                           char* name,
                                           unsigned short& nameBufferSize) const
 {
-  return GetNetworkNameByLanguage(bouquetId, language, name, nameBufferSize);
+  return GetNameByLanguage(Bouquet,
+                            TABLE_ID_BAT,
+                            bouquetId,
+                            bouquetId,
+                            language,
+                            name,
+                            nameBufferSize);
+}
+
+unsigned char CParserBat::GetFreesatRegionNameCount(unsigned long regionId) const
+{
+  return GetNameCount(FreesatRegion, TABLE_ID_BAT, regionId >> 16, regionId & 0xffff);
+}
+
+bool CParserBat::GetFreesatRegionNameByIndex(unsigned long regionId,
+                                                unsigned char index,
+                                                unsigned long& language,
+                                                char* name,
+                                                unsigned short& nameBufferSize) const
+{
+  return GetNameByIndex(FreesatRegion,
+                        TABLE_ID_BAT,
+                        regionId >> 16,
+                        regionId & 0xffff,
+                        index,
+                        language,
+                        name,
+                        nameBufferSize);
+}
+
+bool CParserBat::GetFreesatRegionNameByLanguage(unsigned long regionId,
+                                                    unsigned long language,
+                                                    char* name,
+                                                    unsigned short& nameBufferSize) const
+{
+  return GetNameByLanguage(FreesatRegion,
+                            TABLE_ID_BAT,
+                            regionId >> 16,
+                            regionId & 0xffff,
+                            language,
+                            name,
+                            nameBufferSize);
+}
+
+unsigned char CParserBat::GetFreesatChannelCategoryNameCount(unsigned long categoryId) const
+{
+  return GetNameCount(FreesatChannelCategory, TABLE_ID_BAT, categoryId >> 16, categoryId & 0xffff);
+}
+
+bool CParserBat::GetFreesatChannelCategoryNameByIndex(unsigned long categoryId,
+                                                          unsigned char index,
+                                                          unsigned long& language,
+                                                          char* name,
+                                                          unsigned short& nameBufferSize) const
+{
+  return GetNameByIndex(FreesatChannelCategory,
+                        TABLE_ID_BAT,
+                        categoryId >> 16,
+                        categoryId & 0xffff,
+                        index,
+                        language,
+                        name,
+                        nameBufferSize);
+}
+
+bool CParserBat::GetFreesatChannelCategoryNameByLanguage(unsigned long categoryId,
+                                                            unsigned long language,
+                                                            char* name,
+                                                            unsigned short& nameBufferSize) const
+{
+  return GetNameByLanguage(FreesatChannelCategory,
+                            TABLE_ID_BAT,
+                            categoryId >> 16,
+                            categoryId & 0xffff,
+                            language,
+                            name,
+                            nameBufferSize);
 }

@@ -49,6 +49,22 @@ class CUtils
       stringSet.clear();
     }
 
+    template<class T1, class T2> static void CleanUpMapOfStringSets(map<T1, map<T2, char*>*>& mapOfStringSets)
+    {
+      map<T1, map<T2, char*>*>::iterator it = mapOfStringSets.begin();
+      for ( ; it != mapOfStringSets.end(); it++)
+      {
+        map<T2, char*>* stringSet = it->second;
+        if (stringSet != NULL)
+        {
+          CleanUpStringSet(*stringSet);
+          delete stringSet;
+          it->second = NULL;
+        }
+      }
+      mapOfStringSets.clear();
+    }
+
     template<class T1, class T2> static bool CompareMaps(const map<T1, T2>& m1,
                                                           const map<T1, T2>& m2)
     {
@@ -93,6 +109,30 @@ class CUtils
       {
         map<T, char*>::const_iterator it2 = ss2.find(it1->first);
         if (it2 == ss2.end() || !CompareStrings(it1->second, it2->second))
+        {
+          return false;
+        }
+      }
+      return true;
+    }
+
+    template<class T1, class T2> static bool CompareMapsOfStringSets(const map<T1, map<T2, char*>*>& mss1,
+                                                                      const map<T1, map<T2, char*>*>& mss2)
+    {
+      if (mss1.size() != mss2.size())
+      {
+        return false;
+      }
+      map<T1, map<T2, char*>*>::const_iterator it1 = mss1.begin();
+      for ( ; it1 != mss1.end(); it1++)
+      {
+        map<T1, map<T2, char*>*>::const_iterator it2 = mss2.find(it1->first);
+        if (
+          it2 == mss2.end() ||
+          (it1->second == NULL && it2->second != NULL) ||
+          (it1->second != NULL && it2->second == NULL) ||
+          (it1->second != NULL && !CompareStringSets(*(it1->second), *(it2->second)))
+        )
         {
           return false;
         }
@@ -207,7 +247,8 @@ class CUtils
     template<class T1, class T2> static void DebugMap(const map<T1, T2>& m,
                                                       const wchar_t* mapName,
                                                       const wchar_t* keyName,
-                                                      const wchar_t* elementName)
+                                                      const wchar_t* elementName,
+                                                      const wchar_t* indent = L"  ")
     {
       if (m.size() == 0)
       {
@@ -216,23 +257,72 @@ class CUtils
 
       if (mapName != NULL)
       {
-        LogDebug(L"  %s...", mapName);
+        LogDebug(L"%s%s...", indent == NULL ? L"" : indent, mapName);
       }
       map<T1, T2>::const_iterator it = m.begin();
       for ( ; it != m.end(); it++)
       {
-        wstringstream tempStream(ios_base::out | ios_base::ate);
-        tempStream << L"    " << keyName << L" = " << it->first << L", "
-              << elementName << L" = " << it->second;
+        wstringstream tempStream;
+        if (indent != NULL)
+        {
+          tempStream << indent;
+        }
+        tempStream << L"  ";
+        if (keyName != NULL)
+        {
+          tempStream << keyName << L" = ";
+        }
+        tempStream << it->first << L", ";
+        if (elementName != NULL)
+        {
+          tempStream << elementName << L" = ";
+        }
+        tempStream << it->second;
         wstring tempString(tempStream.str());
         LogDebug(tempString.c_str());
+      }
+    }
+
+    template<class T1, class T2> static void DebugMapOfStringSets(const map<T1, map<T2, char*>*>& mss,
+                                                                  const wchar_t* mapName,
+                                                                  const wchar_t* key1Name,
+                                                                  const wchar_t* key2Name,
+                                                                  const wchar_t* elementName)
+    {
+      if (mss.size() == 0)
+      {
+        return;
+      }
+
+      if (mapName != NULL)
+      {
+        LogDebug(L"  %s...", mapName);
+      }
+      map<T1, map<T2, char*>*>::const_iterator it = mss.begin();
+      for ( ; it != mss.end(); it++)
+      {
+        wstringstream tempStream;
+        tempStream << L"    ";
+        if (key1Name != NULL)
+        {
+          tempStream << key1Name << L" = ";
+        }
+        tempStream << it->first << L"...";
+        wstring tempString(tempStream.str());
+        LogDebug(tempString.c_str());
+
+        if (it->second != NULL)
+        {
+          DebugStringMap(*(it->second), NULL, key2Name, elementName, L"    ");
+        }
       }
     }
 
     template<class T> static void DebugStringMap(const map<T, char*>& m,
                                                   const wchar_t* setName,
                                                   const wchar_t* keyName,
-                                                  const wchar_t* elementName)
+                                                  const wchar_t* elementName,
+                                                  const wchar_t* indent = L"  ")
     {
       if (m.size() == 0)
       {
@@ -241,28 +331,32 @@ class CUtils
 
       if (setName != NULL)
       {
-        LogDebug(L"  %s...", setName);
+        LogDebug(L"%s%s...", indent == NULL ? L"" : indent, setName);
       }
       map<T, char*>::const_iterator it = m.begin();
       for ( ; it != m.end(); it++)
       {
-        LogDebug(L"    %s = %S, %s = %S",
-                  keyName, (char*)&(it->first), elementName,
-                  it->second == NULL ? "" : it->second);
+        LogDebug(L"%s  %s = %S, %s = %S",
+                  indent == NULL ? L"" : indent, keyName, (char*)&(it->first),
+                  elementName, it->second == NULL ? "" : it->second);
       }
     }
 
     template<class T> static void DebugVector(const vector<T>& v,
                                               const wchar_t* name,
-                                              bool elementsAreStrings)
+                                              bool elementsAreStrings,
+                                              const wchar_t* indent = L"  ")
     {
       if (v.size() == 0)
       {
         return;
       }
 
-      wstringstream tempStream(ios_base::out | ios_base::ate);
-      tempStream << L"  ";
+      wstringstream tempStream;
+      if (indent != NULL)
+      {
+        tempStream << indent;
+      }
       if (name != NULL)
       {
         tempStream << name << L" = ";

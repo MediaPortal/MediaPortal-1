@@ -47,4 +47,26 @@ class CParserBat : public CParserNitDvb
                                   unsigned long language,
                                   char* name,
                                   unsigned short& nameBufferSize) const;
+
+    unsigned char GetFreesatRegionNameCount(unsigned long regionId) const;
+    bool GetFreesatRegionNameByIndex(unsigned long regionId,
+                                      unsigned char index,
+                                      unsigned long& language,
+                                      char* name,
+                                      unsigned short& nameBufferSize) const;
+    bool GetFreesatRegionNameByLanguage(unsigned long regionId,
+                                        unsigned long language,
+                                        char* name,
+                                        unsigned short& nameBufferSize) const;
+
+    unsigned char GetFreesatChannelCategoryNameCount(unsigned long categoryId) const;
+    bool GetFreesatChannelCategoryNameByIndex(unsigned long categoryId,
+                                              unsigned char index,
+                                              unsigned long& language,
+                                              char* name,
+                                              unsigned short& nameBufferSize) const;
+    bool GetFreesatChannelCategoryNameByLanguage(unsigned long categoryId,
+                                                  unsigned long language,
+                                                  char* name,
+                                                  unsigned short& nameBufferSize) const;
 };

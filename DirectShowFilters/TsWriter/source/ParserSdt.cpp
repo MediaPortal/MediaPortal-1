@@ -602,8 +602,8 @@ bool CParserSdt::GetServiceNameByIndex(unsigned short serviceIndex,
     return false;
   }
 
-  map<unsigned long, char*>::const_iterator it = m_currentRecord->ServiceNames.begin();
-  for ( ; it != m_currentRecord->ServiceNames.end(); it++)
+  map<unsigned long, char*>::const_iterator it = recordSdt->ServiceNames.begin();
+  for ( ; it != recordSdt->ServiceNames.end(); it++)
   {
     if (nameIndex != 0)
     {
@@ -626,9 +626,9 @@ bool CParserSdt::GetServiceNameByIndex(unsigned short serviceIndex,
                 (char*)&language, requiredBufferSize, serviceNameBufferSize);
     }
 
-    it = m_currentRecord->ProviderNames.find(language);
+    it = recordSdt->ProviderNames.find(language);
     char* temp = NULL;
-    if (it != m_currentRecord->ProviderNames.end())
+    if (it != recordSdt->ProviderNames.end())
     {
       temp = it->second;
     }
@@ -668,8 +668,8 @@ bool CParserSdt::GetServiceNameByLanguage(unsigned short serviceIndex,
     recordSdt = m_referenceRecord;
   }
 
-  map<unsigned long, char*>::const_iterator it = m_currentRecord->ServiceNames.find(language);
-  if (it == m_currentRecord->ServiceNames.end())
+  map<unsigned long, char*>::const_iterator it = recordSdt->ServiceNames.find(language);
+  if (it == recordSdt->ServiceNames.end())
   {
     LogDebug(L"SDT %d: invalid service name language, service index = %hu, table ID = 0x%hhx, ONID = %hu, TSID = %hu, service ID = %hu, reference service ID = %hu, language = %S",
               GetPid(), serviceIndex, recordSdt->TableId,
@@ -692,9 +692,9 @@ bool CParserSdt::GetServiceNameByLanguage(unsigned short serviceIndex,
               (char*)&language, requiredBufferSize, serviceNameBufferSize);
   }
 
-  it = m_currentRecord->ProviderNames.find(language);
+  it = recordSdt->ProviderNames.find(language);
   char* temp = NULL;
-  if (it != m_currentRecord->ProviderNames.end())
+  if (it != recordSdt->ProviderNames.end())
   {
     temp = it->second;
   }

@@ -61,7 +61,7 @@ bool CRecordStore::AddOrUpdateRecord(IRecord** record, void* callBack)
     existingRecord->Debug(L"key duplicate 1 [old]");
     newRecord->Debug(L"key duplicate 2 [new]");
     delete newRecord;
-    *record = NULL;
+    *record = existingRecord;
     return false;
   }
 
@@ -77,7 +77,7 @@ bool CRecordStore::AddOrUpdateRecord(IRecord** record, void* callBack)
   // No change.
   existingRecord->LastSeen = clock();
   delete newRecord;
-  *record = NULL;
+  *record = existingRecord;
   return false;
 }
 

@@ -436,7 +436,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
                             uint[] openTvRegionIds,
                             ref byte openTvRegionIdCount,
                             out byte cyfrowyPolsatChannelCategoryId,
-                            ushort[] freesatChannelCategoryIds,
+                            uint[] freesatChannelCategoryIds,
                             ref byte freesatChannelCategoryIdCount,
                             ushort[] mediaHighwayChannelCategoryIds,
                             ref byte mediaHighwayChannelCategoryIdCount,
@@ -444,7 +444,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
                             ref byte openTvChannelCategoryIdCount,
                             out byte virginMediaChannelCategoryId,
                             out ushort dishMarketId,
-                            byte[] norDigChannelListIds,
+                            ulong[] norDigChannelListIds,
                             ref byte norDigChannelListIdCount,
                             out ushort previousOriginalNetworkId,
                             out ushort previousTransportStreamId,
@@ -768,13 +768,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
       return result;
     }
 
-    public byte GetFreesatRegionNameCount(ushort regionId)
+    public byte GetFreesatRegionNameCount(uint regionId)
     {
       object[] parameters = new object[1] { regionId };
       return (byte)_delegateGrabberSiDvb("GetFreesatRegionNameCount", ref parameters);
     }
 
-    public bool GetFreesatRegionNameByIndex(ushort regionId,
+    public bool GetFreesatRegionNameByIndex(uint regionId,
                                             byte index,
                                             out Iso639Code language,
                                             IntPtr name,
@@ -788,7 +788,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
       return result;
     }
 
-    public bool GetFreesatRegionNameByLanguage(ushort regionId,
+    public bool GetFreesatRegionNameByLanguage(uint regionId,
                                                 Iso639Code language,
                                                 IntPtr name,
                                                 ref ushort nameBufferSize)
@@ -799,13 +799,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
       return result;
     }
 
-    public byte GetFreesatChannelCategoryNameCount(ushort categoryId)
+    public byte GetFreesatChannelCategoryNameCount(uint categoryId)
     {
       object[] parameters = new object[1] { categoryId };
       return (byte)_delegateGrabberSiDvb("GetFreesatChannelCategoryNameCount", ref parameters);
     }
 
-    public bool GetFreesatChannelCategoryNameByIndex(ushort categoryId,
+    public bool GetFreesatChannelCategoryNameByIndex(uint categoryId,
                                                       byte index,
                                                       out Iso639Code language,
                                                       IntPtr name,
@@ -819,7 +819,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
       return result;
     }
 
-    public bool GetFreesatChannelCategoryNameByLanguage(ushort categoryId,
+    public bool GetFreesatChannelCategoryNameByLanguage(uint categoryId,
                                                         Iso639Code language,
                                                         IntPtr name,
                                                         ref ushort nameBufferSize)
@@ -840,13 +840,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
       return result;
     }
 
-    public byte GetNorDigChannelListNameCount(byte channelListId)
+    public byte GetNorDigChannelListNameCount(ulong channelListId)
     {
       object[] parameters = new object[1] { channelListId };
       return (byte)_delegateGrabberSiDvb("GetNorDigChannelListNameCount", ref parameters);
     }
 
-    public bool GetNorDigChannelListNameByIndex(byte channelListId,
+    public bool GetNorDigChannelListNameByIndex(ulong channelListId,
                                                 byte index,
                                                 out Iso639Code language,
                                                 IntPtr name,
@@ -860,7 +860,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
       return result;
     }
 
-    public bool GetNorDigChannelListNameByLanguage(byte channelListId,
+    public bool GetNorDigChannelListNameByLanguage(ulong channelListId,
                                                     Iso639Code language,
                                                     IntPtr name,
                                                     ref ushort nameBufferSize)
