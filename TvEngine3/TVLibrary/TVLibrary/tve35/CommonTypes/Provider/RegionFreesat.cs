@@ -91,6 +91,12 @@ namespace Mediaportal.TV.Server.Common.Types.Provider
     // Northern Ireland bouquets
     public static readonly RegionFreesat NorthernIreland = new RegionFreesat(90, "Northern Ireland", "Northern Ireland", "Northern Ireland");
 
+    // other bouquets
+    // These are commented out because we don't want them to show or be
+    // selectable in TV Server Configuration.
+    //public static readonly RegionFreesat Default = new RegionFreesat(50, "Default", "Default", "Default");
+    //public static readonly RegionFreesat None = new RegionFreesat(100, "-", "-", "-");
+
     #endregion
 
     private RegionFreesat(int id, string country, string region, string subRegion)

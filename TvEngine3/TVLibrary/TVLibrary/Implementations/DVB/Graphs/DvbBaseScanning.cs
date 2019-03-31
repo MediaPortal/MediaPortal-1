@@ -82,14 +82,14 @@ namespace TvLibrary.Implementations.DVB
     private const byte COUNT_AVAILABLE_IN_COUNTRIES = 15;
     private const byte COUNT_BOUQUET_IDS = 30;
     private const byte COUNT_FREESAT_CHANNEL_CATEGORY_IDS = 50;
-    private const byte COUNT_FREESAT_REGION_IDS = 100;
+    private const byte COUNT_FREESAT_REGION_IDS = 200;
     private const byte COUNT_FREQUENCIES = 50;
     private const ushort COUNT_LOGICAL_CHANNEL_NUMBERS = 500;
     private const byte COUNT_MEDIAHIGHWAY_CHANNEL_CATEGORY_IDS = 50;
     private const byte COUNT_NETWORK_IDS = 15;
     private const byte COUNT_NORDIG_CHANNEL_LIST_IDS = 50;
     private const byte COUNT_OPENTV_CHANNEL_CATEGORY_IDS = 50;
-    private const byte COUNT_OPENTV_REGION_IDS = 100;
+    private const byte COUNT_OPENTV_REGION_IDS = 200;
     private const byte COUNT_SUBTITLES_LANGUAGES = 15;
     private const byte COUNT_TARGET_REGION_IDS = 100;
     private const byte COUNT_UNAVAILABLE_IN_CELLS = 100;
@@ -1281,7 +1281,7 @@ namespace TvLibrary.Implementations.DVB
       uint[] openTvRegionIds = new uint[openTvRegionIdCount];
       byte cyfrowyPolsatChannelCategoryId;
       byte freesatChannelCategoryIdCount = COUNT_FREESAT_CHANNEL_CATEGORY_IDS;
-      ushort[] freesatChannelCategoryIds = new ushort[freesatChannelCategoryIdCount];
+      uint[] freesatChannelCategoryIds = new uint[freesatChannelCategoryIdCount];
       byte mediaHighwayChannelCategoryIdCount = COUNT_MEDIAHIGHWAY_CHANNEL_CATEGORY_IDS;
       ushort[] mediaHighwayChannelCategoryIds = new ushort[mediaHighwayChannelCategoryIdCount];
       byte openTvChannelCategoryIdCount = COUNT_OPENTV_CHANNEL_CATEGORY_IDS;
@@ -1289,7 +1289,7 @@ namespace TvLibrary.Implementations.DVB
       byte virginMediaChannelCategoryId;
       ushort dishNetworkMarketId;
       byte norDigChannelListIdCount = COUNT_NORDIG_CHANNEL_LIST_IDS;
-      byte[] norDigChannelListIds = new byte[norDigChannelListIdCount];
+      ulong[] norDigChannelListIds = new ulong[norDigChannelListIdCount];
       ushort previousOriginalNetworkId;
       ushort previousTransportStreamId;
       ushort previousServiceId;
@@ -1880,6 +1880,11 @@ namespace TvLibrary.Implementations.DVB
         groupType == ChannelGroupType.OpenTvRegionSkyUk ||
         groupType == ChannelGroupType.OpenTvRegionOther
       );
+      bool isBouquetIdPrefixedGroupId = (
+        isOpenTvRegionGroup ||
+        groupType == ChannelGroupType.FreesatChannelCategory ||
+        groupType == ChannelGroupType.FreesatRegion
+      );
 
       IDictionary<ulong, string> names;
       if (!groupNames.TryGetValue(groupType, out names))
@@ -1896,8 +1901,32 @@ namespace TvLibrary.Implementations.DVB
         for (byte i = 0; i < groupCount; i++)
         {
           ulong groupId = Convert.ToUInt64(groupIds.GetValue(i));
-          string groupIdString = groupId.ToString();
           groupIdList.Add(groupId);
+
+          ushort bouquetId = 0;
+          ushort regionId = 0;
+          string groupIdString;
+          if (isBouquetIdPrefixedGroupId)
+          {
+            bouquetId = (ushort)(groupId >> 16);
+            regionId = (ushort)groupId;
+            //groupIdString = string.Format("bouquet ID = {0}, group ID = {1}", bouquetId, regionId);
+            groupIdString = string.Format("{0}/{1}", bouquetId, regionId);
+          }
+          else if (groupType == ChannelGroupType.NorDigChannelList)
+          {
+            byte tableId = (byte)(groupId >> 56);
+            ushort extensionId = (ushort)(groupId >> 40);
+            ushort transportStreamId = (ushort)(groupId >> 24);
+            ushort norDigOriginalNetworkId = (ushort)(groupId >> 8);
+            byte channelListId = (byte)groupId;
+            //groupIdString = string.Format("table ID = {0}, extension ID = {1}, TSID = {2}, ONID = {3}, channel list ID = {4}", tableId, extensionId, transportStreamId, norDigOriginalNetworkId, channelListId);
+            groupIdString = string.Format("{0}/{1}/{2}/{3}/{4}", tableId, extensionId, transportStreamId, norDigOriginalNetworkId, channelListId);
+          }
+          else
+          {
+            groupIdString = groupId.ToString();
+          }
 
           string nameString = null;
           if (!names.TryGetValue(groupId, out nameString) || isOpenTvRegionGroup)
@@ -1933,7 +1962,7 @@ namespace TvLibrary.Implementations.DVB
             }
             else if (groupType == ChannelGroupType.FreesatChannelCategory)
             {
-              if (grabber.GetFreesatChannelCategoryNameCount((ushort)groupId) > 0 && grabber.GetFreesatChannelCategoryNameByIndex((ushort)groupId, 0, out language, nameBuffer, ref nameBufferSize))
+              if (grabber.GetFreesatChannelCategoryNameCount((uint)groupId) > 0 && grabber.GetFreesatChannelCategoryNameByIndex((uint)groupId, 0, out language, nameBuffer, ref nameBufferSize))
               {
                 nameString = DvbTextConverter.Convert(nameBuffer, nameBufferSize);
               }
@@ -1942,12 +1971,15 @@ namespace TvLibrary.Implementations.DVB
             {
               // We can use the grabbed names, but they're not as nice or clear
               // as the names we use for configuration.
-              int regionId = (ushort)groupId;     // group ID = (bouquet ID << 16) | region ID; Remove the bouquet ID.
-              nameString = ((RegionFreesat)regionId).ToString();
-              /*if (grabber.GetFreesatRegionNameCount((ushort)groupId) > 0 && grabber.GetFreesatRegionNameByIndex((ushort)groupId, 0, out language, nameBuffer, ref nameBufferSize))
+              RegionFreesat region = (RegionFreesat)regionId;
+              if (region != null)
+              {
+                nameString = region.ToString();
+              }
+              else if (grabber.GetFreesatRegionNameCount((uint)groupId) > 0 && grabber.GetFreesatRegionNameByIndex((uint)groupId, 0, out language, nameBuffer, ref nameBufferSize))
               {
                 nameString = DvbTextConverter.Convert(nameBuffer, nameBufferSize);
-              }*/
+              }
             }
             else if (groupType == ChannelGroupType.MediaHighwayChannelCategory)
             {
@@ -1958,16 +1990,13 @@ namespace TvLibrary.Implementations.DVB
             }
             else if (groupType == ChannelGroupType.NorDigChannelList)
             {
-              if (grabber.GetNorDigChannelListNameCount((byte)groupId) > 0 && grabber.GetNorDigChannelListNameByIndex((byte)groupId, 0, out language, nameBuffer, ref nameBufferSize))
+              if (grabber.GetNorDigChannelListNameCount(groupId) > 0 && grabber.GetNorDigChannelListNameByIndex(groupId, 0, out language, nameBuffer, ref nameBufferSize))
               {
                 nameString = DvbTextConverter.Convert(nameBuffer, nameBufferSize);
               }
             }
             else if (isOpenTvRegionGroup)
             {
-              ushort bouquetId = (ushort)(groupId >> 16);
-              ushort regionId = (ushort)groupId;
-              groupIdString = string.Format("{0}/{1}", bouquetId, regionId);
               if (groupType == ChannelGroupType.OpenTvRegionFoxtel)
               {
                 RegionOpenTvFoxtel region = RegionOpenTvFoxtel.GetValue(regionId, (BouquetOpenTvFoxtel)bouquetId);
@@ -1978,7 +2007,10 @@ namespace TvLibrary.Implementations.DVB
               }
               else if (groupType == ChannelGroupType.OpenTvRegionSkyNz)
               {
-                nameString = ((RegionOpenTvSkyNz)regionId)./*GetDescription()*/ToString();
+                if (System.Enum.IsDefined(typeof(RegionOpenTvSkyNz), regionId))
+                {
+                  nameString = ((RegionOpenTvSkyNz)regionId)./*GetDescription()*/ToString();
+                }
               }
               else if (groupType == ChannelGroupType.OpenTvRegionSkyUk)
               {

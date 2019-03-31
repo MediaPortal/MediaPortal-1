@@ -264,7 +264,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
                             uint[] openTvRegionIds,
                             ref byte openTvRegionIdCount,
                             out byte cyfrowyPolsatChannelCategoryId,
-                            ushort[] freesatChannelCategoryIds,
+                            uint[] freesatChannelCategoryIds,
                             ref byte freesatChannelCategoryIdCount,
                             ushort[] mediaHighwayChannelCategoryIds,
                             ref byte mediaHighwayChannelCategoryIdCount,
@@ -272,7 +272,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
                             ref byte openTvChannelCategoryIdCount,
                             out byte virginMediaChannelCategoryId,
                             out ushort dishMarketId,
-                            byte[] norDigChannelListIds,
+                            ulong[] norDigChannelListIds,
                             ref byte norDigChannelListIdCount,
                             out ushort previousOriginalNetworkId,
                             out ushort previousTransportStreamId,
@@ -591,7 +591,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
     /// </summary>
     /// <param name="regionId">The Freesat region's identifier.</param>
     /// <returns>the number of names received by the grabber for the given Freesat region</returns>
-    public byte GetFreesatRegionNameCount(ushort regionId)
+    public byte GetFreesatRegionNameCount(uint regionId)
     {
       return _grabber.GetFreesatRegionNameCount(regionId);
     }
@@ -605,7 +605,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
     /// <param name="name">A buffer containing the Freesat region's name, encoded as DVB-compatible text. The caller must allocate and free this buffer.</param>
     /// <param name="nameBufferSize">As an input, the size of the <paramref name="name">name buffer</paramref>; as an output, the consumed buffer size.</param>
     /// <returns><c>true</c> if the Freesat region's name is successfully retrieved, otherwise <c>false</c></returns>
-    public bool GetFreesatRegionNameByIndex(ushort regionId,
+    public bool GetFreesatRegionNameByIndex(uint regionId,
                                             byte index,
                                             out Iso639Code language,
                                             IntPtr name,
@@ -626,7 +626,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
     /// <param name="name">A buffer containing the Freesat region's name, encoded as DVB-compatible text. The caller must allocate and free this buffer.</param>
     /// <param name="nameBufferSize">As an input, the size of the <paramref name="name">name buffer</paramref>; as an output, the consumed buffer size.</param>
     /// <returns><c>true</c> if the Freesat region's name is successfully retrieved, otherwise <c>false</c></returns>
-    public bool GetFreesatRegionNameByLanguage(ushort regionId,
+    public bool GetFreesatRegionNameByLanguage(uint regionId,
                                                 Iso639Code language,
                                                 IntPtr name,
                                                 ref ushort nameBufferSize)
@@ -639,7 +639,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
     /// </summary>
     /// <param name="categoryId">The Freesat channel category's identifier.</param>
     /// <returns>the number of names received by the grabber for the given Freesat channel category</returns>
-    public byte GetFreesatChannelCategoryNameCount(ushort categoryId)
+    public byte GetFreesatChannelCategoryNameCount(uint categoryId)
     {
       return _grabber.GetFreesatChannelCategoryNameCount(categoryId);
     }
@@ -653,7 +653,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
     /// <param name="name">A buffer containing the Freesat channel category's name, encoded as DVB-compatible text. The caller must allocate and free this buffer.</param>
     /// <param name="nameBufferSize">As an input, the size of the <paramref name="name">name buffer</paramref>; as an output, the consumed buffer size.</param>
     /// <returns><c>true</c> if the Freesat channel category's name is successfully retrieved, otherwise <c>false</c></returns>
-    public bool GetFreesatChannelCategoryNameByIndex(ushort categoryId,
+    public bool GetFreesatChannelCategoryNameByIndex(uint categoryId,
                                                       byte index,
                                                       out Iso639Code language,
                                                       IntPtr name,
@@ -674,7 +674,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
     /// <param name="name">A buffer containing the Freesat channel category's name, encoded as DVB-compatible text. The caller must allocate and free this buffer.</param>
     /// <param name="nameBufferSize">As an input, the size of the <paramref name="name">name buffer</paramref>; as an output, the consumed buffer size.</param>
     /// <returns><c>true</c> if the Freesat channel category's name is successfully retrieved, otherwise <c>false</c></returns>
-    public bool GetFreesatChannelCategoryNameByLanguage(ushort categoryId,
+    public bool GetFreesatChannelCategoryNameByLanguage(uint categoryId,
                                                         Iso639Code language,
                                                         IntPtr name,
                                                         ref ushort nameBufferSize)
@@ -704,7 +704,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
     /// </summary>
     /// <param name="channelListId">The NorDig channel list's identifier.</param>
     /// <returns>the number of names received by the grabber for the given NorDig channel list</returns>
-    public byte GetNorDigChannelListNameCount(byte channelListId)
+    public byte GetNorDigChannelListNameCount(ulong channelListId)
     {
       return _grabber.GetNorDigChannelListNameCount(channelListId);
     }
@@ -718,7 +718,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
     /// <param name="name">A buffer containing the NorDig channel list's name, encoded as DVB-compatible text. The caller must allocate and free this buffer.</param>
     /// <param name="nameBufferSize">As an input, the size of the <paramref name="name">name buffer</paramref>; as an output, the consumed buffer size.</param>
     /// <returns><c>true</c> if the NorDig channel list's name is successfully retrieved, otherwise <c>false</c></returns>
-    public bool GetNorDigChannelListNameByIndex(byte channelListId,
+    public bool GetNorDigChannelListNameByIndex(ulong channelListId,
                                                 byte index,
                                                 out Iso639Code language,
                                                 IntPtr name,
@@ -739,7 +739,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
     /// <param name="name">A buffer containing the NorDig channel list's name, encoded as DVB-compatible text. The caller must allocate and free this buffer.</param>
     /// <param name="nameBufferSize">As an input, the size of the <paramref name="name">name buffer</paramref>; as an output, the consumed buffer size.</param>
     /// <returns><c>true</c> if the NorDig channel list's name is successfully retrieved, otherwise <c>false</c></returns>
-    public bool GetNorDigChannelListNameByLanguage(byte channelListId,
+    public bool GetNorDigChannelListNameByLanguage(ulong channelListId,
                                                     Iso639Code language,
                                                     IntPtr name,
                                                     ref ushort nameBufferSize)
