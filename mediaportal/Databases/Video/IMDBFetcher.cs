@@ -678,6 +678,12 @@ namespace MediaPortal.Video.Database
               VideoDatabase.SetMovieInfoById(_movieDetails.ID, ref _movieDetails);
             }
           }
+
+          // Fetch Actor Details
+          if (!string.IsNullOrEmpty(actorImdbId))
+          {
+            IMDBFetcher.FetchMovieActor(null, _movieDetails, actorImdbId, actorId);
+          }
         }
       }
     }
