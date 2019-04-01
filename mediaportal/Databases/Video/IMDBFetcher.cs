@@ -336,7 +336,7 @@ namespace MediaPortal.Video.Database
               {
                 _movieDetails.ThumbURL = tmdbSearch[0];
                 // **Progress bar message for TMDB end
-                OnProgress(line1, _url.Title, string.Empty, 40);
+                OnProgress(line1, _url.Title, string.Empty, 30);
               }
 
               if (tmdbSearch.Count == 0)
@@ -360,7 +360,7 @@ namespace MediaPortal.Video.Database
                   _movieDetails.ThumbURL = impSearch[0];
 
                   // **Progress bar message for IMPAw end
-                  OnProgress(line1, _url.Title, string.Empty, 40);
+                  OnProgress(line1, _url.Title, string.Empty, 30);
                 }
                 
                 // All fail, last try IMDB
@@ -377,7 +377,7 @@ namespace MediaPortal.Video.Database
                   {
                     _movieDetails.ThumbURL = imdbSearch[0];
                     // **Progress bar message for IMDB end
-                    OnProgress(line1, _url.Title, string.Empty, 40);
+                    OnProgress(line1, _url.Title, string.Empty, 30);
                   }
                 }
               }
@@ -443,6 +443,7 @@ namespace MediaPortal.Video.Database
               }
             }
             
+            OnProgress(line1, _url.Title, string.Empty, 50);
             if (_movieDetails.FanartURL == string.Empty || _movieDetails.FanartURL == Strings.Unknown)
             {
               fanartSearch.GetTmdbFanartByApi
@@ -640,6 +641,9 @@ namespace MediaPortal.Video.Database
       
       if (actors.Count > 0)
       {
+        double percent = 60.00;
+        double step = 20.00 / (actors.Count * 1.00);
+
         // Clean old actors for movie
         VideoDatabase.RemoveActorsForMovie(_movieDetails.ID);
 
@@ -654,7 +658,7 @@ namespace MediaPortal.Video.Database
           char[] splitter = { '|' };
           string[] temp = actor.Split(splitter);
           actorName = temp[0];
-          
+
           // Check if actor is movie director
           if (actorName.StartsWith("*d"))
           {
@@ -664,6 +668,10 @@ namespace MediaPortal.Video.Database
 
           actorImdbId = temp[1];
           role = temp[2];
+
+          percent += step;
+          OnProgress(actorImdbId + " " + actorName + (string.IsNullOrEmpty(role) ? "" : " as " + role), string.Empty, string.Empty, (int) percent);
+
           // Add actor and link actor to movie
           int actorId = VideoDatabase.AddActor(actorImdbId, actorName);
 
