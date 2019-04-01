@@ -54,11 +54,18 @@ namespace MediaPortal.Video.Database
     private bool _addToDatabase = true;
     private bool _skipExisting;
     private bool _refreshdbOnly;
+    private bool _fetchActors;
     
     public IMDBFetcher(IMDB.IProgress progress)
     {
       _imdb = new IMDB(this);
       _progress = progress;
+
+      using (Settings xmlreader = new MPSettings())
+      {
+        // Fetch Actors info when Movie updated
+        _fetchActors = xmlreader.GetValueAsBool("moviedatabase", "fetchactors", false);
+      }
     }
 
     #region Movie Fetch
@@ -553,7 +560,7 @@ namespace MediaPortal.Video.Database
       {
         OnDetailsEnd(this);
         _disableCancel = false;
-         _detailsThread = null;
+        _detailsThread = null;
       }
     }
 
@@ -680,11 +687,11 @@ namespace MediaPortal.Video.Database
           }
 
           // Fetch Actor Details
-          if (!string.IsNullOrEmpty(actorImdbId))
+          if (_fetchActors && !string.IsNullOrEmpty(actorImdbId))
           {
             _imdb = new IMDB();
             _imdb.SetIMDBActor("http://www.imdb.com/name/" + actorImdbId, actorImdbId);
-            _actor = actor;
+            _actor = actorImdbId + " " + actorName + (string.IsNullOrEmpty(role) ? "" : " as " + role);
             _actorId = actorId;
             _actorIndex = 0;
             FetchActorDetails();
