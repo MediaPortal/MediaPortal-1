@@ -670,7 +670,7 @@ namespace MediaPortal.Video.Database
           role = temp[2];
 
           percent += step;
-          OnProgress(actorImdbId + " " + actorName + (string.IsNullOrEmpty(role) ? "" : " as " + role), string.Empty, string.Empty, (int) percent);
+          OnProgress(actorName + (string.IsNullOrEmpty(role) ? "" : " as " + role), string.Empty, string.Empty, (int) percent);
 
           // Add actor and link actor to movie
           int actorId = VideoDatabase.AddActor(actorImdbId, actorName);
@@ -699,7 +699,7 @@ namespace MediaPortal.Video.Database
           {
             _imdb = new IMDB();
             _imdb.SetIMDBActor("http://www.imdb.com/name/" + actorImdbId, actorImdbId);
-            _actor = actorImdbId + " " + actorName + (string.IsNullOrEmpty(role) ? "" : " as " + role);
+            _actor = actorName + (string.IsNullOrEmpty(role) ? "" : " as " + role);
             _actorId = actorId;
             _actorIndex = 0;
             FetchActorDetails();
