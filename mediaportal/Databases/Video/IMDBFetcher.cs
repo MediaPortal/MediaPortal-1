@@ -641,8 +641,8 @@ namespace MediaPortal.Video.Database
       
       if (actors.Count > 0)
       {
-        double percent = 60.00;
-        double step = 20.00 / (actors.Count * 1.00);
+        double percent = 0.00;
+        double step = 100.00 / (actors.Count * 1.00);
 
         // Clean old actors for movie
         VideoDatabase.RemoveActorsForMovie(_movieDetails.ID);
@@ -1079,6 +1079,11 @@ namespace MediaPortal.Video.Database
 
     public void OnProgress(string line1, string line2, string line3, int percent)
     {
+      if (percent > 100)
+      {
+        percent = 100;
+      }
+
       if (_progress != null)
       {
         _progress.OnProgress(line1, line2, line3, percent);
