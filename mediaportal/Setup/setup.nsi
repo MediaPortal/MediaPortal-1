@@ -520,6 +520,8 @@ Section "MediaPortal core files (required)" SecCore
   File "${git_DirectShowFilters}\mpc-hc_subs\bin\${BUILD_TYPE}\mpcSubs.dll"
   File "${git_DirectShowFilters}\DXErr9\bin\${BUILD_TYPE}\Dxerr9.dll"
   File "${git_MP}\MiniDisplayLibrary\bin\${BUILD_TYPE}\MiniDisplayLibrary.dll"
+  ; Json Library
+  File "${git_MP}\MediaPortal.Base\Newtonsoft.Json.dll"
   ; iMON VFD/LCD
   File "${git_ROOT}\Packages\MediaPortal-iMON-Display.1.1.0\lib\iMONDisplay.dll"
   File "${git_ROOT}\Packages\MediaPortal-iMON-Display.1.1.0\lib\iMONDisplayWrapper.dll"
@@ -801,6 +803,8 @@ SectionEnd
   Delete "$MPdir.Base\mpcSubs.dll"
   Delete "$MPdir.Base\MiniDisplayLibrary.dll"
   Delete "$MPdir.Base\System.Management.Automation.dll"
+  ; Json Library
+  Delete "$MPdir.Base\Newtonsoft.Json.dll"
   ; iMON VFD/LCD
   Delete "$MPdir.Base\iMONDisplay.dll"
   Delete "$MPdir.Base\iMONDisplayWrapper.dll"
