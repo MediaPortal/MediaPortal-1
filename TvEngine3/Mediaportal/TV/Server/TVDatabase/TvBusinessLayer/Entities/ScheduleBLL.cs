@@ -12,6 +12,9 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities
   {
     private readonly Schedule _entity;
 
+    /// <remarks>
+    /// The provided schedule instance must include the associated canceled schedules and channel tuning details.
+    /// </remarks>
     public ScheduleBLL(Schedule entity)
     {
       _entity = entity;
@@ -25,6 +28,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities
     // Stored as bits 3 to 16 (zero indexed, bit 0 is LSB) in the Quality property.
     public QualityType QualityType
     {
+      // requires: [nothing]
       get
       {
         int value = (_entity.Quality >> 3) & 0x3fff;
@@ -46,6 +50,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities
     // Stored as bits 3 to 9 (zero indexed, bit 0 is LSB) in the Quality property.
     public int AverageBitRate
     {
+      // requires: [nothing]
       get
       {
         return (_entity.Quality >> 3) & 0x7f;
@@ -59,6 +64,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities
     // Stored as bits 10 to 16 (zero indexed, bit 0 is LSB) in the Quality property.
     public int PeakBitRate
     {
+      // requires: [nothing]
       get
       {
         return (_entity.Quality >> 10) & 0x7f;
@@ -72,6 +78,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities
     // Stored in the 3 least significant bits of the Quality property.
     public EncodeMode BitRateMode
     {
+      // requires: [nothing]
       get
       {
         return (EncodeMode)(_entity.Quality & 7);
@@ -89,6 +96,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities
     {
       get
       {
+        // requires: [nothing]
         if (_entity.ScheduleType != (int)ScheduleRecordingType.Once)
         {
           return false;
@@ -108,6 +116,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities
     /// </returns>
     public bool IsDone()
     {
+      // requires: [nothing]
       return _entity.ScheduleType == (int)ScheduleRecordingType.Once && DateTime.Now > _entity.EndTime;
     }
 
@@ -184,6 +193,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities
 
     public bool IsPartialRecording(Program prg)
     {
+      // requires: [nothing]
       if (_entity.ScheduleType == (int)ScheduleRecordingType.EveryTimeOnEveryChannel ||
           _entity.ScheduleType == (int)ScheduleRecordingType.EveryTimeOnThisChannel ||
           _entity.ScheduleType == (int)ScheduleRecordingType.WeeklyEveryTimeOnThisChannel)
@@ -231,18 +241,19 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities
 
     public bool IsOverlapping(Schedule schedule, int defaultPreRecordInterval, int defaultPostRecordInterval)
     {
-      DateTime Start1 = _entity.StartTime.AddMinutes(-(_entity.PreRecordInterval ?? defaultPreRecordInterval));
-      DateTime Start2 = schedule.StartTime.AddMinutes(-(schedule.PreRecordInterval ?? defaultPreRecordInterval));
-      DateTime End1 = _entity.EndTime.AddMinutes(_entity.PostRecordInterval ?? defaultPostRecordInterval);
-      DateTime End2 = schedule.EndTime.AddMinutes(schedule.PostRecordInterval ?? defaultPostRecordInterval);
+      // requires: [nothing]
+      DateTime start1 = _entity.StartTime.AddMinutes(-(_entity.PreRecordInterval ?? defaultPreRecordInterval));
+      DateTime start2 = schedule.StartTime.AddMinutes(-(schedule.PreRecordInterval ?? defaultPreRecordInterval));
+      DateTime end1 = _entity.EndTime.AddMinutes(_entity.PostRecordInterval ?? defaultPostRecordInterval);
+      DateTime end2 = schedule.EndTime.AddMinutes(schedule.PostRecordInterval ?? defaultPostRecordInterval);
 
       // sch_1        s------------------------e
       // sch_2    ---------s-----------------------------
       // sch_2    s--------------------------------e
       // sch_2  ------------------e
-      if ((Start2 >= Start1 && Start2 < End1) ||
-          (Start2 <= Start1 && End2 >= End1) ||
-          (End2 > Start1 && End2 <= End1))
+      if ((start2 >= start1 && start2 < end1) ||
+          (start2 <= start1 && end2 >= end1) ||
+          (end2 > start1 && end2 <= end1))
       {
         return true;
       }
@@ -251,11 +262,13 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities
 
     public bool IsSerieIsCanceled(DateTime startTimeParam)
     {
+      // requires: CanceledSchedules
       return _entity.CanceledSchedules.Any(schedule => schedule.CancelDateTime == startTimeParam);
     }
 
     public bool IsSerieIsCanceled(DateTime startTimeParam, int idChannel)
     {
+      // requires: CanceledSchedules
       return _entity.CanceledSchedules.Any(schedule => schedule.CancelDateTime == startTimeParam && schedule.IdChannel == idChannel);
     }
 
@@ -275,6 +288,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities
     /// <returns>The start time of the episode within a schedule that overlaps with program</returns>
     public DateTime GetSchedStartTimeForProg(Program prog)
     {
+      // requires: [nothing]
       DateTime dtSchedStart;
       DateTime dtSchedEnd;
       if (GetAdjustedScheduleTimeRange(prog, out dtSchedStart, out dtSchedEnd))
@@ -294,6 +308,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities
     /// <returns>True if a suitable adjustment was found</returns>
     private bool GetAdjustedScheduleTimeRange(Program program, out DateTime scheduleStart, out DateTime scheduleEnd)
     {
+      // requires: [nothing]
       scheduleStart = new DateTime(program.StartTime.Year, program.StartTime.Month, program.StartTime.Day,
                                    _entity.StartTime.Hour, _entity.StartTime.Minute, 0).AddDays(-1);
       scheduleEnd = scheduleStart.Add(_entity.EndTime.Subtract(_entity.StartTime));
@@ -324,6 +339,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities
 
     private bool IsRecordingProgramWithinTimeRange(Program program, bool filterCanceledRecordings)
     {
+      // requires: CanceledSchedules
       DateTime scheduleStartTime;
       DateTime scheduleEndTime;
       if (GetAdjustedScheduleTimeRange(program, out scheduleStartTime, out scheduleEndTime))

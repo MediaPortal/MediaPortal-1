@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+﻿#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -18,10 +18,20 @@
 
 #endregion
 
-namespace Mediaportal.TV.Server.TVService.Interfaces.CardReservation
+namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
 {
-  public interface ICardStopReservationTicket
+  public enum TunerState
   {
-    int Id { get; }
+    Idle,
+
+    StopPending,
+    Stopping,
+    Stopped,
+    StopFailed,
+
+    TunePending,
+    Tuning,
+    Tuned,
+    TuneFailed
   }
 }

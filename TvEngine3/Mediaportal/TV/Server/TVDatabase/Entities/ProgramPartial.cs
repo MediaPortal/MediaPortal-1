@@ -18,9 +18,11 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
+using Mediaportal.TV.Server.Common.Types.Enum;
 
 namespace Mediaportal.TV.Server.TVDatabase.Entities
 {
@@ -133,6 +135,144 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
 
       // Replace tags.
       return line.Replace(tag, value);
+    }
+
+    #region program state
+
+    private void SetFlag(ProgramState flag, bool isSet)
+    {
+      ProgramState newState = (ProgramState)State;
+      if (!isSet && newState.HasFlag(flag))
+      {
+        newState ^= flag;
+        State = (int)newState;
+      }
+      else if (isSet && !newState.HasFlag(flag))
+      {
+        newState |= flag;
+        State = (int)newState;
+      }
+    }
+
+    /// <summary>
+    /// Property relating to database column notify
+    /// </summary>
+    public bool Notify
+    {
+      get { return ((ProgramState)State).HasFlag(ProgramState.Notify); }
+      set { SetFlag(ProgramState.Notify, value); }
+    }
+
+    /// <summary>
+    /// Property relating to database column IsRecordingOnce
+    /// </summary>
+    public bool IsRecordingOnce
+    {
+      get { return ((ProgramState)State).HasFlag(ProgramState.RecordOnce); }
+      set { SetFlag(ProgramState.RecordOnce, value); }
+    }
+
+    /// <summary>
+    /// Property relating to database column IsRecordingSeriesPending
+    /// </summary>
+    public bool IsRecordingSeriesPending
+    {
+      get { return ((ProgramState)State).HasFlag(ProgramState.RecordSeriesPending); }
+      set { SetFlag(ProgramState.RecordSeriesPending, value); }
+    }
+
+    /// <summary>
+    /// Property relating to database column IsRecordingSeriesPending
+    /// </summary>
+    public bool IsPartialRecordingSeriesPending
+    {
+      get { return ((ProgramState)State).HasFlag(ProgramState.PartialRecordSeriesPending); }
+      set { SetFlag(ProgramState.PartialRecordSeriesPending, value); }
+    }
+
+    /// <summary>
+    /// Property relating to database column IsRecordingOncePending
+    /// </summary>
+    public bool IsRecordingOncePending
+    {
+      get { return ((ProgramState)State).HasFlag(ProgramState.RecordOncePending); }
+      set { SetFlag(ProgramState.RecordOncePending, value); }
+    }
+
+    /// <summary>
+    /// Property relating to database column IsRecordingManual
+    /// </summary>
+    public bool IsRecordingManual
+    {
+      get { return ((ProgramState)State).HasFlag(ProgramState.RecordManual); }
+      set { SetFlag(ProgramState.RecordManual, value); }
+    }
+
+    /// <summary>
+    /// Property relating to database column isRecording
+    /// </summary>
+    public bool IsRecordingSeries
+    {
+      get { return ((ProgramState)State).HasFlag(ProgramState.RecordSeries); }
+      set { SetFlag(ProgramState.RecordSeries, value); }
+    }
+
+    /// <summary>
+    /// Property relating to database column conflict
+    /// </summary>
+    public bool HasConflict
+    {
+      get { return ((ProgramState)State).HasFlag(ProgramState.Conflict); }
+      set { SetFlag(ProgramState.Conflict, value); }
+    }
+
+    /// <summary>
+    /// Property relating to database column IsRecording
+    /// </summary>
+    public bool IsRecording
+    { // This should reflect whether program is actually recording right now
+      get { return (IsRecordingSeries || IsRecordingManual || IsRecordingOnce); }
+    }
+
+    public void ClearRecordPendingState()
+    {
+      State &=
+        ~(int)
+         (ProgramState.RecordOncePending | ProgramState.RecordSeriesPending | ProgramState.PartialRecordSeriesPending);
+    }
+
+    #endregion
+
+    /// <summary>
+    /// Checks if the program ended prior to the specified date/time
+    /// </summary>
+    /// <param name="tCurTime">date and time</param>
+    /// <returns>true if program ended prior to tCurTime</returns>
+    public bool EndedBefore(DateTime tCurTime)
+    {
+      return EndTime <= tCurTime;
+    }
+
+    /// <summary>
+    /// Checks if the program is running between the specified start and end time/dates, i.e. whether the intervals overlap
+    /// </summary>
+    /// <param name="tStartTime">Start date and time</param>
+    /// <param name="tEndTime">End date and time</param>
+    /// <returns>true if program is running between tStartTime-tEndTime</returns>
+    public bool RunningAt(DateTime tStartTime, DateTime tEndTime)
+    {
+      // do NOT use <= >= since end-times are non-including
+      return tStartTime < EndTime && tEndTime > StartTime;
+    }
+
+    /// <summary>
+    /// Checks if the program is running at the specified date/time
+    /// </summary>
+    /// <param name="tCurTime">date and time</param>
+    /// <returns>true if program is running at tCurTime</returns>
+    public bool IsRunningAt(DateTime tCurTime)
+    {
+      return tCurTime >= StartTime && tCurTime <= EndTime;
     }
   }
 }

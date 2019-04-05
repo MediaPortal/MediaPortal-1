@@ -42,21 +42,27 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
   [ServiceKnownType(typeof(SubChannel))]
   [ServiceKnownType(typeof(VirtualCard))]
   [ServiceKnownType(typeof(TvResult))]
+  [ServiceKnownType(typeof(ChannelAmRadio))]
   [ServiceKnownType(typeof(ChannelAnalogTv))]
   [ServiceKnownType(typeof(ChannelAtsc))]
   [ServiceKnownType(typeof(ChannelCapture))]
   [ServiceKnownType(typeof(ChannelDigiCipher2))]
   [ServiceKnownType(typeof(ChannelDvbC))]
   [ServiceKnownType(typeof(ChannelDvbC2))]
+  [ServiceKnownType(typeof(ChannelDvbDsng))]
   [ServiceKnownType(typeof(ChannelDvbS))]
   [ServiceKnownType(typeof(ChannelDvbS2))]
   [ServiceKnownType(typeof(ChannelDvbT))]
   [ServiceKnownType(typeof(ChannelDvbT2))]
+  [ServiceKnownType(typeof(ChannelIsdbC))]
+  [ServiceKnownType(typeof(ChannelIsdbS))]
+  [ServiceKnownType(typeof(ChannelIsdbT))]
   [ServiceKnownType(typeof(ChannelFmRadio))]
   [ServiceKnownType(typeof(ChannelSatelliteTurboFec))]
   [ServiceKnownType(typeof(ChannelScte))]
   [ServiceKnownType(typeof(ChannelStream))]
   [ServiceKnownType(typeof(ScannedChannel))]
+  [ServiceKnownType(typeof(ScannedTransmitter))]
   public interface IControllerService
   {
     #region internal interface
@@ -166,7 +172,7 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     /// <param name="channel">contains tuningdetails for the transponder.</param>
     /// <returns>list of all channels found</returns>
     [OperationContract]
-    TuningDetail[] ScanNIT(int cardId, IChannel channel);
+    ScannedTransmitter[] ScanNIT(int cardId, IChannel channel);
 
     /// <summary>
     /// returns which schedule the card specified is currently recording
@@ -268,12 +274,11 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     /// Determines whether the card is in use
     /// </summary>
     /// <param name="cardId">The card id.</param>
-    /// <param name="user">The user who uses the card.</param>
     /// <returns>
     /// 	<c>true</c> if card is in use; otherwise, <c>false</c>.
     /// </returns>
     [OperationContract]
-    bool IsCardInUse(int cardId, out IUser user);
+    bool IsCardInUse(int cardId);
 
     /// <summary>
     /// Fetches all channel states for a specific user (cached - faster)
@@ -393,6 +398,14 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     /// <param name="position">position</param>
     [OperationContract]
     void DiSEqCGotoStoredPosition(int cardId, byte position);
+
+    /// <summary>
+    /// Go to the DiSEqC position for the given card
+    /// </summary>
+    /// <param name="cardId">card id</param>
+    /// <param name="longitude">longitude</param>
+    [OperationContract]
+    void DiSEqCGotoAngularPosition(int cardId, double longitude);
 
     /// <summary>
     /// Gets the DiSEqC position for the given card
@@ -560,7 +573,7 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     /// <param name="userName"> </param>
     /// <param name="user">user credentials.</param>
     /// <param name="channelId"> </param>
-    /// <returns>true if success otherwise false</returns>
+    /// <returns><c>true</c> if successful, otherwise <c>false</c></returns>
     [OperationContract]
     bool StopTimeShifting(string userName, out IUser user);
 
@@ -571,19 +584,18 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     /// <param name="cardId"> </param>
     /// <param name="user">The user.</param>
     /// <param name="fileName">Name of the recording file.</param>
-    /// <returns>true if success otherwise false</returns>
+    /// <returns><c>true</c> if successful, otherwise <c>false</c></returns>
     [OperationContract]
     TvResult StartRecording(string userName, int cardId, out IUser user, ref string fileName);
 
     /// <summary>
-    /// Stops recording.
+    /// Stop a recording.
     /// </summary>
-    /// <param name="userName"> </param>
-    /// <param name="idCard"> </param>
-    /// <param name="user">The user.</param>
-    /// <returns>true if success otherwise false</returns>
+    /// <param name="subChannelId">The identifier of the sub-channel that is recording.</param>
+    /// <param name="subChannel">The sub-channel.</param>
+    /// <returns><c>true</c> if successful, otherwise <c>false</c></returns>
     [OperationContract]
-    bool StopRecording(string userName, int idCard, out IUser user);
+    bool StopRecording(int subChannelId, out ISubChannel subChannel);
 
     /// <summary>
     /// Scan the specified card to the channel.
@@ -604,15 +616,14 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     IDictionary<string, IUser> GetUsersForCard(int cardId);
 
     /// <summary>
-    /// Determines whether the the user is the owner of the card
+    /// Determines whether a sub-channel is the owner of the tuner
     /// </summary>
-    /// <param name="cardId">The card id.</param>
-    /// <param name="userName"> </param>
+    /// <param name="subChannelId">The sub-channel's identifier.</param>
     /// <returns>
-    /// 	<c>true</c> if the specified user is the card owner; otherwise, <c>false</c>.
+    /// 	<c>true</c> if the specified sub-channel is the tuner owner; otherwise, <c>false</c>.
     /// </returns>
     [OperationContract]
-    bool IsOwner(int cardId, string userName);
+    bool IsOwner(int subChannelId);
 
     #endregion
 

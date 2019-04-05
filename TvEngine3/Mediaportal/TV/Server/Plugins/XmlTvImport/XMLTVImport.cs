@@ -901,7 +901,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
 
           UpdateImportStatus("waiting for database import to complete", stats);
           SettingsManagement.SaveValue(SETTING_NAME_IMPORT_PREVIOUS_START, importDate);
-          ProgramManagement.InitiateInsertPrograms();
+          ProgramManagement.WaitForInsertProgramsToFinish();
 
           this.LogInfo("XMLTV import: import completed, result = {0}, [file/unmapped/DB] channel count = {1}/{2}/{3}, program count = {4}/{5}/{6}",
                         success, stats.TotalChannelCountFiles, stats.TotalChannelCountFilesUnmapped, stats.TotalChannelCountDb,

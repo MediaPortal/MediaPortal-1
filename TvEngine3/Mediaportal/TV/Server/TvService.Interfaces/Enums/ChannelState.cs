@@ -26,20 +26,32 @@ namespace Mediaportal.TV.Server.TVService.Interfaces.Enums
   public enum ChannelState
   {
     /// <summary>
-    /// the channel cannot be tuned right now - maybe all cards are busy
+    /// the channel cannot be tuned
     /// </summary>
-    nottunable = 0,
+    NotTunable = 0,
     /// <summary>
-    /// the channel can be zapped
+    /// the channel can be tuned
     /// </summary>
-    tunable = 1,
+    Tunable,
     /// <summary>
-    /// this channel is currently timeshifted by one card
+    /// the channel is currently being time-shifted
     /// </summary>
-    timeshifting = 2,
+    TimeShifting,
     /// <summary>
-    /// this channel is currently being recorded
+    /// the channel is currently being recorded
     /// </summary>
-    recording = 3,
+    Recording,
+
+    #region these values correspond to TvResult values
+
+    NotTunable_AllTunersUnavailable,
+    NotTunable_AllTunersDisabled,
+    NotTunable_AllTunersBusy,
+    NotTunable_ChannelNotTunable,         // (...by any tuner)
+    NotTunable_TuningDetailsNotMapped,    // (...to any tuner)
+    NotTunable_ChannelNotDecryptable,     // (...by any tuner)
+    NotTunable_NoTuningDetails
+
+    #endregion
   }
 }

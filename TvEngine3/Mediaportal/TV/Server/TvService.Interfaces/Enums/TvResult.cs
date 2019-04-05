@@ -29,68 +29,117 @@ namespace Mediaportal.TV.Server.TVService.Interfaces.Enums
     /// Operation succeeded
     /// </summary>
     Succeeded,
+
     /// <summary>
-    /// Operation failed since all cards are busy and no free card could be found
+    /// The channel does not have any tuning details, and is therefore
+    /// untunable.
     /// </summary>
-    AllCardsBusy,
+    ChannelNoTuningDetails,
     /// <summary>
-    /// Operation failed since channel is encrypted
+    /// All the channel's tuning details are not mapped to any tuners.
     /// </summary>
-    ChannelIsScrambled,
+    ChannelTuningDetailsNotMapped,
     /// <summary>
-    /// Opetation failed since no audio/video was detected after tuning
+    /// The tuner or tuners are physically incapable of tuning the channel, or
+    /// are prevented by configuration (eg. tuner broadcast standard and/or
+    /// satellite config).
     /// </summary>
-    NoVideoAudioDetected,
+    ChannelNotTunable,
     /// <summary>
-    /// Operation failed since no signal was detected
+    /// The channel is encrypted and the tuner or tuners are incapable of
+    /// decrypting it. This result can be returned in response to a
+    /// configuration limitation (for example: CA disabled or provider not
+    /// supported) or after actually attempting and failing to decrypt.
     /// </summary>
-    NoSignalDetected,
+    ChannelNotDecryptable,
     /// <summary>
-    /// Operation failed due to an unknown error
+    /// The channel is currently not active. Currently this result is returned
+    /// after the channel's transmitter has been successfully tuned but the
+    /// MPEG 2 program is unavailable (program PMT not found or DVB service
+    /// record marked as not running in the SDT).
     /// </summary>
-    UnknownError,
+    ChannelNotActive,
     /// <summary>
-    /// Operation failed since the graph could not be build or started
+    /// The channel was not found. Currently this result is returned after the
+    /// channel's transmitter has been successfully tuned but the MPEG 2
+    /// program is not found in the PAT. This result may indicate that the
+    /// channel's tuning details are incorrect or that the channel has been
+    /// moved to a different transmitter.
     /// </summary>
-    UnableToStartGraph,
+    ChannelNotFound,
     /// <summary>
-    /// Operation failed since the channel is unknown
+    /// The channel's transmitter was successfully tuned, but subsequently the
+    /// channel's video and/or audio were not received.
+    /// </summary>
+    ChannelVideoAndOrAudioNotReceived,
+
+    /// <summary>
+    /// The target tuner or tuners are not available (disabled in Windows
+    /// device manager, disconnected, turned off or otherwise undetectable).
+    /// </summary>
+    TunerNotAvailable,
+    /// <summary>
+    /// The target tuner or tuners are configured to be disabled.
+    /// </summary>
+    TunerDisabled,
+    /// <summary>
+    /// The target tuner or tuners are capable of tuning the channel but
+    /// currently tuned to other channels for other users, and therefore cannot
+    /// be used.
+    /// </summary>
+    TunerBusy,
+    /// <summary>
+    /// The target tuner or tuners could not be loaded.
+    /// </summary>
+    TunerLoadFailed,
+    /// <summary>
+    /// The target tuner or tuners could not be loaded because the required
+    /// software encoders are not installed.
+    /// </summary>
+    TunerLoadFailedSoftwareEncoderRequired,
+    /// <summary>
+    /// The channel is associated with a satellite for which there is no
+    /// corresponding tuning configuration for the tuner or tuners.
+    /// </summary>
+    TunerSatelliteNotReceivable,
+    /// <summary>
+    /// The channel's tuning details require DiSEqC commands to be sent, but
+    /// TV Server is unable to send DiSEqC commands using the tuner or tuners.
+    /// </summary>
+    TunerDiseqcNotSupported,
+    /// <summary>
+    /// After tuning according to the channel's tuning details, the tuner
+    /// failed to lock onto (locate) the transmitter's signal or stream.
+    /// </summary>
+    TunerNoSignalDetected,
+
+    /// <summary>
+    /// An unexpected, unspecified, unknown or unhandleable error occurred.
+    /// </summary>
+    UnexpectedError,
+    /// <summary>
+    /// (Currently not used.)
     /// </summary>
     UnknownChannel,
+
     /// <summary>
-    /// Operation failed since the there is no tuning information for the channel
+    /// There is insufficient free disk space to peform the operation.
     /// </summary>
-    NoTuningDetails,
+    InsufficientFreeDiskSpace,
     /// <summary>
-    /// Operation failed since the channel is not mapped to any card
-    /// </summary>
-    ChannelNotMappedToAnyCard,
-    /// <summary>
-    /// Operation failed since the card is disabled
-    /// </summary>
-    CardIsDisabled,
-    /// <summary>
-    /// Operation failed since we are unable to build the graph
-    /// </summary>
-    GraphBuildingFailed,
-    /// <summary>
-    /// Operation failed since we can't find a suitable software encoder
-    /// </summary>
-    SWEncoderMissing,
-    /// <summary>
-    /// Operation failed since there is no free disk space
-    /// </summary>
-    NoFreeDiskSpace,
-    /// <summary>
-    /// No PMT found
-    /// </summary>
-    NoPmtFound,
-    /// <summary>
-    /// A tune operation was cancelled
+    /// The tune operation was cancelled.
     /// </summary>
     TuneCancelled,
-    UsersBlocking,
+
+
     AlreadyParked,
-    ChannelNotActive
+    SubChannelDoesNotExist,
+    SubChannelIsParked,
+    SubChannelIsNotParked,
+
+    /// <summary>
+    /// Tuning failed for an unspecified reason.
+    /// </summary>
+    TuneFailed
   }
 }

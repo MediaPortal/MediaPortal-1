@@ -1,8 +1,5 @@
 using System.Runtime.Serialization;
-using System.Xml.Serialization;
 using Mediaportal.TV.Server.Common.Types.Enum;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner.Enum;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 using Mediaportal.TV.Server.TVService.Interfaces.Enums;
 using Mediaportal.TV.Server.TVService.Interfaces.Services;
 
@@ -22,13 +19,6 @@ namespace Mediaportal.TV.Server.TVService.Interfaces
     /// </summary>
     [DataMember]
     int Id { get; }
-
-    /// <summary>
-    /// Gets the type of card (analog,dvbc,dvbs,dvbt,atsc)
-    /// </summary>
-    /// <value>cardtype</value>
-    [DataMember]
-    BroadcastStandard SupportedBroadcastStandards { get; }
 
     /// <summary>
     /// Gets the name 
@@ -110,23 +100,6 @@ namespace Mediaportal.TV.Server.TVService.Interfaces
     int IdChannel { get; }
 
     /// <summary>
-    /// Gets/Sts the quality type
-    /// </summary>
-    QualityType QualityType { get; set; }
-
-    /// <summary>
-    /// Gets/Sts the bitrate mode
-    /// </summary>
-    EncoderBitRateMode BitRateMode { get; set; }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    int NrOfOtherUsersTimeshiftingOnCard { get; set; }
-
-    MediaType? MediaType { get; }
-
-    /// <summary>
     /// Get the tuner's signal status.
     /// </summary>
     /// <param name="forceUpdate"><c>True</c> to force the signal status to be updated, and not use cached information.</param>
@@ -163,35 +136,31 @@ namespace Mediaportal.TV.Server.TVService.Interfaces
     /// <returns>true if success otherwise false</returns>
     TvResult StartRecording(ref string fileName);
 
-    /// <summary>
-    /// Indicates, if the user is the owner of the card
-    /// </summary>
-    /// <returns>true/false</returns>
-    bool IsOwner();
+    #region quality control
 
     /// <summary>
-    /// Indicates, if the card supports quality control
+    /// Determine which (if any) quality control features are supported by a tuner.
     /// </summary>
-    /// <returns>true/false</returns>
-    bool SupportsQualityControl();
+    /// <param name="supportedEncodeModes">The encoding modes supported by the tuner.</param>
+    /// <param name="canSetBitRate"><c>True</c> if the tuner's average and/or peak encoding bit-rate can be set.</param>
+    void GetSupportedQualityControlFeatures(out EncodeMode supportedEncodeModes, out bool canSetBitRate);
 
     /// <summary>
-    /// Indicates, if the card supports bit rates
+    /// Get and/or set the tuner's video and/or audio encoding mode.
     /// </summary>
-    /// <returns>true/false</returns>
-    bool SupportsBitRate();
+    EncodeMode EncodeMode { get; set; }
 
     /// <summary>
-    /// Indicates, if the card supports bit rate modes 
+    /// Get and/or set the tuner's average video and/or audio bit-rate, encoded as a percentage over the supported range.
     /// </summary>
-    /// <returns>true/false</returns>
-    bool SupportsBitRateModes();
+    int AverageBitRate { get; set; }
 
     /// <summary>
-    /// Indicates, if the card supports bit rate peak mode
+    /// Get and/or set the tuner's peak video and/or audio bit-rate, encoded as a percentage over the supported range.
     /// </summary>
-    /// <returns>true/false</returns>
-    bool SupportsPeakBitRateMode();
+    int PeakBitRate { get; set; }
+
+    #endregion
 
     /// <summary>
     /// Indicates, if the card supports CI Menu
@@ -225,12 +194,5 @@ namespace Mediaportal.TV.Server.TVService.Interfaces
     /// <param name="answer">answer string</param>
     /// <returns>true if successful</returns>
     bool SendMenuAnswer(bool cancel, string answer);
-
-    /// <summary>
-    /// Sets a callback handler
-    /// </summary>
-    /// <param name="callbackHandler"></param>
-    /// <returns></returns>
-    bool SetCiMenuHandler(IConditionalAccessMenuCallBack callbackHandler);
   }
 }

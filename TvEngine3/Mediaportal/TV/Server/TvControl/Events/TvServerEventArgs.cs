@@ -88,7 +88,7 @@ namespace Mediaportal.TV.Server.TVControl.Events
     /// <param name="eventType">Type of the _event.</param>
     /// <param name="card">The card.</param>
     /// <param name="user">The user.</param>
-    public TvServerEventArgs(TvServerEventType eventType, VirtualCard card, User user)
+    public TvServerEventArgs(TvServerEventType eventType, IVirtualCard card, IUser user)
     {
       _eventType = eventType;
       _card = card;
@@ -102,7 +102,7 @@ namespace Mediaportal.TV.Server.TVControl.Events
     /// <param name="card">The card.</param>
     /// <param name="user">The user.</param>
     /// <param name="channel">The channel.</param>
-    public TvServerEventArgs(TvServerEventType eventType, VirtualCard card, User user, IChannel channel)
+    public TvServerEventArgs(TvServerEventType eventType, IVirtualCard card, IUser user, IChannel channel)
     {
       _eventType = eventType;
       _card = card;
@@ -118,7 +118,7 @@ namespace Mediaportal.TV.Server.TVControl.Events
     /// <param name="user">The user.</param>
     /// <param name="scheduleId">The schedule identifier.</param>
     /// <param name="recordingId">The recording identifier.</param>
-    public TvServerEventArgs(TvServerEventType eventType, VirtualCard card, User user, int scheduleId,
+    public TvServerEventArgs(TvServerEventType eventType, IVirtualCard card, IUser user, int scheduleId,
                              int recordingId)
     {
       _eventType = eventType;
@@ -126,21 +126,6 @@ namespace Mediaportal.TV.Server.TVControl.Events
       _user = user;
       _schedule = scheduleId;
       _recording = recordingId;
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="TvServerEventArgs"/> class.
-    /// </summary>
-    /// <param name="eventType">Type of the event.</param>
-    /// <param name="card">The card.</param>
-    /// <param name="user">The user.</param>
-    /// <param name="conflictId">The conflict identifier.</param>
-    public TvServerEventArgs(TvServerEventType eventType, VirtualCard card, User user, int conflictId)
-    {
-      _eventType = eventType;
-      _card = card;
-      _user = user;
-      _conflict = conflictId;
     }
 
     /// <summary>

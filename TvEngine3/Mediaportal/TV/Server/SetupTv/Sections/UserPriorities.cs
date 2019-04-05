@@ -19,10 +19,8 @@
 #endregion
 
 using System.Collections.Generic;
-using System.Text;
 using System.Windows.Forms;
 using Mediaportal.TV.Server.SetupControls;
-using Mediaportal.TV.Server.TVControl;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
@@ -31,6 +29,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
   public partial class UserPriorities : SectionSettings
   {
     private int _priorityScheduler = -1;
+    private int _priorityChannelScanner = -1;
     private int _priorityEpgGrabber = -1;
     private int _priorityOtherDefault = -1;
     private readonly IDictionary<string, int> _prioritiesOtherCustom = new Dictionary<string, int>();
@@ -45,19 +44,22 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     {
       this.LogDebug("user priorities: activating");
 
-      _priorityScheduler = ServiceAgents.Instance.SettingServiceAgent.GetValue(UserFactory.SETTING_NAME_PRIORITY_SCHEDULER, UserFactory.DEFAULT_PRIORITY_SCHEDULER);
+      _priorityScheduler = ServiceAgents.Instance.SettingServiceAgent.GetValue("userPriorityScheduler", 100);
       numericUpDownScheduler.Value = _priorityScheduler;
-      _priorityEpgGrabber = ServiceAgents.Instance.SettingServiceAgent.GetValue(UserFactory.SETTING_NAME_PRIORITY_EPG_GRABBER, UserFactory.DEFAULT_PRIORITY_EPG_GRABBER);
+      _priorityChannelScanner = ServiceAgents.Instance.SettingServiceAgent.GetValue("userPriorityChannelScanner", 2);
+      numericUpDownChannelScanner.Value = _priorityChannelScanner;
+      _priorityEpgGrabber = ServiceAgents.Instance.SettingServiceAgent.GetValue("userPriorityEpgGrabber", 1);
       numericUpDownEpgGrabber.Value = _priorityEpgGrabber;
-      _priorityOtherDefault = ServiceAgents.Instance.SettingServiceAgent.GetValue(UserFactory.SETTING_NAME_PRIORITY_OTHER_DEFAULT, UserFactory.DEFAULT_PRIORITY_OTHER);
+      _priorityOtherDefault = ServiceAgents.Instance.SettingServiceAgent.GetValue("userPriorityOtherDefault", 3);
       numericUpDownOtherDefault.Value = _priorityOtherDefault;
-      this.LogDebug("  scheduler     = {0}", _priorityScheduler);
-      this.LogDebug("  EPG grabber   = {0}", _priorityEpgGrabber);
-      this.LogDebug("  other default = {0}", _priorityOtherDefault);
+      this.LogDebug("  scheduler       = {0}", _priorityScheduler);
+      this.LogDebug("  channel scanner = {0}", _priorityEpgGrabber);
+      this.LogDebug("  EPG grabber     = {0}", _priorityEpgGrabber);
+      this.LogDebug("  other default   = {0}", _priorityOtherDefault);
 
       _prioritiesOtherCustom.Clear();
       dataGridViewUserPriorities.Rows.Clear();
-      string[] users = ServiceAgents.Instance.SettingServiceAgent.GetValue(UserFactory.SETTING_NAME_PRIORITIES_OTHER_CUSTOM, string.Empty).Split(';');
+      string[] users = ServiceAgents.Instance.SettingServiceAgent.GetValue("userPrioritiesOtherCustom", string.Empty).Split(';');
       foreach (string user in users)
       {
         int lastCommaIndex = user.LastIndexOf(",");
@@ -70,7 +72,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         int priority;
         if (!string.IsNullOrEmpty(userName) && int.TryParse(priorityString, out priority))
         {
-          this.LogDebug("  {0, -13} = {1}", userName, priority);
+          this.LogDebug("  {0, -15} = {1}", userName, priority);
           _prioritiesOtherCustom[userName] = priority;
           dataGridViewUserPriorities.Rows.Add(new string[2] { userName.Trim(), priority.ToString() });
         }
@@ -87,19 +89,25 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       if (_priorityScheduler != numericUpDownScheduler.Value)
       {
         this.LogInfo("user priorities: scheduler priority changed from {0} to {1}", _priorityScheduler, numericUpDownScheduler.Value);
-        ServiceAgents.Instance.SettingServiceAgent.SaveValue(UserFactory.SETTING_NAME_PRIORITY_SCHEDULER, (int)numericUpDownScheduler.Value);
+        ServiceAgents.Instance.SettingServiceAgent.SaveValue("userPriorityScheduler", (int)numericUpDownScheduler.Value);
+        needReload = true;
+      }
+      if (_priorityChannelScanner == numericUpDownChannelScanner.Value)
+      {
+        this.LogInfo("user priorities: channel scanner priority changed from {0} to {1}", _priorityChannelScanner, numericUpDownChannelScanner.Value);
+        ServiceAgents.Instance.SettingServiceAgent.SaveValue("userPriorityChannelScanner", (int)numericUpDownChannelScanner.Value);
         needReload = true;
       }
       if (_priorityEpgGrabber == numericUpDownEpgGrabber.Value)
       {
         this.LogInfo("user priorities: EPG grabber priority changed from {0} to {1}", _priorityEpgGrabber, numericUpDownEpgGrabber.Value);
-        ServiceAgents.Instance.SettingServiceAgent.SaveValue(UserFactory.SETTING_NAME_PRIORITY_EPG_GRABBER, (int)numericUpDownEpgGrabber.Value);
+        ServiceAgents.Instance.SettingServiceAgent.SaveValue("userPriorityEpgGrabber", (int)numericUpDownEpgGrabber.Value);
         needReload = true;
       }
       if (_priorityOtherDefault == numericUpDownOtherDefault.Value)
       {
         this.LogInfo("user priorities: other default priority changed from {0} to {1}", _priorityOtherDefault, numericUpDownOtherDefault.Value);
-        ServiceAgents.Instance.SettingServiceAgent.SaveValue(UserFactory.SETTING_NAME_PRIORITY_OTHER_DEFAULT, (int)numericUpDownOtherDefault.Value);
+        ServiceAgents.Instance.SettingServiceAgent.SaveValue("userPriorityOtherDefault", (int)numericUpDownOtherDefault.Value);
         needReload = true;
       }
 
@@ -144,7 +152,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
       if (customPrioritiesChanged)
       {
-        ServiceAgents.Instance.SettingServiceAgent.SaveValue(UserFactory.SETTING_NAME_PRIORITIES_OTHER_CUSTOM, string.Join(";", parts));
+        ServiceAgents.Instance.SettingServiceAgent.SaveValue("userPrioritiesOtherCustom", string.Join(";", parts));
         needReload = true;
       }
 

@@ -43,17 +43,9 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     event TvServerEventHandler OnTvServerEvent;
     IDictionary<int, ITvCardHandler> CardCollection { get; }
 
-    List<IVirtualCard> GetAllRecordingCards();
+    IUserManagement UserManagement { get; }
 
-    /// <summary>
-    /// Tunes the the specified card to the channel.
-    /// </summary>
-    /// <param name="user">The user.</param>
-    /// <param name="channel">The channel.</param>
-    /// <param name="idChannel">The id channel.</param>
-    /// <param name="ticket">card reservation ticket</param>
-    /// <returns>true if succeeded</returns>
-    TvResult Tune(ref IUser user, IChannel channel, int idChannel, object ticket);
+    List<IVirtualCard> GetAllRecordingCards();
 
     /// <summary>
     /// grabs the epg.

@@ -46,9 +46,8 @@ namespace Mediaportal.TV.Server.TVService.Interfaces.CardHandler
     /// <param name="user">User</param>
     /// <param name="fileName">Name of the timeshiftfile.</param>
     /// <param name="subChannelId"> </param>
-    /// <param name="idChannel"> </param>
     /// <returns>TvResult indicating whether method succeeded</returns>
-    TvResult Start(ref IUser user, out string fileName, int subChannelId, int idChannel);
+    TvResult Start(ref IUser user, out string fileName, int subChannelId);
 
     /// <summary>
     /// Stops the time shifting.
@@ -65,8 +64,6 @@ namespace Mediaportal.TV.Server.TVService.Interfaces.CardHandler
     /// <returns></returns>
     void GetStreamQualityCounters(string userName, out int totalTSpackets, out int discontinuityCounter);
 
-    void OnBeforeTune();
-    void OnAfterTune();
     void ReloadConfiguration();
     void CopyBuffer(string userName, long position1, long bufferId1, long position2, long bufferId2, string destinationFolder);
   }

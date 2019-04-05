@@ -18,39 +18,21 @@
 
 #endregion
 
-using Mediaportal.TV.Server.Common.Types.Enum;
-using Mediaportal.TV.Server.TVDatabase.Entities;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 
 namespace Mediaportal.TV.Server.TVService.Interfaces.CardHandler
 {
   public interface ITvCardHandler
   {
-    IParkedUserManagement ParkedUserManagement { get; }
-    IUserManagement UserManagement { get; }
-    IDisEqcManagement DisEqC { get; }
-    IChannelScanning Scanner { get; }
     IEpgGrabbing Epg { get; }
     
     IRecorder Recorder { get; }
     ITimeShifter TimeShifter { get; }
-    ICardTuner Tuner { get; }
-    IConditionalAccessMenuActions CiMenuActions { get; }
-    bool CiMenuSupported { get; }
 
-    ITuner Card { get; }    
-    bool IsIdle { get; }
-    Tuner DataBaseCard { get; set; }
-
-    IChannel CurrentChannel(string userName, int idChannel);
-    int CurrentDbChannel(string userName);
-    string CurrentChannelName(string userName, int idChannel);    
-    bool IsScrambled(string userName);
-    bool IsScrambled(int subchannel);
-
-    void StopCard();
+    ITuner Card { get; }
     void Dispose();
+
+    // TODO get rid of this
+    string CurrentChannelName(string userName, int idChannel);
   }
 }

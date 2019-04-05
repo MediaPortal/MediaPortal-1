@@ -139,7 +139,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
       timer1.Enabled = true;
 
-      txtPrio.Text = ServiceAgents.Instance.SettingServiceAgent.GetValue(UserFactory.SETTING_NAME_PRIORITY_OTHER_DEFAULT, UserFactory.DEFAULT_PRIORITY_OTHER).ToString();
+      txtPrio.Text = ServiceAgents.Instance.SettingServiceAgent.GetValue("userPriorityOtherDefault", 3).ToString();
 
       UpdateAdvMode();
 
@@ -207,46 +207,46 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     {
       switch (result)
       {
-        case TvResult.NoPmtFound:
+        /*case TvResult.NoPmtFound:
           MessageBox.Show(this, "No PMT found");
-          break;
-        case TvResult.NoSignalDetected:
+          break;*/
+        case TvResult.TunerNoSignalDetected:
           MessageBox.Show(this, "No signal");
           break;
-        case TvResult.CardIsDisabled:
+        case TvResult.TunerDisabled:
           MessageBox.Show(this, "Card is not enabled");
           break;
-        case TvResult.AllCardsBusy:
+        case TvResult.TunerBusy:
           MessageBox.Show(this, "All cards are busy");
           break;
-        case TvResult.ChannelIsScrambled:
+        case TvResult.ChannelNotDecryptable:
           MessageBox.Show(this, "Channel is scrambled");
           break;
-        case TvResult.NoVideoAudioDetected:
+        case TvResult.ChannelVideoAndOrAudioNotReceived:
           MessageBox.Show(this, "No Video/Audio detected");
           break;
-        case TvResult.UnableToStartGraph:
+        /*case TvResult.UnableToStartGraph:
           MessageBox.Show(this, "Unable to create/start graph");
-          break;
-        case TvResult.ChannelNotMappedToAnyCard:
+          break;*/
+        case TvResult.ChannelTuningDetailsNotMapped:
           MessageBox.Show(this, "Channel is not mapped to any card");
           break;
-        case TvResult.NoTuningDetails:
+        case TvResult.ChannelNoTuningDetails:
           MessageBox.Show(this, "No tuning information available for this channel");
           break;
         case TvResult.UnknownChannel:
           MessageBox.Show(this, "Unknown channel");
           break;
-        case TvResult.UnknownError:
+        case TvResult.UnexpectedError:
           MessageBox.Show(this, "Unknown error occured");
           break;
-        case TvResult.GraphBuildingFailed:
+        case TvResult.TunerLoadFailed:
           MessageBox.Show(this, "Unable to create graph");
           break;
-        case TvResult.SWEncoderMissing:
+        case TvResult.TunerLoadFailedSoftwareEncoderRequired:
           MessageBox.Show(this, "No suppported software encoder installed");
           break;
-        case TvResult.NoFreeDiskSpace:
+        case TvResult.InsufficientFreeDiskSpace:
           MessageBox.Show(this, "No free disk space");
           break;
         case TvResult.TuneCancelled:
@@ -398,7 +398,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
     private bool IsChannelParked(VirtualCard card, int id)
     {
-      foreach (ISubChannel subch in card.User.SubChannels.Values)
+      // TODO need user sub-channels
+      /*foreach (ISubChannel subch in card.User.SubChannels.Values)
       {
         if (subch.IdChannel == id)
         {
@@ -407,7 +408,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             return true;
           }
         }
-      }
+      }*/
       return false;
     }
 
@@ -479,8 +480,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         IDictionary<string, IUser> usersForCard = ServiceAgents.Instance.ControllerServiceAgent.GetUsersForCard(tuner.IdTuner);
 
         foreach (IUser user1 in usersForCard.Values)
-        {          
-          foreach (var subchannel in user1.SubChannels.Values)
+        {
+          // TODO user sub-channels
+          /*foreach (var subchannel in user1.SubChannels.Values)
           {
             if (subchannel.IdChannel == channelId)
             {
@@ -490,7 +492,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
                 return vcard;
               }
             } 
-          }          
+          }*/
         }
       }
       return null;

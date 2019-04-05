@@ -18,185 +18,56 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Net;
 using System.Runtime.Serialization;
 using Mediaportal.TV.Server.TVService.Interfaces.Enums;
 using Mediaportal.TV.Server.TVService.Interfaces.Services;
 
 namespace Mediaportal.TV.Server.TVControl
 {
-  /// <summary>
-  /// 
-  /// </summary>
   [DataContract]
-  public class User : ICloneable, IUser
+  public class User : IUser
   {
-    #region private members
+    #region variables
+
+    [DataMember]
+    private string _name;
 
     [DataMember] 
-    private UserType _userType;
-
-    [DataMember]
-    private string _hostName;
-
-    [DataMember]
-    private int _cardId;
-
-    [DataMember]
-    private int _failedCardId;
-
-    [DataMember]
-    private TvStoppedReason _timeshiftStoppedReason;
-
-    [NonSerialized]
-    private object _history;
-
-    [DataMember]
-    private Dictionary<int, ChannelState> _channelStates; //used primarily for miniepg.
-
-    [DataMember]
-    private int? _priority;
-
-    [DataMember]
-    private IDictionary<int, ISubChannel> _subChannels; //key is subChannelId
+    private UserType _type;
 
     #endregion
 
-    #region constructors
-
     /// <summary>
-    /// Initializes a new instance of the <see cref="User"/> class.
+    /// Initialise a new instance of the <see cref="User"/> class.
     /// </summary>
-    /// <param name="name">The name.</param>
-    /// <param name="userType"> </param>
-    /// <param name="cardId">The card id.</param>
-    /// <param name="priority">card lock priority</param>
-    public User(string name = null, UserType userType = UserType.Normal, int cardId = -1, int? priority = null)
+    /// <param name="name">The user's name.</param>
+    /// <param name="type">The user's type.</param>
+    public User(string name, UserType type = UserType.Normal)
     {
-      _hostName = name;
-      if (name == null)
-      {
-        _hostName = Dns.GetHostName();
-      }
-      _userType = userType;
-      _cardId = cardId;
-      _priority = priority;
-      _failedCardId = -1;
-      _timeshiftStoppedReason = TvStoppedReason.UnknownReason;
-      _channelStates = new Dictionary<int, ChannelState>();
-      _subChannels = new SortedDictionary<int, ISubChannel>();          
+      _name = name;
+      _type = type;
     }
 
-    #endregion    
+    #region properties
 
     /// <summary>
-    /// Gets an integer defining the user's card lock priority (higher number=higher priority)
-    /// </summary>    
-    /// <returns>user priority</returns>
-    public int? Priority
-    {
-      get { return _priority; }
-      set { _priority = value; }
-    }
-
-    /// <summary>
-    /// Gets a list of all channel states    
-    /// </summary>    
-    /// <returns>dictionary containing all channel states of the channels supplied</returns>
-    public Dictionary<int, ChannelState> ChannelStates
-    {
-      get { return _channelStates; }
-      set { _channelStates = value; }
-    }
-
-    /// <summary>
-    /// Gets or sets the failed card id.
+    /// Get the user's name.
     /// </summary>
-    /// <value>The card id.</value>
-    public int FailedCardId
-    {
-      get { return _failedCardId; }
-      set { _failedCardId = value; }
-    }
-
-    /// <summary>
-    /// Gets or sets the card id.
-    /// </summary>
-    /// <value>The card id.</value>
-    public int CardId
-    {
-      get { return _cardId; }
-      set { _cardId = value; }
-    }
-    
-    /// <summary>
-    /// Gets or sets the name.
-    /// </summary>
-    /// <value>The name.</value>
+    /// <value>The user's name.</value>
     public string Name
     {
-      get { return _hostName; }
-      set { _hostName = value; }
-    }    
-
-    /// <summary>
-    /// Gets or sets the history.
-    /// </summary>
-    /// <value>The history.</value>
-    public object History
-    {
-      get { return _history; }
-      set { _history = value; }
+      get { return _name; }
     }
 
     /// <summary>
-    /// Gets/Sets the stop reason
+    /// Get the user's type.
     /// </summary>
-    public TvStoppedReason TvStoppedReason
+    /// <value>The user's type.</value>
+    public UserType Type
     {
-      get { return _timeshiftStoppedReason; }
-      set { _timeshiftStoppedReason = value; }
+      get { return _type; }
     }
-
-    public IDictionary<int, ISubChannel> SubChannels
-    {
-      get { return _subChannels; }
-      set { _subChannels = value; }
-    }
-
-    #region ICloneable Members
-
-    /// <summary>
-    /// Creates a new object that is a copy of the current instance.
-    /// </summary>
-    /// <returns>
-    /// A new object that is a copy of this instance.
-    /// </returns>
-    public object Clone()
-    {
-      var user = new User(_hostName, _userType, _cardId, _priority.GetValueOrDefault())
-                    {                                              
-                      SubChannels = new SortedDictionary<int, ISubChannel>(_subChannels),
-                      History = _history,
-                      ChannelStates = new Dictionary<int, ChannelState>(_channelStates),
-                      FailedCardId = _failedCardId,
-                      TvStoppedReason = _timeshiftStoppedReason                      
-                    };
-
-      return user;
-    }
-
-    public UserType UserType
-    {
-      get { return _userType; }
-    }
-
 
     #endregion
-
-
-   
   }
 }

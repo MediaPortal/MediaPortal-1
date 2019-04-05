@@ -63,20 +63,12 @@
     <Compile Include="..\..\..\..\..\Common-MP-TVE3\SolutionInfo.cs">
       <Link>SolutionInfo.cs</Link>
     </Compile>
-    <Compile Include="CardHandler\ICardTuner.cs" />
-    <Compile Include="CardHandler\IChannelScanning.cs" />
-    <Compile Include="CardHandler\IDisEqcManagement.cs" />
     <Compile Include="CardHandler\IEpgGrabbing.cs" />
-    <Compile Include="CardHandler\IParkedUserManagement.cs" />
     <Compile Include="CardHandler\IRecorder.cs" />
     <Compile Include="CardHandler\ITimeShifter.cs" />
     <Compile Include="CardHandler\ITvCardHandler.cs" />
     <Compile Include="CardHandler\IUserManagement.cs" />
-    <Compile Include="CardReservation\ICardReservation.cs" />
-    <Compile Include="CardReservation\ICardStopReservationTicket.cs" />
-    <Compile Include="CardReservation\ICardTuneReservationTicket.cs" />
-    <Compile Include="Enums\CardStopState.cs" />
-    <Compile Include="Enums\CardTuneState.cs" />
+    <Compile Include="Enums\TunerState.cs" />
     <Compile Include="Enums\ChannelState.cs" />
     <Compile Include="Enums\TvResult.cs" />
     <Compile Include="Enums\TvStoppedReason.cs" />
@@ -85,7 +77,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\ISubChannel.cs" />
     <Compile Include="Services\IUser.cs" />
-    <Compile Include="Enums\TvUsage.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>

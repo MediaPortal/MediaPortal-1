@@ -190,26 +190,22 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       bool isScheduleRecording = false;
       Program prg = ProgramManagement.GetProgram(idProgram);
 
-      if (prg != null)
+      if (prg != null && prg.IsRecording)
       {
-        var programBll = new ProgramBLL(prg);
-        if (programBll.IsRecording)
+        using (IScheduleRepository scheduleRepository = new ScheduleRepository())
         {
-          using (IScheduleRepository scheduleRepository = new ScheduleRepository())
+          Schedule schedule = scheduleRepository.FindOne<Schedule>(s => s.IdSchedule == idSchedule);
+          if (schedule != null)
           {
-            Schedule schedule = scheduleRepository.FindOne<Schedule>(s => s.IdSchedule == idSchedule);
-            if (schedule != null)
+            Schedule spawnedSchedule = RetrieveSpawnedSchedule(idSchedule, prg.StartTime);
+            if (spawnedSchedule != null)
             {
-              Schedule spawnedSchedule = RetrieveSpawnedSchedule(idSchedule, prg.StartTime);
-              if (spawnedSchedule != null)
-              {
-                schedule = spawnedSchedule;
-              }
+              schedule = spawnedSchedule;
             }
-            if (schedule != null)
-            {
-              isScheduleRecording = (RecordingManagement.GetActiveRecording(schedule.IdSchedule) != null);
-            }
+          }
+          if (schedule != null)
+          {
+            isScheduleRecording = (RecordingManagement.GetActiveRecording(schedule.IdSchedule) != null);
           }
         }
       }
@@ -251,7 +247,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       notViewableSchedules = new List<Schedule>();
       Log.Info("GetConflictingSchedules: schedule = {0}", sched);
 
-      IList<Tuner> tuners = TunerManagement.ListAllTuners(TunerRelation.ChannelMaps);
+      IList<Tuner> tuners = TunerManagement.ListAllTuners(TunerRelation.TuningDetailMappings);
       Log.Info("GetConflictingSchedules: tuner count = {0}", tuners.Count);
       if (tuners.Count == 0)
       {
@@ -374,7 +370,11 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       foreach (Tuner tuner in tuners)
       {
         ScheduleBLL scheduleBll = new ScheduleBLL(schedule);
-        if (!tuner.ChannelMaps.Any(map => schedule.IdChannel == map.IdChannel))   // If there are no mappings, the tuner CAN be used.
+        // TODO broken
+        // We need a way to determine if a tuner can tune a channel... but really
+        // this whole conflict detection mechanism is borked. It should be based on the tuner allocator
+        // logic to ensure that conflicts are accurately identified.
+        //if (!tuner.ChannelMaps.Any(map => schedule.IdChannel == map.IdChannel))   // If there are no mappings, the tuner CAN be used.
         {
           isTunable = true;
 

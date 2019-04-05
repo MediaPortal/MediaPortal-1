@@ -154,7 +154,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.EPG
 
     private Channel IsInsertAllowed(KeyValuePair<IChannel, IList<EpgProgram>> epgChannel)
     {
-      ChannelDvbBase dvbChannel = epgChannel.Key as ChannelDvbBase;
+      IChannelDvbCompatible dvbChannel = epgChannel.Key as IChannelDvbCompatible;
       if (dvbChannel == null)
       {
         this.LogError("{0}: failed assumption, grabbing not supported for non-DVB channels");
@@ -176,12 +176,12 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.EPG
       }
 
       //do we have a channel with these service details?
-      BroadcastStandard broadcastStandard = TuningDetailManagement.GetBroadcastStandardFromChannelInstance(epgChannel.Key);
+      BroadcastStandard broadcastStandard = GetBroadcastStandardFromChannelInstance(epgChannel.Key);
       IList<TuningDetail> tuningDetails = TuningDetailManagement.GetDvbTuningDetails(
         broadcastStandard,
         dvbChannel.OriginalNetworkId,
-        dvbChannel.ServiceId,
         TuningDetailRelation.Channel,
+        dvbChannel.ServiceId,
         dvbChannel.TransportStreamId,
         null,
         satelliteId
@@ -209,6 +209,88 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.EPG
       }
 
       return dbChannel;
+    }
+
+    public static BroadcastStandard GetBroadcastStandardFromChannelInstance(IChannel channel)
+    {
+      if (channel is ChannelAmRadio)
+      {
+        return BroadcastStandard.AmRadio;
+      }
+      if (channel is ChannelAnalogTv)
+      {
+        return BroadcastStandard.AnalogTelevision;
+      }
+      if (channel is ChannelAtsc)
+      {
+        return BroadcastStandard.Atsc;
+      }
+      if (channel is ChannelCapture)
+      {
+        return BroadcastStandard.ExternalInput;
+      }
+      if (channel is ChannelDigiCipher2)
+      {
+        return BroadcastStandard.DigiCipher2;
+      }
+      if (channel is ChannelDvbC)
+      {
+        return BroadcastStandard.DvbC;
+      }
+      if (channel is ChannelDvbC2)
+      {
+        return BroadcastStandard.DvbC2;
+      }
+      if (channel is ChannelDvbDsng)
+      {
+        return BroadcastStandard.DvbDsng;
+      }
+      if (channel is ChannelDvbS)
+      {
+        return BroadcastStandard.DvbS;
+      }
+      ChannelDvbS2 dvbs2Channel = channel as ChannelDvbS2;
+      if (dvbs2Channel != null)
+      {
+        return dvbs2Channel.BroadcastStandard;
+      }
+      if (channel is ChannelDvbT)
+      {
+        return BroadcastStandard.DvbT;
+      }
+      if (channel is ChannelDvbT2)
+      {
+        return BroadcastStandard.DvbT2;
+      }
+      if (channel is ChannelFmRadio)
+      {
+        return BroadcastStandard.FmRadio;
+      }
+      if (channel is ChannelIsdbC)
+      {
+        return BroadcastStandard.IsdbC;
+      }
+      if (channel is ChannelIsdbS)
+      {
+        return BroadcastStandard.IsdbS;
+      }
+      if (channel is ChannelIsdbT)
+      {
+        return BroadcastStandard.IsdbT;
+      }
+      if (channel is ChannelSatelliteTurboFec)
+      {
+        return BroadcastStandard.SatelliteTurboFec;
+      }
+      if (channel is ChannelScte)
+      {
+        return BroadcastStandard.Scte;
+      }
+      if (channel is ChannelStream)
+      {
+        return BroadcastStandard.DvbIp;
+      }
+      return BroadcastStandard.Unknown;
     }
 
     private void GetPreferredText(IDictionary<string, string> text, out string selectedText)

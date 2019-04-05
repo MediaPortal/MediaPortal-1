@@ -19,16 +19,10 @@
 #endregion
 
 using System;
-using System.IO;
 using System.Runtime.Serialization;
 using System.Xml.Serialization;
 using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVControl.Interfaces.Services;
-using Mediaportal.TV.Server.TVLibrary.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner.Enum;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 using Mediaportal.TV.Server.TVService.Interfaces;
 using Mediaportal.TV.Server.TVService.Interfaces.Enums;
 using Mediaportal.TV.Server.TVService.Interfaces.Services;
@@ -48,10 +42,7 @@ namespace Mediaportal.TV.Server.TVControl
     #region variables
 
     [DataMember]
-    private int _nrOfOtherUsersTimeshiftingOnCard = 0;
-
-    [DataMember]
-    private IUser _user;
+    private ISubChannel _subChannel;
 
     [DataMember]
     private bool _isTimeshifting;
@@ -75,9 +66,6 @@ namespace Mediaportal.TV.Server.TVControl
     private string _name;
 
     [DataMember]
-    private BroadcastStandard _supportedBroadcastStandards = BroadcastStandard.Unknown;
-
-    [DataMember]
     private string _timeShiftFileName;
 
     [DataMember]
@@ -85,9 +73,6 @@ namespace Mediaportal.TV.Server.TVControl
 
     [DataMember]
     private int _idChannel = -1;
-
-    [DataMember]
-    private MediaType? _mediaType;
 
     #endregion
 
@@ -97,20 +82,12 @@ namespace Mediaportal.TV.Server.TVControl
     /// Initializes a new instance of the <see cref="VirtualCard"/> class.
     /// </summary>
     /// <param name="user">The user.</param>
-    public VirtualCard(IUser user)
+    public VirtualCard(ISubChannel subChannel)
     {
-      _user = user;
-
-      InitStaticProperties();
-    }
-
-    private void InitStaticProperties()
-    {
-      string userName = _user.Name;
-      int cardId = _user.CardId;
+      _subChannel = subChannel;
 
       var controllerService = GlobalServiceProvider.Get<IControllerService>();
-      if (!string.IsNullOrWhiteSpace(userName))
+      /*if (!string.IsNullOrWhiteSpace(userName))
       {
         _isTimeshifting = controllerService.IsTimeShifting(userName);
         _rtspUrl = controllerService.GetStreamingUrl(userName);
@@ -118,15 +95,7 @@ namespace Mediaportal.TV.Server.TVControl
         _idChannel = controllerService.CurrentDbChannel(userName);
         _channelName = controllerService.CurrentChannelName(userName);
 
-        if (_idChannel > 0)
-        {
-          IChannel channel = controllerService.CurrentChannel(userName, _idChannel);
-          if (channel != null)
-          {
-            _mediaType = channel.MediaType;
-          }
-        }
-        if (cardId > 0 && _user.UserType == UserType.Normal)
+        if (cardId > 0 && _user.Type == UserType.Normal)
         {
           _timeShiftFileName = controllerService.TimeShiftFileName(userName, cardId);
         }
@@ -142,8 +111,7 @@ namespace Mediaportal.TV.Server.TVControl
         _isScanning = controllerService.IsScanning(cardId);
         _isGrabbingEpg = controllerService.IsGrabbingEpg(cardId);
         _name = controllerService.CardName(cardId);
-        _supportedBroadcastStandards = controllerService.SupportedBroadcastStandards(cardId);
-      }
+      }*/
     }
 
     #endregion
@@ -152,18 +120,13 @@ namespace Mediaportal.TV.Server.TVControl
 
     #region static properties
 
-    public MediaType? MediaType
-    {
-      get { return _mediaType; }
-    }
-
     /// <summary>
     /// Gets the user.
     /// </summary>
     /// <value>The user.</value>
     public IUser User
     {
-      get { return _user; }
+      get { return null; }// _user; }
     }
 
     /// <summary>
@@ -171,18 +134,7 @@ namespace Mediaportal.TV.Server.TVControl
     /// </summary>
     public int Id
     {
-      get { return _user.CardId; }
-    }
-
-    /// <summary>
-    /// Get the broadcast standards supported by the tuner.
-    /// </summary>
-    public BroadcastStandard SupportedBroadcastStandards
-    {
-      get
-      {
-        return _supportedBroadcastStandards;
-      }
+      get { return _subChannel.IdTuner; }
     }
 
     /// <summary>
@@ -196,12 +148,12 @@ namespace Mediaportal.TV.Server.TVControl
         return _name;
         /*try
         {
-          if (User.CardId < 0)
+          if (_subChannel.IdTuner < 0)
           {
             return "";
           }
           RemoteControl.HostName = _server;
-          return GlobalServiceProvider.Get<IControllerService>().CardName(User.CardId);
+          return GlobalServiceProvider.Get<IControllerService>().CardName(_subChannel.IdTuner);
         }
         catch (Exception)
         {
@@ -209,7 +161,6 @@ namespace Mediaportal.TV.Server.TVControl
         }
         return "";*/
       }
-      set { _name = value; }
     }
 
 
@@ -224,7 +175,7 @@ namespace Mediaportal.TV.Server.TVControl
         return _recordingFileName;
         /*try
         {
-          if (User.CardId < 0)
+          if (_subChannel.IdTuner < 0)
           {
             return "";
           }
@@ -253,7 +204,7 @@ namespace Mediaportal.TV.Server.TVControl
         /*
         try
         {
-          if (User.CardId < 0)
+          if (_subChannel.IdTuner < 0)
           {
             return "";
           }
@@ -279,12 +230,12 @@ namespace Mediaportal.TV.Server.TVControl
         return _isGrabbingEpg;
         /*try
         {
-          if (User.CardId < 0)
+          if (_subChannel.IdTuner < 0)
           {
             return false;
           }
           RemoteControl.HostName = _server;
-          return GlobalServiceProvider.Get<IControllerService>().IsGrabbingEpg(User.CardId);
+          return GlobalServiceProvider.Get<IControllerService>().IsGrabbingEpg(_subChannel.IdTuner);
         }
         catch (Exception)
         {
@@ -306,7 +257,7 @@ namespace Mediaportal.TV.Server.TVControl
         return _isRecording;
         /*try
         {
-          //if (User.CardId < 0) return false;
+          //if (_subChannel.IdTuner < 0) return false;
           RemoteControl.HostName = _server;          
           IVirtualCard vc = null;
           bool isRec = WaitFor<bool>.Run(CommandTimeOut, () => GlobalServiceProvider.Get<IControllerService>().IsRecording(IdChannel, out vc));
@@ -332,12 +283,12 @@ namespace Mediaportal.TV.Server.TVControl
         return _isScanning;
         /*try
         {
-          if (User.CardId < 0)
+          if (_subChannel.IdTuner < 0)
           {
             return false;
           }
           RemoteControl.HostName = _server;
-          return GlobalServiceProvider.Get<IControllerService>().IsScanning(User.CardId);
+          return GlobalServiceProvider.Get<IControllerService>().IsScanning(_subChannel.IdTuner);
         }
         catch (Exception)
         {
@@ -359,7 +310,7 @@ namespace Mediaportal.TV.Server.TVControl
         return _isTimeshifting;
         /*try
         {
-          if (User.CardId < 0)
+          if (_subChannel.IdTuner < 0)
           {
             return false;
           }
@@ -386,12 +337,12 @@ namespace Mediaportal.TV.Server.TVControl
         return _timeShiftFileName;
         /*try
         {
-          if (User.CardId < 0)
+          if (_subChannel.IdTuner < 0)
           {
             return "";
           }
           RemoteControl.HostName = _server;
-          return GlobalServiceProvider.Get<IControllerService>().TimeShiftFileName(User.Name, User.CardId);
+          return GlobalServiceProvider.Get<IControllerService>().TimeShiftFileName(User.Name, _subChannel.IdTuner);
         }
         catch (Exception)
         {
@@ -400,15 +351,6 @@ namespace Mediaportal.TV.Server.TVControl
         return "";*/
       }
       set { _timeShiftFileName = value; }
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    public int NrOfOtherUsersTimeshiftingOnCard
-    {
-      get { return _nrOfOtherUsersTimeshiftingOnCard; }
-      set { _nrOfOtherUsersTimeshiftingOnCard = value; }
     }
 
     #endregion
@@ -426,11 +368,11 @@ namespace Mediaportal.TV.Server.TVControl
       {
         try
         {
-          if (User.CardId < 0)
+          if (_subChannel.IdTuner < 0)
           {
             return -1;
           }
-          return GlobalServiceProvider.Get<IControllerService>().GetRecordingSchedule(User.CardId, User.Name);
+          return GlobalServiceProvider.Get<IControllerService>().GetRecordingSchedule(_subChannel.IdTuner, User.Name);
         }
         catch (Exception)
         {
@@ -456,9 +398,9 @@ namespace Mediaportal.TV.Server.TVControl
       quality = 0;
       try
       {
-        if (User.CardId > 0)
+        if (_subChannel.IdTuner > 0)
         {
-          GlobalServiceProvider.Get<IControllerService>().GetSignalStatus(User.CardId, forceUpdate, out isLocked, out isPresent, out strength, out quality);
+          GlobalServiceProvider.Get<IControllerService>().GetSignalStatus(_subChannel.IdTuner, forceUpdate, out isLocked, out isPresent, out strength, out quality);
         }
       }
       catch (Exception)
@@ -479,7 +421,7 @@ namespace Mediaportal.TV.Server.TVControl
       discontinuityCounter = 0;
       try
       {
-        if (User.CardId > 0)
+        if (_subChannel.IdTuner > 0)
         {
           GlobalServiceProvider.Get<IControllerService>().GetStreamQualityCounters(User.Name, out totalTSpackets, out discontinuityCounter);
         }
@@ -502,7 +444,7 @@ namespace Mediaportal.TV.Server.TVControl
         /*
         try
         {
-          if (User.CardId < 0)
+          if (_subChannel.IdTuner < 0)
           {
             return "";
           }
@@ -529,7 +471,7 @@ namespace Mediaportal.TV.Server.TVControl
         /*
         try
         {
-          if (User.CardId < 0)
+          if (_subChannel.IdTuner < 0)
           {
             return -1;
           }
@@ -551,31 +493,26 @@ namespace Mediaportal.TV.Server.TVControl
     /// <summary>
     /// Stops the time shifting.
     /// </summary>
-    /// <returns>true if success otherwise false</returns>
+    /// <returns><c>true</c> if successful, otherwise <c>false</c></returns>
     public void StopTimeShifting()
     {
       try
       {
-        if (User.CardId < 0)
-        {
-          return;
-        }
-        if (IsTimeShifting == false)
+        if (_subChannel.IdTuner < 0 || !IsTimeShifting)
         {
           return;
         }
         IUser userResult;
-        GlobalServiceProvider.Get<IControllerService>().StopTimeShifting(_user.Name, out userResult);
+        GlobalServiceProvider.Get<IControllerService>().StopTimeShifting(_subChannel.UserName, out userResult);
 
         if (userResult != null)
         {
-          _user = userResult;          
+          //_user = userResult;          
         }
         _isTimeshifting = false;
         _timeShiftFileName = null;
         _rtspUrl = null;
         _name = null;
-        _supportedBroadcastStandards = BroadcastStandard.AnalogTelevision;
       }
       catch (Exception)
       {
@@ -586,20 +523,20 @@ namespace Mediaportal.TV.Server.TVControl
     /// <summary>
     /// Stops recording.
     /// </summary>
-    /// <returns>true if success otherwise false</returns>
+    /// <returns><c>true</c> if successful, otherwise <c>false</c></returns>
     public void StopRecording()
     {
       try
       {
-        if (User.CardId < 0)
+        if (_subChannel.IdTuner < 0)
         {
           return;
         }
-        IUser userResult;
-        GlobalServiceProvider.Get<IControllerService>().StopRecording(_user.Name, _user.CardId, out userResult);
-        if (userResult != null)
+        ISubChannel subChannel;
+        GlobalServiceProvider.Get<IControllerService>().StopRecording(_subChannel.Id, out subChannel);
+        if (subChannel != null)
         {
-          _user = userResult;
+          _subChannel = subChannel;
         }
       }
       catch (Exception)
@@ -612,21 +549,21 @@ namespace Mediaportal.TV.Server.TVControl
     /// Starts recording.
     /// </summary>
     /// <param name="fileName">Name of the recording file.</param>
-    /// <returns>true if success otherwise false</returns>
+    /// <returns><c>true</c> if successful, otherwise <c>false</c></returns>
     public TvResult StartRecording(ref string fileName)
     {
       try
       {
-        if (User.CardId < 0)
+        if (_subChannel.IdTuner < 0)
         {
-          return TvResult.UnknownError;
+          return TvResult.UnexpectedError;
         }
         IUser userResult;
-        TvResult startRecording = GlobalServiceProvider.Get<IControllerService>().StartRecording(_user.Name, _user.CardId, out userResult, ref fileName);
+        TvResult startRecording = GlobalServiceProvider.Get<IControllerService>().StartRecording(_subChannel.UserName, _subChannel.IdTuner, out userResult, ref fileName);
 
         if (userResult != null)
         {
-          _user = userResult;
+          //_user = userResult;
         }
 
         return startRecording;
@@ -635,12 +572,10 @@ namespace Mediaportal.TV.Server.TVControl
       {
         //HandleFailure();
       }
-      return TvResult.UnknownError;
+      return TvResult.UnexpectedError;
     }
 
     #endregion
-
-    #region quality control
 
     /// <summary>
     /// Indicates, if the user is the owner of the card
@@ -650,135 +585,72 @@ namespace Mediaportal.TV.Server.TVControl
     {
       try
       {
-        if (User.CardId < 0)
+        if (_subChannel.IdTuner > 0)
         {
-          return false;
+          return GlobalServiceProvider.Get<IControllerService>().IsOwner(_subChannel.Id);
         }
-        return GlobalServiceProvider.Get<IControllerService>().IsOwner(User.CardId, User.Name);
       }
-      catch (Exception)
+      catch
       {
         //HandleFailure();
       }
       return false;
     }
 
+    #region quality control
+
     /// <summary>
-    /// Indicates, if the card supports quality control
+    /// Determine which (if any) quality control features are supported by a tuner.
     /// </summary>
-    /// <returns>true/false</returns>
-    public bool SupportsQualityControl()
+    /// <param name="supportedEncodeModes">The encoding modes supported by the tuner.</param>
+    /// <param name="canSetBitRate"><c>True</c> if the tuner's average and/or peak encoding bit-rate can be set.</param>
+    public void GetSupportedQualityControlFeatures(out EncodeMode supportedEncodeModes, out bool canSetBitRate)
     {
+      supportedEncodeModes = EncodeMode.Default;
+      canSetBitRate = false;
       try
       {
-        if (User.CardId < 0)
+        if (_subChannel.IdTuner > 0 && IsOwner())
         {
-          return false;
+          GlobalServiceProvider.Get<IControllerService>().GetSupportedQualityControlFeatures(_subChannel.IdTuner, out supportedEncodeModes, out canSetBitRate);
         }
-        return GlobalServiceProvider.Get<IControllerService>().SupportsQualityControl(User.CardId);
       }
-      catch (Exception)
+      catch
       {
         //HandleFailure();
       }
-      return false;
     }
 
     /// <summary>
-    /// Indicates, if the card supports bit rates
+    /// Get and/or set the tuner's video and/or audio encoding mode.
     /// </summary>
-    /// <returns>true/false</returns>
-    public bool SupportsBitRate()
-    {
-      try
-      {
-        if (User.CardId < 0)
-        {
-          return false;
-        }
-        return GlobalServiceProvider.Get<IControllerService>().SupportsBitRate(User.CardId);
-      }
-      catch (Exception)
-      {
-        //HandleFailure();
-      }
-      return false;
-    }
-
-    /// <summary>
-    /// Indicates, if the card supports bit rate modes 
-    /// </summary>
-    /// <returns>true/false</returns>
-    public bool SupportsBitRateModes()
-    {
-      try
-      {
-        if (User.CardId < 0)
-        {
-          return false;
-        }
-        return GlobalServiceProvider.Get<IControllerService>().SupportsBitRateModes(User.CardId);
-      }
-      catch (Exception)
-      {
-        //HandleFailure();
-      }
-      return false;
-    }
-
-    /// <summary>
-    /// Indicates, if the card supports bit rate peak mode
-    /// </summary>
-    /// <returns>true/false</returns>
-    public bool SupportsPeakBitRateMode()
-    {
-      try
-      {
-        if (User.CardId < 0)
-        {
-          return false;
-        }
-        return GlobalServiceProvider.Get<IControllerService>().SupportsPeakBitRateMode(User.CardId);
-      }
-      catch (Exception)
-      {
-        //HandleFailure();
-      }
-      return false;
-    }
-
-    /// <summary>
-    /// Gets/Sts the quality type
-    /// </summary>
-    public QualityType QualityType
+    public EncodeMode EncodeMode
     {
       get
       {
         try
         {
-          if (User.CardId < 0)
+          if (_subChannel.IdTuner > 0)
           {
-            return QualityType.Default;
+            return GlobalServiceProvider.Get<IControllerService>().GetEncodeMode(_subChannel.IdTuner);
           }
-          return GlobalServiceProvider.Get<IControllerService>().GetQualityType(User.CardId);
         }
-        catch (Exception)
+        catch
         {
           //HandleFailure();
         }
-        return QualityType.Default;
+        return EncodeMode.Default;
       }
       set
       {
         try
         {
-          if (User.CardId < 0)
+          if (_subChannel.IdTuner > 0 && IsOwner())
           {
-            return;
+            GlobalServiceProvider.Get<IControllerService>().SetEncodeMode(_subChannel.IdTuner, value);
           }
-          GlobalServiceProvider.Get<IControllerService>().SetQualityType(User.CardId, value);
         }
-        catch (Exception)
+        catch
         {
           //HandleFailure();
         }
@@ -786,44 +658,80 @@ namespace Mediaportal.TV.Server.TVControl
     }
 
     /// <summary>
-    /// Gets/Sts the bitrate mode
+    /// Get and/or set the tuner's average video and/or audio bit-rate, encoded as a percentage over the supported range.
     /// </summary>
-    public EncoderBitRateMode BitRateMode
+    public int AverageBitRate
     {
       get
       {
         try
         {
-          if (User.CardId < 0)
+          if (_subChannel.IdTuner > 0)
           {
-            return EncoderBitRateMode.Undefined;
+            return GlobalServiceProvider.Get<IControllerService>().GetAverageBitRate(_subChannel.IdTuner);
           }
-          return GlobalServiceProvider.Get<IControllerService>().GetBitRateMode(User.CardId);
         }
-        catch (Exception)
+        catch
         {
           //HandleFailure();
         }
-        return EncoderBitRateMode.Undefined;
+        return 0;
       }
       set
       {
         try
         {
-          if (User.CardId < 0)
+          if (_subChannel.IdTuner > 0 && IsOwner())
           {
-            return;
+            GlobalServiceProvider.Get<IControllerService>().SetAverageBitRate(_subChannel.IdTuner, value);
           }
-          GlobalServiceProvider.Get<IControllerService>().SetBitRateMode(User.CardId, value);
         }
-        catch (Exception)
+        catch
         {
           //HandleFailure();
         }
       }
     }
 
-    #region CI Menu Handling
+    /// <summary>
+    /// Get and/or set the tuner's peak video and/or audio bit-rate, encoded as a percentage over the supported range.
+    /// </summary>
+    public int PeakBitRate
+    {
+      get
+      {
+        try
+        {
+          if (_subChannel.IdTuner > 0)
+          {
+            return GlobalServiceProvider.Get<IControllerService>().GetPeakBitRate(_subChannel.IdTuner);
+          }
+        }
+        catch
+        {
+          //HandleFailure();
+        }
+        return 0;
+      }
+      set
+      {
+        try
+        {
+          if (_subChannel.IdTuner > 0 && IsOwner())
+          {
+            GlobalServiceProvider.Get<IControllerService>().SetPeakBitRate(_subChannel.IdTuner, value);
+          }
+        }
+        catch
+        {
+          //HandleFailure();
+        }
+      }
+    }
+
+    #endregion
+
+    #region CA Menu Handling
 
     /// <summary>
     /// Indicates, if the card supports CI Menu
@@ -833,13 +741,12 @@ namespace Mediaportal.TV.Server.TVControl
     {
       try
       {
-        if (User.CardId < 0 || !IsOwner())
+        if (_subChannel.IdTuner > 0 && IsOwner())
         {
-          return false;
+          return GlobalServiceProvider.Get<IControllerService>().CiMenuSupported(_subChannel.IdTuner);
         }
-        return GlobalServiceProvider.Get<IControllerService>().CiMenuSupported(User.CardId);
       }
-      catch (Exception)
+      catch
       {
         //HandleFailure();
       }
@@ -854,13 +761,12 @@ namespace Mediaportal.TV.Server.TVControl
     {
       try
       {
-        if (User.CardId < 0 || !IsOwner())
+        if (_subChannel.IdTuner > 0 && IsOwner())
         {
-          return false;
+          return GlobalServiceProvider.Get<IControllerService>().EnterCiMenu(_subChannel.IdTuner);
         }
-        return GlobalServiceProvider.Get<IControllerService>().EnterCiMenu(User.CardId);
       }
-      catch (Exception)
+      catch
       {
         //HandleFailure();
       }
@@ -870,19 +776,18 @@ namespace Mediaportal.TV.Server.TVControl
     /// <summary>
     /// Selects a ci menu entry
     /// </summary>
-    /// <param name="Choice">Choice (1 based), 0 for "back"</param>
+    /// <param name="choice">Choice (1 based), 0 for "back"</param>
     /// <returns>true if successful</returns>
-    public bool SelectCiMenu(byte Choice)
+    public bool SelectCiMenu(byte choice)
     {
       try
       {
-        if (User.CardId < 0 || !IsOwner())
+        if (_subChannel.IdTuner > 0 && IsOwner())
         {
-          return false;
+          return GlobalServiceProvider.Get<IControllerService>().SelectMenu(_subChannel.IdTuner, choice);
         }
-        return GlobalServiceProvider.Get<IControllerService>().SelectMenu(User.CardId, Choice);
       }
-      catch (Exception)
+      catch
       {
         //HandleFailure();
       }
@@ -897,13 +802,12 @@ namespace Mediaportal.TV.Server.TVControl
     {
       try
       {
-        if (User.CardId < 0 || !IsOwner())
+        if (_subChannel.IdTuner > 0 && IsOwner())
         {
-          return false;
+          return GlobalServiceProvider.Get<IControllerService>().CloseMenu(_subChannel.IdTuner);
         }
-        return GlobalServiceProvider.Get<IControllerService>().CloseMenu(User.CardId);
       }
-      catch (Exception)
+      catch
       {
         //HandleFailure();
       }
@@ -913,54 +817,26 @@ namespace Mediaportal.TV.Server.TVControl
     /// <summary>
     /// Sends an answer to CAM after a request
     /// </summary>
-    /// <param name="Cancel">cancel request</param>
-    /// <param name="Answer">answer string</param>
+    /// <param name="cancel">cancel request</param>
+    /// <param name="answer">answer string</param>
     /// <returns>true if successful</returns>
-    public bool SendMenuAnswer(bool Cancel, string Answer)
+    public bool SendMenuAnswer(bool cancel, string answer)
     {
       try
       {
-        if (User.CardId < 0 || !IsOwner())
+        if (_subChannel.IdTuner > 0 && IsOwner())
         {
-          return false;
+          return GlobalServiceProvider.Get<IControllerService>().SendMenuAnswer(_subChannel.IdTuner, cancel, answer);
         }
-        return GlobalServiceProvider.Get<IControllerService>().SendMenuAnswer(User.CardId, Cancel, Answer);
       }
-      catch (Exception)
+      catch
       {
-        //HandleFailure();
-      }
-      return false;
-    }
-
-    /// <summary>
-    /// Sets a callback handler
-    /// </summary>
-    /// <param name="CallbackHandler"></param>
-    /// <returns></returns>
-    public bool SetCiMenuHandler(IConditionalAccessMenuCallBack CallbackHandler)
-    {
-      this.LogDebug("VC: SetCiMenuHandler");
-      try
-      {
-        if (User.CardId < 0 || !IsOwner())
-        {
-          return false;
-        }
-        this.LogDebug("VC: SetCiMenuHandler card: {0}, {1}", User.CardId, CallbackHandler);
-        return GlobalServiceProvider.Get<IControllerService>().SetCiMenuHandler(User.CardId, CallbackHandler);
-      }
-      catch (Exception ex)
-      {
-        this.LogError(ex, "Exception");
         //HandleFailure();
       }
       return false;
     }
 
     #endregion
-
-    #endregion    
 
     #endregion
   }

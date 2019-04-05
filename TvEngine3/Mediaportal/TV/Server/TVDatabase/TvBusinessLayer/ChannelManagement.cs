@@ -20,6 +20,16 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       }
     }
 
+    public static IList<Channel> ListAllVisibleChannels(ChannelRelation includeRelations)
+    {
+      using (IChannelRepository channelRepository = new ChannelRepository())
+      {
+        IQueryable<Channel> query = channelRepository.GetQuery<Channel>().Where(c => c.VisibleInGuide).OrderBy(c => c.Name);
+        query = channelRepository.IncludeAllRelations(query, includeRelations);
+        return channelRepository.LoadNavigationProperties(query, includeRelations);
+      }
+    }
+
     public static IList<Channel> ListAllChannelsByGroupId(int idChannelGroup, ChannelRelation includeRelations)
     {
       using (IChannelRepository channelRepository = new ChannelRepository())
@@ -86,7 +96,9 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     {
       using (IChannelRepository channelRepository = new ChannelRepository())
       {
-        // TODO should tuning detail change events should be triggered here?
+        // Currently we don't trigger tuning detail change events here because
+        // tuning detail changes are all handled through tuning detail
+        // management.
         channelRepository.AttachEntityIfChangeTrackingDisabled(channelRepository.ObjectContext.Channels, channel);
         channelRepository.ApplyChanges(channelRepository.ObjectContext.Channels, channel);
         channelRepository.UnitOfWork.SaveChanges();
@@ -99,7 +111,9 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     {
       using (IChannelRepository channelRepository = new ChannelRepository())
       {
-        // TODO should tuning detail change events should be triggered here?
+        // Currently we don't trigger tuning detail change events here because
+        // tuning detail changes are all handled through tuning detail
+        // management.
         channelRepository.AttachEntityIfChangeTrackingDisabled(channelRepository.ObjectContext.Channels, channels);
         channelRepository.ApplyChanges(channelRepository.ObjectContext.Channels, channels);
         channelRepository.UnitOfWork.SaveChanges();
@@ -215,7 +229,6 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
         foreach (TuningDetail tuningDetail in tuningDetails)
         {
           tuningDetail.IdChannel = bestChannel.IdChannel;
-          tuningDetail.Priority = nextTuningDetailPriority++;
           TuningDetailManagement.SaveTuningDetail(tuningDetail);
         }
 

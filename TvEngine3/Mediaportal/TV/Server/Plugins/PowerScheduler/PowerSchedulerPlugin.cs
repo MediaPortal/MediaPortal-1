@@ -37,19 +37,6 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler
   [ComponentProxyBehavior(AdditionalInterfaces = new[] { typeof(ITvServerPluginCommunication) })]
   public class PowerSchedulerPlugin : ITvServerPlugin, ITvServerPluginCommunication
   {
-    #region Variables
-
-    #endregion
-
-    #region Constructor
-
-    /// <summary>
-    /// Creates a new PowerScheduler plugin
-    /// </summary>
-    public PowerSchedulerPlugin() {}
-
-    #endregion
-
     #region ITvServerPlugin implementation
 
     /// <summary>

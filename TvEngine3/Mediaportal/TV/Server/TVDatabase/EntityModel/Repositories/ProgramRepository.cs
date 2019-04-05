@@ -23,17 +23,17 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
     {
     }
 
-    public IQueryable<Program> GetNowProgramsForChannelGroup(int idGroup)
+    public IQueryable<Program> GetNowProgramsForChannelGroup(int idChannelGroup)
     {
-      IQueryable<int> channels = GetQuery<Channel>(c => c.GroupMaps.Any(g => g.IdGroup == idGroup)).Select(g => g.IdChannel);
+      IQueryable<int> channels = GetQuery<Channel>(c => c.ChannelGroupMappings.Any(m => m.IdChannelGroup == idChannelGroup)).Select(m => m.IdChannel);
 
       DateTime now = DateTime.Now;
       return GetQuery<Program>().Where(p => channels.Contains(p.IdChannel) && p.EndTime > now && p.StartTime <= now);
     }
 
-    public IQueryable<Program> GetNextProgramsForChannelGroup(int idGroup)
+    public IQueryable<Program> GetNextProgramsForChannelGroup(int idChannelGroup)
     {
-      IQueryable<int> channels = GetQuery<Channel>(c => c.GroupMaps.Any(g => g.IdGroup == idGroup)).Select(g => g.IdChannel);
+      IQueryable<int> channels = GetQuery<Channel>(c => c.ChannelGroupMappings.Any(m => m.IdChannelGroup == idChannelGroup)).Select(m => m.IdChannel);
       DateTime now = DateTime.Now;
 
       var q = GetQuery<Program>().Where(p =>
@@ -54,17 +54,6 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
       DateTime now = DateTime.Now;
       var programs = GetQuery<Program>().Where(p => p.IdChannel == idChannel && p.EndTime >= now).OrderBy(p => p.StartTime).Take(2);
       return IncludeAllRelations(programs);
-    }
-
-    public void DeleteAllProgramsWithChannelId(int idChannel)
-    {
-      Delete<Program>(p => p.IdChannel == idChannel);
-      UnitOfWork.SaveChanges();
-    }
-
-    public IQueryable<Program> FindAllProgramsByChannelId(int idChannel)
-    {
-      return GetQuery<Program>().Where(p => p.IdChannel == idChannel);
     }
 
     public Program GetProgramAt(DateTime date, int idChannel)

@@ -417,7 +417,7 @@ namespace Mediaportal.TV.Server.Plugins.TvMovieImport
           }
 
           UpdateImportStatus("waiting for database import to complete", stats);
-          ProgramManagement.InitiateInsertPrograms();
+          ProgramManagement.WaitForInsertProgramsToFinish();
 
           this.LogInfo("TV Movie import: import completed, result = {0}, [TVM DB/unmapped/TVE DB] channel count = {1}/{2}/{3}, program count = {2}/-/{3}",
                         success, stats.ChannelCountTvmDb, stats.ChannelCountTveDb,

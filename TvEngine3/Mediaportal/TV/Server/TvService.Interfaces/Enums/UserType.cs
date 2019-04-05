@@ -6,8 +6,8 @@ namespace Mediaportal.TV.Server.TVService.Interfaces.Enums
   public enum UserType
   {
     Normal,
-    EPG,
+    EpgGrabber,
     Scheduler,
-    Scanner
+    ChannelScanner
   }
 }

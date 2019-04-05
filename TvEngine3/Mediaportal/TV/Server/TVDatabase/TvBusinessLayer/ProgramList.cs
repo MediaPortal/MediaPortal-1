@@ -23,8 +23,6 @@
 using System;
 using System.Collections.Generic;
 using Mediaportal.TV.Server.TVDatabase.Entities;
-using Mediaportal.TV.Server.TVDatabase.Entities.Factories;
-//
 
 #endregion
 
@@ -181,21 +179,6 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     /// Removes programs from the list that overlap programs in <paramref name="existingPrograms"/>.
     /// </summary>
     /// <param name="existingPrograms">a list of programs to check against</param>
-    /// <remarks>
-    /// The list will be sorted if needed according to <seealso cref="AlreadySorted"/> property.
-    /// The <paramref name="existingPrograms"/> list is assumed unsorted and will be sorted.
-    /// Both list may contain programs from multiple channels.
-    /// Programs are assumed to not overlap within each list.
-    /// </remarks>
-    public void RemoveOverlappingPrograms(List<Program> existingPrograms)
-    {
-      RemoveOverlappingPrograms(existingPrograms, false);
-    }
-
-    /// <summary>
-    /// Removes programs from the list that overlap programs in <paramref name="existingPrograms"/>.
-    /// </summary>
-    /// <param name="existingPrograms">a list of programs to check against</param>
     /// <param name="alreadySorted">if <value>true</value> <paramref name="existingPrograms"/> is assumed to be sorted</param>
     /// <remarks>
     /// The list will be sorted if needed according to <seealso cref="AlreadySorted"/> property.
@@ -203,7 +186,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     /// Both list may contain programs from multiple channels.
     /// Programs are assumed to not overlap within each list.
     /// </remarks>
-    public void RemoveOverlappingPrograms(List<Program> existingPrograms, bool alreadySorted)
+    public void RemoveOverlappingPrograms(List<Program> existingPrograms, bool alreadySorted = false)
     {
       if (Count == 0 || existingPrograms.Count == 0) return;
 
@@ -252,53 +235,6 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
             //existProg = existingPrograms[j];
           }
         }
-      }
-    }
-
-    /// <summary>
-    /// Fill in gaps in the <see cref="ProgramList"/> using data from <paramref name="sourceList"/>.
-    /// </summary>
-    /// <param name="sourceList">The list to get data from</param>
-    /// <remarks>
-    /// Programs in <paramref name="sourceList"/> are assumed unsorted.
-    /// </remarks>
-    public void FillInMissingDataFromList(List<Program> sourceList)
-    {
-      FillInMissingDataFromList(sourceList, false);
-    }
-
-    /// <summary>
-    /// Fill in gaps in the <see cref="ProgramList"/> using data from <paramref name="sourceList"/>.
-    /// </summary>
-    /// <param name="sourceList">The list to get data from</param>
-    /// <param name="sourceAlreadySorted">If true <paramref name="sourceList"/> 
-    /// is assumed to be already sorted and will not be sorted again</param>
-    public void FillInMissingDataFromList(List<Program> sourceList, bool sourceAlreadySorted)
-    {
-      SortIfNeeded();
-      if (!sourceAlreadySorted)
-      {
-        sourceList.Sort(this);
-      }
-      Program prevProg = this[0];
-      for (int i = 1; i < Count; i++)
-      {
-        Program newProg = this[i];
-        if (newProg.StartTime > prevProg.EndTime) // we have a gap here
-        {
-          // try to find data in the database
-          foreach (Program dbProg in sourceList)
-          {
-            if ((dbProg.StartTime >= prevProg.EndTime) && (dbProg.EndTime <= newProg.StartTime))
-            {
-              Insert(i, ProgramFactory.Clone(dbProg));
-              i++;
-              prevProg = dbProg;
-            }
-            if (dbProg.StartTime >= newProg.EndTime) break; // no more data available
-          }
-        }
-        prevProg = newProg;
       }
     }
 
@@ -363,22 +299,14 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     /// Parse the program list and find the unique channel IDs
     /// </summary>
     /// <returns>A list of channel IDs</returns>
-    public List<int> GetChannelIds()
+    public HashSet<int> GetChannelIds()
     {
-      List<int> channelIds = new List<int>();
+      HashSet<int> channelIds = new HashSet<int>();
       if (Count != 0)
       {
-        SortIfNeeded();
-        int lastChannelId = this[0].IdChannel;
-        channelIds.Add(lastChannelId);
-        for (int i = 1; i < Count; i++)
+        foreach (Program program in this)
         {
-          Program currProg = this[i];
-          if (lastChannelId != currProg.IdChannel)
-          {
-            lastChannelId = currProg.IdChannel;
-            channelIds.Add(lastChannelId);
-          }
+          channelIds.Add(program.IdChannel);
         }
       }
       return channelIds;

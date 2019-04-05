@@ -13,7 +13,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     {
       using (ITunerRepository tunerRepository = new TunerRepository())
       {
-        IQueryable<Tuner> query = tunerRepository.GetAll<Tuner>().OrderBy(t => t.Priority);
+        IQueryable<Tuner> query = tunerRepository.GetAll<Tuner>().OrderBy(t => t.Priority).ThenBy(t => t.IdTuner);
         query = tunerRepository.IncludeAllRelations(query, includeRelations);
         return query.ToList();
       }

@@ -124,7 +124,6 @@
     <Compile Include="ServiceHelper.cs" />
     <Compile Include="SubChannel.cs" />
     <Compile Include="User.cs" />
-    <Compile Include="UserFactory.cs" />
     <Compile Include="Util.cs" />
     <Compile Include="VirtualCard.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

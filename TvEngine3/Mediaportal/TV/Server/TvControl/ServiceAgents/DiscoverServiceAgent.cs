@@ -26,7 +26,7 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
       binding.OpenTimeout = timeout;
       if (!String.IsNullOrEmpty(hostname))
       {
-        var endpoint = new EndpointAddress(ServiceHelper.GetEndpointURL(typeof(IDiscoverService), hostname));
+        var endpoint = new EndpointAddress(ServiceHelper.GetEndPointUrl(typeof(IDiscoverService), hostname));
         var channelFactory = new ChannelFactory<IDiscoverService>(binding, endpoint);
         _channel = channelFactory.CreateChannel();
       }

@@ -182,13 +182,22 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
               Random rnd2 = new Random();
               channelsForUser = channelsForUser.OrderBy((item) => rnd2.Next());
 
-              int priority = GetUserPriority();
-              string name = "stress-" + Convert.ToString(rnd.Next(1, 500)) + " [" + priority + "]";
+              int priority;
+              string priorityString = "default";
+              if (_rndPrio)
+              {
+                var rnd3 = new Random();
+                priority = rnd3.Next(1, 10);
+                priorityString = priority.ToString();
+              }
+
+              string name = "stress-" + Convert.ToString(rnd.Next(1, 500)) + " [" + priorityString + "]";
               while (_users.ContainsKey(name))
               {
-                name = "stress-" + Convert.ToString(rnd.Next(1, 500)) + " [" + priority + "]";
+                name = "stress-" + Convert.ToString(rnd.Next(1, 500)) + " [" + priorityString + "]";
               }
-              IUser user = UserFactory.CreateBasicUser(name, priority);
+              //IUser user = UserFactory.CreateBasicUser(name, priority);
+              IUser user = new User(name);  // TODO priority ignored
               _users.Add(user.Name, true);
               ThreadPool.QueueUserWorkItem(delegate { TuneChannelsForUser(user, channelsForUser); });
               Thread.Sleep(500);
@@ -225,21 +234,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           }
         }
       }
-    }
-
-    private int GetUserPriority()
-    {
-      int rndPrio;
-      if (_rndPrio)
-      {
-        var rnd = new Random();
-        rndPrio = rnd.Next(1, 10);
-      }
-      else
-      {
-        rndPrio = UserFactory.DEFAULT_PRIORITY_OTHER;  
-      }
-      return rndPrio;
     }
 
     private void mpButtonTimeShift_Click(object sender, EventArgs e)
@@ -385,10 +379,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             //user.TunerId = cardId;
             _succeeded++;
           }
-          else if (result == TvResult.CardIsDisabled ||
-                   result == TvResult.AllCardsBusy ||
-                   result == TvResult.CardIsDisabled ||
-                   result == TvResult.ChannelNotMappedToAnyCard ||
+          else if (result == TvResult.TunerDisabled ||
+                   result == TvResult.TunerBusy ||
+                   result == TvResult.TunerDisabled ||
+                   result == TvResult.ChannelTuningDetailsNotMapped ||
                    result == TvResult.TuneCancelled ||
                    result == TvResult.ChannelNotActive
             )
@@ -441,7 +435,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     {
       Stopwatch sw = Stopwatch.StartNew();
       UpdateDiscontinuityCounter(user, nextRowIndexForDiscUpdate);
-      result = ServiceAgents.Instance.ControllerServiceAgent.StartTimeShifting(user.Name, channel.IdChannel, out card, out user, user.Priority);
+      // TODO user priority
+      result = ServiceAgents.Instance.ControllerServiceAgent.StartTimeShifting(user.Name, channel.IdChannel, out card, out user);//, user.Priority);
       mSecsElapsed = sw.ElapsedMilliseconds;
       _avg += mSecsElapsed;
       return user;
@@ -452,46 +447,46 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       string err = "";
       switch (result)
       {
-        case TvResult.NoPmtFound:
+        /*case TvResult.NoPmtFound:
           err = "No PMT found";
-          break;
-        case TvResult.NoSignalDetected:
+          break;*/
+        case TvResult.TunerNoSignalDetected:
           err = "No signal";
           break;
-        case TvResult.CardIsDisabled:
+        case TvResult.TunerDisabled:
           err = "Card is not enabled";
           break;
-        case TvResult.AllCardsBusy:
+        case TvResult.TunerBusy:
           err = "All cards are busy";
           break;
-        case TvResult.ChannelIsScrambled:
+        case TvResult.ChannelNotDecryptable:
           err = "Channel is scrambled";
           break;
-        case TvResult.NoVideoAudioDetected:
+        case TvResult.ChannelVideoAndOrAudioNotReceived:
           err = "No Video/Audio detected";
           break;
-        case TvResult.UnableToStartGraph:
+        /*case TvResult.UnableToStartGraph:
           err = "Unable to create/start graph";
-          break;
-        case TvResult.ChannelNotMappedToAnyCard:
+          break;*/
+        case TvResult.ChannelTuningDetailsNotMapped:
           err = "Channel is not mapped to any card";
           break;
-        case TvResult.NoTuningDetails:
+        case TvResult.ChannelNoTuningDetails:
           err = "No tuning information available for this channel";
           break;
         case TvResult.UnknownChannel:
           err = "Unknown channel";
           break;
-        case TvResult.UnknownError:
+        case TvResult.UnexpectedError:
           err = "Unknown error occured";
           break;
-        case TvResult.GraphBuildingFailed:
+        case TvResult.TunerLoadFailed:
           err = "Unable to create graph";
           break;
-        case TvResult.SWEncoderMissing:
+        case TvResult.TunerLoadFailedSoftwareEncoderRequired:
           err = "No suppported software encoder installed";
           break;
-        case TvResult.NoFreeDiskSpace:
+        case TvResult.InsufficientFreeDiskSpace:
           err = "No free disk space";
           break;
         case TvResult.TuneCancelled:
@@ -519,7 +514,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       if (nextRowIndexForDiscUpdate > 0)
       {
         ListViewItem item = mpListViewLog.Items[nextRowIndexForDiscUpdate - 1];
-        if (user.SubChannels.Count > 0)//user.TunerId > 0)
+        // TODO user sub-channels
+        //if (user.SubChannels.Count > 0)//user.TunerId > 0)
+        if (true)
         {
           int discCounter = 0;
           int totalBytes = 0;

@@ -24,73 +24,31 @@ using Mediaportal.TV.Server.TVService.Interfaces.Enums;
 
 namespace Mediaportal.TV.Server.TVService.Interfaces.Services
 {
-  /// <summary>
-  /// User
-  /// </summary>  
   public interface IUser
   {
-    [DataMember]
-    UserType UserType { get; }
-
     /// <summary>
-    /// Gets an integer defining the user's card lock priority (higher number=higher priority)
-    /// </summary>    
-    /// <returns>user priority</returns>
-    [DataMember]
-    int? Priority { get; set; }
-
-    /// <summary>
-    /// Gets a list of all channel states    
-    /// </summary>    
-    /// <returns>dictionary containing all channel states of the channels supplied</returns>
-    [DataMember]
-    Dictionary<int, ChannelState> ChannelStates { get; set; }
-
-    /// <summary>
-    /// Gets or sets the failed card id.
+    /// Get the user's name.
     /// </summary>
-    /// <value>The card id.</value>
+    /// <value>The user's name.</value>
     [DataMember]
-    int FailedCardId { get; set; }
+    string Name { get; }
 
     /// <summary>
-    /// Gets or sets the card id.
+    /// Get the user's type.
     /// </summary>
-    /// <value>The card id.</value>
+    /// <value>The user's type.</value>
     [DataMember]
-    int CardId { get; set; }
-  
-    /// <summary>
-    /// Gets or sets the name.
-    /// </summary>
-    /// <value>The name.</value>
-    [DataMember]
-    string Name { get; set; }    
+    UserType Type { get; }
 
     /// <summary>
-    /// Gets or sets the history.
+    /// Get the user's sub-channels.
     /// </summary>
-    /// <value>The history.</value>    
-    object History { get; set; }
-
-
-    /// <summary>
-    /// Gets/Sets the stop reason
-    /// </summary>
-    [DataMember]
-    TvStoppedReason TvStoppedReason { get; set; }
-
-    
-
-    /// <summary>
-    /// Creates a new object that is a copy of the current instance.
-    /// </summary>
-    /// <returns>
-    /// A new object that is a copy of this instance.
-    /// </returns>
-    object Clone();
-
-    [DataMember]
-    IDictionary<int, ISubChannel> SubChannels { get; set; }        
+    /// <remarks>
+    /// The dictionary key is the sub-channel's identifier.
+    /// The dictionary should not be modified.
+    /// </remarks>
+    /// <value>The user's sub-channels.</value>
+    //[DataMember]
+    //IDictionary<int, ISubChannel> SubChannels { get; }
   }
 }

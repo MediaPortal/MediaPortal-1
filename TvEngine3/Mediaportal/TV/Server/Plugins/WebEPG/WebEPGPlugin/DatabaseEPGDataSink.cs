@@ -174,7 +174,7 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport
     void IEpgDataSink.Close()
     {
       this.LogInfo("WebEPG: Waiting for database to be updated...");
-      ProgramManagement.InitiateInsertPrograms();
+      ProgramManagement.WaitForInsertProgramsToFinish();
       this.LogInfo("WebEPG: Database update finished.");
     }
 
