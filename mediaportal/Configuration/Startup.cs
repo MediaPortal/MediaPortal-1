@@ -75,7 +75,7 @@ namespace MediaPortal.Configuration
       {
         Log.Info("Main: Configuration v" + versionInfo.FileVersion + " is starting up on Windows 10 Pro for Workstations (???)");
       }
-      Log.Info(OSInfo.OSInfo.GetLastInstalledWindowsUpdateTimestampAsString());
+      //Log.Info(OSInfo.OSInfo.GetLastInstalledWindowsUpdateTimestampAsString());
       Log.Info("Windows Media Player: [{0}]", OSInfo.OSInfo.GetWMPVersion());
 #if DEBUG
       Log.Info("Debug build: " + Application.ProductVersion);

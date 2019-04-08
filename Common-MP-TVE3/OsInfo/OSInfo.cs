@@ -807,13 +807,21 @@ namespace OSInfo
         var session = new UpdateSession();
         var updateSearcher = session.CreateUpdateSearcher();
         updateSearcher.Online = false;
+        updateSearcher.ServerSelection = (ServerSelection)2; //ssWindowsUpdate = 2
         int count = updateSearcher.GetTotalHistoryCount();
-        var history = updateSearcher.QueryHistory(0, count);
-        for (int i = 0; i < count; ++i)
+        if (count < 1)
         {
-          if ((history[i].ResultCode == OperationResultCode.orcSucceeded) &&
-              (!history[i].Title.Contains("Security Essentials")) &&
-              (!history[i].Title.Contains("Windows Defender")))
+          return DateTime.MinValue;
+        }
+        var history = updateSearcher.QueryHistory(0, count);
+        for (int i = 0; (i < count) && (i < 50); ++i)
+        {
+          // if ((history[i].ResultCode == OperationResultCode.orcSucceeded) &&
+          //     (!history[i].Title.Contains("Security Essentials")) &&
+          //     (!history[i].Title.Contains("Windows Defender")))
+          //   return history[i].Date;
+
+          if (history[i].ResultCode == OperationResultCode.orcSucceeded)
             return history[i].Date;
         }
       }
