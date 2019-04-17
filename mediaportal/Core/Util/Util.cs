@@ -1769,7 +1769,8 @@ namespace MediaPortal.Util
     {
       string extension = Path.GetExtension(fileName).ToLowerInvariant();
       // check for "http" to prevent exception
-      if (string.IsNullOrEmpty(fileName) || fileName.StartsWith("http://") || fileName.StartsWith("https://") || !File.Exists(fileName) || (extension == ".tsbuffer" || extension == ".ts")) 
+      if (string.IsNullOrEmpty(fileName) || fileName.StartsWith("http://") || fileName.StartsWith("https://") || 
+          !File.Exists(fileName) || (extension == ".tsbuffer" || extension == ".ts")) 
         return false;
 
       string vDrive = DaemonTools.GetVirtualDrive();

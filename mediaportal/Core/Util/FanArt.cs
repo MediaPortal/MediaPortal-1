@@ -86,12 +86,12 @@ namespace MediaPortal.Util
 
       bool isUrl = true;
 
-      if (localFile.Length > 7 && localFile.Substring(0, 7).Equals("file://"))
+      if (localFile.Length > 10 && localFile.StartsWith(@"file://"))
       {
         localFile = localFile.Replace("file://", "");
         isUrl = false;
       }
-      else if (localFile.Length > 7 && !localFile.StartsWith(@"http://") && !localFile.StartsWith(@"https://"))
+      else if (localFile.Length > 10 && !localFile.StartsWith(@"http://") && !localFile.StartsWith(@"https://"))
       {
         return;
       }

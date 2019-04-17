@@ -913,7 +913,7 @@ namespace MediaPortal.GUI.Video
         string titleCoverFilename = string.Empty;
         string imageExt = string.Empty;
 
-        if (!string.IsNullOrEmpty(imageUrl) && imageUrl.Length > 7 && !imageUrl.StartsWith(@"file://") && !imageUrl.StartsWith(@"http://") && !imageUrl.StartsWith(@"https://"))
+        if (!string.IsNullOrEmpty(imageUrl) && imageUrl.Length > 10 && !imageUrl.StartsWith(@"file://") && !imageUrl.StartsWith(@"http://") && !imageUrl.StartsWith(@"https://"))
         {
           imageExt = Util.Utils.GetFileExtension(imageUrl);
           if ((Util.Utils.IsPicture(imageUrl) || imageExt.ToLowerInvariant() == ".tbn") && File.Exists(imageUrl))
@@ -922,7 +922,7 @@ namespace MediaPortal.GUI.Video
           }
         }
 
-        if (!string.IsNullOrEmpty(imageUrl) && imageUrl.Length > 7 && (imageUrl.StartsWith(@"file://") || imageUrl.StartsWith(@"http://") || imageUrl.StartsWith(@"https://")))
+        if (!string.IsNullOrEmpty(imageUrl) && imageUrl.Length > 10 && (imageUrl.StartsWith(@"file://") || imageUrl.StartsWith(@"http://") || imageUrl.StartsWith(@"https://")))
         {
           // Set cover thumb filename (movieTitle{movieId})
           titleCoverFilename = _currentMovie.Title + "{" + _currentMovie.ID + "}";
@@ -1699,8 +1699,8 @@ namespace MediaPortal.GUI.Video
     // Cover refresh
     private void OnCoverRefresh()
     {
-      if (string.IsNullOrEmpty(_currentMovie.ThumbURL) || _currentMovie.ThumbURL.Length <= 7 || 
-         (_currentMovie.ThumbURL.Length > 7 && !_currentMovie.ThumbURL.StartsWith(@"http://") && !_currentMovie.ThumbURL.StartsWith(@"https://")))
+      if (string.IsNullOrEmpty(_currentMovie.ThumbURL) || _currentMovie.ThumbURL.Length <= 10 || 
+         (_currentMovie.ThumbURL.Length > 10 && !_currentMovie.ThumbURL.StartsWith(@"http://") && !_currentMovie.ThumbURL.StartsWith(@"https://")))
       {
         return;
       }

@@ -3349,7 +3349,7 @@ namespace MediaPortal.Configuration.Sections
         _progressDialog.SetLine1("Downloading cover for: " + movie.Title);
 
         // Skip no thumb URL movie ...
-        if (string.IsNullOrEmpty(movie.ThumbURL) || movie.ThumbURL.Length <= 7 || (!movie.ThumbURL.StartsWith(@"http://") && !movie.ThumbURL.StartsWith(@"https://")))
+        if (string.IsNullOrEmpty(movie.ThumbURL) || movie.ThumbURL.Length <= 10 || (!movie.ThumbURL.StartsWith(@"http://") && !movie.ThumbURL.StartsWith(@"https://")))
         {
           if (_progressDialog.Count < movies.Count - 1)
             _progressDialog.Count++;
@@ -3896,7 +3896,7 @@ namespace MediaPortal.Configuration.Sections
       imdbActor.DateOfDeath = tbDeathDate.Text;
       imdbActor.PlaceOfDeath = tbDeathPlace.Text;
 
-      if (!string.IsNullOrEmpty(tbThumbLoc.Text) && tbThumbLoc.Text.Length >= 7)
+      if (!string.IsNullOrEmpty(tbThumbLoc.Text) && tbThumbLoc.Text.Length > 10)
       {
         bool isUrl = (tbThumbLoc.Text.StartsWith(@"http://") || tbThumbLoc.Text.StartsWith(@"file://") || tbThumbLoc.Text.StartsWith(@"https://"));
         if (isUrl)
