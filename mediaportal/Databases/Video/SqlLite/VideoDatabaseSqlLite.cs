@@ -33,6 +33,7 @@ using MediaPortal.Player;
 using MediaPortal.Util;
 using SQLite.NET;
 using MediaPortal.Profile;
+using MediaInfo;
 
 namespace MediaPortal.Video.Database
 {
@@ -1165,7 +1166,7 @@ namespace MediaPortal.Video.Database
           }
 
           m_db.Execute(strSQL);
-          SetVideoDuration(fileID, mInfo.VideoDuration / 1000);
+          SetVideoDuration(fileID, mInfo.Duration / 1000);
           ArrayList movieFiles = new ArrayList();
           int movieId = VideoDatabase.GetMovieId(strFilenameAndPath);
           VideoDatabase.GetFilesForMovie(movieId, ref movieFiles);

@@ -38,7 +38,7 @@ using MediaPortal.Util;
 using Un4seen.Bass;
 using Un4seen.Bass.AddOn.Cd;
 using Action = MediaPortal.GUI.Library.Action;
-using MediaPortal.Player.Subtitles;
+using MediaInfo;
 
 namespace MediaPortal.Player
 {
@@ -1545,7 +1545,7 @@ namespace MediaPortal.Player
 
         // back to previous Windows if we are only in video fullscreen to do a proper release when next item is music only
         if (((GUIWindow.Window) (Enum.Parse(typeof (GUIWindow.Window), GUIWindowManager.ActiveWindow.ToString())) ==
-             GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO) && (MediaInfo != null && !MediaInfo.hasVideo) && type == MediaType.Music)
+             GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO) && (MediaInfo != null && !MediaInfo.HasVideo) && type == MediaType.Music)
         {
           GUIWindowManager.ShowPreviousWindow();
         }
@@ -1569,7 +1569,7 @@ namespace MediaPortal.Player
             {
               type = MediaType.Music;
             }
-            if (MediaInfo != null && MediaInfo.hasVideo && type == MediaType.Music)
+            if (MediaInfo != null && MediaInfo.HasVideo && type == MediaType.Music)
             {
               type = MediaType.Video;
             }
@@ -1605,7 +1605,7 @@ namespace MediaPortal.Player
           ChangeDriveSpeed(strFile, DriveType.CD);
         }
 
-        if (MediaInfo != null && MediaInfo.hasVideo && type == MediaType.Music)
+        if (MediaInfo != null && MediaInfo.HasVideo && type == MediaType.Music)
         {
           type = MediaType.Video;
         }
@@ -1638,7 +1638,7 @@ namespace MediaPortal.Player
                 // Make a double check on .ts because it can be recorded TV or Radio
                 if (extension == ".ts")
                 {
-                  if (MediaInfo != null && MediaInfo.hasVideo)
+                  if (MediaInfo != null && MediaInfo.HasVideo)
                   {
                     RefreshRateChanger.AdaptRefreshRate(strFile, (RefreshRateChanger.MediaType)(int)type);
                   }
@@ -1739,7 +1739,7 @@ namespace MediaPortal.Player
 
                 if (Util.Utils.PlayMovie(strFile))
                 {
-                  if (MediaInfo != null && MediaInfo.hasVideo)
+                  if (MediaInfo != null && MediaInfo.HasVideo)
                   {
                     RefreshRateChanger.AdaptRefreshRate();
                   }
@@ -1805,7 +1805,7 @@ namespace MediaPortal.Player
               // Make a double check on .ts because it can be recorded TV or Radio
               if (extension == ".ts")
               {
-                if (MediaInfo != null && MediaInfo.hasVideo)
+                if (MediaInfo != null && MediaInfo.HasVideo)
                 {
                   RefreshRateChanger.AdaptRefreshRate(strFile, (RefreshRateChanger.MediaType)(int)type);
                 }
