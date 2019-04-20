@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>464554871</id>
+  <defaultcontrol>50</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <define>#header.label:FRITZ!Box Manager</define>
+  <define>#header.hover:hover_fritzbox.png</define>
+  <controls>
+    <control>
+      <description>BG</description>
+      <type>image</type>
+      <id>1</id>
+      <texture>#backgroundcolour</texture>
+      <width>1920</width>
+      <height>1080</height>
+    </control>
+    
+	<import>custom\Allscreens\user_dialog.xml</import>
+    	
+    <control>
+      <description>Action menu</description>
+      <type>actiongroup</type>
+      <dimColor>00ffffff</dimColor>
+      <width>800</width>
+      <height>800</height>
+      <buttonX>0</buttonX>
+      <buttonY>0</buttonY>
+      <buttonwidth>100</buttonwidth>
+      <buttonheight>1080</buttonheight>
+      <onexit>50</onexit>
+      <defaultcontrol>2</defaultcontrol>
+      <textureFocus></textureFocus>
+      <textureNoFocus></textureNoFocus>
+	  
+     <control>
+	   <type>image</type>
+	   <posX>0</posX>
+	   <posY>0</posY>
+	   <width>1920</width>
+	   <height>1080</height>
+       <texture>black.png</texture>
+        <colordiffuse>99000000</colordiffuse>
+	   <animation effect="fade" time="350" reversible="true">hidden</animation>
+	   <visible>!Control.HasFocus(50)</visible>    
+	 </control>
+		
+	  <control>
+        <type>image</type>
+        <id>0</id>
+        <posX>420</posX>
+        <posY>150</posY>
+        <width>975</width>
+        <height>836</height>
+        <texture>dialogglowbig.png</texture>
+		<visible>!Control.HasFocus(50)</visible>    
+      </control>	
+	  
+      <control>
+        <description>Group element</description>
+        <type>group</type>
+        <visible>!Control.HasFocus(50)</visible>
+        <posX>500</posX>
+        <posY>250</posY>
+        <layout>StackLayout</layout>
+        <control>
+          <id>2</id>
+          <description>View as</description>
+          <type>button</type>
+          <onright>50</onright>
+          <onup>9</onup>
+          <label>100</label>
+		  <textureFocus>btn_list_blue2.png</textureFocus>
+          <textureNoFocus></textureNoFocus>
+		  <textYOff>7</textYOff>
+		  <width>820</width>
+		  <height>50</height>
+        </control>
+        <control>
+          <id>3</id>
+          <description>Sort</description>
+          <type>sortbutton</type>
+          <onright>50</onright>
+          <ondown>4</ondown>
+		  <textureFocus>btn_list_blue2.png</textureFocus>
+          <textureNoFocus></textureNoFocus>
+		  <textYOff>7</textYOff>
+		  <width>820</width>
+		  <height>50</height>
+        </control>
+        <control>
+          <id>4</id>
+          <description>Mode</description>
+          <type>button</type>
+          <onright>50</onright>
+          <ondown>9</ondown>
+		  <textureFocus>btn_list_blue2.png</textureFocus>
+          <textureNoFocus></textureNoFocus>
+		  <textYOff>7</textYOff>
+		  <width>820</width>
+		  <height>50</height>
+          <label>Mode</label>
+        </control>
+        <control>
+          <id>9</id>
+          <description>Update list</description>
+          <type>button</type>
+          <onright>50</onright>
+          <ondown>2</ondown>
+		  <textureFocus>btn_list_blue2.png</textureFocus>
+          <textureNoFocus></textureNoFocus>
+		  <textYOff>7</textYOff>
+		  <width>820</width>
+		  <height>50</height>
+          <label>Update</label>
+        </control>
+      </control>
+    </control>
+    <import>common.facade.pictures.xml</import>
+	
+	
+		
+	    <!-- Gradient overlay -->
+	  <control>
+        <type>image</type>
+        <id>0</id>
+		<posX>0</posX>
+		<posY>730</posY>
+        <width>1920</width>
+        <height>164</height>
+        <texture>#overlaycolour</texture>
+		<visible>!facadeview.list+!facadeview.coverflow+!facadeview.filmstrip</visible>
+      </control>
+	<!-- Gradient overlay -->  
+	
+	
+    <control>
+      <description>Contact picture</description>
+      <id>500</id>
+      <type>image</type>
+      <posX>1350</posX>
+      <posY>250</posY>
+      <width>167</width>
+      <height>142</height>
+      <keepaspectratio>yes</keepaspectratio>
+      <centered>yes</centered>
+      <texture flipY="true" diffuse="Thumb_Mask.png">#selectedthumb</texture>
+      <visible>yes</visible>
+      <animation effect="fade" time="450" reversible="false">visible</animation>
+    </control>
+	<control>
+      <description>Current View</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>138</posX>
+      <posY>48</posY>
+      <align>left</align>
+      <width>1800</width>
+      <font>font18</font>	
+      <textcolor>ffffffff</textcolor>
+      <label>FRITZ!Box Manager</label>
+      <align>left</align>
+    </control>
+
+  </controls>
+</window>

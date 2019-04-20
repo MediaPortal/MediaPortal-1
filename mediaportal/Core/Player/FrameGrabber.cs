@@ -100,56 +100,57 @@ namespace MediaPortal
           {
             lock (grabNotifier)
             {
-              lock (VMR9Util.g_vmr9._syncRoot)
-              {
-                if (VMR9Util.g_vmr9 != null && !VMR9Util.g_vmr9._exitThread)
+              if (VMR9Util.g_vmr9?._syncRoot != null)
+                lock (VMR9Util.g_vmr9?._syncRoot)
                 {
-                  try
+                  if (VMR9Util.g_vmr9 != null && !VMR9Util.g_vmr9._exitThread)
                   {
-                    if (FrameResult != null)
+                    try
                     {
-                      FrameResult.SafeDispose();
-                      FrameResult = null;
-                    }
-
-                    // Grab frame
-                    //VMR9Util.g_vmr9.GrabCurrentFrame(); // Using C# WIP
-                    VMR9Util.g_vmr9.MadVrGrabCurrentFrame();
-
-                    if (GUIGraphicsContext.madVRCurrentFrameBitmap != null)
-                    {
-#if DEBUG
-                      string directory = string.Format("{0}\\MediaPortal Screenshots\\{1:0000}-{2:00}-{3:00}",
-                        Environment.GetFolderPath(Environment.SpecialFolder.MyPictures),
-                        DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
-                      if (!Directory.Exists(directory))
+                      if (FrameResult != null)
                       {
-                        Log.Info("GetCurrentImage: Taking screenshot - Creating directory: {0}", directory);
-                        Directory.CreateDirectory(directory);
+                        FrameResult.SafeDispose();
+                        FrameResult = null;
                       }
-                      string fileName = string.Format("{0}\\madVR - {1:00}-{2:00}-{3:00}-{4:000}", directory,
-                        DateTime.Now.Hour,
-                        DateTime.Now.Minute, DateTime.Now.Second, DateTime.Now.Millisecond);
-#endif
-                      FrameResult = new Bitmap(GUIGraphicsContext.madVRCurrentFrameBitmap);
+
+                      // Grab frame
+                      //VMR9Util.g_vmr9.GrabCurrentFrame(); // Using C# WIP
+                      VMR9Util.g_vmr9.MadVrGrabCurrentFrame();
+
+                      if (GUIGraphicsContext.madVRCurrentFrameBitmap != null)
+                      {
 #if DEBUG
-                      // Need to be commented out for saving screenshot frame
-                      //FrameResult.Save(fileName + ".jpg", ImageFormat.Jpeg);
+                        string directory = string.Format("{0}\\MediaPortal Screenshots\\{1:0000}-{2:00}-{3:00}",
+                          Environment.GetFolderPath(Environment.SpecialFolder.MyPictures),
+                          DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
+                        if (!Directory.Exists(directory))
+                        {
+                          Log.Info("GetCurrentImage: Taking screenshot - Creating directory: {0}", directory);
+                          Directory.CreateDirectory(directory);
+                        }
+                        string fileName = string.Format("{0}\\madVR - {1:00}-{2:00}-{3:00}-{4:000}", directory,
+                          DateTime.Now.Hour,
+                          DateTime.Now.Minute, DateTime.Now.Second, DateTime.Now.Millisecond);
 #endif
-                      return FrameResult;
+                        FrameResult = new Bitmap(GUIGraphicsContext.madVRCurrentFrameBitmap);
+#if DEBUG
+                        // Need to be commented out for saving screenshot frame
+                        //FrameResult.Save(fileName + ".jpg", ImageFormat.Jpeg);
+#endif
+                        return FrameResult;
+                      }
+                      // Bitmap not ready return null
+                      Log.Debug("FrameGrabber: Frame not ready for madVR");
+                      return null;
                     }
-                    // Bitmap not ready return null
-                    Log.Debug("FrameGrabber: Frame not ready for madVR");
-                    return null;
-                  }
-                  catch
-                  {
-                    Log.Debug("FrameGrabber: Frame grab catch failed for madVR");
-                    return null;
-                    // When Bitmap is not yet ready
+                    catch
+                    {
+                      Log.Debug("FrameGrabber: Frame grab catch failed for madVR");
+                      return null;
+                      // When Bitmap is not yet ready
+                    }
                   }
                 }
-              }
 
               //////// Part of code used for D3D9 setting in madVR
               //////lock (grabNotifier)

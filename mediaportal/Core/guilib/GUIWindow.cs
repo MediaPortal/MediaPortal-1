@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2019 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2019 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -258,7 +258,7 @@ namespace MediaPortal.GUI.Library
 
     private VisualEffect _showAnimation = new VisualEffect(); // for dialogs
     private VisualEffect _closeAnimation = new VisualEffect();
-    public static SynchronizationContext _mainThreadContext = SynchronizationContext.Current;
+    public readonly static SynchronizationContext _mainThreadContext = SynchronizationContext.Current;
 
     #endregion
 
@@ -495,32 +495,21 @@ namespace MediaPortal.GUI.Library
 
     public bool LoadSkin()
     {
-      if (Thread.CurrentThread.Name != "MPMain" && Thread.CurrentThread.Name != "Config Main")
-      {
-        if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
-            GUIGraphicsContext.InVmr9Render && GUIGraphicsContext.Vmr9Active)
-        {
-          return LoadSkinBool();
-        }
-        if (!GUIWindow._loadSkinDone)
-        {
-          GUIWindow._loadSkinDone = true;
-          if (!isSkinXMLLoading)
-          {
-            int result = GUIWindowManager.SendThreadCallbackSkin(LoadSkinThreaded, 0, 0, null);
-          }
-        }
-        return _loadSkinResult;
-      }
-      return LoadSkinBool();
-    }
+      //if (Thread.CurrentThread.Name != "MPMain" && Thread.CurrentThread.Name != "Config Main")
+      //{
+      //  _loadSkinDone = true;
 
-    public int LoadSkinThreaded(int p1, int p2, object s)
-    {
-      _loadSkinResult = LoadSkinBool();
-      Log.Debug("LoadSkinThreaded() done with return value : {0}", _loadSkinResult);
-      GUIWindow._loadSkinDone = false;
-      return p1;
+      //  GUIWindowManager.SendThreadCallbackSkin((p1, p2, result) =>
+      //  {
+      //    _loadSkinResult = LoadSkinBool();
+      //    Log.Debug("LoadSkin() callback done with return value  : {0}", _loadSkinResult);
+      //    return 0;
+      //  }, 0, 0, null);
+
+      //  Log.Debug("LoadSkin() callback thread done with return value : {0}", _loadSkinResult);
+      //  return true;
+      //}
+      return LoadSkinBool();
     }
 
     /// <summary>
@@ -549,7 +538,10 @@ namespace MediaPortal.GUI.Library
       }
 
       if (isSkinXMLLoading)
+      {
         Log.Error("LoadSkin: Running already so skipping");
+        //return false; // need to be disable to be able to load skin when not in main thread
+      }
 
       isSkinXMLLoading = true;
       _lastSkin = GUIGraphicsContext.Skin;
@@ -801,6 +793,13 @@ namespace MediaPortal.GUI.Library
                 {
                   LoadInclude(node, defines);
                 }
+                else
+                {
+                  if (node.Attributes["otherwise"] != null && !string.IsNullOrEmpty(node.Attributes["otherwise"].Value))
+                  {
+                    LoadInclude(node, defines, true);
+                  }
+                }
                 break;
             }
           }
@@ -868,16 +867,34 @@ namespace MediaPortal.GUI.Library
 
     private bool LoadInclude(XmlNode node, IDictionary<string, string> defines)
     {
+      return LoadInclude(node, defines, false);
+    }
+
+    private bool LoadInclude(XmlNode node, IDictionary<string, string> defines, bool otherwise)
+    {
       if (node == null || Children == null)
       {
         return false;
+      }
+
+      string skinFile = node.InnerText;
+      if (otherwise)
+      {
+        if (node.Attributes["otherwise"] != null && !string.IsNullOrEmpty(node.Attributes["otherwise"].Value))
+        {
+          skinFile = node.Attributes["otherwise"].Value;
+        }
+        else
+        {
+          return false;
+        }
       }
 
       try
       {
         XmlDocument doc = new XmlDocument();
 
-        doc.Load(GUIGraphicsContext.GetThemedSkinFile("\\" + node.InnerText));
+        doc.Load(GUIGraphicsContext.GetThemedSkinFile("\\" + skinFile));
 
         if (doc.DocumentElement == null)
         {
@@ -1112,7 +1129,7 @@ namespace MediaPortal.GUI.Library
     {
       // reset our info manager caches
       GUIInfoManager.ResetCache();
-      foreach (GUIControl control in Children)
+      foreach (GUIControl control in Children.ToList())
       {
         if (control.GetVisibleCondition() != 0)
         {
@@ -1201,6 +1218,7 @@ namespace MediaPortal.GUI.Library
               GUIWindowManager.Process();
               if (GUIWindow._loadSkinDone)
               {
+                GUIWindow._loadSkinDone = false;
                 break;
               }
             }
@@ -1271,6 +1289,12 @@ namespace MediaPortal.GUI.Library
         Dispose();
 
         LoadSkin();
+
+        // needed when this call is done from a thread
+        if (_windowAllocated)
+        {
+          //return;
+        }
 
         HashSet<int> faultyControl = new HashSet<int>();
         // tell every control we're gonna alloc the resources next
@@ -1373,7 +1397,7 @@ namespace MediaPortal.GUI.Library
       _windowLoaded = false;
       _listPositions = new List<CPosition>();
 
-      foreach (GUIControl child in Children)
+      foreach (GUIControl child in Children.ToList())
       {
         GUIControl control = child;
         control.StorePosition();
@@ -1471,35 +1495,39 @@ namespace MediaPortal.GUI.Library
     /// <returns>id of control or -1 if no control has the focus</returns>
     public virtual int GetFocusControlId()
     {
-      foreach (GUIControl child in Children.ToList())
+      lock (Children)
       {
-        GUIGroup grp = child as GUIGroup;
-        if (grp != null)
+        foreach (GUIControl child in Children.ToList())
         {
-          int iFocusedControlId = grp.GetFocusControlId();
-          if (iFocusedControlId >= 0)
+          GUIGroup grp = child as GUIGroup;
+          if (grp != null)
           {
-            _previousFocusedControlId = iFocusedControlId;
-            // Store new ID for the rendering optimisation
-            FocusID = iFocusedControlId;
-            return iFocusedControlId;
-          }
-        }
-        else
-        {
-          if (child != null)
-          {
-            var guicontrol = child;
-            if (guicontrol.Focus)
+            int iFocusedControlId = grp.GetFocusControlId();
+            if (iFocusedControlId >= 0)
             {
+              _previousFocusedControlId = iFocusedControlId;
               // Store new ID for the rendering optimisation
-              FocusID = guicontrol.GetID;
-              return guicontrol.GetID;
+              FocusID = iFocusedControlId;
+              return iFocusedControlId;
+            }
+          }
+          else
+          {
+            if (child != null)
+            {
+              var guicontrol = child;
+              if (guicontrol.Focus)
+              {
+                // Store new ID for the rendering optimisation
+                FocusID = guicontrol.GetID;
+                return guicontrol.GetID;
+              }
             }
           }
         }
+
+        return -1;
       }
-      return -1;
     }
 
     /// <summary>
@@ -1551,12 +1579,48 @@ namespace MediaPortal.GUI.Library
       AllocResources();
     }
 
+    internal static bool WasWinTVplugin()
+    {
+      var act = GUIWindowManager.ActiveWindow;
+      var result = (
+        act == (int) Window.WINDOW_TV_CROP_SETTINGS ||
+        act == (int) Window.WINDOW_SETTINGS_SORT_CHANNELS ||
+        act == (int) Window.WINDOW_SETTINGS_TV_EPG ||
+        act == (int) Window.WINDOW_TVFULLSCREEN ||
+        act == (int) Window.WINDOW_TVGUIDE ||
+        act == (int) Window.WINDOW_MINI_GUIDE ||
+        act == (int) Window.WINDOW_TV_SEARCH ||
+        act == (int) Window.WINDOW_TV_SEARCHTYPE ||
+        act == (int) Window.WINDOW_TV_SCHEDULER_PRIORITIES ||
+        act == (int) Window.WINDOW_TV_PROGRAM_INFO ||
+        act == (int) Window.WINDOW_TV_RECORDED_INFO ||
+        act == (int) Window.WINDOW_SETTINGS_RECORDINGS ||
+        act == (int) Window.WINDOW_SCHEDULER ||
+        act == (int) Window.WINDOW_SEARCHTV ||
+        act == (int) Window.WINDOW_TV_TUNING_DETAILS ||
+        act == (int) Window.WINDOW_TV
+        );
+
+      return result;
+    }
+
     /// <summary>
     /// Render() method. This method draws the window by asking every control
     /// of the window to render itself
     /// </summary>
     public virtual void Render(float timePassed)
     {
+      // Disable this hack it break some skin reload (GUIVolumeOverlay)
+      // Hack for madVR to avoid freeze
+      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
+          GUIGraphicsContext.InVmr9Render && GUIGraphicsContext.Vmr9Active)
+      {
+        if (!GUIGraphicsContext.NeedRecreateSwapChain || GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.SUSPENDING)
+        {
+          //_shouldRestore = false;
+        }
+      }
+
       if (_shouldRestore)
       {
         DoRestoreSkin();
@@ -1602,8 +1666,8 @@ namespace MediaPortal.GUI.Library
         {
           foreach (GUIControl control in Children.ToList())
           {
-            control.UpdateVisibility();
-            control.DoRender(timePassed, currentTime);
+            control?.UpdateVisibility();
+            control?.DoRender(timePassed, currentTime);
           }
         }
 
@@ -1917,6 +1981,9 @@ namespace MediaPortal.GUI.Library
 
               _skipAnimation = false;
 
+              msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT_DONE, 0, 0, 0, 0, 0, null);
+              GUIWindowManager.SendThreadMessage(msg);
+
               return true;
               // TODO BUG ! Check if this return needs to be in the case and if there needs to be a break statement after each case.
 
@@ -1935,6 +2002,9 @@ namespace MediaPortal.GUI.Library
 #endif
                 _shouldRestore = true;
                 _skipAnimation = false;
+
+                msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT_DONE, 0, 0, 0, 0, 0, null);
+                GUIWindowManager.SendThreadMessage(msg);
 
                 return true;
               }

@@ -1,4 +1,4 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2018 Team MediaPortal
 
 // Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
@@ -33,6 +33,7 @@ using MediaPortal.Profile;
 using MediaPortal.Player.PostProcessing;
 using System.Collections;
 using System.Collections.Generic;
+using MediaPortal.Player.LAV;
 
 namespace MediaPortal.Player
 {
@@ -209,6 +210,7 @@ namespace MediaPortal.Player
             if (comObject != null)
             {
               PostProcessFilterVideo.Add(filter, comObject);
+              Log.Debug("TSReaderPlayer: PostProcessAddVideo() - {0}", filter.ToString());
             }
           }
         }
@@ -227,6 +229,53 @@ namespace MediaPortal.Player
             if (comObject != null)
             {
               PostProcessFilterAudio.Add(filter, comObject);
+              Log.Debug("TSReaderPlayer: PostProcessAddAudio() - {0}", filter.ToString());
+            }
+          }
+        }
+      }
+    }
+
+    protected override void PostProcessRemoveVideo()
+    {
+      if (filterConfig != null)
+      {
+        foreach (string filter in this.filterConfig.OtherFilters)
+        {
+          if (FilterHelper.GetVideoCodec().Contains(filter) && filter.ToString() != "Core CC Parser")
+          {
+            var comObject = DirectShowUtil.GetFilterByName(_graphBuilder, filter);
+            if (comObject == null)
+            {
+              PostProcessFilterVideo.Remove(filter);
+              Log.Debug("TSReaderPlayer: PostProcessRemoveVideo() - {0}", filter);
+            }
+            else
+            {
+              DirectShowUtil.ReleaseComObject(comObject);
+            }
+          }
+        }
+      }
+    }
+
+    protected override void PostProcessRemoveAudio()
+    {
+      if (filterConfig != null)
+      {
+        foreach (string filter in this.filterConfig.OtherFilters)
+        {
+          if (FilterHelper.GetAudioCodec().Contains(filter))
+          {
+            var comObject = DirectShowUtil.GetFilterByName(_graphBuilder, filter);
+            if (comObject == null)
+            {
+              PostProcessFilterAudio.Remove(filter);
+              Log.Debug("TSReaderPlayer: PostProcessRemoveAudio() - {0}", filter);
+            }
+            else
+            {
+              DirectShowUtil.ReleaseComObject(comObject);
             }
           }
         }
@@ -393,6 +442,13 @@ namespace MediaPortal.Player
           Log.Debug("TSReaderPlayer: PostProcessingEngine to DummyEngine");
         }
 
+        // When using LAV Audio
+        IAudioPostEngine audioEngine = AudioPostEngine.GetInstance(true);
+        if (audioEngine != null && !audioEngine.LoadPostProcessing(_graphBuilder))
+        {
+          AudioPostEngine.engine = new AudioPostEngine.DummyEngine();
+        }
+
         #endregion
 
         #region render TsReader output pins
@@ -444,6 +500,10 @@ namespace MediaPortal.Player
           }
         }
         DirectShowUtil.RemoveUnusedFiltersFromGraph(_graphBuilder);
+
+        // Clean-post process filter that has been removed from graph
+        PostProcessRemoveVideo();
+        PostProcessRemoveAudio();
 
         #endregion
 
@@ -822,7 +882,7 @@ namespace MediaPortal.Player
     {
       lock (lockObj)
       {
-        if (_graphBuilder == null)
+        if (_graphBuilder == null || (VMR9Util.g_vmr9 != null && VMR9Util.g_vmr9.isCurrentStopping))
         {
           return;
         }
@@ -869,13 +929,24 @@ namespace MediaPortal.Player
           PostProcessingEngine.GetInstance().FreePostProcess();
           Log.Debug("TSReaderPlayer: Cleanup FreePostProcess");
 
+          AudioPostEngine.GetInstance().FreePostProcess();
+          Log.Debug("TSReaderPlayer: Cleanup FreeAudioEngine");
+
           //FinalReleaseComObject from PostProcessFilter list objects.
           foreach (var ppFilter in PostProcessFilterVideo)
           {
             if (ppFilter.Value != null)
             {
-              DirectShowUtil.RemoveFilter(_graphBuilder, ppFilter.Value as IBaseFilter);
-              DirectShowUtil.FinalReleaseComObject(ppFilter.Value);
+              try
+              {
+                Log.Debug("TSReaderPlayer: Removing PostProcessFilter - Video");
+                DirectShowUtil.RemoveFilter(_graphBuilder, ppFilter.Value);
+                DirectShowUtil.FinalReleaseComObject(ppFilter.Value);
+              }
+              catch (Exception ex)
+              {
+                Log.Error("TSReaderPlayer: Exception while cleaning PostProcessFilterVideo - {0} {1}", ex.Message, ex.StackTrace);
+              }
             }
           }
           PostProcessFilterVideo.Clear();
@@ -883,8 +954,16 @@ namespace MediaPortal.Player
           {
             if (ppFilter.Value != null)
             {
-              DirectShowUtil.RemoveFilter(_graphBuilder, ppFilter.Value as IBaseFilter);
-              DirectShowUtil.FinalReleaseComObject(ppFilter.Value);
+              try
+              {
+                Log.Debug("TSReaderPlayer: Removing PostProcessFilter - Audio");
+                DirectShowUtil.RemoveFilter(_graphBuilder, ppFilter.Value);
+                DirectShowUtil.FinalReleaseComObject(ppFilter.Value);
+              }
+              catch (Exception ex)
+              {
+                Log.Error("TSReaderPlayer: Exception while cleaning PostProcessFilterAudio - {0} {1}", ex.Message, ex.StackTrace);
+              }
             }
           }
           PostProcessFilterAudio.Clear();
@@ -954,7 +1033,7 @@ namespace MediaPortal.Player
             _dvbSubRenderer = null;
           }
 
-          if (_videoWin != null)
+          if (_videoWin != null && GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
           {
             _videoWin.put_Owner(IntPtr.Zero);
             _videoWin.put_Visible(OABool.False);
@@ -1363,6 +1442,14 @@ namespace MediaPortal.Player
     public override bool HasPostprocessing
     {
       get { return PostProcessingEngine.GetInstance().HasPostProcessing; }
+    }
+
+    /// <summary>
+    /// Property to Get Audio LAV delay engine
+    /// </summary>
+    public override bool HasAudioEngine
+    {
+      get { return AudioPostEngine.GetInstance().HasAudioEngine; }
     }
 
     /// <summary>

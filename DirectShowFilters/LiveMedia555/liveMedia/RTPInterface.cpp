@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2017 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2018 Live Networks, Inc.  All rights reserved.
 // An abstraction of a network interface used for RTP (or RTCP).
 // (This allows the RTP-over-TCP hack (RFC 2326, section 10.12) to
 // be implemented transparently.)
@@ -172,6 +172,10 @@ static void deregisterSocket(UsageEnvironment& env, int sockNum, unsigned char s
 
 void RTPInterface::removeStreamSocket(int sockNum,
 				      unsigned char streamChannelId) {
+  // Remove - from our list of 'TCP streams' - the record of the (sockNum,streamChannelId) pair.
+  // (However "streamChannelId" == 0xFF is a special case, meaning remove all
+  //  (sockNum,*) pairs.)
+  
   while (1) {
     tcpStreamRecord** streamsPtr = &fTCPStreams;
 
@@ -179,13 +183,14 @@ void RTPInterface::removeStreamSocket(int sockNum,
       if ((*streamsPtr)->fStreamSocketNum == sockNum
 	  && (streamChannelId == 0xFF || streamChannelId == (*streamsPtr)->fStreamChannelId)) {
 	// Delete the record pointed to by *streamsPtr :
+	unsigned char streamChannelIdToRemove = (*streamsPtr)->fStreamChannelId;
 	tcpStreamRecord* next = (*streamsPtr)->fNext;
 	(*streamsPtr)->fNext = NULL;
 	delete (*streamsPtr);
 	*streamsPtr = next;
 
 	// And 'deregister' this socket,channelId pair:
-	deregisterSocket(envir(), sockNum, streamChannelId);
+	deregisterSocket(envir(), sockNum, streamChannelIdToRemove);
 
 	if (streamChannelId != 0xFF) return; // we're done
 	break; // start again from the beginning of the list, in case the list has changed
@@ -459,7 +464,7 @@ void SocketDescriptor
 #endif
   fSubChannelHashTable->Remove((char const*)(long)streamChannelId);
 
-  if (fSubChannelHashTable->IsEmpty() || streamChannelId == 0xFF) {
+  if (fSubChannelHashTable->IsEmpty()) {
     // No more interfaces are using us, so it's curtains for us now:
     if (fAreInReadHandlerLoop) {
       fDeleteMyselfNext = True; // we can't delete ourself yet, but we'll do so from "tcpReadHandler()" below

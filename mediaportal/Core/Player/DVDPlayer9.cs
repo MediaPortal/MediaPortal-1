@@ -1,4 +1,4 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2018 Team MediaPortal
 
 // Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
@@ -28,6 +28,7 @@ using DShowNET.Helper;
 using MediaPortal.Configuration;
 using MediaPortal.ExtensionMethods;
 using MediaPortal.GUI.Library;
+using MediaPortal.Player.LAV;
 using MediaPortal.Profile;
 using Microsoft.Win32;
 using MediaPortal.Player.PostProcessing;
@@ -295,6 +296,13 @@ namespace MediaPortal.Player
           PostProcessingEngine.engine = new PostProcessingEngine.DummyEngine();
         }
 
+        // When using LAV Audio
+        IAudioPostEngine audioEngine = AudioPostEngine.GetInstance(true);
+        if (audioEngine != null && !audioEngine.LoadPostProcessing(_graphBuilder))
+        {
+          AudioPostEngine.engine = new AudioPostEngine.DummyEngine();
+        }
+
         #endregion
 
         _mediaCtrl = (IMediaControl)_graphBuilder;
@@ -330,7 +338,7 @@ namespace MediaPortal.Player
 
     private void Cleanup()
     {
-      if (_graphBuilder == null)
+      if (_graphBuilder == null || (VMR9Util.g_vmr9 != null && VMR9Util.g_vmr9.isCurrentStopping))
       {
         return;
       }
@@ -393,6 +401,10 @@ namespace MediaPortal.Player
           DirectShowUtil.DisconnectAllPins(_graphBuilder, VMR9Util.g_vmr9._vmr9Filter);
           Log.Info("DVDPlayer9: Cleanup VMR9");
         }
+
+        // Clean post process
+        PostProcessingEngine.GetInstance().FreePostProcess();
+        AudioPostEngine.GetInstance().FreePostProcess();
 
         if (_videoWin != null && GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
         {

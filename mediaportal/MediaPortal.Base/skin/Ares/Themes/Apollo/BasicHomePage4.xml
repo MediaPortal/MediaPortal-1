@@ -63,12 +63,13 @@
         <label>#(iif(eq(#skin.tile16cne,'True'),'#tile16plugin.name','#tile16.name'))</label>
 		<oninfo>#(skin.setfocus(35,260))</oninfo>
 		<hyperlink>#tile16.hyperlink</hyperlink>
+		<hyperlinkParameter>#tile16plugin.parameter</hyperlinkParameter>
 		<textcolorNoFocus>ff888888</textcolorNoFocus>
 		<textcolor>ffffffff</textcolor>
 		<textureFocus overlay="t_overlayB.png" mask="large_m.png">#(iif(eq(#skin.manualimg,'yes'),'btn\focus\focus_#tile16pluginImg.png','btn\focus\focus_#tile16plugin.hyperlink_Large.png'))</textureFocus>
 		<textureNoFocus mask="large_m.png">#(iif(eq(#skin.manualimg,'yes'),'btn\unfocus\#tile16pluginImg.png','btn\unfocus\#tile16plugin.hyperlink_Large.png'))</textureNoFocus>
 		<textalign>center</textalign>
-		<textYOff>530</textYOff>
+		<textYOff>515</textYOff>
 		<font>font13</font>
 		<onESC>#(skin.setfocus(35,cint(#skin.Anav16)))</onESC>
         <onleft>00#skin.page4navleft</onleft>
@@ -92,12 +93,13 @@
         <label>#(iif(eq(#skin.tile17cne,'True'),'#tile17plugin.name','#tile17.name'))</label>
 		<oninfo>#(skin.setfocus(35,262))</oninfo>
 		<hyperlink>#tile17.hyperlink</hyperlink>
+		<hyperlinkParameter>#tile17plugin.parameter</hyperlinkParameter>
 		<textcolorNoFocus>ff888888</textcolorNoFocus>
 		<textcolor>ffffffff</textcolor>
 		<textureFocus overlay="t_overlayA.png">#(switch( eq(#tile17plugin.hyperlink,'LATEST_TVSERIES1'),'#latestMediaHandler.tvseries.latest1.fanart', eq(#tile17plugin.hyperlink,'LATEST_TVSERIES2'),'#latestMediaHandler.tvseries.latest2.fanart', eq(#tile17plugin.hyperlink,'LATEST_MOVPICS1'),'#latestMediaHandler.movingpicture.latest1.fanart', eq(#tile17plugin.hyperlink,'LATEST_MOVPICS2'),'#latestMediaHandler.movingpicture.latest2.fanart', eq(#tile17plugin.hyperlink,'LATEST_MYVIDS1'),'#latestMediaHandler.myvideo.latest1.fanart', eq(#tile17plugin.hyperlink,'LATEST_MYVIDS2'),'#latestMediaHandler.myvideo.latest2.fanart', eq(#skin.manualimg,'yes'),'btn\focus\focus_#tile17pluginImg.png', eq(1,1),'btn\focus\focus_#tile17plugin.hyperlink.png'))</textureFocus>
 		<textureNoFocus>#(switch( eq(#tile17plugin.hyperlink,'LATEST_TVSERIES1'),'#latestMediaHandler.tvseries.latest1.fanart', eq(#tile17plugin.hyperlink,'LATEST_TVSERIES2'),'#latestMediaHandler.tvseries.latest2.fanart', eq(#tile17plugin.hyperlink,'LATEST_MOVPICS1'),'#latestMediaHandler.movingpicture.latest1.fanart', eq(#tile17plugin.hyperlink,'LATEST_MOVPICS2'),'#latestMediaHandler.movingpicture.latest2.fanart', eq(#tile17plugin.hyperlink,'LATEST_MYVIDS1'),'#latestMediaHandler.myvideo.latest1.fanart', eq(#tile17plugin.hyperlink,'LATEST_MYVIDS2'),'#latestMediaHandler.myvideo.latest2.fanart', eq(#skin.manualimg,'yes'),'btn\focus\focus_#tile17pluginImg.png', eq(1,1),'btn\focus\focus_#tile17plugin.hyperlink.png'))</textureNoFocus>
 		<textalign>center</textalign>
-		<textYOff>220</textYOff>
+		<textYOff>210</textYOff>
 		<font>font13</font>
 		<onESC>#(skin.setfocus(35,cint(#skin.Anav17)))</onESC>
         <onleft>00515</onleft>
@@ -121,12 +123,13 @@
         <label>#(iif(eq(#skin.tile18cne,'True'),'#tile18plugin.name','#tile18.name'))</label>
 		<oninfo>#(skin.setfocus(35,264))</oninfo>
 		<hyperlink>#tile18.hyperlink</hyperlink>
+		<hyperlinkParameter>#tile18plugin.parameter</hyperlinkParameter>
 		<textcolorNoFocus>ff888888</textcolorNoFocus>
 		<textcolor>ffffffff</textcolor>
 		<textureFocus overlay="t_overlayA.png">#(switch( eq(#tile18plugin.hyperlink,'LATEST_TVSERIES1'),'#latestMediaHandler.tvseries.latest1.fanart', eq(#tile18plugin.hyperlink,'LATEST_TVSERIES2'),'#latestMediaHandler.tvseries.latest2.fanart', eq(#tile18plugin.hyperlink,'LATEST_MOVPICS1'),'#latestMediaHandler.movingpicture.latest1.fanart', eq(#tile18plugin.hyperlink,'LATEST_MOVPICS2'),'#latestMediaHandler.movingpicture.latest2.fanart', eq(#tile18plugin.hyperlink,'LATEST_MYVIDS1'),'#latestMediaHandler.myvideo.latest1.fanart', eq(#tile18plugin.hyperlink,'LATEST_MYVIDS2'),'#latestMediaHandler.myvideo.latest2.fanart', eq(#skin.manualimg,'yes'),'btn\focus\focus_#tile18pluginImg.png', eq(1,1),'btn\focus\focus_#tile18plugin.hyperlink.png'))</textureFocus>
 		<textureNoFocus>#(switch( eq(#tile18plugin.hyperlink,'LATEST_TVSERIES1'),'#latestMediaHandler.tvseries.latest1.fanart', eq(#tile18plugin.hyperlink,'LATEST_TVSERIES2'),'#latestMediaHandler.tvseries.latest2.fanart', eq(#tile18plugin.hyperlink,'LATEST_MOVPICS1'),'#latestMediaHandler.movingpicture.latest1.fanart', eq(#tile18plugin.hyperlink,'LATEST_MOVPICS2'),'#latestMediaHandler.movingpicture.latest2.fanart', eq(#tile18plugin.hyperlink,'LATEST_MYVIDS1'),'#latestMediaHandler.myvideo.latest1.fanart', eq(#tile18plugin.hyperlink,'LATEST_MYVIDS2'),'#latestMediaHandler.myvideo.latest2.fanart', eq(#skin.manualimg,'yes'),'btn\focus\focus_#tile18pluginImg.png', eq(1,1),'btn\focus\focus_#tile18plugin.hyperlink.png'))</textureNoFocus>
 		<textalign>center</textalign>
-		<textYOff>220</textYOff>
+		<textYOff>210</textYOff>
 		<font>font13</font>
 		<onESC>#(skin.setfocus(35,cint(#skin.Anav18)))</onESC>
         <onleft>00515</onleft>
@@ -150,12 +153,13 @@
         <label>#(iif(eq(#skin.tile19cne,'True'),'#tile19plugin.name','#tile19.name'))</label>
 		<oninfo>#(skin.setfocus(35,266))</oninfo>
 		<hyperlink>#tile19.hyperlink</hyperlink>
+		<hyperlinkParameter>#tile19plugin.parameter</hyperlinkParameter>
 		<textcolorNoFocus>ff888888</textcolorNoFocus>
 		<textcolor>ffffffff</textcolor>
 		<textureFocus overlay="t_overlayA.png" mask="top_m.png">#(switch( eq(#tile19plugin.hyperlink,'LATEST_TVSERIES1'),'#latestMediaHandler.tvseries.latest1.fanart', eq(#tile19plugin.hyperlink,'LATEST_TVSERIES2'),'#latestMediaHandler.tvseries.latest2.fanart', eq(#tile19plugin.hyperlink,'LATEST_MOVPICS1'),'#latestMediaHandler.movingpicture.latest1.fanart', eq(#tile19plugin.hyperlink,'LATEST_MOVPICS2'),'#latestMediaHandler.movingpicture.latest2.fanart', eq(#tile19plugin.hyperlink,'LATEST_MYVIDS1'),'#latestMediaHandler.myvideo.latest1.fanart', eq(#tile19plugin.hyperlink,'LATEST_MYVIDS2'),'#latestMediaHandler.myvideo.latest2.fanart', eq(#skin.manualimg,'yes'),'btn\focus\focus_#tile19pluginImg.png', eq(1,1),'btn\focus\focus_#tile19plugin.hyperlink.png'))</textureFocus>
 		<textureNoFocus mask="top_m.png">#(switch( eq(#tile19plugin.hyperlink,'LATEST_TVSERIES1'),'#latestMediaHandler.tvseries.latest1.fanart', eq(#tile19plugin.hyperlink,'LATEST_TVSERIES2'),'#latestMediaHandler.tvseries.latest2.fanart', eq(#tile19plugin.hyperlink,'LATEST_MOVPICS1'),'#latestMediaHandler.movingpicture.latest1.fanart', eq(#tile19plugin.hyperlink,'LATEST_MOVPICS2'),'#latestMediaHandler.movingpicture.latest2.fanart', eq(#tile19plugin.hyperlink,'LATEST_MYVIDS1'),'#latestMediaHandler.myvideo.latest1.fanart', eq(#tile19plugin.hyperlink,'LATEST_MYVIDS2'),'#latestMediaHandler.myvideo.latest2.fanart', eq(#skin.manualimg,'yes'),'btn\focus\focus_#tile19pluginImg.png', eq(1,1),'btn\focus\focus_#tile19plugin.hyperlink.png'))</textureNoFocus>
 		<textalign>center</textalign>
-		<textYOff>220</textYOff>
+		<textYOff>210</textYOff>
 		<font>font13</font>
 		<onESC>#(skin.setfocus(35,cint(#skin.Anav19)))</onESC>
         <onleft>00516</onleft>
@@ -179,12 +183,13 @@
         <label>#(iif(eq(#skin.tile20cne,'True'),'#tile20plugin.name','#tile20.name'))</label>
 		<oninfo>#(skin.setfocus(35,268))</oninfo>
 		<hyperlink>#tile20.hyperlink</hyperlink>
+		<hyperlinkParameter>#tile20plugin.parameter</hyperlinkParameter>
 		<textcolorNoFocus>ff888888</textcolorNoFocus>
 		<textcolor>ffffffff</textcolor>
 		<textureFocus overlay="t_overlayA.png" mask="btm_m.png">#(switch( eq(#tile20plugin.hyperlink,'LATEST_TVSERIES1'),'#latestMediaHandler.tvseries.latest1.fanart', eq(#tile20plugin.hyperlink,'LATEST_TVSERIES2'),'#latestMediaHandler.tvseries.latest2.fanart', eq(#tile20plugin.hyperlink,'LATEST_MOVPICS1'),'#latestMediaHandler.movingpicture.latest1.fanart', eq(#tile20plugin.hyperlink,'LATEST_MOVPICS2'),'#latestMediaHandler.movingpicture.latest2.fanart', eq(#tile20plugin.hyperlink,'LATEST_MYVIDS1'),'#latestMediaHandler.myvideo.latest1.fanart', eq(#tile20plugin.hyperlink,'LATEST_MYVIDS2'),'#latestMediaHandler.myvideo.latest2.fanart', eq(#skin.manualimg,'yes'),'btn\focus\focus_#tile20pluginImg.png', eq(1,1),'btn\focus\focus_#tile20plugin.hyperlink.png'))</textureFocus>
 		<textureNoFocus mask="btm_m.png">#(switch( eq(#tile20plugin.hyperlink,'LATEST_TVSERIES1'),'#latestMediaHandler.tvseries.latest1.fanart', eq(#tile20plugin.hyperlink,'LATEST_TVSERIES2'),'#latestMediaHandler.tvseries.latest2.fanart', eq(#tile20plugin.hyperlink,'LATEST_MOVPICS1'),'#latestMediaHandler.movingpicture.latest1.fanart', eq(#tile20plugin.hyperlink,'LATEST_MOVPICS2'),'#latestMediaHandler.movingpicture.latest2.fanart', eq(#tile20plugin.hyperlink,'LATEST_MYVIDS1'),'#latestMediaHandler.myvideo.latest1.fanart', eq(#tile20plugin.hyperlink,'LATEST_MYVIDS2'),'#latestMediaHandler.myvideo.latest2.fanart', eq(#skin.manualimg,'yes'),'btn\focus\focus_#tile20pluginImg.png', eq(1,1),'btn\focus\focus_#tile20plugin.hyperlink.png'))</textureNoFocus>
 		<textalign>center</textalign>
-		<textYOff>220</textYOff>
+		<textYOff>210</textYOff>
 		<font>font13</font>
 		<onESC>#(skin.setfocus(35,cint(#skin.Anav20)))</onESC>
         <onleft>00517</onleft>

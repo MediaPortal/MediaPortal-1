@@ -1674,7 +1674,11 @@ namespace MediaPortal.GUI.Library
       if (iItem < 0) iItem = 0;
       if (iItem >= itemCount) iItem = itemCount - 1;
 
-      if (iItem >= itemCount - (itemCount % itemsPerPage) && itemCount > itemsPerPage)
+      if (itemsPerPage == 0)
+      {
+        iItem = 0;
+      }
+      else if (iItem >= itemCount - (itemCount % itemsPerPage) && itemCount > itemsPerPage)
       {
         // Special case, jump to last page, but fill entire page
         _offset = itemCount - itemsPerPage;

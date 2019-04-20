@@ -130,7 +130,6 @@ namespace MediaPortal.Player
 
     public PlaneScene(VMR9Util util)
     {
-      MadVrRenderTarget = null;
       //	Log.Info("PlaneScene: ctor()");
 
       _textureAddress = 0;
@@ -197,8 +196,6 @@ namespace MediaPortal.Player
       get { return _visible; }
       set { _visible = value; }
     }
-
-    public Surface MadVrRenderTarget { get; set; }
 
     public bool Enabled
     {
@@ -419,7 +416,7 @@ namespace MediaPortal.Player
     /// </returns>
     public bool SetVideoWindow(Size videoSize)
     {
-      lock (GUIGraphicsContext.RenderLock)
+      //lock (GUIGraphicsContext.RenderLock) // Seems not needed anymore and can lead to deadlock
       {
         try
         {
@@ -866,17 +863,26 @@ namespace MediaPortal.Player
       return GUIGraphicsContext.IsFullScreenVideo;
     }
 
+    // To force an update of video window to be able to trigger a sync client size.
+    public int RenderGuiRefresh(Int16 width, Int16 height, Int16 arWidth, Int16 arHeight, bool forceRefresh)
+    {
+      //Log.Debug("Planescene: RenderGuiRefreshrGui: arWidth {0} - arHeight {1}", arWidth, arHeight);
+      return RenderLayers(GUILayers.under, width, height, arWidth, arHeight, forceRefresh);
+    }
+
     public int RenderGui(Int16 width, Int16 height, Int16 arWidth, Int16 arHeight)
     {
+      //Log.Debug("Planescene: RenderGui: arWidth {0} - arHeight {1}", arWidth, arHeight);
       return RenderLayers(GUILayers.under, width, height, arWidth, arHeight);
     }
 
     public int RenderOverlay(Int16 width, Int16 height, Int16 arWidth, Int16 arHeight)
     {
+      //Log.Debug("Planescene: RenderOverlay: arWidth {0} - arHeight {1}", arWidth, arHeight);
       return RenderLayers(GUILayers.over, width, height, arWidth, arHeight);
     }
 
-    private int RenderLayers(GUILayers layers, Int16 width, Int16 height, Int16 arWidth, Int16 arHeight)
+    private int RenderLayers(GUILayers layers, Int16 width, Int16 height, Int16 arWidth, Int16 arHeight, bool forceRefresh = false)
     {
       UiVisible = false;
 
@@ -884,7 +890,7 @@ namespace MediaPortal.Player
       {
         try
         {
-          if (_reEntrant)
+          if (_reEntrant && !forceRefresh)
           {
             return -1;
           }
@@ -911,6 +917,21 @@ namespace MediaPortal.Player
           {
             //Log.Error("4");
             return -1; // (0) -> S_OK, (1) -> S_FALSE; //dont present video during window transitions
+          }
+
+          if (layers == GUILayers.over)
+          {
+            if (Thread.CurrentThread.Name == null)
+            {
+              Thread.CurrentThread.Name = "madVR - RenderOverlay";
+            }
+          }
+          else
+          {
+            if (Thread.CurrentThread.Name == null)
+            {
+              Thread.CurrentThread.Name = "madVR - RenderGui";
+            }
           }
 
           // Disable for now and added back to g_player
@@ -1623,7 +1644,7 @@ namespace MediaPortal.Player
 
                 int horzDelta = (int) (xSkewPerLine*y);
 
-                GUIGraphicsContext.DX9Device.StretchRectangle(surfaceLastFrame,
+                GUIGraphicsContext.DX9Device?.StretchRectangle(surfaceLastFrame,
                   new Rectangle(horzDelta, y, backbuffer.Description.Width - horzOffset*2 + horzDelta, 1),
                   backbuffer,
                   new Rectangle(targetRect.X, y, targetRect.Width, 1),
@@ -1637,7 +1658,7 @@ namespace MediaPortal.Player
       }
       else // render normal 3D movie
       {
-        GUIGraphicsContext.DX9Device.StretchRectangle(surface,
+        GUIGraphicsContext.DX9Device?.StretchRectangle(surface,
           new Rectangle(0, 0, backbuffer.Description.Width, backbuffer.Description.Height),
           backbuffer,
           targetRect,

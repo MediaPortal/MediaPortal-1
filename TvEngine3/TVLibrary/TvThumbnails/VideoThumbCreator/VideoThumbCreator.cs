@@ -90,7 +90,7 @@ namespace TvThumbnails.VideoThumbCreator
 
       if (Duration == 0)
       {
-        Log.Debug("TvThumbnails.VideoThumbCreator: the {0} is corrupt.", aVideoPath);
+        Log.Debug("TvThumbnails.VideoThumbCreator: video duration is zero for {0} - aborting", aVideoPath);
         return false;
       }
 

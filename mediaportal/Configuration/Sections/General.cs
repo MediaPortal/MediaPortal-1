@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2019 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2019 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -53,7 +53,7 @@ namespace MediaPortal.Configuration.Sections
     {
       using (Settings xmlreader = new MPSettings())
       {
-        loglevel = xmlreader.GetValueAsString("general", "loglevel", "2"); // set loglevel to 2:info 3:debug
+        loglevel = xmlreader.GetValueAsString("general", "loglevel", "3"); // set loglevel to 2:info 3:debug
         cbDebug.SelectedIndex = Convert.ToInt16(loglevel);
 
         string prio = xmlreader.GetValueAsString("general", "ThreadPriority", "Normal");

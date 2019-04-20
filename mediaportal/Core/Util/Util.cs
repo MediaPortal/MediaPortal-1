@@ -2950,17 +2950,24 @@ namespace MediaPortal.Util
       }
     }
 
+    public static int PlaySound(string sSoundFile, bool bSynchronous, bool bIgnoreErrors, bool force)
+    {
+      if (sSoundFile == null) return 0;
+      if (sSoundFile.Length == 0) return 0;
+      return PlaySound(sSoundFile, bSynchronous, bIgnoreErrors, false, false, false, force);
+    }
+
     public static int PlaySound(string sSoundFile, bool bSynchronous, bool bIgnoreErrors)
     {
       if (sSoundFile == null) return 0;
       if (sSoundFile.Length == 0) return 0;
-      return PlaySound(sSoundFile, bSynchronous, bIgnoreErrors, false, false, false);
+      return PlaySound(sSoundFile, bSynchronous, bIgnoreErrors, false, false, false, false);
     }
 
     public static int PlaySound(string sSoundFile, bool bSynchronous, bool bIgnoreErrors,
-                                bool bNoDefault, bool bLoop, bool bNoStop)
+                                bool bNoDefault, bool bLoop, bool bNoStop, bool force)
     {
-      if (!enableGuiSounds)
+      if (!enableGuiSounds && !force)
         return 0;
 
       const int SND_ASYNC = 1;
@@ -2979,6 +2986,10 @@ namespace MediaPortal.Util
         else if (Util.Utils.FileExistsInCache(GUIGraphicsContext.GetThemedSkinFile("\\" + sSoundFile + ".wav")))
         {
           sSoundFile = GUIGraphicsContext.GetThemedSkinFile("\\" + sSoundFile + ".wav");
+        }
+        else if (Util.Utils.FileExistsInCache(Config.GetFile(Config.Dir.Config, "Sounds", sSoundFile)))
+        {
+          sSoundFile = Config.GetFile(Config.Dir.Config, "Sounds", sSoundFile);
         }
         else
         {
@@ -3511,40 +3522,45 @@ namespace MediaPortal.Util
     public static bool FileExistsInCache(string filename)
     {
       bool found = false;
-
-      if (IsFileExistsCacheEnabled())
+      try
       {
-        SetupFileSystemManagerThread();
-        SetupFileExistsCacheThread();
-        try
+        if (IsFileExistsCacheEnabled())
         {
-          string path = GetDirectoryName(filename);
-          if (path.Length > 0)
+          SetupFileSystemManagerThread();
+          SetupFileExistsCacheThread();
+          try
           {
-            path = path.ToLowerInvariant();
-            if (!HasFolderBeenScanned(path))
+            string path = GetDirectoryName(filename);
+            if (path.Length > 0)
             {
-              lock (_fileExistsCacheLock)
+              path = path.ToLowerInvariant();
+              if (!HasFolderBeenScanned(path))
               {
-                _fileExistsCacheQueue.Add(path);
-                _fileExistsCacheThreadEvt.Set();
+                lock (_fileExistsCacheLock)
+                {
+                  _fileExistsCacheQueue.Add(path);
+                  _fileExistsCacheThreadEvt?.Set();
+                }
               }
+              /*else
+                {
+                  Log.Debug("FileExistsInCache: already pre-scanned dir : {0} .. skipping", path);
+                }*/
             }
-            /*else
-            {
-              Log.Debug("FileExistsInCache: already pre-scanned dir : {0} .. skipping", path);
-            }*/
           }
+          catch (ArgumentException)
+          {
+            //ignore
+          }
+          found = DoFileExistsInCache(filename);
         }
-        catch (ArgumentException)
+        else
         {
-          //ignore  
+          found = File.Exists(filename);
         }
-        found = DoFileExistsInCache(filename);
       }
-      else
+      catch (Exception)
       {
-        found = File.Exists(filename);
       }
       return found;
     }
@@ -3558,96 +3574,119 @@ namespace MediaPortal.Util
           _fileLookUpCacheEnabled = xmlreader.GetValueAsBool("gui", "fileexistscache", false);
         }
       }
-      return (_fileLookUpCacheEnabled.HasValue && _fileLookUpCacheEnabled.Value);
+      return (_fileLookUpCacheEnabled.Value);
     }
 
     private static void FileExistsCacheThread()
     {
-      while (true)
+      try
       {
-        HashSet<string> fileExistsCacheQueueCopy = null;
-        lock (_fileExistsCacheLock)
+        while (true)
         {
-          fileExistsCacheQueueCopy = new HashSet<string>(_fileExistsCacheQueue);
-        }
-
-        int items = fileExistsCacheQueueCopy.Count;
-        if (items > 0)
-        {
-          Log.Debug("FileExistsCacheThread: new items found waiting for caching: {0}", items);
-
-          foreach (string path in fileExistsCacheQueueCopy)
+          HashSet<string> fileExistsCacheQueueCopy = null;
+          lock (_fileExistsCacheLock)
           {
-            InsertFilesIntoCacheAsynch(path);
-            lock (_fileExistsCacheLock)
+            fileExistsCacheQueueCopy = new HashSet<string>(_fileExistsCacheQueue);
+          }
+
+          int items = fileExistsCacheQueueCopy.Count;
+          if (items > 0)
+          {
+            Log.Debug("FileExistsCacheThread: new items found waiting for caching: {0}", items);
+
+            foreach (string path in fileExistsCacheQueueCopy)
             {
-              _fileExistsCacheQueue.Remove(path);
+              InsertFilesIntoCacheAsynch(path);
+              lock (_fileExistsCacheLock)
+              {
+                _fileExistsCacheQueue.Remove(path);
+              }
             }
           }
-        }
 
-        bool isQueueEmpty = false;
-        lock (_fileExistsCacheLock)
-        {
-          isQueueEmpty = (_fileExistsCacheQueue.Count == 0);
-        }
+          bool isQueueEmpty = false;
+          lock (_fileExistsCacheLock)
+          {
+            isQueueEmpty = (_fileExistsCacheQueue.Count == 0);
+          }
 
-        if (isQueueEmpty)
-        {
-          Log.Debug("FileExistsCacheThread: no more items to cache, suspending thread.: {0}", items);
-          _fileExistsCacheThreadEvt.Reset();
-        }
+          if (isQueueEmpty)
+          {
+            Log.Debug("FileExistsCacheThread: no more items to cache, suspending thread.: {0}", items);
+            _fileExistsCacheThreadEvt?.Reset();
+          }
 
-        _fileExistsCacheThreadEvt.WaitOne();
+          if (App.IsShuttingDown)
+          {
+            _fileExistsCacheThreadEvt?.Dispose();
+            _fileExistsCacheThreadEvt = null;
+            break;
+          }
+          _fileExistsCacheThreadEvt?.WaitOne(5000);
+        }
+      }
+      catch (Exception)
+      {
       }
     }
 
     private static void FileSystemWatchManagerThread()
     {
-      while (true)
+      try
       {
-        lock (_watchersLock)
+        while (true)
         {
-          if (_lastTimeFolderWasAdded != DateTime.MinValue)
+          lock (_watchersLock)
           {
-            DateTime now = DateTime.Now;
-            TimeSpan ts = now - _lastTimeFolderWasAdded;
-
-            //Log.Debug("_lastTimeFolderWasAdded: {0}", _lastTimeFolderWasAdded);
-            //Log.Debug("ts.TotalSeconds: {0}", ts.TotalSeconds);
-
-            if (ts.TotalSeconds > 5)
+            if (_lastTimeFolderWasAdded != DateTime.MinValue)
             {
-              Log.Debug("FileSystemWatchManagerThread : updating watchers");
-              HashSet<string> folders = GetUniqueTopLevelFolders();
+              DateTime now = DateTime.Now;
+              TimeSpan ts = now - _lastTimeFolderWasAdded;
 
-              foreach (string dir in folders)
+              //Log.Debug("_lastTimeFolderWasAdded: {0}", _lastTimeFolderWasAdded);
+              //Log.Debug("ts.TotalSeconds: {0}", ts.TotalSeconds);
+
+              if (ts.TotalSeconds > 5)
               {
-                if (!string.IsNullOrEmpty(dir))
+                Log.Debug("FileSystemWatchManagerThread : updating watchers");
+                HashSet<string> folders = GetUniqueTopLevelFolders();
+
+                foreach (string dir in folders)
                 {
-                  if (!IsFolderAlreadyWatched(dir))
+                  if (!string.IsNullOrEmpty(dir))
                   {
-                    UpdateWatchers(dir);
+                    if (!IsFolderAlreadyWatched(dir))
+                    {
+                      UpdateWatchers(dir);
+                    }
                   }
                 }
+                _lastTimeFolderWasAdded = DateTime.MinValue;
+                Log.Debug("FileLookUpCacheThread items : {0}", _fileLookUpCache.Count);
               }
-              _lastTimeFolderWasAdded = DateTime.MinValue;
-              Log.Debug("FileLookUpCacheThread items : {0}", _fileLookUpCache.Count);
-            }
 
 
-            /*string[] keyCopy = _watchers.Keys.ToArray();
-            foreach (string key in keyCopy)
-            {
-              FileSystemWatcher fsw = null;
-              if (_watchers.TryGetValue(key, out fsw))
+              /*string[] keyCopy = _watchers.Keys.ToArray();
+              foreach (string key in keyCopy)
               {
-                Log.Debug("FileSystemWatcher : {0}", fsw.Path);
-              }
-            }*/
+                FileSystemWatcher fsw = null;
+                if (_watchers.TryGetValue(key, out fsw))
+                {
+                  Log.Debug("FileSystemWatcher : {0}", fsw.Path);
+                }
+              }*/
+            }
           }
+          if (App.IsShuttingDown)
+          {
+            _fileExistsCacheThreadEvt?.Dispose();
+            break;
+          }
+          Thread.Sleep(FileLookUpCacheThreadScanningIntervalMSecs);
         }
-        Thread.Sleep(FileLookUpCacheThreadScanningIntervalMSecs);
+      }
+      catch (Exception)
+      {
       }
     }
 
@@ -3958,6 +3997,23 @@ namespace MediaPortal.Util
         _fileExistsCacheThread.IsBackground = true;
         _fileExistsCacheThread.Priority = ThreadPriority.Lowest;
         _fileExistsCacheThread.Start();
+      }
+    }
+
+    public static void DisposeFileExistsCacheThread()
+    {
+      try
+      {
+        if (_fileExistsCacheThread != null)
+        {
+          _fileExistsCacheThreadEvt?.Dispose();
+          _fileExistsCacheThread?.SafeDispose();
+          _fileExistsCacheThreadEvt = null;
+          _fileExistsCacheThread = null;
+        }
+      }
+      catch (Exception)
+      {
       }
     }
 

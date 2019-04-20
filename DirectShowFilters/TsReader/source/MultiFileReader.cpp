@@ -686,7 +686,7 @@ HRESULT MultiFileReader::RefreshTSBufferFile()
   		if (name)
   		{
   			name++;
-  			long len = name - wfilename;
+  			long len = (long)(name - wfilename);
   			path = new wchar_t[len+1];
   			lstrcpynW(path, wfilename, len+1);
   		}
@@ -696,7 +696,7 @@ HRESULT MultiFileReader::RefreshTSBufferFile()
   
   		LPWSTR pCurr = (LPWSTR)(m_pInfoFileBuffer2 + sizeof(__int64) + sizeof(long) + sizeof(long)); //pointer to start of filename section
   		LPWSTR pEndOfList = (LPWSTR)(m_pInfoFileBuffer2 + fileLength - (2*sizeof(long)));
-  		long length = wcslen(pCurr);
+  		long length = (long)wcslen(pCurr);
   		while ((length > 0) && (pCurr < pEndOfList))
   		{
   			//modify filename path here to include the real path
@@ -718,7 +718,7 @@ HRESULT MultiFileReader::RefreshTSBufferFile()
   			filenames.push_back(pFilename);
   
   			pCurr += (length + 1);
-  			length = wcslen(pCurr);
+  			length = (long)wcslen(pCurr);
   		}
   
   		if (path)

@@ -47,7 +47,7 @@ namespace MediaInfoWrapper
     private string _videoResolution = string.Empty;
     private int _videoDuration = 0;
     private bool _DVDenabled = false;
-    private string _ParseSpeed;
+    private string _ParseSpeed = string.Empty;
 
     //Audio
     private int _audioRate = 0;
@@ -56,8 +56,8 @@ namespace MediaInfoWrapper
     private string _audioCodec = string.Empty;
 
     //Detection
-    private bool _hasAudio;
-    private bool _hasVideo;
+    private bool _hasAudio = false;
+    private bool _hasVideo = false;
 
     //Subtitles
     private int _numsubtitles = 0;

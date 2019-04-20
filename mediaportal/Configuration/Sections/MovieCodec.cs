@@ -39,6 +39,7 @@ namespace MediaPortal.Configuration.Sections
     public static bool _forceSourceSplitter = false;
     public static string _splitterFilter = "";
     public static string _splitterFileFilter = "";
+    private readonly Movies _movies = new Movies();
 
     /// <summary>
     /// 
@@ -168,7 +169,7 @@ namespace MediaPortal.Configuration.Sections
     }
 
     /// <summary>
-    /// sets useability of select config depending on whether auot decoder stting option is enabled.
+    /// sets useability of select config depending on whether auto decoder setting option is enabled.
     /// </summary>
     public void UpdateDecoderSettings()
     {
@@ -197,7 +198,17 @@ namespace MediaPortal.Configuration.Sections
       _forceSourceSplitter = ForceSourceSplitter.Checked;
       _splitterFilter = SplitterComboBox.Text;
       _splitterFileFilter = SplitterFileComboBox.Text;
-      Movies.UpdateDecoderSettings();
+      _movies.UpdateDecoderSettings();
+
+      Startup._automaticMovieFilter = ForceSourceSplitter.Checked;
+      if ((SplitterComboBox.Text == "File Source (Async.)" || SplitterComboBox.Text == "File Source (URL)") && ForceSourceSplitter.Checked)
+      {
+        SplitterFileComboBox.Enabled = true;
+      }
+      else
+      {
+        SplitterFileComboBox.Enabled = false;
+      }
     }
 
     /// <summary>

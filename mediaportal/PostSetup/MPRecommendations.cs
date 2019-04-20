@@ -21,6 +21,7 @@
 using System;
 using System.Threading;
 using System.Windows.Forms;
+using System.Net;
 
 namespace PostSetup
 {
@@ -254,6 +255,8 @@ namespace PostSetup
     [STAThread]
     private static void Main(string[] args)
     {
+      // .NET 4.0: Use TLS v1.2. Many download sources no longer support the older and now insecure TLS v1.0/1.1 and SSL v3.
+      ServicePointManager.SecurityProtocol = (SecurityProtocolType)0xc00;
       Application.Run(new MPRecommendations(args));
     }
 

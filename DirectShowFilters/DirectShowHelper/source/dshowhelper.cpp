@@ -345,6 +345,7 @@ UINT CALLBACK LogThread(void* param)
       Sleep(1);
     }
   }
+	_endthreadex(0);
   return 0;
 }
 
@@ -361,10 +362,13 @@ void StopLogger()
 {
   if (m_hLogger)
   {
+    //Make sure the thread runs soon so it can finish processing
+    SetThreadPriority(m_hLogger, THREAD_PRIORITY_NORMAL);
     m_bLoggerRunning = FALSE;
     m_EndLoggingEvent.Set();
     WaitForSingleObject(m_hLogger, INFINITE);	
     m_EndLoggingEvent.Reset();
+    CloseHandle(m_hLogger);
     m_hLogger = NULL;
     logFileParsed = -1;
     logFileDate = -1;
@@ -1062,7 +1066,7 @@ void MadVrPaused(bool paused)
       m_madPresenter->m_pRunDone = false;
     }
 
-    m_madPresenter->SetMadVrPaused(paused);
+    m_madPresenter->m_pPaused = paused;
   }
 }
 

@@ -149,6 +149,7 @@ namespace MediaPortal.GUI.Library
     private static int _scrollSpeedHorizontal = 3;
     private static int _charsInCharacterSet = 255;
     private static volatile bool _vmr9Active;
+    private static volatile bool _vmr9ActivePlaylist;
     private static int _maxFPS = 60;
     private static long _desiredFrameTime = 100;
     private static float _currentFPS;
@@ -174,7 +175,7 @@ namespace MediaPortal.GUI.Library
     private static bool _tabWithBlackBars = false;
 
     // For madVR
-    public static Surface MadVrRenderTargetVMR9 = null;
+    public static Surface MadVrRenderTargetVmr9 = null;
 
     /// <summary>
     /// madVR HWnd video instance
@@ -401,6 +402,8 @@ namespace MediaPortal.GUI.Library
     public static bool TABBottomDone;
     public static int _backupCurrentScreenSizeWidth;
     public static int _backupCurrentScreenSizeHeight;
+    public static bool _guiMsgDbtAudioDeviceRemoveComplete;
+    public static bool _guiMsgDbtAudioDeviceArrival;
     public static int Convert2Dto3DSkewFactor { get; set; }
 
     public enum eRender3DModeHalf { None, SBSLeft, SBSRight, TABTop, TABBottom };
@@ -1538,6 +1541,22 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// 
     /// </summary>
+    public static bool Vmr9ActivePlaylist
+    {
+      get { return _vmr9ActivePlaylist; }
+      set
+      {
+        if (value != _vmr9ActivePlaylist)
+        {
+          _vmr9ActivePlaylist = value;
+          Log.Debug(_vmr9ActivePlaylist ? "VMR9: Now active for playlist" : "VMR9: Inactive for playlist");
+        }
+      }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
     public static bool Vmr9Active
     {
       get { return _vmr9Active; }
@@ -1728,6 +1747,16 @@ namespace MediaPortal.GUI.Library
     }
 
     /// <summary>
+    /// Get/set current audio device name arrival
+    /// </summary>
+    public static string CurrentAudioDeviceNameArrival { set; get; } = "";
+
+    /// <summary>
+    /// Get/set current audio device name removal
+    /// </summary>
+    public static string CurrentAudioDeviceNameRemoval { set; get; } = "";
+
+    /// <summary>
     /// Returns true if the active window belongs to the my tv plugin
     /// </summary>
     /// <returns>
@@ -1861,7 +1890,7 @@ namespace MediaPortal.GUI.Library
     public static bool NoneDone { get; set; }
     public static bool ForceMadVRRefresh { get; set; }
     public static bool ForceMadVRRefresh3D { get; set; }
-    internal static bool ForceMadVRFirstStart { get; set; }
+    public static bool ForceMadVRFirstStart { get; set; }
     internal static bool ProcessMadVrOsdDisplay { get; set; }
     public static bool BlurayMenu { get; set; }
     internal static bool InitMadVRWindowPosition { get; set; }
@@ -1881,6 +1910,11 @@ namespace MediaPortal.GUI.Library
     internal static double ForcedRR3DRate { get; set; }
     internal static bool RenderMadVr3Dchanged { get; set; }
     public static bool CurrentAudioRendererDone { get; set; }
+    // set to true if recreate swap chain is needed
+    public static bool NeedRecreateSwapChain { get; set; }
+    // Needed to avoid align TOP/LEFT on start
+    public static int RDestTop = 480;
+    public static int RDestLeft = 150;
 
     //public static IntPtr madVRDIB { get; set; }
 

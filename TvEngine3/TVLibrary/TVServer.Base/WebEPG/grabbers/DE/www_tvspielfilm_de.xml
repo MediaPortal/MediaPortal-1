@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Grabber>
+	<Info availableDays="14" timezone="W. Europe Standard Time" version="1.0"/>
+	<Channels>
+		<Channel siteId="13th-street,13TH" id="13th Street"/>
+		<Channel siteId="3,3PLUS" id="3+"/>
+		<Channel siteId="3sat,3SAT" id="3sat"/>
+		<Channel siteId="aunde,AETV" id="A&amp;E"/>
+		<Channel siteId="adult-channel,ADULT" id="Adult Channel"/>
+		<Channel siteId="al-jazeera,ALJAZ" id="Al Jazeera"/>
+		<Channel siteId="animal-planet,APLAN" id="Animal Planet"/>
+		<Channel siteId="anixe,ANIXE" id="ANIXE"/>
+		<Channel siteId="ard-alpha,ALPHA" id="ARD-alpha"/>
+		<Channel siteId="arte,ARTE" id="ARTE"/>
+		<Channel siteId="atv,ATV" id="ATV"/>
+		<Channel siteId="atv-ii,ATV2" id="ATV II"/>
+		<Channel siteId="auto-motor-und-sport,AMS" id="Auto Motor und Sport"/>
+		<Channel siteId="axn,AXN" id="AXN"/>
+		<Channel siteId="bbc-entertainment,BBC-E" id="BBC Entertainment"/>
+		<Channel siteId="bbc-world-news,BBC" id="BBC World News"/>
+		<Channel siteId="beate-uhsetv,BUTV" id="Beate-Uhse.TV"/>
+		<Channel siteId="belgien-1,BE1" id="Belgien 1"/>
+		<Channel siteId="bibel-tv,BIBEL" id="Bibel TV"/>
+		<Channel siteId="blizz,BLIZZ" id="blizz"/>
+		<Channel siteId="bloomberg-europe-tv,BLM" id="Bloomberg Europe TV"/>
+		<Channel siteId="blue-movie,BLUM" id="Blue Movie"/>
+		<Channel siteId="blue-movie-2,BLUM2" id="Blue Movie 2"/>
+		<Channel siteId="blue-movie-3,BLUM3" id="Blue Movie 3"/>
+		<Channel siteId="bongusto,GUSTO" id="BonGusto"/>
+		<Channel siteId="boomerang,BOOM" id="Boomerang"/>
+		<Channel siteId="br,BR" id="BR"/>
+		<Channel siteId="cartoon-network,C-NET" id="Cartoon Network"/>
+		<Channel siteId="channel21,CH21" id="Channel21"/>
+		<Channel siteId="classica,CLASS" id="Classica"/>
+		<Channel siteId="cnbc,CNBC" id="CNBC"/>
+		<Channel siteId="cnn-international,CNN" id="CNN International"/>
+		<Channel siteId="comedy-central,CC" id="COMEDY CENTRAL"/>
+		<Channel siteId="das-erste,ARD" id="Das Erste"/>
+		<Channel siteId="dazn,DAZN" id="DAZN"/>
+		<Channel siteId="deluxe-music,DMC" id="DELUXE MUSIC"/>
+		<Channel siteId="der-aktionaer-tv,DATV" id="Der Aktionär TV"/>
+		<Channel siteId="deutsches-musik-fernsehen,DMF" id="Deutsches Musik Fernsehen"/>
+		<Channel siteId="discovery-hd,HDDIS" id="Discovery HD"/>
+		<Channel siteId="disney-channel,DISNE" id="Disney Channel"/>
+		<Channel siteId="disney-cinemagic,DCM" id="Disney Cinemagic"/>
+		<Channel siteId="disney-junior,DJUN" id="Disney Junior"/>
+		<Channel siteId="disney-xd,DXD" id="Disney XD"/>
+		<Channel siteId="dmax,DMAX" id="DMAX"/>
+		<Channel siteId="dr1,DR1" id="DR1"/>
+		<Channel siteId="dw-europe,DWTV" id="DW (Europe)"/>
+		<Channel siteId="e-entertainment,E!" id="E! Entertainment"/>
+		<Channel siteId="eotv,EOTV" id="eoTV"/>
+		<Channel siteId="euronews,EURON" id="euronews"/>
+		<Channel siteId="eurosport-1,EURO" id="Eurosport 1"/>
+		<Channel siteId="eurosport-2,EURO2" id="Eurosport 2"/>
+		<Channel siteId="extreme-sports,EX-SP" id="EXTREME SPORTS"/>
+		<Channel siteId="family-tv,FAMTV" id="Family TV"/>
+		<Channel siteId="fashion-tv,FATV" id="Fashion TV"/>
+		<Channel siteId="fine-living-network,FLN" id="Fine Living Network"/>
+		<Channel siteId="fix-und-foxi,FFTV" id="FIX &amp; FOXI"/>
+		<Channel siteId="food-network,FOOD" id="Food Network"/>
+		<Channel siteId="fox,FOX" id="FOX"/>
+		<Channel siteId="france-24-engl,FR24E" id="France 24 (engl.)"/>
+		<Channel siteId="france-24-franz,FR24F" id="France 24 (franz.)"/>
+		<Channel siteId="fundorado-tv,FUNDO" id="FunDorado TV"/>
+		<Channel siteId="geo-television,GEO" id="GEO Television"/>
+		<Channel siteId="goldstar-tv,GOLD" id="GoldStar TV"/>
+		<Channel siteId="gute-laune-tv,LAUNE" id="Gute Laune TV"/>
+		<Channel siteId="hamburg-1,HH1" id="Hamburg 1"/>
+		<Channel siteId="health-tv,HEALTH" id="Health TV"/>
+		<Channel siteId="heimatkanal,HEIMA" id="Heimatkanal"/>
+		<Channel siteId="history-hd,HISHD" id="HISTORY HD"/>
+		<Channel siteId="hr,HR" id="HR"/>
+		<Channel siteId="hse24,HSE" id="HSE24"/>
+		<Channel siteId="jukebox,JUKE" id="Jukebox"/>
+		<Channel siteId="junior,JUNIO" id="Junior"/>
+		<Channel siteId="juwelo,JUWELO" id="JUWELO"/>
+		<Channel siteId="k-tv,KTV" id="K-TV"/>
+		<Channel siteId="kabel-eins,K1" id="kabel eins"/>
+		<Channel siteId="kabel-eins-classics,K1CLA" id="kabel eins CLASSICS"/>
+		<Channel siteId="kabel-eins-doku,K1DOKU" id="kabel eins Doku"/>
+		<Channel siteId="kika,KIKA" id="KiKA"/>
+		<Channel siteId="kinowelttv,KINOW" id="KinoweltTV"/>
+		<Channel siteId="leipzig-fernsehen,LEITV" id="Leipzig Fernsehen"/>
+		<Channel siteId="lust-pur,LUSTP" id="LUST PUR"/>
+		<Channel siteId="marco-polo-tv,MAPO" id="Marco Polo TV"/>
+		<Channel siteId="mdr,MDR" id="MDR"/>
+		<Channel siteId="mezzo,MEZZO" id="Mezzo"/>
+		<Channel siteId="motors-tv,MOTOR" id="Motors TV"/>
+		<Channel siteId="motorvision-tv,MOVTV" id="Motorvision TV"/>
+		<Channel siteId="mtv,MTV" id="MTV"/>
+		<Channel siteId="mtv-base,MTV-B" id="MTV Base"/>
+		<Channel siteId="mtv-dance,MTV-D" id="MTV Dance"/>
+		<Channel siteId="mtv-hits,MTV-H" id="MTV Hits"/>
+		<Channel siteId="mtv-live-hd,MTV-L" id="MTV Live HD"/>
+		<Channel siteId="muenchentv,TVM" id="münchen.tv"/>
+		<Channel siteId="muenchen2,MUE2" id="münchen2"/>
+		<Channel siteId="n-tv,NTV" id="n-tv"/>
+		<Channel siteId="n24-doku,N24DOKU" id="N24 Doku"/>
+		<Channel siteId="nat-geo-wild,N-GW" id="NAT GEO WILD"/>
+		<Channel siteId="national-geographic-hd,N-GHD" id="National Geographic HD"/>
+		<Channel siteId="nautical-channel,NAUCH" id="Nautical Channel"/>
+		<Channel siteId="ndr,N3" id="NDR"/>
+		<Channel siteId="nhk-world-tv,NHK" id="NHK WORLD TV"/>
+		<Channel siteId="nick,NICK" id="nick"/>
+		<Channel siteId="nick-jr,NICKJ" id="Nick Jr."/>
+		<Channel siteId="nicktoons,NICKT" id="Nicktoons"/>
+		<Channel siteId="nitro,RTL-N" id="NITRO"/>
+		<Channel siteId="now-us,NOWUS" id="NOW US"/>
+		<Channel siteId="npo-1,NL1" id="NPO 1"/>
+		<Channel siteId="npo-2,NL2" id="NPO 2"/>
+		<Channel siteId="npo-3,NL3" id="NPO 3"/>
+		<Channel siteId="oe24tv,OE24TV" id="oe24.TV"/>
+		<Channel siteId="one,FES" id="ONE"/>
+		<Channel siteId="orf-2,ORF2" id="ORF 2"/>
+		<Channel siteId="orf-eins,ORF1" id="ORF eins"/>
+		<Channel siteId="orf-iii,ORF3" id="ORF III"/>
+		<Channel siteId="orf-sport-,ORFSP" id="ORF SPORT +"/>
+		<Channel siteId="phoenix,PHOEN" id="PHOENIX"/>
+		<Channel siteId="planet,PLANE" id="PLANET"/>
+		<Channel siteId="playboy-tv,PBOY" id="Playboy TV"/>
+		<Channel siteId="prosieben,PRO7" id="ProSieben"/>
+		<Channel siteId="prosieben-fun,PRO7F" id="ProSieben Fun"/>
+		<Channel siteId="prosieben-maxx,PRO7M" id="ProSieben MAXX"/>
+		<Channel siteId="puls-4,PULS4" id="PULS 4"/>
+		<Channel siteId="puls-acht,PULS8" id="PULS acht"/>
+		<Channel siteId="qvc,QVC" id="QVC"/>
+		<Channel siteId="qvc-style,QVCBS" id="QVC Style"/>
+		<Channel siteId="qvc2,QVCP" id="QVC2"/>
+		<Channel siteId="rbb,RBB" id="RBB"/>
+		<Channel siteId="rck-tv,RCK" id="RCK TV"/>
+		<Channel siteId="regio-tv,REGIO" id="Regio TV"/>
+		<Channel siteId="regio-tv-bodensee,REGBS" id="Regio TV Bodensee"/>
+		<Channel siteId="rhein-neckar-fernsehen,RNF" id="Rhein-Neckar Fernsehen"/>
+		<Channel siteId="rheinmain-tv,RMTV" id="rheinmain tv"/>
+		<Channel siteId="ric,RIC" id="RiC"/>
+		<Channel siteId="romance-tv,ROM" id="Romance TV"/>
+		<Channel siteId="rtl,RTL" id="RTL"/>
+		<Channel siteId="rtl-crime,RTL-C" id="RTL Crime"/>
+		<Channel siteId="rtl-ii,RTL2" id="RTL II"/>
+		<Channel siteId="rtl-living,RTL-L" id="RTL Living"/>
+		<Channel siteId="rtl-passion,PASS" id="RTL Passion"/>
+		<Channel siteId="rtlplus,RTLPL" id="RTLplus"/>
+		<Channel siteId="sachsen-fernsehen,SACH" id="Sachsen Fernsehen"/>
+		<Channel siteId="sat1,SAT1" id="SAT.1"/>
+		<Channel siteId="sat1-emotions,SAT1E" id="SAT.1 emotions"/>
+		<Channel siteId="sat1-gold,SAT1G" id="SAT.1 Gold"/>
+		<Channel siteId="servustv-deutschland,SERVU" id="ServusTV Deutschland"/>
+		<Channel siteId="silverline,SILVE" id="Silverline"/>
+		<Channel siteId="sixx,SIXX" id="sixx"/>
+		<Channel siteId="sky-1,SKY1" id="Sky 1"/>
+		<Channel siteId="sky-action,SKY-A" id="Sky Action"/>
+		<Channel siteId="sky-arts-hd,ARTS" id="SKY Arts HD"/>
+		<Channel siteId="sky-atlantic-hd,SKYAT" id="Sky Atlantic HD"/>
+		<Channel siteId="sky-bundesliga,BULI" id="Sky Bundesliga"/>
+		<Channel siteId="sky-cinema,CIN" id="Sky Cinema"/>
+		<Channel siteId="sky-cinema-hits-hd,SKY-H" id="Sky Cinema Hits HD"/>
+		<Channel siteId="sky-cinema1,CIN1" id="Sky Cinema+1"/>
+		<Channel siteId="sky-cinema24,CIN24" id="Sky Cinema+24"/>
+		<Channel siteId="sky-comedy,SKY-C" id="Sky Comedy"/>
+		<Channel siteId="sky-emotion,SKY-E" id="Sky Emotion"/>
+		<Channel siteId="sky-family,SKY-F" id="Sky Family"/>
+		<Channel siteId="sky-krimi,SKY-K" id="Sky Krimi"/>
+		<Channel siteId="sky-nostalgie,SKY-N" id="Sky Nostalgie"/>
+		<Channel siteId="sky-select,SKY-S" id="Sky select"/>
+		<Channel siteId="sky-sport-austria,SPO-A" id="Sky Sport Austria"/>
+		<Channel siteId="sky-sport-hd-1,HDSPO" id="Sky Sport HD 1"/>
+		<Channel siteId="sky-sport-hd-2,SHD2" id="Sky Sport HD 2"/>
+		<Channel siteId="sky-sport-news-hd,SNHD" id="Sky Sport News HD"/>
+		<Channel siteId="sonnenklar-tv,SKLAR" id="sonnenklar TV"/>
+		<Channel siteId="sony-channel,SONY" id="Sony Channel"/>
+		<Channel siteId="spiegel-geschichte,SP-GE" id="SPIEGEL Geschichte"/>
+		<Channel siteId="spiegel-tv-wissen,SPTVW" id="SPIEGEL TV WISSEN"/>
+		<Channel siteId="sport1,SPORT" id="SPORT1"/>
+		<Channel siteId="sport1-us,SP1US" id="SPORT1 US"/>
+		<Channel siteId="sport1,S1PLU" id="SPORT1+"/>
+		<Channel siteId="sportdigital,SPO-D" id="sportdigital"/>
+		<Channel siteId="srf-1,SF1" id="SRF 1"/>
+		<Channel siteId="srf-zwei,SF2" id="SRF zwei"/>
+		<Channel siteId="star-tv,STTV" id="STAR TV"/>
+		<Channel siteId="super-rtl,SUPER" id="SUPER RTL"/>
+		<Channel siteId="swrsr,SWR" id="SWR/SR"/>
+		<Channel siteId="syfy,SCIFI" id="Syfy"/>
+		<Channel siteId="tagesschau-24,TAG24" id="tagesschau 24"/>
+		<Channel siteId="tele-5,TELE5" id="TELE 5"/>
+		<Channel siteId="tlc,TLC" id="TLC"/>
+		<Channel siteId="tnt-comedy,TNT-C" id="TNT Comedy"/>
+		<Channel siteId="tnt-film,TNT-F" id="TNT Film"/>
+		<Channel siteId="tnt-serie,TNT-S" id="TNT Serie"/>
+		<Channel siteId="toggo-plus,TOGGO" id="TOGGO plus"/>
+		<Channel siteId="trace-tv,TRACE" id="Trace TV"/>
+		<Channel siteId="travel-channel,TRCH" id="Travel Channel"/>
+		<Channel siteId="travelxp-4k,TRAVELXP" id="travelxp 4K"/>
+		<Channel siteId="tvberlin,TVB" id="tv.berlin"/>
+		<Channel siteId="tv2,TV2" id="TV2"/>
+		<Channel siteId="tv5-monde,TV5" id="TV5 Monde"/>
+		<Channel siteId="universal-channel-hd,UNIVE" id="Universal Channel HD"/>
+		<Channel siteId="vh1-classic,VH1" id="VH1 Classic"/>
+		<Channel siteId="viva,VIVA" id="VIVA"/>
+		<Channel siteId="vox,VOX" id="VOX"/>
+		<Channel siteId="wdr,WDR" id="WDR"/>
+		<Channel siteId="welt,WELT" id="WELT"/>
+		<Channel siteId="welt-der-wunder-tv,WDWTV" id="Welt der Wunder TV"/>
+		<Channel siteId="wettercom-tv,DWF" id="Wetter.com TV"/>
+		<Channel siteId="zdf,ZDF" id="ZDF"/>
+		<Channel siteId="zdfinfo,ZINFO" id="ZDFinfo"/>
+		<Channel siteId="zdfneo,2NEO" id="ZDFneo"/>
+		<Channel siteId="zeeone,ZEE-1" id="Zee.One"/>
+	</Channels>
+	<Listing type="Html">
+		<Site url="http://m.tvspielfilm.de/tv-programm/sendungen/[ID].html?date=[YYYY]-[MM]-[DD]" external="false" encoding="utf-8"/>
+		<Html>
+			<Template name="default" start="">
+				<SectionTemplate tags="DSAHI">
+					<TemplateText>
+					<![CDATA[
+					<img>
+					<a class="info-holder">
+						<div class="broadcast-times">
+							<span class="d">Heute</span>
+							<span class="t"><#START></span>
+							<span class="c"></span>
+						</div>
+						<h3 class="tv-tip-heading"><#TITLE></h3>
+						<span class="genre"><#GENRE>, <#GARBADGE></span>
+					</a>
+					<a class="live-icon-holder">
+						<div class="icon-holder">
+							<div class="listing-icon"></div>
+							<div class="livetv-running-listing listing-icon"></div>
+						</div>
+					</a>
+					<span class="progress-bar"></span>
+					]]>
+					</TemplateText>
+				</SectionTemplate>
+			</Template>
+			<Template name="Details" start="&lt;div class=&quot;row component article-paragraph&quot;&gt;" end="&lt;div class=&quot;row component channels social-box&quot;&gt;">
+				<SectionTemplate tags="D">
+					<TemplateText>
+					<![CDATA[
+					<div><#DESCRIPTION></div>
+					]]>
+					</TemplateText>
+				</SectionTemplate>
+			</Template>
+			<Sublinks>
+				<Sublink search="/tv-programm/sendung/" template="Details">
+					<Link url="http://m.tvspielfilm.de/[1]" external="false" encoding="utf-8"/>
+				</Sublink>
+			</Sublinks>
+		</Html>
+	</Listing>
+</Grabber>

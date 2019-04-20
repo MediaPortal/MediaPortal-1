@@ -282,6 +282,7 @@ class MPMadPresenter : public CUnknown, public CCritSec
     STDMETHODIMP SetStopEvent();
 
     virtual void EnableExclusive(bool bEnable);
+    virtual void EnableOriginalDisplayMode(bool bEnable);
 
     bool m_pShutdown = false;
     bool m_pInitOSD = false;
@@ -289,6 +290,7 @@ class MPMadPresenter : public CUnknown, public CCritSec
     bool m_pPausedDone = false;
     bool m_pRunDone = false;
     int m_pPausedCount = 0;
+    bool m_pPaused = false;
     IVMR9Callback* m_pCallback = nullptr;
     CCritSec m_dsLock;
     HANDLE m_pGrabEvent = nullptr;

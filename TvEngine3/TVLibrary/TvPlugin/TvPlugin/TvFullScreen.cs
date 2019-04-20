@@ -2508,7 +2508,7 @@ namespace TvPlugin
       // Set recorder status
       VirtualCard card;
       var server = new TvServer();
-      if (TVHome.Navigator.Channel != null)
+      if (TVHome.Navigator?.Channel != null)
       {
         if (server.IsRecording(TVHome.Navigator.Channel.IdChannel, out card))
         {

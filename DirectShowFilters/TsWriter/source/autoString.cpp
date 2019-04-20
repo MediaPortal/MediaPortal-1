@@ -1,5 +1,5 @@
 /* 
- *	Copyright (C) 2006-2008 Team MediaPortal
+ *	Copyright (C) 2006-2018 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -24,15 +24,39 @@
 CAutoString::CAutoString(int len)
 {
 	m_pBuffer = new char[len];
-  memset(m_pBuffer,0,len);
+	if (m_pBuffer)
+	{  
+    memset(m_pBuffer,0,len);
+    m_Len = len;
+  }
 }
 CAutoString::~CAutoString()
 {
-	delete [] m_pBuffer;
-	m_pBuffer=NULL;
+	if (m_pBuffer)
+	{  
+  	delete [] m_pBuffer;
+  	m_pBuffer=NULL;
+  }
 }
 
 char* CAutoString::GetBuffer() 
 {
 	return m_pBuffer;
 }
+
+char* CAutoString::GetBuffer(int newLength)
+{
+  if (newLength>0 && newLength<m_Len)
+  {    
+    //Copy data into new, smaller buffer
+    char* pNewString = new char[newLength];
+    if (pNewString)
+    {
+      memcpy(pNewString, m_pBuffer, newLength);
+      delete[] m_pBuffer;
+      m_pBuffer = pNewString;
+    }
+  }
+  return m_pBuffer;
+}
+
