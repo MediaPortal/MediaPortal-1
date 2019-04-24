@@ -1,8 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ArrayOfDVBTTuning xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <!-- PSB1 -->
+  <!-- PSB1 [pre-700 18/09/2019] -->
   <DVBTTuning>
     <Frequency>786000</Frequency>
+    <BandWidth>8</BandWidth>
+    <Offset>167</Offset>
+  </DVBTTuning>
+  <!-- PSB1 [post-700 18/09/2019] -->
+  <DVBTTuning>
+    <Frequency>570000</Frequency>
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
