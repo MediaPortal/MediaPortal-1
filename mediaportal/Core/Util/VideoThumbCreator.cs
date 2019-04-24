@@ -30,6 +30,7 @@ using MediaPortal.Profile;
 using MediaPortal.Services;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
+using MediaInfo;
 
 namespace MediaPortal.Util
 {
@@ -41,7 +42,7 @@ namespace MediaPortal.Util
     private static int PreviewRows = 2;
     private static int preRecordInterval = 1;
     private static bool LeaveShareThumb = false;
-    private static MediaPortal.Player.MediaInfoWrapper MediaInfo = null;
+    private static MediaInfoWrapper MediaInfo = null;
     private static int TimeBetweenThumbs = 60;
 
     #region Serialisation
@@ -149,12 +150,11 @@ namespace MediaPortal.Util
       Log.Debug("VideoThumbCreator: random value: {0}", intRnd);
       bool Success = false;
 
-      MediaInfo = new MediaPortal.Player.MediaInfoWrapper(aVideoPath);
-      MediaInfo.finished.WaitOne(5000);
+      MediaInfo = new MediaInfoWrapper(aVideoPath);
 
       if (MediaInfo != null)
       {
-        Duration = MediaInfo.VideoDuration/1000;
+        Duration = (int?) MediaInfo.BestVideoStream?.Duration.TotalSeconds ?? 0;
       }
 
       if (Duration == 0)

@@ -548,7 +548,18 @@ ${MementoSection} "MediaPortal TV Server" SecServer
 
   ; MediaInfo
   ;File "${git_ROOT}\Packages\MediaInfo.0.7.95\MediaInfo.dll"
-  File "${git_ROOT}\Packages\MediaInfo.0.7.69\MediaInfo.dll"
+  SetOutPath "$INSTDIR\x64\"
+  File "${git_ROOT}\Packages\MediaInfo.Native.18.12.2\build\native\x64\MediaInfo.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Native.18.12.2\build\native\x64\libcrypto-1_1-x64.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Native.18.12.2\build\native\x64\libcurl.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Native.18.12.2\build\native\x64\libssl-1_1-x64.dll"
+  SetOutPath "$INSTDIR\x86\"
+  File "${git_ROOT}\Packages\MediaInfo.Native.18.12.2\build\native\x86\MediaInfo.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Native.18.12.2\build\native\x86\libcrypto-1_1.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Native.18.12.2\build\native\x86\libcurl.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Native.18.12.2\build\native\x86\libssl-1_1.dll"
+  SetOutPath "$INSTDIR"
+  File "${git_ROOT}\Packages\MediaInfo.Wrapper.18.12.1\lib\net40\MediaInfo.Wrapper.dll"
 
   ; thumbnail software
   File "${git_ROOT}\Packages\ffmpeg.2.7.1\ffmpeg.exe"

@@ -154,7 +154,7 @@ xcopy %1\MPE\MpeMaker\bin\%2\MpeMaker.* . /Y /D
 
 REM Nuget 
 xcopy %1\Databases\bin\%2\HtmlAgilityPack.* . /Y /D
-xcopy %1\..\Packages\MediaInfo.0.7.95\MediaInfo.dll . /Y /D
+xcopy %1\..\Packages\MediaInfo.Wrapper.18.12.1\lib\net40\MediaInfo.Wrapper.dll . /Y /D
 xcopy %1\..\Packages\Sqlite.3.21.0\sqlite.dll . /Y /D
 
 REM ffmpeg 

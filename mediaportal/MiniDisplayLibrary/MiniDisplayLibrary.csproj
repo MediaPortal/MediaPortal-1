@@ -73,6 +73,9 @@
       <Name>LibDriverCoreClient</Name>
       <HintPath>..\MediaPortal.Base\LibDriverCoreClient.dll</HintPath>
     </Reference>
+    <Reference Include="MediaInfo.Wrapper, Version=18.12.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\Packages\MediaInfo.Wrapper.18.12.1\lib\net40\MediaInfo.Wrapper.dll</HintPath>
+    </Reference>
     <Reference Include="SharpLibDisplay, Version=0.2.8.23010, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\Packages\SharpLibDisplay.0.3.4\lib\net40\SharpLibDisplay.dll</HintPath>
     </Reference>
@@ -405,4 +408,11 @@
     <PostBuildEvent>
     </PostBuildEvent>
   </PropertyGroup>
+  <Import Project="..\..\Packages\MediaInfo.Native.18.12.2\build\MediaInfo.Native.targets" Condition="Exists('..\..\Packages\MediaInfo.Native.18.12.2\build\MediaInfo.Native.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\..\Packages\MediaInfo.Native.18.12.2\build\MediaInfo.Native.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\MediaInfo.Native.18.12.2\build\MediaInfo.Native.targets'))" />
+  </Target>
 </Project>

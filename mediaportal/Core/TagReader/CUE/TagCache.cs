@@ -22,6 +22,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using MediaInfo;
 using MediaPortal.Player;
 
 namespace MediaPortal.TagReader
@@ -92,37 +93,22 @@ namespace MediaPortal.TagReader
     {
       try
       {
-        MediaInfo mi = new MediaInfo();
-        mi.Open(fname);
-        FileType = mi.Get(StreamKind.Audio, 0, "Format");
-        Codec = mi.Get(StreamKind.Audio, 0, "Format/Info");
-
-        var bitRateKbps = 0;
-        int.TryParse(mi.Get(StreamKind.Audio, 0, "BitRate"), out bitRateKbps);
-        BitRate = bitRateKbps/1000;
-
-        var durationms = 0;
-        int.TryParse(mi.Get(StreamKind.General, 0, "Duration"), out durationms);
-        Duration = durationms/1000;
-
-        var channelString = mi.Get(StreamKind.Audio, 0, "Channel(s)");
-        var index = channelString.IndexOf("/", StringComparison.Ordinal);
-        if (index > 0)
-        {
-          Channels = Int32.Parse(channelString.Substring(0, index - 1));
+        var mi = new MediaInfoWrapper(fname);
+        if (!mi.MediaInfoNotloaded)
+        { 
+          var audioStream = mi.BestAudioStream;
+          if (audioStream != null)
+          {
+            FileType = audioStream.Format;
+            Codec = audioStream.Codec.ToString();
+            BitRate = (int) (audioStream.Bitrate / 1000);
+            Duration = (int) audioStream.Duration.TotalSeconds;
+            Channels = audioStream.Channel;
+            SampleRate = (int) audioStream.SamplingRate;
+            // TODO: Add bitrate mode
+            BitRateMode = string.Empty;
+          }
         }
-        else
-        {
-          Channels = Int32.Parse(channelString);
-        }
-
-        var samplerate = 0;
-        int.TryParse(mi.Get(StreamKind.Audio, 0, "SamplingRate"), out samplerate);
-        SampleRate = samplerate;
-
-        BitRateMode = mi.Get(StreamKind.Audio, 0, "BitRate_Mode");
-
-        mi.Close();
       }
       catch (Exception)
       {
