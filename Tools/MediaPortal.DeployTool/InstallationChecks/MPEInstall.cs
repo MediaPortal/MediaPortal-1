@@ -40,7 +40,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
         string mpeExePath = Path.Combine(InstallationProperties.Instance["MPDir"], "MpeInstaller.exe");
         if (File.Exists(mpeExePath))
         {
-          Process setup = Process.Start(mpeExePath, String.Format(@"/S ""{0}""", FileName));
+          Process setup = Process.Start(mpeExePath, String.Format(@"/S /U ""{0}""", FileName));
           if (setup != null)
           {
             setup.WaitForExit();

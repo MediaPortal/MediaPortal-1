@@ -63,6 +63,8 @@ namespace MediaPortal.DeployTool.Sections
     public override void UpdateUI()
     {
       lblChooseSkin.Text = Localizer.GetBestTranslation("SkinChoice_labelSectionHeader");
+      lblInfoSkins.Text = Localizer.GetBestTranslation("SkinChoice_labelInfoSkins");
+      ChkAllSkinInstall.Text = Localizer.GetBestTranslation("SkinChoice_ChkInstallAllSkin");
     }
 
     public override DeployDialog GetNextDialog()
@@ -116,5 +118,12 @@ namespace MediaPortal.DeployTool.Sections
       InstallationProperties.Instance.Set("ChosenSkin", "[Existing]");
     }
 
+
+    private void ChkAllSkinInstall_Click(object sender, EventArgs e)
+    {
+      InstallationProperties.Instance.Set("InstallAllSkin", ChkAllSkinInstall.Checked ? "1" : "0");
+
+     // InstallationProperties.Instance.Set("InstallAllSkin", "Yes");
+    }
   }
 }

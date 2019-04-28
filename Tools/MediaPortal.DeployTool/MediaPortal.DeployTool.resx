@@ -112,10 +112,10 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="WatchTV_labelSectionHeader" xml:space="preserve">
     <value>Do you want to watch TV with MediaPortal ?</value>
@@ -548,5 +548,13 @@ Please proceed with it before continuing with MediaPortal installation.</value>
   </data>
   <data name="MySQLChoice_Title" xml:space="preserve">
     <value>MySQL Upgrade 5.1 to 5.6</value>
+  </data>
+  <data name="SkinChoice_ChkInstallAllSkin" xml:space="preserve">
+    <value>Install All Skins provided by the setup</value>
+  </data>
+  <data name="SkinChoice_labelInfoSkins" xml:space="preserve">
+    <value>Selector will install only selected skin.
+If your skin folder contain a skin of the list, it will be installed too. 
+info: Titan will always be installed as safe skin</value>
   </data>
 </root>

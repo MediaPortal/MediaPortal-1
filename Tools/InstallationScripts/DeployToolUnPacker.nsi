@@ -72,6 +72,13 @@
 
 !include "include-MP-PreBuild.nsh"
 
+#---------------------------------------------------------------------------
+# BUILD / INCLUDE SKIN DURING BUILD PROCESS 
+#---------------------------------------------------------------------------
+; comment one of the following lines to disable the preBuild
+
+!define BUILD_Skin
+!define INCLUDE_Skin
 
 #---------------------------------------------------------------------------
 # INCLUDE FILES
@@ -81,6 +88,26 @@
 !include "${git_InstallScripts}\include\MediaPortalMacros.nsh"
 !include "${git_InstallScripts}\include\DotNetSearch.nsh"
 
+#---------------------------------------------------------------------------
+# SKIN BUILD EXTENSION PACKAGE
+#---------------------------------------------------------------------------
+!define SkinRoot "${git_ROOT}\skin"
+
+!ifdef BUILD_Skin
+Section
+# Define skin version related to MP version.
+!define SkinReleaseVersion "${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}.${VER_BUILD}"
+
+#Ares Installer
+!define AresPath "${SkinRoot}\Ares"
+!include "${AresPath}\Ares_build.nsh"
+
+#DefaultWideHD Installer
+!define DFWHDPath "${SkinRoot}\DefaultWideHD"
+!include "${DFWHDPath}\DFWHD_build.nsh"
+
+SectionEnd
+!endif
 
 #---------------------------------------------------------------------------
 # INSTALLER ATTRIBUTES
@@ -138,11 +165,24 @@ Section
   File "${git_TVServer}\Setup\Release\package-tvengine.exe"
 #end of workaound code
 !endif
- 
+
   SetOutPath $INSTDIR\HelpContent\DeployToolGuide
   File /r /x .git "${git_DeployTool}\HelpContent\DeployToolGuide\*"
 
 SectionEnd
+
+# SKIN INCLUDE EXTENSION PACKAGE INSIDE MP PACKAGE
+!ifdef INCLUDE_Skin
+Section
+SetOutPath $INSTDIR\deploy
+
+# Ares skin
+  File "${git_OUT}\${Ares_nameoutput}.mpe1"
+# DefaultWideHD skin
+  File "${git_OUT}\${DFWHD_nameoutput}.mpe1"
+ 
+SectionEnd
+!endif
 
 Function CheckAndDownloadDotNet45
 # Let's see if the user has the .NET Framework 4.5 installed on their system or not

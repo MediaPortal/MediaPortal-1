@@ -703,15 +703,10 @@ Section "MediaPortal core files (required)" SecCore
   ; used for Default and Titan Skin Font
   StrCpy $FONT_DIR $FONTS
 
-  !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\DefaultWideHD\MPDefaultFonts\NotoSans-Regular.ttf"
   !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Titan\Fonts\TitanSmall.ttf"
   !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Titan\Fonts\Titan.ttf"
   !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Titan\Fonts\TitanLight.ttf"
   !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Titan\Fonts\TitanMedium.ttf"
-  !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Ares\MPDefaultFonts\AvalonTypeLight.ttf"
-  !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Ares\MPDefaultFonts\HELN.TTF"
-  !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Ares\MPDefaultFonts\HindVadodara-SemiBold.ttf"
-  !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Ares\MPDefaultFonts\MediaPortalDefault.ttf"
 
   SendMessage ${HWND_BROADCAST} ${WM_FONTCHANGE} 0 0 /TIMEOUT=1000
   
@@ -1046,7 +1041,7 @@ Section -Post
   ${EndIf}
 
   ; run AresBackupRestore.exe
-  Exec '"$MPdir.Base\AresBackupRestore.exe"'
+  ; Exec '"$MPdir.Base\AresBackupRestore.exe"'
 SectionEnd
 
 #---------------------------------------------------------------------------
