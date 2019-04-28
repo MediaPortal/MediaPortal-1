@@ -150,6 +150,7 @@
       <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\$(Configuration);$(DXSDK_DIR)lib\x86;$(WINDOWS_SDK)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <IgnoreSpecificDefaultLibraries>libcmt.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <ModuleDefinitionFile>.\source\TsReader.def</ModuleDefinitionFile>
       <ProgramDatabaseFile>.\bin\Release/TsReader.pdb</ProgramDatabaseFile>
       <StackReserveSize>2097152</StackReserveSize>
       <StackCommitSize>2097152</StackCommitSize>

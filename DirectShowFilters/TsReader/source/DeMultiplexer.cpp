@@ -4544,7 +4544,7 @@ bool CDeMultiplexer::GetTeletextStreamCount(__int32 &count)
   
   if(m_pids.TeletextPid > 0 && m_pids.TeletextInfo.size() > 0)
   {
-    count = m_pids.TeletextInfo.size();
+    count = (int)m_pids.TeletextInfo.size();
   }
   else
   {
