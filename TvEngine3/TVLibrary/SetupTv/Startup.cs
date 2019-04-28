@@ -104,6 +104,9 @@ namespace SetupTv
     {
       // Initialize hosting environment
       IntegrationProviderHelper.Register(PathManager.BuildAssemblyRelativePath("Integration"));
+      // .NET 4.0: Use TLS v1.2. Many download sources no longer support the older and now insecure TLS v1.0/1.1 and SSL v3.
+      // TODO: Check for compatibility inside MP2-Server process!!!
+      // ServicePointManager.SecurityProtocol = (SecurityProtocolType)0xc00;
 
       // Init Common logger -> this will enable TVPlugin to write in the Mediaportal.log file
       var loggerName = Path.GetFileNameWithoutExtension(Environment.GetCommandLineArgs()[0]);
@@ -180,7 +183,7 @@ namespace SetupTv
       {
         Log.Info("---- SetupTv v" + versionInfo.FileVersion + " is starting up on Windows 10 Pro for Workstations (???)");
       }
-      Log.Info(OSInfo.OSInfo.GetLastInstalledWindowsUpdateTimestampAsString());
+      //Log.Info(OSInfo.OSInfo.GetLastInstalledWindowsUpdateTimestampAsString());
       Log.Info("Windows Media Player: [{0}]", OSInfo.OSInfo.GetWMPVersion());
 
       //Check for unsupported operating systems

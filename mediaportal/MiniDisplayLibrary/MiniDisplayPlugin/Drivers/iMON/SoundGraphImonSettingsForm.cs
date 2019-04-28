@@ -66,6 +66,5 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             SoundGraphImon.Settings.Save();
             Close();
         }
-
-    }
+  }
 }

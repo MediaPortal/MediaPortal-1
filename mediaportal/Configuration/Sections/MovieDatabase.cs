@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2019 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2019 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -3044,12 +3044,12 @@ namespace MediaPortal.Configuration.Sections
     // Save thumbs for covers and actors, database update with pic link
     private void UpdateActiveMovieImageAndThumbs(string strImageUrl, int movieID, string movieTitle)
     {
-      if (strImageUrl == string.Empty)
+      if (string.IsNullOrEmpty(strImageUrl))
       {
         return;
       }
 
-      bool bIsUrl = (strImageUrl.Substring(0, 7) == @"http://");
+      bool bIsUrl = (strImageUrl.StartsWith(@"http://") || strImageUrl.StartsWith(@"https://"));
 
       // Clear previous image
       if (pictureBoxCover.Image != null)
@@ -3349,7 +3349,7 @@ namespace MediaPortal.Configuration.Sections
         _progressDialog.SetLine1("Downloading cover for: " + movie.Title);
 
         // Skip no thumb URL movie ...
-        if (string.IsNullOrEmpty(movie.ThumbURL) || movie.ThumbURL.Length <= 7 || (movie.ThumbURL.Length > 7 && !movie.ThumbURL.Substring(0, 7).Equals("http://")))
+        if (string.IsNullOrEmpty(movie.ThumbURL) || movie.ThumbURL.Length <= 10 || (!movie.ThumbURL.StartsWith(@"http://") && !movie.ThumbURL.StartsWith(@"https://")))
         {
           if (_progressDialog.Count < movies.Count - 1)
             _progressDialog.Count++;
@@ -3896,9 +3896,9 @@ namespace MediaPortal.Configuration.Sections
       imdbActor.DateOfDeath = tbDeathDate.Text;
       imdbActor.PlaceOfDeath = tbDeathPlace.Text;
 
-      if (tbThumbLoc.Text != string.Empty && tbThumbLoc.Text.Length >= 7)
+      if (!string.IsNullOrEmpty(tbThumbLoc.Text) && tbThumbLoc.Text.Length > 10)
       {
-        bool isUrl = (tbThumbLoc.Text.Substring(0, 7) == @"http://" || tbThumbLoc.Text.Substring(0, 7) == @"file://");
+        bool isUrl = (tbThumbLoc.Text.StartsWith(@"http://") || tbThumbLoc.Text.StartsWith(@"file://") || tbThumbLoc.Text.StartsWith(@"https://"));
         if (isUrl)
         {
           imdbActor.ThumbnailUrl = tbThumbLoc.Text;

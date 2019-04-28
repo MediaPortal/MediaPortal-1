@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2019 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2019 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -1769,7 +1769,8 @@ namespace MediaPortal.Util
     {
       string extension = Path.GetExtension(fileName).ToLowerInvariant();
       // check for "http" to prevent exception
-      if (string.IsNullOrEmpty(fileName) || fileName.StartsWith("http://") || !File.Exists(fileName) || (extension == ".tsbuffer" || extension == ".ts")) 
+      if (string.IsNullOrEmpty(fileName) || fileName.StartsWith("http://") || fileName.StartsWith("https://") || 
+          !File.Exists(fileName) || (extension == ".tsbuffer" || extension == ".ts")) 
         return false;
 
       string vDrive = DaemonTools.GetVirtualDrive();
@@ -2950,17 +2951,24 @@ namespace MediaPortal.Util
       }
     }
 
+    public static int PlaySound(string sSoundFile, bool bSynchronous, bool bIgnoreErrors, bool force)
+    {
+      if (sSoundFile == null) return 0;
+      if (sSoundFile.Length == 0) return 0;
+      return PlaySound(sSoundFile, bSynchronous, bIgnoreErrors, false, false, false, force);
+    }
+
     public static int PlaySound(string sSoundFile, bool bSynchronous, bool bIgnoreErrors)
     {
       if (sSoundFile == null) return 0;
       if (sSoundFile.Length == 0) return 0;
-      return PlaySound(sSoundFile, bSynchronous, bIgnoreErrors, false, false, false);
+      return PlaySound(sSoundFile, bSynchronous, bIgnoreErrors, false, false, false, false);
     }
 
     public static int PlaySound(string sSoundFile, bool bSynchronous, bool bIgnoreErrors,
-                                bool bNoDefault, bool bLoop, bool bNoStop)
+                                bool bNoDefault, bool bLoop, bool bNoStop, bool force)
     {
-      if (!enableGuiSounds)
+      if (!enableGuiSounds && !force)
         return 0;
 
       const int SND_ASYNC = 1;
@@ -2979,6 +2987,10 @@ namespace MediaPortal.Util
         else if (Util.Utils.FileExistsInCache(GUIGraphicsContext.GetThemedSkinFile("\\" + sSoundFile + ".wav")))
         {
           sSoundFile = GUIGraphicsContext.GetThemedSkinFile("\\" + sSoundFile + ".wav");
+        }
+        else if (Util.Utils.FileExistsInCache(Config.GetFile(Config.Dir.Config, "Sounds", sSoundFile)))
+        {
+          sSoundFile = Config.GetFile(Config.Dir.Config, "Sounds", sSoundFile);
         }
         else
         {

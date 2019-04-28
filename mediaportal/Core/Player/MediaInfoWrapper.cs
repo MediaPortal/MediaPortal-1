@@ -52,6 +52,8 @@ namespace MediaPortal.Player
     private int _videoDuration = 0;
     private bool _DVDenabled = false;
     private bool _BDenabled = false;
+    private bool _mediaInfoForceDisable = false;
+    private bool _enabledDRR = false;
     private string _ParseSpeed;
 
     //Audio
@@ -99,6 +101,7 @@ namespace MediaPortal.Player
         if (!MediaInfoExist())
         {
           _mediaInfoNotloaded = true;
+          finished.Set();
           return;
         }
 
@@ -106,6 +109,8 @@ namespace MediaPortal.Player
         {
           _DVDenabled = xmlreader.GetValueAsBool("dvdplayer", "mediainfoused", false);
           _BDenabled = xmlreader.GetValueAsBool("bdplayer", "mediainfoused", false);
+          _mediaInfoForceDisable = xmlreader.GetValueAsBool("general", "mediainfoforcedisable", false);
+          _enabledDRR = xmlreader.GetValueAsBool("general", "autochangerefreshrate", false);
           _ParseSpeed = xmlreader.GetValueAsString("debug", "MediaInfoParsespeed", "0.3");
           // fix delay introduced after 0.7.26: http://sourceforge.net/tracker/?func=detail&aid=3013548&group_id=86862&atid=581181
         }
@@ -124,6 +129,7 @@ namespace MediaPortal.Player
             isAVStream);
           Log.Debug("MediaInfoWrapper: disabled for this content");
           _mediaInfoNotloaded = true;
+          finished.Set();
           return;
         }
 
@@ -131,6 +137,7 @@ namespace MediaPortal.Player
         {
           Log.Debug("MediaInfoWrapper: WTV file is not handled");
           _mediaInfoNotloaded = true;
+          finished.Set();
           return;
         }
 
@@ -142,11 +149,12 @@ namespace MediaPortal.Player
           isDVD = false;
 
         //currently mediainfo is only used for local video related material (if enabled)
-        if ((!isVideo && !isDVD) || (isDVD && !_DVDenabled) || (isDVD && _BDenabled))
+        if ((!isVideo && !isDVD) || (isDVD && !_DVDenabled) || (isDVD && _BDenabled) || (_mediaInfoForceDisable && !_enabledDRR))
         {
           Log.Debug("MediaInfoWrapper: isVideo:{0}, isDVD:{1}[enabled:{2}]", isVideo, isDVD, _DVDenabled);
           Log.Debug("MediaInfoWrapper: disabled for this content");
           _mediaInfoNotloaded = true;
+          finished.Set();
           return;
         }
 
@@ -166,6 +174,7 @@ namespace MediaPortal.Player
               if (!File.Exists(strFile))
               {
                 _mediaInfoNotloaded = true;
+                finished.Set();
                 return;
               }
             }
@@ -205,6 +214,7 @@ namespace MediaPortal.Player
           else
           {
             _mediaInfoNotloaded = true;
+            finished.Set();
             return;
           }
 

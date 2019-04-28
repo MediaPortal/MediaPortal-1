@@ -1393,7 +1393,7 @@ void CDeMultiplexer::OnTsPacket(byte* tsPacket, int bufferOffset, int bufferLeng
 
   if (m_pids.TeletextPid > 0 && m_pids.TeletextPid != m_currentTeletextPid)
   {
-    IDVBSubtitle* pDVBSubtitleFilter(m_filter.GetSubtitleFilter());
+    //IDVBSubtitle* pDVBSubtitleFilter(m_filter.GetSubtitleFilter());
     if (pTeletextServiceInfoCallback)
     {
       std::vector<TeletextServiceInfo>::iterator vit = m_pids.TeletextInfo.begin();
@@ -1646,7 +1646,7 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket, int bufferOffs
                 byte hChannels = ((*(ps + 2) & 0x01) << 2) | ((*(ps + 3) & 0xC0) >> 6);
                 byte hRDBs = *(ps + 6) & 0x03; //Raw data blocks per frame
 
-                if (hFreq > 2 && hFreq < 9 && hChannels < 7 && hChannels>0 && hRDBs == 0) //Sanity checks...
+                if (hFreq>2 && hFreq<11 && hChannels<7 && hChannels>0 && hRDBs==0) //Sanity checks...
                 {
                   if (m_audHeaderCount < 16)  // Learning/training state
                   {
@@ -1756,7 +1756,8 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket, int bufferOffs
                   byte hObjectType = ((*(ps + 5) & 0xF8) >> 3);
                   byte hFreq = ((*(ps + 5) & 0x07) << 1) | ((*(ps + 6) & 0x80) >> 7);
                   byte hChannels = ((*(ps + 6) & 0x78) >> 3);
-                  if (hFreq > 2 && hFreq < 9 && hChannels < 7 && hChannels>0 && (hObjectType == 2 || hObjectType == 5)) //Sanity checks...
+                  //LogDebug("demux: LATM AAC preamble found, hObjectType: %d, hFreq: %d, hChannels: %d", hObjectType, hFreq, hChannels);
+                  if (hFreq>2 && hFreq<11 && hChannels<7 && hChannels>0 && (hObjectType==2 || hObjectType==5 || hObjectType==29)) //Sanity checks...
                   {
                     //Found a possible good header....
                     if (m_audHeaderCount < 8)  // Learning/training state
@@ -4536,6 +4537,49 @@ void CDeMultiplexer::CallTeletextEventCallback(int eventCode, unsigned long int 
   {
     (*pTeletextEventCallback)(eventCode, eventValue);
   }
+}
+
+bool CDeMultiplexer::GetTeletextStreamCount(__int32 &count)
+{  
+  
+  if(m_pids.TeletextPid > 0 && m_pids.TeletextInfo.size() > 0)
+  {
+    count = m_pids.TeletextInfo.size();
+  }
+  else
+  {
+    count = 0;
+  }      
+  return S_OK;
+}
+
+bool CDeMultiplexer::GetTeletextStreamType(__int32 stream, __int32 &type)
+{
+  if (m_pids.TeletextPid < 1 || stream < 0 || (size_t)stream >= m_pids.TeletextInfo.size())
+  {
+    // invalid stream number
+    type = -1;
+    return S_FALSE;
+  }
+  
+  type = m_pids.TeletextInfo[stream].type;
+    
+  return S_OK;
+}
+
+bool CDeMultiplexer::GetTeletextStreamLanguage(__int32 stream, char* szLanguage)
+{
+  if (m_pids.TeletextPid < 1 || stream < 0 || (size_t)stream >= m_pids.TeletextInfo.size())
+  {
+    szLanguage[0] = szLanguage[1] = szLanguage[2] = 0;
+    return S_FALSE;
+  }
+  szLanguage[0] = m_pids.TeletextInfo[stream].lang[0];
+  szLanguage[1] = m_pids.TeletextInfo[stream].lang[1];
+  szLanguage[2] = m_pids.TeletextInfo[stream].lang[2];
+  szLanguage[3] = 0;
+
+  return S_OK;
 }
 
 void CDeMultiplexer::DelegatedFlush(bool forceNow, bool waitForFlush)

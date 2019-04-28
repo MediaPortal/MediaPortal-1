@@ -160,7 +160,7 @@
         <posX>655</posX>
         <posY>305</posY>
         <dimColor>ffffffff</dimColor>
-        <layout>GridLayout(2, 0, 120, 1, 1)</layout>
+        <layout>GridLayout(2, 0, 50, 1, 1)</layout>
       <control>
         <description>Playlist</description>
         <type>button</type>
@@ -210,6 +210,7 @@
         <id>24</id>
         <label>2134</label>
         <width>525</width>
+        <ondown>25</ondown>
       </control>
       <control>
         <description>Audio</description>
@@ -217,6 +218,7 @@
         <id>25</id>
         <label>2135</label>
         <width>525</width>
+        <onup>24</onup>
       </control>
       <control>
         <description>Auto Decoder Settings On/Off</description>
@@ -239,6 +241,18 @@
         <label>1323</label>
         <width>525</width>
         <ondown>42</ondown>
+      </control>
+      <control>
+        <description>Video codec select 1</description>
+        <type>checkbutton</type>
+        <id>47</id>
+        <visible>false</visible>
+      </control>
+      <control>
+        <description>Video codec select 2</description>
+        <type>checkbutton</type>
+        <id>48</id>
+        <visible>false</visible>
       </control>
     </control>
     

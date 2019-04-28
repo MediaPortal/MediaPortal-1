@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2019 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2019 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -79,18 +79,19 @@ namespace MediaPortal.Util
     /// <param name="index"></param>
     public void GetLocalFanart(int movieId, string localFile, int index)
     {
-      if (localFile == string.Empty)
+      if (string.IsNullOrEmpty(localFile))
       {
         return;
       }
+
       bool isUrl = true;
 
-      if (localFile.Length > 7 && localFile.Substring(0, 7).Equals("file://"))
+      if (localFile.Length > 10 && localFile.StartsWith(@"file://"))
       {
         localFile = localFile.Replace("file://", "");
         isUrl = false;
       }
-      else if (localFile.Length > 7 && !localFile.Substring(0, 7).Equals("http://"))
+      else if (localFile.Length > 10 && !localFile.StartsWith(@"http://") && !localFile.StartsWith(@"https://"))
       {
         return;
       }

@@ -371,6 +371,8 @@
     <ClCompile Include="liveMedia\OggFileSink.cpp" />
     <ClCompile Include="liveMedia\ourMD5.cpp" />
     <ClCompile Include="liveMedia\ProxyServerMediaSession.cpp" />
+    <ClCompile Include="liveMedia\RawVideoRTPSink.cpp" />
+    <ClCompile Include="liveMedia\RawVideoRTPSource.cpp" />
     <ClCompile Include="liveMedia\RTSPRegisterSender.cpp" />
     <ClCompile Include="liveMedia\RTSPServerSupportingHTTPStreaming.cpp" />
     <ClCompile Include="liveMedia\StreamReplicator.cpp" />
@@ -527,6 +529,8 @@
     <ClCompile Include="liveMedia/RTSPServerRegister.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="liveMedia\include\RawVideoRTPSink.hh" />
+    <ClInclude Include="liveMedia\include\RawVideoRTPSource.hh" />
     <ClInclude Include="liveMedia\rtcp_from_spec.h" />
     <ClInclude Include="groupsock\include\NetCommon.h" />
     <ClInclude Include="MediaPortal\MPMPEG2TransportStreamFromPESSource.h" />

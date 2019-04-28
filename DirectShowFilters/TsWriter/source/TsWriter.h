@@ -1,5 +1,5 @@
 /* 
- *	Copyright (C) 2006-2008 Team MediaPortal
+ *	Copyright (C) 2006-2018 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -252,4 +252,5 @@ private:
 		CCritSec m_channelLock;         // Lock for protecting access to m_vecChannels.
     typedef vector<CTsChannel*>::iterator ivecChannels;
 		int m_id;
+	  CRegistryUtil* m_pRegistryUtil; 	
 };

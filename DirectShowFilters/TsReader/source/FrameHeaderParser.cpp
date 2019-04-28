@@ -650,7 +650,7 @@ bool CFrameHeaderParser::Read(aachdr& h, int len, CMediaType* pmt)
 		return(false);
 
 	h.FrameSize = h.aac_frame_length - (h.fcrc == 0 ? 9 : 7);
-	static int freq[] = {96000, 88200, 64000, 48000, 44100, 32000, 24000, 22050, 16000, 12000, 11025, 8000};
+	static int freq[] = {96000, 88200, 64000, 48000, 44100, 32000, 24000, 22050, 16000, 12000, 11025, 8000, 7350};
 	h.nBytesPerSec = h.aac_frame_length * freq[h.freq] / 1024; // ok?
 	h.rtDuration = 10000000i64 * 1024 / freq[h.freq]; // ok?
 	h.nSamplesPerSec = freq[h.freq];
