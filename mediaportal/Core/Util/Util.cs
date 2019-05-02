@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2019 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2019 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -1371,35 +1371,30 @@ namespace MediaPortal.Util
     public static string GetNamedDate(DateTime aDateTime)
     {
       DateTime now = DateTime.Now;
+      String timeStr = aDateTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
+
       if (aDateTime.Date == now.Date) // Today
       {
-        return String.Format("{0} {1}", GUILocalizeStrings.Get(6030),
-                             aDateTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+        return String.Format("{0} {1}", GUILocalizeStrings.Get(6030), timeStr);
       }
       else if (aDateTime.Date == now.Date.AddDays(1)) // Tomorrow
       {
-        return String.Format("{0} {1}", GUILocalizeStrings.Get(6031), aDateTime.ToString("t"),
-                             CultureInfo.CurrentCulture.DateTimeFormat);
+        return String.Format("{0} {1}", GUILocalizeStrings.Get(6031), timeStr);
       }
       else if (aDateTime.Date.AddDays(1) == now.Date) // Yesterday
       {
-        return String.Format("{0} {1}", GUILocalizeStrings.Get(6040), aDateTime.ToString("t"),
-                             CultureInfo.CurrentCulture.DateTimeFormat);
+        return String.Format("{0} {1}", GUILocalizeStrings.Get(6040), timeStr);
       }
       else if (aDateTime.Date.AddDays(2) == now.Date) // Two days ago
       {
-        return String.Format("{0} {1}", GUILocalizeStrings.Get(6041), aDateTime.ToString("t"),
-                             CultureInfo.CurrentCulture.DateTimeFormat);
+        return String.Format("{0} {1}", GUILocalizeStrings.Get(6041), timeStr);
       }
-      return String.Format("{0} {1}",
-                           Utils.GetShortDayString(aDateTime),
-                           aDateTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+      return String.Format("{0} {1}", Utils.GetShortDayString(aDateTime), timeStr);
     }
 
     public static string GetNamedDateStartEnd(DateTime startDateTime, DateTime endDateTime)
     {
-      return String.Format("{0}-{1}", GetNamedDate(startDateTime), endDateTime.ToString("t"),
-                           CultureInfo.CurrentCulture.DateTimeFormat);
+      return String.Format("{0}-{1}", GetNamedDate(startDateTime), endDateTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
     }
 
     public static string GetShortDayString(DateTime dt)
@@ -1431,7 +1426,10 @@ namespace MediaPortal.Util
             day = GUILocalizeStrings.Get(663);
             break;
         }
-        return String.Format("{0} {1}-{2}", day, dt.Day, dt.Month);
+        String mdp = CultureInfo.CurrentCulture.DateTimeFormat.MonthDayPattern;
+        String DateSeparator = CultureInfo.CurrentCulture.DateTimeFormat.DateSeparator;
+        String pattern = mdp.IndexOf('M') < mdp.IndexOf('d') ? " MM"+ DateSeparator+"dd" : " dd" + DateSeparator + "MM";
+        return day + dt.ToString(pattern);
       }
       catch (Exception) {}
       return string.Empty;
@@ -1769,8 +1767,7 @@ namespace MediaPortal.Util
     {
       string extension = Path.GetExtension(fileName).ToLowerInvariant();
       // check for "http" to prevent exception
-      if (string.IsNullOrEmpty(fileName) || fileName.StartsWith("http://") || fileName.StartsWith("https://") || 
-          !File.Exists(fileName) || (extension == ".tsbuffer" || extension == ".ts")) 
+      if (string.IsNullOrEmpty(fileName) || fileName.StartsWith("http://") || !File.Exists(fileName) || (extension == ".tsbuffer" || extension == ".ts")) 
         return false;
 
       string vDrive = DaemonTools.GetVirtualDrive();
