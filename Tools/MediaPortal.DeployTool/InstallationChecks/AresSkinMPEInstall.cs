@@ -28,10 +28,10 @@ namespace MediaPortal.DeployTool.InstallationChecks
 {
   internal class AresSkinMPEInstall : MPEInstall
   {
+    string MPversion = Convert.ToString(Utils.GetCurrentPackageVersion()) + ".0"; //get MP version being installed
 
     public AresSkinMPEInstall()
     {
-      string MPversion = Convert.ToString(Utils.GetCurrentPackageVersion()) + ".0"; //get MP version being installed
       MpeId = "805a38ec-6dd4-4b2c-9b65-55e680da24cc"; // Offcial ID set by wizard
       MpeURL = "https://github.com/MediaPortal/MP1-Skin-Ares/releases/download/" + MPversion + "/Ares_" + MPversion + ".mpe1";
       MpeUpdateURL = "https://raw.githubusercontent.com/MediaPortal/MP1-Skin-Ares/master/Aresupdate.xml";
@@ -56,48 +56,77 @@ namespace MediaPortal.DeployTool.InstallationChecks
 
     public override string GetDisplayName()
     {
-      return "Ares Skin" + (OnlineVersion != null ? " " + OnlineVersion.ToString() : "");
+      return "Ares Skin" + (OnlineVersion != null ? " " + OnlineVersion.ToString() : MPversion + " *");
     }
 
     public override CheckResult CheckStatus()
     {
       CheckResult result = default(CheckResult);
-
+      string MPversion = Convert.ToString(Utils.GetCurrentPackageVersion()) + ".0"; //get MP version being installed
       // check if the user selected Ares as default skin, and install it
 
       if (InstallationProperties.Instance["ChosenSkin"] == "Ares" || InstallationProperties.Instance["InstallAllSkin"] == "1" || SkinFolder(true))
       {
-
         // check if mpe package is installed
         Version vMpeInstalled = GetInstalledMpeVersion();
         if (vMpeInstalled != null)
         {
-          OnlineVersion = GetLatestAvailableMpeVersion();
-          if (OnlineVersion != null)
+          if (File.Exists(FileName))
           {
-            if ((vMpeInstalled >= OnlineVersion || vMpeInstalled <= OnlineVersion) && File.Exists(FileName))
-            {
-
-              result.state = CheckState.NOT_INSTALLED; // always install skin setup 
-            }
-            else if(SkinFolder(true))
-              {
-              result.state = CheckState.VERSION_MISMATCH;
-            }
-            else
-            {
-              result.needsDownload = !File.Exists(FileName);
-            }
+            result.state = CheckState.NOT_INSTALLED; // always install skin setup, not update
           }
           else
           {
-            result.state = CheckState.VERSION_LOOKUP_FAILED;
+            result.state = CheckState.SKIPPED;
+            return result;
           }
+        }
+        else if (SkinFolder(true) && File.Exists(FileName))
+        {
+          result.state = CheckState.NOT_INSTALLED;
         }
         else
         {
-          result.needsDownload = !File.Exists(FileName);
+          result.state = CheckState.SKIPPED;
         }
+
+        #region old logic backup
+        //  // check if mpe package is installed
+        //  Version vMpeInstalled = GetInstalledMpeVersion();
+        //  if (vMpeInstalled != null)
+        //  {
+        //    OnlineVersion = GetLatestAvailableMpeVersion();
+        //    if (OnlineVersion != null)
+        //    {
+        //      if ((vMpeInstalled >= OnlineVersion || vMpeInstalled <= OnlineVersion) && File.Exists(FileName))
+        //      {
+
+        //        result.state = CheckState.NOT_INSTALLED; // always install skin setup 
+        //      }
+        //      else
+        //      {
+        //        result.needsDownload = !File.Exists(FileName);
+        //      }
+        //    }
+        //    else if ("vMpeInstalled" != "MPversion")
+        //    {
+        //      result.state = CheckState.VERSION_MISMATCH;
+        //    }
+        //    else
+        //    {
+        //      result.state = CheckState.VERSION_LOOKUP_FAILED;
+        //    }
+        //  }
+        //  else if (SkinFolder(true))
+        //  {
+        //    result.state = CheckState.NOT_INSTALLED;
+        //  }
+        //  else
+        //  {
+        //    result.needsDownload = !File.Exists(FileName);
+        //  }
+        #endregion
+
       }
       else
       {
@@ -108,7 +137,9 @@ namespace MediaPortal.DeployTool.InstallationChecks
 
       if (InstallationProperties.Instance["InstallType"] == "download_only")
       {
-        result.state = result.needsDownload == true ? CheckState.DOWNLOADED : CheckState.NOT_DOWNLOADED;
+        result.state = result.needsDownload == false ? CheckState.DOWNLOADED : CheckState.NOT_DOWNLOADED;
+        return result;
+
       }
 
       return result;

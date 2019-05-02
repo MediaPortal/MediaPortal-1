@@ -28,9 +28,10 @@ namespace MediaPortal.DeployTool.InstallationChecks
 {
   internal class DFWHDSkinMPEInstall : MPEInstall
   {
+    string MPversion = Convert.ToString(Utils.GetCurrentPackageVersion()) + ".0"; //get MP version being installed
+
     public DFWHDSkinMPEInstall()
     {
-      string MPversion = Convert.ToString(Utils.GetCurrentPackageVersion()) + ".0"; //get MP version being installed
       MpeId = "922354ea-14e1-42dd-92af-496e2ac999db";
       MpeURL = "https://github.com/MediaPortal/MP1-Skin-DefaultWideHD/releases/download/" + MPversion + "/DFWHD_" + MPversion + ".mpe1";
       MpeUpdateURL = "https://raw.githubusercontent.com/MediaPortal/MP1-Skin-DefaultWideHD/master/DFWHDupdate.xml";
@@ -55,7 +56,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
 
     public override string GetDisplayName()
     {
-      return "DefaultWideHD skin" + (OnlineVersion != null ? " " + OnlineVersion.ToString() : "");
+      return "DefaultWideHD skin" + (OnlineVersion != null ? " " + OnlineVersion.ToString() : MPversion + " *");
     }
 
     public override CheckResult CheckStatus()
@@ -66,37 +67,67 @@ namespace MediaPortal.DeployTool.InstallationChecks
 
       if (InstallationProperties.Instance["ChosenSkin"] == "DefaultWideHD" || InstallationProperties.Instance["InstallAllSkin"] == "1" || SkinFolder(true))
       {
-
         // check if mpe package is installed
         Version vMpeInstalled = GetInstalledMpeVersion();
         if (vMpeInstalled != null)
         {
-          OnlineVersion = GetLatestAvailableMpeVersion();
-          if (OnlineVersion != null)
+          if (File.Exists(FileName))
           {
-            if ((vMpeInstalled >= OnlineVersion || vMpeInstalled <= OnlineVersion) && File.Exists(FileName))
-            {
-
-              result.state = CheckState.NOT_INSTALLED; // always install skin setup
-            }
-            else if(SkinFolder(true))
-              {
-              result.state = CheckState.VERSION_MISMATCH;
-            }
-            else
-            {
-              result.needsDownload = !File.Exists(FileName);
-            }
+            result.state = CheckState.NOT_INSTALLED; // always install skin setup, not update
           }
           else
           {
-            result.state = CheckState.VERSION_LOOKUP_FAILED;
+            result.state = CheckState.SKIPPED;
+            return result;
           }
+        }
+        else if (SkinFolder(true) && File.Exists(FileName))
+        {
+          result.state = CheckState.NOT_INSTALLED;
         }
         else
         {
-          result.needsDownload = !File.Exists(FileName);
+          result.state = CheckState.SKIPPED;
         }
+
+
+        #region old logic backup
+        // Backup old logic
+        //// check if mpe package is installed
+        //Version vMpeInstalled = GetInstalledMpeVersion();
+        //if (vMpeInstalled != null)
+        //{
+        //  OnlineVersion = GetLatestAvailableMpeVersion();
+        //  if (OnlineVersion != null)
+        //  {
+        //    if ((vMpeInstalled >= OnlineVersion || vMpeInstalled <= OnlineVersion ) && File.Exists(FileName))
+        //    {
+
+        //      result.state = CheckState.NOT_INSTALLED; // always install skin setup
+        //    }
+        //    else if(SkinFolder(true))
+        //      {
+        //      result.state = CheckState.NOT_INSTALLED;
+        //    }
+        //    else
+        //    {
+        //      result.needsDownload = !File.Exists(FileName);
+        //    }
+        //  }
+        //  else if (File.Exists(FileName))
+        //  {
+        //    result.state = CheckState.VERSION_MISMATCH;
+        //  }
+        //  else
+        //  {
+        //    result.state = CheckState.VERSION_LOOKUP_FAILED; 
+        //  }
+        //}
+        //else
+        //{
+        //  result.needsDownload = !File.Exists(FileName);
+        //}
+        #endregion
       }
       else
       {
@@ -107,7 +138,8 @@ namespace MediaPortal.DeployTool.InstallationChecks
 
       if (InstallationProperties.Instance["InstallType"] == "download_only")
       {
-        result.state = result.needsDownload == true ? CheckState.DOWNLOADED : CheckState.NOT_DOWNLOADED;
+        result.state = result.needsDownload == false ? CheckState.DOWNLOADED : CheckState.NOT_DOWNLOADED;
+        return result;
       }
 
       return result;
