@@ -946,6 +946,8 @@ SectionGroup /e "Backup" SecBackup
   ${MementoSectionEnd}
 SectionGroupEnd
 
+!ifdef EXT_SKIN_INCLUDED
+
 Section "-External Skin installer Ares" SecExtSkinInstaller_Ares
   ${LOG_TEXT} "INFO" "MediaPortal Skin : Ares and DefaultWideHD ..."
   ; copy skin folder
@@ -1001,7 +1003,7 @@ Section "-External Skin installer Ares" SecExtSkinInstaller_Ares
    ${LOG_TEXT} "INFO" "Remove MediaPortal Skin : DefaultWideHD..."
   ; remove macro needed for allow building
   !macroend
-
+!endif
 
 ${MementoSectionDone}
 
