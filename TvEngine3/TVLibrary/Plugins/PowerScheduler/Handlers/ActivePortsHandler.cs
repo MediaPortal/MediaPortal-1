@@ -62,7 +62,8 @@ namespace TvEngine.PowerScheduler.Handlers
       {
         if (_enabled)
         {
-          if (IsPortBeingUsed(3389) || IsPortBeingUsed(5900))
+          // if (IsPortBeingUsed(3389) || IsPortBeingUsed(5900)) //Normal RDP and VNC ports
+          if (IsPortBeingUsed(5900))
           {
             return _useAwayMode ? StandbyMode.AwayModeRequested : StandbyMode.StandbyPrevented;
           }

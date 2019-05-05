@@ -90,13 +90,37 @@ namespace TvEngine.PowerScheduler.Handlers
 
               foreach (string hostName in hosts.Split(";".ToCharArray()))
               {
-                try
+                if (hostName.StartsWith(":")) //Basic check for port number (only)
                 {
-                  Ping ping = new Ping();
-                  ping.PingCompleted += new PingCompletedEventHandler(PingCompletedCallback);
-                  ping.SendAsync(hostName, 100);
+                  try
+                  {
+                    string portStr = new String(hostName.Where(Char.IsDigit).ToArray());
+                    Int32 port = 0;
+                    bool canConvert = Int32.TryParse(portStr, out port);
+                    bool portActive = false;
+                    if (canConvert)
+                    {
+                      portActive = IPGlobalProperties.GetIPGlobalProperties().GetActiveTcpConnections().Any(
+                                       tcpConnectionInformation => tcpConnectionInformation.LocalEndPoint.Port == port);
+                    }  
+                    if (portActive)
+                    {
+                      _isActiveHost = true;
+                    }             
+                    Log.Debug("PS: PingMonitor: Port string: {0}, num: {1}, active: {2}", hostName, port, portActive);
+                  }
+                  catch (Exception) {}
+                }                
+                else  //It's an IP address or hostname                
+                {
+                  try
+                  {
+                    Ping ping = new Ping();
+                    ping.PingCompleted += new PingCompletedEventHandler(PingCompletedCallback);
+                    ping.SendAsync(hostName, 100);
+                  }
+                  catch (Exception) {}
                 }
-                catch (Exception) {}
               }
             }
 
