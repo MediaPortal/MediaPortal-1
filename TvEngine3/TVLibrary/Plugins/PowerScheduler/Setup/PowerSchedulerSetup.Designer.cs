@@ -1476,7 +1476,7 @@ namespace PowerScheduler.Setup
             this.checkBoxPingMonitorEnabled.Name = "checkBoxPingMonitorEnabled";
             this.checkBoxPingMonitorEnabled.Size = new System.Drawing.Size(306, 17);
             this.checkBoxPingMonitorEnabled.TabIndex = 1;
-            this.checkBoxPingMonitorEnabled.Text = "Do not put the computer to sleep while any hosts are active";
+            this.checkBoxPingMonitorEnabled.Text = "Do not put the computer to sleep while any listed hosts or ports are active";
             this.checkBoxPingMonitorEnabled.UseVisualStyleBackColor = true;
             this.checkBoxPingMonitorEnabled.CheckedChanged += new System.EventHandler(this.checkBoxPingMonitorEnable_CheckedChanged);
             // 

@@ -88,12 +88,15 @@ namespace TvEngine.PowerScheduler.Handlers
               _pingRun = true;
               _isActiveHost = false;
 
+              //Log.Debug("PS: PingMonitor: hosts: {0}", hosts);
               foreach (string hostName in hosts.Split(";".ToCharArray()))
               {
-                if (hostName.StartsWith(":")) //Basic check for port number (only)
+                try
                 {
-                  try
+                  //Log.Debug("PS: PingMonitor: hostName or port: {0}", hostName);
+                  if (hostName.StartsWith(":"))
                   {
+                    //It's a local port number to check for connections
                     string portStr = new String(hostName.Where(Char.IsDigit).ToArray());
                     Int32 port = 0;
                     bool canConvert = Int32.TryParse(portStr, out port);
@@ -106,21 +109,18 @@ namespace TvEngine.PowerScheduler.Handlers
                     if (portActive)
                     {
                       _isActiveHost = true;
-                    }             
-                    Log.Debug("PS: PingMonitor: Port string: {0}, num: {1}, active: {2}", hostName, port, portActive);
+                      Log.Debug("PS: PingMonitor found an active port {0}", port);
+                    }
                   }
-                  catch (Exception) {}
-                }                
-                else  //It's an IP address or hostname                
-                {
-                  try
+                  else
                   {
+                    //It's an IP address or hostname to ping
                     Ping ping = new Ping();
                     ping.PingCompleted += new PingCompletedEventHandler(PingCompletedCallback);
                     ping.SendAsync(hostName, 100);
                   }
-                  catch (Exception) {}
                 }
+                catch (Exception) { }
               }
             }
 
@@ -140,7 +140,7 @@ namespace TvEngine.PowerScheduler.Handlers
         {
           if (e.Cancelled)
           {
-            Log.Debug("PS: PingCompletedCallback, Ping canceled.");
+            Log.Debug("PS: PingCompletedCallback, Ping cancelled.");
             return;
           }
 
