@@ -96,7 +96,7 @@ namespace TvEngine.PowerScheduler.Handlers
                   //Log.Debug("PS: PingMonitor: hostName or port: {0}", hostName);
                   if (hostName.StartsWith(":"))
                   {
-                    //It's a local port number to check for connections
+                    //It's a local port number to check for active connections
                     string portStr = new String(hostName.Where(Char.IsDigit).ToArray());
                     Int32 port = 0;
                     bool canConvert = Int32.TryParse(portStr, out port);
@@ -114,7 +114,7 @@ namespace TvEngine.PowerScheduler.Handlers
                   }
                   else
                   {
-                    //It's an IP address or hostname to ping
+                    //It's a remote IP address or hostname to ping
                     Ping ping = new Ping();
                     ping.PingCompleted += new PingCompletedEventHandler(PingCompletedCallback);
                     ping.SendAsync(hostName, 100);
