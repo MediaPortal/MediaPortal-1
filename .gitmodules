@@ -4,3 +4,11 @@
 [submodule "libbluray"]
 	path = libbluray
 	url = https://github.com/MediaPortal/libbluray.git
+[submodule "skin/Ares"]
+	path = skin/Ares
+	url = https://github.com/MediaPortal/MP1-Skin-Ares.git
+	branch = master
+[submodule "skin/DefaultWideHD"]
+	path = skin/DefaultWideHD
+	url = https://github.com/MediaPortal/MP1-Skin-DefaultWideHD.git
+	branch = master

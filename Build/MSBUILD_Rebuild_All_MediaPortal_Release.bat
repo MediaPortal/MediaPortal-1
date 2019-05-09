@@ -45,7 +45,7 @@ call MSBUILD_MP_LargeAddressAware.bat %BUILD_TYPE%
 
 echo.
 echo Building Installer...
-"%progpath%\NSIS\makensis.exe" /DBUILD_TYPE=%BUILD_TYPE% /DVER_BUILD=%version% "%MediaPortal%\Setup\setup.nsi" >> %log%
+"%progpath%\NSIS\makensis.exe" /DBUILD_TYPE=%BUILD_TYPE% /DVER_BUILD=%version% /DEXT_SKIN_INCLUDED "%MediaPortal%\Setup\setup.nsi" >> %log%
 
 @ECHO OFF
 

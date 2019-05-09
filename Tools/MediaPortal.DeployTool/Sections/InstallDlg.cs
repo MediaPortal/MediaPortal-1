@@ -187,6 +187,8 @@ namespace MediaPortal.DeployTool.Sections
           AddPackageToListView(new TvServerChecker());
           AddPackageToListView(new TvPluginChecker());
           AddPackageToListView(new LAVFilterMPEInstall());
+          AddPackageToListView(new DFWHDSkinMPEInstall());
+          AddPackageToListView(new AresSkinMPEInstall());
           break;
 
         case "tvserver_master":
@@ -201,11 +203,15 @@ namespace MediaPortal.DeployTool.Sections
           AddPackageToListView(new MediaPortalChecker());
           AddPackageToListView(new TvPluginChecker());
           AddPackageToListView(new LAVFilterMPEInstall());
+         AddPackageToListView(new DFWHDSkinMPEInstall());
+          AddPackageToListView(new AresSkinMPEInstall());
           break;
 
         case "mp_only":
           AddPackageToListView(new MediaPortalChecker());
           AddPackageToListView(new LAVFilterMPEInstall());
+          AddPackageToListView(new DFWHDSkinMPEInstall());
+          AddPackageToListView(new AresSkinMPEInstall());
           break;
 
         case "download_only":
@@ -215,6 +221,11 @@ namespace MediaPortal.DeployTool.Sections
           AddPackageToListView(new TvServerChecker());
           AddPackageToListView(new TvPluginChecker());
           AddPackageToListView(new LAVFilterMPEInstall());
+          AddPackageToListView(new DFWHDSkinMPEInstall());
+          AddPackageToListView(new AresSkinMPEInstall());
+
+
+
           break;
       }
       if ((InstallationProperties.Instance["ConfigureMediaPortalFirewall"] == "1" ||

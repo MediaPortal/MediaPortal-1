@@ -79,6 +79,9 @@
 !define COMMON_APPDATA        "$APPDATA\Team MediaPortal\MediaPortal"
 !define STARTMENU_GROUP       "$SMPROGRAMS\Team MediaPortal\MediaPortal"
 
+; Uncomment the next define value for include External skin to the setup package, without extension installer
+;!define EXT_SKIN_INCLUDED
+
 ; import version from shared file
 !include "${git_InstallScripts}\include\MediaPortalCurrentVersion.nsh"
 
@@ -249,6 +252,12 @@ ShowUninstDetails show
   ; List all of your components in following manner here.
   !insertmacro "${MacroName}" "SecPowerScheduler"
   !insertmacro "${MacroName}" "SecMpeInstaller"
+  !ifdef EXT_SKIN_INCLUDED
+    IfFileExists ${git_ROOT}\skin\Ares\Ares\*.* 0 +2
+  !insertmacro "${MacroName}" "SecExtSkinInstaller_Ares"
+    IfFileExists ${git_ROOT}\skin\DefaultWideHD\DefaultWideHD\*.* 0 +2
+  !insertmacro "${MacroName}" "SecExtSkinInstaller_DFWHD"
+  !endif
 !macroend
 
 !macro ShutdownRunningMediaPortalApplications
@@ -703,15 +712,10 @@ Section "MediaPortal core files (required)" SecCore
   ; used for Default and Titan Skin Font
   StrCpy $FONT_DIR $FONTS
 
-  !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\DefaultWideHD\MPDefaultFonts\NotoSans-Regular.ttf"
   !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Titan\Fonts\TitanSmall.ttf"
   !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Titan\Fonts\Titan.ttf"
   !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Titan\Fonts\TitanLight.ttf"
   !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Titan\Fonts\TitanMedium.ttf"
-  !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Ares\MPDefaultFonts\AvalonTypeLight.ttf"
-  !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Ares\MPDefaultFonts\HELN.TTF"
-  !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Ares\MPDefaultFonts\HindVadodara-SemiBold.ttf"
-  !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Ares\MPDefaultFonts\MediaPortalDefault.ttf"
 
   SendMessage ${HWND_BROADCAST} ${WM_FONTCHANGE} 0 0 /TIMEOUT=1000
   
@@ -942,6 +946,65 @@ SectionGroup /e "Backup" SecBackup
   ${MementoSectionEnd}
 SectionGroupEnd
 
+!ifdef EXT_SKIN_INCLUDED
+
+Section "-External Skin installer Ares" SecExtSkinInstaller_Ares
+  ${LOG_TEXT} "INFO" "MediaPortal Skin : Ares and DefaultWideHD ..."
+  ; copy skin folder
+  ; Ares
+  SetOutPath "$MPdir.Skin\Ares"
+  File /nonfatal /r /x .git "${git_ROOT}\skin\Ares\Ares\*"
+  SetOverwrite off
+  File /nonfatal /r /x .git "${git_ROOT}\skin\Ares\SkinSetting\*"
+  SetOverwrite on
+  
+  SetOutPath "$MPdir.Base"
+  File /nonfatal "${git_ROOT}\skin\Ares\Backup\AresBackupRestore.exe"
+  
+  SetOutPath "$MPdir.Plugins\process"
+  File /nonfatal "${git_ROOT}\skin\Ares\Plugin\AresPlugin.dll"
+
+  StrCpy $FONT_DIR $FONTS
+  !insertmacro InstallTTFFont "${git_ROOT}\skin\Ares\Ares\MPDefaultFonts\AvalonTypeLight.ttf"
+  !insertmacro InstallTTFFont "${git_ROOT}\skin\Ares\Ares\MPDefaultFonts\HELN.TTF"
+  !insertmacro InstallTTFFont "${git_ROOT}\skin\Ares\Ares\MPDefaultFonts\HindVadodara-SemiBold.ttf"
+  !insertmacro InstallTTFFont "${git_ROOT}\skin\Ares\Ares\MPDefaultFonts\MediaPortalDefault.ttf"
+  
+  SendMessage ${HWND_BROADCAST} ${WM_FONTCHANGE} 0 0 /TIMEOUT=1000
+  
+  SectionEnd
+  
+  !macro Remove_${SecExtSkinInstaller_Ares}
+   ${LOG_TEXT} "INFO" "Remove MediaPortal Skin : Ares..."
+
+  Delete "$MPdir.Base\AresBackupRestore.exe"
+  Delete "$MPdir.Plugins\process\AresPlugin.dll"
+
+  !macroend
+  
+  Section "-External Skin installer DefaultWideHD" SecExtSkinInstaller_DFWHD
+  ${LOG_TEXT} "INFO" "MediaPortal Skin : DefaultWideHD ..."
+  ; copy skin folder
+  ; DefaultWideHD
+  SetOutPath "$MPdir.Skin\DefaultWideHD"
+  File /nonfatal /r /x .git "${git_ROOT}\skin\DefaultWideHD\DefaultWideHD\*"
+  SetOverwrite off
+  File /nonfatal /r /x .git "${git_ROOT}\skin\DefaultWideHD\SkinSetting\*"
+  SetOverwrite on
+   
+    StrCpy $FONT_DIR $FONTS
+  !insertmacro InstallTTFFont "${git_ROOT}\skin\DefaultWideHD\DefaultWideHD\MPDefaultFonts\NotoSans-Regular.ttf"
+
+  SendMessage ${HWND_BROADCAST} ${WM_FONTCHANGE} 0 0 /TIMEOUT=1000
+  
+  SectionEnd
+  
+!macro Remove_${SecExtSkinInstaller_DFWHD}
+   ${LOG_TEXT} "INFO" "Remove MediaPortal Skin : DefaultWideHD..."
+  ; remove macro needed for allow building
+  !macroend
+!endif
+
 ${MementoSectionDone}
 
 #---------------------------------------------------------------------------
@@ -1045,8 +1108,14 @@ Section -Post
     Exec '"$MPdir.Base\MPTray.exe"'
   ${EndIf}
 
+  !ifdef EXT_SKIN_INCLUDED
   ; run AresBackupRestore.exe
-  Exec '"$MPdir.Base\AresBackupRestore.exe"'
+  ${If} ${FileExists} "$MPdir.Base\AresBackupRestore.exe"
+      ${LOG_TEXT} "INFO" "Run AresBackupRestore.exe."
+    Exec '"$MPdir.Base\AresBackupRestore.exe"'
+  ${EndIf}
+  !endif
+  
 SectionEnd
 
 #---------------------------------------------------------------------------
