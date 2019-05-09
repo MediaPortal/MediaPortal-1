@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2019 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2019 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -829,7 +829,7 @@ namespace MediaPortal.GUI.Video
       }
 
       // Save cover url into db
-      if (cover.StartsWith("http://") || _forceRefreshAll)
+      if (cover.StartsWith("http://") || cover.StartsWith("https://") || _forceRefreshAll)
       {
         SetThumb(ref item, cover);
       }

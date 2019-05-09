@@ -32,7 +32,7 @@ using System.Security.Permissions;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Team MediaPortal")]
 [assembly: Guid("6D0386CE-37E6-4f77-B678-07C584105DC6")]
-[assembly: AssemblyVersion("2.0.0.1408")]
+[assembly: AssemblyVersion("2.0.0.0")]
 #if DEBUG
 
 [assembly: AssemblyProduct("Debug Version")]
@@ -56,4 +56,4 @@ using System.Security.Permissions;
 #pragma warning disable 612,618
 [assembly: SecurityPermission(action: SecurityAction.RequestMinimum, UnmanagedCode = true)]
 #pragma warning restore 612,618
-[assembly: AssemblyFileVersion("2.0.0.1408")]
+[assembly: AssemblyFileVersion("2.0.0.0")]

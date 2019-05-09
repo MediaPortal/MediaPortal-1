@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2018 Team MediaPortal
+#region Copyright (C) 2005-2019 Team MediaPortal
 
-// Copyright (C) 2005-2018 Team MediaPortal
+// Copyright (C) 2005-2019 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -2549,7 +2549,7 @@ namespace MediaPortal.Video.Database
         }
         else
         {
-          strSQL = "SELECT * FROM actors WHERE IMDBActorId = '";
+          strSQL = "SELECT * FROM actors WHERE IMDBActorID = '";
           strSQL += strActorImdbId;
           strSQL += "'";
         }
@@ -2563,7 +2563,7 @@ namespace MediaPortal.Video.Database
           
           if (idActor != -1)
           {
-            strSQL = string.Format("UPDATE actors SET IMDBActorId='{0}', strActor = '{1}' WHERE idActor ={2}",
+            strSQL = string.Format("UPDATE actors SET IMDBActorID='{0}', strActor = '{1}' WHERE idActor ={2}",
                                   strActorImdbId,
                                   strActorName,
                                   idActor);
@@ -2572,7 +2572,7 @@ namespace MediaPortal.Video.Database
           }
           else
           {
-            strSQL = "INSERT INTO actors (idActor, strActor, IMDBActorId) VALUES( NULL, '";
+            strSQL = "INSERT INTO actors (idActor, strActor, IMDBActorID) VALUES( NULL, '";
             strSQL += strActorName;
             strSQL += "','";
             strSQL += strActorImdbId;
@@ -2617,7 +2617,7 @@ namespace MediaPortal.Video.Database
         {
           actors.Add(DatabaseUtility.Get(results, iRow, "idActor") + "|" +
                      DatabaseUtility.Get(results, iRow, "strActor") + "|" +
-                     DatabaseUtility.Get(results, iRow, "IMDBActorId"));
+                     DatabaseUtility.Get(results, iRow, "IMDBActorID"));
         }
       }
       catch (Exception ex)
@@ -2678,7 +2678,7 @@ namespace MediaPortal.Video.Database
         {
           actors.Add(DatabaseUtility.Get(results, iRow, "idActor") + "|" +
                      DatabaseUtility.Get(results, iRow, "strActor") + "|" + 
-                     DatabaseUtility.Get(results, iRow, "IMDBActorId"));
+                     DatabaseUtility.Get(results, iRow, "IMDBActorID"));
         }
       }
       catch (Exception ex)
@@ -2729,7 +2729,7 @@ namespace MediaPortal.Video.Database
         
         string strSQL =
           String.Format(
-            "SELECT actors.idActor, actors.strActor, actors.IMDBActorId, actorlinkmovie.strRole FROM actors INNER JOIN actorlinkmovie ON actors.idActor = actorlinkmovie.idActor WHERE actorlinkmovie.idMovie={0}",
+            "SELECT actors.idActor, actors.strActor, actors.IMDBActorID, actorlinkmovie.strRole FROM actors INNER JOIN actorlinkmovie ON actors.idActor = actorlinkmovie.idActor WHERE actorlinkmovie.idMovie={0}",
             idMovie);
         SQLiteResultSet results = m_db.Execute(strSQL);
         
@@ -2739,7 +2739,7 @@ namespace MediaPortal.Video.Database
           {
             actorsByMovieID.Add(DatabaseUtility.Get(results, i, "actors.idActor") + "|" +
                                 DatabaseUtility.Get(results, i, "actors.strActor")  + "|" +
-                                DatabaseUtility.Get(results, i, "actors.IMDBActorId") + "|" +
+                                DatabaseUtility.Get(results, i, "actors.IMDBActorID") + "|" +
                                 DatabaseUtility.Get(results, i, "actorlinkmovie.strRole"));
           }
         }
@@ -2805,7 +2805,7 @@ namespace MediaPortal.Video.Database
       {
         string actorFiltered = actorImdbId;
         DatabaseUtility.RemoveInvalidChars(ref actorFiltered);
-        string sql = String.Format("SELECT * FROM actors WHERE IMDBActorId='{0}'", actorFiltered);
+        string sql = String.Format("SELECT * FROM actors WHERE IMDBActorID='{0}'", actorFiltered);
         SQLiteResultSet results = m_db.Execute(sql);
         
         if (results.Rows.Count == 0)

@@ -1694,14 +1694,14 @@ namespace MediaPortal.Util
             GUIListItem item;
             string FileName = aDirectory + @"\" + fd.cFileName;
 
-            long ftCreationTime = (((long)fd.ftCreationTime.dwHighDateTime) << 32) + fd.ftCreationTime.dwLowDateTime;
-            long ftLastWriteTime = (((long)fd.ftLastWriteTime.dwHighDateTime) << 32) + fd.ftLastWriteTime.dwLowDateTime;
+            long ftCreationTime  = (((long)fd.ftCreationTime.dwHighDateTime) << 32) | (uint)fd.ftCreationTime.dwLowDateTime;
+            long ftLastWriteTime = (((long)fd.ftLastWriteTime.dwHighDateTime) << 32) | (uint)fd.ftLastWriteTime.dwLowDateTime;
 
             FileInformation fi = new FileInformation();
 
             fi.CreationTime = DateTime.FromFileTimeUtc(ftCreationTime);
             fi.ModificationTime = DateTime.FromFileTimeUtc(ftLastWriteTime);
-            fi.Length = (((long)fd.nFileSizeHigh) << 32) + fd.nFileSizeLow;
+            fi.Length = (((long)fd.nFileSizeHigh) << 32) | (uint)fd.nFileSizeLow;
 
             if ((fd.dwFileAttributes & FileAttributes.Directory) == FileAttributes.Directory)
             {

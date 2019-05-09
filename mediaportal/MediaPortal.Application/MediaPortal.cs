@@ -752,7 +752,7 @@ public class MediaPortalApp : D3D, IRender
       catch {
         Log.Info("Main: MediaPortal v" + versionInfo.FileVersion + " is starting up on Windows 10 Pro for Workstations (???)");
       }
-      Log.Info(OSInfo.OSInfo.GetLastInstalledWindowsUpdateTimestampAsString());
+      //Log.Info(OSInfo.OSInfo.GetLastInstalledWindowsUpdateTimestampAsString());
       Log.Info("Windows Media Player: [{0}]", OSInfo.OSInfo.GetWMPVersion());
 
       #if DEBUG
