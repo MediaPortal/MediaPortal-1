@@ -18,7 +18,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text.RegularExpressions;
-
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using MediaPortal.Video.Database;
@@ -119,7 +118,6 @@ internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
 
     // Director, actors, rating....
     GetExtraDataImdb(ref movie);
-
     return true;
   }
 
@@ -1032,6 +1030,7 @@ internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
       if (!string.IsNullOrEmpty(tmdbActor.Biography))
       {
         if (FULL_ACTOR_INFO)
+
         {
           actor.Biography = tmdbActor.Biography + "\n\n" + actor.Biography;
         }
