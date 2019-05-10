@@ -23,7 +23,6 @@ using System.Collections;
 using System.Globalization;
 using System.IO;
 using Gentle.Framework;
-// using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 using MediaPortal.Util;
