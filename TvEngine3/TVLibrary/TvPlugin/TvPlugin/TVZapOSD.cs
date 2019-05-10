@@ -23,7 +23,9 @@ using System.Collections;
 using System.Globalization;
 using System.IO;
 using Gentle.Framework;
+// using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
+using MediaPortal.Profile;
 using MediaPortal.Util;
 using TvControl;
 using TvDatabase;
@@ -45,16 +47,35 @@ namespace TvPlugin
     [SkinControl(102)] protected GUILabelControl lblEndTime = null;
     [SkinControl(39)] protected GUIImage imgRecIcon = null;
     [SkinControl(10)] protected GUIImage imgTvChannelLogo = null;
-    [SkinControl(38)] protected GUILabelControl lblZapToCannelNo = null;
+    [SkinControl(38)] protected GUILabelControl lblZapToChannelNo = null;
 
 
     private bool m_bNeedRefresh = false;
     private DateTime m_dateTime = DateTime.Now;
     private string channelName = "";
     private string channelNr = "";
+    private string channelIdx = "";
     private int idChannel;
 
+    private bool _byIndex = false;
+    private bool _showChannelNumber = false;
+    private int _channelNumberMaxLength = 3;
+
     private TVHome.ChannelErrorInfo m_lastError;
+
+    #region Serialisation
+
+    private void LoadSettings()
+    {
+      using (Settings xmlreader = new MPSettings())
+      {
+        _byIndex = xmlreader.GetValueAsBool("mytv", "byindex", true);
+        _showChannelNumber = xmlreader.GetValueAsBool("mytv", "showchannelnumber", false);
+        _channelNumberMaxLength = xmlreader.GetValueAsInt("mytv", "channelnumbermaxlength", 3);
+      }
+    }
+
+    #endregion
 
     public TVHome.ChannelErrorInfo LastError
     {
@@ -167,6 +188,7 @@ namespace TvPlugin
       m_bNeedRefresh = false;
       m_dateTime = DateTime.Now;
       channelNr = GetChannelNumber();
+      channelIdx = GetChannelIndex();
       channelName = GetChannelName();
       idChannel = GetIdChannel();
       SetCurrentChannelLogo();
@@ -258,6 +280,7 @@ namespace TvPlugin
       }
       TVHome.Navigator.ZapToPreviousChannel(true);
       channelNr = GetChannelNumber();
+      channelIdx = GetChannelIndex();
       channelName = GetChannelName();
       idChannel = GetIdChannel();
       SetCurrentChannelLogo();
@@ -273,6 +296,7 @@ namespace TvPlugin
       }
       TVHome.Navigator.ZapToNextChannel(true);
       channelNr = GetChannelNumber();
+      channelIdx = GetChannelIndex();
       channelName = GetChannelName();
       idChannel = GetIdChannel();
       SetCurrentChannelLogo();
@@ -285,6 +309,7 @@ namespace TvPlugin
       if (LastError == null)
       {
         channelNr = GetChannelNumber();
+        channelIdx = GetChannelIndex();
       }
       channelName = GetChannelName();
       idChannel = GetIdChannel();
@@ -340,7 +365,22 @@ namespace TvPlugin
       {
         return "";
       }
-      return zapChannelNr.ToString();
+      string chNum = zapChannelNr.ToString();
+      if (chNum.Length > _channelNumberMaxLength)
+      {
+        return "";
+      }
+      return chNum;
+    }
+
+    private string GetChannelIndex()
+    {
+      int zapChannelIdx = TVHome.Navigator.ZapChannelIdx;
+      if (zapChannelIdx<0)
+      {
+        return "";
+      }
+      return zapChannelIdx.ToString();
     }
 
     private int GetIdChannel()
@@ -373,10 +413,23 @@ namespace TvPlugin
         imgRecIcon.IsVisible = server.IsRecording(idChannel, out card);
       }
 
-      if (lblZapToCannelNo != null)
+      if (lblZapToChannelNo != null)
       {
-        lblZapToCannelNo.Label = channelNr;
-        lblZapToCannelNo.Visible = !string.IsNullOrEmpty(channelNr);
+        if (_showChannelNumber == false)
+        {
+          lblZapToChannelNo.Label = "";
+          lblZapToChannelNo.Visible = false;
+        }
+        else if (_byIndex)
+        {
+          lblZapToChannelNo.Label = channelIdx;
+          lblZapToChannelNo.Visible = !string.IsNullOrEmpty(channelIdx);
+        }
+        else
+        {
+          lblZapToChannelNo.Label = channelNr;
+          lblZapToChannelNo.Visible = !string.IsNullOrEmpty(channelNr);
+        }
       }
       var chan = TVHome.Navigator.GetChannel(idChannel, true);
       if (chan != null)
