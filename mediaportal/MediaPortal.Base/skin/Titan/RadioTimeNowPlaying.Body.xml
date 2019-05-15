@@ -1,0 +1,377 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <controls>
+    
+  <!-- ClearArt -->
+
+    <control>
+      <description>ClearArt</description>
+      <type>image</type>
+      <id>258456951</id>
+      <posX>1650</posX>
+      <posY>580</posY>
+      <width>200</width>
+      <height>75</height>           
+      <valign>bottom</valign>
+      <texture>#fanarthandler.music.artistclearart.play</texture>
+      <animation effect="fade" time="500">VisibleChange</animation>
+      <shouldCache>false</shouldCache>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+    <control>
+      <description>ClearArt</description>
+      <type>image</type>
+      <id>258456952</id>
+      <posX>1650</posX>
+      <posY>580</posY>
+      <width>200</width>
+      <height>75</height>           
+      <animation effect="fade" time="500">VisibleChange</animation>
+      <valign>bottom</valign>
+      <texture>..\..\..\Thumbs\ClearArt\Music\#Play.Current.Artist.png</texture>
+      <visible>!control.hasthumb(258456951)</visible>
+      <shouldCache>false</shouldCache>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+  <!-- -->
+
+    <control>
+      <id>0</id>
+      <type>image</type>
+      <posX>10</posX>
+      <posY>644</posY>
+      <width>1903</width>
+      <height>398</height>
+      <texture>panel_now_playing.png</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+    <control Style="smallTitle">
+      <description>Selected item Label</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>510</posX>
+      <posY>1015</posY>
+      <label>4540</label>
+      <visible>!control.isvisible(91919280)</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+    <control>
+      <type>label</type>
+      <id>1</id>
+      <description>Clock</description>
+      <posX>1820</posX>
+      <posY>998</posY>
+      <width>144</width>
+      <font>TitanLight12</font>
+      <align>right</align>
+      <label>#time</label>
+      <textcolor>ff000000</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+    <control>
+      <id>0</id>
+      <description>shadow</description>
+      <type>image</type>
+      <posX>68</posX>
+      <posY>704</posY>
+      <width>284</width>
+      <height>284</height>
+      <texture>music_now_playing_shadow.png</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="Fade" time="500">VisibleChange</animation>
+    </control>
+
+    <control>
+      <id>0</id>
+      <type>image</type>
+      <visible>!control.hasthumb(112)</visible>
+      <posX>87</posX>
+      <posY>717</posY>
+      <width>234</width>
+      <height>234</height>
+      <texture>DefaultMyRadioBig.png</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="Fade" time="1000" delay="250">VisibleChange</animation>
+    </control>
+    <control>
+      <id>112</id>
+      <description>radiotime art image</description>
+      <type>image</type>
+      <posX>87</posX>
+      <posY>717</posY>
+      <width>234</width>
+      <height>234</height>
+      <texture>#Play.Current.Thumb</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <centered>yes</centered>    
+      <zoom>yes</zoom>
+      <visible>!control.hasthumb(113)</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="Fade" time="500">VisibleChange</animation>
+    </control>
+    <control>
+      <id>113</id>
+      <description>artist art image</description>
+      <type>image</type>
+      <posX>87</posX>
+      <posY>717</posY>
+      <width>234</width>
+      <height>234</height>
+      <texture>#fanarthandler.music.artisthumb.play</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <centered>yes</centered>    
+      <zoom>yes</zoom>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="Fade" time="500">VisibleChange</animation>
+    </control>
+
+    <control>
+      <id>0</id>
+      <description>Station Label</description>
+      <type>fadelabel</type>
+      <posX>372</posX>
+      <posY>714</posY>
+      <width>1000</width>
+      <font>fontB20</font>
+      <textcolor>FF00b7ff</textcolor>
+      <label>#RadioTime.Play.Station #RadioTime.Play.Slogan</label>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+    <control>
+      <id>0</id>
+      <description>title label</description>
+      <type>fadelabel</type>
+      <posX>372</posX>
+      <posY>779</posY>
+      <width>1000</width>
+      <font>TitanLight14</font>
+      <textcolor>ff00b7ff</textcolor>
+      <label>#RadioTime.Play.Description</label>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <visible>string.equals(#Play.Current.Artist,)</visible>
+    </control>
+    <control>
+      <id>0</id>
+      <description>title label</description>
+      <type>fadelabel</type>
+      <posX>372</posX>
+      <posY>779</posY>
+      <width>1000</width>
+      <font>TitanLight14</font>
+      <textcolor>ff00b7ff</textcolor>
+      <label>#Play.Current.Artist#(iif(eq(#Play.Current.Album,''),'',string.format(' - {0}',#Play.Current.Album)))#(iif(eq(#Play.Current.Title,''),'',string.format(' - {0}',#Play.Current.Title)))</label>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <visible>!string.equals(#Play.Current.Artist,)</visible>
+    </control>
+
+    <control>
+      <id>0</id>
+      <description>description format label</description>
+      <type>fadelabel</type>
+      <posX>372</posX>
+      <posY>825</posY>
+      <width>1000</width>
+      <font>TitanLight14</font>
+      <textcolor>ff00b7ff</textcolor>
+      <label>#RadioTime.Play.Description - #RadioTime.Play.Format</label>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <visible>!string.equals(#RadioTime.Play.Description,)</visible>
+    </control>
+    <control>
+      <id>0</id>
+      <description>format label</description>
+      <type>fadelabel</type>
+      <posX>372</posX>
+      <posY>825</posY>
+      <width>1000</width>
+      <font>TitanLight14</font>
+      <textcolor>ff00b7ff</textcolor>
+      <label>#RadioTime.Play.Station.Description - #RadioTime.Play.Format</label>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <visible>!string.equals(#RadioTime.Play.Station.Description,)+string.equals(#RadioTime.Play.Description,)</visible>
+    </control>
+    <control>
+      <id>0</id>
+      <description>format label</description>
+      <type>fadelabel</type>
+      <posX>372</posX>
+      <posY>825</posY>
+      <width>1000</width>
+      <font>TitanLight14</font>
+      <textcolor>ff00b7ff</textcolor>
+      <label>#RadioTime.Play.Format</label>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <visible>string.equals(#RadioTime.Play.Station.Description,)+string.equals(#RadioTime.Play.Description,)</visible>
+    </control>
+
+    <control>
+      <id>0</id>
+      <description>genre label</description>
+      <type>fadelabel</type>
+      <posX>372</posX>
+      <posY>870</posY>
+      <width>1000</width>
+      <font>TitanLight14</font>
+      <textcolor>ff00b7ff</textcolor>
+      <label>#Play.Current.Genre</label>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+    <control>
+      <id>117</id>
+      <description>Progress background</description>
+      <type>image</type>
+      <visible>player.hasmedia</visible>
+      <posX>460</posX>
+      <posY>926</posY>
+      <width>734</width>
+      <height>18</height>
+      <texture>osd_progress_bg_music.png</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+    <control>
+      <id>118</id>
+      <description>progress bar</description>
+      <type>progress</type>
+      <visible>player.hasmedia</visible>
+      <posX>450</posX>
+      <posY>929</posY>
+      <width>755</width>
+      <height>15</height>
+      <label>#percentage</label>
+      <texturebg>-</texturebg>
+      <lefttexture>osd_progress_left.png</lefttexture>
+      <midtexture>osd_progress_mid.png</midtexture>
+      <righttexture>osd_progress_right.png</righttexture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+    <control>
+      <id>0</id>
+      <description>track duration label</description>
+      <type>label</type>
+      <visible>player.hasmedia</visible>
+      <posX>374</posX>
+      <posY>918</posY>
+      <label>#currentplaytime</label>
+      <align>left</align>
+      <font>font11</font>
+      <textcolor>FF00b7ff</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+    <control>
+      <id>0</id>
+      <description>track duration label</description>
+      <type>fadelabel</type>
+      <visible>player.hasmedia</visible>
+      <posX>1285</posX>
+      <posY>918</posY>
+      <label>#currentremaining</label>
+      <align>right</align>
+      <font>font11</font>
+      <textcolor>FF00b7ff</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <visible>!string.equals(#currentremaining,0:00)</visible>
+    </control>
+
+    <!-- CDArt -->
+
+    <control>
+      <description>CDArt</description>
+      <type>image</type>
+      <id>159357</id>
+      <posX>1599</posX>
+      <posY>717</posY>
+      <width>234</width>
+      <height>234</height>
+      <texture>..\..\..\Thumbs\CDArt\Music\#Play.Current.Artist - #Play.Current.Album.png</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <centered>yes</centered>
+      <align>center</align>
+      <zoom>no</zoom>
+      <valign>top</valign>
+      <animation effect="rotate" delay="0" end="-360" time="8000" loop="true" condition="!player.paused">Conditional</animation>
+      <animation effect="fade" time="500">VisibleChange</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+    <control>
+      <description>CDArt</description>
+      <type>image</type>
+      <id>159358</id>
+      <posX>1599</posX>
+      <posY>717</posY>
+      <width>234</width>
+      <height>234</height>
+      <texture>#fanarthandler.music.albumcd.play</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <centered>yes</centered>
+      <align>center</align>
+      <zoom>no</zoom>
+      <valign>top</valign>
+      <visible>!control.hasthumb(159357)</visible>
+      <animation effect="rotate" delay="0" end="-360" time="8000" loop="true" condition="!player.paused">Conditional</animation>
+      <animation effect="fade" time="500">VisibleChange</animation>
+    </control>
+
+    <!-- -->
+
+    <control>
+      <description>FANART IMAGE 1</description>
+      <id>897688</id>
+      <type>image</type>
+      <posX>1417</posX>
+      <posY>717</posY>
+      <width>416</width>
+      <height>234</height>
+      <texture>#fanarthandler.music.backdrop1.play</texture>
+      <visible>control.isvisible(91919295)+control.isvisible(91919294)+!control.hasthumb(159357)+!control.hasthumb(159358)</visible>
+      <animation effect="fade" time="300">visible</animation>
+      <animation effect="fade" time="300" delay="300">hidden</animation>
+    </control>
+
+    <control>
+      <description>FANART IMAGE 2</description>
+      <id>897689</id>
+      <type>image</type>
+      <posX>1417</posX>
+      <posY>717</posY>
+      <width>416</width>
+      <height>234</height>
+      <texture>#fanarthandler.music.backdrop2.play</texture>
+      <visible>control.isvisible(91919296)+control.isvisible(91919294)+!control.hasthumb(159357)+!control.hasthumb(159358)</visible>
+      <animation effect="fade" time="300">visible</animation>           
+      <animation effect="fade" time="300" delay="300">hidden</animation>
+    </control>
+
+  </controls>
+</window>

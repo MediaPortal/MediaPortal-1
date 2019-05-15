@@ -25,14 +25,16 @@
         <width>1920</width>
         <height>1080</height>
 		<texture>hover_my radio.png</texture>
-		<visible>facadeview.list | facadeview.smallicons | facadeview.largeicons</visible>
+		<visible>[facadeview.list | facadeview.smallicons | facadeview.largeicons]+!control.isvisible(91919293)</visible>
     	<animation effect="fade" time="300">visible</animation>
 		<animation effect="fade" time="300" delay="300">hidden</animation>
 		<animation effect="fade" time="250">WindowOpen</animation>
 		<animation effect="fade" time="250">WindowClose</animation>
 	</control>
 	
-		<!--            :: Overlays ::            -->	
+    <include>common.music.selected.fanart.xml</include>
+
+	<!--            :: Overlays ::            -->	
 		
  	<control>
 		<description>fanart overlay</description>

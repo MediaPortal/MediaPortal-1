@@ -1,64 +1,149 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
-    <controls>
-    	<control>
-      	<id>0</id>
-        <type>label</type>
-        <posX>144</posX>
-        <posY>38</posY>
-        <width>855</width>
-        <font>TitanLight22</font>
-        <textcolor>ffffff</textcolor>
-        <label>#header.label</label>
-				<align>left</align>
-				<visible>[window.isvisible(35) | window.isvisible(0)] | [!window.isvisible(35) + !window.isvisible(0) + !window.isvisible(96742) + !window.isvisible(7111992)] | [window.isvisible(96742) + Control.IsVisible(50)] | [window.isvisible(96742) + Control.IsVisible(51)]</visible>
-	      <animation effect="fade" time="250">WindowOpen</animation>
-	      <animation effect="fade" time="250">WindowClose</animation>
-  		</control>
-      
-			<control>
-      	<id>0</id>
-        <type>label</type>
-        <posX>1848</posX>
-        <posY>36</posY>
-        <width>555</width>
-        <font>TitanLight22</font>
-        <textcolor>ffffff</textcolor>
-        <label>#time</label>
-				<align>right</align>
-				<visible>[window.isvisible(35) | window.isvisible(0)] | [!window.isvisible(35) + !window.isvisible(0) + !window.isvisible(96742) + !window.isvisible(7111992)] | [window.isvisible(96742) + Control.IsVisible(50)] | [window.isvisible(96742) + Control.IsVisible(51)]</visible>
-	      <animation effect="fade" time="250">WindowOpen</animation>
-	      <animation effect="fade" time="250">WindowClose</animation>
-  		</control>
-      
-			<control>
-      	<description>Date / Weather</description>
-      	<id>0</id>
-        <type>label</type>
-        <posX>1845</posX>
-        <posY>96</posY>
-        <font>TitanLight12</font>
-        <textcolor>ffffff</textcolor>
-        <label>#date / #WorldWeather.TodayTemperature</label>
-				<align>right</align>
-				<visible>[[window.isvisible(35) | window.isvisible(0)] | [!window.isvisible(35) + !window.isvisible(0) + !window.isvisible(96742) + !window.isvisible(7111992)] | [window.isvisible(96742) + Control.IsVisible(50)] | [window.isvisible(96742) + Control.IsVisible(51)]] + plugin.isenabled(World Weather)</visible>
-	      <animation effect="fade" time="250">WindowOpen</animation>
-	      <animation effect="fade" time="250">WindowClose</animation>
- 			</control>
-      
-			<control>
-      	<description>Date</description>
-      	<id>0</id>
-        <type>label</type>
-        <posX>1845</posX>
-        <posY>96</posY>
-        <font>TitanLight12</font>
-        <textcolor>ffffff</textcolor>
-        <label>#date</label>
-				<align>right</align>
-				<visible>[[window.isvisible(35) | window.isvisible(0)] | [!window.isvisible(35) + !window.isvisible(0) + !window.isvisible(96742) + !window.isvisible(7111992)] | [window.isvisible(96742) + Control.IsVisible(50)] | [window.isvisible(96742) + Control.IsVisible(51)]] + !plugin.isenabled(World Weather)</visible>
-	      <animation effect="fade" time="250">WindowOpen</animation>
-	      <animation effect="fade" time="250">WindowClose</animation>
-   		</control>
-    </controls>
+  <controls>
+
+    <control>
+      <description>DUMMY Visible Control</description>
+      <type>label</type>
+      <id>3338333</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1</width>
+      <visible>[window.isvisible(35)|window.isvisible(0)] | [!window.isvisible(35)+!window.isvisible(0)+!window.isvisible(96742)+!window.isvisible(7111992)] | [window.isvisible(96742)+Control.IsVisible(50)] | [window.isvisible(96742)+Control.IsVisible(51)]</visible>
+    </control>
+            
+    <control>
+      <description>DUMMY Weather Visible Control</description>
+      <type>image</type>
+      <id>3330333</id>
+      <posX>7000</posX>
+      <posY>7000</posY>
+      <width>1</width>
+      <height>1</height>
+      <texture>#WorldWeather.TodayIconImage</texture>
+    </control>
+            
+    <control>
+      <description>DUMMY Weather Visible Control</description>
+      <type>label</type>
+      <id>3331333</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1</width>
+      <visible>[plugin.isenabled(World Weather Lite)|plugin.isenabled(World Weather)]+control.hasthumb(3330333)+skin.hassetting(#skin.weather.home)</visible>
+    </control>
+
+    <control>
+      <id>0</id>
+      <type>label</type>
+      <posX>144</posX>
+      <posY>38</posY>
+      <width>855</width>
+      <font>TitanLight22</font>
+      <textcolor>ffffff</textcolor>
+      <label>#header.label</label>
+      <align>left</align>
+      <visible>control.isvisible(3338333)</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+    <control>
+      <description>Time</description>
+      <id>0</id>
+      <type>label</type>
+      <posX>1845</posX>
+      <posY>36</posY>
+      <width>555</width>
+      <font>TitanLight22</font>
+      <textcolor>ffffff</textcolor>
+      <label>#(iif(eq(#Dtimeformat,'True'),string.format('{0:HH:mm}',cdate(#time)),string.format('{0:hh:mm}',cdate(#time))))</label>
+      <align>right</align>
+      <visible>control.isvisible(3338333)+!control.isvisible(3331333)</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+    <control>
+      <description>Date</description>
+      <id>0</id>
+      <type>label</type>
+      <posX>1845</posX>
+      <posY>96</posY>
+      <font>TitanLight12</font>
+      <textcolor>ffffff</textcolor>
+      <label>#(iif(eq(#skin.fullday,'True'),#date,string.format('{0:ddd dd MMM}',cdate(#date.local))))</label>
+      <align>right</align>
+      <visible>control.isvisible(3338333)+!control.isvisible(3331333)</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+    <control>
+      <description>Current Weather icon</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1740</posX>
+      <posY>22</posY>
+      <width>128</width>
+      <height>128</height>
+      <align>center</align>
+      <valign>middle</valign>
+      <zoom>true</zoom>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>#WorldWeather.TodayIconImage</texture>
+      <visible>control.isvisible(3338333)+control.isvisible(3331333)</visible>
+      <animation effect="fade" time="350">WindowOpen</animation>
+      <animation effect="fade" time="350">WindowClose</animation>
+    </control>
+
+    <control>
+      <description>Forecast Weather icon</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1790</posX>
+      <posY>80</posY>
+      <width>70</width>
+      <height>70</height>
+      <align>center</align>
+      <valign>middle</valign>
+      <zoom>true</zoom>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>#WorldWeather.ForecastDay1IconImage</texture>
+      <visible>string.equals(#skin.Weather.Forecast.Clock.enabled,true)+control.isvisible(3338333)+control.isvisible(3331333)+!string.equals(#WorldWeather.TodayIconImage,#WorldWeather.ForecastDay1IconImage)</visible>
+      <animation effect="fade" time="350">WindowOpen</animation>
+      <animation effect="fade" time="350">WindowClose</animation>
+    </control>
+
+    <control>
+      <description>Time / Weather</description>
+      <id>0</id>
+      <type>label</type>
+      <posX>1730</posX>
+      <posY>36</posY>
+      <width>555</width>
+      <font>TitanLight22</font>
+      <textcolor>ffffff</textcolor>
+      <label>#(iif(eq(#Dtimeformat,'True'),string.format('{0:HH:mm}',cdate(#time)),string.format('{0:hh:mm}',cdate(#time))))</label>
+      <align>right</align>
+      <visible>control.isvisible(3338333)+control.isvisible(3331333)</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+    <control>
+      <description>Date / Weather</description>
+      <id>0</id>
+      <type>label</type>
+      <posX>1730</posX>
+      <posY>96</posY>
+      <font>TitanLight12</font>
+      <textcolor>ffffff</textcolor>
+      <label>#(iif(eq(#skin.fullday,'True'),#date,string.format('{0:ddd dd MMM}',cdate(#date.local)))) / #WorldWeather.TodayTemperature</label>
+      <align>right</align>
+      <visible>control.isvisible(3338333)+control.isvisible(3331333)</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+  </controls>
 </window>

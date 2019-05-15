@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<window>
+  <id>7977</id>
+  <defaultcontrol>5555</defaultcontrol>
+  <allowoverlay>yes</allowoverlay> 
+  <disabletopbar>yes</disabletopbar>
+  <define>#header.label:8</define>
+  <controls>
+
+    <import>common.default.background.xml</import>
+    <import>WorldWeather.common.fanart.xml</import>
+    <import>common.time.xml</import>
+    <import>Worldweather.common.header.xml</import>
+
+    <import>Worldweather.backgrounds.xml</import>
+    <import>WorldWeather.NormalCondition.xml</import>
+    <import>WorldWeather.HourCondition.xml</import>
+    <import>WorldWeather.HistoryCondition.xml</import>
+    <import>WorldWeather.GraphicCondition.xml</import>
+    <import>WorldWeather.GeoClock.xml</import>
+    <import>WorldWeather.Holidays.xml</import>
+    <import>WorldWeather.Image.xml</import>
+    <import>WorldWeather.Astronomy.xml</import>
+
+    <import>WorldWeather.body.xml</import>
+    <import>Worldweather.lightbody.xml</import>
+
+    <!--include condition="#(eq(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature#WorldWeather.HistoryDayAverageMaxTemperature#WorldWeather.HistoryDayAverageMinTemperature,''))">Worldweather.gauge.xml</include>
+    <include condition="#(neq(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature#WorldWeather.HistoryDayAverageMaxTemperature#WorldWeather.HistoryDayAverageMinTemperature,''))">"WorldWeather.gauge.themp.xml</include-->
+    <import>Worldweather.gauge.xml</import>
+    <import>WorldWeather.gauge.themp.xml</import>
+
+    <import>Worldweather.sunmoon.xml</import>
+
+    <import>WorldWeather.lightbody.feed.xml</import>
+
+    <import>WorldWeather.buttons.xml</import>
+    <import>common.overlay.xml</import>
+    <import>Worldweather.hiddenmenu.xml</import>
+
+  </controls>
+</window>

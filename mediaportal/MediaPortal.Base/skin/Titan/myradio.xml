@@ -4,6 +4,8 @@
 <defaultcontrol>2</defaultcontrol>
 <allowoverlay>yes</allowoverlay>
 <define>#header.label:665</define>
+<define>#useRandomMusicUserFanart:Yes</define>
+<define>#useSelectedFanart:Yes</define>
 <controls>
 	<import>common.window.radio.xml</import>
 	<control>

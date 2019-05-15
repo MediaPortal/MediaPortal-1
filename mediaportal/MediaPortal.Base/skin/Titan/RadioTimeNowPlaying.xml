@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+<id>25652</id>
+<defaultcontrol>155</defaultcontrol>
+<allowoverlay>no</allowoverlay>
+<define>#usePlayFanart:Yes</define>
+<define>#header.hover:#(iif(#skin.background.useHover, 'hover_radiotime.png', 'background.png'))</define>       
+<define property="true" evaluateNow="true">#music.simple:#(iif(or(and(plugin.isenabled('Fanart Handler'),eq(#fanarthandler.pictures.slideshow.enabled,'true'),eq(#skin.fanarthandler.pictures.slideshow.enabled,'True')),eq(#skin.music.nowplaying.simple,'True')),'true','false'))</define>
+<!--define property="true">#music.filetype:#(iif(string.contains(#Play.Current.FileType,'mp3'),'mp3',iif(string.contains(#Play.Current.FileType,'flac'),'flac',iif(string.contains(#Play.Current.FileType,'ape'),'ape',iif(string.contains(#Play.Current.FileType,'ogg'),'ogg',#Play.Current.FileType)))))</define-->
+<controls>
+    
+  <!--            :: BACKGROUNDS ::              -->
+    
+    <control>
+      <description>BACKGROUND</description>
+      <id>0</id>
+      <type>image</type>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>#header.hover</texture>
+      <shouldCache>true</shouldCache>     
+    </control>
+
+    <control>
+      <description>BACKGROUND Overlay</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>fanart_overlay.png</texture>
+      <visible>skin.hassetting(#skin.background.useHover)</visible>       
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+                
+    <import>common.music.play.fanart.xml</import>
+
+    <include condition="#(eq(#music.simple,'false'))">RadioTimeNowPlaying.Body.xml</include>
+    <include condition="#(eq(#music.simple,'true'))">RadioTimeNowPlaying.SimpleBody.xml</include>
+    
+    <import>RadioTimeNowPlaying.Dummy.xml</import>
+
+    <import>PlayingNow.Scraper.xml</import>
+    <import>PlayingNow.Pause.xml</import>
+
+</controls>
+</window>

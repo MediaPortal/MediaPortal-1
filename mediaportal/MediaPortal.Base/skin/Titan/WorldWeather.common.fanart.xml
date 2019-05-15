@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <controls>
+
+    <control>
+      <description>DUMMY CONTROLL FOR FANART 1 VISIBILITY CONDITION</description>
+      <type>label</type>
+      <id>91919281</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1</width>
+    </control>
+    <control>
+      <description>DUMMY CONTROLL FOR FANART 2 VISIBILITY CONDITION</description>
+      <type>label</type>
+      <id>91919282</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1</width>
+    </control>
+    <control>
+      <description>DUMMY CONTROLL FOR FANART AVAILABILITY CONDITION</description>
+      <type>label</type>
+      <id>91919283</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1</width>
+      <visible>no</visible>
+    </control>
+
+    <control>
+      <description>Weather Hover</description>
+      <type>image</type>
+      <id>0</id>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>hover_worldweather.png</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <visible>string.equals(#skin.background.useHover,true)+!control.hasthumb(77577)+!control.isvisible(91919283)</visible>
+    </control>
+
+    <control>
+      <description>Wheather Selected Fanart</description>
+      <type>image</type>
+      <id>77577</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>weather\bg\#WorldWeather.TodayIconNumber.jpg</texture>
+      <visible>!control.isvisible(91919283)</visible>
+      <animation effect="fade" start="100" end="0" time="450" reversible="false">Hidden</animation>
+      <animation effect="fade" start="0" end="100" time="450" reversible="false">Visible</animation>
+      <animation effect="fade" start="0" end="100" time="250" delay="350">WindowOpen</animation>
+      <animation effect="fade" start="100" end="0" time="250" delay="0">WindowClose</animation>
+    </control>
+
+    <control>
+      <description>Weather Selected Fanart</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <visible>control.isvisible(91919281)+control.isvisible(91919283)</visible>
+      <texture>#fanarthandler.weather.backdrop1</texture>
+      <animation effect="fade" start="100" end="0" time="450" reversible="false">Hidden</animation>
+      <animation effect="fade" start="0" end="100" time="450" reversible="false">Visible</animation>
+      <animation effect="fade" start="0" end="100" time="250" delay="350">WindowOpen</animation>
+      <animation effect="fade" start="100" end="0" time="250" delay="0">WindowClose</animation>
+    </control>
+    <control>
+      <description>Weather Selected Fanart</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <visible>control.isvisible(91919282)+control.isvisible(91919283)</visible>
+      <texture>#fanarthandler.weather.backdrop2</texture>
+      <animation effect="fade" start="100" end="0" time="450" reversible="false">Hidden</animation>
+      <animation effect="fade" start="0" end="100" time="450" reversible="false">Visible</animation>
+      <animation effect="fade" start="0" end="100" time="250" delay="350">WindowOpen</animation>
+      <animation effect="fade" start="100" end="0" time="250" delay="0">WindowClose</animation>
+    </control>
+
+    <control>
+      <description>Background Overlay</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>fanart_overlay.png</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+  </controls>
+</window>
