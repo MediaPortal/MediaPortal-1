@@ -1,58 +1,44 @@
 //css_reference "core.dll";
 //css_reference "Databases.dll";
 //css_reference "utils.dll";
+//css_reference "Newtonsoft.Json.dll";
+//css_reference System.Core;
+//css_reference System.Data.ComponentModel;
+//css_reference System.Data.DataSetExtensions;
+//css_reference System.Xml;
+//css_reference System.Xml.Linq;
 
 using System;
 using System.Text;
 using System.IO;
 using System.Net;
 using System.Web;
+using System.Linq;
+using System.Collections;
+using System.Collections.Generic;
+using System.Globalization;
 using System.Text.RegularExpressions;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using MediaPortal.Video.Database;
-using System.Collections;
+
+using Newtonsoft.Json;
 
 internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
 {
 
   private string _strBody = string.Empty;
+  private TMDBMovie tmdbMovie;
+  private TMDBMovie imdbMovie;
+
+  public const int thumbSize = 500; // pixels size of picture -> horizontal
+  public const string TITLE_MASK = "{0}{1}{2}"; // {0} - Title {1} - Separator {2} - Original Title {3} - Year
+  public const string TITLE_SEPARATOR = " / ";
+
+  public const bool FULL_ACTOR_INFO = false; // true - TMDB + IMDB, false - TMDB or IMDB
+  public const bool GET_ACTOR_AWARDS = true;
 
   #region ActorMoviesDetails
-
-  public bool GetPlotImdb(ref IMDBMovie movie)
-  {
-    string strUrl = String.Format("http://m.imdb.com/title/{0}", movie.IMDBNumber);
-    string regex = @"<p itemprop=""description"">(?<moviePlot>.+?)</p>";
-
-    _strBody = string.Empty;
-    string shortPlot = GetPlot(strUrl, regex, ref _strBody);
-
-    string pageNotFound = @"<h1>Page not found</h1>";
-
-    if (Regex.Match(_strBody, pageNotFound, RegexOptions.Singleline | RegexOptions.IgnoreCase).Success)
-    {
-      Log.Warn("GUIVideoArtistInfo-Actor movielist update Page not found: {0}", strUrl);
-      return false;
-    }
-
-    // Full plot
-    strUrl = String.Format("http://m.imdb.com/title/{0}/plotsummary", movie.IMDBNumber);
-    regex = @">Plot\sSummary.*?<p\sclass=""text-large"">(?<moviePlot>.*?)</p>";
-
-    string plotBody = string.Empty;
-    string fullPlot = GetPlot(strUrl, regex, ref plotBody);
-
-    if (fullPlot != string.Empty)
-    {
-      shortPlot = fullPlot.Trim();
-    }
-
-    movie.PlotOutline = shortPlot;
-    // Director, actors, rating....
-    GetExtraDataImdb(ref movie);
-    return true;
-  }
 
   public string GetThumbImdb(string imdbId)
   {
@@ -64,130 +50,410 @@ internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
       return tmdbSearch[0];
     }
 
-    _strBody = string.Empty;
     string thumb = string.Empty;
 
     string uri;
     string strUrl = String.Format("http://m.imdb.com/title/{0}", imdbId);
-    _strBody = GetPage(strUrl, "utf-8", out uri);
+    string strBody = GetPage(strUrl, "utf-8", out uri);
     string regex = @"Poster"".src=""(?<poster>.*?_V1)";
-    thumb = Regex.Match(_strBody, regex, RegexOptions.Singleline | RegexOptions.IgnoreCase).Groups["poster"].Value;
+    thumb = Regex.Match(strBody, regex, RegexOptions.Singleline | RegexOptions.IgnoreCase).Groups["poster"].Value;
 
     if (!string.IsNullOrEmpty(thumb))
     {
-      int thumbSize = 400; // pixels size of picture -> horizontal
       thumb += "_SX" + thumbSize + ".jpg";
     }
 
-    _strBody = string.Empty;
     return thumb;
+  }
+
+  public bool GetPlotImdb(ref IMDBMovie movie)
+  {
+    tmdbMovie = GetTMDBDetails(movie.IMDBNumber);
+    GetCast(ref tmdbMovie);
+    GetTMDBRelease(ref tmdbMovie);
+
+    imdbMovie = GetIMDBDetails(movie.IMDBNumber);
+
+    string shortPlot = string.Empty;
+
+    if (string.IsNullOrEmpty(tmdbMovie.Plot) && string.IsNullOrEmpty(imdbMovie.Plot))
+    {
+      string strUrl = String.Format("http://m.imdb.com/title/{0}", movie.IMDBNumber);
+      // string regex = @"<p itemprop=""description"">(?<moviePlot>.+?)</p>";
+      string regex = @"<h\d>Storyline<\/h\d>[^<]+?<div[^>]+?>[^<]+?<p[^>]*?>[^<]+<span[^>]*?>(?<moviePlot>[^<]+?)<";
+
+      _strBody = string.Empty;
+      shortPlot = GetPlot(strUrl, regex, ref _strBody);
+
+      string pageNotFound = @"<h\d>Page not found</h\d>";
+
+      if (Regex.Match(_strBody, pageNotFound, RegexOptions.Singleline | RegexOptions.IgnoreCase).Success)
+      {
+        Log.Warn("GUIVideoArtistInfo-Actor movielist update Page not found: {0}", strUrl);
+        return false;
+      }
+
+      // Full plot
+      strUrl = String.Format("http://m.imdb.com/title/{0}/plotsummary", movie.IMDBNumber);
+      // regex = @">Plot\sSummary.*?<p\sclass=""text-large"">(?<moviePlot>.*?)</p>";
+      regex = @"<section id=.plot-summaries-content.>(?<moviePlot>.+?)<\/section";
+
+      string plotBody = string.Empty;
+      string fullPlot = GetPlot(strUrl, regex, ref plotBody);
+      if (!string.IsNullOrEmpty(fullPlot))
+      {
+        fullPlot = Utils.stripHTMLtags(fullPlot);
+      }
+
+      if (fullPlot != string.Empty)
+      {
+        shortPlot = fullPlot.Trim();
+      }
+    }
+    else
+    {
+      shortPlot = string.IsNullOrEmpty(tmdbMovie.Plot) ? imdbMovie.Plot : tmdbMovie.Plot;
+    }
+    movie.PlotOutline = shortPlot;
+
+    // Director, actors, rating....
+    GetExtraDataImdb(ref movie);
+    return true;
   }
 
   private void GetExtraDataImdb(ref IMDBMovie movie)
   {
-    //Update title/Year
-    string rxTitleBlock = "<h1>.*?</h1>";
-    string titleBlock =
-      Regex.Match(_strBody, rxTitleBlock, RegexOptions.Singleline | RegexOptions.IgnoreCase).Value.Trim();
-    string regex =
-      @"<h1>(?<movieTitle>.*?)[(].*?(?<movieYear>\d{4})";
-    string title =
-    Regex.Match(titleBlock, regex, RegexOptions.Singleline | RegexOptions.IgnoreCase).Groups["movieTitle"].Value;
-    int year = 0;
-    int.TryParse(
-      Regex.Match(titleBlock, regex, RegexOptions.Singleline | RegexOptions.IgnoreCase).Groups["movieYear"].Value.Trim
-        (), out year);
+    string regex = string.Empty;
 
-    if (title != string.Empty)
+    if (string.IsNullOrEmpty(_strBody))
     {
-      title = title.Replace("\n", string.Empty);
-      title = Utils.stripHTMLtags(title).Trim();
-      title = HttpUtility.HtmlDecode(title);
-      movie.Title = title;
+      string uri;
+      string strUrl = String.Format("http://m.imdb.com/title/{0}", movie.IMDBNumber);
+      _strBody = GetPage(strUrl, "utf-8", out uri);
     }
 
-    if (year == 0)
+    // Update Title/Year
+
+    // Title - TITLE_MASK {0} - Title {1} - Separator {2} - Original Title {3} - Year
+    string sTitle = TITLE_MASK;
+    if (!string.IsNullOrEmpty(sTitle))
     {
-      year = DateTime.Today.Year + 3;
+      if (tmdbMovie.Title.Equals(tmdbMovie.OriginalTitle, StringComparison.CurrentCultureIgnoreCase))
+      {
+        sTitle = sTitle.Replace("{1}", string.Empty).Replace("{2}", string.Empty).Trim();
+      }
+      if (string.IsNullOrEmpty(tmdbMovie.Title) || string.IsNullOrEmpty(tmdbMovie.OriginalTitle))
+      {
+        sTitle = sTitle.Replace("{1}", string.Empty).Trim();
+      }
+      sTitle = string.Format(sTitle, tmdbMovie.Title, TITLE_SEPARATOR, tmdbMovie.OriginalTitle, tmdbMovie.Year);
     }
 
-    movie.Year = year;
-
-    // Director
-    string rxDirectorsBlock = @"<h3\sclass=""inline-block"">Director[s]?:</h3>(?<director>.*?)</span>";
-    string directorsBlock =
-      Regex.Match(_strBody, rxDirectorsBlock, RegexOptions.Singleline | RegexOptions.IgnoreCase).Value;
-    regex = @"<span\sitemprop=""name"">(?<director>.*?)</span>";
-    string director =
-      Regex.Match(directorsBlock, regex, RegexOptions.Singleline | RegexOptions.IgnoreCase).Groups["director"].Value;
-
-
-    if (director == string.Empty)
+    if (!string.IsNullOrEmpty(tmdbMovie.Title) || !string.IsNullOrEmpty(tmdbMovie.OriginalTitle))
     {
-      director = Strings.Unknown;
+      // TMDB
+      movie.Title = sTitle;
     }
     else
     {
-      movie.WritingCredits = HttpUtility.HtmlDecode(director.Replace("\n", string.Empty));
-      if (movie.WritingCredits != null) 
+      // IMDB
+      string rxTitleBlock = "<h1>.*?</h1>";
+      string titleBlock = Regex.Match(_strBody, rxTitleBlock, RegexOptions.Singleline | RegexOptions.IgnoreCase).Value.Trim();
+      regex = @"<h1>(?<movieTitle>.*?)[(].*?(?<movieYear>\d{4})";
+      string title = Regex.Match(titleBlock, regex, RegexOptions.Singleline | RegexOptions.IgnoreCase).Groups["movieTitle"].Value;
+
+      if (!string.IsNullOrEmpty(imdbMovie.Title))
       {
-        movie.WritingCredits = movie.WritingCredits.Replace(",", ", ");
+        // IMDB Json
+        movie.Title = imdbMovie.Title;
+      } 
+      else if (!string.IsNullOrEmpty(title))
+      {
+        title = title.Replace("\n", string.Empty);
+        title = Utils.stripHTMLtags(title).Trim();
+        title = HttpUtility.HtmlDecode(title);
+        movie.Title = title;
       }
+
+      int year = 0;
+      int.TryParse(
+        Regex.Match(titleBlock, regex, RegexOptions.Singleline | RegexOptions.IgnoreCase).Groups["movieYear"].Value.Trim
+          (), out year);
+      movie.Year = year;
+    }
+    if (tmdbMovie.Year > 0)
+    {
+      // TMDB
+      movie.Year = tmdbMovie.Year;
+    }
+    if (movie.Year == 0)
+    {
+      movie.Year = DateTime.Today.Year + 3;
+    }
+
+    // Director
+
+    // TMDB Directors and Writers
+    string sDirector = string.Empty;
+    string sWriters = string.Empty;
+    if (tmdbMovie.Crew != null)
+    {
+      foreach (TMDBPerson apers in tmdbMovie.Crew)
+      {
+        if (!string.IsNullOrEmpty(apers.Name))
+        {
+          if (apers.As.Contains("Direct") && string.IsNullOrEmpty(sDirector))
+          {
+            // Only one Director per Movie in MP
+            sDirector = apers.Name; // + " (" + apers.As + ")";
+          }
+          else if (apers.As.Contains("Writ"))
+          {
+            sWriters += (!string.IsNullOrEmpty(sWriters) ? ", " : string.Empty) + apers.Name; // + " (" + apers.As + ")";
+          }
+        }
+      }
+      sDirector = sDirector.Replace("...", string.Empty).Trim();
+      sWriters = sWriters.Replace("...", string.Empty).Trim();
+    }
+
+    if (!string.IsNullOrEmpty(sDirector))
+    {
+      movie.Director = sDirector;
+    }
+    if (!string.IsNullOrEmpty(sWriters))
+    {
+      movie.WritingCredits = sWriters;
+    }
+
+    // IMDB Json Directors and Writers
+    sDirector = string.Empty;
+    sWriters = string.Empty;
+    if (imdbMovie.Crew != null)
+    {
+      foreach (TMDBPerson apers in imdbMovie.Crew)
+      {
+        if (!string.IsNullOrEmpty(apers.Name))
+        {
+          if (apers.As.Contains("Direct") && string.IsNullOrEmpty(sDirector))
+          {
+            // Only one Director per Movie in MP
+            sDirector = apers.Name; // + " (" + apers.As + ")";
+          }
+          else if (apers.As.Contains("Writ"))
+          {
+            sWriters += (!string.IsNullOrEmpty(sWriters) ? ", " : string.Empty) + apers.Name; // + " (" + apers.As + ")";
+          }
+        }
+      }
+      sDirector = sDirector.Replace("...", string.Empty).Trim();
+      sWriters = sWriters.Replace("...", string.Empty).Trim();
+    }
+
+    if (!string.IsNullOrEmpty(sDirector))
+    {
+      movie.Director = sDirector;
+    }
+    if (!string.IsNullOrEmpty(sWriters))
+    {
+      movie.WritingCredits = sWriters;
+    }
+
+    // IMDB
+    if (string.IsNullOrEmpty(movie.Director))
+    {
+      // Director
+      string rxDirectorsBlock = @"<h\d[^>]*>[^D]*Director[s]?:[^<]*<\/h\d>[^<]*(?<director>.*?)<\/div>";
+      string directorsBlock = Regex.Match(_strBody, rxDirectorsBlock, RegexOptions.Singleline | RegexOptions.IgnoreCase).Value;
+      // regex = @"href=.\/name\/nm\d{7}(?:\/|\?)[^>]+?>(?:<span[^>]+?>)?(?<director>.*?)(?:<\/span>)?<\/a>";
+      regex = @"<span[^>]+?>(?<director>.*?)?<\/span>";
+      string director = Regex.Match(directorsBlock, regex, RegexOptions.Singleline | RegexOptions.IgnoreCase).Groups["director"].Value;
+
+      if (!string.IsNullOrEmpty(director))
+      {
+        director = HttpUtility.HtmlDecode(director.Replace("\n", string.Empty));
+        if (!string.IsNullOrEmpty(director))
+        {
+          movie.Director = director.Replace(",", ", ");
+        }
+      }
+    }
+    if (string.IsNullOrEmpty(movie.Director))
+    {
+      movie.Director = Strings.Unknown;
+    }
+
+    if (string.IsNullOrEmpty(movie.WritingCredits))
+    {
+      // Writers
+      string rxWritersBlock = @"<h\d[^>]*>[^W]*Writer[s]?:[^<]*</h\d>[^<]*(?<writers_block>.*?)</div>";
+      string writersBlock = Regex.Match(_strBody, rxWritersBlock, RegexOptions.Singleline).Groups["writers_block"].Value;
+
+      if (!string.IsNullOrEmpty(writersBlock))
+      {
+        string strWriter = string.Empty;
+        strWriter = HttpUtility.HtmlDecode(writersBlock);
+        strWriter = Utils.stripHTMLtags(strWriter).Trim();
+
+        if (strWriter.EndsWith(";"))
+        {
+          int skipIndex = strWriter.LastIndexOf(",");
+
+          if (skipIndex > 0)
+          {
+            strWriter = strWriter.Substring(0, skipIndex);
+          }
+        }
+
+        movie.WritingCredits = strWriter.Replace("...", "").Replace("\n", "").Replace("  ", "").Trim().Replace(",", ", ");
+      }
+    }
+    if (string.IsNullOrEmpty(movie.WritingCredits))
+    {
+      movie.WritingCredits = Strings.Unknown;
     }
 
     // Genre
-    regex = @"<h3>Genres</h3>(?<genre>.+?)</section>";
-    string genre =
-      Regex.Match(_strBody, regex, RegexOptions.Singleline | RegexOptions.IgnoreCase).Groups["genre"].Value.Trim();
-    genre = HttpUtility.HtmlDecode(Utils.stripHTMLtags(genre.Replace("\n", string.Empty)));
-    if (string.IsNullOrEmpty(genre))
+    if (!string.IsNullOrEmpty(tmdbMovie.Genre))
     {
-      genre = Strings.Unknown;
+      // TMDB
+      movie.SingleGenre = tmdbMovie.Genre.Replace(" / ", ", ");
+    }
+    else if (!string.IsNullOrEmpty(imdbMovie.Genre))
+    {
+      // IMDB Json
+      movie.SingleGenre = imdbMovie.Genre.Replace(" / ", ", ");
     }
     else
     {
-      genre = genre.Replace(" ", string.Empty);
-      genre = genre.Replace("|", ", ");
+      // IMDB
+      regex = @"<h\d>Genres</h\d>(?<genre>.+?)</section>";
+      string genre = Regex.Match(_strBody, regex, RegexOptions.Singleline | RegexOptions.IgnoreCase).Groups["genre"].Value.Trim();
+      genre = HttpUtility.HtmlDecode(Utils.stripHTMLtags(genre.Replace("\n", string.Empty)));
+      if (!string.IsNullOrEmpty(genre))
+      {
+        genre = genre.Replace(" ", string.Empty);
+        genre = genre.Replace("|", ", ");
+      }
+      movie.SingleGenre = genre;
     }
-    movie.SingleGenre = genre;
+    if (string.IsNullOrEmpty(movie.SingleGenre))
+    {
+      movie.SingleGenre = Strings.Unknown;
+    }
 
     // Rating
-    regex = @"itemprop=""contentRating""\scontent=""(?<rating>.+?)""";
-    string mpaaRating =
-      Regex.Match(_strBody, regex, RegexOptions.Singleline | RegexOptions.IgnoreCase).Groups["rating"].Value.Trim();
-    if (mpaaRating == string.Empty)
+    if (!string.IsNullOrEmpty(tmdbMovie.MPARating))
     {
-      mpaaRating = Strings.Unknown;
+      // TMDB
+      movie.MPARating = tmdbMovie.MPARating;
+    }
+    else if (!string.IsNullOrEmpty(imdbMovie.MPARating))
+    {
+      // IMDB Json
+      movie.MPARating = imdbMovie.MPARating;
+    }
+    else
+    {
+      // IMDB
+      // regex = @"itemprop=""contentRating""\scontent=""(?<rating>.+?)""";
+      regex = @"contentRating.:.*?""(?<rating>.+?)""";
+      string mpaaRating = Regex.Match(_strBody, regex, RegexOptions.Singleline | RegexOptions.IgnoreCase).Groups["rating"].Value.Trim();
+      movie.MPARating = mpaaRating;
+    }
+    if (string.IsNullOrEmpty(tmdbMovie.MPARating))
+    {
+      tmdbMovie.MPARating = "NR";
     }
 
-    movie.MPARating = mpaaRating;
-
     // Actors
-    regex = @"itemprop='url'>\s<strong>(?<actor>.*?)</strong>";
-    MatchCollection actors = Regex.Matches(_strBody, regex, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+
+    // TMDB Actors as Role
     string strActor = string.Empty;
-    int actorNo = 0;
-
-    foreach (Match actor in actors)
+    if (tmdbMovie.Cast != null)
     {
-      string tmpActor = actor.Groups["actor"].Value;
-      tmpActor = HttpUtility.HtmlDecode(tmpActor);
-
-      if (tmpActor != string.Empty && actorNo < 4)
+      int actorNo = 0;
+      foreach (TMDBPerson apers in tmdbMovie.Cast)
       {
-        strActor += tmpActor + " / ";
-        actorNo++;
+        if (actorNo < 4)
+        {
+          strActor += apers.Name + " / ";
+          actorNo++;
+        }
+      }
+
+      int index = strActor.LastIndexOf(" /");
+      if (index > 0)
+      {
+        strActor = strActor.Remove(index);
       }
     }
 
-    int index = strActor.LastIndexOf(" /");
-
-    if (index > 0)
+    if (!string.IsNullOrEmpty(strActor))
     {
-      strActor = strActor.Remove(index);
+      movie.Cast = strActor;
+    }
+    else
+    {
+      // IMDB Actors as Role
+      regex = @"itemprop='url'>\s<strong>(?<actor>.*?)</strong>";
+      MatchCollection actors = Regex.Matches(_strBody, regex, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+      strActor = string.Empty;
+      int actorNo = 0;
+
+      foreach (Match actor in actors)
+      {
+        string tmpActor = actor.Groups["actor"].Value;
+        tmpActor = HttpUtility.HtmlDecode(tmpActor);
+
+        if (tmpActor != string.Empty && actorNo < 4)
+        {
+          strActor += tmpActor + " / ";
+          actorNo++;
+        }
+      }
+
+      int index = strActor.LastIndexOf(" /");
+      if (index > 0)
+      {
+        strActor = strActor.Remove(index);
+      }
+
+      if (!string.IsNullOrEmpty(strActor))
+      {
+        movie.Cast = strActor;
+      }
     }
 
-    movie.Cast = strActor;
+    if (string.IsNullOrEmpty(movie.Cast))
+    {
+      // IMDB Json Actors
+      strActor = string.Empty;
+      if (imdbMovie.Cast != null)
+      {
+        int actorNo = 0;
+        foreach (TMDBPerson apers in imdbMovie.Cast)
+        {
+          if (actorNo < 4)
+          {
+            strActor += apers.Name + " / ";
+            actorNo++;
+          }
+        }
+
+        int index = strActor.LastIndexOf(" /");
+        if (index > 0)
+        {
+          strActor = strActor.Remove(index);
+        }
+      }
+
+      if (!string.IsNullOrEmpty(strActor))
+      {
+        movie.Cast = strActor;
+      }
+    }
+
     _strBody = string.Empty;
   }
 
@@ -433,6 +699,8 @@ internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
         return false;
       }
 
+      IMDBActor JsonActor = GetIMDBActorDetails(actor.IMDBActorID, html);
+
       HTMLParser parser = new HTMLParser(html);
       string strThumb = string.Empty;
       string value = string.Empty;
@@ -440,12 +708,41 @@ internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
       parser.Content = value;
       value = string.Empty;
 
+      #region Actor Main Image
+
+      string imdbImage = string.Empty;
+      string fromLeft = string.Empty;
+      bool badImage = false;
+
+      string regex = @"link rel=.image_src.\s+?href=.(?<image>[^>]+?_CR(?<left>\d+?),[^>]+?(?:jpg|png))[^>]+?>";
+      imdbImage = Regex.Match(html, regex, RegexOptions.Singleline | RegexOptions.IgnoreCase).Groups["image"].Value;
+      if (!string.IsNullOrEmpty(imdbImage))
+      {
+        fromLeft = Regex.Match(html, regex, RegexOptions.Singleline | RegexOptions.IgnoreCase).Groups["left"].Value;
+        int iFromLeft = 0;
+        if (Int32.TryParse(fromLeft, out iFromLeft))
+        {
+          if (iFromLeft > 150)
+          {
+            badImage = true;
+            MediaPortal.GUI.Library.Log.Debug("IMDB Bad image detected [{0}]: {1}", iFromLeft, imdbImage);
+            imdbImage = imdbImage.Replace("630,1200", "630,1000");
+          }
+        }
+      }
+
+      #endregion
+
       #region Actor name
 
       // Actor name
-      if (parser.skipToEndOf("<section id=\"name-overview\">") &&
-          parser.skipToEndOf("<h1>") &&
-          parser.extractTo("</h1>", ref value))
+      if (!string.IsNullOrEmpty(JsonActor.Name))
+      {
+        actor.Name = JsonActor.Name;
+      }
+      else if (parser.skipToEndOf("<section id=\"name-overview\">") &&
+               parser.skipToEndOf("<h1>") &&
+               parser.extractTo("</h1>", ref value))
       {
         value = new HTMLUtil().ConvertHTMLToAnsi(value);
         value = Utils.RemoveParenthesis(value).Trim();
@@ -454,7 +751,7 @@ internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
         actor.Name = value.Replace("\n", string.Empty);
       }
 
-      if (actor.Name == string.Empty)
+      if (string.IsNullOrEmpty(actor.Name))
       {
         actor.Name = url.Title;
       }
@@ -468,42 +765,91 @@ internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
 
       #region Actor photo
 
-      if (parser.skipToStartOf("<img id=\"name-poster\"") &&
-          parser.skipToEndOf("class=\"media-object\"") &&
-          // parser.extractTo("itemprop=\"image\"", ref photoBlock))
-          parser.extractTo("data-src-x2=", ref photoBlock))
+      if (badImage)
+      {
+        actor.ThumbnailUrl = imdbImage;
+      }
+      else if (!string.IsNullOrEmpty(JsonActor.ThumbnailUrl))
+      {
+        actor.ThumbnailUrl = JsonActor.ThumbnailUrl;
+      }
+      else if (parser.skipToStartOf("<img id=\"name-poster\"") &&
+               parser.skipToEndOf("class=\"media-object\"") &&
+               // parser.extractTo("itemprop=\"image\"", ref photoBlock))
+               parser.extractTo("data-src-x2=", ref photoBlock))
       {
         parser.Content = photoBlock;
 
         if (parser.skipToEndOf("src=\"") &&
             parser.extractTo("_V1", ref strThumb))
         {
-          actor.ThumbnailUrl = strThumb + "_V1_SX500.jpg";
+          if (strThumb.Contains("<") || strThumb.Contains(">"))
+          {
+            actor.ThumbnailUrl = string.Empty;
+          }
+          else
+          {
+            actor.ThumbnailUrl = strThumb + "_V1_SX" + thumbSize + ".jpg";
+          }
         }
         parser.Content = parserTxt;
       }
 
       #endregion
 
-      #region Actor birth date/place
+      parser.resetPosition();
 
-      // Birth date/Place
-      if (parser.skipToEndOf("<strong>Born:</strong>"))
+      #region Actor Birth date/place
+
+      // Birth Date
+      actor.DateOfBirth = string.Empty;
+
+      if (!string.IsNullOrEmpty(JsonActor.DateOfBirth))
       {
-        if (parser.skipToEndOf("<time datetime=") &&
-            // parser.skipToEndOf("itemprop=\"birthDate\">") &&
-            parser.skipToEndOf("\">") &&
-            parser.extractTo("</time>", ref value))
+        DateTime date = DateTime.Parse(JsonActor.DateOfBirth);
+        actor.DateOfBirth = String.Format("{0:D}", date);
+        string zodiac = GetZodiac(date);
+        if (!string.IsNullOrEmpty(zodiac))
         {
-          value = Utils.stripHTMLtags(value).Trim();
-          value = value.Replace("\n", string.Empty).Trim();
-          value = value.Replace("  ", string.Empty);
-          value = value.Replace(",", ", ");
-          actor.DateOfBirth = value;
+          actor.DateOfBirth += " (" + zodiac + ")";
+        }
+      }
+      else if (parser.skipToEndOf("<strong>Born:</strong>") && parser.extractTo("</time>", ref value))
+      {
+        regex = @"datetime=.(?<date>\d{4}-\d{1,2}-\d{1,2})";
+        string birthday = Regex.Match(value, regex, RegexOptions.Singleline | RegexOptions.IgnoreCase).Groups["date"].Value;
+        if (!string.IsNullOrEmpty(birthday))
+        {
+          DateTime date = DateTime.Parse(birthday);
+          actor.DateOfBirth = String.Format("{0:D}", date);
+          string zodiac = GetZodiac(date);
+          if (!string.IsNullOrEmpty(zodiac))
+          {
+            actor.DateOfBirth += " (" + zodiac + ")";
+          }
         }
       }
 
-      // Birth place
+      if (string.IsNullOrEmpty(actor.DateOfBirth))
+      {
+        parser.resetPosition();
+        if (parser.skipToEndOf("<strong>Born:</strong>"))
+        {
+          if (parser.skipToEndOf("<time datetime=") &&
+              // parser.skipToEndOf("itemprop=\"birthDate\">") &&
+              parser.skipToEndOf("\">") &&
+              parser.extractTo("</time>", ref value))
+          {
+            value = Utils.stripHTMLtags(value).Trim();
+            value = value.Replace("\n", string.Empty).Trim();
+            value = value.Replace("  ", string.Empty);
+            value = value.Replace(",", ", ");
+            actor.DateOfBirth = value;
+          }
+        }
+      }
+
+      // Birth Place
       if (parser.skipToEndOf("<h3>Born</h3>") &&
           parser.skipToEndOf("<time datetime=") &&
           // parser.skipToEndOf("itemprop=\"birthDate\">") &&
@@ -526,32 +872,59 @@ internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
             parser.extractTo("</span>", ref value))
         {
           value = Utils.stripHTMLtags(value).Trim();
-          actor.PlaceOfBirth = HttpUtility.HtmlDecode(value);
+          if (!value.Contains(@"""") && !value.Contains("m"))
+          {
+            actor.PlaceOfBirth = HttpUtility.HtmlDecode(value);
+          }
         }
       }
 
       #endregion
 
-      #region Actor death date/place
-
       parser.resetPosition();
 
-      // Death date
-      if (parser.skipToEndOf("<strong>Died:</strong> "))
-      {
-        if (parser.skipToEndOf("<time datetime=") &&
-            // parser.skipToEndOf("itemprop=\"deathDate\">") &&
-            parser.skipToEndOf("\">") &&
-            parser.extractTo("</time>", ref value))
-        {
-          value = Utils.stripHTMLtags(value).Trim();
-          value = value.Replace("\n", string.Empty).Trim();
-          value = value.Replace("  ", string.Empty);
-          value = value.Replace(",", ", ");
-          actor.DateOfDeath = value;
-        }
+      #region Actor death date/place
 
-        // Death place
+      // Death Date
+      if (!string.IsNullOrEmpty(JsonActor.DateOfDeath))
+      {
+        DateTime date = DateTime.Parse(JsonActor.DateOfDeath);
+        actor.DateOfDeath = String.Format("{0:D}", date);
+      }
+      else if (parser.skipToEndOf("<strong>Died:</strong>") && parser.extractTo("</time>", ref value))
+      {
+        regex = @"datetime=.(?<date>\d{4}-\d{1,2}-\d{1,2})";
+        string deathday = Regex.Match(value, regex, RegexOptions.Singleline | RegexOptions.IgnoreCase).Groups["date"].Value;
+        if (!string.IsNullOrEmpty(deathday))
+        {
+          DateTime date = DateTime.Parse(deathday);
+          actor.DateOfDeath = String.Format("{0:D}", date);
+        }
+      }
+
+      if (string.IsNullOrEmpty(actor.DateOfDeath))
+      {
+        parser.resetPosition();
+
+        if (parser.skipToEndOf("<strong>Died:</strong> "))
+        {
+          if (parser.skipToEndOf("<time datetime=") &&
+              // parser.skipToEndOf("itemprop=\"deathDate\">") &&
+              parser.skipToEndOf("\">") &&
+              parser.extractTo("</time>", ref value))
+          {
+            value = Utils.stripHTMLtags(value).Trim();
+            value = value.Replace("\n", string.Empty).Trim();
+            value = value.Replace("  ", string.Empty);
+            value = value.Replace(",", ", ");
+            actor.DateOfDeath = value;
+          }
+        }
+      }
+
+      if (!string.IsNullOrEmpty(actor.DateOfDeath))
+      {
+        // Death Place
         if (parser.skipToEndOf("<h3>Died</h3>") &&
             parser.skipToEndOf("<time datetime=") &&
             // parser.skipToEndOf("itemprop=\"deathDate\">") &&
@@ -578,23 +951,67 @@ internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
           }
         }
       }
+      #endregion
+
+      #region TMDB Info
+
+      IMDBActor tmdbActor = new IMDBActor();
+      if (TMDBGetActorDetails(actor.IMDBActorID, out tmdbActor))
+      {
+        MediaPortal.GUI.Library.Log.Debug("TMDB {0}: {1}", "Name", tmdbActor.Name);
+        if ((string.IsNullOrEmpty(actor.ThumbnailUrl) || badImage) && !string.IsNullOrEmpty(tmdbActor.ThumbnailUrl))
+        {
+          MediaPortal.GUI.Library.Log.Debug("TMDB {0}: {1}", "ThumbnailUrl", tmdbActor.ThumbnailUrl);
+          actor.ThumbnailUrl = tmdbActor.ThumbnailUrl;
+        }
+
+        if (string.IsNullOrEmpty(actor.DateOfBirth) && !string.IsNullOrEmpty(tmdbActor.DateOfBirth))
+        {
+          MediaPortal.GUI.Library.Log.Debug("TMDB {0}: {1}", "DateOfBirth", tmdbActor.DateOfBirth);
+          actor.DateOfBirth = tmdbActor.DateOfBirth;
+        }
+        if (string.IsNullOrEmpty(actor.PlaceOfBirth) && !string.IsNullOrEmpty(tmdbActor.PlaceOfBirth))
+        {
+          MediaPortal.GUI.Library.Log.Debug("TMDB {0}: {1}", "PlaceOfBirth", tmdbActor.PlaceOfBirth);
+          actor.PlaceOfBirth = tmdbActor.PlaceOfBirth;
+        }
+
+        if (string.IsNullOrEmpty(actor.DateOfDeath) && !string.IsNullOrEmpty(tmdbActor.DateOfDeath))
+        {
+          MediaPortal.GUI.Library.Log.Debug("TMDB {0}: {1}", "DateOfDeath", tmdbActor.DateOfDeath);
+          actor.DateOfDeath = tmdbActor.DateOfDeath;
+        }
+
+        if (!string.IsNullOrEmpty(tmdbActor.MiniBiography))
+        {
+          MediaPortal.GUI.Library.Log.Debug("TMDB {0}: {1}", "MiniBiography", tmdbActor.MiniBiography);
+          actor.MiniBiography = tmdbActor.MiniBiography;
+        }
+      }
 
       #endregion
 
-      //Mini Biography
+      parser.resetPosition();
 
       #region Actor biography
 
-      parser.resetPosition();
-
-      if (parser.skipToEndOf("<a href=\"bio?ref_=m_mn_ov_bio\"\nclass=\"btn-full\" > <p>") &&
-        parser.extractTo("</p>", ref value))
+      //Mini Biography
+      if (string.IsNullOrEmpty(tmdbActor.MiniBiography))
       {
-        value = new HTMLUtil().ConvertHTMLToAnsi(value);
-        value = Utils.stripHTMLtags(value).Trim();
-        value = HttpUtility.HtmlDecode(value);
-        actor.MiniBiography = value;
+        if (parser.skipToEndOf("<a href=\"bio?ref_=m_mn_ov_bio\"\nclass=\"btn-full\" > <p>") &&
+            parser.extractTo("</p>", ref value))
+        {
+          value = new HTMLUtil().ConvertHTMLToAnsi(value);
+          value = Utils.stripHTMLtags(value).Trim();
+          value = HttpUtility.HtmlDecode(value);
+          actor.MiniBiography = value;
+        }
+      }
 
+      actor.Biography = string.Empty;
+      if (string.IsNullOrEmpty(tmdbActor.Biography) || FULL_ACTOR_INFO)
+      {
+        //Full Biography
         string fullBioUrl = string.Format("http://m.imdb.com/name/{0}/bio?ref_=m_mn_ov_bio", actor.IMDBActorID);
         html = GetPage(fullBioUrl, "utf-8", out absoluteUri);
         parser.Content = html;
@@ -608,15 +1025,28 @@ internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
           value = HttpUtility.HtmlDecode(value);
           actor.Biography = value;
         }
-
-        // IMDB Awards
-        string imdbAwards = GetAwardsIMDB(actor.IMDBActorID);
-        if (!string.IsNullOrEmpty(imdbAwards))
-        {
-          actor.Biography = actor.Biography + "\n\n" + imdbAwards;
-        }
-        actor.Biography = actor.Biography + "\n\n";
       }
+
+      if (!string.IsNullOrEmpty(tmdbActor.Biography))
+      {
+        if (FULL_ACTOR_INFO)
+
+        {
+          actor.Biography = tmdbActor.Biography + "\n\n" + actor.Biography;
+        }
+        else
+        {
+          actor.Biography = tmdbActor.Biography;
+        }
+      }
+
+      // IMDB Awards
+      string imdbAwards = GetAwardsIMDB(actor.IMDBActorID);
+      if (!string.IsNullOrEmpty(imdbAwards))
+      {
+        actor.Biography = actor.Biography + "\n\n" + imdbAwards;
+      }
+      actor.Biography = actor.Biography + "\n\n";
 
       #endregion
 
@@ -1113,11 +1543,211 @@ internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
 
   #endregion
 
+  #region IMDB Json
+
+  public class JsonIMDBPerson
+  {
+      public string type { get; set; }
+      public string url { get; set; }
+      public string name { get; set; }
+  }
+
+  public class JsonIMDBActor : JsonIMDBPerson
+  {
+      public string image { get; set; }
+      public string description { get; set; }
+      public string birthDate { get; set; }
+      public string deathDate { get; set; }
+  }    
+
+  public class JsonIMDBObject
+  {
+      public string url { get; set; }
+      public string name { get; set; }
+      public string image { get; set; }
+      public List<string> genre { get; set; }
+      public string contentRating { get; set; }
+      public List<JsonIMDBPerson> actor { get; set; }
+      public JsonIMDBPerson director { get; set; }
+      public List<JsonIMDBPerson> creator { get; set; }
+      public string description { get; set; }
+      public string duration { get; set; }
+  }
+
+  public IMDBActor GetIMDBActorDetails(string imdbID, string page)
+  {
+    IMDBActor oReturn = new IMDBActor();
+
+    if (string.IsNullOrEmpty(page))
+    {
+      return oReturn;
+    }
+
+    string regex = @"type=.application\/ld\+json.>(?<json>{.+?})<";
+    string json = Regex.Match(page, regex, RegexOptions.Singleline | RegexOptions.IgnoreCase).Groups["json"].Value;
+    if (string.IsNullOrEmpty(json))
+    {
+      Log.Debug("GetIMDBActorDetails IMDB = {0}, JSON not found.", imdbID);
+      return oReturn;
+    }
+    json = json.Replace(@"""@", @"""");
+
+    try
+    {
+      JsonIMDBActor Actor = JsonConvert.DeserializeObject<JsonIMDBActor>(json);
+      if (Actor == null)
+      {
+        Log.Debug("GetIMDBActorDetails IMDB = {0}, JSON changed!?.", imdbID);
+        return oReturn;
+      }
+
+      if (!string.IsNullOrEmpty(Actor.name))
+      {
+        MediaPortal.GUI.Library.Log.Debug("IMDB {0}: {1}", "Name", Actor.name);
+      }
+      oReturn.Name = Actor.name;
+      oReturn.IMDBActorID = imdbID;
+      oReturn.MiniBiography = Actor.description;
+      oReturn.ThumbnailUrl = string.IsNullOrEmpty(Actor.image) ? string.Empty : Actor.image.Replace("_V1_","_V1_SX" + thumbSize);
+      oReturn.DateOfBirth = Actor.birthDate;
+      oReturn.DateOfDeath = Actor.deathDate;
+    }
+    catch (Exception ex)
+    {
+      Log.Debug("GetIMDBActorDetails IMDB = {0}, Exception {1}, JSON changed!?.", imdbID, ex.Message);
+    }
+
+    return oReturn;
+  }
+
+  public TMDBMovie GetIMDBDetails(string imdbID)
+  {
+    TMDBMovie oReturn = new TMDBMovie();
+
+    if (string.IsNullOrEmpty(_strBody))
+    {
+      string uri;
+      string strUrl = String.Format("http://m.imdb.com/title/{0}", imdbID);
+      _strBody = GetPage(strUrl, "utf-8", out uri);
+    }
+
+    string regex = @"type=.application\/ld\+json.>(?<json>{.+?})<";
+    string json = Regex.Match(_strBody, regex, RegexOptions.Singleline | RegexOptions.IgnoreCase).Groups["json"].Value;
+    if (string.IsNullOrEmpty(json))
+    {
+      Log.Debug("GetIMDBDetails IMDB = {0}, JSON not found.", imdbID);
+      return oReturn;
+    }
+    json = json.Replace(@"""@", @"""");
+
+    try
+    {
+      JsonIMDBObject Movie = JsonConvert.DeserializeObject<JsonIMDBObject>(json);
+      if (Movie == null)
+      {
+        Log.Debug("GetIMDBDetails IMDB = {0}, JSON changed!?.", imdbID);
+        return oReturn;
+      }
+
+      if (!string.IsNullOrEmpty(Movie.name))
+      {
+        MediaPortal.GUI.Library.Log.Debug("IMDB {0}: {1}", "Title", Movie.name);
+      }
+      oReturn.Title = Movie.name;
+      oReturn.IMDBNumber = imdbID;
+      oReturn.Plot = Movie.description;
+      oReturn.ThumbURL = string.IsNullOrEmpty(Movie.image) ? string.Empty : Movie.image.Replace("_V1_","_V1_SX" + thumbSize);
+
+      if (!string.IsNullOrEmpty(Movie.duration))
+      {
+        regex = @"PT(?:(?<hour>\d*)H)?(?<minutes>\d+?)M";
+        string hour = Regex.Match(Movie.duration, regex).Groups["hour"].Value;
+        string minutes = Regex.Match(Movie.duration, regex).Groups["minutes"].Value;
+        if (string.IsNullOrEmpty(hour))
+        {
+          hour = "0";
+        }
+        if (string.IsNullOrEmpty(minutes))
+        {
+          minutes = "0";
+        }
+        oReturn.RunTime = Int32.Parse(hour) * 60 + Int32.Parse(minutes);
+      }
+
+      oReturn.Genre = string.Empty;
+      if (Movie.genre != null && Movie.genre.Count > 0)
+      {
+        foreach (string g in Movie.genre)
+        {
+          oReturn.Genre += (!string.IsNullOrEmpty(oReturn.Genre) ? " / " : string.Empty) + g;
+        }
+      }
+
+      List<TMDBPerson> tReturn = new List<TMDBPerson>();
+      string sCast = string.Empty;
+
+      if (Movie.actor != null && Movie.actor.Count > 0)
+      {
+        foreach (JsonIMDBPerson cast in Movie.actor)
+        {
+          if (cast.type == "Person")
+          {
+            TMDBPerson aPerson = new TMDBPerson();
+            aPerson.Id = cast.url;
+            aPerson.Name = cast.name;
+            tReturn.Add(aPerson);
+          }
+        }
+      }
+
+      if (Movie.creator != null && Movie.creator.Count > 0)
+      {
+        foreach (JsonIMDBPerson creator in Movie.creator)
+        {
+          if (creator.type == "Person")
+          {
+            TMDBPerson aPerson = new TMDBPerson();
+            aPerson.Id = creator.url;
+            aPerson.Name = creator.name;
+            aPerson.As = "Writer";
+            tReturn.Add(aPerson);
+          }
+        }
+      }
+
+      if (Movie.director  != null)
+      {
+        TMDBPerson aPerson = new TMDBPerson();
+        aPerson.Id = Movie.director.url;
+        aPerson.Name = Movie.director.name;
+        aPerson.As = "Director ";
+        tReturn.Add(aPerson);
+      }
+
+      if (tReturn.Count > 0)
+      {
+        oReturn.Cast = tReturn.ToArray();
+      }
+    }
+    catch (Exception ex)
+    {
+      Log.Debug("GetIMDBDetails IMDB = {0}, Exception {1}, JSON changed!?.", imdbID, ex.Message);
+    }
+
+    return oReturn;
+  }
+
+  #endregion
+
   #region IMDBActorAwards
 
   private string GetAwardsIMDB(string IMDBID)
   {
     if (string.IsNullOrEmpty(IMDBID))
+    {
+      return string.Empty;
+    }
+    if (!GET_ACTOR_AWARDS)
     {
       return string.Empty;
     }
@@ -1318,28 +1948,648 @@ internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
 
   #endregion
 
-  private ArrayList Parse(string input, string pattern) {
-      ArrayList keyedMatches  = new ArrayList();
-      try {
-          Regex regEx             = new Regex(pattern, RegexOptions.IgnoreCase | RegexOptions.Singleline);
-          MatchCollection matches = regEx.Matches(input);
-          
-          // write matches and groups to variables
-          foreach (Match currMatch in matches) {
-              // store the groups in the match
-              if (currMatch.Groups.Count > 1) {
-                  Hashtable groupings = new Hashtable( );
-                  for (int i = 1; i < currMatch.Groups.Count; i++)
-                      groupings.Add(regEx.GroupNameFromNumber(i), currMatch.Groups[i].Value.Trim());
-                  keyedMatches.Add(groupings);
-              }
+  #region TMDB
+
+  private const string API_KEY = "e224fe4f3fec5f7b5570641f7cd3df3a"; //Inset API Key
+  private static string API_LANG = CultureInfo.CurrentCulture.TwoLetterISOLanguageName.ToUpper(); 
+
+  private const string API_ImageUrl = "http://image.tmdb.org/t/p/";
+  private const string API_PosterUrl = API_ImageUrl + "w500";
+  private const string API_FanartUrl = API_ImageUrl + "original";
+
+  private const string API_BaseUrl = "http://api.themoviedb.org/3/";
+
+  public const string API_SearchPerson = API_BaseUrl + "find/{0}?api_key={1}&external_source=imdb_id";
+  public const string API_DetailsPerson = API_BaseUrl + "person/{0}?api_key={1}";
+  public const string API_MovieInfo = API_BaseUrl + "movie/{0}?api_key={1}";
+  public const string API_Casts = API_BaseUrl + "movie/{0}/casts?api_key={1}";
+  public const string API_ReleaseInfo = API_BaseUrl + "movie/{0}/releases?api_key={1}";
+
+  public TMDBMovie GetTMDBDetails(string imdbID)
+  {
+    TMDBMovie oReturn = new TMDBMovie();
+
+    if (string.IsNullOrEmpty(imdbID))
+    {
+      return oReturn;
+    }
+
+    string URL = string.Format(API_MovieInfo, imdbID, API_KEY);
+    if (!string.IsNullOrEmpty(API_LANG))
+    {
+      URL += "&language=" + API_LANG.ToLower();
+    }
+
+    string uri = string.Empty;
+    string json = GetPage(URL, "utf-8", out uri);
+    if (string.IsNullOrEmpty(json))
+    {
+      return oReturn;
+    }
+
+    // Log.Debug("{0} GetTMDBDetails url = {1}, sResponseDetails = {2}", strGrabber, HideAPIKey(url), json);
+    try
+    {
+      MovieDatails Movie = JsonConvert.DeserializeObject<MovieDatails>(json);
+      if (Movie == null || Movie.id <= 0)
+      {
+        return oReturn;
+      }
+
+      oReturn.ID = Movie.id;
+      oReturn.Title = Movie.title;
+      oReturn.OriginalTitle = Movie.original_title;
+      oReturn.IMDBNumber = Movie.imdb_id;
+      oReturn.Plot = Movie.overview;
+      oReturn.TagLine = Movie.tagline;
+      oReturn.RunTime = Movie.runtime;
+      oReturn.Rating = (float)Movie.vote_average;
+      oReturn.Votes = Movie.vote_count;
+
+      oReturn.Genre = string.Empty;
+      if (Movie.genres != null && Movie.genres.Count > 0)
+      {
+        foreach (Genre genre in Movie.genres)
+        {
+          oReturn.Genre += (!string.IsNullOrEmpty(oReturn.Genre) ? " / " : string.Empty) + genre.name;
+        }
+      }
+
+      oReturn.Language = string.Empty;
+      if (Movie.spoken_languages != null && Movie.spoken_languages.Count > 0)
+      {
+        foreach (SpokenLanguage language in Movie.spoken_languages)
+        {
+          oReturn.Language += (!string.IsNullOrEmpty(oReturn.Language) ? ", " : string.Empty) + language.name;
+        }
+      }
+      else
+      {
+        if (!string.IsNullOrEmpty(Movie.original_language))
+        {
+          oReturn.Language = Movie.original_language;
+        }
+      }
+
+      oReturn.Country = string.Empty;
+      if (Movie.production_countries != null && Movie.production_countries.Count > 0)
+      {
+        foreach (ProductionCountry country in Movie.production_countries)
+        {
+          oReturn.Country += (!string.IsNullOrEmpty(oReturn.Country) ? ", " : string.Empty) + country.name;
+        }
+      }
+
+      oReturn.Studios = string.Empty;
+      if (Movie.production_companies != null && Movie.production_companies.Count > 0)
+      {
+        foreach (ProductionCompany studio in Movie.production_companies)
+        {
+          oReturn.Studios += (!string.IsNullOrEmpty(oReturn.Studios) ? " / " : string.Empty) + studio.name;
+        }
+      }
+
+      string sYear = !string.IsNullOrWhiteSpace(Movie.release_date) && Movie.release_date.Length >= 4 ? Movie.release_date.Substring(0, 4) : string.Empty;
+      if (!string.IsNullOrEmpty(sYear))
+      {
+        int iYear;
+        int.TryParse(sYear, out iYear);
+        oReturn.Year = iYear;
+      }
+
+      if (string.IsNullOrEmpty(oReturn.Title))
+      {
+        oReturn.Title = oReturn.OriginalTitle;
+      }
+
+      oReturn.ThumbURL = Movie.poster_path;
+      if (!string.IsNullOrEmpty(oReturn.ThumbURL))
+      {
+        oReturn.ThumbURL = API_PosterUrl + oReturn.ThumbURL;
+      }
+      else
+      {
+        oReturn.ThumbURL = string.Empty;
+      }
+
+      oReturn.FanartURL = Movie.backdrop_path;
+      if (!string.IsNullOrEmpty(oReturn.FanartURL))
+      {
+        oReturn.FanartURL = API_FanartUrl + oReturn.FanartURL;
+      }
+      else
+      {
+        oReturn.FanartURL = string.Empty;
+      }
+    }
+    catch { }
+
+    return oReturn;
+  }
+
+  public bool TMDBGetActorDetails(string imdbID, out IMDBActor actor)
+  {
+    actor = new IMDBActor();
+    if (string.IsNullOrEmpty(imdbID))
+    {
+      return false;
+    }
+
+    string URL = string.Format(API_SearchPerson, imdbID, API_KEY);
+    if (!string.IsNullOrEmpty(API_LANG))
+    {
+      URL += "&language=" + API_LANG.ToLower();
+    }
+
+    string uri = string.Empty;
+    string json = GetPage(URL, "utf-8", out uri);
+    if (string.IsNullOrEmpty(json))
+    {
+      return false;
+    }
+
+    try
+    {
+      FindObject Person = JsonConvert.DeserializeObject<FindObject>(json);
+      if (Person != null & Person.person_results != null && Person.person_results.Count == 1)
+      {
+        URL = string.Format(API_DetailsPerson, Person.person_results[0].id, API_KEY);
+        if (!string.IsNullOrEmpty(API_LANG))
+        {
+          URL += "&language=" + API_LANG.ToLower();
+        }
+
+        json = GetPage(URL, "utf-8", out uri);
+        if (string.IsNullOrEmpty(json))
+        {
+          return false;
+        }
+
+        ActorDetails Actor = JsonConvert.DeserializeObject<ActorDetails>(json);
+        if (Actor != null)
+        {
+          actor.Name = Actor.name;
+          if (!string.IsNullOrEmpty(Actor.profile_path))
+          {
+            actor.ThumbnailUrl = API_PosterUrl + Actor.profile_path;
           }
+          else
+          {
+            actor.ThumbnailUrl = string.Empty;
+          }
+
+          if (!string.IsNullOrEmpty(Actor.birthday))
+          {
+            DateTime date = DateTime.Parse(Actor.birthday);
+            actor.DateOfBirth = String.Format("{0:D}", date);
+            string zodiac = GetZodiac(date);
+            if (!string.IsNullOrEmpty(zodiac))
+            {
+              actor.DateOfBirth += " (" + zodiac + ")";
+            }
+          }
+          actor.PlaceOfBirth = Actor.place_of_birth;
+
+          if (!string.IsNullOrEmpty(Actor.deathday))
+          {
+            DateTime date = DateTime.Parse(Actor.deathday);
+            actor.DateOfDeath = String.Format("{0:D}", date);
+            if (!string.IsNullOrEmpty(Actor.birthday))
+            {
+              DateTime bday = DateTime.Parse(Actor.birthday);
+              int age = date.Year - bday.Year;
+              if (bday > date.AddYears(-age)) 
+              {
+                age--;
+              }
+              if (age > 0)
+              {
+                actor.DateOfDeath += " (" + age.ToString() + ")";
+              }
+            }
+          }
+
+          string miniBio = string.Empty;
+          if (!string.IsNullOrEmpty(Actor.biography))
+          {
+            using (StringReader reader = new StringReader(Actor.biography))
+            {
+              string line;
+              int i = 0;
+              while ((line = reader.ReadLine()) != null)
+              {
+                i++;
+                var punctuation = line.Where(Char.IsPunctuation).Distinct().ToArray();
+                var words = line.Split().Select(x => x.Trim(punctuation));		
+                miniBio += string.IsNullOrEmpty(miniBio) ? line : "\n" + line;
+                if (words == null || words.Count() > 3)
+                {
+                  break;
+                }
+                if (i >= 2)
+                {
+                  break;
+                }
+              }
+            }	   
+          }
+          actor.MiniBiography = miniBio;
+          actor.Biography = Actor.biography;
+
+          return true;
+        }
       }
-      catch (Exception e) {
-          Log.Error("Regex expression failed! Exception: {0}", e.Message);
-          Log.Error(e);
+    }
+    catch (Exception ex)
+    {
+      Log.Debug("TMDB Script GetActorDetails error: {0}", ex.Message);
+    }
+    return false;
+  }
+
+  public void GetCast(ref TMDBMovie movie)
+  {
+    if (string.IsNullOrEmpty(movie.IMDBNumber))
+    {
+      return;
+    }
+
+    Log.Debug("TMDB Get Cast for {0}: {1}", movie.IMDBNumber, movie.Title);
+
+    string URL = string.Format(API_Casts, movie.IMDBNumber, API_KEY);
+    if (!string.IsNullOrEmpty(API_LANG))
+    {
+      URL += "&language=" + API_LANG.ToLower();
+    }
+
+    string uri = string.Empty;
+    string json = GetPage(URL, "utf-8", out uri);
+    if (string.IsNullOrEmpty(json))
+    {
+      return;
+    }
+
+    SearchCast casts = JsonConvert.DeserializeObject<SearchCast>(json);
+    if (casts == null)
+    {
+      return;
+    }
+
+    try
+    {
+      List<TMDBPerson> tReturn = new List<TMDBPerson>();
+      string sCast = string.Empty;
+
+      if (casts.cast != null && casts.cast.Count > 0)
+      {
+        foreach (Cast cast in casts.cast)
+        {
+          TMDBPerson aPerson = new TMDBPerson();
+          aPerson.Id = cast.id.ToString();
+          aPerson.Name = cast.name;
+          aPerson.As = cast.character;
+          tReturn.Add(aPerson);
+        }
+        movie.Cast = tReturn.ToArray();
       }
-      return keyedMatches;
+    }
+    catch { }
+
+    try
+    {
+      List<TMDBPerson> tReturn = new List<TMDBPerson>();
+      string sCrew = string.Empty;
+
+      if (casts.crew != null && casts.crew.Count > 0)
+      {
+        foreach (Crew crew in casts.crew)
+        {
+          TMDBPerson aPerson = new TMDBPerson();
+          aPerson.Id = crew.id.ToString();
+          aPerson.Name = crew.name;
+          aPerson.As = crew.department; // crew.job;
+          tReturn.Add(aPerson);
+        }
+        movie.Crew = tReturn.ToArray();
+      }
+    }
+    catch { }
+  }
+
+  public void GetTMDBRelease(ref TMDBMovie movie)
+  {
+    if (string.IsNullOrEmpty(movie.IMDBNumber))
+    {
+      return;
+    }
+
+    string URL = string.Format(API_ReleaseInfo, movie.IMDBNumber, API_KEY);
+    if (!string.IsNullOrEmpty(API_LANG))
+    {
+      URL += "&language=" + API_LANG.ToLower();
+    }
+
+    string uri = string.Empty;
+    string json = GetPage(URL, "utf-8", out uri);
+    if (string.IsNullOrEmpty(json))
+    {
+      return;
+    }
+
+    try
+    {
+      SearchRelease releases = JsonConvert.DeserializeObject<SearchRelease>(json);
+      if (releases == null || releases.countries == null || releases.countries.Count <= 0)
+      {
+        return;
+      }
+
+      string sCertification = string.Empty;
+      sCertification = GetMPAA(releases.countries, API_LANG);
+      if (!string.IsNullOrEmpty(sCertification))
+      {
+        Log.Debug("{0} MPAA {1}: {2}", "TMDB", API_LANG, sCertification);
+      }
+      else
+      {
+        sCertification = GetMPAA(releases.countries, "US");
+        if (!string.IsNullOrEmpty(sCertification))
+        {
+          Log.Debug("{0} MPAA US: {1}", "TMDB", sCertification);
+        }
+        else
+        {
+          sCertification = GetMPAA(releases.countries, "UK");
+          if (!string.IsNullOrEmpty(sCertification))
+          {
+            Log.Debug("{0} MPAA UK: {1}", "TMDB", sCertification);
+          }
+        }
+      }
+      movie.MPARating = sCertification.Replace("+", string.Empty);
+    }
+    catch { }
+  }
+
+  private static string GetMPAA(List<Country> countrys, string code)
+  {
+    if (countrys == null || countrys.Count <= 0)
+    {
+      return string.Empty;
+    }
+    if (string.IsNullOrEmpty(code))
+    {
+      return string.Empty;
+    }
+
+    foreach (Country country in countrys)
+    {
+      if (country.iso_3166_1 == code)
+      {
+        if (!string.IsNullOrEmpty(country.certification))
+        {
+          return country.certification;
+        }
+      }
+    }
+    return string.Empty;
+  }
+
+  public struct TMDBMovie
+  {
+    public int ID;
+    public string Title;
+    public string OriginalTitle;
+    public string IMDBNumber;
+    public int Year;
+    public int RunTime;
+    public string ThumbURL;
+    public string Director;
+    public string WritingCredits;
+    public string Genre;
+    public string Studios;
+    public string Country;
+    public string Language;
+    public string MPARating;
+    public string TagLine;
+    public string Collection;
+    public string CollectionCover;
+    public string CollectionBackdrop;
+    public string UserGroups;
+    public string Plot;
+    public string PlotOutline;
+    public string FanartURL;
+    public float Rating;
+    public int Votes;
+    public TMDBPerson[] Cast;
+    public TMDBPerson[] Crew;
+
+  }
+
+  public struct TMDBPerson
+  {
+    public string Id;
+    public string Name;
+    public string As;
+  }
+
+  public class MovieDatails
+  {
+    public bool adult { get; set; }
+    public string backdrop_path { get; set; }
+    public Collection belongs_to_collection { get; set; }
+    public int budget { get; set; }
+    public List<Genre> genres { get; set; }
+    public string homepage { get; set; }
+    public int id { get; set; }
+    public string imdb_id { get; set; }
+    public string original_language { get; set; }
+    public string original_title { get; set; }
+    public string overview { get; set; }
+    public double popularity { get; set; }
+    public string poster_path { get; set; }
+    public List<ProductionCompany> production_companies { get; set; }
+    public List<ProductionCountry> production_countries { get; set; }
+    public string release_date { get; set; }
+    public int revenue { get; set; }
+    public int runtime { get; set; }
+    public List<SpokenLanguage> spoken_languages { get; set; }
+    public string status { get; set; }
+    public string tagline { get; set; }
+    public string title { get; set; }
+    public bool video { get; set; }
+    public double vote_average { get; set; }
+    public int vote_count { get; set; }
+  }
+
+  public class ActorDetails
+  {
+    public int id { get; set; }
+    public string name { get; set; }
+    public string birthday { get; set; }
+    public string place_of_birth { get; set; }
+    public string deathday { get; set; }
+    public int gender { get; set; }
+    public string biography { get; set; }
+    public string known_for_department { get; set; }
+    public double popularity { get; set; }
+    public string profile_path { get; set; }
+    public string imdb_id { get; set; }
+  }
+
+  public class PersonFind
+  {
+    public int gender { get; set; }
+    public string name { get; set; }
+    public int id { get; set; }
+    public string profile_path { get; set; }
+  }
+
+  public class FindObject
+  {
+    public List<PersonFind> person_results { get; set; }
+  }
+
+  public class Cast
+  {
+    public int cast_id { get; set; }
+    public string character { get; set; }
+    public string credit_id { get; set; }
+    public int gender { get; set; }
+    public int id { get; set; }
+    public string name { get; set; }
+    public int order { get; set; }
+    public string profile_path { get; set; }
+  }
+
+  public class Crew
+  {
+    public string credit_id { get; set; }
+    public string department { get; set; }
+    public int gender { get; set; }
+    public int id { get; set; }
+    public string job { get; set; }
+    public string name { get; set; }
+    public string profile_path { get; set; }
+  }
+
+  public class SearchCast
+  {
+    public int id { get; set; }
+    public List<Cast> cast { get; set; }
+    public List<Crew> crew { get; set; }
+  }
+
+  public class Collection
+  {
+    public int id { get; set; }
+    public string name { get; set; }
+    public string overview { get; set; }
+    public string poster_path { get; set; }
+    public string backdrop_path { get; set; }
+  }
+
+  public class Genre
+  {
+    public int id { get; set; }
+    public string name { get; set; }
+  }
+
+  public class ProductionCompany
+  {
+    public string name { get; set; }
+    public int id { get; set; }
+  }
+
+  public class ProductionCountry
+  {
+    public string iso_3166_1 { get; set; }
+    public string name { get; set; }
+  }
+
+  public class SpokenLanguage
+  {
+    public string iso_639_1 { get; set; }
+    public string name { get; set; }
+  }
+
+  public class SearchRelease
+  {
+    public int id { get; set; }
+    public List<Country> countries { get; set; }
+  }
+
+  public class Country
+  {
+    public string certification { get; set; }
+    public string iso_3166_1 { get; set; }
+    public bool primary { get; set; }
+    public string release_date { get; set; }
+  }
+
+  #endregion
+
+  private string GetZodiac(DateTime dt)
+  {
+    int month = dt.Month;
+    int day = dt.Day;
+    switch (month)
+    {
+      case 1:
+        if (day <= 19) return "Capricorn"; else return "Aquarius";
+      case 2:
+        if (day <= 18) return "Aquarius"; else return "Pisces";
+      case 3:
+        if (day <= 20) return "Pisces"; else return "Aries";
+      case 4:
+        if (day <= 19) return "Aries"; else return "Taurus";
+      case 5:
+        if (day <= 20) return "Taurus"; else return "Gemini";
+      case 6:
+        if (day <= 20) return "Gemini"; else return "Cancer";
+      case 7:
+        if (day <= 22) return "Cancer"; else return "Leo";
+      case 8:
+        if (day <= 22) return "Leo"; else return "Virgo";
+      case 9:
+        if (day <= 22) return "Virgo"; else return "Libra";
+      case 10:
+        if (day <= 22) return "Libra"; else return "Scorpio";
+      case 11:
+        if (day <= 21) return "Scorpio"; else return "Sagittarius";
+      case 12:
+        if (day <= 21) return "Sagittarius"; else return "Capricorn";
+    }
+    return string.Empty;
+  }
+
+  private ArrayList Parse(string input, string pattern) 
+  {
+    ArrayList keyedMatches  = new ArrayList();
+    try 
+    {
+      Regex regEx             = new Regex(pattern, RegexOptions.IgnoreCase | RegexOptions.Singleline);
+      MatchCollection matches = regEx.Matches(input);
+      
+      // write matches and groups to variables
+      foreach (Match currMatch in matches) 
+      {
+        // store the groups in the match
+        if (currMatch.Groups.Count > 1) 
+        {
+          Hashtable groupings = new Hashtable( );
+          for (int i = 1; i < currMatch.Groups.Count; i++)
+              groupings.Add(regEx.GroupNameFromNumber(i), currMatch.Groups[i].Value.Trim());
+          keyedMatches.Add(groupings);
+        }
+      }
+    }
+    catch (Exception e) 
+    {
+      Log.Error("Regex expression failed! Exception: {0}", e.Message);
+      Log.Error(e);
+    }
+    return keyedMatches;
   }
 
   private string GetPage(string strUrl, string strEncode, out string absoluteUri)
