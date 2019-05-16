@@ -2343,5 +2343,6 @@
 		<String id="300231">Wiederholfrequenz senken wenn MP keinen Fokus hat</String>
 		<String id="990000">Wöchentlich an Tag X auf diesem Sender</String>
 		<String id="990001">{0} immer auf {1}</String>
+        <String id="350041">Künstler-Infos und Foto laden</String>
 	</Section>
 </Language>

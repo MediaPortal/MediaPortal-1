@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2018 Team MediaPortal
+#region Copyright (C) 2005-2019 Team MediaPortal
 
-// Copyright (C) 2005-2018 Team MediaPortal
+// Copyright (C) 2005-2019 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -54,11 +54,18 @@ namespace MediaPortal.Video.Database
     private bool _addToDatabase = true;
     private bool _skipExisting;
     private bool _refreshdbOnly;
+    private bool _fetchActors;
     
     public IMDBFetcher(IMDB.IProgress progress)
     {
       _imdb = new IMDB(this);
       _progress = progress;
+
+      using (Settings xmlreader = new MPSettings())
+      {
+        // Fetch Actors info when Movie updated
+        _fetchActors = xmlreader.GetValueAsBool("moviedatabase", "fetchactors", false);
+      }
     }
 
     #region Movie Fetch
@@ -329,7 +336,7 @@ namespace MediaPortal.Video.Database
               {
                 _movieDetails.ThumbURL = tmdbSearch[0];
                 // **Progress bar message for TMDB end
-                OnProgress(line1, _url.Title, string.Empty, 40);
+                OnProgress(line1, _url.Title, string.Empty, 30);
               }
 
               if (tmdbSearch.Count == 0)
@@ -353,7 +360,7 @@ namespace MediaPortal.Video.Database
                   _movieDetails.ThumbURL = impSearch[0];
 
                   // **Progress bar message for IMPAw end
-                  OnProgress(line1, _url.Title, string.Empty, 40);
+                  OnProgress(line1, _url.Title, string.Empty, 30);
                 }
                 
                 // All fail, last try IMDB
@@ -370,7 +377,7 @@ namespace MediaPortal.Video.Database
                   {
                     _movieDetails.ThumbURL = imdbSearch[0];
                     // **Progress bar message for IMDB end
-                    OnProgress(line1, _url.Title, string.Empty, 40);
+                    OnProgress(line1, _url.Title, string.Empty, 30);
                   }
                 }
               }
@@ -436,6 +443,7 @@ namespace MediaPortal.Video.Database
               }
             }
             
+            OnProgress(line1, _url.Title, string.Empty, 50);
             if (_movieDetails.FanartURL == string.Empty || _movieDetails.FanartURL == Strings.Unknown)
             {
               fanartSearch.GetTmdbFanartByApi
@@ -553,7 +561,7 @@ namespace MediaPortal.Video.Database
       {
         OnDetailsEnd(this);
         _disableCancel = false;
-         _detailsThread = null;
+        _detailsThread = null;
       }
     }
 
@@ -633,6 +641,9 @@ namespace MediaPortal.Video.Database
       
       if (actors.Count > 0)
       {
+        double percent = 0.00;
+        double step = 100.00 / (actors.Count * 1.00);
+
         // Clean old actors for movie
         VideoDatabase.RemoveActorsForMovie(_movieDetails.ID);
 
@@ -647,7 +658,7 @@ namespace MediaPortal.Video.Database
           char[] splitter = { '|' };
           string[] temp = actor.Split(splitter);
           actorName = temp[0];
-          
+
           // Check if actor is movie director
           if (actorName.StartsWith("*d"))
           {
@@ -657,6 +668,10 @@ namespace MediaPortal.Video.Database
 
           actorImdbId = temp[1];
           role = temp[2];
+
+          percent += step;
+          OnProgress(actorName + (string.IsNullOrEmpty(role) ? "" : " as " + role), string.Empty, string.Empty, (int) percent);
+
           // Add actor and link actor to movie
           int actorId = VideoDatabase.AddActor(actorImdbId, actorName);
 
@@ -677,6 +692,17 @@ namespace MediaPortal.Video.Database
             {
               VideoDatabase.SetMovieInfoById(_movieDetails.ID, ref _movieDetails);
             }
+          }
+
+          // Fetch Actor Details
+          if (_fetchActors && !string.IsNullOrEmpty(actorImdbId))
+          {
+            _imdb = new IMDB();
+            _imdb.SetIMDBActor("http://www.imdb.com/name/" + actorImdbId, actorImdbId);
+            _actor = actorName + (string.IsNullOrEmpty(role) ? "" : " as " + role);
+            _actorId = actorId;
+            _actorIndex = 0;
+            FetchActorDetails();
           }
         }
       }
@@ -1053,6 +1079,11 @@ namespace MediaPortal.Video.Database
 
     public void OnProgress(string line1, string line2, string line3, int percent)
     {
+      if (percent > 100)
+      {
+        percent = 100;
+      }
+
       if (_progress != null)
       {
         _progress.OnProgress(line1, line2, line3, percent);
