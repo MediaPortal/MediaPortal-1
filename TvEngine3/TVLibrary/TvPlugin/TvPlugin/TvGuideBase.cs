@@ -865,32 +865,7 @@ namespace TvPlugin
                 for (int iDay = 0; iDay < MaxDaysInGuide; iDay++)
                 {
                   DateTime dtTemp = dtNow.AddDays(iDay);
-                  string day;
-                  switch (dtTemp.DayOfWeek)
-                  {
-                    case DayOfWeek.Monday:
-                      day = GUILocalizeStrings.Get(657);
-                      break;
-                    case DayOfWeek.Tuesday:
-                      day = GUILocalizeStrings.Get(658);
-                      break;
-                    case DayOfWeek.Wednesday:
-                      day = GUILocalizeStrings.Get(659);
-                      break;
-                    case DayOfWeek.Thursday:
-                      day = GUILocalizeStrings.Get(660);
-                      break;
-                    case DayOfWeek.Friday:
-                      day = GUILocalizeStrings.Get(661);
-                      break;
-                    case DayOfWeek.Saturday:
-                      day = GUILocalizeStrings.Get(662);
-                      break;
-                    default:
-                      day = GUILocalizeStrings.Get(663);
-                      break;
-                  }
-                  day = String.Format("{0} {1}-{2}", day, dtTemp.Day, dtTemp.Month);
+                  string day = Utils.GetShortDayString(dtTemp);
                   cntlDay.AddLabel(day, iDay);
                 }
               }
