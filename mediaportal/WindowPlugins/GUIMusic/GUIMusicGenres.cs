@@ -606,6 +606,16 @@ namespace MediaPortal.GUI.Music
             }
             break;
 
+          case "year":
+            strThumb = Util.Utils.GetCoverArt(Thumbs.MusicYear, item.Label);
+            if (Util.Utils.FileExistsInCache(strThumb))
+            {
+              item.IconImage = strThumb;
+              item.IconImageBig = strThumb;
+              item.ThumbnailImage = strThumb;
+            }
+            break;
+
           default:
             Log.Warn("GUIMusicGenres: OnRetrieveCoverArt - no filter definition matched for item {0}", item.Label);
             base.OnRetrieveCoverArt(item);
