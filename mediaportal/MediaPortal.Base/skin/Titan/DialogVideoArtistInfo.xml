@@ -213,7 +213,7 @@
   <control>
     <description>Movie Title Actor view</description>
     <type>fadelabel</type>
-		<label>#title</label>
+		<label>#title#(iif(eq(#Actor.Movies.Progress,''),'',string.format(' - {0}',#Actor.Movies.Progress)))</label>
   	<id>0</id>
 		<posX>96</posX>
     <posY>998</posY>
