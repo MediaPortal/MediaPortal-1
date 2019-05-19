@@ -24,6 +24,7 @@ using System.IO;
 using MediaInfo;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
+using MediaPortal.Services;
 
 namespace MediaPortal.TagReader
 {
@@ -310,9 +311,11 @@ namespace MediaPortal.TagReader
         {
           try
           {
-            var mi = new MediaInfoWrapper(fname);
+            var logger = GlobalServiceProvider.Get<MediaInfo.ILogger>();
+            var mi = new MediaInfoWrapper(fname, logger);
             if (!mi.MediaInfoNotloaded)
             {
+              mi.WriteInfo();
               musicTagCache.Duration = (int?) mi.BestAudioStream?.Duration.TotalSeconds ?? 0;
             }
           }

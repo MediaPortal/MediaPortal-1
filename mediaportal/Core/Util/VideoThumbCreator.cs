@@ -150,7 +150,9 @@ namespace MediaPortal.Util
       Log.Debug("VideoThumbCreator: random value: {0}", intRnd);
       bool Success = false;
 
-      MediaInfo = new MediaInfoWrapper(aVideoPath);
+      var logger = GlobalServiceProvider.Get<MediaInfo.ILogger>();
+      MediaInfo = new MediaInfoWrapper(aVideoPath, logger);
+      MediaInfo.WriteInfo();
 
       if (MediaInfo != null)
       {

@@ -24,6 +24,7 @@ using System.Linq;
 using System.Text;
 using MediaInfo;
 using MediaPortal.Player;
+using MediaPortal.Services;
 
 namespace MediaPortal.TagReader
 {
@@ -93,9 +94,11 @@ namespace MediaPortal.TagReader
     {
       try
       {
-        var mi = new MediaInfoWrapper(fname);
+        var logger = GlobalServiceProvider.Get<MediaInfo.ILogger>();
+        var mi = new MediaInfoWrapper(fname, logger);
         if (!mi.MediaInfoNotloaded)
-        { 
+        {
+          mi.WriteInfo();
           var audioStream = mi.BestAudioStream;
           if (audioStream != null)
           {
