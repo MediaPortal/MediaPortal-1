@@ -1552,25 +1552,35 @@ namespace MediaPortal.Player
       }
 
       //Detection of Interlaced Video, true for all type except .bdmv .mpls
-      if (g_Player.MediaInfo != null)
+      if (g_Player.MediaInfo != null && g_Player.MediaInfo.BestVideoStream != null)
       {
-        if (g_Player.MediaInfo.IsInterlaced && (string.Equals(g_Player.MediaInfo.VideoCodec, VC1Codec)))
+        var videoStream = g_Player.MediaInfo.BestVideoStream;
+        if (g_Player.MediaInfo.IsInterlaced && videoStream.Codec == MediaInfo.Model.VideoCodec.Vc1)
         {
           vc1ICodec = true;
           vc1Codec = false;
         }
-          //Detection of VC1 Video if Splitter detection Failed, true for all type except .bdmv .mpls
-        else if (string.Equals(g_Player.MediaInfo.VideoCodec, VC1Codec))
+
+        //Detection of VC1 Video if Splitter detection Failed, true for all type except .bdmv .mpls
+        else if (videoStream.Codec == MediaInfo.Model.VideoCodec.Vc1)
           vc1Codec = true;
+
         //Detection of AAC Audio //Disable the Detection to enable correct audio filter detection rules.
         //if (_mediaInfo.AudioCodec.Contains(AACCodec))
         //aacCodec = true;
-        if (g_Player.MediaInfo.VideoCodec.Contains("AVC"))
+        if (videoStream.Codec == MediaInfo.Model.VideoCodec.Mpeg4Is0Avc ||
+            videoStream.Codec == MediaInfo.Model.VideoCodec.Mpeg4IsoAvc)
           h264Codec = true;
-        if (g_Player.MediaInfo.VideoCodec.Contains("HEVC"))
+
+        if (videoStream.Codec == MediaInfo.Model.VideoCodec.MpeghIsoHevc)
           hevcCodec = true;
-        if (g_Player.MediaInfo.VideoCodec.Contains("XVID") || g_Player.MediaInfo.VideoCodec.Contains("DIVX") ||
-            g_Player.MediaInfo.VideoCodec.Contains("DX50"))
+
+        if (videoStream.Codec == MediaInfo.Model.VideoCodec.Xvid ||
+            videoStream.Codec == MediaInfo.Model.VideoCodec.Divx1 ||
+            videoStream.Codec == MediaInfo.Model.VideoCodec.Divx2 ||
+            videoStream.Codec == MediaInfo.Model.VideoCodec.Divx3 ||
+            videoStream.Codec == MediaInfo.Model.VideoCodec.Divx4 ||
+            videoStream.Codec == MediaInfo.Model.VideoCodec.Divx50)
           xvidCodec = true;
       }
 

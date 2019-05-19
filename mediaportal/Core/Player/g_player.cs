@@ -3885,12 +3885,12 @@ namespace MediaPortal.Player
 
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CODEC_MISSING, 0, 0, 0, 0, 0, null);
         msg.Label = string.Format("{0}: {1}", GUILocalizeStrings.Get(1451), Util.Utils.GetFilename(FileName));
-        msg.Label2 = _mediaInfo == null || string.IsNullOrEmpty(_mediaInfo.VideoCodec)
+        msg.Label2 = _mediaInfo == null || _mediaInfo.BestVideoStream == null
                        ? string.Empty
-                       : string.Format("Video codec: {0}", _mediaInfo.VideoCodec);
-        msg.Label3 = _mediaInfo == null || string.IsNullOrEmpty(_mediaInfo.AudioCodec)
+                       : $"Video codec: {_mediaInfo.BestVideoStream.Codec}";
+        msg.Label3 = _mediaInfo == null || _mediaInfo.BestAudioStream == null
                        ? string.Empty
-                       : string.Format("Audio codec: {0}", _mediaInfo.AudioCodec);
+                       : $"Audio codec: {_mediaInfo.BestAudioStream.Codec}";
         GUIGraphicsContext.SendMessage(msg);
         _mediaInfo = null;
         PlayListType currentList = PlayListPlayer.SingletonPlayer.CurrentPlaylistType;
