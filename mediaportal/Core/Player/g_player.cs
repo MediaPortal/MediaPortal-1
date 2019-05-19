@@ -40,6 +40,7 @@ using Un4seen.Bass;
 using Un4seen.Bass.AddOn.Cd;
 using Action = MediaPortal.GUI.Library.Action;
 using MediaInfo;
+using MediaPortal.Services;
 
 namespace MediaPortal.Player
 {
@@ -1542,7 +1543,9 @@ namespace MediaPortal.Player
         {
           if (currentMediaInfoFilePlaying != strFile)
           {
-            _mediaInfo = new MediaInfoWrapper(strFile);
+            var logger = GlobalServiceProvider.Get<MediaInfo.ILogger>();
+            _mediaInfo = new MediaInfoWrapper(strFile, logger);
+            _mediaInfo.WriteInfo();
             currentMediaInfoFilePlaying = strFile;
           }
         }
@@ -3875,7 +3878,9 @@ namespace MediaPortal.Player
         bool playingRemoteUrl = Util.Utils.IsRemoteUrl(FileName);
         if (_mediaInfo == null && !playingRemoteUrl)
         {
-          _mediaInfo = new MediaInfoWrapper(FileName);
+          var logger = GlobalServiceProvider.Get<MediaInfo.ILogger>();
+          _mediaInfo = new MediaInfoWrapper(FileName, logger);
+          _mediaInfo.WriteInfo();
         }
 
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CODEC_MISSING, 0, 0, 0, 0, 0, null);

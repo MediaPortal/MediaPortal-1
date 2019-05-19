@@ -16,8 +16,8 @@ REM Check for Microsoft Antispyware .BAT bug
 if exist .\kernel32.dll exit 1
 
 REM Hack to remove dll not needed in root 
-del *.dll
-del *.ax
+REM del *.dll
+REM del *.ax
 REM Support
 xcopy %1\MediaPortal.Support\bin\%2\MediaPortal.Support.* . /Y /D
 

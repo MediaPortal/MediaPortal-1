@@ -34,6 +34,7 @@ using MediaPortal.Util;
 using SQLite.NET;
 using MediaPortal.Profile;
 using MediaInfo;
+using MediaPortal.Services;
 
 namespace MediaPortal.Video.Database
 {
@@ -1112,8 +1113,11 @@ namespace MediaPortal.Video.Database
         else
         {
           g_Player.currentMediaInfoFilePlaying = strFilenameAndPath;
-          mInfo = g_Player._mediaInfo = new MediaInfoWrapper(strFilenameAndPath);
+          var logger = GlobalServiceProvider.Get<MediaInfo.ILogger>();
+          mInfo = g_Player._mediaInfo = new MediaInfoWrapper(strFilenameAndPath, logger);
         }
+
+        mInfo.WriteInfo();
 
         if (isImage && DaemonTools.IsMounted(strFilenameAndPath))
         {
