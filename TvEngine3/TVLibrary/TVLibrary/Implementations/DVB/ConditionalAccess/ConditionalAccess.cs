@@ -134,13 +134,12 @@ namespace TvLibrary.Implementations.DVB
         if (isDVBC || isDVBS || isDVBT)
         {
           Log.Log.WriteFile("Check for TBS");
-
           _turbosight = new Turbosight(tunerFilter, card.DevicePath);
           if (_turbosight.IsTurbosight)
           {
-              this._diSEqCMotor = new DiSEqCMotor(_turbosight);
-              _ciMenu = _turbosight;
-              return;
+            this._diSEqCMotor = new DiSEqCMotor(_turbosight);
+            _ciMenu = _turbosight;
+            return;
           }
           Release.DisposeToNull(ref _turbosight);
             
@@ -439,7 +438,7 @@ namespace TvLibrary.Implementations.DVB
 
         if (_turbosight != null)
         {
-            return _turbosight.IsCamReady();
+          return _turbosight.IsCamReady();
         }
         if (_knc != null)
         {
@@ -690,7 +689,7 @@ namespace TvLibrary.Implementations.DVB
 
         if (_turbosight != null)
         {
-            return _turbosight.SendPmt(ListManagementType.Only, CommandIdType.Descrambling, context.PMT, context.PMTLength);
+          return _turbosight.SendPmt(ListManagementType.Only, CommandIdType.Descrambling, context.PMT, context.PMTLength);
         }
 
         if (_winTvCiModule != null)
@@ -1164,6 +1163,7 @@ namespace TvLibrary.Implementations.DVB
       Release.Dispose(_twinhan);
       Release.Dispose(_profred);
       Release.Dispose(_TeVii);
+      Release.Dispose(_turbosight);
     }
 
     #endregion
