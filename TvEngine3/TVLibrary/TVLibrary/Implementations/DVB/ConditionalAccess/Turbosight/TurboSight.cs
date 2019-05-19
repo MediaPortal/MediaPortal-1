@@ -99,13 +99,13 @@ namespace TvLibrary.Implementations.DVB
       public TbsTone Tone;
       private uint Reserved1;
       public TbsLnbPower LnbPower;
-      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 0x80)]
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = MaxDiseqcMessageLength)]
       public byte[] DiseqcTransmitMessage;
       public uint DiseqcTransmitMessageLength;
-      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 0x80)]
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = MaxDiseqcMessageLength)]
       public byte[] DiseqcReceiveMessage;
       public uint DiseqcReceiveMessageLength;
-      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 0x100)]
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)]
       public byte[] Reserved2;
     }
 
@@ -194,6 +194,7 @@ namespace TvLibrary.Implementations.DVB
     // USB (QBOX) only.
     private enum UsbBdaExtensionProperty
     {
+      Ir = 1,                 // Property for retrieving IR codes from the IR receiver.
       CiAccess = 8,           // Property for interacting with the CI slot.
       TbsAccess = 18          // TBS property for enabling control of the common properties in the TbsAccessMode enum.
     }
@@ -528,60 +529,58 @@ namespace TvLibrary.Implementations.DVB
       if (tunerFilter == null)
       {
         Log.Log.Debug("Turbosight: tuner filter is null");
+        return;
       }
-      else
-      {
-        _tunerFilterName = FilterGraphTools.GetFilterName(tunerFilter);
 
-        if ((_tunerFilterName == null) || (!_tunerFilterName.StartsWith("TBS") && !_tunerFilterName.StartsWith("QBOX")))
+      _tunerFilterName = FilterGraphTools.GetFilterName(tunerFilter);
+
+      if ((_tunerFilterName == null) || (!_tunerFilterName.StartsWith("TBS") && !_tunerFilterName.StartsWith("QBOX")))
+      {
+        Log.Log.Debug("Turbosight: tuner filter name does not match");
+        return;
+      }
+
+      KSPropertySupport support;
+      _propertySet = tunerFilter as IKsPropertySet;
+      if ((_propertySet != null) && (_propertySet.QuerySupported(UsbBdaExtensionPropertySet, (int)UsbBdaExtensionProperty.Ir, out support) == 0))
+      {
+        Log.Log.Debug("Turbosight: supported tuner detected (USB interface)");
+        _isTurbosight = true;
+        _isUsb = true;
+        _propertySetGuid = UsbBdaExtensionPropertySet;
+        _tbsAccessProperty = (int)UsbBdaExtensionProperty.TbsAccess;
+      }
+      if (!_isTurbosight)
+      {
+        IPin o = DsFindPin.ByDirection(tunerFilter, PinDirection.Input, 0);
+        _propertySet = o as IKsPropertySet;
+        if ((_propertySet != null) && (_propertySet.QuerySupported(BdaExtensionPropertySet, (int)BdaExtensionProperty.TbsAccess, out support) == 0))
         {
-          Log.Log.Debug("Turbosight: tuner filter name does not match");
+          Log.Log.Debug("Turbosight: supported tuner detected (PCIe/PCI interface)");
+          _isTurbosight = true;
+          _isUsb = false;
+          _propertySetGuid = BdaExtensionPropertySet;
+          _tbsAccessProperty = (int)BdaExtensionProperty.TbsAccess;
         }
-        else
+        if ((o != null) && !_isTurbosight)
         {
-          KSPropertySupport support;
-          _propertySet = tunerFilter as IKsPropertySet;
-          if ((_propertySet != null) && (_propertySet.QuerySupported(UsbBdaExtensionPropertySet, 1, out support) == 0))
-          {
-            Log.Log.Debug("Turbosight: supported tuner detected (USB interface)");
-            _isTurbosight = true;
-            _isUsb = true;
-            _propertySetGuid = UsbBdaExtensionPropertySet;
-            _tbsAccessProperty = 0x12;
-          }
-          if (!_isTurbosight)
-          {
-            IPin o = DsFindPin.ByDirection(tunerFilter, PinDirection.Input, 0);
-            _propertySet = o as IKsPropertySet;
-            if ((_propertySet != null) && (_propertySet.QuerySupported(BdaExtensionPropertySet, 0x15, out support) == 0))
-            {
-              Log.Log.Debug("Turbosight: supported tuner detected (PCIe/PCI interface)");
-              _isTurbosight = true;
-              _isUsb = false;
-              _propertySetGuid = BdaExtensionPropertySet;
-              _tbsAccessProperty = 0x15;
-            }
-            if ((o != null) && !_isTurbosight)
-            {
-              Release.ComObject(o);
-            }
-          }
-          if (_isTurbosight)
-          {
-            _tunerFilter = tunerFilter;
-            _generalBuffer = Marshal.AllocCoTaskMem(0x218);
-            _deviceIndex = (uint)Server.ListAll()
-              .SelectMany(s => s.ReferringCard())
-              .ToList()
-              .Where(c => c.Name.StartsWith("TBS"))
-              .OrderBy(c => c.DevicePath)
-              .Select((card, index) => new { card = card, index = index })
-              .Where(x => x.card.DevicePath == devicePath)
-              .Select(x => x.index).FirstOrDefault();
-            OpenCi();
-            SetPowerState(true);
-          }
+          Release.ComObject(o);
         }
+      }
+      if (_isTurbosight)
+      {
+        _tunerFilter = tunerFilter;
+        _generalBuffer = Marshal.AllocCoTaskMem(TbsAccessParamsSize);
+        _deviceIndex = (uint)Server.ListAll()
+          .SelectMany(s => s.ReferringCard())
+          .ToList()
+          .Where(c => c.Name.StartsWith("TBS"))
+          .OrderBy(c => c.DevicePath)
+          .Select((card, index) => new { card = card, index = index })
+          .Where(x => x.card.DevicePath == devicePath)
+          .Select(x => x.index).FirstOrDefault();
+        OpenCi();
+        SetPowerState(true);
       }
     }
 
@@ -601,7 +600,7 @@ namespace TvLibrary.Implementations.DVB
         if (_mmiHandlerThread != null)
         {
           _stopMmiHandlerThread = true;
-          Thread.Sleep(0xbb8);
+          Thread.Sleep(MmiHandlerThreadSleepTime * 2);
         }
         CloseCi();
         Marshal.FreeCoTaskMem(_generalBuffer);
@@ -610,9 +609,9 @@ namespace TvLibrary.Implementations.DVB
           Release.ComObject(_propertySet);
         }
       }
-      // MBU
-      _tunerFilter = null;            // MBU
-      _isTurbosight = false;          // MBU
+
+      _tunerFilter = null;
+      _isTurbosight = false;
     }
 
     #region CI/CAM support
@@ -856,7 +855,7 @@ namespace TvLibrary.Implementations.DVB
         Log.Log.Debug("Turbosight: CAM not available");
         return true;
       }
-      if (length > 0x400)
+      if (length > MaxPmtLength)
       {
         Log.Log.Debug("Turbosight: buffer capacity too small, length = {0}", length);
         return false;
@@ -1368,17 +1367,16 @@ namespace TvLibrary.Implementations.DVB
       {
         Log.Log.Debug("Turbosight: error, response too short");
         DVB_MMI.DumpBinary(content, 0, length);
+        return;
       }
-      else
-      {
-        MmiApplicationType type = (MmiApplicationType)content[0];
-        //DVB_MMI.ApplicationType type = (DVB_MMI.ApplicationType)content[0];
-        String title = System.Text.Encoding.ASCII.GetString(content, 5, length - 5);
-        Log.Log.Debug("  type         = {0}", type);
-        Log.Log.Debug("  manufacturer = 0x{0:x}{1:x}", content[1], content[2]);
-        Log.Log.Debug("  code         = 0x{0:x}{1:x}", content[3], content[4]);
-        Log.Log.Debug("  menu title   = {0}", title);
-      }
+
+      MmiApplicationType type = (MmiApplicationType)content[0];
+      //DVB_MMI.ApplicationType type = (DVB_MMI.ApplicationType)content[0];
+      String title = System.Text.Encoding.ASCII.GetString(content, 5, length - 5);
+      Log.Log.Debug("  type         = {0}", type);
+      Log.Log.Debug("  manufacturer = 0x{0:x}{1:x}", content[1], content[2]);
+      Log.Log.Debug("  code         = 0x{0:x}{1:x}", content[3], content[4]);
+      Log.Log.Debug("  menu title   = {0}", title);
     }
 
     private void HandleCaInformation(byte[] content, int length)
@@ -1387,24 +1385,23 @@ namespace TvLibrary.Implementations.DVB
       if (length == 0)
       {
         Log.Log.Debug("Turbosight: error, response too short");
+        return;
       }
-      else
+
+      int numCasIds = content[0];
+      Log.Log.Debug("  # CAS IDs = {0}", numCasIds);
+      int i = 1;
+      int l = 1;
+      while ((l + 2) <= length)
       {
-        int numCasIds = content[0];
-        Log.Log.Debug("  # CAS IDs = {0}", numCasIds);
-        int i = 1;
-        int l = 1;
-        while ((l + 2) <= length)
-        {
-          Log.Log.Debug("  {0,-2}        = 0x{1:x2}{2:x2}", i, content[l + 1], content[l]);
-          l += 2;
-          i++;
-        }
-        if (length != ((numCasIds * 2) + 1))
-        {
-          Log.Log.Debug("Turbosight: error, unexpected numCasIds");
-          DVB_MMI.DumpBinary(_mmiResponseBuffer, 0, length);
-        }
+        Log.Log.Debug("  {0,-2}        = 0x{1:x2}{2:x2}", i, content[l + 1], content[l]);
+        l += 2;
+        i++;
+      }
+      if (length != ((numCasIds * 2) + 1))
+      {
+        Log.Log.Debug("Turbosight: error, unexpected numCasIds");
+        DVB_MMI.DumpBinary(_mmiResponseBuffer, 0, length);
       }
     }
 
@@ -1415,30 +1412,29 @@ namespace TvLibrary.Implementations.DVB
       {
         Log.Log.Debug("Turbosight: error, response too short");
         DVB_MMI.DumpBinary(content, 0, length);
+        return;
+      }
+
+      bool blind = (content[0] != 0);
+      uint answerLength = content[1];
+      String text = System.Text.Encoding.ASCII.GetString(content, 2, length - 2);
+      Log.Log.Debug("  text   = {0}", text);
+      Log.Log.Debug("  length = {0}", answerLength);
+      Log.Log.Debug("  blind  = {0}", blind);
+      if (_ciMenuCallbacks != null)
+      {
+        try
+        {
+          _ciMenuCallbacks.OnCiRequest(blind, answerLength, text);
+        }
+        catch (Exception exception)
+        {
+          Log.Log.Debug("Turbosight: CAM request callback exception\r\n{0}", exception.ToString());
+        }
       }
       else
       {
-        bool blind = (content[0] != 0);
-        uint answerLength = content[1];
-        String text = System.Text.Encoding.ASCII.GetString(content, 2, length - 2);
-        Log.Log.Debug("  text   = {0}", text);
-        Log.Log.Debug("  length = {0}", answerLength);
-        Log.Log.Debug("  blind  = {0}", blind);
-        if (_ciMenuCallbacks != null)
-        {
-          try
-          {
-            _ciMenuCallbacks.OnCiRequest(blind, answerLength, text);
-          }
-          catch (Exception exception)
-          {
-            Log.Log.Debug("Turbosight: CAM request callback exception\r\n{0}", exception.ToString());
-          }
-        }
-        else
-        {
-          Log.Log.Debug("Turbosight: menu callbacks are not set");
-        }
+        Log.Log.Debug("Turbosight: menu callbacks are not set");
       }
     }
 
@@ -1448,93 +1444,91 @@ namespace TvLibrary.Implementations.DVB
       if (length == 0)
       {
         Log.Log.Debug("Turbosight: error, response too short");
+        return;
       }
-      else
-      {
-        int numEntries = content[0];
 
-        // Read all the entries into a list. Entries are NULL terminated.
-        List<string> entries = new List<string>();
-        byte[] source = null;
-        int entryCount = 0;
-        for (int i = 1; i < length; i++)
+      int numEntries = content[0];
+
+      // Read all the entries into a list. Entries are NULL terminated.
+      List<string> entries = new List<string>();
+      byte[] source = null;
+      int entryCount = 0;
+      for (int i = 1; i < length; i++)
+      {
+        if (content[i] == 0)
         {
-          if (content[i] == 0)
-          {
-            IntPtr ptr = Marshal.AllocCoTaskMem(source.Length + 1);
-            Marshal.Copy(source, 0, ptr, source.Length);
-            Marshal.WriteByte(ptr, source.Length, 0);
-            //DVB_MMI.DumpBinary(ptr, 0, source.Length);
-            entries.Add(DvbTextConverter.Convert(ptr, null));
-            entryCount++;
-            source = new byte[] { };
-            Marshal.FreeCoTaskMem(ptr);
-          }
-          else
-          {
-            if (source != null)
-            {
-              byte[] array = new byte[source.Length + 1];
-              source.CopyTo(array, 0);
-              array[array.Length - 1] = content[i];
-              source = array;
-            }
-            else
-            {
-              source = new byte[] { content[i] };
-            }
-          }
-        }
-        IntPtr destination = Marshal.AllocCoTaskMem(source.Length + 1);
-        Marshal.Copy(source, 0, destination, source.Length);
-        Marshal.WriteByte(destination, source.Length, 0);
-        //DVB_MMI.DumpBinary(destination, 0, source.Length);
-        entries.Add(DvbTextConverter.Convert(destination, null));
-        source = null;
-        Marshal.FreeCoTaskMem(destination);
-        entryCount -= 2;
-        if (entryCount < 0)
-        {
-          Log.Log.Debug("Turbosight: error, not enough menu entries");
-          DVB_MMI.DumpBinary(content, 0, length);
+          IntPtr ptr = Marshal.AllocCoTaskMem(source.Length + 1);
+          Marshal.Copy(source, 0, ptr, source.Length);
+          Marshal.WriteByte(ptr, source.Length, 0);
+          //DVB_MMI.DumpBinary(ptr, 0, source.Length);
+          entries.Add(DvbTextConverter.Convert(ptr, null));
+          entryCount++;
+          source = new byte[] { };
+          Marshal.FreeCoTaskMem(ptr);
         }
         else
         {
-          Log.Log.Debug("  title     = {0}", entries[0]);
-          Log.Log.Debug("  sub-title = {0}", entries[1]);
-          Log.Log.Debug("  footer    = {0}", entries[2]);
-          Log.Log.Debug("  # entries = {0}", numEntries);
-          if (_ciMenuCallbacks != null)
+          if (source == null)
           {
-            try
-            {
-              _ciMenuCallbacks.OnCiMenu(entries[0], entries[1], entries[2], entryCount);
-            }
-            catch (Exception exception)
-            {
-              Log.Log.Debug("Turbosight: menu header callback exception\r\n{0}", exception.ToString());
-            }
+            source = new byte[] { content[i] };
           }
-          for (int j = 0; j < entryCount; j++)
+          else
           {
-            Log.Log.Debug("  entry {0,-2}  = {1}", j + 1, entries[j + 3]);
-            if (_ciMenuCallbacks != null)
-            {
-              try
-              {
-                _ciMenuCallbacks.OnCiMenuChoice(j, entries[j + 3]);
-              }
-              catch (Exception exception2)
-              {
-                Log.Log.Debug("Turbosight: menu entry callback exception\r\n{0}", exception2.ToString());
-              }
-            }
-          }
-          if (entryCount != numEntries)
-          {
-            Log.Log.Debug("Turbosight: error, numEntries != entryCount");
+            byte[] array = new byte[source.Length + 1];
+            source.CopyTo(array, 0);
+            array[array.Length - 1] = content[i];
+            source = array;
           }
         }
+      }
+      IntPtr destination = Marshal.AllocCoTaskMem(source.Length + 1);
+      Marshal.Copy(source, 0, destination, source.Length);
+      Marshal.WriteByte(destination, source.Length, 0);
+      //DVB_MMI.DumpBinary(destination, 0, source.Length);
+      entries.Add(DvbTextConverter.Convert(destination, null));
+      source = null;
+      Marshal.FreeCoTaskMem(destination);
+      entryCount -= 2;
+      if (entryCount < 0)
+      {
+        Log.Log.Debug("Turbosight: error, not enough menu entries");
+        DVB_MMI.DumpBinary(content, 0, length);
+        return;
+      }
+
+      Log.Log.Debug("  title     = {0}", entries[0]);
+      Log.Log.Debug("  sub-title = {0}", entries[1]);
+      Log.Log.Debug("  footer    = {0}", entries[2]);
+      Log.Log.Debug("  # entries = {0}", numEntries);
+      if (_ciMenuCallbacks != null)
+      {
+        try
+        {
+          _ciMenuCallbacks.OnCiMenu(entries[0], entries[1], entries[2], entryCount);
+        }
+        catch (Exception exception)
+        {
+          Log.Log.Debug("Turbosight: menu header callback exception\r\n{0}", exception.ToString());
+        }
+      }
+      for (int j = 0; j < entryCount; j++)
+      {
+        Log.Log.Debug("  entry {0,-2}  = {1}", j + 1, entries[j + 3]);
+        if (_ciMenuCallbacks != null)
+        {
+          try
+          {
+            _ciMenuCallbacks.OnCiMenuChoice(j, entries[j + 3]);
+          }
+          catch (Exception exception2)
+          {
+            Log.Log.Debug("Turbosight: menu entry callback exception\r\n{0}", exception2.ToString());
+          }
+        }
+      }
+      if (entryCount != numEntries)
+      {
+        Log.Log.Debug("Turbosight: error, numEntries != entryCount");
       }
     }
 
@@ -1904,7 +1898,7 @@ namespace TvLibrary.Implementations.DVB
         structure.RollOff = TbsRollOff.Undefined;
       }
       Log.Log.Debug("  roll-off       = {0}", structure.RollOff);
-      int hresult = _propertySet.QuerySupported(BdaExtensionPropertySet, 10, out support);
+      int hresult = _propertySet.QuerySupported(BdaExtensionPropertySet, (int)BdaExtensionProperty.NbcParams, out support);
       if (hresult != 0)
       {
         Log.Log.Debug("Turbosight: failed to query property support, hr = 0x{0:x} ({1})", hresult, HResult.GetDXErrorString(hresult));
@@ -1916,7 +1910,7 @@ namespace TvLibrary.Implementations.DVB
         return channel2;
       }
       Marshal.StructureToPtr(structure, _generalBuffer, true);
-      hresult = _propertySet.Set(BdaExtensionPropertySet, 10, _generalBuffer, 20, _generalBuffer, 20);
+      hresult = _propertySet.Set(BdaExtensionPropertySet, (int)BdaExtensionProperty.NbcParams, _generalBuffer, NbcTuningParamsSize, _generalBuffer, NbcTuningParamsSize);
       if (hresult == 0)
       {
         Log.Log.Debug("Turbosight: result = success");
