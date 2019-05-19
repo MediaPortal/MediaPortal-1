@@ -565,7 +565,7 @@ namespace TvLibrary.Implementations.DVB
         _deviceIndex = (uint)Server.ListAll()
           .SelectMany(s => s.ReferringCard())
           .ToList()
-          .Where(c => c.Name.StartsWith("TBS"))
+          .Where(c => c.Name.StartsWith("TBS") || c.Name.StartsWith("QBOX"))
           .OrderBy(c => c.DevicePath)
           .Select((card, index) => new { card = card, index = index })
           .Where(x => x.card.DevicePath == devicePath)
