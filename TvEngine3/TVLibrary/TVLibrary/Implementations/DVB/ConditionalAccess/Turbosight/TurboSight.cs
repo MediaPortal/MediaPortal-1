@@ -187,7 +187,8 @@ namespace TvLibrary.Implementations.DVB
     {
       Ir = 1,                 // Property for retrieving IR codes from the IR receiver.
       CiAccess = 8,           // Property for interacting with the CI slot.
-      TbsAccess = 18          // TBS property for enabling control of the common properties in the TbsAccessMode enum.
+      TbsAccess = 18,         // Property for enabling control of the common properties in the TbsAccessMode enum.
+      PlpInfo = 19            // Property for setting the DVB-*2 input stream or physical layer pipe identifier.
     }
 
     // PCIe/PCI only.
@@ -195,7 +196,8 @@ namespace TvLibrary.Implementations.DVB
     {
       NbcParams = 10,         // Property for setting DVB-S2 parameters that could not initially be set through BDA interfaces.
       CiAccess = 18,          // Property for interacting with the CI slot.
-      TbsAccess = 21          // TBS property for enabling control of the common properties in the BdaExtensionCommand enum.
+      TbsAccess = 21,         // Property for enabling control of the common properties in the TbsAccessMode enum.
+      PlpInfo = 22            // Property for setting the DVB-*2 input stream or physical layer pipe identifier.
     }
 
     private enum MmiApplicationType : byte
@@ -480,30 +482,30 @@ namespace TvLibrary.Implementations.DVB
 
     #region variables
 
-    private bool _isTurbosight;
-    private uint _deviceIndex;
-    private bool _isUsb;
+    private bool _isTurbosight = false;
+    private uint _deviceIndex = 0;
+    private bool _isUsb = false;
 
-    private IBaseFilter _tunerFilter;
-    private string _tunerFilterName;
+    private IBaseFilter _tunerFilter = null;
+    private string _tunerFilterName = string.Empty;
 
-    private IKsPropertySet _propertySet;
+    private IKsPropertySet _propertySet = null;
     private Guid _propertySetGuid = Guid.Empty;
-    private int _tbsAccessProperty;
+    private int _tbsAccessProperty = (int)BdaExtensionProperty.TbsAccess;
     private IntPtr _generalBuffer = IntPtr.Zero;
     private IntPtr _pmtBuffer = IntPtr.Zero;
 
-    private string _apiFileName;
-    private IntPtr _apiLibraryHandle;
+    private string _apiFileName = string.Empty;
+    private IntPtr _apiLibraryHandle = IntPtr.Zero;
     private IntPtr _ciHandle = IntPtr.Zero;
     private ICiMenuCallbacks _ciMenuCallbacks;
 
-    private bool _isCiSlotPresent;
-    private bool _isCamPresent;
-    private bool _isCamReady;
+    private bool _isCiSlotPresent = false;
+    private bool _isCamPresent = false;
+    private bool _isCamReady = false;
 
-    private Thread _mmiHandlerThread;
-    private bool _stopMmiHandlerThread;
+    private Thread _mmiHandlerThread = null;
+    private bool _stopMmiHandlerThread = false;
     private List<MmiMessage> _mmiMessageQueue;
     private IntPtr _mmiMessageBuffer = IntPtr.Zero;
     private IntPtr _mmiResponseBuffer = IntPtr.Zero;
@@ -523,41 +525,83 @@ namespace TvLibrary.Implementations.DVB
         return;
       }
 
+      // Check the tuner filter name first. Other manufacturers that do not support these interfaces
+      // use the same property set GUIDs which makes things a little tricky.
       _tunerFilterName = FilterGraphTools.GetFilterName(tunerFilter);
-
       if ((_tunerFilterName == null) || (!_tunerFilterName.StartsWith("TBS") && !_tunerFilterName.StartsWith("QBOX")))
       {
         Log.Log.Debug("Turbosight: tuner filter name does not match");
         return;
       }
 
+      // Now check for the USB interface first as per TBS SDK recommendations.
       KSPropertySupport support;
       _propertySet = tunerFilter as IKsPropertySet;
-      if ((_propertySet != null) && (_propertySet.QuerySupported(UsbBdaExtensionPropertySet, (int)UsbBdaExtensionProperty.Ir, out support) == 0))
+      if (_propertySet != null)
       {
-        Log.Log.Debug("Turbosight: supported tuner detected (USB interface)");
-        _isTurbosight = true;
-        _isUsb = true;
-        _propertySetGuid = UsbBdaExtensionPropertySet;
-        _tbsAccessProperty = (int)UsbBdaExtensionProperty.TbsAccess;
+        // For DVB-S/S2 tuners...
+        int hr = _propertySet.QuerySupported(UsbBdaExtensionPropertySet, (int)UsbBdaExtensionProperty.TbsAccess, out support);
+        if (hr != 0)
+        {
+          // For DVB-C/T/T2 tuners with CI slot...
+          hr = _propertySet.QuerySupported(UsbBdaExtensionPropertySet, (int)UsbBdaExtensionProperty.CiAccess, out support);
+          if (hr != 0)
+          {
+            // For DVB-T2 tuners without CI slot...
+            hr = _propertySet.QuerySupported(UsbBdaExtensionPropertySet, (int)UsbBdaExtensionProperty.PlpInfo, out support);
+          }
+        }
+
+        if (hr == 0)
+        {
+          Log.Log.Debug("Turbosight: supported tuner detected (USB interface)");
+          _isTurbosight = true;
+          _isUsb = true;
+          _propertySetGuid = UsbBdaExtensionPropertySet;
+          _tbsAccessProperty = (int)UsbBdaExtensionProperty.TbsAccess;
+        }
       }
+
+      // If the tuner doesn't support the USB interface then check for the PCIe/PCI interface.
       if (!_isTurbosight)
       {
         IPin o = DsFindPin.ByDirection(tunerFilter, PinDirection.Input, 0);
         _propertySet = o as IKsPropertySet;
-        if ((_propertySet != null) && (_propertySet.QuerySupported(BdaExtensionPropertySet, (int)BdaExtensionProperty.TbsAccess, out support) == 0))
+        if (_propertySet != null)
         {
-          Log.Log.Debug("Turbosight: supported tuner detected (PCIe/PCI interface)");
-          _isTurbosight = true;
-          _isUsb = false;
-          _propertySetGuid = BdaExtensionPropertySet;
-          _tbsAccessProperty = (int)BdaExtensionProperty.TbsAccess;
+          // For DVB-S/S2 tuners...
+          int hr = _propertySet.QuerySupported(BdaExtensionPropertySet, (int)BdaExtensionProperty.TbsAccess, out support);
+          if (hr != 0)
+          {
+            // For DVB-C/T/T2 tuners with CI slot...
+            hr = _propertySet.QuerySupported(BdaExtensionPropertySet, (int)BdaExtensionProperty.CiAccess, out support);
+            if (hr != 0)
+            {
+              // For DVB-T2 tuners without CI slot...
+              hr = _propertySet.QuerySupported(BdaExtensionPropertySet, (int)BdaExtensionProperty.PlpInfo, out support);
+              if (hr != 0)
+              {
+                // For older Conexant-based DVB-S/S2 tuners [without CI slot]...
+                hr = _propertySet.QuerySupported(BdaExtensionPropertySet, (int)BdaExtensionProperty.NbcParams, out support);
+              }
+            }
+          }
+
+          if (hr == 0)
+          {
+            Log.Log.Debug("Turbosight: supported tuner detected (PCIe/PCI interface)");
+            _isTurbosight = true;
+            _isUsb = false;
+            _propertySetGuid = BdaExtensionPropertySet;
+            _tbsAccessProperty = (int)BdaExtensionProperty.TbsAccess;
+          }
         }
         if ((o != null) && !_isTurbosight)
         {
           Release.ComObject(o);
         }
       }
+
       if (_isTurbosight)
       {
         _tunerFilter = tunerFilter;
