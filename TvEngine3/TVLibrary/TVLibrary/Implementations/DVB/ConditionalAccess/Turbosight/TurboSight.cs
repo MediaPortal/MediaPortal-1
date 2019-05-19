@@ -1191,38 +1191,9 @@ namespace TvLibrary.Implementations.DVB
         Marshal.FreeCoTaskMem(_pmtBuffer);
         _pmtBuffer = IntPtr.Zero;
       }
-      //if (_libHandle != IntPtr.Zero)
-      //{
-      //    NativeMethods.FreeLibrary(_libHandle);
-      //    _libHandle = IntPtr.Zero;
-      //}
-      //_dllLoaded = false;
 
       Log.Log.Debug("Turbosight: result = true");
       return true;
-
-
-
-
-
-
-
-      //if (this._ciHandle != IntPtr.Zero)
-      //{
-      //    Log.Log.Debug("Turbosight: close conditional access interface");
-      //    try
-      //    {
-      //        On_Exit_CI(this._ciHandle);
-      //    }
-      //    catch (Exception)
-      //    {
-      //    }
-      //    this._ciHandle = IntPtr.Zero;
-      //    Marshal.FreeCoTaskMem(this._mmiMessageBuffer);
-      //    Marshal.FreeCoTaskMem(this._mmiResponseBuffer);
-      //    Marshal.FreeCoTaskMem(this._pmtBuffer);
-      //}
-      //return true;
     }
 
     /// <summary>
