@@ -130,7 +130,7 @@ namespace TvLibrary.Implementations.DVB
     #region Enums
 
     [System.Flags]
-    enum LoadLibraryFlags : uint
+    private enum LoadLibraryFlags : uint
     {
       DONT_RESOLVE_DLL_REFERENCES = 0x00000001,
       LOAD_IGNORE_CODE_AUTHZ_LEVEL = 0x00000010,
@@ -222,7 +222,7 @@ namespace TvLibrary.Implementations.DVB
       TbsAccess = 21          // TBS property for enabling control of the common properties in the BdaExtensionCommand enum.
     }
 
-    public enum MmiApplicationType : byte
+    private enum MmiApplicationType : byte
     {
       /// <summary>
       /// Conditional access application.
@@ -237,7 +237,7 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// DVB MMI enquiry answer response types.
     /// </summary>
-    public enum MmiResponseType : byte
+    private enum MmiResponseType : byte
     {
       /// <summary>
       /// The response is a cancel request.
@@ -252,7 +252,7 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// DVB MMI close MMI command types.
     /// </summary>
-    public enum MmiCloseType : byte
+    private enum MmiCloseType : byte
     {
       /// <summary>
       /// The MMI dialog should be closed immediately.
@@ -267,7 +267,7 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// DVB MMI message tags.
     /// </summary>
-    public enum MmiTag
+    private enum MmiTag
     {
       /// <summary>
       /// Unknown tag.
@@ -470,14 +470,14 @@ namespace TvLibrary.Implementations.DVB
       CommsReceiveMore
     }
 
-    public enum ToneBurst
+    private enum ToneBurst
     {
       None,
       ToneBurst,
       DataBurst
     }
 
-    public enum Tone22k
+    private enum Tone22k
     {
       Off,
       On,
@@ -615,8 +615,8 @@ namespace TvLibrary.Implementations.DVB
     /// Turbosight constructor
     /// </summary>
     /// <param name="tunerFilter"></param>
-    /// <param name="deviceIndex"></param>
-    public Turbosight(IBaseFilter tunerFilter, uint deviceIndex)
+    /// <param name="devicePath"></param>
+    public Turbosight(IBaseFilter tunerFilter, string devicePath)
     {
       if (tunerFilter == null)
       {
@@ -625,7 +625,6 @@ namespace TvLibrary.Implementations.DVB
       else
       {
         _tunerFilterName = FilterGraphTools.GetFilterName(tunerFilter);
-        _deviceIndex = deviceIndex;
 
         if ((_tunerFilterName == null) || (!_tunerFilterName.StartsWith("TBS") && !_tunerFilterName.StartsWith("QBOX")))
         {
@@ -664,34 +663,19 @@ namespace TvLibrary.Implementations.DVB
           {
             _tunerFilter = tunerFilter;
             _generalBuffer = Marshal.AllocCoTaskMem(0x218);
-            _deviceIndex = deviceIndex;
+            _deviceIndex = (uint)Server.ListAll()
+              .SelectMany(s => s.ReferringCard())
+              .ToList()
+              .Where(c => c.Name.StartsWith("TBS"))
+              .OrderBy(c => c.DevicePath)
+              .Select((card, index) => new { card = card, index = index })
+              .Where(x => x.card.DevicePath == devicePath)
+              .Select(x => x.index).FirstOrDefault();
             OpenCi();
             SetPowerState(true);
           }
         }
       }
-    }
-
-    #endregion
-
-    #region Static methods
-
-    /// <summary>
-    /// Returns deviceindex for card.
-    /// Just by sorting cards by devicepath
-    /// </summary>
-    /// <param name="TvCard"></param>
-    /// <returns></returns>
-    public static int GetDeviceIndex(TvCardBase TvCard)
-    {
-      return Server.ListAll()
-        .SelectMany(x => x.ReferringCard())
-        .ToList()
-        .Where(x => x.Name.StartsWith("TBS"))
-        .OrderBy(x => x.DevicePath)
-        .Select((card, index) => new { card = card, index = index })
-        .Where(x => x.card.DevicePath == TvCard.DevicePath)
-        .Select(x => x.index).FirstOrDefault();
     }
 
     #endregion
@@ -1324,7 +1308,7 @@ namespace TvLibrary.Implementations.DVB
     /// IsCamPresent
     /// </summary>
     /// <returns></returns>
-    public bool IsCamPresent()
+    private bool IsCamPresent()
     {
       Log.Log.Debug("Turbosight: is CAM present");
       if (!_isCiSlotPresent)
@@ -1364,7 +1348,7 @@ namespace TvLibrary.Implementations.DVB
       return camPresent;
     }
 
-    public bool IsCiSlotPresent()
+    private bool IsCiSlotPresent()
     {
       // Check whether a CI slot is present.
       Log.Log.Debug("Turbosight: is CI slot present");
@@ -1389,7 +1373,7 @@ namespace TvLibrary.Implementations.DVB
     /// that any necessary hardware (such as a CI slot) is connected.
     /// </summary>
     /// <returns><c>true</c> if the interface is successfully opened, otherwise <c>false</c></returns>
-    public bool OpenCi()
+    private bool OpenCi()
     {
       Log.Log.Debug("Turbosight: open conditional access interface");
 
@@ -1491,14 +1475,11 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// Reset the conditional access interface.
     /// </summary>
-    /// <param name="rebuildGraph">This parameter will be set to <c>true</c> if the BDA graph must be rebuilt
-    ///   for the interface to be completely and successfully reset.</param>
     /// <returns><c>true</c> if the interface is successfully reopened, otherwise <c>false</c></returns>
-    public bool ResetCi(out bool rebuildGraph)
+    public bool ResetCi()
     {
       // TBS have confirmed that it is not currently possible to call On_Start_CI() multiple times on a
       // filter instance ***even if On_Exit_CI() is called***. The graph must be rebuilt to reset the CI.
-      rebuildGraph = true;
       return true;
     }
 
@@ -1725,7 +1706,7 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     /// <param name="powerOn"><c>True</c> to turn the power supply on; <c>false</c> to turn the power supply off.</param>
     /// <returns><c>true</c> if the power state is set successfully, otherwise <c>false</c></returns>
-    public bool SetPowerState(bool powerOn)
+    private bool SetPowerState(bool powerOn)
     {
       Log.Log.Debug("Turbosight: set power state, on = {0}", powerOn);
       if (!_isTurbosight)
@@ -1762,7 +1743,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="toneBurstState">The tone/data burst command to send, if any.</param>
     /// <param name="tone22kState">The 22 kHz continuous tone state to set.</param>
     /// <returns><c>true</c> if the tone state is set successfully, otherwise <c>false</c></returns>
-    public bool SetToneState(ToneBurst toneBurstState, Tone22k tone22kState)
+    private bool SetToneState(ToneBurst toneBurstState, Tone22k tone22kState)
     {
       Log.Log.Debug("Turbosight: set tone state, burst = {0}, 22 kHz = {1}", toneBurstState, tone22kState);
 
