@@ -51,15 +51,6 @@ namespace TvLibrary.Implementations.DVB
 
     #region structures
 
-    private struct BDA_NBC_PARAMS
-    {
-      public int rolloff;
-      public int pilot;
-      public int dvbtype;         // 1 for dvbs 2 for dvbs2 0 for auto
-      public int fecrate;
-      public int modtype;
-    }
-
     // MP internal message holder - purely for convenience.
     private struct MmiMessage
     {
@@ -113,7 +104,7 @@ namespace TvLibrary.Implementations.DVB
 
     #region enums
 
-    [System.Flags]
+    [Flags]
     private enum LoadLibraryFlags : uint
     {
       DONT_RESOLVE_DLL_REFERENCES = 0x00000001,
@@ -1647,7 +1638,7 @@ namespace TvLibrary.Implementations.DVB
       }
       bool successTone = SetToneState(off, on);
 
-      SetDVBS2(channel);  // Don't need to know the result of this
+      SetTuningParameters(channel);
 
       return (successDiseqc && successTone);
     }
@@ -1796,83 +1787,40 @@ namespace TvLibrary.Implementations.DVB
       return false;
     }
 
-    /// <summary>
-    /// Sets the DVB-Type for TBS PCIe Card.
-    /// </summary>
-    /// <param name="reply">The reply message.</param>
-    /// <returns><c>true</c> if a reply is successfully received, otherwise <c>false</c></returns>
-    public void SetDVBS2(DVBSChannel channel)
+    private void SetTuningParameters(DVBSChannel channel)
     {
-      //Set the Pilot
-      Log.Log.Info("Turbosight: Set DVB-S2");
-      if (channel.ModulationType != ModulationType.ModNbc8Psk && channel.ModulationType != ModulationType.ModNbcQpsk)
-        return;
-      int hr;
-      KSPropertySupport supported;
-      _propertySet.QuerySupported(BdaExtensionPropertySet, (int)BdaExtensionProperty.NbcParams,
-                                  out supported);
-      if ((supported & KSPropertySupport.Set) == KSPropertySupport.Set)
-      {
-        BDA_NBC_PARAMS DVBNBCParams = new BDA_NBC_PARAMS();
-        DVBNBCParams.fecrate = (int)channel.InnerFecRate;
-        DVBNBCParams.modtype = (int)channel.ModulationType;
-        DVBNBCParams.pilot = (int)channel.Pilot;
-        DVBNBCParams.rolloff = (int)channel.Rolloff;
-        DVBNBCParams.dvbtype = 2; //DVB-S2
-        Log.Log.Info("Turbosight: Set DVB-S2: {0}", DVBNBCParams.dvbtype);
-        Marshal.StructureToPtr(DVBNBCParams, _generalBuffer, true);
-        DVB_MMI.DumpBinary(_generalBuffer, 0, NbcTuningParamsSize);
-
-        hr = _propertySet.Set(_propertySetGuid, (int)BdaExtensionProperty.NbcParams,
-          _generalBuffer, NbcTuningParamsSize,
-          _generalBuffer, NbcTuningParamsSize
-        );
-
-        if (hr != 0)
-        {
-          Log.Log.Info("Turbosight: Set DVB-S2 returned {0}", hr, DsError.GetErrorText(hr));
-        }
-      }
-      else
-      {
-        Log.Log.Info("Turbosight: Set DVB-S2 not supported");
-      }
-    }
-
-    public DVBBaseChannel SetTuningParameters(DVBBaseChannel channel)
-    {
-      KSPropertySupport support;
       Log.Log.Debug("Turbosight: set tuning parameters");
-      DVBSChannel channel2 = channel as DVBSChannel;
-      if (channel2 == null)
+      if (channel == null)
       {
-        return channel;
+        return;
       }
+
       NbcTuningParams structure = new NbcTuningParams
       {
         DvbsStandard = TbsDvbsStandard.Auto,
-        InnerFecRate = channel2.InnerFecRate
+        InnerFecRate = channel.InnerFecRate
       };
       Log.Log.Debug("  inner FEC rate = {0}", structure.InnerFecRate);
 
-      if (channel2.ModulationType == ModulationType.ModNotSet)
+      if (channel.ModulationType == ModulationType.ModNotSet)
       {
-        channel2.ModulationType = ModulationType.ModQpsk;
+        channel.ModulationType = ModulationType.ModQpsk;
         structure.DvbsStandard = TbsDvbsStandard.Dvbs;
       }
-      else if (channel2.ModulationType == ModulationType.ModQpsk)
+      else if (channel.ModulationType == ModulationType.ModQpsk)
       {
-        channel2.ModulationType = ModulationType.ModNbcQpsk;
+        channel.ModulationType = ModulationType.ModNbcQpsk;
         structure.DvbsStandard = TbsDvbsStandard.Dvbs2;
       }
-      else if (channel2.ModulationType == ModulationType.Mod8Psk)
+      else if (channel.ModulationType == ModulationType.Mod8Psk)
       {
-        channel2.ModulationType = ModulationType.ModNbc8Psk;
+        channel.ModulationType = ModulationType.ModNbc8Psk;
         structure.DvbsStandard = TbsDvbsStandard.Dvbs2;
       }
-      structure.ModulationType = channel2.ModulationType;
-      Log.Log.Debug("  modulation     = {0}", channel2.ModulationType);
-      if (channel2.Pilot == Pilot.On)
+      structure.ModulationType = channel.ModulationType;
+      Log.Log.Debug("  modulation     = {0}", channel.ModulationType);
+
+      if (channel.Pilot == Pilot.On)
       {
         structure.Pilot = TbsPilot.On;
       }
@@ -1881,15 +1829,16 @@ namespace TvLibrary.Implementations.DVB
         structure.Pilot = TbsPilot.Off;
       }
       Log.Log.Debug("  pilot          = {0}", structure.Pilot);
-      if (channel2.Rolloff == RollOff.Twenty)
+
+      if (channel.Rolloff == RollOff.Twenty)
       {
         structure.RollOff = TbsRollOff.Twenty;
       }
-      else if (channel2.Rolloff == RollOff.TwentyFive)
+      else if (channel.Rolloff == RollOff.TwentyFive)
       {
         structure.RollOff = TbsRollOff.TwentyFive;
       }
-      else if (channel2.Rolloff == RollOff.ThirtyFive)
+      else if (channel.Rolloff == RollOff.ThirtyFive)
       {
         structure.RollOff = TbsRollOff.ThirtyFive;
       }
@@ -1898,26 +1847,27 @@ namespace TvLibrary.Implementations.DVB
         structure.RollOff = TbsRollOff.Undefined;
       }
       Log.Log.Debug("  roll-off       = {0}", structure.RollOff);
-      int hresult = _propertySet.QuerySupported(BdaExtensionPropertySet, (int)BdaExtensionProperty.NbcParams, out support);
-      if (hresult != 0)
+
+      KSPropertySupport support;
+      int hr = _propertySet.QuerySupported(BdaExtensionPropertySet, (int)BdaExtensionProperty.NbcParams, out support);
+      if (hr != 0)
       {
-        Log.Log.Debug("Turbosight: failed to query property support, hr = 0x{0:x} ({1})", hresult, HResult.GetDXErrorString(hresult));
-        return channel2;
+        Log.Log.Debug("Turbosight: failed to query property support, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        return;
       }
-      if ((support & KSPropertySupport.Set) == ((KSPropertySupport)0))
+      if ((support & KSPropertySupport.Set) == 0)
       {
         Log.Log.Debug("Turbosight: NBC tuning parameter property not supported");
-        return channel2;
+        return;
       }
       Marshal.StructureToPtr(structure, _generalBuffer, true);
-      hresult = _propertySet.Set(BdaExtensionPropertySet, (int)BdaExtensionProperty.NbcParams, _generalBuffer, NbcTuningParamsSize, _generalBuffer, NbcTuningParamsSize);
-      if (hresult == 0)
+      hr = _propertySet.Set(BdaExtensionPropertySet, (int)BdaExtensionProperty.NbcParams, _generalBuffer, NbcTuningParamsSize, _generalBuffer, NbcTuningParamsSize);
+      if (hr == 0)
       {
         Log.Log.Debug("Turbosight: result = success");
-        return channel2;
+        return;
       }
-      Log.Log.Debug("Turbosight: result = failure, hr = 0x{0:x} ({1})", hresult, HResult.GetDXErrorString(hresult));
-      return channel2;
+      Log.Log.Debug("Turbosight: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
     }
 
     #endregion
