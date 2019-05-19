@@ -34,18 +34,8 @@
 
 
 <controls>	
-    <control>
-      <description>DEFAULT BACKGROUND</description>
-      <type>image</type>
-      <id>0</id>
-      <posX>0</posX>
-      <posY>0</posY>
-      <width>1920</width>
-      <height>1080</height>
-      <texture>background.png</texture>
-      <shouldCache>true</shouldCache>
-    </control>
 
+    <include>common.default.background.xml</include> 
     
     <include condition="#(eq(#skin.basichome.background,'default'))">BasicHome.BackgroundSelected.xml</include>	
     <include condition="#(eq(#skin.basichome.background,'FanartHandler'))">BasicHome.Fanart.Selected.xml</include>	
@@ -480,6 +470,20 @@
       <width>62</width>
       <height>55</height>
       <texture>icon_home.png</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <visible>!control.hasthumb(9870789)</visible>
+    </control>
+
+    <control>
+      <description>Home Holiday ICON</description>
+      <type>image</type>
+      <id>9870789</id>
+      <posX>66</posX>
+      <posY>38</posY>
+      <width>60</width>
+      <height>60</height>
+      <texture>#fanarthandler.holiday.icon</texture>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
     </control>
