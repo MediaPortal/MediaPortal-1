@@ -557,7 +557,7 @@ ${MementoSection} "MediaPortal TV Server" SecServer
 
   ; thumbnail software
   File "${git_ROOT}\Packages\ffmpeg.2.7.1\ffmpeg.exe"
-  File "${git_TVServer}\TvThumbnails\x86\bin\${BUILD_TYPE}\TvThumbnails.dll"
+  File "${git_TVServer}\TvThumbnails\bin\x86\${BUILD_TYPE}\TvThumbnails.dll"
   
 
   ; protocol implementations for MPIPTVSource.ax
