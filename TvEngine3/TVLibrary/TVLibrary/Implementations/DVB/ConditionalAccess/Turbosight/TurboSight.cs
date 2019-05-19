@@ -46,26 +46,10 @@ namespace TvLibrary.Implementations.DVB
     public extern static bool FreeLibrary(IntPtr dllPointer);
     [DllImport("kernel32.dll", CharSet = CharSet.Ansi)]
     public extern static IntPtr GetProcAddress(IntPtr dllPointer, string functionName);
-    //We need to define api.dll for every tuner.
 
     #endregion
 
-    #region Invoke delegates
-
-    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    private delegate bool DelCamavailable(IntPtr handle);
-    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    private delegate void DelOn_Exit_CI(IntPtr handle);
-    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    private delegate IntPtr DelOn_Start_CI(IBaseFilter Filter, [MarshalAs(UnmanagedType.LPWStr)] string tuner_name, uint iDeviceIndex);
-    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    private delegate void DelTBS_ci_MMI_Process(IntPtr handle, IntPtr command, IntPtr response);
-    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    private delegate void DelTBS_ci_SendPmt(IntPtr handle, IntPtr pmt, ushort pmtLength);
-
-    #endregion
-
-    #region Structures
+    #region structures
 
     private struct BDA_NBC_PARAMS
     {
@@ -127,7 +111,7 @@ namespace TvLibrary.Implementations.DVB
 
     #endregion
 
-    #region Enums
+    #region enums
 
     [System.Flags]
     private enum LoadLibraryFlags : uint
@@ -486,130 +470,53 @@ namespace TvLibrary.Implementations.DVB
 
     #endregion
 
-    #region Fields
+    #region constants
 
-    private IntPtr _ciHandle = IntPtr.Zero;
-    private ICiMenuCallbacks _ciMenuCallbacks;
-    private IntPtr _generalBuffer = IntPtr.Zero;
-    private bool _isCamPresent;
-    private bool _isCamReady;
-    private bool _isCiSlotPresent;
-    private bool _isTurbosight;
-    private bool _isUsb;
-    private Thread _mmiHandlerThread;
-    private IntPtr _mmiMessageBuffer = IntPtr.Zero;
-    private List<MmiMessage> _mmiMessageQueue;
-    private IntPtr _mmiResponseBuffer = IntPtr.Zero;
-    private IntPtr _pmtBuffer = IntPtr.Zero;
-    private IKsPropertySet _propertySet;
-    private Guid _propertySetGuid = Guid.Empty;
-    private bool _stopMmiHandlerThread;
-    private int _tbsAccessProperty;
-    private IBaseFilter _tunerFilter;
-    private string _tunerFilterName;
     private static readonly Guid BdaExtensionPropertySet = new Guid(0xfaa8f3e5, 0x31d4, 0x4e41, 0x88, 0xef, 0xd9, 0xeb, 0x71, 0x6f, 110, 0xc9);
-    private const int MaxDiseqcMessageLength = 0x80;
-    private const int MaxPmtLength = 0x400;
-    private const int MmiMessageBufferSize = 0x200;
-    private const int MmiResponseBufferSize = 0x800;
-    private const int NbcTuningParamsSize = 20;
-    private const int TbsAccessParamsSize = 0x218;
-
     private static readonly Guid UsbBdaExtensionPropertySet = new Guid(0xc6efe5eb, 0x855a, 0x4f1b, 0xb7, 170, 0x87, 0xb5, 0xe1, 220, 0x41, 0x13);
 
+    private const int MmiMessageBufferSize = 512;
+    private const int MmiResponseBufferSize = 2048;
     private const int MmiHandlerThreadSleepTime = 2000;   // unit = ms
-    private const int TbsNBCParamsSize = 20;
+
+    private const int MaxDiseqcMessageLength = 128;
+    private const int MaxPmtLength = 1024;
+    private const int NbcTuningParamsSize = 20;
+    private const int TbsAccessParamsSize = 536;
+
+    #endregion
+
+    #region variables
+
+    private bool _isTurbosight;
     private uint _deviceIndex;
-    private IntPtr _apiLibraryHandle;
+    private bool _isUsb;
+
+    private IBaseFilter _tunerFilter;
+    private string _tunerFilterName;
+
+    private IKsPropertySet _propertySet;
+    private Guid _propertySetGuid = Guid.Empty;
+    private int _tbsAccessProperty;
+    private IntPtr _generalBuffer = IntPtr.Zero;
+    private IntPtr _pmtBuffer = IntPtr.Zero;
+
     private string _apiFileName;
+    private IntPtr _apiLibraryHandle;
+    private IntPtr _ciHandle = IntPtr.Zero;
+    private ICiMenuCallbacks _ciMenuCallbacks;
+
+    private bool _isCiSlotPresent;
+    private bool _isCamPresent;
+    private bool _isCamReady;
+
+    private Thread _mmiHandlerThread;
+    private bool _stopMmiHandlerThread;
+    private List<MmiMessage> _mmiMessageQueue;
+    private IntPtr _mmiMessageBuffer = IntPtr.Zero;
+    private IntPtr _mmiResponseBuffer = IntPtr.Zero;
 
     #endregion
-
-    #region Delegates implementation
-
-    private bool Camavailable(IntPtr handle)
-    {
-      if (_apiLibraryHandle == IntPtr.Zero)
-      {
-        LoadCIApi();
-      }
-      IntPtr pApi = GetProcAddress(_apiLibraryHandle, "Camavailable");
-      if (pApi == IntPtr.Zero)
-      {
-        Log.Log.Debug("Turbosight: unable to invoke Camavailable");
-        return false;
-      }
-      DelCamavailable fdel = (DelCamavailable)Marshal.GetDelegateForFunctionPointer(pApi, typeof(DelCamavailable));
-      return fdel(handle);
-    }
-
-    private void On_Exit_CI(IntPtr handle)
-    {
-      if (_apiLibraryHandle == IntPtr.Zero)
-      {
-        LoadCIApi();
-      }
-      IntPtr pApi = GetProcAddress(_apiLibraryHandle, "On_Exit_CI");
-      if (pApi == IntPtr.Zero)
-      {
-        Log.Log.Debug("Turbosight: unable to invoke On_Exit_CI");
-        return;
-      }
-      DelOn_Exit_CI fdel = (DelOn_Exit_CI)Marshal.GetDelegateForFunctionPointer(pApi, typeof(DelOn_Exit_CI));
-      fdel(handle);
-    }
-
-    private IntPtr On_Start_CI(IBaseFilter Filter, [MarshalAs(UnmanagedType.LPWStr)] string tuner_name, uint iDeviceIndex)
-    {
-      if (_apiLibraryHandle == IntPtr.Zero)
-      {
-        LoadCIApi();
-      }
-      IntPtr pApi = GetProcAddress(_apiLibraryHandle, "On_Start_CI");
-      if (pApi == IntPtr.Zero)
-      {
-        Log.Log.Debug("Turbosight: unable to invoke On_Start_CI");
-        return IntPtr.Zero;
-      }
-      DelOn_Start_CI fdel = (DelOn_Start_CI)Marshal.GetDelegateForFunctionPointer(pApi, typeof(DelOn_Start_CI));
-      return fdel(Filter, tuner_name, iDeviceIndex);
-    }
-
-    private void TBS_ci_MMI_Process(IntPtr handle, IntPtr command, IntPtr response)
-    {
-      if (_apiLibraryHandle == IntPtr.Zero)
-      {
-        LoadCIApi();
-      }
-      IntPtr pApi = GetProcAddress(_apiLibraryHandle, "TBS_ci_MMI_Process");
-      if (pApi == IntPtr.Zero)
-      {
-        Log.Log.Debug("Turbosight: unable to invoke TBS_ci_MMI_Process");
-        return;
-      }
-      DelTBS_ci_MMI_Process fdel = (DelTBS_ci_MMI_Process)Marshal.GetDelegateForFunctionPointer(pApi, typeof(DelTBS_ci_MMI_Process));
-      fdel(handle, command, response);
-    }
-
-    private void TBS_ci_SendPmt(IntPtr handle, IntPtr pmt, ushort pmtLength)
-    {
-      if (_apiLibraryHandle == IntPtr.Zero)
-      {
-        LoadCIApi();
-      }
-      IntPtr pApi = GetProcAddress(_apiLibraryHandle, "TBS_ci_SendPmt");
-      if (pApi == IntPtr.Zero)
-      {
-        Log.Log.Debug("Turbosight: unable to invoke TBS_ci_SendPmt");
-        return;
-      }
-      DelTBS_ci_SendPmt fdel = (DelTBS_ci_SendPmt)Marshal.GetDelegateForFunctionPointer(pApi, typeof(DelTBS_ci_SendPmt));
-      fdel(handle, pmt, pmtLength);
-    }
-
-    #endregion
-
-    #region Constructors
 
     /// <summary>
     /// Turbosight constructor
@@ -678,11 +585,39 @@ namespace TvLibrary.Implementations.DVB
       }
     }
 
-    #endregion
+    public bool IsTurbosight
+    {
+      get
+      {
+        return _isTurbosight;
+      }
+    }
 
-    #region Private methods
+    public void Dispose()
+    {
+      if (_isTurbosight)
+      {
+        SetPowerState(false);
+        if (_mmiHandlerThread != null)
+        {
+          _stopMmiHandlerThread = true;
+          Thread.Sleep(0xbb8);
+        }
+        CloseCi();
+        Marshal.FreeCoTaskMem(_generalBuffer);
+        if (_isUsb)
+        {
+          Release.ComObject(_propertySet);
+        }
+      }
+      // MBU
+      _tunerFilter = null;            // MBU
+      _isTurbosight = false;          // MBU
+    }
 
-    #region Dynamic DLL handling
+    #region CI/CAM support
+
+    #region TBS interface
 
     private void LoadCIApi()
     {
@@ -698,182 +633,521 @@ namespace TvLibrary.Implementations.DVB
       }
     }
 
+    #region delegate definitions
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    private delegate IntPtr DelOn_Start_CI(IBaseFilter Filter, [MarshalAs(UnmanagedType.LPWStr)] string tuner_name, uint iDeviceIndex);
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    private delegate bool DelCamavailable(IntPtr handle);
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    private delegate void DelTBS_ci_MMI_Process(IntPtr handle, IntPtr command, IntPtr response);
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    private delegate void DelTBS_ci_SendPmt(IntPtr handle, IntPtr pmt, ushort pmtLength);
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    private delegate void DelOn_Exit_CI(IntPtr handle);
+
     #endregion
 
-    private void HandleApplicationInformation(byte[] content, int length)
+    #region delegate implementation
+
+    private IntPtr On_Start_CI(IBaseFilter Filter, [MarshalAs(UnmanagedType.LPWStr)] string tuner_name, uint iDeviceIndex)
     {
-      Log.Log.Debug("Turbosight: application information");
-      if (length < 5)
+      if (_apiLibraryHandle == IntPtr.Zero)
       {
-        Log.Log.Debug("Turbosight: error, response too short");
-        DVB_MMI.DumpBinary(content, 0, length);
+        LoadCIApi();
       }
-      else
+      IntPtr pApi = GetProcAddress(_apiLibraryHandle, "On_Start_CI");
+      if (pApi == IntPtr.Zero)
       {
-        MmiApplicationType type = (MmiApplicationType)content[0];
-        //DVB_MMI.ApplicationType type = (DVB_MMI.ApplicationType)content[0];
-        String title = System.Text.Encoding.ASCII.GetString(content, 5, length - 5);
-        Log.Log.Debug("  type         = {0}", type);
-        Log.Log.Debug("  manufacturer = 0x{0:x}{1:x}", content[1], content[2]);
-        Log.Log.Debug("  code         = 0x{0:x}{1:x}", content[3], content[4]);
-        Log.Log.Debug("  menu title   = {0}", title);
+        Log.Log.Debug("Turbosight: unable to invoke On_Start_CI");
+        return IntPtr.Zero;
       }
+      DelOn_Start_CI fdel = (DelOn_Start_CI)Marshal.GetDelegateForFunctionPointer(pApi, typeof(DelOn_Start_CI));
+      return fdel(Filter, tuner_name, iDeviceIndex);
     }
 
-    private void HandleCaInformation(byte[] content, int length)
+    private bool Camavailable(IntPtr handle)
     {
-      Log.Log.Debug("Turbosight: conditional access information");
-      if (length == 0)
+      if (_apiLibraryHandle == IntPtr.Zero)
       {
-        Log.Log.Debug("Turbosight: error, response too short");
+        LoadCIApi();
       }
-      else
+      IntPtr pApi = GetProcAddress(_apiLibraryHandle, "Camavailable");
+      if (pApi == IntPtr.Zero)
       {
-        int numCasIds = content[0];
-        Log.Log.Debug("  # CAS IDs = {0}", numCasIds);
-        int i = 1;
-        int l = 1;
-        while ((l + 2) <= length)
-        {
-          Log.Log.Debug("  {0,-2}        = 0x{1:x2}{2:x2}", i, content[l + 1], content[l]);
-          l += 2;
-          i++;
-        }
-        if (length != ((numCasIds * 2) + 1))
-        {
-          Log.Log.Debug("Turbosight: error, unexpected numCasIds");
-          DVB_MMI.DumpBinary(_mmiResponseBuffer, 0, length);
-        }
+        Log.Log.Debug("Turbosight: unable to invoke Camavailable");
+        return false;
       }
+      DelCamavailable fdel = (DelCamavailable)Marshal.GetDelegateForFunctionPointer(pApi, typeof(DelCamavailable));
+      return fdel(handle);
     }
 
-    private void HandleEnquiry(byte[] content, int length)
+    private void TBS_ci_MMI_Process(IntPtr handle, IntPtr command, IntPtr response)
     {
-      Log.Log.Debug("Turbosight: enquiry");
-      if (length < 3)
+      if (_apiLibraryHandle == IntPtr.Zero)
       {
-        Log.Log.Debug("Turbosight: error, response too short");
-        DVB_MMI.DumpBinary(content, 0, length);
+        LoadCIApi();
       }
-      else
+      IntPtr pApi = GetProcAddress(_apiLibraryHandle, "TBS_ci_MMI_Process");
+      if (pApi == IntPtr.Zero)
       {
-        bool blind = (content[0] != 0);
-        uint answerLength = content[1];
-        String text = System.Text.Encoding.ASCII.GetString(content, 2, length - 2);
-        Log.Log.Debug("  text   = {0}", text);
-        Log.Log.Debug("  length = {0}", answerLength);
-        Log.Log.Debug("  blind  = {0}", blind);
-        if (_ciMenuCallbacks != null)
-        {
-          try
-          {
-            _ciMenuCallbacks.OnCiRequest(blind, answerLength, text);
-          }
-          catch (Exception exception)
-          {
-            Log.Log.Debug("Turbosight: CAM request callback exception\r\n{0}", exception.ToString());
-          }
-        }
-        else
-        {
-          Log.Log.Debug("Turbosight: menu callbacks are not set");
-        }
+        Log.Log.Debug("Turbosight: unable to invoke TBS_ci_MMI_Process");
+        return;
       }
+      DelTBS_ci_MMI_Process fdel = (DelTBS_ci_MMI_Process)Marshal.GetDelegateForFunctionPointer(pApi, typeof(DelTBS_ci_MMI_Process));
+      fdel(handle, command, response);
     }
 
-    private void HandleMenu(byte[] content, int length)
+    private void TBS_ci_SendPmt(IntPtr handle, IntPtr pmt, ushort pmtLength)
     {
-      Log.Log.Debug("Turbosight: menu");
-      if (length == 0)
+      if (_apiLibraryHandle == IntPtr.Zero)
       {
-        Log.Log.Debug("Turbosight: error, response too short");
+        LoadCIApi();
+      }
+      IntPtr pApi = GetProcAddress(_apiLibraryHandle, "TBS_ci_SendPmt");
+      if (pApi == IntPtr.Zero)
+      {
+        Log.Log.Debug("Turbosight: unable to invoke TBS_ci_SendPmt");
+        return;
+      }
+      DelTBS_ci_SendPmt fdel = (DelTBS_ci_SendPmt)Marshal.GetDelegateForFunctionPointer(pApi, typeof(DelTBS_ci_SendPmt));
+      fdel(handle, pmt, pmtLength);
+    }
+
+    private void On_Exit_CI(IntPtr handle)
+    {
+      if (_apiLibraryHandle == IntPtr.Zero)
+      {
+        LoadCIApi();
+      }
+      IntPtr pApi = GetProcAddress(_apiLibraryHandle, "On_Exit_CI");
+      if (pApi == IntPtr.Zero)
+      {
+        Log.Log.Debug("Turbosight: unable to invoke On_Exit_CI");
+        return;
+      }
+      DelOn_Exit_CI fdel = (DelOn_Exit_CI)Marshal.GetDelegateForFunctionPointer(pApi, typeof(DelOn_Exit_CI));
+      fdel(handle);
+    }
+
+    #endregion
+
+    #endregion
+
+    #region CI/CAM handling
+
+    /// <summary>
+    /// Open the conditional access interface. For the interface to be opened successfully it is expected
+    /// that any necessary hardware (such as a CI slot) is connected.
+    /// </summary>
+    /// <returns><c>true</c> if the interface is successfully opened, otherwise <c>false</c></returns>
+    private bool OpenCi()
+    {
+      Log.Log.Debug("Turbosight: open conditional access interface");
+
+      if (!_isTurbosight)
+      {
+        Log.Log.Debug("Turbosight: device not initialised or interface not supported");
+        return false;
+      }
+      if (_ciHandle != IntPtr.Zero)
+      {
+        return false;
+      }
+
+      // Check whether a CI slot is present.
+      _isCiSlotPresent = IsCiSlotPresent();
+      if (!_isCiSlotPresent)
+      {
+        return false;
+      }
+      Log.Log.Debug("Turbosight: open conditional access interface");
+
+      _ciHandle = On_Start_CI(_tunerFilter, FilterGraphTools.GetFilterName(_tunerFilter), _deviceIndex);
+      if (_ciHandle == IntPtr.Zero || _ciHandle.ToInt64() == -1)
+      {
+        Log.Log.Debug("Turbosight: interface handle is null");
+        _isCiSlotPresent = false;
+        return false;
       }
       else
       {
-        int numEntries = content[0];
+        Log.Log.Debug("Turbosight: interface handle {0}", _ciHandle);
+      }
 
-        // Read all the entries into a list. Entries are NULL terminated.
-        List<string> entries = new List<string>();
-        byte[] source = null;
-        int entryCount = 0;
-        for (int i = 1; i < length; i++)
+      Log.Log.Debug("Turbosight: interface opened successfully");
+      _mmiMessageBuffer = Marshal.AllocCoTaskMem(MmiMessageBufferSize);
+      _mmiResponseBuffer = Marshal.AllocCoTaskMem(MmiResponseBufferSize);
+      _pmtBuffer = Marshal.AllocCoTaskMem(MaxPmtLength + 2);  // + 2 for TBS PMT header
+      _isCamPresent = IsCamPresent();
+      _isCamReady = IsCamReady();
+      return true;
+    }
+
+    private bool IsCiSlotPresent()
+    {
+      // Check whether a CI slot is present.
+      Log.Log.Debug("Turbosight: is CI slot present");
+      int ciAccessProperty = (int)BdaExtensionProperty.CiAccess;
+      if (_isUsb)
+      {
+        ciAccessProperty = (int)UsbBdaExtensionProperty.CiAccess;
+      }
+      KSPropertySupport support;
+      int hr = _propertySet.QuerySupported(_propertySetGuid, ciAccessProperty, out support);
+      if (hr != (int)HResult.Serverity.Success || support == 0)
+      {
+        Log.Log.Debug("Turbosight: device doesn't have a CI slot");
+        return false;
+      }
+      Log.Log.Debug("Turbosight: device does have a CI slot");
+      return true;
+    }
+
+    private bool IsCamPresent()
+    {
+      Log.Log.Debug("Turbosight: is CAM present");
+      if (!_isCiSlotPresent)
+      {
+        Log.Log.Debug("Turbosight: CI slot not present");
+        return false;
+      }
+      if (_ciHandle == IntPtr.Zero)
+      {
+        Log.Log.Debug("Turbosight: interface not opened");
+        return false;
+      }
+      bool flag = false;
+      lock (this)
+      {
+        flag = Camavailable(_ciHandle);
+      }
+      Log.Log.Debug("Turbosight: result = {0}", flag);
+      return flag;
+    }
+
+    public bool IsCamReady()
+    {
+      Log.Log.Debug("Turbosight: is CAM ready");
+      if (_ciHandle == IntPtr.Zero)
+      {
+        Log.Log.Debug("Turbosight: interface not opened");
+        return false;
+      }
+      // We can only tell whether a CAM is present, not whether it is ready.
+      bool camPresent = false;
+      lock (this)
+      {
+        camPresent = Camavailable(_ciHandle);
+      }
+      Log.Log.Debug("Turbosight: result = {0}", camPresent);
+      return camPresent;
+    }
+
+    public bool SendPmt(ListManagementType listAction, CommandIdType command, byte[] pmt, int length)
+    {
+      Log.Log.Debug("Turbosight: send PMT to CAM, list action = {0}, command = {1}", listAction, command);
+      if (!_isCamPresent)
+      {
+        Log.Log.Debug("Turbosight: CAM not available");
+        return true;
+      }
+      if (length > 0x400)
+      {
+        Log.Log.Debug("Turbosight: buffer capacity too small, length = {0}", length);
+        return false;
+      }
+      Marshal.WriteByte(_pmtBuffer, 0, (byte)listAction);
+      Marshal.WriteByte(_pmtBuffer, 1, (byte)command);
+      int ofs = 2;
+      for (int i = 0; i < length; i++)
+      {
+        Marshal.WriteByte(_pmtBuffer, ofs, pmt[i]);
+        ofs++;
+      }
+      TBS_ci_SendPmt(_ciHandle, _pmtBuffer, (ushort)(length + 2));
+      return true;
+    }
+
+    /// <summary>
+    /// Reset the conditional access interface.
+    /// </summary>
+    /// <returns><c>true</c> if the interface is successfully reopened, otherwise <c>false</c></returns>
+    public bool ResetCi()
+    {
+      // TBS have confirmed that it is not currently possible to call On_Start_CI() multiple times on a
+      // filter instance ***even if On_Exit_CI() is called***. The graph must be rebuilt to reset the CI.
+      return true;
+    }
+
+    /// <summary>
+    /// Close the conditional access interface.
+    /// </summary>
+    /// <returns><c>true</c> if the interface is successfully closed, otherwise <c>false</c></returns>
+    public bool CloseCi()
+    {
+      Log.Log.Debug("Turbosight: close conditional access interface");
+
+      if (_mmiHandlerThread != null && _mmiHandlerThread.IsAlive)
+      {
+        _stopMmiHandlerThread = true;
+        // In the worst case scenario it should take approximately
+        // twice the thread sleep time to cleanly stop the thread.
+        _mmiHandlerThread.Join(MmiHandlerThreadSleepTime * 2);
+        if (_mmiHandlerThread.IsAlive)
         {
-          if (content[i] == 0)
-          {
-            IntPtr ptr = Marshal.AllocCoTaskMem(source.Length + 1);
-            Marshal.Copy(source, 0, ptr, source.Length);
-            Marshal.WriteByte(ptr, source.Length, 0);
-            //DVB_MMI.DumpBinary(ptr, 0, source.Length);
-            entries.Add(DvbTextConverter.Convert(ptr, null));
-            entryCount++;
-            source = new byte[] { };
-            Marshal.FreeCoTaskMem(ptr);
-          }
-          else
-          {
-            if (source != null)
-            {
-              byte[] array = new byte[source.Length + 1];
-              source.CopyTo(array, 0);
-              array[array.Length - 1] = content[i];
-              source = array;
-            }
-            else
-            {
-              source = new byte[] { content[i] };
-            }
-          }
+          Log.Log.Debug("Turbosight: warning, failed to join MMI handler thread => aborting thread");
+          _mmiHandlerThread.Abort();
         }
-        IntPtr destination = Marshal.AllocCoTaskMem(source.Length + 1);
-        Marshal.Copy(source, 0, destination, source.Length);
-        Marshal.WriteByte(destination, source.Length, 0);
-        //DVB_MMI.DumpBinary(destination, 0, source.Length);
-        entries.Add(DvbTextConverter.Convert(destination, null));
-        source = null;
-        Marshal.FreeCoTaskMem(destination);
-        entryCount -= 2;
-        if (entryCount < 0)
+        _mmiHandlerThread = null;
+      }
+
+      if (_ciHandle != IntPtr.Zero)
+      {
+        On_Exit_CI(_ciHandle);
+        _ciHandle = IntPtr.Zero;
+      }
+
+      _isCiSlotPresent = false;
+      _isCamPresent = false;
+      _mmiMessageQueue = null;
+      if (_mmiMessageBuffer != IntPtr.Zero)
+      {
+        Marshal.FreeCoTaskMem(_mmiMessageBuffer);
+        _mmiMessageBuffer = IntPtr.Zero;
+      }
+      if (_mmiResponseBuffer != IntPtr.Zero)
+      {
+        Marshal.FreeCoTaskMem(_mmiResponseBuffer);
+        _mmiResponseBuffer = IntPtr.Zero;
+      }
+      if (_pmtBuffer != IntPtr.Zero)
+      {
+        Marshal.FreeCoTaskMem(_pmtBuffer);
+        _pmtBuffer = IntPtr.Zero;
+      }
+
+      Log.Log.Debug("Turbosight: result = true");
+      return true;
+    }
+
+    #endregion
+
+    #region CAM menu access
+
+    #region ICiMenuActions implementation
+
+    /// <summary>
+    /// Set the CAM callback handler functions.
+    /// </summary>
+    /// <param name="ciMenuHandler">A set of callback handler functions.</param>
+    /// <returns><c>true</c> if the handlers are set, otherwise <c>false</c></returns>
+    public bool SetCiMenuHandler(ICiMenuCallbacks ciMenuHandler)
+    {
+      if (ciMenuHandler != null)
+      {
+        _ciMenuCallbacks = ciMenuHandler;
+        StartMmiHandlerThread();
+        return true;
+      }
+      return false;
+    }
+
+    /// <summary>
+    /// Send a request from the user to the CAM to open the menu.
+    /// </summary>
+    /// <returns><c>true</c> if the request is successfully passed to and processed by the CAM, otherwise <c>false</c></returns>
+    public bool EnterCIMenu()
+    {
+      Log.Log.Debug("Turbosight: enter menu");
+      if (!_isTurbosight || _ciHandle == IntPtr.Zero)
+      {
+        Log.Log.Debug("Turbosight: device not initialised or interface not supported");
+        return false;
+      }
+      if (!_isCamPresent)
+      {
+        Log.Log.Debug("Turbosight: the CAM is not present");
+        return false;
+      }
+      lock (this)
+      {
+        // Close any existing sessions otherwise the CAM gets confused.
+        _mmiMessageQueue.Add(new MmiMessage(TbsMmiMessageType.CloseMmi));
+        // We send an "application info" message because attempting to enter the menu will fail
+        // if you don't get the application information first.
+        _mmiMessageQueue.Add(new MmiMessage(TbsMmiMessageType.ApplicationInfo));
+        // The CA information is just for information purposes.
+        _mmiMessageQueue.Add(new MmiMessage(TbsMmiMessageType.CaInfo));
+        // The main message.
+        _mmiMessageQueue.Add(new MmiMessage(TbsMmiMessageType.EnterMenu));
+        // We have to request a response.
+        _mmiMessageQueue.Add(new MmiMessage(TbsMmiMessageType.GetMmi));
+      }
+      return true;
+    }
+
+    /// <summary>
+    /// Send a menu entry selection from the user to the CAM.
+    /// </summary>
+    /// <param name="choice">The index of the selection as an unsigned byte value.</param>
+    /// <returns><c>true</c> if the selection is successfully passed to and processed by the CAM, otherwise <c>false</c></returns>
+    public bool SelectMenu(byte choice)
+    {
+      Log.Log.Debug("Turbosight: select menu entry, choice = {0}", choice);
+
+      if (!_isTurbosight || _ciHandle == IntPtr.Zero)
+      {
+        Log.Log.Debug("Turbosight: device not initialised or interface not supported");
+        return false;
+      }
+      if (!_isCamPresent)
+      {
+        Log.Log.Debug("Turbosight: the CAM is not present");
+        return false;
+      }
+
+      lock (this)
+      {
+        MmiMessage selectMessage = new MmiMessage(TbsMmiMessageType.MenuAnswer, 3);
+        selectMessage.Message[0] = 0;
+        selectMessage.Message[1] = 0;
+        selectMessage.Message[2] = choice;
+        _mmiMessageQueue.Add(selectMessage);
+        // Don't explicitly request a response for a "back" request as that
+        // could choke the message queue with a message that the CAM
+        // never answers.
+        if (choice != 0)
         {
-          Log.Log.Debug("Turbosight: error, not enough menu entries");
-          DVB_MMI.DumpBinary(content, 0, length);
+          _mmiMessageQueue.Add(new MmiMessage(TbsMmiMessageType.GetMmi));
         }
-        else
+      }
+      return true;
+    }
+
+    /// <summary>
+    /// Send a response from the user to the CAM.
+    /// </summary>
+    /// <param name="cancel"><c>True</c> to cancel the request.</param>
+    /// <param name="answer">The user's response.</param>
+    /// <returns><c>true</c> if the response is successfully passed to and processed by the CAM, otherwise <c>false</c></returns>
+    public bool SendMenuAnswer(bool cancel, string answer)
+    {
+      if (answer == null)
+      {
+        answer = String.Empty;
+      }
+      Log.Log.Debug("Turbosight: send menu answer, answer = {0}, cancel = {1}", answer, cancel);
+
+      if (!_isTurbosight || _ciHandle == IntPtr.Zero)
+      {
+        Log.Log.Debug("Turbosight: device not initialised or interface not supported");
+        return false;
+      }
+      if (!_isCamPresent)
+      {
+        Log.Log.Debug("Turbosight: the CAM is not present");
+        return false;
+      }
+
+      if (answer.Length > 254)
+      {
+        Log.Log.Debug("Turbosight: answer too long, length = {0}", answer.Length);
+        return false;
+      }
+
+      byte responseType = (byte)MmiResponseType.Answer;
+      if (cancel)
+      {
+        responseType = (byte)MmiResponseType.Cancel;
+      }
+      lock (this)
+      {
+        MmiMessage answerMessage = new MmiMessage(TbsMmiMessageType.Answer, answer.Length + 3);
+        answerMessage.Message[0] = (byte)(answer.Length + 1);
+        answerMessage.Message[1] = 0;
+        answerMessage.Message[2] = responseType;
+        int offset = 3;
+        for (int i = 0; i < answer.Length; i++)
         {
-          Log.Log.Debug("  title     = {0}", entries[0]);
-          Log.Log.Debug("  sub-title = {0}", entries[1]);
-          Log.Log.Debug("  footer    = {0}", entries[2]);
-          Log.Log.Debug("  # entries = {0}", numEntries);
-          if (_ciMenuCallbacks != null)
-          {
-            try
-            {
-              _ciMenuCallbacks.OnCiMenu(entries[0], entries[1], entries[2], entryCount);
-            }
-            catch (Exception exception)
-            {
-              Log.Log.Debug("Turbosight: menu header callback exception\r\n{0}", exception.ToString());
-            }
-          }
-          for (int j = 0; j < entryCount; j++)
-          {
-            Log.Log.Debug("  entry {0,-2}  = {1}", j + 1, entries[j + 3]);
-            if (_ciMenuCallbacks != null)
-            {
-              try
-              {
-                _ciMenuCallbacks.OnCiMenuChoice(j, entries[j + 3]);
-              }
-              catch (Exception exception2)
-              {
-                Log.Log.Debug("Turbosight: menu entry callback exception\r\n{0}", exception2.ToString());
-              }
-            }
-          }
-          if (entryCount != numEntries)
-          {
-            Log.Log.Debug("Turbosight: error, numEntries != entryCount");
-          }
+          answerMessage.Message[offset++] = (byte)answer[i];
         }
+        _mmiMessageQueue.Add(answerMessage);
+        // We have to request a response.
+        _mmiMessageQueue.Add(new MmiMessage(TbsMmiMessageType.GetMmi));
+      }
+      return true;
+    }
+
+    /// <summary>
+    /// Send a request from the user to the CAM to close the menu.
+    /// </summary>
+    /// <returns><c>true</c> if the request is successfully passed to and processed by the CAM, otherwise <c>false</c></returns>
+    public bool CloseCIMenu()
+    {
+      Log.Log.Debug("Turbosight: close menu");
+
+      if (!_isTurbosight || _ciHandle == IntPtr.Zero)
+      {
+        Log.Log.Debug("Turbosight: device not initialised or interface not supported");
+        return false;
+      }
+      if (!_isCamPresent)
+      {
+        Log.Log.Debug("Turbosight: the CAM is not present");
+        return false;
+      }
+      lock (this)
+      {
+        _mmiMessageQueue.Add(new MmiMessage(TbsMmiMessageType.CloseMmi));
+      }
+      return true;
+    }
+
+    #endregion
+
+    #region MMI handler thread
+
+    /// <summary>
+    /// Start a thread that will handle interaction with the CAM.
+    /// </summary>
+    private void StartMmiHandlerThread()
+    {
+      // Don't start a thread if there is no purpose for it.
+      if (!_isTurbosight || !_isCiSlotPresent || _ciHandle == IntPtr.Zero)
+      {
+        return;
+      }
+
+      // Check if an existing thread is still alive. It will be terminated in case of errors, i.e. when CI callback failed.
+      if ((_mmiHandlerThread != null) && !_mmiHandlerThread.IsAlive)
+      {
+        Log.Log.Debug("Turbosight: aborting old MMI handler thread");
+        _mmiHandlerThread.Abort();
+        _mmiHandlerThread = null;
+      }
+      if (_mmiHandlerThread == null)
+      {
+        Log.Log.Debug("Turbosight: starting new MMI handler thread");
+        _mmiMessageQueue = new List<MmiMessage>();
+        for (int i = 0; i < MmiMessageBufferSize; i++)
+        {
+          Marshal.WriteByte(_mmiMessageBuffer, i, 0);
+        }
+        for (int j = 0; j < MmiResponseBufferSize; j++)
+        {
+          Marshal.WriteByte(_mmiResponseBuffer, j, 0);
+        }
+        _stopMmiHandlerThread = false;
+        _mmiHandlerThread = new Thread(new ThreadStart(MmiHandler));
+        _mmiHandlerThread.Name = "Turbosight MMI handler";
+        _mmiHandlerThread.IsBackground = true;
+        _mmiHandlerThread.Priority = ThreadPriority.Lowest;
+        _mmiHandlerThread.Start();
       }
     }
 
@@ -1087,655 +1361,190 @@ namespace TvLibrary.Implementations.DVB
       }
     }
 
-    /// <summary>
-    /// Start a thread that will handle interaction with the CAM.
-    /// </summary>
-    private void StartMmiHandlerThread()
+    private void HandleApplicationInformation(byte[] content, int length)
     {
-      // Don't start a thread if there is no purpose for it.
-      if (!_isTurbosight || !_isCiSlotPresent || _ciHandle == IntPtr.Zero)
+      Log.Log.Debug("Turbosight: application information");
+      if (length < 5)
       {
-        return;
+        Log.Log.Debug("Turbosight: error, response too short");
+        DVB_MMI.DumpBinary(content, 0, length);
       }
+      else
+      {
+        MmiApplicationType type = (MmiApplicationType)content[0];
+        //DVB_MMI.ApplicationType type = (DVB_MMI.ApplicationType)content[0];
+        String title = System.Text.Encoding.ASCII.GetString(content, 5, length - 5);
+        Log.Log.Debug("  type         = {0}", type);
+        Log.Log.Debug("  manufacturer = 0x{0:x}{1:x}", content[1], content[2]);
+        Log.Log.Debug("  code         = 0x{0:x}{1:x}", content[3], content[4]);
+        Log.Log.Debug("  menu title   = {0}", title);
+      }
+    }
 
-      // Check if an existing thread is still alive. It will be terminated in case of errors, i.e. when CI callback failed.
-      if ((_mmiHandlerThread != null) && !_mmiHandlerThread.IsAlive)
+    private void HandleCaInformation(byte[] content, int length)
+    {
+      Log.Log.Debug("Turbosight: conditional access information");
+      if (length == 0)
       {
-        Log.Log.Debug("Turbosight: aborting old MMI handler thread");
-        _mmiHandlerThread.Abort();
-        _mmiHandlerThread = null;
+        Log.Log.Debug("Turbosight: error, response too short");
       }
-      if (_mmiHandlerThread == null)
+      else
       {
-        Log.Log.Debug("Turbosight: starting new MMI handler thread");
-        _mmiMessageQueue = new List<MmiMessage>();
-        for (int i = 0; i < MmiMessageBufferSize; i++)
+        int numCasIds = content[0];
+        Log.Log.Debug("  # CAS IDs = {0}", numCasIds);
+        int i = 1;
+        int l = 1;
+        while ((l + 2) <= length)
         {
-          Marshal.WriteByte(_mmiMessageBuffer, i, 0);
+          Log.Log.Debug("  {0,-2}        = 0x{1:x2}{2:x2}", i, content[l + 1], content[l]);
+          l += 2;
+          i++;
         }
-        for (int j = 0; j < MmiResponseBufferSize; j++)
+        if (length != ((numCasIds * 2) + 1))
         {
-          Marshal.WriteByte(_mmiResponseBuffer, j, 0);
+          Log.Log.Debug("Turbosight: error, unexpected numCasIds");
+          DVB_MMI.DumpBinary(_mmiResponseBuffer, 0, length);
         }
-        _stopMmiHandlerThread = false;
-        _mmiHandlerThread = new Thread(new ThreadStart(MmiHandler));
-        _mmiHandlerThread.Name = "Turbosight MMI handler";
-        _mmiHandlerThread.IsBackground = true;
-        _mmiHandlerThread.Priority = ThreadPriority.Lowest;
-        _mmiHandlerThread.Start();
+      }
+    }
+
+    private void HandleEnquiry(byte[] content, int length)
+    {
+      Log.Log.Debug("Turbosight: enquiry");
+      if (length < 3)
+      {
+        Log.Log.Debug("Turbosight: error, response too short");
+        DVB_MMI.DumpBinary(content, 0, length);
+      }
+      else
+      {
+        bool blind = (content[0] != 0);
+        uint answerLength = content[1];
+        String text = System.Text.Encoding.ASCII.GetString(content, 2, length - 2);
+        Log.Log.Debug("  text   = {0}", text);
+        Log.Log.Debug("  length = {0}", answerLength);
+        Log.Log.Debug("  blind  = {0}", blind);
+        if (_ciMenuCallbacks != null)
+        {
+          try
+          {
+            _ciMenuCallbacks.OnCiRequest(blind, answerLength, text);
+          }
+          catch (Exception exception)
+          {
+            Log.Log.Debug("Turbosight: CAM request callback exception\r\n{0}", exception.ToString());
+          }
+        }
+        else
+        {
+          Log.Log.Debug("Turbosight: menu callbacks are not set");
+        }
+      }
+    }
+
+    private void HandleMenu(byte[] content, int length)
+    {
+      Log.Log.Debug("Turbosight: menu");
+      if (length == 0)
+      {
+        Log.Log.Debug("Turbosight: error, response too short");
+      }
+      else
+      {
+        int numEntries = content[0];
+
+        // Read all the entries into a list. Entries are NULL terminated.
+        List<string> entries = new List<string>();
+        byte[] source = null;
+        int entryCount = 0;
+        for (int i = 1; i < length; i++)
+        {
+          if (content[i] == 0)
+          {
+            IntPtr ptr = Marshal.AllocCoTaskMem(source.Length + 1);
+            Marshal.Copy(source, 0, ptr, source.Length);
+            Marshal.WriteByte(ptr, source.Length, 0);
+            //DVB_MMI.DumpBinary(ptr, 0, source.Length);
+            entries.Add(DvbTextConverter.Convert(ptr, null));
+            entryCount++;
+            source = new byte[] { };
+            Marshal.FreeCoTaskMem(ptr);
+          }
+          else
+          {
+            if (source != null)
+            {
+              byte[] array = new byte[source.Length + 1];
+              source.CopyTo(array, 0);
+              array[array.Length - 1] = content[i];
+              source = array;
+            }
+            else
+            {
+              source = new byte[] { content[i] };
+            }
+          }
+        }
+        IntPtr destination = Marshal.AllocCoTaskMem(source.Length + 1);
+        Marshal.Copy(source, 0, destination, source.Length);
+        Marshal.WriteByte(destination, source.Length, 0);
+        //DVB_MMI.DumpBinary(destination, 0, source.Length);
+        entries.Add(DvbTextConverter.Convert(destination, null));
+        source = null;
+        Marshal.FreeCoTaskMem(destination);
+        entryCount -= 2;
+        if (entryCount < 0)
+        {
+          Log.Log.Debug("Turbosight: error, not enough menu entries");
+          DVB_MMI.DumpBinary(content, 0, length);
+        }
+        else
+        {
+          Log.Log.Debug("  title     = {0}", entries[0]);
+          Log.Log.Debug("  sub-title = {0}", entries[1]);
+          Log.Log.Debug("  footer    = {0}", entries[2]);
+          Log.Log.Debug("  # entries = {0}", numEntries);
+          if (_ciMenuCallbacks != null)
+          {
+            try
+            {
+              _ciMenuCallbacks.OnCiMenu(entries[0], entries[1], entries[2], entryCount);
+            }
+            catch (Exception exception)
+            {
+              Log.Log.Debug("Turbosight: menu header callback exception\r\n{0}", exception.ToString());
+            }
+          }
+          for (int j = 0; j < entryCount; j++)
+          {
+            Log.Log.Debug("  entry {0,-2}  = {1}", j + 1, entries[j + 3]);
+            if (_ciMenuCallbacks != null)
+            {
+              try
+              {
+                _ciMenuCallbacks.OnCiMenuChoice(j, entries[j + 3]);
+              }
+              catch (Exception exception2)
+              {
+                Log.Log.Debug("Turbosight: menu entry callback exception\r\n{0}", exception2.ToString());
+              }
+            }
+          }
+          if (entryCount != numEntries)
+          {
+            Log.Log.Debug("Turbosight: error, numEntries != entryCount");
+          }
+        }
       }
     }
 
     #endregion
 
-    #region Public methods
-    /// <summary>
-    /// Close the conditional access interface.
-    /// </summary>
-    /// <returns><c>true</c> if the interface is successfully closed, otherwise <c>false</c></returns>
-    public bool CloseCi()
-    {
-      Log.Log.Debug("Turbosight: close conditional access interface");
+    #endregion
 
-      if (_mmiHandlerThread != null && _mmiHandlerThread.IsAlive)
-      {
-        _stopMmiHandlerThread = true;
-        // In the worst case scenario it should take approximately
-        // twice the thread sleep time to cleanly stop the thread.
-        _mmiHandlerThread.Join(MmiHandlerThreadSleepTime * 2);
-        if (_mmiHandlerThread.IsAlive)
-        {
-          Log.Log.Debug("Turbosight: warning, failed to join MMI handler thread => aborting thread");
-          _mmiHandlerThread.Abort();
-        }
-        _mmiHandlerThread = null;
-      }
+    #endregion
 
-      if (_ciHandle != IntPtr.Zero)
-      {
-        On_Exit_CI(_ciHandle);
-        _ciHandle = IntPtr.Zero;
-      }
-
-      _isCiSlotPresent = false;
-      _isCamPresent = false;
-      _mmiMessageQueue = null;
-      if (_mmiMessageBuffer != IntPtr.Zero)
-      {
-        Marshal.FreeCoTaskMem(_mmiMessageBuffer);
-        _mmiMessageBuffer = IntPtr.Zero;
-      }
-      if (_mmiResponseBuffer != IntPtr.Zero)
-      {
-        Marshal.FreeCoTaskMem(_mmiResponseBuffer);
-        _mmiResponseBuffer = IntPtr.Zero;
-      }
-      if (_pmtBuffer != IntPtr.Zero)
-      {
-        Marshal.FreeCoTaskMem(_pmtBuffer);
-        _pmtBuffer = IntPtr.Zero;
-      }
-
-      Log.Log.Debug("Turbosight: result = true");
-      return true;
-    }
-
-    /// <summary>
-    /// Send a request from the user to the CAM to close the menu.
-    /// </summary>
-    /// <returns><c>true</c> if the request is successfully passed to and processed by the CAM, otherwise <c>false</c></returns>
-    public bool CloseCIMenu()
-    {
-      Log.Log.Debug("Turbosight: close menu");
-
-      if (!_isTurbosight || _ciHandle == IntPtr.Zero)
-      {
-        Log.Log.Debug("Turbosight: device not initialised or interface not supported");
-        return false;
-      }
-      if (!_isCamPresent)
-      {
-        Log.Log.Debug("Turbosight: the CAM is not present");
-        return false;
-      }
-      lock (this)
-      {
-        _mmiMessageQueue.Add(new MmiMessage(TbsMmiMessageType.CloseMmi));
-      }
-      return true;
-    }
-
-    /// <summary>
-    /// Sets the DVB-Type for TBS PCIe Card.
-    /// </summary>
-    /// <param name="reply">The reply message.</param>
-    /// <returns><c>true</c> if a reply is successfully received, otherwise <c>false</c></returns>
-    public void SetDVBS2(DVBSChannel channel)
-    {
-      //Set the Pilot
-      Log.Log.Info("Turbosight: Set DVB-S2");
-      if (channel.ModulationType != ModulationType.ModNbc8Psk && channel.ModulationType != ModulationType.ModNbcQpsk)
-        return;
-      int hr;
-      KSPropertySupport supported;
-      _propertySet.QuerySupported(BdaExtensionPropertySet, (int)BdaExtensionProperty.NbcParams,
-                                  out supported);
-      if ((supported & KSPropertySupport.Set) == KSPropertySupport.Set)
-      {
-        BDA_NBC_PARAMS DVBNBCParams = new BDA_NBC_PARAMS();
-        DVBNBCParams.fecrate = (int)channel.InnerFecRate;
-        DVBNBCParams.modtype = (int)channel.ModulationType;
-        DVBNBCParams.pilot = (int)channel.Pilot;
-        DVBNBCParams.rolloff = (int)channel.Rolloff;
-        DVBNBCParams.dvbtype = 2; //DVB-S2
-        Log.Log.Info("Turbosight: Set DVB-S2: {0}", DVBNBCParams.dvbtype);
-        Marshal.StructureToPtr(DVBNBCParams, _generalBuffer, true);
-        DVB_MMI.DumpBinary(_generalBuffer, 0, TbsNBCParamsSize);
-
-        hr = _propertySet.Set(_propertySetGuid, (int)BdaExtensionProperty.NbcParams,
-          _generalBuffer, TbsNBCParamsSize,
-          _generalBuffer, TbsNBCParamsSize
-        );
-
-        if (hr != 0)
-        {
-          Log.Log.Info("Turbosight: Set DVB-S2 returned {0}", hr, DsError.GetErrorText(hr));
-        }
-      }
-      else
-      {
-        Log.Log.Info("Turbosight: Set DVB-S2 not supported");
-      }
-    }
-
-    public void Dispose()
-    {
-      if (_isTurbosight)
-      {
-        SetPowerState(false);
-        if (_mmiHandlerThread != null)
-        {
-          _stopMmiHandlerThread = true;
-          Thread.Sleep(0xbb8);
-        }
-        CloseCi();
-        Marshal.FreeCoTaskMem(_generalBuffer);
-        if (_isUsb)
-        {
-          Release.ComObject(_propertySet);
-        }
-      }
-      // MBU
-      _tunerFilter = null;            // MBU
-      _isTurbosight = false;          // MBU
-    }
-
-    /// <summary>
-    /// Send a request from the user to the CAM to open the menu.
-    /// </summary>
-    /// <returns><c>true</c> if the request is successfully passed to and processed by the CAM, otherwise <c>false</c></returns>
-    public bool EnterCIMenu()
-    {
-      Log.Log.Debug("Turbosight: enter menu");
-      if (!_isTurbosight || _ciHandle == IntPtr.Zero)
-      {
-        Log.Log.Debug("Turbosight: device not initialised or interface not supported");
-        return false;
-      }
-      if (!_isCamPresent)
-      {
-        Log.Log.Debug("Turbosight: the CAM is not present");
-        return false;
-      }
-      lock (this)
-      {
-        // Close any existing sessions otherwise the CAM gets confused.
-        _mmiMessageQueue.Add(new MmiMessage(TbsMmiMessageType.CloseMmi));
-        // We send an "application info" message because attempting to enter the menu will fail
-        // if you don't get the application information first.
-        _mmiMessageQueue.Add(new MmiMessage(TbsMmiMessageType.ApplicationInfo));
-        // The CA information is just for information purposes.
-        _mmiMessageQueue.Add(new MmiMessage(TbsMmiMessageType.CaInfo));
-        // The main message.
-        _mmiMessageQueue.Add(new MmiMessage(TbsMmiMessageType.EnterMenu));
-        // We have to request a response.
-        _mmiMessageQueue.Add(new MmiMessage(TbsMmiMessageType.GetMmi));
-      }
-      return true;
-    }
-
-    /// <summary>
-    /// IsCamPresent
-    /// </summary>
-    /// <returns></returns>
-    private bool IsCamPresent()
-    {
-      Log.Log.Debug("Turbosight: is CAM present");
-      if (!_isCiSlotPresent)
-      {
-        Log.Log.Debug("Turbosight: CI slot not present");
-        return false;
-      }
-      if (_ciHandle == IntPtr.Zero)
-      {
-        Log.Log.Debug("Turbosight: interface not opened");
-        return false;
-      }
-      bool flag = false;
-      lock (this)
-      {
-        flag = Camavailable(_ciHandle);
-      }
-      Log.Log.Debug("Turbosight: result = {0}", flag);
-      return flag;
-    }
-
-    public bool IsCamReady()
-    {
-      Log.Log.Debug("Turbosight: is CAM ready");
-      if (_ciHandle == IntPtr.Zero)
-      {
-        Log.Log.Debug("Turbosight: interface not opened");
-        return false;
-      }
-      // We can only tell whether a CAM is present, not whether it is ready.
-      bool camPresent = false;
-      lock (this)
-      {
-        camPresent = Camavailable(_ciHandle);
-      }
-      Log.Log.Debug("Turbosight: result = {0}", camPresent);
-      return camPresent;
-    }
-
-    private bool IsCiSlotPresent()
-    {
-      // Check whether a CI slot is present.
-      Log.Log.Debug("Turbosight: is CI slot present");
-      int ciAccessProperty = (int)BdaExtensionProperty.CiAccess;
-      if (_isUsb)
-      {
-        ciAccessProperty = (int)UsbBdaExtensionProperty.CiAccess;
-      }
-      KSPropertySupport support;
-      int hr = _propertySet.QuerySupported(_propertySetGuid, ciAccessProperty, out support);
-      if (hr != (int)HResult.Serverity.Success || support == 0)
-      {
-        Log.Log.Debug("Turbosight: device doesn't have a CI slot");
-        return false;
-      }
-      Log.Log.Debug("Turbosight: device does have a CI slot");
-      return true;
-    }
-
-    /// <summary>
-    /// Open the conditional access interface. For the interface to be opened successfully it is expected
-    /// that any necessary hardware (such as a CI slot) is connected.
-    /// </summary>
-    /// <returns><c>true</c> if the interface is successfully opened, otherwise <c>false</c></returns>
-    private bool OpenCi()
-    {
-      Log.Log.Debug("Turbosight: open conditional access interface");
-
-      if (!_isTurbosight)
-      {
-        Log.Log.Debug("Turbosight: device not initialised or interface not supported");
-        return false;
-      }
-      if (_ciHandle != IntPtr.Zero)
-      {
-        return false;
-      }
-
-      // Check whether a CI slot is present.
-      _isCiSlotPresent = IsCiSlotPresent();
-      if (!_isCiSlotPresent)
-      {
-        return false;
-      }
-      Log.Log.Debug("Turbosight: open conditional access interface");
-
-      _ciHandle = On_Start_CI(_tunerFilter, FilterGraphTools.GetFilterName(_tunerFilter), _deviceIndex);
-      if (_ciHandle == IntPtr.Zero || _ciHandle.ToInt64() == -1)
-      {
-        Log.Log.Debug("Turbosight: interface handle is null");
-        _isCiSlotPresent = false;
-        return false;
-      }
-      else
-      {
-        Log.Log.Debug("Turbosight: interface handle {0}", _ciHandle);
-      }
-
-      Log.Log.Debug("Turbosight: interface opened successfully");
-      _mmiMessageBuffer = Marshal.AllocCoTaskMem(MmiMessageBufferSize);
-      _mmiResponseBuffer = Marshal.AllocCoTaskMem(MmiResponseBufferSize);
-      _pmtBuffer = Marshal.AllocCoTaskMem(MaxPmtLength + 2);  // + 2 for TBS PMT header
-      _isCamPresent = IsCamPresent();
-      _isCamReady = IsCamReady();
-      return true;
-    }
-
-    /// <summary>
-    /// Retrieve the response to a previously sent DiSEqC command (or alternatively, check for a command
-    /// intended for this tuner).
-    /// </summary>
-    /// <param name="response">The response (or command).</param>
-    /// <returns><c>true</c> if the response is read successfully, otherwise <c>false</c></returns>
-    public bool ReadDiSEqCCommand(out byte[] response)
-    {
-      Log.Log.Debug("Turbosight: read DiSEqC response");
-      response = null;
-
-      if (!_isTurbosight || _propertySet == null)
-      {
-        Log.Log.Debug("Turbosight: device not initialised or interface not supported");
-        return false;
-      }
-
-      for (int i = 0; i < TbsAccessParamsSize; i++)
-      {
-        Marshal.WriteByte(_generalBuffer, i, 0);
-      }
-
-      TbsAccessParams accessParams = new TbsAccessParams();
-      accessParams.AccessMode = TbsAccessMode.Diseqc;
-      int returnedByteCount;
-      int hr = _propertySet.Get(_propertySetGuid, _tbsAccessProperty,
-        _generalBuffer, TbsAccessParamsSize,
-        _generalBuffer, TbsAccessParamsSize,
-        out returnedByteCount
-      );
-      if (hr != 0)
-      {
-        Log.Log.Debug("Turbosight: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-        return false;
-      }
-
-      DVB_MMI.DumpBinary(_generalBuffer, 0, returnedByteCount);
-
-      if (returnedByteCount != TbsAccessParamsSize)
-      {
-        Log.Log.Debug("Turbosight: result = failure, unexpected number of bytes ({0}) returned", returnedByteCount);
-        return false;
-      }
-
-      accessParams = (TbsAccessParams)Marshal.PtrToStructure(_generalBuffer, typeof(TbsAccessParams));
-      if (accessParams.DiseqcReceiveMessageLength > MaxDiseqcMessageLength)
-      {
-        Log.Log.Debug("Turbosight: result = failure, unexpected number of message bytes ({0}) returned", accessParams.DiseqcReceiveMessageLength);
-        return false;
-      }
-      response = new byte[accessParams.DiseqcReceiveMessageLength];
-      Buffer.BlockCopy(accessParams.DiseqcReceiveMessage, 0, response, 0, (int)accessParams.DiseqcReceiveMessageLength);
-      Log.Log.Debug("Turbosight: result = success");
-      return true;
-    }
-
-    /// <summary>
-    /// Reset the conditional access interface.
-    /// </summary>
-    /// <returns><c>true</c> if the interface is successfully reopened, otherwise <c>false</c></returns>
-    public bool ResetCi()
-    {
-      // TBS have confirmed that it is not currently possible to call On_Start_CI() multiple times on a
-      // filter instance ***even if On_Exit_CI() is called***. The graph must be rebuilt to reset the CI.
-      return true;
-    }
-
-    /// <summary>
-    /// Send a menu entry selection from the user to the CAM.
-    /// </summary>
-    /// <param name="choice">The index of the selection as an unsigned byte value.</param>
-    /// <returns><c>true</c> if the selection is successfully passed to and processed by the CAM, otherwise <c>false</c></returns>
-    public bool SelectMenu(byte choice)
-    {
-      Log.Log.Debug("Turbosight: select menu entry, choice = {0}", choice);
-
-      if (!_isTurbosight || _ciHandle == IntPtr.Zero)
-      {
-        Log.Log.Debug("Turbosight: device not initialised or interface not supported");
-        return false;
-      }
-      if (!_isCamPresent)
-      {
-        Log.Log.Debug("Turbosight: the CAM is not present");
-        return false;
-      }
-
-      lock (this)
-      {
-        MmiMessage selectMessage = new MmiMessage(TbsMmiMessageType.MenuAnswer, 3);
-        selectMessage.Message[0] = 0;
-        selectMessage.Message[1] = 0;
-        selectMessage.Message[2] = choice;
-        _mmiMessageQueue.Add(selectMessage);
-        // Don't explicitly request a response for a "back" request as that
-        // could choke the message queue with a message that the CAM
-        // never answers.
-        if (choice != 0)
-        {
-          _mmiMessageQueue.Add(new MmiMessage(TbsMmiMessageType.GetMmi));
-        }
-      }
-      return true;
-    }
-
-    public bool SendDiseqcCommand(ScanParameters parameters, DVBSChannel channel)
-    {
-      bool flag = BandTypeConverter.IsHiBand(channel, parameters);
-      ToneBurst off = ToneBurst.None;
-      bool successDiseqc = true;
-      if (channel.DisEqc == DisEqcType.SimpleA)
-      {
-        off = ToneBurst.ToneBurst;
-      }
-      else if (channel.DisEqc == DisEqcType.SimpleB)
-      {
-        off = ToneBurst.DataBurst;
-      }
-      else if (channel.DisEqc != DisEqcType.None)
-      {
-        int antennaNr = BandTypeConverter.GetAntennaNr(channel);
-        bool flag3 = (channel.Polarisation == Polarisation.LinearH) || (channel.Polarisation == Polarisation.CircularL);
-        byte num2 = 240;
-        num2 = (byte)(num2 | (flag ? ((byte)1) : ((byte)0)));
-        num2 = (byte)(num2 | (flag3 ? ((byte)2) : ((byte)0)));
-        num2 = (byte)(num2 | ((byte)((antennaNr - 1) << 2)));
-        byte[] command = new byte[] { 0xe0, 0x10, 0x38, 0 };
-        command[3] = num2;
-        successDiseqc = SendDiSEqCCommand(command);
-      }
-      Tone22k on = Tone22k.Off;
-      if (flag)
-      {
-        on = Tone22k.On;
-      }
-      bool successTone = SetToneState(off, on);
-
-      SetDVBS2(channel);  // Don't need to know the result of this
-
-      return (successDiseqc && successTone);
-    }
-
-    /// <summary>
-    /// Send an arbitrary DiSEqC command.
-    /// </summary>
-    /// <param name="command">The command to send.</param>
-    /// <returns><c>true</c> if the command is sent successfully, otherwise <c>false</c></returns>
-    public virtual bool SendDiSEqCCommand(byte[] command)
-    {
-      Log.Log.Debug("Turbosight: send DiSEqC command");
-
-      if (!_isTurbosight || _propertySet == null)
-      {
-        Log.Log.Debug("Turbosight: device not initialised or interface not supported");
-        return false;
-      }
-      if (command == null || command.Length == 0)
-      {
-        Log.Log.Debug("Turbosight: command not supplied");
-        return true;
-      }
-      if (command.Length > MaxDiseqcMessageLength)
-      {
-        Log.Log.Debug("Turbosight: command too long, length = {0}", command.Length);
-        return false;
-      }
-
-      TbsAccessParams accessParams = new TbsAccessParams();
-      accessParams.AccessMode = TbsAccessMode.Diseqc;
-      accessParams.DiseqcTransmitMessageLength = (uint)command.Length;
-      accessParams.DiseqcTransmitMessage = new byte[MaxDiseqcMessageLength];
-      Buffer.BlockCopy(command, 0, accessParams.DiseqcTransmitMessage, 0, command.Length);
-
-      Marshal.StructureToPtr(accessParams, _generalBuffer, true);
-      //DVB_MMI.DumpBinary(_generalBuffer, 0, TbsAccessParamsSize);
-
-      int hr = _propertySet.Set(_propertySetGuid, _tbsAccessProperty,
-        _generalBuffer, TbsAccessParamsSize,
-        _generalBuffer, TbsAccessParamsSize
-      );
-      if (hr == 0)
-      {
-        Log.Log.Debug("Turbosight: result = success");
-        return true;
-      }
-
-      Log.Log.Debug("Turbosight: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-      return false;
-    }
-
-    /// <summary>
-    /// Send a response from the user to the CAM.
-    /// </summary>
-    /// <param name="cancel"><c>True</c> to cancel the request.</param>
-    /// <param name="answer">The user's response.</param>
-    /// <returns><c>true</c> if the response is successfully passed to and processed by the CAM, otherwise <c>false</c></returns>
-    public bool SendMenuAnswer(bool cancel, string answer)
-    {
-      if (answer == null)
-      {
-        answer = String.Empty;
-      }
-      Log.Log.Debug("Turbosight: send menu answer, answer = {0}, cancel = {1}", answer, cancel);
-
-      if (!_isTurbosight || _ciHandle == IntPtr.Zero)
-      {
-        Log.Log.Debug("Turbosight: device not initialised or interface not supported");
-        return false;
-      }
-      if (!_isCamPresent)
-      {
-        Log.Log.Debug("Turbosight: the CAM is not present");
-        return false;
-      }
-
-      if (answer.Length > 254)
-      {
-        Log.Log.Debug("Turbosight: answer too long, length = {0}", answer.Length);
-        return false;
-      }
-
-      byte responseType = (byte)MmiResponseType.Answer;
-      if (cancel)
-      {
-        responseType = (byte)MmiResponseType.Cancel;
-      }
-      lock (this)
-      {
-        MmiMessage answerMessage = new MmiMessage(TbsMmiMessageType.Answer, answer.Length + 3);
-        answerMessage.Message[0] = (byte)(answer.Length + 1);
-        answerMessage.Message[1] = 0;
-        answerMessage.Message[2] = responseType;
-        int offset = 3;
-        for (int i = 0; i < answer.Length; i++)
-        {
-          answerMessage.Message[offset++] = (byte)answer[i];
-        }
-        _mmiMessageQueue.Add(answerMessage);
-        // We have to request a response.
-        _mmiMessageQueue.Add(new MmiMessage(TbsMmiMessageType.GetMmi));
-      }
-      return true;
-    }
-
-    public bool SendPmt(ListManagementType listAction, CommandIdType command, byte[] pmt, int length)
-    {
-      Log.Log.Debug("Turbosight: send PMT to CAM, list action = {0}, command = {1}", listAction, command);
-      if (!_isCamPresent)
-      {
-        Log.Log.Debug("Turbosight: CAM not available");
-        return true;
-      }
-      if (length > 0x400)
-      {
-        Log.Log.Debug("Turbosight: buffer capacity too small, length = {0}", length);
-        return false;
-      }
-      Marshal.WriteByte(_pmtBuffer, 0, (byte)listAction);
-      Marshal.WriteByte(_pmtBuffer, 1, (byte)command);
-      int ofs = 2;
-      for (int i = 0; i < length; i++)
-      {
-        Marshal.WriteByte(_pmtBuffer, ofs, pmt[i]);
-        ofs++;
-      }
-      TBS_ci_SendPmt(_ciHandle, _pmtBuffer, (ushort)(length + 2));
-      return true;
-    }
-
-    /// <summary>
-    /// Set the CAM callback handler functions.
-    /// </summary>
-    /// <param name="ciMenuHandler">A set of callback handler functions.</param>
-    /// <returns><c>true</c> if the handlers are set, otherwise <c>false</c></returns>
-    public bool SetCiMenuHandler(ICiMenuCallbacks ciMenuHandler)
-    {
-      if (ciMenuHandler != null)
-      {
-        _ciMenuCallbacks = ciMenuHandler;
-        StartMmiHandlerThread();
-        return true;
-      }
-      return false;
-    }
-
-    /// <summary>
-    /// Turn the device power supply on or off.
-    /// </summary>
-    /// <param name="powerOn"><c>True</c> to turn the power supply on; <c>false</c> to turn the power supply off.</param>
-    /// <returns><c>true</c> if the power state is set successfully, otherwise <c>false</c></returns>
-    private bool SetPowerState(bool powerOn)
-    {
-      Log.Log.Debug("Turbosight: set power state, on = {0}", powerOn);
-      if (!_isTurbosight)
-      {
-        Log.Log.Debug("Turbosight: device not initialised or interface not supported");
-        return false;
-      }
-      TbsAccessParams accessParams = new TbsAccessParams();
-      accessParams.AccessMode = TbsAccessMode.LnbPower;
-      if (powerOn)
-      {
-        accessParams.LnbPower = TbsLnbPower.On;
-      }
-      else
-      {
-        accessParams.LnbPower = TbsLnbPower.Off;
-      }
-
-      Marshal.StructureToPtr(accessParams, _generalBuffer, true);
-
-      int hresult = _propertySet.Set(_propertySetGuid, _tbsAccessProperty, _generalBuffer, TbsAccessParamsSize, _generalBuffer, TbsAccessParamsSize);
-      if (hresult == 0)
-      {
-        Log.Log.Debug("Turbosight: result = success");
-        return true;
-      }
-      Log.Log.Debug("Turbosight: result = failure, hr = 0x{0:x} ({1})", hresult, HResult.GetDXErrorString(hresult));
-      return false;
-    }
+    #region DiSEqC support
 
     /// <summary>
     /// Send a tone/data burst command, and then set the 22 kHz continuous tone state.
@@ -1810,6 +1619,230 @@ namespace TvLibrary.Implementations.DVB
       }
 
       return success;
+    }
+
+    public bool SendDiseqcCommand(ScanParameters parameters, DVBSChannel channel)
+    {
+      bool flag = BandTypeConverter.IsHiBand(channel, parameters);
+      ToneBurst off = ToneBurst.None;
+      bool successDiseqc = true;
+      if (channel.DisEqc == DisEqcType.SimpleA)
+      {
+        off = ToneBurst.ToneBurst;
+      }
+      else if (channel.DisEqc == DisEqcType.SimpleB)
+      {
+        off = ToneBurst.DataBurst;
+      }
+      else if (channel.DisEqc != DisEqcType.None)
+      {
+        int antennaNr = BandTypeConverter.GetAntennaNr(channel);
+        bool flag3 = (channel.Polarisation == Polarisation.LinearH) || (channel.Polarisation == Polarisation.CircularL);
+        byte num2 = 240;
+        num2 = (byte)(num2 | (flag ? ((byte)1) : ((byte)0)));
+        num2 = (byte)(num2 | (flag3 ? ((byte)2) : ((byte)0)));
+        num2 = (byte)(num2 | ((byte)((antennaNr - 1) << 2)));
+        byte[] command = new byte[] { 0xe0, 0x10, 0x38, 0 };
+        command[3] = num2;
+        successDiseqc = SendDiSEqCCommand(command);
+      }
+      Tone22k on = Tone22k.Off;
+      if (flag)
+      {
+        on = Tone22k.On;
+      }
+      bool successTone = SetToneState(off, on);
+
+      SetDVBS2(channel);  // Don't need to know the result of this
+
+      return (successDiseqc && successTone);
+    }
+
+    /// <summary>
+    /// Send an arbitrary DiSEqC command.
+    /// </summary>
+    /// <param name="command">The command to send.</param>
+    /// <returns><c>true</c> if the command is sent successfully, otherwise <c>false</c></returns>
+    public bool SendDiSEqCCommand(byte[] command)
+    {
+      Log.Log.Debug("Turbosight: send DiSEqC command");
+
+      if (!_isTurbosight || _propertySet == null)
+      {
+        Log.Log.Debug("Turbosight: device not initialised or interface not supported");
+        return false;
+      }
+      if (command == null || command.Length == 0)
+      {
+        Log.Log.Debug("Turbosight: command not supplied");
+        return true;
+      }
+      if (command.Length > MaxDiseqcMessageLength)
+      {
+        Log.Log.Debug("Turbosight: command too long, length = {0}", command.Length);
+        return false;
+      }
+
+      TbsAccessParams accessParams = new TbsAccessParams();
+      accessParams.AccessMode = TbsAccessMode.Diseqc;
+      accessParams.DiseqcTransmitMessageLength = (uint)command.Length;
+      accessParams.DiseqcTransmitMessage = new byte[MaxDiseqcMessageLength];
+      Buffer.BlockCopy(command, 0, accessParams.DiseqcTransmitMessage, 0, command.Length);
+
+      Marshal.StructureToPtr(accessParams, _generalBuffer, true);
+      //DVB_MMI.DumpBinary(_generalBuffer, 0, TbsAccessParamsSize);
+
+      int hr = _propertySet.Set(_propertySetGuid, _tbsAccessProperty,
+        _generalBuffer, TbsAccessParamsSize,
+        _generalBuffer, TbsAccessParamsSize
+      );
+      if (hr == 0)
+      {
+        Log.Log.Debug("Turbosight: result = success");
+        return true;
+      }
+
+      Log.Log.Debug("Turbosight: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      return false;
+    }
+
+    /// <summary>
+    /// Retrieve the response to a previously sent DiSEqC command (or alternatively, check for a command
+    /// intended for this tuner).
+    /// </summary>
+    /// <param name="response">The response (or command).</param>
+    /// <returns><c>true</c> if the response is read successfully, otherwise <c>false</c></returns>
+    public bool ReadDiSEqCCommand(out byte[] response)
+    {
+      Log.Log.Debug("Turbosight: read DiSEqC response");
+      response = null;
+
+      if (!_isTurbosight || _propertySet == null)
+      {
+        Log.Log.Debug("Turbosight: device not initialised or interface not supported");
+        return false;
+      }
+
+      for (int i = 0; i < TbsAccessParamsSize; i++)
+      {
+        Marshal.WriteByte(_generalBuffer, i, 0);
+      }
+
+      TbsAccessParams accessParams = new TbsAccessParams();
+      accessParams.AccessMode = TbsAccessMode.Diseqc;
+      int returnedByteCount;
+      int hr = _propertySet.Get(_propertySetGuid, _tbsAccessProperty,
+        _generalBuffer, TbsAccessParamsSize,
+        _generalBuffer, TbsAccessParamsSize,
+        out returnedByteCount
+      );
+      if (hr != 0)
+      {
+        Log.Log.Debug("Turbosight: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        return false;
+      }
+
+      DVB_MMI.DumpBinary(_generalBuffer, 0, returnedByteCount);
+
+      if (returnedByteCount != TbsAccessParamsSize)
+      {
+        Log.Log.Debug("Turbosight: result = failure, unexpected number of bytes ({0}) returned", returnedByteCount);
+        return false;
+      }
+
+      accessParams = (TbsAccessParams)Marshal.PtrToStructure(_generalBuffer, typeof(TbsAccessParams));
+      if (accessParams.DiseqcReceiveMessageLength > MaxDiseqcMessageLength)
+      {
+        Log.Log.Debug("Turbosight: result = failure, unexpected number of message bytes ({0}) returned", accessParams.DiseqcReceiveMessageLength);
+        return false;
+      }
+      response = new byte[accessParams.DiseqcReceiveMessageLength];
+      Buffer.BlockCopy(accessParams.DiseqcReceiveMessage, 0, response, 0, (int)accessParams.DiseqcReceiveMessageLength);
+      Log.Log.Debug("Turbosight: result = success");
+      return true;
+    }
+
+    #endregion
+
+    #region other
+
+    /// <summary>
+    /// Turn the device power supply on or off.
+    /// </summary>
+    /// <param name="powerOn"><c>True</c> to turn the power supply on; <c>false</c> to turn the power supply off.</param>
+    /// <returns><c>true</c> if the power state is set successfully, otherwise <c>false</c></returns>
+    private bool SetPowerState(bool powerOn)
+    {
+      Log.Log.Debug("Turbosight: set power state, on = {0}", powerOn);
+      if (!_isTurbosight)
+      {
+        Log.Log.Debug("Turbosight: device not initialised or interface not supported");
+        return false;
+      }
+      TbsAccessParams accessParams = new TbsAccessParams();
+      accessParams.AccessMode = TbsAccessMode.LnbPower;
+      if (powerOn)
+      {
+        accessParams.LnbPower = TbsLnbPower.On;
+      }
+      else
+      {
+        accessParams.LnbPower = TbsLnbPower.Off;
+      }
+
+      Marshal.StructureToPtr(accessParams, _generalBuffer, true);
+
+      int hresult = _propertySet.Set(_propertySetGuid, _tbsAccessProperty, _generalBuffer, TbsAccessParamsSize, _generalBuffer, TbsAccessParamsSize);
+      if (hresult == 0)
+      {
+        Log.Log.Debug("Turbosight: result = success");
+        return true;
+      }
+      Log.Log.Debug("Turbosight: result = failure, hr = 0x{0:x} ({1})", hresult, HResult.GetDXErrorString(hresult));
+      return false;
+    }
+
+    /// <summary>
+    /// Sets the DVB-Type for TBS PCIe Card.
+    /// </summary>
+    /// <param name="reply">The reply message.</param>
+    /// <returns><c>true</c> if a reply is successfully received, otherwise <c>false</c></returns>
+    public void SetDVBS2(DVBSChannel channel)
+    {
+      //Set the Pilot
+      Log.Log.Info("Turbosight: Set DVB-S2");
+      if (channel.ModulationType != ModulationType.ModNbc8Psk && channel.ModulationType != ModulationType.ModNbcQpsk)
+        return;
+      int hr;
+      KSPropertySupport supported;
+      _propertySet.QuerySupported(BdaExtensionPropertySet, (int)BdaExtensionProperty.NbcParams,
+                                  out supported);
+      if ((supported & KSPropertySupport.Set) == KSPropertySupport.Set)
+      {
+        BDA_NBC_PARAMS DVBNBCParams = new BDA_NBC_PARAMS();
+        DVBNBCParams.fecrate = (int)channel.InnerFecRate;
+        DVBNBCParams.modtype = (int)channel.ModulationType;
+        DVBNBCParams.pilot = (int)channel.Pilot;
+        DVBNBCParams.rolloff = (int)channel.Rolloff;
+        DVBNBCParams.dvbtype = 2; //DVB-S2
+        Log.Log.Info("Turbosight: Set DVB-S2: {0}", DVBNBCParams.dvbtype);
+        Marshal.StructureToPtr(DVBNBCParams, _generalBuffer, true);
+        DVB_MMI.DumpBinary(_generalBuffer, 0, NbcTuningParamsSize);
+
+        hr = _propertySet.Set(_propertySetGuid, (int)BdaExtensionProperty.NbcParams,
+          _generalBuffer, NbcTuningParamsSize,
+          _generalBuffer, NbcTuningParamsSize
+        );
+
+        if (hr != 0)
+        {
+          Log.Log.Info("Turbosight: Set DVB-S2 returned {0}", hr, DsError.GetErrorText(hr));
+        }
+      }
+      else
+      {
+        Log.Log.Info("Turbosight: Set DVB-S2 not supported");
+      }
     }
 
     public DVBBaseChannel SetTuningParameters(DVBBaseChannel channel)
@@ -1891,18 +1924,6 @@ namespace TvLibrary.Implementations.DVB
       }
       Log.Log.Debug("Turbosight: result = failure, hr = 0x{0:x} ({1})", hresult, HResult.GetDXErrorString(hresult));
       return channel2;
-    }
-
-    #endregion
-
-    #region Public properties
-
-    public bool IsTurbosight
-    {
-      get
-      {
-        return _isTurbosight;
-      }
     }
 
     #endregion
