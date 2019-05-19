@@ -840,8 +840,8 @@ namespace TvPlugin
       {
         TVHome.UserChannelChanged = true;
         m_zapchannel = _lastViewedChannel;
-        m_zapChannelNr = -1;
-        m_zapChannelIdx = -1;
+        m_zapChannelNr = m_zapchannel.ChannelNumber;
+        m_zapChannelIdx = GetChannelIndex(m_zapchannel);
         m_zaptime = DateTime.Now;
         RaiseOnZapChannelEvent();
       }

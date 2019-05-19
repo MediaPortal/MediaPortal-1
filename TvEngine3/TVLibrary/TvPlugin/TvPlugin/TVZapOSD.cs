@@ -23,6 +23,7 @@ using System.Collections;
 using System.Globalization;
 using System.IO;
 using Gentle.Framework;
+using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 using MediaPortal.Util;
@@ -58,7 +59,6 @@ namespace TvPlugin
 
     private bool _byIndex = false;
     private bool _showChannelNumber = false;
-    private int _channelNumberMaxLength = 3;
 
     private TVHome.ChannelErrorInfo m_lastError;
 
@@ -70,7 +70,6 @@ namespace TvPlugin
       {
         _byIndex = xmlreader.GetValueAsBool("mytv", "byindex", true);
         _showChannelNumber = xmlreader.GetValueAsBool("mytv", "showchannelnumber", false);
-        _channelNumberMaxLength = xmlreader.GetValueAsInt("mytv", "channelnumbermaxlength", 3);
       }
     }
 
@@ -272,7 +271,7 @@ namespace TvPlugin
 
     private void OnPreviousChannel()
     {
-      Log.Debug("GUITV OSD: OnNextChannel");
+      Log.Debug("GUITV OSD: OnPreviousChannel");
       if (!TVHome.Card.IsTimeShifting)
       {
         return;
@@ -318,33 +317,32 @@ namespace TvPlugin
 
     private void SetCurrentChannelLogo()
     {
-      string strLogo = null;
-      if (LastError != null)
+      if (imgTvChannelLogo != null)
       {
-        strLogo = TVUtil.GetChannelLogo(LastError.FailingChannel);
-      }
-      else
-      {
-        strLogo = TVUtil.GetChannelLogo(TVHome.Navigator.ZapChannel);
-      }
-
-      if (string.IsNullOrEmpty(strLogo))
-      {
-        if (imgTvChannelLogo != null)
+        string strLogo = null;
+        if (LastError != null)
         {
+          strLogo = TVUtil.GetChannelLogo(LastError.FailingChannel);
+        }
+        else
+        {
+          strLogo = TVUtil.GetChannelLogo(TVHome.Navigator.ZapChannel);
+        }
+  
+        if (string.IsNullOrEmpty(strLogo))
+        {
+          imgTvChannelLogo.SetFileName(String.Empty);
           imgTvChannelLogo.IsVisible = false;
         }
-      }
-      else
-      {
-        if (imgTvChannelLogo != null)
+        else
         {
           imgTvChannelLogo.SetFileName(strLogo);
           //img.SetPosition(GUIGraphicsContext.OverScanLeft, GUIGraphicsContext.OverScanTop);
           m_bNeedRefresh = true;
-          imgTvChannelLogo.IsVisible = true;
+          //imgTvChannelLogo.IsVisible = true;
         }
       }
+      
       ShowPrograms();
     }
 
@@ -364,12 +362,7 @@ namespace TvPlugin
       {
         return "";
       }
-      string chNum = zapChannelNr.ToString();
-      if (chNum.Length > _channelNumberMaxLength)
-      {
-        return "";
-      }
-      return chNum;
+      return zapChannelNr.ToString();
     }
 
     private string GetChannelIndex()
@@ -405,29 +398,38 @@ namespace TvPlugin
       }
 
       // Set recorder status
-      if (imgRecIcon != null)
-      {
-        VirtualCard card;
-        TvServer server = new TvServer();
-        imgRecIcon.IsVisible = server.IsRecording(idChannel, out card);
-      }
+      // if (imgRecIcon != null)
+      // {
+      //   VirtualCard card;
+      //   TvServer server = new TvServer();
+      //   imgRecIcon.IsVisible = server.IsRecording(idChannel, out card);
+      // }
 
       if (lblZapToChannelNo != null)
       {
-        if (_showChannelNumber == false)
+        if (_byIndex)
         {
-          lblZapToChannelNo.Label = "";
-          lblZapToChannelNo.Visible = false;
-        }
-        else if (_byIndex)
-        {
-          lblZapToChannelNo.Label = channelIdx;
-          lblZapToChannelNo.Visible = !string.IsNullOrEmpty(channelIdx);
+          if (string.IsNullOrEmpty(channelIdx))
+          {
+            lblZapToChannelNo.Label = String.Empty;
+            lblZapToChannelNo.Visible = false;
+          }
+          else
+          {
+            lblZapToChannelNo.Label = channelIdx;
+          }
         }
         else
         {
-          lblZapToChannelNo.Label = channelNr;
-          lblZapToChannelNo.Visible = !string.IsNullOrEmpty(channelNr);
+          if (string.IsNullOrEmpty(channelNr))
+          {
+            lblZapToChannelNo.Label = String.Empty;
+            lblZapToChannelNo.Visible = false;
+          }
+          else
+          {
+            lblZapToChannelNo.Label = channelNr;
+          }
         }
       }
       var chan = TVHome.Navigator.GetChannel(idChannel, true);
