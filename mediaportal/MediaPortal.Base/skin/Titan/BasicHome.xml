@@ -4,6 +4,7 @@
 <defaultcontrol>4</defaultcontrol>
 <allowoverlay>yes</allowoverlay>
 <disabletopbar>no</disabletopbar>
+
 <define>#useRandomGamesUserFanart:Yes</define>
 <define>#useRandomMoviesUserFanart:Yes</define>
 <define>#useRandomMoviesScraperFanart:Yes</define>
@@ -15,6 +16,18 @@
 <define>#useRandomScoreCenterUserFanart:Yes</define> 
 <define>#useRandomTVUserFanart:Yes</define>
 <define>#useRandomTVSeriesFanart:Yes</define>
+<define>#useRandomShowTimesFanart:Yes</define>
+
+<define>#useRandomSpotLightsFanart:Yes</define>
+
+<define>#useRandomLatestsMusicFanart:Yes</define>
+<define>#useRandomLatestsMvCentralFanart:Yes</define>
+<define>#useRandomLatestsMovieFanart:Yes</define>
+<define>#useRandomLatestsMovingPicturesFanart:Yes</define>
+<define>#useRandomLatestsTVSeriesFanart:Yes</define>
+<define>#useRandomLatestsMyFilmsFanart:Yes</define>
+
+<define>#usePlayFanart:Yes</define>
 
 <define>#header.label:Home</define>
 <rememberLastFocusedControl>yes</rememberLastFocusedControl>
@@ -31,14 +44,16 @@
       <height>1080</height>
       <texture>background.png</texture>
       <shouldCache>true</shouldCache>
-      </control>
+    </control>
 
     
-		<include condition="#(eq(#skin.basichome.background,'default'))">BasicHome.BackgroundSelected.xml</include>	
-		<include condition="#(eq(#skin.basichome.background,'FanartHandler'))">BasicHome.FanartSelected.xml</include>	
-		<include condition="#skin.enable.latest.myVideo">BasicHome.LatestVideo.xml</include>
-		<include condition="#skin.enable.latest.MovingPictures">BasicHome.LatestMovingPictures.xml</include>
-		<include condition="#skin.enable.latest.Series">BasicHome.LatestTVSeries.xml</include>
+    <include condition="#(eq(#skin.basichome.background,'default'))">BasicHome.BackgroundSelected.xml</include>	
+    <include condition="#(eq(#skin.basichome.background,'FanartHandler'))">BasicHome.Fanart.Selected.xml</include>	
+    <include condition="#(eq(#skin.basichome.background,'FanartHandler'))">BasicHome.Fanart.Holiday.xml</include> 
+    <include condition="#(eq(#skin.basichome.background,'FanartHandler'))">BasicHome.Fanart.Play.xml</include> 
+    <include condition="#skin.enable.latest.myVideo">BasicHome.LatestVideo.xml</include>
+    <include condition="#skin.enable.latest.MovingPictures">BasicHome.LatestMovingPictures.xml</include>
+    <include condition="#skin.enable.latest.Series">BasicHome.LatestTVSeries.xml</include>
 
     <import>BasicHome.submenus.xml</import> 
     
@@ -500,6 +515,8 @@
       <animation effect="fade" time="250">WindowClose</animation>
     </control>
     
+    <import>common.Scraper.xml</import>
+    <import>common.Latests.xml</import>
     <import>common.overlay.xml</import>
 </controls>
 </window>
