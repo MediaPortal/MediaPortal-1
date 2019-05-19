@@ -101,9 +101,9 @@ namespace TvLibrary.Implementations.DVB
     [StructLayout(LayoutKind.Sequential, Pack = 1), ComVisible(true)]
     private struct NbcTuningParams
     {
-      public Turbosight.TbsRollOff RollOff;
-      public Turbosight.TbsPilot Pilot;
-      public Turbosight.TbsDvbsStandard DvbsStandard;
+      public TbsRollOff RollOff;
+      public TbsPilot Pilot;
+      public TbsDvbsStandard DvbsStandard;
       public BinaryConvolutionCodeRate InnerFecRate;
       public ModulationType ModulationType;
     }
@@ -111,10 +111,10 @@ namespace TvLibrary.Implementations.DVB
     [StructLayout(LayoutKind.Sequential, Pack = 1), ComVisible(true)]
     private struct TbsAccessParams
     {
-      public Turbosight.TbsAccessMode AccessMode;
-      public Turbosight.TbsTone Tone;
+      public TbsAccessMode AccessMode;
+      public TbsTone Tone;
       private uint Reserved1;
-      public Turbosight.TbsLnbPower LnbPower;
+      public TbsLnbPower LnbPower;
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = 0x80)]
       public byte[] DiseqcTransmitMessage;
       public uint DiseqcTransmitMessageLength;
