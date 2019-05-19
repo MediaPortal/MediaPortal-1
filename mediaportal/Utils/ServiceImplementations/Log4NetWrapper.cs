@@ -93,7 +93,8 @@ namespace MediaPortal.ServiceImplementations
 
     public void Log(MediaInfo.LogLevel loglevel, string message, params object[] parameters)
     {
-      if (!_logLevels.TryGetValue(loglevel, out var commonLogLevel) || CommonLogger.Instance.LogLevel < commonLogLevel)
+      CommonLogLevel commonLogLevel;
+      if (!_logLevels.TryGetValue(loglevel, out commonLogLevel) || CommonLogger.Instance.LogLevel < commonLogLevel)
       {
         return;
       }
