@@ -72,17 +72,6 @@ namespace TvLibrary.Implementations.DVB
 
     #region Structures
 
-    [StructLayout(LayoutKind.Sequential, Pack = 1), ComVisible(true)]
-    private struct UsbIrCommand
-    {
-      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 0x20)]
-      private byte[] Reserved1;
-      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)]
-      public byte[] Codes;
-      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 0xf4)]
-      private byte[] Reserved2;
-    }
-
     private struct BDA_NBC_PARAMS
     {
       public int rolloff;
@@ -112,13 +101,6 @@ namespace TvLibrary.Implementations.DVB
         Length = 0;
         Message = null;
       }
-    }
-
-    [StructLayout(LayoutKind.Sequential, Pack = 1), ComVisible(true)]
-    private struct IrCommand
-    {
-      public uint Address;
-      public uint Command;
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1), ComVisible(true)]
@@ -178,55 +160,6 @@ namespace TvLibrary.Implementations.DVB
       Dvbs2 = 2
     }
 
-    private enum TbsIrCode : byte
-    {
-      Down1 = 0x88,
-      Down2 = 150,
-      Eight = 0x8e,
-      Epg = 0x97,
-      Exit = 0x9f,
-      Five = 0x8a,
-      Four = 0x8b,
-      FullScreen = 0x9d,
-      Info = 0x9c,
-      Left1 = 140,
-      Left2 = 0x90,
-      Menu = 0x9e,
-      Mute = 0x94,
-      Nine = 0x8d,
-      Ok = 0x99,
-      One = 0x87,
-      Pause = 0x98,
-      Play = 0x9b,
-      Power = 0x84,
-      Recall = 0x80,
-      Record = 0x83,
-      Right1 = 130,
-      Right2 = 0x93,
-      Seven = 0x8f,
-      Six = 0x89,
-      Snapshot = 0x9a,
-      Tab = 0x95,
-      Three = 0x85,
-      Two = 0x86,
-      Up1 = 0x81,
-      Up2 = 0x91,
-      Zero = 0x92
-    }
-
-    private enum TbsIrProperty
-    {
-      Codes = 0,
-      ReceiverCommand = 1
-    }
-
-    private enum TbsIrReceiverCommand : byte
-    {
-      Flush = 3,
-      Start = 1,
-      Stop = 2
-    }
-
     private enum TbsLnbPower : uint
     {
       Off = 0,
@@ -282,19 +215,14 @@ namespace TvLibrary.Implementations.DVB
     // USB (QBOX) only.
     private enum UsbBdaExtensionProperty
     {
-      Reserved = 0,
-      Ir = 1,                 // Property for retrieving IR codes from the device's IR receiver.
       CiAccess = 8,           // Property for interacting with the CI slot.
-      BlindScan = 9,          // Property for accessing and controlling the hardware blind scan capabilities.
       TbsAccess = 18          // TBS property for enabling control of the common properties in the TbsAccessMode enum.
     }
 
     // PCIe/PCI only.
     private enum BdaExtensionProperty
     {
-      Reserved = 0,
       NbcParams = 10,         // Property for setting DVB-S2 parameters that could not initially be set through BDA interfaces.
-      BlindScan = 11,         // Property for accessing and controlling the hardware blind scan capabilities.
       CiAccess = 18,          // Property for interacting with the CI slot.
       TbsAccess = 21          // TBS property for enabling control of the common properties in the BdaExtensionCommand enum.
     }
@@ -585,37 +513,12 @@ namespace TvLibrary.Implementations.DVB
     private IBaseFilter _tunerFilter;
     private string _tunerFilterName;
     private static readonly Guid BdaExtensionPropertySet = new Guid(0xfaa8f3e5, 0x31d4, 0x4e41, 0x88, 0xef, 0xd9, 0xeb, 0x71, 0x6f, 110, 0xc9);
-    private static readonly Guid IrPropertySet = new Guid(0xb51c4994, 0x54, 0x4749, 130, 0x43, 2, 0x9a, 0x66, 0x86, 0x36, 0x36);
     private const int MaxDiseqcMessageLength = 0x80;
     private const int MaxPmtLength = 0x400;
     private const int MmiMessageBufferSize = 0x200;
     private const int MmiResponseBufferSize = 0x800;
     private const int NbcTuningParamsSize = 20;
     private const int TbsAccessParamsSize = 0x218;
-    private static readonly string[] TunersWithCiSlots = new string[]
-    {
-      "TBS DVBC Tuner",
-      "TBS 5880 DVB-T/T2 Tuner",
-      "TBS 5880 DVBC Tuner",
-      "TBS 5881 DVB-T/T2 Tuner",
-      "TBS 5881 DVBC Tuner",
-      "TBS 5680 DVBC Tuner",
-      "TBS 5980 CI Tuner", 
-      "TBS 5990 DVBS/S2 Tuner A",
-      "TBS 5990 DVBS/S2 Tuner B",
-      "TBS 6290 DVBT/T2 Tuner A",
-      "TBS 6290 DVBT/T2 Tuner B",
-      "TBS 6290 DVBC Tuner A",
-      "TBS 6290 DVBC Tuner B",
-      "TBS 6680 BDA DVBC Tuner A",
-      "TBS 6680 BDA DVBC Tuner B",
-      "TBS 6928 DVBS/S2 Tuner", 
-      "TBS 6991 DVBS/S2 Tuner A",
-      "TBS 6991 DVBS/S2 Tuner B",
-      "TBS 6992 DVBS/S2 Tuner A",
-      "TBS 6992 DVBS/S2 Tuner B",
-      "TBS 6618 BDA DVBC Tuner"
-    };
 
     private static readonly Guid UsbBdaExtensionPropertySet = new Guid(0xc6efe5eb, 0x855a, 0x4f1b, 0xb7, 170, 0x87, 0xb5, 0xe1, 220, 0x41, 0x13);
 
@@ -940,7 +843,6 @@ namespace TvLibrary.Implementations.DVB
             {
               source = new byte[] { content[i] };
             }
-            //TvLibrary.Log.Log.Debug("OK2", new object[0]);
           }
         }
         IntPtr destination = Marshal.AllocCoTaskMem(source.Length + 1);
@@ -1349,8 +1251,6 @@ namespace TvLibrary.Implementations.DVB
       lock (this)
       {
         this._mmiMessageQueue.Add(new MmiMessage(TbsMmiMessageType.CloseMmi));
-        //this._mmiMessageQueue.Add(1);
-        //this._mmiMessageQueue.Add(14);
       }
       return true;
     }
@@ -1418,7 +1318,6 @@ namespace TvLibrary.Implementations.DVB
       // MBU
       _tunerFilter = null;            // MBU
       _isTurbosight = false;          // MBU
-
     }
 
     /// <summary>
@@ -1451,17 +1350,6 @@ namespace TvLibrary.Implementations.DVB
         _mmiMessageQueue.Add(new MmiMessage(TbsMmiMessageType.EnterMenu));
         // We have to request a response.
         _mmiMessageQueue.Add(new MmiMessage(TbsMmiMessageType.GetMmi));
-
-        //this._mmiMessageQueue.Add(1);
-        //this._mmiMessageQueue.Add(14);
-        //this._mmiMessageQueue.Add(1);
-        //this._mmiMessageQueue.Add(1);
-        //this._mmiMessageQueue.Add(1);
-        //this._mmiMessageQueue.Add(2);
-        //this._mmiMessageQueue.Add(1);
-        //this._mmiMessageQueue.Add(9);
-        //this._mmiMessageQueue.Add(1);
-        //this._mmiMessageQueue.Add(13);
       }
       return true;
     }
@@ -1528,20 +1416,6 @@ namespace TvLibrary.Implementations.DVB
       }
       TvLibrary.Log.Log.Debug("Turbosight: device does have a CI slot");
       return true;
-
-      /*TvLibrary.Log.Log.Debug("Turbosight: is CI slot present", new object[0]);
-      string filterName = FilterGraphTools.GetFilterName(this._tunerFilter);
-      bool flag = false;
-      for (int i = 0; i < TunersWithCiSlots.Length; i++)
-      {
-          if (filterName.Equals(TunersWithCiSlots[i]))
-          {
-              flag = true;
-              break;
-          }
-      }
-      TvLibrary.Log.Log.Debug("Turbosight: result = {0}", new object[] { flag });
-      return flag;*/
     }
 
     /// <summary>
@@ -1699,7 +1573,6 @@ namespace TvLibrary.Implementations.DVB
       }
       return true;
     }
-
 
     public bool SendDiseqcCommand(ScanParameters parameters, DVBSChannel channel)
     {
