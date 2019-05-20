@@ -350,6 +350,10 @@ namespace TvPlugin
     {
       get
       {
+        if (m_zapChannelNr<0)
+        {
+          return m_currentChannel.ChannelNumber;
+        }
         return m_zapChannelNr;
       }
       set
@@ -365,6 +369,10 @@ namespace TvPlugin
     {
       get
       {
+        if (m_zapChannelIdx<0)
+        {
+          return GetChannelIndex(m_currentChannel);
+        }
         return m_zapChannelIdx;
       }
       set

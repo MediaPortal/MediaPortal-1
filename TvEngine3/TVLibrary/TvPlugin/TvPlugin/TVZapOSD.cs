@@ -398,12 +398,12 @@ namespace TvPlugin
       }
 
       // Set recorder status
-      // if (imgRecIcon != null)
-      // {
-      //   VirtualCard card;
-      //   TvServer server = new TvServer();
-      //   imgRecIcon.IsVisible = server.IsRecording(idChannel, out card);
-      // }
+      //if (imgRecIcon != null)
+      //{
+      //  VirtualCard card;
+      //  TvServer server = new TvServer();
+      //  imgRecIcon.IsVisible = server.IsRecording(idChannel, out card);
+      //}
 
       if (lblZapToChannelNo != null)
       {
@@ -417,6 +417,7 @@ namespace TvPlugin
           else
           {
             lblZapToChannelNo.Label = channelIdx;
+            //lblZapToChannelNo.Visible = true;
           }
         }
         else
@@ -429,6 +430,7 @@ namespace TvPlugin
           else
           {
             lblZapToChannelNo.Label = channelNr;
+            //lblZapToChannelNo.Visible = true;
           }
         }
       }
