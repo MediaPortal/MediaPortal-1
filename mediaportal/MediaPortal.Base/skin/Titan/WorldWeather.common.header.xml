@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <controls>
+
+    <!--            :: WEATHER ICON ::            -->
+
+    <control>
+      <id>0</id>
+      <type>image</type>
+      <posX>63</posX>
+      <posY>40</posY>
+      <width>65</width>
+      <height>51</height>
+      <texture>icon_weather.png</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+    <!--            :: CURRENT LOCATION ::            -->
+
+    <control>
+      <description>LOCATION</description>
+      <type>label</type>
+      <label>#WorldWeather.Location #WorldWeather.LocationCountry</label>
+      <id>0</id>
+      <posX>72</posX>
+      <posY>100</posY>
+      <align>left</align>
+      <textcolor>FFFFFFFF</textcolor>
+      <font>TitanLight12</font>
+      <visible>string.equals(#WorldWeather.LocationDescription,)</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>LOCATION</description>
+      <type>label</type>
+      <label>#WorldWeather.LocationDescription</label>
+      <id>0</id>
+      <posX>72</posX>
+      <posY>100</posY>
+      <align>left</align>
+      <textcolor>FFFFFFFF</textcolor>
+      <font>TitanLight12</font>
+      <visible>!string.equals(#WorldWeather.LocationDescription,)</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+  </controls>
+</window>

@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+<id>25650</id>
+<defaultcontrol>50</defaultcontrol>
+<allowoverlay>no</allowoverlay>
+<define>#header.label:RadioTime</define>
+<define>#useRandomMusicUserFanart:Yes</define>
+<define>#useSelectedFanart:Yes</define>
+<define>#usePlayFanart:Yes</define>
+<define>#header.hover:#(iif(#skin.background.useHover, 'hover_radiotime.png', 'background.png'))</define>       
+<controls>
+    
+  <!--            :: BACKGROUNDS ::           	 -->
+	
+	<control>
+		<description>BACKGROUND</description>
+		<id>0</id>
+		<type>image</type>
+        <posX>0</posX>
+        <posY>0</posY>
+        <width>1920</width>
+        <height>1080</height>
+		<texture>#header.hover</texture>
+        <shouldCache>true</shouldCache>		
+	</control>
+
+    <include>common.music.selected.fanart.xml</include>
+    <include>common.music.play.fanart.xml</include>
+
+    <import>common.window.radiotime.xml</import>
+    
+    <control>
+        <id>0</id>
+        <type>image</type>
+        <posX>66</posX>
+        <posY>34</posY>
+        <width>68</width>
+        <height>60</height>
+        <texture>icon_music.png</texture>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+    <import>common.time.xml</import>
+    <import>RadioTime.hiddenmenu.xml</import>
+    <import>common.facade.radiotime.xml</import>
+
+    <!--            :: LISTVIEW ::            -->
+    
+    <control>
+        <description>Poster shadow</description>
+        <type>image</type>
+        <id>1</id>
+        <posX>213</posX>
+        <posY>443</posY>
+        <width>382</width>
+        <height>381</height>
+        <texture>list_poster_shadow_music.png</texture>
+        <visible>facadeview.list+Control.IsVisible(50)</visible>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+        
+    <control>
+        <id>0</id>
+        <type>image</type>
+        <posX>225</posX>
+        <posY>450</posY>
+        <width>350</width>
+        <height>350</height>
+        <visible>facadeview.list+!control.hasthumb(51)</visible>
+        <texture>defaultAudioBig.png</texture>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+    <control>
+        <id>0</id>
+        <type>image</type>
+        <posX>225</posX>
+        <posY>450</posY>
+        <width>350</width>
+        <height>350</height>
+        <texture>folderBackMusic.png</texture>
+        <visible>[facadeview.list+!control.hasthumb(51)+string.contains(#selecteditem, ..)]</visible>
+    <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    
+    <control>
+        <description>Cover Art</description>
+        <type>image</type>
+        <id>51</id>
+        <posX>225</posX>
+        <posY>450</posY>
+        <width>350</width>
+        <height>350</height>
+        <texture>-</texture>
+        <keepaspectratio>yes</keepaspectratio>      
+        <visible>facadeview.list+Control.IsVisible(50)</visible>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>     
+    </control>
+
+    <control>
+        <description>subtext</description>
+        <type>fadelabel</type>
+        <label>#RadioTime.Selected.Subtext</label>
+        <id>47</id>
+        <posX>150</posX>
+        <posY>900</posY>
+        <width>530</width>
+        <align>center</align>
+        <font>font12</font>
+        <textcolor>6aa5cb</textcolor>
+        <visible>facadeview.list+Control.IsVisible(50)+!string.equals(#selecteditem,..)</visible>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>     
+    </control>
+
+    <control>
+        <description>format</description>
+        <type>fadelabel</type>
+        <label>#RadioTime.Selected.Format</label>
+        <id>47</id>
+        <posX>150</posX>
+        <posY>940</posY>
+        <width>530</width>
+        <align>center</align>
+        <font>font12</font>
+        <textcolor>6aa5cb</textcolor>
+        <visible>facadeview.list+Control.IsVisible(50)+!string.equals(#selecteditem,..)</visible>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>     
+    </control>
+    
+    <control>
+        <id>81</id>
+        <description>existent rating2</description>
+        <type>imagelist</type>
+        <visible>no</visible>
+        <posX>240</posX>
+        <posY>820</posY>
+        <width>315</width>
+        <height>29</height>
+        <align>left</align>
+        <percentage>#RadioTime.Selected.Reliability</percentage>
+        <imagesToDraw>10</imagesToDraw>
+        <orientation>horizontal</orientation>
+        <textureWidth>32</textureWidth>
+        <textureHeight>27</textureHeight>
+        <subitems>
+        <subitem>starblue.png</subitem>
+        <subitem>starwhite.png</subitem>
+        </subitems>
+        <visible>facadeview.list+!string.equals(#RadioTime.Selected.Reliability,0)+Control.HasFocus(50)</visible>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+    <!--          :: Thumbviews ::            -->
+
+    <control>
+        <description>Title value</description>
+        <type>fadelabel</type>
+        <id>1</id>
+        <posX>1040</posX>
+        <posY>332</posY>
+        <width>700</width>
+        <label>#selecteditem</label>
+        <font>fontB16</font>
+        <textcolor>FF00b7ff</textcolor>
+        <shadowAngle>120</shadowAngle>
+        <shadowDistance>2</shadowDistance>
+        <shadowColor>FF000000</shadowColor>
+        <visible>[facadeview.smallicons | facadeview.largeicons]</visible>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+    <control Style="InfoValueWide">
+        <description>subtext</description>
+        <type>fadelabel</type>
+        <label>#RadioTime.Selected.Subtext</label>
+        <id>47</id>
+        <posX>1040</posX>
+        <posY>481</posY>
+        <width>530</width>
+        <visible>[facadeview.smallicons | facadeview.largeicons]+Control.IsVisible(50)+!string.equals(#selecteditem,..)</visible>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>     
+    </control>
+
+    <control Style="InfoValueWide">
+        <description>format</description>
+        <type>fadelabel</type>
+        <label>#RadioTime.Selected.Format</label>
+        <id>47</id>
+        <posX>1040</posX>
+        <posY>445</posY>
+        <width>530</width>
+        <visible>[facadeview.smallicons | facadeview.largeicons]+Control.IsVisible(50)+!string.equals(#selecteditem,..)</visible>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>     
+    </control>
+
+    <control>
+        <id>81</id>
+        <description>existent rating2</description>
+        <type>imagelist</type>
+        <visible>no</visible>
+        <posX>1038</posX>
+        <posY>401</posY>
+        <width>315</width>
+        <height>29</height>
+        <align>left</align>
+        <percentage>#RadioTime.Selected.Reliability</percentage>
+        <imagesToDraw>10</imagesToDraw>
+        <orientation>horizontal</orientation>
+        <textureWidth>32</textureWidth>
+        <textureHeight>27</textureHeight>
+        <subitems>
+        <subitem>starblue.png</subitem>
+        <subitem>starwhite.png</subitem>
+        </subitems>
+        <visible>[facadeview.smallicons | facadeview.largeicons]+!string.equals(#RadioTime.Selected.Reliability,0)+Control.HasFocus(50)</visible>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    
+    <!-- Clear Art -->
+    <control>
+        <description>ClearArt</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>1650</posX>
+        <posY>190</posY>
+        <width>200</width>
+        <height>77</height>           
+        <texture>#fanarthandler.music.artistclearart.selected</texture>
+        <animation effect="fade" time="500">VisibleChange</animation>
+        <animation effect="fade" time="250">Hidden</animation>
+        <!--visible>![facadeview.filmstrip|facadeview.coverflow]</visible-->
+        <shouldCache>false</shouldCache>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <!-- -->
+    <import>common.Scraper.xml</import>
+    <import>common.overlay.xml</import>
+
+    </controls>
+</window>

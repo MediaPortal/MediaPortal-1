@@ -39,17 +39,18 @@
     
     <control>
       <description>Moviecount</description>
-      <type>label</type>
-	  	<label>#currentmodule: #itemcount</label>
-    	<id>0</id>
-	  	<posX>96</posX>
+      <type>fadelabel</type>
+	  <label>#currentmodule: #itemcount</label>
+      <id>0</id>
+	  <posX>96</posX>
       <posY>998</posY>
       <align>left</align>
+      <width>500</width>
       <font>TitanLight12</font>
       <textcolor>000000</textcolor>
       <visible>[facadeview.list | facadeview.smallicons | facadeview.largeicons|facadeview.playlist] + control.isvisible(50)</visible>
-	  	<animation effect="fade" time="250">WindowOpen</animation>
-	  	<animation effect="fade" time="250">WindowClose</animation>
+	  <animation effect="fade" time="250">WindowOpen</animation>
+	  <animation effect="fade" time="250">WindowClose</animation>
     </control>
 
 	<!--            :: Listview Lines ::            -->

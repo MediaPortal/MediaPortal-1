@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+<id>25653</id>
+<defaultcontrol>101</defaultcontrol>
+<allowoverlay>no</allowoverlay>
+<define>#header.label:RadioTime</define>
+<define>#header.hover:#(iif(#skin.background.useHover, 'hover_radiotime.png', 'background.png'))</define>			
+<controls>
+	
+  <!--            :: BACKGROUNDS ::           	 -->
+	
+	<control>
+		<description>BACKGROUND</description>
+		<id>0</id>
+		<type>image</type>
+    <posX>0</posX>
+    <posY>0</posY>
+    <width>1920</width>
+    <height>1080</height>
+		<texture>#header.hover</texture>
+    <shouldCache>true</shouldCache>		
+	</control>
+
+	<control>
+		<description>background listview</description>
+		<type>image</type>
+		<id>0</id>
+		<posX>0</posX>
+    <posY>0</posY>
+		<width>1920</width>
+		<height>1080</height>
+		<texture>fanart_overlay.png</texture>
+		<visible>skin.hassetting(#skin.background.useHover)</visible>		
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+	
+	<control>
+		<id>0</id>
+		<type>image</type>
+		<posX>66</posX>
+		<posY>34</posY>
+		<width>68</width>
+		<height>60</height>
+		<texture>icon_music.png</texture>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+
+	<import>common.time.xml</import>
+	
+	<control>
+		<description>sub title</description>
+		<type>label</type>
+		<id>1</id>
+		<posX>72</posX>
+    <posY>94</posY>
+    <align>left</align>
+		<width>500</width>
+    <textcolor>FFFFFFFF</textcolor>
+    <font>TitanLight12</font>
+		<label>#RadioTime.Translation.FastPresets.Label</label>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+	
+	<control>
+		<description>viewport list</description>
+		<type>image</type>
+		<id>0</id>
+		<posX>10</posX>
+		<posY>145</posY>
+		<width>1903</width>
+		<height>897</height>
+		<texture>panel_trakt.png</texture>
+	</control>
+
+	<control>
+		<description>buttons</description>
+		<type>group</type>
+		<posX>122</posX>
+		<posY>246</posY>
+		<layout>StackLayout(7, Vertical, true)</layout>
+			
+		<control Style="SettingsButton">
+			<id>2</id>
+			<type>button</type>
+			<onup>17</onup>
+			<ondown>3</ondown>
+			<label>#RadioTime.Translation.Home.Label</label>
+			<posY>165</posY>
+		</control>
+		
+		<control Style="SettingsButton">
+			<id>3</id>
+			<type>button</type>
+			<onup>2</onup>
+			<ondown>3</ondown>
+			<label>#RadioTime.Translation.Folders.Label</label>
+		</control>
+	</control>
+
+		<control>
+			<description>group element</description>
+			<type>group</type>
+			<control>
+				<description>button group</description>
+				<type>group</type>
+				<posX>650</posX>
+				<posY>246</posY>
+				<layout>StackLayout(7, Vertical, true)</layout>
+				
+				<control Style="SettingsButtonLarge">
+					<id>101</id>
+					<type>button</type>
+					<onright>101</onright>
+					<ondown>102</ondown>
+					<onup>110</onup>
+					<label>#RadioTime.Presets.1.Name</label>
+				</control>
+				
+				<control Style="SettingsButtonLarge">
+					<id>102</id>
+					<type>button</type>
+					<onright>102</onright>
+					<onup>101</onup>
+					<ondown>103</ondown>
+					<label>#RadioTime.Presets.2.Name</label>
+				</control>
+				
+				<control Style="SettingsButtonLarge">
+					<id>103</id>
+					<type>button</type>
+					<onright>103</onright>
+					<onup>102</onup>
+					<ondown>104</ondown>
+					<label>#RadioTime.Presets.3.Name</label>
+				</control>
+				
+				<control Style="SettingsButtonLarge">
+					<id>104</id>
+					<type>button</type>
+					<onright>104</onright>
+					<onup>103</onup>
+					<ondown>105</ondown>
+					<label>#RadioTime.Presets.4.Name</label>
+				</control>
+				
+				<control Style="SettingsButtonLarge">
+					<id>105</id>
+					<type>button</type>
+					<onright>105</onright>
+					<onup>104</onup>
+					<ondown>106</ondown>
+					<label>#RadioTime.Presets.5.Name</label>
+				</control>
+				
+				<control Style="SettingsButtonLarge">
+					<id>106</id>
+					<type>button</type>
+					<onleft>2</onleft>
+					<onup>105</onup>
+					<ondown>107</ondown>
+					<label>#RadioTime.Presets.6.Name</label>
+				</control>
+				
+				<control Style="SettingsButtonLarge">
+					<id>107</id>
+					<type>button</type>
+					<onleft>2</onleft>
+					<onup>106</onup>
+					<ondown>108</ondown>
+					<label>#RadioTime.Presets.7.Name</label>
+				</control>
+				
+				<control Style="SettingsButtonLarge">
+					<id>108</id>
+					<type>button</type>
+					<onleft>2</onleft>
+					<onup>107</onup>
+					<ondown>109</ondown>
+					<label>#RadioTime.Presets.8.Name</label>
+				</control>
+				
+				<control Style="SettingsButtonLarge">
+					<id>109</id>
+					<type>button</type>
+					<onleft>2</onleft>
+					<onup>108</onup>
+					<ondown>110</ondown>
+					<label>#RadioTime.Presets.9.Name</label>
+				</control>
+				
+				<control Style="SettingsButtonLarge">
+					<id>110</id>
+					<type>button</type>
+					<onleft>2</onleft>
+					<onup>109</onup>
+					<ondown>101</ondown>
+					<label>#RadioTime.Presets.10.Name</label>
+				</control>
+			</control>
+		</control>
+		
+		<import>common.overlay.xml</import>
+		
+	</controls>
+</window>

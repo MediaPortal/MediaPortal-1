@@ -1,0 +1,894 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <allowoverlay>yes</allowoverlay>
+  <controls>
+
+    <!-- *** Location *** -->
+    <control>
+      <description>Location year label</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>100</posX>
+      <posY>320</posY>
+      <label>#WorldWeather.TranslationChart #WorldWeather.HistoryYear4Year - #WorldWeather.HistoryYear0Year</label>
+      <font>fontB11</font>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+    <!-- *** History Temperature Chart (Year) *** -->
+    <control>
+      <description>temperature chart</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1100</posX>
+      <posY>350</posY>
+      <width>800</width>
+      <height>600</height>
+      <align>center</align>
+      <valign>middle</valign>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>#WorldWeather.HistoryYearTemperatureChart</texture>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+!string.equals(#WorldWeather.HistoryYear0Date, )</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+    <!-- *** History (Year) *** -->
+    <control>
+      <description>year 0 day</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>100</posX>
+      <posY>390</posY>
+      <height>20</height>
+      <width>200</width>
+      <align>left</align>
+      <label>#WorldWeather.HistoryYear0Day</label>
+      <font>TitanLight10</font>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+!string.equals(#WorldWeather.HistoryYear0Day, )</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>year 0 date</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>100</posX>
+      <posY>420</posY>
+      <height>20</height>
+      <width>175</width>
+      <align>left</align>
+      <label>#WorldWeather.HistoryYear0Date</label>
+      <font>font1</font>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+!string.equals(#WorldWeather.HistoryYear0Date, )</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>year 0 icon</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>400</posX>
+      <posY>360</posY>
+      <width>85</width>
+      <height>85</height>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>#WorldWeather.HistoryYear0IconImage</texture>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+!string.equals(#WorldWeather.HistoryYear0Date, )</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>year 0 condition</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>340</posX>
+      <posY>450</posY>
+      <height>20</height>
+      <width>200</width>
+      <align>center</align>
+      <label>#WorldWeather.HistoryYear0Condition</label>
+      <font>TitanLight10</font>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+!string.equals(#WorldWeather.HistoryYear0Date, )</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>year 0 temperature</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>650</posX>
+      <posY>390</posY>
+      <height>20</height>
+      <width>175</width>
+      <align>right</align>
+      <label>#WorldWeather.HistoryYear0MaxTemperature</label>
+      <font>font1</font>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+!string.equals(#WorldWeather.HistoryYear0Date, )</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>year 0 temperature</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>650</posX>
+      <posY>420</posY>
+      <height>20</height>
+      <width>175</width>
+      <align>right</align>
+      <label>#WorldWeather.HistoryYear0MinTemperature</label>
+      <font>font1</font>
+      <textcolor>00b7ff</textcolor>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+!string.equals(#WorldWeather.HistoryYear0Date, )</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>year 0 wind</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>750</posX>
+      <posY>390</posY>
+      <height>20</height>
+      <width>175</width>
+      <align>right</align>
+      <label>#WorldWeather.HistoryYear0MaxWindSpeed</label>
+      <font>font1</font>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+!string.equals(#WorldWeather.HistoryYear0Date, )</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>year 0 wind</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>750</posX>
+      <posY>420</posY>
+      <height>20</height>
+      <width>175</width>
+      <align>right</align>
+      <label>#WorldWeather.HistoryYear0MinWindSpeed</label>
+      <font>font1</font>
+      <textcolor>00b7ff</textcolor>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+!string.equals(#WorldWeather.HistoryYear0Date, )</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>year 0 pressure</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>900</posX>
+      <posY>390</posY>
+      <height>20</height>
+      <width>175</width>
+      <align>right</align>
+      <label>#WorldWeather.HistoryYear0MaxPressure</label>
+      <font>font1</font>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+!string.equals(#WorldWeather.HistoryYear0Date, )</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>year 0 pressure</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>900</posX>
+      <posY>420</posY>
+      <height>20</height>
+      <width>175</width>
+      <align>right</align>
+      <label>#WorldWeather.HistoryYear0MinPressure</label>
+      <font>font1</font>
+      <textcolor>00b7ff</textcolor>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+!string.equals(#WorldWeather.HistoryYear0Date, )</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>year 0 precipitation</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1000</posX>
+      <posY>390</posY>
+      <height>20</height>
+      <width>175</width>
+      <align>right</align>
+      <label>#WorldWeather.HistoryYear0Precipitation</label>
+      <font>font1</font>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+!string.equals(#WorldWeather.HistoryYear0Date, )</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <!-- *** History (Year) *** -->
+    <control>
+      <description>year 1 day</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>100</posX>
+      <posY>510</posY>
+      <height>20</height>
+      <width>200</width>
+      <align>left</align>
+      <label>#WorldWeather.HistoryYear1Day</label>
+      <font>TitanLight10</font>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+!string.equals(#WorldWeather.HistoryYear1Day, )</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>year 1 date</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>100</posX>
+      <posY>540</posY>
+      <height>20</height>
+      <width>175</width>
+      <align>left</align>
+      <label>#WorldWeather.HistoryYear1Date</label>
+      <font>font1</font>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+!string.equals(#WorldWeather.HistoryYear1Date, )</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>year 1 icon</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>400</posX>
+      <posY>480</posY>
+      <width>85</width>
+      <height>85</height>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>#WorldWeather.HistoryYear1IconImage</texture>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+!string.equals(#WorldWeather.HistoryYear1Date, )</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>year 1 condition</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>340</posX>
+      <posY>570</posY>
+      <height>20</height>
+      <width>200</width>
+      <align>center</align>
+      <label>#WorldWeather.HistoryYear1Condition</label>
+      <font>TitanLight10</font>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+!string.equals(#WorldWeather.HistoryYear1Date, )</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>year 1 temperature</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>650</posX>
+      <posY>510</posY>
+      <height>20</height>
+      <width>175</width>
+      <align>right</align>
+      <label>#WorldWeather.HistoryYear1MaxTemperature</label>
+      <font>font1</font>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+!string.equals(#WorldWeather.HistoryYear1Date, )</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>year 1 temperature</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>650</posX>
+      <posY>540</posY>
+      <height>20</height>
+      <width>175</width>
+      <align>right</align>
+      <label>#WorldWeather.HistoryYear1MinTemperature</label>
+      <font>font1</font>
+      <textcolor>00b7ff</textcolor>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+!string.equals(#WorldWeather.HistoryYear1Date, )</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>year 1 wind</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>750</posX>
+      <posY>510</posY>
+      <height>20</height>
+      <width>175</width>
+      <align>right</align>
+      <label>#WorldWeather.HistoryYear1MaxWindSpeed</label>
+      <font>font1</font>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+!string.equals(#WorldWeather.HistoryYear1Date, )</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>year 1 wind</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>750</posX>
+      <posY>540</posY>
+      <height>20</height>
+      <width>175</width>
+      <align>right</align>
+      <label>#WorldWeather.HistoryYear1MinWindSpeed</label>
+      <font>font1</font>
+      <textcolor>00b7ff</textcolor>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+!string.equals(#WorldWeather.HistoryYear1Date, )</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>year 1 pressure</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>900</posX>
+      <posY>510</posY>
+      <height>20</height>
+      <width>175</width>
+      <align>right</align>
+      <label>#WorldWeather.HistoryYear1MaxPressure</label>
+      <font>font1</font>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+!string.equals(#WorldWeather.HistoryYear1Date, )</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>year 1 pressure</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>900</posX>
+      <posY>540</posY>
+      <height>20</height>
+      <width>175</width>
+      <align>right</align>
+      <label>#WorldWeather.HistoryYear1MinPressure</label>
+      <font>font1</font>
+      <textcolor>00b7ff</textcolor>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+!string.equals(#WorldWeather.HistoryYear1Date, )</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>year 1 precipitation</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1000</posX>
+      <posY>510</posY>
+      <height>20</height>
+      <width>175</width>
+      <align>right</align>
+      <label>#WorldWeather.HistoryYear1Precipitation</label>
+      <font>font1</font>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+!string.equals(#WorldWeather.HistoryYear1Date, )</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <!-- *** History (Year) *** -->
+    <control>
+      <description>year 2 day</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>100</posX>
+      <posY>630</posY>
+      <height>20</height>
+      <width>200</width>
+      <align>left</align>
+      <label>#WorldWeather.HistoryYear2Day</label>
+      <font>TitanLight10</font>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+!string.equals(#WorldWeather.HistoryYear2Day, )</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>year 2 date</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>100</posX>
+      <posY>660</posY>
+      <height>20</height>
+      <width>175</width>
+      <align>left</align>
+      <label>#WorldWeather.HistoryYear2Date</label>
+      <font>font1</font>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+!string.equals(#WorldWeather.HistoryYear2Date, )</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>year 2 icon</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>400</posX>
+      <posY>600</posY>
+      <width>85</width>
+      <height>85</height>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>#WorldWeather.HistoryYear2IconImage</texture>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+!string.equals(#WorldWeather.HistoryYear2Date, )</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>year 2 condition</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>340</posX>
+      <posY>690</posY>
+      <height>20</height>
+      <width>200</width>
+      <align>center</align>
+      <label>#WorldWeather.HistoryYear2Condition</label>
+      <font>TitanLight10</font>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+!string.equals(#WorldWeather.HistoryYear2Date, )</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>year 2 temperature</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>650</posX>
+      <posY>630</posY>
+      <height>20</height>
+      <width>175</width>
+      <align>right</align>
+      <label>#WorldWeather.HistoryYear2MaxTemperature</label>
+      <font>font1</font>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+!string.equals(#WorldWeather.HistoryYear2Date, )</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>year 2 temperature</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>650</posX>
+      <posY>660</posY>
+      <height>20</height>
+      <width>175</width>
+      <align>right</align>
+      <label>#WorldWeather.HistoryYear2MinTemperature</label>
+      <font>font1</font>
+      <textcolor>00b7ff</textcolor>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+!string.equals(#WorldWeather.HistoryYear2Date, )</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>year 2 wind</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>750</posX>
+      <posY>630</posY>
+      <height>20</height>
+      <width>175</width>
+      <align>right</align>
+      <label>#WorldWeather.HistoryYear2MaxWindSpeed</label>
+      <font>font1</font>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+!string.equals(#WorldWeather.HistoryYear2Date, )</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>year 2 wind</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>750</posX>
+      <posY>660</posY>
+      <height>20</height>
+      <width>175</width>
+      <align>right</align>
+      <label>#WorldWeather.HistoryYear2MinWindSpeed</label>
+      <font>font1</font>
+      <textcolor>00b7ff</textcolor>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+!string.equals(#WorldWeather.HistoryYear2Date, )</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>year 2 pressure</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>900</posX>
+      <posY>630</posY>
+      <height>20</height>
+      <width>175</width>
+      <align>right</align>
+      <label>#WorldWeather.HistoryYear2MaxPressure</label>
+      <font>font1</font>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+!string.equals(#WorldWeather.HistoryYear2Date, )</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>year 2 pressure</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>900</posX>
+      <posY>660</posY>
+      <height>20</height>
+      <width>175</width>
+      <align>right</align>
+      <label>#WorldWeather.HistoryYear2MinPressure</label>
+      <font>font1</font>
+      <textcolor>00b7ff</textcolor>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+!string.equals(#WorldWeather.HistoryYear2Date, )</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>year 2 precipitation</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1000</posX>
+      <posY>630</posY>
+      <height>20</height>
+      <width>175</width>
+      <align>right</align>
+      <label>#WorldWeather.HistoryYear2Precipitation</label>
+      <font>font1</font>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+!string.equals(#WorldWeather.HistoryYear2Date, )</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <!-- *** History (Year) *** -->
+    <control>
+      <description>year 3 day</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>100</posX>
+      <posY>750</posY>
+      <height>20</height>
+      <width>200</width>
+      <align>left</align>
+      <label>#WorldWeather.HistoryYear3Day</label>
+      <font>TitanLight10</font>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+!string.equals(#WorldWeather.HistoryYear3Day, )</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>year 3 date</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>100</posX>
+      <posY>780</posY>
+      <height>20</height>
+      <width>175</width>
+      <align>left</align>
+      <label>#WorldWeather.HistoryYear3Date</label>
+      <font>font1</font>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+!string.equals(#WorldWeather.HistoryYear3Date, )</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>year 3 icon</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>400</posX>
+      <posY>720</posY>
+      <width>85</width>
+      <height>85</height>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>#WorldWeather.HistoryYear3IconImage</texture>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+!string.equals(#WorldWeather.HistoryYear3Date, )</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>year 3 condition</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>340</posX>
+      <posY>810</posY>
+      <height>20</height>
+      <width>200</width>
+      <align>center</align>
+      <label>#WorldWeather.HistoryYear3Condition</label>
+      <font>TitanLight10</font>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+!string.equals(#WorldWeather.HistoryYear3Date, )</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>year 3 temperature</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>650</posX>
+      <posY>750</posY>
+      <height>20</height>
+      <width>175</width>
+      <align>right</align>
+      <label>#WorldWeather.HistoryYear3MaxTemperature</label>
+      <font>font1</font>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+!string.equals(#WorldWeather.HistoryYear3Date, )</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>year 3 temperature</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>650</posX>
+      <posY>780</posY>
+      <height>20</height>
+      <width>175</width>
+      <align>right</align>
+      <label>#WorldWeather.HistoryYear3MinTemperature</label>
+      <font>font1</font>
+      <textcolor>00b7ff</textcolor>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+!string.equals(#WorldWeather.HistoryYear3Date, )</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>year 3 wind</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>750</posX>
+      <posY>750</posY>
+      <height>20</height>
+      <width>175</width>
+      <align>right</align>
+      <label>#WorldWeather.HistoryYear3MaxWindSpeed</label>
+      <font>font1</font>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+!string.equals(#WorldWeather.HistoryYear3Date, )</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>year 3 wind</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>750</posX>
+      <posY>780</posY>
+      <height>20</height>
+      <width>175</width>
+      <align>right</align>
+      <label>#WorldWeather.HistoryYear3MinWindSpeed</label>
+      <font>font1</font>
+      <textcolor>00b7ff</textcolor>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+!string.equals(#WorldWeather.HistoryYear3Date, )</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>year 3 pressure</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>900</posX>
+      <posY>750</posY>
+      <height>20</height>
+      <width>175</width>
+      <align>right</align>
+      <label>#WorldWeather.HistoryYear3MaxPressure</label>
+      <font>font1</font>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+!string.equals(#WorldWeather.HistoryYear3Date, )</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>year 3 pressure</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>900</posX>
+      <posY>780</posY>
+      <height>20</height>
+      <width>175</width>
+      <align>right</align>
+      <label>#WorldWeather.HistoryYear3MinPressure</label>
+      <font>font1</font>
+      <textcolor>00b7ff</textcolor>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+!string.equals(#WorldWeather.HistoryYear3Date, )</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>year 3 precipitation</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1000</posX>
+      <posY>750</posY>
+      <height>20</height>
+      <width>175</width>
+      <align>right</align>
+      <label>#WorldWeather.HistoryYear3Precipitation</label>
+      <font>font1</font>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+!string.equals(#WorldWeather.HistoryYear3Date, )</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <!-- *** History (Year) *** -->
+    <control>
+      <description>year 4 day</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>100</posX>
+      <posY>870</posY>
+      <height>20</height>
+      <width>200</width>
+      <align>left</align>
+      <label>#WorldWeather.HistoryYear4Day</label>
+      <font>TitanLight10</font>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+!string.equals(#WorldWeather.HistoryYear4Day, )</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>year 4 date</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>100</posX>
+      <posY>900</posY>
+      <height>20</height>
+      <width>175</width>
+      <align>left</align>
+      <label>#WorldWeather.HistoryYear4Date</label>
+      <font>font1</font>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+!string.equals(#WorldWeather.HistoryYear4Date, )</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>year 4 icon</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>400</posX>
+      <posY>840</posY>
+      <width>85</width>
+      <height>85</height>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>#WorldWeather.HistoryYear4IconImage</texture>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+!string.equals(#WorldWeather.HistoryYear4Date, )</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>year 4 condition</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>340</posX>
+      <posY>930</posY>
+      <height>20</height>
+      <width>200</width>
+      <align>center</align>
+      <label>#WorldWeather.HistoryYear4Condition</label>
+      <font>TitanLight10</font>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+!string.equals(#WorldWeather.HistoryYear4Date, )</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>year 4 temperature</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>650</posX>
+      <posY>870</posY>
+      <height>20</height>
+      <width>175</width>
+      <align>right</align>
+      <label>#WorldWeather.HistoryYear4MaxTemperature</label>
+      <font>font1</font>
+      <textcolor>00b7ff</textcolor>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+!string.equals(#WorldWeather.HistoryYear4Date, )</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>year 4 temperature</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>650</posX>
+      <posY>900</posY>
+      <height>20</height>
+      <width>175</width>
+      <align>right</align>
+      <label>#WorldWeather.HistoryYear4MinTemperature</label>
+      <font>font1</font>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+!string.equals(#WorldWeather.HistoryYear4Date, )</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>year 4 wind</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>750</posX>
+      <posY>870</posY>
+      <height>20</height>
+      <width>175</width>
+      <align>right</align>
+      <label>#WorldWeather.HistoryYear4MaxWindSpeed</label>
+      <font>font1</font>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+!string.equals(#WorldWeather.HistoryYear4Date, )</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>year 4 wind</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>750</posX>
+      <posY>900</posY>
+      <height>20</height>
+      <width>175</width>
+      <align>right</align>
+      <label>#WorldWeather.HistoryYear4MinWindSpeed</label>
+      <font>font1</font>
+      <textcolor>00b7ff</textcolor>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+!string.equals(#WorldWeather.HistoryYear4Date, )</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>year 4 pressure</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>900</posX>
+      <posY>870</posY>
+      <height>20</height>
+      <width>175</width>
+      <align>right</align>
+      <label>#WorldWeather.HistoryYear4MaxPressure</label>
+      <font>font1</font>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+!string.equals(#WorldWeather.HistoryYear4Date, )</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>year 4 pressure</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>900</posX>
+      <posY>900</posY>
+      <height>20</height>
+      <width>175</width>
+      <align>right</align>
+      <label>#WorldWeather.HistoryYear4MinPressure</label>
+      <font>font1</font>
+      <textcolor>00b7ff</textcolor>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+!string.equals(#WorldWeather.HistoryYear4Date, )</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>year 4 precipitation</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1000</posX>
+      <posY>870</posY>
+      <height>20</height>
+      <width>175</width>
+      <align>right</align>
+      <label>#WorldWeather.HistoryYear4Precipitation</label>
+      <font>font1</font>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+!string.equals(#WorldWeather.HistoryYear4Date, )</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <!-- *** Feature notification *** -->
+    <control>
+      <description>Feature notification</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>400</posX>
+      <posY>350</posY>
+      <width>760</width>
+      <label>This feature isn't enabled.</label>
+      <align>center</align>
+      <font>fontB16</font>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+string.equals(#WorldWeather.HistoryYearCount, )</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+  </controls>
+</window>
