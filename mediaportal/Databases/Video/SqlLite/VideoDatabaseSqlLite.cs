@@ -1149,11 +1149,11 @@ namespace MediaPortal.Video.Database
             strSQL = String.Format(
               "INSERT INTO filesmediainfo (idFile, videoCodec, videoResolution, aspectRatio, hasSubtitles, audioCodec, audioChannels) VALUES({0},'{1}','{2}','{3}',{4},'{5}','{6}')",
               fileID,
-              Util.Utils.MakeFileName(mInfo.BestVideoStream.Codec.ToString() ?? string.Empty),
+              Util.Utils.MakeFileName(mInfo.BestVideoStream.Codec.ToCodecString() ?? string.Empty),
               mInfo.VideoResolution,
               mInfo.AspectRatio,
               subtitles,
-              Util.Utils.MakeFileName(mInfo.BestAudioStream?.Codec.ToString() ?? string.Empty),
+              Util.Utils.MakeFileName(mInfo.BestAudioStream?.Codec.ToCodecString() ?? string.Empty),
               mInfo.AudioChannelsFriendly);
           }
           else
@@ -1161,11 +1161,11 @@ namespace MediaPortal.Video.Database
             strSQL = String.Format(
               "UPDATE filesmediainfo SET videoCodec='{1}', videoResolution='{2}', aspectRatio='{3}', hasSubtitles='{4}', audioCodec='{5}', audioChannels='{6}' WHERE idFile={0}",
               fileID,
-              Util.Utils.MakeFileName(mInfo.BestVideoStream.Codec.ToString() ?? string.Empty),
+              Util.Utils.MakeFileName(mInfo.BestVideoStream.Codec.ToCodecString() ?? string.Empty),
               mInfo.VideoResolution,
               mInfo.AspectRatio,
               subtitles,
-              Util.Utils.MakeFileName(mInfo.BestAudioStream?.Codec.ToString() ?? string.Empty),
+              Util.Utils.MakeFileName(mInfo.BestAudioStream?.Codec.ToCodecString() ?? string.Empty),
               mInfo.AudioChannelsFriendly);
           }
 

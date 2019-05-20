@@ -25,6 +25,7 @@ using System.Text;
 using MediaInfo;
 using MediaPortal.Player;
 using MediaPortal.Services;
+using MediaPortal.Util;
 
 namespace MediaPortal.TagReader
 {
@@ -103,7 +104,7 @@ namespace MediaPortal.TagReader
           if (audioStream != null)
           {
             FileType = audioStream.Format;
-            Codec = audioStream.Codec.ToString();
+            Codec = audioStream.Codec.ToCodecString();
             BitRate = (int) (audioStream.Bitrate / 1000);
             Duration = (int) audioStream.Duration.TotalSeconds;
             Channels = audioStream.Channel;
