@@ -583,6 +583,7 @@ namespace TvPlugin
       TVHome.UserChannelChanged = true;
       m_zapchannel = channel;
       m_zapchannel.CurrentGroup = null;
+      m_zapChannelIdx = GetChannelIndex(m_zapchannel);
 
       if (useZapDelay)
       {
@@ -692,8 +693,8 @@ namespace TvPlugin
       m_zapchannel.CurrentGroup = null;
       m_zapChannelNr = chan.ChannelNumber;
       m_zapChannelIdx = currindex;
-      Log.Info("Navigator:ZapNext {0}:{1}->{2}:{3}",
-               currentChan.DisplayName, currentChan.ChannelNumber, m_zapchannel.DisplayName, m_zapchannel.ChannelNumber);
+      Log.Info("Navigator:ZapNext {0}:{1}->{2}:{3},index:{4}",
+               currentChan.DisplayName, currentChan.ChannelNumber, m_zapchannel.DisplayName, m_zapchannel.ChannelNumber, m_zapChannelIdx);
       if (GUIWindowManager.ActiveWindow == (int)(int)GUIWindow.Window.WINDOW_TVFULLSCREEN)
       {
         if (useZapDelay)
@@ -759,8 +760,8 @@ namespace TvPlugin
       m_zapchannel.CurrentGroup = null;
       m_zapChannelNr = chan.ChannelNumber;
       m_zapChannelIdx = currindex;
-      Log.Info("Navigator:ZapPrevious {0}:{1}->{2}:{3}",
-               currentChan.DisplayName, currentChan.ChannelNumber, m_zapchannel.DisplayName, m_zapchannel.ChannelNumber);
+      Log.Info("Navigator:ZapPrevious {0}:{1}->{2}:{3},index:{4}",
+               currentChan.DisplayName, currentChan.ChannelNumber, m_zapchannel.DisplayName, m_zapchannel.ChannelNumber, m_zapChannelIdx);
       if (GUIWindowManager.ActiveWindow == (int)(int)GUIWindow.Window.WINDOW_TVFULLSCREEN)
       {
         if (useZapDelay)

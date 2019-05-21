@@ -71,6 +71,8 @@ namespace TvPlugin
         _byIndex = xmlreader.GetValueAsBool("mytv", "byindex", true);
         _showChannelNumber = xmlreader.GetValueAsBool("mytv", "showchannelnumber", false);
       }
+      Log.Debug("TVZapOSD:LoadSettings(), _byIndex:{0}, _showChannelNumber:{1}",
+               _byIndex, _showChannelNumber);
     }
 
     #endregion
@@ -98,6 +100,7 @@ namespace TvPlugin
     {
       bool bResult = Load(GUIGraphicsContext.GetThemedSkinFile(@"\tvZAPOSD.xml"));
       GetID = (int)Window.WINDOW_TVZAPOSD;
+      LoadSettings();
       return bResult;
     }
 
@@ -171,7 +174,7 @@ namespace TvPlugin
 
     protected override void OnPageLoad()
     {
-      Log.Debug("zaposd pageload");
+      //Log.Debug("zaposd pageload");
       // following line should stay. Problems with OSD not
       // appearing are already fixed elsewhere
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Channel));
@@ -191,8 +194,10 @@ namespace TvPlugin
       idChannel = GetIdChannel();
       SetCurrentChannelLogo();
       base.OnPageLoad();
-
       GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(100000 + GetID));
+      
+      Log.Debug("TVZapOSD:OnPageLoad(), channelName:{0}, channelNr:{1}, channelIdx:{2}, idChannel:{3}",
+               channelName, channelNr, channelIdx, idChannel);
     }
 
     private void Get_TimeInfo()
@@ -372,6 +377,7 @@ namespace TvPlugin
       {
         return "";
       }
+      zapChannelIdx++; //real index is 0->n, displayed index is 1->n+1
       return zapChannelIdx.ToString();
     }
 
@@ -398,16 +404,21 @@ namespace TvPlugin
       }
 
       // Set recorder status
-      //if (imgRecIcon != null)
-      //{
-      //  VirtualCard card;
-      //  TvServer server = new TvServer();
-      //  imgRecIcon.IsVisible = server.IsRecording(idChannel, out card);
-      //}
+      if (imgRecIcon != null)
+      {
+        VirtualCard card;
+        TvServer server = new TvServer();
+        imgRecIcon.IsVisible = server.IsRecording(idChannel, out card);
+      }
 
       if (lblZapToChannelNo != null)
       {
-        if (_byIndex)
+        if (_showChannelNumber == false)
+        {
+          lblZapToChannelNo.Label = String.Empty;
+          lblZapToChannelNo.Visible = false;
+        }
+        else if (_byIndex == true)
         {
           if (string.IsNullOrEmpty(channelIdx))
           {
@@ -417,7 +428,7 @@ namespace TvPlugin
           else
           {
             lblZapToChannelNo.Label = channelIdx;
-            //lblZapToChannelNo.Visible = true;
+            // lblZapToChannelNo.Visible = true;
           }
         }
         else
@@ -430,7 +441,7 @@ namespace TvPlugin
           else
           {
             lblZapToChannelNo.Label = channelNr;
-            //lblZapToChannelNo.Visible = true;
+            // lblZapToChannelNo.Visible = true;
           }
         }
       }
