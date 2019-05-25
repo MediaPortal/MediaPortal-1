@@ -377,7 +377,6 @@ namespace TvPlugin
       {
         return "";
       }
-      zapChannelIdx++; //real index is 0->n, displayed index is 1->n+1
       return zapChannelIdx.ToString();
     }
 
@@ -428,7 +427,7 @@ namespace TvPlugin
           else
           {
             lblZapToChannelNo.Label = channelIdx;
-            // lblZapToChannelNo.Visible = true;
+            lblZapToChannelNo.Visible = true;
           }
         }
         else
@@ -441,7 +440,7 @@ namespace TvPlugin
           else
           {
             lblZapToChannelNo.Label = channelNr;
-            // lblZapToChannelNo.Visible = true;
+            lblZapToChannelNo.Visible = true;
           }
         }
       }
