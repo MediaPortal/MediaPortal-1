@@ -545,6 +545,7 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   File "${TVSERVER.BASE}\ttdvbacc.dll"
   File "${TVSERVER.BASE}\tevii.dll"
   File "${TVSERVER.BASE}\Ionic.Zip.dll"
+  File "${git_TVServer}\TVLibrary\bin\${BUILD_TYPE}\TbsCIapi.dll"
 
   ; MediaInfo
   ;File "${git_ROOT}\Packages\MediaInfo.0.7.95\MediaInfo.dll"
@@ -735,6 +736,9 @@ ${MementoSectionEnd}
   Delete "$INSTDIR\ttdvbacc.dll"
   Delete "$INSTDIR\tevii.dll"
   Delete "$INSTDIR\Ionic.Zip.dll"
+  Delete "$INSTDIR\TbsCIapi.dll"
+  ; all copies of TBS CI API DLL created by TV Server should also be cleaned up
+  Delete "$INSTDIR\TbsCiApi*.dll"
   ;Delete "$INSTDIR\Interop.SHDocVw.dll"
   Delete "$INSTDIR\ffmpeg.exe"
   Delete "$INSTDIR\TvThumbnails.dll"
