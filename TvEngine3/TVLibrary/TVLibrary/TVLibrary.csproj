@@ -269,7 +269,9 @@
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('..\..\..\Packages\MediaInfo.0.7.69\build\MediaInfo.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\Packages\MediaInfo.0.7.69\build\MediaInfo.targets'))" />
+    <Error Condition="!Exists('..\..\..\Packages\TBS.CI.API.1.0.2.3\build\TBS.CI.API.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\Packages\TBS.CI.API.1.0.2.3\build\TBS.CI.API.targets'))" />
   </Target>
+  <Import Project="..\..\..\Packages\TBS.CI.API.1.0.2.3\build\TBS.CI.API.targets" Condition="Exists('..\..\..\Packages\TBS.CI.API.1.0.2.3\build\TBS.CI.API.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
