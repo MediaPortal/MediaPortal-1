@@ -381,6 +381,14 @@ namespace TvPlugin
     {
       get
       {
+        //Workaround to get remote/keyboard number entry display 
+        //in 'channel index' mode i.e. before zapping actually occurs. 
+        //m_zapChannelNr contains entered number in this situation.
+        if (m_zapchannel == null)
+        {
+          return m_zapChannelNr;
+        }
+        
         IList<GroupMap> channels = CurrentGroup.ReferringGroupMap(); 
         int channelIdx = GetChannelIndex(ZapChannel);    
         if (channelIdx < 0 || channelIdx >= channels.Count)
@@ -974,7 +982,7 @@ namespace TvPlugin
       Log.Info("ChannelNavigator::LoadSettings()");
       string currentchannelName = xmlreader.GetValueAsString("mytv", "channel", String.Empty);
       m_zapdelay = 1000 * xmlreader.GetValueAsInt("movieplayer", "zapdelay", 2);
-      m_zapShortDelay = 1000 * xmlreader.GetValueAsInt("mytv", "zapShortDelay", 1);
+      m_zapShortDelay = m_zapdelay;
       string groupname = xmlreader.GetValueAsString("mytv", "group", TvConstants.TvGroupNames.AllChannels);
       m_currentgroup = GetGroupIndex(groupname);
       if (m_currentgroup < 0 || m_currentgroup >= m_groups.Count) // Group no longer exists?

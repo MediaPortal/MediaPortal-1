@@ -96,7 +96,6 @@ namespace TvPlugin
     private DateTime _groupTimeOutTimer;
     private DateTime _vmr7UpdateTimer = DateTime.Now;
     //		string			m_sZapChannel;
-    //		long				m_iZapDelay;
     private volatile bool _isOsdVisible = false;
     private volatile bool _isPauseOsdVisible = false;
     private volatile bool _zapOsdVisible = false;
@@ -105,6 +104,7 @@ namespace TvPlugin
 
     private long _timeOsdOnscreen;
     private long _zapTimeOutValue;
+    private long _zapKeyTimeout;
     private DateTime _updateTimer = DateTime.Now;
     private DateTime _updateTimerProgressbar = DateTime.Now;
     private bool _lastPause = false;
@@ -239,7 +239,7 @@ namespace TvPlugin
       {
         //_isMsnChatPopup = (xmlreader.GetValueAsInt("MSNmessenger", "popupwindow", 0) == 1);       // msn related can be removed
         _timeOsdOnscreen = 1000 * xmlreader.GetValueAsInt("movieplayer", "osdtimeout", 5);
-        //				m_iZapDelay = 1000*xmlreader.GetValueAsInt("movieplayer","zapdelay",2);
+        _zapKeyTimeout = 1000 * xmlreader.GetValueAsInt("movieplayer", "zapKeyTimeout", 1);
         _zapTimeOutValue = 1000 * xmlreader.GetValueAsInt("movieplayer", "zaptimeout", 5);
         _byIndex = xmlreader.GetValueAsBool("mytv", "byindex", true);
         _channelNumberMaxLength = xmlreader.GetValueAsInt("mytv", "channelnumbermaxlength", 3);
@@ -2981,7 +2981,7 @@ namespace TvPlugin
         return;
       }
       TimeSpan ts = DateTime.Now - _keyPressedTimer;
-      if (ts.TotalMilliseconds >= 1000 || _channelName.Length == _channelNumberMaxLength)
+      if (ts.TotalMilliseconds >= _zapKeyTimeout || _channelName.Length == _channelNumberMaxLength)
       {
         // change channel
         int iChannel = -1;
