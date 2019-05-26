@@ -58,7 +58,6 @@ namespace TvPlugin
     private int idChannel;
 
     private bool _byIndex = false;
-    private bool _showChannelNumber = false;
 
     private TVHome.ChannelErrorInfo m_lastError;
 
@@ -69,10 +68,7 @@ namespace TvPlugin
       using (Settings xmlreader = new MPSettings())
       {
         _byIndex = xmlreader.GetValueAsBool("mytv", "byindex", true);
-        _showChannelNumber = xmlreader.GetValueAsBool("mytv", "showchannelnumber", false);
       }
-      Log.Debug("TVZapOSD:LoadSettings(), _byIndex:{0}, _showChannelNumber:{1}",
-               _byIndex, _showChannelNumber);
     }
 
     #endregion
@@ -177,11 +173,12 @@ namespace TvPlugin
       //Log.Debug("zaposd pageload");
       // following line should stay. Problems with OSD not
       // appearing are already fixed elsewhere
-      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Channel));
-      sb.AddConstraint(Operator.Equals, "istv", 1);
-      sb.AddOrderByField(true, "sortOrder");
-      SqlStatement stmt = sb.GetStatement(true);
-      ObjectFactory.GetCollection(typeof (Channel), stmt.Execute());
+      
+      // SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Channel));
+      // sb.AddConstraint(Operator.Equals, "istv", 1);
+      // sb.AddOrderByField(true, "sortOrder");
+      // SqlStatement stmt = sb.GetStatement(true);
+      // ObjectFactory.GetCollection(typeof (Channel), stmt.Execute());
 
       AllocResources();
       // if (g_application.m_pPlayer) g_application.m_pPlayer.ShowOSD(false);
@@ -196,8 +193,8 @@ namespace TvPlugin
       base.OnPageLoad();
       GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(100000 + GetID));
       
-      Log.Debug("TVZapOSD:OnPageLoad(), channelName:{0}, channelNr:{1}, channelIdx:{2}, idChannel:{3}",
-               channelName, channelNr, channelIdx, idChannel);
+      Log.Debug("TVZapOSD:OnPageLoad(), channelName:{0}, channelNr:{1}, channelIdx:{2}, idChannel:{3}, useIndex:{4}",
+               channelName, channelNr, channelIdx, idChannel, _byIndex);
     }
 
     private void Get_TimeInfo()
@@ -412,12 +409,7 @@ namespace TvPlugin
 
       if (lblZapToChannelNo != null)
       {
-        if (_showChannelNumber == false)
-        {
-          lblZapToChannelNo.Label = String.Empty;
-          lblZapToChannelNo.Visible = false;
-        }
-        else if (_byIndex == true)
+        if (_byIndex == true)
         {
           if (string.IsNullOrEmpty(channelIdx))
           {

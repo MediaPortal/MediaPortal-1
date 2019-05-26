@@ -3138,11 +3138,6 @@ namespace TvPlugin
       Log.Debug("ZapPreviousChannel()");
       TVHome.Navigator.ZapToPreviousChannel(true);
       UpdateOSD();
-      ///@
-      ///if (_useVMR9Zap == true && _vmr9OSD != null)
-      {
-        //_vmr9OSD.RenderChannelList(TVHome.Navigator.CurrentGroup,TVHome.Navigator.ZapChannel);
-      }
     }
 
     public void ZapNextChannel()
@@ -3155,11 +3150,18 @@ namespace TvPlugin
       Log.Debug("ZapNextChannel()");
       TVHome.Navigator.ZapToNextChannel(true);
       UpdateOSD();
-      ///@
-      ///if (_useVMR9Zap == true && _vmr9OSD != null)
+    }
+
+    public void ZapLastViewedChannel()
+    {
+      if (g_Player.IsTVRecording)
       {
-        //_vmr9OSD.RenderChannelList(TVHome.Navigator.CurrentGroup,TVHome.Navigator.ZapChannel);
+        return;
       }
+
+      Log.Debug("ZapLastViewedChannel()");
+      TVHome.Navigator.ZapToLastViewedChannel(true);
+      UpdateOSD();
     }
 
     public void StartAutoZap()
