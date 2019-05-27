@@ -4,15 +4,10 @@
   <defaultcontrol>20</defaultcontrol>
   <allowoverlay>no</allowoverlay>
   <controls>
-    <control>
-      <description>BG</description>
-      <type>image</type>
-      <id>1</id>
-      <texture>background.png</texture>
-      <width>1920</width>
-      <height>1080</height>
-    </control>
-	
+    <include>common.default.background.xml</include> 
+
+	<import>common.window.music.xml</import>
+
 	<control>
 		<description>Number of Files Label</description>
 		<type>label</type>
@@ -25,7 +20,8 @@
 		<label>#currentmodule: #itemcount</label>
 		<visible>[facadeview.list|facadeview.smallicons|facadeview.largeicons|facadeview.filmstrip]+Control.IsVisible(50)</visible>
 	</control>	
-    	<control>
+
+    <control>
       	<id>0</id>
         <type>label</type>
         <posX>144</posX>
@@ -36,9 +32,9 @@
         <label>Results</label>
 		<align>left</align>
 		<visible>[window.isvisible(35) | window.isvisible(0)] | [!window.isvisible(35) + !window.isvisible(0) + !window.isvisible(96742) + !window.isvisible(7111992)] | [window.isvisible(96742) + Control.IsVisible(50)] | [window.isvisible(96742) + Control.IsVisible(51)]</visible>
-  		</control>
+ 	</control>
       
-		<control>
+	<control>
       	<id>0</id>
         <type>label</type>
         <posX>1848</posX>
@@ -49,10 +45,9 @@
         <label>#time</label>
 		<align>right</align>
 		<visible>[window.isvisible(35) | window.isvisible(0)] | [!window.isvisible(35) + !window.isvisible(0) + !window.isvisible(96742) + !window.isvisible(7111992)] | [window.isvisible(96742) + Control.IsVisible(50)] | [window.isvisible(96742) + Control.IsVisible(51)]</visible>
-  		</control>
-      
-      
-		<control>
+  	</control>
+     
+	<control>
       	<description>Date</description>
       	<id>0</id>
         <type>label</type>
@@ -63,9 +58,8 @@
         <label>#date</label>
 		<align>right</align>
 		<visible>[[window.isvisible(35) | window.isvisible(0)] | [!window.isvisible(35) + !window.isvisible(0) + !window.isvisible(96742) + !window.isvisible(7111992)] | [window.isvisible(96742) + Control.IsVisible(50)] | [window.isvisible(96742) + Control.IsVisible(51)]] + !plugin.isenabled(World Weather)</visible>
-   		</control>
-	<import>common.window.music.xml</import>
-	
+	</control>
+
     <control>
 	 <id>0</id>
      <type>image</type>

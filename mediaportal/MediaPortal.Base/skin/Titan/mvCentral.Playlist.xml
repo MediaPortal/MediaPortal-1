@@ -8,6 +8,8 @@
   <define>#usePlayFanart:Yes</define>
   <define>#useSelectedFanart:Yes</define>
   <controls>
+    <include>common.default.background.xml</include> 
+
     <import>common.window.playlist.xml</import>
 
     <!-- ClearArt -->

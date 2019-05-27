@@ -7,6 +7,8 @@
 <define>#useRandomPicturesUserFanart:Yes</define>
 <define>#useSelectedFanart:Yes</define>
 <controls>
+    <include>common.default.background.xml</include> 
+
     <import>common.window.pictures.xml</import>
     
     <control>

@@ -5,14 +5,8 @@
 <allowoverlay>yes</allowoverlay>
 <define>#header.label:100748</define>
 <controls>
-	<control>
-		<description>BG</description>
-		<type>image</type>
-		<id>1</id>
-		<width>1920</width>
-		<height>1080</height>
-		<texture>background.png</texture>
-	</control>
+  <include>common.default.background.xml</include> 
+
   <control>
   	<description>VIEWPORT</description>
     <type>image</type>
