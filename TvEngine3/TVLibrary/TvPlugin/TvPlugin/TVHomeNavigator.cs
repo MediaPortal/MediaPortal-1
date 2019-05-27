@@ -80,8 +80,8 @@ namespace TvPlugin
 
     private int m_currentgroup = 0;
     private DateTime m_zaptime;
-    private long m_zapdelay;
-    private long m_zapShortDelay;
+    private long m_zapdelay = 2000;
+    private long m_zapShortDelay = 2000;
     private Channel m_zapchannel = null;
     private int m_zapChannelNr = -1;
     private int m_zapgroup = -1;
@@ -890,7 +890,8 @@ namespace TvPlugin
         ZapChannel = _lastViewedChannel;
         if (useZapDelay)
         {
-          m_zaptime = DateTime.Now.AddMilliseconds(m_zapShortDelay);
+          //Short delay to just display OSD
+          m_zaptime = DateTime.Now.AddMilliseconds(100);
         }
         else
         {

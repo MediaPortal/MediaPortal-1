@@ -97,9 +97,9 @@ namespace TvPlugin
     private volatile bool _zapOsdVisible = false;
     private bool _channelInputVisible = false;
 
-    private long _timeOsdOnscreen;
-    private long _zapTimeOutValue;
-    private long _zapKeyTimeout;
+    private long _timeOsdOnscreen = 5000;
+    private long _zapTimeOutValue = 5000;
+    private long _zapKeyTimeout = 1000;
     private DateTime _updateTimer = DateTime.Now;
     private DateTime _updateTimerProgressbar = DateTime.Now;
     private bool _lastPause = false;
