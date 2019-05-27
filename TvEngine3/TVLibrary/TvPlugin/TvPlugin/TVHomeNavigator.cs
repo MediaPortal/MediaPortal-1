@@ -356,7 +356,7 @@ namespace TvPlugin
     }
 
     /// <summary>
-    /// Gets the channel number that we will zap to. If not zapping by number or not zapping to anything, returns -1.
+    /// Gets the channel number (LCN) that we will zap to. If not zapping by number or not zapping to anything, returns -1.
     /// </summary>
     public int ZapChannelNr
     {
@@ -418,7 +418,7 @@ namespace TvPlugin
           }
         }      
         
-        Log.Debug("ZapChannelIdx, guideIdx:{0}, channelIdx:{1}", guideIdx, channelIdx);
+        // Log.Debug("ZapChannelIdx, guideIdx:{0}, channelIdx:{1}", guideIdx, channelIdx);
         return guideIdx;
       }
     }
@@ -669,12 +669,12 @@ namespace TvPlugin
     /// </summary>
     /// <param name="channelIdx">The (1 based) index within the group of the channel to change to.</param>
     /// <param name="useZapDelay">If true, the configured zap delay is used. Otherwise it zaps immediately.</param>
-    public void ZapToChannel(int channelIdx, bool useZapDelay)
+    public void ZapToChannelIndex(int channelIdx, bool useZapDelay)
     {
       IList<GroupMap> channels = CurrentGroup.ReferringGroupMap();     
       if (channelIdx < 1 || channelIdx > channels.Count)
       {
-        Log.Debug("ZapToChannel, channelIdx out-of-range:{0}", channelIdx);
+        Log.Debug("ZapToChannelIndex, channelIdx out-of-range:{0}", channelIdx);
         return;
       }
       //Check channelIdx against visible channels in guide

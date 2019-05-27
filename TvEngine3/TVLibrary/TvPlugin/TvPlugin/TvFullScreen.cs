@@ -59,7 +59,6 @@ namespace TvPlugin
       public int Speed = 1;
       public bool OsdVisible = false;
       public bool Paused = false;
-      //public bool MsnVisible = false;       // msn related can be removed
       public bool ContextMenuVisible = false;
       public bool ShowStatusLine = false;
       public bool ShowTime = false;
@@ -84,22 +83,18 @@ namespace TvPlugin
     private bool _byIndex = false;
     private DateTime _statusTimeOutTimer = DateTime.Now;
 
-    ///@
     private TvZapOsd _zapWindow = null;
 
     private TvOsd _osdWindow = null;
 
-    ///GUITVMSNOSD _msnWindow = null;       // msn related can be removed
     private DateTime _osdTimeoutTimer;
 
     private DateTime _zapTimeOutTimer;
     private DateTime _groupTimeOutTimer;
     private DateTime _vmr7UpdateTimer = DateTime.Now;
-    //		string			m_sZapChannel;
     private volatile bool _isOsdVisible = false;
     private volatile bool _isPauseOsdVisible = false;
     private volatile bool _zapOsdVisible = false;
-    //bool _msnWindowVisible = false;       // msn related can be removed
     private bool _channelInputVisible = false;
 
     private long _timeOsdOnscreen;
@@ -113,7 +108,6 @@ namespace TvPlugin
     private string _channelName = "";
     private bool _isDialogVisible = false;
     private bool _IsClosingDialog = false;
-    //bool _isMsnChatPopup = false;       // msn related can be removed
     private GUIDialogMenu dlg;
     private GUIDialogMenuBottomRight _dialogBottomMenu = null;
     private GUIDialogYesNo _dlgYesNo = null;
@@ -125,7 +119,6 @@ namespace TvPlugin
     private DateTime _msgTimer = DateTime.Now;
     private int _msgBoxTimeout = 0;
     private bool _needToClearScreen = false;
-    private bool _useVMR9Zap = false;
     private bool _immediateSeekIsRelative = true;
     private int _immediateSeekValue = 10;
     private int _channelNumberMaxLength = 3;
@@ -134,8 +127,6 @@ namespace TvPlugin
     // Tv error handling
     private TvPlugin.TVHome.ChannelErrorInfo _gotTvErrorMessage = null;
 
-    ///@
-    ///VMR9OSD _vmr9OSD = null;
     private FullScreenState _screenState = new FullScreenState();
 
     private bool _isVolumeVisible = false;
@@ -214,7 +205,6 @@ namespace TvPlugin
     {
       using (Settings xmlreader = new MPSettings())
       {
-        _useVMR9Zap = xmlreader.GetValueAsBool("general", "useVMR9ZapOSD", false);
         _immediateSeekIsRelative = xmlreader.GetValueAsBool("movieplayer", "immediateskipstepsisrelative", true);
         _immediateSeekValue = xmlreader.GetValueAsInt("movieplayer", "immediateskipstepsize", 10);
       }
@@ -237,7 +227,6 @@ namespace TvPlugin
     {
       using (Settings xmlreader = new MPSettings())
       {
-        //_isMsnChatPopup = (xmlreader.GetValueAsInt("MSNmessenger", "popupwindow", 0) == 1);       // msn related can be removed
         _timeOsdOnscreen = 1000 * xmlreader.GetValueAsInt("movieplayer", "osdtimeout", 5);
         _zapKeyTimeout = 1000 * xmlreader.GetValueAsInt("movieplayer", "zapKeyTimeout", 1);
         _zapTimeOutValue = 1000 * xmlreader.GetValueAsInt("movieplayer", "zaptimeout", 5);
@@ -280,19 +269,9 @@ namespace TvPlugin
       }
 
       SettingsLoaded = true;
+      Log.Debug("TvFullScreen.LoadSettings(),  _timeOsdOnscreen: {0}, _zapKeyTimeout: {1}, _zapTimeOutValue: {2}, _byIndex: {3}, _channelNumberMaxLength: {4}", 
+                _timeOsdOnscreen, _zapKeyTimeout, _zapTimeOutValue, _byIndex, _channelNumberMaxLength);
     }
-
-    //		public string ZapChannel
-    //		{
-    //			set
-    //			{
-    //				m_sZapChannel = value;
-    //			}
-    //			get
-    //			{
-    //				return m_sZapChannel;
-    //			}
-    //		}
 
     #endregion
 
@@ -353,21 +332,12 @@ namespace TvPlugin
         _volumeTimer = DateTime.Now;
         _isVolumeVisible = true;
         RenderVolume(_isVolumeVisible);
-        //				if(_vmr9OSD!=null)
-        //					_vmr9OSD.RenderVolumeOSD();
-      }
-      //ACTION_SHOW_CURRENT_TV_INFO
-      if (action.wID == Action.ActionType.ACTION_SHOW_CURRENT_TV_INFO)
-      {
-        //if(_vmr9OSD!=null)
-        //	_vmr9OSD.RenderCurrentShowInfo();
       }
 
       if (action.wID == Action.ActionType.ACTION_MOUSE_CLICK && action.MouseButton == MouseButtons.Right)
       {
         // switch back to the menu
         _isOsdVisible = false;
-        //_msnWindowVisible = false;       // msn related can be removed
         GUIWindowManager.IsOsdVisible = false;
         GUIGraphicsContext.IsFullScreenVideo = false;
         GUIWindowManager.ShowPreviousWindow();
@@ -428,29 +398,6 @@ namespace TvPlugin
         }
         return;
       }
-        //@
-        /*
-       * else if (_msnWindowVisible)       // msn related can be removed
-      {
-        if (((action.wID == Action.ActionType.ACTION_SHOW_OSD) || (action.wID == Action.ActionType.ACTION_SHOW_GUI))) // hide the OSD
-        {
-          lock (this)
-          {
-            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, _msnWindow.GetID, 0, 0, GetID, 0, null);
-            _msnWindow.OnMessage(msg);	// Send a de-init msg to the OSD
-            _msnWindowVisible = false;
-            GUIWindowManager.IsOsdVisible = false;
-          }
-          return;
-        }
-        if (action.wID == Action.ActionType.ACTION_KEY_PRESSED)
-        {
-          _msnWindow.OnAction(action);
-
-          return;
-        }
-      }*/
-
       else if (action.wID == Action.ActionType.ACTION_MOUSE_MOVE && GUIGraphicsContext.MouseSupport)
       {
         int y = (int)action.fAmount2;
@@ -511,11 +458,8 @@ namespace TvPlugin
 
             if (!_zapOsdVisible && !g_Player.IsTVRecording)
             {
-              if (!_useVMR9Zap)
-              {
-                ShowZapOSD(_gotTvErrorMessage);
-                _gotTvErrorMessage = null;
-              }
+              ShowZapOSD(_gotTvErrorMessage);
+              _gotTvErrorMessage = null;
             }
             else
             {
@@ -525,24 +469,9 @@ namespace TvPlugin
           }
           break;
 
-          // msn related can be removed
-          //case Action.ActionType.ACTION_SHOW_MSN_OSD:
-          //  if (_isMsnChatPopup)
-          //  {
-          //    Log.Debug("MSN CHAT:ON");
-
-          //    _msnWindowVisible = true;
-          //    GUIWindowManager.VisibleOsd = GUIWindow.Window.WINDOW_TVMSNOSD;
-          //    ///@
-          //    ///_msnWindow.DoModal(GetID, null);
-          //    _msnWindowVisible = false;
-          //    GUIWindowManager.IsOsdVisible = false;
-          //  }
-          //  break;
-
         case Action.ActionType.ACTION_AUTOCROP:
           {
-            Log.Debug("ACTION_AUTOCROP");
+            Log.Debug("TvFullScreen.ACTION_AUTOCROP");
             _statusVisible = true;
             _statusTimeOutTimer = DateTime.Now;
 
@@ -568,7 +497,7 @@ namespace TvPlugin
 
         case Action.ActionType.ACTION_TOGGLE_AUTOCROP:
           {
-            Log.Debug("ACTION_TOGGLE_AUTOCROP");
+            Log.Debug("TvFullScreen.ACTION_TOGGLE_AUTOCROP");
             _statusVisible = true;
             _statusTimeOutTimer = DateTime.Now;
             IAutoCrop cropper = GUIGraphicsContext.autoCropper;
@@ -661,8 +590,6 @@ namespace TvPlugin
 
         case Action.ActionType.ACTION_KEY_PRESSED:
           {
-            // msn related can be removed
-            //if ((action.m_key != null) && (!_msnWindowVisible))
             if (action.m_key != null)
             {
               OnKeyCode((char)action.m_key.KeyChar);
@@ -698,15 +625,13 @@ namespace TvPlugin
 
         case Action.ActionType.ACTION_PREVIOUS_MENU:
         case Action.ActionType.ACTION_SHOW_GUI:
-          Log.Debug("fullscreentv:show gui");
-          //if(_vmr9OSD!=null)
-          //	_vmr9OSD.HideBitmap();
+          Log.Debug("TvFullScreen: show gui");
           GUIWindowManager.ShowPreviousWindow();
           return;
 
         case Action.ActionType.ACTION_SHOW_OSD: // Show the OSD
           {
-            Log.Debug("OSD:ON");
+            Log.Debug("TvFullScreen.OSD:ON");
             ShowMainOSD();
           }
           break;
@@ -880,7 +805,7 @@ namespace TvPlugin
                 newIndex = 0;
               }
 
-              Log.Debug("Switching from audio stream {0} to {1}", oldIndex, newIndex);
+              Log.Debug("TvFullScreen.Switching from audio stream {0} to {1}", oldIndex, newIndex);
 
               // Show OSD Label
               _statusVisible = true;
@@ -921,7 +846,7 @@ namespace TvPlugin
       }
       
       // Get dialog to ask the user for confirmation
-      Log.Debug("TVFullscreen: user request to stop");
+      Log.Debug("TvFullScreen: user request to stop");
       GUIDialogPlayStop dlgPlayStop =
         (GUIDialogPlayStop)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_PLAY_STOP);
       if (dlgPlayStop == null)
@@ -937,7 +862,7 @@ namespace TvPlugin
       dlgPlayStop.DoModal(GetID);
       if (dlgPlayStop.IsStopConfirmed)
       {
-        Log.Debug("TVFullscreen: stop confirmed");
+        Log.Debug("TvFullScreen: stop confirmed");
         return true;
       }
       
@@ -957,12 +882,6 @@ namespace TvPlugin
     public override void SetObject(object obj)
     {
       base.SetObject(obj);
-      ///@
-      /// if (obj.GetType() == typeof(VMR9OSD))
-      ///{
-      ///  _vmr9OSD = (VMR9OSD)obj;
-
-      ///}
     }
 
     public override bool OnMessage(GUIMessage message)
@@ -1132,68 +1051,6 @@ namespace TvPlugin
 
       if (message.Message == GUIMessage.MessageType.GUI_MSG_RECORDER_ABOUT_TO_START_RECORDING)
       {
-        /*
-                TVRecording rec = message.Object as TVRecording;
-                if (rec == null) return true;
-                if (rec.Channel == Recorder.TVChannelName) return true;
-                if (!Recorder.NeedChannelSwitchForRecording(rec)) return true;
-
-                _messageBoxVisible = false;
-                _msnWindowVisible = false;     // msn related can be removed
-                GUIWindowManager.IsOsdVisible = false;
-                if (_zapOsdVisible)
-                {
-                  GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, _zapWindow.GetID, 0, 0, GetID, 0, null);
-                  _zapWindow.OnMessage(msg);
-                  _zapOsdVisible = false;
-                  GUIWindowManager.IsOsdVisible = false;
-                }
-                if (_isOsdVisible)
-                {
-                  GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, _osdWindow.GetID, 0, 0, GetID, 0, null);
-                  _osdWindow.OnMessage(msg);
-                  _isOsdVisible = false;
-                  GUIWindowManager.IsOsdVisible = false;
-                }
-                if (_msnWindowVisible)     // msn related can be removed
-                {
-                  GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, _msnWindow.GetID, 0, 0, GetID, 0, null);
-                  _msnWindow.OnMessage(msg);	// Send a de-init msg to the OSD
-                  _msnWindowVisible = false;
-                  GUIWindowManager.IsOsdVisible = false;
-                }
-                if (_isDialogVisible && dlg != null)
-                {
-                  GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, dlg.GetID, 0, 0, GetID, 0, null);
-                  dlg.OnMessage(msg);	// Send a de-init msg to the OSD
-                }
-
-                _bottomDialogMenuVisible = true;
-                _dialogBottomMenu = (GUIDialogMenuBottomRight)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU_BOTTOM_RIGHT);
-                _dialogBottomMenu.TimeOut = 10;
-                _dialogBottomMenu.SetHeading(1004);//About to start recording
-                _dialogBottomMenu.SetHeadingRow2(String.Format("{0} {1}", GUILocalizeStrings.Get(1005), rec.Channel));
-                _dialogBottomMenu.SetHeadingRow3(rec.Title);
-                _dialogBottomMenu.AddLocalizedString(1006); //Allow recording to begin
-                _dialogBottomMenu.AddLocalizedString(1007); //Cancel recording and maintain watching tv
-                _dialogBottomMenu.DoModal(GetID);
-                if (_dialogBottomMenu.SelectedId == 1007) //cancel recording
-                {
-                  if (rec.RecType == TVRecording.RecordingType.Once)
-                  {
-                    rec.Canceled = Utils.datetolong(DateTime.Now);
-                  }
-                  else
-                  {
-                    Program prog = message.Object2 as Program;
-                    if (prog != null)
-                      rec.CanceledSeries.Add(prog.Start);
-                    else
-                      rec.CanceledSeries.Add(Utils.datetolong(DateTime.Now));
-                  }
-                  TVDatabase.UpdateRecording(rec, TVDatabase.RecordingChange.Canceled);
-                }
-         */
         _bottomDialogMenuVisible = false;
       }
 
@@ -1219,7 +1076,7 @@ namespace TvPlugin
         _notifyDialogVisible = true;
         dlgNotify.DoModal(GUIWindowManager.ActiveWindow);
         _notifyDialogVisible = false;
-        Log.Debug("Notify Message:" + channel + ", " + message.Label);
+        Log.Debug("TvFullScreen.Notify Message:" + channel + ", " + message.Label);
         return true;
       }
 
@@ -1303,55 +1160,6 @@ namespace TvPlugin
 
           #endregion
 
-          // msn related can be removed
-          //#region case GUI_MSG_MSN_CLOSECONVERSATION
-
-          //case GUIMessage.MessageType.GUI_MSG_MSN_CLOSECONVERSATION:
-          //  if (_msnWindowVisible)
-          //  {
-          //    ///@
-          //    /// GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, _msnWindow.GetID, 0, 0, GetID, 0, null);
-          //    ///_msnWindow.OnMessage(msg);	// Send a de-init msg to the OSD
-          //  }
-          //  _msnWindowVisible = false;
-          //  GUIWindowManager.IsOsdVisible = false;
-          //  break;
-
-          //#endregion
-
-          // msn related can be removed
-          //#region case GUI_MSG_MSN_STATUS_MESSAGE
-
-          //case GUIMessage.MessageType.GUI_MSG_MSN_STATUS_MESSAGE:
-
-          //#endregion
-
-          // msn related can be removed
-          //#region case GUI_MSG_MSN_MESSAGE
-          //case GUIMessage.MessageType.GUI_MSG_MSN_MESSAGE:
-          //  if (_isOsdVisible && _isMsnChatPopup)
-          //  {
-          //    GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, _osdWindow.GetID, 0, 0, GetID, 0, null);
-          //    _osdWindow.OnMessage(msg);	// Send a de-init msg to the OSD
-          //    _isOsdVisible = false;
-          //    GUIWindowManager.IsOsdVisible = false;
-
-          //  }
-
-          //  if (!_msnWindowVisible && _isMsnChatPopup)
-          //  {
-          //    Log.Debug("MSN CHAT:ON");
-          //    _msnWindowVisible = true;
-          //    GUIWindowManager.VisibleOsd = GUIWindow.Window.WINDOW_TVMSNOSD;
-          //    ///@
-          //    ///_msnWindow.DoModal(GetID, message);
-          //    _msnWindowVisible = false;
-          //    GUIWindowManager.IsOsdVisible = false;
-
-          //  }
-          //  break;
-          //#endregion
-
           #region case GUI_MSG_WINDOW_DEINIT
 
         case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
@@ -1378,7 +1186,6 @@ namespace TvPlugin
 
               _screenState.ContextMenuVisible = false;
               _screenState.MsgBoxVisible = false;
-              //_screenState.MsnVisible = false;      // msn related can be removed
               _screenState.OsdVisible = false;
               _screenState.Paused = false;
               _screenState.ShowGroup = false;
@@ -1410,7 +1217,6 @@ namespace TvPlugin
 
             _osdWindow = (TvOsd)GUIWindowManager.GetWindow((int)Window.WINDOW_TVOSD);
             _zapWindow = (TvZapOsd)GUIWindowManager.GetWindow((int)Window.WINDOW_TVZAPOSD);
-            //_msnWindow = (GUITVMSNOSD)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TVMSNOSD);     // msn related can be removed
 
             _lastPause = g_Player.Paused;
             _lastSpeed = g_Player.Speed;
@@ -1469,7 +1275,6 @@ namespace TvPlugin
           {
             return true;
           }
-          //if (_msnWindowVisible) return true;     // msn related can be removed
           if (message.SenderControlId != (int)Window.WINDOW_TVFULLSCREEN)
           {
             return true;
@@ -1479,12 +1284,6 @@ namespace TvPlugin
           #endregion
       }
 
-      // msn related can be removed
-      //if (_msnWindowVisible)
-      //{
-      //  ///@
-      //  ///_msnWindow.OnMessage(message);	// route messages to MSNChat window
-      //}
       return base.OnMessage(message);
     }
 
@@ -1533,13 +1332,6 @@ namespace TvPlugin
         dlg.AddLocalizedString(1441); // Fullscreen teletext
       }
       dlg.AddLocalizedString(941); // Change aspect ratio
-
-      // msn related can be removed
-      //if (PluginManager.IsPluginNameEnabled("MSN Messenger"))
-      //{
-      //  dlg.AddLocalizedString(12902); // MSN Messenger
-      //  dlg.AddLocalizedString(902); // MSN Online contacts
-      //}
 
       //IAudioStream[] streams = TVHome.Card.AvailableAudioStreams;
       //if (streams != null && streams.Length > 0)
@@ -1616,7 +1408,7 @@ namespace TvPlugin
       dlg.DoModal(GetID);
       _isDialogVisible = false;
 
-      Log.Debug("selected id:{0}", dlg.SelectedId);
+      Log.Debug("TvFullScreen.selected id:{0}", dlg.SelectedId);
       if (dlg.SelectedId == -1)
       {
         return;
@@ -2637,19 +2429,6 @@ namespace TvPlugin
         }
       }
 
-      if (_useVMR9Zap == true)
-      {
-        TimeSpan ts = DateTime.Now - _zapTimeOutTimer;
-        if (ts.TotalMilliseconds > _zapTimeOutValue)
-        {
-          //if(_vmr9OSD!=null)
-          //	_vmr9OSD.HideBitmap();
-        }
-      }
-      //if(_vmr9OSD!=null)
-      //	_vmr9OSD.CheckTimeOuts();
-
-
       // OSD Timeout?
       if (_isOsdVisible && _timeOsdOnscreen > 0)
       {
@@ -2693,15 +2472,15 @@ namespace TvPlugin
       {
         TVHome.Navigator.CheckChannelChange();
       }
-      //Log.Debug("osd visible:{0} timeoutvalue:{1}", _zapOsdVisible ,_zapTimeOutValue);
+      //Log.Debug("TvFullScreen.osd visible:{0} timeoutvalue:{1}", _zapOsdVisible ,_zapTimeOutValue);
       if (_zapOsdVisible && _zapTimeOutValue > 0)
       {
         TimeSpan ts = DateTime.Now - _zapTimeOutTimer;
-        //Log.Debug("timeout :{0}", ts.TotalMilliseconds);
+        //Log.Debug("TvFullScreen.timeout :{0}", ts.TotalMilliseconds);
         if (ts.TotalMilliseconds > _zapTimeOutValue)
         {
           //yes, then remove osd offscreen
-          Log.Debug("ZAP OSD:Off timeout");
+          Log.Debug("TvFullScreen.ZAP OSD:Off timeout");
           HideZapOSD();
         }
       }
@@ -2713,54 +2492,6 @@ namespace TvPlugin
       {
         return;
       }
-      /*
-      if (VMR7Util.g_vmr7 != null)
-      {
-        if (!GUIWindowManager.IsRouted)
-        {
-          if (_screenState.ContextMenuVisible ||
-            _screenState.MsgBoxVisible ||
-            //_screenState.MsnVisible ||     // msn related can be removed
-            _screenState.OsdVisible ||
-            _screenState.Paused ||
-            _screenState.ShowGroup ||
-            _screenState.ShowInput ||
-            _screenState.ShowStatusLine ||
-            _screenState.ShowTime ||
-            _screenState.ZapOsdVisible ||
-            g_Player.Speed != 1 ||
-            _needToClearScreen)
-          {
-            TimeSpan ts = DateTime.Now - _vmr7UpdateTimer;
-            if ((ts.TotalMilliseconds >= 5000) || _needToClearScreen)
-            {
-              _needToClearScreen = false;
-              using (Bitmap bmp = new Bitmap(GUIGraphicsContext.Width, GUIGraphicsContext.Height))
-              {
-                using (Graphics g = Graphics.FromImage(bmp))
-                {
-                  GUIGraphicsContext.graphics = g;
-                  base.Render(timePassed);
-                  RenderForm(timePassed);
-                  GUIGraphicsContext.graphics = null;
-                  _screenState.wasVMRBitmapVisible = true;
-                  VMR7Util.g_vmr7.SaveBitmap(bmp, true, true, 0.8f);
-                }
-              }
-              _vmr7UpdateTimer = DateTime.Now;
-            }
-          }
-          else
-          {
-            if (_screenState.wasVMRBitmapVisible)
-            {
-              _screenState.wasVMRBitmapVisible = false;
-              VMR7Util.g_vmr7.SaveBitmap(null, false, false, 0.8f);
-            }
-          }
-        }
-      }*/
-
       if (GUIGraphicsContext.Vmr9Active)
       {
         base.Render(timePassed);
@@ -2783,24 +2514,9 @@ namespace TvPlugin
         return;
       }
 
-      //close window
-      //GUIMessage msg2 = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, _osdWindow.GetID, 0, 0, GetID, 0,
-      //                                 null);
-      //_osdWindow.OnMessage(msg2); // Send a de-init msg to the OSD
-      //msg2 = null;
-      Log.Debug("timeout->OSD:Off");
-      //_isOsdVisible = false;
-      //GUIWindowManager.IsOsdVisible = false;
+      Log.Debug("TvFullScreen.timeout->OSD:Off");
       HideMainOSD();
       HideZapOSD();
-
-      //close window
-      ///@
-      /// msg2 = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, _msnWindow.GetID, 0, 0, GetID, 0, null);
-      ///_msnWindow.OnMessage(msg2);	// Send a de-init msg to the OSD
-      /// msg2 = null;
-
-      //_msnWindowVisible = false;     // msn related can be removed
 
       GUIWindowManager.IsOsdVisible = false;
     }
@@ -2816,7 +2532,7 @@ namespace TvPlugin
       {
         return;
       }
-      Log.Debug("UpdateOSD()");
+      Log.Debug("TvFullScreen.UpdateOSD()");
       if (!_zapOsdVisible && !g_Player.IsTVRecording)
       {
         GUIWindowManager.IsPauseOsdVisible = false;
@@ -2846,7 +2562,7 @@ namespace TvPlugin
           _zapWindow.LastError = errorInfo;
         }
         _zapWindow.OnMessage(msg);
-        Log.Debug("ZAP OSD:ON");
+        Log.Debug("TvFullScreen.ZAP OSD:ON");
         _zapTimeOutTimer = DateTime.Now;
         _zapOsdVisible = true;
         // now even if main OSD is visible it won't be rendered
@@ -2937,10 +2653,6 @@ namespace TvPlugin
         {
           dlg.Render(timePassed);
         }
-
-        // msn related can be removed
-        ///if (_msnWindowVisible)
-        ///_msnWindow.Render(timePassed);
       }
       // do we need 2 render the OSD?
 
@@ -3110,19 +2822,19 @@ namespace TvPlugin
 
     private void ChangeChannelNr(int channelNr, bool useZapDelay)
     {
-
       if (g_Player.IsTVRecording)
       {
         return;
       }
 
-      Log.Debug("ChangeChannelNr()");
       if (_byIndex == true)
       {
-        TVHome.Navigator.ZapToChannel(channelNr, useZapDelay);
+        Log.Debug("TvFullScreen.ChangeChannelNr(), channelIndex: {0}", channelNr);
+        TVHome.Navigator.ZapToChannelIndex(channelNr, useZapDelay);
       }
       else
       {
+        Log.Debug("TvFullScreen.ChangeChannelNr(), channelNr: {0}", channelNr);
         TVHome.Navigator.ZapToChannelNumber(channelNr, useZapDelay);
       }
 
@@ -3135,7 +2847,7 @@ namespace TvPlugin
       {
         return;
       }
-      Log.Debug("ZapPreviousChannel()");
+      Log.Debug("TvFullScreen.ZapPreviousChannel()");
       TVHome.Navigator.ZapToPreviousChannel(true);
       UpdateOSD();
     }
@@ -3147,7 +2859,7 @@ namespace TvPlugin
         return;
       }
 
-      Log.Debug("ZapNextChannel()");
+      Log.Debug("TvFullScreen.ZapNextChannel()");
       TVHome.Navigator.ZapToNextChannel(true);
       UpdateOSD();
     }
@@ -3159,7 +2871,7 @@ namespace TvPlugin
         return;
       }
 
-      Log.Debug("ZapLastViewedChannel()");
+      Log.Debug("TvFullScreen.ZapLastViewedChannel()");
       TVHome.Navigator.ZapToLastViewedChannel(true);
       UpdateOSD();
     }
@@ -3171,7 +2883,7 @@ namespace TvPlugin
         return;
       }
 
-      Log.Debug("TVFullscreen: Start autozap mode");
+      Log.Debug("TvFullScreen: Start autozap mode");
       _autoZapMode = true;
       _autoZapTimer.Elapsed += new ElapsedEventHandler(_autoZapTimer_Elapsed);
       using (Settings xmlreader = new MPSettings())
@@ -3196,7 +2908,7 @@ namespace TvPlugin
 
     public void StopAutoZap()
     {
-      Log.Debug("Stop zap mode");
+      Log.Debug("TvFullScreen.Stop zap mode");
       _autoZapTimer.Elapsed -= new ElapsedEventHandler(_autoZapTimer_Elapsed);
       _autoZapMode = false;
     }
@@ -3207,14 +2919,6 @@ namespace TvPlugin
       {
         return _osdWindow.GetFocusControlId();
       }
-
-      // msn related can be removed
-      //if (_msnWindowVisible)
-      //{
-      //  ///@
-      //  ///return _msnWindow.GetFocusControlId();
-      //}
-
       return base.GetFocusControlId();
     }
 
@@ -3224,14 +2928,6 @@ namespace TvPlugin
       {
         return _osdWindow.GetControl(iControlId);
       }
-
-      // msn related can be removed
-      //if (_msnWindowVisible)
-      //{
-      //  ///@
-      //  ///return _msnWindow.GetControl(iControlId);
-      //}
-
       return base.GetControl(iControlId);
     }
 
@@ -3239,22 +2935,6 @@ namespace TvPlugin
     {
       _autoZapMode = false;
       _autoZapTimer.Dispose();
-
-      ///@
-      /*
-      if (!GUIGraphicsContext.IsTvWindow(newWindowId))
-      {
-        if (Recorder.IsViewing() && !(Recorder.IsTimeShifting() || Recorder.IsRecording()))
-        {
-          if (GUIGraphicsContext.ShowBackground)
-          {
-            // stop timeshifting & viewing... 
-
-            Recorder.StopViewing();
-          }
-        }
-      }*/
-
       base.OnPageDestroy(newWindowId);
     }
 
