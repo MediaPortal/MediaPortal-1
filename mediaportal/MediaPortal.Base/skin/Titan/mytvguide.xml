@@ -6,6 +6,8 @@
   <define>#header.label:600</define>
   <controls>
   
+    <include>common.default.background.xml</include> 
+
     <include condition="#(eq(#skin.tvguide.rows,' 7'))">mytvguide.7rows.xml</include>
     <include condition="#(eq(#skin.tvguide.rows,' 11'))">mytvguide.11rows.xml</include>
 

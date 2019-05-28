@@ -5,6 +5,7 @@
 	<allowoverlay>yes</allowoverlay> 
 	<define>#header.label:811</define>	
 	<controls>
+    <include>common.default.background.xml</include> 
 	<import>common.window.recordings.xml</import>
   <control>
     <id>0</id>

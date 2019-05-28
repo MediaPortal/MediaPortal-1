@@ -6,7 +6,6 @@
   <define>#header.label:3</define>
   <define>#useSelectedFanart:Yes</define>
   <controls>
-    <import>common.default.background.xml</import>
     <control>
       <description>dummy button for backdrop display</description>
       <type>button</type>
@@ -23,6 +22,7 @@
       <textcolorNoFocus>ffffffff</textcolorNoFocus>
     </control>
 
+    <import>common.default.background.xml</import>
     <import>common.fanart.selected.xml</import>
 
     <control>

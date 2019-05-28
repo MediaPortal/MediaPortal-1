@@ -9,6 +9,7 @@
 
     <import>common.default.background.xml</import>
     <import>WorldWeather.common.fanart.xml</import>
+    <import>common.default.background.overlay.xml</import> 
     <import>common.time.xml</import>
     <import>Worldweather.common.header.xml</import>
 

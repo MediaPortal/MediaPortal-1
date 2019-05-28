@@ -4,13 +4,7 @@
   <defaultcontrol>3</defaultcontrol>
   <allowoverlay>no</allowoverlay>
   <controls>
-    <control>
-      <id>0</id>
-      <type>image</type>
-      <width>1920</width>
-      <height>1080</height>
-      <texture>background.png</texture>
-    </control>
+    <include>common.default.background.xml</include> 
     <control>
       <type>label</type>
       <id>0</id>

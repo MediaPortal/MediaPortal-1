@@ -8,6 +8,7 @@
   <define>#useSelectedFanart:Yes</define>
   <define>#shadow.dark:ff000000</define>
   <controls>
+    <import>common.default.background.xml</import> 
     <!--
     <import>mvcentral.autofanart.xml</import>
     <import>mvcentral.selected.fanart.xml</import>
