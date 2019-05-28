@@ -94,6 +94,7 @@ namespace TvPlugin
     private bool _byIndex = false;
     private bool _showChannelNumber = false;
     private int _channelNumberMaxLength = 3;
+    private long _zapKeyTimeout = 1000;
     private bool _useNewRecordingButtonColor = false;
     private bool _useNewPartialRecordingButtonColor = false;
     private bool _useNewNotifyButtonColor = false;
@@ -153,6 +154,7 @@ namespace TvPlugin
         _byIndex = xmlreader.GetValueAsBool("mytv", "byindex", true);
         _showChannelNumber = xmlreader.GetValueAsBool("mytv", "showchannelnumber", false);
         _channelNumberMaxLength = xmlreader.GetValueAsInt("mytv", "channelnumbermaxlength", 3);
+        _zapKeyTimeout = 1000 * xmlreader.GetValueAsInt("movieplayer", "zapKeyTimeout", 1);
         _timePerBlock = xmlreader.GetValueAsInt("tvguide", "timeperblock", 30);
         _hdtvProgramText = xmlreader.GetValueAsString("mytv", "hdtvProgramText", "(HDTV)");
         _guideContinuousScroll = xmlreader.GetValueAsBool("mytv", "continuousScrollGuide", false);
@@ -4207,7 +4209,7 @@ namespace TvPlugin
         return;
       }
       TimeSpan ts = DateTime.Now - _keyPressedTimer;
-      if (ts.TotalMilliseconds >= 1000)
+      if (ts.TotalMilliseconds >= _zapKeyTimeout)
       {
         // change channel
         int iChannel = Int32.Parse(_lineInput);
@@ -4227,7 +4229,7 @@ namespace TvPlugin
       if (chKey >= '0' && chKey <= '9') //Make sure it's only for the remote
       {
         TimeSpan ts = DateTime.Now - _keyPressedTimer;
-        if (_lineInput.Length >= _channelNumberMaxLength || ts.TotalMilliseconds >= 1000)
+        if (_lineInput.Length >= _channelNumberMaxLength || ts.TotalMilliseconds >= _zapKeyTimeout)
         {
           _lineInput = String.Empty;
         }
