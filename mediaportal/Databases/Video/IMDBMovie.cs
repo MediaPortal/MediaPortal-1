@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2017 Team MediaPortal
+#region Copyright (C) 2005-2019 Team MediaPortal
 
-// Copyright (C) 2005-2017 Team MediaPortal
+// Copyright (C) 2005-2019 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -931,6 +931,8 @@ namespace MediaPortal.Video.Database
       GUIPropertyManager.SetProperty("#AudioChannels", string.Empty);
       GUIPropertyManager.SetProperty("#HasSubtitles", "false");
       GUIPropertyManager.SetProperty("#AspectRatio", string.Empty);
+      GUIPropertyManager.SetProperty("#Is3D", string.Empty);
+      GUIPropertyManager.SetProperty("#IsHDR", string.Empty);
     }
 
     private void SetMediaInfoProperties(string file)
@@ -957,6 +959,8 @@ namespace MediaPortal.Video.Database
         GUIPropertyManager.SetProperty("#AudioChannels", MediaInfo.AudioChannels);
         GUIPropertyManager.SetProperty("#HasSubtitles", hasSubtitles);
         GUIPropertyManager.SetProperty("#AspectRatio", MediaInfo.AspectRatio);
+        GUIPropertyManager.SetProperty("#Is3D", MediaInfo.Is3D ? "true" : "false");
+        GUIPropertyManager.SetProperty("#IsHDR", MediaInfo.IsHDR ? "true" : "false");
       }
       catch (Exception) { }
     }
@@ -2128,6 +2132,8 @@ namespace MediaPortal.Video.Database
         GUIPropertyManager.SetProperty("#HasSubtitles", hasSubtitles);
         GUIPropertyManager.SetProperty("#AspectRatio", info.MediaInfo.AspectRatio);
         GUIPropertyManager.SetProperty("#myvideosuserfanart", info.UserFanart);
+        GUIPropertyManager.SetProperty("#Is3D", info.MediaInfo.Is3D ? "true" : "false");
+        GUIPropertyManager.SetProperty("#IsHDR", info.MediaInfo.IsHDR ? "true" : "false");
         
       }
       catch (Exception ex)
@@ -2188,6 +2194,8 @@ namespace MediaPortal.Video.Database
       GUIPropertyManager.SetProperty("#isgroup", string.Empty);
       GUIPropertyManager.SetProperty("#iscollection", string.Empty);
       GUIPropertyManager.SetProperty("#awards", string.Empty);
+      GUIPropertyManager.SetProperty("#Is3D",  string.Empty);
+      GUIPropertyManager.SetProperty("#IsHDR",  string.Empty);
     }
 
     #endregion
