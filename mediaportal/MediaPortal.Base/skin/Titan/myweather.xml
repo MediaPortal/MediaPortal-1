@@ -120,7 +120,7 @@
 	
 <!--   5-day stuff   -->
 
-    <include>common.default.background.xml</include> 
+    <import>common.default.background.xml</import> 
 	
 	<control>
 		<description>Viewport</description>

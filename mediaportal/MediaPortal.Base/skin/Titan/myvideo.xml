@@ -6,7 +6,9 @@
   <define>#header.label:3</define>
   <define>#useSelectedFanart:Yes</define>
   <controls>
+
     <!--            :: DUMMY ::            -->
+
     <control>
       <description>Selected item Label</description>
       <type>label</type>
@@ -16,22 +18,26 @@
       <label>#title</label>
       <visible>control.hastext(7773)</visible>
     </control>
-    <!--            :: DEFAULT BACKGROUND ::            -->
+
+    <!--            :: BACKGROUND ::            -->
     <import>common.default.background.xml</import>
     <import>common.fanart.selected.xml</import>
-    <!--            :: IMPORT ::            -->
+    <import>common.default.background.overlay.xml</import>
+
     <import>myvideo.background.default.xml</import>
+
     <control>
-			<id>0</id>
+		<id>0</id>
     	<type>image</type>
-      <posX>60</posX>
-      <posY>34</posY>
-      <width>68</width>
-			<height>60</height>
-       <texture>icon_movies.png</texture>
+        <posX>60</posX>
+        <posY>34</posY>
+        <width>68</width>
+		<height>60</height>
+        <texture>icon_movies.png</texture>
 	    <animation effect="fade" time="250">WindowOpen</animation>
 	    <animation effect="fade" time="250">WindowClose</animation>
     </control>
+
     <import>common.time.xml</import>
     <import>myvideo.hiddenmenu.xml</import>
     <import>myvideo.views.default.xml</import>

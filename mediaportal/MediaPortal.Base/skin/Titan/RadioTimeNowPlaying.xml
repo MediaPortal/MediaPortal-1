@@ -23,21 +23,8 @@
       <shouldCache>true</shouldCache>     
     </control>
 
-    <control>
-      <description>BACKGROUND Overlay</description>
-      <type>image</type>
-      <id>0</id>
-      <posX>0</posX>
-      <posY>0</posY>
-      <width>1920</width>
-      <height>1080</height>
-      <texture>fanart_overlay.png</texture>
-      <visible>skin.hassetting(#skin.background.useHover)</visible>       
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="250">WindowClose</animation>
-    </control>
-                
     <import>common.music.play.fanart.xml</import>
+    <import>common.default.background.overlay.xml</import>
 
     <include condition="#(eq(#music.simple,'false'))">RadioTimeNowPlaying.Body.xml</include>
     <include condition="#(eq(#music.simple,'true'))">RadioTimeNowPlaying.SimpleBody.xml</include>

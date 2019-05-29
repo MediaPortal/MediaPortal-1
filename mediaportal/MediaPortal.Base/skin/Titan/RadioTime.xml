@@ -24,8 +24,9 @@
         <shouldCache>true</shouldCache>		
 	</control>
 
-    <include>common.music.selected.fanart.xml</include>
-    <include>common.music.play.fanart.xml</include>
+    <import>common.music.selected.fanart.xml</import>
+    <import>common.music.play.fanart.xml</import>
+    <import>common.default.background.overlay.xml</import>
 
     <import>common.window.radiotime.xml</import>
     

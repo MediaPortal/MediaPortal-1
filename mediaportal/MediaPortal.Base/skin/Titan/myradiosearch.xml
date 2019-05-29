@@ -6,7 +6,7 @@
 <define>#header.label:665</define>		
 <controls>
   
-  <include>common.default.background.xml</include> 
+  <import>common.default.background.xml</import> 
 
   <control>
   	<description>VIEWPORT</description>

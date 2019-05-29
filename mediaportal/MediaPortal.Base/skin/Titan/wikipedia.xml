@@ -17,7 +17,7 @@
 		<height>1080</height>
 	</control>
 
-    <include>common.default.background.overlay.xml</include> 
+    <import>common.default.background.overlay.xml</import> 
 
 	<control>
 		<id>0</id>

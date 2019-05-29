@@ -5,7 +5,7 @@
 <allowoverlay>yes</allowoverlay>
 <define>#header.label:100748</define>
 <controls>
-  <include>common.default.background.xml</include> 
+  <import>common.default.background.xml</import> 
 
   <control>
   	<description>VIEWPORT</description>
