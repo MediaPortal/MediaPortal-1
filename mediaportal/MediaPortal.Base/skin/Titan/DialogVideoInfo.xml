@@ -228,6 +228,38 @@
       <animation effect="fade" time="250" condition="!control.hasfocus(456852)">conditional</animation>
     </control>
 
+    <!-- 3D -->
+
+    <control>
+        <description>3D banner</description>
+        <id>0</id>
+        <type>image</type>
+        <posX>395</posX>
+        <posY>360</posY>
+        <width>110</width>
+        <height>110</height>
+        <texture>is3D.png</texture>                                                  
+    	<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+        <animation effect="fade" time="250" condition="!control.hasfocus(456852)">conditional</animation>
+    </control>
+
+    <!-- HDR -->
+
+    <control>
+        <description>HDR banner</description>
+        <id>0</id>
+        <type>image</type>
+        <posX>395</posX>
+        <posY>360</posY>
+        <width>110</width>
+        <height>110</height>
+        <texture>isHDR.png</texture>                                                  
+    	<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+        <animation effect="fade" time="250" condition="!control.hasfocus(456852)">conditional</animation>
+    </control>
+
     <control>
       <description>Button group</description>
       <type>group</type>

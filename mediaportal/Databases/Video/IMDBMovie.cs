@@ -1146,6 +1146,16 @@ namespace MediaPortal.Video.Database
             Log.Error("IMDBMovie Set user fanart file property error: {0}", ex.Message);
           }
 
+          // MP1-4955
+          if (info.MediaInfo.Is3D)
+          {
+            item.AdditionalData = item.AdditionalData | GUIListItemProperty.Is3D;
+          }
+          if (info.MediaInfo.IsHDR)
+          {
+            item.AdditionalData = item.AdditionalData | GUIListItemProperty.IsHDR;
+          }
+
           item.AlbumInfoTag = info;
         }
         catch (ThreadAbortException) 

@@ -375,6 +375,38 @@
       <animation effect="fade" time="0">WindowClose</animation>
     </control>
 
+    <!-- 3D -->
+
+    <control>
+        <description>3D banner</description>
+        <id>0</id>
+        <type>image</type>
+        <posX>395</posX>
+        <posY>360</posY>
+        <width>110</width>
+        <height>110</height>
+        <texture>is3D.png</texture>                                                  
+        <visible>[facadeview.list|facadeview.playlist]+Control.IsVisible(50)+!string.equals(#plot,)+string.equals(#Is3D,yes)</visible>
+    	<animation effect="fade" time="0">WindowOpen</animation>
+		<animation effect="fade" time="0">WindowClose</animation>
+    </control>
+
+    <!-- HDR -->
+
+    <control>
+        <description>HDR banner</description>
+        <id>0</id>
+        <type>image</type>
+        <posX>395</posX>
+        <posY>360</posY>
+        <width>110</width>
+        <height>110</height>
+        <texture>isHDR.png</texture>                                                  
+        <visible>[facadeview.list|facadeview.playlist]+Control.IsVisible(50)+!string.equals(#plot,)+string.equals(#IsHDR,true)</visible>
+    	<animation effect="fade" time="0">WindowOpen</animation>
+		<animation effect="fade" time="0">WindowClose</animation>
+    </control>
+
 	<!--            :: INFO LABELS ::            -->
 	
 	<control Style="InfoLabel">
@@ -396,7 +428,7 @@
 		<posX>798</posX>
 		<posY>387</posY>
 		<!--label>#year</label-->
-		<label>#(iif(eq(#year,'1900'),' ','#year'))</label>
+		<label>#(iif(eq(#year,'1900'),' ','#year')) #IsHDR</label>
 		<visible>[facadeview.list|facadeview.playlist] + Control.IsVisible(50) + string.equals(#hideinfo, False)</visible>
 		<animation effect="fade" time="250">WindowOpen</animation>
 		<animation effect="fade" time="250">WindowClose</animation>

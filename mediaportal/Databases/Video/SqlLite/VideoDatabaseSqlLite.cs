@@ -1170,7 +1170,7 @@ namespace MediaPortal.Video.Database
               Util.Utils.MakeFileName(mInfo.BestAudioStream?.Codec.ToCodecString() ?? string.Empty),
               mInfo.AudioChannelsFriendly,
               mInfo.Is3D ? 1 : 0,
-              mInfo.IsHDR ? 1 : 0);
+              mInfo.IsHdr ? 1 : 0);
           }
           else
           {
@@ -1184,7 +1184,7 @@ namespace MediaPortal.Video.Database
               Util.Utils.MakeFileName(mInfo.BestAudioStream?.Codec.ToCodecString() ?? string.Empty),
               mInfo.AudioChannelsFriendly,
               mInfo.Is3D ? 1 : 0,
-              mInfo.IsHDR ? 1 : 0);
+              mInfo.IsHdr ? 1 : 0);
           }
 
           m_db.Execute(strSQL);

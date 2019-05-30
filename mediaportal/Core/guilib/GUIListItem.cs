@@ -59,6 +59,7 @@ namespace MediaPortal.GUI.Library
     protected string _folder = string.Empty; // path + filename of the item
     protected string _dvdLabel = string.Empty; // indicates the disc number of movie
     protected int _duration = 0; // duration (in seconds) of the movie or song
+    protected GUIListItemProperty _additionalData = GUIListItemProperty.None; // Additional data for Facade control
     private FileInformation _fileInfo = null; // file info (size, date/time etc.) of the file
     private bool _shaded = false; // indicates if the item needs to be rendered shaded
     private float _rating = 0; // rating of a movie
@@ -114,6 +115,7 @@ namespace MediaPortal.GUI.Library
       _isBdDvdFolder = item._isBdDvdFolder;
       _isUserGroup = item._isUserGroup;
       _isCollection = item._isCollection;
+      _additionalData = item._additionalData;
       _dtUpdated = item._dtUpdated;
     }
 
@@ -441,6 +443,15 @@ namespace MediaPortal.GUI.Library
     {
       get { return _isCollection; }
       set { _isCollection = value; }
+    }
+
+    /// <summary>
+    /// Get/set Additional Data for Facade contol
+    /// </summary>
+    public GUIListItemProperty AdditionalData
+    {
+      get { return _additionalData; }
+      set { _additionalData = value; }
     }
 
     /// <summary>
@@ -772,4 +783,18 @@ namespace MediaPortal.GUI.Library
 
     #endregion
   }
+
+  #region Enums
+
+  public enum GUIListItemProperty
+  {
+    None   = 0x00, // 00000000 in binary
+    Is3D   = 0x01, // 00000001 in binary
+    IsHDR  = 0x02, // 00000010 in binary
+    //     = 0x04, // 00000100 in binary
+    //     = 0x08  // 00001000 in binary
+  }
+
+  #endregion
+
 }

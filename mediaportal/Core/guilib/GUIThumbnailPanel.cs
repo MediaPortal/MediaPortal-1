@@ -611,12 +611,9 @@ namespace MediaPortal.GUI.Library
       }
 
       // 5. 3D and HDR images for Movies
-      if ((_show3DImage || _showHDRImage) && pItem.AlbumInfoTag != null)
+      if ((_show3DImage || _showHDRImage) && pItem.AdditionalData != GUIListItemProperty.None)
       {
-        IMDBMovie info = item.AlbumInfoTag as IMDBMovie;
-        if (info != null)
-        {
-          if (_show3DImage && info.Is3D)
+        if (_show3DImage && (pItem.AdditionalData & GUIListItemProperty.Is3D) == GUIListItemProperty.Is3D)
           {
             GUIOverlayImage _overlayImage = new GUIOverlayImage(_is3DImagePosX, _is3DImagePosY, _is3DImageWidth, _is3DImageHeight, _is3DImageTexture);
             if (_overlayImage != null)
@@ -625,13 +622,12 @@ namespace MediaPortal.GUI.Library
             }
           }
 
-          if (_showHDRImage && info.IsHDR)
+        if (_showHDRImage && (pItem.AdditionalData & GUIListItemProperty.IsHDR) == GUIListItemProperty.IsHDR)
           {
             GUIOverlayImage _overlayImage = new GUIOverlayImage(_isHDRImagePosX, _isHDRImagePosY, _isHDRImageWidth, _isHDRImageHeight, _isHDRImageTexture);
             if (_overlayImage != null)
             {
               _overlayList.Add(_overlayImage);
-            }
           }
         }
       }

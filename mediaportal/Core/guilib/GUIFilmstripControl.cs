@@ -189,7 +189,7 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("show3DImage")] protected bool _show3DImage = false;
     [XMLSkinElement("Is3DImagePosX")] protected int _is3DImagePosXLow = 0;
     [XMLSkin("Is3DImagePosX", "Big")] protected int _is3DImagePosXBig = 0;
-    [XMLSkinElement("Is3DImagePosY")] protected int _is3DImagePosYKow = 0;
+    [XMLSkinElement("Is3DImagePosY")] protected int _is3DImagePosYLow = 0;
     [XMLSkin("Is3DImagePosY", "Big")] protected int _is3DImagePosYBig = 0;
     [XMLSkinElement("Is3DImageWidth")] protected int _is3DImageWidthLow = 0;
     [XMLSkin("Is3DImageWidth", "Big")] protected int _is3DImageWidthBig = 0;
@@ -739,12 +739,9 @@ namespace MediaPortal.GUI.Library
       }
 
       // 5. 3D and HDR images for Movies
-      if ((_show3DImage || _showHDRImage) && pItem.AlbumInfoTag != null)
+      if ((_show3DImage || _showHDRImage) && pItem.AdditionalData != GUIListItemProperty.None)
       {
-        IMDBMovie info = item.AlbumInfoTag as IMDBMovie;
-        if (info != null)
-        {
-          if (_show3DImage && info.Is3D)
+        if (_show3DImage && (pItem.AdditionalData & GUIListItemProperty.Is3D) == GUIListItemProperty.Is3D)
           {
             GUIOverlayImage _overlayImage = new GUIOverlayImage(_is3DImagePosX, _is3DImagePosY, _is3DImageWidth, _is3DImageHeight, _is3DImageTexture);
             if (_overlayImage != null)
@@ -753,13 +750,12 @@ namespace MediaPortal.GUI.Library
             }
           }
 
-          if (_showHDRImage && info.IsHDR)
+        if (_showHDRImage && (pItem.AdditionalData & GUIListItemProperty.IsHDR) == GUIListItemProperty.IsHDR)
           {
             GUIOverlayImage _overlayImage = new GUIOverlayImage(_isHDRImagePosX, _isHDRImagePosY, _isHDRImageWidth, _isHDRImageHeight, _isHDRImageTexture);
             if (_overlayImage != null)
             {
               _overlayList.Add(_overlayImage);
-            }
           }
         }
       }
