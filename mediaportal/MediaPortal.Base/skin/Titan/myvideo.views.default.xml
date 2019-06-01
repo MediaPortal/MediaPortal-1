@@ -428,7 +428,7 @@
 		<posX>798</posX>
 		<posY>387</posY>
 		<!--label>#year</label-->
-		<label>#(iif(eq(#year,'1900'),' ','#year')) #IsHDR</label>
+		<label>#(iif(eq(#year,'1900'),' ','#year'))</label>
 		<visible>[facadeview.list|facadeview.playlist] + Control.IsVisible(50) + string.equals(#hideinfo, False)</visible>
 		<animation effect="fade" time="250">WindowOpen</animation>
 		<animation effect="fade" time="250">WindowClose</animation>
