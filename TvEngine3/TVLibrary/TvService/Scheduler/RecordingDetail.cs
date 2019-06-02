@@ -222,8 +222,10 @@ namespace TvService
       
       bool fileNameOK = true;
       
-      //Actual Windows limit is 260(inc. terminating null), 249 allows for appending extension and numbers.  
-      const int FILE_PATH_LIMIT = 249;
+      //Actual Windows limit is 260(inc. terminating null), 
+      //using 229 allows space for pre-pending hostname/IPaddress (for remote UNC path access), 
+      //and appending unique numbers and the file extension.  
+      const int FILE_PATH_LIMIT = 229;
 
       Setting setting;
       if (!IsSerie)
