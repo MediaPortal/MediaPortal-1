@@ -20,6 +20,7 @@
 
 using System;
 using System.Text.RegularExpressions;
+using TvThumbnails;
 using TvControl;
 using TvDatabase;
 using TvLibrary.Log;
@@ -215,9 +216,11 @@ namespace TvService
     /// Create the filename for the recording 
     /// </summary>
     /// <param name="recordingPath"></param>
-    public void MakeFileName(string recordingPath)
+    public bool MakeFileName(string recordingPath)
     {
       TvBusinessLayer layer = new TvBusinessLayer();
+      
+      bool fileNameOK = true;
 
       Setting setting;
       if (!IsSerie)
@@ -333,14 +336,44 @@ namespace TvService
                                  DateTime.Now.Minute, DateTime.Now.Second);
       }
       fileName = Utils.MakeFileName(fileName);
+      
+      //Check length of full recording and thumbnail file paths against Windows limits,
+      //truncate if necessary and possible.
+      int lenRec = (fullPath + "\\" + fileName).Length;
+      int lenThumb = (Thumbs.ThumbnailFolder + "\\" + fileName).Length;
+      int truncateCnt = Math.Max(lenRec, lenThumb) - 250; //Actual limit is 260, 250 allows for appending extension and numbers later.  
+      if (truncateCnt > 0)
+      {
+        if (fileName.Length > truncateCnt)
+        {
+          //Truncate fileName and add '~' to the end, to indicate truncation
+          fileName = fileName.Substring(0, (fileName.Length - truncateCnt)) + "~";
+          Log.Error("Scheduler: MakeFileName(): file path > 250 characters, length = {0}, filename truncated to: {1}", 
+                    truncateCnt+250, fileName);
+        }
+        else
+        {
+          Log.Error("Scheduler: MakeFileName(): file path > 250 characters, length = {0}, filename too short to truncate, fileName.Length = {1}", 
+                    truncateCnt+250, fileName.Length);
+          fileNameOK = false;
+        }
+      }
+      
+      
       if (DoesFileExist(fullPath + "\\" + fileName))
       {
         int i = 1;
         while (DoesFileExist(fullPath + "\\" + fileName + "_" + i))
           ++i;
         fileName += "_" + i;
+        if (i > 9999)
+        {
+          fileNameOK = false;
+        }        
       }
       _fileName = fullPath + "\\" + fileName + recEngineExt;
+      
+      return fileNameOK;
     }
 
     /// <summary>
@@ -357,7 +390,7 @@ namespace TvService
         return true;
       return false;
     }
-
+    
     #endregion
   }
 }
