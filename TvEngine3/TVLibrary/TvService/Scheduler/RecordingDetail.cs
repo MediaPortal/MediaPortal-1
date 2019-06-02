@@ -221,6 +221,9 @@ namespace TvService
       TvBusinessLayer layer = new TvBusinessLayer();
       
       bool fileNameOK = true;
+      
+      //Actual Windows limit is 260(inc. terminating null), 249 allows for appending extension and numbers.  
+      const int FILE_PATH_LIMIT = 249;
 
       Setting setting;
       if (!IsSerie)
@@ -337,24 +340,35 @@ namespace TvService
       }
       fileName = Utils.MakeFileName(fileName);
       
-      //Check length of full recording and thumbnail file paths against Windows limits,
-      //truncate if necessary and possible.
+      //Check length of full recording and thumbnail file paths against FILE_PATH_LIMIT,
+      //truncate fileName part if necessary and possible.
       int lenRec = (fullPath + "\\" + fileName).Length;
       int lenThumb = (Thumbs.ThumbnailFolder + "\\" + fileName).Length;
-      int truncateCnt = Math.Max(lenRec, lenThumb) - 250; //Actual limit is 260, 250 allows for appending extension and numbers later.  
+      int truncateCnt = Math.Max(lenRec, lenThumb) - FILE_PATH_LIMIT;
       if (truncateCnt > 0)
       {
+        if (lenRec > lenThumb)
+        {
+          Log.Error("Scheduler: MakeFileName(): rec file path too long, length = {0}, file path: {1}", 
+                    truncateCnt+FILE_PATH_LIMIT, (fullPath + "\\" + fileName));
+        }
+        else
+        {
+          Log.Error("Scheduler: MakeFileName(): thumb file path too long, length = {0}, file path: {1}", 
+                    truncateCnt+FILE_PATH_LIMIT, (Thumbs.ThumbnailFolder + "\\" + fileName));
+        }
+        
         if (fileName.Length > truncateCnt)
         {
           //Truncate fileName and add '~' to the end, to indicate truncation
           fileName = fileName.Substring(0, (fileName.Length - truncateCnt)) + "~";
-          Log.Error("Scheduler: MakeFileName(): file path > 250 characters, length = {0}, filename truncated to: {1}", 
-                    truncateCnt+250, fileName);
+          Log.Error("Scheduler: MakeFileName(): file path too long, length = {0}, filename truncated to: {1}", 
+                    truncateCnt+FILE_PATH_LIMIT, fileName);
         }
         else
         {
-          Log.Error("Scheduler: MakeFileName(): file path > 250 characters, length = {0}, filename too short to truncate, fileName.Length = {1}", 
-                    truncateCnt+250, fileName.Length);
+          Log.Error("Scheduler: MakeFileName(): file path too long, length = {0}, filename too short to truncate, fileName.Length = {1}", 
+                    truncateCnt+FILE_PATH_LIMIT, fileName.Length);
           fileNameOK = false;
         }
       }
@@ -364,11 +378,14 @@ namespace TvService
       {
         int i = 1;
         while (DoesFileExist(fullPath + "\\" + fileName + "_" + i))
+        {
           ++i;
+        }
         fileName += "_" + i;
         if (i > 9999)
         {
           fileNameOK = false;
+          Log.Error("Scheduler: MakeFileName(): fileName number suffix > 9999");          
         }        
       }
       _fileName = fullPath + "\\" + fileName + recEngineExt;
