@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <Language name="English" characters="255">
   <Section name="unmapped">
     <String id="0" prefix="My ">Programs</String>
@@ -2420,6 +2420,7 @@
     <String id="350038">HTPCinfo</String>
 	<String id="350039">Emulators2</String>
 	<String id="350040">MPsteam</String>
-    <String id="350041">Grab Actor details and photo</String>
+	<String id="350041">Grab Actor details and photo</String>
+	<String id="350042">Zap Key Timeout</String>
    </Section>
 </Language>

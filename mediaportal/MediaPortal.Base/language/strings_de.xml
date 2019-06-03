@@ -158,9 +158,9 @@
 		<String id="192">Liste leeren</String>
 		<String id="193">Suche</String>
 		<String id="194">Suche...</String>
-		<String id="195">Keinen OFDB/IMDB-Eintrag gefunden!</String>
+		<String id="195">Keinen TMDB/IMDB-Eintrag gefunden!</String>
 		<String id="196">Film wählen: </String>
-		<String id="197">OFDB/IMDB-Informationen abfragen</String>
+		<String id="197">TMDB/IMDB-Informationen abfragen</String>
 		<String id="198">Lade Filminformationen</String>
 		<String id="199">Regisseur: </String>
 		<String id="200">Autor: </String>
@@ -330,7 +330,7 @@
 		<String id="365">Name</String>
 		<String id="366">Jahr</String>
 		<String id="367">Bewertung</String>
-		<String id="368">OFDB/IMDB</String>
+		<String id="368">TMDB/IMDB</String>
 		<String id="369">Titel</String>
 		<String id="370">Gewitter</String>
 		<String id="371">teilweise</String>
@@ -1650,7 +1650,7 @@
 		<String id="10101">Spielzeit</String>
 		<String id="10102">Rekordzeit</String>
 		<String id="10103" prefix="Mein ">Minesweeper</String>
-		<String id="10104">Sender-Vorschau</String>
+		<String id="10104">Mini-EPG</String>
 		<String id="10105">Aktuell</String>
 		<String id="11000">Bildbereich zuschneiden</String>
 		<String id="11001">Oben: </String>
@@ -2343,6 +2343,7 @@
 		<String id="300231">Wiederholfrequenz senken wenn MP keinen Fokus hat</String>
 		<String id="990000">Wöchentlich an Tag X auf diesem Sender</String>
 		<String id="990001">{0} immer auf {1}</String>
-        <String id="350041">Künstler-Infos und Foto laden</String>
+		<String id="350041">Künstler-Infos und Foto laden</String>
+		<String id="350042">Zap-Eingabe-Timeout</String>
 	</Section>
 </Language>
