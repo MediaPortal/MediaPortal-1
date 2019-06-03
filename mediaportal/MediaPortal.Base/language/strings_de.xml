@@ -1702,6 +1702,7 @@
 		<String id="14018">Aktualisierung installieren</String>
         <String id="15001">Informationen zum Künstler</String>
         <String id="15002">Informationen zum Album</String>
+        <String id="15003">Einfacher Modus</String>
 		<String id="16001">Partymix</String>
 		<String id="19001" prefix="Mein ">Tetris</String>
 		<String id="19002">Neues Spiel</String>

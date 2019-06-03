@@ -286,7 +286,7 @@
                 <textcolor>FFFFFFFF</textcolor>
                 <colordiffuse>ffffffff</colordiffuse>
                 <textcolorNoFocus>ff393939</textcolorNoFocus>
-                <label>Simple Now Playing</label>
+                <label>#(L(15003))</label>
                 <selected>#(skin.hassetting('#skin.music.nowplaying.simple'))</selected>
                 <onclick>#(skin.togglesetting('#skin.music.nowplaying.simple'))</onclick>
     			<onright>50</onright>
