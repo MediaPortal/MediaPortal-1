@@ -223,9 +223,9 @@ namespace TvService
       bool fileNameOK = true;
       
       //Actual Windows limit is 260(inc. terminating null), 
-      //using 229 allows space for pre-pending hostname/IPaddress (for remote UNC path access), 
+      //using 225 allows space for pre-pending hostname/IPaddress (for remote UNC path access), 
       //and appending unique numbers and the file extension.  
-      const int FILE_PATH_LIMIT = 229;
+      const int FILE_PATH_LIMIT = 225;
 
       Setting setting;
       if (!IsSerie)
@@ -384,10 +384,10 @@ namespace TvService
           ++i;
         }
         fileName += "_" + i;
-        if (i > 9999)
+        if (i > 99999)
         {
           fileNameOK = false;
-          Log.Error("Scheduler: MakeFileName(): fileName number suffix > 9999");          
+          Log.Error("Scheduler: MakeFileName(): fileName number suffix > 99999");          
         }        
       }
       _fileName = fullPath + "\\" + fileName + recEngineExt;
