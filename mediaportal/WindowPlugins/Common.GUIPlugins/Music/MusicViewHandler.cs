@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2019 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2019 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -168,7 +168,7 @@ namespace MediaPortal.GUI.Music
                               searchField, definition.Restriction, countField, searchTable);
           // only group special characters into a "#" entry is field is text based
           if (defRoot.Where == "rating" || defRoot.Where == "year" || defRoot.Where == "track" || defRoot.Where == "disc#" ||
-              defRoot.Where == "timesplayed" || defRoot.Where == "favourites" || defRoot.Where == "date")
+              defRoot.Where == "timesplayed" || defRoot.Where == "favourites" || defRoot.Where == "date" || defRoot.Where == "filetype")
           {
             database.GetSongsByFilter(sql, out songs, table, defRoot.Where, true);
           }
@@ -353,7 +353,7 @@ namespace MediaPortal.GUI.Music
         {
           string from = String.Format("{1} from {0}", table, GetField(defCurrent.Where));
 
-          if (isUsingTrackTable && table != "album" && defCurrent.Where != "Disc#")
+          if (isUsingTrackTable && table != "album" && defCurrent.Where != "disc#")
           {
             from = String.Format("{0} from tracks", allPrevColumns);
             table = "tracks";
@@ -397,6 +397,11 @@ namespace MediaPortal.GUI.Music
           {
             from = String.Format("* from tracks", GetField(defCurrent.Where));
             whereClause += " group by strAlbum, strAlbumArtist, iDisc ";
+          }
+          if (defCurrent.Where == "filetype")
+          {
+            from = String.Format("* from tracks", GetField(defCurrent.Where));
+            whereClause += " group by strAlbum, strAlbumArtist, strFileType ";
           }
 
           sql = String.Format("select distinct {0} {1} {2}", from, whereClause, orderClause);
@@ -750,6 +755,10 @@ namespace MediaPortal.GUI.Music
       {
         return "tracks";
       }
+      if (where == "filetype")
+      {
+        return "tracks";
+      }
       return null;
     }
 
@@ -814,6 +823,10 @@ namespace MediaPortal.GUI.Music
       if (where == "disc#")
       {
         return "iDisc";
+      }
+      if (where == "filetype")
+      {
+        return "strFileType";
       }
       return null;
     }
@@ -880,6 +893,10 @@ namespace MediaPortal.GUI.Music
       {
         return song.DiscId.ToString();
       }
+      if (where == "filetype")
+      {
+        return song.FileType;
+      }
       return "";
     }
 
@@ -911,6 +928,10 @@ namespace MediaPortal.GUI.Music
       if (filter.DefaultSort == "disc#")
       {
         return "iDisc";
+      }
+      if (filter.DefaultSort == "filetype")
+      {
+        return "strFileType";
       }
       if (filter.DefaultSort == "Track")
       {
@@ -950,6 +971,9 @@ namespace MediaPortal.GUI.Music
           break;          
         case"disc#":
           localizedLevelName = GUILocalizeStrings.Get(1216);
+          break;          
+        case"filetype":
+          localizedLevelName = GUILocalizeStrings.Get(467);
           break;          
         case "title":
         case "timesplayed":
