@@ -6,10 +6,12 @@
   <define>#header.label:600</define>
   <controls>
   
-    <include>common.default.background.xml</include> 
+    <import>common.default.background.xml</import> 
 
     <include condition="#(eq(#skin.tvguide.rows,' 7'))">mytvguide.7rows.xml</include>
     <include condition="#(eq(#skin.tvguide.rows,' 11'))">mytvguide.11rows.xml</include>
+
+    <import>common.default.background.overlay.xml</import> 
 
     <control>
       <id>0</id>
@@ -23,7 +25,8 @@
 	
     <import>common.time.settings.xml</import>
 
-		<include condition="#(skin.hassetting('#skin.tvguide.usecolorsforbuttons'))">mytvguide.colors.xml</include>
-		<include condition="#(eq(#skin.tvguide.rows,' 11'))">common.overlay.xml</include>
+	<include condition="#(skin.hassetting('#skin.tvguide.usecolorsforbuttons'))">mytvguide.colors.xml</include>
+	<include condition="#(eq(#skin.tvguide.rows,' 11'))">common.overlay.xml</include>
+
   </controls>
 </window>

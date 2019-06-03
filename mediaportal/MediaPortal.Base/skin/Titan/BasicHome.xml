@@ -35,7 +35,7 @@
 
 <controls>	
 
-    <include>common.default.background.xml</include> 
+    <include>common.default.background.xml</include>
     
     <include condition="#(eq(#skin.basichome.background,'default'))">BasicHome.BackgroundSelected.xml</include>	
     <include condition="#(eq(#skin.basichome.background,'FanartHandler'))">BasicHome.Fanart.Selected.xml</include>	
@@ -47,7 +47,7 @@
 
     <import>BasicHome.submenus.xml</import> 
     
-    <include>common.default.background.overlay.xml</include> 
+    <include>common.default.background.overlay.xml</include>
 
     <import>common.time.xml</import> 
     

@@ -9,11 +9,14 @@
   <define>#shadow.dark:ff000000</define>
   <controls>
     <import>common.default.background.xml</import> 
+    <import>common.music.selected.fanart.xml</import> 
+    <import>common.default.background.overlay.xml</import> 
     <!--
     <import>mvcentral.autofanart.xml</import>
     <import>mvcentral.selected.fanart.xml</import>
     -->
     <import>common.window.music.genres.xml</import>
+
     <!-- ClearArt -->
     <control>
         <description>ClearArt</description>

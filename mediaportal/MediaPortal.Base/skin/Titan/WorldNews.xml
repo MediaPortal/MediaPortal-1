@@ -21,8 +21,8 @@
 <animation effect="fade" time="250">WindowClose</animation>
 <visible>string.equals(#skin.enable.Hovers,true)</visible>
 </control>
-<include>common.default.background.overlay.xml</include> 
-<include condition="#(eq(#skin.enable.background.overlay.plugins,'True'))">BasicHome.BackgroundSelected.overlay.xml</include>
+<import>common.default.background.overlay.xml</import> 
+<!--include condition="#(eq(#skin.enable.background.overlay.plugins,'True'))">BasicHome.BackgroundSelected.overlay.xml</include-->
 <control>
 <description>VIEWPORT</description>
 <type>image</type>

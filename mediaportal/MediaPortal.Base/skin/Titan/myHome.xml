@@ -8,7 +8,7 @@
 <controls>	
 
     <import>common.default.background.xml</import>
-    <include>common.default.background.overlay.xml</include> 
+    <import>common.default.background.overlay.xml</import> 
 		
     <control>
       <description>Menu</description>
