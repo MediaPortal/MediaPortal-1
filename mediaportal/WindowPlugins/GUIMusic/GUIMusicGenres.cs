@@ -564,6 +564,7 @@ namespace MediaPortal.GUI.Music
           }
 
           case "disc#":
+          case "filetype":
           case "album":
 
             bool thumbFound = false;
@@ -1306,6 +1307,9 @@ namespace MediaPortal.GUI.Music
           break;
         case "disc#":
           m_database.GetSongsByAlbumArtistAlbumDisc(s.AlbumArtist, s.Album, s.DiscId, ref songs);
+          break;
+        case "filetype":
+          m_database.GetSongsByAlbumArtistAlbumFileType(s.AlbumArtist, s.Album, s.FileType, ref songs);
           break;
         default:
           Log.Debug("GUIMusicGenres: GetSongsForFolder - could not determine type for {0}", s.ToShortString());
