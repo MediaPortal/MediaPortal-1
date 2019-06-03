@@ -1718,6 +1718,8 @@
 		<String id="14016">кол-ву загрузок</String>
 		<String id="14017">рейтингу</String>
 		<String id="14018">Установить обновление</String>
+        <String id="15001">О Артисте...</String>
+        <String id="15002">О Альбоме...</String>
 		<String id="16001">Микс для вечеринки</String>
 		<String id="19001" prefix="Мой ">Тетрис</String>
 		<String id="19002">Новая игра</String>

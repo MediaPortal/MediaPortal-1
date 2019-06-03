@@ -106,7 +106,7 @@
               <id>6101</id>
             <posX>1453</posX>
             <posY>717</posY>
-            <label>Artist Information</label>
+            <label>#(L(15001))</label>
         <font>TitanLight12</font>   
             <selected>#(eq(#skin.mymusic.info,'ArtistInfo'))</selected>
             <onclick>#(skin.setstring('#skin.mymusic.info',iif(eq(#skin.mymusic.info,'ArtistInfo'),'None','ArtistInfo')))</onclick>
@@ -124,7 +124,7 @@
               <id>6102</id>
             <posX>1453</posX>
             <posY>782</posY>
-            <label>Album Information</label>
+            <label>#(L(15002))</label>
         <font>TitanLight12</font>           
             <selected>#(eq(#skin.mymusic.info,'AlbumInfo'))</selected>
             <onclick>#(skin.setstring('#skin.mymusic.info',iif(eq(#skin.mymusic.info,'AlbumInfo'),'None','AlbumInfo')))</onclick>

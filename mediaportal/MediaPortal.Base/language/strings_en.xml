@@ -1728,6 +1728,8 @@
     <String id="14016">Download</String>
     <String id="14017">Rating</String>
     <String id="14018">Install Update</String>
+    <String id="15001">Artist Information</String>
+    <String id="15002">Album Information</String>
     <String id="16001">Party Shuffle</String>
     <String id="19001" prefix="My ">Tetris</String>
     <String id="19002">New Game</String>
