@@ -333,7 +333,21 @@ namespace MediaPortal.Video.Database
         if (DatabaseUtility.TableExists(m_db, "filesmediainfo") == false)
         {
           DatabaseUtility.AddTable(m_db, "filesmediainfo",
-                                   "CREATE TABLE filesmediainfo ( idFile integer primary key, videoCodec text, videoResolution text, aspectRatio text, hasSubtitles bool, audioCodec text, audioChannels text)");
+                                   "CREATE TABLE filesmediainfo ( idFile integer primary key, videoCodec text, videoResolution text, aspectRatio text, hasSubtitles bool, audioCodec text, audioChannels text, is3D bool, isHDR bool)");
+        }
+
+        // 3D flag
+        if (DatabaseUtility.TableColumnExists(m_db, "filesmediainfo", "is3D") == false)
+        {
+          string strSQL = "ALTER TABLE \"main\".\"filesmediainfo\" ADD COLUMN \"is3D\" bool DEFAULT 0";
+          m_db.Execute(strSQL);
+        }
+
+        // HDR flag
+        if (DatabaseUtility.TableColumnExists(m_db, "filesmediainfo", "isHDR") == false)
+        {
+          string strSQL = "ALTER TABLE \"main\".\"filesmediainfo\" ADD COLUMN \"isHDR\" bool DEFAULT 0";
+          m_db.Execute(strSQL);
         }
 
         #endregion
@@ -509,7 +523,7 @@ namespace MediaPortal.Video.Database
       DatabaseUtility.AddTable(m_db, "VideoThumbBList",
                                "CREATE TABLE VideoThumbBList ( idVideoThumbBList integer primary key, strPath text, strExpires text, strFileDate text, strFileSize text)");
       DatabaseUtility.AddTable(m_db, "filesmediainfo",
-                               "CREATE TABLE filesmediainfo ( idFile integer primary key, videoCodec text, videoResolution text, aspectRatio text, hasSubtitles bool, audioCodec text, audioChannels text)");
+                               "CREATE TABLE filesmediainfo ( idFile integer primary key, videoCodec text, videoResolution text, aspectRatio text, hasSubtitles bool, audioCodec text, audioChannels text, is3D bool, isHDR bool)");
       #endregion
 
       #region Indexes
@@ -1147,26 +1161,30 @@ namespace MediaPortal.Video.Database
           if (results.Rows.Count == 0)
           {
             strSQL = String.Format(
-              "INSERT INTO filesmediainfo (idFile, videoCodec, videoResolution, aspectRatio, hasSubtitles, audioCodec, audioChannels) VALUES({0},'{1}','{2}','{3}',{4},'{5}','{6}')",
+              "INSERT INTO filesmediainfo (idFile, videoCodec, videoResolution, aspectRatio, hasSubtitles, audioCodec, audioChannels, is3D, isHDR) VALUES({0},'{1}','{2}','{3}',{4},'{5}','{6}','{7}','{8}')",
               fileID,
               Util.Utils.MakeFileName(mInfo.BestVideoStream.Codec.ToCodecString() ?? string.Empty),
               mInfo.VideoResolution,
               mInfo.AspectRatio,
               subtitles,
               Util.Utils.MakeFileName(mInfo.BestAudioStream?.Codec.ToCodecString() ?? string.Empty),
-              mInfo.AudioChannelsFriendly);
+              mInfo.AudioChannelsFriendly,
+              mInfo.Is3D ? 1 : 0,
+              mInfo.IsHdr ? 1 : 0);
           }
           else
           {
             strSQL = String.Format(
-              "UPDATE filesmediainfo SET videoCodec='{1}', videoResolution='{2}', aspectRatio='{3}', hasSubtitles='{4}', audioCodec='{5}', audioChannels='{6}' WHERE idFile={0}",
+              "UPDATE filesmediainfo SET videoCodec='{1}', videoResolution='{2}', aspectRatio='{3}', hasSubtitles='{4}', audioCodec='{5}', audioChannels='{6}', is3D='{7}', isHDR='{8}' WHERE idFile={0}",
               fileID,
               Util.Utils.MakeFileName(mInfo.BestVideoStream.Codec.ToCodecString() ?? string.Empty),
               mInfo.VideoResolution,
               mInfo.AspectRatio,
               subtitles,
               Util.Utils.MakeFileName(mInfo.BestAudioStream?.Codec.ToCodecString() ?? string.Empty),
-              mInfo.AudioChannelsFriendly);
+              mInfo.AudioChannelsFriendly,
+              mInfo.Is3D ? 1 : 0,
+              mInfo.IsHdr ? 1 : 0);
           }
 
           m_db.Execute(strSQL);
@@ -1243,6 +1261,14 @@ namespace MediaPortal.Video.Database
         mediaInfo.AudioCodec = DatabaseUtility.Get(results, 0, "audioCodec");
         mediaInfo.AudioChannels = DatabaseUtility.Get(results, 0, "audioChannels");
         mediaInfo.Duration = GetVideoDuration(fileID);
+
+        int is3D;
+        int.TryParse(DatabaseUtility.Get(results, 0, "is3D"), out is3D);
+        mediaInfo.Is3D = (is3D != 0);
+
+        int isHDR;
+        int.TryParse(DatabaseUtility.Get(results, 0, "isHDR"), out isHDR);
+        mediaInfo.IsHDR = (isHDR != 0);
       }
       catch (ThreadAbortException)
       {
@@ -1294,6 +1320,14 @@ namespace MediaPortal.Video.Database
         mediaInfo.AudioCodec = DatabaseUtility.Get(results, 0, "audioCodec");
         mediaInfo.AudioChannels = DatabaseUtility.Get(results, 0, "audioChannels");
         mediaInfo.Duration = GetVideoDuration(fileID);
+
+        int is3D;
+        int.TryParse(DatabaseUtility.Get(results, 0, "is3D"), out is3D);
+        mediaInfo.Is3D = (is3D != 0);
+
+        int isHDR;
+        int.TryParse(DatabaseUtility.Get(results, 0, "isHDR"), out isHDR);
+        mediaInfo.IsHDR = (isHDR != 0);
       }
       catch (ThreadAbortException)
       {
