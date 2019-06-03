@@ -380,7 +380,7 @@
                                 <posY>0</posY>
                                 <width>238</width>
                                 <height>340</height>
-                                <texture flipY="true" diffuse="Thumb_Mask_test.png" mask="filmstrip_mask.png">defaultVideoBig.png</texture>
+                                <texture flipY="true" diffuse="Thumb_Mask_test.png" mask="filmstrip_mask.png">defaultVideoBack.png</texture>
                               </control>
 
                               <control>
