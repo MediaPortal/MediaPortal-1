@@ -154,30 +154,29 @@
       <animation effect="zoom" start="100,100" end="110,110" time="500" condition="true" pulse="true">conditional</animation>
     </control>
     <control>
-      <description>background</description>
-      <type>image</type>
-      <id>1</id>
-      <posX>-20</posX>
-      <posY>42</posY>
-      <height>110</height>
-      <width>270</width>
-      <texture>picturecase_mask.png</texture>
-      <colordiffuse>ddffffff</colordiffuse>
-      <visible>control.isvisible(38)</visible>
-    </control>
-    <control>
-      <description>Zap to channel no</description>
-      <type>label</type>
-      <id>38</id>
-      <posX>73</posX>
-      <posY>42</posY>
-      <label>-</label>
-      <align>left</align>
-      <font>font36</font>
-      <textcolor>ff0066ff</textcolor>
-      <visible>no</visible>
-      <animation effect="zoom" start="100,100" end="160,160" time="0">visible</animation>
-    </control>
+    <description>background</description>
+    <type>image</type>
+    <id>1</id>
+    <posX>-5</posX>
+    <posY>10</posY>
+    <height>72</height>
+    <width>170</width>
+    <texture>osdbg2.png</texture>
+    <colordiffuse>bb000000</colordiffuse>
+    <!--visible>yes</visible-->
+  </control>
+  <control>
+    <description>Zap to channel no</description>
+    <type>label</type>
+    <id>38</id>
+    <posX>23</posX>
+    <posY>3</posY>
+    <label>-</label>
+    <font>font36</font>
+    <textcolor>lightskyblue</textcolor>
+    <visible>no</visible>
+    <!--animation effect="zoom" start="100,100" end="160,160" time="0">visible</animation-->
+  </control>
     <!-- ***************************************************************************************************** -->
   <!-- *****************************         RECORDING INFO LATESTMEDIA       ****************************** -->
   <!-- ***************************************************************************************************** -->
