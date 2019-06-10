@@ -177,7 +177,7 @@
     <type>fadelabel</type>
     <id>0</id>
     <posX>225</posX>
-    <posY>1020</posY>
+    <posY>1040</posY>
     <width>50</width>
     <label>#latestMediaHandler.tvrecordings.active.count</label>
     <align>center</align>
