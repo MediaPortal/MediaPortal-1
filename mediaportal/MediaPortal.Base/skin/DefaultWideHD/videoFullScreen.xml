@@ -5,7 +5,7 @@
   <allowoverlay>no</allowoverlay>
   <disabletopbar>false</disabletopbar>
   <controls>
-    <control>
+    <!--control>
       <description>background image</description>
       <type>image</type>
       <id>105</id>
@@ -16,56 +16,67 @@
       <texture mask="OSDBG2.png">black.png</texture>
       <colordiffuse>White</colordiffuse>
       <visible>window.ispauseosdvisible|player.rewinding|player.forwarding</visible>
-    </control>
+    </control-->
     <control>
       <description>background image</description>
       <type>image</type>
       <id>111</id>
       <posX>-90</posX>
-      <posY>867</posY>
-      <height>217</height>
+      <posY>937</posY>
+      <height>128</height>
       <width>2200</width>
-      <texture>OSDBG2.png</texture>
-      <colordiffuse>ddffffff</colordiffuse>
+      <texture>OSDBG4.png</texture>
+      <colordiffuse>dfffffff</colordiffuse>
+      <visible>!window.isosdvisible+[window.ispauseosdvisible+player.paused|player.rewinding|player.forwarding|control.isVisible(10)|control.isVisible(11)|control.isVisible(12)]</visible>
+    </control>
+    <control>
+      <description>background for black channelname</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>10</posX>
+      <posY>878</posY>
+      <height>60</height>
+      <width>1600</width>
+      <texture>OSDBG5.png</texture>
+      <colordiffuse>dfffffff</colordiffuse>
       <visible>!window.isosdvisible+[window.ispauseosdvisible+player.paused|player.rewinding|player.forwarding|control.isVisible(10)|control.isVisible(11)|control.isVisible(12)]</visible>
     </control>
     <control>
       <description>Time BG</description>
       <type>image</type>
-      <id>0</id>
-      <posX>1646</posX>
-      <posY>895</posY>
-      <width>237</width>
-      <height>52</height>
-      <texture>button_focus.png</texture>
-      <colordiffuse>ffffffff</colordiffuse>
-      <animation effect="rotate" delay="0" end="180" time="0" condition="true">conditional</animation>
-      <visible>control.isVisible(101)+!topbar.focused</visible>
+      <id>105</id>
+      <posX>1706</posX>
+      <posY>878</posY>
+      <width>450</width>
+      <height>60</height>
+      <texture>OSDBG3.png</texture>
+      <colordiffuse>dfffffff</colordiffuse>
+      <visible>!window.isosdvisible+[window.ispauseosdvisible+player.paused|player.rewinding|player.forwarding|control.isVisible(10)|control.isVisible(11)|control.isVisible(12)]</visible>
     </control>
     <control>
       <description>Time Info</description>
       <type>label</type>
-      <id>0</id>
-      <posX>1868</posX>
-      <posY>893</posY>
+      <id>2</id>
+      <posX>1898</posX>
+      <posY>885</posY>
       <label>#time</label>
       <align>right</align>
-      <font>font16</font>
-      <textcolor>ivory</textcolor>
+      <font>Label</font>
+      <textcolor>black</textcolor>
       <visible>control.isVisible(111)</visible>
     </control>
     <control>
       <description>Movie Name</description>
-      <id>0</id>
+      <id>3</id>
       <type>fadelabel</type>
-      <posX>0</posX>
-      <posY>893</posY>
+      <posX>30</posX>
+      <posY>885</posY>
       <width>1920</width>
       <height>54</height>
       <label>-</label>
-      <align>center</align>
-      <textcolor>ffffffff</textcolor>
-      <font>Menutitle</font>
+      <align>left</align>
+      <textcolor>black</textcolor>
+      <font>Label</font>
       <label>#Play.Current.Title</label>
       <visible>control.isVisible(111)</visible>
     </control>
@@ -134,7 +145,7 @@
       <type>image</type>
       <id>0</id>
       <posX>1522</posX>
-      <posY>680</posY>
+      <posY>690</posY>
       <width>372</width>
       <height>187</height>
       <texture>#TVSeries.Play.ClearArt</texture>
@@ -143,16 +154,15 @@
       <align>center</align>
       <zoom>no</zoom>
       <valign>top</valign>
-      <visible>!string.equals(#TVSeries.Episode.SeriesName,)</visible>
+      <visible>!string.equals(#TVSeries.Episode.SeriesName,)+control.isVisible(111)</visible>
       <animation effect="fade" delay="0" start="0" end="100" time="2000">WindowOpen</animation>
-      <animation effect="fade" delay="10000" start="100" end="0" time="2000" condition="true">conditional</animation>
     </control>
     <control>
       <description>Movie ClearArt</description>
       <type>image</type>
       <id>0</id>
       <posX>1522</posX>
-      <posY>680</posY>
+      <posY>690</posY>
       <width>372</width>
       <height>187</height>
       <texture>..\..\..\Thumbs\ClearArt\Movies\#Play.Current.IMDBNumber.png</texture>
@@ -161,16 +171,15 @@
       <align>center</align>
       <zoom>no</zoom>
       <valign>top</valign>
-      <visible>!string.equals(#Play.Current.IMDBNumber,)</visible>
+      <visible>!string.equals(#Play.Current.IMDBNumber,)+control.isVisible(111)</visible>
       <animation effect="fade" delay="0" start="0" end="100" time="2000">WindowOpen</animation>
-      <animation effect="fade" delay="5000" start="100" end="0" time="2000" condition="true">conditional</animation>
     </control>
     <control>
       <description>mvCentral ClearArt</description>
       <type>image</type>
       <id>0</id>
       <posX>1522</posX>
-      <posY>680</posY>
+      <posY>690</posY>
       <width>372</width>
       <height>187</height>
       <texture>..\..\..\Thumbs\ClearArt\Music\#Play.Current.mvArtist.png</texture>
@@ -179,9 +188,8 @@
       <align>center</align>
       <zoom>no</zoom>
       <valign>top</valign>
-      <visible>!string.equals(#Play.Current.mvArtist,)+!string.equals(#mvCentral.Play.Started,true)</visible>
+      <visible>!string.equals(#Play.Current.mvArtist,)+!string.equals(#mvCentral.Play.Started,true)+control.isVisible(111)</visible>
       <animation effect="fade" delay="0" start="0" end="100" time="2000">WindowOpen</animation>
-      <animation effect="fade" delay="5000" start="100" end="0" time="2000" condition="true">conditional</animation>
     </control>
     <!-- ***************************************************************************************************** -->
     <!-- *****************************         RECORDING INFO LATESTMEDIA       ****************************** -->
@@ -199,19 +207,19 @@
       <visible>plugin.isenabled(Latest Media Handler)+control.isVisible(111)+!string.equals(#latestMediaHandler.tvrecordings.active1.title,)</visible>
     </control>
     <control>
-    <description>Current recording count</description>
-    <type>fadelabel</type>
-    <id>0</id>
-    <posX>215</posX>
-    <posY>1035</posY>
-    <width>50</width>
-    <label>#latestMediaHandler.tvrecordings.active.count</label>
-    <align>center</align>
-    <font>font10</font>
-    <textcolor>ivory</textcolor>
-    <animation effect="zoom" start="100,100" end="110,110" time="500" condition="true" pulse="true">conditional</animation>
-    <visible>plugin.isenabled(Latest Media Handler)+!string.equals(#latestMediaHandler.tvrecordings.active1.title,)+control.isVisible(111)</visible>
-  </control>
+      <description>Current recording count</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>215</posX>
+      <posY>1015</posY>
+      <width>50</width>
+      <label>#latestMediaHandler.tvrecordings.active.count</label>
+      <align>center</align>
+      <font>font10</font>
+      <textcolor>ivory</textcolor>
+      <animation effect="zoom" start="100,100" end="110,110" time="500" condition="true" pulse="true">conditional</animation>
+      <visible>plugin.isenabled(Latest Media Handler)+!string.equals(#latestMediaHandler.tvrecordings.active1.title,)+control.isVisible(111)</visible>
+    </control>
     <control>
       <description>Current channel</description>
       <type>fadelabel</type>
@@ -219,7 +227,6 @@
       <posX>270</posX>
       <posY>1020</posY>
       <width>600</width>
-      <!--label>#latestMediaHandler.tvrecordings.active1.title (#latestMediaHandler.tvrecordings.active1.channel) - #latestMediaHandler.tvrecordings.active1.startDate ~ #latestMediaHandler.tvrecordings.active1.startTime-#latestMediaHandler.tvrecordings.active1.endTime +++ #latestMediaHandler.tvrecordings.active2.title (#latestMediaHandler.tvrecordings.active2.channel) - #latestMediaHandler.tvrecordings.active2.startDate ~ #latestMediaHandler.tvrecordings.active2.startTime-#latestMediaHandler.tvrecordings.active2.endTime +++ #latestMediaHandler.tvrecordings.active3.title (#latestMediaHandler.tvrecordings.active3.channel) - #latestMediaHandler.tvrecordings.active3.startDate ~ #latestMediaHandler.tvrecordings.active3.startTime-#latestMediaHandler.tvrecordings.active3.endTime +++ #latestMediaHandler.tvrecordings.active4.title (#latestMediaHandler.tvrecordings.active4.channel) - #latestMediaHandler.tvrecordings.active4.startDate ~ #latestMediaHandler.tvrecordings.active4.startTime-#latestMediaHandler.tvrecordings.active4.endTime</label-->
       <label>#latestMediaHandler.tvrecordings.active1.channel   #latestMediaHandler.tvrecordings.active2.channel   #latestMediaHandler.tvrecordings.active3.channel   #latestMediaHandler.tvrecordings.active4.channel</label>
       <align>left</align>
       <font>font9</font>

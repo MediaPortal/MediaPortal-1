@@ -10,7 +10,7 @@
       <width>55</width>
       <height>55</height>
       <label>-</label>
-      <font>-</font>
+      <font>font10</font>
       <textureFocus />
       <textureNoFocus />
       <onleft>31</onleft>
@@ -31,7 +31,7 @@
         <width>55</width>
         <height>55</height>
         <label>-</label>
-        <font>-</font>
+        <font>font10</font>
         <textureFocus>tb_extend.png</textureFocus>
         <textureNoFocus>tb_extendNF.png</textureNoFocus>
         <onleft>31</onleft>
@@ -50,7 +50,7 @@
         <textureFocus>tb_menu.png</textureFocus>
         <textureNoFocus>tb_menuNF.png</textureNoFocus>
         <action>106</action>
-        <font>-</font>
+        <font>font10</font>
         <onleft>1237</onleft>
         <onright>218</onright>
         <onup>997</onup>
@@ -66,7 +66,7 @@
         <textureFocus>tb_subtitles.png</textureFocus>
         <textureNoFocus>tb_subtitlesNF.png</textureNoFocus>
         <label>-</label>
-        <font>-</font>
+        <font>font10</font>
         <onleft>997</onleft>
         <onright>219</onright>
         <onup>218</onup>
@@ -82,7 +82,7 @@
         <textureFocus>tb_playlist.png</textureFocus>
         <textureNoFocus>tb_playlistNF.png</textureNoFocus>
         <label>-</label>
-        <font>-</font>
+        <font>font10</font>
         <onleft>218</onleft>
         <onright>220</onright>
         <onup>219</onup>
@@ -98,7 +98,7 @@
         <textureFocus>tb_video.png</textureFocus>
         <textureNoFocus>tb_videoNF.png</textureNoFocus>
         <label>-</label>
-        <font>-</font>
+        <font>font10</font>
         <onleft>219</onleft>
         <onright>221</onright>
         <onup>220</onup>
@@ -116,7 +116,7 @@
         <textureFocus>tb_music.png</textureFocus>
         <textureNoFocus>tb_musicNF.png</textureNoFocus>
         <label>-</label>
-        <font>-</font>
+        <font>font10</font>
         <onleft>220</onleft>
         <onright>223</onright>
         <onup>221</onup>
@@ -134,13 +134,13 @@
         <textureFocus>tb_record_red.png</textureFocus>
         <textureNoFocus>tb_recordNF_red.png</textureNoFocus>
         <label>-</label>
-        <font>-</font>
+        <font>font10</font>
         <onleft>221</onleft>
         <onright>222</onright>
         <onup>223</onup>
         <ondown>223</ondown>
         <animation effect="zoom" start="100,100" end="115,115" time="0">focus</animation>
-        <visible>plugin.isenabled(Latest Media Handler)+string.equals(#TV.Record.Active,true)</visible>
+        <visible>plugin.isenabled(Latest Media Handler)+!string.equals(#latestMediaHandler.tvrecordings.active1.title,)</visible>
       </control>
       <control>
         <description>Clickfinder ProgramGuide Details</description>
@@ -153,7 +153,7 @@
         <textureFocus>tb_cf.png</textureFocus>
         <textureNoFocus>tb_cfNF.png</textureNoFocus>
         <label>-</label>
-        <font>-</font>
+        <font>font10</font>
         <onleft>223</onleft>
         <onright>31</onright>
         <onup>222</onup>
@@ -291,9 +291,11 @@
       <description>SubTitle Delay label</description>
       <type>label</type>
       <id>850</id>
-      <posX>432</posX>
+      <posX>640</posX>
       <posY>878</posY>
       <label>303</label>
+      <font>font11</font>
+      <align>right</align>
       <textcolor>ffffffff</textcolor>
       <visible>no</visible>
     </control>
@@ -317,11 +319,11 @@
       <description>SubTitles On/Off Checkbox</description>
       <type>checkmark</type>
       <id>801</id>
-      <posX>1013</posX>
-      <posY>886</posY>
+      <posX>900</posX>
+      <posY>880</posY>
       <label>305</label>
       <align>right</align>
-      <font>font12</font>
+      <font>font10</font>
       <onup>800</onup>
       <ondown>802</ondown>
       <onleft>801</onleft>
@@ -334,9 +336,9 @@
       <description>Sub Titles List Control</description>
       <type>listcontrol</type>
       <id>802</id>
-      <posX>1273</posX>
-      <posY>880</posY>
-      <width>310</width>
+      <posX>1150</posX>
+      <posY>875</posY>
+      <width>330</width>
       <height>220</height>
       <textureHeight>35</textureHeight>
       <textXOff>-40</textXOff>
@@ -356,13 +358,26 @@
       <visible>no</visible>
     </control>
     <control>
+      <description>divider</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1130</posX>
+      <posY>875</posY>
+      <height>170</height>
+      <width>2</width>
+      <texture>verticalbar.png</texture>
+      <visible>control.isvisible(802)</visible>
+    </control>
+    <control>
       <description>A/v Delay label</description>
       <type>label</type>
       <id>550</id>
-      <posX>432</posX>
+      <posX>640</posX>
       <posY>878</posY>
       <label>297</label>
       <textcolor>ffffffff</textcolor>
+      <font>font11</font>
+      <align>right</align>
       <visible>no</visible>
     </control>
     <control>
@@ -401,9 +416,11 @@
       <description>Video Position label</description>
       <type>label</type>
       <id>750</id>
-      <posX>432</posX>
+      <posX>640</posX>
       <posY>878</posY>
       <label>298</label>
+      <font>font11</font>
+      <align>right</align>
       <textcolor>ffffffff</textcolor>
       <visible>no</visible>
     </control>
@@ -589,7 +606,7 @@
       <description>Label background</description>
       <type>image</type>
       <id>0</id>
-      <posX>208</posX>
+      <posX>228</posX>
       <posY>878</posY>
       <height>42</height>
       <width>188</width>
@@ -600,11 +617,11 @@
       <description>label Subtitles</description>
       <type>label</type>
       <id>1</id>
-      <posX>300</posX>
-      <posY>902</posY>
+      <posX>238</posX>
+      <posY>878</posY>
       <label>287</label>
       <font>font11</font>
-      <align>center</align>
+      <align>left</align>
       <textcolor>ivory</textcolor>
       <visible>Control.isvisible(800)</visible>
     </control>
@@ -612,11 +629,11 @@
       <description>label Video Menu</description>
       <type>label</type>
       <id>1</id>
-      <posX>300</posX>
-      <posY>902</posY>
+      <posX>238</posX>
+      <posY>878</posY>
       <label>Video</label>
       <font>font11</font>
-      <align>center</align>
+      <align>left</align>
       <textcolor>ivory</textcolor>
       <visible>Control.isvisible(700)</visible>
     </control>
@@ -624,11 +641,11 @@
       <description>label Audio Menu</description>
       <type>label</type>
       <id>1</id>
-      <posX>300</posX>
-      <posY>902</posY>
+      <posX>238</posX>
+      <posY>878</posY>
       <label>Audio</label>
       <font>font11</font>
-      <align>center</align>
+      <align>left</align>
       <textcolor>ivory</textcolor>
       <visible>Control.isvisible(500)</visible>
     </control>

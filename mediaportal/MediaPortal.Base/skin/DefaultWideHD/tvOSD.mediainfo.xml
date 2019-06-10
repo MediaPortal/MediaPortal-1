@@ -5,7 +5,7 @@
       <type>group</type>
       <description>group element</description>
       <layout>StackLayout(10, Horizontal, true)</layout>
-      <posX>358</posX>
+      <posX>256</posX>
       <posY>872</posY>
       <visible>control.hasfocus(1237)|control.hasfocus(1238)</visible>
       <animation effect="fade" start="0" end="100" time="50" reversible="true">visiblechange</animation>
@@ -34,19 +34,20 @@
         <width>102</width>
         <height>70</height>
         <texture>Logos\audio\#Play.Current.AudioCodec.Texture.png</texture>
+        <!--texture>Logos\dolbydigitalplus.png</texture-->
         <keepaspectratio>yes</keepaspectratio>
       </control>
-      <!--control>
+      <control>
         <description>Audio channels</description>
         <type>image</type>
         <id>0</id>
         <posX>1529</posX>
         <posY>977</posY>
-        <width>98</width>
+        <width>102</width>
         <height>70</height>
-        <texture>Logos\audio\#Play.Current.AudioChannels.png</texture>
+        <texture>#(iif(eq(#Play.Current.AudioChannels,'true'),'Logos\audio\#Play.Current.AudioChannels.png','Logos\audio\Stereo.png'))</texture>
         <keepaspectratio>yes</keepaspectratio>
-      </control-->
+      </control>
       <control>
         <description>AspectRatio</description>
         <type>image</type>
@@ -63,6 +64,7 @@
         <width>102</width>
         <height>70</height>
         <texture>#(iif(eq(#TV.View.HasTeletext,'true'),'logos\Teletext.png','logos\noTeletext.png'))</texture>
+        <!--texture>Logos\dualaudio.png</texture-->
         <keepaspectratio>yes</keepaspectratio>
       </control>
       <control>
@@ -71,7 +73,9 @@
         <id>0</id>
         <width>102</width>
         <height>70</height>
-        <texture>#(iif(eq(#Play.Current.HasSubtitles,'true'),'logos\subtitles.png','logos\nosubtitles.png'))</texture>
+        <texture>#(iif(eq(#Play.Current.HasSubtitles,'true'),'logos\Subtitles.png','logos\nosubtitles.png'))</texture>
+        <!--texture>Logos\audiodescription.png</texture-->
+        
         <keepaspectratio>yes</keepaspectratio>
       </control>
       <control>

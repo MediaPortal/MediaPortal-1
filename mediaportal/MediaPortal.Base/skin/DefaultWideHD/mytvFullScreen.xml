@@ -10,11 +10,23 @@
       <type>image</type>
       <id>111</id>
       <posX>-90</posX>
-      <posY>843</posY>
-      <height>241</height>
+      <posY>907</posY>
+      <height>158</height>
       <width>2200</width>
-      <texture>OSDBG2.png</texture>
-      <colordiffuse>ddffffff</colordiffuse>
+      <texture>OSDBG4.png</texture>
+      <colordiffuse>dfffffff</colordiffuse>
+      <visible>!window.isosdvisible+[window.ispauseosdvisible+player.paused|player.rewinding|player.forwarding|control.isVisible(10)|control.isVisible(11)|control.isVisible(12)]</visible>
+    </control>
+    <control>
+      <description>background for black channelname</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>200</posX>
+      <posY>848</posY>
+      <height>60</height>
+      <width>450</width>
+      <texture>OSDBG3.png</texture>
+      <colordiffuse>dfffffff</colordiffuse>
       <visible>!window.isosdvisible+[window.ispauseosdvisible+player.paused|player.rewinding|player.forwarding|control.isVisible(10)|control.isVisible(11)|control.isVisible(12)]</visible>
     </control>
     <control>
@@ -36,8 +48,8 @@
       <posY>40</posY>
       <width>420</width>
       <label>-</label>
-      <font>Menutitle</font>
-      <textcolor>fff5deb3</textcolor>
+      <font>Label</font>
+      <textcolor>ivory</textcolor>
       <visible>no</visible>
     </control>
     <control>
@@ -127,13 +139,13 @@
       <id>108</id>
       <type>fadelabel</type>
       <posX>227</posX>
-      <posY>925</posY>
+      <posY>930</posY>
       <width>1440</width>
       <height>40</height>
       <align>left</align>
-      <label>#TV.View.title</label>
-      <font>Menutitle</font>
-      <textcolor>dodgerblue</textcolor>
+      <label>#TV.View.start - #TV.View.stop  #TV.View.title</label>
+      <font>Label</font>
+      <textcolor>ivory</textcolor>
       <visible>control.isVisible(111)</visible>
     </control>
     <control>
@@ -141,9 +153,9 @@
       <type>image</type>
       <id>109</id>
       <posX>54</posX>
-      <posY>884</posY>
-      <width>129</width>
-      <height>129</height>
+      <posY>845</posY>
+      <width>137</width>
+      <height>137</height>
       <texture>#TV.View.thumb</texture>
       <centered>yes</centered>
       <keepaspectratio>yes</keepaspectratio>
@@ -154,37 +166,36 @@
       <type>label</type>
       <id>120</id>
       <posX>227</posX>
-      <posY>878</posY>
-      <width>1038</width>
-      <label>#TV.View.channel    #TV.View.start - #TV.View.stop</label>
+      <posY>855</posY>
+      <width>440</width>
+      <label>#TV.View.channel</label>
       <align>left</align>
-      <font>font14</font>
-      <textcolor>ivory</textcolor>
+      <font>Label</font>
+      <textcolor>black</textcolor>
       <visible>control.isVisible(111)</visible>
     </control>
     <control>
       <description>Time BG</description>
       <type>image</type>
       <id>0</id>
-      <posX>1646</posX>
-      <posY>875</posY>
-      <width>237</width>
-      <height>52</height>
-      <texture>button_focus.png</texture>
-      <colordiffuse>ffffffff</colordiffuse>
-      <animation effect="rotate" delay="0" end="180" time="0" condition="true">conditional</animation>
+      <posX>1706</posX>
+      <posY>848</posY>
+      <width>450</width>
+      <height>60</height>
+      <texture>OSDBG3.png</texture>
+      <colordiffuse>dfffffff</colordiffuse>
       <visible>control.isVisible(111)</visible>
     </control>
     <control>
       <description>Time Info</description>
       <type>label</type>
       <id>140</id>
-      <posX>1868</posX>
-      <posY>870</posY>
+      <posX>1898</posX>
+      <posY>855</posY>
       <label>#time</label>
       <align>right</align>
-      <font>font16</font>
-      <textcolor>ivory</textcolor>
+      <font>Label</font>
+      <textcolor>black</textcolor>
       <visible>control.isVisible(111)</visible>
     </control>
     <control>
@@ -219,7 +230,7 @@
     <type>fadelabel</type>
     <id>0</id>
     <posX>215</posX>
-    <posY>1035</posY>
+    <posY>1015</posY>
     <width>50</width>
     <label>#latestMediaHandler.tvrecordings.active.count</label>
     <align>center</align>
@@ -235,7 +246,6 @@
       <posX>270</posX>
       <posY>1020</posY>
       <width>600</width>
-      <!--label>#latestMediaHandler.tvrecordings.active1.title (#latestMediaHandler.tvrecordings.active1.channel) - #latestMediaHandler.tvrecordings.active1.startDate ~ #latestMediaHandler.tvrecordings.active1.startTime-#latestMediaHandler.tvrecordings.active1.endTime +++ #latestMediaHandler.tvrecordings.active2.title (#latestMediaHandler.tvrecordings.active2.channel) - #latestMediaHandler.tvrecordings.active2.startDate ~ #latestMediaHandler.tvrecordings.active2.startTime-#latestMediaHandler.tvrecordings.active2.endTime +++ #latestMediaHandler.tvrecordings.active3.title (#latestMediaHandler.tvrecordings.active3.channel) - #latestMediaHandler.tvrecordings.active3.startDate ~ #latestMediaHandler.tvrecordings.active3.startTime-#latestMediaHandler.tvrecordings.active3.endTime +++ #latestMediaHandler.tvrecordings.active4.title (#latestMediaHandler.tvrecordings.active4.channel) - #latestMediaHandler.tvrecordings.active4.startDate ~ #latestMediaHandler.tvrecordings.active4.startTime-#latestMediaHandler.tvrecordings.active4.endTime</label-->
       <label>#latestMediaHandler.tvrecordings.active1.channel   #latestMediaHandler.tvrecordings.active2.channel   #latestMediaHandler.tvrecordings.active3.channel   #latestMediaHandler.tvrecordings.active4.channel</label>
       <align>left</align>
       <font>font9</font>
@@ -265,7 +275,7 @@
       <width>912</width>
       <label>-</label>
       <align>left</align>
-      <font>dingbats</font>
+      <font>Label</font>
       <textcolor>ivory</textcolor>
       <visible>yes</visible>
     </control>
@@ -278,7 +288,7 @@
       <width>912</width>
       <label>-</label>
       <align>left</align>
-      <font>dingbats</font>
+      <font>Label</font>
       <textcolor>ivory</textcolor>
       <visible>yes</visible>
     </control>
@@ -291,7 +301,7 @@
       <width>912</width>
       <label>-</label>
       <align>left</align>
-      <font>dingbats</font>
+      <font>Label</font>
       <textcolor>ivory</textcolor>
       <visible>yes</visible>
     </control>
@@ -304,7 +314,7 @@
       <width>912</width>
       <label>-</label>
       <align>left</align>
-      <font>dingbats</font>
+      <font>Label</font>
       <textcolor>ivory</textcolor>
       <visible>yes</visible>
     </control>
