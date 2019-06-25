@@ -649,7 +649,7 @@ Section "MediaPortal core files (required)" SecCore
     File /oname=bluray.dll "${git_DirectShowFilters}\bin_Win32\libbluray\libbluray.dll"
   !endif
   File /oname=libbluray.jar "${git_Libbluray}\src\.libs\libbluray-.jar"
-  CopyFiles /SILENT "$MPdir.Base\libbluray.jar" "$MPdir.Base\libbluray-j2se-1.1.1.jar"
+  CopyFiles /SILENT "$MPdir.Base\libbluray.jar" "$MPdir.Base\libbluray-j2se-1.1.2.jar"
     ; libbluray - Awt file
    SetOutPath "$MPdir.Base\awt"
     File /oname=libbluray.jar "${git_Libbluray}\src\.libs\libbluray-awt-.jar"
@@ -991,6 +991,7 @@ Section -Post
   Delete "$MPdir.Base\libbluray-j2se-0.6.2.jar"
   Delete "$MPdir.Base\libbluray-j2se-1.0.1.jar"
   Delete "$MPdir.Base\libbluray-j2se-1.0.2.jar"
+  Delete "$MPdir.Base\libbluray-j2se-1.1.1.jar"
 
   ; MP1-4315 Blow windowplugins dll to separate plugin dlls
   ${LOG_TEXT} "INFO" "Removing obsolete WindowPlugins.dll"
