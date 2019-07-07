@@ -268,7 +268,31 @@
       <align>left</align>
       <font>Label</font>
       <textcolor>black</textcolor>
-      <visible>control.hasfocus(1237)|control.hasfocus(1238)</visible>
+      <visible>!control.isvisible(39)+control.hasfocus(1237)|control.hasfocus(1238)</visible>
+    </control>
+    <control>
+      <description>Current channelname black</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>265</posX>
+      <posY>562</posY>
+      <width>440</width>
+      <label>#TV.View.channel</label>
+      <align>left</align>
+      <font>Label</font>
+      <textcolor>black</textcolor>
+      <visible>control.isvisible(39)+[control.hasfocus(1237)|control.hasfocus(1238)]</visible>
+    </control>
+    <control>
+      <description>rec logo</description>
+      <type>image</type>
+      <id>139</id>
+      <posX>202</posX>
+      <posY>557</posY>
+      <width>58</width>
+      <height>56</height>
+      <texture>tv_is_recording.png</texture>
+      <visible>control.isvisible(39)+[control.hasfocus(1237)|control.hasfocus(1238)]</visible>
     </control>
     <control>
       <description>Time BG</description>
@@ -605,7 +629,7 @@
         <posX>555</posX>
         <posY>548</posY>
         <width>1500</width>
-        <label>#latestMediaHandler.tvrecordings.active1.title (#latestMediaHandler.tvrecordings.active1.channel) - #latestMediaHandler.tvrecordings.active1.startDate ~ #latestMediaHandler.tvrecordings.active1.startTime</label>
+        <label>#latestMediaHandler.tvrecordings.active1.title (#latestMediaHandler.tvrecordings.active1.channel) - #latestMediaHandler.tvrecordings.active1.startDate #scroll.wrap #latestMediaHandler.tvrecordings.active1.startTime</label>
         <align>left</align>
         <font>font10</font>
         <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
@@ -620,7 +644,7 @@
         <posY>583</posY>
         <width>1500</width>
         <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
-        <label>#latestMediaHandler.tvrecordings.active2.title (#latestMediaHandler.tvrecordings.active2.channel) - #latestMediaHandler.tvrecordings.active2.startDate ~ #latestMediaHandler.tvrecordings.active2.startTime</label>
+        <label>#latestMediaHandler.tvrecordings.active2.title (#latestMediaHandler.tvrecordings.active2.channel) - #latestMediaHandler.tvrecordings.active2.startDate #scroll.wrap #latestMediaHandler.tvrecordings.active2.startTime</label>
         <align>left</align>
         <font>font10</font>
         <textcolor>ivory</textcolor>
@@ -634,7 +658,7 @@
         <posY>618</posY>
         <width>1500</width>
         <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
-        <label>#latestMediaHandler.tvrecordings.active3.title (#latestMediaHandler.tvrecordings.active3.channel) - #latestMediaHandler.tvrecordings.active3.startDate ~ #latestMediaHandler.tvrecordings.active3.startTime</label>
+        <label>#latestMediaHandler.tvrecordings.active3.title (#latestMediaHandler.tvrecordings.active3.channel) - #latestMediaHandler.tvrecordings.active3.startDate #scroll.wrap #latestMediaHandler.tvrecordings.active3.startTime</label>
         <align>left</align>
         <font>font10</font>
         <textcolor>ivory</textcolor>
@@ -648,7 +672,7 @@
         <posY>653</posY>
         <width>1500</width>
         <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
-        <label>#latestMediaHandler.tvrecordings.active4.title (#latestMediaHandler.tvrecordings.active4.channel) - #latestMediaHandler.tvrecordings.active4.startDate ~ #latestMediaHandler.tvrecordings.active4.startTime</label>
+        <label>#latestMediaHandler.tvrecordings.active4.title (#latestMediaHandler.tvrecordings.active4.channel) - #latestMediaHandler.tvrecordings.active4.startDate #scroll.wrap #latestMediaHandler.tvrecordings.active4.startTime</label>
         <align>left</align>
         <font>font10</font>
         <textcolor>ivory</textcolor>
