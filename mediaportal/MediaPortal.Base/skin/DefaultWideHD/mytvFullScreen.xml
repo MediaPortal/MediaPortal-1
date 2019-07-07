@@ -172,7 +172,20 @@
       <align>left</align>
       <font>Label</font>
       <textcolor>black</textcolor>
-      <visible>control.isVisible(111)</visible>
+      <visible>!control.isvisible(39)+control.isVisible(111)</visible>
+    </control>
+    <control>
+      <description>Current channel</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>265</posX>
+      <posY>855</posY>
+      <width>400</width>
+      <label>#TV.View.channel</label>
+      <align>left</align>
+      <font>Label</font>
+      <textcolor>black</textcolor>
+      <visible>control.isvisible(39)+control.isVisible(111)</visible>
     </control>
     <control>
       <description>Time BG</description>
@@ -202,10 +215,10 @@
       <description>rec logo</description>
       <type>image</type>
       <id>39</id>
-      <posX>1792</posX>
-      <posY>931</posY>
-      <width>35</width>
-      <height>35</height>
+      <posX>202</posX>
+      <posY>850</posY>
+      <width>58</width>
+      <height>56</height>v
       <texture>tv_is_recording.png</texture>
       <animation effect="zoom" start="100,100" end="110,110" time="500" condition="true" pulse="true">conditional</animation>
       <!--visible>control.isVisible(111)</visible-->
@@ -230,7 +243,7 @@
     <type>fadelabel</type>
     <id>0</id>
     <posX>215</posX>
-    <posY>1035</posY>
+    <posY>1015</posY>
     <width>50</width>
     <label>#latestMediaHandler.tvrecordings.active.count</label>
     <align>center</align>
