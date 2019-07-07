@@ -72,6 +72,20 @@
       <align>left</align>
       <font>Label</font>
       <textcolor>black</textcolor>
+      <visible>!control.isvisible(39)</visible>
+    </control>
+    <control>
+      <description>Current channelname black</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>265</posX>
+      <posY>815</posY>
+      <width>440</width>
+      <label>#TV.View.channel</label>
+      <align>left</align>
+      <font>Label</font>
+      <textcolor>black</textcolor>
+      <visible>control.isvisible(39)</visible>
     </control>
     <control>
       <type>image</type>
@@ -138,12 +152,11 @@
     <description>rec logo</description>
     <type>image</type>
     <id>39</id>
-    <posX>1830</posX>
-    <posY>885</posY>
-    <width>50</width>
-    <height>50</height>
+    <posX>202</posX>
+    <posY>810</posY>
+    <width>58</width>
+      <height>56</height>
     <texture>tv_is_recording.png</texture>
-    <animation effect="zoom" start="100,100" end="110,110" time="500" condition="true" pulse="true">conditional</animation>
   </control>
   <control>
     <description>background</description>

@@ -215,14 +215,24 @@
       <description>rec logo</description>
       <type>image</type>
       <id>39</id>
+      <posX>2202</posX>
+      <posY>850</posY>
+      <width>58</width>
+      <height>56</height>v
+      <texture>tv_is_recording.png</texture>
+      <visible>no</visible>
+      </control>
+      <control>
+      <description>rec logo</description>
+      <type>image</type>
+      <id>139</id>
       <posX>202</posX>
       <posY>850</posY>
       <width>58</width>
       <height>56</height>v
       <texture>tv_is_recording.png</texture>
-      <animation effect="zoom" start="100,100" end="110,110" time="500" condition="true" pulse="true">conditional</animation>
-      <visible>no</visible>
-    </control>
+      <visible>control.isvisible(39)+control.isvisible(111)</visible>
+      </control>
     <!-- ***************************************************************************************************** -->
     <!-- *****************************         RECORDING INFO LATESTMEDIA       ****************************** -->
     <!-- ***************************************************************************************************** -->
