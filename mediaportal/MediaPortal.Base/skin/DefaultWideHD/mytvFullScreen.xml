@@ -221,7 +221,7 @@
       <height>56</height>v
       <texture>tv_is_recording.png</texture>
       <animation effect="zoom" start="100,100" end="110,110" time="500" condition="true" pulse="true">conditional</animation>
-      <!--visible>control.isVisible(111)</visible-->
+      <visible>control.isVisible(111)</visible>
     </control>
     <!-- ***************************************************************************************************** -->
     <!-- *****************************         RECORDING INFO LATESTMEDIA       ****************************** -->
@@ -243,7 +243,7 @@
     <type>fadelabel</type>
     <id>0</id>
     <posX>215</posX>
-    <posY>1015</posY>
+    <posY>1035</posY>
     <width>50</width>
     <label>#latestMediaHandler.tvrecordings.active.count</label>
     <align>center</align>
