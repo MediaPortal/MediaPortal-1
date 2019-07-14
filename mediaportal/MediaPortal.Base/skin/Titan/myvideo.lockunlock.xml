@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+<controls>
+
+    <control>
+      <description>Content locked</description>
+      <type>image</type>
+      <id>0</id>
+      <posX property="#(sub(add(cint(#facadeview.focus.X),cint(#facadeview.focus.Width)),30))">-1000</posX>
+      <posY>870</posY>
+      <width>50</width>
+      <height>50</height>
+      <texture>FolderLock.png</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <align>right</align>
+      <valign>bottom</valign>
+      <visible>facadeview.filmstrip+!Control.IsVisible(24)+string.equals(#MyVideos.PinLocked, True)</visible>
+    </control>
+    <control>
+      <description>Content unlock</description>
+      <type>image</type>
+      <id>0</id>
+      <posX property="#(sub(add(cint(#facadeview.focus.X),cint(#facadeview.focus.Width)),30))">-1000</posX>
+      <posY>870</posY>
+      <width>50</width>
+      <height>50</height>
+      <texture>FolderUnLock.png</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <align>right</align>
+      <valign>bottom</valign>
+      <visible>facadeview.filmstrip+!Control.IsVisible(24)+string.equals(#MyVideos.PinLocked, False)</visible>
+    </control>
+
+</controls>
+</window>

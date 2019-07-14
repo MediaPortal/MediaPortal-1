@@ -13,6 +13,7 @@
 		<animation effect="slide" start="-60,0" time="250" delay="400">WindowOpen</animation>
 		<animation effect="slide" start="0,0" end="-60,0" time="250" delay="100">WindowClose</animation>
 	</control>
+
 	<control>
 		<id>1</id>
 		<type>image</type>
@@ -23,6 +24,7 @@
 		<animation effect="slide" start="0,-60" time="250" delay="400">WindowOpen</animation>
 		<animation effect="slide" start="0,0" end="0,-60" time="250" delay="100">WindowClose</animation>
 	</control>
+
 	<control>
 		<type>actiongroup</type>
 		<description>action menu</description>
@@ -52,10 +54,10 @@
 				<height>1074</height>
 				<texture>menu_bg.png</texture>
 				<visible>!Control.HasFocus(50)+control.isvisible(50)</visible>
-	    	<animation effect="fade" time="0">WindowClose</animation>
-	    	<animation effect="slide" start="-150,0" time="100">visible</animation>
-	    	<animation effect="fade" time="50">visible</animation>
-	    	<animation effect="fade" time="0">hidden</animation>
+	    		<animation effect="fade" time="0">WindowClose</animation>
+	    		<animation effect="slide" start="-150,0" time="100">visible</animation>
+	    		<animation effect="fade" time="50">visible</animation>
+	    		<animation effect="fade" time="0">hidden</animation>
 			</control>
 			<control>
 				<type>image</type>
@@ -66,10 +68,10 @@
 				<height>1</height>
 				<texture>hiddenmenu_separator.png</texture>
 				<visible>!Control.HasFocus(50)</visible>
-	    	<animation effect="fade" time="0">WindowClose</animation>
-	    	<animation effect="slide" start="-150,0" time="100">visible</animation>
-	    	<animation effect="fade" time="50">visible</animation>
-	    	<animation effect="fade" time="0">hidden</animation>
+    	    	<animation effect="fade" time="0">WindowClose</animation>
+    	    	<animation effect="slide" start="-150,0" time="100">visible</animation>
+    	    	<animation effect="fade" time="50">visible</animation>
+    	    	<animation effect="fade" time="0">hidden</animation>
 			</control>
 			<control>
 				<type>image</type>
@@ -80,10 +82,10 @@
 				<height>1</height>
 				<texture>hiddenmenu_separator.png</texture>
 				<visible>!Control.HasFocus(50)</visible>
-	    	<animation effect="fade" time="0">WindowClose</animation>
-	    	<animation effect="slide" start="-150,0" time="100">visible</animation>
-	    	<animation effect="fade" time="50">visible</animation>
-	    	<animation effect="fade" time="0">hidden</animation>
+    	    	<animation effect="fade" time="0">WindowClose</animation>
+    	    	<animation effect="slide" start="-150,0" time="100">visible</animation>
+    	    	<animation effect="fade" time="50">visible</animation>
+    	    	<animation effect="fade" time="0">hidden</animation>
 			</control>
 			<control>
 				<type>image</type>
@@ -94,10 +96,10 @@
 				<height>1</height>
 				<texture>hiddenmenu_separator.png</texture>
 				<visible>!Control.HasFocus(50)</visible>
-	    	<animation effect="fade" time="0">WindowClose</animation>
-	    	<animation effect="slide" start="-150,0" time="100">visible</animation>
-	    	<animation effect="fade" time="50">visible</animation>
-	    	<animation effect="fade" time="0">hidden</animation>
+    	    	<animation effect="fade" time="0">WindowClose</animation>
+    	    	<animation effect="slide" start="-150,0" time="100">visible</animation>
+    	    	<animation effect="fade" time="50">visible</animation>
+    	    	<animation effect="fade" time="0">hidden</animation>
 			</control>
 			<control>
 				<description>Menu label</description>
@@ -109,11 +111,11 @@
 				<font>fontB16</font>
 				<textcolor>393939</textcolor>
 				<visible>!Control.HasFocus(50)</visible>
-	    	<animation effect="fade" time="0">WindowClose</animation>
-	    	<animation effect="slide" start="-150,0" time="100">visible</animation>
-	    	<animation effect="fade" time="50">visible</animation>
-	    	<animation effect="fade" time="0">hidden</animation>
-	    </control>
+    	    	<animation effect="fade" time="0">WindowClose</animation>
+    	    	<animation effect="slide" start="-150,0" time="100">visible</animation>
+    	    	<animation effect="fade" time="50">visible</animation>
+    	    	<animation effect="fade" time="0">hidden</animation>
+	        </control>
 			<control>
 				<description>Playlist label</description>
 				<type>label</type>
@@ -124,10 +126,10 @@
 				<font>fontB12</font>
 				<textcolor>393939</textcolor>
 	 			<visible>!Control.HasFocus(50)</visible>
-	    	<animation effect="fade" time="0">WindowClose</animation>
-	    	<animation effect="slide" start="-150,0" time="100">visible</animation>
-	    	<animation effect="fade" time="50">visible</animation>
-	    	<animation effect="fade" time="0">hidden</animation>
+    	    	<animation effect="fade" time="0">WindowClose</animation>
+    	    	<animation effect="slide" start="-150,0" time="100">visible</animation>
+    	    	<animation effect="fade" time="50">visible</animation>
+    	    	<animation effect="fade" time="0">hidden</animation>
 			</control>
 			<control>
 				<description>Settings label</description>
@@ -139,10 +141,10 @@
 				<font>fontB12</font>
 				<textcolor>393939</textcolor>
 	 			<visible>!Control.HasFocus(50)</visible>
-	    	<animation effect="fade" time="0">WindowClose</animation>
-	    	<animation effect="slide" start="-150,0" time="100">visible</animation>
-	    	<animation effect="fade" time="50">visible</animation>
-	    	<animation effect="fade" time="0">hidden</animation>
+    	    	<animation effect="fade" time="0">WindowClose</animation>
+    	    	<animation effect="slide" start="-150,0" time="100">visible</animation>
+    	    	<animation effect="fade" time="50">visible</animation>
+    	    	<animation effect="fade" time="0">hidden</animation>
 			</control>
 			<control>
 				<description>Jump to label</description>
@@ -154,22 +156,23 @@
 				<font>fontB12</font>
 				<textcolor>393939</textcolor>
 	 			<visible>!Control.HasFocus(50)</visible>
-	    	<animation effect="fade" time="0">WindowClose</animation>
-	    	<animation effect="slide" start="-150,0" time="100">visible</animation>
-	    	<animation effect="fade" time="50">visible</animation>
-	    	<animation effect="fade" time="0">hidden</animation>
+    	    	<animation effect="fade" time="0">WindowClose</animation>
+    	    	<animation effect="slide" start="-150,0" time="100">visible</animation>
+    	    	<animation effect="fade" time="50">visible</animation>
+    	    	<animation effect="fade" time="0">hidden</animation>
 			</control>
+
 			<control>
-      	<type>group</type>
-        <description>group element</description>
+      	        <type>group</type>
+                <description>group element</description>
  				<visible>!Control.HasFocus(50)</visible>
-    		<animation effect="fade" time="0">WindowClose</animation>
-    		<animation effect="slide" start="-150,0" time="100">visible</animation>
-    		<animation effect="fade" time="50">visible</animation>
-    		<animation effect="fade" time="0">hidden</animation>
-        <posX>53</posX>
-        <posY>155</posY>
-        <layout>StackLayout(0, Vertical, true)</layout>
+           		<animation effect="fade" time="0">WindowClose</animation>
+           		<animation effect="slide" start="-150,0" time="100">visible</animation>
+           		<animation effect="fade" time="50">visible</animation>
+           		<animation effect="fade" time="0">hidden</animation>
+                <posX>53</posX>
+                <posY>155</posY>
+                <layout>StackLayout(0, Vertical, true)</layout>
 					<control>
 						<description>View-As</description>
 						<type>menubutton</type>
@@ -187,8 +190,8 @@
 						<valuePrefixText>95</valuePrefixText>
 						<onright>50</onright>
 						<onleft>50</onleft>
-	          <ondown>5</ondown>
-	          <onup>15</onup>
+	                    <ondown>5</ondown>
+                        <onup>11</onup>
 					</control>
 					<control>
 						<description>Switch View</description>
@@ -223,19 +226,19 @@
 						<offsetSortButtonY>27</offsetSortButtonY>
 						<onright>50</onright>
 						<onleft>50</onleft>
-	          <ondown>9</ondown>
+	                    <ondown>9</ondown>
 					</control>
-          <control>
-          	<description>Empty button</description>
-            <type>button</type>
-            <id>0</id>
-    			  <textureFocus>-</textureFocus>
-    			  <textureNoFocus>-</textureNoFocus>
+                    <control>
+          	            <description>Empty button</description>
+                        <type>button</type>
+                        <id>0</id>
+    			        <textureFocus>-</textureFocus>
+    			        <textureNoFocus>-</textureNoFocus>
 						<width>499</width>
 						<height>64</height>
-            <label>-</label>
-            <visible>true</visible>
-      		</control>
+                        <label>-</label>
+                        <visible>true</visible>
+      		        </control>
 					<control>
 						<description>Current Playlist</description>
 						<type>button</type>
@@ -250,7 +253,7 @@
 						<action>33</action>
 						<onright>50</onright>
 						<onleft>50</onleft>
-	          <onup>3</onup>
+	                    <onup>3</onup>
 					</control>
 					<control>
 						<description>My Playlists</description>
@@ -265,48 +268,48 @@
 						<label>983</label>
 						<onright>50</onright>
 						<onleft>50</onleft>
-            <onup>9</onup>
-	          <ondown>66610</ondown>
+                        <onup>9</onup>
+	                    <ondown>66610</ondown>
 					</control>
-          <control>
-          	<description>Empty button</description>
-            <type>button</type>
-            <id>0</id>
-    			  <textureFocus>-</textureFocus>
-    			  <textureNoFocus>-</textureNoFocus>
+                    <control>
+          	            <description>Empty button</description>
+                        <type>button</type>
+                        <id>0</id>
+           			    <textureFocus>-</textureFocus>
+    			        <textureNoFocus>-</textureNoFocus>
 						<width>499</width>
 						<height>64</height>
-            <label>-</label>
-            <visible>true</visible>
-      		</control>
-    			<control>
-    				<description>Music Settings</description>
-    				<type>button</type>
-    				<id>66610</id>
-    				<textureFocus>hiddenmenu_item_selected.png</textureFocus>
-    				<textureNoFocus>-</textureNoFocus>
+                        <label>-</label>
+                        <visible>true</visible>
+                    </control>
+    			    <control>
+    				    <description>Music Settings</description>
+    				    <type>button</type>
+    				    <id>66610</id>
+    				    <textureFocus>hiddenmenu_item_selected.png</textureFocus>
+    				    <textureNoFocus>-</textureNoFocus>
 						<width>499</width>
 						<height>64</height>
 						<textXOff>62</textXOff>
 						<textYOff>16</textYOff>
-    				<label>249</label>
-    				<hyperlink>14</hyperlink>
-    				<onleft>50</onleft>
-            <onright>50</onright>
-    				<onup>10</onup>
-    				<ondown>11</ondown>
-    			</control>
-          <control>
-          	<description>Empty button</description>
-            <type>button</type>
-            <id>0</id>
-    			  <textureFocus>-</textureFocus>
-    			  <textureNoFocus>-</textureNoFocus>
-						<width>499</width>
-						<height>64</height>
-            <label>-</label>
-            <visible>true</visible>
-      		</control>
+    				    <label>249</label>
+    				    <hyperlink>14</hyperlink>
+    				    <onleft>50</onleft>
+                        <onright>50</onright>
+    				    <onup>10</onup>
+    				    <ondown>11</ondown>
+    			     </control>
+                     <control>
+                     	<description>Empty button</description>
+                        <type>button</type>
+                        <id>0</id>
+               			<textureFocus>-</textureFocus>
+               			<textureNoFocus>-</textureNoFocus>
+           				<width>499</width>
+           				<height>64</height>
+                        <label>-</label>
+                        <visible>true</visible>
+                 	</control>
 					<control>
 						<description>Now playing</description>
 						<type>button</type>
@@ -321,29 +324,9 @@
 						<hyperlink>510</hyperlink>
 						<onright>50</onright>
 						<onleft>50</onleft>
-	          <onup>66610</onup>
-	          <ondown>18</ondown>
+	                    <onup>66610</onup>
+	                    <ondown>200</ondown>
 					</control>
-							<control>
-				  <description>AutoDJ</description>
-				 <type>checkbutton</type>
-				 <id>18</id>
-				 <width>499</width>
-				 <height>69</height>
-				 <textureFocus>hiddenmenu_item_selected.png</textureFocus>
-			     <textureNoFocus>-</textureNoFocus>
-    <font>font12</font>
-    <textcolor>FFFFFFFF</textcolor>
-    <colordiffuse>ffffffff</colordiffuse>
-    <textcolorNoFocus>ff393939</textcolorNoFocus>
-				 <label>AutoDJ</label>
-				 <onup>11</onup>
-				 <ondown>200</ondown>
-				 <onleft>50</onleft>
-				 <onright>50</onright>
-				 <textXOff>62</textXOff>
-				 <textYOff>16</textYOff>
-				</control>
 					<control>
 						<description>Search</description>
 						<type>button</type>
@@ -358,8 +341,8 @@
 						<hyperlink>30885</hyperlink>
 						<onright>50</onright>
 						<onleft>50</onleft>
-	          <ondown>15</ondown>
-	          <onup>11</onup>
+	                    <onup>11</onup>
+	                    <ondown>15</ondown>
 						<visible>plugin.isenabled(Search music)</visible>
 					</control>
 
@@ -377,11 +360,79 @@
 						<hyperlink>90478</hyperlink>
 						<onright>50</onright>
 						<onleft>50</onleft>
-	          <ondown>2</ondown>
-	          <onup>200</onup>
-	          <visible>plugin.isenabled(My Lyrics)</visible>
-			</control>
-		</control>
+	                    <onup>200</onup>
+	                    <ondown>55</ondown>
+	                    <visible>plugin.isenabled(My Lyrics)</visible>
+			        </control>
+
+                    <control>
+                        <description>FanArtHandler Slideshow</description>
+                        <type>checkbutton</type>
+                        <id>55</id>
+						<width>499</width>
+						<height>64</height>
+						<textXOff>62</textXOff>
+						<textYOff>16</textYOff>
+                        <textureFocus>hiddenmenu_item_selected.png</textureFocus>
+                        <textureNoFocus>-</textureNoFocus>
+                        <font>font12</font>
+                        <textcolor>FFFFFFFF</textcolor>
+                        <colordiffuse>ffffffff</colordiffuse>
+                        <textcolorNoFocus>ff393939</textcolorNoFocus>
+                        <label>#fanarthandler.pictures.slideshow.translation</label>
+                        <selected>#(skin.hassetting('#skin.fanarthandler.pictures.slideshow.enabled'))</selected>
+                        <onclick>#(skin.togglesetting('#skin.fanarthandler.pictures.slideshow.enabled'))</onclick>
+						<onright>50</onright>
+						<onleft>50</onleft>
+                        <onup>15</onup>
+                        <ondown>555</ondown>
+                        <visible>plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.pictures.slideshow.enabled,true)</visible>
+                    </control>
+
+                    <control>
+                        <description>Simple Now Playing</description>
+                        <type>checkbutton</type>
+                        <id>555</id>
+						<width>499</width>
+						<height>64</height>
+						<textXOff>62</textXOff>
+						<textYOff>16</textYOff>
+                        <textureFocus>hiddenmenu_item_selected.png</textureFocus>
+                        <textureNoFocus>-</textureNoFocus>
+                        <font>font12</font>
+                        <textcolor>FFFFFFFF</textcolor>
+                        <colordiffuse>ffffffff</colordiffuse>
+                        <textcolorNoFocus>ff393939</textcolorNoFocus>
+                        <label>#(L(15003))</label>
+                        <selected>#(skin.hassetting('#skin.music.nowplaying.simple'))</selected>
+                        <onclick>#(skin.togglesetting('#skin.music.nowplaying.simple'))</onclick>
+						<onright>50</onright>
+						<onleft>50</onleft>
+                        <onup>55</onup>
+                        <ondown>18</ondown>
+                    </control>
+
+                    <control>
+                        <description>AutoDJ</description>
+                        <type>checkbutton</type>
+                        <id>18</id>
+                        <width>499</width>
+                        <height>69</height>
+                        <textureFocus>hiddenmenu_item_selected.png</textureFocus>
+                        <textureNoFocus>-</textureNoFocus>
+                        <font>font12</font>
+                        <textcolor>FFFFFFFF</textcolor>
+                        <colordiffuse>ffffffff</colordiffuse>
+                        <textcolorNoFocus>ff393939</textcolorNoFocus>
+                        <label>AutoDJ</label>
+                        <onup>555</onup>
+                        <ondown>2</ondown>
+                        <onleft>50</onleft>
+                        <onright>50</onright>
+                        <textXOff>62</textXOff>
+                        <textYOff>16</textYOff>
+                    </control>
+		       </control>
 		</control>
 </controls>
 </window>

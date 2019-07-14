@@ -39,7 +39,8 @@ using MediaPortal.Util;
 using Un4seen.Bass;
 using Un4seen.Bass.AddOn.Cd;
 using Action = MediaPortal.GUI.Library.Action;
-using MediaPortal.Player.Subtitles;
+using MediaInfo;
+using MediaPortal.Services;
 
 namespace MediaPortal.Player
 {
@@ -1542,15 +1543,16 @@ namespace MediaPortal.Player
         {
           if (currentMediaInfoFilePlaying != strFile)
           {
-            _mediaInfo = new MediaInfoWrapper(strFile);
-            _mediaInfo.finished.WaitOne(5000);
+            var logger = GlobalServiceProvider.Get<MediaInfo.ILogger>();
+            _mediaInfo = new MediaInfoWrapper(strFile, logger);
+            _mediaInfo.WriteInfo();
             currentMediaInfoFilePlaying = strFile;
           }
         }
 
         // back to previous Windows if we are only in video fullscreen to do a proper release when next item is music only
         if (((GUIWindow.Window) (Enum.Parse(typeof (GUIWindow.Window), GUIWindowManager.ActiveWindow.ToString())) ==
-             GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO) && (MediaInfo != null && !MediaInfo.hasVideo) && type == MediaType.Music)
+             GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO) && (MediaInfo != null && !MediaInfo.HasVideo) && type == MediaType.Music)
         {
           GUIWindowManager.ShowPreviousWindow();
         }
@@ -1574,7 +1576,7 @@ namespace MediaPortal.Player
             {
               type = MediaType.Music;
             }
-            if (MediaInfo != null && MediaInfo.hasVideo && type == MediaType.Music)
+            if (MediaInfo != null && MediaInfo.HasVideo && type == MediaType.Music)
             {
               type = MediaType.Video;
             }
@@ -1610,7 +1612,7 @@ namespace MediaPortal.Player
           ChangeDriveSpeed(strFile, DriveType.CD);
         }
 
-        if (MediaInfo != null && MediaInfo.hasVideo && type == MediaType.Music)
+        if (MediaInfo != null && MediaInfo.HasVideo && type == MediaType.Music)
         {
           type = MediaType.Video;
         }
@@ -1692,7 +1694,7 @@ namespace MediaPortal.Player
                 // Make a double check on .ts because it can be recorded TV or Radio
                 if (extension == ".ts")
                 {
-                  if (MediaInfo != null && MediaInfo.hasVideo)
+                  if (MediaInfo != null && MediaInfo.HasVideo)
                   {
                     RefreshRateChanger.AdaptRefreshRate(strFile, (RefreshRateChanger.MediaType)(int)type);
                   }
@@ -1793,7 +1795,7 @@ namespace MediaPortal.Player
 
                 if (Util.Utils.PlayMovie(strFile))
                 {
-                  if (MediaInfo != null && MediaInfo.hasVideo)
+                  if (MediaInfo != null && MediaInfo.HasVideo)
                   {
                     RefreshRateChanger.AdaptRefreshRate();
                   }
@@ -1859,7 +1861,7 @@ namespace MediaPortal.Player
               // Make a double check on .ts because it can be recorded TV or Radio
               if (extension == ".ts")
               {
-                if (MediaInfo != null && MediaInfo.hasVideo)
+                if (MediaInfo != null && MediaInfo.HasVideo)
                 {
                   RefreshRateChanger.AdaptRefreshRate(strFile, (RefreshRateChanger.MediaType)(int)type);
                 }
@@ -3876,18 +3878,19 @@ namespace MediaPortal.Player
         bool playingRemoteUrl = Util.Utils.IsRemoteUrl(FileName);
         if (_mediaInfo == null && !playingRemoteUrl)
         {
-          _mediaInfo = new MediaInfoWrapper(FileName);
-          _mediaInfo.finished.WaitOne(5000);
+          var logger = GlobalServiceProvider.Get<MediaInfo.ILogger>();
+          _mediaInfo = new MediaInfoWrapper(FileName, logger);
+          _mediaInfo.WriteInfo();
         }
 
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CODEC_MISSING, 0, 0, 0, 0, 0, null);
         msg.Label = string.Format("{0}: {1}", GUILocalizeStrings.Get(1451), Util.Utils.GetFilename(FileName));
-        msg.Label2 = _mediaInfo == null || string.IsNullOrEmpty(_mediaInfo.VideoCodec)
+        msg.Label2 = _mediaInfo == null || _mediaInfo.BestVideoStream == null
                        ? string.Empty
-                       : string.Format("Video codec: {0}", _mediaInfo.VideoCodec);
-        msg.Label3 = _mediaInfo == null || string.IsNullOrEmpty(_mediaInfo.AudioCodec)
+                       : $"Video codec: {_mediaInfo.BestVideoStream.Codec}";
+        msg.Label3 = _mediaInfo == null || _mediaInfo.BestAudioStream == null
                        ? string.Empty
-                       : string.Format("Audio codec: {0}", _mediaInfo.AudioCodec);
+                       : $"Audio codec: {_mediaInfo.BestAudioStream.Codec}";
         GUIGraphicsContext.SendMessage(msg);
         _mediaInfo = null;
         PlayListType currentList = PlayListPlayer.SingletonPlayer.CurrentPlaylistType;

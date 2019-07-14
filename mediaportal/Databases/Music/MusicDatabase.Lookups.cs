@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2019 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2019 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -1016,6 +1016,34 @@ namespace MediaPortal.Music.Database
           string.Format(
             "SELECT * FROM tracks WHERE strAlbumArtist LIKE '%| {0} |%' AND strAlbum LIKE '{1}' AND iDisc = {2} order by iDisc asc, iTrack asc",
             strAlbumArtist, strAlbum, discNo);
+        GetSongsByFilter(sql, out aSongList, "tracks");
+
+        return true;
+      }
+      catch (Exception ex)
+      {
+        Log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Open();
+      }
+
+      return false;
+    }
+
+    public bool GetSongsByAlbumArtistAlbumFileType(string aAlbumArtist, string aAlbum, string fileType, ref List<Song> aSongList)
+    {
+      try
+      {
+        aSongList.Clear();
+
+        string strAlbumArtist = aAlbumArtist;
+        string strAlbum = aAlbum;
+        DatabaseUtility.RemoveInvalidChars(ref strAlbumArtist);
+        DatabaseUtility.RemoveInvalidChars(ref strAlbum);
+
+        string sql =
+          string.Format(
+            "SELECT * FROM tracks WHERE strAlbumArtist LIKE '%| {0} |%' AND strAlbum LIKE '{1}' AND strFileType = {2} order by strFileType asc, iTrack asc",
+            strAlbumArtist, strAlbum, fileType);
         GetSongsByFilter(sql, out aSongList, "tracks");
 
         return true;

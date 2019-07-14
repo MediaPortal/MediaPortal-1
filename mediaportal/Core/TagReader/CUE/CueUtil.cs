@@ -21,8 +21,10 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using MediaInfo;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
+using MediaPortal.Services;
 
 namespace MediaPortal.TagReader
 {
@@ -309,12 +311,13 @@ namespace MediaPortal.TagReader
         {
           try
           {
-            MediaInfo mi = new MediaInfo();
-            mi.Open(fname);
-            int durationms = 0;
-            int.TryParse(mi.Get(StreamKind.General, 0, "Duration"), out durationms);
-            musicTagCache.Duration = durationms / 1000;
-            mi.Close();
+            var logger = GlobalServiceProvider.Get<MediaInfo.ILogger>();
+            var mi = new MediaInfoWrapper(fname, logger);
+            if (!mi.MediaInfoNotloaded)
+            {
+              mi.WriteInfo();
+              musicTagCache.Duration = (int?) mi.BestAudioStream?.Duration.TotalSeconds ?? 0;
+            }
           }
           catch (Exception ex1)
           {

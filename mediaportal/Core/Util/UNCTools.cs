@@ -514,12 +514,12 @@ namespace MediaPortal.Util
             {
                 //we have no IP address -> make an async dns reverse lookup
 
-                //Start async dns reverse lookup
+                //Start async dns reverse lookup - MP1-4967 TimeOut increased to 1500ms
                 try
                 {
                     var t1 = Task.Factory.StartNew(_ => DnsReverseLookup(strHost_or_IP),
                                                         TaskCreationOptions.AttachedToParent)
-                                         .TimeoutAfter(1000)
+                                         .TimeoutAfter(1500)
                                          .ContinueWith(antecedent =>
                                          {
                                              if (!(antecedent.IsCanceled || antecedent.IsFaulted))

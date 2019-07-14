@@ -230,6 +230,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\MediaPortal.Base\Interop.WMPLib.dll</HintPath>
     </Reference>
+    <Reference Include="MediaInfo.Wrapper, Version=18.12.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\Packages\MediaInfo.Wrapper.18.12.2\lib\net40\MediaInfo.Wrapper.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.DirectX, Version=1.0.2902.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
       <SpecificVersion>True</SpecificVersion>
     </Reference>
@@ -404,7 +407,6 @@
     <Compile Include="Player\LAV\AudioPostEngine.cs" />
     <Compile Include="Player\LAV\LAVEngine.cs" />
     <Compile Include="Player\MadvrInterface.cs" />
-    <Compile Include="Player\MediaInfoWrapper.cs" />
     <Compile Include="Player\PostProcessing\PostProcessingEngine.cs" />
     <Compile Include="Player\RefreshRateChanger.cs" />
     <Compile Include="guilib\Tween.cs" />
@@ -437,7 +439,6 @@
     <Compile Include="Player\DummyPlayerFactory.cs" />
     <Compile Include="Player\IMPAudioSwitcher.cs" />
     <Compile Include="Player\IPlayerFactory.cs" />
-    <Compile Include="Player\MediaInfo.cs" />
     <Compile Include="Player\Subtitles\DirectVobSubEngine.cs" />
     <Compile Include="Player\FFDShow\FFDShowAPI.cs" />
     <Compile Include="Player\FFDShow\FFDShowConstants.cs" />
@@ -579,6 +580,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="guilib\DXEnums.cs" />
+    <Compile Include="Util\CodecExtenstions.cs" />
     <Compile Include="Util\EncryptDecrypt.cs" />
     <Compile Include="Util\FanArt.cs" />
     <Compile Include="Util\FastImage.cs" />
@@ -1685,8 +1687,8 @@
   <PropertyGroup>
     <PreBuildEvent>
     </PreBuildEvent>
-    <PostBuildEvent>xcopy $(TargetDir)core.* $(SolutionDir)MediaPortal.Application\bin\$(ConfigurationName)\ /Y /T
-xcopy $(TargetDir)core.* $(SolutionDir)MediaPortal.Application\bin\$(ConfigurationName)\ /Y</PostBuildEvent>
+    <PostBuildEvent>xcopy "$(TargetDir)core.*" "$(SolutionDir)MediaPortal.Application\bin\$(ConfigurationName)\" /Y /T
+xcopy "$(TargetDir)core.*" "$(SolutionDir)MediaPortal.Application\bin\$(ConfigurationName)\" /Y</PostBuildEvent>
   </PropertyGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
@@ -1696,7 +1698,6 @@ xcopy $(TargetDir)core.* $(SolutionDir)MediaPortal.Application\bin\$(Configurati
     <Error Condition="!Exists('..\..\Packages\bass.ofr.2.4.0.2\build\bass.ofr.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\bass.ofr.2.4.0.2\build\bass.ofr.targets'))" />
     <Error Condition="!Exists('..\..\Packages\bass.vst.2.4.5\build\bass.vst.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\bass.vst.2.4.5\build\bass.vst.targets'))" />
     <Error Condition="!Exists('..\..\Packages\bass.wadsp.2.4.1\build\bass.wadsp.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\bass.wadsp.2.4.1\build\bass.wadsp.targets'))" />
-    <Error Condition="!Exists('..\..\Packages\BASS.2.4.12.1\build\bass.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\BASS.2.4.12.1\build\bass.targets'))" />
     <Error Condition="!Exists('..\..\Packages\bass.aac.2.4.5.1\build\bass.aac.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\bass.aac.2.4.5.1\build\bass.aac.targets'))" />
     <Error Condition="!Exists('..\..\Packages\bass.ac3.2.4.0.5\build\bass.ac3.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\bass.ac3.2.4.0.5\build\bass.ac3.targets'))" />
     <Error Condition="!Exists('..\..\Packages\bass.ape.2.4.2.0\build\bass.ape.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\bass.ape.2.4.2.0\build\bass.ape.targets'))" />
@@ -1714,13 +1715,13 @@ xcopy $(TargetDir)core.* $(SolutionDir)MediaPortal.Application\bin\$(Configurati
     <Error Condition="!Exists('..\..\Packages\bass.wma.2.4.5.1\build\bass.wma.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\bass.wma.2.4.5.1\build\bass.wma.targets'))" />
     <Error Condition="!Exists('..\..\Packages\bass.wv.2.4.6.0\build\bass.wv.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\bass.wv.2.4.6.0\build\bass.wv.targets'))" />
     <Error Condition="!Exists('..\..\Packages\BASS.2.4.12.1\build\bass.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\BASS.2.4.12.1\build\bass.targets'))" />
+    <Error Condition="!Exists('..\..\Packages\MediaInfo.Native.18.12.3\build\MediaInfo.Native.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\MediaInfo.Native.18.12.3\build\MediaInfo.Native.targets'))" />
   </Target>
   <Import Project="..\..\Packages\bass.alac.2.4.3\build\bass.alac.targets" Condition="Exists('..\..\Packages\bass.alac.2.4.3\build\bass.alac.targets')" />
   <Import Project="..\..\Packages\bass.ofr.2.4.0.2\build\bass.ofr.targets" Condition="Exists('..\..\Packages\bass.ofr.2.4.0.2\build\bass.ofr.targets')" />
   <Import Project="..\..\Packages\bass.vst.2.4.5\build\bass.vst.targets" Condition="Exists('..\..\Packages\bass.vst.2.4.5\build\bass.vst.targets')" />
   <Import Project="..\..\Packages\bass.wadsp.2.4.1\build\bass.wadsp.targets" Condition="Exists('..\..\Packages\bass.wadsp.2.4.1\build\bass.wadsp.targets')" />
-  <Import Project="..\..\Packages\MediaInfo.0.7.95\build\MediaInfo.targets" Condition="Exists('..\..\Packages\MediaInfo.0.7.95\build\MediaInfo.targets')" />
-  <Import Project="..\..\Packages\BASS.2.4.12.1\build\native\bass.targets" Condition="Exists('..\..\Packages\BASS.2.4.12.1\build\native\bass.targets')" />
+  <Import Project="..\..\Packages\BASS.2.4.12.1\build\bass.targets" Condition="Exists('..\..\Packages\BASS.2.4.12.1\build\bass.targets')" />
   <Import Project="..\..\Packages\bass.aac.2.4.5.1\build\bass.aac.targets" Condition="Exists('..\..\Packages\bass.aac.2.4.5.1\build\bass.aac.targets')" />
   <Import Project="..\..\Packages\bass.ac3.2.4.0.5\build\bass.ac3.targets" Condition="Exists('..\..\Packages\bass.ac3.2.4.0.5\build\bass.ac3.targets')" />
   <Import Project="..\..\Packages\bass.ape.2.4.2.0\build\bass.ape.targets" Condition="Exists('..\..\Packages\bass.ape.2.4.2.0\build\bass.ape.targets')" />
@@ -1737,5 +1738,5 @@ xcopy $(TargetDir)core.* $(SolutionDir)MediaPortal.Application\bin\$(Configurati
   <Import Project="..\..\Packages\bass.wasapi.2.4.1.2\build\bass.wasapi.targets" Condition="Exists('..\..\Packages\bass.wasapi.2.4.1.2\build\bass.wasapi.targets')" />
   <Import Project="..\..\Packages\bass.wma.2.4.5.1\build\bass.wma.targets" Condition="Exists('..\..\Packages\bass.wma.2.4.5.1\build\bass.wma.targets')" />
   <Import Project="..\..\Packages\bass.wv.2.4.6.0\build\bass.wv.targets" Condition="Exists('..\..\Packages\bass.wv.2.4.6.0\build\bass.wv.targets')" />
-  <Import Project="..\..\Packages\BASS.2.4.12.1\build\bass.targets" Condition="Exists('..\..\Packages\BASS.2.4.12.1\build\bass.targets')" />
+  <Import Project="..\..\Packages\MediaInfo.Native.18.12.3\build\MediaInfo.Native.targets" Condition="Exists('..\..\Packages\MediaInfo.Native.18.12.3\build\MediaInfo.Native.targets')" />
 </Project>

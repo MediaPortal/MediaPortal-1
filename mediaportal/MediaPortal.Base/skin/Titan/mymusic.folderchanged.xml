@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+<controls>
+
+	<control>
+		<animation effect="slide" start="-60,0" end="0,0" tween="quadratic" easing="in" time="250" delay="400">WindowOpen</animation>
+		<animation effect="slide" start="0,0" end="-60,0" tween="quadratic" easing="in" time="250" delay="100">WindowClose</animation>
+		<id>0</id>
+		<type>image</type>
+		<posY>620</posY>
+		<width>30</width>
+		<height>149</height>
+		<keepaspectratio>no</keepaspectratio>
+		<texture>page_updated_left.png</texture>
+		<visible>string.equals(#MusicFolderChanged,true)</visible>
+	</control>
+
+</controls>
+</window>

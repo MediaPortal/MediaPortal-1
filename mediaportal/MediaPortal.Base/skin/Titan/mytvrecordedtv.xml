@@ -6,6 +6,7 @@
 <define>#header.label:604</define>
 <controls>
 
+    <import>common.default.background.xml</import> 
 	<import>common.window.recordings.xml</import>
 
     <control>

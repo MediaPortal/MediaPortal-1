@@ -207,7 +207,7 @@
       <label>300132</label>
       <posX>675</posX>
       <posY>532</posY>
-      <ondown>2</ondown>
+      <ondown>5</ondown>
     </control>
     <control>
       <description>ZapTimeout value label</description>
@@ -216,6 +216,24 @@
       <posX>1125</posX>
       <posY>540</posY>
       <label>#zapTimeout</label>
+      <font>Label</font>
+    </control>
+    <control>
+      <description>ZapKeyTimeout button</description>
+      <type>button</type>
+      <id>5</id>
+      <label>350042</label>
+      <posX>675</posX>
+      <posY>599</posY>
+      <ondown>2</ondown>
+    </control>
+    <control>
+      <description>ZapKeyTimeout value label</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>1125</posX>
+      <posY>607</posY>
+      <label>#zapKeyTimeout</label>
       <font>Label</font>
     </control>
     </control>

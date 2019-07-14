@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <controls>
+    <!--UNUSED-->
+    <control>
+      <id>166</id>
+      <description>list genres</description>
+      <type>listcontrol</type>
+      <onright>155</onright>
+      <ondown>155</ondown>
+      <posX>2000</posX>
+      <posY>545</posY>
+      <width>391</width>
+      <height>168</height>
+      <textXOff>7</textXOff>
+      <IconXOff>1</IconXOff>
+      <spinColor>-</spinColor>
+      <image>-</image>
+      <textureUp>-</textureUp>
+      <textureDown>-</textureDown>
+      <textureUpFocus>-</textureUpFocus>
+      <textureDownFocus>-</textureDownFocus>
+      <textureFocus>list_sub_focus_arrow_small.png</textureFocus>
+      <textureNoFocus>-</textureNoFocus>
+    </control>
+    <control>
+      <id>155</id>
+      <description>list similar</description>
+      <type>listcontrol</type>
+      <onleft>166</onleft>
+      <onup>166</onup>
+      <posX>2000</posX>
+      <posY>545</posY>
+      <width>533</width>
+      <height>168</height>
+      <textXOff>7</textXOff>
+      <IconXOff>1</IconXOff>
+      <spinColor>-</spinColor>
+      <image>-</image>
+      <textureUp>-</textureUp>
+      <textureNoFocus>-</textureNoFocus>
+      <textureDown>-</textureDown>
+      <textureUpFocus>-</textureUpFocus>
+      <textureDownFocus>-</textureDownFocus>
+      <textureFocus>list_sub_focus_arrow.png</textureFocus>
+      <textcolor>White</textcolor>
+    </control>
+    <control>
+      <id>29</id>
+      <description>Genres</description>
+      <type>fadelabel</type>
+      <posX>2000</posX>
+      <posY>10</posY>
+      <width>100</width>
+      <label>-</label>
+    </control>
+    <control>
+      <id>28</id>
+      <description>similar stations</description>
+      <type>fadelabel</type>
+      <posX>2000</posX>
+      <posY>10</posY>
+      <width>100</width>
+      <label>-</label>
+    </control>
+  </controls>
+</window>

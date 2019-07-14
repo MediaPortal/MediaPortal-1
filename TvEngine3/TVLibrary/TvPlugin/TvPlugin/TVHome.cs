@@ -4361,7 +4361,19 @@ namespace TvPlugin
     /// </summary>
     public static void OnLastViewedChannel()
     {
-      Navigator.ZapToLastViewedChannel();
+      Log.Info("TVHome:OnLastViewedChannel()");
+      if (GUIGraphicsContext.IsFullScreenVideo)
+      {
+        // where in fullscreen so delayzap channel instead of immediatly tune..
+        TvFullScreen TVWindow = (TvFullScreen)GUIWindowManager.GetWindow((int)(int)Window.WINDOW_TVFULLSCREEN);
+        if (TVWindow != null)
+        {
+          TVWindow.ZapLastViewedChannel();
+        }
+        return;
+      }
+      
+      Navigator.ZapToLastViewedChannel(false);
     }
 
     /// <summary>
