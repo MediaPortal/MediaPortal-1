@@ -52,7 +52,7 @@
     <control>
       <description>TV Logo</description>
       <type>image</type>
-      <id>0</id>
+      <id>10</id>
       <posX>54</posX>
       <posY>805</posY>
       <width>137</width>
@@ -63,29 +63,15 @@
     </control>
     <control>
       <description>Current channelname black</description>
-      <type>fadelabel</type>
-      <id>1</id>
+      <type>label</type>
+      <id>35</id>
       <posX>227</posX>
       <posY>815</posY>
       <width>440</width>
-      <label>#TV.View.channel</label>
+      <label>-</label>
       <align>left</align>
       <font>Label</font>
-      <textcolor>black</textcolor>
-      <visible>!control.isvisible(39)</visible>
-    </control>
-    <control>
-      <description>Current channelname black</description>
-      <type>fadelabel</type>
-      <id>1</id>
-      <posX>265</posX>
-      <posY>815</posY>
-      <width>440</width>
-      <label>#TV.View.channel</label>
-      <align>left</align>
-      <font>Label</font>
-      <textcolor>black</textcolor>
-      <visible>control.isvisible(39)</visible>
+      <textcolor>black</textcolor>     
     </control>
     <control>
       <type>image</type>
@@ -113,19 +99,7 @@
       <label>#TV.View.Percentage</label>
       <visible>yes</visible>
     </control>
-    <!--control>
-    <description>Start Time Info</description>
-    <type>label</type>
-    <id>101</id>
-    <posX>227</posX>
-    <posY>890</posY>
-    <width>1107</width>>
-    <label>#TV.View.start</label>
-    <align>left</align>
-    <font>Label</font>
-    <textcolor>ivory</textcolor>
-  </control-->
-  <control>
+    <control>
     <description>On tv NOW</description>
     <id>1</id>
     <type>fadelabel</type>
@@ -152,11 +126,11 @@
     <description>rec logo</description>
     <type>image</type>
     <id>39</id>
-    <posX>202</posX>
+    <posX>592</posX>
     <posY>810</posY>
     <width>58</width>
-      <height>56</height>
-    <texture>tv_is_recording.png</texture>
+    <height>56</height>
+    <texture>tv_is_recording.png</texture>    
   </control>
   <control>
     <description>background</description>
@@ -233,24 +207,24 @@
     <type>textbox</type>
     <posX>3393</posX>
   </control>
-  <control>
+  <!--control>
     <description>On tv NEXT</description>
     <id>10</id>
     <type>image</type>
     <posX>3393</posX>
-  </control>
+  </control-->
   <control>
     <description>On tv NEXT</description>
     <id>36</id>
     <type>textbox</type>
     <posX>3393</posX>
   </control>
-  <control>
+  <!--control>
     <description>On tv NEXT</description>
     <id>35</id>
     <type>label</type>
     <posX>3393</posX>
-  </control>
+  </control-->
   <control>
     <description>On tv NEXT</description>
     <id>100</id>
