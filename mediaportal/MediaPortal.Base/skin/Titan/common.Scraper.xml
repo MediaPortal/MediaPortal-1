@@ -40,7 +40,7 @@
         <font>TitanLight12</font>
         <label>#fanarthandler.holiday.current</label>
         <align>left</align>
-        <visible>!control.isvisible(91919280)</visible>
+        <visible>!control.isvisible(91919280)+plugin.isenabled(Fanart Handler)</visible>
         <animation effect="fade" time="250">WindowOpen</animation>
         <animation effect="fade" time="250">WindowClose</animation>
     </control> 	
