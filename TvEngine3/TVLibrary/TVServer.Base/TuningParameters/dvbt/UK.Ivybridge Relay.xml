@@ -18,4 +18,22 @@
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
+  <!-- COM4 -->
+  <DVBTTuning>
+    <Frequency>618000</Frequency><!-- C39 -->
+    <BandWidth>8</BandWidth>
+    <Offset>167</Offset>
+  </DVBTTuning>
+  <!-- COM5 -->
+  <DVBTTuning>
+    <Frequency>586000</Frequency><!-- C35 -->
+    <BandWidth>8</BandWidth>
+    <Offset>167</Offset>
+  </DVBTTuning>
+  <!-- COM6 -->
+  <DVBTTuning>
+    <Frequency>578000</Frequency><!-- C34 -->
+    <BandWidth>8</BandWidth>
+    <Offset>167</Offset>
+  </DVBTTuning>
 </ArrayOfDVBTTuning>
