@@ -76,7 +76,7 @@ namespace TsPacketChecker
       version_number = (int)((Data[5] >> 1) & 0x1F);
       current_next_indicator = (Data[5] & 0x01) != 0;
       section_number = (int)Data[6];
-      last_section_number = (int)Data[1];
+      last_section_number = (int)Data[7];
       return true;
     }
     public bool SectionComplete()
