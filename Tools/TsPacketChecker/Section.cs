@@ -17,6 +17,7 @@ namespace TsPacketChecker
     public int section_number;
     public int version_number;
     public int section_syntax_indicator;
+    public bool current_next_indicator;
     public int last_section_number;
 
     public int BufferPos;
@@ -73,8 +74,9 @@ namespace TsPacketChecker
         section_length=(int)(((Data[1] & 0xF) << 8) + Data[2]);
       table_id_extension=((Data[3] << 8) +Data[4]);
       version_number = (int)((Data[5] >> 1) & 0x1F);
+      current_next_indicator = (Data[5] & 0x01) != 0;
       section_number = (int)Data[6];
-      section_syntax_indicator = (int)((Data[1] >> 7) & 1);
+      last_section_number = (int)Data[1];
       return true;
     }
     public bool SectionComplete()
