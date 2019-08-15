@@ -61,25 +61,25 @@ namespace TsPacketChecker
       {
         case 0:
           return "not defined";
-          break;
+          
         case 1:
           return "1/2 conv. code rate";
-          break;
+          
         case 2:
           return "2/3 conv. code rate";
-          break;
+          
         case 3:
           return "3/4 conv. code rate";
-          break;
+          
         case 4:
           return "5/6 conv. code rate";
-          break;
+          
         case 5:
           return "7/8 conv. code rate";
-          break;
+          
         case 6:
           return "8/9 conv. code rate";
-          break;
+          
       }
       return "no conv. coding";
     }
@@ -89,33 +89,56 @@ namespace TsPacketChecker
       {
         case 0:
           return "not defined";
-          break;
+          
         case 1:
           return "no outer FEC coding";
-          break;
+          
         case 2:
           return "RS(204/188)";
-          break;
+          
       }
       return "other (reserved)";
     }
-    private string ModulationToStr()
+    private string ModulationToStr(NetworkType networkType)
     {
-      switch (modulation)
+      switch (networkType)
       {
-        case 0:
-          return "not defined";
-        case 1:
-          return "16 QAM";
-        case 2:
-          return "32 QAM";
-        case 3:
-          return "64 QAM";
-        case 4:
-          return "128 QAM";
-        case 5:
-          return "256 QAM";
+        case NetworkType.DVB_C:
+        {
+            switch (modulation)
+            {
+              case 0:
+                return "not defined";
+              case 1:
+                return "16 QAM";
+              case 2:
+                return "32 QAM";
+              case 3:
+                return "64 QAM";
+              case 4:
+                return "128 QAM";
+              case 5:
+                return "256 QAM";
+            }
+            break;
+         }
+        case NetworkType.DVB_S:
+          {
+            switch (modulation)
+            {
+              case 0:
+                return "auto";
+              case 1:
+                return "QPSK";
+              case 2:
+                return "8PSK";
+              case 3:
+                return "16 QAM";              
+            }
+            break;
+          }
       }
+      
       return "not set";
     }
     private string BandwidthToStr()
@@ -215,7 +238,7 @@ namespace TsPacketChecker
       {
         case NetworkType.DVB_S:
           node.Nodes.Add("Symbolrate: " + symbolrate.ToString());
-          node.Nodes.Add("Modulation: " + ModulationToStr());
+          node.Nodes.Add("Modulation: " + ModulationToStr(NetworkType.DVB_S));
           node.Nodes.Add("FECinner: " + FECinnerToStr());
           node.Nodes.Add("Polarisation: " + PolarisationToStr());
           float opos = orbitalPosition / 10;
@@ -224,7 +247,7 @@ namespace TsPacketChecker
           break;
         case NetworkType.DVB_C:
           node.Nodes.Add("Symbolrate: " + symbolrate.ToString());
-          node.Nodes.Add("Modulation: " + ModulationToStr());
+          node.Nodes.Add("Modulation: " + ModulationToStr(NetworkType.DVB_C));
           node.Nodes.Add("FECinner: " + FECinnerToStr());
           node.Nodes.Add("FECouter: " + FECouterToStr());
           break;
