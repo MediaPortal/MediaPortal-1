@@ -39,10 +39,7 @@ namespace TsPacketChecker
       if (IsReady) return;
 
       if (sections.table_id_extension != service_id) return;
-      if (sections.table_id_extension == 6033)
-      {
-        int xc = 564;
-      }
+      
       byte[] section = sections.Data;
       int section_length = sections.section_length;
 
