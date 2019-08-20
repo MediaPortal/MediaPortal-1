@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using System.IO;
 using System.Threading;
 using System.Xml;
+using WindowsApplication13;
 
 namespace TsPacketChecker
 {
@@ -117,6 +118,16 @@ namespace TsPacketChecker
       {
         tsFile = openDlg.FileName;
         this.Text = caption + " - " + tsFile;
+      }
+    }
+    private void OpentsStreamToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+      var openstreamdialog = new OpenStreamDialog();
+      if(openstreamdialog.ShowDialog()== DialogResult.OK)
+      {
+        var address = openstreamdialog.Address;
+        var port = openstreamdialog.Port;
+        var mode =  openstreamdialog.TransmissionMode;
       }
     }
     private void importFromXMLToolStripMenuItem_Click(object sender, EventArgs e)
@@ -257,6 +268,8 @@ namespace TsPacketChecker
       WriteLog(checker.GetStatistics());
       WriteLog(checker.GetErrorDetails());
     }
+
+    
   }
   public class NodeSorter : System.Collections.IComparer
   {

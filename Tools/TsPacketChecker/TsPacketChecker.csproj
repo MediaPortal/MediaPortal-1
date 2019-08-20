@@ -75,6 +75,12 @@
     <Compile Include="Descriptors\ISO639LanguageDescriptor.cs" />
     <Compile Include="Descriptors\NetworkNameDescriptor.cs" />
     <Compile Include="NITParser.cs" />
+    <Compile Include="OpenStreamDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="OpenStreamDialog.Designer.cs">
+      <DependentUpon>OpenStreamDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="PacketChecks.cs" />
     <Compile Include="PatParser.cs" />
     <Compile Include="PcrUtils.cs" />
@@ -87,10 +93,14 @@
     <Compile Include="Descriptors\ServiceDescriptor.cs" />
     <Compile Include="Descriptors\ServiceListDescriptor.cs" />
     <Compile Include="Descriptors\TerrestrialDeliverySystemDescriptor.cs" />
+    <Compile Include="TransmissionMode.cs" />
     <Compile Include="Utils.cs" />
     <EmbeddedResource Include="Form1.resx">
       <SubType>Designer</SubType>
       <DependentUpon>Form1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="OpenStreamDialog.resx">
+      <DependentUpon>OpenStreamDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
