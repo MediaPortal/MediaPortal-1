@@ -38,6 +38,7 @@ namespace TsPacketChecker
       section_number = -1;
       version_number = -1;
       section_syntax_indicator = -1;
+      last_section_number = -1;
       BufferPos = 0;
       for (int i = 0; i < Data.Length; i++)
         Data[i] = 0xFF;

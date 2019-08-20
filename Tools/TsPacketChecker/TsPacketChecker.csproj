@@ -42,8 +42,29 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BufferedTsFileReader.cs" />
+    <Compile Include="Descriptors\AACDescriptor.cs" />
+    <Compile Include="Descriptors\AC3Descriptor.cs" />
+    <Compile Include="Descriptors\BouquetNameDescriptor.cs" />
+    <Compile Include="Descriptors\C2DeliverySystemDescriptor.cs" />
+    <Compile Include="Descriptors\CableDeliverySystemDescriptor.cs" />
+    <Compile Include="Descriptors\CaDescriptor.cs" />
     <Compile Include="CatParser.cs" />
     <Compile Include="ChannelLinkageParser.cs" />
+    <Compile Include="Descriptors\CaIdentifierDescriptor.cs" />
+    <Compile Include="Descriptors\CountryAvailabilityDescriptor.cs" />
+    <Compile Include="Descriptors\DataBroadcastDescriptor.cs" />
+    <Compile Include="Descriptors\DataBroadcastIdDescriptor.cs" />
+    <Compile Include="Descriptors\Descriptor.cs" />
+    <Compile Include="Descriptors\DTSDescriptor.cs" />
+    <Compile Include="Descriptors\EnhancedAC3Descriptor.cs" />
+    <Compile Include="Descriptors\ExtendedEventDescriptor.cs" />
+    <Compile Include="Descriptors\LinkageDescriptor.cs" />
+    <Compile Include="Descriptors\PrivateDataSpecifierDescriptor.cs" />
+    <Compile Include="Descriptors\S2DeliverySystemDescriptor.cs" />
+    <Compile Include="Descriptors\ScramblingDescriptor.cs" />
+    <Compile Include="Descriptors\ShortEventDescriptor.cs" />
+    <Compile Include="Descriptors\SubtitlingDescriptor.cs" />
+    <Compile Include="Descriptors\T2DeliverySystemDescriptor.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -51,6 +72,8 @@
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
     <Compile Include="EitParser.cs" />
+    <Compile Include="Descriptors\ISO639LanguageDescriptor.cs" />
+    <Compile Include="Descriptors\NetworkNameDescriptor.cs" />
     <Compile Include="NITParser.cs" />
     <Compile Include="PacketChecks.cs" />
     <Compile Include="PatParser.cs" />
@@ -59,6 +82,12 @@
     <Compile Include="PmtParser.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Descriptors\RegistrationDescriptor.cs" />
+    <Compile Include="Descriptors\SatelliteDeliverySystemDescriptor.cs" />
+    <Compile Include="Descriptors\ServiceDescriptor.cs" />
+    <Compile Include="Descriptors\ServiceListDescriptor.cs" />
+    <Compile Include="Descriptors\TerrestrialDeliverySystemDescriptor.cs" />
+    <Compile Include="Utils.cs" />
     <EmbeddedResource Include="Form1.resx">
       <SubType>Designer</SubType>
       <DependentUpon>Form1.cs</DependentUpon>
