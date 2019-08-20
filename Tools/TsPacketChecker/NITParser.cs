@@ -267,33 +267,38 @@ namespace TsPacketChecker
 
   class NITParser 
   {
-    NetworkInfo netInfo;
-    TreeNode baseNode;
-    List<int> seenNITs;
-    SectionDecoder dec1;
-    SectionDecoder dec2;
+    private NetworkInfo _netInfo;
+    private bool _useSubtables;
+    private TreeNode _baseNode;
+    private List<int> _seenNITs;
+    private SectionDecoder _dec1;
+    private SectionDecoder _dec2;
+    private HashSet<int> _sectionsCompleted = new HashSet<int>();
 
-    public NITParser(TreeNode nodeToAdd)
+    public bool IsReady { get; private set; }
+
+    public NITParser(TreeNode nodeToAdd,bool useSubtables)
     {
-      baseNode = nodeToAdd;
-      seenNITs = new List<int>();
-      dec1 = new SectionDecoder(0x10, 0x40);
-      dec1.OnSectionDecoded += OnNewSection;
-      dec2 = new SectionDecoder(0x10, 0x41);
-      dec2.OnSectionDecoded += OnNewSection;
+      _useSubtables = useSubtables;
+      _baseNode = nodeToAdd;
+      _seenNITs = new List<int>();
+      _dec1 = new SectionDecoder(0x10, 0x40);
+      _dec1.OnSectionDecoded += OnNewSection;
+      _dec2 = new SectionDecoder(0x10, 0x41);
+      _dec2.OnSectionDecoded += OnNewSection;
     }
 
     public void OnTsPacket(byte[] tsPacket)
     {
-      dec1.OnTsPacket(tsPacket);
-      dec2.OnTsPacket(tsPacket);
+      _dec1.OnTsPacket(tsPacket);
+      _dec2.OnTsPacket(tsPacket);
     }
 
     #region Descriptor decoders
     private void DVB_GetLogicalChannelNumber(int original_network_id, int transport_stream_id, byte[] buf, int start)
     {
-      netInfo.service_id = (0x100 * buf[start]) + buf[start + 1];
-      netInfo.LCN = (0x100 * (buf[start + 2] & 0x3)) + buf[start + 3];
+      _netInfo.service_id = (0x100 * buf[start]) + buf[start + 1];
+      _netInfo.LCN = (0x100 * (buf[start + 2] & 0x3)) + buf[start + 3];
       
       // 32 bits per record
       int n = buf[start + 1] / 4;
@@ -322,8 +327,8 @@ namespace TsPacketChecker
         pointer += 4;
         if (original_network_id > 0 && transport_stream_id > 0 && ServiceID > 0 && LCN >= 0)
         {
-          netInfo.LCN = LCN;
-          netInfo.service_id = ServiceID;
+          _netInfo.LCN = LCN;
+          _netInfo.service_id = ServiceID;
         }
       }
     }
@@ -338,34 +343,34 @@ namespace TsPacketChecker
 
       if (descriptor_length > 13) return;
 
-      netInfo.netType = NetworkType.DVB_S;
+      _netInfo.netType = NetworkType.DVB_S;
 
-      netInfo.frequency = (10000000 * ((b[2] >> 4) & 0xf));
-      netInfo.frequency += (1000000 * ((b[2] & 0xf)));
-      netInfo.frequency += (100000 * ((b[3] >> 4) & 0xf));
-      netInfo.frequency += (10000 * ((b[3] & 0xf)));
-      netInfo.frequency += (1000 * ((b[4] >> 4) & 0xf));
-      netInfo.frequency += (100 * ((b[4] & 0xf)));
-      netInfo.frequency += (10 * ((b[5] >> 4) & 0xf));
-      netInfo.frequency += (b[5] & 0xf);
+      _netInfo.frequency = (10000000 * ((b[2] >> 4) & 0xf));
+      _netInfo.frequency += (1000000 * ((b[2] & 0xf)));
+      _netInfo.frequency += (100000 * ((b[3] >> 4) & 0xf));
+      _netInfo.frequency += (10000 * ((b[3] & 0xf)));
+      _netInfo.frequency += (1000 * ((b[4] >> 4) & 0xf));
+      _netInfo.frequency += (100 * ((b[4] & 0xf)));
+      _netInfo.frequency += (10 * ((b[5] >> 4) & 0xf));
+      _netInfo.frequency += (b[5] & 0xf);
 
-      netInfo.orbitalPosition += (1000 * ((b[6] >> 4) & 0xf));
-      netInfo.orbitalPosition += (100 * ((b[6] & 0xf)));
-      netInfo.orbitalPosition += (10 * ((b[7] >> 4) & 0xf));
-      netInfo.orbitalPosition += (b[7] & 0xf);
+      _netInfo.orbitalPosition += (1000 * ((b[6] >> 4) & 0xf));
+      _netInfo.orbitalPosition += (100 * ((b[6] & 0xf)));
+      _netInfo.orbitalPosition += (10 * ((b[7] >> 4) & 0xf));
+      _netInfo.orbitalPosition += (b[7] & 0xf);
 
-      netInfo.WestEastFlag = (b[8] & 0x80) >> 7;
-      netInfo.polarisation = (b[8] & 0x60) >> 5;
+      _netInfo.WestEastFlag = (b[8] & 0x80) >> 7;
+      _netInfo.polarisation = (b[8] & 0x60) >> 5;
 
-      netInfo.modulation = (b[8] & 0x1F);
-      netInfo.symbolrate = (1000000 * ((b[9] >> 4) & 0xf));
-      netInfo.symbolrate += (100000 * ((b[9] & 0xf)));
-      netInfo.symbolrate += (10000 * ((b[10] >> 4) & 0xf));
-      netInfo.symbolrate += (1000 * ((b[10] & 0xf)));
-      netInfo.symbolrate += (100 * ((b[11] >> 4) & 0xf));
-      netInfo.symbolrate += (10 * ((b[11] & 0xf)));
-      netInfo.symbolrate += (((b[12] >> 4) & 0xf));
-      netInfo.FECInner = (b[12] & 0xF);
+      _netInfo.modulation = (b[8] & 0x1F);
+      _netInfo.symbolrate = (1000000 * ((b[9] >> 4) & 0xf));
+      _netInfo.symbolrate += (100000 * ((b[9] & 0xf)));
+      _netInfo.symbolrate += (10000 * ((b[10] >> 4) & 0xf));
+      _netInfo.symbolrate += (1000 * ((b[10] & 0xf)));
+      _netInfo.symbolrate += (100 * ((b[11] >> 4) & 0xf));
+      _netInfo.symbolrate += (10 * ((b[11] & 0xf)));
+      _netInfo.symbolrate += (((b[12] >> 4) & 0xf));
+      _netInfo.FECInner = (b[12] & 0xF);
     }
     private void DVB_GetTerrestrialDelivSys(byte[] buf, int start, int maxLen)
     {
@@ -377,27 +382,27 @@ namespace TsPacketChecker
         int descriptor_length = b[1];
         if (descriptor_length > 11) return;
 
-        netInfo.netType = NetworkType.DVB_T;
+        _netInfo.netType = NetworkType.DVB_T;
 
-        netInfo.frequency = (b[2] << 24) + (b[3] << 16) + (b[4] << 8) + b[5];
+        _netInfo.frequency = (b[2] << 24) + (b[3] << 16) + (b[4] << 8) + b[5];
 
-        if (netInfo.frequency < 40000000 || netInfo.frequency > 900000000) return; // invalid frequency
+        if (_netInfo.frequency < 40000000 || _netInfo.frequency > 900000000) return; // invalid frequency
 
-        netInfo.bandwidth = (b[6] >> 5);
+        _netInfo.bandwidth = (b[6] >> 5);
 
-        netInfo.constellation = (b[7] >> 6);
+        _netInfo.constellation = (b[7] >> 6);
 
-        netInfo.HirarchyInformation = (b[7] >> 3) & 7;
-        netInfo.CodeRateHPStream = (b[7] & 7);
-        netInfo.CodeRateLPStream = (b[8] >> 5);
-
-
-        netInfo.GuardInterval = (b[8] >> 3) & 3;
+        _netInfo.HirarchyInformation = (b[7] >> 3) & 7;
+        _netInfo.CodeRateHPStream = (b[7] & 7);
+        _netInfo.CodeRateLPStream = (b[8] >> 5);
 
 
-        netInfo.TransmissionMode = (b[8] >> 1) & 3;
+        _netInfo.GuardInterval = (b[8] >> 3) & 3;
 
-        netInfo.otherFrequencyFlag = (b[8] & 3);
+
+        _netInfo.TransmissionMode = (b[8] >> 1) & 3;
+
+        _netInfo.otherFrequencyFlag = (b[8] & 3);
         // 0 - no other frequency in use
       }
     }
@@ -412,40 +417,53 @@ namespace TsPacketChecker
       int descriptor_length = b[1];
       if (descriptor_length > 13) return;
 
-      netInfo.netType = NetworkType.DVB_C;
+      _netInfo.netType = NetworkType.DVB_C;
 
-      netInfo.frequency = (10000000 * ((b[2] >> 4) & 0xf));
-      netInfo.frequency += (1000000 * ((b[2] & 0xf)));
-      netInfo.frequency += (100000 * ((b[3] >> 4) & 0xf));
-      netInfo.frequency += (10000 * ((b[3] & 0xf)));
-      netInfo.frequency += (1000 * ((b[4] >> 4) & 0xf));
-      netInfo.frequency += (100 * ((b[4] & 0xf)));
-      netInfo.frequency += (10 * ((b[5] >> 4) & 0xf));
-      netInfo.frequency += (b[5] & 0xf);
+      _netInfo.frequency = (10000000 * ((b[2] >> 4) & 0xf));
+      _netInfo.frequency += (1000000 * ((b[2] & 0xf)));
+      _netInfo.frequency += (100000 * ((b[3] >> 4) & 0xf));
+      _netInfo.frequency += (10000 * ((b[3] & 0xf)));
+      _netInfo.frequency += (1000 * ((b[4] >> 4) & 0xf));
+      _netInfo.frequency += (100 * ((b[4] & 0xf)));
+      _netInfo.frequency += (10 * ((b[5] >> 4) & 0xf));
+      _netInfo.frequency += (b[5] & 0xf);
 
-      netInfo.FECOuter = (b[7] & 0xF);
+      _netInfo.FECOuter = (b[7] & 0xF);
 
-      netInfo.modulation = b[8];
+      _netInfo.modulation = b[8];
 
-      netInfo.symbolrate = (1000000 * ((b[9] >> 4) & 0xf));
-      netInfo.symbolrate += (100000 * ((b[9] & 0xf)));
-      netInfo.symbolrate += (10000 * ((b[10] >> 4) & 0xf));
-      netInfo.symbolrate += (1000 * ((b[10] & 0xf)));
-      netInfo.symbolrate += (100 * ((b[11] >> 4) & 0xf));
-      netInfo.symbolrate += (10 * ((b[11] & 0xf)));
-      netInfo.symbolrate += (((b[12] >> 4) & 0xf));
+      _netInfo.symbolrate = (1000000 * ((b[9] >> 4) & 0xf));
+      _netInfo.symbolrate += (100000 * ((b[9] & 0xf)));
+      _netInfo.symbolrate += (10000 * ((b[10] >> 4) & 0xf));
+      _netInfo.symbolrate += (1000 * ((b[10] & 0xf)));
+      _netInfo.symbolrate += (100 * ((b[11] >> 4) & 0xf));
+      _netInfo.symbolrate += (10 * ((b[11] & 0xf)));
+      _netInfo.symbolrate += (((b[12] >> 4) & 0xf));
 
-      netInfo.FECInner = (b[12] & 0xF);
+      _netInfo.FECInner = (b[12] & 0xF);
     }
     #endregion
 
     public int GetChannelCount()
     {
-      return seenNITs.Count;
+      return _seenNITs.Count;
     }
 
     public void OnNewSection(Section section)
     {
+      if (_useSubtables)
+      {
+        if (_sectionsCompleted.Count == section.last_section_number + 1)
+        {
+          IsReady = true;
+          return;
+        }
+
+        if (_sectionsCompleted.Contains(section.section_number))
+        {
+          return;
+        }
+      }
       int network_descriptor_length = ((section.Data[8] & 0xF) << 8) + section.Data[9];
 
       int l1 = network_descriptor_length;
@@ -481,7 +499,7 @@ namespace TsPacketChecker
         key += (ulong)transport_stream_id;
 
         int transport_descriptor_length = ((section.Data[pointer + 4] & 0xF) << 8) + section.Data[pointer + 5];
-        netInfo = new NetworkInfo(network_name, transport_stream_id, original_network_id);
+        _netInfo = new NetworkInfo(network_name, transport_stream_id, original_network_id);
         pointer += 6;
         l1 -= 6;
         int l2 = transport_descriptor_length;
@@ -512,13 +530,19 @@ namespace TsPacketChecker
           l2 -= descriptor_length;
           l1 -= descriptor_length;
         }
-        if (netInfo.netType!=NetworkType.Unknown)
-          baseNode.Text = "NIT " + netInfo.netType.ToString();
-        if (!seenNITs.Contains(netInfo.frequency))
+        if (_netInfo.netType!=NetworkType.Unknown)
+          _baseNode.Text = "NIT " + _netInfo.netType.ToString();
+        if (!_seenNITs.Contains(_netInfo.frequency))
         {
-          netInfo.AddToNode(baseNode,(section.table_id==0x41));
-          seenNITs.Add(netInfo.frequency);
+          _netInfo.AddToNode(_baseNode,(section.table_id==0x41));
+          _seenNITs.Add(_netInfo.frequency);
         }
+        if (_useSubtables)
+        {
+          _sectionsCompleted.Add(section.section_number);
+        }
+        if (!_useSubtables)
+        { IsReady = true; }
       }
     }
   }

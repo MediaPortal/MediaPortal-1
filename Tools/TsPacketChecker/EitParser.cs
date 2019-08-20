@@ -9,12 +9,17 @@ namespace TsPacketChecker
   public class EitParser: SectionDecoder
   {
     #region Private variables
-    Form1 frm;
+    private Form1 _frm;
+    private bool _useSubtables;
+    private HashSet<int> _sectionsCompleted = new HashSet<int>();
+
+    public bool IsReady { get; private set; }
     #endregion
 
-    public EitParser(Form1 handle)
+    public EitParser(Form1 handle,bool useSubtables)
     {
-      frm = handle;
+      _useSubtables = useSubtables;
+      _frm = handle;
       TableId = 0x2;
       Pid = (ushort)0x12;
     }
@@ -25,6 +30,19 @@ namespace TsPacketChecker
 
     public override void OnNewSection(Section sections)
     {
+      if (_useSubtables)
+      {
+        if (_sectionsCompleted.Count == sections.last_section_number + 1)
+        {
+          IsReady = true;
+          return;
+        }
+
+        if (_sectionsCompleted.Contains(sections.section_number))
+        {
+          return;
+        }
+      }
       int start = 14;
       byte[] buf = sections.Data;
       int service_id = (buf[3] << 8) + buf[4];
@@ -64,7 +82,7 @@ namespace TsPacketChecker
                 //frm.WriteLog("private data");
                 break;
               case 0x89: // MPAA rating
-                frm.WriteLog("MPAA rating");
+                _frm.WriteLog("MPAA rating");
                 break;
               default:
                 //frm.WriteLog("Unknown descriptor ("+descriptor_tag.ToString()+")");
@@ -75,7 +93,13 @@ namespace TsPacketChecker
         }
         start += descriptors_len;
       }
-	  }
+      if (_useSubtables)
+      {
+        _sectionsCompleted.Add(sections.section_number);
+      }
+      if (!_useSubtables)
+      { IsReady = true; }
+    }
 
     private string DecodeString(byte[] data, int start, int len)
     {
@@ -101,7 +125,7 @@ namespace TsPacketChecker
       int off=6+event_len;
       int text_len=buf[off];
       string eventDescription = DecodeString(buf, off + 1, text_len);
-      frm.WriteLog("[" + lang + "] Short event: title=" + eventText+" details="+eventDescription);
+      _frm.WriteLog("[" + lang + "] Short event: title=" + eventText+" details="+eventDescription);
     }
     private void DecodeParentalRating(byte[] data)
     {
@@ -111,7 +135,7 @@ namespace TsPacketChecker
       {
         string lang = DecodeLanguage(data, off);
         uint rating=(uint)data[off+3];
-        frm.WriteLog("["+lang+"] Rating=" + rating.ToString());
+        _frm.WriteLog("["+lang+"] Rating=" + rating.ToString());
         off += 4;
       }
     }

@@ -188,11 +188,11 @@ namespace TsPacketChecker
       TreeNode linkageNode = new TreeNode("ChannelLinkage");
       ChannelLinkageParser linkageParser = new ChannelLinkageParser(linkageNode);
       TreeNode sdtNode = new TreeNode("SDT");
-      SdtParser sdtParser = new SdtParser(sdtNode);
+      SdtParser sdtParser = new SdtParser(sdtNode,false);
       TreeNode nitNode = new TreeNode("NIT");
-      NITParser nitParser = new NITParser(nitNode);
+      NITParser nitParser = new NITParser(nitNode,false);
       PacketChecker checker = new PacketChecker(double.Parse(edPcrDiff.Text));
-      EitParser eitParser = new EitParser(this);
+      EitParser eitParser = new EitParser(this,false);
 
       int maxPATPidsCount = 0;
        while (reader.GetNextPacket(out tsPacket, out header))
